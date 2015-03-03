@@ -119,10 +119,7 @@ namespace Rich
 
     void PixelCreatorBase::printStats() const
     {
-      if ( m_Nevts > 0
-           && ( m_hitCount[Rich::Rich1].hasSomeStats() ||
-                m_hitCount[Rich::Rich2].hasSomeStats()
-                ) )
+      if ( m_Nevts > 0 )
       {
         const StatDivFunctor occ("%8.2f +-%6.2f");
         const std::string & lines
@@ -142,12 +139,7 @@ namespace Rich
         info() << " Rejected         :  RICH1 = " << occ(m_hitCount[Rich::Rich1].rejectedPixels,m_Nevts)
                << "  RICH2 = " << occ(m_hitCount[Rich::Rich2].rejectedPixels,m_Nevts)
                << " HPD pixels / event" << endmsg;
-
         info() << lines << endmsg;
-      }
-      else
-      {
-        Warning( "No pixels produced", StatusCode::SUCCESS );
       }
     }
 

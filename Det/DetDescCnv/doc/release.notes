@@ -4,6 +4,13 @@
 ! Purpose     : standard converters for the LHCb Detector Description
 !------------------------------------------------------------------------------
 
+!========================= DetDescCnv v4r13 2011-04-26 =========================
+! 2011-04-19 - Marco Cattaneo
+ - Fix defect 16169, UNINIT_CTOR in XmlMixtureCnv.cpp
+
+! 2011-04-08 - Marco Cattaneo
+ - Recover precision in rotation matrix in case of rotation by pi or halfpi
+
 !========================= DetDescCnv v4r12 2011-01-31 =========================
 ! 2011-01-12 - Marco Cattaneo
  - Fix again ICC warning 1125, previous fix was wrong

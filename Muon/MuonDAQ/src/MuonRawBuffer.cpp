@@ -174,7 +174,8 @@ StatusCode MuonRawBuffer::finalize() {
   if(print_errors){
     for (unsigned int i=0;i<MuonDAQHelper_maxTell1Number;i++){
       if(m_tell1_header_error[i]>0){
-        info()<<" in Tell1 "<<i<<" error inside Tell1 "<<m_tell1_header_error[i]<<endreq;
+//commented out waiting for a proper Tell1 firmware 2011-04-24      
+//        info()<<" in Tell1 "<<i<<" error inside Tell1 "<<m_tell1_header_error[i]<<endreq;
         
       }
       
@@ -183,10 +184,10 @@ StatusCode MuonRawBuffer::finalize() {
         info()<<" in Tell1 "<<i<<" ODE reported error "<<m_tell1_header_ORODE_error[i]<<endreq;
       }
       
-      
+//commented out waiting for a proper Tell1 firmware 2011-04-24      
       if( m_tell1_header_SYNCH_data_error[i]>0){
-        info()<<" in Tell1 "<<i<<" SYNCH data consistency  error "
-               <<m_tell1_header_SYNCH_data_error[i]<<endreq;
+        //info()<<" in Tell1 "<<i<<" SYNCH data consistency  error "
+        //       <<m_tell1_header_SYNCH_data_error[i]<<endreq;
       }
       
       if(m_tell1_header_SYNCH_BC_error[i]>0){ 
@@ -761,7 +762,7 @@ StatusCode MuonRawBuffer::DecodeData(const LHCb::RawBank* r)
 { 
   StatusCode sc=StatusCode::FAILURE;
   unsigned int tell1Number=(r)->sourceID();
-  if(tell1Number>MuonDAQHelper_maxTell1Number){
+  if(tell1Number>=MuonDAQHelper_maxTell1Number){
     error()<<" in muon data a Tell1 Source ID is gretare than maximum "<<endreq;
     
     return StatusCode::FAILURE; 
@@ -789,7 +790,7 @@ StatusCode MuonRawBuffer::DecodeDataPad(const LHCb::RawBank* r)
   StatusCode sc=StatusCode::FAILURE;
   sc.ignore();
   unsigned int tell=(r)->sourceID();
-  if(tell>MuonDAQHelper_maxTell1Number){
+  if(tell>=MuonDAQHelper_maxTell1Number){
     error()<<" in raw data there is a muon bank with source ID greater than maximum "<<endreq;    
     return StatusCode::FAILURE;
   }
@@ -854,7 +855,7 @@ StatusCode  MuonRawBuffer::decodeNZSupp(const LHCb::RawBank* r){
   }
 
   
-  if(tell1Num>MuonDAQHelper_maxTell1Number)return StatusCode::FAILURE;
+  if(tell1Num>=MuonDAQHelper_maxTell1Number)return StatusCode::FAILURE;
   
   unsigned int data[24][35];
   const unsigned int * it=r->begin<unsigned int>(); 
@@ -908,7 +909,7 @@ StatusCode MuonRawBuffer::dumpNZSupp(const LHCb::RawBank* r,unsigned int ode_num
 {
   unsigned int tell1Number=(r)->sourceID();
   //info()<<" t1 "<<tell1Number<<endreq;
-  if(tell1Number>MuonDAQHelper_maxTell1Number)return StatusCode::FAILURE;
+  if(tell1Number>=MuonDAQHelper_maxTell1Number)return StatusCode::FAILURE;
   if(!m_ODEAlreadyDecoded[tell1Number]){
       decodeNZSupp( r);
   }  

@@ -46,8 +46,12 @@ StatusCode UnpackTrack::execute() {
   if ( !m_alwaysOutput && !exist<LHCb::PackedTracks>(m_inputName) ) return StatusCode::SUCCESS;
 
   const LHCb::PackedTracks* dst = getOrCreate<LHCb::PackedTracks,LHCb::PackedTracks>( m_inputName );
-  if ( msgLevel(MSG::DEBUG) ) 
+  if ( msgLevel(MSG::DEBUG) ) {
     debug() << "Size of PackedTracks = " << dst->end() - dst->begin() << endmsg;
+    if ( dst->sizeId()    > 65535 ) debug() << "Large container of LHCbIDs: " << dst->sizeId()    << endmsg;
+    if ( dst->sizeState() > 65535 ) debug() << "Large container of States: "  << dst->sizeState() << endmsg;
+    if ( dst->sizeExtra() > 65535 ) debug() << "Large container of Extras: "  << dst->sizeExtra() << endmsg;
+  }
 
   LHCb::Tracks* newTracks = new LHCb::Tracks();
   newTracks->reserve( dst->tracks().size() );
@@ -60,6 +64,13 @@ StatusCode UnpackTrack::execute() {
   }
   
   StandardPacker pack;
+
+  int firstIdHigh = 0;
+  int lastIdHigh  = 0;
+  int firstStateHigh = 0;
+  int lastStateHigh  = 0;
+  int firstExtraHigh = 0;
+  int lastExtraHigh  = 0;
   
   for ( std::vector<LHCb::PackedTrack>::const_iterator itS = dst->begin();
         dst->end() != itS; ++itS ) {
@@ -75,9 +86,27 @@ StatusCode UnpackTrack::execute() {
       track->setLikelihood(       pack.fltPacked( src.likelihood ) );
       track->setGhostProbability( pack.fltPacked( src.ghostProba ) );
     }
-    std::vector<LHCb::LHCbID> lhcbids(  src.lastId - src.firstId  ) ;
+
+    int firstId = src.firstId; 
+    int lastId  = src.lastId;
+    if ( dst->sizeId() > 65535 ) {
+      //== Protections for wraping of the index, a short unsigned int.
+      if ( src.firstId == 0 && itS != dst->begin() ) {   // we wrapped just at a track boundary
+        firstIdHigh += 0x10000;
+        lastIdHigh  += 0x10000;
+      }
+      firstId = firstIdHigh + src.firstId; 
+      lastId  = lastIdHigh  + src.lastId;
+      if ( lastId < firstId ) {  // we wrapped in the track
+        lastIdHigh  += 0x10000;
+        firstIdHigh += 0x10000;
+        lastId = lastIdHigh  + src.lastId;
+      }
+    }    
+    
+    std::vector<LHCb::LHCbID> lhcbids( lastId - firstId ) ;
     std::vector<LHCb::LHCbID>::iterator lhcbit = lhcbids.begin() ;
-    for ( int kId = src.firstId; src.lastId > kId; ++kId, ++lhcbit ) {
+    for ( int kId = firstId; lastId > kId; ++kId, ++lhcbit ) {
       unsigned int id = *(dst->beginIds()+kId);
       *lhcbit = LHCb::LHCbID( id ) ;
     }
@@ -87,14 +116,50 @@ StatusCode UnpackTrack::execute() {
     }
     track->addSortedToLhcbIDs( lhcbids ) ;
 
-    for ( int kSt = src.firstState; src.lastState > kSt; ++kSt ) {
+    int firstState = src.firstState; 
+    int lastState  = src.lastState;
+    if ( dst->sizeState() > 65535 ) {
+      //== Protections for wraping of the index, a short unsigned int.
+      if ( src.firstState == 0 && itS != dst->begin() ) {   // we wrapped just at a track boundary
+        firstStateHigh += 0x10000;
+        lastStateHigh  += 0x10000;
+      }
+      firstState = firstStateHigh + src.firstState; 
+      lastState  = lastStateHigh  + src.lastState;
+      if ( lastState < firstState ) {  // we wrapped in the track
+        lastStateHigh  += 0x10000;
+        firstStateHigh += 0x10000;
+        lastState = lastStateHigh  + src.lastState;
+      }
+    }
+    
+    for ( int kSt = firstState; lastState > kSt; ++kSt ) {
       LHCb::PackedState pSta = *(dst->beginState()+kSt);
       convertState( pSta, track );
     }
-    for ( int kEx = src.firstExtra; src.lastExtra > kEx; ++kEx ) {
+
+    int firstExtra = src.firstExtra; 
+    int lastExtra  = src.lastExtra;
+    if ( dst->sizeExtra() > 65535 ) {
+      //== Protections for wraping of the index, a short unsigned int.
+      if ( src.firstExtra == 0 && itS != dst->begin() ) {   // we wrapped just at a track boundary
+        firstExtraHigh += 0x10000;
+        lastExtraHigh  += 0x10000;
+      }
+      firstExtra = firstExtraHigh + src.firstExtra; 
+      lastExtra  = lastExtraHigh  + src.lastExtra;
+      if ( lastExtra < firstExtra ) {  // we wrapped in the track
+        lastExtraHigh  += 0x10000;
+        firstExtraHigh += 0x10000;
+        lastExtra = lastExtraHigh  + src.lastExtra;
+      }
+    }
+
+    for ( int kEx = firstExtra; lastExtra > kEx; ++kEx ) {
       std::pair<int,int> info = *(dst->beginExtra()+kEx);
       track->addInfo( info.first, pack.fltPacked( info.second ) );
     }
+
     //== Cleanup extraInfo and set likelihood/ghostProbability for old data
     if ( dst->version() <= 2 ) {
       track->eraseInfo(LHCb::Track::PatQuality);

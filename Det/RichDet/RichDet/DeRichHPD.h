@@ -196,7 +196,6 @@ public:
    */
   inline const Rich::TabulatedProperty1D* hpdQuantumEff() const
   {
-    if ( !m_hpdQuantumEffFunc ) { initHpdQuantumEff(); }
     return m_hpdQuantumEffFunc;
   }
 
@@ -296,15 +295,16 @@ private: // functions
   /// Get parameters from Rich1
   StatusCode getParameters();
 
-  /// Update the locally stored transformations
-  StatusCode updateTransformations();
+  /// Update the cached parameters based on geometry
+  StatusCode updateGeometry();
 
   /// Update the magnification and demagnification information
   StatusCode updateDemagProperties();
 
-  // go from a point on silicon to a point on the photo-cathode with magnet ON
+  /// go from a point on silicon to a point on the photo-cathode with magnet ON
   StatusCode magnifyToGlobalMagnetON( Gaudi::XYZPoint& detectPoint, bool photoCathodeSide ) const;
-  // go from a point on silicon to a point on the photo-cathode with magnet OFF
+
+  /// go from a point on silicon to a point on the photo-cathode with magnet OFF
   StatusCode magnifyToGlobalMagnetOFF( Gaudi::XYZPoint& detectPoint, bool photoCathodeSide ) const;
 
   /// Initialise the interpolators for demagnification (cathode to anode)
@@ -314,8 +314,8 @@ private: // functions
   StatusCode fillHpdMagTable( const unsigned int field );
 
   /// Initialise the HPD quantum eff function
-  void initHpdQuantumEff() const;
-
+  StatusCode initHpdQuantumEff();
+  
   /// Access magnetic field service on demand
   ILHCbMagnetSvc * magSvc() const;
 
@@ -354,7 +354,7 @@ private: // functions
 
 private: // data
 
-  const IDetectorElement* m_deSiSensor; ///< The silicon sensor detector element
+  IDetectorElement* m_deSiSensor; ///< The silicon sensor detector element
 
   const IPVolume* m_pvWindow;      ///< The pv for the HPD quartz window
   const ISolid* m_windowSolid;     ///< The HPD window solid
@@ -396,8 +396,8 @@ private: // data
   /// Demagnification parameters condition
   std::vector< SmartRef<Condition> > m_demagConds;
 
-  /// binary flags; 1 for update of demag param, 2 for update of geometry; 6 for new hpdQE
-  mutable std::bitset<7> m_flags;
+  /// Flag indicating if this HPD owns its HPD QE function
+  mutable bool m_ownHPDQEFunc;
 
   std::vector<double> m_refactParams; ///< refraction parameters for quartz window
 
@@ -410,8 +410,8 @@ private: // data
   /// magnitude of the longitudinal B field
   double m_LongitudinalBField;
 
-  ///< version of MDMS corrections
-  int m_MDMS_version;
+  /// version of MDMS corrections, for both field polarities
+  int m_MDMS_version[2];
 
   // Cached parameters for speed reasons.
   Gaudi::Transform3D m_SiSensorToHPDMatrix; ///< silicon to HPD transform

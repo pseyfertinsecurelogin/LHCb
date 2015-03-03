@@ -1,6 +1,5 @@
-// $Id: IEventTupleTool.h,v 1.2 2009-08-04 09:45:31 jpalac Exp $
-#ifndef DECAYTUPLE_IEVENTTUPLETOOL_H
-#define DECAYTUPLE_IEVENTTUPLETOOL_H  1
+#ifndef KERNEL_IEVENTTUPLETOOL_H
+#define KERNEL_IEVENTTUPLETOOL_H  1
 
 // from Gaudi
 #include "GaudiKernel/IAlgTool.h"
@@ -34,4 +33,4 @@ class GAUDI_API IEventTupleTool : virtual public IAlgTool {
 
 
 
-#endif // DECAYTUPLE_IEVENTTUPLETOOL_H
+#endif // KERNEL_IEVENTTUPLETOOL_H

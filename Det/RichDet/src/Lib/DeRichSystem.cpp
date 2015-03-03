@@ -60,7 +60,7 @@ const CLID& DeRichSystem::classID()
 //=========================================================================
 //  initialize
 //=========================================================================
-StatusCode DeRichSystem::initialize ( )
+StatusCode DeRichSystem::initialize()
 {
   setMyName("DeRichSystem");
 
@@ -71,10 +71,12 @@ StatusCode DeRichSystem::initialize ( )
   SmartRef<Condition> rich2numbers = condition( m_condDBLocs[Rich::Rich2] );
   updMgrSvc()->registerCondition(this,rich1numbers.path(),&DeRichSystem::buildHPDMappings);
   updMgrSvc()->registerCondition(this,rich2numbers.path(),&DeRichSystem::buildHPDMappings);
-  if ( updMgrSvc()->update(this).isFailure() )
-    error() << "Failed to update mappings" << endmsg;
 
-  return StatusCode::SUCCESS;
+  // Run first update
+  const StatusCode sc = updMgrSvc()->update(this);
+  if ( sc.isFailure() ) error() << "Failed to update mappings" << endmsg;
+
+  return sc;
 }
 
 //=========================================================================
@@ -103,24 +105,8 @@ DetectorElement * DeRichSystem::deRich( const Rich::DetectorType rich ) const
 {
   if ( !m_deRich[rich] )
   {
-    if      ( Rich::Rich1 == rich )
-    {
-      SmartDataPtr<DetectorElement> deR(dataSvc(),DeRichLocations::Rich1);
-      m_deRich[rich] = deR;
-    }
-    else if ( Rich::Rich2 == rich )
-    {
-      SmartDataPtr<DetectorElement> deR(dataSvc(),DeRichLocations::Rich2);
-      m_deRich[rich] = deR;
-    }
-    else
-    {
-      std::ostringstream mess;
-      mess << "Cannot load detector element for RICH " << rich;
-      throw GaudiException( mess.str(),
-                            "DeRichSystem::deRich",
-                            StatusCode::FAILURE );
-    }
+    SmartDataPtr<DetectorElement> deR( dataSvc(), DeRichLocations::location(rich) );
+    m_deRich[rich] = deR;
   }
   return m_deRich[rich];
 }
@@ -158,17 +144,11 @@ StatusCode DeRichSystem::buildHPDMappings()
   m_L1HardIDAndInputToHPDHardID.clear();
   m_firstL1CopyN = 0;
 
-  // NB : Currently updating both RICH1 and RICH2 if either changes ...
-  //      Could considering doing this separately, probably not a big issue though
+  // Fill the maps for each RICH
+  const StatusCode sc = ( fillMaps ( Rich::Rich1 ) && 
+                          fillMaps ( Rich::Rich2 ) );
 
-  // RICH1
-  StatusCode sc = fillMaps( Rich::Rich1 );
-  if ( sc.isFailure() ) return sc;
-
-  // RICH2
-  sc            = fillMaps( Rich::Rich2 );
-  if ( sc.isFailure() ) return sc;
-
+  // return
   return sc;
 }
 
@@ -194,19 +174,11 @@ StatusCode DeRichSystem::fillMaps( const Rich::DetectorType rich )
   // vector of HPD Level0 IDs
   const CondData & l0IDs   = numbers->paramVect<int>("HPDLevel0IDs");
   // vector of HPD Level1 board Hardware IDs
-  // If statement for DC06 compat.
-  const CondData & l1IDs   = ( numbers->exists("HPDLevel1HardwareIDs") ?
-                               numbers->paramVect<int>("HPDLevel1HardwareIDs") :
-                               numbers->paramVect<int>("HPDLevel1IDs") );
+  const CondData & l1IDs   = numbers->paramVect<int>("HPDLevel1HardwareIDs");
   // vector of HPD Level1 input numbers
   const CondData & l1Ins   = numbers->paramVect<int>("HPDLevel1InputNums");
   // vector of HPD Copy numbers
-  // define default vector with numbers for DC06 compatibility
-  std::vector<int> defaultCopyN;
-  for (unsigned int i=rich*196; i<rich*196+nHPDs; ++i) { defaultCopyN.push_back( i ); }
-  const CondData & copyNs   = ( numbers->exists("HPDCopyNumbers") ?
-                                numbers->paramVect<int>("HPDCopyNumbers") :
-                                defaultCopyN );
+  const CondData & copyNs  = numbers->paramVect<int>("HPDCopyNumbers");
   // inactive HPDs
   CondData inacts;
   bool inactiveHPDListInSmartIDs( false );
@@ -217,17 +189,13 @@ StatusCode DeRichSystem::fillMaps( const Rich::DetectorType rich )
     const CondData& inactsHuman = numbers->paramVect<int>("InactiveHPDListInSmartIDs");
     inactiveHPDListInSmartIDs = true;
     inacts.reserve(inactsHuman.size());
-    for ( unsigned int inHpd = 0; inHpd<inactsHuman.size(); ++inHpd )
+    for ( CondData::const_iterator inHpd = inactsHuman.begin(); inHpd != inactsHuman.end(); ++inHpd )
     {
-      LHCb::RichSmartID myID( Rich::DAQ::HPDIdentifier(inactsHuman[inHpd]).smartID() );
-      if ( myID.isValid() ) 
-      {
-        inacts.push_back( myID );
-      }
+      const LHCb::RichSmartID ID( Rich::DAQ::HPDIdentifier(*inHpd).smartID() );
+      if ( ID.isValid() ) { inacts.push_back( ID ); }
       else
       {
-        error() << "Invalid smartID in the list of inactive HPDs "
-                << inactsHuman[inHpd] << endmsg;
+        error() << "Invalid smartID in the list of inactive HPDs " << *inHpd << endmsg;
       }
     }
   }
@@ -255,7 +223,7 @@ StatusCode DeRichSystem::fillMaps( const Rich::DetectorType rich )
   }
 
   // current number of L1 boards
-  const int saveL1size = m_l1IDs.size();
+  const unsigned int saveL1size = m_l1IDs.size();
 
   // build cached mappings
   CondData::const_iterator iSoft  = softIDs.begin();
@@ -264,7 +232,6 @@ StatusCode DeRichSystem::fillMaps( const Rich::DetectorType rich )
   CondData::const_iterator iL1In  = l1Ins.begin();
   CondData::const_iterator iL0    = l0IDs.begin();
   CondData::const_iterator icopyN = copyNs.begin();
-
   for ( ; iSoft  != softIDs.end() &&
           iHard  != hardIDs.end() &&
           iL0    != l0IDs.end()   &&
@@ -275,12 +242,12 @@ StatusCode DeRichSystem::fillMaps( const Rich::DetectorType rich )
   {
 
     // get data
-    const LHCb::RichSmartID        hpdID  ( *iSoft  ); 
-    const Rich::DAQ::HPDHardwareID hardID ( *iHard  );
-    const Rich::DAQ::Level1HardwareID L1ID( *iL1    );
-    const Rich::DAQ::Level0ID      L0ID   ( *iL0    );
-    const Rich::DAQ::Level1Input   L1IN   ( *iL1In  );
-    const Rich::DAQ::HPDCopyNumber copyN  ( *icopyN );
+    const LHCb::RichSmartID           hpdID  ( *iSoft  ); 
+    const Rich::DAQ::HPDHardwareID    hardID ( *iHard  );
+    const Rich::DAQ::Level1HardwareID L1ID   ( *iL1    );
+    const Rich::DAQ::Level0ID         L0ID   ( *iL0    );
+    const Rich::DAQ::Level1Input      L1IN   ( *iL1In  );
+    const Rich::DAQ::HPDCopyNumber    copyN  ( *icopyN );
 
     // debug printout
     verbose() << "PD     " << (int)hpdID << " " << hpdID
@@ -401,20 +368,10 @@ StatusCode DeRichSystem::fillMaps( const Rich::DetectorType rich )
       m_l1HardToLog[hardID]         = logID;
     }
   }
-  else // DC06 compat
+  else 
   {
-    for ( CondData::const_iterator iM = l1IDs.begin();
-          iM != l1IDs.end(); ++iM )
-    {
-      // Just make up a one to one mapping
-      const Rich::DAQ::Level1LogicalID  logID  ( *iM );
-      const Rich::DAQ::Level1HardwareID hardID ( *iM );
-      const Rich::DetectorType richTmp = this->richDetector(hardID);
-      debug() << richTmp << " DC06 L1 ID mapping : Logical=" << logID
-              << " Hardware=" << hardID << endmsg;
-      (m_l1LogToHard[rich])[logID]  = hardID;
-      m_l1HardToLog[hardID]         = logID;
-    }
+    error() << "Could not load Condition " << L1LogToHardMapName << endmsg;
+    return StatusCode::FAILURE;
   }
 
   // L1 Logical ID to Copy Numbers
@@ -641,40 +598,25 @@ DeRichSystem::richSmartID( const Rich::DAQ::HPDCopyNumber copyNumber ) const
 }
 
 //=========================================================================
-//  copyNumber
 // Obtain the Copy Number number for a given RichSmartID
 //=========================================================================
 const Rich::DAQ::HPDCopyNumber
 DeRichSystem::copyNumber( const LHCb::RichSmartID smartID ) const
 {
-  // DC06 compatibility
-  static const bool useNewCopyNumber = exists("HpdQuantumEffCommonLoc"); 
-  if ( useNewCopyNumber )  // use the copy number vector
+  // See if this RichSmartID is known
+  SmartIDToCopyN::const_iterator id = m_smartid2copyNumber.find( smartID.hpdID() );
+  if ( m_smartid2copyNumber.end() == id )
   {
-    // See if this RichSmartID is known
-    SmartIDToCopyN::const_iterator id = m_smartid2copyNumber.find( smartID.hpdID() );
-    if ( m_smartid2copyNumber.end() == id )
-    {
-      std::ostringstream mess;
-      mess << "Unknown HPD RichSmartID " 
-           << (int)smartID.hpdID() << " " << smartID.hpdID();
-      throw GaudiException( mess.str(),
-                            "DeRichSystem::copyNumber",
-                            StatusCode::FAILURE );
-    }
-    // Found, so return copy number
-    return (*id).second;
+    std::ostringstream mess;
+    mess << "Unknown HPD RichSmartID " 
+         << (int)smartID.hpdID() << " " << smartID.hpdID();
+    throw GaudiException( mess.str(),
+                          "DeRichSystem::copyNumber",
+                          StatusCode::FAILURE );
   }
-  else // do it the DC06 way
-  {
-    static const int rich1NumberHpds = 
-      deRich(Rich::Rich1)->param<int>("Rich1TotNumHpd");
-    const unsigned int cn =
-      ( smartID.rich() == Rich::Rich1 ?
-        smartID.panel()*98 + smartID.hpdCol()*14 + smartID.hpdNumInCol() :
-        rich1NumberHpds + smartID.panel()*144 + smartID.hpdCol()*16 + smartID.hpdNumInCol() );
-    return Rich::DAQ::HPDCopyNumber( cn );
-  }
+
+  // Found, so return copy number
+  return (*id).second;
 }
 
 //=========================================================================

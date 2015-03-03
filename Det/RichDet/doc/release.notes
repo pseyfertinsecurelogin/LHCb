@@ -4,6 +4,21 @@
 ! Purpose     : Interface to the xml description
 !-----------------------------------------------------------------------------
 
+!========================= RichDet v16r3 2011-04-26 =========================
+! 2011-04-14 - Chris Jones
+ - Remove some obsolete DC06 compatibility hacks
+ - Return StatusCode FAILURE from DeRichSystem::initialize() if initial 
+   update fails.
+
+! 2011-04-07 - Chris Jones
+ - Improve the way various cached information is handled w.r.t. condition
+   updates.
+
+! 2011-04-05 - Chris Jones
+ - Move all of the initialisation of variables in DeRichSphMirror::initialize()
+   to DeRichSphMirror::updateGeometry(), in order to make sure everything
+   is properly updated on Condition changes.
+
 !========================= RichDet v16r2 2011-04-04 =========================
 ! 2011-03-31 - Antonis Papanestis
  - Chages in DeRichGasRadiator to allow easy change of gas in RICH1
