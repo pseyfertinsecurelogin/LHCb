@@ -1,4 +1,4 @@
-// $Id: MCAlgs.h 124207 2011-06-02 16:05:29Z ibelyaev $
+// $Id: MCAlgs.h 157303 2013-05-26 13:15:20Z cattanem $
 // ============================================================================
 #ifndef LOKI_MCALGS_H 
 #define LOKI_MCALGS_H 1
@@ -883,10 +883,10 @@ namespace LoKi
       if ( predicate ( particle ) ) { return particle ; }            // RETURN 
       //
       typedef SmartRefVector<LHCb::MCVertex>   EndVertices ;
-      typedef SmartRefVector<LHCb::MCParticle> Ps          ;
+      //      typedef SmartRefVector<LHCb::MCParticle> Ps          ;
       const EndVertices& vertices = particle->endVertices() ;
       //
-      for ( EndVertices::const_iterator ivx = vertices.begin() ; 
+      for ( EndVertices::const_iterator ivx = vertices.begin() ;
             vertices.end() != ivx ; ++ivx ) 
       {
         const LHCb::MCVertex* vx = *ivx ;

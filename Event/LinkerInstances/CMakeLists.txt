@@ -1,9 +1,10 @@
 ################################################################################
 # Package: LinkerInstances
 ################################################################################
-gaudi_subdir(LinkerInstances v3r6)
+gaudi_subdir(LinkerInstances v3r7p1)
 
 gaudi_depends_on_subdirs(Event/DigiEvent
+                         Event/FTEvent
                          Event/LinkerEvent
                          Event/MCEvent
                          Event/PhysEvent
@@ -13,7 +14,6 @@ gaudi_depends_on_subdirs(Event/DigiEvent
 gaudi_add_dictionary(LinkerInstances
                      dict/linker_instances.h
                      xml/lcg_selection.xml
-                     INCLUDE_DIRS Event/DigiEvent
                      LINK_LIBRARIES LinkerEvent MCEvent PhysEvent RecEvent TrackEvent
                      OPTIONS "-U__MINGW32__")
 

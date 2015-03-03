@@ -15,6 +15,7 @@
 #include "Event/PackedVertex.h"
 #include "Event/PackedWeightsVector.h"
 #include "Event/PackedCaloCluster.h"
+#include "Event/PackedFlavourTag.h"
 
 template class DataPacking::Pack<LHCb::MCRichHitPacker>;
 typedef DataPacking::Pack<LHCb::MCRichHitPacker> A;
@@ -115,3 +116,11 @@ DECLARE_ALGORITHM_FACTORY( R )
 template class DataPacking::Pack<LHCb::MCFTHitPacker>;
 typedef DataPacking::Pack<LHCb::MCFTHitPacker> S;
 DECLARE_ALGORITHM_FACTORY( S )
+
+template class DataPacking::Pack<LHCb::MCSLHitPacker>;
+typedef DataPacking::Pack<LHCb::MCSLHitPacker> T;
+DECLARE_ALGORITHM_FACTORY( T )
+
+template class DataPacking::Pack<LHCb::FlavourTagPacker>;
+typedef DataPacking::Pack<LHCb::FlavourTagPacker> U;
+DECLARE_ALGORITHM_FACTORY( U )

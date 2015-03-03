@@ -3,6 +3,18 @@
 ! Responsible : Olivier Deschamps odescham@in2p3.fr
 !------------------------------------------------------------------------------
 
+!========================= CaloUtils v10r0 2013-06-03 =========================
+! 2013-05-26 - Marco Cattaneo
+ - Fix trivial gcc48 warnings
+
+! 2013-05-10 - Olivier Deschamps
+  - move CaloTrackAlg/Match/Tool.{cpp,h} to CaloPIDs
+  - remove "use TrackInterfaces" from requirements
+
+! 2013-05-06 - Marco Cattaneo
+ - Replace endreq by endmsg
+ - Fix UNINIT_CTOR defect
+
 !========================= CaloUtils v9r6 2012-11-26 =========================
 ! 2012-11-20 - Marco Clemencic
  - Fixed a warning.

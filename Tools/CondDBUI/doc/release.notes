@@ -3,6 +3,10 @@
 ! package manager : Marco Clemencic
 ! ========================================================================
 
+!========================= CondDBUI v3r23 2013-06-03 =========================
+! 2013-05-13 - Liang Sun
+ - __init__.py: Before any (de)compression operation, check the existence of the 'data' key in the DB payload
+
 !========================= CondDBUI v3r22 2013-04-29 =========================
 ! 2013-04-25 - Illya Shapoval
  - AriadneAdmin_InitialImport.py added:

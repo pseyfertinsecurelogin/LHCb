@@ -82,7 +82,7 @@ StatusCode CaloTriggerAdcsFromRawAlg::execute() {
     catch(GaudiException &exc) { 
       counter("Duplicate L0ADC") += 1;
       std::ostringstream os("");
-      os << "Duplicate l0ADC for channel " << il0Adc->cellID() << endmsg;
+      os << "Duplicate l0ADC for channel " << il0Adc->cellID() << std::endl;
       Warning(os.str(),StatusCode::SUCCESS).ignore();
       int card =  m_l0AdcTool->deCalo()->cardNumber( il0Adc->cellID() );
       int tell1=  m_l0AdcTool->deCalo()->cardToTell1( card);
@@ -111,7 +111,7 @@ StatusCode CaloTriggerAdcsFromRawAlg::execute() {
     catch(GaudiException &exc) { 
       counter("Duplicate PIN L0ADC") += 1;
       std::ostringstream os("");
-      os << "Duplicate PIN l0ADC for channel " << il0Adc->cellID() << endmsg;
+      os << "Duplicate PIN l0ADC for channel " << il0Adc->cellID() << std::endl;
       Warning(os.str(),StatusCode::SUCCESS).ignore();
       int card =  m_l0AdcTool->deCalo()->cardNumber( il0Adc->cellID() );
       int tell1=  m_l0AdcTool->deCalo()->cardToTell1( card);
@@ -129,15 +129,4 @@ StatusCode CaloTriggerAdcsFromRawAlg::execute() {
   if(m_statusOnTES)m_l0AdcTool->putStatusOnTES();  
   return StatusCode::SUCCESS;
 }
-
-//=============================================================================
-//  Finalize
-//=============================================================================
-StatusCode CaloTriggerAdcsFromRawAlg::finalize() {
-
-  if( UNLIKELY( msgLevel(MSG::DEBUG) ) ) debug() << "==> Finalize" << endmsg;
-
-  return GaudiAlgorithm::finalize();  // must be called after all other actions
-}
-
 //=============================================================================

@@ -30,7 +30,7 @@ EventIndexer::EventIndexer(const std::string& name, ISvcLocator* pSvcLocator)
   : base_class(name, pSvcLocator), m_file(0), m_tree(0)
 {
   declareProperty("Stripping", m_stripping = "",
-                  "Stripping version (empty to guess from file name).");
+                  "Stripping version.");
   declareProperty("OutputFile", m_outputFileName = "indexer_data.root",
                   "Output file name for the indexer data.");
 }
@@ -104,8 +104,10 @@ StatusCode EventIndexer::finalize() {
   DEBMSG << "==> Finalize" << endmsg;
 
   VERMSG << "Flush the TTree" << endmsg;
-  if (m_tree)
+  if (m_tree) {
+    m_file->cd(); // ensure that we write to the right file
     m_tree->Write();
+  }
 
   VERMSG << "Close the output file" << endmsg;
   if (m_file) {
@@ -125,20 +127,21 @@ StatusCode EventIndexer::finalize() {
 void EventIndexer::handle(const Incident& incident) {
   // set the current input file
   m_data.lfn = incident.source();
+
+  VERMSG << "New input file opened: " << m_data.lfn << endmsg;
   // reset the position counter
   m_data.position = 0;
-  if (m_stripping.empty()) {
-    // guess the stripping name
-    std::string::size_type end = m_data.lfn.rfind('.');
-    if (end == std::string::npos){
-      m_data.stripping = "";
-      return;
-    }
+  std::string::size_type end = m_data.lfn.rfind('.');
+  if (end == std::string::npos){
+    m_data.stream = "";
+  } else {
     std::string::size_type begin = m_data.lfn.rfind('.', end - 1);
     if (begin == std::string::npos){
-      m_data.stripping = "";
-      return;
+      m_data.stream = "";
+    } else {
+      ++begin;
+      m_data.stream = m_data.lfn.substr(begin, end - begin);
+      VERMSG << "Stream name: " << m_data.stream << endmsg;
     }
-    m_data.stripping = m_data.lfn.substr(++begin, end);
   }
 }

@@ -113,6 +113,10 @@ class SimConf(LHCbConfigurableUser) :
                     from Configurables import DataPacking__Pack_LHCb__MCITHitPacker_     as MCITHitPacker
                     packing.Members += [ MCITHitPacker("MCITHitPacker"+slot) ]
 
+                if 'SL' in dets :
+                    from Configurables import DataPacking__Pack_LHCb__MCSLHitPacker_     as MCSLHitPacker
+                    packing.Members += [ MCSLHitPacker("MCSLHitPacker"+slot) ]
+
                 if 'OT' in dets :
                     from Configurables import DataPacking__Pack_LHCb__MCOTHitPacker_     as MCOTHitPacker
                     packing.Members += [ MCOTHitPacker("MCOTHitPacker"+slot) ]
@@ -200,6 +204,10 @@ class SimConf(LHCbConfigurableUser) :
             if 'IT' in dets :
                 from Configurables import DataPacking__Unpack_LHCb__MCITHitPacker_
                 self._makeUnpacker( DataPacking__Unpack_LHCb__MCITHitPacker_, "UnpackMCITHits", slot, 'IT/Hits' )
+
+            if 'SL' in dets :
+                from Configurables import DataPacking__Unpack_LHCb__MCSLHitPacker_
+                self._makeUnpacker( DataPacking__Unpack_LHCb__MCSLHitPacker_, "UnpackMCSLHits", slot, 'SL/Hits' )
 
             if 'OT' in dets :
                 from Configurables import DataPacking__Unpack_LHCb__MCOTHitPacker_
@@ -389,6 +397,9 @@ class SimConf(LHCbConfigurableUser) :
                 if 'Hcal' in dets :
                     simList += [ self.tapeLocation( slot, mcRoot, 'Hcal/Hits' ) ]
                    
+                if 'SL' in dets :
+                    simList += [ self.tapeLocation( slot, mcRoot, 'SL/Hits' ) ]
+
                 if 'Rich' in dets :
                     simList += [ self.tapeLocation( slot, mcRoot, 'Rich/Hits' ),
                                  self.tapeLocation( slot, mcRoot, 'Rich/OpticalPhotons' ),

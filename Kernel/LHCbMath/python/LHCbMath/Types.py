@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # =============================================================================
-# $Id: Types.py 154654 2013-04-06 18:49:57Z ibelyaev $
+# $Id: Types.py 157054 2013-05-18 14:49:59Z ibelyaev $
 # =============================================================================
 ## @file
 #
@@ -35,7 +35,7 @@
 #  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
 #  @date 2009-09-12
 #
-#  Last modification $Date: 2013-04-06 20:49:57 +0200 (Sat, 06 Apr 2013) $
+#  Last modification $Date: 2013-05-18 16:49:59 +0200 (Sat, 18 May 2013) $
 #                 by $Author: ibelyaev $
 #
 #
@@ -69,14 +69,14 @@ Simple file to provide 'easy' access in python for the basic ROOT::Math classes
   >>> dir( Gaudi.Math )
   >>> dir( Gaudi      )
   
-  Last modification $Date: 2013-04-06 20:49:57 +0200 (Sat, 06 Apr 2013) $
+  Last modification $Date: 2013-05-18 16:49:59 +0200 (Sat, 18 May 2013) $
                  by $Author: ibelyaev $
 
 """
 # =============================================================================
 __author__  = "Vanya BELYAEV Ivan.Belyaev@nikhef.nl"
 __date__    = "2009-09-12"
-__version__ = "Version$Revision: 154654 $"
+__version__ = "Version$Revision: 157054 $"
 # =============================================================================
 __all__     = () ## nothing to be imported !
 # =============================================================================
@@ -182,7 +182,7 @@ Gaudi.SymMatrix8x8        = Gaudi.SymMatrix(8)
 Gaudi.SymMatrix9x9        = Gaudi.SymMatrix(9)
 
 
-Gaudi.Math.SymMatrix3x3   = Gaudi.SymMatrix2x2 
+Gaudi.Math.SymMatrix2x2   = Gaudi.SymMatrix2x2 
 Gaudi.Math.SymMatrix3x3   = Gaudi.SymMatrix3x3 
 Gaudi.Math.SymMatrix4x4   = Gaudi.SymMatrix4x4
 Gaudi.Math.SymMatrix5x5   = Gaudi.SymMatrix5x5 
