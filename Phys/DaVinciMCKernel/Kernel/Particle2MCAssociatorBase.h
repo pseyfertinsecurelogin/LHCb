@@ -1,4 +1,4 @@
-// $Id: Particle2MCAssociatorBase.h,v 1.4 2009-02-02 14:33:13 jpalac Exp $
+// $Id: Particle2MCAssociatorBase.h,v 1.7 2009-03-09 14:12:36 jpalac Exp $
 #ifndef PARTICLE2MCASSOCIATORBASE_H 
 #define PARTICLE2MCASSOCIATORBASE_H 1
 
@@ -16,10 +16,14 @@
  *  Mainly inline helper methods for common implementation of host of 
  *  similar methods in the interface.
  *  Set of methods is self-consistent. Derived classes only need to implement
- *  method
+ *  methods
  *  @code 
- *  double weight(const LHCb::Particle*, const LHCb::MCParticle)
+ *  bool isMatched(const LHCb::Particle*, const LHCb::MCParticle)
  *  @endcode
+ *  and
+ *  @code
+ *  LHCb::MCParticle::ConstVector sort(const LHCb::MCParticle::Container* mcParticles) const
+ *  @code
  *
  *  @author Juan PALACIOS
  *  @date   2009-01-30
@@ -78,9 +82,9 @@ public:
   associations(const LHCb::Particle::Container& particles,
                const LHCb::MCParticle::ConstVector& mcParticles) const ;
 
-  virtual double 
-  weight(const LHCb::Particle* particle, 
-         const LHCb::MCParticle* mcParticle) const ;
+  virtual bool 
+  isMatched(const LHCb::Particle* particle, 
+            const LHCb::MCParticle* mcParticle) const ;
   
 private:
 
@@ -100,44 +104,40 @@ private:
   {
     Particle2MCParticle::LightTable table;
     if (0!=particle) {
+      LHCb::MCParticle::ConstVector mcps;
       for ( Iter iMCP = begin ; iMCP != end ; ++iMCP){
-        const double wt = weight(particle, *iMCP);
-        if (wt > 0. ) table.i_push(particle,*iMCP, wt );
+        const bool match = isMatched(particle, *iMCP);
+        if ( match ) mcps.push_back(*iMCP);
       }
-      table.i_sort();
+      mcps = sort(mcps);
+      return i_buildTable(particle, mcps.begin(), mcps.end() );
     } else {
       Warning("No particle!").ignore();
+      return Particle2MCParticle::LightTable();
     }
-    return table;
   }
 
   template <typename pIter, typename mcPIter>
   Particle2MCParticle::LightTable 
   i_associations(const pIter pBegin, 
-                     const pIter pEnd, 
-                     const mcPIter mcBegin, 
-                     const mcPIter mcEnd) const
+                 const pIter pEnd, 
+                 const mcPIter mcBegin, 
+                 const mcPIter mcEnd) const
   {
 
     Particle2MCParticle::LightTable table;
-
     for (pIter part = pBegin; part != pEnd; ++part) {
-      for ( mcPIter iMCP = mcBegin ; iMCP != mcEnd ; ++iMCP){
-        const double wt = weight(*part, *iMCP);
-        if (wt > 0. ) {
-          table.i_push( *part, *iMCP,  wt );
-        }
-      }
+      table.merge( i_relatedMCPs(*part, mcBegin, mcEnd).relations() );
     }
-    table.i_sort();
+    //    table.i_sort();
     return table;
   }
   
   template <typename Iter> 
   inline Particle2MCParticle::LightTable 
   i_associations(const Iter pBegin,
-                     const Iter pEnd,
-                     const std::string& mcParticleLocation) const
+                 const Iter pEnd,
+                 const std::string& mcParticleLocation) const
   {
     LHCb::MCParticle::Container* mcps = i_MCParticles(mcParticleLocation);
     if (0!=mcps) {
@@ -145,6 +145,31 @@ private:
     } else {
       return Particle2MCParticle::LightTable();
     }
+  }
+
+  template <typename Iter>
+  Particle2MCParticle::LightTable i_buildTable(const LHCb::Particle* particle,
+                                               const Iter mcBegin,
+                                               const Iter mcEnd) const
+  {
+    Particle2MCParticle::LightTable table;
+    for ( Iter iMCP = mcBegin ; iMCP != mcEnd ; ++iMCP) {
+      table.i_push( particle, *iMCP );
+    }
+    //    table.i_sort();
+    return table;
+  }
+
+private :
+
+  virtual LHCb::MCParticle::ConstVector sort(const LHCb::MCParticle::ConstVector& mcParticles) const;
+
+  virtual LHCb::MCParticle::ConstVector sort(const LHCb::MCParticle::Container* mcParticles) const;
+
+  template <typename Iter> 
+  LHCb::MCParticle::ConstVector i_sort(const Iter begin, const Iter end) const
+  {
+    return LHCb::MCParticle::ConstVector(begin, end);
   }
 
 private:

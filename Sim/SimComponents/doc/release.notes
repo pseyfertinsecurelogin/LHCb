@@ -5,6 +5,36 @@
 !               processing stage accessing the MC event classes
 !-----------------------------------------------------------------------------
 
+!====================== SimComponents v2r17 2009-03-10 =======================
+! 2009-03-10 - Rob Lambert
+ - MCEventTypeFinder, changed default acceptance, closer to true
+   definition. Added checks for msgLevel to improve speed.
+
+! 2009-03-10 - Rob Lambert
+ - Bugfix, MCEventTypeFinder. It seems the const_reverse_iterator is 
+   not implimented or has no != operator under windows for the std::set.
+
+! 2009-03-09 - Rob Lambert
+ - Bugfix, added in extra headers to EvtTypeSvc.
+   Could have produced differences with different compilers.
+
+! 2009-03-08 - Rob Lambert
+ - Bugfix, small problem with MCEventTypeFinder. noticed by Marco,
+   produced errors with gcc 4. Now fixed.
+
+! 2009-03-06 - Rob Lambert
+ - Added implimentation of EventTypeFinder tool. 
+   This is a new tool, based on the IEventTypeFinder interface,
+   which is in Kernel/MCInterfaces.
+	 This allows you to search the MCTruth of an event for any event type.
+   Or to construct the event type based on lhcb-note 2005-034
+
+! 2009-03-05 - Rob Lambert
+ - Added sanity checking of the decay string, and use of the ppSvc to get 
+   charge conjugated associates. Fixed some odd dereferencing segfaults.
+   MCDecayFinder now works much better.
+	 Added method to EvtTypeSvc to get all known types
+
 !====================== SimComponents v2r16 2009-02-18 =======================
 ! 2009-02-17 M Needham
   - Add printout of half sample width

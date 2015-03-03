@@ -4,6 +4,10 @@
 ! Purpose     : Event model for HLT tracks
 !-----------------------------------------------------------------------------
 
+!======================== HltEvent v8r16 2009-03-09 ==========================
+! 2009-02-27 - Tomasz Skwarnicki
+ - create custom dictionary for HltObjectSummary::Info
+
 !======================== HltEvent v8r15 2009-02-18 ==========================
 ! 2009-02-16 - Jaap Panman
  - move HltLumiSummary to LumiEvent
