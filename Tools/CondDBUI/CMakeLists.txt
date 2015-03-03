@@ -1,7 +1,7 @@
 ################################################################################
 # Package: CondDBUI
 ################################################################################
-gaudi_subdir(CondDBUI v3r28)
+gaudi_subdir(CondDBUI v3r29)
 
 gaudi_depends_on_subdirs(Det/DDDB)
 
@@ -16,7 +16,7 @@ find_package(pygraphics)
 find_package(pytools)
 
 gaudi_add_dictionary(CondDBUI
-                     dict/dictionary.h
+                     dict/conddbui_dictionary.h
                      dict/dictionary.xml
                      INCLUDE_DIRS ROOT PythonLibs COOL Boost CORAL
                      LINK_LIBRARIES ROOT PythonLibs COOL Boost CORAL)

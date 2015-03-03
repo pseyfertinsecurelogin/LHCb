@@ -4,6 +4,19 @@
 ! Purpose: LHCb specific Kernel classes
 !--------------------------------------------------------------------------------
 
+!========================= LHCbKernel v15r3 2014-07-14 ========================
+! 2014-07-11 - Marco Clemencic
+ - Added patched merge_files.py to allow work-arounds for ROOT 6 runtime warnings.
+
+! 2014-07-11 - Marco Clemencic
+ - Removed duplicated dictionary entry.
+
+! 2014-07-10 - Marco Cattaneo
+ - Fix untested StatusCode in LbAppInit.cpp
+
+! 2014-06-11 - Heinrich Schindler
+ - Change content of PixelPositionInfo struct.
+
 !========================= LHCbKernel v15r2 2014-05-12 ========================
 ! 2014-05-03 - Heinrich Schindler
  - Add file VPConstants.h.
@@ -19,7 +32,7 @@
  - Remove unused functors from VPDataFunctor.
 
 ! 2014-03-20 - Francesco Polci
- - Modified FTChannelID.xml to include mat() and module() and redefined quarter() functions to reflect the present FT geometry. 
+ - Modified FTChannelID.xml to include mat() and module() and redefined quarter() functions to reflect the present FT geometry.
 
 
 ! 2014-03-19 - Marco Clemencic

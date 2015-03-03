@@ -1,9 +1,9 @@
-#============================================================================
+#=====================================================================
 # Created    : 2010-08-20 (migrated from Phys/DaVinciMaps)
 # Maintainer : ??
-#============================================================================
+#=====================================================================
 package           MicroDst
-version           v1r1
+version           v1r2
 
 branches          cmt doc src Kernel python
 
@@ -26,3 +26,8 @@ macro_append MicroDstDict_cppflags "" \
                         target-icc " -wd177 -wd191"
 
 apply_pattern install_python_modules
+
+# work around for a problem with ROOT 6 rootmap files
+private
+  macro merge_rootmap_cmd "python $(LHCbKernel_root)/cmt/merge_files.py --exclude-re '^header .*VectorMap'"
+end_private

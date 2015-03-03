@@ -94,7 +94,7 @@ public:
   }
 
   /** returns an int containing the float value of the double */
-  int fltPacked( const double x ) const
+  int fltPacked( const double& x ) const
   {
     union fltInt { int i; float f; } convert;
     convert.f = (float)x;
@@ -275,7 +275,7 @@ public:
 
   //---------------------------------------------------------------------------
 
-protected:
+private:
 
   /// Pack a double to an int
   int packDouble ( const double val ) const

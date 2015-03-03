@@ -4,6 +4,48 @@
 ! Purpose     : Hlt RawBanks writers/decoders/monitors
 !------------------------------------------------------------------------------
 
+!========================= HltDAQ v4r5 2014-06-18 =========================
+
+! 2014-06-19 - Gerhard Raven
+ - OOPS: fix logic in HltTrackReportsDecoder 
+
+! 2014-06-18 - Gerhard Raven
+ - add dependency on LumiEvent
+
+! 2014-06-17 - Gerhard Raven
+ - fix brace-elision problem under clang (brace elision will be
+   in C++14, not C++11, and while gcc accepts it already, clang 
+   does not)
+
+! 2014-06-14 - Gerhard Raven
+ - various minor tweaks...
+
+! 2014-06-14 - Gerhard Raven
+ - silence warning about pre-existing HltRoutingBits RawBank
+ - fix various clang warnings
+
+! 2014-06-13 - Gerhard Raven
+ - implement same policy on warning messages in HltTrackReportsDecoder
+ - use more STL in HltTrackReportsDecoder
+ - update warning message in case TCK=0 
+ - empty (but present) track rawbank is not an error
+ - run clang-format
+ - add option to update 3rd word (Hlt2) of existing RoutingBits rawbank
+ - make it possible to skip setting Hlt2 routing bits (needed when 
+   running Hlt1 only)
+ 
+
+! 2014-06-12 - Gerhard Raven
+ - change policy on warning messages from HltTrackReportsWriter: if the
+   configures TES location doesn't exist, keep score but don't print a
+   warning i.e.  'nothing in' => 'nothing out and shut up'.
+   Underlying reason for this policy is that the HltTrackReportsWriter runs
+   in the EndSequence, blind to the various trigger line decisions. Hence
+   sometimes, depending on the lines firing, there may not be any tracks
+   reconstructed, and in other case there may. Hence absence of input TES
+   location is not always a sign of a misconfiguration, and thus needs to
+   be dealt with 'silently'.
+
 !========================= HltDAQ v4r4 2014-06-10 =========================
 ! 2014-06-06 - Gerhard Raven
  - better use of IANNSvc interface

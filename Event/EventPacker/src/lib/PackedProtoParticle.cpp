@@ -1,4 +1,6 @@
-// $Id: $
+
+// STL
+#include <sstream>
 
 // local
 #include "Event/PackedProtoParticle.h"
@@ -8,6 +10,9 @@
 
 // Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
+
+// Boost
+#include <boost/numeric/conversion/bounds.hpp>
 
 using namespace LHCb;
 
@@ -89,11 +94,21 @@ ProtoParticlePacker::pack( const DataVector & protos,
 
     //== Handles the ExtraInfo
     newPart.firstExtra = pprotos.extras().size();
-    for ( GaudiUtils::VectorMap<int,double>::iterator itE = part->extraInfo().begin();
-          part->extraInfo().end() != itE; ++itE )
+    const double high = boost::numeric::bounds<float>::highest();
+    const double low  = boost::numeric::bounds<float>::lowest();
+    for ( const auto einfo : part->extraInfo() )
     {
-      pprotos.extras().push_back( std::pair<int,int>((*itE).first,
-                                                     m_pack.fltPacked((*itE).second)) );
+      double info = einfo.second;
+      if ( info > high || info < low )
+      {
+        std::ostringstream s;
+        s << (LHCb::ProtoParticle::additionalInfo)einfo.first;
+        parent().Warning( "ExtraInfo '" + s.str() + 
+                          "' out of floating point range. Truncating value." ).ignore();
+        // if      ( info > high ) { info = high; }
+        // else if ( info < low  ) { info = low;  }
+      }
+      pprotos.extras().push_back( std::make_pair(einfo.first,m_pack.fltPacked(info)) );
     }
     newPart.lastExtra = pprotos.extras().size();
 

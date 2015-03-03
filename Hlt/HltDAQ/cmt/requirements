@@ -3,7 +3,7 @@
 # Maintainer : Tomasz Skwarnicki
 #=====================================================================
 package           HltDAQ
-version           v4r4
+version           v4r5
 
 #=====================================================================
 # Structure, i.e. directories to process.
@@ -29,6 +29,7 @@ use EventPacker         v*    Event
 use DAQKernel           v*    DAQ
 use LoKiHlt             v*    Phys
 use HltServices         v*    Hlt
+use LumiEvent           v*    Event
 
 #### for CORAL access
 use DetCond             v*      Det

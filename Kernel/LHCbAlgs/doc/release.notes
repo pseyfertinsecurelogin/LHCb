@@ -4,6 +4,18 @@
 ! Purpose     : General purpose algorithms and tools for LHCb
 !-----------------------------------------------------------------------------
 
+!========================= LHCbAlgs v3r3 2014-07-14 =========================
+! 2014-07-10 - Marco Clemencic
+ - Added a test to ensure that the RunChangeHandler really triggers a reload of
+   the XML files if it gets triggered without a change of the run number.
+
+! 2014-07-10 - Marco Clemencic
+ - Modified OdinTimeDecoder to fire a RunChangeIncident not only when the run
+   number changes, but also when the "trigger flagging" bit in the EventType
+   word goes from flagging to filtering.
+ - Modified the RunChangeTest to check all the possible transitions of run
+   number and flagging bit in ODIN.
+
 !========================= LHCbAlgs v3r2 2014-04-22 =========================
 ! 2014-03-19 - Rob Lambert
  - Ignore test results which differ in the timing.

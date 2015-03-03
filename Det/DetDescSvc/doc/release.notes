@@ -1,8 +1,17 @@
-! =============================================================================
+! ====================================================================
 ! package DetDescSvc
-! package manager : Marco Clemencic, Juan Palacios ?
+! package manager : Marco Clemencic
 ! purpose:          Component library for Detector Description Services
-! =============================================================================
+! ====================================================================
+
+!========================= DetDescSvc v3r7 2014-07-14 =========================
+! 2014-07-10 - Marco Clemencic
+ - Modified RunChangeHandlerSvc to clean the XmlParserSvc cache if it gets a
+   RunChangeIncident without a change of run number.
+
+! 2014-07-10 - Marco Clemencic
+ - Modified RunChangeHandlerSvc to trigger an update on every RunChange incident
+   and not only if there is a real change in the run number.
 
 !========================= DetDescSvc v3r6 2012-11-26 =========================
 ! 2012-11-15 - Marco Clemencic

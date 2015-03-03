@@ -1,7 +1,7 @@
 ################################################################################
 # Package: LHCbSys
 ################################################################################
-gaudi_subdir(LHCbSys v37r3)
+gaudi_subdir(LHCbSys v38r0)
 
 gaudi_depends_on_subdirs(Associators/MCAssociators
                          Calo/CaloDAQ
@@ -62,6 +62,7 @@ gaudi_depends_on_subdirs(Associators/MCAssociators
                          GaudiConfUtils
                          GaudiMTTools
                          GaudiObjDesc
+                         HC/HCDAQ
                          Hlt/HltDAQ
                          Hlt/HltServices
                          Kernel/FSRAlgs
