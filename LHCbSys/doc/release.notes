@@ -5,6 +5,142 @@
 ! Purpose     : LHCb OO kernel packages
 !-----------------------------------------------------------------------------
 
+</PRE><H1><A NAME=v22r4>2007-04-23 LHCbSys v22r4</A></H1><PRE>
+This version uses Gaudi v19r3 and LCG_50b. Fully compatible with DC06 data
+
+- Packages modified: KernelSys v6r4, LHCbKernel v7r3, RichKernel v7r4, 
+    EventSys v23r4, EventBase v2r2, MCEvent v2r2, TrackEvent v4r2, RecEvent v2r3,
+    DAQEvent v7r3, DetSys v9r4, RichDet v10r4, STDet v3r3, VeloDet v11r2,
+    DetDescCnv v4r3p1, DetCond v11r2, CondDBUI v2r2, DAQSys v3r2, OTDAQ v5r2,
+    CaloDAQ v3r2, MDF v2r4p2, CaloInterfaces v7r2, CaloUtils v7r2,
+    TrackInterfaces v3r3, RichRecBase v3r3
+
+- In LHCbKernel v7r3
+  . Extend the DifTraj interface with an operator+= which allows one to
+    update the parameters of a DifTraj when fitting for them
+  . Implement operator+= in AlignTraj to follow the above
+  . Add new flag to RichTraceMode to control kapton intersection checks
+  . Add typedef to RichSmartID for boost pool allocated vector
+  . Add dict for std::pair<Gaudi::XYZPoint,Gaudi::XYZPoint>, previously in DetSys
+
+- In RichKernel v3r4
+  . First bug in postfix ++ and -- operators in RichDAQDefinitions.h
+  . Import various DAQ related class from RichDAQ and RichDet
+    Needed to allow access to headers/footers etc outside RichDAQ
+  . Move content of RichEvent directory into RichKernel and remove RichEvent
+  . Update IRichRawDataFormatTool for new decoded RICH data object
+  . Update IRichSmartIDTool to return a statuscode for translation of a
+    smartID into a global position
+  . Add copy constructor to RichObjPtn
+  . Various speed optimisations to RichPixelCluster.h
+  . Additions to DAQ definitions
+
+- In MCEvent v2r2
+  . Add MCCaloDataFunctor.h
+
+- In TrackEvent v4r2
+  . Add stdVectorTypeDef="TRUE" to Measurement.xml
+  . Add Muon track type and location
+
+- In RecEvent v2r3
+  . RecHeader no longer distinguishes between positive and negative event numbers
+    + evtNumber() accessor is now longlong (was ulonglong)
+    + realData() function removed 
+
+- In DAQEvent v7r3
+  . Add "ForceRawEvent" property to OdinTimeDecoder tool, to force it to decode
+    ODIN bank even if DAQ/ODIN object already exists in TES.
+
+- In EventBase v2r2, DAQEvent v7r3, MCEvent v2r2, RecEvent v2r3
+  . Add copy constructors to ProcessHeader, RecHeader, ODIN, MCHeader, ProcStatus
+
+- In RichDet v10r4
+  . Move RichDAQDefinitions.h into RichKernel -> Introduce dependency on 
+    RichKernel
+  . Some more optimisation in DeRichSystem, by making some methods inline
+  . Move the detectionPoint functionality from DeRichHPDPanel to DeRichHPD
+    to be able to use individual properties of HPDs.
+  . Added DeRichLocations.h to hold all the locations of DeRich objects
+  . Added methods in DeRichSystem to return the copy number and xml 
+    location of an HPD in smartID form.
+  . Some speed improvements for HLT
+    + Remove MsgStream object
+    + Make some methods non virtual (not needed to be virtual)
+    + Use new flag in RichTraceMode to control checking for intersections
+      with kapton HPD shields
+    + Various small tidy ups
+ 
+- In VeloDet v11r2
+  . Read the cut related to the sensitive volume ID from existing value in DDDB
+
+- In DetDescCnv v4r3p1
+  . Improved the warning for failing computation in XmlMixtureCnv.
+
+- In DetCond v11r2
+  . Added ICondDBAccessSvc::connectionString() to be able to find the
+    connection string that was used without looking in the options.
+  . Use a static std::auto_ptr instead of a basic pointer and a counter of 
+    instances (for CondDBAccessSvc::s_XMLstorageSpec).
+  . Added class CondDBSQLiteCopyAccSvc to copy an SQLite file and connect to
+    the copy.
+
+- In CondDBUI v2r2
+  . Fixed a bug in the requirements: it was still depending on SQLDDDB v*.
+    (now it should be DDDB)
+  . Made it possible to pass to copy_files_to_db.py files with system ids
+    starting with "conddb:" without breaking them.
+
+- In CaloInterfaces v7r2
+  . Remove const qualifiers in ICaloMomentum
+  . Add new virtual methods bremstrahlung() & bremCaloMomentum() to ICaloMomentum
+  . ICaloElectron moved to CaloUtils
+  . Standardize the package : interfaceID() inlined, virtual destructor removed
+     --> src/ removed
+
+- In CaloUtils v7r2
+  . Fix bug in CaloMomenum definition of the transport matrix (indices swap) 
+  . Add new methods bremstrahlung() & bremCaloMomentum() in CaloElectron
+  . Implement ICaloMomentum interface (moved from CaloInterfaces)
+
+- In CaloDAQ v3r2
+  . Add a patched implementation of CaloDataProvider : CaloDataProviderPatched
+    with temporary patches allow to deal with the current Calo TELL1 firmware.
+    Will be merged with CaloDataProvider once firmware is frozen.
+  . CaloReadoutTool : rawEvent location can be changed by option
+  . Fix bug in CaloTriggerBitFromRaw : tool returned only the last TELL1 data.
+  . Fix an old bug in CaloFillPrsSpdRawBuffer : last Prs/Spd L0bits were missing
+    for 50% of events.
+  . Adapt CaloReadoutTool for consecutive bunch crossings readout
+
+- In RichRecBase v3r3
+  . Add class to store radiator corrected positions
+  . Add new options to RichPixelCreatorBase to turn off entirely the 
+    clustering for reconstruction (HLT).
+  . Some speed optimisations
+    + Pass clusters and smartIDs by reference to RichRecPixel constructor
+    + Dedicated stream in RichPixelCreatorBase for single cluster pixels
+
+- In TrackInterfaces v3r3
+  . Add ITrajFitter interface
+
+- In MDF v2r4p2
+  . Fix bug in MDFIO discovered during the RICH commissioning
+  . Use RawEventLocation::Default instead of hardwired string
+
+- In DetSys v9r4, RichDet v10r4, STDet v3r3, VeloDet v11r2
+  . Move generation of dictionaries to package where classes are defined, add
+    missing dictionaries for all public classes and return types
+
+- In RichKernel v3r4, RichRecBase v3r3, CaloInterfaces v7r2
+  . Generate dictionary for all interfaces
+
+- In VeloDet v11r2, OTDAQ v5r2
+  . Fix untested StatusCodes
+
+- In STDet v3r3, CaloUtils v7r2, LHCbKernel v7r3, RichKernel v3r4, RecEvent v2r3,
+     RichDet v10r4, RichRecBase v3r3, MDF v2r4p2
+  . Fix doxygen warnings
+
 </PRE><H1><A NAME=v22r3>2007-03-23 LHCbSys v22r3</A></H1><PRE>
 This version uses Gaudi v19r3 and LCG_50b. Fully compatible with DC06 data
 

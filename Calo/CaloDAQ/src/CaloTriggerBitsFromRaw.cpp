@@ -1,4 +1,4 @@
-// $Id: CaloTriggerBitsFromRaw.cpp,v 1.13 2007-02-28 22:44:34 odescham Exp $
+// $Id: CaloTriggerBitsFromRaw.cpp,v 1.15 2007-04-24 10:21:14 odescham Exp $
 // Include files
 
 // from Gaudi
@@ -127,10 +127,6 @@ LHCb::Calo::PrsSpdFiredCells& CaloTriggerBitsFromRaw::prsSpdCells (  LHCb::RawBa
 //  Main decoding method fill both m_prsCells and m_spdCells containers.
 //=========================================================================
 StatusCode CaloTriggerBitsFromRaw::getData(  LHCb::RawBank* bank ) {
-
-  LHCb::Calo::FiredCells  prsCells;
-  LHCb::Calo::FiredCells  spdCells;
-
   unsigned int* data = bank->data();
   int size           = bank->size()/4;  // size in byte
   int version        = bank->version();
@@ -138,11 +134,7 @@ StatusCode CaloTriggerBitsFromRaw::getData(  LHCb::RawBank* bank ) {
   int lastData       = 0;
   debug() << "Decode bank " << bank << " source " << sourceID 
           << " version " << version << " size " << size << endreq;
-  // Get the FE-Cards associated to that bank (via condDB)
-  std::vector<int> feCards = m_calo->tell1ToCards( sourceID );
-  int nCards = feCards.size();
-  debug() << nCards << " FE-Cards are expected to be readout : " 
-          << feCards << " in Tell1 bank " << sourceID << endreq;
+  
 
   //=== Offline coding: a CellID, 8 SPD bits, 8 Prs bits
   if ( 1 == version ) {
@@ -157,13 +149,13 @@ StatusCode CaloTriggerBitsFromRaw::getData(  LHCb::RawBank* bank ) {
           LHCb::CaloCellID id( lastID+kk );
           LHCb::CaloCellID spdId( (lastID+kk) & 0x3FFF );
 
-          if ( spdData & 1 ) spdCells.push_back( spdId);
-          if ( prsData & 1 ) prsCells.push_back( id ); 
+          if ( spdData & 1 ) m_data.second.push_back( spdId);
+          if ( prsData & 1 ) m_data.first.push_back( id ); 
  
 
           //event dump
           if ( msgLevel( MSG::DEBUG) ) {
-            debug() << " |  Tell1 : " << sourceID
+            debug() << " |  SourceID : " << sourceID
                     << " |  FeBoard : " << m_calo->cardNumber(id)
                     << " |  CaloCell " << id
                     << " |  valid ? " << m_calo->valid(id)
@@ -186,7 +178,7 @@ StatusCode CaloTriggerBitsFromRaw::getData(  LHCb::RawBank* bank ) {
         //event dump
         LHCb::CaloCellID prsId( spdId + 0x4000 );   // Prs
         if ( msgLevel( MSG::DEBUG) ) {
-          debug() << " |  Tell1 : " << sourceID
+          debug() << " |  SourceID : " << sourceID
                   << " |  FeBoard : " << m_calo->cardNumber( prsId )
                   << " |  CaloCell " << prsId
                   << " |  valid ? " << m_calo->valid( prsId )
@@ -196,10 +188,10 @@ StatusCode CaloTriggerBitsFromRaw::getData(  LHCb::RawBank* bank ) {
         
         if ( 0 != (item & 2) ) {
           LHCb::CaloCellID id ( spdId );   // SPD
-          spdCells.push_back( id );
+          m_data.second.push_back( id );
         }
         if ( 0 != (item & 1) ) {
-          prsCells.push_back( prsId );
+          m_data.first.push_back( prsId );
         }
       }
       ++data;
@@ -207,6 +199,13 @@ StatusCode CaloTriggerBitsFromRaw::getData(  LHCb::RawBank* bank ) {
     }
     //==== Codage for 1 MHz
   } else if ( 3 == version ) {
+
+    // Get the FE-Cards associated to that bank (via condDB)
+    std::vector<int> feCards = m_calo->tell1ToCards( sourceID );
+    int nCards = feCards.size();
+    debug() << nCards << " FE-Cards are expected to be readout : " 
+            << feCards << " in Tell1 bank " << sourceID << endreq;
+    
     int offset   = 0;
     int lenAdc   = 0;
     int lenTrig  = 0;
@@ -253,7 +252,7 @@ StatusCode CaloTriggerBitsFromRaw::getData(  LHCb::RawBank* bank ) {
 
         // event dump
         if ( msgLevel( MSG::DEBUG) ) {
-          debug() << " |  Tell1 : " << sourceID
+          debug() << " |  SourceID : " << sourceID
                   << " |  FeBoard : " << code 
             //<< " |  Channel : " << bitNum
                   << " |  CaloCell " << id
@@ -262,10 +261,10 @@ StatusCode CaloTriggerBitsFromRaw::getData(  LHCb::RawBank* bank ) {
         }
 
 
-        if ( 0 != isPrs ) prsCells.push_back( id );
+        if ( 0 != isPrs ) m_data.first.push_back( id );
         if ( 0 != isSpd ) {
           LHCb::CaloCellID spdId( 0, id.area(), id.row(), id.col() );
-          spdCells.push_back( spdId );
+          m_data.second.push_back( spdId );
         }
       }
       int nSkip = (lenAdc+1 ) / 2;  // Length in number of words
@@ -276,7 +275,6 @@ StatusCode CaloTriggerBitsFromRaw::getData(  LHCb::RawBank* bank ) {
     checkCards(nCards,feCards);
   } //== versions
   
-  m_data = std::make_pair(prsCells,spdCells);
   
   return StatusCode::SUCCESS;
 }

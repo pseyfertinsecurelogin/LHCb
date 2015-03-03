@@ -1,9 +1,44 @@
-! $Id: release.notes,v 1.72 2007-03-05 13:10:55 cattanem Exp $
+! $Id: release.notes,v 1.77 2007-04-19 15:47:26 cattanem Exp $
 ! Package     : Event/MCEvent
 ! Responsible : Marco Cattaneo, Gloria Corti
 ! Purpose     : LHCb Event model. MC truth classes (Gauss and Boole output) 
 !-----------------------------------------------------------------------------
 
+!======================== MCEvent v2r2 2007-04-19 ============================
+! 2007-04-19 - Chris Jones
+ - Add complete copy constructor for MCHeader. 
+   NB : Please remember to update this constructor if the data members of 
+   the class are ever extended in the future.
+
+! 2007-04-03 - Vanya BELYAEV
+ - Event/MCCaloDataFunctor.h
+    new file with couple of generic useful functions to deal with 
+    MC-calorimeter data objects. These functions are particulartly 
+    very useful for Yasmine's & Kirill's studies of timing and time 
+    alignement in Calorimeter
+
+   typical usage:
+
+     using namespace LHCb::CaloDataFunctor ;
+      
+     const LHCb::MCCaloDigit::Container* digits = 
+         get<LHCb::MCCaloDigit::Container>( LHCb::MCCaloDigitLocation::Ecal ) ;
+     
+     const double e1 = activeEnergyInTime ( digits , 0 ) ;
+     
+     const LHCb::MCCaloHit::Container* hits = 
+         get<LHCb::MCCaloHit::Container>( LHCb::MCCaloHitLocation::Ecal ) ;
+     
+     const double e2 = activeEnergyInTime ( hits   , 0 ) ;
+     
+     const LHCb::MCCaloHit*   hit   = ... ;
+     
+     const double e3 = activeEnergyInTime ( hit   , 0 ) ;
+     
+     const LHCb::MCCaloDigit* digit = ... ;
+      
+     const double e4 = activeEnergyInTime ( digit   , 0 ) ;
+  
 !======================== MCEvent v2r1 2007-03-05 ============================
 ! 2007-03-05 - Chris Jones
  - Add new 'Outside Acceptance' category to MC reconstructibility

@@ -4,6 +4,13 @@
 ! Purpose     : Package for the tracking event model classes
 !-----------------------------------------------------------------------------
 
+!======================= TrackEvent v4r2 2007-04-20 ==========================
+! 2007-04-20 - Erica Polycarpo
+ - add Muon Track type and location 
+
+! 2007-04-17 - Gerhard Raven
+ - add stdVectorTypeDef="TRUE" to Measurement.xml
+
 !======================= TrackEvent v4r1 2007-03-20 ==========================
 ! 2007-03-20 - Marco Cattaneo
  - Use GaudiObjDesc to document enums in the generated header file

@@ -4,6 +4,25 @@
 ! Purpose: LHCb specific Kernel classes
 !--------------------------------------------------------------------------
 
+!===================== LHCbKernel v7r3 2007-04-20 ========================
+! 2007-04-20 - Marco Cattaneo
+ - Add dictionary for std::pair<Gaudi::XYZPoint,Gaudi::XYZPoint>, previously 
+   in DetSys
+
+! 2007-04-17 - Marco Cattaneo
+ - Fix a doxygen warning
+
+! 2007-04-16 - Gerhard Raven
+ - Extend the DifTraj interface with an operator+= which allows one to
+   update the parameters of a DifTraj when fitting for them
+ - Implement operator+= in AlignTraj to follow the above
+
+! 2007-03-27 - Chris Jones
+ - Add new flag to RichTraceMode to control kapton intersection checks
+
+! 2007-03-26 - Chris Jones
+ - Add typedef to RichSmartID for boost pool allocated vector
+
 !===================== LHCbKernel v7r2 2007-03-05 ========================
 ! 2007-03-05 - Marco Cattaneo
  - Remove obsolete LHCbKernel_load.cpp file

@@ -4,6 +4,34 @@
 ! Purpose     : interface to the xml description
 !-----------------------------------------------------------------------------
 
+!======================== RichDet v10r4 2007-04-23 ========================
+! 2007-04-23 - Marco Cattaneo
+ - Make LCG dictionaries for public classes (previously in DetSys)
+
+! 2007-04-23 - Chris Jones
+ - Move RichDAQDefinitions.h into RichKernel -> Introduce dependency on 
+	 RichKernel
+
+! 2007-04-04 - Chris Jones
+ - Improve doxygen comments in DeRichSystem
+ - Some more optimisation in DeRichSystem, by making some methods inline
+
+! 2007-04-02 - "Antonis Papanestis"
+ - move the detectionPoint functionality from DeRichHPDPanel to DeRichHPD
+   to be able to use individual properties of HPDs.
+ - Added DeRichLocations.h to hold all the locations of DeRich objects
+ - Added methods in DeRichSystem to return the copy number and xml 
+   location of an HPD in smartID form.
+
+! 2007-03-26 - Chris Jones
+ - Some speed improvements for HLT
+  + Remove MsgStream object
+  + Make some methods non virtual (not needed to be virtual)
+  + Use new flag in RichTraceMode to control checking for intersections
+    with kapton HPD shields
+  + Various small tidy ups
+ - Additions to DAQ definitions
+
 !======================== RichDet v10r3 2007-03-20 ========================
 ! 2007-03-19 - Chris Jones
  - Replace use of Gaudi format with boost::format to fix various issues

@@ -4,7 +4,7 @@
  *
  *  Header file for detector description class : DeRichHPDPanel
  *
- *  $Id: DeRichHPDPanel.h,v 1.41 2007-02-06 15:01:53 cattanem Exp $
+ *  $Id: DeRichHPDPanel.h,v 1.45 2007-04-23 12:28:13 jonrob Exp $
  *
  *  @author Antonis Papanestis a.papanestis@rl.ac.uk
  *  @date   2004-06-18
@@ -14,10 +14,14 @@
 #ifndef RICHDET_DERICHHPDPANEL_H
 #define RICHDET_DERICHHPDPANEL_H 1
 
-// Math typedefs
+// STL
+#include <sstream>
+
+// Gaudi
 #include "GaudiKernel/Point3DTypes.h"
 #include "GaudiKernel/Vector3DTypes.h"
 #include "GaudiKernel/Plane3DTypes.h"
+#include "GaudiKernel/GaudiException.h"
 
 // LHCbKernel
 #include "Kernel/RichSmartID.h"
@@ -30,42 +34,16 @@
 
 // RichDet
 #include "RichDet/DeRich.h"
-#include "RichDet/DeRichSystem.h"
 #include "RichDet/DeRichHPD.h"
+#include "RichDet/DeRichLocations.h"
 
-/** @namespace DeRichHPDPanelLocation
- *
- *  Namespace for the location of HPD panels in xml
- *
- *  @author Antonis Papanestis a.papanestis@rl.ac.uk
- *  @date   2004-06-18
- *
- *  @todo Find a proper way to deal with RichSmartIDs that cannot be mapped to the
- *        entrance window in the method DeRichHPDPanel::detectionPoint
- */
-namespace DeRichHPDPanelLocation 
-{
-  /// Location of Rich1 top panel
-  static const std::string& Rich1Panel0 =
-  "/dd/Structure/LHCb/BeforeMagnetRegion/Rich1/PDPanel0";
+class DeRichSystem;
 
-  /// Location of Rich1 bottom panel
-  static const std::string& Rich1Panel1 =
-  "/dd/Structure/LHCb/BeforeMagnetRegion/Rich1/PDPanel1";
-
-  /// Location of Rich2 left panel
-  static const std::string& Rich2Panel0 =
-  "/dd/Structure/LHCb/AfterMagnetRegion/Rich2/RichSystem/HPDPanel0";
-
-  /// Location of Rich2 right panel
-  static const std::string& Rich2Panel1 =
-  "/dd/Structure/LHCb/AfterMagnetRegion/Rich2/RichSystem/HPDPanel1";
-}
 
 /** @class DeRichHPDPanel DeRichHPDPanel.h
  *
- * DeRichHPDPanel provides geometry information for the HPD panels, converts RichSmartIDs
- * to space points and finds intersections with the HPDs
+ * DeRichHPDPanel provides geometry information for the HPD panels, converts
+ * RichSmartIDs to space points and finds intersections with the HPDs
  *
  * @author Antonis Papanestis a.papanestis@rl.ac.uk
  */
@@ -107,13 +85,12 @@ public:
    */
   virtual StatusCode initialize();
 
-
-  /**
-   * Retrieves the detection plane of the HPD panel. The plane is defined
-   * at the top of the HPDs (a plane resting on the HPDs "touching" the
-   * INSIDE surface of the window).
+  /** @brief Retrieves the detection plane of the HPD panel. 
    *
-   * @return The detection plane
+   *  The plane is defined at the top of the HPDs (a plane resting on 
+   *  the HPDs "touching" the INSIDE surface of the window).
+   *
+   *  @return The detection plane
    */
   inline const Gaudi::Plane3D& detectionPlane() const
   {
@@ -131,83 +108,92 @@ public:
     return m_localOffset;
   }
 
-  /**
-   * Converts a Gaudi::XYZPoint in global coordinates to a RichSmartID.
-   * The point is assumed to be on the actual detection volume
-   * (silicon pixel sensor).
+  /** @brief Converts a Gaudi::XYZPoint in global coordinates to a RichSmartID.
    *
-   * @param globalPoint The point in global coordinates
-   * @param id          The RichSmartID for the given point
+   *  The point is assumed to be on the actual detection volume (silicon pixel sensor).
    *
-   * @return Status of conversion
-   * @retval StatusCode::FAILURE Point outside silicon pixel sensor
+   *  @param[IN] globalPoint  The point in global coordinates
+   *  @param[OUT] id          The RichSmartID for the given point
+   *
+   *  @return Status of conversion
+   *  @retval StatusCode::FAILURE Point outside silicon pixel sensor
    */
-  virtual StatusCode smartID( const Gaudi::XYZPoint& globalPoint,
-                              LHCb::RichSmartID& id ) const;
+  StatusCode smartID( const Gaudi::XYZPoint& globalPoint,
+                      LHCb::RichSmartID& id ) const;
 
-  /**
-   * Converts a RichSmartID to a point in global coordinates. The point is
-   * given on the inside of the HPD window, on the photocathode.
+  /** @brief Converts a RichSmartID to a point in global coordinates. 
    *
-   * @return The detection point in global coordinates
+   *  The point is given on the inside of the HPD window, on the photocathode.
+   *
+   *  @param[IN] smartID      The HPD channel ID
+   *  @param[OUT] detectPoint The detection point
+   *
+   *  @return Status of connersion
+   *  @retval StatusCode::SUCCESS Conversion to photocathode was OK
+   *  @retval StatusCode::FAILURE Impossible conversion to photocathode
    */
-  virtual Gaudi::XYZPoint detectionPoint( const LHCb::RichSmartID& smartID ) const;
+  StatusCode detectionPoint( const LHCb::RichSmartID smartID,
+                             Gaudi::XYZPoint& detectPoint ) const;
 
-  /**
-   * Converts a RichSmartID to a point on the anode in global coordinates.
-   *
-   * @return The detection anode point in global coordinates
+  /** Converts a RichSmartID to a point on the anode in global coordinates.
+   *  @param[IN] smartID      The HPD channel ID
+   *  @return The detection anode point in global coordinates
    */
-  virtual Gaudi::XYZPoint detPointOnAnode( const LHCb::RichSmartID& smartID ) const;
+  Gaudi::XYZPoint detPointOnAnode( const LHCb::RichSmartID smartID ) const;
 
-  /**
-   * Returns the intersection point with an HPD window given a vector
-   * and a point. With the "circle" option a quick check is performed
-   * to test if there would be an intersection with a flat circle instead
-   * of the HPD window.
+  /** @brief Returns the intersection point with an HPD window given a vector
+   *  and a point.
+   * 
+   *  With the "circle" option a quick check is performed
+   *  to test if there would be an intersection with a flat circle instead
+   *  of the HPD window.
    *
-   * @param vGlobal  The intersection direction
-   * @param pGlobal  The intersection start point
-   * @param windowPointGlobal The return point on the HPD window
-   * @param smartID  The returned smartID with hit HPD info
-   * @param mode The ray-tracing configuration mode
+   *  @param[IN] vGlobal  The intersection direction
+   *  @param[IN] pGlobal  The intersection start point
+   *  @param[OUT] windowPointGlobal The return point on the HPD window
+   *  @param[OUT] smartID  The returned smartID with hit HPD info
+   *  @param[IN] mode The ray-tracing configuration mode
    *
-   * @return Status of intersection
+   *  @return Status of intersection
+   *  @retval StatusCode::SUCCESS Intersection was successfully calculated
+   *  @retval StatusCode::FAILURE Intersection was not found
    */
-  virtual StatusCode PDWindowPoint( const Gaudi::XYZVector& vGlobal,
-                                    const Gaudi::XYZPoint& pGlobal,
-                                    Gaudi::XYZPoint& windowPointGlobal, // return
-                                    LHCb::RichSmartID& smartID,          // return
-                                    const LHCb::RichTraceMode mode ) const;
+  StatusCode PDWindowPoint( const Gaudi::XYZVector& vGlobal,
+                            const Gaudi::XYZPoint& pGlobal,
+                            Gaudi::XYZPoint& windowPointGlobal,
+                            LHCb::RichSmartID& smartID, 
+                            const LHCb::RichTraceMode mode ) const;
 
-  /**
-   * Returns the intersection point with the detector plane given a vector
-   * and a point. If mode is tight, returns true only if point is within
+  /** @brief Returns the intersection point with the detector plane given a vector
+   * and a point. 
+   * 
+   * If mode is tight, returns true only if point is within
    * the detector coverage.
    *
-   * @param vGlobal  The intersection direction
-   * @param pGlobal  The intersection start point
-   * @param hitPosition The intersection point on the HPD plane
-   * @param mode The ray-tracing configuration mode
+   * @param[IN] vGlobal  The intersection direction
+   * @param[IN] pGlobal  The intersection start point
+   * @param[OUT] hitPosition The intersection point on the HPD plane
+   * @param[IN] mode The ray-tracing configuration mode
    *
    * @return Intersection status
-   * @retval false Intersection fell outside acceptance, as defined by mode
+   * @retval true  Intersection was inside the acceptance as defined by mode
+   * @retval false Intersection fell outside acceptance as defined by mode
    */
-  virtual bool detPlanePoint( const Gaudi::XYZPoint& pGlobal,
-                              const Gaudi::XYZVector& vGlobal,
-                              Gaudi::XYZPoint& hitPosition,
-                              const LHCb::RichTraceMode mode ) const;
+  bool detPlanePoint( const Gaudi::XYZPoint& pGlobal,
+                      const Gaudi::XYZVector& vGlobal,
+                      Gaudi::XYZPoint& hitPosition,
+                      const LHCb::RichTraceMode mode ) const;
 
-  /**
-   * Converts a global position to the coordinate system of the
-   * photodetector panel. The local coordinate system is shifted to allow
-   * placing panels side by side
+  /** @brief Converts a global position to the coordinate system of the
+   *  photodetector panel. 
    *
-   * @param globalPoint The point in global coordinates
+   *  The local coordinate system is shifted to allow placing panels side by side
    *
-   * @return Local (panel) point
+   *  @param[IN] globalPoint The point in global coordinates
+   *
+   *  @return Local (panel) point
    */
-  virtual Gaudi::XYZPoint globalToPDPanel( const Gaudi::XYZPoint& globalPoint ) const;
+  Gaudi::XYZPoint globalToPDPanel( const Gaudi::XYZPoint& globalPoint ) const;
 
 
   /**
@@ -219,9 +205,8 @@ public:
    *
    * @return Global point.
    */
-  virtual Gaudi::XYZPoint globalPosition( const Gaudi::XYZPoint& localPoint,
-                                          const Rich::Side side) const;
-
+  Gaudi::XYZPoint globalPosition( const Gaudi::XYZPoint& localPoint,
+                                  const Rich::Side side ) const;
 
   /**
    * Adds to the given vector all the available readout channels in this HPD panel
@@ -229,6 +214,8 @@ public:
    * @param readoutChannels Vector of valid pixel IDs
    *
    * @return Status code
+   * @retval StatusCode::SUCCESS Readout channel list was successfully determined
+   * @retval StatusCode::FAILURE An error occured whilst determining the readout channels
    */
   StatusCode readoutChannelList( LHCb::RichSmartID::Vector& readoutChannels ) const;
 
@@ -241,7 +228,7 @@ public:
   /// sensitive volume identifier
   virtual const int sensitiveVolumeID(const Gaudi::XYZPoint& globalPoint) const;
 
-protected:
+private:
 
   /**
    * Finds the HPD row and column that corresponds to the x,y coordinates
@@ -251,7 +238,7 @@ protected:
    * @retval true   HPD is found
    * @retval false  The point is outside the coverage of the HPDs.
    */
-  virtual bool findHPDColAndPos(const Gaudi::XYZPoint& inPanel, LHCb::RichSmartID& id) const;
+  bool findHPDColAndPos(const Gaudi::XYZPoint& inPanel, LHCb::RichSmartID& id) const;
 
   /** Returns the name of this particular HPD panel
    *  @return HPD panel name
@@ -262,10 +249,30 @@ protected:
    *  (which is unique in the Rich system).
    *  @return The Copy Number
    */
+  // CRJ : Is this method still needed ? 
+  //     : Would the one from DeRichSystem be better ?
   int copyNumber( unsigned int HPDNumber ) const;
 
+  /// Returns the HPD number for the given RichSmartID
+  inline unsigned int hpdNumber( const LHCb::RichSmartID smartID ) const
+  {
+    return smartID.hpdCol() * m_HPDNumInCol + smartID.hpdNumInCol();
+  }
 
-  // data
+  /// Returns the IPVolume master volume for the given HPD number
+  inline const IPVolume* HPDMaster( const unsigned int HPDNumber ) const
+  {
+    const IPVolume* pvHPDMaster = m_pvHPDMaster[HPDNumber];
+    if ( HPDNumber>m_HPDMax || !pvHPDMaster )
+    {
+      std::ostringstream mess;
+      mess << "HPDMaster:: Inappropriate HPDNumber : " << HPDNumber;
+      throw GaudiException( mess.str(), "*DeRichHPDPanel*", StatusCode::FAILURE );
+    }
+    return pvHPDMaster;
+  }
+
+private: // data
 
   std::string m_name;           ///< The name of this HPD panel
   unsigned int m_HPDColumns;    ///< Number of HPD columns in the panel
@@ -275,84 +282,45 @@ protected:
   double m_HPDPitch;               ///< distance between HPDs
   double m_HPDColPitch;            ///< distance between HPD columns
 
-  unsigned int m_pixelRows;        /// Number of pixel rows
-  unsigned int m_pixelColumns;     /// Number of pixel columns
+  unsigned int m_pixelRows;        ///< Number of pixel rows
+  unsigned int m_pixelColumns;     ///< Number of pixel columns
 
-  /// The active HPD window radius (photocathode coverage)
-  double m_activeRadius;
-  /// The active HPD window radius Squared
+  /// The active HPD window radius (photocathode coverage) Squared
   double m_activeRadiusSq;
-
-  /// The radius of the sphere of the HPD window
-  double m_winR;
-  /// Radius squared
-  double m_winRsq;
-
-  double m_winOutR;
-  double m_winOutRsq;
 
   /// The z position of the detection plane in an HPD panel
   double m_detPlaneZ;
-  /// the z difference between the planes defined at the top and bottom of HPD window
-  double m_detPlaneZdiff;
 
   double m_pixelSize;      ///< The pixel size on the silicon sensor
   double m_subPixelSize;   ///< The size of the subpixel (Alice mode)
   double m_siliconHalfLengthX;     ///< Half size (x) of silicon sensor
   double m_siliconHalfLengthY;     ///< Half size (y) of silicon sensor
 
-  /// The demagnification factor of the HPD.  Element [0] is the linear
-  /// term, and element[1] the non-linear term for small corrections.
-  double m_deMagFactor[2];
-
-  /// The following points are used to get the row and column pitch
-  /// Centre of HPD 0
-  Gaudi::XYZPoint m_HPD0Centre;
-
-  /// the top of the HPD window in silicon coordinates
-  Gaudi::XYZPoint m_HPDTop;
-
-  const ISolid* m_HPDPanelSolid;   ///< The solid (box) that contains the HPDs
-
   std::vector<Gaudi::XYZPoint> m_HPDCentres; ///< The centres of all HPDs
 
-  Gaudi::Plane3D m_detectionPlane;    ///< detection plane in global coordinates
-  Gaudi::Plane3D m_localPlane;        ///< detection plane in PDPanel coordinates
+  Gaudi::Plane3D m_detectionPlane;     ///< detection plane in global coordinates
+  Gaudi::Plane3D m_localPlane;         ///< detection plane in PDPanel coordinates
   Gaudi::XYZVector m_localPlaneNormal; ///< The normal vector of det plane in local coordinates
 
-  /// Plane2 is defined ging through all HPDs at the edge of photocathode coverage on
-  /// HPD window. It is used for HPD row/column purposes
+  /** Plane2 is defined ging through all HPDs at the edge of photocathode coverage on
+   *  HPD window. It is used for HPD row/column purposes */
   Gaudi::Plane3D m_localPlane2;
   Gaudi::XYZVector m_localPlaneNormal2;  ///< Normal vector of plane2
-
 
   Gaudi::Transform3D m_vectorTransf;  ///< Transform from global to panel coordinates
 
   double m_panelColumnSideEdge;    ///< Edge of the panel along the columns
   double m_panelStartColPosEven;   ///< Bottom/Start point of the even HPD columns
   double m_panelStartColPosOdd;    ///< Bottom/Start point of the odd HPD columns
-  /// abs max of even and odd start points used as the edge across columns
-  double m_panelStartColPos;
-  double m_localOffset;           ///< offset applied in the global to panel coordinates
-  
-public:
-  /**
-   * Prints coordinates on anode and cathode: for test only porposes.
-   *
-   * @param HPDNumber x y z Bfield
-   *
-   * @return void
-   */
-  void testdemagnification( int HPDNumber, double,double,double, double B );
+  double m_panelStartColPos;       ///< abs max of even and odd start points used as the edge across columns
+  double m_localOffset;            ///< offset applied in the global to panel coordinate transformation
 
+  DeRichSystem* m_deRichS;         ///< Pointer to the overall RICH system object
 
-private:
-
-  Rich::DetectorType m_rich;
-  Rich::Side m_side;
-  LHCb::RichSmartID m_panelRichID;
-  DeRichSystem* m_deRichS;
-  const ISolid* m_kaptonSolid;
+  Rich::DetectorType m_rich;       ///< The RICH detector type
+  Rich::Side m_side;               ///< The RICH HPD panel (up, down, left or right)
+  LHCb::RichSmartID m_panelRichID; ///< RichSmartID for the panel
+  const ISolid* m_kaptonSolid;     ///< Pointer to the kapton solid
 
   std::vector<const IPVolume*> m_pvHPDMaster;
   std::vector<const IPVolume*> m_pvHPDSMaster;
@@ -362,38 +330,34 @@ private:
   std::vector<Gaudi::Transform3D> m_HPDWindowToGlobal;
   std::vector<Gaudi::Transform3D> m_panelToSilicon;
 
-  std::vector<DeRichHPD*> m_DeHPDs; ///< Container for the HPDs as Det Elem
-
-  std::vector<double>  m_refactParams;
-
-  StatusCode updateDemagProperties();
-  int m_nstart, m_nstop;
-
-  int    rgiState[2+55];
-  bool   m_UseHpdMagDistortions;
-  bool   m_UseBFieldTestMap ;
-  bool   m_UseRandomBField  ;
-  double m_LongitudinalBField ;
-  double m_RandomBFieldMinimum ;
-  double m_RandomBFieldMaximum ;
-  double m_RichHpdQWToSiMaxDist;
-  int m_Rich1TotNumHpd ;
-  int m_Rich2TotNumHpd ;
-  void init_mm( );
-  int number_range( int from, int to );
-  int number_mm( void );
-
-  std::string m_XmlHpdDemagPath;
-  SmartRef<Condition> m_demagCond;
-  double Delta_Phi(double, const double);
-  double mag(double , double);
-  double demag(double, double );
-  StatusCode fillHpdDemagTableSim( std::string , std::vector<double>& , int& );
-  StatusCode fillHpdDemagTableRec( std::string , std::vector<double>& , int& );
-  Gaudi::XYZPoint demagToCathode_new( int , double , double ) const;
-  Gaudi::XYZPoint demagToCathode_old( double , double ) const;
-  Gaudi::XYZPoint demagToAnode_test ( int , double , double );
+  std::vector<DeRichHPD*> m_DeHPDs; ///< Container for the HPDs as Det Elements
 
 };
+
+//=========================================================================
+//  convert a SmartID to a point on the anode (global coord system)
+//=========================================================================
+inline Gaudi::XYZPoint DeRichHPDPanel::detPointOnAnode( const LHCb::RichSmartID smartID ) const
+{
+  return m_DeHPDs[hpdNumber(smartID)]->detPointOnAnode(smartID);
+}
+
+//=========================================================================
+//  convert a point from the global to the panel coodinate system
+//=========================================================================
+inline Gaudi::XYZPoint DeRichHPDPanel::globalToPDPanel( const Gaudi::XYZPoint& globalPoint ) const
+{
+  const Gaudi::XYZPoint localPoint( geometry()->toLocal( globalPoint ) );
+  return Gaudi::XYZPoint( localPoint.x(), localPoint.y(), localPoint.z()-m_detPlaneZ );
+}
+
+//=========================================================================
+//  convert a smartID to a point on the inside of the HPD window
+//=========================================================================
+inline StatusCode DeRichHPDPanel::detectionPoint ( const LHCb::RichSmartID smartID,
+                                                   Gaudi::XYZPoint& detectPoint ) const
+{
+  return m_DeHPDs[hpdNumber(smartID)]->detectionPoint(smartID,detectPoint);
+}
 
 #endif    // RICHDET_DERICHHPDPANEL_H

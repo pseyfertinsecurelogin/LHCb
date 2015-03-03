@@ -1,4 +1,4 @@
-// $Id: ICaloElectron.h,v 1.2 2007-01-12 16:42:36 odescham Exp $
+// $Id: ICaloElectron.h,v 1.1 2007-03-29 16:34:12 odescham Exp $
 #ifndef KERNEL_ICALOELECTRON_H 
 #define KERNEL_ICALOELECTRON_H 1
 
@@ -8,7 +8,6 @@
 
 // from Gaudi
 #include "GaudiKernel/IAlgTool.h"
-
 // from LHCb
 #include "Event/CaloHypo.h"
 #include "Event/Particle.h"
@@ -20,8 +19,7 @@ namespace LHCb{
   class CaloMomentum; 
 }
 
-
-static const InterfaceID IID_ICaloElectron ( "ICaloElectron", 1, 0 );
+static const InterfaceID IID_ICaloElectron ( "ICaloElectron", 2, 0 );
 
 /** @class ICaloElectron ICaloElectron.h Kernel/ICaloElectron.h
  *  
@@ -40,8 +38,10 @@ public:
   virtual bool               set(const  LHCb::ProtoParticle* proto) = 0;
   virtual double             eOverP()= 0 ;
   virtual double             ecalE() = 0 ;
-  virtual const LHCb::CaloHypo*    electron() = 0 ;
-  virtual const LHCb::CaloMomentum bremstrahlung() = 0 ;
+  virtual LHCb::CaloHypo*    electron() = 0 ;
+  virtual LHCb::CaloHypo*    bremstrahlung() = 0 ;
+  virtual LHCb::CaloMomentum bremCaloMomentum() = 0 ;
+
   virtual LHCb::State        closestState(std::string toWhat = "hypo") =0;
   virtual LHCb::State        caloState(CaloPlane::Plane plane = CaloPlane::ShowerMax , double deltaShower = 0. ) = 0;
   virtual double             caloTrajectoryZ(CaloPlane::Plane refPlane = CaloPlane::ShowerMax,std::string toWhat = "hypo") =0;

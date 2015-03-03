@@ -23,6 +23,7 @@
       <location name="Match"   place="Rec/Track/Match"/>
       <location name="KsTrack" place="Rec/Track/KsTrack"/>
       <location name="Tsa"     place="Rec/Track/Tsa"/>
+      <location name="Muon"    place="Rec/Track/Muon"/>
 
       <location name="HltSeed"    place="Hlt/Track/Seed"/>
       <location name="HltRZVelo"  place="Hlt/Track/RZVelo"/>
@@ -32,6 +33,7 @@
       <location name="HltMatch"   place="Hlt/Track/Match"/>
       <location name="HltKsTrack" place="Hlt/Track/KsTrack"/>
       <location name="HltTsa"     place="Hlt/Track/Tsa"/>
+      <location name="HltMuon"    place="Hlt/Track/Muon"/>
 
 
       <base name='KeyedObject&lt;int&gt;' />
@@ -61,6 +63,7 @@
         <enumval name = "TrackMatching"  value="7" desc=""/>
         <enumval name = "PatKShort"      value="8" desc=""/>
         <enumval name = "TsaTrack"       value="9" desc=""/>
+        <enumval name = "MuonID"         value="10" desc="track produced with the Muon pattern recognition"/>
       </enum>
 
       <enum
@@ -83,6 +86,7 @@
         <enumval name = "Upstream"              desc="upstream track"/>
         <enumval name = "Downstream"            desc="downstream track"/>
         <enumval name = "Ttrack"                desc="seed track"/>
+        <enumval name = "Muon"                  desc="muon track"/>
       </enum>
 
       <enum

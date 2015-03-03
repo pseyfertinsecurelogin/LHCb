@@ -1,4 +1,4 @@
-// $Id: DeVeloPhiType.cpp,v 1.32 2007-02-19 09:37:26 cattanem Exp $
+// $Id: DeVeloPhiType.cpp,v 1.34 2007-03-22 10:27:50 dhcroft Exp $
 //==============================================================================
 #define VELODET_DEVELOPHITYPE_CPP 1
 //==============================================================================
@@ -57,7 +57,8 @@ StatusCode DeVeloPhiType::initialize()
   IJobOptionsSvc* jobSvc;
   ISvcLocator* svcLoc = Gaudi::svcLocator();
   StatusCode sc = svcLoc->service("JobOptionsSvc", jobSvc);
-  if( sc.isSuccess() ) jobSvc->setMyProperties("DeVeloPhiType", pmgr);
+  if( sc.isSuccess() ) sc = jobSvc->setMyProperties("DeVeloPhiType", pmgr);
+  if( !sc ) return sc;
   if ( 0 < outputLevel ) {
     msgSvc()->setOutputLevel("DeVeloPhiType", outputLevel);
   }
@@ -221,13 +222,11 @@ StatusCode DeVeloPhiType::pointToChannel(const Gaudi::XYZPoint& point,
                           double& fraction,
                           double& pitch) const
 {
-  Gaudi::XYZPoint localPoint(0,0,0);
-  StatusCode sc = globalToLocal(point,localPoint);
-  if(!sc.isSuccess()) return sc;
+  Gaudi::XYZPoint localPoint = globalToLocal(point);
   double radius=localPoint.Rho();
 
   // Check boundaries...
-  sc = isInActiveArea(localPoint);
+  StatusCode sc = isInActiveArea(localPoint);
   if(!sc.isSuccess()) return sc;
 
   // Use symmetry to handle second stereo...
@@ -396,10 +395,9 @@ StatusCode DeVeloPhiType::residual(const Gaudi::XYZPoint& point,
                                    double &chi2) const
 {
   MsgStream msg(msgSvc(), "DeVeloPhiType");
-  Gaudi::XYZPoint localPoint(0,0,0);
-  StatusCode sc=DeVeloSensor::globalToLocal(point,localPoint);
-  if(!sc.isSuccess()) return sc;
-  sc = isInActiveArea(localPoint);
+  Gaudi::XYZPoint localPoint = DeVeloSensor::globalToLocal(point);
+
+  StatusCode sc = isInActiveArea(localPoint);
   if(!sc.isSuccess()) return sc;
 
   // Get start/end co-ordinates of channel's strip
@@ -438,8 +436,8 @@ StatusCode DeVeloPhiType::residual(const Gaudi::XYZPoint& point,
   residual = sqrt(gsl_pow_2(xNear-x)+gsl_pow_2(yNear-y));
 
   // Work out how to calculate the sign!
-  Gaudi::XYZPoint localNear(xNear,yNear,0.0),globalNear;
-  sc = DeVeloSensor::localToGlobal(localNear,globalNear);
+  Gaudi::XYZPoint localNear(xNear,yNear,0.0);
+  Gaudi::XYZPoint globalNear = DeVeloSensor::localToGlobal(localNear);
   if(point.phi() < globalNear.phi()) residual *= -1.;
 
   double radius = localPoint.Rho();
@@ -550,9 +548,8 @@ std::auto_ptr<LHCb::Trajectory> DeVeloPhiType::trajectory(const LHCb::VeloChanne
     lEnd2 += (lEnd2-lNextEnd2)*offset;
   }
   
-  Gaudi::XYZPoint gEnd1, gEnd2;
-  localToGlobal(lEnd1, gEnd1);
-  localToGlobal(lEnd2, gEnd2);
+  Gaudi::XYZPoint gEnd1 = localToGlobal(lEnd1);
+  Gaudi::XYZPoint gEnd2 = localToGlobal(lEnd2);
 
   // put into trajectory
   LHCb::Trajectory* tTraj = new LHCb::LineTraj(gEnd1,gEnd2);

@@ -1,4 +1,4 @@
-// $Id: CaloReadoutTool.cpp,v 1.7 2007-02-22 23:40:49 odescham Exp $
+// $Id: CaloReadoutTool.cpp,v 1.11 2007-04-24 20:59:53 odescham Exp $
 // Include files 
 
 // from Gaudi
@@ -37,16 +37,24 @@ CaloReadoutTool::CaloReadoutTool( const std::string& type,
 //=============================================================================
 // Destructor
 //=============================================================================
-CaloReadoutTool::~CaloReadoutTool() {} 
-
-
+CaloReadoutTool::~CaloReadoutTool() {}
 
 //=========================================================================
 //  Get required CaloBanks (short or packed format) - Fill m_banks
 //=========================================================================
 StatusCode CaloReadoutTool::getCaloBanksFromRaw( ) {
 
-  LHCb::RawEvent* rawEvt = get<LHCb::RawEvent>( rootOnTES() + LHCb::RawEventLocation::Default );
+  LHCb::RawEvent* rawEvt = NULL ;
+  m_raw = rootOnTES() + LHCb::RawEventLocation::Default;
+  debug() << "raw location :: " << m_raw << endreq;  
+  if( exist<LHCb::RawEvent>( m_raw ) ){
+    rawEvt= get<LHCb::RawEvent>( m_raw );
+  }else  {
+    warning() << "rawEvent not found at location '" << m_raw << "'"<< endreq;
+    return StatusCode::FAILURE;
+  }
+      
+
   m_banks = 0;
   if( !m_packedIsDefault){
     debug() << "Banks of short type are requested as default" << endreq;
@@ -113,12 +121,14 @@ void CaloReadoutTool::checkCards(int nCards, std::vector<int> feCards ){
 int CaloReadoutTool::findCardbyCode(std::vector<int> feCards , int code){
   for(unsigned int iFe = 0 ; iFe <  feCards.size();++iFe){ 
     if( code == m_calo->cardCode( feCards[iFe] ) ){
-      debug() <<" FE-Card [code : " << code 
+      int crate  = m_calo->cardParam( feCards[ iFe ] ).crate();
+      int slot   = m_calo->cardParam( feCards[ iFe ] ).slot();
+      debug() <<" FE-Card [code : " << code << " | crate : " << crate << " slot : " << slot 
               << "] has been found with (num : " << feCards[iFe] <<")  in condDB" << endreq;
       return iFe;
       break;
     }        
   }
-  error() << " FE-Card [code : " << code << "] has not been found" << endreq;
+  error() << "  FE-Card [code : " << code << "] does not match the condDB cabling scheme  " << endreq;
   return -1;
 }    

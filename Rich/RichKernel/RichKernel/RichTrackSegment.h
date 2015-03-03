@@ -5,7 +5,7 @@
  *  Header file for tool interface : RichTrackSegment
  *
  *  CVS Log :-
- *  $Id: RichTrackSegment.h,v 1.9 2007-02-06 15:02:28 cattanem Exp $
+ *  $Id: RichTrackSegment.h,v 1.2 2007-04-23 15:07:58 cattanem Exp $
  *
  *  @author Antonis Papanestis   Antonis.Papanestis@cern.ch
  *  @author Chris Jones          Christopher.Rob.Jones@cern.ch
@@ -34,12 +34,12 @@
 #include "RichKernel/RichException.h"
 
 
-/// General LHCb namespace
+// General LHCb namespace
 namespace LHCb
 {
 
   //-----------------------------------------------------------------------------
-  /** @class RichTrackSegment RichTrackSegment.h RichEvent/RichTrackSegment.h
+  /** @class RichTrackSegment RichTrackSegment.h RichKernel/RichTrackSegment.h
    *
    *  RichTrackSegment represents the trajectory of a Track through a radiator volume.
    *
@@ -72,7 +72,7 @@ namespace LHCb
   public: // helper classes
 
     //-----------------------------------------------------------------------------
-    /** @class StateErrors RichTrackSegment.h RichEvent/RichTrackSegment.h
+    /** @class StateErrors RichTrackSegment.h RichKernel/RichTrackSegment.h
      *
      *  Helper class for RichTrackSegment to describe the segment errors.
      *

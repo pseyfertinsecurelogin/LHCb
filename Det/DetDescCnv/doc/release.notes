@@ -1,8 +1,12 @@
-!-----------------------------------------------------------------------------
+!------------------------------------------------------------------------------
 ! Package     : Det/DetDescCnv
 ! Responsible : Marco Clemencic, Juan Palacios
 ! Purpose     : standard converters for the LHCb Detector Description
-!-----------------------------------------------------------------------------
+!------------------------------------------------------------------------------
+
+!================ DetDescCnv v4r3p1 2007-04-23 ================================
+! 2007-04-20 - Marco Clemencic
+ - Improved the warning for failing computation in XmlMixtureCnv.
 
 !================ DetDescCnv v4r3 2007-03-19 ==================================
 ! 2007-03-19 - Marco Cattaneo

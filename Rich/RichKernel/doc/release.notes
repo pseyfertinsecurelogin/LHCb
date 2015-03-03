@@ -1,8 +1,25 @@
-! $Id: release.notes,v 1.142 2007-03-20 13:45:22 cattanem Exp $
+! $Id: release.notes,v 1.145 2007-04-23 15:42:28 jonrob Exp $
 ! Package     : Rich/RichKernel
 ! Responsible : Chris Jones
 ! Purpose     : General purpose RICH classes
 !----------------------------------------------------------------------
+
+!====================== RichKernel v7r4 2007-04-23 ====================
+! 2007-04-23 - Marco Cattaneo
+ - Add lcg dictionary generation for all public interfaces
+
+! 2007-04-23 - Chris Jones
+ - First bug in postfix ++ and -- operators in RichDAQDefinitions.h
+ - Import various DAQ related class from RichDAQ and RichDet
+   Needed to allow access to headers/footers etc outside RichDAQ
+ - Move content of RichEvent directory into RichKernel and 
+   remove RichEvent
+ - Some doxygen fixes
+ - Update IRichRawDataFormatTool for new decoded RICH data object
+ - Update IRichSmartIDTool to return a statuscode for translation of a
+   smartID into a global position
+ - Add copy constructor to RichObjPtn
+ - Various speed optimisations to RichPixelCluster.h
 
 !====================== RichKernel v7r3 2007-03-20 ====================
 ! 2007-03-19 - Chris Jones

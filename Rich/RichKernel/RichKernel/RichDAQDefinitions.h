@@ -5,7 +5,7 @@
  *  Header file for RICH DAQ general definitions
  *
  *  CVS Log :-
- *  $Id: RichDAQDefinitions.h,v 1.12 2007-03-19 15:02:47 jonrob Exp $
+ *  $Id: RichDAQDefinitions.h,v 1.14 2007-04-24 12:38:36 jonrob Exp $
  *
  *  @author Chris Jones  Christopher.Rob.Jones@cern.ch
  *  @date   2003-11-06
@@ -25,6 +25,7 @@
 // Kernel
 #include "Kernel/RichSmartID.h"
 #include "Kernel/RichSmartIDHashFuncs.h"
+//#include "Kernel/FastAllocVector.h" // Still under testing
 
 // Boost
 #include "boost/lexical_cast.hpp"
@@ -72,7 +73,7 @@ namespace Rich
     //---------------------------------------------------------------------------------
 
     //---------------------------------------------------------------------------------
-    /** @class NumericType RichDet/RichDAQDefinitions.h
+    /** @class NumericType RichKernel/RichDAQDefinitions.h
      *
      *  Simple class with numeric characteristics but some additional type safety
      *
@@ -112,11 +113,11 @@ namespace Rich
       /// Operator ++   (prefix)
       inline NumericType<TYPE>& operator++()    { ++m_id; return *this; }
       /// Operator ++(int)  (postfix)
-      inline NumericType<TYPE>& operator++(int) { NumericType<TYPE> tmp = *this; ++m_id; return tmp; }
+      inline NumericType<TYPE>  operator++(int) { NumericType<TYPE> tmp = *this; ++m_id; return tmp; }
       /// Operator --   (prefix)
       inline NumericType<TYPE>& operator--()    { --m_id; return *this; }
       /// Operator --(int)  (postfix)
-      inline NumericType<TYPE>& operator--(int) { NumericType<TYPE> tmp = *this; --m_id; return tmp; }
+      inline NumericType<TYPE>  operator--(int) { NumericType<TYPE> tmp = *this; --m_id; return tmp; }
     protected:
       /// Update the internal data
       inline void setData( const TYPE id ) { m_id = id; }
@@ -126,7 +127,7 @@ namespace Rich
 
     //---------------------------------------------------------------------------------
 
-    /** @class Level0ID RichDet/RichDAQDefinitions.h
+    /** @class Level0ID RichKernel/RichDAQDefinitions.h
      *
      *  Contains the Level 0 board number plus one bit identifying on of the two HPDs
      *
@@ -205,7 +206,7 @@ namespace Rich
 
     //---------------------------------------------------------------------------------
 
-    /** @class EventID RichDet/RichDAQDefinitions.h
+    /** @class EventID RichKernel/RichDAQDefinitions.h
      *
      *  The Event ID.
      *
@@ -230,7 +231,7 @@ namespace Rich
       ShortType m_nActiveBits;
     };
 
-    /** @class BXID RichDet/RichDAQDefinitions.h
+    /** @class BXID RichKernel/RichDAQDefinitions.h
      *
      *  The BX ID.
      *
@@ -255,7 +256,7 @@ namespace Rich
       ShortType m_nActiveBits;
     };
 
-    /** @class Level1ID RichDet/RichDAQDefinitions.h
+    /** @class Level1ID RichKernel/RichDAQDefinitions.h
      *
      *  The Level 1 board ID.
      *
@@ -270,7 +271,7 @@ namespace Rich
         : NumericType<ShortType>(id) { }
     };
 
-    /** @class L1IngressID RichDet/RichDAQDefinitions.h
+    /** @class L1IngressID RichKernel/RichDAQDefinitions.h
      *
      *  The L1 ingress number (which of the four groups of inputs to each L1 board)
      *
@@ -285,7 +286,7 @@ namespace Rich
         : NumericType<ShortType>(id) { }
     };
 
-    /** @class L1InputWithinIngress RichDet/RichDAQDefinitions.h
+    /** @class L1InputWithinIngress RichKernel/RichDAQDefinitions.h
      *
      *  The input number within a given L1 ingress
      *
@@ -300,7 +301,7 @@ namespace Rich
         : NumericType<ShortType>(id) { }
     };
 
-    /** @class Level1Input RichDet/RichDAQDefinitions.h
+    /** @class Level1Input RichKernel/RichDAQDefinitions.h
      *
      *  The Level 1 board input number.
      *
@@ -331,7 +332,7 @@ namespace Rich
       }
     };
 
-    /** @class HPDHardwareID RichDet/RichDAQDefinitions.h
+    /** @class HPDHardwareID RichKernel/RichDAQDefinitions.h
      *
      *  The (numeric) HPD hardware ID. Unique to each HPD and can be
      *  used to locate its physical properties, such as Q.E. curves.
@@ -347,7 +348,7 @@ namespace Rich
         : NumericType<ShortType>(id) { }
     };
 
-    /** @class HPDL1InputID RichDet/RichDAQDefinitions.h
+    /** @class HPDL1InputID RichKernel/RichDAQDefinitions.h
      *
      *  The HPD Level1 input ID. The Level1 board number and the input
      *  number on that board for a given HPD bit-packed into a single word.
@@ -428,19 +429,23 @@ namespace Rich
     //---------------------------------------------------------------------------------
 
     /// Local definition of a RawBank constructed from 32bit ints
-    typedef std::vector< LongType >                           RAWBank;
+    typedef std::vector< LongType >                                      RAWBank;
 
     /// Vector of HPD Hardware IDs
-    typedef std::vector< HPDHardwareID >                      HPDHardwareIDs;
+    typedef std::vector< HPDHardwareID >                                 HPDHardwareIDs;
+    //typedef LHCb::FastAllocVector< HPDHardwareID >                       HPDHardwareIDs;
+
+    /// Vector of Level 0 IDs
+    typedef std::vector< Level0ID >                                      Level0IDs;
+    //typedef LHCb::FastAllocVector< Level0ID >                            Level0IDs;
 
     /// Vector of Level 1 IDs
-    typedef std::vector< Level0ID >                           Level0IDs;
-
-    /// Vector of Level 1 IDs
-    typedef std::vector< Level1ID >                           Level1IDs;
+    typedef std::vector< Level1ID >                                      Level1IDs;
+    //typedef LHCb::FastAllocVector< Level1ID >                            Level1IDs;
 
     /// Vector of L1InputWithinIngress
-    typedef std::vector< L1InputWithinIngress >               L1IngressInputs;
+    typedef std::vector< L1InputWithinIngress >                          L1IngressInputs;
+    //typedef LHCb::FastAllocVector< L1InputWithinIngress >                L1IngressInputs;
 
     //---------------------------------------------------------------------------------
 
@@ -673,7 +678,6 @@ namespace GaudiUtils
 
 #endif
 
-
 //----------------------------------------------------------------------------------------------------
 namespace Rich
 {
@@ -683,23 +687,15 @@ namespace Rich
     /// Map for RICH HPD data, sorted by HPD number
     typedef std::map< const LHCb::RichSmartID, LHCb::RichSmartID::Vector >            PDMap;
 
-    /// HPD Information
-    typedef std::pair< const LHCb::RichSmartID, const Level1Input >                   HPDInfo;
-
-    /// Hash Map for RICH HPD data, sorted by HPD number
-    typedef GaudiUtils::HashMap< const HPDInfo, LHCb::RichSmartID::Vector >           HPDHashMap;
-
-    /// type for data in a single L1 ingress
-    typedef GaudiUtils::HashMap< const L1IngressID, HPDHashMap >                      IngressMap;
-
-    /// Hash Map for RICH HPD data, sorted by Level1 board number
-    typedef GaudiUtils::HashMap< const Level1ID, IngressMap >                         L1Map;
-
     /// Mapping from Level1 ID to list of HPD RichSmartIDs
     typedef GaudiUtils::HashMap< const Level1ID, LHCb::RichSmartID::Vector >          L1ToSmartIDs;
+    /// Pair type in a L1ToSmartIDs
+    typedef std::pair< const Level1ID, LHCb::RichSmartID::Vector >                    L1ToSmartIDsPair;
 
     /// Mapping from Level1 ID to list of HPD RichSmartIDs
     typedef GaudiUtils::HashMap< const Level1ID, HPDHardwareIDs >                     L1ToHardIDs;
+    /// Pair type in a L1ToHardIDs
+    typedef std::pair< const Level1ID, HPDHardwareIDs >                               L1ToHardIDsPair;
 
   }
 }

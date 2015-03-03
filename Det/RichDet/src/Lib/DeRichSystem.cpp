@@ -4,7 +4,7 @@
  *
  * Implementation file for class : DeRichSystem
  *
- * $Id: DeRichSystem.cpp,v 1.10 2007-03-19 15:02:47 jonrob Exp $
+ * $Id: DeRichSystem.cpp,v 1.14 2007-04-23 12:28:13 jonrob Exp $
  *
  * @author Antonis Papanestis a.papanestis@rl.ac.uk
  * @date   2006-01-27
@@ -60,6 +60,20 @@ StatusCode DeRichSystem::initialize ( )
   m_condBDLocs[Rich::Rich2] = "Rich2DetectorNumbers";
   SmartRef<Condition> rich1numbers = condition( m_condBDLocs[Rich::Rich1] );
   SmartRef<Condition> rich2numbers = condition( m_condBDLocs[Rich::Rich2] );
+
+  SmartDataPtr<DetectorElement> deRich1(dataSvc(),DeRichLocations::Rich1 );
+  if ( !deRich1 ) {
+    msg << MSG::ERROR << "Could not load DeRich1" << endmsg;
+    return StatusCode::FAILURE;
+  }
+  m_rich1NumberHpds = deRich1->param<int>("Rich1TotNumHpd");
+
+
+  SmartDataPtr<DetectorElement> deR0P0(dataSvc(),DeRichLocations::Rich1Panel0 );
+  if ( !deR0P0 ) {
+    msg << MSG::ERROR << "Could not load DeRichPanel R1 P0" << endmsg;
+    return StatusCode::FAILURE;
+  }
 
   // register condition for updates
   updMgrSvc()->registerCondition(this,rich1numbers.path(),&DeRichSystem::buildHPDMappings);
@@ -303,74 +317,6 @@ DeRichSystem::richSmartID( const Rich::DAQ::Level0ID l0ID ) const
 }
 
 //=========================================================================
-//  activeHPDRichSmartIDs
-//=========================================================================
-const LHCb::RichSmartID::Vector& DeRichSystem::activeHPDRichSmartIDs() const
-{
-  return m_smartIDs;
-}
-
-//=========================================================================
-//  activeHPDHardwareIDs
-//=========================================================================
-const Rich::DAQ::HPDHardwareIDs& DeRichSystem::activeHPDHardwareIDs() const
-{
-  return m_hardIDs;
-}
-
-//=========================================================================
-//  hpdIsActive
-//=========================================================================
-bool DeRichSystem::hpdIsActive( const LHCb::RichSmartID id ) const
-{
-  // is this id in the inactive list
-  const bool isActive =
-    ( std::find( m_inactiveSmartIDs.begin(),
-                 m_inactiveSmartIDs.end(),
-                 id.hpdID() ) == m_inactiveSmartIDs.end() );
-
-  // Double check id is valid
-  // could make this check optional if it proves too costly in cpu
-  SoftToHard::const_iterator iid = m_soft2hard.find( id.hpdID() );
-  if ( m_soft2hard.end() == iid )
-  {
-    std::ostringstream mess;
-    mess << "Unknown HPD RichSmartID " << id.hpdID();
-    throw GaudiException( mess.str(),
-                          "DeRichSystem::hpdIsActive",
-                          StatusCode::FAILURE );
-  }
-
-  if (!isActive) std::cout << "DeRichSystem::hpdIsActive : inactive HPD" << std::endl;
-  return isActive;
-}
-
-//=========================================================================
-//  hpdIsActive
-//=========================================================================
-bool DeRichSystem::hpdIsActive( const Rich::DAQ::HPDHardwareID id ) const
-{
-  // is this id in the inactive list
-  const bool isActive =
-    ( std::find( m_inactiveHardIDs.begin(),
-                 m_inactiveHardIDs.end(),
-                 id ) == m_inactiveHardIDs.end() );
-
-  // Double check id is valid
-  // could make this check optional if it proves too costly in cpu
-  HardToSoft::const_iterator iid = m_hard2soft.find( id );
-  if ( m_hard2soft.end() == iid )
-  {
-    throw GaudiException( "Unknown HPD hardware ID " + (std::string)id,
-                          "DeRichSystem::hpdIsActive",
-                          StatusCode::FAILURE );
-  }
-
-  if (!isActive) std::cout << "DeRichSystem::hpdIsActive : inactive HPD" << std::endl;
-  return isActive;
-}
-
-//=========================================================================
 //  level0ID
 //=========================================================================
 const Rich::DAQ::Level0ID
@@ -529,24 +475,6 @@ DeRichSystem::l1HPDHardIDs( const Rich::DAQ::Level1ID l1ID ) const
 }
 
 //=========================================================================
-// l1HPDSmartIDs
-// Access mapping between Level 1 IDs and HPD RichSmartIDs
-//=========================================================================
-const Rich::DAQ::L1ToSmartIDs& DeRichSystem::l1HPDSmartIDs() const
-{
-  return m_l12smartids;
-}
-
-//=========================================================================
-//  l1HPDHardIDs
-// Access mapping between Level 1 IDs and HPD RichSmartIDs
-//=========================================================================
-const Rich::DAQ::L1ToHardIDs& DeRichSystem::l1HPDHardIDs() const
-{
-  return m_l12hardids;
-}
-
-//=========================================================================
 // richDetector
 //=========================================================================
 const Rich::DetectorType
@@ -565,11 +493,25 @@ DeRichSystem::richDetector( const Rich::DAQ::Level1ID l1ID ) const
 }
 
 //=========================================================================
-//  level1IDs
+//  getDeHPDLocation
 //=========================================================================
-const Rich::DAQ::Level1IDs& DeRichSystem::level1IDs() const
+std::string DeRichSystem::getDeHPDLocation (LHCb::RichSmartID smartID ) const
 {
-  return m_l1IDs;
-}
+  const unsigned int cNumber = copyNumber( smartID );
+  std::string loc;
 
+  if( smartID.rich() == Rich::Rich1 )
+    if( smartID.panel() == Rich::top )
+      loc = DeRichLocations::Rich1Panel0;
+    else
+      loc = DeRichLocations::Rich1Panel1;
+  else
+    if( smartID.panel() == Rich::left )
+      loc = DeRichLocations::Rich2Panel0;
+    else
+      loc = DeRichLocations::Rich2Panel1;
+
+  loc = loc + "/HPD:"+boost::lexical_cast<std::string>(cNumber);
+  return loc;
+}
 //===========================================================================

@@ -3,7 +3,7 @@
  *
  *  Header file for RICH utility class : RichGeomPhoton
  *
- *  $Id: RichGeomPhoton.h,v 1.5 2007-03-09 17:58:13 jonrob Exp $
+ *  $Id: RichGeomPhoton.h,v 1.2 2007-04-23 15:07:58 cattanem Exp $
  *
  *  @author Antonis Papanestis
  *  @author Chris Jones    Christopher.Rob.Jones@cern.ch
@@ -23,7 +23,7 @@
 #include "RichKernel/RichPixelCluster.h"
 #include "RichKernel/BoostMemPoolAlloc.h"
 
-/// General LHCb namespace
+// General LHCb namespace
 namespace LHCb
 {
 
@@ -105,8 +105,8 @@ namespace LHCb
      *  @param detectionPoint The photon detection point on the HPDs
      *  @param sphMirrReflPoint The reflection point on the spherical mirrors
      *  @param flatMirrReflPoint The reflection point on the flat mirrors
-     *  @param id The RichSmartID channel identifier for the detection channel
-     *  @param activeFrac The fraction of the associate segment tat this photon could have been radiated from
+     *  @param cluster The RichSmartID channel cluster
+     *  @param activeFrac The fraction of the associate segment that this photon could have been radiated from
      */
     RichGeomPhoton( const float theta,
                     const float phi,

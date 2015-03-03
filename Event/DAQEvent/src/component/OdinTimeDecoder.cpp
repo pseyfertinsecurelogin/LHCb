@@ -1,4 +1,4 @@
-// $Id: OdinTimeDecoder.cpp,v 1.1 2006-09-26 10:55:58 marcocle Exp $
+// $Id: OdinTimeDecoder.cpp,v 1.3 2007-04-19 13:25:39 cattanem Exp $
 // Include files 
 
 // from Gaudi
@@ -30,8 +30,8 @@ OdinTimeDecoder::OdinTimeDecoder( const std::string& type,
                                   const IInterface* parent )
   : GaudiTool ( type, name , parent )
 {
+  declareProperty( "ForceRawEvent", m_forceRawEvent = false );
   declareInterface<IEventTimeDecoder>(this);
-
 }
 //=============================================================================
 // Destructor
@@ -44,34 +44,41 @@ OdinTimeDecoder::~OdinTimeDecoder() {}
 LHCb::ODIN *OdinTimeDecoder::getODIN() const 
 {
   if ( ! exist<LHCb::ODIN>(LHCb::ODINLocation::Default) ){
-
-    debug() << "Get LHCb::RawEvent at " << LHCb::RawEventLocation::Default << endmsg;
-    LHCb::RawEvent * rawEvent = get<LHCb::RawEvent>(LHCb::RawEventLocation::Default);
-    
-    debug() << "Get Odin bank" << endmsg;
-    // check if there is ODIN bank present
-    const std::vector<LHCb::RawBank*>& odinBanks = rawEvent->banks(LHCb::RawBank::ODIN);
-    if(odinBanks.size()){
-
-      LHCb::ODIN *odin = new LHCb::ODIN();
-      if ( ! odin->set(*odinBanks.begin()).isSuccess() ) Error("Cannot decode ODIN bank");
-      put(odin,LHCb::ODINLocation::Default);
-      return odin;
-
-    } else {
-
-      warning() << "Cannot find ODIN bank" << endmsg;
-      return NULL;
-
-    }
-
+    // Decode ODIN bank from RawEvent
+    return decodeODIN();
+  }
+  else if( m_forceRawEvent ) {
+    debug() << "Removing existing " << LHCb::ODINLocation::Default << " object" << endmsg;
+    evtSvc()->unlinkObject( LHCb::ODINLocation::Default );
+    // Decode ODIN bank from RawEvent
+    return decodeODIN();
   }
   else {
     return get<LHCb::ODIN>(LHCb::ODINLocation::Default);
   }
-  
 }
-
+//=========================================================================
+// Decode ODIN bank from RawEvent
+//=========================================================================
+LHCb::ODIN *OdinTimeDecoder::decodeODIN() const 
+{
+  debug() << "Getting " << LHCb::RawEventLocation::Default << endmsg;
+  LHCb::RawEvent* rawEvent = get<LHCb::RawEvent>(LHCb::RawEventLocation::Default);
+  
+  debug() << "Creating " << LHCb::ODINLocation::Default << " object from ODIN bank" << endmsg;
+  // check if there is ODIN bank present
+  const std::vector<LHCb::RawBank*>& odinBanks = rawEvent->banks(LHCb::RawBank::ODIN);
+  if(odinBanks.size()){
+    LHCb::ODIN *odin = new LHCb::ODIN();
+    if ( ! odin->set(*odinBanks.begin()).isSuccess() ) Error("Cannot decode ODIN bank");
+    put(odin,LHCb::ODINLocation::Default);
+    return odin;
+  }
+  else {
+    warning() << "Cannot find ODIN bank in RawEvent" << endmsg;
+    return NULL;
+  }
+}
 
 //=========================================================================
 //  Return the time of current event
