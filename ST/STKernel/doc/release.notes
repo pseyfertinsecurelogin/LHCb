@@ -1,7 +1,21 @@
-! $Id: release.notes,v 1.78 2009-09-09 12:18:54 cattanem Exp $
+! $Id: release.notes,v 1.82 2009-11-13 15:50:51 cattanem Exp $
 ! Package     : STKernel
 ! Responsible : M. Needham
 !----------------------------------------------------------------------------
+
+!====================== STKernel v1r18 2009-11-13 ===========================
+! 2009-11-09 - Mark Tobin
+ - Rename method in ISTNoiseCalculationTool.
+
+! 2009-10-30 Mark Tobin
+ - Add interface for STNoiseCalculationTool
+ - Add method to Readout tool for mapping TELL number to source ID.
+
+! 2009-10-26 - Jeroen Van Tilburg
+ - STTell1Board: Use (usigned int) interstrip position from the raw buffer in
+   STTell1Board::ADCToOffline(..). Before this value was recalculating, which
+   could give ADC offsets due to rounding difference between Tell1 and
+   simulation.
 
 !====================== STKernel v1r17 2009-09-09 ===========================
 ! 2009-09-09 Marco Cattaneo

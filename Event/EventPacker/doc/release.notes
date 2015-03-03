@@ -4,6 +4,45 @@
 ! Purpose     : Pack and unpack events classes for smaller events
 !-----------------------------------------------------------------------------
 
+!============================ EventPacker v2r0 2009-11-13 ====================
+! 2009-11-12 - Olivier Callot
+ - Fix CompareTrack to not report saturated q/p error for poorely measured tracks
+
+! 2009-11-10 - Chris Jones
+ - Add some debug to ProtoParticle packers and unpackers + remove need for 
+   temporary packed object during packing
+
+! 2009-11-10 - Olivier Callot
+ - Fix CompareTrack to not report saturated q/p error for poorely measured tracks
+
+! 2009-11-10 - Olivier Callot
+ - Fix a wrong decoding of likelihood and ghost probability for Track version>2
+
+! 2009-11-06 - Chris Jones
+ - Add an option to the packers and unpackers to optionally create the
+   output container if the input is missing. Default is to not to do so.
+
+! 2009-11-04 - Christopher Rob Jones
+ - Add packers for RichPIDs and MuonPIDs
+ - Protect packers and unpackers from missing input data and also already 
+   existing output data
+
+! 2009-11-03 - Christopher Rob Jones
+ - Update new packers to explicitly store the 'packing version' in the packed
+   DataObject. Allows the 'version' of the data object to the be used to store
+   any versioning needed in the original unpacked data.
+
+! 2009-10-29 - Chris Jones
+ - Silently return no unpacked data when packed data does not exist. Needed
+   for spillover events, which are not always present.
+
+! 2009-10-26 - Victor Coco
+ - Extend the packinf unpacking to VeloPix sub-detector
+
+! 2009-10-21 - Chris Jones
+ - Add new packing classes for the packing of all MC information in Gauss
+   and Boole.
+
 !============================ EventPacker v1r8 2009-10-16 ====================
 ! 2009-10-14 - Marco Cattaneo
  - In Packer algorithms, use getOrCreate of input containers instead of get,

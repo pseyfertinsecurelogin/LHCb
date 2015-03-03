@@ -1,4 +1,4 @@
-// $Id: DeVeloPixSensor.cpp,v 1.1.1.1 2009-09-17 16:07:20 cocov Exp $
+// $Id: DeVeloPixSensor.cpp,v 1.3 2009-10-21 11:19:28 cocov Exp $
 //==============================================================================
 #define VELOPIXDET_DEVELOPIXSENSOR_CPP 1
 //==============================================================================
@@ -11,6 +11,7 @@
 #include "GaudiKernel/ISvcLocator.h"
 #include "GaudiKernel/MsgStream.h"
 #include "GaudiKernel/IUpdateManagerSvc.h"
+
 
 #include "DetDesc/Condition.h"
 
@@ -138,5 +139,6 @@ void DeVeloPixSensor::initSensor()
   m_lpSize = param<double>("LowPrecisionSize");
   m_nPixCol = param<int>("NPixelColumn");
   m_nPixRow = param<int>("NPixelRow");
+  m_interchipPixSize = param<double>("InterChipPixelSize");
 
 }

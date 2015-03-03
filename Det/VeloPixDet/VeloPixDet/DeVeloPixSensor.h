@@ -1,4 +1,4 @@
-// $Id: DeVeloPixSensor.h,v 1.1.1.1 2009-09-17 16:07:20 cocov Exp $
+// $Id: DeVeloPixSensor.h,v 1.6 2009-10-29 15:34:05 cocov Exp $
 #ifndef VELOPIXDET_DEVELOPIXSENSOR_H
 #define VELOPIXDET_DEVELOPIXSENSOR_H 1
 
@@ -53,10 +53,28 @@ public:
   /// Initialise the DeVeloPixSensor from the XML
   virtual StatusCode initialize();
 
+
   /// Calculate the nearest channel to a 3-d point.
+  /// Also returns the fractional x-y position IN the pixel
   virtual StatusCode pointToChannel(const Gaudi::XYZPoint& point,
                                     LHCb::VeloPixChannelID& channel,
-                                    double& fraction) const = 0;
+                                    std::pair <double, double>& fraction) const = 0;
+
+  /// Calculate the XYZ center of a pixel
+  virtual StatusCode channelToPoint( const LHCb::VeloPixChannelID& channel,
+                                                Gaudi::XYZPoint& point) const = 0;
+  
+
+  ///  Get the list of VeloPixChannelID forming the 3x3 cluster of pixel centered on point
+  virtual StatusCode pointTo3x3Channels(const Gaudi::XYZPoint& point,
+                                        std::vector <LHCb::VeloPixChannelID>& channels) const = 0;
+
+  /// Get the 8 channel (if they exist) arround a given seed channel
+  virtual StatusCode  channelToNeighbours( const LHCb::VeloPixChannelID& seedChannel, 
+                                       std::vector <LHCb::VeloPixChannelID>& channels) const = 0;
+
+  /// Return the pixel size (since the edge pixel might have different size)
+  virtual std::pair<double,double> PixelSize(LHCb::VeloPixChannelID channel) const = 0;
 
   /// Determines if local 3-d point is inside sensor
   virtual StatusCode isInActiveArea(const Gaudi::XYZPoint& point) const = 0;
@@ -148,7 +166,7 @@ public:
   /// The thickness of the sensor in mm
   inline double siliconThickness() const {return m_siliconThickness;}
   /// The number of ladders orming the detector
-  inline double ladderNumber() const {return m_ladderNumber;}
+  inline int ladderNumber() const {return m_ladderNumber;}
 
   /// Returns the software module number
   inline unsigned int module() const {return m_module;}
@@ -162,6 +180,9 @@ public:
 
   /// Returns the sensor number
   inline unsigned int sensorNumber() const {return m_sensorNumber;}
+
+  /// Returns the size of the interchip pixel
+  inline double interchipPixSize() const {return m_interchipPixSize;}
 
   /// Cache the geometry information after changes to position from alignment
   StatusCode cacheGeometry();
@@ -198,6 +219,7 @@ private:
   double m_lpSize            ; ///< low precision pixel dimension (eq. to high if symetric)
   int m_nPixCol              ; ///< Number of pixel column in a chip
   int m_nPixRow              ; ///< Number of pixel row in a chip
+  double m_interchipPixSize  ; ///< Size of the pixel at the edge of the chip
  
   std::vector<double> m_pixelNoise ; ///< Vector of noise for pixels
   

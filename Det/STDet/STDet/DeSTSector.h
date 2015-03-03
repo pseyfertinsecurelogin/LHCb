@@ -1,4 +1,4 @@
-// $Id: DeSTSector.h,v 1.42 2009-08-08 10:44:59 mneedham Exp $
+// $Id: DeSTSector.h,v 1.45 2009-11-06 12:31:20 mneedham Exp $
 #ifndef _DeSTSector_H_
 #define _DeSTSector_H_
 
@@ -11,6 +11,7 @@
 #include "Kernel/STChannelID.h"
 #include "Kernel/LHCbConstants.h"
 #include "STDet/DeSTBaseElement.h"
+#include "STDet/DeSTSensor.h"
 
 #include "GaudiKernel/Plane3DTypes.h"
 #include "LHCbMath/LineTypes.h"
@@ -106,6 +107,71 @@ public:
    * @param aChannel channel
    * @return ADC count
    */
+
+  /** set the noise vector 
+  * @param noise
+  */
+  void setNoise(const std::vector<double>& values);
+
+
+ /** get the noise of the corresponding strip
+   * @param aChannel channel
+   * @return double noise of the strip
+   */
+  double rawNoise(const LHCb::STChannelID& aChannel) const;
+
+  /** get the average raw noise in the sector
+   * @return double average noise
+   */
+  double rawSectorNoise() const;
+
+  /** get the average raw noise of a beetle
+   * @param beetle beetle number (1-4)
+   * @return double average noise
+   */
+  double rawBeetleNoise(const unsigned int& beetle) const;
+
+  /** get the average raw noise of a beetle port
+   * @param beetle beetle number (1-4)
+   * @param port beetle port number (1-3)
+   * @return double average noise
+   */
+  double rawPortNoise(const unsigned int& beetle, const unsigned int& port) const;
+
+  /** get the common mode noise of the corresponding strip
+   * @param aChannel channel
+   * @return double noise of the strip
+   */
+  double cmNoise(const LHCb::STChannelID& aChannel) const;
+
+  /** get the average common noise in the sector
+   * @return double average noise
+   */
+  double cmSectorNoise() const;
+
+  /** get the average common mode noise of a beetle
+   * @param beetle beetle number (1-4)
+   * @return double average noise
+   */
+  double cmBeetleNoise(const unsigned int& beetle) const;
+
+  /** get the average common mode noise of a beetle port
+   * @param beetle beetle number (1-4)
+   * @param port beetle port number (1-3)
+   * @return double average noise
+   */
+  double cmPortNoise(const unsigned int& beetle, const unsigned int& port) const;
+
+  /** set the cmMode vector
+  * @param cm noise
+  */
+  void setCMNoise(const std::vector<double>& values);
+ 
+  /** set the noise vector 
+  * @param noise
+  */
+  void setADCConversion(const std::vector<double>& values);
+
   double toADC(const double& e, const LHCb::STChannelID& aChannel) const;
 
   /** get the ADC count from the electron number
@@ -182,15 +248,20 @@ public:
                   double& xAtYEq0, double& zAtYEq0, double& ybegin, double& yend) const ;
 
   /**
-   * @return capacitance
+   * @return total capacitance
+   * ie sensors, cable + pitch adaptor
    */
   double capacitance() const;
+
+  /** 
+   * @return sensor Capacitance
+   */
+  double sensorCapacitance() const; 
 
   /** strip length
    * @return strip length
    */
   double stripLength() const;
-
 
   /** thickness
    * @return double thickness
@@ -352,7 +423,10 @@ public:
 
   /** direct access to the status condition, for experts only */
   const Condition* statusCondition() const;
-
+  
+  /** direct access to the noise condition, for experts only */
+  const Condition* noiseCondition() const;
+  
 protected:
 
   StatusCode registerConditionsCallbacks();
@@ -409,6 +483,8 @@ private:
   std::string m_noiseString;
   std::vector< double > m_noiseValues;
   std::vector< double > m_electronsPerADC;
+  std::vector< double > m_cmModeValues;
+
 
  protected:
 
@@ -450,6 +526,11 @@ inline bool DeSTSector::isStrip(const unsigned int strip) const {
 
 inline double DeSTSector::capacitance() const{
   return m_capacitance;
+}
+
+inline double DeSTSector::sensorCapacitance() const{
+  const Sensors& theSensors = sensors();
+  return theSensors.size() * theSensors.front()->capacitance(); ;
 }
 
 inline double DeSTSector::stripLength() const {
@@ -633,6 +714,12 @@ inline const std::string& DeSTSector::nickname() const{
 inline const Condition* DeSTSector::statusCondition() const{
   return condition(m_statusString);
 }
+
+inline const Condition* DeSTSector::noiseCondition() const{
+  return condition(m_noiseString);
+}
+
+
 #include "STDet/StatusMap.h"
  
 #endif // _DeSTSector_H

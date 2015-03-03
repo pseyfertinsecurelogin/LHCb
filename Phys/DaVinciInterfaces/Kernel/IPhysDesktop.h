@@ -1,4 +1,4 @@
-// $Id: IPhysDesktop.h,v 1.4 2009-09-14 15:49:49 jpalac Exp $
+// $Id: IPhysDesktop.h,v 1.8 2009-11-11 08:54:54 jpalac Exp $
 #ifndef DAVINCIKERNEL_IPHYSDESKTOP_H 
 #define DAVINCIKERNEL_IPHYSDESKTOP_H 1
 
@@ -9,7 +9,6 @@
 #include "Kernel/Particle2Vertex.h"
 // Forward declarations
 class StatusCode;
-class IRelatedPVFinder;
 
 /** @class IPhysDesktop IPhysDesktop.h Kernel/IPhysDesktop.h
  *
@@ -72,11 +71,14 @@ public:
   /// Only DVAlgorithm::sysExecute() should call this function.
   virtual StatusCode getEventInput() = 0;
 
-  /// set InputLocations (fro DVAlgorithm)
-  virtual StatusCode setInputLocations(const std::vector<std::string> &) = 0 ;
+  /// set OutputLocation (from DVAlgorithm)
+  virtual void setOutputLocation(const std::string&) = 0 ;
 
-  /// set InputLocations (fro DVAlgorithm)
-  virtual StatusCode setP2PVInputLocations(const std::vector<std::string> &) = 0 ;
+  /// set InputLocations (from DVAlgorithm)
+  virtual StatusCode setInputLocations(const std::vector<std::string>&) = 0 ;
+
+  /// set Particle->PV relations input TES locations (from DVAlgorithm)
+  virtual StatusCode setP2PVInputLocations(const std::vector<std::string>&) = 0 ;
 
   /// 
   virtual void setWriteP2PV(const bool&) = 0;
@@ -98,6 +100,11 @@ public:
 
   /// retrieve the Particle->Primary vertex relations
   virtual Particle2Vertex::LightTable& Particle2VertexRelations() = 0;
+
+  virtual Particle2Vertex::Map& Particle2VertexMap() = 0;
+
+  virtual const Particle2Vertex::Map& Particle2VertexMap() const = 0;
+  
 
   /// Store relations over-writing previously existing ones
   virtual void overWriteRelations(Particle2Vertex::Table::Range::const_iterator begin,
@@ -132,9 +139,6 @@ public:
   /// on the TES and should be used only when necessary. (Used by Filters)
   virtual StatusCode cloneTrees( const LHCb::Particle::ConstVector& ) = 0;
 
-  /// Impose output location
-  virtual void imposeOutputLocation(const std::string& outputLocationString) = 0;
-
   /// Get output location
   virtual const std::string& getOutputLocation() const = 0 ;
 
@@ -145,11 +149,6 @@ public:
   /// between LHCb::Particle and LHCb::VertexBase
   virtual const LHCb::VertexBase* relatedVertex(const LHCb::Particle* part) const = 0;
 
-  /**
-   * Get a pointer to the Particle->PV relator tool
-   **/
-  virtual const IRelatedPVFinder* relatedPVFinder() const = 0 ;
-  
   /// Establish a relation between an LHCb::Particle and an LHCb::VertexBase
   virtual void relate(const LHCb::Particle* part, 
                       const LHCb::VertexBase* vert ) = 0;

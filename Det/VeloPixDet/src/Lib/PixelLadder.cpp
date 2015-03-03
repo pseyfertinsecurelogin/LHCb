@@ -1,4 +1,4 @@
-// $Id: PixelLadder.cpp,v 1.1.1.1 2009-09-17 16:07:20 cocov Exp $
+// $Id: PixelLadder.cpp,v 1.4 2009-10-28 13:02:28 cocov Exp $
 // Include files
 // local
 #define  VELOPIXDET_PIXELLADDER_CPP 1
@@ -19,27 +19,15 @@ PixelLadder::PixelLadder(Gaudi::XYZPoint pRef ,int n)
 {
    m_pRef = pRef;
    m_NChip = n;
+   for (int i = 0 ; i < n ; i++){
+     m_edgesOrientation.push_back(0);
+   }
 }
 
 //=============================================================================
 // Destructor
 //=============================================================================
 PixelLadder::~PixelLadder() {}
-
-//=============================================================================
-
-//========================== Access to the reference point coordinates
-Gaudi::XYZPoint PixelLadder::ReferencePoint() const
-{
-  return m_pRef;
-}
-
-//========================== Access to the reference number of chip in the ladder
-int PixelLadder::nChip() const
-{
-  return m_NChip;
-}
-
 
 //========================== Set the reference point coordinates
 void PixelLadder::setReferencePoint( Gaudi::XYZPoint p)
@@ -51,4 +39,13 @@ void PixelLadder::setReferencePoint( Gaudi::XYZPoint p)
 void PixelLadder::setNChip( int n )
 {
   m_NChip = n;
+}
+
+//========================== Set the positions of the readout edge
+void PixelLadder::setEdgesOrientation( std::vector< int > orientation )
+{
+  for (unsigned int i = 0 ; i < orientation.size() ; i++ )
+  {
+    m_edgesOrientation[i] = orientation[i] ;
+  }
 }

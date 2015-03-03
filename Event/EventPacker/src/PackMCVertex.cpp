@@ -1,4 +1,4 @@
-// $Id: PackMCVertex.cpp,v 1.3 2009-10-14 16:22:02 cattanem Exp $
+// $Id: PackMCVertex.cpp,v 1.6 2009-11-07 12:20:39 jonrob Exp $
 // Include files 
 
 // from Boost
@@ -30,6 +30,7 @@ PackMCVertex::PackMCVertex( const std::string& name,
 {
   declareProperty( "InputName" , m_inputName  = LHCb::MCVertexLocation::Default );
   declareProperty( "OutputName", m_outputName = LHCb::PackedMCVertexLocation::Default );
+  declareProperty( "AlwaysCreateOutput",         m_alwaysOutput = false     );
 }
 //=============================================================================
 // Destructor
@@ -41,7 +42,10 @@ PackMCVertex::~PackMCVertex() {};
 //=============================================================================
 StatusCode PackMCVertex::execute() {
 
-  LHCb::MCVertices* verts = getOrCreate<LHCb::MCVertices,LHCb::MCVertices>( m_inputName );
+  // If input does not exist, and we aren't making the output regardless, just return
+  if ( !m_alwaysOutput && !exist<LHCb::MCVertices>(m_inputName) ) return StatusCode::SUCCESS;
+
+  const LHCb::MCVertices* verts = getOrCreate<LHCb::MCVertices,LHCb::MCVertices>( m_inputName );
   if( msgLevel(MSG::DEBUG) )
     debug() << m_inputName << " contains " << verts->size()
             << " MCVertices to convert." << endmsg;
@@ -54,6 +58,7 @@ StatusCode PackMCVertex::execute() {
   LHCb::PackedMCVertices* out = new LHCb::PackedMCVertices();
   put( out, m_outputName );
 
+  out->reserve( verts->size() );
   for ( LHCb::MCVertices::const_iterator itV = verts->begin();
         verts->end() != itV; ++itV ) {
     LHCb::MCVertex* vert = (*itV);

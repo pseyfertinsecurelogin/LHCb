@@ -1,4 +1,4 @@
-// $Id: DVAlgorithm.cpp,v 1.60 2009-09-14 16:29:04 jpalac Exp $
+// $Id: DVAlgorithm.cpp,v 1.67 2009-11-11 08:57:44 jpalac Exp $
 // ============================================================================
 // Include 
 // ============================================================================
@@ -13,6 +13,7 @@
 #include "Kernel/IRelatedPVFinder.h"
 #include "Kernel/DaVinciFun.h"
 #include "Kernel/DaVinciGuards.h"
+#include "Kernel/DaVinciStringUtils.h"
 // ============================================================================
 /** @file
  *  The implementation for class DVAlgorithm
@@ -66,6 +67,8 @@ DVAlgorithm::DVAlgorithm
     , m_descendantsName       ("ParticleDescendants")
     , m_writeSelResultName    ( "WriteSelResult" )
     , m_writeSelResult        ( 0 )
+    , m_onOffline             ( 0 )
+    , m_pvRelator             ( 0 )
     , m_ppSvc                 ( 0 )
     , m_setFilterCalled       ( false )
     , m_countFilterWrite      ( 0 )
@@ -74,6 +77,9 @@ DVAlgorithm::DVAlgorithm
     , m_multiPV               ( false )
     , m_useP2PV               ( true  )
     , m_writeP2PV             ( true  )
+    , m_PVs                   ( 0 )
+    , m_PVLocation            ("")
+    , m_noPVs                 ( false )
 {
   m_inputLocations.clear() ;
   declareProperty( "InputLocations", 
@@ -84,6 +90,8 @@ DVAlgorithm::DVAlgorithm
   declareProperty( "P2PVInputLocations", 
                    m_p2PVInputLocations, 
                    "Particle -> PV Relations Input Locations forwarded to PhysDesktop" );
+
+  declareProperty( "InputPrimaryVertices", m_PVLocation );
 
   declareProperty("UseP2PVRelations", m_useP2PV,
                   "Use P->PV relations internally. Forced to true if re-fitting PVs. Otherwise disabled for single PV events. Default: true.");
@@ -209,7 +217,9 @@ StatusCode DVAlgorithm::initialize ()
     Warning( mgs +  "Some tools/utilities could have the problems." );
   }
   
-  if ( m_avoidSelResult ) { if (msgLevel(MSG::DEBUG)) debug() << "Avoiding SelResult" << endmsg; }
+  if ( m_avoidSelResult ) { 
+    if (msgLevel(MSG::DEBUG)) debug() << "Avoiding SelResult" << endmsg; 
+  }
   
   
   // Load tools very
@@ -223,13 +233,22 @@ StatusCode DVAlgorithm::initialize ()
     { debug() << "Decay Descriptor: " << m_decayDescriptor << endmsg; }
   }
 
+  if (m_PVLocation=="") {
+    m_PVLocation = onOffline()->primaryVertexLocation();
+  }
+
+  m_noPVs = (m_PVLocation=="None"||m_PVLocation=="") ? true : false;
+  
   if (!m_p2PVInputLocations.empty() ) 
   {
+    DaVinci::StringUtils::expandLocations( m_p2PVInputLocations.begin(),
+                                           m_p2PVInputLocations.end(),
+                                           onOffline()->trunkOnTES()     );
     if (msgLevel(MSG::DEBUG)) debug() << ">>> Preloading PhysDesktop with P->PV locations " << endmsg;
     desktop()->setP2PVInputLocations(m_p2PVInputLocations);
   }
    
-  desktop()->setWriteP2PV( m_writeP2PV );
+  desktop()->setWriteP2PV( m_writeP2PV && !m_noPVs );
 
   if (msgLevel(MSG::DEBUG)) debug() << "End of DVAlgorithm::initialize with " << sc << endmsg;
   
@@ -245,23 +264,32 @@ StatusCode DVAlgorithm::loadTools()
   { return Warning( "Not preloading tools", StatusCode::SUCCESS ) ; }
   
   if (msgLevel(MSG::DEBUG)) debug() << ">>> Preloading tools" << endmsg;
-  
+ 
+  DaVinci::StringUtils::expandLocations( m_inputLocations.begin(),
+                                         m_inputLocations.end(),
+                                         onOffline()->trunkOnTES() );
+ 
   if (msgLevel(MSG::DEBUG)) debug() << ">>> Preloading PhysDesktop with locations " << m_inputLocations << endmsg;
   desktop()->setInputLocations(m_inputLocations);
+ 
+  std::string outputLocation = this->name();
   
+  DaVinci::StringUtils::expandLocation(outputLocation,
+                                       onOffline()->trunkOnTES());
+  
+  desktop()->setOutputLocation(outputLocation);
+  
+ 
   // vertex fitter
-  IOnOffline* onof = NULL;
   
   if ( m_particleCombinerNames.end() == m_particleCombinerNames.find("") )
   {
-    if ( 0==onof) { onof = tool<IOnOffline>( "OnOfflineTool" , this ) ; }
-    m_particleCombinerNames[""] = onof->particleCombinerType() ;
+    m_particleCombinerNames[""] = onOffline()->particleCombinerType() ;
   }
   
   if ( m_vertexFitNames.end() == m_vertexFitNames.find("") )
   {
-    if ( 0==onof) onof = tool<IOnOffline>("OnOfflineTool",this);
-    m_vertexFitNames[""] = onof->vertexFitterType() ;
+    m_vertexFitNames[""] = onOffline()->vertexFitterType() ;
   }
   
   if (msgLevel(MSG::DEBUG)) debug() << ">>> Preloading "
@@ -271,8 +299,7 @@ StatusCode DVAlgorithm::loadTools()
   // geometry THIS IS OBSOLETE
   if ( m_distanceCalculatorNames.end() == m_distanceCalculatorNames.find("") )
   {
-    if ( 0==onof ) onof = tool<IOnOffline>("OnOfflineTool",this);
-    m_distanceCalculatorNames[""] = onof->distanceCalculatorType() ;
+    m_distanceCalculatorNames[""] = onOffline()->distanceCalculatorType() ;
   }
   
   // distance geometry
@@ -297,6 +324,34 @@ StatusCode DVAlgorithm::loadTools()
   return StatusCode::SUCCESS;
 }
 // ============================================================================
+// Load PVs
+// ============================================================================
+void DVAlgorithm::loadPVs() {
+
+  if (m_noPVs) {
+    m_PVs=0;
+    if (msgLevel(MSG::VERBOSE)) {
+      verbose() << "PV loading disabled. No PVs used in event";
+    } 
+  }
+  
+
+  if (msgLevel(MSG::VERBOSE)) {
+    verbose() << "Getting PV from " << m_PVLocation << endmsg;
+  }
+
+  if ( !exist<LHCb::RecVertices>( m_PVLocation ) ) {
+    m_PVs = 0 ;
+    Warning("No PV container at " + m_PVLocation,1).ignore();
+  } else {
+    m_PVs = get<LHCb::RecVertices>( m_PVLocation ); 
+    if (m_PVs->empty()) {
+      Warning( "Empty PV container at "+m_PVLocation, 1).ignore() ;      
+    }
+  }
+
+}
+// ============================================================================
 // Execute
 // ============================================================================
 StatusCode DVAlgorithm::sysExecute () 
@@ -310,15 +365,17 @@ StatusCode DVAlgorithm::sysExecute ()
 
   DaVinci::Guards::CleanDesktopGuard desktopGuard(desktop());
 
-  desktop()->setUsingP2PV(this->useP2PV());
+  this->loadPVs();
 
   StatusCode sc = desktop()->getEventInput();
   if ( sc.isFailure()) 
   { return Error (  "Not able to fill PhysDesktop" , sc ) ; }
   
-  const LHCb::RecVertices* pvs = desktop()->primaryVertices();
+  const LHCb::RecVertices* pvs = this->primaryVertices();
   
   m_multiPV = 0!=pvs ? pvs->size() > 1 : false;
+
+  desktop()->setUsingP2PV(this->useP2PV());
 
   // execute the algorithm 
   sc = this->Algorithm::sysExecute();
@@ -534,7 +591,7 @@ void DVAlgorithm::imposeOutputLocation(const std::string& outputLocationString)
   if ( 0==desktop() ) {
     fatal() << "Desktop has not been created yet" << endmsg;
   }
-  desktop()->imposeOutputLocation(outputLocationString);  
+  desktop()->setOutputLocation(outputLocationString);  
   return;  
 }
 // ============================================================================

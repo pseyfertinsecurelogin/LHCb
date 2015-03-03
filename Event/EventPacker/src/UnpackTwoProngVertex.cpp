@@ -1,4 +1,4 @@
-// $Id: UnpackTwoProngVertex.cpp,v 1.2 2009-07-09 09:44:16 cattanem Exp $
+// $Id: UnpackTwoProngVertex.cpp,v 1.4 2009-11-07 12:20:39 jonrob Exp $
 // Include files 
 
 // from Gaudi
@@ -18,7 +18,6 @@
 // Declaration of the Algorithm Factory
 DECLARE_ALGORITHM_FACTORY( UnpackTwoProngVertex );
 
-
 //=============================================================================
 // Standard constructor, initializes variables
 //=============================================================================
@@ -28,6 +27,7 @@ UnpackTwoProngVertex::UnpackTwoProngVertex( const std::string& name,
 {
   declareProperty( "InputName" , m_inputName  = LHCb::PackedTwoProngVertexLocation::Default );
   declareProperty( "OutputName", m_outputName = LHCb::TwoProngVertexLocation::Default );
+  declareProperty( "AlwaysCreateOutput",         m_alwaysOutput = false     );
 }
 //=============================================================================
 // Destructor
@@ -40,10 +40,19 @@ UnpackTwoProngVertex::~UnpackTwoProngVertex() {}
 StatusCode UnpackTwoProngVertex::execute() {
 
   if ( msgLevel(MSG::DEBUG) ) debug() << "==> Execute" << endmsg;
-  LHCb::PackedTwoProngVertices* dst = get<LHCb::PackedTwoProngVertices>( m_inputName );
-  debug() << "Size of PackedRecVertices = " << dst->end() - dst->begin() << endmsg;
+
+  // If input does not exist, and we aren't making the output regardless, just return
+  if ( !m_alwaysOutput && !exist<LHCb::PackedTwoProngVertices>(m_inputName) )
+    return StatusCode::SUCCESS;
+
+  const LHCb::PackedTwoProngVertices* dst = 
+    getOrCreate<LHCb::PackedTwoProngVertices,LHCb::PackedTwoProngVertices>( m_inputName );
+  
+  if ( msgLevel(MSG::DEBUG) )
+    debug() << "Size of PackedRecVertices = " << dst->end() - dst->begin() << endmsg;
 
   LHCb::TwoProngVertices* newTwoProngVertices = new LHCb::TwoProngVertices();
+  newTwoProngVertices->reserve(dst->vertices().size());
   put( newTwoProngVertices, m_outputName );
 
   StandardPacker pack;
@@ -163,6 +172,7 @@ StatusCode UnpackTwoProngVertex::execute() {
       pids.push_back( myPid );
     }
     vert->setCompatiblePIDs( pids );
+
   }
 
   return StatusCode::SUCCESS;

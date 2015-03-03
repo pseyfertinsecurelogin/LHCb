@@ -1,7 +1,20 @@
-! $Id: release.notes,v 1.6 2009-01-08 15:53:41 cattanem Exp $
+! $Id: release.notes,v 1.10 2009-11-13 15:27:19 cattanem Exp $
 ! Package     : HltInterfaces
 ! Responsible : Gerhard Raven
 !------------------------------------------------------------------------------
+
+!============ Kernel/HltInterfaces v3r0 2009-11-13 ============================
+! 2009-11-10 - Patrick Koppenburg
+ - ReadRoutingBits : Do not break on missing RawBank
+
+! 2009-11-07 - Gerhard Raven
+ - remove IHltSummaryTool 
+
+! 2009-11-06 - Patrick Koppenburg
+ - New functions readRoutingBits and firexRoutingBits in namespace Hlt that
+   get quick access to routing bits.
+ - Depend on DAQEvent
+ - v2r1
 
 !============ Kernel/HltInterfaces v2r0 2009-01-08 ============================
 ! 2008-12-29 - Gerhard Raven

@@ -1,10 +1,32 @@
-! $Id: release.notes,v 1.136 2009-10-16 12:18:19 cattanem Exp $
+! $Id: release.notes,v 1.139 2009-11-13 14:14:22 cattanem Exp $
 ! Package     : CaloUtils
 ! Responsible : Olivier Deschamps odescham@in2p3.fr
 !------------------------------------------------------------------------------
 
+!========================== CaloUtils v8r8 2009-11-13 =========================
+! 2009-11-08 - Olivier Deschamps
+ - Calo2Dview : 
+  - speed-up processing 
+    - getunit() method : remove usage of  slow HistoID/std::string cast-conversion 
+    - fillCalo2D() method :reduce usage of histoXD() method in case of sequential filling of the same histogram
+  - implement  Profile2D view
+
+! 2009-10-25 - Vanya Belyaev
+
+ - CaloNeighbours:
+
+    make use of new typedef  
+
+ - CaloTrackTool:
+
+     use ICaloDigits4Track 
+
+ - cmt/requirements 
+    
+     version increment to v8r8 
+
 !========================== CaloUtils v8r7 2009-10-16 =========================
-! 2009-12-10 - Olivier Deschamps
+! 2009-10-12 - Olivier Deschamps
  - Calo2Dview : speed-up processing
 
 ! 2009-10-02 - Vanya BELYAEV

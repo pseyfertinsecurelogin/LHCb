@@ -4,6 +4,19 @@
 ! Purpose     : Package for the tracking event model classes
 !-----------------------------------------------------------------------------
 
+!======================= TrackEvent v5r2 2009-11-13 ==========================
+! 2009-11-13 - Wouter Hulsbergen
+ - 'Solve' compilation problem on windows.
+
+! 2009-11-11 - Wouter Hulsbergen
+ - Hide TrackFitResult::copy
+
+! 2009-11-10 - Wouter Hulsbergen
+ - Replace vector by range for nodes in Track. This should have been committed on 2009-10-08
+
+! 2009-10-23 - Wouter Hulsbergen
+ - Hide TrackFitResult copy constructor.
+
 !======================= TrackEvent v5r1 2009-10-16 ==========================
 ! 2009-10-08 - Wouter Hulsbergen
  - Added class 'TrackFitResult' to store trackfit related (transient) data in 

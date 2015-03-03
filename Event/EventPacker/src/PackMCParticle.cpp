@@ -1,4 +1,4 @@
-// $Id: PackMCParticle.cpp,v 1.4 2009-10-14 16:22:02 cattanem Exp $
+// $Id: PackMCParticle.cpp,v 1.8 2009-11-07 12:20:39 jonrob Exp $
 // Include files 
 
 // from Gaudi
@@ -27,7 +27,9 @@ PackMCParticle::PackMCParticle( const std::string& name,
 {
   declareProperty( "InputName" , m_inputName  = LHCb::MCParticleLocation::Default );
   declareProperty( "OutputName", m_outputName = LHCb::PackedMCParticleLocation::Default );
+  declareProperty( "AlwaysCreateOutput",         m_alwaysOutput = false     );
 }
+
 //=============================================================================
 // Destructor
 //=============================================================================
@@ -38,17 +40,21 @@ PackMCParticle::~PackMCParticle() {};
 //=============================================================================
 StatusCode PackMCParticle::execute() {
 
-  debug() << "==> Execute" << endmsg;
+  // If input does not exist, and we aren't making the output regardless, just return
+  if ( !m_alwaysOutput && !exist<LHCb::MCParticles>(m_inputName) ) return StatusCode::SUCCESS;
 
   LHCb::MCParticles* parts = getOrCreate<LHCb::MCParticles,LHCb::MCParticles>( m_inputName );
-  debug() << m_inputName << " contains " << parts->size()
-          << " MCParticles to convert." << endmsg;
+
+  if ( msgLevel(MSG::DEBUG) )
+    debug() << m_inputName << " contains " << parts->size()
+            << " MCParticles to convert." << endmsg;
   
   StandardPacker pack;
   
   LHCb::PackedMCParticles* out = new LHCb::PackedMCParticles();
   put( out, m_outputName );
 
+  out->reserve( parts->size() );
   for ( LHCb::MCParticles::const_iterator itP = parts->begin();
         parts->end() != itP; ++itP ) {
     LHCb::MCParticle* part = (*itP);

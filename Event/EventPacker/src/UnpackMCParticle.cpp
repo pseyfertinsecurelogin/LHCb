@@ -1,4 +1,4 @@
-// $Id: UnpackMCParticle.cpp,v 1.2 2009-07-09 09:44:16 cattanem Exp $
+// $Id: UnpackMCParticle.cpp,v 1.6 2009-11-07 12:20:39 jonrob Exp $
 // Include files 
 
 // from Gaudi
@@ -27,6 +27,7 @@ UnpackMCParticle::UnpackMCParticle( const std::string& name,
 {
   declareProperty( "InputName" , m_inputName  = LHCb::PackedMCParticleLocation::Default );
   declareProperty( "OutputName", m_outputName = LHCb::MCParticleLocation::Default );
+  declareProperty( "AlwaysCreateOutput",         m_alwaysOutput = false     );
 }
 //=============================================================================
 // Destructor
@@ -38,16 +39,23 @@ UnpackMCParticle::~UnpackMCParticle() {};
 //=============================================================================
 StatusCode UnpackMCParticle::execute() {
 
-  debug() << "==> Execute" << endmsg;
+  // CRJ : If packed data does not exist just return. Needed for packing of 
+  //     : spillover which is not neccessarily available for each event
+  if ( !m_alwaysOutput && !exist<LHCb::PackedMCParticles>(m_inputName) ) 
+    return StatusCode::SUCCESS;
 
-  LHCb::PackedMCParticles* dst = get<LHCb::PackedMCParticles>( m_inputName );
-  debug() << "Size of PackedMCParticles = " << dst->end() - dst->begin() << endmsg;
+  LHCb::PackedMCParticles* dst = 
+    getOrCreate<LHCb::PackedMCParticles,LHCb::PackedMCParticles>( m_inputName );
+
+  if ( msgLevel(MSG::DEBUG) )
+    debug() << "Size of PackedMCParticles = " << dst->end() - dst->begin() << endmsg;
 
   LHCb::MCParticles* newMCParticles = new LHCb::MCParticles();
   put( newMCParticles, m_outputName );
 
   StandardPacker pack;
   
+  newMCParticles->reserve( dst->size() );
   for ( std::vector<LHCb::PackedMCParticle>::const_iterator itS = dst->begin();
         dst->end() != itS; ++itS ) {
     const LHCb::PackedMCParticle& src = (*itS);
@@ -55,15 +63,15 @@ StatusCode UnpackMCParticle::execute() {
     LHCb::MCParticle* part = new LHCb::MCParticle( );
     newMCParticles->insert( part, src.key );
 
-    double px = pack.energy( src.px );
-    double py = pack.energy( src.py );
-    double pz = pack.energy( src.pz );
-    double mass = src.mass;
-    double E = sqrt( px*px + py*py + pz*pz + mass*mass );
-    Gaudi::LorentzVector p( px, py, pz , E );
+    const double px = pack.energy( src.px );
+    const double py = pack.energy( src.py );
+    const double pz = pack.energy( src.pz );
+    const double mass = src.mass;
+    const double E = std::sqrt( px*px + py*py + pz*pz + mass*mass );
+    const Gaudi::LorentzVector p( px, py, pz , E );
     part->setMomentum( p );
 
-    LHCb::ParticleID PID(src.PID);    
+    const LHCb::ParticleID PID(src.PID);    
     part->setParticleID( PID );
     
     int hintID;

@@ -1,4 +1,4 @@
-// $Id: UnpackTrack.cpp,v 1.11 2009-09-01 15:17:43 ocallot Exp $
+// $Id: UnpackTrack.cpp,v 1.14 2009-11-10 07:26:04 ocallot Exp $
 // Include files 
 
 // from Gaudi
@@ -27,6 +27,7 @@ UnpackTrack::UnpackTrack( const std::string& name,
 {
   declareProperty( "InputName" , m_inputName  = LHCb::PackedTrackLocation::Default );
   declareProperty( "OutputName", m_outputName = LHCb::TrackLocation::Default );
+  declareProperty( "AlwaysCreateOutput",         m_alwaysOutput = false     );
 }
 //=============================================================================
 // Destructor
@@ -40,10 +41,15 @@ StatusCode UnpackTrack::execute() {
 
   if ( msgLevel(MSG::DEBUG) ) debug() << "==> Execute" << endmsg;
 
-  LHCb::PackedTracks* dst = get<LHCb::PackedTracks>( m_inputName );
-  debug() << "Size of PackedTracks = " << dst->end() - dst->begin() << endmsg;
+  // If input does not exist, and we aren't making the output regardless, just return
+  if ( !m_alwaysOutput && !exist<LHCb::PackedTracks>(m_inputName) ) return StatusCode::SUCCESS;
+
+  const LHCb::PackedTracks* dst = getOrCreate<LHCb::PackedTracks,LHCb::PackedTracks>( m_inputName );
+  if ( msgLevel(MSG::DEBUG) )
+    debug() << "Size of PackedTracks = " << dst->end() - dst->begin() << endmsg;
 
   LHCb::Tracks* newTracks = new LHCb::Tracks();
+  newTracks->reserve( dst->tracks().size() );
   put( newTracks, m_outputName );
 
   StandardPacker pack;
@@ -59,8 +65,8 @@ StatusCode UnpackTrack::execute() {
     track->setNDoF(       src.nDoF );
     track->setFlags(      src.flags );
     if ( dst->version() > 2 ) {
-      track->setLikelihood(       src.likelihood );
-      track->setGhostProbability( src.ghostProba );
+      track->setLikelihood(       pack.fltPacked( src.likelihood ) );
+      track->setGhostProbability( pack.fltPacked( src.ghostProba ) );
     }
     std::vector<LHCb::LHCbID> lhcbids(  src.lastId - src.firstId  ) ;
     std::vector<LHCb::LHCbID>::iterator lhcbit = lhcbids.begin() ;

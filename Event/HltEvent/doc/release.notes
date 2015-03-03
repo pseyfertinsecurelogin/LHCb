@@ -4,6 +4,13 @@
 ! Purpose     : Event model for HLT tracks
 !-----------------------------------------------------------------------------
 
+!======================== HltEvent v8r19 2009-11-13 ==========================
+! 2009-11-13 - Marco Cattaneo
+ - remove hack for Gaudi v21r1 to link dictionary on windows from requirements
+
+! 2009-11-07 - Gerhard Raven
+ - remove obsolete HltSummary.xml
+
 !======================== HltEvent v8r18 2009-06-16 ==========================
 ! 2009-06-11 - Juan PALACIOS
  - Remove operators == and < for HltDecReport and HltObjectSummary, and 

@@ -1,4 +1,4 @@
-// $Id: PixelLadder.h,v 1.1.1.1 2009-09-17 16:07:20 cocov Exp $
+// $Id: PixelLadder.h,v 1.3 2009-10-28 13:02:28 cocov Exp $
 #ifndef VELOPIXDET_PIXELLADDER_H 
 #define VELOPIXDET_PIXELLADDER_H 1
 
@@ -12,6 +12,7 @@
  */
 
 #include "GaudiKernel/Point3DTypes.h"
+#include <vector>
 
 class PixelLadder {
 public: 
@@ -19,15 +20,17 @@ public:
   PixelLadder(Gaudi::XYZPoint pRef ,int n);
   virtual ~PixelLadder( ); ///< Destructor
 
-  Gaudi::XYZPoint ReferencePoint() const;
-  int nChip() const;
-
+  inline Gaudi::XYZPoint ReferencePoint() const {return m_pRef;}
+  inline int nChip() const {return m_NChip;} 
+  int edgeOrientation(int chipNum) const { return m_edgesOrientation[chipNum];}
   void setReferencePoint( Gaudi::XYZPoint p);
   void setNChip( int n );
+  void setEdgesOrientation( std::vector< int > orientation );
 
 private:
   Gaudi::XYZPoint m_pRef;
   int m_NChip;
+  std::vector<int> m_edgesOrientation;
 };
 
 

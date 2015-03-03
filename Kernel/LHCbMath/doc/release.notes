@@ -6,6 +6,75 @@
 !               All headers included in directory LHCbMath
 !-----------------------------------------------------------------------------
 
+!========================= LHCbMath v3r14 2009-11-13 =========================
+! 2009-10-23 - Vanya Belyaev
+
+ - add new tests for CPU comparison of Lomont-type 
+      & Knuth-type compare.
+
+0%   10   20   30   40   50   60   70   80   90   100%
+|----|----|----|----|----|----|----|----|----|----|
+***************************************************
+ Knuth/GSL-compare 4.0001e+06 Time User   : Tot= 24.8  [s] Ave/Min/Max= 1.24(+-0.428)/    0/    2 [ms] #=20000
+ Lomont-compare    3.9996e+06 Time User   : Tot= 5.86  [s] Ave/Min/Max=  293(+-  455)/    0/1e+03 [us] #=20000
+
+  Bottom line:  Lomont-type compare is approximately 4 times more CPU efficient 
+
+
+! 2009-10-23 - Vanya Belyaev
+
+ - LHCbMath/LHCbMath.h
+    
+      reimplement the function "round" using boost:numeric 
+
+ - tests/TestRound.cpp 
+     
+      new test/illustration for new "round" function.
+
+    Three functions are compared:
+
+     1. "old-round" (based on Knuth-compare) 
+     2. modified round (based on Lomont-compare 
+     2  New implementation using boost::numeric::converter 
+  
+   Results:  
+ 
+      - No difference in result has been found , 
+      - Large difference in CPU has been detected: 
+
+    Differences: 0
+
+0%   10   20   30   40   50   60   70   80   90   100%
+|----|----|----|----|----|----|----|----|----|----|
+***************************************************
+ round-Knuth     -1.3e+07
+                Time User   : Tot= 17.2  [s] Ave/Min/Max= 34.5(+-  182)/    0/1e+03 [us] #=500000
+ round&Lomont    -1.3e+07
+                Time User   : Tot= 4.91  [s] Ave/Min/Max= 9.82(+- 98.6)/    0/1e+03 [us] #=500000
+ round-New       -1.3e+07
+                Time User   : Tot= 2.03  [s] Ave/Min/Max= 4.06(+- 63.6)/    0/1e+03 [us] #=500000
+
+
+     Lomont-based rounding is approximately factor of 4 faster, 
+     and the new rounding is approximately factor of 10 faster...
+    
+
+! 2009-10-22 - Vanya Belyaev
+
+ - python/LHCbMath/Types.h
+
+     add more decorations for lines & planes & their operations, like 
+      intersections, impact parameters, distances, parallel, etc..
+      
+ - python/LHCbMath/tests.py
+
+     add the tests for new functions 
+
+ - cmt/requirements 
+
+     version increment to v3r14 
+
+
 !========================= LHCbMath v3r13 2009-10-16 =========================
 ! 2009-10-07 - Gerhard Raven
  - faster (but equivalent) check for parallel tracks in GeomFun.icpp

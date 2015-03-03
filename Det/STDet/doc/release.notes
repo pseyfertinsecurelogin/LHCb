@@ -1,7 +1,19 @@
-!$Id: release.notes,v 1.180 2009-10-16 12:33:31 cattanem Exp $
+!$Id: release.notes,v 1.185 2009-11-13 14:29:51 cattanem Exp $
 !Package         : STDet
 !Package manager : M. Needham
 !-------------------------------------------------------------------------
+
+!======================== STDet v4r15 2009-11-13 =========================
+! 2009-11-06 M Needham
+ - Add sensor capacitance methods
+
+! 2009-10-28 J Luisier
+ - Bug fix in setNoise, setCMnoise and setADCConversion methods
+ - Bug fix in case of unexisting cmNoise paramVector in Noise condition
+
+! 2009-10-21 M Needham
+ - Add conditions for common mode noise. 
+ - allow updating of noise condition 
 
 !======================== STDet v4r14 2009-10-16 =========================
 ! 2009-09-15 - Jeroen van Tilburg

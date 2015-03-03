@@ -1,4 +1,4 @@
-// $Id: DVAlgorithm.h,v 1.42 2009-09-14 15:54:06 jpalac Exp $ 
+// $Id: DVAlgorithm.h,v 1.46 2009-11-10 10:41:38 jpalac Exp $ 
 // ============================================================================
 #ifndef DAVINCIKERNEL_DVALGORITHM_H
 #define DAVINCIKERNEL_DVALGORITHM_H 1
@@ -23,6 +23,7 @@
 // from DaVinciKernel
 // ============================================================================
 #include "Kernel/IPhysDesktop.h"
+#include "Kernel/IOnOffline.h"
 #include "Kernel/IVertexFit.h"
 #include "Kernel/IGeomDispCalculator.h"
 #include "Kernel/IParticleFilter.h"
@@ -33,7 +34,7 @@
 #include "Kernel/IWriteSelResult.h"
 #include "Kernel/IDistanceCalculator.h"
 #include "Kernel/IPVReFitter.h"
-class IRelatedPVFinder;
+#include "Kernel/IRelatedPVFinder.h"
 // ============================================================================
 #include "Kernel/IMassFit.h"
 #include "Kernel/IMassVertexFit.h"
@@ -77,6 +78,8 @@ class IRelatedPVFinder;
  *
  *  - <b>PVReFitters</b> : the map for possible primary vertex re-fitters 
  *     @see IPVReFitter
+ *
+ *  - <b>ReFitPVs</b> : bool. Perform automatic PV re-fitting when asking for best PV.
  *
  *  - <b>DecayDescriptor</b>  : the decay descriptor ofthe algorithm 
  *               in the spirit of (MC)DecayFinder tool by Olivier Dormond.
@@ -138,6 +141,12 @@ public:
     return getTool<IPhysDesktop>(m_desktopName,m_desktop,this) ;
   }
 
+  /// accessor for IOnOffline tool
+  inline IOnOffline* onOffline() const
+  {
+    return getTool<IOnOffline>("OnOfflineTool", m_onOffline, this) ;    
+  }
+  
   /**
    * direct const access to the tool that calculates the Particle->PV
    * weighted relations
@@ -146,7 +155,9 @@ public:
    **/
   inline const IRelatedPVFinder* relatedPVFinder() const
   {
-    return desktop()->relatedPVFinder();
+    if ( 0!=m_pvRelator ) return m_pvRelator;
+    const std::string& pvRelatorName = onOffline()->relatedPVFinderType();
+    return getTool<IRelatedPVFinder>(pvRelatorName, m_pvRelator, this) ;      
   }
   /**
    * direct const access to container of input primary vertices.
@@ -155,7 +166,7 @@ public:
    **/
   inline const LHCb::RecVertex::Container* primaryVertices() const
   {
-    return desktop()->primaryVertices();
+    return m_PVs;
   }
 
   /**
@@ -379,16 +390,20 @@ public:
   /// Accessor for WriteSelResult Tool
   inline IWriteSelResult* writeSelResult()const
   {
-    return getTool<IWriteSelResult>(m_writeSelResultName,m_writeSelResult);
+    return getTool<IWriteSelResult>(m_writeSelResultName,
+                                    m_writeSelResult);
   }
   /// Tagging Tool
   inline IBTaggingTool* flavourTagging()const{
-    return getTool<IBTaggingTool>(m_taggingToolName,m_taggingTool);
+    return getTool<IBTaggingTool>(m_taggingToolName, 
+                                  m_taggingTool, 
+                                  this );
   }
   
   /// Descnedants
   inline IParticleDescendants* descendants()const{
-    return getTool<IParticleDescendants>(m_descendantsName,m_descendants);
+    return getTool<IParticleDescendants>(m_descendantsName,
+                                         m_descendants);
   }
   // ==========================================================================
   /** Accessor for ParticlePropertySvc
@@ -445,6 +460,17 @@ protected:
     }
     return t ;
   } 
+
+  /**
+   * Access to the list of TES input locations given by the InputLocations
+   * property
+   *
+   * @return vector or strings with TES input locations
+   */
+  inline const std::vector<std::string>& inputLocations() 
+  {
+    return m_inputLocations;
+  }
 
 protected:
   
@@ -504,6 +530,9 @@ private:
   /// Method to load all tools. 
   /// The base class provides an instance of all type of tools
   StatusCode loadTools() ;
+
+  /// Load the primart vertices from 
+  void loadPVs();
 
   /// Method to create SelResult container
   StatusCode fillSelResult() ;
@@ -596,6 +625,13 @@ protected:
   std::string m_writeSelResultName;
   /// Reference to CheckOverlap
   mutable IWriteSelResult* m_writeSelResult;
+
+  /// 
+  mutable IOnOffline* m_onOffline;
+
+  ///
+  mutable IRelatedPVFinder* m_pvRelator;
+  
   
   /// Reference to ParticlePropertySvc
   mutable const LHCb::IParticlePropertySvc* m_ppSvc;
@@ -659,9 +695,14 @@ private:
   bool m_preloadTools;
   /// InputLocations
   std::vector<std::string> m_inputLocations ;
-
+  /// User-defined Particle->PV relations locations
   std::vector<std::string> m_p2PVInputLocations ;
-
+  /// Pointer to event's RecVertices
+  LHCb::RecVertex::Container* m_PVs;
+  /// TES location of input PVs.
+  std::string m_PVLocation;
+  /// Don't use PVs
+  bool m_noPVs;
 };
 // ==========================================================================
 /*  Accessor for ParticlePropertySvc
@@ -704,7 +745,7 @@ DVAlgorithm::pid ( const LHCb::ParticleID& id ) const
   const LHCb::ParticleProperty* pp = ppSvc()->find ( id ) ;
   if ( 0 == pp ) { Error ( "pid() : invalid LHCb::ParticleProperty!" ) ; }
   return pp ;
-} 
+}
 // ==========================================================================
 // The END 
 // ==========================================================================

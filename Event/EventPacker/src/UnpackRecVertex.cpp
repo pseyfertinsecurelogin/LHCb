@@ -1,4 +1,4 @@
-// $Id: UnpackRecVertex.cpp,v 1.3 2009-07-09 09:44:16 cattanem Exp $
+// $Id: UnpackRecVertex.cpp,v 1.5 2009-11-07 12:20:39 jonrob Exp $
 // Include files 
 
 // from Gaudi
@@ -28,6 +28,7 @@ UnpackRecVertex::UnpackRecVertex( const std::string& name,
 {
   declareProperty( "InputName" , m_inputName  = LHCb::PackedRecVertexLocation::Primary );
   declareProperty( "OutputName", m_outputName = LHCb::RecVertexLocation::Primary );
+  declareProperty( "AlwaysCreateOutput",         m_alwaysOutput = false     );
 }
 //=============================================================================
 // Destructor
@@ -40,10 +41,18 @@ UnpackRecVertex::~UnpackRecVertex() {}
 StatusCode UnpackRecVertex::execute() {
 
   if ( msgLevel(MSG::DEBUG) ) debug() << "==> Execute" << endmsg;
-  LHCb::PackedRecVertices* dst = get<LHCb::PackedRecVertices>( m_inputName );
-  debug() << "Size of PackedRecVertices = " << dst->end() - dst->begin() << endmsg;
+
+  // If input does not exist, and we aren't making the output regardless, just return
+  if ( !m_alwaysOutput && !exist<LHCb::PackedRecVertices>(m_inputName) ) return StatusCode::SUCCESS;
+
+  const LHCb::PackedRecVertices* dst = 
+    getOrCreate<LHCb::PackedRecVertices,LHCb::PackedRecVertices>( m_inputName );
+
+  if ( msgLevel(MSG::DEBUG) )
+    debug() << "Size of PackedRecVertices = " << dst->end() - dst->begin() << endmsg;
 
   LHCb::RecVertices* newRecVertices = new LHCb::RecVertices();
+  newRecVertices->reserve(dst->vertices().size());
   put( newRecVertices, m_outputName );
 
   StandardPacker pack;
