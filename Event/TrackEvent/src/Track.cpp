@@ -233,10 +233,10 @@ void Track::addToMeasurements( MeasurementContainer& measurements )
 // Remove an LHCbID from the list of LHCbIDs associated to the Track
 //=============================================================================
 void Track::removeFromLhcbIDs( const LHCbID& value )
-{
-  std::vector<LHCbID>::iterator iter =
-    std::remove( m_lhcbIDs.begin(), m_lhcbIDs.end(), value );
-  m_lhcbIDs.erase( iter, m_lhcbIDs.end() );
+{ 
+  LHCbIDContainer::iterator pos =
+    std::lower_bound( m_lhcbIDs.begin(), m_lhcbIDs.end(), value ) ;
+  m_lhcbIDs.erase( pos ) ;
   const Measurement* meas = measurement( value );
   if( meas ) removeFromMeasurements( meas );
 };
@@ -277,13 +277,67 @@ void Track::removeFromNodes( Node* node )
 };
 
 //=============================================================================
+// Add LHCbIDs to track
+//=============================================================================
+bool Track::addToLhcbIDs( const LHCb::LHCbID& value ) 
+{
+  LHCbIDContainer::iterator pos =
+    std::lower_bound( m_lhcbIDs.begin(),m_lhcbIDs.end(),value ) ;
+  bool rc = (pos == m_lhcbIDs.end()) || !( (*pos) == value ) ;
+  if( rc ) m_lhcbIDs.insert( pos, value ) ;
+  return rc ;
+}
+
+//=============================================================================
+// Add LHCbIDs to track
+//=============================================================================
+bool Track::addSortedToLhcbIDs( const LHCbIDContainer& ids ) 
+{
+  LHCbIDContainer result( ids.size() + m_lhcbIDs.size() ) ;
+  LHCbIDContainer::iterator pos =
+    std::set_union( ids.begin(), ids.end(),
+		    m_lhcbIDs.begin(), m_lhcbIDs.end(),
+		    result.begin()) ;
+  bool rc = pos == result.end() ;
+  result.erase( pos, result.end() ) ;
+  m_lhcbIDs.swap( result ) ;
+  return rc ;
+}  
+
+
+//=============================================================================
+// Compute the number of LHCbIDs that two tracks have in common
+//=============================================================================
+size_t Track::nCommonLhcbIDs(const Track& rhs) const
+{
+  // adapted from std::set_intersection
+  size_t rc(0) ;
+  LHCbIDContainer::const_iterator first1 = m_lhcbIDs.begin() ;
+  LHCbIDContainer::const_iterator last1  = m_lhcbIDs.end() ;
+  LHCbIDContainer::const_iterator first2 = rhs.m_lhcbIDs.begin() ;
+  LHCbIDContainer::const_iterator last2  = rhs.m_lhcbIDs.end() ;
+  while (first1 != last1 && first2 != last2)
+    if (*first1 < *first2)
+      ++first1;
+    else if (*first2 < *first1)
+      ++first2;
+    else {
+      ++first1;
+      ++first2;
+      ++rc ;
+    }
+  return rc ;
+}
+
+//=============================================================================
 // Check whether the given LHCbID is on the Track
 //=============================================================================
-bool Track::isOnTrack( const LHCbID& value ) const
+bool Track::isOnTrack( const LHCb::LHCbID& value ) const
 {
-  return ( std::find( m_lhcbIDs.begin(), m_lhcbIDs.end(), value )
-           != m_lhcbIDs.end() );
-};
+  LHCbIDContainer::const_iterator pos =
+    std::lower_bound( m_lhcbIDs.begin(), m_lhcbIDs.end(), value ) ;
+  return pos != m_lhcbIDs.end() && *pos == value ;
+} ;
 
 //=============================================================================
 // Check whether the given Measurement is on the Track

@@ -4,6 +4,18 @@
 ! Purpose     : Package for the tracking event model classes
 !-----------------------------------------------------------------------------
 
+!======================= TrackEvent v4r21 2009-06-29 =========================
+! 2009-06-26 - Wouter Hulsbergen
+ - added method to set all LHCbIDs on track at once
+ - added method to compute overlap in sets of LHCbIDs
+
+! 2009-06-24 - Wouter Hulsbergen
+ - bug fix in Track::addToLhcbIDs
+
+! 2009-06-23 - Wouter Hulsbergen
+ - LHCbIDs on track are now sorted
+ - added State locations for vertex and last measurement
+
 !======================= TrackEvent v4r20 2009-05-06 =========================
 ! 2009-04-01 - David Hutchcroft
  - Added Track AdditionalInfo enums: nPRVeloRZExpected and nPRVelo3DExpected

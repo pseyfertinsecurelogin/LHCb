@@ -1,4 +1,4 @@
-// $Id: LoKiMCDict.h,v 1.12 2008-12-18 15:24:34 ibelyaev Exp $
+// $Id: LoKiMCDict.h,v 1.14 2009-06-28 18:23:33 ibelyaev Exp $
 // ============================================================================
 #ifndef LOKI_LOKIMCDICT_H 
 #define LOKI_LOKIMCDICT_H 1
@@ -21,6 +21,9 @@
 #include "LoKi/Trees.h"
 #include "LoKi/TreeOps.h"
 #include "LoKi/MCDecays.h"
+// ============================================================================
+#include "LoKi/IMCDecay.h"
+#include "LoKi/FinderDict.h"
 // ============================================================================
 #include "LoKi/IMCHybridTool.h"
 #include "LoKi/MCHybridEngine.h"
@@ -138,6 +141,12 @@ namespace
     Decays::Tree_<const LHCb::MCParticle*>           m_tree1 ;
     Decays::Trees::Any_<const LHCb::MCParticle*>     m_tree3 ;
     LoKi::Dicts::TreeOps<const LHCb::MCParticle*>    m_trops ;   
+    // ========================================================================
+    // Decay Finder 
+    // ========================================================================
+    Decays::IMCDecay::Finder m_finder ;
+    Decays::IMCDecay::Tree   m_tree   ;
+    LoKi::Dicts::FinderDicts_<const LHCb::MCParticle*> m_finderDicts ;
     // ========================================================================
    } ;  
   //===========================================================================

@@ -1,4 +1,4 @@
-// $Id: PackTrack.cpp,v 1.5 2009-01-21 14:17:53 ocallot Exp $
+// $Id: PackTrack.cpp,v 1.7 2009-06-24 13:58:58 ocallot Exp $
 // Include files 
 
 // from Gaudi
@@ -43,7 +43,7 @@ StatusCode PackTrack::execute() {
   LHCb::Tracks* tracks = get<LHCb::Tracks>( m_inputName );
   LHCb::PackedTracks* out = new LHCb::PackedTracks();
   put( out, m_outputName );
-  out->setVersion( 1 );
+  out->setVersion( 2 );
 
   StandardPacker pack;
   
@@ -107,7 +107,8 @@ void PackTrack::convertState ( const LHCb::State* state, LHCb::PackedTracks* out
   double p = 0.;
   if ( 0 != state->qOverP() ) p = 1./ state->qOverP();
   newState.p    = pack.energy  ( p );
-
+  p = pack.energy( newState.p );  //== Get the coded value in case of saturation, to code properly the error later
+  
   // convariance Matrix
   std::vector<double> err;
   err.push_back( sqrt( state->errX2() ) );

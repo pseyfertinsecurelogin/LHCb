@@ -1,4 +1,4 @@
-// $Id: Reference.h,v 1.4 2007-08-11 20:17:01 ibelyaev Exp $
+// $Id: Reference.h,v 1.5 2009-06-28 13:26:09 ibelyaev Exp $
 // ============================================================================
 #ifndef LOKI_REFERENCE_H 
 #define LOKI_REFERENCE_H 1 
@@ -12,6 +12,8 @@
 namespace LoKi 
 {
   // ==========================================================================
+  template <class TYPE> class ConstReference ;
+  // ==========================================================================
   /** @class Reference Reference.h LoKi/Reference.h
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date   2007-06-08
@@ -20,45 +22,72 @@ namespace LoKi
   class Reference 
   {
   public: 
+    // ========================================================================
     /// Standard constructor
-    Reference( TYPE& data ) : m_data( &data ) {} ;
+    Reference( TYPE& data ) : m_data( &data ) {} 
     /// destructor
-    ~Reference(){};
+    ~Reference(){}
     /// just to please the compiler: NO USE IS ALLOWED 
     Reference() : m_data ( 0 ) {}
+    // ========================================================================
   public:
+    // ========================================================================
     /// get the content: conversion to the reference 
     inline          TYPE& get () const 
     {
       // check the validity of the data:
       LoKi::Assert ( 0 != m_data , "LoKi::Reference::get(): Invalid pointer!" ) ; 
       return *m_data ; 
-    } ;
+    } 
     /// THE MAIN METHOD: conversion to reference  
     inline operator TYPE&     () const { return   get() ; }
     /// dereferencing: conversion  to reference 
     inline TYPE& operator*    () const { return   get() ; }
+    // ========================================================================
   public:
+    // ========================================================================
+    /// get the data, technical method, please do not use it!!!
+    TYPE* i_data() const { return m_data ; }
+    // ========================================================================
+  public:
+    // ========================================================================
     /// assignement from the value 
-    inline Reference& operator=( TYPE& value ) 
-    { m_data = &value ; return *this ; } ;
+    Reference& operator=( TYPE&            value ) 
+    { m_data = &value        ; return *this ; } 
+    /// assignement from the value 
+    Reference& operator=( const Reference& value ) 
+    { m_data =  value.m_data ; return *this ; } 
+    // ========================================================================
   public:
+    // ========================================================================
     /// comparison
     bool operator==( const Reference& right ) const 
-    { 
-      return &right == this || right.m_data == m_data ;
-    }
+    { return &right == this || right.m_data == m_data ; }
     /// comparison
-    bool operator==( const TYPE& right ) const 
-    { 
-      return &right == m_data ;
-    }
+    bool operator==( const ConstReference<TYPE>& right ) const ;
+    /// comparison
+    bool operator==( const TYPE& right ) const { return &right == m_data ; }
+    // ========================================================================
   private:
-    // the underlying pointer 
-    TYPE* m_data ; ///< the underlying pointer 
+    // ========================================================================
+    /// the underlying pointer 
+    TYPE* m_data ;                                    // the underlying pointer 
+    // ========================================================================
   };
   // ==========================================================================
-} //end of namespace LoKi
+} //                                                      end of namespace LoKi
+// ============================================================================
+#include "LoKi/ConstReference.h"
+// ============================================================================
+namespace LoKi 
+{
+  // ==========================================================================
+  /// comparison
+  template <class TYPE>
+  bool Reference<TYPE>::operator==( const ConstReference<TYPE>& right ) const 
+  { return right.i_data() == m_data ; }
+  // ==========================================================================
+} //                                                      end of namespace LoKi 
 // ============================================================================
 // The END 
 // ============================================================================

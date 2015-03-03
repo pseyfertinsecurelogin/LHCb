@@ -1,4 +1,4 @@
-// $Id: UnpackTrack.cpp,v 1.5 2009-01-21 14:17:53 ocallot Exp $
+// $Id: UnpackTrack.cpp,v 1.8 2009-06-24 13:58:58 ocallot Exp $
 // Include files 
 
 // from Gaudi
@@ -58,10 +58,18 @@ StatusCode UnpackTrack::execute() {
     track->setChi2PerDoF( pack.fltPacked( src.chi2PerDoF ) );
     track->setNDoF(       src.nDoF );
     track->setFlags(      src.flags );
-    for ( int kId = src.firstId; src.lastId > kId; ++kId ) {
+    std::vector<LHCb::LHCbID> lhcbids(  src.lastId - src.firstId  ) ;
+    std::vector<LHCb::LHCbID>::iterator lhcbit = lhcbids.begin() ;
+    for ( int kId = src.firstId; src.lastId > kId; ++kId, ++lhcbit ) {
       unsigned int id = *(dst->beginIds()+kId);
-      track->addToLhcbIDs( LHCb::LHCbID( id ) );
+      *lhcbit = LHCb::LHCbID( id ) ;
     }
+    // schema change: sorting no longer needed when we write DSTs with sorted lhcbids
+    if( dst->version() <= 1 ) {
+      std::sort( lhcbids.begin(), lhcbids.end() ) ;
+    }
+    track->addSortedToLhcbIDs( lhcbids ) ;
+
     for ( int kSt = src.firstState; src.lastState > kSt; ++kSt ) {
       LHCb::PackedState pSta = *(dst->beginState()+kSt);
       convertState( pSta, track );
