@@ -1,4 +1,4 @@
-// $Id: FilterAlg.cpp 53291 2010-08-05 14:35:53Z ibelyaev $
+// $Id: FilterAlg.cpp 124231 2011-06-05 11:23:58Z ibelyaev $
 // ============================================================================
 // Include files 
 // ============================================================================
@@ -12,9 +12,26 @@
 // ============================================================================
 /** @file 
  *  Implementation file for class LoKi::FilterAlg
- *  @see LOKi::FilterAlg
+ *
+ *  This file is a part of LoKi project - 
+ *    "C++ ToolKit  for Smart and Friendly Physics Analysis"
+ *
+ *  The package has been designed with the kind help from
+ *  Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas, 
+ *  contributions and advices from G.Raven, J.van Tilburg, 
+ *  A.Golutvin, P.Koppenburg have been used in the design.
+ *
+ *  By usage of this code one clearly states the disagreement 
+ *  with the smear campaign of Dr.O.Callot et al.: 
+ *  ``No Vanya's lines are allowed in LHCb/Gaudi software.''
+ *
+ *  @see LoKi::FilterAlg
  *  @date 2008-09-23 
- *  @author Vanya  BELYAEV Ivan.Belyaev@inkhef.nl
+ *  @author Vanya  BELYAEV Ivan.Belyaev@nikhef.nl
+ *
+ *                    $Revision: 124231 $
+ *  Last modification $Date: 2011-06-05 13:23:58 +0200 (Sun, 05 Jun 2011) $
+ *                 by $Author: ibelyaev $
  */
 // ============================================================================
 /*  standard constructor 
@@ -30,11 +47,11 @@ LoKi::FilterAlg::FilterAlg
 ( const std::string& name ,                     // the algorithm instance name 
   ISvcLocator*       pSvc )                  // pointer to the service locator
   : GaudiAlgorithm ( name , pSvc ) 
-  // the type/name for LoKi/Bender "hybrid" factory 
+// the type/name for LoKi/Bender "hybrid" factory 
   , m_factory ( "<UNSPECIFIED>" )
-  // the filter/code criteria itself 
+// the filter/code criteria itself 
   , m_code   ( "<unspecified>" ) 
-  // the preambulo 
+// the preambulo 
   , m_preambulo_ () 
   // the preambulo 
   , m_preambulo  ()
@@ -70,20 +87,39 @@ LoKi::FilterAlg::FilterAlg
 // ============================================================================
 LoKi::FilterAlg::~FilterAlg () {}
 // ============================================================================
+// add to preambulo 
+// ============================================================================
+void LoKi::FilterAlg::addToPreambulo 
+( const std::string&              item ) 
+{
+  m_preambulo_.push_back ( item ) ;
+  m_preambulo_updated = true ;
+}
+// ============================================================================
+// set preambulo 
+// ============================================================================
+void LoKi::FilterAlg::setPreambulo  
+( const std::vector<std::string>& items )
+{
+  m_preambulo_        = items ;
+  m_preambulo_updated = true  ;
+}
+// ============================================================================
 // update the factory 
 // ============================================================================
 void LoKi::FilterAlg::updateFactory ( Property& /* p */ ) // update the factory 
 {
   // no action if not yet initialized 
   if ( Gaudi::StateMachine::INITIALIZED > FSMState() ) { return ; }
-  /// mark as "to-be-updated" 
+  //
+  // mark as "to-be-updated" 
   m_factory_updated = true ;
   //
   // postpone the action 
   if ( !m_code_updated || !m_preambulo_updated ) { return ; } 
-  
+  //
   // perform the actual immediate decoding  
-  
+  //
   StatusCode sc = decode () ;
   Assert ( sc.isSuccess () , "Error from LoKi::FilterAlg::decode()" , sc ) ;
   

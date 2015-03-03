@@ -1,5 +1,5 @@
 package LHCbSys
-version           v32r3
+version           v32r3g1
 
 branches doc cmt test
 
@@ -47,7 +47,7 @@ use DigiEvent             v2r17   Event   # Marco Cattaneo and sub-det experts
 use EventAssoc            v5r1    Event   # Juan Palacios
 use EventBase             v2r5p1  Event   # Marco Cattaneo, Gloria Corti
 use EventPacker           v2r9    Event   # Olivier Callot
-use GenEvent              v5r7    Event   # Gloria Corti
+use GenEvent              v6r1    Event   # Gloria Corti
 use HltEvent              v9r2    Event   # Jose Angel Hernando-Morata
 use L0Event               v19r3   Event   # Olivier Deschamps, Julien Cogan
 use LinkerEvent           v3r8    Event   # Olivier Callot
@@ -55,9 +55,10 @@ use LinkerInstances       v3r5    Event   # Thomas Ruf
 use LumiEvent             v3r1    Event   # Jaap Panman
 use MCEvent               v2r19   Event   # Gloria Corti and sub-det experts
 use PackedEvent           v4r5    Event   # Marco Cattaneo, Olivier Callot
-use PhysEvent             v11r13  Event   # Patrick Koppenburg, Juan Palacios
+use PhysEvent             v11r14  Event   # Patrick Koppenburg, Juan Palacios
 use RecEvent              v2r37   Event   # Marco Cattaneo and sub-det experts
 use RecreatePIDTools      v1r3    Event   # Chris Jones
+use SwimmingEvent         v1r0    Event   # Roel Aaij, Vava Gligorov
 use TrackEvent            v5r12   Event   # Wouter Hulsbergen
 use VeloEvent             v16r10  Event   # Tomasz Szumlak, Chris Parkes
 
@@ -69,7 +70,7 @@ use IOExample             v3r5    Ex      # Marco Cattaneo
 # Packages without Hat, cannot have comment field.
 
 # Maintainer M.Cattaneo
-use GaudiConf             v13r10
+use GaudiConf             v15r2
 
 # Maintainer J.Palacios
 use GaudiConfUtils        v1r0
@@ -83,14 +84,14 @@ use GaudiObjDesc          v11r12
 use HepMCBack             v1r1    Gen     # Gloria Corti, Patrick Robbe
 
 # Kernel packages
-use HistoStrings          v1r0    Kernel  # Vanya Belyaev 
+use HistoStrings          v1r0    Kernel  # Vanya Belyaev
 use HltInterfaces         v4r3    Kernel  # Patrick Koppenburg
 use KernelSys             v12r1   Kernel  # Marco Cattaneo
 use LHCbAlgs              v2r38   Kernel  # Marco Cattaneo
 use LHCbKernel            v13r1   Kernel  # Marco Cattaneo
 use LHCbMath              v3r25   Kernel  # Juan Palacios
 use MCInterfaces          v1r13   Kernel  # Marco Cattaneo et al.
-use PartProp              v1r9    Kernel  # Vanya Belyaev 
+use PartProp              v1r9    Kernel  # Vanya Belyaev
 use Relations             v6r0p1  Kernel  # Ivan Belyaev
 use XMLSummaryBase        v1r2    Kernel  # Rob Lambert
 use XMLSummaryKernel      v1r0p2  Kernel  # Rob Lambert
@@ -104,9 +105,11 @@ use MuonDAQ               v4r9    Muon    # Alessia Satta
 use MuonInterfaces        v1r2p1  Muon    # Alessia Satta
 use MuonKernel            v4r0    Muon    # Andrei Tsaregorodtsev
 
+use RootCnv               v1r8    Online  # Markus Frank (also in ONLINE project)
+
 use OTDAQ                 v7r9    OT      # Wouter Hulsbergen
 
-use LoKiCore              v11r0   Phys    # Ivan Belyaev
+use LoKiCore              v11r3   Phys    # Ivan Belyaev
 use LoKiGen               v10r1   Phys    # Ivan Belyaev
 use LoKiHlt               v3r7    Phys    # Ivan Belyaev
 use LoKiMC                v10r0   Phys    # Ivan Belyaev
@@ -128,6 +131,7 @@ use TsaKernel             v3r6    Tf      # Matt Needham
 
 use CondDBEntityResolver  v5r2    Tools   # Marco Clemencic
 use CondDBUI              v3r9    Tools   # Marco Clemencic
+use FileStager            v1r3    Tools   # Roel Aaij
 use XmlTools              v6r4    Tools   # Marco Clemencic
 
 use TrackInterfaces       v4r19   Tr      # Matt Needham
@@ -136,7 +140,7 @@ use TrackKernel           v1r7    Tr      # Wouter Hulsbergen
 # Declare this as a container package
 apply_pattern container_package
 
-# Allow the generation of QMTest summary 
+# Allow the generation of QMTest summary
 apply_pattern QMTestSummarize
 
 # Allow the generation of QMTests

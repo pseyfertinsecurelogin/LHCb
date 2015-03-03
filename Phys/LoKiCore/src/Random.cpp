@@ -1,4 +1,4 @@
-// $Id: Random.cpp 87549 2010-10-10 15:39:45Z ibelyaev $
+// $Id: Random.cpp 124234 2011-06-05 12:14:22Z ibelyaev $
 // ============================================================================
 // Include files 
 // ============================================================================
@@ -20,10 +20,31 @@
 #include "LoKi/Services.h"
 #include "LoKi/Random.h"
 // ============================================================================
+#ifdef __INTEL_COMPILER       // Disable ICC remark
+#pragma warning(disable:1572) // floating-point equality and inequality comparisons are unreliable
+#endif
+// ============================================================================
 /** @file
  *  the implementation file for functors from the namespace LoKi::Random
+ *
+ *  This file is a part of LoKi project - 
+ *    "C++ ToolKit  for Smart and Friendly Physics Analysis"
+ *
+ *  The package has been designed with the kind help from
+ *  Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas, 
+ *  contributions and advices from G.Raven, J.van Tilburg, 
+ *  A.Golutvin, P.Koppenburg have been used in the design.
+ *
+ *  By usage of this code one clearly states the disagreement 
+ *  with the smear campaign of Dr.O.Callot et al.: 
+ *  ``No Vanya's lines are allowed in LHCb/Gaudi software.''
+ *
  *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
  *  @date   2008-03-19
+ *
+ *                     $Revision: 124234 $
+ *   Last modification $Date: 2011-06-05 14:14:22 +0200 (Sun, 05 Jun 2011) $
+ *                  by $Author: ibelyaev $
  */
 // ============================================================================
 // constructor from the numbers 

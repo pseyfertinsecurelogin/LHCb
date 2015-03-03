@@ -1,4 +1,4 @@
-// $Id: FilterAlg.h 53291 2010-08-05 14:35:53Z ibelyaev $
+// $Id: FilterAlg.h 124231 2011-06-05 11:23:58Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_FILTERALG_H 
 #define LOKI_FILTERALG_H 1
@@ -8,6 +8,25 @@
 // GaudiAlg 
 // ============================================================================
 #include "GaudiAlg/GaudiAlgorithm.h"
+// ============================================================================
+/** @file LoKi/FilterAlg.h
+ *
+ *  This file is a part of LoKi project - 
+ *    "C++ ToolKit  for Smart and Friendly Physics Analysis"
+ *
+ *  The package has been designed with the kind help from
+ *  Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas, 
+ *  contributions and advices from G.Raven, J.van Tilburg, 
+ *  A.Golutvin, P.Koppenburg have been used in the design.
+ *
+ *  By usage of this code one clearly states the disagreement 
+ *  with the campain of Dr.O.Callot et al.: 
+ *  ``No Vanya's lines are allowed in LHCb/Gaudi software.''
+ *
+ *                    $Revision: 124231 $
+ *  Last modification $Date: 2011-06-05 13:23:58 +0200 (Sun, 05 Jun 2011) $
+ *                 by $Author: ibelyaev $
+ */
 // ============================================================================
 namespace LoKi 
 {
@@ -123,6 +142,10 @@ namespace LoKi
     // check the nesessity of updated 
     inline bool updateRequired () const 
     { return m_factory_updated || m_code_updated || m_preambulo_updated ; }
+    // add to preambulo 
+    void addToPreambulo ( const std::string&              item ) ;
+    // set the preambulo
+    void setPreambulo   ( const std::vector<std::string>& items ) ;
     // ========================================================================
   public:
     /// =======================================================================
@@ -160,7 +183,10 @@ namespace LoKi
       if ( sc.isFailure() ) 
       { return Error("Unable to decode functor '" + code() + "'" , sc ) ; }
       //
-      debug() << "Requested code: '" << code () << "' -> Decoded functor :'" << functor << "'" << endmsg ;
+      debug() << "Requested code: \n'" 
+              << code () 
+              << "'\n -> Decoded functor :\n'" 
+              << functor << "'" << endmsg ;
       //
       m_factory_updated   = false ;
       m_code_updated      = false ;
@@ -200,9 +226,9 @@ namespace LoKi
     // ========================================================================
   };
   // ==========================================================================
-} // end of namespace LoKi 
+} //                                                      end of namespace LoKi 
 // ============================================================================
-// The END
+//                                                                      The END
 // ============================================================================
 #endif // LOKI_FILTERALG_H
 // ============================================================================

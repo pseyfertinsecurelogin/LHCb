@@ -1,7 +1,14 @@
-! $Id: release.notes,v 1.154 2010-05-26 09:31:28 cattanem Exp $
 ! Package     : PhysEvent 
 ! Responsible : P. Koppenburg, J.P. Palacios
 !----------------------------------------------------------------------------
+
+!========================= PhysEvent v11r14 2011-06-14 =========================
+! 2011-06-04 - Vanya Belyaev
+ - add LHCb::Particle::Selection into dictionary 
+   it helps with GaudiPython/Bender
+
+! 2011-04-27 - Patrick Koppenburg
+ - Remove obsolete FilterCriterionResult. Completes Task #12929.
 
 !========================= PhysEvent v11r13 2011-01-31 =========================
 ! 2011-01-13 - Marco Cattaneo
