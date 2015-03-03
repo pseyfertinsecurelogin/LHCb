@@ -5,7 +5,7 @@
  *  Header file for poisson efficiency functor : RichPoissonEffFunctor
  *
  *  CVS Log :-
- *  $Id: RichPoissonEffFunctor.h,v 1.5 2007-02-01 17:24:55 jonrob Exp $
+ *  $Id: RichPoissonEffFunctor.h,v 1.7 2007-03-19 15:03:29 jonrob Exp $
  *
  *  @author Chris Jones  Christopher.Rob.Jones@cern.ch
  *  @date   2003-09-08
@@ -21,15 +21,9 @@
 // Gaudi
 #include "GaudiKernel/MsgStream.h"
 
-//-----------------------------------------------------------------------------
-/** @namespace Rich
- *
- *  General namespace for RICH software
- *
- *  @author Chris Jones  Christopher.Rob.Jones@cern.ch
- *  @date   08/07/2004
- */
-//-----------------------------------------------------------------------------
+// boost
+#include "boost/format.hpp"
+
 namespace Rich
 {
 
@@ -119,8 +113,8 @@ namespace Rich
       inline PoissonEffFunctorResult operator() ( const double top,
                                                   const double bot ) const
       {
-        return PoissonEffFunctorResult( ( bot>0 ? top/bot                          : 0 ),
-                                        ( bot>0 ? sqrt((top/bot)*(1.-top/bot)/bot) : 0 ),
+        return PoissonEffFunctorResult( ( bot>0 ? 100.0 * top/bot                          : 0 ),
+                                        ( bot>0 ? 100.0 * sqrt((top/bot)*(1.-top/bot)/bot) : 0 ),
                                         this );
       }
 
@@ -141,7 +135,7 @@ namespace Rich
   inline MsgStream & operator << ( MsgStream & os,
                                    const PoissonEffFunctorResult & res )
   {
-    return os << format( res.parent()->printFormat().c_str(), 100.*res.result(), 100.*res.error() );
+    return os << boost::format( res.parent()->printFormat() ) % res.result() % res.error() ;
   }
 
 }

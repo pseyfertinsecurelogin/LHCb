@@ -4,7 +4,17 @@
 ! Purpose     : Base package for RICH Reconstruction Packages
 !-----------------------------------------------------------------------------
 
-!===================== RichRecBase v3r1 2006-02-06 =======================
+!===================== RichRecBase v3r2 2007-03-20 =======================
+! 2007-03-19 - Chris Jones
+ - Replace use of Gaudi format with boost::format to fix various issues
+
+! 2007-03-09 - Chris Jones
+ - Remove doxygen comments for namespaces (in separate file)
+ - Adapt to use of HPD pixel cluster in reconstruction
+ - Update MC truth interface for new HPD pixel clusters
+ - Update pixel creators to be able to include clustering information
+
+!===================== RichRecBase v3r1 2007-02-06 =======================
 ! 2007-02-06 - Marco Cattaneo
  - Remove LHCbDefinitions includes
 

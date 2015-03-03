@@ -19,6 +19,8 @@ namespace Tsa{
 
     Line(const double m , const double c);
 
+    Line(const double m , const double y, const double x);
+
     ~Line(){}
 
     double value(const double x) const;
@@ -46,6 +48,12 @@ inline Tsa::Line::Line(const double y1, const double y2,
   m_m = (y2-y1)/(x2-x1);
   m_c = y1 - (m_m*x1);
   
+}
+
+inline Tsa::Line::Line(const double m, const double y, const double z):
+m_m(m),
+m_c(y - (m*z)){
+  // constructor from slope and constatn
 }
 
 inline double Tsa::Line::value(const double x) const{

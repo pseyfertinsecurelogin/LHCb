@@ -1,8 +1,8 @@
-// $Id: ITTDataSvc.h,v 1.2 2006-12-06 14:35:19 mneedham Exp $
+// $Id: ITTDataSvc.h,v 1.3 2007-03-13 13:45:46 cattanem Exp $
 #ifndef _ITTDataSvc_H
 #define _ITTDataSvc_H
 
-/** @class ITTDataSvc ITTDataSvc Tsa/ITTDataSvc.h
+/** @class ITTDataSvc ITTDataSvc.h TsaKernel/ITTDataSvc.h
  *
  *  Interface to data svc
  *

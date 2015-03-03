@@ -5,7 +5,7 @@
  *  Header file for poisson efficiency functor : RichStatDivFunctor
  *
  *  CVS Log :-
- *  $Id: RichStatDivFunctor.h,v 1.5 2007-02-01 17:24:55 jonrob Exp $
+ *  $Id: RichStatDivFunctor.h,v 1.7 2007-03-19 15:03:29 jonrob Exp $
  *
  *  @author Chris Jones  Christopher.Rob.Jones@cern.ch
  *  @date   2003-09-08
@@ -22,15 +22,9 @@
 // Gaudi
 #include "GaudiKernel/MsgStream.h"
 
-//-----------------------------------------------------------------------------
-/** @namespace Rich
- *
- *  General namespace for RICH software
- *
- *  @author Chris Jones  Christopher.Rob.Jones@cern.ch
- *  @date   08/07/2004
- */
-//-----------------------------------------------------------------------------
+// boost
+#include "boost/format.hpp"
+
 namespace Rich
 {
 
@@ -142,9 +136,9 @@ namespace Rich
   inline MsgStream & operator << ( MsgStream & os,
                                    const StatDivFunctorResult & res )
   {
-    return os << format( res.parent()->printFormat().c_str(), res.result(), res.error() );
+    return os << boost::format( res.parent()->printFormat() ) % res.result() % res.error() ;
   }
-
+  
 }
 
 #endif // RICHKERNEL_RICHSTATDIVFUNCTOR_H

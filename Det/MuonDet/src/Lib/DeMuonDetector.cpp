@@ -1,4 +1,4 @@
-// $Id: DeMuonDetector.cpp,v 1.31 2007-02-28 18:33:18 marcocle Exp $
+// $Id: DeMuonDetector.cpp,v 1.34 2007-03-21 15:50:04 marcocle Exp $
 
 // Include files
 #include "MuonDet/DeMuonDetector.h"
@@ -28,14 +28,15 @@ DeMuonDetector::DeMuonDetector() {
   m_detSvc = 0;
   m_stations = 0;
   m_regions = 0;
+  m_chamberLayout = 0;
 }
 
 /// Standard Destructor
 DeMuonDetector::~DeMuonDetector()
 {
-  delete m_chamberLayout; 
+  if (m_chamberLayout) delete m_chamberLayout; 
 }
-  
+
 const CLID& DeMuonDetector::clID () const 
 { 
   return DeMuonDetector::classID() ; 
@@ -107,10 +108,10 @@ StatusCode DeMuonDetector::Hit2GapNumber(Gaudi::XYZPoint myPoint,
       
       isIn = geoGVol->isInside(myPoint);
       if(isIn) {
-	DeMuonGasGap*  myGap =  dynamic_cast<DeMuonGasGap*>( *itGap ) ;
-	gapNumber = myGap->gasGapNumber();
-	sc = StatusCode::SUCCESS;
-	break;
+        DeMuonGasGap*  myGap =  dynamic_cast<DeMuonGasGap*>( *itGap ) ;
+        gapNumber = myGap->gasGapNumber();
+        sc = StatusCode::SUCCESS;
+        break;
       }
     }
     if(isIn) break;
@@ -268,28 +269,22 @@ StatusCode DeMuonDetector::Pos2StChamberNumber(const double x,
 					       const double y,
 					       int station,
 					       int & chamberNumber, int& regNum) const {
-  StatusCode sc = StatusCode::FAILURE;
   //Hit Z is not know (giving only the station).
   //Take the chamber Z to update the hit later on.
   Gaudi::XYZPoint hitPoint(x,y,0); 
 
-  sc = Hit2ChamberNumber(hitPoint,station,chamberNumber,regNum);
-
-  return sc;
+  return Hit2ChamberNumber(hitPoint,station,chamberNumber,regNum);
 }
 
 StatusCode DeMuonDetector::Pos2StGapNumber(const double x,
                                            const double y,
                                            int station, int & gapNumber,
                                            int & chamberNumber, int& regNum)const {
-  StatusCode sc = StatusCode::FAILURE;
   //Hit Z is not know (giving only the station).
   //Take the chamber Z to update the hit later on.
   Gaudi::XYZPoint hitPoint(x,y,0); 
   
-  sc = Hit2GapNumber(hitPoint,station,gapNumber,chamberNumber,regNum);
-
-  return sc;
+  return Hit2GapNumber(hitPoint,station,gapNumber,chamberNumber,regNum);
 }
 
 
@@ -298,12 +293,11 @@ StatusCode DeMuonDetector::Pos2StChamberPointer(const double x,
                                                 int station,
                                                 DeMuonChamber* & 
                                                 chamberPointer)const{
-  StatusCode sc = StatusCode::FAILURE;
   //Hit Z is not know (giving only the station).
   //Take the chamber Z to update the hit later on.
   Gaudi::XYZPoint hitPoint(x,y,0); 
   int chamberNumber(-1),regNum(-1);
-  sc = Hit2ChamberNumber(hitPoint,station,chamberNumber,regNum);
+  StatusCode sc = Hit2ChamberNumber(hitPoint,station,chamberNumber,regNum);
   if((regNum > -1) && (chamberNumber>-1)) {
     DeMuonChamber*  myPtr =  getChmbPtr(station,regNum,chamberNumber) ;
     chamberPointer = myPtr;
@@ -318,8 +312,7 @@ StatusCode DeMuonDetector::Pos2ChamberPointer(const double x,
                                               const double z,
                                               DeMuonChamber* & chamberPointer)const{
   //Dummy conversion z <-> station  
-  StatusCode sc = Pos2StChamberPointer(x,y,getStation(z),chamberPointer);
-  return sc;
+  return Pos2StChamberPointer(x,y,getStation(z),chamberPointer);
 }
 
 
@@ -329,13 +322,10 @@ StatusCode DeMuonDetector::Pos2ChamberNumber(const double x,
 					     int & chamberNumber, int& regNum)const{
   MsgStream msg( msgSvc(), name() );
 
-  StatusCode sc = StatusCode::FAILURE;
   //Z is know/provided.
   Gaudi::XYZPoint hitPoint(x,y,z);   int sta = getStation(z);
 
-  sc = Hit2ChamberNumber(hitPoint,sta,chamberNumber,regNum);
-
-  return sc;
+  return Hit2ChamberNumber(hitPoint,sta,chamberNumber,regNum);
 }
 
 
@@ -344,13 +334,12 @@ StatusCode DeMuonDetector::Pos2GapNumber(const double x,
 					 const double y,
 					 const double z, int & gapNumber,
 					 int & chamberNumber, int& regNum)const{
-  StatusCode sc = StatusCode::FAILURE;
+
   //Z is know/provided.
-  Gaudi::XYZPoint hitPoint(x,y,z);   int sta = getStation(z);
+  Gaudi::XYZPoint hitPoint(x,y,z);
+  int sta = getStation(z);
 
-  sc = Hit2GapNumber(hitPoint,sta,gapNumber,chamberNumber,regNum);
-
-  return sc;
+  return Hit2GapNumber(hitPoint,sta,gapNumber,chamberNumber,regNum);
 }
 
 
@@ -358,11 +347,10 @@ StatusCode DeMuonDetector::Pos2ChamberTile(const double x,
 					   const double y,
 					   const double z,
 					   LHCb::MuonTileID& tile)const{
-  StatusCode sc = StatusCode::SUCCESS;
   int dumChmb(-1), reg(-1);
 
   //Return the chamber number
-  sc = Pos2ChamberNumber(x,y,z,dumChmb,reg);
+  StatusCode sc = Pos2ChamberNumber(x,y,z,dumChmb,reg);
 
   //Convert chamber number into a tile
   tile = m_chamberLayout->tileChamberNumber(getStation(z),reg,dumChmb);
@@ -610,7 +598,7 @@ DeMuonDetector::listOfPhysChannels(Gaudi::XYZPoint my_entry, Gaudi::XYZPoint my_
   }
 
   //Getting the grid pointer
-  Condition* aGrid = myChPtr->condition((myChPtr->getGridName()).data());
+  Condition* aGrid = myChPtr->condition(myChPtr->getGridName());
   MuonChamberGrid* theGrid = dynamic_cast<MuonChamberGrid*>(aGrid);
 
   //Convert relative distances into absolute ones
@@ -679,7 +667,7 @@ StatusCode DeMuonDetector::getPCCenter(MuonFrontEndID fe,int chamber,
   float dx = box->xHalfLength();  
   float dy = box->yHalfLength();
   Condition* aGrid = 
-  myChPtr->condition((myChPtr->getGridName()).data());
+  myChPtr->condition(myChPtr->getGridName());
   MuonChamberGrid* theGrid = dynamic_cast<MuonChamberGrid*>(aGrid);
   double xcenter_norma=-1;
   double ycenter_norma=-1;  
@@ -706,12 +694,11 @@ StatusCode  DeMuonDetector::Chamber2Tile(int  chaNum, int station, int region,
 };
 
 
-StatusCode  DeMuonDetector::fillGeoInfo()
+void DeMuonDetector::fillGeoInfo()
 {
   MsgStream msg( msgSvc(), name() );
   bool debug=false;
   
-  StatusCode sc = StatusCode::SUCCESS; 
   IDetectorElement::IDEContainer::iterator itSt=this->childBegin();
   int station=0;
   int region=0;
@@ -756,7 +743,7 @@ StatusCode  DeMuonDetector::fillGeoInfo()
         m_gapPerRegion[station*4+region]=gaps;
         m_gapPerFE[station*4+region]=gaps/2; 
         
-        Condition* bGrid = (chPt)->condition((chPt->getGridName()).data());
+        Condition* bGrid = (chPt)->condition(chPt->getGridName());
         MuonChamberGrid* theGrid = dynamic_cast<MuonChamberGrid*>(bGrid);
         
         int nreadout=1;
@@ -982,12 +969,10 @@ StatusCode  DeMuonDetector::fillGeoInfo()
   m_phCardiacORNY[1][18]=1;
   m_phCardiacORNY[0][19]=1;
 
-
-
-  return sc;
+  return;
 };
 
-StatusCode  DeMuonDetector::fillGeoArray()
+void DeMuonDetector::fillGeoArray()
 {
   MsgStream msg( msgSvc(), name() );
 
@@ -1130,8 +1115,7 @@ StatusCode  DeMuonDetector::fillGeoArray()
     station++;      
   }
   
-
-  return StatusCode::SUCCESS;
+  return;
 }
 
 

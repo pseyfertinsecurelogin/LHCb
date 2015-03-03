@@ -1,11 +1,18 @@
 ! ------------------------------------------------------------------------------
-! $Id: release.notes,v 1.22 2007-03-05 10:34:25 cattanem Exp $ 
+! $Id: release.notes,v 1.24 2007-03-14 15:48:46 cattanem Exp $ 
 ! ------------------------------------------------------------------------------
 ! Package     : Det/DetDescChecks
 ! Responsible : Vanya Belyaev Ivan.Belyaev@itep.ru
 ! Purpose     : Collection of useful components for checking of 
 !               Detector Description, Material Budget etc 
 ! ------------------------------------------------------------------------------
+
+!======================= DetDescChecks v4r3 2007-03-14 ========================
+! 2007-03-14 - Marco Cattaneo
+ - Use DDDB instead of explicitly using SQLDDDB, update options accordingly
+
+! 2007-03-14 - Marco Clemencic
+ - VolumeCheck.py updated to use SQLDDDB
 
 !======================= DetDescChecks v4r2 2007-03-05 ========================
 ! 2007-03-05 - Marco Cattaneo

@@ -1,4 +1,4 @@
-// $Id: CondDBAccessSvc.h,v 1.24 2007-02-22 14:20:19 marcocle Exp $
+// $Id: CondDBAccessSvc.h,v 1.26 2007-03-22 16:04:12 marcocle Exp $
 #ifndef COMPONENT_CONDDBACCESSSVC_H 
 #define COMPONENT_CONDDBACCESSSVC_H 1
 
@@ -23,6 +23,7 @@ class CondDBCache;
 class IRndmGenSvc;
 
 namespace cool {
+  class Application;
   class RecordSpecification;
 }
 
@@ -229,6 +230,18 @@ private:
   /// (and needing the AttributeListSpecification pointers).
   static unsigned long long s_instances;
 
+  /// Pointer to a shared instance of the COOL Application
+  static std::auto_ptr<cool::Application> s_coolApplication;
+
+  /// Flag to turn off/on the CORAL LFCReplicaService (option UseLFCReplicaSvc, default = false).
+  /// Setting this option works only if it is set for the first CondDBAccessSvc initialized
+  /// because of a "feature" of CORAL.
+  bool m_useLFCReplicaSvc;
+
+  /// Flag to turn off/on the CORAL Automatinc connection clean up
+  /// (option EnableCoralConnectionCleanUp, default = false).
+  /// Setting this option works only if it is set for the first CondDBAccessSvc initialized.
+  bool m_coralConnCleanUp;
 
   // -------------------------------------
   // ---------- Time Out Thread ----------
@@ -306,7 +319,8 @@ private:
         if ( last_access.sec == m_owner->lastAccess().sec ) { // no further accesses
 
           if ( m_owner->database()->isOpen() ) { // close the database
-            log << MSG::INFO << "Disconnect from database" << endmsg;
+            log << MSG::INFO << "Disconnect from database after being idle for "
+                << m_owner->m_connectionTimeOut << "s (will reconnect if needed)"<< endmsg;
             m_owner->database()->closeDatabase();
           }
 

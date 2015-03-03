@@ -4,6 +4,13 @@
 ! Purpose     : Core Tsa classes
 !----------------------------------------------------------------------------
 
+!======================= TsaKernel v2r3 2007-03-13 ==========================
+! 2007-03-13 - Marco Cattaneo
+ - fix two more doxygen warnings
+
+! 2007-03-13 - M. Needham
+ - add constructor to Line class
+
 !======================= TsaKernel v2r2 2007-03-01 ==========================
 ! 2007-03-01 - Marco Cattaneo
  - Fix many doxygen warnings.

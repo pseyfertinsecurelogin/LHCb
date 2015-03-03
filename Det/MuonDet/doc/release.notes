@@ -1,7 +1,19 @@
-! $Id: release.notes,v 1.86 2007-03-05 07:19:36 cattanem Exp $
+! $Id: release.notes,v 1.91 2007-03-21 16:02:38 cattanem Exp $
 ! Package     : MuonDet
 ! Responsible : Alessia Satta
 !----------------------------------------------------------------------------
+
+!========================= MuonDet v6r2 2007-03-21 ========================
+! 2007-03-21 - Marco Clemencic
+ - Fix in DeMuonDetector::~DeMuonDetector: m_chamberLayout was deleted, but
+   neither initialized to 0 nor checked.
+
+! 2007-03-19 - Marco Cattaneo
+ - Clean up some StatusCodes
+
+! 2007-03-16 - Marco Clemencic
+ - Replaced calls to std::string::data() with std::string::c_str() or removed
+   where not needed.
 
 !========================= MuonDet v6r1 2007-03-05 ========================
 ! 2007-03-05 - Marco Cattaneo
