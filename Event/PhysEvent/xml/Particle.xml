@@ -69,6 +69,14 @@
         <enumval name="Chi2OfDirectionConstrainedFit" value="11" desc="Chi2 of Direction Constrained Fit" />
         <enumval name="Chi2OfVertexConstrainedFit"    value="12" desc="Chi2 of Vertex  Constrained Fit"   />
         <enumval name="Chi2OfParticleReFitter"        value="15" desc="Chi2 From Particle ReFitter"       />
+        <enumval name="Cone1Index" value="9000"                 desc="First index for cone variables, cone size 1" />
+        <enumval name="Cone2Index" value="Cone1Index+14"        desc="First index for cone variables, cone size 2" />
+        <enumval name="Cone3Index" value="Cone2Index+14"        desc="First index for cone variables, cone size 3" />
+        <enumval name="Cone4Index" value="Cone3Index+14"        desc="First index for cone variables, cone size 4" />
+        <enumval name="EWCone1Index" value="Cone4Index+14"      desc="First index for EW cone variables, cone size 1" />
+        <enumval name="EWCone2Index" value="EWCone1Index+23"    desc="First index for EW cone variables, cone size 2" />
+        <enumval name="EWCone3Index" value="EWCone2Index+23"    desc="First index for EW cone variables, cone size 3" />
+        <enumval name="EWCone4Index" value="EWCone3Index+23"    desc="First index for EW cone variables, cone size 4" />
         <enumval name="FirstJetIndex"        value="9500"       desc="The first index allocated for jet-related studies"   />
         <enumval name="JetActiveArea"                           desc="Jet Active Area estimation"   />
         <enumval name="JetActiveAreaError"                      desc="Uncertanty in Jet Active Area evaluation"   />
@@ -101,7 +109,7 @@
       <constructor
         argList="const LHCb::ParticleID&amp; pid, const int key"
         desc="Constructor from ParticleID and key"
-        initList = "KeyedObject&lt;int&gt;( key ), m_particleID(pid), m_measuredMass(-1.0), m_measuredMassErr(0.0), m_momentum(0.0, 0.0, 0.0, -1*Gaudi::Units::GeV), m_referencePoint(0.0, 0.0, -1*Gaudi::Units::km), m_momCovMatrix(), m_posCovMatrix(), m_posMomCovMatrix(), m_extraInfo()"
+        initList = "KeyedObject&lt;int&gt;(key), m_particleID(pid), m_measuredMass(-1.0), m_measuredMassErr(0.0), m_momentum(0.0, 0.0, 0.0, -1*Gaudi::Units::GeV), m_referencePoint(0.0, 0.0, -1*Gaudi::Units::km), m_momCovMatrix(), m_posCovMatrix(), m_posMomCovMatrix(), m_extraInfo()"
         />
 
       <method

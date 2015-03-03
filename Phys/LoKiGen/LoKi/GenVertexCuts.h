@@ -1,4 +1,4 @@
-// $Id: GenVertexCuts.h 134316 2012-01-29 13:55:54Z ibelyaev $
+// $Id: GenVertexCuts.h 135241 2012-02-13 12:14:55Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_GENVERTEXCUTS_H 
 #define LOKI_GENVERTEXCUTS_H 1
@@ -34,8 +34,8 @@
  *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
  *  @date 2006-02-08 
  *   
- *                    $Revision: 134316 $
- *  Last modification $Date: 2012-01-29 14:55:54 +0100 (Sun, 29 Jan 2012) $
+ *                    $Revision: 135241 $
+ *  Last modification $Date: 2012-02-13 13:14:55 +0100 (Mon, 13 Feb 2012) $
  *                 by $Author: ibelyaev $
  */
 // ============================================================================
@@ -177,6 +177,16 @@ namespace LoKi
      *  @date 2006-02-08
      */     
     const   LoKi::GenVertices::PositionZ                   GVZ    ;
+    // ========================================================================
+    /** @var GVRHO
+     *  trivial function which returns the rho(zylindrical)-position of 
+     *  HepMC::GenVertex 
+     *  @see HepMC::GenVertex 
+     *  @see LoKi::GenVertices::Rho
+     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+     *  @date 2012-02-13
+     */     
+    const   LoKi::GenVertices::Rho                        GVRHO  ;
     // ========================================================================
     /** @var GVT
      *  trivial function which returns the T-position of 

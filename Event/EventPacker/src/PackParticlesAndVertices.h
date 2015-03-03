@@ -24,12 +24,16 @@
 
 /** @class PackParticlesAndVertices PackParticlesAndVertices.h
  *   
- *
+ *  Packs Particles and Vertices
+ *  
  *  @author Olivier Callot
  *  @date   2012-01-23
  */
-class PackParticlesAndVertices : public GaudiAlgorithm {
+class PackParticlesAndVertices : public GaudiAlgorithm 
+{
+
 public: 
+
   /// Standard constructor
   PackParticlesAndVertices( const std::string& name, ISvcLocator* pSvcLocator );
 
@@ -38,22 +42,40 @@ public:
   virtual StatusCode initialize();    ///< Algorithm initialization
   virtual StatusCode execute   ();    ///< Algorithm execution
 
+private:
+
   typedef LHCb::Relation1D<LHCb::Particle, LHCb::VertexBase> RELATION;
 
-protected:
-  void selectContainers ( DataObject* obj, std::vector<std::string>& names, unsigned int classID, bool forceRead=false );
+private:
+
+  /// Select the data containers in the TES, of a given type, to write out
+  void selectContainers ( DataObject* obj,
+                          std::vector<std::string>& names, 
+                          const unsigned int classID, 
+                          const bool forceRead=false );
   
-  void packAParticleContainer ( LHCb::Particles* parts, LHCb::PackedParticles& pparts );
+  /// Pack a Particle container
+  void packAParticleContainer ( const LHCb::Particles* parts, 
+                                LHCb::PackedParticles& pparts );
   
-  void packAVertexContainer ( LHCb::Vertices* verts, LHCb::PackedVertices& pverts );
+  /// pack a vertex container
+  void packAVertexContainer ( const LHCb::Vertices* verts, 
+                              LHCb::PackedVertices& pverts );
   
-  void packARecVertexContainer ( LHCb::RecVertices* rverts, LHCb::PackedRecVertices& prverts );
+  /// Pack a RecVertex container
+  void packARecVertexContainer ( const LHCb::RecVertices* rverts, 
+                                 LHCb::PackedRecVertices& prverts );
   
-  void packARelationContainer ( RELATION* rels, LHCb::PackedRelations& prels );
+  /// Pack a relations container
+  void packARelationContainer ( const RELATION* rels, 
+                                LHCb::PackedRelations& prels );
   
-  void packAParticleLHCbIDContainer ( DaVinci::Map::Particle2LHCbIDs* partIds, LHCb::PackedParticle2Ints& pPartIds );
+  /// Pack a Particle to LHCbID map
+  void packAParticleLHCbIDContainer ( const DaVinci::Map::Particle2LHCbIDs* partIds, 
+                                      LHCb::PackedParticle2Ints& pPartIds );
   
 private:
+
   std::string m_inputStream; ///< Input stream root
   bool m_alwaysOutput;      ///< Flag to turn on the creation of output, even when input is missing
   bool m_forceReading;      ///< If true, read the containers from file. Else (def) take what is in TES
@@ -68,4 +90,5 @@ private:
   unsigned int m_clIdPart2Vert;
   unsigned int m_clIdPart2Ints;
 };
+
 #endif // PACKPARTICLESANDVERTICES_H

@@ -1,8 +1,33 @@
-!--------------------------------------------------------------------------
+!--------------------------------------------------------------------------------
 ! Package Kernel/LHCbKernel
 ! Package manager: M.Cattaneo
 ! Purpose: LHCb specific Kernel classes
-!--------------------------------------------------------------------------
+!--------------------------------------------------------------------------------
+
+!========================= LHCbKernel v13r9 2012-02-28 =========================
+! 2012-02-28 - Marco Cattaneo
+ - Fix requirements to set -DGOD_NOALLOC when tag 'target-dbg' is set, previuosly
+   used tag 'debug' that no longer exists
+
+! 2012-02-27 - Marco Cattaneo
+ - Fix an icc compilation warning in previous commit
+
+! 2012-02-23 - Olivier Callot
+ - Create an FTChannelID for the Fibre Tracker of the upgrade. 
+   This is a stripped down version of OTChannelID. 
+   Added it to LHCbID with all usual methods to get, set and test.
+
+! 2012-02-22 - Chris Jones
+ - Fix the 64-bit reference packing on 32 bit builds.
+
+! 2012-02-21 - Chris Jones
+ - Add a new set of 64-bit reference packing methods to the StandardPacker
+
+! 2012-02-13 - Marco Cattaneo
+ - Fix dictionary warning from previous commit
+
+! 2012-02-10 - Marco Clemencic
+ - Minor clean up in IAccept.
 
 !========================= LHCbKernel v13r8 2012-01-31 =========================
 ! 2012-01-31 - Olivier Callot

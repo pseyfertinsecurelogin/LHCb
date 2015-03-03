@@ -4,6 +4,17 @@
 ! Purpose     : Event Model classes for persistency of the swimming result
 !-----------------------------------------------------------------------------
 
+!========================= SwimmingEvent v1r2 2012-02-28 ========================
+! 2012-02-28 - Marco Cattaneo
+ - Fix requirements to set -DGOD_NOALLOC when tag 'target-dbg' is set, previuosly
+   used tag 'debug' that no longer exists
+
+!========================= SwimmingEvent v1r1 2012-02-14 ========================
+! 2012-02-14 - Roel Aaij
+ - Add -DGOD_NOALLOC to cppflags for debug and WIN32 builds.
+ - Add dictionaries for to allow interaction with map<string, double>
+   from python.
+
 !========================== SwimmingEvent v1r0 2011-10-24 =======================
 ! 2011-10-21 - Roel Aaij
  - Make the package compile on Windows by setting some ifdefs in the convenience

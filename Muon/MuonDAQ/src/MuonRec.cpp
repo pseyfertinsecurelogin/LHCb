@@ -29,6 +29,7 @@ MuonRec::MuonRec( const std::string& name,
   if(context()=="TAE")  m_forceResetDAQ=true;
   m_Exccounter=0;
   
+  declareProperty( "RawEventLocation", m_rawEventLoc = "");
 
 }
 
@@ -94,8 +95,18 @@ StatusCode MuonRec::execute() {
   // and make output vectors of MuonCoords one for each station
   std::vector<std::pair<LHCb::MuonTileID,unsigned int > > decoding;
 
+  StatusCode sc= StatusCode::FAILURE;
+  if ( "" == m_rawEventLoc ) sc= m_muonBuffer->getTileAndTDC(decoding);
+  else {
+     if ( exist<LHCb::RawEvent>(m_rawEventLoc,false) )  {  // false: don't use RootInTES
+       LHCb::RawEvent* raw = get<LHCb::RawEvent>(m_rawEventLoc,false);
+       if((raw->banks(RawBank::Muon)).size()!=0){
+         if( UNLIKELY( msgLevel(MSG::DEBUG) ) ) debug() << "MuonRawEvent found at location " << m_rawEventLoc << endmsg;
+         sc=m_muonBuffer->getTileAndTDC(raw,decoding,"");
+       } else if( UNLIKELY( msgLevel(MSG::DEBUG) ) ) debug() << "No muon raw banks at location " << m_rawEventLoc << endmsg;
+     } else   if( UNLIKELY( msgLevel(MSG::DEBUG) ) ) debug() << "Path " << m_rawEventLoc << " does not exist" << endmsg;
+  }
 
-  StatusCode sc=	m_muonBuffer->getTileAndTDC(decoding);
   if(sc.isFailure()){
     error()<<" error in decoding the muon raw data "<<endmsg;
     return sc;

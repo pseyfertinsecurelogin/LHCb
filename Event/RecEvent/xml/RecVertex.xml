@@ -10,7 +10,7 @@
     
     <class
 	author = "Juan Palacios"
-	desc = "Base class from which all vertices are derived"
+	desc = "Reconstructed Vertices"
 	name = "RecVertex"
 	stdVectorTypeDef="TRUE"
 	keyedContTypeDef = "TRUE"
@@ -34,7 +34,21 @@
       <typedef
 	  type   = "Gaudi::NamedRange_&lt;ConstVector&gt;"
 	  def    = "Range"
-	  desc   = "For uniform access to containers in TES (KeyedContainer,SharedContainer) "
+	  desc   = "For uniform access to containers in TES (KeyedContainer,SharedContainer)"
+	  access = "PUBLIC"
+	  />
+
+      <typedef
+	  type   = "std::pair&lt;const LHCb::Track*,float&gt;"
+	  def    = "TrackWithWeight"
+	  desc   = "Type for storing a Track pointer with its associated weight"
+	  access = "PUBLIC"
+	  />
+
+      <typedef
+	  type   = "std::vector&lt;TrackWithWeight&gt;"
+	  def    = "TrackWithWeightVector"
+	  desc   = "Type for a vector of TrackWithWeight objects"
 	  access = "PUBLIC"
 	  />
 
@@ -53,20 +67,20 @@
       <constructor
         argList="RecVertex rhs"
         desc="Copy constructor, note that the tracks are cloned"
-	initList="VertexBase(rhs), m_technique( rhs.m_technique), m_tracks( rhs.m_tracks )"
+	initList="VertexBase(rhs),m_technique(rhs.m_technique),m_tracks(rhs.m_tracks),m_weights(rhs.m_weights)"
 	/>
 
       <constructor
         argList="int key"
 	explicit = "TRUE"
         desc="create a vertex with a selected key"
-        initList = "VertexBase( key ), m_technique(RecVertex::Unknown)"
+        initList = "VertexBase(key),m_technique(RecVertex::Unknown)"
 	/>
 
       <constructor
         argList="const Gaudi::XYZPoint&amp; point"
         desc="Constructor from a point"
-	initList="VertexBase(point), m_technique(RecVertex::Unknown)"
+	initList="VertexBase(point),m_technique(RecVertex::Unknown)"
 	/>
 
       <method
@@ -76,9 +90,7 @@
         const="TRUE"
 	virtual="TRUE"
 	>
-	<code>
-          return new RecVertex(*this);
-	</code>
+	<code>  return new RecVertex(*this); </code>
       </method>
 
       <method
@@ -88,9 +100,7 @@
         const="TRUE"
 	virtual="TRUE"
 	>
-        <code>
-          return Primary == m_technique ;
-        </code>
+        <code>  return ( Primary == technique() ); </code>
       </method>
 
       <attribute
@@ -98,13 +108,101 @@
         desc="How the vertex was made"
         type="RecVertexType"
         init="RecVertex::Unknown"
-	/>
+      />
 
-      <relation
-        type      = "LHCb::Track"
-        name      = "tracks"
-        desc      = "Tracks this vertex was made from" 
-        multiplicity = "N" />
+      <attribute
+        type    = "SmartRefVector&lt;LHCb::Track&gt;"
+        name    = "tracks"
+        desc    = "Tracks this vertex was made from" 
+        setMeth = "FALSE"
+        getMeth = "TRUE"
+      />
+
+      <attribute
+        type = "std::vector&lt;float&gt;"
+        name = "weights"
+        desc = "vector of weights for each track in this PV"
+        setMeth = "FALSE"
+        getMeth = "TRUE"
+      />
+
+      <method 
+	name = "setTracks" 
+	type = "void"
+	desc = "Set the tracks for this PV. Weights are implicitly set to 1 for each" >
+        <arg const="TRUE" name="tracks" type="SmartRefVector&lt;LHCb::Track&gt;"/>
+        <code>
+          m_tracks = tracks;
+          m_weights = std::vector&lt;float&gt;( tracks.size(), 1.0 );
+        </code>
+      </method>
+
+      <method 
+	name = "addToTracks" 
+	type = "void"
+        argList="const LHCb::Track* track"
+	desc = "Add a track to the track list, with an implicit weight of 1.0" >
+        <code>  addToTracks( track, 1.0 ); </code>
+      </method>
+
+      <method 
+	name = "addToTracks" 
+	type = "void"
+        argList="const LHCb::Track* track, const float weight"
+	desc = "Add a track to the track list, with the given weight" >
+        <code>
+          m_tracks.push_back(track);
+          m_weights.push_back(weight);
+        </code>
+      </method>
+
+      <method 
+	name = "removeFromTracks" 
+	type = "void"
+        argList="const LHCb::Track* track"
+	desc = "Remove the given track from the list of tracks and its associated weight" >
+      </method>
+
+      <method 
+	name = "clearTracks" 
+	type = "void"
+	desc = "Remove all tracks, and their associated weights, from this vertex" >
+        <code>  
+          m_tracks.clear(); 
+          m_weights.clear();
+        </code>
+      </method>
+
+      <method 
+	name  = "tracksWithWeights" 
+	type  = "TrackWithWeightVector"
+        const = "TRUE"
+	desc  = "Access the tracks with their associated weights" >
+      </method>
+
+      <method 
+	name  = "setTracksWithWeights" 
+	type  = "void"
+        const = "FALSE"
+        argList="const TrackWithWeightVector&amp; tracksAndWeights"
+	desc  = "Set the tracks with their associated weights" >
+      </method>
+
+      <method 
+	name  = "setTrackWeight" 
+	type  = "bool"
+        const = "FALSE"
+        argList="const LHCb::Track* track, const float weight"
+	desc  = "Set the weight for the given Track. Returns true if weight is successfuly set, false if the track is not part of this vertex" >
+      </method>
+
+      <method 
+	name  = "trackWeight" 
+	type  = "std::pair&lt;bool,float&gt;"
+        const = "TRUE"
+        argList="const LHCb::Track* track"
+	desc  = "Returns a pair containing a bool, indicating if the track was part of this vertex or not, and its associated weight (0 if track not included)" >
+      </method>
 
     </class>
   </package>

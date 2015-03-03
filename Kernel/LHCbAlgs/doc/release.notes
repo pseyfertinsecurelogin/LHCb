@@ -4,6 +4,40 @@
 ! Purpose     : General purpose algorithms and tools for LHCb
 !-----------------------------------------------------------------------------
 
+!========================= LHCbAlgs v2r48 2012-02-28 =========================
+! 2012-02-24 - Marco Cattaneo
+ - Change default DataType in LHCbApp() to 2012 (was 2009)
+ - Add slot "IgnoreDQFlags" to LHCbApp(). If False, events with bad DQ are 
+   skipped. Default is True
+ - Adapt lhcbalgs.dqfilter.service.basic to use LHCbApp with IgnoreDQFlags=False
+ - Clone above test as lhcbalgs.dqfilter.service.disabled to test LHCbApp with
+   IgnoreDQFlags=True
+
+! 2012-02-13 - Chris Jones
+ - Protect EmptyEventNodeCleaner from a completely missing root node
+
+! 2012-02-10 - Marco Clemencic
+ - Added a new tool (DQAcceptTool) implementing IAccept to wrap the calls to
+   IDQFilter and IDQScanner in one simple function.
+   The new tool can work both by run and by event.
+ - Modified the algorithm DQFilter to use DQAcceptTool and removed DQFilterByRun
+   because the difference between the two algorithms is not wrapped in the tool.
+ - Factored out the Python code for the validation of DQFilter tests.
+ - Added a simple service using DQAcceptTool to filter events on the BeginEvent
+   incident (DQFilterSvc).
+
+! 2012-02-08 - Marco Cattaneo
+ - Add missing dependency for LHCbApp imports
+
+! 2012-02-06 - Marco Cattaneo
+ - Added LHCbApp configurable, moved from GaudiConf
+ - Moved from GaudiConf the tests fsr-only-file-root and fsr-small-files-root
+ - Adjust QMTest dependencies accordingly
+
+! 2012-02-06 - Chris Jones
+ - Protect DataObjectVersionFilter from printing an exception message when
+   the input data does not exist.
+
 !========================= LHCbAlgs v2r47 2012-02-01 =========================
 ! 2012-01-31 - Marco Clemencic
  - Added the algorithm DQFilterByRun. It is equivalent to DQFilter, but rejects
@@ -12,7 +46,7 @@
  - Added tests for DQFilterByRun.
 
 ! 2012-01-31 - Chris Jones
- - Add new algorithm EmptyEventNodeCleaner that searches the TES for empty 
+ - Add new algorithm EmptyEventNodeCleaner that searches the TES for empty
    data nodes and removes them.
 
 ! 2012-01-30 - Marco Clemencic

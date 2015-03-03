@@ -66,16 +66,30 @@
   <class name="std::vector<LoKi::Interface<IAlgorithm> >" />
   
   <enum name="LHCb::L0DUDecision::Type" />
- 
+  
+  <class    name = "LoKi::Numbers::EvtNum"   /> 
+  <class    name = "LoKi::Numbers::EvtNumList">
+    <field  name = "m_list" transient="true" />
+  </class>
+  <class    name = "LoKi::Numbers::RunEvt"    >
+    <field  name = "m_pair" transient="true" />
+  </class>
+  <class    name = "LoKi::Numbers::RunEvtList">
+    <field  name = "m_list" transient="true" />
+  </class> 
+  <function name = "LoKi::Numbers::add1"       /> 
+  <function name = "LoKi::Numbers::add2"       /> 
+  
   <exclusion>
     
-    <class name="LoKi::HLT::RoutingBits::Bits"   />
+    <class name="LoKi::HLT::RoutingBits::Bits"     />
     <class name="LoKi::HLT::HasSelection::Names"   />
     <class name="LoKi::HLT::HasDecision::Names"    />
     <class name="LoKi::HLT::DecisionBut::Names"    />
     <class name="LoKi::L0::ChannelDecision::Names" />
     <class name="LoKi::L0::ChannelDecision::Channels" />
     <class name="LoKi::Algorithms::AnyPassed::Algorithms" /> 
+    <class name="LoKi::Odin::RunNumber::run_list" />
 
     <class pattern="LoKi::HLT::*">
       <method name="=" />
@@ -136,7 +150,6 @@
     </class>
 
 
-    <class name="LoKi::HasDecision::Names"/>
 
     <class pattern="LoKi::HLT::*Regex">
       <method name="=" />

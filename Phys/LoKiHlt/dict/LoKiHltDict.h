@@ -25,6 +25,7 @@
 #include "LoKi/IHltFactory.h"
 #include "LoKi/IHltAntiFactory.h"
 #include "LoKi/HltEngine.h"
+#include "LoKi/EvtNum.h"
 // ============================================================================
 /** @file
  *  Simpe file to build the dictionaries for LoKi's functors, which 
@@ -261,6 +262,11 @@ namespace
     LoKi::Constant<const LHCb::HltDecReports*,bool>               m_co022 ;
     /// fictive non-existent constructor 
     _Instantiations() ;
+    // ========================================================================
+    std::vector<unsigned long long>  m_l1 ;
+    std::vector<         long long>  m_l2 ;
+    std::vector<unsigned      long>  m_l3 ;
+    std::vector<              long>  m_l4 ;
     // ========================================================================
   };  
   // ==========================================================================

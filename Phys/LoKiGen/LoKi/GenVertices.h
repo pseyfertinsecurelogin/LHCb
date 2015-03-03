@@ -1,4 +1,4 @@
-// $Id: GenVertices.h 134316 2012-01-29 13:55:54Z ibelyaev $
+// $Id: GenVertices.h 135241 2012-02-13 12:14:55Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_GENVERTICES_H 
 #define LOKI_GENVERTICES_H 1
@@ -32,8 +32,8 @@
  *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
  *  @date 2006-02-08 
  * 
- *                    $Revision: 134316 $
- *  Last modification $Date: 2012-01-29 14:55:54 +0100 (Sun, 29 Jan 2012) $
+ *                    $Revision: 135241 $
+ *  Last modification $Date: 2012-02-13 13:14:55 +0100 (Mon, 13 Feb 2012) $
  *                 by $Author: ibelyaev $
  */
 namespace LoKi 
@@ -172,6 +172,32 @@ namespace LoKi
       virtual  PositionT* clone() const ;
       /// MANDATORY: virtual destructor 
       virtual ~PositionT() ;
+      /// MANDATORY: the only one essential method 
+      virtual  result_type operator() ( argument p ) const ;
+      /// "SHORT" representation, @see LoKi::AuxFunBase 
+      virtual  std::ostream& fillStream( std::ostream& s ) const ;
+      // ======================================================================
+    } ;
+    // ========================================================================
+    /** @class Rho
+     *
+     *  the most primitive function - it return the rho-position (cylindrical) 
+     *  HepMC::GenVertex object
+     *
+     *  @see LoKi::Cuts::GVRHO
+     *  @see HepMC::GenVertex
+     *
+     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+     *  @date   2012-02-13
+     */
+    class GAUDI_API Rho : public LoKi::GenTypes::GVFunc 
+    {
+    public:
+      // ======================================================================
+      /// MANDATORY: clone method ("virtual" constructor")
+      virtual  Rho* clone() const ;
+      /// MANDATORY: virtual destructor 
+      virtual ~Rho() ;
       /// MANDATORY: the only one essential method 
       virtual  result_type operator() ( argument p ) const ;
       /// "SHORT" representation, @see LoKi::AuxFunBase 

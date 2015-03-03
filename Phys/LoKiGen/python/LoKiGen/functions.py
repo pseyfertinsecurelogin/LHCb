@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # =============================================================================
-# $Id: functions.py 134308 2012-01-28 17:57:24Z ibelyaev $
+# $Id: functions.py 135241 2012-02-13 12:14:55Z ibelyaev $
 # =============================================================================
 ## @file LoKiGen/functions.py
 #  The full set of useful objects from LoKiGen library 
@@ -20,8 +20,8 @@
 #  @author Vanya BELYAEV ibelyaev@physics.syr.edu
 #  @date 2007-12-01
 #
-#                    $Revision: 134308 $
-#  Last modification $Date: 2012-01-28 18:57:24 +0100 (Sat, 28 Jan 2012) $
+#                    $Revision: 135241 $
+#  Last modification $Date: 2012-02-13 13:14:55 +0100 (Mon, 13 Feb 2012) $
 #                 by $Author: ibelyaev $
 # =============================================================================
 """
@@ -43,7 +43,7 @@ with the smear campaign of Dr.O.Callot et al.:
 # =============================================================================
 __author__  = "Vanya BELYAEV ibelyaev@physics.syr.edu" 
 __date__    = "2007-12-01"
-__version__ = "$Revision: 134308 $ "
+__version__ = "$Revision: 135241 $ "
 # =============================================================================
 
 import LoKiCore.decorators as _LoKiCore 
@@ -269,7 +269,18 @@ GVTIME     = LoKi.GenVertices.PositionT()
 ## @see LoKi::Cuts::GVCOUNT
 GVCOUNT    = LoKi.GenVertices.CountIF
 ## @see LoKi::Cuts::GVSUM
-GVSUM      = LoKi.GenVertices.SumIF 
+GVSUM      = LoKi.GenVertices.SumIF
+
+## @see LoKi::Cuts::GVX 
+GVX        = LoKi.GenVertices.PositionX () 
+## @see LoKi::Cuts::GVY 
+GVY        = LoKi.GenVertices.PositionY () 
+## @see LoKi::Cuts::GVZ 
+GVZ        = LoKi.GenVertices.PositionZ () 
+## @see LoKi::Cuts::GVRHO
+GVRHO      = LoKi.GenVertices.Rho       ()  
+## @see LoKi::Cuts::GVT
+GVT        = LoKi.GenVertices.PositionT()
 
 ## @see LoKi::Cuts::GCOSPOL
 GCOSPOL     = LoKi.GenParticles.PolarizationAngle 
@@ -287,8 +298,6 @@ GSINPHITR   = LoKi.GenParticles.SinPhiTr
 GCOSPHITR   = LoKi.GenParticles.CosPhiTr
 ## @see LoKi::Cuts::GANGLEPHITR 
 GANGLEPHITR = LoKi.GenParticles.AnglePhiTr
-
-
 
 
 ## functional part

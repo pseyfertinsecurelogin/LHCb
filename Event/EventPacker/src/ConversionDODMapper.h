@@ -12,7 +12,9 @@
 
 class IJobOptionsSvc;
 
-/** Tool for automatic conversions in the transient store.
+/** @class ConversionDODMapper ConversionDODMapper.h
+ *
+ * Tool for automatic conversions in the transient store.
  *
  * Implements the IDODAlgMapper interface to dynamically instruct the DataOnDemandSvc
  * to call conversion algorithms that will convert some input object in the T.S.
@@ -37,17 +39,28 @@ class IJobOptionsSvc;
  * @author Marco Clemencic
  * @date 17/01/2012
  */
-class ConversionDODMapper: public extends2<GaudiTool, IDODAlgMapper, IDODNodeMapper> {
+class ConversionDODMapper : public extends2< GaudiTool,
+                                             IDODAlgMapper, 
+                                             IDODNodeMapper >
+{
+
 public:
+
   /// Standard constructor
-  ConversionDODMapper(const std::string& type, const std::string& name, const IInterface* parent);
-  virtual ~ConversionDODMapper(); ///< Destructor
+  ConversionDODMapper( const std::string& type, 
+                       const std::string& name, 
+                       const IInterface* parent );
+
+  /// Destructor
+  virtual ~ConversionDODMapper(); 
 
   /// Initialize the tool instance.
   virtual StatusCode initialize();
 
   /// Initialize the tool instance.
   virtual StatusCode finalize();
+
+public:
 
   /// Return the algorithm type/name to produce the requested entry.
   ///
@@ -62,6 +75,8 @@ public:
   /// @see IDODAlgMapper
   virtual Gaudi::Utils::TypeNameString algorithmForPath(const std::string &path);
 
+public:
+
   /// Instruct the DataOnDemandSvc to create the DataObjects for the
   /// intermediate levels of a path we can handle.
   ///
@@ -72,15 +87,17 @@ public:
   /// @see IDODNodeMapper
   virtual std::string nodeTypeForPath(const std::string &path);
 
+private:
+
   /// Convert a string using the configured mapping rules.
   /// All the rules are tried until one matches. If there is no match an empty
   /// string is returned.
   std::string transform(const std::string &input) const;
 
-protected:
-private:
   /// Helper function to get the source candidate.
   DataObject *candidate(const std::string &path) const;
+
+private:
 
   /// @{
   /// Data members corresponding to properties
@@ -98,24 +115,35 @@ private:
   /// It is needed to configure the Algorithm instances.
   SmartIF<IJobOptionsSvc> m_jos;
 
+private:
+
   /// Helper class to manage the regex translation rules.
-  class Rule {
+  class Rule 
+  {
   public:
+  
     /// Constructor.
     inline Rule(const std::string& _regexp, const std::string& _format):
       regexp(_regexp), format(_format) {}
+    
     /// Apply the conversion rule to the input string.
     /// If the regex does not match the input, an empty string is returned.
-    inline std::string apply(const std::string &input) const {
+    inline std::string apply(const std::string &input) const
+    {
       return boost::regex_replace(input, regexp, format, boost::match_default | boost::format_no_copy);
     }
+    
     /// Helper to create a Rule from a pair of strings.
-    inline static Rule make(const std::pair<std::string, std::string> &p) {
+    inline static Rule make(const std::pair<std::string, std::string> &p) 
+    {
       return Rule(p.first, p.second);
     }
+ 
   private:
+    
     /// Regular expression object.
     boost::regex regexp;
+  
     /// Format string (see Boost documentation).
     std::string format;
   };

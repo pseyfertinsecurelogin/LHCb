@@ -4,6 +4,19 @@
 ! Purpose     : Pack, Unpack and Compare containers for optimized persistency
 !-----------------------------------------------------------------------------
 
+!========================= PackedEvent v4r7 2012-02-28 =========================
+! 2012-02-21 - Chris Jones
+ - Update the way some references to Particles and Vertices are stored, to
+   use 64 bit integers, to avoid packing problems.
+
+! 2012-02-17 - Chris Jones
+ - Update the RecVertex packed class to support the new RecVertex class 
+   with track weights
+
+! 2012-02-16 - Chris Jones
+ - Reorganise things a bit w.r.t. the Particle and Vertex packing, to avoid
+   some code duplication
+
 !========================= PackedEvent v4r6 2012-01-31 =========================
 ! 2012-01-31 - Chris Jones
  - Update CLID for PackedParticle2Ints to 1591, to avoid a clash

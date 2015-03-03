@@ -2,6 +2,13 @@
 ! Responsible : P. Koppenburg, J.P. Palacios
 !----------------------------------------------------------------------------
 
+!========================= PhysEvent v11r15 2012-02-28 =========================
+! 2012-02-24 - Anton Poluektov 
+ - add enums for EW isolation, up to 4 cone sizes
+
+! 2012-02-20 - Anton Poluektov 
+ - add enums related to isolation information to Particle extraInfo. 
+
 !========================= PhysEvent v11r14 2011-06-14 =========================
 ! 2011-06-04 - Vanya Belyaev
  - add LHCb::Particle::Selection into dictionary 

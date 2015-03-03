@@ -4,6 +4,25 @@
 ! Purpose     : Pack and unpack events classes for smaller events
 !-----------------------------------------------------------------------------
 
+!========================= EventPacker v2r12 2012-02-28 =========================
+! 2012-02-21 - Chris Jones
+ - Update the way some references to Particles and Vertices are stored, to
+   use 64 bit integers, to avoid packing problems.
+
+! 2012-02-17 - Chris Jones
+ - Update the RecVertex packering and unpacking algorithms to support the new
+   RecVertex class with track weights.
+
+! 2012-02-16 - Chris Jones
+ - Reorganise things a bit w.r.t. the Particle and Vertex packing, to avoid
+   some code duplication
+
+! 2012-02-13 - Chris Jones
+ - Protect PackParticlesAndVertices against completely missing streams
+
+! 2012-02-06 - Chris Jones
+ - Add a new mapping tool to support the many to one Particle and Vertex packer
+
 !========================= EventPacker v2r11 2012-02-01 ======================
 
 ! 2012-02-01 - Chris Jones

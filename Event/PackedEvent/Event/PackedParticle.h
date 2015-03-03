@@ -51,10 +51,10 @@ namespace LHCb
         vertex(-1),
         proto(-1),
         firstDaughter(0), lastDaughter(0)
-    {}
+    { }
 
     // packed data members
-    int key;               ///< referenceLong to the original container + key of the particle
+    long long key;         ///< referenceLong to the original container + key of the particle
     int particleID;        ///< PID Code
     int measMass;          ///< Measured mass
     int measMassErr;       ///< Error on the measured mass
@@ -80,16 +80,16 @@ namespace LHCb
     int pmCov30,pmCov31,pmCov32;
 
     // Extra info
-    unsigned short int firstExtra, lastExtra;
+    unsigned int firstExtra, lastExtra;
 
     // End Vertex
-    int vertex;  
+    long long vertex;  
 
     // ProtoParticle
-    int proto;
+    long long proto;
 
     // daughters
-    unsigned short int firstDaughter, lastDaughter;  
+    unsigned int firstDaughter, lastDaughter;  
 
   };
 
@@ -126,7 +126,7 @@ namespace LHCb
     typedef std::vector<PackedExtraInfo> PackedExtraInfoVector;
 
     /// Daughters
-    typedef std::vector<int> Daughters;
+    typedef std::vector<long long> Daughters;
 
   public:
 
@@ -211,9 +211,21 @@ namespace LHCb
     ParticlePacker() {}
 
   public:
+
+    /// Pack a single Particle
+    void pack( const Data & part,
+               PackedData & ppart,
+               PackedDataVector & pparts ) const;
+
     /// Pack Particles
     void pack( const DataVector & parts,
                PackedDataVector & pparts ) const;
+
+    /// Unpack a single Particle
+    void unpack( const PackedData       & ppart,
+                 Data                   & part,
+                 const PackedDataVector & pparts,
+                 DataVector             & parts ) const;
 
     /// Unpack Particles
     void unpack( const PackedDataVector & pparts,
