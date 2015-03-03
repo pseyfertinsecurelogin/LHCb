@@ -5,6 +5,15 @@
 ! Purpose     : LHCb base classes and event model
 !-----------------------------------------------------------------------------
 
+</PRE><H1><A NAME=v32r4g1>2011-11-15 LHCbSys v32r4g1</A></H1><PRE>
+This version uses Gaudi v22r4 and LCG_61a
+- Packages added :   Event/SwimmingEvent: Contains event model classes for the
+                                          swimming.
+
+- Packages updated: Tools/FileStager v1r5, Online/RootCnv v1r8,
+    Event/PhysEvent v11r14, Event/GenEvent v6r1, GaudiConf v15r2,
+    Phys/LoKiCore v11r3
+
 </PRE><H1><A NAME=v32r4>2011-06-15 LHCbSys v32r4</A></H1><PRE>
 This version uses Gaudi v22r2 and LCG_60a
 Production version for 2011 data after July 2011 technical stop

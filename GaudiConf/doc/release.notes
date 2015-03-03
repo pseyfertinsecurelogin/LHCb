@@ -1,6 +1,87 @@
+!----------------------------------------------------------------------------
 ! package GaudiConf
 ! package manager: M.Cattaneo
 !----------------------------------------------------------------------------
+
+!========================= GaudiConf v15r2 2011-09-27 =========================
+! 2011-09-26 - Rob Lambert
+ - Fix IOExtension problem with svcClass.
+
+!========================= GaudiConf v15r1 2011-09-20 =========================
+! 2011-09-16 - Marco Cattaneo
+ - Add "NextNext" to default DstConf().SpilloverPaths
+
+!========================= GaudiConf v15r0 2011-09-15 =========================
+! 2011-09-15 - Marco Cattaneo
+ - Update test references to follow small verbosity change in ROOT persistency
+
+! 2011-09-14 - Rob Lambert
+ - Added two tests to confirm what opening several files with FSRs works
+
+! 2011-09-13 - Rob Lambert
+ - Added a test that files which only contain an FSR and nothing else can be read
+   and written correctly, see bug #86527
+
+! 2011-09-09 - Rob Lambert
+ - FSR output accidentally being set even when not defined.
+ - Wierd to have made an FSR ever with no output, but one of the Brunel
+   tests picked it up, so it needed preotection. see bug #86527
+ - an extra unit test is added verifying this problem is now avoided
+
+! 2011-09-08 - Rob Lambert
+ - Small bug in FSRs fixed. New test added to check for this bug.
+ - Still no confirmation that it is really fixed, though. Because Stripping16
+   configuration dictionary is broken
+ - See bug #86527
+
+! 2011-09-08 - Rob Lambert
+ - More debug information available
+
+! 2011-09-07 - Marco Cattaneo
+ - Fix requirements to set up complete environment to run QMTests standalone
+ - Fix QMTest comparisons on i686 when addresses are printed as 0x########L
+
+! 2011-09-05 - Rob Lambert
+ - Update test references for default persistency change
+
+! 2011-09-02 - Marco Cattaneo
+ - Change default persistency to ROOT
+
+! 2011-09-01 - Rob Lambert
+ - Modify IOHelper to work directly with FileRecordCnvSvc for any type
+ - Add information getter functions for iohelper
+ - Add compatibility with connection strings not containing DATAFILE
+   OutputStream, for example, can have it set separately
+
+!========================= GaudiConf v14r2 2011-08-30 =========================
+! 2011-08-24 - Rob Lambert
+ - Fix typo, those locations were never persisted on the DST
+
+! 2011-08-23 - Rob Lambert
+ - Prepare DstConf for new entries in the SDST, the raw banks for Trigger and Muon
+
+!========================= GaudiConf v14r1 2011-07-25 =========================
+! 2011-07-25 - Rob Lambert
+ - Plug a hole in IOHelper which was trying to convertSelector on a strange type
+   Change MDF logic slightly
+
+! 2011-07-20 - Marco Cattaneo
+ - In LHCbExclusions.py, exclude from QMTest log file comparisons INFO messages
+   that have been removed in Gaudi HEAD but still exist in Gaudi v22r2. Can be
+   be removed when LHCb stack is released on next Gaudi
+
+!========================= GaudiConf v14r0p1 2011-07-11 =========================
+! 2011-07-07 - Rob Lambert
+ - Add extensionString to IOExtension, wrapper for helperString,
+   with IOExtension used instead.
+   Updated unit tests accordingly
+
+! 2011-07-07 - Rob Lambert
+ - Fix IOHelper for bug in postConfigServices, silly extra arguement
+
+! 2011-06-20 - Rob Lambert
+ - Fix DigiConf and DstConf to correctly use IOHelper
+ - avoiding a printed warning if something other than the default is propagated
 
 !========================= GaudiConf v14r0 2011-06-15 =========================
 ! 2011-06-15 - Marco Cattaneo

@@ -1,4 +1,4 @@
-// $Id: AlgFunctors.cpp 124234 2011-06-05 12:14:22Z ibelyaev $
+// $Id: AlgFunctors.cpp 127137 2011-08-03 09:06:59Z graven $
 // ============================================================================
 // Include files 
 // ============================================================================
@@ -54,9 +54,9 @@
  *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
  *  @date 2008-010-14 
  *
- *                     $Revision: 124234 $
- *   Last modification $Date: 2011-06-05 14:14:22 +0200 (Sun, 05 Jun 2011) $
- *                  by $Author: ibelyaev $
+ *                     $Revision: 127137 $
+ *   Last modification $Date: 2011-08-03 11:06:59 +0200 (Wed, 03 Aug 2011) $
+ *                  by $Author: graven $
  */ 
 // ============================================================================
 namespace 
@@ -206,7 +206,8 @@ namespace
       } 
     }
     //
-    if ( Gaudi::StateMachine::RUNNING != _a -> FSMState() ) 
+    if ( Gaudi::StateMachine::RUNNING != _a -> FSMState() &&
+                  Gaudi::StateMachine::RUNNING == LoKi::Services::instance().lokiSvc()->FSMState() )
     { 
       // start it! 
       StatusCode sc = _a->sysStart() ;
