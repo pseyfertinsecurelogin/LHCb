@@ -1,0 +1,14 @@
+package ProcessorKernel
+
+version v3r1
+
+branches cmt doc src ProcessorKernel
+
+use Boost v* LCG_Interfaces
+use LHCbKernel v* Kernel
+use XercesC     v* LCG_Interfaces
+
+include_dirs $(PROCESSORKERNELROOT)
+
+library ProcessorKernel  ../src/*.cpp
+apply_pattern linker_library library="ProcessorKernel"

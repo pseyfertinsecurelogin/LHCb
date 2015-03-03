@@ -1,0 +1,56 @@
+# $Id: requirements,v 1.102 2006-05-26 12:39:29 cattanem Exp $
+# =============================================================================
+package LHCbKernel
+author  M.Frank    CERN/LHCb
+manager M.Cattaneo CERN/LHCb
+
+version v6r7
+
+branches cmt doc Event Kernel src xml
+
+include_dirs $(LHCBKERNELROOT)
+
+use GaudiKernel     v*
+use LHCbDefinitions v* Kernel
+use Boost           v* LCG_Interfaces
+
+# Produce Header-Files from XML description, overriding default destination
+#============================================================================
+macro LHCbKernelObj2Doth_GODflags " -s ../Kernel/ " \
+      WIN32                       " -s ..\Kernel\ "
+document obj2doth LHCbKernelObj2Doth ../xml/*.xml
+
+# Declare fragment for adding custom dictionary to GOD generated ones
+#============================================================================
+make_fragment customdict -header=customdict_header -trailer=customdict_trailer
+
+# Make custom dictionary. Must be before GOD generation
+#============================================================================
+document customdict LHCbKernelCustomDict ../Kernel/lcgStl.h
+
+# Generate remaining dictionaries with lcgdict via GOD
+#============================================================================
+macro LHCbKernelObj2Dict_GODflags " -s ../Kernel/ " \
+      WIN32                       " -s ..\Kernel\ "
+document obj2dict LHCbKernelObj2Dict ../xml/*.xml
+
+# Build libraries (including dictionary)
+#============================================================================
+library LHCbKernel     *.cpp          -import=GaudiAlg
+library LHCbKernelDict ../$(tag)/dict/LHCbKernel/*.cpp
+
+# Debug flag for RichSmartID
+macro_append LHCbKernel_cppflags "" \
+                   Linux&debug " -DRICHDEBUG "
+        
+# Standard patterns (order is essential)
+#============================================================================
+apply_pattern component_library library=LHCbKernelDict
+apply_pattern linker_library    library=LHCbKernel
+
+macro_append LHCbKernel_linkopts  "-L$(ROOT_home)/lib  -lReflex " \
+             WIN32  "/LIBPATH:$(ROOT_home)/lib libReflex.lib "
+private
+#============================================================================
+use GaudiObjDesc v* -no_auto_imports
+use GaudiAlg     v* -no_auto_imports

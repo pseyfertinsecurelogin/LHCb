@@ -1,0 +1,51 @@
+!-----------------------------------------------------------------------------
+! Package     : Muon/MuonDAQ
+! Responsible : Alessia Satta
+! Purpose     : Muon System Raw Buffer coding and decoding algorithms
+!-----------------------------------------------------------------------------
+
+!========================= MuonDAQ v2r1 2006-03-21 ===========================
+! 2006-02-21 - Alessia Satta
+ - add the endoding and decoding of the date format to be used by trigger
+
+!========================= MuonDAQ v2r0 2006-02-24 ===========================
+! 2006-02-24 - Alessia Satta
+ -fix a non intialized variable
+
+! 2006-02-15 - Marco Cattaneo
+ - In requirements, migrate to DigiEvent
+
+! 2006-02-07 - Marco Cattaneo
+ - Move algorithm include to src directory and cleanup included files
+
+! 2006-01-31 - Alessia satta
+ - implement the new Muon DAQ format (digit address first +TDC at the end of the bank)	
+ - adapt to new event model (mainly LHCb namespace & DAQEvent)
+ - adapt to use /dd/Conditions for readoing the cabling info
+
+!========================= MuonDAQ v1r2p3 2005-09-22 ======================
+! 2005-09-22 - Marco Cattaneo
+ - Fix uninitialized varriable m_TotL1Board in MuonRawBuffer2Digit.cpp
+
+!========================= MuonDAQ v1r2p2 2005-04-01 ======================
+! 2005-04-01 - Marco Cattaneo
+ - Update requirements to use MuonEvent v*
+
+!========================= MuonDAQ v1r2p1 2005-03-07 ======================
+! 2005-03-07 - Marco Cattaneo
+ - Update requirements to use DAQEvent v*
+
+!========================== MuonDAQ v1r2 2004-08-31 =======================
+! 2004-08-31 - Alessia Satta
+ - Move the header files in a separate directory
+
+!========================== MuonDAQ v1r1 2004-04-13 =======================
+! 2004-04-13 - Alessia Satta
+ - Fix warning for unsigned intinitialization to a negative value
+
+!========================== MuonDAQ v1r0 2004-02-10 =======================
+! 2004-02-10 - Alessia Satta
+ - Fix bug in readout type info and timeStamp storage 
+
+! 2004-02-05 - Alessia Satta
+ - First public version

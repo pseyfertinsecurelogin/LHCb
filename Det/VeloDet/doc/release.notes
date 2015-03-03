@@ -1,0 +1,504 @@
+! $Id: release.notes,v 1.138 2006-06-16 06:32:22 cattanem Exp $
+package VeloDet
+package manager : Velo Group
+
+!========================= VeloDet v10r7 2006-06-14 ========================
+! 2006-06-14 - Mark Tobin
+ - Added sensor containers for Left and Right side of the detector.
+ - Provide iterator and reverse iterator access to said containers.
+ - Add methods to return numbers of Left/Right R/Phi sensors.
+ - Removed unused xSide method from DeVeloSensor. Same information was
+ already available from isRight() method and is now also available from the
+ new isLeft() method.
+ - Fix trajectories method so that R trajectories run anti-clockwise.
+
+! 2006-05-31 - Kurt Rinnert
+ - the 'TELL1 without sensor' flag is now initialized to false in the
+   DeVeloSensor constructor.  This should not change the behaviour since 
+   it is always updated from the CondDB.  This change simply ensures 
+   consistent treatment of all conditions in DeVeloSensor.
+
+! 2006-05-31 - Kurt Rinnert
+ - Add new condition 'Tell1WithoutSensor' to Velo sensor readout conditions.
+ This feature was requested by the AC/DC group in order to facilitate 
+ the proper simulation of all possible test beam setups.
+ The configuration can be accessed via bool DeVeloSensor::tell1WithoutSensor()
+
+! 2006-05-23 - Mark Tobin
+ - Replaced sensorIndex(sensor) by internal map which returns the pointer to
+ the sensor directly.
+ - Removed the unused associateSensor() and associatedSensors() code from DeVeloSensor.
+
+! 2006-05-18 - Mark Tobin
+ - Fixed bug in sensor indices: assumed all sensors are there which may not
+ always be the case.
+
+!========================= VeloDet v10r6 2006-05-17 ========================
+! 2006-05-17 - Marco Cattaneo
+ - Remove unneccessary SystemOfUnits includes and adapt to Gaudi::Units namespace
+
+! 2006-05-14 - David Hutchcroft
+ - Fixed bug in calculating trajectories for phi sensor and single strip 
+   clusters in last strip
+
+!========================= VeloDet v10r5 2006-05-02 ========================
+! 2006-04-28 - Kurt Rinnert
+ - Implemented workaround for Microsoft(tm) "extensions" that prevented
+   static data members from being accessed consistently via inlined methods
+
+! 2006-04-28 - Mark Tobin
+ - Bug fixes in the phi min/max of zone in DeVeloRType.
+
+! 2006-04-21 - Kurt Rinnert
+ - Added consistency check in readout conditions update.  A sensor that is
+  marked as being read out in CondDB but lacks a mapping to a TELL1 Id now
+  triggers an exception.  This relies on the sensor readout conditions to be
+  always updated before the Velo readout conditions.  This is true true during
+  detector element initialization using the flat XML file CondDB.  In real life
+  we might need a new mechanism to ensure this without making the sensors aware 
+  of the DeVelo detector element.
+
+!========================= VeloDet v10r4 2006-04-18 ========================
+! 2006-04-13 - Mark Tobin
+ - Fix bug in neighbour and channel distance methods
+
+! 2006-04-12 - Mark Tobin
+ - Add trajectory method in DeVelo
+ - Move implementation for trajectory method to sensor classes
+ - Remove stripLimitsR/Phi methods from DeVelo
+ - Add methods to sensors which provide start and end co-ordinates for strip in
+ local and global frames
+
+!========================= VeloDet v10r3 2006-04-06 ========================
+! 2004-04-06 - David Hutchcroft
+ - Added method to get origin of phi sensors for measurement on track classes
+
+! 2006-04-05 - Mark Tobin
+ - Fixed bug in channel mapping
+ - Made all public methods in DeVeloSensor const
+
+! 2006-04-05 - Mark Tobin
+ - Add module number method to DeVeloSensor
+ - Removed all instances of unecessary this->
+
+! 2006-04-04 - Edwin Bos
+ - trajectory() methods now return std::auto_ptr<LHCb::Trajectory>
+
+! 2006-03-27 - Kurt Rinnert
+ - Added missing registration of condition update call back methods
+	to DeVelo::initialize() and DeVeloSensor::initialize(). They must
+	have got lost during some of previous updates.
+
+!========================= VeloDet v10r2 2006-03-23 ========================
+! 2006-03-23 - Mark Tobin
+ - Added reverse iterator access to sensor containers
+
+! 2006-03-21 - Mark Tobin
+ - Renamed isInside method to isInActiveArea
+
+! 2006-03-17 - Mark Tobin and Kurt Rinnert
+ - Removed all accessors to sensor information via DeVelo: sensor information
+   must now be retrieved directly from sensors
+ - Provide iterator access to sensor containers
+
+!========================= VeloDet v10r1 2006-03-02 ========================
+! 2006-03-02 - Mark Tobin
+ - Added namespace DeVeloLocation for xml path
+
+! 2006-03-02 - Mark Tobin
+ - Modified sensitiveVolumeID to work with misaligned sensors
+ - Tidied up DeVelo::initialize method
+
+! 2006-02-27 - Jeroen van Tilburg
+ - Added const to the trajectory method.
+
+! 2006-02-23 - David Hutchcroft
+ - Added the trajectory as a return type for a channelID + offset
+
+! 2006-02-06 - Kurt Rinnert
+ - fixed class<->struct mismatch in friend declaration in
+   DeVeloSensor::StripInfo and doxygen comment.
+
+! 2006-01-26 - Kurt Rinnert
+ - All methods returning containers by value were changed to return
+   const references instead.  This alway faster and prevents
+   CPU intensive misuse.  
+   Change is completely transparent to client code.
+ - minor cosmetics
+
+! 2006-01-26 - Kurt Rinnert
+ - DeVeloSensor::associatedSensors() now returns a const reference
+   to a vector instead of an instance.  This alway faster and prevents
+   CPU intensive misuse.  Change is completely transparent to client code. 
+ - DeVeloSensor::OKStrip() now uses strip information from the condition
+   cache.  The now redundant old 'bad strip' map was removed  
+ - minor cosmetics
+
+! 2006-01-26 - Kurt Rinnert
+ - Added caching of conditions for DeVelo and DeVeloSensor, this includes
+   * data members holding the cache
+	 * interface to the cache
+	 * call back functions for update service
+	 * helper code for converting DB entries into cache 
+   These changes are backwards incompatible. XmlDDDB >= v30r0,
+   XmlConditions > v1r4 and geometry > v200511 are required (at the time 
+   of this writing no release with all the requirements was integrated yet)
+ - The DeVeloSensor::stripCapacitance() method is no longer purely virtual. 
+   The implementation in the derived classes was removed and  DeVeloSensor 
+	 now implements the method as an interface to the condition cache.
+ 
+!========================= VeloDet v10r0 2005-12-14 ========================
+! 2005-12-14 - Mark Tobin
+ - Removed all dependencies on CLHEP.
+
+! 2005-12-08 - Mark Tobin
+ - Added method to assign sensorID from a 3d point.  This is implements the 
+   sensitiveVolumeID in DetectorElement.  
+ - Removed hard-coding of sensor numbers.  These are now read from XmlDDDB.
+   Backwards incompatible, requires XmlDDDB >= v27r1 and geometry >= v200507
+   
+! 2005-10-02 - Mark Tobin
+ - Added methods to convert strip number to routing line to chip channel
+   and back.  
+
+!========================= VeloDet v9r8 2005-07-13 =========================
+! 2005-07-13 - David Hutchcroft
+ - Removed Reversed phi ranges of R sectors: was not correct
+
+! 2005-07-11 - Mark Tobin
+ - Added method to DeVelo to allow re-caching of geometry information and to
+   allow the recalculation of z position after changes to the geometry (eg after
+   changes to alignment parameters
+
+! 2005-07-07 - Mark Tobin
+ - Added method to cache geometry information outside of the initialise 
+   method in DeVeloSensor.  Will allow geometry to be changed at later time.
+
+! 2005-07-07 - Marco Cattaneo
+ - Remove dict stuff, moved to DetSys
+
+! 2005-07-05 - Juan PALACIOS
+ - Add std::vector<*> to dictionary. At the moment that only covers vectors of
+   DeVeloSensor , DeVeloRType and DeVeloPhiType pointers.
+
+! 2005-07-04 - Juan PALACIOS
+ - Add DeVeloSensor, DeVeloRType, DeVeloPhiType, VeloChannelID to dictionary.
+
+! 2005-07-03 - Juan PALACIOS
+ - Add dict directory with dictionary generation. Add necessary patterns to 
+   requirements file (from P. Mato).
+
+! 2005-06-30 - David Hutchcroft
+ - Reversed phi range of R sectors in "downstream" R sensors 0<->3, 1<->2 etc. 
+
+!========================= VeloDet v9r7 2005-06-28 =========================
+! 2005-06-28 - Juan PALACIOS
+ - In DeVelo, sort sensors in Z before storing, as they are no longer sorted 
+   in the latest XML geometry
+
+!========================= VeloDet v9r6 2005-06-02 =========================
+! 2005-06-02 - Juan PALACIOS
+- Modify .cpp files to accept new XML parameters controlling sensor types,
+  to allow for flipped R sensors. Old sensor typing scheme understood so
+  backwards compatible.
+- Make most methods in DeVelo, DeVeloSensors and derived classes const.
+- Get rid of most protected data members in DeVeloSensor class
+
+!========================= VeloDet v9r5 2005-05-24 =========================
+! 2005-05-13 - Marco CLEMENCIC
+ - Use new ParamValidDataObject interface (DetDesc >= v15)
+
+!========================= VeloDet v9r4 2005-03-22 =========================
+! 2005-03-22 - Juan Palacios
+ - Enable DeVelo to cope with an arbitrary number of detector element 
+   hierarchies between Velo and individual sensors.
+
+!========================= VeloDet v9r3 2005-03-04 =========================
+! 2005-03-03 - Mark Tobin
+ - Fixed minor (> to >=) bug in isInside
+
+!========================= VeloDet v9r2 2004-12-06 =========================
+   >> Requires XmlDDDB v23r1 or greater <<
+
+! 2004-12-03 - David Hutchcroft
+ - Redid the interface again, last time hopefully.
+
+!========================= VeloDet v9r1 2004-11-29 =========================
+   >> Requires XmlDDDB v23r1 or greater <<
+
+! 2004-10-26 - David Hutchcroft
+ - Final changes to work with Boole
+
+!========================= VeloDet v9r0 2004-03-02 =========================
+   >> Requires XmlDDDB v22r0 or greater <<
+
+! 2004-03-25 - Mark Tobin
+ - Fixed my own stupid bug in trgPhiMatchingStrips.  The outer zone for phi 
+ sensors was always used instead of the innner zone.
+
+! 2004-03-24 - Mark Tobin
+ - Removed references to old designs from matchingZones.
+   (R sensor is divided into 4 zones, numbered from 0 to 3.)
+
+! 2004-03-02 - Marco Cattaneo
+ - Use LHCbMath::round instead of VeloRound, and remove VeloKernel dependency
+
+! 2004-02-29 - Mark Tobin
+ - Restored angular limits of zones for R sensors to match those of previous
+ versions.
+
+! 2004-02-28 - Mark Tobin
+ - Tidy up of code. Repeated data members removed from Phi/R classes
+ and kept protected in Sensor class.
+
+! 2004-02-27 - Mark Tobin
+ - Bug fix in DeVeloSensor.  m_isDownstream was never initialised.
+
+! 2004-02-25 - Mark Tobin
+ - Returned makeSpacePoint to previous behaviour
+
+! 2004-02-24 - Mark Tobin
+ - Replicate behaviour of old VeloDet by adding routines trgPhiMatchingStrips,
+ trgPhiDirectionOfStrip, trgPhiOfStrip and restoring the old functionality of
+ phiMatchingStrips and distToOrigin.
+ - Minor bug fix in pointToChannel for phi sensors!
+
+! 2004-02-17 - Mark Tobin
+ - inlining of methods in DeVeloSensor, DeVeloRType and DeVeloPhiType
+
+! 2004-02-13 - Mark Tobin
+ - Added angleOfStrip to replace phiDirectionOfStrip in old DeVelo.
+   Added method to calculate rPitch at a given radius (rPitchAtR).
+   Added method to return pointers to R and Phi sensors
+
+! 2004-02-13 - Marco Cattaneo
+ - Remove unneccessary includes from public include files
+ - Change INFO messages in DeVelo to DEBUG
+ - Add missing factories to VeloDet_load.cpp 
+
+! 2004-02-03 - Mark Tobin
+ - Total redesign of DeVelo interface.
+   Old velo designs removed.
+   DeVeloSensor is DetElement.
+   Now have separate classes for R/Phi sensors.
+   Local frame for sensors is +ve x, upstream stereo.
+   Removed all rotations that were previously done by hand.
+   Removed PileUpType; too similar to RType to have separate class.  
+   All member functions now called using VeloChannelIDs and fractional 
+   distance between strips rather than using double strip.
+   VeloChannelID is centre of strip, fraction is +/-0.5 pitch
+   Sensor numbering scheme also changed.
+   0-41 are +ve x, 50-91 -ve x, > 100 pile up.
+
+!========================= VeloDet v8r8 2003-12-16 =========================
+! 2003-12-16 - Marco Cattaneo
+ - Move to Gaudi v14 (use LHCbKernel v4r* in requirements)
+
+!========================= VeloDet v8r7 2003-12-08 =========================
+! 2003-12-08 - Marco Cattaneo
+ - Move to Gaudi v13 (use LHCbKernel v3r* in requirements)
+
+!========================= VeloDet v8r6 2003-10-06 =========================
+! 2003-10-06 - Marco Cattaneo
+ - Remove explicit dependency on DetDesc, implicit through DetDescCnv
+
+!========================= VeloDet v8r5 2003-06-17 =========================
+! 2003-06-16 - Sebastien Ponce
+ - use new package DetDescCnv and new version v12r* of DetDesc
+
+! 2003-03-20 - Olivier Callot
+ - fix a bug in stripLimitsR, used only for Panoramix, returning the limits
+   of a strip: Right and LEft were exchanged.
+
+!========================= VeloDet v8r4 2003-01-30 =========================
+! 2003-01-27 - Olivier Callot
+ - Change the handling of the neighbours in the R sensor, when at the boundary
+   inner-outer part. When there is no outer part, an illegal strip 2048 was
+   created in some cases.
+ - Add also protection towards illegal strip ( > 2047 ) for Phi sensors, and 
+   for the case of step=0 in the neighbour method.
+
+!========================= VeloDet v8r3 2003-01-08 =========================
+! 2003-01-08 - Olivier Callot
+ - Add an extra entry in m_rStrip: For strip 511, we access the center of the
+   non-existing strip 512, with weight = 0, but it needs to be specified.
+
+! 2003-01-06 - Olivier Callot
+ - Delete the VeloSensor objects in the destructor, to make valgrind happy.
+
+!======================== VeloDet v8r2 2002-12-04 =======================
+! 2002-12-04 - Florence Ranjard
+ - requirements - use new versions
+
+!========================= VeloDet v8r1 2002-12-03 =========================
+! 2002-12-03 - Olivier Callot
+ - Fix the pitch of design 1, so that we have 512 strips below 42 mm, not 
+   512.5 as before. Outer pitch changed from .1028 to .1030;
+ - Fix a problem in PhiMatchingStrips for matching in the dog-leg part. Test is
+   now on the R sensor zone, not on the actual phi.
+
+!========================= VeloDet v8r0 2002-11-11 =========================
+! 2002-11-08 - Olivier Callot
+ - New method nbL1Sectors() to return 8 (45 degree design) or 4 (TDR design).
+
+! 2002-11-08 - Olivier Callot
+ - Change the matchingZones method to allow also phi neighbors.
+ - Fix a bad handling of strip 682 (boundary of the two Phi sensor zones) in
+   getSpacePoint.
+ - Put the hardcoded geometry parameters in the .cpp to ease final release.
+ - New methods for Panoramix, returning the strip geometry parameters:
+   stripLimitsR( double strip, int sensor, 
+                 double& Z, double& radius, double& phiMin, double& phiMax )
+   stripLimitsPhi( double strip, int sensor, 
+                   HepPoint3D& begin, HepPoint3D& end )
+
+ - new method phiMatchingStrips( int sensor, double radius, int rSensor, 
+                                 int zone, double angularTol,
+                                 double& stripMin, double& stripMax, 
+                                 double& pitch, double& offset )
+   returns the phi strip range on sensor 'sensor' at radius 'radius' matching
+   a R strip in R sensor 'rSensor' in zone 'zone', as returned by rOfStrip(), 
+   with a phi tolerance for boundary extrapolation of 'angularTol'.
+   It gives also the strip-to-phi parameters, namely
+     phi = strip * pitch + offset;
+   This is intended to replace getSpacePoint as this is faster...
+ - Phi strip number are in the range 0 to 2048 while R are in the range -0.5 to
+   2047.5 and this is difficult to change !
+ - Phi offset of phi sensors are close to 0 in Xml, shifted by -pi/2 in the
+   initialization, to avoid this subtraction in many methods.
+
+! 2002-10-18 - Chris Parkes
+ - Hardcoded designs for the 45 degree R sensors. Added a jobOption to select
+   which design to use. This is intended to be temporary !
+
+!========================= VeloDet v7r1 2002-10-14 =========================
+! 2002-10-14 - Olivier Callot
+ - Improve the getSpacePoint method by removing some wrong consistency tests, 
+   as reported by Ivan Kisel.
+
+!========================= VeloDet v7r0 2002-07-18 =========================
+! 2002-07-11 - Olivier Callot
+ - Correct various method to handle sensor number over 100, which is PuVeto
+   sensors, for Velo/VeloAlgorithms. Removed the specialized methods for the
+   PuVeto, and adapt the generic ones:
+     puSensorNumber     :  sensorNumber
+     puStripNumber      :  stripNumber
+     zPuSensor          :  zSensor
+
+! 2002-07-09 - Chris Parkes
+ - re-define integer strip method  rOfStrip, so that it gives same result as 
+   double version.
+ - bug in ChannelID method - fractional part was not in range -0.5 to +0.5
+
+!========================= VeloDet v6r0 2002-07-09 =========================
+! 2002-06-24 - Olivier Callot
+ - Trick to set the OutputLevel in the detector element, to control the print
+   level. Default is no print, DEBUG gives the list of the sensor's properties.
+
+! 2002-06-20 - Olivier Callot
+ - Adapt to the new Velo structure with 42 half-stations, in place of 21 
+	 stations. Same for PuVeto. The functionality is unchanged.
+
+! 2002-06-18 - Olivier Callot
+ - Fix some bugs in the new method, implemented the methods used by the
+   VeloAlgorithms properly.
+
+! 2002-06-10 - Olivier Callot
+ - Adaptation to the 21 station velo, with dog-leg Phi sensors
+   2 phi sensors can match a R sensor. No longer virtual strips > 2048
+ - New methods needed for the Velo signal processing (Chris Parkes)
+
+!======================== VeloDet v5r0 2002-04-05 ============================
+! 04/05/2002 - Olivier Callot
+  - Fix the rOfStrip method: Was always returning the first strip position
+
+!=============================================================================
+! 25/04/2002 - Olivier Callot
+  - Fix the string type for the sensor, as a bug has been fixed in Det/DetDesc
+  - Test that the type is known, log and fail if not.
+
+!=============================================================================
+! 24/04/2002 - Olivier Callot  ** v5r0 **
+  - Added functions for the new Xml description, allowing various R-Phi orders.
+     isRSensor( num ) : return if the sensor measures R
+     phiSensorAssociated( num ) : Lits the Phi sensors to patch the specified 
+                                  R sensor
+     matchingZones( zone1, zone2 ) : Are the two R zones compatible ?
+     rOfStrip( int ) : Return the radius of this strip, from a pre-computed 
+                       table for fast access.
+     phiPitch( int ) : Return the phi pitch in angle of the specified strip.
+  - Get the sensor geometry form Xml, using a userParameter. No longer any
+    hardcoded knowledge of the R-Phi order and alternance. PuVeto is also
+    identified from Xml.
+
+!=============================================================================
+! 18/04/2002 - Olivier Callot
+  - Replaced 'wafer' by 'sensor' in all member function names and internals
+  - New function sensorType( int ) to get the type of a sensor
+
+! 20020419 (M.Cattaneo)
+  Use DetDesc v10* (for Gaudi v10)
+
+!=============================================================================
+! 05/04/2002 - Olivier Callot ** v4r0 **
+  - Fixed the type of wafers in PuVeto, they were always of teh same type !
+
+! 28/03/2002 - Olivier Callot
+  - New methods for Phi: 
+    originToPhiDistance : Return the (signed) distance form orgigin to a strip.
+    phiDirectionOfStrip : Return the signed angle of the strip.
+    These two methods are needed by the VeloPhiHitOnTrack TrEvent class.
+
+!=============================================================================
+! 18/03/2002 - Olivier Callot ** v3r1 **
+  - Change the 'type' of the wafers, to handle properly the separation between
+    left and right detectors, this was not done for R and was incorrect for 
+    Phi. The result was an inefficiency in the overlap region (vertical).
+  - Fixes a few minor problems of boundary, by increasing tolerances to see
+    if a hit is compatible with a region of the other detector.
+  - When matching R-Phi, if the slope from the nominal vertex is too big,
+    one use an extrapolation parallel to the Z axis and an increased tolerance.
+
+!=============================================================================
+! 29/01/2002 - Olivier Callot  v3r0
+  - Put the R wafer in front of the Phi wafer (was the reverse)
+
+!=============================================================================
+! 28/01/2002 - Olivier Callot
+  - Modified the initialize() method to use the child detector elements, to get
+    the individual wafer positions from XML. The type of wafer is still 
+	  hardcoded, as is the detection of PuVeto / Normal Velo boundary.
+    This requires XmlDDDB v7r2 or later.
+
+!=============================================================================
+! 23/01/2002 - Olivier Callot
+  - Added new members to DeVelo (.h,.cpp) : rOfStrip, phiOfStrip rPitch and 
+    phiPitch to be able to implement the VeloClusterOnTrack with this geometry.
+  - Added zVertex method to fix the point to extrapolate in getSpacePoint 
+    between R and Phi wafers. 
+  - Also adapted the requirements to GaudiSys v9
+  - PuVeto seems to be working.
+
+!=============================================================================
+! 10/01/2002 - Olivier Callot
+  - Added the PU Veto wafer, with new methods to get their number and position.
+    This is not fully tested for the PU Veto, but doesn't affect the Velo
+
+!=============================================================================
+! 26/11/2001 - Olivier Callot
+  - Modifiy the detector element to add pseudo-strips in Phi wafer, as the 
+	  shape in SICBMC is still half a circle. These strips have number over 2048
+    and are properly handled by the strip-to-position routine.
+
+!=============================================================================
+! 25/10/2001 - Olivier Callot
+  - Add a DeVelo detector element, to answer questions abou the position to 
+    strip conversion with the TDR Velo geometry.
+
+! 20010711 - v2 Flr
+  VeloDetectorElement.h - include IGeometryInfo.h from DetDesc/
+
+! 20010205 - Bruce Hay, Pere Mato
+
+- This is a new package for the Velo detector description.
+

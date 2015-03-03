@@ -1,0 +1,162 @@
+! $Id: release.notes,v 1.44 2006-05-16 08:56:51 cattanem Exp $
+! Package     : Event/MCEvent
+! Responsible : Marco Cattaneo, Gloria Corti
+! Purpose     : LHCb Event model. MC truth classes (Gauss and Boole output) 
+!-----------------------------------------------------------------------------
+
+!========================== MCEvent v1r3 2006-05-16 ==========================
+! 2006-05-16 M. Needham
+ - Add ISiDepositedCharge interface
+
+! 2006-05-11 - Marco Cattaneo
+ - Use explicitly Gaudi::Units namespace in MCParticle.h and MCHit.h, to avoid 
+   possible clash when also including the CLHEP files (e.g. in HepMC)
+
+!========================== MCEvent v1r2p1 2006-04-20 ========================
+! 2006-04-20 - Florence RANJARD
+ - requirements - add Kernel in branches
+
+! 2006-04-20 - Marco Cattaneo
+ - Remove duplicated MCParticle::Container typedef
+
+!========================== MCEvent v1r2 2006-03-16 ==========================
+! 2006-03-16 - P. Koppenburg
+ - Kernel/IMCDecayFinder.h: replace MCParticle::ConstContainer by MCParticle::Container
+  
+! 2006-03-15 - Juan Palacios
+ - xml/Particle.xml: add typedefs for KeyedContainers of MCParticle and 
+   const MCParticle. LHCb::MCParticle::Container, 
+   LHCb::MCParticle::ConstContainer.
+   These should be generated automatically by GOD from Gaudi v18r3 onwards.
+ - Kernel/IMCDecayFinder.h: replace LHCb::ConstMCParticles by LHCb::MCParticle::ConstContainer. 
+   Remove typedef LHCb::ConstMCParticles
+
+!========================== MCEvent v1r1 2006-03-07 ==========================
+! 2006-03-14 - Juan Palacios
+ - Add temporary typedef to IMCDecayFinder to define LHCb::ConstMCParticles.
+   This should be removed as soon as GOD generates it automatically in
+   MCParticle.h.
+   Change xml/MCParticle.xml to generate typedefs LHCb::MCParticle::Vector and
+   LHCb::MCParticle::ConstVector.
+   Change IMCDecayFinder hasDecay, findDecay, decayMembers, decaySubTrees 
+   methods to use LHCb::ConstParticles and LHCb::MCParticle::Vector.
+
+! 2006-03-07 - Gloria CORTI
+ - Add new data member to MCHit, i.e. the absolute momentum of the particle
+   when producing the hit.
+
+! 2006-03-01 - Chris Jones
+ - Improvements to RICH MC classes
+  + MCRichDigitHistoryCode has more background types
+  + Add missing include for MCParticle in MCRichDigitSummary
+  + MCRichHit can store more background types
+  + Update history flags in MCRichOpticalPhoton to match those in the hit
+    Add refraction point (for aerogel) and remove unused data members
+  + MCRichSegment now support other radiator types
+ 
+! 2006-02-22 - Chris Jones
+ - Update sensDetID member in MCRichHit to be of type RichSmartID
+
+! 2006-02-17 - Marco Cattaneo
+ - Fix default locations to all follow the same convention
+
+! 2006-02-16 - Chris Jones
+ - General clean up of history information in the RICH MC classes
+  + Add new flags for new background sources in Gauss
+  + Add some simple summary methods
+ - Remove definition of Linker locations from MCRichOpticalPhoton and
+   MCRichTrack
+
+! 2006-02-13 - Chris Jones
+ - Add more history flags to RICH MCRichHit objects
+
+! 2006-02-06 - Chris Jones
+ - Remove non const accessors added for MCVertex and MCParticle.
+   Work arounds added where needed in GaussKine and GigaCnv instead
+
+! 2006-02-06 - Chris Jones
+ - Update MCRichDigitHistoryCode with new method to import flags from another 
+   history code.
+
+!========================== MCEvent v1r0 2006-01-27 ==========================
+! 2006-01-27 - Gloria CORTI
+ - Add non-const accessors to relations for MCVertex and MCParticle necessary
+   when filling them in Gauss
+
+! 2006-01-23 - Chris Jones
+ - Add charge sharing field to MCRichDigitHistoryCode
+
+! 2006-01-17 - Marco Cattaneo
+ - Add MCMuonDigit, MCMuonDigitInfo, MCMuonHitHistory, MCMuonPack, moved here
+   from MuonEvent
+
+! 2006-01-12 - Marco Cattaneo
+ - Add MCOTTime, MCOTDeposit, moved here from OTEvent
+ - Add MCVeloFE, moved here from VeloEvent
+
+! 2005-12-22 - Chris Jones
+ - Add methods to MCRichSegment to add to position and momentum vectors
+
+! 2005-12-20 - Chris Jones
+ - Fix MCRichTrack compilation.
+
+! 2005-12-20 - Marco Cattaneo
+ - Add MCSTDeposit and MCSTDigit
+ - Fix package of Rich classes (was RichEvent), except for MCRichTrack, whose
+   dictionary does not compile.
+
+! 2005-12-16 - Chris Jones
+ - Add Rich MC digitisation classes
+
+! 2005-12-16 - Marco Cattaneo
+ - Add MCTrackInfo helper class (from MCTools package)
+
+! 2005-12-16 - Matt Needham
+ - Add MCHit::midPoint() method
+
+! 2005-12-15 - Gloria CORTI
+ - Introduce new data members in MCHeader: evtNumber and evtTime.
+ - Add Kernel/IMCDecayFinder.h interface, moved from Phys/MCTools, the 
+   implementation is in new package Sim/SimComponents 
+
+! 2005-12-15 - Marco Cattaneo
+ - Add Event/MCTruth.h helper class, moved from Event/Event on old event model
+
+! 2005-12-14 - Marco Cattaneo
+ - Add MCCaloDigit.xml (moved from CaloEvent)
+
+! 2005-12-07 - Marco Cattaneo
+ - Replace MCHitLocation::ST with ::TT and ::IT
+
+! 2005-12-06 - Olivier Deschamps, Marco Cattaneo
+ - Import MCCaloHit from CaloEvent, including event model review changes and
+   migration to MathCore
+
+! 2005-12-06 - Chris Jones
+ - Import MCRichSegment, MCRichTrack, MCRichOpticalPhoton and MCRichHit from 
+   RichEvent. Allows Gauss to be independant of RichEvent.
+ - Port RICH classes from CLHEP to ROOT geometry classes
+
+! 2005-11-30 - Marco Cattaneo
+ - Migrate to GaudiObjDesc v9r1 (LHCb namespace)
+ - Remove obsolete object factories from library
+
+! 2005-11-15 - Gloria CORTI
+ - Change package name to MCEvent in *.xml, for GOD Reflex dict generation
+ - MCHit adapted to Event Model review reccomendations:
+   . no longer a KeyObject but a ContainedObject
+   . use of LHCb typedefs (to MathCore) for basic vector and point classes 
+   . introduce new attribute for sensitive detector identifier (sensDetID
+     with -1 as invalid number)
+   . renaming of some methods
+
+! 2005-11-15 - Patrick KOPPENBURG
+ - New MCHeader class inheriting from ProcessHeader 
+ - MCParticle and MCVertex adapted to Physics Event Model guidelines, remove
+   some methods (ex. collision() to be provided by tools) and adopt MathCore
+
+! 2005-09-06 - P. Koppenburg
+  - Split package Event/Event into Event/MCEvent and Event/EventBase because 
+    . Packages called Foo/Foo cause problems in cvs
+    . Everything was depending on it which is not that nice since it contains
+      MCParticle for instance

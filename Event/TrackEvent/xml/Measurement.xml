@@ -1,0 +1,200 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE gdd SYSTEM 'gdd.dtd'>
+<gdd>
+  <package name='TrackEvent'>
+
+<!-- ================= Measurement class definition ================= -->
+
+    <class
+      name        = 'Measurement'
+      author      = 'Jose Hernando, Eduardo Rodrigues'
+      desc        = 'Measurement is the base class for offline and online measurements.'
+      serializers = 'FALSE' >
+
+      <import name='Kernel/TrackTypes.h' />
+      <import name='Kernel/LHCbID' />
+      <import name='Kernel/Trajectory' />
+
+      &StlPtrVector;
+
+<!--
+  /** Measurement type enumerations
+   *
+   *   Unknown  : measurement of undefined type (this should never happen!)
+   *   VeloR    : Velo-R measurement
+   *   VeloPhi  : Velo-phi measurement
+   *   TT       : TT measurement (ST measurement in the TT stations)
+   *   IT       : IT measurement (ST measurement in the IT seeding stations)
+   *   OT       : OT measurement in the seeding stations
+   *   Muon     : Muon measurement
+   *
+   */
+-->
+      <enum
+        name    = 'Type'
+        value   = 'Unknown,VeloR,VeloPhi,TT,IT,OT,Muon'
+        desc    = 'enumerator for the type of Measurement'
+        access  = 'PUBLIC' />
+
+      <constructor 
+	desc     = "Copy constructor" 
+	argList  = "LHCb::Measurement other" >
+        <code>
+          m_mtype = other.m_mtype;
+          m_z = other.m_z;
+          m_measure = other.m_measure;
+          m_errMeasure = other.m_errMeasure;
+          m_trajectory.reset( (other.m_trajectory)->clone().release());
+          m_lhcbID = other.m_lhcbID;
+          m_refVector = other.m_refVector;
+          m_refIsSet = other.m_refIsSet;
+        </code>
+      </constructor>
+
+     <attribute
+       type    = 'bitfield'
+       name    = 'mtype'
+       desc    = 'the variety of measurement types'
+       getMeth = 'FALSE'
+       setMeth = 'FALSE'
+       access  = 'PROTECTED'>
+       <bitfield
+         name      = 'type'
+         length    = '6'
+         type      = 'Type'
+         getMeth   = 'FALSE'
+         setMeth   = 'TRUE'
+         checkMeth = 'FALSE'
+         desc      = 'measurement type' />
+      </attribute>
+
+      <attribute
+        type    = 'double'
+        name    = 'z'
+        desc    = 'the z-position of the measurement'
+        access  = 'PROTECTED' />
+
+      <attribute
+        type    = 'double'
+        name    = 'measure'
+        desc    = 'the measurement value'
+        access  = 'PROTECTED' />
+
+      <attribute
+        type    = 'double'
+        name    = 'errMeasure'
+        desc    = 'the measurement error'
+        access  = 'PROTECTED' />
+
+      <attribute
+        type    = 'std::auto_ptr &lt; LHCb::Trajectory &gt;'
+        name    = 'trajectory'
+        desc    = 'the trajectory representing the measurement (owner)'
+        access  = 'PROTECTED'
+        getMeth = 'FALSE'
+        setMeth = 'FALSE' />
+
+      <attribute
+        type    = 'LHCb::LHCbID'
+        name    = 'lhcbID'
+        desc    = 'the corresponding LHCbID'
+        access  = 'PROTECTED' />
+
+      <attribute
+        type    = 'Gaudi::TrackVector'
+        name    = 'refVector'
+        desc    = 'the reference vector'
+        access  = 'PROTECTED' 
+        setMeth = 'FALSE' />
+
+      <attribute
+        type    = 'bool'
+        name    = 'refIsSet'
+        desc    = 'flag for the reference vector'
+        access  = 'PROTECTED'
+        setMeth = 'FALSE' />
+
+      <method
+        type    = 'double'
+        name    = 'errMeasure2'
+        desc    = 'Retrieve const  the measurement error squared'
+        const   = 'TRUE'>
+        <code>
+  return m_errMeasure * m_errMeasure;
+        </code>
+      </method>
+
+      <method
+        type    = 'double'
+        name    = 'resolution'
+        argList = 'Gaudi::XYZPoint /*point*/, Gaudi::XYZVector /*vec*/'
+        desc    = 'Retrieve the measurement error'
+        const   = 'TRUE'
+        virtual = 'TRUE'>
+        <code>
+  return m_errMeasure;
+        </code>
+      </method>
+
+      <method
+        type    = 'double'
+        name    = 'resolution2'
+        argList = 'Gaudi::XYZPoint /*point*/, Gaudi::XYZVector /*vec*/'
+        desc    = 'Retrieve the measurement error squared'
+        const   = 'TRUE'
+        virtual = 'TRUE'>
+        <code>
+  return m_errMeasure * m_errMeasure;
+        </code>
+      </method>
+
+      <method
+        type    = 'unsigned int'
+        name    = 'type'
+        desc    = 'Retrieve the measurement type'
+        const   = 'TRUE'>
+        <code>
+  return (Measurement::Type)((m_mtype &amp; typeMask) &gt;&gt; typeBits);
+        </code>
+      </method>
+
+      <method
+        type    = 'bool'
+        name    = 'checkType'
+        argList = 'unsigned int type'
+        desc    = 'Check the measurement type'
+        const   = 'TRUE' />
+
+      <method
+        type    = 'LHCb::Measurement*'
+        name    = 'clone'
+        desc    = 'Clone the measurement'
+        const   = 'TRUE'
+        virtual = 'PURE'>
+      </method>
+
+      <method
+        name    = 'setRefVector'
+        desc    = 'Update the reference vector'
+        argList = 'const Gaudi::TrackVector refVector'>
+        <code>
+  m_refIsSet  = true;
+  m_refVector = refVector;
+        </code>
+      </method>
+
+      <method
+        type    = 'const LHCb::Trajectory&amp;'
+        name    = 'trajectory'
+        desc    = 'Retrieve the trajectory representing the measurement'
+        const   = 'TRUE'>
+        <code>
+  LHCb::Trajectory* pTraj = m_trajectory.get();
+  return *pTraj;
+        </code>
+      </method>
+
+    </class>
+
+  </package>
+</gdd>

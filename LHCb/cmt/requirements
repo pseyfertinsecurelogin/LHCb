@@ -1,0 +1,28 @@
+package LHCb
+version v21r1
+
+branches doc cmt options
+
+#===============================================================
+# LHCb packages
+#===============================================================
+
+use GaudiConf           v9r7
+
+# Kernel packages
+use KernelSys           v5r6    Kernel
+
+# Detector description
+use DetSys              v8r6    Det
+
+# Event data model
+use EventSys            v21r6  Event
+
+# DAQ Buffer encoding and decoding
+use DAQSys              v2r4    DAQ
+
+# Extra stuff
+use LHCbAlgs            v2r0    Kernel
+use CaloInterfaces      v6r0    Calo
+use CaloUtils           v6r3    Calo
+use SimComponents       v1r2p1  Sim

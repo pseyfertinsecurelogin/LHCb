@@ -1,0 +1,46 @@
+//$Id: common.opts,v 1.5 2005-12-08 11:41:08 marcocle Exp $
+//==============================================================
+// Common job options for all DetCondExample tests
+//==============================================================
+
+//--------------------------------------------------------------
+// Services needed in the application
+//--------------------------------------------------------------
+
+// Dynamically load component library for DetCond services and converters
+ApplicationMgr.DLLs    = { "DetDescSvc", "GaudiAlg", "XmlTools", "DetDescCnv" };
+
+// No histograms are needed in this example
+ApplicationMgr.HistogramPersistency = "NONE";
+
+//--------------------------------------------------------------
+// Message service options
+//--------------------------------------------------------------
+
+// Modify Message Format to print algorithm name with 25 characters
+MessageSvc.Format = "% F%25W%S%7W%R%T %0W%M";
+
+//--------------------------------------------------------------
+// Detector Description Options
+//--------------------------------------------------------------
+DetectorDataSvc.UsePersistency = true;
+DetectorDataSvc.DetDbLocation  = "$DETCONDEXAMPLE_XMLDDDB/dddb.xml";
+DetectorDataSvc.DetDbRootName  = "dd";
+DetectorDataSvc.DetStorageType = 7;
+XmlCnvSvc.AllowGenericConversion = true;
+XmlCnvSvc.DtdLocation = "$DETCONDEXAMPLE_XMLDDDB/DTD";
+
+//--------------------------------------------------------------
+// Detector Persistency Service Setup
+//--------------------------------------------------------------
+DetectorPersistencySvc.CnvServices += { "XmlCnvSvc" };
+
+//--------------------------------------------------------------
+// Timing measurement
+//--------------------------------------------------------------
+GaudiSequencer.MeasureTime = true;
+//ApplicationMgr.ExtSvc += { "ChronoStatSvc" };
+
+//==============================================================
+// End of common job options for DetCondExample tests
+//==============================================================

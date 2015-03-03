@@ -1,0 +1,358 @@
+# $Id: release.notes,v 1.67 2006-04-25 17:20:19 marcocle Exp $
+!-----------------------------------------------------------------------------
+! Package     : Det/DetCond
+! Responsible : Marco Clemencic
+! Purpose     : Interface between LHCb and LGC/COOL project
+!-----------------------------------------------------------------------------
+
+!=========== Ex/DetCondExample v8r0 2006-04-25 ==============================
+! 2006-04-25 - Marco Clemencic
+ **** requires LCGCMT_43 ****
+ - Updated to COOL_1_3_x
+
+! 2006-04-13 - Marco Clemencic
+ - Fixed a problem with uninitialized variables just affecting the case of
+   a FolderSet stored in the CondDB cache.
+
+!================= Det/DetCond v7r10p1 2006-03-29 ============================
+! 2006-03-29 - Marco Cattaneo
+ - Trivial fix in requirements for GCCXML+Boost on Windows with LCG_v42a
+
+!================= Det/DetCond v7r10 2006-03-22 ==============================
+! 2006-03-22 - Marco Cattaneo
+ - Add DetCondDict (to remove dependency on DetCond in DetSys)
+
+!================= Det/DetCond v7r9 2006-02-03 ===============================
+! 2006-02-01 - Marco Clemencic
+ - Updated to Gaudi v18r2 (use Gaudi::Time instead of ITime+TimePoint)
+ - Added Boost and SEAL to the dependencies because they are not inherited
+   from other packages anymore
+
+! 2006-01-25 - Nicolas Gilardi
+ - Allow to use a COOL connection string instead of the splitted credentials
+ - Modified Function CondDBAccessSvc::createFolder() to use large (16M)
+   strings by default in the CondDB folders.
+
+! 2006-01-22 - Marco Clemencic + Nicolas Gilardi
+ - Updated to improved COOL API.
+
+================= Det/DetCond v7r8 2006-01-20 ================================
+! 2006-01-20 - Marco Cattaneo
+ - Add use CORAL to requirements. N.B.: this is temporary, should be done 
+   directly in COOL interface package
+
+! 2005-12-08 - Marco Clemencic
+ - Use GaudiUtils::HashMap in CondDBCache.h
+
+================= Det/DetCond v7r7 2005-11-04 ================================
+! 2005-10-18 - Marco Clemencic
+ - Cosmetic improvements
+   (RelyConverter, CondDBGenericCnv, CondDBAccessSvc, CondDBCnvSvc)
+ - Added `#include <vector>' in ICondDBAccessSvc.h and ICondDBCnvSvc.h
+
+! 2005-10-05 - Marco Clemencic
+ - Minimal update to follow API changes from COOL_1_1_0 to COOL_1_2_4
+
+================= Det/DetCond v7r6 2005-09-19 ================================
+! 2005-09-18 - Marco Clemencic
+ - Allow direct mapping of the CondDB structure to the DetectorDataSvc tree
+   (no need to pass through an XML file/string with only catalogs)
+ - Use the 3rd string of the GenericAddress to store the origin of the XML
+   string (needed for self referencing XML string with DetDescCnv > v2r8)
+
+! 2005-08-31 - Marco Clemencic
+ - Implemented RelyConverter::updateObjRefs in order to re-initialize
+   correctly the updated conditions.
+
+! 2005-08-30 - Marco Clemencic
+ - Added support to cool::ChannelId (needs DetDescCnv > v2r8)
+ - Fixed a bug in CondDBCache
+   (the search of conflicts in the IOVs worked only in a well defined case,
+    the one tested!)
+
+================= Det/DetCond v7r5 2005-07-21 ================================
+! 2005-07-21 - Marco Clemencic
+ - Apply always tag NEEDS_COOL_FACTORY (is needed by Windows and Python)
+
+! 2005-07-11 - Marco Clemencic
+ - Removed unused pointers from CondDBCnvSvc
+
+! 2005-07-07 - Marco Cattaneo
+ - Fix a doxygen warning
+
+! 2005-07-07 - Marco Clemencic
+ - Abstract interfaces moved to DetDesc (to allow python bindings)
+ - Added CondDBAccessSvc::dumpCache(), it prints (level=DEBUG) the content
+   of the cache.
+
+! 2005-06-30 - Marco Clemencic
+ - Added RelyConverter::fillObjectRefs (was missing, but needed for
+   initialization of objects)
+
+================= Det/DetCond v7r4 2005-06-23 ================================
+! 2005-06-23 - Marco Clemencic
+ - Added the possibility of having an in-memory copy of the CondDB.
+
+! 2005-06-14 - Marco Clemencic
+ - Renamed ConditionsDBCnvSvc to CondDBCnvSvc and added the interface
+   ICondDBCnvSvc
+
+================= Det/DetCond v7r3 2005-06-14 ================================
+! 2005-06-14 - Marco Cattaneo
+ - Move ConditionsDbCnvSvc and RelyConverter to component library.
+
+! 2005-06-14 - Marco Clemencic
+ - CondDBAccessSvc does not complain anymore if the user is not specified
+	 (adapted to POOL XML authentication service, COOL > 1.1.0)
+
+! 2005-06-08 - Marco Clemencic
+ - Changed from "component library" to "component + link library"
+
+================= Det/DetCond v7r2 ===========================================
+! 2005-05-27 - Marco Clemencic
+ - fixed compilation issue for Windows
+
+! 2005-05-25 - Marco Clemencic
+ - Adapted to COOL 1.1.0 (LCG_35)
+
+================= Det/DetCond v7r1 ===========================================
+! 2005-05-12 - Marco Clemencic
+ - Fixed the compilation on WIN32
+ - Added support to multiple databases through option
+   ConditionsDBCnvSvc.CondDBAccessServices
+
+================= Det/DetCond v7r0 ===========================================
+! 2005-04-25 - Marco CLEMENCIC
+ - Upgrade to COOL_1_0_0 (first production release)
+ - Works with LHCb v18r3
+
+================= Det/DetCond v6r1 ===========================================
+! 2005-04-22 - Marco CLEMENCIC
+ - Upgrade to COOL_0_1_0-pre2
+ - Support for tagging
+ - almost all the technicalities (POOL/COOL) moved to CondDBAccessSvc
+ - some clean up
+ - commit before the first production release
+
+==============================================================================
+! 2005-02-09 - Marco CLEMENCIC
+ - Upgrade to first public preliminary version of COOL (COOL_0_0_3-pre1)
+ - Renamed XMLRelyCnv to RelyConverter (it can use, in principle, any
+   conversion service).
+ - Moved CondDBGenericCnv to the public interface in order to allow public
+   usage of RelyConverter.
+
+==============================================================================
+! 2005-01-27 - Marco CLEMENCIC
+ - Upgrade to first preliminary version of the Conditions Database API:
+   COOL_0_0_1
+
+==============================================================================
+! 2004-12-08 - Marco Clemencic
+ - Upgrade to latest stable version of CondDB (CONDDB_0_2_0) and fixed for the
+changes in Gaudi/LHCb
+ - Moved and modified part of the ConditionsDBCnvSvc to a dedicated converter
+(XmlRelyCnv) + a generic CondDB converter to put common Converter functions in
+one place
+ - Implemented the possibility to use a fall back Converter (the one relying on
+DetectorPersistencySvc) if no dedicated converter is found.
+Requirements v5r0
+
+==============================================================================
+!20030131 - Andrea Valassi
+Upgrade to DetDesc v11r8.
+Only change is in recommended CMTPATH.
+- DetDesc is included in LHCB_v11r5 for all of rh61dbx, rh73dbx and Windows
+- This makes it easier to distribute as DetDesc does not need to be recompiled
+Requirements v4r3, private tag h20030131
+
+==============================================================================
+!20021203 - Andrea Valassi
+Include the MySQL implementation for both RH73 and WIN32
+- DetCond on RH73/WIN32 now depends on both Oracle and MySQL implementations
+  > multiple "use..." in the requirements
+  > if the "use..." statement is removed, some code is #ifndef'd away
+    (as the base packages propagate to DetCond the relevant cppflags)
+  > to make the code more readable, implementation-specific init() and 
+    i_buildCondDBInfo() have been introduced (#ifdef'd in only if necessary!)
+  > I assume RH61 is always Objy only
+- Implementation is read at runtime from the job options
+  > ConditionsDBGate.condDBImpl = one of CondDBObjy, CondDBOracle, CondDBMySQL
+- Remove CondDBKey.h from DetCond (I forgot to remove it on h20020301!)
+Requirements v4r2, private tag h20021203
+
+==============================================================================
+!20021125 - Andrea Valassi
+Upgrade to CondDBOracle v4r16, Gaudi v11r2 and DetDesc v11r2.
+Upgrade to RedHat73 on lxplus7.
+- no major change to DetCond code
+  > disable WIN32 compilation warning 4786 in ConditionsDBGate.cpp 
+  > print out ORA_NLS33 and NLS_LANG to keep track of their values
+- dependency on Det/CondDBOracle changed from v4r15 to v4r16 (RH7,WIN)
+- dependency on Gaudi changed to v13r* (tested with v13r2)
+- dependency on GaudiSvc changed to v10r* (tested with v10r1)
+- dependency on Det/DetDesc changed to v11r* (tested with v11r2)
+Modify CMT requirements to allow for runtime choice between Oracle and MySQL.
+- precompiler directives are inherited from CondDB package(s)
+- dependency on CONDDB (using Objectivity) changed to v3r02p3 (RH6)
+Requirements v4r1, private tag h20021125
+
+==============================================================================
+!20020725 - Andrea Valassi
+Upgrade to CondDBOracle v4r15 and Gaudi v10r4.
+- no change to DetCond code
+- dependency on Det/CondDBOracle changed from v3r10p1 to v4r15 (RH7,WIN)
+- dependency on CONDDB (using Objectivity) remains v3r02p2 (RH6)
+- dependency on Gaudi tested with GaudiKernel v12r3 and GaudiSvc v8r3
+- dependency on Det/DetDesc (v10r*) tested with v10r3
+Requirements v4r0, private tag h20020725
+
+==============================================================================
+!20020417 - Andrea Valassi
+Upgrade to Gaudi v10
+- use RedHat7.2 tag rh72_gcc2952 (not rh72_gcc29521), defined in GaudiPolicy
+- dependency on Det/CondDBOracle changed from v3r10 to v3r10p1
+- dependency on CONDDB changed from v3r02p1 to v3r02p2 (bug fix)
+- adapt to new version of MsgStream.h in GaudiKernel for longlong printout
+- dependency on Det/DetDesc changed from v9r* to v10r*
+Requirements v3r0, private tag h20020417
+
+==============================================================================
+!20020405 - Andrea Valassi
+Minor modifications to requirements
+- dependency on CONDDB changed from v3r02 to v3r02p1
+- env. variable CONDDB_implementation is defined in CONDDB or Det/CondDBOracle
+Requirements v2r1, private tag h20020405
+
+==============================================================================
+!20020328 - Andrea Valassi
+First Oracle implementation ported to Linux (RedHat 7.2 only)
+See doc/README.RedHat72 in Ex/DetCondExample for more details
+Corresponds to Emil's first official release of ConditionsDB (0.3.1.0)
+- change WIN32 dependency on Det/CondDBOracle package to version v3r10
+- add rh72_gcc29521 dependency on Det/CondDBOracle v3r10
+- keep rh61_gcc29521 dependency on CONDDB v3r02
+Requirements v2r1, private tag h20020328.
+
+==============================================================================
+!20020308 - Andrea Valassi
+Change dependency on CondDBOracle package to version v2r10 (0.2.1.0).
+Requirements v2r1, private tag h20020308.
+
+==============================================================================
+!20020301 - Andrea Valassi
+First version supported on Windows using an Oracle implementation of CondDB.
+- Platform-specific support
+  > remove CondDBKey.h from DetCond: use that from the ConditionsDB package
+  > interchange the contents of DetCond_dll and DetCond_load
+  > remove #ifdef's with dummy failure codes for non-Linux platforms
+- Support of Oracle (needed also to suppport Oracle under Linux)
+  > implementation specified in the requirements  is propagated via #ifdef's
+  > new init string for the Oracle database including host, user and password
+  > CondDBOracleMgrFactory or CondDBObjyDBMgrFactory called in either case
+Requirements v2r1, private tag h20020301.
+
+==============================================================================
+!20020110 - Flr
+ requirements - apply packageShr instead of ld_library_path pattern because 
+                it is a component library.
+                do not apply package_Lshlibflags, there is no linker library.
+ 
+!20011220 - Andrea Valassi
+Simplify dependencies on the Gaudi framework.
+
+==============================================================================
+!20011216 - Andrea Valassi
+Major changes due to tighter coordination with DetDesc and XmlDDDB packages.
+- Update cannot be delegated to XmlCnvSvc until major changes in DetDes 
+  > code creating and interpreting DOM trees in each Xml converter should be 
+    executed also in updateObj(): to avoid duplicating code, a solution is 
+    to move it from createObj() to updateObj() or better updateObjRefs(),
+    which should be called internally from createObj()
+  > my (temporary?) solution is to create a new object using the address, and 
+    deep copy part of it into the old one by a Condition::update(Condition&)
+    method to deep copy only those properties of a DataObject that refer
+    to a Condition (eg validity and parameters); the registry, address,
+    reference counts and other DataObject properties should not be deep
+    copied instead (hence an overloaded operator= is not introduced)
+  > update of DataObjects is only possible for Conditions (and derived classes)
+    because this method exists only for Conditions
+  > this is the only reason to have a dependency on DetDesc
+  > however, DataObjects not implementing IValidity are now assumed valid
+    (previously, an error was returned when updating them)
+- Changes in folder description
+  > classID are removed from all XML refs: remove it from folder description
+  > assume that secondary storage type is always read from folder description
+- Remove ConditionsDBAddress (a GenericAddress of type CONDDB is enough)
+  > par[0] is still the COndDB folder name
+  > the tag name is not anymore in the CONDDB address
+  > par[1] is now the name of the element (e.g. the name of an XML element)
+  > the string storage type is not in the CONDDB address
+    (it is now assumed that it is always read from the folder description)
+  > ipar{0,1] are not used anymore 
+- Registry entry (can be 0) is used in creating and updating Conditions
+  > for instance: this is needed for catalog conversion
+  > it is set in the secondary temporary address (e.g. an XML catalog address)
+- Minor changes in messaging: use VERBOSE tag for verbose comments
+- Overload methods for writing representations in ConditionsDBCnvSvc
+  > they must be overloaded because this CnvSvc has no converters
+  > they are empty for the moment (not yet implemented)
+- Upgrade to CMT v1r10: remove scripts and hacks needed to cure a bug in CMT
+Requirements v2r0, private tag h20011216.
+
+==============================================================================
+!20011130 - Andrea Valassi
+Modified version of DetDataSvc in GaudiSvc committed to CVS 
+- Contains main features of ConditionDataSvc and ConditionsDBDataSvc
+- Remove ConditionDataSvc and ConditionsDBDataSvc from this package
+
+==============================================================================
+!20011129 - Andrea Valassi
+- Remove the IConditionsDBDataSvc special interface
+  > ConditionsDBDataSvc now does little more than ConditionDataSvc
+- Implement a dummy IIncidentListener interface in ConditionDataSvc
+- Redefine ConditionsDBAddress_undefinedClassID = CLID_NULL (it will disappear)
+
+==============================================================================
+!20011128 - Andrea Valassi
+Move the global tag from the ConditionsDBDataSvc to the ConditionsDBCnvSvc
+- Use IAddressCreator interface of CnvSvc to create addresses with global tag
+  > "DEFAULT" becomes a reserved word to indicate the global tag
+- Remove method setGlobalTag (the tag can only be set in the job options)
+
+==============================================================================
+!20011127 - Andrea Valassi
+A few more changes before including my detector data service in GaudiSvc
+- The event time is not passed in an address from the DataSvc to the CnvSvc
+  > remove IConditionAddress
+  > ConditionsDBCnvSvc now reads the event time from the DetDataSvc
+  > ConditionDataSvc::updateObject now just checks validity before delegating
+- Move interface IDetDataSvc (formerly IConditionDataSvc) to GaudiKernel 
+  > needed to retrieve the event time within the ConditionsDBCnvSvc
+  > the setEventTime method is temporary (eventually: use the IncidentService)
+- Store ConditionsDBAddress private data as GenericAddress private data
+
+==============================================================================
+!20011126 - Andrea Valassi
+A few changes before including my data service in GaudiSvc.
+- Move ConditionData from DetCond/src/Lib to DetCondExample
+  > only DataObjects are manipulated, with dynamic casts to IValidity
+  > no Lib anymore in DetCond/src
+- Manipulate ITime and TimePoint objects rather than ITime pointers
+  > add bool method to check if the event time is defined in ConditionDataSvc
+
+==============================================================================
+!20011123 - Andrea Valassi
+Upgrade to Gaudi v9
+- Addresses now inherit from GenericAddress (which has been simplified a lot)
+- There are no address factories any more
+- Adapt to changes in RegistryEntry (which now implements IRegistry)
+- Add dummy methods fillObjRefs and updateObjRefs in ConditionsDBCnvSvc
+- Notify (by flag "true") ServiceLocator to create services not existing yet
+Requirements v2, private tag h20011123.
+
+==============================================================================
+!20010914 - Andrea Valassi
+New package.
+Requirements v1, private tag v1.
+

@@ -1,0 +1,10 @@
+// Options to read POOL .sim file and make a copy
+
+// Set up POOL persistency and load DLLs that contain the necessary dictionaries
+#include "$STDOPTS/SimDicts.opts"
+
+EventSelector.Input = {
+   "DATAFILE='PFN:file:$LHCBDEV/GAUSS/Test_v24r1/11144100.100ev.MCHit.sim' TYP='POOL_ROOT' OPT='READ'"
+};  // 100 events with Gauss v24r1
+
+InputCopyStream.Output = "DATAFILE='PFN:PoolSim.root' TYP='POOL_ROOTTREE' OPT='REC'";

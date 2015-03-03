@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--- $Id: -->
+<!--- Author  : Patrick KOPPENBURG -->
+<!--- Created : 2005-08-17 -->
+
+<!DOCTYPE gdd SYSTEM "gdd.dtd" >
+<gdd>
+  <package name='EventBase'>
+<!-- ****************************************************************
+     * ProcessHeader                                                *
+     ****************************************************************-->
+     <class 
+      author="P. Koppenburg"
+      desc="Common base class for all process headers: GenHeader, MCHeader..."
+      name="ProcessHeader"
+      id="103"
+     >
+       &DataObject;
+       <base name="DataObject"/>
+       <location name = "Digi" place = "MC/DigiHeader" />
+       <location name = "Rec"  place = "Rec/Header" />
+       <attribute
+        desc="random number seeds for this step"
+        name="randomSeeds"
+        type="std::vector &lt; long int &gt;"
+       />
+       <attribute
+        desc="Application or Program Name (e.g. Gauss, Boole or Pythia)"
+        name="applicationName"
+        type="std::string"
+        init='"Unknown"'
+       />
+       <attribute
+        desc="Application or Program version"
+        name="applicationVersion"
+        type="std::string"
+        init='"Unknown"'
+       />
+       <attribute
+        desc="Run number"
+        name="runNumber"
+        type="unsigned int"
+        init="0"
+       />
+     </class>
+  </package>
+
+</gdd>

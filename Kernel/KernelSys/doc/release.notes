@@ -1,0 +1,210 @@
+!-----------------------------------------------------------------------------
+! Package     : Kernel/KernelSys
+! Responsible : Marco Cattaneo
+! Purpose     : collect Kernel packages
+!-----------------------------------------------------------------------------
+
+!======================== KernelSys v5r6 2006-06-14 ========================
+! 2006-06-14 - Marco Cattaneo
+ - Use LHCbDefinitions v1r7, LHCbKernel v6r7, LHCbMath v1r1, Relations v4r0,
+       RichKernel v6r4, ProcessorKernel v3r1, caloKernel v4r0p1
+
+!======================== KernelSys v5r5 2006-05-10 ========================
+! 2006-05-10 - Marco Cattaneo
+ - Add LHCbMath v1r0
+ - Use LHCbDefinitions v1r6, LHCbKernel v6r6, RichKernel v6r3
+
+!======================== KernelSys v5r4 2006-05-02 ========================
+! 2006-05-02 - Marco Cattaneo
+ - Use LHCbDefinitions v1r5
+
+!======================== KernelSys v5r3 2006-04-11 ========================
+! 2006-04-11 - Marco Cattaneo
+ - Use LHCbKernel v6r5
+
+!======================== KernelSys v5r2 2006-03-29 ========================
+! 2006-03-29 - Marco Cattaneo
+ - Use LHCbDefinitions v1r4, LHCbKernel v6r4, Relations v3r1
+
+!======================== KernelSys v5r1 2006-03-23 ========================
+! 2006-03-23 - Marco Cattaneo
+ - Use LHCbKernel v6r3, RichKernel v6r2, MuonKernel v3r1
+
+!======================== KernelSys v5r0 2006-03-09 ========================
+! 2006-02-03 - Marco Cattaneo
+ - Major new version for backards incompatible DC06 changes
+ - Obsolete packages removed: TrKernel, L0mConf, VeloKernel
+ - Packages added: LHCbDefinitions v1r3
+ - Packages modified: LHCbKernel v6r2, CaloKernel v4r0, RichKernel v6r0,
+     MuonKernel v5r0, ProcessorKernel v3r0, L0MuonKernel v5r0, Relations v3r0
+
+!======================== KernelSys v4r18 2005-12-19 =======================
+! 2005-12-19 - Marco Cattaneo
+ - Use LHCbKernel v5r16, ProcessorKernel v2r0, L0MuonKernel v4r0
+ - Remove L0mConf
+
+!======================== KernelSys v4r17 2005-11-18 =======================
+! 2005-11-18 - Marco Cattaneo
+ - Use RichKernel v5r6
+
+!======================== KernelSys v4r16 2005-11-11 =======================
+! 2005-11-11 - Marco Cattaneo
+ - Use LHCbKernel v5r15, MuonKernel v2r7p1
+
+!======================== KernelSys v4r15 2005-10-19 =======================
+! 2005-10-19 - Marco Cattaneo
+ - Use LHCbKernel v5r14, Relations v2r6
+
+!======================== KernelSys v4r14 2005-09-06 =======================
+! 2005-09-06 - Marco Cattaneo
+ - Use LHCbKernel v5r13
+
+!======================== KernelSys v4r13p1 2005-07-20 =====================
+! 2005-07-20 - Marco Cattaneo
+ - Use LHCbKernel v5r12p1
+
+!======================== KernelSys v4r13 2005-06-22 =======================
+! 2005-06-22 - Marco Cattaneo
+ - Use LHCbKernel v5r12, RichKernel v5r5
+
+!======================== KernelSys v4r12 2005-06-02 =======================
+! 2005-06-02 - Marco Cattaneo
+ - Use LHCbKernel v5r11
+
+!======================== KernelSys v4r11 2005-05-24 =======================
+! 2005-05-24 - Marco Cattaneo
+ - Use Relations v2r5, RichKernel v5r4p1
+
+!======================== KernelSys v4r10 2005-04-15 =======================
+! 2005-04-15 - Marco Cattaneo
+ - Use L0mConf v2r2p4, L0MuonKernel v3r0p1, ProcessorKernel v1r0p1,
+       LHCbKernel v5r10
+
+!======================== KernelSys v4r9 2005-04-07 ========================
+! 2005-04-07 - Marco Cattaneo
+ - Add ProcessorKernel v1r0
+ - Use Relations v2r4, MuonKernel v2r7, L0MuonKernel v3r0, LHCbKernel v5r9
+
+!======================== KernelSys v4r8 2005-03-08 ========================
+! 2005-03-08 - Marco Cattaneo
+ - Use LHCbKernel v5r8, RichKernel v5r4
+
+!======================== KernelSys v4r7 2005-02-08 ========================
+! 2005-02-08 - Marco Cattaneo
+ - Add L0mConf v2r2p3, L0MuonKernel v2r3 (from Boole, DaVinci)
+ - Use LHCbKernel v5r7, Relations v2r3, RichKernel v5r3
+
+!======================== KernelSys v4r6 2004-01-25 ========================
+! 2005-01-25 - Marco Cattaneo
+ - Use LHCbKernel v5r6, RichKernel v5r2, VeloKernel v1r5p1
+
+!======================== KernelSys v4r5 2004-12-09 ========================
+! 2004-12-09 - Marco Cattaneo
+ - Use LHCbKernel v5r5, Relations v2r1
+
+!======================== KernelSys v4r4 2004-11-22 ========================
+! 2004-11-22 - Marco Cattaneo
+ - Use LHCbKernel v5r4, RichKernel v5r1, Relations v2r0
+
+!======================== KernelSys v4r3 2004-10-18 ========================
+! 2004-10-18 - Marco Cattaneo
+ - Use LHCbKernel v5r3
+
+!======================== KernelSys v4r2 2004-09-23 ========================
+! 2004-09-23 - Marco Cattaneo
+ - Use LHCbKernel v5r2, CaloKernel v3r2, RichKernel v5r0p1
+
+!======================== KernelSys v4r1 2004-07-28 ========================
+! 2004-07-28 - Marco Cattaneo
+ - Use LHCbKernel v5r1
+
+!======================= KernelSys v4r0p1 2004-07-26 =======================
+! 2004-07-26 - Marco Cattaneo
+ - Use LHCbKernel v5r0p1
+
+!======================== KernelSys v4r0 2004-07-19 ========================
+! 2004-07-19 - Marco Cattaneo
+ - Use LHCbKernel v5r0, RichKernel v5r0, CaloKernel v3r1, MuonKernel v2r6,
+       TrKernel v11r4, VeloKernel v1r5
+
+!======================= KernelSys v3r6p1 2004-06-30 =======================
+! 2004-06-30 - Marco Cattaneo
+ - Use RichKernel v4r6
+
+!======================== KernelSys v3r6 2004-05-03 ========================
+! 2004-05-03 - Marco Cattaneo
+ - Use LHCbKernel v4r6
+
+!======================== KernelSys v3r5 2004-03-25 ========================
+! 2004-03-26 - Marco Cattaneo
+ - Use LHCbKernel v4r5
+
+!======================== KernelSys v3r4 2004-03-18 ========================
+! 2004-03-18 - Marco Cattaneo
+ - Use LHCbKernel v4r4. Introduces dependency on GaudiTools v8r*
+ - Use RichKernel v4r5
+
+!======================== KernelSys v3r3 2004-03-02 ========================
+! 2004-03-02 - Marco Cattaneo
+ - Use LHCbKernel v4r3, CaloKernel v3r0, VeloKernel v1r4
+
+!======================== KernelSys v3r2 2004-02-04 ========================
+! 2004-02-04 - Marco Cattaneo
+ - Use LHCbKernel v4r2, RichKernel v4r4
+
+!======================== KernelSys v3r1 2004-01-27 ========================
+! 2004-01-27 - Marco Cattaneo
+ - Use LHCbKernel v4r1
+
+!======================== KernelSys v3r0 2003-12-16 ========================
+! 2003-12-16 - Marco Cattaneo
+ - Use LHCbKernel v4r0, CaloKernel v2r5, MuonKernel v2r5, TrKernel v11r3,
+       RichKernel v4r3
+
+!======================== KernelSys v2r0 2003-12-08 ========================
+! 2003-12-08 - Marco Cattaneo
+ - Use LHCbKernel v3r0, CaloKernel v2r4, RichKernel v4r2, MuonKernel v2r4
+
+!======================== KernelSys v1r9 2003-12-04 ========================
+! 2003-12-04 - Marco Cattaneo
+ - Use LHCbKernel v2r10
+
+!======================== KernelSys v1r8 2003-11-25 ========================
+! 2003-11-25 - Marco Cattaneo
+ - Use LHCbKernel v2r9, RichKernel v4r1
+
+!======================== KernelSys v1r7 2003-11-03 ========================
+! 2003-11-03 - Marco Cattaneo
+ - Use RichKernel v4r0
+
+!======================== KernelSys v1r6 2003-10-14 ========================
+! 2003-10-14 - Marco Cattaneo
+ - Use RichKernel v3r3, CaloKernel v2r3p1
+
+!======================== KernelSys v1r5 2003-09-26 ========================
+! 2003-09-26 - Marco Cattaneo
+ - Use RichKernel v3r2
+
+!======================== KernelSys v1r4 2003-07-03 ========================
+! 2003-07-03 - Marco Cattaneo
+ - Use RichKernel v3r1
+
+!======================== KernelSys v1r3 2003-07-03 ========================
+! 2003-07-03 - Marco Cattaneo
+ - Use TrKernel v1r2p1
+
+! 2003-06-16 - Marco Cattaneo
+ - Use LHCbKernel v2r8, CaloKernel v2r3, MuonKernel v2r3
+
+!======================== KernelSys v1r2 2003-05-19 ========================
+! 2003-05-14 - Marco Cattaneo
+ - Use LHCbKernel v2r7
+
+!======================== KernelSys v1r1 2003-04-15 ========================
+! 2003-04-03 - Marco Cattaneo
+ - Use RichKernel v3r0
+
+!============================= KernelSys v1r0 2002-10-01 =============
+! 2002-10-01 - Florence Ranjard
+ - 1st import
+!======================================================================

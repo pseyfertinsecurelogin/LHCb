@@ -1,0 +1,271 @@
+! $Id: release.notes,v 1.62 2006-06-16 09:45:44 cattanem Exp $ 
+! =============================================================================
+Package         : CaloDet   
+Package manager : Olivier Deschamps odescham@in2p3.fr
+! =============================================================================
+
+!========================= CaloDet v7r3 2006-06-16 ============================
+! 2006-06-15 - Vanya BELYAEV
+ - remove DeCalorimeter::Assert 
+   (from now rely on DetectorElement::Assert functions)
+ - add 2 new function to acces sub-calorimeters (after the initialization!)
+  
+  class DeCalorimeter 
+   {
+   ...
+   public:    /// CONTST is public 
+     typedef std::vector<const DeSubCalorimeter*> SubCalos  ;   
+     const DeCalorimeter::SubCalos&  subCalos() const ;
+   protected: /// NON-const is protected 
+     typedef std::vector<DeSubCalorimeter*      > SubCalos_ ;   
+     const DeCalorimeter::SubCalos_& subCalos()       ;
+   }
+
+
+! 2006-06-15 - Vanya BELYAEV
+ - DeCalorimeter.h, DeCalorimeter.icpp
+   New function is added: 
+      inline const CellParam* Cell_( const Gaudi::XYZPoint& point ) const ;
+   It simplifies and speeds-up a bit the 'regular' pattern:
+      const DeCalormeter*    calo  = ... ;  
+      const Gaudi::XYZPoint& point = ... ;
+      const LHCb::CaloCellID cell = calo->Cell( point ) ;
+      // valid cell ?
+      if   ( LHCb::CaloCellID() == cell ) { /* not valid */ }
+      elif ( !calo->valid( cell )       ) { /* not valid */ }
+   Not one can do it shorter and a bit more efficient 
+   (no second lookup is required)
+   The basic implementation is picked up from 'the regular' function:
+      LHCb::CaloCellID DeCalorimeetr::Cell( const Gaudi::XYZPoint& ) const ;
+   The code is inlined, some minor polishing of internal lines 
+   has been performed (less invokation of virtual functions, etc..)
+
+- src/Lib/DeCalorimeter.cpp
+    the regualr function is reimplemented to use 'optimized' one..
+
+ - DeSubCalorimeter.icpp - remove the file 
+     
+! 2006-06-08 - Olivier Deschamps
+ - CaloDet/DeCalorimeter.h, src/Lib/DeCalorimeetr.cpp
+    + the main plane() method updated in order the predefined plane3D positions 
+      match the boundary of the active calo 
+    + 2 parameters from DDDB : zOffset (new) & zSize (redefined in DDDB)
+    + require xmlDDDB > v30r8 
+
+! 2006-05-30 - Vanya BELYAEV
+ - CaloDet/DeCalorimeter.h, src/Lib/DeCalorimeetr.cpp
+     a) add one more method plane (for 3D plane whch pass through 
+        given 3D-point in global reference system 
+     b) add "inline" and "const" qualifiers for DeCalorimeter::plane
+ - cmt/requirement
+     versionincrement to v7r3 
+
+!========================= CaloDet v7r2 2006-05-17 ============================
+! 2006-05-17 - Marco Cattaneo
+ - Move to Gaudi::Units
+
+!========================= CaloDet v7r1 2006-04-03 ============================
+! 2006-04-03 - Olivier Deschamps
+ -  DeCalorimeter->plane()  as CONST method 
+! 2006-03-31 - Olivier Deschamps
+ - Adapt DeCalorimeter to the change in XmlConditions v1r6 and XmlDDDB v30r3
+   (ZshowerMax moving and ZSize introducing)
+ - Introduce a new method returning reference planes in DeCalorimeter
+
+!========================= CaloDet v7r0 2006-01-17 ============================
+! 2006-01-17 - Olivier Deschamps
+ - add /DownstreamRegion/ to DeCalorimeterLocation in CaloDet/DeCalorimeter.h
+
+! 2006-01-11 - Olivier Callot
+ - Change a message form INFO to DEBUG in building FE cards in DeCalorimeter.cpp
+
+! 2005-12-16 - Olivier Deschamps
+ - CaloDet/  & src/Lib :   migration to LHCb v20 - MathCore 
+ - src/component/CaloDetTestAlgorithm.cpp : remove CaloAlgorithm inheritance 
+ - cmt/requirements : add dependency to GaudiAlg
+
+! 2005-12-02 - Olivier Callot
+ - Get the gain parameters from the Conditions, no longer from UserParameters in
+   XmlDDDB structure file.
+ - Build the card geometry from the "CellsToCards" condition, no longer hardcoded
+ - Add 'm_' in front of several data member names
+ - Remove data members holding the number of cells and cards: This is just the 
+   size of the corresponding vectors.
+
+!========================= CaloDet v6r9p1 2005-07-06 =========================
+! 2005-07-06 - Vanya BELYAEV
+ - CaloDet/DeCalorimeter.h
+   CaloDet/CardParam.h
+     minor fix to please the geenration of LCG-dictionaries (for Python)
+ - cmt/requirements
+     version increment to v6r9p1 
+
+!========================= CaloDet v6r9 2005-05-24 =========================
+! 2005-05-13 - Marco Clemencic
+ - Use new ParamValidDataObject interface (DetDesc >= v15)
+ - Removed dependency on DetDesc v14r* in requirements
+
+!========================= CaloDet v6r8 2004-02-26 =========================
+! 2004-02-15 - Vanya BELYAEV
+ - cmt/requirements    
+     1) make use of Calo/CaloKernel v3r*  
+     2) increase the version to v6r8 
+
+!========================= CaloDet v6r7 2003-12-08 =========================
+! 2003-12-08 - Marco Cattaneo
+ - Move to Gaudi v13 (use DetDesc v14r* in requirements)
+
+!======================== CaloDet v6r6p1 2003-11-24 ========================
+! 2003-11-24 - Marco Cattaneo
+ - Fix a doxygen comment in CaloDet_load.cpp
+
+! 2003-11-18 - Guy Barrand
+ - Use macro in CaloDet_dll.cpp, to compile on Mac OS X
+
+!========================= CaloDet v6r6 2003-10-06 =========================
+! 2003-10-06 - Marco Cattaneo
+ - Use DetDesc v13r*
+
+!========================= CaloDet v6r5 2003-06-17 =========================
+! 2003-06-16 - Sebastien Ponce
+ - use new version of DetDesc. Thus drop dependency on XML
+ - minor fix for gcc 3.2/3.3
+
+!========================= CaloDet v6r4 2003-01-23 =========================
+! 2003-01-23 - Olivier Callot
+ - Fix uninitialized values in the CellParam constructor.
+ - Update all local variable names of CellParam to comply to conventions
+
+!========================= CaloDet v6r3 2003-01-08 =========================
+! 2002-12-15 - Olivier Callot
+ - Added the concept of Validation Card, new method to retrieve the validation
+   card for a given card, valid and useful only for Ecal cards.
+ - Fixed a 'previousCard' problem for Ecal cards having a boundary just on the 
+   horizontal central line. They had no previous card. This affects only the
+   pi0 global trigger. 
+
+!========================= CaloDet v6r2 2002-11-19 =========================
+                              built on v5r2b branch
+! 2002-11-19 - Florence Ranjard
+ - cmt/requirements - move to new versions 
+! 2002-11-29 - Ivan Belyaev
+ - cmt/requirements           version update 
+
+!========================== CaloDet v5r2 2002-11-14 ==========================
+! 2002-11-14 - Marco Cattaneo
+ - Change version to force recompilation
+
+!========================== CaloDet v5r1 2002-10-05 ==========================
+! 2002-10-03 - Marco Cattaneo
+ - Use fabs() instead of abs() for floating point
+
+!========================== CaloDet v5r0 2002-07-09 ==========================
+! 2002-06-15 - v5r0 Vanya Belyaev
+ - cmt/requirements: change version number to v5r0 to avoid seriouse problems
+
+! 2002-06-15 - Olivier Callot
+ - Changed Ecal cell size to 121.700 mm (X)
+ - Use the new user parameters to define the cell size ratio and the central
+   hole size.
+ - Add the namespace DeCalorimeterLocation for detector location values.
+
+!========================== CaloDet v4r0 2002-04-19 ==========================
+! 19/04/2002 - Marco Cattaneo
+  - Use DetDesc v10r* (for Gaudi v10)
+  
+! =============================================================================
+! 02/04/2002 - v4r0 - Vanya Belyaev
+! - add 'const' qualifier to 'DeCaloriimeter::Cell' method 
+! =============================================================================
+
+! =============================================================================
+! 28/03/2002 - v4r0 - Vanya Belyaev
+! - update for newer CaloKernel and LHCbKernel packages 
+! - move all Xml-related stuff into new package Det/CaloDetXmlCnv     
+! =============================================================================
+
+! =============================================================================
+! 15/12/2001 - Vanya Belyaev
+!  add the simplest detector test algorithm  
+! =============================================================================
+
+! =============================================================================
+! 09/12/2001 - Vanya Belyaev
+  - update for newer version of Gaudi 
+! =============================================================================
+
+! =============================================================================
+! 25/11/2001 - Vanya Belyaev
+  - update for newer CaloKernel package 
+
+! =============================================================================
+! 20010830 - v3 Vanya Belyaev
+	version match for CaloGen v3*
+
+! =============================================================================
+! 20010821 - v3 Vanya Belyaev
+	version match for DetDesc v8* 
+ 
+! =============================================================================
+! 20010821 - Vanya Belyaev 
+   DeCalorimeter.h/.cpp
+   DeSubCalorimeter.h/.cpp 
+   fix problems of user parameters on Win2K 
+
+! =============================================================================
+! 20010717 - Vanya Belyaev 
+   minor modifications to improve Doxygen documentation
+! =====================================================================
+! 20010702 - Vanya Belyaev 
+        Improved readability of DeCalorimeter.h file :
+     (1)  CellParam and CardParam classes moved out from DeCalorimeter.h 
+          file into separate files 
+     (2)  some inline functions moved out from class declaration  itself
+        
+! =====================================================================
+! 20010629 - CaloDet v2 Vanya Belyaev 
+    The code update due to changes in DetDesc 
+    (1) DeCalorimeter.h/cpp,DeSubCalorimeter.h/cpp -
+                              implement "initialize" method
+    (2) Remove specialized Xml-converters for 
+        DeCalorimeter and DeSubCalorimeter class 
+! =====================================================================   
+! 20010625 - CaloDet v2 (Flr)
+  requirements - use DetDesc v7, CaloGen v2
+                 updated for GaudiSys v8 and CMT v1r8
+! =====================================================================
+! 2001/06/14  - Sebastien Ponce
+      new implementation of the converters. Use of DOM instead of SAX.
+! =====================================================================
+! 2001/03/24  - Vanya Belyaev
+      final polishing before official release 
+! =====================================================================
+! 2001/03/06  - Vanya Belyaev
+      (1) remove extra printout in buildCells() method of DeCalorimeter
+      (2) introduce printOut functions for DeCalorimeter and DeSubCalorimeter
+      (3) define << operators to std::ostream and MsgStream for following types:
+           const DeCalorimeter&
+           const DeCalorimeter*
+           const DeSubCalorimeter&
+           const DeSubCalorimeter*
+! =====================================================================
+! 2001/02/28  - Olivier Callot
+   DeCalorimeter.h   : New method to get the nominal time of arrival in a cell
+   DeCalorimeter.cpp : in VERBOSE< debug the cell neighborhood.
+! =====================================================================
+! 2001/02/27  - Marco Cattaneo 
+   requirements - replace curly {} with round ()
+                - remove unneccessary dependency on CaloSicbCnv
+                - fix CaloDetLib_shlibflags
+! =====================================================================
+! 2001/02/07  - Vanya Belyaev 
+   
+   DeCalorimeter.cpp  vector ---> std::vector. It is essential fr NT
+           to note explicitely namespace std! 
+
+! =====================================================================
+! 2001/02/04  - v1 Vanya Belyaev 
+  new package 
+  move the codes from former Calo (CaloAlg)
+
+

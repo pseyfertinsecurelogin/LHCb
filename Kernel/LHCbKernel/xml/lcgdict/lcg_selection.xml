@@ -1,0 +1,20 @@
+<lcgdict>
+  <class name="std::vector<std::pair<LHCb::VeloChannelID,int> >"/>
+  <class name="std::pair<LHCb::VeloChannelID,int>"/>
+  <class name="std::vector<std::pair<LHCb::STChannelID,int> >"/>
+  <class name="std::pair<LHCb::STChannelID,int>"/>
+  <class name="std::vector<std::pair<LHCb::OTChannelID,int> >"/>
+  <class name="std::pair<LHCb::OTChannelID,int>"/>
+  <class name="std::pair<double,LHCb::CaloCellID>"/>
+  <class name="std::vector<std::pair<double,LHCb::CaloCellID> >"/>
+  <class name="std::pair<LHCb::MuonTileID,int>"/>
+  <class name="std::vector<std::pair<LHCb::MuonTileID,int> >"/>
+  <class name="LHCb::Trajectory"/>
+  <class name="LHCb::CircleTraj"/>
+  <class name="LHCb::LineTraj"/>
+  <class name="LHCb::ParabolaTraj"/>
+  <class name="std::auto_ptr<LHCb::Trajectory>"/>
+  <class pattern ="GaudiUtils::VectorMap<*>"/>
+  <class pattern ="ROOT::Math::RowOffsets<*>"/>
+  <class pattern ="LHCb::DifTraj<*"/>
+</lcgdict>

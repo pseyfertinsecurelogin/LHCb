@@ -1,0 +1,165 @@
+!Package         : STDet
+!Package manager : M. Needham
+!-----------------------------------------------------------------------
+
+!========================= STDet v2r3 2006-04-19 =======================
+! 2006-04-19 M. Needham
+ - Changes to findSector methods of DeSTDetector - factor 2 faster
+ - Changes to DeSTSector method to get trajectory - factor 2 faster
+ - Add methods to get plane in DeSTSector
+ - Plane method added to layer 
+ - Clean up what is cached after these changes
+
+! 2006-04-10 - Jeroen van Tilburg
+ - Fixed bug in DeSTSector trajectory method. Changed minus into plus sign.
+
+!========================= STDet v2r2 2006-04-06 =======================
+! 2006-04-06 - Jeroen van Tilburg
+ - DeSTSector: Fix bug in trajectory method. Trajectory was assumed to start
+   at s=0.
+
+! 2006-04-04 - Edwin Bos
+ - trajectory() methods now return std::auto_ptr<LHCb::Trajectory>
+
+! 2006-04-03
+ - Add method to return all sectors in the layers
+
+! 2006-03-30 - Jeroen van Tilburg
+ - Added methods to DeSTDetector and DeSTSector: trajectoryFirstStrip and
+   trajectoryLastStrip.
+ - Removed bug in strip numbering (in DeSTSector::cacheTrajectory).
+
+!========================= STDet v2r1 2006-03-22 =======================
+! 2006-03-22 - Marco Cattaneo
+ - Remove unneccessary gsl dependency
+
+! 2006-03-14 - Jeroen Van Tilburg
+ - DeSTDetector: Added method sensitiveVolumeID to return the elementID given
+   a 3D point.
+
+!========================= STDet v2r0 2006-03-06 =======================
+! 2006-03-06 M.Needham
+ - fix bug in findSector in DeTTHalfModule 
+ - correct flipping of the sensors
+ - correct find method for DeITLadder
+
+! 2006-03-03 M Needham
+ - Changes in DeSTSector to ensure strips always number in +x
+
+! 2006-02-27 - Jeroen van Tilburg
+ - Added findLayer method in DeSTDetector.
+
+! 2006-02-26 M Needham
+ - Minor bug fixes
+
+! 2006-02-21 M. Needham
+ - Tune treatment of guard rings
+
+! 2006-02-20 M.Needham
+ - Add find layer
+ - Bug fix in next left and right
+
+! 2006-02-16 M Needham
+ - Bug fix in trajectory calc
+
+! 2006-02-15 - Marco Cattaneo
+ - Remove unimplemented method DeSTDetector::pitch
+
+! 2006-02-14 - M.Needham
+ - Bug fixes: station number in DeSTDetector, localInActive/bondGap
+   in DeSTSector
+
+! 2006-02-14 - Marco Cattaneo
+ - Add explicit Boost dependency to requirements
+
+! 2006-02-12 M Needham
+- init track pointers to zero
+- put back valid test
+- Add trajectory and inside functions
+
+! 2006-02-09 M. Needham 
+- change the printout from DeSTSector 
+- Few bug fixes in DeSTSector init 
+
+! 2006-02-08 M. Needham 
+- Remove pitch and strips per sector from DeSTDetector
+- Add next functionality to DeSTSector
+- return u to strip rather than u to channel 
+
+! 2006-02-08 M. Needham 
+ - Get TT Sector numbering init correct
+
+! 2006-02-06 M. Needham 
+ - bug fix that gets numbering closer to correct
+ - Minor bug fixes
+
+! 2006-02-01 M. Needham
+ - Add center method to base class
+
+! 2006-01-26 M. Needham
+  - Adapt to new numbering scheme
+  - Add ITLadder
+  - check child is correct type in DeSTDetector
+  - Better error handling: check really can find children/parent in 
+    DeSTBaseElement.h
+  - order initialize methods so that children got last  
+
+! 2006-01-18 M. Needham
+  - check that child is of the correct type
+  - set element ids in DeITBox and DeITLayer
+
+! 2006-01-18 - Marco Cattaneo
+ - Fix param<> types and names to correspond to XmlDDDB
+
+! 2006-01-16 M Needham
+  - Change LayerID to layerID in DeSTLayer.cpp
+  - Bug fix in DeITStation::initialize
+
+! 2006-01-13 M. Needham
+  - change detector path strings
+
+! 2005-12-19 M. Needham
+  - New version for LHCb v20r0. Totally backward incompatible !!!!!!
+
+!========================= STDet v1r5 2005-07-29 =======================
+! 2005-07-27 - Luis Fernandez
+ - STWafer.{h,cpp}
+   . New method 'isInVDeadZone(...)' to check if (u,v) is inside a wafer
+     and in a vertical dead zone given some tolerance
+
+!========================= STDet v1r4 2005-05-24 =======================
+! 2005-05-13 - Marco Clemencic
+ - Use new ParamValidDataObject interface (DetDesc >= v15)
+
+
+!========================= STDet v1r3 2005-04-06 =======================
+! 2005-04-06  M. Needham
+  - bug fix in TTLayer.cpp (not backwards compatible)
+
+!======================== STDet v1r2p1 2005-03-29 =======================
+! 2005-03-29 - M. Needham
+ - correct typo in STDetectionStation header
+
+!========================= STDet v1r2 2004-07-19 ========================
+! 2004-07-19 - Marco Cattaneo
+ - Move to Gaudi v15 (use LHCbKernel v5r* in requirements)
+
+! 2004-05-26 - Marco Cattaneo
+ - Make GSL dependency no_auto_imports (only needed for gsl macros)
+
+! 2004-05-19 - M.needham
+ - Add members to layer to convert u,v to x,y and vice versa
+ - Add (another) member to wafer for checking if hit is inside 
+
+!========================= STDet v1r1 2004-03-02 ========================
+! 2004-03-02 - M.needham
+ - Bug fixs in TTLayer
+
+! 2004-02-18 - M Needham
+ - Add functions to return all z positions of ladders
+
+!========================= STDet v1r0 2004-02-02 ========================
+! 2004-01-29 - M Needham
+    - First release of the STDet package
+    - Supports new TT geometries
+    

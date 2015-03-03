@@ -1,0 +1,90 @@
+!-----------------------------------------------------------------------------
+! Package     : DAQ/DAQSys
+! Responsible : Marco Cattaneo
+! Purpose     : Hat package for packages encoding and decoding DAQ buffers
+!-----------------------------------------------------------------------------
+
+!========================== DAQSys v2r4 2006-05-02 ===========================
+! 2006-05-02 - Marco Cattaneo
+ - Use OTDAQ v4r2
+
+!========================== DAQSys v2r3 2006-04-20 ===========================
+! 2006-04-20 - Marco Cattaneo
+ - Use CaloDAQ v2r2
+
+!========================== DAQSys v2r2 2006-03-31 ===========================
+! 2006-03-31 - Marco Cattaneo
+ - Use OTDAQ v4r1
+
+!========================== DAQSys v2r1 2006-03-22 ===========================
+! 2006-03-22 - Marco Cattaneo
+ - Use CaloDAQ v2r1, MuonDAQ v2r1
+
+!========================== DAQSys v2r0 2006-03-13 ===========================
+! 2006-03-13 - Marco Cattaneo
+ - Major new version for backards incompatible DC06 changes
+ - Packages removed: RichDAQ, STDAQ, VeloDAQ (moved to Lbcom)
+ - Packages added:   SiDAQ v1r1
+ - Packages modified: CaloDAQ v2r0, OTDAQ v4r0, MuonDAQ v2r0
+
+ - Remove obsolete RawBuffer.opts. A new file, RawEvent.opts, will be provided
+   in GaudiConf
+
+!========================== DAQSys v1r9 2005-12-19 ===========================
+! 2005-12-19 - Marco Cattaneo
+ - Remove L0MuonDAQ
+
+!========================== DAQSys v1r8 2005-11-18 ===========================
+! 2005-11-18 - Marco Cattaneo
+ - Use RichDAQ v2r3
+
+!========================== DAQSys v1r7 2005-10-14 ===========================
+! 2005-10-14 - Marco Cattaneo
+ - Use STDAQ v1r6
+
+!========================== DAQSys v1r6p1 2005-09-22 =========================
+! 2005-09-22 - Marco Cattaneo
+ - Use MuonDAQ v1r2p3
+
+!========================== DAQSys v1r6 2005-07-14 ===========================
+! 2005-07-14 - Marco Cattaneo
+ - Use VeloDAQ v2r3p2, OTDAQ v3r3
+
+!========================== DAQSys v1r5 2005-06-21 ===========================
+! 2005-06-21 - Marco Cattaneo
+ - Use RichDAQ v2r2
+
+!========================== DAQSys v1r4p1 2005-06-06 =========================
+! 2005-06-06 - Marco Cattaneo
+ - Remove creation of DataOnDemandSvc from RawBuffer.opts, to avoid clashes with
+   other job options includes
+
+!========================== DAQSys v1r4 2005-05-17 ===========================
+! 2005-05-17 - Marco Cattaneo
+ - Fix RawBuffer.opts to create /Event/Raw on demand if it does not exist
+
+!========================== DAQSys v1r3 2005-05-04 ===========================
+! 2005-05-04 - Marco Cattaneo
+ - Modified packages: CaloDAQ v1r1
+ - RawBuffer.opts: enable DataOnDemandSvc for /Event/Header
+
+!========================== DAQSys v1r2 2005-04-07 ===========================
+! 2005-04-07 - Marco Cattaneo
+ - New package:       L0MuonDAQ v1r0
+ - Modified packages: MuonDAQ v1r2p2, STDAQ v1r5
+
+!========================= DAQSys v1r1p1 2005-03-07 ==========================
+! 2005-03-07 - Marco Cattaneo
+ - Modified packages: MuonDAQ v1r2p1,OTDAQ v3r2p1,RichDAQ v2r1p1,VeloDAQ v2r3p1,
+                      CaloDAQ v1r1p2
+
+!========================== DAQSys v1r1 2005-02-11 ===========================
+! 2005-02-11 - Marco Cattaneo
+ - Modified packages: STDAQ v1r4p1, CaloDAQ v1r0p1, RichDAQ v2r1, VeloDAQ v2r3
+
+!========================== DAQSys v1r0 2005-01-17 ===========================
+! 2005-01-17 - Marco Cattaneo
+ - First release. Uses all xxDAQ packages of subdetectors, contains options
+   for decoding RawBuffer on demand
+ - New packages:      CaloDAQ v1r0
+ - Modified packages: RichDAQ v2r0

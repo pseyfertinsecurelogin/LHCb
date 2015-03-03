@@ -1,0 +1,152 @@
+! $Id: release.notes,v 1.42 2006-03-13 07:18:31 cattanem Exp $
+package Event/VeloEvent
+package manager: C.Parkes, T.Szumlak
+
+!====================== VeloEvent v14r0 2006-03-13 =======================
+! 2006-03-09 - David Hutchcroft
+ - Added hasHighThreshold bool to InternalVeloCluster
+
+! 2006-02-20 - Marco Cattaneo
+ - Remove all "public" VeloEvent classes. Package now contains only Velo 
+   internal classes, and does not produce a dictionary. To distinguish from
+   public classes, header files are produced in VeloEvent sub-directory
+
+! 2006-02-10 - Marco Cattaneo
+ - Add InternalVeloCluster and VeloFullFPGADigit, to avoid coupling between
+   VeloAlgorithms package and VeloAssociators
+
+! 2006-02-08 - Tomasz Szumlak
+ - update VeloDigit object
+
+! 2006-01-12 - Marco Cattaneo
+ - Move MCVeloFE to MCEvent package. This removed dependency on MCEvent
+
+  2006-01-07 - Tomasz Szumlak
+ - Remove all CLHEP dependencies 
+ - move all objects to LHCb namespace
+ - using new LHCbEnv v20r0
+
+! 2005-12-16 - Tomasz Szumlak 
+ - Revision of the Velo Event Model, VeloFullFPGA is a private data class
+   which resides in the VeloAlgorithms package
+ - Move from MCVeloHit to common MCHit
+
+! 2005-10-27 - Mark Tobin (for Tomasz)
+ - Removed static member from VeloEvent class
+
+! 2005-10-20 - Tomasz Szumlak & Chris Parkes
+ - VeloFullDigit was removed
+ - Two new objects VeloFullFPGADigit and VeloDigit are created
+
+!====================== VeloEvent v13r2p1 2005-04-07 ======================
+! 2005-04-07 - Marco Cattaneo
+ - Remove obsolete import CLHEPStreams from xml
+
+!======================= VeloEvent v13r2 2004-10-26 =======================
+! 2004-10-26 - David Hutchcroft
+ - Modifications for new VeloDet v9r0 code (start from Chris' code again)
+
+!======================= VeloEvent v13r1 2004-03-05 =======================
+! 2004-02-03 - Mark Tobin
+ - Modified VeloEvent.xml to cope with modified VeloChannelID.
+ - Code is backwards compatible
+
+!====================== VeloEvent v13r0p1 2004-03-15 ======================
+! 2004-03-13 - Chris Parkes
+- Use VeloChannelID as keyedObject key for VeloCluster
+
+!======================= VeloEvent v13r0 2003-12-16 =======================
+! 2003-12-16 - Marco Cattaneo
+ - Changes for POOL (Gaudi v14)
+
+!======================= VeloEvent v12r1 2003-06-17 =======================
+! 2003-06-16 - Sebastien Ponce
+ - use more recent GaudiObjDesc
+
+!======================== VeloEvent v12r0 2002-09-25 =========================
+! 2002-09-26 - Florence Ranjard
+ - requirements - use Event v3r*
+
+! 2002-07-24 - Chris Parkes
+ - modified VeloEvent.xml to work with updated associator/VeloSim, 
+  solving ambiguity for multiple hits contributing to FEs.
+
+!========================= VeloEvent v11r0 2002-07-09 =========================
+! 2002-07-04 - Pere Mato
+ - Added /include:_<package>_loadRef in <package>_linkopts for Windows
+
+! 2002-06-18 - Stefan Roiser
+ - changed use-statement of GaudiObjDesc to v4r4
+
+! 2002-06-10 - Marco Cattaneo
+ - Increase version to v11r0, to use Event v2r*
+
+!========================= VeloEvent v10r0 2002-05-09 ===================
+! 2002-05-09 Chris Parkes
+  - VeloEvent.xml VeloCluster 
+    added additional access methods for obtaining adc and strip numbers 
+    of strips in cluster
+    added method to get ChannelID (i.e. key) for strips in cluster
+
+! 20020508 Marco Cattaneo
+  - Fix factories: remove VeloEventInstantiation.cpp, add VeloEvent_load.cpp
+
+! 20020430 Marco Cattaneo
+  - requirements: remove run time dependency on GaudiIntrospection
+  - VeloEvent.xml: modify default TDS paths to conform with convention
+
+! 25/04/2002 - Olivier Callot
+  - Added a typedef for the MCVeloHit keyed container
+  - Removed the "/Event/" prefix in all locations, to allow spillover.
+
+! 23/04/2002 - Olivier Callot
+  - Changed the location of FullDigit and Cluster to /Raw from /Rec
+  - Added specific location for PuVeto Hit and FE
+
+! 20020418 (M.Cattaneo)
+  - Move to Gaudi v10
+  - Build separate library for dictionaries
+  - Remove file VeloEvent_dll.cpp (not making a component library)
+
+! 20020415 (Chris Parkes)
+  clean up my first attempt at the release.
+  Change some accessor names to be compatible with IT/OT code
+  MCVeloHit now inherits from MCHit
+  Add constructors to MCVeloFE/MCVeloFullDigit which take key as input
+
+! 20020404 (Chris Parkes)
+  First version of VELO Event Model for OO DST.
+  Classes are:
+	MCVeloHit.h - geant hit info., common for velo, pile-up and L1
+	MCVeloFE.h  - MC front end chip info., ie. after silicon and 
+                      chip simulation but before digitisation, 
+                      common for velo, pile-up and L1
+	VeloFullDigit.h - internal state of data processor board 
+                          e.g. CM and pedestal corrections
+	VeloCluster.h - Velo Clusters, which strips are joined by data 
+                        processor to produce clusters, and signal values 
+                        of these strips
+! ===================================================================
+! 20020107 - VeloEvent v6r0 (MC)
+  Changes for Gaudi v9:
+  requirements - use LHCbEvent v12
+  RecVeloEvent.h - remove call to DataObject constructor
+
+! ===================================================================
+! 20010711 - VeloEvent v5 (Markus Frank)
+  Change CLID in RecVeloEvent, VeloCluster to the way 
+  encouraged by new Gaudi release.
+
+! 20010621 - VeloEvent v5 (Flr)
+  requirements - use GaudiKernel v10*
+                 adapted to GaudiPolicy v5 and CMT v1r8
+
+! 20010515 - VeloEvent v4 M.Cattaneo
+  requirements - use LHCbEvent v10*
+               - build only component library
+  VeloCLIDs.cpp - removed, since CLIDs are now defined inline.
+
+! 20010402 - VeloEvent v3
+  requirements - use GaudiSys v7
+
+! ===================================================================

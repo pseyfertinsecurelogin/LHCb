@@ -1,0 +1,343 @@
+! $Id: release.notes,v 1.78 2006-06-19 09:03:32 cattanem Exp $
+! Package     : MuonDet
+! Responsible : Alessia Satta
+!----------------------------------------------------------------------------
+
+!========================= MuonDet v5r4 2006-06-19 =========================
+! 2006-06-19 - Marco Cattaneo
+ - Fix a gcc 3.4.5 compilation warning
+
+! 2006-05-19 - Alessio Sarti
+ - Added a method that returns Z station position in DeMuonDetector
+
+!========================= MuonDet v5r3 2006-05-09 =========================
+! 2006-05-09 - Marco Cattaneo
+ - Cleanup includes in MuonBasicGeometry.h, to avoid unneccessary dependencies
+
+!========================= MuonDet v5r2 2006-03-26 =========================
+! 2006-03-26 - Alessia Satta
+ -fix a bug in DeMuonDetector::list_f_physical_channels
+
+!========================= MuonDet v5r1 2006-02-28 =========================
+! 2006-02-28 - Alessio Sarti
+ - Fixed a memory leak problem in MuonChamberLayout.cpp
+	Methods used to navigate the chambers have been 
+	also simplified and unnecessary call to smartDataPtr
+	and new have been removed
+
+! 2006-02-28 - Alessia Satta
+ - removed unused variable from DeMuonDetector.cpp
+
+! 2006-02-28 - Alessia Satta
+ - Add method to get stations inner and outer dimensions ( required by MuonID) 
+
+! 2006-02-16 - Alessio Sarti
+ - MuonChamberLayout.cpp
+	fix the choice of volume to access to return deltax,y and z.
+	now used the gas volume instead of chamberbox
+
+! 2006-02-17 - Alessio Sarti
+ - DeMuonDetector.cpp
+   	Fix the Hit2GapNumber method. Now the hits is correctly
+	searched inside the Gas Gap Volume instead of Gap volume.
+        Also removed the z test that is now wrong with tilted
+	chambers
+
+! 2006-02-16 - Alessio Sarti
+ - MuonChamberLayout.cpp
+	fix the localToglobal method: now returns the correct 
+	deltax,y,z and the getXYZPad method that now correctly
+	returns the global XYZ instead of local ones.
+
+! 2006-02-10 - Alessia Satta
+ - fix a wrong header in the MuonDetector::sensitiveVolumeID(), as a 
+   consequences many const attributes have been added in DeMuonDetector 
+   and MuonChamberLayout
+
+! 2006-02-10 - Alessio Sarti
+ - fix in MuonChamberLayout.cpp: now chamber are properly created
+   looking into the ChVec (instead of using new) and an inconsistent
+   use of tiles has been detected and removed
+ - fix in DeMuonDetector: now the MuonChamberLayout is properly initialized
+
+! 2006-02-07 - Alessio Sarti
+ - a fix in MuonChamberLayout.cpp: in getChamberNumber() propagated
+   yesterday's fix from Alessia
+
+! 2006-02-06 - Alessia Satta
+ - few fixes in DeMuonDetector.cpp and MuonChamberLayout.cpp: in 
+   filleGeo(), sensDetID and tileChamber()
+
+! 2006-02-01 - Marco Clemencic
+ - Removed constructor using ITime (not used anywhere).
+
+!========================= MuonDet v5r0 2006-01-31 =========================
+! 2006-01-30 - Alessia Satta
+  - add some features included  in MuonGeometryTool (sm is still 
+    missing..)
+
+! 2006-01-17 - Alessia Satta
+  - fixed to be compatible with LHCb::Packer
+
+! 2006-01-17 - Alessio Sarti
+  - fixed TES path adding DownstramRegion
+
+! 2006-01-16 - Alessio Sarti
+  - removal of warnings at compile time 
+
+! 2006-01-16 - Gaia Lanfranchi
+  - add methods to fill and retrieve info in the int sensdetID of MCHit
+ 
+! 2005-12-16 - Alessio Sarti
+   - src/Lib/MuonChamberLayout.cpp(.h)
+   - src/Lib/DeMuonDetector.cpp(.h)
+   - src/Lib/MuonODEBoard.cpp(.h)
+	Migrated the code to LHCb v20r0:
+	using namespace LHCb for MuonTileID
+	removed indtances of Hep libraries
+	
+! 2005-12-14 - Alessio Sarti
+   - src/Lib/MuonChamberLayout.cpp(.h)
+	Implemented the tile -> XYZ transformation.
+	The new code is a porting of d. Hutchcroft code
+	in MuonTileXYZ.cpp,h having (hopefully) taken care
+	of misalignments and tilts. No longer use
+	fixed grids in MuonGeometry class.
+   - src/Lib/DeMuonDetector.cpp 
+	Changed initialize() using MuonChamberLayout method
+
+! 2005-12-13 - Alessia Satta
+   - import of the funxtionality now present in a separate tool (MuonGetInfo)
+   - fix few points ( MuonChamberLayour - MuonChamberGrid)  
+
+!========================= MuonDet v4r8 2005-07-01 =========================
+! 2005-12-07 - Alessio Sarti
+   - src/Lib/MuonChamberLayout.cpp 
+	Removed unnecessary debug output
+   - src/Lib/DeMuonDetector.cpp 
+	Added Layour information to frontend channels 
+	returned by the listOfPhysChannels method
+	needed for the digitization
+
+! 2005-12-07 - Alessio Sarti
+   - src/Lib/MuonChamberGrid.cpp (.h)
+   - src/Lib/DeMuonRegion.cpp (.h)
+	Removed unnecessaryvariables from Chamber Region constructor
+	and moved them to the Chamber Grid
+   - src/Lib/DeMuonDetector.cpp
+   - src/Lib/MuonChamberLayout.cpp
+	Introduced the methods needed for convertion
+	from tile to XYZ needed for muonId. Still needs to be finished.
+
+! 2005-11-05 - Alessio Sarti
+   - src/Lib/MuonChamberGrid.cpp 
+   - src/Lib/DeMuonDetector.cpp
+	Introduced resolution effects [removes fake channels
+	returned for rounding problems]
+
+! 2005-11-05 - Alessio Sarti
+   - src/Lib/DeMuonDetector.cpp (.h accordingly)
+	Now returns the list of PhCh with distances in mm instead of
+	relative to chamber dimensions
+	Grids are retrieved correctly using the condition
+	machinery
+
+! 2005-11-04 - Alessio Sarti
+   - src/Lib/MuonChamberGrid.cpp (.h accordingly)
+	Added relative distance from boundaries.
+	Remember that all distances ARE not absolute distances
+	but relative to the chamber dimensions!
+   - src/Lib/DeMuonDetector.cpp (.h accordingly)
+	Fixed a bug in the call to a chamber pointer.
+	Added the method for the list of physical 
+	channels retrieval. It only needs hit_entry and 
+	hit_exit and returns:
+	std::vector< std::pair< MuonFrontEndID,std::vector<float> > >
+
+! 2005-10-31 - Alessio Sarti
+ - Some cleanup and bugfixes after first feedback from users
+   - src/component/DeMuonGasGap.cpp, MuonDet/DeMuonGasGap.h
+	Initialized the gas gap properties (station,region,chamber)
+   - src/Lib/MuonChamberLayout.cpp
+	Removed all goto instructions. Replaced with return
+   - src/Lib/DeMuonChamber.cpp (and .h)
+	Renamed the grid name methods
+   - src/component/DeMuonDetector.cpp, MuonDet/DeMuonDetector.h
+	a) Using a vector of chamber pointers to return the chamber
+	instead of a loop on detector elements [speed up the code]
+	b) Removed all goto instructions with use of return
+	c) Implemented methods that can convert x,y,z information
+	into chamber, gap, region one.
+
+! 2005-10-28 - Alessio Sarti
+ - First version with running DeMuonDetector
+   - src/component/DeMuonDetector.cpp
+	implemented first methods for xyz->chamber conversion
+   - src/component/MuonChamberLayout.cpp
+	small cleanup and some bugfixes for chamber retrieval
+	in the grid
+   - MuonDet/*h 
+	changes accordingly to previous *cpp files...
+
+! 2005-10-25 - Alessio Sarti
+ - Major changes in almost all code. Made the Converters and classes
+   compliant with LHCb templates. Need soon a v5r0 tag.
+   - src/component/*
+	removed all the Xml converters that are not "dummy". The building
+	of DeMuon* objects and grid is automagically done directly in Xml
+   - src/Lib/*
+	added MuonDetector, MuonChamberGrid and MuonChamberLayout needed
+	for new Event model and for alignment studies.
+	DeMuon* objects ahve been modifies accordingly to the LHCb
+	conventions
+   - MuonDet/*
+	Removed the CLID files [now the classID is directly in the .h
+	file]. Adapted DeMuon*.h files to changes in cpp.
+	Added .h classes for MuonDetector,Chamber Grid and ChamberLayout
+
+! 2005-07-01 - Marco Cattaneo
+ - Fix memory leak in XmlMuonRegionCnv, occuring whn trying to add the same
+   chamber twice (due to circular dependency of MuonRegion, see below)
+
+!========================= MuonDet v4r7 2005-06-08 =========================
+! 2005-06-08 - P. Koppenburg
+  - src/component/XmlMuonRegionCnv.cpp
+    . Changed all DEBUG to VERBOSE
+
+! 2005-06-06 - Marco Cattaneo
+ - Added hack to suppress warnings when chambers added twice. This happens due
+   to circular dependency of MuonRegion, which will break misalignment code
+ - Remove unnecessary options directory
+
+! 2005-06-06 - Juan Palacios
+ - Add geometry to chambers *after* adding them to TES, to fix a problem that
+   appears with new GeometryInfo implementation
+
+!========================= MuonDet v4r6 2004-04-23 =========================
+! 2004-04-23 - Marco Cattaneo
+ - Fix a memory leak (Savannah bug 3129) (just commented out some debug code!)
+ - Fix some doxygen warnings
+
+!========================= MuonDet v4r5 2004-02-04 =========================
+! 2004-02-04 - Alessia Satta
+ - Add components to decode the Muon cabling:
+   4 new classes MuonStationCabling,MuonL1Board,MuonODEBoard,MuonTSMap
+   3 new converters XmlMuonCablingCnv,XmlMuonODECnv,XmlMuonTSMapCnv
+
+!======================== MuonDet v4r4p1 2003-11-24 ========================
+! 2003-11-24 - Marco Cattaneo
+ - Fix a compiler warning, fix doxygen comments
+
+! 2003-11-24 - Guy Barrand
+ - Use macro in MuonDet_dll.cpp, to compile on Mac OS X
+
+!========================= MuonDet v4r4 2003-06-17 =========================
+! 2003-06-16 - Sebastien Ponce
+ - use new xerces 2.2
+ - use new package DetDescCnv
+
+! 2003-01-17 - Sebastien Ponce
+ - support for gcc 3.2
+
+!======================== MuonDet v4r3 2002-12-04 ========================
+! 2002-11-29 - Florence Ranjard
+ - requirements - use DetDesc v11r*
+
+!========================= MuonDet v4r2 2002-10-27 =========================
+! 2002-11-26 - David Hutchcroft
+ - Corrected a bug in MuonReadoutCond.cpp, wrong array size used
+
+!========================= MuonDet v4r1 2002-10-22 =========================
+! 2002-10-21 - Alessia Satta
+ - add the MuonBasicGeometry class which is useful to deal with M1-noM1 case 
+
+!========================= MuonDet v4r0 2002-10-11 =========================
+! 2002-10-03 - Marco Cattaneo
+ - requirements: changed version to v4r0. Has to be used with XmlDDDB v13r0 
+   or greater due to structural changes in the Xml description.
+
+! 2002-09-27 - David Hutchcroft
+ - Removed the unused padx and pady from DeMuonRegion and so from 
+   XmlDeMuonRegionCnv
+
+!===================== MuonDet v3r2 2002-09-25 =======================
+! 2002-08-05 Alessia Satta
+  - Few bug fixes in MuonReadoutCond.h and MuonReadoutCond.cpp , those
+    bugs disabled the pad edge effect in the cross talk calculation
+  
+!===================== MuonDet v3r1 update 2002-06-04 ======================
+! 2002-06-04 David Hutchcroft
+  - Added the code to MuonReadoutCond to store the time jitter information
+  - Added the code to XmlMuonReadoutCondCnv to read the time jitter pdfs from
+    the XML
+
+! 2002-04-25 David Hutchcroft
+  - Another Bug fix in XmlMuonRegionCnv: set FE channel size of Anode and 
+    cathode correctly, I think this is the last problem with this code...
+
+!===================== MuonDet v3r0 release 2002-05-16 ======================
+! 20020422 (M.Cattaneo)
+  - Use DetDesc v10r* (for Gaudi v10)
+
+! >>>>>>>>>>>>>>>> MuonDet v2r2 <<<<<<<<<<<<<<<<<<<<<
+! 21/04/2022 David Hutchcroft
+  - Bug fix in XmlMuonRegionCnv: set FE channel size of Anode and cathode 
+  correctly
+
+! 20020406 - David Hutchcroft
+ - Changed the XmlDeMuonRegionCnv code to calculate the number of gaps per
+   FE channel, rather than read from the XML.
+
+! 20020403 - David Hutchcroft
+  - Added const qualifiers to access code to DeMuonRegion parameters
+
+!>>>>>>>>>>>>>>>> MuonDet v2r0 <<<<<<<<<<<<<<<<<<<<<
+! 20020320 - David Hutchcroft
+  - Added code to read the Front end channel size from the XML 
+    in src/Lib/XmlMuonRegionCnv.cpp
+  - Added storeage of the channel size and mapping between FE channels and 
+    logical channels in DeMuonRegion.h and DeMuonRegion.cpp
+  - Added MuonDet/MuonParameters.h to store the readout type enumeration
+
+! ===========v1r1=============================================================
+! 20020221 - David Hutchcroft
+  - Added methods to get the station, region and chamber numbers to the 
+    DeMuonChamber objects and these and the gas gap numbers to the 
+    DeMuonGasGap objects.
+
+  - Modified src/component/XmlMuonRegionCnv.cpp to fill the above parameters
+    when reading the XML.
+
+! ============================================================================
+! 20020131 - David Hutchcroft
+  - Added the files:
+      CLID_DeMuonChamber.h
+      CLID_DeMuonGasGap.h
+      CLID_DeMuonRegion.h
+      CLID_MuonReadoutCond.h
+    so that the Visual C++ linker can link the code
+
+! ===========v1r0=============================================================
+! 20020121 - David Hutchcroft
+  - Created a new package MuonDet.
+  - Code Files are:
+              MuonDet/DeMuonChamber.h  
+              MuonDet/DeMuonGasGap.h  
+              MuonDet/DeMuonRegion.h  
+              MuonDet/MuonReadoutCond.h
+              src/Lib/DeMuonChamber.cpp
+              src/Lib/DeMuonGasGap.cpp 
+              src/Lib/DeMuonRegion.cpp
+              src/Lib/MuonReadoutCond.cpp
+              src/component/MuonDet_dll.cpp
+              src/component/MuonDet_load.cpp
+              src/component/XmlMuonReadoutCondCnv.cpp
+              src/component/XmlMuonRegionCnv.cpp
+   - Defines the objects to be created on the Transient Detector Store from 
+     the XML represenations
+   - The XML representation only has muon regions, the converter makes all of
+     the chambers and gas gaps from this object
+   - The component files are all compiled into DLLs so the file:
+              options/MuonDet.opts
+     must be included in a job that uses this package    
+

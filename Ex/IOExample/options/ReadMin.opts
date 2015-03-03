@@ -1,0 +1,41 @@
+// $Id: ReadMin.opts,v 1.16 2006-03-08 10:20:47 cattanem Exp $
+
+//--------------------------------------------------------------------
+// Example to navigate the event data store, starting from a POOL file
+//--------------------------------------------------------------------
+
+// StoreExplorerAlg algorithm loads all leaves in Event Data store
+ApplicationMgr.TopAlg     += { "StoreExplorerAlg" };
+StoreExplorerAlg.Load = true;
+StoreExplorerAlg.PrintFreq = 1.;
+StoreExplorerAlg.ExploreRelations = 1;
+
+// DumpMCEvent algorithm dumps MC part of main event
+ApplicationMgr.TopAlg     += { "DumpMCEventAlg" };
+DumpMCEventAlg.OutputLevel = 3; // try also 2, or 1 !!
+
+ApplicationMgr.EvtMax      = 5;
+
+// Job options to set up the POOL persistency and
+// DLLs that contain the necessary dictionaries
+#include "$STDOPTS/DstDicts.opts"
+
+// The input catalog describes the input file.
+// In this example it is the catalog produced by WriteMin.opts
+PoolDbCacheSvc.Catalog = {"xmlcatalog_file:MyCatalog.xml"};
+
+// Configure the DataOnDemand Service to get the event header from RawBuffer
+ApplicationMgr.ExtSvc += { "DataOnDemandSvc" };
+EventDataSvc.EnableFaultHandler  = true ;
+
+// Unpack the packed containers on demand
+#include "$STDOPTS/UnpackDigi.opts"
+
+// Input data file can be produced by first running IOMin.exe with WriteMin.opts
+
+// Brunel file
+//EventSelector.Input = {"DATAFILE='PFN:PoolDst.root' TYP='POOL_ROOTTREE' OPT='READ'"};
+// Boole file
+EventSelector.Input  = {"DATAFILE='PFN:PoolDigi.root' TYP='POOL_ROOTTREE' OPT='READ'" };
+// Gauss file
+//EventSelector.Input = {"DATAFILE='PFN:PoolSim.root' TYP='POOL_ROOTTREE' OPT='READ'"};

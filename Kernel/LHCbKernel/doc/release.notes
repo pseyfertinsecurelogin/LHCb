@@ -1,0 +1,1003 @@
+Package LHCbKernel
+Package manager: M.Cattaneo
+Purpose: LHCb specific Kernel classes
+
+!===================== LHCbKernel v6r7 2006-06-19 =========================
+! 2006-06-19 - Marco Cattaneo
+ - Add missing dictionary ROOT::Math::RowOffsets<*> (should be in RELAX)
+
+! 2006-06-16 - Marco Cattaneo
+ - Fix in VeloDataFunctor.h for gcc 3.4.5.
+
+! 2006-06-14 - Matt Needham
+ - Bug fix in STDataFunctor
+
+! 2006-06-09 - Eduardo Rodrigues
+ - added creation of dictionary for templated CircleTraj class
+
+! 2006-06-08 Jan Amoraal
+ - Fix OTChannelID::geometry. Should return station, layer, quarter, 
+   module and straw. 
+ - Fix LineTraj::derivative. Returns derivative w.r.t. x, y, z, stereo angle 
+   and tilt.
+
+! 2006-05-26 - Marco Cattaneo
+ - Remove generation of dictionaries already provided by RELAX
+
+!===================== LHCbKernel v6r6 2006-05-16 =========================
+! 2006-05-16 M. Needham
+ - Add ISiAmplifierResponse interface
+
+! 2006-05-15 - Marco Cattaneo
+ - Move SystemOfUnits.h out of Trajectory.h and into cpp's where is is needed
+   to avoid exporting this dependency to all the software
+
+! 2006-05-11 - Marco Cattaneo
+ - Add explicit Boost dependency, for allocators in GOD generated classes
+
+! 2006-05-03 - Gerhard Raven
+ - add generic typedef of Point and Vector to Trajectory, 
+   and default arguments to LineTraj::direction, LineTraj::curvature
+   and ParabolaTraj::curvature. All these are backwards compatible changes
+   to allow easier interchange with other geometry classes.
+
+!===================== LHCbKernel v6r5 2006-04-19 =========================
+! 2006-04-18 - Eduardo Rodrigues
+ - added creation of dictionaries for all Trajectory-related classes
+   (-> available in Python)
+
+! 2006-04-11 - Chris Jones
+ - Bug fix - Remove erroneous 'inline' from implementation of 
+   Rich::text( const Rich::Side side ) in RichSide.cpp
+
+!===================== LHCbKernel v6r4 2006-04-06 =========================
+! 2006-04-06 - Edwin Bos
+ - fixed factor of 2 bug in LineTraj length()
+ - moved range() to baseclass Trajectory.h, updated constructor
+ - initializationlists of trajectory classes
+
+! 2006-04-06 - David Hutchcroft
+ - Added const to IVeloClusterPosition interface methods
+   removed protected methods
+
+! 2006-04-05 - Vanya BELYAEV
+ - Kernel/IInAcceptance.h
+   src/IInAcceptance.cpp
+   minor modification for an interface 
+  (add the "LHCb::" namespace qualifier to Track)
+
+! 2006-04-04 - Edwin Bos
+ - added beginPoint() and endPoint() functions to Trajectory.h
+
+! 2006-03-24 - Chris Jones
+ - Modifications to RichSmartIDHashFuncs.h
+
+!===================== LHCbKernel v6r3 2006-03-23 =========================
+! 2006-03-23 - Chris Jones
+ - Invert order of pixel row and column in RIchSmartID so "natural" sorting
+   matches the order the pixels come out the HPD electronics
+
+! 2006-03-22 - Marco Cattaneo
+ - Add Kernel/OTDataFunctor.h, moved from OTSimulation
+
+! 2006-03-17 - Olivier Callot
+ - Fix LineTraj constructor with two points. Order of initialisations was
+   wrong, and uninitialised variable used...
+
+! 2006-03-15 M Needham
+ - Add find method to fast container class
+ - Add functors to use it for Silicon (SiDataFunctors.h)
+
+!===================== LHCbKernel v6r2 2006-03-09 =========================
+! 2006-03-09 - Marco Cattaneo
+ - Remove obsolete IRndmTool.h interface
+
+! 2006-03-03 - Julien Cogan
+ - MuonTileID: proper initialization in the constructor from a string.
+   Bits were left undefined after the reduction of the MuonTileID
+   from 32 to 28 bits
+
+! 2006-02-03 - Tomasz Szumlat
+ - Add SiPositionInfo.h and update IVeloClusterPosition interface
+
+! 2006-03-01 - Chris Jones
+ - Add new background radiator types to enum in RichRadiatorType.{h,cpp}
+
+! 2006-03-01 - David Hutchcroft
+ - Fixed a bug in FastClusterContainer.h so that end() worked properly
+
+! 2006-02-23 - Ivan BELYAEV
+ - Event/CaloCellIDKeyTraights.h
+   - The creation of the key=CaloCellID form the integer by KeyedContainer
+     is allowed now..  :-((( 
+     The modification is forced by usage of MCTruth utility. 
+
+! 2006-02-22 - Tomasz Szumlak
+ - minor changes inside the velo tool interface
+
+! 2006-02-21 - Tomasz Szumlak
+ - IVeloClusterPos removed and new IVeloClusterPosition interface added
+
+! 2006-02-16 - Chris Jones
+ - Minor fix to RichSmartID (printing)
+ - MInor update to RichRadiatorType
+
+! 2006-02-14 - Marco Cattaneo
+ - Changes to LbAppinit:
+   . Add getSeeds and initRndm methods (code taken from initRndm tool)
+   . Add optional *seeds argument to printEventRun method
+   N.B. these methods are not called in the base class
+ - Make GaudiAlg dependency private (needed only by LbAppInit)
+
+! 2006-02-13 G.Raven 
+ - Add typedef for return type of DifTraj::derivative
+ - make Trajectory::arclength pure virtual, and implement in relevant derived classes
+ - implement Trajectory::length in baseclass, update derived classes
+ - CircleTraj: fully implement
+
+! 2006-02-10 - Marco Cattaneo
+ - Add IMCVeloFEType.h, IVeloClusterPos.h, VeloEventFunctor.h
+
+! 2006-02-10 G.Raven + E.Bos
+ - updated the various Trajectory classes
+ 
+! 2006-02-08 M Needham
+ - changes in STChannelID constructer
+
+! 2006-02-06 - Eduardo Rodrigues
+ - inserted LHCb namespace for all trajectory-related classes
+
+! 2006-02-06 - Edwin Bos
+ - Added Trajectory classes
+
+! 2006-02-06 - Marco Cattaneo
+ - Add Reflex library to LHCbKernel linkopts, to resolve dictionary symbols
+
+! 2006-02-02 M needham
+ - bug fix in fast container
+
+! 2006-02-01 - Antonis Papanestis
+ - Added RichSmartIDHashFuncs.h to LHCbKernel from RichDAQ
+
+! 2006-02-01 - Chris Jones
+ - Add some tricks to RichSmartID.xml to make it fully non-virtual
+
+!===================== LHCbKernel v6r1 2006-01-27 =========================
+! 2006-01-27 M Needham
+  - Remove spare bits from LHCbID
+
+! 2006-01-26 M Needham
+  - Adapt to new ST numbering scheme
+
+! 2006-01-25 - Chris Jones
+ - Add some missing LHCb namespace scopes to RichSmartID.xml
+
+! 2006-01-20 - Marco Cattaneo
+ - Remove IMagneticFieldSvc.h, use GaudiKernel instead (from GAUDI v18r1)
+
+!===================== LHCbKernel v6r0 2006-01-18 =========================
+! 2006-01-18 - Gloria CORTI
+ - Modify LbAppInit.h and cpp file to introduce retrieval of Application
+   name and version. Provide methods to return values of some data members. 
+
+! 2006-01-17 - Marco Cattaneo
+ - Add Kernel/FastClusterContainer.h from Markus Frank. A test program and usage
+   example is available in the directory src/tests
+ - Add xml/Packer.xml, defines LHCb::Packer namespace and methods to set and get
+   bits in a word (previously in MuonEventBase)
+
+! 2006-01-17 - Chris Jones
+ - Import RichParticleIDType files from RichKernel
+
+! 2005-12-21 - Marco Cattaneo
+ - Add Kernel/LbAppInit.h, and implementation in src. This is an initialization
+   algorithm to produce standard printout for production applications. It can
+   be used as is, or specialized
+
+! 2005-12-20 - Marco Cattaneo
+ - Add Kernel/ISTClusterPosition.h, moved from STTools
+ - Add Kernel/RichTraceMode.h, moved from RichKernel
+
+! 2005-12-15 - Gloria CORTI
+ - Add Kernel/IMCParticleSelector.h, moved from Phys/MCTools, updated with
+   LHCb namespace
+
+! 2005-12-14 M. Needham
+ - STDatafunctors updated for new LHCb namespace
+ - Add missing STDetSwitch.cpp 
+
+! 2005-12-14 - Marco Cattaneo
+ - Add IGenericTool and IRndmTool interfaces
+ - Add std::vector<std::pair<std::string,int> > to lcg custom dict
+ - Remove obsolete CaloCellIDOp, add CaloCellIDTraits (moved from CaloEvent)
+ - Remove obsolete serialize methods from CaloCellID
+
+! 2005-12-13 - Eduardo Rodrigues
+ - added isTT() method to STChannelID
+ - modifications to LHCbID class:
+   - ST type split into TT and IT
+   - isST() method supplemented with isTT() and isIT() methods
+
+! 2005-12-12 - Eduardo Rodrigues
+ - modifications to LHCbID class:
+   - added checkDetectorType method
+   - made detector type enum public, and renamed them
+
+! 2005-12-08 - Mark Tobin
+ - Use GaudiObjDesc to set bitfields in VeloChannelID.xml
+
+! 2005-12-08 - Marco Cattaneo
+ - Remove CLHEP from IBIntegrator interface
+ - Add IMagneticFieldSvc interface (from GaudiKernel, adapted to MathCore)
+
+! 2005-12-07 - Chris Jones
+ - Update naming scheme in RichSmartID
+  + HPD "Row" is now called "NumInRow" to better reflect the actual detector
+  + subPixel is renamed pixelSubRow, for more clarity
+  + "PD" becomes "HPD"
+
+! 2005-12-06 - Marco Cattaneo
+ - Add MuonTileID and MuonLayout (moved from MuonKernel) and adapt to LHCb::
+ - Add MuonTileID to LHCbID
+ - Add std::pair<MuonTileID,int> template instantiations to lcgdict
+ - Add IEvtTypeSvc.h interface, moved to Kernel from MCTools
+
+! 2005-11-28 - Marco Cattaneo
+ - Output serializers for std containers (SerializeStl.h) are now in LHCb 
+   namespace, this is needed for the new event model classes.
+
+! 2005-11-26 - Olivier Deschamps
+ - Changes to CaloCellID:
+    . Removed unneccessary 16 bit representation, obsolete SICB method and
+      redundant ccid() method
+    . Constructor from int is now explicit
+    . WriteType typedef removed from CaloCellCode.h
+
+! 2005-11-25 - Marco Cattaneo
+ - Adapt xxID.xml to GaudiObjDesc v9r0 (LHCb:: namespace)
+ - Remove CaloPrint (for printing CLHEP vectors and matrices)
+ - Remove CaloMap, CaloHash, CaloHashMap (use equivalent classes in GaudiKernel)
+ - Remove CaloHypothes.h, CaloHypoPrint (should be defined in CaloHypo.xml)
+ - Remove ITChannelID.xml
+ - Remove LHCbMath.h and LHCbConstants.h, moved to LHCbDefinitions package
+ - Remove explicit dependency on CLHEP
+   (implicit dependency remains for now, via LHCbDefinitions)
+
+! 2005-11-22 M Needham
+  - Modify LHCbID to use STChannelID instead of ITChannelID
+  - Add new STChannelID class
+  - Add new STDataFunctors namespace
+  - Add new STDetSwitch function 
+
+!===================== LHCbKernel v5r15 2005-11-11 ========================
+! 2005-11-11 - Marco Cattaneo
+ - Add fragments to add custom dictionaries to the lcg generated ones
+ - Modify requirements to use fragments, plus platform dependent dictionaries
+ - Remove SEAL_1_7_5, POOL_2_2_3 hacks
+
+! 2005-11-07 - Chris Jones
+ - Remove custom accessors from RichSmartID in favour of new GOD generator 
+   methods with specified return types.
+
+!===================== LHCbKernel v5r14 2005-11-04 ========================
+! 2005-11-04 - Marco Cattaneo
+ - Add HACKs to requirements to pick up:
+     SEAL_1_7_5 (binary compatible with 1_7_4).
+     SEAL_2_2_3 (binary compatible with 2_2_2).
+   To be removed when Gaudi moves to SEAL_1_7_5, POOL_2_2_3 or greater
+
+! 2005-10-17 - Chris Jones
+ - Clean up some of the RICH enums
+
+! 2005-10-12 Matt Needham
+  - Add number of strips per Beetle to constants
+
+! 2005-10-11 - Marco Cattaneo
+ - Modifications to produce reflex dictionaries, for use with Gaudi v17
+
+!===================== LHCbKernel v5r13 2005-09-06 ========================
+! 2005-09-06 - Marco Cattaneo
+ - Add Kernel/IBIntegrator.h interface (moved from TrackInterfaces)
+ - Add Kernel/IBdlTool.h interface (derived from BdlTool in TrgVeloTT, PatVeloTT)
+ - Add Kernel/IInAcceptance.h, ICheckTool.h, INormalizeTool.h, moved here
+   from obsolete LHCbInterfaces package
+
+!===================== LHCbKernel v5r12p1 2005-07-20 ======================
+! 2005-07-14 - Jose A. Hernando
+ - LHCbID::channelID() now returns the internal unsigned int of the specific
+   VeloChannelID, ITChannelID, etc... 
+
+!===================== LHCbKernel v5r12 2005-06-28 ========================
+! 2005-06-28 - Olivier Callot
+ - Fix the packing of ITChannelID in LHCbID, remove two unused bits for strip
+   and add the needed bits for station.
+ - LHCbID constructor for ITChannelID and size (default 0).
+ - Inline most LHCbID constructors to make them faster.
+ - faster accessors to the Velo/IT/OT ids from LHCbID.
+
+! 2005-06-24 - Stefan Roiser
+ - Fixes to POOL dictionaries for use from GaudiPython:
+   . Remove --pool option from lcgdict build command
+   . Add copy constructor to CaloCellID, VeloChannelID, ITChannelID
+
+!===================== LHCbKernel v5r11 2005-06-01 ========================
+! 2005-06-01 - Marco Cattaneo
+ - Add Kernel/StandardPacker.h (moved from Event/Rdst)
+
+! 2005-05-31 - Olivier Callot
+ - VeloChannelID.xml: Modify the creator with 3 arguments: Single line of code
+   instead of calling 3 methods with masking. This gains speed for L1.
+ - LHCbID.xml: Add a constructor with VeloChannelID and size, without masking,
+   for improved speed in L1.
+
+!===================== LHCbKernel v5r10 2005-04-15 ========================
+! 2005-04-15 - Chris Jones
+ - Add preprocessor directives so that valdity checks in RichSmartID
+   are only applied to CMTDEB libraries. Speeds things up particulary for
+   the RICH HLT processing.
+
+! 2005-04-08 - Jose Hernando
+ - LHCbID class revisited:
+		. using 26 bits for ST, 2 bits used for size 
+
+
+!====================== LHCbKernel v5r9 2005-04-07 ========================
+! 2005-04-07 - Marco Cattaneo
+ - Remove obsolete files Kernel/LHCbStreams.h and Kernel/CLHEPStreams.h
+
+! 2005-04-02 - Jose Hernando
+ - LHCbID class revisited:
+   . using 26 bits for OT and 21 Velo for channelID
+   . leaving space for spare bits for Velo (size of cluster) 
+     and OT (left/right ambiguity)
+
+!====================== LHCbKernel v5r8 2005-03-04 ========================
+! 2005-02-22 - Chris Jones
+ - Update RichSmartID with reordered bit field, but this time with the 
+   validity bits in the same place for compatibility with LHCbID.
+   Backwards incompatible.
+ - Update the out of range messaging in RichSmartID to print the field
+   name and also the parameter values.
+
+! 2005-02-17 - Chris Jones
+ - Add entries to generate lcg dictionary information for :-
+  + std::vector<HepGeom::Vector3D<double> >
+  + std::vector<HepGeom::Point3D<double> >
+
+!====================== LHCbKernel v5r7 2005-02-09 ========================
+! 2005-02-09 - Marco Cattaneo
+ - Fixes to RichSmartID (backwards incompatible) for GaudiObjDesc v7r3
+
+! 2005-02-04 - Jose Hernando, Eduardo Rodrigues
+ - LHCbID class extended:
+   - backward incompatible changes to names of several methods
+   - first implementation to use spare bits where needed
+     (e.g. to store the ambiguity in OT)
+
+! 2005-01-20 - Marco Cattaneo
+ - Changes for Gaudi v16 and CLHEP 1.9
+   . Remove CLHEPStreams.h, .cpp as Gaudi MsgStream can now handle any class
+   . Use namespaces in CLHEP forward declarations (CaloPrint.h)
+
+!====================== LHCbKernel v5r6 2005-01-17 ========================
+! 2005-01-17 - Marco Cattaneo
+ - Fix some doxygen warnings
+
+! 2005-01-07 - Chris Jones
+ - Update RichSmartID. 
+   + Improved constructors and messaging.
+
+!====================== LHCbKernel v5r5 2004-12-08 ========================
+! 2004-12-08 - Marco Cattaneo
+ - Use GaudiObjDesc v7r*, to pick up new Python based version
+ - Remove obsolete StreamBuffer stuff from CLHEPStreams.h, .cpp
+
+! 2004-12-07 - Vanya BELYAEV
+ - xml/CaloCellID.xml
+    remove std::setw from MsgStream version of CaloCellID::fillStream 
+    to please some Visual C++ + LCG dictionary interference 
+
+!====================== LHCbKernel v5r5 2004-11-29 ========================
+! 2004-11-29 - Marco Cattaneo
+ - Add std:pair<double,double> to lcgStl.h, lcg_selection.xml
+ - Make .xml files independent of each other
+
+! 2004-10-26 - David Hutchcroft
+ - Modifed VeloChannelID.xml for new VeloDet v9r0 (backwards incompatible)
+
+!====================== LHCbKernel v5r4 2004-11-19 ========================
+! 2004-11-03 - Chris Jones
+ - Update RichSmartID (backwards compatible)
+
+!====================== LHCbKernel v5r3 2004-10-18 ========================
+! 2004-10-18 - Marco Cattaneo
+ - Add first implementation of LHCbID
+
+! 2004-08-30 - Jacopo Nardulli
+ - Backward incompatible modifications in OTChannelID.xml: 
+   Introduction of the Tdc-Time (8 bits). If not filled, the TDC-Time is 0.
+   New method called geometry returns the geometrical part of the OTChannelID.
+
+!===================== LHCbKernel v5r2p2 2004-10-26 =======================
+ Built on branch v5r2b2
+
+! 2004-10-26 - Marco Cattaneo
+ - Use GaudiKernel v* in requirements
+
+!====================== LHCbKernel v5r2 2004-09-02 ========================
+! 2004-08-26 - Vanya Belyaev
+ - Kernel/InstanceCounter.h
+   Fix a bug/typo in the member name.
+    only LoKi in debug mode is affected 
+
+! 2004-08-17 - Chris Jones
+ - Update RICH enumeration doxygen documentation
+
+! 2004-07-29 - Chris Jones
+ - Add CVS Log information to RichSmartID.xml
+
+!====================== LHCbKernel v5r1 2004-07-28 ========================
+! 2004-07-28 - Vanya BELYAEV
+ - Kernel/CaloHash.h
+   fix a bug for Win32 platform, kindly reported by T.Ruf 
+
+! 2004-07-27 - Vanya BELYAEV
+  drastical simplification of "maps"
+  - Kernel/CaloHash.h 
+    extend the hashing techniques for variouse specific cases 
+    through template partial specialization 
+  - Kernel/CaloMap.h 
+    remove all #ifdef/#else/#endif platform dependent directives 
+  - Kernel.CaloHashMap 
+    remove all #ifdef/#else/#endif platform dependent directives 
+    From now *ALL* platform-dependent preprocessor "code" comes from
+    GaudiKernel/stl_hash.h
+    From now the class GaudiKernel/HAshTabel is not in use anymore,  
+    as a result one COULD expect significant reduce in run-time errors 
+    on Win32 platform  ( a number of segmentation faults were 
+    detected by T.Ruf on Win32 platform in HashTable code)
+  
+  Indeed now the code in Kernel/CaloHash.h, Kernel/CaloHashMap.h 
+  and Kernel/CaloMap.h is *IDENTICAL* to LoKi/Hash.h, LoKi/Map.h 
+  and  LoKi/HashMap.h 
+ 
+!===================== LHCbKernel v5r0p1 2004-07-26 =======================
+! 2004-07-26 - Vanya Belyaev
+ - Kernel/InstanceCounter.h
+    suppress the printout message for zero counters (everything is OK)
+
+!====================== LHCbKernel v5r0 2004-07-19 ========================
+! 2004-07-19 - Marco Cattaneo
+ - Adapt requirements for Gaudi v15
+ - Remove Relations subpackage, now a separate package
+ - Remove some serializers from SerializeStl.h, now defined in GaudiKernel
+ - Put use GaudiObjDesc in private section
+
+! 2004-06-29 - Chris Jones
+ - Added "Invalid" to the RichDetectorType, RichRadiatorType and 
+   RichSide enumerations.
+ - Reorganisation of RichSmartID.xml to improve human-readability
+ - Removed std::cout messages from RichSmartID set methods (used for
+   debug purposes). Users can still test the return value (bool) for success
+
+! 2004-06-14 - Marco Cattaneo
+ - ProcessPhase removed (moved to LHCbAlgs component library)
+
+!====================== LHCbKernel v4r6 2004-05-05 ========================
+! 2004-05-05 - Marco Cattaneo, Markus Frank, Stefan Rosier
+ - Add missing template instantiations to lcg dictionary
+ - Remove obsolete file src/dict/StlDict.cpp
+ - Fix many doxygen warnings in Relations sub-package
+
+!====================== LHCbKernel v4r5 2004-03-25 ========================
+! 2004-03-26 - Marco Cattaneo
+ - Moved ITDataFunctor.h from ITAlgorithms
+ - Add Kernel/LHCbConstants.h, containing constants of general LHCb interest,
+   previously in ITAlgorithms/ITGeneral.h
+ - Put in LHCbMath.h some Tolerance parameters previously in ITGeneral.h
+
+!====================== LHCbKernel v4r4 2004-03-18 ========================
+! 2004-03-17 - Vanya BELYAEV
+ - Relations/AssociatorBase.h
+   src/AssociatorBase.cpp
+       1) implement inheritance from base class GaudiTool  
+       2) remove a lot of unnesessary methods 
+
+  - Relations/Relation.h
+  - Relations/RelationWeighted.h 
+     ensure to return FAILURE only in teh case of real errors 
+  - cmt/requirements
+     1) increment version to v4r4 
+     2) add the dependency on GaudiTools 
+  
+!====================== LHCbKernel v4r3 2004-03-02 ========================
+! 2004-03-02 - Marco Cattaneo
+ - Add new file Kernel/LHCbMath.h which implements math related functions for
+   general LHCb use. Currently contains:
+     int LHCbMath::round( const double x );
+     int LHCbMath::round( const float x );
+   (Taken from ITAlgorithms/ITGeneral.h, can also replace VeloKernel::VeloRound)
+
+! 2004-02-03 - Mark Tobin
+ - Modified bit structure of VeloChannelID.  Added type(), but kept same
+   constructor for backward compatibility. 
+   >> N.B. The new constructor and the type() method should not be used when
+   >> using VeloDet v8r* (old geometry) because of an inconsistency in sensor
+   >> numbering with the backwards compatible VeloChannelID constructor
+
+!====================== LHCbKernel v4r2 2004-02-02 ========================
+! 2004-01-29 - Chris Jones
+ - Minor changes to RichSmartID (backwards compatible). 
+   Imported RichRadiatorType.h and RichDetectorType.h from Rich/RichKernel
+
+!====================== LHCbKernel v4r1 2004-01-27 ========================
+! 2004-01-27 - Marco Cattaneo, Stefan Roiser, Pere Mato
+ - Modify requirements and add new files Kernel/lcgStl.h, xml/lcg_selection.xml,
+   to generate lcg dictionary with gccXml for Stl classes not handled by GOD
+
+!====================== LHCbKernel v4r0 2004-01-15 ========================
+! 2004-01-15 - Marco Cattaneo
+ - Move implementation of virtual destructor from RelationBase.h and 
+   IRelationBases.cpp to IRelationBase.h, and make it public 
+   (need to build dict on Windows)
+
+! 2004-01-14 - Vanya BELYAEV
+ - Relations/IRelationBase.h
+   Relations/Relation.h
+   Relations/Relation1D.h
+   Relations/Relation2.h
+   Relations/Relation2D.h
+   Relations/Relation2Weighted.h
+   Relations/RelationWeighted.h
+   Relations/RelationWeighted1D.h
+   Relations/RelationWeighted2D.h
+  Update for usage of new interface IUpdateable ("GaudiKernel/IUpdateable.h")
+
+! 2004-01-14 - Vanya BELYAEV
+ - Relations subpackage: trick to make the Relations "POOL'able"
+      all relations now inherit from 
+      IRelationBase interface; this interface has virtual method 
+      "rebuild", whch need to be called in POOL converter after 
+      "reading" of the relatuon table from POOL/ROOT
+
+! 2003-12-15 - Marco Cattaneo
+ - Move to GAUDI_v14r0 
+   . requirements: use GaudiKernel v15r*, GaudiObjDesc v6r*
+   . IAssociatorWighted.h: add some typename's
+   . Relation1,2D.h, RelationWeighted1,2D.h: change order of inheritance
+   . CaloCellID.xml, ITChannelID.xml, OTChannelID.xml, RichSmartID.xml, VeloChannelID.xml:
+     adaptations for SEAL dictionary
+   . Remove dict/CLHEP_dict.cpp (now done by SEAL)
+ - Add ParticleID.xml, ParticleID.cpp (moved from Event/Event)
+
+!====================== LHCbKernel v3r0 2003-12-08 ========================
+! 2003-12-08 - Marco Cattaneo
+ - Move to GAUDI_v13r0 (in requirements: use GaudiKernel v14r*)
+ - Relations/IAssociatorWeighted.h: add a missing typename, needed by vc71
+ - SerializeStl.h: add serialisation methods for std::map (taken from RichKernel)
+ - Remove Kernel/MuonTileID.h (more recent version exists in MuonKernel)
+
+!====================== LHCbKernel v2r10 2003-12-04 =======================
+! 2003-12-01 - Jacopo Nardulli
+ - Modifications of bits in OTChannelID.xml. Stations runs from 1-3, layers 
+   from 0-3, quarters from 0-3, modules from 1-9, and straws from 1-128.
+
+!======================= LHCbKernel v2r9 2003-11-24 =======================
+! 2003-11-24 - Marco Cattaneo
+ - Fix doxygen warnings
+
+! 2003-11-24 - Vanya BELYAEV
+ - xml/CaloCellID.xml    new file : XML description of CaloCellID class
+ - xml/LHCbKernel.xml    add reference to CaloCellID.xml file 
+ - Kernel/CaloCellID.h   remove the file from cvs 
+ - Kernel/CaloCellIDOp.h, 
+   src/CaloCellIDOp.cpp  new files to provide MsgStream operator for CaloCellID
+
+! 2003-11-24 - Guy Barrand
+ - CaloPrint.h: add print method for long unsigned int, to please Mac OS X
+
+! 2003-11-23 - Chris Jones
+ - Add XML file for RichSmartID
+
+! 2003-11-22 - Vanya BELYAEV 
+
+ - Relations/RelationBase.h     add method "i_reserve" to reserve the number 
+                                of relations (efficiency reasons)
+ - Relations/Relation.h add method "reserve"  to reserve the number of relations 
+ - Relations/Relation.h duplicate all essential methods in fast "inline"
+                        variant and in "virtual" variant  (efficiency reasons)
+ - the same procedure for Relation2, RelationWeighted, Relation2Weighted, 
+   Relation1D, Relation2D, RelationWeighted2D and RelationWeighted2D classes.
+ - remove *ALL* virtual inheritances 
+   (with exception for virtual inheritance in interfaces from IInterface)
+ - remove *ALL* multiple inheritances 
+   (with exception for inheritance in interfaces from object and Interface
+ - to "compensate" the additional redirections, arised from removal of 
+   multiple inheritance some optimization tricks were applied.
+ - few optimizations were added into constructors/destructors and serialzation 
+   methods 
+ - Add more test into ../src/Test directory
+ - modify cmt/requirement file to incorporate new test applications
+ - increase the version in cmt/requirement file to v2r9
+
+!======================= LHCbKernel v2r8 2003-06-25 =======================
+! 2003-06-25 - Vanya BELYAEV
+ - few modification  for Relations stuff. 
+ - src/AssociatorBase.cpp    fix for memory leak 
+
+! 2003-06-16 - Sebastien Ponce
+ - fixes for gcc 3.2/3.3
+ - use more recent GaudiObjDesc
+
+!======================= LHCbKernel v2r7 2003-05-30 =======================
+! 2003-05-30 - Marco Cattaneo
+ - Move BrunelPhase to this package from Rec/BrunelKernel, renamed ProcessPhase
+
+! 2003-05-15 - Vanya BELYAEV
+ -  Relations/RelationTypeTraits.h 
+    Relations/RelationWeightedTypeTraits.h 
+   Some "improvements" for Ranges
+   1) introduce new methods: "operator()", "operator[]" and "at" 
+      in accordance with STL standard : 
+
+       Range r = ... ; 
+       for( size_t index = 0 ; index < r.size() ; ++index )
+        {
+          // use 'operator()'
+          std::cout << " relation by index " << index 
+                    << " from " <<     r(index).from() 
+                    << " to   " <<     r(index).to  () << std::endl ;
+          std::cout << " relation by index " << index 
+                    << " from " <<     r(index).from() 
+                    << " to   " <<     r(index).to  () << std::endl ;
+          // use 'operator[]'
+          std::cout << " relation by index " << index 
+                    << " from " <<     r[index].from() 
+                    << " to   " <<     r[index].to  () << std::endl ;
+          std::cout << " relation by index " << index 
+                    << " from " <<     r[index].from() 
+                    << " to   " <<     r[index].to  () << std::endl ;
+          // use 'at()'
+          std::cout << " relation by index " << index 
+                    << " from " <<  r.at(index).from() 
+                    << " to   " <<  r.at(index).to  () << std::endl ;
+          std::cout << " relation by index " << index 
+                    << " from " <<  r.at(index).from() 
+                    << " to   " <<  r.at(index).to  () << std::endl ;
+         }
+
+     For invalid indices  'operator()' and 'operator[]'both 
+     return references to "default(empty)" entry in relation table 
+     ('from','to' and 'weight' gets their default values - "0")
+     while "at()" throws the GaudiException 
+   2) "front()" and "back()" methods now ar ereimplemented using 
+       "operator()" and its error handling.(The previous behavior was 
+        undefined for invalid ranges) 
+   3) potential problems of "rbegin" and "rend" methods are fixed 
+   4) add new type to Ranges "value_type" 
+   5) remove few unnesessary types from Range
+
+  Now Range type is fulfill all ANSI C++ signatures for standard containers. 
+  Therefore now it is (from compiler's point of view) undistinguishable 
+  from standard STL containers. 
+  
+- src/Test/RelationsTest.cpp - updated to test the access with indices 
+
+
+! 2003-04-15 - Philippe Charpentier
+ - Add property "DecreasingWeight" to be used in associatedFrom()/To()
+   Note: this does not change the behaviour of the Range class (see below)
+
+! 2003-01-17 - Sebastien Ponce
+ - support for gcc 3.2
+
+!======================== LHCbKernel v2r6 2002-12-04 ==================
+! 2002-11-13 - Florence Ranjard
+ - requirements - use new versions
+
+!========================= LHCbKernel v1r5 2002-11-11 ===================
+! 2002-10-29 - Ivan Belyaev
+ - Relations/RelationTypeTraits.h
+ - Relations/RelationWeightedTypeTraits.h
+   add the notion of "const_reverse_iterator" for Range class for 
+   "reverse" iteration over selected range of relations.
+   The STL-like methods "rbegin" and "rend" are added to Range class.
+
+! 2002-10-10 - Vanya Belyaev 
+  Relations/RelationTypeTraits.h
+  Relations/RelationWeightedTypeTraits.h 
+     - remove trivial misprints 
+
+! 2002-09-04 - Ivan Belyaev
+ - introduce STL-like methods 'front()' and 'back()'
+   for all 'Ranges' from Relations-subpackage.
+ - intoruce "iterator","const_iterator","reference" and 
+   "const_reference" types for Range.
+   And now Range (pair of 2 iterator) semantically indistinguishable 
+   form ordinary container. (all iterators and types defined as they 
+   must be defined)
+
+!========================= LHCbKernel v1r4 2002-07-29 ===================
+! 2002-07-25 - Ivan Belyaev
+ - Relations / *.h : fix bug in destructors.
+
+!========================= LHCbKernel v1r3 2002-07-18 ===================
+! 2002-07-18 - Marco Cattaneo
+ - Add Kernel/InstanceCounter.h: static class for instrumenting constructors
+   and destructors to serach for memory leaks
+
+! 2002-07-12 - Philippe Charpentier
+ - modification in Relations, file src/AssociatorBase.cpp
+   the associator now tries and set the Property "OutputTable" or "Output"
+   of the building algorithm (in this order of priority) to the value of
+	 its own "Location" property.
+   This allows to make sure that the algorithm produces the relations table
+	 at the right place
+
+!========================= LHCbKernel v1r2 2002-07-09 ===================
+! 2002-06-18 - Stefan Roiser
+ - changed use-statement of GaudiObjDesc to v4r4
+
+! 2002-06-18 - Vanya Belyaev
+ - Relations/Relation.h: fix bug affecting inverse relations (found by Marco)
+
+! 2002-06-07 - Marco Cattaneo
+ - Change version number to v1r2
+ - Cleanup of OTChannelID.xml to use bitfield descriptions
+
+!========================== LHCbKernel v1r1 2002-05-24 =================
+! 2002-05-24 - Ivan Belyaev
+ - src/RelationUtils.cpp  :
+   explicitely suppress ObjectVector&ObjectList bits for generated CLIDs
+ - src/AssociatorBase.cpp :
+   remove misprints in Warning/Error counters
+ - Relations/Associator.h
+ - Relations/AssociatorWeighted.h
+   suppress warning printout for inverse relation table
+
+!========================== LHCbKernel v1r0 2002-05-15 =================
+!20020515 - Marco Cattaneo
+  - Remove CaloCellCode.h in DoxyFile.cfg (causes doxygen crash)
+
+!20020515 - Philippe Charpentier
+  - rename associator methods (changes in [I]Associator[Weighted].h) :
+        range[xxx]()      ->  range[xxx]From()
+        invRange[xxx]()   ->  range[xxx]To()
+!20020514 - Marco Cattaneo
+  - requirements: remove link time dependency on Boost library
+
+!20020513 - Vanya Belyaev
+  - Relations/Associator.h
+  - Relations/AssociatorWeighed.h  fix bugs
+
+! 20020513 - Marco Cattaneo
+  - requirements: use a * for BOOST dependency
+
+! 13/05/2002- Philippe Charpentier
+  - Relations/Associator.h and IAssociator.h
+    add method to retrieve THE related object in case there is at most one.
+	  Otherwise it returns the first one or a null pointer if there is none.
+  - Relations/AssociatorWeighted.h and IAssociatorWeighted
+    add method to retrieve THE related object in case there is at most one.
+	  Otherwise it returns the first one or a null pointer if there is none.
+
+! 12/05/2002 - Vanya Belyaev
+  - src/Test/LHCbKernelTest.cpp  removed
+  - src/Test/RelationsTest.cpp   new test application for Relations subpackage
+  - Relations/AssociatoBase.h
+    Relations/AssociatorBase.cpp
+    improve the printout and introduce better error/warnins/exception
+    handling and statistics (imported from base classes of LHCb Calo software)
+  - Relations/IAssociator.h
+    1) add "const" and "virtual" qualifiers to all "range" methods
+    2) declare all "range" methods as pure abstract
+    3) move the actual implementation of "range" methods to Associator
+  - Relations/IAssociatorWeighted.h
+    1) add "const" and "virtual" qualifiers to all "range" methods
+    2) declare all "range" methods as pure abstract
+    3) move the actual implementation of "range" methods to AssociatorWeighted
+  - Relations/Associator.h
+    add implementation of "range" methods from IAssociator
+  - Relations/AssociatorWeighted.h
+    add implementation of "range" methods from IAssociatorWeighted
+
+! 10/05/2002 - Philippe Charpentier
+  - modified interface to Associators:
+    Added methods to retrieve ranges,   delegating to the table
+     StatusCode xxx( *, Range&)         returns FAILURE if no table
+     ToRange    xxx( * )                returns empty range if no table
+
+	  Relations/IAssociator[Weighted].h   Removed unsafe methods
+                                        Added methods [inv]range()
+                                        Method bool tableExists()
+                                         creates/accesses the table and returns
+                                         true if successful
+	  Relations/IAssociatorWeighted.h     Added methods with cuts on weight:
+                                         [inv]rangeWith{Low|High}Cut
+
+! 10/05/2002 - Vanya Belyaev
+
+  - new files in Relations subdirectory:
+    Relations/TypeSelect.h           compile-time selection of objects
+    Relations/TypeContainedObject.h  compile-time detection of public
+                                     inheritance from class ContainedObject
+    Relations/TypeDataObject.h       compile-time detection of public
+                                     inheritance from class DataObject
+    Relations/TypeStorable.h         compiler-time detection of public
+                                     inheritance either from class DataObject
+                                     or from class Contained Object
+    Relations/TypePersistent.h       Compile-time evaluation of "persistent"
+                                     representation of the class:
+                                     "SmartPtr<TYPE>" if it has sense,
+                                     "TYPE" otherwise
+    Relations/TypeId.h               Unique object type identification:
+                                     "TYPE::classID()" if it has sence and
+                                     artificially hashed value otherwise
+    Relations/TypeSerializers.h
+    Relations/TypeIdAux.h
+    Relations/TypeSelectAux.h
+    Relations/ObjectTypeTraitsStripped.h
+    Relations/TypeApplyAux.h
+  The first 6 files could be of more or less general interest,
+  all other are "private" for Relations sub-package.
+
+  - modified files
+    Relations/IRelation.h            improve the "quality" of comments
+                                     to produce better DoxyGen documentation
+    Relations/IRelationWeighted.h    improve the "quality" of comments
+                                     to produce better DoxyGen documentation
+    Relation/ObjectTypeTraits.h      drastical redesign:
+                                     remove all #ifdef/#endif
+                                     remove all FULL template specialization
+    Relations/Less.h                 add the template specialization of
+                                     std::less structure for SmartRef objects
+                                     (to suppress warnings) (on Linux) and
+                                     templated comparison operator for SmartRef
+                                     objects to Win32 platform
+    Relations/RelationTypeTraits.h   add default(empty) constructor to Range
+    Relations/RelationWeightedTypeTraits.h - add default(empty) constructor to
+                                     Range
+    TypeConversion.h                 update for usage of Boost
+    TypeApply.h                      set the environment for SmartRefs
+    TypeSerializer.h                 specialization to please Win32
+  - remove file
+    Relations/TypeApply_WIN32.h
+  - new files
+    doc/DoxyFile.cfg                Doxygen configuration file
+    doc/Doxyheader.html,Doxyfooter.html   header and footer for doxygen
+ -  new directory
+    src/Test
+ -  new files in test directory
+    src/Test/LHCbKernelTest.cpp     simple primitive test file to test
+                                    some basic features of Relations
+                                    sub-package
+
+! 20020507 Vanya Belyaev
+ - Relations/Less.h
+ - Relations/ObjectTypeTraits.h - remove warnings on Linux
+
+! 20020507 Vanya Belyaev
+- src/CLHEPstreams.cpp
+  1) modify the persistent representation of HepLorentzVector to
+     preserve the 4-length of the vectror to be subjected truncation
+     errors
+  2) modify the persistent representation of HepVector to write the
+     vector length in teh format of "unsigned char".It implies the
+     limitation of the mamximal vector length to be 256 elements
+  3) the same for HepSymMatrix, HepDiagMatrix and HepMatrix
+
+! 20020503 Pere Mato
+- added dictionary for CLHEP classes in /dict
+
+! 20020430 Vanya Belyaev
+  Kernel/CaloHash.h  bug fix for Win2K
+
+! 20020430 Marco Cattaneo
+- requirements: remove run time dependency on GaudiIntrospection
+
+! 20020427 Vanya Belyaev
+  - add CaloHash.h file for usage in CaloMap.h and CaloHashMaps.h
+
+! 20020426 Vanya Belyaev
+  - Relations/TypeApply.h, Relations/ObjectTypeTraits.h
+    change the order of include files and forward declarations
+
+! 20020426 Philippe Charpentier
+  - Add typedefs and two methods for delegating the retrieval of relations to
+    the table without to explicitely getting a pointer to it.
+
+! 20020426 Vanya Belyaev
+  - "Relations" - reduce number of warnings for MicroSoft compiler
+
+! 20020425 Vanya Belyaev
+  - fix one more problem for Relations at Win2K
+
+! 20020424 Vanya Belyaev
+  - fix one more problem for Relations at Win2K
+
+! 20020423 Vanya Belyaev
+  - resolve the clash between CLHEP/Units/SystemOfUnits.h definition of
+    "static const HepDouble second = ... " and
+    std::pair::second for RelationTypeTraits
+
+
+! 20020523 M. Needham
+  - add uniqueLayer/uniqueWafer members to OTChannelID.h
+
+! 20020422 Vanya Belyaev
+  new files:
+  Kernel/CaloPrint.h
+  src/CaloProint.cpp
+  Kernel/OSiterator.h
+  Kernel/CaloMap.h
+  Kernel/CaloHashMap.h
+  files are moved from Calo/CaloKernel package to eliminate the
+  dependency of Event/CaloEvent package from Calo/CaloKernal package.
+
+
+! 20020418 M.Cattaneo
+  - Make separate library for dictionaries
+
+! 20020417 M.Cattaneo
+  - Package moved to Kernel/LHCbKernel
+  - use Gaudi v10
+  - Remove from SerializeStl.h stuff that has been moved to GaudiKernel
+
+! 20020415 Chris Parkes
+  - add VeloChannelID.xml
+
+! 20020409 M. Needham
+  - add uniqueLayer/uniqueWafer members to ITChannelID.h
+
+! 20020409 Vanya Belyaev Ivan.Belyaev@itep.ru
+  - AssociatorBase.cpp: AssociatorBase::locateAlgorithm()
+                        replace few clear and VALID lines with
+                        smaller number of less clear and potentially
+                        dangerouse lines to avoid misteriouse segmentation
+                        faults. The solution is temporary. One need to
+                        investigate it in detail later.
+
+  add "virtual" qualifier for public inheritance from "Relation*" - bases
+  to following following classes:
+  - Relation1D.h,
+  - Relation2D.h
+  - RelationWeighted1D.h
+  - RelationWeighted2D.h
+
+! 20020408 Vanya Belyaev Ivan.Belyaev@itep.ru
+  - new version of "Relations"-subpackage
+  - rename *RelationTool*          into *Associator*
+  - rename *RelationWeightedTool*  into *AssociatorWeighted*
+
+! 20020405 Stefan Roiser
+  - operator-overloading for pairs added to SerializeStl.h
+  - bugfix: ostream operator for vector
+
+! 20020403 M.Cattaneo
+  - OTChannelID.xml added
+
+! 20020403 Vanya Belyaev
+  - new version of "Relations" stuff
+
+! 20020327 (M.Cattaneo)
+  - add LHCbStreams.h to include all other needed streams header files
+
+! 20020319 (M.Cattaneo)
+  - add SerializeStl.h for serialisation of std::vector and std::list
+
+! 18/03/2002 - Ivan Belyaev
+  - add new directory Relations with implementation of relations
+
+! 18/03/2002 - Vanya Belyaev  Ivan.Belyaev@itep.ru
+  moved from CaloKernel package
+  - CaloCellCode.h   the coding schema for CaloCellID
+  - CaloCellID.h     the uniqie identifier of calorimeter cell
+  - CaloHypotheses.h the list of avaialble calorimeter hyportheses
+  - CaloHypoPrint.h  the printout of available calorimeter hypotheses
+                     in a "readable" format
+
+! 20020318 (M.Cattaneo) - New package
+! 20020318 (M.Frank)
+  - CLHEPStreams moved to this package (from Event/LHCbEvent), and
+    modified to include serialization and printout for various CLHEP classes
+

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE gdd SYSTEM "gdd.dtd">
+ 
+<gdd>
+  <package name="GenEvent">
+    <import name="HepMC/GenEvent"/>
+    <class name="HepMCEvent"
+      author="W. Pokorski, modified by G.Corti to adapt to new event model"
+      desc="Gaudi wrapper for HepMC events"
+      location="Gen/HepMCEvents"
+      id="202" >
+      <base name="KeyedObject&lt;int&gt;"/>
+      &KeyedObject;
+      <import name="HepMC" ignore="TRUE"/>
+      <import name="CLHEPStreams" ignore="TRUE"/>
+      <location name="Signal"     place="Gen/SignalDecayTree"  />
+      <enum
+	desc="Status code in HepMC::GenParticle"
+        name="statusType"
+        value="Unknown = 0,StableInProdGen = 1,DecayedByProdGen = 2,DocumentationParticle = 3,DecayedByDecayGen = 777,DecayedByDecayGenAndProducedByProdGen = 888,SignalInLabFrame = 889,SignalAtRest = 998,StableInDecayGen = 999"
+        access="PUBLIC"
+      />
+      <constructor
+        desc="Constructor">
+        <code>
+          m_pGenEvt = new HepMC::GenEvent();
+        </code>
+      </constructor>
+       <constructor
+        desc="Copy constructor"
+        argList="const HepMCEvent evt"/>
+      <destructor
+         desc="Destructor">
+        <code>
+          if(m_pGenEvt !=0) 
+          {
+          delete m_pGenEvt;
+          }
+        </code>
+      </destructor> 
+      <attribute
+        desc="Generator Name"
+        name="generatorName" init='"Unknown"'
+        type="std::string"
+      />
+      <attribute
+        desc="HepMC generator event"
+        name="pGenEvt" init="0"
+        type="HepMC::GenEvent*"
+        nonconstaccessor="TRUE"
+      />
+      <method
+        desc="Assignment operator"
+        name="operator="
+        type="HepMCEvent&amp;"
+        argList="const HepMCEvent evt" />
+     </class>
+  </package>
+</gdd>
+

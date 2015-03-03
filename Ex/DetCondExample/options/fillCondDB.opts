@@ -1,0 +1,40 @@
+//$Id: fillCondDB.opts,v 1.6 2005-09-18 16:15:16 marcocle Exp $
+//==============================================================
+// Job options to populate the CondDB in DetCondExample
+//==============================================================
+
+#include "$DETCONDEXAMPLEROOT/options/cool.opts"
+
+//--------------------------------------------------------------
+// Sequence of algorithms to be applied
+//--------------------------------------------------------------
+ApplicationMgr.TopAlg  = { "PopulateDB" };
+
+//--------------------------------------------------------------
+// Input events
+//--------------------------------------------------------------
+
+// Input file
+ApplicationMgr.EvtSel = "NONE";
+
+// Number of events to be processed (default is 10)
+ApplicationMgr.EvtMax = 1;
+
+//--------------------------------------------------------------
+// Message service options
+//--------------------------------------------------------------
+
+// Set output level threshold 
+// Levels: 1=VERBOSE, 2=DEBUG, 3=INFO, 4=WARNING, 5=ERROR, 6=FATAL
+MessageSvc.OutputLevel = 1;
+
+//--------------------------------------------------------------
+// DetCond extra options
+//--------------------------------------------------------------
+
+// needed to drop the database before creating the new one
+CondDBAccessSvc.RecreateDB = true;
+
+//==============================================================
+// End of job options to populate the CondDB in DetCondExample
+//==============================================================

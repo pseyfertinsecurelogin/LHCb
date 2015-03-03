@@ -1,0 +1,214 @@
+! $Id: release.notes,v 1.23 2006-06-09 08:46:22 cattanem Exp $ 
+! -----------------------------------------------------------------------------
+! CVS tag $Name: not supported by cvs2svn $, version $Revision: 1.23 $
+! -----------------------------------------------------------------------------
+! Package     : Phys/LoKiCore
+! Responsible : Vanya BELYAEV ibelyaev@physics.syr.edu
+! Purpose     : The core part of LoKi project
+! -----------------------------------------------------------------------------
+! 
+!   This file is a part of LoKi project - 
+!     "C++ ToolKit  for Smart and Friendly Physics Analysis"
+! 
+!   The package has been designed with the kind help from
+!   Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas, 
+!   contributions and advices from G.Raven, J.van Tilburg, 
+!   A.Golutvin, P.Koppenburg have been used in the design.
+! 
+! -----------------------------------------------------------------------------
+
+!=========================== LoKiCore v1r5 2006-06-09 =========================
+! 2006-06-02 - Vanya BELYAEV
+ - many minor fixex for new compiler (gcc3.4.5)
+   and some of them has real sence! (bugs have been detected nad fixed)
+
+! 2006-05-26 - Vanya BELYAEV
+ - LoKi/Interface.h 
+    fix the serious problem with the incorrect assignement from raw pointer 
+  
+      Bottom line: for any "smart pointer" ( and class LoKi::Interface *IS* a 
+      kind of "smart pointer") one *MUST* be very carefull with all 
+      copy&assigements - all cases must to be implemented explicitely, 
+      without the compiler generated defaults. 
+   
+! 2006-05-23 - Vanya Belyaev
+ - LoKi/Print.h 	
+      minor fix for the printout of unsigned types 
+ - cmt/requirements
+      version increment 
+
+!=========================== LoKiCore v1r4 2006-05-08 =========================
+! 2006-05-08 - Marco Cattaneo
+ - Adapt for units now in Gaudi::Units namespace, no longer CLHEP::
+   Needs Gaudi 18r4 or greater
+
+!=========================== LoKiCore v1r3 2006-05-02 =========================
+! 2006-05-02 - Vanya Belyaev
+  - src/Components/LoKiSvc.cpp 
+    bug fix with creation/release of reporter 
+ -  *ALL* files are modified (actually censored). 
+
+! 2006-04-20 - Vanya BELYAEV
+ - src/Components/LoKiCvc.cpp
+     add the boolean flag to instantiate ToolSvc and ParticlePropertySvc 
+     if not done yet.. 
+ - cmt/requirements 
+     version increment to v1r3 
+
+!=========================== LoKiCore v1r2 2006-04-19 =========================
+! 2006-04-19 - Vanya BELYAEV
+ - LoKi/Geometry.h
+   src/Geometry.cpp
+    - fix a bug in the method signature (It returns NOTHING!!!)
+ - LoKi/ConstIterator.h, 
+   LoKi/ConstView.h 
+    - fix some strange compilation error... 
+ - cmt/requirements 
+    - version increment to v1r2 
+
+!=========================== LoKiCore v1r1 2006-03-28 =========================
+! 2006-03-14 - Vanya BELYAEV
+ - LoKi/AddRef.h, 
+   LoKi/Release.h
+   LoKi/Interface.h
+   LoKi/Convertible.h 
+     useful utilities 
+
+! 2006-03-08 - Vanya BELYAEV
+ - LoKi/WrongMass.h, src/WrongMass.cpp
+   few useful functions LoKi::Kinematics::WorngMass, which 
+   allows to use "wrong" mass hypothesis for 
+   evaluation of kinematical quantities.
+ 
+   const LHCb::Particle* p1 = ... ; 
+   const LHCb::Particle* p2 = ... ;
+  
+   // evaluate the invariant mass using the muon hypotheses:
+   const double mass =  
+      LoKi::Kinematics::wrongMass ( p1->momentum() , "mu+" , 
+                                    p2->momentum() , "mu-" ) ;
+
+
+! 2006-03-07 - Vanya BELYAEV
+ - LoKi/Kinematics.h
+   src/Kinematics.cpp
+      minor polishing and  reshuffling inbetween *.h and *.cpp files 
+ - LoKi/FuncCast.h 
+      4 new adapter functions, which *COULD* be very useful later 
+      in generic Bender/Python loops (and almost useless in C++ code)
+
+
+! 2006-02-22 - Vanya BELYAEV
+ - LoKi/Keeper.h
+   LoKi/UniqueKeeper.h
+   two new templated container adapters, 
+   which are useful to keep valid 
+   pointer "const OBJECT*"
+   The containers implements rudimentaty STL interface 
+   which is simultaneously "vector"-like and "set"-like
+   By construction, the containers hold *ONLY* valid objects.
+   The difference: UniqueKeeper<OBBJECT> contains no duplicates 
+   (it is based on std::set), while Keeper<OBJECT> may contains 
+   duplicates. From technicla point of view UniqueKeeper is always 
+   sorted, thats why std::binary_search could be efficiently  
+   applied  
+
+
+!=========================== LoKiCore v1r0 2006-01-24 =========================
+! 2006-02-16 - Vanya BELYAEV
+ - LoKi/Print.h
+   src/Print.cpp
+   few pure technical but useful utilities to 
+   print maps/hashmaps/container/SmartRef/SmartRefVector and 
+   to convert them into the strings  
+
+! 2006-02-09 - Vanya BELYAEV
+ - minor fix in LoKi::Objects namespace - add 
+   constant objects specicializtaion for <const void*> type
+   to improve a little bit the client code 
+
+! 2006-02-08 - Vanya BELYAEV
+ - LoKi/Objects.h
+   new file with contains new trivial objects for VERY efficient 
+   implementation of LoKi::Extract functions 
+ - LoKi/LokiCore.h
+   add new incldue 
+
+! 2006-01-23 - Vanya BELYAEV
+ - New import: the core part of restructurized LoKi project
+	
+   The package contains the event-model independent parts of LoKi project: 
+
+     - the basic types functors 
+        -- functions 
+        -- predicates  
+     - the core functionality and the basic elements:
+        -- combiners, selectors 
+        -- selection algorihtms
+        -- access to the services
+        -- error/exception handling and monitoring
+! -----------------------------------------------------------------------------
+
+
+! -----------------------------------------------------------------------------
+! $Log: not supported by cvs2svn $
+! Revision 1.22  2006/06/02 17:03:12  ibelyaev
+!  fixes for gcc3.4.5
+!
+! Revision 1.21  2006/05/26 10:17:16  cattanem
+! v1r5
+!
+! Revision 1.20  2006/05/26 07:07:04  ibelyaev
+!  important bug fix in LoKi::Interface
+!
+! Revision 1.19  2006/05/23 10:58:07  ibelyaev
+!  minor fix in LoKi/Print.h
+!
+! Revision 1.18  2006/05/08 09:04:27  cattanem
+! Units now in Gaudi::Units namespace
+!
+! Revision 1.17  2006/05/02 15:27:54  cattanem
+! v1r3
+!
+! Revision 1.16  2006/05/02 14:29:10  ibelyaev
+!  censored
+!
+! Revision 1.15  2006/04/20 18:09:26  ibelyaev
+!  fix a bit LoKiSvc.cpp
+!
+! Revision 1.14  2006/04/19 11:41:00  cattanem
+! v1r2
+!
+! Revision 1.13  2006/04/19 08:14:10  ibelyaev
+!  fix a bug in Geometry + 'Const'
+!
+! Revision 1.12  2006/03/29 14:51:05  cattanem
+! fix to link on Windows with Gaudi v18r3
+!
+! Revision 1.11  2006/03/24 17:23:26  cattanem
+! v1r1
+!
+! Revision 1.10  2006/03/14 18:57:00  ibelyaev
+!  v1r1 : add a lot of new utilities
+!
+! Revision 1.9  2006/03/08 21:32:34  ibelyaev
+!  add WrongMass.h(.cpp)
+!
+! Revision 1.8  2006/03/07 16:28:49  ibelyaev
+!  add LoKi/FuncCast.h file
+!
+! Revision 1.7  2006/02/22 20:58:50  ibelyaev
+!  add Keeper/UniqueKeeper container adapters
+!
+! Revision 1.6  2006/02/17 12:11:29  cattanem
+! move tag
+!
+! Revision 1.5  2006/02/16 18:09:38  ibelyaev
+!  add utilities for the easy printouts
+!
+! Revision 1.4  2006/02/09 10:06:27  ibelyaev
+!  minor improvements
+!
+! -----------------------------------------------------------------------------
+! The END 
+! -----------------------------------------------------------------------------

@@ -1,0 +1,48 @@
+# $Id: requirements,v 1.18 2006-06-11 17:00:32 ibelyaev Exp $
+# =============================================================================
+# CVS tag $Name: not supported by cvs2svn $ ; version $Revision: 1.18 $  
+# =============================================================================
+package Relations
+author  I.Belyaev
+manager I.Belyaev
+
+version v4r0
+
+# ============= structure =====================================================
+branches      Relations doc cmt src dict python
+
+# ============== own includes =================================================
+include_dirs     $(RELATIONSROOT)
+
+# ============== dependencies =================================================
+use              GaudiKernel v*
+use              Python      v* LCG_Interfaces -no_auto_imports
+use              Reflex      v* LCG_Interfaces -no_auto_imports
+use              Boost       v* LCG_Interfaces
+
+# ============== Produce LCG dictionary =======================================
+apply_pattern     reflex_dictionary                                 \
+                  dictionary=Relations                              \
+                  headerfiles=$(RELATIONSROOT)/dict/selection.h     \
+                  selectionfile=$(RELATIONSROOT)/dict/selection.xml \
+	          options=" -U__MINGW32__ "
+
+# ============== constituents =================================================
+library          RelationsLib  *.cpp
+
+# ============== patterns =====================================================
+apply_pattern    component_library library=RelationsDict
+apply_pattern    linker_library    library=RelationsLib
+
+# ============== find memory leaks ============================================
+macro_append     Relations_pp_cppflags '  -DCOUNT_INSTANCES  ' \
+                 WIN32                 ' /D"COUNT_INSTANCES" '
+macro RelationsDict_use_linkopts $(Reflex_linkopts)
+
+path_remove  PYTHONPATH "Relations"
+path_prepend PYTHONPATH "$(RELATIONSROOT)/python"
+path_prepend PYTHONPATH "$(RELATIONSROOT)/$(BINDIR)"
+
+# =============================================================================
+# The END 
+# =============================================================================

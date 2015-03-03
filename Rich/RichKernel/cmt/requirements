@@ -1,0 +1,29 @@
+#============================================================================
+# Created    : 2003-11-06
+# Maintainer : Christopher Rob Jones
+#============================================================================
+# $Id: requirements,v 1.47 2006-06-14 18:57:02 jonrob Exp $
+#============================================================================
+
+package RichKernel
+version v6r3
+
+# ================ structure =================================================
+branches RichKernel RichEvent cmt doc src
+
+# ================ environment ===============================================
+include_dirs $(RICHKERNELROOT)
+
+# ================ dependencies ==============================================
+use DetDesc     v*   Det
+use LHCbKernel  v*   Kernel
+use GaudiAlg    v*
+use Boost       v*   LCG_Interfaces
+
+# ================ linker library ============================================
+library RichKernel ../src/*.cpp
+apply_pattern linker_library library=RichKernel
+
+# Debug flag
+macro_append cppflags "" \
+          Linux&debug " -DRICHDEBUG "

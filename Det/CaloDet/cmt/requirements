@@ -1,0 +1,31 @@
+# $Id: requirements,v 1.52 2006-06-16 09:45:44 cattanem Exp $ 
+# =============================================================================
+package  CaloDet 
+version  v7r3
+
+# =============== structure ===================================================
+branches         src cmt doc options CaloDet 
+
+# =============== own includes ================================================
+include_dirs      $(CALODETROOT)
+
+# =============== used packages ===============================================
+use GaudiAlg     v*
+use LHCbKernel   v*     Kernel
+use CaloKernel   v*     Calo 
+use DetDesc      v*     Det 
+
+# =============== own options =================================================
+set CALODETOPTS  ${CALODETROOT}/options
+
+# =============== link library (base classes) =================================
+library          CaloDetLib        Lib/*.cpp 
+
+# =============== component library ===========================================
+library          CaloDet           component/*.cpp
+
+#================ patterns ====================================================
+apply_pattern component_library library=CaloDet
+apply_pattern linker_library    library=CaloDetLib
+
+# =============================================================================

@@ -1,0 +1,97 @@
+// $Id: DeCalorimeter.icpp,v 1.3 2006-06-15 14:39:46 ibelyaev Exp $ 
+// ============================================================================
+// CVS tag $Name: not supported by cvs2svn $, version $Revision: 1.3 $
+// ============================================================================
+//  $Log: not supported by cvs2svn $
+//  Revision 1.2  2006/06/15 09:27:27  ibelyaev
+//   add DeCalorimeter::Cell_ function
+// 
+// ============================================================================ 
+#ifndef    CALODET_DECALORIMETER_ICPP
+#define    CALODET_DECALORIMETER_ICPP 1 
+// ============================================================================ 
+/// GaudiKernel
+// ============================================================================ 
+#include "GaudiKernel/MsgStream.h"
+// ============================================================================ 
+// DetDesc 
+// ============================================================================ 
+#include "DetDesc/IGeometryInfo.h"
+// ============================================================================ 
+/// CaloDet 
+// ============================================================================ 
+#include "CaloDet/DeCalorimeter.h"
+#include "CaloDet/DeSubCalorimeter.h"
+// ============================================================================ 
+#include "GaudiKernel/System.h"
+
+//----------------------------------------------------------------------------
+// Explicit inline methods, those needing more than a single statement...
+//----------------------------------------------------------------------------
+
+// ============================================================================
+/// Return a reference (tilted) plane
+// ============================================================================
+inline Gaudi::Plane3D DeCalorimeter::plane
+( const CaloPlane::Plane pos) const
+{
+  switch(pos){
+  case CaloPlane::Front     : return plane(m_zOffset-m_zSize/2. );
+  case CaloPlane::ShowerMax : return plane(m_zShowerMax);
+  case CaloPlane::Middle    : return plane(m_zOffset);
+  case CaloPlane::Back      : return plane(m_zOffset+m_zSize/2.);
+  default : return plane(m_zOffset); 
+  }
+};
+// ============================================================================
+/// return a 3D-plane, which contain the given 3D-point in the global system
+// ============================================================================
+inline Gaudi::Plane3D DeCalorimeter::plane
+( const Gaudi::XYZPoint& global ) const 
+{ return plane ( geometry()->toLocal( global ).Z() ) ; }
+// ============================================================================
+/** return parameters of cell, which contains the global point.
+ *  the function shodul be a bit more fast and efficent, 
+ *  @param globalPoint point to be checked 
+ *  @param cell parameters (null if point is not in Calorimter 
+ */
+// ============================================================================
+const CellParam* 
+DeCalorimeter::Cell_
+( const Gaudi::XYZPoint& globalPoint ) const
+{
+  // if the point is outside calorimeter
+  const IGeometryInfo* geo = geometry() ;
+  Assert ( 0 != geo , " Unable to extract IGeometryInfo* " ) ;
+  if ( !geo->isInside( globalPoint ) ) { return 0 ; }             // RETURN 
+  // find subcalorimeter
+  typedef SubCalos::const_iterator _IT ;
+  _IT begin = subCalos().begin () ;
+  _IT end   = subCalos().end   () ;
+  for ( _IT isub = begin ; end != isub ; ++isub ) 
+  {
+    const DeSubCalorimeter* subCalorimeter = *isub ;
+    const IGeometryInfo*    subCalGeo      = subCalorimeter->geometry() ;
+    if ( subCalGeo->isInside( globalPoint ) ) 
+    {
+      //
+      const unsigned int Area     = isub - begin   ;
+      const double       CellSize = subCalorimeter->size() ;
+      //
+      Gaudi::XYZPoint localPoint ( subCalGeo->toLocal ( globalPoint ) );
+      //
+      const int Column = (int) ( localPoint.x() / CellSize + m_firstRowUp ) ;
+      const int Row    = (int) ( localPoint.y() / CellSize + m_firstRowUp ) ;
+      //
+      return &m_cells[LHCb::CaloCellID( m_caloIndex, Area , Row , Column ) ] ;
+    }
+  }
+  return 0 ;
+} ;
+// ============================================================================
+
+// ============================================================================ 
+// The END 
+// ============================================================================ 
+#endif  // CALODET_DECALORIMETER_ICPP
+// ============================================================================

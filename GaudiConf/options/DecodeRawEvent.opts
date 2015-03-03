@@ -1,0 +1,31 @@
+// Job options to configure the data on demand service for decoding the RawEvent
+
+// Load the DLLs
+ApplicationMgr.DLLs += { "VeloDAQ" };
+ApplicationMgr.DLLs += { "STDAQ" };
+ApplicationMgr.DLLs += { "OTDAQ" };
+//ApplicationMgr.DLLs += { "CaloDAQ" }; // already in CaloDigitsOnDemand.opts
+ApplicationMgr.DLLs += { "RichDAQ" };
+ApplicationMgr.DLLs += { "MuonDAQ" };
+
+// Set up the algorithms
+DataOnDemandSvc.Nodes += { "DATA='/Event/Raw' TYPE='DataObject'" };
+DataOnDemandSvc.Nodes += { "DATA='/Event/Raw/Velo' TYPE='DataObject'" };
+DataOnDemandSvc.Nodes += { "DATA='/Event/Raw/TT'   TYPE='DataObject'" };
+DataOnDemandSvc.Nodes += { "DATA='/Event/Raw/IT'   TYPE='DataObject'" };
+DataOnDemandSvc.Algorithms += {
+  "DATA='/Event/Raw/Velo/Clusters'     TYPE='DecodeVeloRawBuffer/createVeloClusters'"
+ ,"DATA='/Event/Raw/TT/Clusters'       TYPE='RawBankToSTClusterAlg/createTTClusters'"
+ ,"DATA='/Event/Raw/IT/Clusters'       TYPE='RawBankToSTClusterAlg/createITClusters'"
+ ,"DATA='/Event/Raw/Velo/LiteClusters' TYPE='DecodeVeloRawBuffer/createVeloLiteClusters'"
+ ,"DATA='/Event/Raw/TT/LiteClusters'   TYPE='RawBankToSTLiteClusterAlg/createTTLiteClusters'"
+ ,"DATA='/Event/Raw/IT/LiteClusters'   TYPE='RawBankToSTLiteClusterAlg/createITLiteClusters'"
+ ,"DATA='/Event/Raw/OT/Times'          TYPE='OTTimeCreator'"
+ ,"DATA='/Event/Raw/Muon/Digits'       TYPE='MuonRawBuffer2Digit'"
+};
+createITClusters.detType     = "IT";
+createITLiteClusters.detType = "IT";
+createVeloClusters.DecodeToVeloClusters     = true;
+createVeloClusters.DecodeToVeloLiteClusters = false;
+#include "$RICHDAQROOT/options/Brunel_DecodeRawEvent.opts"
+#include "$CALODAQROOT/options/CaloDigitsOnDemand.opts"

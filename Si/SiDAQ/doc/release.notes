@@ -1,0 +1,63 @@
+Package         : SiDAQ
+Package manager : Matt Needham
+!-----------------------------------------------------------------------
+
+!=========================== SiDAQ v1r1 2006-03-13 =====================
+! 2006-03-10 - Kurt Rinnert
+ - byte count for full cluster decoding iterator now contains the 4
+  header bytes and is well defined under all circumstances.
+ - corrected documentation of posadc_iterator::bytesRead() method according
+  to the latest changes (now posadc_iterator::bytesRead() == RawBank::size()
+  should always be true after the whole bank was decoded to full clusters). 
+
+! 2006-02-24 - Kurt Rinnert
+ - fixed off-by-one error in calculation of byte count
+
+! 2006-02-24 - Kurt Rinnert
+ - added new method SiRawBankDecoder::posadc_iterator::bytesRead().  The purpose
+   of this method is to compare its return value to RawBank::size()-8 after 
+   reading the whole bank as a consistency check.
+
+! 2006-02-23 - Kurt Rinnert
+ - added proper copy constructor and assignment operator. This allows caching
+   of decoder instances in vectors, a feature needed by ST decoding.
+ - added convenience accessor for error flag in bank header
+
+! 2006-02-23 - M Needham
+ - Try to please the windows compiler by casting u int to bool
+
+! 2006-02-22 - Kurt Rinnert
+ - added generic raw bank decoder template. This allows to share all
+   common low-level code with the ST
+ - added ADC bank type traits needed by the generic decoder. These
+   live in the namespace SiDAQ
+ - added buffer_word typedef to SiDAQ namespace  
+
+! 2006-02-14 - Kurt Rinnert
+ - changed m_value type in header word and cluster word to unsigned int
+   and unsigned short, respectively.  This is to avoid binary complement
+   confusion in integer casts. 
+ - added include of iostream in SiHeaderWord (do we really need this streamer?).
+
+! 2006-02-08 M Needham
+ - Remove not need virtual functions
+
+! 2006-02-05 M Needham
+ - Make the fracStripBits public in STClusterWord.h
+
+! 2006-02-05 - Kurt Rinnert
+ - Changed type of m_value member in ADC word from char to unsigned char.
+   This was necessary to make the encoding work since the accessor has 
+   unsigned int as return type and the cast created binary complement 
+   bit pattern for negative values of m_value (i.e. whenever the new 
+   cluster bit was set).
+ - commented out the unprotected std::cout in ADC word class
+
+! 2005-12-19 M. Needham
+  Add error flag to header word
+
+! ======================================================================
+! 2005-11-21 - v1r0
+  M.Needham
+  First official release of code
+! ======================================================================

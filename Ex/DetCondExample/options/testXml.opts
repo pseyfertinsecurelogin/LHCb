@@ -1,0 +1,47 @@
+//$Id: testXml.opts,v 1.8 2005-09-18 16:15:16 marcocle Exp $
+//==============================================================
+// Job options for DetCondExample test of XML files
+//==============================================================
+
+#include "$DETCONDEXAMPLEROOT/options/common.opts"
+
+DetectorDataSvc.DetDbLocation  = "$DETCONDEXAMPLE_XMLDDDB/dddb-nodb.xml";
+
+//--------------------------------------------------------------
+// Sequence of algorithms to be applied
+//--------------------------------------------------------------
+
+ApplicationMgr.TopAlg  = { "GaudiSequencer" };
+GaudiSequencer.Members   = { };
+//GaudiSequencer.Members  += { "EvtClock" };
+GaudiSequencer.Members  += { "XmlTestAlgorithm" };
+GaudiSequencer.Members  += { "DumpDetectorStore" };
+
+//--------------------------------------------------------------
+// Input events
+//--------------------------------------------------------------
+
+// Input file
+ApplicationMgr.EvtSel = "NONE";
+
+// Number of events to be processed (default is 10)
+ApplicationMgr.EvtMax = 2;
+
+// The event time is not really used but it is better to test it
+ApplicationMgr.ExtSvc += { "EventClockSvc" };
+// Event clock attributes
+EventClockSvc.StartTime = 12;
+EventClockSvc.TimeStep  = 5;
+
+//--------------------------------------------------------------
+// Message service options
+//--------------------------------------------------------------
+
+// Set output level threshold 
+// Levels: 1=VERBOSE, 2=DEBUG, 3=INFO, 4=WARNING, 5=ERROR, 6=FATAL
+MessageSvc.OutputLevel = 1;
+
+//==============================================================
+// End of job options for DetCondExample test of XML files
+//==============================================================
+

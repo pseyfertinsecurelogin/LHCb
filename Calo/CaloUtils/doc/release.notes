@@ -1,0 +1,283 @@
+! $Id: release.notes,v 1.61 2006-06-21 21:38:45 odescham Exp $
+! Package     : CaloUtils
+! Responsible : Olivier Deschamps odescham@in2p3.fr
+! =============================================================================
+
+!========================== CaloUtils v6r3 2006-06-19 =========================
+! 2006-06-20 - Olivier Deschamps
+ - add a predefined location in Calo2Track.h
+
+! 2006-06-20 - Olivier Deschamps
+ - improve CaloUtils/Calo2Track.h
+
+! 2006-06-18 - Vanya BELYAEV
+ - fix few minor bugs 
+
+! 2006-06-14 - Vanya BELYAEV
+ - CaloUtils/CaloTrackMatch.h
+     fix the return boolean valeus from Sinvert functions...
+ - CaloUtils/CaloTrackTool.h 
+     fix the problem with NEGATIVE distance from plane to point 
+
+! 2006-06-14 - Olivier Deschamps
+ - Bug fix src/CovarianceEstimator.cpp
+ - Add CaloUtils/Calo2Track.h header file
+
+! 2006-06-12 - Marco Cattaneo
+ - Fixes to modified files, for compatibility with changes in LHCbMath and Track
+
+! 2006-06-06 - Vanya BELYAEV
+ - few base classed for CaloPIDs implementation
+    CaloTrackTool &  CaloTrackMatch
+ - rewritten class TrackUse 
+ - cmt/requirements
+     add LHCbMath & TrackInterfaces
+
+! 2006-05-29 - Olivier Deschamps
+ - Update TrackUse.{cpp,h} for New Track Model
+ - bug fix in src/SpreadEstimator.cpp
+
+! 2006-05-26 - Marco Cattaneo
+ - Move to Gaudi::Units in header files
+
+!========================== CaloUtils v6r2p1 2006-05-09 =======================
+! 2006-05-09 - Marco Cattaneo
+ - Remove explicit usage of boost, to please Win32 with Gaudi v18r4
+
+!========================== CaloUtils v6r2 2006-05-02 =========================
+! 2006-05-02 - Eduardo Rodrigues
+ - propagation of change Track::Unique -> Track::Clone in Event/TrackEvent
+
+!========================== CaloUtils v6r1 2006-04-19 =========================
+! 2006-04-10 - Olivier Deschamps
+ -  Complete migration to LHCb v20/Gaudi v18 :
+    CaloUtils/Digit2ClustersConnector.h and CaloUtils/SharedCells.h updated
+
+! 2006-04-10 - Marco Cattaneo
+ - Make Boost usage no_auto_imports (needed only in .cpp)
+
+! 2006-04-06 - Olivier Deschamps
+ - a bit of repackaging : CaloUtils/Calo2MC.h & CaloMCTools.h moved from
+   CaloAssociators/src
+
+!========================== CaloUtils v6r0p1 2006-03-28 =================
+! 2006-03-28 - Marco Cattaneo
+ - Add explicit dependency on Boost, needed for Gaudi v18r3
+
+!========================== CaloUtils v6r0 2006-03-22 ===================
+! 2006-03-22 - Olivier Deschamps
+ - Migration to LHCb v20/Gaudi v18
+ - cmt/requirement : RecEvent dependency replaces CaloEvent 
+ - version increment to v6r0
+
+!========================== CaloUtils v5r1 2005-12-08 ===================
+! 2005-12-08 - Olivier Deschamps
+ - TrackUse.cpp based on Track::History == 'Cnv' Tracks only 
+
+!========================== CaloUtils v5r0 2005-11-04 ===================
+! 2005-11-04 - Olivier Deschamps
+ - Adapt to new Track Event Model (TrackEvent v1r4)
+
+  modified files :  
+   CaloUtils/CaloTrackAlg.h
+   CaloUtils/CaloHistoTrackAlg.h
+   CaloUtils/TrackUse.h  
+   src/CaloTrackAlg.cpp
+   src/CaloHistoTrackAlg.cpp
+   src/TrackUse.cpp
+
+ - cmt/requirements 
+   version increment to v5r0
+!========================== CaloUtils v4r9 2005-05-09 ===================
+! 2005-05-09 - Marco Cattaneo
+ - Fix some doxygen warnings
+
+! 2005-05-06 - Vanya BELYAEV
+ - move the base classes CaloTrackAlg and CaloHistoTrackAlg
+   from Calo/CaloReco to this package ( to be used also in Calo/CaloPIDs) 
+
+  new files :
+  
+   CaloUtils/CaloTrackAlg.h
+   CaloUtils/CaloHistoTrackAlg.h
+   src/CaloTrackAlg.cpp
+   src/CaloHistoTrackAlg.cpp
+
+ - cmt/requirements 
+   version increment to v4r9
+
+!========================== CaloUtils v4r8 2004-10-27 ===================
+! 2004-10-27 - Vanya BELYAEV
+ - CaloUtils/TrTrackUse.h ,
+   src/TrTrackUse.cpp
+
+      new helper class to simplify the selection/rejection of 
+      TrStoredTrack fro e.g. mathcing, monitoring, PID, etc...
+      It defins a "standard" set of properties for "Component"
+      classes ("Algorithm", "Service", "AlgTool") and few methods 
+      for seelction.rejection of tracks, inspection, etc... 
+
+      The clients : CaloReco, CaloMoniDst. CaloPIDs 
+
+ - cmt/requirements
+    increment the version to v4r8 
+
+! ============================ CaloUtils v4r7p1 2004-10-26 ====================
+! 2004-10-26 - Marco Cattaneo
+ - Files histoHBookName.h and dirHbookName.h are obsolete, they are now empty
+   and redirect to the corresponding GaudiAlg file
+ - Fix some doxygen comments...
+
+! 2004-10-22 - Vanya BELYAEV
+  - src/CellMatrix2x2.cpp
+  - src/CellMatrix3x3.cpp
+  - src/CellNeighbour.cpp
+  - src/CellSwissCross.cpp
+
+   bug fix in evaluation of energy fractions (kindly reported by O.Deschamps:)
+  """
+      I am looking at the sharing of the energy of cells that belong to several
+      clusters using CellMatrix3x3 method that returns the fraction of 2
+      overlaping squares on the Ecal surface. In the function  
+      "treatDifferentAreas" you return :
+      Area / sizeCell / sizeCel 
+      where Area is the overlaping surface but sizeCell is defined as :
+      0.5 det()->cellSize   ( cell ) ; 
+ 
+      So the returned fraction is wrong by a factor (1/0.5)**2=4 (Indeed I
+      observe Outer->Middle fractions are set to 4 !!).
+      Are these fractions >1 taken into account elsewhere or is it an error?  
+  """
+
+  - cmt/requirements
+   version increment to v4r7p1 
+
+! ============================= CaloUtils v4r7 2004-05-27 =====================
+! 2004-05-27 - Marco Cattaneo
+ - Fix many doxygen comments and warnings
+
+! 2004-05-27 - Ivan Belyaev
+ - CaloUtils/CellMatrix.h
+   fix my stupid bug in evaluation of overlapping area for 2 rectangular areas
+   The bug was observed and kindly reported by Olivier Deschamps 
+ - cmt/requirements
+   increment the version to v4r7 
+
+! ============================= CaloUtils v4r6 2004-01-07 =====================
+! 2004-01-07 - Marco Cattaneo
+ - Move to Gaudi v14 (use CaloEvent v13r* in requirements)
+
+!========================= CaloUtils v4r5 2003-07-16 =====================
+! 2003-07-16 - Marco Cattaneo
+ - requirements: use CaloEvent v12r*
+
+!========================= CaloUtils v4r4 2002-12-06 =====================
+! 2002-11-22 - Florence Ranjard
+ - requirements - use new versions
+
+! 2002-11-29 - Ivan Belyaev
+ - cmt/requirements                       version update 
+
+!======================== CaloUtils v4r3 2002-11-11 ========================
+! 2002-11-14 - Ivan Belyaev
+ - Few bugs are fixed
+
+!======================== CaloUtils v4r2 2002-10-04 ========================
+! 2002-10-03 - Marco Cattaneo
+ - use fabs() instead of abs() for floats
+
+!========================= CaloUtils v4r1 2002-07-18 ==========================
+! 2002-07-18 - Ivan Belyaev
+ - use new CaloEvent 
+
+!========================= CaloUtils v4r0 2002-07-09 ==========================
+! 2002-06-15 - Vanya Belyaev
+ - version update for new CaloDet version 
+
+! 2002-06-14 - v3r2 Vanya Belyaev
+ - src/SpreadEstimator.cpp       bug fix 
+   
+
+! 2002-06-10 - Marco Cattaneo
+ - Change version to v3r0 to use EventKernel v2r*
+
+!===================== CaloUtils v2r0 2002-05-29 ==============================
+! 2002-05-29 - Ivan Belyaev
+ - src/CovarinaceEstimator.cpp : remove the most stupid bug 
+  induced by previoud "bug fix'. Indices for covariance and parameters 
+  were set to be 100% wrong. I definitely need some vacations. 
+  I never put SO stupid bugs  :-(((
+
+! 2002-05-23 - Vanya Belyaev
+ - cmt/requirements               : increase tehversion and use new patterns 
+ - CaloUtils/CaloPhotonMomnetum.h : add the posiibility to redefine 
+   the nominal position of null(primary) vertex 
+ - src/CovarinaceEstimator.cpp    : remove stupid bug 
+
+
+!=============================================================================
+! 07/04/2002 - Vanya Belyaev 
+! - histoHbookName.h, dirHbookName.h  bug fix 
+!=============================================================================
+
+!=============================================================================
+! 05/04/2002 - Vanya Belyaev 
+! - split histoHbookName.h file into histoHbookName.h and dirHbookName.h
+!=============================================================================
+
+!=============================================================================
+! 04/04/2002 - Vanya Belyaev 
+  - add "dirHbookName()" function to histoHbookName.h file 
+!=============================================================================
+
+!=============================================================================
+! 02/04/2002 - Olivier Callot
+  - Fix reference to CaloEvent/CaloDigit.h in CaloUtils/CaloData.h
+!=============================================================================
+
+! =============================================================================
+! 02/04/2002 - v2r0 Vanya Belyaev
+!  - update for new event model 
+! =============================================================================
+
+! =============================================================================
+! 13/03/2002 - Vanya Belyaev
+  - change version on requirements file 
+! =============================================================================
+
+! =============================================================================
+! 09/12/2001 - Vanya Belyaev
+  - update for newer Gaudi version 
+! =============================================================================
+
+! =============================================================================
+! 25/11/2001 - Ivan Belyaev
+  - update for newer CaloKernel package 
+
+! =============================================================================
+  20011122    Vanya Belyaev 
+  SpreadEstimator.h/.cpp
+  new utility for estimation of teh spread/size of the cluster 
+
+! =============================================================================
+  20011107    Vanya Belyaev 
+
+  CaloUtils/CellMatrix.h
+  CaloUtils/CellMatrix3x3.h
+  CaloUtils/CellMatrix2x2.h
+  CaloUtils/CellSwissCross.h
+  3 new useful utilities to determinet the relative position 
+   of calorimeter with respect to some reference ("seed") cell.
+  Utilities are able to determite what fraction of the area of 
+  the given cell belongs to certain topological configuration 
+  around referenced "seed" cell. 
+  5 possible configurations are considered:
+    3x3 matrix          ( area of 9 seed cells )
+    swiss-cross matrix  ( area of 5 seed cells )
+    4 types of 2x2 submatrices -
+    UpperLeft,UpperRight, LowerLeft and LowerRight  (area of 4 seed cells)
+
+! =============================================================================
+  20011102    v1  Vanya Belyaev 
+   first release of new package 
+! =============================================================================

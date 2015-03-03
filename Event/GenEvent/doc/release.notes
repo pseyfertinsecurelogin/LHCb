@@ -1,0 +1,142 @@
+Package Event/GenEvent
+package coordinator: W.Pokorski, G.Corti
+
+!======================== GenEvent v4r4 2006-05-26 ============================
+! 2006-05-26 - Marco Cattaneo
+ - Remove custom dictionary for HepMC, since all classes are now in RELAX
+
+!======================== GenEvent v4r3 2006-03-30 ============================
+! 2006-03-30 - Marco Cattaneo
+ - Remove from custom dictionary classes that are in HepMCRflx.so from RELAX
+
+! 2006-03-29 - Florence RANJARD
+ - requirements - uses HepMC from lcg/external
+
+!======================== GenEvent v4r2 2006-03-22 ============================
+! 2006-03-22 - Gloria CORTI for Patrick ROBBE
+ - Remove constructor with arguments from HepMCEvent, values need to be set
+   with setters.
+
+!======================== GenEvent v4r1 2006-02-03 ============================
+! 2006-02-03 - Marco Cattaneo
+ - Updates to work with Root reflex in Gaudi v18r2
+
+!======================== GenEvent v4r0 2006-01-30 ============================
+! 2006-01-30 - Gloria CORTI
+ - Remove attributes fillDuration and fillLifetime from GenHeader since
+   can be retrieved from options setting.
+
+! 2006-01-18 - Gloria CORTI
+ - Introduce new path in Event Store for decay of signal in HepMCEvent.xml
+   "HepMCEventsLocation::Signal".
+
+! 2005-12-15 - Gloria CORTI
+ - Introduce evtNumber in GenHeader since the generic Header has been removed
+ - Introduce non const accessor for pointer to HepMC::GenEvent necessary
+   in generation of events
+
+! 2005-11-30 - Marco Cattaneo
+ - Remove obsolete serialization methods from HepMCEvent
+ - Remove obsolete object factories from link library
+
+! 2005-11-15 - Gloria CORTI
+ - Changes for new Event Model
+ - Use EventBase package instead of Event that has been removed
+ - Renaming of GenEvent.xml into HepMCEvent.xml
+ - Remove obsolete classes: 
+   . HardInfo, merged into GenCollision
+   . GenMCLink, which functionality should be provided by a tool
+ - Change package name to GenEvent in GenCollision.xml, for GOD Reflex dict
+   generation
+
+! 2005-11-15 - Patrick KOPPENBURG
+ - Merge of GenCollision, HardInfo, Collision into a single GenCollision
+   class
+ - New GenHeader class inheriting from ProcessHeader
+
+!================ GenEvent v3r5 2005-11-14 ============================
+! 2005-11-14 - Pere Mato
+ - Changes for custom dictionary
+ - Set HepMC::Flow::m_particle_owner transient in selection file
+
+! 2005-11-11 - Marco Cattaneo
+ - Changes to produce platform dependent dictionaries
+
+!================ GenEvent v3r4 2005-10-10 ============================
+! 2005-10-10 - Marco Cattaneo
+ - Modify requirements to produce reflex dictionaries
+ - Modify HepMC_dict.h, .xml to work as template for GaudiObjDesc
+
+!================ GenEvent v3r3p2 2005-07-21 ==========================
+! 2005-07-21 - Marco Cattaneo
+ - Change package name to GenEvent in *.xml, for GOD Reflex dict generation
+
+!================ GenEvent v3r3p1 2005-02-08 ==========================
+! 2005-02-08 - Marco Cattaneo
+ - Add some template instantiations to please Root 4.
+
+!================= GenEvent v3r3 2004-07-19 ===========================
+! 2004-07-19 - Marco Cattaneo
+ - Remove explicit dependency on LHCbKernel (taken from Event/Event)
+ - Fix requirements for Gaudi v15
+
+!================= GenEvent v3r2 2004-04-07 ===========================
+! 2004-04-07 - Gloria CORTI
+ - Introduce xml for new classes:
+   . GenMCLink.xml - holds info to connect signal MCParticle to corresponding
+                     GenParticle in HepMC (pointer to HepMC event and barcode)
+   . HardInfo.xml  - holds info relative to hard process for each pp-collision
+   . GenCollision.xml - extend class Collision to add refernce to HardInfo
+ - Add new class declaration to
+   . GenEvent_load.cpp
+ - Add creation of header file and dictionary in requirements and increase
+   version number
+                   
+!================= GenEvent v3r1 2004-04-01 ===========================
+! 2004-04-01 - Gloria CORTI
+ - Remove transient declaration from GenEvent.xml to persistify with POOL
+   HepMC
+
+!================= GenEvent v3r0 2004-01-07 ===========================
+! 2004-01-07 - Marco Cattaneo
+ - Changes for POOL persistency (Gaudi v14)
+
+!================ GenEvent v2r4p1 2003-12-09 ==========================
+! 2003-12-09 - Marco Cattaneo
+ - Cleanup requirements and fix them for use with vc71
+
+!================= GenEvent v2r4 2003-10-09 ===========================
+! 2003-10-09 - Witek Pokorski
+ - requirements and GenEven_load - final (hopefully..) fix for loading the factories
+
+! 2003-08-14 - Witek Pokorski
+ - fixed loading of factories
+
+!================= GenEvent v2r3p1 2003-06-17 ==========================
+! 2003-06-16 - Sebastien Ponce
+ - fix version in requirement file
+
+!================== GenEvent v2r3 ==================
+! 2002-11-11 - Florence Ranjard
+  requirements - remove use GaudiKernel. It is given by EventKernel
+                 use -no_auto_import and -import= 
+
+!================== GenEvent v2r1 =====================
+! 2002-07-19 - Witek Pokorski
+  HepMCEvent.cpp - fixes for serialization
+
+!================== GenEvent v2r0 =====================
+! 2002-07-15 - Florence Ranjard
+  requirements - use HepMC v3r121p*
+
+! 20020709 - GenEvent v2r0 - Witek Pokorski
+  xml description created, included directory changed to Event (from GenEvent)
+
+! ================= GenEvent v1r0 =====================
+! 20020423 - GenEvent v1r0 - Vanya Belyaev
+    - use GaudiKernel v12
+
+! 20020405 - GenEvent v1r0 - Witek Pokorski
+    - New Package 
+
+!================== GenEvent v0r0 ====================

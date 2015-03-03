@@ -1,0 +1,485 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE gdd SYSTEM 'gdd.dtd'>
+<gdd>
+  <package name='TrackEvent'>
+
+<!-- ==================== State class definition ==================== -->
+
+    <class
+      name             = 'State'
+      author           = 'Jose Hernando, Eduardo Rodrigues'
+      desc             = 'State is the base class of offline and online track states.'
+      id               = '10011'
+      location         = 'Rec/Track/States'
+      stdVectorTypeDef = "TRUE"
+      keyedContTypeDef = 'TRUE'>
+
+      <import name ="GaudiKernel/MsgStream"/>
+       <import name="Kernel/Point3DTypes.h"/>
+       <import name="Kernel/Vector3DTypes.h"/>
+       <import name="Kernel/SymmetricMatrixTypes.h"/>
+       <import name="Kernel/TrackTypes.h"/>
+      &StlPtrVector;
+
+<!--
+  /** State location enumerations
+   *
+   *    State
+   *    LocationUnknown   : at undefined location
+   *    ClosestToBeam     : closest to the beam-line
+   *    FirstMeasurement  : at the first measurement
+   *    EndVelo           : at the end of the VELO
+   *    AtTT              : at the TT stations
+   *    AtT               : at the T seeding stations
+   *    BegRich1          : at the beginning of RICH1
+   *    EndRich1          : at the end of RICH1
+   *    BegRich2          : at the beginning of RICH2
+   *    EndRich2          : at the end of RICH2
+   *    Spd               : at the Scintillating Pad Detector SPD
+   *    Prs               : at the Preshower detector
+   *    BegECal           : at the beginning of the ECAL
+   *    ECalShowerMax     : at the maximum-shower position in the ECAL
+   *    EndECal           : at the end of the ECAL
+   *    BegHCal           : at the beginning of the HCAL
+   *    MidHCal           : at the middle of the HCAL
+   *    EndHCal           : at the end of the HCAL
+   *    Muon              : in the muon stations
+   *
+   */
+-->
+      <enum
+        name  = 'Location'
+        desc  = 'State location enumerations'
+        value = 'LocationUnknown,
+                 ClosestToBeam,
+                 FirstMeasurement,
+                 EndVelo,
+                 AtTT,
+                 AtT,
+                 BegRich1,
+                 EndRich1,
+                 BegRich2,
+                 EndRich2,
+		 Spd,
+		 Prs,
+		 BegECal,
+		 ECalShowerMax,
+		 EndECal,
+		 BegHCal,
+		 MidHCal,
+		 EndHCal,
+                 Muon'
+       access = 'PUBLIC' />
+
+      <constructor
+        desc    = 'Default constructor' />
+
+        <constructor 
+	desc     = "Constructor with assigned key" 
+	argList  = " const Gaudi::TrackVector&amp; stateVec, 
+                     const Gaudi::TrackSymMatrix&amp; cov, double z, 
+                     const LHCb::State::Location&amp; location"
+	initList = "m_stateVector(stateVec), m_covariance(cov), m_z(z)">
+       <code>
+       setLocation(location);
+      </code>
+      </constructor>
+
+     <attribute
+       type    = 'bitfield'
+       name    = 'flags'
+       desc    = 'the variety of State flags'
+       init    = '0'
+       access  = 'PROTECTED'>
+       <bitfield
+         type      = 'LHCb::State::Location'
+         name      = 'location'
+         length    = '16'
+         desc      = 'state location'
+         setMeth   = 'TRUE'
+         getMeth   = 'TRUE'
+         checkMeth = 'FALSE' />
+      </attribute>
+
+      <attribute
+        type    = 'Gaudi::TrackVector'
+        name    = 'stateVector'
+        desc    = 'the state vector'
+        setMeth = 'FALSE'
+        access  = 'PROTECTED'
+	nonconstaccessor = 'TRUE' />
+
+      <attribute
+        type    = 'Gaudi::TrackSymMatrix'
+        name    = 'covariance'
+        desc    = 'the state covariance matrix (indexes 1,...,5 for x, y, tx, ty, Q/p)'
+        setMeth = 'FALSE'
+        access  = 'PROTECTED'
+	nonconstaccessor = 'TRUE' />
+
+      <attribute
+        type    = 'double'
+        name    = 'z'
+        desc    = 'the z-position of the state'
+        setMeth = 'FALSE'
+        getMeth = 'FALSE'
+        access  = 'PROTECTED' />
+
+      <method
+        type    = 'unsigned int'
+        name    = 'nParameters'
+        const   = 'TRUE'
+        desc    = 'Retrieve the number of state parameters'>
+        <code>
+    return (unsigned int) m_stateVector.Dim();
+        </code>
+      </method>
+
+      <method
+        name    = 'positionAndMomentum'
+        desc    = 'Retrieve the position and momentum vectors and the corresponding 6D covariance matrix (pos:1->3,mom:4-6) of the state'
+        const   = 'TRUE'>
+        <arg type = 'Gaudi::XYZPoint' name='pos' />
+        <arg type = 'Gaudi::XYZVector' name='mom' />
+        <arg type = 'Gaudi::SymMatrix6x6' name='cov6D' />
+        <code>
+    pos   = position();
+    mom   = momentum();
+    cov6D = posMomCovariance();
+        </code>
+      </method>
+
+      <method
+        name    = 'positionAndMomentum'
+        desc    = 'Retrieve the position and momentum vectors of the state'
+        const   = 'TRUE'>
+        <arg type = 'Gaudi::XYZPoint' name='pos' />
+        <arg type = 'Gaudi::XYZVector' name='mom' />
+        <code>
+    pos   = position();
+    mom   = momentum();
+        </code>
+      </method>
+
+      <method
+        type    = 'Gaudi::XYZPoint'
+        name    = 'position'
+        desc    = 'Retrieve the 3D-position vector of the state'
+        const   = 'TRUE'>
+        <code>
+    return Gaudi::XYZPoint( m_stateVector[0], m_stateVector[1], m_z );
+        </code>
+      </method>
+
+      <method
+        type    = 'double'
+        name    = 'x'
+        desc    = 'Retrieve the x-position of the state'
+        const   = 'TRUE'>
+        <code>
+    return m_stateVector[0];
+        </code>
+      </method>
+
+      <method
+        type    = 'double'
+        name    = 'y'
+        desc    = 'Retrieve the y-position of the state'
+        const   = 'TRUE'>
+        <code>
+    return m_stateVector[1];
+        </code>
+      </method>
+
+      <method
+        type    = 'double'
+        name    = 'z'
+        desc    = 'Retrieve the z-position of the state'
+        const   = 'TRUE'>
+        <code>
+    return m_z;
+        </code>
+      </method>
+
+      <method
+        type    = 'Gaudi::XYZVector'
+        name    = 'slopes'
+        desc    = 'Retrieve the slopes (Tx=dx/dz,Ty=dy/dz,1.) of the state'
+        const   = 'TRUE'>
+        <code>
+    return Gaudi::XYZVector( m_stateVector[2], m_stateVector[3], 1.);
+        </code>
+      </method>
+
+      <method
+        type    = 'double'
+        name    = 'tx'
+        desc    = 'Retrieve the Tx=dx/dz slope of the state'
+        const   = 'TRUE'>
+        <code>
+    return m_stateVector[2];
+        </code>
+      </method>
+
+      <method
+        type    = 'double'
+        name    = 'ty'
+        desc    = 'Retrieve the Ty=dy/dz slope of the state'
+        const   = 'TRUE'>
+        <code>
+   return m_stateVector[3];
+        </code>
+      </method>
+
+      <method
+        type    = 'double'
+        name    = 'qOverP'
+        desc    = 'Retrieve the charge-over-momentum Q/P of the state'
+        const   = 'TRUE'
+        virtual = 'TRUE' />
+
+      <method
+        type    = 'double'
+        name    = 'p'
+        desc    = 'Retrieve the momentum of the state'
+        const   = 'TRUE'
+        virtual = 'TRUE' />
+
+      <method
+        type    = 'double'
+        name    = 'pt'
+        desc    = 'Retrieve the transverse momentum of the state'
+        const   = 'TRUE'
+        virtual = 'TRUE' />
+
+      <method
+        type    = 'Gaudi::XYZVector'
+        name    = 'momentum'
+        desc    = 'Retrieve the momentum vector of the state'
+        const   = 'TRUE'>
+        <code>
+  Gaudi::XYZVector mom = slopes();
+  mom *= ( p() / mom.R() );
+  return mom;
+        </code>
+      </method>
+
+      <method
+        type    = 'double'
+        name    = 'qOverPperp'
+        desc    = 'Retrieve the Q/Pperp (ratio of the charge to the component of the momentum transverse to the magnetic field) of the state'
+        const   = 'TRUE'>
+        <code>
+  const double tx2 = tx() * tx();
+  return ( qOverP() * sqrt( (1.+ tx2 + ty()*ty()) / (1. + tx2 ) ) );
+        </code>
+      </method>
+
+      <method
+        type    = 'Gaudi::SymMatrix6x6'
+        name    = 'posMomCovariance'
+        desc    = 'Retrieve the 6D covariance matrix (x,y,z,px,py,pz) of the state'
+        const   = 'TRUE'
+        virtual = 'TRUE' />
+
+      <method
+        type    = 'Gaudi::SymMatrix3x3'
+        name    = 'errPosition'
+        desc    = 'Retrieve the errors on the 3D-position vector of the state'
+        const   = 'TRUE' />
+
+      <method
+        type    = 'double'
+        name    = 'errX2'
+        desc    = 'Retrieve the squared error on the x-position of the state'
+        const   = 'TRUE'>
+        <code>
+  return m_covariance(0,0);
+        </code>
+      </method>
+
+      <method
+        type    = 'double'
+        name    = 'errY2'
+        desc    = 'Retrieve the squared error on the y-position of the state'
+        const   = 'TRUE'>
+        <code>
+  return m_covariance(1,1);
+        </code>
+      </method>
+
+      <method
+        type    = 'Gaudi::SymMatrix3x3'
+        name    = 'errSlopes'
+        desc    = 'Retrieve the errors on the slopes of the state'
+        const   = 'TRUE' />
+
+      <method
+        type    = 'double'
+        name    = 'errTx2'
+        desc    = 'Retrieve the squared error on the x-slope Tx=dx/dz of the state'
+        const   = 'TRUE'>
+        <code>
+ return m_covariance(2,2);
+        </code>
+      </method>
+
+      <method
+        type    = 'double'
+        name    = 'errTy2'
+        desc    = 'Retrieve the squared error on the y-slope Ty=dy/dz of the state'
+        const   = 'TRUE'>
+        <code>
+  return m_covariance(3,3);
+        </code>
+      </method>
+
+      <method
+        type    = 'double'
+        name    = 'errQOverP2'
+        desc    = 'Retrieve the squared error on the charge-over-momentum Q/P of the state'
+        const   = 'TRUE'
+        virtual = 'TRUE' />
+
+      <method
+        type    = 'double'
+        name    = 'errP2'
+        desc    = 'Retrieve the squared error on the momentum of the state'
+        const   = 'TRUE'
+        virtual = 'TRUE' />
+
+      <method
+        type    = 'Gaudi::SymMatrix3x3'
+        name    = 'errMomentum'
+        desc    = 'Retrieve the errors on the momentum vector of the stateRetrieve the errors on the momentum vector of the state'
+        const   = 'TRUE'
+        virtual = 'TRUE' />
+
+      <method
+        type    = 'double'
+        name    = 'errQOverPperp2'
+        desc    = 'Retrieve the squared error on the Q/Pperp of the state'
+        const   = 'TRUE'
+        virtual = 'TRUE' />
+
+      <method
+        type    = 'LHCb::State*'
+        name    = 'clone'
+        desc    = 'Clone the state (remember you then owe the pointer)'
+        virtual = 'TRUE'
+        const   = 'TRUE' />
+
+      <method
+        name    = 'setState'
+        argList = 'const Gaudi::TrackVector state'
+        desc    = 'Update the state vector'>
+        <code>
+ m_stateVector = state;
+        </code>
+      </method>
+
+      <method
+        name    = 'setState'
+        argList = 'double x, double y, double z, double tx, double ty, double qOverP'
+        desc    = 'Update the state vector'
+        virtual = 'TRUE' />
+
+      <method
+        name    = 'setCovariance'
+        argList = 'Gaudi::TrackSymMatrix value'
+        desc    = 'Update the state covariance'>
+        <code>
+  m_covariance = value;
+        </code>
+      </method>
+
+      <method
+        name    = 'setX'
+        argList = 'double value'
+        desc    = 'Update the x-position of the state'>
+        <code>
+  m_stateVector[0] = value;
+        </code>
+      </method>
+
+      <method
+        name    = 'setY'
+        argList = 'double value'
+        desc    = 'Update the y-position of the state'>
+        <code>
+  m_stateVector[1] = value;
+        </code>
+      </method>
+
+      <method
+        name    = 'setZ'
+        argList = 'double value'
+        desc    = 'Update the z-position of the state'>
+        <code>
+  m_z = value;
+        </code>
+      </method>
+
+      <method
+        name    = 'setTx'
+        argList = 'double value'
+        desc    = 'Update the Tx slope of the state'>
+        <code>
+  m_stateVector[2] = value;
+        </code>
+      </method>
+
+      <method
+        name    = 'setTy'
+        argList = 'double value'
+        desc    = 'Update the Ty slope of the state'>
+        <code>
+  m_stateVector[3] = value;
+        </code>
+      </method>
+
+      <method
+        name    = 'setQOverP'
+        argList = 'double value'
+        desc    = 'Update the Q/P value of the state'
+        virtual = 'TRUE' />
+
+      <method
+        name    = 'setErrQOverP2'
+        argList = 'double value'
+        desc    = 'Update the squared error on the Q/P of the state'
+        virtual = 'TRUE' />
+
+      <method
+        type    = 'bool'
+        name    = 'checkLocation'
+        argList = 'const LHCb::State::Location&amp; value'
+        desc    = 'check if the state is of this location'
+        const   = 'TRUE'>
+        <code>
+  return location() == value;
+        </code>
+      </method>
+
+      <method
+	name      = "fillStream"
+	desc      = "printOut method to Gaudi message stream"
+	type      = "MsgStream&amp;"
+	virtual   = "TRUE"
+	const     = "TRUE" >
+	<arg name = "os" type = "MsgStream" inout = "BOTH"/>
+	<code>
+  os &lt;&lt; "{ " &lt;&lt; "flags :	"
+     &lt;&lt; m_flags &lt;&lt; std::endl
+     &lt;&lt; "stateVector :	" &lt;&lt; m_stateVector &lt;&lt; std::endl
+     &lt;&lt; "covariance :	" &lt;&lt; m_covariance &lt;&lt; std::endl
+     &lt;&lt; "z :	        " &lt;&lt; (float)m_z &lt;&lt; std::endl
+     &lt;&lt; " }";
+  return os;
+	</code>
+      </method>
+
+    </class>
+
+  </package>
+</gdd>

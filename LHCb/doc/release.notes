@@ -1,0 +1,369 @@
+package LHCb
+package manager: M.Cattaneo
+
+!========================== LHCb v21r1 2006-06-19 ==========================
+! 2006-06-19 - Marco Cattaneo
+ - Use DetSys v8r6, EventSys v21r6, KernelSys v5r6, CaloUtils v6r3,
+       SimComponents v1r2p1, GaudiConf v9r7
+
+!========================== LHCb v21r0 2006-05-09 ==========================
+! 2006-05-09 - Marco Cattaneo
+ - Use GaudiConf v9r6, KernelSys v5r5, DetSys v8r5, EventSys v21r5,
+       SimComponents v1r2, CaloUtils v6r2p1
+
+!========================== LHCb v20r4 2006-05-02 ==========================
+! 2006-05-02 - Marco Cattaneo
+ - Use DetSys v8r4, DAQSys v2r4, EventSys v21r4, KernelSys v5r4, CaloUtils v6r2
+
+!========================== LHCb v20r3 2006-04-20 ==========================
+! 2006-04-20 - Marco Cattaneo
+ - Use KernelSys v5r3, DetSys v8r3, EventSys v9r3, DAQSys v2r3, CaloUtils v6r1
+
+!========================== LHCb v20r2 2006-03-31 ==========================
+! 2006-03-31 - Marco Cattaneo
+ - Use KernelSys v5r2, EventSys v21r2, DetSys v8r2, CaloUtils v6r0p1,
+       GaudiConf v9r5, SimComponents v1r1p1, DAQSys v2r2
+
+!========================== LHCb v20r1 2006-03-17 ==========================
+! 2006-03-17 - Marco Cattaneo
+ - Use KernelSys v2r1, EventSys v21r1, DAQSys v2r1, GaudiConf v9r4, DetSys v8r1
+
+!========================== LHCb v20r0 2006-03-09 ==========================
+! 2006-03-09 - Marco Cattaneo
+ - Update all packages for DC06 changes
+
+! 2006-02-15 - Marco Cattaneo
+ - Remove options directory. LHCbApplication.opts moved to $STDOPTS
+
+!========================== LHCb v19r4 2005-12-19 ==========================
+! 2005-12-19 - Marco Cattaneo
+ - Use KernelSys v4r18, EventSys v20r14, DetSys v7r7p1, AssociatorsSys v3r1,
+       DAQSys v1r9
+
+!========================== LHCb v19r3 2005-12-08 ==========================
+! 2005-12-08 - Marco Cattaneo
+ - Use DetSys v7r7, EventSys v20r13, TrackInterfaces v1r4, CaloUtils v5r1
+
+!========================== LHCb v19r2 2005-11-22 ==========================
+! 2005-11-22 - Marco Cattaneo
+ - Use KernelSys v4r17, EventSys v20r12, DetSys v7r6, DAQSys v1r8, 
+       CaloInterfaces v5r0, CaloUtils v5r0
+ - Remove RichRecBase, to avoid duplication with RichRecSys
+ - Add loading of RichCondition DLL in LHCbApplication.opts
+
+!========================== LHCb v19r1 2005-11-11 ==========================
+! 2005-11-11 - Marco Cattaneo
+ - Use KernelSys v4r16, EventSys v20r11
+
+!========================== LHCb v19r0 2005-11-08 ==========================
+! 2005-11-08 - Marco Cattaneo
+ - Use KernelSys v4r15, EventSys v20r10, DetSys v7r5, DAQSys v1r7, STTools v1r2,
+       RichRecBase v1r16p2
+ - In LHCbApplication.opts, remove creation of DataOnDemandSvc, as this must
+   be done *after* creation of PoolDbCacheSvc in GaudiPoolDbRoot.opts
+
+!========================== LHCb v18r9 2005-09-21 ==========================
+! 2005-09-21 - Marco Cattaneo
+ - Use KernelSys v4r14, DetSys v7r4, EventSys v20r9, MCTools v1r14,
+       TrackInterfaces v1r3, LHCbAlgs v1r9, GaudiConf v9r2, DAQSys v1r6p1
+ - Remove LHCbInterfaces
+
+!========================== LHCb v18r8 2005-07-25 ==========================
+! 2005-07-25 - Marco Cattaneo
+ - Use KernelSys v4r13p1, DetSys v7r3, EventSys v20r8, DAQSys v1r6,
+       LHCbAlgs v1r8, RichRecBase v1r16p1, TrackInterfaces v1r2,
+       LHCbInterfaces v1r3
+
+!========================== LHCb v18r7 2005-06-24 ==========================
+! 2005-06-24 - Marco Cattaneo
+ - Use KernelSys v4r13, DetSys v7r2, EventSys v20r7, DAQSys v1r5, 
+       TrackInterfaces v1r1, RichRecBase v1r16, LHCbAlgs v1r7
+ - Remove Pool persistency and dictionaries from LHCbApplication.opts
+
+!========================== LHCb v18r6 2005-06-06 ==========================
+! 2005-06-06 - Marco Cattaneo
+ - Use KernelSys v4r12, EventSys v20r6, DetSys v7r1, DAQSys v1r4p1
+ - Add options/LHCbApplication.opts, groups together options needed by standard
+   applications
+
+!========================== LHCb v18r5 2005-05-24 ==========================
+! 2005-05-24 - Marco Cattaneo
+ - Add TrackInterfaces
+ - Use KernelSys v4r11, EventSys v20r5, DAQSys v1r4, DetSys v7r0
+
+!========================== LHCb v18r4 2005-05-09 ==========================
+! 2005-05-09 - Marco Cattaneo
+ - Add STTools
+ - Use DetSys v6r5, EventSys v20r4, AssociatorsSys v3r0, LHCbAlgs v1r6, 
+       CaloDAQ v1r3, CaloUtils v4r9, DAQSys v1r3
+
+!========================== LHCb v18r3 2005-04-21 ==========================
+! 2005-04-21 - Marco Cattaneo
+ - Use GaudiConf v9r1, KernelSys v4r10, EventSys v20r3, LHCbAlgs v1r5,
+       AssociatorsSys v2r4p1
+
+!========================== LHCb v18r2 2005-04-07 ==========================
+! 2005-04-07 - Marco Cattaneo
+ - Use KernelSys v4r9, EventSys v20r2, DetSys v6r4, LHCbAlgs v1r4,
+       AssociatorsSys v2r4, DAQSys v1r2, MCTools v1r13, RichRecBase v1r15p1
+
+!========================== LHCb v18r1 2005-03-02 ==========================
+! 2005-03-02 - Marco Cattaneo
+ - Move to Gaudi v16r2
+ - Use KernelSys v4r8, EventSys v20r1, DetSys v6r3, DAQSys v1r1p1, 
+       RichRecBase v1r15
+
+!========================== LHCb v18r0 2005-02-08 ==========================
+! 2005-02-08 - Marco Cattaneo
+ - Move to Gaudi v16r1
+ - Use GaudiConf v9r0, KernelSys v4r7, EventSys v20r0, DAQSys v1r1,
+       AssociatorsSys v2r3, MCTools v1r12, LHCbAlgs v1r3p1, DetSys v6r2
+ - Add RichRecBase (previously in Brunel, DaVinci)
+ - Remove RichTools, RichMCTools (moved to Lbcom)
+
+!========================== LHCb v17r3 2005-01-25 ==========================
+! 2005-01-25 - Marco Cattaneo
+ - Remove obsolete doxygen configuration files
+ - Add DAQSys v1r0 and remove explicit use of STDAQ,OTDAQ,RichDAQ,VeloDAQ,MuonDAQ
+ - Use EventSys v19r3, KernelSys v4r6, DetSys v6r1, AssociatorsSys v2r2p1
+       RichTools v1r3, RichMCTools v2r4, CaloInterfaces v4r3, MCTools v1r11
+
+!========================== LHCb v17r2 2004-12-15 ==========================
+! 2004-12-15 - Marco Cattaneo
+ - Use GaudiConf v8r3, KernelSys v4r5, EventSys v19r2, DetSys v6r0, VeloDAQ v2r2,
+       OTDAQ v3r2, AssociatorsSys v2r2, MCTools v1r10, LHCbAlgs v1r3,
+       LHCbInterfaces v1r1
+
+!========================== LHCb v17r1 2004-11-26 ==========================
+! 2004-11-26 - Marco Cattaneo
+ - Use GaudiConf v8r2, KernelSys v4r4, DetSys v5r9, EventSys v19r1, STDAQ v1r4,
+       LHCbAlgs v1r2, RichDAQ v1r6, RichMCTools v2r3, RichTools v1r2,
+       MCTools v1r9, AssciatorsSys v2r1
+
+!========================== LHCb v17r0 2004-11-01 ==========================
+! 2004-11-01 - Marco Cattaneo
+ - Use KernelSys v4r3, EventSys v19r0, DetSys vr8, AssociatorsSys v2r0,
+       MCTools v1r8, GaudiConf v8r0p1
+ - Add OTDAQ v3r1
+
+!========================== LHCb v16r3 2004-10-27 ==========================
+ Built on v16r2b2 branch
+
+! 2004-10-27 - Marco Cattaneo
+ - Use KernelSys v4r2p2, EventSys v18r3, LHCbAlgs v1r1p1, CaloUtils v4r8
+
+!========================== LHCb v16r2 2004-09-06 ==========================
+! 2004-09-06 - Marco Cattaneo
+ - Use KernelSys v4r2, EventSys v18r2, AssociatorsSys v1r15, LHCbAlgs v1r1,
+       CaloInterfaces v4r2
+ - Add MuonDAQ, VeloDAQ, ITDAQ
+   (OTDAQ not yet added, due to dependency on OTAlgorithms)
+
+!========================== LHCb v16r1 2004-07-28 ==========================
+! 2004-07-28 - Marco Cattaneo
+ - Use KernelSys v4r1, EventSys v18r1
+
+!========================== LHCb v16r0 2004-07-19 ==========================
+! 2004-07-19 - Marco Cattaneo
+ - Use KernelSys v4r0, EventSys v18r0, DetSys v5r7, AssociatorsSys v1r14, 
+       LHCbInterfaces v1r0, LHCbAlgs v1r0, RichTools v1r0, RichMCTools v2r0,
+       RichDAQ v1r5, MCTools v1r7, GaudiConf v8r0, CaloInterfaces v4r1,
+       RichTools v1r0
+ - Remove LHCbTools
+
+!========================= LHCb v15r13 2004-06-30 ==========================
+! 2004-06-30 - Marco Cattaneo
+ - Use KernelSys v3r6p1, EventSys v17r12
+
+!========================= LHCb v15r12 2004-06-18 ==========================
+! 2004-06-18 - Marco Cattaneo
+ - Use EventSys v17r11, DetSys v5r6p2, MCTools v1r6
+
+!========================= LHCb v15r11 2004-05-27 ==========================
+! 2004-05-27 - Marco Cattaneo
+ - Use CaloUtils v4r7
+
+!========================= LHCb v15r10 2004-05-17 ==========================
+! 2004-05-17 - Marco Cattaneo
+ - Use EventSys v17r10
+
+!========================== LHCb v15r9 2004-05-05 ==========================
+! 2004-05-05 - Marco Cattaneo
+ - Use KernelSys v3r6, EventSys v17r9, DetSys v5r6p1
+ - Use GaudiConf v7r8
+
+!========================== LHCb v15r8 2004-04-23 ==========================
+! 2004-04-23 - Marco Cattaneo
+ - Use DetSys v5r6, EventSys v17r8
+
+!========================== LHCb v15r7 2004-04-20 ==========================
+! 2004-04-20 - Marco Cattaneo
+ - Use GaudiConf v7r7, AssociatorSys v1r13, DetSys v5r5, EventSys v17r7
+
+!========================== LHCb v15r6 2004-04-07 ==========================
+! 2004-04-07 - Marco Cattaneo
+ - Use EventSys v17r6, DetSys v5r4
+
+!========================== LHCb v15r5 2004-03-26 ==========================
+! 2004-03-26 - Marco Cattaneo
+ - Use KernelSys v3r5, EventSys v17r5, DetSys v5r3, MCTools v1r5
+
+!========================== LHCb v15r4 2004-03-18 ==========================
+! 2004-03-18 - Marco Cattaneo
+ - Use AssociatorsSys v11r2, DetSys v5r2, KernelSys v3r4
+
+!========================== LHCb v15r3 2004-03-05 ==========================
+! 2004-03-05 - Marco Cattaneo
+ - Use KernelSys v3r3, DetSys v5r1, EventSys v17r3, AssociatorsSys v1r11,
+       MCTools v1r4, CaloInterfaces v4r0, GaudiConf v7r6
+
+!========================== LHCb v15r2 2004-02-04 ==========================
+! 2004-02-04 - Marco Cattaneo
+ - Use KernelSys v3r2, EventSys v17r2, DetSys v5r0, AssociatorsSys v1r10, 
+   MCTools v1r3
+ - Remove RiSicbGeom
+
+!========================== LHCb v15r1 2004-01-27 ==========================
+! 2004-01-27 - Marco Cattaneo
+ - Use EventSys v17r1, KernelSys v3r1, DetSys v4r2, AssociatorsSys v1r9p1
+ - Add RiSicbGeom, CaloInterfaces, CaloUtils, MCTools
+
+!========================== LHCb v15r0 2003-12-19 ==========================
+! 2003-12-15 - Marco Cattaneo
+ - Use GaudiConf v7r5
+ - Use EventSys v17r0, DetSys v4r1, KernelSys v3r0, AssociatorsSys v1r9
+
+!========================== LHCb v14r0 2003-12-08 ==========================
+! 2003-12-08 - Marco Cattaneo
+ - Use KernelSys v2r0, EventSys v16r0, DetSys v4r0
+
+!========================== LHCb v13r5 2003-12-04 ==========================
+! 2003-12-04 - Marco Cattaneo
+ - Use GaudiConf v7r4, 
+ - Use EventSys v15r3, DetSys v3r3, KernelSys v1r9, AssociatorsSys v1r8
+
+!========================== LHCb v13r4 2003-11-25 ==========================
+! 2003-11-25 - Marco Cattaneo
+ - Use GaudiConf v7r3
+ - Use KernelSys v1r8, EventSys v15r2, DetSys v3r2
+
+!========================= LHCb v13r3p1 2003-11-10 =========================
+! 2003-11-10 - Marco Cattaneo
+ - Use EventSys v15r1 
+
+!========================== LHCb v13r3 2003-11-03 ==========================
+! 2003-11-03 - Marco Cattaneo
+ - Use GaudiConf v7r2
+ - Use KernelSys v1r7, DetSys v3r1, EventSys v15r0, AssociatorsSys v1r7
+ - Remove BookKeeping
+
+!========================== LHCb v13r2 2003-10-14 ==========================
+! 2003-10-14 - Marco Cattaneo
+ - Use KernelSys v1r6
+
+!========================== LHCb v13r1 2003-10-09 ==========================
+! 2003-10-09 - Marco Cattaneo
+ - Use DetSys v3r0, KernelSys v1r5, AssociatorsSys v1r6
+
+! 2003-09-10 - Marco Cattaneo
+ - Use EventSys v14r3
+
+! 2003-07-22 - Marco Cattaneo
+ - Use GaudiConf v7r1
+
+!========================== LHCb v13r0 2003-07-17 ==========================
+! 2003-07-17 - Marco Cattaneo
+ - Use GaudiConf v7r0
+
+! 2003-07-16 - Marco Cattaneo
+ - Use AssociatorsSys v1r5, DetSys v2r2, EventSys v14r2
+
+!========================== LHCb v12r1 2003-07-08 ==========================
+! 2003-07-08 - Marco Cattaneo
+ - Use GaudiConf v6r10, KernelSys v1r4, EventSys v14r1, DetSys v2r1
+
+!========================== LHCb v12r0 2003-07-01 ==========================
+! 2003-07-01 - Marco Cattaneo
+ - Use GaudiConf v6r9
+
+! 2003-06-17 - Marco Cattaneo
+ - Use Bookkeeping v1r2, KernelSys v1r3, DetSys v2r0, EventSys v14r0,
+       AssociatorsSys v1r4
+ - Built against Gaudi v12, supports gcc 3.2
+
+!========================= LHCb v11r12 2003-05-19 =========================
+! 2003-05-19 - Marco Cattaneo
+ - Use GaudiConf v6r8, KernelSys v1r2, DetSys v1r6, EventSys v13r6
+
+!========================= LHCb v11r11 2003-04-16 =========================
+! 2003-04-16 - Marco Cattaneo
+ - Use GaudiConf v6r7, KernelSys v1r1, DetSys v1r5, EventSys v13r5,
+       AssociatorsSys v1r3
+
+!========================= LHCb v11r10 2003-02-04 =========================
+! 2003-02-03 - Marco Cattaneo
+ - Use EventSys v13r4
+
+!========================== LHCb v11r9 2003-01-30 ==========================
+! 2003-01-27 - Marco Cattaneo
+ - Use DetSys v1r4
+
+!========================== LHCb v11r8 2003-01-22 ==========================
+! 2003-01-22 - Marco Cattaneo
+ - Use EventSys v13r3, DetSys v1r3
+
+!========================== LHCb v11r7 2003-01-16 ==========================
+! 2003-01-10 - Marco Cattaneo
+ - Use AssociatorsSys v1r2, EventSys v13r2
+
+!========================== LHCb v11r6 2003-01-08 ==========================
+! 2002-12-20 - Marco Cattaneo
+ - use AssociatorsSys v1r1, EventSys v13r1, DetSys v1r2
+
+!======================== LHCb v11r5 2002-12-13 ===================
+! 2002-12-13 - Florence Ranjard
+ - use DetSys v1r1 to use DetDesc v11r8 
+
+!======================== LHCb v11r4 release 2002-12-05 ====================
+! 2002-12-05 - Florence Ranjard
+ - List of sub-projects used by Brunel, DaVinci do not contain MC packages
+
+!======================== LHCb v11r3 release 2002-11-25 ====================
+! 2002-11-25 - Florence Ranjard
+ - List of sub-projects used by Brunel software
+
+!======================== LHCb v10r4 release 2002-09-10 ====================
+! 2002-09-10 - Florence Ranjard
+ - List of sub-projects used by LHCb software
+
+!========================= LHCb v10r1 release 2002-06-05 ======================
+! 2002-06-05 - Marco Cattaneo
+ - List of LHCb packages including:
+   . Core packages, using Gaudi v10r1
+   . Packages used by Brunel v10r0
+   . Packages used by DaVinci v4r0
+
+!========================= LHCb v10r0 release 2002-05-16 ======================
+! 2002-05-16 Marco Cattaneo
+  List of LHCb packages using Gaudi v10r1
+
+>>>>>>>>>>>>>>>>>>>>>>>>>> LHCb v9r0p1 <<<<<<<<<<<<<<<<<<<<<<<<<
+! 20020114 - v9r0p1 - Flr
+  use LHCbEvent v12r1
+
+! 20011220 - LHCb v9r0
+  list of LHCb packages using Gaudi v9r0
+
+! 20010831 - LHCb v8
+  Changed the Doxygen configuration file to include the
+  Gaudi packages 
+
+! 20010821 - LHCb v8
+             list of LHCb packages using Gaudi v8r1
+ 
+! 20010327 - LHCb v7
+  this package is used for distribution and documentation.
+  The requirements file contains the list of packages with version number
+  released with Gaudi v7
+
+! =========================================================================

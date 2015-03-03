@@ -1,0 +1,25 @@
+// $Id: Mixture.icpp,v 1.5 2006-06-16 11:53:53 cattanem Exp $
+#ifndef    DETDESC_MIXTURE_ICPP 
+#define    DETDESC_MIXTURE_ICPP 1 
+
+#include "DetDesc/Mixture.h"
+#include "GaudiKernel/SystemOfUnits.h"
+
+/////////////////////////////////////////////////////////////////////////////////
+inline const int    Mixture::nOfItems() const { return m_elements.size(); }
+/// Effective A is returned /////////////////////////////////////////////////////
+inline const double Mixture::A()        const { return m_A    ; }
+/// Effective A is computed, can't be set explicitly ////////////////////////////
+inline void         Mixture::setA( const double /*value*/ ){} ;
+/// Effective Z is returned /////////////////////////////////////////////////////
+inline const double Mixture::Z()        const { return m_Z    ; }
+/// Effective Z is computed, can't be set explicitly ////////////////////////////
+inline void         Mixture::setZ( const double /*value*/ ){} ; 
+/// Effective N is returned
+inline const double Mixture::N()        const { return m_A*Gaudi::Units::mole/Gaudi::Units::g; }  
+/////////////////////////////////////////////////////////////////////////////////
+inline const Mixture::Elements& Mixture::elements() const { return m_elements ; }
+inline       Mixture::Elements& Mixture::elements()       { return m_elements ; }
+/////////////////////////////////////////////////////////////////////////////////
+
+#endif  // DETDESC_MIXTURE_ICPP 

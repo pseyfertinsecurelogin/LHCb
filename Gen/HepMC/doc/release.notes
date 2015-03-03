@@ -1,0 +1,8 @@
+Package : Gen/HepMC
+Package manager : Witek Pokorski
+
+!===================== HepMC v1r126p0 ====================================
+! 2006-03-29 - Florence Ranjard
+ - interface package to the LCG external version
+
+!==========================================================================

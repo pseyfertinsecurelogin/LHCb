@@ -1,0 +1,41 @@
+Package LinkerInstances
+Package manager: T.Ruf
+Purpose: Creates dictionaries for the use of Linker relations in Python
+
+!===================== LinkerInstances v3r1 2006-06-13 ========================
+! 2006-06-13 - Thomas Ruf
+ - instantiate MCHit2MCParticle linker table
+
+!===================== LinkerInstances v3r0p1 2006-05-09 ======================
+! 2006-05-09 - Marco Cattaneo
+ - Add flag to build dictionary on Windows in presence of Boost
+
+!===================== LinkerInstances v3r0 2006-04-13 ========================
+! 2006-04-13 - Eduardo Rodrigues
+ - changes for Reflex dictionaries and latest GaudiPython
+ - using LHCb namespaces
+ - LinkedFrom is now also available in Python
+
+! 2006-03-06 - Eduardo Rodrigues
+ - updated to MCEvent, DigiEvent and RecEvent (replace MuonEvent, OTEvent, etc.)
+ - removed links to old track event model classes
+ - added link to Track class
+
+!===================== LinkerInstances v2r1 2005-10-11 ========================
+! 2005-10-11 - Marco Cattaneo
+ - Update requirements to produce reflex dictionaries
+
+!===================== LinkerInstances v2r0 2005-07-22 ========================
+! 2005-07-22 - Florence Ranjard
+ - Fixes to make the dictionary work both on Linux and Windows
+
+! 2005-06-30 - Thomas Ruf
+ - modified linker_instances.h to match with the change of the OT event model
+   after DC04
+
+!===================== LinkerInstances v1r0 2005-06-30 ========================
+! 2005-06-30 - Thomas Ruf
+ - dll automatically added to PATH and PYTHON directory automatically added to
+   PYTHONPATH
+   To be used needs a "use LinkerInstances v* Event" in the requirement file of
+   the user application and "from eventassoc import *" in the user Python script.

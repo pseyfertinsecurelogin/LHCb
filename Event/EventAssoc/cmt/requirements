@@ -1,0 +1,37 @@
+# $Id: requirements,v 1.15 2006-06-11 20:43:14 ibelyaev Exp $
+# =============================================================================
+# Created    : 19/12/2003
+# =============================================================================
+# Maintainer : Vanya BELYAEV ibelyaev@physics.syr.edu
+# =============================================================================
+package           EventAssoc
+version           v3r2
+
+# =============== structure ===================================================
+branches          cmt doc dict 
+
+# =============== dependencies ================================================
+use               L0Event     v* Event
+use               PhysEvent   v* Event
+use               MCEvent     v* Event
+use               Relations   v* Kernel
+        
+#private               
+use               GaudiPython v* -no_auto_imports 
+        
+# =============== LCG/Reflex dictionaries =====================================
+apply_pattern     reflex_dictionary                              \ 
+                  dictionary=EventAssoc                          \
+                  headerfiles=$(EVENTASSOCROOT)/dict/selection.h \
+                  selectionfile=../dict/selection.xml            \
+                  options="-U__MINGW32__"
+
+# =============== standard patterns ===========================================
+apply_pattern     component_library library=EventAssocDict
+
+# =============================================================================
+# $Log: not supported by cvs2svn $
+# =============================================================================
+# The END 
+# =============================================================================
+

@@ -1,0 +1,14 @@
+
+// write an output file in POOL format
+#include "$GAUDIPOOLDBROOT/options/GaudiPoolDbRoot.opts"
+
+// Job option to tell POOL to load  Event Model dictionaries
+PoolDbCacheSvc.Dlls += { "HepMCRflx" };
+PoolDbCacheSvc.Dlls += { "CLHEPRflx" };
+PoolDbCacheSvc.Dlls += { "STLRflx" };
+PoolDbCacheSvc.Dlls += { "MathRflx" };
+PoolDbCacheSvc.Dlls += {"LHCbKernelDict"};
+PoolDbCacheSvc.Dlls += {"EventBaseDict" };
+PoolDbCacheSvc.Dlls += {"GenEventDict" };
+PoolDbCacheSvc.Dlls += {"MCEventDict" };
+PoolDbCacheSvc.Dlls += {"PackedEventDict" };

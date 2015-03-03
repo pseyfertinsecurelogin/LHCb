@@ -1,0 +1,25 @@
+# $Id: requirements,v 1.32 2006-06-02 16:02:01 cattanem Exp $
+package DetDescExample
+version v7r2
+
+branches doc src options cmt
+
+# GAUDI framework
+use GaudiAlg      v*
+
+# Detector Description and services
+use DetDescCnv    v* Det
+use CaloDet       v* Det
+
+# Build the application
+# =============================================================================
+application       DetDescExample $(GAUDICONFROOT)/src/GaudiMain.cpp *.cpp
+
+private
+use               XmlDDDB       v* Det
+use               XmlConditions v* Det
+use               DetDescSvc    v* Det
+use               CaloDetXmlCnv v* Det
+use               GaudiConf     v*     
+use               GaudiSvc      v*       
+apply_pattern     application_path

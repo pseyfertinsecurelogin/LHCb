@@ -1,0 +1,22 @@
+# Created    : 22/11/2005
+# Maintainer : Juan Palacios
+#
+
+package LHCbDefinitions
+version v1r7
+
+# Structure, i.e. directories to process. 
+#============================================================================
+branches          cmt doc Kernel
+
+# Include directories
+#============================================================================
+include_path none
+include_dirs $(LHCBDEFINITIONSROOT) $(ROOT_home)/include
+
+# Used packages. 
+#============================================================================
+use   ROOT           v*      LCG_Interfaces -no_auto_imports
+macro LHCbDefinitions_linkopts  " -L$(ROOT_home)/lib  -lMathCore -lSmatrix " \
+         WIN32  " /LIBPATH:$(ROOT_home)/lib libMathCore.lib libSmatrix.lib "
+#============================================================================

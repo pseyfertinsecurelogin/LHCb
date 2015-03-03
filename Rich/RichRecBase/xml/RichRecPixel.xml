@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE gdd SYSTEM "gdd.dtd">
+<gdd>
+<package name="RichRecBase">
+
+<!-- **************************************************************************
+  * $Id: RichRecPixel.xml,v 1.13 2006-06-14 22:04:02 jonrob Exp $
+  *****************************************************************************
+  * XML-description of RichRecPixel class                                     *
+  * author: Chris Jones   Christopher.Rob.Jones@cern.ch                       *
+  * date:   2004-06-23                                                        *
+  ************************************************************************* -->
+
+
+<class 
+        name             = "RichRecPixel" 
+        author           = "Chris Jones   (Christopher.Rob.Jones@cern.ch)" 
+        desc             = "Rich reconstruction working pixel object" 
+        id               = "12422" 
+        keyedContTypeDef = "TRUE" 
+        location         = "Rec/Rich/RecoEvent/Pixels" 
+        stdVectorTypeDef = "TRUE" >
+
+        <base name="KeyedObject&lt;int&gt;"/>
+        &KeyedObject;
+            
+        <import name="GaudiKernel/ContainedObject"/>
+        <import name="RichRecBase/RichRecPixelParentType"/>
+        <import name="Kernel/RichRadiatorType"/>
+        <import name="Kernel/RichDetectorType"/>
+        <import name="Kernel/Point3DTypes"/>
+        <import name="Event/RichRecTrack"   soft="TRUE" />
+        <import name="Event/RichRecPhoton"  soft="TRUE" />
+
+        <import ignore="TRUE" name="Rich"/>
+        <import ignore="TRUE" name="PixelParent"/>
+        <import ignore="TRUE" name="Type"/>
+        <import ignore="TRUE" name="RadiatorType"/>
+        <import ignore="TRUE" name="DetectorType"/>
+
+        <import name="Kernel/RichSmartID"/>
+
+        <location name="Offline" place="Rec/Rich/OfflineEvent/Pixels"/>
+        <location name="HLT"     place="Rec/Rich/HLTEvent/Pixels"/>
+            
+	<typedef 
+		desc   = "type for internal storage for floating point data" 
+		access = "PUBLIC" 
+		def    = "FloatType" 
+		type   = "float"
+	/>
+
+        <constructor 
+                desc     = "Constructor with arguments" 
+                initList = "m_smartID(smartID), m_globalPosition(gPos), m_localPosition(lPos), m_radCorrLocalPositions(Rich::NRadiatorTypes,lPos), m_currentBackground(0), m_parentType(parentType), m_richRecTracks(), m_richRecPhotons(), m_parentPixel(parent)">
+                <arg inout="BYVALUE"  const="TRUE" name="smartID"    type="LHCb::RichSmartID"         />
+                <arg                  const="TRUE" name="gPos"       type="Gaudi::XYZPoint"           />
+                <arg                  const="TRUE" name="lPos"       type="Gaudi::XYZPoint"           />
+                <arg inout="BYVALUE"  const="TRUE" name="parentType" type="Rich::PixelParent::Type"   />
+                <arg                  const="TRUE" name="parent"     type="ContainedObject*"    />
+                <code/>
+        </constructor>
+
+        <constructor 
+                desc     = "Copy Constructor. Creates a new RichRecPixel with the same physics content" 
+                initList = "KeyedObject&lt;int&gt;(), m_smartID(pixel.smartID()), m_globalPosition(pixel.globalPosition()), m_localPosition(pixel.localPosition()), m_radCorrLocalPositions(pixel.radCorrLocalPositions()), m_currentBackground(pixel.currentBackground()), m_parentType(pixel.parentType()), m_richRecTracks(pixel.richRecTracks()), m_richRecPhotons(pixel.richRecPhotons()), m_parentPixel(pixel.parentPixel())">
+                <arg  const="TRUE" name="pixel" type="LHCb::RichRecPixel" />
+                <code/>
+        </constructor>
+            
+        <method
+                const = "TRUE" 
+                desc  = "Returns the RICH Detector for this pixel" 
+                name  = "detector" 
+                type  = "Rich::DetectorType">
+                <code>
+                        return m_smartID.rich();
+                </code>
+        </method>
+            
+        <method 
+                const = "TRUE" 
+                desc  = "Returns unique RichSmartID identifier for the HPD this pixel is in" 
+                name  = "hpd" 
+                type  = "LHCb::RichSmartID" >
+                <code>
+                        return m_smartID.hpdID();
+                </code>
+        </method>
+            
+        <method 
+                const = "TRUE" 
+                desc  = "Returns unique RichSmartID identifier for the HPD panel this pixel is in" 
+                name  = "panel" 
+                type  = "LHCb::RichSmartID" >
+                <code>
+                        return m_smartID.panelID();
+                </code>
+        </method>
+
+        <method 
+                desc   = "Add to associated RichRecTracks" 
+                inline = "TRUE" 
+                name   = "addToRichRecTracks" >
+                <arg const="FALSE" name="track" type="LHCb::RichRecTrack*"/>
+                <code>
+                        m_richRecTracks.push_back(track);
+                </code>
+        </method>
+
+        <method 
+                desc      = "Add to associated RichRecPhotons" 
+                inline    = "TRUE" 
+                name      = "addToRichRecPhotons" >
+                <arg const="FALSE" name="photon" type="LHCb::RichRecPhoton*"/>
+                <code>
+                        m_richRecPhotons.push_back(photon);
+                </code>
+        </method>
+
+        <method 
+                desc   = "Set the radiator corrected local HPD panel coordinate position for given radiator"
+                inline = "TRUE"
+                name   = "setRadCorrLocalPosition" >
+                <arg const="TRUE" name="localPos" type="Gaudi::XYZPoint" />
+                <arg const="TRUE" name="rad"      type="Rich::RadiatorType" inout="BYVALUE" />
+                <code>
+                        m_radCorrLocalPositions[rad] = localPos;
+                </code>
+        </method>
+
+        <method 
+                const  = "TRUE" 
+                desc   = "Get the radiator corrected local HPD panel coordinate position for given radiator"
+                inline = "TRUE"
+                name   = "localPosition" 
+                type   = "const Gaudi::XYZPoint&amp;" >
+                <arg const="TRUE" name="rad" type="Rich::RadiatorType" inout="BYVALUE" />
+                <code>
+                        return m_radCorrLocalPositions[rad];
+                </code>
+        </method>
+
+        <attribute 
+                desc = "RichSmartID for the pixel associated to this reconstructed hit" 
+                name = "smartID" 
+                type = "LHCb::RichSmartID"
+                init = "0" 
+        />
+            
+        <attribute 
+                desc = "Position in global LHCb coordinate system" 
+                name = "globalPosition" 
+                type = "Gaudi::XYZPoint"
+                init = "0,0,0" 
+        />
+            
+        <attribute 
+                desc = "Uncorrected position in local HPD panel coordinate system" 
+                name = "localPosition" 
+                type = "Gaudi::XYZPoint"
+                init = "0,0,0" 
+        />
+
+        <attribute 
+                desc    = "Position in local HPD panel coordinate system, corrected for the average optical distortion for each radiator" 
+                name    = "radCorrLocalPositions"
+                type    = "std::vector&lt;Gaudi::XYZPoint&gt;"
+                init    = "Rich::NRadiatorTypes,Gaudi::XYZPoint(0,0,0)"
+                setMeth = "FALSE" 
+                getMeth = "TRUE" 
+        />
+
+        <attribute 
+                desc = "Current value for a working estimate of the background in this pixel" 
+                name = "currentBackground" 
+                type = "LHCb::RichRecPixel::FloatType"
+                init = "0" 
+        />
+            
+        <attribute 
+                desc = "Enumeration to Parent type" 
+                name = "parentType" 
+                type = "Rich::PixelParent::Type"
+                init = "Rich::PixelParent::Unknown" 
+        />
+            
+        <relation 
+                desc = "Parent Object this pixel was produced from" 
+                name = "parentPixel" 
+                type = "ContainedObject"
+        />
+            
+        <typedef 
+                access = "PUBLIC" 
+                def    = "Tracks" 
+                desc   = "Container type for RichRecTracks" 
+                type   = "std::vector&lt;LHCb::RichRecTrack*&gt;"
+        />
+            
+        <attribute 
+                access = "PRIVATE" 
+                desc   = "Associated RichRecTracks with which this pixel has RichRecPhoton candidates" 
+                name   = "richRecTracks" 
+                type   = "Tracks"
+        />
+            
+        <typedef 
+                access = "PUBLIC" 
+                def    = "Photons" 
+                desc   = "Container type for RichRecPhotons" 
+                type   = "std::vector&lt;LHCb::RichRecPhoton*&gt;"
+        />
+            
+        <attribute 
+                access    = "PRIVATE" 
+                desc      = "Associated RichRecPhotons" 
+                name      = "richRecPhotons" 
+                type      = "Photons"
+                nonconstaccessor = "TRUE"
+        />
+
+</class>
+
+</package>
+</gdd>

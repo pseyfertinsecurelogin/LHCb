@@ -1,0 +1,30 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE gdd SYSTEM 'gdd.dtd'>
+<gdd>
+  <package name='L0Event' >
+
+    <class name='L0MuonCandidate' id='6002' author='A. Tsaregorodtsev' location="/Event/Trig/L0/Muon" desc='L0Muon trigger candidate'>
+      <desc> *  representing the output of the L0Muon trigger processor.</desc>
+      <base name='KeyedObject&lt;int&gt;'/>
+      &KeyedObject;
+      <import name="Kernel/MuonTileID"/>
+      <constructor  desc="Empty constructor"/>
+      <constructor argList="double pt, double theta, double phi, 
+                            std::vector&lt;MuonTileID&gt; pads, int encodedPt" 
+			    desc="Constructor with full information"/>
+
+      <method const="TRUE" type="MuonTileID" name="pad" argList="unsigned int station" 
+                    desc="Accessor to the pad in a given station"/>
+
+      <method const="TRUE" type="bool" name="operator&lt;" argList="const L0MuonCandidate lmc" 
+                    desc="Comparison operator for sorting candidates in Pt"/>
+      
+      <attribute name="pt" type="double" desc="Pt of the candidate" setMeth="FALSE"/>
+      <attribute name="theta" type="double" desc="Theta at IP of the candidate" setMeth="FALSE"/>
+      <attribute name="phi" type="double" desc="Phi at IP of the candidate" setMeth="FALSE"/>
+      <attribute name="pads" type="std::vector&lt;MuonTileID&gt;" desc="Pads used in the candidate"  
+                 setMeth="FALSE" getMeth="FALSE"/>      
+      <attribute name="encodedPt" type="int" desc="encoded Pt of the candidate" setMeth="FALSE"/>
+    </class>  
+  </package>
+</gdd>

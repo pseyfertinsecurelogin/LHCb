@@ -1,0 +1,22 @@
+# $Id: requirements,v 1.82 2006-06-16 09:45:06 cattanem Exp $ 
+# =============================================================================
+package       DetDesc
+version       v16r6
+
+# =========== structure =======================================================
+branches      DetDesc doc cmt src
+
+# =========== own includes ====================================================
+include_dirs  $(DETDESCROOT)
+
+# =========== dependencies ====================================================
+use           GaudiKernel       v*
+use           LHCbDefinitions   v* Kernel
+
+# =========== constituents ====================================================
+library       DetDescLib        Lib/*.cpp
+
+# =========== standard patterns (the order is essential!) =====================
+apply_pattern linker_library    library=DetDescLib 
+macro_append DetDesc_linkopts "" \
+                        WIN32 "/include:_DetDesc_loadRef"

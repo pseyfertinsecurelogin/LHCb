@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE gdd SYSTEM "gdd.dtd">
+<gdd>
+  <package name="LHCbKernel">
+
+    <class
+       name   = "LHCbID"
+       desc   = "LHCb wide channel identifier"
+       author = "Marco Cattaneo" >
+
+       <import name="Kernel/VeloChannelID"/>
+       <import name="Kernel/STChannelID"/>
+       <import name="Kernel/OTChannelID"/>
+       <import name="Kernel/RichSmartID"/>
+       <import name="Kernel/CaloCellID"/>
+       <import name="Kernel/MuonTileID"/>
+
+       &StlVector;
+
+       <enum
+          desc   = "types of sub-detector channel ID"
+          name   = "channelIDType"
+          value  = "Velo=1, TT, IT, OT, Rich, Calo, Muon"
+          access = 'PUBLIC'
+       />
+
+
+       <attribute
+          desc = "the internal representation" name="lhcbID"
+          type = "bitfield"
+          setMeth = "FALSE" >
+            <bitfield desc='the ID bits (to recreate the channelID)' length='28' name='ID' setMeth='TRUE' getMeth='FALSE' />
+            <bitfield desc='the LHCb detector type bits' length='4' name='detectorType' />
+       </attribute>
+
+       <method
+         type    = 'bool'
+         name    = 'operator=='
+         argList = 'const LHCbID chanID'
+         const   = 'TRUE'
+         desc    = 'comparison equality'>
+         <code>
+  return (this->lhcbID() == chanID.lhcbID());
+         </code>
+       </method>
+
+       <constructor 
+         desc  = "Constructor from VeloChannelID " >
+          <arg const="TRUE" name="chanID" type="VeloChannelID" />
+          <code>
+m_lhcbID = (Velo &lt;&lt; detectorTypeBits) +
+           chanID;
+          </code>
+       </constructor>
+
+       <method
+         type  = "bool"
+         name  = "isVelo"
+         const = 'TRUE'
+         desc  = "return true if this is a Velo identifier">
+         <code>
+  return (Velo == detectorType());
+         </code>
+       </method>
+
+       <method
+         type  = "LHCb::VeloChannelID"
+         name  = "veloID"
+         const = 'TRUE'
+         desc  = "return the VeloChannelID">
+	 <code>
+return ( isVelo() ? m_lhcbID &amp; IDMask : 0xF0000000);
+         </code>
+       </method>
+
+       <constructor
+         desc     = "Constructor from STChannelID " >
+          <arg const="TRUE" name="chanID" type="STChannelID" />
+          <code>
+unsigned int stType = ( chanID.isTT() ? TT : IT );
+m_lhcbID = (stType   &lt;&lt; detectorTypeBits) +
+           chanID;
+        </code>
+      </constructor>
+
+       <method
+         type  = "bool"
+         name  = "isTT"
+         const = 'TRUE'
+         desc  = "return true if this is a TT Silicon Tracker identifier">
+         <code>
+  return (TT == detectorType());
+         </code>
+       </method>
+
+       <method
+         type  = "bool"
+         name  = "isIT"
+         const = 'TRUE'
+         desc  = "return true if this is a IT Silicon Tracker identifier">
+         <code>
+  return (IT == detectorType());
+         </code>
+       </method>
+
+       <method
+         type  = "bool"
+         name  = "isST"
+         const = 'TRUE'
+         desc  = "return true if this is a Silicon Tracker identifier (i.e. TT or IT)">
+         <code>
+  return ( isTT() || isIT() );
+         </code>
+       </method>
+
+       <method
+         type  = "LHCb::STChannelID"
+         name  = "stID"
+         const = 'TRUE'
+         desc  = "return the STChannelID">
+	 <code>
+return ( isST() ? (m_lhcbID &amp; IDMask ) : 0xF0000000);
+         </code>
+       </method>
+
+       <constructor
+         desc     = "Constructor from OTChannelID" >
+        <arg const="TRUE" name="chanID" type="OTChannelID" />
+        <code>
+m_lhcbID = (OT &lt;&lt; detectorTypeBits) + chanID;
+        </code>
+       </constructor>
+
+       <method
+         type  = "bool"
+         name  = "isOT"
+         const = 'TRUE'
+         desc  = "return true if this is a Outer Tracker identifier">
+         <code>
+return (OT == detectorType());
+         </code>
+       </method>
+
+       <method
+         type  = "LHCb::OTChannelID"
+         name  = "otID"
+         const = 'TRUE'
+         desc="return the OTChannelID">
+	 <code>
+return (isOT() ? m_lhcbID &amp; IDMask : 0xF0000000 );
+         </code>
+       </method>
+
+       <constructor
+         desc     = "Constructor from RichSmartID"
+         initList = "m_lhcbID(0)" >
+         <arg const="TRUE" name="chanID" type="RichSmartID" />
+         <code>
+  unsigned int richData = chanID.dataBitsOnly();
+  if( chanID.pixelDataAreValid() ) richData += 0x8000000;
+  setDetectorType( Rich );
+  setID( richData );
+         </code>
+       </constructor>
+
+       <method
+         type  = 'bool'
+         name  = 'isRich'
+         const = 'TRUE'
+         desc  = 'return true if this is a Rich identifier'>
+         <code>
+  return (Rich == detectorType());
+         </code>
+       </method>
+
+       <method
+         type  = "LHCb::RichSmartID"
+         name  = "richID"
+         const = 'TRUE'
+         desc  = "return the richSmartID">
+	 <code>
+if ( !isRich() ) return 0x0;
+int id = m_lhcbID &amp; IDMask;
+if( id &amp;&amp; 0x8000000 ) id = id | 0x7E000000;
+return id;
+         </code>
+       </method>
+
+       <constructor
+          desc     = "Constructor from CaloCellID"
+          initList = "m_lhcbID(0)" >
+          <arg const="TRUE" name="chanID" type="CaloCellID" />
+         <code>
+  setDetectorType( Calo );
+  setID( chanID.all() );
+         </code>
+       </constructor>
+
+       <method
+         type  = "bool"
+         name  = "isCalo"
+         const = 'TRUE'
+         desc  = "return true if this is a Calo identifier">
+         <code>
+  return (Calo == detectorType());
+         </code>
+       </method>
+
+       <method
+         type  = "LHCb::CaloCellID"
+         name  = "caloID"
+         const = 'TRUE'
+         desc  = "return the CaloCellID">
+         <code>
+  return isCalo() ? CaloCellID(m_lhcbID &amp; IDMask) : CaloCellID(0xF0000000);
+         </code>
+       </method>
+
+       <constructor
+          desc     = "Constructor from MuonTileID"
+          initList = "m_lhcbID(0)" >
+          <arg const="TRUE" name="chanID" type="MuonTileID" />
+         <code>
+  setDetectorType( Muon );
+  setID( int(chanID) );
+         </code>
+       </constructor>
+
+       <method
+         type  = "bool"
+         name  = "isMuon"
+         const = 'TRUE'
+         desc  = "return true if this is a Muon identifier">
+         <code>
+  return (Muon == detectorType());
+         </code>
+       </method>
+
+       <method
+         type  = "LHCb::MuonTileID"
+         name  = "muonID"
+         const = 'TRUE'
+         desc  = "return the MuonTileID">
+         <code>
+  return isMuon() ? MuonTileID(m_lhcbID &amp; IDMask) : MuonTileID(0xF0000000);
+         </code>
+       </method>
+
+       <method
+         type  = "bool"
+         name  = "checkDetectorType"
+         argList = "unsigned int channelIDType"
+         desc  = "Check the LHCbID sub-detector channel ID type identifier"
+         const = "TRUE">
+         <code>
+  return ( channelIDType == detectorType() );
+         </code>
+       </method>
+
+      <method
+        type    = "unsigned int"
+        name    = "channelID"
+        const   = "TRUE"
+        desc    = "General ID: returns detector ID = internal unsigned int">
+        <code>
+if (isVelo()) return veloID().channelID();
+if (isST()) return stID().channelID();
+if (isOT()) return otID().channelID();
+if (isRich()) return richID().key();
+if (isCalo()) return m_lhcbID &amp; IDMask;
+if (isMuon()) return m_lhcbID &amp; IDMask;
+return 0;
+        </code>
+      </method>
+    </class>
+  </package>
+</gdd>

@@ -1,0 +1,27 @@
+# $Id: requirements,v 1.50 2006-06-01 09:19:02 cattanem Exp $
+# =========================================================================
+
+package  VeloDet 
+version  v10r7
+
+# =============== structure ===============================================	
+branches         src cmt doc VeloDet
+
+# =============== own includes ============================================
+include_dirs      $(VELODETROOT)
+
+# =============== used packages ===========================================
+use DetDesc     v*    Det
+use DetDescCnv  v*    Det
+use LHCbKernel	v*    Kernel
+
+# =============== link library (base classes) =============================
+library          VeloDetLib        Lib/*.cpp
+
+# =============== component library =======================================
+library          VeloDet           component/*.cpp
+
+#================ patterns ================================================
+apply_pattern component_library library=VeloDet
+apply_pattern linker_library    library=VeloDetLib
+

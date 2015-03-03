@@ -1,0 +1,58 @@
+!-----------------------------------------------------------------------------
+! Package     : Sim/SimComponents
+! Responsible : Gloria CORTI
+! Purpose     : Holds general purpose components that can be run at any
+!               processing stage accessing the MC event classes
+!-----------------------------------------------------------------------------
+
+!====================== SimComponents v1r2p1 2006-05-29 ======================
+! 2006-05-29 - Marco Cattaneo
+ - Change message levels of CompareMCVertex and CompareMCParticle, for use in
+   production inside Boole
+
+!====================== SimComponents v1r2 2006-05-10 ========================
+! 2006-05-10 - Marco Cattaneo
+ - Use explicitly Gaudi::Units namespace in MCParticleSelector.cpp
+ - Replace include of CLHEP units with GaudiKernel
+
+!====================== SimComponents v1r1p1 2006-03-31 ======================
+! 2006-03-31 - Marco Cattaneo
+ - Add explicit dependency on Boost, needed with Gaudi v18r3
+ - Add missing factory declaration for CheckMCEventTool
+
+!====================== SimComponents v1r1 2006-03-16 ========================
+! 2006-03-16 - P. Koppenburg
+ - Adapt MCDecayFinder to new interface
+
+!====================== SimComponents v1r0 2006-02-17 ========================
+! 2006-02-17 - Marco Cattaneo
+ - Add algorithms to pack, unpack and compare MCParticles and MCVertices
+
+! 2005-12-16 - Gloria CORTI
+ - Uncomment lines left inadvertently commented in EvtTypeChecker.cpp
+
+! 2005-12-13 - Gloria CORTI
+ - First version of the package importing code from Phys/MCTool:
+   . CheckMCEventTool.{h,cpp}   - tool to check integrity of an MCEvent
+   . DumpMCEventAlg.{h,cpp}     - algorithm to dump contents of an MCEvent
+   . EvtTypeChecker.{h,cpp}     - algorithm that checks if the events contains
+                                  a given "decay" and counts how many
+   . EvtTypeInfo.h              - auxiliary class containing infor for event
+                                  type as provided in Bookkeeping: type, 
+                                  descriptor and nickname
+   . EvtTypeSvc.{h,cpp}         - service providing given a eventtype code
+                                  the decay descriptor and nickname
+   . MCDecayFinder.{h,cpp}      - tool to find a given "decay" provided a 
+                                  string descriptor
+   . MCHitMonitor.{h,cpp}       - algorithm providing a generic monitor of 
+                                  MCHits used for monitoring of IT, ST and OT
+   . MCParticleSelector.{h,cpp} - tool for selection of MC particles given a
+                                  criteria
+   . mclexer.{lpp,icpp}, 
+     mcparser.{h,icpp,ypp}      - auxiliary code for MCDecayFinder
+   The interfaces IEvtTypeSvc and IMCParticleSelector are in the Kernel
+   directory of LHCbKernel v6r0
+   The interface of IMCDecayFinder is in the Kernel directory of MCEvent v1r0.
+   All files adapted to new event model and LHCb namespace
+
+!=============================================================================

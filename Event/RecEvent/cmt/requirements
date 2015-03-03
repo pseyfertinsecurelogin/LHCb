@@ -1,0 +1,39 @@
+# $Id: requirements,v 1.8 2006-05-30 08:43:03 cattanem Exp $
+# Created    : 13/12/2005
+# Maintainer : Marco Cattaneo
+#
+package           RecEvent
+version           v1r4
+
+# Structure, i.e. directories to process. 
+#============================================================================
+branches          cmt doc xml Event src
+
+# Include directories
+#============================================================================
+include_dirs $(RECEVENTROOT)
+
+# Used packages. 
+#============================================================================
+use EventBase    v*      Event
+use DigiEvent    v*      Event
+# Temporary, whilst Track Event is developed separately
+use TrackEvent   v*      Event
+
+# Produce Header-Files & dictionary from XML description
+#============================================================================
+document obj2doth RecEventObj2Doth ../xml/*.xml
+document obj2dict RecEventObj2Dict ../xml/*.xml
+
+# Build libraries (including dictionary)
+#============================================================================
+library          RecEvent      ../src/*.cpp
+library          RecEventDict  ../$(tag)/dict/RecEvent/*.cpp
+
+# Define link options
+#============================================================================
+apply_pattern component_library library=RecEventDict
+apply_pattern linker_library    library=RecEvent
+
+private
+use GaudiObjDesc v* -no_auto_imports

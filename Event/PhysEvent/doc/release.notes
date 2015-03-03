@@ -1,0 +1,470 @@
+! $Id: release.notes,v 1.98 2006-06-01 06:26:56 cattanem Exp $
+! Package     : PhysEvent 
+! Responsible : P. Koppenburg, J.P. Palacios
+
+
+!======================= PhysEvent v9r5 2006-05-31 ==========================
+! 2006-05-31 - Juan PALACIOS
+  - src/Particle.cpp: Use new LHCbMath/MatrixManip.h instead of one in 
+    Kernel/LHCbDefinitios Kernel directory.
+    Change corresponding namespace from LHCb::MatrixManip to Gaudi::Math
+
+! 2006-05-23 - Juan PALACIOS
+ - xml/Particle.xml: Remove duplicate Container typedef. 
+                     Remove ConstContainer typedef
+
+!======================= PhysEvent v9r4 2006-05-16 ==========================
+! 2006-05-16 - Juan PALACIOS
+ - Add Gaudi::Units:: namespace prefix to some units used in header files.
+
+! 2006-05-08 - Juan PALACIOS
+ - src/Particle.cpp: Fix bug in Particle::covMatrix. Erroneous assignment of
+                     off-diagonal position-momentum covariance blocks.
+                     Fill upper and lower off-diagonal blocks to be safe
+                     from MatrixManip::Symmetrize implementation.
+
+!======================= PhysEvent v9r3 2006-04-18 ==========================
+! 2006-04-12 - Juan PALACIOS
+ - Remove leading "/Event/" from all PhysEvent default location definitions.
+ - Change implementation of LHCb::Particle::daughtersVector()
+
+! 2006-04-05 - Juan PALACIOS
+ - Change to Particle interface: replace slopeX() and slopeY() by slopes(),
+   returning Gaudi::XYZVector.
+
+!======================= PhysEvent v9r2 2006-04-03 ==========================
+! 2006-04-03 - Juan Palacios
+ - Fix indices and Windows compilation in Particle::covMatrix()
+
+! 2006-03-31 - Chris Jones
+ - Fix Particle.xml to return ExtraInfo by const reference
+
+! 2006-03-28 - Juan Palacios
+ - xml/Particle.xml: move body of covMatrix() method to .cpp file.
+ - src/Particle.cpp: Use Kernel/MatrixManip to transform symmetric matrices
+                     into standard ones to cure Smatrix::Place_at compilation
+                     problems.
+
+!======================= PhysEvent v9r1 2006-03-16 ==========================
+! 2006-03-15 - Juan Palacios
+ - xml/Particle.xml: add typedefs for KeyedContainers of Particle and 
+   const Particle. LHCb::Particle::Container, LHCb::Particle::ConstContainer.
+   These should be generated automatically by GOD from Gaudi v18r3 onwards.
+
+!======================= PhysEvent v9r0 2006-03-08 ==========================
+! 2006-03-08 - Marco Cattaneo
+ - Move ProtoParticle.xml to RecEvent
+
+! 2006-02-16 - P. Koppenburg
+ - xml/Vertex.xml
+ - xml/PrimVertex.xml
+   . More elegant way of getting the same result without the internal variable.
+   
+! 2006-02-16 - P. Koppenburg
+ - xml/Particle.xml
+   . Default weight is +1, not -1.
+ - xml/Vertex.xml
+ - xml/PrimVertex.xml
+   . Use internal variable isPrimary to know if vertex is primary or not.
+     This way the following code:
+   
+  // Test
+  PrimVertex PV ;
+  PrimVertex* pPV = &PV;
+  Vertex* pV =  &PV;
+  info() << "PrimVertex is primary? " << pPV->isPrimary() << " " << pV->isPrimary() << endmsg 
+
+  Vertex V ;
+  pV =  &V;
+  info() << "    Vertex is primary? " << pV->isPrimary() << endmsg ;
+
+    returns:
+    
+DC06Tests  INFO PrimVertex is primary? 1 1
+DC06Tests  INFO     Vertex is primary? 0
+    
+! 2006-02-15 - Marco Cattaneo
+ - Remove CaloEvent from requirements
+
+! 2006-01-27 - Marco Cattaneo
+ - In requirements, add workaround to gccxml bug on Windows when parsing
+   SMatrix header file. Needs GaudiObjDesc v9r3 or greater
+
+! 2006-01-23 - P. Koppenburg
+ - xml/Particle.xml
+   . Add setConfLevel and setWeight methods
+
+! 2006-01-20 - P. Koppenburg
+ - xml/Particle.xml
+ - xml/Vertex.xml
+   . Use symmetric matrices
+
+! 2006-01-20 - P. Koppenburg
+ - xml/Particle.xml
+   . Added a constructor from ParticleID
+   . Added a mthod that returns a ConstVector of daughters
+ - xml/Vertex.xml
+   . Added a constructor from XYZPoint
+   . Added a mthod that returns a ConstVector of outgoingParticles
+
+! 2006-01-17 - Marco Cattaneo
+ - Cleaned up requirements
+
+! 2006-01-17 - P. Koppenburg
+  . Removed VctMap (to Gaudi), PhysEvent_load.cpp and EffCheckResult (MC)
+  . Use new Gaudi matrices
+  . Use namespace LHCb
+
+! 2005-10-18 - P. Koppenburg
+  . Don't use ROOT TMatrices
+
+! 2005-09-06 - P. Koppenburg
+  - Many changes: 
+    . Use ROOT linear algebra
+    . Use LHCb typedefs for momentum, point, matrix.
+
+! 2005-07-29 - P. Koppenburg
+  - Use new MathCore geometry and Lorenz
+  
+!==================== PhysEvent v9r0PEMTF0729 2005-07-29 =======================
+! 2005-07-29 - P. Koppenburg
+  Implemented some of the suggestions by Vanya:
+  - Corr -> Cov
+  - const int& -> int
+  - const double& -> double
+  
+!==================== PhysEvent v9r0PEMTF0726b 2005-07-29 ======================
+! 2005-07-29 - P. Koppenburg
+  Changes of July 26:
+  - All: Remove Key and Info typedefs, 
+  - Particle: ConfLevel, weight method using info
+              Covariance matrix 7x7
+	      Charge is an int
+
+!==================== PhysEvent v9r0PEMTF0726 2005-07-26 =======================
+Minor changes
+!======================= PhysEvent v9r0PEMTF 2005-07-25 ==========================
+! 2005-07-25 - P. Koppenburg for Vanya Belyaev
+  New class Event/VctMap.h for a light alternative to std::map for
+  the relatively rare insertions and frequent look-up. Use-case:
+  PID info in ProtoParticle.
+  - src/VctMapTest.cpp
+    . Example
+  
+! 2005-07-25 - P. Koppenburg
+  First changes from PhysEvent Task Force
+  - xml/Particle.xml
+    . mass(Err) -> measuredMass(Err)
+    . isResonance -> removed
+    . pointOnTrack(Err) -> referencePoint(Err)
+    . ContainedObject* origin -> ProtoParticle* proto
+    . slopeX, slopeY methods removed
+    . New relation daughters
+    . New method isBasicParticle()
+    . charge is an int  
+  - xml/ProtoParticle.xml
+    . Based on Track and State
+    . Merge pIDDetectors and pIDInfo into pIDMeasurements
+    . new method probOfTechnique
+    . remove methods pIDLIst, probOfPID, bestPID, probOfBestPID, 
+      detPIDvalue, detPID, minimalStates
+    . charge is an int  
+    . firstState becomes firstState
+    . pointOnTrack -> referencePoint
+  - xml/Vertex.xml
+    . products -> outgoingParticles
+  - xml/PrimVertex.xml    
+    . Based on Track and State
+  - xml/V0.xml   
+    . Removed
+  - src/*.*
+    . Modified accordingly
+    
+!======================= PhysEvent v8r11 2005-11-11 ==========================
+! 2005-11-11 - Marco Cattaneo
+ - Add a copy constructor to FlavourTag to fix obscure Windows complaint
+ - Fix for platform dependent dictionaries with GaudiObjDesc v8r3
+
+!======================= PhysEvent v8r10 2005-07-25 ==========================
+! 2005-07-25 - P. Koppenburg
+  - xml/Tagger.xml
+    . Restore std::vector<Particle> version for consistency. 
+      To be revised later
+
+! 2005-07-07 - P. Koppenburg
+  - xml/Tagger.xml
+    . Contain std::vector<const Particle*>, not std::vector<Particle>
+      Bug reported by Vanya
+
+! 2005-07-06 - P. Koppenburg
+ - Changes already done in v8r5b1 branch:
+ - P. Koppenburg for Cristina Lazzeroni
+  - xml/FilterCriterionResult.xml
+    . New FilterCriterion result
+ - P. Koppenburg for Marco Musy
+  - xml/FlavourTag.xml modified
+  - xml/Tagger.xml added
+  - src/FlavourTag.cpp removed
+    . New FlavourTag class
+
+!======================== PhysEvent v8r9 2005-03-11 ========================
+! 2005-03-11 - Marco Cattaneo
+ - Add Kernel directory, for Interfaces closely related to PhysEvent classes
+ - Move IParticleTransporter.h to Kernel directory, from DaVinciKernel package 
+
+!======================== PhysEvent v8r8 2005-02-02 ========================
+! 2005-02-02 - Marco Cattaneo
+ - Add attribute to produce KeyedContainers typedefs in PrimVertex.xml, needed
+   by GaudiObjDesc v7r*
+ - Put ad hoc fix Particle.xml and Vertex.xml to bypass CLHEP 1.9 
+   HEP_CC_NEED_SUB_WITHOUT_CONST problem
+ - Make .xml files standalone, and remove PhysEvent.xml
+ - Clean up obsolete includes from xml
+
+!======================== PhysEvent v8r7 2004-12-06 ========================
+! 2004-12-06 - Marco Cattaneo
+ - Remove obsolete serialize() methods for consistency with GaudiObjDesc v7r*
+
+!======================== PhysEvent v8r6 2004-11-19 ========================
+! 2004-11-19 - Marco Cattaneo
+ - Put back forward declaration of RichPID in ProtoParticle.xml
+
+!======================== PhysEvent v8r5 2004-11-16 ========================
+! 2004-11-16 - Marco Cattaneo
+ - Use RichEvent v8r*
+ - Explicitly include RichPID.h in ProtoParticle.xml (instead of forward
+   declaration) to allow for RichPID DC04 compatibility hack
+
+!======================== PhysEvent v8r4 2004-06-25 ========================
+! 2004-06-25 - P. Koppenburg for P. Igo-Kemenes
+ - xml/EffCheckEvent.xml -> xml/EffCheckResult.xml
+   . Renamed and some additions.
+   
+! 2004-06-18 - P. Koppenburg for P. Igo-Kemenes and C. Jacoby
+ - xml/EffCheckEvent.xml
+   Access to MC particle information for efficiency algorithms
+   
+!======================== PhysEvent v8r3 2004-05-03 ========================
+! 2004-05-03 - Marco Cattaneo
+ - Fixes for POOL dictionaries in ProtoParticle.xml and SelResult.xml
+
+!======================== PhysEvent v8r2 2004-03-05 ========================
+! 2004-03-05 - P. Koppenburg
+ - src/ProtoParticle.xml:
+   . Add PhotonID to detectorPID enum for later use by Calorimeter group.
+   . Add firstMeasured method, for Ks reconstruction usage.
+   . Adapted to new track naming (Downstream...)
+ - src/FlavourTag.cpp xml/FlavourTag.xml
+   . Added category and setCategory for future use by flavour tagging
+ - xml/SelResult.xml
+   . New: Store result of selection.
+   . Removed obsolete PhysSel.xml and PhySelDecay.xml
+
+!======================== PhysEvent v8r1 2004-02-09 ========================
+! 2004-02-06 - Olivier Callot
+ - Add a constructor with key to Vertex, for Trg usage.
+
+!======================== PhysEvent v8r0 2003-12-16 ========================
+! 2003-12-16 - Marco Cattaneo
+ - Changes for POOL persistency (Gaudi v14)
+
+!======================== PhysEvent v7r8 2003-11-03 ========================
+! 2003-11-03 - Marco Cattaneo
+ - Use RichEvent v6r*
+
+!======================== PhysEvent v7r7 2003-07-16 ========================
+! 2003-07-16 - Marco Cattaneo
+ - Use CaloEvent v12r*
+
+!======================== PhysEvent v7r6 2003-07-04 ========================
+! 2003-07-04 - Marco Cattaneo
+ - Use more recent RichEvent
+
+!======================== PhysEvent v7r5 2003-06-17 ========================
+! 2003-06-16 - Sebastien Ponce
+ - use more recent GaudiObjDesc
+
+!========================= PhysEvent v7r4p1 2003-06-02 ===================
+! 2003-06-02 - Gloria CORTI
+ - src/ProtoParticle.cpp
+   . set value of method detPIDvalue to -999.0 (was -1.0) when PID technique
+     does not exist to adapt to delta log likelihood values
+
+!========================= PhysEvent v7r4 2003-04-15 =====================
+! 2003-04-15 - Gloria Corti
+ - Introduce serializer in FlavourTag.xml and .cpp
+ - Introduce new enum in ProtoParticle.xml for detectorsPID
+ - Remove repeated line in ProtoParticle.cpp
+
+! 2003-01-15 - Gloria Corti
+ - In Vertex.cpp and Particle.cpp modify copy contructor not to do deep
+    copy but keep original SmartRefs
+ - In Vertex.cpp fix bug in copy constructor and assignment operator where 
+   the NDoF was not copied
+
+!========================= PhysEvent v7r3 2002-12-04 =====================
+! 2002-11-28 - Florence Ranjard
+ - requirements - use new versions to use Gaudi v11r3
+
+!========================= PhysEvent v7r2 2002-12-03 ========================
+! 2002-12-03 - Gloria Corti
+ - Introduce new class V0 to hold results of Kshort search
+
+!========================= PhysEvent v7r1 2002-11-27 ========================
+! 2002-11-27 - Gloria Corti
+ - Introduce copy constructor, clone method and assignment operator in
+   FlavourTag where in all cases original values are kept but keyed object
+   part is not propagated.
+
+!========================= PhysEvent v7r0 2002-10-03 ========================
+! 2002-10-03 - Gloria Corti
+ - Correlation error dimension is ( 4x3 = (px,py,pz,E)(x,y,z) )
+
+! 2002-09-08 - Gloria Corti
+ - Fix in Particle to extend correlation error between position and momentum
+   to include energy elements
+ - Increase major version number in requirements file (Particle not 
+	 backward compatible)
+
+! 2002-09-02 - Gloria Corti
+ - Check Vertex not null in copy constructor of Particle before cloning it
+   (D.Hutchcroft)
+
+! 2002-08-25 - Gloria Corti
+ - Introduce new location in ProtoParticleLocation::Upstream for Ks
+   upstream tracks (D.Hutchcroft)
+
+! 2002-08-16 - Gerhard Raven
+ - Bug fix in Vertex::serialize on read-back. When reading back reduced
+   DST containing vertices, the vertices where (re)created but not initialized.
+
+!========================= PhysEvent v6r1 2002-07-29 ========================
+! 2002-07-25 - Gloria Corti
+ - Bug fix in bestPID() of ProtoParticle
+
+!========================= PhysEvent v6r0 2002-07-25 ========================
+! 2002-07-24 - Gloria Corti
+ - Introduce copy constructor, clone method and assignment operator to the
+   ProtoParticle where in all cases original values are kept but keyed object
+   part is not copied. 
+ - Introduce assignment operator in Particle and Vertex class. Note that
+   they keep the original SmartRef to the other class and to ProtoParticles
+   This fix the problem of exceptions with keyed containers due to using the
+   ParticleTransporter on temporary copies of particles with an assigned key.
+   This problem appeared after modifications of the delete of KeyedObject. 
+ - Change copy constructor to use member initialization list in Particle
+   and Vertex classes. Note that both clone the Particle and Vertex to which
+   they are connected to but keep the original ProtoParticle SmartRef
+
+! 2002-07-18 - Gloria Corti
+ - Increase version number to v6r0 for backward inconsisten changes
+ - Remove obsolete class AxPartCandidate
+ - New methods in ProtoParticle and change charge from attribute to
+   only getter method.
+
+!========================= PhysEvent v5r1 2002-07-18 ========================
+! 2002-07-15 - Gloria Corti
+ - Introduce new enum for calorimeter particleIDs techniques in
+   ProtoParticle.xml
+
+! 2002-07-10 - Gloria Corti
+ - Add ProtoParticles and hence uses RichEvent v3r*, CaloEvent v11r*,
+   MuonEvent v2r* 
+
+!========================= PhysEvent v5r0 2002-07-09 =========================
+! 2002-07-04 - Pere Mato
+ - Added /include:_<package>_loadRef in <package>_linkopts for Windows
+
+! 2002-06-18 - Stefan Roiser
+ - changed use-statement of GaudiObjDesc to v4r4
+
+! 2002-06-10 - Marco Cattaneo
+ - Increase version to v5r0 to use TrEvent v11r*
+
+!======================== PhysEvent v4r1 2002-05-23 =====================
+! 2002-05-23 - Gloria Corti
+ - New keyed object FlavourTag to hold resulst of OO Flavour tagging
+
+! >>>>>>>>>>>>>>>>>>>>>>> PhysEvent v4r0 <<<<<<<<<<<<<<<<<<<<<
+! 20020515 Gloria Corti
+  - introduce clone methods in Particle and Vertex, new class
+    PrimVertex, introduce default location in PhysSel
+
+! 20020430 Marco Cattaneo
+  - requirements: remove run time dependency on GaudiIntrospection
+
+! 20020426 (G.Corti)
+  - Particle.cpp: bug fix in propagation from slopes to momentum error
+    and propagation of non diagonal component in error matrix
+
+! 20020419 (M.Cattaneo)
+  - Separate library for dictionaries
+
+! 20020415 (G.Corti)
+  Adapt to new Event Model
+  New files:
+   xml/AxPartCandidates.xml - moved and clean from LHCbEvent
+
+   src/AxPartCandidate.cpp  - moved from LHCbEvent
+  Removed files:
+   Event/HepMatrixStream.h  - now in EventKernel
+  Modifications:
+   cmt/requirements         - use Event v1r0
+   xml/PhysEvent.xml        - introduce AxPartCandidate
+   xml/Vertex.xml, Particle.xml, PhysSel.xml
+                            - make files more readable
+   src/Particle.cpp         - adapt to new ParticleID
+   src/PhysSel.cpp          - adapt serializer dropping LHCbEvent dependecie
+   src/PhysEvent_load.cpp   - declare AxPartCandidate(s) factories
+   
+! >>>>>>>>>>>>>>>>>>>>>>> PhysEvent v3r0 <<<<<<<<<<<<<<<<<<<<<
+! 20020402 - PhysEvent v3r0 (G.Corti)
+	New event model for Physics Event part.
+  Still depend of LHCbEvent v12r2 and SicbCnv v15r1 (uses old ParticleID)
+  Introduce separate xml files for various classes.
+  Vertex class uses enum for VertexType. 
+  Particle class has variuos short cut methods as well as setter of
+  error matrices that are kept consistent (to be updated later for
+  persistency). Temporary implementation of charge method valid for 
+  basic particles only.
+  Producing the dictionary is switched off at the moment.
+
+
+! 20020228 - PhysEvent v3r0 (G.Corti)
+  First changes for v3r0:
+  - Remove header files from PhysEvent
+  - Update xml/PhysEvent.xml with Particle&Vertex classes according to
+    new Event model conventions, remove PhysEvent class.
+  - Update src to use Event in includes and factories declarations
+  - Introduce Event/HepMatrixStream.h for serialization
+
+! ======================================================================
+
+! 20020208 - PhysEvent v2r0 (Gloria Corti)
+  - modify requirements to set version v2r0 to use Gaudi v9 and
+    disable generation of dictionary
+  - xml/PhysEvent.xml consistent with GaudiObjDesc
+  - PhysEvent/*.h automatically created files by hand
+  - removed obsolete src/dictionary
+  - src/PhysSel.cpp, PhysSelDecay.cpp modified to agree with *.h
+
+! ======================================================================
+
+! 20011018 - Pere Mato
+  Modified to add the dictionary stuff:
+  - Added xml/PhysEvent.xml file
+  - Modified requirements to build the dictionary (disabled generation of .h files)
+
+! 20010716 - PhysEvent (GCorti)
+  Introduced new method in PhysSel (whichPhysSelDecays) that returns the
+  list of name of SelDecay which selectionhas been executed
+
+! 20010709 - PhysEvent v1 (GCorti)
+  First release of the package.
+  This package is foreseen to contain the event data model for physics
+  analysis. 
+  This first release contains a generic Physis Event class (PhysEvent)
+  a generic vertex class (VtxCandidate), and two classes to hold results
+  of the Physics Analysis Selection Algorithms (AxSel and AxSelDecay)
+  
+! ======================================================================

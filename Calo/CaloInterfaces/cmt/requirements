@@ -1,0 +1,42 @@
+# $Id: requirements,v 1.24 2006-03-22 18:21:51 odescham Exp $
+# =============================================================================
+# CVS tag $Name: not supported by cvs2svn $ 
+# =============================================================================
+package           CaloInterfaces
+version           v6r0
+
+# =============== structure ===================================================
+branches          cmt doc src CaloInterfaces
+
+# =============== include directories =========================================
+include_dirs      $(CALOINTERFACESROOT)
+
+# =============== dependencies ================================================
+use LHCbKernel    v*    Kernel
+use RecEvent        v*      Event
+  
+# =============== build the library ===========================================
+library           CaloInterfaces *.cpp 
+apply_pattern     linker_library library=CaloInterfaces 
+
+# =============================================================================
+# $Log: not supported by cvs2svn $
+# Revision 1.23  2005/11/22 14:12:44  cattanem
+# fix doxygen warnings
+#
+# Revision 1.22  2005/11/07 12:08:25  odescham
+# v5r0 - Adapt to the new Track Event Model
+#
+# Revision 1.21  2005/01/25 14:12:18  cattanem
+# updates for CLHEP 1.9
+#
+# Revision 1.20  2004/09/06 09:43:53  cattanem
+# v4r2
+#
+# Revision 1.19  2004/09/02 18:52:52  ibelyaev
+#  make preparation for HLT/Trigger
+# 
+# 
+# =============================================================================
+# The END 
+# =============================================================================

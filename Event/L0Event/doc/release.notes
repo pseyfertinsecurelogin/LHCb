@@ -1,0 +1,187 @@
+$Id: release.notes,v 1.55 2006-05-09 08:50:34 cattanem Exp $
+Package : L0Event
+Package manager : Olivier Callot
+
+!======================== L0Event v15r2 2006-05-09 ========================
+! 2006-05-09 - Marco Cattaneo
+ - Add Boost dependency, needed for Boost allocators in event model
+
+!======================== L0Event v15r1 2006-02-22 ========================
+! 2006-03-22 - Olivier Deschamps
+ - update L0CaloCandidate.xml Doxygen
+
+! 2006-03-21 - Olivier Deschamps
+ - improve L0DUBase.h to please L0Muon 
+
+! 2006-03-20 - Olivier Deschamps
+ - Fix in src/L0CaloCandidate.cpp implementation file.
+ - Remove L0Calo namespace.
+
+!======================== L0Event v15r0 2006-02-21 ========================
+! 2006-02-21 - Olivier Callot
+ - Add IL0Candidate.h in Event. Interface to decode L0ProcessorData.
+ - Fix a typo in the location of PuVeto data.
+
+! 2006-02-09 - Marco Cattaneo
+ - Add ClassID to L0ProcessorData
+
+! 2006-02-07 - Olivier Callot
+ - Prefix the print operators with LHCb:: also.
+
+! 2006-01-24 - Marco Cattaneo
+ - Replace u_int16_t gcc type with unsigned short ansi type, for Windows
+
+! 2005-12-20 - Olivier Callot
+ - New version for L0Muon from Julien Cogan.
+
+! 2005-12-15 - Olivier Callot
+ - Adapt to Gaudi v18 / LHCb v20. Add LHCb namespace.
+ - Split L0Calo into L0CaloCandidate, L0CaloAdc, L0PrsSpdHit source files
+ - New implementation of L0DU: Class L0Candidate and L0ProcessorData, and 
+   new L0DUReport.
+ - Remove L0PuVeto, should become directly a L0Candidate.
+
+! 2005-11-07 - Olivier Callot
+ - add a copy constructor to L0CaloADC, needed for new CaloDAQ decoding.
+ - Make L0PrsSpdHit a KeyedContainer<CaloCellID>, to have fast access by key
+
+!======================== L0Event v14r3p1 2005-07-21 ======================
+! 2005-07-21 - Marco Cattaneo
+ - Change package name to L0Event in L0Muon.xml, for GOD Reflex dict generation
+
+!======================== L0Event v14r3 2005-04-05 ========================
+! 2005-04-05 - Marco Cattaneo
+ - Removed obsolete includes from xml
+
+! 2005-04-05 - Andrei Tsaregorodtsev
+ - Added to L0MuonBase.h constants for decoding L1Buffer
+
+!======================== L0Event v14r2 2005-01-14 ========================
+! 2005-01-12 - Olivier Callot
+ - Re-implement L0PrsSpdHit and L0CaloADC
+ - L0PrsSpdHit is now a KeyedObject as the new GOD has a problem with
+   simple contained object. This is just a transient object -> no effect.
+
+!======================= L0Event v14r1p2 2004-12-10 =======================
+! 2004-12-10 - Marco Cattaneo
+ - Remove obsolete L0PrsSpdHitVector factory
+
+!======================= L0Event v14r1p1 2004-07-20 =======================
+! 2004-07-20 - Marco Cattaneo
+ - Add explicit use GaudiObjDesc 
+
+!======================== L0Event v14r1 2004-01-26 ========================
+! 2004-01-26 - Olivier Deschamps
+ - Add Event/L0DUTELL1Base.h . Contains mask for coding/decoding L0DU->L1Buffer
+ - Move L0MuonBase.h from src to Event
+
+!======================== L0Event v14r0 2003-12-16 ========================
+! 2003-12-16 - Marco Cattaneo
+ - Changes for POOL persistency (Gaudi v14)
+
+!======================== L0Event v13r4 2003-12-08 ========================
+! 2003-12-08 - Marco Cattaneo
+ - Move to Gaudi v13 (use LHCbKernel v3r*, EventKernel v4r* in requirements)
+
+!======================== L0Event v13r3 2003-10-06 ========================
+! 2003-10-06 - Marco Cattaneo
+ - use EventKernel v3r*
+
+!======================== L0Event v13r2 2003-06-17 ========================
+! 2003-06-16 - Sebastien Ponce
+ - use more recent GaudiObjDesc
+
+!======================== L0Event v13r1 2003-01-08 ========================
+! 2002-12-15 - Olivier Callot
+ - Remove the initialisation of the key of L0CaloCandidate to allow the list of
+   per validation card candidates.
+ - Add a "Full" location for L0CaloCandidates
+
+!======================= L0Event v13r0 2002-09-25 ==========================
+! 2002-09-26 - Florence Ranjard
+ - requirements - use LHCbKernel v2r* 
+
+!======================== L0Event v12r2 2002-09-12 ========================
+! 2002-09-12 - Andrei Tsaregorodtsev
+ - L0MuonCandidate.cpp: initialise member variables in constructor
+
+!========================= L0Event v12r1 2002-07-25 =========================
+! 2002-07-25 - Andrei Tsaregorodtsev
+ - Bug fixed in L0MuonCandidate::setPt(): incorrect encoding for large Pt values;
+   wrong Pt sign bit position in L0MuonBase.h
+
+!========================= L0Event v12r0 2002-07-09 =========================
+! 2002-07-04 - Pere Mato
+ - Added /include:_<package>_loadRef in <package>_linkopts for Windows
+
+! 2002-06-14 - Stefan Roiser
+ - changed type-attribute of operator-overloadings in L0Calo.xml
+ - uncommented dictionary-files production and compilation in requirements-file
+ - changed use-statement of GaudiObjDesc to v4r4
+
+! 2002-06-10 - Marco Cattaneo
+ - Change version to v12r0, to use EventKernel v2r*
+
+!===================== L0Event v11r0 2002-05-06 =========================
+! 20020506 Andrei Tsaregorodtsev
+  - minor bug fixed in L0MuonCandidate.cpp;
+  - removed redundant constants from L0MuonBase.h 
+
+! 20020430 Marco Cattaneo
+  - requirements: remove run time dependency on GaudiIntrospection
+  - add L0Event_load.cpp to declare factories
+
+! 20020418 (M.Cattaneo)
+  - Move to Gaudi v10
+
+! 15/04/2002 - Olivier Callot
+  - Add a new L0Calo type SpdMult for SPD multiplicity counter. Add the 
+    corresponding print values in L0Calo.cpp
+  - Fix the declaration of the MSgStream operators in xml.
+
+! 05/04/2002 - Olivier Callot
+  - Add a correct print routine for L0CaloCandidate.
+  - Move the code of L0CaloCandidate to src/L0Calo.cpp
+
+! 04/04/2002 - Marco Cattaneo
+  - Remove dependency on LHCbEvent. Take CLHEPStreams from /Kernel
+
+!=============================================================================
+! 04/04/2002 - Olivier Callot   ** v10r0 **
+  - New L0Muon event model, with xml, from Andrei Tsaregorodtsev
+  - L0 namespace renamed to L0Calo, it defines the type of L0Calo candidates
+  - xml files split between L0Calo, L0DU and L0PuVeto
+
+!=============================================================================
+! 30/01/2002 - Olivier Callot
+  - Generate the header files from xml.
+  - Installed the L0Calo files : 
+	      L0CaloCandidate (was in L0/L0Calo)
+			  L0CaloAdc (new)
+			  L0PrsSpdHit (new)
+
+!=============================================================================
+! 20020107 - L0Event v4r0 (MC)
+  Changes for Gaudi v9:
+  requirements - use LHCbEvent v12r*
+
+!=============================================================================
+! 20010626 - L0Event v3 (Flr)
+  requirements -  use LHCbEvent v11*
+                  adapted to GaudiPolicy v5 and CMT v1r8
+
+! 27/06/2001 - Olivier Callot
+  - Removed all but the PileUpVeto class. New L0 code for calorimeter and muon
+    is now available in C++, with dedicated classes in L0Calo, L0Muon and L0DU
+
+! 20010622 - L0Event v2 (Flr)
+  requirements - use CaloEvent v6*
+                 adapted to GaudiPolicy v5 and CMT v1r8
+  L0CLIDS.cpp     - include GaudiKernel/ClassID.h instead of /Kernel.h
+  L0Event_dll.cpp - include GaudiKernel/FactoryTable.h instead of .cpp
+
+! 20010109 - v1 (Flr)
+  requirements - L0EventLib is no_share
+
+! 20000606 - v1
+  First public version of Level 0 trigger event data model.

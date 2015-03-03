@@ -1,0 +1,13 @@
+<lcgdict>
+  <class name="LHCb::RawEvent" id="000003EA-0000-0000-0000-000000000000">
+    <field name="m_eventMap" transient="true"/>  
+    <field name="m_mapped" transient="true"/>  
+  </class>
+  <class name="LHCb::RawBank"/>
+  <class name="LHCb::RawEvent::Bank">
+    <field name="m_owns" transient="true"/>  
+  </class>
+  <class name="std::vector<LHCb::RawEvent::Bank>"/>
+  <class name="std::vector<LHCb::RawBank*>"/>
+  <class name="std::map<LHCb::RawBank::BankType, std::vector<LHCb::RawBank*> >"/>
+</lcgdict>

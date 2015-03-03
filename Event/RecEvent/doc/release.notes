@@ -1,0 +1,73 @@
+! $Id: release.notes,v 1.30 2006-06-21 21:37:33 odescham Exp $
+! Package     : Event/RecEvent
+! Responsible : Marco Cattaneo
+! Purpose     : LHCb Event model. Reconstruction classes (Brunel output) 
+
+!========================== RecEvent v1r4 2006-06-19 =========================
+! 2006-06-21 - Olivier Deschamps
+ - Add intermediate CaloPID estimator in enum names in ProtoParticles
+
+! 2006-06-19 - Olivier Deschamps
+ - Minor changes in Calo enum names  in ProtoParticles
+
+! 2006-06-18 - Chris Jones
+ - Minor changes in enum names due to tests with Particle makers in DaVinci
+
+! 2006-06-14 - Chris Jones
+ - Fix bug in methods RichPID::isAboveThreshold(const Rich::ParticleIDType type)
+   and LHCb::RichPID::traversedRadiator(const Rich::RadiatorType radiator)
+   where the hardcoded bit shifts where no longer valid, following changes to
+   the bit field... New version is robust as it does not use such nasty things.
+ - Add xml files for Rich reco "summary" data objects
+
+! 2006-06-13 - Chris Jones
+ - Updates to printing options for ProtoParticle.
+
+! 2006-05-29 - Olivier Deschamps 
+  - nonconstaccessors added in CaloHypo.xml and CaloClusterEntry.xml 
+
+!========================== RecEvent v1r3 2006-05-16 =========================
+! 2006-05-16 - Juan Palacios
+  - xml/CaloPosition.xml Add Gaudi::Units namespace prefix to units
+
+! 2006-05-10 - Chris Jones
+ - Update RichPID for changes in radiator names
+
+!========================== RecEvent v1r2 2006-04-06 =========================
+! 2006-04-06 - Olivier Deschamps
+ - Make some Calo accessors non-const
+
+! 2006-03-30 - Chris Jones
+ - First iteration in improvements to ProtoParticle (not the last)
+
+!========================== RecEvent v1r1 2006-03-23 =========================
+! 2006-04-06 - Olivier Deschamps 
+ -  nonconstaccessor=TRUE in position-related attributes (CaloPosition.xml, CaloCluster.xml, CaloHypo.xml)
+
+! 2006-03-22 - Olivier Deschamps 
+ - fix in Event/CaloDataFunctor.h
+ - typedef redefined in xml/CaloPosition.xml
+
+!========================== RecEvent v1r0 2006-03-08 =========================
+! 2006-03-08 - Marco Cattaneo
+ - Add ProtoParticle.xml (moved from PhysEvent)
+
+! 2006-02-21 - Olivier Deschamps
+ - Update CaloDataFunctor.h
+ - Fix Mathcore vector index in CaloPosition.xml
+
+! 2006-02-17 - Marco Cattaneo
+ - Fix default locations od STSummary
+
+! 2006-02-15 - Marco Cattaneo
+ - Add classes from obsolete CaloEvent, MuonEvent, STEvent packages
+
+! 2006-01-17 - Marco Cattaneo
+ - Add MuonPID class
+
+! 2006-01-17 - Chris Jones
+ - Add RichPID class
+ - Add dependency on TrackEvent package
+
+! 2005-12-13 - Marco Cattaneo
+ - First release, RecHeader and ProcStatus

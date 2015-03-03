@@ -1,0 +1,146 @@
+!-----------------------------------------------------------------------------
+! Package     : Calo/CaloDAQ
+! Responsible : Olivier Callot
+! Purpose     : Convert Calo Digit and Trigger information to RawEvent banks.
+!-----------------------------------------------------------------------------
+
+!========================== CaloDAQ v2r2 2006-04-20 ==========================
+! 2006-04-19 - Olivier Deschamps
+ - modification of CaloZsupAlg (option driven output: CaloDigits and/or CaloADCs)
+ - new algorithm : src/CaloTriggerAdcsFromRawAlg
+
+!========================== CaloDAQ v2r1 2006-03-15 ==========================
+! 2006-03-15 - Olivier Deschamps
+ - CaloZSupAlg.{cpp,h} algorithm added (moved from CaloDigit)
+ 
+!========================== CaloDAQ v2r0 2006-03-07 ==========================
+! 2006-02-24 - Olivier Callot
+ - Remove the detection of 'same event' in CaloTriggerBitsFromRaw as ODIN bank
+   is not yet very stable... This means decoding twice to get SPD and PRS bits.
+ - Put proper parenthesese to fix precedence problem in CaloTriggerBitsFromRaw
+
+! 2006-02-23 - Vanya BELYAEV
+ - change the default options for CaloReCreateMCLinks algorithm 
+
+! 2006-02-16 - Olivier Callot
+ - Use ODIN bank to get the event number for CaloTriggerBitsFromRaw.
+
+! 2006-02-15 - Marco Cattaneo
+ - In requirements, migrate to DigiEvent
+
+! 2006-02-14 - Olivier Callot
+ - Fix improper use of cell.index() instead of cell.all()
+
+! 2006-02-02 - Olivier Callot
+ - Protect CaloTrigegrBitsFromRaw if DAQ bank is absent.
+ - Code (CaloFillRawBuffer) from Full CaloADC banks if coding type = 2.
+ - Bank length is in bytes now (CaloTriggerAdcsFromRaw, CaloTriggerBitsFromRaw,
+   CaloEnergyFromRaw)
+
+! 2006-01-19 - Marco Cattaneo
+ - Use definitions from CaloDet for detector locations, instead of raw strings
+
+! 2006-01-10 - Marco Cattaneo
+ - Remove BankType property from CaloFillRawBuffer, because an enum cannot be 
+   a property
+
+! 2005-12-20 - Olivier Callot
+ - Fix the namespace LHCb:: for CaloEvent classes, due to a missing recompilation
+
+! 2005-12-19 - Olivier Callot
+ - Adapt to the new event model, mainly LHCb:: namespace, and also the new DAQEvent.
+   Several things still to cleanup and fix.
+
+! 2005-12-02 - Olivier Callot
+ - Remove the detector prefix in the condition CellsToCards
+
+! 2005-11-15 - Olivier Callot
+ - Changed Prs/SPd coding type 2, with cell id in upper 14 bits instead of lower
+
+! 2005-11-10 - Olivier Callot
+ - Use a new RawBuffer::BankType for the packed (TELL1) information. The
+   bank type is set according to detector name, option with default from
+   the name of the  instance.
+
+! 2005-11-08 - Olivier Callot
+ - Change the interface to get a more efficient decoding:
+   o ICaloEnergyFromRaw returns a vector of CaloDigit or of CaloAdc (new object)
+   o ICaloTriggerAdcsFromRaw returns a vector of L0CaloAdc
+   o ICaloTriggerBitsFromRaw returns a vector of CaloCellID.
+
+! 2005-09-06 - Olivier Callot
+ - New tool CaloReadoutTool for a description of the cards and readout, 1 MHz version
+ - Implementation of the proposed 1 MHz coding, with packing instead of
+   zero suppression. Starts from EcalFull and HcalFull digit containers
+   Affects CaloFillRawBuffer and CaloFillPrsSpdRawBuffer. Note that this coding is 
+   NOT the default, one has to add the options :
+    EcalFillRawBuffer.DataCodingType = 2;
+    HcalFillRawBuffer.DataCodingType = 2;
+    CaloFillPrsSpdRawBuffer.DataCodingType = 3;
+ - Process the new format in the decoding algorithms CaloEnergyFromRaw, CaloTriggerFromRaw, 
+   CaloPrsBitFromRaw and CaloSpdBitFromRaw,
+
+ - Adjust the comparison algorithm. New option 'packedRawBuffer' to be set to
+   true when using the 1 MHz coding type.
+
+  Decoding speed can be improved by inlining the 'nextCell' method, i.e. changing the
+  interface of this package. One could also implement just a begin and end accessor
+  to the local array where the unpacking is performed. But this makes visible
+  the internal implementation. To be done when the 1 MHz readout becomes the
+  baseline scenario.
+
+!========================== CaloDAQ v1r1 2005-05-10 ==========================
+! 2005-05-11 - Vanya BELYAEV
+ - src/CaloReCreateMCLinks.cpp
+     1) add new property "IgnoreMode" 
+        (the defualt value is "false" )
+        to ignore the absence of MC-containers 
+        (a warning is printed at the end of the job, but processing is continued)
+     2) some consmetics changes 
+     3) improve Doxygen comments 
+ - src/CaloReCreateMcLinks.h
+     remove the file 
+ 
+! 2005-05-10 - Olivier Callot
+ - Initialize the base class of CaloEnergyFromRaw, was forgotten.
+
+! 2005-05-04 - Olivier Callot
+ - Accesses the RawEvent and not explicitely the RawBuffer while decoding.
+ - Avoid a copy of the list of banks when decoding the RawEvent.
+
+! 2005-05-03 - Marco Cattaneo
+ - Add missing factory for CaloEnergyFromRaw tool
+
+!========================= CaloDAQ v1r0p2 2005-03-07 =========================
+! 2005-03-07 - Marco Cattaneo
+ - Fix requirements to use DAQEvent v*
+
+!========================= CaloDAQ v1r0p1 2005-01-31 =========================
+! 2005-01-31 - Marco Cattaneo
+ - Add a missing include for Windows (no longer included via CLHEP...)
+
+!========================== CaloDAQ v1r0 2005-01-14 ==========================
+! 2005-01-10 - Olivier Callot
+ - Tools to decode the Raw buffer: One interface for the trigger and one for
+   the energies:
+     interface ICaloTriggerFromRaw: 
+        CaloPrsBitFromRaw
+        CaloSpdBitFromRaw
+        CaloTriggerFromRaw
+     interface ICaloEnergyFromRaw
+        CaloEnergyFromRaw
+ - Algorithm CaloDigitsFromRaw (was in CaloEvent) to decode the Raw buffer and
+   re-create the CaloDigits
+ - Algorithm CompareCaloDigits (was in CaloEvent) to test two codings of the 
+   CaloDigits. 
+ - Algorithm CaloReCreateMCLinks (was in CaloEvent) to re-create the MCLink for
+   the CaloDigit containers.
+ - Compared to version in CaloEvent, data coding of Prs/Ecal/Hcal energies is 
+   more compact (-1.5 kbyte/event), but thanks to versioning of the RawBuffer 
+   banks, the decoding is handling properly the old and new data formats
+
+! 2004-12-17 - Olivier Callot
+ - Creation of CaloFillRawBuffer from CaloZSup in CaloDigit package, to code 
+   Ecal and Hcal data and trigger banks, from CaloDigits and L0CaloAdcs.
+ - Creation of CaloFillPrsSpdRawBuffer to code the Prs data and the Prs+Spd
+   trigger banks, from CaloDigits (Prs) and L0PrsSpdHits (Prs and Spd).

@@ -1,0 +1,11 @@
+package GaudiConf
+version v9r7
+
+branches doc cmt options src
+include_path none
+
+ignore_pattern package_stamps
+
+set STDOPTS    $(GaudiConf_root)/options
+
+macro_append cppflags ' -DAPPNAME=\"${package}\" -DAPPVERS=\"${version}\" '

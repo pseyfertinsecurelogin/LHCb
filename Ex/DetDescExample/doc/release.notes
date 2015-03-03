@@ -1,0 +1,126 @@
+$Id: release.notes,v 1.34 2006-06-02 16:02:01 cattanem Exp $
+Package: DetDescExample
+Package Manager: Marco Clemencic
+Purpose: Demonstrate how to access detector elements, their geometry 
+         parameters and materials from detector description XML database.
+
+!==================DetDescExample v7r2 2006-06-02 ====================
+! 2006-06-02 - Marco Cattaneo
+ - Add use XmlConditions v* for compatibility with XmlDDDB v30r*
+
+!==================DetDescExample v7r1 2006-05-17 ====================
+! 2006-05-17 - Marco Cattaneo
+ - Adapt to Gaudi::Units
+
+!==================DetDescExample v7r0 2006-02-15 ====================
+! 2006-02-15 - Marco Cattaneo
+ - Restructured to use official detector elements, and adapted for LHCb v20r0
+
+!==================DetDescExample v6r6 2005-12-08 ====================
+! 2005-12-08 - Marco Cattaneo
+ - Add DetDescSvc to requirements
+
+!==================DetDescExample v6r5 2005-12-08 ====================
+! 2005-12-08 - Marco Cattaneo
+ - Add XmlConditions and cleanup requirements
+ - Update to GaudiAlgorithm base class
+
+!==================DetDescExample v6r4 2005-06-24 ====================
+! 2005-06-13 - Marco Cattaneo
+ - Update job options to use a recent XmlDDDB geometry
+ - Remove obsolete Gaudi.job
+ - For materials, print out also N (effective number of nucleons)
+
+!==================DetDescExample v6r3 2005-05-24 ====================
+! 2005-05-13 - Marco CLEMENCIC
+ - Use new ParamValidDataObject interface (DetDesc >= v15)
+
+!================= DetDescExample v6r2p1 2004-07-20 ==================
+! 2004-07-20 - Marco Cattaneo
+ - Use GaudiConf v*
+ - Add missing job option ApplicationMgr.EvtSel = "NONE";
+
+!==================DetDescExample v6r2 2003-10-06 ====================
+! 2003-10-06 - Marco Cattaneo
+ - Remove explicit dependency on DetDesc, implicit through DetDescCnv
+
+!==================DetDescExample v6r1 2003-07-17 ====================
+! 2003-07-17 - Marco Cattaneo
+ - Use new version of GaudiConf
+
+!==================DetDescExample v6r0 2003-07-01 ====================
+! 2003-06-16 - Sebastien Ponce
+ - fixes for gcc 3.2/3.3
+
+! 2003-04-25 - Sebastien Ponce
+ - fixes after valgrind tests
+ - application of code conventions
+
+! 2003-04-24 - Sebastien PONCE
+ - Port to xerces 2.2.0
+
+! 2003-04-23 - Sebastien Ponce
+ - Adaptation to the new structure of the Detector Description packages.
+
+!============================== DetDescExample v5r2 ====================
+! 2003-01-22 - Florence RANJARD
+ - Gaudi.job - get the LHCB version number from STDOPTS
+
+! 2003-01-17 - Sebastien Ponce
+ - support for gcc 3.2
+
+!=============================== DetDescExample v5r1 ===================
+! 2003-01-13 - Marco Cattaneo
+ - Fixed to make it work with latest XmlDDDB
+
+!=============================== DetDescExample v5r0 ===================
+! 2002-11-21 - Florence Ranjard
+ - requirements - use LHCB v11r3
+
+!=============================== DetDescExample v4r0 ====================
+! 20020429 - DetDescExample v4 (Sebastien)
+  - Adapted to Gaudi v10r0
+  - rewrote everything to be compliant with the new geometry and
+    to be more understandable, both in the code and in the output
+
+!============================== DetDescExample v3r0 =====================
+! 20011211 - DetDescExample v3 (Pere)
+  Adapted to Gaudi v9r0
+
+!20011123 v3 Sebastien Ponce
+ - new version number
+ - uses the new DetDesc version number
+
+!20011120 Sebastien Ponce
+ - make use of the new GaudiKernel and GaudiSvc
+ - take care that ILvolumes may have no solid
+
+!20010710 v2 Flr
+ - use Gaudi v8
+ - add options/Gaudi.job to run the example
+
+!20010702 Sebastien Ponce
+ - now it's working under windows
+
+!20010628 Sebastien Ponce
+ - added a new converter for DeCalorimeter in order to illustrate the
+ use of the initialize method in the DetectorElement class and its
+ descendants.
+
+!20010622 Sebastien Ponce
+ - added a test of the TabulatedProperty xml tag.
+
+!20010622 Sebastien Ponce
+ - added the use of UserParam for the Calo subdetector. The previous
+ Calo object and converter were removed.
+
+!20010514 Sebastien Ponce
+ - take into account changes in Det/DetDesc, so use DOM parsing.
+ - changes in the names of materials, following the new convention in the
+ xml code : no more underscore in element name, as in CO2 (was CO2).
+ 
+!20010222 Pere Mato
+ - Changed SimpleAlgorithm.cpp to use Velo instead of Vertex.
+
+!20010308 DetDescExample v1
+ - Initial version, extracted from old GaudiExamples package

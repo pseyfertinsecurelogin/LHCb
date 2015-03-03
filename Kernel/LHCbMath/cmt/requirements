@@ -1,0 +1,33 @@
+#============================================================================
+# Created    : 19/04/2006
+# Maintainer : Juan Palacios
+#============================================================================
+
+package Kernel/LHCbMath
+version v1r1
+
+#============================================================================
+# Structure, i.e. directories to process. 
+#============================================================================
+
+branches cmt doc LHCbMath src
+
+include_dirs $(LHCBMATHROOT)
+
+#============================================================================
+# Used packages. Specify the version, * at the end specifies 'any revision'
+#    Put as many lines as needed, with all packages, without the '#'
+#============================================================================
+use GaudiPolicy     v*
+use GaudiKernel     v*
+use LHCbDefinitions v* Kernel        
+use GSL             v* LCG_Interfaces
+
+
+# ================= constituens: linker library ===============================
+library             LHCbMath    ../src/*.cpp
+
+# ================= patterns ==================================================
+apply_pattern       linker_library library=LHCbMath
+
+#============================================================================

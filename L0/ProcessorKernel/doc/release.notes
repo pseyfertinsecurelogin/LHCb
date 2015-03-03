@@ -1,0 +1,59 @@
+!-----------------------------------------------------------------------------
+! Package     : L0/ProcessorKernel
+! Responsible : A. Tsaregorodtsev
+! Purpose     : Base classes for a generic processor simulation
+!-----------------------------------------------------------------------------
+
+!======================== ProcessorKernel v3r1 2006-06-02 ====================
+! 2006-06-02 - Marco Cattaneo
+ - Add <cmath> include to Register.cpp, to please gcc 3.4.5
+
+! 2006-03-29 - Julien Cogan
+ - minor change: add an accessor method to the m_units data in class Unit
+
+!======================== ProcessorKernel v3r0 2006-01-19 ====================
+! 2006-03-03 - Marco Cattaneo
+ - Fixes to remove Windows compilation warnings
+ 
+! 2006-03-03 - Julien Cogan
+ - BUG FIX. In RegisterFactory: objects created with the XMLString::transcode 
+   method of xerces were not deleted (causing memory leak)
+ - BUG FIX. In Register: the method set(bitset) was not properly implemented. 
+ - small changes in the print/dump methods of TileRegister.
+ - add the clear and resize methods in Register
+! 2006-02-10 - Julien Cogan
+ - Unit: add new method: isEmpty (return true if the Unit has no subunits)
+ - Move the print_words method from TileRegister to Register
+ - Register: set the flag m_set to false in the reset method
+ - TileRegister:  set the flag m_set to true in the setTile method
+
+!======================== ProcessorKernel v3r0 2006-01-19 ====================
+! 2006-01-18 - Julien Cogan
+ - Adapt to event model changes and LHCb namespace
+
+!======================== ProcessorKernel v2r0 2005-12-19 ====================
+! 2005-12-15 - Julien Cogan
+ - Add new methods to the Register to manipulate a subset of the bitset
+ - Add a new method to the RegisterFactory to return a existing register
+ - Add methods to the Unit to release input and output registers
+ - Remove the Unit method to look for a child unit 
+ - Change the setDebugMode method of Unit to be virtual
+
+! 2005-11-10 - Julien Cogan
+ - Add methods to the Register to add and retrieve bitsets of a given length 
+   and at a given position
+ - Add methods to build an XML representation for the Unit and for the Register
+
+!======================== ProcessorKernel v1r0p1 2005-04-15 ==================
+! 2005-04-15 - Marco Cattaneo
+ - Use L0mConf v2r2p*
+ - Fix doxygen warnings
+
+!========================= ProcessorKernel v1r0 2005-04-05 ===================
+! 2005-04-05 - Marco Cattaneo
+ - Add a missing STL include for compilation on windows
+ - Fix a doxygen warning
+
+! 2005-04-04 A. Tsaregorodtsev
+ - First release of the package  
+

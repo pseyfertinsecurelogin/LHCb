@@ -1,0 +1,345 @@
+!-----------------------------------------------------------------------------
+! Package     : Event/LinkerEvent
+! Responsible : Olivier Callot
+! Purpose     : Implementation of the Linker package, to associate objects
+!-----------------------------------------------------------------------------
+
+!====================== LinkerEvent v2r2p1 2006-06-09 ========================
+! 2006-06-09 - Marco Cattaneo
+ - Adda missing include to LinkedTo.h, for gcc 3.4.5
+
+!====================== LinkerEvent v2r2 2006-05-11 ==========================
+! 2006-04-12 - Eduardo Rodrigues
+ - fixed typo in path printed out in LinkedFrom (was misleading)
+
+!====================== LinkerEvent v2r1 2006-03-27 ==========================
+! 2006-03-27 - Olivier Callot
+ - Fix warnings on Windows due to int -> short conversion. Make it explicit...
+
+! 2006-03-23 - Olivier Callot
+ - Bypass the test of classID in case the linker object is not found.
+
+! 2006-03-16 - Olivier Callot
+ - Accept a missing template in checking the classID in LinkedTo, LinkedFrom 
+   and AllLinks
+
+! 2006-03-15 - Olivier Callot
+ - Restore the default second template. Use T::classID() without instanciation.
+ - Include GaudiKernel/IRegistry.h in LinkedFrom.h
+
+!====================== LinkerEvent v2r0 2006-03-08 ==========================
+! 2006-03-08 - Olivier Callot
+ - Fixed a typo in LinkedFrom, 'key' left while it should have been 'index'
+
+! 2006-03-08 - Olivier Callot
+ - Add a check on the class ID of the objects related by the Linker.
+   This changes the object LinksByKey (store the two class IDs).
+ - Add a check of the class ID in the wrapper tools (LinkerTool,
+   LinkedFrom, LinkedTo, AllLinks) with exception thrown in case the class ID
+   of the declared template doesn't match the one stored in the object.
+
+! 2006-02-14 - Olivier Callot
+ - Remove all SOURCECONTAINER and TARGETCONTAINER template as this is
+   always a ObjectContainerBase. This simplifies the interface...
+
+! 2006-02-14 - Olivier Callot
+ - Replace ObjectVector<> by ObjectContainerBase, as KeyedContainer doesn't
+   inherit from ObjectVector. 
+
+! 2005-12-19 - Olivier Callot
+ - Include SmartDataPtr.h in all 4 wrappers.
+
+! 2005-12-15 - Olivier Callot
+ - Replace all references to KeyedObject by ContainedObject and similarly
+   KeyedContainer to ObjectVector. Replace key() by index() and object( key )
+   by containedObject( index ). This gives unchanged behaviour for KeyedObject
+   but works also for ContainedObjects.
+
+! 2005-12-15 - Marco Cattaneo
+ - Changes for migration to Gaudi v18/LHCb v20
+
+! 2005-11-21 - Olivier Callot
+ - Add methods front() and Back() to LinkerRange as suggested by Matt.
+
+!====================== LinkerEvent v1r9 2005-11-11 ==========================
+! 2005-11-11 - Marco Cattaneo
+ - Fix for platform dependent dictionaries with Gaudi v17r2
+
+!====================== LinkerEvent v1r8p1 2005-07-21 ========================
+! 2005-07-21 - Marco Cattaneo
+ - Change package name to LinkerEvent in LinksByKey.xml, for GOD Reflex dict
+   generation
+
+!====================== LinkerEvent v1r8 2005-05-04 ==========================
+! 2005-05-04 - Vanya BELYAEV
+
+ - Linker/LinkedFrom.h,
+   Linker/LinkedTo.h,
+   Linker/LinkerWithKey.h
+   
+   Fix a problem with usage of keys, which are not implicitely 
+   convertible into "int" (e.g. CaloCellID *by porpose* has no 
+   conversion operator to "int"). Instead of implict conversion a
+   call to Containers::key_traits<key_type>::identifier( key ) is 
+   performed. (The same technique for conversion of "key" into 
+   "long" is used by class KeyedContainer. In addition the 
+   uniformity and coherence is achieved). 
+   This fix allow to buitl linker table for classes, "keyed" by 
+   not trivial keys, e.g. CaloDigit (the key is CaloCellID).
+   I gues sit will be even more important for future, when 
+   LHCbID will be used for indexing (LHCbID also have no implicit 
+   conversion to "int"). The problem is solved in a trivial way 
+   by specialization for        
+     Containers::key_traits<key_type>::identifier( key ) 
+   E.g. for CaloCellID it is done using the mehtod CaloCellID::all() : 
+
+       /// Full unhashed key identifier
+       static long identifier ( const key_type& k ) 
+       { return k.all   () ; }
+ 
+   ( see $CALOEVENTROOT/Event/CaloCellIDKeyTraits.h) 
+ 
+   I guess the similar specialization for LHCbID to be used as key
+    will use something like LHCbID::key() 
+
+   The fix is completely backward compatible   
+
+!====================== LinkerEvent v1r7 2005-03-29 ==========================
+! 2005-03-29 - Olivier Callot
+ - Fixed a major bug in LinkedFrom, as the containers are not loaded by default.
+   An explicit resolution of the links is performed whenever needed. This affects
+   the methods 'first' and 'intRange'. This was not properly saved in the change
+   made on 2005-01-27 apparently.
+ - intRange( TARGET ) in LinkedFrom was returning only keys created as int,
+   not all keys. This is a small change of philosophy made in January, as 
+   access by key gives access to all objects with that key, while before it was
+   giving access only to associations established with a key.
+
+! 2005-03-22 - Olivier Callot
+ - Make non const the methods direct() and inverse() to LinkerTool
+ - Add the 'bool empty()' method to LinkerRange.
+
+!====================== LinkerEvent v1r6 2005-01-31 ==========================
+! 2005-02-04 - Olivier Callot
+ - Fix a bug in accessing relations, as all the linked containers are not 
+   loaded by default
+
+! 2005-01-31 - Marco Cattaneo
+ - Fix a windows warning in LinkReference constructor and LinksByKey.cpp
+
+! 2005-01-27 - Olivier Callot
+ - Add LinkerTool object. This is NOT a Gaudi Tool, but it has the
+   same usage as described in Vanya's note LHCb 2004-022, except the
+   declaration of the type, and the retrieval of the tool. The normal user just
+   need to include "Linker/LinkerTool.h"
+
+ - Load the containers of SOURCE / TARGET only when needed in LinkedFrom,
+   LinkedTo and AllLinks. This allows to use the relation between the SOURCE 
+   key and the TARGET without loading the SOURCE container, useful for L1/HLT
+   where the Velo/IT Cluster and OTTime are not available.
+
+! 2005-01-26 - Olivier Callot
+ - Protect against several entries from the same pair SOURCE-TARGET. The weight
+   of the last entered relation is kept.
+
+! 2005-01-24 - Olivier Callot
+ - When requesting the relation to an int, all possible SOURCE with that key
+   are matching the request, and there respective target is returned. This
+   means that e.g. the relations ITDigit -> MCParticle allow also to get the
+   relation ITChannelID -> MCParticle. 
+
+! 2005-01-21 - Olivier Callot
+ - Make 'const' most methods
+
+!====================== LinkerEvent v1r5 2004-11-25 ==========================
+! 2004-11-24 - Olivier Callot
+ - Define types 'LRange' and 'LRangeIt' for the std::vector<TARGET*> and 
+   corresponding const_iterator type in LinkedTo, std::vector<SOURCE*> and
+   corresponding const_iterator in LinkedFrom.
+
+ - Added methods 'LRangeIt beginRange()' and 'LRangeIt endRange()' to both
+   LinkedTo and LinkedFrom, retrieving the begin and ned of the range. The
+   range method should have been created first.
+
+! 2004-11-23 - Olivier Callot
+ - New methods of LinkedTo to access the relations with STL flavour :
+   std::vector<TARGET*>& range( const SOURCE* source)
+   It returns a vector of pointers to target, on which iteration can be used.
+   Similarly, new method with the same name and an "int key " argument.
+
+ - Similar method 'std::vector<SOURCE*> range( const TARGET* target )' in 
+   LinkedFrom.
+
+ - New method 'std::vector<int>& intRange( const TARGET* target)' in 
+   LinkedFrom to return the list of keys a target is linked to. Returns only 
+   pure keys, i.e. not created with an object but with an 'int' in 
+   LinkerWithKey.
+
+ - Add a 'void reset()' method to LinksByKey, to force the reseting of a 
+   possibly existing link table when creating one. The default is to update
+   it, i.e. add new links to existing ones.
+
+!====================== LinkerEvent v1r4 2004-07-19 ==========================
+! 2004-07-19 - Marco Cattaneo
+ - Move to Gaudi v15 (use LHCbKernel v5r* in requirements)
+
+!====================== LinkerEvent v1r3 2004-05-18 ==========================
+! 2004-05-17 - Olivier Callot
+ - Fix two bugs in LinkedFrom, reported by Philippe Charpentier:
+   - Wrong variable type, due to a missing adaptation after a change.
+   - Wrong handling of the nextSource() in case an entry was last in a list. 
+     This was creating an infinite loop.
+
+!====================== LinkerEvent v1r2 2004-02-05 ==========================
+! 2004-02-05 - Olivier Callot
+ - New wrapper class 'AllLinks' to return all links in the LinksByKey object.
+   Templated with TARGET, SOURCE, TARGETCONTAINER, SOURCECONTAINER.
+   Created as the other, i.e. 
+   AllLinks<TARGET, SOURCE, TARGETCONTAINER, SOURCECONTAINER> test(
+            eventSvc(), msgSvc(), name );
+   SOURCECONTAINER defaults to KeyedContainer<SOURCE>
+   TARGETCONTAINER defaults to KeyedContainer<TARGET>
+   SOURCE defaults to KeyedObject<int>
+
+   Methods: 
+     bool notFound() : return true if the LinksByKey object was not found.
+     TARGET* first() : return the target of the first relation
+     TARGET* next()  : return the next target, NULL if no more targets.
+     double weight() : return the weight of the current relation
+     int    key()    : return the key of the SOURCE of the current relation
+     SOURCE* source(): return the source of the relation.
+                       If a relation was made with only a key, a NULL pointer
+                       is returned in this case. key() will return the proper
+                       value
+   This new wrapper is intended to allow complete scanning of the whole 
+   relation table.
+
+
+! 2004-02-05 - Olivier Callot
+ - New method 'notFound()' in LinkedTo and LinkedFrom to indicate if the 
+   LinksByKey object was found or not.
+ - In LinkerWithKey, the LinksByKey is searched for, and if it exist the new
+   information is added to it.
+ - If the msgSvc is null, no message is printed in LinedTo / LinkedFrom in case
+   the LinksByKey is not found.
+
+!====================== LinkerEvent v1r1 2004-01-27 ==========================
+! 2004-01-27 - Marco Cattaneo
+ - Add magic lines to the xml to produce lcg dictionary
+
+! 2004-01-26 - Olivier Callot
+ - Replace the std::map<int,int> by a std::vector<std::pair<int,int> > to
+   access more efficiently the data. Insertion is done in such way to keep
+   the vector sorted on the first memeber of the pair, and access is done by
+   binary search, which is very fast. Reading and writing is just as a simple
+   vector, and should be easily suported by POOL and fast in reading.
+
+!====================== LinkerEvent v1r0 2004-01-16 ==========================
+! 2004-01-15 - Olivier Callot
+ - Fix several problems:
+	  o Update the LinkMgr when reading the DataObject. New method resolveLinks
+      of the LinksByKey object.
+    o Use short for LinkMgr indices and float for the weight, to decrease the
+      event size.
+    o Use ClassID 400.
+    o Accept names with the "/Event/" prefix in LinkerWithKey, LinedFrom and 
+      LinkedTo. This is locally removed to create the DataObject name at 
+      location "Link/"+argument.
+	  o Add protection if the DataObject is not found in LinkedFrom/To
+    o Remove private streamer for std::map    
+
+! 2004-01-09 - Olivier Callot
+ - Adapted to GaudiObjeDesc v6r* with January 2004's Gaudi/LHCb/...
+
+! 2004-01-08 - Olivier Callot
+ - Initial release of the package.
+
+  This package contains an event class, storing LINK relations between keyed 
+  objects in a generic way. It also contains three small templated classes to 
+  manipulate easily these relations.
+
+* LinkerWithKey< TARGET, SOURCE > link( eventSvc, msgSvc, name );
+       create a linker object, in the execute method of an algorithm.
+       At least the Target class should be specified. The source and the target
+       whould be KeyedObject. The name is used to define the stored location of
+       the link. It can be the location of the source container, as the prefix
+       "MC/" is added to the name to define the location.
+       Note that 'SOURCE' defaults to KeyedObject<int> if not specified.
+
+    link.link( source, destination, weight=1. )
+       link the source to the destination, optionaly with a weight.
+       The sources can be in different containers, as can be the destinations.
+
+    link.link( int, destination, weight=1. )
+       link an int with a destination, with an optional weight. Useful to e.g.
+       associate a MCParticle to a ChannelID.
+       The destinations can be in different containers.
+
+    link.setIncreasingWeight()
+       Defines the increasing order for the weight, order in which they will be
+       retrieved. The default is decreasing, i.e. highest weight first.
+    link.setDecereasingWeight() 
+       Re-inforce the default order.
+
+* LinkedTo< TARGET, SOURCE, TARGETCONTAINER > link( eventSvc, msgSvc, name );
+       Retrieve an existing link between SOURCE objects and TARGET objects. 
+       If not specified, TARGETCONTAINER defaults to KeyedContainer<TARGET>.
+       If not specified, SOURCE defaults to KeyedObject<int>.
+       'name' should be as specified when crating the link.
+
+    TARGET* = link.first( source );
+       returns the first target associated to the source, or a NULL pointer.   
+
+    TARGET* = link.first( int );
+       returns the first target associated to the int, or a NULL pointer. This
+       works only with links created with an int as argument. There is probably
+       no reason to specify SOURCE in this case.
+
+    TARGET* = link.next( );
+       returns the next target associated to the previously specified source.
+       Works for both specification of the initial source. A NULL pointer is 
+       returned if no more targets.
+
+    double w = link.weight()
+       returns the weight associated to the last accessed link.
+
+* LinkedFrom< SOURCE, TARGET, SOURCECONTAINER > link( eventSvc, msgSvc, name );
+       Retrieve an existing link between SOURCE objects and TARGET objects. 
+       Use this object to access the reverse relations, i.e. which SOURCE is
+       related to a specified TARGET.
+       If not specified, SOURCECONTAINER defaults to KeyedContainer<TARGET>.
+       If not specified, TARGET defaults to KeyedObject<int>.
+       'name' should be as specified when crating the link.
+
+    SOURCE* = link.first( target );
+       returns the first source associated to the specified target, or a NULL 
+       pointer. One can NOT retrieve key associated to a target.
+
+    SOURCE* = link.next( );
+       returns the next source associated to the previously specified target.
+       A NULL pointer is returned if no more sources.
+
+    double w = link.weight()
+       returns the weight associated to the last accessed link.
+
+
+  Using the 'LinkedTo' (LinkedFrom is quite similar) is then very simple and
+  clean. The only following lines are needed, no tool, nothing in the .h nor
+  in option files.
+
+  #include "Linker/LinkedTo.h"
+
+  ... in execute()
+
+  LinkedTo<MCParticle> link( eventSvc(), msgSvc(), 
+                             VeloClusterLocation::Default );
+
+  ... when needed
+
+  MCParticle* part = link.first( myCluster );
+  while ( NULL != part ) {
+    ...
+    double weight = link.weight();
+    ...
+    part = link.next();
+  }

@@ -1,0 +1,55 @@
+$Id: release.notes,v 1.15 2006-02-20 08:17:04 cattanem Exp $
+Package: IOExample
+Package Manager: M.Frank
+Purpose: Demonstrate how to write and read back event data using POOL I/O.
+
+!====================== IOExample v2r0 2006-02-20 =========================
+! 2006-02-20 - Marco Cattaneo
+ - Add TestPack.opts to test PackedEvent classes
+
+! 2006-02-15 - Marco Cattaneo
+ - Updates for LHCb v20r0. Input data files to be updated when test data exists
+
+!====================== IOExample v1r5 2005-10-20 =========================
+! 2005-10-20 - Marco Cattaneo
+ - Updates for using Reflex, use InputCopyStream to set up file copy,
+   cleanup obsolete job options
+
+!====================== IOExample v1r4p2 2005-04-21 =======================
+! 2005-04-21 - Marco Cattaneo
+ - Remove dependency on LHCbAlgs
+ - Update input files for LHCb v18r3 event model changes
+
+!====================== IOExample v1r4p1 2005-02-08 =======================
+! 2005-02-08 - Marco Cattaneo
+ - Update WriteMin input files to files produced with Root 4
+
+!======================= IOExample v1r4 2004-11-29 ========================
+! 2004-11-29 - Marco Cattaneo
+ - Update WriteMin input files to files produced with new Rich event model
+ - Add example of DataOnDemandSvc usage to ReadMin.opts
+
+!======================= IOExample v1r3 2004-10-21 ========================
+! 2004-10-21 - Marco Cattaneo
+ - Update WriteMin input files to files produced with new OT event model
+ - Update Dst,Digi contents to new OT event model
+
+!======================= IOExample v1r2 2004-07-14 ========================
+! 2004-07-14 - Marco Cattaneo
+ - Remove usage of obsolete GaudiRootDb format
+ - Add DumpMCEventAlg to ReadMin (similar to obsolete DumpEventExample)
+ - Update WriteMin input files to files produced in DC04
+ - Update Dst,Digi,Sim contents to DC04 versions
+ - Take StoreBrowserAlg from GaudiSvc. Example now consists only of job options
+
+! 2004-06-28 - Marco Cattaneo
+ - Adapted job options for DAQEvent change to component library
+
+!======================= IOExample v1r1 2004-02-12 ========================
+! 2004-02-12 - Marco Cattaneo
+ - Update to use latest output file definitions
+
+!======================= IOExample v1r0 2004-01-19 ========================
+! 2004-12-16 Markus Frank
+  
+  First version

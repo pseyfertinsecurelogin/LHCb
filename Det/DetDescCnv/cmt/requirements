@@ -1,0 +1,22 @@
+# $Id: requirements,v 1.25 2006-06-02 08:44:54 cattanem Exp $ 
+# =============================================================================
+package       DetDescCnv
+version       v3r2p1
+
+# =========== structure =======================================================
+branches      DetDescCnv doc cmt src
+
+# =========== own includes ====================================================
+include_dirs  $(DETDESCCNVROOT)
+
+# =========== dependencies ====================================================
+use	DetDesc		v*	Det
+use	XmlTools	v*	Tools
+
+# =========== constituents =====================================================
+library       DetDescCnvLib        Lib/*.cpp
+library       DetDescCnv           component/*.cpp
+
+# =========== standard patterns (the order is essential!) ====================== 
+apply_pattern component_library library=DetDescCnv 
+apply_pattern linker_library    library=DetDescCnvLib 

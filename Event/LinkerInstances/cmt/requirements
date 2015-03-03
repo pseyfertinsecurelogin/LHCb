@@ -1,0 +1,36 @@
+# $Id: requirements,v 1.11 2006-06-13 07:54:05 cattanem Exp $
+# =============================================================================
+package LinkerInstances
+author  Stefan Roiser
+manager Thomas Ruf
+
+version v3r1
+
+include_dirs $(LINKERINSTANCESROOT)
+
+use LinkerEvent  v*    Event
+use MCEvent      v*    Event
+use DigiEvent    v*    Event
+use RecEvent     v*    Event
+use TrackEvent   v*    Event
+
+# Produce lcg dictionary for instances of Linker classes
+#============================================================================
+apply_pattern reflex_dictionary                                             \
+              dictionary=LinkerInstances                                 \
+              headerfiles=$(LINKERINSTANCESROOT)/dict/linker_instances.h \
+              selectionfile=$(LINKERINSTANCESROOT)/xml/lcg_selection.xml \
+              options="-U__MINGW32__"
+
+# Build libraries (including dictionary)
+#============================================================================
+library LinkerInstancesDict ../$(tag)/dict/LinkerInstances/*.cpp
+        
+# Standard patterns
+#============================================================================
+apply_pattern component_library library=LinkerInstancesDict
+path_remove PATH "/LinkerInstances/" WIN32 "\LinkerInstances\"
+path_append PATH "${LINKERINSTANCESROOT}/$(BINDIR)" \
+                 WIN32 "${LINKERINSTANCESROOT}\$(BINDIR)" 
+path_append PYTHONPATH "${LINKERINSTANCESROOT}/python" \
+                 WIN32 "${LINKERINSTANCESROOT}\python"

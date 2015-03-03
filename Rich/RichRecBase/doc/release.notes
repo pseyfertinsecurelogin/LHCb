@@ -1,0 +1,277 @@
+!-----------------------------------------------------------------------------
+! Package     : Rich/RichRecBase
+! Responsible : Chris Jones   Christopher.Rob.Jones@cern.ch
+! Purpose     : Base package for RICH Reconstruction Packages
+!-----------------------------------------------------------------------------
+
+!====================== RichRecBase v2r4 2006-06-21 ========================
+! 2006-06-21 - Chris Jones
+ - Update for new track enums
+
+! 2006-06-14 - Chris Jones
+ - Remove obsolete methods from pixel creator interface
+ - Add new methods to MC access tool
+ - Update Pixel creator base class to move more functionality in from 
+   derived classes
+ - minor updates to Track creator base class
+
+!====================== RichRecBase v2r3 2006-05-17 ========================
+! 2006-05-17 - Marco Cattaneo
+ - Use Gaudi::Units in header files
+
+! 2006-05-09 - Chris Jones
+ - Remove support for old converted Track types
+
+! 2006-05-05 - Chris Jones
+ - Adapt to radiator name changes + move a few methods around
+
+!====================== RichRecBase v2r2 2006-05-02 ========================
+! 2006-05-02 - Eduardo Rodrigues
+ - propagation of change Track::Unique -> Track::Clone in Event/TrackEvent
+
+!====================== RichRecBase v2r1 2006-03-29 ========================
+! 2006-03-22 - Chris Jones
+ - In RichTrackSelector.h momentum cut is in GeV
+ - In RichPixelCreatorBase.cpp, RichPixelSuppress tool renamed to PixelSuppress
+
+!====================== RichRecBase v2r0 2006-03-13 ========================
+! 2006-03-12 - Chris Jones
+ - Add missing includes for IAlgTool in tool interfaces
+ - Add missing include in RichRecRing for RichRecPixel
+
+! 2006-02-16 - Chris Jones
+ - Bug fixes for "MC" running modes
+ - Improvements to the RichTrackSelector
+
+! 2006-02-06 - Chris Jones
+ - Update to get numbering information from RichDet instead of DAQ tools
+ - Makes dependency on RichDet permanent.
+
+! 2006-02-02 - Marco Cattaneo
+ - Add temporary dependency on RichDet to get round compilation problem with 
+   RichKernel/IRichDetNumberingTool.h
+
+! 2006-01-25 - Marco Cattaneo
+ - "Fix" wrong ContainedObject forward declaration produced by GOD by explicitly
+   including the header file
+
+! 2006-01-25 - Chris Jones
+ - Remove dependencies on MCEvent and DAQEvent
+
+! 2006-01-23 - Chris Jones
+ - Updates for LHCb v20r0
+
+!====================== RichRecBase v1r17 2005-11-18 =======================
+! 2005-11-15 - Chris Jones
+ - Improvements to transient reconstruction objects
+ - Adapt to new RichDAQ package
+
+! 2005-11-07 - Christopher Rob Jones
+ - Bug fix to RichTrackSelector for TrStoredTracks that caused a boost array
+   to go out of range for "Unknown" or "UnUsable" tracks. 
+   Problem picked up when switching to Boost 1.32.0 since this version seems 
+   to have introduced some range checking.
+
+! 2005-10-31 - Chris Jones
+ - Split up "Moni" base classes into Histo and Tuple versions, to allow
+   creation of histograms without having to inherit Tuple stuff as well.
+
+! 2005-10-18 - Chris Jones
+ - Updates for new style enums in Track event model
+
+! 2005-10-13 - Chris Jones
+ - Rework of common tool and algorithm base classes to use a common
+   code base
+ - Add support for the new track event model
+ - Various code clean ups
+ - Switch to using context() functionailty instead of private variant.
+
+!====================== RichRecBase v1r16p1 2005-07-13 =====================
+! 2005-07-13 - Chris Jones
+ - Add missing include of Kernel/RichRadiatorType.h to RichRecPixel.xml
+
+!====================== RichRecBase v1r16 2005-06-21 =======================
+! 2005-06-21 - Chris Jones
+ - Changes needed to allow offline and HLT reconstructions to run in
+   the same application
+
+! 2005-06-17 - Chris Jones
+ - Remove unused SmartRefs from definition of RichRecPixel
+
+! 2005-05-26 - Chris Jones
+ - Add new base classes for photon and track creator tools. Due to the
+   increase in the number of such tools, its is now convenient to have 
+   common functionality in shared base classes.
+
+! 2005-05-13 - Chris Jones
+ - Add explicit dependency on DAQEvent
+ - Add new methods to access a range of RichRecPixels 
+   (e.g. only those in RICH1 or RICH1 upper panel )
+ - Add base class for all pixel creator tools (shared common code)
+   each creator only need implement those bits that are unique to each
+ - Update RichTrackSelector
+   + Fix a few bugs in the "trackSelected" methods
+   + Add new method to print out selection to a given stream
+
+! 2005-04-06 - Chris Jones
+ - Only load the creator tools "on-demand" for the algorithm base classes
+   Avoids the loading of unused tools (for HLT for example). Has the side 
+   that some tools are only created during the first event...
+
+!==================== RichRecBase v1r15p1 2005-04-07 =======================
+! 2005-04-07 - Marco Cattaneo
+ - Remove from xml import of obsolete includes
+ - Add private use GaudiObjDesc v*, no longer inherited from Event model
+
+!====================== RichRecBase v1r15 2005-03-04 =======================
+! 2005-03-04 - Marco Cattaneo
+ - Fix some doxygen warnings
+ - Remove obsolete include of CLHEPStreams.h
+
+! 2005-01-13 - Chris Jones
+ - Very minor fix to RichTrackID
+ - Add monitor algorithm and tool base classes
+
+!===================== RichRecBase v1r14p1 2004-12-09 ======================
+! 2004-12-09 - Marco Cattaneo
+ - Suppress creation of dictionaries, as they do not work with GaudiObjDesc v7,
+   and are in any case not necessary for transient-only classes
+
+! 2004-11-20 - Chris Jones
+ - Improved handling of events with no pixels.
+
+!====================== RichRecBase v1r14 2004-11-18 =======================
+! 2004-11-02 - Chris Jones
+ - Update the way the XML is structured so that each file is parsed 
+   individually. This improvement means if an xml file is changed the header
+   file for that class (and only that class) is automatically regenerated.
+
+! 2004-10-19 - Chris Jones
+ - Update usage to RichEvent v8r*
+
+! 2004-10-13 - Chris Jones
+ - New improved versions of RichTrackID and RichTrackSelector
+
+! 2004-08-17 - Chris Jones
+ - Remove dependency on RichDet
+
+! 2004-07-29 - Chris Jones
+ - Add CVS Log information to XML files
+
+!====================== RichRecBase v1r13 2004-07-22 =======================
+
+! 2004-07-22 - Marco Cattaneo
+ - Fix requirements to use RichDet v8r*
+ - Add fixes for windows
+
+! 2004-07-11 - Chris Jones
+ - Template the RichPhotonSpectra class
+ - Clean up the XML descriptions to improve readability and and comments
+
+! 2004-07-02 - Chris Jones
+ - Update to new IRichRayTracing interface
+
+! 2004-06-23 - Chris Jones
+ - Update RichTrackID and RichTrackSelector to no longer require knowledge of 
+   the bit structure in the TrStoredTrack "history" code. 
+   Add track charge and momentum selection criteria to RichTrackSelector.
+ - Remove debugging safety check from RichRecPhotonKey constructor
+
+!====================== RichRecBase v1r12 2004-06-18 =======================
+
+! 2004-06-17 - Chris Jones
+ - Remove RichMap.h and RichHash.h. These where used to fix a problem with
+   maps using VC6 on windows, but which is now fixed with VC7.
+ - Update includes for new packaging.
+
+! 2004-06-16 - Chris Jones
+ - Remove dependency on RichMCTools package (errant, not really needed)
+
+!===================== RichRecBase v1r11p1 2004-06-30 ======================
+! 2004-05-30 - Chris Jones
+ - Update RichRecRing event model objects
+ - Add new interfaces for RichRayTraceCherenkovCone,
+    RichMassHypothesisRingCreator and RichRecGeomTool
+ - Minor changes related to changes in RichHypoData for windows
+
+!====================== RichRecBase v1r11 2004-04-20 =======================
+! 2004-04-20 - Chris Jones
+ - Improvements to RichTrackSelector
+
+! 2004-04-18 - Chris Jones
+ - Improvements to reconstruction event model
+
+!====================== RichRecBase v1r10 2004-03-18 =======================
+! 2004-03-14 - Chris Jones
+ - Adapt to new Gaudi Base classes
+
+! 2004-02-18 - Chris Jones
+ - Add missing forward declaration to IRichRecMCTruthTool.h
+
+!====================== RichRecBase v1r9p1 2004-03-08 ======================
+! 2004-03-08 - Marco Cattaneo
+ - In RichTrackID.cpp: use TrStoredTrack::isDownstream() instead of upstream() 
+
+!======================= RichRecBase v1r9 2004-02-09 =======================
+! 2004-01-13 - Chris Jones
+ - Add RichRecRing object to reconstruction event model, to support development
+   of standalone ring finding algorithms.
+ - Miscellaneous changes and tidying up of the code
+ - Improvements to algorithm and tool base classes
+
+!======================= RichRecBase v1r8 2004-01-08 =======================
+! 2004-01-08 - Marco Cattaneo
+ - Move to Gaudi v14 (use RichEvent v7r* in requirements, 
+                      fix an include in RichRecBaseEvent_load.cpp)
+
+!======================= RichRecBase v1r7 2003-12-10 =======================
+! 2003-12-10 - Marco Cattaneo
+ - Fixes for move to LHCB v14r0 (SerializeStl.h moved to LHCbKernel)
+
+!======================= RichRecBase v1r6 2003-12-04 =======================
+! 2003-12-04 - Marco Cattaneo
+ - Fix some doxygen warnings
+
+! 2003-12-03 - Chris Jones
+ - Minor additions to XML file
+
+!======================= RichRecBase v1r5 2003-11-27 =======================
+! 2003-11-25 - Chris Jones
+ - Updates for RichSmartID
+ - Improvements to tools and interfaces
+
+!======================= RichRecBase v1r4 2003-11-05 =======================
+! 2003-11-05 - Marco Cattaneo
+ - Use RichEvent v6r* and clean up requirements
+
+! 2003-11-02 - Chris Jones
+ - Update due to changes to RichHypoData format
+ - Move some tool interfaces to detector package due to dependencies
+
+!======================= RichRecBase v1r3 2003-10-17 =======================
+! 2003-07-31 - Chris Jones
+ - Change from std::vector to boost::array for fixed-sized data arrays
+ - Further re-organisation of tool classes
+ - various minor changes to utility objects
+
+!======================= RichRecBase v1r2 2003-07-07 =======================
+! 2003-06-30 - Chris Jones
+ - Use latest RichEvent
+ - Improvements to doxygen documentation comments
+ - Algorithm specific code and XML files moved to dedicated packages
+ - Restructuring of reconstruction tools for more flexibility
+ - Add some small utility classes and improvements to base classes
+
+!======================= RichRecBase v1r1 2003-06-19 =======================
+
+! 2003-06-18 - Marco Cattaneo
+ - Use more recent version of GaudiObjDesc
+
+! ====================== RichRecBase v1r0 2003-04-09 ========================
+
+! 2003-04-09 - Marco Cattaneo
+ - Release tools and interfaces
+
+! 2003-03-13 - Chris Jones
+ - First version - Merger of previous RichRecEvent, RichRecKernel and 
+   RichRecInterfaces packages due to increasing commonality

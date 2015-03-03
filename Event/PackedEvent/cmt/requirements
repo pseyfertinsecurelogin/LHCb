@@ -1,0 +1,33 @@
+#============================================================================
+# Created    : 2005-02-07
+# Maintainer : Olivier Callot
+#
+# Documentation on the requirement file can be found at
+# http://cern.ch/lhcb-comp/Support/html/new_structure.pdf
+#============================================================================
+package           PackedEvent
+version           v2r0
+
+#============================================================================
+# This template is an example for a standard Algorithm package
+#
+# Structure, i.e. directories to process. 
+#============================================================================
+branches          cmt doc Event xml
+include_dirs      $(PACKEDEVENTROOT)
+#============================================================================
+# Used packages. Specify the version, * at the end specifies 'any revision'
+#    Put as many lines as needed, with all packages, without the '#'
+#============================================================================
+use	GaudiKernel     v*
+
+#============================================================================
+# Produce lcg dictionary for stl containers used in PackedEvent
+#============================================================================
+apply_pattern     reflex_dictionary                                         \
+                  dictionary=PackedEvent                                 \
+                  headerfiles=$(PACKEDEVENTROOT)/Event/*.h               \
+                  selectionfile=$(PACKEDEVENTROOT)/xml/lcg_selection.xml
+
+library PackedEventDict    ../$(tag)/dict/PackedEvent/*.cpp
+apply_pattern component_library library=PackedEventDict

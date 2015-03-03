@@ -1,0 +1,21 @@
+package HepMC
+version v1r126p0
+
+branches doc cmt
+
+use CLHEP v* LCG_Interfaces
+
+macro HepMC_native_version "1.26"
+macro HepMC_home $(LCG_external)/HepMC/$(HepMC_native_version)/$(LCG_system)
+
+include_path none
+include_dirs $(HepMC_home)/include
+
+macro HepMC_linkopts "-L$(HepMC_home)/lib -lHepMC " \
+      WIN32          '/libpath:"$(HepMC_home)/lib" HepMC.lib '
+
+path_remove LD_LIBRARY_PATH "/HepMC/" WIN32 ""
+path_append LD_LIBRARY_PATH "$(HepMC_home)/lib" WIN32 ""
+
+path_remove PATH  "" WIN32 "\HepMC\"
+path_append PATH  "" WIN32 "$(HepMC_home)/lib"

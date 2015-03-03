@@ -1,0 +1,58 @@
+//==============================================================
+// Common job options to use a COOL in DetCondExample
+//==============================================================
+
+//--------------------------------------------------------------
+// Extra services needed in the application
+//--------------------------------------------------------------
+
+// Dynamically load component library for DetCond services and converters
+ApplicationMgr.DLLs += { "DetCond" };
+
+//--------------------------------------------------------------
+// Access to the ConditionsDB
+//--------------------------------------------------------------
+
+// connection string
+//CondDBAccessSvc.ConnectionString = "$CONDDBCONNECTIONSTRING";
+
+// name of the database server
+CondDBAccessSvc.HostName = "$CONDDBHOST";
+
+// name of the user needed to connect
+CondDBAccessSvc.User     = "$CONDDBUSER";
+
+// password needed to connect to the DB server
+CondDBAccessSvc.Password = "$CONDDBPWD";
+
+// hide password in log output (default = true)
+CondDBAccessSvc.HidePassword = true;
+
+// name of the database to use
+CondDBAccessSvc.Database = "$CONDDBNAME";
+
+// schema to use
+CondDBAccessSvc.Schema   = "$CONDDBSCHEMA";
+
+// which tag to use if none is specified
+// CondDBAccessSvc.TAG = "";
+
+// which db technology to use (oracle|mysql|sqlite)
+CondDBAccessSvc.BackEnd    = "$CONDDBENGINE";
+
+// Drop and recreate the database during initialization.
+//CondDBAccessSvc.RecreateDB = true;
+
+//CondDBAccessSvc.RunTest = true;
+
+// +++++++++++++ Cache related options (default values)
+//CondDBAccessSvc.UseCache = false;
+//CondDBAccessSvc.CacheHighLevel = 100;
+//CondDBAccessSvc.CacheLowLevel = 10;
+//CondDBAccessSvc.NoDB = false;
+
+//************************************************** 
+
+// which tag to use if none is specified
+//CondDBAccessSvc.TAG = "COLD";
+

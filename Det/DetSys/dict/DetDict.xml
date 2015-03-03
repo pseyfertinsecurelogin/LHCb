@@ -1,0 +1,119 @@
+<lcgdict>
+  
+  <class name="IDetectorElement"  />
+  <class name="IGeometryInfo"     />
+  <class name="ILVolume"          />
+  <class name="IPVolume"          />
+  <class name="ISolid"            />
+  <class name="ITransportSvc"     />
+  <class name="IUpdateManagerSvc" />
+
+  <class name="IAlignment"        />
+  <class name="ICalibration"      />
+  <class name="IConditionInfo"    />
+  <class name="IFastControl"      />
+  <class name="ISlowControl"      />
+  <class name="IReadOut"          />
+
+  <class name="Material"         />
+  <class name="Mixture"          />
+  <class name="Element"          />
+  <class name="Isotope"          />
+
+  <class name="LogVolBase"       />
+  <class name="LVolume"          />
+  <class name="LAssembly"        />
+
+  <class pattern="*Condition"        />
+  <class name="Surface"              />
+  <class name="DetectorElement"      />
+  <class name="TabulatedProperty"    />
+  <class name="ValidDataObject"      />
+  <class name="ParamValidDataObject" />
+
+  <class name="PVolume"              />
+  <class name="GeometryInfoPlus"     />
+  <class name="AlignmentInfo"        />
+  <class name="CalibrationInfo"      />
+  <class name="ConditionInfo"        />
+  <class name="FastControlInfo"      />
+  <class name="ReadOutInfo"          />
+  <class name="SlowControlInfo"      />
+  <class name="SimpleValidity"       />
+  
+  <class pattern="Solid*" />
+
+  <class name="DeVelo"        />
+  <class name="DeVeloSensor"  />
+  <class name="DeVeloPhiType" />
+  <class name="DeVeloRType"   />
+
+
+  <class name="DeCalorimeter"    />
+  <class name="DeSubCalorimeter" />
+  <class name="CellParam"        />
+  <class name="CardParam"        />
+
+  <class name="DeOTDetector"     />
+  <class name="DeOTStation"      />
+  <class name="DeOTLayer"        />
+  <class name="DeOTModule"       />
+  <class name="DeOTQuarter"      />
+
+  <class name="DeSTDetector"       />
+  <class name="DeITDetector"       />
+  <class name="DeTTDetector"       />
+  <class name="DeSTStation"       />
+  <class name="DeITStation"       />
+  <class name="DeTTStation"       />
+  <class name="DeSTLayer"       />
+  <class name="DeITLayer"       />
+  <class name="DeTTLayer"       />
+  <class name="DeSTSector"       />
+  <class name="DeITSector"       />
+  <class name="DeTTSector"       />
+  <class name="DeITBox"       />
+  <class name="DeTTHalfModule"       />
+
+  <class name="DeRich"                    />
+  <class name="DeRich1"                   />
+  <class name="DeRich2"                   />
+  <class name="DeRichSphMirror"           />
+  <class name="DeRichHPDPanel"            />
+  <class name="DeRichRadiator"            />
+  <class name="DeRichMultiSolidRadiator"  />
+  <class name="DeRichSingleSolidRadiator" />
+  <class name="RichMirrorSegPosition"     />
+
+  <class name="DeMuonChamber"      />
+  <class name="DeMuonRegion"       />
+  <class name="DeMuonGasGap"       />
+  <class name="MuonBasicGeometry"  />
+  <!-- class name="MuonReadoutCond"    /-->
+  <class name="MuonTSMap"          />
+  <class name="MuonL1Board"        />
+  <class name="MuonODEBoard"       />
+  <class name="MuonStationCabling" />
+
+  <class pattern="std::vector<*>"    contid="VECTOR" />
+  <class pattern="std::pair<*>"                      />
+  <class pattern="SmartRef<*>"                       />
+  <class pattern="SmartRefVector<*>" contid="VECTOR" />
+
+  <exclusion>
+    <class name="SolidPolycone::CmpZ" />
+    <class name="std::vector<MuonReadoutCond::_readoutParameter>" />
+    <class name="std::vector<MuonReadoutCond::_clus>"             />
+    <class name="std::pair<const std::basic_string<char>,std::basic_string<char> >" />
+    <class name="std::pair<const std::basic_string<char>,SmartRef<Condition> >" />
+    <class name="std::pair<const std::basic_string<char>,BasicParam*>" />
+    <class name="std::pair<const unsigned int,unsigned int>" />
+    <class name="std::pair<const unsigned int,bool>" />
+    <class name="std::pair<const double,double>" />
+    <class name="std::swap<const unsigned int,const unsigned int>" />
+    <class name="std::swap<const std::basic_string<char>,const std::basic_string<char> >" />
+<!--  
+    <class name="std::vector<DeMuonRegion::logMap_>"              />
+-->  
+ </exclusion>
+</lcgdict>

@@ -1,0 +1,14 @@
+package MuonKernel
+
+version v3r1
+
+branches cmt src MuonKernel doc 
+
+include_dirs $(MUONKERNELROOT)
+
+use LHCbKernel	v* Kernel
+
+library MuonKernelLib  ../src/*.cpp
+apply_pattern linker_library    library=MuonKernelLib
+
+

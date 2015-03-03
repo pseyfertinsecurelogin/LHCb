@@ -1,0 +1,332 @@
+! $Id: release.notes,v 1.123 2006-06-15 14:29:58 jonrob Exp $
+! Package     : Rich/RichKernel
+! Responsible : Chris Jones
+! Purpose     : General purpose RICH classes
+
+!======================= RichKernel v6r4 2006-06-15 =======================
+! 2006-06-13 - Chris Jones
+ - Update Boost memory pool allocator to use same scheme as in Gaudi.
+ - Update MC access tool interface
+
+! 2006-06-02 - Chris Jones
+ - Add fixes for compilation errors with gcc 3.4.5 on SLC4.
+
+!======================= RichKernel v6r3 2006-05-08 =======================
+! 2006-05-05 - Chris Jones
+ - Adapt to radiator name changes
+
+!======================= RichKernel v6r2 2006-03-23 =======================
+! 2006-03-23 - Marco Cattaneo
+ - Remove unneccessary GSL dependency, add explicit Boost dependency
+
+! 2006-03-22 - Chris Jones
+ - Remove now obsolete RichCondition interfaces
+
+! 2006-03-12 - Chris Jones
+ - Add missing includes for IAlgTool in tool interfaces
+
+!======================= RichKernel v6r1 2006-03-07 =======================
+! 2006-03-01 - Chris Jones
+ - Remove classes Rich1DTabFunc and Rich1DTabProperty, which have been
+   moved into RichDet to allow them to be used there without introducing a
+   dependency on RichKernel in RichDet.
+       (at least until a better solution can be found)
+ - Add new interface for pixel suppression tools
+
+! 2006-03-01 - Chris Jones
+ - remove obsolete methods from RichMCTruthTool
+ - Updates to DAQ interfaces
+ - Other minor updates
+
+! 2006-02-16 - Chris Jones
+ - Fixes to RichTrackSegment to work around problems with ROOT math
+ - Update MC truth tool interface
+
+! 2006-02-15 - Marco Cattaneo
+ - Add RichEvent directory for classes previously in RichEvent
+
+! 2006-02-14 - Chris Jones
+ - Add a fix so derived classes do not need to load Tool registry simply because
+   they were in debug mode.
+
+! 2006-02-09 - Christopher Rob Jones
+ - Add IRich1AerogelMonitor for aerogel updates in RichCondition
+
+! 2006-02-06 - Chris Jones
+ - remove IRichDetNumberingTool interface
+
+! 2006-02-02 - Chris Jones
+ - Quick work around for new RichDet. Will be superseded soon by a proper update.
+
+! 2006-02-01 - Marco Clemencic
+ - Removed forward declaration to TimePoint.
+
+!======================= RichKernel v6r0 2006-01-17 =======================
+! 2006-01-23 - Chris Jones
+ - New updates for Rich DAQ
+ - Various fixes for reconstruction compatibility with LHCb v20r0
+
+! 2006-01-17 - Chris Jones
+ - Remove RichParticleIDType enum files (now in LHCbKernel)
+
+! 2005-12-19 - Marco Cattaneo
+ - Move RichTraceMode.h to LHCbKernel
+
+! 2005-12-17 - Chris Jones
+ - Move interfaces IRichPhotonReconstruction and IRichTrSegMaker to RichRecBase
+ - Update interfaces for new RichGeomPhoton and RichTrackSegment
+
+! 2005-12-13 - Chris Jones
+ - Update DAQ related definitions
+ - Switch RichHashMap to using Gaudi provided hash map and move into  
+   Rich namespace
+
+! 2005-12-12 - Antonis Papanestis
+ - Replace CLHEP geometry with Mathcore
+
+! 2005-11-28 - Chris Jones
+ - Update sorting algorithm for RichSmartIDs
+
+!======================= RichKernel v5r6 2005-11-17 =======================
+! 2005-11-15 - Chris Jones
+ - Update to use new numbering schemes from Conditions.
+  + Replace tools IRichHPDInfoTool and IRichHPDToLevel1Tool with single tool
+    IRichDetNumberingTool
+  + Update ID objects in RichDAQDefinitions.h
+ - Add "autopointer" like class RichObjPtn
+ - Improvements to RichTrackSegment creator interface
+
+! 2005-10-31 - Chris Jones
+ - Split up "Moni" base classes into Tuple and Histo versions, to allow
+   histogram creation without havinf to inherit Tuple stuff as well.
+ - Add RichHistoID class
+
+! 2005-10-25 - Chris Jones
+ - Improve doxygen comments for RichCondition tools plus tidy up 
+   their interfaces a little more
+
+! 2005-10-17 - Chris Jones
+ - Update IRichMCTruthTool interface with new methods
+
+! 2005-10-17 - Chris Jones
+ - Update acquireTool method to allow side-stepping of the tool registry
+   for some "common" tools
+
+! 2005-10-13 - Chris Jones
+ - Update Rich tool and algorithm base classes to share a common code
+   base using templated inheritance
+
+! 2005-10-07 - Chris Jones
+ - Add method to Rich1DTabFunc to return the number of (x,y) data points
+
+! 2005-09-30 - S Easo
+ - Add interfaces for RichConditions tools
+
+! 2005-09-23 - Antonis Papanestis
+ - changes to IRichMirrorSegFinder to include secondary (spherical) mirrors
+
+! 2005-07-14 - Chris Jones
+ - Updates to Level1 ID tool to give access to all valid Level1 IDs
+
+!======================= RichKernel v5r5 2005-06-21 =======================
+! 2005-06-21 - Chris Jones
+ - Technical changes to help reconstruction run simultaneously offline
+   and HLT reconstructions
+
+! 2005-06-17 - Chris Jones
+ - Changes to RichMirrorSegFinder interface
+
+! 2005-05-13 - Chris Jones
+ - Adapt to new RichDAQ
+
+! 2005-04-16 - Chris Jones
+ - Add debug proprocessor flag.
+
+!======================= RichKernel v5r4p1 2005-05-24 =======================
+! 2005-05-24 - Marco Cattaneo
+ - Remove explicit DetDesc version from requirements
+
+!======================= RichKernel v5r4 2005-03-08 =======================
+! 2005-02-20 - Chris Jones
+ - Add new methods to algorithm and tool base classes to access the TES
+   location for a given DataObject.
+
+!======================= RichKernel v5r3 2005-02-08 =======================
+! 2005-02-08 - Marco Cattaneo
+ - Adapt to backward incompatible changes in RichSmartID accessors, due to 
+   GaudiObjDesc v7r*
+
+!======================= RichKernel v5r2 2005-01-25 =======================
+! 2005-01-25 - Marco Cattaneo
+ - Backwards compatible fixes for CLHEP 1.9
+
+! 2005-01-13 - Chris Jones
+ - Add base classes for monitoring tools and algorithms
+
+! 2005-01-07 - Chris Jones
+ - Add interfaces for new DAQ tools
+ - Change interface to RichSmartID tool
+ - Add various new files
+
+!======================= RichKernel v5r1 2004-11-16 =======================
+! 2004-10-30 - Chris Jones
+ - Add interface for RawBuffer decoding tool
+
+! 2004-10-21 - Antonis Papanestis
+ - Added method traceBackFromDetector to IRichRayTracing
+
+! 2004-10-20 - Chris Jones
+ - Update Rich1DTabProperty to handle the case when a null TabulatedProperty
+   pointer is passed.
+
+! 2004-10-13 - Chris Jones
+ - New methods to IRichMCTruthTool
+
+! 2004-09-23 - Marco Cattaneo
+ - BoostArray.h: Add an include to compile with Gaudi v15r2
+
+! 2004-08-17 - Chris Jones
+ - Add new method to RichMCTruthTool interface
+
+! 2004-07-27 - Chris Jones
+ - Fix typo in class name + minor updates
+
+! 2004-07-26 - Chris Jones
+ - Various improvements to doxygen comments
+
+!======================= RichKernel v5r0 2004-07-19 =======================
+! 2004-07-19 - Marco Cattaneo
+ - Remove explicit dependency on LHCbKernel (taken from DetDesc)
+ - Pick up GaudiTool.h from GaudiAlg, for Gaudi v15
+
+! 2004-07-15 - Chris Jones
+ - More improvements to doxygen comments
+
+! 2004-07-12 - Chris Jones
+ - Doxygen improvements + add debug printout to base classes
+
+! 2004-07-02 - Chris Jones
+ - Minor improvements to RichTraceMode
+   - Explicit initialisation of modes in default constructor
+   - Explicit copy constructor
+   - Single return state for inline methods
+ - Make RichTraceMode a const variable in IRichRayTracing interface
+
+! 2004-07-01 - Antonis Papanestis
+ - added RichTraceMode and updated IRichRayTracing to use it
+
+! 2004-06-29 - Chris Jones
+ - Add initialisation status test to GSL interpolators
+ - Correct comment in IRichMirrorSegFinder.h
+
+! 2004-06-18 - Chris Jones
+ - Clean up interfaces to remove the need for explicit includes from
+   RichEvent or RichDet. (One RichDet include remains in IRichRayTracing.h, 
+   which will be removed in an upcoming update)
+
+! 2004-06-16 - Marco Cattaneo
+ - Add interfaces previously in RichDetTools and RichMCTools
+ - Add base classes previously in RichUtils
+   Above changes introduce dependencies on GSL, GaudiAlg, DetDesc
+ - Remove dummy includes RichDetectorType.h, RichRadiatorType.h, RichSide.h,
+   to use directly the versions in LHCbKernel 
+
+!======================= RichKernel v4r6 2004-06-30 =======================
+! 2004-06-03 - Chris Jones
+ - Remove default initialisation value for RichHypoData, to fix windows problems.
+   Users must now always specify an initialisation value in the constructor and
+   reset functions (no bad thing...)
+ - Increment major release number due to backwards incompatible change (above).
+
+!======================= RichKernel v4r5 2004-03-18 =======================
+! 2004-03-14 - Chris Jones
+ - Improvements to RichHypoData
+
+!======================= RichKernel v4r4 2004-02-04 =======================
+! 2004-01-30 - Chris Jones
+ - Exported RichDetectorType.h and RichDetectorType.h to Kernel/LHCbKernel
+   due to changes in RichSmartID
+
+!======================= RichKernel v4r3 2003-12-16 =======================
+! 2003-12-16 - Marco Cattaneo
+ - Move to Gaudi v14 (use LHCbKernel v4r* in requirements)
+
+!======================= RichKernel v4r2 2003-12-08 =======================
+! 2003-12-08 - Marco Cattaneo
+ - Move to Gaudi v13 (use LHCbKernel v3r* in requirements)
+ - Remove RichKernel/MessageSvcStl.h (now in GaudiKernel/MsgStream.h)
+ - Remove RichKernel/SerializeStl.h (methods moved to LHCbKernel/SerializeStl.h)
+
+!======================= RichKernel v4r1 2003-11-24 =======================
+! 2003-11-23 - Chris Jones
+ - Remove RichSmartID files. Now in Kernel/LHCbKernel
+
+!======================= RichKernel v4r0 2003-11-03 =======================
+! 2003-11-03 - Marco Cattaneo
+ - Fixes to comments to suppress doxygen warnings
+
+! 2003-10-30 - Chris Jones
+ - Upgrade RichSmartID class. NB - Not backward compatible
+ - Upgrade RichHypoData with more robust data validity test
+
+!======================= RichKernel v3r3 2003-10-14 =======================
+! 2003-10-13 - Chris Jones
+ - Add minor bug fix to RichHypoData
+
+!======================= RichKernel v3r2 2003-10-06 =======================
+! 2003-07-06 - Chris Jones
+ - Add container class for hypothesis data using boost::array class
+ - Remove explicit HPD references
+
+!======================= RichKernel v3r1 2003-07-03 =======================
+! 2003-06-30 - Chris Jones
+ - Improvements to doxygen documentation comments
+ - Remove unused RichPIDKey.h
+ - Add MessageSvcStl.h
+
+!======================= RichKernel v3r0 2003-04-15 =======================
+! 2003-04-15 - Chris Jones
+ - fixes to keep windows happy
+
+! 2003-03-13 - Chris Jones
+ - Various updates for OO Reco
+
+!=================== RichKernel v2r2 2002-12-04 ======================
+! 2002-12-04 - Florence Ranjard
+ - requirements - use new versions
+
+! ==================== RichKernel v2r1 2002-12-02 =====================
+! 2002-12-02 Chris Jones
+ - Bug fixes
+
+! ==================== RichKernel v2r0 2002-11-18 =====================
+! 2002-11-14 - C Jones
+ - Updates for new OO reco code
+
+! ==================== RichKernel v1r3 2002-11-07 =====================
+! 2002-10-21 - C Jones
+ - Make some methods public to allow more general setting of properties.
+ - Add some private serialize methods for STL
+
+! ==================== RichKernel v1r2 2002-06-18 =====================
+! 2002-06-18 C.Jones
+  - Reshuffle enumerations into seperate files for ease of maintainence
+  - Add additional functionality to ParticleIDType
+  - Merge Rich1Side and Rich2Side into single Side enum 
+    (Rich1Side and Rich2Side files retained for the moment for backwards 
+     compaticbility)
+
+! ==================== RichKernel v1r1 2002-06-14 =====================
+! 2002-06-14  C. Jones
+  - Tidy up some of the enumerations
+  - Add string conversion functions for enumerations
+  - Move RichRecPhotonKey into reconstruction package
+  - Remove various unused relic header files
+
+>>>>>>>>>>>> RichKernel v1r0 <<<<<<<<<<<<<
+! 20020404 (C.Jones)
+  - First import into CVS.
+
+! 20021704
+  - Update RichSmartID files.
+

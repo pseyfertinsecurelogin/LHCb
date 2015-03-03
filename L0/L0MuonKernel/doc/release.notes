@@ -1,0 +1,92 @@
+!-----------------------------------------------------------------------------
+! Package     : L0/L0MuonKernel
+! Responsible : Luisanna Tocco, Andrei Tsaregorodtsev
+! Purpose     : 
+!-----------------------------------------------------------------------------
+
+!========================= L0MuonKernel v5r0 2006-03-06 ====================
+! 2006-03-06 - Marco Cattaneo
+ - Fixes to compile on Windows
+
+! 2006-03-06 - Julien Cogan
+ - Implement the methods to write and decode the L0Buffers and the RawBuffers.
+ - Externalize the ptcalc and xyFromPad methods of Tower.
+ - BUG FIX; in L0MUnit, release objects created with the XMLString::transcode
+   of xerces.
+! 2006-03-03 - Julien Cogan
+ - Cleaning in L0MuonKernelFromXML: remove commented print out.
+! 2006-02-10 - Julien Cogan
+ - Write the L0Buffers
+   o add a new base class L0BufferUnit (methods to write buffer into a file)
+   o implement inheritance relations:
+     L0BufferCtrlUnit, L0BufferSlaveUnit, L0BufferBCSUnit, LOBufferProcUnit
+     now inherites from L0BufferUnit
+   o implement the execute method for the L0BufferXXXUnit to build their 
+     L0Buffers
+!========================= L0MuonKernel v5r0 2006-01-19 ====================
+! 2006-01-18 - Julien Cogan
+ - Adapt to event model changes and LHCb namespace
+
+!========================= L0MuonKernel v4r0 2005-12-19 ====================
+! 2005-12-18 - Julien Cogan
+ - Decouple the building of the MuonKernel.xml (done once) and the reading
+   (done at running time); remove dependance in L0mConf; the building 
+   functionnality has been externalized in a new package: L0MuonKernelBuild  
+! 2005-12-15 - Julien Cogan
+ - Candidates are put in registers to be passed between units 
+ - Add the possibility to write L0 & RAW buffers
+ - Simplify the candidate search inside towers
+
+!========================= L0MuonKernel v3r0p1 2005-04-15 ==================
+! 2005-04-15 - Marco Cattaneo
+ - Fix some doxygen warnings
+
+! 2005-04-14 A. Tsaregorodtsev
+ - Fix in the L0mProcuUnit::l0bufferTileList(...) to always define all the 
+   elements in the returned list of L0MTile's.
+
+!========================== L0MuonKernel v3r0 2005-04-05 ===================
+! 2005-04-05 - Marco Cattaneo
+ - Fix some compiler and doxygen warnings
+
+! 2005-04-04 A. Tsaregorodtsev
+ - Many changes to make L0MuonKernel not dependant on Gaudi framework
+ - Code rearrangements and optimizations of the performance
+
+!========================== L0MuonKernel v2r4 2005-01-18 ===================
+! 2005-01-03 - P. Koppenburg
+ - Deleted tags v2r4 v2r5 and v2r6
+ - cmt/requirements
+   . increment to version v2r4. 
+ 
+! 2004-12-21 - Luisanna Tocco
+ - Comments for doxygen documentation
+ - Cleaning for compilation warnings (remaining warnings concerns L0mConf)
+ - Some obsolete methods eliminated in CablingUnit
+ - Dependency from Event/L0Muon.h eliminated 
+
+!======================= L0MuonKernel v2r3 2004-12-01 ========================
+! 2004-12-01 - Luisanna Tocco
+ - In CandidateTower, setOrderedBit corrected to include y Foi=0
+
+!======================= L0MuonKernel v2r2 2004-09-28 ========================
+! 2004-09-28 - Luisanna Tocco
+ - bug fixed in getPadIndex for stations 4 and 5
+ - add methods and flag to search candidates without M1 (for trigger studies)
+ - add methods and flag to write L0 Buffers (files ascii)
+ - modified classes BuildL0BufferUnit and BestCandidateSelectionUnit
+ - delete some obsolete methods
+
+!======================= L0MuonKernel v2r1p1 2004-07-12 ========================
+! 2004-03-24 - Luisanna Tocco
+ - bug fixed in data flow management (XBan, YCorner, YBand):
+	 Modified files: L0mProcUnit, FormattingUnit, CablingUnit, TileRegister
+ - Added functions for analysis 
+
+!======================= L0MuonKernel v1r1 2004-03-24 ========================
+! 2004-03-24 - Luisanna Tocco
+ - Fix a compiler warning
+
+!======================= L0MuonKernel v1r0 2004-03-15 ========================
+! 2004-03-15 - Marco Cattaneo
+ - First public LHCb release

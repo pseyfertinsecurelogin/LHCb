@@ -1,0 +1,54 @@
+!-----------------------------------------------------------------------------
+! Package     : Event/DigiEvent
+! Responsible : Marco Cattaneo
+! Purpose     : Event model classes related to Digitization
+!-----------------------------------------------------------------------------
+
+!========================= DigiEvent v1r2 2006-05-10 =========================
+! 2006-05-10 - Marco Cattaneo
+ - Add Boost dependency, needed for Boost allocators in event model
+
+!========================= DigiEvent v1r1 2006-03-22 =========================
+! 2006-03-20 - M.Needham
+ - Bug fix in STCluster.xml
+
+! 2006-03-19 - Tomasz Szumlak
+ - Bug fix in VeloCluster.xml
+
+! 2006-03-15 M Needham
+ - Functionality for fast container find added SiLiteClusters (typedefs)
+
+! 2006-03-14 - Kurt Rinnert
+ - fixed bug in VeloLiteCluster.xml, the insterstrip position was encoded
+  using only two bits, instead of three
+
+! 2006-03-13 - Jeroen van Tilburg
+ - SiLiteCluster.ent: Added STLiteClusters typedef for FastContainer.
+
+!========================= DigiEvent v1r0 2006-03-06 =========================
+! 2006-03-06 - Marco Cattaneo
+ - Add Kernel/IVeloCluster2VeloDigitTool.h interface
+
+! 2006-02-23 - Olivier Deschamps
+ - add CaloDigitLocation::Default in CaloDigit.xml
+
+! 2006-02-21 - Tomasz Szumlak
+ - noise data member has been removed from VeloDigit.xml as well as setters,
+   getters and signalToNoise() methods
+
+! 2006-02-21 - Marco Cattaneo
+ - Change name of default location for Velo classes to ::Default
+! 2006-02-17 - Chris Parkes
+ - new VeloCluster, VeloLiteCluster added 
+
+! 2006-02-17 - Marco Cattaneo
+ - Fix various default locations to all follow the same convention
+
+! 2006-02-16 M Needham
+ - More bug fixes in the light cluster class
+ - also allow the velo to have 3 bits precision
+ - Bug fix in STCluster.xml (< instead of >)
+
+! 2006-02-15 - Marco Cattaneo
+ - First version, from migration of classes from VeloEvent, STEvent, OTEvent,
+   RichEvent, CaloEvent, MuonEvent

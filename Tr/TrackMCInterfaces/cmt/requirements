@@ -1,0 +1,23 @@
+#============================================================================
+# Created    : 2006-02-16
+# Maintainer : Eduardo Rodrigues
+#
+# Documentation on the requirement file can be found at
+# http://cern.ch/lhcb-comp/Support/html/new_structure.pdf
+#============================================================================
+package           TrackMCInterfaces
+version           v1r0
+
+#============================================================================
+# This template is an example for a standard Algorithm package
+#
+# Structure, i.e. directories to process. 
+#============================================================================
+branches          cmt doc TrackMCInterfaces
+
+# =============== include directories =======================================
+include_dirs      $(TRACKMCINTERFACESROOT)
+
+# =============== dependencies ==============================================
+use LHCbDefinitions  v* Kernel
+use GaudiKernel      v*

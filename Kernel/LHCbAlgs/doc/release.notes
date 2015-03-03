@@ -1,0 +1,90 @@
+!-----------------------------------------------------------------------------
+! Package     : Kernel/LHCbAlgs
+! Responsible : Marco Cattaneo
+! Purpose     : General purpose algorithms and tools for LHCb
+!-----------------------------------------------------------------------------
+
+!======================== LHCbAlgs v2r0 2006-03-09 =======================
+! 2006-03-09 - Marco Cattaneo
+ - Fix uninitialized variable in MemoryTool
+ - Remove obsolete InitRndmTool, use methods in LbAppInit base class instead
+
+! 2005-12-14 - Marco Cattaneo
+ - Remove LbAppInit. Replaced by two tools: InitRndmTool, MemoryTool
+
+!======================== LHCbAlgs v1r9 2005-09-06 =======================
+! 2005-09-06 - Marco Cattaneo
+ - Remove dependency on LHCbInterfaces and pick up Kernel/INormalizeTool.h from
+   it new location in LHCbKernel
+
+!======================== LHCbAlgs v1r8 2005-07-15 =======================
+! 2005-07-15 - Marco Cattaneo
+ - Add EventNodeKiller algorithm to kill nodes in the event data store. Useful if
+   you want to make the application "forget" about the previous history of the
+
+!======================== LHCbAlgs v1r7 2005-06-23 =======================
+! 2005-06-23 - Marco Cattaneo
+ - LbAppInit is now a GaudiHistoAlg, property "HistoProduce" replaces "doHistos"
+ - Split memory histogram into two, both with "HistoSize" bins
+   . hID=2: one entry per event for first HistoSize events
+   . hID=3: one entry every HistoSize events, starting at event 1
+
+!======================== LHCbAlgs v1r6 2005-05-03 =======================
+! 2005-05-03 - Marco Cattaneo
+ - Remove TESFilter algorithm, moved to EventUtils
+
+!======================== LHCbAlgs v1r5 2005-04-19 =======================
+! 2005-04-19 - Marco Cattaneo
+ - Remove printout of program name and version, now done in ApplicationMgr
+
+!======================== LHCbAlgs v1r4 2005-03-18 =======================
+! 2005-03-18 - Marco Cattaneo
+ - Add "PreloadGeometry" option to LbAppInit. Default is false
+
+!======================= LHCbAlgs v1r3p1 2005-01-28 =======================
+! 2005-01-28 - Marco Cattaneo
+ - Remove an unnecessary variable from LbAppInit
+ - Fix some doxygen warnings
+
+!======================== LHCbAlgs v1r3 2004-11-30 ========================
+! 2004-11-30 - Marco Cattaneo
+ - LbAppInit:
+   . Replace SmartDataPtr access to ProcStatus, use GaudiAlgorithms methods
+
+!======================== LHCbAlgs v1r2 2004-11-11 ========================
+! 2004-11-11 - Marco Cattaneo
+ - LbAppInit: 
+   . Remove use of timing tool at initilisation, as normalisation of timing is
+     now done in SequencerTimerTool
+   . Improve initialisation of random numbers: now the run and event number are
+     given as first and second seeds to setSeeds, as well as being used in the
+     hash algorithm to generate a third seed. The previous behaviour can be 
+     recovered by seting the "SingleSeed" option to true. In addition, one can
+     skip some random numbers before every event, set by the "SkipFactor" job
+     option (default value = 0)
+
+!======================= LHCbAlgs v1r1p1 2004-10-26 =======================
+! 2004-10-26 - Marco Cattaneo
+ - LbAppInit: bug fix, if creating the event header, it contained the run number
+              instead of the event number, and 0 for the run number
+
+!======================== LHCbAlgs v1r1 2004-09-06 ========================
+! 2004-09-17 - Marco Cattaneo
+ - Add TESCheck algorithm from Vanya, to preload and/or check existence of
+   objects in the transient store
+
+! 2004-09-06 - Marco Cattaneo
+ - LbAppInit: Protect against undefined APPVERSION environment variable
+
+! 2004-07-30 - P. Koppenburg
+ - LbAppInit: Print memory usage at each event in debug() OutputLevel
+    
+!======================== LHCbAlgs v1r0 2004-07-21 ========================
+! 2004-07-21 - Marco Cattaneo
+ - First version:
+ . TimingTool:   provides a timing normalization       (previously in LHCbTools)
+ . ProcessPhase: phase for data processing application (previously in LHCbKernel)
+ . TESFilter:    removes selected data from TES        (previously in BrunelAlgs)
+ . LbAppInit:    common initialisation algorithm for Gauss,Boole,Brunel
+ . (StoreExplorer algorithm, available in a pre-release version of this
+    package, has been removed, use instead StoreExplorerAlg from GaudiSvc)

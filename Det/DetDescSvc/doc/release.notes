@@ -1,0 +1,42 @@
+! =============================================================================
+! $Id: release.notes,v 1.10 2006-04-27 14:58:30 cattanem Exp $ 
+! =============================================================================
+! package DetDescSvc
+! package manager : Marco Clemencic, Juan Palacios ?
+! purpose:          Component library for Detector Description Services
+! =============================================================================
+
+!========================= DetDescSvc v1r4 2006-04-27 =========================
+! 2006-04-13 - Marco Clemencic
+ - Added a couple of methods using a mutex_lock to avoid different threads to
+  step on each other toes. (the update loop inside newEvent() must not be
+  disturbed by another thread)
+
+!========================= DetDescSvc v1r3 2006-02-01 =========================
+! 2006-02-01 - Marco Clemencic
+ - Updated to Gaudi v18r2 (use Gaudi::Time instead of ITime+TimePoint)
+
+!========================= DetDescSvc v1r2 2006-01-20 =========================
+! 2006-01-12 - Marco Clemencic
+ ### requires GaudiKernel >= v20r2 ###
+ - UpdateManagerSvc improved: now it can set a user provided pointer to the
+   condition object
+ - IUpdateManagerSvc.h moved to GaudiKernel
+ - New exception UpdateManagerException introduced. It is thrown when the
+   registration fails. As a consequence, IUpdateManagerSvc::registerCondition
+   methods do not return anymore a StatusCode.
+
+!========================= DetDescSvc v1r1 2005-12-13 =========================
+! 2005-12-13 - Marco Clemencic
+ - Improved debug messages of the UpdateMgrSvc.
+
+! 2005-12-07 - Marco Cattaneo
+ - Migrate TransportSvc to MathCore
+ - Add UpdateMgrSvc, EventClockSvc (moved from DetDesc)
+
+!========================= DetDescSvc v1r0 2005-12-07 =========================
+! 2005-12-07 - M. Needham 
+ - This is a new package for the LHCb detector description services.
+ - Moved transportSvc from DetDesc
+   - Removed calls to MsgStream in event loop
+   - Changed std::copy to vector insert

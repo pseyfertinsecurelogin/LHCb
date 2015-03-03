@@ -1,0 +1,43 @@
+! $Id: release.notes,v 1.12 2005-12-19 09:25:21 cattanem Exp $
+! =============================================================================
+! Package     : CaloDetXmlCnv
+! Responsible : Vanya Belyaev Ivan.Belyaev@itep.ru
+! =============================================================================
+
+!===================== CaloDetXmlCnv v2r3p2 2005-12-19 =====================
+! 2005-12-16 - Olivier Deschamps
+ - cmt/requirements
+   dependency to last version for CaloDet and DetDescCnv
+
+!===================== CaloDetXmlCnv v2r3p1 2003-11-18 =====================
+! 2003-11-18 - Guy Barrand
+ - use macro in CaloDetXmlCnv_dll.cpp, to fix compilation on Mac OS X
+
+!====================== CaloDetXmlCnv v2r3 2003-06-17 ======================
+! 2003-06-16 - Sebastien Ponce
+ - use new package DetDescCnv
+
+!===================== CaloDetXmlCnv v2r2 2002-12-04 ======================
+! 2002-11-29 - Ivan Belyaev
+ - cmt/requirements          version update 
+
+! 2002-11-21 - Florence Ranjard
+ - requirements - uses CaloDet v6r*
+
+!===================== CaloDetXmlCnv v2r1 2002-11-14 ==========================
+! 2002-11-14 - Ivan Belyaev
+ - version update (to be build with CaloDet v5r2)
+
+!===================== CaloDetXmlCnv v2r0 2002-07-09 ==========================
+! 2002-06-15 - Ivan Belyaev
+ - version update (to be build with ClaoDet v5r*)
+
+! 2002-06-15 - Ivan Belyaev
+ - version update (to be build with CaloDet v4r1)
+
+
+!===================== CaloDetXmlCnv v1r0 2002-03-28 ==========================
+! 28/03/2002  - v1r0  - Vanya Belyaev
+  New package, XML converters for Calorimeter Detector Model are moved 
+               from CaloDet package    
+

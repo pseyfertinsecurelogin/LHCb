@@ -1,0 +1,85 @@
+Package MuonKernel
+Package manager: A.Tsaregorodtsev
+
+!======================= MuonKernel v3r1 2006-03-22 =======================
+! 2006-03-22 - Julien Cogan
+ - Remove python wrappping. The binding is now in the standalone package
+   MuonKernelStandalone
+
+! 2006-03-03 - Julien Cogan
+ - Python wrapper compatible with the LHCb v20r0 and global LHCb namespace.
+
+!======================= MuonKernel v3r0 2006-01-16 =======================
+! 2005-12-16 - Alessia Satta
+ - Compatible with the LHCb v20r0 and global LHCb namespace.
+   MuonTileID is now part of LHCbKernel.
+   
+! 2005-10-25 - Alessia Satta
+ - Compact the MuonTileID in 28 bits to allow the use ad LHCbID. 
+   The Layer and Reaodut bits have been removed with  
+   the corresponding accessors methods.
+
+!======================= MuonKernel v2r7 2005-04-05 =======================
+! 2005-04-05 - Marco Cattaneo
+ - MuonTileID.xml is now standalone, removed unneccessary MuonKernel.xml
+ - Removed obsolete GaudiObjDesc flags from requirements. 
+
+! 2004-04-04 - Andrei Tsaregorodtsev
+ - Added toString() method and constructor taking a string to MuonTileID
+   class ( MuonTileID.xml ) 
+
+!======================= MuonKernel v2r6 2004-07-19 =======================
+! 2004-07-19 - Marco Cattaneo
+ - Move to Gaudi v15 (use LHCbKernel v5r* in requirements)
+
+!======================= MuonKernel v2r5 2003-12-16 =======================
+! 2003-12-16 - Marco Cattaneo
+ - Move to Gaudi v14 (use GaudiKernel v15r* in requirements)
+ - MuonTileID.h removed from CVS, now created by MuonTileID.xml
+
+!======================= MuonKernel v2r4 2003-12-09 =======================
+! 2003-12-09 - Marco Cattaneo
+ - Move to Gaudi v13 (use GaudiKernel v14r* in requirements)
+ - Fix some doxygen warnings
+ - Fixes to std::max for vc71
+
+!======================= MuonKernel v2r3 2003-06-17 =======================
+! 2003-06-16 - Sebastien Ponce
+ - use more recent GaudiKernel
+ - fixes for gcc 3.2/3.3
+
+!=================== MuonKernel v2r2 2002-12-05 =======================
+! 2002-09-24 - Florence Ranjard
+  requirements - use GaudiKernel v13r*
+
+====================v2r1==============================================
+! 20020506 Andrei Tsaregorodtsev
+  Various fixes to suit Muon and L0Muon requirements as well as to
+  satisfy Python version of the package:
+  - unsigned int for all the parameters describing layouts;
+  - (0,0) layout is now possible to denote absence of a layout
+    in a given region;
+  - no virtual inheritance from IMuonLayout;
+  - dropped IMuonTile interface;
+  - MuonTileID: set functions are now public; deltaX and Y functions added;
+
+>>>>>>>>>>>>>>>>> MuonKernel v2r0 <<<<<<<<<<<<<<<<<
+! 20020418 M.Cattaneo
+  - Use GaudiKernel v12r* (Gaudi v10)
+
+! 20020228 - MuonKernel v1r0 Andrei Tsaregorodtsev
+
+  Muon/MuonKernel v1 can be compiled in the standalone mode (without
+  Gaudi legacy) by excluding MsgStream and alike with conditional
+  compiling (-DMUONKERNEL_LOCAL). The requirements contain "standalone" 
+  tag now. To compile a standalone version: >gmake tag=standalone . It might
+  be necessary to rm *.make* before that if old make files were
+  made for non-standalone compilation.
+
+! 20020127 - MuonKernel v1 Andrei Tsaregorodtsev
+
+  Initial version of the package containing basic Muon system classes 
+  to manage the Muon system entities bookkeeping.
+  
+  The package builds the library as well as "test" application. The
+  latter serves mostly as an example of the use.

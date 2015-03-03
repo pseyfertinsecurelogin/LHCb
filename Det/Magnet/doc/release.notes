@@ -1,0 +1,100 @@
+!-----------------------------------------------------------------------------
+! Package     : Det/Magnet
+! Responsible : 
+! Purpose     : Provides magnetic field map and Bdl tools
+!-----------------------------------------------------------------------------
+
+!====================== Magnet v3r1 2006-01-20 ===============================
+! 2006-01-20 - Marco Cattaneo
+ - IMagneticFieldSvc.h is now in GaudiKernel, since GAUDI v18r1
+
+!====================== Magnet v3r0 2005-12-08 ===============================
+! 2005-12-08 - Marco Cattaneo
+ - Migrate to GaudiAlgorithm
+ - Migrate to MathCore
+ - Migrate to Root for test Ntuple
+
+!====================== Magnet v2r9 2005-09-06 ===============================
+! 2005-09-06 - Marco Cattaneo
+ - Add BdlTool and BIntegrator tools, moved from duplicate implementations in
+   TrgVeloTT, PatVeloTT, TrTools, TrackTools
+
+!====================== Magnet v2r8p1 2005-08-30 ==========================
+! 2005-08-29 M. Needham
+! Use [] instead of () everywhere in B field calculations
+
+!====================== Magnet v2r8 2005-01-20 ==========================
+! 2005-01-20 - Marco Cattaneo
+ - Fixes for CLHEP 1.9
+
+!====================== Magnet v2r7 2004-06-29 ==========================
+! 2004-07-19 - Marco Cattaneo
+ - Updates for Gaudi v15:
+   . Explicit use if CLHEP in requirements
+   . Use InterfaceID instead of IID in MagneticFieldSvc
+
+! 2004-04-28 M. Needham
+ - Clean up fieldGrid() - Avoid temporary copying to arrays
+                        - Initialize min/max coords of field grid once only
+
+!====================== Magnet v2r6 2004-04-07 ==========================
+! 2004-04-07 - Marco Cattaneo
+ - Use field045 by default
+ - Use mm and gauss as internal units, to avoid unit conversions for each
+   call to fieldVector() (as suggested by M.Needham)
+ - Add MagFieldReader, used by TestMagnet test application (from G.Corti)
+
+!====================== Magnet v2r5 2004-03-18 ==========================
+! 2004-03-18 - Florence RANJARD
+ - remove the use FieldMap v4r*
+   the use of FieldMap must be done in the application with an explicit
+   version number.
+
+!====================== Magnet v2r4 2002-12-16 ===========================
+! 2003-12-16 - Marco Cattaneo
+ - Move to Gaudi v14 (use GaudiKernel v15r* in requirements)
+
+!====================== Magnet v2r3 2002-12-08 ===========================
+! 2003-12-08 - Marco Cattaneo
+ - Move to Gaudi v13 (use GaudiKernel v14r* in requirements)
+
+!====================== Magnet v2r2 2002-10-01 ===========================
+! 2003-10-01 - Marco Cattaneo
+ - Get field map from FieldMap package (instead of LHCBDBASE)
+ - Changed default map to field043 (from field044)
+
+!====================== Magnet v2r1 2002-12-04 ===========================
+! 2002-09-26 - Florence Ranjard
+ - -requirements - use GaudiKernel v13r*
+
+!======================= Magnet v2r0 2002-07-16 =============================
+! 2002-07-16 - Florence Ranjard
+ - requirements - use CLHEP 1.8.0.0
+ - MagneticFieldSvc.cpp - read field044.cdf by default
+
+!======================== Magnet v1r1 update 2002-05-31 ======================
+! 2002-05-31 - Edgar De Oliveira
+ - Fix a Bug pointed by Rutger Hierck: When position y was set to zero
+   the service was returning zero for By component of the field, what is not 
+	 true.
+
+ - Some float were changed to double and the internal function fieldGrid
+   now returns void instead of a StatusCode that was not tested in any 
+   circunstance. 
+
+!======================== Magnet v1r0 release 2002-05-23 =====================
+! 2002-05-23 - Olivier Callot
+ - Fix a bug : When x>0, Y<0, the Y component of the field was inverted instead
+   of the x component !
+ - Added also a protection: Return a zero field when outside the field map.
+
+! 2002-05-21 - Edgar De Oliveira
+ - New version of MagneticFieldSvc (originally in SicbCnv).
+   This version does not make use anymore of SICB utilities.
+   The fortran interpolation of the grid has been replaced by a C++ 
+   translation of the code.
+   This version has as property the name of the field map file
+   (property "FieldMapFile"). The default name of the field map will be
+   $LHCBDASE/cdf/field043.cdf (if LHCBDBASE is defined) or field043.cdf
+   in the local directory.
+   The file is read in the initialize method of the service.

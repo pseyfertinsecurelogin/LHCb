@@ -1,0 +1,266 @@
+!-----------------------------------------------------------------------------
+! Package     : Det/RichDet
+! Responsible : Antonis Papanestis
+! Purpose     : interface to the xml description
+!-----------------------------------------------------------------------------
+
+!========================= RichDet v9r5 2006-06-15 =========================
+! 2006-06-07 - Antonis Papanestis
+ - Fixed bug in HPD demagnification
+
+! 2006-06-02 - Antonis Papanestis
+ - Added method detPointOnAnode in DeRichHPDPanel
+ - Minor change in DeRichGasRadiator
+
+!========================= RichDet v9r4 2006-05-17 =========================
+! 2006-05-17 - Marco Cattaneo
+ - Adapt to Gaudi::Units
+
+! 2006-04-13 - Chris Jones
+ - Add ALICE mode options to DAQ definitions
+
+! 2006-04-10 - Antonis Papanestis
+ - Changed DeRich to produce WARNING if alignment cond is not there, but not 
+   fail.
+ - Increased active radius on pixel chip in HPDPanel.
+
+! 2006-04-03 - Chris Jones
+ - Update to printing to suppress messaging during initialize, but for all
+   subsequent updates print a message.
+
+!========================= RichDet v9r3 2006-03-29 =========================
+! 2006-03-24 - Chris Jones
+ - Modifications to RichDAQDefinitions.h
+
+!========================= RichDet v9r2 2006-03-16 =========================
+! 2006-03-16 - Chris Jones
+ - Add some checks on the validity of the Rich1DTabProperty after they are
+   created
+ - Add a work around to the problem of Rich1DTabProperty objects being created
+   before UMS has updated the underlying tables. This problem will "go away"
+   once Rich1DTabProperty can automatically update itself on changes to the 
+   underlying tables
+ - Some speed optimisations for the RichRadIntersections class
+
+! 2006-03-15 - Antonis Papanestis
+ - Added classes DeRichGasRadiator and DeRichAerogelRadiator to handle 
+   the update of the gas and aerogel properties. Small changes in the
+   DeRich1/2 moving common code to the base class. Requires new xml.
+
+!========================= RichDet v9r1 2006-03-01 =========================
+! 2006-03-01 - Antonis Papanestis
+ - added Rich1DTabFunc, Rich1DTabProperty and RichRadIntersection
+ - new method intersections in DeRichRadiator
+
+! 2006-02-22 - Antonis Papanestis
+ - added functionality for sensitiveVolumeID
+
+! 2006-02-21 - Chris Jones
+ - Add loading of Rich1AerogelMonitor tool when creating aerogel DeRadiator
+
+! 2006-02-16 - Chris Jones
+ - Update DeRichSystem for improved treatment of inactive HPDs.
+   Requires update to XmlConditions
+
+! 2006-02-16 - Antonis Papanestis
+ - Added 2nd order demagnification in the smartID->detectionPoint.
+ - Fixed minor bug in readoutChannelList. Both in DeRichHPDPanel.
+
+! 2006-02-14 - Marco Cattaneo
+ - Add explicit Boost dependency to requirements
+
+! 2006-02-06 - Chris Jones
+ - Minor improvements to DeRichSystem (debug messaging etc.)
+
+! 2006-02-01 - Antonis Papanestis
+ - Added DeRichSystem and RichDAQDefinitions.h to handle the HPD numbering
+   schemes
+
+!========================= RichDet v9r0 2006-01-24 =========================
+! 2006-01-24 - Antonis Papanestis
+ - introduced alignment of mirrors in DeRich and DeRichSphMirror
+   requires XmlConditions
+
+! 2005-12-21 - Antonis Papanestis
+ - Redesign of the HPDPanel. Remove Rich1 & Rich2 HPDPanel classes
+
+! 2005-12-19 - Marco Cattaneo
+ - Pick up RichTraceMode.h from LHCbKernel and remove RichKernel dependency
+
+! 2005-12-14 - Antonis Papanestis
+ - Move from CLHEP to MathCore
+ - Drop DeRich1CdfHPDPanel and DeRichFlatMirror
+ - Modifications for new RichSmartID and HPD numbering.
+
+!========================= RichDet v8r5 2005-11-18 =========================
+! 2005-10-14 - Chris Jones
+ - Additions to radiator detector elements to load up RichCondition tools.
+   Needed to ensure these tools are initialised before the detector elememts.
+   Note - not entriely happy with this approach, but it seems to work. 
+   It is should be considered under review.
+
+! 2005-09-23 - Antonis Papanestis
+ - Modifications in DeRichSphMirror for the secondary spherical mirrors
+ - MultiSolid radiator for the new aerogel
+
+! 2005-07-13 - Antonis Papanestis
+ - Allow for different reflectivity for every mirror segment.
+
+!========================= RichDet v8r4 2005-05-24 =========================
+! 2005-05-13 - Marco Clemencic
+ - Use new ParamValidDataObject interface (DetDesc >= v15)
+
+!========================= RichDet v8r3 2005-03-04 =========================
+! 2005-02-22 - Chris Jones
+ - Add fix to DeRichHPDPanel to protect against invalid pixel information 
+   being set into RichSmartID
+ - Minor other improvements
+
+!========================= RichDet v8r2 2005-02-08 =========================
+! 2005-02-08 - Marco Cattaneo
+ - Adapt to changed names of RichSmartID bit field accessors of GaudiObjDesc
+   v7r*
+ - Remove obsolete CLHEPStreams.h include
+
+!========================= RichDet v8r1 2004-08-27 =========================
+! 2004-10-27 - Chris Jones
+ - Some additions minor changes to functions
+
+! 2004-10-20 - Chris Jones
+ - Tidy up inline and virtual functions (whilst solving a windows problem)
+
+! 2004-10-18 - Chris Jones
+ - Minor updates. Mainly addition of const here and there plus a few
+   changes to functions.
+
+! 2004-08-27 - Antonis Papanestis
+ - added access to tabulated properties to DeRich and DeRichRadiator
+
+! 2004-07-27 - Chris Jones
+ - Add doxygen file documentation
+
+!========================= RichDet v8r0 2004-07-01 =========================
+! 2004-07-22 - Antonis Papanestis
+ - Added documentation
+
+! 2004-07-01 - Antonis Papanestis
+ - added RichMirrorSegPosition for row/column info on mirrors provided 
+   by the DeRich class
+ - changed method signature in HPDPanel to use RichTraceMode
+ - minor improvements here and there
+
+!========================= RichDet v7r2 2004-06-17 =========================
+! 2004-06-10 - Chris Jones
+ - Increase RichKernel usage to v5r*
+
+!========================= RichDet v7r1 2004-04-18 =========================
+! 2004-04-18 - Chris Jones
+ - Remove cout error messages
+
+!========================= RichDet v7r0 2004-03-18 =========================
+! 2004-03-15 - Chris Jones
+ - Add standard locations in TDS to Detector element header files
+
+! 2004-02-16 - Antonis Papanestis
+ - Removed DeRichPDPanel
+ - Added local to global conversion for HPDPanel (globalPosition)
+
+!========================= RichDet v6r5 2004-02-04 =========================
+! 2004-01-28 - Antonis Papanestis
+ - Started the process of removing DeRichPDPanel, by removing the .cpp file
+
+! 2003-12-19 - Antonis Papanestis
+ - Added global to local conversion for HPD Panels
+
+!========================= RichDet v6r4 2003-12-08 =========================
+! 2003-12-08 - Marco Cattaneo
+ - Adapt requirements to pick up Gaudi v13
+
+!========================= RichDet v6r3 2003-12-03 =========================
+! 2003-12-03 - Antonis Papanestis
+ - Restructured the DeRichRadiator class, making it a base class and adding
+   DeRicgSingleSolid/DeRichMultiSolid Radiator
+
+!========================= RichDet v6r2 2003-11-21 =========================
+
+! 2003-11-23 - Chris Jones
+ - Some improvements for efficiency
+
+! 2003-11-21 - Antonis Papanestis
+ - Added DeRich.h as a base class for DeRich1 and DeRich2 with a new function
+   to return the side.
+ - Modified heavily RichHPDPanel, Rich1HPDPanel, Rich1CdfHPDPanel and 
+   Rich2HPDPanel so that all the common code in in the HPDPanel class
+ - Added a extra variable in the PDWindow method (with a default value) to
+   use a simple (and quick) algorith for getting the HPD.
+ - Removed support for MaPMTs
+ - Spherical mirrors can now return their radius.
+
+!========================= RichDet v6r1 2003-11-03 =========================
+! 2003-11-02 - Chris Jones
+ - A few speed improvements for digitisation
+ - Switch to new RichKernel v4r0
+
+! 2003-31-10 - Antonis Papanestis
+ - minor improvements.
+
+! 2003-10-14 - Antonis Papanestis
+ - added a new function to the DeRichPDPanel and moved some of the 
+   functionality of the traceToDetectorWithoutEff from RichDetTools to RichDet.
+ - improved the algorithm that finds the photoDetector within the Panel
+ - added some more debug information.
+
+!========================= RichDet v6r0 2003-08-29 =========================
+! 2003-08-29 - Antonis Papanestis
+ - added DeRichMaPMTPanel with classID = 12015. This will allow the use
+   of MaPMTs as well as HPDs.
+ - use of new names for user parameters in the xml.
+
+! 2003-09-08 - Antonis Papanestis
+ - added the Cdf member functions to the MaPMTPanel for the processing
+   of SICBMC Rich data.
+
+!========================= RichDet v5r0 2003-06-20 =========================
+! 2003-06-20 - Antonis Papanestis
+ - added DeRichPDPanel to allow for the introduction of MaPMTs.  All Panels
+   inherit from PDPanel.
+ - added function in DeRich(H)PDPanel to fill a vector with all 
+   possible RichSmartdIDs
+ - bug fixes
+
+!========================= RichDet v4r2 2003-06-17 =========================
+! 2003-06-16 - Sebastien Ponce
+ - use new package DetDescCnv
+ - fixes for gcc 3.2/3.3
+
+!========================= RichDet v4r1 2003-04-15 =========================
+! 2003-04-01 - Chris Jones
+ - Various bug fixes and optimisations for speed
+
+!======================== RichDet v4r0 2003-01-22 ========================
+! 2003-01-16 - Antonis Papanestis
+  class DeRichHPDPanel has been split in 3 different classes, with the original
+  class a common base class.
+  There are new classID numbers:
+  DeRich1HPDPanel = 12011
+  DeRich2HPDPanel = 12012
+  DeRich1CdfHPDPanel = 12013
+
+!======================== RichDet v3r2 2002-12-04 ========================
+! 2002-11-19 - Florence Ranjard
+ - requirements - use new versions
+
+!========================= RichDet v3r1 2002-11-18 ===========================
+! 2002-11-13 - Chris Jones
+ - Change RichKernel version to v2r*
+
+!========================= RichDet v3r0 2002-11-07 ===========================
+! 2002-11-04 - Antonis
+  changed the parameter names in DeRich1 & 2
+
+! 2002-10-30 - Antonis Papanestis
+  added class for Rich1, made a lot of bug fixes
+
+! 2002-07-16 - Antonis Papanestis
+ - the package has now a completely new structure.
+

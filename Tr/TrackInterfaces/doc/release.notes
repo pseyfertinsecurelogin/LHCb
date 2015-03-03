@@ -1,0 +1,155 @@
+!-----------------------------------------------------------------------------
+! Package     : Tr/TrackInterfaces
+! Responsible : Jose Hernando, Eduardo Rodrigues
+! Purpose     : package for tracking tools interfaces
+!-----------------------------------------------------------------------------
+
+!====================== TrackInterfaces v2r4 2006-06-16 ======================
+! 2006-06-15 - Gerhard Raven
+ - Make ITrackProjector::projectionMatrix return a TrackProjectionMatrix
+   instead of a TrackVector
+
+! 2006-06-14 - Eduardo Rodrigues
+ - simplified the ITrackCloneFinder interface
+
+! 2006-06-14 - Jeroen van Tilburg
+ - Added IAddTTClusterTool interface.
+
+! 2006-06-09 - Edwin Bos
+ - Added extrapolate-to-plane method, with a default tolerance of 10 microns
+
+! 2006-05-20 - M Needham
+ - Add the ITrackManipulator interface
+
+!====================== TrackInterfaces v2r3 2006-05-02 ======================
+! 2006-05-02 - Eduardo Rodrigues
+ - consistent const arguments and return types in TrajectoryProvider
+ - propagation of the renaming of the Track Event Model typedefs
+   (in TrackTypes.h in Kernel/LHCbDefinitions)
+
+!====================== TrackInterfaces v2r2 2006-04-06 ======================
+! 2006-04-06 - Jeroen van Tilburg
+ - Added errMeasure method to ITrackProjector. This is needed by the track fit.
+
+! 2006-04-05 - Edwin Bos
+ - updated to using auto_ptr
+
+!====================== TrackInterfaces v2r1 2006-03-16 ======================
+! 2006-03-16 - Marco Cattaneo
+ - Add IPatForwardTool interface
+
+!====================== TrackInterfaces v2r0 2006-03-06 ======================
+! 2006-03-06 - Eduardo Rodrigues
+ - moved to new package Tr/TrackMCInterfaces the interfaces accessing
+   Monte Carlo information: IIdealStateCreator.h, ITrackReconstructible.h,
+   ITrackCriteriaSelector.h
+
+! 2006-03-03 - Eduardo Rodrigues
+ - const arguments in ITrajectoryProvider
+
+! 2006-02-21 - Matt Needham
+ - add ITrackSelector and ITrackCaloMatch
+
+! 2006-02-17 - Eduardo Rodrigues
+ - introduced new interface for the trajectory provider tool
+ - changes to IMeasurementProvider to match simplified LHCbID class
+
+! 2006-02-06 - Eduardo Rodrigues
+ - changes in ITrajPoca to match latest developments in trajectories
+
+! 2006-02-02 - Eduardo Rodrigues
+ - minor typo corrected in IIdealStateCreator
+ - remove unnecessary include in ITrackExtrapolator
+
+! 2006-02-02 - Edwin Bos
+ - Removed all extrapolator methods involving a plane, because they are not
+ - needed anymore, due to the introduction of Trajectories
+
+! 2006-02-01 - Eduardo Rodrigues
+ - added missing TrackTypes.h include in ITrackExtrapolator
+
+! 2006-01-19 M. Needham
+ - Bug fixes from Chris Jones - this should allow it to compile!
+
+! 2006-01-12 - Eduardo Rodrigues
+ - bug fixes from move to LHCb v20r0
+
+! 2006-01-12 - Marco Cattaneo
+ - In ITrackCloneFinder.h, use forward declaration instead of
+   #include Event/Track.h
+ - Clean up dependencies in requirements
+
+! 2006-1-11 M. Needham
+ - Move to LHCb v20r0
+
+! 2005-12-13 - Eduardo Rodrigues
+ - new interface ITrackCloneFinder added: it checks whether two input tracks
+   are clones of each other and makes a choice based on hit sharing criteriae
+
+! 2005-12-01 - Edwin Bos, Jeroen van Tilburg, Eduardo Rodrigues
+ - First version of the ITrajPoca interface:
+   a "TrajPoca" tool calculates the point of closest approach
+   between two trajectories
+
+!====================== TrackInterfaces v1r4 2005-11-29 ======================
+! 2005-11-21 - Jeroen van Tilburg
+ - ITrackFitter: removed the fitUpstream and fitDownstream methods and
+   added one single method: fit( Track& track );
+
+! 2005-11-09 - Eduardo Rodrigues
+ - ITrackExtraSelector interface introduced:
+   selects which extrapolator to use (from M. Needham)
+
+! 2005-10-24 - Eduardo Rodrigues
+ - ITrackFitter interface modified to provide both upstream and
+   downstream fitting
+
+! 2005-10-20 - Eduardo Rodrigues
+ - seed State no longer const in ITrackFitter
+
+!====================== TrackInterfaces v1r3 2005-09-20 ======================
+! 2005-09-20 - Eduardo Rodrigues
+ - renamings to avoid clashes with same algorithm of the old track event model:
+   - ITrackSelector renamed to ITrackCriteriaSelector
+   - IStateCreator renamed to IIdealStateCreator
+
+! 2005-09-08 - Eduardo Rodrigues
+ - added ITrackChi2Calculator interface, moved from TrMatching, for the
+   new  track event model
+
+! 2005-09-06 - Marco Cattaneo
+ - Remove IBIntegrator.h, moved to Kernel directory in LHCbKernel
+
+!====================== TrackInterfaces v1r2 2005-07-20 ======================
+! 2005-07-19 - Jose A. Hernando
+	- added predict() to a "plane" to ITrackExtrapolator
+
+! 2005-07-06 - Edwin Bos
+	- added propagate() to ITrackExtrapolator
+
+! 2005-06-28 - Eduardo Rodrigues
+ - added interface to MeasurementProvider tool (concrete tool in Tr/TrackTools)
+
+!====================== TrackInterfaces v1r1 2005-06-21 ======================
+! 2005-05-25 - Eduardo Rodrigues
+ - added forward declaration for `Measurement' in ITrackFitter.h
+
+! 2005-05-25 - Jose A. Hernando
+ - adding (draft) interface to ITrackFitter 
+
+!====================== TrackInterfaces v1r0 2005-05-24 ======================
+! 2005-05-24 - Marco Cattaneo
+ - Add use statements to requirements file
+ - Remove some unneccessary includes in header files
+
+! 2005-05-24 - Eduardo Rodrigues
+ - correction to requirements file
+
+! 2005-05-20 - Jose Hernando, Eduardo Rodrigues
+ - creation of the package:
+    - moved from Kernel/LHCbInterfaces:
+      interfaces for the track extrapolators (ITrackExtrapolator.h)
+      and track projectors (ITrackProjector.h) added
+    - moved from Tr/TrackTools:
+      IBIntegrator.h, IStateCreator.h, ITrackPtKick.h,
+      ITrackReconstructible.h, ITrackSelector.h

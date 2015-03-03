@@ -1,0 +1,268 @@
+package GaudiConf
+package manager: M.Cattaneo
+
+!======================== GaudiConf v9r7 2006-06-19 ========================
+! 2006-06-19 - Marco Cattaneo
+ - Remove CERN specific setting of STAGE_HOST and RFIO_CASTOR_V2, now done in
+   group login
+
+!======================== GaudiConf v9r6 2006-05-08 ========================
+! 2006-05-08 - Marco Cattaneo
+ - Add explicit loading of Reflex dictionaries in SimDicts.opts, until problems
+   with rootmap files are sorted out
+
+! 2006-04-25 - Florence RANJARD
+ - cmt/requirements - add setting of STAGE_HOST and RFIO_USE_CASTOR_V2 for
+                      CMTSITE=CERN to use castor2
+
+!======================== GaudiConf v9r5 2006-03-30 ========================
+! 2006-03-30 - Marco Cattaneo
+ - In PoolSim.opts, remove dictionaries loaded from RELAX via rootmap mechanism
+
+!======================== GaudiConf v9r4 2006-03-23 ========================
+! 2006-03-23 - Marco Cattaneo
+ - Fix DecodeRawEvent.opts for Velo, IT and TT decoding
+ - Remove RichCondition from LHCbApplication.opts
+
+!======================== GaudiConf v9r3 2006-03-08 ========================
+! 2006-03-08 - Marco Cattaneo
+ - Add UnpackDigi.opts to decode on demand packed Digi objects
+
+! 2006-02-22 - Marco Cattaneo
+ - Add DecodeRawEvent.opts to decode on demand the RawEvent banks
+
+! 2006-02-15 - Marco Cattaneo
+ - Add SimDicts.opts, DigiDicts.opts, DstDicts.opts to load POOL dictionaries
+ - Add PoolCopy.opts to copy a POOL file
+ - Add LHCbApplication.opts to bootstrap standard LHCb applications
+
+! 2006-02-06 - Marco Cattaneo
+ - In DetDesc.opts, create DetDataSvc as ExtSvc, to ensure it is finalized 
+   after ToolSvc
+
+! 2005-12-20 M. Needham
+ - Add picofarad to list of units
+
+! 2005-12-07 - Marco Cattaneo
+ - Replace DetDesc with DetDescSvc DLL in DetDesc.opts
+
+!======================== GaudiConf v9r2 2005-09-21 ========================
+! 2005-09-21 - Marco Cattaneo
+ - New file options/addrcheck.supp, contains suppressions for addrcheck tool
+   of valgrind (recommended instead of memcheck, as it is much faster)
+
+!======================== GaudiConf v9r1 2005-04-19 ========================
+! 2005-04-19 - Marco Cattaneo
+ - Modify GaudiMain.cpp and requirements to set program name and version
+   using compilation flags. Needs ApplicationMgr mods from Gaudi v16r3
+
+! 2005-04-15 - Marco Cattaneo
+ - Gaudi.supp updated for Gaudi v16r3
+
+!======================== GaudiConf v9r0 2005-01-19 ========================
+! 2005-01-19 - Marco Cattaneo
+ - Remove path append to ROOT_native_version, for move to Gaudi v16 
+
+! 2004-12-17 - Marco Cattaneo
+ - Gaudi.supp updated for LHCb v17r2
+
+!======================== GaudiConf v8r3 2004-11-29 ========================
+! 2004-11-29 - Marco Cattaneo
+ - Remove remaining .py options files (obsolete)
+
+!======================== GaudiConf v8r2 2004-11-26 ========================
+! 2004-11-26 - Marco Cattaneo
+ - Remove obsolete options files (Common.opts, Dlls.opts, Services.opts)
+ - Remove corresponding STDOPTIONS environment variable
+
+!======================== GaudiConf v8r1 2004-11-18 ========================
+! 2004-11-18 - Marco Cattaneo
+ - For rh73_gcc323 and slc_ia32_gcc323, append "_0411" to ROOT_native_version,
+   to pick up fix for using rootd on Castor
+
+!======================= GaudiConf v8r0p1 2004-09-23 =======================
+! 2004-09-23 - Marco Cattaneo
+ - Update Gaudi.supp for Gaudi v15r2 errors
+
+!======================== GaudiConf v8r0 2004-07-23 ========================
+! 2004-07-23 - Marco Cattaneo
+ - Update Gaudi.supp for Gaudi v15 errors
+ - Remove RootDb.opts as this is obsolete with Gaudi v15
+
+!======================== GaudiConf v7r8 2004-05-03 ========================
+! 2004-04-29 - Marco Cattaneo
+ - Updated Gaudi.supp file for Gaudi v14r5, and added suppressions also for
+   Memcheck:Leak
+
+!======================== GaudiConf v7r7 2004-04-16 ========================
+! 2004-04-16 - Marco Cattaneo
+ - Updated Gaudi.supp file for Gaudi v14r4
+
+!======================== GaudiConf v7r6 2004-03-02 ========================
+! 2004-03-02 - Marco Cattaneo
+ - Remove SicbTestDataFile.opts, .py
+ - Add options/Gaudi.supp: valgrind errors suppression file 
+
+!======================== GaudiConf v7r5 2004-01-15 ========================
+! 2004-01-15 - Marco Cattaneo
+ - Remove SimContents.opts, DigiContent.opts, DstContent.opts, moved to
+   Gauss, Boole, Brunel respectively
+ - Add RootDb.opts for standard Root/IO persistency options
+
+!======================== GaudiConf v7r4 2003-12-04 ========================
+! 2003-12-04 - Marco Cattaneo
+ - DigiContent.opts: Remove Trig/L1/OTClusters as they are broken by the new OT
+                     geometry/channelID. Will anyway be replaced by L1Buffer
+
+!======================== GaudiConf v7r3 2003-11-25 ========================
+! 2003-11-25 - Marco Cattaneo
+ - DigiContent.opts: rename HltBuffer to RawBuffer
+                     save full spillover event trees, as defined by spilloverAlg
+                     remove Calo Digits (can be recreated from RawBuffer)
+                     remove Rich Digits (can be recreated from RawBuffer)
+ - DstContent.opts:  add RawBuffer
+
+!======================== GaudiConf v7r2 2003-11-03 ========================
+! 2003-11-03 - Marco Cattaneo
+ - DigiContent.opts: rename HLTBuffer to HltBuffer
+ - DstContent.opts:  add L1Buffer, as requested at trigger workshop
+
+!======================== GaudiConf v7r1 2003-10-01 ========================
+! 2003-10-01 - Marco Cattaneo
+ - RawhContent.opts renamed SimContent.opts, to describe SicbToOORawh output 
+   compatible with Gauss
+ - DigiContent.opts: add DAQ/L1Buffer, DAQ/HLTBuffer for raw data buffers
+
+! 2003-08-08 - Marco Cattaneo
+ - DigiContent.opts: add MC/Rich/Digits to preserve relation to Hits
+
+! 2003-07-22 - Grigori Rybkine
+ - options/units.opts  add basic time units (ns, s, ms, microsecond, picosecond)
+                       used only names from SystemOfUnits.h of CLHEP/1.8.0.0
+
+!======================== GaudiConf v7r0 2003-07-16 ========================
+! 2003-07-16 - Marco Cattaneo
+ - Add DigiContent.opts to define output of Boole
+ - RawhContent.opts: replace MC/Rich/Hits with MC/Rich/HitsSICB, to highlight
+                     incompatibility between hits produced by SICBMC and by Gauss
+ - DstContent.opts: removed Rich and Calorimeter digits, and all L1 clusters, as
+                    these were only needed for special studies. It is now 
+                    possible to navigate to the oodigi tape if necessary
+
+!======================== GaudiConf v6r10 2003-07-08 =======================
+! 2003-07-08 - Marco Cattaneo
+ - DstContent.opts: remove Rec/V0, Rec/V0/States, Rec/V0/Vertices, Rec/V0/V0s
+
+!======================== GaudiConf v6r9 2003-07-01 ========================
+! 2003-07-01 - Marco Cattaneo
+ - DstContent.opts: remove optional Rec/Rich/OOPIDs, 
+                    add optional LHCBackground/Header
+ - DetDesc.opt, .py - Add XmlCnv and DetDescCnv to DLLs list
+
+!======================== GaudiConf v6r8 2003-05-19 ========================
+! 2003-04-30 - Marco Cattaneo
+ - Make L1/TTClusters, L1/ITClusters, L1/OTClusters optional in DstContent.opts
+   This is because DSTs can exist both with (evtype 61) and without (other 
+   evtypes) these containers
+
+!========================== GaudiConf v6r7 2003-04-16 ======================
+! 2003-04-16 - Marco Cattaneo, Gloria Corti
+ - Add RawhContent.opts defining content of OORAWH files converted from ZEBRA
+   RAWH
+
+!========================== GaudiConf v6r6 2003-04-03 ======================
+! 2003-04-03 - Marco Cattaneo
+ - Add missing L1/OT,IT,TTClusters to DstContent.opts, and retag as v6r6
+
+! 2003-03-20 - Gloria Corti
+ - Add DstContent.opts with list of mandatory and optional items in
+   OODST
+
+!========================== GaudiConf v6r5 2002-12-02 ======================
+! 2002-11-29 - Ivan Belyaev
+ - options/units.opts  add few more convenient units (mm,cm)
+
+! 2002-11-21 - Sebastien Ponce
+ - Release of the Application was missing at the end of GaudiMain
+
+!========================== GaudiConf v6r4 2002-11-14 ======================
+! 2002-11-14 - Marco Cattaneo
+ - Added units.opts and included it from Common.opts. This file could be modified
+   in future to add units that should be parsed in job options
+
+!========================== GaudiConf v6r3 2002-05-03 ======================
+! 20020503 - v6r3 - Pere Mato
+  added options/Interactive.opts for enabling phython interactivity on
+  applications
+
+! 20020123 - v6r1 - Pere Mato
+  src/GaudiMain.cpp removed default JobOptions file to ""
+
+! 20020123 - v6r1 - Marco Cattaneo
+  options/DetDesc.opts, .py: removed DetectorDataSvc.DetDbLocation option.
+
+! 20011128 - Pere Mato
+  Changed GaudiMain.cpp to use the new GaudiPython service.
+  Added some Python scripts
+
+! 20011120 - Sebastien Ponce
+  Changed the default value for MaxDocNbInCache to 10.
+
+! 20010822 - Sebastien Ponce
+  added two options in the default joboption file for DetDesc :
+  MaxDocNbInCache = 5 and CacheBehavior = 3
+
+! 20010703 - GaudiConf v5 (Pere)
+  Remove LHCbEvent from standard DLLs
+  New version of GaudiMain that supports Python scripts instead of JobOptions files
+ 
+! 20010319 - GaudiConf v4 (MC)
+  options/Dlls.opts     - Remove HbookCnv from standard DLLs. This is because 
+                          user should choose between Hbook and Root
+          DetDesc.opts  - Options now property of DetectorDataSvc, 
+                          not of ApplicationMgr
+          Hbook.opts    - new: Standard options for HBOOK persistency
+          RootHist.opts - new: Standard options for ROOT histogram persistency
+
+! 20010306 - GaudiConf v4 (MC)
+  options/ - All files renamed with extension .opts
+  src/     - GaudiMain.cpp: Generic main program for Gaudi applications 
+
+!============================================================================= 
+! 20010110 - GaudiConf v3r2 (Flr)
+  Services.txt - add ParticlePropertySvc in the EXTSvc list.
+
+! 20001212 - GaudiConf v3r1 -Flr
+  DetDesc.txt - remove DetDbLocation, use the default location instead.
+
+!============================================================================= 
+! 20001117 - Pere Mato
+  options/ - Changed Dlls.txt and Services.txt to add the ChronoAuditor as default
+    
+! 20001030 - GaudiConf v3 - changes by M.Cattaneo
+  options/ - New files Dlls.txt, Services.txt included by Common.txt, to allow
+             possibility to include only Services.txt by static linked programs
+
+! 20001027 - GaudiConf v3 - changes by M.Cattaneo for GaudiSys v6
+  mgr/     - requirements:  add STDOPTS logical to point to options directory
+  options/ - StandardOptions.txt:  renamed Common.txt
+             Common.txt:           removed SicbEventSelector
+             DetDesc.txt:          additional options to use XML database
+             SicbTestDataFile.txt: EventSelector.Input for test jobs
+           
+! 20000726 - GaudiConf v2
+	   - StandardOptions.txt: remove TapesDatabase option, not needed
+             with GaudiSys v5
+
+! 20000530 - changes for GaudiConf v2 by M.Cattaneo
+           - StandardOptions.txt: use AFSROOT environment variable
+             for TapesDatabase path, and remove #ifdef WIN32
+           - requirements: change version to v2
+             (use of AFSROOT requires GaudiSvc v3)
+ 
+! 20000413 - GaudiConf v1
+             this package must be used by any application, it contains:
+  mgr/     - requirements to set STDOPTIONS environment variable
+  options/ - StandardOptions.txt  the Standard Options
+
+!=====================================================================

@@ -1,0 +1,12 @@
+!-----------------------------------------------------------------------------
+! Package     : Tr/TrackMCInterfaces
+! Responsible : Eduardo Rodrigues
+! Purpose     : Package for tracking tools interfaces accessing MC information
+!-----------------------------------------------------------------------------
+
+!====================== TrackMCInterfaces v1r0 2006-03-10 ====================
+! 2006-03-06 - Eduardo Rodrigues
+ - creation of the package:
+    - moved from Tr/TrackInterfaces the interfaces accessing Monte Carlo
+      information: IIdealStateCreator.h, ITrackReconstructible.h,
+      ITrackCriteriaSelector.h

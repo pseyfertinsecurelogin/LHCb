@@ -1,0 +1,252 @@
+Package: DAQEvent
+Author:  Markus Frank (based on work by Jose' Helder Lopes)
+Purpose: Define the classes delivered to the online farm by the DAQ
+
+!================ DAQEvent v6r4p1 2006-06-01 ==========================
+! 2006-06-01 - Marco Cattaneo
+ - Add VeloProcFull as RawBank type
+
+!================ DAQEvent v6r4 2006-05-08 ============================
+! 2006-05-08 - Markus Frank
+ - Fix mismatch between new and delete in RawEvent.cpp
+
+!================ DAQEvent v6r3 2006-03-23 ============================
+! 2006-03-23 - Marco Cattaneo
+ - Add VeloError and VeloPedestal as RawBank types
+ - Add ODINDefinitions.h to describe contents of ODIN bank
+
+!================ DAQEvent v6r2 2006-03-06 ============================
+! 2006-03-06 - Markus Frank
+ - Fix RawBank according to EDMS note. UI is backwards compatible,
+   but stored bank length was without the size of the header
+ - Add accessor totalSize to RawBank returning the full padded length
+
+! 2006-02-09 - Markus Frank
+ - Add flag in requirements to correctly process RawEvent dictionary 
+
+! 2006-02-07 - Matt Needham
+ - Add some protection against 0 size banks in BankWriter
+
+! 2006-02-03 - Marco Cattaneo
+ - Adapt dictionary generation to Gaudi v18r2
+
+!================ DAQEvent v6r1 2006-01-24 ============================
+! 2006-01-24 - Marco Cattaneo
+ - Add typedef for std::vector<RawBank*>
+
+! 2006-01-10 - Markus Frank
+ - Add End marker to bank types
+ - Add static function to retrieve integer aligned padded bank size from 
+   raw byte aligned bank size
+
+! 2005-12-06 - Marco Cattaneo
+ - Add ITError, TTError, ITPedestal, TTPedestal bank types
+
+! 2005-12-02 - Marco Cattaneo
+ - Add L0Muon to BankType enum
+
+!2005-11-22 M. Needham
+ - Extend functionality of Bytestream - access number of bytes
+ - Bug fixes in BankWriter
+
+!2005-11-22 M. Needham
+ - Extend functionality of BankWriter - accessor for number used bytes
+ - Extend functionality of Bytestream - rewind and seek functions
+
+! 2005-11-10 - Olivier Callot
+ - Add new values to enum BankType in RawBank.h for the 1MHz packed
+   data format for the calorimeter.
+
+!================ DAQEvent v6r0 2005-10-18 ============================
+! 2005-10-18 - Marco Cattaneo
+ - Internal representation of Bank is unsigned int
+   . RawEvent->addBank method takes std::vector<unsigned int>
+   . Removed data_type_t typedef, use native type directly, to decouple 
+     Root from lcgdict
+
+! 2005-10-18 - M. Needham
+  - Bug fix in Bytestream
+
+! 2005-10-14 - Marco Cattaneo
+ - Major changes to follow 1MHz readout:
+   . Remove RawBuffer and all L1 classes
+   . Reimplement RawEvent, RawBank (Markus Frank, backwards incompatible)
+     Due to non-standard tricks needed both to make these classes persistent
+     and to create them in the online farm, they are not described in XML.
+     The header files and LCG dictionary selection files are hand made.
+   . BankType enum now defined in RawBank. Added TTFull and ITFull. 
+   . In component library:
+     - add RawEventDump
+     - remove CreateRawEvent (will be reimplemented in Boole project)
+     - remove EventHeaderFromRaw (will be reimplemented in Rec project)
+   . Add SmartBank, Bytestream and BankWriter helper classes (Matt Needham)
+   . All Event and helper classes are defined in /Event, inside LHCb namespace
+   . Add tests subdirectory, with usage examples
+
+!================ DAQEvent v5r3 2005-10-10 ============================
+! 2005-10-10 - Marco Cattaneo
+ - Modify requirements to produce reflex dictionaries
+ - Modify lcgStl.h and lcg_selection.xml to work as template for GaudiObjDesc
+
+!================ DAQEvent v5r2p2 2005-07-20 ==========================
+! 2005-07-20 - Marco Cattaneo
+ - Add "VeloFull" to RawBuffer bank types enum
+
+! 2005-07-05 - Marco Cattaneo
+ - In EventHeaderFromRaw, check existence of DAQ bank before accessing it, return
+   StatusCode::FAILURE if missing
+ - Add debug printout of buffer length to CreateL1Event and CreateRawEvent
+
+!================ DAQEvent v5r2p1 2005-06-24 ==========================
+! 2005-06-24 - Marco Cattaneo
+ - In CreateL1Event,CreateRawEvent, do not attempt to create if already existing 
+
+!================ DAQEvent v5r2 2005-06-02 ============================
+! 2005-06-02 - Marco Cattaneo
+ - In CreateRawBuffer.cpp, clear the registry entry of Event/Header after it
+   has been added to RawBuffer, to prevent reloading it when decoding RawBuffer
+
+! 2005-06-02 - P. Koppenburg
+ - Added HLT to RawBuffer BankType enum. For RTTC.
+
+!================ DAQEvent v5r1 2005-05-09 ============================
+! 2005-05-09 - Marco Cattaneo
+ - Add constructor from buffer pointer and length to RawEvent and L1Event,
+   for online use, and remove constructor from map
+ - Store buffer pointer and length in RawEvent and L1Event and add get accessors
+ - Add enum to RawBuffer containing "MagicPattern" value
+ - Disable copy and assignment operators in L1Buffer and RawBuffer
+
+!================ DAQEvent v5r0 2005-03-08 ============================
+! 2005-03-08 - Marco Cattaneo
+ - Backwards incompatible changes to RawBank header, to reflect EDMS 565851
+ - Add L0 and DAQ bank types, and L0SourceID, DAQSourceID enums to L1Buffer.
+   The specific L0Calo, L0DU L0Muon bank types have been removed, use the 
+   source ID to distinguish between different L0 (and DAQ) sources
+ - Add DAQ and ODIN bank types to RawBuffer, remove Header bank type
+ - Modify CreateRawBuffer and EventHeaderFromRaw to use DAQ bank type for
+   event and run number
+ - Modify CreateL1Buffer to create a DAQ SFC bank 
+
+!================ DAQEvent v4r6 2005-02-24 ============================
+! 2005-02-24 - Daniela Lunesu
+ - Add L0Muon bank type
+
+! 2005-02-03 - Marco Cattaneo
+ - Fixes for serialization with GaudiObjDesc v7. Not backwards compatible
+ - Reorganize xml files to be built independently for each class
+
+! 2005-01-31 - Marco Cattaneo
+ - Fix typedefs in DAQTypes.h to compile on Windows
+
+!=============== DAQEvent v4r5 2004-10-26 =============================
+! 2004-10-26 - Marco Cattaneo
+ - Change meaning of "BankType" field in RawBank header. Now top 8 bits are
+   interpreted as a bank version number, bottom 8 bits retain original bank type
+   meaning, taken from RawBuffer::BankType enum.
+   Change is backwards compatible with DC04 data (all version numbers are zero),
+   RawBuffer::addBank methods take additional version argument.
+ - Add EventHeaderFromRaw algorithm to decode EventHeader from RawBuffer
+
+!============== DAQEvent v4r4p1 2004-07-20 ============================
+! 2004-07-29 - Marco Cattaneo
+ - Fix a typo in L1Buffer banktype enum, L0DU was called LODU
+
+!=============== DAQEvent v4r4 2004-07-20 =============================
+! 2004-07-20 - Marco Cattaneo
+ - Fix requirements for Gaudi v15
+
+! 2004-06-28 - Marco Cattaneo
+ - Add a component library with trivial algorithms to create empty
+   L1Buffer, RawBuffer, and L1Event, RawEvent from corresponding Buffer
+ - Due to above change, DAQEvent is now a DLL. Needs to be loaded with
+   ApplicationMgr.DLLs += { "DAQEvent" };
+ - Add "Header" to RawBuffer BankType enum, for event header.
+
+!=============== DAQEvent v4r3 2004-06-10 =============================
+! 2004-06-10 - Marco Cattaneo
+ - Add missing lcg dictionaries for STL containers used in L1Event, RawEvent
+
+!=============== DAQEvent v4r2 2004-04-23 =============================
+! 2004-04-23 - Jose Helder Lopes
+ - Fix the L1Event bank type (savannah bug 3130)
+
+!=============== DAQEvent v4r1 2004-01-16 =============================
+! 2004-03-16 - Marco Cattaneo
+ - Add L0PU to RawBuffer::BankType enum
+
+!=============== DAQEvent v4r0 2004-01-13 =============================
+! 2004-01-12 - Olivier Callot
+ - Fix a bug when reading L1Buffer and RawBuffer: The size should be set as
+   m_allocatedSize and not m_currentSize
+
+! 2003-12-15 - Marco Cattaneo
+ - Fixes for POOL persistency (Gaudi v14)
+ - Undo CaloMap hack, not needed for vc71
+
+!=============== DAQEvent v3r2 2003-12-08 =============================
+! 2003-12-08 - Marco Cattaneo
+ - move to Gaudi v13 (use LHCbKernel v3r*, EventKernel v4r* in requirements)
+
+!=============== DAQEvent v3r1 2003-12-05 =============================
+! 2003-12-05 - Jose Helder Lopes
+ - Add protections to L1Buffer and RawBuffer if too many banks added or
+   sourceID out of range
+
+!=============== DAQEvent v3r0 2003-11-24 =============================
+! 2003-11-24 - Marco Cattaneo
+ - Rename HltBank, HltBuffer and HltEvent to RawBank, RawBuffer and RawEvent
+ - Change data-type hlt_int to raw_int
+ - Only one Velo Raw bank type (instead of VeloR and VeloPhi)
+ - Use a "CaloMap" instead of std::map in L1Event and RawEvent, to fix 
+   Win VC6 map problem (to be removed when we go to VC7)
+
+!=============== DAQEvent v2r1 2003-11-10 =============================
+! 2003-11-10 - Marco Cattaneo
+ - Add implementation files for L1Buffer and HltBuffer, to implement serializers
+ - Add an enum for Hlt bank types
+
+!=============== DAQEvent v2r0 2003-11-03 =============================
+! 2003-10-30 - Jose Helder Lopes
+
+  - Identifier Source_ID changed to SourceID to conform to LHCb coding rules.
+  - Identifier Class_ID changed to bankType to avoid confusion with the class ID
+    used by the LHCb event data classes.
+  - L1 header changed: Use 7 bits for bank sizes, 6 bits for source Id's and 3
+    bits for bank types.
+  - Introduced definitions of L1 bank types in L1Buffer.
+  - The HLT classes names changed (HLT -> Hlt) to improve  readability.
+  - The method size() of L1Bank and HltBank was renamed to dataSize() and now
+    returns the size of the data part only, excluding the header.
+
+!=============== DAQEvent v1r1 2003-10-03 =============================
+! 2003-10-03 - Marco Cattaneo
+ - Add constructors HLTEvent( HLTBuffer& ) and L1Event( L1Buffer& )
+
+!=============== DAQEvent v1r0 22-09-2003 =============================
+  - DAQTypes.h: Header file with typedef's for hlt_int (32 bits) and l1_int 
+                (16 bits) types.
+
+  - L1Buffer:   Holds event size(s) information and a buffer(raw array of l1_int)
+                with the data for L1 trigger. Serialize and fillStream methods 
+                not implemented yet. Header word with source (7 bits), class 
+                (2 bits) and size (7 bits) info for each data bank.
+
+  - L1Event:    Scan the L1 buffer and save a std::vector of L1Banks for each
+                different class_ID found in the TES.
+
+  - L1Bank:     Holds the size and the pointer to the data in L1 buffer for each
+                data bank
+
+  - HLTBuffer:  Holds event size(s) information and a buffer(raw array of hlt_int)
+                with the data for HLT, following the Online Data Format prescription
+                (LHCb note 2001-097). Should be filled at the end of the 
+                digitization phase for each detector sub-system. Serialize and 
+                fillStream methods not implemented yet. Transport header and tail
+                not implemented.
+      
+  - HLTEvent:   Scan the HLT buffer and makes a std::vector of HLTBanks for each
+                different class_ID found. 
+	      
+  - HLTBank:    Holds the size and the pointer to the data in HLT buffer for each
+                data bank
