@@ -1,9 +1,9 @@
-// $Id: FuncOps.h 103150 2010-11-23 11:11:13Z ibelyaev $
+// $Id: FuncOps.h 114430 2010-12-06 16:42:05Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_FUNCOPS_H 
 #define LOKI_FUNCOPS_H 1
 // ============================================================================
-// $URL: http://svn.cern.ch/guest/lhcb/LHCb/tags/Phys/LoKiCore/v10r6/LoKi/FuncOps.h $
+// $URL: http://svn.cern.ch/guest/lhcb/LHCb/tags/Phys/LoKiCore/v10r7/LoKi/FuncOps.h $
 // ============================================================================
 // Include files
 // ============================================================================
@@ -1164,7 +1164,8 @@ namespace LoKi
     template <class TYPE>
     class InfoOps
     {
-    public:
+      // ======================================================================
+    public: // info 
       // ======================================================================
       // __info__ 
       static LoKi::FunctorFromFunctor<TYPE,double>
@@ -1177,6 +1178,20 @@ namespace LoKi
       __info__ ( const LoKi::Functor<TYPE,double>& fun , 
                  const int  index                      ) 
       { return LoKi::info ( index , fun          ) ; }
+      // ======================================================================
+    public: // logging 
+      // ======================================================================
+      // __info__ 
+      static LoKi::FunctorFromFunctor<TYPE,double>
+      __logging__ ( const LoKi::Functor<TYPE,double>& fun , 
+                    const int  index                      ) 
+      { return LoKi::ExtraInfo2::LogInfo<TYPE,double> ( fun , index ) ; }
+      // ======================================================================
+      // __info__ 
+      static LoKi::FunctorFromFunctor<TYPE,bool>
+      __logging__ ( const LoKi::Functor<TYPE,bool>& fun , 
+                    const int  index                      ) 
+      { return LoKi::ExtraInfo2::LogInfo<TYPE,bool>  ( fun , index ) ; }
       // ======================================================================
     } ;
     // ========================================================================

@@ -42,75 +42,73 @@ class TagStatus(Storm):
     tag_id = Int()
     tag = Reference(tag_id, "Tag.id")
     site = Unicode()
-    last_ok_time = DateTime()
+    time = DateTime()
+    status = Unicode()
 
-    def __init__(self, site, last_ok_time = datetime(1970,1,1)):
+    def __init__(self, site, time = datetime(1970,1,1)):
         """
         @param site: site name (LCG.CERN.ch, LCG.CNAF.it, ...)
-        @param last_ok: last time the tag was found to be correct
+        @param time: last time the tag was checked
         """
 
         self.site = site
-        self.last_ok_time = last_ok_time
+        self.time = time
+        self.status = u"BAD"
 
     def dumpInfo(self):
+        """Dumps all information about a tag status entry."""
+
         return {
                 'TagID':self.tag_id,
                 'TagName':self.tag.name,
                 'Partition':self.tag.partition,
                 'Site':self.site,
-                'Last_ok_time':self.last_ok_time,
-                'Master_hash_sum':self.tag.hash_sum,
-                'Hash_alg':self.tag.hash_alg
+                'Time':self.time,
+                'Status':self.status,
+                'ReferenceHashSum':self.tag.hash_sum,
+                'HashAlg':self.tag.hash_alg
                 }
 
 
 class TagStatusDB(object):
     """ Class to interact with the TagStatusDB designed to monitor the CondDB global tag availability status."""
 
-    def __init__(self, db_path, create_new_db = False, recheck = timedelta(7), expiration = timedelta(30)):
+    def __init__(self, db_path, recheck = timedelta(7), expiration = timedelta(30),
+                 verification_latency = timedelta(1)):
         """
-        @param db_path: database path to connect to or create new one
+        @param db_path: database path to connect to
         @param recheck: time interval after which the tag must be re-checked
         @param expiration: time interval after which a tag doesn't need to be checked again
         """
-        if create_new_db and os.path.exists(db_path):
-            raise Exception, "Requested path for the new db at '%s' contains already some db."%db_path
+        if not os.path.exists(db_path.split(":")[-1]):
+            raise Exception, "No TSDB found at '%s'."%db_path
 
-        self.openDatabase(db_path,create_new_db)
-        if create_new_db:
-            self.createTagsTable()
-            self.createTagStatusTable()
+        self.openDatabase(db_path)
 
         self.recheck = recheck
         self.expiration = expiration
         self.start_test_time_boundary = datetime.now()-self.recheck
         self.stop_test_time_boundary = datetime.now()-self.expiration
+        self.verification_latency = verification_latency
+        self.latency_boundary = self.start_test_time_boundary - self.verification_latency
+        self.sites = [
+                      u"LCG.IN2P3.fr",
+                      u"LCG.PIC.es",
+                      u"LCG.CERN.ch",
+                      u"LCG.CNAF.it",
+                      u"LCG.RAL.uk",
+                      u"LCG.GRIDKA.de",
+                      u"LCG.SARA.nl"
+                      ]
 
-    def openDatabase(self, db_path, create_new_db = False):
-        """Connects to the db at db_path (or creates new one if requested) and opens its store."""
+    def openDatabase(self, db_path):
+        """Connects to the TSDB at db_path and builds its store."""
 
-        if os.path.exists(db_path.split(":")[-1]) or create_new_db:
-            self.db = create_database(db_path)
-        else:
-            raise Exception, "No database found at %s" %db_path
+        if not os.path.exists(db_path.split(":")[-1]):
+            raise Exception, "No TSDB found at '%s'." %db_path
 
+        self.db = create_database(db_path)
         self.store = Store(self.db)
-
-    def createTagsTable(self):
-        """Creates empty 'TAGS' table"""
-
-        self.store.execute("CREATE TABLE TAGS (id INTEGER PRIMARY KEY, "
-                           "name VARCHAR UNIQUE, partition VARCHAR UNIQUE, "
-                           "creation_time DATETIME, hash_sum VARCHAR UNIQUE, "
-                           "hash_alg VARCHAR);")
-
-    def createTagStatusTable(self):
-        """Creates empty 'TAGS_BULLETINS' table"""
-
-        self.store.execute("CREATE TABLE TAGS_STATUS (tag_id INTEGER, site VARCHAR,"
-                           "last_ok_time DATETIME, PRIMARY KEY (tag_id,site),"
-                           "FOREIGN KEY(tag_id) REFERENCES tags(id));")
 
     def addRow(self, row):
         """Adds new row to the in-memory-db.
@@ -121,7 +119,7 @@ class TagStatusDB(object):
         self.store.add(row)
 
     def getTag(self, tag, partition):
-        """Finds row in the table 'TAGS' and returns Tag instance.
+        """Finds a row in the table 'TAGS' and returns Tag instance.
 
         @param tag: String. Tag name to be found.
         @param partition: String. Partition name to look the tag in.
@@ -130,7 +128,7 @@ class TagStatusDB(object):
         return self.store.find(Tag,Tag.name == tag, Tag.partition == partition).one()
 
     def getTagStatus(self, tag, partition, site):
-        """Finds row in the table 'TAG_BULLETINS' and returns TagStatus instance.
+        """Finds a row in the table 'TAGS_STATUS' and returns TagStatus instance.
 
         @param tag: String. Tag name to be found.
         @param partition: String. Partition name to look the tag in.
@@ -138,10 +136,10 @@ class TagStatusDB(object):
         status_set = self.getTag(tag,partition).status_set
         for status in status_set:
             if status.site == site: return status
-            else: return None
+        return None
 
     def resolveRow(self, row):
-        """Resolves if the row (can be Tag or TagStatus) is in the db or not.
+        """Resolves if a row (can be Tag or TagStatus) is in the db or not.
 
         @param row: Instance. Instance of a row to be found in the db.
         """
@@ -152,21 +150,24 @@ class TagStatusDB(object):
     def getGoodTags(self, site, partition):
         """ Get the list of tags that are believed to be good:
             now < tag.created + self.expiration &&
-            now < tag.last_ok + self.recheck
+            now < tag.last_ok + self.recheck &&
+            status is 'GOOD'
 
         Returns a list of Tag objects.
         """
 
         valid_status_set = self.store.find(TagStatus,
                                            TagStatus.site == site,
-                                           TagStatus.last_ok_time > self.start_test_time_boundary)
+                                           TagStatus.time > self.start_test_time_boundary,
+                                           TagStatus.status == u'GOOD')
 
         return [status for status in valid_status_set if status.tag.partition == partition]
 
     def getGoodSites(self, tag, partition):
         """ Get the list of sites that are believed to contain valid tag:
             now < tag.created + self.expiration &&
-            now < tag.last_ok + self.recheck
+            now < tag.time + self.recheck &&
+            status is 'GOOD'
 
         Returns a list of sites.
         """
@@ -174,14 +175,15 @@ class TagStatusDB(object):
         tagObj = self.getTag(tag,partition)
         if tagObj:
             return [status.site for status in tagObj.status_set
-                    if status.last_ok_time > self.start_test_time_boundary]
+                    if status.time > self.start_test_time_boundary and status.status == u'GOOD']
         else:
             return []
 
-    def getTagsToCheck(self, site, partition):
+    def getTagsToCheck(self, site, partition, includeTagsBeingChecked = True):
         """ Get list of tags that requires to be checked:
             now < tag.created + self.expiration &&
-            now > tag.last_ok + self.recheck
+            now > tag.time + self.recheck &&
+            status is 'BAD'
 
         Returns a list of TagStatus objects.
         """
@@ -190,24 +192,53 @@ class TagStatusDB(object):
                                       Tag.partition == partition,
                                       Tag.creation_time > self.stop_test_time_boundary)
         tag_status_to_check = []
+        if includeTagsBeingChecked:
+            for tag in actual_tags:
+                for status in tag.status_set:
+                    if status.site == site and (status.time < self.start_test_time_boundary or
+                                                status.status == u'BAD'):
+                        tag_status_to_check.append(status)
+        else:
+            for tag in actual_tags:
+                for status in tag.status_set:
+                    if status.site == site and (status.time < self.latency_boundary or
+                                                status.status == u'BAD'):
+                        tag_status_to_check.append(status)
+        return tag_status_to_check
+
+    def getTagsBeingChecked(self, site, partition):
+        """ Get list of tags that are *believed* being checked right now:
+            now < tag.created + self.expiration &&
+            now > tag.time + self.recheck
+
+        Returns a list of TagStatus objects.
+        """
+
+        actual_tags = self.store.find(Tag,
+                                      Tag.partition == partition,
+                                      Tag.creation_time > self.stop_test_time_boundary)
+        half_way_tags = []
         for tag in actual_tags:
             for status in tag.status_set:
-                if status.site == site and status.last_ok_time < self.start_test_time_boundary:
-                    tag_status_to_check.append(status)
-        return tag_status_to_check
+                if status.site == site and \
+                self.latency_boundary < status.time < self.start_test_time_boundary:
+                    half_way_tags.append(status)
+        return half_way_tags
 
     def setAsGood(self, tags_status):
         """ Flag the tags as successfully checked.
-        The last_ok_time field of each of the tags is set to the current time.
+        - The 'time' field (last check time) of each tag which has been checked is set to the current time.
+        - The 'status' field  of a tag is updated to its new just discovered status.
 
-        @param tags: list of TagStatus objects
+        @param tags_status: list of TagStatus objects to be set as good.
         """
 
         for status in tags_status:
             status_to_modify = self.store.find(TagStatus,
                                                TagStatus.tag_id == status.tag_id,
-                                               TagStatus.last_ok_time == status.last_ok_time).one()
-            status_to_modify.last_ok_time = datetime.now()
+                                               TagStatus.site == status.site).one()
+            status_to_modify.time = datetime.now()
+            status_to_modify.status = u"GOOD"
 
     def write(self):
         """Commits changes to the db."""

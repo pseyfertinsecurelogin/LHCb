@@ -5,6 +5,15 @@
 ! Purpose     : Package containing useful typedefs for Phys
 !-----------------------------------------------------------------------------
 
+!========================= DaVinciTypes v2r2 2010-12-08 =========================
+! 2010-12-07 - Vanya Belyaev    
+ - fix stupid bug in RecVertexHolder desrcructor 
+
+! 2010-12-06 - Juan Palacios
+ - Add tests for RecVertexHolder.
+ - Add QM test davincitypes.test_recvertexholder.
+ - Increase version to v2r2.
+
 !========================= DaVinciTypes v2r1 2010-12-06 =========================
 ! 2010-12-03 - Vanya Belyaev
  - LHCb::RecVertexHolder

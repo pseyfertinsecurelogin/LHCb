@@ -7,6 +7,7 @@ import urllib
 import cPickle as pickle
 import CondDBUI
 import os
+from pprint import pprint
 os.environ["COOL_IGNORE_LFC"] = "1"
 
 def main():
@@ -26,7 +27,7 @@ the list of those which become valid.
 
     parser.add_option("-r", "--request", type = "string",
                       help = "Two request types are possible: 'bad' (get invalid tags)"
-                      " and 'good-bad-ugly' (get valid and invalid tags). "
+                      " and 'good-bad-ugly' (get valid, invalid and being now checked tags). "
                       "DEFAULT: 'bad'."
                       )
     parser.add_option("-w", "--web-server", type = "string",
@@ -40,9 +41,11 @@ the list of those which become valid.
                       help = "Re-check invalid tags and return those of them "
                       "which have resurrected."
                       )
+    parser.add_option("-o","--output", type = "string",
+                      help = "Write result to a file."
+                      )
 
     parser.set_default("request", 'bad')
-    parser.set_default("web_server", "http://127.0.0.1/cgi-bin/TSDBAdmin_Scout.cgi")
     parser.set_default("tier", None)
 
     # parse command line
@@ -66,15 +69,21 @@ the list of those which become valid.
     ###########################################################################
     request = options.request
     if request not in ["bad","good-bad-ugly"]:
-        parser.error( "Request type is unfamiliar.")
+        parser.error("Request type is unfamiliar.")
     if request == "good-bad-ugly" and options.recheck:
         parser.error("Re-checking tags is not applicable with this request type.")
 
     url = options.web_server
+    if url == None:
+        parser.error("Please specify an URL where the TSDB negotiator is located.")
 
     if not options.tier:
-        parser.error("You have to give the name of Tier site to check a tag at.")
+        parser.error("Please specify Tier site to check a tag at.")
     tier = unicode(options.tier)
+
+    file = options.output
+    if file and not options.recheck:
+        log.info("The mode without tags re-checking doesn't use an output file feature.\n")
 
     ###########################################################################
     # Interact with the server-side script
@@ -82,28 +91,37 @@ the list of those which become valid.
     response = urllib.urlopen(url+"?request=%s&tier=%s"%(request,tier))
 
     if request == "bad":
-        tags_to_check = pickle.loads(response.read())['CHECK']
+        tags_to_check = pickle.loads(response.read())['BAD']
         if options.recheck:
+            log.info("Tags re-validation started ...")
             tags_to_update = {}
             import hashlib, datetime
             for partition in tags_to_check.keys():
                 tags_to_update[partition]=[]
-                tier_db_conn_str = str(tier).split(".")[1].lower() + "/%s"%partition
+                tier_db_conn_str = "CondDB/%s"%partition
                 db = CondDBUI.CondDB(tier_db_conn_str)
                 for tag_dict in tags_to_check[partition]:
-                    log.info("Checking '%s' tag:"%tag_dict["TagName"])
-                    initHashObj = getattr(hashlib,tag_dict["Hash_alg"])()
+                    log.info("Checking '%s/%s' tag:"%(partition,tag_dict["TagName"]))
+                    initHashObj = getattr(hashlib,tag_dict["HashAlg"])()
                     hash_sum = db.payloadToHash(initHashObj,tag=str(tag_dict["TagName"])).hexdigest()
-                    if unicode(hash_sum) == tag_dict["Master_hash_sum"]:
-                        tag_dict["Last_ok_time"] = datetime.datetime.now()
-                        tags_to_update[partition].append(tag_dict)
-            print tags_to_update
+                    tag_dict["Time"] = datetime.datetime.now()
+                    if unicode(hash_sum) == tag_dict["ReferenceHashSum"]:
+                        tag_dict["Status"] = u"GOOD"
+                    else:
+                        tag_dict["Status"] = u"BAD"
+                    tags_to_update[partition].append(tag_dict)
+            if file:
+                f = open(file,'w')
+                pickle.dump(tags_to_update,f)
+                f.close()
+                log.info("Done! Results have been written to '%s'." %file)
+            else:
+                pprint(tags_to_update)
         else:
-            print tags_to_check
+            pprint(tags_to_check)
     elif request == "good-bad-ugly":
-        good_bad_tags = pickle.loads(response.read())
-        print "Tags to check are: ", good_bad_tags['CHECK']
-        print "Good tags are: ", good_bad_tags['GOOD']
+        all_tags = response.read()
+        print all_tags
 
 if __name__ == '__main__':
     import sys

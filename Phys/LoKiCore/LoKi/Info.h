@@ -1,4 +1,4 @@
-// $Id: Info.h 53291 2010-08-05 14:35:53Z ibelyaev $
+// $Id: Info.h 114430 2010-12-06 16:42:05Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_INFO_H 
 #define LOKI_INFO_H 1
@@ -15,9 +15,10 @@
 // ============================================================================
 namespace LoKi 
 {
+  // ===========================================================================
   /** @namespace LoKi::ExtraInfo
    * 
-   *  Collection of function to deal with "ExtraInfo"
+   *  Collection of functions to deal with "ExtraInfo"
    *  Essentially these functions are very 
    *  useful for implementation of the generic HLt-effcient 
    *   functors:
@@ -318,10 +319,12 @@ namespace LoKi
       assert( 0 != object && "LoKi::Info::addInfo: invalid pointer " ) ;
       if ( 0 != object ) { addInfo ( *object , key , value ) ; }
     }
-  } // end of namespace LoKi::Info
-} // end of namespace LoKi
+    // ========================================================================
+  } //                                              end of namespace LoKi::Info
+  // ==========================================================================
+} //                                                      end of namespace LoKi
 // ============================================================================
-// The END 
+//                                                                      The END 
 // ============================================================================
 #endif // LOKI_INFO_H
 // ============================================================================

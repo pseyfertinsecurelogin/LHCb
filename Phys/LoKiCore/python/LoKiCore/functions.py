@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # =============================================================================
-# $Id: functions.py 102942 2010-11-18 20:06:33Z ibelyaev $
+# $Id: functions.py 114430 2010-12-06 16:42:05Z ibelyaev $
 # =============================================================================
-# $URL: http://svn.cern.ch/guest/lhcb/LHCb/tags/Phys/LoKiCore/v10r6/python/LoKiCore/functions.py $ 
+# $URL: http://svn.cern.ch/guest/lhcb/LHCb/tags/Phys/LoKiCore/v10r7/python/LoKiCore/functions.py $ 
 # =============================================================================
 ## @file functions.py LoKiCore/function.py
 #  The set of basic functions for from LoKiCore library
@@ -32,7 +32,7 @@ A.Golutvin, P.Koppenburg have been used in the design.
 # =============================================================================
 __author__  = "Vanya BELYAEV ibelyaev@physics.syr.edu"
 __date__    = "????-??-??"
-__version__ = "Version $Revision: 102942 $ "
+__version__ = "Version $Revision: 114430 $ "
 # =============================================================================
 
 from LoKiCore.basic import cpp, std, LoKi, LHCb, Gaudi
@@ -602,15 +602,15 @@ def yields ( s ) :
 
 # =============================================================================
 ## construct "smart Extra Info" functor
-def info ( index , fun , update = False ) :
+def info ( key , fun , update = False ) :
     """
-    Construct ''Smart-extra-info'' functor,
-    which returns the valeu of extraInfo(index), if the information
+    Construct ''Smart-extra-info''/``cache'' functor,
+    which returns the valeu of extraInfo(index)/cache(key), if the information
     present, otherwise it evaluates the functor and (optionally)
-    updates the extraInfo field
+    updates the extraInfo/cache field
 
     >>> functor = ...
-    >>> smart = infor ( 15 , functor )
+    >>> smart = info ( 15 , functor )
     
     >>> particle = ...
     >>> value = smart ( particle )
@@ -619,6 +619,21 @@ def info ( index , fun , update = False ) :
     
     """
     return fun.__info__ ( index , update ) 
+
+# =============================================================================
+## construct logging-functor
+def logging ( fun , *args ) :
+    """
+    Construct logging functor,
+    that writes into cache the resutl sof own evaluation 
+    
+    >>> functor = ...
+    >>> logged  = logging ( functor )
+    
+    The concept belongs to Gerhard ``The Great'' Raven 
+    
+    """
+    return fun.__logging__ ( *args ) 
 
 
 # =============================================================================
