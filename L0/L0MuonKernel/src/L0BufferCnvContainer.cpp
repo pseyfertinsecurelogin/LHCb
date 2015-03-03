@@ -1,4 +1,4 @@
-// $Id: L0BufferCnvContainer.cpp,v 1.1 2007-08-27 09:32:25 jucogan Exp $
+// $Id: L0BufferCnvContainer.cpp,v 1.3 2007-11-30 08:55:00 jucogan Exp $
 // Include files 
 
 #include "L0MuonKernel/PUL0BufferCnv.h"
@@ -42,9 +42,11 @@ L0Muon::L0BufferCnvContainer::L0BufferCnvContainer() {
 
     }
 
-    L0Muon::SUL0BufferCnv * pcnvsu = new L0Muon::SUL0BufferCnv(LHCb::MuonTileID(iq));
+    LHCb::MuonTileID quarterId = LHCb::MuonTileID(0);
+    quarterId.setQuarter(iq);
+    L0Muon::SUL0BufferCnv * pcnvsu = new L0Muon::SUL0BufferCnv(quarterId);
     m_cnvs.push_back(pcnvsu);
-    L0Muon::CUL0BufferCnv * pcnvcu = new L0Muon::CUL0BufferCnv(LHCb::MuonTileID(iq));
+    L0Muon::CUL0BufferCnv * pcnvcu = new L0Muon::CUL0BufferCnv(quarterId);
     m_cnvs.push_back(pcnvcu);
     
   }
@@ -53,7 +55,7 @@ L0Muon::L0BufferCnvContainer::L0BufferCnvContainer() {
 
 L0Muon::L0BufferCnvContainer::L0BufferCnvContainer(std::vector<LHCb::MuonTileID> lpus) {
   std::map<LHCb::MuonTileID , bool> boards;
-  std::map<int , bool> quarters;
+  std::map<LHCb::MuonTileID , bool> quarters;
   
   std::vector<LHCb::MuonTileID>::iterator ipu;
   for ( ipu = lpus.begin(); ipu != lpus.end(); ++ipu ) {
@@ -67,8 +69,9 @@ L0Muon::L0BufferCnvContainer::L0BufferCnvContainer(std::vector<LHCb::MuonTileID>
     LHCb::MuonTileID board = ipu->containerID(MuonLayout(1,1));
     boards[board] = true;
     
-    int quarter = ipu->quarter();
-    quarters[quarter] = true;
+    LHCb::MuonTileID quarter = LHCb::MuonTileID(0);
+    quarter.setQuarter(ipu->quarter());
+    quarters[quarter]=true;
   }
 
   std::map<LHCb::MuonTileID , bool>::iterator  iboard;
@@ -77,7 +80,7 @@ L0Muon::L0BufferCnvContainer::L0BufferCnvContainer(std::vector<LHCb::MuonTileID>
     m_cnvs.push_back(pcnvbcsu);
   }
 
-  std::map<int , bool>::iterator  iquarter;
+  std::map<LHCb::MuonTileID, bool>::iterator  iquarter;
   for (iquarter=quarters.begin(); iquarter!=quarters.end(); ++iquarter){
     L0Muon::SUL0BufferCnv * pcnvsu = new L0Muon::SUL0BufferCnv(iquarter->first);
     m_cnvs.push_back(pcnvsu);

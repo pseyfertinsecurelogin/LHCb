@@ -1,4 +1,4 @@
-// $Id: AuxFunBase.h,v 1.5 2007-06-10 19:54:05 ibelyaev Exp $
+// $Id: AuxFunBase.h,v 1.8 2007-12-09 17:56:39 ibelyaev Exp $
 // ============================================================================
 #ifndef LOKI_AUXFUNBASE_H 
 #define LOKI_AUXFUNBASE_H 1
@@ -15,6 +15,11 @@
 // GaudiKernel
 // ============================================================================
 #include "GaudiKernel/StatusCode.h"
+// ============================================================================
+// LoKi
+// ============================================================================
+#include "LoKi/ILoKiSvc.h"
+#include "LoKi/Interface.h"
 // ============================================================================
 // forward declaration
 // ============================================================================
@@ -34,20 +39,6 @@ class MsgStream ;
  *  @date 2001-01-23 
  */
 // ============================================================================
-
-#define _LOKI_FUNCTION_TYPES_( FUNC , TYPE )             \
-  typedef          FUNC<TYPE>            Self         ;  \
-  typedef typename LoKi::Function<TYPE>  FunB         ;  \
-  typedef typename FunB::result_type     result_type  ;  \
-  typedef typename FunB::argument        argument     ;
-
-
-#define _LOKI_PREDICATE_TYPES_( PRED , TYPE )            \
-  typedef          PRED<TYPE>            Self         ;  \
-  typedef typename LoKi::Predicate<TYPE> FunB         ;  \
-  typedef typename FunB::result_type     result_type  ;  \
-  typedef typename FunB::argument        argument     ;
-
 namespace LoKi
 {  
   /** @class AuxFunBase
@@ -59,10 +50,10 @@ namespace LoKi
   {   
   protected:
   public:    // to please Visual C++ compiler
-    // Default constructor
-    AuxFunBase  () ; ///< Default constructor
+    /// constructor from LoKi Service
+    AuxFunBase  ( const LoKi::ILoKiSvc* svc = 0 ) ; 
     // copy consructor 
-    AuxFunBase  ( const AuxFunBase& ); //</ copy consructor 
+    AuxFunBase  ( const AuxFunBase&     right ) ; //</ copy consructor 
     // destructor 
     virtual ~AuxFunBase (); ///< destructor 
   protected:
@@ -124,6 +115,34 @@ namespace LoKi
     virtual std::string   objType   () const ;
     /// unique function ID (hash); see LoKi::genericID 
     virtual std::size_t   id        () const ;
+  public:
+    /// get the event-ID 
+    long event    ()           const { return m_event ; }
+    /// set the event-ID 
+    void setEvent ( long evt ) const { m_event = evt  ; }
+    /// set the event-ID from LoKi service 
+    void setEvent (          ) const ; 
+  public:
+    /// check the data for the same event 
+    bool sameEvent() const ;
+  public:
+    // ========================================================================
+    /// get LoKi service 
+    const LoKi::Interface<LoKi::ILoKiSvc>& lokiSvc () const ;
+    /// get LoKi service 
+    const LoKi::ILoKiSvc*               getLokiSvc () const { return lokiSvc() ; }
+    /// set LoKi service 
+    void setLoKiSvc 
+    (                       LoKi::ILoKiSvc*  svc ) const { m_lokiSvc = svc ; }
+    /// set LoKi service 
+    void setLoKiSvc 
+    ( const LoKi::Interface<LoKi::ILoKiSvc>& svc ) const { m_lokiSvc = svc ; }
+    // ========================================================================
+  private:
+    // the event ID 
+    mutable long m_event ; ///< the event ID 
+    // LoKi service
+    mutable LoKi::Interface<LoKi::ILoKiSvc> m_lokiSvc ; ///< LoKi service
   };
   // ==========================================================================
   /** simple fuctiin to generate the default generic 

@@ -1,4 +1,4 @@
-// $Id: VeloProcessInfo.h,v 1.3 2007-09-18 09:10:46 cattanem Exp $
+// $Id: VeloProcessInfo.h,v 1.5 2007-12-10 00:28:19 szumlat Exp $
 #ifndef EVENT_VELOPROCESSINFO_H 
 #define EVENT_VELOPROCESSINFO_H 1
 
@@ -33,7 +33,8 @@ public:
 
   bool isEnable(unsigned int proc);
   void setDataProcessInfo(unsigned int inValue);
-  void setSimProcessInfo(dataVec inVec);
+  void setSimProcessInfo(VeloTELL1::dataVec inVec);
+  void setDevProcessInfo(VeloTELL1::dataVec inVec);
   void setProcType(unsigned int inValue);
   unsigned int procType();
   void setConvLimit(unsigned int inValue);
@@ -46,21 +47,27 @@ protected:
 private:
   
   unsigned int m_dataProcessInfo;
-  dataVec m_simProcessInfo;
+  VeloTELL1::dataVec m_simProcessInfo;
   unsigned int m_procType;
   unsigned int m_convergenceLimit;
   unsigned int m_runType;
-  
+  VeloTELL1::dataVec m_devProcessInfo;
+
 };
 //
 inline bool VeloProcessInfo::isEnable(unsigned int proc)
 {
   if(m_procType==VeloTELL1::REAL_DATA){
     return ( (m_dataProcessInfo>>proc)&1 );
-  }else if(m_procType==SIM_DATA){
+  }else if(m_procType==VeloTELL1::SIM_DATA){
     return ( *(m_simProcessInfo.begin()+proc) );
+  }else if(m_procType==VeloTELL1::DEV_DATA){
+    return ( *(m_devProcessInfo.begin()+proc) );
   }else{
-    std::cout<< " Unknown data type! " <<std::endl;
+    std::cout<< " ---------------------- " <<std::endl;
+    std::cout<< " ==> Unknown data type! " <<std::endl;
+    std::cout<< " ---------------------- " <<std::endl;
+    return ( false );
   }
 }
 //
@@ -69,9 +76,14 @@ inline void VeloProcessInfo::setDataProcessInfo(unsigned int inValue)
   m_dataProcessInfo=inValue;
 }
 //
-inline void VeloProcessInfo::setSimProcessInfo(dataVec inVec)
+inline void VeloProcessInfo::setSimProcessInfo(VeloTELL1::dataVec inVec)
 {
   m_simProcessInfo=inVec;
+}
+//  
+inline void VeloProcessInfo::setDevProcessInfo(VeloTELL1::dataVec inVec)
+{
+  m_devProcessInfo=inVec;
 }
 //  
 inline void VeloProcessInfo::setProcType(unsigned int inValue)

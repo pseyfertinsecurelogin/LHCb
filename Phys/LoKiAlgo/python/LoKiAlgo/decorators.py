@@ -1,16 +1,38 @@
 #!/usr/bin/env python
 # =============================================================================
+# $Id: decorators.py,v 1.8 2007-12-03 11:14:51 ibelyaev Exp $ 
+# =============================================================================
 ## @file decorators.py LoKiAlgo/decorators.py
 #  The set of basic decorator for objects from LoKiAlgo library
 #  The file is a part of LoKi and Bender projects
+#
+#        This file is a part of LoKi project - 
+#    "C++ ToolKit  for Smart and Friendly Physics Analysis"
+#
+#  The package has been designed with the kind help from
+#  Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas, 
+#  contributions and advices from G.Raven, J.van Tilburg, 
+#  A.Golutvin, P.Koppenburg have been used in the design.
+#
 #  @author Vanya BELYAEV ibelyaev@physics.syr.edu
 # =============================================================================
-""" The set of basic decorators for obejcts from LoKiAlgo library """
-_author_ = "Vanya BELYAEV ibelyaev@physics.syr.edu" 
+"""
+The set of basic decorators for objects from LoKiAlgo library
+
+      This file is a part of LoKi project - 
+'C++ ToolKit  for Smart and Friendly Physics Analysis'
+
+The package has been designed with the kind help from
+Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas, 
+contributions and advices from G.Raven, J.van Tilburg, 
+A.Golutvin, P.Koppenburg have been used in the design.
+"""
+# =============================================================================
+__author__ = "Vanya BELYAEV ibelyaev@physics.syr.edu" 
 # =============================================================================
 
 import LoKiPhys.decorators   as     _LoKiPhys
-import LoKiPhysMC.decorators as     _LoKiPhysMC 
+#import LoKiPhysMC.decorators as     _LoKiPhysMC 
 from   LoKiAlgo.functions    import * 
 
 
@@ -323,6 +345,7 @@ LoKi.Loop.m           = _mass_
 LoKi.Loop.p           = _momentum_
 
 
+
 # =============================================================================
 ## Print the decay tree for LoKi::Loop object:
 def printDecay ( s , *a ) :
@@ -340,8 +363,10 @@ printDecay . __doc__ += "\n\n" + LoKi.PrintLoop.printDecay . __doc__
 
 if not hasattr ( LoKi.Loop ,   "printDecay"   ) :
     LoKi.Loop.   printDecay   = printDecay
+    LoKi.Loop.        decay   = printDecay
 if not hasattr ( LoKi.Loop , "__printDecay__" ) :
     LoKi.Loop. __printDecay__ = printDecay
+    LoKi.Loop.      __decay__ = printDecay
     
 import LoKiCore.functions  as _LCF 
 _LCF.printDecay    . __doc__ += "\n" + LoKi.PrintLoop.printDecay    . __doc__ 
@@ -394,28 +419,32 @@ _name = _LoKiPhys.__name__
 ## make a decoration fo functions and predicates """
 ## ============================================================================
 def _decorate( name = _name ) :
-    """ make a decoration fo functions and predicates """
-    import LoKiCore.decorators   as     _LoKiCore 
+    """
+    Make a decoration fo functions and predicates
+    """
+    import LoKiCore.decorators   as     _LoKiCore
+    _p='const LHCb::Particle*'
+    _v='const LHCb::VertexBase*'
     _decorated   = _LoKiCore.getAndDecorateFunctions (
         name                                          , ## module name 
-        LoKi.Function('const LHCb::Particle*')        , ## the base 
+        LoKi.Functor          (_p,'double')           , ## the base 
         LoKi.Dicts.ExtFunCalls(LHCb.Particle)         , ## call-traits 
-        LoKi.Dicts.FuncOps('const LHCb::Particle*')   ) ## operators 
+        LoKi.Dicts.FuncOps    (_p,_p)                 ) ## operators 
     _decorated |= _LoKiCore.getAndDecorateFunctions  (
         name                                          , ## module name 
-        LoKi.Function('const LHCb::VertexBase*')      , ## the base 
+        LoKi.Functor          (_v,'double'), ## the base 
         LoKi.Dicts.ExtFunCalls(LHCb.VertexBase)       , ## call-traits 
-        LoKi.Dicts.FuncOps('const LHCb::VertexBase*') ) ## operators
+        LoKi.Dicts.FuncOps    (_v,_v)                 ) ## operators
     _decorated |=  _LoKiCore.getAndDecoratePredicates (
         name                                          , ## module name 
-        LoKi.Predicate('const LHCb::Particle*')       , ## the base 
+        LoKi.Functor          (_p,bool)               , ## the base 
         LoKi.Dicts.ExtCutCalls(LHCb.Particle)         , ## call-traits 
-        LoKi.Dicts.FuncOps('const LHCb::Particle*')   ) ## operators 
+        LoKi.Dicts.CutsOps    (_p,_p)                 ) ## operators 
     _decorated |= _LoKiCore.getAndDecoratePredicates (
         name                                          , ## module name 
-        LoKi.Predicate('const LHCb::VertexBase*')     , ## the base 
+        LoKi.Functor          (_v,bool)               , ## the base 
         LoKi.Dicts.ExtCutCalls(LHCb.VertexBase)       , ## call-traits 
-        LoKi.Dicts.FuncOps('const LHCb::VertexBase*') ) ## the operators
+        LoKi.Dicts.CutsOps    (_v,_v)                 ) ## the operators
     # (re)decorate pids (Comparison with strings, integers and ParticleID objects:
     for t in ( _LoKiPhys.ID , _LoKiPhys.ABSID ) :
         t = type ( t ) 
@@ -427,7 +456,7 @@ def _decorate( name = _name ) :
 # =============================================================================
 ## make a decoration of the module 
 _decorated  = _decorate ( _LoKiPhys   . __name__ ) 
-_decorated |= _decorate ( _LoKiPhysMC . __name__ ) 
+#_decorated |= _decorate ( _LoKiPhysMC . __name__ ) 
 # =============================================================================
 if '__main__' == __name__ :
     print 'Number of properly decorated types: %s'%len(_decorated)

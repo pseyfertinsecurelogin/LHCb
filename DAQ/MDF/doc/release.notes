@@ -6,6 +6,20 @@
 !               MEP fragments
 !-----------------------------------------------------------------------------
 
+!========================= MDF v2r7 2007-12-07 ===============================
+! 2007-12-07 - Markus Frank
+  - Fix bug in MDF IO to accept properly file names like PFN:file:....
+
+! 2007-11-23 - Markus Frank
+  - Add new Rawbank types to RawEventPrintout.h to retrieve bank type as string.
+
+! 2007-11-04 - Markus Frank
+  - Implemement connection to XML file catalog from GaudiUtils
+    New files: RawDataConnection.h/cpp
+    Requires new job option:
+    ApplicationMgr.SvcOptMapping += { "Gaudi::MultiFileCatalog/FileCatalog",
+                                      "Gaudi::IODataManager/IODataManager" };
+
 !========================= MDF v2r6 2007-11-07 ===============================
 ! 2007-11-07 - Markus Frank
  - Fix 64 bit checksum creation bug for hash32

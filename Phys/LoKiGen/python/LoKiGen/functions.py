@@ -1,12 +1,32 @@
 #!/usr/bin/env python
 # =============================================================================
-## @file LoKiCore/functions.py
+## @file LoKiGen/functions.py
 #  The full set of useful objects from LoKiGen library 
-#  The file is a part of LoKi and Bender projects
+#
+#  This file is a part of LoKi project - 
+#   'C++ ToolKit  for Smart and Friendly Physics Analysis'
+#
+#  The package has been designed with the kind help from
+#  Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas, 
+#  contributions and advices from G.Raven, J.van Tilburg, 
+#  A.Golutvin, P.Koppenburg have been used in the design.
+#
 #  @author Vanya BELYAEV ibelyaev@physics.syr.edu
+#  @date 2007-12-01
 # =============================================================================
-""" The full set of useful objects from LoKiGen library """
-_author_ = "Vanya BELYAEV ibelyaev@physics.syr.edu" 
+"""
+The full set of useful objects from LoKiGen library
+
+This file is a part of LoKi project - 
+'C++ ToolKit  for Smart and Friendly Physics Analysis'
+
+The package has been designed with the kind help from
+Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas, 
+contributions and advices from G.Raven, J.van Tilburg, 
+A.Golutvin, P.Koppenburg have been used in the design.
+"""
+# =============================================================================
+__author__ = "Vanya BELYAEV ibelyaev@physics.syr.edu" 
 # =============================================================================
 
 import LoKiCore.decorators as _LoKiCore 
@@ -41,21 +61,21 @@ GVRangeL = LoKi.RangeList_  ( GVRange )
 # =============================================================================
 
 ## @see LoKi::Types::GFunc
-GFunc  = LoKi.Function               ( _GP ) 
+GFunc  = LoKi.Functor                ( _GP  + ',double' ) 
 ## @see LoKi::Types::GCuts
-GCuts  = LoKi.Predicate              ( _GP ) 
+GCuts  = LoKi.Functor                ( _GP  + ',bool'   ) 
 ## @see LoKi::Types::GFun
-GFun   = LoKi.FunctionFromFunction   ( _GP ) 
+GFun   = LoKi.FunctorFromFunctor     ( _GP  + ',double' ) 
 ## @see LoKi::Types::GCut
-GCut   = LoKi.PredicateFromPredicate ( _GP ) 
-## @see LoKi::Types::GFunc
-GVFunc = LoKi.Function               ( _GV ) 
+GCut   = LoKi.FunctorFromFunctor     ( _GP  + ',bool'   ) 
+## @see LoKi::Types::GFunc  
+GVFunc = LoKi.Functor                ( _GV  + ',double' ) 
 ## @see LoKi::Types::GCuts
-GVCuts = LoKi.Predicate              ( _GV ) 
+GVCuts = LoKi.Functor                ( _GV  + ',bool'   ) 
 ## @see LoKi::Types::GFun
-GVFun  = LoKi.FunctionFromFunction   ( _GV ) 
+GVFun  = LoKi.FunctorFromFunctor     ( _GV  + ',double' ) 
 ## @see LoKi::Types::GCut
-GVCut  = LoKi.PredicateFromPredicate ( _GV ) 
+GVCut  = LoKi.FunctorFromFunctor     ( _GV  +  ',bool'  ) 
 
 # =============================================================================
 ## All concrete types 
@@ -67,7 +87,7 @@ G3Q      = LoKi.GenParticles.ThreeCharge()
 ## @see LoKi::Cuts::GABSID
 GABSID    = LoKi.GenParticles.AbsIdentifier()
 ## @see LoKi::Cuts::GALL
-GALL      = LoKi.BooleanConstant ( _GP ) ( True ) 
+GALL      = LoKi.Constant ( _GP + ',bool' ) ( True ) 
 ## @see LoKi::Cuts::GANCESTOR
 GANCESTOR = LoKi.GenParticles.IsAnAncestor
 ## @see LoKi::Cuts::GBAR
@@ -99,7 +119,7 @@ GE        = LoKi.GenParticles.Energy  ()
 ## @see LoKi::Cuts::GETA
 GETA      = LoKi.GenParticles.PseudoRapidity ()
 ## @see LoKi::Cuts::GFALSE
-GFALSE    = LoKi.BooleanConstant( _GP )(False)
+GFALSE    = LoKi.Constant( _GP + ',bool' )(False)
 ## @see LoKi::Cuts::GFAEVX
 GFAEVX   = LoKi.GenParticles.AdapterToEndVertex
 ## @see LoKi::Cuts::GFAPVX
@@ -131,11 +151,11 @@ GNINTREE  = LoKi.GenParticles.NInTree
 ## @see LoKi::Cuts::GNLT
 GNLT     = LoKi.GenParticles.NominalLifeTime () 
 ## @see LoKi::Cuts::GNONE
-GNONE    = LoKi.BooleanConstant( _GP )(False)
+GNONE    = LoKi.Constant( _GP + ',bool' )(False)
 ## @see LoKi::Cuts::GNUCLEUS
 GNUCLEUS = LoKi.GenParticles.IsNucleus () 
 ## @see LoKi::Cuts::GONE
-GONE      = LoKi.Constant ( _GP )( 1.0 )
+GONE      = LoKi.Constant ( _GP + ',double' )( 1.0 )
 ## @see LoKi::Cuts::GP
 GP       = LoKi.GenParticles.Momentum () 
 ## @see LoKi::Cuts::GPHI
@@ -171,32 +191,27 @@ GTIME    = LoKi.GenParticles.ProperLifeTime ()
 ## GTOP  = LoKi.GenParticles.HasQuark ( LHCb.ParticleID.top )
 GTOP     = LoKi.GenParticles.HasQuark ( 6 )
 ## @see LoKi::Cuts::GTRUE
-GTRUE    = LoKi.BooleanConstant ( _GP )( True )
+GTRUE    = LoKi.Constant ( _GP , bool )( True )
 ## @see LoKi::Cuts::GVALID
 GVALID   = LoKi.Valid           ( _GP ) ()
 ## @see LoKi::Cuts::GVEV
 GVEV     = LoKi.GenParticles.ValidEndVertex()
 ## @see LoKi::Cuts::GZERO
-GZERO     = LoKi.Constant       ( _GP )( 0.0 )    
-
+GZERO     = LoKi.Constant       ( _GP + ',double' )( 0.0 )    
 
 
 ## @see LoKi::Cuts::GVTRUE
-GVTRUE     = LoKi.BooleanConstant( _GV )(True)
+GVTRUE     = LoKi.Constant( _GV , bool )(True)
 ## @see LoKi::Cuts::GVFALSE
-GVFALSE    = LoKi.BooleanConstant( _GV )(False)
+GVFALSE    = LoKi.Constant( _GV , bool )(False)
 ## @see LoKi::Cuts::GVALL
 GVALL      = GVTRUE
 ## @see LoKi::Cuts::GVNONE
 GVNONE     = GVFALSE
 ## @see LoKi::Cuts::GVONE
-GVONE      = LoKi.Constant ( _GV )(1.0)
+GVONE      = LoKi.Constant ( _GV + ',double' )(1.0)
 ## @see LoKi::Cuts::GVZERO
-GVZERO     = LoKi.Constant ( _GV )(0.0)
-## @see LoKi::Cuts::GVMIN
-#GVMIN      = LoKi.Min          ( _GV )
-## @see LoKi::Cuts::GVMAX
-#GVMAX      = LoKi.Max          ( _GV )
+GVZERO     = LoKi.Constant ( _GV + ',double' )(0.0)
 ## @see LoKi::Cuts::GVVALID
 GVVALID    = LoKi.Valid        ( _GV )()
 ## @see LoKi::Cuts::GVSAME
@@ -214,8 +229,34 @@ GVSUM      = LoKi.GenVertices.SumIF
 
 
 
+## functional part
+_vgp      = std.vector ( _GP    )
+_vgv      = std.vector ( _GV    )
+_vd       = std.vector ('double')
+#
+GMaps      = LoKi.Functor             ( _vgp , _vd       )
+GMap       = LoKi.FunctorFromFunctor  ( _vgp , _vd       )
+GPipes     = LoKi.Functor             ( _vgp , _vgp      )
+GPipe      = LoKi.FunctorFromFunctor  ( _vgp , _vgp      )
+GFunVals   = LoKi.Functor             ( _vgp , 'double'  )
+GFunVal    = LoKi.FunctorFromFunctor  ( _vgp , 'double'  )
+GElements  = LoKi.Functor             ( _vgp , _GP       ) 
+GElement   = LoKi.FunctorFromFunctor  ( _vgp , _GP       )
+GSources   = LoKi.Functor             ('void', _vgp      )
+GSource    = LoKi.FunctorFromFunctor  ('void', _vgp      )
+
+#
+GVMaps     = LoKi.Functor             ( _vgv , _vd       )
+GVMap      = LoKi.FunctorFromFunctor  ( _vgv , _vd       )
+GVPipes    = LoKi.Functor             ( _vgv , _vgv      )
+GVPipe     = LoKi.FunctorFromFunctor  ( _vgv , _vgv      )
+GVFunVals  = LoKi.Functor             ( _vgv , 'double'  )
+GVFunVal   = LoKi.FunctorFromFunctor  ( _vgv , 'double'  )
+GVElements = LoKi.Functor             ( _vgv , _GV       ) 
+GVElement  = LoKi.FunctorFromFunctor  ( _vgv , _GV       ) 
 
 
+GSOURCE    = LoKi.GenParticles.SourceTES
 
 # =============================================================================
 if '__main__' == __name__ :

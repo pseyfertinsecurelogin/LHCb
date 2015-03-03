@@ -4,7 +4,7 @@
 <package name="RecEvent">
 
 <!-- **************************************************************************
-  * $Id: RichSummaryRadSegment.xml,v 1.2 2006-10-20 12:52:09 jonrob Exp $
+  * $Id: RichSummaryRadSegment.xml,v 1.4 2007-11-29 09:31:36 cattanem Exp $
   *****************************************************************************
   * XML-description of RichSummaryRadSegment class                            *
   * author: Chris Jones   Christopher.Rob.Jones@cern.ch                       *

@@ -1,4 +1,4 @@
-! $Id: release.notes,v 1.61 2007-10-19 13:41:55 cattanem Exp $ 
+! $Id: release.notes,v 1.70 2007-12-12 06:40:04 cattanem Exp $ 
 ! -----------------------------------------------------------------------------
 ! Package     : Phys/LoKiCore
 ! Responsible : Vanya BELYAEV ibelyaev@physics.syr.edu
@@ -14,6 +14,46 @@
 !   A.Golutvin, P.Koppenburg have been used in the design.
 ! 
 ! -----------------------------------------------------------------------------
+
+!=========================== LoKiCore v7r0 2007-12-12  ========================
+! 2007-12-11 - Vanya BELYAEV
+ - LoKi/HybridBsse.h
+   src/HybridBase.cpp
+    1) put more structure into the python pseudocode, generated on-flight.
+    2) add the possibility to add "local" python pseudo-code 
+       (referred here as "context") 
+
+! 2007-12-11 - Vanya BELYAEV
+ - LoKi/BasicFunctors.h
+   add new structure "Assignable" to
+   obtain the "assignable" functor type from 
+   the abstract "functor" base (actually it saves a lot of typing)
+ - LoKi/FilterOps.h
+   clean up 
+
+
+! 2007-12-09 - Vanya BELYAEV
+ - 1) prepare for context-dependent functors (needed for HLT) 
+   2) implemenet "source"&"info" functional-operations  (a'la Gerhard) 
+
+! 2007-12-05 - Vanya BELYAEV
+  
+ - LoKi/FuncOps.h
+    add the decorators for "sources"  
+
+! 2007-12-05 - Vanya BELYAEV
+ - LoKi/AuxFunBase.h, src/AuxFunBase.cpp
+   prepare for the context functors 
+
+! 2007-12-05 - Vanya BELYAEV
+ - remove the dictionaries for LHCb::ParticleID class
+
+! 2007-11-30 - Vanya BELYAEV  
+ - new MAJOR version of LoKi  
+   Many new concepts from Gerhard "The Great" for functional programming
+   essentially the whole "functor"-business is reqritten 
+ - cmt/requirements 
+   version incrmeent to v7r0
 
 !=========================== LoKiCore v6r1p1 2007-10-19 ======================
 ! 2007-10-19 - Marco Cattaneo
@@ -387,6 +427,30 @@
 
 ! -----------------------------------------------------------------------------
 ! $Log: not supported by cvs2svn $
+! Revision 1.69  2007/12/11 18:37:04  ibelyaev
+!  Hybrid: add more structure and introduce ''the context''
+!
+! Revision 1.68  2007/12/11 09:35:49  ibelyaev
+! add LoKi::Assignable into LoKi/BasicFunctors.h and clean LoKi/FilterOps.h
+!
+! Revision 1.67  2007/12/09 17:56:43  ibelyaev
+!  improve context/sources&infos
+!
+! Revision 1.66  2007/12/05 16:35:21  ibelyaev
+!  add LoKi::Dicts::SourceOps
+!
+! Revision 1.65  2007/12/05 15:38:46  ibelyaev
+!  prepare for the context functors
+!
+! Revision 1.63  2007/12/05 09:37:45  ibelyaev
+!  remove the dictionaries for LHCb::ParticleID class
+!
+! Revision 1.62  2007/12/03 12:03:23  ibelyaev
+!  v7r0: the powerful streamers
+!
+! Revision 1.61  2007/10/19 13:41:55  cattanem
+! fix for gcc 4.0
+!
 ! Revision 1.60  2007/10/08 06:44:16  cattanem
 ! move tag
 !

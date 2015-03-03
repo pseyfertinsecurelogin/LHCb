@@ -1,9 +1,24 @@
 !-----------------------------------------------------------------------------
-! $Id: release.notes,v 1.69 2007-11-09 08:29:48 cattanem Exp $
+! $Id: release.notes,v 1.79 2007-12-03 15:56:13 cattanem Exp $
 ! Package     : Event/RecEvent
 ! Responsible : Marco Cattaneo
 ! Purpose     : LHCb Event model. Reconstruction classes (Brunel output) 
 !-----------------------------------------------------------------------------
+
+!========================= RecEvent v2r8 2007-12-03 ==========================
+! 2007-12-03 Wouter Hulsbergen
+ - Added missing const in TwoProngVertex::addPID
+
+! 2007-11-28 Wouter Hulsbergen
+ - Fixed bug in TwoProngVertex::covMatrix7x7
+
+! 2007-11-27 - Chris Jones
+ - Add new ProtoParticle TES location for HLT charged tracks
+ - Add TES locations for Offline and HLT MuonPIDs
+
+! 2007-11-23 - Sean Brisbane
+ - Add new class, TwoProngVertex
+ - Update the RecVertex class with new RecVertex Location for TwoProngVertex
 
 !========================= RecEvent v2r7 2007-11-09 ==========================
 ! 2007-11-09 - Marco Cattaneo

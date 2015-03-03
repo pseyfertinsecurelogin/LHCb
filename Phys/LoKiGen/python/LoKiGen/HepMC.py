@@ -1,14 +1,32 @@
 #!/usr/bin/env python
 # =============================================================================
-# $Id: HepMC.py,v 1.5 2007-08-17 15:21:16 ibelyaev Exp $ 
+# $Id: HepMC.py,v 1.7 2007-12-01 13:52:14 ibelyaev Exp $ 
 # =============================================================================
 ## @file
 #  collection of utilities for useful 'decoration' of HepMC-objects
+#
+#  This file is a part of LoKi project - 
+#   'C++ ToolKit  for Smart and Friendly Physics Analysis'
+#
+#  The package has been designed with the kind help from
+#  Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas, 
+#  contributions and advices from G.Raven, J.van Tilburg, 
+#  A.Golutvin, P.Koppenburg have been used in the design.
+#
 #  @author Vanya BELYAEV ibelyaev@physics.syr.edu
 #  @date 2007-08-11 
 # =============================================================================
 """
 Collection of utilities for useful 'decoration' of HepMC-objects
+
+This file is a part of LoKi project - 
+'C++ ToolKit  for Smart and Friendly Physics Analysis'
+
+The package has been designed with the kind help from
+Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas, 
+contributions and advices from G.Raven, J.van Tilburg, 
+A.Golutvin, P.Koppenburg have been used in the design.
+
 """
 # =============================================================================
 __author__ = 'Vanya BELYAEV ibelyaev@physics.syr.edu'
@@ -468,11 +486,30 @@ printDecay. __doc__ += "\n\n" + LoKi.PrintHepMC.printDecay . __doc__
 
 if not hasattr ( HepMC.GenParticle ,     'printDecay'   ) :
     HepMC.GenParticle .  printDecay   =   printDecay
+    HepMC.GenParticle .       decay   =   printDecay
 if not hasattr ( HepMC.GenParticle ,   '__printDecay__' ) :
     HepMC.GenParticle. __printDecay__ =   printDecay
+    HepMC.GenParticle.      __decay__ =   printDecay
 
+
+def __particleID__ ( self ) :
+    """
+    Get the ParticleID obejct for the particle
+
+    >>> p =
+    >>> pid = p.particleID()
+    
+    """
+    return LHCb.ParticleID( self.pdg_id() )
+
+HepMC.GenParticle.__particleID__  = __particleID__
+HepMC.GenParticle.  particleID    = __particleID__
 
 import LoKiCore.functions  as _LCF 
+HepMC.GenParticle.  pname   = _LCF.__pname__
+HepMC.GenParticle.   name   = _LCF.__pname__
+HepMC.GenParticle.__pname__ = _LCF.__pname__
+
 
 _LCF.nChildren     . __doc__ += "\n" + LoKi.GenChild.nChildren         . __doc__ 
 _LCF.child         . __doc__ += "\n" + LoKi.GenChild.child             . __doc__

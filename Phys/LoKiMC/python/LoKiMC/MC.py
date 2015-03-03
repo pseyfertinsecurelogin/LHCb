@@ -1,14 +1,29 @@
 #!/usr/bin/env python
 # =============================================================================
-# $Id: MC.py,v 1.5 2007-08-17 15:21:30 ibelyaev Exp $ 
-# =============================================================================
-## @file
+## @file LoKiMC/MC.py
 #  collection of utilities for useful 'decoration' of MC-objects
+#   
+#        This file is a part of LoKi project - 
+#    "C++ ToolKit  for Smart and Friendly Physics Analysis"
+#
+#  The package has been designed with the kind help from
+#  Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas, 
+#  contributions and advices from G.Raven, J.van Tilburg, 
+#  A.Golutvin, P.Koppenburg have been used in the design.
+#
 #  @author Vanya BELYAEV ibelyaev@physics.syr.edu
 #  @date 2007-08-11 
 # =============================================================================
 """
 Collection of utilities for useful 'decoration' of MC-objects
+
+      This file is a part of LoKi project - 
+'C++ ToolKit  for Smart and Friendly Physics Analysis'
+
+The package has been designed with the kind help from
+Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas, 
+contributions and advices from G.Raven, J.van Tilburg, 
+A.Golutvin, P.Koppenburg have been used in the design.
 """
 # =============================================================================
 __author__ = 'Vanya BELYAEV ibelyaev@physics.syr.edu'
@@ -168,9 +183,9 @@ def mcParticles ( p , *a ) :
     >>> daughterPions = mcParticles ( p , 'pi+' == MCABSID , True )
 
     """
-    return LoKi.Dicts.Extract.mcParticles ( p , *a )
+    return LoKi.Dicts.MCExtract.mcParticles ( p , *a )
 
-mcParticles . __doc__ += "\n\n" + LoKi.Dicts.Extract.mcParticles . __doc__  
+mcParticles . __doc__ += "\n\n" + LoKi.Dicts.MCExtract.mcParticles . __doc__  
 
 getParticles = mcParticles 
 particles    = mcParticles
@@ -323,11 +338,16 @@ printDecay. __doc__ += "\n\n" + LoKi.PrintMC.printDecay . __doc__
 
 if not hasattr ( LHCb.MCParticle ,     'printDecay'   ) :
     LHCb.MCParticle .  printDecay   =   printDecay
+    LHCb.MCParticle .       decay   =   printDecay
 if not hasattr ( LHCb.MCParticle ,   '__printDecay__' ) :
     LHCb.MCParticle. __printDecay__ =   printDecay
+    LHCb.MCParticle.      __decay__ =   printDecay
 
 
 import LoKiCore.functions  as _LCF 
+LHCb.MCParticle.__pname__ =  _LCF.__pname__
+LHCb.MCParticle.  pname   =  _LCF.__pname__
+LHCb.MCParticle.   name   =  _LCF.__pname__
 
 _LCF.nChildren     . __doc__ += "\n" + LoKi.MCChild.nChildren         . __doc__ 
 _LCF.child         . __doc__ += "\n" + LoKi.MCChild.child             . __doc__
@@ -338,9 +358,9 @@ _LCF.daughters     . __doc__ += "\n" + LoKi.MCChild.children          . __doc__
 _LCF.descendants   . __doc__ += "\n" + LoKi.MCChild.descendants       . __doc__ 
 _LCF.ancestors     . __doc__ += "\n" + LoKi.MCChild.ancestors         . __doc__ 
 
-_LCF.extract       . __doc__ += "\n" + LoKi.Dicts.Extract.mcParticles . __doc__ 
-_LCF.particles     . __doc__ += "\n" + LoKi.Dicts.Extract.mcParticles . __doc__ 
-_LCF.getParticles  . __doc__ += "\n" + LoKi.Dicts.Extract.mcParticles . __doc__ 
+_LCF.extract       . __doc__ += "\n" + LoKi.Dicts.MCExtract.mcParticles . __doc__ 
+_LCF.particles     . __doc__ += "\n" + LoKi.Dicts.MCExtract.mcParticles . __doc__ 
+_LCF.getParticles  . __doc__ += "\n" + LoKi.Dicts.MCExtract.mcParticles . __doc__ 
 
 _LCF.count_if      . __doc__ += "\n" + LoKi.Dicts.MCAlgs.count_if     . __doc__ 
 _LCF.found         . __doc__ += "\n" + LoKi.Dicts.MCAlgs.found        . __doc__ 

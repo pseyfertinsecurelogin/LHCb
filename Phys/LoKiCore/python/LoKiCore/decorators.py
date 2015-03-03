@@ -14,12 +14,13 @@ import PyCintex
 # construct the global namespace 
 _global   = PyCintex.makeNamespace('')
 # namespace LoKi
+cpp  = _global 
 std  = _global.std
 LoKi = _global.LoKi
 LHCb = _global.LHCb
 
 
-# (auto) load the obejct form LoKiCoreDict dictionary 
+# (auto) load the obejcts from LoKiCoreDict dictionary 
 LoKi.RangeBase_
 LoKi.KeeperBase
 
@@ -108,7 +109,9 @@ def getInherited ( name , base ) :
 # =============================================================================
 ## Decorate the functions using the proper adapters 
 def decorateFunctions ( funcs , calls , opers ) :
-    """ Decorate the functions using the proper adapters """
+    """
+    Decorate the functions using the proper adapters
+    """
     for fun in funcs :
         # operator(): 
         def _call_ (s,*a) :
@@ -268,6 +271,17 @@ def decorateFunctions ( funcs , calls , opers ) :
             Uses:\n
             """
             return opers.__rdiv__ (s,a)
+        # streamers
+        def _rrshift_ ( s , a ) :
+            """
+            Streamer (map here)
+            
+            >>> a =
+            >>> function =
+            >>> result = a >> function
+            
+            """
+            return calls.__rrshift__ ( s , a ) 
         # other:
         def _neg_  (s)   :
             """
@@ -522,13 +536,135 @@ def decorateFunctions ( funcs , calls , opers ) :
             """
             Create the predicate which efficiently checks the equality of the
             function to some predefined value. Logically it is just 'operator==',
-            b ut it should be more efficient 
+            but it should be more efficient 
             
             >>> cut = equal_to ( TrTYPE , LHCb.Track.Long )
             
             Uses:\n
             """
             return opers.__equal_to__(f,v)
+        def _yields_ ( s ) :
+            """
+            Create 'yields/map' vector-functor from the scalar functor
+
+            >>> fun = ...
+            >>> vfun = yields ( fun )
+
+            The concept belongs to Gerghard 'The Great' Raven
+            
+            Uses:\n
+            """
+            return opers.__yields__ ( s )
+        def _process_ ( s ) :
+            """
+            Create 'process' vector-functor from the scalar functor
+
+            >>> fun = ...
+            >>> vfun = process ( fun )
+
+            The concept belongs to Gerghard 'The Great' Raven
+            
+            Uses:\n
+            """
+            return opers.__process__ ( s )
+        def _min_value_ ( s ) :
+            """
+            Create 'min_value' vector-functor from the scalar functor
+
+            >>> fun = ...
+            >>> vfun = min_value ( fun )
+
+            The concept belongs to Gerghard 'The Great' Raven
+            
+            Uses:\n
+            """
+            return opers.__min_value__ ( s )
+        def _max_value_ ( s ) :
+            """
+            Create 'max_value' vector-functor from the scalar functor
+
+            >>> fun = ...
+            >>> vfun = max_value ( fun )
+
+            The concept belongs to Gerghard 'The Great' Raven
+            
+            Uses:\n
+            """
+            return opers.__max_value__ ( s )
+        def _min_abs_value_ ( s ) :
+            """
+            Create 'min_abs_value' vector-functor from the scalar functor
+
+            >>> fun = ...
+            >>> vfun = min_abs_value ( fun )
+
+            The concept belongs to Gerghard 'The Great' Raven
+            
+            Uses:\n
+            """
+            return opers.__min_abs_value__ ( s )
+        def _max_abs_value_ ( s ) :
+            """
+            Create 'max_abs_value' vector-functor from the scalar functor
+
+            >>> fun = ...
+            >>> vfun = max_abs_value ( fun )
+
+            The concept belongs to Gerghard 'The Great' Raven
+            
+            Uses:\n
+            """
+            return opers.__max_abs_value__ ( s )
+        def _min_element_ ( s ) :
+            """
+            Create 'min_element' vector-functor from the scalar functor
+
+            >>> fun = ...
+            >>> vfun = min_element ( fun )
+
+            The concept belongs to Gerghard 'The Great' Raven
+            
+            Uses:\n
+            """
+            return opers.__min_element__ ( s )
+        def _max_element_ ( s ) :
+            """
+            Create 'max_element' vector-functor from the scalar functor
+
+            >>> fun = ...
+            >>> vfun = max_element ( fun )
+
+            The concept belongs to Gerghard 'The Great' Raven
+            
+            Uses:\n
+            """
+            return opers.__max_element__ ( s )
+        def _min_abs_element_ ( s ) :
+            """
+            Create 'min_abs_element' vector-functor from the scalar functor
+
+            >>> fun = ...
+            >>> vfun = min_abs_element ( fun )
+
+            The concept belongs to Gerghard 'The Great' Raven
+            
+            Uses:\n
+            """
+            return opers.__min_abs_element__ ( s )
+        def _max_abs_element_ ( s ) :
+            """
+            Create 'max_abs_element' vector-functor from the scalar functor
+
+            >>> fun = ...
+            >>> vfun = max_abs_element ( fun )
+
+            The concept belongs to Gerghard 'The Great' Raven
+            
+            Uses:\n
+            """
+            return opers.__max_abs_element__ ( s )
+
+        
         # documentation:
         _call_ . __doc__  += calls.__call__ . __doc__
         _lt_   . __doc__  += opers.__lt__   . __doc__
@@ -545,10 +681,13 @@ def decorateFunctions ( funcs , calls , opers ) :
         _rsub_ . __doc__  += opers.__rmul__ . __doc__
         _rmul_ . __doc__  += opers.__rsub__ . __doc__
         _rdiv_ . __doc__  += opers.__rdiv__ . __doc__
+        _rrshift_ . __doc__  += calls.__rrshift__ . __doc__
         _neg_  . __doc__  += opers.__neg__  . __doc__
         _abs_  . __doc__  += opers.__abs__  . __doc__
         _pow_  . __doc__  += opers.__pow__  . __doc__
         _rpow_ . __doc__  += opers.__rpow__ . __doc__
+        
+        
         # others:
         _sin_  . __doc__  += opers.__sin__  . __doc__
         _cos_  . __doc__  += opers.__cos__  . __doc__
@@ -570,8 +709,21 @@ def decorateFunctions ( funcs , calls , opers ) :
         _atan2_. __doc__  += opers.__atan2__. __doc__
         _min_  . __doc__  += opers.__min__  . __doc__
         _max_  . __doc__  += opers.__max__  . __doc__
-        _monitor_  . __doc__  += opers.__monitor__  . __doc__
-        _equal_to_ . __doc__  += opers.__equal_to__ . __doc__
+        _monitor_  . __doc__  += opers.__monitor__   . __doc__
+        _equal_to_ . __doc__  += opers.__equal_to__  . __doc__
+
+        # functional part 
+        _yields_          . __doc__  += opers.__yields__          . __doc__ 
+        _process_         . __doc__  += opers.__process__         . __doc__ 
+        _min_value_       . __doc__  += opers.__min_value__       . __doc__ 
+        _max_value_       . __doc__  += opers.__max_value__       . __doc__
+        _min_abs_value_   . __doc__  += opers.__min_abs_value__   . __doc__ 
+        _max_abs_value_   . __doc__  += opers.__max_abs_value__   . __doc__
+        _min_element_     . __doc__  += opers.__min_element__     . __doc__ 
+        _max_element_     . __doc__  += opers.__max_element__     . __doc__
+        _min_abs_element_ . __doc__  += opers.__min_abs_element__ . __doc__ 
+        _max_abs_element_ . __doc__  += opers.__max_abs_element__ . __doc__
+
         # use also other docs: 
         _call_ . __doc__  += '\n\t' + fun.__call__   . __doc__ 
         _call_ . __doc__  += '\n\t' + fun.eval       . __doc__ 
@@ -592,6 +744,7 @@ def decorateFunctions ( funcs , calls , opers ) :
         fun . __rsub__   = _rsub_  # operator-
         fun . __rmul__   = _rmul_  # operator*
         fun . __rdiv__   = _rdiv_  # operator/
+        fun . __rrshift__ = _rrshift_  # (right) operator>> 
         fun . __neg__    = _neg_   # 
         fun . __abs__    = _abs_   # 
         fun . __pow__    = _pow_   # 
@@ -617,8 +770,22 @@ def decorateFunctions ( funcs , calls , opers ) :
         fun . __pow4__   = _pow4_  #
         fun . __min__    = _min_   #
         fun . __max__    = _max_   #
-        fun . __monitor__  = _monitor_    #
-        fun . __equal_to__ = _equal_to_   #
+        fun . __monitor__   = _monitor_   #
+        fun . __equal_to__  = _equal_to_  #
+        # functional part:
+        fun . __yields__          = _yields_           #
+        fun . __process__         = _process_          #
+        fun . __min_value__       = _min_value_        #
+        fun . __max_value__       = _max_value_        #
+        fun . __min_abs_value__   = _min_abs_value_    #
+        fun . __max_abs_value__   = _max_abs_value_    #
+        fun . __min_element__     = _min_element_      #
+        fun . __max_element__     = _max_element_      #
+        fun . __min_abs_element__ = _min_abs_element_  #
+        fun . __max_abs_element__ = _max_abs_element_  #
+        
+        for attr in ( '__or__' , '__and__' ) :
+            if hasattr ( fun , attr ) : setattr ( fun , attr , None ) 
     return funcs                                          ## RETURN 
 # =============================================================================        
 ## Decorate the predicates using the proper adapters 
@@ -657,27 +824,17 @@ def decoratePredicates ( cuts , calls , opers ) :
             Uses:\n
             """
             return opers.__and__  (s,a) 
-        # "right" boolean operations:
-        def _ror_  (s,a) :
+        # streamers
+        def _rrshift_ ( s , a ) :
             """
-            Construct the right 'logical-OR' predicate: other|cut
+            Streamer (filter here)
             
-            >>> (True|cut)
-            >>> (cut2|cut)
+            >>> a = ...
+            >>> predicate  = ...
+            >>> result = a >> predicate
             
-            Uses:\n
             """
-            return opers.__ror__  (s,a)
-        def _rand_  (s,a) :
-            """
-            Construct the right 'logical-AND' predicate: other&cut
-            
-            >>> (True&cut)
-            >>> (cut2&cut)
-            
-            Uses:\n
-            """
-            return opers.__rand__  (s,a)
+            return calls.__rrshift__ ( s , a ) 
         # other:
         def _invert_ ( s ) :
             """
@@ -707,29 +864,66 @@ def decoratePredicates ( cuts , calls , opers ) :
 
             Uses:\n
             """
-            return opers.__switch__(s,v1,v2)            
+            return opers.__switch__(s,v1,v2)
+        def _select_ (s) :
+            """
+            Construct 'select/filter' vector function fron the scalar predicate:
+
+            >>> cut = ...
+            >>> selector = select( cut )
+
+            The concept belongs to Gerghard 'The Great' Raven
+            
+            Uses:\n
+            """
+            return opers.__select__(s)
+        def _process_ (s) :
+            """
+            Construct 'process' vector function fron the scalar predicate:
+
+            >>> cut = ...
+            >>> processor = process( cut )
+
+            The concept belongs to Gerghard 'The Great' Raven
+            
+            Uses:\n
+            """
+            return opers.__process__(s)
+        def _rshift_ (s, *a) :
+            """
+            
+            NO DOCS YET
+            
+            Uses:\n
+            """
+            return calls.__rshift__(s,*a)
+
         # documentation: 
         _call_    . __doc__  += calls.__call__     . __doc__
         _or_      . __doc__  += opers.__or__       . __doc__
         _and_     . __doc__  += opers.__and__      . __doc__
-        _ror_     . __doc__  += opers.__ror__      . __doc__
-        _rand_    . __doc__  += opers.__rand__     . __doc__
+        _rrshift_ . __doc__  += calls.__rrshift__  . __doc__ 
+        _rshift_  . __doc__  += calls.__rshift__   . __doc__
         _invert_  . __doc__  += opers.__invert__   . __doc__
         _monitor_ . __doc__  += opers.__monitor__  . __doc__
         _switch_  . __doc__  += opers.__switch__   . __doc__
+        _select_  . __doc__  += opers.__select__   . __doc__
+        _process_ . __doc__  += opers.__process__  . __doc__
         # use also other docs: 
         _call_ . __doc__  += '\n\t' + cut.__call__  . __doc__ 
         _call_ . __doc__  += '\n\t' + cut.evaluate  . __doc__ 
         _call_ . __doc__  += '\n\t' + cut.evaluate  . __doc__ 
         # finally redefine the functions:
-        cut .__call__   = _call_   # operator() 
-        cut .__or__     = _or_     # operator||
-        cut .__and__    = _and_    # operator&&
-        cut .__ror__    = _ror_    #
-        cut .__rand__   = _rand_   #
-        cut .__invert__ = _invert_ # operator!
+        cut .__call__     = _call_      # operator() 
+        cut .__or__       = _or_        # operator||
+        cut .__and__      = _and_       # operator&&
+        cut .__invert__   = _invert_    # operator!
+        cut .__rrshift__  = _rrshift_   # (right) operator>>
         cut . __monitor__ = _monitor_   # monitoring 
         cut . __switch__  = _switch_    # switch 
+        cut . __select__  = _select_    # select
+        cut . __process__ = _process_   # process 
+        cut . __rshift__  = _rshift_    #         operator>>
         for attr in ( '__eq__' , '__ne__' ,
                       '__lt__' , '__lt__' ,
                       '__gt__' , '__ge__' ) :
@@ -788,6 +982,129 @@ def decoratePID ( fun , opers ) :
     fun . __eq__ = _eq_
     fun . __ne__ = _ne_
     return fun                                    ## RETURN
+
+
+# =============================================================================
+## Decorate the maps/yields using the proper adapters
+def decorateMaps ( funcs , opers ) :
+    """
+    Decorate all mapping functions
+    """
+    for fun in funcs :
+        print fun
+
+        ## Use the vector function as streamer
+        if hasattr ( opers , '__rrshift__' ) : 
+            def _rrshift_ ( s ,*a ) :
+                """
+                Use the vector function as streamer
+                
+                >>> object =
+                >>> result = object >> functor
+                
+                Uses:\n
+                """
+                return opers.__rrshift__ ( s , *a )
+            # documentation
+            _rrshift_.__doc__     += opers . __rrshift__ . __doc__ 
+            # finally redefine the functions:
+            fun      . __rrshift__ = _rrshift_ 
+            
+        ## Use the vector function as streamer
+        if hasattr ( opers , '__rshift__' ) : 
+            def _rshift_ ( s ,*a ) :
+                """
+                Use the Streamers 
+                
+                >>> fun1 = ...
+                >>> fun2 = ...
+                >>> func = fun1 >> fun2 
+                
+                Uses:\n
+                """
+                return opers.__rshift__ ( s , *a )
+            # documentation
+            _rshift_ .__doc__   += opers . __rshift__  . __doc__ 
+            # finally redefine the functions:
+            fun      .__rshift__ =  _rshift_ 
+            
+        if hasattr ( opers , '__tee__' ) : 
+            def _tee_  ( s ) :
+                """
+                'Tee' the action :
+                
+                >>> functor1 = ...
+                >>> functor2 = tee ( functor )
+                
+                The concept belongs to Gerghard 'The Great' Raven
+                
+                Uses:\n
+                """
+                return opers.__tee__ ( s )
+            # documentation        
+            _tee_ .__doc__  += opers . __tee__     . __doc__
+            # finally redefine the functions:            
+            fun   . __tee__  =          _tee_ 
+            
+    return funcs                                 ## RETURN
+
+# =============================================================================
+## get all mapping functors and decorate them 
+def getAndDecorateMaps   ( name , base , opers ) :
+    """ get all maps  and decorate them """
+    funcs = getInherited ( name , base )
+    return decorateMaps  ( funcs , opers )  ## RETURN 
+# =============================================================================
+
+## Decorate the functions 'extra-info' using the proper adapters
+def decorateFunInfo ( funcs , infos  ) :
+    """
+    Decorate the functions 'extra-info' using the proper adapters
+    """
+    for fun in funcs :
+        # operator(): 
+        def _info_ (s,*a) :
+            """
+            Construct ''Smart-extra-info'' functor,
+            which returns the valeu of extraInfo(index), if the information
+            present, otherwise it evaluates the functor and (optionally)
+            updates the extraInfo field
+            
+            >>> functor = ...
+            >>> smart = infor ( 15 , functor )
+            
+            >>> particle = ...
+            >>> value = smart ( particle )
+            
+            The concept belongs to Jose Angel Hernado Morata and Hugo Ruiz Peres
+            
+            """ 
+            return infos . __info__ ( s , *a )
+        # update the documentation 
+        _info_ . __doc__ += infos . __info__ . __doc__
+        # finally decorate the function 
+        fun    . __info__  =         _info_ 
+
+    return funcs
+
+# =============================================================================
+## get all 'info'-functors and decorate them 
+def getAndDecorateInfos  ( name , base , opers ) :
+    """
+    Det all infos  and decorate them
+    """
+    funcs = getInherited ( name , base )
+    return decorateFunInfo ( funcs , opers )  ## RETURN 
+
+# =============================================================================
+## get all pipeing functors and decorate them 
+def getAndDecoratePipes  ( name , base , opers ) :
+    """ get all maps  and decorate them """
+    funcs = getInherited ( name , base )
+    return decorateMaps  ( funcs , opers )  ## RETURN 
+
+
+
 
 
 # =============================================================================

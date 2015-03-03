@@ -4,6 +4,15 @@
 ! Purpose     : Base package for RICH Reconstruction Packages
 !-----------------------------------------------------------------------------
 
+!===================== RichRecBase v3r9 2007-11-26 =======================
+! 2007-11-26 - Marco Cattaneo
+ - Adapt to GaudiObjDesc v10r0 changes to deal with changed namespace of STL
+   serializers in Gaudi v19r6
+
+! 2007-11-26 - Chris Jones
+ - Add new interface for photon emission point tool
+ - Remove redundant method from IRichPhotonReconstruction.h
+
 !===================== RichRecBase v3r8 2007-11-12 =======================
 ! 2007-11-12 - Marco Cattaneo
  - Add explicit dependency of library on generated includes

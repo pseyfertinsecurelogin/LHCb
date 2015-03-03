@@ -1,4 +1,4 @@
-// $Id: L0DUElementaryData.cpp,v 1.3 2007-10-31 14:31:15 odescham Exp $
+// $Id: L0DUElementaryData.cpp,v 1.5 2007-11-29 09:38:16 cattanem Exp $
 // Include files 
 #include <utility>
 #include <string>

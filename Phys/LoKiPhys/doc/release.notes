@@ -1,9 +1,22 @@
-! $Id: release.notes,v 1.36 2007-10-08 06:56:38 cattanem Exp $ 
+! $Id: release.notes,v 1.38 2007-12-09 18:25:33 ibelyaev Exp $ 
 ! -----------------------------------------------------------------------------
 ! Package     : Phys/LoKiPhys
 ! Responsible : Vanya Belyaev
 ! Purpose     : "Phys"-part of new restructurized LoKi 
 ! -----------------------------------------------------------------------------
+
+!========================== LoKiPhys v7r0 2007-12-09 ==========================
+
+! 2007-12-09 - Vanya BELYAEV
+ - add 'sources' 
+   new files LoKi/PhysSources.h, src/PhsySources.cpp 
+
+
+! 2007-12-02 - Vanya BELYAEV
+ - update for the new major verison of LoKi v7r0 ("The Powerful Streamers")
+ - cmt/requirements 
+   version upgrade to v7r0 
+
 
 !========================== LoKiPhys v6r1 2007-10-08 ==========================
 ! 2007-10-07 - Vanya BELYAEV

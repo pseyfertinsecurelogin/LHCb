@@ -1,10 +1,15 @@
 ! =============================================================================
-! $Id: release.notes,v 1.37 2007-10-05 13:11:42 cattanem Exp $ 
+! $Id: release.notes,v 1.39 2007-12-07 12:57:46 cattanem Exp $ 
 ! =============================================================================
 ! package DetDescSvc
 ! package manager : Marco Clemencic, Juan Palacios ?
 ! purpose:          Component library for Detector Description Services
 ! =============================================================================
+
+!========================= DetDescSvc v1r15 2007-12-07 ========================
+! 2007-12-07 - Marco Clemencic
+ - Minor improvement in UpdateManagerSvc debug output: print demangled name of
+   registered classes. 
 
 !========================= DetDescSvc v1r14 2007-10-04 ========================
 ! 2007-10-01 - Marco Clemencic

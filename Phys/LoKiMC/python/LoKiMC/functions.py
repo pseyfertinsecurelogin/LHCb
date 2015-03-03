@@ -3,10 +3,30 @@
 ## @file functions.py LoKiMC/functions.py
 #  The set of basic functions from LoKiMC library
 #  The file is a part of LoKi and Bender projects
+#   
+#        This file is a part of LoKi project - 
+#    "C++ ToolKit  for Smart and Friendly Physics Analysis"
+#
+#  The package has been designed with the kind help from
+#  Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas, 
+#  contributions and advices from G.Raven, J.van Tilburg, 
+#  A.Golutvin, P.Koppenburg have been used in the design.
+#
 #  @author Vanya BELYAEV ibelyaev@physics.syr.edu
 # =============================================================================
-""" The set of basic functions from LoKiMC library """ 
-_author_ = "Vanya BELYAEV ibelyaev@physics.syr.edu" 
+"""
+The set of basic functions from LoKiMC library
+
+      This file is a part of LoKi project - 
+'C++ ToolKit  for Smart and Friendly Physics Analysis'
+
+The package has been designed with the kind help from
+Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas, 
+contributions and advices from G.Raven, J.van Tilburg, 
+A.Golutvin, P.Koppenburg have been used in the design.
+""" 
+# =============================================================================
+__author__ = "Vanya BELYAEV ibelyaev@physics.syr.edu" 
 # =============================================================================
 
 import LoKiCore.decorators as _LoKiCore
@@ -36,38 +56,38 @@ MCVRangeL = LoKi.RangeList_  ( MCVRange )
 # =============================================================================
 
 ## @see LoKi::Types::MCFunc
-MCFunc  = LoKi.Function               ( _MCP ) 
+MCFunc  = LoKi.Functor               ( _MCP , 'double' ) 
 ## @see LoKi::Types::MCCuts
-MCCuts  = LoKi.Predicate              ( _MCP ) 
+MCCuts  = LoKi.Functor               ( _MCP ,  bool    ) 
 ## @see LoKi::Types::MCFun
-MCFun   = LoKi.FunctionFromFunction   ( _MCP ) 
+MCFun   = LoKi.FunctorFromFunctor    ( _MCP , 'double' ) 
 ## @see LoKi::Types::MCCut
-MCCut   = LoKi.PredicateFromPredicate ( _MCP ) 
+MCCut   = LoKi.FunctorFromFunctor    ( _MCP ,  bool    ) 
 ## @see LoKi::Types::MCFunc
-MCVFunc = LoKi.Function               ( _MCV ) 
+MCVFunc = LoKi.Functor               ( _MCV , 'double' ) 
 ## @see LoKi::Types::MCCuts
-MCVCuts = LoKi.Predicate              ( _MCV ) 
+MCVCuts = LoKi.Functor               ( _MCV ,  bool    ) 
 ## @see LoKi::Types::MCFun
-MCVFun  = LoKi.FunctionFromFunction   ( _MCV ) 
+MCVFun  = LoKi.FunctorFromFunctor    ( _MCV , 'double' ) 
 ## @see LoKi::Types::MCCut
-MCVCut  = LoKi.PredicateFromPredicate ( _MCV ) 
+MCVCut  = LoKi.FunctorFromFunctor    ( _MCV ,  bool    ) 
 
 # =============================================================================
 ## All concrete types 
 # =============================================================================
 
 ## @see LoKi::Cuts::MCTRUE
-MCTRUE     = LoKi.BooleanConstant( _MCP )(True)
+MCTRUE     = LoKi.Constant( _MCP , bool )(True)
 ## @see LoKi::Cuts::MCFALSE
-MCFALSE    = LoKi.BooleanConstant( _MCP )(False)
+MCFALSE    = LoKi.Constant( _MCP , bool )(False)
 ## @see LoKi::Cuts::MCALL
 MCALL      = MCTRUE
 ## @see LoKi::Cuts::MCNONE
 MCNONE     = MCFALSE
 ## @see LoKi::Cuts::MCONE
-MCONE      = LoKi.Constant     ( _MCP )(1.0)
+MCONE      = LoKi.Constant     ( _MCP , 'double' ) (1.0)
 ## @see LoKi::Cuts::MCZERO
-MCZERO     = LoKi.Constant     ( _MCP )(0.0)
+MCZERO     = LoKi.Constant     ( _MCP , 'double' ) (0.0)
 ## @see LoKi::Cuts::MCMIN
 #MCMIN      = LoKi.Min          ( _MCP )
 ## @see LoKi::Cuts::MCMIN
@@ -75,7 +95,7 @@ MCZERO     = LoKi.Constant     ( _MCP )(0.0)
 ## @see LoKi::Cuts::MCVALID
 MCVALID    = LoKi.Valid        ( _MCP )()
 ## @see LoKi::Cuts::MCSAME
-MCSAME     = LoKi.TheSame      ( _MCP )
+#MCSAME     = LoKi.TheSame      ( _MCP )
 ## @see LoKi::Cuts::OSCILLATED
 OSCILLATED = LoKi.MCParticles.Oscillated   ()
 ## @see LoKi::Cuts::MCOSCILLATED
@@ -205,17 +225,17 @@ HADRON     = MCHADRON
 NUCLEUS    = MCNUCLEUS
 
 ## @see LoKi::Cuts::MCVTRUE
-MCVTRUE     = LoKi.BooleanConstant( _MCV )(True)
+MCVTRUE     = LoKi.Constant( _MCV  , bool )(True)
 ## @see LoKi::Cuts::MCVFALSE
-MCVFALSE    = LoKi.BooleanConstant( _MCV )(False)
+MCVFALSE    = LoKi.Constant( _MCV  , bool )(False)
 ## @see LoKi::Cuts::MCVALL
 MCVALL      = MCVTRUE
 ## @see LoKi::Cuts::MCVNONE
 MCVNONE     = MCVFALSE
 ## @see LoKi::Cuts::MCVONE
-MCVONE      = LoKi.Constant     ( _MCV )(1.0)
+MCVONE      = LoKi.Constant     ( _MCV , 'double' )(1.0)
 ## @see LoKi::Cuts::MCVZERO
-MCVZERO     = LoKi.Constant     ( _MCV )(0.0)
+MCVZERO     = LoKi.Constant     ( _MCV , 'double' )(0.0)
 ## @see LoKi::Cuts::MCVMIN
 #MCVMIN      = LoKi.Min         ( _MCV )
 ## @see LoKi::Cuts::MCVMIN
@@ -223,7 +243,7 @@ MCVZERO     = LoKi.Constant     ( _MCV )(0.0)
 ## @see LoKi::Cuts::MCVVALID
 MCVVALID    = LoKi.Valid        ( _MCV )()
 ## @see LoKi::Cuts::MCVSAME
-MCVSAME     = LoKi.TheSame      ( _MCV )
+#MCVSAME     = LoKi.TheSame      ( _MCV )
 ## @see LoKi::Cuts::MCVTYPE
 MCVTYPE     = LoKi.MCVertices.TypeOfMCVertex ()
 ## @see LoKi::Cuts::MCVFOT
@@ -245,7 +265,38 @@ MCVDIST     = LoKi.MCVertices.MCVertexDistance
 ## @see LoKi::Cuts::MCVXFUN
 MCVXFUN     = LoKi.MCVertices.MCVFunAsMCFun
 
-_MCChild = LoKi.Child.MCChild 
+
+# functional part:
+
+## functional part
+_vp       = std.vector ( _MCP    )
+_vv       = std.vector ( _MCV    )
+_vd       = std.vector ('double')
+#
+MCMaps      = LoKi.Functor             ( _vp , _vd      )
+MCMap       = LoKi.FunctorFromFunctor  ( _vp , _vd      )
+MCPipes     = LoKi.Functor             ( _vp , _vp      )
+MCPipe      = LoKi.FunctorFromFunctor  ( _vp , _vp      )
+MCFunVals   = LoKi.Functor             ( _vp , 'double' )
+MCFunVal    = LoKi.FunctorFromFunctor  ( _vp , 'double' )
+MCElements  = LoKi.Functor             ( _vp , _MCP     ) 
+MCElement   = LoKi.FunctorFromFunctor  ( _vp , _MCP     ) 
+MCSources   = LoKi.Functor             ('void', _vp     )
+MCSource    = LoKi.FunctorFromFunctor  ('void', _vp     )
+#
+MCVMaps     = LoKi.Functor             ( _vv , _vd      )
+MCVMap      = LoKi.FunctorFromFunctor  ( _vv , _vd      )
+MCVPipes    = LoKi.Functor             ( _vv , _vv      )
+MCVPipe     = LoKi.FunctorFromFunctor  ( _vv , _vv      )
+MCVFunVals  = LoKi.Functor             ( _vv , 'double' )
+MCVFunVal   = LoKi.FunctorFromFunctor  ( _vv , 'double' )
+MCVElements = LoKi.Functor             ( _vv , _MCV     ) 
+MCVElement  = LoKi.FunctorFromFunctor  ( _vv , _MCV     ) 
+MCVSources  = LoKi.Functor             ('void', _vv     )
+MCVSource   = LoKi.FunctorFromFunctor  ('void', _vv     )
+
+
+MCSOURCE    = LoKi.MCParticles.SourceTES
 
 # =============================================================================
 if '__main__' == __name__ :

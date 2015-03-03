@@ -4,6 +4,13 @@
 ! Purpose     : Muon System Raw Buffer coding and decoding algorithms
 !-----------------------------------------------------------------------------
 
+!========================== MuonDAQ v3r3 2007-11-28 ==========================
+! 2007-11-28 - Marco Cattaneo
+ - Add dictionary fo tool interface
+
+! 2007-11-20 - Alessia Satta
+ - Fix for unchecked status code
+
 !========================== MuonDAQ v3r2 2007-06-05 ==========================
 ! 2007-06-05 - Marco Cattaneo
  - Adapt to RootInTES() being set in the GaudiAlg/GaudiTool base class

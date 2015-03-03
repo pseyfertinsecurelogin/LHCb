@@ -1,14 +1,4 @@
-// $Id: LoKiCoreDict.h,v 1.3 2007-06-14 14:54:17 cattanem Exp $
-// ============================================================================
-// CVS tag $Name: not supported by cvs2svn $, version $Revision: 1.3 $
-// ============================================================================
-// $Log: not supported by cvs2svn $
-// Revision 1.2  2007/06/03 20:38:24  ibelyaev
-//  update the generic algorithms
-//
-// Revision 1.1  2007/06/01 11:35:27  ibelyaev
-//  prepare for v3r0
-// 
+// $Id: LoKiCoreDict.h,v 1.5 2007-12-09 19:17:32 ibelyaev Exp $
 // ============================================================================
 #ifndef LOKI_LOKICOREDICT_H 
 #define LOKI_LOKICOREDICT_H 1
@@ -40,11 +30,12 @@ namespace
   struct _Interfaces 
   {
     // 
-    LoKi::Interface<LoKi::ILoKiSvc>  m_1 ;
-    LoKi::Interface<LoKi::IReporter> m_2 ;
-    LoKi::Interface<GaudiTool>       m_3 ;
-    LoKi::Interface<GaudiAlgorithm>  m_4 ;
-    /// fictive constructor 
+    LoKi::Interface<LoKi::ILoKiSvc>   m_1 ;
+    LoKi::Interface<LoKi::IReporter>  m_2 ;
+    LoKi::Interface<GaudiTool>        m_3 ;
+    LoKi::Interface<GaudiAlgorithm>   m_4 ;
+    LoKi::Interface<IDataProviderSvc> m_5 ;
+    // fictive constructor 
     _Interfaces() ;
   } ;  
 }

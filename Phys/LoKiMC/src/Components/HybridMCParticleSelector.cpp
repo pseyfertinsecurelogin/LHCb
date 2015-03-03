@@ -1,4 +1,4 @@
-// $Id: HybridMCParticleSelector.cpp,v 1.1 2007-07-25 15:16:07 ibelyaev Exp $
+// $Id: HybridMCParticleSelector.cpp,v 1.3 2007-12-09 18:20:18 ibelyaev Exp $
 // ============================================================================
 // Include files 
 // ============================================================================
@@ -57,10 +57,10 @@ namespace LoKi
       virtual StatusCode initialize () ;
       /// select
       virtual bool accept      ( const LHCb::MCParticle* p ) const      
-      { return m_mccut ( p ) ; }
+      { return m_mccut.fun ( p ) ; }
       /// Test if filter is satisfied (functor interface)
       virtual bool operator()  ( const LHCb::MCParticle* p ) const 
-      { return accept ( p ) ; }
+      { return m_mccut.fun ( p ) ; }
     protected:
       /// Standard constructor
       MCParticleSelector 
@@ -68,7 +68,7 @@ namespace LoKi
         const std::string& name,
         const IInterface* parent)
         : GaudiTool ( type , name , parent )
-        , m_mccut   ( LoKi::BooleanConstant<const LHCb::MCParticle*>( false ) ) 
+        , m_mccut   ( LoKi::BasicFunctors<const LHCb::MCParticle*>::BooleanConstant( false ) ) 
         , m_code    ( "MCNONE" )
         , m_factory ("LoKi::Hybrid::MCTool/MCHybridFactory:PUBLIC") 
       {

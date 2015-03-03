@@ -4,6 +4,14 @@
 ! Purpose     : Define and build the POOL dictionaries for the relations
 !-----------------------------------------------------------------------------
 
+!======================= EventAssoc v4r3 2007-11-29 ==========================
+! 2007-11-27 - Vanya BELYAEV
+ - dict/selection.py
+   tiny update to take into accunt new (python) structure in Kernel/Relations
+   package
+ - cmt/requirements 
+   version increment to v4r3 
+
 !======================= EventAssoc v4r2 2007-07-02 ==========================
 ! 2007-06-29 - Vanya BELYAEV
  - dict/selection.py 

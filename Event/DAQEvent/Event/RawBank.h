@@ -1,3 +1,4 @@
+
 #ifndef DAQEVENT_RAWBANK_H
 #define DAQEVENT_RAWBANK_H 1
 
@@ -69,9 +70,9 @@ namespace LHCb
                    VeloFull,
                    TTFull,
                    ITFull,
-                   EcalPacked,
-                   HcalPacked,
-                   PrsPacked,
+                   EcalPacked,//21
+                   HcalPacked,//22
+                   PrsPacked,//23
                    L0Muon,
                    ITError,
                    TTError,
@@ -96,6 +97,7 @@ namespace LHCb
                    GaudiHeader,     //45
                    TTProcFull,      //46
                    ITProcFull,      //47
+                   TAEHeader,       //48
                    LastType    // LOOP Marker; add new bank types ONLY before!
     };
 

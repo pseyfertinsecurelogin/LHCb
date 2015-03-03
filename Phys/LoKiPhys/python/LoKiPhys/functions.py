@@ -3,10 +3,30 @@
 ## @file functions.py LoKiPhys/functions.py
 #  The set of basic decorator for objects from LoKiPhys library
 #  The file is a part of LoKi and Bender projects
+#
+#        This file is a part of LoKi project - 
+#    "C++ ToolKit  for Smart and Friendly Physics Analysis"
+#
+#  The package has been designed with the kind help from
+#  Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas, 
+#  contributions and advices from G.Raven, J.van Tilburg, 
+#  A.Golutvin, P.Koppenburg have been used in the design.
+#
 #  @author Vanya BELYAEV ibelyaev@physics.syr.edu
 # =============================================================================
-""" The set of basic decorators for obejcts from LoKiPhys library """
-_author_ = "Vanya BELYAEV ibelyaev@physics.syr.edu" 
+"""
+The set of basic decorators for obejcts from LoKiPhys library
+
+      This file is a part of LoKi project - 
+'C++ ToolKit  for Smart and Friendly Physics Analysis'
+
+The package has been designed with the kind help from
+Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas, 
+contributions and advices from G.Raven, J.van Tilburg, 
+A.Golutvin, P.Koppenburg have been used in the design.
+"""
+# =============================================================================
+__author__ = "Vanya BELYAEV ibelyaev@physics.syr.edu" 
 # =============================================================================
 
 import LoKiCore.decorators as      _LoKiCore
@@ -38,38 +58,38 @@ VRangeL = LoKi.RangeList_  ( VRange )
 # =============================================================================
 
 ## @see LoKi::Types::Func
-Func  = LoKi.Function               ( _RCP ) 
+Func  = LoKi.Functor                ( _RCP , 'double' ) 
 ## @see LoKi::Types::Cuts
-Cuts  = LoKi.Predicate              ( _RCP ) 
+Cuts  = LoKi.Functor                ( _RCP ,  bool    ) 
 ## @see LoKi::Types::Fun
-Fun   = LoKi.FunctionFromFunction   ( _RCP ) 
+Fun   = LoKi.FunctorFromFunctor     ( _RCP , 'double' ) 
 ## @see LoKi::Types::Cut
-Cut   = LoKi.PredicateFromPredicate ( _RCP ) 
+Cut   = LoKi.FunctorFromFunctor     ( _RCP ,  bool    ) 
 ## @see LoKi::Types::Func
-VFunc = LoKi.Function               ( _RCV ) 
+VFunc = LoKi.Functor                ( _RCV , 'double' ) 
 ## @see LoKi::Types::Cuts
-VCuts = LoKi.Predicate              ( _RCV ) 
+VCuts = LoKi.Functor                ( _RCV ,  bool    ) 
 ## @see LoKi::Types::Fun
-VFun  = LoKi.FunctionFromFunction   ( _RCV ) 
+VFun  = LoKi.FunctorFromFunctor     ( _RCV , 'double' ) 
 ## @see LoKi::Types::Cut
-VCut  = LoKi.PredicateFromPredicate ( _RCV ) 
+VCut  = LoKi.FunctorFromFunctor     ( _RCV ,  bool    ) 
 
 # =============================================================================
 ## All concrete types 
 # =============================================================================
 
 ## @see LoKi::Cuts::TRUE
-TRUE     = LoKi.BooleanConstant( _RCP )(True)
+TRUE     = LoKi.Constant( _RCP , bool )(True)
 ## @see LoKi::Cuts::FALSE
-FALSE    = LoKi.BooleanConstant( _RCP )(False)
+FALSE    = LoKi.Constant( _RCP , bool )(False)
 ## @see LoKi::Cuts::ALL
 ALL      = TRUE
 ## @see LoKi::Cuts::NONE
 NONE     = FALSE
 ## @see LoKi::Cuts::ONE
-ONE      = LoKi.Constant     ( _RCP )(1.0)
+ONE      = LoKi.Constant     ( _RCP , 'double' )(1.0)
 ## @see LoKi::Cuts::ZERO
-ZERO     = LoKi.Constant     ( _RCP )(0.0)
+ZERO     = LoKi.Constant     ( _RCP , 'double' )(0.0)
 ## @see LoKi::Cuts::VALID
 VALID    = LoKi.Valid        ( _RCP )()
 ## @see LoKi::Cuts::SAME
@@ -330,17 +350,17 @@ DANG     = LoKi.Particles.CosineDirectionAngle
 DIRA     = LoKi.Particles.CosineDirectionAngle 
 
 ## @see LoKi::Cuts::VTRUE
-VTRUE     = LoKi.BooleanConstant( _RCV )(True)
+VTRUE     = LoKi.Constant( _RCV , bool )(True)
 ## @see LoKi::Cuts::VFALSE
-VFALSE    = LoKi.BooleanConstant( _RCV )(False)
+VFALSE    = LoKi.Constant( _RCV , bool )(False)
 ## @see LoKi::Cuts::VALL
 VALL      = VTRUE
 ## @see LoKi::Cuts::VNONE
 VNONE     = VFALSE
 ## @see LoKi::Cuts::VONE
-VONE      = LoKi.Constant     ( _RCV )(1.0)
+VONE      = LoKi.Constant     ( _RCV , 'double' )(1.0)
 ## @see LoKi::Cuts::VZERO
-VZERO     = LoKi.Constant     ( _RCV )(0.0)
+VZERO     = LoKi.Constant     ( _RCV , 'double' )(0.0)
 ## @see LoKi::Cuts::VVALID
 VVALID    = LoKi.Valid        ( _RCV )()
 ## @see LoKi::Cuts::VSAME
@@ -389,6 +409,43 @@ MINVVDCHI2 = LoKi.Vertices.MinVertexChi2Distance
 VIP        = LoKi.Vertices.ImpPar
 ## @see LoKi::Vertices::ImpParChi2
 VIPCHI2    = LoKi.Vertices.ImpParChi2
+
+
+
+# functional part:
+
+## functional part
+_vp       = std.vector ( _RCP    )
+_vv       = std.vector ( _RCV    )
+_vd       = std.vector ('double')
+#
+Maps      = LoKi.Functor             ( _vp    , _vd      )
+Map       = LoKi.FunctorFromFunctor  ( _vp    , _vd      )
+Pipes     = LoKi.Functor             ( _vp    , _vp      )
+Pipe      = LoKi.FunctorFromFunctor  ( _vp    , _vp      )
+FunVals   = LoKi.Functor             ( _vp    , 'double' )
+FunVal    = LoKi.FunctorFromFunctor  ( _vp    , 'double' )
+Elements  = LoKi.Functor             ( _vp    , _RCP     ) 
+Element   = LoKi.FunctorFromFunctor  ( _vp    , _RCP     ) 
+Sources   = LoKi.Functor             ( 'void' , _vp      ) 
+Source    = LoKi.FunctorFromFunctor  ( 'void' , _vp      ) 
+#
+VMaps     = LoKi.Functor             ( _vv , _vd      )
+VMap      = LoKi.FunctorFromFunctor  ( _vv , _vd      )
+VPipes    = LoKi.Functor             ( _vv , _vv      )
+VPipe     = LoKi.FunctorFromFunctor  ( _vv , _vv      )
+VFunVals  = LoKi.Functor             ( _vv , 'double' )
+VFunVal   = LoKi.FunctorFromFunctor  ( _vv , 'double' )
+VElements = LoKi.Functor             ( _vv , _RCV     ) 
+VElement  = LoKi.FunctorFromFunctor  ( _vv , _RCV     ) 
+VSources  = LoKi.Functor             ( 'void' , _vv   ) 
+VSource   = LoKi.FunctorFromFunctor  ( 'void' , _vv   ) 
+
+
+SOURCE         = LoKi.Particles.SourceTES
+SOURCEDESKTOP  = LoKi.Particles.SourceDesktop
+VSOURCE        = LoKi.Vertices.SourceTES
+VSOURCEDESKTOP = LoKi.Vertices.SourceDesktop
 
 
 # =============================================================================

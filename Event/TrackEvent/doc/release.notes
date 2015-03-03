@@ -4,6 +4,28 @@
 ! Purpose     : Package for the tracking event model classes
 !-----------------------------------------------------------------------------
 
+!======================= TrackEvent v4r9 2007-12-04 ==========================
+!2007-12-04 - Wouter Hulsbergen
+ - Changed 'Measurement::setTrajectory' method such that it compiles on windows
+
+!2007-11-30 Wouter Hulsbergen
+ - added method to add list of states to track
+ - moved reference vector from Measurement to Node
+
+!2007-11-29 - Stephanie Hansmann-Menzemer
+ - change name of state: ZAtT -> ZEndT
+
+!2007-11-27 - Wouter Hulsbergen
+ - Added method to remove all measurements or nodes from a track
+
+!2007-11-26 - Wouter Hulsbergen
+ - Fixed 'Track::copy' method to work also for track with muon measurements
+ - Added method to efficiently add set of measurements to Track
+ - Added method to set StateVector to Measurement
+
+!2007-11-20 - Wouter Hulsbergen
+ - Corrected z-position for begin of T-station range in StateParameters
+
 !======================= TrackEvent v4r8 2007-11-09 ==========================
 ! 2007-11-09 - Marco Cattaneo
  - Remove an obsolete dependency

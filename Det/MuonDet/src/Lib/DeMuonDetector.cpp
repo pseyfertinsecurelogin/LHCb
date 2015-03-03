@@ -1,10 +1,10 @@
-// $Id: DeMuonDetector.cpp,v 1.36 2007-10-17 11:24:04 asatta Exp $
+// $Id: DeMuonDetector.cpp,v 1.38 2007-11-28 08:00:23 cattanem Exp $
 
 // Include files
+#include "MuonChamberLayout.h"
 #include "MuonDet/DeMuonDetector.h"
 #include "MuonDet/DeMuonGasGap.h"
 #include "MuonDet/MuonChamberGrid.h"
-#include "MuonDet/MuonChamberLayout.h"
 #include "MuonDet/DeMuonRegion.h"
 
 //Detector description
@@ -705,7 +705,8 @@ StatusCode DeMuonDetector::getPCCenter(MuonFrontEndID fe,int chamber,
   MuonChamberGrid* theGrid = dynamic_cast<MuonChamberGrid*>(aGrid);
   double xcenter_norma=-1;
   double ycenter_norma=-1;  
-  theGrid->getPCCenter(fe,xcenter_norma,ycenter_norma);
+  StatusCode sc=theGrid->getPCCenter(fe,xcenter_norma,ycenter_norma);
+  if(sc.isFailure())return StatusCode::FAILURE;
   double xcenter_gap=xcenter_norma*2*dx-dx;
   double ycenter_gap=ycenter_norma*2*dy-dy;
   //  unsigned int layer=fe.getLayer();

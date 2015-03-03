@@ -1,4 +1,4 @@
-// $Id: Calls.h,v 1.2 2007-07-23 17:07:35 ibelyaev Exp $
+// $Id: Calls.h,v 1.4 2007-12-03 12:03:22 ibelyaev Exp $
 // ============================================================================
 #ifndef LOKI_CALLS_H 
 #define LOKI_CALLS_H 1
@@ -12,6 +12,7 @@
 // LoKi
 // ============================================================================
 #include "LoKi/Functions.h"
+#include "LoKi/BasicFunctors.h"
 // ============================================================================
 namespace LoKi
 {
@@ -26,13 +27,26 @@ namespace LoKi
     class FunCalls 
     {
     private:
-      typedef TYPE                        Type ;
-      typedef LoKi::Function<const Type*> Fun  ;
+      typedef TYPE                                                Type ;
+      typedef typename LoKi::BasicFunctors<const Type*>::Function Fun  ;
     public:
+      //
       static typename Fun::result_type __call__ 
       ( const Fun& fun  , const Type*           o ) { return fun ( o ) ; }
       static typename Fun::result_type __call__ 
       ( const Fun& fun  , const SmartRef<Type>& o ) { return fun ( o ) ; }
+      // ======================================================================
+      static std::vector<typename Fun::result_type> __rrshift__ 
+      ( const Fun& fun  , const typename Type::ConstVector& o ) 
+      { return o >> fun  ; }
+      static std::vector<typename Fun::result_type> __rrshift__ 
+      ( const Fun& fun  , const typename Type::Vector&      o ) 
+      { return o >> fun  ; }
+      static typename Fun::result_type              __rrshift__ 
+      ( const Fun& fun  , const Type*           o ) { return fun ( o ) ; }
+      static typename Fun::result_type              __rrshift__ 
+      ( const Fun& fun  , const SmartRef<Type>& o ) { return fun ( o ) ; }
+      //
     } ;
     // ========================================================================
     /** @class CutCalls Calls.h LoKi/Calls.h
@@ -43,17 +57,31 @@ namespace LoKi
     class CutCalls 
     {
     private:
-      typedef TYPE                         Type ;
-      typedef LoKi::Predicate<const Type*> Fun ;
+      typedef TYPE                                                 Type ;
+      typedef typename LoKi::BasicFunctors<const Type*>::Predicate Fun  ;
     public:
+      //
       static typename Fun::result_type __call__ 
-      ( const Fun& fun  , const Type*           o ) { return fun ( o ) ; }
+      ( const Fun& fun  , const Type*                       o ) { return fun ( o ) ; }
       static typename Fun::result_type __call__ 
-      ( const Fun& fun  , const SmartRef<Type>& o ) { return fun ( o ) ; }
+      ( const Fun& fun  , const SmartRef<Type>&             o ) { return fun ( o ) ; }
+      // ======================================================================
+      static typename Type::ConstVector __rrshift__ 
+      ( const Fun& fun  , const typename Type::ConstVector& o ) { return o >> fun  ; }
+      static typename Type::Vector      __rrshift__ 
+      ( const Fun& fun  , const typename Type::Vector&      o ) { return o >> fun  ; }
+      static typename Fun::result_type  __rrshift__ 
+      ( const Fun& fun  , const Type*                       o ) { return fun ( o ) ; }
+      static typename Fun::result_type  __rrshift__ 
+      ( const Fun& fun  , const SmartRef<Type>&             o ) { return fun ( o ) ; }
+      // ======================================================================
+      static LoKi::FunctorFromFunctor<const Type*,bool> __rshift__            
+      ( const Fun& fun  , const Fun&                        o ) { return fun >> o  ; }
+      //
     } ;
     // ========================================================================
   } // end of namespace LoKi::Dicts
-} //end oif namespace LoKi
+} //end of namespace LoKi
 // ============================================================================
 // The END 
 // ============================================================================

@@ -1,9 +1,8 @@
-// $Id: VeloTell1Core.h,v 1.1 2007-09-18 07:33:03 cattanem Exp $
+// $Id: VeloTell1Core.h,v 1.3 2007-12-11 08:39:10 cattanem Exp $
 #ifndef VELOTELL1CORE_H 
 #define VELOTELL1CORE_H 1
 
 // Include files
-#include <sys/types.h>
 #include <vector>
 
 /** @namespace VeloTell1Core VeloTell1Core.h Kernel/VeloTell1Core.h
@@ -14,6 +13,10 @@
  */
 
 namespace VeloTELL1{
+
+  typedef unsigned int u_int32_t;
+  typedef unsigned short int u_int16_t;
+  typedef unsigned char u_int8_t;
 
   enum strips{
     HEADER_STRIPS=4
@@ -126,6 +129,9 @@ namespace VeloTELL1{
   typedef std::vector<int> EngineVec;
   typedef EngineVec::iterator diT;
   typedef EngineVec::const_iterator const_diT;
-
+  // these are needed after upadate of the VeloTELL1Data
+  typedef std::vector<signed int>::const_iterator cIT;
+  // Pair of const iterators
+  typedef std::pair<cIT, cIT> ALinkPair;
 };
 #endif // VELOTELL1CORE_H

@@ -544,16 +544,24 @@ class genClasses(genSrcUtils.genSrcUtils):
             if b['attrs']['name'].split('<')[0] not in ('ContainedObject', 'DataObject', 'KeyedObject'):
               s += '  %s::fillStream(s);\n' % b['attrs']['name']
         if godClass.has_key('attribute'):
+          for att in godClass['attribute']:
+            attAtt = att['attrs']
+            type = attAtt['type'].lstrip()
+            if type[:5] == 'std::':
+              if 'GaudiKernel/SerializeSTL' not in self.include:
+                self.include.append('GaudiKernel/SerializeSTL')
+                 # Trick for namespace problems (Savannah bug 29887)
+                self.verbatimLHCb.append('using GaudiUtils::operator<<;')
+                break;
           s += '  s << "{ "'
           for att in godClass['attribute']:
             attAtt = att['attrs']
-            if attAtt['type'][:5] == 'std::' and 'Kernel/SerializeStl' not in self.include:
-              self.include.append('Kernel/SerializeStl')
+            type = attAtt['type'].lstrip()
             if s[-1] == '"' : s += ' << "%s :\t" ' % attAtt['name']
             else            : s += '\n            << "%s :\t" ' % attAtt['name']
-            if   attAtt['type'] == 'bool'   : s += '<< l_'
-            elif attAtt['type'] == 'double' : s += '<< (float)m_'
-            else                            : s += '<< m_'
+            if   type == 'bool'   : s += '<< l_'
+            elif type == 'double' : s += '<< (float)m_'
+            else                  : s += '<< m_'
             s += attAtt['name'] + ' << std::endl'
           s += ' << " }";\n'
         s += '  return s;\n'

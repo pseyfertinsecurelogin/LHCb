@@ -134,9 +134,11 @@
         access = "PUBLIC" >
         <enumval name = "Likelihood" value = "1" desc="The Likelihood the track is real"/>
         <enumval name = "PatQuality" value = "2" desc="Quality variable from PatForward Tracking"/>
-	<enumval name = "Cand2ndQPat"      value = "3"  desc=" Quality of the second candidate"/>
-        <enumval name = "NCandCommonHits"  value = "4"  desc=" NCand with common hits"/>
-        <enumval name = "Cand2ndChi2Mat"   value = "5"  desc=" Chi2 of the second candidate"/>
+	<enumval name = "Cand1stQPat"      value = "3"  desc=" Quality of the first candidate"/>
+	<enumval name = "Cand2ndQPat"      value = "4"  desc=" Quality of the second candidate"/>
+        <enumval name = "NCandCommonHits"  value = "5"  desc=" NCand with common hits"/>
+        <enumval name = "Cand1stChi2Mat"   value = "6"  desc=" Chi2 of the first candidate"/>
+        <enumval name = "Cand2ndChi2Mat"   value = "7"  desc=" Chi2 of the second candidate"/>
         <enumval name = "nExpectedVelo" value = "10" desc="number of expected Velo hits"/>
         <enumval name = "nExpectedTT" value = "11" desc="number of expected TT hits"/>
         <enumval name = "nExpectedIT" value = "12" desc="number of expected IT hits"/>
@@ -156,6 +158,27 @@
         type   = "GaudiUtils::VectorMap&lt;int,double&gt;"
         def    = "ExtraInfo"
         desc   = "Vector of additional information"
+        access = "PUBLIC"
+   />
+
+   <typedef
+        type   = "std::vector&lt;LHCb::Measurement*&gt;"
+        def    = "MeasurementContainer"
+        desc   = "Container for LHCb::Measurements on track"
+        access = "PUBLIC"
+   />
+
+   <typedef
+        type   = "std::vector&lt;LHCb::State*&gt;"
+        def    = "StateContainer"
+        desc   = "Container for LHCb::States on track"
+        access = "PUBLIC"
+   />
+
+   <typedef
+        type   = "std::vector&lt;LHCb::Node*&gt;"
+        def    = "NodeContainer"
+        desc   = "Container for LHCb::Nodes on track"
         access = "PUBLIC"
    />
 
@@ -509,6 +532,12 @@
         <arg type = 'const LHCb::State' name=' state' />
       </method>
 
+     <method
+        name    = 'addToStates'
+        desc    = 'Add a set of states to the track. Track takes ownership.'>
+        <arg type = 'StateContainer' name='states' />
+      </method>
+
       <method
         name    = 'removeFromStates'
         desc    = 'Remove a State from the list of states associated to the track'
@@ -593,10 +622,21 @@
         <arg type = 'const LHCb::Measurement' name='meas' />
       </method>
 
-     <method
+      <method
+        name    = 'addToMeasurements'
+        desc    = 'Add a set of measurements to the track. Track takes ownership.'>
+        <arg type = 'MeasurementContainer' name='measurements' />
+      </method>
+
+      <method
         name    = 'removeFromMeasurements'
         desc    = 'Remove a Measurement from the list of Measurements associated to the track'
         argList = 'LHCb::Measurement* value'>
+      </method>
+
+      <method
+        name    = 'clearMeasurements'
+        desc    = 'Clear all measurements on track'>
       </method>
 
       <method
@@ -608,7 +648,12 @@
         </code>
       </method>
 
-     <method
+      <method
+        name    = 'clearNodes'
+        desc    = 'Clear all nodes on track'>
+      </method>
+
+      <method
         name    = 'removeFromNodes'
         desc    = 'Remove a Node from the list of Nodes associated to the track'
         argList = 'Node* value'>

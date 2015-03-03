@@ -2,11 +2,28 @@
 # =============================================================================
 ## @file
 #  collection of utilities for useful 'decoration' of Phys-objects
+#
+#        This file is a part of LoKi project - 
+#    "C++ ToolKit  for Smart and Friendly Physics Analysis"
+#
+#  The package has been designed with the kind help from
+#  Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas, 
+#  contributions and advices from G.Raven, J.van Tilburg, 
+#  A.Golutvin, P.Koppenburg have been used in the design.
+#
 #  @author Vanya BELYAEV ibelyaev@physics.syr.edu
 #  @date 2007-08-11 
 # =============================================================================
 """
 Collection of utilities for useful 'decoration' of Phys-objects
+
+      This file is a part of LoKi project - 
+'C++ ToolKit  for Smart and Friendly Physics Analysis'
+
+The package has been designed with the kind help from
+Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas, 
+contributions and advices from G.Raven, J.van Tilburg, 
+A.Golutvin, P.Koppenburg have been used in the design.
 """
 # =============================================================================
 __author__ = 'Vanya BELYAEV ibelyaev@physics.syr.edu'
@@ -284,11 +301,16 @@ printDecay. __doc__ += "\n\n" + LoKi.PrintPhys.printDecay . __doc__
 
 if not hasattr ( LHCb.Particle ,     'printDecay'   ) :
     LHCb.Particle .  printDecay   =   printDecay
+    LHCb.Particle .       decay   =   printDecay
 if not hasattr ( LHCb.Particle ,   '__printDecay__' ) :
     LHCb.Particle. __printDecay__ =   printDecay
+    LHCb.Particle.      __decay__ =   printDecay
 
 
 import LoKiCore.functions  as _LCF 
+LHCb.Particle.__pname__ =  _LCF.__pname__
+LHCb.Particle.  pname   =  _LCF.__pname__
+LHCb.Particle.   name   =  _LCF.__pname__
 
 _LCF.nChildren     . __doc__ += "\n" + LoKi.Child.nChildren         . __doc__ 
 _LCF.child         . __doc__ += "\n" + LoKi.Child.child             . __doc__

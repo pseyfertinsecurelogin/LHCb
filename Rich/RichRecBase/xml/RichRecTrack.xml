@@ -4,7 +4,7 @@
 <package name="RichRecBase">
 
 <!-- **************************************************************************
-  * $Id: RichRecTrack.xml,v 1.14 2007-09-17 11:28:52 jonrob Exp $
+  * $Id: RichRecTrack.xml,v 1.16 2007-11-29 10:00:52 cattanem Exp $
   *****************************************************************************
   * XML-description of RichrecTrack class                                     *
   * author: Chris Jones   Christopher.Rob.Jones@cern.ch                       *

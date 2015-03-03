@@ -1,9 +1,30 @@
 ! =============================================================================
-! $Id: release.notes,v 1.341 2007-10-25 07:31:28 cattanem Exp $ 
+! $Id: release.notes,v 1.345 2007-12-04 13:29:34 cattanem Exp $ 
 ! =============================================================================
 ! package DetDesc
 ! package manager : Marco Clemencic, Juan Palacios
 ! =============================================================================
+
+!====================== DetDesc v18r2 2007-12-04 ==============================
+! 2007-12-04 - Juan Palacios
+ - Removal of 
+   ROOT::Math::Transform3D(ROOT::Math::XYZVector, 
+                           ROOT::Math::Rotation3D) 
+   constructor, for 3D transformation made from translation followed by 
+   rotation. Modify code to produce the equivalent transformation thus:
+   ROOT::Math::VectorXYZ translation = ...;
+   ROOT::Math::Rotation3D rotation = ...'
+   ROOT::Math::Transform3D myTransform(rotation, rotation(translation));
+
+   files modified:
+   - src/Lib/PVolume.cpp
+   - src/Lib/SolidChild.cpp
+
+ ### requires GaudiKernel >= v23r2 ###
+! 2007-11-09 - Marco Clemencic
+ - Added specialized fillStream() member function for ValidDataObject and
+   ParamValidDataObject.
+ - Use GaudiKernel/SerializeSTL.h to print parameters of ParamValidDataObject. 
 
 !====================== DetDesc v18r1p1 2007-10-25 ============================
 ! 2007-10-25 - Marco Cattaneo

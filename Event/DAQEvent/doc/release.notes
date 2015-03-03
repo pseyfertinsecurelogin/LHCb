@@ -4,6 +4,28 @@
 !Purpose: Define the classes delivered to the online farm by the DAQ
 !----------------------------------------------------------------------
 
+!================ DAQEvent v7r7 2007-12-12 ============================
+! 2007-12-12 - Olivier Callot
+ - add new bank type TAEHeader, in fact not a bank but a pseudo-one, put
+   as first bank in the MDF payload to describe multi-event in the same
+   MDF block. The bank is a vector of triplets of int: bxOffset, offset, size.
+
+! 2007-12-10 Olivier Deschamps
+ - Add the status 'UNKNOWN' in RawBankReadoutStatus::Status enum
+
+! 2007-12-07 Marco Clemencic
+ - Updated the ODIN class to version 3 of the ODIN bank format 
+   (added CalibrationStep and TriggerConfigurationKey).
+ - Modified the tests to comply to the Gaudi QMTest infrastructure and added
+   a very simple test (to be reviewed).
+ 
+! 2007-12-05 Olivier Deschamps
+ - Bug fix in RawBankReadoutStatus.xml
+
+! 2007-12-04 Olivier Deschamps
+ - Add new class : RawBankReadoutStatus.xml
+ - New component algorithm : RawBankReadoutStatusFilter
+
 !================ DAQEvent v7r6p1 2007-11-12 ==========================
 ! 2007-11-12 - Marco Cattaneo
  - Add explicit dependency of library on generated header files

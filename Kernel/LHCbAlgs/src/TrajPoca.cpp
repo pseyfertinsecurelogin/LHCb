@@ -1,4 +1,4 @@
-// $Id: TrajPoca.cpp,v 1.6 2007-10-16 11:53:20 wouter Exp $
+// $Id: TrajPoca.cpp,v 1.8 2007-11-19 08:12:57 mneedham Exp $
 // Include files 
 
 // from Gaudi
@@ -85,7 +85,7 @@ StatusCode TrajPoca::minimize( const LHCb::Trajectory& traj1,
     // we have to catch some problematic cases
     if( !finished && istep > 2 && delta > prevdelta ) {
       // we can get stuck if a flt range is restricted
-      if( restrictRange1 && step1 == 0. || restrictRange2 && step2 == 0. ) {
+      if( restrictRange1 && fabs(step1) > 1.0e-10 || restrictRange2 && fabs(step2) > 1e-10 ) {
         if( ++nStuck > m_maxnStuck ) {
           // downgrade to a point poca
           Gaudi::XYZVector dist = Gaudi::XYZVector( 0., 0., 0. );
@@ -127,7 +127,7 @@ StatusCode TrajPoca::minimize( const LHCb::Trajectory& traj1,
           // between'.
           mu1 = prevflt1 + 0.5 * step1 ;
           if( restrictRange1 ) restrictToRange(mu1,traj1) ;
-          mu1 = prevflt2 + 0.5 * step2 ;
+          mu2 = prevflt2 + 0.5 * step2 ;
           if( restrictRange2 ) restrictToRange(mu2,traj2) ;
           newPos1    = traj1.position( mu1 );
           newPos2    = traj2.position( mu2 );
