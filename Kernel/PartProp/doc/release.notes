@@ -1,9 +1,16 @@
-! $Id: release.notes 95146 2010-10-25 12:54:36Z rlambert $ 
+! $Id: release.notes 104180 2010-11-27 18:11:46Z cattanem $ 
 ! -----------------------------------------------------------------------------
 ! Package     : Kernel/PartProp
 ! Responsible : Vanya BELYAEV Ivan.Belyaev@nikhef.nl
 ! Purpose     : 
 ! -----------------------------------------------------------------------------
+
+!========================= PartProp v1r8 2010-11-27 =========================
+! 2010-11-12 - Vanya Belyaev
+ - add printout for  set<LHCb::ParticleID>
+ - add GAUDI_API declarations 
+ - cmt/requirements 
+   version increment to v1r8 
 
 !========================= PartProp v1r7 2010-10-25 =========================
 

@@ -1,4 +1,4 @@
-// $Id: LoKiCoreDict.h 53291 2010-08-05 14:35:53Z ibelyaev $
+// $Id: LoKiCoreDict.h 102913 2010-11-18 16:03:12Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_LOKICOREDICT_H 
 #define LOKI_LOKICOREDICT_H 1
@@ -28,6 +28,7 @@
 #include "LoKi/iTree.h"
 #include "LoKi/IDecayNode.h"
 #include "LoKi/Listener.h"
+#include "LoKi/Dump.h"
 // ============================================================================
 // Stefan Roiser's trick to allow compilation on Win32
 // ============================================================================

@@ -43,6 +43,7 @@
 #include "Kernel/HitPattern.h"
 #include "Kernel/IReferenceRate.h"
 #include "Kernel/IAccept.h"
+#include "Kernel/Counters.h"
 
 // end include files
 

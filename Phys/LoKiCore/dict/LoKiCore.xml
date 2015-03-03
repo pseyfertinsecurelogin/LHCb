@@ -1,7 +1,7 @@
 <!-- 
-     * $Id: LoKiCore.xml 53291 2010-08-05 14:35:53Z ibelyaev $ 
+     * $Id: LoKiCore.xml 102913 2010-11-18 16:03:12Z ibelyaev $ 
      * ========================================================================
-     * CVS tag:$Name: not supported by cvs2svn $, version $Revision: 53291 $ 
+     * CVS tag:$Name: not supported by cvs2svn $, version $Revision: 102913 $ 
      * ======================================================================== 
      * @file
      * The seleciton file to build Reflex dictionaries for Phys/LoKiCore package
@@ -39,8 +39,10 @@
   <function name = "LoKi::throwException"  />
   <!--function name = "LoKi::Assert"          /-->
   <function name = "LoKi::Print::toString" />
-
-  <class name    = "Bender::Welcome"      />
+  
+  <class name    = "LoKi::Dump"            />
+  
+  <class name    = "Bender::Welcome"       />
   
   <class name = "LoKi::Hybrid::ICoreFactory"               />
   <class name = "LoKi::Hybrid::ICoreAntiFactory"           />

@@ -46,8 +46,22 @@
   <class name = "LHCb::Inspector" />
   <class name = "IAccept"                      />
   <class name = "extend_interfaces1<IAlgTool>" />
+  
+<!-- Counters in TES --> 
 
-<!--- These should really be moved to GaudiKernel or Reflex --> 
+  <class name = "Gaudi::Counter"  id = "00000096-0000-0000-0000-000000000000" />
+  <class name = "Gaudi::Counters" id = "00000097-0000-0000-0000-000000000000" />
+  <class name = "Gaudi::Numbers"  id = "00000098-0000-0000-0000-000000000000" />
+
+  <class name = "std::pair<std::string,double>"     />
+  <class name = "std::pair<std::string,StatEntity>" />  
+  <class name = "std::vector<std::pair<std::string,double> >"      />
+  <class name = "std::vector<std::pair<std::string,StatEntity> > " />
+  
+
+  <!--- These should really be moved to GaudiKernel or Reflex --> 
   <class name="std::pair<Gaudi::XYZPoint,Gaudi::XYZPoint>" />
+  
+
 </lcgdict>
 

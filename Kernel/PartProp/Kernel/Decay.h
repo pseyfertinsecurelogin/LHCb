@@ -1,4 +1,4 @@
-// $Id: Decay.h 95074 2010-10-22 15:06:40Z ibelyaev $
+// $Id: Decay.h 101224 2010-11-12 14:08:02Z ibelyaev $
 // ============================================================================
 #ifndef LHCBKERNEL_DECAY_H 
 #define LHCBKERNEL_DECAY_H 1
@@ -31,7 +31,7 @@ namespace Decays
    *  @author  Vanya BELYAEV Ivan.Belyaev@nikhef.nl
    *  @date   2008-03-31
    */
-  class Decay 
+  class GAUDI_API Decay 
   {
   public: 
     // ========================================================================
@@ -220,7 +220,7 @@ namespace Decays
     // ========================================================================
   };
   // ==========================================================================
-} // end of namespace LHCb
+} //                                                      end of namespace LHCb
 // ============================================================================
 /// the printout operator to the stream 
 inline std::ostream& operator<<
@@ -232,7 +232,7 @@ inline std::ostream& operator<<
   ( std::ostream&              s     , 
     const Decays::Decay::Item& item  ) { return item .fillStream ( s ) ; }
 // ============================================================================
-// The END
+//                                                                      The END
 // ============================================================================
 #endif // LHCBKERNEL_DECAY_H
 // ============================================================================

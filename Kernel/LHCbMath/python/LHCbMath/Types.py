@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # =============================================================================
-# $Id: Types.py 86674 2010-09-27 11:14:36Z ibelyaev $
+# $Id: Types.py 101260 2010-11-14 18:02:25Z ibelyaev $
 # =============================================================================
-# $URL: http://svn.cern.ch/guest/lhcb/LHCb/tags/Kernel/LHCbMath/v3r21/python/LHCbMath/Types.py $
+# $URL: http://svn.cern.ch/guest/lhcb/LHCb/tags/Kernel/LHCbMath/v3r22/python/LHCbMath/Types.py $
 # =============================================================================
 ## @file
 #
@@ -37,7 +37,7 @@
 #  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
 #  @date 2009-09-12
 #
-#  Last modification $Date: 2010-09-27 13:14:36 +0200 (Mon, 27 Sep 2010) $
+#  Last modification $Date: 2010-11-14 19:02:25 +0100 (Sun, 14 Nov 2010) $
 #                 by $Author: ibelyaev $
 #
 #
@@ -71,14 +71,14 @@ Simple file to provide 'easy' access in python for the basic ROOT::Math classes
   >>> dir( Gaudi.Math )
   >>> dir( Gaudi      )
   
-  Last modification $Date: 2010-09-27 13:14:36 +0200 (Mon, 27 Sep 2010) $
+  Last modification $Date: 2010-11-14 19:02:25 +0100 (Sun, 14 Nov 2010) $
                  by $Author: ibelyaev $
 
 """
 # =============================================================================
 __author__  = "Vanya BELYAEV Ivan.Belyaev@nikhef.nl"
 __date__    = "2009-09-12"
-__version__ = "Version$Revision: 86674 $"
+__version__ = "Version$Revision: 101260 $"
 # =============================================================================
 __all__     = () ## nothing to be imported !
 # =============================================================================
@@ -89,6 +89,7 @@ from GaudiPython.Bindings import gbl as cpp
 
 ## C++ namespace Gaudi
 Gaudi = cpp.Gaudi
+std   = cpp.std
 
 ## ROOT::Math namespace 
 _RM = ROOT.ROOT.Math
@@ -182,6 +183,15 @@ Gaudi.Math.Line3D            = Gaudi.Math.XYZLine
 Gaudi.Math.frac              = Gaudi.Math.Functions.frac
 Gaudi.Math.asym              = Gaudi.Math.Functions.asym
 Gaudi.Math.binomEff          = Gaudi.Math.Functions.binomEff 
+
+
+## vetcors of vectors
+Gaudi.Vectors2       = std.vector( Gaudi.Vector2 )
+Gaudi.Vectors3       = std.vector( Gaudi.Vector3 )
+Gaudi.Vectors4       = std.vector( Gaudi.Vector4 )
+Gaudi.Math.Vectors2  = Gaudi.Vectors2 
+Gaudi.Math.Vectors3  = Gaudi.Vectors3
+Gaudi.Math.Vectors4  = Gaudi.Vectors4 
 
 ## ============================================================================
 ## some useful decoration:
@@ -288,7 +298,7 @@ def _mg_str_ ( self , fmt = ' %+11.4g') :
         if ( _rows - 1 )  != _irow : _line += '\n'
     return _line
 #
-## self-printpout of symmetrical matrices
+## self-printout of symmetrical matrices
 def _ms_str_ ( self , fmt = ' %+11.4g' , width = 12 ) :
     """
     Self-printout of symetrical matrices 
@@ -305,6 +315,30 @@ def _ms_str_ ( self , fmt = ' %+11.4g' , width = 12 ) :
         if ( _rows - 1 )  != _irow : _line += '\n'
     return _line
 
+## get the correlation matrix
+def _m_corr_ ( self ) :
+    """
+    Get the correlation matrix
+    
+    >>> mtrx = ...
+    >>> corr = mtrx.correlations()
+    
+    """
+    from math import sqrt
+
+    _t = type ( self )
+    _c = _t   () 
+    _rows = self.kRows
+    for i in range ( 0 , _rows ) :
+        _dI = sqrt ( self ( i , i ) ) 
+        for j in range ( i + 1 , _rows ) :
+            _dJ = sqrt ( self ( j , j ) ) 
+            _c [ i , j ] = self ( i , j ) /  (  _dI * _dJ )
+        _c[ i , i ] = 1.0
+        
+    return _c 
+    
+    
 for m in ( Gaudi.Matrix5x5      ,
            Gaudi.TrackMatrix    ,
            Gaudi.Matrix4x3      ) :
@@ -322,6 +356,10 @@ for m in ( Gaudi.SymMatrix2x2   ,
            Gaudi.SymMatrix8x8   ,
            Gaudi.SymMatrix9x9   ,
            Gaudi.TrackSymMatrix ) :
+    
+    if not hasattr ( m , 'correlations' ) :
+        m.correlations = _m_corr_
+        
     if not hasattr ( m , '_new_str_' ) : 
         m. _new_str_ = _ms_str_
         m. __repr__  = _ms_str_
@@ -380,6 +418,55 @@ for t in ( Gaudi.Math.ValueWithError         ,
         t._new_str_ = t.toString
         t.__str__   = t.toString
         t.__repr__  = t.toString
+
+        
+## get the eigenvalues for symmetric matrices :
+def _eigen_1_ ( self , sorted = True ) :
+    """
+    
+    >>> mtrx = ...
+    >>> values = mtrx.eigenValues ( sorted = True )
+    
+    """
+    return Gaudi.Math.EigenSystems.eigenValues ( self , sorted )
+
+
+## get the eigevectors for symmetric matrices :
+def _eigen_2_ ( self , sorted = True ) :
+    """
+    
+    >>> mtrx = ...
+    >>> values, vectors = mtrx.eigenVectors( sorted = True )
+    
+    """
+    if   2 == mtrx.kCols :
+        _values  = Gaudi.Vector2  ()
+        _vectors = Gaudi.Vectors2 ()
+    elif 3 == mtrx.kCols :
+        _values  = Gaudi.Vector3  ()
+        _vectors = Gaudi.Vectors3 ()
+    elif 4 == mtrx.kCols :
+        _values  = Gaudi.Vector4  ()
+        _vectors = Gaudi.Vectors4 ()
+    else :
+        raise AttributeError, "Not implemented for dimention: %s" % mtrx.kCols
+    
+    st = Gaudi.Math.EigenSystems.eigenVectors ( self , _values , _vectors , sorted )
+    if st.isFailure () :
+        print 'EigenVectors: Failure from EigenSystems' , st
+        
+    return ( _values , _vectors )
+
+    
+_eigen_1_ .__doc__ += '\n' +  Gaudi.Math.EigenSystems.eigenValues  . __doc__
+_eigen_2_ .__doc__ += '\n' +  Gaudi.Math.EigenSystems.eigenVectors . __doc__
+
+for m in ( Gaudi.SymMatrix2x2   ,
+           Gaudi.SymMatrix3x3   ,
+           Gaudi.SymMatrix4x4   ) :
+    if not hasattr ( m , 'eigenValues'  ) : m.eigenValues  = _eigen_1_
+    if not hasattr ( m , 'eigenVectors' ) : m.eigenVectors = _eigen_2_
+        
 
 # =============================================================================
 ## self-printout of Gaudi::Math::ParticleParams  

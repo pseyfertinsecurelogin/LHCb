@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # =============================================================================
-# $Id: functions.py 86706 2010-09-27 12:48:42Z ibelyaev $
+# $Id: functions.py 102942 2010-11-18 20:06:33Z ibelyaev $
 # =============================================================================
-# $URL: http://svn.cern.ch/guest/lhcb/LHCb/tags/Phys/LoKiCore/v10r5/python/LoKiCore/functions.py $ 
+# $URL: http://svn.cern.ch/guest/lhcb/LHCb/tags/Phys/LoKiCore/v10r6/python/LoKiCore/functions.py $ 
 # =============================================================================
 ## @file functions.py LoKiCore/function.py
 #  The set of basic functions for from LoKiCore library
@@ -32,13 +32,13 @@ A.Golutvin, P.Koppenburg have been used in the design.
 # =============================================================================
 __author__  = "Vanya BELYAEV ibelyaev@physics.syr.edu"
 __date__    = "????-??-??"
-__version__ = "Version $Revision: 86706 $ "
+__version__ = "Version $Revision: 102942 $ "
 # =============================================================================
 
 from LoKiCore.basic import cpp, std, LoKi, LHCb, Gaudi
 
 # =============================================================================
-def monitor ( o  , *m ) :
+def monitor ( o , *m ) :
     """
     Create the monitored pedicate/function:
 
@@ -786,6 +786,33 @@ def includes ( fun1 , fun2 ) :
 
 
 # =============================================================================
+##  create the 'conditional source/cause' 
+#
+#  @code
+#
+#    >>> cond   = ...  # the condition 
+#    >>> source = ...  # the source
+#    
+#    >>> result = cause ( cond , source ) 
+#
+#  @endcode     
+#
+#  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
+#  @date 2010-11-18
+def cause ( fun1 , fun2 ) :
+    """
+    Create ``conditional source/cause'' 
+
+    >>> cond   = ...  # the condition 
+    >>> source = ...  # the source
+    
+    >>> result = cause ( cond , source ) 
+    
+    """    
+    return fun1._cause_ ( fun2 ) if hasattr ( fun1 , '_cause_' ) else fun2._cause_ ( fun1 )
+
+
+# =============================================================================
 def mark ( tree ) :
     """
     Create the 'marked' tree:
@@ -1027,7 +1054,13 @@ def vct_from_list  ( lst , *args ) :
         except TypeError      : pass
     ## 
     return doubles ( lst , *args )
-    
+
+
+# =============================================================================
+## @see LoKi::Dump
+Dump = LoKi.Dump
+dump = LoKi.Dump ()
+
 # =============================================================================
 if '__main__' == __name__ :
 

@@ -1,4 +1,4 @@
-// $Id: select.h 53291 2010-08-05 14:35:53Z ibelyaev $
+// $Id: select.h 103150 2010-11-23 11:11:13Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_SELECT_H 
 #define LOKI_SELECT_H 1
@@ -46,9 +46,32 @@ namespace LoKi
     return out ;
   } 
   // ==========================================================================
-} // end of namespace LoKi
+  /** helpful utility to transfortm objects from the container
+   *  to another container. 
+   *
+   *  @param begin begin iterator from the sequence to be copied 
+   *  @param end   end   iterator from the sequence to be copied 
+   *  @param out   destination (output iterator) 
+   *  @param fun   thr function 
+   *  @return last output iterator 
+   *
+   *  @author Vanya Belyaev Ivan.Belyaev@cern.ch
+   *  @date   2010-11-23   
+   */
+  template<class INPUT , class OUTPUT , class FUN>
+  inline OUTPUT transform 
+  ( INPUT      begin , 
+    INPUT      end   ,
+    OUTPUT     out   ,
+    const FUN& fun   )
+  {
+    for ( ; begin != end ; ++begin ) { *out = fun ( *begin ) ; ++out ; }
+    return out ;
+  } 
+  // ==========================================================================
+} //                                                      end of namespace LoKi
 // ============================================================================
-// The END 
+//                                                                      The END 
 // ============================================================================
 #endif // LOKI_SELECT_H
 // ============================================================================

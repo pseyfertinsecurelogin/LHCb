@@ -1,9 +1,9 @@
-// $Id: FuncOps.h 53291 2010-08-05 14:35:53Z ibelyaev $
+// $Id: FuncOps.h 103150 2010-11-23 11:11:13Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_FUNCOPS_H 
 #define LOKI_FUNCOPS_H 1
 // ============================================================================
-// $URL: http://svn.cern.ch/guest/lhcb/LHCb/tags/Phys/LoKiCore/v10r5/LoKi/FuncOps.h $
+// $URL: http://svn.cern.ch/guest/lhcb/LHCb/tags/Phys/LoKiCore/v10r6/LoKi/FuncOps.h $
 // ============================================================================
 // Include files
 // ============================================================================
@@ -653,6 +653,14 @@ namespace LoKi
       __rshift__ 
       ( const Map& fun , const LoKi::BasicFunctors<double>::CutVal& fun2 ) 
       { return fun >> fun2 ; }
+      //
+      // add the dumps
+      //
+      // __rshift__
+      static LoKi::FunctorFromFunctor<std::vector<TYPE>,std::vector<double> >
+      __rshift__ 
+      ( const  Map& fun , const LoKi::Dump& dump  ) 
+      { return fun >> LoKi::Functors::Dump_<double> ( dump ) ; }
       // ======================================================================
     public:
       // ======================================================================
@@ -769,6 +777,20 @@ namespace LoKi
       __rshift__ 
       ( const Pipe& fun , const Func&      fun2 ) 
       { return fun >> LoKi::yields<TYPE> ( fun2 ) ; }
+      //
+      // ======================================================================
+    public: // gate & dump 
+      // ======================================================================
+      // __rshift__  : gate 
+      static LoKi::FunctorFromFunctor<std::vector<TYPE>,std::vector<TYPE> >
+      __rshift__ 
+      ( const Pipe& fun , const LoKi::Functor<void,bool>& gate )  
+      { return fun >> LoKi::gate<TYPE> ( gate ) ; }
+      // __rshift__  : dump
+      static LoKi::FunctorFromFunctor<std::vector<TYPE>,std::vector<TYPE> >
+      __rshift__ 
+      ( const Pipe& fun , const LoKi::Dump& dump  ) 
+      { return fun >> LoKi::Functors::Dump_<TYPE> ( dump ) ; }
       // ======================================================================
     public:
       // ======================================================================
@@ -1038,6 +1060,31 @@ namespace LoKi
       __rshift__ 
       ( const Source& fun , const Func&    fun2 ) 
       { return fun >> LoKi::yields<TYPE> ( fun2 ) ; }
+      //
+      // ======================================================================
+    public:  // gate & dump 
+      // ======================================================================
+      // __rshift__ : gate 
+      static LoKi::FunctorFromFunctor<void,std::vector<TYPE> >
+      __rshift__ 
+      ( const Source& fun , const LoKi::Functor<void,bool>& gate ) 
+      { return fun >> LoKi::gate<TYPE> ( gate ) ; }
+      // __rshift__ : dump 
+      static LoKi::FunctorFromFunctor<void,std::vector<TYPE> >
+      __rshift__ 
+      ( const Source& fun , const LoKi::Dump& dump  ) 
+      { return fun >> LoKi::Functors::Dump_<TYPE> ( dump ) ; }
+      // ======================================================================
+    public: // cause 
+      // ======================================================================
+      // __rmul__ 
+      static LoKi::FunctorFromFunctor<void,std::vector<TYPE> >
+      __rmul__  ( const Source& fun  , const LoKi::Functor<void,bool>& fun2 ) 
+      { return LoKi::cause ( fun , fun2 ) ; }      
+      // __cause__ 
+      static LoKi::FunctorFromFunctor<void,std::vector<TYPE> >
+      __cause__ ( const Source& fun  , const LoKi::Functor<void,bool>& fun2 ) 
+      { return LoKi::cause ( fun , fun2 ) ; }      
       // ======================================================================
     public:
       // ======================================================================

@@ -1,4 +1,4 @@
-// $Id: IParticlePropertySvc.h 95074 2010-10-22 15:06:40Z ibelyaev $
+// $Id: IParticlePropertySvc.h 101224 2010-11-12 14:08:02Z ibelyaev $
 // ============================================================================
 #ifndef LHCBKERNEL_IPARTICLEPROPERTYSVC_H
 #define LHCBKERNEL_IPARTICLEPROPERTYSVC_H
@@ -11,6 +11,7 @@
 // ============================================================================
 // GaudiKernel
 // ============================================================================
+#include "GaudiKernel/Kernel.h"
 #include "GaudiKernel/IInterface.h"
 // ============================================================================
 // forward declarations
@@ -27,7 +28,7 @@ namespace LHCb
    *  @author G.Corti
    *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
    */
-  class IParticlePropertySvc : virtual public IInterface
+  class GAUDI_API IParticlePropertySvc : virtual public IInterface
   {
     // ========================================================================
   public: // the  public types 
@@ -156,10 +157,11 @@ namespace LHCb
     // ========================================================================
   };
   // ==========================================================================
-} // end of namespace LHCb
+} //                                                      end of namespace LHCb
 // ============================================================================
 namespace LHCb
 {
+  // ==========================================================================
   namespace ParticleProperties
   {
     // ========================================================================
@@ -529,7 +531,7 @@ namespace LHCb
     LHCb::IParticlePropertySvc::ParticleProperties 
     allProperties ( const LHCb::IParticlePropertySvc* service ) ;
     // ========================================================================
-  } // end of namespace LHCb::ParticleProperties
+  } //                                end of namespace LHCb::ParticleProperties
   // ==========================================================================
   // get the properties according to some criteria 
   // ==========================================================================
@@ -543,10 +545,10 @@ namespace LHCb
     iterator last  = this -> end  () ;
     return LHCb::ParticleProperties::get ( first , last , cut , output ) ;
   }
-  // ========================================================================
-} // end of namespace LHCb 
+  // ==========================================================================
+} //                                                      end of namespace LHCb 
 // ============================================================================
-// The END 
+//                                                                      The END 
 // ============================================================================
 #endif
 // ============================================================================
