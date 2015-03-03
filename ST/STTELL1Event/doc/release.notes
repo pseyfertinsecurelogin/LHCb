@@ -1,7 +1,15 @@
-! $Id: release.notes,v 1.34 2009-06-29 13:50:40 cattanem Exp $
+! $Id: release.notes,v 1.37 2009-07-28 08:26:14 cattanem Exp $
 ! Package     : STTELL1Event
 ! Responsible : Mathias Knecht
 !-----------------------------------------------------------------------------
+
+!======================== STTELL1Event v1r9 2009-07-28 =======================
+! 2009-07-24 M Needham
+  - another bug fix in STTELL1EventInfo
+
+! 2009-07-24 M Needham
+  - Add method to return valid pp in STTELL1Event
+  - Bug fixed in STTELL1Eventfo linkEnabled, add enabled() function
 
 !======================== STTELL1Event v1r8 2009-06-29 =======================
 ! 2009-06-19 J Luisier

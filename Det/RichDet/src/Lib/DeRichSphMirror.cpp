@@ -3,7 +3,7 @@
  *
  *  Implementation file for detector description class : DeRichSphMirror
  *
- *  $Id: DeRichSphMirror.cpp,v 1.31 2008-07-24 18:28:57 papanest Exp $
+ *  $Id: DeRichSphMirror.cpp,v 1.33 2009-07-26 18:13:18 jonrob Exp $
  *
  *  @author Antonis Papanestis a.papanestis@rl.ac.uk
  *  @date   2004-06-18
@@ -35,7 +35,8 @@
 const CLID CLID_DeRichSphMirror = 12030;  // User defined
 
 // Standard Constructor
-DeRichSphMirror::DeRichSphMirror() :
+DeRichSphMirror::DeRichSphMirror(const std::string & name) :
+  DeRichBase     ( name ),
   m_reflectivity ( NULL ),
   m_mirrorNumber ( -1   )
 {}
@@ -65,8 +66,8 @@ StatusCode DeRichSphMirror::initialize()
   Rich::DetectorType rich;
   const std::string::size_type pos = name().find("Rich");
   if ( std::string::npos != pos ) {
-    m_name = name().substr(pos);
-    std::string richNum = m_name.substr(4,1);
+    setMyName( name().substr(pos) );
+    std::string richNum = myName().substr(4,1);
     if ( richNum == "1" ) {
       rich = Rich::Rich1;
       const std::string::size_type secPos = name().find("Mirror2");
@@ -84,12 +85,12 @@ StatusCode DeRichSphMirror::initialize()
         return StatusCode::FAILURE;
       }
   } else {
-    m_name = "DeRichSphMirror_NO_NAME";
+    setMyName("DeRichSphMirror_NO_NAME");
     msgStart << MSG::FATAL << "Cannot identify Rich number!" << endmsg;
     return StatusCode::FAILURE;
   }
 
-  std::string localName = ( secondary ? "DeRichSecMirror" : "DeRichSphMirror" );
+  const std::string localName = ( secondary ? "DeRichSecMirror" : "DeRichSphMirror" );
   MsgStream msg( msgSvc(), localName );
 
   // extract mirror number from detector element name
@@ -202,73 +203,91 @@ StatusCode DeRichSphMirror::initialize()
   m_centreNormalPlane = Gaudi::Plane3D(m_centreNormal, m_mirrorCentre);
   msg << MSG::VERBOSE << "centreNormalPlane " << m_centreNormalPlane << endmsg;
 
-  // find surface properties
-  std::string surfLocation, sphMirrorName, surfName;
-  if ( rich == Rich::Rich1 ) {
-    surfLocation = "/dd/Geometry/BeforeMagnetRegion/Rich1/Rich1Surfaces";
-    sphMirrorName = ( secondary  ? "Mirror2" : "Mirror1");
-    surfName = ":"+mirNumString;
-  }
-  else{
-    surfLocation = "/dd/Geometry/AfterMagnetRegion/Rich2/Rich2Surfaces";
-    sphMirrorName = ( secondary  ? "SecMirror" : "SphMirror");
-    surfName = "Seg"+mirNumString;
-  }
+  Surface* surf( 0 );
+  if ( !exists("SurfaceLocation") )
+  {
+    // find surface properties the old way
+    std::string surfLocation, sphMirrorName, surfName;
+    if ( rich == Rich::Rich1 ) {
+      surfLocation = "/dd/Geometry/BeforeMagnetRegion/Rich1/Rich1Surfaces";
+      sphMirrorName = ( secondary  ? "Mirror2" : "Mirror1");
+      surfName = ":"+mirNumString;
+    }
+    else{
+      surfLocation = "/dd/Geometry/AfterMagnetRegion/Rich2/Rich2Surfaces";
+      sphMirrorName = ( secondary  ? "SecMirror" : "SphMirror");
+      surfName = "Seg"+mirNumString;
+    }
 
-  bool foundSurface( false );
+    bool foundSurface( false );
 
-  // get the surface catalog
-  SmartDataPtr<DataObject> rich2SurfCat(dataSvc(),surfLocation);
-  if (!rich2SurfCat) {
-    msg << MSG::FATAL << "Cannot locate suface for mirror " + name() << endmsg;
-    return StatusCode::FAILURE;
-  }
+    // get the surface catalog
+    SmartDataPtr<DataObject> rich2SurfCat(dataSvc(),surfLocation);
+    if (!rich2SurfCat) {
+      msg << MSG::FATAL << "Cannot locate suface for mirror " + name() << endmsg;
+      return StatusCode::FAILURE;
+    }
 
-  DataSvcHelpers::RegistryEntry* rich2Reg = dynamic_cast<DataSvcHelpers::RegistryEntry*>
-    (rich2SurfCat->registry());
-  IRegistry* storeReg = 0;
+    DataSvcHelpers::RegistryEntry* rich2Reg = dynamic_cast<DataSvcHelpers::RegistryEntry*>
+      (rich2SurfCat->registry());
+    IRegistry* storeReg = 0;
 
-  // find the surface in the registry
-  for (DataSvcHelpers::RegistryEntry::Iterator child = rich2Reg->begin();
-       (child != rich2Reg->end() && !foundSurface); ++child){
-    // child is a const_iterator of vector<IRegistry*>
-    const std::string::size_type pos3 = (*child)->name().find(sphMirrorName);
-    if ( std::string::npos != pos3 ) {
-      const std::string::size_type pos4 = (*child)->name().find(surfName);
-      if ( std::string::npos != pos4 ) {
-        storeReg = (*child);
-        foundSurface = true;
+    // find the surface in the registry
+    for (DataSvcHelpers::RegistryEntry::Iterator child = rich2Reg->begin();
+         (child != rich2Reg->end() && !foundSurface); ++child){
+      // child is a const_iterator of vector<IRegistry*>
+      const std::string::size_type pos3 = (*child)->name().find(sphMirrorName);
+      if ( std::string::npos != pos3 ) {
+        const std::string::size_type pos4 = (*child)->name().find(surfName);
+        if ( std::string::npos != pos4 ) {
+          storeReg = (*child);
+          foundSurface = true;
+        }
       }
     }
-  }
 
-  bool foundRefl( false );
-  // get the surface, get the tabulated properties and find REFLECTIVITY
-  if ( foundSurface ) {
-    SmartDataPtr<DataObject> obj (dataSvc(), storeReg->identifier());
-    DataObject* pObj = obj;
-    msg << MSG::VERBOSE << "Dynamic cast to surface " << obj->name() << endmsg;
-    Surface* surf = dynamic_cast<Surface*> (pObj);
-    const Surface::Tables surfTabProp = surf->tabulatedProperties();
-    for (Surface::Tables::const_iterator table_iter = surfTabProp.begin();
-         table_iter != surfTabProp.end(); ++table_iter) {
-      if ( (*table_iter)->type() == "REFLECTIVITY" ) {
-        m_reflectivity = new Rich::TabulatedProperty1D( (*table_iter) );
-        foundRefl = true;
-        break;
-      }
+    // get the surface, get the tabulated properties and find REFLECTIVITY
+    if ( foundSurface ) {
+      SmartDataPtr<DataObject> obj (dataSvc(), storeReg->identifier());
+      DataObject* pObj = obj;
+      msg << MSG::VERBOSE << "Dynamic cast to surface " << obj->name() << endmsg;
+      surf = dynamic_cast<Surface*> (pObj);
     }
-    if ( !foundRefl ) {
-      msg << MSG::FATAL <<"Could not find REFLECTIVITY "<< surf->name() << endmsg;
+    else {
+      msg << MSG::FATAL <<"Could not find surface for mirror "<< myName() << endmsg;
       return StatusCode::FAILURE;
     }
   }
-  else {
-    msg << MSG::FATAL <<"Could not find surface for mirror "<< myName() << endmsg;
+  else
+  {
+    // new way, use user parameter for the surface location
+    SmartDataPtr<Surface> s( dataSvc(), param<std::string>("SurfaceLocation") );
+    if ( !s )
+    {
+      msg << MSG::FATAL <<"Could not find surface for mirror "<< myName()
+          << " at location " << param<std::string>("SurfaceLocation") << endmsg;
+      return StatusCode::FAILURE;
+    }
+    surf = s;
+  }
+
+  bool foundRefl( false );
+  const Surface::Tables surfTabProp = surf->tabulatedProperties();
+  for (Surface::Tables::const_iterator table_iter = surfTabProp.begin();
+       table_iter != surfTabProp.end(); ++table_iter) {
+    if ( (*table_iter)->type() == "REFLECTIVITY" ) {
+      m_reflectivity = new Rich::TabulatedProperty1D( (*table_iter) );
+      foundRefl = true;
+      break;
+    }
+  }
+  if ( !foundRefl ) {
+    msg << MSG::FATAL <<"Could not find REFLECTIVITY "<< surf->name() << endmsg;
     return StatusCode::FAILURE;
   }
 
   msg << MSG::DEBUG<< "Reflectivity is from TabProp " << m_reflectivity->tabProperty()->name() << endmsg;
+  msg << MSG::DEBUG<< "Second volume is " << surf->secondVol() << endmsg;
   msg << MSG::VERBOSE << m_reflectivity->tabProperty() << endmsg;
 
   // update localy cashed geometry info
@@ -323,8 +342,9 @@ StatusCode DeRichSphMirror::intersects( const Gaudi::XYZPoint& globalP,
 //=========================================================================
 //  updateGeometry
 //=========================================================================
-StatusCode DeRichSphMirror::updateGeometry ( ) {
-  //std::cout << "Update geometry of mirror " << myName() << std::endl;
+StatusCode DeRichSphMirror::updateGeometry ( ) 
+{
+  debug() << "Update geometry of mirror" << endmsg;
   m_mirrorCentre = geometry()->toGlobal(m_localMirrorCentre);
   m_centreOfCurvature = geometry()->toGlobal(m_localOrigin);
   return StatusCode::SUCCESS;

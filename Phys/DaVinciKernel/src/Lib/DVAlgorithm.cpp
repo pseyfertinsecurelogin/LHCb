@@ -1,4 +1,4 @@
-// $Id: DVAlgorithm.cpp,v 1.51 2009-04-30 13:21:31 ibelyaev Exp $
+// $Id: DVAlgorithm.cpp,v 1.53 2009-07-27 12:31:32 jpalac Exp $
 // ============================================================================
 // Include 
 // ============================================================================
@@ -73,6 +73,10 @@ DVAlgorithm::DVAlgorithm
 {
   m_inputLocations.clear() ;
   declareProperty( "InputLocations", m_inputLocations, "Input Locations forwarded to PhysDesktop" );
+
+  m_p2PVInputLocations.clear() ;
+  declareProperty( "P2PVInputLocations", m_p2PVInputLocations, 
+                   "Particle -> PV Relations Input Locations forwarded to PhysDesktop" );
   // 
   m_vertexFitNames [ "Offline"       ] = "OfflineVertexFitter" ;
   m_vertexFitNames [ "Trigger"       ] = "TrgVertexFitter"     ;
@@ -201,7 +205,10 @@ StatusCode DVAlgorithm::initialize ()
     else
     { debug() << "Decay Descriptor: " << m_decayDescriptor << endmsg; }
   }
-  
+
+  if (msgLevel(MSG::DEBUG)) debug() << ">>> Preloading PhysDesktop with P->PV locations " << m_p2PVInputLocations << endmsg;
+  desktop()->setP2PVInputLocations(m_p2PVInputLocations);
+
   if (msgLevel(MSG::DEBUG)) debug() << "End of DVAlgorithm::initialize with " << sc << endmsg;
   
   return sc;
@@ -364,7 +371,7 @@ const LHCb::VertexBase* DVAlgorithm::calculateRelatedPV(const LHCb::Particle* p)
       reFittedPVs.clear();
       return returnPV;
     }
-  } else {
+  } else { // no PV re-fit
     if (msgLevel(MSG::VERBOSE)) verbose() << "Getting related PV from finder" << endmsg;
     const Particle2Vertex::LightTable table = finder->relatedPVs(p, *PVs);
     const Particle2Vertex::Range range = table.relations(p);
@@ -386,16 +393,21 @@ const LHCb::VertexBase* DVAlgorithm::getRelatedPV(const LHCb::Particle* part) co
     error() << "input particle is NULL" << endmsg;
     return 0;
   }
-  Particle2Vertex::Range p2pvRange = desktop()->particle2Vertices(part);
+  const Particle2Vertex::Range p2pvRange = desktop()->particle2Vertices(part);
   if (msgLevel(MSG::VERBOSE)) {
     verbose() << "getRelatedPV! Got range with size " << endmsg;
     verbose() << p2pvRange.size() << endmsg;
   }
-  if (desktop()->particle2Vertices(part).empty()) {
-    if (msgLevel(MSG::VERBOSE)) verbose() << "particle2Vertices empty. Calling calculateRelatedPV" << endmsg;
-    const LHCb::RecVertex* pv = dynamic_cast<const LHCb::RecVertex*>(calculateRelatedPV(part));
+  if (p2pvRange.empty()) {
+    if (msgLevel(MSG::VERBOSE)) {
+      verbose() << "particle2Vertices empty. Calling calculateRelatedPV" 
+                << endmsg;
+    }
+    const LHCb::VertexBase* pv = calculateRelatedPV(part);
     if (0!=pv) {
-      if (msgLevel(MSG::VERBOSE)) verbose() << "Found related vertex. Relating it" << endmsg;
+      if (msgLevel(MSG::VERBOSE)) {
+        verbose() << "Found related vertex. Relating it" << endmsg;
+      }
       relateWithOverwrite(part, pv);
     } else {
       Warning("Found no related vertex", StatusCode::FAILURE, 10).ignore();

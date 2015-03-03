@@ -43,8 +43,9 @@ unsigned int LHCb::STTELL1EventInfo::pcnVote() const{
   
   std::map<unsigned int, unsigned int> pcns;
   for (unsigned int iLink = 0; iLink < nBeetle ; ++iLink)
-    pcns[findPCN(iLink)] += 1;     
-   
+    if (linkEnabled(iLink) == true){
+      pcns[findPCN(iLink)] += 1;     
+    } 
   // find the best
   unsigned int majorityVote = 200;
   unsigned int maxValue = 0;
@@ -70,23 +71,36 @@ bool LHCb::STTELL1EventInfo::pcnConsistency() const
   else
     return false;
 
-  /*
-    bool isConsistent(true);
-
-    isConsistent *= (pcnv == pcnBeetle0());
-    isConsistent *= (pcnv == pcnBeetle1());
-    isConsistent *= (pcnv == pcnBeetle2());
-    isConsistent *= (pcnv == pcnBeetle3());
-    isConsistent *= (pcnv == pcnBeetle4());
-    isConsistent *= (pcnv == pcnBeetle5());
-
-    return isConsistent;
-  */
 }
 
 bool LHCb::STTELL1EventInfo::linkEnabled(const unsigned int iLink) const{
-  return  (OptLnkDisable() >> iLink & 1) ;
+  return  !(OptLnkDisable() >> iLink & 1) ;
 } 
+
+bool LHCb::STTELL1EventInfo::enabled() const{
+  const unsigned int testValue = OptLnkDisable();
+  return (testValue ==  ((1 << OptLnkDisableBits) - 1)   ? false : true );
+}
+
+bool LHCb::STTELL1EventInfo::noEvent(const unsigned int iLink) const{
+  return (OptLnkNoEvt() >> iLink & 1);
+}
+
+bool LHCb::STTELL1EventInfo::noClock(const unsigned int iLink) const{
+  return (OptLnkNoClock() >> iLink & 1);
+}
+
+bool LHCb::STTELL1EventInfo::TLKLinkLoss(const unsigned int iLink) const{
+  return (tlkLnkLoss() >> iLink & 1);
+}
+
+bool LHCb::STTELL1EventInfo::syncRAMFull(const unsigned int iLink) const{
+  return (SyncRAMFull() >> iLink & 1); 
+} 
+
+bool LHCb::STTELL1EventInfo::syncEvtSizeError(const unsigned int iLink) const{
+  return (SyncEvtSizeError() >> iLink & 1);
+}
 
 // fillstream method
 std::ostream& LHCb::STTELL1EventInfo::fillStream(std::ostream& s) const{

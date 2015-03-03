@@ -1,5 +1,5 @@
 package STKernel 
-version v1r15
+version v1r16
 
 use GaudiKernel v*
 use GaudiAlg    v*
@@ -9,14 +9,13 @@ use DAQEvent    v* Event
 use SiDAQ       v* Si
 use STDet       v* Det
 use Boost       v* LCG_Interfaces
-#use STTELL1Event v* ST
 
 branches Kernel doc cmt src 
 
 apply_pattern install_more_includes more=Kernel
 
 # ==================== linker library =======================================
-library STKernelLib     *.cpp
+library STKernelLib     *.cpp -import=AIDA
 apply_pattern linker_library  library=STKernelLib
 
 #============================================================================

@@ -1,9 +1,18 @@
 ! =============================================================================
-! $Id: release.notes,v 1.115 2009-07-14 07:58:30 cattanem Exp $
+! $Id: release.notes,v 1.118 2009-07-28 09:38:32 cattanem Exp $
 ! =============================================================================
 ! package Tools/CondDBUI
 ! package manager : Marco Clemencic
 ! =============================================================================
+
+!===================== Tools/CondDBUI v2r21 2009-07-28 ========================
+! 2009-07-21 - Marco Clemencic
+ - Improved the fragments for pyqt.
+
+! 2009-07-20 - Marco Clemencic
+ - Modified the new CondDBBrowser to work with zipped Python directories (needed
+   starting from Gaudi v21r4).
+ - Added fragment to convert the Qt Designer .ui files to Python modules.
 
 !===================== Tools/CondDBUI v2r20 2009-07-14 ========================
 ! 2009-06-30 - Marco Clemencic
