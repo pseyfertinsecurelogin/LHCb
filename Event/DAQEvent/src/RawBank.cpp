@@ -12,6 +12,10 @@
 //=============================================================================
 std::string LHCb::RawBank::typeName(LHCb::RawBank::BankType e){
   switch ( e ) {
+    //
+    // Important note:
+    // Keep the order exactly as in the RawEvent header file!
+    //
   case LHCb::RawBank::L0Calo          : return  "L0Calo";
   case LHCb::RawBank::L0DU            : return  "L0DU";            
   case LHCb::RawBank::PrsE            : return  "PrsE";            
@@ -75,10 +79,14 @@ std::string LHCb::RawBank::typeName(LHCb::RawBank::BankType e){
   case LHCb::RawBank::DstData         : return  "DstData";
   case LHCb::RawBank::DstAddress      : return  "DstAddress";    
   case LHCb::RawBank::FileID          : return  "FileID";
-  case LHCb::RawBank::VeloPix         : return  "VeloPix";
+  case LHCb::RawBank::VP              : return  "VP";
   case LHCb::RawBank::FTCluster       : return  "FTCluster";  
   case LHCb::RawBank::VL              : return  "VL"; 
-  default                             : return  "Undefined name";
+  case LHCb::RawBank::UT              : return  "UT";
+  case LHCb::RawBank::UTFull          : return  "UTFull";
+  case LHCb::RawBank::UTError         : return  "UTError";
+  case LHCb::RawBank::UTPedestal      : return  "UTPedestal";
+  default                             : return  "Undefined_name";
   };
 }  
 

@@ -1,4 +1,3 @@
-
 //-----------------------------------------------------------------------------
 /** @file RichRadiatorType.cpp
  *
@@ -12,8 +11,10 @@
 // local
 #include "Kernel/RichRadiatorType.h"
 
+#if !(defined(__GXX_EXPERIMENTAL_CXX0X__) || __cplusplus >= 201103L)
 // boost
 #include "boost/assign/list_of.hpp"
+#endif
 
 // Text conversion for RadiatorType enumeration
 std::string Rich::text( const Rich::RadiatorType radiator )
@@ -27,6 +28,8 @@ std::string Rich::text( const Rich::RadiatorType radiator )
   case Rich::HPDQuartzWin:       return "HPDQuartzWin";
   case Rich::Nitrogen:           return "Nitrogen";
   case Rich::AerogelFilter:      return "AerogelFilter";
+  case Rich::CO2:                return "Rich CO2";
+  case Rich::PMTQuartzWin:       return "PMTQuartzWin";
   case Rich::InvalidRadiator:    return "Invalid Radiator";
   default:                       return "SHOULD NEVER SEE THIS";
   }
@@ -35,7 +38,11 @@ std::string Rich::text( const Rich::RadiatorType radiator )
 const Rich::Radiators & Rich::radiators()
 {
   static Rich::Radiators rads =
+#if defined(__GXX_EXPERIMENTAL_CXX0X__) || __cplusplus >= 201103L
+    {Rich::Aerogel, Rich::Rich1Gas, Rich::Rich2Gas};
+#else
     boost::assign::list_of(Rich::Aerogel)(Rich::Rich1Gas)(Rich::Rich2Gas);
+#endif
   return rads;
 }
 

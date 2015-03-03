@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--- $Id: -->
+<!--- Author  : Eric Cogneras -->
+<!--- Created : 2012-05-15 -->
+
+<!DOCTYPE gdd SYSTEM "gdd.dtd" >
+<gdd>
+  <package name="FTEvent">
+    <class name   = "MCFTDigit"
+           id     = "14002"
+           author = "Eric Cogneras"
+           desc   = "This class represents the ADC charge collected per FTChannelID"
+           serializers="FALSE">
+      <import   name = "Kernel/FTChannelID" />
+      <import   name = "Event/MCParticle.h" />
+      <location name = "Default"   place="MC/FT/Digits"   />
+
+      <template name = "KeyedObjectDict" t1="LHCb::FTChannelID"/>
+      <base     name = "KeyedObject&lt;LHCb::FTChannelID&gt;" />
+      &KeyedObject;
+
+      <constructor desc     = "Constructor"
+		   argList  = "LHCb::FTChannelID&amp; id, int adc,std::map&lt;const LHCb::MCParticle*, double&gt; mcMap" 
+                   initList = "m_adcCount(adc),m_mcParticleMap(mcMap)">
+        <code> this->setKey(id); </code>
+      </constructor>
+
+      <destructor  desc="destructor">
+        <code> // dummy  </code>
+      </destructor>
+
+      <method    name   = "channelID"
+                 desc   = "Retrieve the FTChannelID, key of the object"
+                 type   = "const LHCb::FTChannelID&amp;"
+                 access = "PUBLIC">
+        <code> return key(); </code>
+      </method>
+
+      <method    name   = "lowerByChannelID"
+		 desc   = "Comparison for sorting by channel ID"
+		 argList = "MCFTDigit* d1, MCFTDigit* d2"
+		 type    = "bool"
+		 static  = "TRUE"
+		 access  = "PUBLIC">
+	<code> return d1-&gt;channelID() &lt; d2-&gt;channelID(); </code>
+      </method>
+
+      <attribute name   = "adcCount"
+                 desc   = "ADC Count for ChannelID"
+                 type   = "int"
+                 access = "PRIVATE"/>
+
+      <attribute name   = "mcParticleMap"
+                 desc   = "map of MCParticle involved in the digit and deposited energy"
+                 type   = "std::map&lt; const LHCb::MCParticle*, double&gt;"
+                 setMeth = "FALSE"
+                 access = "PRIVATE"/>
+    </class>
+  </package>
+</gdd>

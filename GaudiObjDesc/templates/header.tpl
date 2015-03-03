@@ -20,7 +20,7 @@
 // Forward declarations
 @@@forwardDeclsGlob@@@
 
-namespace @@@classNamespace@@@ 
+namespace @@@classNamespace@@@
 {
 
   // Forward declarations
@@ -31,11 +31,11 @@ namespace @@@classNamespace@@@
 
   /** @class @@@classname@@@ @@@classname@@@.h
    *
-   * @@@desc@@@ 
+   * @@@desc@@@
    *
    * @author @@@author@@@
    * created @@@today@@@
-   * 
+   *
    */
 
   class @@@classname@@@@@@inheritance@@@
@@ -73,6 +73,7 @@ namespace @@@classNamespace@@@
   }; // class @@@classname@@@
 
   @@@classTypedefs@@@
+  @@@globalTypedefs@@@
   @@@classOstreamOverload@@@
   @@@enumOstreamOverloads@@@
 } // namespace @@@classNamespace@@@;
@@ -93,5 +94,7 @@ namespace @@@classNamespace@@@
 @@@publicMethodDefs@@@
 @@@protectedMethodDefs@@@
 @@@privateMethodDefs@@@
+
+@@@registerAllocatorReleaser@@@
 
 #endif ///@@@packagename@@@_@@@classname@@@_H

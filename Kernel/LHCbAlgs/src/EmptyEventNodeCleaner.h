@@ -25,17 +25,23 @@ public:
 
   virtual ~EmptyEventNodeCleaner( ); ///< Destructor
 
-  virtual StatusCode execute   ();    ///< Algorithm execution
+  virtual StatusCode initialize ();   ///< Initialize
+  virtual StatusCode execute   ();    ///< Execution
 
 private:
 
+  /// Performs a recursive clean of the given TES location
   void cleanNodes( DataObject * obj,
                    const std::string & location,
                    unsigned int nRecCount = 0 );
 
 private:
+  
+  std::string m_inputStream;   ///< Input stream root
+  std::string m_dataSvcName;   ///< name of the data service
 
-  std::string m_inputStream; ///< Input stream root
+  IDataProviderSvc* m_dataSvc; ///< The data service itself
 
 };
+
 #endif // EMPTYEVENTNODECLEANER_H

@@ -18,11 +18,58 @@ class UnpackCluster : public GaudiAlgorithm
 public:
 
   /// Standard constructor
-  UnpackCluster( const std::string& name, ISvcLocator* pSvcLocator );
+  UnpackCluster( const std::string& name, 
+                 ISvcLocator* pSvcLocator );
 
   virtual ~UnpackCluster( ); ///< Destructor
 
   virtual StatusCode execute(); ///< Algorithm execution
+
+private:
+
+  /// Create and access Velo clusters on demand
+  LHCb::VeloClusters * vClus()
+  {
+    if ( !m_vClus )
+    {
+      put( m_vClus = new LHCb::VeloClusters() , 
+           LHCb::VeloClusterLocation::Default  + m_extension );
+    }
+    return m_vClus;
+  }
+
+  /// Create and access TT Clusters on demand
+  LHCb::STClusters* ttClus()
+  {
+    if ( !m_ttClus )
+    {
+      put( m_ttClus = new LHCb::STClusters() ,
+           LHCb::STClusterLocation::TTClusters + m_extension );
+    }
+    return m_ttClus;
+  }
+
+  /// Create and access UT Clusters on demand
+  LHCb::STClusters* utClus()
+  {
+    if ( !m_utClus )
+    {
+      put( m_utClus = new LHCb::STClusters() ,
+           LHCb::STClusterLocation::UTClusters + m_extension );
+    }
+    return m_utClus;
+  }
+
+  /// Create and access IT Clusters on demand
+  LHCb::STClusters* itClus()
+  {
+    if ( !m_itClus )
+    {
+      put( m_itClus = new LHCb::STClusters() ,
+           LHCb::STClusterLocation::ITClusters + m_extension );
+    }
+    return m_itClus;
+  }
 
 private:
 
@@ -32,6 +79,12 @@ private:
 
   /// Check to prevent recursive calls to this, due to the multiple possible outputs
   bool m_running;
+
+  // Cache pointers to containers, for on-demand creation
+  LHCb::VeloClusters * m_vClus; ///< Velo clusters
+  LHCb::STClusters*   m_ttClus; ///< TT Clusters
+  LHCb::STClusters*   m_utClus; ///< UT Clusters
+  LHCb::STClusters*   m_itClus; ///< IT Clusters
 
 };
 

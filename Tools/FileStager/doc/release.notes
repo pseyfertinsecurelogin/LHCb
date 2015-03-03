@@ -4,6 +4,25 @@
 ! Purpose     : Create local copies of files from the grid at runtime.
 !-----------------------------------------------------------------------------
 
+!========================= FileStager v1r9 2012-09-28 =========================
+! 2012-09-20 - Roel Aaij
+ - Added protection to the finding of a file's size from dedicated command output.
+ - Print extra error information when staging has failed.
+
+! 2012-09-16 - Roel Aaij
+ - Fixed handling of file:// PFNs (such as used at CNAF). Unless the StageLocal
+   property is set, they are not staged.
+
+! 2012-09-12 - Roel Aaij
+ - Added extra protection to the use of KeepFiles. If there is an environment
+   variable set which ends in JOBID, files will never be kept.
+
+! 2012-09-12 - Marco Clemencic
+ - Minor change to simplify translation to CMake.
+
+! 2012-08-08 - Marco Clemencic
+ - Added python/FileStager/__init__.py.
+
 !========================= FileStager v1r8 2012-06-25 =========================
 ! 2012-03-28 - Roel Aaij
  - Support '+' in filenames

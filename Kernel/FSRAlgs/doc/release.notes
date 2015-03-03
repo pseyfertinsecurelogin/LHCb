@@ -1,0 +1,25 @@
+!-----------------------------------------------------------------------------
+! Package     : Rec/LumiAlgs
+! Responsible : Jaap Panman, Rob Lambert
+! Purpose     : Generic FSR manipulation and creation algorithms
+!-----------------------------------------------------------------------------
+
+!========================= FSRAlgs v1r0 2012-09-28 =========================
+! 2012-09-26 - Marco Clemencic
+ - Added empty __init__.py in the top Python module.
+ - Removed transient QMTest directory.
+
+! 2012-09-20 - Marco Cattaneo
+ - Adapt test reference to options printout format change in Gaudi v23r4
+
+! 2012-08-13 - Rob Lambert
+ - Creation of package. First step is a complete copy of Rec/LumiAlgs to preserve svn history.
+ - Removal of algorithms which belong only in Rec/LumiAlgs. remainder is:
+   . DumpFSR, PropagateFSR, LumiMergeFSR, EventAccounting and the FSRNavigator
+ - Removal of tests which should stay in Rec/LumiAlgs 
+ - Removal of python modules which should stay in Rec/LumiAlgs
+ - Creation of includes directory for interfaces
+ - move test directory
+ - remove jobs directory
+ - Tested in Brunel with the new Rec/LumiAlgs, and all works fine. 
+ - Needs a nightly test to check packaging.

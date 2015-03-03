@@ -1,4 +1,4 @@
-// $Id: Functions.cpp 143024 2012-07-21 16:59:13Z ibelyaev $ 
+// $Id: Functions.cpp 144911 2012-09-05 11:39:55Z ibelyaev $ 
 // ============================================================================
 // Include files
 // ============================================================================
@@ -44,8 +44,8 @@
  *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
  *  @date 2010-04-19
  *  
- *                    $Revision: 143024 $
- *  Last modification $Date: 2012-07-21 18:59:13 +0200 (Sat, 21 Jul 2012) $
+ *                    $Revision: 144911 $
+ *  Last modification $Date: 2012-09-05 13:39:55 +0200 (Wed, 05 Sep 2012) $
  *                 by $author$
  */
 // ============================================================================
@@ -829,6 +829,32 @@ namespace
    *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
    *  @date 2010-05-23
    */
+  double phase_space_3_1_GSL ( double x , void* params )  
+  {
+    //
+    const Gaudi::Math::PhaseSpace3* ps = 
+      (Gaudi::Math::PhaseSpace3*) params ;
+    //
+    return ps -> ps2_aux (x) ;
+  }
+  // ==========================================================================
+  /** helper function for itegration of PhaseSpace shape 
+   *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
+   *  @date 2010-05-23
+   */
+  double phase_space_3_2_GSL ( double x , void* params )  
+  {
+    //
+    const Gaudi::Math::PhaseSpace3* ps = 
+      (Gaudi::Math::PhaseSpace3*) params ;
+    //
+    return (*ps)(x) ;
+  }
+  // ==========================================================================
+  /** helper function for itegration of PhaseSpace shape 
+   *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
+   *  @date 2010-05-23
+   */
   double phase_space_NL_GSL ( double x , void* params )  
   {
     //
@@ -895,6 +921,18 @@ namespace
   {
     //
     const Gaudi::Math::Flatte23L* f = (Gaudi::Math::Flatte23L*) params ;
+    //
+    return (*f)(x) ;
+  }
+  // ==========================================================================
+  /** helper function for itegration of Gounaris23L shape 
+   *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+   *  @date 2012-05-24
+   */
+  double Gounaris_23L_GSL ( double x , void* params )  
+  {
+    //
+    const Gaudi::Math::Gounaris23L* f = (Gaudi::Math::Gounaris23L*) params ;
     //
     return (*f)(x) ;
   }
@@ -2442,6 +2480,152 @@ Gaudi::Math::PhaseSpace2::q1
     std::complex<double> ( 0 , 0.5  * std::sqrt ( -lam ) / m     ) ;
 }
 // ============================================================================
+
+// ============================================================================
+/*  constructor from three masses
+ *  @param m1 the mass of the first  particle 
+ *  @param m2 the mass of the second particle 
+ *  @param m3 the mass of the third  particle 
+ *  @param l1 the angular momentum between 1st and 2nd particle 
+ *  @param l2 the angular momentum between the pair and 3rd particle 
+ */
+// ============================================================================
+Gaudi::Math::PhaseSpace3::PhaseSpace3
+( const double         m1 , 
+  const double         m2 , 
+  const double         m3 , 
+  const unsigned short l1 , 
+  const unsigned short l2 ) 
+  : std::unary_function<double,double> () 
+  , m_m1 ( std::abs ( m1 ) ) 
+  , m_m2 ( std::abs ( m2 ) ) 
+  , m_m3 ( std::abs ( m3 ) ) 
+  , m_l1 ( l1 ) 
+  , m_l2 ( l2 ) 
+{}
+// ============================================================================
+// deststructor 
+// ============================================================================
+Gaudi::Math::PhaseSpace3::~PhaseSpace3 () {}
+// ============================================================================
+// evaluate 3-body phase space 
+// ============================================================================
+double Gaudi::Math::PhaseSpace3::operator () ( const double x ) const 
+{
+  //
+  if ( x <= lowEdge() ) { return 0 ; }
+  //
+  /// set the temporary mass 
+  m_tmp = x ;
+  //
+  // make integral of ps2_aux from m_m1+m_m2 till x-m_m3
+  //
+  const double low  = m_m1 + m_m2 ;
+  const double high = x    - m_m3 ;
+  //
+  // use GSL to evaluate the integral 
+  //
+  Sentry sentry ;
+  //
+  gsl_function F                 ;
+  F.function = &phase_space_3_1_GSL ;
+  const PhaseSpace3* _ps = this  ;
+  F.params   = const_cast<PhaseSpace3*> ( _ps ) ;
+  //
+  double result   = 1.0 ;
+  double error    = 1.0 ;
+  //
+  const int ierror = gsl_integration_qag 
+    ( &F                ,            // the function 
+      low   , high      ,            // low & high edges 
+      s_PRECISION       ,            // absolute precision            
+      s_PRECISION       ,            // relative precision 
+      s_SIZE            ,            // size of workspace 
+      GSL_INTEG_GAUSS31 ,            // integration rule  
+      workspace ( m_workspace ) ,    // workspace  
+      &result           ,            // the result 
+      &error            ) ;          // the error in result 
+  //
+  if ( ierror ) 
+  { 
+    gsl_error ( "Gaudi::Math::PhaseSpace3::QAG" ,
+                __FILE__ , __LINE__ , ierror ) ; 
+  }
+  //
+  return result ;
+}
+// ============================================================================
+// helper function to get the phase space as 
+// ============================================================================
+double Gaudi::Math::PhaseSpace3::ps2_aux 
+( const double m12 ) const
+{
+  //
+  if ( m_tmp <= lowEdge()    ) { return 0 ; }
+  //
+  if ( m12   <= m_m1  + m_m2 ) { return 0 ; }
+  if ( m12   >= m_tmp - m_m3 ) { return 0 ; }
+  //  
+  // represent 3-body phase space as extention of 2-body phase space 
+  return  m12 / M_PI *  
+    Gaudi::Math::PhaseSpace2::phasespace ( m12   , m_m1 , m_m2 , m_l1 ) * 
+    Gaudi::Math::PhaseSpace2::phasespace ( m_tmp , m12  , m_m3 , m_l2 ) ;
+  //  
+}
+// ============================================================================
+// get the integral between low and high limits 
+// ============================================================================
+double  Gaudi::Math::PhaseSpace3::integral 
+( const double low  , 
+  const double high ) const 
+{
+  if ( s_equal ( low , high ) ) { return                 0.0 ; } // RETURN 
+  if (           low > high   ) { return - integral ( high ,                                                     
+                                                      low  ) ; } // RETURN 
+  //
+  if ( lowEdge() >= high  ) { return 0 ; }
+  if ( lowEdge() >  low   ) { return integral ( lowEdge() , high ) ; }
+  
+  //
+  if ( 0 < lowEdge() && 5 * lowEdge() < ( high - low ) ) 
+  {
+    return 
+      integral ( low                   , 0.5 *  ( high + low ) ) + 
+      integral ( 0.5 *  ( high + low ) ,          high         ) ;
+  }
+  //
+  // use GSL to evaluate the integral 
+  //
+  Sentry sentry ;
+  //
+  gsl_function F                 ;
+  F.function = &phase_space_3_2_GSL ;
+  const PhaseSpace3* _ps = this  ;
+  F.params   = const_cast<PhaseSpace3*> ( _ps ) ;
+  //
+  double result   = 1.0 ;
+  double error    = 1.0 ;
+  //
+  const int ierror = gsl_integration_qag 
+    ( &F                ,             // the function 
+      low   , high      ,             // low & high edges 
+      s_PRECISION       ,             // absolute precision            
+      s_PRECISION       ,             // relative precision 
+      s_SIZE            ,             // size of workspace 
+      GSL_INTEG_GAUSS31 ,             // integration rule  
+      workspace ( m_workspace2 ) ,    // workspace  
+      &result           ,             // the result 
+      &error            ) ;           // the error in result 
+  //
+  if ( ierror ) 
+  { 
+    gsl_error ( "Gaudi::Math::PhaseSpace3::QAG" ,
+                __FILE__ , __LINE__ , ierror ) ; 
+  }
+  //
+  return result ;
+}
+// ============================================================================
 // constructor from threshold and number of particles 
 // ============================================================================
 Gaudi::Math::PhaseSpaceLeft::PhaseSpaceLeft 
@@ -2755,10 +2939,11 @@ Gaudi::Math::BreitWigner::amplitude ( const double x ) const
   //
   const std::complex<double> v = m0() * m0 () - x * x - s_j * m0() * g ;
   //
-  const double q  = Gaudi::Math::PhaseSpace2::q ( x    , m1() , m2() ) ;
-  const double q0 = Gaudi::Math::PhaseSpace2::q ( m0() , m1() , m2() ) ;
+  const double q  = Gaudi::Math::PhaseSpace2::q ( x    , m1 () , m2 () ) ;
+  const double q0 = Gaudi::Math::PhaseSpace2::q ( m0() , m1 () , m2 () ) ;
   //
-  return  Gaudi::Math::pow ( q / q0 , m_L ) / v ;
+  return  
+    std::sqrt ( m0 () * gam0 () ) * Gaudi::Math::pow ( q / q0 , m_L ) / v ;
 }
 // ============================================================================
 /*  calculate the Breit-Wigner shape
@@ -3515,7 +3700,14 @@ double Gaudi::Math::PhaseSpace23L::q ( const double x ) const
 double Gaudi::Math::PhaseSpace23L::p ( const double x ) const 
 { return Gaudi::Math::PhaseSpace2::q ( m_m , x , m_m3 ) ; }
 // ============================================================================
+// calculate the phase space
+// ============================================================================
 double Gaudi::Math::PhaseSpace23L::operator () ( const double x ) const 
+{ return ps23L( x ) ; }
+// ============================================================================
+// calculate the phase space
+// ============================================================================
+double Gaudi::Math::PhaseSpace23L::ps23L ( const double x ) const 
 {
   //
   if ( lowEdge() >= x || highEdge() <= x ) { return  0 ; }
@@ -3827,9 +4019,9 @@ Gaudi::Math::Bugg23L::Bugg23L
   const double         g2 ,
   const double         b1 ,
   const double         b2 ,
+  const double         a  ,
   const double         s1 ,
   const double         s2 ,
-  const double         a  ,
   const double         m1 ,
   const double         m3 ,
   const double         m  ,
@@ -3847,7 +4039,7 @@ Gaudi::Math::Bugg23L::Bugg23L
   , m_ps ( m1 , m1 , m3 , m , L , 0 )  
 //
   , m_workspace () 
-{}
+{} 
 // ============================================================================
 // destructor 
 // ============================================================================
@@ -3866,7 +4058,7 @@ std::complex<double>
 Gaudi::Math::Bugg23L::rho4_ratio ( const double x ) const 
 {
   //
-  if ( 4 * m1() >= x ) { return 0 ; }
+  if ( 2 * m1() >= x ) { return 0 ; }
   //
   return rho4 ( x ) / rho4 ( M() ) ;
 }
@@ -4355,6 +4547,215 @@ double  Gaudi::Math::Flatte23L::integral
 // ============================================================================
 double  Gaudi::Math::Flatte23L::integral () const 
 { return integral ( lowEdge () , highEdge() ) ; }
+// ============================================================================
+
+
+// ============================================================================
+// Gounaris & Sakurai shape 
+// ============================================================================
+/* constructor from all masses and angular momenta 
+ *  @param M  mass of rho
+ *  @param g0 width parameter 
+ *  @param m1 the mass of the first  particle (the same as the second)
+ *  @param m3 the mass of the third  particle 
+ *  @param m  the mass of the mother particle (m>m1+m2+m3)
+ *  @param L  the angular momentum between the first pair and the third 
+ */
+// ============================================================================
+Gaudi::Math::Gounaris23L::Gounaris23L
+( const double         M  ,  // GeV  
+  const double         g0 ,  // GeV 
+  const double         m1 ,  // MeV
+  const double         m3 ,  // MeV 
+  const double         m  ,  // MeV 
+  const unsigned short L  ) 
+  : std::unary_function<double,double>  () 
+//
+  , m_M  ( std::abs ( M  ) ) 
+  , m_g0 ( std::abs ( g0 ) ) 
+//
+  , m_ps ( m1 , m1 , m3 , m , L , 1 )
+{}
+// ============================================================================
+// destructor 
+// ============================================================================
+Gaudi::Math::Gounaris23L::~Gounaris23L(){}
+// ============================================================================
+// set the proper parameters 
+// ============================================================================
+bool Gaudi::Math::Gounaris23L::setM ( const double x ) 
+{
+  //
+  const double v = std::abs ( x ) ;
+  if ( s_equal ( v , m_M ) ) { return false ; }
+  //
+  m_M = v ;
+  //
+  return true ;
+}
+// ============================================================================
+// set the proper parameters 
+// ============================================================================
+bool Gaudi::Math::Gounaris23L::setG0 ( const double x ) 
+{
+  //
+  const double v = std::abs ( x ) ;
+  if ( s_equal ( v , m_g0 ) ) { return false ; }
+  //
+  m_g0 = v ;
+  //
+  return true ;
+}
+// ============================================================================
+// get h-factor 
+// ============================================================================
+double Gaudi::Math::Gounaris23L::h ( const double x , 
+                                     const double k ) const 
+{
+  //
+  if ( lowEdge() > x || highEdge() < x ) { return 0 ; }
+  //
+  return 2 * k  / M_PI / x * std::log ( ( x + 2 * k ) / 2 / m1() ) ;
+} 
+// ============================================================================
+// get h-factor 
+// ============================================================================
+double Gaudi::Math::Gounaris23L::h ( const double x ) const 
+{
+  //
+  if ( lowEdge() > x ) { return 0 ; }
+  //
+  const double k = PhaseSpace2::q ( x , m1 () , m1() ) ;
+  //
+  return h ( x , k ) ;
+} 
+// ============================================================================
+// get h'-factor 
+// ============================================================================
+double Gaudi::Math::Gounaris23L::h_prime ( const double x ) const 
+{
+  //
+  if ( lowEdge() > x ) { return 0 ; }
+  //
+  const double k = PhaseSpace2::q ( x , m1 () , m1() ) ;
+  //
+  return h_prime ( x , k ) ;
+} 
+// ============================================================================
+// get h'-factor 
+// ============================================================================
+double Gaudi::Math::Gounaris23L::h_prime ( const double x , 
+                                           const double k ) const 
+{
+  //
+  if ( lowEdge() > x ) { return 0 ; }
+  //
+  const double f =  ( x + 2 * k ) / ( 2  * m1 () ) ;
+  //
+  return k / M_PI / x / x * ( - std::log ( f ) / x  + 0.5 / m1() / f ) ;  
+}
+// ============================================================================
+// get the amlitude  (not normalized!)
+// ============================================================================
+std::complex<double> 
+Gaudi::Math::Gounaris23L::amplitude (  const double x ) const 
+{
+  //
+  if ( x <= lowEdge() ) { return 0 ; }
+  //
+  const double k    = PhaseSpace2::q ( x    , m1 () , m1 () ) ;
+  const double k0   = PhaseSpace2::q ( M () , m1 () , m1 () ) ;
+  const double k03  = k0 * k0 * k0 ;
+  //
+  const double m0_2 = M() * M() ;
+  //
+  const double v1   = m0_2 - x * x ;
+  //
+  const double dh   = h ( x , k ) - h ( M() , k0 ) ;
+  const double hp   = h_prime ( m() , k0 ) ;
+  //
+  const double v2 = k * k * dh + k0 * k0 * hp * ( m0_2 - x * x ) ;
+  const double v3 = Gaudi::Math::pow ( k/k0 , 3 ) * m0() / x ;
+  //
+  return 
+    std::sqrt ( g0 () * m0 () ) / 
+    std::complex<double> ( v1 + v2 * g0() * m0_2 / k03 ,
+                           v3      * g0() * m0 ()      ) ;  
+}
+// ============================================================================
+// calculate the Gounaris-Sakurai shape
+// ============================================================================
+double Gaudi::Math::Gounaris23L::operator() ( const double x ) const 
+{
+  //
+  if ( lowEdge() >= x || highEdge() <= x ) { return 0 ; }
+  //
+  std::complex<double> amp = amplitude ( x ) ;
+  const double  ps = m_ps( x ) ;
+  //
+  return x * ps * std::norm ( amp ) * 2 / M_PI  ;
+}
+
+// ============================================================================
+// get the integral between low and high limits 
+// ============================================================================
+double  Gaudi::Math::Gounaris23L::integral 
+( const double low  , 
+  const double high ) const 
+{
+  if ( s_equal ( low , high ) ) { return                 0.0 ; } // RETURN 
+  if (           low > high   ) { return - integral ( high ,                                                     
+                                                      low  ) ; } // RETURN 
+  //
+  if ( high <= lowEdge  () ) { return 0 ; }
+  if ( low  >= highEdge () ) { return 0 ; }
+  //
+  if ( low  <  lowEdge  () ) 
+  { return integral ( lowEdge() , high        ) ; }
+  //
+  if ( high >  highEdge () ) 
+  { return integral ( low       , highEdge () ) ; }
+  //
+  // use GSL to evaluate the integral 
+  //
+  Sentry sentry ;
+  //
+  gsl_function F                   ;
+  F.function             = &Gounaris_23L_GSL ;
+  const Gounaris23L* _ps = this  ;
+  F.params               = const_cast<Gounaris23L*> ( _ps ) ;
+  //
+  double result   = 1.0 ;
+  double error    = 1.0 ;
+  //
+  const int ierror = gsl_integration_qag 
+    ( &F                ,            // the function 
+      low   , high      ,            // low & high edges 
+      s_PRECISION     ,            // absolute precision            
+      s_PRECISION       ,            // relative precision 
+      s_SIZE            ,            // size of workspace 
+      GSL_INTEG_GAUSS31 ,            // integration rule  
+      workspace ( m_workspace ) ,    // workspace  
+      &result           ,            // the result 
+      &error            ) ;          // the error in result 
+  //
+  if ( ierror ) 
+  { 
+    gsl_error ( "Gaudi::Math::Gounaris23L::QAG" ,
+                __FILE__ , __LINE__ , ierror ) ; 
+  }
+  //
+  return result ;
+}
+// ============================================================================
+// get the integral 
+// ============================================================================
+double  Gaudi::Math::Gounaris23L::integral () const 
+{ return integral ( lowEdge () , highEdge() ) ; }
+// ============================================================================
+
+
+
 
 
 // ============================================================================

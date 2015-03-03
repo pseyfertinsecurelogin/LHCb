@@ -57,11 +57,13 @@ namespace LHCb
   {
     static const std::string& Velo    = "pSim/Velo/Hits";
     static const std::string& PuVeto  = "pSim/PuVeto/Hits";
-    static const std::string& VeloPix = "pSim/VeloPix/Hits";
+    static const std::string& VP      = "pSim/VP/Hits";
     static const std::string& VL      = "pSim/VL/Hits";
     static const std::string& TT      = "pSim/TT/Hits";
+    static const std::string& UT      = "pSim/UT/Hits";
     static const std::string& IT      = "pSim/IT/Hits";
     static const std::string& OT      = "pSim/OT/Hits";
+    static const std::string& FT      = "pSim/FT/Hits";
     static const std::string& Muon    = "pSim/Muon/Hits";
   }
 
@@ -235,23 +237,30 @@ namespace LHCb
     static const std::string unpackedLocation() { return LHCb::MCHitLocation::PuVeto;       }
   };
 
-  /** @class MCVeloPixHitPacker Event/PackedMCHit.h
+  /** @class MCVPHitPacker Event/PackedMCHit.h
    *
-   *  Utility class to handle the packing and unpacking of the MC VeloPix Hits
+   *  Utility class to handle the packing and unpacking of the MC VP Hits
    *
    *  @author Christopher Rob Jones
    *  @date   2009-10-13
    */
-  class MCVeloPixHitPacker : public MCHitPacker
+  class MCVPHitPacker : public MCHitPacker
   {
   public:
-    MCVeloPixHitPacker( GaudiAlgorithm & parent ) : MCHitPacker(parent)
-    {
+    MCVPHitPacker( GaudiAlgorithm & parent ) : MCHitPacker(parent)
+    { // printf("MCVPHitPacker::MCVPHitPacker()\n");
       m_dispScale = 1.0e2;
       m_enScale   = 5.0e3;
     }
-    static const std::string packedLocation()   { return LHCb::PackedMCHitLocation::VeloPix; }
-    static const std::string unpackedLocation() { return LHCb::MCHitLocation::VeloPix;       }
+    static const std::string packedLocation()   { return LHCb::PackedMCHitLocation::VP; }
+    static const std::string unpackedLocation() { return LHCb::MCHitLocation::VP;       }
+    /*
+    void pack( const DataVector & hits,
+               PackedDataVector & phits ) const
+    { printf("MCVPHitPacker::pack(%d hits):\n", hits.size() );
+      // printf("MCVPHitPacker::pack(%d): %s => %s\n", hits.size(), LHCb::MCHitLocation::VP, LHCb::PackedMCHitLocation::VP );
+      MCHitPacker::pack(hits, phits); }
+    */
   };
 
   /** @class MCVLHitPacker Event/PackedMCHit.h
@@ -292,6 +301,25 @@ namespace LHCb
     static const std::string unpackedLocation() { return LHCb::MCHitLocation::TT;       }
   };
 
+  /** @class MCUTHitPacker Event/PackedMCHit.h
+   *
+   *  Utility class to handle the packing and unpacking of the MC UT Hits
+   *
+   *  @author Jianchun Wang
+   *  @date   2012-07-13
+   */
+  class MCUTHitPacker : public MCHitPacker
+  {
+  public:
+    MCUTHitPacker( GaudiAlgorithm & parent ) : MCHitPacker(parent)
+    {
+      m_dispScale = 1.0e2;
+      m_enScale   = 5.0e3;
+    }
+    static const std::string packedLocation()   { return LHCb::PackedMCHitLocation::UT; }
+    static const std::string unpackedLocation() { return LHCb::MCHitLocation::UT;       }
+  };
+
   /** @class MCITHitPacker Event/PackedMCHit.h
    *
    *  Utility class to handle the packing and unpacking of the MC IT Hits
@@ -328,6 +356,19 @@ namespace LHCb
     }
     static const std::string packedLocation()   { return LHCb::PackedMCHitLocation::OT; }
     static const std::string unpackedLocation() { return LHCb::MCHitLocation::OT;       }
+  };
+
+
+  class MCFTHitPacker : public MCHitPacker
+  {
+  public:
+    MCFTHitPacker( GaudiAlgorithm & parent ) : MCHitPacker(parent)
+    {
+      m_dispScale = 1.0e2;
+      m_enScale   = 5.0e3;
+    }
+    static const std::string packedLocation()   { return LHCb::PackedMCHitLocation::FT; }
+    static const std::string unpackedLocation() { return LHCb::MCHitLocation::FT;       }
   };
 
   /** @class MCMuonHitPacker Event/PackedMCHit.h

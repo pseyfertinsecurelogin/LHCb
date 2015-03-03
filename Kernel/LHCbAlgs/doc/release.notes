@@ -4,6 +4,38 @@
 ! Purpose     : General purpose algorithms and tools for LHCb
 !-----------------------------------------------------------------------------
 
+!========================= LHCbAlgs v2r52 2012-09-28 =========================
+! 2012-09-21 - Marco Clemencic
+ - Fixed compilation with -std=c++11 (-std=c++0x).
+
+! 2012-09-17 - Chris Jones
+ - Use getIfExists in ODINDecodeTool
+
+! 2012-08-08 - Chris Jones
+ - Fix stupid typo I introduced in FSRCleaner
+
+! 2012-08-08 - Marco Clemencic
+ - Added python/LHCbAlgs/__init__.py.
+
+! 2012-08-07 - Patrick Koppenburg
+ - src/RateFromCondDB, src/OfflineRateLimiter, src/RateFromTCK:
+   . Allow to deal with rates and prescales to fix https://savannah.cern.ch/bugs/?94262
+   . Requires LHCb/LHCbKernel r143843
+
+! 2012-08-02 - Chris Jones
+ - Call EmptyEventNodeCleaner::finalize() not GaudiAlgorithm::finalize() in
+   FSRCleaner::finalize()
+
+!========================= LHCbAlgs v2r51 2012-08-01 =========================
+
+! 2012-08-01 - Chris Jones
+ - Some minor clean ups of the last FSR related changes
+
+! 2012-08-01 - Rob Lambert
+ - Modify EmptyEventNodeCleaner to have a configurable EventDataSvc
+ - Add FSRCleaner derived from the new EmptyEventNodeCleaner to use after FSR merging
+ - see bug #96471
+
 !========================= LHCbAlgs v2r50 2012-06-25 =========================
 ! 2012-06-25 - Marco Cattaneo
  - Remove do nothing method EvtCounter::finalize, which in fact was buggy

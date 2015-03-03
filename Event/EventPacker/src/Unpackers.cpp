@@ -52,8 +52,8 @@ template class DataPacking::Unpack<LHCb::MCVeloHitPacker>;
 typedef DataPacking::Unpack<LHCb::MCVeloHitPacker> F;
 DECLARE_ALGORITHM_FACTORY( F )
 
-template class DataPacking::Unpack<LHCb::MCVeloPixHitPacker>;
-typedef DataPacking::Unpack<LHCb::MCVeloPixHitPacker> Fp;
+template class DataPacking::Unpack<LHCb::MCVPHitPacker>;
+typedef DataPacking::Unpack<LHCb::MCVPHitPacker> Fp;
 DECLARE_ALGORITHM_FACTORY( Fp )
 
 template class DataPacking::Unpack<LHCb::MCVLHitPacker>;
@@ -67,6 +67,10 @@ DECLARE_ALGORITHM_FACTORY( G )
 template class DataPacking::Unpack<LHCb::MCTTHitPacker>;
 typedef DataPacking::Unpack<LHCb::MCTTHitPacker> H;
 DECLARE_ALGORITHM_FACTORY( H )
+
+template class DataPacking::Unpack<LHCb::MCUTHitPacker>;
+typedef DataPacking::Unpack<LHCb::MCUTHitPacker> Hu;
+DECLARE_ALGORITHM_FACTORY( Hu )
 
 template class DataPacking::Unpack<LHCb::MCITHitPacker>;
 typedef DataPacking::Unpack<LHCb::MCITHitPacker> I;
@@ -107,3 +111,8 @@ DECLARE_ALGORITHM_FACTORY( Q )
 template class DataPacking::Unpack<LHCb::CaloClusterPacker>;
 typedef DataPacking::Unpack<LHCb::CaloClusterPacker> R;
 DECLARE_ALGORITHM_FACTORY( R )
+
+template class DataPacking::Unpack<LHCb::MCFTHitPacker>;
+typedef DataPacking::Unpack<LHCb::MCFTHitPacker> S;
+DECLARE_ALGORITHM_FACTORY( S )
+

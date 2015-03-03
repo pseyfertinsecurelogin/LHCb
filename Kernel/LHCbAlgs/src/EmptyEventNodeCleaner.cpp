@@ -9,17 +9,16 @@
 // 2012-01-31 : Chris Jones
 //-----------------------------------------------------------------------------
 
-// Declaration of the Algorithm Factory
-DECLARE_ALGORITHM_FACTORY( EmptyEventNodeCleaner )
-
 //=============================================================================
 // Standard constructor, initializes variables
 //=============================================================================
 EmptyEventNodeCleaner::EmptyEventNodeCleaner( const std::string& name,
-                                              ISvcLocator* pSvcLocator)
-  : GaudiAlgorithm ( name , pSvcLocator )
+                                              ISvcLocator* pSvcLocator )
+  : GaudiAlgorithm ( name , pSvcLocator ),
+    m_dataSvc      ( NULL               )
 {
   declareProperty( "InputStream", m_inputStream = "/Event" );
+  declareProperty( "DataService", m_dataSvcName = "EventDataSvc" );
 }
 
 //=============================================================================
@@ -28,12 +27,26 @@ EmptyEventNodeCleaner::EmptyEventNodeCleaner( const std::string& name,
 EmptyEventNodeCleaner::~EmptyEventNodeCleaner() {}
 
 //=============================================================================
+// Initialization
+//=============================================================================
+StatusCode EmptyEventNodeCleaner::initialize()
+{
+  const StatusCode sc = GaudiAlgorithm::initialize();
+  if ( sc.isFailure() ) return sc;
+
+  // get the File Records service
+  m_dataSvc = svc<IDataProviderSvc>( m_dataSvcName, true );
+
+  return sc;
+}
+
+//=============================================================================
 // Main execution
 //=============================================================================
 StatusCode EmptyEventNodeCleaner::execute()
 {
   // Try and load the root DataObject for the configured stream
-  SmartDataPtr<DataObject> root( eventSvc(), m_inputStream );
+  SmartDataPtr<DataObject> root( m_dataSvc, m_inputStream );
 
   // if found, recursively clean
   if ( root ) cleanNodes( root, m_inputStream );
@@ -49,13 +62,13 @@ void EmptyEventNodeCleaner::cleanNodes( DataObject * obj,
                                         unsigned int nRecCount )
 {
   // protect against infinite recursion
-  if ( ++nRecCount > 99999 ) 
+  if ( ++nRecCount > 99999 )
   {
     Error( "Maximum recursion limit reached...." ).ignore();
     return;
   }
 
-  SmartIF<IDataManagerSvc> mgr( eventSvc() );
+  SmartIF<IDataManagerSvc> mgr( m_dataSvc );
   typedef std::vector<IRegistry*> Leaves;
   Leaves leaves;
 
@@ -70,8 +83,8 @@ void EmptyEventNodeCleaner::cleanNodes( DataObject * obj,
       {
         const std::string & id = (*iL)->identifier();
         DataObject* tmp(NULL);
-        sc = eventSvc()->findObject( id, tmp );
-        if ( sc && tmp ) 
+        sc = m_dataSvc->findObject( id, tmp );
+        if ( sc && tmp )
         {
           if ( CLID_DataObject == tmp->clID() )
           {
@@ -87,11 +100,16 @@ void EmptyEventNodeCleaner::cleanNodes( DataObject * obj,
     {
       if ( msgLevel(MSG::DEBUG) )
         debug() << "Removing node " << location << endmsg;
-      sc = eventSvc()->unlinkObject(location);
-      //sc = eventSvc()->unregisterObject(obj);
-      //delete obj;
+      sc = m_dataSvc->unlinkObject(location);
     }
 
   }
 
 }
+
+//=============================================================================
+
+// Declaration of the Algorithm Factory
+DECLARE_ALGORITHM_FACTORY( EmptyEventNodeCleaner )
+
+//=============================================================================

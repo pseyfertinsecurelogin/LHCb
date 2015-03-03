@@ -5,6 +5,68 @@
 ! Package manager: Stefan Roiser
 !--------------------------------------------------------------------------------
 
+!========================= GaudiObjDesc v11r16 2012-09-28 =========================
+! 2012-09-26 - Marco Clemencic
+ - Allow for generation of "private" headers when using CMake.
+   Note: those headers are not copied anywhere, so they will not be available
+         in Doxygen.
+
+! 2012-09-20 - Stefan Roiser
+ - Added the possibility of declaring typedefs in the scope of the namespace
+   surrounding the class (i.e. just outside the class).
+
+! 2012-09-05 - Marco Clemencic
+ - Added CMake configuration and module (to be used by other packages).
+ - Added a special target to just generate all the headers files (AllObj2doth).
+ - Added tests for the XML parser.
+ - Removed some dead code: parsing of GODsClassDB.xml (not supported by DTD).
+ - Added test for entities and comment handling in xparser.
+ - Re-implemented GaudiObjDesc.xparser on lxml (instead of the embedded pyxml).
+   Note: it requires a more strict DTD.
+
+! 2012-08-01 - Marco Clemencic
+ - Added the possibility to set the allocator to 'ORDERED' on the command line.
+ - Minor improvements to the command line option test.
+ - Rewritten the option parsing using the 'optparse' module instead of the
+   obsolete 'getopt'.
+
+! 2012-07-31 - Marco Clemencic
+ - Modified the class generation to use the 'unordered' malloc and free in the
+   default allocators.
+ - The ordered_malloc and ordered_free (with their companion release_memory) can
+   be enabled with the attribute allocator="ORDERED" in the <class> tag of the
+   XML description.
+ - Added a test submodule to GaudiObjDesc (using nosetests) with some tests in
+   preparation of the consolidation of the Python code.
+ - Fixed a minor bug in some obsolete code.
+
+! 2012-07-25 - Marco Clemencic
+ - Imported MemoryPoolAllocatorReleaser source and test from Kernel/LHCbKernel,
+   changing the namespace from LHCb to Gaudi.
+ - Added a linker library to host the function required by
+   MemoryPoolAllocatorReleaser.
+ - Renamed the directory 'test' to 'tests' to conform to the convention.
+ Note: Kernel/LHCbKernel is not required anymore.
+
+!========================= GaudiObjDesc v11r15 2012-07-24 =========================
+   ======== requires Kernel/LHCbKernel > v13r11 ========
+! 2012-07-16 - Marco Clemencic
+ - Modified the generation of the code using boost pool allocators to add a
+   "release_pool" method and to register the class to the static object that
+   allow the release of all the pools.
+ - Added dependency on Kernel/LHCbKernel to ensure that every user of G.O.D. can
+   find the required headers.
+ - Modified the "release_pool" method to use the return value of the release
+   methods of the Boost singleton_pool.
+
+! 2012-07-13 - Marco Clemencic
+ - Restored corrected indentation in generated headers after the re-indentation
+   of Python modules.
+
+! 2012-06-25 - Chris Jones
+ - Use ordered_malloc() instead of malloc() and ordered_free(p) instead of
+   free(p) in boost pool allocations and de-allocations.
+
 !========================= GaudiObjDesc v11r14 2012-06-25 =========================
 ! 2012-06-04 - Marco Clemencic
  - Corrected indentation of Python files (with reindent.py).
@@ -20,7 +82,7 @@
 
 !========================= GaudiObjDesc v11r13 2012-02-28 =======================
 ! 2012-02-28 - Marco Cattaneo
- - Fix requirements to set -DGOD_NOALLOC when tag 'target-dbg' is set, previuosly
+ - Fix requirements to set -DGOD_NOALLOC when tag 'target-dbg' is set, previously
    used tag 'debug' that no longer exists
 
 !========================= GaudiObjDesc v11r12 2011-02-22 =======================

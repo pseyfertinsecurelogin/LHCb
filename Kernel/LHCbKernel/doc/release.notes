@@ -4,14 +4,46 @@
 ! Purpose: LHCb specific Kernel classes
 !--------------------------------------------------------------------------------
 
+!========================= LHCbKernel v13r13 2012-09-28 =========================
+! 2012-09-24 - Jianchun Wang
+ - Small modification in STChannelID.xml to avoid warnings
+
+! 2012-09-23 - Sajan Easo
+ - Minor fix to RichRadiatorType.cpp to match the RichRadiatorType.h
+
+! 2012-09-21 - Jianchun Wang
+ - Add UT in STChannelID, ST detector switch and LHCbID
+
+! 2012-09-21 - Marco Clemencic
+ - Fixed compilation with -std=c++11 (-std=c++0x).
+
+! 2012-09-13 - Paul Szczypka
+ - Renamed EVERYTHING from VeloPix to VP or corresponding string.
+ - Moved *VeloPix* files to *VP*
+
+! 2012-09-04 - Marco Clemencic
+ - Fixed the package name in ITNames.xml and TTNames.xml.
+
+! 2012-08-08 - Marco Clemencic
+ - Added python/LHCbKernel/__init__.py.
+
+! 2012-08-07 - Patrick Koppenburg
+ - Expand IRateFromTCK.h to deal with prescales. See https://savannah.cern.ch/bugs/?94262
+
+! 2012-07-25 - Marco Clemencic
+ - Moved MemoryPoolAllocatorReleaser source and test to GaudiObjDesc, changing
+   the namespace to Gaudi.
+ - Modified LbAppInit for the change in the namespace of
+   MemoryPoolAllocatorReleaser.
+
 !========================= LHCbKernel v13r12 2012-07-24 =========================
 ! 2012-07-20 - Marco Cattaneo
  - In LbAppInit, implement the same checks on memory usage as in DaVinciInit:
    . Print memory increment every "Increment" events if it has changed.
      Default every 100 events
    . Shrink Boost memory pools if memory usage exceeds "MemoryPurgeLimit".
-     Default 3.4GB 
-   . Shrink Boost memory pools at finalize 
+     Default 3.4GB
+   . Shrink Boost memory pools at finalize
 
 ! 2012-07-16 - Marco Clemencic
  - Added mechanism to collect the list of classes using a memory pool allocator

@@ -23,7 +23,11 @@ DECLARE_ALGORITHM_FACTORY( UnpackCluster )
   UnpackCluster::UnpackCluster( const std::string& name,
                                 ISvcLocator* pSvcLocator )
     : GaudiAlgorithm ( name, pSvcLocator ),
-      m_running      ( false             )
+      m_running      ( false             ),
+      m_vClus        ( NULL              ),
+      m_ttClus       ( NULL              ),
+      m_utClus       ( NULL              ),
+      m_itClus       ( NULL              )
 {
   declareProperty( "InputName" , m_inputName = LHCb::PackedClusterLocation::Default );
   declareProperty( "Extension",  m_extension = "" );
@@ -46,26 +50,31 @@ StatusCode UnpackCluster::execute()
   if ( msgLevel(MSG::DEBUG) ) debug() << "==> Execute" << endmsg;
 
   // If input does not exist, and we aren't making the output regardless, just return
-  if ( !m_alwaysOutput && 
+  if ( !m_alwaysOutput &&
        !exist<LHCb::PackedClusters>(m_inputName) ) return StatusCode::SUCCESS;
-  
+
   // If any clusters already exist, return
   if ( exist<LHCb::VeloClusters>(LHCb::VeloClusterLocation::Default+m_extension)  ||
        exist<LHCb::STClusters>  (LHCb::STClusterLocation::TTClusters+m_extension) ||
+       exist<LHCb::STClusters>  (LHCb::STClusterLocation::UTClusters+m_extension) ||
        exist<LHCb::STClusters>  (LHCb::STClusterLocation::ITClusters+m_extension)  )
   {
-    if ( msgLevel(MSG::DEBUG) ) 
+    if ( msgLevel(MSG::DEBUG) )
       debug() << "Clusters already exist -> Quitting" << endmsg;
     return StatusCode::SUCCESS;
   }
-  
-  // Create the cluster containers
-  LHCb::VeloClusters* vClus = new LHCb::VeloClusters();
-  put( vClus,  LHCb::VeloClusterLocation::Default  + m_extension );
-  LHCb::STClusters*  ttClus = new LHCb::STClusters();
-  put( ttClus, LHCb::STClusterLocation::TTClusters + m_extension );
-  LHCb::STClusters*  itClus = new LHCb::STClusters();
-  put( itClus, LHCb::STClusterLocation::ITClusters + m_extension );
+
+  // Reset cluster pointers, to force new ones to be creatd when needed next time
+  m_vClus  = NULL;
+  m_ttClus = NULL;
+  m_utClus = NULL;
+  m_itClus = NULL;
+
+  // Force creation of non-upgrade locatons. 
+  // Temporary, need to check if all works fine with these removed.
+  vClus();
+  ttClus();
+  itClus();
 
   // Get the packed data
   const LHCb::PackedClusters* dst =
@@ -79,14 +88,16 @@ StatusCode UnpackCluster::execute()
   for ( std::vector<LHCb::PackedCluster>::const_iterator itC = dst->clusters().begin();
         dst->clusters().end() != itC; ++itC )
   {
+
     const int det = (*itC).id >> 29;
     int id        = (*itC).id & 0x1FFFFFFF;
     LHCb::VeloCluster::ADCVector adcs;
     for ( unsigned int kk = (*itC).begin; (*itC).end != kk; ++kk )
     {
-      adcs.push_back( std::pair<int,unsigned int>( dst->strips()[kk], dst->adcs()[kk] ) );
+      adcs.push_back( std::pair<int,unsigned int>( dst->strips()[kk],
+                                                   dst->adcs()[kk]  ) );
     }
-    if ( 1 == det ) 
+    if ( 1 == det )
     {
       LHCb::VeloChannelID vId( id & 0xFFFFFF );
       id = id >> 24;
@@ -99,8 +110,17 @@ StatusCode UnpackCluster::execute()
       LHCb::VeloCluster* vCl = new LHCb::VeloCluster( vl, adcs );
       if ( msgLevel(MSG::VERBOSE) )
         verbose() << " Unpacked " << vCl->channelID() << endmsg;
-      vClus->insert( vCl, vCl->channelID() );
-    } 
+      try 
+      {
+        vClus()->insert( vCl, vCl->channelID() );
+      }
+      catch ( const GaudiException & excpt )
+      {
+        if ( msgLevel(MSG::VERBOSE) )
+          verbose() << excpt.message() << endmsg;
+        delete vCl;
+      }
+    }
     else if ( 2 == det || 3 == det )
     {
       LHCb::STChannelID sId( id & 0xFFFFFF );
@@ -111,46 +131,58 @@ StatusCode UnpackCluster::execute()
       if ( ( id & 4 ) != 0 ) size = 3;
       bool high = ( id & 8 ) != 0;
       LHCb::STLiteCluster sl( sId, frac, size, high );
-      if ( 0 == (*itC).spill ) 
+      if ( 0 == (*itC).spill )
       {
         LHCb::STCluster* sCl = new LHCb::STCluster( sl, adcs,
-                                                    double( (*itC).sum ), (*itC).sourceID,
-                                                    (*itC).tell1Channel, LHCb::STCluster::Central );
-        if ( 2 == det ) 
-        {
-          ttClus->insert( sCl, sCl->channelID() );
-        } 
-        else
-        {
-          itClus->insert( sCl, sCl->channelID() );
-        }
+                                                    double( (*itC).sum ),
+                                                    (*itC).sourceID,
+                                                    (*itC).tell1Channel,
+                                                    LHCb::STCluster::Central );
         if ( msgLevel(MSG::VERBOSE) )
           verbose() << " Unpacked " << sCl->channelID() << endmsg;
-      } 
-      else 
+        try 
+        {
+          if ( 2 == det )
+          {
+            ttClus()->insert( sCl, sCl->channelID() );
+          }
+          else
+          {
+            itClus()->insert( sCl, sCl->channelID() );
+          }
+        }
+        catch ( const GaudiException & excpt )
+        {
+          if ( msgLevel(MSG::VERBOSE) )
+            verbose() << excpt.message() << endmsg;
+          delete sCl;
+        }
+      }
+      else
       {
         Warning( "ST cluster from non central spill !" ).ignore();
       }
-    } 
-    else 
+    }
+    else
     {
       Warning( "Unknown detector for a cluster !").ignore();
     }
-  }
+
+  } // end loop over clusters
 
   //== If we stored in a different location, compare...
-  if ( !m_extension.empty() ) 
+  if ( !m_extension.empty() )
   {
 
     LHCb::VeloClusters* vRef = get<LHCb::VeloClusters>(LHCb::VeloClusterLocation::Default);
-    for ( LHCb::VeloClusters::iterator itV = vClus->begin(); vClus->end() != itV; ++itV ) 
+    for ( LHCb::VeloClusters::iterator itV = vClus()->begin(); vClus()->end() != itV; ++itV )
     {
       LHCb::VeloCluster* vCl = *itV;
       LHCb::VeloCluster* vOld = vRef->object( vCl->key() );
       if ( ( vOld->interStripFraction() != vCl->interStripFraction() ) ||
            ( vOld->pseudoSize()         != vCl->pseudoSize() )         ||
            ( vOld->highThreshold()      != vCl->highThreshold() )      ||
-           ( vOld->stripValues()        != vCl->stripValues() )         ) 
+           ( vOld->stripValues()        != vCl->stripValues() )         )
       {
         info() << "Old Velo Cluster " << format( "frac%5.2f size%3d thr%2d ", vOld->interStripFraction(),
                                                  vOld->pseudoSize(),  vOld->highThreshold() ) << endmsg;
@@ -160,14 +192,31 @@ StatusCode UnpackCluster::execute()
     }
 
     LHCb::STClusters* ttRef = get<LHCb::STClusters>(LHCb::STClusterLocation::TTClusters);
-    for ( LHCb::STClusters::iterator itT = ttClus->begin(); ttClus->end() != itT; ++itT ) 
+    for ( LHCb::STClusters::iterator itT = ttClus()->begin(); ttClus()->end() != itT; ++itT )
     {
       LHCb::STCluster* sCl = *itT;
       LHCb::STCluster* sOld = ttRef->object( sCl->key() );
       if ( ( sOld->interStripFraction() != sCl->interStripFraction() ) ||
            ( sOld->pseudoSize()         != sCl->pseudoSize() )         ||
            ( sOld->highThreshold()      != sCl->highThreshold() )      ||
-           ( sOld->stripValues()        != sCl->stripValues() )         ) 
+           ( sOld->stripValues()        != sCl->stripValues() )         )
+      {
+        info() << "Old ST Cluster " << format( "frac%5.2f size%3d thr%2d ", sOld->interStripFraction(),
+                                               sOld->pseudoSize(),  sOld->highThreshold() ) << endmsg;
+        info() << " new           " << format( "frac%5.2f size%3d thr%2d ", sCl->interStripFraction(),
+                                               sCl->pseudoSize(),  sCl->highThreshold() ) << endmsg;
+      }
+    }
+
+    LHCb::STClusters* utRef = get<LHCb::STClusters>(LHCb::STClusterLocation::UTClusters);
+    for ( LHCb::STClusters::iterator itU = utClus()->begin(); utClus()->end() != itU; ++itU )
+    {
+      LHCb::STCluster* sCl = *itU;
+      LHCb::STCluster* sOld = utRef->object( sCl->key() );
+      if ( ( sOld->interStripFraction() != sCl->interStripFraction() ) ||
+           ( sOld->pseudoSize()         != sCl->pseudoSize() )         ||
+           ( sOld->highThreshold()      != sCl->highThreshold() )      ||
+           ( sOld->stripValues()        != sCl->stripValues() )         )
       {
         info() << "Old ST Cluster " << format( "frac%5.2f size%3d thr%2d ", sOld->interStripFraction(),
                                                sOld->pseudoSize(),  sOld->highThreshold() ) << endmsg;
@@ -177,14 +226,14 @@ StatusCode UnpackCluster::execute()
     }
 
     LHCb::STClusters* itRef = get<LHCb::STClusters>(LHCb::STClusterLocation::ITClusters);
-    for ( LHCb::STClusters::iterator itI = itClus->begin(); itClus->end() != itI; ++itI )
+    for ( LHCb::STClusters::iterator itI = itClus()->begin(); itClus()->end() != itI; ++itI )
     {
       LHCb::STCluster* sCl = *itI;
       LHCb::STCluster* sOld = itRef->object( sCl->key() );
       if ( ( sOld->interStripFraction() != sCl->interStripFraction() ) ||
            ( sOld->pseudoSize()         != sCl->pseudoSize() )         ||
            ( sOld->highThreshold()      != sCl->highThreshold() )      ||
-           ( sOld->stripValues()        != sCl->stripValues() )         ) 
+           ( sOld->stripValues()        != sCl->stripValues() )         )
       {
         info() << "Old ST Cluster " << format( "frac%5.2f size%3d thr%2d ", sOld->interStripFraction(),
                                                sOld->pseudoSize(),  sOld->highThreshold() ) << endmsg;
@@ -193,8 +242,8 @@ StatusCode UnpackCluster::execute()
       }
     }
 
-    info() << "Decoded " << vClus->size() << " Velo, " << ttClus->size()
-           << " TT and " << itClus->size() << " IT clusters;" << endmsg;
+    info() << "Decoded " << vClus()->size() << " Velo, " << ttClus()->size()
+           << " TT and " << utClus()->size() << " UT, " << itClus()->size() << " IT clusters;" << endmsg;
   }
 
   m_running = false;

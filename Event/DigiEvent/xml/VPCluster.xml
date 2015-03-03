@@ -1,0 +1,69 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE gdd SYSTEM "gdd.dtd" > 
+<gdd>
+ <package name="DigiEvent">
+  <class
+   author="Marcin Kucharczyk"
+   desc="This class represents VP cluster of pixel hits"
+   id="4504"
+   name="VPCluster">
+   <location name="VPClusterLocation"   place="Raw/VP/Clusters"   />
+   <import name="Kernel/VPChannelID"/>
+   <import name="Event/VPLiteCluster"/>
+   <template name="KeyedObjectDict" t1="LHCb::VPChannelID"/>
+   <base name="KeyedObject&lt;LHCb::VPChannelID&gt;"/>
+   &KeyedContainer;
+   <import name="vector" std="TRUE"/>
+
+   <constructor desc="Constructor with lite cluster"
+       argList='VPLiteCluster lCluster,
+                std::vector &lt; std::pair&lt;LHCb::VPChannelID,int&gt; &gt; pixelHitVec'
+       initList='m_lCluster(lCluster),
+                 m_pixelHitVec(pixelHitVec)' >
+   </constructor>
+
+   <constructor desc="Constructor without lite cluster"
+       argList='std::vector &lt; std::pair&lt;LHCb::VPChannelID,int&gt; &gt; pixelHitVec'
+       initList='m_lCluster(),
+                 m_pixelHitVec(pixelHitVec)' >
+   </constructor>
+
+  <constructor desc = 'copy constructor'
+      initList = "KeyedObject&lt;LHCb::VPChannelID&gt;(),m_lCluster(cluster.m_lCluster),
+                                                              m_pixelHitVec(cluster.m_pixelHitVec)" >
+      <arg const = 'TRUE' name = "cluster" type = "LHCb::VPCluster" />
+  </constructor>
+
+   <method desc= 'clone method'
+    name = 'clone'
+    const = 'TRUE'
+    type = "LHCb::VPCluster*"
+    access = "PUBLIC">
+    <code>
+      return new LHCb::VPCluster( *this );
+    </code>
+   </method>
+
+   <attribute name="lCluster" type="LHCb::VPLiteCluster" desc="lite cluster"/>
+   <attribute name="pixelHitVec" type="std::vector &lt; std::pair&lt;LHCb::VPChannelID,int&gt; &gt;" desc="vector of pairs(channelID,ToT)"/>
+   <method type='LHCb::VPChannelID' name='channelID' const='TRUE' desc='channel = key'>
+    <code>return key();</code>
+   </method>
+
+   <method                                                                                                                                
+     name = "fillStream"                                                                                                                  
+     desc = "Print the cluster key = channelID"                                                                                           
+     type = "std::ostream&amp;"                                                                                                           
+     virtual = "FALSE"                                                                                                                    
+     const = "TRUE">
+     <arg type = "std::ostream"                                                                                                           
+      name = "s" />
+      <code >
+       s &lt;&lt; "{VPCluster's key: " &lt;&lt; (int) key() &lt;&lt; " }";
+      return s;
+     </code>
+  </method>
+
+  </class>
+ </package>
+</gdd>
