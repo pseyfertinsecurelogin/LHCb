@@ -1,9 +1,29 @@
-! $Id: release.notes,v 1.81 2008-11-21 15:11:29 cattanem Exp $ 
+! $Id: release.notes,v 1.85 2009-01-08 17:18:13 cattanem Exp $ 
 ! -----------------------------------------------------------------------------
 ! Package     : Phys/LoKiPhys
 ! Responsible : Vanya Belyaev
 ! Purpose     : "Phys"-part of new restructurized LoKi 
 ! -----------------------------------------------------------------------------
+
+!========================== LoKiPhys v8r1 2009-01-08 ==========================
+! 2008-12-17 - Vanya  Belyaev
+
+ - add the first tree-functions 
+ 
+
+! 2008-12-03 - Vanya BELYAEV
+
+ - new symbols:
+
+    -  DWMASS &  DWM : delta wrong mass
+    - ADWMASS & ADWM : absolute valeu for delte wrong mass 
+
+
+! 2008-11-27 - Vanya BELYAEV
+ - add QMTest 
+ - polish filters 
+ - version increment to v8r1 
+
 
 !========================== LoKiPhys v8r0 2008-11-21 ==========================
 ! 2008-11-21 - Marco Cattaneo

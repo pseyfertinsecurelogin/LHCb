@@ -1,5 +1,5 @@
 <!-- 
-     * $Id: LoKiGen.xml,v 1.15 2008-11-02 19:25:25 ibelyaev Exp $ 
+     * $Id: LoKiGen.xml,v 1.18 2008-12-18 14:49:00 ibelyaev Exp $ 
      * ========================================================================
      * @file
      * The seleciton file to build Reflex dictionaries for Phys/LoKiGen package
@@ -39,6 +39,9 @@
   <class pattern   = "LoKi::Functor<*HepMC::*>"            />
   <class pattern   = "LoKi::FunctorFromFunctor<*HepMC::*>" />
   <class pattern   = "LoKi::Constant<*HepMC::*>"           />
+
+  <class pattern   = "LoKi::Functors::Empty<*HepMC::*>"   />
+  <class pattern   = "LoKi::Functors::Size<*HepMC::*>"   />
   
   <class pattern   = "LoKi::Valid<*HepMC::*>"         />
   <class pattern   = "LoKi::TheSame<*HepMC::*>"       />
@@ -60,6 +63,7 @@
   <class pattern   = "LoKi::Dicts::MapsOps<*HepMC::*>"    />
   <class pattern   = "LoKi::Dicts::PipeOps<*HepMC::*>"    />
   <class pattern   = "LoKi::Dicts::FunValOps<*HepMC::*>"  />
+  <class pattern   = "LoKi::Dicts::CutValOps<*HepMC::*>"  />
   <class pattern   = "LoKi::Dicts::ElementOps<*HepMC::*>" />
   <class pattern   = "LoKi::Dicts::SourceOps<*HepMC::*>"  />
 
@@ -75,6 +79,18 @@
   
   <class name = "std::vector<const HepMC::GenParticle*>"  />
   <class name = "std::vector<const HepMC::GenVertex*>"    />
+  
+  
+  <class name = "Decays::Trees::Any_<const HepMC::GenParticle*>"   />
+  <class name      = "Decays::Trees::GenExclusive" />
+  <class name      = "Decays::Trees::GenInclusive" />
+  <class name      = "Decays::Trees::GenOptional"  />
+  <class name      = "Decays::Trees::GenPhotos"  />
+  <class name      = "Decays::Trees::GenPhotosOptional"  />
+  <class name      = "LoKi::Dicts::TreeOps<const HepMC::GenParticle*>" />
+  <class name      = "Decays::iTree_<const HepMC::GenParticle*>"       />
+  <class name      = "Decays::Tree_<const HepMC::GenParticle*>"        />
+
   
   <exclusion>
     <class    name    = "std::unary_function<char,bool>"        />
@@ -139,6 +155,14 @@
       <method name="=" />
     </class>
     <class pattern="std::binary_function&lt;*&gt;">
+      <method name="=" />
+    </class>
+
+    <class pattern="LoKi::Functors::*">
+      <method name="=" />
+    </class>
+    
+    <class pattern="Decays::*">
       <method name="=" />
     </class>
 

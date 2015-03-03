@@ -1,4 +1,4 @@
-// $Id: Interface.h,v 1.10 2008-10-19 16:11:40 ibelyaev Exp $
+// $Id: Interface.h,v 1.12 2008-12-04 14:37:31 ibelyaev Exp $
 // ============================================================================
 #ifndef LOKI_INTERFACE_H 
 #define LOKI_INTERFACE_H 1
@@ -69,7 +69,7 @@ namespace LoKi
       LoKi::release ( tmp      ) ;                 // 2) decrement the counter 
       //
       return *this ;
-    } ;
+    } 
     /// the regular assignement 
     Interface& operator= ( const Interface<TYPE>& right ) 
     {
@@ -82,7 +82,7 @@ namespace LoKi
       LoKi::release ( tmp      ) ;                 // 2) decrement the counter 
       //
       return *this ;      
-    } ;
+    } 
     /// the templated assignement
     template <class OTHER>
     Interface& operator= ( const Interface<OTHER>& right ) 
@@ -94,7 +94,24 @@ namespace LoKi
       LoKi::release ( tmp      ) ;                 // 2) decrement the counter 
       //
       return *this ;                                  // RETURN 
-    } ;
+    } 
+    // ========================================================================
+  public:
+    // ========================================================================
+    /// comparison with raw pointer 
+    bool operator== ( const TYPE* other ) const 
+    { return m_object == other ; }
+    /// comparison with same type pointer 
+    bool operator== ( const Interface<TYPE>& other ) const 
+    { return m_object == other.m_object ; }
+    /// comparison with other type of pointer 
+    template <class OTHER>
+    bool operator== ( const Interface<OTHER>& other ) const 
+    { return m_object == other.m_object ; }
+    // ========================================================================
+  public:
+    // ========================================================================
+    bool same ( const TYPE* other ) const { return m_object == other ; }
     // ========================================================================
   public:
     // ========================================================================
@@ -108,6 +125,15 @@ namespace LoKi
     inline operator TYPE*     () const { return getObject()     ; }
     /// access to the object 
     inline TYPE* getObject    () const { return m_object        ; }
+    // ========================================================================
+  public :
+    // ========================================================================
+    /// release the underlying pointer & invalidate the object 
+    void release () 
+    {
+      LoKi::release ( m_object ) ;
+      m_object = 0 ;
+    }
     // ========================================================================
   private:
     // ========================================================================

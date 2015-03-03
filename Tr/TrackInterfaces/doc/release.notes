@@ -4,6 +4,11 @@
 ! Purpose     : package for tracking tools interfaces
 !-----------------------------------------------------------------------------
 
+!====================== TrackInterfaces v4r0 2009-01-08 ======================
+! 2008-12-04 - Marco Cattaneo
+ - Remove IPatDebugTool and IPatDebugTTTool interfaces (moved to PatKernel) and
+   remove PatKernel dependency
+
 !====================== TrackInterfaces v3r18 2008-11-17 =====================
 ! 2008-10-16 - David Hutchcroft
  - Added IPromoteClusters to allow the "promotion" of Lite clusters to 

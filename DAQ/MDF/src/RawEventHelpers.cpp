@@ -1,4 +1,4 @@
-// $Id: RawEventHelpers.cpp,v 1.43 2008-10-29 08:59:27 cattanem Exp $
+// $Id: RawEventHelpers.cpp,v 1.45 2008-12-05 19:29:09 frankb Exp $
 //  ====================================================================
 //  RawEventHelpers.cpp
 //  --------------------------------------------------------------------
@@ -679,17 +679,20 @@ StatusCode LHCb::decodeRawBanks(const char* start, const char* end, int* offsets
 /// Copy RawEvent data from the object to sequential buffer
 StatusCode LHCb::encodeRawBanks(const RawEvent* evt, char* const data, size_t size, bool skip_hdr_bank)  {
   if ( data )  {
+    typedef std::vector<RawBank*> _BankV;
     RawEvent* raw = const_cast<RawEvent*>(evt);
-    for(size_t total=0, len=0, i=RawBank::L0Calo; i<RawBank::LastType; ++i)  {
-      typedef std::vector<RawBank*> _BankV;
-      const _BankV& b = raw->banks(RawBank::BankType(i));
-      if(encodeRawBanks(b, data+total, size-total, skip_hdr_bank, &len).isSuccess())  {
-        total += len;
-        continue;
+    size_t total, len, i;
+    for(total=0, len=0, i=RawBank::L0Calo; i<RawBank::LastType; ++i)  {
+      if ( i != RawBank::DAQ ) {
+	const _BankV& b = raw->banks(RawBank::BankType(i));
+	if(encodeRawBanks(b, data+total, size-total, skip_hdr_bank, &len).isSuccess())  {
+	  total += len;
+	  continue;
+	}
+	return StatusCode::FAILURE;
       }
-      return StatusCode::FAILURE;
     }
-    return StatusCode::SUCCESS;
+    return encodeRawBanks(raw->banks(RawBank::DAQ), data+total, size-total, skip_hdr_bank, &len);
   }
   return StatusCode::FAILURE;
 }
@@ -698,21 +701,36 @@ StatusCode LHCb::encodeRawBanks(const RawEvent* evt, char* const data, size_t si
 StatusCode LHCb::encodeRawBanks(const std::vector<RawBank*>& banks, char* const data, 
                                 size_t size, bool skip_hdr_bank, size_t* length) {
   typedef std::vector<RawBank*> _BankV;
-  size_t len = 0;
+  RawBank* fid = 0;
+  size_t len = 0, s;
   for(_BankV::const_iterator j=banks.begin(); j != banks.end(); ++j)  {
     RawBank* b = (*j);
     if ( skip_hdr_bank )  {
-      if ( b->type() == RawBank::DAQ && b->version() == DAQ_STATUS_BANK ) {
-        continue;
+      if ( b->type() == RawBank::DAQ )   {
+	if ( b->version() == DAQ_STATUS_BANK ) {
+	  continue;
+	}
+	if ( b->version() == DAQ_FILEID_BANK ) {
+	  fid = b;
+	  continue;
+	}
       }
     }
-    size_t s = b->totalSize();
+    s = b->totalSize();
     if ( size >= (len+s) )  {
       ::memcpy(data+len, b, s);
       len += s;
       continue;
     }
     return StatusCode::FAILURE;
+  }
+  // ALWAYS attach FID bank at the very end!
+  if ( fid )  {
+    s = fid->totalSize();
+    if ( size >= (len+s) ) {
+      ::memcpy(data+len, fid, s);
+      len += s;
+    }
   }
   if ( length ) *length = len;
   return StatusCode::SUCCESS;

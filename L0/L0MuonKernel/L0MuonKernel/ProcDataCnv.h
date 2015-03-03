@@ -138,20 +138,20 @@ namespace L0Muon {
     @param ib : index of the board in the quarter (0 to 11)
     @param ipu : index of the pu in the board (0 to 3)
     */
-    const bool inError(int ib, int ipu) const { return m_errors[ib].inError(ipu);}
+    bool inError(int ib, int ipu) const { return m_errors[ib].inError(ipu);}
 
     /** Returns the decoding error code for the given processing board.
         
     @param ib : index of the board in the quarter (0 to 11)
     */
-    const int  decodingError(int ib) const { return ((int(m_errors[ib].decodingError())<<1)&2);}
+    int  decodingError(int ib) const { return ((int(m_errors[ib].decodingError())<<1)&2);}
 
     /** Returns the hardware error code for the given pu in the given processing board.
         
     @param ib : index of the board in the quarter (0 to 11)
     @param ipu : index of the pu in the board (0 to 3)
     */
-    const int  hardwareError(int ib, int ipu) const {return m_errors[ib].hardwareError(ipu);}
+    int  hardwareError(int ib, int ipu) const {return m_errors[ib].hardwareError(ipu);}
 
     /** Returns a pointer to the ProcDataErrors error handler for the given processing board.
         
@@ -183,6 +183,13 @@ namespace L0Muon {
     */ 
     int rawBank_v2(std::vector<unsigned int> &raw, int mode, bool compression);
 
+    /** Apply the compression algorithm on the given word and fill the given bitset
+
+    @param word : word to be compressed
+    @param bitset : bitset updated with the compressed sequence
+    */
+    void word_to_compressedBitset(unsigned int word, boost::dynamic_bitset<> & bitset);
+    
     /** Fill the TileRegister containing the optical link data of the given processing board with the given bitset.
         
     @param iboard : index of the board in the quarter (0 to 11)

@@ -1,0 +1,54 @@
+<!-- 
+     * $Id: PartProp.xml,v 1.2 2008-12-03 17:35:54 ibelyaev Exp $ 
+     * ========================================================================
+     * CVS tag:$Name: not supported by cvs2svn $, version $Revision: 1.2 $ 
+     * ======================================================================== 
+     * @file
+     * The seleciton file to build Reflex dictionaries for 
+     * Kernel/PartProp package 
+     * @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
+     * @date 2008-12-01
+     * ========================================================================
+-->
+
+<lcgdict>
+  
+  <class name = "LHCb::ParticleID"                />
+  <class name = "LHCb::ParticleProperty"          />
+  <class name = "LHCb::IParticlePropertySvc"      />
+  <class name = "LHCb::IParticlePropertySvc::ParticleProperties" />
+  <class name = "LHCb::IParticlePropertySvc::iterator"           />
+  
+  <class name = "std::vector<LHCb::ParticleID>"              />
+  <class name = "std::vector<const LHCb::ParticleProperty*>" />
+
+
+  <enum name = "LHCb::ParticleID::Quark"    />
+  <enum name = "LHCb::ParticleID::Location" />
+
+
+  <function pattern = "LHCb::ParticleProperties::*"   />
+
+
+  <class name = "Decays::Decay"       />
+  <class name = "Decays::Decay::Item" />
+  <class name = "std::vector<Decays::Decay>"       />
+  <class name = "std::vector<Decays::Decay::Item>" />
+  
+  <class name    = "std::unary_function<LHCb::ParticleID,bool>"  />
+  <class name    = "Decays::iNode"   />
+  <class name    = "Decays::Node"    />
+  <class pattern = "Decays::Nodes:*" />
+  <class name    = "Decays::Dict::NodeOps" />
+  <class name    = "std::vector<Decays::Nodes::_Node>" />
+  
+
+  <exclusion>
+    <class name = "LHCb::ParticleID">
+      <method name="digit_"/>
+      <method name="digits_"/>
+    </class>
+  </exclusion>
+
+</lcgdict>
+

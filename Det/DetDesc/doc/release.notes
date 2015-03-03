@@ -1,9 +1,18 @@
 ! =============================================================================
-! $Id: release.notes,v 1.385 2008-11-17 14:36:07 cattanem Exp $ 
+! $Id: release.notes,v 1.389 2009-01-12 07:11:44 cattanem Exp $ 
 ! =============================================================================
 ! package DetDesc
 ! package manager : Marco Clemencic, Juan Palacios
 ! =============================================================================
+
+!====================== DetDesc v18r11 2009-01-12 =============================
+! 2009-01-10 - Marco Clemencic
+ - Removed the implementation of GeometryInfoPlus::getAlignmentCondition. It was
+   not needed and was causing problems with the VeloAlignCond.
+   The function is still there to preserve the interface, but the body is empty.
+
+! 2008-12-11 - Marco Cattaneo
+ - Fix a gcc 4.3 compilation warning
 
 !====================== DetDesc v18r10 2008-11-17 =============================
 ! 2008-11-04 - Marco Cattaneo

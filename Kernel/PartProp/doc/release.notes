@@ -1,0 +1,57 @@
+! $Id: release.notes,v 1.10 2009-01-12 06:35:38 cattanem Exp $ 
+! -----------------------------------------------------------------------------
+! Package     : Kernel/PartProp
+! Responsible : Vanya BELYAEV Ivan.Belyaev@nikhef.nl
+! Purpose     : 
+! -----------------------------------------------------------------------------
+
+!======================== PartProp v1r0 2009-01-12 ============================
+! 2009-01-10 - Ivan Belyaev
+ - Nodes.h, Nodes.cpp 
+   disable operator&= and |=  
+
+! 2008-12-16 - Marco Cattaneo
+ - Fix gcc 4.3 warning
+
+! 2008-12-13 - Vanya BELYAEV
+ - move the function form "local" header CC.h into Kernel/CC.h
+
+! 2008-12-11 - Gloria CORTI
+ - Kernel/ParticleID.h, src/ParticleID.cpp
+      Modify the methods "isNuclei", "isValid", "fundamentalID()", and
+      "threeCharge()" to take
+      into account new pdgID convention for nuclei that has also been adopted
+      by Geant4. Keep backward compatibility for DC06.
+      Introduce new methods "A", "Z" and "nLambda" that return a valid result
+      for nuclei and zero for everything else.
+      The new convention for ion numbers is +/- 10LZZZAAAI, where:
+         AAA is A - baryon/nucleon number
+         ZZZ is Z - total charge/atomic number
+         L is the total number of strange quarks.
+         I is the isomer number, with I=0 corresponding to the ground state.
+ - introduce check on few nuclei pIDs in test
+
+! 2008-12-03 - Vanya BELYAEV
+
+ - Kernel/Decay.h, src/Decay.cpp
+      "Decay" from LHCbKernel package 
+       LHCb::Decay -> Decays::Decay
+
+ - Kernel/iNode.h,Nodes.h src/iNode.cpp,Nodes.cpp
+       Import nodes from LoKi
+       "LoKi::Decays" -> "Decays"
+
+ - update the examples and tests 
+
+
+! 2008-12-03 - Vanya BELYAEV
+ - add the possiibilty to make "CC"-ing for the decay descriptors 
+ - update the tests and examples 
+
+! 2008-12-01 - Vanya BELYAEV
+ - the first import 
+
+! -----------------------------------------------------------------------------
+! The END 
+! -----------------------------------------------------------------------------
+

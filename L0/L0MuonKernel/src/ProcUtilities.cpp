@@ -1,4 +1,4 @@
-// $Id: ProcUtilities.cpp,v 1.6 2008-11-07 16:23:39 jucogan Exp $
+// $Id: ProcUtilities.cpp,v 1.8 2008-12-16 15:59:50 jucogan Exp $
 
 #include "L0MuonKernel/ProcUtilities.h"
 
@@ -23,7 +23,7 @@ void L0Muon::candidatesOrdering(std::vector<L0Muon::PMuonCandidate> * cands, int
   return;
 }
 
-const int L0Muon::extrapolationM1(int i,int procVersion){
+int L0Muon::extrapolationM1(int i,int procVersion){
   if (procVersion ==0) {
     const int ExtrapolationM1[6]={0,+4,+7,+11,+14,+18};
     return ExtrapolationM1[i];
@@ -419,10 +419,10 @@ int L0Muon::encodePT(double pT,int procVersion, bool debug) {
   
   // Encode absolute value
   ipt= int(0.5+fabs(pT)/dpT);
-  ipt = pT>ptMax ? ptMax:ipt;
+  ipt = ipt>ptMax ? ptMax:ipt;
   
   // Encode charge
-  if (pT>0) ipt|=(1<<8);
+  if (pT>0) ipt|=(1<<nbits);
 
   if (debug) std::cout<<"L0Muon::ptEncoding pT= "<<pT<<" => "<<ipt<<std::endl;
 

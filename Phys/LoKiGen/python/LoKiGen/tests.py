@@ -1,6 +1,6 @@
 #!/usr/bin/env python 
 # =============================================================================
-# $Id: tests.py,v 1.5 2008-02-11 10:05:34 ibelyaev Exp $
+# $Id: tests.py,v 1.7 2008-11-27 10:31:17 ibelyaev Exp $
 # =============================================================================
 ## @file   LoKiGen/tests.py
 #
@@ -49,8 +49,9 @@ def test1() :
     print 'particle: %s/%s '%(p.name(),pname(p))
     print 'particle: (GPX,GPY,GPZ,GM)=(%s,%s,%s,%s)'%(GPX(p),GPY(p),GPZ(p),GM(p))
     print 'particle: ( p>>GID , p>>cos(GE) )=(%s,%s)'    %(p>>GID,p>>cos(GE))
-    
-    v = std.vector('const HepMC::GenParticle*')()
+
+    gpv = std.vector('const HepMC::GenParticle*')
+    v = gpv()
     
     v.push_back(p)
     p1 = HepMC.GenParticle()
@@ -65,9 +66,10 @@ def test1() :
     print ' v>>process(GID)>>min_value(GP)   : %s'%(v>>process(GID)>>min_value(GP))
     print '(v>>min_element(GID)).name()      : %s'%(v>>min_element(GID)).name()
     print ' v>>min_value(GID)                : %s'%(v>>min_value(GID))
-    print '(v>>("e+"!=GABSID)).size()        : %s'%(v>>('e+'!=GABSID)).size()
-    print '(v>>select("mu+"!=GABSID)).size() : %s'%(v>>select('mu+'!=GABSID)).size()
-
+    print ' v>>("e+"!=GABSID)>>GSIZE         : %s'%(v>>('e+'!=GABSID)>>GSIZE)
+    print ' v>>select("mu+"!=GABSID)>>GEMPTY : %s'%(v>>select('mu+'!=GABSID)>>GEMPTY)
+    
+        
 # =============================================================================
 def testAll() :
     test1()

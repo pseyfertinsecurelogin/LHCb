@@ -1,4 +1,4 @@
-! $Id: release.notes,v 1.121 2008-11-17 15:57:28 cattanem Exp $ 
+! $Id: release.notes,v 1.132 2009-01-08 17:11:23 cattanem Exp $ 
 ! -----------------------------------------------------------------------------
 ! Package     : Phys/LoKiCore
 ! Responsible : Vanya BELYAEV ibelyaev@physics.syr.edu
@@ -14,6 +14,71 @@
 !   A.Golutvin, P.Koppenburg have been used in the design.
 ! 
 ! -----------------------------------------------------------------------------
+
+! =========================== LoKiCore v8r1 2009-01-08 ========================
+! 2008-12-18 - Vanya Belyaev
+
+ - fixes for the trees 
+
+! 2008-12-17 - Vanya Belyaev
+
+ - add the dictionaries for the trees 
+   fix many tiny bugs 
+
+
+! 2008-12-13 - Vanya BELYAEV
+
+ - LoKi/iTree.h
+   add typedef for the actual particld type 
+   (the request from Sascha Mazurov for new decay finder) 
+
+! 2008-11-29 - Vanya BELYAEV
+
+ - few fixes for gcc43 fompiler,
+   essentially Reflex does not like boost::is_convertible..
+   
+   The C++ code is OK, but Reflex complains..
+   (Btw the situation is teh samew with VC71 - C++ is fine, 
+   but Reflex does nto like it)
+
+   TEMPORARY: LoKi::Convertible is using teh sam eimplementation 
+   for win323 and GCC
+
+
+! 2008-11-22 - Vanya BELYAEV
+
+ - the first attempt to make the integrated QMTests
+
+! 2008-11-21 - Vanya Belyaev
+
+ - undo some changes...
+
+! 2008-11-20 - Vanya Belyaev
+
+ - LoKi/Filters.h
+
+   add Empty&Size functors 
+
+ - cmt/requirmeents 
+
+   version increment to v8r1 
+
+! 2008-11-19 - Vanya Belyaev
+
+ - src/FilterAlg.cpp
+
+   enforce the execution of "decode" method within the 
+   AlgContext guard  
+ 
+  
+! 2008-11-18 - Vanya Belyaev
+
+ - src/HybridBase.cpp
+   substitute WARNING-messages for PyLocals/PyGlobals with INFO-messages
+
+ - cmt/requirements 
+   version increment to v8r0p1 
+ 
 
 ! =========================== LoKiCore v8r0 2008-11-17 ========================
 ! 2008-11-11 - Vanya BELYAEV

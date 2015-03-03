@@ -1,9 +1,49 @@
-!$Id: release.notes,v 1.273 2008-11-17 16:47:27 cattanem Exp $
+!$Id: release.notes,v 1.279 2009-01-08 16:52:14 cattanem Exp $
 !============================================================================
 ! Package     : DaVinciKernel
 ! Responsible : J.P. Palacios
 !============================================================================
 
+!======================== DaVinciKernel v7r2 2009-01-08 =====================
+! 2008-12-11 - Marco Cattaneo
+ - Fix gcc 4.3 warning in IOnOfflineTool.h
+
+! 2008-12-09 - Patrick Koppenburg
+ - Added new function Decays::escape that replaces special characters
+   by something likes by root. Taken from DecayTreeTuple.
+
+! 2008-12-05 - Vanya BELYAEV
+ - DVAlgorithm:
+
+   1) modify the method ppSvc to return the pointer to new particle 
+    property service 
+   2) add method "pid" which returns particleporpety by name and ID:
+
+  
+   *   const LHCb::Particle* p = ... ;
+   *
+   *   const LHCb::ParticleProperty* pp = pid ( p->particleID() ) ;
+   *   
+   *   const LHCb::ParticleProperty* pion = pid ( "pi+" ) ;
+   *   
+
+
+! 2008-12-04 - Vanya BELYAEV
+
+ - 1) LHCb::Decay -> Decays::Decay
+   2) use PartProp v* Kernel 
+   3) remove public global typedefs for strings&ints 
+      from Kernel/IDecodeSimpleDecayString.h
+
+! 2008-11-29 - Vanya BELYAEV
+
+ - Kernel/DVAlgorithm.h
+    remove "#include <boost/lexical_cast.hpp>", 
+    since it causes Reflex problems for gcc4.3 compiler 
+    (Reflex complains about boost::is_enum) 
+ - cmt/requirements 
+   version increment to v7r2  
+    
 !======================== DaVinciKernel v7r1 2008-11-17 =====================
 ! 2008-11-17 - Tomasz Skwarnicki
  - fix problem with unwanted dependencies in ITriggerTisTos

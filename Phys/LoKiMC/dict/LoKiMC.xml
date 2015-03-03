@@ -1,5 +1,5 @@
 <!-- 
-     * $Id: LoKiMC.xml,v 1.19 2008-11-02 18:46:31 ibelyaev Exp $ 
+     * $Id: LoKiMC.xml,v 1.22 2008-12-18 15:24:34 ibelyaev Exp $ 
      * ========================================================================
      * @file
      * The seleciton file to build Reflex dictionaries for Phys/LoKiMC package
@@ -46,6 +46,9 @@
   <class pattern   = "LoKi::Valid<*LHCb::MC*>"            />
   <class pattern   = "LoKi::TheSame<*LHCb::MC*>"          />
 
+  <class pattern   = "LoKi::Functors::Size<*LHCb::MC*>"     />
+  <class pattern   = "LoKi::Functors::Empty<*LHCb::MC*>"     />
+
   <class pattern   = "LoKi::MCParticles::*"                />
   <class pattern   = "LoKi::MCVertices::*"                 />
   
@@ -65,6 +68,7 @@
   <class pattern   = "LoKi::Dicts::MapsOps<*LHCb::MC*>"    />
   <class pattern   = "LoKi::Dicts::PipeOps<*LHCb::MC*>"    />
   <class pattern   = "LoKi::Dicts::FunValOps<*LHCb::MC*>"  />
+  <class pattern   = "LoKi::Dicts::CutValOps<*LHCb::MC*>"  />
   <class pattern   = "LoKi::Dicts::ElementOps<*LHCb::MC*>" />
   <class pattern   = "LoKi::Dicts::SourceOps<*LHCb::MC*>"  />
 
@@ -74,6 +78,20 @@
   
   <class pattern   = "LoKi::Hybrid::*"          />
   <class pattern   = "LoKi::IMCHybrid*"         />
+
+
+
+  <class name = "Decays::Trees::Any_<const LHCb::MCParticle*>"   />
+  <class name = "Decays::Trees::MCExclusive" />
+  <class name = "Decays::Trees::MCInclusive" />
+  <class name = "Decays::Trees::MCOptional"  />
+  <class name = "Decays::Trees::Photos"  />
+  <class name = "Decays::Trees::PhotosOptional"  />
+  <class name = "LoKi::Dicts::TreeOps<const LHCb::MCParticle*>" />
+  <class name = "Decays::iTree_<const LHCb::MCParticle*>"       />
+  <class name = "Decays::Tree_<const LHCb::MCParticle*>"        />
+
+
   
   <exclusion>
     <class name = "std::unary_function<char,bool>"                />
@@ -154,6 +172,15 @@
       <method name="=" />
     </class>
     <class pattern="std::binary_function&lt;*&gt;">
+      <method name="=" />
+    </class>
+
+    <class pattern="LoKi::Functors::*">
+      <method name="=" />
+    </class>
+    
+
+    <class pattern="Decays::*">
       <method name="=" />
     </class>
     

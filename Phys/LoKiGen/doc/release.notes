@@ -1,4 +1,4 @@
-! $Id: release.notes,v 1.62 2008-11-17 15:59:48 cattanem Exp $ 
+! $Id: release.notes,v 1.65 2009-01-08 17:11:58 cattanem Exp $ 
 ! -----------------------------------------------------------------------------
 ! Package     : Phys/LoKiGen
 ! Responsible : Vanya BELYAEV
@@ -13,6 +13,25 @@
 !   contributions and advices from G.Raven, J.van Tilburg, 
 !   A.Golutvin, P.Koppenburg have been used in the design.
 ! -----------------------------------------------------------------------------
+
+!========================== LoKiGen v8r1 2009-01-08 ===========================
+! 2008-12-18 - Vanya Belyaev
+ - many fixes for trees , 
+   add new symbols:
+     GDECNODE 
+     GDECTREE 
+
+! 2008-11-23 - Vanya BELYAEV
+  - add QMTest 
+  - new functors:
+    GSIZE
+    GEMTPTY
+    GOSCILLATED1
+    GOSCILLATED2 
+  - better treatment  of "CutVals"    
+  - cmt/requirements 
+    version increment to v8r1 
+
 
 !============================ LoKiGen v8r0 2008-11-17 =========================
 ! 2008-11-02 - Vanya BELYAEV

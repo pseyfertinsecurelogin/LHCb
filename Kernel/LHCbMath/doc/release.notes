@@ -6,6 +6,32 @@
 !               All headers included in directory LHCbMath
 !-----------------------------------------------------------------------------
 
+!========================= LHCbMath v3r5 2009-01-12 ==========================
+! 2009-01-10 - Vanya BELYAEV 
+ - LHCbMath/Digit.h
+   to please Reflex at Win32 platform. make a drafstical simplification 
+   of argument for BOOST_STATIC_ASSERT macro.
+
+! 2008-12-03 M Needham
+ - More protections against fpe in ModeFunctions
+
+! 2008-12-02 - Vanya BELYAEV
+ - LHCbMath/Kinematics.h
+    fix the bugs...
+ - tests/kinematics.cpp
+    one more test-file 
+ - cmt/requirments 
+    version increment to v3r5 
+
+! 2008-12-02 M Needham
+  - Guard against fpe in generalizedMean calc 
+
+! 2008-12-02 M. Needham
+  - Add robust functions to calculate mode or MPV [ModeFunctions.h]
+
+! 2008-11-28 - Gerhard Raven
+ - add list<MD5> to the dictionary
+
 !========================= LHCbMath v3r4 2008-11-17 ==========================
 ! 2008-11-08 - Vanya BELYAEV
  - LHCbMath/Lomont.h

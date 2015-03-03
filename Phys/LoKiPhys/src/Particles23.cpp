@@ -1,18 +1,19 @@
-// $Id: Particles23.cpp,v 1.1 2008-10-13 16:32:24 ibelyaev Exp $
+// $Id: Particles23.cpp,v 1.3 2008-12-05 09:09:21 ibelyaev Exp $
 // ============================================================================
 // Include files 
 // ============================================================================
 // GaudiKernel
 // ============================================================================
 #include "GaudiKernel/ToStream.h"
-#include "GaudiKernel/ParticleProperty.h"
+// ============================================================================
+// PartProp
+// ============================================================================
+#include "Kernel/ParticleProperty.h"
 // ============================================================================
 // LoKi
 // ============================================================================
-#include "LoKi/Objects.h"
 #include "LoKi/Particles23.h"
 #include "LoKi/ParticleProperties.h"
-#include "LoKi/WrongMass.h"
 // ============================================================================
 // Boost
 // ============================================================================
@@ -196,7 +197,7 @@ StatusCode LoKi::Particles::WrongMass::decode () const
     for ( PIDs::const_iterator ipid = m_pids.begin() ; 
           m_pids.end () != ipid ; ++ipid )
     {
-      const ParticleProperty* pp = LoKi::Particles::_ppFromPID ( *ipid ) ;
+      const LHCb::ParticleProperty* pp = LoKi::Particles::_ppFromPID ( *ipid ) ;
       if ( 0 == pp ) 
       {
         m_masses.clear() ;
@@ -215,7 +216,7 @@ StatusCode LoKi::Particles::WrongMass::decode () const
     for ( Names::const_iterator iname = m_names.begin() ; 
           m_names.end () != iname ; ++iname )
     {
-      const ParticleProperty* pp = LoKi::Particles::_ppFromName ( *iname ) ;
+      const LHCb::ParticleProperty* pp = LoKi::Particles::_ppFromName ( *iname ) ;
       if ( 0 == pp ) 
       {
         m_masses.clear() ;
@@ -235,43 +236,19 @@ StatusCode LoKi::Particles::WrongMass::decode () const
   return StatusCode::SUCCESS ;
 }
 // ============================================================================
-// MANDATORY : the only one essential method 
+// evaluate the wrong mass 
 // ============================================================================
 LoKi::Particles::WrongMass::result_type 
-LoKi::Particles::WrongMass::operator() 
-  ( LoKi::Particles::WrongMass::argument p ) const
+LoKi::Particles::WrongMass::wmass  
+( LoKi::Particles::WrongMass::argument p ) const
 {
-  if ( 0 == p ) 
+  StatusCode sc = check ( p ) ;
+  if ( sc.isFailure() ) 
   {
-    Error ( "Invalid LHCb::Particle*, return Invalid Mass" ) ;
+    Error ( "Error from check(), return InvalidMass" , sc ) ;
     return LoKi::Constants::InvalidMass ;
   }
-  //
-  if ( m_masses.empty() ) 
-  {
-    StatusCode sc = decode() ;
-    if ( sc.isFailure() ) 
-    {
-      Error ( "Invalid configuration, return Invalid Mass" , sc ) ;
-      return LoKi::Constants::InvalidMass ;      
-    }
-  }
-  //
-  typedef  SmartRefVector<LHCb::Particle> Daughters ;
-  const Daughters& daughters = p->daughters() ;
-  if ( m_masses.size() != daughters.size() ) 
-  {
-    Error ( " #masses != #daughetrs, return Invalid Mass" ) ;
-    return LoKi::Constants::InvalidMass ; 
-  }
-  // evaluate the 'wrong mass'
-  const LoKi::LorentzVector wm = 
-    LoKi::Kinematics::wrongMass 
-    ( daughters.begin () , 
-      daughters.end   () , 
-      m_masses.begin  () , LoKi::Objects::_VALID_ ) ;
-  // 
-  return wm.M() ;
+  return wmass ( p->daughters () ) ;
 }
 // ============================================================================
 // OPTIONAL  : the nice printout 
@@ -325,6 +302,144 @@ std::ostream& LoKi::Particles::WrongMass::fillStream ( std::ostream& s ) const
     return s << "])" ;                                              // RETURN 
   }
   return s << "WMASS(" << Gaudi::Utils::toString ( m_masses ) << ")" ; 
+}
+// ======================================================================
+
+// ======================================================================
+// constructor from masse
+// ======================================================================
+LoKi::Particles::DeltaWrongMass::DeltaWrongMass
+( const double            m0 , 
+  const LoKi::Particles::WrongMass& wm ) 
+  : LoKi::Particles::WrongMass ( wm ) 
+  , m_m0    ( m0 ) 
+  , m_name0 (    ) 
+  , m_pid0  ( 0  ) 
+{}
+// ======================================================================
+// constructor from name 
+// ======================================================================
+LoKi::Particles::DeltaWrongMass::DeltaWrongMass
+( const std::string&                m0 , 
+  const LoKi::Particles::WrongMass& wm ) 
+  : LoKi::Particles::WrongMass ( wm ) 
+  , m_m0    ( -100 * Gaudi::Units::TeV ) 
+  , m_name0 ( m0 ) 
+  , m_pid0  ( 0  ) 
+{
+  m_m0 = LoKi::Particles::massFromName ( m_name0 ) ;
+}
+// ======================================================================
+// constructor from pid 
+// ======================================================================
+LoKi::Particles::DeltaWrongMass::DeltaWrongMass
+( const LHCb::ParticleID&           m0 , 
+  const LoKi::Particles::WrongMass& wm ) 
+  : LoKi::Particles::WrongMass ( wm ) 
+  , m_m0    ( -100 * Gaudi::Units::TeV ) 
+  , m_name0 (    ) 
+  , m_pid0  ( m0 ) 
+{
+  m_m0 = LoKi::Particles::massFromPID ( m_pid0 ) ;
+}
+// ============================================================================
+// evaluate the wrong mass 
+// ============================================================================
+LoKi::Particles::DeltaWrongMass::result_type 
+LoKi::Particles::DeltaWrongMass::dwmass  
+( LoKi::Particles::DeltaWrongMass::argument p ) const
+{
+  StatusCode sc = check ( p ) ;
+  if ( sc.isFailure() ) 
+  {
+    Error ( "Error from check(), return InvalidMass" , sc ) ;
+    return LoKi::Constants::InvalidMass ;
+  }
+  return dwmass ( p->daughters () ) ;
+}
+// ============================================================================
+// OPTIONAL  : the nice printout 
+// ============================================================================
+std::ostream& LoKi::Particles::DeltaWrongMass::fillStream
+( std::ostream& s ) const 
+{
+  s << "DWMASS(" ;
+  //
+  if      ( !m_name0.empty() )  { s << "'" << m_name0 << "'" ; }
+  else if ( 0 != m_pid0.pid() ) { s <<        m_pid0         ; }
+  else                          { s <<        m_m0           ; }
+  //
+  s << "," ;
+  LoKi::Particles::WrongMass::fillStream( s ) ;
+  //
+  return s << ")";
+}
+
+
+
+// ======================================================================
+// constructor from masse
+// ======================================================================
+LoKi::Particles::AbsDeltaWrongMass::AbsDeltaWrongMass
+( const double            m0 , 
+  const LoKi::Particles::WrongMass& wm ) 
+  : LoKi::Particles::DeltaWrongMass ( m0 , wm ) 
+{}
+// ======================================================================
+// constructor from name 
+// ======================================================================
+LoKi::Particles::AbsDeltaWrongMass::AbsDeltaWrongMass
+( const std::string&                m0 , 
+  const LoKi::Particles::WrongMass& wm ) 
+  : LoKi::Particles::DeltaWrongMass ( m0 , wm ) 
+{}
+// ======================================================================
+// constructor from pid 
+// ======================================================================
+LoKi::Particles::AbsDeltaWrongMass::AbsDeltaWrongMass
+( const LHCb::ParticleID&           m0 , 
+  const LoKi::Particles::WrongMass& wm ) 
+  : LoKi::Particles::DeltaWrongMass ( m0 , wm ) 
+{}
+// ======================================================================
+// constructor from delta 
+// ======================================================================
+LoKi::Particles::AbsDeltaWrongMass::AbsDeltaWrongMass
+( const LoKi::Particles::DeltaWrongMass& dwm ) 
+  : LoKi::Particles::DeltaWrongMass ( dwm ) 
+{}
+// ============================================================================
+// evaluate the wrong mass 
+// ============================================================================
+LoKi::Particles::AbsDeltaWrongMass::result_type 
+LoKi::Particles::AbsDeltaWrongMass::adwmass
+( LoKi::Particles::AbsDeltaWrongMass::argument p ) const
+{
+  StatusCode sc = check ( p ) ;
+  if ( sc.isFailure() ) 
+  {
+    Error ( "Error from check(), return InvalidMass" , sc ) ;
+    return LoKi::Constants::InvalidMass ;
+  }
+  return adwmass ( p->daughters () ) ;
+}
+// ============================================================================
+// OPTIONAL  : the nice printout 
+// ============================================================================
+std::ostream& LoKi::Particles::AbsDeltaWrongMass::fillStream
+( std::ostream& s ) const 
+{
+  s << "ADWMASS(" ;
+  //
+  if      ( !name0().empty()  ) { s << "'" << name0 () << "'" ; }
+  else if ( 0 != pid0().pid() ) { s <<        pid0  ()        ; }
+  else                          { s <<        m0    ()        ; }
+  //
+  s << "," ;
+  //
+  LoKi::Particles::WrongMass::fillStream( s ) ;
+  //
+  return s << ")";
 }
 // ============================================================================
 // The END 

@@ -4,6 +4,60 @@
 ! Purpose: LHCb specific Kernel classes
 !--------------------------------------------------------------------------
 
+!===================== LHCbKernel v11r0 2009-01-09 ========================
+! 2009-01-09 - Jeroen van Tilburg
+ - Added the cluster size as data the SiPositionInfo struct.
+
+! 2009-01-08 - Chris Jones
+ - Fix NULL implementation of FPEGuard.
+
+! 2008-12-10 - Marco Cattaneo
+ - Remove unneccessary PartProp dependency
+
+! 2008-12-10 - Louis Nicolas
+ - AlignTraj: Changed again in order not to break TrackProjectors compilation
+   The constructors shouldn't have been changed at first.
+
+! 2008-12-09 - Louis Nicolas
+ - AlignTraj: changed m_traj from reference to pointer to fix genreflex warning
+   during compilation.
+
+! 2008-12-09 - Olivier Callot
+ - Remove the logPacked methods from StandardPacker.h, put new methods fltPacked
+   to store the float of a double in an int.
+
+! 2008-12-07 - Vanya BELYAEV
+ - xmt/LHCbID.xml 
+    add the comparison "less"-operator 
+
+! 2008-12-04 - Olivier Callot
+ - Upgrade the logPacked decoder, to restore int if the value was an int, 
+   this means positive and close at 10-7 of an int. 
+
+! 2008-12-04 - Vanya BELYAEV
+ - remove Kernel/Decay.h
+
+! 2008-12-03 M Needham 
+  - More protections against fpe in SiChargeFun
+
+! 2008-12-02 - Vanya BELYAEV
+ - remove:
+    xml/ParticleID.xml
+    src/ParticleID.cpp 
+ - cmt/rerquirements
+    add dependency on Kernel/PartProp
+
+! 2008-12-02 M Needham
+  - Fix against fpe in truncated mean calc 
+
+! 2008-12-02 M Needham
+ - Add interface functions for robust estimation of the mode in Silicon [SiChargeFun.h]
+ - Add functors for sorting +accumulating by charge [SiDataFunctor.h]   
+
+! 2008-12-01 - Marco Cattaneo
+ - In Configurable, fix setOtherProp to work also for property types for
+   which hasattr is True even if property has not been set (lists, dicts etc.)
+
 !===================== LHCbKernel v10r0 2008-11-17 ========================
 ! 2008-11-19 - Olivier Callot
  - New methods logPacked in StandardPacker to put the log of a value and

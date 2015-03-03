@@ -1,4 +1,4 @@
-// $Id: Algo.cpp,v 1.22 2008-10-28 08:02:02 jpalac Exp $
+// $Id: Algo.cpp,v 1.24 2008-12-05 13:29:43 ibelyaev Exp $
 // ============================================================================
 // Include files 
 // ============================================================================
@@ -96,6 +96,7 @@ LoKi::Algo::Algo
   , m_reporters ( )
   // the list of cut values 
   , m_cutValues ( ) 
+  //
 {
   //
   declareProperty 
@@ -217,7 +218,7 @@ LoKi::Loop LoKi::Algo::loop
   const std::string&       pid      , 
   const IParticleCombiner* combiner )
 {
-  const ParticleProperty* _pp = ppSvc()->find( pid ) ;
+  const LHCb::ParticleProperty* _pp = ppSvc()->find( pid ) ;
   if ( 0 == _pp ) 
   { Error ( "loop(" + formula + "): invaid particle name '"+pid+"'!" ) ; }
   return loop ( formula , _pp , combiner )  ;
@@ -228,7 +229,7 @@ LoKi::Loop LoKi::Algo::loop
   const LHCb::ParticleID&  pid      , 
   const IParticleCombiner* combiner )
 {
-  const ParticleProperty* _pp = ppSvc()->findByStdHepID( pid.pid() ) ;
+  const LHCb::ParticleProperty* _pp = ppSvc()->find ( pid ) ;
   if ( 0 == _pp ) 
   { Error ( "loop(" + formula + "): invaid particle ID '" + 
             Gaudi::Utils::toString( pid.pid() ) + "'!" ) ; }
@@ -236,9 +237,9 @@ LoKi::Loop LoKi::Algo::loop
 }
 // ============================================================================  
 LoKi::Loop LoKi::Algo::loop
-( const std::string&       formula  , 
-  const ParticleProperty*  pid      , 
-  const IParticleCombiner* combiner ) 
+( const std::string&             formula  , 
+  const LHCb::ParticleProperty*  pid      , 
+  const IParticleCombiner*       combiner ) 
 {
   // tokenize the formula 
   LoKi::Tokens tokens;
@@ -268,7 +269,7 @@ LoKi::Loop LoKi::Algo::loop
   const std::string&            pid      , 
   const IParticleCombiner*      combiner )
 {
-  const ParticleProperty* _pp = ppSvc()->find( pid ) ;
+  const LHCb::ParticleProperty* _pp = ppSvc()->find( pid ) ;
   if ( 0 == _pp ) 
   { Error ( "loop(" + _formu ( formula ) + "): invaid particle name '"+pid+"'!" ) ; }
   return loop ( formula , _pp , combiner )  ;
@@ -279,7 +280,7 @@ LoKi::Loop LoKi::Algo::loop
   const LHCb::ParticleID&       pid      , 
   const IParticleCombiner*      combiner )
 {
-  const ParticleProperty* _pp = ppSvc()->findByStdHepID( pid.pid() ) ;
+  const LHCb::ParticleProperty* _pp = ppSvc()->find ( pid ) ;
   if ( 0 == _pp ) 
   { Error ( "loop(" + _formu ( formula ) + "): invaid particle ID '" + 
             Gaudi::Utils::toString ( pid.pid() ) + "'!" ) ; }
@@ -288,7 +289,7 @@ LoKi::Loop LoKi::Algo::loop
 // ============================================================================  
 LoKi::Loop LoKi::Algo::loop
 ( const LoKi::Types::RangeList& formula  , 
-  const ParticleProperty*       pid      , 
+  const LHCb::ParticleProperty* pid      , 
   const IParticleCombiner*      combiner ) 
 {
   if ( 0 == pid ) 
@@ -312,13 +313,13 @@ LoKi::Loop LoKi::Algo::loop
 } 
 // ============================================================================
 /* Create the loop object from "decay"
- *  @see LHCb::Decay
+ *  @see Decays::Decay
  *  @param decay the decay desctrptor
  *  @param combined the combiner
  *  @return the valid looping-object
  */
 LoKi::Loop LoKi::Algo::loop 
-( const LHCb::Decay&       decay    , 
+( const Decays::Decay&     decay    , 
   const IParticleCombiner* combiner ) 
 {
   // verify the decay descriptor
@@ -335,8 +336,8 @@ LoKi::Loop LoKi::Algo::loop
   // configure the loop object
   object -> setPID ( decay.mother().pp() ) ;
   // feed the data
-  const LHCb::Decay::Items& children = decay.children() ;
-  for ( LHCb::Decay::Items::const_iterator ic = 
+  const Decays::Decay::Items& children = decay.children() ;
+  for ( Decays::Decay::Items::const_iterator ic = 
           children.begin() ; children.end() != ic ; ++ic ) 
   {
     const std::string& c = ic->name()  ;
@@ -483,10 +484,10 @@ LoKi::Types::Range LoKi::Algo::pattern
   // backup! 
   loop->backup() ; 
   // 
-  const ParticleProperty* _pp = loop->pp ();
+  const LHCb::ParticleProperty* _pp = loop->pp ();
   if ( 0 == _pp ) 
   {
-    Error("pattern(..,window,...): ParticleProperty* is invalid! select NOTHING!");
+    Error("pattern(..,window,...): LHCb::ParticleProperty* is invalid! select NOTHING!");
     return selected(tag);
   }
   const double nominal = _pp->mass() ;
@@ -646,10 +647,10 @@ LoKi::Types::Range LoKi::Algo::pattern
   // backup!
   loop->backup()  ; 
   // get the nominal mass 
-  const ParticleProperty* _pp = loop->pp ();
+  const LHCb::ParticleProperty* _pp = loop->pp ();
   if ( 0 == _pp ) 
   {
-    Error("pattern(..,window,...): ParticleProperty* is invalid! select NOTHING!");
+    Error("pattern(..,window,...): LHCb::ParticleProperty* is invalid! select NOTHING!");
     return selected(tag);
   }
   const double nominal = _pp->mass() ;

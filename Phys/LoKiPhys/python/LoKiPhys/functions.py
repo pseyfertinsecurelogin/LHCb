@@ -399,9 +399,18 @@ INGENERATION  = LoKi.Particles.InGeneration
 NINGENERATION = LoKi.Particles.NinGeneration
 
 ## @see LoKi::Cuts::WM 
-WM    = LoKi.Particles.WrongMass
+WM      = LoKi.Particles.WrongMass
 ## @see LoKi::Cuts::WMASS 
-WMASS = LoKi.Particles.WrongMass
+WMASS   = LoKi.Particles.WrongMass
+## @see LoKi::Cuts::DWMASS 
+DWMASS  = LoKi.Particles.DeltaWrongMass 
+## @see LoKi::Cuts::DWM
+DWM     = LoKi.Particles.DeltaWrongMass 
+## @see LoKi::Cuts::ADWMASS 
+ADWMASS = LoKi.Particles.AbsDeltaWrongMass 
+## @see LoKi::Cuts::ADWM
+ADWM    = LoKi.Particles.AbsDeltaWrongMass 
+
 
 ## @see LoKi::Cuts::LIFETIME
 LIFETIME         = LoKi.Particles.LifeTime
@@ -494,6 +503,8 @@ MINVVDCHI2 = LoKi.Vertices.MinVertexChi2Distance
 VIP        = LoKi.Vertices.ImpPar
 ## @see LoKi::Vertices::ImpParChi2
 VIPCHI2    = LoKi.Vertices.ImpParChi2
+
+
 
 # =============================================================================
 # Aliases from Vava GLIGOROV
@@ -628,6 +639,8 @@ Pipes     = LoKi.Functor             ( _vp    , _vp      )
 Pipe      = LoKi.FunctorFromFunctor  ( _vp    , _vp      )
 FunVals   = LoKi.Functor             ( _vp    , 'double' )
 FunVal    = LoKi.FunctorFromFunctor  ( _vp    , 'double' )
+CutVals   = LoKi.Functor             ( _vp    , bool     )
+CutVal    = LoKi.FunctorFromFunctor  ( _vp    , bool     )
 Elements  = LoKi.Functor             ( _vp    , _RCP     ) 
 Element   = LoKi.FunctorFromFunctor  ( _vp    , _RCP     ) 
 Sources   = LoKi.Functor             ( 'void' , _vp      ) 
@@ -639,10 +652,17 @@ VPipes    = LoKi.Functor             ( _vv , _vv      )
 VPipe     = LoKi.FunctorFromFunctor  ( _vv , _vv      )
 VFunVals  = LoKi.Functor             ( _vv , 'double' )
 VFunVal   = LoKi.FunctorFromFunctor  ( _vv , 'double' )
+VCutVals  = LoKi.Functor             ( _vv , bool     )
+VCutVal   = LoKi.FunctorFromFunctor  ( _vv , bool     )
 VElements = LoKi.Functor             ( _vv , _RCV     ) 
 VElement  = LoKi.FunctorFromFunctor  ( _vv , _RCV     ) 
 VSources  = LoKi.Functor             ( 'void' , _vv   ) 
 VSource   = LoKi.FunctorFromFunctor  ( 'void' , _vv   ) 
+
+EMPTY  = LoKi.Functors.Empty ( _RCP ) ()
+VEMPTY = LoKi.Functors.Empty ( _RCV ) ()
+SIZE   = LoKi.Functors.Size  ( _RCP ) ()
+VSIZE  = LoKi.Functors.Size  ( _RCV ) ()
 
 
 SOURCE         = LoKi.Particles.SourceTES

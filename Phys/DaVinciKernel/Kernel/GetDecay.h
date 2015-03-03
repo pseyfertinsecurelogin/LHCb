@@ -1,4 +1,4 @@
-// $Id: GetDecay.h,v 1.2 2008-05-29 14:55:49 cattanem Exp $
+// $Id: GetDecay.h,v 1.4 2008-12-09 07:09:52 pkoppenb Exp $
 // ============================================================================
 #ifndef DAVINCIKERNEL_GETDECAY_H 
 #define DAVINCIKERNEL_GETDECAY_H 1
@@ -10,13 +10,13 @@
 #include <vector>
 #include <string>
 // ============================================================================
-// LHCbKernel
+// PartProp
 // ============================================================================
 #include "Kernel/Decay.h"
 // ============================================================================
 class IDecodeSimpleDecayString ;
 // ============================================================================
-namespace DaVinci  
+namespace Decays
 {
   // ==========================================================================
   /** create decay object from the descriptor
@@ -25,7 +25,7 @@ namespace DaVinci
    *  @param decoder the decoder tool
    *  @return the constructed decay
    */
-  LHCb::Decay decay 
+  Decays::Decay decay 
   ( const std::string&        descriptor , 
     IDecodeSimpleDecayString* decoder    ) ;
   // ==========================================================================
@@ -34,7 +34,7 @@ namespace DaVinci
    *  @param decoder the decoder tool
    *  @return the constructed decay
    */
-  LHCb::Decays decays
+  std::vector<Decays::Decay> decays
   ( const std::string&        descriptor , 
     IDecodeSimpleDecayString* decoder    ) ;
   /** create all decay objects from the descriptor
@@ -42,11 +42,11 @@ namespace DaVinci
    *  @param decoder the decoder tool
    *  @return the constructed decay
    */
-  LHCb::Decays decays
+  std::vector<Decays::Decay> decays
   ( const std::vector<std::string>& descriptors , 
     IDecodeSimpleDecayString*       decoder     ) ;
   // ==========================================================================
-} // end of namespace DaVinci
+} // end of namespace Decays
 // ============================================================================
 // The END
 // ============================================================================

@@ -93,23 +93,29 @@ class DDDBConf(ConfigurableUser):
         self.__data_types_handlers__[dataType](self)
 
         # Get particle properties table from condDB
+        # Old Gaudi implementation
         ParticlePropertySvc().ParticlePropertiesFile = 'conddb:///param/ParticleTable.txt'
+        # New LHCb implementation
+        from Configurables import LHCb__ParticlePropertySvc
+        LHCb__ParticlePropertySvc( ParticlePropertiesFile = 'conddb:///param/ParticleTable.txt' )
             
     def __set_tag__(self, partitions, tag):
         cdb = CondDB()
         for p in partitions:
             if p not in cdb.Tags:
                 cdb.Tags[p] = tag
-            else:
-                log.warning("Not using default tag %s for partition %s (using %s)", tag, p,cdb.Tags[p])
+                log.warning("Using default tag %s for partition %s", tag, p)
+            elif cdb.Tags[p].upper() == "DEFAULT" :
+                cdb.Tags[p] = tag
+                log.warning("Default tag requested for partition %s (using %s)", p, tag )
 
     def __2008_conf__(self):
         """
         2008-specific configuration.
         """
         # Set the tags
-        tag = "head-20081002"
-        self.__set_tag__(["DDDB", "LHCBCOND", "SIMCOND"], tag)
+        self.__set_tag__(["DDDB", "LHCBCOND"], "head-20090112")
+        self.__set_tag__(["SIMCOND"], "sim-20090112")
     
     def __DC06_conf__(self):
         """

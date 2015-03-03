@@ -1,10 +1,10 @@
-# $Id: requirements,v 1.58 2008-10-14 16:35:31 jpalac Exp $
+# $Id: requirements,v 1.61 2008-12-09 07:09:52 pkoppenb Exp $
 # Created    : 05/02/2002
 # Maintainer : P. Koppenburg, J. Palcios
 #============================================================================
 
 package           DaVinciKernel
-version           v7r1
+version           v7r2
 
 # Structure, i.e. directories to process. 
 #============================================================================
@@ -13,6 +13,7 @@ branches          cmt doc dict src Kernel
 # Used packages. 
 #============================================================================
 use PhysEvent  v* Event
+use PartProp   v* Kernel
 use GaudiAlg   v* 
 use Relations  v* Kernel
 use RecInterfaces v* Kernel
@@ -35,3 +36,5 @@ apply_pattern reflex_dictionary                                             \
               headerfiles=$(DAVINCIKERNELROOT)/dict/DaVinciKernelDict.h     \
               selectionfile=$(DAVINCIKERNELROOT)/dict/DaVinciKernelDict.xml \
               options="-U__MINGW32__"
+
+macro_append Boost_linkopts " $(Boost_linkopts_regex) "

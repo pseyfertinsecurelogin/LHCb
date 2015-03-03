@@ -1,4 +1,4 @@
-// $Id: GenParticles.cpp,v 1.19 2008-11-02 19:25:25 ibelyaev Exp $
+// $Id: GenParticles.cpp,v 1.21 2008-12-18 14:49:00 ibelyaev Exp $
 // ============================================================================
 // Include files 
 // ============================================================================
@@ -1560,6 +1560,126 @@ LoKi::GenParticles::Oscillated::operator()
 std::ostream& 
 LoKi::GenParticles::Oscillated::fillStream ( std::ostream& o ) const 
 { return o << "GOSCILLATED" ; }
+// ============================================================================
+
+// ============================================================================
+// MANDATORY: clone method ("virtual constructor")
+// ============================================================================
+LoKi::GenParticles::Oscillated1* 
+LoKi::GenParticles::Oscillated1::clone() const 
+{ return new LoKi::GenParticles::Oscillated1(*this); }
+// ============================================================================
+// MANDATORY: the only one essential method 
+// ============================================================================
+LoKi::GenParticles::Oscillated1::result_type 
+LoKi::GenParticles::Oscillated1::operator() 
+  ( LoKi::GenParticles::Oscillated::argument p ) const 
+{
+  return 0 != LoKi::GenParticles::oscillated1 ( p );  
+}
+// ============================================================================
+// OPTIONAL: the specific printout 
+// ============================================================================
+std::ostream& 
+LoKi::GenParticles::Oscillated1::fillStream ( std::ostream& o ) const 
+{ return o << "GOSCILLATED1" ; }
+// ============================================================================
+
+// ============================================================================
+// MANDATORY: clone method ("virtual constructor")
+// ============================================================================
+LoKi::GenParticles::Oscillated2* 
+LoKi::GenParticles::Oscillated2::clone() const 
+{ return new LoKi::GenParticles::Oscillated2(*this); }
+// ============================================================================
+// MANDATORY: the only one essential method 
+// ============================================================================
+LoKi::GenParticles::Oscillated2::result_type 
+LoKi::GenParticles::Oscillated2::operator() 
+  ( LoKi::GenParticles::Oscillated2::argument p ) const 
+{
+  return 0 != LoKi::GenParticles::oscillated2 ( p );  
+}
+// ============================================================================
+// OPTIONAL: the specific printout 
+// ============================================================================
+std::ostream& 
+LoKi::GenParticles::Oscillated2::fillStream ( std::ostream& o ) const 
+{ return o << "GOSCILLATED2" ; }
+// ============================================================================
+
+
+
+// ============================================================================
+// constructor from the actual node
+// ============================================================================
+LoKi::GenParticles::DecNode::DecNode
+( const Decays::iNode& node )
+  : LoKi::BasicFunctors<const HepMC::GenParticle*>::Predicate()
+  , m_node ( node )
+{}
+// ============================================================================
+// MANDATORY: the only one essential method
+// ============================================================================
+LoKi::GenParticles::DecNode::result_type
+LoKi::GenParticles::DecNode::operator()
+  ( LoKi::GenParticles::DecNode::argument p ) const
+{
+  if ( 0 == p )
+  {
+    Error ( "HepMC::GenParticle* point to NULL, return false") ;
+    return false ;
+  }
+  // use the node for evaluation
+  return m_node.node ( LHCb::ParticleID ( p->pdg_id() ) ) ;
+}
+// ============================================================================
+// OPTIONAL: the nice printout
+// ============================================================================
+std::ostream& LoKi::GenParticles::DecNode::fillStream( std::ostream& s ) const
+{
+  if ( !valid() ) { return s << "GDECNODE(invalid)" ; }
+  return s << "GDECNODE( " << m_node << ")";
+}
+// ============================================================================
+
+
+// ============================================================================
+// constructor from the actual tree
+// ============================================================================
+LoKi::GenParticles::DecTree::DecTree
+( const LoKi::GenParticles::DecTree::iTree& tree )
+  : LoKi::BasicFunctors<const HepMC::GenParticle*>::Predicate()
+  , m_tree ( tree )
+{}
+// ============================================================================
+// MANDATORY: the only one essential method
+// ============================================================================
+LoKi::GenParticles::DecTree::result_type
+LoKi::GenParticles::DecTree::operator()
+  ( LoKi::GenParticles::DecTree::argument p ) const
+{
+  if ( 0 == p )
+  {
+    Error ( "HepMC::GenParticle* point to NULL, return false") ;
+    return false ;
+  }
+  if ( !valid() )
+  {
+    Error ( "LoKi::GenParticles::DecTree::Tree  is invalid, return false") ;
+    return false ;
+  }
+  // use the node for evaluation
+  return m_tree.tree ( p ) ;
+}
+// ============================================================================
+// OPTIONAL: the nice printout
+// ============================================================================
+std::ostream& LoKi::GenParticles::DecTree::fillStream( std::ostream& s ) const
+{
+  if ( !valid() ) { return s << "GDECTREE(invalid)" ; }
+  return s << "GDECTREE( " << m_tree << ")";
+}
 // ============================================================================
 
 
