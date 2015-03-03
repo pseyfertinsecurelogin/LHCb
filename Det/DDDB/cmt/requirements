@@ -4,12 +4,12 @@
 #============================================================================
 package           DDDB
 ##############################################################
-# The major version ofthe package has to be used to identify #
+# The major version of the package has to be used to identify#
 # the compatibility of the schema (if the DB is  readable or #
 # not with the version of the software being used).          #
 # The version of the geometry is in the database tag.        #
 ##############################################################
-version           v1r2
+version           v1r3
 
 # Structure, i.e. directories to process. 
 #============================================================================
@@ -18,14 +18,18 @@ branches          cmt doc options
 # Used packages. 
 #============================================================================
 # The database
-use   SQLDDDB               v3r*  Det
+use   SQLDDDB               v4r*  Det
 
 # Database access and conversion package
 use   DetCond               v*    Det   -no_auto_imports
 # Bridge from XML parser to database
 use   CondDBEntityResolver  v*    Tools -no_auto_imports
 
-# Database back-end library
+# Database back-end libraries
 use   sqlite                v*    LCG_Interfaces -no_auto_imports
+use   oracle                v*    LCG_Interfaces -no_auto_imports
+
+# To get credentials for accessing oracle db
+use   lfc                   v*    LCG_Interfaces -no_auto_imports
 
 include_path      none

@@ -3,7 +3,7 @@
 # Maintainer : Olivier Deschamps
 #============================================================================
 package           CaloDAQ
-version           v4r2
+version           v4r3
 
 #============================================================================
 # Structure, i.e. directories to process. 
@@ -13,9 +13,10 @@ branches          CaloDAQ cmt doc options src
 #============================================================================
 # Used packages.
 #============================================================================
+use     GaudiAlg        v*
+use     CaloDet         v*      Det
 use	DAQEvent	v*	Event
 use     DigiEvent       v*      Event
-use     CaloDet         v*      Det
 use	L0Event		v*	Event
 use     MCEvent         v*      Event
 #============================================================================
@@ -36,5 +37,3 @@ apply_pattern reflex_dictionary                                      \
               headerfiles=$(CALODAQROOT)/dict/CaloDAQDict.h        \
               selectionfile=$(CALODAQROOT)/dict/CaloDAQDict.xml    \
               options="-U__MINGW32__ -DBOOST_DISABLE_ASSERTS"
-# Hack for cmt v1r19 bug to link dictionary on windows
-macro CaloDAQDict_use_linkopts $(use_linkopts)

@@ -1,8 +1,8 @@
-// $Id: CaloReadoutTool.cpp,v 1.18 2007-12-11 21:10:55 odescham Exp $
+// $Id: CaloReadoutTool.cpp,v 1.24 2008-01-25 14:43:41 cattanem Exp $
 // Include files 
 
 // from Gaudi
-#include "GaudiKernel/DeclareFactoryEntries.h" 
+#include "GaudiKernel/ToolFactory.h" 
 
 // local
 #include "CaloReadoutTool.h"
@@ -46,6 +46,9 @@ CaloReadoutTool::~CaloReadoutTool() {}
 //=========================================================================
 bool CaloReadoutTool::getCaloBanksFromRaw( ) {
 
+
+  m_readSources.clear();
+
   m_banks = NULL;
   LHCb::RawEvent* rawEvt = NULL ;
   m_raw = LHCb::RawEventLocation::Default;
@@ -53,8 +56,7 @@ bool CaloReadoutTool::getCaloBanksFromRaw( ) {
   if( exist<LHCb::RawEvent>( m_raw ) ){
     rawEvt= get<LHCb::RawEvent>( m_raw );
   }else  {
-    warning() << "rawEvent not found at location '" << rootInTES() + m_raw 
-              << "'" << endmsg;
+    Warning( "rawEvent not found at location '" + rootInTES() + m_raw ).ignore();
     return false;
   }
       
@@ -186,12 +188,53 @@ void CaloReadoutTool::putStatusOnTES(){
     status = new Status( m_status  );
     statuss->insert( status );
   } else {
-    debug() << "Status for bankType " <<  LHCb::RawBank::BankType(m_status.key()) << " already exists" << endreq;
+    std::stringstream type("");
+    type << LHCb::RawBank::typeName(m_status.key()) ;
+    
+    if ( msgLevel( MSG::DEBUG) )debug() << "Status for bankType " <<  type.str()  << " already exists" << endreq;
     if( status->status() != m_status.status() ){
-      error() << "Status for bankType " <<  LHCb::RawBank::BankType(m_status.key()) << " already exists" << endreq;
-      error() << " with different status value !!! "
-              << status->status() << " / " << m_status.status()
-              << endreq;
+      Warning("Status for bankType " +  type.str() + " already exists  with different status value -> merge both"
+              , StatusCode::SUCCESS).ignore();
+      for( std::map< int, long >::iterator it = m_status.statusMap().begin() ; it != m_status.statusMap().end() ; ++it){
+        status->addStatus((*it).first , (*it).second);
+      }
     } 
   }
+}
+
+
+void CaloReadoutTool::checkCtrl(int ctrl,int sourceID){
+
+  if ( msgLevel( MSG::DEBUG) )debug()<< "Control word :" << ctrl << endreq;
+  
+  if( 0 != (0x1& ctrl) || 0 != (0x20& ctrl) || 0 != (0x40& ctrl)){
+    if(msgLevel(MSG::WARNING))Warning("Tell1 error bits have been detected in data", StatusCode::SUCCESS).ignore();
+    if( 0 != (0x1  & ctrl))m_status.addStatus(sourceID,LHCb::RawBankReadoutStatus::Tell1Error );
+    if( 0 != (0x20 & ctrl))m_status.addStatus(sourceID,LHCb::RawBankReadoutStatus::Tell1Sync  );      
+    if( 0 != (0x40 & ctrl))m_status.addStatus(sourceID,LHCb::RawBankReadoutStatus::Tell1Link  );
+  }
+}
+
+bool CaloReadoutTool::checkSrc(int source){
+
+  
+  bool read = false;
+
+  for(std::vector<int>::iterator it = m_readSources.begin() ; it != m_readSources.end() ; ++it){
+    if( source == *it){
+      read = true;
+      break;
+    }    
+  }
+
+  if(read){
+    std::stringstream s("");
+    s<< source;
+    Warning("Another bank bank with same sourceID " + s.str() + " has already been read").ignore();
+    m_status.addStatus(source, LHCb::RawBankReadoutStatus::NonUnique );
+  }
+  else{
+    m_readSources.push_back(source);
+  }
+  return read;
 }

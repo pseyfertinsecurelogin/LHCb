@@ -1,0 +1,15 @@
+!-----------------------------------------------------------------------------
+! Package     : DAQ/MDF_DCAP
+! Responsible : Markus Frank
+! Purpose     : DCAP plugin to read MDF files.
+!-----------------------------------------------------------------------------
+
+!========================== MDF_DCAP v1r0 2008-01-28  ========================
+! 2008-01-28 - Marco Cattaneo
+ - Fix compatibility with DCAP version contained in LCGCMT_54
+
+! 2007-12-20 - Marco Cattaneo
+ - Use new disable_package_on pattern to disable building on Darwin and WIN32
+
+! 2007-12-19 - Markus Frank
+  - New package: spin-off from DAQ/MDF

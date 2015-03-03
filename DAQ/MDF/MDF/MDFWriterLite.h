@@ -1,11 +1,11 @@
-// $Id: MDFWriterLite.h,v 1.6 2007-08-29 08:22:12 apuignav Exp $
-//	====================================================================
+// $Id: MDFWriterLite.h,v 1.8 2008-02-05 16:44:17 frankb Exp $
+//  ====================================================================
 //  MDFWriterLite.h
-//	--------------------------------------------------------------------
+//  --------------------------------------------------------------------
 //
-//	Author    : Sai Suman & Niko Neufeld 
+//  Author    : Sai Suman & Niko Neufeld 
 //
-//	====================================================================
+//  ====================================================================
 #ifndef MDF_MDFWRITERLITE_H
 #define MDF_MDFWRITERLITE_H
 
@@ -54,14 +54,12 @@ namespace LHCb    {
     StreamBuffer  m_data;
     /// Pointer to checksum object
     TMD5*         m_md5;
-    /// Input data type (banks from TES=1, compressed data from address = 2)
-    int           m_dataType;
     /// Maximum size of each file (after which a new file will be written)
-    size_t	  m_maxFileSizeKB;
+    size_t    m_maxFileSizeKB;
     /// Maximum number of events in a file (after which a new file will be written)
     size_t        m_maxFileEvents;
-		/// Location of the raw banks in the TES
-		std::string		m_bankLocation;
+    /// Location of the raw banks in the TES
+    std::string    m_bankLocation;
 
 
     /// Internal setup (may not be called from sub-classes!

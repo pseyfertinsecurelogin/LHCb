@@ -13,6 +13,8 @@
       name        = 'TwoProngVertex'
       author      = 'Wouter Hulsbergen, Sean Brisbane'
       desc        = 'TwoProngVertex for use in V0 finding and tracking monitoring'
+      stdVectorTypeDef="TRUE"
+      keyedContTypeDef = "TRUE"
       id = '10040'
       serializers = 'TRUE'>
 
@@ -21,16 +23,14 @@
 	noQuote="TRUE"
 	/>
 
-
-
       <base name='LHCb::RecVertex'/>
+      &KeyedObject;
       <import name='Event/RecVertex'/>
       <import name='Event/State'/>
       <import name='GaudiKernel/Vector4DTypes'/>
       <import name='Kernel/ParticleID'/>
       <import name='Event/Track'/>
-      <import name='LHCbMath/MatrixUtils'/>
-
+      <import name='LHCbMath/MatrixTransforms'/>
 
       <enum
         desc="Additional information assigned to this V0. Contains Impact parameter information"
@@ -124,7 +124,7 @@
 	type = 'void'
 	name = 'addPID'
 	desc = 'add a PID to the vector'>
-	<arg type = 'LHCb::ParticleID' name = 'value' const = 'TRUE'/> 
+	<arg type = 'LHCb::ParticleID' name = 'value'/> 
 	<code>
 	  m_compatiblePIDs.push_back(value);
 	</code>

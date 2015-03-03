@@ -1,9 +1,37 @@
-# $Id: release.notes,v 1.112 2007-12-03 16:49:11 cattanem Exp $
+# $Id: release.notes,v 1.119 2008-01-28 10:29:38 cattanem Exp $
 !-----------------------------------------------------------------------------
 ! Package     : Det/DetCond
 ! Responsible : Marco Clemencic
 ! Purpose     : Interface between LHCb and LGC/COOL project
 !-----------------------------------------------------------------------------
+
+!===================== Det/DetCond v11r8 2008-01-28 ==========================
+                           NEEDS: LCGCMT >= 54
+! 2008-01-26 - Marco Clemencic
+ - Added the service CondDBLogger (implementation of ICondDBReader) that, if put
+   between a user and a provider of the ICondDBReader interface, stores in a
+   file all the requests that were made to the CondDBReader, with the time of
+   the request.
+   The class allows to generate some history of the CondDB traffic to be able to
+   analyze and replay it afterward.
+ - Added the algorithm CondDBReplayAlg. It can read a file produced with
+   CondDBLogger to replay the requests to the database.
+ - Modified ICondDBReader and CondDBAccessSvc to allow the retrieval of objects
+   from the conditions database using the channel name (available since COOL
+   2.3.0, LCGCMT 54).
+
+! 2008-01-21 - Marco Clemencic
+ - Improved error messages in case of CORAL exceptions.
+
+! 2007-12-20 - Marco Clemencic
+ - Allow to use tags that are not global in CondDBAccessSvc.
+ - Added a service (COOLConfSvc/ICOOLConfSvc) dedicated to the instantiation and
+   configuration of COOL/CORAL. The options to configure COOL and CORAL have
+   been moved from CondDBAccessSvc to the new service. 
+
+! 2007-12-20 - Marco Cattaneo
+ - Replace homemade linkopts with new Boost_linkopts_filesystem_mt
+ - Remove slc3 specific set, no longer supported in LCG_54
 
 !===================== Det/DetCond v11r7 2007-12-03 ==========================
 ! 2007-11-29 - Marco Clemencic

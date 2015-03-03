@@ -1,5 +1,5 @@
 package STKernel 
-version v1r0
+version v1r1
 
 use GaudiKernel v*
 use LHCbKernel  v* Kernel
@@ -23,7 +23,5 @@ apply_pattern reflex_dictionary                                      \
               headerfiles=$(STKERNELROOT)/dict/STKernelDict.h        \
               selectionfile=$(STKERNELROOT)/dict/STKernelDict.xml    \
               options="-U__MINGW32__ -DBOOST_DISABLE_ASSERTS"
-# Hack for cmt v1r19 bug to link dictionary on windows
-macro STKernelDict_use_linkopts $(use_linkopts)
 
 

@@ -4,6 +4,38 @@
 ! Purpose     : Convert Calo Digit and Trigger information to RawEvent banks.
 !-----------------------------------------------------------------------------
 
+!========================== CaloDAQ v4r3 2008-01-30 ==========================
+! 2008-01-29 - Olivier Deschamps
+ - bug fix in CaloL0DataProvider (for Prs trigger but decoding)
+
+! 2008-01-25 - Olivier Deschamps
+ - add Hcal together with Ecal as default in CaloReCreateMCLinks.cpp
+
+! 2008-01-24 - Olivier Deschamps
+ - CaloReadoutTool : fix abusive warning  + fix wrong initialization of m_readSource
+
+! 2008-01-24 - Marco Cattaneo
+ - Change CalDigitsOnDemand.opts to use DataOnDemndSvc.AlgMap
+
+! 2008-01-23 - Olivier Deschamps
+ - minor change in CaloReadoutTool.cpp (better handling of ReadoutStatus)
+
+! 2008-01-22 - Olivier Deschamps
+ - Add new status ("NonUnique") when several banks with identical sourceID in the same rawEvent  
+
+! 2008-01-10 - Olivier Deschamps
+ - Add a protection against events pile-up in the same rawEvent  (actually, several banks with same sourceID)
+ - fix unclear precedence to please windows compiler
+
+! 2008-01-08 - Marco Cattaneo
+ - Fix an obsolete include
+
+! 2007-12-14 - Olivier Deschamps
+ - improve the calls to msgSvc
+
+! 2007-12-12 - Olivier Deschamps
+ - fix ifndef in ICALOL0DATAPROVIDER
+
 !========================== CaloDAQ v4r2 2007-12-12 ==========================
 ! 2007-12-11 - Olivier Deschamps
  - Improve printout using Error() method

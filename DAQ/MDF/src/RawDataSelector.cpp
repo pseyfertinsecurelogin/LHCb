@@ -1,19 +1,20 @@
-// $Id: RawDataSelector.cpp,v 1.15 2007-11-19 19:27:32 frankb Exp $
+// $Id: RawDataSelector.cpp,v 1.18 2008-02-05 16:44:18 frankb Exp $
 //====================================================================
-//	OnlineMDFEvtSelector.cpp
+//  OnlineMDFEvtSelector.cpp
 //--------------------------------------------------------------------
 //
-//	Package    : MDF
+//  Package    : MDF
 //
 //  Description: The LHCb::RawDataSelector component is able
 //               to produce a list of event references given 
 //               a set of "selection criteria".
 //
-//	Author     : M.Frank
+//  Author     : M.Frank
 //====================================================================
 
 // Include files
 #include "MDF/RawDataAddress.h"
+#include "MDF/RawEventHelpers.h"
 #include "MDF/RawDataSelector.h"
 #include "MDF/RawDataConnection.h"
 #include "GaudiKernel/Tokenizer.h"
@@ -34,10 +35,13 @@ RawDataSelector::LoopContext::LoopContext(const RawDataSelector* pSelector)
 /// Set connection
 StatusCode RawDataSelector::LoopContext::connect(const std::string& specs)  {
   close();
-  StatusCode sc = m_ioMgr->connectRead(m_sel,m_connection=new RawDataConnection(m_sel,specs));
+  m_connection = new RawDataConnection(m_sel,specs);
+  StatusCode sc = m_ioMgr->connectRead(true,m_connection);
   if ( sc.isSuccess() )  {
     m_conSpec = m_connection->fid();
+    return sc;
   }
+  close();
   return sc;
 }
 
@@ -53,7 +57,7 @@ void RawDataSelector::LoopContext::close()    {
 RawDataSelector::RawDataSelector(const std::string& nam, ISvcLocator* svcloc)
 : Service( nam, svcloc), m_rootCLID(CLID_NULL)
 {
-  declareProperty("DataManager", m_ioMgrName="IODataManager");
+  declareProperty("DataManager", m_ioMgrName="Gaudi::IODataManager/IODataManager");
   declareProperty("NSkip", m_skipEvents=0);
 }
 
@@ -112,7 +116,7 @@ StatusCode RawDataSelector::next(Context& ctxt) const  {
     StatusCode sc = pCtxt->receiveData(msgSvc());
     if ( !sc.isSuccess() ) {
       MsgStream log(msgSvc(),name());
-      log << MSG::ERROR << "Failed to receieve the next event." << endmsg;
+      log << MSG::INFO << "Failed to receieve the next event from:" << pCtxt->specs() << endmsg;
     }
     return sc;
   }
@@ -166,7 +170,7 @@ StatusCode
 RawDataSelector::createAddress(const Context& ctxt, IOpaqueAddress*& pAddr) const   {
   const LoopContext* pctxt = dynamic_cast<const LoopContext*>(&ctxt);
   if ( pctxt ) {
-    if ( pctxt->data().second > 0 )  {
+    if ( pctxt->data().second>0 )  {
       RawDataAddress* pA = new RawDataAddress(RAWDATA_StorageType,m_rootCLID,pctxt->specs(),"0",0,0);
       pA->setType(RawDataAddress::DATA_TYPE);
       pA->setFileOffset(pctxt->offset());

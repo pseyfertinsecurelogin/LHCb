@@ -1,4 +1,4 @@
-// $Id: RawEventTestCreator.cpp,v 1.9 2007-04-20 12:40:25 cattanem Exp $
+// $Id: RawEventTestCreator.cpp,v 1.12 2008-01-25 22:58:45 frankb Exp $
 // Include files from Gaudi
 #include "GaudiKernel/Algorithm.h" 
 #include "GaudiKernel/IDataProviderSvc.h" 
@@ -56,13 +56,15 @@ namespace LHCb  {
         }
         raw->adoptBank(bank, true);
       }
+
       bank = raw->createBank(0, RawBank::ODIN, 2, sizeof(OnlineRunInfo), 0);
       OnlineRunInfo* run = bank->begin<OnlineRunInfo>();
-      memset(run,0,sizeof(OnlineRunInfo));
+      ::memset(run,0,sizeof(OnlineRunInfo));
       run->Run     = 123;
       run->Orbit   = trNumber/10;
       run->L0ID    = trNumber;
       run->bunchID = trNumber%100;
+      run->triggerType = 0;
       raw->adoptBank(bank, true);
 
       // raw->removeBank(bank);
@@ -87,5 +89,5 @@ namespace LHCb  {
   };
 }
 
-#include "GaudiKernel/DeclareFactoryEntries.h"
+#include "GaudiKernel/AlgFactory.h"
 DECLARE_NAMESPACE_ALGORITHM_FACTORY(LHCb,RawEventTestCreator)

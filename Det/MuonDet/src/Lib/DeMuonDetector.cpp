@@ -1,4 +1,4 @@
-// $Id: DeMuonDetector.cpp,v 1.38 2007-11-28 08:00:23 cattanem Exp $
+// $Id: DeMuonDetector.cpp,v 1.40 2007-12-21 08:09:40 cattanem Exp $
 
 // Include files
 #include "MuonChamberLayout.h"
@@ -10,6 +10,9 @@
 //Detector description
 #include "DetDesc/IGeometryInfo.h"
 #include "DetDesc/SolidBox.h"
+
+// Gaudi
+#include "GaudiKernel/SmartDataPtr.h"
 
 /** @file DeMuonDetector.cpp
  * 
@@ -1190,5 +1193,76 @@ myPoint) const
            (ngap<<PackMCMuonHit::shiftGapID);
   return id;
 
+}
+
+
+IDetectorElement* DeMuonDetector::Tile2Station(LHCb::MuonTileID aTile)
+{
+  char stationName[10];
+  MsgStream msg( msgSvc(), name() );
+  
+  unsigned int istat = aTile.station();
+  sprintf(stationName,"/M%d",istat+1);
+  std::string stationPath = DeMuonLocation::Default+stationName;
+
+  SmartDataPtr<DetectorElement> station(m_detSvc, stationPath);
+  if( !station ) {
+    msg << MSG::INFO << "Error in retrieving DetectorElement!" << endreq;
+  }
+  return station;
+}
+
+
+std::vector<DeMuonChamber*> DeMuonDetector::Tile2Chamber(LHCb::MuonTileID aTile)
+{ 
+  MsgStream msg( msgSvc(), name() );
+  unsigned int istat = aTile.station();
+  unsigned int ireg =  aTile.region();
+  unsigned int chamNum;
+
+  std::vector<DeMuonChamber*> ChmbPtr;
+  std::vector<unsigned int> chamberVector=m_chamberLayout->Tile2ChamberNum(aTile);
+  int vdim = chamberVector.size();
+  
+  // std::cout << "chamberNumVect--> size: "<< vdim << std::endl;
+  for(int i=0; i<vdim; i++) {
+    chamNum = chamberVector.at(i);
+    ChmbPtr.push_back(getChmbPtr(istat,ireg,chamNum));
+  }
+  return ChmbPtr;
+}
+
+
+IDetectorElement* DeMuonDetector::Hit2Station(Gaudi::XYZPoint myPoint)
+{ 
+  char stationName[10];
+  MsgStream msg(msgSvc(),name());
+  
+  unsigned int istat = getStation(myPoint.z());
+  sprintf(stationName,"/M%d",istat+1);
+  std::string stationPath = DeMuonLocation::Default+stationName;
+
+  SmartDataPtr<DetectorElement> station(m_detSvc, stationPath);
+  if( !station ) {
+    msg << MSG::INFO << "Error in retrieving DetectorElement!" << endreq;
+  }
+  return station;
+}
+
+
+DeMuonChamber* DeMuonDetector::Hit2Chamber(Gaudi::XYZPoint myPoint)
+{ 
+  MsgStream msg(msgSvc(),name());
+  DeMuonChamber* ChmbPtr;
+  unsigned int istat = getStation(myPoint.z());
+  
+  StatusCode sc = this->Pos2StChamberPointer(myPoint.x(),
+                                             myPoint.y(),
+                                             istat,
+                                             ChmbPtr);  
+  if(sc!=StatusCode::SUCCESS) {
+    msg << MSG::ERROR << "Error calling Pos2StChamberPointer function!" << endreq;
+  }
+  return ChmbPtr;
 }
 

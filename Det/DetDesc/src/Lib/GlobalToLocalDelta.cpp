@@ -1,12 +1,10 @@
-// $Id: GlobalToLocalDelta.cpp,v 1.14 2007-09-12 15:17:05 jpalac Exp $
+// $Id: GlobalToLocalDelta.cpp,v 1.17 2008-01-14 13:23:01 jpalac Exp $
 // Include files 
 #include "DetDesc/IDetectorElement.h"
 #include "DetDesc/IGeometryInfo.h"
 // local
 #include "DetDesc/GlobalToLocalDelta.h"
 #include "DetDesc/3DTransformationFunctions.h"
-#include "RotationZYX.h"
-#include "3DConversions.h"
 namespace DetDesc {
 
 const Gaudi::Transform3D localDeltaMatrix(const IDetectorElement* DE,
@@ -79,6 +77,70 @@ const Gaudi::Transform3D localDeltaFromParentTransform(const IGeometryInfo* pare
   const Gaudi::Transform3D T_parent = parentGI->toGlobalMatrix();
   const Gaudi::Transform3D T_k2n_inv   = GI->toLocalMatrix() * T_parent;
   return d_0 * T_k2n_inv * parentTransform;
+}
+
+const Gaudi::Transform3D localDeltaFromAnyFrame(const Gaudi::Transform3D& frame,
+                                                const IDetectorElement* DE,
+                                                const Gaudi::Transform3D& toGlobalInFrame) {
+
+  return localDeltaFromAnyFrame(frame, DE->geometry(), toGlobalInFrame);
+  
+}
+  
+const Gaudi::Transform3D localDeltaFromAnyFrame(const Gaudi::Transform3D& frame,
+                                                const IGeometryInfo* GI,
+                                                const Gaudi::Transform3D& toGlobalInFrame) {
+
+  const Gaudi::Transform3D d_0 = GI->ownToOffNominalMatrix();
+  const Gaudi::Transform3D T_k2n_inv   = GI->toLocalMatrix() * frame;
+  return d_0 * T_k2n_inv * toGlobalInFrame;  
+  
+}
+
+const Gaudi::Transform3D localDeltaFromAnyFrameDelta(const Gaudi::Transform3D& frame,
+                                                     const IDetectorElement* DE,
+                                                     const Gaudi::Transform3D& deltaInFrame) {
+
+  return localDeltaFromAnyFrame(frame, DE->geometry(), deltaInFrame);
+  
+}
+  
+const Gaudi::Transform3D localDeltaFromAnyFrameDelta(const Gaudi::Transform3D& frame,
+                                                     const IGeometryInfo* GI,
+                                                     const Gaudi::Transform3D& deltaInFrame) {
+
+  const Gaudi::Transform3D d_0 = GI->ownToOffNominalMatrix();
+  const Gaudi::Transform3D T_k2n_inv   = GI->toLocalMatrix() * frame;
+  return d_0 * frame.Inverse() * deltaInFrame * frame;  
+  
+}
+
+const Gaudi::Transform3D globalDeltaFromLocalDeltaPrime(const IDetectorElement*   DE,
+                                                        const Gaudi::Transform3D& deltaPrime)
+{
+  return  globalDeltaFromLocalDeltaPrime(DE->geometry(), deltaPrime);
+}
+
+const Gaudi::Transform3D globalDeltaFromLocalDeltaPrime(const IGeometryInfo*      GI,
+                                                        const Gaudi::Transform3D& deltaPrime)
+{
+  return  GI->toGlobalMatrix()*deltaPrime*GI->toLocalMatrix();
+}
+
+const Gaudi::Transform3D globalDelta(const IDetectorElement* DE)
+{
+  return  globalDelta( DE->geometry() );
+}
+
+const Gaudi::Transform3D globalDelta(const IGeometryInfo* GI)
+{
+  return  GI->toGlobalMatrix()*GI->ownToOffNominalMatrix()*GI->toLocalMatrix();
+}
+
+const Gaudi::Transform3D relativeTransformation(const IDetectorElement* referenceDE,
+                                                const IDetectorElement* DE)
+{
+  return referenceDE->geometry()->toLocalMatrix()*DE->geometry()->toGlobalMatrix();
 }
   
 } // namespace DetDesc

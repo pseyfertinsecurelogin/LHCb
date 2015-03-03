@@ -1,0 +1,19 @@
+#============================================================================
+# Maintainer : Markus Frank
+#============================================================================
+package           MDF_GFAL
+version           v1r0
+branches          cmt doc src
+ 
+use MDF           v* DAQ            -no_auto_imports
+use gfal          v* LCG_Interfaces -no_auto_imports
+
+include_path none
+
+# ==================== libraries ==================================
+library MDF_GFAL *.cpp -import=MDF -import=gfal
+apply_pattern ld_library_path
+apply_pattern linker_library library=MDF_GFAL
+
+apply_pattern disable_package_on platform=Darwin
+apply_pattern disable_package_on platform=WIN32

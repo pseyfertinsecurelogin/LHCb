@@ -1,5 +1,5 @@
 package DAQEvent
-version v7r7
+version v7r8
 
 use GaudiKernel v*
 branches cmt doc Event src tests xml
@@ -19,9 +19,6 @@ apply_pattern     reflex_dictionary                            \
                   headerfiles=$(DAQEVENTROOT)/xml/lcgdict/lcg_headers.h     \
                   selectionfile=$(DAQEVENTROOT)/xml/lcgdict/lcg_selection.xml \
                   options=--comments
-
-# Hack for cmt v1r19 bug to link dictionary on windows
-macro DAQEventDict_use_linkopts $(use_linkopts)
 
 # ==================== linker library =======================================
 macro DAQEventLib_dependencies DAQEventObj2Doth

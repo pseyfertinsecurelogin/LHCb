@@ -1,7 +1,15 @@
-!$Id: release.notes,v 1.120 2007-11-30 16:47:53 cattanem Exp $
+!$Id: release.notes,v 1.122 2008-01-08 15:56:35 cattanem Exp $
 !Package         : STDet
 !Package manager : M. Needham
 !-------------------------------------------------------------------------
+
+!======================== STDet v3r9 2008-01-08 ==========================
+! 2008-01-08 - Marco Cattaneo
+ - Fix some doxygen warnings
+
+! 2008-01-08 M Needham
+ - DeSTSector: final changes to allow use of dead strip conditions
+ - Add test on the version to allow DC 06 backwards compatability
 
 !======================== STDet v3r8 2007-11-30 ==========================
 ! 2007-11-30 - Marco Cattaneo

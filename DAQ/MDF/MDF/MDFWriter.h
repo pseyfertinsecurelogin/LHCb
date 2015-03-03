@@ -1,11 +1,11 @@
-// $Id: MDFWriter.h,v 1.6 2007-11-19 19:27:32 frankb Exp $
-//	====================================================================
+// $Id: MDFWriter.h,v 1.10 2008-02-05 16:44:17 frankb Exp $
+//  ====================================================================
 //  MDFWriter.h
-//	--------------------------------------------------------------------
+//  --------------------------------------------------------------------
 //
-//	Author    : Markus Frank
+//  Author    : Markus Frank
 //
-//	====================================================================
+//  ====================================================================
 #ifndef MDF_MDFWRITER_H
 #define MDF_MDFWRITER_H
 
@@ -57,11 +57,12 @@ namespace LHCb    {
     StreamBuffer  m_data;
     /// Pointer to checksum object
     TMD5*         m_md5;
-    /// Input data type (banks from TES=1, compressed data from address = 2)
-    int           m_dataType;
-		/// Location of the raw banks in the TES
-		std::string		m_bankLocation;
-
+    /// Location of the raw banks in the TES
+    std::string   m_bankLocation;
+    /// Bytes write count
+    long long int m_bytesWritten;
+    /// Input data type (like MDFIO::m_dataType)
+    int           m_inputType;
     /// Internal setup (may not be called from sub-classes!
     void construct();
 

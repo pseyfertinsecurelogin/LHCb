@@ -1,12 +1,12 @@
-// $Header: /afs/cern.ch/project/cvs/reps/lhcb/DAQ/MDF/src/MEPWriter.cpp,v 1.6 2007-11-19 19:27:32 frankb Exp $
-//	====================================================================
+// $Id: MEPWriter.cpp,v 1.9 2008-02-05 16:44:18 frankb Exp $
+//  ====================================================================
 //  MEPWriter.cpp
-//	--------------------------------------------------------------------
+//  --------------------------------------------------------------------
 //
-//	Author    : Markus Frank
+//  Author    : Markus Frank
 //
-//	====================================================================
-#include "GaudiKernel/DeclareFactoryEntries.h"
+//  ====================================================================
+#include "GaudiKernel/AlgFactory.h"
 #include "GaudiKernel/MsgStream.h"
 #include "GaudiKernel/SmartDataPtr.h"
 #include "GaudiUtils/IIODataManager.h"
@@ -27,9 +27,10 @@ static void* extendBuffer(void* p, size_t len)   {
 
 /// Standard algorithm constructor
 MEPWriter::MEPWriter(const std::string& name, ISvcLocator* pSvcLocator)
-: MDFWriter(name, pSvcLocator), m_evID(0)
+  : MDFWriter(name, pSvcLocator), m_evID(0)
 {
   declareProperty("PackingFactor",  m_packingFactor=20);
+  declareProperty("MakeTAE",        m_makeTAE=false);
 }
 
 /// Standard Destructor
@@ -42,6 +43,7 @@ StatusCode MEPWriter::execute()    {
   if ( raw )  {
     StatusCode sc = StatusCode::SUCCESS;
     raw->addRef();
+    if ( m_makeTAE ) change2TAEEvent(raw);
     m_events.insert(std::pair<unsigned int, RawEvent*>(m_evID++, raw.ptr()));
     if ( int(m_events.size()) == m_packingFactor )  {
       MEPEvent* me = 0;

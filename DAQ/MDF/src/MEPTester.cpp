@@ -1,4 +1,4 @@
-// $Id: MEPTester.cpp,v 1.2 2007-04-20 12:40:25 cattanem Exp $
+// $Id: MEPTester.cpp,v 1.4 2008-01-08 15:20:34 cattanem Exp $
 // Include files from Gaudi
 #include "GaudiKernel/SmartIF.h" 
 #include "GaudiKernel/Algorithm.h" 
@@ -7,6 +7,7 @@
 #include "GaudiKernel/IDataProviderSvc.h" 
 #include "GaudiKernel/SmartDataPtr.h" 
 #include "GaudiKernel/MsgStream.h" 
+#include "Event/RawEvent.h"
 #include "MDF/RawEventPrintout.h"
 #include "MDF/OnlineRunInfo.h"
 #include "MDF/MDFHeader.h"
@@ -108,5 +109,5 @@ namespace LHCb  {
   };
 }
 
-#include "GaudiKernel/DeclareFactoryEntries.h"
+#include "GaudiKernel/AlgFactory.h"
 DECLARE_NAMESPACE_ALGORITHM_FACTORY(LHCb,MEPTester)

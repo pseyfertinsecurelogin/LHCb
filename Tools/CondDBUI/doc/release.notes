@@ -1,9 +1,35 @@
 ! =============================================================================
-! $Id: release.notes,v 1.65 2007-12-07 09:43:24 marcocle Exp $
+! $Id: release.notes,v 1.74 2008-01-28 10:38:41 cattanem Exp $
 ! =============================================================================
 ! package Tools/CondDBUI
 ! package manager : Marco Clemencic / Nicolas Gilardi
 ! =============================================================================
+
+!===================== Tools/CondDBUI v2r7 2008-01-28 =========================
+! 2008-01-23 - Marco Clemencic
+ - Added a the sub-module CondDBUI.Admin for functions needed for administrative
+   tasks. Currently it contains:
+    - check_addition_db_content:
+      checks if the database we are going to merge into another one contains
+      only files which are not yet there
+    - merge_and_tag:
+      insert the content of a database into another one (after calling
+      'check_addition_db_content') and apply a tag to the new files (move it if
+      it already exists)
+
+! 2008-01-08 - Marco Clemencic
+ - Fixed a problem with local tags in dump_db_to_files.py.
+
+! 2008-01-07 - Marco Clemencic
+ - Fixed a bug preventing to open a database.
+
+! 2007-12-20 - Marco Clemencic
+ - Added the possibility to specify a connection string on the command line of
+   CondDBBrowser.py to open a database.
+ 
+! 2007-12-14 - Marco Clemencic
+ - Fixed a bug (introduced with the latest changes) that prevents the addition
+   of new conditions.
 
 !===================== Tools/CondDBUI v2r6 2007-12-07 =========================
                             NEEDS LCGCMT >= 53f (Gaudi v19r6)

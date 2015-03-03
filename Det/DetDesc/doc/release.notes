@@ -1,9 +1,126 @@
 ! =============================================================================
-! $Id: release.notes,v 1.345 2007-12-04 13:29:34 cattanem Exp $ 
+! $Id: release.notes,v 1.356 2008-01-22 07:06:11 cattanem Exp $ 
 ! =============================================================================
 ! package DetDesc
 ! package manager : Marco Clemencic, Juan Palacios
 ! =============================================================================
+
+!====================== DetDesc v18r3 2008-01-22 ==============================
+! 2008-01-15 - Juan PALACIOS
+ - src/Lib/3DTransformationFunctions.cpp
+  . Tidy up a bit taking advantage of latest syntax fixes in MathCore.
+
+! 2008-01-14 - Juan Palacios
+ - DetDesc/GlobalToLocalDelta.h
+  . Add methods to estimate "off-nominal" delta matrix at local level, starting
+    from either total position or "off-nominal" corrections in an arbitrary 
+    frame, independent of the detector element hierarchy.
+
+  const Gaudi::Transform3D localDeltaFromAnyFrame(const Gaudi::Transform3D& frame,
+                                                  const IDetectorElement* DE,
+                                                  const Gaudi::Transform3D& toGlobalInFrame); 
+
+  const Gaudi::Transform3D localDeltaFromAnyFrame(const Gaudi::Transform3D& frame,
+                                                  const IGeometryInfo* GI,
+                                                  const Gaudi::Transform3D& toGlobalInFrame); 
+
+  const Gaudi::Transform3D localDeltaFromAnyFrameDelta(const Gaudi::Transform3D& frame,
+                                                       const IDetectorElement* DE,
+                                                       const Gaudi::Transform3D& deltaInFrame); 
+
+  const Gaudi::Transform3D localDeltaFromAnyFrameDelta(const Gaudi::Transform3D& frame,
+                                                       const IGeometryInfo* GI,
+                                                       const Gaudi::Transform3D& deltaInFrame); 
+
+! 2008-01-14 - Juan Palacios
+ - DetDesc/3DTransformationFunctions.h
+  . Add method
+    template <class ROT>
+    void getZYXRotationParameters( const ROT& rotation,
+                                   double& rotX, 
+                                   double& rotY, 
+                                   double& rotZ           ) 
+
+  Takes any MathCore 3D rotation and estimates the equivalent
+  Euler 321 rotation parameters.
+
+! 2008-01-11 - Marco Cattaneo
+ - Do not add MathCore to ROOT_linkopts, already done by LHCbKernel
+
+! 2008-01-11 - Juan PALACIOS
+ - DetDesc/3DTransformationFunctions.h
+  . Remove methods
+
+    const Gaudi::Transform3D XYZTranslation(const std::vector<double>& params);
+    Method is replaced by direct use of new ROOT::Math::Translation3D class.
+
+    const Gaudi::Transform3D ZYXRotation(const std::vector<double>& params);  
+    Method replaced by direct ure of new ROOT::Math::RotationZYX class.
+
+    void getZYXRotationParameters(const Gaudi::Rotation3D& rot,
+                                  std::vector<double>& rotParams);
+    void getTranslationParameters(const Gaudi::TranslationXYZ& trans,
+                                  std::vector<double>& transParams);
+    Get components directly from RotationZYX and Tranlsation3D objects.
+
+ - Remove from src/Lib:
+   RotationZYX.h
+   RotationZYXfwd.h
+   RotationZYX.cpp
+   3DConversions.h
+   3DConversions.cpp
+   These had been borrowed from MathCore awaiting their release.
+
+! 2008-01-10 - Juan PALACIOS
+ - DetDesc/GlobalToLocalDelta.h, src/Lib/GlobalToLocalDelta.cpp
+  . Add new functions:
+
+   Obtain a global off-nominal correction D_global on top of the current total 
+   transformation of a IGeometryInfo or IDetectorElement (T_global) starting from 
+   a correction D' calculated at the local level of that IGeometryInfo or IDetectorElement
+
+  const Gaudi::Transform3D globalDeltaFromLocalDeltaPrime(const IDetectorElement*   DE,
+                                                          const Gaudi::Transform3D& deltaPrime);
+  const Gaudi::Transform3D globalDeltaFromLocalDeltaPrime(const IGeometryInfo*      GI,
+                                                          const Gaudi::Transform3D& deltaPrime);
+
+   Obtain the global "delta" transformation corresponding to the local "delta"
+   of an IDetectorElement or IGeometryInfo
+
+  const Gaudi::Transform3D globalDelta(const IDetectorElement* DE);
+  const Gaudi::Transform3D globalDelta(const IGeometryInfo* GI);
+
+   Obtain the 3D transformation, T_relative, representing the placement of 
+   DetectorElement DE in the frame of DetectorElement referenceDE.
+
+  const Gaudi::Transform3D relativeTransformation(const IDetectorElement* referenceDE,
+                                                  const IDetectorElement* DE);
+
+! 2007-12-19 - Vanya BELYAEV
+ New treatment of geometry overlaps:
+
+ New files: 
+  - DetDesc/Compare.h
+      comparison of floating numbers 
+  - DetDesc/IGeometryErrorSvc.h, src/Lib/IGeometryErrorSvc.cpp
+        abstract interface for hadnling of geomety errors 
+  - DetDesc/IntersectionErrors.h, src/Lib/IntersectionErrors.cpp
+       helper utility to make a bridge between volumes and 
+       geometry error handling service 
+
+ Modified files: 
+  - DetDesc/VolumeIntersectionIntervals.h
+      add new functions:
+       1) MergeOwnAndChildIntersections2
+       2) correct 
+       3) intersect
+       4) ... 
+
+  - src/Lib/LAssembly.cpp, src/Lib/LVolume.cpp, src/Lib/LogVolBase.cpp
+      make use of new functions 
+
+  - cmt/requirements 
+      version increment to v18r3 
 
 !====================== DetDesc v18r2 2007-12-04 ==============================
 ! 2007-12-04 - Juan Palacios

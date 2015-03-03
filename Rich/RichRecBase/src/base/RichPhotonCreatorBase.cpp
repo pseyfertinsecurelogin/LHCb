@@ -1,16 +1,16 @@
 
-//---------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 /** @file RichPhotonCreatorBase.cpp
  *
  *  Implementation file for tool base class : Rich::Rec::PhotonCreatorBase
  *
  *  CVS Log :-
- *  $Id: RichPhotonCreatorBase.cpp,v 1.21 2007-11-26 16:45:19 jonrob Exp $
+ *  $Id: RichPhotonCreatorBase.cpp,v 1.24 2008-01-11 11:51:09 jonrob Exp $
  *
  *  @author Chris Jones   Christopher.Rob.Jones@cern.ch
  *  @date   20/05/2005
  */
-//---------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 
 // local
 #include "RichRecBase/RichPhotonCreatorBase.h"
@@ -111,10 +111,26 @@ namespace Rich
       acquireTool( "RichParticleProperties",  m_richPartProp );
 
       // Get the HPD panels
-      m_hpdPanels[Rich::Rich1][Rich::top]    = getDet<DeRichHPDPanel>(DeRichLocations::Rich1TopPanel);
-      m_hpdPanels[Rich::Rich1][Rich::bottom] = getDet<DeRichHPDPanel>(DeRichLocations::Rich1BottomPanel);
-      m_hpdPanels[Rich::Rich2][Rich::left]   = getDet<DeRichHPDPanel>(DeRichLocations::Rich2LeftPanel);
-      m_hpdPanels[Rich::Rich2][Rich::right]  = getDet<DeRichHPDPanel>(DeRichLocations::Rich2RightPanel);
+      DetectorElement* deRich1 = getDet<DetectorElement>(DeRichLocations::Rich1);
+      DetectorElement* deRich2 = getDet<DetectorElement>(DeRichLocations::Rich2);
+
+      if ( deRich1->exists("HPDPanelDetElemLocations") )
+      {
+        std::vector<std::string> r1PanelLoc = deRich1->paramVect<std::string>("HPDPanelDetElemLocations");
+        m_hpdPanels[Rich::Rich1][Rich::top]    = getDet<DeRichHPDPanel>(r1PanelLoc[0]);
+        m_hpdPanels[Rich::Rich1][Rich::bottom] = getDet<DeRichHPDPanel>(r1PanelLoc[1]);
+        std::vector<std::string> r2PanelLoc = deRich2->paramVect<std::string>("HPDPanelDetElemLocations");
+        m_hpdPanels[Rich::Rich2][Rich::left]   = getDet<DeRichHPDPanel>(r2PanelLoc[0]);
+        m_hpdPanels[Rich::Rich2][Rich::right]  = getDet<DeRichHPDPanel>(r2PanelLoc[1]);
+      }
+      else
+      {
+        m_hpdPanels[Rich::Rich1][Rich::top]    = getDet<DeRichHPDPanel>(DeRichLocations::Rich1TopPanel);
+        m_hpdPanels[Rich::Rich1][Rich::bottom] = getDet<DeRichHPDPanel>(DeRichLocations::Rich1BottomPanel);
+        m_hpdPanels[Rich::Rich2][Rich::left]   = getDet<DeRichHPDPanel>(DeRichLocations::Rich2LeftPanel);
+        m_hpdPanels[Rich::Rich2][Rich::right]  = getDet<DeRichHPDPanel>(DeRichLocations::Rich2RightPanel);
+      }
+      
 
       // Setup incident services
       incSvc()->addListener( this, IncidentType::BeginEvent );
@@ -207,8 +223,8 @@ namespace Rich
 
         // make a rough guess at a size to reserve based on number of pixels
         if ( richPhotons()->empty() )
-          richPhotons()->reserve( trackCreator()->richTracks()->size() *
-                                  pixelCreator()->richPixels()->size() );
+          richPhotons()->reserve( ( trackCreator()->richTracks()->size() *
+                                    pixelCreator()->richPixels()->size() ) / 20 );
 
         // Iterate over all tracks
         for ( LHCb::RichRecTracks::const_iterator iTrack =

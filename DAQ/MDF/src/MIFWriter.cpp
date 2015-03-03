@@ -1,12 +1,12 @@
-// $Header: /afs/cern.ch/project/cvs/reps/lhcb/DAQ/MDF/src/MIFWriter.cpp,v 1.6 2007-11-19 19:27:32 frankb Exp $
-//	====================================================================
+// $Id: MIFWriter.cpp,v 1.10 2008-02-05 16:44:18 frankb Exp $
+//  ====================================================================
 //  MIFWriter.cpp
-//	--------------------------------------------------------------------
+//  --------------------------------------------------------------------
 //
-//	Author    : Markus Frank
+//  Author    : Markus Frank
 //
-//	====================================================================
-#include "GaudiKernel/DeclareFactoryEntries.h"
+//  ====================================================================
+#include "GaudiKernel/AlgFactory.h"
 #include "GaudiKernel/MsgStream.h"
 #include "GaudiKernel/DataObject.h"
 #include "GaudiKernel/SmartDataPtr.h"
@@ -30,7 +30,7 @@ MIFWriter::MIFWriter(const std::string& nam, ISvcLocator* svc)
 : Algorithm(nam, svc), m_ioMgr(0), m_connection(0)
 {
   declareProperty("Connection",  m_connectParams="");
-  declareProperty("DataManager", m_ioMgrName="IODataManager");
+  declareProperty("DataManager", m_ioMgrName="Gaudi::IODataManager/IODataManager");
 }
 
 /// Standard Destructor
@@ -79,6 +79,7 @@ StatusCode MIFWriter::execute()    {
         const std::string& dsn = pA->par()[0];
         int fid = genChecksum(1,dsn.c_str(),dsn.length()+1);
         FidMap::const_iterator i = m_fidMap.find(fid);
+  //std::cout << "FID:" << dsn << " " << fid << endl;
         if ( i == m_fidMap.end() )   {
           MsgStream log(msgSvc(),name());
           m_fidMap.insert(std::make_pair(fid,dsn));

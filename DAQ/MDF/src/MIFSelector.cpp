@@ -1,11 +1,11 @@
-// $Id: MIFSelector.cpp,v 1.8 2007-11-19 19:27:32 frankb Exp $
+// $Id: MIFSelector.cpp,v 1.12 2008-02-05 16:44:18 frankb Exp $
 //====================================================================
-//	MIFSelector.cpp
+//  MIFSelector.cpp
 //--------------------------------------------------------------------
 //
-//	Package    : MIF
+//  Package    : MIF
 //
-//	Author     : M.Frank
+//  Author     : M.Frank
 //====================================================================
 
 // Include files
@@ -51,7 +51,7 @@ namespace LHCb  {
     typedef std::map<int,Connection*> FidMap;
 
     long long            m_fileOffset;
-    std::pair<char*,int> m_data;
+    MDFDescriptor        m_data;
     StreamBuffer         m_buff;
     MIFHeader*           m_header;
     const MIFSelector*   m_mifSel;
@@ -70,9 +70,9 @@ namespace LHCb  {
     }
     /// Standard destructor 
     virtual ~MIFContext();
-    std::pair<char*,int> getDataSpace(void* const /* ioDesc */, size_t len)  {
+    MDFDescriptor getDataSpace(void* const /* ioDesc */, size_t len)  {
       m_buff.reserve(len);
-      return std::pair<char*,int>(m_buff.data(), m_buff.size());
+      return MDFDescriptor(m_buff.data(), m_buff.size());
     }
     virtual StatusCode connect(const std::string& spec);
     /// Receive event and update communication structure
@@ -83,7 +83,7 @@ namespace LHCb  {
     virtual StatusCode readBuffer(void* const ioDesc, void* const data, size_t len);
     long long offset()  const                       { return m_fileOffset;     }
     /// Raw data buffer (if it exists)
-    virtual std::pair<char*,int> data() const       { return m_data;           }
+    virtual MDFDescriptor data() const              { return m_data;           }
   };
 }
 
@@ -121,6 +121,10 @@ StatusCode MIFContext::connect(const std::string& spec)  {
     std::auto_ptr<IDataConnection> c(new RawDataConnection(m_sel,spec));
     StatusCode sc = m_ioMgr->connectRead(false,c.get());
     if ( sc.isSuccess() )  {
+      MsgStream log(m_msg,"MIFSelector");
+      log << MSG::ALWAYS << "Connected to:" << spec << " " << c->pfn() 
+  /* << " " << fid */ 
+    << endmsg;
       m_fidMap.insert(std::make_pair(fid,c.release()));
       m_mifFID = fid;
       return sc;
@@ -182,5 +186,5 @@ StatusCode MIFContext::skipEvents(IMessageSvc* /* msg */,int numEvt)  {
   return StatusCode::FAILURE;
 }
 
-#include "GaudiKernel/DeclareFactoryEntries.h"
+#include "GaudiKernel/SvcFactory.h"
 DECLARE_NAMESPACE_SERVICE_FACTORY(LHCb,MIFSelector);

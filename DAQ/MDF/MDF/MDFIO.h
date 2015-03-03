@@ -1,11 +1,11 @@
-// $Id: MDFIO.h,v 1.13 2007-10-04 13:57:07 frankb Exp $
-//	====================================================================
+// $Id: MDFIO.h,v 1.18 2008-02-05 16:44:17 frankb Exp $
+//  ====================================================================
 //  MDFIO.h
-//	--------------------------------------------------------------------
+//  --------------------------------------------------------------------
 //
-//	Author    : Markus Frank
+//  Author    : Markus Frank
 //
-//	====================================================================
+//  ====================================================================
 #ifndef DAQ_MDF_MDFIO_H
 #define DAQ_MDF_MDFIO_H
 
@@ -39,7 +39,8 @@ namespace LHCb {
     //            compressed records data from address = 2
     //            banks data from address (MDF bank first) = 3
     enum Writer_t { MDF_NONE=1, MDF_RECORDS=2, MDF_BANKS=3 };
-
+    /// MDF data descriptor definition
+    typedef std::pair<char*,int> MDFDescriptor;
   protected:
     /// Streambuffer to hold compressed data
     StreamBuffer                  m_tmp;
@@ -57,8 +58,19 @@ namespace LHCb {
     Gaudi::IFileCatalogSvc*       m_catalog;
     /// Flag to ignore the checksum
     bool                          m_ignoreChecksum;
+    /// Flag to force TAE format of the MDF file
+    bool                          m_forceTAE;
 
-
+    /// Monitoring quantity: Number of write errors
+    int                           m_writeErrors;
+    /// Monitoring quantity: Number of write actions
+    int                           m_writeActions;
+   
+    /// Monitoring quantity: Number of space errors
+    int                           m_spaceErrors;
+    /// Monitoring quantity: Number of space actions
+    int                           m_spaceActions;
+   
     /// Helper to retrieve data from Opaque address
     std::pair<const char*,int> getDataFromAddress();
     /// Helper to access header information
@@ -84,17 +96,22 @@ namespace LHCb {
     /// Ignore checksum
     void setIgnoreChecksum(bool new_value) {  m_ignoreChecksum = new_value; }
 
-    std::pair<char*,int> readLegacyBanks(const MDFHeader& h, void* const ioDesc, bool dbg);
+    MDFDescriptor readLegacyBanks(const MDFHeader& h, void* const ioDesc, bool dbg);
 
-    std::pair<char*,int> readBanks(const MDFHeader& h, void* const ioDesc, bool dbg);
+    MDFDescriptor readBanks(const MDFHeader& h, void* const ioDesc, bool dbg);
 
     bool checkSumOk(int checksum, const char* src, int datSize, bool prt);
+
+    RawBank* createDummyMDFHeader( RawEvent* raw, size_t len );
 
   public:
 
     /// Initializing constructor
     MDFIO(Writer_t typ, const std::string& nam) 
-      : m_msgSvc(0), m_evtSvc(0), m_dataType(typ), m_parent(nam), m_catalog(0) {}
+      : m_msgSvc(0), m_evtSvc(0), m_dataType(typ), m_parent(nam), m_catalog(0), m_forceTAE(false),
+      m_writeErrors(0), m_writeActions(0), m_spaceErrors(0), m_spaceActions(0)
+      {
+      }
 
     /// Default destructor
     virtual ~MDFIO() {}
@@ -108,7 +125,7 @@ namespace LHCb {
       *
       * @return  Pointer to allocated memory space
       */
-    virtual std::pair<char*,int> getDataSpace(void* const ioDesc, size_t len) = 0;
+    virtual MDFDescriptor getDataSpace(void* const ioDesc, size_t len) = 0;
 
     /** Write raw char buffer to output stream
       * @param[in] ioDesc Output IO descriptor       
@@ -155,7 +172,7 @@ namespace LHCb {
     virtual StatusCode commitRawBanks(int                compTyp,
                                       int                chksumTyp,
                                       void* const        ioDesc,
-																			const std::string& location);
+                                      const std::string& location);
 
     /** Commit raw banks to IO stream. -- Main entry point --
       * @param[in] raw       Pointer to RawEvent
@@ -208,7 +225,7 @@ namespace LHCb {
       *
       * @return  Number of valid bytes in stream buffer (-1 on failure).
       */
-    virtual std::pair<char*,int> readBanks(void* const ioDesc, bool dbg=false);
+    virtual MDFDescriptor readBanks(void* const ioDesc, bool dbg=false);
 
     /** Read raw char buffer from input stream
       * @param[in] ioDesc Input IO descriptor       

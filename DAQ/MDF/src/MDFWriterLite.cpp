@@ -1,12 +1,12 @@
-// $Header: /afs/cern.ch/project/cvs/reps/lhcb/DAQ/MDF/src/MDFWriterLite.cpp,v 1.7 2007-10-04 13:57:07 frankb Exp $
-//	====================================================================
+// $Id: MDFWriterLite.cpp,v 1.9 2008-02-05 16:44:18 frankb Exp $
+//  ====================================================================
 //  MDFWriterLite.cpp
-//	--------------------------------------------------------------------
+//  --------------------------------------------------------------------
 //
-//	Author    : Sai Suman & Niko Neufeld 
+//  Author    : Sai Suman & Niko Neufeld 
 //
-//	====================================================================
-#include "GaudiKernel/DeclareFactoryEntries.h"
+//  ====================================================================
+#include "GaudiKernel/AlgFactory.h"
 #include "GaudiKernel/SmartDataPtr.h"
 #include "GaudiKernel/MsgStream.h"
 #include "MDF/RawEventHelpers.h"
@@ -56,7 +56,7 @@ void LHCb::MDFWriterLite::construct()   {
   declareProperty("DataType",       m_dataType=MDFIO::MDF_NONE); // Input data type
   declareProperty("MaxFileSizeKB",  m_maxFileSizeKB=2000000);
   declareProperty("MaxFileEvents",  m_maxFileEvents=1000000);
-	declareProperty("BankLocation",		m_bankLocation=LHCb::RawEventLocation::Default);  // Location of the banks in the TES
+  declareProperty("BankLocation",    m_bankLocation=LHCb::RawEventLocation::Default);  // Location of the banks in the TES
 }
 
 LHCb::MDFWriterLite::~MDFWriterLite()   {

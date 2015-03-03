@@ -6,6 +6,46 @@
 !               MEP fragments
 !-----------------------------------------------------------------------------
 
+!========================= MDF v3r2 2008-02-05 ===============================
+! 2008-02-05 - Markus Frank
+ - Add support for ROOT protocol as back up for any non-implemented protocols.
+ - Fix bug in MDF writer
+ - Implement retry for decompression if data space is insufficient.
+
+!========================= MDF v3r1 2008-01-30 ===============================
+! 2008-01-28 - Markus Frank
+ - Fix bug in RawDataCnvSvc introduced by processing TAE events
+
+! 2008-01-19 - Markus Frank
+ - Add helper functions for processing TAE events. Fix bug in RawDtaCnvSvc when 
+   accessing TAE events.
+ - Fix crucial bug (typo??) in detecting TAE events
+ - Fix bug in accessing IODataManager
+
+!========================= MDF v3r0 2008-01-08 ===============================
+! 2008-01-08 - Marco Cattaneo
+ - Remove obsolete MDF.cpp file, and cleanup Factory includes
+
+! 2007-12-19 - Markus Frank
+ - Remove the RFIO/DCAP,... plugins from MDF and make them seperate packages.
+
+! 2007-12-18 - Markus Frank
+ - Add support for non-strict RFC URIs - similar to whar ROOT supports.
+
+! 2007-12-15 - Markus Frank
+ - Add support for TAE events in the RawDataCnvSvc.
+   The creation of leaves in the TES is triggered by the content of the TAE
+   meta bank.
+   
+! 2007-12-12 - Olivier Callot
+ - Add coding of TAE events in the MDF buffer, triggered by the value of the ODIN
+   triggerType() = LHCb::ODIN::TimingTrigger or forced by the jobOption
+   forceTAE = true of MDFWriter. A pseudo-bank of type TAEHeader is added
+   as first bank in the buffer, with description of the various RawEvents found.
+- Add function unpackTAEBuffer in RawEventHelpers to decode the TAE MDF block, 
+  it works also for non-TAE blocks. It returns a vector of pair of (name in TES, 
+  RawEvent*).
+
 !========================= MDF v2r7 2007-12-07 ===============================
 ! 2007-12-07 - Markus Frank
   - Fix bug in MDF IO to accept properly file names like PFN:file:....

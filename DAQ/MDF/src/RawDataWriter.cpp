@@ -1,12 +1,12 @@
-// $Header: /afs/cern.ch/project/cvs/reps/lhcb/DAQ/MDF/src/RawDataWriter.cpp,v 1.9 2007-11-19 19:27:32 frankb Exp $
-//	====================================================================
+// $Id: RawDataWriter.cpp,v 1.12 2008-02-05 16:44:18 frankb Exp $
+//  ====================================================================
 //  RawDataWriter.cpp
-//	--------------------------------------------------------------------
+//  --------------------------------------------------------------------
 //
-//	Author    : Markus Frank
+//  Author    : Markus Frank
 //
-//	====================================================================
-#include "GaudiKernel/DeclareFactoryEntries.h"
+//  ====================================================================
+#include "GaudiKernel/AlgFactory.h"
 #include "GaudiKernel/MsgStream.h"
 #include "GaudiUtils/IIODataManager.h"
 #include "MDF/RawDataConnection.h"
@@ -96,8 +96,8 @@ RawDataWriter::RawDataWriter(const std::string& nam, ISvcLocator* pSvc)
   declareProperty("GenerateMD5",    m_genMD5=false);                // Generate MD5 checksum
   declareProperty("CloseTimeout",   m_closeTMO=0);                  // Timeout before really closing the file
   declareProperty("DataType",       m_dataType=MDFIO::MDF_RECORDS); // Input data type
-	declareProperty("BankLocation",		m_bankLocation=RawEventLocation::Default);  // Location of the banks in the TES
-  declareProperty("DataManager",    m_ioMgrName="IODataManager");   // Name of IO manager service
+  declareProperty("BankLocation",   m_bankLocation=RawEventLocation::Default);  // Location of the banks in the TES
+  declareProperty("DataManager",    m_ioMgrName="Gaudi::IODataManager/IODataManager");   // Name of IO manager service
 }
 
 /// Initialize the algorithm.

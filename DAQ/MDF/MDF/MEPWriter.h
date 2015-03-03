@@ -1,11 +1,11 @@
-// $Header: /afs/cern.ch/project/cvs/reps/lhcb/DAQ/MDF/MDF/MEPWriter.h,v 1.3 2006-01-12 19:09:33 frankb Exp $
-//	====================================================================
+// $Header: /afs/cern.ch/project/cvs/reps/lhcb/DAQ/MDF/MDF/MEPWriter.h,v 1.5 2008-02-05 16:44:18 frankb Exp $
+//  ====================================================================
 //  MEPWriter.h
-//	--------------------------------------------------------------------
+//  --------------------------------------------------------------------
 //
-//	Author    : Markus Frank
+//  Author    : Markus Frank
 //
-//	====================================================================
+//  ====================================================================
 #ifndef MEP_MEPWRITER_H
 #define MEP_MEPWRITER_H
 
@@ -30,9 +30,15 @@ namespace LHCb    {
 
   private:
     typedef std::map<unsigned int, RawEvent*> Events;
+    /// Property: packing factor for merged MEPS
     int           m_packingFactor;
+    /// Property: flag tio indicate if TAE events should be forced
+    bool          m_makeTAE;
+    /// Intermediate buffer to store raw events
     Events        m_events;
+    /// Event ID
     unsigned int  m_evID;
+
   public:
 
     /// Standard algorithm constructor

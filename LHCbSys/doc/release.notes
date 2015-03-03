@@ -5,6 +5,286 @@
 ! Purpose     : LHCb OO kernel packages
 !-----------------------------------------------------------------------------
 
+</PRE><H1><A NAME=v23r3>2008-02-05 LHCbSys v23r3</A></H1><PRE>
+This version uses Gaudi v19r7 and LCG_54. Fully compatible with DC06 data
+
+- New packages:      MDF_DCAP v1r0 - DCAP plugin to read MDF files 
+                     MDF_GFAL v1r0 - GFAL plugin to read MDF files 
+                     MDF_RFIO v1r0 - RFIO plugin to read MDF files 
+                     MDF_ROOT v1r0 - ROOT plugin to read MDF files 
+- Packages modified: GaudiConf v10r6, GaudiObjDesc v11r1, KernelSys v7r1,
+    LHCbKernel v8r1, LHCbMath v2r5, RichKernel v7r10, DDDB v1r3, DetSys v11r2,
+    DetDesc v18r3, DetDescCnv v4r5, DetDescSvc v1r16, MuonDet v7r2,
+    RichDet v10r9, STDet v3r9, DetCond v11r8, CondDBUI v2r7, DetDescChecks v4r5,
+    EventSys v24r0, DAQEvent v7r8, HltEvent v8r6, MCEvent v2r6, PhysEvent v11r5,
+    RecEvent v2r9, TrackEvent v4r10, MDF v3r2, DAQSys v3r8, CaloDAQ v4r3,
+    TfKernel v2r2, DaVinciKernel v6r10, STKernel v1r1, LHCbAlgs v2r14,
+    LoKiNumbers v7r1, RichRecBase v3r10, IOExample v2r4
+
+- In GaudiConf v10r6
+  . In DecodeRawEvent.opts and UnpackDigi.opts:
+    o Use AlgMap property to define the algorithms
+  . In DecodeRawEvent.opts:
+    o Add algorithm to decode ODIN
+    o Resurrect L0DU with correct naming (L0DUReport)
+  . Add Event/Link/Raw/Hcal/Digits to DigiContent.opts and MCDstContent.opts
+
+- In GaudiObjDesc v11r1
+  . New feature for enum generation: when activating the string<->enum conversion
+    so far the enum had to contain one value "Unknown". In case of several enums
+    in the same class this was not possible for each enum because of the scoping.
+    A new attribute "unknownValue" of the <enum> element can now be set to over-
+    write the value. The default is "Unknown" but can be set to any string, take
+    care to also provide an actual value of the enum with the string set in the 
+    attribute.
+
+- In LHCbKernel v8r1
+  . Fix derivatives in AlignTraj (forgot to zero three numbers!).
+  . Add PiecewiseTrajectory class
+  . Make number of RICHes an unsigned int.
+  . Fix doxygen comment and use std::sqrt in RichRadIntersection
+
+- In LHCbMath v2r5
+  . Split MatrixUtils.h into two files MatrixUtils.h and MatrixTransforms.h and
+    include functionality previously in MatrixUtils.h of Phys/VertexFit package 
+    See release notes for details of split.
+  . Add new function Gaudi::Math::mult for evaluation of v1^T*M*v2
+  . Add new file Kinematics.h to keep some pure mathematical functions useful
+    for kinematical calculations. Currently it contains the functions for 
+    evaluation of dispersions and sigmas  for mass and mass^2 and chi2 of mass:
+       *   - sigma2mass2   :   sigma^2(M^2)
+       *   - sigma2mass    :   sigma^2(M)  for M^2 > 0 
+       *   - sigmamass     :   sigma(M)    for M^2 > 0
+       *   - chi2mass      :   delta^2(M^2)/sigma^2(M^2) 
+  . Update(improve?) the doxygen comments for some other header files.
+
+- In RichKernel v7r10
+  . Add new tool interface to tools that implement Snell's Law for refraction
+  . Add missing initialisation for m_dataWord to RichGeomPhoton
+  . Extend RichGeomPhoton to include direction at emission point
+
+- In DDDB v1r3
+  . Change requirements to pick up SQLDDDB v4r*
+  . Add oracle dependency to allow access to Oracle DDDB
+  . Add lfc dependency to get credentials for Oracle DDDB access
+
+- In DetDesc v18r3
+  . New treatment of geometry overlaps:
+    o DetDesc/Compare.h: Comparison of floating numbers 
+    o IGeometryErrorSvc: Abstract interface for handling of geometry errors 
+    o IntersectionErrors: Helper utility to make a bridge between volumes and 
+                          geometry error handling service 
+    o DetDesc/VolumeIntersectionIntervals.h: Add new functions
+    o LAssembly.cpp, LVolume.cpp, LogVolBase.cpp: Make use of new functions 
+  . Add new functions to GlobalToLocalDelta.{h,cpp}
+    o Obtain a global off-nominal correction D_global on top of the current total
+      transformation of a IGeometryInfo or IDetectorElement (T_global) starting
+      from a correction D' calculated at the local level of that IGeometryInfo
+      or IDetectorElement
+    o Obtain the global "delta" transformation corresponding to the local "delta"
+      of an IDetectorElement or IGeometryInfo
+    o estimate "off-nominal" delta matrix at local level, starting from either
+      total position or "off-nominal" corrections in an arbitrary frame,
+      independent of the detector element hierarchy.
+  . In 3DTransformationFunctions.h add method taking any MathCore 3D rotation
+    and estimating the equivalent Euler 321 rotation parameters.
+  . Remove functionality now in MathCore, take advantage of latest syntax fixes
+
+- In DetDescCnv v4r5
+  . Modified XmlMixtureCnv to correctly set the name of the mixture from XML. 
+  . Changed the tag name for elements of maps inside conditions (even if it is
+    not used) to be consistent with the changes in SQLDDDB (>= v4r0). 
+
+- In DetDescSvc v1r16
+  . New treatment of geometry overlaps/errors in TransportSvc
+    o implement new interface DetDesc::IGeometryErrorSvc
+    o add new properties 
+       "Recover"  (boolean) -> to activate/deactivate the recovery of the 
+                          errors          (default  is true)
+       "Protocol" (boolean) -> to activate/deactivate the protocol of the  
+                          geomtery errors (default is "true")
+
+- In MuonDet v7r2
+  . Added four new methods to the DeMuonDetector class usefull for alignment 
+    purpose (changed DeMuonDetector and MuonChamberLayout)
+
+- In RichDet v10r9
+  . Changes for post-DC06 xml description, compatible with DC06
+    o New locations for detector elements. The paths are parameters
+      in DeRich1 and DeRich2, which can stiil be found in DeRichLocations.
+    o Individual QE per HPD (Rich::TabulatedProperty1D) from LHCBCOND (Tabulated 
+      Property). Warning from 4 HPDs (one per panel) if not found.
+    o One method for magnification in DeRichHPD, for both old and new way.
+  . Changes to how the DeRichHPD and DeRichHPDPanel objects deal with the
+    method DeRichHPDPanel::PDWindowPoint which calculates the intersection
+    with the HPDs
+    o Various fixes to correct a small disagreement between ray tracing results
+      and the full photon reconstruction.
+    o Clean up a little how the various transforms from DeRichHPD are accessed
+    o Add the method DeRichHPD::testKaptonShadowing which checks for 
+      intersections with the kapton shield
+    o Various other minor doxygen and code improvements
+  . Changes for composite (CMA) Rich1 spherical mirrors. The Rich1 mirrors
+    now have individual alignment conditions.
+  . Introduced user parameters in DeRich1/2 for the location of the 
+    mirror reflectivity
+
+- In STDet v3r9
+  . DeSTSector: final changes to allow use of dead strip conditions
+  . Add test on the version to allow DC06 backwards compatibility
+
+- In DetDescChecks v4r5
+  . Improved the error message of LoadDDDB in case of exceptions.
+  . Added new algorithm DetDesc::CheckOverlap 
+    See the <a href="http://indico.cern.ch/materialDisplay.py?contribId=5&materialId=slides&confId=10184">presentation at T-Rec meeting, 17.12.2007</a>
+
+- In EventSys v24r0
+  . Adapt copy_relax_rootmap pattern to new rootmap names in LCG_54
+
+- In DAQEvent v7r8
+  . Add bank types MuonFull, MuonError
+  . Added an enum in ODIN to define the meaning of the Trigger Type.
+  . Add new RawBankReadoutStatus ("NonUnique" when several banks with identical
+    sourceID in the same rawEvent)  
+  . Add new algorithm RawBankReadoutStatusMonitor : monitoring of ReadoutStatus
+  . RawBank.h : add new static method typeName(type) that returns the bankType
+    as string
+  . improve bankKiller
+
+- In HltEvent v8r6
+  . Used GOD-given conversion to string in HltEnums
+  . Makes HltNames and its python script obsolete. Removed.
+
+- In MCEvent v2r6
+  . Add new MCVertex type, RichHpdBackScat, for back-scattering in the RICH HPDs
+  . Additions to MCRichHit to store new HPD reflection background types in hit
+    history code
+  . Improve the MCRichHit fillStream method.
+  . Improve the MC history methods and flags in MCRichDigitHistoryCode
+  . Add addition member to MCRichOpticalPhoton to store impact point of photon
+    on the HPD Quartz Window.
+
+- In PhysEvent v11r5
+  . Particle.xml: Add the enum to store the chi2 of the mass-constrained fit
+
+- In RecEvent v2r9
+  . Added keyedContTypeDef = true to TwoProngVertex
+
+- In TrackEvent v4r10
+  . Make the Track(int key) constructor explicit
+
+- In MDF v3r0, v3r1, v3r2
+  . Remove the RFIO/DCAP,... plugins from MDF and make them separate packages.
+  . Add support for non-strict RFC URIs - similar to what ROOT supports.
+  . Add support for TAE events in the RawDataCnvSvc. The creation of leaves in
+    the TES is triggered by the content of the TAE meta bank TAEHeader.
+  . Add coding of TAE events in the MDF buffer, triggered by the value of the 
+    ODIN triggerType() = LHCb::ODIN::TimingTrigger or forced by the jobOption
+    forceTAE = true of MDFWriter. A pseudo-bank of type TAEHeader is added
+    as first bank in the buffer, with description of the various RawEvents found.
+  . Add function unpackTAEBuffer in RawEventHelpers to decode the TAE MDF block.
+  . Fix bug in RawDataCnvSvc introduced by processing TAE events
+  . Fix crucial bug (typo??) in detecting TAE events
+  . Fix bug in accessing IODataManager
+  . Add support for ROOT protocol as back up for any non-implemented protocols.
+  . Fix bug in MDF writer
+  . Implement retry for decompression if data space is insufficient.
+
+- In CaloDAQ v4r3
+  . Improve the calls to msgSvc
+  . Fix ifndef in ICALOL0DATAPROVIDER
+  . Change CalDigitsOnDemand.opts to use DataOnDemandSvc.AlgMap
+  . Minor change in CaloReadoutTool.cpp (better handling of ReadoutStatus)
+  . Add new status ("NonUnique") when several banks with identical sourceID in 
+    the same rawEvent  
+  . Add a protection against events pile-up in the same rawEvent
+    (actually, several banks with same sourceID)
+  . Fix unclear precedence to please windows compiler
+  . Add Hcal together with Ecal as default in CaloReCreateMCLinks.cpp
+
+- In DetCond v11r8
+  . Replace homemade linkopts with new Boost_linkopts_filesystem_mt
+  . Remove slc3 specific set, no longer supported in LCG_54
+  . Allow to use tags that are not global in CondDBAccessSvc.
+  . Added a service (COOLConfSvc/ICOOLConfSvc) dedicated to the instantiation and
+    configuration of COOL/CORAL. The options to configure COOL and CORAL have
+    been moved from CondDBAccessSvc to the new service. 
+  . Added the service CondDBLogger (implementation of ICondDBReader) that, if put
+    between a user and a provider of the ICondDBReader interface, stores in a
+    file all the requests that were made to the CondDBReader, with the time of
+    the request. The class allows to generate some history of the CondDB traffic
+    to be able to analyze and replay it afterward.
+  . Added the algorithm CondDBReplayAlg. It can read a file produced with
+    CondDBLogger to replay the requests to the database.
+  . Modified ICondDBReader and CondDBAccessSvc to allow the retrieval of objects
+    from the conditions database using the channel name
+  . Improved error messages in case of CORAL exceptions.
+
+- In CondDBUI v2r7
+  . Added the possibility to specify a connection string on the command line of
+    CondDBBrowser.py to open a database.
+  . Fixed a bug (introduced in v2r6) that prevents the addition of new conditions
+  . Fixed a bug preventing to open a database.
+  . Fixed a problem with local tags in dump_db_to_files.py.
+  . Added a the sub-module CondDBUI.Admin for functions needed for administrative
+    tasks. Currently it contains:
+    o check_addition_db_content:
+      checks if the database we are going to merge into another one contains
+      only files which are not yet there
+    o merge_and_tag:
+      insert the content of a database into another one (after calling
+      'check_addition_db_content') and apply a tag to the new files (move it if
+      it already exists)
+
+- In CaloUtils v7r7
+  . _setProperty was removed from CaloTracktool.h and CaloTrackTool.cpp
+  . New base class Calo2Dview.cpp (inherits from GaudiHistoAlg)
+    produces 2D display of Calorimeter
+  . requirements : import AIDA
+
+- In TfKernel v2r2
+  . Added hit preparation on demand to the VELO hit managers. Client code that
+    uses this feature needs to access the stations via the new 'NoPrep' methods
+    and take care of preparing the hits by calling prepareHits(Station*).
+    Code not using this feature is not affected.
+  . Add new values in HitBase Estatus enum, mainly for TT hits.
+  . added new member to OTHit which stores the RtRelation to be used to
+    convert drift times to drift radii and make sure it is used everywhere
+    (to have possibility to switch off using drift times in the pattern reco)
+
+- In DaVinciKernel v6r10
+  . Add interfaces IParticleTupleTool and IEventTupleTool for filling generic
+    nTuples
+  . Add interface IMassFit for mass-constrained fit.
+  . New method calcProjectedFlightDistance in IGeomDispCalculator
+  . src/Lib/DVAlgorithm.cpp
+    o Minor modification for dealing with Algorithm Context Service:
+      1) the property "RegisterForContexService" is setto be "true"
+      2) initialize/finalize and sysExecute methods are equipped with 
+         sentries/guards to register the algorithm for Algorithm ContextService
+      3) there is warning message "intialize" methods if the registration 
+         for context service  is disabled.
+    o Declare all tools as protected instead of private.
+
+- In STKernel v1r1
+  . Add STFun.h/.cpp [functions related to calculating interstrip fraction]
+
+- In LHCbAlgs v2r14
+  . Add createODIN algorithm, to create DAQ/ODIN object from ODIN RawBank
+  . AlgorithmCorrelations : Protect debug() and verbose()
+
+- In LoKiNumbers v7r1
+  . Fix for Windows to suppress the (auto)generation of "strange" functors
+
+- In RichRecBase v3r10
+  . Extend IRichExpectedTrackSignal interface with a few new methods
+  . Change the way to get detector elements. The paths are parameters
+    in DeRich1 and DeRich2, which can stiil be found in DeRichLocations.
+    Compatible with DC06 xml description.
+
+- In IOExample v2r4
+  . Replace PoolDbCacheSvc.Catalog by FileCatalog.Catalogs, for Gaudi v19r7
+
 </PRE><H1><A NAME=v23r2>2007-12-12 LHCbSys v23r2</A></H1><PRE>
 This version uses Gaudi v19r6 and LCG_53f. Fully compatible with DC06 data
 

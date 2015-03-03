@@ -4,6 +4,30 @@
 !Purpose: Define the classes delivered to the online farm by the DAQ
 !----------------------------------------------------------------------
 
+!================ DAQEvent v7r8 2008-01-30 ============================
+! 2008-01-30 Marco Clemencic
+ - Fixed compilation warnings in ODIN.xml on Win32.  
+
+! 2008-01-23 - Olivier Deschamps
+ - Add new algorithm RawBankReadoutStatusMonitor : monitoring of ReadoutStatus
+ - RawBank.h : add new static method typeName(type) that returns the bankType as string
+ - improve bankKiller
+
+! 2008-01-22 - Olivier Deschamps
+ - Add new RawBankReadoutStatus ("NonUnique" when several banks with identical
+   sourceID in the same rawEvent)  
+
+! 2007-12-14 - Markus Frank
+ - Add numbers to bank type enum.
+ - Add two new bank types on request of Giacomo Graziani, Andrea Salamon and Alessia Satta:
+                   MuonFull,        // 49
+                   MuonError,       // 50
+! 2007-12-13 - Olivier Callot
+ - Added an enum in ODIN to define the meaning of the Trigger Type.
+
+! 2007-12-12 Olivier Deschamps
+ - protect bankKiller against annoying printout 
+
 !================ DAQEvent v7r7 2007-12-12 ============================
 ! 2007-12-12 - Olivier Callot
  - add new bank type TAEHeader, in fact not a bank but a pseudo-one, put

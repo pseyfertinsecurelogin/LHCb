@@ -1,4 +1,4 @@
-// $Id: DaVinciKernelDict.h,v 1.8 2007-10-10 20:22:21 tskwarni Exp $
+// $Id: DaVinciKernelDict.h,v 1.10 2008-01-15 18:16:53 ibelyaev Exp $
 #ifndef DICT_DAVINCIKERNELDICT_H 
 #define DICT_DAVINCIKERNELDICT_H 1
 
@@ -24,6 +24,7 @@
 #include "Kernel/IDecayFinder.h"
 #include "Kernel/IDecodeSimpleDecayString.h"
 #include "Kernel/IDirectionFit.h"
+#include "Kernel/IEventTupleTool.h"
 #include "Kernel/IFilterCriteriaTESTool.h"
 #include "Kernel/IFilterCriterion.h"
 #include "Kernel/IFilterParticles.h"
@@ -31,6 +32,7 @@
 #include "Kernel/IJetMaker.h"
 #include "Kernel/ILifetimeFitter.h"
 #include "Kernel/IMassVertexFit.h"
+#include "Kernel/IMassFit.h"
 #include "Kernel/IOnOffline.h"
 #include "Kernel/IP2VVAngleCalculator.h"
 #include "Kernel/IP2VVPartAngleCalculator.h"
@@ -44,6 +46,7 @@
 #include "Kernel/IParticleReFitter.h"
 #include "Kernel/IParticleStuffer.h"
 #include "Kernel/IParticleTransporter.h"
+#include "Kernel/IParticleTupleTool.h"
 #include "Kernel/IPhysDesktop.h"
 #include "Kernel/IPlotTool.h"
 #include "Kernel/IProtoParticleFilter.h"

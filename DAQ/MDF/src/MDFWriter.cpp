@@ -1,12 +1,12 @@
-// $Header: /afs/cern.ch/project/cvs/reps/lhcb/DAQ/MDF/src/MDFWriter.cpp,v 1.10 2007-11-19 19:27:32 frankb Exp $
-//	====================================================================
+// $Id: MDFWriter.cpp,v 1.20 2008-02-05 16:44:18 frankb Exp $
+//  ====================================================================
 //  MDFWriter.cpp
-//	--------------------------------------------------------------------
+//  --------------------------------------------------------------------
 //
-//	Author    : Markus Frank
+//  Author    : Markus Frank
 //
-//	====================================================================
-#include "GaudiKernel/DeclareFactoryEntries.h"
+//  ====================================================================
+#include "GaudiKernel/AlgFactory.h"
 #include "GaudiKernel/SmartDataPtr.h"
 #include "GaudiKernel/MsgStream.h"
 #include "GaudiUtils/IIODataManager.h"
@@ -16,6 +16,7 @@
 #include "MDF/MDFHeader.h"
 #include "Event/RawEvent.h"
 #include "TMD5.h"
+#include <iomanip>
 
 DECLARE_NAMESPACE_ALGORITHM_FACTORY(LHCb,MDFWriter)
 
@@ -26,6 +27,7 @@ using namespace Gaudi;
 MDFWriter::MDFWriter(MDFIO::Writer_t typ, const std::string& nam, ISvcLocator* pSvc)
 : Algorithm(nam, pSvc), MDFIO(typ, nam)
 {
+  m_inputType = typ;
   construct();
 }
 
@@ -33,6 +35,7 @@ MDFWriter::MDFWriter(MDFIO::Writer_t typ, const std::string& nam, ISvcLocator* p
 MDFWriter::MDFWriter(const std::string& nam, ISvcLocator* pSvc)
 : Algorithm(nam, pSvc), MDFIO(MDFIO::MDF_RECORDS, nam)
 {
+  m_inputType = MDFIO::MDF_NONE;
   construct();
 }
 
@@ -40,15 +43,18 @@ MDFWriter::MDFWriter(const std::string& nam, ISvcLocator* pSvc)
 void MDFWriter::construct()   {
   m_ioMgr = 0;
   m_connection = 0;
+  m_bytesWritten = 0;
   m_md5 = new TMD5();
   m_data.reserve(1024*64);
   declareProperty("Connection",     m_connectParams="");
   declareProperty("Compress",       m_compress=2);        // File compression
   declareProperty("ChecksumType",   m_genChecksum=1);     // Generate checksum
-  declareProperty("GenerateMD5",    m_genMD5=false);      // Generate MD5 checksum
-  declareProperty("DataType",       m_dataType=MDFIO::MDF_NONE); // Input data type
-	declareProperty("BankLocation",		m_bankLocation=RawEventLocation::Default);  // Location of the banks in the TES
-  declareProperty("DataManager",    m_ioMgrName="IODataManager");
+  declareProperty("GenerateMD5",    m_genMD5=true);       // Generate MD5 checksum
+  declareProperty("DataType",       m_inputType);         // Input data type
+  declareProperty("MDFDataType",    m_dataType);          // Output data type
+  declareProperty("BankLocation",   m_bankLocation=RawEventLocation::Default);  // Location of the banks in the TES
+  declareProperty("DataManager",    m_ioMgrName="Gaudi::IODataManager/IODataManager");
+  declareProperty("ForceTAE",       m_forceTAE = false);
 }
 
 MDFWriter::~MDFWriter()   {
@@ -58,6 +64,8 @@ MDFWriter::~MDFWriter()   {
 /// Initialize
 StatusCode MDFWriter::initialize()   {
   MsgStream log(msgSvc(), name());
+  log << MSG::INFO << "Initialize MDFWriter" << endmsg;
+  
   std::string con = getConnection(m_connectParams);
   // Retrieve conversion service handling event iteration
   StatusCode status = service(m_ioMgrName, m_ioMgr);
@@ -67,6 +75,7 @@ StatusCode MDFWriter::initialize()   {
         << m_ioMgrName << endreq;
     return status;
   }
+  m_bytesWritten = 0;
   m_connection = new RawDataConnection(this,con);
   status = m_ioMgr->connectWrite(m_connection,IDataConnection::RECREATE,"MDF");
   if ( m_connection->isConnected() )
@@ -81,8 +90,8 @@ StatusCode MDFWriter::finalize() {
   if ( m_genMD5 )  {
     MsgStream log(msgSvc(), name());
     m_md5->Final();
-    log << MSG::INFO << "Output:" << m_connectParams
-      << " MD5 sum:" << m_md5->AsString() << endmsg;
+    log << MSG::INFO << "Size:" << std::setw(8) << m_bytesWritten << " Output:" << m_connectParams
+  << " MD5 sum:" << m_md5->AsString() << endmsg;
   }
   if ( m_ioMgr )  {
     m_ioMgr->disconnect(m_connection).ignore();
@@ -94,20 +103,20 @@ StatusCode MDFWriter::finalize() {
 }
 
 /// Allocate space for IO buffer
-std::pair<char*,int> MDFWriter::getDataSpace(void* const /* ioDesc */, size_t len)  {
+MDFIO::MDFDescriptor MDFWriter::getDataSpace(void* const /* ioDesc */, size_t len)  {
   m_data.reserve(len);
-  return std::pair<char*,int>(m_data.data(), m_data.size());
+  return MDFDescriptor(m_data.data(), m_data.size());
 }
 
 /// Execute procedure
 StatusCode MDFWriter::execute()    {
   setupMDFIO(msgSvc(),eventSvc());
   MsgStream log(msgSvc(), name());
-  switch(m_dataType) {
-    case MDF_NONE:
+  switch(m_inputType) {
+    case MDFIO::MDF_NONE:
       return commitRawBanks(m_compress, m_genChecksum, m_connection, m_bankLocation);
-    case MDF_BANKS:
-    case MDF_RECORDS:
+    case MDFIO::MDF_BANKS:
+    case MDFIO::MDF_RECORDS:
       return commitRawBuffer(m_dataType, m_compress, m_genChecksum, m_connection);
     default:
       break;
@@ -116,9 +125,11 @@ StatusCode MDFWriter::execute()    {
 }
 
 /// Write byte buffer to output stream
-StatusCode MDFWriter::writeBuffer(void* const /* ioDesc */, const void* data, size_t len)    {
-  StatusCode sc = m_ioMgr->write(m_connection, data, len);
+StatusCode MDFWriter::writeBuffer(void* const ioDesc, const void* data, size_t len)    {
+  Connection* c = (Connection*)ioDesc;
+  StatusCode sc = m_ioMgr->write(c, data, len);
   if ( sc.isSuccess() )  {
+    m_bytesWritten += len;
     if ( m_genMD5 )  {
       m_md5->Update((const unsigned char*)data, len);
     }

@@ -1,25 +1,45 @@
-// $Header: /afs/cern.ch/project/cvs/reps/lhcb/DAQ/MDF/src/RawEventHelpers.cpp,v 1.24 2007-11-07 15:53:07 frankb Exp $
-//	====================================================================
+// $Header: /afs/cern.ch/project/cvs/reps/lhcb/DAQ/MDF/src/RawEventHelpers.cpp,v 1.32 2008-02-05 16:44:18 frankb Exp $
+//  ====================================================================
 //  RawEventHelpers.cpp
-//	--------------------------------------------------------------------
+//  --------------------------------------------------------------------
 //
-//	Author    : Markus Frank
+//  Author    : Markus Frank
 //
-//	====================================================================
+//  ====================================================================
 #include "MDF/RawEventHelpers.h"
 #include "MDF/RawEventPrintout.h"
 #include "MDF/RawEventDescriptor.h"
+#include "MDF/OnlineRunInfo.h"
 #include "MDF/MDFHeader.h"
 #include "MDF/MEPEvent.h"
 #include "Event/RawEvent.h"
 #include <stdexcept>
 #include <iostream>
+
 #ifdef _WIN32
+#define NOATOM
+#define NOGDI
+#define NOGDICAPMASKS
+#define NOMETAFILE
+#define NOMINMAX
+#define NOMSG
+#define NOOPENFILE
+#define NORASTEROPS
+#define NOSCROLL
+#define NOSOUND
+#define NOSYSMETRICS
+#define NOTEXTMETRIC
+#define NOWH
+#define NOCOMM
+#define NOKANJI
+#define NOCRYPT
+#define NOMCX
 #include <winsock.h>
 #define LITTLE_ENDIAN
 #else
 #include <netinet/in.h>
 #endif
+#include "Event/ODIN.h"
 
 using LHCb::RawEvent;
 using LHCb::RawBank;
@@ -351,6 +371,25 @@ size_t LHCb::rawEventLength(const std::vector<RawBank*>& banks)    {
   return len;
 }
 
+/// Determine length of the sequential buffer from RawEvent object
+size_t LHCb::rawEventLengthTAE(const std::vector<RawBank*>& banks)    {
+  size_t len = 0;
+  for(std::vector<RawBank*>::const_iterator j=banks.begin(); j != banks.end(); ++j)  {
+    if ( !((*j)->type() == RawBank::DAQ && (*j)->version() == DAQ_STATUS_BANK) )
+      len += (*j)->totalSize();
+  }
+  return len;
+}
+/// Determine length of the sequential buffer from RawEvent object
+size_t LHCb::rawEventLengthTAE(const RawEvent* evt)    {
+  size_t i, len;
+  RawEvent* raw = const_cast<RawEvent*>(evt);
+  for(len=0, i=RawBank::L0Calo; i<RawBank::LastType; ++i)  {
+    len += rawEventLengthTAE(raw->banks(RawBank::BankType(i)));
+  }
+  return len;
+}
+
 /// Determine number of banks from rawEvent object
 size_t LHCb::numberOfBanks(const RawEvent* evt)   {
   size_t count = 0;
@@ -557,7 +596,8 @@ StatusCode LHCb::encodeRawBanks(const RawEvent* evt, char* const data, size_t si
 }
 
 /// Copy RawEvent data from bank vectors to sequential buffer
-StatusCode LHCb::encodeRawBanks(const std::vector<RawBank*>& banks, char* const data, size_t size, bool skip_hdr_bank, size_t* length) {
+StatusCode LHCb::encodeRawBanks(const std::vector<RawBank*>& banks, char* const data, 
+                                size_t size, bool skip_hdr_bank, size_t* length) {
   typedef std::vector<RawBank*> _BankV;
   size_t len = 0;
   for(_BankV::const_iterator j=banks.begin(); j != banks.end(); ++j)  {
@@ -846,4 +886,147 @@ StatusCode LHCb::readMEPrecord(StreamDescriptor& dsc, const StreamDescriptor::Ac
     }
   }
   return StatusCode::FAILURE;
+}
+
+/// Return vector of MEP sub-event names
+std::vector<std::string> LHCb::buffersMEP(const char* start) {
+  std::vector<std::string> result;
+  MEPEvent* me = (MEPEvent*)start;
+  MEPEvent::Fragment* f = me->first();
+  int num_subevt = f->packing();
+  for(int i=-((num_subevt-1)/2), n=0; n<num_subevt; ++n,++i)
+    result.push_back(rootFromBxOffset(i));
+  return result;
+}
+
+/// Unpacks the buffer given by the start and end pointers, and return a vector of Raw Events pointers
+std::vector<std::pair<std::string,LHCb::RawEvent*> > LHCb::unpackTAEBuffer( const char* start, const char* end ) {
+  std::vector<std::pair<std::string,LHCb::RawEvent*> > result;
+  RawBank* b = (RawBank*)start;            // Get the first bank in the buffer
+  if ( b->type() != RawBank::TAEHeader ) { // Is it the TAE bank?
+    RawEvent* full = new RawEvent();       // No: This is a single RawEvent, unpack it
+    decodeRawBanks( start, end, full );
+    std::pair<std::string,LHCb::RawEvent*> alone( "", full );
+    result.push_back( alone );
+    return result;
+  }
+  int nBlocks = b->size()/sizeof(int)/3;  // The TAE bank is a vector of triplets
+  int* block  = (int*)start;
+  block += 2;                             // skip bank header
+  start += b->totalSize();                // skip TAE bank
+  for ( int nbl = 0; nBlocks > nbl; ++nbl ) {
+    int nBx = *block++;
+    int off = *block++;
+    int len = *block++;
+    const char* myBeg = start+off;
+    const char* myEnd = myBeg + len;
+    RawEvent* evt = new RawEvent();
+    decodeRawBanks( myBeg, myEnd, evt );
+    result.push_back(std::make_pair(rootFromBxOffset(nBx),evt));
+  }
+  return result;
+}
+
+/// Access to the TAE bank (if present)
+RawBank* LHCb::getTAEBank(const char* start) {
+  RawBank* b = (RawBank*)start;              // Get the first bank in the buffer
+  if ( b->type() == RawBank::TAEHeader ) {   // Is it the TAE bank?
+    return b;
+  }
+  if ( b->type() == RawBank::DAQ ) {         // Is it the TAE bank?
+    start += b->totalSize();                 //
+    b = (RawBank*)start;                     // If the first bank is a MDF (DAQ) bank,
+  }                                          // then the second bank must be the TAE header
+  if ( b->type() == RawBank::TAEHeader ) {   // Is it the TAE bank?
+    return b;
+  }
+  return 0;
+}
+
+/// Return vector of TAE event names
+std::vector<std::string> LHCb::buffersTAE(const char* start) {
+  std::vector<std::string> result;
+  RawBank* b = getTAEBank(start);
+  if ( b && b->type() == RawBank::TAEHeader ) {   // Is it the TAE bank?
+    int nBlocks = b->size()/sizeof(int)/3;   // The TAE bank is a vector of triplets
+    const int* block  = b->begin<int>();
+    for(int nbl = 0; nBlocks > nbl; ++nbl, block +=3)
+      result.push_back(rootFromBxOffset(*block));
+  }
+  return result;
+}
+
+/// Returns the prefix on TES according to bx number, - is previous, + is next
+std::string LHCb::rootFromBxOffset(int bxOffset) {
+  if ( 0 == bxOffset )
+    return "/Event";
+  else if ( 0 < bxOffset )
+    return std::string("/Event/Next") + char('0'+bxOffset);
+  return std::string("/Event/Prev") + char('0'-bxOffset);
+}
+
+/// Returns the offset of the TAE with respect to the central bx
+int LHCb::bxOffsetTAE(const std::string& root) {
+  size_t idx = std::string::npos;
+  if ( (idx=root.find("/Prev")) != std::string::npos )
+    return -(root[idx+5]-'0');
+  else if ( (idx=root.find("/Next")) != std::string::npos )
+    return root[idx+5]-'0';
+  return 0;
+}
+
+/// Unpacks the buffer given by the start and end pointers, and return a vector of Raw Events pointers
+StatusCode LHCb::unpackTAE(const char* start, const char* end, const std::string& loc, RawEvent* raw) {
+  RawBank* b = getTAEBank(start);
+  if ( b ) {   // Is it the TAE bank?
+    int bx = bxOffsetTAE(loc);
+    if ( -7 <= bx && 7 >= bx )  {
+      int nBlocks = b->size()/sizeof(int)/3;   // The TAE bank is a vector of triplets
+      const int* block  = b->begin<int>();     // skip bank header
+      start = ((char*)b) + b->totalSize();     // skip TAE bank
+      for(int nbl = 0; nBlocks > nbl; ++nbl, block +=3 ) {
+        if ( *block == bx )  {
+          int off = *(++block);
+          int len = *(++block);
+          return decodeRawBanks(start+off, start+off+len,raw);
+        }
+      }
+    }
+    return StatusCode::FAILURE;
+  }
+  return decodeRawBanks(start,end,raw);
+}
+
+/// Unpacks the buffer given by the start and end pointers, and fill the rawevent structure
+StatusCode LHCb::unpackTAE(const MDFDescriptor& data, const std::string& loc, RawEvent* raw)  {
+  return unpackTAE(data.first,data.first+data.second,loc,raw);
+}
+
+/// Force the event type in ODIN to be a TAE event
+StatusCode LHCb::change2TAEEvent(RawEvent* raw)  {
+  StatusCode sc = StatusCode::FAILURE;
+  typedef std::vector<RawBank*> _V;
+  if ( raw ) {
+    const _V& oBnks = raw->banks(RawBank::ODIN);
+    for(_V::const_iterator i=oBnks.begin(); i != oBnks.end(); ++i)  {
+      (*i)->begin<OnlineRunInfo>()->triggerType = ODIN::TimingTrigger;
+      sc = StatusCode::SUCCESS;
+    }
+  }
+  return sc;
+}
+
+/// Check if a given RawEvent structure belongs to a TAE event
+bool LHCb::isTAERawEvent(RawEvent* raw)  {
+  typedef std::vector<RawBank*> _V;
+  if ( raw ) {
+    //== Check ODIN event type to see if this is TAE
+    const _V& oBnks = raw->banks(RawBank::ODIN);
+    for(_V::const_iterator i=oBnks.begin(); i != oBnks.end(); ++i)  {
+      if ( (*i)->begin<OnlineRunInfo>()->triggerType == ODIN::TimingTrigger ) {
+        return true;
+      }
+    }
+  }
+  return false;
 }

@@ -1,4 +1,4 @@
-// $Id: CondDBAccessSvc.h,v 1.31 2007-11-29 15:52:38 marcocle Exp $
+// $Id: CondDBAccessSvc.h,v 1.33 2008-01-26 15:47:46 marcocle Exp $
 #ifndef COMPONENT_CONDDBACCESSSVC_H 
 #define COMPONENT_CONDDBACCESSSVC_H 1
 
@@ -23,6 +23,7 @@ template <class TYPE> class SvcFactory;
 
 class CondDBCache;
 class IRndmGenSvc;
+class ICOOLConfSvc;
 
 namespace cool {
   class Application;
@@ -63,6 +64,13 @@ public:
   virtual StatusCode getObject (const std::string &path, const Gaudi::Time &when,
                                 DataPtr &data,
                                 std::string &descr, Gaudi::Time &since, Gaudi::Time &until, cool::ChannelId channel = 0);
+
+  /// Try to retrieve an object from the Condition DataBase. If path points to a FolderSet,
+  /// channel and when are ignored and data is set ot NULL.
+  /// (Version with alphanumeric channel id)
+  virtual StatusCode getObject (const std::string &path, const Gaudi::Time &when,
+                                DataPtr &data,
+                                std::string &descr, Gaudi::Time &since, Gaudi::Time &until, const std::string &channel);
 
   /// Retrieve the names of the children nodes of a FolderSet.
   virtual StatusCode getChildNodes (const std::string &path, std::vector<std::string> &node_names);
@@ -197,6 +205,9 @@ private:
   /// Property CondDBAccessSvc.CheckTAGTimeOut: Seconds to sleep between one trial and the following (default = 60).
   int m_checkTagTimeOut;
 
+  /// Pointer to the service initializing COOL/CORAL.
+  ICOOLConfSvc *m_coolConfSvc;
+  
   /// Shared pointer to the COOL database instance
   cool::IDatabasePtr m_db;
 
@@ -219,7 +230,22 @@ private:
   /// Connect to the COOL database. It sets 'm_db'.
   StatusCode i_openConnection();
 
-  /// Connect to the COOL database. It sets 'm_db'.
+  /// Internal method to retrieve an object.
+  StatusCode CondDBAccessSvc::i_getObject(const std::string &path, const Gaudi::Time &when,
+                                          DataPtr &data,
+                                          std::string &descr, Gaudi::Time &since, Gaudi::Time &until,
+                                          bool use_numeric_chid,
+                                          cool::ChannelId channel, const std::string &channelstr);
+
+  /// Internal method to retrieve an object from the database.
+  /// If the cache is activated, the result is copied there.
+  StatusCode CondDBAccessSvc::i_getObjectFromDB(const std::string &path, const cool::ValidityKey &when,
+                                                DataPtr &data,
+                                                std::string &descr, cool::ValidityKey &since, cool::ValidityKey &until,
+                                                bool use_numeric_chid,
+                                                cool::ChannelId channel, const std::string &channelstr);
+
+    /// Connect to the COOL database. It sets 'm_db'.
   StatusCode i_validateDefaultTag();
 
   /// Check if the TAG set exists in the DB.
@@ -247,27 +273,6 @@ private:
 
   /// AttributeListSpecification used to sore XML strings
   static std::auto_ptr<cool::RecordSpecification> s_XMLstorageSpec;
-
-  /// Pointer to a shared instance of the COOL Application
-  static std::auto_ptr<cool::Application> s_coolApplication;
-
-  /// Flag to turn off/on the CORAL LFCReplicaService (option UseLFCReplicaSvc, default = false).
-  /// Setting this option works only if it is set for the first CondDBAccessSvc initialized
-  /// because of a "feature" of CORAL.
-  bool m_useLFCReplicaSvc;
-
-  /// Flag to turn off/on the CORAL Automatinc connection clean up
-  /// (option EnableCoralConnectionCleanUp, default = false).
-  /// Setting this option works only if it is set for the first CondDBAccessSvc initialized.
-  bool m_coralConnCleanUp;
-  
-  /// Time between two connection trials (in seconds).
-  /// Passed to CORAL when loaded.
-  int m_retrialPeriod;
-   
-  /// How long to keep retrying before giving up (in seconds).
-  /// Passed to CORAL when loaded.
-  int m_retrialTimeOut;
 
   // -------------------------------------
   // ---------- Time Out Thread ----------

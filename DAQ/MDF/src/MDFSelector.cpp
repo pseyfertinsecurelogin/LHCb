@@ -1,11 +1,11 @@
-// $Id: MDFSelector.cpp,v 1.12 2007-11-19 19:27:32 frankb Exp $
+// $Id: MDFSelector.cpp,v 1.16 2008-02-05 16:44:18 frankb Exp $
 //====================================================================
-//	MDFSelector.cpp
+//  MDFSelector.cpp
 //--------------------------------------------------------------------
 //
-//	Package    : MDF
+//  Package    : MDF
 //
-//	Author     : M.Frank
+//  Author     : M.Frank
 //====================================================================
 
 // Framework include files
@@ -39,12 +39,12 @@ namespace LHCb  {
     /// Standard destructor 
     virtual ~MDFContext()                                    { }
     /// Allocate buffer space for reading data
-    std::pair<char*,int> getDataSpace(void* const /* ioDesc */, size_t len)  {
+    MDFDescriptor getDataSpace(void* const /* ioDesc */, size_t len)  {
       m_buff.reserve(len);
-      return std::pair<char*,int>(m_buff.data(),m_buff.size());
+      return MDFDescriptor(m_buff.data(),m_buff.size());
     }
     /// Read raw byte buffer from input stream
-    StatusCode readBuffer(void* const ioDesc, void* const data, size_t len)  {
+    StatusCode readBuffer(void* const /* ioDesc */, void* const data, size_t len)  {
       return m_ioMgr->read(m_connection, data, len);
     }
     /// Receive event and update communication structure
@@ -108,5 +108,5 @@ namespace LHCb  {
   };
 }
 
-#include "GaudiKernel/DeclareFactoryEntries.h"
+#include "GaudiKernel/SvcFactory.h"
 DECLARE_NAMESPACE_SERVICE_FACTORY(LHCb,MDFSelector);

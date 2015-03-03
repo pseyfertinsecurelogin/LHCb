@@ -1,14 +1,13 @@
-// $Id: DeMuonDetector.h,v 1.24 2007-12-03 08:47:15 cattanem Exp $
+// $Id: DeMuonDetector.h,v 1.26 2007-12-21 08:09:40 cattanem Exp $
 // ============================================================================
 #ifndef MUONDET_DEMUONDETECTOR_H
 #define MUONDET_DEMUONDETECTOR_H 1
 
-//Det Desc
+//DetDesc
 #include "DetDesc/DetectorElement.h"
 #include "DetDesc/SolidBox.h"
-// Not needed here but used by many algorithms
 
-//Gaudi
+//LHCbKernel
 #include "Kernel/Packer.h"
 
 //Muon Detector
@@ -256,6 +255,20 @@ public:
   unsigned int getCardiacORY(const int par, const unsigned int readoutType){
     return m_phCardiacORNY[readoutType][par];
   };
+
+  //Returns the station (as DetectorElement pointer) identified by MuonTileID
+  IDetectorElement* Tile2Station(const LHCb::MuonTileID aTile);
+  
+  // Return the chambers (as vector of DeMuonChamber pointer) from the MuonTileID
+  std::vector<DeMuonChamber*> Tile2Chamber(const LHCb::MuonTileID aTile);
+
+  //Returns the station (as DetectorElement pointer) from a Hit 
+  IDetectorElement* DeMuonDetector::Hit2Station(const Gaudi::XYZPoint myPoint);
+  
+  //Returns the chamber (as DetectorElement pointer) from a Hit 
+  DeMuonChamber* DeMuonDetector::Hit2Chamber(const Gaudi::XYZPoint myPoint);
+
+
 // unsigned int getReadoutType(int station, int region,MuonLayout lay);  
 // MuonODEBoard* getODEContainingTile(LHCb::MuonTileID digit);  
 // MuonL1Board* getL1ContainingTile(LHCb::MuonTileID digit);

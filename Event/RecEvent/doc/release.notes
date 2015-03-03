@@ -1,9 +1,17 @@
 !-----------------------------------------------------------------------------
-! $Id: release.notes,v 1.79 2007-12-03 15:56:13 cattanem Exp $
+! $Id: release.notes,v 1.82 2008-01-16 07:20:51 cattanem Exp $
 ! Package     : Event/RecEvent
 ! Responsible : Marco Cattaneo
 ! Purpose     : LHCb Event model. Reconstruction classes (Brunel output) 
 !-----------------------------------------------------------------------------
+
+!========================= RecEvent v2r9 2008-01-16 ==========================
+! 2008-01-16 - Marco Cattaneo
+ - In TwoProngVertex.xml, include LHCbMath/MatrixTransforms.h to adapt to latest
+   changes
+
+! 2007-12-19 - Patrick Koppenburg for Jaap Panman
+ - Added keyedContTypeDef = true to TwoProngVertex
 
 !========================= RecEvent v2r8 2007-12-03 ==========================
 ! 2007-12-03 Wouter Hulsbergen

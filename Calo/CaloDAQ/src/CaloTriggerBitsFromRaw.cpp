@@ -1,4 +1,4 @@
-// $Id: CaloTriggerBitsFromRaw.cpp,v 1.19 2007-12-11 21:10:56 odescham Exp $
+// $Id: CaloTriggerBitsFromRaw.cpp,v 1.21 2008-01-10 13:56:13 odescham Exp $
 // Include files
 
 // from Gaudi
@@ -119,8 +119,13 @@ LHCb::Calo::PrsSpdFiredCells& CaloTriggerBitsFromRaw::prsSpdCells (int source ) 
       sourceID       = (*itB)->sourceID();
       if( source >= 0 && source != sourceID )continue;
       found = true;
+      if(checkSrc( sourceID ))continue;
       decoded = getData ( *itB );
-      if( !decoded )error() << " Error when decoding bank " << sourceID  << " -> incomplete data - May be corrupted" <<endreq;
+      if( !decoded ){
+        std::stringstream s("");
+        s<< sourceID;
+        Error("Error when decoding bank " + s.str()   + " -> incomplete data - May be corrupted").ignore();
+      }
     } 
   }
   if( !found ){
@@ -185,8 +190,8 @@ bool CaloTriggerBitsFromRaw::getData(  LHCb::RawBank* bank ) {
  
 
           //event dump
-          if ( msgLevel( MSG::DEBUG) ) {
-            debug() << " |  SourceID : " << sourceID
+          if ( msgLevel( MSG::VERBOSE) ) {
+            verbose() << " |  SourceID : " << sourceID
                     << " |  FeBoard : " << m_calo->cardNumber(id)
                     << " |  CaloCell " << id
                     << " |  valid ? " << m_calo->valid(id)
@@ -207,12 +212,12 @@ bool CaloTriggerBitsFromRaw::getData(  LHCb::RawBank* bank ) {
 
         //event dump
         LHCb::CaloCellID prsId( spdId + 0x4000 );   // Prs
-        if ( msgLevel( MSG::DEBUG) ) {
-          debug() << " |  SourceID : " << sourceID
-                  << " |  FeBoard : " << m_calo->cardNumber( prsId )
-                  << " |  CaloCell " << prsId
-                  << " |  valid ? " << m_calo->valid( prsId )
-                  << " |  Prs/Spd  = " << (item&1) << "/" << (item&2) << endreq;
+        if ( msgLevel( MSG::VERBOSE) ) {
+          verbose() << " |  SourceID : " << sourceID
+                    << " |  FeBoard : " << m_calo->cardNumber( prsId )
+                    << " |  CaloCell " << prsId
+                    << " |  valid ? " << m_calo->valid( prsId )
+                    << " |  Prs/Spd  = " << (item&1) << "/" << (item&2) << endreq;
         }
         
         
@@ -253,13 +258,7 @@ bool CaloTriggerBitsFromRaw::getData(  LHCb::RawBank* bank ) {
       }
       int code  = (word >>14 ) & 0x1FF;
       int ctrl    = (word >> 23) &  0x1FF;
-      if ( msgLevel( MSG::DEBUG) )debug()<< "Control word :" << ctrl << endreq;
-      if( 0 != 0x1& ctrl || 0 != 0x20& ctrl || 0 != 0x40& ctrl){
-        warning() << "Tell1 error bits have been detected in data" << endreq;
-        if( 0 != 0x1  & ctrl)m_status.addStatus(sourceID,LHCb::RawBankReadoutStatus::Tell1Error );
-        if( 0 != 0x20 & ctrl)m_status.addStatus(sourceID,LHCb::RawBankReadoutStatus::Tell1Sync  );      
-        if( 0 != 0x40 & ctrl)m_status.addStatus(sourceID,LHCb::RawBankReadoutStatus::Tell1Link  );
-      }
+      checkCtrl(ctrl,sourceID);
       
       if ( msgLevel( MSG::DEBUG) )debug() << "Read FE-board ["<< code << "] linked to TELL1 bank " << sourceID << endreq;      
       // access chanID via condDB
@@ -298,13 +297,13 @@ bool CaloTriggerBitsFromRaw::getData(  LHCb::RawBank* bank ) {
 
 
         // event dump
-        if ( msgLevel( MSG::DEBUG) ) {
-          debug() << " |  SourceID : " << sourceID
-                  << " |  FeBoard : " << code 
-                  << " |  Channel : " << num
-                  << " |  CaloCell " << id
-                  << " |  valid ? " << m_calo->valid(id)
-                  << " |  Prs/Spd  = " << isPrs << "/" << isSpd << endreq;
+        if ( msgLevel( MSG::VERBOSE) ) {
+          verbose() << " |  SourceID : " << sourceID
+                    << " |  FeBoard : " << code 
+                    << " |  Channel : " << num
+                    << " |  CaloCell " << id
+                    << " |  valid ? " << m_calo->valid(id)
+                    << " |  Prs/Spd  = " << isPrs << "/" << isSpd << endreq;
         }
 
 

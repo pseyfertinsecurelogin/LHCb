@@ -9,7 +9,7 @@ versionNumber = '$Name: not supported by cvs2svn $'.split()[1]
 if versionNumber == "$":
     versionNumber = 'HEAD'
 
-versionId  = '$Id: guiwin.py,v 1.2 2007-12-07 09:13:38 marcocle Exp $'.split()
+versionId  = '$Id: guiwin.py,v 1.5 2008-01-07 17:45:05 marcocle Exp $'.split()
 if len(versionId) < 4:
     versionDate = 'unknown'
 else:
@@ -30,18 +30,15 @@ class myWindow(qt.QMainWindow):
     def __init__(self, bridge = None, parent = None, name = 'myWindow', flags = qt.Qt.WType_TopLevel):
         qt.QMainWindow.__init__(self, parent, name, flags)
 
-        self.bridge = bridge
-        if bridge:
-            self.connectionString = self.bridge.connectionString
-        else:
-            self.connectionString = ''
-
+        self.bridge = None
+        self.connectionString = ''
+        
         #---- Configurations ----#
         self.confFile = os.path.join(os.environ['HOME'],'.conddbbrowserrc')
         self.old_sessions = ["sqlite_file:$SQLITEDBPATH/DDDB.db/DDDB [r-]",
                              "sqlite_file:$SQLITEDBPATH/LHCBCOND.db/LHCBCOND [r-]",
                              ]
-        self.max_old_sessions = 5
+        self.max_old_sessions = 15
         self.external_editor = "emacs"
         if os.path.exists(self.confFile):
             locals = {}
@@ -129,6 +126,10 @@ class myWindow(qt.QMainWindow):
         self.connect(self.dbTree.tree, qt.SIGNAL("selectionChanged(QListViewItem *)"), self.resolveSelection)
         self.connect(self.dialogAddCondition.buttonWrite, qt.SIGNAL("clicked()"), self.writeCondition)
         #----------------------------#
+
+        if bridge:
+            self.setBridge(bridge)
+        
 
     ##################
     # Signal actions #
@@ -251,9 +252,11 @@ class myWindow(qt.QMainWindow):
         self.setCursor(qt.QCursor(qt.Qt.WaitCursor))
         try:
             if self.dialogConnectDB.exec_loop():
-                self.connectionString = self.dialogConnectDB.connectString
+                connectionString = self.dialogConnectDB.connectString
                 is_read_only = self.dialogConnectDB.buttonLocked.isOn()
-                bridge = CondDBUI.CondDB(self.connectionString, create_new_db = False, readOnly = is_read_only)
+                bridge = CondDBUI.CondDB(connectionString,
+                                         create_new_db = False,
+                                         readOnly = is_read_only)
                 self.setBridge(bridge)
         except Exception, details:
             self.unsetCursor()
@@ -396,14 +399,14 @@ class myWindow(qt.QMainWindow):
                 keyList = self.bridge.getFolderStorageKeys(item.fullName)
                 for k in keyList:
                     xmlDict[k] = xmlHeader
-                self.dialogAddCondition.reset(item.fullName, xmlDict, externalEditorCmd=self.externalEditorCmd)
+                self.dialogAddCondition.reset(item.fullName, xmlDict, externalEditorCmd = self.external_editor)
             elif isinstance(item, guitree.guiChannel):
                 row = self.dbTable.tableDB.currentRow()
                 tagName = str(self.dbTable.choseTagName.currentText())
                 keyList = self.bridge.getFolderStorageKeys(item.parent().fullName)
                 for k in keyList:
                     xmlDict[k] = item.getCondDBCache(tagName)[row]['payload'][k]
-                self.dialogAddCondition.reset(item.parent().fullName, xmlDict, item.ID, externalEditorCmd=self.externalEditorCmd)
+                self.dialogAddCondition.reset(item.parent().fullName, xmlDict, item.ID, externalEditorCmd = self.external_editor)
             else:
                 errorMsg = qt.QMessageBox('CondDBUI',
                                           "No COOL folder selected\nInsertion in the CondDB can only be done in existing COOL folder",

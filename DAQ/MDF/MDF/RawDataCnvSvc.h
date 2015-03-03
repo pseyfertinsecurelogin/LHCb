@@ -1,11 +1,11 @@
-// $Id: RawDataCnvSvc.h,v 1.9 2007-11-19 19:27:32 frankb Exp $
-//	====================================================================
+// $Id: RawDataCnvSvc.h,v 1.11 2008-02-05 16:44:18 frankb Exp $
+//  ====================================================================
 //  RawDataCnvSvc.h
-//	--------------------------------------------------------------------
+//  --------------------------------------------------------------------
 //
-//	Author    : Markus Frank
+//  Author    : Markus Frank
 //
-//	====================================================================
+//  ====================================================================
 #ifndef MDF_RAWDATACNVSVC_H
 #define MDF_RAWDATACNVSVC_H
 
@@ -59,8 +59,8 @@ namespace LHCb  {
     IDataManagerSvc*    m_dataMgr;
     /// Properties for time alignment events
     int                 m_evtsBefore, m_evtsAfter;
-		/// Location of the raw banks in the TES
-		std::string	        m_bankLocation;
+    /// Location of the raw banks in the TES
+    std::string          m_bankLocation;
     /// Reference to file manager service
     Gaudi::IIODataManager* m_ioMgr;
     /// Name of the IO manager service
@@ -79,12 +79,12 @@ namespace LHCb  {
     virtual StatusCode commitDescriptors(void* ioDesc);
 
     /// Read raw banks
-    virtual StatusCode readRawBanks(RawDataAddress* pAddr,std::pair<char*,int>& data);
+    virtual StatusCode readRawBanks(RawDataAddress* pAddr,MDFDescriptor& data);
 
     /// Allocate data space for output
-    virtual std::pair<char*,int> getDataSpace(void* const /* ioDesc */, size_t len)  {
+    virtual MDFDescriptor getDataSpace(void* const /* ioDesc */, size_t len)  {
       m_data.reserve(len);
-      return std::pair<char*,int>(m_data.data(), m_data.size());
+      return MDFDescriptor(m_data.data(), m_data.size());
     }
 
     /// Write data block to stream
@@ -94,10 +94,18 @@ namespace LHCb  {
     virtual StatusCode readBuffer(void* const ioDesc, void* const data, size_t len);
 
     /// Helper to install opaque address leaf
-    StatusCode regAddr(IRegistry* pReg,IOpaqueAddress* pA,CSTR path,const CLID& clid);
+    StatusCode regAddr(IRegistry* pReg,RawDataAddress* pA,CSTR path,const CLID& clid);
 
-    /// Pass raw banks to RawEvent identified by its path
-    StatusCode adoptRawBanks(CSTR path, const Banks& banks);
+    /// Access the raw data from MDF file
+    MDFDescriptor accessRawData(RawDataAddress* pAddRaw);
+
+    /// Decode a TAE event record from MDF banks
+    StatusCode registerRawAddresses(IRegistry* pReg,
+                                    RawDataAddress* pAddRaw,
+                                    const std::vector<std::string>& names);
+
+    /// Decode a MEP (Multi event packets) record
+    StatusCode unpackMEP(const MDFDescriptor& dat, const std::string& loc, RawEvent* raw);
 
   public:
     /** Initializing constructor
@@ -160,7 +168,7 @@ namespace LHCb  {
 
     /// Create a Generic address using explicit arguments to identify a single object.
     virtual StatusCode createAddress(long typ, const CLID& clid, const std::string* par, 
-                            const unsigned long* ip, IOpaqueAddress*& refpAddress);
+                                     const unsigned long* ip, IOpaqueAddress*& refpAddress);
   };
 }      // End namespace LHCb
 #endif // MDF_RAWDATACNVSVC_H
