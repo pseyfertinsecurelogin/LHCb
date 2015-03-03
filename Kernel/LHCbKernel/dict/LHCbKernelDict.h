@@ -1,4 +1,4 @@
-// $Id: LHCbKernelDict.h,v 1.10 2008-06-17 21:46:39 pkoppenb Exp $
+// $Id: LHCbKernelDict.h,v 1.13 2008-07-21 14:46:34 cattanem Exp $
 #ifndef DICT_LHCBKERNELDICT_H 
 #define DICT_LHCBKERNELDICT_H 1
 
@@ -25,17 +25,17 @@
 #include "Kernel/IBIntegrator.h"
 #include "Kernel/ICheckTool.h"
 #include "Kernel/ICondDBInfo.h"
-#include "Kernel/IDetElemFinder.h"
-#include "Kernel/IEventTimeDecoder.h"
 #include "Kernel/IEvtTypeSvc.h"
-#include "Kernel/IGenericTool.h"
 #include "Kernel/IInAcceptance.h"
+#include "Kernel/ILHCbMagnetSvc.h"
 #include "Kernel/IMCVeloFEType.h"
 #include "Kernel/INormalizeTool.h"
 #include "Kernel/ISiAmplifierResponse.h"
 #include "Kernel/ISTClusterPosition.h"
 #include "Kernel/ITrajPoca.h"
 #include "Kernel/IUsedLHCbID.h"
+#include "Kernel/TTNames.h"
+#include "Kernel/ITNames.h"
 
 // end include files
 

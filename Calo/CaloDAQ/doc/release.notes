@@ -4,6 +4,10 @@
 ! Purpose     : Convert Calo Digit and Trigger information to RawEvent banks.
 !-----------------------------------------------------------------------------
 
+!========================== CaloDAQ v4r7 2008-07-27 ==========================
+! 2008-07-23 - Olivier Deschamps
+ - CaloZSupAlg : protect against large negative noise in 2D 0-sup method (via ZsupNeighbor property)
+
 !========================== CaloDAQ v4r6 2008-06-30 ==========================
 ! 2008-06-13 - Olivier Deschamps
  - CaloZSupAlg : allow 2D suppression over calo area (as now 0-sup is software)

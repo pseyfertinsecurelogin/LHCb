@@ -1,4 +1,4 @@
-// $Id: STTell1Board.h,v 1.5 2008-07-15 11:21:03 mneedham Exp $
+// $Id: STTell1Board.h,v 1.7 2008-07-25 15:42:49 mneedham Exp $
 #ifndef _STTell1Board_H
 #define _STTell1Board_H 1
 
@@ -37,6 +37,9 @@ public:
   /// board indentifer
   STTell1ID boardID() const;
 
+  /// same board id
+  bool sameID(const STTell1ID& id) const;
+ 
   /// channel is in this board
   bool isInside(const LHCb::STChannelID aOfflineChan,
                 unsigned int& sectorIndex) const;
@@ -93,6 +96,10 @@ inline STTell1ID STTell1Board::boardID() const{
   return m_boardID;
 }
 
+inline bool STTell1Board::sameID(const STTell1ID& id) const{
+  return m_boardID == id ? true : false;
+}
+
 inline const std::vector<int>& STTell1Board::orientation() const{
   return m_orientation;
 }
@@ -102,7 +109,10 @@ inline const std::vector<LHCb::STChannelID>& STTell1Board::sectorIDs() const{
 }
 
 inline bool STTell1Board::validChannel(const unsigned int daqChan) const{
-  return (daqChan < m_nStripsPerHybrid*m_sectorsVector.size()); 
+  if (daqChan > m_nStripsPerHybrid*m_sectorsVector.size()) return false;
+  const int index = daqChan/m_nStripsPerHybrid; 
+  if (m_sectorsVector[index].sector() == 0 ) return false;
+  return true; 
 }
   
 #endif // _STTell1Board_H

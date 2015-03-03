@@ -4,6 +4,11 @@
 ! Package manager: Stefan Roiser
 !-----------------------------------------------------------------------------
 
+!======================== GaudiObjDesc v11r3 2008-07-27 ======================
+! 2008-08-24 - Hubert Degaudenzi
+ - fixed dependency problems in the fragments to allow parallel compilation
+   with "make -j"
+
 !======================== GaudiObjDesc v11r2p1 2008-06-30 ====================
 ! 2008-06-30 - Marco Cattaneo
  - Add dependency on GaudiPolicy to allow running of QMTest macros

@@ -1,7 +1,15 @@
-! $Id: release.notes,v 1.22 2008-07-16 21:20:36 cattanem Exp $
+! $Id: release.notes,v 1.25 2008-07-27 16:12:00 cattanem Exp $
 ! Package     : STKernel
 ! Responsible : M. Needham
 !----------------------------------------------------------------------------
+
+!====================== STKernel v1r7 2008-07-27 ============================
+! 2008-07-25 M Needham
+ - Bug fix in validChannel function [broken after STDAQ changes]
+
+! 2008-07-18 M Needham
+ - Add sameID function to STTell1Board
+ - Change printout from hex to dec in STell1Board
 
 !====================== STKernel v1r6 2008-07-16 ============================
 ! 2008-07-15 M. Needham

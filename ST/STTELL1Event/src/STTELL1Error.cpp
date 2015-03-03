@@ -135,7 +135,11 @@ unsigned int LHCb::STTELL1Error::findPCN(const unsigned int beetle) const{
 void LHCb::STTELL1Error::fillErrorInfo() {
 
   for (unsigned int iLink = 0; iLink < nBeetle ; ++iLink){
-    if ( OptLnkDisable() >> iLink & 1 ) {
+    if ( !correctPatterns() )
+      {
+        flagBadLinks(iLink,kCorruptedBank);
+      }
+    else if ( OptLnkDisable() >> iLink & 1 ) {
       flagBadLinks(iLink,kOptLinkDisabled);      
     }   
     else  if ( tlkLnkLoss() >> iLink & 1 ) {
@@ -162,6 +166,31 @@ void LHCb::STTELL1Error::fillErrorInfo() {
     } // if
   } // iOLink  
 
+}
+
+bool LHCb::STTELL1Error::correctPatterns() const
+{
+  bool isOK(true);
+
+  // testing word4 Error bank
+  isOK  *= ((m_word4 & 0xFF) == 0) * (((m_word4 & 0xFF00) / 0x100) == 0x8e);
+
+  // testing word10 Cluster bank
+  isOK *= ((m_word10 & 0xFF) == 1) * (((m_word10 & 0xFF00) / 0x100) == 0x8e);
+
+  // testing word11 ADC bank
+  isOK *= ((m_word11 & 0xFF) == 2) * (((m_word11 & 0xFF00) / 0x100) == 0x8e);
+
+  if (hasNZS())
+    // testing word12 NZS bank
+    isOK *= ((m_word12 & 0xFF) == 3) * (((m_word12 & 0xFF00) / 0x100) == 0x8e);
+  
+
+  if (hasPed())
+    // testing word13 Pedestal bank
+    isOK *= ((m_word13 & 0xFF) == 4) * (((m_word13 & 0xFF00) / 0x100) == 0x8e);
+
+  return isOK;
 }
 
 

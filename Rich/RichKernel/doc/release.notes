@@ -1,8 +1,15 @@
-! $Id: release.notes,v 1.185 2008-06-30 20:02:18 cattanem Exp $
+! $Id: release.notes,v 1.188 2008-07-27 16:07:10 cattanem Exp $
 ! Package     : Rich/RichKernel
 ! Responsible : Chris Jones
 ! Purpose     : General purpose RICH classes
 !-----------------------------------------------------------------------
+
+!====================== RichKernel v7r14 2008-07-27 ====================
+! 2008-07-25 - Chris Jones
+ - Add logical and hardware Level1 ID classes
+
+! 2008-07-24 - Antonis Papanestis
+ - Added HPDCopyNumber class in DAQDefinitions
 
 !====================== RichKernel v7r13 2008-06-30 ==================
 ! 2008-06-30 - Chris Jones

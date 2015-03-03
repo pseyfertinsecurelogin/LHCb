@@ -5,6 +5,18 @@
 !               processing stage accessing the MC event classes
 !-----------------------------------------------------------------------------
 
+!====================== SimComponents v2r11 2008-07-27 =======================
+! 2008-07-24 - Marco Cattaneo
+ - Improve protection against crazy vertex times in PackMCVertex
+
+! 2008-07-23 - Marco Cattaneo
+ - Add DumpHepMCDecay, DumpHepMC, DumpHepMCTree algorithms, previously in
+   Gen/Generators as DumpMCDecay, DumpMC, DumpHepMCTree
+
+! 2008-07-22 - Marco Cattaneo
+ - Fix ForcedBDecayTool.cpp for HepMC 2 (Gaudi v20r2)
+ - Fix a doxygen warning
+
 !====================== SimComponents v2r10p2 2008-07-17 =====================
 ! 2008-07-17 - Marco Cattaneo
  - Fix compiler warning in mclexer.icpp

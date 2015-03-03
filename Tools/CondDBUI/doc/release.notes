@@ -1,9 +1,29 @@
 ! =============================================================================
-! $Id: release.notes,v 1.86 2008-07-16 21:26:20 cattanem Exp $
+! $Id: release.notes,v 1.92 2008-07-30 12:07:29 marcocle Exp $
 ! =============================================================================
 ! package Tools/CondDBUI
 ! package manager : Marco Clemencic
 ! =============================================================================
+
+!===================== Tools/CondDBUI v2r12 2008-07-30 ========================
+! 2008-07-30 - Marco Clemencic
+ - Changed the name of the configurables for online partition from ONLINE-YYYYMM
+   to ONLINE_YYYYMM.
+
+! 2008-07-28 - Marco Clemencic
+ - Work around for a problem with the LCG interface package for sip (affecting
+   the distributed version of LCG 55a).
+ - Minor fixes in CondDBUI.Management (CondDBAdmin_Commit.py). 
+
+! 2008-07-23 - Marco Clemencic
+ - Added the connection string to the opened database in the status bar of
+   CondDBBrowser.py.
+ - Bug-fixes in CondDBAdmin_Commit.py and PyCoolDiff to support local tags. 
+
+! 2008-07-22 - Marco Clemencic
+ - Modified CondDBAdmin_MakeSnapshot.py to accept interval of validity as UTC.
+ - Allow ONLINE-YYYYMM as partition alias in CondDBBrowser.py and
+   CondDBAdmin_MakeSnapshot.py.
 
 !===================== Tools/CondDBUI v2r11 2008-07-16 ========================
 ! 2008-07-16 - Marco Clemencic

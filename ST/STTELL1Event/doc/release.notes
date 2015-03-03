@@ -1,7 +1,25 @@
-! $Id: release.notes,v 1.17 2008-07-16 21:22:10 cattanem Exp $
+! $Id: release.notes,v 1.23 2008-07-27 16:10:40 cattanem Exp $
 ! Package     : STTELL1Event
 ! Responsible : Mathias Knecht
 !-----------------------------------------------------------------------------
+
+!======================== STTELL1Event v1r4 2008-07-27 =======================
+! 2008-07-24 - Marco Cattaneo
+ - Remove xml/STTELL1BoardError.xml (duplicate def. of STTELL1BoardErrorBank)
+ - Change STELL1Error and STTELL1ErrorBank class IDs to 9012 and 9013 
+   respectively, to avoid duplicates
+ - Add god_dictionary pattern to generate a Reflex dictionary for these classes
+
+! 2008-07-23 - Marco Cattaneo
+ - Remove xml/gdd.dtd, this file is provided automatically by GaudiObjDesc
+ - Remove obsolete file Event/STProcessInfo.h
+
+! 2008-07-21 J Luisier
+ - Check of all reserved words imlemented
+
+! 2008-07-17 J Luisier
+ - Add PCN check methods in STTELL1EventInfo
+ - Add kCorruptedBank FailureMode in STTELL1Error
 
 !======================== STTELL1Event v1r3 2008-07-16 =======================
 ! 2008-07-15 - Marco Cattaneo

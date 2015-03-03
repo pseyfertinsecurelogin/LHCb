@@ -1,7 +1,7 @@
 """
 High level configuration tools for LHCb applications
 """
-__version__ = "$Id: Configuration.py,v 1.8 2008-07-03 14:36:06 cattanem Exp $"
+__version__ = "$Id: Configuration.py,v 1.10 2008-07-25 12:53:19 cattanem Exp $"
 __author__  = "Marco Cattaneo <Marco.Cattaneo@cern.ch>"
 
 from os import environ
@@ -14,8 +14,12 @@ class LHCbApp(ConfigurableUser):
        ,"skipEvents":             0  # events to skip
        ,"DDDBtag":    "DC06-default" # geometry   database tag
        ,"condDBtag":  "DC06-default" # conditions database tag
+       ,"useOracleCondDB":    False  # if False, use SQLDDDB instead
        ,"monitors"  :  []            # monitor actions
         }
+
+    def knownMonitors(self):
+        return ["SC", "FPE"]
 
     def getProp(self,name):
         if hasattr(self,name):
@@ -29,10 +33,6 @@ class LHCbApp(ConfigurableUser):
     def defineDB(self):
         condDBtag = self.getProp("condDBtag")
         DDDBtag   = self.getProp("DDDBtag")
-        if hasattr( MagneticFieldSvc(),"FieldMapFile" ):
-            mapFile = getattr( MagneticFieldSvc(),"FieldMapFile" )
-        else:
-            mapFile = "UNDEFINED"
             
         # If a default is requested, use it
         if DDDBtag.find("-default") != -1 or condDBtag.find("-default") != -1:
@@ -42,9 +42,6 @@ class LHCbApp(ConfigurableUser):
                 importOptions( "$DDDBROOT/options/LHCb-2008.py" )
             else :
                 raise RuntimeError("Invalid combination of default tags. CondDB: '%s' DDDB: '%s'"%(condDBtag,DDDBtag))
-            # reset the field map if it was already defined...
-            if mapFile.find("UNDEFINED") == -1:
-                MagneticFieldSvc().FieldMapFile = mapFile 
 
         # Otherwise, take the tag supplied
         if DDDBtag.find("-default") == -1:
@@ -53,10 +50,6 @@ class LHCbApp(ConfigurableUser):
             CondDBAccessSvc( "LHCBCOND", DefaultTAG = condDBtag )
             CondDBAccessSvc( "SIMCOND",  DefaultTAG = condDBtag )
             
-        #-- Default field map set by Fieldmap package
-        if not hasattr( MagneticFieldSvc(),"FieldMapFile" ):
-            MagneticFieldSvc().FieldMapFile = "$FIELDMAP"
-
     def defineEvents(self):
         # Set up transient store and data on demand service
         EventDataSvc( ForceLeaves        = True,
@@ -76,6 +69,9 @@ class LHCbApp(ConfigurableUser):
             ApplicationMgr().EvtMax = evtMax
 
     def defineMonitors(self):
+        for prop in self.getProp("monitors"):
+            if prop not in self.knownMonitors():
+                raise RuntimeError("Unknown monitor '%s'"%prop)
         if "SC" in self.getProp("monitors"):
             ApplicationMgr().StatusCodeCheck = True
         if "FPE" in self.getProp("monitors"):

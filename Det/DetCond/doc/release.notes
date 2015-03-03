@@ -1,9 +1,30 @@
-# $Id: release.notes,v 1.142 2008-07-16 19:46:44 cattanem Exp $
+# $Id: release.notes,v 1.148 2008-07-30 12:08:10 marcocle Exp $
 !-----------------------------------------------------------------------------
 ! Package     : Det/DetCond
 ! Responsible : Marco Clemencic
 ! Purpose     : Interface between LHCb and LGC/COOL project
 !-----------------------------------------------------------------------------
+
+!===================== Det/DetCond v12r2 2008-07-30 ==========================
+! 2008-07-30 - Marco Clemencic
+ - Changed the name of the configurables for online partition from ONLINE-YYYYMM
+   to ONLINE_YYYYMM.
+
+! 2008-07-28 - Marco Cattaneo 
+ - Fix windows compilation
+ 
+! 2008-07-23 - Marco Clemencic
+ - Changed the type of CondDBDispatcherSvc.Alternatives from list of strings
+   to map<string,string>.
+ - Added tests for DetCond.Configuration.
+ - Fixed a problem with conversion between 'double' and 'long long' in
+   CondDBTimeSwitchSvc.
+
+! 2008-07-21 - Marco Clemencic
+ - Added a function to DetCond.Configuration (configureOnlineSnapshots) to
+   prepare the configuration using monthly snapshots of the ONLINE partition.
+   The first and last snapshot used extend their validity to 0 and +infinity
+   respectively.
 
 !===================== Det/DetCond v12r1 2008-07-16 ==========================
 ! 2008-07-10 - Marco Clemencic

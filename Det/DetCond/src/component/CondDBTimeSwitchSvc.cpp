@@ -1,5 +1,11 @@
-// $Id: CondDBTimeSwitchSvc.cpp,v 1.1 2008-06-27 17:00:41 marcocle Exp $
+// $Id: CondDBTimeSwitchSvc.cpp,v 1.4 2008-07-28 15:30:21 cattanem Exp $
 // Include files
+
+#ifdef WIN32 // Hacks to compile on Windows...
+#define NOMSG
+#define NOGDI
+#define max max
+#endif
 
 #include "GaudiKernel/SvcFactory.h"
 #include "GaudiKernel/MsgStream.h"
@@ -13,6 +19,7 @@
 #include "CondDBTimeSwitchSvc.h"
 #include "CondDBCommon.h"
 
+
 // Factory implementation
 DECLARE_SERVICE_FACTORY(CondDBTimeSwitchSvc)
 
@@ -22,18 +29,52 @@ DECLARE_SERVICE_FACTORY(CondDBTimeSwitchSvc)
 // 2006-07-10 : Marco CLEMENCIC
 //-----------------------------------------------------------------------------
 
-namespace {
-  double convert(const Gaudi::Time &t){
-    return static_cast<double>(t.ns());
-  }
-  Gaudi::Time convert(const double &ns){
-    return Gaudi::Time(static_cast<Gaudi::Time::ValueType>(ns));
-  }
-}
-
 // This is needed otherwise the implementation of std::map does
 // not find operator<(Gaudi::Time,Gaudi::Time).
 namespace Gaudi { using ::operator<; }
+
+//=============================================================================
+//=============================================================================
+// Code copied from GaudiKernel Parsers, to have a parser for
+// pair<long long,long long>.
+// ============================================================================
+// Boost.Bind 
+// ============================================================================
+#include "boost/bind.hpp"
+// ============================================================================
+// Boost.Spirit
+// ============================================================================
+#include "boost/spirit.hpp"
+// ============================================================================
+// Boost.Spirit.Phoenix
+// ============================================================================
+#include "boost/spirit/phoenix.hpp"
+// ============================================================================
+// GaudiKernel
+// ============================================================================
+#include "GaudiKernel/Parsers.h"
+#include "GaudiKernel/Grammars.h"
+namespace {
+  using namespace std;
+  using namespace boost::spirit;
+  using namespace Gaudi::Parsers;
+  
+  /// the actual type of position iterator 
+  typedef boost::spirit::position_iterator<string::const_iterator> IteratorT;
+  
+  /// create the position iterator from the inptut 
+  inline IteratorT createIterator(const std::string& input){
+    return IteratorT(input.begin(), input.end());
+  }
+  StatusCode parse(pair<long long,long long>& result, const string& input){
+    return parse
+    ( createIterator(input), 
+        IteratorT(),
+        PairGrammar < IntGrammar<long long> , IntGrammar <long long> >()[var(result)=arg1],
+        SkipperGrammar()).full;
+  }
+}
+//=============================================================================
 
 //=============================================================================
 // Standard constructor, initializes variables
@@ -94,14 +135,14 @@ StatusCode CondDBTimeSwitchSvc::initialize(){
   
   // decoding the property "Readers"
   std::string reader_name, reader_siov;
-  std::pair<double,double> reader_iov;
+  std::pair<long long,long long> reader_iov;
   for (ReadersDeclatationsType::iterator rd = m_readersDeclatations.begin();
        rd != m_readersDeclatations.end(); ++rd){
     // first step of parsing (split "'name':value" -> "name","value")
     sc = Gaudi::Parsers::parse(reader_name,reader_siov,*rd);
     if (sc.isSuccess()) {
       // second step (only if first passed)
-      sc = Gaudi::Parsers::parse(reader_iov,reader_siov);
+      sc = ::parse(reader_iov,reader_siov);
     }
     if (sc.isFailure()){
       log << MSG::ERROR << "Cannot decode string '" << *rd << "'" << endmsg;
@@ -120,6 +161,14 @@ StatusCode CondDBTimeSwitchSvc::initialize(){
     // use "until" as key to be able to search with "upper_bound"
     ReaderInfo ri(reader_name, reader_iov.first, reader_iov.second);
     m_readers.insert(std::make_pair(ri.until,ri));
+  }
+  if (outputLevel() <= MSG::DEBUG) {
+    log << MSG::DEBUG << "Configured CondDBReaders:" << endmsg;
+    ReadersType::iterator r;
+    for (r = m_readers.begin(); r != m_readers.end(); ++r) {
+      log << MSG::DEBUG << " " << r->second.since << " - " << r->second.until
+          << ": " << r->second.name << endmsg;
+    }
   }
   // we need to reset it because it got corrupted during the
   // check for overlaps
@@ -155,7 +204,7 @@ CondDBTimeSwitchSvc::ReaderInfo *CondDBTimeSwitchSvc::readerFor(const Gaudi::Tim
 
   if (!quiet) log << MSG::VERBOSE << "Get CondDBReader for event time " << when << endmsg;
   
-  // TODO: (MCl) if the change service, we may clear the cache of the one
+  // TODO: (MCl) if we change service, we may clear the cache of the one
   //       that is not needed.
   if ((!m_latestReaderRequested) || !m_latestReaderRequested->isValidAt(when)){
     // service not valid: search for the correct one
@@ -297,6 +346,5 @@ void CondDBTimeSwitchSvc::defaultTags ( std::vector<LHCb::CondDBNameTagPair>& ta
     reader->second.reader(serviceLocator())->defaultTags(tags);
   }
 }
-
 
 //=============================================================================

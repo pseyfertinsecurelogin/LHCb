@@ -6,9 +6,35 @@ from Configurables import ( CondDBAccessSvc,
                             CondDBDispatcherSvc, 
                             CondDBLayeringSvc, 
                             CondDBCnvSvc,
+                            CondDBTimeSwitchSvc,
                             CondDBEntityResolver,
                             XmlCnvSvc,
                             XmlParserSvc )
+from GaudiConf.Configuration import LHCbApp
+
+# Helper function that should be moved to Gaudi 
+def getConfigurable(name, defaultType = None):
+    """Helper function to get a configurable with the given name regardless
+    for the type.
+    If defaultType can be a class derived from configurable or a string. If not
+    specified, the tool name is used as type."""
+    if name in allConfigurables:
+        return allConfigurables[name]
+    else:
+        # if the configurable is not found, we need to instantiate it
+        if defaultType is None:
+            # try to use the name of the configurable as default type
+            defaultType = name
+        if type(defaultType) is str:
+            # we need to convert from string to actual class
+            if defaultType in globals():
+                # We the type is defined in the global namespace
+                defaultType = globals()[defaultType]
+            else:
+                # otherwise we try to get it from the Configurables database
+                exec "from Configurables import %s" % defaultType
+                defaultType = locals()[defaultType]
+        return defaultType(name)
 
 ##########################################################################
 # Detector Transient Store Configuration
@@ -59,43 +85,46 @@ DetectorPersistencySvc( CnvServices = [ xmlCnvSvc ] )
 ApplicationMgr().ExtSvc += [ detDataSvc ]
 
 ##########################################################################
+# Technology dependent options
+##########################################################################
+if getConfigurable("LHCbApp").getProp("useOracleCondDB"):
+    importOptions("$SQLDDDBROOT/options/SQLDDDB-Oracle.py")
+else:   
+    importOptions("$SQLDDDBROOT/options/SQLDDDB.py")
+
+##########################################################################
 # Access to ConditionsDB
 ##########################################################################
 # DB partitions
-DDDB     = CondDBAccessSvc("DDDB")
-LHCBCOND = CondDBAccessSvc("LHCBCOND")
-ONLINE   = CondDBAccessSvc("ONLINE")
-SIMCOND  = CondDBAccessSvc("SIMCOND")
+
+DDDB     = getConfigurable("DDDB",     CondDBAccessSvc)
+LHCBCOND = getConfigurable("LHCBCOND", CondDBAccessSvc)
+ONLINE   = getConfigurable("ONLINE",   CondDBTimeSwitchSvc)
+SIMCOND  = getConfigurable("SIMCOND",  CondDBAccessSvc)
 
 # Standard configurations
-#  - Reconstruction / analisys
+#  - Reconstruction / analysis
 CondDBDispatcherSvc("MainCondDBReader",
                      MainAccessSvc = DDDB,
-                     Alternatives = [
-                       "/Conditions=" + LHCBCOND.getFullName(),
-                       # Not yet available
-                       # "/Conditions/Online=" + ONLINE.getFullName()
-                       ]
+                     Alternatives = {
+                       "/Conditions": LHCBCOND.getFullName(),
+                       "/Conditions/Online": ONLINE.getFullName()
+                       }
                     )
 
 #  - Simulation
 CondDBDispatcherSvc("SimulationCondDBReader",
                     MainAccessSvc = DDDB,
-                    Alternatives = [
-                      "/Conditions=" + SIMCOND.getFullName()
-                      ]
+                    Alternatives = {
+                      "/Conditions": SIMCOND.getFullName()
+                      }
                     )
 
 # Default is real data
-CondDBCnvSvc( CondDBReader = allConfigurables["MainCondDBReader"] )
+CondDBCnvSvc( CondDBReader = getConfigurable("MainCondDBReader") )
 
 # Use this for simulated data
-#CondDBCnvSvc( CondDBReader = allConfigurables["SimulationCondDBReader"] )
-
-##########################################################################
-# Technology dependent options
-##########################################################################
-importOptions("$SQLDDDBROOT/options/SQLDDDB.py")
+#CondDBCnvSvc( CondDBReader = getConfigurable("SimulationCondDBReader") )
 
 # Suppress pointless warning from COOL_2_5_0
 MessageSvc().setError.append("RelationalDatabase")
