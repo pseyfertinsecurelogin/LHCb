@@ -1,0 +1,59 @@
+!-----------------------------------------------------------------------------
+! Package     : Kernel/XMLSummaryKernel
+! Responsible : Rob Lambert
+! Purpose     : Holds code for writing an XML-based summary in Gaudi
+!-----------------------------------------------------------------------------
+
+!======================== XmlSummaryKernel v1r0 2009-10-16 ===================
+! 2009-10-07 - Rob Lambert
+ - Protection against the loss of the summary object
+ - added extra tests for unopenable files for writing
+
+! 2009-09-24 - Rob Lambert
+ - Updated to adopt the new FailOutputFile incident
+
+! 2009-09-23 - Rob Lambert
+ - Added a couple of info messages
+
+! 2009-09-19 - Marco Cottaneo
+ - Cleaned up configurable, removed LHCbKernel dependency
+ - Removed unnecessary XMLSummaryKernel_dll.cpp file
+ - Removed XMLSummaryKernel directory, component library includes should not
+   be public
+
+! 2009-09-18 - Rob Lambert
+ - Refined requirements file to avoid circular dependencies
+ - Wrote new configurable to manage the behaviour, XMLSummary()
+
+! 2009-09-17 - Rob Lambert
+ - Added minimal options file to run the summary
+
+! 2009-09-15 - Rob Lambert
+ - Added options file required for qmtest
+ - Added check for preproc GAUDI_FILE_INCIDENTS
+   this will allow backwards-compatibility with
+   Gaudi v21r4. Requires gaudi patch #3240
+ - Added tests for exceptions, failures, and exits
+
+! 2009-09-14 - Rob Lambert
+ - Added qmtests
+
+! 2009-09-11 - Rob Lambert
+ - Added support for obtaining the MemoryMaximum
+ - Tested with filling output OK!
+
+! 2009-09-11 - Rob Lambert
+ - First working version, ready for upload
+
+! 2009-09-04 - Rob Lambert
+ - XMLSummaryKernel:
+     Newly defined incidents added.
+     Relies on changes in Gaudi patch #3222
+
+! 2009-09-03 - Rob Lambert
+ - Separated into:
+     XMLSummaryBase => holds the xml and python
+     XMLSummaryKernel => holds the gaudi code
+
+! 2009-07-07 - Rob Lambert
+ - Created the package and began to populate

@@ -297,7 +297,20 @@ def decorateFunctionOps ( funcs , opers ) :
 
         
     # equality ==
-    if hasattr ( opers , '__eq__' ) :        
+    if hasattr ( opers , '__cpp_eq__' ) :        
+        def _eq_   (s,a) :
+            """
+            Construct the comparison predicate: fun==other
+            
+            >>> fun==2
+            >>> 4==fun
+            >>> fun==fun2
+            
+            Uses:\n
+            """
+            return opers.__cpp_eq__   (s,a)
+        _eq_   . __doc__  += opers.__cpp_eq__   . __doc__
+    elif hasattr ( opers , '__eq__' ) :        
         def _eq_   (s,a) :
             """
             Construct the comparison predicate: fun==other
@@ -313,7 +326,20 @@ def decorateFunctionOps ( funcs , opers ) :
         
         
     # operator != 
-    if hasattr ( opers , '__ne__' ) :        
+    if hasattr ( opers , '__cpp_ne__' ) :        
+        def _ne_   (s,a) :
+            """
+            Construct the comparison predicate: fun!=other
+            
+            >>> fun!=2
+            >>> 4!=fun
+            >>> fun!=fun2
+            
+            Uses:\n
+            """
+            return opers.__cpp_ne__   (s,a)
+        _ne_   . __doc__  += opers.__cpp_ne__   . __doc__
+    elif hasattr ( opers , '__ne__' ) :        
         def _ne_   (s,a) :
             """
             Construct the comparison predicate: fun!=other
@@ -1236,42 +1262,85 @@ def getAndDecoratePredicates ( name , base , calls , opers ) :
 # the special case of decoration of ID/ABSID functions:
 def decoratePID ( fun , opers ) :
     """ the special case of decoration of ID/ABSID functions """
-    # equality 
-    def _eq_ (s,a) :
-        """
-        Construct the predicate: id==other 
+    # equality
+
+    _eq_ = None
+    _ne_ = None
+    
+    if hasattr ( opers , '__cpp_eq__' ) : 
+        def _eq_ (s,a) :
+            """
+            Construct the predicate: id==other 
+            
+            >>> id == 11
+            >>> id == LHCbParticleID(11)
+            >>> id == 'e+'
+            >>> 11 == id
+            >>> LHCbParticleID(11) == id
+            >>> 'e+' == id
+            
+            Uses:\n
+            """
+            return opers.__cpp_eq__  (s,a)
+        _eq_   . __doc__  += opers.__cpp_eq__   . __doc__    
+    elif hasattr ( opers , '__eq__' ) :
+        def _eq_ (s,a) :
+            """
+            Construct the predicate: id==other 
+            
+            >>> id == 11
+            >>> id == LHCbParticleID(11)
+            >>> id == 'e+'
+            >>> 11 == id
+            >>> LHCbParticleID(11) == id
+            >>> 'e+' == id
+            
+            Uses:\n
+            """
+            return opers.__eq__  (s,a)        
+        _eq_   . __doc__  += opers.__eq__   . __doc__    
+    
+    # non-equality
+    if hasattr ( opers , '__cpp_ne__' ) : 
+        def _ne_ (s,a) :
+            """
+            Construct the predicate: id!=other 
+            
+            >>> id != 11
+            >>> id != LHCbParticleID(11)
+            >>> id != 'e+'
+            >>> 11 != id
+            >>> LHCbParticleID(11) != id
+            >>> 'e+' != id
+            
+            Uses:\n
+            """
+            return opers.__cpp_ne__  (s,a)
+        _ne_   . __doc__  += opers.__cpp_ne__   . __doc__    
+    elif hasattr ( opers , '__ne__' ) : 
+        def _ne_ (s,a) :
+            """
+            Construct the predicate: id!=other 
+            
+            >>> id != 11
+            >>> id != LHCbParticleID(11)
+            >>> id != 'e+'
+            >>> 11 != id
+            >>> LHCbParticleID(11) != id
+            >>> 'e+' != id
+            
+            Uses:\n
+            """
+            return opers.__ne__  (s,a)
+        _ne_   . __doc__  += opers.__ne__   . __doc__    
         
-        >>> id == 11
-        >>> id == LHCbParticleID(11)
-        >>> id == 'e+'
-        >>> 11 == id
-        >>> LHCbParticleID(11) == id
-        >>> 'e+' == id
-        
-        Uses:\n
-        """ 
-        return opers.__eq__  (s,a)
-    # non-equality 
-    def _ne_ (s,a) :
-        """
-        Construct the predicate: id!=other 
-        
-        >>> id != 11
-        >>> id != LHCbParticleID(11)
-        >>> id != 'e+'
-        >>> 11 != id
-        >>> LHCbParticleID(11) != id
-        >>> 'e+' != id
-        
-        Uses:\n
-        """ 
-        return opers.__ne__  (s,a)
-    # documentation
-    _eq_   . __doc__  += opers.__eq__   . __doc__
-    _ne_   . __doc__  += opers.__ne__   . __doc__
+    
     # decorate the function:
-    fun . __eq__ = _eq_
-    fun . __ne__ = _ne_
+    if not not _eq_ : fun . __eq__ = _eq_
+    if not not _ne_ : fun . __ne__ = _ne_
+    
+    fun . _pid_opers_ = opers
+    
     return fun                                    ## RETURN
 
 

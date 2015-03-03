@@ -1,9 +1,41 @@
-! $Id: release.notes,v 1.92 2009-07-28 09:11:08 cattanem Exp $
+! $Id: release.notes,v 1.98 2009-10-16 13:43:59 cattanem Exp $
 !-----------------------------------------------------------------------------
 ! Package     : Phys/DaVinciMCKernel
 ! Responsible : Juan PALACIOS
 ! Purpose     : MCEvent dependent interfaces and base classes.
 !-----------------------------------------------------------------------------
+
+!====================== DaVinciMCKernel v4r1 2009-10-16 ======================
+! 2009-10-15 - Juan PALACIOS
+ - cmt/requirements
+  . Increase version to v4r1
+ - Kernel/IParticle2MCAssociator.h
+ - Kernel/IParticle2MCWeightedAssociator.h
+ - Kernel/Particle2MCAssociatorBase.h
+ - src/Lib/Particle2MCAssociatorBase.cpp
+  . Use new GAUDI_API stuff.
+
+! 2009-10-01 - Juan PALACIOS
+ - Kernel/Particle2MCAssociatorBase.h
+  . Include STL header <numeric>, needed for accumulate algorithm.
+
+! 2009-09-23 - Juan PALACIOS
+ - dict/DaVinciMCKernelDict.xml
+  . Remove duplicate dictionaries.
+
+!====================== DaVinciMCKernel v4r0p1 2009-09-23 ====================
+
+! 2009-09-23 - Juan PALACIOS
+ - dict/DaVinciMCKernelDict.xml
+  . Add copy of LHCb::Relation1D<LHCb::Particle,LHCb::MCParticle> dictionery
+    entry.
+  . Explicitly add other entries not in Event/EventAssoc.
+
+! 2009-09-23 - Juan PALACIOS
+ - cmt/requirements
+  . Increase version to v4r0p1
+ - dict/DaVinciMCKernelDict.xml
+  . Remove dictionaries that are already in Event/EventAssoc.
 
 !====================== DaVinciMCKernel v4r0 2009-07-28 ======================
 ! 2009-07-27 - Juan PALACIOS

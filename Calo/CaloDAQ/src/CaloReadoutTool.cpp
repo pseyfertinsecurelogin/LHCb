@@ -1,9 +1,8 @@
-// $Id: CaloReadoutTool.cpp,v 1.35 2009-09-02 12:22:13 cattanem Exp $
+// $Id: CaloReadoutTool.cpp,v 1.42 2009-10-14 11:35:45 odescham Exp $
 // Include files 
 
 // from Gaudi
 #include "GaudiKernel/ToolFactory.h" 
-
 // local
 #include "CaloReadoutTool.h"
 
@@ -27,7 +26,9 @@ CaloReadoutTool::CaloReadoutTool( const std::string& type,
                   const std::string& name,
                   const IInterface* parent )
   : GaudiTool ( type, name , parent )
-    , m_first(true)
+  , m_packed(false)
+  , m_ok(false)
+  , m_first(true)
 {
   declareInterface<ICaloReadoutTool>(this);
 
@@ -35,6 +36,7 @@ CaloReadoutTool::CaloReadoutTool( const std::string& type,
   declareProperty( "PackedIsDefault", m_packedIsDefault = false);
   declareProperty( "DetectorSpecificHeader", m_extraHeader = false);
   declareProperty( "CleanWhenCorruption", m_cleanCorrupted = false);
+  declareProperty( "RawLocation", m_raw = LHCb::RawEventLocation::Default);
   m_getRaw = true;
 }
 //=============================================================================
@@ -45,14 +47,29 @@ CaloReadoutTool::~CaloReadoutTool() {}
 //=========================================================================
 //  Get required CaloBanks (short or packed format) - Fill m_banks
 //=========================================================================
-bool CaloReadoutTool::getCaloBanksFromRaw( ) {
+StatusCode CaloReadoutTool::initialize(){
+     StatusCode sc = GaudiTool::initialize();
+     if ( sc.isFailure() ) return sc;  // error printed already by GaudiAlgorithm
+     debug() << "==> Initialize " << name() << endmsg;
+     IIncidentSvc* inc = incSvc() ;
+     if ( 0 != inc )inc -> addListener  ( this , IncidentType::BeginEvent ) ;
+     return sc;
+}
+StatusCode CaloReadoutTool::finalize(){
+  IIncidentSvc* inc = incSvc() ;
+  if ( 0 != inc ) { inc -> removeListener  ( this ) ; }
+  return GaudiTool::finalize();
+}
 
   
-  m_readSources.clear();
 
+
+bool CaloReadoutTool::getCaloBanksFromRaw( ) {
+
+  m_readSources.clear();
   m_banks = NULL;
   LHCb::RawEvent* rawEvt = NULL ;
-  m_raw = LHCb::RawEventLocation::Default;
+  //  m_raw = LHCb::RawEventLocation::Default;
   if ( msgLevel( MSG::DEBUG) )debug() << "raw location :: " << rootInTES() + m_raw << endmsg;  
   if( exist<LHCb::RawEvent>( m_raw ) ){
     rawEvt= get<LHCb::RawEvent>( m_raw );
@@ -87,6 +104,7 @@ bool CaloReadoutTool::getCaloBanksFromRaw( ) {
     
     if ( 0 == m_banks || 0 == m_banks->size() ){
       if ( msgLevel( MSG::DEBUG) )debug() << "WARNING : None of short and packed banks have been found "<<endmsg;
+      counter("No " + m_detectorName + " bank found") += 1;
       return false;
     }else{
       if( !m_packedIsDefault){      
@@ -157,9 +175,8 @@ bool CaloReadoutTool::checkCards(int nCards, std::vector<int> feCards ){
                                           << "  - Is it a PinDiode readout FE-Card ? " 
                                           << m_calo->isPinCard( feCards[iFe] ) << endmsg;
       if ( !m_calo->isPinCard( feCards[iFe] ) ){
-        std::stringstream s("");
-        s << m_calo->cardCode( feCards[iFe] )  ;
-        Warning(" The standard FE-Card " + s.str() + " expected in TELL1 bank has not been read !!").ignore();
+        Warning(" The standard FE-Card " + Gaudi::Utils::toString( m_calo->cardCode( feCards[iFe] ) ) 
+                + " expected in TELL1 bank has not been read !!").ignore();
         check = false;
       }
     }    
@@ -184,9 +201,8 @@ int CaloReadoutTool::findCardbyCode(std::vector<int> feCards , int code){
       break;
     }        
   }
-  std::stringstream c("");
-  c<<code;
-  Error("FE-Card [code : " + c.str() + "] does not match the condDB cabling scheme  ",StatusCode::SUCCESS).ignore();
+  Error("FE-Card [code : " + Gaudi::Utils::toString(code) 
+        + "] does not match the condDB cabling scheme  ",StatusCode::SUCCESS).ignore();
   return -1;
 }    
 
@@ -201,12 +217,11 @@ void CaloReadoutTool::putStatusOnTES(){
     status = new Status( m_status  );
     statuss->insert( status );
   } else {
-    std::stringstream type("");
-    type << LHCb::RawBank::typeName(m_status.key()) ;
-    
-    if ( msgLevel( MSG::DEBUG) )debug() << "Status for bankType " <<  type.str()  << " already exists" << endmsg;
+    if ( msgLevel( MSG::DEBUG) )debug() << "Status for bankType " <<  Gaudi::Utils::toString( m_status.key())
+                                        << " already exists" << endmsg;
     if( status->status() != m_status.status() ){
-      Warning("Status for bankType " +  type.str() + " already exists  with different status value -> merge both"
+      Warning("Status for bankType " +  LHCb::RawBank::typeName(m_status.key()) 
+              + " already exists  with different status value -> merge both"
               , StatusCode::SUCCESS).ignore();
       for( std::map< int, long >::iterator it = m_status.statusMap().begin() ; it != m_status.statusMap().end() ; ++it){
         status->addStatus((*it).first , (*it).second);
@@ -241,9 +256,7 @@ bool CaloReadoutTool::checkSrc(int source){
   }
 
   if(read){
-    std::stringstream s("");
-    s<< source;
-    Warning("Another bank with same sourceID " + s.str() + " has already been read").ignore();
+    Warning("Another bank with same sourceID " + Gaudi::Utils::toString( source ) + " has already been read").ignore();
     m_status.addStatus(source, LHCb::RawBankReadoutStatus::NonUnique );
   }
   else{

@@ -1,4 +1,4 @@
-// $Id: DeMuonChamber.h,v 1.8 2007-06-08 15:34:00 asatta Exp $
+// $Id: DeMuonChamber.h,v 1.10 2009-10-02 13:24:19 asatta Exp $
 // ============================================================================
 // CVS tag $Name:
 // ============================================================================
@@ -12,8 +12,11 @@
 #include <vector>
 #include <string>
 
+#include "GaudiKernel/MsgStream.h"
+
 #include "DetDesc/DetectorElement.h"
 #include "MuonDet/MuonNamespace.h"
+#include "DetDesc/PVolume.h"
 
 /** @class DeMuonChamber DeMuonChamber.h MuonDet/DeMuonChamber.h
  *  
@@ -91,7 +94,29 @@ public:
     m_chmbGrid = grid;
   }
 
+  IPVolume* getFirstGasGap();
+  IPVolume* getGasGap(int number);
+  int getGasGapNumber();
+  StatusCode  isPointInGasGap(Gaudi::XYZPoint 
+  pointInChamber,Gaudi::XYZPoint&
+  pointInGap,IPVolume* gasVolume);
+  StatusCode  isPointInGasGap(Gaudi::XYZPoint 
+  pointInChamber,Gaudi::XYZPoint&
+  pointInGap,int& number,IPVolume* gasVolume);
+  IPVolume* getGasGapLayer(int number);
+
 private:
+
+  /// Access to Msgstream object
+  inline MsgStream & msgStream() const
+  {
+    if ( !m_msgStream ) m_msgStream = new MsgStream(msgSvc(),name());
+    return *m_msgStream;
+  }
+
+private:
+
+  mutable MsgStream * m_msgStream;
 
   /// Chamber Grid
   std::string m_chmbGrid;

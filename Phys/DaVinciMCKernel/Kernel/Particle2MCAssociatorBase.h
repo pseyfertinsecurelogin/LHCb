@@ -1,8 +1,10 @@
-// $Id: Particle2MCAssociatorBase.h,v 1.21 2009-05-07 10:26:05 jpalac Exp $
+// $Id: Particle2MCAssociatorBase.h,v 1.24 2009-10-15 14:07:30 jpalac Exp $
 #ifndef PARTICLE2MCASSOCIATORBASE_H 
 #define PARTICLE2MCASSOCIATORBASE_H 1
 
 // Include files
+// STL
+#include <numeric>
 // from Gaudi
 #include "GaudiAlg/GaudiTool.h"
 // LHCb
@@ -36,8 +38,8 @@
  *  @author Juan PALACIOS
  *  @date   2009-01-30
  */
-class Particle2MCAssociatorBase : public GaudiTool, 
-                                  virtual public IParticle2MCWeightedAssociator
+class GAUDI_API Particle2MCAssociatorBase : public extends1<GaudiTool, 
+                                                            IParticle2MCWeightedAssociator>
 {
 public: 
   /// Standard constructor

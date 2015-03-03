@@ -5,7 +5,7 @@
  *  Header file for RICH DAQ utility class : Rich::DAQ::L1IngressHeader
  *
  *  CVS Log :-
- *  $Id: RichDAQL1IngressHeader.h,v 1.3 2007-05-30 16:00:53 jonrob Exp $
+ *  $Id: RichDAQL1IngressHeader.h,v 1.8 2009-10-12 15:47:48 jonrob Exp $
  *
  *  @author Chris Jones   Christopher.Rob.Jones@cern.ch
  *  @date   19/01/2007
@@ -14,6 +14,9 @@
 
 #ifndef RICHDAQ_RichDAQL1IngressHeader_H
 #define RICHDAQ_RichDAQL1IngressHeader_H 1
+
+// STD
+#include <bitset>
 
 // Gaudi
 #include "GaudiKernel/GaudiException.h"
@@ -175,15 +178,22 @@ namespace Rich
     public:
 
       /** For a given set of HPD Ids, set each of them as active
-       *  @param inputs  HPD Ids
+       *  @param inputs  HPD Ingress Input Numbers
        */
       void setHPDsActive( const L1IngressInputs & inputs );
 
-      /// Returns the number of active HPDs (0-9) in this particular ingress
-      ShortType numActiveHPDs() const;
-
       /// Returns a vector of the active HPD input numbers in this ingress
       void activeHPDInputs( L1IngressInputs & inputs ) const;
+
+      /// Returns a vector of the inactive HPD input numbers in this ingress
+      void inactiveHPDInputs( L1IngressInputs & inputs ) const;
+
+      /// Returns the number of active HPDs (0-9) in this particular ingress
+      inline ShortType numActiveHPDs() const
+      {
+        const std::bitset<NumL1InputsPerIngress> bits(activeHPDbits());
+        return bits.count();
+      }
 
     public:
 

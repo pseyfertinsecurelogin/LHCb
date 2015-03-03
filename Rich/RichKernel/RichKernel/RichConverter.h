@@ -1,4 +1,4 @@
-// $Id: RichConverter.h,v 1.1 2009-07-07 16:24:53 jonrob Exp $
+// $Id: RichConverter.h,v 1.3 2009-09-30 08:25:59 jonrob Exp $
 #ifndef RICHKERNEL_RICHCONVERTER_H
 #define RICHKERNEL_RICHCONVERTER_H 1
 
@@ -16,7 +16,7 @@ namespace Rich
    *  @author Chris Jones
    *  @date   2009-07-07
    */
-  class Converter : public Rich::CommonBase< Rich::Converter_Imp >
+  class Converter : public Rich::CommonBase<Rich::Converter_Imp>
   {
 
   public:
@@ -25,9 +25,9 @@ namespace Rich
     Converter ( long storage_type,
                 const CLID &class_type,
                 ISvcLocator *svc = NULL )
-      : Rich::CommonBase< Rich::Converter_Imp > ( storage_type, class_type, svc )
+      : Rich::CommonBase<Rich::Converter_Imp> ( storage_type, class_type, svc )
     { }
-    
+
   };
 
 }

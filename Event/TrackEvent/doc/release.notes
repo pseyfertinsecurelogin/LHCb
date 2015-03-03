@@ -4,6 +4,15 @@
 ! Purpose     : Package for the tracking event model classes
 !-----------------------------------------------------------------------------
 
+!======================= TrackEvent v5r1 2009-10-16 ==========================
+! 2009-10-08 - Wouter Hulsbergen
+ - Added class 'TrackFitResult' to store trackfit related (transient) data in 
+   track. Moved nodes and measurements into this class.
+ - Added typedef for SharedObjectsContainer to Track
+
+! 2009-09-28 - Jeroen Van Tilburg
+ - Modified Track.xml to add history, type and location for TT tracks.
+
 !======================= TrackEvent v5r0 2009-09-02 ==========================
 ! 2009-09-02 - Marco Cattaneo
  - put back the unused extra info members, with an obsoleted name, to allow

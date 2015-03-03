@@ -1,0 +1,44 @@
+!-----------------------------------------------------------------------------
+! Package     : Kernel/XMLSummaryBase
+! Responsible : Rob Lambert
+! Purpose     : Holds the bare minumum code for manipulating XML
+!-----------------------------------------------------------------------------
+
+!======================== XmlSummaryBase v1r0 2009-10-16 =====================
+! 2009-10-07 - Rob Lambert
+ - Additional protection against losing the objects
+ - This is useful for inside C++
+
+! 2009-09-24 - Rob Lambert
+ - Minor polishing of schema, xml, and code, updated reference files
+
+! 2009-09-23 - Rob Lambert
+ - Significant changes for speed optimisation
+ - benchmark tests ~0.5s to fill 2000 statEntity counters
+ - divided qmtests into two parts, more unit-style tests
+
+! 2009-09-23 - Rob Lambert
+ - optimised the filling of counters/files, reducing the time overhead
+ - benchmark tests ~20s to fill 1000 statEntity counters
+ - benchmark tests ~15s to fill 1000 simple counters
+
+! 2009-09-15 - Rob Lambert
+ - fixed a bug in the parsing which would erase "failed" statuses
+
+! 2009-09-14 - Rob Lambert
+ - Added qmtest, test the basic python
+
+! 2009-09-11 - Rob Lambert
+ - Added support for MemoryMaximum
+ - Tested for input files, OK
+
+! 2009-09-04 - Rob Lambert
+ - XMLSummaryBase complete and tested
+
+! 2009-09-03 - Rob Lambert
+ - Separated into:
+     XMLSummaryBase => holds the xml and python
+     XMLSummaryKernel => holds the gaudi code
+
+! 2009-07-07 - Rob Lambert
+ - Created the package and began to populate

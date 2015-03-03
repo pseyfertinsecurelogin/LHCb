@@ -1,4 +1,4 @@
-// $Id: DeOTModule.cpp,v 1.41 2008-10-23 09:16:28 janos Exp $
+// $Id: DeOTModule.cpp,v 1.43 2009-09-24 12:04:49 wouter Exp $
 // GaudiKernel
 #include "GaudiKernel/Point3DTypes.h"
 #include "GaudiKernel/IUpdateManagerSvc.h"
@@ -352,6 +352,47 @@ double DeOTModule::distanceToWire(const unsigned int aStraw,
   return (u-localUOfStraw(aStraw))*cosU;
 }
 
+void DeOTModule::monoLayerIntersection(int monolayer, 
+				       const Gaudi::XYZPoint& aPoint, 
+				       const double tx, const double ty,
+				       double& straw, double& yfrac) const {
+
+  const Gaudi::XYZVector& dp = m_dp0di ;
+  Gaudi::XYZVector dX = aPoint - m_p0[monolayer] ;
+  
+  // the is the most efficient I could come up with
+  double trackCrossWireX =   (ty*m_dzdy -      1) ;
+  double trackCrossWireY = - (tx*m_dzdy - m_dxdy) ;
+  
+  double a = trackCrossWireX * ( dX.x() - tx * dX.z() ) ;
+  double b = trackCrossWireY * ( dX.y() - ty * dX.z() ) ;
+  double c = trackCrossWireY * ( ty * dp.z() - dp.y() ) ;
+  double d = trackCrossWireX * ( tx * dp.z() - dp.x() ) ;
+  
+  double u = - (a + b) / (c + d ) ;
+  
+  // here we could still optimize something
+  double eta = ( ( tx * dp.z() - dp.x() ) * u + dX.x() - tx * dX.z() ) / trackCrossWireY ;
+  
+  // cross check with this alternative computation
+  //   {
+  //     Gaudi::XYZVector q( m_dxdy, 1, m_dzdy) ;
+  //     Gaudi::XYZVector n = q.Cross( dp ) ;
+  //     Gaudi::XYZVector t(tx,ty,1) ;
+  //     double dz = - dX.Dot(n) / t.Dot(n) ;
+  //     Gaudi::XYZVector inplanevector = dX + dz * t ;
+  //     double thisu   = inplanevector.Dot( dp )/dp.Mag2() ;
+  //     double thiseta = inplanevector.Dot( q )/q.Mag2() ;
+  //     eta = thiseta ;
+  //     u   = thisu ;
+  //   }
+
+  yfrac = eta / m_dy[monolayer] ;
+  straw = u + 1 ;
+
+
+}
+
 void DeOTModule::clear() {
   m_midTraj[0].reset();
   m_midTraj[1].reset();
@@ -413,18 +454,13 @@ StatusCode DeOTModule::cacheInfo() {
   // nonsense, of course.
   m_dxdy = m_dir.x()/m_dir.y() ;
   m_dzdy = m_dir.z()/m_dir.y() ;
-  Gaudi::XYZVector vectormono = (g4[0]-g3[0]).unit() * m_xPitch ;
-  m_dp0di.SetY( vectormono.y() ) ;
-  m_dp0di.SetX( vectormono.x() - vectormono.y() * m_dxdy ) ;
-  m_dp0di.SetZ( vectormono.z() - vectormono.y() * m_dzdy ) ;
+  m_dp0di = (g4[0]-g3[0]).unit() * m_xPitch ;
   for( int imono=0; imono<2; ++imono) {
     std::auto_ptr<Trajectory> traj = trajectoryFirstWire(imono) ;
     Gaudi::XYZPoint p0 = traj->position(traj->beginRange()) ;
     Gaudi::XYZPoint p1 = traj->position(traj->endRange()) ;
     m_dy[imono] = p1.y() - p0.y() ;
-    m_p0[imono].SetY(p0.y()) ;
-    m_p0[imono].SetX(p0.x() - p0.y() * m_dxdy) ;
-    m_p0[imono].SetZ(p0.z() - p0.y() * m_dzdy) ;
+    m_p0[imono] = p0 ;
   }
 
   // Update the stereo angle. We correct by 'pi' if necessary.

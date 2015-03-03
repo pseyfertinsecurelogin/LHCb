@@ -1,7 +1,14 @@
-! $Id: release.notes,v 1.124 2008-11-17 14:45:51 cattanem Exp $
+! $Id: release.notes,v 1.126 2009-10-16 12:32:14 cattanem Exp $
 ! Package     : OTDet
 ! Responsible : Jeroen van Tilburg, Jacopo Nardulli, Jan Amoraal
 !--------------------------------------------------------------------------
+
+!========================== OTDet v8r3 2009-10-16 =========================
+! 2009-10-16 - Marco Cattaneo
+ - Remove obsolete file OTDet_dll.cpp
+
+! 2009-09-24 - Wouter Hulsbergen
+ - Added method to compute intersection with monolayer plane in 'straw' coordinates.
 
 !========================== OTDet v8r2 2008-11-17 =========================
 ! 2008-10-28 - Marco Cattaneo

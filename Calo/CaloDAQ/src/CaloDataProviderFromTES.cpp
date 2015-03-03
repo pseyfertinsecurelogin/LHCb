@@ -1,4 +1,4 @@
-// $Id: CaloDataProviderFromTES.cpp,v 1.4 2009-09-02 12:22:12 cattanem Exp $
+// $Id: CaloDataProviderFromTES.cpp,v 1.8 2009-10-12 16:03:53 odescham Exp $
 // Include files 
 
 // from Gaudi
@@ -60,10 +60,21 @@ CaloDataProviderFromTES::CaloDataProviderFromTES( const std::string& type,
 CaloDataProviderFromTES::~CaloDataProviderFromTES() {} 
 
 //=============================================================================
+StatusCode CaloDataProviderFromTES::finalize ( ) {
+     IIncidentSvc* inc = incSvc() ;
+     if ( 0 != inc ) { inc -> removeListener  ( this ) ; }
+     return GaudiTool::finalize();
+}
+
 StatusCode CaloDataProviderFromTES::initialize ( ) {
   StatusCode sc = GaudiTool::initialize(); // must be executed first
   if ( sc.isFailure() ) return sc;  // error printed already by GaudiAlgorithm
   debug() << "==> Initialize " << name() << endmsg;
+
+  // fill incident listener
+  IIncidentSvc* inc = incSvc() ;
+  if ( 0 != inc )inc -> addListener  ( this , IncidentType::BeginEvent ) ;
+
 
   if ( "Ecal" == m_detectorName ) {
     m_calo     = getDet<DeCalorimeter>( DeCalorimeterLocation::Ecal );
@@ -102,6 +113,7 @@ StatusCode CaloDataProviderFromTES::initialize ( ) {
 
 //-------------------------------------
 bool CaloDataProviderFromTES::getBanks( ) {  
+  m_ok = false;
   if( fromDigit() ){
     if( exist<LHCb::CaloDigits>(m_loc) ){
       m_digCont = get<LHCb::CaloDigits>(m_loc);
@@ -113,13 +125,19 @@ bool CaloDataProviderFromTES::getBanks( ) {
       if ( msgLevel( MSG::DEBUG) )debug() << "Found container " << m_loc << " Content size " << m_adcCont->size() << endmsg;
     }else return false;
   }
-  return true;
+  m_ok = true;
+  return m_ok;
 }
 
 //-------------------------------------
 void CaloDataProviderFromTES::clear( ) {
   m_adcs.clear();
   m_digits.clear();
+  m_readSources.clear();
+  m_minADC = LHCb::CaloAdc(LHCb::CaloCellID() , 3840);
+  m_minPinADC = LHCb::CaloAdc(LHCb::CaloCellID(), 3840);  
+  m_maxADC = LHCb::CaloAdc(LHCb::CaloCellID() , -256);
+  m_maxPinADC = LHCb::CaloAdc(LHCb::CaloCellID(), -256);  
 }
 void CaloDataProviderFromTES::cleanData(int feb ) {
   if(feb<0)return;
@@ -172,20 +190,20 @@ int CaloDataProviderFromTES::adc (LHCb::CaloCellID id){
 //---------
 
 
-CaloVector<LHCb::CaloAdc>& CaloDataProviderFromTES::adcs(int source){
+const CaloVector<LHCb::CaloAdc>& CaloDataProviderFromTES::adcs(int source,bool clean){
   std::vector<int> sources;
   sources.push_back(source);
-  return adcs(sources);
+  return adcs(sources,clean);
 }
-CaloVector<LHCb::CaloDigit>& CaloDataProviderFromTES::digits(int source){
+const CaloVector<LHCb::CaloDigit>& CaloDataProviderFromTES::digits(int source,bool clean){
   std::vector<int> sources;
   sources.push_back(source);
-  return digits(sources);
+  return digits(sources,clean);
 }
 
 
-CaloVector<LHCb::CaloAdc>& CaloDataProviderFromTES::adcs(std::vector<int> sources){
-  clear();
+const CaloVector<LHCb::CaloAdc>& CaloDataProviderFromTES::adcs(std::vector<int> sources,bool clean){
+  if(clean)clear();
   for(std::vector<int>::iterator i=sources.begin();i!=sources.end();i++){
     int source = *i; 
     if(checkSrc( source ))continue;
@@ -194,22 +212,37 @@ CaloVector<LHCb::CaloAdc>& CaloDataProviderFromTES::adcs(std::vector<int> source
       for(LHCb::CaloDigits::iterator idig = m_digCont->begin();idig!=m_digCont->end();idig++){
         LHCb::CaloCellID id = (*idig)->cellID();
         if( source != -1 && source != m_calo->cardToTell1 ( m_calo->cardNumber( id ) )) continue;
-        m_adcs.addEntry( LHCb::CaloAdc( id , adc(id) ) , id);
-      }
+        LHCb::CaloAdc cAdc(id ,adc(id) );
+        m_adcs.addEntry( cAdc , id);
+        if( id.area() != CaloCellCode::PinArea ){
+          if( cAdc.adc() < m_minADC.adc()  )m_minADC = cAdc ;
+          if( cAdc.adc() > m_maxADC.adc()  )m_maxADC = cAdc ;
+        }else{
+          if( cAdc.adc() < m_minPinADC.adc() )m_minPinADC = cAdc ;
+          if( cAdc.adc() > m_maxPinADC.adc() )m_maxPinADC = cAdc ;
+        }
+      }   
     }else if( fromAdc() ){
       if( NULL == m_adcCont )return m_adcs ;
       for(LHCb::CaloAdcs::iterator iadc = m_adcCont->begin();iadc!=m_adcCont->end();iadc++){
         LHCb::CaloCellID id = (*iadc)->cellID();
         if( source != -1 && source != m_calo->cardToTell1 ( m_calo->cardNumber( id ) )) continue;
         m_adcs.addEntry( *(*iadc) , id);
-      }
+        if( id.area() != CaloCellCode::PinArea ){
+          if( (*iadc)->adc() < m_minADC.adc()  )m_minADC = *(*iadc) ;
+            if( (*iadc)->adc() > m_maxADC.adc()  )m_maxADC = *(*iadc) ;
+        }else{
+          if( (*iadc)->adc() < m_minPinADC.adc() )m_minPinADC = *(*iadc) ;
+          if( (*iadc)->adc() > m_maxPinADC.adc() )m_maxPinADC = *(*iadc) ;
+        } 
+      } 
     }
   }
   return m_adcs;
 }
 //---------
-CaloVector<LHCb::CaloDigit>& CaloDataProviderFromTES::digits(std::vector<int> sources){
-  clear();
+const CaloVector<LHCb::CaloDigit>& CaloDataProviderFromTES::digits(std::vector<int> sources,bool clean){
+  if(clean)clear();
   for(std::vector<int>::iterator i=sources.begin();i!=sources.end();i++){
     int source = *i; 
     if(checkSrc( source ))continue;

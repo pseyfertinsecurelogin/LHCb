@@ -1,7 +1,20 @@
-! $Id: release.notes,v 1.133 2009-09-09 13:06:34 cattanem Exp $
+! $Id: release.notes,v 1.138 2009-10-16 13:20:31 cattanem Exp $
 ! Package     : MuonDet
 ! Responsible : Alessia Satta
 !----------------------------------------------------------------------------
+
+!========================= MuonDet v9r0 2009-10-16 ==========================
+! 2009-10-08 - Alessia Satta
+ - Remove obsolete header file (DeMuonGasGap.h)
+
+! 2009-10-05 - Alessia Satta
+ - Fix untested statuscode
+
+! 2009-10-02 - Alessia Satta
+ - Largely Modified to reduce the detector elements inside the chambers 
+
+! 2009-09-11 - Chris Jones
+ - Cache MsgStream objects for speed
 
 !========================= MuonDet v8r5p2 2009-09-09 ========================
 ! 2009-07-08 - Marco Cattaneo

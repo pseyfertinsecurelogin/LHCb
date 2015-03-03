@@ -1,0 +1,34 @@
+# $Id: requirements,v 1.5 2009-09-20 12:38:39 cattanem Exp $
+# Created    : 07/07/2009
+# Maintainer : R. Lambert
+#
+
+#============================================================================
+package XMLSummaryKernel 
+version v1r0
+
+# Structure, i.e. directories to process. 
+#============================================================================
+branches          cmt doc src options python tests
+
+# Packages needed to compile and link the application
+use XMLSummaryBase     v* Kernel
+use GaudiKernel        v*
+use GaudiUtils        v*
+
+# Packages needed to resolve external dependencies at run time
+private
+  use Python             v*    LCG_Interfaces -no_auto_imports
+  use GaudiPoolDb        v*	             -no_auto_imports
+end_private
+
+
+library XMLSummaryKernel *.cpp -import=Python
+
+# define link options
+#============================================================================
+#
+
+apply_pattern component_library library=XMLSummaryKernel
+apply_pattern install_python_modules
+apply_pattern QMTest

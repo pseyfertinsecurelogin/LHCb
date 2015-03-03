@@ -1,4 +1,4 @@
-// $Id: ParticleCuts.h,v 1.36 2009-04-24 12:49:05 ibelyaev Exp $
+// $Id: ParticleCuts.h,v 1.38 2009-10-02 15:06:13 ibelyaev Exp $
 // ============================================================================
 #ifndef LOKI_PHYSPARTICLECUTS_H 
 #define LOKI_PHYSPARTICLECUTS_H 1
@@ -2635,6 +2635,27 @@ namespace LoKi
      */
     const EQUALTO                       ISLONG ( TRTYPE , LHCb::Track::Long ) ;
     // ========================================================================
+    /** @var ISLOOSEMUON
+     *  The simple evaluator of LHCb::MuonPID::IsMuonLoose
+     *  
+     *  @code 
+     *
+     *  const LHCb::Particle* p = ... ;
+     * 
+     *  bool muon = ISLOOSEMUON ( p ) ;
+     *
+     *  @endcode 
+     *     
+     *  @see LHCb::Particle
+     *  @see LHCb::ProtoParticle
+     *  @see LHCb::MuonPID 
+     *  @see LoKi::Particles::IsMuonLoose
+     *  
+     *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
+     *  @date 2009-09-26
+     */
+    const LoKi::Particles::IsMuonLoose                            ISLOOSEMUON ;
+    // ========================================================================
     /** @var ISMUONPID
      *  The simple evaluator of LHCb::MuonPID::isMuon
      *  
@@ -2655,6 +2676,48 @@ namespace LoKi
      *  @date 2007-02-25
      */
     const LoKi::Particles::IsMuon                                   ISMUONPID ;
+    // ========================================================================
+    /** @var ISMUON
+     *  The simple evaluator of LHCb::MuonPID::isMuon
+     *  
+     *  @code 
+     *
+     *  const LHCb::Particle* p = ... ;
+     * 
+     *  bool muon = ISMUON ( p ) ;
+     *
+     *  @endcode 
+     *     
+     *  @see LHCb::Particle
+     *  @see LHCb::ProtoParticle
+     *  @see LHCb::MuonPID 
+     *  @see LoKi::Particles::IsMuon
+     *  
+     *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
+     *  @date 2007-02-25
+     */
+    const LoKi::Particles::IsMuon                                      ISMUON ;
+    // ========================================================================
+    /** @var ISMUONLOOSE
+     *  The simple evaluator of LHCb::MuonPID::IsMuonLoose
+     *  
+     *  @code 
+     *
+     *  const LHCb::Particle* p = ... ;
+     * 
+     *  bool muon = ISMUONLOOSE ( p ) ;
+     *
+     *  @endcode 
+     *     
+     *  @see LHCb::Particle
+     *  @see LHCb::ProtoParticle
+     *  @see LHCb::MuonPID 
+     *  @see LoKi::Particles::IsMuonLoose
+     *  
+     *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
+     *  @date 2009-09-26
+     */
+    const LoKi::Particles::IsMuonLoose                            ISMUONLOOSE ;
     // ========================================================================
     /** @var ISTTRACK
      *  The trivial predicate whoch evalauted to true for particles, 
@@ -5618,6 +5681,26 @@ namespace LoKi
      */
     const EQUALTO                 TRDOWN ( TRTYPE , LHCb::Track::Downstream ) ;
     // ========================================================================
+    /** @var TRGHP
+     *  simple evaluator of "ghost probability"
+     *  @see LoKi::Particles::GhostProbability
+     *  @see LoKi::Cuts::TRGHOSTPROB
+     *  @see LHCb::Track::ghostProbabilty
+     *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
+     *  @date 2009-10-02 
+     */
+    const LoKi::Particles::GhostProbability                             TRGHP ;
+    // ========================================================================
+    /** @var TRGHOSTPROB
+     *  simple evaluator of "ghost probability"
+     *  @see LoKi::Particles::GhostProbability
+     *  @see LoKi::Cuts::TRGHP
+     *  @see LHCb::Track::ghostProbabilty
+     *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
+     *  @date 2009-10-02 
+     */
+    const LoKi::Particles::GhostProbability                        TGHOSTPROB ;
+    // ========================================================================
     /** @var TRHISTORY 
      *  The trivial function which evaluates LHCb::Track::history
      *
@@ -5670,6 +5753,26 @@ namespace LoKi
      *  @date 2006-02-23 
      */
     const EQUALTO                       TRLONG ( TRTYPE , LHCb::Track::Long ) ;
+    // ========================================================================
+    /** @var TRLH 
+     *  simple evaluator of "track likelihood"
+     *  @see LoKi::Particles::TrackLikelihood
+     *  @see LoKi::Cuts::TRLIKELIHOOD
+     *  @see LHCb::Track::likelihood
+     *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
+     *  @date 2009-10-02 
+     */
+    const LoKi::Particles::TrackLikelihood                               TRLH ;
+    // ========================================================================
+    /** @var TRLIKELIHOOD
+     *  simple evaluator of "track likelihood"
+     *  @see LoKi::Particles::TrackLikelihood
+     *  @see LoKi::Cuts::TRLH
+     *  @see LHCb::Track::likelihood
+     *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
+     *  @date 2009-10-02 
+     */
+    const LoKi::Particles::TrackLikelihood                       TRLIKELIHOOD ;
     // ========================================================================
     /** @var TRPCHI2 
      *  The trivial evaluato of \f$\chi^2\f$-probability for the track 

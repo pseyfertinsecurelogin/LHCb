@@ -11,6 +11,8 @@
 
 // from TrackEvent
 #include "Event/Track.h"
+#include "Event/TrackFitResult.h"
+
 
 /** @namespace TrackFunctor
  *
@@ -228,12 +230,22 @@ namespace TrackFunctor
 // Retrieve the number of Measurements that fulfill a predicate
 // (using e.g. the HasKey template in TrackKeys.h)
 //=============================================================================
+  template <class Container, class T>
+  unsigned int nMeasurements( const Container& meas, const T& pred )
+  {
+    return std::count_if( meas.begin(), meas.end(), pred );
+  };
+
+//=============================================================================
+// Retrieve the number of Measurements that fulfill a predicate
+// (using e.g. the HasKey template in TrackKeys.h)
+//=============================================================================
   template <class T>
   unsigned int nMeasurements( const LHCb::Track& track, const T& pred )
   {
-    const std::vector<LHCb::Measurement*>& meas = track.measurements();
-    return std::count_if( meas.begin(), meas.end(), pred );
-  };
+    const LHCb::TrackFitResult* fit = track.fitResult() ;
+    return fit ? nMeasurements( fit->measurements(), pred ) : 0 ;
+  }
 
 };
 

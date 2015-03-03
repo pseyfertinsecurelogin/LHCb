@@ -185,8 +185,12 @@ WEIGHT   = LoKi.Particles.Weight           ()
 ISBASIC  = LoKi.Particles.IsBasic          () 
 ## @see LoKi::Cuts::ISMUON
 ISMUON   = LoKi.Particles.IsMuon           ()
+## @see LoKi::Cuts::ISMUONLOOSE
+ISMUONLOOSE = LoKi.Particles.IsMuonLoose   ()
+## @see LoKi::Cuts::ISLOOSEMUON
+ISLOOSEMUON = LoKi.Particles.IsMuonLoose   ()
 ## @see LoKi::Cuts::NDAUGS  
-NDAUGS   = LoKi.Particles.NumberOfDaughters  () 
+NDAUGS   = LoKi.Particles.NumberOfDaughters() 
 ## @see LoKi::Cuts::HASINFO
 HASINFO  = LoKi.Particles.HasInfo
 ## @see LoKi::Cuts::INFO
@@ -379,6 +383,17 @@ DELTAR2  = LoKi.Particles.DeltaR2
 DR2      = LoKi.Particles.DeltaR2
 ## @see LoKi::Cuts::TRPCHI2 
 TRPCHI2  = LoKi.Particles.TrackChi2Prob ()
+
+## @see LoKi::Cuts::TRGHP
+TRGHP        = LoKi.Particles.GhostProbability ()
+## @see LoKi::Cuts::TRGHOSTPROB
+TRGHOSTPROB  = TRGHP 
+
+## @see LoKi::Cuts::TRLH
+TRLH         = LoKi.Particles.TrackLikelihood ()
+## @see LoKi::Cuts::TRGHOSTPROB
+TRLIKELIHOOD = TRLH 
+
 
 ## @see LoKi::Cuts::TRGPOINTING
 TRGPOINTING     = LoKi.Particles.TrgPointingScore 

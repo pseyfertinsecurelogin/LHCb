@@ -40,8 +40,12 @@ CaloDataProvider::~CaloDataProvider() {};
 //=========================================================================
 //  Initialisation, according to the name -> detector
 //=========================================================================
+StatusCode CaloDataProvider::finalize ( ) {
+  return CaloReadoutTool::finalize();
+}
+
 StatusCode CaloDataProvider::initialize ( ) {
-  StatusCode sc = GaudiTool::initialize(); // must be executed first
+  StatusCode sc = CaloReadoutTool::initialize(); // must be executed first
   if ( sc.isFailure() ) return sc;  // error printed already by GaudiAlgorithm
   debug() << "==> Initialize " << name() << endmsg;
 
@@ -91,6 +95,13 @@ void CaloDataProvider::clear( ) {
   m_adcs.clear();
   m_digits.clear();
   m_tell1s = 0;
+  m_readSources.clear();
+  m_minADC = LHCb::CaloAdc(LHCb::CaloCellID() , 3840);
+  m_minPinADC = LHCb::CaloAdc(LHCb::CaloCellID(), 3840);  
+  m_maxADC = LHCb::CaloAdc(LHCb::CaloCellID() , -256);
+  m_maxPinADC = LHCb::CaloAdc(LHCb::CaloCellID(), -256);  
+  if ( msgLevel( MSG::DEBUG) )
+    debug() << "ALL DATA CLEARED" << endmsg;
 }
 //-------------------------------------
 void CaloDataProvider::cleanData(int feb ) {
@@ -118,13 +129,14 @@ void CaloDataProvider::cleanData(int feb ) {
 //===================
 //  Get ADC Container
 //===================
-CaloVector<LHCb::CaloAdc>& CaloDataProvider::adcs(int source){
-  clear();
+const CaloVector<LHCb::CaloAdc>& CaloDataProvider::adcs(int source,bool clean){
+  if(clean)clear();
   decodeTell1(source);
   return m_adcs;
 }
-CaloVector<LHCb::CaloAdc>& CaloDataProvider::adcs(std::vector<int> sources){
-  clear();
+const CaloVector<LHCb::CaloAdc>& CaloDataProvider::adcs(std::vector<int> sources,bool clean){
+  if(clean)clear();
+  if( m_getRaw )getBanks();
   if( !m_packed) return adcs(); // decode the single 'offline' bank
   for(std::vector<int>::iterator i=sources.begin();i!=sources.end();i++){
     decodeTell1(*i);
@@ -140,14 +152,15 @@ void CaloDataProvider::adc2digit(){
     m_digits.addEntry( dig , id);
   }
 }
-CaloVector<LHCb::CaloDigit>& CaloDataProvider::digits(std::vector<int> sources){
+const CaloVector<LHCb::CaloDigit>& CaloDataProvider::digits(std::vector<int> sources,bool clean){
+  if( m_getRaw )getBanks();
   if( !m_packed) return digits(); // decode the single 'offline' bank
-  adcs(sources);
+  adcs(sources,clean);
   adc2digit();
   return m_digits;
 }
-CaloVector<LHCb::CaloDigit>& CaloDataProvider::digits(int source){
-  adcs(source);
+const CaloVector<LHCb::CaloDigit>& CaloDataProvider::digits(int source,bool clean){
+  adcs(source,clean);
   adc2digit();
   return m_digits;
 }
@@ -155,6 +168,7 @@ CaloVector<LHCb::CaloDigit>& CaloDataProvider::digits(int source){
 //  Get data
 //==========
 double CaloDataProvider::digit (LHCb::CaloCellID id){
+  if( m_getRaw )getBanks();
   if( 0 >  m_digits.index(id) ){
     int temp = adc(id);
     if( 0 == temp && 0 >  m_adcs.index(id) ) return 0.; // 0-suppressed data or non-valid CellID
@@ -167,6 +181,7 @@ double CaloDataProvider::digit (LHCb::CaloCellID id){
 }
 //-------------------------------------------------------
 int CaloDataProvider::adc (LHCb::CaloCellID id){
+  if( m_getRaw )getBanks();
   bool ok=true;
   if( 0 >  m_adcs.index(id) )ok = decodeCell( id );
   if( 0 >  m_adcs.index(id) )return 0;// 0-suppressed data or non-valid CellID
@@ -204,8 +219,10 @@ bool CaloDataProvider::decodeCell(LHCb::CaloCellID id ){
 }
 //-------------------------------------------------------
 bool CaloDataProvider::decodeTell1 (int source) {
+  if( source < 0)clear(); // re-init for full decoding
   bool decoded = false;
   bool found  = false;
+  if( m_getRaw )getBanks();
   if(NULL == m_banks) return false;
   int sourceID  ;
 
@@ -225,16 +242,12 @@ bool CaloDataProvider::decodeTell1 (int source) {
       decoded = decodeBank ( *itB );
     }
     if( !decoded ){
-      std::stringstream s("");
-      s<< sourceID;
-      Error("Error when decoding bank " + s.str()   + " -> incomplete data - May be corrupted").ignore();
+      Error("Error when decoding bank " + Gaudi::Utils::toString( sourceID)  + " -> incomplete data - May be corrupted").ignore();
     }
     m_tell1s++; // count the number of decoded TELL1
   }
   if( !found ){
-    std::stringstream s("");
-    s<< source;
-    Error("rawBank sourceID : " + s.str() + " has not been found").ignore();
+    Error("rawBank sourceID : " + Gaudi::Utils::toString( source )  + " has not been found").ignore();
   }
   return decoded;
 }
@@ -289,8 +302,9 @@ bool CaloDataProvider::decodeBank( LHCb::RawBank* bank ){
                                           << " |  ADC value = " << adc << endmsg;
       
       if ( 0 != cellId.index() ){
-        LHCb::CaloAdc temp(cellId,adc);
-        m_adcs.addEntry(temp  ,cellId );
+        //LHCb::CaloAdc temp(cellId,adc);
+        LHCb::CaloAdc temp = fillAdc( cellId , adc);
+        m_adcs.addEntry(temp  ,cellId );        
       }
       
       ++data;
@@ -327,11 +341,8 @@ bool CaloDataProvider::decodeBank( LHCb::RawBank* bank ){
         chanID = m_calo->cardChannels( feCards[card] );
         feCards.erase(feCards.begin()+card);
       }else{
-        std::stringstream s("");
-        s<<sourceID;
-        std::stringstream c("");
-        c<<code;
-        Error(" FE-Card w/ [code : " + c.str() + " ] is not associated with TELL1 bank sourceID : " +s.str()
+        Error(" FE-Card w/ [code : " + Gaudi::Utils::toString(code) + " ] is not associated with TELL1 bank sourceID : " 
+              + Gaudi::Utils::toString( sourceID )
               + " in condDB :  Cannot read that bank").ignore();
         Error("Warning : previous data may be corrupted").ignore();
         if(m_cleanCorrupted)cleanData(prevCard);
@@ -390,7 +401,8 @@ bool CaloDataProvider::decodeBank( LHCb::RawBank* bank ){
         
         //== Keep only valid cells
         if ( 0 != id.index() ){
-          LHCb::CaloAdc temp(id,adc);
+          LHCb::CaloAdc temp = fillAdc( id , adc);
+          //LHCb::CaloAdc temp(id,adc);
           m_adcs.addEntry( temp ,id );
         }        
       }
@@ -429,11 +441,8 @@ bool CaloDataProvider::decodeBank( LHCb::RawBank* bank ){
         chanID = m_calo->cardChannels( feCards[card] );
         feCards.erase(feCards.begin()+card);
       }else{
-        std::stringstream s("");
-        s<<sourceID;
-        std::stringstream c("");
-        c<<code;
-        Error(" FE-Card w/ [code : " + c.str() + " ] is not associated with TELL1 bank sourceID : " +s.str()
+        Error(" FE-Card w/ [code : " + Gaudi::Utils::toString(code) + " ] is not associated with TELL1 bank sourceID : " 
+              + Gaudi::Utils::toString(sourceID)
               + " in condDB :  Cannot read that bank").ignore();
         Error("Warning : previous data may be corrupted").ignore();
         if(m_cleanCorrupted)cleanData(prevCard);
@@ -475,7 +484,8 @@ bool CaloDataProvider::decodeBank( LHCb::RawBank* bank ){
 
 
         if ( 0 != id.index() ){
-          LHCb::CaloAdc temp(id,adc);
+          LHCb::CaloAdc temp = fillAdc( id , adc);
+          //LHCb::CaloAdc temp(id,adc);
           m_adcs.addEntry( temp ,id );
         }
         
@@ -535,7 +545,8 @@ bool CaloDataProvider::decodePrsTriggerBank( LHCb::RawBank* bank ) {
 
           if ( spdData & 1 ){
             if ( 0 != spdId.index() ){
-              LHCb::CaloAdc temp(spdId,1);
+              //LHCb::CaloAdc temp(spdId,1);
+              LHCb::CaloAdc temp = fillAdc( spdId , 1);
               m_adcs.addEntry( temp ,spdId) ;
             } 
           }
@@ -577,7 +588,8 @@ bool CaloDataProvider::decodePrsTriggerBank( LHCb::RawBank* bank ) {
         if ( 0 != (item & 2) ) {
           LHCb::CaloCellID id ( spdId );   // SPD
           if ( 0 != id.index() ){
-            LHCb::CaloAdc temp(id,1);
+            //LHCb::CaloAdc temp(id,1);
+            LHCb::CaloAdc temp = fillAdc( id , 1);
             m_adcs.addEntry( temp ,id);
           } 
         }
@@ -623,11 +635,8 @@ bool CaloDataProvider::decodePrsTriggerBank( LHCb::RawBank* bank ) {
         chanID = m_calo->cardChannels( feCards[card] );
         feCards.erase(feCards.begin()+card);
       }else{
-        std::stringstream s("");
-        s<<sourceID;
-        std::stringstream c("");
-        c<<code;
-        Error(" FE-Card w/ [code : " + c.str() + " ] is not associated with TELL1 bank sourceID : " +s.str()
+        Error(" FE-Card w/ [code : " + Gaudi::Utils::toString(code) + " ] is not associated with TELL1 bank sourceID : " 
+              + Gaudi::Utils::toString(sourceID)
               + " in condDB :  Cannot read that bank").ignore();
         Error("Warning : previous data may be corrupted").ignore();
         if(m_cleanCorrupted)cleanData(prevCard);
@@ -668,7 +677,8 @@ bool CaloDataProvider::decodePrsTriggerBank( LHCb::RawBank* bank ) {
         if ( 0 != isSpd ) {
           LHCb::CaloCellID spdId( 0, id.area(), id.row(), id.col() );
           if ( 0 != spdId.index() ){
-            LHCb::CaloAdc temp(spdId,1);
+            //LHCb::CaloAdc temp(spdId,1);
+            LHCb::CaloAdc temp = fillAdc( spdId , 1);
             m_adcs.addEntry( temp ,spdId);
           }   
         }

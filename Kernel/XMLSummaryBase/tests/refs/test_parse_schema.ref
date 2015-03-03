@@ -1,0 +1,9 @@
+schema parsed
+created default OK
+parsed example xml OK
+assigning rubbish value was prevented by the schema
+adding rubbish child was prevented by the schema
+adding child of the wrong type was prevented by the schema
+referencing rubbish attribute was prevented by the schema
+assigning rubbish attribute was prevented by the schema
+get/setter tests complete

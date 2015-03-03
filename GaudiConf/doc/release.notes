@@ -1,7 +1,54 @@
-! $Id: release.notes,v 1.163 2009-07-28 07:52:36 cattanem Exp $
+! $Id: release.notes,v 1.177 2009-10-19 13:11:05 cattanem Exp $
 ! package GaudiConf
 ! package manager: M.Cattaneo
 !----------------------------------------------------------------------------
+
+!======================== GaudiConf v12r9 2009-10-19 ========================
+! 2009-10-19 - Marco Cattaneo
+ - In CaloPackingConf.py, remove unneccessary LHCbConfigurableUser dependency
+ - In DstConf.py, really fix the genConf warning.
+
+! 2009-10-16 - Marco Cattaneo
+ - In DstConf.py, fix genConf warnings due to import path of new CaloPacking
+   configurables 
+
+! 2009-10-15 - Marco Cattaneo
+ - In CaloPackingConf.py, add helper functions previously in CaloReco.CaloPacking
+
+! 2009-10-12 - Vanya Belyaev 
+ - cmt/requirements : change order of configurables 
+
+! 2009-10-10 - Vanya Belyaev
+ - Add CaloPackingConf.py:
+     two small configurables to pack/unpack Calo-objects on DST:
+     1. CaloDstPackConf 
+     2. CaloDstUnPackConf 
+
+ - DstConf.py: make usage of new CaloDst configurables 
+
+! 2009-10-08 - Marco Cattaneo
+ - In DigiConf.py:
+   . Make writing of spillover headers compulsory if SpilloverPaths have been set
+   . When saving spillover, save also spillover Gen headers (previously only saved MC)
+   . Kill all known Spillover nodes when saving "Minimal" format
+
+! 2009-10-06 - Marco Cattaneo
+ - In DstConf.py, do not set up DataOnDemand unpacking of Muon tracks if
+   DstType is RDST 
+
+! 2009-09-18 - Rob Lambert
+ - Edited Configurable.py to avoid circular dependency on XMLSummarySvc
+   Behaviour deligated to XMLSummary configurable in XMLSummaryKernel
+ - Added explicit requirement on XMLSummaryKernel in requirements
+
+! 2009-09-11 - Rob Lambert
+ - In Configurable.py, LHCbApp:
+   . Added configuration of an XMLSummarySvc LHCbApp().XMLSummary
+     Default behaviour is to neither create nor fill a summary service/file
+
+! 2009-09-14 - Marco Cattaneo
+ - Add options/valgrind-python.supp, suppression file for valgrind errors from
+   python, e.g. when executing gaudirun.py
 
 !======================== GaudiConf v12r8 2009-07-28 ========================
 ! 2009-07-14 - Marco Cattaneo

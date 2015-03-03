@@ -5,7 +5,7 @@
  *  Implementation file for class : Rich::Converter_Imp
  *
  *  CVS Log :-
- *  $Id: RichConverter_Imp.h,v 1.2 2009-07-07 17:27:11 jonrob Exp $
+ *  $Id: RichConverter_Imp.h,v 1.6 2009-09-30 08:25:59 jonrob Exp $
  *
  *  @author Chris Jones    Christopher.Rob.Jones@cern.ch
  *  @date   2009-07-07
@@ -73,9 +73,9 @@ namespace Rich
     /// the actual type of general counters
     typedef std::map<std::string,StatEntity>   Statistics ;
     /// the actual type error/warning counter
-    typedef std::map<std::string,unsigned int> Counter      ;
+    typedef std::map<std::string,unsigned int> Counter    ;
     /// storage for active tools
-    typedef std::vector<IAlgTool*>             AlgTools     ;
+    typedef std::vector<IAlgTool*>             AlgTools   ;
     /// storage for active services
     typedef GaudiUtils::HashMap<std::string, SmartIF<IService> > Services;
 
@@ -115,7 +115,7 @@ namespace Rich
     inline SmartIF<SERVICE> svc( const std::string& name   ,
                                  const bool         create = true ) const
     {
-      SmartIF<IService>& baseSvc = this->serviceLocator()->service(name, create);
+      SmartIF<IService> & baseSvc = this->serviceLocator()->service(name, create);
       // Try to get the requested interface
       SmartIF<SERVICE> s;
       s = baseSvc;
@@ -197,7 +197,8 @@ namespace Rich
     /// Delete the current messaging object
     inline void resetMsgStream() const
     {
-      if ( 0 != m_msgStream ) { delete m_msgStream; m_msgStream = 0; }
+      delete m_msgStream; 
+      m_msgStream = NULL;
     }
 
     /// shortcut for the method msgStream ( MSG::ALWAYS )
@@ -221,16 +222,28 @@ namespace Rich
 
     /// print error message
     StatusCode Error     ( const std::string    & Message ,
-                           const StatusCode     & sc  = StatusCode::FAILURE ) const;
+                           const StatusCode       Status  = StatusCode::FAILURE ) const;
 
     /// print warning  message
-    StatusCode Warning   ( const std::string    & msg                       ,
-                           const StatusCode     & sc  = StatusCode::FAILURE ) const;
+    StatusCode Warning   ( const std::string    & Message                       ,
+                           const StatusCode       Status  = StatusCode::FAILURE ) const;
+
+    /// print info message
+    StatusCode Info      ( const std::string    & Message ,
+                           const StatusCode       Status  = StatusCode::SUCCESS ) const;
+
+    /// print debug message
+    StatusCode Debug     ( const std::string    & Message ,
+                           const StatusCode       Status  = StatusCode::SUCCESS ) const;
+
+    /// print verbose message
+    StatusCode Verbose   ( const std::string    & Message ,
+                           const StatusCode       Status  = StatusCode::SUCCESS ) const;
 
     /// print the message
-    StatusCode Print     ( const std::string    & msg                       ,
-                           const MSG::Level     & lvl = MSG::INFO           ,
-                           const StatusCode     & sc  = StatusCode::FAILURE ) const;
+    StatusCode Print     ( const std::string    & Message                       ,
+                           const MSG::Level       level   = MSG::INFO           ,
+                           const StatusCode       Status  = StatusCode::SUCCESS ) const;
 
     /// Throw an exception
     StatusCode Exception
@@ -275,10 +288,10 @@ namespace Rich
     mutable IChronoStatSvc* m_chronoSvc;
 
     /// List of active  tools
-    mutable AlgTools   m_tools       ;
+    mutable AlgTools   m_tools;
 
     /// List of active  services
-    mutable Services   m_services    ;
+    mutable Services   m_services;
 
   };
 

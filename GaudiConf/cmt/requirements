@@ -1,5 +1,5 @@
 package GaudiConf
-version v12r8
+version v12r9
 
 branches doc cmt options python src
 include_path none
@@ -7,6 +7,7 @@ include_path none
 use GaudiPolicy v*
 use LHCbKernel  v* Kernel # for LHCbConfigurableUser inheritance
 use DDDB        v* Det    # needed by configurable
+use XMLSummaryKernel   v* Kernel    # needed for inheritance
 
 ignore_pattern package_stamps
 
@@ -14,7 +15,7 @@ set STDOPTS    $(GaudiConf_root)/options
 
 macro_append cppflags ' -DAPPNAME=\"${package}\" -DAPPVERS=\"${version}\" '
 
-macro GaudiConfConfUserModules "GaudiConf.DigiConf GaudiConf.DstConf GaudiConf.Configuration"
+macro GaudiConfConfUserModules "GaudiConf.DigiConf GaudiConf.CaloPackingConf GaudiConf.DstConf GaudiConf.Configuration"
 apply_pattern install_python_modules
 apply_pattern install_scripts
 

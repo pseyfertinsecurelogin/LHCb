@@ -4,6 +4,38 @@
 ! Purpose     : Convert Calo Digit and Trigger information to RawEvent banks.
 !-----------------------------------------------------------------------------
 
+!========================== CaloDAQ v4r14 2009-10-16 =========================
+! 2009-10-14 - Patrick Koppenburg
+ - CaloReadoutTool.cpp : bug fix : initialise m_packed in constructor
+
+! 2009-10-10 - Olivier Deschamps
+  - Calo decoding tools (I)Calo(L0)DataProvider/(I)CaloEnergyFromRaw/(I)CaloTriggerXXXFromRaw : 
+    - add protections with const qualifier
+    - remove usage of stringstream (slow)
+    - change signature of adcs() methods
+    - increment interface version
+
+! 2009-09-30 - Olivier Deschamps
+  - Calo(L0)DataProvider : fix intialisation when (l0)Adc() method is called first
+
+! 2009-09-30 - Olivier Deschamps
+ - ICaloDataProvider : new virtual methods adcRange() and pinRange() return min/max (pin)Adc in the decoded ADC list.
+  - increment ICaloDataProvider version
+  - adapt CaloDataProviderFromTES and CaloDataProvider
+  - remove CaloDataProviderPatched (obsolete)
+
+! 2009-09-28 - Olivier Deschamps
+ - Calo(L0)DataProvider(...).cpp : fix uncomplete initialization in clear()
+
+! 2009-09-18 - Olivier Deschamps
+ - CaloReadoutTool : fix problem with IncidentSvc handling for getBanks() (problem in Boole when RawBanks does not exist at BeginEvent)
+
+! 2009-09-16 - Olivier Deschamps
+ - CaloReadoutTool : 
+    - implement BeginEvent update via IncidentService : the getBanks() method no longer need to be externally invoked at each event
+    - implement initialize()/finalize() method
+    - adapt all iheriting readout tools accordingly
+
 !========================== CaloDAQ v4r13 2009-09-02 =========================
 ! 2009-09-02 - Marco Cattaneo
  - Remove CaloReCreateMCLinks.cpp (moved to CaloAssociators)
@@ -12,6 +44,7 @@
  - Remove hack for Gaudi v21r1 to link dictionary on Windows 
  - Remove obsolete file CaloDAQ_dll.cpp
 
+!========================== CaloDAQ v4r12p1 2009-09-03 =========================
 ! 2009-09-17 - Olivier Deschamps
  - new algorithm : CaloAdcFromRaw produces ADC from rawBanks with possible mis-calibration
  - fix Calo(L0)DataProvider for 'partial' decoding in case of single 'offline' bank

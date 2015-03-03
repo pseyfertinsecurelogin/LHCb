@@ -4,6 +4,27 @@
 ! Purpose     : General purpose algorithms and tools for LHCb
 !-----------------------------------------------------------------------------
 
+!======================== LHCbAlgs v2r29 2009-10-16 ==========================
+! 2009-10-08 - Marco Cattaneo
+ - In TESCheck, do not call Warning() if OutputLevel is greater than WARNING
+
+! 2009-10-08 - Vanya Belyaev
+ - Memory Tool:
+    1. two new conunters:
+       "Total Memory/MB" 
+       "Delta Memory/MB"
+    2. two new histograms 
+       "Total Memory [MB]" 
+       "Delta Memory [MB]"
+ 
+! 2009-09-14 - Rob Lambert
+ - Fixed compiler warnings in EventCountAlg
+
+! 2009-09-09 - Rob Lambert
+ - Added EventCountAlg, which has a nameable counter()
+   This will presumably replace EventCountHisto with the
+   XMLSummarySvc for most users.
+
 !======================== LHCbAlgs v2r28 2009-07-13 ==========================
 ! 2009-07-13 - Marco Cattaneo
  - Remove obsolete file LHCbAlgs_dll.cpp

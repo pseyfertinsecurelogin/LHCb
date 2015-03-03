@@ -1,4 +1,4 @@
-// $Id: SVectorWithError.h,v 1.1 2009-06-13 18:30:12 ibelyaev Exp $
+// $Id: SVectorWithError.h,v 1.3 2009-09-12 19:29:26 ibelyaev Exp $
 // ============================================================================
 #ifndef LHCBMATH_SVECTORWITHERROR_H 
 #define LHCBMATH_SVECTORWITHERROR_H 1
@@ -112,16 +112,41 @@ namespace Gaudi
       inline SCALAR& cov2  ( unsigned int i , 
                              unsigned int j )        { return m_cov2  ( i , j ) ; }      
       // ======================================================================
+    public:  // finally it is just a vector 
+      // ======================================================================
+      const  SCALAR& operator() ( unsigned int i ) const { return m_value(i) ; }
+      inline SCALAR& operator() ( unsigned int i )       { return m_value(i) ; }
+      const  SCALAR& operator[] ( unsigned int i ) const { return m_value[i] ; }
+      inline SCALAR& operator[] ( unsigned int i )       { return m_value[i] ; }
+      // ======================================================================
+    public: // correlations 
+      // ======================================================================
+      /** get the correlation coefficient between "i" and "j"
+       *  for invalid setup , return large negative value 
+       *  @param i the first index 
+       *  @param j the second index 
+       *  @return correlation coefficient 
+       */
+      inline SCALAR  corr  ( unsigned int i  , unsigned int j  ) const ;
+      /** get the full correlation matrix 
+       *  @return false for invalid setup 
+       */
+      inline bool    corr  ( Covariance& corrm ) const ;
+      // ======================================================================
     public: // setters 
       // ======================================================================
       void setValue      ( const Value&      v ) { m_value = v ; }
       void setCovariance ( const Covariance& c ) { m_cov2  = c ; }
+      void setCov2       ( const Covariance& c ) { m_cov2  = c ; }
       // ======================================================================
       template <class B>
       void setValue       ( const ROOT::Math::VecExpr<B,SCALAR,N>&  v ) 
       { m_value = v ; }
       template <class B, class R>
       void setCovariance  ( const ROOT::Math::Expr<B,SCALAR,N,N,R>& c ) 
+      { m_cov2 = c ; }
+      template <class B, class R>
+      void setCov2        ( const ROOT::Math::Expr<B,SCALAR,N,N,R>& c ) 
       { m_cov2 = c ; }
       // ======================================================================
     public: // cast:
@@ -170,7 +195,13 @@ namespace Gaudi
       Self __add__  ( const Value& right ) const ;
       Self __sub__  ( const Value& right ) const ;      
       Self __radd__ ( const Value& right ) const ;
-      Self __rsub__ ( const Value& right ) const ;      
+      Self __rsub__ ( const Value& right ) const ;
+      // ======================================================================      
+      Self& __imul__  ( const double v )       { return (*this) *= v ; }
+      Self& __idiv__  ( const double v )       { return (*this) *= v ; }
+      Self  __mul__   ( const double v ) const { return (*this) *  v ; }
+      Self  __div__   ( const double v ) const { return (*this) /  v ; }
+      Self  __rmul__  ( const double v ) const { return __mul__ ( v ) ; }
       // ======================================================================
     public: //  printout 
       // ======================================================================
@@ -321,6 +352,39 @@ namespace Gaudi
       const SVectorWithError<N,SCALAR>&      v1 ) 
     {
       return SVectorWithError<N,SCALAR> ( v2 - v1.value() , v1.cov2()  ) ;
+    }
+    // ========================================================================
+    template <unsigned int N, class SCALAR>
+    inline 
+    SVectorWithError<N,SCALAR>
+    operator* 
+    ( const SVectorWithError<N,SCALAR>&      v1 , 
+      const SCALAR                           v2 ) 
+    {
+      SVectorWithError<N,SCALAR> tmp ( v1 ) ;
+      return tmp *= v2 ;
+    }
+    // ========================================================================
+    template <unsigned int N, class SCALAR>
+    inline 
+    SVectorWithError<N,SCALAR>
+    operator/
+    ( const SVectorWithError<N,SCALAR>&      v1 , 
+      const SCALAR                           v2 ) 
+    {
+      SVectorWithError<N,SCALAR> tmp ( v1 ) ;
+      return tmp /= v2 ;
+    }
+    // ========================================================================
+    template <unsigned int N, class SCALAR>
+    inline 
+    SVectorWithError<N,SCALAR>
+    operator* 
+    ( const SCALAR                           v2 , 
+      const SVectorWithError<N,SCALAR>&      v1 )
+    {
+      SVectorWithError<N,SCALAR> tmp ( v1 ) ;
+      return tmp *= v2 ;
     }
     // ========================================================================
   } //                                             end of namespace Gaudi::Math

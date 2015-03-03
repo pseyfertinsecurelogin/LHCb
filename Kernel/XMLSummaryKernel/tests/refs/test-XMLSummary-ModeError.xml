@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<summary version="1.0" xsi:noNamespaceSchemaLocation="$XMLSUMMARYBASEROOT/xml/XMLSummary.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<success>False</success>
+	<step>execute</step>
+	<usage>
+		<stat unit="KB" useOf="MemoryMaximum">236884.0</stat>
+	</usage>
+	<input>
+		<file GUID="" name="PFN:YouCannotOpenMe.dst" status="fail">0</file>
+		<file GUID="" name="PFN:rfio:/castor/cern.ch/user/c/cattanem/Brunel/v32r1/00001820_00000001_5.dst" status="part">0</file>
+	</input>
+	<output>
+		<file GUID="" name="PFN:PoolDst.root" status="fail">0</file>
+	</output>
+	<counters />
+	<lumiCounters />
+</summary>

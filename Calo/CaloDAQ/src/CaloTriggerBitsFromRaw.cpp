@@ -1,4 +1,4 @@
-// $Id: CaloTriggerBitsFromRaw.cpp,v 1.26 2009-09-02 12:22:13 cattanem Exp $
+// $Id: CaloTriggerBitsFromRaw.cpp,v 1.29 2009-10-12 16:03:54 odescham Exp $
 // Include files
 
 // from Gaudi
@@ -37,8 +37,12 @@ CaloTriggerBitsFromRaw::~CaloTriggerBitsFromRaw() {};
 //=========================================================================
 //  Initialisation
 //=========================================================================
+StatusCode CaloTriggerBitsFromRaw::finalize ( ) {
+  return CaloReadoutTool::finalize(); 
+}
+
 StatusCode CaloTriggerBitsFromRaw::initialize ( ) {
-  StatusCode sc = GaudiTool::initialize(); // must be executed first
+  StatusCode sc = CaloReadoutTool::initialize(); // must be executed first
   if ( sc.isFailure() ) return sc;  // error printed already by GaudiTool
 
   debug() << "==> Initialize " << name() << endmsg;
@@ -87,31 +91,31 @@ void CaloTriggerBitsFromRaw::cleanData(int feb ) {
 //  the FULL decoding is run twice
 //  --> in this case it's better to invoque prsSpdCells() method
 //=========================================================================
-LHCb::Calo::FiredCells& CaloTriggerBitsFromRaw::prsCells () {
-  LHCb::Calo::PrsSpdFiredCells& allCells = prsSpdCells();
+const LHCb::Calo::FiredCells& CaloTriggerBitsFromRaw::prsCells () {
+  const LHCb::Calo::PrsSpdFiredCells& allCells = prsSpdCells();
   return allCells.first;
 }
-LHCb::Calo::FiredCells& CaloTriggerBitsFromRaw::spdCells () {
-  LHCb::Calo::PrsSpdFiredCells& allCells = prsSpdCells();  
+const LHCb::Calo::FiredCells& CaloTriggerBitsFromRaw::spdCells () {
+  const LHCb::Calo::PrsSpdFiredCells& allCells = prsSpdCells();  
   return allCells.second;
 }
 //=========================================================================
 //  Decode the fired Cells for ALL banks of one event
 //=========================================================================
-LHCb::Calo::PrsSpdFiredCells& CaloTriggerBitsFromRaw::prsSpdCells () {
+const LHCb::Calo::PrsSpdFiredCells& CaloTriggerBitsFromRaw::prsSpdCells () {
   return prsSpdCells( -1 );
 }
 //=========================================================================
 //  Decode the TriggerBit for a single bank (given by sourceID)
 //  Decode ALL banks if source < 0
 //=========================================================================
-LHCb::Calo::PrsSpdFiredCells& CaloTriggerBitsFromRaw::prsSpdCells (int source ) {
+const LHCb::Calo::PrsSpdFiredCells& CaloTriggerBitsFromRaw::prsSpdCells (int source ) {
 
   clear();
   bool decoded = false;
   bool found   = false;
   int sourceID     ;
-  if(m_getRaw)getCaloBanksFromRaw();
+  if(m_getRaw)getBanks();
   if( NULL == m_banks || 0 == m_banks->size() ){
     debug() << "The banks container is empty" << endmsg;
   }else{    
@@ -123,16 +127,13 @@ LHCb::Calo::PrsSpdFiredCells& CaloTriggerBitsFromRaw::prsSpdCells (int source ) 
       if(checkSrc( sourceID ))continue;
       decoded = getData ( *itB );
       if( !decoded ){
-        std::stringstream s("");
-        s<< sourceID;
-        debug() << "Error when decoding bank " << s.str()   << " -> incomplete data - May be corrupted" << endmsg;
+        debug() << "Error when decoding bank " << Gaudi::Utils::toString(sourceID)   
+                << " -> incomplete data - May be corrupted" << endmsg;
       }
     } 
   }
   if( !found ){
-    std::stringstream s("");
-    s<< source;
-    debug() << "rawBank sourceID : " << s.str() << " has not been found"<<endmsg;
+    debug() << "rawBank sourceID : " << Gaudi::Utils::toString(source) << " has not been found"<<endmsg;
   }
   return m_data;
 }
@@ -141,7 +142,7 @@ LHCb::Calo::PrsSpdFiredCells& CaloTriggerBitsFromRaw::prsSpdCells (int source ) 
 //  Return appropriate containers (prs.or.spd) for a single bank (given by pointer)
 //=========================================================================
 
-LHCb::Calo::PrsSpdFiredCells& CaloTriggerBitsFromRaw::prsSpdCells (  LHCb::RawBank* bank ) {
+const LHCb::Calo::PrsSpdFiredCells& CaloTriggerBitsFromRaw::prsSpdCells (  LHCb::RawBank* bank ) {
   clear();
   if( ! getData ( bank ))clear();
   return m_data;
@@ -270,11 +271,8 @@ bool CaloTriggerBitsFromRaw::getData(  LHCb::RawBank* bank ) {
         chanID = m_calo->cardChannels( feCards[card] );
         feCards.erase(feCards.begin()+card);
       }else{
-        std::stringstream s("");
-        s<<sourceID;
-        std::stringstream c("");
-        c<<code;
-        Error(" FE-Card w/ [code : " + c.str() + " ] is not associated with TELL1 bank sourceID : " +s.str()
+        Error(" FE-Card w/ [code : " + Gaudi::Utils::toString(code) + " ] is not associated with TELL1 bank sourceID : " 
+              +Gaudi::Utils::toString(sourceID)
               + " in condDB :  Cannot read that bank").ignore();
         Error("Warning : previous data may be corrupted").ignore();
         if(m_cleanCorrupted)cleanData(prevCard);

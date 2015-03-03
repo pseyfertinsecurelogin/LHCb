@@ -4,6 +4,15 @@
 ! Purpose     : Pack and unpack events classes for smaller events
 !-----------------------------------------------------------------------------
 
+!============================ EventPacker v1r8 2009-10-16 ====================
+! 2009-10-14 - Marco Cattaneo
+ - In Packer algorithms, use getOrCreate of input containers instead of get,
+   to produce empty output container if input is missing (useful for Lumi events)
+ - Fix a windows warnings in ReadPackedDst and WritePackedDst
+
+! 2009-10-09 Markus Frank
+ - Add name of leaf in TES to DstAddress bank
+
 !============================ EventPacker v1r7 2009-09-02 ====================
 ! 2009-09-01 - Olivier Callot
  - Remove HitPattern as it is removed form Track
