@@ -1,0 +1,14 @@
+! =============================================================================
+! Package     : MuonInterfaces
+! Responsible : Alessia Satta Alessia.Sattaft@cern.ch
+! =============================================================================
+
+!====================== MuonInterfaces v1r0 2010-02-12 ========================
+! 2010-02-10 - Giacomo Graziani
+ - move all tool interfaces from MuonTrackRec, and the related classes 
+
+! 2010-02-09 - Alessia Satta
+ - First release. Only header of interfaces are supposed to 
+   be in this package
+
+
