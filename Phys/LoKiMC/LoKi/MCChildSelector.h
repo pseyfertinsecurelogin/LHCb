@@ -1,4 +1,4 @@
-// $Id: MCChildSelector.h 124207 2011-06-02 16:05:29Z ibelyaev $
+// $Id: MCChildSelector.h 141138 2012-06-16 09:18:40Z ibelyaev $
 // ============================================================================
 #ifndef LOKIMC_MCCHILDSELECTOR_H 
 #define LOKIMC_MCCHILDSELECTOR_H 1
@@ -119,43 +119,6 @@ namespace LoKi
       bool                      m_decayOnly ;    // decay only ?
       // ======================================================================
     };
-    // ========================================================================
-    /** Trivial accessor to the daughter particles for the given particle.
-     *  @param  particle (const) pointer to mother particle 
-     *  @param  selector the selector 
-     *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
-     *  @date   2010-05-29
-     */
-    GAUDI_API 
-    const LHCb::MCParticle* child 
-    ( const LHCb::MCParticle*        particle , 
-      const LoKi::MCChild::Selector& selector ) ;
-    // ========================================================================
-    /** accessor to certain children particles for the given particle 
-     *  @param  particle (INPUT) pointer to mother particle 
-     *  @param  selector (INPUT) the selector 
-     *  @param  result   (OUTPUT) the container of found particles
-     *  @return number of found particles 
-     *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
-     *  @date   2010-05-29
-     */
-    GAUDI_API 
-    unsigned int children 
-    ( const LHCb::MCParticle*        particle , 
-      const LoKi::MCChild::Selector& selector , 
-      LHCb::MCParticle::ConstVector& result   ) ;
-    /** accessor to certain children particles for the given particle 
-     *  @param  particle (INPUT) pointer to mother particle 
-     *  @param  selector (INPUT) the selector 
-     *  @return the container of found particles
-     *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
-     *  @date   2010-05-29
-     */
-    GAUDI_API 
-    LHCb::MCParticle::ConstVector
-    children 
-    ( const LHCb::MCParticle*        particle , 
-      const LoKi::MCChild::Selector& selector ) ;
     // ========================================================================
   } //                                           end of namespace LoKi::MCChild 
   // ==========================================================================

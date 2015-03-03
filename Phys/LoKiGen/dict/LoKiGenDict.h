@@ -1,4 +1,4 @@
-// $Id: LoKiGenDict.h 134319 2012-01-29 17:47:25Z ibelyaev $
+// $Id: LoKiGenDict.h 140464 2012-05-24 14:25:32Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_LOKICOREDICT_H 
 #define LOKI_LOKICOREDICT_H 1
@@ -63,8 +63,8 @@
  *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
  *  @date 2007-12-01
  *
- *                    $Revision: 134319 $
- *  Last modification $Date: 2012-01-29 18:47:25 +0100 (Sun, 29 Jan 2012) $
+ *                    $Revision: 140464 $
+ *  Last modification $Date: 2012-05-24 16:25:32 +0200 (Thu, 24 May 2012) $
  *                 by $Author: ibelyaev $
  */
 // ============================================================================
@@ -162,6 +162,29 @@ namespace LoKi
       static Fun::result_type 
       __call__    ( const Fun& fun  , const Type*           o ) 
       { return fun ( o ) ; }
+      //
+      // __call__ as filter 
+      //
+      // __call__ 
+      static LoKi::GenTypes::GenContainer 
+      __call__ ( const Fun& fun  , const LoKi::GenTypes::GenContainer& o ) 
+      { return o >> fun  ; }
+      // __call__      
+      static LoKi::GenTypes::GenContainer 
+      __call__ ( const Fun& fun  , const LoKi::GenTypes::GRange& o ) 
+      { return o >> fun  ; }
+      // __call__ 
+      static LoKi::GenTypes::GenContainer
+      __call__ ( const Fun& fun  , const HepMC::GenEvent* e ) 
+      { return e >> fun ; }
+      // __call__ 
+      static LoKi::GenTypes::GenContainer
+      __call__ ( const Fun& fun  , const LHCb::HepMCEvent* e ) 
+      { return e >> fun ; }
+      // __call__ 
+      static LoKi::GenTypes::GenContainer
+      __call__ ( const Fun& fun  , const LHCb::HepMCEvent::Container* e ) 
+      { return e >> fun ; }
       // ======================================================================
     public:
       // ======================================================================
@@ -169,10 +192,29 @@ namespace LoKi
       static Fun::result_type              
       __rrshift__ ( const Fun& fun  , const Type*           o ) 
       { return o >> fun  ; }
+      //
+      // rrshift as "filter"
+      //
       // __rrshift__ 
-      static const LoKi::GenTypes::GenContainer 
+      static LoKi::GenTypes::GenContainer 
       __rrshift__ ( const Fun& fun  , const LoKi::GenTypes::GenContainer& o ) 
-      { return o >> fun  ; }      
+      { return o >> fun  ; }
+      // __rrshift__ 
+      static LoKi::GenTypes::GenContainer 
+      __rrshift__ ( const Fun& fun  , const LoKi::GenTypes::GRange& o ) 
+      { return o >> fun  ; }
+      // __rrshift__ 
+      static LoKi::GenTypes::GenContainer
+      __rrshift__ ( const Fun& fun  , const HepMC::GenEvent* e ) 
+      { return e >> fun  ; }
+      // __rrshift__ 
+      static LoKi::GenTypes::GenContainer
+      __rrshift__ ( const Fun& fun  , const LHCb::HepMCEvent* e ) 
+      { return e >> fun  ; }
+      // __rrshift__ 
+      static LoKi::GenTypes::GenContainer
+      __rrshift__ ( const Fun& fun  , const LHCb::HepMCEvent::Container* e ) 
+      { return e >> fun  ; }
       // ======================================================================
     public:
       // ======================================================================

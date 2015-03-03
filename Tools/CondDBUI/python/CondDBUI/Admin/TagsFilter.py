@@ -17,10 +17,11 @@ from xml.sax import make_parser, SAXException
 from xml.sax.handler import ContentHandler
 
 class ReleaseNotesHandler(ContentHandler):
-    def __init__(self, partition, datatype, search_gts):
+    def __init__(self, partition, datatype, search_gts, search_lts):
         # Variables to store the attributes of each global tag
         self.requested_partition, self.requested_datatype = partition, datatype
         self.search_gts = search_gts
+        self.search_lts = search_lts
         # Flags to indicate the element, content of which should be read.
         self.found_lt, self.found_lt_Name, self.found_lt_Partition, self.found_lt_DataType = False, False, False, False
         self.found_gt, self.found_gt_Name, self.found_gt_Partition, self.found_gt_DataType = False, False, False, False
@@ -60,22 +61,22 @@ class ReleaseNotesHandler(ContentHandler):
         """Performs analysis of .xml file elements content.
 
         Depending on the request, this function fills:
-        1) The list of all global tags wich correspond to the given partition
+        1) The list of all global tags which correspond to the given partition
         and data type.
         2) The tuple of the most recent global tag and all subsequent local tags for it.
         """
 
-        # Cancellation of whitespaces processing by characters()
+        # Cancellation of white-spaces processing by characters()
         if ch in ("\n", "\t", "\t\t", "\t\t\t"): return 0
 
-        # Local tag entry treating. Grabing marked elemets values.
+        # Local tag entry treating. Grabbing marked elements values.
         if self.found_lt:
             if self.found_lt_Partition:
                 self.lt_Partition = ch
             elif self.found_lt_Name:
                 self.lt_Name = ch
             elif self.found_lt_DataType:
-                # Choosing among all mentioned datatypes the one requested
+                # Choosing among all mentioned data types the one requested
                 if ch == self.requested_datatype:
                     self.lt_DataType = ch
 
@@ -84,12 +85,12 @@ class ReleaseNotesHandler(ContentHandler):
                     if self.lt_Name not in self.local_tags:
                         self.local_tags.append(str(self.lt_Name))
 
-        # Global tag entry treating.  Grabing marked elemets values.
-        elif self.found_gt:
+        # Global tag entry treating.  Grabbing marked elements values.
+        elif self.found_gt and not self.search_lts:
             if self.found_gt_Name:
                 self.gt_Name = ch
             elif self.found_gt_DataType:
-                # Choosing among all mentioned datatypes the one requested
+                # Choosing among all mentioned data types the one requested
                 if ch == self.requested_datatype:
                     self.gt_DataType = ch
             elif self.found_gt_Partition:
@@ -104,7 +105,7 @@ class ReleaseNotesHandler(ContentHandler):
                         self.global_tags.append(str(self.gt_Name))
 
     def endElement(self, name):
-        """Performs unsetting the flag_*_* variables, when processed element is left."""
+        """Performs resetting the flag_*_* variables, when processed element is left."""
 
         # Local tag entry treating.
         if self.found_lt:
@@ -137,10 +138,10 @@ class ReleaseNotesHandler(ContentHandler):
                 self.gt_Name, self.gt_DataType = None, None
 
 
-def init_finder(partition, datatype, search_gts):
+def init_finder(partition, datatype, search_gts = False, search_lts = False):
     """Initializing SAX handler and parser for the "release_notes.xml" file."""
 
-    handler = ReleaseNotesHandler(partition, datatype, search_gts)
+    handler = ReleaseNotesHandler(partition, datatype, search_gts, search_lts)
     parser = make_parser()
     parser.setContentHandler(handler)
     return parser, handler
@@ -151,13 +152,35 @@ def all_gts(partition, datatype, rel_notes = None):
     The output is in the form of a list. The fist one global tag is the most recent one.
     """
 
-    parser, handler = init_finder(partition, datatype, True)
+    parser, handler = init_finder(partition, datatype, search_gts = True)
     if not rel_notes:
         rel_notes = os.path.join(os.environ["SQLITEDBPATH"], "..", "doc", "release_notes.xml")
     try:
         parser.parse(open(rel_notes))
         if len(handler.global_tags) != 0:
             return handler.global_tags
+        else:
+            return None
+    except IOError:
+        print "\nSorry.. There is no such file or IO problem has been met.\
+        \nYou were using: %s \
+        \nPlease check the path to 'release_notes.xml' or just try again later."\
+        % rel_notes
+        return 1
+
+def all_lts(partition, datatype, rel_notes = None):
+    """Returns for the given partition and datatype the list of all local tags.
+
+    The output is in the form of a list. The fist one global tag is the most recent one.
+    """
+
+    parser, handler = init_finder(partition, datatype, search_lts = True)
+    if not rel_notes:
+        rel_notes = os.path.join(os.environ["SQLITEDBPATH"], "..", "doc", "release_notes.xml")
+    try:
+        parser.parse(open(rel_notes))
+        if len(handler.local_tags) != 0:
+            return handler.local_tags
         else:
             return None
     except IOError:
@@ -178,7 +201,7 @@ def last_gt_lts(partition, datatype, rel_notes = None):
     will be returned, even if local tags were found for the condition.
     """
 
-    parser, handler = init_finder(partition, datatype, False)
+    parser, handler = init_finder(partition, datatype)
     if not rel_notes:
         rel_notes = os.path.join(os.environ["SQLITEDBPATH"], "..", "doc", "release_notes.xml")
     try:

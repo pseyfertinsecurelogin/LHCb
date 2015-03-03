@@ -1,4 +1,4 @@
-// $Id: ValueWithError.h 139291 2012-04-29 16:09:19Z ibelyaev $
+// $Id: ValueWithError.h 141156 2012-06-17 12:51:56Z ibelyaev $
 // ============================================================================
 #ifndef LHCBMATH_ERRORS_H 
 #define LHCBMATH_ERRORS_H 1
@@ -44,6 +44,10 @@ namespace Gaudi
       // ======================================================================
     public:
       // ======================================================================
+      typedef std::vector<ValueWithError>                          Vector     ;
+      // ======================================================================
+    public:
+      // ======================================================================
       /// constructor from the value and covariance 
       ValueWithError ( const double value      = 0 , 
                        const double covariance = 0 ) ;
@@ -78,8 +82,9 @@ namespace Gaudi
       // ======================================================================
     public: // setters 
       // ======================================================================
-      void setValue      ( const double v ) { m_value = v      ; }
-      void setCovariance ( const double c ) { m_cov2  = c      ; }
+      void setValue      ( const double v ) {  m_value = v   ; }
+      void setCov2       ( const double c ) {  m_cov2  = c   ; }
+      void setCovariance ( const double c ) { setCov2  ( c ) ; }
       /** set the error 
        *  @attention invalid covariance is set for negative error 
        */
@@ -142,6 +147,10 @@ namespace Gaudi
        *  defined as  signed \f$\sqrt \chi^2 \f$
        */
       double residual ( const double          right ) const ;
+      /** get Kullback-Liebler divergency 
+       *  @return KL-divergency for valid arguments, -1 otherwise
+       */
+      double kullback ( const ValueWithError& right ) const ;
       // ======================================================================
     public:
       // ======================================================================
@@ -253,7 +262,7 @@ namespace Gaudi
       /// the associated covariance
       double m_cov2 ;                              // the associated covariance
       // ======================================================================
-    };
+    } ;
     // ========================================================================
     /// addition 
     inline ValueWithError 
@@ -329,6 +338,13 @@ namespace Gaudi
     ( const double          b ,
       const ValueWithError& a ) { return a.chi2 ( b ) ; }
     // ========================================================================
+    /** get Kullback-Liebler divergency 
+     *  return the divergency for valid arguments, -1 otherwise
+     */
+    inline double kullback 
+    ( const ValueWithError& a , 
+      const ValueWithError& b ) { return a.kullback ( b ) ; }
+    // ========================================================================
     /// evaluate the "fraction"  a/(a+b)
     inline ValueWithError frac 
     ( const ValueWithError& a , 
@@ -398,7 +414,7 @@ namespace Gaudi
      *  @param a (INPUT) the base 
      *  @param b (INPUT) the exponent 
      *  @return the <c>a</c> raised to power <c>b</b> 
-     *  @warning invalid and small covarinaces are ignored 
+     *  @warning invalid and small covariances are ignored 
      */
     GAUDI_API
     ValueWithError pow 
@@ -531,6 +547,39 @@ namespace Gaudi
       const ValueWithError& v10 , 
       const ValueWithError& v11 ) ;
     // ========================================================================    
+    /** get the sum of the vector 
+     *  @param vct the vecor
+     *  @param ini the intial value 
+     *  @return the sum over the vector 
+     */
+    GAUDI_API 
+    ValueWithError sum 
+    ( const std::vector<ValueWithError>& vct                    , 
+      ValueWithError                     ini = ValueWithError() ) ;
+    // ========================================================================    
+    /** get the sum of the absolute values
+     *  @param vct the vecor
+     *  @param ini the intial value 
+     *  @return the sum over the vector 
+     */
+    GAUDI_API 
+    ValueWithError abssum ( const std::vector<ValueWithError>& vct ) ;
+    // ========================================================================    
+    /** get the sum of the absolute values
+     *  @param vct the vecor
+     *  @param ini the intial value 
+     *  @return the sum over the vector 
+     */
+    inline 
+    ValueWithError sumabs ( const std::vector<ValueWithError>& vct )
+    { return abssum ( vct )  ; }
+    // ========================================================================    
+    /// the output operator for the vector 
+    GAUDI_API 
+    std::ostream& operator<<
+      ( std::ostream& s , 
+        const std::vector<Gaudi::Math::ValueWithError>& v ) ;
+    // ========================================================================
   } //                                             end of namespace Gaudi::Math 
   // ==========================================================================
   namespace Parsers 
@@ -568,6 +617,30 @@ namespace Gaudi
   } //                                          end of namespace Gaudi::Parsers 
   // ==========================================================================
 } //                                                    end of namespace  Gaudi
+// ============================================================================
+namespace Gaudi
+{
+  // ==========================================================================
+  namespace Utils 
+  {
+    // ========================================================================
+    inline 
+    std::ostream& toStream
+    ( const Gaudi::Math::ValueWithError& obj , std::ostream& s )
+    { return obj.fillStream ( s ) ; }
+    // =======================================================================
+    /// print the vector
+    GAUDI_API 
+    std::ostream& toStream
+    ( const std::vector<Gaudi::Math::ValueWithError>& obj , std::ostream& s ) ;
+    // =======================================================================
+    inline 
+    std::string toString ( const Gaudi::Math::ValueWithError& obj )
+    { return obj.toString () ; }
+    // ========================================================================
+  } //                                            end of namespace Gaudi::Utils 
+  // ==========================================================================
+} //                                                     end of namespace Gaudi
 // ============================================================================
 // The END 
 // ============================================================================

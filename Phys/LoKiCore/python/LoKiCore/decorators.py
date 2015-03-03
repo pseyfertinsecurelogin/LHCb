@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # =============================================================================
-# $Id: decorators.py 134317 2012-01-29 17:46:17Z ibelyaev $ 
+# $Id: decorators.py 140320 2012-05-20 14:42:28Z ibelyaev $ 
 # =============================================================================
-# $URL: http://svn.cern.ch/guest/lhcb/LHCb/tags/Phys/LoKiCore/v11r7/python/LoKiCore/decorators.py $ 
+# $URL: http://svn.cern.ch/guest/lhcb/LHCb/tags/Phys/LoKiCore/v11r9/python/LoKiCore/decorators.py $ 
 # =============================================================================
 ## @file decorators.py LoKiCore/decorators.py
 #
@@ -22,8 +22,8 @@
 #
 #  @author Vanya BELYAEV ibelyaev@physics.syr.edu
 #
-#  $Revision: 134317 $
-#  Last modification $Date: 2012-01-29 18:46:17 +0100 (Sun, 29 Jan 2012) $
+#  $Revision: 140320 $
+#  Last modification $Date: 2012-05-20 16:42:28 +0200 (Sun, 20 May 2012) $
 #                 by $Author: ibelyaev $
 # =============================================================================
 """
@@ -46,7 +46,7 @@ with the campain of Dr.O.Callot et al.:
 # =============================================================================
 __author__  = "Vanya BELYAEV ibelyaev@physics.syr.edu" 
 __date__    = "????-??-??"
-__version__ = "SVN $Revision: 134317 $ "
+__version__ = "SVN $Revision: 140320 $ "
 # =============================================================================
 
 from LoKiCore.basic import cpp, std, LoKi, LHCb, Gaudi  
@@ -419,8 +419,14 @@ def decorateCallsCut ( funcs , calls ) :
             
             Uses:\n
             """
-            if not calls.__call__ (s,*a) : return False 
-            return True  
+            result = calls.__call__ ( s , *a )
+            
+            if isinstance ( result ,  ( int , long ) ) :
+                return True if result else False
+            
+            return result 
+            # if not calls.__call__ (s,*a) : return False 
+            # return True  
         
         _call_ . __doc__  += calls.__call__ . __doc__
 

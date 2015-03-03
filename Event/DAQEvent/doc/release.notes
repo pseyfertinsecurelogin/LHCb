@@ -4,6 +4,22 @@
 !Purpose: Define the classes delivered to the online farm by the DAQ
 !-----------------------------------------------------------------------------
 
+!========================= DAQEvent v9r8 2012-06-25 =========================
+! 2012-06-16 - Heinrich Schindler
+ - Add VL to RawBank types 
+
+! 2012-06-15 - Marco Cattaneo
+ - Add RawEventLocation::Calo to RawEvent locations
+
+! 2012-06-13 - Chris Jones
+ - Add RawEventLocation::Rich to RawEvent locations
+
+! 2012-06-08 - Marco Cattaneo
+ - Add RawEventLocation::Muon and RawEventLocation::Other
+
+! 2012-05-14 - Olivier Callot
+ - New DAQ bank number for FTCluster.
+
 !========================= DAQEvent v9r7 2012-05-02 =========================
 ! 2012-04-03 - Olivier Deschamps
  - Fix typo in  RawBankReadoutStatus::Status enum

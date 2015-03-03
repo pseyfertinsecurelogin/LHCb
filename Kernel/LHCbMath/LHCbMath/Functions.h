@@ -1,4 +1,4 @@
-// $Id: Functions.h 139270 2012-04-28 17:33:47Z ibelyaev $
+// $Id: Functions.h 140791 2012-06-07 10:15:16Z ibelyaev $
 // ============================================================================
 #ifndef LHCBMATH_FUNCTIONS_H 
 #define LHCBMATH_FUNCTIONS_H 1
@@ -22,8 +22,8 @@
  *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
  *  @date 2010-04-19
  *  
- *                    $Revision: 139270 $
- *  Last modification $Date: 2012-04-28 19:33:47 +0200 (Sat, 28 Apr 2012) $
+ *                    $Revision: 140791 $
+ *  Last modification $Date: 2012-06-07 12:15:16 +0200 (Thu, 07 Jun 2012) $
  *                 by $author$
  */
 // ============================================================================
@@ -918,6 +918,86 @@ namespace Gaudi
       /// integral  
       double m_integral ;  // the integral  
       // ======================================================================
+    private:
+      // ======================================================================
+      /// workspace 
+      Gaudi::Math::WorkSpace m_workspace ;
+      // ======================================================================
+    } ;
+    // ========================================================================
+    /** @class Needham
+     *  The special parametrization by Matthew NEEDHAM of 
+     *  ``Crystal Ball-function'' suitable for \f$J/\psi\f$-peak
+     *  @thank Matthew Needham 
+     *  @see Gaudi::Math::CrystalBall
+     *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
+     *  @date 2012-05-13
+     */
+    class GAUDI_API Needham : public std::unary_function<double,double>     
+    {
+    public:
+      // ======================================================================
+      /** constructor from all parameters 
+       *  @param m0     m0       parameter 
+       *  @param sigma  sigma    parameter 
+       *  @param a0     a0       parameter 
+       *  @param a1     a1       parameter 
+       *  @param a2     a2       parameter 
+       */
+      Needham
+      ( const double m0    = 3096.0     , 
+        const double sigma =   13.5     , 
+        const double a0    =    1.975   , 
+        const double a1    =    0.0011  , 
+        const double a2    =   -0.00018 ) ;
+      /// destructor 
+      ~Needham() ;
+      // ======================================================================     
+    public:
+      // ====================================================================== 
+      /// evaluate Needham's function 
+      double operator() ( const double x ) const ;
+      // ====================================================================== 
+    public: // trivial accessors 
+      // ======================================================================  
+      double m0    () const { return m_cb.m0    () ; }
+      double peak  () const { return      m0    () ; }
+      double sigma () const { return m_cb.sigma () ; }
+      double a0    () const { return m_a0          ; }
+      double a1    () const { return m_a1          ; }
+      double a2    () const { return m_a2          ; }
+      double alpha () const { return a0()+sigma()*(a1()+sigma()*a2()) ; }
+      // ======================================================================
+    public: // trivial accessors 
+      // ======================================================================
+      bool setM0    ( const double value ) { return m_cb.setM0    ( value ) ; }
+      bool setPeak  ( const double value ) { return      setM0    ( value ) ; }
+      bool setMass  ( const double value ) { return      setPeak  ( value ) ; }
+      bool setSigma ( const double value ) { return m_cb.setSigma ( value ) ; }
+      bool setA0    ( const double value ) ;
+      bool setA1    ( const double value ) ;
+      bool setA2    ( const double value ) ;
+      // ======================================================================
+    public: 
+      // ======================================================================
+      /// get (possibly trunkated) integral 
+      double integral () const { return m_cb.integral() ; }
+      /// get integral between low and high 
+      double integral ( const double low , 
+                        const double high ) const 
+      { return m_cb.integral ( low , high ) ; }
+      // ======================================================================
+    private:
+      // ======================================================================
+      /// the function itself 
+      Gaudi::Math::CrystalBall m_cb ; // the function itself
+      /// a0-parameter 
+      double m_a0       ;  // a0_parameter 
+      /// a0-parameter 
+      double m_a1       ;  // a1_parameter 
+      /// a0-parameter 
+      double m_a2       ;  // a2_parameter 
+      // ======================================================================
     } ;
     // ========================================================================
     /** @class CrystalBallDoubleSided 
@@ -1010,7 +1090,12 @@ namespace Gaudi
       double m_const_R  ;      
       /// integral  
       double m_integral ;  // the integral  
-      //  
+      // ======================================================================
+    private:
+      // ======================================================================
+      /// workspace 
+      Gaudi::Math::WorkSpace m_workspace ;
+      // ======================================================================
     } ;
     // ========================================================================
     /** @class GramCharlierA4
@@ -1498,17 +1583,26 @@ namespace Gaudi
       // ======================================================================
     public:
       // ======================================================================
+      /// get breit-wigner amplitude
+      std::complex<double> amplitude ( const double x ) const ;
+      // ======================================================================
       double breit_wigner  ( const double x ) const ;
       // ======================================================================
     public:
       // ======================================================================
-      double m0     () const { return m_m0      ; }
-      double mass   () const { return   m0   () ; }
-      double peak   () const { return   m0   () ; }
-      double gam0   () const { return m_gam0    ; }
-      double gamma0 () const { return   gam0 () ; }
-      double gamma  () const { return   gam0 () ; }
-      double width  () const { return   gam0 () ; }
+      double         m0     () const { return m_m0      ; }
+      double         mass   () const { return   m0   () ; }
+      double         peak   () const { return   m0   () ; }
+      double         gam0   () const { return m_gam0    ; }
+      double         gamma0 () const { return   gam0 () ; }
+      double         gamma  () const { return   gam0 () ; }
+      double         width  () const { return   gam0 () ; }
+      // ======================================================================
+    public:
+      // ======================================================================
+      double         m1     () const { return m_m1 ; }
+      double         m2     () const { return m_m2 ; }
+      unsigned short L      () const { return m_L  ; }
       // ======================================================================
     public:
       // ======================================================================
@@ -1574,9 +1668,9 @@ namespace Gaudi
     public:
       // ======================================================================
       // constructor from all parameters
-      Rho0  ( const double m0       = 770   , 
-              const double gam0     = 150   ,
-              const double pi_mass  = 139.6 ) ;
+      Rho0  ( const double m0       = 770   ,     // MeV 
+              const double gam0     = 150   ,     // MeV 
+              const double pi_mass  = 139.6 ) ;   // MeV 
       /// destructor 
       virtual ~Rho0 () ;
       // ======================================================================
@@ -1591,13 +1685,13 @@ namespace Gaudi
     public:
       // ======================================================================
       /// constructor from all parameters
-      Rho0FromEtaPrime  ( const double m0        = 770   , 
-                          const double gam0      = 150   ,
-                          const double pi_mass   = 139.6 , 
-                          const double eta_prime = 957.7 ) ;
+      Rho0FromEtaPrime  ( const double m0        = 770   ,    // MeV 
+                          const double gam0      = 150   ,    // MeV 
+                          const double pi_mass   = 139.6 ,    // MeV 
+                          const double eta_prime = 957.7 ) ;  // MeV 
       /// constructor from all parameters
       Rho0FromEtaPrime  ( const Gaudi::Math::Rho0& rho   , 
-                          const double eta_prime = 957.7 ) ;
+                          const double eta_prime = 957.7 ) ;  // MeV 
       /// destructor 
       virtual ~Rho0FromEtaPrime () ;
       // ======================================================================
@@ -1614,7 +1708,12 @@ namespace Gaudi
     // ========================================================================
     /** @class Flatte
      *
-     *  http://www.springerlink.com/content/q773737260425652/
+     *  S.M. Flatté
+     *  "Coupled-channel analysis of the \f$\pi\eta\f$ and \f$K\bar{K}\f$ 
+     *  systems near \f$K\bar{K}\f$threshold"
+     *  Physics Letters B, Volume 63, Issue 2, 19 July 1976, Pages 224-227
+     *
+     *  http://www.sciencedirect.com/science/article/pii/0370269376906547
      *
      *  \f$\pi\pi\f$-channel
      *  @author Vanya BELYAEV Ivan.BElyaev@cern.ch
@@ -1625,24 +1724,34 @@ namespace Gaudi
     {
     public:
       // ======================================================================
-      /** constructor  from three parameters 
+      /** constructor  from all parameters 
        *  @param m0    the mass 
        *  @param m0g1  parameter \f$ m_0\times g_1\f$
        *  @param g2og2 parameter \f$ g2/g_1       \f$
+       *  @param mK    kaon mass 
+       *  @param mPi   pion mass 
        */
-      Flatte  ( const double m0    = 980      , 
-                const double m0g1  = 165*1000 ,  
-                const double g2og1 = 4.21     , 
-                const double mK    = 493.7    , 
-                const double mPi   = 139.6    ) ;                
+      Flatte  ( const double m0    = 980    , 
+                const double m0g1  = 165    , 
+                const double g2og1 = 4.21   , 
+                const double mK    = 493.7  , 
+                const double mPi   = 139.6  ) ;                
       /// destructor 
       virtual ~Flatte () ;  
       // ======================================================================
     public:
       // ======================================================================
       /// get the value of Flatte function 
-      // ======================================================================
       virtual double operator() ( const double x ) const ;
+      /// get the value of Flatte amplitude
+      virtual std::complex<double> amplitude ( const double x ) const ;
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// get the amplitude for pipi-channel
+      std::complex<double> flatte_amp  ( const double x ) const ;
+      /// get the amplitude for KK-channel
+      std::complex<double> flatte2_amp ( const double x ) const ;
       // ======================================================================
     public:
       // ======================================================================
@@ -1659,7 +1768,7 @@ namespace Gaudi
       double m0g1   () const { return m_m0g1    ; }
       double g2og1  () const { return m_g2og1   ; }
       double mK     () const { return m_K       ; }
-      double mPi    () const { return m_K       ; }
+      double mPi    () const { return m_Pi       ; }
       // ======================================================================
     public:
       // ======================================================================
@@ -1694,10 +1803,14 @@ namespace Gaudi
     // ========================================================================
     /** @class Flatte2
      *
-     *  http://www.springerlink.com/content/q773737260425652/
+     *  S.M. Flatté
+     *  "Coupled-channel analysis of the \f$\pi\eta\f$ and \f$K\bar{K}\f$ 
+     *  systems near \f$K\bar{K}\f$threshold"
+     *  Physics Letters B, Volume 63, Issue 2, 19 July 1976, Pages 224-227
+     *
+     *  http://www.sciencedirect.com/science/article/pii/0370269376906547
      *
      *  KK-channel
-     *
      *  @author Vanya BELYAEV Ivan.BElyaev@cern.ch
      *  @date 2011-11-30
      */
@@ -1711,7 +1824,7 @@ namespace Gaudi
        *  @param g2og2 parameter \f$ g2/g_1       \f$
        */
       Flatte2  ( const double m0    = 980      , 
-                 const double m0g1  = 165*1000 ,  
+                 const double m0g1  = 165      ,  
                  const double g2og1 = 4.21     , 
                  const double mK    = 493.7    , 
                  const double mPi   = 139.6    ) ;                
@@ -1721,11 +1834,15 @@ namespace Gaudi
     public:
       // ======================================================================
       /// get the value of Flatte function (KK-channel)
-      // ======================================================================
       virtual double operator() ( const double x ) const ;
+      /// get the value of Flatte amplitude
+      virtual std::complex<double> amplitude ( const double x ) const ;
       // ======================================================================
     } ;
     // ========================================================================
+    /** @class Voight 
+     *  simple Voightian function 
+     */
     class GAUDI_API Voigt
       : public std::unary_function<double,double>     
     {
@@ -1743,7 +1860,7 @@ namespace Gaudi
       // ======================================================================
       /// get the value of Voigt function 
       // ======================================================================
-      double operator() ( const double x ) const ;
+      virtual double operator() ( const double x ) const ;
       // ======================================================================
     public:
       // ====================================================================== 
@@ -1897,7 +2014,7 @@ namespace Gaudi
      *    the third particle. 
      *   E.g. taking \f$\ell=0, L=1\f$, one can get the S-wave contribution for 
      *   \f$\pi^+\pi^-\f$-mass from \f$B^0\rightarrowJ/\psi\pi^+\pi^-\f$ decay.
-     *  @author Vanya BELYAEV Ivan.BElyaev@itep.ru
+     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2012-04-01
      */
     class GAUDI_API LASS23L : public std::unary_function<double,double>     
@@ -1966,6 +2083,351 @@ namespace Gaudi
       // ======================================================================
       /// phase space 
       Gaudi::Math::PhaseSpace23L m_ps    ;    // phase space 
+      // ======================================================================
+    private:
+      // ======================================================================
+      /// integration workspace 
+      Gaudi::Math::WorkSpace m_workspace ;    // integration workspace 
+      // ======================================================================
+    } ;
+    // ========================================================================
+    /** @class Bugg23L
+     *  parametrisation of sigma-pole for
+     *  two pion mass distribution from three body decays 
+     *
+     *  The parameterization of sigma pole by 
+     *  B.S.Zou and D.V.Bugg, Phys.Rev. D48 (1993) R3948.
+     *
+     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+     *  @date 2012-04-01
+     */
+    class GAUDI_API Bugg23L
+      : public std::unary_function<double,double>     
+    {
+    public:
+      // ======================================================================
+      /** constructor from all masses and angular momenta 
+       *  @param M  mass of sigma (very different from the pole positon!)
+       *  @param g2 width parameter g2 (4pi width)
+       *  @param b1 width parameter b1  (2pi coupling)
+       *  @param b2 width parameter b2  (2pi coupling)
+       *  @param s1 width parameter s1  (cut-off for 4pi coupling)
+       *  @param s2 width parameter s2  (cut-off for 4pi coupling)
+       *  @param a  parameter a (the exponential cut-off) 
+       *  @param m1 the mass of the first  particle 
+       *  @param m3 the mass of the third  particle 
+       *  @param m  the mass of the mother particle (m>m1+m2+m3)
+       *  @param L  the angular momentum between the first pair and the third 
+       */
+      Bugg23L ( const double         M  = 0.9264        ,  // GeV  
+                const double         g2 = 0.0024        ,  // GeV 
+                const double         b1 = 0.5848        ,  // GeV 
+                const double         b2 = 1.6663        ,  // GeV-1 
+                const double         a  = 1.082         ,  // GeV^2
+                const double         s1 = 2.8           ,  // GeV^2 
+                const double         s2 = 3.5           ,
+                const double         m1 =  139.6 / 1000 ,  // MeV
+                const double         m3 = 3097.0 / 1000 ,  // MeV 
+                const double         m  = 5278.0 / 1000 ,  // MeV 
+                const unsigned short L  =    1          ) ;
+      /// destructor 
+      ~Bugg23L () ;
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// calculate the Breit-Wigner shape
+      double operator() ( const double x ) const ;
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// get the amlitude  (not normalized!)
+      std::complex<double> amplitude (  const double x ) const ;
+      /// get the phase space factor (taking into account L)
+      double phaseSpace ( const double x ) const { return m_ps  ( x ) ; }
+      // ======================================================================
+    public:
+      // ====================================================================== 
+      // phase space variables
+      // ====================================================================== 
+      double m1        () const { return m_ps.m1 () ; }
+      double m2        () const { return m_ps.m2 () ; }      
+      double m3        () const { return m_ps.m3 () ; }      
+      double m         () const { return m_ps.m  () ; }      
+      // ======================================================================
+      double lowEdge   () const { return m_ps. lowEdge() ; }
+      double highEdge  () const { return m_ps.highEdge() ; }
+      // ====================================================================== 
+    public:
+      // ====================================================================== 
+      /// get the running width by Bugg
+      std::complex<double> 
+      gamma ( const double x ) const ; // get the running width by Bugg
+      // ====================================================================== 
+    public:
+      // ====================================================================== 
+      /// adler factor 
+      double               adler       ( const double x ) const ; // adler factor 
+      /// ratio of 2pi-phase spaces 
+      double               rho2_ratio  ( const double x ) const ;
+      /// ratio of 4pi-phase spaces 
+      std::complex<double> rho4_ratio  ( const double x ) const ;
+      /// b-factor for 2-pi coupling 
+      double b( const double x ) const { return  b1 () + x * x * b2 () ; }    
+      // ====================================================================== 
+    private:
+      // ====================================================================== 
+      /// approximation for  4pi-phase space
+      std::complex<double> rho4        ( const double x ) const ;
+      // ====================================================================== 
+    public:
+      // ====================================================================== 
+      // sigma & Bugg variables 
+      // ====================================================================== 
+      double M     () const  { return m_M       ; }
+      double M2    () const  { return m_M * m_M ; }
+      double m0    () const  { return   M ()    ; }
+      double mass  () const  { return   M ()    ; }
+      double peak  () const  { return   M ()    ; }
+      // ====================================================================== 
+      double g2    () const  { return m_g2   ; }
+      double b1    () const  { return m_b1   ; }
+      double b2    () const  { return m_b2   ; }
+      double s1    () const  { return m_s1   ; }
+      double s2    () const  { return m_s2   ; }
+      double a     () const  { return m_a    ; }
+      // ====================================================================== 
+      bool setM    ( const double value  ) ;
+      bool setM0   ( const double value  ) { return setM ( value )  ; }
+      bool setMass ( const double value  ) { return setM ( value )  ; }
+      bool setPeak ( const double value  ) { return setM ( value )  ; }
+      // ====================================================================== 
+      bool setG2   ( const double value  ) ;
+      bool setB1   ( const double value  ) ;
+      bool setB2   ( const double value  ) ;
+      bool setS1   ( const double value  ) ;
+      bool setS2   ( const double value  ) ;
+      bool setA    ( const double value  ) ;
+      // ====================================================================== 
+    public:
+      // ====================================================================== 
+      /// get the integral 
+      double integral () const ;
+      /// get the integral between low and high limits 
+      double integral ( const double low  , 
+                        const double high ) const ;
+      // ====================================================================== 
+    private:
+      // ======================================================================
+      // sigma & Bugg varibales 
+      // ======================================================================
+      /// mass of sigma (very different from the pole positon!)
+      double m_M  ; // mass of sigma (very different from the pole positon!)
+      /// width parameter g2 (4pi width)
+      double m_g2 ; // width parameter g2 (4-p width) 
+      /// width parameter b1  (2pi coupling)
+      double m_b1 ; // width parameter b1  (2pi coupling)
+      /// width parameter b2  (2pi coupling)
+      double m_b2 ; // width parameter b2  (2pi coupling)
+      /// width parameter s1  (cut-off for 4pi coupling)
+      double m_s1 ; // width parameter b1  (cut-off for 4pi coupling)
+      /// width parameter s2  (cut-off for 4pi coupling)
+      double m_s2 ; // width parameter b2  (cut-off for 4pi coupling)
+      /// parameter a (the exponential cut-off) 
+      double m_a  ; // parameter a (the exponential cut-off)
+      // ======================================================================
+    private:
+      // ======================================================================
+      /// phase space 
+      Gaudi::Math::PhaseSpace23L m_ps         ; // phase space 
+      // ======================================================================
+    private:
+      /// integration workspace 
+      Gaudi::Math::WorkSpace     m_workspace  ;    // integration workspace 
+      // ======================================================================
+    } ;
+    // ========================================================================
+    /** @class BW23L 
+     *  @see Gaudi::Math::BreittWigner 
+     *  @see Gaudi::Math::PhaseSpace23L 
+     *  @author Vanya BELYAEV Ivan.BElyaev@cern.ch
+     *  @date 2012-05-23
+     */
+    class GAUDI_API BW23L
+      : public std::unary_function<double,double>     
+    {
+    public:
+      // ======================================================================
+      // constructor from all parameters
+      BW23L ( const double         m0       , 
+              const double         gam0     ,
+              const double         m1       , 
+              const double         m2       , 
+              const double         m3       , 
+              const double         m        , 
+              const unsigned short L1  = 0  , 
+              const unsigned short L2  = 0  ) ;
+      // constructor from all parameters
+      BW23L ( const double         m0       , 
+              const double         gam0     ,
+              const double         m1       , 
+              const double         m2       , 
+              const double         m3       , 
+              const double         m        , 
+              const unsigned short L1       , 
+              const unsigned short L2       ,
+              const Gaudi::Math::BreitWigner::JacksonRho r ) ;
+      /// constructor from BreitWigner  
+      BW23L ( const Gaudi::Math::BreitWigner& bw , 
+              const double                    m3 , 
+              const double                    m  , 
+              const unsigned short            L2 ) ;
+      /// destructor 
+      virtual ~BW23L () ;
+      // ======================================================================
+    private:
+      // ======================================================================
+      /// the default constructor is disabled 
+      BW23L () ;                         // the default constructor is disabled 
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// calculate the shape 
+      double operator() ( const double x ) const ;
+      // ======================================================================
+    public:
+      // ======================================================================
+      double m0     () const { return m_bw . m0   () ; }
+      double mass   () const { return        m0   () ; }
+      double peak   () const { return        m0   () ; }
+      double gam0   () const { return m_bw . gam0 () ; }
+      double gamma0 () const { return        gam0 () ; }
+      double gamma  () const { return        gam0 () ; }
+      double width  () const { return        gam0 () ; }
+      // ======================================================================
+    public:
+      // ======================================================================
+      bool setM0     ( const double x ) { return m_bw.setM0     ( x ) ; }
+      bool setMass   ( const double x ) { return setM0          ( x ) ; }
+      bool setPeak   ( const double x ) { return setM0          ( x ) ; }      
+      bool setGamma0 ( const double x ) { return m_bw.setGamma0 ( x ) ; }
+      bool setGamma  ( const double x ) { return setGamma0      ( x ) ; }
+      bool setWidth  ( const double x ) { return setGamma0      ( x ) ; }      
+      // ======================================================================
+    public:
+      // ======================================================================
+      double lowEdge   () const { return m_ps. lowEdge() ; }
+      double highEdge  () const { return m_ps.highEdge() ; }
+      // ====================================================================== 
+    public:
+      // ======================================================================
+      /// calculate the current width 
+      double gamma ( const double x ) const { return m_bw.gamma ( x ) ; }
+      // ======================================================================
+    public:
+      // ====================================================================== 
+      /// get the integral 
+      double integral () const ;
+      /// get the integral between low and high limits 
+      double integral ( const double low  , 
+                        const double high ) const ;
+      // ====================================================================== 
+    private:
+      // ======================================================================
+      /// the breit wigner 
+      Gaudi::Math::BreitWigner   m_bw        ;    // the breit wigner 
+      /// the phase space 
+      Gaudi::Math::PhaseSpace23L m_ps        ;    // the phase space
+      /// integration workspace 
+      Gaudi::Math::WorkSpace     m_workspace ;    // integration workspace 
+      // ======================================================================
+    } ;  
+    // ========================================================================
+    /** @class Flatte23L
+     *  \f$\pi\pi\f$-channel
+     *  @author Vanya BELYAEV Ivan.BElyaev@cern.ch
+     *  @date 2011-11-30
+     */
+    class GAUDI_API Flatte23L
+      : public std::unary_function<double,double>     
+    {
+    public:
+      // ======================================================================
+      /** constructor  from all parameters 
+       *  @param m0    the mass 
+       *  @param m0g1  parameter \f$ m_0\times g_1\f$
+       *  @param g2og2 parameter \f$ g2/g_1       \f$
+       *  @param mK    kaon mass 
+       *  @param mPi   pion mass
+       *  @param m3    the mass of the third particle 
+       *  @param m     the mass of mother particle  
+       *  @param L     the orbital momentum between the pair and the third particle
+       */
+      Flatte23L  ( const double         m0    =  980.0   ,     // MeV 
+                   const double         m0g1  =  165     ,     // MeV^2
+                   const double         g2og1 =    4.21  ,     // dimensionless 
+                   const double         mK    =  493.7   ,     // MeV 
+                   const double         mPi   =  139.6   ,     // MeV 
+                   const double         m3    = 3096.9   ,     // MeV 
+                   const double         m     = 5366.0   ,     // MeV 
+                   const unsigned short L     = 1        ) ;
+      // ======================================================================
+      /** constructor  from flatte function  
+       *  @param m3    the mass of the third particle 
+       *  @param m     the mass of mother particle  
+       *  @param L     the orbital momentum between the pair and the third particle
+       */
+      Flatte23L  ( const Flatte&        fun              ,     // MeV 
+                   const double         m3    = 3096.9   ,     // MeV 
+                   const double         m     = 5366.0   ,     // MeV 
+                   const unsigned short L     = 1        ) ;      
+      /// destructor 
+      virtual ~Flatte23L () ;  
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// get the value of Flatte function 
+      // ======================================================================
+      double operator() ( const double x ) const ;
+      // ======================================================================
+      /// get the value of complex Flatte amplitude (pipi-channel) 
+      std::complex<double> amplitude ( const double x ) const 
+      { return m_flatte.flatte_amp ( x ) ; }
+      // ======================================================================      
+    public:
+      // ====================================================================== 
+      double m0     () const { return m_flatte . m0    () ; }
+      double mass   () const { return            m0    () ; }
+      double peak   () const { return            m0    () ; }
+      double m0g1   () const { return m_flatte . m0g1  () ; }
+      double g2og1  () const { return m_flatte . g2og1 () ; }
+      // ======================================================================
+    public:
+      // ======================================================================
+      bool setM0     ( const double x ) { return m_flatte . setM0    ( x ) ; }
+      bool setMass   ( const double x ) { return            setM0    ( x ) ; }
+      bool setPeak   ( const double x ) { return            setM0    ( x ) ; }      
+      bool setM0G1   ( const double x ) { return m_flatte . setM0G1  ( x ) ; }
+      bool setG2oG1  ( const double x ) { return m_flatte . setG2oG1 ( x ) ; }
+      // ======================================================================
+    public:
+      // ======================================================================
+      double lowEdge   () const { return m_ps .  lowEdge () ; }
+      double highEdge  () const { return m_ps . highEdge () ; }
+      // ====================================================================== 
+    public:
+      // ====================================================================== 
+      /// get the integral 
+      virtual double integral () const ;
+      /// get the integral between low and high limits 
+      virtual double integral ( const double low  , 
+                                const double high ) const ;
+      // ====================================================================== 
+    private:
+      // ======================================================================
+      /// the actual Flatte function 
+      Gaudi::Math::Flatte        m_flatte ; // the actual Flatte function 
+      /// phase space factor 
+      Gaudi::Math::PhaseSpace23L m_ps     ; // phase space factor 
       // ======================================================================
     private:
       // ======================================================================

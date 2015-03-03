@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # =============================================================================
-# $Id: Types.py 139270 2012-04-28 17:33:47Z ibelyaev $
+# $Id: Types.py 140504 2012-05-28 19:13:30Z ibelyaev $
 # =============================================================================
 ## @file
 #
@@ -35,7 +35,7 @@
 #  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
 #  @date 2009-09-12
 #
-#  Last modification $Date: 2012-04-28 19:33:47 +0200 (Sat, 28 Apr 2012) $
+#  Last modification $Date: 2012-05-28 21:13:30 +0200 (Mon, 28 May 2012) $
 #                 by $Author: ibelyaev $
 #
 #
@@ -69,14 +69,14 @@ Simple file to provide 'easy' access in python for the basic ROOT::Math classes
   >>> dir( Gaudi.Math )
   >>> dir( Gaudi      )
   
-  Last modification $Date: 2012-04-28 19:33:47 +0200 (Sat, 28 Apr 2012) $
+  Last modification $Date: 2012-05-28 21:13:30 +0200 (Mon, 28 May 2012) $
                  by $Author: ibelyaev $
 
 """
 # =============================================================================
 __author__  = "Vanya BELYAEV Ivan.Belyaev@nikhef.nl"
 __date__    = "2009-09-12"
-__version__ = "Version$Revision: 139270 $"
+__version__ = "Version$Revision: 140504 $"
 # =============================================================================
 __all__     = () ## nothing to be imported !
 # =============================================================================
@@ -238,8 +238,72 @@ Gaudi.Math.Vectors2  = Gaudi.Vectors2
 Gaudi.Math.Vectors3  = Gaudi.Vectors3
 Gaudi.Math.Vectors4  = Gaudi.Vectors4 
 
+Gaudi.Math.ValueWithError.Vector = std.vector(Gaudi.Math.ValueWithError)
+Gaudi.Math.ValueWithError.Vector .__str__   = lambda s : str( [ i for i in s ])
+Gaudi.Math.ValueWithError.Vector .__repr__  = lambda s : str( [ i for i in s ])
+
+## Sum the contents of the vector
+def _ve_sum_ ( s ) :
+    """
+
+    >>> v = ...
+    >>> s = v.sum()
+    
+    """
+    return Gaudi.Math.sum ( s )
 
 
+## Sum the contents of the vector
+def _ve_asum_ ( s ) :
+    """
+
+    >>> v = ...
+    >>> s = v.abssum()
+    
+    """
+    return Gaudi.Math.abssum ( s )
+
+_ve_sum_  . __doc__ += '\n' + Gaudi.Math.sum    .__doc__
+_ve_asum_ . __doc__ += '\n' + Gaudi.Math.abssum .__doc__
+
+_VVE = std.vector( Gaudi.Math.ValueWithError )
+
+_VVE  . sum      = _ve_sum_
+_VVE  . abssum   = _ve_asum_
+_VVE  . sumabs   = _ve_asum_
+_VVE  . __str__  = lambda s : str( [ i for i in s ] )
+_VVE  . __repr__ = lambda s : str( [ i for i in s ] )
+_VVE  . __len__  = lambda s : s.size ()
+
+_VVVE = std.vector( _VVE )
+_VVVE . __str__  = lambda s : str( [ i for i in s ] )
+_VVVE . __repr__ = lambda s : str( [ i for i in s ] )
+_VVVE . __len__  = lambda s : s.size ()
+
+_VVE.Vector = _VVVE 
+Gaudi.Math.ValueWithError.Vector = _VVE
+
+_C2F            = Gaudi.Math.Chi2Fit
+_C2F . __str__  = lambda s : s.toString ()
+_C2F . __repr__ = lambda s : s.toString ()
+## chi2-probabilty 
+def _c2_prob_  ( s ) :
+    """
+    Chi2 probabiilty
+
+    >>> r = h.hfit ( ... )
+    >>> r.Prob()
+    
+    """
+    dofs = s.points() - s.size() 
+    return ROOT.TMath.Prob ( s.chi2() , dofs )
+
+_C2F . Prob        = _c2_prob_
+_C2F . Probability = _c2_prob_
+_C2F . prob        = _c2_prob_
+_C2F . probability = _c2_prob_
+_C2F . __len__     = lambda s     : s.size  (   )
+_C2F . __getitem__ = lambda s , i : s.param ( i )  
 
 ## ============================================================================
 ## some useful decoration:
@@ -469,6 +533,8 @@ for t in ( Gaudi.Math.ValueWithError         ,
         t._new_str_ = t.toString
         t.__str__   = t.toString
         t.__repr__  = t.toString
+
+
 
         
 ## get the eigenvalues for symmetric matrices :

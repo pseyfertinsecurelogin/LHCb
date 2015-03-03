@@ -1,4 +1,4 @@
-// $Id: ILoKiSvc.h 133878 2012-01-18 19:33:38Z ibelyaev $
+// $Id: ILoKiSvc.h 141109 2012-06-15 13:17:46Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_ILOKISVC_H 
 #define LOKI_ILOKISVC_H 1
@@ -50,10 +50,7 @@ namespace LoKi
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date   2006-01-16
    */
-  class ILoKiSvc 
-    : virtual public IInterface       
-    , virtual public IService         
-    , virtual public IIncidentListener 
+  class ILoKiSvc : virtual public IService         
   {
   public:    
     // ========================================================================
@@ -67,7 +64,7 @@ namespace LoKi
      *  (needed for the proper synchronizations checks) 
      *  @return the sequential event number 
      */
-    virtual long                 event       () const = 0 ;
+    virtual unsigned long long   event       () const = 0 ;
     // ========================================================================
   public:
     // ========================================================================

@@ -1,4 +1,4 @@
-// $Id: Functions.cpp 139270 2012-04-28 17:33:47Z ibelyaev $ 
+// $Id: Functions.cpp 140791 2012-06-07 10:15:16Z ibelyaev $ 
 // ============================================================================
 // Include files
 // ============================================================================
@@ -32,14 +32,18 @@
 // ============================================================================
 #include "boost/static_assert.hpp"
 // ============================================================================
+// Local
+// ============================================================================
+#include "GSL_sentry.h"
+// ============================================================================
 /** @file 
  *  Implementation file for functions from the file LHCbMath/Functions.h
  *
  *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
  *  @date 2010-04-19
  *  
- *                    $Revision: 139270 $
- *  Last modification $Date: 2012-04-28 19:33:47 +0200 (Sat, 28 Apr 2012) $
+ *                    $Revision: 140791 $
+ *  Last modification $Date: 2012-06-07 12:15:16 +0200 (Thu, 07 Jun 2012) $
  *                 by $author$
  */
 // ============================================================================
@@ -164,41 +168,7 @@ double Gaudi::Math::Jackson::jackson_A7
 namespace 
 {
   // ==========================================================================
-  // GSL 
-  // ==========================================================================
-  void GSL_local_error
-  ( const char * reason    ,
-    const char * file      ,
-    int          line      ,
-    int          gsl_errno ) 
-  {
-    std::cerr 
-      << " GSL_ERROR : "   << gsl_errno << "/'" << gsl_strerror( gsl_errno ) << "'"
-      << "\t reason '"     << reason    << "' "
-      << "\t file/line '"  << file      << "'/" << line 
-      << std::endl ;  
-  }
-  // ==========================================================================
-  class GSL_Handler_Sentry
-  {
-  public :
-    // ========================================================================
-    /// constructor: loc
-    GSL_Handler_Sentry () 
-      : m_old ( 0 ) 
-    { 
-      // m_old = gsl_set_error_handler ( &GSL_local_error ) ; 
-      m_old = gsl_set_error_handler_off () ; 
-    }
-    //
-    ~GSL_Handler_Sentry () { gsl_set_error_handler ( m_old ) ; }
-    // ========================================================================
-  private:
-    // ========================================================================
-    /// the "old" error handler 
-    gsl_error_handler_t * m_old ; // the "old" error handler 
-    // ========================================================================
-  } ;  
+  typedef Gaudi::Math::GSL::GSL_Error_Handler Sentry ;
   // ==========================================================================
   /// get GSL-workspace
   gsl_integration_workspace* workspace 
@@ -421,6 +391,32 @@ namespace
     return (*novosibirsk)(x) ;
   }
   // ==========================================================================
+  /** helper function for itegration of CrystalBall function 
+   *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
+   *  @date 2012-06-06
+   */
+  double crystalball_GSL ( double x , void* params )  
+  {
+    //
+    const Gaudi::Math::CrystalBall* cb = 
+      (Gaudi::Math::CrystalBall*) params ;
+    //
+    return (*cb)(x) ;
+  }
+  // ==========================================================================
+  /** helper function for itegration of CrystalBall function 
+   *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
+   *  @date 2012-06-06
+   */
+  double crystalball2s_GSL ( double x , void* params )  
+  {
+    //
+    const Gaudi::Math::CrystalBallDoubleSided* cb2s = 
+      (Gaudi::Math::CrystalBallDoubleSided*) params ;
+    //
+    return (*cb2s)(x) ;
+  }
+  // ==========================================================================
   /** evaluate the helper function  \f[ f = \frac{\log{1+x}}{x} \f]
    *  it allows to calculate Bukin' function in efficient and regular way  
    *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
@@ -506,7 +502,7 @@ namespace
     if      ( -30 > x ) { return -1 ; }
     else if ( +30 < x ) { return  1 ; }
     //
-    GSL_Handler_Sentry sentry ;
+    Sentry sentry ;
     //
     gsl_sf_result result ;
     const int ierror = gsl_sf_erf_e ( x , &result ) ;
@@ -522,9 +518,8 @@ namespace
       {}
       else 
       {
-        // GSL_Handler_Sentry sentry ;
-        GSL_local_error ( "Error from erf_e function" ,
-                          __FILE__ , __LINE__ , ierror ) ; 
+        gsl_error ( "Error from erf_e function" ,
+                    __FILE__ , __LINE__ , ierror ) ; 
       }
       //
       if      ( -15 > x ) { return -1 ; }
@@ -540,7 +535,7 @@ namespace
   double my_exp ( const double arg ) 
   {
     // 
-    GSL_Handler_Sentry sentry ;
+    Sentry sentry ;
     gsl_sf_result      result ;
     const int          ierror = gsl_sf_exp_e ( arg , &result ) ;
     //
@@ -555,9 +550,8 @@ namespace
            ierror == GSL_EROUND    ) {} /* failed because of roundoff error    */
       else 
       {
-        // GSL_Handler_Sentry sentry ;
-        GSL_local_error ( "Error from exp_e function" ,
-                          __FILE__ , __LINE__ , ierror ) ; 
+        gsl_error ( "Error from exp_e function" ,
+                    __FILE__ , __LINE__ , ierror ) ; 
       }
       //
       if      ( -100 > arg ) { return          0 ; }
@@ -575,7 +569,7 @@ namespace
     // 
     if ( 0 >= arg ) { return -s_INFINITY ; } // REUTRN
     //
-    GSL_Handler_Sentry sentry ;
+    Sentry sentry ;
     gsl_sf_result result ;
     const int     ierror = gsl_sf_log_e ( arg , &result ) ;
     if ( ierror ) 
@@ -590,9 +584,8 @@ namespace
       {}
       else 
       {
-        // GSL_Handler_Sentry sentry ;
-        GSL_local_error ( "Error from exp_e function" ,
-                          __FILE__ , __LINE__ , ierror ) ; 
+        gsl_error ( "Error from exp_e function" ,
+                    __FILE__ , __LINE__ , ierror ) ; 
       }
       //
       if      (  1.e-100 > arg  ) { return -s_INFINITY ; }
@@ -669,7 +662,7 @@ namespace
     }
     //
     // use GSL to evaluate the integral
-    GSL_Handler_Sentry sentry ;
+    Sentry sentry ;
     //
     gsl_function F            ;
     F.function = &gauss_GSL   ;
@@ -696,9 +689,8 @@ namespace
     //
     if ( ierror ) 
     { 
-      // GSL_Handler_Sentry sentry ;      
-      GSL_local_error ( "Gaudi::Math::gaussian_int " ,
-                        __FILE__ , __LINE__ , ierror ) ; 
+      gsl_error ( "Gaudi::Math::gaussian_int " , 
+                  __FILE__ , __LINE__ , ierror ) ; 
     }
     //
     return result ;    
@@ -869,6 +861,42 @@ namespace
     return (*lass)(x) ;
   }
   // ==========================================================================
+  /** helper function for itegration of Bugg23L shape 
+   *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+   *  @date 2012-05-23
+   */
+  double Bugg_23L_GSL ( double x , void* params )  
+  {
+    //
+    const Gaudi::Math::Bugg23L* bugg = (Gaudi::Math::Bugg23L*) params ;
+    //
+    return (*bugg)(x) ;
+  }
+  // ==========================================================================
+  /** helper function for itegration of BW23L shape 
+   *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+   *  @date 2012-05-23
+   */
+  double BW_23L_GSL ( double x , void* params )  
+  {
+    //
+    const Gaudi::Math::BW23L* bw = (Gaudi::Math::BW23L*) params ;
+    //
+    return (*bw)(x) ;
+  }
+  // ==========================================================================
+  /** helper function for itegration of Flatte23L shape 
+   *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+   *  @date 2012-05-24
+   */
+  double Flatte_23L_GSL ( double x , void* params )  
+  {
+    //
+    const Gaudi::Math::Flatte23L* f = (Gaudi::Math::Flatte23L*) params ;
+    //
+    return (*f)(x) ;
+  }
+  // ==========================================================================
   /** helper function for itegration of Voigt shape 
    *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
    *  @date 2010-05-23
@@ -886,66 +914,8 @@ namespace
 namespace 
 {
   // ==========================================================================
-  /// get the complex Flatte amplitude (pipi-channel)
-  std::complex<double> flatte_amp 
-  ( const double x     , 
-    const double m0    , 
-    const double m0g1  , 
-    const double g2og1 , 
-    const double mK    , 
-    const double mPi   )
-  {
-    //
-    if ( 2 * mPi >= x ) { return 0 ; }
-    //
-    const std::complex<double> rho_PP = 
-      Gaudi::Math::PhaseSpace2::q1 ( x , mPi , mPi )  ;
-    const std::complex<double> rho_KK = 
-      Gaudi::Math::PhaseSpace2::q1 ( x , mK  , mK  )  ;
-    //
-    // 
-    static const std::complex<double> s_j ( 0 , 1 ) ;
-    //
-    const std::complex<double> v = 
-      m0 * m0 - x * x - s_j * m0g1 * ( rho_PP + g2og1 * rho_KK ) ;
-    //
-    // attention: normalization factors and phase space are here!
-    const double d = 2 * std::abs ( x * m0g1 * rho_PP ) / M_PI ;
-    //
-    return  std::sqrt ( d ) / v ;
-  }
-  // ==========================================================================
-  /// get the complex Flatte amplitude (KK-channel)
-  std::complex<double> flatte2_amp 
-  ( const double x     , 
-    const double m0    , 
-    const double m0g1  , 
-    const double g2og1 , 
-    const double mK    , 
-    const double mPi   )
-  {
-    //
-    if ( 2 * mK >= x ) { return 0 ; }
-    //
-    const std::complex<double> rho_PP = 
-      Gaudi::Math::PhaseSpace2::q1 ( x , mPi , mPi ) ;
-    const std::complex<double> rho_KK = 
-      Gaudi::Math::PhaseSpace2::q1 ( x , mK  , mK  ) ;
-    //
-    static const std::complex<double> s_j ( 0 , 1 ) ;
-    //
-    const std::complex<double> v = 
-      m0 * m0 - x * x - s_j * m0g1 * ( rho_PP + g2og1 * rho_KK ) ;
-    //
-    // attention: normalization factors and phase space are here!
-    //
-    const double d = 2 * std::abs ( x * m0g1 * g2og1 * rho_KK ) / M_PI ;
-    //
-    return  std::sqrt ( d ) / v ;
-  }
-  // ==========================================================================
   /// get the complex Breit amplitude
-  std::complex<double> breit
+  std::complex<double> breit_amp
   ( const double x     , 
     const double m0    , 
     const double gamma )
@@ -1411,7 +1381,7 @@ double Gaudi::Math::Bukin::integral
   //
   // use GSL to evaluate the integral
   //
-  GSL_Handler_Sentry sentry ;
+  Sentry sentry ;
   //
   gsl_function F                ;
   F.function = &bukin_GSL ;
@@ -1434,9 +1404,8 @@ double Gaudi::Math::Bukin::integral
   if ( ierror ) 
   { 
     //
-    // GSL_Handler_Sentry sentry ;
-    GSL_local_error ( "Gaudi::Math::Bukin::QAG" ,
-                      __FILE__ , __LINE__ , ierror ) ; 
+    gsl_error ( "Gaudi::Math::Bukin::QAG" ,
+                __FILE__ , __LINE__ , ierror ) ; 
   }
   //
   return result ;
@@ -1620,7 +1589,7 @@ double Gaudi::Math::Novosibirsk::integral
   //
   // use GSL to evaluate the integral 
   //
-  GSL_Handler_Sentry sentry ;
+  Sentry sentry ;
   //
   gsl_function F                ;
   F.function = &novosibirsk_GSL ;
@@ -1644,7 +1613,6 @@ double Gaudi::Math::Novosibirsk::integral
   //
   if ( ierror ) 
   { 
-    GSL_Handler_Sentry sentry ;
     gsl_error ( "Gaudi::Math::Novosibirsk::QAG" ,
                 __FILE__ , __LINE__ , ierror ) ; 
   }
@@ -1677,12 +1645,11 @@ void Gaudi::Math::Novosibirsk::integrate()
   //
   // use GSL to evaluate the tails:
   //
-  GSL_Handler_Sentry sentry ;
+  Sentry sentry ;
   //
   gsl_function F                ;
   F.function = &novosibirsk_GSL ;
   F.params   = const_cast<Novosibirsk*> ( this ) ;
-  //
   //
   // left tail:
   //
@@ -1701,7 +1668,6 @@ void Gaudi::Math::Novosibirsk::integrate()
   //
   if ( ierror_l ) 
   { 
-    GSL_Handler_Sentry sentry ;
     gsl_error ( "Gaudi::Math::Novosibirsk::QAGIL" ,
                 __FILE__ , __LINE__ , ierror_l ) ; 
     tail_l = 0.0 ;
@@ -1725,7 +1691,6 @@ void Gaudi::Math::Novosibirsk::integrate()
   //
   if ( ierror_r ) 
   { 
-    GSL_Handler_Sentry sentry ;
     gsl_error ( "Gaudi::Math::Novosibirsk::QAGIU" ,
                 __FILE__ , __LINE__ , ierror_r ) ; 
     tail_r = 0.0 ;
@@ -1751,13 +1716,14 @@ Gaudi::Math::CrystalBall::CrystalBall
   const double alpha , 
   const double N     ) 
   : std::unary_function<double,double> () 
-  , m_m0       ( m0                  )
-  , m_sigma    (     std::fabs ( sigma ) )
-  , m_alpha    ( 1 + std::fabs ( alpha ) )
-  , m_N        ( 1 + std::fabs ( N     ) )
+  , m_m0         ( m0                  )
+  , m_sigma      (     std::fabs ( sigma ) )
+  , m_alpha      ( 1 + std::fabs ( alpha ) )
+  , m_N          ( 1 + std::fabs ( N     ) )
 //
-  , m_const    ( 0.0 )  
-  , m_integral ( -1000 ) 
+  , m_const      ( 0.0   )  
+  , m_integral   ( -1000 ) 
+  , m_workspace  () 
 {
   m_const = my_exp ( -0.5 * m_alpha * m_alpha ) ;
 }
@@ -1861,17 +1827,35 @@ double Gaudi::Math::CrystalBall::integral
   //
   // tail
   //
-  const double factor = m_const * std::pow ( m_N / m_alpha * m_sigma , m_N ) ;
+  // use GSL to evaluate the integral 
   //
-  const double c  =  ( m_N / m_alpha - m_alpha ) * m_sigma + m_m0;
+  Sentry sentry ;
   //
-  const double a  = -  low + c ;
-  const double b  = - high + c ;
+  gsl_function F                ;
+  F.function = &crystalball_GSL ;
+  F.params   = const_cast<CrystalBall*> ( this ) ;
   //
-  if ( std::fabs( m_N - 1 ) < 1.e-5 ) { return my_log ( b / a ) * factor ; }
+  double result   = 1.0 ;
+  double error    = 1.0 ;
   //
-  return factor / ( 1 - m_N ) * ( std::pow ( a , 1 - m_N ) - 
-                                  std::pow ( b , 1 - m_N ) ) ;
+  const int ierror = gsl_integration_qag 
+    ( &F                ,            // the function 
+      low   , high      ,            // low & high edges 
+      s_PRECISION       ,            // absolute precision            
+      s_PRECISION       ,            // relative precision 
+      s_SIZE            ,            // size of workspace 
+      GSL_INTEG_GAUSS31 ,            // integration rule  
+      workspace ( m_workspace ) ,    // workspace  
+      &result           ,            // the result 
+      &error            ) ;          // the error in result 
+  //
+  if ( ierror ) 
+  { 
+    gsl_error ( "Gaudi::Math::CrystalBall::QAG" ,
+                __FILE__ , __LINE__ , ierror ) ; 
+  }
+  //
+  return result ;
 }
 // ============================================================================
 // get the (trunkated)  integral
@@ -1881,7 +1865,7 @@ void Gaudi::Math::CrystalBall::integrate ()
   //
   const double x0  = m_m0 - m_alpha * m_sigma ;
   //
-  const double low = m_m0 - s_TRUNC * m_sigma ;
+  const double low = std::max ( m_m0 - s_TRUNC * m_sigma , 0.0 ) ;
   //
   // integrate the tail:
   m_integral  = integral       ( low , x0 ) ;
@@ -1904,6 +1888,63 @@ double Gaudi::Math::CrystalBall::integral () const
   return m_integral ;
 }
 // ============================================================================
+// Needham function 
+// ============================================================================
+/* constructor from all parameters 
+ *  @param m0     m0       parameter 
+ *  @param sigma  sigma    parameter 
+ *  @param a0     a0       parameter 
+ *  @param a1     a1       parameter 
+ *  @param a2     a2       parameter 
+ */
+// ============================================================================
+Gaudi::Math::Needham::Needham
+( const double m0    , 
+  const double sigma , 
+  const double a0    , 
+  const double a1    , 
+  const double a2    ) 
+  : std::unary_function<double,double>()
+/// @see Gaudi::Math:CrystalBall
+  , m_cb  ( m0 , sigma , 1 , 0 ) // Gaudi::Math:CrystalBall
+  , m_a0  ( std::abs ( a0 )  ) 
+  , m_a1  (            a1    ) 
+  , m_a2  (            a2    ) 
+{
+  m_cb.setAlpha ( alpha () ) ;  
+}
+// ============================================================================
+// destructor 
+// ============================================================================
+Gaudi::Math::Needham::~Needham(){}
+// ============================================================================
+bool Gaudi::Math::Needham::setA0 ( const double value ) 
+{
+  const double value_ = std::fabs ( value );
+  if ( s_equal ( value_ , m_a0 ) ) { return false ; } 
+  m_a0      = value_ ;
+  return m_cb.setAlpha ( alpha () ) ;
+}
+// ============================================================================
+bool Gaudi::Math::Needham::setA1 ( const double value ) 
+{
+  if ( s_equal ( value , m_a1 ) ) { return false ; } 
+  m_a1 = value ;
+  return m_cb.setAlpha ( alpha () ) ;
+}
+// ============================================================================
+bool Gaudi::Math::Needham::setA2 ( const double value ) 
+{
+  if ( s_equal ( value , m_a2 ) ) { return false ; } 
+  m_a2 = value ;
+  return m_cb.setAlpha ( alpha () ) ;
+}
+// ===========================================================================
+// evaluate Needham's function 
+// ===========================================================================
+double Gaudi::Math::Needham::operator() ( const double x ) const 
+{ return m_cb ( x ) ; }
+// ============================================================================
 /*  constructor from all parameters 
  *  @param m0 m0 parameter 
  *  @param alpha alpha parameter 
@@ -1918,16 +1959,17 @@ Gaudi::Math::CrystalBallDoubleSided::CrystalBallDoubleSided
   const double alpha_R , 
   const double N_R     ) 
   : std::unary_function<double,double> () 
-  , m_m0       (  m0                        )
-  , m_sigma    (      std::fabs ( sigma   ) )
-  , m_alpha_L  (  1 + std::fabs ( alpha_L ) )
-  , m_N_L      (  1 + std::fabs ( N_L     ) )
-  , m_alpha_R  (  1 + std::fabs ( alpha_R ) )
-  , m_N_R      (  1 + std::fabs ( N_R     ) )
+  , m_m0         (  m0                        )
+  , m_sigma      (      std::fabs ( sigma   ) )
+  , m_alpha_L    (  1 + std::fabs ( alpha_L ) )
+  , m_N_L        (  1 + std::fabs ( N_L     ) )
+  , m_alpha_R    (  1 + std::fabs ( alpha_R ) )
+  , m_N_R        (  1 + std::fabs ( N_R     ) )
 //
-  , m_const_L  (  1 ) 
-  , m_const_R  (  1 )
-  , m_integral ( -1000 ) 
+  , m_const_L    (  1 ) 
+  , m_const_R    (  1 )
+  , m_integral   ( -1000 ) 
+  , m_workspace  () 
 {
   //
   m_const_L = my_exp ( -0.5 * m_alpha_L * m_alpha_L ) ;  
@@ -2054,45 +2096,47 @@ double Gaudi::Math::CrystalBallDoubleSided::integral
   { return integral ( low , x_high ) + integral ( x_high , high ) ; }
   //
   //
-  //  "left tail"
-  if     ( high <= x_low ) 
-  {
-    //
-    const double factor = m_const_L * std::pow ( m_N_L / m_alpha_L * m_sigma , m_N_L ) ;
-    //
-    const double c  =  ( m_N_L / m_alpha_L - m_alpha_L ) * m_sigma + m_m0;
-    //
-    const double a  = -  low + c ;
-    const double b  = - high + c ;
-    //
-    if ( std::fabs( m_N_L - 1 ) < 1.e-5 ) { return my_log ( b / a ) * factor ; }
-    //
-    return factor / ( 1 - m_N_L ) * ( std::pow ( a , 1 - m_N_L ) - 
-                                      std::pow ( b , 1 - m_N_L ) ) ;
-  }
-  //  "right tail"
-  else if ( low  >= x_high ) 
-  {
-    //
-    const double factor = m_const_R * std::pow ( m_N_R / m_alpha_R * m_sigma , m_N_R ) ;
-    //
-    const double c  = ( m_N_R / m_alpha_R - m_alpha_R ) * m_sigma - m_m0;
-    //
-    const double a  = low  + c ;
-    const double b  = high + c ;
-    //
-    if ( std::fabs ( m_N_R - 1 ) < 1.e-5 ) { return my_log ( b / a ) * factor ; }
-    //
-    return factor / ( 1 - m_N_R ) * ( std::pow ( b , 1 - m_N_R ) - 
-                                      std::pow ( a , 1 - m_N_R ) ) ;
-  }
-  //
   // the peak 
   //
-  return gaussian_int ( 0.5 / ( m_sigma * m_sigma ) , 
-                        0            , 
-                        low   - m_m0 ,
-                        high  - m_m0 ) ;
+  if ( x_low <= low && high <= x_high ) 
+  {
+    return gaussian_int ( 0.5 / ( m_sigma * m_sigma ) , 
+                          0            , 
+                          low   - m_m0 ,
+                          high  - m_m0 ) ;
+  }
+  //
+  // tails 
+  //
+  // use GSL to evaluate the integral 
+  //
+  Sentry sentry ;
+  //
+  gsl_function F                ;
+  F.function = &crystalball2s_GSL ;
+  F.params   = const_cast<CrystalBallDoubleSided*> ( this ) ;
+  //
+  double result   = 1.0 ;
+  double error    = 1.0 ;
+  //
+  const int ierror = gsl_integration_qag 
+    ( &F                ,            // the function 
+      low   , high      ,            // low & high edges 
+      s_PRECISION       ,            // absolute precision            
+      s_PRECISION       ,            // relative precision 
+      s_SIZE            ,            // size of workspace 
+      GSL_INTEG_GAUSS31 ,            // integration rule  
+      workspace ( m_workspace ) ,    // workspace  
+      &result           ,            // the result 
+      &error            ) ;          // the error in result 
+  //
+  if ( ierror ) 
+  { 
+    gsl_error ( "Gaudi::Math::CrystalBallDoubleSided::QAG" ,
+                __FILE__ , __LINE__ , ierror ) ; 
+  }
+  //
+  return result ;
 }
 // ============================================================================
 // get the (trunkated)  integral
@@ -2221,7 +2265,7 @@ double Gaudi::Math::GramCharlierA::integral
   //
   // use GSL to evaluate the integral 
   //
-  GSL_Handler_Sentry sentry ;
+  Sentry sentry ;
   //
   gsl_function F                ;
   F.function = &gram_charlier_A_GSL ;
@@ -2245,7 +2289,6 @@ double Gaudi::Math::GramCharlierA::integral
   //
   if ( ierror ) 
   { 
-    GSL_Handler_Sentry sentry ;
     gsl_error ( "Gaudi::Math::GramCharlierA::QAG" ,
                 __FILE__ , __LINE__ , ierror ) ; 
   }
@@ -2592,7 +2635,7 @@ double  Gaudi::Math::PhaseSpaceNL::integral
   //
   // use GSL to evaluate the integral 
   //
-  GSL_Handler_Sentry sentry ;
+  Sentry sentry ;
   //
   gsl_function F                 ;
   F.function = &phase_space_NL_GSL ;
@@ -2615,7 +2658,6 @@ double  Gaudi::Math::PhaseSpaceNL::integral
   //
   if ( ierror ) 
   { 
-    GSL_Handler_Sentry sentry ;
     gsl_error ( "Gaudi::Math::PhaseSpaceNL::QAG" ,
                 __FILE__ , __LINE__ , ierror ) ; 
   }
@@ -2695,6 +2737,27 @@ Gaudi::Math::BreitWigner::BreitWigner
 // destructor
 // ============================================================================ 
 Gaudi::Math::BreitWigner::~BreitWigner (){}
+// ============================================================================
+//  calculate the Breit-Wigner amplitude  
+// ============================================================================
+std::complex<double> 
+Gaudi::Math::BreitWigner::amplitude ( const double x ) const 
+{
+  //
+  if ( m_m1 + m_m2 >= x ) { return 0 ; }
+  //
+  const double g  = gamma ( x ) ;
+  if ( 0 >= g ) { return 0 ; }
+  //
+  static const std::complex<double> s_j ( 0 , 1 ) ;
+  //
+  const std::complex<double> v = m0() * m0 () - x * x - s_j * m0() * g ;
+  //
+  const double q  = Gaudi::Math::PhaseSpace2::q ( x    , m1() , m2() ) ;
+  const double q0 = Gaudi::Math::PhaseSpace2::q ( m0() , m1() , m2() ) ;
+  //
+  return  Gaudi::Math::pow ( q / q0 , m_L ) / v ;
+}
 // ============================================================================
 /*  calculate the Breit-Wigner shape
  *  \f$\frac{1}{\pi}\frac{\omega\Gamma(\omega)}{ (\omega_0^2-\omega^2)^2-\omega_0^2\Gammma^2(\omega)-}\f$
@@ -2799,7 +2862,7 @@ double  Gaudi::Math::BreitWigner::integral
   //
   // use GSL to evaluate the integral 
   //
-  GSL_Handler_Sentry sentry ;
+  Sentry sentry ;
   //
   gsl_function F                 ;
   F.function = &breit_wigner_GSL ;
@@ -2824,7 +2887,6 @@ double  Gaudi::Math::BreitWigner::integral
   //
   if ( ierror ) 
   { 
-    GSL_Handler_Sentry sentry ;
     gsl_error ( "Gaudi::Math::BreitWigner::QAG" ,
                 __FILE__ , __LINE__ , ierror ) ; 
   }
@@ -2845,7 +2907,7 @@ double  Gaudi::Math::BreitWigner::integral () const
   //
   // use GSL to evaluate the integral 
   //
-  GSL_Handler_Sentry sentry ;
+  Sentry sentry ;
   //
   gsl_function F                 ;
   F.function = &breit_wigner_GSL ;
@@ -2870,7 +2932,6 @@ double  Gaudi::Math::BreitWigner::integral () const
   //
   if ( ierror ) 
   { 
-    GSL_Handler_Sentry sentry ;
     gsl_error ( "Gaudi::Math::BreitWigner::QAGIU" ,
                 __FILE__ , __LINE__ , ierror ) ; 
     result = 0.0 ;
@@ -2974,42 +3035,82 @@ Gaudi::Math::Flatte::~Flatte(){}
 double Gaudi::Math::Flatte::operator() ( const double x ) const
 { return flatte ( x ) ; }
 // ============================================================================
+// get the complex Flatte amplitude (pipi-channel)
+// ============================================================================
+std::complex<double> Gaudi::Math::Flatte::amplitude 
+( const double x     )  const { return flatte_amp ( x ) ; }
+// ============================================================================
+// get the complex Flatte amplitude (pipi-channel)
+// ============================================================================
+std::complex<double> Gaudi::Math::Flatte::flatte_amp 
+( const double x     )  const 
+{
+  //
+  if ( 2 * mPi () >= x ) { return 0 ; }
+  //
+  const std::complex<double> rho_PP = 
+    Gaudi::Math::PhaseSpace2::q1 ( x , mPi() , mPi() )  ;
+  const std::complex<double> rho_KK = 
+    Gaudi::Math::PhaseSpace2::q1 ( x , mK () , mK () )  ;
+  //
+  static const std::complex<double> s_j ( 0 , 1 ) ;
+  //
+  const std::complex<double> v = 
+    m0() * m0 () - x * x - s_j * m0g1() * ( rho_PP + g2og1 () * rho_KK ) ;
+  //
+  return  1.0 / v ;
+}
+// ==========================================================================
+// get the complex Flatte amplitude (KK-channel)
+// ==========================================================================
+std::complex<double> 
+Gaudi::Math::Flatte::flatte2_amp 
+( const double x ) const 
+{
+  //
+  if ( 2 * mK() >= x ) { return 0 ; }
+  //
+  const std::complex<double> rho_PP = 
+    Gaudi::Math::PhaseSpace2::q1 ( x , mPi () , mPi () ) ;
+  const std::complex<double> rho_KK = 
+    Gaudi::Math::PhaseSpace2::q1 ( x , mK  () , mK  () ) ;
+  //
+  static const std::complex<double> s_j ( 0 , 1 ) ;
+  //
+  const std::complex<double> v = 
+    m0 () * m0 () - x * x - s_j * m0g1 () * ( rho_PP + g2og1 () * rho_KK ) ;
+  //
+  return  1.0 / v ;
+}
+// ==========================================================================
 // get the function for pipi-channel  
 // ============================================================================
 double Gaudi::Math::Flatte::flatte ( const double x ) const
 {
-  
-  if ( 2 * m_Pi >= x ) { return 0 ; }
+  //
+  if ( 2 * mPi () >= x ) { return 0 ; }
   //
   // get the amplitude...
-  std::complex<double> amp = flatte_amp
-    ( x       , 
-      m_m0    ,
-      m_m0g1  ,
-      m_g2og1 ,
-      m_K     ,
-      m_Pi    ) ;
+  std::complex<double> amp = flatte_amp ( x ) ;
   //
-  return std::norm ( amp ) ;
+  const double ps = Gaudi::Math::PhaseSpace2::phasespace ( x ,  mPi() , mPi() ) ;
+  //
+  return x * ps * std::norm ( amp ) * 2 / M_PI * m0g1() ;
 } 
-// ============================================================================
+// ==========================================================================
 // get the function for KK-channel  
 // ============================================================================
 double Gaudi::Math::Flatte::flatte2 ( const double x ) const
 {
   //
-  if ( 2 * m_K >= x ) { return 0 ; }
+  if ( 2 * mK () >= x ) { return 0 ; }
   //
   // get the amplitude...
-  std::complex<double> amp = flatte2_amp
-    ( x       , 
-      m_m0    ,
-      m_m0g1  ,
-      m_g2og1 ,
-      m_K     ,
-      m_Pi    ) ;
+  std::complex<double> amp = flatte2_amp ( x ) ;
   //
-  return std::norm ( amp ) ;
+  const double ps = Gaudi::Math::PhaseSpace2::phasespace ( x ,  mK() , mK() ) ;
+  //
+  return x * ps * std::norm ( amp ) * 2 / M_PI * m0g1 () * g2og1 () ;
 } 
 // ============================================================================
 // get the integral between low and high limits 
@@ -3065,7 +3166,7 @@ double  Gaudi::Math::Flatte::integral
   //
   // use GSL to evaluate the integral 
   //
-  GSL_Handler_Sentry sentry ;
+  Sentry sentry ;
   //
   gsl_function F                 ;
   F.function = &flatte_GSL ;
@@ -3091,7 +3192,6 @@ double  Gaudi::Math::Flatte::integral
   //
   if ( ierror ) 
   { 
-    GSL_Handler_Sentry sentry ;
     gsl_error ( "Gaudi::Math::Flatte::QAG" ,
                 __FILE__ , __LINE__ , ierror ) ; 
   }
@@ -3112,7 +3212,7 @@ double  Gaudi::Math::Flatte::integral () const
   //
   // use GSL to evaluate the integral 
   //
-  GSL_Handler_Sentry sentry ;
+  Sentry sentry ;
   //
   gsl_function F                 ;
   F.function = &flatte_GSL ;
@@ -3136,7 +3236,6 @@ double  Gaudi::Math::Flatte::integral () const
   //
   if ( ierror ) 
   { 
-    GSL_Handler_Sentry sentry ;
     gsl_error ( "Gaudi::Math::Flatte::QAGIU" ,
                 __FILE__ , __LINE__ , ierror ) ; 
     result = 0.0 ;
@@ -3213,7 +3312,12 @@ Gaudi::Math::Flatte2::~Flatte2(){}
 // ============================================================================
 double Gaudi::Math::Flatte2::operator() ( const double x ) const
 { return flatte2 ( x ) ; }
-
+// ============================================================================
+// get the complex Flatte amplitude (pipi-channel)
+// ============================================================================
+std::complex<double> Gaudi::Math::Flatte2::amplitude 
+( const double x     )  const { return flatte2_amp ( x ) ; }
+// ============================================================================
 
 // ============================================================================
 // Positive polinomials 
@@ -3665,7 +3769,7 @@ double  Gaudi::Math::Voigt::integral
   //
   // use GSL to evaluate the integral 
   //
-  GSL_Handler_Sentry sentry ;
+  Sentry sentry ;
   //
   gsl_function F                 ;
   F.function = &voigt_GSL ;
@@ -3691,7 +3795,6 @@ double  Gaudi::Math::Voigt::integral
   //
   if ( ierror ) 
   { 
-    GSL_Handler_Sentry sentry ;
     gsl_error ( "Gaudi::Math::Voigt::QAG" ,
                 __FILE__ , __LINE__ , ierror ) ; 
   }
@@ -3762,12 +3865,12 @@ Gaudi::Math::PhaseSpace23L::PhaseSpace23L
   const unsigned short l  ) 
   : std::unary_function<double,double> () 
 //
-  , m_m1 ( std::abs ( m1 ) ) 
-  , m_m2 ( std::abs ( m2 ) ) 
-  , m_m3 ( std::abs ( m3 ) ) 
-  , m_m  ( std::abs ( m  ) ) 
-  , m_l  (            l    )  
-  , m_L  (            L    )  
+  , m_m1   ( std::abs ( m1 ) ) 
+  , m_m2   ( std::abs ( m2 ) ) 
+  , m_m3   ( std::abs ( m3 ) ) 
+  , m_m    ( std::abs ( m  ) ) 
+  , m_l    (            l    )  
+  , m_L    (            L    )  
 //
   , m_norm ( -1 ) 
 //
@@ -3793,8 +3896,7 @@ double Gaudi::Math::PhaseSpace23L::p ( const double x ) const
 double Gaudi::Math::PhaseSpace23L::operator () ( const double x ) const 
 {
   //
-  if ( x <= m_m1 + m_m2 ) { return 0 ; }
-  if ( x >= m_m  - m_m3 ) { return 0 ; }
+  if ( lowEdge() >= x || highEdge() <= x ) { return  0 ; }
   //
   // represent 3-body phase space as extention of 2-body phase space 
   double ps =  x / M_PI *  
@@ -3822,7 +3924,7 @@ double  Gaudi::Math::PhaseSpace23L::integral
   //
   // use GSL to evaluate the integral 
   //
-  GSL_Handler_Sentry sentry ;
+  Sentry sentry ;
   //
   gsl_function F                 ;
   F.function               = &phase_space_23L_GSL ;
@@ -3845,7 +3947,6 @@ double  Gaudi::Math::PhaseSpace23L::integral
   //
   if ( ierror ) 
   { 
-    GSL_Handler_Sentry sentry ;
     gsl_error ( "Gaudi::Math::PhaseSpace23L::QAG" ,
                 __FILE__ , __LINE__ , ierror ) ; 
   }
@@ -4044,7 +4145,7 @@ double  Gaudi::Math::LASS23L::integral
   //
   // use GSL to evaluate the integral 
   //
-  GSL_Handler_Sentry sentry ;
+  Sentry sentry ;
   //
   gsl_function F                 ;
   F.function         = &LASS_23L_GSL ;
@@ -4067,7 +4168,6 @@ double  Gaudi::Math::LASS23L::integral
   //
   if ( ierror ) 
   { 
-    GSL_Handler_Sentry sentry ;
     gsl_error ( "Gaudi::Math::LASS23L::QAG" ,
                 __FILE__ , __LINE__ , ierror ) ; 
   }
@@ -4079,6 +4179,568 @@ double  Gaudi::Math::LASS23L::integral
 // ============================================================================
 double  Gaudi::Math::LASS23L::integral () const 
 { return integral ( m_ps.lowEdge () , m_ps.highEdge() ) ; }
+// ============================================================================
+
+
+
+// ============================================================================
+// Bugg 
+// ============================================================================
+/*  constructor from all masses and angular momenta 
+ *  @param M  mass of sigma (very different from the pole positon!)
+ *  @param g2 width parameter g2 (4pi width)
+ *  @param b1 width parameter b1  (2pi coupling)
+ *  @param b2 width parameter b2  (2pi coupling)
+ *  @param s1 width parameter s1  (cut-off for 4pi coupling)
+ *  @param s2 width parameter s2  (cut-off for 4pi coupling)
+ *  @param a  parameter a (the exponential cut-off) 
+ *  @param m1 the mass of the first  particle 
+ *  @param m3 the mass of the third  particle 
+ *  @param m  the mass of the mother particle (m>m1+m2+m3)
+ *  @param L  the angular momentum between the first pair and the third 
+ */
+// ============================================================================
+Gaudi::Math::Bugg23L::Bugg23L
+( const double         M  ,
+  const double         g2 ,
+  const double         b1 ,
+  const double         b2 ,
+  const double         s1 ,
+  const double         s2 ,
+  const double         a  ,
+  const double         m1 ,
+  const double         m3 ,
+  const double         m  ,
+  const unsigned short L  ) 
+  : std::unary_function<double,double> () 
+//
+  , m_M  ( std::abs ( M  ) ) 
+  , m_g2 ( std::abs ( g2 ) ) 
+  , m_b1 ( std::abs ( b1 ) ) 
+  , m_b2 ( std::abs ( b2 ) ) 
+  , m_s1 ( std::abs ( s1 ) ) 
+  , m_s2 ( std::abs ( s2 ) ) 
+  , m_a  ( std::abs ( a  ) )
+// phase space
+  , m_ps ( m1 , m1 , m3 , m , L , 0 )  
+//
+  , m_workspace () 
+{}
+// ============================================================================
+// destructor 
+// ============================================================================
+Gaudi::Math::Bugg23L::~Bugg23L(){}
+// ============================================================================
+double Gaudi::Math::Bugg23L::rho2_ratio ( const double x ) const 
+{
+  if ( lowEdge() >= x ) { return 0 ; }
+  //
+  return 
+    Gaudi::Math::PhaseSpace2::phasespace ( x    , m1() , m2 () ) / 
+    Gaudi::Math::PhaseSpace2::phasespace ( M () , m1() , m2 () ) ; 
+}
+// ============================================================================
+std::complex<double> 
+Gaudi::Math::Bugg23L::rho4_ratio ( const double x ) const 
+{
+  //
+  if ( 4 * m1() >= x ) { return 0 ; }
+  //
+  return rho4 ( x ) / rho4 ( M() ) ;
+}
+// ============================================================================
+std::complex<double> 
+Gaudi::Math::Bugg23L::rho4 ( const double x ) const 
+{
+  const double s  = x * x ;
+  //
+  const double r2 = 1 - 16 * m1() * m1() / s ; 
+  //
+  const double r  = 
+    std::sqrt ( std::abs ( r2 ) ) * 
+    ( 1 + std::exp ( ( s1 () - s )  / s2 () ) ) ;
+  //
+  return 0 <= r2 ? 
+    std::complex<double> ( r , 0 ) :
+    std::complex<double> ( 0 , r ) ;
+}
+// ============================================================================
+// Adler's pole 
+// ============================================================================
+double Gaudi::Math::Bugg23L::adler ( const double x ) const 
+{
+  if ( lowEdge() >= x ) { return 0 ; }
+  //
+  const double pole = 0.5 * m1 () * m1 ()  ;
+  //
+  return ( x * x - pole ) / ( M2 () - pole ) ;
+}
+// ============================================================================
+// get the running width by Bugg
+// ============================================================================
+std::complex<double> 
+Gaudi::Math::Bugg23L::gamma ( const double x ) const 
+{
+  //
+  if ( lowEdge() >= x || highEdge() <= x ) { return 0 ; }
+  //
+  const double s = x * x ;
+  //
+  const double g1 = 
+    b     ( x ) * 
+    adler ( x ) * std::exp ( -1 * ( s - M2() )  / a() ) ;
+  //
+  return g1 * rho2_ratio ( x ) + g2 () * rho4_ratio ( x ) ;
+}
+// ============================================================================
+// get the amlitude  (not normalized!)
+// ============================================================================
+std::complex<double> 
+Gaudi::Math::Bugg23L::amplitude (  const double x ) const 
+{
+  if ( lowEdge() >= x || highEdge() <= x ) { return 0 ; }
+  //
+  static const std::complex<double> j ( 0 , 1 ) ;
+  //
+  std::complex<double> d = M2() - x * x  - j * M() * gamma ( x ) ;
+  //
+  return 1.0 / d ;
+}
+// ============================================================================
+// evaluate Bugg
+// ============================================================================
+double Gaudi::Math::Bugg23L::operator () ( const double x ) const 
+{ 
+  //
+  if ( lowEdge() >= x || highEdge() <= x ) { return 0 ; }
+  //
+  const double result = phaseSpace  ( x ) ;
+  if ( 0 >= result ) { return 0 ; }
+  //
+  return result * std::norm ( amplitude ( x ) ) ;
+}
+// ============================================================================
+// set the proper parameters 
+// ============================================================================
+bool Gaudi::Math::Bugg23L::setM ( const double x ) 
+{
+  //
+  const double v = std::abs ( x ) ;
+  if ( s_equal ( v , m_M ) ) { return false ; }
+  //
+  m_M = v ;
+  //
+  return true ;
+}
+// ============================================================================
+// set the proper parameters 
+// ============================================================================
+bool Gaudi::Math::Bugg23L::setG2 ( const double x ) 
+{
+  //
+  const double v = std::abs ( x ) ;
+  if ( s_equal ( v , m_g2 ) ) { return false ; }
+  //
+  m_g2 = v ;
+  //
+  return true ;
+}
+// ============================================================================
+// set the proper parameters 
+// ============================================================================
+bool Gaudi::Math::Bugg23L::setB1 ( const double x ) 
+{
+  //
+  const double v = std::abs ( x ) ;
+  if ( s_equal ( v , m_b1 ) ) { return false ; }
+  //
+  m_b1 = v ;
+  //
+  return true ;
+}
+// ============================================================================
+// set the proper parameters 
+// ============================================================================
+bool Gaudi::Math::Bugg23L::setB2 ( const double x ) 
+{
+  //
+  const double v = std::abs ( x ) ;
+  if ( s_equal ( v , m_b2 ) ) { return false ; }
+  //
+  m_b2 = v ;
+  //
+  return true ;
+}
+// ============================================================================
+// set the proper parameters 
+// ============================================================================
+bool Gaudi::Math::Bugg23L::setS1 ( const double x ) 
+{
+  //
+  const double v = std::abs ( x ) ;
+  if ( s_equal ( v , m_s1 ) ) { return false ; }
+  //
+  m_s1 = v ;
+  //
+  return true ;
+}
+// ============================================================================
+// set the proper parameters 
+// ============================================================================
+bool Gaudi::Math::Bugg23L::setS2 ( const double x ) 
+{
+  //
+  const double v = std::abs ( x ) ;
+  if ( s_equal ( v , m_s2 ) ) { return false ; }
+  //
+  m_s2 = v ;
+  //
+  return true ;
+}
+// ============================================================================
+// set the proper parameters 
+// ============================================================================
+bool Gaudi::Math::Bugg23L::setA ( const double x ) 
+{
+  //
+  const double v = std::abs ( x ) ;
+  if ( s_equal ( v , m_a ) ) { return false ; }
+  //
+  m_a = v ;
+  //
+  return true ;
+}
+// ============================================================================
+// get the integral between low and high limits 
+// ============================================================================
+double  Gaudi::Math::Bugg23L::integral 
+( const double low  , 
+  const double high ) const 
+{
+  if ( s_equal ( low , high ) ) { return                 0.0 ; } // RETURN 
+  if (           low > high   ) { return - integral ( high ,                                                     
+                                                      low  ) ; } // RETURN 
+  //
+  if ( high <= lowEdge  () ) { return 0 ; }
+  if ( low  >= highEdge () ) { return 0 ; }
+  //
+  if ( low  <  lowEdge  () ) 
+  { return integral ( lowEdge() , high        ) ; }
+  //
+  if ( high >  highEdge () ) 
+  { return integral ( low       , highEdge () ) ; }
+  //
+  // use GSL to evaluate the integral 
+  //
+  Sentry sentry ;
+  //
+  gsl_function F                 ;
+  F.function         = &Bugg_23L_GSL ;
+  const Bugg23L* _ps = this  ;
+  F.params           = const_cast<Bugg23L*> ( _ps ) ;
+  //
+  double result   = 1.0 ;
+  double error    = 1.0 ;
+  //
+  const int ierror = gsl_integration_qag 
+    ( &F                ,            // the function 
+      low   , high      ,            // low & high edges 
+      s_PRECISION       ,            // absolute precision            
+      s_PRECISION       ,            // relative precision 
+      s_SIZE            ,            // size of workspace 
+      GSL_INTEG_GAUSS31 ,            // integration rule  
+      workspace ( m_workspace ) ,    // workspace  
+      &result           ,            // the result 
+      &error            ) ;          // the error in result 
+  //
+  if ( ierror ) 
+  { 
+    gsl_error ( "Gaudi::Math::BUGG23L::QAG" ,
+                __FILE__ , __LINE__ , ierror ) ; 
+  }
+  //
+  return result ;
+}
+// ============================================================================
+// get the integral 
+// ============================================================================
+double  Gaudi::Math::Bugg23L::integral () const 
+{ return integral ( lowEdge () , highEdge() ) ; }
+// ============================================================================
+
+
+
+// ============================================================================
+// constructor from all parameters
+// ============================================================================
+Gaudi::Math::BW23L::BW23L
+( const double         m0   , 
+  const double         gam0 ,
+  const double         m1   , 
+  const double         m2   , 
+  const double         m3   , 
+  const double         m    , 
+  const unsigned short L1   , 
+  const unsigned short L2   ) 
+  : std::unary_function<double,double>() 
+//
+  , m_bw ( m0 , gam0 , m1  , m2 , L1      ) 
+  , m_ps ( m1 , m2   , m3  , m  , L2 , L1 ) 
+//
+  , m_workspace () 
+{}
+// ============================================================================
+// constructor from all parameters
+// ============================================================================
+Gaudi::Math::BW23L::BW23L
+( const double                               m0   , 
+  const double                               gam0 ,
+  const double                               m1   , 
+  const double                               m2   , 
+  const double                               m3   , 
+  const double                               m    , 
+  const unsigned short                       L1   , 
+  const unsigned short                       L2   ,
+  const Gaudi::Math::BreitWigner::JacksonRho r    ) 
+  : std::unary_function<double,double>() 
+//
+  , m_bw ( m0 , gam0 , m1  , m2 , L1 , r  ) 
+  , m_ps ( m1 , m2   , m3  , m  , L2 , L1 ) 
+//
+  , m_workspace () 
+{}
+// ============================================================================
+// constructor from BreitWigner  
+// ============================================================================
+Gaudi::Math::BW23L::BW23L
+( const Gaudi::Math::BreitWigner& bw , 
+  const double                    m3 , 
+  const double                    m  , 
+  const unsigned short            L2 ) 
+  : std::unary_function<double,double>() 
+//
+  , m_bw ( bw ) 
+  , m_ps ( bw.m1() , bw.m2() , m3  , m  , L2 , bw. L()) 
+//
+  , m_workspace () 
+{}
+// ============================================================================
+// destructor 
+// ============================================================================
+Gaudi::Math::BW23L::~BW23L (){}
+// ============================================================================
+// calculate the shape 
+// ============================================================================
+double Gaudi::Math::BW23L::operator() ( const double x ) const 
+{
+  if (  lowEdge() >= x || highEdge()  <= x ) { return 0 ; }
+  //
+  const double bw = m_bw ( x ) ;
+  //
+  // get the incomplete phase space factor 
+  const double ps  =                   // get the incomplete phase space factor 
+    x / M_PI *  
+    // =======================================================================
+    // the second factor is already in our BW !!! 
+    // Gaudi::Math::PhaseSpace2::phasespace ( x   , m_m1 , m_m2 , m_l  ) * 
+    // =======================================================================
+    Gaudi::Math::PhaseSpace2::phasespace ( m_ps.m  () ,
+                                           x          , 
+                                           m_ps.m3 () , 
+                                           m_ps.L  () ) ;
+  // 
+  return bw * ps ;  
+}
+// ============================================================================
+// get the integral between low and high limits 
+// ============================================================================
+double  Gaudi::Math::BW23L::integral 
+( const double low  , 
+  const double high ) const 
+{
+  if ( s_equal ( low , high ) ) { return                 0.0 ; } // RETURN 
+  if (           low > high   ) { return - integral ( high ,                                                     
+                                                      low  ) ; } // RETURN 
+  //
+  if ( high <= lowEdge  () ) { return 0 ; }
+  if ( low  >= highEdge () ) { return 0 ; }
+  //
+  if ( low  <  lowEdge  () ) 
+  { return integral ( lowEdge() , high        ) ; }
+  //
+  if ( high >  highEdge () ) 
+  { return integral ( low       , highEdge () ) ; }
+  //
+  // use GSL to evaluate the integral 
+  //
+  Sentry sentry ;
+  //
+  gsl_function F                   ;
+  F.function         = &BW_23L_GSL ;
+  const BW23L* _ps   = this  ;
+  F.params           = const_cast<BW23L*> ( _ps ) ;
+  //
+  double result   = 1.0 ;
+  double error    = 1.0 ;
+  //
+  const int ierror = gsl_integration_qag 
+    ( &F                ,            // the function 
+      low   , high      ,            // low & high edges 
+      s_PRECISION       ,            // absolute precision            
+      s_PRECISION       ,            // relative precision 
+      s_SIZE            ,            // size of workspace 
+      GSL_INTEG_GAUSS31 ,            // integration rule  
+      workspace ( m_workspace ) ,    // workspace  
+      &result           ,            // the result 
+      &error            ) ;          // the error in result 
+  //
+  if ( ierror ) 
+  { 
+    gsl_error ( "Gaudi::Math::BW23L::QAG" ,
+                __FILE__ , __LINE__ , ierror ) ; 
+  }
+  //
+  return result ;
+}
+// ============================================================================
+// get the integral 
+// ============================================================================
+double  Gaudi::Math::BW23L::integral () const 
+{ return integral ( lowEdge () , highEdge() ) ; }
+// ============================================================================
+
+
+
+// ============================================================================
+// Flatte23L 
+// ============================================================================
+/*  constructor  from all parameters 
+ *  @param m0    the mass 
+ *  @param m0g1  parameter \f$ m_0\times g_1\f$
+ *  @param g2og2 parameter \f$ g2/g_1       \f$
+ *  @param mK    kaon mass 
+ *  @param mPi   pion mass
+ *  @param m3    the mass of the third particle 
+ *  @param m     the mass of mother particle  
+ *  @param L     the orbital momentum between the pair and the third particle
+ */
+// ============================================================================
+Gaudi::Math::Flatte23L::Flatte23L
+( const double         m0    ,     // MeV 
+  const double         m0g1  ,     // MeV^2
+  const double         g2og1 ,     // dimensionless 
+  const double         mK    ,     // MeV 
+  const double         mPi   ,     // MeV 
+  const double         m3    ,     // MeV 
+  const double         m     ,     // MeV 
+  const unsigned short L     ) 
+  : std::unary_function<double,double> () 
+// 
+  , m_flatte    ( m0  , m0g1 , g2og1 , mK , mPi  ) 
+  , m_ps        ( mPi , mPi  , m3    , m  , L    ) 
+//
+  , m_workspace () 
+{}
+// ============================================================================
+/* constructor  from flatte function  
+ *  @param m3    the mass of the third particle 
+ *  @param m     the mass of mother particle  
+ *  @param L     the orbital momentum between the pair and the third particle
+ */
+// ============================================================================
+Gaudi::Math::Flatte23L::Flatte23L
+( const Gaudi::Math::Flatte& fun ,     // MeV 
+  const double               m3  ,     // MeV 
+  const double               m   ,     // MeV 
+  const unsigned short       L   ) 
+  : std::unary_function<double,double> () 
+// 
+  , m_flatte    ( fun ) 
+  , m_ps        ( fun.mPi() , fun.mPi()  , m3    , m  , L    ) 
+//
+  , m_workspace () 
+{}
+// ============================================================================
+// destructor 
+// ============================================================================
+Gaudi::Math::Flatte23L::~Flatte23L (){}
+// ============================================================================
+// get the value of Flatte function 
+// ============================================================================
+double Gaudi::Math::Flatte23L::operator() ( const double x ) const 
+{
+  //
+  if ( lowEdge () >= x || highEdge() <= x ) { return 0 ; } // RETURN
+  //
+  // get the amplitude...
+  std::complex<double> amp = m_flatte.flatte_amp ( x ) ;
+  //
+  return m_ps ( x ) * std::norm ( amp ) * 2 / M_PI * m0g1() ;    
+}
+// ============================================================================
+// get the integral between low and high limits 
+// ============================================================================
+double  Gaudi::Math::Flatte23L::integral 
+( const double low  , 
+  const double high ) const 
+{
+  if ( s_equal ( low , high ) ) { return                 0.0 ; } // RETURN 
+  if (           low > high   ) { return - integral ( high ,                                                     
+                                                      low  ) ; } // RETURN 
+  //
+  if ( high <= lowEdge  () ) { return 0 ; }
+  if ( low  >= highEdge () ) { return 0 ; }
+  //
+  if ( low  <  lowEdge  () ) 
+  { return integral ( lowEdge() , high        ) ; }
+  //
+  if ( high >  highEdge () ) 
+  { return integral ( low       , highEdge () ) ; }
+  //
+  // use GSL to evaluate the integral 
+  //
+  Sentry sentry ;
+  //
+  gsl_function F                   ;
+  F.function             = &Flatte_23L_GSL ;
+  const Flatte23L* _ps   = this  ;
+  F.params               = const_cast<Flatte23L*> ( _ps ) ;
+  //
+  double result   = 1.0 ;
+  double error    = 1.0 ;
+  //
+  const int ierror = gsl_integration_qag 
+    ( &F                ,            // the function 
+      low   , high      ,            // low & high edges 
+      s_PRECISION       ,            // absolute precision            
+      s_PRECISION       ,            // relative precision 
+      s_SIZE            ,            // size of workspace 
+      GSL_INTEG_GAUSS31 ,            // integration rule  
+      workspace ( m_workspace ) ,    // workspace  
+      &result           ,            // the result 
+      &error            ) ;          // the error in result 
+  //
+  if ( ierror ) 
+  { 
+    gsl_error ( "Gaudi::Math::BW23L::QAG" ,
+                __FILE__ , __LINE__ , ierror ) ; 
+  }
+  //
+  return result ;
+}
+// ============================================================================
+// get the integral 
+// ============================================================================
+double  Gaudi::Math::Flatte23L::integral () const 
+{ return integral ( lowEdge () , highEdge() ) ; }
+// ============================================================================
+
+
+
+
+  
+
+
 // ============================================================================
 // The END 
 // ============================================================================

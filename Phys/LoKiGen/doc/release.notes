@@ -13,6 +13,20 @@
 !   A.Golutvin, P.Koppenburg have been used in the design.
 ! -----------------------------------------------------------------------------
 
+!========================= LoKiGen v10r8 2012-06-25 =========================
+! 2012-06-18 - Vanya Belyaev
+ - redesign kinematical functors 
+
+! 2012-06-16 - Vanya Belyaev
+ - improge child selection 
+
+! 2012-05-24 - Vanya Belyaev
+ - more improvements for decorators 
+
+!========================= LoKiGen v10r7 2012-05-24 =========================
+! 2012-05-19 - Vanya Belyaev
+ - add more rrshift/calls decorators 
+
 !========================= LoKiGen v10r6 2012-02-28 =========================
 ! 2012-02-13 - Vanya Belyaev
  - add GVRHO functor for Marc-Olivier 

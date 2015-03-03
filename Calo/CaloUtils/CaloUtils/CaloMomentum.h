@@ -55,6 +55,8 @@ namespace LHCb
     typedef Gaudi::Matrix4x3                               MomPointCovariance ;
     /// vector of CaloPositions
     typedef std::vector<LHCb::CaloPosition>                     CaloPositions ;
+    /// vector of CaloHypos
+    typedef std::vector<const LHCb::CaloHypo*>                      CaloHypos ;
     // ========================================================================
   public:
     // ========================================================================
@@ -126,6 +128,7 @@ namespace LHCb
                    const PointCovariance&     cov     ) ;
     // ========================================================================
     /// Special constructors from CaloHypo    
+    CaloMomentum ( const std::vector<const LHCb::CaloHypo*> hypos);
     CaloMomentum ( const LHCb::CaloHypo*      hypo    ) ;
     CaloMomentum ( const LHCb::CaloHypo*      hypo    , 
                    const Point&               point   ) ;
@@ -153,7 +156,7 @@ namespace LHCb
     const CaloPositions&      caloPositions  () const { return m_caloPositions  ; }
     const Point&              referencePoint () const { return m_point          ; }
     const PointCovariance&    pointCovMatrix () const { return m_pointCovMatrix ; }
-    
+    unsigned int              multiplicity   () const { return m_caloPositions.size();}
     int status () const { return m_status ; } 
     int flag   () const { return m_flag   ; }
     // ========================================================================
@@ -173,15 +176,13 @@ namespace LHCb
     { m_caloPositions = value ; }
     void resetCaloPositions() { m_caloPositions.clear() ; }
     //
-    void setReferencePoint 
-    ( const Point&            point  ) ;
-    void setPosCovMatrix   
-    ( const PointCovariance&  cov    ) ; 
-    void setReferencePoint 
-    ( const Point&            point  , 
-      const PointCovariance&  cov    ) ;
-    void setReferencePoint 
-    ( const LHCb::VertexBase* vertex ) ;
+
+    CaloHypos caloHypos();
+    void setReferencePoint( const Point&            point  ) ;
+    void setPosCovMatrix( const PointCovariance&  cov    ) ; 
+    void setReferencePoint( const Point&            point  , 
+                            const PointCovariance&  cov    ) ;
+    void setReferencePoint( const LHCb::VertexBase* vertex ) ;
     //
     void addToStatus ( Status status ) { m_status |= status ; }
     void addToFlag   ( Flag   flag   ) { m_flag   |= flag   ; }
@@ -208,6 +209,8 @@ namespace LHCb
     // ========================================================================
     /// vector of Calo-positions 
     CaloPositions      m_caloPositions     ;    //     vector of Calo-positions 
+    /// vector of CaloHypos
+    CaloHypos          m_caloHypos         ;    //     vector of CaloHypos
     /// origin point 
     Point              m_point             ;    //                 origin point 
     /// origin point covariance 
@@ -221,18 +224,19 @@ namespace LHCb
     // ========================================================================    
   private: // auxillary
     // ========================================================================    
-    /// status 
     int m_status ;                              //                   the status 
-    /// flag
     int m_flag   ;                              //                         flag
     // ========================================================================    
   }; // class CaloMomentum
   // ==========================================================================
 } // end of namespace LHCb
 // ============================================================================
-inline void LHCb::CaloMomentum::setReferencePoint
-( const LHCb::CaloMomentum::Point&  point )
-{
+
+inline LHCb::CaloMomentum::CaloHypos LHCb::CaloMomentum::caloHypos(){
+  return m_caloHypos;
+}
+
+inline void LHCb::CaloMomentum::setReferencePoint( const LHCb::CaloMomentum::Point&  point ){
   m_point = point; 
   this -> addToFlag ( LHCb::CaloMomentum::NewReferencePoint ) ;
 } 

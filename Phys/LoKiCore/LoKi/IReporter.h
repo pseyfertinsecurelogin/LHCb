@@ -1,4 +1,4 @@
-// $Id: IReporter.h 133878 2012-01-18 19:33:38Z ibelyaev $
+// $Id: IReporter.h 141109 2012-06-15 13:17:46Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_IREPORTER_H 
 #define LOKI_IREPORTER_H 1
@@ -44,9 +44,7 @@ namespace LoKi
    *  @author Vanya BELYAEV ivelyaev@physics.syr.edu
    *  @date   2003-01-16
    */
-  class IReporter 
-    : public virtual   IAlgTool   
-    , public virtual   IErrorTool
+  class IReporter : public virtual IErrorTool
   {
   public: 
     // ========================================================================
@@ -63,7 +61,28 @@ namespace LoKi
     // destructor 
     virtual ~IReporter() ; 
     // ========================================================================
-  };
+  public:
+    // ========================================================================
+    /// define maximal number of prints 
+    static  void setMaxErrorPrint   ( const std::size_t ) ; // max prints 
+    /// define maximal number of warning prints 
+    static  void setMaxWarningPrint ( const std::size_t ) ; // max prints
+    // ========================================================================
+  public:
+    // ========================================================================
+    /// maximal number of error   prints 
+    static std::size_t maxErrorPrint   () ;
+    /// maximal number of warning prints 
+    static std::size_t maxWarningPrint () ;
+    // ========================================================================
+  private:
+    // ========================================================================
+    /// maximal number of error prints 
+    static std::size_t s_maxErrorPrint   ;
+    /// maximal number of warning prints 
+    static std::size_t s_maxWarningPrint ;
+    // ========================================================================
+  } ;
   // ==========================================================================
 } // end of namespace LoKi
 // ============================================================================

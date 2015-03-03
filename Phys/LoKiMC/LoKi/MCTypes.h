@@ -1,4 +1,4 @@
-// $Id: MCTypes.h 124207 2011-06-02 16:05:29Z ibelyaev $
+// $Id: MCTypes.h 140459 2012-05-24 13:13:19Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_MCTYPES_H 
 #define LOKI_MCTYPES_H 1
@@ -37,8 +37,8 @@
  *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
  *  @date 2006-03-10 
  *
- *                    $Revision: 124207 $
- *  Last modification $Date: 2011-06-02 18:05:29 +0200 (Thu, 02 Jun 2011) $
+ *                    $Revision: 140459 $
+ *  Last modification $Date: 2012-05-24 15:13:19 +0200 (Thu, 24 May 2012) $
  *                 by $Author: ibelyaev $
  */
 // ============================================================================
@@ -233,6 +233,32 @@ namespace LoKi
   { return s << ( this->m_value ? "MCVALL" : "MCVNONE" ) ; }
   // ==========================================================================  
 } //                                                      end of namespace LoKi
+// ============================================================================
+// a little bit of streamers 
+// ============================================================================
+GAUDI_API 
+LHCb::MCParticle::ConstVector 
+operator>>
+( const LHCb::MCParticle::ConstVector&    input , 
+  const LoKi::Types::MCCuts&              cuts  ) ;
+// ============================================================================
+GAUDI_API 
+LHCb::MCParticle::ConstVector 
+operator>> 
+( const LHCb::MCParticle::Container*      input , 
+  const LoKi::Types::MCCuts&              cuts  ) ;
+// ============================================================================
+GAUDI_API 
+LHCb::MCParticle::ConstVector 
+operator>> 
+( const LoKi::MCTypes::MCRange&           input , 
+  const LoKi::Types::MCCuts&              cuts  ) ;
+// ============================================================================
+GAUDI_API 
+LHCb::MCParticle::ConstVector 
+operator>> 
+( const SmartRefVector<LHCb::MCParticle>& input , 
+  const LoKi::Types::MCCuts&              cuts  ) ;
 // ============================================================================
 //                                                                      The END 
 // ============================================================================

@@ -4,6 +4,18 @@
 ! Purpose     : 
 !-----------------------------------------------------------------------------
 
+!========================= TrackKernel v1r10 2012-06-25 =========================
+! 2012-06-21 - Wouter Hulsbergen
+ - Added adaptive fit to TrackStateVertex
+
+! 2012-06-14 - Wouter Hulsbergen
+ - Added utility class TrajVertex
+
+! 2012-06-04 - Wouter Hulsbergen
+ - Two changes to TrackStateVertex:
+   - now copies input states rather than keeping pointers
+   - particles with negative masshypo will be ignored for p4
+
 !========================= TrackKernel v1r9p1 2012-03-27 =========================
 
 ! 2012-03-27 - Wouter Hulsbergen

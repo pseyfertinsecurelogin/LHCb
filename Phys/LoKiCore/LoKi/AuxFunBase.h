@@ -1,4 +1,4 @@
-// $Id: AuxFunBase.h 133878 2012-01-18 19:33:38Z ibelyaev $
+// $Id: AuxFunBase.h 141345 2012-06-21 09:05:51Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_AUXFUNBASE_H 
 #define LOKI_AUXFUNBASE_H 1
@@ -47,22 +47,23 @@ class MsgStream ;
 // ============================================================================
 namespace LoKi
 {  
+  // ==========================================================================
   /** @class AuxFunBase
    *  Helpful function to serve as common pseudo-base for all LoKi functions
    *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
    *  @date   2002-07-15
    */
-  class AuxFunBase
+  class GAUDI_API AuxFunBase
   {   
   protected:
   public:    // to please Visual C++ compiler
     // ========================================================================
     /// constructor from LoKi Service
     AuxFunBase  () ; 
-    // copy consructor 
-    AuxFunBase  ( const AuxFunBase&     right ) ; //</ copy consructor 
-    // destructor 
-    virtual ~AuxFunBase (); ///< destructor 
+    /// copy consructor 
+    AuxFunBase  ( const AuxFunBase& right ) ;                // copy consructor 
+    /// destructor 
+    virtual ~AuxFunBase ();                                       // destructor 
     // ========================================================================
   protected:
   public:    // to please Visual C++ compiler
@@ -131,9 +132,9 @@ namespace LoKi
   public:
     // ========================================================================
     /// get the event-ID 
-    long event    ()           const { return m_event ; }
+    unsigned long long event    ()                 const { return m_event ; }
     /// set the event-ID 
-    void setEvent ( long evt ) const { m_event = evt  ; }
+    void setEvent ( const unsigned long long evt ) const { m_event = evt  ; }
     /// set the event-ID from LoKi service 
     void setEvent (          ) const ; 
     // ========================================================================
@@ -154,7 +155,7 @@ namespace LoKi
   private:
     // ========================================================================
     /// the event ID 
-    mutable long m_event ;                                      // the event ID 
+    mutable unsigned long long m_event ;                        // the event ID 
     /// =======================================================================
   };
   // ==========================================================================
@@ -162,32 +163,53 @@ namespace LoKi
    *  (hopefully unique?) ID for the functor 
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    */
+  GAUDI_API 
   std::size_t genericID ( const AuxFunBase& ) ;  
   // ==========================================================================
 } // end of namespace LoKi
 // ============================================================================
 /** output operator of function objects to std::ostream 
- *  @param stream refeence to the stream
+ *  @param stream reference to the stream
  *  @param obj object to be printed 
  *  @return reference to the stream
  */
+GAUDI_API
 std::ostream& operator<< 
   ( std::ostream&           stream , 
     const LoKi::AuxFunBase& obj    ) ;
 // ============================================================================
-/** output operator of function objects to MsgStream
- *  @param stream refeence to the stream
+/** output operator of function objects to std::ostream 
+ *  @param stream reference to the stream
  *  @param obj object to be printed 
  *  @return reference to the stream
  */
-MsgStream&    operator<< 
+GAUDI_API
+MsgStream& operator<< 
   ( MsgStream&              stream , 
     const LoKi::AuxFunBase& obj    ) ;
 // ============================================================================
-
-
+namespace Gaudi
+{
+  // ==========================================================================
+  namespace Utils 
+  {
+    // ========================================================================
+    /** string represenatation of the object 
+     */
+    GAUDI_API 
+    std::string toString ( const LoKi::AuxFunBase& o ) ;
+    // ========================================================================
+    /** dump the object to the stream  
+     */
+    GAUDI_API 
+    std::ostream& 
+    toStream ( const LoKi::AuxFunBase& o , std::ostream& s ) ;
+    // ========================================================================
+  } //                                            end of namespace Gaudi::Utils
+  // ==========================================================================
+} //                                                     end of namespace Gaudi
 // ============================================================================
-// The END 
+//                                                                      The END 
 // ============================================================================
 #endif // LOKI_AUXFUNBASE_H
 // ============================================================================

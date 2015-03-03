@@ -6,6 +6,35 @@
 !               All headers included in directory LHCbMath
 !-----------------------------------------------------------------------------
 
+!========================= LHCbMath v3r33 2012-06-25 =========================
+! 2012-06-07 - Vanya Belyaev
+ - minor fix 
+
+! 2012-06-04 - Vanya Belyaev
+ - fix ICC warnings/remarks
+   fix some Coverity reports 
+
+! 2012-05-28 - Vanya Belyaev
+ - add hfit 
+
+! 2012-05-28 - Vanya Belyaev
+ - add the code for hfits
+
+!========================= LHCbMath v3r32 2012-05-24 =========================
+! 2012-05-24 - Vanya Belyaev
+ - add Flatte's function properly corrected for phase space factors 
+
+! 2012-05-23 - Vanya Belyaev
+ - add Bugg' function for low mass S-wave dipion system ("sigma")
+     *
+     *  The parameterization of sigma pole by 
+     *  B.S.Zou and D.V.Bugg, Phys.Rev. D48 (1993) R3948.
+     *
+     *
+!========================= LHCbMath v3r31 2012-05-19 =========================
+! 2012-05-13 - Vanya Belyaev
+ - add Needham function for J/psi 
+
 !========================= LHCbMath v3r30 2012-05-02 =========================
 ! 2012-04-29 - Vanya Belyaev
  - minor polishing 
@@ -1008,4 +1037,5 @@
 
 ! 2006-05-08 - Juan Palacios
  - First release of Kernel/LHCbMath
+
 

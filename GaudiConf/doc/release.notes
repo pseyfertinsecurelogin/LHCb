@@ -3,6 +3,22 @@
 ! package manager: M.Cattaneo
 !------------------------------------------------------------------------------
 
+!========================= GaudiConf v16r0 2012-06-25 =========================
+! 2012-06-24 - Olivier Deschamps
+ - DstConf : add CaloHypo->MC linkers to the writer list
+
+! 2012-06-15 - Marco Cattaneo
+ - Add also Calo/RawEvent
+
+! 2012-06-13 - Marco Cattaneo
+ - Add also Rich/RawEvent
+
+! 2012-06-07 - Marco Cattaneo
+ - Modify SDST, DST, XDST content to always contain [Trigger,Muon,Other]/RawEvent
+   instead of DAQ/RawEvent (needs Brunel v43r0 to write, LHCb v35r0 stack to 
+   decode). SDST and DST are now identical after Brunel, SDST is obsolete
+ - Remove obsolete support for input from stripping ETC
+
 !========================= GaudiConf v15r10 2012-05-02 =========================
 ! 2012-04-18 - Marco Cattaneo
  - Use the new EnableCheck functionality of the Packers for the packing tests,

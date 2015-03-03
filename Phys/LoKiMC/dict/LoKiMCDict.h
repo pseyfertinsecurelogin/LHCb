@@ -1,4 +1,4 @@
-// $Id: LoKiMCDict.h 124226 2011-06-04 19:34:02Z ibelyaev $
+// $Id: LoKiMCDict.h 140459 2012-05-24 13:13:19Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_LOKIMCDICT_H 
 #define LOKI_LOKIMCDICT_H 1
@@ -82,6 +82,93 @@ namespace LoKi
   } // end of namespace LoKi::Functors 
   // ==========================================================================
 } // end of namespace LoKi
+// ============================================================================
+namespace LoKi
+{
+  // ==========================================================================
+  namespace Dicts
+  {
+    // ========================================================================
+    template <>
+    class CutCalls<LHCb::MCParticle> 
+    {
+    private:
+      // ======================================================================
+      typedef LHCb::MCParticle                           Type ;
+      typedef LoKi::BasicFunctors<const Type*>::Predicate Fun  ;
+      // ======================================================================
+    public:
+      // ======================================================================
+      // __call__
+      static Fun::result_type 
+      __call__    ( const Fun& fun  , const Type*           o ) 
+      { return fun ( o ) ; }
+      // __call__
+      static Fun::result_type 
+      __call__    ( const Fun& fun  , const SmartRef<Type>& o ) 
+      { return fun ( o ) ; }
+      //
+      // __call__ as filter 
+      //
+      // __call__ 
+      static LoKi::MCTypes::MCContainer 
+      __call__ ( const Fun& fun  , const LoKi::MCTypes::MCContainer&  e ) 
+      { return e >> fun ; }
+      // __call__ 
+      static LoKi::MCTypes::MCContainer
+      __call__ ( const Fun& fun  , const LHCb::MCParticle::Container* e ) 
+      { return e >> fun ; }
+      // __call__ 
+      static LoKi::MCTypes::MCContainer
+      __call__ ( const Fun& fun  , const LoKi::MCTypes::MCRange& e ) 
+      { return e >> fun ; }
+      // __call__ 
+      static LoKi::MCTypes::MCContainer
+      __call__ ( const Fun& fun  , const SmartRefVector<Type>& e ) 
+      { return e >> fun ; }
+      // ======================================================================
+    public:
+      // ======================================================================
+      // __rrshift__ 
+      static Fun::result_type              
+      __rrshift__ ( const Fun& fun  , const Type*           o ) 
+      { return o >> fun  ; }
+      // __rrshift__ 
+      static Fun::result_type              
+      __rrshift__ ( const Fun& fun  , const SmartRef<Type>&  o ) 
+      { return o >> fun  ; }
+      // ======================================================================
+      // rrshift as "filter"
+      // ======================================================================
+      // __rrshift__ 
+      static LoKi::MCTypes::MCContainer 
+      __rrshift__ ( const Fun& fun  , const LoKi::MCTypes::MCContainer&  e ) 
+      { return e >> fun ; }
+      // __rrshift__ 
+      static LoKi::MCTypes::MCContainer
+      __rrshift__ ( const Fun& fun  , const LHCb::MCParticle::Container* e ) 
+      { return e >> fun ; }
+      // __rrshift__ 
+      static LoKi::MCTypes::MCContainer
+      __rrshift__ ( const Fun& fun  , const LoKi::MCTypes::MCRange& e ) 
+      { return e >> fun ; }
+      // __rrshift__ 
+      static LoKi::MCTypes::MCContainer
+      __rrshift__ ( const Fun& fun  , const SmartRefVector<Type>& e ) 
+      { return e >> fun ; }
+      // ======================================================================
+    public:
+      // ======================================================================
+      // __rshift__ 
+      static LoKi::FunctorFromFunctor<const Type*,bool>
+      __rshift__ ( const Fun& fun  , const Fun& o ) 
+      { return fun >> o   ; }      
+      // ======================================================================
+    } ;    
+    // ========================================================================
+  } 
+  // ==========================================================================
+}
 // ============================================================================
 namespace
 {

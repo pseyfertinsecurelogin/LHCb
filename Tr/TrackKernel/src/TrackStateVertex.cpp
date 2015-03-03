@@ -20,6 +20,13 @@ namespace LHCb
       typedef ROOT::Math::SVector<double,5> TrackVector ;
 
       VertexTrack( const LHCb::State& state, const PositionCovariance& m_poscov ) ;
+
+      /// set the state
+      void setState( const LHCb::State& state ) {
+	m_state = state ; 
+	m_G = state.covariance() ;
+	Gaudi::Math::invertPosDefSymMatrix( m_G ) ;
+      }
       
       /// compute chisq derivatives
       void project( const ROOT::Math::SVector<double,3>& position,
@@ -47,11 +54,17 @@ namespace LHCb
 	return m_momposcov.first ? m_momposcov.second : computeMomPosCov() ;
       }
       
-      /// chisquare
+      /// chisquare (ignores the weight)
       double chisq(const ROOT::Math::SVector<double,3>& pos) const {
 	return ROOT::Math::Similarity(residual(pos),m_G) ;
       }
 
+      /// set the weight
+      void setweight(double w) { m_weight = w ; }
+
+      /// retrieve the weight
+      double weight() const { return m_weight ; }
+ 
       /// update momentum for given change in position
       void updateSlopes( const ROOT::Math::SVector<double,3>& pos ) { 
 	m_q += m_WBG * residual(pos) ; 
@@ -103,9 +116,10 @@ namespace LHCb
       }
       
     private:
-      const LHCb::State& m_state ;
+      LHCb::State m_state ;
       const PositionCovariance& m_poscov ;
-      
+      double m_weight ;
+
       // In fruhwirth's notation
       Gaudi::SymMatrix5x5 m_G ;               // weight matrix of state p=(x,y,tz,ty)
       ROOT::Math::SMatrix<double,5,3> m_A ;   // projection matrix for vertex position
@@ -119,7 +133,7 @@ namespace LHCb
     } ;
   
     VertexTrack::VertexTrack(const LHCb::State& state, const PositionCovariance& poscov)
-      : m_state(state), m_poscov(poscov)
+      : m_state(state), m_poscov(poscov), m_weight(1.0)
     {
       // reset cache of variables that we calculate only on demand
       m_WBGA.first = m_momcov.first = m_momposcov.first = false ;
@@ -176,6 +190,13 @@ namespace LHCb
       m_W = ROOT::Math::Similarity( Transpose(m_B), m_G ) ;
       Gaudi::Math::invertPosDefSymMatrix( m_W ) ;
 
+      // now we need to be careful with the track weight. in
+      // principle, we just reweight m_G. However, if the weight is
+      // close to zero, then the matrix inversion of m_W fails. The
+      // weight has no effect on m_WBG. In the end, by ignoring the
+      // weight until the derivatives, all we do wrong are the track
+      // momenta (which would get infinite error for zero weight).
+      
       // momentum gain matrix
       m_WBG  = m_W * Transpose(m_B) * m_G ;
       
@@ -183,8 +204,8 @@ namespace LHCb
       Gaudi::SymMatrix5x5 GB = m_G - ROOT::Math::Similarity( m_G*m_B, m_W) ;
       
       // Add to chisquare plus derivatives
-      halfDChisqDX += -ROOT::Math::Transpose(m_A) * GB * residual(pos) ;
-      halfD2ChisqDX2 +=  ROOT::Math::Similarity(ROOT::Math::Transpose(m_A),GB) ;
+      halfDChisqDX += - m_weight * ROOT::Math::Transpose(m_A) * GB * residual(pos) ;
+      halfD2ChisqDX2 += m_weight * ROOT::Math::Similarity(ROOT::Math::Transpose(m_A),GB) ;
       // reset cache of variables that we calculate only on demand
       m_WBGA.first = m_momcov.first = m_momposcov.first = false ;
     }
@@ -251,7 +272,7 @@ namespace LHCb
   TrackStateVertex::TrackStateVertex( const Gaudi::XYZPoint& reference,
 				      const Gaudi::SymMatrix3x3& refcovariance,
 				      bool isweightmatrix )
-    : m_fitStatus(UnFitted), m_chi2(-1)
+    : m_poscov(refcovariance), m_fitStatus(UnFitted), m_chi2(-1)
   {
     m_refpos(0) =  reference.x() ;
     m_refpos(1) =  reference.y() ;
@@ -259,7 +280,6 @@ namespace LHCb
     m_refweight = refcovariance ;
     if(!isweightmatrix) m_refweight.InvertChol() ;
     m_pos    = m_refpos ;
-    //m_poscov = refcovariance ;
   }
   
   void TrackStateVertex::addTrack( const LHCb::State& inputstate,
@@ -279,6 +299,17 @@ namespace LHCb
     }
   }
 
+  void TrackStateVertex::setInputState(size_t i, const LHCb::State& inputstate)
+  {
+    m_fitStatus = UnFitted ;
+    if( i>=m_tracks.size() ) m_tracks.resize(i+1,0) ;
+    if( m_tracks[i] == 0 ) {
+      m_tracks[i] = new VertexTrack( inputstate, m_poscov ) ;
+    } else {
+      m_tracks[i]->setState( inputstate ) ;
+    }
+  }
+  
   double TrackStateVertex::fitOneStep()
   {
     // This implements the Billoir-Fruhwirth-Regler algorithm.
@@ -329,6 +360,11 @@ namespace LHCb
   {
     return m_tracks[i]->chisq(m_pos) ;
   }
+  
+  double TrackStateVertex::weight(size_t i) const
+  {
+    return m_tracks[i]->weight() ;
+  }
 
   TrackStateVertex::FitStatus TrackStateVertex::fit( double maxdchisq, size_t maxnumiter)
   {
@@ -343,6 +379,45 @@ namespace LHCb
     return m_fitStatus ;
   }
 
+  TrackStateVertex::FitStatus TrackStateVertex::fitAdaptive( double maxtrkchi2,
+							     double maxdchisq, size_t maxnumiter)
+  {
+    bool finished(false) ;
+    double prevtotalchi2(-1) ;
+    size_t N = m_tracks.size() ;
+    // since we don't compute unbiased chi2, we need to rescale
+    const double scaledmaxtrkchi2 = maxtrkchi2 * (2*N - 3 ) / (2*N) ;
+    size_t niter(0) ;
+    std::vector<double> trkchi2s(N,0) ;
+    while( !finished ) {
+      fit( maxdchisq, maxnumiter) ;
+      ++niter ; //niter += m_nIter ;
+      // compute the total chi2, cache contribution of each track
+      m_chi2 = ROOT::Math::Similarity(m_refweight,(m_pos - m_refpos)) ;
+      for(size_t i=0; i<N; ++i) {
+        double trkchi2 = m_tracks[i]->chisq(m_pos) ;
+        m_chi2 += m_tracks[i]->weight() * trkchi2 ;
+	trkchi2s[i] = trkchi2 ;
+      }
+      if( niter>1 && prevtotalchi2 - m_chi2 < maxdchisq ) {
+        finished = true ;
+      } else if ( niter >= maxnumiter ) {
+	finished = true ;
+	m_fitStatus = FitFailure ;
+      } else {
+        prevtotalchi2 = m_chi2 ;
+        double sumw(0) ;
+        for(size_t i=0; i<N; ++i) {
+	  double weight = trkchi2s[i] < scaledmaxtrkchi2 ? 1 : scaledmaxtrkchi2 / trkchi2s[i] ;
+	  m_tracks[i]->setweight(weight) ;
+          sumw += weight ;
+        }
+      }
+    }
+    //m_nIter = niter ;
+    return m_fitStatus ;
+  }
+  
   const TrackStateVertex::MomentumParameters& TrackStateVertex::mom( size_t i ) const
   {
     return m_tracks[i]->mom() ;
@@ -470,10 +545,11 @@ namespace LHCb
   Gaudi::LorentzVector TrackStateVertex::p4(const std::vector<double>& masshypos) const 
   {
     Gaudi::LorentzVector p4sum,p4tmp ;
-    for( size_t index = 0 ; index<m_tracks.size() ; ++index) {
-      Gaudi::Math::geo2LA(m_tracks[index]->mom(),masshypos[index],p4tmp);
-      p4sum += p4tmp ;
-    }
+    for( size_t index = 0 ; index<m_tracks.size() ; ++index) 
+      if( masshypos[index] >=0 ) {
+	Gaudi::Math::geo2LA(m_tracks[index]->mom(),masshypos[index],p4tmp);
+	p4sum += p4tmp ;
+      }
     return p4sum ;
   }
   
@@ -489,15 +565,17 @@ namespace LHCb
     std::vector<Gaudi::Matrix4x3> dP4dMom(dim) ;
     Gaudi::Matrix4x4    tmp4x4 ;
     Gaudi::SymMatrix4x4 stmp4x4 ;
-    for( size_t index = 0 ; index<dim ; ++index) {
-      Gaudi::Math::JacobdP4dMom(m_tracks[index]->mom(),masshypos[index],dP4dMom[index]);
-      p4cov += ROOT::Math::Similarity( dP4dMom[index], m_tracks[index]->momcov() ) ;
-      for( size_t jndex = 0 ; jndex<index ; ++jndex) {
-	tmp4x4 = dP4dMom[index] * momMomCovMatrixFast(index,jndex) * ROOT::Math::Transpose(dP4dMom[jndex]);
-	ROOT::Math::AssignSym::Evaluate( stmp4x4, tmp4x4 + ROOT::Math::Transpose( tmp4x4 ) ) ;
-	p4cov += stmp4x4 ;
+    for( size_t index = 0 ; index<dim ; ++index) 
+      if( masshypos[index] >=0 ) {
+	Gaudi::Math::JacobdP4dMom(m_tracks[index]->mom(),masshypos[index],dP4dMom[index]);
+	p4cov += ROOT::Math::Similarity( dP4dMom[index], m_tracks[index]->momcov() ) ;
+	for( size_t jndex = 0 ; jndex<index ; ++jndex) 
+	  if( masshypos[jndex] >=0 ) {
+	    tmp4x4 = dP4dMom[index] * momMomCovMatrixFast(index,jndex) * ROOT::Math::Transpose(dP4dMom[jndex]);
+	    ROOT::Math::AssignSym::Evaluate( stmp4x4, tmp4x4 + ROOT::Math::Transpose( tmp4x4 ) ) ;
+	    p4cov += stmp4x4 ;
+	  }
       }
-    }
     return p4cov ;
   }
 
@@ -510,17 +588,19 @@ namespace LHCb
     Gaudi::Matrix4x4    tmp4x4 ;
     Gaudi::SymMatrix4x4 stmp4x4 ;
     Gaudi::Matrix4x3 covmompos;
-    for( size_t index = 0 ; index<dim ; ++index) {
-      // this is something we can still optimize
-      Gaudi::Math::JacobdP4dMom(m_tracks[index]->mom(),masshypos[index],dP4dMom[index]);
-      p4cov += ROOT::Math::Similarity( dP4dMom[index], m_tracks[index]->momcov() ) ;
-      covmompos += dP4dMom[index] * m_tracks[index]->momposcov() ;
-      for( size_t jndex = 0 ; jndex<index ; ++jndex) {
-	tmp4x4 = dP4dMom[index] * momMomCovMatrixFast(index,jndex) * ROOT::Math::Transpose(dP4dMom[jndex]);
-	ROOT::Math::AssignSym::Evaluate( stmp4x4, tmp4x4 + ROOT::Math::Transpose( tmp4x4 ) ) ;
-	p4cov += stmp4x4 ;
+    for( size_t index = 0 ; index<dim ; ++index) 
+      if( masshypos[index] >=0 ) {
+	// this is something we can still optimize
+	Gaudi::Math::JacobdP4dMom(m_tracks[index]->mom(),masshypos[index],dP4dMom[index]);
+	p4cov += ROOT::Math::Similarity( dP4dMom[index], m_tracks[index]->momcov() ) ;
+	covmompos += dP4dMom[index] * m_tracks[index]->momposcov() ;
+	for( size_t jndex = 0 ; jndex<index ; ++jndex) 
+	  if( masshypos[jndex] >=0 ) {
+	    tmp4x4 = dP4dMom[index] * momMomCovMatrixFast(index,jndex) * ROOT::Math::Transpose(dP4dMom[jndex]);
+	    ROOT::Math::AssignSym::Evaluate( stmp4x4, tmp4x4 + ROOT::Math::Transpose( tmp4x4 ) ) ;
+	    p4cov += stmp4x4 ;
+	  }
       }
-    }
     
     // finally copy everything to the 7x7 matrix
     Gaudi::SymMatrix7x7 cov7x7;
@@ -577,17 +657,19 @@ namespace LHCb
     Gaudi::SymMatrix4x4 p4cov ;
     Gaudi::Matrix4x4    tmp4x4 ;
     Gaudi::SymMatrix4x4 stmp4x4 ;
-    for( size_t index = 0 ; index< dim ; ++index) {
-      Gaudi::Math::geo2LA(m_tracks[index]->mom(),masshypos[index],p4[index]);
-      p4sum += p4[index] ;
-      Gaudi::Math::JacobdP4dMom(m_tracks[index]->mom(),masshypos[index],dP4dMom[index]);
-      p4cov += ROOT::Math::Similarity( dP4dMom[index], m_tracks[index]->momcov() ) ;
-      for( size_t jndex = 0 ; jndex<index ; ++jndex) {
-	tmp4x4 = dP4dMom[index] * momMomCovMatrixFast(index,jndex) * ROOT::Math::Transpose(dP4dMom[jndex]);
-	ROOT::Math::AssignSym::Evaluate( stmp4x4, tmp4x4 + ROOT::Math::Transpose( tmp4x4 ) ) ;
-	p4cov += stmp4x4 ;
+    for( size_t index = 0 ; index< dim ; ++index) 
+      if( masshypos[index] >= 0 ) {
+	Gaudi::Math::geo2LA(m_tracks[index]->mom(),masshypos[index],p4[index]);
+	p4sum += p4[index] ;
+	Gaudi::Math::JacobdP4dMom(m_tracks[index]->mom(),masshypos[index],dP4dMom[index]);
+	p4cov += ROOT::Math::Similarity( dP4dMom[index], m_tracks[index]->momcov() ) ;
+	for( size_t jndex = 0 ; jndex<index ; ++jndex) 
+	    if( masshypos[jndex] >= 0 ) {
+	      tmp4x4 = dP4dMom[index] * momMomCovMatrixFast(index,jndex) * ROOT::Math::Transpose(dP4dMom[jndex]);
+	      ROOT::Math::AssignSym::Evaluate( stmp4x4, tmp4x4 + ROOT::Math::Transpose( tmp4x4 ) ) ;
+	      p4cov += stmp4x4 ;
+	    }
       }
-    }
     
     // now there are many ways to formulate the constraint. we'll
     // start with this one, which is the one in squares

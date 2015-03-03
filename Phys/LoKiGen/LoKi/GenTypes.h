@@ -1,4 +1,4 @@
-// $Id: GenTypes.h 134316 2012-01-29 13:55:54Z ibelyaev $
+// $Id: GenTypes.h 140464 2012-05-24 14:25:32Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_GENTYPES_H 
 #define LOKI_GENTYPES_H 1
@@ -11,6 +11,10 @@
 #include "LoKi/Functions.h"
 #include "LoKi/Selected.h"
 #include "LoKi/RangeList.h"
+// ============================================================================
+// GenEvent 
+// ============================================================================
+#include "Event/HepMCEvent.h"
 // ============================================================================
 // forward declarations  
 // ============================================================================
@@ -36,8 +40,8 @@ namespace HepMC { class GenVertex   ; }
  *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
  *  @date 2001-01-23 
  *
- *                    $Revision: 134316 $
- *  Last modification $Date: 2012-01-29 14:55:54 +0100 (Sun, 29 Jan 2012) $
+ *                    $Revision: 140464 $
+ *  Last modification $Date: 2012-05-24 16:25:32 +0200 (Thu, 24 May 2012) $
  *                 by $Author: ibelyaev $
  */
 // ============================================================================
@@ -229,6 +233,38 @@ namespace LoKi
   { return s << ( this->m_value ? "GVALL" : "GVNONE" ) ; }
   // ==========================================================================  
 } //                                                      end of namespace LoKi
+// ============================================================================
+// a little bit of streamers 
+// ============================================================================
+GAUDI_API 
+LoKi::GenTypes::GenContainer 
+operator >> 
+( const LoKi::GenTypes::GenContainer& input ,  
+  const LoKi::Types::GCuts&           cuts  ) ;
+// ============================================================================
+GAUDI_API 
+LoKi::GenTypes::GenContainer 
+operator >> 
+( const LoKi::GenTypes::GRange&       input ,  
+  const LoKi::Types::GCuts&           cuts  ) ;
+// ============================================================================
+GAUDI_API 
+LoKi::GenTypes::GenContainer 
+operator >> 
+( const LHCb::HepMCEvent*             event ,  
+  const LoKi::Types::GCuts&           cuts  ) ;
+// ============================================================================
+GAUDI_API 
+LoKi::GenTypes::GenContainer 
+operator >> 
+( const LHCb::HepMCEvent::Container*  event ,  
+  const LoKi::Types::GCuts&           cuts  ) ;
+// ============================================================================
+GAUDI_API 
+LoKi::GenTypes::GenContainer 
+operator >> 
+( const HepMC::GenEvent*              event ,  
+  const LoKi::Types::GCuts&           cuts  ) ;
 // ============================================================================
 //                                                                      The END 
 // ============================================================================

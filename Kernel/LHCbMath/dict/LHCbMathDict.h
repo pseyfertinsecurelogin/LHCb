@@ -1,4 +1,4 @@
-// $Id: LHCbMathDict.h 139270 2012-04-28 17:33:47Z ibelyaev $
+// $Id: LHCbMathDict.h 140504 2012-05-28 19:13:30Z ibelyaev $
 // ============================================================================
 #ifndef DICT_LHCBMATHDICT_H 
 #define DICT_LHCBMATHDICT_H 1
@@ -27,6 +27,7 @@
 #include "LHCbMath/Functions.h"
 #include "LHCbMath/LHCbMath.h"
 #include "LHCbMath/Chi2Solution.h"
+#include "LHCbMath/Chi2Fit.h"
 // ============================================================================
 /** @file LHCbMathDict.h 
  *  
@@ -301,6 +302,7 @@ namespace
     Gaudi::Math::SVectorWithError<8,double> __sv8 ;
     //
     std::vector<Gaudi::Math::ValueWithError>  _dver ;
+    std::vector<std::vector<Gaudi::Math::ValueWithError> > _dver2 ;
     //
     std::vector<Gaudi::Vector2>  _vct_2 ;
     std::vector<Gaudi::Vector3>  _vct_3 ;
