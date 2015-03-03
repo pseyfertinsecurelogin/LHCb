@@ -1,4 +1,3 @@
-// $Id: ReadPackedDst.cpp,v 1.13 2010-05-18 09:03:21 jonrob Exp $
 // Include files
 
 // from Gaudi
@@ -21,6 +20,7 @@
 #include "Event/PackedParticle.h"
 #include "Event/PackedVertex.h"
 #include "Event/PackedWeightsVector.h"
+#include "Event/PackedCaloCluster.h"
 #include "Event/RecHeader.h"
 #include "Event/ProcStatus.h"
 #include "Event/ODIN.h"
@@ -237,12 +237,12 @@ StatusCode ReadPackedDst::execute() {
       longlong eventNumber = nextInt();
       eventNumber = (eventNumber << 32) + nextInt();
       recHeader->setEvtNumber( eventNumber );
+      // Dummy reads from old data when RecHeader contained random seeds.
+      // Data encoded after random seeds were removed has nb=0
       unsigned nb = nextInt();
-      std::vector<long int> seeds;
       for ( unsigned int kk=0 ; nb > kk; ++kk ) {
-        seeds.push_back( nextInt() );
+        nextInt();
       }
-      recHeader->setRandomSeeds( seeds );
       recHeader->setApplicationName( stringFromData() );
       recHeader->setApplicationVersion( stringFromData() );
       recHeader->setRunNumber( nextInt() );
@@ -263,7 +263,7 @@ StatusCode ReadPackedDst::execute() {
       processLinks( parts, version );
       getFromBlob<LHCb::PackedParticle> ( parts->data(), blobs );
       getFromBlob<std::pair<int,int> >  ( parts->extra(), blobs );
-      getFromBlob<int>                  ( parts->daughters(), blobs );
+      getFromBlob<long long>            ( parts->daughters(), blobs );
 
     } else if ( LHCb::CLID_PackedVertices        == classID ) {
 
@@ -271,7 +271,7 @@ StatusCode ReadPackedDst::execute() {
       put( verts, name + m_postfix );
       processLinks( verts, version );
       getFromBlob<LHCb::PackedVertex> ( verts->data(), blobs );
-      getFromBlob<int>                ( verts->outgoingParticles(), blobs );
+      getFromBlob<long long>          ( verts->outgoingParticles(), blobs );
 
     } else if ( LHCb::CLID_PackedWeightsVector   == classID ) {
       
@@ -280,6 +280,14 @@ StatusCode ReadPackedDst::execute() {
       processLinks( weights, version );
       getFromBlob<LHCb::PackedWeights> ( weights->data(),    blobs );
       getFromBlob<LHCb::PackedWeight>  ( weights->weights(), blobs );
+
+    } else if ( LHCb::CLID_PackedCaloClusters   == classID ) {
+      
+      LHCb::PackedCaloClusters* clusters = new LHCb::PackedCaloClusters();
+      put( clusters, name + m_postfix );
+      processLinks( clusters, version );
+      getFromBlob<LHCb::PackedCaloCluster>      ( clusters->data(),    blobs );
+      getFromBlob<LHCb::PackedCaloClusterEntry> ( clusters->entries(), blobs );
 
     } else if ( LHCb::CLID_ProcStatus == classID ) {
 

@@ -1,5 +1,5 @@
 package           DAQUtils
-version           v1r5
+version           v1r5p1
 
 branches cmt doc Event src tests
 
@@ -10,7 +10,7 @@ use DAQEvent    v* Event
 apply_pattern install_more_includes more=Event
 
 library DAQUtils *.cpp
-apply_pattern component_library library=DAQUtils 
+apply_pattern component_library library=DAQUtils
 
 # Set up the test application with packages needed at run time
 private

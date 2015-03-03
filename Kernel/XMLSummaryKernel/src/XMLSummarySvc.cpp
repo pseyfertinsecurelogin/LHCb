@@ -65,7 +65,9 @@ XMLSummarySvc::XMLSummarySvc(const std::string& name, ISvcLocator* svc )
   declareProperty("StatEntityList",
                   m_statEntityList=std::vector<std::string>(1,".*"));
   declareProperty("UpdateFreq",m_freq=500);
-  
+
+  declareProperty("BeginEventIncident", m_beginIncident = IncidentType::BeginEvent);
+  declareProperty("EndEventIncident", m_endIncident = IncidentType::EndEvent);
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -246,7 +248,7 @@ void XMLSummarySvc::handle( const Incident& incident )
     
   }
 
-  if(incident.type()!=IncidentType::EndEvent && incident.type()!=IncidentType::BeginEvent) 
+  if(incident.type()!=m_endIncident && incident.type()!=m_beginIncident) 
     log << MSG::VERBOSE << incident.type() << ":" << incident.source() << endmsg;
   //elif(incident.source()=="EventLoopMgr")
     
@@ -273,6 +275,7 @@ void XMLSummarySvc::handle( const Incident& incident )
   else if(incident.type()==IncidentType::EndInputFile)
     {
       status="full";
+      //use end name so that no race conditions occur between end file and end event
       filename=m_filename=incident.source();
       m_hasinput=true;
       
@@ -286,7 +289,9 @@ void XMLSummarySvc::handle( const Incident& incident )
   else if(incident.type()==IncidentType::FailInputFile)
     {
       status="fail";
-      filename=m_filename=incident.source();
+      //do not update filename, so that end events are never attributed
+      //to failed files, possibly could produce a race condition
+      filename=incident.source();
       m_hasinput=true;
       
     }
@@ -296,12 +301,14 @@ void XMLSummarySvc::handle( const Incident& incident )
       method="fill_output";
       filename=incident.source();
     }
-  //else if(incident.type()==IncidentType::BeginEvent)
+  // perhaps BeginEvent should also change the active file to wherever
+  // /Event is stored ...
+  //else if(incident.type()==m_beginIncident)
   //  {
   //    status="part";
   //    addevents=1;
   //  }
-  else if(incident.type()==IncidentType::EndEvent)
+  else if(incident.type()==m_endIncident)
     {
       status="part";
       addevents=1;
@@ -317,12 +324,12 @@ void XMLSummarySvc::handle( const Incident& incident )
   
   
   //only fill input if there is input to fill!, i.e. if EndEvent but not m_hasinput, then skip it
-  if(incident.type()!=IncidentType::EndEvent || m_hasinput)
+  if(incident.type()!=m_endIncident || m_hasinput)
   {
   
     //actually add to the summary
     std::string GUID=file2GUID(filename);
-    if(incident.type()!=IncidentType::EndEvent && incident.type()!=IncidentType::BeginEvent)
+    if(incident.type()!=m_endIncident && incident.type()!=m_beginIncident)
       log << MSG::VERBOSE << method <<"(" << filename << "," << GUID << "," << status << "," << addevents << ")" << endmsg;
     
     PyObject_CallMethod(m_summary,
@@ -338,7 +345,7 @@ void XMLSummarySvc::handle( const Incident& incident )
   m_handled++;
   
   //never write at begin event!
-  if ( incident.type()!=IncidentType::BeginEvent && (
+  if ( incident.type()!=m_beginIncident && (
        //write all major file events
        (incident.type()==IncidentType::EndInputFile
        || incident.type()==IncidentType::FailInputFile
@@ -346,7 +353,7 @@ void XMLSummarySvc::handle( const Incident& incident )
        || incident.type()==IncidentType::BeginInputFile
         || m_handled.flag()==1)
        //write every freq end events
-       || (incident.type()==IncidentType::EndEvent && m_freq>0 && int(m_ended.flag())%m_freq ==0) )
+       || (incident.type()==m_endIncident && m_freq>0 && int(m_ended.flag())%m_freq ==0) )
        )
     {
       
@@ -511,8 +518,8 @@ StatusCode XMLSummarySvc::prepareIncSvc()
   StatusCode sc=service("IncidentSvc", m_incSvc, false);
   if(!sc.isSuccess() || m_incSvc== NULL) return StatusCode::FAILURE;
 
-  m_incSvc->addListener( this, IncidentType::EndEvent);
-  //m_incSvc->addListener( this, IncidentType::BeginEvent);
+  m_incSvc->addListener( this, m_endIncident);
+  //m_incSvc->addListener( this, m_beginIncident);
 
   //check extended file incidents are defined
 #ifdef GAUDI_FILE_INCIDENTS

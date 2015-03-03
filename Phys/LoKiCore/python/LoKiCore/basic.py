@@ -2,7 +2,7 @@
 # =============================================================================
 # $Id: basic.py 121023 2011-03-29 18:09:53Z ibelyaev $ 
 # =============================================================================
-# $URL: http://svn.cern.ch/guest/lhcb/LHCb/tags/Phys/LoKiCore/v11r2/python/LoKiCore/basic.py $ 
+# $URL: http://svn.cern.ch/guest/lhcb/LHCb/tags/Phys/LoKiCore/v11r3/python/LoKiCore/basic.py $ 
 # =============================================================================
 ## @file decorators.py LoKiCore/basic.py
 #

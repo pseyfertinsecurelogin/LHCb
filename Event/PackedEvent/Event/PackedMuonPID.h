@@ -34,7 +34,8 @@ namespace LHCb
       : MuonLLMu(0), MuonLLBg(0),
         nShared(0), status(0),
         idtrack(-1),
-        mutrack(-1)
+        mutrack(-1),
+        key(0)
     {}
 
     int MuonLLMu;
@@ -43,7 +44,7 @@ namespace LHCb
     int status;
     int idtrack;
     int mutrack;
-
+    int key;
   };
 
   // -----------------------------------------------------------------------
@@ -72,9 +73,14 @@ namespace LHCb
     typedef std::vector<LHCb::PackedMuonPID> Vector;
 
   public:
+    
+    /// Default Packing Version
+    static char defaultPackingVersion() { return 1; }
+    
+  public:
 
     /// Standard constructor
-    PackedMuonPIDs( ) : m_packingVersion(0) { }
+    PackedMuonPIDs( ) : m_packingVersion(defaultPackingVersion()) { }
 
     /// Destructor
     virtual ~PackedMuonPIDs( ) { }
@@ -101,7 +107,7 @@ namespace LHCb
 
   private:
 
-    /// Data packing version (not used as yet, but for any future schema evolution)
+    /// Data packing version 
     char   m_packingVersion;
 
     /// The packed data objects
@@ -130,10 +136,15 @@ namespace LHCb
     static const std::string& packedLocation()   { return LHCb::PackedMuonPIDLocation::Default; }
     static const std::string& unpackedLocation() { return LHCb::MuonPIDLocation::Default; }
 
+  private:
+
+    /// Default Constructor hidden
+    MuonPIDPacker() : m_parent(NULL) {}
+
   public:
 
     /// Default Constructor
-    MuonPIDPacker() {}
+    MuonPIDPacker( GaudiAlgorithm & parent ) : m_parent(&parent) {}
 
   public:
 
@@ -143,17 +154,24 @@ namespace LHCb
 
     /// Unpack MuonPIDs
     void unpack( const PackedDataVector & phits,
-                 DataVector       & hits ) const;
+                 DataVector             & hits ) const;
 
     /// Compare two MuonPIDs to check the packing -> unpacking performance
     StatusCode check( const DataVector & dataA,
-                      const DataVector & dataB,
-                      GaudiAlgorithm & parent ) const;
+                      const DataVector & dataB ) const;
+
+  private:
+
+    /// Access the parent algorithm
+    GaudiAlgorithm& parent() const { return *m_parent; }
 
   private:
 
     /// Standard packing of quantities into integers ...
     StandardPacker m_pack;
+
+    /// Pointer to parent algorithm
+    GaudiAlgorithm * m_parent;
 
   };
 

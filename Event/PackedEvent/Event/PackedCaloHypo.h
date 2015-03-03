@@ -2,13 +2,22 @@
 #ifndef EVENT_PACKEDCALOHYPO_H
 #define EVENT_PACKEDCALOHYPO_H 1
 
-// Include files
-// Include files
 #include "GaudiKernel/DataObject.h"
+#include "GaudiKernel/StatusCode.h"
+
+// Kernel
+#include "Kernel/StandardPacker.h"
+
+// Event
+#include "Event/CaloHypo.h"
+
 #include <string>
 #include <vector>
 
-namespace LHCb {
+class GaudiAlgorithm;
+
+namespace LHCb
+{
 
   /** @struct PackedCaloHypo Event/PackedCaloHypo.h
    *  Packed description of a CaloHypo
@@ -43,29 +52,22 @@ namespace LHCb {
       firstDigit( c.firstDigit ), lastDigit( c.lastDigit ),
       firstCluster( c.firstCluster ), lastCluster( c.lastCluster ),
       firstHypo( c.firstHypo ), lastHypo( c.lastHypo )
-    { }
+    {}
 
     int key;
     int hypothesis;
     int lh;
     // from CaloPosition
     int z;
-    // position (3 ) + 3x3 symetric covariance matrix
-    int posX;
-    int posY;
-    int posE;
+    // position (3) + 3x3 symmetric covariance matrix
+    int posX, posY, posE;
 
-    int cov00;
-    int cov11;
-    int cov22;
-    short int cov10;
-    short int cov20;
-    short int cov21;
-    short int cerr10;    // non diagonal terms of the x,y spread matrix.
+    int cov00, cov11, cov22;
+    short int cov10, cov20, cov21;
+    short int cerr10; // non diagonal terms of the x,y spread matrix.
     // center in x,y + 2x2 symetric covariance matrix
     int centX;
     int centY;
-
     int cerr00;
     int cerr11;
 
@@ -76,7 +78,6 @@ namespace LHCb {
     unsigned short int firstHypo;
     unsigned short int lastHypo;
   };
-
 
   static const CLID CLID_PackedCaloHypos = 1551;
 
@@ -90,6 +91,7 @@ namespace LHCb {
   }
 
   /** @class PackedCaloHypos Event/PackedCaloHypo.h
+   *
    *  Vector of packed CaloHypos
    *
    *  @author Olivier Callot
@@ -109,30 +111,83 @@ namespace LHCb {
     }
 
     virtual ~PackedCaloHypos( ) {}; ///< Destructor
+
+  public:
+    
     virtual const CLID& clID()  const { return PackedCaloHypos::classID(); }
     static  const CLID& classID()     { return CLID_PackedCaloHypos;       }
 
-    void addEntry( PackedCaloHypo& obj ) { m_vect.push_back( obj ); }
-    std::vector<PackedCaloHypo>::const_iterator begin() const { return m_vect.begin(); }
-    std::vector<PackedCaloHypo>::const_iterator end()   const { return m_vect.end(); }
-    std::vector<PackedCaloHypo>& hypos()                      { return m_vect; }
-    const std::vector<PackedCaloHypo>& hypos() const          { return m_vect; }
+  public:
 
-    void addRef( int i ) { m_refs.push_back( i ); }
-    /// Avoid hidden method
-    virtual unsigned long addRef() { return DataObject::addRef(); }
-    std::vector<int>::const_iterator beginRefs() const { return m_refs.begin(); }
-    unsigned int  sizeRef()                      const { return m_refs.size(); }
-    std::vector<int>& refs()                           { return m_refs; }
-    const std::vector<int>& refs() const               { return m_refs; }
+    std::vector<PackedCaloHypo>& hypos()              { return m_vect; }
+    const std::vector<PackedCaloHypo>& hypos() const  { return m_vect; }
+
+    std::vector<int>& refs()                          { return m_refs; }
+    const std::vector<int>& refs() const              { return m_refs; }
 
   private:
 
     std::vector<PackedCaloHypo> m_vect;
-    std::vector<int>       m_refs;
+    std::vector<int>            m_refs;
 
   };
 
-}  // End of LHCb namespace
+  /** @class CaloHypoPacker Event/PackedCaloHypo.h
+   *
+   *  Utility class to handle the packing and unpacking of CaloHypos
+   *
+   *  @author Christopher Rob Jones
+   *  @date   05/04/2012
+   */
+  class CaloHypoPacker
+  {
+
+  public:
+
+    typedef LHCb::CaloHypo                    Data;
+    typedef LHCb::PackedCaloHypo        PackedData;
+    typedef LHCb::CaloHypos             DataVector;
+    typedef LHCb::PackedCaloHypos PackedDataVector;
+
+  private:
+
+    /// Default Constructor hidden
+    CaloHypoPacker() : m_parent(NULL) {}
+
+  public:
+
+    /// Default Constructor
+    CaloHypoPacker( GaudiAlgorithm & parent ) : m_parent(&parent) {}
+
+  public:
+
+    /// Pack CaloHypos
+    void pack( const DataVector & hypos,
+               PackedDataVector & phypos ) const;
+
+    /// Unpack CaloHypos
+    void unpack( const PackedDataVector & phypos,
+                 DataVector             & hypos ) const;
+
+    /// Compare two CaloHypos to check the packing -> unpacking performance
+    StatusCode check( const DataVector & dataA,
+                      const DataVector & dataB ) const;
+
+  private:
+
+    /// Access the parent algorithm
+    GaudiAlgorithm& parent() const { return * m_parent; }
+
+  private:
+
+    /// Standard packing of quantities into integers ...
+    StandardPacker m_pack;
+
+    /// Pointer to parent algorithm
+    GaudiAlgorithm * m_parent;
+
+  };
+
+}
 
 #endif // EVENT_PACKEDCALOHYPO_H

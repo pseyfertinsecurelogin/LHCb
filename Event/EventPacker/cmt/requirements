@@ -1,12 +1,12 @@
 #============================================================================
 # Created    : 2008-11-18
-# Maintainer : Olivier Callot
+# Maintainer : Olivier Callot, Chris Jones
 #============================================================================
 package           EventPacker
-version           v2r10
+version           v2r10p1
 
 #============================================================================
-# Structure, i.e. directories to process. 
+# Structure, i.e. directories to process.
 #============================================================================
 branches          cmt doc src
 #============================================================================
@@ -16,7 +16,7 @@ branches          cmt doc src
 include_path      none
 
 #============================================================================
-# Used packages. 
+# Used packages.
 #============================================================================
 use   GaudiKernel  v*
 use   GaudiAlg     v*
@@ -26,9 +26,11 @@ use   MCEvent      v*    Event
 use   TrackEvent   v*    Event
 use   RecEvent     v*    Event
 use   DAQEvent     v*    Event
+use   HltEvent     v*    Event
 use   MDF          v*    DAQ
 use   Boost        v*    LCG_Interfaces
-
+use   Relations    v*    Kernel
+use   MicroDst     v*    Event
 #============================================================================
 # Component library building rule
 #============================================================================
@@ -37,3 +39,7 @@ library          EventPacker    ../src/*.cpp
 # define component library link options
 #============================================================================
 apply_pattern    component_library library=EventPacker
+
+private
+macro_append Boost_linkopts ' $(Boost_linkopts_regex) '
+end_private

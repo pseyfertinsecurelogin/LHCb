@@ -17,8 +17,11 @@ Pack<PACKER>::Pack( const std::string& name,
 {
   declareProperty( "InputName" , m_inputName   = PACKER::unpackedLocation() );
   declareProperty( "OutputName", m_outputName  = PACKER::packedLocation()   );
-  declareProperty( "PackingVersion", m_version = 0                          );
+  declareProperty( "PackingVersion",
+                   m_version = (unsigned short int)PACKER::PackedDataVector::defaultPackingVersion() );
   declareProperty( "AlwaysCreateOutput",         m_alwaysOutput = false     );
+  declareProperty( "DeleteInput",                m_deleteInput  = false     );
+  declareProperty( "EnableCheck",                m_enableCheck  = false     );
 }
 
 template < class PACKER >
@@ -30,7 +33,7 @@ StatusCode Pack<PACKER>::initialize()
   const StatusCode sc = GaudiAlgorithm::initialize();
   if ( sc.isFailure() ) return sc;
 
-  if( UNLIKELY( msgLevel(MSG::DEBUG) ) ) 
+  if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
     debug() << "Input '"    << rootInTES() << m_inputName
             << "' Output '" << rootInTES() << m_outputName << "'" << endmsg;
 
@@ -73,7 +76,7 @@ StatusCode Pack<PACKER>::execute()
     {
 
       // Load the input data
-      const typename PACKER::DataVector * data =
+      typename PACKER::DataVector * data =
         this->get<typename PACKER::DataVector>(m_inputName);
 
       // set data version
@@ -83,13 +86,10 @@ StatusCode Pack<PACKER>::execute()
       pdata->setPackingVersion(m_version);
 
       // Packer
-      static const PACKER packer;
+      const PACKER packer(*dynamic_cast<GaudiAlgorithm*>(this));
 
       // Fill packed data
       packer.pack( *data, *pdata );
-
-      // Clear the registry address of the unpacked container, to prevent reloading
-      data->registry()->setAddress( 0 );
 
       if ( msgLevel(MSG::DEBUG) )
       {
@@ -98,11 +98,42 @@ StatusCode Pack<PACKER>::execute()
         debug() << " Packed Version   = " << (int)pdata->version() << endmsg;
       }
 
-    } // input OK
+      // Packing checks
+      if ( UNLIKELY(m_enableCheck) )
+      {
+        // make new unpacked output data object
+        typename PACKER::DataVector * unpacked = new typename PACKER::DataVector();
+        put( unpacked, m_inputName+"_PackingCheck" );
 
-    // Count packed output
-    if ( inputOK || m_alwaysOutput )
-      counter("# PackedData") += pdata->data().size();
+        // unpack
+        packer.unpack( *pdata, *unpacked );
+
+        // run checks
+        packer.check( *data, *unpacked ).ignore();
+
+        // clean up after checks
+        StatusCode sc = evtSvc()->unregisterObject( unpacked );
+        if( sc.isSuccess() ) delete unpacked;
+      }
+
+      // If requested, remove the input data from the TES and delete
+      if ( UNLIKELY(m_deleteInput) )
+      {
+        StatusCode sc = evtSvc()->unregisterObject( data );
+        if( sc.isSuccess() ) delete data;
+        data = NULL;
+      }
+      else
+      {
+        // Clear the registry address of the unpacked container, to prevent reloading
+        data->registry()->setAddress( 0 );
+      }
+
+      // Count packed output
+      if ( inputOK || m_alwaysOutput )
+        counter("# PackedData") += pdata->data().size();
+
+    } // input OK
 
   } // output OK
 

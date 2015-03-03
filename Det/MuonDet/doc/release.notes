@@ -3,6 +3,14 @@
 ! Responsible : Alessia Satta
 !----------------------------------------------------------------------------
 
+!========================= MuonDet v9r7 2011-08-29 =========================
+! 2011-08-25 - Alessia Satta
+ - Bug fix in the pad size for regions with double readouts
+
+! 2011-08-01 - Marco Cattaneo
+ - Replace std::cout by MsgStream when the stream was terminated by endmsg,
+   fixes several Coverity warnings
+
 !========================= MuonDet v9r6 2011-07-25 =========================
 ! 2011-07-20 - Marco Cattaneo
  - Create MSG::VERBOSE and MSG::DEBUG messages only when output level requires

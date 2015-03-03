@@ -1,24 +1,24 @@
-// $Id: PackedEventChecks.h,v 1.1 2009-10-21 16:40:16 jonrob Exp $
+
 #ifndef EVENT_PACKEDEVENTCHECKS_H
 #define EVENT_PACKEDEVENTCHECKS_H 1
 
-// STL
-#include <cmath>
-#include <sstream>
-
 // Gaudi
+#include "GaudiKernel/GenericVectorTypes.h"
 #include "GaudiKernel/Point3DTypes.h"
 #include "GaudiKernel/Vector3DTypes.h"
 #include "GaudiKernel/Vector4DTypes.h"
 #include "GaudiKernel/MsgStream.h"
 #include "GaudiAlg/GaudiAlgorithm.h"
 
+// Boost
+#include "boost/array.hpp"
+
 namespace DataPacking
 {
 
   /** @class DataChecks Event/PackedEventChecks.h
    *
-   *  basic utilities to check the packed data
+   *  Basic utilities to check the packed data
    *
    *  @author Christopher Rob Jones
    *  @date   2009-10-15
@@ -43,10 +43,10 @@ namespace DataPacking
 
     /// Compare two Matrices
     template < class TYPE, unsigned int N, unsigned int M >
-    inline bool compareMatrices(  const std::string & name,
-                                  const TYPE & a,
-                                  const TYPE & b,
-                                  const double tol = 5.0e-3 ) const
+    inline bool compareMatrices( const std::string & name,
+                                 const TYPE & a,
+                                 const TYPE & b,
+                                 const double tol = 5.0e-3 ) const
     {
       bool ok = true;
       for ( unsigned int n = 0; n<N; ++n )
@@ -55,129 +55,109 @@ namespace DataPacking
         {
           std::ostringstream text;
           text << name << ":" << n << m;
-          ok &= compareDoubles( text.str(), a(n,m), b(n,m), tol );
+          double tolRel = tol * fabs( a(n,m) );
+          if ( tolRel < tol ) tolRel = tol;
+          ok &= compareDoubles( text.str(), a(n,m), b(n,m), tolRel );
+        }
+      }
+      return ok;
+    }
+
+    /// Compare two 'Covariance' Matrices
+    template < class TYPE, unsigned int N >
+    inline bool compareCovMatrices( const std::string & name,
+                                    const TYPE & a,
+                                    const TYPE & b,
+                                    const boost::array<double,N> tolOnDiag,
+                                    const double tolOffDiag ) const
+    {
+      bool ok = true;
+      for ( unsigned int n = 0; n<N; ++n )
+      {
+        for ( unsigned int m = n; m<N; ++m )
+        {
+          std::ostringstream text;
+          text << name << ":" << n << m;
+          if ( m == n )
+          { // On diagonal
+            ok &= compareDoubles( text.str(), 
+                                  std::sqrt(a(n,m)), 
+                                  std::sqrt(b(n,m)),
+                                  tolOnDiag[n] );
+          }
+          else
+          { // Off diagonal
+            const double testA = ( fabs(a(n,n)) > 0 && fabs(a(m,m)) > 0 ?
+                                   a(n,m) / std::sqrt( a(n,n) * a(m,m) ) : 0 );
+            const double testB = ( fabs(b(n,n)) > 0 && fabs(b(m,m)) > 0 ?
+                                   b(n,m) / std::sqrt( b(n,n) * b(m,m) ) : 0 );
+            ok &= compareDoubles( text.str(), testA, testB, tolOffDiag );
+          }
         }
       }
       return ok;
     }
 
     /// Compare two Lorentz vector
-    inline bool compareLorentzVectors( const std::string & name,
-                                       const Gaudi::LorentzVector & a,
-                                       const Gaudi::LorentzVector & b,
-                                       const double tol = 5.0e-3 ) const
-    {
-      const Gaudi::XYZVector av(a.x(),a.y(),a.z());
-      const Gaudi::XYZVector bv(b.x(),b.y(),b.z());
-      const bool vOK = compareVectors( name+":Vect", av, bv, tol );
-      const bool mOK = compareDoubles( name+":mass", a.M(), b.M(), tol );
-      return vOK && mOK;
-    }
+    bool compareLorentzVectors( const std::string & name,
+                                const Gaudi::LorentzVector & a,
+                                const Gaudi::LorentzVector & b,
+                                const double tolV = 5.0e-3,
+                                const double tolE = 1.0e-2 ) const;
 
     /// Compare two points to within the given tolerance
-    inline bool comparePoints( const std::string & name,
-                               const Gaudi::XYZPoint & a,
-                               const Gaudi::XYZPoint & b,
-                               const double tol = 1.0e-4 ) const
-    {
-      const bool ok = ( std::fabs( a.x() - b.x() ) < tol &&
-                        std::fabs( a.y() - b.y() ) < tol &&
-                        std::fabs( a.z() - b.z() ) < tol );
-      if (!ok)
-      {
-        parent->warning() << name << " comparison failed :-" << endmsg
-                          << " Original " << a.x() << " " << a.y() << " " << a.z() << endmsg
-                          << " Unpacked " << b.x() << " " << b.y() << " " << b.z() << endmsg
-                          << " Diff.    "
-                          << std::fabs( a.x() - b.x() ) << " "
-                          << std::fabs( a.y() - b.y() ) << " "
-                          << std::fabs( a.z() - b.z() ) << endmsg;
-      }
-      parent->counter("Original - "+name+" x") += a.x();
-      parent->counter("Original - "+name+" y") += a.y();
-      parent->counter("Original - "+name+" z") += a.z();
-      parent->counter("Unpacked - "+name+" x") += b.x();
-      parent->counter("Unpacked - "+name+" y") += b.y();
-      parent->counter("Unpacked - "+name+" z") += b.z();
-      parent->counter("Diff.    - "+name+" x") += a.x()-b.x();
-      parent->counter("Diff.    - "+name+" y") += a.y()-b.y();
-      parent->counter("Diff.    - "+name+" z") += a.z()-b.z();
-      return ok;
-    }
+    bool comparePoints( const std::string & name,
+                        const Gaudi::XYZPoint & a,
+                        const Gaudi::XYZPoint & b,
+                        const double tol = 1.0e-4 ) const;
 
-    /// Compare two vectors to within the given tolerance
-    inline bool compareVectors( const std::string & name,
-                                const Gaudi::XYZVector & a,
-                                const Gaudi::XYZVector & b,
-                                const double tol = 1.0e-4 ) const
-    {
-      const bool ok = ( std::fabs( a.x() - b.x() ) < tol &&
-                        std::fabs( a.y() - b.y() ) < tol &&
-                        std::fabs( a.z() - b.z() ) < tol );
-      if (!ok)
-      {
-        parent->warning() << name << " comparison failed :-" << endmsg
-                          << " Original " << a.x() << " " << a.y() << " " << a.z() << endmsg
-                          << " Unpacked " << b.x() << " " << b.y() << " " << b.z() << endmsg
-                          << "  Diff    "
-                          << std::fabs( a.x() - b.x() ) << " "
-                          << std::fabs( a.y() - b.y() ) << " "
-                          << std::fabs( a.z() - b.z() ) << endmsg;
-      }
-      parent->counter("Original - "+name+" x") += a.x();
-      parent->counter("Original - "+name+" y") += a.y();
-      parent->counter("Original - "+name+" z") += a.z();
-      parent->counter("Unpacked - "+name+" x") += b.x();
-      parent->counter("Unpacked - "+name+" y") += b.y();
-      parent->counter("Unpacked - "+name+" z") += b.z();
-      parent->counter("Diff.    - "+name+" x") += a.x()-b.x();
-      parent->counter("Diff.    - "+name+" y") += a.y()-b.y();
-      parent->counter("Diff.    - "+name+" z") += a.z()-b.z();
-      return ok;
-    }
+    /// Compare two XYZ vectors to within the given tolerance
+    bool compareVectors( const std::string & name,
+                         const Gaudi::XYZVector & a,
+                         const Gaudi::XYZVector & b,
+                         const double tol = 1.0e-4 ) const;
+
+    /// Compare two 3D vectors to within the given tolerance
+    bool compareVectors( const std::string & name,
+                         const Gaudi::Vector3 & a,
+                         const Gaudi::Vector3 & b,
+                         const double tol = 1.0e-4 ) const;
+
+    /// Compare two 2D vectors to within the given tolerance
+    bool compareVectors( const std::string & name,
+                         const Gaudi::Vector2 & a,
+                         const Gaudi::Vector2 & b,
+                         const double tol = 1.0e-4 ) const;
 
     /// Compare two double values
-    inline bool compareDoubles( const std::string & name,
-                                const double a,
-                                const double b,
-                                const double tol = 1.0e-4 ) const
-    {
-      const bool ok = ( std::fabs( a - b ) < tol );
-      if (!ok)
-      {
-        parent->warning() << name << " comparison failed :-" << endmsg
-                          << " Original = " << a << endmsg
-                          << " Unpacked = " << b << endmsg
-                          << "  Diff = " << std::fabs(a-b) << " > " << tol
-                          << endmsg;
-      }
-      parent->counter("Original - "+name) += a;
-      parent->counter("Unpacked - "+name) += b;
-      parent->counter("Diff.    - "+name) += a-b;
-      return ok;
-    }
+    bool compareDoubles( const std::string & name,
+                         const double& a,
+                         const double& b,
+                         const double tol = 1.0e-4 ) const;
 
     /// Compare two int values
-    inline bool compareInts( const int a,
+    inline bool compareInts( const std::string & name,
+                             const int a,
                              const int b ) const
     {
       const bool ok = ( a == b );
       if (!ok)
       {
-        parent->warning() << "compare(signed)Ints failed :-" << endmsg
+        parent->warning() << name << " compare (signed)Ints failed :-" << endmsg
                           << "  " << a << " " << b << endmsg;
       }
       return ok;
     }
 
     /// Compare two unsigned int values
-    inline bool compareInts( const unsigned int a,
+    inline bool compareInts( const std::string & name,
+                             const unsigned int a,
                              const unsigned int b ) const
     {
       const bool ok = ( a == b );
       if (!ok)
       {
-        parent->warning() << "compare(unsigned)Ints failed" << endmsg
+        parent->warning() << name << " compare (unsigned)Ints failed" << endmsg
                           << "  " << a << " " << b << endmsg;
       }
       return ok;
@@ -185,8 +165,8 @@ namespace DataPacking
 
     /// Compare two double 'energy' values
     inline bool compareEnergies( const std::string & name,
-                                 const double a,
-                                 const double b,
+                                 const double& a,
+                                 const double& b,
                                  const double tol = 5.0e-3 ) const
     {
       return compareDoubles( name, a, b, tol );
@@ -194,8 +174,8 @@ namespace DataPacking
 
     /// Compare two double 'energy' vectors (e.g. Momentum vectors)
     inline bool compareEnergies( const std::string & name,
-                                 const Gaudi::XYZVector & a,
-                                 const Gaudi::XYZVector & b,
+                                 const Gaudi::XYZVector& a,
+                                 const Gaudi::XYZVector& b,
                                  const double tol = 5.0e-3 ) const
     {
       return compareVectors( name, a, b, tol );

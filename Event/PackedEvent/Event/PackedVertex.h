@@ -29,17 +29,43 @@ namespace LHCb
    */
   struct PackedVertex
   {
+
     /// Default constructor
     PackedVertex()
-      : technique(0),
-        firstOutgoingPart(0), lastOutgoingPart(0)
+      : key(0),
+        technique(0),
+        chi2(0), nDoF(0),
+        x(0), y(0), z(0),
+        cov00(0), cov11(0), cov22(0),
+        cov10(0), cov20(0), cov21(0),
+        firstOutgoingPart(0), 
+        lastOutgoingPart(0),
+        firstInfo(0), lastInfo(0)
     {}
     
-    // packed data members
-    int technique;
+    /// Key and possibly container index.
+    long long key; 
 
-    // outgoing particles
-    unsigned short int firstOutgoingPart, lastOutgoingPart;
+    int technique;    ///< packed technique
+    int chi2;         ///< packed chi^2
+    int nDoF;         ///< packed nDOF
+
+    // Position
+    int x, y, z;
+
+    // Covariance matrix
+    int cov00, cov11, cov22;
+    short int cov10, cov20, cov21;
+
+    /// first outgoing particle
+    unsigned int firstOutgoingPart;
+    /// last outgoing particle
+    unsigned int lastOutgoingPart;
+
+    /// first info
+    unsigned int firstInfo;
+    /// last info
+    unsigned int lastInfo;
 
   };
 
@@ -51,6 +77,7 @@ namespace LHCb
   namespace PackedVertexLocation
   {
     static const std::string& User = "pPhys/User/Vertices";
+    static const std::string& InStream = "/pPhys/Vertices";
   }
 
   /** @class PackedVertices Event/PackedVertex.h
@@ -69,12 +96,23 @@ namespace LHCb
     typedef std::vector<LHCb::PackedVertex> Vector;
 
     /// Outgoing Particles
-    typedef std::vector<int> OutgoingParticles;
+    typedef std::vector<long long> OutgoingParticles;
+
+    /// Packed Extra Info
+    typedef std::pair<int,int> ExtraInfo;
+
+    /// Packed Extra Info Vector
+    typedef std::vector<ExtraInfo> ExtraInfoVector;
+
+  public:
+    
+    /// Default Packing Version
+    static char defaultPackingVersion() { return 1; }
 
   public:
 
     /// Standard constructor
-    PackedVertices( ) : m_packingVersion(0) { }
+    PackedVertices( ) : m_packingVersion(defaultPackingVersion()) { }
 
     /// Destructor
     virtual ~PackedVertices( ) { }
@@ -105,16 +143,28 @@ namespace LHCb
     /// Access the packing version
     char packingVersion() const { return m_packingVersion; }
 
+    /// add an extra info
+    void addExtra( const int a, const int b ) { m_extra.push_back( ExtraInfo(a,b) ); }
+
+    /// Write access the extra info
+    ExtraInfoVector& extras()             { return m_extra; }
+
+    /// Read access the extra info
+    const ExtraInfoVector& extras() const { return m_extra; }
+
   private:
 
-    /// Data packing version (not used as yet, but for any future schema evolution)
-    char   m_packingVersion;
+    /// Data packing version
+    char m_packingVersion;
 
     /// The packed data objects
     Vector m_vect;
 
     /// Outgoing Particles
     OutgoingParticles m_parts;
+
+    /// Extra info
+    ExtraInfoVector m_extra;
 
   };
 
@@ -129,6 +179,7 @@ namespace LHCb
    */
   class VertexPacker
   {
+
   public:
 
     // These are required by the templated algorithms
@@ -139,30 +190,57 @@ namespace LHCb
     static const std::string& packedLocation()   { return LHCb::PackedVertexLocation::User; }
     static const std::string& unpackedLocation() { return LHCb::VertexLocation::User; }
 
+  private:
+
+    /// Default Constructor hidden
+    VertexPacker() : m_parent(NULL) {}
+
   public:
 
     /// Default Constructor
-    VertexPacker() {}
+    VertexPacker( GaudiAlgorithm & parent ) : m_parent(&parent) {}
 
   public:
+
+    /// Pack a Vertex
+    void pack( const Data & vert,
+               PackedData & pvert,
+               PackedDataVector & pverts ) const;
 
     /// Pack Vertices
     void pack( const DataVector & verts,
                PackedDataVector & pverts ) const;
 
+    /// Unpack a Vertex
+    void unpack( const PackedData       & pvert,
+                 Data                   & vert,
+                 const PackedDataVector & pverts,
+                 DataVector             & verts ) const;
+
     /// Unpack Vertices
     void unpack( const PackedDataVector & pverts,
                  DataVector             & verts ) const;
 
-    /// Compare two Vertices to check the packing -> unpacking performance
+    /// Compare two Vertex vectors to check the packing -> unpacking performance
     StatusCode check( const DataVector & dataA,
-                      const DataVector & dataB,
-                      GaudiAlgorithm & parent ) const;
+                      const DataVector & dataB ) const;
+
+    /// Compare two Vertices to check the packing -> unpacking performance
+    StatusCode check( const Data & dataA,
+                      const Data & dataB ) const;
+
+  private:
+
+    /// Access the parent algorithm
+    GaudiAlgorithm& parent() const { return *m_parent; }
 
   private:
 
     /// Standard packing of quantities into integers ...
     StandardPacker m_pack;
+
+    /// Pointer to parent algorithm
+    GaudiAlgorithm * m_parent;
 
   };
 

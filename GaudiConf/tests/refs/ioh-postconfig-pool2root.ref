@@ -1,0 +1,118 @@
+# --> Including file '/build/cattanem/LHCb_HEAD/GaudiConf/tests/ioh-postconfig-pool2root.py'
+# <-- End of file '/build/cattanem/LHCb_HEAD/GaudiConf/tests/ioh-postconfig-pool2root.py'
+# applying configuration of LHCbApp
+# /***** User LHCbApp/LHCbApp ************************************************************************
+# |-Persistency = 'POOL'  (default: None)
+# |-DDDBtag     = ''
+# |-DataType    = '2009'
+# |-TimeStamp   = False
+# |-SkipEvents  = 0
+# |-OutputLevel = 3
+# |-EvtMax      = 1  (default: -1)
+# |-CondDBtag   = ''
+# |-DQFLAGStag  = ''
+# |-XMLSummary  = None
+# |-Simulation  = False
+# |-Monitors    = []  (default: [])
+# \----- (End of User LHCbApp/LHCbApp) ---------------------------------------------------------------
+# applying configuration of DDDBConf
+# WARNING: Using default tag head-20101206 for partition DDDB
+# WARNING: Using default tag head-20110614 for partition LHCBCOND
+# WARNING: Using default tag MC-20101026-vc15mm-md100 for partition SIMCOND
+# WARNING: Using default tag tt-20110126 for partition DQFLAGS
+# /***** User DDDBConf/DDDBConf **********************************************************************
+# |-DataType   = '2009'
+# |-DbRoot     = 'conddb:/lhcb.xml'
+# |-Simulation = False
+# \----- (End of User DDDBConf/DDDBConf) -------------------------------------------------------------
+# skipping configuration of XMLSummary
+# applying configuration of CondDB
+# --> Including file '/afs/cern.ch/lhcb/software/DEV/DBASE/Det/SQLDDDB/options/SQLDDDB.py'
+# <-- End of file '/afs/cern.ch/lhcb/software/DEV/DBASE/Det/SQLDDDB/options/SQLDDDB.py'
+# /***** User CondDB/CondDB **************************************************************************
+# |-PartitionConnectionString = {}  (default: {})
+# |-LocalTags                 = {}  (default: {})
+# |-IgnoreHeartBeat           = False
+# |-Tags                      = {}  (default: {})
+# |-Overrides                 = []  (default: [])
+# |-DisableLFC                = False
+# |-Simulation                = False
+# |-SQLiteLocalCopiesDir      = ''
+# |-HeartBeatCondition        = '/Conditions/Online/LHCb/Tick'
+# |-Online                    = False
+# |-QueryGranularity          = 0
+# |-UseOracle                 = False
+# |-LogFile                   = ''
+# |-UseLatestTags             = []  (default: [])
+# |-OverwriteSQLiteLocalCopy  = False
+# \----- (End of User CondDB/CondDB) -----------------------------------------------------------------
+Before, i.e. POOL
+[<PoolDbCnvSvc/PoolRootEvtCnvSvc at 0x2b657d094c50>, <PoolDbCnvSvc/PoolRootTreeEvtCnvSvc at 0x2b657d094e50>, <PoolDbCnvSvc/PoolRootKeyEvtCnvSvc at 0x2b657d094d50>, 'LHCb::RawDataCnvSvc', <PoolDbCnvSvc/FileRecordCnvSvc at 0x2b657d67d050>, 'Gaudi::MultiFileCatalog/FileCatalog', 'Gaudi::IODataManager/IODataManager', <PoolDbCacheSvc/PoolDbCacheSvc at 0x2b657c830c80>]
+DATAFILE='testRootOP.dst' TYP='POOL_ROOTTREE' OPT='REC'
+DATAFILE='testRootOP.dst' SVC='FileRecordCnvSvc' OPT='REC'
+["DATAFILE='PFN:root://castorlhcb.cern.ch//castor/cern.ch/user/c/cattanem/Boole/v18r0/30000000-100ev-20090407-MC09.digi?svcClass=default' TYP='POOL_ROOT' OPT='READ'"]
+After, i.e. ROOT
+[<Gaudi::RootCnvSvc/RootCnvSvc at 0x1190f520>, 'LHCb::RawDataCnvSvc', <Gaudi::RootCnvSvc/FileRecordCnvSvc at 0x1190cc80>, 'Gaudi::MultiFileCatalog/FileCatalog', 'Gaudi::IODataManager/IODataManager']
+DATAFILE='testRootOP.dst' SVC='RootCnvSvc' OPT='REC'
+DATAFILE='testRootOP.dst' SVC='FileRecordCnvSvc' OPT='REC'
+["DATAFILE='PFN:root://castorlhcb.cern.ch//castor/cern.ch/user/c/cattanem/Boole/v18r0/30000000-100ev-20090407-MC09.digi?svcClass=default' SVC='Gaudi::RootEvtSelector' OPT='READ'"]
+==========================
+Debugging Persistencies
+['ROOT']
+==========================
+Debugging External Services
+EvtDataSvc/EventDataSvc
+{'RootCLID': 1, 'ForceLeaves': True, 'EnableFaultHandler': True}
+EvtPersistencySvc/EventPersistencySvc
+{'CnvServices': ['Gaudi::RootCnvSvc/RootCnvSvc', 'LHCb::RawDataCnvSvc']}
+FileRecordDataSvc/FileRecordDataSvc
+{'PersistencySvc': 'PersistencySvc/FileRecordPersistencySvc', 'RootCLID': 1, 'ForceLeaves': True, 'EnableFaultHandler': True}
+PersistencySvc/FileRecordPersistencySvc
+{'CnvServices': ['Gaudi::RootCnvSvc/FileRecordCnvSvc']}
+==========================
+Debugging Persistency Services
+Gaudi::RootCnvSvc/RootCnvSvc
+{'EnableIncident': True, 'CacheBranches': [], 'VetoBranches': ['*']}
+LHCb::RawDataCnvSvc
+Gaudi::RootCnvSvc/FileRecordCnvSvc
+{'ShareFiles': 'YES'}
+Gaudi::MultiFileCatalog/FileCatalog
+Gaudi::IODataManager/IODataManager
+==========================
+Debugging Streams
+OutputStream/OutputStream
+{'Output': "DATAFILE='testRootOP.dst' SVC='RootCnvSvc' OPT='REC'"}
+RecordStream/FSROutputStream
+{'Output': "DATAFILE='testRootOP.dst' SVC='FileRecordCnvSvc' OPT='REC'", 'ItemList': ['/FileRecords#999'], 'EvtDataSvc': 'FileRecordDataSvc', 'EvtConversionSvc': 'FileRecordPersistencySvc'}
+==========================
+Debugging Input
+EventSelector/EventSelector
+{'Input': ["DATAFILE='PFN:root://castorlhcb.cern.ch//castor/cern.ch/user/c/cattanem/Boole/v18r0/30000000-100ev-20090407-MC09.digi?svcClass=default' SVC='Gaudi::RootEvtSelector' OPT='READ'"]}
+==========================
+ApplicationMgr    SUCCESS
+====================================================================================================================================
+                                                   Welcome to ApplicationMgr $Revision: 1.77 $
+                                          running on lxbuild163.cern.ch on Sun Nov  6 15:50:45 2011
+====================================================================================================================================
+ApplicationMgr       INFO Application Manager Configured successfully
+DetectorPersist...   INFO Added successfully Conversion service:XmlCnvSvc
+DetectorDataSvc   SUCCESS Detector description database: conddb:/lhcb.xml
+OutputStream         INFO Data source: EventDataSvc output: DATAFILE='testRootOP.dst' SVC='RootCnvSvc' OPT='REC'
+FileRecordPersi...   INFO Added successfully Conversion service:FileRecordCnvSvc
+FSROutputStream      INFO Data source: FileRecordDataSvc output: DATAFILE='testRootOP.dst' SVC='FileRecordCnvSvc' OPT='REC'
+EventSelector        INFO Stream:EventSelector.DataStreamTool_1 Def:DATAFILE='PFN:root://castorlhcb.cern.ch//castor/cern.ch/user/c/cattanem/Boole/v18r0/30000000-100ev-20090407-MC09.digi?svcClass=default' SVC='Gaudi::RootEvtSelector' OPT='READ'
+HistogramPersis...WARNING Histograms saving not required.
+ApplicationMgr       INFO Application Manager Initialized successfully
+ApplicationMgr       INFO Application Manager Started successfully
+EventSelector     SUCCESS Reading Event record 1. Record number within stream 1: 1
+EventPersistenc...   INFO Added successfully Conversion service:RootCnvSvc
+ApplicationMgr       INFO Application Manager Stopped successfully
+OutputStream         INFO Events output: 1
+FSROutputStream      INFO Set up File Summary Record
+FSROutputStream      INFO Events output: 1
+EventLoopMgr         INFO Histograms converted successfully according to request.
+ToolSvc              INFO Removing all tools created by ToolSvc
+FileRecordCnvSvc     INFO Disconnected data IO:12884927-6FDF-E011-AD65-003048C9CD62 [testRootOP.dst]
+RootCnvSvc           INFO Disconnected data IO:9032500F-3924-DE11-89FD-0030487C5E0E [root://castorlhcb.cern.ch//castor/cern.ch/user/c/cattanem/Boole/v18r0/30000000-100ev-20090407-MC09.digi?svcClass=default]
+ApplicationMgr       INFO Application Manager Finalized successfully
+ApplicationMgr       INFO Application Manager Terminated successfully

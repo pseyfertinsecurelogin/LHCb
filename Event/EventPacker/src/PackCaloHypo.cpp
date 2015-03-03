@@ -1,11 +1,8 @@
-// $Id: PackCaloHypo.cpp,v 1.5 2009-11-07 12:20:39 jonrob Exp $
-// Include files 
+// Include files
 
 // from Gaudi
-#include "GaudiKernel/AlgFactory.h" 
-#include "Event/CaloHypo.h"
-#include "Event/PackedCaloHypo.h"
-#include "Kernel/StandardPacker.h"
+#include "GaudiKernel/AlgFactory.h"
+
 // local
 #include "PackCaloHypo.h"
 
@@ -21,122 +18,83 @@ DECLARE_ALGORITHM_FACTORY( PackCaloHypo )
 //=============================================================================
 // Standard constructor, initializes variables
 //=============================================================================
-PackCaloHypo::PackCaloHypo( const std::string& name,
-                            ISvcLocator* pSvcLocator)
-  : GaudiAlgorithm ( name , pSvcLocator )
+  PackCaloHypo::PackCaloHypo( const std::string& name,
+                              ISvcLocator* pSvcLocator)
+    : GaudiAlgorithm ( name , pSvcLocator )
 {
   declareProperty( "InputName" , m_inputName  = LHCb::CaloHypoLocation::Electrons );
-  declareProperty( "OutputName", m_outputName = LHCb::PackedCaloHypoLocation::Electrons ); 
+  declareProperty( "OutputName", m_outputName = LHCb::PackedCaloHypoLocation::Electrons );
   declareProperty( "AlwaysCreateOutput",         m_alwaysOutput = false     );
+  declareProperty( "DeleteInput",                m_deleteInput  = false     );
+  declareProperty( "EnableCheck",                m_enableCheck  = false     );
 }
+
 //=============================================================================
 // Destructor
 //=============================================================================
-PackCaloHypo::~PackCaloHypo() {} 
+PackCaloHypo::~PackCaloHypo() {}
 
 //=============================================================================
 // Main execution
 //=============================================================================
-StatusCode PackCaloHypo::execute() {
-
+StatusCode PackCaloHypo::execute()
+{
   if ( msgLevel(MSG::DEBUG) ) debug() << "==> Execute" << endmsg;
 
   // If input does not exist, and we aren't making the output regardless, just return
-  if ( !m_alwaysOutput && !exist<LHCb::CaloHypos>(m_inputName) ) return StatusCode::SUCCESS;
+  if ( !m_alwaysOutput && 
+       !exist<LHCb::CaloHypos>(m_inputName) ) return StatusCode::SUCCESS;
 
-  const LHCb::CaloHypos* hypo = getOrCreate<LHCb::CaloHypos,LHCb::CaloHypos>( m_inputName );
-  
+  // inputs
+  LHCb::CaloHypos* hypos = getOrCreate<LHCb::CaloHypos,LHCb::CaloHypos>( m_inputName );
+
+  // output
   LHCb::PackedCaloHypos* out = new LHCb::PackedCaloHypos();
-  out->hypos().reserve(hypo->size());
   put( out, m_outputName );
   out->setVersion( 1 );
 
-  StandardPacker pack;
-  
-  for ( LHCb::CaloHypos::const_iterator itH = hypo->begin(); hypo->end() != itH; ++itH ) {
-    LHCb::PackedCaloHypo pH;
-    pH.key        = (*itH)->key();
-    pH.hypothesis = (*itH)->hypothesis();
-    pH.lh         = pack.fltPacked( (*itH)->lh() );
-    if ( 0 == (*itH)->position() ) {
-      pH.z    = 0;
-      pH.posX = 0;
-      pH.posY = 0;
-      pH.posE = 0;
-      pH.cov00 = 0;
-      pH.cov10 = 0;
-      pH.cov20 = 0;
-      pH.cov11 = 0;
-      pH.cov21 = 0;
-      pH.cov22 = 0;
-      pH.centX = 0;
-      pH.centY = 0;
-      pH.cerr00 = 0;
-      pH.cerr10 = 0;
-      pH.cerr11 = 0;
-    } else {
-      LHCb::CaloPosition* pos = (*itH)->position();
-      pH.z    = pack.position( pos->z() );
-      pH.posX = pack.position( pos->x() );
-      pH.posY = pack.position( pos->y() );
-      pH.posE = pack.energy( pos->e() );
+  // pack
+  const LHCb::CaloHypoPacker packer(*this);
+  packer.pack( *hypos, *out );
 
-      // convariance Matrix
-      double err0 = sqrt( pos->covariance()(0,0) );
-      double err1 = sqrt( pos->covariance()(1,1) );
-      double err2 = sqrt( pos->covariance()(2,2) );
-  
-      pH.cov00 = pack.position( err0 );
-      pH.cov11 = pack.position( err1 );
-      pH.cov22 = pack.energy  ( err2 );
-      pH.cov10 = pack.fraction( pos->covariance()(1,0)/err1/err0 );
-      pH.cov20 = pack.fraction( pos->covariance()(2,0)/err2/err0 );
-      pH.cov21 = pack.fraction( pos->covariance()(2,1)/err2/err1 );
-
-      pH.centX = pack.position( pos->center()(0) );
-      pH.centY = pack.position( pos->center()(1) );
-
-      err0 = sqrt( pos->spread()(0,0) );
-      err1 = sqrt( pos->spread()(1,1) );
-      
-      pH.cerr00 = pack.position( err0 );
-      pH.cerr11 = pack.position( err1 );
-      pH.cerr10 = pack.fraction( pos->spread()(1,0)/err1/err0 );
-    }
-
-    //== Store the CaloDigits
-    pH.firstDigit = out->sizeRef();
-    for ( SmartRefVector<LHCb::CaloDigit>::const_iterator itD = (*itH)->digits().begin();
-          (*itH)->digits().end() != itD; ++itD ) {
-      int myRef = pack.reference( out, (*itD)->parent(), (*itD)->key().all() );
-      out->addRef( myRef );
-    }
-    pH.lastDigit = out->sizeRef();
-
-    //== Store the CaloClusters
-    pH.firstCluster = out->sizeRef();
-    for ( SmartRefVector<LHCb::CaloCluster>::const_iterator itC = (*itH)->clusters().begin();
-          (*itH)->clusters().end() != itC; ++itC ) {
-      int myRef = pack.reference( out, (*itC)->parent(), (*itC)->key() );
-      out->addRef( myRef );
-    }
-    pH.lastCluster = out->sizeRef();
-
-    //== Store the CaloHypos
-    pH.firstHypo = out->sizeRef();
-    for ( SmartRefVector<LHCb::CaloHypo>::const_iterator itO = (*itH)->hypos().begin();
-          (*itH)->hypos().end() != itO; ++itO ) {
-      int myRef = pack.reference( out, (*itO)->parent(), (*itO)->key() );
-      out->addRef( myRef );
-    }
-    pH.lastHypo = out->sizeRef();
-
-    out->addEntry( pH );
+  // Packing checks
+  if ( UNLIKELY(m_enableCheck) )
+  {
+    // make new unpacked output data object
+    LHCb::CaloHypos * unpacked = new LHCb::CaloHypos();
+    put( unpacked, m_inputName+"_PackingCheck" );
+    
+    // unpack
+    packer.unpack( *out, *unpacked );
+    
+    // run checks
+    packer.check( *hypos, *unpacked ).ignore();
+    
+    // clean up after checks
+    StatusCode sc = evtSvc()->unregisterObject( unpacked );
+    if( sc.isSuccess() ) 
+      delete unpacked;
+    else
+      return Error("Failed to delete test data after unpacking check", sc );
   }
- 
-  // Clear the registry address of the unpacked container, to prevent reloading
-  hypo->registry()->setAddress( 0 );
-  
+
+  // If requested, remove the input data from the TES and delete
+  if ( UNLIKELY(m_deleteInput) )
+  {
+    StatusCode sc = evtSvc()->unregisterObject( hypos );
+    if( sc.isSuccess() ) {
+      delete hypos;
+      hypos = NULL;
+    }
+    else
+      return Error("Failed to delete input data as requested", sc );
+  }
+  else
+  {
+    // Clear the registry address of the unpacked container, to prevent reloading
+    hypos->registry()->setAddress( 0 );
+  }
+
   return StatusCode::SUCCESS;
 }
 //=============================================================================
