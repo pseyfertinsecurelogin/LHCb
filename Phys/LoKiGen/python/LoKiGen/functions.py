@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # =============================================================================
-# $Id: functions.py 152702 2013-02-21 11:32:49Z ibelyaev $
+# $Id: functions.py 155778 2013-04-29 10:03:16Z cattanem $
 # =============================================================================
 ## @file LoKiGen/functions.py
 #  The full set of useful objects from LoKiGen library 
@@ -13,16 +13,12 @@
 #  contributions and advices from G.Raven, J.van Tilburg, 
 #  A.Golutvin, P.Koppenburg have been used in the design.
 #
-#  By usage of this code one clearly states the disagreement 
-#  with the smear campaign of Dr.O.Callot et al.: 
-#  ``No Vanya's lines are allowed in LHCb/Gaudi software.''
-#
 #  @author Vanya BELYAEV ibelyaev@physics.syr.edu
 #  @date 2007-12-01
 #
-#                    $Revision: 152702 $
-#  Last modification $Date: 2013-02-21 12:32:49 +0100 (Thu, 21 Feb 2013) $
-#                 by $Author: ibelyaev $
+#                    $Revision: 155778 $
+#  Last modification $Date: 2013-04-29 12:03:16 +0200 (Mon, 29 Apr 2013) $
+#                 by $Author: cattanem $
 # =============================================================================
 """
 The full set of useful objects from LoKiGen library
@@ -35,15 +31,11 @@ Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas,
 contributions and advices from G.Raven, J.van Tilburg, 
 A.Golutvin, P.Koppenburg have been used in the design.
 
-By usage of this code one clearly states the disagreement 
-with the smear campaign of Dr.O.Callot et al.: 
-``No Vanya's lines are allowed in LHCb/Gaudi software.''
-
 """
 # =============================================================================
 __author__  = "Vanya BELYAEV ibelyaev@physics.syr.edu" 
 __date__    = "2007-12-01"
-__version__ = "$Revision: 152702 $ "
+__version__ = "$Revision: 155778 $ "
 # =============================================================================
 
 import LoKiCore.decorators as _LoKiCore 
@@ -252,6 +244,17 @@ GETA      = LoKi.GenParticles.PseudoRapidity ()
 ## @see LoKi::Cuts::GPSEUDORAPIDITY
 GPSEUDORAPIDITY = LoKi.GenParticles.PseudoRapidity 
 
+## @see LoKi::Cuts::GBETA 
+GBETA      = LoKi.GenParticles.Beta      ()
+## @see LoKi::Cuts::GGAMMA
+GGAMMA     = LoKi.GenParticles.Gamma     ()
+## @see LoKi::Cuts::GBETAGAMMA 
+GBETAGAMMA = LoKi.GenParticles.BetaGamma ()
+## @see LoKi::Cuts::GBGAMMA 
+GBGAMMA    = LoKi.GenParticles.BetaGamma ()
+## @see LoKi::Cuts::GBG
+GBG        = LoKi.GenParticles.BetaGamma ()
+
 ## @see LoKi::Cuts::GY
 GY        = LoKi.GenParticles.Rapidity ()
 ## @see LoKi::Cuts::GRAPIDITY
@@ -272,6 +275,12 @@ GTHETA    = LoKi.GenParticles.Theta  ()
 ## @see LoKi::Cuts::GASYMUTH
 GPOLAR    = LoKi.GenParticles.Theta
 
+## @see LoKi::Cuts::GFLIGHTPV 
+GFLIGHTPV = LoKi.GenParticles.Flight ( True  ) 
+## @see LoKi::Cuts::GPVFLIGHT
+GPVFLIGHT = LoKi.GenParticles.Flight ( True  ) 
+## @see LoKi::Cuts::GFLIGHT
+GFLIGHT   = LoKi.GenParticles.Flight ( False ) 
 
 
 ## @see LoKi::Cuts::GCOUNT

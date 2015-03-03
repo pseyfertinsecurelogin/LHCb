@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # =============================================================================
-# $Id: basic.py 121023 2011-03-29 18:09:53Z ibelyaev $ 
+# $Id: basic.py 155775 2013-04-29 09:31:21Z cattanem $ 
 # =============================================================================
-# $URL: http://svn.cern.ch/guest/lhcb/LHCb/tags/Phys/LoKiCore/v11r11/python/LoKiCore/basic.py $ 
+# $URL: http://svn.cern.ch/guest/lhcb/LHCb/tags/Phys/LoKiCore/v11r12/python/LoKiCore/basic.py $ 
 # =============================================================================
 ## @file decorators.py LoKiCore/basic.py
 #
@@ -16,15 +16,11 @@
 #  contributions and advices from G.Raven, J.van Tilburg, 
 #  A.Golutvin, P.Koppenburg have been used in the design.
 #
-#   By usage of this code one clearly states the disagreement 
-#  with the campain of Dr.O.Callot et al.: 
-#  ``No Vanya's lines are allowed in LHCb/Gaudi software.''
-#
 #  @author Vanya BELYAEV ibelyaev@physics.syr.edu
 #
-#  $Revision: 121023 $
-#  Last modification $Date: 2011-03-29 20:09:53 +0200 (Tue, 29 Mar 2011) $
-#                 by $Author: ibelyaev $
+#  $Revision: 155775 $
+#  Last modification $Date: 2013-04-29 11:31:21 +0200 (Mon, 29 Apr 2013) $
+#                 by $Author: cattanem $
 # =============================================================================
 """
 The set of basic decorators for objects from LoKiCore library
@@ -37,16 +33,11 @@ Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas,
 contributions and advices from G.Raven, J.van Tilburg, 
 A.Golutvin, P.Koppenburg have been used in the design.
 
-By usage of this code one clearly states the disagreement 
-with the campain of Dr.O.Callot et al.:
- ``No Vanya's lines are allowed in LHCb/Gaudi software.''
-
-
 """
 # =============================================================================
 __author__  = "Vanya BELYAEV Ivan.Belyaev@nikhef.nl" 
 __date__    = "2010-09-27"
-__version__ = "SVN $Revision: 121023 $ "
+__version__ = "SVN $Revision: 155775 $ "
 # =============================================================================
 __all__     = (
     'cpp'   ,

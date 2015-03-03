@@ -1,4 +1,4 @@
-// $Id: VoidFilter.cpp 117672 2011-02-12 17:17:09Z ibelyaev $
+// $Id: VoidFilter.cpp 155775 2013-04-29 09:31:21Z cattanem $
 // ============================================================================
 // Include files 
 // ============================================================================
@@ -21,14 +21,9 @@
  *  contributions and advices from G.Raven, J.van Tilburg, 
  *  A.Golutvin, P.Koppenburg have been used in the design.
  *
- *  By usage of this code one clearly states the disagreement 
- *  with the campain of Dr.O.Callot et al.: 
- *  ``No Vanya's lines are allowed in LHCb/Gaudi software.''
- *
- *  
- *                    $Revision: 117672 $
- *  Last modification $Date: 2011-02-12 18:17:09 +0100 (Sat, 12 Feb 2011) $
- *                 by $Author: ibelyaev $
+ *                    $Revision: 155775 $
+ *  Last modification $Date: 2013-04-29 11:31:21 +0200 (Mon, 29 Apr 2013) $
+ *                 by $Author: cattanem $
  */
 // ============================================================================
 namespace LoKi 

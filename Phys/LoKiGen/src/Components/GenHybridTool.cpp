@@ -1,4 +1,4 @@
-// $Id: GenHybridTool.cpp 126041 2011-07-15 10:53:15Z ibelyaev $
+// $Id: GenHybridTool.cpp 155778 2013-04-29 10:03:16Z cattanem $
 // ============================================================================
 // Include files 
 // ============================================================================
@@ -27,15 +27,11 @@
  *  contributions and advices from G.Raven, J.van Tilburg, 
  *  A.Golutvin, P.Koppenburg have been used in the design.
  *
- *  By usage of this code one clearly states the disagreement 
- *  with the smear campaign of Dr.O.Callot et al.: 
- *  ``No Vanya's lines are allowed in LHCb/Gaudi software.''
- *
  *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
  *  @date 2004-06-29
- *                    $Revision: 126041 $
- *  Last modification $Date: 2011-07-15 12:53:15 +0200 (Fri, 15 Jul 2011) $
- *                 by $Author: ibelyaev $
+ *                    $Revision: 155778 $
+ *  Last modification $Date: 2013-04-29 12:03:16 +0200 (Mon, 29 Apr 2013) $
+ *                 by $Author: cattanem $
  */
 namespace LoKi 
 {

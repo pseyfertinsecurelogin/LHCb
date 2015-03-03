@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # =============================================================================
-# $Id: functions.py 130408 2011-10-21 16:58:55Z ibelyaev $ 
+# $Id: functions.py 155779 2013-04-29 11:00:51Z cattanem $ 
 # =============================================================================
 ## @file functions.py LoKiMC/functions.py
 #  The set of basic functions from LoKiMC library
@@ -13,10 +13,6 @@
 #  Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas, 
 #  contributions and advices from G.Raven, J.van Tilburg, 
 #  A.Golutvin, P.Koppenburg have been used in the design.
-#
-#  By usage of this code one clearly states the disagreement 
-#  with the smear campaign of Dr.O.Callot et al.: 
-#  ``No Vanya's lines are allowed in LHCb/Gaudi software.''
 #
 #  @author Vanya BELYAEV ibelyaev@physics.syr.edu
 # =============================================================================
@@ -31,15 +27,11 @@ Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas,
 contributions and advices from G.Raven, J.van Tilburg, 
 A.Golutvin, P.Koppenburg have been used in the design.
 
-By usage of this code one clearly states the disagreement 
-with the smear campaign of Dr.O.Callot et al.: 
-``No Vanya's lines are allowed in LHCb/Gaudi software.''
-
 """ 
 # =============================================================================
 __author__  = "Vanya BELYAEV ibelyaev@physics.syr.edu" 
 __date__    = "????-??-??"
-__version__ = "$Revision: 130408 $ "
+__version__ = "$Revision: 155779 $ "
 # =============================================================================
 
 import LoKiCore.decorators as _LoKiCore

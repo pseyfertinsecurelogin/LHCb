@@ -1,4 +1,4 @@
-// $Id: GenSections.h 134316 2012-01-29 13:55:54Z ibelyaev $
+// $Id: GenSections.h 155778 2013-04-29 10:03:16Z cattanem $
 // ============================================================================
 #ifndef LOKI_GENSECTIONS_H 
 #define LOKI_GENSECTIONS_H 1
@@ -25,10 +25,6 @@
  *  Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas, 
  *  contributions and advices from G.Raven, J.van Tilburg, 
  *  A.Golutvin, P.Koppenburg have been used in the design.
- *
- *  By usage of this code one clearly states the disagreement 
- *  with the smear campaign of Dr.O.Callot et al.: 
- *  ``No Vanya's lines are allowed in LHCb/Gaudi software.''
  *
  *  @author Vanya  BELYAEV Ivan.Belyaev@nikhef.nl
  *  @date   2008-04-29

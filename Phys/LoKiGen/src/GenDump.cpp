@@ -1,4 +1,4 @@
-// $Id: GenDump.cpp 134319 2012-01-29 17:47:25Z ibelyaev $
+// $Id: GenDump.cpp 155778 2013-04-29 10:03:16Z cattanem $
 // ============================================================================
 // Include files 
 // ============================================================================
@@ -22,16 +22,12 @@
  *  contributions and advices from G.Raven, J.van Tilburg, 
  *  A.Golutvin, P.Koppenburg have been used in the design.
  *
- *  By usage of this code one clearly states the disagreement 
- *  with the smear campaign of Dr.O.Callot et al.: 
- *  ``No Vanya's lines are allowed in LHCb/Gaudi software.''
- *
  *  @author Vanya Belyaev Ivan.Belyaev@cern.ch
  *  @date   2011-06-03
  * 
- *                    $Revision: 134319 $
- *  Last modification $Date: 2012-01-29 18:47:25 +0100 (Sun, 29 Jan 2012) $
- *                 by $Author: ibelyaev $
+ *                    $Revision: 155778 $
+ *  Last modification $Date: 2013-04-29 12:03:16 +0200 (Mon, 29 Apr 2013) $
+ *                 by $Author: cattanem $
  */
 // ============================================================================
 /*  template specialization of ``dumper''

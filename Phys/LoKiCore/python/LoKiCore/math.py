@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # =============================================================================
-# $Id: math.py 121225 2011-04-02 12:41:34Z ibelyaev $ 
+# $Id: math.py 155775 2013-04-29 09:31:21Z cattanem $ 
 # =============================================================================
 ## @file LoKiCore/math.py
 #  helper file for redefine the standard mathematical functions
@@ -14,13 +14,9 @@
 #  contributions and advices from G.Raven, J.van Tilburg, 
 #  A.Golutvin, P.Koppenburg have been used in the design.
 #
-#   By usage of this code one clearly states the disagreement 
-#  with the campain of Dr.O.Callot et al.: 
-#  ``No Vanya's lines are allowed in LHCb/Gaudi software.''
-#
-#                    $Revision: 121225 $
-#  Last modification $Date: 2011-04-02 14:41:34 +0200 (Sat, 02 Apr 2011) $
-#                 by $Author: ibelyaev $
+#                    $Revision: 155775 $
+#  Last modification $Date: 2013-04-29 11:31:21 +0200 (Mon, 29 Apr 2013) $
+#                 by $Author: cattanem $
 #
 #  @author Vanya BELYAEV ibelyaev@physics.syr.edu
 #  @date 2007-07-17
@@ -36,15 +32,11 @@ Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas,
 contributions and advices from G.Raven, J.van Tilburg, 
 A.Golutvin, P.Koppenburg have been used in the design.
 
-By usage of this code one clearly states the disagreement 
-with the campain of Dr.O.Callot et al.:
-``No Vanya's lines are allowed in LHCb/Gaudi software.''
-
 """
 # =============================================================================
 __author_   = "Vanya BELYAEV ibelyaev@physics.syr.edu"
 __date__    = "2007-01-17"
-__version__ = "CVS Tag: $Name: not supported by cvs2svn $, version $Revision: 121225 $ "
+__version__ = "CVS Tag: $Name: not supported by cvs2svn $, version $Revision: 155775 $ "
 # =============================================================================
 import math
 

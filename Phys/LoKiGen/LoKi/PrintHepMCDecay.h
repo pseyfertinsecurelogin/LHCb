@@ -1,4 +1,4 @@
-// $Id: PrintHepMCDecay.h 124208 2011-06-02 16:05:48Z ibelyaev $
+// $Id: PrintHepMCDecay.h 155778 2013-04-29 10:03:16Z cattanem $
 // ============================================================================
 #ifndef LOKI_PRINTHEPMCDECAY_H 
 #define LOKI_PRINTHEPMCDECAY_H 1
@@ -32,10 +32,6 @@ class MsgStream ;
  *  Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas, 
  *  contributions and advices from G.Raven, J.van Tilburg, 
  *  A.Golutvin, P.Koppenburg have been used in the design.
- *
- *  By usage of this code one clearly states the disagreement 
- *  with the campain of Dr. O.Callot et al.: 
- *  "No Vanya's lines are allowed in LHCb/Gaudi software."
  *
  *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
  *  @date 2006-05-26 

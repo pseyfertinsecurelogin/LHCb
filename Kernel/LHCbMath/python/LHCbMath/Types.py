@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # =============================================================================
-# $Id: Types.py 153636 2013-03-18 10:38:26Z ibelyaev $
+# $Id: Types.py 154654 2013-04-06 18:49:57Z ibelyaev $
 # =============================================================================
 ## @file
 #
@@ -35,7 +35,7 @@
 #  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
 #  @date 2009-09-12
 #
-#  Last modification $Date: 2013-03-18 11:38:26 +0100 (Mon, 18 Mar 2013) $
+#  Last modification $Date: 2013-04-06 20:49:57 +0200 (Sat, 06 Apr 2013) $
 #                 by $Author: ibelyaev $
 #
 #
@@ -69,14 +69,14 @@ Simple file to provide 'easy' access in python for the basic ROOT::Math classes
   >>> dir( Gaudi.Math )
   >>> dir( Gaudi      )
   
-  Last modification $Date: 2013-03-18 11:38:26 +0100 (Mon, 18 Mar 2013) $
+  Last modification $Date: 2013-04-06 20:49:57 +0200 (Sat, 06 Apr 2013) $
                  by $Author: ibelyaev $
 
 """
 # =============================================================================
 __author__  = "Vanya BELYAEV Ivan.Belyaev@nikhef.nl"
 __date__    = "2009-09-12"
-__version__ = "Version$Revision: 153636 $"
+__version__ = "Version$Revision: 154654 $"
 # =============================================================================
 __all__     = () ## nothing to be imported !
 # =============================================================================
@@ -315,6 +315,8 @@ _V4D = Gaudi.LorentzVector
 
 def _o_mul_ ( self , other ) :
     _typ  = self.__class__
+    if isinstance ( other , _typ ) :
+        return self.Dot ( other ) 
     tmp   = _typ ( self )
     tmp  *= other 
     return tmp
@@ -347,8 +349,6 @@ def _o2_str_ ( self , fmt = "[( %g, %g, %g), %g]" ) :
     """
     return fmt % ( self.X() , self.Y( ), self.Z() , self.E() )
 
-
-_P3D.__mul__ = _o_mul_
 _V3D.__mul__ = _o_mul_
 _V4D.__mul__ = _o_mul_
 
@@ -362,6 +362,9 @@ _V4D.__sub__ = _o_sub_
     
 _V3D. __rmul__ = _V3D.__mul__ 
 _V4D. __rmul__ = _V4D.__mul__
+
+_P3D. __radd__ = _P3D.__add__
+_V3D. __radd__ = _V3D.__add__
 
 if not hasattr ( _P3D , '_new_str_' ) :
     _P3D._new_str_ = _o1_str_  

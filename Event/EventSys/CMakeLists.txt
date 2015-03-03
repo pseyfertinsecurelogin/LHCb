@@ -1,7 +1,7 @@
 ################################################################################
 # Package: EventSys
 ################################################################################
-gaudi_subdir(EventSys v25r1)
+gaudi_subdir(EventSys v26r0)
 
 gaudi_depends_on_subdirs(Event/DAQEvent
                          Event/DigiEvent
@@ -13,7 +13,6 @@ gaudi_depends_on_subdirs(Event/DAQEvent
                          Event/LinkerEvent
                          Event/LumiEvent
                          Event/MCEvent
-                         Event/PackedEvent
                          Event/PhysEvent
                          Event/RecEvent
                          Event/TrackEvent

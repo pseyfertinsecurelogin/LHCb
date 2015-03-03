@@ -5,6 +5,10 @@
 !               CondDB URLs into XML documents
 !-----------------------------------------------------------------------------
 
+!========================= CondDBEntityResolver v5r5 2013-04-29 =========================
+! 2013-02-21 - Liang Sun
+ - Added support for compressed CondDB with the class CondDBCompression
+
 !========================= CondDBEntityResolver v5r4 2012-11-26 =========================
 ! 2012-11-15 - Marco Clemencic
  - Added CMake configuration file.

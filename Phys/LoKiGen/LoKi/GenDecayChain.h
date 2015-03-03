@@ -1,4 +1,4 @@
-// $Id: GenDecayChain.h 124235 2011-06-05 12:25:53Z ibelyaev $
+// $Id: GenDecayChain.h 155778 2013-04-29 10:03:16Z cattanem $
 // ============================================================================
 #ifndef LOKI_GENDECAYCHAIN_H 
 #define LOKI_GENDECAYCHAIN_H 1
@@ -25,16 +25,12 @@
  *  contributions and advices from G.Raven, J.van Tilburg, 
  *  A.Golutvin, P.Koppenburg have been used in the design.
  *
- *  By usage of this code one clearly states the disagreement 
- *  with the smear campaign of Dr.O.Callot et al.: 
- *  ``No Vanya's lines are allowed in LHCb/Gaudi software.''
- *
  *  @author Vanya Belyaev Ivan.Belyaev@cern.ch
  *  @date   2011-06-03
  * 
- *                    $Revision: 124235 $
- *  Last modification $Date: 2011-06-05 14:25:53 +0200 (Sun, 05 Jun 2011) $
- *                 by $Author: ibelyaev $
+ *                    $Revision: 155778 $
+ *  Last modification $Date: 2013-04-29 12:03:16 +0200 (Mon, 29 Apr 2013) $
+ *                 by $Author: cattanem $
  */
 // ============================================================================
 namespace LoKi 
@@ -121,7 +117,7 @@ namespace LoKi
      *    
      *    /// print decay chain to gausdi message stream
      *    MsgStream log( msgSvc() , name() ) ;
-     *    dc.print ( head , log , endreq          ) ;
+     *    dc.print ( head , log , endmsg          ) ;
      *
      *  @endcode 
      * 
@@ -243,7 +239,7 @@ namespace LoKi
      *    
      *    /// print decay chain to gaudi message stream
      *    MsgStream log( msgSvc() , name() ) ;
-     *    dc.print ( event , log , endreq          ) ;
+     *    dc.print ( event , log , endmsg          ) ;
      *
      *  @endcode 
      * 
@@ -297,7 +293,7 @@ namespace LoKi
      *    
      *    /// print decay chain to gaudi message stream
      *    MsgStream log( msgSvc() , name() ) ;
-     *    dc.print ( event , log , endreq          ) ;
+     *    dc.print ( event , log , endmsg          ) ;
      *
      *  @endcode 
      * 
@@ -342,7 +338,7 @@ namespace LoKi
      *    
      *    /// print decay chain to gaudi message stream
      *    MsgStream log( msgSvc() , name() ) ;
-     *    dc.print ( events , log , endreq          ) ;
+     *    dc.print ( events , log , endmsg          ) ;
      *
      *  @endcode 
      * 

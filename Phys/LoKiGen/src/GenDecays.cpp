@@ -1,4 +1,4 @@
-// $Id: GenDecays.cpp 131413 2011-11-11 18:10:47Z ibelyaev $
+// $Id: GenDecays.cpp 155778 2013-04-29 10:03:16Z cattanem $
 // ============================================================================
 // Include files 
 // ============================================================================
@@ -22,10 +22,6 @@
  *  Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas, 
  *  contributions and advices from G.Raven, J.van Tilburg, 
  *  A.Golutvin, P.Koppenburg have been used in the design.
- *
- *  By usage of this code one clearly states the disagreement 
- *  with the smear campaign of Dr. O.Callot et al.: 
- *  "No Vanya's lines are allowed in LHCb/Gaudi software."
  *
  *  @author Vanya BELYAEV Ivan.BELYAEV@nikhef.nl
  *  @date   2008-06-10

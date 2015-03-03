@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # =============================================================================
-# $Id: MC.py 141138 2012-06-16 09:18:40Z ibelyaev $ 
+# $Id: MC.py 155779 2013-04-29 11:00:51Z cattanem $ 
 # =============================================================================
 ## @file LoKiMC/MC.py
 #  collection of utilities for useful 'decoration' of MC-objects
@@ -13,16 +13,12 @@
 #  contributions and advices from G.Raven, J.van Tilburg, 
 #  A.Golutvin, P.Koppenburg have been used in the design.
 #
-#  By usage of this code one clearly states the disagreement 
-#  with the smear campaign of Dr.O.Callot et al.: 
-#  ``No Vanya's lines are allowed in LHCb/Gaudi software.''
-#
 #  @author Vanya BELYAEV ibelyaev@physics.syr.edu
 #  @date 2007-08-11
 #
-#                    $Revision: 141138 $
-#  Last modification $Date: 2012-06-16 11:18:40 +0200 (Sat, 16 Jun 2012) $
-#                 by $Author: ibelyaev $
+#                    $Revision: 155779 $
+#  Last modification $Date: 2013-04-29 13:00:51 +0200 (Mon, 29 Apr 2013) $
+#                 by $Author: cattanem $
 # =============================================================================
 """
 Collection of utilities for useful 'decoration' of MC-objects
@@ -35,15 +31,11 @@ Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas,
 contributions and advices from G.Raven, J.van Tilburg, 
 A.Golutvin, P.Koppenburg have been used in the design.
 
-By usage of this code one clearly states the disagreement 
-with the smear campaign of Dr.O.Callot et al.: 
-``No Vanya's lines are allowed in LHCb/Gaudi software.''
-
 """
 # =============================================================================
 __author__  = 'Vanya BELYAEV ibelyaev@physics.syr.edu'
 __date__    = "2007-08-11"
-__version__ = "$Revision: 141138 $ "
+__version__ = "$Revision: 155779 $ "
 # =============================================================================
 
 from   LoKiMC.functions    import LoKi,LHCb,cpp

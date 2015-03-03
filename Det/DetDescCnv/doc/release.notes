@@ -4,6 +4,14 @@
 ! Purpose     : standard converters for the LHCb Detector Description
 !------------------------------------------------------------------------------
 
+!========================= DetDescCnv v4r18 2013-04-29 =========================
+! 2013-04-26 - Marco Cattaneo
+ - Replace some unnecessary dynamic_cast by static_cast, fixes FORWARD_NULL 
+   defects
+
+! 2013-04-02 - Marco Cattaneo
+ - Fix UNINIT_CTOR defect
+
 !========================= DetDescCnv v4r17 2013-02-04 =========================
 ! 2013-01-25 - Marco Clemencic
  - Fixed compilation after replacement of Kernel/HistoStrings with GaudiUtils.

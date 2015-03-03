@@ -1,4 +1,4 @@
-// $Id: LoKiGen.cpp 132877 2011-12-13 19:09:00Z ibelyaev $
+// $Id: LoKiGen.cpp 155778 2013-04-29 10:03:16Z cattanem $
 // ============================================================================
 // Include files 
 // ============================================================================
@@ -20,16 +20,12 @@
  *  contributions and advices from G.Raven, J.van Tilburg, 
  *  A.Golutvin, P.Koppenburg have been used in the design.
  *
- *  By usage of this code one clearly states the disagreement 
- *  with the smear campaign of Dr.O.Callot et al.: 
- *  ``No Vanya's lines are allowed in LHCb/Gaudi software.''
- *
  *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
  *  @date 2001-01-23 
  * 
- *                    $Revision: 132877 $
- *  Last modification $Date: 2011-12-13 20:09:00 +0100 (Tue, 13 Dec 2011) $
- *                 by $Author: ibelyaev $
+ *                    $Revision: 155778 $
+ *  Last modification $Date: 2013-04-29 12:03:16 +0200 (Mon, 29 Apr 2013) $
+ *                 by $Author: cattanem $
  */
 // ============================================================================
 // The END 

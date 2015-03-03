@@ -4,6 +4,21 @@
 ! Purpose: LHCb specific Kernel classes
 !--------------------------------------------------------------------------------
 
+!========================= LHCbKernel v14r0 2013-04-29 =========================
+!  2013-04-16 - Wouter Hulsbergen
+ - HitPattern: add VP and VL
+
+! 2013-04-09 - Chris Jones
+ - Move Kernel/StandardPacker.h into Event/EventPacker
+
+! 2013-03-26 - Chris Jones
+ - Extend the RichSmartID test application to check conversion to and from
+   an LHCbID. 
+ - Fix LHCbID class to use & instead of && in richID().
+
+! 2013-03-22 - Wouter Hulsbergen
+ - HitPattern: adapt for FT; merge UT with TT.
+
 !========================= LHCbKernel v13r15 2013-02-04 =========================
 ! 2013-01-07 - Jianchun Wang
  - Add UT hits

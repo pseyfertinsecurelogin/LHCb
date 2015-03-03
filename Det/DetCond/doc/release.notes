@@ -4,11 +4,68 @@
 ! Purpose     : Interface between LHCb and LGC/COOL project
 !-----------------------------------------------------------------------------
 
-!========================= DetCond v12r29p1 2013-03-19 =======================
-! built on branch v12r29b
+!========================= DetCond v12r30 2013-04-29 =========================
+! 2013-04-26 - Liang Sun
+ - Removed all references to BZip2. We still need 32Bit machines
+
+! 2013-04-26 - Marco Clemencic
+ - Removed the temporary hack used for C++11 (it was needed only because Boost
+   was not yet built with C++11 enabled).
+
+! 2013-04-25 - Marco Clemencic
+ - Fixed an issue with the previous change (the environment variable expansion
+   was prevented in too many places).
+
+! 2013-04-24 - Illya Shapoval
+ - A bug fix: an expansion of the SQLITEUPGRADEDBPATH env. variable is prevented.
+
+! 2013-04-18 - Liang Sun
+ - Two redundant variables removed to quell the warning messages.
+
+! 2013-04-17 - Liang Sun
+ - Added the compression method of LZMA from ROOT with the assigned method number at 0, the method number for BZip2 now changed to 1.
+
+! 2013-04-02 - Marco Cattaneo
+ - Fix UNINIT_CTOR defects
+
+! 2013-03-21 - Liang Sun
+ - Minor fix on a few potential memory leaks
+   - http://lhcb-coverity.cern.ch:8080/sourcebrowser.htm?projectId=10002#mergedDefectId=45083&defectInstanceId=156348385&fileInstanceId=111518946
+   - http://lhcb-coverity.cern.ch:8080/sourcebrowser.htm?projectId=10002#mergedDefectId=45084&defectInstanceId=156348386&fileInstanceId=111518946
 
 ! 2013-03-18 - Vanya Belyaev
+
  - comment usage of python module from removed package HistoStrings
+
+! 2013-03-12 - Marco Clemencic
+ - Added hints to Coverity to fix a few flas positives:
+   - https://lhcb-coverity.cern.ch:8443/sourcebrowser.htm?projectId=10002#mergedDefectId=45071&defectInstanceId=156278261&fileInstanceId=111423297
+   - https://lhcb-coverity.cern.ch:8443/sourcebrowser.htm?projectId=10002#mergedDefectId=45070&defectInstanceId=156277446&fileInstanceId=111423297
+   - https://lhcb-coverity.cern.ch:8443/sourcebrowser.htm?projectId=10002#mergedDefectId=45069&defectInstanceId=156277445&fileInstanceId=111423297
+
+! 2013-03-12 - Liang Sun
+ - Minor fix on coverity defects (0&i++)
+
+! 2013-03-11 - Liang Sun
+ - Set up prototype to allow multiple compression methods, with an additional byte identifying the method prepended to the compressed string
+
+! 2013-03-08 - Marco Clemencic
+ - Fixed compilation on 32 bits with a hack (the 32 bits dev version of bz2
+   cannot be installed on lxbuild because of missing templates).
+
+! 2013-02-27 - Liang Sun
+ - Fix the type conversions to quell the -pedantic warnings
+
+! 2013-02-23 - Marco Clemencic
+ - Forgot to add -lbz2 after removing the 'use' statement.
+
+! 2013-02-22 - Marco Clemencic
+ - Added use of BZip2 in CMakeLists.txt and removed the use of LCG_Interfaces/bz2lib
+   from the requirements (we must pick up the system version because the one in
+   lcg/externals is obsolete and deprecated).
+
+! 2013-02-21 - Liang Sun
+ - Added functionalities of compression and decompression on CondDB with new class CondDBCompression
 
 !========================= DetCond v12r29 2013-02-04 =========================
 ! 2012-12-20 - Marco Clemencic

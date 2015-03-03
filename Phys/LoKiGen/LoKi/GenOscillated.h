@@ -1,4 +1,4 @@
-// $Id: GenOscillated.h 131413 2011-11-11 18:10:47Z ibelyaev $
+// $Id: GenOscillated.h 155778 2013-04-29 10:03:16Z cattanem $
 // ============================================================================
 #ifndef LOKI_GENOSCILLATED_H 
 #define LOKI_GENOSCILLATED_H 1
@@ -21,15 +21,11 @@ namespace HepMC { class GenParticle ; }
  *  contributions and advices from G.Raven, J.van Tilburg, 
  *  A.Golutvin, P.Koppenburg have been used in the design.
  *
- *  By usage of this code one clearly states the disagreement 
- *  with the smear campaign of Dr.O.Callot et al.: 
- *  ``No Vanya's lines are allowed in LHCb/Gaudi software.''
- *
  *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
  *
- *                    $Revision: 131413 $
- *  Last modification $Date: 2011-11-11 19:10:47 +0100 (Fri, 11 Nov 2011) $
- *                 by $Author: ibelyaev $
+ *                    $Revision: 155778 $
+ *  Last modification $Date: 2013-04-29 12:03:16 +0200 (Mon, 29 Apr 2013) $
+ *                 by $Author: cattanem $
  */
 // ===========================================================================
 namespace LoKi 

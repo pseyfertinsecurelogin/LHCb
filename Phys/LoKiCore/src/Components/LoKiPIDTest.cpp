@@ -1,4 +1,4 @@
-// $Id: LoKiPIDTest.cpp 115323 2011-01-14 08:08:25Z cattanem $
+// $Id: LoKiPIDTest.cpp 155775 2013-04-29 09:31:21Z cattanem $
 // ============================================================================
 // Include files 
 // ============================================================================
@@ -59,7 +59,7 @@ namespace LoKi
         const LHCb::ParticleProperty* pp = *ipp ;
         if ( 0 == pp ) { continue ; }                            // RETURN
         debug() << "Name/PID: "
-                << "'" << pp->particle() << "':" << pp->pdgID() << endreq ;
+                << "'" << pp->particle() << "':" << pp->pdgID() << endmsg ;
         // verify name -> pid map  
         Assert ( pp->particle   () == nameFromPID ( pp->particleID() ) , 
                  "Mismatch in Name/PID map for '" + pp->particle() + "'" ) ;

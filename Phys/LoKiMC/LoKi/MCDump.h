@@ -1,4 +1,4 @@
-// $Id: MCDump.h 134318 2012-01-29 17:46:59Z ibelyaev $
+// $Id: MCDump.h 155779 2013-04-29 11:00:51Z cattanem $
 // ============================================================================
 #ifndef LOKI_MCDUMP_H 
 #define LOKI_MCDUMP_H 1
@@ -21,16 +21,12 @@
  *  contributions and advices from G.Raven, J.van Tilburg, 
  *  A.Golutvin, P.Koppenburg have been used in the design.
  *
- *  By usage of this code one clearly states the disagreement 
- *  with the smear campaign of Dr.O.Callot et al.: 
- *  ``No Vanya's lines are allowed in LHCb/Gaudi software.''
- *
  *  @author Vanya Belyaev Ivan.Belyaev@cern.ch
  *  @date   2011-06-03
  * 
- *                    $Revision: 134318 $
- *  Last modification $Date: 2012-01-29 18:46:59 +0100 (Sun, 29 Jan 2012) $
- *                 by $Author: ibelyaev $
+ *                    $Revision: 155779 $
+ *  Last modification $Date: 2013-04-29 13:00:51 +0200 (Mon, 29 Apr 2013) $
+ *                 by $Author: cattanem $
  */
 // ============================================================================
 namespace LoKi 

@@ -13,6 +13,27 @@
 !   A.Golutvin, P.Koppenburg have been used in the design.
 ! -----------------------------------------------------------------------------
 
+!========================= LoKiCore v11r12 2013-04-29 =========================
+! 2013-04-29 - Marco Cattaneo
+ - Replace endreq by endmsg
+ - Remove unnecessary disclaimers from file documentation blocks
+
+! 2013-04-23 - Marco Clemencic
+ - Fixed Eclipse static analyzer warning.
+
+! 2013-04-12 - Marco Clemencic
+ - Move 'operator<<' inside a namespace to fix compilation errors with clang.
+ - Added default constructors to fix compilation errors with clang.
+
+! 2013-04-06 - Vanya Belyaev
+ - add LoKi::Tensors into dictionary
+
+! 2013-03-28 - Vanya Belyaev
+ - extend functionality for TES-getters
+
+! 2013-03-25 - Chris Jones
+ - Try and fix gcc 4.7 compilation issues with Primitives.h
+
 !========================= LoKiCore v11r11 2013-02-07 =========================
 ! 2013-02-07 - Vanya Belyaev
  - tweak a bit CONTAINS functor: return -1 for non-existing locations

@@ -1,4 +1,4 @@
-// $Id: GenExtract.h 132877 2011-12-13 19:09:00Z ibelyaev $
+// $Id: GenExtract.h 155778 2013-04-29 10:03:16Z cattanem $
 // ============================================================================
 #ifndef LOKI_GENEXTRACT_H 
 #define LOKI_GENEXTRACT_H 1
@@ -29,16 +29,12 @@
  *  contributions and advices from G.Raven, J.van Tilburg, 
  *  A.Golutvin, P.Koppenburg have been used in the design.
  *
- *  By usage of this code one clearly states the disagreement 
- *  with the smear campaign of Dr.O.Callot et al.: 
- *  ``No Vanya's lines are allowed in LHCb/Gaudi software.''
- *
  *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
  *  @date 2001-01-23 
  * 
- *                    $Revision: 132877 $
- *  Last modification $Date: 2011-12-13 20:09:00 +0100 (Tue, 13 Dec 2011) $
- *                 by $Author: ibelyaev $
+ *                    $Revision: 155778 $
+ *  Last modification $Date: 2013-04-29 12:03:16 +0200 (Mon, 29 Apr 2013) $
+ *                 by $Author: cattanem $
  */
 // ============================================================================
 namespace LoKi 
@@ -46,6 +42,71 @@ namespace LoKi
   // ==========================================================================
   namespace Extract
   {
+    // ========================================================================
+    /** simple function which allows to extract a certain 
+     *  particles from HepMC graph.
+     *   
+     *  e.g. one can get all  b(and anti-b)quarks from 
+     *  higgs decay
+     *  
+     *  @code 
+     *
+     *  const LHCb::HepMCEvent* event = 
+     *      get<LHCb::HepMCEvents>( LHCb::HepMcEventLocation::Default ) ;
+     *  
+     *  SEQUENCE bquarks ;
+     *  LoKi::Extract::genParticles 
+     *     ( events                         , 
+     *       std::back_inserter( bquarks )  , 
+     *       ( "b" == GABSID ) && 
+     *       0 != GNINTREE( "H_10" == GABSID , HepMC::parents ) ) ;
+     *
+     *  @endcode 
+     * 
+     *  @see LoKi::Cuts::GABSID
+     *  @see LoKi::Cuts::GNINTREE
+     *  @see LHCb::HepMCEvent
+     *  @see LHCb::HepMCEvents
+     *
+     *  @author Vanya BELYAEV belyaev@lapp.in2p3.fr
+     *  @date   2005-03-26
+     */
+    template <class OUTPUT, class PREDICATE> 
+    inline OUTPUT genParticles 
+    ( const LHCb::HepMCEvents* events    , 
+      OUTPUT                   output    , 
+      const PREDICATE&         predicate );
+    // ========================================================================
+    /** simple function which allows to extract a certain 
+     *  particles from HepMC vertex 
+     *   
+     *  @see HepMC::GenParticle
+     *  @see HepMC::GenVertex
+     *
+     *  @author Vanya BELYAEV belyaev@lapp.in2p3.fr
+     *  @date   2005-03-26
+     */
+    template <class OUTPUT, class PREDICATE> 
+    inline OUTPUT genParticles 
+    ( const HepMC::GenVertex* vertex    , 
+      HepMC::IteratorRange    range     ,
+      OUTPUT                  output    , 
+      const PREDICATE&        predicate );
+    // ========================================================================
+    /** simple function which allows to extract a certain 
+     *  particles from HepMC vertex 
+     *   
+     *  @see HepMC::GenParticle
+     *  @see HepMC::GenVertex
+     *
+     *  @author Vanya BELYAEV belyaev@lapp.in2p3.fr
+     *  @date   2005-03-26
+     */
+    template <class OUTPUT, class PREDICATE> 
+    inline OUTPUT genParticles 
+    ( const HepMC::GenParticle* particle  , 
+      OUTPUT                    output    , 
+      const PREDICATE&          predicate );
     // ========================================================================
     /** simple function which allow to extract a certain 
      *  particles from HepMC graph.
@@ -62,7 +123,7 @@ namespace LoKi
     ( INPUT            first     ,
       INPUT            last      , 
       OUTPUT           output    , 
-      const PREDICATE& predicate ) ;
+      const PREDICATE& predicate );
     // ========================================================================
     /** Simple function which allow to extract a certain 
      *  particles from HepMC graph.

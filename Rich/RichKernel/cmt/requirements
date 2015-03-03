@@ -4,7 +4,7 @@
 #============================================================================
 
 package           RichKernel
-version           v7r52
+version           v7r53
 
 # ================ structure =================================================
 branches RichKernel cmt dict doc src python
@@ -40,9 +40,6 @@ apply_pattern reflex_dictionary                                       \
 # Disable some compiler warnings in the automatically generated dict code
 macro_append RichKernelDict_cppflags "" \
                           target-icc " -wd177 -wd873"
-
-# Debug flag
-macro_append cppflags "" Linux&target-dbg " -DRICHDEBUG "
 
 private
 # RichKernel Configurable uses the generated configurables 

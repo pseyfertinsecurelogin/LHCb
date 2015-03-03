@@ -4,6 +4,21 @@
 ! Purpose     : General purpose algorithms and tools for LHCb
 !-----------------------------------------------------------------------------
 
+!========================= LHCbAlgs v2r57 2013-04-29 =========================
+! 2013-04-25 - Paul Szczypka
+ - Added it and ot to known detector list.
+
+!========================= LHCbAlgs v2r56 2013-04-23 =========================
+
+! 2013-04-19 - Chris Jones
+ - Add a new simple little algorithm, ApplicationVersionFilter, that 
+   selects/rejects events based on a regex filter on the application version.
+
+! 2013-04-02 - Marco Cattaneo
+ - Fix UNINIT_CTOR defect
+ - Remove unnecessary Assert after call to svc<>
+ - Fix untested StatusCode
+
 !========================= LHCbAlgs v2r55 2013-03-20 =========================
 ! 2013-03-14 - Paul Szczypka
  - Changed the way LHCbApp derives dataTypes for the DB to also pick up older

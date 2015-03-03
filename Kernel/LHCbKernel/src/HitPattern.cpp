@@ -8,9 +8,9 @@ namespace LHCb
     
     HitPattern::HitPattern( const std::vector<LHCbID>& ids  ) {
 
-	for( std::vector<LHCbID>::const_iterator id = ids.begin() ;
+      for( std::vector<LHCbID>::const_iterator id = ids.begin() ;
 	     id != ids.end(); ++id) {
-	    switch( id->detectorType() ) {
+  	  switch( id->detectorType() ) {
 		case LHCbID::Velo:
 		{
 		    LHCb::VeloChannelID veloid = id->veloID() ;
@@ -40,6 +40,49 @@ namespace LHCb
 		    }
 		}
 		break ;
+        	case LHCbID::VL:
+		{
+		  LHCb::VLChannelID veloid = id->vlID() ;
+		  unsigned int station = (veloid.sensor()%64)/2 ;
+		  unsigned int side    = (veloid.sensor()%2) ;
+		  unsigned int type    = (veloid.sensor()/64) ;
+		  switch( side+2*type) {
+		    case 0:
+		      m_veloRA.set(station) ;
+		      break ;
+		    case 1:
+		      m_veloRC.set(station) ; 
+		      break;
+		    case 2:
+		      m_veloPhiA.set(station) ;
+		      break;
+		    case 3:
+		      m_veloPhiC.set(station) ;
+		  }
+		}
+		break ;
+                case LHCbID::VP:
+		{
+		  // FIXME: WH: the problem is that we have some
+		  // interesting logic to cpmpute velo holes, which
+		  // doesn't work for VP. this is not very neat, but
+		  // it is a solution for now. I may also have swapped
+		  // A and C side.
+		  LHCb::VPChannelID vpid = id->vpID() ;
+		  unsigned int station = vpid.station() ;
+		  switch( vpid.sidepos() ) {
+		  case 0:
+		    m_veloRA.set(station) ;
+		    m_veloPhiA.set(station) ;
+		    break ;
+		  case 1:
+		    m_veloRC.set(station) ; 
+		    m_veloPhiC.set(station) ;
+		    break;
+		  }		    
+		}
+		break ;
+		case LHCbID::UT:
 		case LHCbID::TT:
 		{
 		    LHCb::STChannelID stid = id->stID() ;
@@ -47,14 +90,7 @@ namespace LHCb
 		    m_tt.set(uniquelayer) ;
 		}
 		break ;
-		case LHCbID::UT:
-		{
-		    LHCb::STChannelID stid = id->stID() ;
-		    unsigned int uniquelayer = (stid.station()-1)*2 + stid.layer()-1 ;
-		    m_ut.set(uniquelayer) ;
-		}
-		break ;
-		case LHCbID::IT:
+	        case LHCbID::IT:
 		{
 		    LHCb::STChannelID stid = id->stID() ;
 		    unsigned int uniquelayer = (stid.station()-1)*4 + stid.layer()-1 ;
@@ -81,14 +117,20 @@ namespace LHCb
 			m_ot2ndMonoLayer.set(uniquelayer);
 		}
 		break ;
+		case LHCbID::FT:
+		{
+		   LHCb::FTChannelID stid = id->ftID() ;
+		   unsigned int uniquelayer = stid.layer() ;
+		   // we could also fill in OT, but it doesn't really matter now
+		   m_itAC.set(uniquelayer);
+		}
+		break ;
 		case LHCbID::Muon:
 		{
 		    LHCb::MuonTileID muonid = id->muonID() ;
 		    m_muon.set( muonid.station() ) ;
 		}
 		break ;
-		default:
-		    ;
 	    }
 	}
     }
@@ -101,7 +143,6 @@ namespace LHCb
 	  << "veloPhiA:           " << m_veloPhiA << std::endl
 	  << "veloPhiC:           " << m_veloPhiC << std::endl
 	  << "TT:                 " << m_tt << std::endl
-	  << "UT:                 " << m_ut << std::endl
 	  << "IT-top-bottom:      " << m_itTopBottom << std::endl
 	  << "IT-AC:              " << m_itAC << std::endl
 	  << "OT-1st-mono-layer:  " << m_ot1stMonoLayer << std::endl
@@ -194,7 +235,6 @@ namespace LHCb
 	      m_itAC == hitPat.itAC() &&
 	      m_itTopBottom == hitPat.itTopBottom() &&
 	      m_tt == hitPat.tt() &&
-	      m_ut == hitPat.ut() &&
 	      m_muon == hitPat.muon() );
   }
 }

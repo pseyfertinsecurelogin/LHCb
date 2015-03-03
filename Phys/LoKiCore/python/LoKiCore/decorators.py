@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # =============================================================================
-# $Id: decorators.py 140320 2012-05-20 14:42:28Z ibelyaev $ 
+# $Id: decorators.py 155775 2013-04-29 09:31:21Z cattanem $ 
 # =============================================================================
-# $URL: http://svn.cern.ch/guest/lhcb/LHCb/tags/Phys/LoKiCore/v11r11/python/LoKiCore/decorators.py $ 
+# $URL: http://svn.cern.ch/guest/lhcb/LHCb/tags/Phys/LoKiCore/v11r12/python/LoKiCore/decorators.py $ 
 # =============================================================================
 ## @file decorators.py LoKiCore/decorators.py
 #
@@ -16,15 +16,11 @@
 #  contributions and advices from G.Raven, J.van Tilburg, 
 #  A.Golutvin, P.Koppenburg have been used in the design.
 #
-#   By usage of this code one clearly states the disagreement 
-#  with the campain of Dr.O.Callot et al.: 
-#  ``No Vanya's lines are allowed in LHCb/Gaudi software.''
-#
 #  @author Vanya BELYAEV ibelyaev@physics.syr.edu
 #
-#  $Revision: 140320 $
-#  Last modification $Date: 2012-05-20 16:42:28 +0200 (Sun, 20 May 2012) $
-#                 by $Author: ibelyaev $
+#  $Revision: 155775 $
+#  Last modification $Date: 2013-04-29 11:31:21 +0200 (Mon, 29 Apr 2013) $
+#                 by $Author: cattanem $
 # =============================================================================
 """
 The set of basic decorators for objects from LoKiCore library
@@ -37,16 +33,11 @@ Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas,
 contributions and advices from G.Raven, J.van Tilburg, 
 A.Golutvin, P.Koppenburg have been used in the design.
 
-By usage of this code one clearly states the disagreement 
-with the campain of Dr.O.Callot et al.:
- ``No Vanya's lines are allowed in LHCb/Gaudi software.''
-
-
 """
 # =============================================================================
 __author__  = "Vanya BELYAEV ibelyaev@physics.syr.edu" 
 __date__    = "????-??-??"
-__version__ = "SVN $Revision: 140320 $ "
+__version__ = "SVN $Revision: 155775 $ "
 # =============================================================================
 
 from LoKiCore.basic import cpp, std, LoKi, LHCb, Gaudi  

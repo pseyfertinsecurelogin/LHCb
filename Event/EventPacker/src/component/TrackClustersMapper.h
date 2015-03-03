@@ -10,8 +10,6 @@
 // Event model
 #include "Event/PackedCluster.h"
 
-#include "Kernel/StandardPacker.h"
-
 class IJobOptionsSvc;
 
 /** @class TrackClustersMapper TrackClustersMapper.h

@@ -1,4 +1,4 @@
-// $Id: GenTypes.h 140464 2012-05-24 14:25:32Z ibelyaev $
+// $Id: GenTypes.h 155778 2013-04-29 10:03:16Z cattanem $
 // ============================================================================
 #ifndef LOKI_GENTYPES_H 
 #define LOKI_GENTYPES_H 1
@@ -33,16 +33,12 @@ namespace HepMC { class GenVertex   ; }
  *  contributions and advices from G.Raven, J.van Tilburg, 
  *  A.Golutvin, P.Koppenburg have been used in the design.
  *
- *  By usage of this code one clearly states the disagreement 
- *  with the smear campaign of Dr.O.Callot et al.: 
- *  ``No Vanya's lines are allowed in LHCb/Gaudi software.''
- *
  *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
  *  @date 2001-01-23 
  *
- *                    $Revision: 140464 $
- *  Last modification $Date: 2012-05-24 16:25:32 +0200 (Thu, 24 May 2012) $
- *                 by $Author: ibelyaev $
+ *                    $Revision: 155778 $
+ *  Last modification $Date: 2013-04-29 12:03:16 +0200 (Mon, 29 Apr 2013) $
+ *                 by $Author: cattanem $
  */
 // ============================================================================
 namespace LoKi

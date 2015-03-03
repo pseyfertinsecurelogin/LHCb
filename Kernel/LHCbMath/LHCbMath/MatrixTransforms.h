@@ -1,4 +1,4 @@
-// $Id: MatrixTransforms.h 124901 2011-06-16 12:46:28Z ibelyaev $
+// $Id: MatrixTransforms.h 155802 2013-04-29 11:26:07Z cattanem $
 // ============================================================================
 #ifndef LHCBMATH_MATRIXTRANSFORMS_H 
 #define LHCBMATH_MATRIXTRANSFORMS_H 1
@@ -12,6 +12,12 @@
 #include "Math/Point3D.h"
 #include "Math/Vector4D.h"
 #include "Math/Vector3D.h"
+// ============================================================================
+// LHCbMath
+// ============================================================================
+#include "LHCbMath/LHCbMath.h"
+#include "LHCbMath/EqualTo.h"
+#include "LHCbMath/MatrixUtils.h"
 // ============================================================================
 /** @file 
  *  The collection of useful utils to minimize the conversion from 
@@ -273,7 +279,7 @@ namespace Gaudi
      *      ( v1->covMatrix() + v2->covMatrix() ).Sinverse( ifail ) ) ;
      *  if ( 0 != ifail ) { ... error here ... } ;
      *
-     *  always() << " Chi2 distance between vertices is " << chi2 << endreq ;
+     *  always() << " Chi2 distance between vertices is " << chi2 << endmsg ;
      *
      *  @endcode 
      *
@@ -309,7 +315,7 @@ namespace Gaudi
      *        v1->position() - v2.position() ) ;
      *  if ( 0 != ifail ) { ... error here ... } ;
      *
-     *  always() << " Chi2 distance between vertices is " << chi2 << endreq ;
+     *  always() << " Chi2 distance between vertices is " << chi2 << endmsg ;
      *
      *  @endcode 
      *
@@ -342,7 +348,7 @@ namespace Gaudi
      *     ( p1->momCovMatrix() + p2->momCovMatrix() ).Sinverse( ifail ) ) ;
      *  if ( 0 != ifail ) { ... error here ... } ;
      *
-     *  always() << " Chi2 distance in momenta is " << chi2 << endreq ;
+     *  always() << " Chi2 distance in momenta is " << chi2 << endmsg ;
      *
      *  @endcode 
      *
@@ -378,7 +384,7 @@ namespace Gaudi
      *       p1->momentum() - p2.momentum() ) ;
      *  if ( 0 != ifail ) { ... error here ... } ;
      *
-     *  always() << " Chi2 distance in momenta is " << chi2 << endreq ;
+     *  always() << " Chi2 distance in momenta is " << chi2 << endmsg ;
      *
      *  @endcode 
      *

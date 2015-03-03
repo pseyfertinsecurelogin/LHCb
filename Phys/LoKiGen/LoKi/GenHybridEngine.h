@@ -1,4 +1,4 @@
-// $Id: GenHybridEngine.h 124208 2011-06-02 16:05:48Z ibelyaev $
+// $Id: GenHybridEngine.h 155778 2013-04-29 10:03:16Z cattanem $
 // ============================================================================
 #ifndef LOKI_GENHYBRIDENGINE_H 
 #define LOKI_GENHYBRIDENGINE_H 1
@@ -21,13 +21,9 @@
  *  contributions and advices from G.Raven, J.van Tilburg, 
  *  A.Golutvin, P.Koppenburg have been used in the design.
  *
- *  By usage of this code one clearly states the disagreement 
- *  with the smear campaign of Dr.O.Callot et al.: 
- *  ``No Vanya's lines are allowed in LHCb/Gaudi software.''
- *
- *                    $Revision: 124208 $
- *  Last modification $Date: 2011-06-02 18:05:48 +0200 (Thu, 02 Jun 2011) $
- *                 by $Author: ibelyaev $
+ *                    $Revision: 155778 $
+ *  Last modification $Date: 2013-04-29 12:03:16 +0200 (Mon, 29 Apr 2013) $
+ *                 by $Author: cattanem $
  */
 // ============================================================================
 namespace LoKi 
@@ -47,10 +43,6 @@ namespace LoKi
      *  Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas, 
      *  contributions and advices from G.Raven, J.van Tilburg, 
      *  A.Golutvin, P.Koppenburg have been used in the design.
-     *
-     *  By usage of this code one clearly states the disagreement 
-     *  with the smear campaign of Dr.O.Callot et al.: 
-     *  ``No Vanya's lines are allowed in LHCb/Gaudi software.''
      *
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date   2004-06-30

@@ -3,6 +3,15 @@
 ! Responsible : Alessia Satta
 !----------------------------------------------------------------------------
 
+!========================= MuonDet v9r11 2013-04-29 =========================
+! 2013-04-26 - Marco Cattaneo
+ - Replace some unnecessary dynamic_cast by static_cast, fixes some FORWARD_NULL 
+   defects
+ - Fix unprotected DEBUGs from recent changes
+
+! 2013-04-25 - Marco Cattaneo
+ - Remove an unused member variable, fixes an UNINIT_CTOR defect
+
 !========================= MuonDet v9r10 2013-03-20 =========================
 ! 2013-02-25 - Marco Cattaneo for Danilo Piparo
  - In DeMuonDetector.h: (see https://savannah.cern.ch/bugs/?100553)

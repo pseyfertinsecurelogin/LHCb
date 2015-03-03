@@ -1,7 +1,7 @@
 <!-- 
-     * $Id: LoKiCore.xml 130709 2011-10-30 18:29:40Z ibelyaev $ 
+     * $Id: LoKiCore.xml 154653 2013-04-06 17:53:32Z ibelyaev $ 
      * ========================================================================
-     * CVS tag:$Name: not supported by cvs2svn $, version $Revision: 130709 $ 
+     * CVS tag:$Name: not supported by cvs2svn $, version $Revision: 154653 $ 
      * ======================================================================== 
      * @file
      * The selection file to build Reflex dictionaries for Phys/LoKiCore package
@@ -59,6 +59,8 @@
   <function name = "LoKi::HistoBook::book"             />
   <function name = "LoKi::Monitoring::getCounter"      />
 
+  <class name      = "LoKi::Tensors::Delta"     />
+  <class name      = "LoKi::Tensors::Epsilon"   />
 
   <function name = "Decays::Trees::arrow"      />
   <function name = "Decays::Trees::decayOnly"  />
@@ -78,6 +80,11 @@
   
   <class name    = "LoKi::Listener">
     <field name = "m_incSvc" transient = "true"/>
+  </class>
+  
+  <class    name = "LoKi::TES::Get" >
+    <field name = "m_algorithm" transient = "true"/>
+    <field name = "m_datasvc"   transient = "true"/>
   </class>
   
   <class name =        "implements1<IIncidentListener>" />
@@ -101,7 +108,12 @@
     <class pattern="std::binary_function&lt;*&gt;">
       <method name="=" />
     </class>
-
+    
+    <class    name = "LoKi::TES::Get" >
+      <field name = "m_algorithm" />
+      <field name = "m_datasvc"   />
+    </class>
+    
     <class pattern="LoKi::Listener">
       <method name="release"  />
       <method name="addRef"   />

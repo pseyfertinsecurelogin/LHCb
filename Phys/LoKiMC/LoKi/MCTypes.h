@@ -1,4 +1,4 @@
-// $Id: MCTypes.h 140459 2012-05-24 13:13:19Z ibelyaev $
+// $Id: MCTypes.h 155779 2013-04-29 11:00:51Z cattanem $
 // ============================================================================
 #ifndef LOKI_MCTYPES_H 
 #define LOKI_MCTYPES_H 1
@@ -30,16 +30,12 @@
  *  contributions and advices from G.Raven, J.van Tilburg, 
  *  A.Golutvin, P.Koppenburg have been used in the design.
  *
- *  By usage of this code one clearly states the disagreement 
- *  with the smear campaign of Dr.O.Callot et al.: 
- *  ``No Vanya's lines are allowed in LHCb/Gaudi software.''
- *
  *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
  *  @date 2006-03-10 
  *
- *                    $Revision: 140459 $
- *  Last modification $Date: 2012-05-24 15:13:19 +0200 (Thu, 24 May 2012) $
- *                 by $Author: ibelyaev $
+ *                    $Revision: 155779 $
+ *  Last modification $Date: 2013-04-29 13:00:51 +0200 (Mon, 29 Apr 2013) $
+ *                 by $Author: cattanem $
  */
 // ============================================================================
 namespace LoKi

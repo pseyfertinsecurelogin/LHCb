@@ -6,6 +6,30 @@
 !               All headers included in directory LHCbMath
 !-----------------------------------------------------------------------------
 
+!========================= LHCbMath v3r39 2013-04-29 =========================
+! 2013-04-27  - Vanya Belyaev 
+ - EqualTo: add comparison ove vectors, points & matrices 
+ - Functions.h: small fix 
+
+! 2013-04-25 - Vanya Belyaev
+ -  add few helper functions into ValueWithError
+
+! 2013-04-23 - Chris Jones
+ - Move 'operator<<' for MD5 inside a namespace to fix compilation 
+   errors with clang.
+
+! 2013-04-22 - Chris Jones
+ - More fixes for clang 3.2 compilation.
+
+! 2013-04-15 - Marco Clemencic
+ - Move 'operator<<' inside a namespace to fix compilation errors with clang.
+
+! 2013-04-06 - Vanya Belyaev
+ - small adjustment of operators in python
+
+! 2013-03-26 - Chris Jones
+ - A few work arounds to fix compilation with clang 3.2
+
 !========================= LHCbMath v3r38 2013-03-20 =========================
 ! 2013-03-18 - Marco Clemencic
  - updated CMake configuration after latest changes

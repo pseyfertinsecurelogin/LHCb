@@ -1,4 +1,4 @@
-// $Id: DumpHepMC.cpp 124235 2011-06-05 12:25:53Z ibelyaev $
+// $Id: DumpHepMC.cpp 155778 2013-04-29 10:03:16Z cattanem $
 // ============================================================================
 // Include files 
 // ============================================================================
@@ -156,7 +156,7 @@ StatusCode LoKi::DumpHepMC::execute()
       LoKi::Objects::_ALL_  ,  // accept 
       LoKi::Objects::_NONE_ ) ; // mark
   //
-  log << endreq ;
+  log << endmsg ;
   //
   return StatusCode::SUCCESS ;
 } 

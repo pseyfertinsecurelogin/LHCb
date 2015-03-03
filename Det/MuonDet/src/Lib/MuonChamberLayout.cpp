@@ -30,7 +30,7 @@
 // Standard constructor, initializes variables
 //=============================================================================
 MuonChamberLayout::MuonChamberLayout()
-  : m_msgStream(NULL), m_msgSvc(NULL),  m_detSvc(NULL)
+  : m_msgStream(NULL), m_msgSvc(NULL),  m_detSvc(NULL), m_isM1defined(false)
 {
 
   MuonLayout R1(1,1);
@@ -76,11 +76,9 @@ StatusCode MuonChamberLayout::initialize( ) {
 
   SmartDataPtr<DeMuonDetector> 
     MuonDe(m_detSvc,DeMuonLocation::Default);
-  bool  isM1defined = MuonDe->isM1defined();
+  m_isM1defined = MuonDe->isM1defined();
   if (debug)
-    msgStream()<<MSG::INFO<< "Retrieved M1 definition status: " << isM1defined <<endmsg;
-
-  m_isM1defined = isM1defined;
+    msgStream()<<MSG::INFO<< "Retrieved M1 definition status: " << m_isM1defined <<endmsg;
 
 
   //Grid initialization
@@ -1682,7 +1680,7 @@ Tile2ChamberNum(const LHCb::MuonTileID& tile){
     fillChambersVector(this->dataSvc());
     msgStream() << MSG::INFO <<" Called initialization "<<endmsg;
     if( 0 == m_logVertGridX.size() ){
-      msgStream() << MSG::DEBUG <<" Initialization failed!"<<endmsg;
+      msgStream() << MSG::INFO <<" Initialization failed!"<<endmsg;
       return m_chaVect;
     }
   }

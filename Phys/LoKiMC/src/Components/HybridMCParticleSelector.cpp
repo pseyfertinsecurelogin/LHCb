@@ -1,4 +1,4 @@
-// $Id: HybridMCParticleSelector.cpp 124207 2011-06-02 16:05:29Z ibelyaev $
+// $Id: HybridMCParticleSelector.cpp 155779 2013-04-29 11:00:51Z cattanem $
 // ============================================================================
 // Include files 
 // ============================================================================
@@ -118,7 +118,7 @@ StatusCode LoKi::Hybrid::MCParticleSelector::initialize ()
   if ( sc.isFailure() ) 
   { return Error ( "Error from IMCHybridFactory", sc   ) ; }     // RETURN 
   // 
-  info() << "CUT: '" << m_mccut << "' "<< endreq ;
+  info() << "CUT: '" << m_mccut << "' "<< endmsg ;
   //
   return StatusCode::SUCCESS ;  
 }

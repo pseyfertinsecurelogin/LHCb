@@ -25,15 +25,11 @@
 DeMuonDetector::DeMuonDetector() : m_msgStream(NULL),
                                    m_isM1defined(true)     
 {
-
-  bool debug = false;
-  if(debug) std::cout<< "Building the Detector !!!" <<std::endl;
   m_detSvc = 0;
   m_stations = 0;
   m_regions = 0;
   m_chamberLayout = 0;
   m_hitNotInGap = 0;
-
 }
 
 /// Standard Destructor
@@ -758,7 +754,7 @@ StatusCode DeMuonDetector::getPCCenter(MuonFrontEndID fe,int chamber,
   double dy = box->yHalfLength();
   Condition* aGrid = 
   myChPtr->condition(myChPtr->getGridName());
-  MuonChamberGrid* theGrid = dynamic_cast<MuonChamberGrid*>(aGrid);
+  MuonChamberGrid* theGrid = static_cast<MuonChamberGrid*>(aGrid);
   double xcenter_norma=-1;
   double ycenter_norma=-1;  
   StatusCode sc=theGrid->getPCCenter(fe,xcenter_norma,ycenter_norma);
@@ -876,7 +872,7 @@ void DeMuonDetector::fillGeoInfo()
 
           
           Condition* bGrid = (chPt)->condition(chPt->getGridName());
-          MuonChamberGrid* theGrid = dynamic_cast<MuonChamberGrid*>(bGrid);
+          MuonChamberGrid* theGrid = static_cast<MuonChamberGrid*>(bGrid);
           
           int nreadout=1;
           if(theGrid->getGrid2SizeY()>1)nreadout=2;
@@ -1119,10 +1115,10 @@ void DeMuonDetector::fillGeoArray()
     //get the dimensions of the inner rectangular
     if(debug)msgStream()<<MSG::INFO<<" inside loop "<<endmsg;
 
-    msgStream()<<MSG::DEBUG<<"DeMuonDetector::fillGeoArray station: " << station <<endmsg;
+    if(debug)msgStream()<<MSG::DEBUG<<"DeMuonDetector::fillGeoArray station: " << station <<endmsg;
     if (testForFilter(*itSt) == true)
       continue;
-    msgStream()<<MSG::DEBUG<<"DeMuonDetector::fillGeoArray station: " << station <<endmsg;
+    if(debug)msgStream()<<MSG::DEBUG<<"DeMuonDetector::fillGeoArray station: " << station <<endmsg;
 
     double minX=100000;
     double minY=100000;

@@ -1,4 +1,4 @@
-// $Id: DecayBase.cpp 149830 2012-12-12 17:09:11Z cattanem $
+// $Id: DecayBase.cpp 155775 2013-04-29 09:31:21Z cattanem $
 // ============================================================================
 // Include files 
 // =============================================================================
@@ -163,7 +163,7 @@ StatusCode LoKi::DecayBase::_parse
     ( tree , input , _symbols , _particles , err.stream() ) ;
   if ( sc.isFailure() ) 
   {
-    err << endreq ;
+    err << endmsg ;
     return Error ( "Unable to parse '"+input+"'" , sc ) ;            // RETURN 
   }
   //

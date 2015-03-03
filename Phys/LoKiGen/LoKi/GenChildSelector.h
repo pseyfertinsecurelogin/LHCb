@@ -1,4 +1,4 @@
-// $Id: GenChildSelector.h 141170 2012-06-18 09:45:16Z ibelyaev $
+// $Id: GenChildSelector.h 155778 2013-04-29 10:03:16Z cattanem $
 // ============================================================================
 #ifndef LOKI_GENCHILDSELECTOR_H 
 #define LOKI_GENCHILDSELECTOR_H 1
@@ -30,16 +30,12 @@
  *  contributions and advices from G.Raven, J.van Tilburg, 
  *  A.Golutvin, P.Koppenburg have been used in the design.
  *
- *  By usage of this code one clearly states the disagreement 
- *  with the smear campaign of Dr.O.Callot et al.: 
- *  ``No Vanya's lines are allowed in LHCb/Gaudi software.''
- *
  *  @author Vanya Belyaev  Ivan.Belyaev@cern.ch
  *  @date 2011-12-11
  * 
- *                    $Revision: 141170 $
- *  Last modification $Date: 2012-06-18 11:45:16 +0200 (Mon, 18 Jun 2012) $
- *                 by $Author: ibelyaev $
+ *                    $Revision: 155778 $
+ *  Last modification $Date: 2013-04-29 12:03:16 +0200 (Mon, 29 Apr 2013) $
+ *                 by $Author: cattanem $
  */
 // ============================================================================
 namespace LoKi 
@@ -59,10 +55,6 @@ namespace LoKi
      *  Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas, 
      *  contributions and advices from G.Raven, J.van Tilburg, 
      *  A.Golutvin, P.Koppenburg have been used in the design.
-     *
-     *  By usage of this code one clearly states the disagreement 
-     *  with the smear campaign of Dr.O.Callot et al.: 
-     *  ``No Vanya's lines are allowed in LHCb/Gaudi software.''
      *
      *  @author Vanya Belyaev  Ivan.Belyaev@cern.ch
      *  @date   2011-12-13

@@ -1,4 +1,4 @@
-// $Id: GenChild.h 141149 2012-06-16 14:22:16Z ibelyaev $
+// $Id: GenChild.h 155778 2013-04-29 10:03:16Z cattanem $
 // ============================================================================
 #ifndef LOKI_GENCHILD_H 
 #define LOKI_GENCHILD_H 1
@@ -39,15 +39,11 @@
  *  contributions and advices from G.Raven, J.van Tilburg, 
  *  A.Golutvin, P.Koppenburg have been used in the design.
  *
- *  By usage of this code one clearly states the disagreement 
- *  with the smear campaign of Dr.O.Callot et al.: 
- *  ``No Vanya's lines are allowed in LHCb/Gaudi software.''
- *
  *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
  *
- *                    $Revision: 141149 $
- *  Last modification $Date: 2012-06-16 16:22:16 +0200 (Sat, 16 Jun 2012) $
- *                 by $Author: ibelyaev $
+ *                    $Revision: 155778 $
+ *  Last modification $Date: 2013-04-29 12:03:16 +0200 (Mon, 29 Apr 2013) $
+ *                 by $Author: cattanem $
  */
 // ============================================================================
 namespace LoKi

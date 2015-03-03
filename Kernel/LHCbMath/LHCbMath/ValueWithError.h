@@ -1,4 +1,4 @@
-// $Id: ValueWithError.h 147772 2012-11-09 10:26:21Z ibelyaev $
+// $Id: ValueWithError.h 155622 2013-04-25 12:47:40Z ibelyaev $
 // ============================================================================
 #ifndef LHCBMATH_ERRORS_H 
 #define LHCBMATH_ERRORS_H 1
@@ -409,6 +409,26 @@ namespace Gaudi
     ValueWithError agrestiCoullEff   
     ( const size_t n , 
       const size_t N ) ;
+    // ========================================================================
+    /** simple evaluation of efficiency from statistically independend
+     * "exclusive" samples "accepted" and "rejected"
+     *  \f$ \varepsilon = \frac{1}{ 1 + \frac{N_{rejected}}{N_accepted}}\f$ 
+     *  @param accepted  (IN) accepted sample 
+     *  @param rejected  (IN) rejected sample 
+     */
+    GAUDI_API 
+    ValueWithError exclusiveEff
+    ( const ValueWithError& accepted , 
+      const ValueWithError& rejected ) ;
+    // ========================================================================
+    /** simple evaluation of efficiency using Zech's prescription 
+     *  @param accepted  (IN) accepted sub-sample 
+     *  @param total     (IN) total     sample 
+     */
+    GAUDI_API 
+    ValueWithError zechEff
+    ( const ValueWithError& accepted , 
+      const ValueWithError& total    ) ;
     // ========================================================================
     /** evaluate pow(a,b)
      *  @param a (INPUT) the base 

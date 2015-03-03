@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # =============================================================================
-# $Id: doxygenurl.py 53341 2010-08-06 13:17:49Z ibelyaev $ 
+# $Id: doxygenurl.py 155775 2013-04-29 09:31:21Z cattanem $ 
 # =============================================================================
-# $URL: http://svn.cern.ch/guest/lhcb/LHCb/tags/Phys/LoKiCore/v11r11/python/LoKiCore/doxygenurl.py $ 
+# $URL: http://svn.cern.ch/guest/lhcb/LHCb/tags/Phys/LoKiCore/v11r12/python/LoKiCore/doxygenurl.py $ 
 # =============================================================================
 ## @file LoKiCore/doxygenurl.py
 #
@@ -24,16 +24,12 @@
 #   This file is part of LoKi project: 
 #    ``C++ ToolKit for Smart and Friendly Physics Analysis''
 # 
-#   By usage of this code one clearly states the disagreement 
-#  with the campain of Dr.O.Callot et al.: 
-#  ``No Vanya's lines are allowed in LHCb/Gaudi software.''
-#
 #  @author Vanya BELYAEV ibelyaev@physics.syr.edu
 #  @date 2007-07-22
 #
-#  $Revision: 53341 $
-#  Last modification $Date: 2010-08-06 15:17:49 +0200 (Fri, 06 Aug 2010) $
-#                 by $Author: ibelyaev $
+#  $Revision: 155775 $
+#  Last modification $Date: 2013-04-29 11:31:21 +0200 (Mon, 29 Apr 2013) $
+#                 by $Author: cattanem $
 #
 # =============================================================================
 """
@@ -55,18 +51,13 @@ and the minor helper function
   This file is part of LoKi project: 
   ``C++ ToolKit for Smart and Friendly Physics Analysis''
   
-  By usage of this code one clearly states the disagreement 
-  with the campain of Dr.O.Callot et al.: 
-  ``No Vanya's lines are allowed in LHCb/Gaudi software.''
-
-  
-$Revision: 53341 $
-Last modification $Date: 2010-08-06 15:17:49 +0200 (Fri, 06 Aug 2010) $
-               by $Author: ibelyaev $
+$Revision: 155775 $
+Last modification $Date: 2013-04-29 11:31:21 +0200 (Mon, 29 Apr 2013) $
+               by $Author: cattanem $
   
 """
 # =============================================================================
-__version__ = " SVN $Revision: 53341 $ "
+__version__ = " SVN $Revision: 155775 $ "
 __author__  = " Vanya BELYAEV ibelyaev@physics.syr.edu "
 __date__    = " 2007-07-22"
 __all__     = (

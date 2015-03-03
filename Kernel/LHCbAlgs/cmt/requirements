@@ -3,7 +3,7 @@
 # Maintainer : Marco Cattaneo
 #========================================================================
 package           LHCbAlgs
-version           v2r55
+version           v2r57
 
 #========================================================================
 # Structure, i.e. directories to process.
@@ -28,6 +28,7 @@ use TrackEvent          v*    Event
 use L0Event             v*    Event
 use Boost               v*    LCG_Interfaces
 
+macro_append Boost_linkopts " $(Boost_linkopts_regex) "
 
 #========================================================================
 # Component library building rule

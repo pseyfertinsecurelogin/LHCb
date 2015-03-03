@@ -1,4 +1,4 @@
-// $Id: CounterAlg.cpp 121023 2011-03-29 18:09:53Z ibelyaev $
+// $Id: CounterAlg.cpp 155775 2013-04-29 09:31:21Z cattanem $
 // ============================================================================
 // Include files 
 // ============================================================================
@@ -29,14 +29,9 @@
  *  contributions and advices from G.Raven, J.van Tilburg, 
  *  A.Golutvin, P.Koppenburg have been used in the design.
  *
- *  By usage of this code one clearly states the disagreement 
- *  with the campain of Dr.O.Callot et al.: 
- *  ``No Vanya's lines are allowed in LHCb/Gaudi software.''
- *
- *  
- *                    $Revision: 121023 $
- *  Last modification $Date: 2011-03-29 20:09:53 +0200 (Tue, 29 Mar 2011) $
- *                 by $Author: ibelyaev $
+ *                    $Revision: 155775 $
+ *  Last modification $Date: 2013-04-29 11:31:21 +0200 (Mon, 29 Apr 2013) $
+ *                 by $Author: cattanem $
  */
 // ============================================================================
 namespace LoKi 
@@ -276,7 +271,7 @@ StatusCode LoKi::CounterAlg::updateItems ()                 // update variables
     //
     debug() << "The decoded variable name is '"
             << m_items.back().m_name << "'\t, the functor : '"
-            << m_items.back().m_fun  << "'" << endreq ;
+            << m_items.back().m_fun  << "'" << endmsg ;
   }  
   // 
   release ( factory ) ; // we do not need the factory anymore 

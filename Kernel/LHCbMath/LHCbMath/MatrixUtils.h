@@ -1,4 +1,4 @@
-// $Id: MatrixUtils.h 133881 2012-01-18 20:11:28Z ibelyaev $
+// $Id: MatrixUtils.h 155742 2013-04-27 12:26:24Z ibelyaev $
 // ============================================================================
 #ifndef LHCBMATH_MATRIXUTILS_H
 #define LHCBMATH_MATRIXUTILS_H 1
@@ -19,6 +19,10 @@
 #include "Math/Point3D.h"
 #include "Math/Vector4D.h"
 #include "Math/Vector3D.h"
+// ============================================================================
+// LHCbMath
+// ============================================================================
+#include "LHCbMath/EqualTo.h"
 // ============================================================================
 /** @file
  *  The collection of functions for manipulation with matrices and vectors.

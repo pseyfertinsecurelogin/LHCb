@@ -1,4 +1,4 @@
-// $Id: Functions.h 150522 2013-01-05 08:38:49Z ibelyaev $
+// $Id: Functions.h 155742 2013-04-27 12:26:24Z ibelyaev $
 // ============================================================================
 #ifndef LHCBMATH_FUNCTIONS_H
 #define LHCBMATH_FUNCTIONS_H 1
@@ -22,8 +22,8 @@
  *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
  *  @date 2010-04-19
  *
- *                    $Revision: 150522 $
- *  Last modification $Date: 2013-01-05 09:38:49 +0100 (Sat, 05 Jan 2013) $
+ *                    $Revision: 155742 $
+ *  Last modification $Date: 2013-04-27 14:26:24 +0200 (Sat, 27 Apr 2013) $
  *                 by $author$
  */
 // ============================================================================
@@ -1604,9 +1604,11 @@ namespace Gaudi
     } ;
     // ========================================================================
     /** @class Rho0
+     *  \f$ \rho^{0} \rightarrow \pi^+ \pi^- \f$
      *  J.D.Jackson,
      *  "Remarks on the Phenomenological Analysis of Resonances",
      *  In Nuovo Cimento, Vol. XXXIV, N.6
+     *  @see Gaudi::Math::BreitWigner::Jackson_A7 
      *  @author Vanya BELYAEV Ivan.BElyaev@cern.ch
      *  @date 2011-11-30
      */
@@ -1620,6 +1622,51 @@ namespace Gaudi
               const double pi_mass  = 139.6 ) ;   // MeV
       /// destructor
       virtual ~Rho0 () ;
+      // ======================================================================
+    } ;
+    // ========================================================================
+    /** @class Kstar0
+     *  \f$ K^{*0} \rightarrow K^+ \pi^- \f$
+     *  J.D.Jackson,
+     *  "Remarks on the Phenomenological Analysis of Resonances",
+     *  In Nuovo Cimento, Vol. XXXIV, N.6
+     *  @see Gaudi::Math::BreitWigner::Jackson_A2 
+     *  @author Vanya BELYAEV Ivan.BElyaev@cern.ch
+     *  @date 2014-04-27
+     */
+    class GAUDI_API Kstar0 : public Gaudi::Math::BreitWigner
+    {
+    public:
+      // ======================================================================
+      // constructor from all parameters
+      Kstar0  ( const double m0       = 770   ,     // MeV
+                const double gam0     = 150   ,     // MeV
+                const double k_mass   = 493.7 ,     // MeV
+                const double pi_mass  = 139.6 ) ;   // MeV
+      /// destructor
+      virtual ~Kstar0 () ;
+      // ======================================================================
+    } ;
+    // ========================================================================
+    /** @class Phi0
+     *  \f$ \phi \rightarrow K^+ K^- \f$
+     *  J.D.Jackson,
+     *  "Remarks on the Phenomenological Analysis of Resonances",
+     *  In Nuovo Cimento, Vol. XXXIV, N.6
+     *  @see Gaudi::Math::BreitWigner::Jackson_A2 
+     *  @author Vanya BELYAEV Ivan.BElyaev@cern.ch
+     *  @date 2014-04-27
+     */
+    class GAUDI_API Phi0 : public Gaudi::Math::BreitWigner
+    {
+    public:
+      // ======================================================================
+      // constructor from all parameters
+      Phi0  ( const double m0       = 1019.5 ,     // MeV
+              const double gam0     =    4.3 ,     // MeV
+              const double k_mass   =  493.7 ) ;   // MeV
+      /// destructor
+      virtual ~Phi0 () ;
       // ======================================================================
     } ;
     // ========================================================================
