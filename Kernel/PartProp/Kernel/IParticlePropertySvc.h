@@ -1,4 +1,4 @@
-// $Id: IParticlePropertySvc.h,v 1.3 2008-12-03 13:43:50 ibelyaev Exp $
+// $Id: IParticlePropertySvc.h,v 1.5 2009-04-17 13:12:47 cattanem Exp $
 // ============================================================================
 #ifndef LHCBKERNEL_IPARTICLEPROPERTYSVC_H
 #define LHCBKERNEL_IPARTICLEPROPERTYSVC_H
@@ -69,7 +69,7 @@ namespace LHCb
      */
     virtual const ParticleProperty* find 
     ( const std::string&      name ) const =  0 ;   // find by particle name 
-    /** Retrieve an object by name:
+    /** Retrieve an object by LHCb::ParticleID:
      *
      *  @code 
      *  
@@ -80,7 +80,7 @@ namespace LHCb
      *   const LHCb::ParticleProperty*  pp = svc -> find ( pid ) ;
      *
      *  @endcode 
-     *  @param name the particle name
+     *  @param  pid     the particle's LHCb::ParticleID 
      *  @return pointer to particle property object
      */
     virtual const ParticleProperty* find 
@@ -416,7 +416,7 @@ namespace LHCb
      *  Essentially it is just a missing <c>std::copy_if</c> STL-algorithm 
      * 
      *  @param first begin-iterator of input sequence of particle properties 
-     *  @param end   end-iterator of input sequence of particle properties 
+     *  @param last  end-iterator of input sequence of particle properties 
      *  @param cut the predicate
      *  @param output the output iterator
      *  @return the updated position of output iterator
@@ -498,7 +498,8 @@ namespace LHCb
      *  // use the function 
      *  LHCb::ParticleProperties::get 
      *    ( svc , 
-     *      bind ( &LHCb::ParticleID::isLepton , bind ( &LHCb::ParticleProperty::particleID , _1 ) ) ,
+     *      bind ( &LHCb::ParticleID::isLepton , 
+     *      bind ( &LHCb::ParticleProperty::particleID , _1 ) ) ,
      *      std::back_inserter ( leptons ) ) ; // output 
      *
      *  @endcode

@@ -1,7 +1,23 @@
-! $Id: release.notes,v 1.210 2009-01-12 07:16:09 cattanem Exp $
+! $Id: release.notes,v 1.214 2009-05-06 15:28:55 cattanem Exp $
 ! package VeloDet
 ! package manager : Velo Group
 !-----------------------------------------------------------------------------
+
+!======================== VeloDet v13r6 2009-05-06 ===========================
+! 2009-03-31 - Marco Clemencic
+ - Updated the reference file of the test velodet.veloaligncond.updates because
+   the output changed after the changes by Wouter. 
+
+! 2009-03-24 - Kurt Rinnert
+ - Added free functions to convert chip channel to TELL1 channel.  The
+   conversion is a simply inverting the order of the four blocks of 512
+   channels.  The concept existed already in different pieces of code but was
+   never made explicit.  Only relevant for analysis of NZS data.
+
+! 2009-03-17 - Wouter Hulsbergen
+ - Added VeloAlignCond::updateParams which overloads the function in AlignmentCondition 
+   and corrects for the motion system position when updating the condition.
+ - Added VeloAlignCond::motionSystemTransform which actually defines the transform
 
 !======================== VeloDet v13r5 2009-01-12 ===========================
 ! 2009-01-10 - Marco Clemencic

@@ -1,8 +1,36 @@
-!$Id: release.notes,v 1.292 2009-03-09 14:20:18 cattanem Exp $
+!$Id: release.notes,v 1.299 2009-05-07 12:58:50 cattanem Exp $
 !============================================================================
 ! Package     : DaVinciKernel
 ! Responsible : J.P. Palacios
 !============================================================================
+
+!======================== DaVinciKernel v7r5 2009-05-07 =====================
+! 2009-04-30 - Vanya BELYAEV
+ - src/Lib/DVAlgorithm.cpp
+   add few mode default nicknames for various tools 
+
+! 2009-04-25 - Patrick Spradlin
+ - src/Lib/DVAlgorithm.cpp
+  . Fix bug obtaining dangling references into a temporary instance of
+    Particle2Vertex::LightTable.
+
+! 2009-04-23 - Patrick Koppenburg
+ - More comments in DVAlgorithms
+ - Removed FilterCriteria
+ - added setDecayDescriptor(std::string)
+
+! 2009-04-22 - Patrick Koppenburg
+ - More debug printout in DVAlgorithm
+
+! 2009-04-21 - Patrick Koppenburg
+ - New method setInputLocations for PhysDeskop.
+   DVAlgorithm : set it.
+   This allows the new recommnded syntax:
+  
+   MyAlg.InputLocations =  [ 'MyPreviousAlg' ]
+
+ - ICaloParticlemaker : use ConstVector of Particles
+ - Increment to v7r5
 
 !======================== DaVinciKernel v7r4 2009-03-09 =====================
 ! 2009-02-27 - Juan PALACIOS

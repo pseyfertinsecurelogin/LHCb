@@ -1,4 +1,4 @@
-// $Id: DeCaloCalib.cpp,v 1.1 2008-09-26 15:45:39 odescham Exp $
+// $Id: DeCaloCalib.cpp,v 1.4 2009-04-17 13:41:04 cattanem Exp $
 // Include files 
 
 // from Gaudi
@@ -34,9 +34,12 @@ DeCaloCalib::DeCaloCalib( const std::string& name,
 
   declareProperty( "DetectorName"   , m_detectorName );
   declareProperty( "Method"         , m_method = "Flat"); // Flat/Gauss/User
-  declareProperty( "Params"         , m_params);
-  declareProperty( "Key"            , m_key = "CellID" );
-  declareProperty( "deltaGain"      , m_deltas);
+  declareProperty( "Params"         , m_params);           // gauss/flat  parameters
+  declareProperty( "Key"            , m_key = "CellID" ); // 'CellID'/'Index' : for User-defined parameters
+  declareProperty( "deltaGain"      , m_deltas);          // User defined params mapping  <key : value>
+  declareProperty( "EventUpdate"    , m_update = false); // default is update in initialize only
+  declareProperty( "Ntupling"       , m_ntup   = true ); 
+  declareProperty( "DeadChannelList", m_dead);
 
   m_params.push_back( 1.0 );
   m_params.push_back( 1.0  );
@@ -74,96 +77,61 @@ StatusCode DeCaloCalib::initialize() {
   } else if ( "Spd" == m_detectorName ) {
     m_calo     = getDet<DeCalorimeter>( DeCalorimeterLocation::Spd ); 
   } else {
-    error() << "Unknown Calo detector name " << m_detectorName << endreq;
+    error() << "Unknown Calo detector name " << m_detectorName << endmsg;
     return StatusCode::FAILURE;
   }
 
-  info() << " ======= SIMULATING THE (MIS)Calibration of "<< m_detectorName << " gains  ======= " << endreq;
+  info() << " ======= SIMULATING THE (MIS)Calibration of "<< m_detectorName << " gains  ======= " << endmsg;
   
   
   // Params
   m_rndmSvc = svc< IRndmGenSvc>( "RndmGenSvc" , true );
-  Rndm::Numbers shoot;
   
   double a,b;
   if( m_method == "Gauss" ){
     // Gaussian random (mean, rms)
-    info() << "---- Method : gaussian random timing values "<< endreq;
-    if(m_params.size() != 2)error() << "wrong parameters size" << endreq;
+    info() << "---- Method : gaussian random timing values "<< endmsg;
+    if(m_params.size() != 2)error() << "wrong parameters size" << endmsg;
     a= *(m_params.begin());
     b= *(m_params.begin()+1);
-    info() << " mean/sigma = " << a << "/" << b << endreq;
-    sc = shoot.initialize(rndmSvc() , Rndm::Gauss( a , b ));
+    info() << " mean/sigma = " << a << "/" << b << endmsg;
+    sc = m_shoot.initialize(rndmSvc() , Rndm::Gauss( a , b ));
     if( !sc.isSuccess() )return sc;
   }
   else if(m_method == "Flat"){
     // Flat random (min, max)
-    info() << "---- Method : flat random timing values "<< endreq;
-    if(m_params.size() != 2)error() << "wrong parameters size" << endreq;
+    info() << "---- Method : flat random timing values "<< endmsg;
+    if(m_params.size() != 2)error() << "wrong parameters size" << endmsg;
     a= *(m_params.begin());
     b= *(m_params.begin()+1);
-    info() << " min/max = " << a << "/" << b << endreq;
-    sc=shoot.initialize(rndmSvc() , Rndm::Flat( a , b ));
+    info() << " min/max = " << a << "/" << b << endmsg;
+    sc=m_shoot.initialize(rndmSvc() , Rndm::Flat( a , b ));
     if( !sc.isSuccess() )return sc;
   }  
   else if(m_method == "User"){
-    info() << "---- Method : user-defined timing values "<< endreq;
-    info() << "Timing value have been defined for " << m_deltas.size() << " cells " << endreq;
+    info() << "---- Method : user-defined timing values "<< endmsg;
+    info() << "Timing value have been defined for " << m_deltas.size() << " cells " << endmsg;
     info() << "Default value [" << m_deltas["Default"] <<  "] will be applied to " 
-           << m_calo->numberOfCells()- m_deltas.size() << " other cells." << endreq;
+           << m_calo->numberOfCells()- m_deltas.size() << " other cells." << endmsg;
     if( m_key == "CellID" ){
-      info() << "The timing values are mapped with KEY = CellID " << endreq;
+      info() << "The calib values are mapped with KEY = CellID " << endmsg;
     }
     else if( m_key == "Index" ){
-      info() << "The timing values are are mapped with KEY = Index" << endreq;
+      info() << "The calib values are are mapped with KEY = Index" << endmsg;
     }
     else{
-      error() << "undefined deltaKey : must be either 'CellID' or 'Index' " << endreq;
+      error() << "undefined deltaKey : must be either 'CellID' or 'Index' " << endmsg;
     return StatusCode::FAILURE;
     }
   }
   else{
-    error() << "Method " << m_method << " unknown - should be 'Flat', 'Gauss' or 'User'"<< endreq;
+    error() << "Method " << m_method << " unknown - should be 'Flat', 'Gauss' or 'User'"<< endmsg;
     return StatusCode::FAILURE;
   }
 
-
   // update cellParams
-
-  CaloVector<CellParam>& cells = m_calo->cellParams();
-  std::vector<int> cellids,cellind;
-  std::vector<double> gains,dgains;
-  for(CaloVector<CellParam>::iterator icell = cells.begin() ; icell != cells.end() ; icell++){
-    LHCb::CaloCellID id = (*icell).cellID() ;
-    if( !m_calo->valid  ( id )  )continue;
-    if( m_calo->isPinId( id )   )continue;
-    long num = m_calo->cellIndex( id );
-    double dt;
-    if( m_method == "User" ){
-      long index = id.index();
-      if( m_key == "Index" )index = num;
-      dt = delta( index );
-    }
-    else{
-      dt = shoot();
-    }
-    debug() << num << " Calibration constant for cellID " << id << " : " << dt << endreq;
-    (*icell).setCalibration ( dt ) ; // 
-
-    cellids.push_back( id.index()      );
-    cellind.push_back( num             );
-    gains.push_back  ( (*icell).gain() );
-    dgains.push_back ( (*icell).calibration());
-  }
+  update(); 
   
-  // Ntupling
-  Tuple ntp = nTuple(500,m_detectorName + "DeCalib" ,CLID_ColumnWiseTuple);
-  int max = m_calo->numberOfCells();
-  sc=ntp->farray("cellID"   , cellids  ,"Nchannels",max);
-  sc=ntp->farray("index"    , cellind  ,"Nchannels",max);
-  sc=ntp->farray("gain"     , gains    ,"Nchannels",max);
-  sc=ntp->farray("calib"    , dgains   ,"Nchannels",max);
-  sc=ntp->write();
   return sc;
 }
 
@@ -174,7 +142,8 @@ StatusCode DeCaloCalib::execute() {
 
   debug() << "==> Execute" << endmsg;
 
-
+  // update at each event ?
+  if(m_update)update();
 
   return StatusCode::SUCCESS;
 }
@@ -190,3 +159,59 @@ StatusCode DeCaloCalib::finalize() {
 }
 
 //=============================================================================
+
+void DeCaloCalib::update() {
+  // update cellParams
+  CaloVector<CellParam>& cells = (CaloVector<CellParam>&) m_calo->cellParams(); // no-const conversion
+  std::vector<int> cellids,cellind;
+  std::vector<double> gains,dgains;
+  for(CaloVector<CellParam>::iterator icell = cells.begin() ; icell != cells.end() ; icell++){
+    LHCb::CaloCellID id = (*icell).cellID() ;
+    if( !m_calo->valid  ( id )  )continue;
+    if( m_calo->isPinId( id )   )continue; 
+
+    long num = m_calo->cellIndex( id );
+    double dt;
+    long index = id.index();
+    if( m_key == "Index" )index = num;
+
+    if( isDead( index ) ){
+      dt = 0.;
+      (*icell).addQualityFlag(CaloCellQuality::Dead);  
+    }
+    else if( m_method == "User" )
+      dt = delta( index );
+    else
+      dt = m_shoot();
+    
+    debug() << num << " Calibration constant for cellID " << id << " : " << dt << endmsg;
+    (*icell).setCalibration ( dt ) ; //
+    cellids.push_back( id.index()      );
+    cellind.push_back( num             );
+    gains.push_back  ( (*icell).gain() );
+    dgains.push_back ( (*icell).calibration());
+  }
+
+  if(!m_ntup)return ;
+  // Ntupling
+  StatusCode sc;
+  Tuple ntp = nTuple( 500 + CaloCellCode::CaloNumFromName( m_detectorName),
+                      m_detectorName + "DeCalib" ,CLID_ColumnWiseTuple);
+  int max = m_calo->numberOfCells() ;
+  sc=ntp->farray("cellID"   , cellids  ,"nchannels",max);
+  sc=ntp->farray("index"    , cellind  ,"nchannels",max);
+  sc=ntp->farray("gain"     , gains    ,"nchannels",max);
+  sc=ntp->farray("calib"    , dgains   ,"nchannels",max);
+  sc=ntp->write();
+  if(sc.isFailure())Warning("cannot write NTP").ignore();
+}
+
+
+bool DeCaloCalib::isDead(int channel) {
+  if(m_dead.empty())return false;
+  for(std::vector<int>::iterator i = m_dead.begin();m_dead.end()!=i;i++){
+    if( m_key == "Index"  && channel == *i)return true;
+    if( m_key == "CellID" && channel == ( *i & 0x3FFF) ) return true;
+  }  
+  return false;
+}

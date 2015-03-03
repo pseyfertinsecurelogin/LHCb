@@ -4,6 +4,14 @@
 ! Purpose     : BCM DetectorElement
 !----------------------------------------------------------------------------
 
+!========================= BcmDet v1r3 2009-05-06 ==========================
+! 2009-05-04 - Olivier Callot
+ - Call the base class constructor in DeBcm and DeBcmSens
+
+! 2009-04-17 - Marco Cattaneo
+ - Replace endreq by endmsg
+ - Do not create MsgStream when not needed
+
 !========================= BcmDet v1r2 2008-11-17 ==========================
 ! 2008-10-28 - Marco Cattaneo
  - Follow DetDesc changes for gcc 4.3 compilation

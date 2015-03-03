@@ -1,13 +1,24 @@
-! $Id: release.notes,v 1.58 2009-03-09 14:16:15 cattanem Exp $
+! $Id: release.notes,v 1.62 2009-05-07 13:22:21 cattanem Exp $
 ! Package     : STKernel
 ! Responsible : M. Needham
 !----------------------------------------------------------------------------
+
+!====================== STKernel v1r13 2009-05-07 ===========================
+! 2009-05-05 Mark Tobin 
+  Added method to STCommonBase class to return SourceID to TELL1 defined in 
+  STBoardMapping.h
+
+! 2009-05-03 M Needham 
+  Add dict for std::pair<STTell1ID, unsigned int>
 
 !====================== STKernel v1r12 2009-03-09 ===========================
 ! 2009-02-24 J Luisier
  - Bug fix in TTNumberToSourceIDMap
 
 !====================== STKernel v1r11 2009-02-20 ===========================
+! 2009-03-09 A Keune
+	- Swapped constructors STTupleAlgBase and STTupleToolBase
+
 ! 2009-02-20 M Needham
   - Move print functions to the cpp for STBoardMapping
 

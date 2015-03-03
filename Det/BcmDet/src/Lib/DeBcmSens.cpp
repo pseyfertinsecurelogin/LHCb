@@ -1,11 +1,13 @@
 #include "BcmDet/DeBcmSens.h"
 
 DeBcmSens::DeBcmSens() :
+  DetectorElement(),
   m_SensorNumber(0)
 {
 }
 
 DeBcmSens::DeBcmSens(int nSensor) :
+  DetectorElement(),
   m_SensorNumber(nSensor)
 {
 }
@@ -16,11 +18,10 @@ DeBcmSens::~DeBcmSens()
 
 StatusCode DeBcmSens::initialize()
 {
-  MsgStream msg( msgSvc(), name() );
-
   StatusCode sc = DetectorElement::initialize();
   if( sc.isFailure() ) {
-    msg << MSG::ERROR << "Failure to initialize DetectorElement" << endreq;
+    MsgStream msg( msgSvc(), name() );
+    msg << MSG::ERROR << "Failure to initialize DetectorElement" << endmsg;
     return sc ;
   }
 

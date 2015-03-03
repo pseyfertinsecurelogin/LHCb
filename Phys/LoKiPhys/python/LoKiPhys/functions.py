@@ -380,6 +380,9 @@ DR2      = LoKi.Particles.DeltaR2
 ## @see LoKi::Cuts::TRPCHI2 
 TRPCHI2  = LoKi.Particles.TrackChi2Prob ()
 
+## @see LoKi::Cuts::TRGPOINTING
+TRGPOINTING     = LoKi.Particles.TrgPointingScore 
+
 ## @see LoKi::Cuts::QPT 
 QPT      = LoKi.Particles.TransverseMomentumQ 
 ## @see LoKi::Cuts::QPT1 
@@ -444,7 +447,14 @@ LTCHI2     = LoKi.Particles.LifeTimeChi2
 LTSIGNCHI2 = LoKi.Particles.LifeTimeSignedChi2
 ## @see LoKi::Cuts::LIFETIMEFITCHI2
 LTFITCHI2  = LoKi.Particles.LifeTimeFitChi2
+## @see LoKi::Cuts::LTIMEERR
+LTIMEERR      = LoKi.Particles.LifeTimeError
 
+
+## @see LoKi::Cuts::REFIT_
+REFIT_        = LoKi.Particles.ReFit
+## @see LoKi::Cuts::MFIT_
+MFIT_         = LoKi.Particles.MassFit 
 
 
 ## @see LoKi::Cuts::VTRUE
@@ -511,7 +521,10 @@ MINVVDCHI2 = LoKi.Vertices.MinVertexChi2Distance
 VIP        = LoKi.Vertices.ImpPar
 ## @see LoKi::Vertices::ImpParChi2
 VIPCHI2    = LoKi.Vertices.ImpParChi2
-
+## @see LoKi::Cuts::VDZ
+VDZ        = LoKi.Vertices.VertexDeltaZ 
+## @see LoKi::Cuts::VABSDZ
+VABSDZ     = LoKi.Vertices.VertexAbsDeltaZ 
 
 
 # =============================================================================
@@ -571,12 +584,40 @@ BESTPVVERTSEPSIGN     = LoKi.Particles.VertexSignedDistanceDV ()          ## by 
 BPVVDDOT              = LoKi.Particles.VertexDotDistanceDV  ()
 BESTPVVERTSEPALONGMOM = LoKi.Particles.VertexDotDistanceDV  ()            ## by Vava GLIGOROV 
 
+
 BPVVDCHI2             = LoKi.Particles.VertexChi2DistanceDV ()
 BPVLTIME              = LoKi.Particles.LifeTimeDV           
 BPVLT                 = LoKi.Particles.LifeTimeDV           
 BPVLTCHI2             = LoKi.Particles.LifeTimeChi2DV
 BPVLTSIGNCHI2         = LoKi.Particles.LifeTimeSignedChi2DV
 BPVLTFITCHI2          = LoKi.Particles.LifeTimeFitChi2DV
+
+# =============================================================================
+# Functions for Lisa Dwyer 
+# =============================================================================
+BPVLTERR              = LoKi.Particles.LifeTimeErrorDV           
+
+
+# =============================================================================
+# Functions for Olivier Leroy
+# =============================================================================
+## @see LoKi::Cuts::REFIT
+REFIT         = LoKi.Particles.ReFitter 
+## @see LoKi::Cuts::REFITTER
+REFITTER      = LoKi.Particles.ReFitter 
+## @see LoKi::Cuts::MFIT
+MFIT          = LoKi.Particles.MassFitter () 
+## @see LoKi::Cuts::MFITTER
+MFITTER       = LoKi.Particles.MassFitter
+## @see LoKi::Cuts::MASSFIT
+MASSFIT       = LoKi.Particles.MassFitter
+
+# =============================================================================
+# Functions for Jaap Panman 
+# =============================================================================
+## @see LoKi::Cuts::BPVDVDOCA
+BPVDVDOCA     = LoKi.Particles.DHCoplanarity
+ 
 
 # vertex separation (for particles) with respect to *all* vertices
 
@@ -597,6 +638,27 @@ VMINVDTES             = LoKi.Vertices.MinVertexDistanceTES
 VMINVDCHI2SOURCE      = LoKi.Vertices.MinVertexChi2DistanceWithSource
 VMINVDCHI2DV          = LoKi.Vertices.MinVertexChi2DistanceDV
 VMINVDCHI2TES         = LoKi.Vertices.MinVertexChi2DistanceTES
+
+# functors rerquired by Rob Lambert:
+
+## @see LoKi::Cuts::MAXDIRASOURCE 
+MAXDIRASOURCE         = LoKi.Particles.MaxCosineDirectionAngleWithSource
+## @see LoKi::Cuts::MAXDIRADV 
+MAXDIRADV             = LoKi.Particles.MaxCosineDirectionAngleDV 
+## @see LoKi::Cuts::MAXDIRATES
+MAXDIRATES            = LoKi.Particles.MaxCosineDirectionAngleTES
+## @see LoKi::Cuts::DOCA 
+DOCA                  = LoKi.Particles.DOCA
+## @see LoKi::Cuts::DOCACHI2  
+DOCACHI2              = LoKi.Particles.DOCAChi2 
+## @see LoKi::Cuts::DOCAMAX_
+DOCAMAX_              = LoKi.Particles.DOCAMax
+## @see LoKi::Cuts::DOCACHI2MAX_
+DOCACHI2MAX_          = LoKi.Particles.DOCAChi2Max 
+## @see LoKi::Cuts::DOCAMAX
+DOCAMAX               = LoKi.Particles.DOCAMax     () 
+## @see LoKi::Cuts::DOCACHI2MAX
+DOCACHI2MAX           = LoKi.Particles.DOCAChi2Max ()
 
 
 # the functors, required by Sean BRISBANE :
@@ -628,6 +690,8 @@ D2DVVDDOT       = LoKi.Particles.DaughterVertexDistanceDot
 ## @see LoKi::Cuts::D2DVVDSIGN
 D2DVVDSIGN      = LoKi.Particles.DaughterVertexSignedDistance
 
+## @see LoKi::Cuts::BPVTRGPOINTING
+BPVTRGPOINTING     = LoKi.Particles.TrgPointingScoreWithBestPV()
 
 # =============================================================================
 # Functional part: 
@@ -681,6 +745,8 @@ VSOURCEDESKTOP = LoKi.Vertices.SourceDesktop
 
 ## Legacy stuff
 BPVVDS_LEGACY = LoKi.Legacy.DistanceSignificanceWithBestPV () 
+TRGPOINTINGWPT = LoKi.Legacy.TrgPointingScoreWithPt
+BPVTRGPOINTINGWPT = LoKi.Legacy.TrgPointingScoreWithPtWithBestPV ()
 
 
 # =============================================================================

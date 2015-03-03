@@ -1,9 +1,46 @@
-! $Id: release.notes,v 1.60 2009-01-08 16:39:57 cattanem Exp $ 
+! $Id: release.notes,v 1.64 2009-05-07 12:13:18 cattanem Exp $ 
 ! -----------------------------------------------------------------------------
 ! Package     : Kernel/Relations
 ! Responsible : Vanya BELYAEV   ibelyaev@physics.syr.edu
 ! Purpose     : General purposes templated relations between classes
 !-----------------------------------------------------------------------------
+
+!====================== Relations v5r7 2009-05-07 ============================
+! 2009-04-24 - Vanya BELYAEV
+ - introduce the new methods for each relation object:
+     i_add ( Entry )  - inlined 
+       add ( Entry )  - virtual
+
+      TABLE::i_add
+      TABLE::add 
+
+ - reimplement i_relate in term of i_add 
+ - add public type "Entry" fo reach relation object
+
+         TABLE::Entry 
+
+ - specify boolean enum for compile-time recoginition of 
+    weighted/unweighted relations:
+
+         TABLE::TypeTraits::weighted 
+
+     (set to "true" for weighted and "false" for ordinary relations) 
+
+
+! 2009-04-15 - Marco Cattaneo
+ - Fix dependecies of RelationsTest, for make -j
+
+! 2009-04-09 - Vanya BELYAEV 
+ - src/Relations.cpp
+   remove local instances of relation tables. 
+   Due to some unknown reasons
+   it causes some problem with compilation of PHYS with SUSE
+   
+ - tests/RelationsTests.cpp
+   add the auxillary test for queich checks of compilation problems. 
+
+ - cmt/requirements 
+    version increment to v5r7 
 
 !====================== Relations v5r6 2008-11-17 ============================
 ! 2008-11-29 - Vanya BELYAEV

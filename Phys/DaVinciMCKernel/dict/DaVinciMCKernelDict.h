@@ -1,4 +1,4 @@
-// $Id: DaVinciMCKernelDict.h,v 1.7 2009-03-06 16:32:45 jpalac Exp $
+// $Id: DaVinciMCKernelDict.h,v 1.10 2009-04-08 12:34:13 jpalac Exp $
 #ifndef DICT_DAVINCIMCKERNELDICT_H 
 #define DICT_DAVINCIMCKERNELDICT_H 1
 
@@ -21,7 +21,14 @@
 #include "Kernel/IMCParticleArrayFilter.h"
 #include "Kernel/IMC2Collision.h"
 #include "Kernel/IParticle2MCAssociator.h"
+#include "Kernel/IParticle2MCWeightedAssociator.h"
 #include "Kernel/IP2VVMCPartAngleCalculator.h"
 #include "Kernel/IPrintDecayTreeTool.h"
 #include "Kernel/IPV2MC.h"
+#include "Kernel/MCAssociation.h"
+namespace
+{
+  std::vector<MCAssociation> __stdvector_MCAssoc;
+}
+
 #endif // DICT_DAVINCIMCKERNELDICT_H

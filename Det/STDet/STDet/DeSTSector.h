@@ -1,4 +1,4 @@
-// $Id: DeSTSector.h,v 1.36 2009-02-18 07:38:53 jluisier Exp $
+// $Id: DeSTSector.h,v 1.39 2009-04-03 06:33:00 jluisier Exp $
 #ifndef _DeSTSector_H_
 #define _DeSTSector_H_
 
@@ -107,6 +107,35 @@ public:
    */
   double portNoise(const unsigned int& beetle, const unsigned int& port) const;
 
+  /** get the ADC count from the electron number
+   * @param e electron number
+   * @param aChannel channel
+   * @return ADC count
+   */
+  double toADC(const double& e, const LHCb::STChannelID& aChannel) const;
+
+  /** get the ADC count from the electron number
+   * @param e electron number
+   * @param aStrip strip number
+   * @return ADC count
+   */
+  double toADC(const double& e, const unsigned int& aStrip) const;
+
+  /** get the electron number from the ADC count
+   * @param val ADV count
+   * @param aChannel channel
+   * @return electron number
+   */
+  double toElectron(const double& val,
+                    const LHCb::STChannelID& aChannel) const;
+
+  /** get the electron number from the ADC count
+   * @param val ADV count
+   * @param aStrip strip number
+   * @return electron number
+   */
+  double toElectron(const double& val, const unsigned int& aStrip) const;
+
   /** sector identfier
    * @return id
    */
@@ -119,7 +148,7 @@ public:
    *  @param  aChannel channel
    *  @return bool
    */
-  bool contains(const LHCb::STChannelID aChannel) const;
+  virtual bool contains(const LHCb::STChannelID aChannel) const;
 
   /** detector pitch
    * @return pitch
@@ -322,6 +351,9 @@ public:
   */
   double fractionActive() const;
 
+  /** direct access to the status condition, for experts only */
+  const Condition* statusCondition() const;
+
 protected:
 
   StatusCode registerConditionsCallbacks();
@@ -338,6 +370,7 @@ private:
   //  void clear();
   
   StatusCode updateStatusCondition();
+  StatusCode updateNoiseCondition();
   void toEnumMap(const std::map<int,int>& input, DeSTSector::StatusMap& output);
   std::auto_ptr<LHCb::Trajectory> createTraj(const unsigned int strip, const double offset ) const; 
 
@@ -374,6 +407,7 @@ private:
   // Noise info
   std::string m_noiseString;
   std::vector< double > m_noiseValues;
+  std::vector< double > m_electronsPerADC;
 };
 
 inline unsigned int DeSTSector::id() const{
@@ -589,6 +623,9 @@ inline const std::string& DeSTSector::nickname() const{
   return m_nickname;
 }
 
+inline const Condition* DeSTSector::statusCondition() const{
+  return condition(m_statusString);
+}
 #include "STDet/StatusMap.h"
  
 #endif // _DeSTSector_H

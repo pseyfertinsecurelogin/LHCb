@@ -1,4 +1,4 @@
-// $Id: DVAlgorithm.h,v 1.37 2009-02-13 15:38:06 jpalac Exp $ 
+// $Id: DVAlgorithm.h,v 1.39 2009-04-23 12:47:57 pkoppenb Exp $ 
 // ============================================================================
 #ifndef DAVINCIKERNEL_DVALGORITHM_H
 #define DAVINCIKERNEL_DVALGORITHM_H 1
@@ -44,7 +44,11 @@ class IRelatedPVFinder;
  *  Base Class for DaVinci Selection Algorithms:
  *  Does the retrieval of all necessary DaVinci Tools
  *
- *  The specific configurtaion properties of the base class: 
+ *  The specific configuration properties of the base class: 
+ *
+ *  - <b>InputLocations</b> : from where to take the particles? 
+ *    Forwarded to PhysDesktop.
+ *    @see IPhysDesktop
  *
  *  - <b>VertexFitters</b> : the map for possible vertex fitters.
  *      @see IVertexFit 
@@ -64,9 +68,6 @@ class IRelatedPVFinder;
  *
  *  - <b>ParticleFilters</b> : the map for possible particle filters 
  *     @see IParticleFilter 
- *
- *  - <b>FilterCriteria</b>  : the map for possible particle filter criteria
- *     @see IFilterCriterion
  *
  *  - <b>ParticleCombiners</b> : the map for possible particle combiners
  *     @see IParticleCombiner
@@ -121,8 +122,11 @@ public:
   // Overridden from Gaudi Algorithm
   virtual StatusCode finalize ();  
 
-  // Overridden from Gaudi Algorithm
+  // Get decay descriptor
   std::string getDecayDescriptor(){return m_decayDescriptor;};  
+
+  // Set decay descriptor
+  void setDecayDescriptor(std::string dd){m_decayDescriptor = dd;};  
 
   /// Imposes an output location for desktop different from algo name
   /// Should be avoided!
@@ -238,16 +242,6 @@ public:
       ( name          , 
         m_filterNames , 
         m_filters     , this ) ;
-  }
-
-  /// Accessor for Filter Criterion Tool
-  inline IFilterCriterion* 
-  filterCriterion ( const std::string& name = "" ) const
-  {
-    return getTool<IFilterCriterion>
-      ( name             , 
-        m_criteriaNames  , 
-        m_criteria       , this ) ;
   }
 
   /// Accessor for ParticleCombiner tool
@@ -523,11 +517,6 @@ protected:
   /// The actual map of "nickname -> tool" for Particle Filters 
   mutable GaudiUtils::VectorMap<std::string,IParticleFilter*>       m_filters ;
   
-  /// Mapping of "nickname ->type/name" for Filter Criteria 
-  ToolMap                                                     m_criteriaNames ;
-  /// The actual map of "nickname -> tool" for Particle Filters 
-  mutable GaudiUtils::VectorMap<std::string,IFilterCriterion*>     m_criteria ;
-  
   /// Mapping of "nickname ->type/name" for Particle Combiners
   ToolMap                                             m_particleCombinerNames ;
   /// The actual map of "nickname -> tool" for Particle Combiners 
@@ -623,6 +612,8 @@ private:
   /// at any event. This option is thus only recommended for use of DVAlgorithm
   /// to do something unrelated to physics analysis.
   bool m_preloadTools;
+  /// InputLocations
+  std::vector<std::string> m_inputLocations ;
 
 };
 // ==========================================================================

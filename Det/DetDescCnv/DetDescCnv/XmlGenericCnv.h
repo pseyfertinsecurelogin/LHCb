@@ -1,4 +1,4 @@
-// $Id: XmlGenericCnv.h,v 1.8 2007-02-02 08:17:08 marcocle Exp $
+// $Id: XmlGenericCnv.h,v 1.11 2009-05-04 14:57:08 ocallot Exp $
 
 #ifndef DETDESCCNV_XMLGENERICCNV_H
 #define DETDESCCNV_XMLGENERICCNV_H
@@ -6,6 +6,8 @@
 // Include files
 #include "GaudiKernel/Converter.h"
 #include "GaudiKernel/IConversionSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/SmartIF.h"
 
 #include "XmlTools/IXmlSvc.h"
 
@@ -41,13 +43,13 @@ class XmlGenericCnv : public Converter {
    *  @return status depending on the completion of the call
    */
   virtual StatusCode initialize();
-  
+
   /**
    * Finalizes the converter
    *  @return status depending on the completion of the call
    */
   virtual StatusCode finalize();
-  
+
   /**
    * Creates the transient representation of an object.
    * @param addr the address of the object representation
@@ -64,7 +66,7 @@ class XmlGenericCnv : public Converter {
    */
   virtual StatusCode updateObj (IOpaqueAddress* pAddress,
                                 DataObject* pObject);
-  
+
   /**
    * Converts the transient object to the requested representation.
    * @param refpAddress the address of the object representation
@@ -73,7 +75,7 @@ class XmlGenericCnv : public Converter {
    */
   virtual StatusCode createRep (DataObject* pObject,
                                 IOpaqueAddress*& refpAddress);
-  
+
   /**
    * Updates the converted representation of a transient object.
    * @param pAddress the address of the object representation
@@ -89,7 +91,9 @@ class XmlGenericCnv : public Converter {
    *  @return status depending on the completion of the call
    */
   IXmlSvc* xmlSvc() {
-    if (!m_xmlSvc) m_xmlSvc = dynamic_cast<IXmlSvc*>(conversionSvc());
+    if (!m_xmlSvc.isValid()) {
+      m_xmlSvc = conversionSvc();
+    }
     return m_xmlSvc;
   }
 
@@ -123,7 +127,7 @@ protected:
    * Default destructor
    */
   ~XmlGenericCnv();
-  
+
   /** This creates the transient representation of an object from the
    *  DOMElement representing it, then fills it and process it.
    *  This implementation actually only calls the i_* methods to do the job.
@@ -137,7 +141,7 @@ protected:
   virtual StatusCode internalCreateObj (xercesc::DOMElement* element,
                                         DataObject*& refpObject,
                                         IOpaqueAddress* address);
-  
+
   /** This creates the transient representation of an object from the
    *  DOMElement representing it. This actually does the "new" operation
    *  and deals with the attributes of the node. This should not deal with
@@ -195,7 +199,7 @@ protected:
   IOpaqueAddress* createAddressForHref (std::string href,
                                         CLID clid,
                                         IOpaqueAddress* parent) const;
-  
+
   /**
    * This creates an XmlAddress using the location, entryName and clid
    * @param location the location string for this address
@@ -228,7 +232,24 @@ protected:
   static const std::string dom2Std (const XMLCh* domString);
 
   /// the IXmlSvc interface of this object
-  IXmlSvc* m_xmlSvc;
+  SmartIF<IXmlSvc> m_xmlSvc;
+
+  /// The message stream
+  MsgStream* m_msg;
+  
+  /// Methods to print as in GaudiAlgorithms
+  MsgStream& verbose() const { return *m_msg << MSG::VERBOSE; }
+  
+  MsgStream& debug()   const { return *m_msg << MSG::DEBUG; }
+
+  MsgStream& info()    const { return *m_msg << MSG::INFO; }
+  
+  MsgStream& warning() const { return *m_msg << MSG::WARNING; }
+
+  MsgStream& error()   const { return *m_msg << MSG::ERROR; }  
+ 
+  MsgStream& fatal()   const { return *m_msg << MSG::FATAL; }  
+ 
 
 private:
 
@@ -244,6 +265,7 @@ private:
   const XMLCh* detelemString;
   const XMLCh* conditionString;
   const XMLCh* classIDString;
+  const XMLCh* serialNumberString;
   
   /// Flag that says if the storage type CONDDB_StorageType is accessible.
   bool m_have_CONDDB_StorageType;

@@ -1,7 +1,28 @@
-!$Id: release.notes,v 1.162 2009-03-09 13:03:11 cattanem Exp $
+!$Id: release.notes,v 1.168 2009-05-06 15:22:53 cattanem Exp $
 !Package         : STDet
 !Package manager : M. Needham
-!-------------------------------------------------------------------------
+i!-------------------------------------------------------------------------
+
+!======================== STDet v4r9 2009-05-06 ===========================
+! 2009-04-03 J Luisier
+ - Add access to Noise condition in DeSTSector
+ - Add methods to read the noise per sector / beetle / beetle port and strip
+   in DeSTSector
+ - Add toElectron and toADC methods in DeSTSector 
+ - Add access to ProdID condition in DeITSector and DeTTHalfModule
+ - Add prodID method in DeSTSector
+
+! 2009-04-06 
+ - Clean up printout in case try to make invalid traj [DeSTSector]
+
+! 2009-03-30 M Needham
+ - Add access to status Condition to DeSTSector
+
+! 2009-03-17 M Needham
+ - Add halfModuleType to DeTTSector class
+
+! 20009-03-14 M. Needham
+ - Move contains function to DeSTBaseElement class + make virtual
 
 !======================== STDet v4r8 2009-03-09 ==========================
 ! 2009-02-27 M Needham

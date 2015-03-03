@@ -1,7 +1,24 @@
-! $Id: release.notes,v 1.114 2009-01-08 12:54:25 cattanem Exp $
+! $Id: release.notes,v 1.119 2009-05-06 14:58:13 cattanem Exp $
 ! Package     : CaloUtils
 ! Responsible : Olivier Deschamps odescham@in2p3.fr
 !------------------------------------------------------------------------------
+
+!========================== CaloUtils v8r4 2009-05-06 =========================
+! 2009-04-20 - Olivier Deschamps
+ - Calo2Dview : add protection + 1D profile allowed
+
+! 2009-04-10 - Olivier Deschamps
+ - Calo2Dview : fix bug in 'electronics' 2D view for Spd
+
+! 2009-04-06 - Olivier Deschamps
+ - Calo2Dview : add new 2D views (crate-feb vs channels) + 
+                possibility to split the view per area
+
+! 2009-03-20 - Victor Egorychev
+ - CaloUtils/CaloTrackMatch.h
+    Error to Warning (requisted by Olivier)
+ - cmt/requirements
+  . Increase version to v8r4
 
 !========================== CaloUtils v8r3p1 2008-11-17 =========================
 ! 2008-12-10 - Marco Cattaneo

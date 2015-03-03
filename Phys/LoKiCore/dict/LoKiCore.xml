@@ -1,7 +1,7 @@
 <!-- 
-     * $Id: LoKiCore.xml,v 1.12 2008-12-12 16:35:24 ibelyaev Exp $ 
+     * $Id: LoKiCore.xml,v 1.14 2009-05-06 20:20:01 ibelyaev Exp $ 
      * ========================================================================
-     * CVS tag:$Name: not supported by cvs2svn $, version $Revision: 1.12 $ 
+     * CVS tag:$Name: not supported by cvs2svn $, version $Revision: 1.14 $ 
      * ======================================================================== 
      * @file
      * The seleciton file to build Reflex dictionaries for Phys/LoKiCore package
@@ -50,8 +50,23 @@
   <class    name = "Gaudi::Histo1DDef"                 />
   <function name = "Gaudi::Histos::book"               />
   <function name = "LoKi::HistoBook::book"             />
+  <function name = "LoKi::Monitoring::getCounter"      />
 
- 
+
+  <function name = "Decays::Trees::arrow"      />
+  <function name = "Decays::Trees::decayOnly"  />
+  <function name = "Decays::Trees::photos"     />
+  <function name = "Decays::Trees::algorithm"  />
+  <function name = "Decays::Trees::valid"      />
+  <enum     name = "Decays::Trees::Oscillation" />
+  <enum     name = "Decays::Trees::Alg"   />
+  <enum     name = "Decays::Trees::Arrow" />
+
+  <enum name = "LoKi::Monitoring::Flag"  />
+
+  <class name    = "IStatSvc"      />
+  <class name    = "IChronoSvc"    />
+
   <exclusion>
     <class    name    = "std::unary_function<char,bool>"        />
     <class    name    = "std::unary_function<const char*,bool>" /> 

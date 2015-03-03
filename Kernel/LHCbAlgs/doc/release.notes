@@ -4,6 +4,20 @@
 ! Purpose     : General purpose algorithms and tools for LHCb
 !-----------------------------------------------------------------------------
 
+!======================== LHCbAlgs v2r26 2009-05-07 ==========================
+! 2009-05-01 - Gerhard Raven
+ - speed up DeterministicPrescaler
+
+! 2009-04-15 - Patrick Koppenburg
+ - AlgorithmCorrelations : check for duplicate entries
+
+! 2009-04-06 - Olivier Deschamps
+ - OdinTimeDecoder : make the tool ODINDecodeTool private
+
+! 2009-03-17 - Marco Cattaneo
+ - Fix TESCheck.cpp for Gaudi v21 (backward compatible)
+ - Replace all endreq (deprecated) by endmsg
+
 !======================== LHCbAlgs v2r25 2009-03-10 ==========================
 ! 2009-03-09 - Jeroen van Tilburg
  - Added FilterByBankType algorithm. Can be used to select events based 

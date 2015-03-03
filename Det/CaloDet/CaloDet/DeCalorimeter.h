@@ -1,4 +1,4 @@
-// $Id: DeCalorimeter.h,v 1.36 2008-09-30 08:51:24 odescham Exp $ 
+// $Id: DeCalorimeter.h,v 1.39 2009-05-06 15:59:13 odescham Exp $ 
 // ============================================================================
 #ifndef       CALODET_DECALORIMETER_H
 #define       CALODET_DECALORIMETER_H 1
@@ -64,9 +64,6 @@ class DeCalorimeter: public DetectorElement
 public:
   typedef std::vector<const DeSubCalorimeter*>  SubCalos  ;
   typedef std::vector<const DeSubSubCalorimeter*>  SubSubCalos  ;
-protected:
-  typedef std::vector<DeSubCalorimeter*>        SubCalos_ ;
-public:
   ///  Constructors
   DeCalorimeter( const std::string& name    = "" );
   ///  (dirtual) Destructor
@@ -103,6 +100,7 @@ public:
   const SubCalos&  subCalos() const { return m_subCalos ; }
   double zSize () const { return m_zSize         ; };
   double        zOffset       () const { return m_zOffset       ; };
+  unsigned int numberOfAreas() const{return m_nArea;};
  // reference plane in the global frame 
   Gaudi::Plane3D plane ( const double           zLocal ) const ;
   inline  Gaudi::Plane3D plane ( const Gaudi::XYZPoint& point  ) const ;
@@ -111,12 +109,22 @@ public:
 
   // accessing the calibration parameters
   //-------------------------------------
-  double maxEtInCenter(unsigned int reg)const{return (reg<m_maxEtInCenter.size()) ? m_maxEtInCenter[reg]:m_maxEtInCenter[0];}; 
-  double maxEtSlope(unsigned int reg)   const{return (reg<m_maxEtSlope.size()) ? m_maxEtSlope[reg] : m_maxEtSlope[0];};
-  double        pedestalShift    ()     const { return m_pedShift     ; };  
-  double        pinPedestalShift ()     const { return m_pinPedShift  ; };  
-  double        L0EtGain         ()     const { return m_l0Et         ; };
+  double maxEtInCenter(unsigned int reg=0)const{return (reg<m_maxEtInCenter.size()) ? m_maxEtInCenter[reg]:m_maxEtInCenter[0];}; 
+  double maxEtSlope(unsigned int reg=0)   const{return (reg<m_maxEtSlope.size()) ? m_maxEtSlope[reg] : m_maxEtSlope[0];};
+  double        pedestalShift    ()     const { return m_pedShift      ; };  
+  double        pinPedestalShift ()     const { return m_pinPedShift   ; };  
+  double        L0EtGain         ()     const { return m_l0Et          ; };
+  double        coherentNoise    ()     const { return m_cNoise        ; };
+  double        incoherentNoise  ()     const { return m_iNoise        ; };
   // for simulation only
+  int           zSupMethod       ()     const { return (int) m_zSupMeth; };
+  double        zSupThreshold    ()     const { return m_zSup          ; };
+  double        l0Threshold      ()     const { return m_l0Thresh        ; };
+  double        mipDeposit       ()     const { return m_mip           ; };
+  double        dynamicsSaturation()    const { return m_dyn           ; };
+  double        fractionFromPrevious()  const { return m_prev          ; };
+  double numberOfPhotoElectrons(unsigned int area=0) const { return (area < m_phe.size() ) ? m_phe[area] : 0.  ; };  
+  double l0EtCorrection(unsigned int area=0) const { return (area < m_l0Cor.size() ) ? m_l0Cor[area] : 1.  ; };  
   double        activeToTotal    ()     const { return m_activeToTotal; };    
 
   // accessing the hardware parameter(s)
@@ -154,7 +162,10 @@ public:
   inline bool hasQuality( const LHCb::CaloCellID& , CaloCellQuality::Flag flag );
   inline bool isDead  ( const LHCb::CaloCellID& );
   inline bool isNoisy ( const LHCb::CaloCellID& );
-  inline bool isMasked( const LHCb::CaloCellID& );
+  inline bool isShifted( const LHCb::CaloCellID& );
+  inline bool hasDeadLED( const LHCb::CaloCellID& );
+  inline bool isVeryNoisy ( const LHCb::CaloCellID& );
+  inline bool isVeryShifted( const LHCb::CaloCellID& );
   // from cellId to  serial number and vice-versa
   inline int cellIndex    ( const LHCb::CaloCellID&  ) const ;
   inline LHCb::CaloCellID cellIdByIndex( const unsigned int ) const ;
@@ -188,7 +199,11 @@ public:
   inline int cardCrate( const int card ) const ;
   inline int cardSlot(  const int card ) const ;
   inline int cardCode(  const int card ) const ;
-  inline std::vector<LHCb::CaloCellID>&  cardChannels( const int card )  ;  
+  inline const std::vector<LHCb::CaloCellID>&  cardChannels( const int card )  ;  
+  inline const std::vector<LHCb::CaloCellID>&  pinChannels( const LHCb::CaloCellID )  ;  
+  inline const std::vector<LHCb::CaloCellID>&  ledChannels( const int led )  ;  
+  inline const std::vector<int>&  pinLeds( const LHCb::CaloCellID )  ;  
+  inline const std::vector<int>&  cellLeds( const LHCb::CaloCellID )  ;  
   inline int cardIndexByCode( const int crate , const int slot );
   inline int cardToTell1( const int card ) const ;
   // from validation to Hcal FEB
@@ -197,18 +212,20 @@ public:
   int nTell1s ( )  const { return m_tell1Boards.size(); }
   inline std::vector<int> tell1ToCards(const int tell1 ) const;
   // CardParam/Tell1Param/CellParam
-  CardParam cardParam( int card ){return m_feCards[card];  }
-  Tell1Param tell1Param(int tell1){return m_tell1Boards[tell1];  }
-  CellParam cellParam(LHCb::CaloCellID id){ return m_cells[id]; }
+  const CardParam cardParam( const int card ){return m_feCards[card];  }
+  const Tell1Param tell1Param(const int tell1){return m_tell1Boards[tell1];  }
+  const CellParam cellParam(const LHCb::CaloCellID& id){ return m_cells[id]; }
+  const CaloPin   caloPin(const LHCb::CaloCellID& id){ return m_pins[id]; }
+  const CaloLed   caloLed(const int led ){ return m_leds[led]; }
   //  More complex functions
   LHCb::CaloCellID  Cell( const Gaudi::XYZPoint& point ) const ;
   inline const CellParam* Cell_( const Gaudi::XYZPoint& point ) const ;
   // Collections
-  CaloVector<CellParam>& cellParams(){return m_cells;}
-  CaloVector<CaloPin>&  caloPins(){return m_pins;}
-  std::vector<CaloLed>&  caloLeds(){return m_leds;}
-  std::vector<CardParam>& cardParams(){return m_feCards;}
-  std::vector<Tell1Param>& tell1Params(){return m_tell1Boards;}
+  const CaloVector<CellParam>& cellParams(){return m_cells;}
+  const CaloVector<CaloPin>&  caloPins(){return m_pins;}
+  const std::vector<CaloLed>&  caloLeds(){return m_leds;}
+  const std::vector<CardParam>& cardParams(){return m_feCards;}
+  const std::vector<Tell1Param>& tell1Params(){return m_tell1Boards;}
   // PIN flag
   bool isPinCard (const int card) { return m_feCards[card].isPinCard(); };
   bool isPinTell1(const int tell1) { return m_tell1Boards[tell1].readPin(); };
@@ -223,7 +240,6 @@ protected:
   StatusCode     getCalibration ();
   StatusCode     getL0Calibration();
   StatusCode     getQuality     ();
-  const SubCalos_& subCalos()       { return m_subCalos_ ; }
 
 private:
   DeCalorimeter( const DeCalorimeter& ) ;
@@ -240,7 +256,6 @@ private:
   double   m_zSize;
   double   m_zOffset;
   SubCalos   m_subCalos  ;
-  SubCalos_  m_subCalos_ ;
   unsigned int m_nArea;
 
   // hardware
@@ -259,6 +274,16 @@ private:
   double   m_pinPedShift;
   double   m_l0Et;
   double   m_activeToTotal;
+  double   m_cNoise;
+  double   m_iNoise;
+  double   m_zSupMeth;
+  double   m_zSup;
+  double   m_mip;
+  double   m_dyn;
+  double   m_prev;
+  double   m_l0Thresh;
+  std::vector<double> m_phe;
+  std::vector<double> m_l0Cor;
 
   // reconstruction
   double   m_zShowerMax;
@@ -341,7 +366,7 @@ inline MsgStream&     operator<<( MsgStream&    os , const DeCalorimeter& de )
  *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
  */
 inline MsgStream&     operator<<( MsgStream&    os , const DeCalorimeter* de )
-{ return de ? (os<<*de) : (os<<" DeCalorimeter* points to NULL!"<<endreq   ); }
+{ return de ? (os<<*de) : (os<<" DeCalorimeter* points to NULL!"<<endmsg   ); }
 // ===========================================================================
 
 // ===========================================================================
@@ -354,6 +379,7 @@ inline bool DeCalorimeter::valid    ( const LHCb::CaloCellID& ID ) const
 // ===========================================================================
 inline bool DeCalorimeter::hasQuality( const LHCb::CaloCellID& ID , CaloCellQuality::Flag flag){
   int quality = m_cells[ID].quality();
+  if( flag == CaloCellQuality::OK)return (quality == 0);
   return ( (quality & flag) != 0) ;
 }
 inline bool DeCalorimeter::isDead(const LHCb::CaloCellID& ID){
@@ -362,8 +388,17 @@ inline bool DeCalorimeter::isDead(const LHCb::CaloCellID& ID){
 inline bool DeCalorimeter::isNoisy(const LHCb::CaloCellID& ID){
   return hasQuality(ID, CaloCellQuality::Noisy);
 }
-inline bool DeCalorimeter::isMasked(const LHCb::CaloCellID& ID){
-  return hasQuality(ID, CaloCellQuality::Masked);
+inline bool DeCalorimeter::isShifted(const LHCb::CaloCellID& ID){
+  return hasQuality(ID, CaloCellQuality::Shifted);
+}
+inline bool DeCalorimeter::hasDeadLED(const LHCb::CaloCellID& ID){
+  return hasQuality(ID, CaloCellQuality::DeadLED);
+}
+inline bool DeCalorimeter::isVeryNoisy(const LHCb::CaloCellID& ID){
+  return hasQuality(ID, CaloCellQuality::VeryNoisy);
+}
+inline bool DeCalorimeter::isVeryShifted(const LHCb::CaloCellID& ID){
+  return hasQuality(ID, CaloCellQuality::VeryShifted);
 }
 // ===========================================================================
 //  x-position of center of the cell
@@ -682,8 +717,16 @@ inline int DeCalorimeter::cardSlot( const int card ) const
 { return m_feCards[card].slot(); };
 inline int DeCalorimeter::cardCode( const int card ) const 
 { return m_feCards[card].code(); };
-inline std::vector<LHCb::CaloCellID>&  DeCalorimeter::cardChannels( const int card ) 
+inline const std::vector<LHCb::CaloCellID>&  DeCalorimeter::cardChannels( const int card ) 
 { return m_feCards[card].ids(); };
+inline const std::vector<LHCb::CaloCellID>&  DeCalorimeter::pinChannels( const LHCb::CaloCellID id) 
+{ return m_pins[id].cells(); };
+inline const std::vector<LHCb::CaloCellID>&  DeCalorimeter::ledChannels( const int led) 
+{ return m_leds[led].cells(); };
+inline const std::vector<int>&  DeCalorimeter::pinLeds( const LHCb::CaloCellID id )
+{ return m_pins[id].leds(); };
+inline const std::vector<int>&  DeCalorimeter::cellLeds( const LHCb::CaloCellID id )
+{ return m_cells[id].leds(); };
 
 inline int DeCalorimeter::cardIndexByCode( const int crate, const int slot ) 
 { 

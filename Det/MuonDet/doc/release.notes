@@ -1,7 +1,15 @@
-! $Id: release.notes,v 1.125 2008-11-17 14:44:37 cattanem Exp $
+! $Id: release.notes,v 1.129 2009-05-06 15:13:37 cattanem Exp $
 ! Package     : MuonDet
 ! Responsible : Alessia Satta
 !----------------------------------------------------------------------------
+
+!========================= MuonDet v8r5 2009-05-06 ==========================
+! 2009-04-30 - Alessia Satta
+ - Update dict/MuonDet.xml (.h) for new name IMuonFastPosTool
+! 2009-04-29 - Alessia Satta
+ - Rename interface IMuonPosTool in IMuonFastPosTool
+! 2009-04-09 - Alessia Satta
+ - Clean up printout
 
 !========================= MuonDet v8r4 2008-11-17 ==========================
 ! 2008-10-28 - Marco Cattaneo

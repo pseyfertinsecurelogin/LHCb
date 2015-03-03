@@ -1,9 +1,107 @@
-! $Id: release.notes,v 1.66 2009-03-09 14:21:47 cattanem Exp $
+! $Id: release.notes,v 1.87 2009-05-07 13:00:43 cattanem Exp $
 !-----------------------------------------------------------------------------
 ! Package     : Phys/DaVinciMCKernel
 ! Responsible : Juan PALACIOS
 ! Purpose     : MCEvent dependent interfaces and base classes.
 !-----------------------------------------------------------------------------
+
+!====================== DaVinciMCKernel v3r2 2009-05-07 ======================
+! 2009-05-07 - Juan PALACIOS
+ - Kernel/IParticle2MCAssociator.h
+ - Kernel/Particle2MCAssociatorBase.h
+ - src/Lib/Particle2MCAssociatorBase.cpp
+  . Add 
+    virtual const LHCb::MCParticle* operator() (const LHCb::Particle*) const
+
+! 2009-04-15 - Juan PALACIOS
+ - Kernel/Particle2MCParticle.h
+  . Add typedef for weighted Particle -> MCParticle relations table.
+
+! 2009-04-08 - Juan PALACIOS
+ - dict/DaVinciMCKernelDict.h
+  . Add instantiation for Particle2MCParticle::ToVector (std::vector<MCAssociation>
+  . Include Kernel/MCAssociation.h
+ - dict/DaVinciMCKernelDict.xml
+  . Add all classes and structs in Particle2MCParticle namespace
+  . Add class MCAssociation
+
+! 2009-04-08 - Juan PALACIOS
+ - Kernel/Particle2MCAssociatorBase.h
+  . Add safety for case when TES MCParticle container location returns 
+    null pointer
+ - src/Lib/Particle2MCParticle.cpp
+  . Avoid associations filtering when reference MCParticle container is empty.
+
+! 2009-04-06 - Juan PALACIOS
+ - Kernel/IParticle2MCWeightedAssociator.h
+  . Do not inherit from IAlgTool since IParticle2MCAssociator already does.
+ - Kernel/Particle2MCParticleAsociatorBase.h
+  . Remove include of Kernel/IParticle2MCAssociator.h
+ - Kernel/Particle2MCParticle.h
+  . Move function bodies to new src/Lib/Particle2MCParticle.cpp
+ - dict/DaVinciMCKernelDict.xml
+  . Add function pattern for namespace Particle2MCParticle
+
+! 2009-04-01 - Juan PALACIOS
+ - Kernel/Particle2MCParticle.h
+ . FilterMCAssociations method not static
+
+! 2009-03-31 - Juan PALACIOS
+ - src/Lib/Particle2MCAssociatorBase.cpp
+  . Declare both abstract interfaces in constructor
+ - Kernel/Particle2MCParticle.h
+  . Add static method to filter out MCAssociations that don't have MCParticles
+    coming from an MCParticle container
+ - Kernel/IParticle2MCAssociator.h
+  . #include "Event/MCParticle.h" needed after re-structuring.
+
+! 2009-03-27 - Juan PALACIOS
+ - Kernel/Particle2MCParticle.h
+  . Add functor to filter out MCAssociaitons who's MCParticle* are not 
+    inside a given MCParticle* container.
+ - Kernel/Particle2MCAssociatorBase.h
+  . Add relatedMCPsImpl, method to be implemented by derived classes.
+ - src/Lib/Particle2MCAssociatorBase.cpp
+  . add default implementation of relatedMCPsImpl. Uses associationWeight and
+    isAssociated methods
+
+! 2009-03-26 - Juan PALACIOS
+ - Kernel/Particle2MCAssociatorBase.h
+  . associationWeight now private
+  . Add method to normalise weights in Particle2MCParticle::ToVector
+ - Kernel/Particle2MCParticle.h
+  . Add functors for summing and sorting MCAssociation by weight
+ - Kernel/MCAssociation.h
+  . Add non-const reference access to weight
+ - Kernel/Particle2MCAssociatorBase.h
+  . Add private virtual method bool isAssociated(const LHCb::Particle*, const LHCb::MCParticle* ) const to allow for some filtering.
+
+ - Particle2MCAssociatorBase
+   . Add checkiong for empty association ranges when returning "best" MCParticle
+ - Kernel/IParticle2MCWeightedAssociator.h
+  . Inherits from IParticle2MCAssociator.h
+ - Kernel/Particle2MCAssociatorBase.h
+  .Inherits from IParticle2MCWeightedAssociator, which inherits from 
+   IParticle2MCAssociator
+ - Kernel/IParticle2MCAssociator.h
+  . Add associationWeight method
+ - Kernel/IParticle2MCAssociator.h
+  . Add doxygen
+ - Kernel/Particle2MCAssociatorBase.h
+  . Remove obsolete relaations table related methods
+  . Add associaitonWeight method
+ - dict/*
+  . Add dict for IParticle2MCWeightedAssociator
+
+! 2009-03-25 - Juan PALACIOS
+ - Add Kernel/IParticle2MCWeightedAssociator.h
+ - Kernel/IParticle2MCAssociator.h
+  . Now only has simple one-to-one association methods.
+ - Kernel/Particle2MCAssociatorBase.h
+  . Inherit from both interfaces above
+
+! 2009-03-17 - Marco Cattaneo
+ - Backward compatible fix for Gaudi v21
 
 !====================== DaVinciMCKernel v3r1 2009-03-09 ======================
 ! 2009-03-09 - Juan PALACIOS

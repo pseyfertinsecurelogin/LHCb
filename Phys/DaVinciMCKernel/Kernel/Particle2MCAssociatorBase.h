@@ -1,4 +1,4 @@
-// $Id: Particle2MCAssociatorBase.h,v 1.7 2009-03-09 14:12:36 jpalac Exp $
+// $Id: Particle2MCAssociatorBase.h,v 1.21 2009-05-07 10:26:05 jpalac Exp $
 #ifndef PARTICLE2MCASSOCIATORBASE_H 
 #define PARTICLE2MCASSOCIATORBASE_H 1
 
@@ -7,29 +7,38 @@
 #include "GaudiAlg/GaudiTool.h"
 // LHCb
 #include "Event/MCParticle.h"
-#include "Kernel/IParticle2MCAssociator.h"            // Interface
+#include "Kernel/IParticle2MCWeightedAssociator.h"            // Interface
 
 
 /** @class Particle2MCAssociatorBase Particle2MCAssociatorBase.h
  *  
- *  Common implementation for descendants of IParticle2MCAssociator.
+ *  Common implementation for descendants of IParticle2MCWeightedAssociator.
  *  Mainly inline helper methods for common implementation of host of 
  *  similar methods in the interface.
  *  Set of methods is self-consistent. Derived classes only need to implement
- *  methods
+ *  method
+ *  @code
+ *  relatedMCPsImpl(const LHCb::Particle* particle,
+ *                   const LHCb::MCParticle::ConstVector& mcParticles) const ;
+ *  @code
+ *  or the following methods, which are used internally in the default 
+ *  implementation of relatedMCPsImpl
  *  @code 
- *  bool isMatched(const LHCb::Particle*, const LHCb::MCParticle)
+ *  virtual bool isAssociated(const LHCb::Particle*, 
+ *                            const LHCb::MCParticle) const
  *  @endcode
  *  and
  *  @code
- *  LHCb::MCParticle::ConstVector sort(const LHCb::MCParticle::Container* mcParticles) const
+ *  virtual double associationWeight(const LHCb::Particle*,
+                                     const LHCb::MCParticle* ) const
  *  @code
  *
  *  @author Juan PALACIOS
  *  @date   2009-01-30
  */
 class Particle2MCAssociatorBase : public GaudiTool, 
-                                  virtual public IParticle2MCAssociator {
+                                  virtual public IParticle2MCWeightedAssociator
+{
 public: 
   /// Standard constructor
   Particle2MCAssociatorBase( const std::string& type, 
@@ -42,51 +51,80 @@ public:
   
   virtual ~Particle2MCAssociatorBase( );
 
-  virtual Particle2MCParticle::ToVector 
-  associate(const LHCb::Particle* particle) const ;
+  virtual const LHCb::MCParticle* 
+  relatedMCP(const LHCb::Particle*) const ;
+
+  virtual const LHCb::MCParticle* 
+  operator()(const LHCb::Particle*) const ;
+
+  virtual const LHCb::MCParticle*
+  relatedMCP(const LHCb::Particle*,
+             const std::string& mcParticleLocation) const ;
+
+  virtual const LHCb::MCParticle*
+  relatedMCP(const LHCb::Particle* particles,
+             const LHCb::MCParticle::ConstVector& mcParticles) const ;
+
+  virtual const LHCb::MCParticle*
+  relatedMCP(const LHCb::Particle* particles,
+             const LHCb::MCParticle::Container& mcParticles) const ;
 
   virtual Particle2MCParticle::ToVector 
-  associate(const LHCb::Particle* particle,
-            const std::string& mcParticleLocation) const ;
-
-  virtual Particle2MCParticle::LightTable 
-  relatedMCPs(const LHCb::Particle*) const ;
-
-  virtual Particle2MCParticle::LightTable 
-  relatedMCPs(const LHCb::Particle*,
-              const std::string& mcParticleLocation) const ;
+  relatedMCPs(const LHCb::Particle* particle) const ;
   
-  virtual Particle2MCParticle::LightTable 
-  relatedMCPs(const LHCb::Particle*,
+  virtual Particle2MCParticle::ToVector 
+  relatedMCPs(const LHCb::Particle* particle,
+              const std::string& mcParticleLocation) const ;
+
+  virtual Particle2MCParticle::ToVector 
+  relatedMCPs(const LHCb::Particle* particle,
+              const LHCb::MCParticle::Container& mcParticles) const ;
+
+  virtual Particle2MCParticle::ToVector 
+  relatedMCPs(const LHCb::Particle* particle,
               const LHCb::MCParticle::ConstVector& mcParticles) const ;
 
-  virtual Particle2MCParticle::LightTable 
-  associations(const LHCb::Particle::ConstVector& particles) const ;
-  
-  virtual Particle2MCParticle::LightTable 
-  associations(const LHCb::Particle::ConstVector& particles,
-               const std::string& mcParticleLocation) const ;
 
-  virtual Particle2MCParticle::LightTable 
-  associations(const LHCb::Particle::ConstVector& particles,
-               const LHCb::MCParticle::ConstVector& mcParticles) const ;
-
-  virtual Particle2MCParticle::LightTable 
-  associations(const LHCb::Particle::Container& particles) const ;
-
-  virtual Particle2MCParticle::LightTable 
-  associations(const LHCb::Particle::Container& particles,
-               const std::string& mcParticleLocation) const ;
-
-  virtual Particle2MCParticle::LightTable 
-  associations(const LHCb::Particle::Container& particles,
-               const LHCb::MCParticle::ConstVector& mcParticles) const ;
-
-  virtual bool 
-  isMatched(const LHCb::Particle* particle, 
-            const LHCb::MCParticle* mcParticle) const ;
-  
 private:
+
+  /**
+   *
+   * Return the association weight between an LHCb::Particle and an
+   * LHCb::MCParticle
+   *
+   * @param particle pointer to LHCb::Particle to be associated
+   * @param mcParticle pointer to LHCb::MCParticle to be associated
+   * @return weight of the association. It should be a probability, therefore
+   *         it is bounded by 0 and 1.
+   *
+   * @author Juan Palacios juan.palacios@nikhef.nl
+   * @date   2009-26-03
+   **/
+  virtual double associationWeight(const LHCb::Particle*,
+                                   const LHCb::MCParticle* ) const;
+
+  virtual bool isAssociated(const LHCb::Particle*,
+                            const LHCb::MCParticle* ) const;
+  /**
+   *
+   * 
+   * Calculate the weighted associations between an LHCb::Particle and
+   * and some LHCb::MCParticles
+   * @param particle LHCb::Particle* to be associated
+   * @param mcParticles Container of LHCb::MCParticle from which to associate
+   * @return Particle2MCParticle::ToVector containing weighted associations
+   *
+   * Uses isAssociated and associationWeight internally. weighted associations
+   * are not sorted or normalised. Normalisation and sorting is taken care
+   * of before returning the associations to the user via one of the 
+   * methods in the public interface
+   *
+   * @author Juan Palacios juan.palacios@nikhef.nl
+   * @date   2009-27-03
+   **/
+  virtual Particle2MCParticle::ToVector 
+  relatedMCPsImpl(const LHCb::Particle* particle,
+                  const LHCb::MCParticle::ConstVector& mcParticles) const ;
 
   inline LHCb::MCParticle::Container* 
   i_MCParticles(const std::string& location) const
@@ -95,81 +133,60 @@ private:
       get<LHCb::MCParticle::Container>( location ) : 0 ;
   }
   
+  inline Particle2MCParticle::ToVector 
+  i_relatedMCPs(const LHCb::Particle* particle,
+                const std::string& mcParticleLocation) const
+  {
+    LHCb::MCParticle::Container* mcps = i_MCParticles(mcParticleLocation);
+    return (0!=mcps) ? 
+      i_relatedMCPs( particle, mcps->begin(), mcps->end() ) : 
+      Particle2MCParticle::ToVector();
+  }
+
+  inline const LHCb::MCParticle* 
+  i_bestMCPWithCheck(const Particle2MCParticle::ToVector& assoc) const
+  {
+    return (!assoc.empty() ) ? assoc.back().to() : 0;
+  }
+  
 
   template <typename Iter> 
-  Particle2MCParticle::LightTable 
+  Particle2MCParticle::ToVector 
   i_relatedMCPs(const LHCb::Particle* particle,
                 Iter begin,
                 Iter end     ) const
   {
-    Particle2MCParticle::LightTable table;
-    if (0!=particle) {
-      LHCb::MCParticle::ConstVector mcps;
-      for ( Iter iMCP = begin ; iMCP != end ; ++iMCP){
-        const bool match = isMatched(particle, *iMCP);
-        if ( match ) mcps.push_back(*iMCP);
-      }
-      mcps = sort(mcps);
-      return i_buildTable(particle, mcps.begin(), mcps.end() );
-    } else {
-      Warning("No particle!").ignore();
-      return Particle2MCParticle::LightTable();
-    }
+    Particle2MCParticle::ToVector associations = 
+      relatedMCPsImpl(particle,
+                      LHCb::MCParticle::ConstVector(begin, end));
+    i_normalise(associations);
+    i_sort(associations);
+    return associations;
   }
 
-  template <typename pIter, typename mcPIter>
-  Particle2MCParticle::LightTable 
-  i_associations(const pIter pBegin, 
-                 const pIter pEnd, 
-                 const mcPIter mcBegin, 
-                 const mcPIter mcEnd) const
-  {
 
-    Particle2MCParticle::LightTable table;
-    for (pIter part = pBegin; part != pEnd; ++part) {
-      table.merge( i_relatedMCPs(*part, mcBegin, mcEnd).relations() );
+  inline void
+  i_normalise(Particle2MCParticle::ToVector& associations) const
+  {
+    double weight_sum = std::accumulate( associations.begin(),
+                                         associations.end(),
+                                         0.,
+                                         Particle2MCParticle::SumWeights() );
+    for (Particle2MCParticle::ToVector::iterator iAssoc = associations.begin();
+         iAssoc!=associations.end();
+         ++iAssoc) {
+      iAssoc->weight() /= weight_sum;
     }
-    //    table.i_sort();
-    return table;
+    
   }
   
-  template <typename Iter> 
-  inline Particle2MCParticle::LightTable 
-  i_associations(const Iter pBegin,
-                 const Iter pEnd,
-                 const std::string& mcParticleLocation) const
+
+  inline void
+  i_sort(Particle2MCParticle::ToVector& associations) const
   {
-    LHCb::MCParticle::Container* mcps = i_MCParticles(mcParticleLocation);
-    if (0!=mcps) {
-      return i_associations(pBegin, pEnd, mcps->begin(), mcps->end());
-    } else {
-      return Particle2MCParticle::LightTable();
-    }
-  }
-
-  template <typename Iter>
-  Particle2MCParticle::LightTable i_buildTable(const LHCb::Particle* particle,
-                                               const Iter mcBegin,
-                                               const Iter mcEnd) const
-  {
-    Particle2MCParticle::LightTable table;
-    for ( Iter iMCP = mcBegin ; iMCP != mcEnd ; ++iMCP) {
-      table.i_push( particle, *iMCP );
-    }
-    //    table.i_sort();
-    return table;
-  }
-
-private :
-
-  virtual LHCb::MCParticle::ConstVector sort(const LHCb::MCParticle::ConstVector& mcParticles) const;
-
-  virtual LHCb::MCParticle::ConstVector sort(const LHCb::MCParticle::Container* mcParticles) const;
-
-  template <typename Iter> 
-  LHCb::MCParticle::ConstVector i_sort(const Iter begin, const Iter end) const
-  {
-    return LHCb::MCParticle::ConstVector(begin, end);
+    std::stable_sort( associations.begin() , 
+                      associations.end() , 
+                      Particle2MCParticle::SortByWeight() ) ;
   }
 
 private:

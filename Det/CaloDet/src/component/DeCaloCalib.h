@@ -1,4 +1,4 @@
-// $Id: DeCaloCalib.h,v 1.1 2008-09-26 15:45:39 odescham Exp $
+// $Id: DeCaloCalib.h,v 1.3 2009-04-10 14:51:08 odescham Exp $
 #ifndef COMPONENT_DECALOCALIB_H 
 #define COMPONENT_DECALOCALIB_H 1
 
@@ -37,8 +37,10 @@ private:
      sid << id ;
      return (m_deltas.find( sid.str() ) != m_deltas.end() ) ? m_deltas[sid.str()] : m_deltas["Default"];
   }
-
+  void update();
+  bool isDead(int channel);
   
+  Rndm::Numbers m_shoot;
 
   std::string m_detectorName;
   std::string m_method;
@@ -47,5 +49,8 @@ private:
   std::string m_key;
   DeCalorimeter* m_calo;
   mutable IRndmGenSvc*   m_rndmSvc;        ///< random number service 
+  bool m_update;
+  bool m_ntup;
+  std::vector<int> m_dead;
 };
 #endif // COMPONENT_DECALOCALIB_H

@@ -1,9 +1,42 @@
-! $Id: release.notes,v 1.12 2009-02-18 14:39:25 cattanem Exp $ 
+! $Id: release.notes,v 1.16 2009-05-07 12:11:28 cattanem Exp $ 
 ! -----------------------------------------------------------------------------
 ! Package     : Kernel/PartProp
 ! Responsible : Vanya BELYAEV Ivan.Belyaev@nikhef.nl
 ! Purpose     : 
 ! -----------------------------------------------------------------------------
+
+!======================== PartProp v1r1 2009-05-07 ============================
+! 2009-05-06 - Vanya BELYAEV
+ - src/Component/ParticleProperty.cpp
+    add few symbols, protected for cc-operations 
+ - Kernel/Nodes.h , 
+   src/Nodes.cpp  , 
+   python/PartProp/Nodes.py
+    add the nodes for evaluation of SSpin, LSpin & Nucleus 
+
+! 2009-04-17 - Marco Cattaneo
+ - Replace endreq by endmsg
+ - Fix some (but not all...) doxygen warnings
+
+! 2009-03-09 - Vanya BELYAEV
+ - add few very simple methods to LHCb::ParticleProperty class
+
+    - selfcc
+    - threeCharge 
+
+ - src/Component/PartPropAlg.cpp
+
+    -  modity a little bit the test/demo algorithm LHCb::Example::PartPropAlg
+
+ - python/PartProp/decorators.py
+
+    - instrument LHCb.ParticleProperty.__getattr__ to delegate the search 
+      for attributes to underlyig LHCb.ParticleID object. 
+      It allows to ask LHCb.ParticleProperty directly all the 
+      attributes for LHCbParticleID objects      
+
+ - cmt/requirments
+    - version increment to v1r1 
 
 !======================== PartProp v1r0p1 2009-02-18 ==========================
 ! 2009-01-20 - Marco Cattaneo

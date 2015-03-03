@@ -1,9 +1,37 @@
-$Id: release.notes,v 1.34 2009-01-08 17:10:39 cattanem Exp $ 
+$Id: release.notes,v 1.39 2009-05-07 06:42:45 cattanem Exp $ 
 ! -----------------------------------------------------------------------------
 ! Package     : Phys/LoKiArrayFunctors
 ! Responsible : Vanya BELYAEV
 ! Purpose     : Some special "vector-like" functors to Exclusive "HLT"
 ! -----------------------------------------------------------------------------
+
+!========================== LoKiArrayFunctors v8r3 2009-05-06 ===================
+! 2009-05-04 - Vanya BELYAEV
+ - remove some unnecessary dictionaries 
+ - add "fake" dictionaries to pelase new ROOT/Gaudi in :
+      dict/LoKiArrayFunctiorsDict.h
+      dict/LoKiArrayFunctors.xml  
+
+   TO BE REOMVED 
+
+
+! 2009-04-24 - Vanya BELYAEV
+
+ - simplify a bit all *DOCA*-related stuff & eliminate duplicates...
+ - cmt/requirements
+
+   version increment to v8r3
+
+!========================== LoKiArrayFunctors v8r2 2009-03-23 ===================
+! 2009-03-10 - Patrick SPRADLIN
+- add new functors:
+
+    ADOCAMIN & AMINDOCA: retruns minimum doca of any pair of input particles.
+    AALLSAMEBPV:  Checks if all input particles have the same related PV.
+
+- cmt/requirements
+
+   version increment to v8r2
 
 !======================== LoKiArrayFunctors v8r1 2009-01-08 ===================
 ! 2008-11-28 - Vanya BELYAEV

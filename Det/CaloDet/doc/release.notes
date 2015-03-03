@@ -1,8 +1,25 @@
-! $Id: release.notes,v 1.101 2009-01-08 12:56:00 cattanem Exp $ 
+! $Id: release.notes,v 1.106 2009-05-07 08:58:36 cattanem Exp $ 
 ! =============================================================================
 ! Package         : CaloDet   
 ! Package manager : Olivier Deschamps odescham@in2p3.fr
 ! =============================================================================
+
+!======================== CaloDet v10r2 2009-05-07 ============================
+! 2009-05-05 Olivier Deschamps
+    - DeCalorimeter/CellParam : adapt to change in condDB format/content
+                                ( getQuality() and getCalibration() )
+    - new getter methods corresponding to digitization parameters now in condDB
+
+! 2009-04-17 - Marco Cattaneo
+ - Replace endreq by endmsg
+
+! 2009-04-09 Olivier Deschamps
+    - fix bug in CellParam (addQualityFlag() method)
+    - improve DeCalib.cpp algorithm    
+
+! 2009-03-27 Olivier Deschamps
+    - references -> const in *.h
+    - src/component/DeCaloCalib.cpp : allow to re-update (mis)calibration at each event
 
 !======================== CaloDet v10r1 2009-01-08 ============================
 ! 2008-12-09 Olivier Deschamps
