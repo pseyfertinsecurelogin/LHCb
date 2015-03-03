@@ -1,4 +1,4 @@
-// $Id: LHCbMathDict.h 173545 2014-06-08 14:31:21Z ibelyaev $
+// $Id: LHCbMathDict.h 180924 2014-11-30 19:16:11Z ibelyaev $
 // ============================================================================
 #ifndef DICT_LHCBMATHDICT_H
 #define DICT_LHCBMATHDICT_H 1
@@ -31,6 +31,7 @@
 #include "LHCbMath/Spline.h"
 #include "LHCbMath/NSphere.h"
 #include "LHCbMath/WStatEntity.h"
+#include "LHCbMath/BSpline.h"
 // ============================================================================
 /** @file LHCbMathDict.h
  *

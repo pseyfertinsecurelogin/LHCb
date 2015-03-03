@@ -53,24 +53,12 @@ HltRawDataMonitor::HltRawDataMonitor( const std::string& name,
   // <0 never 0=at finalize >0 event frequency
   declareProperty("DiagnosticsFrequency",  m_diagnosticsFrequency = 0);
 
-  m_bankSize        =     0;
-  m_hitSize         =     0;
-  m_objtypSize      =     0;
-  m_substrSize      =     0;
-  m_stdinfoSize     =     0;
-  m_extinfoSize     =     0;
-  m_event           =     0;
-
   declareProperty("SourceID",
 		  m_sourceID= HltSelReportsWriter::kSourceID_Hlt );  
 
 
 }
 
-//=============================================================================
-// Destructor
-//=============================================================================
-HltRawDataMonitor::~HltRawDataMonitor() {} 
 
 //=============================================================================
 // Initialization
@@ -86,13 +74,12 @@ StatusCode HltRawDataMonitor::initialize() {
   m_rawEventLocations.push_back(LHCb::RawEventLocation::Copied);
   m_rawEventLocations.push_back(LHCb::RawEventLocation::Default);
 
-
-  m_bankSize                 = book(100, "Size of HltSelReports Raw Bank (kB)", 0., 5., 500); 
-  m_hitSize                  = book(200, "Size of hits sub-bank in HltSelReports (kB)", 0., 5., 500);
-  m_objtypSize               = book(300, "Size of object-type sub-bank in HltSelReports (kB)", 0., 5., 500);
-  m_substrSize               = book(400, "Size of substructure sub-bank in HltSelReports (kB)", 0., 5., 500);
-  m_stdinfoSize              = book(500, "Size of Standard-Info sub-bank in HltSelReports (kB)", 0., 5., 500);
-  m_extinfoSize              = book(600, "Size of Extra-Info sub-bank in HltSelreports (kB)", 0., 5., 500);
+  m_bankSize    = book(100, "Size of HltSelReports Raw Bank (kB)", 0., 5., 500); 
+  m_hitSize     = book(200, "Size of hits sub-bank in HltSelReports (kB)", 0., 5., 500);
+  m_objtypSize  = book(300, "Size of object-type sub-bank in HltSelReports (kB)", 0., 5., 500);
+  m_substrSize  = book(400, "Size of substructure sub-bank in HltSelReports (kB)", 0., 5., 500);
+  m_stdinfoSize = book(500, "Size of Standard-Info sub-bank in HltSelReports (kB)", 0., 5., 500);
+  m_extinfoSize = book(600, "Size of Extra-Info sub-bank in HltSelreports (kB)", 0., 5., 500);
 
   return StatusCode::SUCCESS;
 }
@@ -268,89 +255,79 @@ StatusCode HltRawDataMonitor::fillRawBank()
   unsigned int nObj = objTypSubBank.numberOfObj();
 
   if( bankSize < hltSelReportsBank.size() ){
-    std::ostringstream mess;
-    mess   << " HltSelReportsRawBank internally reported size " << hltSelReportsBank.size()
-           << " less than bank size delivered by RawEvent " << bankSize;
-    Error( mess.str(), StatusCode::SUCCESS, 100 );
+    Error( " HltSelReportsRawBank internally reported size " + std::to_string( hltSelReportsBank.size() )
+           + " less than bank size delivered by RawEvent " + std::to_string(bankSize),
+          StatusCode::SUCCESS, 100 );
     errors=true;
 
   } else {
 
     ic = hltSelReportsBank.integrityCode();
     if( ic ){
-      std::ostringstream mess;
-      mess << " HltSelReportsRawBank fails integrity check with code " 
-           << ic << " " << HltSelRepRBEnums::IntegrityCodesToString(ic) ;
-      Error( mess.str(), StatusCode::SUCCESS, 100 );
+      Error( " HltSelReportsRawBank fails integrity check with code " 
+            + std::to_string( ic ) + " " +  HltSelRepRBEnums::IntegrityCodesToString(ic) ,
+             StatusCode::SUCCESS, 100 );
       errors=true;
     }
 
     ic = hitsSubBank.integrityCode();
     if( ic ){
-      std::ostringstream mess;
-      mess << " HltSelRepRBHits fails integrity check with code " 
-           << ic << " " << HltSelRepRBEnums::IntegrityCodesToString(ic) ;
-      Error( mess.str(), StatusCode::SUCCESS, 100 );
+      Error( " HltSelRepRBHits fails integrity check with code " 
+             + std::to_string(ic) +  " " +  HltSelRepRBEnums::IntegrityCodesToString(ic),
+             StatusCode::SUCCESS, 100 );
       errors=true;
     }
 
     ic = objTypSubBank.integrityCode();
     if( ic ){
-      std::ostringstream mess;
-      mess << " HltSelRepRBObjTyp fails integrity check with code " 
-           << ic << " " << HltSelRepRBEnums::IntegrityCodesToString(ic) ;
-      Error( mess.str(), StatusCode::SUCCESS, 100 );
+      Error( " HltSelRepRBObjTyp fails integrity check with code " 
+             + std::to_string(ic) +  " " + HltSelRepRBEnums::IntegrityCodesToString(ic),
+             StatusCode::SUCCESS, 100 );
       errors=true;
     }
 
     ic = substrSubBank.integrityCode();
     if( ic ){
-      std::ostringstream mess;
-      mess << " HltSelRepRBSubstr fails integrity check with code " 
-           << ic << " " << HltSelRepRBEnums::IntegrityCodesToString(ic) ;
-      Error( mess.str(), StatusCode::SUCCESS, 100 );
+      Error( " HltSelRepRBSubstr fails integrity check with code " 
+             + std::to_string(ic) + " " +  HltSelRepRBEnums::IntegrityCodesToString(ic),
+             StatusCode::SUCCESS, 100 );
       errors=true;
     }
     if( nObj != substrSubBank.numberOfObj() ){
-      std::ostringstream mess;
-      mess << " HltSelRepRBSubstr has number of objects " 
-           << substrSubBank.numberOfObj()
-           << " which is different than HltSelRepRBObjTyp " << nObj ;
-      Error( mess.str(), StatusCode::SUCCESS, 100 );
+      Error( " HltSelRepRBSubstr has number of objects " 
+             + std::to_string( substrSubBank.numberOfObj( ))
+             +  " which is different than HltSelRepRBObjTyp " + std::to_string(nObj),
+             StatusCode::SUCCESS, 100 );
       errors=true;
     }
 
     ic = stdInfoSubBank.integrityCode();
     if( ic ){
-      std::ostringstream mess;
-      mess << " HltSelRepRBStdInfo fails integrity check with code " 
-           << ic << " " << HltSelRepRBEnums::IntegrityCodesToString(ic) ;
-      Error( mess.str(), StatusCode::SUCCESS, 100 );
+      Error( " HltSelRepRBStdInfo fails integrity check with code " 
+             + std::to_string(ic) +  " " + HltSelRepRBEnums::IntegrityCodesToString(ic),
+             StatusCode::SUCCESS, 100 );
       errors=true;
     }
     if( nObj != stdInfoSubBank.numberOfObj() ){
-      std::ostringstream mess;
-      mess << " HltSelRepRBStdInfo has number of objects " 
-           << stdInfoSubBank.numberOfObj()
-           << " which is different than HltSelRepRBObjTyp " << nObj ;
-      Error( mess.str(), StatusCode::SUCCESS, 100 );
+      Error( " HltSelRepRBStdInfo has number of objects " 
+             + std::to_string(stdInfoSubBank.numberOfObj())
+             + " which is different than HltSelRepRBObjTyp " + std::to_string(nObj),
+             StatusCode::SUCCESS, 100 );
       errors=true;
     }
 
     ic = extraInfoSubBank.integrityCode();
     if( ic ){
-      std::ostringstream mess;
-      mess << " HltSelRepRBExtraInfo fails integrity check with code " 
-           << ic << " " << HltSelRepRBEnums::IntegrityCodesToString(ic) ;
-      Error( mess.str(), StatusCode::SUCCESS, 100 );
+      Error( " HltSelRepRBExtraInfo fails integrity check with code " 
+             + std::to_string(ic) +  " " + HltSelRepRBEnums::IntegrityCodesToString(ic),
+             StatusCode::SUCCESS, 100 );
       //      exInfOn=false; // the only non-fatal info corruption. Set but not used!
     }
     if( nObj != extraInfoSubBank.numberOfObj() ){
-      std::ostringstream mess;
-      mess << " HltSelRepRBExtraInfo has number of objects " 
-           << extraInfoSubBank.numberOfObj()
-           << " which is different than HltSelRepRBObjTyp " << nObj ;
-      Error( mess.str(), StatusCode::SUCCESS, 100 );
+      Error(  " HltSelRepRBExtraInfo has number of objects " 
+              + std::to_string(extraInfoSubBank.numberOfObj())
+              +  " which is different than HltSelRepRBObjTyp " + std::to_string( nObj),
+             StatusCode::SUCCESS, 100 );
       //      exInfOn=false; // Set but not used!
     }
   }

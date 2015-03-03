@@ -3,6 +3,7 @@
 #define HLTVERTEXREPORTSWRITER_H 1
 
 // Include files
+#include "boost/optional.hpp"
 // from Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
 
@@ -37,14 +38,13 @@ public:
   /// Standard constructor
   HltVertexReportsWriter( const std::string& name, ISvcLocator* pSvcLocator );
 
-  virtual ~HltVertexReportsWriter( ); ///< Destructor
+  ~HltVertexReportsWriter( ) override = default; ///< Destructor
 
-  virtual StatusCode initialize();    ///< Algorithm initialization
-  virtual StatusCode execute   ();    ///< Algorithm execution
+  StatusCode initialize() override;    ///< Algorithm initialization
+  StatusCode execute   () override;    ///< Algorithm execution
 
 private:
-
-
+  
   // ----------------------- data members 
 
   /// location of input
@@ -54,11 +54,10 @@ private:
   StringProperty m_outputRawEventLocation;
 
   /// SourceID to insert in the bank header
-  UnsignedIntegerProperty m_sourceID;
+  IntegerProperty m_sourceID;
 
   /// HltANNSvc for making selection names to int selection ID
-  IANNSvc* m_hltANNSvc;  
-
+  IANNSvc* m_hltANNSvc = nullptr;  
 
 };
 

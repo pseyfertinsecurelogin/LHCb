@@ -3,16 +3,11 @@
 #include <string>
 #include <vector>
 #include <iostream>
-#include "boost/optional.hpp"
 #include "boost/operators.hpp"
 #include "GaudiKernel/System.h"
 #include "GaudiKernel/INamedInterface.h"
 #include "GaudiKernel/IProperty.h"
 #include "LHCbMath/MD5.h"
-
-class PropertyConfig; 
-std::ostream& operator<<(std::ostream& os, const PropertyConfig& x);
-std::istream& operator>>(std::istream& is, PropertyConfig& x);
 
 class PropertyConfig : public boost::equality_comparable<PropertyConfig> {
 public:
@@ -76,7 +71,6 @@ public:
     template <typename T>
     PropertyConfig copyAndModify(T begin, T end) const { PropertyConfig ret(*this); while (begin!=end) ret=ret.copyAndModify(*begin++); return ret;}
 
-    std::ostream& print_json(std::ostream& os) const;
     std::ostream& print(std::ostream& os) const;
     std::istream& read(std::istream& is);
 
@@ -84,6 +78,7 @@ public:
 
 private:
     std::string str() const;
+    std::ostream& print_json(std::ostream& os) const;
 
     Properties   m_properties;
     std::string  m_type,m_name,m_kind;
@@ -91,4 +86,7 @@ private:
     void updateCache() const;
     void initProperties( const IProperty& obj );
 };
+
+inline std::ostream& operator<<(std::ostream& os, const PropertyConfig& x) { return x.print(os);}
+inline std::istream& operator>>(std::istream& is, PropertyConfig& x) { return x.read(is); }
 #endif

@@ -4,6 +4,35 @@
 ! Purpose     : HLT-specific services not needed for decoding
 !-----------------------------------------------------------------------------
 
+!========================= HltServices v2r6 2014-12-11 =========================
+! 2014-11-19 - Gerhard Raven
+ - C++11 cleanup
+
+! 2014-11-06 - Marco Clemencic
+ - Fixed CMake configuration.
+
+! 2014-11-06 - Marco Clemencic
+ - Added creation of hlttck_cdb_listkeys.exe to the CMake configuration.
+
+!========================= HltServices v2r5 2014-11-05 =========================
+
+! 2014-11-04 - Sean Benson
+ - HltConfigSvc can now create multiple dec report locations at the same time.
+
+! 2014-10-30 - Gerhard Raven
+ - cleanup
+
+! 2014-10-25 - Gerhard Raven
+ - trim trailing zeros in longname tar header
+ - simplify iteration over tar file content in utility
+ - fix missing label on generated manifest from tar file
+ - in utility, find the label in a format agnostic way
+ - enable JSON output of manifest in utility
+
+! 2014-10-14 - Gerhard Raven
+ - utility: fix key prefix in .tar to .cdb conversion, add re-formatting during
+   conversion, add option to create manifest from .tar, improve dump formatting
+
 !========================= HltServices v2r4 2014-10-01 =========================
 
 ! 2014-09-27 - Gerhard Raven

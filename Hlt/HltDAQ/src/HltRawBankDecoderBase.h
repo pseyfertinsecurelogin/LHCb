@@ -15,7 +15,7 @@
 class HltRawBankDecoderBase : public Decoder::AlgBase {
 public:
     HltRawBankDecoderBase( const std::string& name, ISvcLocator* pSvcLocator);
-    ~HltRawBankDecoderBase() override;
+    ~HltRawBankDecoderBase() override = default;
     StatusCode initialize() override;
 
     std::vector<const LHCb::RawBank*> selectRawBanks( LHCb::RawBank::BankType ) const;
@@ -28,7 +28,8 @@ public:
             : m_key{ std::move(key) }, m_decode{ decode } 
         {}
         operator const Gaudi::StringKey& () const { return m_key; }
-        operator const std::string&() const { return m_key.str(); }
+        const std::string& str() const { return m_key.str(); }
+        operator const std::string&() const { return str(); }
         bool operator!() const { return !m_decode; }
     };
 
@@ -48,8 +49,6 @@ private:
     IANNSvc* m_hltANNSvc;
     IIndexedANNSvc* m_TCKANNSvc;
 
-
-
     using IdTable_t =  GaudiUtils::VectorMap<unsigned int, GaudiUtils::VectorMap<int, element_t>>;
     using Table_t =  GaudiUtils::VectorMap<unsigned int, GaudiUtils::VectorMap<int, Gaudi::StringKey>>;
     mutable IdTable_t m_idTable;
@@ -57,7 +56,7 @@ private:
     mutable Table_t m_infoTable;
     Table_t::const_iterator fetch_info2string(unsigned int tck) const;
     
-    /// SourceID to decode 0=Hlt 1=Hlt1 2=Hlt2 ... (1,2 will decode from 0 if 1,2 not found)
+    /// SourceID to decode: 0=Hlt 1=Hlt1 2=Hlt2 ... (1,2 will decode from 0 if 1,2 not found)
     UnsignedIntegerProperty m_sourceID;
 
     enum SourceIDs { kSourceID_Dummy=0,

@@ -13,6 +13,14 @@
 !   A.Golutvin, P.Koppenburg have been used in the design.
 ! -----------------------------------------------------------------------------
 
+!========================= LoKiCore v11r21 2014-12-11 =========================
+! 2014-12-11 - Marco Clemencic
+ - Fixed the mane of the macro to hide code from gccxml.
+
+! 2014-12-02 - Vanya Belyaev
+ - FunctorFromFunctor
+   add move-constructor
+
 !========================= LoKiCore v11r20p1 2014-07-30 =========================
 
 ! 2014-07-16 - Chris Jones

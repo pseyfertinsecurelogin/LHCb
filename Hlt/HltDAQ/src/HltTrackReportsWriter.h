@@ -47,17 +47,17 @@ public:
   /// Standard constructor
   HltTrackReportsWriter( const std::string& name, ISvcLocator* pSvcLocator );
 
-  virtual ~HltTrackReportsWriter( ); ///< Destructor
+  ~HltTrackReportsWriter( ) override = default; ///< Destructor
 
-  virtual StatusCode initialize();    ///< Algorithm initialization
-  virtual StatusCode execute   ();    ///< Algorithm execution
+  StatusCode initialize() override;    ///< Algorithm initialization
+  StatusCode execute   () override;    ///< Algorithm execution
 
 
 private:
   void convert(const std::string& location, unsigned sourceID, LHCb::RawEvent* rawEvent) const ;
 
   /// mapping of input TES location to output bank header source ID
-  std::map<std::string,unsigned int> m_map;
+  std::map<std::string,int> m_map;
 
   /// location of output
   StringProperty m_outputRawEventLocation;

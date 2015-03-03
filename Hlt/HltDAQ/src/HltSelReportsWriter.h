@@ -23,6 +23,11 @@
  */
 class HltSelReportsWriter : public GaudiAlgorithm {
 public: 
+  /// Standard constructor
+  HltSelReportsWriter( const std::string& name, ISvcLocator* pSvcLocator );
+  ~HltSelReportsWriter() override = default; ///< Destructor
+  StatusCode initialize() override;    ///< Algorithm initialization
+  StatusCode execute   () override;    ///< Algorithm execution
 
   enum HeaderIDs { kVersionNumber=2 };
 
@@ -36,15 +41,6 @@ public:
 		   kSourceID_MinorMask=0x1FFF,
 		   kSourceID_MajorMask=0xE000
   };
-
-  /// Standard constructor
-  HltSelReportsWriter( const std::string& name, ISvcLocator* pSvcLocator );
-
-  ~HltSelReportsWriter() override = default; ///< Destructor
-
-  StatusCode initialize() override;    ///< Algorithm initialization
-  StatusCode execute   () override;    ///< Algorithm execution
-
 private:
 
   /// location of input H
@@ -54,11 +50,10 @@ private:
   StringProperty m_outputRawEventLocation;
 
   /// SourceID to insert in the bank header (0-7)
-  UnsignedIntegerProperty m_sourceID;
+  IntegerProperty m_sourceID;
   
   /// HltANNSvc for making selection names to int selection ID
-  IANNSvc* m_hltANNSvc;
-
+  IANNSvc* m_hltANNSvc = nullptr;
 };
 
 

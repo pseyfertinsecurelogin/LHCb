@@ -4,6 +4,24 @@
 ! Purpose     : collection of functors&factory for HLT
 ! -----------------------------------------------------------------------------
 
+!========================= LoKiHlt v3r17 2014-12-13 =========================
+! 2014-12-13 - Marco Clemencic
+ - Ensure that L0Event dictionary is loaded before trying to use
+   LHCb::L0DUDecision::Type in LoKiHlt.functions (required for ROOT 5).
+
+! 2014-12-05 - Gerhard Raven
+ - L0 functors:
+    - use std:: algorithms whenever possible
+
+ - Hlt functors:
+    - use std:: algorithms whenever possible
+    - fix logic in DecisionButRegex
+    - speed up CountErrorBitsRegex by reversing the order of tests 
+
+! 2014-11-12 - Marco Cattaneo
+ - Remove duplicate dictionary for enum LHCb::L0DUDecision::Type, 
+   already in L0Event
+
 !========================= LoKiHlt v3r16 2014-10-14 =========================
 ! 2014-10-01 - Pieter David
  - LoKi::Hybrid::EvtTupleTool: get HltDecReports from the location in the HLT_Location property

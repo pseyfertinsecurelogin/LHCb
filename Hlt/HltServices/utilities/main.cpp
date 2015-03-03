@@ -17,12 +17,58 @@
 #include "boost/iostreams/stream.hpp"
 #include "boost/iostreams/copy.hpp"
 #include "boost/algorithm/string/split.hpp"
+#include "boost/algorithm/string/join.hpp"
 #include "boost/algorithm/string/classification.hpp"
 #include "boost/program_options.hpp"
 #include "boost/filesystem.hpp"
 #include "boost/filesystem/fstream.hpp"
 #include "boost/algorithm/string/predicate.hpp"
+#include "boost/io/detail/quoted_manip.hpp"
 
+#include "Kernel/ConfigTreeNode.h"
+#include "Kernel/PropertyConfig.h"
+
+template <typename T> std::string convert(const std::string& s) {
+    std::istringstream in(s);
+    std::ostringstream out;
+    T t; in >> t; out << t;
+    return out.str();
+}
+
+constexpr struct to_json_t {
+    std::string operator()(const std::string& s) const;
+    using r2t_t = std::map<std::string,std::string>;
+    std::string operator()(const std::tuple<std::string,r2t_t,std::string>& e) const;
+
+    template <typename K, typename V> std::string operator()(const std::pair<K,V>& p) const ;
+    template <typename V> std::string operator()(const std::map<std::string,V>& m) const ;
+} to_json;
+
+std::string to_json_t::operator()(const std::string& s) const {
+    // TODO: replace with C++14 std::quoted
+    std::ostringstream out;
+    out << boost::io::quoted(s);
+    return out.str();
+}
+
+template <typename K, typename V>
+std::string to_json_t::operator()(const std::pair<K,V>& p) const {
+    return to_json(p.first)+":"+to_json(p.second);
+}
+
+template <typename V>
+std::string to_json_t::operator()(const std::map<std::string,V>& m) const {
+    std::vector<std::string> buf; buf.reserve( m.size() );
+    std::transform( std::begin(m), std::end(m), std::back_inserter(buf), to_json );
+    return std::string{"{"} + boost::algorithm::join(buf,",") + "}";
+}
+
+std::string to_json_t::operator()(const std::tuple<std::string,to_json_t::r2t_t,std::string>& e) const {
+    return std::string{"{"}+to_json(std::make_pair("TCK",std::get<0>(e)))
+                     + "," +to_json(std::make_pair("Release2Type",std::get<1>(e)))
+                     + "," +to_json(std::make_pair("label",std::get<2>(e)))
+                     + "}";
+}
 
 #include "../src/cdb.h"
 #include "../src/tar.h"
@@ -78,7 +124,7 @@ std::vector<unsigned char> make_cdb_record( std::string str, uid_t uid, std::tim
 
 struct manifest_entry {
     template <typename TCKS > 
-    manifest_entry( std::string toplevel, const TCKS& tcks, std::string com) 
+    manifest_entry(const std::string& toplevel, const TCKS& tcks, std::string com) 
     {
         std::vector<std::string> tokens;
         boost::algorithm::split(tokens,toplevel,boost::algorithm::is_any_of("/"));
@@ -88,13 +134,9 @@ struct manifest_entry {
         id = tokens[2];
         auto itck = tcks.find(id);
         tck = (itck!=std::end(tcks)) ? itck->second : "<NONE>" ;
-        comment = com;
+        comment = std::move(com);
     }
-    std::string release;
-    std::string type;
-    std::string tck;
-    std::string id;
-    std::string comment;
+    std::string release,type,tck,id,comment;
 
     bool operator<(const manifest_entry& rhs) const {
         // can we get MOORE_v9r1 prior to MOORE_v10r1 ???
@@ -114,15 +156,16 @@ std::ostream& operator<<(std::ostream& os, const manifest_entry& e) {
 
 
 std::string format_time(std::time_t t) {
-            // gcc4.8 doesn't have std::put_time???
-            static char mbstr[100];
-            mbstr[0]=0;
-            std::strftime(mbstr, sizeof(mbstr), "%A %c", std::localtime(&t));
-            return { mbstr };
+    // gcc4.8 doesn't have std::put_time???
+    static char mbstr[100];
+    mbstr[0]=0;
+    std::strftime(mbstr, sizeof(mbstr), "%A %c", std::localtime(&t));
+    return { mbstr };
 }
 
 class TAR {
     std::fstream m_file;
+    std::map<std::string,std::streamoff> m_index;
 public:
 
     TAR(const std::string& fname) {
@@ -150,10 +193,15 @@ public:
             return value;
         }
         unsigned int valuePersistentSize() const { return m_info.size; }
+        bool isTCK() { return key().size()==22 && key().compare(0,12,"Aliases/TCK/")==0 ; }
+        bool isTopLevel() { return key().back()!='/' && key().compare(0,17,"Aliases/TOPLEVEL/")==0; }
+        std::string TCK() { return isTCK() ? key().substr(12) : std::string{} ; }
+        std::string topLevel() { return isTopLevel() ? key().substr(17) : std::string{}; }
 
     };
 
     class iterator {
+        friend class TAR;
         std::fstream*  m_file;
         std::streamoff m_pos;
 
@@ -181,24 +229,34 @@ public:
             }
             return info;
         }
+        void next() {
+            if (!m_file) return;
+            auto info = read_info();  // read current header, and position at the end of it...
+            if (!m_file) return;
+            size_t skip = info.size;
+            size_t padding = skip % 512;
+            if ( padding != 0 ) skip += 512 - padding;
+            m_pos = m_file->tellg(); // read_info put us at the end of the CURRENT header
+            m_pos += skip;           // m_pos now points at the start of the NEXT header...
+        }
+        bool is_current_valid() {
+            auto info = read_info();
+            return m_file && !info.name.empty() && info.name.back()!='/';
+        }
+        void skip_invalid() {
+            while (m_file && !is_current_valid()) next();
+        }
     public:
-        iterator( ) : m_file{ nullptr }, m_pos{0}  {}
-        iterator( std::fstream* file, std::streamoff pos = 0 ) : m_file{file}, m_pos{pos} 
-        { }
+        iterator( ) : m_file{ nullptr }, m_pos{0}  { }
+        iterator( std::fstream* file, std::streamoff pos = 0 ) : m_file{file}, m_pos{pos} { 
+            skip_invalid();
+        }
 
         record operator*() { // Not quite canonical -- ideally should be record&... and const
             return { m_file, read_info() };
         }
         iterator& operator++() { 
-            if (!m_file) return *this;
-            auto info = read_info(); // filepointer is at the end of the current header...
-            if (!m_file) return *this;
-            size_t skip = info.size;
-            size_t padding = skip % 512;
-            if ( padding != 0 ) skip += 512 - padding;
-            m_pos = m_file->tellg();
-            m_pos += skip; 
-            read_info(); // check if at end of file...
+            next(); skip_invalid();
             return *this; 
         }
 
@@ -213,13 +271,30 @@ public:
     iterator begin() { return { &m_file }; }
     iterator end() const { return { }; }
 
+    iterator find(const std::string& key) { 
+         if (m_index.empty()) index();
+         auto i = m_index.find(key);
+         if (i==std::end(m_index)) return {};
+         return { &m_file, i->second };
+    }
+
+    iterator findTreeNode(const std::string& hash) {
+        return find( std::string("ConfigTreeNodes/")+hash.substr(0,2)+"/"+hash );
+    }
+
+    void index() {
+        for ( auto i = begin(), e = end(); i!=e ; ++i) {
+            m_index.emplace( (*i).key(), i.m_pos );
+        }
+    }
+
 };
 
 class CDB {
     mutable struct cdb m_db;
 public:
     CDB( const std::string& fname ) {
-        int fd = open( fname.c_str(), O_RDONLY );
+        auto fd = open( fname.c_str(), O_RDONLY );
         if (cdb_init( &m_db, fd ) < 0) cdb_fileno(&m_db)=-1;
     }
     ~CDB() {
@@ -244,12 +319,12 @@ public:
             return  *(static_cast<const unsigned char*>(m_vpos)+1);
         }
         uid_t uid() const {
-            const unsigned char *base = static_cast<const unsigned char*>(m_vpos);
+            auto base = static_cast<const unsigned char*>(m_vpos);
             auto f = [=](unsigned int i, unsigned int j) { return  uid_t( base[i] ) <<j; };
             return  f(4,0) | f(5,8) | f(6,16) | f(7,24) ;
         }
         std::time_t time() const {
-            const unsigned char *base = static_cast<const unsigned char*>(m_vpos);
+            auto base = static_cast<const unsigned char*>(m_vpos);
             auto f = [=](unsigned int i, unsigned int j) { return  std::time_t( base[i] ) <<j; };
             return  f(8,0) | f(9,8) | f(10,16) | f(11,24) ;
         }
@@ -257,19 +332,23 @@ public:
             io::stream<io::array_source> buffer(static_cast<const char*>(m_vpos)+12,m_vlen-12);
             io::filtering_istream s;
             switch ( flags() & 0x3  ) {
-                    case 0 : break ; // do nothing...
-                    case 2 : s.push(io::bzip2_decompressor()); break;
-                    case 3 : { io::zlib_params params; params.noheader = true;
-                               s.push(io::zlib_decompressor(params)); } break;
-                    default : 
-                            std::cerr << "unknown compression flag" << std::endl;
-                            return 0;
+                case 0 : break ; // do nothing...
+                case 2 : s.push(io::bzip2_decompressor()); break;
+                case 3 : { io::zlib_params params; params.noheader = true;
+                           s.push(io::zlib_decompressor(params)); } break;
+                default : 
+                         std::cerr << "unknown compression flag" << std::endl;
+                         return 0;
             }
             s.push(buffer);
             std::string value;
             std::copy(std::istreambuf_iterator<char>(s), std::istreambuf_iterator<char>(), std::back_inserter(value));
             return value;
         }
+        bool isTCK() { return key().compare(0,7,"AL/TCK/")==0; }
+        bool isTopLevel() { return key().compare(0,12,"AL/TOPLEVEL/")==0; }
+        std::string TCK() { return isTCK() ? key().substr(7) : std::string{} ; }
+        std::string topLevel() { return isTopLevel() ? key().substr(12) : std::string{}; }
     };
 
     class iterator {
@@ -309,45 +388,78 @@ public:
         return end();
     }
 
+    iterator findTreeNode(const std::string& hash) const {
+        return find( std::string("TN/")+hash );
+    }
+
     bool ok() const { return cdb_fileno(&m_db)>=0; }
 };
 
 
-
-void dump_manifest(CDB& db) {
+template <typename DB>
+std::multiset< manifest_entry > create_manifest(DB& db) {
     std::multiset< manifest_entry > manifest;
 
     // first: get TCK -> id map, and invert.
     // needed so that we can make immutable manifest_entries later...
     std::map< std::string , std::string > tck;     // id -> TCK
-    for ( auto record : db )  { // TODO: allow loop with predicate on key...
+    for ( auto record : db ) { // TODO: allow loop with predicate on key...
+        if (!record.isTCK() ) continue;
         auto key = record.key() ; 
-        if (key.compare(0,6,"AL/TCK")!=0) continue;
-        tck.emplace( record.value() , key.substr(7));
+        tck.emplace( record.value() , record.TCK());
     }
     // next: create manifest
     for ( auto record : db ) { // TODO: allow loop with predicate on key... 
+        if (!record.isTopLevel()) continue;
         auto key = record.key();
-        if (key.compare(0,11,"AL/TOPLEVEL")!=0) continue;
         // the 'comment' is in the 'label' member of the treenode this alias "points" at
         std::string comment;
-        auto i = db.find( std::string("TN/")+key.substr(key.rfind("/")+1) );
+        auto i = db.findTreeNode( key.substr(key.rfind("/")+1) );
         if ( i != std::end(db) ) {
-            auto value = (*i).value();
-            if (value.compare(0,6,"Label:")==0) {
-                   auto x = value.find('\n',6);
-                   comment = value.substr(6, x!=std::string::npos ? x-6 : x );
+            std::istringstream in( (*i).value() );
+            ConfigTreeNode ctn; in >> ctn;
+            comment = ctn.label();
+            if (comment.empty()) {
+                std::cerr << "could not locate Label part of " << std::endl;  
+                std::cerr << (*i).value() << std::endl;
             }
+        } else {
+            std::cerr << "WARNING: could not locate treenode " <<  key.substr(key.rfind("/")+1) << " for key "  << key << std::endl;
         }
-        manifest.emplace( key.substr(12), tck, comment );
+        manifest.emplace( record.topLevel(), tck, comment );
     }
-    for (auto& m : manifest ) std::cout << m <<   std::endl;
+    return manifest;
+}
+
+void dump_manifest( const std::multiset< manifest_entry > & manifest) {
+    std::copy( std::begin(manifest), std::end(manifest),
+               std::ostream_iterator<manifest_entry>(std::cout,"\n") );
+}
+
+void dump_manifest_as_json( const std::multiset< manifest_entry > & manifest) {
+    // build the equivalent to the old-style python _dict used in createTCKManifest:
+    // id ->  TCK, { release -> type }, label
+    using r2t_t  = std::map< std::string, std::string >;
+    using dict_t = std::map< std::string, std::tuple<std::string,r2t_t,std::string> >;
+    dict_t dict;
+    std::for_each( std::begin(manifest), std::end(manifest), [&dict](const manifest_entry& e) {
+        auto i = dict.find( e.id );
+        if ( i != std::end( dict ) ) {
+            std::get<1>(i->second).emplace( e.release, e.type ) ;
+        } else {
+            dict.emplace( e.id, std::make_tuple( e.tck, r2t_t{{ e.release, e.type }} , e.comment ));
+        }
+    } );
+    std::cout << to_json(dict) << std::endl;
 }
 
 template <typename DB>
 void dump_keys(DB& db) {
     for ( auto record : db ) {
-        std::cout << record.uid() << "     " << record.valuePersistentSize()  << "      " << format_time( record.time() ) << "     "  << record.key() << "\n";
+        std::cout << std::setw(5) << record.uid() 
+                  << "   " << std::setw(6) <<  record.valuePersistentSize()  
+                  << "   " << std::setw(34) << format_time( record.time() ) 
+                  << "   " << record.key() << "\n";
     }
     std::cout << std::flush;
 }
@@ -355,7 +467,10 @@ void dump_keys(DB& db) {
 template <typename DB>
 void dump_records(DB& db) {
     for ( auto record : db ) {
-        std::cout << record.uid() << "     " << record.valuePersistentSize()  << "      "<< format_time( record.time() ) << "     "  << record.key() << "\n";
+        std::cout << std::setw(5) << record.uid() 
+                  << "   " << std::setw(6) << record.valuePersistentSize()  
+                  << "   " << std::setw(34) << format_time( record.time() ) 
+                  << "   " << record.key() << "\n";
         std::cout << record.value() <<"\n";
     }
     std::cout << std::flush;
@@ -396,6 +511,7 @@ void extract_records(TAR& db) {
     }
 }
 
+// TODO: add option to 'repack' the content of ConfigTreeNode and PropertyConfig... 
 void convert_records( TAR& in, const std::string& oname ) {
     int ofd = open( oname.c_str(), 
                     O_RDWR  | O_CREAT | O_EXCL,
@@ -406,9 +522,14 @@ void convert_records( TAR& in, const std::string& oname ) {
 
     for ( auto record : in ) {
         auto key = record.key();
-        if ( key.back() == '\0' ) key = key.substr(0, key.size()-1);
-        if ( key.back() == '/' ) { std::cout << "got " << key << " in loop " << std::endl; continue;}
-        auto val = make_cdb_record( record.value(), record.uid(), record.time() );
+        if (key.compare(0,16,"ConfigTreeNodes/")==0)  key.replace(0,18, "TN" ) ;
+        if (key.compare(0,16,"PropertyConfigs/")==0)  key.replace(0,18 ,"PC");
+        if (key.compare(0,8,"Aliases/")==0)           key.replace(0,7,"AL");
+        auto v = record.value();
+        if      (key.compare(0,2,"TN")==0) { v = convert<ConfigTreeNode>(v); }
+        else if (key.compare(0,2,"PC")==0) { v = convert<PropertyConfig>(v); }
+
+        auto val = make_cdb_record( v, record.uid(), record.time() );
         if ( cdb_make_add( &ocdb,
                            reinterpret_cast<const unsigned char*>( key.data() ),
                            key.size(), val.data(), val.size() ) != 0 ) {
@@ -425,14 +546,24 @@ void convert_records( TAR& in, const std::string& oname ) {
 
 namespace po = boost::program_options;
 
+template <typename DB>
+void dispatch(const po::variables_map& vm, DB& db) {
+    if (vm.count("list-manifest"))   dump_manifest( create_manifest(db));
+    if (vm.count("list-manifest-as-json")) dump_manifest_as_json( create_manifest(db));
+    if (vm.count("list-keys"))       dump_keys(db);
+    if (vm.count("list-records"))    dump_records(db);
+    if (vm.count("extract-records")) extract_records(db);
+}
+
 int main(int argc, char* argv[]) {
     po::options_description desc("Allowed options");
     desc.add_options() ("list-manifest", "dump manifest ")
+                       ("list-manifest-as-json", "dump manifest in json format ")
                        ("list-keys", "list keys")
                        ("list-records", "list keys and records")
                        ("extract-records", "extract records")
                        ("convert-to-cdb", "convert to cdb")
-                       ("input-file",  po::value<std::string>()->default_value(std::string("config.cdb")),"input file");
+                       ("input-file",  po::value<std::string>()->default_value("config.cdb"),"input file");
     po::positional_options_description p;
     p.add("input-file", -1);
 
@@ -441,28 +572,19 @@ int main(int argc, char* argv[]) {
     po::notify(vm);
 
     std::string fname = vm["input-file"].as<std::string>();
-    std::cout << "opening " << fname << std::endl;
+    std::cerr << "opening " << fname << std::endl;
     
     if (boost::algorithm::ends_with(fname,".cdb")) {
         CDB db(fname) ;
         if (!db.ok()) return 1;
+        dispatch(vm,db);
 
-        if (vm.count("list-manifest"))   dump_manifest(db);
-        if (vm.count("list-keys"))       dump_keys(db);
-        if (vm.count("list-records"))    dump_records(db);
-        if (vm.count("extract-records")) extract_records(db);
     }
     if (boost::algorithm::ends_with(fname,".tar")) {
         TAR db(fname) ;
         if (!db.ok()) return 1;
-
-        if (vm.count("list-keys"))       dump_keys(db);
-        if (vm.count("list-records"))    dump_records(db);
-        if (vm.count("extract-records")) extract_records(db);
+        dispatch(vm,db);
         if (vm.count("convert-to-cdb"))  convert_records(db, fname.substr(0,fname.size()-3)+"cdb" );
     }
-
     return 0;
 }
-
-// TODO: add method for config.tar -> config.cdb conversion, which maintains timestamp, uid, order...

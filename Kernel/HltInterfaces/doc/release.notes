@@ -3,6 +3,22 @@
 ! Responsible : Gerhard Raven
 !------------------------------------------------------------------------------
 
+!========================= HltInterfaces v5r3 2014-11-05 =========================
+
+! 2014-10-30 - Gerhard Raven
+ - TCK: replace do-it-yourself unhex with std::stoul, make operator<< inline
+ - ConfigTreeNode, PropertyConfig: make operator<< and operator>> inline
+ - ConfigTreeNode: allocate string of right length for string rep, only strip
+    newlines when making string rep, use std::copy_if instead of boost to do so,
+    add one more check (neccessady, but unfortunately not sufficient) on string
+    rep of property
+ - PropertyConfig: allocate string of right length for string rep.
+ - ConfigTreeNodeAlias: inline operators<< and operator>>, replace do-it-yourself
+   unhex with std:stoul
+
+! 2014-10-14 - Gerhard Raven
+ - streamline use of boost::ptree
+
 !========================= HltInterfaces v5r2 2014-10-14 =========================
 ! 2014-10-13 - Gerhard Raven
  - PropertyConfig, ConfigTreeNode: avoid strstream in computation of digest 

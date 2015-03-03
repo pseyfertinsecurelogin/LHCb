@@ -26,7 +26,7 @@ using namespace LHCb;
 namespace {
 
 constexpr struct select2nd_ {
-        template <typename U, typename V> 
+        template <typename U, typename V>
         const V& operator()(const std::pair<U,V>& p) const { return p.second; }
 } select2nd{};
 
@@ -40,17 +40,11 @@ HltTrackReportsWriter::HltTrackReportsWriter( const std::string& name,
     : GaudiAlgorithm( name, pSvcLocator ), m_callcount{ 0u }
 {
     declareProperty( "Input2SourceId", m_map = { { "Hlt/Track/Velo",          kSourceID_Hlt1_Velo }
-                                               , { "Hlt1/Track/ForwardHPT", kSourceID_Hlt1_ForwardHPT} 
-	                                       , { "Hlt1/Track/Forward", kSourceID_Hlt1_Forward } 
+                                               , { "Hlt/Track/ForwardHPT", kSourceID_Hlt1_ForwardHPT}
+	                                             , { "Hlt/Track/VeloTTHPT", kSourceID_Hlt1_VeloTT }
                                                } );
     declareProperty( "OutputRawEventLocation",
                      m_outputRawEventLocation = LHCb::RawEventLocation::Default );
-}
-//=============================================================================
-// Destructor
-//=============================================================================
-HltTrackReportsWriter::~HltTrackReportsWriter()
-{
 }
 
 //=============================================================================
@@ -64,8 +58,8 @@ StatusCode HltTrackReportsWriter::initialize()
     if ( msgLevel( MSG::DEBUG ) ) debug() << "==> Initialize" << endmsg;
 
     // Check validity of source IDs: max is 7, must be unique...
-    if ( std::any_of( std::begin(m_map), std::end(m_map), [](const std::pair<std::string,unsigned>& entry ) {
-            return entry.second > kSourceID_Max;
+    if ( std::any_of( std::begin(m_map), std::end(m_map), [](const std::pair<std::string,int>& entry ) {
+            return entry.second > kSourceID_Max || entry.second<0;
     }) ) {
         return Error( "Illegal SourceID specified; maximal allowed value is 7",
                       StatusCode::FAILURE );
@@ -100,7 +94,7 @@ StatusCode HltTrackReportsWriter::execute()
     return StatusCode::SUCCESS;
 }
 
-void HltTrackReportsWriter::convert(const std::string& location, unsigned sourceID, RawEvent* rawEvent) const 
+void HltTrackReportsWriter::convert(const std::string& location, unsigned sourceID, RawEvent* rawEvent) const
 {
         // get input
         const LHCb::Tracks* inputTracks = getIfExists<LHCb::Tracks>(location);
@@ -110,9 +104,7 @@ void HltTrackReportsWriter::convert(const std::string& location, unsigned source
             return;
         }
 
-
-
-        if ( msgLevel( MSG::VERBOSE ) || true ) {
+        if ( msgLevel( MSG::VERBOSE ) ) {
             verbose() << "----------------------------------------\n";
             verbose() << " Written event " << m_callcount << endmsg;
             verbose() << " Input tracks at " << location << "  -> source ID " << sourceID <<"\n";

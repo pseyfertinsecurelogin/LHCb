@@ -1,4 +1,4 @@
-// $Id: Functions.h 176843 2014-08-25 19:07:57Z ibelyaev $
+// $Id: Functions.h 181005 2014-12-02 13:39:03Z ibelyaev $
 // ============================================================================
 #ifndef LHCBMATH_FUNCTIONS_H
 #define LHCBMATH_FUNCTIONS_H 1
@@ -26,8 +26,8 @@
  *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
  *  @date 2010-04-19
  *
- *                    $Revision: 176843 $
- *  Last modification $Date: 2014-08-25 21:07:57 +0200 (Mon, 25 Aug 2014) $
+ *                    $Revision: 181005 $
+ *  Last modification $Date: 2014-12-02 14:39:03 +0100 (Tue, 02 Dec 2014) $
  *                 by $author$
  */
 // ============================================================================
@@ -4855,7 +4855,7 @@ namespace Gaudi
       ///  vectors of basic  Bernetin polynomials 
       typedef std::vector<Bernstein>  VB ;
       ///  vector  of basic  Bernetin polynomials 
-      VB m_b  ; //  vector  of basic  Bernetin polynomials 
+      VB m_b  ; //  vector  of basic  Bernstein polynomials 
       // ======================================================================
     } ;
     // ========================================================================

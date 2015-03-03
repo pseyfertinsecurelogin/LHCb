@@ -2,6 +2,13 @@
 ! package manager: Marco Cattaneo
 !-------------------------------------------------------------------------
 
+!========================= EventSys v26r2 2014-12-11 =========================
+! 2014-11-27 - Marco Clemencic
+ - Reverted work around for spurious entries in the rootmap files.
+
+! 2014-11-12 - Marco Clemencic
+ - Updated CMake configuration after the fix to GAUDI-972 (in Gaudi).
+
 !========================= EventSys v26r1 2014-07-14 =========================
 ! 2014-07-11 - Marco Clemencic
  - Strip spurious entry from the rootmap (ROOT 6 problem).

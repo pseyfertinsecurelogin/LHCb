@@ -1,7 +1,7 @@
 ################################################################################
 # Package: HltServices
 ################################################################################
-gaudi_subdir(HltServices v2r4)
+gaudi_subdir(HltServices v2r6)
 
 gaudi_depends_on_subdirs(Det/DetCond
                          Det/DetDesc
@@ -20,3 +20,6 @@ gaudi_add_module(HltServices
                  INCLUDE_DIRS Boost AIDA
                  LINK_LIBRARIES Boost DetCondLib DetDescLib DAQEventLib HltEvent GaudiAlgLib GaudiKernel HltInterfaces LoKiHltLib)
 
+gaudi_add_executable(hlttck_cdb_listkeys  utilities/main.cpp src/cdb.cpp src/tar.cpp
+                     INCLUDE_DIRS Boost
+                     LINK_LIBRARIES GaudiKernel Boost HltInterfaces)

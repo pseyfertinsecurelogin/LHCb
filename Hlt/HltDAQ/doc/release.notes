@@ -4,6 +4,37 @@
 ! Purpose     : Hlt RawBanks writers/decoders/monitors
 !------------------------------------------------------------------------------
 
+!========================= HltDAQ v4r10 2014-12-11 =========================
+! 2014-12-10 - Sebastian Neubert
+ - adjusted track locations to shared ones for the upfront tracking  
+ - write out VeloTT tracks from HltHPTTracking
+
+! 2014-12-09 - Gerhard Raven
+ - small speed-up of HltVertexReportsWriter and HltTrackingCoder
+
+! 2014-12-01 - Gerhard Raven
+ - add a big deprecation warning when decoding both Hlt1 and Hlt2 to 
+   a single TES location
+
+! 2014-11-19 - Gerhard Raven
+ - avoid std::stringstream
+
+!========================= HltDAQ v4r9 2014-11-05 =========================
+
+! 2014-11-04 - Sean Benson
+ - Major update: Additional decoding for turbo level reports.
+
+! 2014-11-03 - Gerhard Raven
+ - HltSelReportsDecoder: avoid stringstream, prefer range-based for
+
+! 2014-11-02 - Gerhard Raven
+ - added extra checking & diagnostics. 
+ - generic C++ code cleanup.
+
+! 2014-10-16 - Gerhard Raven
+ - replace 'virtual' qualification on member functions of derived classes with 'override'
+ - when classes have a trivial d'tor, replace explicit implementation with '=default'
+
 !========================= HltDAQ v4r8 2014-09-30 =========================
 
 ! 2014-09-26 - Alex Shires

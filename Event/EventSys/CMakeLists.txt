@@ -1,7 +1,7 @@
 ################################################################################
 # Package: EventSys
 ################################################################################
-gaudi_subdir(EventSys v26r1)
+gaudi_subdir(EventSys v26r2)
 
 gaudi_depends_on_subdirs(Event/DAQEvent
                          Event/DigiEvent
@@ -23,7 +23,7 @@ find_package(RELAX REQUIRED COMPONENTS CLHEP HepMC STL Math)
 # Merge the RELAX rootmaps
 set(rootmapfile ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/relax.rootmap)
 add_custom_command(OUTPUT ${rootmapfile}
-                   COMMAND ${merge_cmd} ${RELAX_ROOTMAPS} ${rootmapfile}
+                   COMMAND ${default_merge_cmd} ${RELAX_ROOTMAPS} ${rootmapfile}
                    DEPENDS ${RELAX_ROOTMAPS})
 add_custom_target(RelaxRootmap ALL DEPENDS ${rootmapfile})
 

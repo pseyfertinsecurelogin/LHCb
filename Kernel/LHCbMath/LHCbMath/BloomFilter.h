@@ -587,22 +587,18 @@ class BloomFilter
 	typedef typename HASH::result_type hashresult1_type;
 	static_assert(sizeof(hashresult1_type) == sizeof(uint64_t),
 		"BLOOMFILTER_FASTHASH only supported for 64 bit hash");
-	/// object to hash a T
-	static HASH s_hashfn1;
 	/// get our second hash by splitting 64 bit hash in two
 	typedef uint32_t hashresult2_type;
 #else
 	/// type of result of hashing a T
 	typedef typename HASH::result_type hashresult1_type;
-	/// object to hash a T
-	static HASH s_hashfn1;
-	/// type of second hash
-	typedef typename BloomFilterImpl::HashFNV1a<hashresult1_type
-	    >::result_type hashresult2_type;
+	/// type of the second hash object
+	typedef typename BloomFilterImpl::HashFNV1a<hashresult1_type>
+	    HASH2;
+	/// result type of second hash
+	typedef typename HASH2::result_type hashresult2_type;
 	static_assert(sizeof(hashresult1_type) == sizeof(hashresult2_type),
 		"The two hash functions' return types are incompatible!");
-	/// second hash object
-	static BloomFilterImpl::HashFNV1a<hashresult1_type> s_hashfn2;
 #endif
 	/// true if number if bits is small enough to use very fast hashing
 	enum { canUseVeryFastHash = _canUseVeryFastHash(
@@ -656,18 +652,18 @@ class BloomFilter
 	{
 	    if (!canUseVeryFastHash) {
 #ifdef BLOOMFILTER_FASTHASH
-		const auto h = s_hashfn1(val);
+		const auto h = HASH()(val);
 		const auto h1 = h & 0xfffffffful;
 		const auto h2 = h >> 32;
 #else
-		const auto h1 = s_hashfn1(val);
-		const auto h2 = s_hashfn2(h1);
+		const auto h1 = HASH()(val);
+		const auto h2 = HASH2()(h1);
 #endif
 		for (unsigned i = 0; i < nHashes; ++i) {
 		    m_bits[(h1 + i * h2) % nBits] = true;
 		}
 	    } else {
-		auto h = s_hashfn1(val);
+		auto h = HASH()(val);
 		// if we don't lose precision by scaling in double precision
 		// to the range 0..(nBits^nHashes - 1), do so (as it produces
 		// fewer collisions)
@@ -694,16 +690,16 @@ class BloomFilter
 	 */
 	template<class IT>
 	inline void insert(IT begin, IT end)
-	{ std::for_each(begin, end, this->insert); }
+	{ std::for_each(begin, end, [&] (const T& val) { insert(val); }); }
 	
 	/** @brief insert the contents of a container or range
 	 *
 	 * @param r	range or container for use in range-based for
 	 */
 	template<class RC>
-	inline void insert(typename std::enable_if<
+	inline typename std::enable_if<
 		std::is_convertible<decltype(*std::begin(RC())),
-		const T&>::value ,RC&&>::type r)
+		const T&>::value, void>::type insert(const RC& r)
 	{ insert(std::begin(r), std::end(r)); }
 
 	/** @brief construct set from contents of a container or range
@@ -713,7 +709,7 @@ class BloomFilter
 	template<class RC>
 	inline BloomFilter(typename std::enable_if<
 		std::is_convertible<decltype(*std::begin(RC())),
-		const T&>::value, RC&&>::type r)
+		const T&>::value, const RC&&>::type r)
 	{ insert(std::forward<RC>(r)); }
 
 	/** @brief construct set from elements between iterators begin and end
@@ -739,18 +735,18 @@ class BloomFilter
 	{
 	    if (!canUseVeryFastHash) {
 #ifdef BLOOMFILTER_FASTHASH
-		const auto h = s_hashfn1(val);
+		const auto h = HASH()(val);
 		const auto h1 = h & 0xfffffffful;
 		const auto h2 = h >> 32;
 #else
-		const auto h1 = s_hashfn1(val);
-		const auto h2 = s_hashfn2(h1);
+		const auto h1 = HASH()(val);
+		const auto h2 = HASH2()(h1);
 #endif
 		for (unsigned i = 0; i < nHashes; ++i) {
 		    if (!m_bits[(h1 + i * h2) % nBits]) return false;
 		}
 	    } else {
-		auto h = s_hashfn1(val);
+		auto h = HASH()(val);
 		// if we don't lose precision by scaling in double precision
 		// to the range 0..(nBits^nHashes - 1), do so (as it produces
 		// fewer collisions)
