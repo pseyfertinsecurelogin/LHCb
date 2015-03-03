@@ -84,11 +84,13 @@ FileStagerSvc::FileStagerSvc( const string& name, ISvcLocator* svcLoc )
    declareProperty( "CopyTries", m_copyTries = 5, "Retry copying if it fails." );
    declareProperty( "StageLocalFiles", m_stageLocalFiles = false,
                     "Stage files beginning with file:." );
-   declareProperty( "DataManagerName",
-                    m_dataManagerName = "Gaudi::StagedIODataManager/IODataManager" ,
-                    "Name of the IODataManager to use for proper disconnection." );
    declareProperty( "GarbageCollectorCommand", m_garbageCommand = "garbage.exe" ,
                     "Command for the garbage collector." );
+   declareProperty( "CheckForLocalGarbageCollector", m_checkLocalGarbage = true,
+                    "Check if the garbage collector command is in the local directory." );
+   // declareProperty( "DataManagerName",
+   //                  m_dataManagerName = "Gaudi::StagedIODataManager/IODataManager" ,
+   //                  "Name of the IODataManager to use for proper disconnection." );
 
 }
 
@@ -108,8 +110,7 @@ StatusCode FileStagerSvc::initialize()
    // Remove trailing slashes
    ba::trim_right_if( m_tmpdir, ba::is_any_of( "/" ) );
 
-   // Check if the base dir exists. FIXME create it if possible and clean up
-   // correctly later.
+   // Check if the base dir exists.
    if ( !fs::exists( m_tmpdir ) ) {
       error() << "Base temp dir " << m_tmpdir << " does not exist." << endmsg;
       sc = StatusCode::FAILURE;
@@ -139,14 +140,6 @@ StatusCode FileStagerSvc::initialize()
       return sc;
    }
 
-   // Get the datamanager to be able to properly disconnect files when we
-   // remove them.
-   // m_dataManager = serviceLocator()->service( m_dataManagerName, false );
-   // if ( !m_dataManager.isValid() ) {
-   //    error() << "Error getting IODataManager Service!" << endmsg;
-   //    return StatusCode::FAILURE;
-   // }
-
    // Submit the garbage collector if not keeping files
    if ( !m_keepFiles ) sc = garbage();
    if ( sc.isSuccess() ) {
@@ -166,16 +159,31 @@ StatusCode FileStagerSvc::finalize()
    if ( !m_keepFiles ) {
       verbose() << "Killing garbage collector" << endmsg;
       kill( m_garbagePID, SIGTERM );
+      boost::this_thread::sleep( pt::seconds( 5 ) );
       int err = 0;
-      while ( waitpid( m_garbagePID, &err, 0) == -1 )
-         if ( errno != EINTR ) {
-            warning() << "Interrupted while waiting for the garbage collector " 
-                      << "to exit." << endmsg;
+      unsigned int waited = 0;
+      while ( waited < 60 ) {
+         pid_t r = waitpid( m_garbagePID, &err, WNOHANG);
+         if ( r == 0 ) {
+            boost::this_thread::sleep( pt::seconds( 1 ) );
+            waited += 1;
+         } else if ( r == -1 ) {
+            if ( errno == EINTR ) {
+               warning() << "Interrupted while waiting for the garbage collector " 
+                         << "to exit." << endmsg;
+               break;
+            }
+         } else {
             break;
          }
+      }
       if ( err < 0 ) {
          warning() << "The garbage collector exited with an error: " 
                    << strerror( err ) << endmsg;
+      } else if ( waited == 60 ) {
+         warning() << "The garbage collector has taken more than a minute " 
+                   << "to exit, trying to kill harder." << endmsg;
+         kill( m_garbagePID, SIGKILL );
       }
    }
    if ( !sc.isSuccess() ) {
@@ -400,8 +408,8 @@ void FileStagerSvc::stage()
             ++tries;
             // If the file is already there, no need to copy
             fs::path temporary( stageFile->temporary() );
-            if ( fs::exists( temporary ) 
-                 && fs::file_size( temporary ) == stageFile->size() ) 
+            if ( fs::exists( temporary )
+                 && fs::file_size( temporary ) / 1024 == stageFile->size() )
                break;
 
             // try to copy a few times
@@ -531,14 +539,12 @@ void FileStagerSvc::removeFile( const_original_iterator it )
    if ( !m_keepFiles && fs::exists( p ) ) {
       // Remove the file
       fs::remove( p );
+      if ( outputLevel() <=  MSG::VERBOSE ) {
+         verbose() << "Deleted file " << temporary << endmsg;
+      }
    }
    file->setStaged( false );
    file->setGood( false );
-
-   if ( outputLevel() <=  MSG::VERBOSE ) {
-      verbose() << "Deleted file " << temporary << endmsg;
-   }
-
 }
 
 //=============================================================================
@@ -595,8 +601,18 @@ StatusCode FileStagerSvc::garbage()
    // Create the arguments
    int ppid = getpid();
 
+   fs::path command(m_garbageCommand);
+   if (m_checkLocalGarbage) {
+      // Check if the garbage command is in the current dir, if so, use it. If not try 
+      // the command as is.
+      fs::path current = fs::initial_path();
+      for (fs::directory_iterator it(current); it != fs::directory_iterator(); ++it) {
+         if (it->path().string().find(command.filename()) != std::string::npos) 
+            command = it->path();
+      }
+   }
    vector< string > arguments;
-   arguments += m_garbageCommand, lexical_cast< string >( ppid ), m_tmpdir;
+   arguments += command.filename(), lexical_cast< string >( ppid ), m_tmpdir;
     
    // Put the arguments into the correct format for execvp
    size_t n = arguments.size();
@@ -629,7 +645,7 @@ StatusCode FileStagerSvc::garbage()
          _exit( 0 );
       }
 
-      execvp( m_garbageCommand.c_str(), args );
+      execvp( command.string().c_str(), args );
 
       // exec should not return, but we got something.
       // delete memory reserved for args
@@ -738,7 +754,7 @@ bool FileStagerSvc::createPFN( string& remote, string& command )
       ba::erase_range( remote, result );
    }
    
-   re = "^((?:rfio)|(?:castor)|(?:root):)//(?:\\w\\.\\w\\.\\w:\\d+/+castor)";
+   re = "^((?:rfio)|(?:castor):)//(?:\\w\\.\\w\\.\\w:\\d+/+castor)";
    if ( regex_search( remote.begin(), remote.end(), match, re, flags ) ) {
       boost::iterator_range< string::iterator >
          range( match[ 1 ].first, match[ 1 ].second );
@@ -755,9 +771,9 @@ bool FileStagerSvc::createPFN( string& remote, string& command )
       ba::erase_range( remote, result );
       command = "rfcp";
       return true;
-   } else if ( result = ba::find_first( remote, "/castor" ) ) {
-      // castor file, no protocol specification
-      command = "rfcp";
+   } else if ( result = ba::find_first( remote, "root:" ) ) {
+      // xrootd needs no changes, command is xrdcp
+      command = "xrdcp -s";
       return true;
    } else if ( result = ba::find_first( remote, "srm:" ) ) {
       // srm does not need changes, command is lcg-cp
@@ -767,7 +783,11 @@ bool FileStagerSvc::createPFN( string& remote, string& command )
       // gsidcap or dcap needs no changes, command is dccp
       command = "dccp -A";
       return true;
-   } else if ( m_stageLocalFiles && ( result = ba::find_first( remote, "file:" ) ) ) {
+   } else if ( result = ba::find_first( remote, "/castor" ) ) {
+      // castor file, no protocol specification
+      command = "rfcp";
+      return true;
+  } else if ( m_stageLocalFiles && ( result = ba::find_first( remote, "file:" ) ) ) {
       // local file, perhaps nfs or other networked filesystem
       ba::erase_range( remote, result );
       command = "cp";

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # =============================================================================
-# $Id: MC.py 126451 2011-07-23 11:54:25Z ibelyaev $ 
+# $Id: MC.py 130408 2011-10-21 16:58:55Z ibelyaev $ 
 # =============================================================================
 ## @file LoKiMC/MC.py
 #  collection of utilities for useful 'decoration' of MC-objects
@@ -20,8 +20,8 @@
 #  @author Vanya BELYAEV ibelyaev@physics.syr.edu
 #  @date 2007-08-11
 #
-#                    $Revision: 126451 $
-#  Last modification $Date: 2011-07-23 13:54:25 +0200 (Sat, 23 Jul 2011) $
+#                    $Revision: 130408 $
+#  Last modification $Date: 2011-10-21 18:58:55 +0200 (Fri, 21 Oct 2011) $
 #                 by $Author: ibelyaev $
 # =============================================================================
 """
@@ -43,7 +43,7 @@ with the smear campaign of Dr.O.Callot et al.:
 # =============================================================================
 __author__  = 'Vanya BELYAEV ibelyaev@physics.syr.edu'
 __date__    = "2007-08-11"
-__version__ = "$Revision: 126451 $ "
+__version__ = "$Revision: 130408 $ "
 # =============================================================================
 
 from   LoKiMC.functions    import LoKi,LHCb,cpp
@@ -440,7 +440,6 @@ if not hasattr ( LHCb.MCParticle , 'Range'       ) :
 if not hasattr ( LHCb.MCVertex   , 'Range'       ) :
     LHCb.MCVertex.Range   = cpp.Gaudi.NamedRange_ ( LHCb.MCVertex.ConstVector   )
 
-
 for r in ( LHCb.MCParticle.Range ,
            LHCb.MCVertex.Range   ,
            cpp.Gaudi.Range_ ( LHCb.MCParticle.ConstVector ) ,
@@ -452,7 +451,6 @@ for r in ( LHCb.MCParticle.Range ,
     r.__getslice__ = _LCD . _slice_
     r.__getitem__  =    r . __call__ 
     r.__setitem__  =          None
-
     
 if not hasattr ( LHCb.MCParticle , 'Container' ) :
     LHCb.MCParticle.Container = cpp.KeyedContainer(LHCb.MCParticle,'Containers::KeyedObjectManager<Containers::hashmap>')

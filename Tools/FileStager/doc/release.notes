@@ -4,6 +4,26 @@
 ! Purpose     : Create local copies of files from the grid at runtime.
 !-----------------------------------------------------------------------------
 
+!========================= FileStager v1r4 2011-11-07 =========================
+! 2011-10-27 - Roel Aaij
+ - Add a timeout of a minute to waiting for the garbage collector to complete its
+   cleanup.
+ - Improve the regex used to find the xrootd host.
+ - Improve garbage collector.
+
+!========================= FileStager v1r3 2011-10-26 =========================
+! 2011-10-25 - Roel Aaij
+ - Add finding of garbage.exe in C++ to cover running from pickled options (like
+   on the grid) in case the package is not released.
+ - Reorder PFN parsing to correctly pickup xrootd at Cern and RAL.
+ - Allow a PFN which is only a filename, no directories.
+
+! 2011-10-23 - Roel Aaij
+ - Add xrdcp support for root:// PFNs.
+
+! 2011-10-14 - Roel Aaij
+ - Fix a bug in disconnect logic.
+
 !========================= FileStager v1r2 2011-08-30 =========================
 ! 2011-08-05 - Roel Aaij
  - Add some ifdef to allow compilation on Windows. The FileStager is _not_

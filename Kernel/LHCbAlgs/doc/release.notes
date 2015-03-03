@@ -4,6 +4,47 @@
 ! Purpose     : General purpose algorithms and tools for LHCb
 !-----------------------------------------------------------------------------
 
+!========================= LHCbAlgs v2r44 2011-11-07 =========================
+! 2011-11-04 - Marco Clemencic
+ - Added a check in OdinTimeDecoder to prevent failures in case of bad ODIN
+   time.
+
+!========================= LHCbAlgs v2r43 2011-10-05 =========================
+! 2011-10-05 - Vanya Belyaev
+ - Add new algorithms for copy/link data in TES:
+   *  @code
+   *
+   *  from Configurables import Gaudi__DataCopy
+   *
+   *  rootInTes = '/Event/Leptonic/'
+   *  rawEvt  = Gaudi_DataCopy ( 'CopyRawEvt' ,
+   *                             What   =      '/Event/DAQ/RawEvent' ,
+   *                             Target = rootInTes + 'DAQ/RawEvent' )
+   *
+   *  @endcode
+   *
+
+   *  @code
+   *
+   *  from Configurables import Gaudi__DataLink
+   *
+   *  rootInTes = '/Event/Leptonic/'
+   *  rawEvt  = Gaudi_DataLink ( 'CopyRawEvt' ,
+   *                             What   =      '/Event/DAQ/RawEvent' ,
+   *                             Target = rootInTes + 'DAQ/RawEvent' )
+   *
+   *  @endcode
+   *
+
+! 2011-10-04 - Marco Clemencic
+ - Fixed a problem in  OdinTimeDecoder after the fix to bug #87392.
+   Do not try to get RawEvent if the Event Store is not ready.
+
+! 2011-10-03 - Marco Clemencic
+ - Added test exposing bug #87392: Event time not set correctly on first event
+ - Adapted TestTimeDecoderOdin to the new behavior of EventClockSvc.
+   (fix to bug #87392)
+
 !========================= LHCbAlgs v2r42 2011-08-29 =========================
 ! 2011-08-10 - Patrick Koppenburg
  - Task #21133:
@@ -19,7 +60,7 @@
 
 ! 2011-08-08 - Patrick Koppenburg
  - New algorithm OfflineRateLimiter that limits the rate wrt to some
-   trigger line. Allows to keep 1 Hz of NoBias in te stripping 
+   trigger line. Allows to keep 1 Hz of NoBias in te stripping
    irrespective of the actual input rate.\
  - OfflineDeterministicParescaler : made some methods and properties
    protected to allow OfflineRateLimiter to inherit from them.
@@ -45,14 +86,14 @@
  - AlgorithmCorreations : Fix bug https://savannah.cern.ch/bugs/index.php?82587
 
 ! 2011-05-18 - Marco Cattaneo
- - If OutputLevel is VERBOSE, TESFingerPrint now sends its statistics also to 
+ - If OutputLevel is VERBOSE, TESFingerPrint now sends its statistics also to
    the MessageSvc
 
 ! 2011-05-17 - Illya Shapoval
- - Added an algorithm to produce the TES finger print (quantitative image). Two 
+ - Added an algorithm to produce the TES finger print (quantitative image). Two
  heuristics levels are possible:
    + Plain data objects statistics through the store ('Low' level);
-   + Mentioned above + more closer look on the container object contents 
+   + Mentioned above + more closer look on the container object contents
    ('Medium' level).
  Files added: TESFingerPrint.cpp, TESFingerPrint.h
 

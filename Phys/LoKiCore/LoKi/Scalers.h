@@ -1,4 +1,4 @@
-// $Id: Scalers.h 53291 2010-08-05 14:35:53Z ibelyaev $
+// $Id: Scalers.h 129913 2011-10-11 14:29:11Z raaij $
 // ============================================================================
 #ifndef LOKI_SCALERS_H 
 #define LOKI_SCALERS_H 1
@@ -237,9 +237,11 @@ namespace LoKi
     private:
       // ======================================================================
       /// Tick interval 
-      mutable long double m_interval ;                         // Tick interval 
+      mutable long double m_interval ;                     //     tick interval 
       /// the next tick 
-      mutable long double m_next     ;                         // the next tick 
+      mutable long double m_next     ;                     //     the next tick 
+      /// the previous tick 
+      mutable long double m_previous ;                     // the previous tick 
       // ======================================================================
     };
     // ========================================================================

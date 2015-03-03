@@ -63,11 +63,16 @@ StatusCode OdinTimeDecoder::initialize() {
 //=========================================================================
 LHCb::ODIN *OdinTimeDecoder::getODIN() const
 {
-  // Decode the ODIN bank.
-  m_odinDecoder->execute();
-  // @FIXME: we must get the ODIN object from where the Tool created it
-  if ( exist<LHCb::ODIN>(LHCb::ODINLocation::Default) ){
-    return get<LHCb::ODIN>(LHCb::ODINLocation::Default);
+  // Check if the root of the transient store is available before calling the
+  // ODIN decoder. (e. g. during the initialize)
+  DataObject *tmp;
+  if (LIKELY( evtSvc()->findObject("", tmp).isSuccess() )) {
+    // Decode the ODIN bank.
+    m_odinDecoder->execute();
+    // @FIXME: we must get the ODIN object from where the Tool created it
+    if ( LIKELY(exist<LHCb::ODIN>(LHCb::ODINLocation::Default)) ){
+      return get<LHCb::ODIN>(LHCb::ODINLocation::Default);
+    }
   }
   return 0;
 }
@@ -95,8 +100,12 @@ Gaudi::Time OdinTimeDecoder::getTime ( ) const {
         debug() << ", new run=" << m_currentRun << endmsg;
       incSvc()->fireIncident(RunChangeIncident(name(),m_currentRun));
     }
-
-    last_time = odin->eventTime();
+    try {
+      last_time = odin->eventTime();
+    } catch(TimeException &e) {
+      Warning("Problem with ODIN GPS Time '" + e.message() + "', ignored",
+              StatusCode::SUCCESS).ignore();
+    }
   }
 
   return last_time;

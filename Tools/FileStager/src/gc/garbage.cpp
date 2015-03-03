@@ -16,12 +16,19 @@ using boost::posix_time::seconds;
 
 // Need a global here to allow cleanup to be called using signal
 std::string tmpdir;
+pid_t pID = 0;
 
 void cleanup( int )
 {
-   fs::path p( tmpdir );
-   fs::remove_all( tmpdir );
-   exit( 0 );
+   if ( kill( pID, 0 ) == 0 ) {
+      // The main process still exists (and probably killed us), we don't do anything.
+      exit( 0 );
+   } else {
+      fs::path p( tmpdir );
+      if ( fs::exists(p) )
+         fs::remove_all( tmpdir );
+      exit( 0 );
+   }
 }
 #endif
 
@@ -70,8 +77,11 @@ int main( int argc, char* argv[] )
       cout << "usage: garbage.exe pid dir" << endl;
       return -2;
    }
+   if ( !fs::exists( fs::path( tmpdir ) ) ) {
+      cout << "Directory " << tmpdir << " does not exist!" << endl;
+      return -2;
+   }
 
-   pid_t pID = 0;
    try {
       pID = vm[ "pid" ].as< pid_t >();
    } catch ( const boost::bad_any_cast& e ) {
@@ -80,14 +90,13 @@ int main( int argc, char* argv[] )
       return -2;
    }
 
-   // register the signals now, we no the tmpdir
+   // register the signals now, we know the tmpdir
    signal( SIGTERM, cleanup );
-   signal( SIGKILL, cleanup );
 
    // poll for the main process 
    while (1) {
       if ( kill( pID, 0 ) == 0 ) {
-         boost::this_thread::sleep( seconds( 10 ) );
+         boost::this_thread::sleep( seconds( 1 ) );
       } else {
          break;
       }

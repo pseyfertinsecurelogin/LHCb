@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # =============================================================================
-# $Id: functions.py 120851 2011-03-28 13:23:53Z ibelyaev $
+# $Id: functions.py 130709 2011-10-30 18:29:40Z ibelyaev $
 # =============================================================================
-# $URL: http://svn.cern.ch/guest/lhcb/LHCb/tags/Phys/LoKiCore/v11r3/python/LoKiCore/functions.py $ 
+# $URL: http://svn.cern.ch/guest/lhcb/LHCb/tags/Phys/LoKiCore/v11r4/python/LoKiCore/functions.py $ 
 # =============================================================================
 ## @file functions.py LoKiCore/function.py
 #  The set of basic functions for from LoKiCore library
@@ -32,7 +32,7 @@ A.Golutvin, P.Koppenburg have been used in the design.
 # =============================================================================
 __author__  = "Vanya BELYAEV ibelyaev@physics.syr.edu"
 __date__    = "????-??-??"
-__version__ = "Version $Revision: 120851 $ "
+__version__ = "Version $Revision: 130709 $ "
 # =============================================================================
 
 from LoKiCore.basic import cpp, std, LoKi, LHCb, Gaudi
@@ -691,7 +691,7 @@ def count ( cut ) :
 #    " ... >> fetch ( PT , 1 , -1 )  >> ... "  #
 #
 #
-#    " ... >> fetch ( PT > 1 * GeV )  "  # terminate stream 
+#    " ... >> fetch ( PT > 1 * GeV , 0 )  "  # terminate stream 
 #
 #  @endcode     
 #
@@ -1005,6 +1005,30 @@ def cause ( fun1 , fun2 ) :
 
 
 # =============================================================================
+## sort the stream  (and get the first N-elements)
+#
+#  @code
+#
+#    >>> stream >> sort ( PT )
+#
+#    >>> stream >> sort ( PT , 5 ) ## get no more than 5 elements 
+#
+#  @endcode     
+#
+#  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
+#  @date 2011-10-30
+def sort( fun , *args ) :
+    """
+    sort the stream  (and get the first N-elements)
+    
+    >>> stream >> sort ( PT )
+    
+    >>> stream >> sort ( PT , 5 ) ## get no more than 5 elements 
+    
+    """    
+    return fun.__sort__ ( *args  ) 
+
+# =============================================================================
 def mark ( tree ) :
     """
     Create the 'marked' tree:
@@ -1249,9 +1273,19 @@ def vct_from_list  ( lst , *args ) :
 
 
 # =============================================================================
+## @see LoKi::FirstN
+def first_n ( N ) :
+    """
+    helper object to selexct the first N-elements from the stream 
+    """
+    return LoKi.FirstN( N )
+
+# =============================================================================
 ## @see LoKi::Dump
-Dump = LoKi.Dump
-dump = LoKi.Dump ()
+Dump    = LoKi.Dump
+dump    = LoKi.Dump ()
+## @see LoKi::Reverse 
+reverse = LoKi.Reverse()
 
 # =============================================================================
 if '__main__' == __name__ :

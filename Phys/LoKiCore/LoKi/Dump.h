@@ -1,4 +1,4 @@
-// $Id: Dump.h 121023 2011-03-29 18:09:53Z ibelyaev $
+// $Id: Dump.h 130709 2011-10-30 18:29:40Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_DUMP_H 
 #define LOKI_DUMP_H 1
@@ -24,16 +24,17 @@
  *  A.Golutvin, P.Koppenburg have been used in the design.
  *
  *  By usage of this code one clearly states the disagreement 
- *  with the campain of Dr.O.Callot et al.: 
+ *  with the smear campaign of Dr.O.Callot et al.: 
  *  ``No Vanya's lines are allowed in LHCb/Gaudi software.''
  *
  *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
  *  @date 2010-11-18
  *  
- *                    $Revision: 121023 $
- *  Last modification $Date: 2011-03-29 20:09:53 +0200 (Tue, 29 Mar 2011) $
+ *                    $Revision: 130709 $
+ *  Last modification $Date: 2011-10-30 19:29:40 +0100 (Sun, 30 Oct 2011) $
  *                 by $Author: ibelyaev $
  */
+// ============================================================================
  namespace LoKi
 {
   // ==========================================================================

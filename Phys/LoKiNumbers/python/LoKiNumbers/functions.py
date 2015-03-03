@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # =============================================================================
-# $Id: functions.py 126316 2011-07-20 20:22:53Z ibelyaev $ 
+# $Id: functions.py 130710 2011-10-30 18:35:44Z ibelyaev $ 
 # =============================================================================
 ## @file LoKiNumbers/functions.py
 #  The full set of useful objects from LoKiNumbers library 
@@ -19,8 +19,8 @@
 #
 #  @author Vanya BELYAEV ibelyaev@physics.syr.edu
 #
-# $Revision: 126316 $
-# Last modification $Date: 2011-07-20 22:22:53 +0200 (Wed, 20 Jul 2011) $
+# $Revision: 130710 $
+# Last modification $Date: 2011-10-30 19:35:44 +0100 (Sun, 30 Oct 2011) $
 #                by $Author: ibelyaev $ 
 # =============================================================================
 """
@@ -39,15 +39,15 @@ with the campain of Dr.O.Callot et al.:
  ``No Vanya's lines are allowed in LHCb/Gaudi software.''
 
 
- $Revision: 126316 $
- Last modification $Date: 2011-07-20 22:22:53 +0200 (Wed, 20 Jul 2011) $
+ $Revision: 130710 $
+ Last modification $Date: 2011-10-30 19:35:44 +0100 (Sun, 30 Oct 2011) $
                 by $Author: ibelyaev $ 
 
 """
 # =============================================================================
 __author__  = "Vanya BELYAEV ibelyaev@physics.syr.edu"
 __date__    = ' xxxx-xx-xx '
-__version__ = " version $Revision: 126316 $ " 
+__version__ = " version $Revision: 130710 $ " 
 # =============================================================================
 
 # Namespaces:
@@ -226,6 +226,7 @@ def  recSummary ( index , location ) :
     return switch ( HASRECSUMMARY ( index      ) ,
                     RECSUMMARY    ( index , -1 ) ,
                     CONTAINS      ( location   ) )  
+
 
 # =============================================================================
 if '__main__' == __name__ :

@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # =============================================================================
-# $Id: decorators.py 121225 2011-04-02 12:41:34Z ibelyaev $ 
+# $Id: decorators.py 130709 2011-10-30 18:29:40Z ibelyaev $ 
 # =============================================================================
-# $URL: http://svn.cern.ch/guest/lhcb/LHCb/tags/Phys/LoKiCore/v11r3/python/LoKiCore/decorators.py $ 
+# $URL: http://svn.cern.ch/guest/lhcb/LHCb/tags/Phys/LoKiCore/v11r4/python/LoKiCore/decorators.py $ 
 # =============================================================================
 ## @file decorators.py LoKiCore/decorators.py
 #
@@ -22,8 +22,8 @@
 #
 #  @author Vanya BELYAEV ibelyaev@physics.syr.edu
 #
-#  $Revision: 121225 $
-#  Last modification $Date: 2011-04-02 14:41:34 +0200 (Sat, 02 Apr 2011) $
+#  $Revision: 130709 $
+#  Last modification $Date: 2011-10-30 19:29:40 +0100 (Sun, 30 Oct 2011) $
 #                 by $Author: ibelyaev $
 # =============================================================================
 """
@@ -46,7 +46,7 @@ with the campain of Dr.O.Callot et al.:
 # =============================================================================
 __author__  = "Vanya BELYAEV ibelyaev@physics.syr.edu" 
 __date__    = "????-??-??"
-__version__ = "SVN $Revision: 121225 $ "
+__version__ = "SVN $Revision: 130709 $ "
 # =============================================================================
 
 from LoKiCore.basic import cpp, std, LoKi, LHCb, Gaudi  
@@ -502,6 +502,7 @@ def decorateFunctionOps ( funcs , opers ) :
     _max_abs_element_ = None
 
     _fetch_           = None
+    _sort_            = None 
     
     _sum_             = None
     _product_         = None
@@ -1482,6 +1483,21 @@ def decorateFunctionOps ( funcs , opers ) :
             """
             return opers.__fetch__ ( s , *a )
         _fetch_ . __doc__  += opers.__fetch__ . __doc__
+        
+    # 'sort' 
+    if hasattr ( opers , '__sort__' ) :
+        def _sort_ ( s , *a ) :
+            """
+            Sort the stream, and (optionally) select the first N-elements
+
+            >>> fun = sort ( PT )
+
+            >>> fun = sort ( PT , 5 ) ## select not more that 5 elements  
+            
+            Uses:\n
+            """
+            return opers.__sort__ ( s , *a )
+        _sort_ . __doc__  += opers.__sort__ . __doc__
 
     # decorate the functions 
     for fun in funcs :
@@ -1556,7 +1572,8 @@ def decorateFunctionOps ( funcs , opers ) :
         if _sum_             : fun . __sum__             = _sum_       #
         if _product_         : fun . __product__         = _product_   #
 
-        if _fetch_           : fun . __fetch__           = _fetch_      #
+        if _fetch_           : fun . __fetch__           = _fetch_     #
+        if _sort_            : fun . __sort__            = _sort_      #
 
         if _mean_            : fun . __mean__            = _mean_       #
         if _meanErr_         : fun . __meanErr__         = _meanErr_    #
