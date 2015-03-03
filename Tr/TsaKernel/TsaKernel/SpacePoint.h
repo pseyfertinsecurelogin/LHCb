@@ -1,7 +1,7 @@
 #ifndef _TsaSpacePoint_H
 #define _TsaSpacePoint_H 1
 
-/** @class TsaSpacePoint TsaSpacePoint.h
+/** @class Tsa::SpacePoint SpacePoint.h TsaKernel/SpacePoint.h
 *
 *  spacepoint class for Tsa
 *
@@ -30,7 +30,7 @@ namespace Tsa{
   }
 
   // Class ID definition
-  static const CLID& CLID_SpacePoint = 19104;
+  static const CLID CLID_SpacePoint = 19104;
 
   class SpacePoint: public KeyedObject<int>{
 

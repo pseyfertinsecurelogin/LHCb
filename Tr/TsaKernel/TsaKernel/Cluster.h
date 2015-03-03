@@ -1,4 +1,4 @@
-// $Id: Cluster.h,v 1.6 2007-01-16 12:42:17 cattanem Exp $
+// $Id: Cluster.h,v 1.7 2007-03-01 12:08:55 cattanem Exp $
 #ifndef TsaCluster_H
 #define TsaCluster_H 1
 
@@ -11,7 +11,7 @@
 #include <vector>
 #include <algorithm>
 
-/** @class TsaCluster TsaCluster.h 
+/** @class Tsa::Cluster Cluster.h TsaKernel/Cluster.h
  *
  *  cluster class for Tsa
  *

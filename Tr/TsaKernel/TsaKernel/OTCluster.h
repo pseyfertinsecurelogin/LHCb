@@ -1,4 +1,4 @@
-// $Id: OTCluster.h,v 1.7 2006-10-13 08:44:36 mneedham Exp $
+// $Id: OTCluster.h,v 1.8 2007-02-28 18:32:11 marcocle Exp $
 #ifndef Tsa_OTCluster_H
 #define Tsa_OTCluster_H 1
 
@@ -14,7 +14,7 @@ class DeOTModule;
 namespace Tsa{
 
   // Class ID definition
-  static const CLID& CLID_OTCluster = 19003;
+  static const CLID CLID_OTCluster = 19003;
 
   // Namespace for locations in TDS
   namespace OTClusterLocation {

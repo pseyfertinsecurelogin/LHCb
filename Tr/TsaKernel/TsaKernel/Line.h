@@ -1,7 +1,7 @@
 #ifndef _TsaLine_H
 #define _TsaLine_H
 
-/** @class TsaLine TsaLine Tsa/TsaLine
+/** @class Tsa::Line Line.h TsaKernel/Line.h
  *
  *  y = mx + c !
  *

@@ -1,4 +1,4 @@
-// $Id: DeITBox.h,v 1.2 2006-12-13 13:48:52 mneedham Exp $
+// $Id: DeITBox.h,v 1.4 2007-03-01 11:08:00 cattanem Exp $
 #ifndef _DeITBox_H_
 #define _DeITBox_H_
 
@@ -21,7 +21,7 @@ class DeITStation;
  *  @author Matthew Needham Matthew.Needham@cern.ch
  */
 
-static const CLID& CLID_DeITBox = 9203; // needs fixing !
+static const CLID CLID_DeITBox = 9203; // needs fixing !
 
 class DeITBox : public DeSTBaseElement  {
 
@@ -61,7 +61,7 @@ public:
 
 
    /** check whether contains 
-   *  @param channel
+   *  @param aChannel channel
    *  @return bool
    */ 
    bool contains(const LHCb::STChannelID aChannel) const; 
@@ -115,8 +115,8 @@ inline bool DeITBox::contains(const LHCb::STChannelID aChannel) const{
 /** ouput operator for class DeITBox
  *  @see DeITBox
  *  @see MsgStream
- *  @param os reference to STL output stream
- *  @param de reference to DeITBox object
+ *  @param os   reference to STL output stream
+ *  @param aBox reference to DeITBox object
  */
 inline std::ostream& operator<<( std::ostream& os , const DeITBox* aBox )
 { return aBox->printOut( os ); }
@@ -125,8 +125,8 @@ inline std::ostream& operator<<( std::ostream& os , const DeITBox* aBox )
 /** ouput operator for class DeITBox
  *  @see DeITBox
  *  @see MsgStream
- *  @param os reference to MsgStream output stream
- *  @param de reference to DeITBox object
+ *  @param os   reference to MsgStream output stream
+ *  @param aBox reference to DeITBox object
  */
 inline MsgStream& operator<<( MsgStream& os , const DeITBox* aBox )
 { return aBox->printOut( os ); }

@@ -1,4 +1,4 @@
-// $Id: SeedTrack.h,v 1.1 2006-12-06 14:35:19 mneedham Exp $
+// $Id: SeedTrack.h,v 1.2 2007-02-28 18:32:12 marcocle Exp $
 #ifndef SEEDTRACK_H 
 #define SEEDTRACK_H 1
 
@@ -28,7 +28,7 @@ namespace LHCb{
  */
 
   // Class ID definition
-  static const CLID& CLID_SeedTrack = 19111;
+  static const CLID CLID_SeedTrack = 19111;
 
   // Namespace for locations in TDS
   namespace SeedTrackLocation {

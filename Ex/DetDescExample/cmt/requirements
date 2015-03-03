@@ -1,6 +1,6 @@
-# $Id: requirements,v 1.33 2007-02-06 13:43:02 cattanem Exp $
+# $Id: requirements,v 1.35 2007-03-02 10:09:52 cattanem Exp $
 package DetDescExample
-version v7r3
+version v7r4
 
 branches doc src options cmt
 
@@ -16,8 +16,7 @@ use CaloDet       v* Det
 application       DetDescExample $(GAUDICONFROOT)/src/GaudiMain.cpp *.cpp
 
 private
-use               XmlDDDB       v* Det
-use               XmlConditions v* Det
+use               SQLDDDB       v* Det
 use               DetDescSvc    v* Det
 use               CaloDetXmlCnv v* Det
 use               GaudiConf     v*     

@@ -1,6 +1,20 @@
 !Package         : STDet
 !Package manager : M. Needham
-!-----------------------------------------------------------------------
+!-------------------------------------------------------------------------
+
+!======================== STDet v3r2 2007-03-01 ==========================
+! 2007-03-01 - Matt Needham
+ - add statuscode to DeSTLayer::cachePlane 
+
+! 2007-03-01 - Marco Cattaneo
+ - Fix broken doxygen comments
+ - Remove obsolete STDet_load.cpp file
+
+! 2007-02-28 - Marco Clemencic
+ - Replaced "static const CLID&" with "static const CLID"
+
+! 2006-02-16 M. Needham
+ - Ensure cached numbers in DeSTLayer are updated
 
 !======================== STDet v3r1 2007-02-09 ==========================
 ! 2007-02-09 - Marco Cattaneo

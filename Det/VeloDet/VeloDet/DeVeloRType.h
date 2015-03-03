@@ -1,11 +1,11 @@
-// $Id: DeVeloRType.h,v 1.19 2006-10-10 08:57:16 mtobin Exp $
+// $Id: DeVeloRType.h,v 1.21 2007-02-28 18:32:28 marcocle Exp $
 #ifndef VELODET_DEVELORTYPE_H 
 #define VELODET_DEVELORTYPE_H 1
 
 // Include files
 
-// from Kernel
-#include "Kernel/Point3DTypes.h"
+// Gaudi Math definitions
+#include "GaudiKernel/Point3DTypes.h"
 
 /// from VeloDet
 #include "VeloDet/DeVeloSensor.h"
@@ -17,7 +17,7 @@
 #include "Kernel/CircleTraj.h"
 
 // Unique class identifier
-static const CLID& CLID_DeVeloRType = 1008102 ;
+static const CLID CLID_DeVeloRType = 1008102 ;
 
 
 /** @class DeVeloRType DeVeloRType.h VeloDet/DeVeloRType.h

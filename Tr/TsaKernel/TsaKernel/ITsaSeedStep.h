@@ -1,8 +1,8 @@
-// $Id: ITsaSeedStep.h,v 1.1 2006-12-06 14:35:19 mneedham Exp $
+// $Id: ITsaSeedStep.h,v 1.2 2007-03-01 12:08:55 cattanem Exp $
 #ifndef _ITsaSeedStep_H
 #define _ITsaSeedStep_H
 
-/** @class ITsaStep TsaKernel/ITsaStep
+/** @class ITsaSeedStep ITsaSeedStep.h TsaKernel/ITsaSeedStep
  *
  *  Interface to data svc
  *

@@ -1,24 +1,26 @@
 #============================================================================
 # Created    : 2006-02-16
 # Maintainer : Eduardo Rodrigues
-#
-# Documentation on the requirement file can be found at
-# http://cern.ch/lhcb-comp/Support/html/new_structure.pdf
 #============================================================================
 package           TrackMCInterfaces
-version           v2r0
+version           v3r0
 
-#============================================================================
-# This template is an example for a standard Algorithm package
-#
 # Structure, i.e. directories to process. 
 #============================================================================
 branches          cmt doc TrackMCInterfaces
 
 # =============== dependencies ==============================================
-use LHCbDefinitions  v* Kernel
 use GaudiKernel      v*
 
 # =============== include directories =======================================
 apply_pattern install_more_includes more=TrackMCInterfaces
 
+# =============== LCG Dictionaries ============================================
+apply_pattern reflex_dictionary                                                 \
+              dictionary=TrackMCInterfaces                                      \
+              headerfiles=$(TRACKMCINTERFACESROOT)/dict/TrackMCInterfacesDict.h \
+              selectionfile=$(TRACKMCINTERFACESROOT)/dict/TrackMCInterfacesDict.xml \
+              options="-U__MINGW32__"
+
+# Hack for cmt v1r19 bug to link dictionary on windows
+macro TrackMCInterfacesDict_use_linkopts $(use_linkopts)

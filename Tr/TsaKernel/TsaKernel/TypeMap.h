@@ -1,11 +1,11 @@
-// $Id: TypeMap.h,v 1.1.1.1 2006-07-24 14:56:20 mneedham Exp $ 
+// $Id: TypeMap.h,v 1.2 2007-03-01 12:08:55 cattanem Exp $ 
 #ifndef _TsaTypeMap_H
 #define _TsaTypeMap_H 1
 
-/** @class TsaTypeMap TsaTypeMap.h 
+/** @class Tsa::TypeMap TypeMap.h TsaKernel/TypeMap.h
 * Map string identifying spacepoint to enum and vice-versa
 * @author M. Needham
-* @data 11/05/2004
+* @date 11/05/2004
 */
 
 #include <map>

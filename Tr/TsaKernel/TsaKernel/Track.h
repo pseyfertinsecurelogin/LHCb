@@ -14,14 +14,14 @@ namespace Tsa{
   class Cluster;
 
   // Class ID definition
-  static const CLID& CLID_TsaTrack = 19010;
+  static const CLID CLID_TsaTrack = 19010;
 
   // Namespace for locations in TDS
   namespace TrackLocation {
     static const std::string& Default = "/Event/Rec/Tsa/Tracks";
   }
 
- /** @class TsaTrack TsaTrack.h 
+ /** @class Tsa::Track Track.h TsaKernel/Track.h
   *
   *  spacepoint class for Tsa
   *

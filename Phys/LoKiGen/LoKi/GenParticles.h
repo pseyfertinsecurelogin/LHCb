@@ -1,16 +1,8 @@
-// $Id: GenParticles.h,v 1.11 2007-01-19 13:11:46 ibelyaev Exp $
+// $Id: GenParticles.h,v 1.14 2007-03-04 16:41:18 ibelyaev Exp $
 // ============================================================================
-// CVS tag $Name: not supported by cvs2svn $ , version $Revision: 1.11 $ 
+// CVS tag $Name: not supported by cvs2svn $ , version $Revision: 1.14 $ 
 // ============================================================================
 // $Log: not supported by cvs2svn $
-// Revision 1.10  2006/11/25 19:14:19  ibelyaev
-//  improve Doxygen
-//
-// Revision 1.9  2006/08/26 11:28:02  ibelyaev
-//  add GSTATUS functor: HepMC::GenParticle::status()
-//
-// Revision 1.8  2006/05/27 11:38:44  ibelyaev
-//  add PrintHepMCDecay utilities
 //
 // ============================================================================
 #ifndef LOKI_GENPARTICLES_H 
@@ -63,7 +55,7 @@ namespace LoKi
    */
   namespace GenParticles 
   {    
-    /** @struct BarCode 
+    /** @class BarCode 
      *  the most primitive function - it return the "barcode" 
      *  of HepMC::GenParticle object
      *
@@ -73,8 +65,8 @@ namespace LoKi
      *  @author Vanya BELYAEV belyaev@lapp.in2p3.fr
      *  @date   2005-03-26
      */
-    struct BarCode : 
-      public LoKi::Function<const HepMC::GenParticle*> 
+    class BarCode 
+      : public LoKi::Function<const HepMC::GenParticle*> 
     {
     public:
       /// MANDATORY: clone method ("virtual" constructor")
@@ -87,7 +79,7 @@ namespace LoKi
       virtual  std::ostream& fillStream( std::ostream& s ) const ;
     };
     
-    /** @struct Identifier 
+    /** @class Identifier 
      *  primitive function to extract the 
      *  particle identifier from HepMC::GenParticle
      *
@@ -102,8 +94,8 @@ namespace LoKi
      *  @author Vanya BELYAEV belyaev@lapp.in2p3.fr
      *  @date   2005-03-26
      */
-    struct Identifier : 
-      public LoKi::Function<const HepMC::GenParticle*> 
+    class Identifier 
+      : public LoKi::Function<const HepMC::GenParticle*> 
     {
     public:
       /// MANDATORY: clone method ("virtual" constructor")
@@ -116,7 +108,7 @@ namespace LoKi
       virtual  std::ostream& fillStream( std::ostream& s ) const ;
     };
     
-    /** @struct AbsIdentifier 
+    /** @class AbsIdentifier 
      *  primitive function to extract the absolute value of 
      *  particle identifier from HepMC::GenParticle
      *  
@@ -131,8 +123,8 @@ namespace LoKi
      *  @author Vanya BELYAEV belyaev@lapp.in2p3.fr
      *  @date   2005-03-26
      */
-    struct AbsIdentifier : 
-      public LoKi::Function<const HepMC::GenParticle*> 
+    class AbsIdentifier 
+      : public LoKi::Function<const HepMC::GenParticle*> 
     {
     public:
       /// MANDATORY: clone method ("virtual" constructor")
@@ -141,12 +133,11 @@ namespace LoKi
       virtual ~AbsIdentifier() ;
       /// MANDATORY: the only one essential method 
       virtual  result_type operator() ( argument p ) const ;
-      /// "SHORT" representation, see @LoKi::AuxFunBase 
+      /// "SHORT" representation, @see LoKi::AuxFunBase 
       virtual  std::ostream& fillStream( std::ostream& s ) const ;
     };
 
-
-    /** @struct Status
+    /** @class Status
      *  the most primitive function - it return the "status" 
      *  of HepMC::GenParticle object
      *
@@ -156,8 +147,8 @@ namespace LoKi
      *  @author Vanya BELYAEV belyaev@lapp.in2p3.fr
      *  @date   2005-03-26
      */
-    struct Status : 
-      public LoKi::Function<const HepMC::GenParticle*> 
+    class Status 
+      : public LoKi::Function<const HepMC::GenParticle*> 
     {
     public:
       /// MANDATORY: clone method ("virtual" constructor")
@@ -170,7 +161,7 @@ namespace LoKi
       virtual  std::ostream& fillStream( std::ostream& s ) const ;
     };
     
-    /** @struct PseudoRapidity
+    /** @class PseudoRapidity
      *  evaluator of the seudorapidity of the particle 
      *
      *  @see HepMC::GenParticle 
@@ -178,20 +169,21 @@ namespace LoKi
      *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
      *  @date   2002-07-15
      */
-    struct PseudoRapidity : 
-      public LoKi::Function<const HepMC::GenParticle*>
-    {      
+    class PseudoRapidity 
+      : public LoKi::Function<const HepMC::GenParticle*>
+    {   
+    public:
       /// clone method (mandatory!)
       virtual  PseudoRapidity* clone() const ;
       /// MANDATORY: virtual destructor 
       virtual ~PseudoRapidity();
       /// the only one essential method 
       virtual  result_type operator() ( argument p ) const ;
-      /// "SHORT" representation, see @LoKi::AuxFunBase 
+      /// "SHORT" representation, @see LoKi::AuxFunBase 
       virtual  std::ostream& fillStream( std::ostream& s ) const ;
     };
     
-    /** @struct Phi
+    /** @class Phi
      *  evaluator of the 'Phi' of the particle 
      *  
      *  @see HepMC::GenParticle 
@@ -199,20 +191,21 @@ namespace LoKi
      *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
      *  @date   2002-07-15
      */
-    struct Phi : 
-      public LoKi::Function<const HepMC::GenParticle*>
-    {      
+    class Phi 
+      : public LoKi::Function<const HepMC::GenParticle*>
+    { 
+    public:
       /// clone method (mandatory!)
       virtual  Phi* clone() const ;
       /// MANDATORY: virtual destructor 
       virtual ~Phi();
       /// the only one essential method 
       virtual  result_type operator() ( argument p ) const ;
-      /// "SHORT" representation, see @LoKi::AuxFunBase 
+      /// "SHORT" representation, @see LoKi::AuxFunBase 
       virtual  std::ostream& fillStream( std::ostream& s ) const ;
     };
-
-    /** @struct Theta
+    
+    /** @class Theta
      *  evaluator of the 'Theta' of the particle 
      *  
      *  @see HepMC::GenParticle 
@@ -220,20 +213,21 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date   2006-01-17
      */
-    struct Theta : 
-      public LoKi::Function<const HepMC::GenParticle*>
-    {      
+    class Theta 
+      : public LoKi::Function<const HepMC::GenParticle*>
+    { 
+    public:
       /// clone method (mandatory!)
       virtual  Theta* clone() const ;
       /// MANDATORY: virtual destructor 
       virtual ~Theta();
       /// the only one essential method 
       virtual  result_type operator() ( argument p ) const ;
-      /// "SHORT" representation, see @LoKi::AuxFunBase 
+      /// "SHORT" representation, @see LoKi::AuxFunBase 
       virtual  std::ostream& fillStream( std::ostream& s ) const ;
     };
-
-    /** @struct Momentum
+    
+    /** @class Momentum
      *  evaluator of the 'Momentum' of the particle 
      *  
      *  @see HepMC::GenParticle 
@@ -241,20 +235,21 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date   2006-01-17
      */
-    struct Momentum : 
-      public LoKi::Function<const HepMC::GenParticle*>
-    {      
+    class Momentum 
+      : public LoKi::Function<const HepMC::GenParticle*>
+    { 
+    public:
       /// clone method (mandatory!)
       virtual  Momentum* clone() const ;
       /// MANDATORY: virtual destructor 
       virtual ~Momentum();
       /// the only one essential method 
       virtual  result_type operator() ( argument p ) const ;
-      /// "SHORT" representation, see @LoKi::AuxFunBase 
+      /// "SHORT" representation, @see LoKi::AuxFunBase 
       virtual  std::ostream& fillStream( std::ostream& s ) const ;
     };
 
-    /** @struct TransverseMomentum
+    /** @class TransverseMomentum
      *  evaluator of the 'TransverseMomentum' of the particle 
      *  
      *  @see HepMC::GenParticle 
@@ -262,20 +257,21 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date   2006-01-17
      */
-    struct TransverseMomentum : 
-      public LoKi::Function<const HepMC::GenParticle*>
-    {      
+    class TransverseMomentum 
+      : public LoKi::Function<const HepMC::GenParticle*>
+    { 
+    public:
       /// clone method (mandatory!)
       virtual  TransverseMomentum* clone() const ;
       /// MANDATORY: virtual destructor 
       virtual ~TransverseMomentum();
       /// the only one essential method 
       virtual  result_type operator() ( argument p ) const ;
-      /// "SHORT" representation, see @LoKi::AuxFunBase 
+      /// "SHORT" representation, @see LoKi::AuxFunBase 
       virtual  std::ostream& fillStream( std::ostream& s ) const ;
     };
-
-    /** @struct Energy
+    
+    /** @class Energy
      *  evaluator of the 'Energy' of the particle 
      *  
      *  @see HepMC::GenParticle 
@@ -283,20 +279,21 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date   2006-01-17
      */
-    struct Energy : 
-      public LoKi::Function<const HepMC::GenParticle*>
-    {      
+    class Energy 
+      : public LoKi::Function<const HepMC::GenParticle*>
+    { 
+    public:
       /// clone method (mandatory!)
       virtual  Energy* clone() const ;
       /// MANDATORY: virtual destructor 
       virtual ~Energy();
       /// the only one essential method 
       virtual  result_type operator() ( argument p ) const ;
-      /// "SHORT" representation, see @LoKi::AuxFunBase 
+      /// "SHORT" representation, @see LoKi::AuxFunBase 
       virtual  std::ostream& fillStream( std::ostream& s ) const ;
     };
-
-    /** @struct Mass
+    
+    /** @class Mass
      *  evaluator of the 'Mass' of the particle 
      *  
      *  @see HepMC::GenParticle 
@@ -304,20 +301,21 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date   2006-01-17
      */
-    struct Mass : 
-      public LoKi::Function<const HepMC::GenParticle*>
-    {      
+    class Mass 
+      : public LoKi::Function<const HepMC::GenParticle*>
+    { 
+    public:
       /// clone method (mandatory!)
       virtual  Mass* clone() const ;
       /// MANDATORY: virtual destructor 
       virtual ~Mass();
       /// the only one essential method 
       virtual  result_type operator() ( argument p ) const ;
-      /// "SHORT" representation, see @LoKi::AuxFunBase 
+      /// "SHORT" representation, @see LoKi::AuxFunBase 
       virtual  std::ostream& fillStream( std::ostream& s ) const ;
     };
-
-    /** @struct MomentumX
+    
+    /** @class MomentumX
      *  evaluator of the X-component of particle momentum
      *  
      *  @see HepMC::GenParticle 
@@ -325,20 +323,21 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date   2006-03-03
      */
-    struct MomentumX : 
-      public LoKi::Function<const HepMC::GenParticle*>
-    {      
+    class MomentumX 
+      : public LoKi::Function<const HepMC::GenParticle*>
+    {
+    public:
       /// clone method (mandatory!)
       virtual  MomentumX* clone() const ;
       /// MANDATORY: virtual destructor 
       virtual ~MomentumX();
       /// the only one essential method 
       virtual  result_type operator() ( argument p ) const ;
-      /// "SHORT" representation, see @LoKi::AuxFunBase 
+      /// "SHORT" representation, @see LoKi::AuxFunBase 
       virtual  std::ostream& fillStream( std::ostream& s ) const ;
     };
     
-    /** @struct MomentumY
+    /** @class MomentumY
      *  evaluator of the Y-component of particle momentum
      *  
      *  @see HepMC::GenParticle 
@@ -346,20 +345,21 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date   2006-03-03
      */
-    struct MomentumY : 
-      public LoKi::Function<const HepMC::GenParticle*>
-    {      
+    class MomentumY 
+      : public LoKi::Function<const HepMC::GenParticle*>
+    { 
+    public:
       /// clone method (mandatory!)
       virtual  MomentumY* clone() const ;
       /// MANDATORY: virtual destructor 
       virtual ~MomentumY();
       /// the only one essential method 
       virtual  result_type operator() ( argument p ) const ;
-      /// "SHORT" representation, see @LoKi::AuxFunBase 
+      /// "SHORT" representation, @see LoKi::AuxFunBase 
       virtual  std::ostream& fillStream( std::ostream& s ) const ;
     };
-
-    /** @struct MomentumZ
+    
+    /** @class MomentumZ
      *  evaluator of the Z-component of particle momentum
      *  
      *  @see HepMC::GenParticle 
@@ -367,21 +367,21 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date   2006-03-03
      */
-    struct MomentumZ : 
-      public LoKi::Function<const HepMC::GenParticle*>
-    {      
+    class MomentumZ 
+      : public LoKi::Function<const HepMC::GenParticle*>
+    { 
+    public:
       /// clone method (mandatory!)
       virtual  MomentumZ* clone() const ;
       /// MANDATORY: virtual destructor 
       virtual ~MomentumZ();
       /// the only one essential method 
       virtual  result_type operator() ( argument p ) const ;
-      /// "SHORT" representation, see @LoKi::AuxFunBase 
+      /// "SHORT" representation, @see LoKi::AuxFunBase 
       virtual  std::ostream& fillStream( std::ostream& s ) const ;
     };
 
-
-    /** @struct ValidEndVertex 
+    /** @class ValidEndVertex 
      *  primitive predicate to test the validity of 
      *  "end-vertex" for HepMC::GenParticle object 
      *
@@ -392,8 +392,8 @@ namespace LoKi
      *  @author Vanya BELYAEV belyaev@lapp.in2p3.fr
      *  @date   2005-03-26
      */
-    struct ValidEndVertex :
-      public LoKi::Predicate<const HepMC::GenParticle*> 
+    class ValidEndVertex 
+      : public LoKi::Predicate<const HepMC::GenParticle*> 
     {
     public:
       /// MANDATORY: clone method ("virtual constructor")
@@ -402,10 +402,10 @@ namespace LoKi
       virtual ~ValidEndVertex() ;
       /// MANDATORY: the only one essential method 
       virtual  result_type operator() ( argument p ) const ;
-      /// "SHORT" representation, see @LoKi::AuxFunBase 
+      /// "SHORT" representation, @see LoKi::AuxFunBase 
       virtual  std::ostream& fillStream( std::ostream& s ) const ;
     };
-
+    
     /** @class MomentumDistance 
      *  Trivial evaluator of euclidian distance 
      *  of 4-momentums useful e.g. for trivial 
@@ -434,8 +434,8 @@ namespace LoKi
      *  @author Vanya BELYAEV belyaev@lapp.in2p3.fr
      *  @date 2005-03-23 
      */
-    class MomentumDistance : 
-      public LoKi::Function<const HepMC::GenParticle*> 
+    class MomentumDistance 
+      : public LoKi::Function<const HepMC::GenParticle*> 
     {
     public:
       /** constructor
@@ -498,8 +498,8 @@ namespace LoKi
      *  @author Vanya BELYAEV belyaev@lapp.in2p3.fr
      *  @date 2005-03-23 
      */
-    class NInTree : 
-      public LoKi::Function<const HepMC::GenParticle*>
+    class NInTree 
+      : public LoKi::Function<const HepMC::GenParticle*>
     {
     public:
       typedef LoKi::Predicate<const HepMC::GenParticle*> GCut ;
@@ -559,8 +559,8 @@ namespace LoKi
      *  @author Vanya BELYAEV belyaev@lapp.in2p3.fr
      *  @date 2005-03-23 
      */
-    class TransverseMomentumRel :
-      public LoKi::Function<const HepMC::GenParticle*> 
+    class TransverseMomentumRel 
+      : public LoKi::Function<const HepMC::GenParticle*> 
     {
     public:
       /** constructor
@@ -608,6 +608,12 @@ namespace LoKi
        */
       FromHepMCTree 
       ( const HepMC::GenParticle* p ) ;
+      /// constructor from vector of particles 
+      FromHepMCTree 
+      ( const LoKi::GenTypes::GenContainer& r  ) ;
+      /// constructor from range of particles 
+      FromHepMCTree 
+      ( const LoKi::Types::GRange& r  ) ;
       /** constructor from vertex  ("head")
        *  @param v pointer to HepMC::GenParticle 
        */
@@ -636,10 +642,12 @@ namespace LoKi
       template <class ITERATOR>
       FromHepMCTree& add ( ITERATOR first , ITERATOR last  ) 
       { _add ( first , last ) ; return *this ; }
-      FromHepMCTree& add ( const HepMC::GenParticle* p ) 
+      FromHepMCTree& add ( const HepMC::GenParticle*    p ) 
       { _add ( p ) ; return *this  ; }
-      FromHepMCTree& add ( const HepMC::GenVertex*   p ) 
+      FromHepMCTree& add ( const HepMC::GenVertex*      p ) 
       { _add ( p ) ; return *this  ; }
+      FromHepMCTree& add ( const LoKi::Types::GRange&   p ) 
+      { _add ( p.begin() , p.end() ) ; return *this  ; }
       FromHepMCTree& remove ( const HepMC::GenVertex*   v ) ;
       FromHepMCTree& remove ( const HepMC::GenParticle* v ) ;      
     protected:
@@ -666,8 +674,8 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@lapp.in2p3.fr
      *  @date 2005-05-16
      */
-    class IsAnAncestor : 
-      public LoKi::Predicate<const HepMC::GenParticle*> 
+    class IsAnAncestor 
+      : public LoKi::Predicate<const HepMC::GenParticle*> 
     {
     public:
       /** constructor from particle 
@@ -701,8 +709,8 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date   2006-01-18
      */
-    class  HasQuark  : 
-      public LoKi::Predicate<const HepMC::GenParticle*>
+    class  HasQuark  
+      : public LoKi::Predicate<const HepMC::GenParticle*>
     {
     public:
       HasQuark (  const LHCb::ParticleID::Quark quark ) ;
@@ -726,9 +734,10 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date   2006-01-18
      */
-    struct IsCharged : 
-      public LoKi::Predicate<const HepMC::GenParticle*>
+    class IsCharged 
+      : public LoKi::Predicate<const HepMC::GenParticle*>
     {
+    public:
       /// clone method (mandatory!)
       virtual IsCharged* clone() const ;
       /// the only one essential method 
@@ -742,9 +751,10 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date   2006-01-18
      */
-    struct IsNeutral : 
-      public LoKi::Predicate<const HepMC::GenParticle*>
+    class IsNeutral 
+      : public LoKi::Predicate<const HepMC::GenParticle*>
     {
+    public:
       /// clone method (mandatory!)
       virtual IsNeutral* clone() const ;
       /// the only one essential method 
@@ -758,9 +768,10 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date   2006-01-18
      */ 
-    struct IsLepton : 
-      public LoKi::Predicate<const HepMC::GenParticle*>
+    class IsLepton 
+      : public LoKi::Predicate<const HepMC::GenParticle*>
     {
+    public:
       /// clone method (mandatory!)
       virtual IsLepton* clone() const ;
       /// the only one essential method 
@@ -774,9 +785,10 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date   2006-01-18
      */ 
-    struct IsMeson : 
-      public LoKi::Predicate<const HepMC::GenParticle*>
+    class IsMeson 
+      : public LoKi::Predicate<const HepMC::GenParticle*>
     {
+    public:
       /// clone method (mandatory!)
       virtual IsMeson* clone() const ;
       /// the only one essential method 
@@ -790,9 +802,10 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date   2006-01-18
      */ 
-    struct IsBaryon : 
-      public LoKi::Predicate<const HepMC::GenParticle*>
+    class IsBaryon 
+      : public LoKi::Predicate<const HepMC::GenParticle*>
     {
+    public:
       /// clone method (mandatory!)
       virtual IsBaryon* clone() const ;
       /// the only one essential method 
@@ -801,15 +814,15 @@ namespace LoKi
       virtual  std::ostream& fillStream( std::ostream& s ) const ;      
     };
 
-
     /** @class IsHadron
      *  simple predicate , return true of particle is hadron
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date   2006-01-18
      */
-    struct IsHadron :
-      public LoKi::Predicate<const HepMC::GenParticle*>
+    class IsHadron 
+      : public LoKi::Predicate<const HepMC::GenParticle*>
     {
+    public:
       /// clone method (mandatory!)
       virtual IsHadron* clone() const ;
       /// the only one essential method 
@@ -817,15 +830,16 @@ namespace LoKi
       /// "SHORT" representation, @see LoKi::AuxFunBase 
       virtual  std::ostream& fillStream( std::ostream& s ) const ;      
     };
-  
+    
     /** @class IsNucleus
      *  simple predicate , return true of particle is nucleus
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date   2004-01-25
      */
-    struct IsNucleus : 
-      public LoKi::Predicate<const HepMC::GenParticle*>
+    class IsNucleus 
+      : public LoKi::Predicate<const HepMC::GenParticle*>
     {
+    public:
       /// clone method (mandatory!)
       virtual IsNucleus* clone() const ;
       /// the only one essential method 
@@ -840,8 +854,8 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-01-18
      */
-    class ProperLifeTime :
-      public LoKi::Function<const HepMC::GenParticle*>
+    class ProperLifeTime 
+      : public LoKi::Function<const HepMC::GenParticle*>
     {
     public:
       /** constructor
@@ -865,14 +879,15 @@ namespace LoKi
       double m_bad ;
     };
     
-    /** @struct NominalLifeTime (c*tau) 
-     *  evaluator of the nominal lifetime of the particle 
+    /** @class NominalLifeTime
+     *  (c*tau) evaluator of the nominal lifetime of the particle 
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-01-18
      */
-    struct NominalLifeTime 
-      : LoKi::Function<const HepMC::GenParticle*>
+    class NominalLifeTime 
+      : public LoKi::Function<const HepMC::GenParticle*>
     {
+    public:
       /// clone method (mandatory!)
       virtual NominalLifeTime* clone() const ;
       /// the only one essential method 
@@ -891,7 +906,7 @@ namespace LoKi
      *  @date 2006-02-08
      */
     class AdapterToProductionVertex 
-      : LoKi::Function<const HepMC::GenParticle*>
+      : public LoKi::Function<const HepMC::GenParticle*>
     {
     public:
       /** constructor from vertex function and "bad" value 
@@ -922,7 +937,7 @@ namespace LoKi
       LoKi::Types::GVFun    m_fun ;
       double                m_bad ;
     };
-    
+
     /** @class AdapterToEndVertex 
      *
      *  Simple adapter, which delegates the evaluation of 
@@ -933,7 +948,7 @@ namespace LoKi
      *  @date 2006-02-08
      */
     class AdapterToEndVertex 
-      : LoKi::Function<const HepMC::GenParticle*>
+      : public LoKi::Function<const HepMC::GenParticle*>
     {
     public:
       /** constructor from vertex function and "bad" value 
@@ -966,7 +981,7 @@ namespace LoKi
     };
     
 
-    /** @struct ThreeCharge
+    /** @class ThreeCharge
      *  primitive function to extract the 3*charge from HepMC::GenParticle
      *  
      *   Algorithm: 
@@ -980,8 +995,8 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date   2006-03-07
      */
-    struct ThreeCharge : 
-      public LoKi::Function<const HepMC::GenParticle*> 
+    class ThreeCharge 
+      : public LoKi::Function<const HepMC::GenParticle*> 
     {
     public:
       /// MANDATORY: clone method ("virtual" constructor")
@@ -990,13 +1005,195 @@ namespace LoKi
       virtual ~ThreeCharge(){} ;
       /// MANDATORY: the only one essential method 
       virtual  result_type operator() ( argument p ) const ;
-      /// "SHORT" representation, see @LoKi::AuxFunBase 
+      /// "SHORT" representation, @see LoKi::AuxFunBase 
       virtual  std::ostream& fillStream( std::ostream& s ) const ;
     };
+    
+    /** @class DeltaPhi
+     *  Simple evaluator of "DeltaPhi" for the particle
+     *
+     *  @see LoKi::Cuts::GDPHI 
+     *
+     *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
+     *  @date 2007-03-03
+     */
+    class DeltaPhi 
+      : public LoKi::Function<const HepMC::GenParticle*>
+    {
+    public:
+      /// constructor from the angle
+      DeltaPhi ( const double phi ) ;
+      /// constructor from the vector 
+      DeltaPhi ( const LoKi::ThreeVector& v ) ;
+      /// constructor from the vector 
+      DeltaPhi ( const LoKi::LorentzVector& v ) ;
+      /// templated constructor from vector 
+      template <class VECTOR> 
+      DeltaPhi ( const VECTOR& v ) 
+        : LoKi::Function<const HepMC::GenParticle*> () 
+        , m_eval (         )
+        , m_phi  ( v.phi() )
+      { 
+        m_phi = adjust ( m_phi ) ;
+      } ;
+      /// constructor from the particle
+      DeltaPhi ( const HepMC::GenParticle* p ) ;
+      /// templated constructor from particle
+      template <class PARTICLE> 
+      DeltaPhi ( const PARTICLE* p ) 
+        : LoKi::Function<const HepMC::GenParticle*> () 
+        , m_eval (  )
+        , m_phi  (  )
+      { 
+        if ( 0 == p ) { Exception("Invalid PARTICLE*") ;}
+        m_phi = p->momentum().phi() ;
+        m_phi = adjust ( m_phi ) ;
+      } ;
+      /// copy constructor
+      DeltaPhi ( const DeltaPhi& right ) ;
+      /// MANDATORY: virtual destructor 
+      virtual ~DeltaPhi() {}
+      /// MANDATORY: clone method ("virtual constructor")
+      virtual  DeltaPhi* clone() const ; 
+      /// MANDATORY: the only essential method 
+      virtual result_type operator() ( argument p ) const ;
+      /// OPTIONAL: "SHORT" representation
+      virtual  std::ostream& fillStream( std::ostream& s ) const ;
+    public:
+      /// adjust delta phi into the raneg of [-180:180]degrees 
+      const double adjust ( double phi ) const ;
+    private:
+      // the default constructor is disabled 
+      DeltaPhi ();
+    private:
+      // the actual evaluator of phi
+      LoKi::GenParticles::Phi m_eval ; ///< the actual evaluator of phi
+      // the angle itself 
+      double                  m_phi  ; ///< the angle itself 
+    } ;
 
-  }; // end of namespace GenParticles
+    /** @class DeltaEta
+     *  Simple evaluator of "DeltaEta" for the particle
+     *
+     *  @see LoKi::Cuts::GDETA
+     *
+     *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
+     *  @date 2007-03-03
+     */
+    class DeltaEta 
+      : public LoKi::Function<const HepMC::GenParticle*>
+    {
+    public:
+      /// constructor from the eta
+      DeltaEta ( const double eta ) ;
+      /// constructor from the vector 
+      DeltaEta ( const LoKi::ThreeVector&   v ) ;
+      /// constructor from the vector 
+      DeltaEta ( const LoKi::LorentzVector& v ) ;
+      /// templated constructor from vector 
+      template <class VECTOR> 
+      DeltaEta ( const VECTOR& v ) 
+        : LoKi::Function<const HepMC::GenParticle*> () 
+        , m_eval (         )
+        , m_eta  ( v.Eta() )
+      { 
+      } ;
+      /// constructor from the particle
+      DeltaEta ( const HepMC::GenParticle* p ) ;
+      /// templated constructor from particle
+      template <class PARTICLE> 
+      DeltaEta ( const PARTICLE* p ) 
+        : LoKi::Function<const HepMC::GenParticle*> () 
+        , m_eval (  )
+        , m_eta  (  )
+      { 
+        if ( 0 == p ) { Exception("Invalid PARTICLE*") ;}
+        m_eta = p->momentum().Eta() ;
+      } ;
+      /// copy constructor
+      DeltaEta ( const DeltaEta& right ) ;
+      /// MANDATORY: virtual destructor 
+      virtual ~DeltaEta() {}
+      /// MANDATORY: clone method ("virtual constructor")
+      virtual  DeltaEta* clone() const ; 
+      /// MANDATORY: the only essential method 
+      virtual result_type operator() ( argument p ) const ;
+      /// OPTIONAL: "SHORT" representation
+      virtual  std::ostream& fillStream( std::ostream& s ) const ;
+    private:
+      // the default constructor is disabled 
+      DeltaEta ();
+    private:
+      // the actual evaluator of eta
+      LoKi::GenParticles::PseudoRapidity m_eval ; ///< the actual evaluator of eta
+      // the angle itself 
+      double                             m_eta  ; ///< the angle itself 
+   } ;
+
+    
+    /** @class DeltaR2
+     *  Simple evaluator of "DeltaPhi**2+ DeltaEta**2"
+     *
+     *  @see LoKi::Cuts::GDR2 
+     *  @see LoKi::Cuts::GDELTAR2 
+     *  @see LoKi::Cuts::GDPHI
+     *  @see LoKi::Cuts::GDETA
+     *  @see LoKi::GenParticles::DeltaPhi
+     *  @see LoKi::GenParticles::DeltaEta
+     *  @see LoKi::GenParticles::Phi
+     *  @see LoKi::GenParticles::PseudoRapidity
+     *
+     *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
+     *  @date 2007-03-03
+     */
+    class DeltaR2
+      : public LoKi::Function<const HepMC::GenParticle*>
+    {
+    public:
+      /// constructor from the vector 
+      DeltaR2 ( const LoKi::ThreeVector&   v ) ;
+      /// constructor from the vector 
+      DeltaR2 ( const LoKi::LorentzVector& v ) ;
+      /// templated constructor from vector 
+      template <class VECTOR> 
+      DeltaR2 ( const VECTOR& v ) 
+        : LoKi::Function<const HepMC::GenParticle*> () 
+        , m_dphi ( v )
+        , m_deta ( v )
+      {} ;
+      /// constructor from the particle
+      DeltaR2 ( const HepMC::GenParticle* p ) ;
+      /// templated constructor from particle
+      template <class PARTICLE> 
+      DeltaR2 ( const PARTICLE* p ) 
+        : LoKi::Function<const HepMC::GenParticle*> () 
+        , m_dphi ( p )
+        , m_deta ( p )
+      {} ;
+      /// copy constructor
+      DeltaR2 ( const DeltaR2& right ) ;
+      /// MANDATORY: virtual destructor 
+      virtual ~DeltaR2() {}
+      /// MANDATORY: clone method ("virtual constructor")
+      virtual  DeltaR2* clone() const ; 
+      /// MANDATORY: the only essential method 
+      virtual result_type operator() ( argument p ) const ;
+      /// OPTIONAL: "SHORT" representation
+      virtual  std::ostream& fillStream( std::ostream& s ) const ;
+    private:
+      // the default constructor is disabled 
+      DeltaR2 ();
+    private:
+      // the actual evaluator of delta phi
+      LoKi::GenParticles::DeltaPhi m_dphi ; ///< the actual evaluator of delta phi
+      // the actual evaluator of delta eta
+      LoKi::GenParticles::DeltaEta m_deta ; ///< the actual evaluator of delta eta
+    } ;
+
+    
+  } // end of namespace GenParticles
   
-}; // end of namespace LoKi
+} // end of namespace LoKi
 
 // ============================================================================
 // The END 

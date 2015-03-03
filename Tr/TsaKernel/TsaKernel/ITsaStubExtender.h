@@ -1,8 +1,8 @@
-// $Id: ITsaStubExtender.h,v 1.1 2006-12-06 14:35:19 mneedham Exp $
+// $Id: ITsaStubExtender.h,v 1.2 2007-03-01 12:08:55 cattanem Exp $
 #ifndef _ITsaStubExtender_H
 #define _ITsaStubExtender_H
 
-/** @class ITsaStep TsaKernel/ITsaStep
+/** @class ITsaStubExtender ITsaStubExtender.h TsaKernel/ITsaStubExtender.h
  *
  *  Interface to data svc
  *

@@ -1,11 +1,11 @@
-// $Id: DeITDetector.h,v 1.3 2006-12-13 13:48:52 mneedham Exp $
+// $Id: DeITDetector.h,v 1.5 2007-03-01 11:08:00 cattanem Exp $
 #ifndef _DeITDetector_H_
 #define _DeITDetector_H_
 
 #include "STDet/DeSTDetector.h"
 #include "GaudiKernel/VectorMap.h"
 
-static const CLID& CLID_DeITDetector = 9201;
+static const CLID CLID_DeITDetector = 9201;
 
 /** @class DeITDetector DeITDetector.h "STDet/DeITDetector.h"
  *
@@ -48,7 +48,7 @@ public:
   
   /** 
   *  short cut to pick up the wafer corresponding to x,y,z
-  * @param point in global frame  
+  * @param  aPoint point in global frame  
   * @return sector 
   */
   virtual DeSTSector* findSector(const Gaudi::XYZPoint& aPoint); 

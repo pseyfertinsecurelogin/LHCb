@@ -1,4 +1,4 @@
-// $Id: ITrackReconstructible.h,v 1.1.1.1 2006-03-06 18:40:48 erodrigu Exp $
+// $Id: ITrackReconstructible.h,v 1.2 2007-02-01 09:58:08 wouter Exp $
 #ifndef TRACKMCINTERFACES_ITRACKRECONSTRUCTIBLE_H 
 #define TRACKMCINTERFACES_ITRACKRECONSTRUCTIBLE_H 1
 
@@ -27,10 +27,10 @@ public:
   /// Retrieve interface ID
   static const InterfaceID& interfaceID() { return IID_ITrackReconstructible; }
 
-  virtual bool hasVelo        ( LHCb::MCParticle* tr ) = 0;
-  virtual bool hasTT          ( LHCb::MCParticle* tr ) = 0;
-  virtual bool hasSeed        ( LHCb::MCParticle* tr ) = 0;
-  virtual bool hasVeloAndSeed ( LHCb::MCParticle* tr ) = 0;
+  virtual bool hasVelo        ( const LHCb::MCParticle* tr ) const = 0;
+  virtual bool hasTT          ( const LHCb::MCParticle* tr ) const = 0;
+  virtual bool hasSeed        ( const LHCb::MCParticle* tr ) const = 0;
+  virtual bool hasVeloAndSeed ( const LHCb::MCParticle* tr ) const = 0;
   
 };
 #endif // TRACKMCINTERFACES_ITRACKRECONSTRUCTIBLE_H 

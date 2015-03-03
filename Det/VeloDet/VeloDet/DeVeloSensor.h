@@ -1,4 +1,4 @@
-// $Id: DeVeloSensor.h,v 1.28 2006-11-30 07:57:41 cattanem Exp $
+// $Id: DeVeloSensor.h,v 1.31 2007-02-28 18:32:28 marcocle Exp $
 #ifndef VELODET_DEVELOSENSOR_H 
 #define VELODET_DEVELOSENSOR_H 1
 
@@ -6,8 +6,8 @@
 #include <algorithm>
 #include <bitset>
 
-// from Kernel
-#include "Kernel/Point3DTypes.h"
+// Gaudi Math definitions
+#include "GaudiKernel/Point3DTypes.h"
 
 /// from Det/DetDesc
 #include "DetDesc/DetectorElement.h"
@@ -20,7 +20,7 @@
 #include "Kernel/Trajectory.h"
 
 // Unique class identifier
-static const CLID& CLID_DeVeloSensor = 1008101 ;
+static const CLID CLID_DeVeloSensor = 1008101 ;
 
 
 /** @class DeVeloSensor DeVeloSensor.h VeloDet/DeVeloSensor.h
@@ -197,7 +197,7 @@ public:
   inline unsigned int sensorNumber() const {return m_sensorNumber;}
   
   /// Cache the geometry information after changes to position from alignment
-  void cacheGeometry();
+  StatusCode cacheGeometry();
 
   /// Convert routing line to chip channel (1234 -> 0213)
   unsigned int RoutingLineToChipChannel(unsigned int routLine) const {

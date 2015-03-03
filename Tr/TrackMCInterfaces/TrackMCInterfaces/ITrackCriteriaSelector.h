@@ -1,4 +1,4 @@
-// $Id: ITrackCriteriaSelector.h,v 1.1.1.1 2006-03-06 18:40:48 erodrigu Exp $
+// $Id: ITrackCriteriaSelector.h,v 1.2 2007-02-01 09:58:08 wouter Exp $
 #ifndef TRACKMCINTERFACES_ITRACKCRITERIASELECTOR_H 
 #define TRACKMCINTERFACES_ITRACKCRITERIASELECTOR_H 1
 
@@ -27,16 +27,16 @@ public:
   /// Retrieve interface ID
   static const InterfaceID& interfaceID() { return IID_ITrackCriteriaSelector; }
 
-  virtual bool select( LHCb::Track* track ) const = 0;
-  virtual bool select( LHCb::MCParticle* mcParticle ) = 0;
+  virtual bool select( const LHCb::Track* track ) const = 0;
+  virtual bool select( const LHCb::MCParticle* mcParticle ) const = 0;
 
-  virtual bool selectByTrackType( LHCb::Track* track ) const = 0;
-  virtual bool selectByTrackType( LHCb::MCParticle* mcParticle ) = 0;
+  virtual bool selectByTrackType( const LHCb::Track* track ) const = 0;
+  virtual bool selectByTrackType( const LHCb::MCParticle* mcParticle ) const = 0;
 
-  virtual unsigned int trackType( LHCb::MCParticle* mcPart ) = 0;
+  virtual unsigned int trackType( const LHCb::MCParticle* mcPart ) const = 0;
 
-  virtual StatusCode setTrackType( LHCb::MCParticle* mcPart,
-                                   LHCb::Track*& track ) = 0;
+  virtual StatusCode setTrackType( const LHCb::MCParticle* mcPart,
+                                   LHCb::Track*& track ) const = 0;
 
 };
 

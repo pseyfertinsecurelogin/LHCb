@@ -1,4 +1,4 @@
-// $Id: DeTTHalfModule.h,v 1.3 2006-12-13 13:48:52 mneedham Exp $
+// $Id: DeTTHalfModule.h,v 1.5 2007-03-01 11:08:00 cattanem Exp $
 
 #ifndef _DeTTHalfModule_H_
 #define _DeTTHalfModule_H_
@@ -24,7 +24,7 @@ class DeTTLayer;
  **
  */
 
-static const CLID& CLID_DeTTHalfModule = 9110;
+static const CLID CLID_DeTTHalfModule = 9110;
 
 class DeTTHalfModule : public DeSTBaseElement  {
 
@@ -88,7 +88,7 @@ public:
   unsigned int lastSector() const;
 
   /** test whether contains channel
-  * @param test channel
+  * @param  aChannel test channel
   * @return bool 
   */
   bool contains(const LHCb::STChannelID aChannel) const; 
@@ -167,8 +167,8 @@ inline bool DeTTHalfModule::contains(const LHCb::STChannelID aChannel) const{
 /** ouput operator for class DeTTHalfModule
  *  @see DeHalfModule
  *  @see MsgStream
- *  @param os reference to STL output stream
- *  @param de reference to DeTTHalfModule object
+ *  @param os      reference to STL output stream
+ *  @param aModule reference to DeTTHalfModule object
  */
 inline std::ostream& operator<<( std::ostream& os , const DeTTHalfModule* aModule )
 { return aModule->printOut( os ); }
@@ -177,19 +177,11 @@ inline std::ostream& operator<<( std::ostream& os , const DeTTHalfModule* aModul
 /** ouput operator for class DeTTHalfModule
  *  @see DeTTHalfModule
  *  @see MsgStream
- *  @param os reference to MsgStream output stream
- *  @param de reference to DeTTHalfModule object
+ *  @param os      reference to MsgStream output stream
+ *  @param aModule reference to DeTTHalfModule object
  */
 inline MsgStream& operator<<( MsgStream& os , const DeTTHalfModule* aModule )
 { return aModule->printOut( os ); }
 
 
 #endif // _DeTTHalfModule_H
-
-
-
-
-
-
-
-

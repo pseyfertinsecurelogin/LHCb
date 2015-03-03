@@ -1,8 +1,8 @@
-// $Id: IOTDataSvc.h,v 1.4 2006-12-06 14:35:19 mneedham Exp $
+// $Id: IOTDataSvc.h,v 1.5 2007-03-01 12:08:55 cattanem Exp $
 #ifndef _IOTDataSvc_H
 #define _IOTDataSvc_H
 
-/** @class IOTDataSvc IOTDataSvc Tsa/IOTDataSvc.h
+/** @class IOTDataSvc IOTDataSvc.h TsaKernel/IOTDataSvc.h
  *
  *  Interface to data svc
  *

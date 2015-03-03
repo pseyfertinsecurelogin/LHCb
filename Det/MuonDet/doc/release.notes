@@ -1,9 +1,28 @@
-! $Id: release.notes,v 1.80 2006-12-14 13:27:06 ranjard Exp $
+! $Id: release.notes,v 1.86 2007-03-05 07:19:36 cattanem Exp $
 ! Package     : MuonDet
 ! Responsible : Alessia Satta
 !----------------------------------------------------------------------------
 
-!========================= MuonDet v6r0 2006-12-14 ========================
+!========================= MuonDet v6r1 2007-03-05 ========================
+! 2007-03-05 - Marco Cattaneo
+ - Remove obsolete MuonDet_load.cpp file
+ - Put factory declarations in a new file, MuonDetFactories.cpp, because they
+   don't compile on Windows if in MuonDet_dll.cpp
+
+! 2007-02-28 - Marco Clemencic
+ - Replaced "static const CLID&" with "static const CLID"
+ - Moved declaration of factories from link library to component library
+   (MuonDet_dll.cpp)
+ - Moved call to "this->dataSvc()" (in DeMuonDetector) from constructor to
+   initialize 
+
+! 2007-02-27 - Alessia Satta
+ - add methods for proper readout condition
+
+! 2007-02-27 - Alessia Satta
+ - add methods for dialog chip deadtime simulation
+
+!========================= MuonDet v6r0 2007-02-27 ========================
 ! 2006-12-06 - Florence RANJARD
  - apply_pattern install_more_includes
  - fixes for new Plugins (P.Mato)

@@ -1,8 +1,8 @@
-// $Id: ITsaStubFind.h,v 1.1 2006-12-06 14:35:19 mneedham Exp $
+// $Id: ITsaStubFind.h,v 1.2 2007-03-01 12:08:55 cattanem Exp $
 #ifndef _ITsaStubFind_H
 #define _ITsaStubFind_H
 
-/** @class ITsaStep TsaKernel/ITsaStep
+/** @class ITsaStubFind ITsaStubFind.h TsaKernel/ITsaStubFind.h
  *
  *  Interface to data svc
  *

@@ -1,4 +1,4 @@
-// $Id: DeOTModule.h,v 1.22 2007-02-04 11:34:35 janos Exp $
+// $Id: DeOTModule.h,v 1.26 2007-03-05 11:37:45 janos Exp $
 #ifndef OTDET_DEOTMODULE_H
 #define OTDET_DEOTMODULE_H 1
 
@@ -9,10 +9,10 @@
 /// Kernel
 #include "Kernel/OTChannelID.h"
 #include "GaudiKernel/Plane3DTypes.h"
+#include "GaudiKernel/Point3DTypes.h"
 
 namespace LHCb
 {
-  class Point3DTypes;
   class Trajectory;
 }
 
@@ -59,7 +59,7 @@ namespace LHCb
 
 namespace LHCb{ class Trajectory; }
 
-static const CLID& CLID_DeOTModule = 8105;
+static const CLID CLID_DeOTModule = 8105;
 
 class DeOTModule : public DetectorElement {
 
@@ -93,7 +93,7 @@ public:
   /** @return moduleID */
   unsigned int moduleID() const;
   
-  /** @retrun quarterID */
+  /** @return quarterID */
   unsigned int quarterID() const;
   
   /** @return  layerID */
@@ -112,7 +112,7 @@ public:
   unsigned int uniqueModule() const;
   
   /** Check contains channel
-   *  @param channel
+   *  @param aChannel The channel to check
    *  @return bool
    */
   bool contains(const LHCb::OTChannelID aChannel) const;
@@ -154,13 +154,13 @@ public:
   unsigned int nChannels() const;
 
   /** Check if straw is in monolayer A
-   * @param straw
+   * @param aStraw The straw to check
    * @return bool
    */
   bool monoLayerA(const unsigned int aStraw) const;
   
   /** Check if straw is in monolayer B
-   * @param straw
+   * @param aStraw the straw to check
    * @return bool
    */
   bool monoLayerB(const unsigned int aStraw) const;
@@ -202,20 +202,20 @@ public:
   Gaudi::XYZPoint globalPoint(const double x, const double y, const double z) const;
 
   /** Calculate straws which are hit 
-   * @param entry point
-   * @param exit point
-   * @param vector of pairs of channel and drift distance
-   * @retrun void
+   * @param  entryPoint  entry point
+   * @param  exitPoint   exit point
+   * @param  chanAndDist vector of pairs of channel and drift distance
+   * @return void
    */
   void DeOTModule::calculateHits(const Gaudi::XYZPoint& entryPoint,
                                  const Gaudi::XYZPoint& exitPoint,
                                  std::vector<std::pair<LHCb::OTChannelID, double> >& chanAndDist) const;
   
   /** Calculate the distance from a given vector in space to the straw 
-   * @param straw
-   * @param point
-   * @param dx/dz
-   * @param dy/dz
+   * @param aStraw straw
+   * @param aPoint point
+   * @param tx     dx/dz
+   * @param ty     dy/dz
    * @return distance
    */
   double distanceToWire(const unsigned int aStraw, 
@@ -276,12 +276,12 @@ private:
   
   void clear();
 
-  void cacheInfo();
+  StatusCode cacheInfo();
 
   /** Return range of hit straws for a given local entry and exit point.
-   * @param local entryPoint
-   * @param local exitPoint
-   * @return hit straws
+   * @param entryPoint local entry point
+   * @param exitPoint  local exit point
+   * @param straws     hit straws
    */
   void findStraws(const Gaudi::XYZPoint& entryPoint, 
                   const Gaudi::XYZPoint& exitPoint,
@@ -306,13 +306,13 @@ private:
   unsigned int hitStrawB(const double u) const;  
 
   /** Check if Y is inside efficient region of monolayer A
-   * @param Y coordinate
+   * @param  y    Y coordinate to check
    * @return bool
    */
   bool isEfficientA(const double y) const;
 
   /** Check if Y is inside efficient region of monolayer B
-   * @param Y coordinate
+   * @param  y    Y coordinate to check
    * @return bool
    */
   bool isEfficientB(const double y) const;
@@ -448,20 +448,23 @@ inline double DeOTModule::sensThickness() const {
 }
 
 inline double DeOTModule::wireLength(const LHCb::OTChannelID aChan) const {
+
+  double wireLength = m_ySizeModule;
+
   /// check if it is a long module goes from 1 to 7 
   if ( aChan.module() < 8u) {
     /// check if it is top module
     if (aChan.quarter() > 1u) {
       /// check if it is the first or second monolayer
-      return ((aChan.straw() <= m_nStraws)?m_ySizeModule-m_inefficientRegion:m_ySizeModule);
+      wireLength = ((aChan.straw() <= m_nStraws)?m_ySizeModule-m_inefficientRegion:m_ySizeModule);
       /// check if it is bottom module
     } else if (aChan.quarter() < 2u) {
       /// check if it is the first or second monolayer
-      return ((aChan.straw() <= m_nStraws)?m_ySizeModule:m_ySizeModule-m_inefficientRegion);
+      wireLength = ((aChan.straw() <= m_nStraws)?m_ySizeModule:m_ySizeModule-m_inefficientRegion);
     }
-  } else {
-    return m_ySizeModule;
   }
+    
+  return wireLength;
 }
 
 inline double DeOTModule::cellRadius() const {

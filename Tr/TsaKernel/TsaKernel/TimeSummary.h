@@ -25,7 +25,7 @@ namespace TimeSummaryLocation {
 }
 
 // Class ID definition
-static const CLID& CLID_TimeSummary = 19111;
+static const CLID CLID_TimeSummary = 19111;
 
 class TimeSummary: public DataObject{
 

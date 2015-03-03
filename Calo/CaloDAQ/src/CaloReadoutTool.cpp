@@ -1,9 +1,8 @@
-// $Id: CaloReadoutTool.cpp,v 1.5 2006-11-23 13:38:32 cattanem Exp $
+// $Id: CaloReadoutTool.cpp,v 1.7 2007-02-22 23:40:49 odescham Exp $
 // Include files 
 
 // from Gaudi
-#include "GaudiKernel/ToolFactory.h" 
-#include "DetDesc/Condition.h"
+#include "GaudiKernel/DeclareFactoryEntries.h" 
 
 // local
 #include "CaloDAQ/CaloReadoutTool.h"
@@ -11,144 +10,115 @@
 //-----------------------------------------------------------------------------
 // Implementation file for class : CaloReadoutTool
 //
-// 2005-08-25 : Olivier Callot
+// base class for Calo readout tools 
+// (CaloEnergyFromRaw, CaloTriggerAdcsFromRaw and CaloTriggerBitsFromRaw)
+//
+// 2007-02-01 : Olivier Deschamps
 //-----------------------------------------------------------------------------
 
+// Declaration of the Tool Factory
 DECLARE_TOOL_FACTORY( CaloReadoutTool );
+
 
 //=============================================================================
 // Standard constructor, initializes variables
 //=============================================================================
 CaloReadoutTool::CaloReadoutTool( const std::string& type,
-                                  const std::string& name,
-                                  const IInterface* parent )
+                  const std::string& name,
+                  const IInterface* parent )
   : GaudiTool ( type, name , parent )
 {
   declareInterface<CaloReadoutTool>(this);
-  declareProperty( "DetectorName", m_detectorName );
-  if ( "ToolSvc.PrsReadoutTool"  == name ) m_detectorName = "Prs";
-  if ( "ToolSvc.EcalReadoutTool" == name ) m_detectorName = "Ecal";
-  if ( "ToolSvc.HcalReadoutTool" == name ) m_detectorName = "Hcal";
-  declareProperty( "CheckingCards", m_checkingCards = false );
+
+  declareProperty( "DetectorName"   , m_detectorName );
+  declareProperty( "PackedIsDefault", m_packedIsDefault = false);
+  m_getRaw = true;
 }
 //=============================================================================
 // Destructor
 //=============================================================================
-CaloReadoutTool::~CaloReadoutTool() {}; 
+CaloReadoutTool::~CaloReadoutTool() {} 
+
 
 
 //=========================================================================
-//  
+//  Get required CaloBanks (short or packed format) - Fill m_banks
 //=========================================================================
-StatusCode CaloReadoutTool::initialize ( ) {
-  StatusCode sc = GaudiTool::initialize(); // must be executed first
-  if ( sc.isFailure() ) return sc;  // error printed already by GaudiAlgorithm
+StatusCode CaloReadoutTool::getCaloBanksFromRaw( ) {
 
-  debug() << "==> Initialize" << endmsg;
-
-  if( "Ecal" == m_detectorName ) {
-    m_calo = getDet<DeCalorimeter>( DeCalorimeterLocation::Ecal );
+  LHCb::RawEvent* rawEvt = get<LHCb::RawEvent>( rootOnTES() + LHCb::RawEventLocation::Default );
+  m_banks = 0;
+  if( !m_packedIsDefault){
+    debug() << "Banks of short type are requested as default" << endreq;
+    m_banks= &rawEvt->banks(  m_shortType );
+  }else{
+    debug() << "Banks of paked type are requested as default" << endreq;
+    m_banks= &rawEvt->banks(  m_packedType );
   }
-  else if( "Hcal" == m_detectorName ) {
-    m_calo = getDet<DeCalorimeter>( DeCalorimeterLocation::Hcal );
+  
+  
+  if ( 0 == m_banks || 0 == m_banks->size() ) {
+    if( !m_packedIsDefault){      
+      debug()<< " Requested banks of short type has not been found ... try packed type" << endreq;
+      m_banks = &rawEvt->banks( m_packedType );
+    }else{
+      debug()<< " Requested banks of packed type has not been found ... try short type" << endreq;
+      m_banks = &rawEvt->banks( m_shortType );
+    }    
+
+    if ( 0 == m_banks || 0 == m_banks->size() ){
+      error() << "None of short and packed banks has been found " << endreq;
+    return StatusCode::FAILURE;
+    }else{
+      if( !m_packedIsDefault){      
+        debug()<< " Requested banks of packed type has been found" << endreq;
+      }else{
+        debug()<< " Requested banks of short type has found" << endreq;
+      }
+    }
+  }else{
+    if( !m_packedIsDefault){      
+      debug()<< " Requested banks of short type has been found" << endreq;
+    }else{
+      debug()<< " Requested banks of packed type has found" << endreq;
+    }
   }
-  else if( "Prs" == m_detectorName ) {
-    m_calo = getDet<DeCalorimeter>( DeCalorimeterLocation::Prs );
-  }
-  else {
-    return( Error( "Invalid detector name: " + m_detectorName ) );
-  }
+  return StatusCode::SUCCESS;
+}
 
-  unsigned int caloID = CaloCellCode::CaloNumFromName( m_detectorName );
-  bool hasFault = false;
 
-  //== First get the FE card description
-  Condition* cond = m_calo->condition( "CellsToCards" );
-  if ( 0 == cond ) {
-    return Error( "Condition 'CellsToCards' not found." );
-  } 
 
-  //== Cards
-  if ( cond->exists( "cards" ) ) {
-    LHCb::CaloCellID dummy( 0, 0, 0, 0 );
-    std::vector<int> temp = cond->paramAsIntVect( "cards" );
-    debug() << "The calorimeter has " << temp.size()/8 << " front end cards." << endreq;
-    for ( unsigned int kk = 0; temp.size()/8 > kk  ; ++kk ) {
-      int ll = 8*kk;
-      CaloFECard  card( temp[ll], temp[ll+6], temp[ll+7] );
-      for ( int row = temp[ll+3]; temp[ll+5] >= row; ++row ) {
-        for ( int col = temp[ll+2]; temp[ll+4] >= col; ++col ) {
-          LHCb::CaloCellID id( caloID, temp[ll+1], row, col );
-          if ( m_calo->valid( id ) ) {
-            card.addID( id );
-          } else {
-            card.addID( dummy );
-          }
-        }
-      }
-      m_cards.push_back( card );
-
-      //== Sanity checks
-      if ( m_checkingCards ) {
-        info() << format( "card %3d A=%1d cf%3d rf%3d cl%3d rl%3d crate%3d slot%3d",
-                          temp[ll  ],  temp[ll+1], temp[ll+2],  temp[ll+3],
-                          temp[ll+4],  temp[ll+5], temp[ll+6],  temp[ll+7] )
-               << endreq;
-        int diffRow = temp[ll+5] - temp[ll+3];
-        
-        if ( ( temp[ll+4] - temp[ll+2] != 7 ) ||
-             ( diffRow != 7 && diffRow != 3 ) ) {
-          info() << "************ Wrong size for row/col ****" << endreq;
-          hasFault = true;
-        }
-        if ( int(kk) != temp[ll] ) {
-          info() << "*********** wrong card number, found " << temp[ll]
-                 << " expect " << kk << endreq;
-          hasFault = true;
-        }
-      }
-    } 
-  }
-  if ( hasFault ) return StatusCode::FAILURE;
-
-  //== Tell1 boards
-
-  if ( cond->exists( "Tell1" ) ) {
-    std::vector<int> temp = cond->paramAsIntVect( "Tell1" );
-    std::vector<int>::iterator it = temp.begin();
-    while( temp.end() > it ) {
-      unsigned int num = (*it++);
-      if ( num != m_tell1.size() ) {
-        info() << "TELL1 number not in sequence: Found " << num 
-               << " expect " << m_tell1.size() << endreq;
-        hasFault = true;
-      }
-      int nb  = (*it++);
-      CaloTell1 tell1( num );
-      while ( 0 < nb-- ) {
-        unsigned int feCard = *it++;
-        if ( m_cards.size() < feCard ) {
-          info() << "**** TELL1 " << num << " reads unknown card " << feCard << endreq;
-          hasFault = true;
-        }
-        tell1.addFeCard( feCard );
-      }
-      m_tell1.push_back( tell1 );
-
-      if ( m_checkingCards ) {
-        std::vector<int> fes = tell1.feCards();
-        info() << "  Added TELL1 card " << num 
-               << " with " << fes.size() << " cards : ";
-        for ( std::vector<int>::iterator itL = fes.begin(); fes.end() != itL; ++itL ) {
-          info() << *itL << " ";
-        }
-        info() << endreq;
-      }
+//========================
+//  Check FE-Cards is PIN
+//========================
+void CaloReadoutTool::checkCards(int nCards, std::vector<int> feCards ){
+  debug() << nCards-feCards.size() << "FE-Cards have been read among the " << nCards << " expected"<< endreq; 
+  if( 0 != feCards.size() ){
+    for(unsigned int iFe = 0 ; iFe <  feCards.size();++iFe){ 
+     debug() << " Unread FE-Cards : " << m_calo->cardCode( feCards[iFe] ) 
+             << "  - Is it a PinDiode readout FE-Card ? " << m_calo->isPinCard( feCards[iFe] ) << endreq;
+     if ( !m_calo->isPinCard( feCards[iFe] ) )
+       warning() << " The standard FE-Card " << m_calo->cardCode( feCards[iFe] )  
+                 << " expected in TELL1 bank has not been read !!"<< endreq;
     }    
   }
-
-  if ( hasFault ) return StatusCode::FAILURE;
-  return StatusCode::SUCCESS;
-  
 }
-//=============================================================================
+
+
+
+
+//========================
+//  Check FE-Cards is PIN
+//========================
+int CaloReadoutTool::findCardbyCode(std::vector<int> feCards , int code){
+  for(unsigned int iFe = 0 ; iFe <  feCards.size();++iFe){ 
+    if( code == m_calo->cardCode( feCards[iFe] ) ){
+      debug() <<" FE-Card [code : " << code 
+              << "] has been found with (num : " << feCards[iFe] <<")  in condDB" << endreq;
+      return iFe;
+      break;
+    }        
+  }
+  error() << " FE-Card [code : " << code << "] has not been found" << endreq;
+  return -1;
+}    

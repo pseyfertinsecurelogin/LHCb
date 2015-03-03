@@ -1,4 +1,4 @@
-// $Id: UpdateManagerSvc.cpp,v 1.10 2007-01-23 07:16:24 cattanem Exp $
+// $Id: UpdateManagerSvc.cpp,v 1.12 2007-02-28 18:32:42 marcocle Exp $
 // Include files 
 
 #include "GaudiKernel/SvcFactory.h"
@@ -182,7 +182,7 @@ StatusCode UpdateManagerSvc::finalize(){
   MsgStream log(msgSvc(),name());
   log << MSG::DEBUG << "--- finalize ---" << endmsg;
 
-  if (msgSvc()->outputLevel() <= 1) dump();
+  if ( m_outputLevel <= MSG::DEBUG ) dump();
 
   // release the interfaces used
   if (m_dataProvider != NULL) m_dataProvider->release();
@@ -414,6 +414,9 @@ StatusCode UpdateManagerSvc::i_update(void *instance){
           if ( m_head_until > item->until )  m_head_until = item->until;
         }
         return sc;
+      } else {
+        MsgStream log(msgSvc(),name());
+        log << MSG::WARNING << "Cannot find object at " << instance << endmsg;
       }
     } else {
       return StatusCode::SUCCESS;
@@ -431,6 +434,9 @@ void UpdateManagerSvc::i_invalidate(void *instance){
     item->invalidate();
     m_head_since = 1;
     m_head_until = 0;
+  } else {
+    MsgStream log(msgSvc(),name());
+    log << MSG::WARNING << "Cannot find object at " << instance << endmsg;
   }
 }
 

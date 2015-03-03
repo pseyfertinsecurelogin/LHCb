@@ -1,11 +1,11 @@
-// $Id: DeVeloPhiType.h,v 1.20 2006-11-16 21:58:25 mtobin Exp $
+// $Id: DeVeloPhiType.h,v 1.22 2007-02-28 18:32:28 marcocle Exp $
 #ifndef VELODET_DEVELOPHITYPE_H 
 #define VELODET_DEVELOPHITYPE_H 1
 
 // Include files
 
-// from Kernel
-#include "Kernel/Point3DTypes.h"
+// Gaudi Math definitions
+#include "GaudiKernel/Point3DTypes.h"
 
 /// from VeloDet
 #include "VeloDet/DeVeloSensor.h"
@@ -17,7 +17,7 @@
 #include "Kernel/LineTraj.h"
 
 // Unique class identifier
-static const CLID& CLID_DeVeloPhiType = 1008103 ;
+static const CLID CLID_DeVeloPhiType = 1008103 ;
 
 
 /** @class DeVeloPhiType DeVeloPhiType.h VeloDet/DeVeloPhiType.h

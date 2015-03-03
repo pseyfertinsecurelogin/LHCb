@@ -1,4 +1,4 @@
-// $Id: SeedStub.h,v 1.1 2006-12-06 14:35:19 mneedham Exp $
+// $Id: SeedStub.h,v 1.2 2007-02-28 18:32:12 marcocle Exp $
 #ifndef SEEDSTUB_H 
 #define SEEDSTUB_H 1
 
@@ -15,7 +15,7 @@
 class SeedHit;
 
  // Class ID definition
- static const CLID& CLID_SeedStub = 19113;
+ static const CLID CLID_SeedStub = 19113;
 
  // Namespace for locations in TDS
  namespace SeedStubLocation {

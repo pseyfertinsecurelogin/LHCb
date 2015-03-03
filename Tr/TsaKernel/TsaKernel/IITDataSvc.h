@@ -1,8 +1,8 @@
-// $Id: IITDataSvc.h,v 1.4 2006-12-06 14:35:19 mneedham Exp $
+// $Id: IITDataSvc.h,v 1.5 2007-03-01 12:08:55 cattanem Exp $
 #ifndef _IITDataSvc_H
 #define _IITDataSvc_H
 
-/** @class IITDataSvc IITDataSvc Tsa/IITDataSvc.h
+/** @class IITDataSvc IITDataSvc.h TsaKernel/IITDataSvc.h
  *
  *  Interface to data svc
  *

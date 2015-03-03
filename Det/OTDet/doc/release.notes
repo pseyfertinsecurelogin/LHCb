@@ -1,12 +1,31 @@
-! $Id: release.notes,v 1.74 2007-02-05 08:54:39 cattanem Exp $
+! $Id: release.notes,v 1.81 2007-03-05 12:16:47 cattanem Exp $
 ! Package     : OTDet
 ! Responsible : Jeroen van Tilburg, Jacopo Nardulli, Jan Amoraal
 !--------------------------------------------------------------------------
 
+!========================== OTDet v7r2 2007-03-05 =========================
+! 2007-03-05 - Jan Amoraal
+ - Fix warning in DeOTModule.h
+ 
+! 2007-03-01 - Marco Cattaneo
+ - Remove obsolete OTDet_load.cpp file
+
+! 2007-02-28 - Marco Clemencic
+ - Replaced "static const CLID&" with "static const CLID"
+
+! 2007-02-15 - Marco Cattaneo
+ - Remove an LHCbDefinitions include
+ - Fix doxygen comments
+ - Cleanup some forward declarations and includes
+
+! 2007-02-13 Jan Amoraal
+ - Add callback methods to DeOTLayer & DeOTModule to update cached
+   values when alignment conditions change.
+
 !========================== OTDet v7r1 2007-02-04 =========================
 ! 2007-02-04 Jan Amoraal
  - Fix findStraws. Check that right most straw is not negative.
- - Add check for entry and exit points. Make sure their inside.
+ - Add check for entry and exit points. Make sure they're inside.
 
 ! 2007-02-02 Jan Amoraal
  - Removed LHCbDefinitions includes

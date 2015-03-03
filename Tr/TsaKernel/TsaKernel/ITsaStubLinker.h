@@ -1,8 +1,8 @@
-// $Id: ITsaStubLinker.h,v 1.1 2006-12-06 14:35:19 mneedham Exp $
+// $Id: ITsaStubLinker.h,v 1.2 2007-03-01 12:08:55 cattanem Exp $
 #ifndef _ITsaStubLinker_H
 #define _ITsaStubLinker_H
 
-/** @class ITsaStep TsaKernel/ITsaStep
+/** @class ITsaStubLinker ITsaStubLinker.h TsaKernel/ITsaStubLinker.h
  *
  *  Interface to data svc
  *

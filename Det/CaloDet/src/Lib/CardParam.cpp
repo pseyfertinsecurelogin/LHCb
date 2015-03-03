@@ -2,6 +2,9 @@
 // CVS tag $Name: not supported by cvs2svn $ 
 // ============================================================================
 // $Log: not supported by cvs2svn $
+// Revision 1.2  2001/07/17 17:26:52  ibelyaev
+// modifications to improve Doxygen documentation
+//
 // Revision 1.1  2001/07/02 17:17:59  ibelyaev
 // improvements in readability of DeCalorimeter.h
 //
@@ -25,15 +28,25 @@
 // ============================================================================
 CardParam::CardParam( int iArea , 
                       int iRow  , 
-                      int iCol  ) 
+                      int iCol  ,
+                      int iNum  ,
+                      int iCrate,
+                      int iSlot) 
   : m_Area           ( iArea )
-  , m_Row            ( iRow )
-  , m_Col            ( iCol )
-  , m_DownNumber     ( -1 )
-  , m_LeftNumber     ( -1 )
-  , m_CornerNumber   ( -1 ) 
-  , m_PreviousNumber ( -1 )
-{} ;
+    , m_Row            ( iRow )
+    , m_Col            ( iCol )
+    , m_DownNumber     ( -1 )
+    , m_LeftNumber     ( -1 )
+    , m_CornerNumber   ( -1 ) 
+    , m_PreviousNumber ( -1 )
+    ,m_isPin (false)
+    ,m_number( iNum)
+    ,m_crate( iCrate)
+    ,m_slot( iSlot)
+    ,m_tell1 (-1)
+{
+  m_ids.reserve( 64 );
+} ;
 
 // ============================================================================
 // Destructor

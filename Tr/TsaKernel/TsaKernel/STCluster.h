@@ -1,4 +1,4 @@
-// $Id: STCluster.h,v 1.4 2006-10-11 15:36:09 mneedham Exp $
+// $Id: STCluster.h,v 1.5 2007-02-28 18:32:11 marcocle Exp $
 #ifndef Tsa_STCluster_H
 #define Tsa_STCluster_H 1
 
@@ -14,7 +14,7 @@
 namespace Tsa{
 
   // Class ID definition
-  static const CLID& CLID_STCluster = 19003;
+  static const CLID CLID_STCluster = 19003;
 
   // Namespace for locations in TDS
   namespace STClusterLocation {

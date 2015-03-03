@@ -1,9 +1,31 @@
 ! =============================================================================
-! $Id: release.notes,v 1.91 2007-02-05 19:05:12 marcocle Exp $
+! $Id: release.notes,v 1.99 2007-03-05 09:41:50 cattanem Exp $
 ! =============================================================================
 ! package Ex/DetCondExample
 ! package manager : Marco Clemencic
 ! =============================================================================
+
+!============ Ex/DetCondExample v11r0 2007-03-05 ==============================
+              ======= NEEDS LCGCMT >= 50 =======
+
+! 2007-03-05 - Marco Cattaneo
+ - Remove obsolete ApplicationMgr.DLLs options
+
+! 2007-02-28 - Marco Clemencic
+ - Clean up in options and requirements
+ - Improved reference log files (removed execution dependent strings)
+
+! 2007-02-20 - Marco Clemencic
+ - Removed not needed link options (-no_auto_imports) for MySQL, SQLite and
+   Oracle.
+
+! 2007-02-19 - Marco Clemencic
+ - Minor fix in prepare_DBs.csh
+
+! 2007-02-14 - Marco CLEMENCIC
+ - Updated to changes in COOL API
+ - Removed few obsolete file
+ - Some clean up
 
 !=========== Ex/DetCondExample v10r0 2007-02-05 ==============================
 ! 2007-02-05 - Marco Clemencic

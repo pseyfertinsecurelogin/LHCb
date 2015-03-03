@@ -1,4 +1,4 @@
-// $Id: CondDBAccessSvc.h,v 1.22 2006-08-31 13:53:03 marcocle Exp $
+// $Id: CondDBAccessSvc.h,v 1.24 2007-02-22 14:20:19 marcocle Exp $
 #ifndef COMPONENT_CONDDBACCESSSVC_H 
 #define COMPONENT_CONDDBACCESSSVC_H 1
 
@@ -14,11 +14,17 @@
 #include <boost/thread/xtime.hpp>
 #include <boost/thread/condition.hpp>
 
+#include "CoolKernel/IDatabase.h"
+
 // Forward declarations
 template <class TYPE> class SvcFactory;
 
 class CondDBCache;
 class IRndmGenSvc;
+
+namespace cool {
+  class RecordSpecification;
+}
 
 /** @class CondDBAccessSvc CondDBAccessSvc.h
  *  
@@ -52,7 +58,7 @@ public:
   /// Try to retrieve an object from the Condition DataBase. If path points to a FolderSet,
   /// channel and when are ignored and data is set ot NULL.
   virtual StatusCode getObject (const std::string &path, const Gaudi::Time &when,
-                                boost::shared_ptr<coral::AttributeList> &data,
+                                DataPtr &data,
                                 std::string &descr, Gaudi::Time &since, Gaudi::Time &until, cool::ChannelId channel = 0);
 
   /// Retrieve the names of the children nodes of a FolderSet.
@@ -110,7 +116,7 @@ public:
 
   /// Add a folder to the cache (bypass the DB)
   virtual StatusCode cacheAddFolder(const std::string &path, const std::string &descr,
-                                    const cool::ExtendedAttributeListSpecification& spec);
+                                    const cool::IRecordSpecification& spec);
   
   /// Add a folder-set to the cache (bypass the DB)
   virtual StatusCode cacheAddFolderSet(const std::string &path, const std::string &descr);
@@ -123,7 +129,7 @@ public:
 
   ///Add an object to the cache (bypass the DB)
   virtual StatusCode cacheAddObject(const std::string &path, const Gaudi::Time &since, const Gaudi::Time &until,
-                                    const coral::AttributeList& payload, cool::ChannelId channel = 0);
+                                    const cool::IRecord& payload, cool::ChannelId channel = 0);
   
   ///Add an XML object to the cache (bypass the DB)
   virtual StatusCode cacheAddXMLData(const std::string &path, const Gaudi::Time &since, const Gaudi::Time &until,
@@ -132,6 +138,9 @@ public:
   /// Add an XML object to the cache (bypass the DB)
   virtual StatusCode cacheAddXMLData(const std::string &path, const Gaudi::Time &since, const Gaudi::Time &until,
                                      const std::map<std::string,std::string> &data, cool::ChannelId channel = 0);
+
+  /// Clear the cache
+  virtual void clearCache();
 
   /// Dump the cache (debug)
   virtual void dumpCache() const;
@@ -214,7 +223,7 @@ private:
   friend class SvcFactory<CondDBAccessSvc>;
 
   /// AttributeListSpecification used to sore XML strings
-  static cool::ExtendedAttributeListSpecification *s_XMLstorageAttListSpec;
+  static cool::RecordSpecification *s_XMLstorageSpec;
 
   /// Counter used to know how many instances of CondDBAccessSvc are around
   /// (and needing the AttributeListSpecification pointers).
@@ -297,7 +306,7 @@ private:
         if ( last_access.sec == m_owner->lastAccess().sec ) { // no further accesses
 
           if ( m_owner->database()->isOpen() ) { // close the database
-            log << MSG::DEBUG << "Disconnect from database" << endmsg;
+            log << MSG::INFO << "Disconnect from database" << endmsg;
             m_owner->database()->closeDatabase();
           }
 
@@ -321,13 +330,18 @@ private:
   class DataBaseOperationLock 
   {
     CondDBAccessSvc    *m_owner;
+    MsgStream           log;
     boost::mutex::scoped_lock busy_lock;
   public:
     DataBaseOperationLock(const CondDBAccessSvc *owner):
       m_owner(const_cast<CondDBAccessSvc*>(owner)),
+      log(m_owner->msgSvc(),m_owner->name()+".DataBaseOperationLock"),
       busy_lock(m_owner->m_busy) // lock the access to the db
     {
-      if (!owner->m_db->isOpen()) owner->m_db->openDatabase(); // ensure that the db is open
+      if (!owner->m_db->isOpen()){
+        log << MSG::INFO << "Connecting to database" << endmsg;
+        owner->m_db->openDatabase(); // ensure that the db is open
+      }
     }
  
     ~DataBaseOperationLock() 
