@@ -1,4 +1,4 @@
-// $Id: GeometryInfoPlus.h,v 1.5 2007-05-03 09:45:13 jpalac Exp $
+// $Id: GeometryInfoPlus.h,v 1.7 2007-06-25 08:58:12 jpalac Exp $
 #ifndef LIB_GEOMETRYINFOPLUS_H 
 #define LIB_GEOMETRYINFOPLUS_H 1
 

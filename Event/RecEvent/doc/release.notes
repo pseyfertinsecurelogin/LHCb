@@ -1,9 +1,17 @@
 !-----------------------------------------------------------------------------
-! $Id: release.notes,v 1.61 2007-06-08 14:31:58 cattanem Exp $
+! $Id: release.notes,v 1.64 2007-07-11 06:35:46 cattanem Exp $
 ! Package     : Event/RecEvent
 ! Responsible : Marco Cattaneo
 ! Purpose     : LHCb Event model. Reconstruction classes (Brunel output) 
 !-----------------------------------------------------------------------------
+
+!========================= RecEvent v2r5 2007-07-11 ==========================
+! 2007-07-11 - Marco Cattaneo for Miriam Gandelman
+ - xml/MuonPID.xml: add data member SmartRef to muon Track 
+
+! 2007-06-27 - Juan Palacios
+ - xml/VertexBase.xml
+   . Add setExtraInfo method.
 
 !========================= RecEvent v2r4 2007-06-07 ==========================
 ! 2007-06-07 - Marco Cattaneo

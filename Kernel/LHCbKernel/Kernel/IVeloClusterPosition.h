@@ -1,4 +1,4 @@
-// $Id: IVeloClusterPosition.h,v 1.8 2007-05-25 11:54:46 cattanem Exp $
+// $Id: IVeloClusterPosition.h,v 1.10 2007-07-12 08:07:05 cattanem Exp $
 #ifndef KERNEL_IVELOCLUSTERPOSITION_H 
 #define KERNEL_IVELOCLUSTERPOSITION_H 1
 
@@ -21,6 +21,7 @@ namespace LHCb
 {
   class VeloCluster;
   class VeloChannelID;
+  class StateVector;
 }
 
 class IVeloClusterPosition : virtual public IAlgTool{
@@ -62,7 +63,21 @@ public:
                             const Gaudi::XYZPoint& aPoint,
                             const Pair& aDirection) const=0;
 
-  /** calculate fractional position
+ /** calculate position of the VeloCluster
+  * @param aCluster pointer to a VeloCLuster cluster
+  * @param aState const reference to VectorState object
+  * @return toolInfo (templated struct) 
+  * <br> strip = channel ID of a floored nearest strip
+  * <br> fractionalPosition = interstrip position (in fraction of strip)
+  * <br> error = estimate of the error (in fraction of strip)
+  * The returned error estimate depends both on pitch and 
+  * projected angle of a track
+  */
+
+  virtual toolInfo position(const LHCb::VeloCluster* aCluster,
+                            const LHCb::StateVector& aState) const=0;
+
+/** calculate fractional position
   * @param aCluster pointer to a VeloCLuster cluster
   * @return Pair - pair of doubles 
   * The method is very useful for resolution studies

@@ -4,6 +4,16 @@
 ! Purpose     : Package for the tracking event model classes
 !-----------------------------------------------------------------------------
 
+!======================= TrackEvent v4r5 2007-07-10 ==========================
+! 2007-07-10 M. Needham
+ - Remove VeloMissed from track enum
+
+! 2007-07-04 - David Hutchcroft
+ - Added 4 more history types to Track.xml for the various PatVelo algorithms
+
+! 2007-06-22 - Edwin Bos
+ - Removed kappa. Consistently use c_light in extrapolators and StateTraj.
+
 !======================= TrackEvent v4r4 2007-06-14 ==========================
 ! 2007-06-14 - Edwin Bos
  - Replaced the wrong correction by the correct value for kappa.

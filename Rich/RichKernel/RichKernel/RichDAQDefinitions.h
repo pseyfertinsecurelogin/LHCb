@@ -5,7 +5,7 @@
  *  Header file for RICH DAQ general definitions
  *
  *  CVS Log :-
- *  $Id: RichDAQDefinitions.h,v 1.15 2007-04-26 20:14:08 jonrob Exp $
+ *  $Id: RichDAQDefinitions.h,v 1.17 2007-06-25 21:28:53 jonrob Exp $
  *
  *  @author Chris Jones  Christopher.Rob.Jones@cern.ch
  *  @date   2003-11-06
@@ -62,7 +62,8 @@ namespace Rich
     static const ShortType NumIngressPerL1 = 4;
 
     /// Number of L1 inputs per ingress
-    static const ShortType NumL1InputsPerIngress = 9;
+    //static const ShortType NumL1InputsPerIngress = 9;
+    static const ShortType NumL1InputsPerIngress = 12;
 
     /// Total number of inputs to an L1 board
     static const ShortType MaxL1Inputs = NumIngressPerL1 * NumL1InputsPerIngress;
@@ -101,15 +102,13 @@ namespace Rich
       /// Operator >
       inline bool operator>  ( const NumericType<TYPE>& id ) const
       { return this->data() > id.data() ; }
+    public:
       /// Operator std::string
       inline operator std::string() const
       { return boost::lexical_cast<std::string>(data()); }
       /// Overload output to ostream
       friend inline std::ostream& operator << ( std::ostream& os, const NumericType<TYPE> & id )
-      { return os << id.data() ; }
-      /// Overloaded output to MsgStream
-      friend inline MsgStream & operator << ( MsgStream & os, const NumericType<TYPE> & id )
-      { return os << boost::format("%4i") % id.data() ; }
+      { return os << boost::format("%6i") % id.data() ; }
       /// Operator ++   (prefix)
       inline NumericType<TYPE>& operator++()    { ++m_id; return *this; }
       /// Operator ++(int)  (postfix)
@@ -118,9 +117,28 @@ namespace Rich
       inline NumericType<TYPE>& operator--()    { --m_id; return *this; }
       /// Operator --(int)  (postfix)
       inline NumericType<TYPE>  operator--(int) { NumericType<TYPE> tmp = *this; --m_id; return tmp; }
+    public:
+      /// Raw dump of the word
+      inline void rawDump( std::ostream& os ) const
+      {
+        std::ostringstream hexW;
+        hexW << std::hex << m_id;
+        std::string tmpW = hexW.str();
+        if ( tmpW.size() < 8 ) { tmpW = std::string(8-tmpW.size(),'0')+tmpW; }
+        os << tmpW << " :";
+        for ( int iCol = 8*sizeof(TYPE)-1; iCol >= 0; --iCol )
+        {
+          os << " " << isBitOn( iCol );
+        }
+      }
     protected:
       /// Update the internal data
       inline void setData( const TYPE id ) { m_id = id; }
+      /// test if a given bit is  'on'
+      inline bool isBitOn( const Rich::DAQ::ShortType pos ) const
+      {
+        return ( 0 != (m_id & (1<<pos)) );
+      }
     private:
       TYPE m_id; ///< The data value
     };
@@ -228,6 +246,10 @@ namespace Rich
       inline ShortType activeBits() const { return m_nActiveBits; }
       /// Set the number of active bits
       inline void setActiveBits(const ShortType bits) { m_nActiveBits = bits; }
+    public:
+      /// Overloaded output to MsgStream
+      friend inline std::ostream & operator << ( std::ostream & os, const EventID & id )
+      { return os << "[ EvtID=" << id.data() << " bits=" << id.activeBits() << " ]"; }
     private:
       /// Number of sensitive bits in this EventID
       ShortType m_nActiveBits;

@@ -1,9 +1,68 @@
 ! =============================================================================
-! $Id: release.notes,v 1.310 2007-06-14 08:21:38 marcocle Exp $ 
+! $Id: release.notes,v 1.321 2007-07-11 16:37:25 jpalac Exp $ 
 ! =============================================================================
 ! package DetDesc
 ! package manager : Marco Clemencic, Juan Palacios
 ! =============================================================================
+
+!====================== DetDesc v17r5 2007-07-11 ==============================
+! 2007-07-11 - Juan PALACIOS
+ - DetDesc/GlobalToLocalDelta.h, src/Lib/GlobalToLocalDelta.cpp
+   . Add methods
+
+     const Gaudi::Transform3D localDeltaFromGlobalTransform(const IDetectorElement* DE,
+                                                            const Gaudi::Transform3D& globalTransform)
+     const Gaudi::Transform3D localDeltaFromGlobalTransform(const IGeometryInfo* GI,
+                                                            const Gaudi::Transform3D& globalTransform)
+
+     to get the local delta matrix starting from a global position matrix.
+
+   . Add methods
+
+  const Gaudi::Transform3D localDeltaFromGlobalTransform(const IGeometryInfo* GI,
+                                                         const Gaudi::Transform3D& globalTransform); 
+  const Gaudi::Transform3D localDeltaFromParentTransform(const IGeometryInfo* ParentGI,
+                                                         const IGeometryInfo* GI,
+                                                         const Gaudi::Transform3D& globalTransform);
+
+     to get the local delta matrix starting from a position matrix giving the position of
+     an element with respect to one of its ancestors.
+
+! 2007-07-09 - Marco Cattaneo
+ - Add dependency on LHCbMath to access cbrt from LHCbMath/Power.h
+
+! 2007-07-02 - Marco Cattaneo
+ - Fix some doxygen warnings
+
+! 2007-06-29 M Needham
+  - Use cbrt in Gaudi::Math rather than pow 
+
+! 2007-06-25 - Juan PALACIOS
+
+  - src/Lib/AlignmentCondition.cpp
+    . Tidy up makeMatrices method by using functions from 
+      DetDesc/3DTransformationFunctions.h
+
+  - src/Lib/GeometryInfoPlus.cpp
+    . Fix bug: local copy of the misalignment matrix was holding the inverse
+      of what the code thought it was holding.
+
+  - src/Lib/GlobalToLocalDelta.cpp
+    . Fix localDeltaMatrix function algebra again. Previous was still wrong!
+
+  - src/Lib/GeometryInfoPlus.cpp
+    . Revert to previous revision. Changes of 2007-06-22 were actually 
+      incorrect.
+
+! 2007-06-22 - Juan PALACIOS
+  - src/Lib/GlobalToLocalDelta.cpp
+    . Fix implementation of localDeltaMatrix function. Algebra was basically wrong!
+  - src/Lib/GeometryInfoPlus.cpp
+    . Fix calculateFullMatrices: Order of matrix multiplications was wrong.
+      Was: d_0*N_0*d_1*N_1*d_2*N_2*...*d_N*N_N
+      Is:  N_0*d_0*N_1*d_1*N_2*d_2*...*N_N*d_N
+      where d_i and N_i are the misalign->align and global->parent matrices 
+      at level i.
 
 !====================== DetDesc v17r4 2007-06-14 ==============================
 ! 2007-06-14 - Marco Clemencic

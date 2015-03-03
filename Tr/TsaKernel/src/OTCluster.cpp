@@ -1,4 +1,4 @@
-// $Id: OTCluster.cpp,v 1.5 2006-10-11 15:36:09 mneedham Exp $
+// $Id: OTCluster.cpp,v 1.6 2007-06-18 15:20:05 mneedham Exp $
 #include "TsaKernel/OTCluster.h"
 #include "OTDet/DeOTDetector.h"
 #include "OTDet/DeOTModule.h"
@@ -39,8 +39,8 @@ double Tsa::OTCluster::driftRadius(const double x,
                                    const double y) const
 {
 
-  const double dx = x - beginPoint().x();
-  const double dy = y - beginPoint().y();
+  const double dx = x - endPoint().x();
+  const double dy = y - endPoint().y();
   const double timeAlongWire = m_det->propagationDelay()*sqrt(dx*dx + dy*dy); 
   return (m_det->driftDistance(m_cluster->calibratedTime()-timeAlongWire));
 }

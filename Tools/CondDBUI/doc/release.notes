@@ -1,15 +1,33 @@
 ! =============================================================================
-! $Id: release.notes,v 1.57 2007-06-15 15:41:42 cattanem Exp $
+! $Id: release.notes,v 1.61 2007-07-05 13:48:43 cattanem Exp $
 ! =============================================================================
 ! package Tools/CondDBUI
 ! package manager : Marco Clemencic / Nicolas Gilardi
 ! =============================================================================
 
+!===================== Tools/CondDBUI v2r4 2007-07-05 =========================
+! 2007-07-05 - Marco Clemencic
+ - Added a script to dump a database snapshot to XML files:
+     dump_db_to_files.py.
+   The user can/should provide a tag and the "event time" (as nanoseconds).
+
+! 2007-06-28 - Marco Clemencic
+ - Fixed the local copy of PyCoolDiff
+ - Added a wrapper for PyCoolCopy.copy to support LFCReplicaSvc
+ - Added the function conddbui.merge to copy the content of a database
+   into another (where folders already exist). It is needed to merge the
+   database obtained with PyCoolDiff.diff into the master database.
+ - Made PyCoolDiff working also when the provided tag is not valid for all the
+   folders
+ - Added the utility function CondDB.getCOOLNode to retrieve a IFolder or
+   IFolderSet object from the database without having to check the type of the
+   requested node.
+
 !===================== Tools/CondDBUI v2r3 2007-06-15 =========================
                             NEEDS LCGCMT >= 52
 ! 2007-06-06 - Marco Clemencic
- - Fixed a problem in copy_files_do_db.py: the destination path was not taken
-   into account when correctinf the relative paths to included files (SYSTEM
+ - Fixed a problem in copy_files_to_db.py: the destination path was not taken
+   into account when correcting the relative paths to included files (SYSTEM
    tag)
 
 ! 2007-06-04 - Marco Clemencic

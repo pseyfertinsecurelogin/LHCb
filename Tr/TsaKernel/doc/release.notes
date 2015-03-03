@@ -4,6 +4,10 @@
 ! Purpose     : Core Tsa classes
 !----------------------------------------------------------------------------
 
+!======================= TsaKernel v2r5 2007-07-09 ==========================
+! 2007-06-18 M Needham
+ - Bug fix in OTCluster drift radius calc, trajectories run towards readout....
+
 !======================= TsaKernel v2r4 2007-05-16 ==========================
 ! 2007-05-13 M. Needham
  - ILHCbIDsToMCHits, ILHCbIDsToMCParticles interfaces moved to TrackMCInterfaces
