@@ -4,9 +4,6 @@
  *
  * Implementation file for algorithm ChargedProtoCombineDLLsAlg
  *
- * CVS Log :-
- * $Id: ChargedProtoCombineDLLsAlg.cpp,v 1.23 2010-03-08 01:46:40 odescham Exp $
- *
  * @author Chris Jones   Christopher.Rob.Jones@cern.ch
  * @date 15/11/2006
  */
@@ -77,36 +74,51 @@ StatusCode ChargedProtoCombineDLLsAlg::initialize()
   StatusCode scc = GaudiAlgorithm::initialize();
   if ( scc.isFailure() ) return scc;
 
-  for(std::vector<std::string>::iterator itech = m_elDisable.begin(); itech != m_elDisable.end(); ++itech){
-    if(0 == m_maskTechnique[to_upper(*itech)]){
+  for ( std::vector<std::string>::const_iterator itech = m_elDisable.begin(); 
+        itech != m_elDisable.end(); ++itech )
+  {
+    if ( 0 == m_maskTechnique[to_upper(*itech)] ) 
+    {
       error() << "Electron PID technique " << *itech << " unknown"<< endmsg;
       scc = StatusCode::FAILURE;
     }
     m_elCombDll &= ~m_maskTechnique[to_upper(*itech)] ;
   }
-  for(std::vector<std::string>::iterator itech = m_muDisable.begin(); itech != m_muDisable.end(); ++itech){
-    if(0 == m_maskTechnique[to_upper(*itech)]){
+  for ( std::vector<std::string>::const_iterator itech = m_muDisable.begin(); 
+        itech != m_muDisable.end(); ++itech )
+  {
+    if ( 0 == m_maskTechnique[to_upper(*itech)] ) 
+    {
       error() << "Muon PID technique " << *itech << " unknown"<< endmsg;
       scc = StatusCode::FAILURE;
     }
     m_muCombDll &= ~m_maskTechnique[to_upper(*itech)] ;
   }
-  for(std::vector<std::string>::iterator itech = m_prDisable.begin(); itech != m_prDisable.end(); ++itech){
-    if(0 == m_maskTechnique[to_upper(*itech)]){
+  for ( std::vector<std::string>::const_iterator itech = m_prDisable.begin(); 
+        itech != m_prDisable.end(); ++itech )
+  {
+    if ( 0 == m_maskTechnique[to_upper(*itech)] )
+    {
       error() << "Proton PID technique " << *itech << " unknown"<< endmsg;
       scc = StatusCode::FAILURE;
     }
     m_prCombDll &= ~m_maskTechnique[to_upper(*itech)] ;
   }
-  for(std::vector<std::string>::iterator itech = m_piDisable.begin(); itech != m_piDisable.end(); ++itech){
-    if(0 == m_maskTechnique[to_upper(*itech)]){
+  for ( std::vector<std::string>::const_iterator itech = m_piDisable.begin(); 
+        itech != m_piDisable.end(); ++itech )
+  {
+    if ( 0 == m_maskTechnique[to_upper(*itech)] )
+    {
       error() << "Pion PID technique " << *itech << " unknown"<< endmsg;
       scc = StatusCode::FAILURE;
     }
     m_piCombDll &= ~m_maskTechnique[to_upper(*itech)] ;
   }
-  for(std::vector<std::string>::iterator itech = m_kaDisable.begin(); itech != m_kaDisable.end(); ++itech){
-    if(0 == m_maskTechnique[to_upper(*itech)]){
+  for ( std::vector<std::string>::const_iterator itech = m_kaDisable.begin(); 
+        itech != m_kaDisable.end(); ++itech )
+  {
+    if ( 0 == m_maskTechnique[to_upper(*itech)] )
+    {
       error() << "Kaon PID technique " << *itech << " unknown"<< endmsg;
       scc = StatusCode::FAILURE;
     }
@@ -114,11 +126,16 @@ StatusCode ChargedProtoCombineDLLsAlg::initialize()
   }
 
   info() << "Using retuned RICH el and mu DLL values in combined DLLs" << endmsg;
-  if ( 0 == m_elCombDll ) Warning( "Not creating Combined DLL for electron hypothesis", StatusCode::SUCCESS );
-  if ( 0 == m_muCombDll ) Warning( "Not creating Combined DLL for muon hypothesis", StatusCode::SUCCESS );
-  if ( 0 == m_piCombDll ) Warning( "Not creating Combined DLL for pion hypothesis", StatusCode::SUCCESS );
-  if ( 0 == m_kaCombDll ) Warning( "Not creating Combined DLL for kaon hypothesis", StatusCode::SUCCESS );
-  if ( 0 == m_prCombDll ) Warning( "Not creating Combined DLL for proton hypothesis", StatusCode::SUCCESS );
+  if ( 0 == m_elCombDll ) 
+    Warning( "Not creating Combined DLL for electron hypothesis", StatusCode::SUCCESS ).ignore();
+  if ( 0 == m_muCombDll ) 
+    Warning( "Not creating Combined DLL for muon hypothesis", StatusCode::SUCCESS ).ignore();
+  if ( 0 == m_piCombDll ) 
+    Warning( "Not creating Combined DLL for pion hypothesis", StatusCode::SUCCESS ).ignore();
+  if ( 0 == m_kaCombDll ) 
+    Warning( "Not creating Combined DLL for kaon hypothesis", StatusCode::SUCCESS ).ignore();
+  if ( 0 == m_prCombDll ) 
+    Warning( "Not creating Combined DLL for proton hypothesis", StatusCode::SUCCESS ).ignore();
 
   return scc;
 }
@@ -126,7 +143,15 @@ StatusCode ChargedProtoCombineDLLsAlg::initialize()
 //=============================================================================
 // Main execution
 //=============================================================================
-StatusCode ChargedProtoCombineDLLsAlg::execute(){
+StatusCode ChargedProtoCombineDLLsAlg::execute()
+{
+  // If ProtoParticles do not exist, exit cleanly with a warning
+  if ( !exist<LHCb::ProtoParticles>(m_protoPath) )
+  {
+    return Warning( "ProtoParticles do not exist at '" + m_protoPath + "'",
+                    StatusCode::SUCCESS );
+  }
+
   // Load the charged ProtoParticles
   LHCb::ProtoParticles * protos = get<LHCb::ProtoParticles>( m_protoPath );
 
@@ -175,70 +200,105 @@ StatusCode ChargedProtoCombineDLLsAlg::execute(){
   return StatusCode::SUCCESS;
 }
 
-bool ChargedProtoCombineDLLsAlg::addRich( LHCb::ProtoParticle * proto, CombinedLL & combDLL ){
+bool ChargedProtoCombineDLLsAlg::addRich( LHCb::ProtoParticle * proto, 
+                                          CombinedLL & combDLL )
+{
   // Add RICH Dll information.
   bool ok = false;
-  if ( proto->hasInfo(LHCb::ProtoParticle::RichPIDStatus)  ){
+  if ( proto->hasInfo(LHCb::ProtoParticle::RichPIDStatus) )
+  {
     ok = true;
     // Apply renormalisation of RICH el and mu DLL values
     // Eventually, should make these tunable job options ....
-    int rTechnique = m_maskTechnique["RICH"];
-    if( 0 != (m_elCombDll & rTechnique) ) combDLL.elDLL += 7.0*tanh( proto->info(LHCb::ProtoParticle::RichDLLe,0)/40.0  );
-    if( 0 != (m_muCombDll & rTechnique) ) combDLL.muDLL += 7.0*tanh( proto->info(LHCb::ProtoParticle::RichDLLmu,0)/5.0 );
-    if( 0 != (m_piCombDll & rTechnique) ) combDLL.piDLL += proto->info ( LHCb::ProtoParticle::RichDLLpi , 0 );
-    if( 0 != (m_kaCombDll & rTechnique) ) combDLL.kaDLL += proto->info ( LHCb::ProtoParticle::RichDLLk  , 0 );
-    if( 0 != (m_prCombDll & rTechnique) ) combDLL.prDLL += proto->info ( LHCb::ProtoParticle::RichDLLp  , 0 );
-    if ( msgLevel(MSG::VERBOSE) ) verbose() << " -> Adding RICH info " << combDLL << endmsg;
+    const int rTechnique = m_maskTechnique["RICH"];
+    if( 0 != (m_elCombDll & rTechnique) ) 
+      combDLL.elDLL += 7.0*tanh( proto->info(LHCb::ProtoParticle::RichDLLe,0)/40.0  );
+    if( 0 != (m_muCombDll & rTechnique) ) 
+      combDLL.muDLL += 7.0*tanh( proto->info(LHCb::ProtoParticle::RichDLLmu,0)/5.0 );
+    if( 0 != (m_piCombDll & rTechnique) ) 
+      combDLL.piDLL += proto->info ( LHCb::ProtoParticle::RichDLLpi , 0 );
+    if( 0 != (m_kaCombDll & rTechnique) ) 
+      combDLL.kaDLL += proto->info ( LHCb::ProtoParticle::RichDLLk  , 0 );
+    if( 0 != (m_prCombDll & rTechnique) ) 
+      combDLL.prDLL += proto->info ( LHCb::ProtoParticle::RichDLLp  , 0 );
+    if ( msgLevel(MSG::VERBOSE) ) 
+      verbose() << " -> Adding RICH info " << combDLL << endmsg;
   }
   return ok;
 }
 
-bool
-ChargedProtoCombineDLLsAlg::addMuon( LHCb::ProtoParticle * proto, CombinedLL & combDLL ){
+bool ChargedProtoCombineDLLsAlg::addMuon( LHCb::ProtoParticle * proto, 
+                                          CombinedLL & combDLL )
+{
 
   bool ok = false;
-  if (  proto->hasInfo(LHCb::ProtoParticle::MuonPIDStatus) ){
+  if (  proto->hasInfo(LHCb::ProtoParticle::MuonPIDStatus) )
+  {
     ok = true;
-    int mTechnique = m_maskTechnique["MUON"];
-    if( 0 != (m_elCombDll  & mTechnique)) combDLL.elDLL += proto->info ( LHCb::ProtoParticle::MuonBkgLL,0 );
-    if( 0 != (m_muCombDll  & mTechnique)) combDLL.muDLL += proto->info ( LHCb::ProtoParticle::MuonMuLL, 0 );
-    if( 0 != (m_piCombDll  & mTechnique)) combDLL.piDLL += proto->info ( LHCb::ProtoParticle::MuonBkgLL,0 );
-    if( 0 != (m_kaCombDll  & mTechnique)) combDLL.kaDLL += proto->info ( LHCb::ProtoParticle::MuonBkgLL,0 );
-    if( 0 != (m_prCombDll  & mTechnique)) combDLL.prDLL += proto->info ( LHCb::ProtoParticle::MuonBkgLL,0 );
-    if ( msgLevel(MSG::VERBOSE) ) verbose() << " -> Adding MUON info " << combDLL << endmsg;
+    const int mTechnique = m_maskTechnique["MUON"];
+    if( 0 != (m_elCombDll  & mTechnique)) 
+      combDLL.elDLL += proto->info ( LHCb::ProtoParticle::MuonBkgLL,0 );
+    if( 0 != (m_muCombDll  & mTechnique)) 
+      combDLL.muDLL += proto->info ( LHCb::ProtoParticle::MuonMuLL, 0 );
+    if( 0 != (m_piCombDll  & mTechnique)) 
+      combDLL.piDLL += proto->info ( LHCb::ProtoParticle::MuonBkgLL,0 );
+    if( 0 != (m_kaCombDll  & mTechnique)) 
+      combDLL.kaDLL += proto->info ( LHCb::ProtoParticle::MuonBkgLL,0 );
+    if( 0 != (m_prCombDll  & mTechnique)) 
+      combDLL.prDLL += proto->info ( LHCb::ProtoParticle::MuonBkgLL,0 );
+    if ( msgLevel(MSG::VERBOSE) ) 
+      verbose() << " -> Adding MUON info " << combDLL << endmsg;
   }
   return ok;
 }
 
-bool ChargedProtoCombineDLLsAlg::addCalo( LHCb::ProtoParticle * proto, CombinedLL & combDLL ){
+bool ChargedProtoCombineDLLsAlg::addCalo( LHCb::ProtoParticle * proto, 
+                                          CombinedLL & combDLL )
+{
   bool ok = false;
-  if (  proto->hasInfo(LHCb::ProtoParticle::EcalPIDe) || proto->hasInfo(LHCb::ProtoParticle::EcalPIDmu) ){
-    int eTechnique = m_maskTechnique["ECAL"];
-    if( 0 != (m_elCombDll & eTechnique)) combDLL.elDLL += proto->info ( LHCb::ProtoParticle::EcalPIDe, 0  );
-    if( 0 != (m_muCombDll & eTechnique)) combDLL.muDLL += proto->info ( LHCb::ProtoParticle::EcalPIDmu, 0 );
-    if ( msgLevel(MSG::VERBOSE) ) verbose() << " -> Adding ECAL info " << combDLL << endmsg;
+  if ( proto->hasInfo(LHCb::ProtoParticle::EcalPIDe) || 
+       proto->hasInfo(LHCb::ProtoParticle::EcalPIDmu) )
+  {
+    const int eTechnique = m_maskTechnique["ECAL"];
+    if( 0 != (m_elCombDll & eTechnique)) 
+      combDLL.elDLL += proto->info ( LHCb::ProtoParticle::EcalPIDe, 0  );
+    if( 0 != (m_muCombDll & eTechnique)) 
+      combDLL.muDLL += proto->info ( LHCb::ProtoParticle::EcalPIDmu, 0 );
+    if ( msgLevel(MSG::VERBOSE) ) 
+      verbose() << " -> Adding ECAL info " << combDLL << endmsg;
     ok = true;
   }
 
-  if ( proto->hasInfo(LHCb::ProtoParticle::HcalPIDe) || proto->hasInfo(LHCb::ProtoParticle::HcalPIDmu) ){
-    int hTechnique =  m_maskTechnique["HCAL"];
-    if( 0 != (m_elCombDll & hTechnique)) combDLL.elDLL += proto->info ( LHCb::ProtoParticle::HcalPIDe, 0  );
-    if( 0 != (m_muCombDll & hTechnique)) combDLL.muDLL += proto->info ( LHCb::ProtoParticle::HcalPIDmu, 0 );
-    if ( msgLevel(MSG::VERBOSE) ) verbose() << " -> Adding HCAL info " << combDLL << endmsg;
+  if ( proto->hasInfo(LHCb::ProtoParticle::HcalPIDe) || 
+       proto->hasInfo(LHCb::ProtoParticle::HcalPIDmu) )
+  {
+    const int hTechnique =  m_maskTechnique["HCAL"];
+    if( 0 != (m_elCombDll & hTechnique)) 
+      combDLL.elDLL += proto->info ( LHCb::ProtoParticle::HcalPIDe, 0  );
+    if( 0 != (m_muCombDll & hTechnique)) 
+      combDLL.muDLL += proto->info ( LHCb::ProtoParticle::HcalPIDmu, 0 );
+    if ( msgLevel(MSG::VERBOSE) ) 
+      verbose() << " -> Adding HCAL info " << combDLL << endmsg;
     ok = true;
   }
 
-  if (  proto->hasInfo(LHCb::ProtoParticle::PrsPIDe) ){
-    int pTechnique = m_maskTechnique["PRS"];
-    if( 0 != (m_elCombDll & pTechnique)) combDLL.elDLL += proto->info ( LHCb::ProtoParticle::PrsPIDe , 0  );
-    if ( msgLevel(MSG::VERBOSE) ) verbose() << " -> Adding PRS  info " << combDLL << endmsg;
+  if ( proto->hasInfo(LHCb::ProtoParticle::PrsPIDe) )
+  {
+    const int pTechnique = m_maskTechnique["PRS"];
+    if( 0 != (m_elCombDll & pTechnique)) 
+      combDLL.elDLL += proto->info ( LHCb::ProtoParticle::PrsPIDe , 0  );
+    if ( msgLevel(MSG::VERBOSE) ) 
+      verbose() << " -> Adding PRS  info " << combDLL << endmsg;
     ok = true;
   }
 
-  if ( proto->hasInfo(LHCb::ProtoParticle::BremPIDe) ){
-    int bTechnique = m_maskTechnique["BREM"] ;
-    if( 0 != (m_elCombDll & bTechnique) ) combDLL.elDLL += proto->info ( LHCb::ProtoParticle::BremPIDe, 0  );
-    if ( msgLevel(MSG::VERBOSE) ) verbose() << " -> Adding BREM info " << combDLL << endmsg;
+  if ( proto->hasInfo(LHCb::ProtoParticle::BremPIDe) )
+  {
+    const int bTechnique = m_maskTechnique["BREM"] ;
+    if( 0 != (m_elCombDll & bTechnique) ) 
+      combDLL.elDLL += proto->info ( LHCb::ProtoParticle::BremPIDe, 0  );
+    if ( msgLevel(MSG::VERBOSE) ) 
+      verbose() << " -> Adding BREM info " << combDLL << endmsg;
     ok = true;
   }
   return ok;

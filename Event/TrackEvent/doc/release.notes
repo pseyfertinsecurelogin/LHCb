@@ -4,6 +4,19 @@
 ! Purpose     : Package for the tracking event model classes
 !-----------------------------------------------------------------------------
 
+!========================= TrackEvent v5r10 2011-01-31 =========================
+! 2011-01-28 - Victor Coco 
+ - residual, errResidual and state becomes virtual in Node class ( for further 
+ implementation in FitNode ). 
+   in Track.cpp, modification of the closestState function.
+
+
+! 2011-01-27 - Stephanie Hansmann-Menzemer
+ - Add track history PatFastVelo
+
+! 2011-01-11 - Marco Cattaneo
+ - Fix ICC warnings and remarks
+
 !========================= TrackEvent v5r9 2010-12-14 =========================
 ! 2010-12-02 - Vanya Belyaev
  - Track.cpp:

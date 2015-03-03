@@ -1,6 +1,6 @@
-// $Id: WrongMass.h 53291 2010-08-05 14:35:53Z ibelyaev $
+// $Id: WrongMass.h 115323 2011-01-14 08:08:25Z cattanem $
 // ============================================================================
-// CVS tag $Name: not supported by cvs2svn $, verision $Revision: 53291 $
+// CVS tag $Name: not supported by cvs2svn $, verision $Revision: 115323 $
 // ============================================================================
 #ifndef LOKI_WRONGMASS_H 
 #define LOKI_WRONGMASS_H 1
@@ -11,7 +11,7 @@
 // ============================================================================
 #include "LoKi/Kinematics.h"
 // ============================================================================
-namespace LHCb { class ParticleID ; } ;
+namespace LHCb { class ParticleID ; }
 // ============================================================================
 /** @file
  *

@@ -5,6 +5,25 @@
 ! package manager : Marco Clemencic
 ! =============================================================================
 
+!========================= CondDBUI v3r8 2011-01-31 =========================
+! 2011-01-31 - Illya Shapoval
+ - Minor bug fix in 'CondDB_UpdateOnlineSnapshots.py' script.
+
+! 2011-01-28 - Illya Shapoval
+ - 'CondDBAdmin_DQ_Commit.py' script added. It (de)populates DQFLAGS database
+   with DQ Flags in a specified IOV and updates SQLDDDB Release Notes web page.
+
+! 2011-01-16 - Illya Shapoval
+ - TagStatusDB.getGoodTags method is modified to take into account tag
+   visibility time boundary.
+
+! 2011-01-10 - Illya Shapoval
+ - 'CondDB_UpdateOnlineSnapshots.py' script added, which updates SQLDDDB ONLINE
+   snapshots. It detects used time scheme (per-year or per-month) of ONLINE
+   snapshots and updates them to extend their coverage up to current time.
+   If no ONLINE snapshots are found it will generate them from scratch.
+   It updates also user's SQLDDDB release notes accordingly.
+
 !========================= CondDBUI v3r7 2010-12-15 =========================
 ! 2010-12-15 - Illya Shapoval
  - TSDB scheme is extended to be more generic (all classes machninery is

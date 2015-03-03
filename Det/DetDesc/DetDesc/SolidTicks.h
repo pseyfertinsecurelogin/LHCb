@@ -6,6 +6,11 @@
 #include <cmath>
 #include <functional>
 #include <algorithm>
+
+#ifdef __INTEL_COMPILER         // Disable ICC remark from Math headers
+  #pragma warning(disable:1572) // Floating-point equality and inequality comparisons are unreliable
+#endif
+
 // Geometry includes 
 #include "GaudiKernel/Point3DTypes.h"
 #include "GaudiKernel/Vector3DTypes.h"
@@ -71,7 +76,7 @@ namespace SolidTicks
     // perform removing of adjancent  ticks
     Indexes tmp              ; 
     Tick    tickNext = 0.0   ;
-    Tick    tickPrev = 0.0   ; 
+    //    Tick    tickPrev = 0.0   ; 
     bool    boolPrev = true  ; 
     bool    boolNext = true  ; 
     for ( iterator it = ticks.begin() ; it != ticks.end() ; ++it ) 
@@ -99,14 +104,14 @@ namespace SolidTicks
           { if(  boolPrev == boolNext ) { tmp.push_back( index ) ; } }
         ///
         boolPrev = boolNext; 
-        tickPrev = tickNext;
+        //        tickPrev = tickNext;
       }
     // remove ticks (from the end!)
     Indexes::reverse_iterator cri = tmp.rbegin();
     while( cri != tmp.rend() ) { ticks.erase( ticks.begin() + *cri++ );  }  
     // get the final answer 
     return ticks.size();
-  };
+  }
   
   /** Sort Ticks, eliminate duplicates and remove all adjancent ticks 
    *  @author      Vanya Belyaev   Ivan.Belyaev@itep.ru 
@@ -135,7 +140,7 @@ namespace SolidTicks
     ticks.erase( std::unique( ticks.begin() , ticks.end() )  , ticks.end() ); 
     // remove adjancent 
     return RemoveAdjancent( ticks , point , vect , solid );
-  };
+  }
 
 
  /** Eliminate duplicates and remove all adjancent ticks, 
@@ -208,7 +213,7 @@ namespace SolidTicks
       }
     // adjancent are already removed 
     return ticks.size () ;
-  };
+  }
   
   /** Eliminate duplicate ticks. Not as safe as the original, but a
    *   bit more efficient: it will not call the 'isInside' stuff
@@ -238,7 +243,7 @@ namespace SolidTicks
       RemoveAdjancent( ticks , point , vect , solid );
     }
     return ticks.size() ;
-  } ;
+  }
 
    /** Remove or adjust intervals such that they overlap with tick range
    *  Assume that "ticks" are already sorted, come in pairs and 
@@ -268,9 +273,9 @@ namespace SolidTicks
       ticks.swap(validticks) ;
     }
     return ticks.size () ;
-  };
+  }
 
-}; ///< end of namespace SolidTicks
+} ///< end of namespace SolidTicks
 
 // ============================================================================
 // The End 

@@ -1,4 +1,4 @@
-// $Id: AlgFunctors.cpp 102879 2010-11-17 16:41:01Z ibelyaev $
+// $Id: AlgFunctors.cpp 115323 2011-01-14 08:08:25Z cattanem $
 // ============================================================================
 // Include files 
 // ============================================================================
@@ -33,7 +33,7 @@
 namespace 
 {
   // ==========================================================================
-  const IAlgManager* const s_ALGMANAGER = 0 ;
+  //  const IAlgManager* const s_ALGMANAGER = 0 ;
   const IAlgorithm*  const s_ALGORITHM  = 0 ;
   // ==========================================================================
   /// get the algorithm manager

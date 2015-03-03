@@ -5,6 +5,19 @@
 ! Purpose     : LHCb Event model. Reconstruction classes (Brunel output) 
 !-----------------------------------------------------------------------------
 
+!========================= RecEvent v2r34 2011-01-31 =========================
+! 2011-01-21 - Chris Jones
+ - Convert reconstruction summary data object to internally use a map<int,int>
+   instead of a map<int,double>.
+ - Add various new summary values (IT,OT,SPD,Velo hits + Velo backward tracks).
+
+! 2011-01-20 - Chris Jones
+ - Add number of RICH1 and RICH2 hits to reconstruction summary data object.
+
+! 2011-01-19 - Chris Jones
+ - Add new LHCb::RecSummary class, to store some basic summary information from
+   the reconstruction.
+
 !========================= RecEvent v2r33 2010-12-06 =========================
 ! 2010-11-30 - Chris Jones
  - Add the enum "ProbNNghost" for the ProtoParticle ExtraInfo.

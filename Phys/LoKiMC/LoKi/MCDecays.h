@@ -17,6 +17,7 @@
 // LoKi
 // ============================================================================
 #include "LoKi/Trees.h"
+#include "LoKi/MCSections.h"
 // ============================================================================
 /** @file
  *  Implementation file for LoKi MC-specific decay/tree-functors
@@ -98,7 +99,7 @@ namespace Decays
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-04-13
      */
-    class MCExclusive: public Decays::iTree_<const LHCb::MCParticle*>
+    class GAUDI_API MCExclusive: public Decays::iTree_<const LHCb::MCParticle*>
     {
     protected:
       // ======================================================================
@@ -207,8 +208,6 @@ namespace Decays
         default:
           return true ;                                               // RETURN
         }
-        //
-        return true ;
       }
       // ======================================================================
       /// get the algorithm
@@ -381,7 +380,7 @@ namespace Decays
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-04-13
      */
-    class MCInclusive : public MCExclusive
+    class GAUDI_API MCInclusive : public MCExclusive
     {
     public:
       // ======================================================================
@@ -473,7 +472,7 @@ namespace Decays
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-04-13
      */
-    class MCOptional : public MCExclusive
+    class GAUDI_API MCOptional : public MCExclusive
     {
     public:
       // ======================================================================
@@ -597,7 +596,7 @@ namespace Decays
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-04-21
      */
-    class Photos : public Decays::Trees::MCExclusive
+    class GAUDI_API Photos : public Decays::Trees::MCExclusive
     {
     public:
       // ======================================================================
@@ -686,7 +685,7 @@ namespace Decays
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-04-13
      */
-    class PhotosOptional : public MCOptional
+    class GAUDI_API PhotosOptional : public MCOptional
     {
     public:
       // ======================================================================
@@ -786,10 +785,7 @@ namespace Decays
   // ==========================================================================
 } //                                                    end of namespace Decays
 // ============================================================================
-
-
-// ============================================================================
-// The END
+//                                                                      The END
 // ============================================================================
 #endif // LOKI_MCDECAYS_H
 // ============================================================================

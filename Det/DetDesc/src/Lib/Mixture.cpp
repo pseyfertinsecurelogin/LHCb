@@ -24,7 +24,7 @@ Mixture::Mixture( const std::string&  name    ,
     , m_Z       ( z )
     , m_I       ( i )
    {
-   };
+   }
 //
 Mixture::~Mixture() {}
 //
@@ -33,21 +33,21 @@ const SmartRef<Element>& Mixture::element( const unsigned int i ) const
   if( i >= m_elements.size() ) 
     { throw MaterialException("Mixture::element:: wrong index! ", this ); } 
   return m_elements[i].second ; 
-};
+}
 //
       SmartRef<Element>& Mixture::element( const unsigned int i )        
 {
   if( i >= m_elements.size() ) 
     { throw MaterialException("Mixture::element:: wrong index! ", this ); } 
   return m_elements[i].second ; 
-};
+}
 //
 double Mixture::elementFraction( const unsigned int i ) const        
 {
   if( i >= m_elements.size() ) 
     { throw MaterialException("Mixture::element:: wrong index! ", this ); } 
   return m_elements[i].first ; 
-};
+}
 //
 void Mixture::addElement( const SmartRef<Element>& e, 
                           const int nOfAtoms , 
@@ -66,7 +66,7 @@ void Mixture::addElement( const SmartRef<Element>& e,
   ///
   if( true == comp )  { computeByAtoms(); }
   ///
-};
+}
 ///
 void Mixture::addElement( const SmartRef<Element>& e, 
                           const double fraction     , 
@@ -88,7 +88,7 @@ void Mixture::addElement( const SmartRef<Element>& e,
     { m_elements.push_back( Entry( fraction , e ) ); }  
   ///  
   if( true == comp ) { compute() ; }
-};
+}
 ///
 void Mixture::addMixture( const SmartRef<Mixture>& mx, 
                           const double fraction, const bool comp)  
@@ -103,7 +103,7 @@ void Mixture::addMixture( const SmartRef<Mixture>& mx,
   ///  
   if( true == comp ) { compute() ; }
   ///
-};
+}
 ///
 StatusCode Mixture::compute()
 {
@@ -114,7 +114,7 @@ StatusCode Mixture::compute()
   else 
     { throw MaterialException("Mixture::compute: could not compute "+name() );}
   return StatusCode::FAILURE ; 
-};
+}
 ///
 StatusCode Mixture::computeByAtoms()  
 {
@@ -230,6 +230,10 @@ StatusCode Mixture::computeByFraction()
   // only update the radiation and interaction length if the attribute is
   // is not provided in the input file
 
+#ifdef __INTEL_COMPILER         // Disable ICC remark from Math headers
+  #pragma warning(disable:1572) // Floating-point equality and inequality comparisons are unreliable
+#endif
+
   if( radiationLength() == 0.0 ) {
     if( radleninv > 0 ) { setRadiationLength( 1.0 / radleninv / density() ); }
   }
@@ -245,7 +249,7 @@ StatusCode Mixture::computeByFraction()
     density() <= 0 ? StatusCode::FAILURE : 
     lambdainv <= 0 ? StatusCode::FAILURE : StatusCode::SUCCESS ;
   ///
-};
+}
 ///
 MsgStream&        Mixture::fillStream ( MsgStream&   s ) const 
 {
@@ -277,7 +281,7 @@ MsgStream&        Mixture::fillStream ( MsgStream&   s ) const
         }
     }
   return s;
-};    
+}
 ///
 std::ostream&     Mixture::fillStream ( std::ostream& s ) const 
 {
@@ -309,7 +313,7 @@ std::ostream&     Mixture::fillStream ( std::ostream& s ) const
         }
     }
   return s;
-};    
+}
 ///
 StatusCode Mixture::addMyself() 
 {
@@ -343,7 +347,7 @@ StatusCode Mixture::addMyself()
   m_atoms.push_back( 1 );
   ///
   return StatusCode::SUCCESS;
-};
+}
 
 
 

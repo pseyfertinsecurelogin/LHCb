@@ -1,4 +1,4 @@
-// $Id: Monitoring.cpp 53291 2010-08-05 14:35:53Z ibelyaev $
+// $Id: Monitoring.cpp 115323 2011-01-14 08:08:25Z cattanem $
 // ============================================================================
 // Include files 
 // ============================================================================
@@ -256,10 +256,6 @@ StatEntity* LoKi::Monitoring::getCounter
       getCounter ( stat    ,               name  ) :
       getCounter ( stat    , name + "::" + group ) ;    
   }
-  //
-  return group.empty() ? 
-    getCounter   ( stat    ,               name  ) :
-    getCounter   ( stat    , name + "::" + group ) ;
 }
 // ============================================================================
 // The END 

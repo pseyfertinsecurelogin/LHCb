@@ -4,6 +4,14 @@
 ! Purpose     : Interface to XML Xerces Parser plus some extra services
 !-----------------------------------------------------------------------------
 
+!========================= XmlTools v6r4 2011-01-31 =========================
+! 2011-01-10 - Marco Cattaneo
+ - Remove obsolete file XmlTools_dll.cpp
+
+! 2011-01-06 - Marco Cattaneo
+ - Fix icc warnings and some remarks
+ - Replace endreq by endmsg
+
 !======================== XmlTools v6r3p2 2010-08-25 =========================
 ! 2010-07-22 - Marco Clemencic
  - Fixed a compilation warning on Windows after the switch to XercesC 3.1.

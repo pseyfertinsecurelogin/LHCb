@@ -8,7 +8,6 @@
 // ============================================================================
 /// Gaudi Kernel includes
 // ============================================================================
-#include "GaudiKernel/Transform3DTypes.h"
 #include "GaudiKernel/StatusCode.h"
 #include "GaudiKernel/SmartDataPtr.h" 
 // ============================================================================
@@ -82,7 +81,7 @@ LVolume::~LVolume()
 // ============================================================================
 const CLID& LVolume::clID   () const { return classID()    ; } 
 // ============================================================================
-const CLID& LVolume::classID()       { return CLID_LVolume ; };
+const CLID& LVolume::classID()       { return CLID_LVolume ; }
 // ============================================================================
 /*  calculate the daughter path containing the Point in Local frame , 
  *  can be VERY slow for complex geometry, 

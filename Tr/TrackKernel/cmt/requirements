@@ -3,7 +3,7 @@
 # Maintainer : Wouter Hulsbergen
 #============================================================================
 package           TrackKernel
-version           v1r5
+version           v1r6
 
 #============================================================================
 # Structure, i.e. directories to process. 
@@ -28,6 +28,9 @@ apply_pattern reflex_dictionary                                        \
               headerfiles=$(TRACKKERNELROOT)/src/TrackKernelDict.h     \
               selectionfile=$(TRACKKERNELROOT)/src/TrackKernelDict.xml \
               options="-U__MINGW32__"
+# Disable some compiler warnings in the automatically generated dict code
+macro_append TrackKernelDict_cppflags "" \
+                           target-icc " -wd654"
 
 # Build linker library
 #============================================================================

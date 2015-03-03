@@ -1,4 +1,4 @@
-// $Id: CoreFactory.cpp 53291 2010-08-05 14:35:53Z ibelyaev $
+// $Id: CoreFactory.cpp 115323 2011-01-14 08:08:25Z cattanem $
 // ============================================================================
 // Include files 
 // ============================================================================
@@ -270,7 +270,7 @@ inline StatusCode LoKi::Hybrid::CoreFactory::_get
   return StatusCode::SUCCESS ;
 }    
 // ============================================================================
-DECLARE_NAMESPACE_TOOL_FACTORY(LoKi::Hybrid,CoreFactory);
+DECLARE_NAMESPACE_TOOL_FACTORY(LoKi::Hybrid,CoreFactory)
 // ============================================================================
 // Standard constructor
 // ============================================================================

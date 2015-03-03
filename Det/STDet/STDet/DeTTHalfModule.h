@@ -67,6 +67,9 @@ public:
   */
   unsigned int detRegion() const;
 
+  /// Workaround to prevent hidden base class function
+  inline const std::type_info& type(const std::string &name) const
+                      {return ParamValidDataObject::type(name);}
   /** indicate the module type (KLM, LM)
   * @return m_type
   */

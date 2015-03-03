@@ -3,10 +3,13 @@
 /** STD & STL  */
 #include <iostream> 
 #include <string>
+#ifdef __INTEL_COMPILER         // Disable ICC remark
+  #pragma warning(disable:1572) // Floating-point equality and inequality comparisons are unreliable
+#endif
 /** DetDesc */ 
+#include "DetDesc/Solid.h"
 #include "DetDesc/SolidUnion.h"
 #include "DetDesc/SolidException.h"
-#include "DetDesc/Solid.h"
 #include "DetDesc/SolidBox.h"
 
 // ============================================================================
@@ -33,7 +36,7 @@ SolidUnion::SolidUnion( const std::string& name  ,
 {
   if( 0 == first ) 
     { throw SolidException(" SolidUnion:: ISolid* points to NULL!"); }
-};
+}
 // ============================================================================
 
 // ============================================================================
@@ -45,7 +48,7 @@ SolidUnion::SolidUnion( const std::string& name )
   : SolidBase    ( name )
   , SolidBoolean ( name )
   , m_coverTop( 0 ) 
-{};
+{}
 // ============================================================================
 
 // ============================================================================
@@ -54,7 +57,7 @@ SolidUnion::SolidUnion( const std::string& name )
 SolidUnion::~SolidUnion()
 { 
   if( 0 != m_coverTop ) { delete m_coverTop ; }
-};
+}
 // ============================================================================
 
 // ============================================================================
@@ -96,7 +99,7 @@ bool SolidUnion::isInsideImpl( const aPoint   & point ) const
                   Solid::IsInside<aPoint>( point ) ) ;
   ///
   return ( childEnd() == ci ? false : true );   
-};
+}
 
 // ============================================================================
 /** add child solid to the solid union
@@ -111,7 +114,7 @@ StatusCode  SolidUnion::unite( ISolid*                solid    ,
   StatusCode sc = addChild( solid , mtrx ); 
   if( sc.isFailure() ) { return sc ; }
   return updateBP();
-};
+}
 
 // ============================================================================
 /** add child solid to the solid union
@@ -127,7 +130,7 @@ StatusCode  SolidUnion::unite ( ISolid*                  child    ,
   StatusCode sc = addChild( child , position , rotation ); 
   if( sc.isFailure() ) { return sc ; }
   return updateBP();
-};
+}
 // ============================================================================
 
 // ============================================================================
@@ -148,7 +151,7 @@ const ISolid* SolidUnion::coverTop() const
   m_coverTop = new SolidBox ("CoverTop for " + name () , x , y, z  ) ;
   // 
   return m_coverTop;
-};
+}
 // ============================================================================
 
 // ============================================================================
@@ -180,7 +183,7 @@ StatusCode SolidUnion::updateBP()
   //
   checkBP();
   return StatusCode::SUCCESS;
-};
+}
 // ============================================================================
 
 // ============================================================================

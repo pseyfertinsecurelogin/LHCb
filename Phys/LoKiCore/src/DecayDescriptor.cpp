@@ -1,4 +1,4 @@
-// $Id: DecayDescriptor.cpp 53291 2010-08-05 14:35:53Z ibelyaev $
+// $Id: DecayDescriptor.cpp 115323 2011-01-14 08:08:25Z cattanem $
 // ============================================================================
 // Include files 
 // ============================================================================
@@ -29,7 +29,6 @@ bool Decays::Trees::decayOnly ( const Decays::Trees::Arrow& arrow )
   case Decays::Trees::LongDoubleX : return false ;  // X 
   default                         : return true  ;
   }
-  return true ;
 }
 // ============================================================================
 /*  simple function to extract "algorithm" flag from the arrow 
@@ -50,7 +49,6 @@ Decays::Trees::Alg  Decays::Trees::algorithm
   case Decays::Trees::LongDoubleX     : return Decays::Trees::Sections  ;
   default                             : return Decays::Trees::Daughters ;
   }
-  return Decays::Trees::Daughters ;
 }
 // ============================================================================
 /*  simple function to extract "photos" flag from the arrow 
@@ -70,7 +68,6 @@ bool Decays::Trees::photos    ( const Decays::Trees::Arrow& arrow )
   case Decays::Trees::LongDoubleX     : return true  ;
   default                             : return false ;
   }
-  return false ;
 }
 // ============================================================================
 /*  get the string representation of the arrow 
@@ -95,7 +92,6 @@ std::string Decays::Trees::arrow ( const Decays::Trees::Arrow& arr )
   case Decays::Trees::LongDoubleX         : return "==x>"  ;
   default                                 : return "<unknown arrow>" ;
   }
-  return "<unknown arrow>" ;
 }
 // ============================================================================
 /*  valid arrow? 
@@ -120,7 +116,6 @@ bool Decays::Trees::valid ( const Decays::Trees::Arrow& arrow )
   case Decays::Trees::LongDoubleX         : return true  ;
   default                                 : return false ;
   }
-  return false ;
 }
 // ============================================================================
 /*  valid arrow? 

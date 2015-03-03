@@ -4,8 +4,18 @@
 ! Purpose     : Components to fully rebuild PIDs from packed DST
 !-----------------------------------------------------------------------------
 
-!========================= RecreatePIDTools v1r1 2010-11-27 =========================
-2010-11-16 - Olivier Deschamps
+!========================= RecreatePIDTools v1r2 2011-01-31 =========================
+! 2010-12-22 - Chris Jones
+ - Fix ChargedProtoCombineDLLsAlg to not throw an exception when the input
+   ProtoParticles do not exist. Issues a warning and exits cleaning instead.
+
+! 2010-12-20 - Chris Jones
+ - Update RichPIDsFromProtoParticlesAlg and MuonPIDsFromProtoParticlesAlg to
+   not throw an exception when the input ProtoParticles are missing, but to
+   instead issue a Warning and create an empty container.
+
+!===================== RecreatePIDTools v1r1 2010-11-27 ======================
+! 2010-11-16 - Olivier Deschamps
   - ChargedProtoCombinedDLLsAlg : fix bug in masking procedure
 
 !===================== Event/RecreatePIDTools v1r0 2010-09-27 ================

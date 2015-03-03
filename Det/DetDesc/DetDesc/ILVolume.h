@@ -8,6 +8,11 @@
 #include <vector> 
 /// GaudiKernel includes 
 #include "GaudiKernel/MsgStream.h"
+
+#ifdef __INTEL_COMPILER         // Disable ICC remark from Math headers
+  #pragma warning(disable:1572) // Floating-point equality and inequality comparisons are unreliable
+#endif
+
 #include "GaudiKernel/Point3DTypes.h"
 #include "GaudiKernel/Vector3DTypes.h"
 /// DetDesc includes
@@ -328,7 +333,7 @@ protected:
  */
 // ============================================================================
 inline std::ostream& operator<<( std::ostream& os , const ILVolume& lv ) 
-{ return lv.printOut( os ); };
+{ return lv.printOut( os ); }
 
 // ============================================================================
 /** output operator to STD/STL stream
@@ -338,7 +343,7 @@ inline std::ostream& operator<<( std::ostream& os , const ILVolume& lv )
  */
 // ============================================================================
 inline std::ostream& operator<<( std::ostream& os , const ILVolume*  lv )
-{ return ((0==lv)?( os<<" ILVolume* points to NULL "):(os<<(*lv)));};
+{ return ((0==lv)?( os<<" ILVolume* points to NULL "):(os<<(*lv)));}
 
 // ============================================================================
 /** output operator to Gaudi MsgStream stream
@@ -348,7 +353,7 @@ inline std::ostream& operator<<( std::ostream& os , const ILVolume*  lv )
  */
 // ============================================================================
 inline MsgStream& operator<<( MsgStream& os , const ILVolume& lv ) 
-{ return lv.printOut( os ); };
+{ return lv.printOut( os ); }
 
 // ============================================================================
 /** output operator to Gaudi MsgStream stream
@@ -358,7 +363,7 @@ inline MsgStream& operator<<( MsgStream& os , const ILVolume& lv )
  */
 // ============================================================================
 inline MsgStream& operator<<( MsgStream& os , const ILVolume*  lv )
-{ return ((0==lv)?( os<<" ILVolume* points to NULL "):(os<<(*lv)));};
+{ return ((0==lv)?( os<<" ILVolume* points to NULL "):(os<<(*lv)));}
 
 // ============================================================================
 // The End 

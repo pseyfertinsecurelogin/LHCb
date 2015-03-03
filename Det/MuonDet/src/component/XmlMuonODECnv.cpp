@@ -41,6 +41,10 @@ public:
 
 protected:
 
+#ifdef __INTEL_COMPILER         // Disable ICC warning
+  #pragma warning(disable:1125) // virtual function is hidden, override intended?
+  #pragma warning(push)
+#endif
   /** This fills the current object for specific child.
    * Overrides the default implementation in XmlUserDetElemCnv.
    * @param childElement the specific child processed here
@@ -51,6 +55,9 @@ protected:
   virtual StatusCode i_fillSpecificObj (xercesc::DOMElement* childElement,
                                         MuonODEBoard* dataObj,
                                         IOpaqueAddress* address);
+#ifdef __INTEL_COMPILER // Re-enable ICC warning
+  #pragma warning(pop)
+#endif
 
 private:
 StatusCode splitList( std::string &stringList,
@@ -122,7 +129,7 @@ XmlMuonODECnv::~XmlMuonODECnv() {
   xercesc::XMLString::release((XMLCh**)&TSQuadrantListString);
   xercesc::XMLString::release((XMLCh**)&TSMapString);         
   xercesc::XMLString::release((XMLCh**)&TSMapRefString);
-}; 
+}
 
 
 StatusCode 
@@ -191,7 +198,7 @@ XmlMuonODECnv::i_fillSpecificObj(xercesc::DOMElement* childElement,
           getNamedItem(TSMapRefString);
         std::string  TSReference = dom2Std (TSNode->getNodeValue());  
         unsigned int poundPosition = TSReference.find_last_of('#');
-        std::string entryName = "/" + TSReference.substr(poundPosition + 1);
+        // std::string entryName = "/" + TSReference.substr(poundPosition + 1);
         sc=dataObj->addTSName(TSReference.substr(poundPosition + 1));    
         if(sc.isFailure())return sc;
 

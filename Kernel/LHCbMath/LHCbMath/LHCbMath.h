@@ -230,8 +230,16 @@ namespace LHCb
       ( const long double v1 ,
         const long double v2 ) const
       { 
+using namespace std;
+#ifdef __INTEL_COMPILER         // Disable ICC remark
+  #pragma warning(disable:2259) //  non-pointer conversion may lose significant bits
+  #pragma warning(push)
+#endif
         return  m_cmp ( static_cast<double> ( v1 ) , 
                         static_cast<double> ( v2 ) ) ; 
+#ifdef __INTEL_COMPILER         // End disable ICC remark
+  #pragma warning(pop)
+#endif
       }
       // ======================================================================
     private :
@@ -382,12 +390,19 @@ namespace LHCb
      */
     inline long round ( const double x ) 
     {
+#ifdef __INTEL_COMPILER         // Disable ICC remark from Boost
+  #pragma warning(disable:1572) // Floating-point equality and inequality comparisons are unreliable 
+  #pragma warning(push)
+#endif
       typedef boost::numeric::RoundEven<double> Rounder ;
       typedef boost::numeric::make_converter_from 
         <double,
         boost::numeric::silent_overflow_handler,
         Rounder>::to<long>::type Converter ;
       return Converter::convert ( x ) ; 
+#ifdef __INTEL_COMPILER         // Re-enable ICC remark 1572
+  #pragma warning(pop)
+#endif
     }
     // ========================================================================
     /** round to nearest integer, rounds half integers to nearest even integer 

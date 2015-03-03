@@ -4,9 +4,6 @@
  *
  * Implementation file for algorithm ChargedProtoParticleAddMuonInfo
  *
- * CVS Log :-
- * $Id: ChargedProtoParticleAddMuonInfo.cpp,v 1.7 2010-03-08 21:51:08 jonrob Exp $
- *
  * @author Chris Jones   Christopher.Rob.Jones@cern.ch
  * @date 28/08/2009
  */
@@ -64,10 +61,7 @@ StatusCode ChargedProtoParticleAddMuonInfo::execute()
 {
   // Load the MuonPIDs
   const bool muonSc = getMuonData();
-  if ( !muonSc )
-  {
-    return Warning( "No MuonPIDs -> ProtoParticles will not be changed.", StatusCode::SUCCESS );
-  }
+  if ( !muonSc ) { return StatusCode::SUCCESS; }
 
   // ProtoParticle container
   if ( !exist<LHCb::ProtoParticles>(m_protoPath) )
@@ -166,7 +160,8 @@ bool ChargedProtoParticleAddMuonInfo::getMuonData()
   // Do we have any MuonPID results
   if ( !exist<LHCb::MuonPIDs>(m_muonPath) )
   {
-    Warning( "No MuonPIDs at '"+m_muonPath+"'", StatusCode::SUCCESS );
+    Warning( "No MuonPIDs at '" + m_muonPath + 
+             "' -> ProtoParticles will not be changed.", StatusCode::SUCCESS, 1 ).ignore();
     return false;
   }
 

@@ -1,4 +1,4 @@
-// $Id: Operators.h 53291 2010-08-05 14:35:53Z ibelyaev $
+// $Id: Operators.h 115323 2011-01-14 08:08:25Z cattanem $
 // ============================================================================
 #ifndef LOKI_OPERATORS_H 
 #define LOKI_OPERATORS_H 1
@@ -157,7 +157,7 @@ template <class TYPE, class TYPE2>
 inline   LoKi::Less<TYPE,TYPE2> 
 operator<  ( const  LoKi::Functor<TYPE,TYPE2>&  fun1 , 
              const  LoKi::Functor<TYPE,TYPE2>&  fun2 ) 
-{ return LoKi::Less<TYPE,TYPE2> ( fun1   , fun2   ) ; } ;
+{ return LoKi::Less<TYPE,TYPE2> ( fun1   , fun2   ) ; }
 // ============================================================================
 /** inline construction of operator "<" 
  *

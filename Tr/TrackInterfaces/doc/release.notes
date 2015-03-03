@@ -4,6 +4,16 @@
 ! Purpose     : package for tracking tools interfaces
 !-----------------------------------------------------------------------------
 
+!========================= TrackInterfaces v4r18 2011-01-31 =========================
+! 2011-01-23 - David Hutchcroft
+ - Added ICountVeloTracks which counts the number of VELO tracks in "Best"
+
+! 2011-01-13 - Vanya Belyaev
+
+ - add ITrackStateProvider into Reflex dictionary
+ - cmt/requirements 
+    version increment to v4r18 
+
 !========================= TrackInterfaces v4r17 2010-10-25 =========================
 
 ! 2010-10-24 - Mariusz Witek

@@ -1,4 +1,4 @@
-// $Id: Selected.h 53291 2010-08-05 14:35:53Z ibelyaev $
+// $Id: Selected.h 115323 2011-01-14 08:08:25Z cattanem $
 // ============================================================================
 #ifndef LOKI_SELECTED_H 
 #define LOKI_SELECTED_H 1
@@ -128,7 +128,7 @@ namespace LoKi
       cont.push_back( object );
       // return valid range 
       return Range( cont.begin() , cont.end() , name );      
-    };
+    }
     /// sequential access though iterators 
     map_iterator begin () const { return m_map.begin () ; }
     /// sequential access though iterators 

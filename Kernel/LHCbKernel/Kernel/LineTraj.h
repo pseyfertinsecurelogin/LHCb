@@ -95,6 +95,7 @@ namespace LHCb
     /// Distance, along the Trajectory, between position(mu1) and
     /// position(mu2). Trivial because LineTraj is parameterized in
     /// arclength.
+    using Trajectory::arclength;
     virtual double arclength(double mu1, double mu2) const { return mu2 - mu1 ; }
     
 #ifndef GOD_NOALLOC
@@ -140,6 +141,10 @@ namespace LHCb
 
 } // namespace LHCb
 
+#ifdef __INTEL_COMPILER         // Disable ICC remark from ROOT
+  #pragma warning(disable:1572) // Floating-point equality and inequality comparisons are unreliable
+#endif
+
 /// Constructor from the middle point and a direction vector
 inline LHCb::LineTraj::LineTraj( const Point& middle,
                                  const Vector& dir,
@@ -147,8 +152,7 @@ inline LHCb::LineTraj::LineTraj( const Point& middle,
   : Trajectory(range),
     m_dir(dir.Unit()),
     m_pos(middle)
-{
-};
+{}
 
 /// Constructor from the middle point and a unit direction vector
 inline LHCb::LineTraj::LineTraj( const Point& middle,
@@ -157,8 +161,7 @@ inline LHCb::LineTraj::LineTraj( const Point& middle,
   : Trajectory(range),
     m_dir(dir),
     m_pos(middle)
-{
-};
+{}
 
 /// Constructor from the middle point and a possibly normalized direction vector
 inline LHCb::LineTraj::LineTraj( const Point& middle,
@@ -167,8 +170,7 @@ inline LHCb::LineTraj::LineTraj( const Point& middle,
   : Trajectory(range),
     m_dir(normalized==yes?dir:dir.Unit()),
     m_pos(middle)
-{
-};
+{}
 
 
 #endif /// LHCbKernel_LineTraj_H

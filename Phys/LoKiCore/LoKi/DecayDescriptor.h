@@ -1,4 +1,4 @@
-// $Id: DecayDescriptor.h 53291 2010-08-05 14:35:53Z ibelyaev $
+// $Id: DecayDescriptor.h 115323 2011-01-14 08:08:25Z cattanem $
 // ============================================================================
 #ifndef LOKI_DECAYDESCRIPTOR_H 
 #define LOKI_DECAYDESCRIPTOR_H 1
@@ -31,7 +31,7 @@ namespace Decays
      */       
     enum Alg {
       Daughters         = 0 , // match only for the direct daughters 
-      Sections              , // match in all graph sections 
+      Sections                // match in all graph sections 
     } ;
     // ======================================================================
     /** @enum Oscillation 
@@ -79,7 +79,7 @@ namespace Decays
       SingleX      ,   // single arrow       "-x>" 
       LongSingleX  ,   // long single arrow "--x>" 
       DoubleX      ,   // dobule arrow       "=x>" 
-      LongDoubleX  ,   // long double arrow "==x>"
+      LongDoubleX      // long double arrow "==x>"
       // =====================================================================
     } ;
     // ======================================================================

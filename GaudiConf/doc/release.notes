@@ -3,6 +3,15 @@
 ! package manager: M.Cattaneo
 !----------------------------------------------------------------------------
 
+!========================= GaudiConf v13r8 2011-01-31 =========================
+! 2011-01-21 - Patrick Robbe
+ - SimConf: add new phases (GenToMCTree) used in Gauss to save generator
+   level information into MCParticles (skipping the full simulation 
+   phase). 
+
+! 2011-01-20 - Chris Jones
+ - Add the new reconstruction summary object to the DST content.
+
 !======================== GaudiConf v13r7 2010-09-27 ========================
 ! 2010-09-22 - Chris Jones
  - Add support for packing of the PV vertex weights

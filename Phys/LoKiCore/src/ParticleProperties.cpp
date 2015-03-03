@@ -1,4 +1,4 @@
-// $Id: ParticleProperties.cpp 53291 2010-08-05 14:35:53Z ibelyaev $
+// $Id: ParticleProperties.cpp 115644 2011-01-20 10:25:05Z ibelyaev $
 // ============================================================================
 // Include files
 // ============================================================================
@@ -286,7 +286,7 @@ LHCb::ParticleID LoKi::Particles::antiParticle( const LHCb::ParticleID& pid  )
   }
   // get the anti particle 
   const LHCb::ParticleProperty* antiPP = p1->antiParticle() ;
-  if ( 0 == p1 ) 
+  if ( 0 == antiPP ) 
   {
     LoKi::Report::Error
       ( " LoKi::Particles::antiParticle("              + 

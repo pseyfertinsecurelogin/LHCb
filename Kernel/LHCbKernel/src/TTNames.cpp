@@ -3,6 +3,9 @@
 #include "Kernel/TTNames.h"
 
 // BOOST
+#ifdef __INTEL_COMPILER         // Disable ICC remark from Boost
+  #pragma warning(disable:2259) // non-pointer conversion from "int" to "char" may lose significant bits
+#endif
 #include "boost/lexical_cast.hpp"
 #include <boost/assign/std/vector.hpp>
 #include <boost/assign/list_of.hpp>
@@ -119,7 +122,7 @@ LHCb::STChannelID LHCb::TTNames::stringToChannel(const std::string& name)  {
   const std::vector<std::string> thestations = stations(); 
   const unsigned int station = findStationType(name, thestations);
  
-  const std::vector<std::string> thelayers = layers(); 
+  //  const std::vector<std::string> thelayers = layers(); 
   unsigned int layer = 0;
   // station 1, layers U and X
   if (station == 1){

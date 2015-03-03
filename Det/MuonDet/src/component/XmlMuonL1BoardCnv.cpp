@@ -38,6 +38,10 @@ public:
 
 protected:
 
+#ifdef __INTEL_COMPILER         // Disable ICC warning
+  #pragma warning(disable:1125) // virtual function is hidden, override intended?
+  #pragma warning(push)
+#endif
   /** This fills the current object for specific child.
    * Overrides the default implementation in XmlUserDetElemCnv.
    * @param childElement the specific child processed here
@@ -48,6 +52,9 @@ protected:
   virtual StatusCode i_fillSpecificObj (xercesc::DOMElement* childElement,
                                         MuonL1Board* dataObj,
                                         IOpaqueAddress* address);
+#ifdef __INTEL_COMPILER // Re-enable ICC warning
+  #pragma warning(pop)
+#endif
 
 private:
 StatusCode splitList( std::string &stringList,
@@ -122,7 +129,7 @@ XmlMuonL1BoardCnv::~XmlMuonL1BoardCnv() {
   xercesc::XMLString::release((XMLCh**)&TSLayoutXString);
   xercesc::XMLString::release((XMLCh**)&TSLayoutYString);  
 
-}; 
+}
 
 
 StatusCode 
@@ -135,9 +142,9 @@ XmlMuonL1BoardCnv::i_fillSpecificObj(xercesc::DOMElement* childElement,
   
   
   if (0 == xercesc::XMLString::compareString(L1String, tagName)) {
-    const std::string  L1Name =
-      dom2Std(childElement->getAttributes()->getNamedItem(L1NameString)
-              ->getNodeValue());
+    //const std::string  L1Name =
+    //  dom2Std(childElement->getAttributes()->getNamedItem(L1NameString)
+    //          ->getNodeValue());
     const std::string  L1Number = dom2Std(childElement->
                                           getAttributes()->
                                           getNamedItem(L1NumberString)

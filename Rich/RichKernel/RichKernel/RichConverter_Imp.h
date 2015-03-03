@@ -127,8 +127,15 @@ namespace Rich
       return s;
     }
 
+#ifdef __INTEL_COMPILER         // Disable ICC warning
+  #pragma warning(disable:1125) // virtual function is hidde, override intended?
+  #pragma warning(push)
+#endif
     /// Release tools and services
     StatusCode release ( const IInterface* interface ) const;
+#ifdef __INTEL_COMPILER // Re-enable ICC warning
+  #pragma warning(pop)
+#endif
 
     // ============================================================================
     // Add the given tool to the list of active tools

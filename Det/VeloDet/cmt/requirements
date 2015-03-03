@@ -5,7 +5,7 @@
 #                 David Hutchcroft
 #                 Kurt Rinnert
 package  VeloDet 
-version  v13r12
+version           v13r13
 
 # =============== structure ===============================================	
 branches         src cmt doc VeloDet dict
@@ -38,6 +38,9 @@ apply_pattern     reflex_dictionary                                 \
                   headerfiles=$(VELODETROOT)/dict/VeloDetDict.h     \
                   selectionfile=$(VELODETROOT)/dict/VeloDetDict.xml \
                   options="-U__MINGW32__"
+# Disable some compiler warnings in the automatically generated dict code
+macro_append VeloDetDict_cppflags "" \
+                       target-icc " -wd654"
 
 private
 

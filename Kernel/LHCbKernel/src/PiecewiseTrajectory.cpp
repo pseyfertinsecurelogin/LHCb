@@ -1,4 +1,9 @@
 #include "Kernel/PiecewiseTrajectory.h"
+// Boost
+#ifdef __INTEL_COMPILER        // Disable ICC remark from Boost
+  #pragma warning(disable:177) // variable was declared but never referenced
+  #pragma warning(disable:193) // zero used for undefined preprocessing identifier
+#endif
 #include "boost/lambda/lambda.hpp"
 #include "boost/lambda/bind.hpp"
 #include "boost/lambda/construct.hpp"
@@ -39,7 +44,7 @@ namespace {
         template <typename T> bool operator()(const T& t, double s)  
         { return t.second < s; }
     };
-};
+}
 
 std::auto_ptr<LHCb::Trajectory> LHCb::PiecewiseTrajectory::clone() const
 {

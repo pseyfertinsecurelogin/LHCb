@@ -4,7 +4,7 @@ package LHCbKernel
 author  M.Frank    CERN/LHCb
 manager M.Cattaneo CERN/LHCb
 
-version           v12r6
+version           v12r7
 
 branches cmt doc Event Kernel src xml
 
@@ -54,3 +54,6 @@ macro_remove cppflags -DGOD_NOALLOC
 macro_append LHCbKernel_cppflags "" \
                 debug " -DGOD_NOALLOC " \
                 WIN32 " -DGOD_NOALLOC "
+# Disable some compiler warnings in the automatically generated dict code
+macro_append LHCbKernel_dictionary_dict_pp_cppflags "" \
+                                         target-icc " -wd177 -wd654"

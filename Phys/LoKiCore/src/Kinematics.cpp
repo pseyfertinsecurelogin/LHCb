@@ -1,4 +1,4 @@
-// $Id: Kinematics.cpp 53291 2010-08-05 14:35:53Z ibelyaev $
+// $Id: Kinematics.cpp 115323 2011-01-14 08:08:25Z cattanem $
 // ============================================================================
 // Include files 
 // ============================================================================
@@ -20,7 +20,14 @@
 // ============================================================================
 // ROOT 
 // ============================================================================
+#ifdef __INTEL_COMPILER         // Disable ICC remark from ROOT GenVector
+  #pragma warning(disable:1572) // Floating-point equality and inequality comparisons are unreliable 
+  #pragma warning(push)
+#endif
 #include "Math/Boost.h"
+#ifdef __INTEL_COMPILER         // Re-enable ICC remark 1572
+  #pragma warning(pop)
+#endif
 // ============================================================================
 /** @file
  *

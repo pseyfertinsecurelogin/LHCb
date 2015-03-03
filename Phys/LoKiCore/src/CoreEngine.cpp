@@ -1,4 +1,4 @@
-// $Id: CoreEngine.cpp 53291 2010-08-05 14:35:53Z ibelyaev $
+// $Id: CoreEngine.cpp 115323 2011-01-14 08:08:25Z cattanem $
 // ============================================================================
 // Include files
 // ============================================================================
@@ -39,7 +39,7 @@ namespace
     LoKi::Hybrid::CoreEngineActor& actor = 
       LoKi::Hybrid::CoreEngineActor::instance() ;
     return actor.process ( name , cut ) ;
-  } ;
+  }
 }
 // ============================================================================
 // propagate the cut to the tool 

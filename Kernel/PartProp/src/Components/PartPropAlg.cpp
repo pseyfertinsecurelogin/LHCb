@@ -1,4 +1,4 @@
-// $Id: PartPropAlg.cpp 95074 2010-10-22 15:06:40Z ibelyaev $
+// $Id: PartPropAlg.cpp 115314 2011-01-13 16:18:55Z cattanem $
 // ============================================================================
 // Include files 
 // ============================================================================
@@ -264,7 +264,7 @@ StatusCode LHCb::Example::PartPropAlg::execute()
 }
 // ============================================================================
 /// Declaration of the Algorithm Factory
-DECLARE_NAMESPACE_ALGORITHM_FACTORY(LHCb::Example,PartPropAlg);
+DECLARE_NAMESPACE_ALGORITHM_FACTORY(LHCb::Example,PartPropAlg)
 // ============================================================================
 // The END 
 // ============================================================================

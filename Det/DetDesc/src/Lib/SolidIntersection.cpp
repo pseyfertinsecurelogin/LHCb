@@ -2,9 +2,12 @@
 // ===========================================================================
 #include <iostream> 
 #include <string> 
+#ifdef __INTEL_COMPILER         // Disable ICC remark
+  #pragma warning(disable:1572) // Floating-point equality and inequality comparisons are unreliable
+#endif
+#include "DetDesc/Solid.h"
 #include "DetDesc/SolidIntersection.h"
 #include "DetDesc/SolidException.h"
-#include "DetDesc/Solid.h"
 
 // ============================================================================
 /** @file
@@ -26,7 +29,7 @@ SolidIntersection::SolidIntersection( const std::string& name  ,
                                       ISolid*            first )
   : SolidBase    ( name         )
   , SolidBoolean ( name , first )
-{};
+{}
 // ============================================================================
 
 // ============================================================================
@@ -37,7 +40,7 @@ SolidIntersection::SolidIntersection( const std::string& name  ,
 SolidIntersection::SolidIntersection( const std::string& name )
   : SolidBase    ( name )
   , SolidBoolean ( name )
-{};
+{}
 // ============================================================================
 
 // ============================================================================
@@ -72,7 +75,7 @@ bool SolidIntersection::isInsideImpl( const aPoint   & point ) const
                   std::not1(Solid::IsInside<aPoint>( point ) ) );
   /// 
   return ( childEnd() == ci ? true : false );   
-};
+}
 
 // ============================================================================
 /** add intersections 
@@ -83,7 +86,7 @@ bool SolidIntersection::isInsideImpl( const aPoint   & point ) const
 // ============================================================================
 StatusCode  SolidIntersection::intersect( ISolid*               solid     , 
                                           const Gaudi::Transform3D* mtrx      )
-{  return addChild( solid , mtrx ); };
+{  return addChild( solid , mtrx ); }
 
 // ============================================================================
 /** add intersections 
@@ -97,6 +100,6 @@ StatusCode  SolidIntersection::intersect
 ( ISolid*               solid    , 
   const Gaudi::XYZPoint&     position , 
   const Gaudi::Rotation3D&    rotation )
-{ return addChild( solid , position , rotation ) ; }; 
+{ return addChild( solid , position , rotation ) ; }
 
 // ============================================================================

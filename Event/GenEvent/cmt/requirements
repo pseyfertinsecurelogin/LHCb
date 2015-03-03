@@ -1,5 +1,5 @@
 package GenEvent
-version v5r6
+version           v5r7
 
 branches cmt doc src xml Event
 
@@ -23,6 +23,9 @@ macro_append GenEventObj2Dict_dependencies GenEventCustomDict
 #============================================================================
 macro GenEventDict_dependencies GenEvent
 apply_pattern god_dictionary files=../xml/*.xml
+# Disable some compiler warnings in the automatically generated dict code
+macro_append GenEventDict_cppflags "" \
+                        target-icc " -wd191 -wd1572"
 
 # Make the linker library
 #============================================================================

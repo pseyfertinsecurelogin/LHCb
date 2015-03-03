@@ -4,9 +4,12 @@
 #include <iostream> 
 #include <string>
 /** DetDesc */
+#ifdef __INTEL_COMPILER         // Disable ICC remark
+  #pragma warning(disable:1572) // Floating-point equality and inequality comparisons are unreliable
+#endif
+#include "DetDesc/Solid.h"
 #include "DetDesc/SolidSubtraction.h"
 #include "DetDesc/SolidException.h"
-#include "DetDesc/Solid.h"
 
 // ============================================================================
 /** @file 
@@ -31,7 +34,7 @@ SolidSubtraction::SolidSubtraction( const std::string& name  ,
 {
   if( 0 == first ) 
     { throw SolidException(" SolidSubtraction:: ISolid* points to NULL! "); }
-};
+}
 // ============================================================================
 
 // ============================================================================
@@ -42,7 +45,7 @@ SolidSubtraction::SolidSubtraction( const std::string& name  ,
 SolidSubtraction::SolidSubtraction( const std::string& Name)
   : SolidBase    ( Name )
   , SolidBoolean ( Name )
-{};
+{}
 // ============================================================================
 
 // ============================================================================
@@ -89,7 +92,7 @@ bool SolidSubtraction::isInsideImpl( const aPoint& point ) const
                   Solid::IsInside<aPoint>( point ) );
   ///
   return ( childEnd() == ci ? true : false );   
-};
+}
 
 // ============================================================================
 /** subtract child solid to the solid
@@ -100,7 +103,7 @@ bool SolidSubtraction::isInsideImpl( const aPoint& point ) const
 // ============================================================================
 StatusCode  SolidSubtraction::subtract( ISolid*                solid    , 
                                         const Gaudi::Transform3D*  mtrx     )
-{  return addChild( solid , mtrx ); };
+{  return addChild( solid , mtrx ); }
 
 // ============================================================================
 /** subtract child solid from  the solid 
@@ -113,7 +116,7 @@ StatusCode  SolidSubtraction::subtract( ISolid*                solid    ,
 StatusCode  SolidSubtraction::subtract ( ISolid*                  child    , 
                                          const Gaudi::XYZPoint&   position , 
                                          const Gaudi::Rotation3D& rotation )
-{ return addChild( child , position , rotation ) ; };
+{ return addChild( child , position , rotation ) ; }
 // ============================================================================
 
 // ============================================================================

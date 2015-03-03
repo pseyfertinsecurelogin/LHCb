@@ -1,4 +1,4 @@
-// $Id: ConstReference.h 53291 2010-08-05 14:35:53Z ibelyaev $
+// $Id: ConstReference.h 115323 2011-01-14 08:08:25Z cattanem $
 #ifndef LOKI_CONSTREFERENCE_H 
 #define LOKI_CONSTREFERENCE_H 1
 // ============================================================================
@@ -100,7 +100,7 @@ namespace LoKi
   template <class TYPE>
   ConstReference<TYPE>& 
   ConstReference<TYPE>::operator=( const Reference<TYPE>& value ) 
-  { m_data =  value.i_data() ; return *this ; } ;
+  { m_data =  value.i_data() ; return *this ; }
   // ==========================================================================
 } //                                                      end of namespace LoKi 
 // ============================================================================
