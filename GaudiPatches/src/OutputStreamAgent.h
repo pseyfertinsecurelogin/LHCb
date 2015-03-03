@@ -18,7 +18,9 @@
 #include "GaudiKernel/IDataStoreAgent.h"
 // Foreward declarations
 class IRegistry;
-class OutputStream;
+
+namespace LHCb {
+  class OutputStream;
 
 /** @name The OutputStreamAgent class.
  
@@ -38,4 +40,7 @@ public:
   /// Analysis callback
   virtual bool analyse(IRegistry* dir, int level);
 };
+
+}
+
 #endif // PERSISTENCYSVC_OUTPUTSTREAMAGENT_H

@@ -1,11 +1,13 @@
-// $Id: ISTClusterPosition.h,v 1.3 2007-02-20 16:42:02 cattanem Exp $
-#ifndef _ISTClusterPosition_H
-#define _ISTClusterPosition_H
+// $Id: $
+#ifndef TrackInterfaces_ISTClusterPosition_H
+#define TrackInterfaces_ISTClusterPosition_H
 
 #include "GaudiKernel/IAlgTool.h"
 #include "GaudiKernel/SmartRefVector.h"
 
-#include "SiPositionInfo.h"
+#include "Event/StateVector.h"
+
+#include "Kernel/SiPositionInfo.h"
 
 namespace LHCb{
 class STChannelID;
@@ -13,7 +15,7 @@ class STCluster;
 class STDigit;
 };
 
-/** @class ISTClusterPosition ISTClusterPosition.h Kernel/ISTClusterPosition.h
+/** @class ISTClusterPosition TrackInterfaces/ISTClusterPosition.h
  *
  *  Interface Class for charge sharing IT strip
  *
@@ -21,7 +23,7 @@ class STDigit;
  *  @date   14/3/2002
  */
 
-// Declaration of the interface ID ( interface id, major version, minor version) 
+// Declaration of the interface ID ( interface id, major version, minor version)
 static const InterfaceID IID_ISTClusterPosition("ISTClusterPosition", 0 , 0); 
 
 class  ISTClusterPosition: virtual public IAlgTool {
@@ -42,6 +44,18 @@ public:
   */
   virtual Info estimate(const LHCb::STCluster* aCluster) const=0;
 
+
+  /** calc position
+  * @param aCluster cluster
+  * @param refVector Reference vector from the track
+  * @return Info (simple struct) 
+  * <br> strip = floored nearest channel
+  * <br> fractionStrip = interstrip position (in fraction of strip)
+  * <br> error = estimate of the error 
+  */
+  virtual Info estimate(const LHCb::STCluster* aCluster, 
+                        const LHCb::StateVector& refVector) const=0;
+
   /** calc position
   * @param digits vector of digits
   * @return Measurement (pair of pairs)
@@ -57,9 +71,17 @@ public:
   */
   virtual double error(const unsigned int nStrips) const =0;
 
+  /** error parameterized as cluster size
+  * @param nStrips number of strips
+  * @param refVector Reference vector from the track
+  * @return error estimate
+  */
+  virtual double error(const unsigned int nStrips, 
+                       const LHCb::StateVector& refVector) const =0;
+
 };
 
-#endif // _ISTClusterPosition_H
+#endif // TrackInterfaces_ISTClusterPosition_H
 
 
 

@@ -1,4 +1,4 @@
-// $Id: InputCopyStream.cpp,v 1.4 2010-05-20 17:07:50 marcocle Exp $
+// $Id: InputCopyStream.cpp,v 1.5 2010-07-19 14:08:57 marcocle Exp $
 #define GAUDISVC_PERSISTENCYSVC_INPUTCOPYSTREAM_CPP
 
 // Framework include files
@@ -12,7 +12,7 @@
 #include "GaudiKernel/MsgStream.h"
 #include "InputCopyStream.h"
 
-#include "IDataStoreLeaves.h"
+#include "GaudiKernel/IDataStoreLeaves.h"
 
 #include <set>
 

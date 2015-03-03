@@ -18,6 +18,8 @@
 #include "OutputStream.h"
 #include "OutputStreamAgent.h"
 
+namespace LHCb {
+  
 /// Standard Constructor
 OutputStreamAgent::OutputStreamAgent(OutputStream* OutputStream)
 : m_OutputStream(OutputStream)  
@@ -31,4 +33,6 @@ OutputStreamAgent::~OutputStreamAgent()  {
 /// Analysis callback
 bool OutputStreamAgent::analyse(IRegistry* pRegistry, int level)   {
   return m_OutputStream->collect(pRegistry, level);
+}
+  
 }

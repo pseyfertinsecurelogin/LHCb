@@ -4,9 +4,6 @@
  *
  *  Header file for RICH base class : Rich::HistoBase
  *
- *  CVS Log :-
- *  $Id: RichHistoBase.h,v 1.5 2010-02-13 15:10:46 jonrob Exp $
- *
  *  @author Chris Jones   Christopher.Rob.Jones@cern.ch
  *  @date   2009-07-27
  */
@@ -16,7 +13,9 @@
 #define RICHKERNEL_RICHHISTOBASE_H 1
 
 #include <vector>
+#include <string>
 
+// Local
 #include "RichKernel/RichCommonBase.h"
 #include "RichKernel/RichHistoID.h"
 #include "RichKernel/RichMap.h"
@@ -107,15 +106,23 @@ namespace Rich
      */
     virtual StatusCode prebookHistograms();
 
-    //-----------------------------------------------------------------------------------------
+  protected:
+
+    /// short name for bin labels
+    typedef std::vector<std::string> BinLabels;
+
+  protected:
 
     /** Book a 1D histogram
      *
-     * @param id      Histogram identifier
-     * @param title   Histogram title
-     * @param low     Lower histogram edge
-     * @param high    Upper histogram edge
-     * @param bins    Number of bins
+     * @param id         Histogram identifier
+     * @param title      Histogram title
+     * @param low        Lower histogram edge
+     * @param high       Upper histogram edge
+     * @param bins       Number of bins
+     * @param xAxisLabel Label for the X Axis
+     * @param yAxisLabel Label for the Y Axis
+     * @param binLabels  Labels for the X axis bins
      *
      * @return Pointer to booked histogram
      */
@@ -123,18 +130,26 @@ namespace Rich
                                      const std::string &    title,
                                      const double             low,
                                      const double            high,
-                                     const unsigned long     bins ) const;
+                                     const unsigned long     bins,
+                                     const std::string&      xAxisLabel = "",
+                                     const std::string&      yAxisLabel = "",
+                                     const BinLabels& binLabels = BinLabels() ) const;
 
     /** Book a 2D histogram
      *
-     * @param id      Histogram identifier
-     * @param title   Histogram title
-     * @param lowX    Lower histogram edge in X
-     * @param highX   Upper histogram edge in X
-     * @param binsX   Number of bins in X
-     * @param lowY    Lower histogram edge in Y
-     * @param highY   Upper histogram edge in Y
-     * @param binsY   Number of bins in Y
+     * @param id         Histogram identifier
+     * @param title      Histogram title
+     * @param lowX       Lower histogram edge in X
+     * @param highX      Upper histogram edge in X
+     * @param binsX      Number of bins in X
+     * @param lowY       Lower histogram edge in Y
+     * @param highY      Upper histogram edge in Y
+     * @param binsY      Number of bins in Y
+     * @param xAxisLabel Label for the X Axis
+     * @param yAxisLabel Label for the Y Axis
+     * @param zAxisLabel Label for the Z Axis
+     * @param xBinLabels Labels for the X axis bins
+     * @param yBinLabels Labels for the Y axis bins
      *
      * @return Pointer to booked histogram
      */
@@ -145,15 +160,23 @@ namespace Rich
                                      const unsigned long     binsX,
                                      const double             lowY,
                                      const double            highY,
-                                     const unsigned long     binsY ) const;
+                                     const unsigned long     binsY,
+                                     const std::string&      xAxisLabel = "",
+                                     const std::string&      yAxisLabel = "",
+                                     const std::string&      zAxisLabel = "",
+                                     const BinLabels& xBinLabels = BinLabels(),
+                                     const BinLabels& yBinLabels = BinLabels() ) const;
 
     /** Book a 1D profile histogram
      *
-     * @param id      Histogram identifier
-     * @param title   Histogram title
-     * @param low     Lower hisstogram edge
-     * @param high    Upper histogram edge
-     * @param bins    Number of bins
+     * @param id         Histogram identifier
+     * @param title      Histogram title
+     * @param low        Lower hisstogram edge
+     * @param high       Upper histogram edge
+     * @param bins       Number of bins
+     * @param xAxisLabel Label for the X Axis
+     * @param yAxisLabel Label for the Y Axis
+     * €param binLabels  Labels for the X axis bins
      *
      * @return Pointer to booked histogram
      */
@@ -161,18 +184,26 @@ namespace Rich
                                      const std::string &    title,
                                      const double             low,
                                      const double            high,
-                                     const unsigned long     bins ) const;
+                                     const unsigned long     bins,
+                                     const std::string&      xAxisLabel = "",
+                                     const std::string&      yAxisLabel = "",
+                                     const BinLabels& binLabels = BinLabels() ) const;
 
     /** Book a 2D profile histogram
      *
-     * @param id      Histogram identifier
-     * @param title   Histogram title
-     * @param lowX    Lower histogram edge in X
-     * @param highX   Upper histogram edge in X
-     * @param binsX   Number of bins in X
-     * @param lowY    Lower histogram edge in Y
-     * @param highY   Upper histogram edge in Y
-     * @param binsY   Number of bins in Y
+     * @param id         Histogram identifier
+     * @param title      Histogram title
+     * @param lowX       Lower histogram edge in X
+     * @param highX      Upper histogram edge in X
+     * @param binsX      Number of bins in X
+     * @param lowY       Lower histogram edge in Y
+     * @param highY      Upper histogram edge in Y
+     * @param binsY      Number of bins in Y
+     * @param xAxisLabel Label for the X Axis
+     * @param yAxisLabel Label for the Y Axis
+     * @param zAxisLabel Label for the Z Axis
+     * @param xBinLabels Labels for the X axis bins
+     * @param yBinLabels Labels for the Y axis bins
      *
      * @return Pointer to booked histogram
      */
@@ -183,7 +214,12 @@ namespace Rich
                                      const unsigned long     binsX,
                                      const double             lowY,
                                      const double            highY,
-                                     const unsigned long     binsY ) const;
+                                     const unsigned long     binsY,
+                                     const std::string&      xAxisLabel = "",
+                                     const std::string&      yAxisLabel = "",
+                                     const std::string&      zAxisLabel = "",
+                                     const BinLabels& xBinLabels = BinLabels(),
+                                     const BinLabels& yBinLabels = BinLabels() ) const;
 
     //-----------------------------------------------------------------------------------------
 

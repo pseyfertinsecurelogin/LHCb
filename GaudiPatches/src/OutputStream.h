@@ -1,4 +1,4 @@
-// $Id: OutputStream.h,v 1.4 2010-05-20 17:07:50 marcocle Exp $
+// $Id: OutputStream.h,v 1.5 2010-07-19 14:08:57 marcocle Exp $
 #ifndef GAUDISVC_PERSISTENCYSVC_OUTPUTSTREAM_H
 #define GAUDISVC_PERSISTENCYSVC_OUTPUTSTREAM_H
 
@@ -21,8 +21,10 @@ class IIncidentSvc;
 class IRegistry;
 class IConversionSvc;
 class IDataManagerSvc;
-class OutputStreamAgent;
 class DataStoreItem;
+
+namespace LHCb {
+class OutputStreamAgent;
 
 /** A small to stream Data I/O.
     Author:  M.Frank
@@ -146,5 +148,7 @@ public:
     return &m_objects;
   }
 };
+
+}
 
 #endif // GAUDISVC_PERSISTENCYSVC_OUTPUTSTREAM_H

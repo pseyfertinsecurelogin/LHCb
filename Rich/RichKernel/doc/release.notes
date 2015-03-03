@@ -4,6 +4,18 @@
 ! Purpose     : General purpose RICH classes
 !-----------------------------------------------------------------------
 
+!====================== RichKernel v7r37 2010-07-19 ====================
+! 2010-07-17 - Chris Jones
+ - Extend histogram booking interfaces to include options axis and bin
+   labels.
+
+! 2010-06-24 - Chris Jones
+ - Add a new method to IRichDetParameters.h to return the S.D. of the 
+   (n-1) distribution for observable photons. Moved here from 
+   IRichRefractiveIndex.h
+ - Add a new method to IRichRefractiveIndex to return the standard 
+   deviation for a given set of radiator intersections.
+
 !====================== RichKernel v7r36 2010-06-20 ====================
 ! 2010-06-20 - Chris Jones
  - Add a new method to python Configurable to return track expected 

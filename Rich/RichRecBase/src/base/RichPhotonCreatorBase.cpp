@@ -4,9 +4,6 @@
  *
  *  Implementation file for tool base class : Rich::Rec::PhotonCreatorBase
  *
- *  CVS Log :-
- *  $Id: RichPhotonCreatorBase.cpp,v 1.31 2010-01-23 00:51:24 jonrob Exp $
- *
  *  @author Chris Jones   Christopher.Rob.Jones@cern.ch
  *  @date   20/05/2005
  */
@@ -166,7 +163,7 @@ namespace Rich
       {
         InitNewEvent();
       }
-      // Debug printout at the end of each event
+      // End of event stuff
       else if ( IncidentType::EndEvent == incident.type() )
       {
         FinishEvent();
@@ -207,112 +204,119 @@ namespace Rich
     StatusCode PhotonCreatorBase::reconstructPhotons() const
     {
 
-      if ( msgLevel(MSG::DEBUG) )
-      {
-        debug() << "Found " << trackCreator()->richTracks()->size()
-                << " RichRecTracks and " << pixelCreator()->richPixels()->size()
-                << " RichRecPixels" << endmsg;
-      }
-      if ( !trackCreator()->richTracks()->empty() &&
-           !pixelCreator()->richPixels()->empty() )
+      // Check for event aborts. If already aborted stop here
+      if ( !procStatus()->aborted() )
       {
 
-        // make a rough guess at a size to reserve based on number of pixels
-        if ( richPhotons()->empty() )
-          richPhotons()->reserve( ( trackCreator()->richTracks()->size() *
-                                    pixelCreator()->richPixels()->size() ) / 20 );
-
-        // Iterate over all tracks
-        bool abortPhotonReco(false);
-        for ( LHCb::RichRecTracks::const_iterator iTrack =
-                trackCreator()->richTracks()->begin();
-              iTrack != trackCreator()->richTracks()->end();
-              ++iTrack )
+        if ( msgLevel(MSG::DEBUG) )
         {
-          LHCb::RichRecTrack * track = *iTrack;
-
-          if ( !track->inUse() ) continue; // skip tracks not "on"
-          if ( !track->allPhotonsDone() )
-          {
-
-            if ( msgLevel(MSG::VERBOSE) )
-            {
-              verbose() << "Trying track " << track->key() << endmsg
-                        << " -> Found " << track->richRecSegments().size()
-                        << " RichRecSegments" << endmsg;
-            }
-
-            // Iterate over segments
-            for ( LHCb::RichRecTrack::Segments::const_iterator iSegment =
-                    track->richRecSegments().begin();
-                  iSegment != track->richRecSegments().end();
-                  ++iSegment)
-            {
-              LHCb::RichRecSegment * segment = *iSegment;
-
-              //if ( msgLevel(MSG::VERBOSE) )
-              //{
-              // verbose() << " -> Trying segment " << segment->key() << " "
-              //           << segment->trackSegment().radiator() << endmsg;
-              //}
-
-              if ( !segment->allPhotonsDone() )
-              {
-                // search all hits in associated RICH/panel
-
-                // only make photons if reco has not been aborted
-                if ( !abortPhotonReco )
-                {
-
-                  // Which Rich
-                  const Rich::DetectorType rich = segment->trackSegment().rich();
-
-                  // get appropriate pixel range
-                  const bool has1 = segment->hasPhotonsIn(Rich::top);
-                  const bool has2 = segment->hasPhotonsIn(Rich::bottom);
-                  IPixelCreator::PixelRange range = ( has1 && has2 ?
-                                                      pixelCreator()->range(rich) :
-                                                      has1 ? pixelCreator()->range(rich,Rich::top) :
-                                                      pixelCreator()->range(rich,Rich::bottom) );
-                  for ( IPixelCreator::PixelRange::const_iterator iPixel = range.begin();
-                        iPixel != range.end(); ++iPixel )
-                  {
-                    //if ( msgLevel(MSG::VERBOSE) )
-                    //{
-                    //  verbose() << " -> Trying pixel " << (*iPixel)->key() << endmsg;
-                    //}
-                    reconstructPhoton( segment, *iPixel );
-                  } // pixel loop
-
-                } // reco not aborted
-
-                // check on size of photon container
-                abortPhotonReco = ( richPhotons()->size() > m_maxPhotons );
-
-                segment->setAllPhotonsDone(true);
-                
-              } // segment not already done
-              
-            } // segment loop
-            
-            track->setAllPhotonsDone(true);
-            
-          } // track not already done
-          
-        } // track loop
-
-        if ( abortPhotonReco )
-        {
-          procStatus()->addAlgorithmStatus( name(), Rich::Rec::ReachedRichPhotonLimit );
-          std::ostringstream mess;
-          mess << "Number of photon candidates exceeds maximum of " 
-               << m_maxPhotons << " -> Processing aborted";
-          Warning( mess.str(), StatusCode::SUCCESS, 0 ).ignore();
-          richPhotons()->clear();
-          deleteAllCrossReferences();
+          debug() << "Found " << trackCreator()->richTracks()->size()
+                  << " RichRecTracks and " << pixelCreator()->richPixels()->size()
+                  << " RichRecPixels" << endmsg;
         }
+        if ( !trackCreator()->richTracks()->empty() &&
+             !pixelCreator()->richPixels()->empty() )
+        {
 
-      } // have tracks and pixels
+          // make a rough guess at a size to reserve based on number of pixels
+          if ( richPhotons()->empty() )
+            richPhotons()->reserve( ( trackCreator()->richTracks()->size() *
+                                      pixelCreator()->richPixels()->size() ) / 20 );
+
+          // Iterate over all tracks
+          bool abortPhotonReco(false);
+          for ( LHCb::RichRecTracks::const_iterator iTrack =
+                  trackCreator()->richTracks()->begin();
+                iTrack != trackCreator()->richTracks()->end();
+                ++iTrack )
+          {
+            LHCb::RichRecTrack * track = *iTrack;
+
+            if ( !track->inUse() ) continue; // skip tracks not "on"
+            if ( !track->allPhotonsDone() )
+            {
+
+              if ( msgLevel(MSG::VERBOSE) )
+              {
+                verbose() << "Trying track " << track->key() << endmsg
+                          << " -> Found " << track->richRecSegments().size()
+                          << " RichRecSegments" << endmsg;
+              }
+
+              // Iterate over segments
+              for ( LHCb::RichRecTrack::Segments::const_iterator iSegment =
+                      track->richRecSegments().begin();
+                    iSegment != track->richRecSegments().end();
+                    ++iSegment)
+              {
+                LHCb::RichRecSegment * segment = *iSegment;
+
+                //if ( msgLevel(MSG::VERBOSE) )
+                //{
+                // verbose() << " -> Trying segment " << segment->key() << " "
+                //           << segment->trackSegment().radiator() << endmsg;
+                //}
+
+                if ( !segment->allPhotonsDone() )
+                {
+                  // search all hits in associated RICH/panel
+
+                  // only make photons if reco has not been aborted
+                  if ( !abortPhotonReco )
+                  {
+
+                    // Which Rich
+                    const Rich::DetectorType rich = segment->trackSegment().rich();
+
+                    // get appropriate pixel range
+                    const bool has1 = segment->hasPhotonsIn(Rich::top);
+                    const bool has2 = segment->hasPhotonsIn(Rich::bottom);
+                    IPixelCreator::PixelRange range = ( has1 && has2 ?
+                                                        pixelCreator()->range(rich) :
+                                                        has1 ? pixelCreator()->range(rich,Rich::top) :
+                                                        pixelCreator()->range(rich,Rich::bottom) );
+                    for ( IPixelCreator::PixelRange::const_iterator iPixel = range.begin();
+                          iPixel != range.end(); ++iPixel )
+                    {
+                      //if ( msgLevel(MSG::VERBOSE) )
+                      //{
+                      //  verbose() << " -> Trying pixel " << (*iPixel)->key() << endmsg;
+                      //}
+                      reconstructPhoton( segment, *iPixel );
+                    } // pixel loop
+
+                  } // reco not aborted
+
+                  // check on size of photon container
+                  abortPhotonReco = ( richPhotons()->size() > m_maxPhotons );
+
+                  segment->setAllPhotonsDone(true);
+
+                } // segment not already done
+
+              } // segment loop
+
+              track->setAllPhotonsDone(true);
+
+            } // track not already done
+
+          } // track loop
+
+          if ( abortPhotonReco )
+          {
+            procStatus()->addAlgorithmStatus( name(), "RICH", "ReachedRichPhotonLimit",
+                                              Rich::Rec::ReachedRichPhotonLimit, true );
+            std::ostringstream mess;
+            mess << "Number of photon candidates exceeds maximum of "
+                 << m_maxPhotons << " -> Processing aborted";
+            Warning( mess.str(), StatusCode::SUCCESS, 0 ).ignore();
+            richPhotons()->clear();
+            deleteAllCrossReferences();
+          }
+
+        } // have tracks and pixels
+
+      } // ProcStat OK
 
       return StatusCode::SUCCESS;
     }
@@ -423,7 +427,8 @@ namespace Rich
     {
       if ( !track->allPhotonsDone() && track->inUse() )
       {
-        debug() << "Reconstructing all photons for track " << track->key() << endmsg;
+        if ( msgLevel(MSG::DEBUG) )
+          debug() << "Reconstructing all photons for track " << track->key() << endmsg;
 
         // Iterate over segments
         for ( LHCb::RichRecTrack::Segments::iterator segment =
@@ -456,7 +461,10 @@ namespace Rich
                                             pixelCreator()->range(rich) :
                                             has1 ? pixelCreator()->range(rich,Rich::top) :
                                             pixelCreator()->range(rich,Rich::bottom) );
-        debug() << " -> Found " << range.size() << " pixels" << endmsg;
+        if ( msgLevel(MSG::DEBUG) )
+        {
+          debug() << " -> Found " << range.size() << " pixels" << endmsg;
+        }
         for ( IPixelCreator::PixelRange::const_iterator iPixel = range.begin();
               iPixel != range.end(); ++iPixel )
         {

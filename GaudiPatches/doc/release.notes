@@ -4,6 +4,10 @@
 ! Purpose     : Patches to Gaudi waiting to be migrated of for a new release
 !-----------------------------------------------------------------------------
 
+!======================= GaudiPatches v1r2 2010-07-19 ========================
+! 2010-07-19 - Marco Clemencic
+ - Adapted to avoid conflicts with Gaudi v21r10.
+
 !======================= GaudiPatches v1r1 2010-05-21 ========================
 ! 2009-05-20 - Marco Clemencic
  - Fixed bug #67523

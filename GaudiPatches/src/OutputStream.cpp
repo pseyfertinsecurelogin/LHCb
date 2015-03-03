@@ -1,4 +1,4 @@
-// $Id: OutputStream.cpp,v 1.5 2010-05-20 17:07:50 marcocle Exp $
+// $Id: OutputStream.cpp,v 1.6 2010-07-19 14:08:57 marcocle Exp $
 #define GAUDISVC_PERSISTENCYSVC_OUTPUTSTREAM_CPP
 
 // Framework include files
@@ -24,6 +24,8 @@
 
 // Define the algorithm factory for the standard output data writer
 //DECLARE_ALGORITHM_FACTORY(OutputStream)
+
+namespace LHCb {
 
 // Standard Constructor
 OutputStream::OutputStream(const std::string& name, ISvcLocator* pSvcLocator)
@@ -565,4 +567,6 @@ bool OutputStream::isEventAccepted( ) const  {
     }
   }
   return result;
+}
+
 }
