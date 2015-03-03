@@ -1,4 +1,4 @@
-// $Id: Math.h,v 1.10 2009-11-21 12:39:37 ibelyaev Exp $
+// $Id: Math.h,v 1.13 2009-12-06 18:20:55 ibelyaev Exp $
 // ============================================================================
 #ifndef LOKI_MATH_H 
 #define LOKI_MATH_H 1
@@ -13,6 +13,7 @@
 // ============================================================================
 #include "LoKi/Functions.h"
 #include "LoKi/Primitives.h"
+#include "LoKi/BasicFunctors.h"
 #include "LoKi/Power.h"
 #include "GaudiKernel/cbrt.h"
 // ============================================================================
@@ -652,34 +653,109 @@ namespace LoKi
     } 
     return result ;
   }
-//   // ==========================================================================
-//   /** "in-range" function
-//    *   @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
-//    *   @date 2009-11-21
-//    */
-//   template <class TYPE>
-//   inline LoKi::InRange<TYPE,double>
-//   inRange ( const typename LoKi::BasicFunctors<TYPE>::Function& fun  , 
-//             const double                                        low  ,
-//             const double                                        high )
-//   {
-//     return LoKi::InRange<TYPE,double>( fun , low , high ) ;
-//   }
-//   // ========================================================================== 
-//   /** "in-range" function
-//    *   @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
-//    *   @date 2009-11-21
-//    */
-//   template <class TYPE>
-//   inline LoKi::InRange<TYPE,double>
-//   in_range ( const typename LoKi::BasicFunctors<TYPE>::Function& fun  , 
-//              const double                                        low  ,
-//              const double                                        high )
-//   {
-//     return inRange( fun , low , high ) ;
-//   }
   // ==========================================================================
-} // end of namespace LoKi
+  /** "in-range" function
+   *   @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
+   *   @date 2009-11-21
+   */
+  template <class TYPE>
+  inline LoKi::InRange<TYPE>
+  inRange ( const double                      low  ,
+            const LoKi::Functor<TYPE,double>& fun  , 
+            const double                      high )
+  {
+    return LoKi::InRange<TYPE> ( low , fun , high ) ;
+  }
+  // ========================================================================== 
+  /** "in-range" function
+   *   @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
+   *   @date 2009-11-21
+   */
+  template <class TYPE>
+  inline LoKi::InRange2<TYPE>
+  inRange ( const LoKi::Functor<TYPE,double>& low  , 
+            const LoKi::Functor<TYPE,double>& fun  , 
+            const LoKi::Functor<TYPE,double>& high ) 
+  {
+    return LoKi::InRange2<TYPE> ( low , fun , high ) ;
+  }
+  // ========================================================================== 
+  /** "in-range" function
+   *   @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
+   *   @date 2009-11-21
+   */
+  template <class TYPE>
+  inline LoKi::InRange2<TYPE>
+  inRange ( const double                      low  , 
+            const LoKi::Functor<TYPE,double>& fun  , 
+            const LoKi::Functor<TYPE,double>& high ) 
+  {
+    return LoKi::InRange2<TYPE> ( low , fun , high ) ;
+  }
+  // ========================================================================== 
+  /** "in-range" function
+   *   @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
+   *   @date 2009-11-21
+   */
+  template <class TYPE>
+  inline LoKi::InRange2<TYPE>
+  inRange ( const LoKi::Functor<TYPE,double>& low  , 
+            const LoKi::Functor<TYPE,double>& fun  , 
+            const double                      high ) 
+  {
+    return LoKi::InRange2<TYPE> ( low , fun , high ) ;
+  }
+  // ========================================================================== 
+  /** "in-range" function
+   *   @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
+   *   @date 2009-11-21
+   */
+  template <class TYPE>
+  inline LoKi::InRange2<TYPE>
+  in_range ( const LoKi::Functor<TYPE,double>& low  , 
+             const LoKi::Functor<TYPE,double>& fun  , 
+             const LoKi::Functor<TYPE,double>& high ) 
+  {
+    return inRange2 ( low , fun , high ) ;
+  }
+  // ========================================================================== 
+  /** "in-range" function
+   *   @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
+   *   @date 2009-11-21
+   */
+  template <class TYPE>
+  inline LoKi::InRange2<TYPE>
+  in_range ( const double                      low  , 
+             const LoKi::Functor<TYPE,double>& fun  , 
+             const LoKi::Functor<TYPE,double>& high ) 
+  {
+    return inRange ( low , fun , high ) ;
+  }
+  // ========================================================================== 
+  /** "in-range" function
+   *   @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
+   *   @date 2009-11-21
+   */
+  template <class TYPE>
+  inline LoKi::InRange2<TYPE>
+  in_range ( const LoKi::Functor<TYPE,double>& low  , 
+             const LoKi::Functor<TYPE,double>& fun  , 
+             const double                      high ) 
+  {
+    return inRange ( low , fun , high ) ;
+  }
+  // ==========================================================================
+  /** "scale" predicate function 
+   *   @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
+   *   @date 2009-12-06
+   */
+  template <class TYPE>
+  inline LoKi::XScaler<TYPE>
+  scale ( const LoKi::Functor<TYPE, bool>& cut , 
+          const LoKi::Functor<void,bool>&  sf  ) 
+  { return LoKi::XScaler<TYPE>( cut , sf ) ;  }
+  // ==========================================================================
+} //                                                      end of namespace LoKi
 // ============================================================================
 // The END 
 // ============================================================================

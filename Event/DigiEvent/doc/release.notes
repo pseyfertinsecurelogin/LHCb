@@ -4,6 +4,29 @@
 ! Purpose     : Event model classes related to Digitization
 !-----------------------------------------------------------------------------
 
+!========================== DigiEvent v2r14 2009-12-11 =======================
+! 2009-12-04 - Victor Coco
+ - fix some windows warning in VeloPixLiteCluster
+
+! 2009-12-02 - Jeroen van Tilburg
+ - Fix small bug in STCluster::contain method.
+
+! 2009-12-02 - Victor Coco
+ - add method to VeloPixLiteCluster to get the cluster time over threshold 
+
+! 2009-11-30 - Victor Coco
+ - set the VeloPixLiteCluster bitfield by hand since the bitfield64 in order the
+ Mask that are compatible with ulonglong --> the value of the enum attributes 
+should be: 0x1234LL instead of 0x1234L otherwise underlying enum type is long
+(which is 32 bits on 32bits machine...)
+
+! 2009-11-28 - Victor Coco
+ - add some paranthesis in VeloPixLiteCluster because of warning with gcc43
+
+! 2009-11-27 - Marcin Kucharczyk
+ - Add VeloPixDigit.xml, VeloPixCluster.xml and VeloPixLiteCluster.xml objects
+   used by pixel Velo algorithms 
+
 !========================== DigiEvent v2r13 2009-11-13 =======================
 ! 2009-10-25 - Vanya Belyaev
  - CaloDigit:

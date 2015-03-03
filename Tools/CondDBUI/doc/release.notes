@@ -1,9 +1,64 @@
 ! =============================================================================
-! $Id: release.notes,v 1.126 2009-10-16 14:19:01 cattanem Exp $
+! $Id: release.notes,v 1.139 2009-12-11 14:19:49 cattanem Exp $
 ! =============================================================================
 ! package Tools/CondDBUI
 ! package manager : Marco Clemencic
 ! =============================================================================
+
+!===================== Tools/CondDBUI v3r0 2009-12-11 =========================
+! 2009-12-08 - Marco Clemencic
+ - Improvements to the new Qt4-based CondDBBrowser
+   - added "delete tag" feature
+   - minor usability improvements
+   - completely covered the functionalities of the old browser
+   - fixed a problem with the conversion between ValidityKey and QDateTime
+     on 32 bits platforms
+   - added automatic support for PIT environment
+
+! 2009-12-07 - Marco Clemencic
+ - Improvements to the new Qt4-based CondDBBrowser
+   - added the "New tag" feature
+   - added the script to call the new browser (also .bat)
+   - renamed the old script to CondDBBrowserOld.py 
+   - added a welcome message for the first time
+   - various improvements
+
+! 2009-12-06 - Marco Clemencic
+ - Improvements to the new Qt4-based CondDBBrowser
+   - added the "Create slice" feature
+   - added a menu entry to copy the connection string of the current database to
+     the clipboard
+   - minor fixes and improvements
+
+! 2009-12-02 - Marco Clemencic
+ - Improvements to the new Qt4-based CondDBBrowser.
+   - completed the "add condition" feature (only few missing bits)
+   - minor fixes and improvements
+
+! 2009-12-01 - Marco Clemencic
+ - Improvements to the new Qt4-based CondDBBrowser.
+   - added a find dialog to search inside the condition text
+   - added a small help for the add condition dialog
+   - added the possibility to switch to/from fixed width fonts in the central widget
+
+! 2009-11-30 - Marco Clemencic
+ - Improvements to the new Qt4-based CondDBBrowser.
+   - started the dialog for new conditions
+   - minor improvements
+   - replaced the splitter with dock widgets
+ 
+! 2009-11-08 - Marco Clemencic
+ - Improvements to the new Qt4-based CondDBBrowser.
+
+! 2009-11-03 - Marco Clemencic
+ - Fixed a compilation problem on Windows for the dictionary.
+
+! 2009-11-02 - Marco Clemencic
+ - Added a helper function for python with its dictionary (as a work-around for
+   a problem with dictionaries of std::map in CondDBUI.Browser).
+ - Changes in CondDBUI.Browser:
+   - added the list of recently opened COOL connection strings
+   - store settings using QSettings 
 
 !===================== Tools/CondDBUI v2r23 2009-10-16 ========================
 ! 2009-09-14 - Illya Shapoval

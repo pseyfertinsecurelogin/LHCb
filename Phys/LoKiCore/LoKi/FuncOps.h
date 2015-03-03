@@ -1,4 +1,4 @@
-// $Id: FuncOps.h,v 1.22 2009-11-21 12:39:36 ibelyaev Exp $
+// $Id: FuncOps.h,v 1.25 2009-12-06 18:20:55 ibelyaev Exp $
 // ============================================================================
 #ifndef LOKI_FUNCOPS_H 
 #define LOKI_FUNCOPS_H 1
@@ -16,6 +16,7 @@
 #include  "LoKi/Filters.h"
 #include  "LoKi/compose.h"
 #include  "LoKi/ExtraInfo.h"
+#include  "LoKi/Math.h"
 // ============================================================================
 namespace LoKi
 {
@@ -63,6 +64,14 @@ namespace LoKi
                               const int    fun2 ) { return fun1 == fun2 ; }
       static Cut __eq__     ( const Func&  fun1 , 
                               const unsigned int fun2 ) { return fun1 == fun2 ; }
+      //
+      static Cut __eq__     ( const Func&                fun1 , 
+                              const std::vector<double>& fun2 ) 
+      { return fun1 == fun2 ; }
+      static Cut __eq__     ( const Func&                fun1 , 
+                              const std::vector<int>&    fun2 ) 
+      { return fun1 == fun2 ; }
+      //
       static Cut __ne__     ( const Func&  fun1 , 
                               const Func&  fun2 ) { return fun1 != fun2 ; }
       static Cut __ne__     ( const Func&  fun1 , 
@@ -71,6 +80,14 @@ namespace LoKi
                               const int    fun2 ) { return fun1 != fun2 ; }
       static Cut __ne__     ( const Func&  fun1 , 
                               const unsigned int fun2 ) { return fun1 != fun2 ; }
+      //
+      static Cut __ne__     ( const Func&                fun1 , 
+                              const std::vector<double>& fun2 ) 
+      { return fun1 != fun2 ; }
+      static Cut __ne__     ( const Func&                fun1 , 
+                              const std::vector<int>&    fun2 ) 
+      { return fun1 != fun2 ; }
+      //
       static Fun __add__    ( const Func&  fun1 , 
                               const Func&  fun2 ) { return fun1 + fun2  ; }
       static Fun __sub__    ( const Func&  fun1 , 
@@ -270,13 +287,44 @@ namespace LoKi
       { return LoKi::EqualToValue<TYPE> ( fun , val ) ; }
       static Cut __equal_to__ ( const Func&   fun  , 
                                 const Func&   fun1 ) { return fun == fun1 ; }
+      //
+      static Cut __equal_to__ ( const Func&                fun1 , 
+                                const std::vector<double>& fun2 ) 
+      { return fun1 == fun2 ; }
+      static Cut __equal_to__ ( const Func&                fun1 , 
+                                const std::vector<int>&    fun2 ) 
+      { return fun1 == fun2 ; }
       // ======================================================================
       // InRange 
       static Cut __in_range__ ( const Func&  fun  , 
-                                const double val1 , 
-                                const double val2 ) 
+                                const double low  , 
+                                const double high ) 
       {
-        return LoKi::InRange<TYPE> ( fun , val1 , val2 ) ;
+        return LoKi::inRange ( low , fun , high ) ;
+      }
+      // ======================================================================
+      // InRange 
+      static Cut __in_range__ ( const Func&  fun  , 
+                                const Func&  low  , 
+                                const double high ) 
+      {
+        return LoKi::inRange ( low , fun , high ) ;
+      }
+      // ======================================================================
+      // InRange 
+      static Cut __in_range__ ( const Func&  fun  , 
+                                const double low  , 
+                                const Func&  high ) 
+      {
+        return LoKi::inRange ( low , fun , high ) ;
+      }
+      // ======================================================================
+      // InRange 
+      static Cut __in_range__ ( const Func&  fun  , 
+                                const Func&  low  , 
+                                const Func&  high ) 
+      {
+        return LoKi::inRange ( low , fun , high ) ;
       }
       // ======================================================================
     } ;
@@ -446,6 +494,11 @@ namespace LoKi
                                 const Cuts&  cut1 ,
                                 const Cuts&  cut2 )
       { return LoKi::Switch<TYPE,bool> ( cut , cut1 , cut2 ) ; }
+      // ======================================================================
+      // scale 
+      static Cut __scale__ ( const Cuts&                     cuts , 
+                             const LoKi::Functor<void,bool>& sf   ) 
+      { return LoKi::scale ( cuts , sf ) ; }
       // ======================================================================
     } ;
     // ========================================================================

@@ -1,4 +1,4 @@
-! $Id: release.notes,v 1.164 2009-11-27 12:36:54 cattanem Exp $ 
+! $Id: release.notes,v 1.169 2009-12-11 14:15:16 cattanem Exp $ 
 ! -----------------------------------------------------------------------------
 ! Package     : Phys/LoKiCore
 ! Responsible : Vanya BELYAEV ibelyaev@physics.syr.edu
@@ -14,6 +14,32 @@
 !   A.Golutvin, P.Koppenburg have been used in the design.
 ! 
 ! -----------------------------------------------------------------------------
+
+! =========================== LoKiCore v9r8 2009-12-11 ========================
+! 2009-12-06 - Vanya Belyaev
+
+  - add generic "prescalers"   ( see task #12978)
+  - add comparison with vectors of doubles/ints 
+ 
+
+! 2009-12-03 - Vanya Belyaev
+
+ - add a sequencing of nodes (thanks to Rob Lambert) 
+
+! 2009-12-03 - Vanya Belyaev
+
+   fix a bug in "pre-cooking" of decay descriptor before parsing.
+
+   Many thanks to Rob Lambert for pointing the problem & Dima Golubkov for 
+   solution
+
+! 2009-11-29 - Vanya Belyaev
+
+ - fix a bug for "range" functions 
+
+ - cmt/requirements 
+
+     version increment to v9r8 
 
 ! =========================== LoKiCore v9r7 2009-11-27 ========================
 ! 2009-11-25 - Vanya Belyaev

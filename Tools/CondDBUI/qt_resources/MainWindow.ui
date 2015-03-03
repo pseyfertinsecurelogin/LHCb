@@ -6,9 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>965</width>
-    <height>655</height>
+    <width>1048</width>
+    <height>582</height>
    </rect>
+  </property>
+  <property name="contextMenuPolicy" >
+   <enum>Qt::ActionsContextMenu</enum>
   </property>
   <property name="windowTitle" >
    <string comment="Browser for LHCb Conditions Database" >CondDBBrowser</string>
@@ -18,244 +21,15 @@
     <normaloff>:/icons/icon.png</normaloff>:/icons/icon.png</iconset>
   </property>
   <widget class="QWidget" name="mainPanel" >
-   <layout class="QVBoxLayout" name="mainPanelLayout" >
-    <property name="margin" >
-     <number>9</number>
-    </property>
+   <layout class="QVBoxLayout" name="verticalLayout_5" >
     <item>
-     <widget class="QSplitter" name="mainWidget" >
-      <property name="orientation" >
-       <enum>Qt::Horizontal</enum>
+     <widget class="SearchableTextEdit" name="dataView" >
+      <property name="acceptDrops" >
+       <bool>false</bool>
       </property>
-      <widget class="QWidget" native="1" name="browsePanel" >
-       <layout class="QVBoxLayout" name="browsePanelLayout" >
-        <property name="margin" >
-         <number>0</number>
-        </property>
-        <item>
-         <widget class="QWidget" native="1" name="pathPanel" >
-          <layout class="QHBoxLayout" name="horizontalLayout" >
-           <property name="margin" >
-            <number>0</number>
-           </property>
-           <item>
-            <widget class="QLabel" name="pathLabel" >
-             <property name="sizePolicy" >
-              <sizepolicy vsizetype="Preferred" hsizetype="Minimum" >
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="text" >
-              <string>Path</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QComboBox" name="pathComboBox" >
-             <property name="sizePolicy" >
-              <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="editable" >
-              <bool>false</bool>
-             </property>
-             <property name="insertPolicy" >
-              <enum>QComboBox::NoInsert</enum>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-        </item>
-        <item>
-         <widget class="QTreeView" name="hierarchyTreeView" >
-          <property name="editTriggers" >
-           <set>QAbstractItemView::NoEditTriggers</set>
-          </property>
-          <property name="showDropIndicator" stdset="0" >
-           <bool>false</bool>
-          </property>
-          <property name="headerHidden" >
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-      <widget class="QTextEdit" name="dataView" >
-       <property name="acceptDrops" >
-        <bool>false</bool>
-       </property>
-       <property name="undoRedoEnabled" >
-        <bool>false</bool>
-       </property>
-       <property name="acceptRichText" >
-        <bool>false</bool>
-       </property>
-       <property name="textInteractionFlags" >
-        <set>Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
-       </property>
-      </widget>
-      <widget class="QWidget" native="1" name="filterPanel" >
-       <layout class="QVBoxLayout" name="filterPanelLayout" >
-        <property name="margin" >
-         <number>0</number>
-        </property>
-        <item>
-         <widget class="QGroupBox" name="iovTagFilterGroupBox" >
-          <property name="sizePolicy" >
-           <sizepolicy vsizetype="Minimum" hsizetype="Preferred" >
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="title" >
-           <string>Filter</string>
-          </property>
-          <layout class="QFormLayout" name="iovTagFilterLayout" >
-           <property name="fieldGrowthPolicy" >
-            <enum>QFormLayout::ExpandingFieldsGrow</enum>
-           </property>
-           <property name="labelAlignment" >
-            <set>Qt::AlignBottom|Qt::AlignRight|Qt::AlignTrailing</set>
-           </property>
-           <property name="formAlignment" >
-            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-           </property>
-           <item row="0" column="0" >
-            <widget class="QLabel" name="sinceLabel" >
-             <property name="text" >
-              <string>From time</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="0" >
-            <widget class="QLabel" name="untilLabel" >
-             <property name="text" >
-              <string>To time</string>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="0" >
-            <widget class="QLabel" name="tagLabel" >
-             <property name="text" >
-              <string>Tag name</string>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="1" >
-            <widget class="QComboBox" name="tagComboBox" >
-             <property name="sizePolicy" >
-              <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-            </widget>
-           </item>
-           <item row="3" column="1" >
-            <widget class="QCheckBox" name="hideAutoCheckBox" >
-             <property name="toolTip" >
-              <string>If checked, the special tags starting with "_auto_" are not displayed.</string>
-             </property>
-             <property name="text" >
-              <string>Hide "_auto_" tags</string>
-             </property>
-             <property name="checked" >
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="1" >
-            <widget class="TimePointEdit" native="1" name="sinceFilterWidget" >
-             <property name="sizePolicy" >
-              <sizepolicy vsizetype="Minimum" hsizetype="MinimumExpanding" >
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="1" >
-            <widget class="TimePointEdit" native="1" name="untilFilterWidget" >
-             <property name="sizePolicy" >
-              <sizepolicy vsizetype="Minimum" hsizetype="MinimumExpanding" >
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-        </item>
-        <item>
-         <widget class="QGroupBox" name="iovTableGroupBox" >
-          <property name="sizePolicy" >
-           <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="title" >
-           <string>IOV Table</string>
-          </property>
-          <layout class="QVBoxLayout" name="verticalLayout" >
-           <item>
-            <widget class="QTableView" name="iovView" >
-             <property name="enabled" >
-              <bool>true</bool>
-             </property>
-             <property name="editTriggers" >
-              <set>QAbstractItemView::NoEditTriggers</set>
-             </property>
-             <property name="selectionMode" >
-              <enum>QAbstractItemView::SingleSelection</enum>
-             </property>
-             <property name="selectionBehavior" >
-              <enum>QAbstractItemView::SelectRows</enum>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QCheckBox" name="iovUTCCheckBox" >
-             <property name="toolTip" >
-              <string>Show the IoVs as UTC</string>
-             </property>
-             <property name="text" >
-              <string>UTC</string>
-             </property>
-             <property name="checked" >
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-        </item>
-        <item>
-         <widget class="QGroupBox" name="payloadGroupBox" >
-          <property name="sizePolicy" >
-           <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="title" >
-           <string>Payload</string>
-          </property>
-          <layout class="QVBoxLayout" name="verticalLayout_2" >
-           <item>
-            <widget class="QListView" name="fieldsView" />
-           </item>
-          </layout>
-         </widget>
-        </item>
-       </layout>
-      </widget>
+      <property name="textInteractionFlags" >
+       <set>Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+      </property>
      </widget>
     </item>
    </layout>
@@ -265,17 +39,17 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>965</width>
-     <height>29</height>
+     <width>1048</width>
+     <height>28</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuDataBase" >
     <property name="title" >
-     <string>DataBase</string>
+     <string>&amp;Database</string>
     </property>
     <widget class="QMenu" name="menuRecent" >
      <property name="title" >
-      <string>Recent</string>
+      <string>&amp;Recent</string>
      </property>
     </widget>
     <widget class="QMenu" name="menuStandard" >
@@ -290,7 +64,9 @@
     <addaction name="separator" />
     <addaction name="actionRead_Only" />
     <addaction name="separator" />
-    <addaction name="actionSlice" />
+    <addaction name="actionCopy_connection_string" />
+    <addaction name="separator" />
+    <addaction name="actionCreate_slice" />
     <addaction name="actionDump_to_files" />
     <addaction name="actionClose" />
     <addaction name="separator" />
@@ -298,78 +74,342 @@
    </widget>
    <widget class="QMenu" name="menuEdit" >
     <property name="title" >
-     <string>Edit</string>
+     <string>&amp;Edit</string>
     </property>
-    <addaction name="actionAdd_Condition" />
-    <addaction name="actionNew_Tag" />
+    <addaction name="actionAdd_condition" />
+    <addaction name="actionNew_tag" />
    </widget>
    <widget class="QMenu" name="menuAdvanced" >
     <property name="enabled" >
      <bool>true</bool>
     </property>
     <property name="title" >
-     <string>Advanced</string>
+     <string>&amp;Advanced</string>
     </property>
-    <addaction name="actionNew_Node" />
-    <addaction name="actionDelete_Node" />
-    <addaction name="actionDelete_Tag" />
+    <addaction name="actionNew_node" />
+    <addaction name="actionDelete_node" />
+    <addaction name="actionDelete_tag" />
    </widget>
    <widget class="QMenu" name="menuHelp" >
     <property name="title" >
-     <string>Help</string>
+     <string>&amp;Help</string>
     </property>
     <addaction name="actionAbout" />
     <addaction name="actionAbout_Qt" />
+    <addaction name="separator" />
+    <addaction name="actionWelcome_message" />
+   </widget>
+   <widget class="QMenu" name="menuPanels" >
+    <property name="title" >
+     <string>&amp;Panels</string>
+    </property>
    </widget>
    <addaction name="menuDataBase" />
    <addaction name="menuEdit" />
    <addaction name="menuAdvanced" />
+   <addaction name="menuPanels" />
    <addaction name="menuHelp" />
   </widget>
   <widget class="QStatusBar" name="statusbar" />
+  <widget class="QDockWidget" name="filterPanel" >
+   <property name="windowTitle" >
+    <string>Time Browser</string>
+   </property>
+   <attribute name="dockWidgetArea" >
+    <number>2</number>
+   </attribute>
+   <widget class="QWidget" name="filterPanelContents" >
+    <layout class="QVBoxLayout" name="verticalLayout_4" >
+     <item>
+      <widget class="QGroupBox" name="iovTagFilterGroupBox" >
+       <property name="sizePolicy" >
+        <sizepolicy vsizetype="Minimum" hsizetype="Preferred" >
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="title" >
+        <string>Filter</string>
+       </property>
+       <layout class="QFormLayout" name="iovTagFilterLayout" >
+        <property name="fieldGrowthPolicy" >
+         <enum>QFormLayout::ExpandingFieldsGrow</enum>
+        </property>
+        <property name="labelAlignment" >
+         <set>Qt::AlignBottom|Qt::AlignRight|Qt::AlignTrailing</set>
+        </property>
+        <property name="formAlignment" >
+         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+        </property>
+        <item row="0" column="0" >
+         <widget class="QLabel" name="sinceLabel" >
+          <property name="text" >
+           <string>From time</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1" >
+         <widget class="TimePointEdit" native="1" name="sinceFilterWidget" >
+          <property name="sizePolicy" >
+           <sizepolicy vsizetype="Minimum" hsizetype="MinimumExpanding" >
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0" >
+         <widget class="QLabel" name="untilLabel" >
+          <property name="text" >
+           <string>To time</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1" >
+         <widget class="TimePointEdit" native="1" name="untilFilterWidget" >
+          <property name="sizePolicy" >
+           <sizepolicy vsizetype="Minimum" hsizetype="MinimumExpanding" >
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0" >
+         <widget class="QLabel" name="tagLabel" >
+          <property name="text" >
+           <string>Tag name</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1" >
+         <widget class="QComboBox" name="tagComboBox" >
+          <property name="sizePolicy" >
+           <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="1" >
+         <widget class="QCheckBox" name="hideAutoCheckBox" >
+          <property name="toolTip" >
+           <string>If checked, the special tags starting with "_auto_" are not displayed.</string>
+          </property>
+          <property name="text" >
+           <string>Hide "_auto_" tags</string>
+          </property>
+          <property name="checked" >
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+       </layout>
+       <zorder>sinceLabel</zorder>
+       <zorder>untilLabel</zorder>
+       <zorder>tagLabel</zorder>
+       <zorder>tagComboBox</zorder>
+       <zorder>hideAutoCheckBox</zorder>
+       <zorder>sinceFilterWidget</zorder>
+       <zorder>untilFilterWidget</zorder>
+      </widget>
+     </item>
+     <item>
+      <widget class="QGroupBox" name="iovTableGroupBox" >
+       <property name="sizePolicy" >
+        <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="title" >
+        <string>IOV Table</string>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout" >
+        <item>
+         <widget class="QTableView" name="iovView" >
+          <property name="enabled" >
+           <bool>true</bool>
+          </property>
+          <property name="editTriggers" >
+           <set>QAbstractItemView::NoEditTriggers</set>
+          </property>
+          <property name="selectionMode" >
+           <enum>QAbstractItemView::SingleSelection</enum>
+          </property>
+          <property name="selectionBehavior" >
+           <enum>QAbstractItemView::SelectRows</enum>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="iovUTCCheckBox" >
+          <property name="toolTip" >
+           <string>Show the IoVs as UTC</string>
+          </property>
+          <property name="text" >
+           <string>UTC</string>
+          </property>
+          <property name="checked" >
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item>
+      <widget class="QGroupBox" name="payloadGroupBox" >
+       <property name="sizePolicy" >
+        <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="title" >
+        <string>Payload</string>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_2" >
+        <item>
+         <widget class="QListView" name="fieldsView" />
+        </item>
+       </layout>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QDockWidget" name="browsePanel" >
+   <property name="windowTitle" >
+    <string>Hierarchy Browser</string>
+   </property>
+   <attribute name="dockWidgetArea" >
+    <number>1</number>
+   </attribute>
+   <widget class="QWidget" name="browsePanelContents" >
+    <layout class="QVBoxLayout" name="verticalLayout_3" >
+     <item>
+      <widget class="QWidget" native="1" name="pathPanel" >
+       <layout class="QHBoxLayout" name="horizontalLayout" >
+        <property name="margin" >
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="QLabel" name="pathLabel" >
+          <property name="sizePolicy" >
+           <sizepolicy vsizetype="Preferred" hsizetype="Minimum" >
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="text" >
+           <string>Path</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QComboBox" name="pathComboBox" >
+          <property name="sizePolicy" >
+           <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="editable" >
+           <bool>false</bool>
+          </property>
+          <property name="insertPolicy" >
+           <enum>QComboBox::NoInsert</enum>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item>
+      <widget class="QTreeView" name="hierarchyTreeView" >
+       <property name="contextMenuPolicy" >
+        <enum>Qt::CustomContextMenu</enum>
+       </property>
+       <property name="editTriggers" >
+        <set>QAbstractItemView::NoEditTriggers</set>
+       </property>
+       <property name="showDropIndicator" stdset="0" >
+        <bool>false</bool>
+       </property>
+       <property name="textElideMode" >
+        <enum>Qt::ElideMiddle</enum>
+       </property>
+       <property name="headerHidden" >
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
   <action name="actionNew" >
    <property name="text" >
-    <string>New</string>
+    <string>&amp;New</string>
+   </property>
+   <property name="shortcut" >
+    <string>Ctrl+N</string>
    </property>
   </action>
   <action name="actionOpen" >
    <property name="text" >
-    <string>Open</string>
+    <string>&amp;Open</string>
+   </property>
+   <property name="shortcut" >
+    <string>Ctrl+O</string>
    </property>
   </action>
-  <action name="actionSlice" >
+  <action name="actionCreate_slice" >
    <property name="text" >
-    <string>Slice</string>
+    <string>Create slice</string>
+   </property>
+   <property name="shortcut" >
+    <string>Ctrl+S</string>
    </property>
   </action>
   <action name="actionClose" >
    <property name="text" >
     <string>Close</string>
    </property>
-  </action>
-  <action name="actionAdd_Condition" >
-   <property name="text" >
-    <string>Add Condition</string>
+   <property name="shortcut" >
+    <string>Ctrl+W</string>
    </property>
   </action>
-  <action name="actionNew_Tag" >
+  <action name="actionAdd_condition" >
    <property name="text" >
-    <string>New Tag</string>
+    <string>Add condition</string>
+   </property>
+   <property name="shortcut" >
+    <string>Ctrl++</string>
    </property>
   </action>
-  <action name="actionNew_Node" >
+  <action name="actionNew_tag" >
    <property name="text" >
-    <string>New Node</string>
+    <string>New tag</string>
+   </property>
+   <property name="shortcut" >
+    <string>Ctrl+T</string>
    </property>
   </action>
-  <action name="actionDelete_Node" >
+  <action name="actionNew_node" >
    <property name="text" >
-    <string>Delete Node</string>
+    <string>New node</string>
    </property>
   </action>
-  <action name="actionDelete_Tag" >
+  <action name="actionDelete_node" >
    <property name="text" >
-    <string>Delete Tag</string>
+    <string>Delete node</string>
+   </property>
+  </action>
+  <action name="actionDelete_tag" >
+   <property name="text" >
+    <string>Delete tag</string>
    </property>
   </action>
   <action name="actionAbout" >
@@ -379,7 +419,10 @@
   </action>
   <action name="actionQuit" >
    <property name="text" >
-    <string>Quit</string>
+    <string>&amp;Quit</string>
+   </property>
+   <property name="shortcut" >
+    <string>Ctrl+Q</string>
    </property>
   </action>
   <action name="actionAbout_Qt" >
@@ -399,14 +442,26 @@
    <property name="checked" >
     <bool>true</bool>
    </property>
-   <property name="enabled" >
-    <bool>false</bool>
-   </property>
    <property name="text" >
     <string>Read Only</string>
    </property>
    <property name="statusTip" >
     <string>Change the opening mode of the database (re-opens it)</string>
+   </property>
+  </action>
+  <action name="actionCopy_path" >
+   <property name="text" >
+    <string>Copy path</string>
+   </property>
+  </action>
+  <action name="actionCopy_connection_string" >
+   <property name="text" >
+    <string>&amp;Copy connection string</string>
+   </property>
+  </action>
+  <action name="actionWelcome_message" >
+   <property name="text" >
+    <string>Welcome message</string>
    </property>
   </action>
  </widget>
@@ -429,6 +484,11 @@
     <signal>maxUnchecked()</signal>
     <signal>validityKeyChanged(cool::ValidityKey)</signal>
    </slots>
+  </customwidget>
+  <customwidget>
+   <class>SearchableTextEdit</class>
+   <extends>QPlainTextEdit</extends>
+   <header>CondDBUI/Browser/Widgets.h</header>
   </customwidget>
  </customwidgets>
  <resources>
@@ -506,8 +566,8 @@
    <slot>selectedPath(QString)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>187</x>
-     <y>48</y>
+     <x>218</x>
+     <y>77</y>
     </hint>
     <hint type="destinationlabel" >
      <x>482</x>
@@ -538,12 +598,12 @@
    <slot>setMinimumDateTime(QDateTime)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>851</x>
-     <y>72</y>
+     <x>1027</x>
+     <y>97</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>851</x>
-     <y>95</y>
+     <x>1027</x>
+     <y>119</y>
     </hint>
    </hints>
   </connection>
@@ -554,12 +614,12 @@
    <slot>resetMaximumDateTime()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>851</x>
-     <y>95</y>
+     <x>1027</x>
+     <y>119</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>851</x>
-     <y>72</y>
+     <x>1027</x>
+     <y>97</y>
     </hint>
    </hints>
   </connection>
@@ -570,12 +630,444 @@
    <slot>setMaximumDateTime(QDateTime)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>851</x>
-     <y>95</y>
+     <x>1027</x>
+     <y>119</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>851</x>
-     <y>72</y>
+     <x>1027</x>
+     <y>97</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionNew</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>newDatabaseDialog()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>482</x>
+     <y>327</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionOpen</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>openDatabaseDialog()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>482</x>
+     <y>327</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionDump_to_files</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>dumpToFiles()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>482</x>
+     <y>327</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>MainWindow</sender>
+   <signal>databaseOpen(bool)</signal>
+   <receiver>actionDump_to_files</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>482</x>
+     <y>327</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>MainWindow</sender>
+   <signal>databaseOpen(bool)</signal>
+   <receiver>actionRead_Only</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>482</x>
+     <y>327</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>MainWindow</sender>
+   <signal>databaseOpen(bool)</signal>
+   <receiver>actionClose</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>482</x>
+     <y>327</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>MainWindow</sender>
+   <signal>databaseOpen(bool)</signal>
+   <receiver>actionCreate_slice</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>482</x>
+     <y>327</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>MainWindow</sender>
+   <signal>databaseOpenReadOnly(bool)</signal>
+   <receiver>actionRead_Only</receiver>
+   <slot>setChecked(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>482</x>
+     <y>327</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionNew_node</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>newNodeDialog()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>482</x>
+     <y>327</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionDelete_node</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>deleteNode()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>482</x>
+     <y>327</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionCreate_slice</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>createSlice()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>482</x>
+     <y>327</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionAdd_condition</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>addCondition()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>482</x>
+     <y>327</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionNew_tag</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>newTag()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>482</x>
+     <y>327</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionDelete_tag</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>deleteTag()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>482</x>
+     <y>327</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>hierarchyTreeView</sender>
+   <signal>customContextMenuRequested(QPoint)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>showHierarchyContextMenu(QPoint)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>160</x>
+     <y>344</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>482</x>
+     <y>327</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionCopy_path</sender>
+   <signal>activated()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>copyPathToClipboard()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>482</x>
+     <y>327</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>MainWindow</sender>
+   <signal>databaseOpenReadOnly(bool)</signal>
+   <receiver>actionAdd_condition</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>482</x>
+     <y>327</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>MainWindow</sender>
+   <signal>databaseOpenReadOnly(bool)</signal>
+   <receiver>actionDelete_node</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>482</x>
+     <y>327</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>MainWindow</sender>
+   <signal>databaseOpenReadOnly(bool)</signal>
+   <receiver>actionDelete_tag</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>482</x>
+     <y>327</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>MainWindow</sender>
+   <signal>databaseOpenReadOnly(bool)</signal>
+   <receiver>actionNew_node</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>482</x>
+     <y>327</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>MainWindow</sender>
+   <signal>databaseOpenReadOnly(bool)</signal>
+   <receiver>actionNew_tag</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>482</x>
+     <y>327</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>MainWindow</sender>
+   <signal>databaseOpen(bool)</signal>
+   <receiver>filterPanel</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>523</x>
+     <y>290</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>912</x>
+     <y>294</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>MainWindow</sender>
+   <signal>databaseOpen(bool)</signal>
+   <receiver>mainPanel</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>523</x>
+     <y>290</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>515</x>
+     <y>294</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>MainWindow</sender>
+   <signal>databaseOpen(bool)</signal>
+   <receiver>browsePanel</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>523</x>
+     <y>290</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>128</x>
+     <y>294</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionCopy_connection_string</sender>
+   <signal>activated()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>copyConnStrToClipboard()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>523</x>
+     <y>290</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>MainWindow</sender>
+   <signal>databaseOpen(bool)</signal>
+   <receiver>actionCopy_connection_string</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>523</x>
+     <y>290</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionWelcome_message</sender>
+   <signal>activated()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>showWelcomeInfo()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>523</x>
+     <y>290</y>
     </hint>
    </hints>
   </connection>
@@ -591,6 +1083,21 @@
   <slot>reopenDatabase(bool)</slot>
   <slot>sinceChanged(QDateTime)</slot>
   <slot>untilChanged(QDateTime)</slot>
+  <slot>newDatabaseDialog()</slot>
+  <slot>openDatabaseDialog()</slot>
+  <slot>dumpToFiles()</slot>
+  <slot>newNodeDialog()</slot>
+  <slot>deleteNode()</slot>
+  <slot>createSlice()</slot>
+  <slot>addCondition()</slot>
+  <slot>newTag()</slot>
+  <slot>deleteTag()</slot>
+  <slot>showHierarchyContextMenu(QPoint)</slot>
+  <slot>copyPathToClipboard()</slot>
+  <slot>copyConnStrToClipboard()</slot>
+  <slot>showWelcomeInfo()</slot>
   <signal>openedDB(P*)</signal>
+  <signal>databaseOpen(bool)</signal>
+  <signal>databaseOpenReadOnly(bool)</signal>
  </slots>
 </ui>

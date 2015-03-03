@@ -61,6 +61,24 @@ def switch ( c  , v1 , v2  ) :
     """
     return c.__switch__ ( v1 , v2  )
 
+# =============================================================================
+def scale ( s , sf ) :
+    """
+    Create the 'scaled' predicate which acts according to the rule:
+
+            result  = s ( argument ) ? sf() : False 
+            
+    Keep the maximal rate os access less than 50 Hz:
+    >>>  cut1 = scale ( L0_DECISION , FRATE  ( 50 * Gaudi.Units.Hz ) ) 
+    
+    ## postscale at 10% o fpositive decisions (random) 
+    >>>  cut2 = scale ( L0_DECISION , FSCALE ( 0.1 ) )
+    
+    ## accept only every 3rd positive decion :
+    >>>  cut3 = scale ( L0_DECISION , FSKIP  ( 3   ) )
+     
+    """
+    return s.__scale__ ( sf )
 
 # =============================================================================
 ## Create the predicate which efficiently checks the equality of the
@@ -72,7 +90,7 @@ def switch ( c  , v1 , v2  ) :
 #    >>> cut = equal_to ( TrTYPE , LHCb.Track.Long )
 #  @endcode
 #  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
-def equal_to  ( f  , v ) :
+def equal_to  ( f  , v , *args ) :
     """
     Create the predicate which efficiently checks the equality of the
     function to some predefined value. Logically it is just 'operator==',
@@ -81,27 +99,33 @@ def equal_to  ( f  , v ) :
     >>> cut = equal_to ( TrTYPE , LHCb.Track.Long )
     
     """
-    if hasattr ( f , '__equal_to__' ) : return f.__equal_to__ ( v ) 
-    if hasattr ( v , '__equal_to__' ) : return v.__equal_to__ ( f )
-    # use the generic version:
-    return f == v 
+    if not args : 
+        if   hasattr ( f , '__equal_to__' ) :
+            if type ( v ) is list : v == doubles ( v ) 
+            return f.__equal_to__ ( v ) 
+        elif hasattr ( v , '__equal_to__' ) :
+            if type ( f ) is list : f == doubles ( f ) 
+            return v.__equal_to__ ( f )
+        # use the generic version:
+        return f == v
+    v = doubles ( v , args )
+    return equal_to ( f , v ) 
 
 # =============================================================================
 ##    Create 'in-range' predicate, that checks the valeu of
 #     certain function is 'in-range' :
 #
 #              retult = low <= fun ( argument ) <= high 
-#
 #  @code
 #
 #    >>> fun = PT
-#    >>> cut = in_range ( PT , 0.5 * GeV , 3 * GeV )
+#    >>> cut = in_range ( 0.5 * GeV , PT , 3 * GeV ) ## 0.5 * GeV <= PT <= 3 * GeV
 #
 #  @endcode
 #
 #  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
 #  @date   2009-11-21
-def in_range ( fun , low , high ) :
+def in_range ( low , fun , high ) :
     """
     Create 'in-range' predicate, that checks the valeu of
     certain function is 'in-range' :
@@ -109,13 +133,14 @@ def in_range ( fun , low , high ) :
               retult = low <= fun ( argument ) <= high 
 
     >>> fun = PT
-    >>> cut = in_range ( PT , 0.5 * GeV , 3 * GeV )
+    >>> cut = in_range ( 0.5 * GeV , PT , 3 * GeV ) ## 0.5 * GeV <= PT <= 3 * GeV  
     
     """
     return fun.__in_range__ ( low , high )
 
 ## ditto...
-inRange = in_range
+inRange  = in_range
+in_Range = in_range
 
 # =============================================================================
 ## Get the number of children for the object.
@@ -645,6 +670,45 @@ def ints ( arg1 , *args ) :
         return vct
     vct.push_back ( arg1 )
     return vct 
+
+# =============================================================================
+## Create the predicate which efficiently checks the equality of the
+#   function to some predefined value. Logically it is just 'operator==',
+#    but it should be more efficient 
+#
+#  @code
+#
+#    >>> cut = equal_to ( TrTYPE , LHCb.Track.Long )
+
+#  @endcode
+#  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
+def equal_to  ( f  , v , *args ) :
+    """
+    Create the predicate which efficiently checks the equality of the
+    function to some predefined value. Logically it is just 'operator==',
+    but it should be more efficient 
+
+    >>> cut = equal_to ( TrTYPE , LHCb.Track.Long )
+    >>> cut = equal_to ( TrTYPE , LHCb.Track.Long , LHCb.Track.Upstream )
+
+    >>> lst = [ .... ] 
+    >>> cut = equal_to ( TrTYPE , lst )
+    
+    
+    """
+    if args :
+        v = doubles ( v , *args )
+        return equal_to ( f , v )
+    
+    if   hasattr ( f , '__equal_to__' ) :
+        if list == type ( v )  : v = doubles ( v )
+        return f.__equal_to__ ( v ) 
+    elif hasattr ( v , '__equal_to__' ) :
+        if list == type ( f )  : f = doubles ( f ) 
+        return v.__equal_to__ ( f )
+    
+    # use the generic version:
+    return f == v
 
 # =============================================================================
 # The END

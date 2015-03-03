@@ -1,4 +1,4 @@
-// $Id: MCMatcher.cpp,v 1.3 2009-09-03 13:50:41 ibelyaev Exp $
+// $Id: MCMatcher.cpp,v 1.5 2009-12-03 13:31:30 ibelyaev Exp $
 // ============================================================================
 // Include files 
 // ============================================================================
@@ -64,6 +64,13 @@ namespace
   /// invalid decay
   const Decays::Trees::Types_<const LHCb::MCParticle*>::Invalid s_INVALID     ;
   // ==========================================================================
+  inline std::string rels0 ( const std::string& loc  ) 
+  {
+    if ( std::string::npos != loc.find ( "Relations" ) ) { return loc ; }
+    if ( 0                 == loc.find ('/')           ) { return loc ; }
+    return "Relations/" + loc ;
+  }  
+  // ==========================================================================
 } //                                                 end of anonymous namespace
 // ============================================================================
 /*  constructor from the decay and MC-truth matching tables
@@ -119,7 +126,7 @@ LoKi::PhysMCParticles::MCMatcherBase::MCMatcherBase
  */
 // ============================================================================
 LoKi::PhysMCParticles::MCMatcherBase::MCMatcherBase
-( const LoKi::PhysMCParticles::MCMatcherBase::ProtoPMatch& protoMatch ) 
+( const LoKi::PhysMCParticles::ProtoPMatch& protoMatch ) 
   : LoKi::PhysMCParticles::MCTruth() 
   , m_locations ()
   , m_alg       ( 0 )
@@ -127,16 +134,16 @@ LoKi::PhysMCParticles::MCMatcherBase::MCMatcherBase
   switch ( protoMatch ) 
   {
   case Neutral     : 
-    m_locations.push_back ( LHCb::ProtoParticleLocation::Neutrals ) ; break ;
+    m_locations.push_back ( rels0 ( LHCb::ProtoParticleLocation::Neutrals ) ) ; break ;
   case ChargedLong : 
-    m_locations.push_back ( LHCb::ProtoParticleLocation::Charged  ) ; break ;
+    m_locations.push_back ( rels0 ( LHCb::ProtoParticleLocation::Charged  ) ) ; break ;
   case Charged     : 
-    m_locations.push_back ( LHCb::ProtoParticleLocation::Charged  ) ; 
-    m_locations.push_back ( LHCb::ProtoParticleLocation::Upstream ) ; break ;
+    m_locations.push_back ( rels0 ( LHCb::ProtoParticleLocation::Charged  ) ) ; 
+    m_locations.push_back ( rels0 ( LHCb::ProtoParticleLocation::Upstream ) ) ; break ;
   default:
-    m_locations.push_back ( LHCb::ProtoParticleLocation::Charged  ) ; 
-    m_locations.push_back ( LHCb::ProtoParticleLocation::Upstream ) ; 
-    m_locations.push_back ( LHCb::ProtoParticleLocation::Neutrals ) ;
+    m_locations.push_back ( rels0 ( LHCb::ProtoParticleLocation::Charged  ) ) ; 
+    m_locations.push_back ( rels0 ( LHCb::ProtoParticleLocation::Upstream ) ) ; 
+    m_locations.push_back ( rels0 ( LHCb::ProtoParticleLocation::Neutrals ) ) ;
   }
 }
 // ============================================================================
@@ -188,16 +195,34 @@ StatusCode LoKi::PhysMCParticles::MCMatcherBase::load() const  // load the data
         m_locations.end() != item ; ++item ) 
   {
     if      ( alg()->exist<LoKi::Types::TableP2MC> ( *item ) ) 
-    { match() -> addMatchInfo ( alg()->get<LoKi::Types::TableP2MC>  ( *item ) ) ; }
+    { match() -> addMatchInfo ( alg()->get<LoKi::Types::TableP2MC>  ( *item ) ) ; continue ; }
     else if ( alg()->exist<LoKi::Types::TableP2MCW> ( *item ) ) 
-    { match() -> addMatchInfo ( alg()->get<LoKi::Types::TableP2MCW> ( *item ) ) ; }
+    { match() -> addMatchInfo ( alg()->get<LoKi::Types::TableP2MCW> ( *item ) ) ; continue ; }
     else if ( alg()->exist<LoKi::Types::TablePP2MC> ( *item ) ) 
-    { match() -> addMatchInfo ( alg()->get<LoKi::Types::TablePP2MC> ( *item ) ) ; }
+    { match() -> addMatchInfo ( alg()->get<LoKi::Types::TablePP2MC> ( *item ) ) ; continue ; }
     else if ( alg()->exist<LoKi::Types::TableT2MC>  ( *item ) ) 
-    { match() -> addMatchInfo ( alg()->get<LoKi::Types::TableT2MC>  ( *item ) ) ; }
+    { match() -> addMatchInfo ( alg()->get<LoKi::Types::TableT2MC>  ( *item ) ) ; continue ; }
     else if ( alg()->exist<LoKi::Types::TableT2MCW> ( *item ) ) 
-    { match() -> addMatchInfo ( alg()->get<LoKi::Types::TableT2MCW> ( *item ) ) ; }
-    else { Error ( "No valid relation table at '" + (*item) + "'" ) ; } 
+    { match() -> addMatchInfo ( alg()->get<LoKi::Types::TableT2MCW> ( *item ) ) ; continue ; }
+    else 
+    {
+      const std::string loc = rels0 ( *item ) ;
+      if ( *item == loc ) 
+      { Error ( "No valid relation table at '" + (*item) + "'" )                ; continue ; }
+      else if ( alg()->exist<LoKi::Types::TableP2MC>  ( loc ) ) 
+      { match() -> addMatchInfo ( alg()->get<LoKi::Types::TableP2MC>  ( loc ) ) ; continue ; }
+      else if ( alg()->exist<LoKi::Types::TableP2MCW> ( loc ) ) 
+      { match() -> addMatchInfo ( alg()->get<LoKi::Types::TableP2MCW> ( loc ) ) ; continue ; }
+      else if ( alg()->exist<LoKi::Types::TablePP2MC> ( loc ) ) 
+      { match() -> addMatchInfo ( alg()->get<LoKi::Types::TablePP2MC> ( loc ) ) ; continue ; }
+      else if ( alg()->exist<LoKi::Types::TableT2MC>  ( loc ) ) 
+      { match() -> addMatchInfo ( alg()->get<LoKi::Types::TableT2MC>  ( loc ) ) ; continue ; }
+      else if ( alg()->exist<LoKi::Types::TableT2MCW> ( loc ) ) 
+      { match() -> addMatchInfo ( alg()->get<LoKi::Types::TableT2MCW> ( loc ) ) ; continue ; }
+      //
+      Error ( "No valid relation table at '" + (*item) + "'" ) ; 
+    }
+    
   }
   //
   if ( match() -> empty() ) 
@@ -277,7 +302,7 @@ LoKi::PhysMCParticles::MCSelMatch::MCSelMatch
 // ======================================================================
 LoKi::PhysMCParticles::MCSelMatch::MCSelMatch
 ( const LoKi::PhysMCParticles::MCSelMatch::MCCuts&         selector , 
-  const LoKi::PhysMCParticles::MCMatcherBase::ProtoPMatch& protoMatch )
+  const LoKi::PhysMCParticles::ProtoPMatch& protoMatch )
   : LoKi::PhysMCParticles::MCMatcherBase ( protoMatch )  
   , m_cuts ( selector ) 
 {}
@@ -397,7 +422,7 @@ LoKi::PhysMCParticles::MCTreeMatch::MCTreeMatch
 // ============================================================================
 LoKi::PhysMCParticles::MCTreeMatch::MCTreeMatch
 ( const LoKi::PhysMCParticles::MCTreeMatch::iTree&         decay      , 
-  const LoKi::PhysMCParticles::MCMatcherBase::ProtoPMatch& protoMatch )
+  const LoKi::PhysMCParticles::ProtoPMatch& protoMatch )
   : LoKi::PhysMCParticles::MCMatcherBase ( protoMatch )  
   , m_finder ( decay ) 
 {
@@ -447,7 +472,7 @@ LoKi::PhysMCParticles::MCTreeMatch::MCTreeMatch
 // ============================================================================
 LoKi::PhysMCParticles::MCTreeMatch::MCTreeMatch
 ( const std::string&                                       decay      , 
-  const LoKi::PhysMCParticles::MCMatcherBase::ProtoPMatch& protoMatch )
+  const LoKi::PhysMCParticles::ProtoPMatch& protoMatch )
   : LoKi::PhysMCParticles::MCMatcherBase ( protoMatch )  
   , m_finder ( s_INVALID ) 
 {
@@ -604,7 +629,7 @@ LoKi::PhysMCParticles::MCNodeMatch::MCNodeMatch
 // ============================================================================
 LoKi::PhysMCParticles::MCNodeMatch::MCNodeMatch
 ( const LoKi::PhysMCParticles::MCNodeMatch::iNode&       node      , 
-  const LoKi::PhysMCParticles::MCMatcherBase::ProtoPMatch& protoMatch )
+  const LoKi::PhysMCParticles::ProtoPMatch& protoMatch )
   : LoKi::PhysMCParticles::MCMatcherBase ( protoMatch )  
   , m_node ( node ) 
 {

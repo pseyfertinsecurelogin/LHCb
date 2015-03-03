@@ -4,11 +4,11 @@ from PyQt4.QtCore import (QObject, SIGNAL, SLOT,
                           Qt)
 from PyQt4.QtGui import QSizePolicy
 
-import time
+from Utils import valKeyToDateTime, dateTimeToValKey
 
 from PyCool import cool
 
-__all__ = ["TimePointEdit"]
+__all__ = ["TimePointEdit", "SearchableTextEdit"]
 
 
 class TimePointEdit(QtGui.QWidget):
@@ -30,16 +30,11 @@ class TimePointEdit(QtGui.QWidget):
         self._edit = QtGui.QDateTimeEdit(self)
         self._edit.setObjectName("edit")
         self._edit.setTimeSpec(Qt.UTC)
+        self._edit.setContextMenuPolicy(Qt.NoContextMenu)
+        
         # Set the time range from cool ValidityKeyMin/Max.
-        # Cannot use setTime_t because of the limited range.
-        minTimeTuple = time.gmtime(cool.ValidityKeyMin / 1e9)
-        minDate = apply(QDate, minTimeTuple[0:3])
-        minTime = apply(QTime, minTimeTuple[3:6])
-        maxTimeTuple = time.gmtime(cool.ValidityKeyMax / 1e9)
-        maxDate = apply(QDate, maxTimeTuple[0:3])
-        maxTime = apply(QTime, maxTimeTuple[3:6])
-        self._minDateTime = QDateTime(minDate, minTime)
-        self._maxDateTime = QDateTime(maxDate, maxTime)
+        self._minDateTime = valKeyToDateTime(cool.ValidityKeyMin)
+        self._maxDateTime = valKeyToDateTime(cool.ValidityKeyMax)
         self._edit.setDateTimeRange(self._minDateTime, self._maxDateTime)
         self._edit.setDisplayFormat("dd-MM-yyyy hh:mm:ss")
         self._edit.setCalendarPopup(True)
@@ -63,7 +58,28 @@ class TimePointEdit(QtGui.QWidget):
                                 QtGui.QSizePolicy.Minimum)
         self._layout.addWidget(self._max)
         
-        #self.setFrameShape(self.Box)
+        self.actionSet_to_minimum = QtGui.QAction(self)
+        self.actionSet_to_minimum.setObjectName("actionSet_to_minimum")
+        self.actionSet_to_minimum.setText("Set to &minimum")
+        self.addAction(self.actionSet_to_minimum)
+        QObject.connect(self.actionSet_to_minimum, SIGNAL("triggered()"),
+                        self.setToMinimum)
+        
+        self.actionSet_to_now = QtGui.QAction(self)
+        self.actionSet_to_now.setObjectName("actionSet_to_now")
+        self.actionSet_to_now.setText("Set to &now")
+        self.addAction(self.actionSet_to_now)
+        QObject.connect(self.actionSet_to_now, SIGNAL("triggered()"),
+                        self.setToNow)
+        
+        self.actionSet_to_maximum = QtGui.QAction(self)
+        self.actionSet_to_maximum.setObjectName("actionSet_to_maximum")
+        self.actionSet_to_maximum.setText("Set to ma&ximum")
+        self.addAction(self.actionSet_to_maximum)
+        QObject.connect(self.actionSet_to_maximum, SIGNAL("triggered()"),
+                        self.setToMaximum)
+        
+        self.setContextMenuPolicy(Qt.ActionsContextMenu)
         
         QtCore.QMetaObject.connectSlotsByName(self)
         
@@ -168,12 +184,7 @@ class TimePointEdit(QtGui.QWidget):
         # Get the number of seconds since epoch and convert it to ns.
         if self._max.isChecked():
             return cool.ValidityKeyMax
-        # FIXME: This is awkward, but I do not have enough resolution otherwise
-        d = self._edit.dateTime().toLocalTime()
-        timeTuple = (d.date().year(), d.date().month(), d.date().day(),
-                     d.time().hour(), d.time().minute(), d.time().second(),
-                     0,0,-1)
-        return int(time.mktime(timeTuple) * 1e9)
+        return dateTimeToValKey(self._edit.dateTime())
 
     ## Set the internal QDateTime from a cool::ValidityKey.
     def setValidityKey(self, valKey):
@@ -181,15 +192,107 @@ class TimePointEdit(QtGui.QWidget):
             self._edit.setDateTime(self._maxDateTime)
             self._max.setChecked(True)
         else:
-            # Cannot use setTime_t because of the limited range.
-            timeTuple = time.gmtime(valkey / 1e9)
-            d = apply(QDate, timeTuple[0:3])
-            t = apply(QTime, timeTuple[3:6])
-            self._edit.setDateTime(QDateTime(d, t))
+            self._edit.setDateTime(valKeyToDateTime(valKey))
             self._max.setChecked(False)
     
     ## Slot called by a "dateTimeChanged" signal to propagate it as a
     #  cool::ValidityKey.
     def emitValidityKeyChange(self):
-        #self.emit(SIGNAL("validityKeyChange(cool::ValidityKey)"),self.toValidityKey())
-        self.emit(SIGNAL("validityKeyChange"),self.toValidityKey())
+        self.emit(SIGNAL("validityKeyChange"), self.toValidityKey())
+
+    ## Slot used to set the value equal to the minimum possible according to the
+    #  current constraints.
+    def setToMinimum(self):
+        spec = self._edit.timeSpec()
+        self.setDateTime(self.minimumDateTime().toTimeSpec(spec))
+    ## Slot used to set the value equal to the maximum possible according to the
+    #  current constraints.
+    def setToMaximum(self):
+        spec = self._edit.timeSpec()
+        self.setDateTime(self.maximumDateTime().toTimeSpec(spec))    
+    ## Slot used to set the value equal to the current time or to the closest
+    #  limit if it is out of bounds.
+    def setToNow(self):
+        spec = self._edit.timeSpec()
+        t = QDateTime.currentDateTime()
+        if t > self.maximumDateTime():
+            t = self.maximumDateTime()
+        elif t < self.minimumDateTime():
+            t = self.minimumDateTime()
+        self.setDateTime(t.toTimeSpec(spec))
+
+## Simple customization of a QPlainTextEdit.
+#  The extensions to a QPlainTextEdit are a "find" dialog (activated with Ctrl+F
+#  or the contextual menu) and the possibility to switch to/from fixed width
+#  font (via contextual menu). 
+class SearchableTextEdit(QtGui.QPlainTextEdit):
+    ## Contructor.
+    def __init__(self, parent = None):
+        super(SearchableTextEdit,self).__init__(parent)
+        
+        from Dialogs import FindDialog
+        self.findDialog = FindDialog(self)
+        
+        self.actionFind = QtGui.QAction(self)
+        self.actionFind.setObjectName("actionFind")
+        self.actionFind.setText("&Find...")
+        self.actionFind.setShortcut("Ctrl+F")
+        self.addAction(self.actionFind)
+        
+        QObject.connect(self.actionFind, SIGNAL("triggered()"), self.findDialog.show)
+        QObject.connect(self.findDialog, SIGNAL("find(QString,QTextDocument::FindFlags,bool)"),
+                        self.findInText)
+        
+        self._defaultFont = self.font()
+        self.actionFixedWidthFont = QtGui.QAction(self)
+        self.actionFixedWidthFont.setObjectName("actionFixedWidthFont")
+        self.actionFixedWidthFont.setText("Use fi&xed width font")
+        self.actionFixedWidthFont.setCheckable(True)
+        self.addAction(self.actionFixedWidthFont)
+        if self._defaultFont.fixedPitch():
+            self.actionFixedWidthFont.setChecked(True)
+            self.actionFixedWidthFont.setEnabled(False)
+        
+        QObject.connect(self.actionFixedWidthFont, SIGNAL("triggered(bool)"),
+                        self.setFixedWidthFont)
+        
+    def contextMenuEvent(self, event):
+        menu = self.createStandardContextMenu()
+        menu.addSeparator()
+        for a in self.actions():
+            menu.addAction(a)
+        menu.exec_(event.globalPos())
+        del menu
+    
+    ## Slot used by the find dialog to trigger a search in the data view
+    def findInText(self, text, flags, wrapped):
+        # look for the string
+        found = self.find(text, flags)
+        if not found and wrapped:
+            # try again for wrapped search
+            if flags & QtGui.QTextDocument.FindBackward:
+                where = QtGui.QTextCursor.End
+            else:
+                where = QtGui.QTextCursor.Start
+            self.moveCursor(where)
+            found = self.find(text, flags)
+        if not found:
+            QtGui.QMessageBox.information(self, "Not found",
+                                          "String '%s' not found in the document." % text)
+
+    ## FixedWidthFont property
+    def setFixedWidthFont(self, value):
+        if self.actionFixedWidthFont.isEnabled():
+            if value:
+                font = QtGui.QFont("Currier")
+                font.setFixedPitch(value)
+                self.setFont(font)
+            else:
+                font = QtGui.QFont(self._defaultFont)
+                font.setFixedPitch(value)
+                self.setFont(font)
+            if self.actionFixedWidthFont.isChecked() != value:
+                self.actionFixedWidthFont.setChecked(value)
+    ## FixedWidthFont property
+    def isFixedWidthFont(self):
+        return self.actionFixedWidthFont.isChecked()

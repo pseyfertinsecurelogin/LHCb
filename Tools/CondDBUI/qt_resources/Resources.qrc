@@ -1,5 +1,9 @@
 <RCC>
   <qresource prefix="icons" >
+    <file>up.png</file>
+    <file>down.png</file>
+    <file>plus.png</file>
+    <file>minus.png</file>
     <file>icon.png</file>
   </qresource>
 </RCC>

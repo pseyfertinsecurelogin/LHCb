@@ -1,7 +1,26 @@
-! $Id: release.notes,v 1.141 2009-11-27 13:36:48 cattanem Exp $
+! $Id: release.notes,v 1.147 2009-12-11 13:36:48 cattanem Exp $
 ! Package     : CaloUtils
 ! Responsible : Olivier Deschamps odescham@in2p3.fr
 !------------------------------------------------------------------------------
+
+!========================== CaloUtils v8r10 2009-12-11 ========================
+! 2009-12-08 - Vanya Belyaev
+ - CellID.py: bug fix in python decorator for std::set-container 
+
+! 2009-12-07 - Marco Cattaneo
+ - In CaloTrackTool.h: Fix trivial untested StatusCode, 
+                       Downgrade Errors to Warnings
+
+! 2009-11-30 - Olivier Deschamps
+ - Calo2Dview::getUnit() : protect against non string unit (bug or feature in HistoID::literalID())
+
+! 2009-11-30 - Marco Cattaneo
+ - Remove obsolete files CaloUtils/dirHbookName.h, CaloUtils/histoHbookName.h 
+
+! 2009-11-28 - Vanya Belyaev
+ - new helper python decorator classes
+ - cmt/requirements 
+    version increment to v8r10 
 
 !========================== CaloUtils v8r9 2009-11-27 =========================
 ! 2009-11-17 - Olivier Deschamps

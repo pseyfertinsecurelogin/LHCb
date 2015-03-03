@@ -4,6 +4,17 @@
 ! Purpose: LHCb specific Kernel classes
 !--------------------------------------------------------------------------
 
+!===================== LHCbKernel v11r10 2009-12-11 =======================
+! 2009-12-10 - Marco Cattaneo
+ - Add polarity() to ILHCbMagnetSvc interface
+
+! 2009-12-04 Gerhard Raven
+ - Add IReferenceRate interface 
+
+!===================== LHCbKernel v11r9p1 2009-12-04 ======================
+! 2009-12-04 Marcin Kucharczyk
+ - Add Kernel/VeloPixDataFunctor.h used by pixel Velo algorithms
+
 !===================== LHCbKernel v11r9p1 2009-11-22 ======================
 ! 2009-11-22 Wouter Hulsbergen
  - Fixed bug in OTChannelID: made enum public
