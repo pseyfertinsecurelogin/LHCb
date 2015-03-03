@@ -1,6 +1,5 @@
-package GaudiObjDesc
-
-version           v11r14
+package           GaudiObjDesc
+version           v11r15
 
 include_path none
 macro xmlsrc "xml"
@@ -25,6 +24,7 @@ pattern god_headers \
 
 use Python v* LCG_Interfaces
 use GaudiPolicy v*
+use LHCbKernel v* Kernel
 
 # Always switch off GaudiObjDesc custom allocators with debug or WIN32
 macro_append cppflags "" \

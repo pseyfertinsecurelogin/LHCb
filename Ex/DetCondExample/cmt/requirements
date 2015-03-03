@@ -1,9 +1,8 @@
-# $Id: requirements,v 1.71 2009-06-03 07:55:40 marcocle Exp $
-package DetCondExample
-version           v11r10
+package           DetCondExample
+version           v11r11
 
-branches doc src job options cmt XMLDDDB python logs
-ignore_pattern package_stamps 
+branches doc src options cmt XMLDDDB python logs
+ignore_pattern package_stamps
 
 # Main program and standard job options
 use GaudiConf v*

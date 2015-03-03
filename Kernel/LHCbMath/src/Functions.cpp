@@ -1,4 +1,4 @@
-// $Id: Functions.cpp 140791 2012-06-07 10:15:16Z ibelyaev $ 
+// $Id: Functions.cpp 143024 2012-07-21 16:59:13Z ibelyaev $ 
 // ============================================================================
 // Include files
 // ============================================================================
@@ -8,6 +8,8 @@
 #include <climits>
 #include <iostream>
 #include <complex>
+#include <algorithm>
+#include <numeric>
 // ============================================================================
 // LHCbMath
 // ============================================================================
@@ -42,8 +44,8 @@
  *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
  *  @date 2010-04-19
  *  
- *                    $Revision: 140791 $
- *  Last modification $Date: 2012-06-07 12:15:16 +0200 (Thu, 07 Jun 2012) $
+ *                    $Revision: 143024 $
+ *  Last modification $Date: 2012-07-21 18:59:13 +0200 (Sat, 21 Jul 2012) $
  *                 by $author$
  */
 // ============================================================================
@@ -3319,384 +3321,6 @@ std::complex<double> Gaudi::Math::Flatte2::amplitude
 ( const double x     )  const { return flatte2_amp ( x ) ; }
 // ============================================================================
 
-// ============================================================================
-// Positive polinomials 
-// ============================================================================
-// Linear 
-// ============================================================================
-// constructor from parameter "alpha" and the interval 
-// ============================================================================
-Gaudi::Math::Positive1::Positive1 
-( const double alpha , 
-  const double xmin  ,
-  const double xmax  ) 
-  : m_slope ( alpha / std::sqrt ( 1 + alpha*alpha ) ) 
-  , m_xmin  ( std::min ( xmin , xmax ) ) 
-  , m_xmax  ( std::max ( xmin , xmax ) ) 
-{}
-// ============================================================================
-// get the value 
-// ============================================================================
-double Gaudi::Math::Positive1::operator() ( const double x ) const 
-{
-  //
-  const double y = ( x - m_xmin ) / ( m_xmax - m_xmin ) ;
-  //
-  return 1 + m_slope * y ;
-}
-// ============================================================================
-// set the proper slope 
-// ============================================================================
-bool Gaudi::Math::Positive1::setAlpha ( const double x ) 
-{
-  //
-  const double v = x / std::sqrt ( 1 + x*x ) ;
-  //
-  if ( s_equal ( v , m_slope ) ) { return false ; }
-  //
-  m_slope = v ;
-  //
-  return true ;
-}
-
-// ============================================================================
-// Quadratic
-// ============================================================================
-// constructor from parameter "alpha" and the interval 
-// ============================================================================
-Gaudi::Math::Positive2::Positive2 
-( const double alpha1 , 
-  const double alpha2 , 
-  const double xmin   ,
-  const double xmax   ) 
-  : m_alpha ( alpha1 ) 
-  , m_beta  ( alpha2 / std::sqrt ( 1 + alpha2 * alpha2 ) ) 
-  , m_xmin  ( std::min ( xmin , xmax ) ) 
-  , m_xmax  ( std::max ( xmin , xmax ) ) 
-{}
-// ======================================================================
-// get the value 
-// ======================================================================
-double Gaudi::Math::Positive2::operator() ( const double x ) const 
-{
-  //
-  const double y = ( x - m_xmin ) / ( m_xmax - m_xmin ) ;
-  //
-  return 
-    y * y * m_alpha * m_alpha  - 
-    2 * y * m_alpha * m_beta   + 1 ;
-}
-// ============================================================================
-// set the proper parameters 
-// ============================================================================
-bool Gaudi::Math::Positive2::setAlpha1 ( const double x ) 
-{
-  //
-  if ( s_equal ( x , m_alpha ) ) { return false ; }
-  //
-  m_alpha = x ;
-  //
-  return true ;
-}
-// ============================================================================
-// set the proper parameters 
-// ============================================================================
-bool Gaudi::Math::Positive2::setAlpha2 ( const double x ) 
-{
-  //
-  const double v = x / std::sqrt ( 1 + x*x ) ;
-  //
-  if ( s_equal ( v , m_beta ) ) { return false ; }
-  //
-  m_beta = v ;
-  //
-  return true ;
-}
-
-
-// ============================================================================
-// Nth order 
-// ============================================================================
-// constructor from parameters and the interval 
-// ============================================================================
-Gaudi::Math::PositiveN1::PositiveN1 
-( const std::vector<double>& alphas , 
-  const double               xmin   ,
-  const double               xmax   ) 
-  : m_alphas () 
-  , m_xmin  ( std::min ( xmin , xmax ) ) 
-  , m_xmax  ( std::max ( xmin , xmax ) ) 
-{
-  for ( std::vector<double>::const_iterator it = alphas.begin() ; 
-        alphas.end() != it ; ++it ) 
-  {
-    const double a = *it ;
-    m_alphas.push_back ( a / std::sqrt ( 1 + a * a ) ) ; 
-  }
-}
-// ============================================================================
-// constructor from parameters and the interval 
-// ============================================================================
-Gaudi::Math::PositiveN1::PositiveN1 
-( const unsigned short       N1     , 
-  const double               xmin   ,
-  const double               xmax   ) 
-  : m_alphas ( N1 , 0 ) 
-  , m_xmin  ( std::min ( xmin , xmax ) ) 
-  , m_xmax  ( std::max ( xmin , xmax ) ) 
-{}
-// ======================================================================
-// get the value 
-// ======================================================================
-double Gaudi::Math::PositiveN1::operator() ( const double x ) const 
-{
-  //
-  const double y = ( x - m_xmin ) / ( m_xmax - m_xmin ) ;
-  //
-  double result = 1 ;
-  //
-  for ( std::vector<double>::const_iterator it = m_alphas.begin() ; 
-        m_alphas.end() != it ; ++it ) 
-  { result *=  1 + (*it) * y  ; }
-  //
-  return result ;
-}
-// ============================================================================
-// set the proper parameters 
-// ============================================================================
-bool Gaudi::Math::PositiveN1::setAlpha 
-( const unsigned int i , const double x ) 
-{
-  //
-  if ( m_alphas.size() <= i ) { return false ; }
-  //
-  const double v = x / std::sqrt ( 1 + x * x ) ;
-  //
-  if ( s_equal ( v , m_alphas[i] ) ) { return false ; }
-  //
-  m_alphas[i] = v ;
-  //
-  return true ;
-}
-
-// ============================================================================
-// 2Nth order 
-// ============================================================================
-// constructor from parameters and the interval 
-// ============================================================================
-Gaudi::Math::PositiveN2::PositiveN2 
-( const std::vector<double>& alpha1, 
-  const std::vector<double>& alpha2 , 
-  const double               xmin   ,
-  const double               xmax   ) 
-  : m_alphas () 
-  , m_xmin  ( std::min ( xmin , xmax ) ) 
-  , m_xmax  ( std::max ( xmin , xmax ) ) 
-{
-  //
-  std::vector<double> alpha_1  ( alpha1 ) ;
-  std::vector<double> alpha_2  ( alpha2 ) ;
-  //
-  while ( alpha_1.size() < alpha_2.size() ) { alpha_1.push_back ( 0 ) ; }
-  while ( alpha_2.size() < alpha_1.size() ) { alpha_2.push_back ( 0 ) ; }
-  //
-  for ( unsigned int i = 0 ; i < alpha1.size() ; ++i ) 
-  {
-    const double v  = alpha_2[i] ;
-    const double v2 = v / std::sqrt ( 1 + v * v ) ;
-    m_alphas.push_back ( std::make_pair ( alpha_1[i] , v2 ) ) ; 
-  }
-  //
-}
-// ============================================================================
-// constructor from parameters and the interval 
-// ============================================================================
-Gaudi::Math::PositiveN2::PositiveN2 
-( const unsigned short N2   , 
-  const double         xmin ,
-  const double         xmax ) 
-  : m_alphas () 
-  , m_xmin  ( std::min ( xmin , xmax ) ) 
-  , m_xmax  ( std::max ( xmin , xmax ) ) 
-{
-  //
-  for ( unsigned int i = 0 ; i < N2 ; ++i ) 
-  { m_alphas.push_back ( std::make_pair ( 0 , 0 ) ) ; }
-  //
-}
-// ============================================================================
-// constructor from parameters and the interval 
-// ============================================================================
-Gaudi::Math::PositiveN2::PositiveN2 
-( const std::vector<std::pair<double,double> >& alpha, 
-  const double               xmin   ,
-  const double               xmax   ) 
-  : m_alphas () 
-  , m_xmin   ( std::min ( xmin , xmax ) ) 
-  , m_xmax   ( std::max ( xmin , xmax ) ) 
-{
-  //
-  for ( std::vector<std::pair<double,double> >::const_iterator ia = 
-          alpha.begin() ; alpha.end() != ia ; ++ia ) 
-  {
-    const double v  = ia -> second ;
-    const double v2 = v / std::sqrt ( 1 + v * v ) ;
-    { m_alphas.push_back ( std::make_pair ( ia->first , v2 ) ) ; } 
-  }
-  //
-}
-// ======================================================================
-// get the value 
-// ======================================================================
-double Gaudi::Math::PositiveN2::operator() ( const double x ) const 
-{
-  //
-  const double y = ( x - m_xmin ) / ( m_xmax - m_xmin ) ;
-  //
-  double result = 1 ;
-  //
-  for ( std::vector<std::pair<double,double> >::const_iterator it = m_alphas.begin() ; 
-        m_alphas.end() != it ; ++it )
-  {
-    //
-    const double a = it -> first   ;
-    const double b = it -> second  ;
-    //
-    result *= y * y * a * a  - 2 * y * a * b + 1 ;
-  }
-  //
-  return result ;
-}
-// ============================================================================
-// set the proper parameters 
-// ============================================================================
-bool Gaudi::Math::PositiveN2::setAlpha1 
-( const unsigned int i , const double x ) 
-{
-  //
-  if ( m_alphas.size() <= i ) { return false ; }
-  //
-  if ( s_equal ( x , m_alphas[i].first ) ) { return false ; }
-  //
-  m_alphas[i].first = x ;
-  //
-  return true ;
-}
-// ============================================================================
-// set the proper parameters 
-// ============================================================================
-bool Gaudi::Math::PositiveN2::setAlpha2 
-( const unsigned int i , const double x ) 
-{
-  //
-  if ( m_alphas.size() <= i ) { return false ; }
-  //
-  const double v = x / std::sqrt ( 1 + x * x ) ;
-  if ( s_equal ( v , m_alphas[i].second ) ) { return false ; }
-  //
-  m_alphas[i].second = v ;
-  //
-  return true ;
-}
-// ============================================================================
-// set the proper parameters 
-// ============================================================================
-bool Gaudi::Math::PositiveN2::setAlpha
-( const unsigned int i , const double x ) 
-{
-  //
-  if ( m_alphas.size()*2 <= i ) { return false ; }
-  //
-  return 
-    ( 0 == i % 2 ) ? 
-    setAlpha1 (   i       / 2 , x ) : 
-    setAlpha2 ( ( i - 1 ) / 2 , x ) ;
-  //
-}
-// ============================================================================
-// The END 
-// ============================================================================
-// constructor from parameter "alpha" and the interval 
-// ============================================================================
-Gaudi::Math::PositiveN::PositiveN
-( const std::vector<double>& alphas ,
-  const unsigned short       roots  , 
-  const double               xmin   ,
-  const double               xmax   ) 
-  : m_n1 ( std::vector<double>()                     , xmin, xmax ) 
-  , m_n2 ( std::vector<std::pair<double,double> > () , xmin, xmax ) 
-{
-  //
-  unsigned int N  = alphas.size () ;
-  unsigned int N1 = std::min ( (unsigned int) roots , N ) ;
-  //
-  // adjustments 
-  if      ( 0 == N % 2 && 1 == N1 % 2 ) { N1 -= 1 ; }
-  //
-  if      ( 1 == N % 2 && 0 == N1     ) { N1  = 1 ; }
-  else if ( 1 == N % 2 && 0 == N1 % 2 ) { N1 -= 1 ; }
-  //
-  const unsigned int N2 = std::min ( N - N1 , N ) ;
-  const unsigned int n2 = N2/2 ;
-  //
-  std::vector<double> n1 = std::vector<double> ( alphas.begin()      , 
-                                                 alphas.begin() + N1 ) ;
-  //
-  m_n1 = Gaudi::Math::PositiveN1 ( n1 , xmin , xmax );
-  
-  std::vector<double> a1 = std::vector<double> ( alphas.begin() + N1       , 
-                                                 alphas.begin() + N1 + n2 ) ;
-  std::vector<double> a2 = std::vector<double> ( alphas.begin() + N1 + n2 , 
-                                                 alphas.begin() + N1 + N2 ) ;
-  
-  m_n2 = Gaudi::Math::PositiveN2 ( a1 , a2 , xmin , xmax ) ;  
-}
-// ============================================================================
-// constructor from parameter "alpha" and the interval 
-// ============================================================================
-Gaudi::Math::PositiveN::PositiveN
-( const unsigned short       N      , 
-  const unsigned short       roots  , 
-  const double               xmin   ,
-  const double               xmax   ) 
-  : m_n1 ( roots , xmin, xmax ) 
-  , m_n2 ( N     , xmin, xmax ) 
-{
-  //
-  unsigned short N1 = std::min ( roots , N ) ;
-  //
-  // adjustments 
-  if      ( 0 == N % 2 && 1 == N1 % 2 ) { N1 -= 1 ; }
-  //
-  if      ( 1 == N % 2 && 0 == N1     ) { N1  = 1 ; }
-  else if ( 1 == N % 2 && 0 == N1 % 2 ) { N1 -= 1 ; }
-  //
-  const unsigned int N2 = N - N1 ;
-  const unsigned int n2 = N2/2   ;
-  //
-  m_n1 = Gaudi::Math::PositiveN1 ( N1 , xmin , xmax );
-  m_n2 = Gaudi::Math::PositiveN2 ( n2 , xmin , xmax ) ;  
-}
-// ======================================================================
-// get the value 
-// ======================================================================
-double Gaudi::Math::PositiveN::operator() ( const double x ) const 
-{ return m_n1 ( x ) * m_n2 ( x ) ; }
-// ============================================================================
-// set the proper parameters 
-// ============================================================================
-bool Gaudi::Math::PositiveN::setAlpha
-( const unsigned int i , const double x ) 
-{
-  //
-  if ( m_n1.n1() + 2 * m_n2.n2()  <= i ) { return false ; }
-  //
-  if ( m_n1.n1() > i ) { return m_n1.setAlpha ( i , x ) ; }
-  //
-  return m_n2.setAlpha ( i - m_n1.n1() , x ) ;
-}
-// ============================================================================
-
 
 // ============================================================================
 // Voigtian
@@ -3843,8 +3467,6 @@ bool Gaudi::Math::Voigt::setSigma ( const double x )
   //
   return true ;
 }
-
-
 // ============================================================================
 /*  constructor from four masses and angular momenta 
  *  @param m1 the mass of the first  particle 
@@ -4733,14 +4355,245 @@ double  Gaudi::Math::Flatte23L::integral
 // ============================================================================
 double  Gaudi::Math::Flatte23L::integral () const 
 { return integral ( lowEdge () , highEdge() ) ; }
+
+
 // ============================================================================
-
-
-
-
-  
-
-
+// constructor from the order 
+// ============================================================================
+Gaudi::Math::Bernstein::Bernstein
+( const unsigned short      N    ,   
+  const double              xmin ,
+  const double              xmax ) 
+  : std::unary_function<double,double> () 
+//
+  , m_pars ( N + 1 , 0.0 )
+// 
+  , m_xmin ( std::min ( xmin , xmax ) ) 
+  , m_xmax ( std::max ( xmin , xmax ) )
+//
+{}
+// ============================================================================
+// constructor from the order 
+// ============================================================================
+Gaudi::Math::Bernstein::Bernstein
+( const std::vector<double>& pars ,
+  const double               xmin ,
+  const double               xmax ) 
+  : std::unary_function<double,double> () 
+//
+  , m_pars ( pars ) 
+// 
+  , m_xmin ( std::min ( xmin , xmax ) ) 
+  , m_xmax ( std::max ( xmin , xmax ) )
+//
+{
+  if ( m_pars.empty() ) { m_pars.push_back( 0 ) ; }
+}
+// ============================================================================
+// get the integral between xmin and xmax
+// ============================================================================
+double Gaudi::Math::Bernstein::integral () const 
+{
+  //
+  return 
+    ( m_xmax - m_xmin ) * 
+    std::accumulate ( m_pars.begin() , m_pars.end() , 0.0 ) / npars() ;
+}
+// ============================================================================
+// set k-parameter
+// ============================================================================
+bool Gaudi::Math::Bernstein::setPar
+( const unsigned short k , const double value ) 
+{
+  //
+  if ( k >= npars() ){ return false ; }
+  //
+  if ( s_equal ( par ( k ) , value ) ) { return false ; }
+  //
+  m_pars [ k ] = value ;
+  //
+  return true ;
+}
+// ============================================================================
+namespace 
+{
+  // ==========================================================================
+  // De Casteljau's algorithm
+  double _casteljau_
+  ( const std::vector<double>& beta , 
+    const double               t0   , 
+    const double               t1   ) 
+  {
+    // the trivial cases 
+    if      ( beta.empty()     ) { return 0       ; }
+    else if ( 1 == beta.size() ) { return beta[0] ; }  
+    else if ( 2 == beta.size() ) { return beta[0]*t1 + beta[1]*t0 ; }
+    //
+    // prepare recursion 
+    const std::size_t N = beta.size() - 1 ;
+    std::vector<double> beta_prime ( N , 0 ) ;
+    for ( std::size_t i = 0 ; i < N ; ++i ) 
+    { beta_prime[i] = beta [ i ] * t1 + beta [ i+1 ] * t0 ; }
+    //
+    // recursion 
+    return _casteljau_ ( beta_prime , t0 , t1 ) ;
+  }
+  // ==========================================================================
+  // De Casteljau's algorithm
+  template <class IT> 
+  double _casteljau_
+  ( IT first , 
+    IT last  , 
+    const double               t0   , 
+    const double               t1   ) 
+  {
+    // the trivial cases 
+    if      ( first == last    ) { return 0       ; }
+    //
+    const std::size_t len  = std::distance ( first , last  ) ;
+    //
+    if      ( 1 == len ) { return       *first                        ; }  
+    else if ( 2 == len ) { return t1 * (*first) + t0 * ( *(first+1) ) ; }
+    //
+    IT second = --last ;
+    //
+    // prepare recursion 
+    for ( IT it = first ; it != second ; ++it ) 
+    { *it = t1 * ( *it )  + t0 * ( *( it+1 ) ) ; }
+    //
+    // recursion 
+    return _casteljau_ ( first , second , t0 , t1 ) ;
+  }
+  // ==========================================================================
+}
+// ============================================================================
+// get the value 
+// ============================================================================
+double Gaudi::Math::Bernstein::operator () ( const double x ) const 
+{
+  /// the trivial cases 
+  if ( x < m_xmin || x > m_xmax ) { return 0.0  ; }
+  //
+  if      ( 0 == npars () ) { return 0.0        ; } 
+  else if ( 1 == npars () ) { return m_pars [0] ; }
+  ///
+  // get the t-values 
+  const double t0 = t ( x ) ;
+  const double t1 = 1 - t0  ;
+  //
+  std::vector<double> beta = m_pars ;
+  return _casteljau_ ( beta.begin() , beta.end() , t0 , t1 ) ;
+}
+// ============================================================================
+namespace 
+{
+  // ==========================================================================
+  inline void _phi0_ ( std::vector<double>& phi0 ) 
+  {
+    const std::size_t N = phi0.size() ;
+    for ( std::size_t i = 0 ; i < N ; ++i ) 
+    {
+      const long double ni = N - i ;
+      phi0[i] = std::atan2 ( std::sqrt ( ni ) , 1.0L ) ;
+    }
+  }
+  // ==========================================================================
+}
+// ============================================================================
+// constructor from the order 
+// ============================================================================
+Gaudi::Math::Positive::Positive
+( const unsigned short      N    ,   
+  const double              xmin ,
+  const double              xmax ) 
+  : std::unary_function<double,double> () 
+//
+  , m_bernstein ( N , xmin , xmax ) 
+  , m_phases    ( N , 0 ) 
+  , m_phi0      ( N , 0 ) 
+  , m_sin2      ( N , 0 ) 
+{
+  // 
+  _phi0_ ( m_phi0 ) ;
+  //
+  for ( unsigned short i = 0 ; i < N ; ++i ) 
+  {
+    const double s = std::sin ( m_phi0[i] ) ;
+    m_sin2 [ i ] = s * s ;
+  }
+  //
+  updateBernstein () ;
+}
+// ============================================================================
+// constructor from the order 
+// ============================================================================
+Gaudi::Math::Positive::Positive
+( const std::vector<double>& pars ,
+  const double               xmin ,
+  const double               xmax ) 
+  : std::unary_function<double,double> () 
+//
+  , m_bernstein ( pars.size () , xmin , xmax )
+  , m_phases    ( pars             ) 
+  , m_phi0      ( pars.size () , 0 ) 
+  , m_sin2      ( pars.size () , 0 ) 
+{
+  //
+  _phi0_ ( m_phi0 ) ;
+  // 
+  for ( unsigned int i =  0 ; i < m_phases.size() ; ++i ) 
+  {
+    const double s = std::sin ( m_phases[i]  + m_phi0 [ i ] ) ;
+    m_sin2 [ i ]   = s * s ;
+  }
+  //
+  updateBernstein () ;
+}
+// ============================================================================
+// set k-parameter
+// ============================================================================
+bool Gaudi::Math::Positive::setPar ( const unsigned short k , const double value ) 
+{ 
+  //
+  if (  k >= m_phases.size() )         { return false ; } // FALSE 
+  //
+  if ( s_equal ( value , par ( k ) ) ) { return false ; }
+  //
+  const double s  = std::sin ( value + m_phi0[k] ) ;
+  const double s2 =  s * s ;
+  //
+  if ( s_equal ( s2 , m_sin2 [ k ] ) ) { return false ; }
+  //
+  m_phases [ k ] = value ;
+  m_sin2   [ k ] = s2    ;
+  //
+  return updateBernstein ( k ) ;  
+}
+// =============================================================================
+// update bernstein coefficients 
+// =============================================================================
+bool Gaudi::Math::Positive::updateBernstein ( const unsigned short k ) 
+{
+  // 
+  double psin2 = 1 ;
+  for ( unsigned int i = 0 ; i < k ; ++ i ) { psin2 *= m_sin2[i] ; }
+  //
+  bool update = false ;
+  const std::size_t np = npars() + 1 ;
+  for ( unsigned int i = k ; i < npars() ; ++i ) 
+  {
+    const double sin2 = m_sin2   [i] ;
+    const double cos2 = 1 - sin2     ;
+    bool up = m_bernstein.setPar ( i , psin2 * cos2 * np ) ;
+    update  = up || update ;
+    psin2  *= sin2 ;
+  }
+  //
+  const bool up = m_bernstein.setPar ( npars() , psin2 * np ) ;
+  update  = up || update ;  
+  //
+  return update ;
+}
 // ============================================================================
 // The END 
 // ============================================================================
