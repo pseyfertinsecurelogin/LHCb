@@ -3,6 +3,12 @@
 ! Responsible : Alessia Satta
 !----------------------------------------------------------------------------
 
+!========================= MuonDet v9r13 2013-07-17 =========================
+! 2013-06-17 - Marco Cattaneo
+ - Put back the fixes from v9r11 and from the commit on 2013-05-07, lost in
+   2013-05-17 commit...
+ - Fix a FORWARD_NULL and two UNINIT_CTOR defects
+
 !========================= MuonDet v9r12 2013-06-03 =========================
 ! 2013-06-04 - Giovanni PASSALEVA
  - fixed a wrong mapping in MuonDAQHelper.cpp. 

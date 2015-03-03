@@ -25,15 +25,11 @@
 DeMuonDetector::DeMuonDetector() : m_msgStream(NULL),
                                    m_isM1defined(true)     
 {
-
-  bool debug = false;
-  if(debug) std::cout<< "Building the Detector !!!" <<std::endl;
   m_detSvc = 0;
   m_stations = 0;
   m_regions = 0;
   m_chamberLayout = 0;
   m_hitNotInGap = 0;
-
 }
 
 /// Standard Destructor
@@ -779,7 +775,7 @@ StatusCode DeMuonDetector::getPCCenter(MuonFrontEndID fe,int chamber,
   double dy = box->yHalfLength();
   Condition* aGrid = 
   myChPtr->condition(myChPtr->getGridName());
-  MuonChamberGrid* theGrid = dynamic_cast<MuonChamberGrid*>(aGrid);
+  MuonChamberGrid* theGrid = static_cast<MuonChamberGrid*>(aGrid);
   double xcenter_norma=-1;
   double ycenter_norma=-1;  
   StatusCode sc=theGrid->getPCCenter(fe,xcenter_norma,ycenter_norma);
@@ -932,7 +928,7 @@ void DeMuonDetector::fillGeoInfo()
 		     <<chPt->getGridName()<<endmsg;
 	  */
           Condition* bGrid = (chPt)->condition(chPt->getGridName());
-          MuonChamberGrid* theGrid = dynamic_cast<MuonChamberGrid*>(bGrid);
+          MuonChamberGrid* theGrid = static_cast<MuonChamberGrid*>(bGrid);
           
 	  // the grid condition is the size of physical readout channels for a certain 
 	  // readout type (i.e. wires or cathode pads) normalized to the 
@@ -1390,10 +1386,12 @@ void DeMuonDetector::fillGeoArray()
   for(itSt=this->childBegin(); itSt<this->childEnd(); itSt++){
     //get the dimensions of the inner rectangular
 
-    msgStream()<<MSG::DEBUG<<"DeMuonDetector::fillGeoArray station: " << station <<endmsg;
+    if( UNLIKELY( msgStream().level() <= MSG::DEBUG ) )
+      msgStream()<<MSG::DEBUG<<"DeMuonDetector::fillGeoArray station: " << station <<endmsg;
     if (testForFilter(*itSt) == true)
       continue;
-    msgStream()<<MSG::DEBUG<<"DeMuonDetector::fillGeoArray station: " << station <<endmsg;
+    if( UNLIKELY( msgStream().level() <= MSG::DEBUG ) )
+      msgStream()<<MSG::DEBUG<<"DeMuonDetector::fillGeoArray station: " << station <<endmsg;
 
     double minX=100000;
     double minY=100000;

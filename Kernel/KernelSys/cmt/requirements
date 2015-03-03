@@ -1,5 +1,5 @@
 package KernelSys
-version           v12r2
+version           v12r3
 
 branches doc cmt
 
@@ -13,5 +13,4 @@ use ProcessorKernel v*    L0
 use Relations       v*    Kernel
 use RichKernel      v*    Rich
 use STKernel        v*    ST
-use TfKernel        v*    Tf
 use XMLSummaryKernel      v*    Kernel

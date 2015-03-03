@@ -1,7 +1,7 @@
 ################################################################################
 # Package: KernelSys
 ################################################################################
-gaudi_subdir(KernelSys v12r2)
+gaudi_subdir(KernelSys v12r3)
 
 gaudi_depends_on_subdirs(Calo/CaloKernel
                          Kernel/LHCbKernel
@@ -13,6 +13,5 @@ gaudi_depends_on_subdirs(Calo/CaloKernel
                          L0/ProcessorKernel
                          Muon/MuonKernel
                          Rich/RichKernel
-                         ST/STKernel
-                         Tf/TfKernel)
+                         ST/STKernel)
 

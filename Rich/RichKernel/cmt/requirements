@@ -1,10 +1,10 @@
-#============================================================================
+#=========================================================================
 # Created    : 2003-11-06
 # Maintainer : Christopher Rob Jones
-#============================================================================
+#=========================================================================
 
 package           RichKernel
-version           v7r53
+version           v7r54
 
 # ================ structure =================================================
 branches RichKernel cmt dict doc src python
@@ -14,6 +14,7 @@ use DAQEvent           v*   Event
 use LHCbKernel         v*   Kernel
 use GaudiAlg           v*
 use GaudiUtils         v*
+use vdt                v*   LCG_Interfaces
 use Boost              v*   LCG_Interfaces
 use AIDA               v*   LCG_Interfaces
 private

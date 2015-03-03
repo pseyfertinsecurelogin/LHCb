@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # =============================================================================
-# $Id: Types.py 157054 2013-05-18 14:49:59Z ibelyaev $
+# $Id: Types.py 159629 2013-07-11 10:27:12Z ibelyaev $
 # =============================================================================
 ## @file
 #
@@ -35,7 +35,7 @@
 #  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
 #  @date 2009-09-12
 #
-#  Last modification $Date: 2013-05-18 16:49:59 +0200 (Sat, 18 May 2013) $
+#  Last modification $Date: 2013-07-11 12:27:12 +0200 (Thu, 11 Jul 2013) $
 #                 by $Author: ibelyaev $
 #
 #
@@ -69,21 +69,23 @@ Simple file to provide 'easy' access in python for the basic ROOT::Math classes
   >>> dir( Gaudi.Math )
   >>> dir( Gaudi      )
   
-  Last modification $Date: 2013-05-18 16:49:59 +0200 (Sat, 18 May 2013) $
+  Last modification $Date: 2013-07-11 12:27:12 +0200 (Thu, 11 Jul 2013) $
                  by $Author: ibelyaev $
 
 """
 # =============================================================================
 __author__  = "Vanya BELYAEV Ivan.Belyaev@nikhef.nl"
 __date__    = "2009-09-12"
-__version__ = "Version$Revision: 157054 $"
+__version__ = "Version$Revision: 159629 $"
 # =============================================================================
 __all__     = () ## nothing to be imported !
 # =============================================================================
 import ROOT
 
 ## get global C++ namespace 
-from GaudiPython.Bindings import gbl as cpp
+## from GaudiPython.Bindings import gbl as cpp
+import PyCintex
+cpp  = PyCintex.makeNamespace('')
 
 ## C++ namespace Gaudi
 Gaudi = cpp.Gaudi

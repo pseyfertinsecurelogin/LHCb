@@ -1,0 +1,49 @@
+!-----------------------------------------------------------------------------
+! Package     : DAQ/RawEventControl
+! Responsible : Rob Lambert
+! Purpose     : To hold configurables for splitting/joining raw events
+!-----------------------------------------------------------------------------
+
+!========================= RawEventCompat v1r1 2013-07-17 =========================
+! 2013-07-17 - Marco Cattaneo
+ - Add missing CMakeLists.txt file
+
+! 2013-07-15 - Rob Lambert
+ - Adapt tests to latest RawEventCompat
+
+! 2013-07-09- Rob Lambert
+ - Try and fix requirements file (again).
+
+!========================= RawEventCompat v1r0 2013-07-08 =========================
+! 2013-07-04 - Rob Lambert
+ - LoadIfRequired also for RecombineRawEvent
+ - Add CMT private uses for tests
+
+! 2013-06-21 - Rob Lambert
+ - New features to clean up extra banks.
+ - Tests for DoD and tests for new features which can clean up extra banks
+
+! 2013-06-21 - Rob Lambert
+ - fix bug when DoD is set.
+
+! 2013-06-19 - Rob Lambert
+ - Added a generic search/replace capability to the Juggler, to handle
+   future cases of splitting up L0, HLT1 and HLT2.
+
+! 2013-06-11 - Rob Lambert
+ - Added test suite, unit tests now check all functions and configurables
+   technically do what is expected.
+ - gaudirun test checks that a DST with re-arranged RawEvent can be
+   created and read in a second validator test.
+
+! 2013-06-10 - Rob Lambert
+ - Split off database into new DBase package.
+ - Add new configurable to juggle all the raw event formats.
+
+! 2013-05-27 - Rob Lambert
+ - Expand 1.0 configuration, interpret as search paths
+
+! 2013-05-01 - Rob Lambert
+ - Create package
+ - create configurables and methods in Configuration.py
+ - Remane one of the configurables to RawEventFormat

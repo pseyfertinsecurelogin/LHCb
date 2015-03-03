@@ -6,6 +6,20 @@
 !               All headers included in directory LHCbMath
 !-----------------------------------------------------------------------------
 
+!========================= LHCbMath v3r41 2013-07-17 =========================
+! 2013-07-11 - Vanya Belyaev
+ - python/LHCbMath/Types.py
+   python/LHCbMath/Math.py
+
+   eliminate unnesessary imports from GaudiPython 
+
+! 2013-06-17 - Marco Cattaneo
+ - Remove Gaudi::Math::invertPosDefSymMatrix altogether
+
+! 2013-06-14 - Marco Cattaneo
+ - Replace use of obsolete wrapper class Gaudi::Math::invertPosDefSymMatrix
+   with direct call to SMatrix InvertChol() method. Fixes gcc48 warning
+
 !========================= LHCbMath v3r40 2013-06-03 =========================
 ! 2013-05-18 - Vanya Belyaev
  - Types.py: minor fix in symmatrix alias 

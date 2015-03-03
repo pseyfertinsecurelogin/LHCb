@@ -1,8 +1,17 @@
+
 <lcgdict>
+
   <class name = "std::vector<const LHCb::RecVertex*>"    />
   <class name = "std::vector<const LHCb::VertexBase*>"   />
   <class name = "std::pair<int,float>"                   />
   <class name = "std::vector<std::pair<int,float> >"     />
   <class name = "LHCb::RecVertex::TrackWithWeight"       />
   <class name = "LHCb::RecVertex::TrackWithWeightVector" />
+  <class name = "Gaudi::SymMatrix9x9" />
+  <exclusion>
+    <class pattern="ROOT::Math::SMatrix&lt;double,9,9,*&gt;">
+      <method proto_pattern="*::operator=(double const&amp;)"/>
+      <method proto_pattern="*::SMatrix(double const&amp;)"/>
+    </class>
+  </exclusion>
 </lcgdict>
