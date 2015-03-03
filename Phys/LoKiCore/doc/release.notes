@@ -1,4 +1,4 @@
-! $Id: release.notes,v 1.160 2009-11-13 15:45:46 cattanem Exp $ 
+! $Id: release.notes,v 1.162 2009-11-22 13:50:06 cattanem Exp $ 
 ! -----------------------------------------------------------------------------
 ! Package     : Phys/LoKiCore
 ! Responsible : Vanya BELYAEV ibelyaev@physics.syr.edu
@@ -14,6 +14,27 @@
 !   A.Golutvin, P.Koppenburg have been used in the design.
 ! 
 ! -----------------------------------------------------------------------------
+
+! =========================== LoKiCore v9r6 2009-11-22 ========================
+! 2009-11-21 - Vanya Belyaev
+
+
+ - LoKi/Primitives.h, 
+   LoKi/VoidPrimitives.h,
+   LoKi/FuncOps.h
+
+   add new functor LoKi::InRange 
+
+  Use in python:
+  
+      >>>  cut = in_range ( PT , 1 * GeV , 5 * GeV ) 
+  
+
+ - cmt/requirements 
+
+    version increment to v9r6 
+
+
 
 ! =========================== LoKiCore v9r5p1 2009-11-13 ======================
 ! 2009-11-11 - Marco Cattaneo

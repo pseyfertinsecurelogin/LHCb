@@ -108,12 +108,8 @@ LHCb::ODIN* ODINCodecBaseTool::i_decode(const LHCb::RawBank* bank, LHCb::ODIN* o
   odin->setEventNumber((temp64 << 32) + odinData[LHCb::ODIN::L0EventIDLo]);
 
   temp64 = odinData[LHCb::ODIN::GPSTimeHi];
-  if (version <= 5) {
-    odin->setGpsTime ((temp64 << 32) + odinData[LHCb::ODIN::GPSTimeLo]);
-  } else {
-    odin->setGpsTime (temp64 * 1000000ull + odinData[LHCb::ODIN::GPSTimeLo]);
-  }
-
+  odin->setGpsTime ((temp64 << 32) + odinData[LHCb::ODIN::GPSTimeLo]);
+  
   temp32 = odinData[LHCb::ODIN::Word7];
   odin->setDetectorStatus( (temp32 & LHCb::ODIN::DetectorStatusMask) >> LHCb::ODIN::DetectorStatusBits );
   odin->setErrorBits( (temp32 & LHCb::ODIN::ErrorMask) >> LHCb::ODIN::ErrorBits );
@@ -220,8 +216,8 @@ LHCb::RawBank* ODINCodecBaseTool::i_encode(const LHCb::ODIN *odin) {
   data[LHCb::ODIN::OrbitNumber] = odin->orbitNumber();
   data[LHCb::ODIN::L0EventIDHi] = (unsigned int) ((odin->eventNumber() >> 32) & 0xFFFFFFFF );
   data[LHCb::ODIN::L0EventIDLo] = (unsigned int) ((odin->eventNumber()) & 0xFFFFFFFF );
-  data[LHCb::ODIN::GPSTimeHi]   = (unsigned int) ((odin->gpsTime() / 1000000ull) & 0xFFFFFFFF );
-  data[LHCb::ODIN::GPSTimeLo]   = (unsigned int) ((odin->gpsTime() % 1000000ull) & 0xFFFFFFFF );
+  data[LHCb::ODIN::GPSTimeHi]   = (unsigned int) ((odin->gpsTime() >> 32) & 0xFFFFFFFF );
+  data[LHCb::ODIN::GPSTimeLo]   = (unsigned int) ((odin->gpsTime()) & 0xFFFFFFFF );
 
   data[LHCb::ODIN::Word7] = (unsigned int) ( ((odin->detectorStatus() << LHCb::ODIN::DetectorStatusBits) & LHCb::ODIN::DetectorStatusMask) |
                                              ((odin->errorBits() << LHCb::ODIN::ErrorBits) & LHCb::ODIN::ErrorMask) );

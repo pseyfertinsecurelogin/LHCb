@@ -694,6 +694,12 @@ CHI2PDGM     = LoKi.Particles.DeltaNominalMassChi2 ()
 CHI2PDGMASS  = LoKi.Particles.DeltaNominalMassChi2 ()
 
 
+## @see LoKi::Cuts::CHILDIP
+CHILDIP     = LoKi.Particles.ChildIP
+## @see LoKi::Cuts::CHILDIPCHI2
+CHILDIPCHI2 = LoKi.Particles.ChildIPChi2
+
+
 ## @see LoKi::Cuts::D2DVVD 
 D2DVVD          = LoKi.Particles.DaughterVertexDistance 
 ## @see LoKi::Cuts::D2DVVDCHI2  
@@ -757,11 +763,21 @@ SOURCEDESKTOP  = LoKi.Particles.SourceDesktop
 VSOURCE        = LoKi.Vertices.SourceTES
 VSOURCEDESKTOP = LoKi.Vertices.SourceDesktop
 
+## adapters
+## @see LoKi::Cuts::PCUTA 
+PCUTA   = LoKi.Particles.PCutA
+## @see LoKi::Cuts::PCUTV
+PCUTV   = LoKi.Particles.PCutV
+## @see LoKi::Cuts::PFUNA 
+PFUNA   = LoKi.Particles.PCutA
+## @see LoKi::Cuts::PFUNV
+PFUNV   = LoKi.Particles.PCutV
 
 ## Legacy stuff
 BPVVDS_LEGACY = LoKi.Legacy.DistanceSignificanceWithBestPV () 
 TRGPOINTINGWPT = LoKi.Legacy.TrgPointingScoreWithPt
 BPVTRGPOINTINGWPT = LoKi.Legacy.TrgPointingScoreWithPtWithBestPV ()
+
 
 
 # =============================================================================

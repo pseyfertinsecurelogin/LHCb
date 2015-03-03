@@ -1,4 +1,4 @@
-// $Id: PlotTool.cpp,v 1.2 2008-05-28 11:39:20 cattanem Exp $
+// $Id: PlotTool.cpp,v 1.4 2009-11-21 17:29:04 ibelyaev Exp $
 // ============================================================================
 // Include files 
 // ============================================================================
@@ -31,8 +31,11 @@
 // ============================================================================
 #include "boost/format.hpp"
 // ============================================================================
+#include "Preambulo.h"
+// ============================================================================
 namespace LoKi 
 {
+  // ==========================================================================
   namespace Hybrid 
   {
     // ========================================================================
@@ -96,6 +99,7 @@ namespace LoKi
       : public virtual IPlotTool 
       , public    GaudiHistoTool 
     {
+      // ======================================================================
       // friend factory for instantiation 
       friend class ToolFactory<LoKi::Hybrid::PlotTool> ;
       // ======================================================================
@@ -121,8 +125,6 @@ namespace LoKi
         if ( m_histos.size() != m_map.size() ) 
         { return Error ( "Something wrong in the configurtaion!") ; }
         //
-        m_initialized = true ;
-        //
         return StatusCode::SUCCESS ;
       }
       // ======================================================================
@@ -136,22 +138,28 @@ namespace LoKi
       class Histo
       {
       public:
-        // the actual type of "trailer->histos" map
+        // ===================================================================
+        /// the actual type of "trailer->histos" map
         typedef GaudiUtils::VectorMap<std::string, AIDA::IHistogram1D*> HMap ;
+        // ===================================================================
       public:
+        // ===================================================================
         /// the default constructor 
         Histo ()
           : m_fun    ( LoKi::BasicFunctors<const LHCb::Particle*>::Constant ( -1.e+10 ) )
           , m_desc   (   )
           , m_histos (   )
         {}
+        // ====================================================================
       public:
+        // ====================================================================
         /// the function to be evaluated 
-        LoKi::Types::Fun    m_fun   ;
+        LoKi::Types::Fun    m_fun    ;
         /// the histogram descriptor
-        Gaudi::Histo1DDef   m_desc  ; /// the histogram description 
+        Gaudi::Histo1DDef   m_desc   ;             // the histogram description 
         /// the list of histogram 
-        HMap m_histos ;
+        HMap                m_histos ;
+        // ====================================================================
       } ;
       // ======================================================================
   public:
@@ -192,16 +200,25 @@ namespace LoKi
       /// the update handler for the histograms 
       void propHandler1 ( Property& /* p */ )  
       { 
-        if ( !m_initialized ) { return ; }
+        if ( Gaudi::StateMachine::INITIALIZED > FSMState() ) { return ; }
         StatusCode sc = initHistos   () ; 
         Assert ( sc.isSuccess() , "Unable to set 'Histos'" , sc ) ;
       }
       /// the update handler for the selector 
       void propHandler2 ( Property& /* p */ )  
       { 
-        if ( !m_initialized ) { return ; }
+        if ( Gaudi::StateMachine::INITIALIZED > FSMState() ) { return ; }
         StatusCode sc = initSelector () ;
         Assert ( sc.isSuccess() , "Unable to set 'Selector'" , sc ) ;
+      }
+      /// the update handler for factory & preambulo
+      void propHandler3 ( Property& /* p */ )  
+      { 
+        if ( Gaudi::StateMachine::INITIALIZED > FSMState() ) { return ; }
+        StatusCode sc1 = initHistos   () ; 
+        Assert ( sc1.isSuccess() , "Unable to set 'Histos'"   , sc1 ) ;
+        StatusCode sc2 = initSelector () ;
+        Assert ( sc2.isSuccess() , "Unable to set 'Selector'" , sc2 ) ;
       }
       // ======================================================================
     private:
@@ -223,41 +240,41 @@ namespace LoKi
         const std::string& name   ,    // tool instance name 
         const IInterface*  parent )    // the parent
         : GaudiHistoTool ( type , name , parent ) 
-        , m_map      () 
-        , m_histos   () 
-        , m_factory  ( "LoKi::Hybrid::Tool/HybridFactory:PUBLIC") 
-        , m_selector ( "ALL" )
-        , m_cut  ( LoKi::BasicFunctors<const LHCb::Particle*>::BooleanConstant ( true ) )
-        , m_initialized ( false )
+        , m_map         () 
+        , m_histos      () 
+        , m_factory     ( "LoKi::Hybrid::Tool/HybridFactory:PUBLIC") 
+        , m_selector    ( "ALL" )
+        , m_cut         ( LoKi::BasicFunctors<const LHCb::Particle*>::BooleanConstant ( true ) )
+        , m_preambulo   () 
       {
         declareInterface <IPlotTool> ( this ) ;
         //
         declareProperty 
-          ( "Factory" , m_factory , 
-            "Type/Name for C++/Python Hybrid Factory" ) ;
+          ( "Factory" , 
+            m_factory , 
+            "Type/Name for C++/Python Hybrid Factory" ) ->
+          declareUpdateHandler 
+          ( &LoKi::Hybrid::PlotTool::propHandler3 , this ) ;
         //
-        {
-          const std::string _prop = "Histos" ;
-          declareProperty 
-            ( _prop ,  m_map      , 
-              "The map of variables and the histogram desctriptors" ) ;
-          Property* p_prop = Gaudi::Utils::getProperty ( this , _prop ) ;
-          Assert ( 0 != p_prop , "Something wrong goes here (1)" ) ;
-          // 
-          p_prop-> declareUpdateHandler 
-            ( &LoKi::Hybrid::PlotTool::propHandler1 , this ) ;
-        }
-        {
-          const std::string _prop = "Selector" ;
-          declareProperty 
-            ( _prop  , m_selector    , 
-              "The selection criteria for the particles" ) ;
-          Property* p_prop = Gaudi::Utils::getProperty ( this , _prop ) ;
-          Assert ( 0 != p_prop , "Something wrong goes here (2)" ) ;
-          // 
-          p_prop-> declareUpdateHandler 
-            ( &LoKi::Hybrid::PlotTool::propHandler2 , this ) ;
-        }
+        declareProperty 
+          ( "Histos" ,  m_map      , 
+            "The map of variables and the histogram desctriptors" ) -> 
+          declareUpdateHandler 
+          ( &LoKi::Hybrid::PlotTool::propHandler1 , this ) ;
+        //
+        declareProperty 
+          ( "Selector"    , 
+            m_selector    , 
+            "The selection criteria for the particles" ) -> 
+          declareUpdateHandler 
+          ( &LoKi::Hybrid::PlotTool::propHandler2 , this ) ;
+        //
+        declareProperty 
+          ( "Preambulo"   , 
+            m_preambulo   , 
+            "The preambulo to be used for Bender/Python script" ) ->
+          declareUpdateHandler 
+          ( &LoKi::Hybrid::PlotTool::propHandler3 , this ) ;
         //
         setProperty ( "HistoPrint" , true ).ignore() ;
         //
@@ -304,22 +321,28 @@ namespace LoKi
         return this -> book ( hist ) ;        
       }
       // ======================================================================
+    protected:
+      // ======================================================================
+      std::string preambulo() const { return _preambulo ( m_preambulo ) ; }
+      // ======================================================================
     private:
+      // ======================================================================
       /// the actual type for var -> histo mapping
       typedef std::map<std::string,Gaudi::Histo1DDef> Map    ;
       typedef std::vector<Histo>                      Histos ;
       /// the storage of the variables and the histogram descriptors
       Map    m_map    ; // the storage of the variables and the histogram descriptors
       /// the actual structure to keep all information: 
-      Histos m_histos ; // the actual structure to keep all information: 
+      Histos m_histos ;         // the actual structure to keep all information
       /// the type/name for the factory
-      std::string          m_factory  ;
+      std::string          m_factory  ;        // the type/name for the factory
       /// the general selector name 
-      std::string          m_selector ;
+      std::string          m_selector ;            // the general selector name 
       /// the general selector  
-      LoKi::PhysTypes::Cut m_cut ;    
-      /// initialization flag 
-      bool m_initialized ; // initialization flag 
+      LoKi::PhysTypes::Cut m_cut ;                      // the general selector  
+      /// the preambulo 
+      std::vector<std::string> m_preambulo ;                   // the preambulo 
+      // ======================================================================
     } ;
     // ========================================================================
   } // end of namespace LoKi::Hybrid
@@ -342,7 +365,7 @@ StatusCode LoKi::Hybrid::PlotTool::initHistos ()
   {
     Histo histo ;
     histo.m_desc = item->second ;
-    sc = factory->get ( item->first , histo.m_fun ) ;
+    sc = factory->get ( item->first , histo.m_fun , preambulo() ) ;
     if ( sc.isFailure() ) 
     { return Error 
         ( "Unable to decode the function: \"" + item->first + "\"" , sc ) ; }
@@ -445,13 +468,13 @@ StatusCode LoKi::Hybrid::PlotTool::fillPlots
       if ( !m_cut ( *ip ) ) { continue ; }    // CONTINUE 
       // fill the histogram
       fill 
-        ( h                          ,   // the histogram 
-          ihisto->m_fun ( *ip )      ,   // the value 
-          1.0                        ,   // the weight 
-          ihisto->m_desc.title()     ) ; // the title 
-    } // end of the loop over the particles 
-  } // end of the loop over the histograms 
-  return StatusCode::SUCCESS ;                               // RETURN 
+        ( h                          ,       // the histogram 
+          ihisto->m_fun ( *ip )      ,       // the value 
+          1.0                        ,       // the weight 
+          ihisto->m_desc.title()     ) ;     // the title 
+    } //                                     end of the loop over the particles 
+  } //                                      end of the loop over the histograms 
+  return StatusCode::SUCCESS ;                                        // RETURN 
 }
 // ============================================================================
 /// Declare the mandatory factory needed for instantiation

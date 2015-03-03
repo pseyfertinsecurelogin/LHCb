@@ -1,9 +1,47 @@
-$Id: release.notes,v 1.44 2009-09-02 16:04:39 cattanem Exp $ 
+$Id: release.notes,v 1.50 2009-11-22 13:48:17 cattanem Exp $ 
 ! -----------------------------------------------------------------------------
 ! Package     : Phys/LoKiArrayFunctors
 ! Responsible : Vanya BELYAEV
 ! Purpose     : Some special "vector-like" functors to Exclusive "HLT"
 ! -----------------------------------------------------------------------------
+
+!========================== LoKiArrayFunctors v8r6 2009-11-22 =================
+! 2009-11-21 - Vanya Belyaev
+
+ - PlotTool.cpp
+
+    the fix for properties 
+
+! 2009-11-20 - Vanya Belyaev
+
+ - TupleTool, PlotTool, PrintTool, 
+   HybridFilterParticles 
+   HybridFilterCriterion 
+   HybridParticleArrayFilter
+
+   add the property "Preambulo" 
+
+
+! 2009-11-17 - Vanya Belyaev
+
+ - modify hybrid factory to accept (V)CutVal(s) 
+
+     needed for "embedded-monitoring"
+
+
+! 2009-11-16 - Vanya Belyaev
+
+ - move Phys/ATypes.h into LoKiPhys package 
+
+ - python/LoKiArrayfunctors/functions.py
+
+     add ADOCA functor 
+     add AFUNV, ACUTV adapters 
+
+ - cmt/requirements 
+
+      version increment to v8r6
+
 
 !========================== LoKiArrayFunctors v8r5 2009-09-02 =================
 ! 2009-09-02 - Marco Cattaneo

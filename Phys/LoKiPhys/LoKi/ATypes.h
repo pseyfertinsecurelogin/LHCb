@@ -1,4 +1,4 @@
-// $Id: ATypes.h,v 1.4 2008-04-02 21:10:47 ibelyaev Exp $
+// $Id: ATypes.h,v 1.1 2009-11-16 11:54:26 ibelyaev Exp $
 // ============================================================================
 #ifndef LOKI_ATYPES_H 
 #define LOKI_ATYPES_H 1
@@ -17,8 +17,10 @@
 // ============================================================================
 namespace LoKi 
 {
+  // ==========================================================================
   namespace ATypes
   {
+    // ========================================================================
     /** The actual argument type for Exclusive HLT processing, 
      *  as requested by Gerhard RAVEN and Patrick KOPPENBURG
      */
@@ -31,9 +33,12 @@ namespace LoKi
     typedef LoKi::BasicFunctors<Combination>::PredicateFromPredicate ACut  ;
     /// type of 'functions' for combination (assignable)
     typedef LoKi::BasicFunctors<Combination>::FunctionFromFunction   AFun  ;
-  } // end of namespace LoKi::ATypes 
+    // ========================================================================
+  }                                            // end of namespace LoKi::ATypes 
+  // ==========================================================================
   namespace Types
   {
+    // ========================================================================
     /// type of 'cuts' for the combination (interface)
     typedef LoKi::ATypes::ACuts                                     ACuts ;
     /// type of 'functions' for the combination (interface)
@@ -42,8 +47,10 @@ namespace LoKi
     typedef LoKi::ATypes::ACut                                      ACut  ;
     /// type of 'functions' for combination (assignable)
     typedef LoKi::ATypes::AFun                                      AFun  ;
-  } // end of namespace LoKi::Types 
-} // end of namespace LoKi 
+    // ========================================================================
+  } //                                             end of namespace LoKi::Types 
+  // ==========================================================================
+} //                                                      end of namespace LoKi 
 // ============================================================================
 namespace LoKi
 {

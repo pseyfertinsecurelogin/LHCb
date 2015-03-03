@@ -4,6 +4,10 @@
 ! Purpose     : Interface to the xml description
 !-----------------------------------------------------------------------------
 
+!======================== RichDet v13r1 2009-11-22 ===========================
+! 2009-11-19 - Antonis Papanestis
+ - Protection against DDDB/LHCBCOND mismatch with missing conditions
+
 !======================== RichDet v13r0 2009-11-13 ===========================
 ! 2009-11-11 - Antonis Papanestis
  - Introduce separate refractive index for the HLT.
