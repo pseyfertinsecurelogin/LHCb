@@ -1,4 +1,4 @@
-! $Id: release.notes,v 1.47 2009-10-16 11:46:19 cattanem Exp $
+! $Id: release.notes,v 1.52 2010-03-19 22:25:04 cattanem Exp $
 ! =============================================================================
 ! Package     : CaloKernel
 ! Responsible : Vanya Belyaev Ivan.Belyaev@itep.ru
@@ -6,6 +6,23 @@
 ! The package contains the general Calo Kernel classes and utilities,
 ! which are essentially independent from Detector and Event models
 ! =============================================================================
+
+!======================= CaloKernel v6r2 2010-03-19 ===========================
+! 2010-03-18 - Vanya Belyaev
+ - add method CaloVector::at that allows much faster iteration in python
+
+! 2010-03-18 - Vanya Belyaev
+ - CaloKernel/CaloVector.h 
+
+   Change *the formal* signature of default agrument to allow 
+   the normal usage in Python, otherwise the class is not avialble.
+   (Is it "Feature" of Reflex?). *The actual* signature  IS THE SAME.
+
+! 2010-03-08 - Olivier Deschamps
+ - CaloKernel/ConfUtils.py
+   - getAlgo() / onDemand() : flexible context-dependent instance naming + 
+                              TES pathes (not longer Offline/Hlt only)
+   - update hltContext()
 
 !======================= CaloKernel v6r1 2009-10-16 ===========================
 ! 2009-10-10 - Vanya Belyaev

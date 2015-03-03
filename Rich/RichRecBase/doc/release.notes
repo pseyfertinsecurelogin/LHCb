@@ -4,6 +4,18 @@
 ! Purpose     : Base package for RICH Reconstruction Packages
 !-----------------------------------------------------------------------------
 
+!===================== RichRecBase v3r28 2010-03-17 ==========================
+! 2010-03-05 - Chris Jones
+ - Various changes to C++ and python to support the configuration of
+   multiple reconstruction sequences in the same application. Needed to
+   support neccessary changes in HLT2.
+
+! 2010-03-02 - Chris Jones
+ - Supress the warning message from the pixel creator base class about
+   empty HPD data blocks to give 0 instances during running, and instead to
+   just summarise the number during finalise. Needed since there are now a few
+   rare situations in real data where this might be expected.
+
 !===================== RichRecBase v3r27 2010-02-24 ==========================
 ! 2010-02-19 - Chris Jones
  - Extend isolated track interface with new methods for LHCb::Track and

@@ -4,9 +4,6 @@
  *
  *  Header file for RICH DAQ general definitions
  *
- *  CVS Log :-
- *  $Id: RichDAQDefinitions.h,v 1.28 2009-07-30 09:32:36 jonrob Exp $
- *
  *  @author Chris Jones  Christopher.Rob.Jones@cern.ch
  *  @date   2003-11-06
  */
@@ -26,11 +23,9 @@
 // Kernel
 #include "Kernel/RichSmartID.h"
 #include "Kernel/RichSmartIDHashFuncs.h"
-//#include "Kernel/FastAllocVector.h" // Still under testing
 
 // Boost
 #include "boost/lexical_cast.hpp"
-//#include "boost/format.hpp"
 
 namespace Rich
 {
@@ -114,7 +109,6 @@ namespace Rich
       /// Overload output to ostream
       friend inline std::ostream& operator << ( std::ostream& os, const NumericType<TYPE> & id )
       { return os << id.data() ; }
-      //{ return os << boost::format("%6i") % id.data() ; }
       /// Operator ++   (prefix)
       inline NumericType<TYPE>& operator++()    { ++m_id; return *this; }
       /// Operator ++(int)  (postfix)
@@ -242,16 +236,28 @@ namespace Rich
     public:
       /// Default constructor
       EventID( ) : NumericType<ulonglong>(0), m_nActiveBits(8*sizeof(ulonglong)) { }
-      /// Constructor from information
+      /// Copy Constructor
+      EventID( const EventID& id ) 
+        : NumericType<ulonglong> ( id.data()       ), 
+          m_nActiveBits          ( id.activeBits() ) { }
+      /// Constructor from value and number of bits
       template<class NUMTYPE>
-      explicit EventID ( const NUMTYPE   id,
-                         const ShortType aBits = 8*sizeof(NUMTYPE) )
+      EventID ( const NUMTYPE   id,
+                const ShortType aBits )
         : NumericType<ulonglong> ( (ulonglong)id ),
           m_nActiveBits          ( aBits         ) { }
+      /// Constructor from value
+      template<class NUMTYPE>
+      explicit EventID ( const NUMTYPE id )
+        : NumericType<ulonglong> ( (ulonglong)id     ),
+          m_nActiveBits          ( 8*sizeof(NUMTYPE) ) { }
       /// Return the number of active bits
       inline ShortType activeBits() const { return m_nActiveBits; }
       /// Set the number of active bits
       inline void setActiveBits(const ShortType bits) { m_nActiveBits = bits; }
+    public:
+      /// Operator ulonglong
+      inline operator ulonglong() const { return data(); }
     public:
       /// Overloaded output to ostream
       friend inline std::ostream & operator << ( std::ostream & os, const EventID & id )
@@ -289,16 +295,28 @@ namespace Rich
     public:
       /// Default constructor
       BXID( ) : NumericType<LongType>(0), m_nActiveBits(8*sizeof(LongType)) { }
-      /// Constructor from information
+      /// Copy Constructor
+      BXID( const BXID& id ) 
+        : NumericType<LongType> ( id.data()       ), 
+          m_nActiveBits         ( id.activeBits() ) { }
+      /// Constructor from value
       template<class NUMTYPE>
-      explicit BXID ( const NUMTYPE   id,
-                      const ShortType aBits = 8*sizeof(NUMTYPE) )
+      explicit BXID ( const NUMTYPE id ) 
+        : NumericType<LongType> ( (LongType)id      ),
+          m_nActiveBits         ( 8*sizeof(NUMTYPE) ) { }
+      /// Constructor from value and number of bits
+      template<class NUMTYPE>
+      BXID ( const NUMTYPE   id,
+             const ShortType aBits )
         : NumericType<LongType> ( (LongType)id ),
           m_nActiveBits         ( aBits        ) { }
       /// Return the number of active bits
       inline ShortType activeBits() const { return m_nActiveBits; }
       /// Set the number of active bits
       inline void setActiveBits(const ShortType bits) { m_nActiveBits = bits; }
+    public:
+      /// Operator LongType
+      inline operator LongType() const { return data(); }
     public:
       /// Operator == that takes into account the correct number of bits
       inline bool operator== ( const BXID& id ) const

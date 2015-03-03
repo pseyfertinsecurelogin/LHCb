@@ -4,6 +4,14 @@
 ! Purpose: LHCb specific Kernel classes
 !--------------------------------------------------------------------------
 
+!===================== LHCbKernel v11r12 2010-03-17 =======================
+! 2010-03-17 - Victor Coco
+ - Add PixelPositionInfo class to deal with 2D position
+
+! 2010-03-09 - Chris Jones
+ - Extend number of RICH ParticleID types to 6, including a new "Below
+   Threshold" type.
+
 !===================== LHCbKernel v11r11p1 2010-02-24 =====================
 ! 2010-02-16 - Chris Jones
  - Update Rich::Side text conversion

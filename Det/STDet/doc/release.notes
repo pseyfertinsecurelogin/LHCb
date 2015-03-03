@@ -1,7 +1,11 @@
-!$Id: release.notes,v 1.191 2010-02-12 16:53:58 cattanem Exp $
+!$Id: release.notes,v 1.193 2010-03-17 16:30:55 cattanem Exp $
 !Package         : STDet
 !Package manager : M. Needham
 !-------------------------------------------------------------------------
+
+!======================== STDet v4r18 2010-03-17 =========================
+! 2010-02-26 M Needham
+ - Bug fix in noise update methods [local cache not updated] 
 
 !======================== STDet v4r17 2010-02-12 =========================
 ! 2010-02-01 M Needham

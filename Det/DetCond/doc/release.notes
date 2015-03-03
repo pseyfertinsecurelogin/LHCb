@@ -4,6 +4,21 @@
 ! Purpose     : Interface between LHCb and LGC/COOL project
 !-----------------------------------------------------------------------------
 
+!===================== Det/DetCond v12r11 2010-03-17 =========================
+! 2010-03-17 - Marco Clemencic
+ - Changes to the CondDB configurable
+   - in the online environment (Online == True) the IgnoreHeartBeat property is
+     defaulted to True
+   - added the property HeartBeatCondition to set the location of the heart-beat
+     condition
+
+! 2010-03-05 - Marco Clemencic
+ - Fixed a problem in the CondDB configurable for the usage of Oracle in the
+   PIT.
+
+! 2010-02-25 - Marco Clemencic
+ - Removed the dependency on rx (obsolete).
+
 !===================== Det/DetCond v12r10 2010-02-12 =========================
 ! 2010-02-12 - Illya Shapoval
  - Minor change to the CondDB.useLatestTags(DataType) function. Added the

@@ -1,4 +1,4 @@
-! $Id: release.notes,v 1.176 2010-02-24 15:42:24 cattanem Exp $ 
+! $Id: release.notes,v 1.180 2010-03-17 17:31:52 cattanem Exp $ 
 ! -----------------------------------------------------------------------------
 ! Package     : Phys/LoKiCore
 ! Responsible : Vanya BELYAEV ibelyaev@physics.syr.edu
@@ -14,6 +14,64 @@
 !   A.Golutvin, P.Koppenburg have been used in the design.
 ! 
 ! -----------------------------------------------------------------------------
+
+! =========================== LoKiCore v9r12 2010-03-17 =======================
+! 2010-03-15 - Vanya Belyaev
+
+ - resurrect the access to doxygen documentation:
+
+     from  LoKiCore.doxygenurl import getURL, browse
+
+     >>> symbol = ...
+
+     >>> getURL ( symbol ) 
+
+
+ - provide new functions for automatic building of documentations
+
+    from LoKiCore.decorators import getSymbols, buildDoc 
+
+     >>> i,t = getSymbols ( modules ) 
+     >>> docs = buildDoc ( i , t ) 
+
+  
+
+! 2010-03-08 - Vanya Belyaev
+
+ - python/LoKiCore/decorators.py 
+
+    fix a bug 
+
+! 2010-03-07 - Vanya Belyaev
+
+ - add the helper function 
+
+       in_list         ( the typical usage:  " in_list ( PID , [11, 13] ) ")
+
+  Decorate properly equality and non-equality, now one can do :
+         
+      ODIN_RUN == [1,2,3,4]
+
+      ODIN_RUN != [1,2,3,4]
+
+      in_range ( 20 , ODIN_RUN , 3425 ) 
+     ~in_range ( 20 , ODIN_RUN , 3425 ) 
+
+      in_list  ( ODIN_RUN , [1,2,3,4] ) 
+     ~in_list  ( ODIN_RUN , [1,2,3,4] ) 
+
+      in_list  ( ODIN_RUN ,  1,2,3,4  ) 
+     ~in_list  ( ODIN_RUN ,  1,2,3,4  ) 
+        
+ - re-code the lines for creation of STL-containers form python lists
+   the generic function is: 
+
+       vct_from_list 
+
+ - cmt/requirements 
+
+       version increment to v9r12 
+
 
 ! =========================== LoKiCore v9r11 2010-02-24 =======================
 ! 2010-02-13 - Vanya Belyaev

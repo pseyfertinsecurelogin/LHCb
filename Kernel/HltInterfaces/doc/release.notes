@@ -1,7 +1,20 @@
-! $Id: release.notes,v 1.10 2009-11-13 15:27:19 cattanem Exp $
+! $Id: release.notes,v 1.17 2010-03-17 17:05:00 cattanem Exp $
 ! Package     : HltInterfaces
 ! Responsible : Gerhard Raven
 !------------------------------------------------------------------------------
+
+!============ Kernel/HltInterfaces v3r2 2010-03-17 ============================
+! 2010-03-08 - Patrick Koppenburg
+ - Remove cout statement that sneked into cvs
+
+! 2010-03-05 - Patrick Koppenburg
+ - ReadRoutingBits : Throw an exception when there is not exactly 1 bank (#63745)
+ - Improved code thanks to Gerhard
+
+!============ Kernel/HltInterfaces v3r1 2010-01-29 ============================
+! 2009-12-04 - Gerhard Raven
+ - move IHltReferenceClockSvc out of HltBase and into HltInterfaces
+ - and remove it again: it has been renamed IReferenceRate, and moved to LHCbKernel
 
 !============ Kernel/HltInterfaces v3r0 2009-11-13 ============================
 ! 2009-11-10 - Patrick Koppenburg

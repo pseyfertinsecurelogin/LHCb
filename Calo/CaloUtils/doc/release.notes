@@ -1,7 +1,24 @@
-! $Id: release.notes,v 1.149 2010-01-20 09:04:15 cattanem Exp $
+! $Id: release.notes,v 1.154 2010-03-19 22:27:38 cattanem Exp $
 ! Package     : CaloUtils
 ! Responsible : Olivier Deschamps odescham@in2p3.fr
 !------------------------------------------------------------------------------
+
+!========================== CaloUtils v8r12 2010-03-19 ========================
+! 2010-03-18 - Vanya Belyaev
+ - CaloUtils.xml
+     add dictionaries for CaloVectors...
+
+ - CaloUtils/CellID.py
+     add the python iteration for related CaloVector-classes 
+
+! 2010-03-13 - Olivier Deschamps
+  - CaloAlgUtils : track location is either 'offline' or 'hlt' depending on
+      context by default CaloReco Configurable to apply specific location
+
+! 2010-02-25 - Olivier Deschamps
+  - CaloAlgUtils/Calo2Track : improvements in generic context-dependent TES
+                              locations  
+  - CaloTrackAlg : accept unknown fitted status if hltContext(context())
 
 !========================== CaloUtils v8r11 2010-01-20 ========================
 ! 2010-01-14 - Victor Egorychev

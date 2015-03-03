@@ -5,6 +5,20 @@
 ! package manager : Marco Clemencic
 ! =============================================================================
 
+!===================== Tools/CondDBUI v3r3 2010-03-24 =========================
+! 2010-03-24 - Illya Shapoval
+ - Removed pyqt_compat dependency which was the reason for CondDBBrowser 
+   segfaults when working with the Oracle Online partition.  
+
+! 2010-03-16 - Marco Clemencic
+ - Modified the Python module CondDBUI to require PyCool at run-time only for
+   the functions that really need it.
+   It allows to use the other utilities (like the tag filters) without PyCool.
+
+! 2010-03-02 - Illya Shapoval
+ - Fixed the bug in database diffing and merging procedures to correctly process 
+   cases with multiple payloads. 
+
 !===================== Tools/CondDBUI v3r2 2010-02-14 =========================
 ! 2010-02-03 - Marco Clemencic
  - Correctly fixed the bug in CondDBBrowser: cannot add conditions to empty

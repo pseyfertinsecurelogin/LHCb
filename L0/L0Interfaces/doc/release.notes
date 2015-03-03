@@ -3,6 +3,19 @@
 ! Responsible : Olivier Deschamps odescham@in2p3.fr
 ! =============================================================================
 
+!====================== L0Interfaces v1r7 2010-03-17 ==========================
+! 2010-03-17 - Marco Cattaneo
+ - Add new interface to dictionary
+
+! 2010-03-09 - Julien Cogan
+ - Add a new tool interface to get L0Muon overflow of candidates
+
+! 2010-03-08 - Julien Cogan
+ - Add 2 new interfaces
+   - IL0MuonInputTool : tool to get l0muon logical channels or pads
+   - IL0MuonOLErrorTool : tool to get the list of optical links in error in 
+     input of the l0muon trigger  
+
 !====================== L0Interfaces v1r6 2010-01-20 ==========================
 ! 2010-01-20 Olivier Deschamps
  - IL0DUFromRawTool : new virtual method dump()

@@ -44,7 +44,6 @@ namespace Rich
         m_clusterHits   ( Rich::NRiches, false ),
         m_noClusterFinding ( false ),
         m_usedDets      ( Rich::NRiches, true  ),
-        m_richRecPixelLocation ( LHCb::RichRecPixelLocation::Default ),
         m_begins        ( boost::extents[Rich::NRiches][Rich::NHPDPanelsPerRICH] ),
         m_ends          ( boost::extents[Rich::NRiches][Rich::NHPDPanelsPerRICH] ),
         m_Nevts         ( 0 ),
@@ -55,16 +54,10 @@ namespace Rich
       // Define the interface
       declareInterface<IPixelCreator>(this);
 
-      if      ( context() == "Offline" )
-      {
-        m_richRecPixelLocation = LHCb::RichRecPixelLocation::Offline;
-      }
-      else if ( context() == "HLT" )
-      {
-        m_richRecPixelLocation = LHCb::RichRecPixelLocation::HLT;
-      }
-
       // Define job option parameters
+      declareProperty( "RichRecPixelLocation", 
+                       m_richRecPixelLocation = contextSpecificTES(LHCb::RichRecPixelLocation::Default),
+                       "The TES location for the transient RichRecPixel objects" );
       declareProperty( "DoBookKeeping",       m_bookKeep  );
       declareProperty( "UseDetectors",        m_usedDets  );
       declareProperty( "CheckHPDsAreActive",  m_hpdCheck  );
@@ -386,7 +379,7 @@ namespace Rich
               {
                 std::ostringstream mess;
                 mess << "Empty HPD data block : L0ID = " << (*iHPD).second.header().l0ID();
-                Warning( mess.str(), StatusCode::SUCCESS, 3 ).ignore();
+                Warning( mess.str(), StatusCode::SUCCESS, 0 ).ignore();
               }
 
             } // loop over HPDs
