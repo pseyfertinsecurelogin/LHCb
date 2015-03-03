@@ -1,6 +1,6 @@
-// $Id: Symbols.cpp,v 1.5 2009-06-02 16:45:36 ibelyaev Exp $
+// $Id: Symbols.cpp 95074 2010-10-22 15:06:40Z ibelyaev $
 // ============================================================================
-// CVS tag $Name: not supported by cvs2svn $, version $Revision: 1.5 $ 
+// CVS tag $Name: not supported by cvs2svn $, version $Revision: 95074 $ 
 // ============================================================================
 // Include files 
 // ============================================================================

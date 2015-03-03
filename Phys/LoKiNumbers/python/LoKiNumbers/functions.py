@@ -1,26 +1,57 @@
 #!/usr/bin/env python
 # =============================================================================
-# $Id: functions.py,v 1.8 2010-02-13 16:30:32 ibelyaev Exp $ 
+# $Id: functions.py 87550 2010-10-10 15:40:48Z ibelyaev $ 
 # =============================================================================
 ## @file LoKiNumbers/functions.py
 #  The full set of useful objects from LoKiNumbers library 
-#  The file is a part of LoKi and Bender projects
+#
+#        This file is a part of LoKi project - 
+#    "C++ ToolKit  for Smart and Friendly Physics Analysis"
+#
+#  The package has been designed with the kind help from
+#  Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas, 
+#  contributions and advices from G.Raven, J.van Tilburg, 
+#  A.Golutvin, P.Koppenburg have been used in the design.
+#
+#  By usage of this code one clearly states the disagreement 
+#  with the campain of Dr.O.Callot et al.: 
+#  ``No Vanya's lines are allowed in LHCb/Gaudi software.''
+#
 #  @author Vanya BELYAEV ibelyaev@physics.syr.edu
+#
+# $Revision: 87550 $
+# Last modification $Date: 2010-10-10 17:40:48 +0200 (Sun, 10 Oct 2010) $
+#                by $Author: ibelyaev $ 
 # =============================================================================
 """
 Few useful objects from LoKiNumbers library
+
+    This file is a part of LoKi project - 
+``C++ ToolKit  for Smart and Friendly Physics Analysis''
+
+The package has been designed with the kind help from
+Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas, 
+contributions and advices from G.Raven, J.van Tilburg, 
+A.Golutvin, P.Koppenburg have been used in the design.
+
+By usage of this code one clearly states the disagreement 
+with the campain of Dr.O.Callot et al.:
+ ``No Vanya's lines are allowed in LHCb/Gaudi software.''
+
+
+ $Revision: 87550 $
+ Last modification $Date: 2010-10-10 17:40:48 +0200 (Sun, 10 Oct 2010) $
+                by $Author: ibelyaev $ 
+
 """
+# =============================================================================
 __author__  = "Vanya BELYAEV ibelyaev@physics.syr.edu"
-__version__ = "CVS Tag $Name: not supported by cvs2svn $, version $Revision: 1.8 $ " 
+__date__    = ' xxxx-xx-xx '
+__version__ = " version $Revision: 87550 $ " 
 # =============================================================================
 
-import LoKiCore.decorators as _LoKiCore 
-
 # Namespaces:
-cpp      = _LoKiCore.cpp
-std      = _LoKiCore.std
-LoKi     = _LoKiCore.LoKi
-
+from LoKiCore.basic import cpp, std, LoKi, Gaudi 
 
 _d = 'double'
 ## _v = std.vector( _d ) 
@@ -39,11 +70,15 @@ XFunVals  = LoKi.Functor            ( _v , _d   )
 XFunVal   = LoKi.FunctorFromFunctor ( _v , _d   )
 XElements = XFunVals 
 XElement  = XFunVal 
+XSources  = LoKi.Functor            ( 'void' , _v )
+XSource   = LoKi.FunctorFromFunctor ( 'void' , _v )
+
 
 XVCuts    = LoKi.Functor            ( _v , bool )
 XVCut     = LoKi.FunctorFromFunctor ( _v , bool )
 XCutVals  = XVCuts
 XCutVal   = XVCut
+
 
 XTRUE     = LoKi.Constant ( _d , bool ) (True)
 XALL      = LoKi.Constant ( _d , bool ) (True)
@@ -113,6 +148,12 @@ XEMPTY    = LoKi.Functors.Empty ( 'double' ) ()
 ## @see LoKi::Cuts::XSIZE 
 XSIZE     = LoKi.Functors.Size  ( 'double' ) ()
 
+## blinders
+
+## @see LoKi::Cuts::BLIND 
+BLIND     = LoKi.Random.Blind 
+## @see LoKi::Cuts::XBLIND 
+XBLIND    = LoKi.Random.XBlind 
 
 
 # =============================================================================
@@ -146,6 +187,12 @@ if not hasattr ( XVector , "__iter__" ) :
     XVector. __str__  = _vct_prnt_
     XVector. __repr__ = _vct_prnt_
     
+
+# if not hasattr ( Gaudi.Math , 'blind' ) :
+#        import LHCbMath.Types
+        
+## @see Gaudi::Math::blind
+# blind     = Gaudi.Math.blind
 
 # =============================================================================
 if '__main__' == __name__ :

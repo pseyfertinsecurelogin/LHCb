@@ -1,4 +1,4 @@
-// $Id: TreeGrammar.h 53291 2010-08-05 14:35:53Z ibelyaev $
+// $Id: TreeGrammar.h 95098 2010-10-24 17:48:42Z ibelyaev $
 // ============================================================================
 #ifndef DECAYS_TREEGRAMMAR_H 
 #define DECAYS_TREEGRAMMAR_H 1
@@ -69,12 +69,13 @@ namespace Decays
         {
           
           head = 
-            ( str_p("[") >> node [ head.tree = construct_<Tree_> ( arg1 ) ] >> "]nos" )
+            ( str_p("[") >> node [ head.tree = construct_<Tree_> ( arg1        ) ] >> "]nos" )
             [ head.tree += Decays::Trees::NotOscillated ] |  
-            ( str_p("[") >> node [ head.tree = construct_<Tree_> ( arg1 ) ] >> "]os"  )
+            ( str_p("[") >> node [ head.tree = construct_<Tree_> ( arg1        ) ] >> "]os"  )
             [ head.tree += Decays::Trees::Oscillated    ] |  
-            (               node [ head.tree = construct_<Tree_> ( arg1 ) ]           ) ;
-
+            ( str_p("<") >> node [ head.tree = construct_<Tree_> ( arg1 , true ) ] >> ">"    ) 
+            | (             node [ head.tree = construct_<Tree_> ( arg1        ) ] ) ;
+          
           expression = 
             // node      [ expression.tree = construct_<Tree_> ( arg1 )  ] |
             tree      [ expression.tree = arg1 ] | 

@@ -1,4 +1,4 @@
-// $Id: TreeHelpers.h 53291 2010-08-05 14:35:53Z ibelyaev $
+// $Id: TreeHelpers.h 95098 2010-10-24 17:48:42Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_TREEHELPERS_H 
 #define LOKI_TREEHELPERS_H 1
@@ -13,7 +13,7 @@
 // ============================================================================
 #include "LoKi/DecayDescriptor.h"
 // ============================================================================
-namespace Decays 
+namespace Decays
 {
   // ==========================================================================
   namespace Parsers 
@@ -37,7 +37,8 @@ namespace Decays
       /// default constructor 
       Tree () ;
       /// constructor from the decay head  
-      Tree ( const Decays::iNode&               head       ) ;
+      Tree ( const Decays::iNode& head           , 
+             const bool           stable = false ) ;
       // ======================================================================
     public: // operators 
       // ======================================================================
@@ -77,6 +78,7 @@ namespace Decays
       bool                       inclusive  () const { return m_inclusive    ; }
       bool                       negated    () const { return m_negated      ; }
       bool                       marked     () const { return m_marked       ; }
+      bool                       stable     () const { return m_stable       ; }
       const Trees&  ored     () const { return m_or       ; }
       const Trees&  anded    () const { return m_and      ; }
       const Trees&  children () const { return m_children ; }      
@@ -108,6 +110,8 @@ namespace Decays
       bool                       m_negated    ;                 //    negation?
       /// mark 
       bool                       m_marked     ;                 //      marked?
+      /// stable ? 
+      bool                       m_stable     ;                 //      stable?
       // ======================================================================
     private:
       // ======================================================================

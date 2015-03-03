@@ -1,4 +1,4 @@
-// $Id: PartPropDict.h,v 1.6 2010-01-06 09:24:23 ibelyaev Exp $
+// $Id: PartPropDict.h 95074 2010-10-22 15:06:40Z ibelyaev $
 // ============================================================================
 #ifndef PARTPROP_PARTPROPDICT_H 
 #define PARTPROP_PARTPROPDICT_H 1

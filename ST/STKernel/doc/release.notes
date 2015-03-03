@@ -3,6 +3,15 @@
 ! Responsible : M. Needham
 !----------------------------------------------------------------------------
 
+!========================= STKernel v2r5 2010-10-25 =========================
+
+! 2010-10-14 Mark Tobin
+ - Add method in ISTNoiseCalculationTool to return the number of events used per
+ strip in the calculation of the noise.
+ 
+! 2010-10-06 - Marco Clemencic
+ - Fix for ICC.
+
 !====================== STKernel v2r4 2010-09-27 ============================
 ! 2010-09-09 M Needham
  - Fix warnings from the INTEL compiler

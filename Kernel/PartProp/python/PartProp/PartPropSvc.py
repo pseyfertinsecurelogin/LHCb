@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # =============================================================================
-# $Id: PartPropSvc.py,v 1.3 2008-12-03 17:35:54 ibelyaev Exp $ 
+# $Id: PartPropSvc.py 95074 2010-10-22 15:06:40Z ibelyaev $ 
 # =============================================================================
 ## @file PartProp/PartPropSvc.py
 #  Demo-file for interactive work with new Particle Property Service
@@ -12,7 +12,7 @@ Demo-file for interactive work with new Particle Property Service
 """
 # =============================================================================
 __author__  = "Vanya BELYAEV Ivan.Belyaev@nikhef.nl"
-__version__ = "CVS tag $Name: not supported by cvs2svn $, version $Revision: 1.3 $" 
+__version__ = "CVS tag $Name: not supported by cvs2svn $, version $Revision: 95074 $" 
 # =============================================================================
 import PartProp.PartPropAlg
 import PartProp.decorators 

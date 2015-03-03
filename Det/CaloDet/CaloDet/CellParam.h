@@ -30,8 +30,7 @@ typedef LHCb::CaloCellID::Vector CaloNeighbors ;
  *
  */
 // ============================================================================
-namespace CaloCellQuality
-{
+namespace CaloCellQuality{
   // ==========================================================================
   enum Flag 
     {
@@ -41,8 +40,22 @@ namespace CaloCellQuality
     Shifted       = 4 ,
     DeadLED       = 8,
     VeryNoisy     = 16,
-    VeryShifted   = 32
+    VeryShifted   = 32,
+    LEDSaturated  = 64,
+    BadLEDTiming  = 128,
+    VeryBadLEDTiming = 256,
+    BadLEDRatio      = 512,
+    BadLEDOpticBundle=1024,
+    UnstableLED      =2048,
+    StuckADC         =4096,
+    OfflineMask      =8192
   } ;
+  static const int Number = 15;
+  static const std::string Name[Number] = {"OK","Dead","Noisy","Shifted","DeadLED","VeryNoisy","VeryShifted","LEDSaturated","BadLEDTiming","VeryBadLEDTiming","BadLEDRatio","BadLEDOpticBundle","UnstableLED","StuckADC","OfflineMask"};
+  static const std::string qName(int i){
+    if( i < Number && i >=0)return Name[i];
+    return std::string("??");
+  }
   // ==========================================================================
 }
 // ============================================================================
@@ -78,9 +91,9 @@ public:
   double                ledDataRMS    () const { return m_ledDataRMS    ; } // RMS(LED) from Quality condition  (current T)
   double                ledMoni       () const { return m_ledMoni       ; } // <LED/PIN> data from Quality condition (current T)
   double                ledMoniRMS    () const { return m_ledMoniRMS    ; } // RMS(LED/PIN) from Quality condition (current T)
-  double                ledDataShift  () const { return ( ledDataRef() > 0 ) ? ledData()/ledDataRef() : 1; }
-  double                gainShift     () const { return ( ledMoniRef() > 0 ) ? ledMoni()/ledMoniRef() : 1; }
-  double                gain          () const { return nominalGain() * calibration() * gainShift() ;}  
+  double                ledDataShift  () const { return ( ledDataRef() > 0 && ledData() > 0 ) ? ledData()/ledDataRef() : 1; }
+  double                gainShift     () const { return ( ledMoniRef() > 0 && ledMoni() > 0 ) ? ledMoni()/ledMoniRef() : 1; }
+  double                gain          () const { return nominalGain() * calibration() / gainShift() ;}  
   int                   numericGain   () const { return m_nGain         ; }  // for Prs only
     
 
@@ -136,6 +149,19 @@ public:
   void setL0Constant   (int    cte)            { m_l0constant  = cte;             }
   void setNumericGain  (int    ng)             {  m_nGain = ng        ; }  // for Prs only
 
+  std::string cellStatus(){
+    if( (CaloCellQuality::Flag) m_quality == CaloCellQuality::OK )return CaloCellQuality::qName(CaloCellQuality::OK);
+    std::ostringstream s("");
+    s << "| ";
+    int q = m_quality;
+    int d=1;
+    while( q > 0 ){
+      if( (q & 0x1) == 1 ) s << CaloCellQuality::qName( d ) << " | "; 
+      d +=1;
+      q /= 2;
+    }
+    return s.str();
+  }
   
   bool operator==( const CellParam& c2 ) const { 
     return center() == c2.center() && size() == c2.size(); }

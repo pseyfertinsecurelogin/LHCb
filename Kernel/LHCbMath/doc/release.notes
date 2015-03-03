@@ -6,6 +6,32 @@
 !               All headers included in directory LHCbMath
 !-----------------------------------------------------------------------------
 
+!========================= LHCbMath v3r21 2010-10-25 =========================
+
+! 2010-10-12 - Vanya Belyaev
+ - LHCbMath/Lomont.h
+    make use of Lomont from GaudiKernel
+ - src/Lomont.cpp 
+    remove the file...
+
+! 2010-10-12 - Vanya Belyaev
+
+ - tests/blind.cpp
+
+    fix for win32 platform 
+
+! 2010-10-10 - Vanya Belyaev
+
+   LHCbMath/Blind.h
+
+     add some string->double hashing (useful for blinding) 
+
+! 2010-10-06 - Marco Clemencic
+ - Fixed an ICC remark that was mistaken for en error by the nightly build.
+
+! 2010-10-05 - Marco Clemencic
+ - Fixed a configuration problem with the Intel compiler.
+
 !========================= LHCbMath v3r20 2010-09-27 =========================
 ! 2010-09-27 - Vanya Belyaev
  - python/LHCbMath/Types.py

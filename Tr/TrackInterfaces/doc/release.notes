@@ -4,6 +4,19 @@
 ! Purpose     : package for tracking tools interfaces
 !-----------------------------------------------------------------------------
 
+!========================= TrackInterfaces v4r17 2010-10-25 =========================
+
+! 2010-10-24 - Mariusz Witek
+- change of argument type to const in removeTracksAndRecalculatePV of IPVOfflineTool interface
+
+! 2010-10-18 - Mariusz Witek
+ - New method removeTracksAndRecalculatePV to remove tracks and 
+   recalculate PV parameters without refitting
+
+! 2010-09-29 - Marco Cattaneo
+ - Add dictionary for IVeloExpectation::Info. Required trivial modification to
+   IVeloExpectation.h
+
 !====================== TrackInterfaces v4r16 2010-09-27 =====================
 ! 2010-09-20 - Mariusz Witek
  - modification of IPVOfflineTool.h conected to new PatPV to store track weights 

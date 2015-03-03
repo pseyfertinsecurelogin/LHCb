@@ -14,6 +14,9 @@
 #include "GaudiKernel/GaudiException.h"
 #include "GaudiKernel/IUpdateManagerSvc.h"
 
+// RichKernel
+#include "RichKernel/RichHPDIdentifier.h"
+
 // DetDesc
 #include "DetDesc/Condition.h"
 
@@ -283,7 +286,7 @@ StatusCode DeRichSystem::fillMaps( const Rich::DetectorType rich )
     {
       m_inactiveHardIDs.push_back  ( hardID );
       m_inactiveSmartIDs.push_back ( hpdID  );
-      debug() << "HPD " << hpdID << " hardID " << hardID << " is INACTIVE" << endmsg;
+      info() << "HPD " << hpdID << " hardID " << hardID << " is INACTIVE" << endmsg;
     }
   }
   std::sort( m_inactiveHardIDs.begin(),  m_inactiveHardIDs.end()  );

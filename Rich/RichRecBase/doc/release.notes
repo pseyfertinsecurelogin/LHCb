@@ -4,6 +4,31 @@
 ! Purpose     : Base package for RICH Reconstruction Packages
 !-----------------------------------------------------------------------------
 
+!========================= RichRecBase v4r1 2010-10-25 =========================
+
+! 2010-10-15 - Chris Jones
+ - Add a new method to the Cherenkov angle tool interface to calculate the
+   saturated CK theta angle for a give track segment (assuming it has infinite
+   momentum). Takes into account the actual radiator media the track segment
+   traversed.
+
+! 2010-10-13 - Chris Jones
+ - Update Photon Creator base class to allow rejection of aerogel photon
+   candidates due to the presence of a good gas photon candidate for the same
+   HPD pixel. Disabled by default for the moment.
+
+! 2010-10-11 - Chris Jones
+ - Update Track creator base class to use new ray tracing methods that pass
+   the full RichTrackSegment (allows for more precise refraction correction
+   at gas/aerogel boundary).
+
+! 2010-09-22 - Victor Coco
+ - Canceled previous modification since VeloPix track type is being suppress 
+   from the Track class.
+
+! 2010-09-21 - Victor Coco
+ - Add VeloPix track to the track algorithm types in RichTrackID.h
+
 !===================== RichRecBase v4r0 2010-07-26 ==========================
 ! 2010-07-26 - Chris Jones
  - Add anew data member to RichRecPixel to store the occupancy of the HPD

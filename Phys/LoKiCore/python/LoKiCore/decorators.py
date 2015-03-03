@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # =============================================================================
-# $Id: decorators.py 86706 2010-09-27 12:48:42Z ibelyaev $ 
+# $Id: decorators.py 95117 2010-10-25 09:58:16Z ibelyaev $ 
 # =============================================================================
-# $URL: http://svn.cern.ch/guest/lhcb/LHCb/tags/Phys/LoKiCore/v10r4/python/LoKiCore/decorators.py $ 
+# $URL: http://svn.cern.ch/guest/lhcb/LHCb/tags/Phys/LoKiCore/v10r5/python/LoKiCore/decorators.py $ 
 # =============================================================================
 ## @file decorators.py LoKiCore/decorators.py
 #
@@ -22,8 +22,8 @@
 #
 #  @author Vanya BELYAEV ibelyaev@physics.syr.edu
 #
-#  $Revision: 86706 $
-#  Last modification $Date: 2010-09-27 14:48:42 +0200 (Mon, 27 Sep 2010) $
+#  $Revision: 95117 $
+#  Last modification $Date: 2010-10-25 11:58:16 +0200 (Mon, 25 Oct 2010) $
 #                 by $Author: ibelyaev $
 # =============================================================================
 """
@@ -46,7 +46,7 @@ with the campain of Dr.O.Callot et al.:
 # =============================================================================
 __author__  = "Vanya BELYAEV ibelyaev@physics.syr.edu" 
 __date__    = "????-??-??"
-__version__ = "SVN $Revision: 86706 $ "
+__version__ = "SVN $Revision: 95117 $ "
 # =============================================================================
 
 from LoKiCore.basic import cpp, std, LoKi, LHCb, Gaudi  
@@ -1653,6 +1653,40 @@ def getAndDecoratePredicates ( name , base , calls , opers ) :
     """
     funcs = getInherited ( name , base )
     return decoratePredicates ( funcs , calls , opers )  ## RETURN 
+# =============================================================================
+## get all primitive void functors and decorate them
+#  void -> double
+#  void -> bool
+def getAndDecoratePrimitiveVoids ( name ) :
+    """
+    Get all primitive void functors and decorate them
+    
+    void -> double
+    void -> bool
+    
+    """
+    ## void-stuff
+    _d = 'double'
+    _b = 'bool'
+    _v = 'void'
+    # void -> double 
+    _decorated   = getAndDecorateFunctions  (
+        name                                , ## module name 
+        LoKi.Functor        ( _v , _d )     , ## the base 
+        LoKi.Dicts.FunCalls ( _v      )     , ## call-traits 
+        LoKi.Dicts.FuncOps  ( _v , _v )       ## operators
+        )
+    
+    # void -> bool 
+    _decorated  |= getAndDecoratePredicates (
+        name                                , ## module name 
+        LoKi.Functor        ( _v , _b )     , ## the base 
+        LoKi.Dicts.CutCalls ( _v      )     , ## call-traits 
+        LoKi.Dicts.CutsOps  ( _v , _v )       ## operators
+        )
+    
+    return _decorated
+
 # =============================================================================
 # the special case of decoration of ID/ABSID functions:
 def decoratePID ( fun , opers ) :

@@ -1,6 +1,6 @@
 # =============================================================================
 package           MuonInterfaces
-version           v1r2
+version           v1r2p1
 
 # =============== structure ===================================================
 branches          cmt doc MuonInterfaces src
@@ -10,6 +10,7 @@ use GaudiKernel     v*
 use LHCbKernel      v*    Kernel
 use MuonKernel      v*    Muon
 use RecEvent        v*    Event
+use DAQEvent        v*    Event
 use MuonDet         v*    Det
 
 library MuonInterfacesLib  ../src/Lib/*.cpp

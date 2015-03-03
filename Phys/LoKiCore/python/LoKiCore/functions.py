@@ -2,7 +2,7 @@
 # =============================================================================
 # $Id: functions.py 86706 2010-09-27 12:48:42Z ibelyaev $
 # =============================================================================
-# $URL: http://svn.cern.ch/guest/lhcb/LHCb/tags/Phys/LoKiCore/v10r4/python/LoKiCore/functions.py $ 
+# $URL: http://svn.cern.ch/guest/lhcb/LHCb/tags/Phys/LoKiCore/v10r5/python/LoKiCore/functions.py $ 
 # =============================================================================
 ## @file functions.py LoKiCore/function.py
 #  The set of basic functions for from LoKiCore library

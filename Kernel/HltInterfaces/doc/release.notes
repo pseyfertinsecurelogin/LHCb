@@ -3,6 +3,21 @@
 ! Responsible : Gerhard Raven
 !------------------------------------------------------------------------------
 
+!========================= HltInterfaces v4r1p1 2010-10-25 =========================
+
+! 2010-10-20 - Marco Cattaneo
+ - Put ANNSvc back. Needed in more than one package (e.g. TrackUtils) so 
+   cannot sit inside HltDAQ
+
+! 2010-10-19 - Gerhard Raven
+ - remove ANNSvc from HltInterfaces altogether -- it also lives in HltDAQ, and 
+   that seems to better fit the pattern as it is not an interface, but a mix-in
+   class to help implement the IANNSvc interface.
+
+! 2010-10-16 - Gerhard Raven
+ - ANNSvc.cpp: boost 1.44 deduces wrong return type, explicitly specify to
+   avoid compilation failure...
+
 !============ Kernel/HltInterfaces v4r1 2010-06-18 ============================
 ! 2010-06-02 - Gerhard Raven
  - check that Property::fromString can parse what Property::toString

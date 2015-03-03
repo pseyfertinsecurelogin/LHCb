@@ -1,4 +1,4 @@
-// $Id: ParserFactory.h 53291 2010-08-05 14:35:53Z ibelyaev $
+// $Id: ParserFactory.h 95098 2010-10-24 17:48:42Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_PARSERFACTORY_H 
 #define LOKI_PARSERFACTORY_H 1
@@ -100,6 +100,7 @@ namespace Decays
       typedef typename Types::Or                 Or       ;
       typedef typename Types::And                And      ;
       typedef Decays::Trees::Marked_<PARTICLE>   Marked   ;
+      typedef Decays::Trees::Stable_<PARTICLE>   Stable   ;
       
       // invalidate the tree 
       tree = Invalid() ;
@@ -127,6 +128,33 @@ namespace Decays
           return sc ;                                                 // RETURN 
         }                           
         tree = And ( trees ) ; 
+      }
+      else if ( parsed.stable () && !parsed.children ().empty()  ) 
+      {
+        StatusCode sc = StatusCode ( Decays::Trees::ChildrenForStable , true ) ;
+        stream << "ERROR: Children are specified for stable : '"
+               << parsed << "' " << sc << std::endl ;
+        return sc ;                                                 // RETURN
+      }
+      else if ( parsed.stable () && !parsed.optional ().empty()  ) 
+      {
+        StatusCode sc = StatusCode ( Decays::Trees::OptionalForStable , true ) ;
+        stream << "ERROR: Optional are specified for stable : '"
+               << parsed << "' " << sc << std::endl ;
+        return sc ;                                                 // RETURN
+      }
+      else if ( parsed.stable () && parsed.inclusive() ) 
+      {
+        StatusCode sc = StatusCode ( Decays::Trees::InclusiveForStable , true ) ;
+        stream << "ERROR: Inclusive  is specified for stable : '"
+               << parsed << "' " << sc << std::endl ;
+        return sc ;                                                 // RETURN
+      }
+      else if ( parsed.stable () )
+      { 
+        //
+        tree = Stable ( parsed.head() ) ;
+        //
       }
       else if ( parsed.children () . empty() &&
                 parsed.optional () . empty() ) 

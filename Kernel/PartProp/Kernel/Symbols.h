@@ -1,6 +1,6 @@
-// $Id: Symbols.h,v 1.4 2009-05-12 11:52:27 ibelyaev Exp $
+// $Id: Symbols.h 95074 2010-10-22 15:06:40Z ibelyaev $
 // ============================================================================
-// CVS tag $Name: not supported by cvs2svn $, version $Revision: 1.4 $ 
+// CVS tag $Name: not supported by cvs2svn $, version $Revision: 95074 $ 
 // ============================================================================
 #ifndef KERNEL_SYMBOLS_H 
 #define KERNEL_SYMBOLS_H 1

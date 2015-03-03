@@ -4,7 +4,7 @@
 #============================================================================
 
 package LHCbMath
-version v3r20
+version           v3r21
 
 #============================================================================
 # Structure, i.e. directories to process. 
@@ -49,6 +49,8 @@ application  TestLomont2 ../tests/TestLomontCPU.cpp
 macro_append TestLomont2_dependencies   " LHCbMathLib "
 application  TestEigen   ../tests/TestEigen.cpp 
 macro_append TestEigen_dependencies   " LHCbMathLib "
+application  TestBlind   ../tests/blind.cpp 
+macro_append TestBlind_dependencies   " LHCbMathLib "
 
 # ================= patterns ================================================
 apply_pattern       linker_library library=LHCbMathLib
@@ -72,5 +74,6 @@ macro_prepend GSL_linkopts " -Wl,--no-as-needed " \
                      WIN32 ""
 macro_append  GSL_linkopts " -Wl,--as-needed " \
                     Darwin "" \
-                     WIN32 ""
+                     WIN32 "" \
+                target-icc ""
 end_private
