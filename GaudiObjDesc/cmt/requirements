@@ -1,6 +1,6 @@
 package GaudiObjDesc
 
-version v10r4p2
+version v10r4
 
 include_path none
 macro xmlsrc "xml"
@@ -19,8 +19,7 @@ pattern god_dictionary \
    macro <package>Gen_dependencies "<package>Obj2Doth <package>Obj2Dict"
 
 pattern god_headers \
-   document obj2doth <package>Obj2Doth <files> ; \
-   macro_append <package>_dependencies <package>Obj2Doth
+   document obj2doth <package>Obj2Doth <files>
 
 use Python v* LCG_Interfaces
 

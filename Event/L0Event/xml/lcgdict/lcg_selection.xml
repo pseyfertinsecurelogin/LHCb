@@ -1,5 +1,0 @@
-<lcgdict>
-  <exclusion>
-    <class name = "KeyedObject<long>" />
-  </exclusion>
-</lcgdict>

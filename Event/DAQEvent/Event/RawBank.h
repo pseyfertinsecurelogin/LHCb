@@ -91,11 +91,11 @@ namespace LHCb
                    L0MuonProcCand,  //40
                    L0MuonProcData,  //41
                    L0MuonRaw,       //42
-		   L0MuonError,     //43
+		               L0MuonError,     //43
                    GaudiSerialize,  //44
                    GaudiHeader,     //45
-                   TTProcFull,      //46
-                   ITProcFull,      //47
+                   ITProcFull,      //46
+                   TTProcFull,      //47
                    LastType    // LOOP Marker; add new bank types ONLY before!
     };
 

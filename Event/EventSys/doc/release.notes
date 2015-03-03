@@ -1,11 +1,6 @@
 ! package EventSys
 ! package manager: Marco Cattaneo
 !-------------------------------------------------------------------------
-! this is branch v23r9b1 for HLT benchmarks
-
-!========================== EventSys v23r9p1 2007-11-14 ===================
-! 2007-11-14 - Patrick Koppenburg
- - Use L0Event v16r6 and DAQEvent v7r6p1
 
 !======================== EventSys v23r9 2007-10-05 ======================
 ! 2007-10-05 - Marco Cattaneo
