@@ -1,9 +1,89 @@
 ! =============================================================================
-! $Id: release.notes,v 1.295 2007-05-03 13:04:00 cattanem Exp $ 
+! $Id: release.notes,v 1.310 2007-06-14 08:21:38 marcocle Exp $ 
 ! =============================================================================
 ! package DetDesc
 ! package manager : Marco Clemencic, Juan Palacios
 ! =============================================================================
+
+!====================== DetDesc v17r4 2007-06-14 ==============================
+! 2007-06-14 - Marco Clemencic
+  - Added dictionaries for free functions in DetDesc namespace.
+
+! 2007-06-13 - Juan PALACIOS
+
+  - DetDesc/3DTransformationFunctions.h, src/Lib/3DTransformationFunctions.cpp
+    . Moved more general functions, ie those not depending on DetDesc classes, 
+      from GlobalToDelta.h, .cpp to this new file. Funcitons are still in the DetDesc
+      namespace.
+
+  - DetDesc/GlobalToLocalDelta.h, src/Lib/GlobalToLocalDelta.h
+    . Move more general functions to 3DTransformationFunctions, namespace still DetDesc.
+
+  - DetDesc/AlignmentCondition.h
+    . Replace include of DetDesc/GlobalToLocalDelta.h by DetDesc/3DTransformationFunctions.h
+
+  - DetDesc/AlignmentCondition.h, src/Lib/AlignmentCondition.cpp
+    . Replace private Transform3D manipulations by functions in GlobalToLocalDelta.h, DetDesc
+      namespace.
+
+  - src/Lib/AlignmentCondition.cpp
+    . Do all matrix calculations in terms on the ideal -> misaligned matrix, corresponding
+      to field m_matrixInv.
+
+! 2007-06-07 - Juan PALACIOS
+  - DetDesc/GlobalToLocalDelta.h, src/Lib/GlobalToLocalDelta.h
+    . Add localDeltaParameters functions to go from deltas in global frame to
+      ones in local frame.
+
+! 2007-06-06 - Juan PALACIOS
+  - DetDesc/GlobalToLocalDelta.h, src/Lib/GlobalToLocalDelta.h
+    . Add some more 3D transformation manipulation functions.
+      GlobalToLocalDelta starts to become a misnomer.
+
+! 2007-06-01 - Juan PALACIOS
+  - src/Lib/GlobalToLocalDelta.h
+    . Fix bug in localToGlobalTransformation function.
+
+! 2007-06-01 - Juan PALACIOS
+  - src/Lib/AlignmentCondition.cpp
+    . Fix small but in transformation matrix setter method.
+  - DetDesc/GlobalToLocalDelta.h, src/Lib/GlobalToLocalDelta.cpp
+    . Add functions to make Gaudi::Transform3D out of 3 parameters representing either a 
+      cartesian translation or three rotation angles about the cartesian axes.
+    . Add a function to construct a local to global Gaudi::Transform3D out of nine parameters
+      describing a pivot, a translation and a rotation about three cartesian axes.
+    . All these functions are independent of DetDesc and should be put elsewhere, but for the time 
+      being they rely on src/Lib/3DConversions.h, which will disappear when a version of
+      MathCore with a fully integrated ROOT::Math::RotationXYZ is released.
+
+! 2007-05-31 - Juan PALACIOS
+  - DetDesc/AlignmentCondition.h, src/Lib/AlignmentCondition.cpp
+    . Fix bug in matrix(const Gaudi::Transform3D&) method. This method takes 
+      the matrix which moves the detector element from nominal to misalinged 
+      position. Internally, this is m_matrixInv. Since we do most operations 
+      with the misaligned -> nominal matrix, m_matrix is, confusingly,
+      actually the inverse of the misalign matrix.
+    . Move matrix(const Gaudi::Transform3D&) and StatusCode setTransformation( const std::vector<double>&, const std::vector<double>&, const std::vector<double>&); to .cpp file.
+  - Add DetDesc/GlobalToLocalDelta.h, src/Lib/GlobalToLocalDelta.cpp
+    . Simple standalone functions to convert a misalignment calculated in the
+      global frame to the corresponding misalignment in the frame of the parent
+      of the detector element in question. 
+
+! 2007-05-30 - Juan PALACIOS
+  - added temporary files in src/Lib:
+    . RotationZYX{.h, .cpp}   : Hacked from homonimous MathCore file in ROOT cvs.
+      Describes a 3D rotation transformation about the Z, Y' and X" axes, 
+      which is what we use in LHCb.
+    . 3DConversions{.h, .cpp} : Hacked from homonymous MathCore file in ROOT 
+      cvs head. Provides conversions between RotationZYX and other MathCore 3D
+      rotation representations.
+
+  - DetDesc/AlignmentCondition.h, src/Lib/AlignmentCondition.cpp
+    . Use RotationZYX class internally. At the moment this is messy, as it is
+      still not integrated with MathCore. So code will need to be cleaned up when
+      RotationZYX classes and co are released in MathCore.
+    . Provide functionality to get back and update the set of Z-Y-X Euler angles
+      obtained each time the transformation matrix is modified.
 
 !====================== DetDesc v17r3 2007-05-03 ==============================
 ! 2007-05-03 - Marco Cattaneo

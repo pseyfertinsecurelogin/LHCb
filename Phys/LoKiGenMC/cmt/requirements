@@ -1,0 +1,48 @@
+# $Id: requirements,v 1.11 2007-06-10 20:04:46 ibelyaev Exp $ 
+# =============================================================================
+# CVS tag $Name: not supported by cvs2svn $, version $Revision: 1.11 $
+# =============================================================================
+# Created    : 2006-01-16
+# Maintainer : Vanya BELYAEV ibelyaev@physics.syr.edu 
+# =============================================================================
+package            LoKiGenMC
+version            v3r0
+
+# ================ structure ==================================================
+branches           cmt doc src options dict python LoKi
+
+# ================ environment ================================================
+set LOKIGENMCOPTS  $(LOKIGENMCROOT)/options  
+
+# ================ dependencies ===============================================
+use                LoKiGen         v* Phys 
+use                LoKiMC          v* Phys 
+use                DaVinciMCKernel v* Phys 
+use                Relations       v* Kernel 
+
+# ================ own includes ===============================================
+apply_pattern install_more_includes more=LoKi
+ 
+# ================ constituents ===============================================
+library            LoKiGenMCLib    ../src/*.cpp 
+library            LoKiGenMC       ../src/Components/*.cpp
+
+# ============== Produce LCG dictionary =======================================
+apply_pattern    reflex_dictionary                                   \
+                 dictionary=LoKiGenMC                                \
+                 headerfiles=$(LOKIGENMCROOT)/dict/LoKiGenMCDict.h   \
+                 selectionfile=$(LOKIGENMCROOT)/dict/LoKiGenMC.xml   \  
+                 options=" -U__MINGW32__ "
+
+# ================ patterns ===================================================
+apply_pattern      linker_library    library=LoKiGenMCLib
+apply_pattern      component_library library=LoKiGenMC
+
+macro LoKiGenMCDict_use_linkopts $(use_linkopts)
+
+# =============================================================================
+# $Log: not supported by cvs2svn $
+#
+# =============================================================================
+# The END
+# =============================================================================

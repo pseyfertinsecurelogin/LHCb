@@ -1,5 +1,5 @@
 /// ===========================================================================
-/// $Id: CardParam.h,v 1.5 2007-02-22 23:17:18 odescham Exp $
+/// $Id: CardParam.h,v 1.7 2007-06-14 16:10:16 odescham Exp $
 /// ===========================================================================
 #ifndef CALODET_CARDPARAM_H 
 #define CALODET_CARDPARAM_H 1
@@ -24,10 +24,15 @@ public:
       @param iArea  calorimeter area 
       @param iRow   row 
       @param iCol   column
+      @param iNum
+      @param iCrate
+      @param iSlot
   */
   CardParam( int iArea = 0 , 
              int iRow  = 0 , 
              int iCol  = 0 ,
+             int ilRow  = 0 , 
+             int ilCol  = 0 ,
              int iNum  = 0 ,
              int iCrate= 0 ,
              int iSlot = 0
@@ -44,6 +49,8 @@ public:
   int area            () const { return m_Area           ; }
   int firstRow        () const { return m_Row            ; }
   int firstColumn     () const { return m_Col            ; }
+  int lastRow         () const { return m_lRow           ; }
+  int lastColumn      () const { return m_lCol           ; }
   bool isPinCard      () const { return m_isPin          ; }
   int tell1           () const { return m_tell1          ; }
   int  number         () const { return m_number         ; }
@@ -74,6 +81,8 @@ private:
   int m_Area;
   int m_Row;
   int m_Col;
+  int m_lRow;
+  int m_lCol;
   int m_DownNumber;
   int m_LeftNumber;
   int m_CornerNumber;

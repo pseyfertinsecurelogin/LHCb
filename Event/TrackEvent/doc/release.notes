@@ -1,8 +1,24 @@
 !-----------------------------------------------------------------------------
 ! Package     : Event/TrackEvent
-! Responsible : Jose Hernando, Eduardo Rodrigues
+! Responsible : M.Needham, W.Hulsbergen
 ! Purpose     : Package for the tracking event model classes
 !-----------------------------------------------------------------------------
+
+!======================= TrackEvent v4r4 2007-06-14 ==========================
+! 2007-06-14 - Edwin Bos
+ - Replaced the wrong correction by the correct value for kappa.
+
+! 2007-06-14 - M. Needham
+ - Change units of kappa to what is correct !
+
+! 2007-06-09 - M. Needham
+ - Add hasT, hasVelo and hasTT functions to Track
+
+! 2007-06-07 - Marco Cattaneo
+ - Adapt requirements to new GaudiObjDesc v10r0 patterns
+
+! 2007-05-21 - Wouter Hulsbergen
+ - Add class StateVector
 
 !======================= TrackEvent v4r3 2007-05-08 ==========================
 ! 2007-05-16 M. Needham

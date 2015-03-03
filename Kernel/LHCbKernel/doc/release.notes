@@ -4,6 +4,28 @@
 ! Purpose: LHCb specific Kernel classes
 !--------------------------------------------------------------------------
 
+!===================== LHCbKernel v7r5 2007-06-07 ========================
+! 2007-06-07 - Marco Cattaneo
+ - Adapt requirements to new GaudiObjDesc v10r0 patterns
+
+! 2007-05-31 M. Needham
+ - Add isVeloR, isVeloPhi, isPileUp methods to LHCbID
+
+! 2007-05-29 - Marco Cattaneo
+ - IMCParticleSelector interface removed, moved to MCInterfaces
+
+! 2007-05-25 - Marco Cattaneo
+ - Add IHltSummaryTool interface (moved from HltBase)
+
+! 2007-05-24 M. Needham
+ - Add sameChannel and sameTime members to OTChannelID
+
+! 2007-05-23 - Tomasz Szumlak
+ - New IVeloClusterPosition interface to completely rewritten
+   VeloCLusterPosition tool added in Kernel - the tool uses new
+   model for uncertainties estimation and accepts track state
+   as an argument  
+
 !===================== LHCbKernel v7r4 2007-05-18 ========================
 ! 2007-05-18 - Marco Cattaneo
  - In LbAppInit, add pointer to ICondDBInfo interface of CondDBSvc

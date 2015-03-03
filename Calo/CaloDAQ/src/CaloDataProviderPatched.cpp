@@ -9,7 +9,10 @@
 //-----------------------------------------------------------------------------
 // Implementation file for class : CaloDataProviderPatched
 //
-// 2005-01-10 : Olivier Callot
+// (temporarly) patched version of CaloDataProvider for Calo commissioning test
+// WARNING : only works with packed Calo bank (TELL1 format) !!!
+//
+// 2005-01-10 : Olivier Deschamps
 //-----------------------------------------------------------------------------
 
 DECLARE_TOOL_FACTORY( CaloDataProviderPatched );
@@ -84,10 +87,10 @@ StatusCode CaloDataProviderPatched::initialize ( ) {
   return StatusCode::SUCCESS;
 }
 
-std::string CaloDataProviderPatched::rawRoot(){return rootOnTES();}
+std::string CaloDataProviderPatched::rawRoot(){return rootInTES();}
 //-------------------------------------
 StatusCode CaloDataProviderPatched::setBank( ) {
-  debug() << "==> Reset " << name() << endmsg;
+  if ( msgLevel( MSG::DEBUG) )debug() << "==> Reset " << name() << endmsg;
   // Reset all containers and get CaloBanks
   clear();
   return getCaloBanksFromRaw();
@@ -181,14 +184,16 @@ StatusCode CaloDataProviderPatched::decodeBank( LHCb::RawBank* bank ){
   int size           = bank->size()/4;  // Bank size is in bytes
   int version        = bank->version();
   int sourceID       = bank->sourceID();
-  debug() << "Decode bank " << bank << " source " << sourceID 
-          << " version " << version << " size " << size << endreq;
+  if ( msgLevel( MSG::DEBUG) )debug() << "Decode bank " << bank << " source " << sourceID 
+                                      << " version " << version << " size " << size << endreq;
 
 
   // -----------------------------------------------
-  // skip detector specific header line  ***PATCH***
-  ++data ; 
-  --size;
+  // skip detector specific header line 
+  if(m_extraHeader){
+    ++data ; 
+    --size;
+  }
   // -----------------------------------------------
 
 
@@ -230,8 +235,8 @@ StatusCode CaloDataProviderPatched::decodeBank( LHCb::RawBank* bank ){
     // Get the FE-Cards associated to that bank (via condDB)
     std::vector<int> feCards = m_calo->tell1ToCards( sourceID );
     int nCards = feCards.size();
-    debug() << nCards << " FE-Cards are expected to be readout : " 
-            << feCards << " in Tell1 bank " << sourceID << endreq;
+    if ( msgLevel( MSG::DEBUG) )debug() << nCards << " FE-Cards are expected to be readout : " 
+                                        << feCards << " in Tell1 bank sourceID :  " << sourceID << endreq;
 
     while( 0 != size ) {
       // Skip 
@@ -288,7 +293,7 @@ StatusCode CaloDataProviderPatched::decodeBank( LHCb::RawBank* bank ){
         
       }else{
         error() << " FE-Card w/ [code : " << code 
-                << " ] is not associated with TELL1 bank " << sourceID
+                << " ] is not associated with TELL1 bank sourceID : " << sourceID
                 << " in condDB :  Cannot read that bank" << endreq;
         return StatusCode::FAILURE;
       }
@@ -352,8 +357,8 @@ StatusCode CaloDataProviderPatched::decodeBank( LHCb::RawBank* bank ){
     // Get the FE-Cards associated to that bank (via condDB)
     std::vector<int> feCards = m_calo->tell1ToCards( sourceID );
     int nCards = feCards.size();
-    debug() << nCards << " FE-Cards are expected to be readout : " 
-            << feCards << " in Tell1 bank " << sourceID << endreq;
+    if ( msgLevel( MSG::DEBUG) )debug() << nCards << " FE-Cards are expected to be readout : " 
+                                        << feCards << " in Tell1 bank sourceID :  " << sourceID << endreq;
 
     while( 0 != size ) {
       // Skip
@@ -376,7 +381,7 @@ StatusCode CaloDataProviderPatched::decodeBank( LHCb::RawBank* bank ){
         //----------------------------------------
       }else{
         error() << " FE-Card w/ [code : " << code 
-                << " ] is not associated with TELL1 bank " << sourceID
+                << " ] is not associated with TELL1 bank sourceID : " << sourceID
                 << " in condDB :  Cannot read that bank" << endreq;
         return StatusCode::FAILURE;
       }
@@ -434,8 +439,19 @@ StatusCode CaloDataProviderPatched::decodePrsTriggerBank( LHCb::RawBank* bank ) 
   int version        = bank->version();
   int sourceID       = bank->sourceID();
   int lastData       = 0;
-  debug() << "Decode Prs bank " << bank << " source " << sourceID 
-          << " version " << version << " size " << size << endreq;
+  if ( msgLevel( MSG::DEBUG) )debug() << "Decode Prs bank " << bank << " source " << sourceID 
+                                      << " version " << version << " size " << size << endreq;
+
+
+
+  // -----------------------------------------------
+  // skip detector specific header line 
+  if(m_extraHeader){
+    ++data ; 
+    --size;
+  }
+  // -----------------------------------------------
+
 
   //=== Offline coding: a CellID, 8 SPD bits, 8 Prs bits
   if ( 1 == version ) {
@@ -501,8 +517,8 @@ StatusCode CaloDataProviderPatched::decodePrsTriggerBank( LHCb::RawBank* bank ) 
     // Get the FE-Cards associated to that bank (via condDB)
     std::vector<int> feCards = m_calo->tell1ToCards( sourceID );
     int nCards = feCards.size();
-    debug() << nCards << " FE-Cards are expected to be readout : " 
-            << feCards << " in Tell1 bank " << sourceID << endreq;
+    if ( msgLevel( MSG::DEBUG) )debug() << nCards << " FE-Cards are expected to be readout : " 
+                                        << feCards << " in Tell1 bank sourceID :  " << sourceID << endreq;
 
     int offset   = 0;
     int lenAdc   = 0;
@@ -518,7 +534,8 @@ StatusCode CaloDataProviderPatched::decodePrsTriggerBank( LHCb::RawBank* bank ) 
                 << endreq;
       }
       int code  = (word >>14 ) & 0x1FF;
-      debug() << "Read FE-board ["<< code << "] linked to TELL1 bank " << sourceID << endreq;      
+      if ( msgLevel( MSG::DEBUG) )debug() << "Read FE-board ["<< code << "] linked to TELL1 bank sourceID : " 
+                                          << sourceID << endreq;      
       // access chanID via condDB
       std::vector<LHCb::CaloCellID> chanID  ;
       // look for the FE-Card in the Tell1->cards vector
@@ -528,7 +545,7 @@ StatusCode CaloDataProviderPatched::decodePrsTriggerBank( LHCb::RawBank* bank ) 
         feCards.erase(feCards.begin()+card);
       }else{
         error() << " FE-Card w/ [code : " << code 
-                << " ] is not associated with TELL1 bank " << sourceID
+                << " ] is not associated with TELL1 bank sourceID : " << sourceID
                 << " in condDB :  Cannot read that bank" << endreq;
         return StatusCode::FAILURE;
       }

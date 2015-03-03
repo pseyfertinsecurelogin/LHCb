@@ -1,4 +1,4 @@
-// $Id: AlignmentCondition.cpp,v 1.11 2006-03-08 11:05:25 jpalac Exp $
+// $Id: AlignmentCondition.cpp,v 1.16 2007-06-13 16:37:34 jpalac Exp $
 // Include files
 #include <algorithm>
 
@@ -7,6 +7,11 @@
 #include "GaudiKernel/MsgStream.h"
 #include "GaudiKernel/IMessageSvc.h"
 #include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/Vector3DTypes.h"
+///@todo put RotationXYZ.h in GaudiKernel when it is released in MathCore.
+#include "RotationZYX.h"
+#include "3DConversions.h"
+#include "DetDesc/3DTransformationFunctions.h"
 //-----------------------------------------------------------------------------
 // Implementation file for class : AlignmentCondition
 //
@@ -55,25 +60,21 @@ StatusCode AlignmentCondition::initialize() {
   // it is up to the user to override this in a child of Condition
   return makeMatrices();
 }
-
 //=============================================================================
-const Gaudi::Transform3D AlignmentCondition::XYZTranslation(const std::vector<double>& coefficients) const
+void AlignmentCondition::matrix(const Gaudi::Transform3D& newMatrix) 
 {
-  Gaudi::TranslationXYZ trans = (coefficients.size()==3) ? 
-    Gaudi::TranslationXYZ(coefficients[0], coefficients[1], coefficients[2]) :
-    Gaudi::TranslationXYZ();
-  return Gaudi::Transform3D( trans );
+  m_matrix=newMatrix.Inverse();
+  m_matrixInv=m_matrix;
+  updateParams();
 }
 //=============================================================================
-const Gaudi::Transform3D AlignmentCondition::XYZRotation(const std::vector<double>& coefficients) const
+StatusCode 
+AlignmentCondition::setTransformation( const std::vector<double>& translation,
+                                       const std::vector<double>& rotation,
+                                       const std::vector<double>& pivot) 
 {
-  if (coefficients.size()!=3) return Gaudi::Transform3D();
-
-  Gaudi::Rotation3D rot = Gaudi::RotationX(coefficients[0])*
-    Gaudi::RotationY(coefficients[1]) *
-    Gaudi::RotationZ(coefficients[2]);
-  return Gaudi::Transform3D(rot);
-  
+  loadParams(translation, rotation, pivot);
+  return makeMatrices();
 }
 //=============================================================================
 StatusCode AlignmentCondition::makeMatrices() 
@@ -84,18 +85,17 @@ StatusCode AlignmentCondition::makeMatrices()
   std::vector<double> translations = paramAsDoubleVect (m_translationString);
   std::vector<double> rotations    = paramAsDoubleVect (m_rotationString);
   std::vector<double> pivot = (exists(m_pivotString) ) ? 
-    paramAsDoubleVect(m_pivotString) : std::vector<double>(3);
+    paramAsDoubleVect(m_pivotString) : std::vector<double>(3, 0);
 
-  std::transform(pivot.begin(), pivot.end(), 
-                 pivot.begin(), std::negate<double>());
-  
   if (translations.size()==3  && rotations.size()==3 && pivot.size()==3) {
 
-    m_matrixInv = XYZTranslation( translations ) *
-      (   XYZTranslation( pivot ).Inverse() *
-          ( XYZRotation( rotations ) * XYZTranslation( pivot ) )  );
-
+    m_matrixInv = ( DetDesc::XYZTranslation( translations ) *  
+                    ( DetDesc::XYZTranslation( pivot ) *
+                      DetDesc::ZYXRotation( rotations ) *
+                      DetDesc::XYZTranslation( pivot ).Inverse()  ) );
+    
     m_matrix = m_matrixInv.Inverse();
+    
     return StatusCode::SUCCESS;
   } else {
     log << MSG::ERROR << "Translations vector has funny size: "
@@ -105,6 +105,21 @@ StatusCode AlignmentCondition::makeMatrices()
     return StatusCode::FAILURE;
   }
 
+}
+//=============================================================================
+void AlignmentCondition::updateParams() 
+{
+  std::vector<double> newTrans(3,0);
+  std::vector<double> newRot(3,0);
+  const std::vector<double> pivot = (exists(m_pivotString) ) ? 
+    paramAsDoubleVect(m_pivotString) : std::vector<double>(3, 0);
+
+  DetDesc::getZYXTransformParameters( m_matrixInv, newTrans, newRot, pivot );
+  
+  loadParams( newTrans, newRot, pivot );
+
+  return;
+  
 }
 //=============================================================================
 IMessageSvc* AlignmentCondition::msgSvc() const {

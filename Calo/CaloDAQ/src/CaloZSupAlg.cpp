@@ -1,4 +1,4 @@
-// $Id: CaloZSupAlg.cpp,v 1.6 2007-02-22 23:39:52 odescham Exp $
+// $Id: CaloZSupAlg.cpp,v 1.8 2007-06-12 20:24:32 odescham Exp $
 
 // Gaudi
 #include "GaudiKernel/AlgFactory.h"
@@ -48,14 +48,14 @@ CaloZSupAlg::CaloZSupAlg( const std::string& name, ISvcLocator* pSvcLocator)
   m_inputToolName = name + "Tool";
   if ( "Ecal" == name.substr( 0 , 4 ) ) {
     m_detectorName     = DeCalorimeterLocation::Ecal;
-    m_outputADCData    = rootOnTES() + LHCb::CaloAdcLocation::Ecal + m_extension;
-    m_outputDigitData  = rootOnTES() + LHCb::CaloDigitLocation::Ecal + m_extension;
+    m_outputADCData    = LHCb::CaloAdcLocation::Ecal   + m_extension;
+    m_outputDigitData  = LHCb::CaloDigitLocation::Ecal + m_extension;
     m_zsupMethod       = "2D";
     m_zsupThreshold    = 20;
   } else if ( "Hcal" == name.substr( 0 , 4 ) ) {
     m_detectorName     = DeCalorimeterLocation::Hcal;
-    m_outputADCData    = rootOnTES() + LHCb::CaloAdcLocation::Hcal + m_extension;
-    m_outputDigitData  = rootOnTES() + LHCb::CaloDigitLocation::Hcal + m_extension;
+    m_outputADCData    = LHCb::CaloAdcLocation::Hcal   + m_extension;
+    m_outputDigitData  = LHCb::CaloDigitLocation::Hcal + m_extension;
     m_zsupMethod       = "1D";
     m_zsupThreshold    = 4;
   }
@@ -85,8 +85,10 @@ StatusCode CaloZSupAlg::initialize() {
     return StatusCode::FAILURE;
   }  
   if( m_digitOnTES )debug() <<  "CaloZSupAlg will produce CaloDigits on TES" 
+                            << rootInTES() + m_outputDigitData
                             << endreq;
   if( m_adcOnTES )debug() <<  "CaloZSupAlg will produce CaloAdcs on TES" 
+                          << rootInTES() + m_outputADCData 
                           << endreq;
   
   // Retrieve the calorimeter we are working with.
@@ -134,9 +136,9 @@ StatusCode CaloZSupAlg::execute() {
   //*** some trivial printout
 
   if ( isDebug && m_adcOnTES) debug() << "Perform zero suppression - return CaloAdcs on TES at "
-                                      << m_outputADCData << endreq;
+                                      << rootInTES() + m_outputADCData << endreq;
   if ( isDebug && m_digitOnTES) debug() << "Perform zero suppression - return CaloDigits on TES at "
-                                      << m_outputDigitData << endreq;
+                                      << rootInTES() + m_outputDigitData << endreq;
 
 
   //*** get the input data
@@ -227,11 +229,11 @@ StatusCode CaloZSupAlg::execute() {
     }    
   }
   if(m_adcOnTES){
-    debug() << format( "Have stored %5d CaloAdcs.", newAdcs->size() ) 
+    if(isDebug)debug() << format( "Have stored %5d CaloAdcs.", newAdcs->size() ) 
             << endreq;
   }
   if(m_digitOnTES){
-    debug() << format( "Have stored %5d CaloDigits.", newDigits->size() ) 
+    if(isDebug)debug() << format( "Have stored %5d CaloDigits.", newDigits->size() ) 
             << endreq;
   }
 

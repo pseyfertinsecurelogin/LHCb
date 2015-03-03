@@ -1,11 +1,4 @@
-// $Id: AuxFunBase.cpp,v 1.4 2007-02-26 13:13:09 cattanem Exp $
-// ============================================================================
-// CVS tag $Name: not supported by cvs2svn $, version $Revision: 1.4 $
-// ============================================================================
-// $Log: not supported by cvs2svn $
-// Revision 1.3  2006/05/02 14:29:10  ibelyaev
-//  censored
-//
+// $Id: AuxFunBase.cpp,v 1.6 2007-06-10 19:54:07 ibelyaev Exp $
 // ============================================================================
 // Include files
 // ============================================================================
@@ -19,6 +12,7 @@
 #include "GaudiKernel/System.h"
 #include "GaudiKernel/StatusCode.h"
 #include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Hash.h"
 // ============================================================================
 // Kernel
 // ============================================================================
@@ -30,8 +24,6 @@
 #include "LoKi/Report.h"
 #include "LoKi/Welcome.h"
 #include "LoKi/Exception.h"
-// ============================================================================
-
 // ============================================================================
 /** @file
  *
@@ -49,8 +41,6 @@
  *  @date 2001-01-23 
  */
 // ============================================================================
-
-// ============================================================================
 namespace LoKi
 {
   // ==========================================================================
@@ -61,11 +51,9 @@ namespace LoKi
   static InstanceCounter<AuxFunBase>  s_AuxFunBaseCounter  ;
 #endif 
   // ==========================================================================
-};
+}
 // ============================================================================
-
-// ============================================================================
-/// default constructor 
+// default constructor 
 // ============================================================================
 LoKi::AuxFunBase::AuxFunBase() 
 {
@@ -73,11 +61,9 @@ LoKi::AuxFunBase::AuxFunBase()
   // increment the instance counter
   LoKi::s_AuxFunBaseCounter.increment();
 #endif 
-};
+}
 // ============================================================================
-
-// ============================================================================
-/// copy constructor 
+// copy constructor 
 // ============================================================================
 LoKi::AuxFunBase::AuxFunBase( const AuxFunBase& /* func */ ) 
 {
@@ -86,11 +72,9 @@ LoKi::AuxFunBase::AuxFunBase( const AuxFunBase& /* func */ )
   LoKi::s_AuxFunBaseCounter.increment();
 #endif 
   LoKi::Welcome::instance() ;
-};
+}
 // ============================================================================
-
-// ============================================================================
-/// destructor  
+// destructor  
 // ============================================================================
 LoKi::AuxFunBase::~AuxFunBase() 
 {
@@ -98,60 +82,52 @@ LoKi::AuxFunBase::~AuxFunBase()
   // decrement the instance counter
   LoKi::s_AuxFunBaseCounter.decrement();
 #endif 
-};
+}
 // ============================================================================
-
-// ============================================================================
-/** print error message 
+/*  print error message 
  *  @param msg  error message 
  *  @param sc   status code 
  *  @return status code 
  */
 // ============================================================================
-StatusCode LoKi::AuxFunBase::Error
+void LoKi::AuxFunBase::Error
 ( const std::string& msg , 
   const StatusCode&  sc  ) const 
 {
-  return LoKi::Report::Error( objType() + ": \t" + msg  , sc );
-};
+  LoKi::Report::Error( objType() + ": \t" + msg  , sc ) ; sc.ignore() ;
+}
 // ============================================================================
-
-// ============================================================================
-/** print Warning message 
+/*  print Warning message 
  *  @param msg  error message 
  *  @param sc   status code 
  *  @return status code 
  */
 // ============================================================================
-StatusCode LoKi::AuxFunBase::Warning
+void LoKi::AuxFunBase::Warning
 ( const std::string& msg , 
   const StatusCode&  sc  ) const 
 {
-  return LoKi::Report::Warning( objType() + ": \t " + msg , sc );
-};
+  LoKi::Report::Warning( objType() + ": \t " + msg , sc ) ; sc.ignore() ;
+} 
 // ============================================================================
-
-// ============================================================================
-/** thrown an exception  
+/*  thrown an exception  
  *  @param msg  error message 
  *  @param sc   status code 
  *  @return status code (fictive)
  */
 // ============================================================================
-StatusCode LoKi::AuxFunBase::Exception
+void LoKi::AuxFunBase::Exception
 ( const std::string& msg , 
   const StatusCode&  sc  ) const 
 {
   LoKi::Report::Error( objType() + " *EXCEPTION* : \t" + msg  , sc ) ;
+  sc.ignore() ;
   //
   throw LoKi::Exception( objType() + ": \t" + msg , sc ) ;
   //
-  return sc ;
-};
+}
 // ============================================================================
-
-// ============================================================================
-/** (virtual) printout to std::ostream 
+/*  (virtual) printout to std::ostream 
  *  @param s output stream 
  *  @restur reference to teh stream 
  */
@@ -160,12 +136,10 @@ std::ostream& LoKi::AuxFunBase::fillStream( std::ostream& s ) const
 {
   s << objType() ;
   return s ;
-};
+}
 // ============================================================================
-
-// ============================================================================
-/** (virtual) printout in form of std::string 
- *  @restur outptu string 
+/*  (virtual) printout in form of std::string 
+ *  @return outptut string 
  */
 // ============================================================================
 std::string LoKi::AuxFunBase::printOut() const 
@@ -173,16 +147,19 @@ std::string LoKi::AuxFunBase::printOut() const
   std::ostringstream s ;
   fillStream( s ) ;
   return s.str() ;
-};
+}
 // ============================================================================
-
+// the actual object type 
 // ============================================================================
 std::string LoKi::AuxFunBase::objType () const 
-{ return System::typeinfoName( typeid( *this ) ) ; } 
+{ return System::typeinfoName ( typeid( *this ) ) ; } 
 // ============================================================================
-
+/// unique function ID (hash); see LoKi::genericID 
 // ============================================================================
-/** output operator of function objects to std::ostream 
+std::size_t LoKi::AuxFunBase::id () const 
+{ return LoKi::genericID( *this ) ; }
+// ============================================================================
+/*  output operator of function objects to std::ostream 
  *  @param stream refeence to the stream
  *  @param obj    object to be printed 
  *  @return reference to the stream
@@ -190,23 +167,33 @@ std::string LoKi::AuxFunBase::objType () const
 // ============================================================================
 std::ostream& operator<<( std::ostream&           stream , 
                           const LoKi::AuxFunBase& obj    ) 
-{ return obj.fillStream( stream ) ; } ;
+{ return obj.fillStream ( stream ) ; } 
 // ============================================================================
-
-// ============================================================================
-/** output operator of function objects to MsgStream
+/*  output operator of function objects to MsgStream
  *  @param stream refeence to the stream
  *  @param obj    object to be printed 
  *  @return reference to the stream
  */
 // ============================================================================
-MsgStream&    operator<<( MsgStream&              stream , 
-                          const LoKi::AuxFunBase& obj    ) 
+MsgStream&    operator<<
+  ( MsgStream&              stream , 
+    const LoKi::AuxFunBase& obj    ) 
 { 
   if ( stream.isActive() ) { obj.fillStream( stream.stream() ) ; }
   return stream ;
-} ;
+}
 // ============================================================================
+/*  simple fuctiin to generate the default generic 
+ *  (hopefully unique?) ID for the functor 
+ *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
+ */
+// ==========================================================================
+std::size_t LoKi::genericID( const AuxFunBase& o ) 
+{
+  GaudiUtils::Hash<std::string> hash ;
+  return hash ( o.printOut() ) ;
+}
+// ==========================================================================
 
 // ============================================================================
 // The END 

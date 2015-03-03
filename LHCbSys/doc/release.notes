@@ -5,6 +5,204 @@
 ! Purpose     : LHCb OO kernel packages
 !-----------------------------------------------------------------------------
 
+</PRE><H1><A NAME=v22r6>2007-06-15 LHCbSys v22r6</A></H1><PRE>
+This version uses Gaudi v19r4 and LCG_52a. Fully compatible with DC06 data
+
+- Packages removed: HltBase           - Moved to HLT project
+                    TrackMCInterfaces - All interfaces moved to MCInterfaces
+- Packages added:   MCInterfaces v1r0 - Interfaces with dependency on MC
+                    LoKiMC       v3r0 - Moved from ANALYSIS project
+                    LoKiGenMC    v3r0 - Moved from ANALYSIS project
+                    LoKiPhys     v4r0 - Moved from ANALYSIS project
+                    LoKiPhysMC   v5r0 - Moved from ANALYSIS project
+                    LoKiAlgo     v4r0 - Moved from ANALYSIS project
+                    LoKiAlgoMC   v4r0 - Moved from ANALYSIS project
+
+- Packages modified: KernelSys v6r6, LHCbKernel v7r5, RichKernel v7r6,
+    DetSys v9r6, DetDesc v17r4, OTDet v7r3, CaloDet v8r2, VeloDet v11r3,
+    STDet v3r4, RichDet v10r5, MuonDet v6r3, RichRecBase v3r5, DetDescSvc v1r12,
+    GaudiObjDesc v10r0, EventSys v23r6, DAQEvent v7r4, DigiEvent v2r2,
+    EventBase v2r4, GenEvent v5r1, HltEvent v8r2, L0Event v16r3, 
+    LinkerEvent v3r1, MCEvent v2r4, PackedEvent v6r2, PhysEvent v11r2,
+    RecEvent v2r4, TrackEvent v4r4, VeloEvent v15r1, CaloInterfaces v7r3, 
+    CaloUtils v7r3, TrackInterfaces v3r5, LHCbAlgs v2r9, LoKiCore v3r0,
+    LoKiGen v3r0, DaVinciKernel v6r4, DAQSys v3r3, CaloDAQ v3r3, MuonDAQ v3r2,
+    OTDAQ v5r3, SimComponents v2r3, DetCond v11r4, DetCondExample v11r1,
+    CondDBUI v2r3
+
+- In LHCbSys
+  . Cleanup doxygen configuration files to follow changes in Gaudi v19r4 doc
+  . Add root/reflex to doxygen, remove unused parts of SEAL
+
+- In LHCbKernel v7r5
+  . Add isVeloR, isVeloPhi, isPileUp methods to LHCbID
+  . Add IHltSummaryTool interface (moved from HltBase)
+  . Add sameChannel and sameTime members to OTChannelID
+  . Updated IVeloClusterPosition interface to accept track state as argument
+  . IMCParticleSelector interface moved to MCInterfaces
+
+- In RichKernel v7r6
+  . IRichMCTruthTool and IRichMCTrackInfoTool interfaces moved to MCInterfaces
+  . Added missing dependency on DAQEvent
+
+- In RichRecBase v3r5
+  . IRichRecMCTruthTool interface moved to MCInterfaces
+
+- In MCEvent v2r4
+  . Move all interfaces to new MCInterfaces package and remove Kernel directory
+
+- In MCInterfaces v1r0
+  . Add bool operator() to IMCParticleSelector (To allow similarity of interface
+    between the various 'selector' type tools).
+  . Update IMCReconstructible interface
+  . Extend the IIdealStateCreator interface to use state vector 
+
+- In SimComponents v2r3
+  . Adapt to new locations of MCInterfaces
+  . Follow extension in IMCReconstructible interface
+
+- In TrackInterfaces v3r5
+  . Add method to IVeloExpectation to return struct containing r and phi hits
+  . Remove const from TrackManipulator interface
+  . Add IMaterialLocator interface
+  . Extended IMeasurementProvider with 'update' function for a measurement
+  . Extended ITrackExtrapolator with propagation of a StateVector
+
+- In DAQEvent v7r4
+  . Add error bank types for EcalPacked/HcalPacked/PrsPacked
+
+- In HltEvent v8r2
+  . Added an enum entry HltSelEntry=1000 which is always stored
+    in HltSummary when HltSelections are reached. 
+
+- In PackedEvent v6r2
+  . Standardize dict selection files
+
+- In TrackEvent v4r4
+  . Add class StateVector
+  . Add hasT, hasVelo and hasTT functions to Track
+  . Change units of kappa to what is correct !
+
+- In DetDesc v17r4
+  . Added temporary files in src/Lib:
+    + RotationZYX{.h, .cpp}   : Hacked from homonymous MathCore file in ROOT cvs.
+      Describes a 3D rotation transformation about the Z, Y' and X" axes 
+    + 3DConversions{.h, .cpp} : Hacked from homonymous MathCore file in ROOT 
+      cvs head. Provides conversions between RotationZYX and other MathCore 3D
+      rotation representations.
+  . DetDesc/AlignmentCondition.h, src/Lib/AlignmentCondition.cpp
+    + Use RotationZYX class internally. At the moment this is messy, as it is
+      still not integrated with MathCore. So code will need to be cleaned up when
+      RotationZYX classes and co are released in MathCore.
+    + Provide functionality to get back and update the set of Z-Y-X Euler angles
+      obtained each time the transformation matrix is modified.
+    + Fix bug in matrix(const Gaudi::Transform3D&) method.
+  . Add DetDesc/GlobalToLocalDelta.h, src/Lib/GlobalToLocalDelta.cpp
+    + Simple standalone functions to convert a misalignment calculated in the
+      global frame to the corresponding misalignment in the frame of the parent
+      of the detector element in question. 
+    + These functions are independent of DetDesc and should be put elsewhere, 
+      but for the time being they rely on src/Lib/3DConversions.h, which will
+      disappear when a version of MathCore with a fully integrated 
+      ROOT::Math::RotationXYZ is released.
+
+- In DetDescSvc v1r12
+  . Fixed a bug in UpdateManagerSvc. Check if the setting of the user provided
+    pointers is successful or not.
+  . Improvement in conditions override. Now it respects the actual type of the
+    object in the transient store (was not working with AlignmentCondition), if
+    possible. It is also possible to specify only few parameters of the
+    condition, and the other are taken from the database.
+
+- In OTDet v7r3
+  . Some minor changes requested by the A-Team: 
+    + Random access to detector elements
+    + Added const find methods for detector elements  
+
+- In MuonDet v6r3 
+  . Add a default value for the muon detector location in /dd...
+  . Clean up many StatusCodes
+
+- In CaloDet v8r2
+  . Fix FE-card connection to neighbors in DeCalorimeter::buildCards()
+
+- In DetCond v11r4
+  . Removed the check on macro CORAL_1_8_x (use always the new CORAL feature).
+
+- In CondDBUI v2r3
+  . Fixed a problem in copy_files_do_db.py: the destination path was not taken
+    into account when correcting the relative paths to included files (SYSTEM
+    tag)
+  . Allow transparent usage of CORAL LFCReplicaService (enabled if the
+    environment variable CORAL_LFC_BASEDIR is set).
+  . Use Qt from LCG_Interfaces
+
+- In OTDet v7r3, CaloDet v8r2, VeloDet v11r3, STDet v3r4, RichDet v10r5,
+     MuonDet v6r3
+  . Add xxxLocation::* variables to dictionary 
+
+- In DetSys v9r6, OTDet v7r3, CaloDet v8r2, MuonDet v6r3
+  . Move lcg dictionary generation from DetSys to individual packages
+
+- In LHCbAlgs v2r9
+  . ProcessPhase "MeasureTime" property now defaults to GaudiSequencer default
+  . Adapt to Gaudi v19r4 change of setFilterPassed return type
+
+- In DetCondExample v11r1
+  . Added a test for conditions overriding with alignment conditions
+
+- In LoKiCore v3r0, LoKiMC v3r0, LoKiGen v3r0, LoKiGenMC v3r0, LoKiPhys v4r0,
+     LoKiPhysMC v5r0, LoKiAlgo v4r0, LoKiAlgoMC v4r0, LoKiHybrid v2r0
+  . Major new version, now all LoKi's dictionaries are build with the packages
+
+- In LoKiMC v3r0
+  . Add 2 new functions (wrappers for IMCReconstructible tool)
+  . Add many STL-like algorithms into namespace LoKi::MCAlgs
+  . Make a coherent  (with respect to generator/HepMC) treatment of "children"
+    (LoKi::Child). Add many functions into namespace LoKi::Child 
+  . Adapt to new location for MCInterfaces includes
+
+- In LoKiPhys v4r0
+  . Provide more coherent interfaces for RC/MC/HepMC-particles 
+  . Upgrade of various "STL-like" algorothms
+
+- In CaloInterfaces v7r3
+  . Add new interface : ICalo2Calo
+
+- In CaloUtils v7r3
+  . Add new tool : Calo2Calo --> connect 2 calorimeters
+ 
+- In CaloDAQ v3r3
+  . CaloReadoutTool and decoding tools : add property to allow skipping the
+    Detector Specific Header when present
+  . Fix CaloDataProvider so that the tool can run correctly on 0-suppressed banks
+
+- In CaloDAQ v3r3, MuonDAQ v3r2
+  . Remove rootOnTES() logic, now done in Gaudi base classes (Gaudi >= v19r4)
+
+- In DaVinciKernel v6r4
+  . DVAlgorithm::setFilterPassed now returns void, as in Gaudi v19r4 base class
+
+- In DaVinciKernel v6r4, PhysEvent v11r2
+  . Move IParticleTransporter.h from PhysEvent to DaVinciMCKernel
+
+- In GaudiObjDesc v10r0
+  . added new two patterns to generate the headers and dictionaries. 
+    god_headers: generates the header files using the existing document
+    god_dictionary: generates the dictionary header file and selection file and
+                    calls the standard relex_dictionary provided by the Reflex
+                    LCGCMT interface package
+  . fix 'static' handling for method generation
+  . change doxygen style for enum values from ///< to //
+
+- In DAQEvent v7r4, DigiEvent v2r2, EventBase v2r4, GenEvent v5r1, HltEvent v8r2,
+     L0Event v16r3, LinkerEvent v3r1, MCEvent v2r4, PhysEvent v11r2,
+     RecEvent v2r4, TrackEvent v4r4, VeloEvent v15r1, OTDAQ v5r3,RichRecBase v3r5
+ . Adapt requirements to new GaudiObjDesc v10r0 patterns
+
+- In CaloDet v8r2, RichDet v10r5
+  . Fix doxygen warnings
+
 </PRE><H1><A NAME=v22r5>2007-05-16 LHCbSys v22r5</A></H1><PRE>
 This version uses Gaudi v19r3 and LCG_50b. Fully compatible with DC06 data
 
@@ -12,7 +210,7 @@ This version uses Gaudi v19r3 and LCG_50b. Fully compatible with DC06 data
     DetSys v9r5, DetDesc v17r3, EventSys v23r5, EventBase v2r3, MCEvent v2r3,
     TrackEvent v4r3, HltEvent v8r1, TrackInterfaces v3r4, TrackMCInterfaces v3r1,
     LHCbAlgs v2r6, DaVinciKernel v6r3, TsaKernel v2r4, SimComponents v2r2,
-    DetCond v11r3
+    DetCond v11r3, LHCbKernel v7r4
 
 - In LHCbSys v22r5
   . Add DoxyLHCbCommon.cfg file for use by doxygen of LHCb applications

@@ -1,0 +1,286 @@
+! $Id: release.notes,v 1.30 2007-06-11 09:18:01 cattanem Exp $ 
+! -----------------------------------------------------------------------------
+! Package     : Phys/LoKiPhys
+! Responsible : Vanya Belyaev
+! Purpose     : "Phys"-part of new restructurized LoKi 
+! -----------------------------------------------------------------------------
+
+!========================== LoKiPhys v4r0 2007-06-11 ==========================
+! 2007-06-10 - Vanya BELYAEV
+ - few fixes to please Reflex, make fuctions vizible in python
+   and to achieve coherent interafce for RC and MC worlds
+
+! 2007-06-04 - Vanya BELYAEV
+ - provide more coherent interfaces for RC/MC/HepMC-particles 
+ - upgrade of various "STL-like" algorothms
+ - New Files:
+    LoKi/PhysAlgsDicts.h
+    LoKi/PhysExtractDicts.h
+    src/PhysAlgsDicts.cpp
+    src/PhysExtractDicts.cpp
+ - Modifed Files:
+    LoKi/Child.h
+    LoKi/PhysAlgs.h
+    LoKi/PhysExtract.h
+    dict/LoKiPhys.xml
+    dict/LoKiPhysDict.h
+    src/Child.cpp
+
+! 2007-06-01 - Vanya BELYAEV
+ - prepare for the next major version: v4r0 
+
+ - New files:
+
+   dict/LoKiPhys.xml
+   dict/LoKiPhysDict.h
+ 
+   python/LoKiPhys/__init__.py
+   python/LoKiPhys/decorators.py
+   python/LoKiPhys/functions.py
+   python/LoKiPhys/tests.py
+
+ - Modified files:
+
+   LoKi/Particles15.h
+   LoKi/PhysRangeTypes.h
+   LoKi/PhysTypes.h
+
+   src/Particles0.cpp
+   src/Particles12.cpp
+   src/Particles4.cpp
+   src/Particles7.cpp
+   src/Vertices0.cpp
+   src/Vertices1.cpp
+
+ - cmt/requirements 
+    version increment to v4r0 
+
+
+!========================== LoKiPhys v3r2p1 2007-04-19 ===================
+! 2007-04-19 -  P. Koppenburg
+  Remove controversial doxygen comment
+
+!========================== LoKiPhys v3r2 2007-03-07 ==================
+
+! 2007-03-07 - Vanya BELYAEV
+ - LoKi/PhysAlgs.h  
+   fix a stupid bug in "LoKi::PhysAlgs::accumulate" method..
+   All tree-relates functions (SUMTREE,MULTREE, etc..) are affected..
+ - retag as v3r2 
+
+! 2007-03-04 - Vanya BELYAEV
+ - LoKi/Particles17.h, src/Particles17.cpp 
+   LoKi/ParticleCuts.h
+    add new functions DeltaPhi/DeltaEta/DeltaR2 useful for jets studies 
+  
+ - cmt/requirements 
+   version increment to v3r2 
+  
+
+!========================== LoKiPhys v3r1 2007-03-01 ==================
+
+! 2007-03-01 - Vanya BELYAEV
+ 
+ - LoKi/Particles0.h, src/Particles0.cpp, LoKi/ParticleCuts.h
+
+    add new function LoKi::Particles::TransverseMomentumDir
+     ( aliases PTDIR and PTREL ) 
+    for evaluationof the transvers emomentum of the particle with 
+    respect to some direction.
+    This function is very useful for jet studies, in particular 
+    for b-tagging.
+ - LoKi/Particles17.h, src/Particles17.cpp 
+
+     new files - placeholder for expected "jet-related" functions 
+ 
+ - retag as v3r1 
+
+!========================== LoKiPhys v3r1 2007-02-25 ==================
+
+! 2007-02-26 - Vanya BELYAEV
+ - LoKi/Particles12.h, src/Particles12.cpp
+
+   add new function LoKi::Particles::IsMuon (shortcut ISMUON)
+   which eeesentially return LHCb::MuonPID::IsMuon
+
+ - cmt/requirements 
+  
+   version increment to v3r1 
+
+
+!========================== LoKiPhys v3r0 2007-01-23 ==================
+! 2007-01-23 - Vanya BELYAEV
+ -  LoKi/Particles0.h
+      fix for Ex/LoKiExample 
+
+!========================== LoKiPhys v3r0 2007-01-09 ==================
+! 2007-01-09 - Florence RANJARD
+ - install include files
+
+!========================== LoKiPhys v2r5 2006-12-16 ===================
+
+! 2006-12-16 - Vanya BELYAEV
+ - LoKi/Particles16.h, src/Particles16.cpp
+   add new function 
+    LoKi::Particles::CosineDirectionAngle ( aliaases: DIRA, DANG )
+   for evaluation of the coside of the angle inbetweenparticle momentum 
+   and ther direction from the primary vertex to the secondary vertex
+ - cmt/requirements 
+    version increment to v2r5 
+   
+!========================== LoKiPhys v2r4 2006-12-01 ===================
+! 2006-12-01 - Vanya BELYAEV 
+ - for for VertexBase 
+ - cmt/requirements 
+   version increment to v2r4 
+
+!========================== LoKiPhys v2r3 2006-11-25 ===================
+! 2006-11-25 - Vanya BELYAEV
+ - #include "Kernel/SystemOsUnits.h" 
+   ===> 
+   #include "GaudiKernel/SystemOsUnits.h" 
+ - src/PrintDecay.cpp 
+    improve the printpout 
+ - improve doxygen printout 
+ - add many missing functions 
+ - remove semicolumns after namespaces 
+ - cmt/requirements 
+   version incrmement to v2r3 
+
+!========================== LoKiPhys v2r1 2006-10-11 ===================
+
+! 2006-10-10 - Vanya BELYAEV
+ - LoKi/Particles4.h
+     fix for python/reflex dictionaries 
+ - cmt/requirements 
+     version increment to v2r1 
+
+!========================== LoKiPhys v2r0 2006-08-30 ===================
+
+
+! 2006-08-15 - Vanya BELYAEV
+
+ - adaptation to new inheritance scheme of VertexBase/Vertex/RecVertes 
+ - LoKi/VertexCast.h
+   couple of helper functions for Vertex <--- VertexBase ---> RecVertex cast 
+ - cmt/requirements 
+   version increment to v2r0 
+
+
+!========================== LoKiPhys v1r2 2006-07-07 ===================
+
+! 2006-06-25 - Vanya BELYAEV
+  - src/Particles13.cpp 
+      fixes for change in LHCb::Track
+  - LoKi/ParticleCuts.h 
+      uncomment PID<x> functions 
+  - cmt/requirements 
+      version increment to v1r2 
+
+!========================== LoKiPhys v1r1 2006-05-29 ===================
+
+! 2006-05-27 - Vanya BELYAEV
+ - LoKi/PritDecay.h src/PrintDecay.cpp
+    new utulities LoKi::printDecay for easy printout of decay trees 
+
+! 2006-05-23 - Vanya BELYAEV
+ - LoKi/Particles.0, src/Particles0.cpp
+   LoKi/ParticleCuts.h 
+     add new functions LoKi::Particles::Charge    ( alias    Q ) 
+                   and LoKi::Particles::SumCharge ( alias SUMQ )  
+
+
+! 2006-04-24 - Ivan BELYAEV
+ - LoKi/Particles13.h
+   src/Particles13.cpp
+     fix for new signature of LHCb::Trach::hasStateAt method 
+
+
+! 2006-04-23 - Vanya BELYAEV
+ - LoKi/PIDOperators.h
+   src/PIDOperators.cpp
+     '==' operator for ID and ABSID functions 
+ - cmt/requirements 
+     version increment to v1r1 
+
+! 2006-02-17 - Vanya Belyaev
+ - new package 
+
+
+! -----------------------------------------------------------------------------
+! $Log: not supported by cvs2svn $
+! Revision 1.29  2007/06/10 20:07:17  ibelyaev
+!  prepare for v4r0
+!
+! Revision 1.28  2007/06/05 06:28:03  cattanem
+! move tag
+!
+! Revision 1.27  2007/06/04 18:25:37  ibelyaev
+!  improve Algs&Extract
+!
+! Revision 1.26  2007/06/04 08:34:05  cattanem
+! v4r0
+!
+! Revision 1.25  2007/06/01 12:07:03  ibelyaev
+!  prepare for version v4r0
+!
+! Revision 1.24  2007/04/19 16:19:08  pkoppenb
+! tagged as v3r2p1
+!
+! Revision 1.22  2007/03/09 11:27:05  pkoppenb
+! tagged as v3r2
+!
+! Revision 1.21  2007/03/07 09:19:52  ibelyaev
+!  fix a stupud bug in LoKi::PhysAlgs::accumulate ; retag
+!
+! Revision 1.20  2007/03/04 16:54:19  ibelyaev
+!  add DeltaPhi/DelatEta/DeltaR2 for jet studies
+!
+! Revision 1.19  2007/03/01 16:14:39  ibelyaev
+!  add PTREL and PTDIR functions
+!
+! Revision 1.18  2007/02/26 09:19:22  ibelyaev
+!  add LoKi::Particles::IsMuon (alias: ISMUON)
+!
+! Revision 1.17  2007/01/23 13:30:44  ibelyaev
+!  fix for Ex/LoKiExample
+!
+! Revision 1.16  2007/01/12 14:12:47  ranjard
+! v3r0 - use Gaudi v19r0
+!
+! Revision 1.15  2006/12/16 13:22:30  ibelyaev
+!  add Particles16: DIRA&DANG
+!
+! Revision 1.14  2006/12/01 08:31:11  ibelyaev
+!  fix for VertexBase argument
+!
+! Revision 1.13  2006/11/27 12:01:32  ibelyaev
+!  prepare for LoKi v4r3
+!
+! Revision 1.12  2006/10/11 12:42:46  ibelyaev
+!  v2r1
+!
+! Revision 1.11  2006/10/10 09:08:35  ibelyaev
+!  tiny fix needed for good&valid dictionaries
+!
+! Revision 1.10  2006/08/30 07:56:21  ibelyaev
+!  tagged as v2r0
+!
+! Revision 1.9  2006/08/15 15:13:26  ibelyaev
+!  update for new inheritance scheme Vertex<--VertexBase-->RecVertex
+!
+! Revision 1.8  2006/07/07 12:18:38  jpalac
+! tagged as v1r2
+!
+! Revision 1.7  2006/06/25 13:55:12  ibelyaev
+!  v1r2:
+!
+! Revision 1.6  2006/05/29 13:39:46  jpalac
+! tagged as v1r1
+!
+! Revision 1.5  2006/05/27 11:43:40  ibelyaev
+!  add PrintDecay utilities
+!
+! -----------------------------------------------------------------------------
+! The END 
+! -----------------------------------------------------------------------------

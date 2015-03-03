@@ -1,7 +1,20 @@
-! $Id: release.notes,v 1.81 2007-03-05 12:16:47 cattanem Exp $
+! $Id: release.notes,v 1.86 2007-06-13 06:48:22 cattanem Exp $
 ! Package     : OTDet
 ! Responsible : Jeroen van Tilburg, Jacopo Nardulli, Jan Amoraal
 !--------------------------------------------------------------------------
+
+!========================== OTDet v7r3 2007-06-13 =========================
+! 2007-06-13 - Jan Amoraal
+ - Bug fix in IndexToDetElementMap
+
+! 2007-06-07 - Jan Amoraal
+ - Some minor changes requested by the A-Team: 
+   - Random access to detector elements
+   - Added const find methods for detector elements  
+
+! 2007-05-25 - Marco Cattaneo
+ - Add LCG dictionaries (moved from DetSys)
+ - Add dictionary for DeOTDetectorLocation::*
 
 !========================== OTDet v7r2 2007-03-05 =========================
 ! 2007-03-05 - Jan Amoraal

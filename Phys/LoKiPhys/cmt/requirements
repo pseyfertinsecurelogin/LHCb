@@ -1,0 +1,40 @@
+# $Id: requirements,v 1.17 2007-06-10 20:07:17 ibelyaev Exp $ 
+# ============================================================================
+# Created    : 2006-02-06
+# Maintainer : Vanya BELYAEV ibelyaev@physics.syr.edu 
+# ============================================================================
+package           LoKiPhys
+version           v4r0
+	
+# =============== structure ==================================================
+branches          cmt doc src dict python LoKi 
+
+# =============== dependencies ===============================================
+use               PhysEvent     v*    Event 
+use               LoKiCore      v*    Phys 
+use               DaVinciKernel v*    Phys 
+	
+# =============== own includes ===============================================
+apply_pattern install_more_includes more=LoKi
+      
+# =============== constituents ===============================================
+library           LoKiPhys ../src/*.cpp 
+
+# ============== Produce LCG dictionary =======================================
+apply_pattern    reflex_dictionary                                   \
+                 dictionary=LoKiPhys                                 \
+                 headerfiles=$(LOKIPHYSROOT)/dict/LoKiPhysDict.h     \
+                 selectionfile=$(LOKIPHYSROOT)/dict/LoKiPhys.xml     \  
+                 options=" -U__MINGW32__ "
+
+# =============== patterns ===================================================
+apply_pattern     linker_library library=LoKiPhys
+
+macro LoKiPhysDict_use_linkopts $(use_linkopts)
+
+# ============================================================================
+# $Log: not supported by cvs2svn $
+#
+# ============================================================================
+# The END 
+# ============================================================================

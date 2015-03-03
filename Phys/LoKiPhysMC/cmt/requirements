@@ -1,0 +1,50 @@
+# $Id: requirements,v 1.21 2007-06-01 12:24:50 ibelyaev Exp $ 
+# ============================================================================
+# Created    : 2006-03-11
+# Maintainer : Vanya BELYAEV ibelyaev@physics.syr.edu 
+# ============================================================================
+package           LoKiPhysMC
+version           v5r0
+
+# =============== structure ==================================================
+branches          cmt doc src options dict python LoKi
+	
+# =============== environment ================================================
+set LOKIPHYSMCOPTS              $(LOKIPHYSMCROOT)/options
+set HEPMCSTANDARDPARTICLESROOT  $(LOKIPHYSMCROOT)
+set HEPMCSTANDARDPARTICLESOPTS  $(LOKIPHYSMCOPTS)
+
+# =============== dependencies ===============================================
+use               Relations          v* Kernel
+use               LoKiMC             v* Phys 
+use               LoKiPhys           v* Phys 
+use               LoKiGenMC          v* Phys 
+use               LinkerEvent        v* Event
+use               DaVinciMCKernel    v* Phys   
+
+# =============== own includes ===============================================
+apply_pattern install_more_includes more=LoKi
+      
+# =============== constituents ===============================================
+library           LoKiPhysMCLib ../src/*.cpp 
+library           LoKiPhysMC    ../src/Components/*.cpp 
+
+# ============== Produce LCG dictionary =======================================
+apply_pattern    reflex_dictionary                                     \
+                 dictionary=LoKiPhysMC                                 \        
+                 headerfiles=$(LOKIPHYSMCROOT)/dict/LoKiPhysMCDict.h   \
+                 selectionfile=$(LOKIPHYSMCROOT)/dict/LoKiPhysMC.xml   \  
+                 options=" -U__MINGW32__ "
+
+# =============== patterns ===================================================
+apply_pattern     linker_library    library=LoKiPhysMCLib
+apply_pattern     component_library library=LoKiPhysMC
+
+macro LoKiPhysMCDict_use_linkopts $(use_linkopts)
+
+# ============================================================================
+# $Log: not supported by cvs2svn $
+#
+# ============================================================================
+# The END 
+# ============================================================================

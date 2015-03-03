@@ -86,10 +86,10 @@ class genSrcUtils(importUtils.importUtils):
               else                        : evall.append([evalAtt['name'], evalAtt['desc']])
               maxlenval = max(maxlenval,len(evall[-1][0]))
             maxlenval += 1
-            s += ' %s ///< %s' % ((evall[0][0]+',').ljust(maxlenval),evall[0][1])
+            s += ' %s // %s' % ((evall[0][0]+',').ljust(maxlenval),evall[0][1])
             for e in evall[1:-1]:
-              s += '\n%s %s ///< %s' % (indent, (e[0]+',').ljust(maxlenval),e[1])
-            s += '\n%s %s ///< %s' % (indent, evall[-1][0].ljust(maxlenval), evall[-1][1])
+              s += '\n%s %s // %s' % (indent, (e[0]+',').ljust(maxlenval),e[1])
+            s += '\n%s %s // %s' % (indent, evall[-1][0].ljust(maxlenval), evall[-1][1])
           s += '\n    };\n'
     return s
 #--------------------------------------------------------------------------------
@@ -189,6 +189,9 @@ class genSrcUtils(importUtils.importUtils):
       s += '  /// %s\n  ' % metAtt['desc']
       if metAtt.has_key('template') : s += 'template <%s>\n  ' % metAtt['template']
       indent += 2
+      if metAtt['static'] == 'TRUE':
+        s += 'static '
+        indent += 7
       if metAtt['virtual'] in ['TRUE','PURE']:
         s += 'virtual '
         indent += 8

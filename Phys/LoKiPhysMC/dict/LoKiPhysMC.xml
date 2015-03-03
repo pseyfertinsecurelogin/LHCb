@@ -1,0 +1,30 @@
+<!-- 
+     * $Id: LoKiPhysMC.xml,v 1.2 2007-06-10 20:17:54 ibelyaev Exp $ 
+     * ========================================================================
+     * @file
+     * The seleciton file to build Reflex dictionaries 
+     * for Phys/LoKiPhysMC package
+     * @author Vanya BELYAEV ibelyaev@physics.syr.edu
+     * @date 2006-02-06
+     * ========================================================================
+-->
+
+<lcgdict>
+  
+  
+  <class name = "LoKi::MCMatch"        />
+  <class name = "LoKi::MCMatchObj"     />
+  <class name = "LoKi::DecayChain"     />
+  
+  <class name="LoKi::Interface<LoKi::MCMatchObj>" />
+  
+  <class name = "LoKi::PhysMCParticles::RCTruth"    />
+  <class name = "LoKi::PhysMCParticles::MCTruth"    />
+  <class name = "LoKi::PhysMCParticles::GenMCTruth" />
+  
+  <function pattern="LoKi::Dicts::MCMatchDicts::*" />
+  
+  <exclusion>
+  </exclusion>
+  
+</lcgdict>

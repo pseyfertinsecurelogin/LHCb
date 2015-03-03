@@ -1,0 +1,42 @@
+# $Id: requirements,v 1.8 2007-06-04 11:04:03 cattanem Exp $ 
+# ============================================================================
+# Created    : 2006-01-17
+# Maintainer : Vanya BELYAEV ibelyaev@physics.syr.edu 
+# ============================================================================
+package           LoKiAlgoMC
+version           v4r0
+	
+# =============== structure ==================================================
+branches          cmt doc src dict python LoKi         
+	
+# =============== dependencies ===============================================
+use               LoKiAlgo      v*    Phys 
+use               LoKiGenMC     v*    Phys 
+use               LoKiPhysMC    v*    Phys 
+use               MCInterfaces  v*    Kernel
+private
+use               GaudiPython   v*                   
+use               Python        v*    LCG_Interfaces 
+public
+
+# =============== own includes ===============================================
+apply_pattern install_more_includes more=LoKi
+      
+# =============== constituents ===============================================
+library           LoKiAlgoMC  ../src/*.cpp 
+
+# ============== Produce LCG dictionary =======================================
+apply_pattern    reflex_dictionary                                   \
+                 dictionary=LoKiAlgoMC                               \
+                 headerfiles=$(LOKIALGOMCROOT)/dict/LoKiAlgoMCDict.h \
+                 selectionfile=$(LOKIALGOMCROOT)/dict/LoKiAlgoMC.xml \  
+                 options=" -U__MINGW32__ "
+
+# =============== patterns ===================================================
+apply_pattern     linker_library library=LoKiAlgoMC 
+
+macro LoKiAlgoMCDict_use_linkopts $(use_linkopts)
+
+# ============================================================================
+# The END
+# ============================================================================

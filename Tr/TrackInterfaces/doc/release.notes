@@ -4,6 +4,21 @@
 ! Purpose     : package for tracking tools interfaces
 !-----------------------------------------------------------------------------
 
+!====================== TrackInterfaces v3r5 2007-06-08 ======================
+! 2007-06-07 W. Hulsbergen
+ - extended IMeasurementProvider with 'update' function for a measurement
+ - extended ITrackExtrapolator with propagation of a StateVector
+
+! 2007-05-29 M. Needham
+ - Changes in IVeloExpectation:
+   * Method to return struct containing r and phi hits added
+
+! 2007-05-23 M. Needham
+ - Remove const from TrackManipulator interface
+
+! 2007-05-17 - Wouter Hulsbergen
+ - Added IMaterialLocator interface
+
 !====================== TrackInterfaces v3r4 2007-05-03 ======================
 ! 2007-05-03 - Marco Cattaneo
  - Fixed some doxygen warnings

@@ -1,4 +1,4 @@
-// $Id: CaloReadoutTool.cpp,v 1.11 2007-04-24 20:59:53 odescham Exp $
+// $Id: CaloReadoutTool.cpp,v 1.15 2007-06-12 20:24:32 odescham Exp $
 // Include files 
 
 // from Gaudi
@@ -32,6 +32,7 @@ CaloReadoutTool::CaloReadoutTool( const std::string& type,
 
   declareProperty( "DetectorName"   , m_detectorName );
   declareProperty( "PackedIsDefault", m_packedIsDefault = false);
+  declareProperty( "DetectorSpecificHeader", m_extraHeader = false);
   m_getRaw = true;
 }
 //=============================================================================
@@ -45,32 +46,33 @@ CaloReadoutTool::~CaloReadoutTool() {}
 StatusCode CaloReadoutTool::getCaloBanksFromRaw( ) {
 
   LHCb::RawEvent* rawEvt = NULL ;
-  m_raw = rootOnTES() + LHCb::RawEventLocation::Default;
-  debug() << "raw location :: " << m_raw << endreq;  
+  m_raw = LHCb::RawEventLocation::Default;
+  if ( msgLevel( MSG::DEBUG) )debug() << "raw location :: " << rootInTES() + m_raw << endmsg;  
   if( exist<LHCb::RawEvent>( m_raw ) ){
     rawEvt= get<LHCb::RawEvent>( m_raw );
   }else  {
-    warning() << "rawEvent not found at location '" << m_raw << "'"<< endreq;
+    warning() << "rawEvent not found at location '" << rootInTES() + m_raw 
+              << "'" << endmsg;
     return StatusCode::FAILURE;
   }
       
-
+  m_packed =false;
   m_banks = 0;
   if( !m_packedIsDefault){
-    debug() << "Banks of short type are requested as default" << endreq;
+    if ( msgLevel( MSG::DEBUG) )debug() << "Banks of short type are requested as default" << endreq;
     m_banks= &rawEvt->banks(  m_shortType );
   }else{
-    debug() << "Banks of paked type are requested as default" << endreq;
+    if ( msgLevel( MSG::DEBUG) )debug() << "Banks of paked type are requested as default" << endreq;
     m_banks= &rawEvt->banks(  m_packedType );
   }
   
   
   if ( 0 == m_banks || 0 == m_banks->size() ) {
     if( !m_packedIsDefault){      
-      debug()<< " Requested banks of short type has not been found ... try packed type" << endreq;
+      if ( msgLevel( MSG::DEBUG) )debug()<< " Requested banks of short type has not been found ... try packed type" << endreq;
       m_banks = &rawEvt->banks( m_packedType );
     }else{
-      debug()<< " Requested banks of packed type has not been found ... try short type" << endreq;
+      if ( msgLevel( MSG::DEBUG) )debug()<< " Requested banks of packed type has not been found ... try short type" << endreq;
       m_banks = &rawEvt->banks( m_shortType );
     }    
 
@@ -79,16 +81,18 @@ StatusCode CaloReadoutTool::getCaloBanksFromRaw( ) {
     return StatusCode::FAILURE;
     }else{
       if( !m_packedIsDefault){      
-        debug()<< " Requested banks of packed type has been found" << endreq;
+        if ( msgLevel( MSG::DEBUG) )debug()<< " Requested banks of packed type has been found" << endreq;
+        m_packed = true;
       }else{
-        debug()<< " Requested banks of short type has found" << endreq;
+        if ( msgLevel( MSG::DEBUG) )debug()<< " Requested banks of short type has found" << endreq;
       }
     }
   }else{
     if( !m_packedIsDefault){      
-      debug()<< " Requested banks of short type has been found" << endreq;
+      if ( msgLevel( MSG::DEBUG) )debug()<< " Requested banks of short type has been found" << endreq;
     }else{
-      debug()<< " Requested banks of packed type has found" << endreq;
+      if ( msgLevel( MSG::DEBUG) )debug()<< " Requested banks of packed type has found" << endreq;
+      m_packed =true;
     }
   }
   return StatusCode::SUCCESS;
@@ -100,11 +104,13 @@ StatusCode CaloReadoutTool::getCaloBanksFromRaw( ) {
 //  Check FE-Cards is PIN
 //========================
 void CaloReadoutTool::checkCards(int nCards, std::vector<int> feCards ){
-  debug() << nCards-feCards.size() << "FE-Cards have been read among the " << nCards << " expected"<< endreq; 
+  if ( msgLevel( MSG::DEBUG) )debug() << nCards-feCards.size() 
+                                      << "FE-Cards have been read among the " << nCards << " expected"<< endreq; 
   if( 0 != feCards.size() ){
     for(unsigned int iFe = 0 ; iFe <  feCards.size();++iFe){ 
-     debug() << " Unread FE-Cards : " << m_calo->cardCode( feCards[iFe] ) 
-             << "  - Is it a PinDiode readout FE-Card ? " << m_calo->isPinCard( feCards[iFe] ) << endreq;
+      if ( msgLevel( MSG::DEBUG) )debug() << " Unread FE-Cards : " << m_calo->cardCode( feCards[iFe] ) 
+                                          << "  - Is it a PinDiode readout FE-Card ? " 
+                                          << m_calo->isPinCard( feCards[iFe] ) << endreq;
      if ( !m_calo->isPinCard( feCards[iFe] ) )
        warning() << " The standard FE-Card " << m_calo->cardCode( feCards[iFe] )  
                  << " expected in TELL1 bank has not been read !!"<< endreq;
@@ -123,8 +129,8 @@ int CaloReadoutTool::findCardbyCode(std::vector<int> feCards , int code){
     if( code == m_calo->cardCode( feCards[iFe] ) ){
       int crate  = m_calo->cardParam( feCards[ iFe ] ).crate();
       int slot   = m_calo->cardParam( feCards[ iFe ] ).slot();
-      debug() <<" FE-Card [code : " << code << " | crate : " << crate << " slot : " << slot 
-              << "] has been found with (num : " << feCards[iFe] <<")  in condDB" << endreq;
+      if ( msgLevel( MSG::DEBUG) )debug() <<" FE-Card [code : " << code << " | crate : " << crate << " slot : " << slot 
+                                          << "] has been found with (num : " << feCards[iFe] <<")  in condDB" << endreq;
       return iFe;
       break;
     }        

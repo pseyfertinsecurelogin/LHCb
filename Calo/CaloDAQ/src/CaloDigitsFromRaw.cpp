@@ -1,4 +1,4 @@
-// $Id: CaloDigitsFromRaw.cpp,v 1.9 2007-02-22 23:39:52 odescham Exp $
+// $Id: CaloDigitsFromRaw.cpp,v 1.11 2007-06-12 20:24:32 odescham Exp $
 // Include files 
 
 // from Gaudi
@@ -50,26 +50,26 @@ StatusCode CaloDigitsFromRaw::initialize ( ) {
   // get DeCalorimeter
   if( 2 == m_detectorNum ) {
     m_calo = getDet<DeCalorimeter>( DeCalorimeterLocation::Ecal );
-    m_outputDigits   = rootOnTES() + LHCb::CaloDigitLocation::Ecal + m_extension;
-    m_outputADCs = rootOnTES() + LHCb::CaloAdcLocation::Ecal   + m_extension;
-    m_pinContainerName = rootOnTES() + LHCb::CaloAdcLocation::EcalPin +m_extension;
+    m_outputDigits     = LHCb::CaloDigitLocation::Ecal  + m_extension;
+    m_outputADCs       = LHCb::CaloAdcLocation::Ecal    + m_extension;
+    m_pinContainerName = LHCb::CaloAdcLocation::EcalPin + m_extension;
   }
   else if( 3 == m_detectorNum ) {
-  m_calo = getDet<DeCalorimeter>( DeCalorimeterLocation::Hcal );
-  m_outputDigits   = rootOnTES() + LHCb::CaloDigitLocation::Hcal + m_extension;
-  m_outputADCs = rootOnTES() + LHCb::CaloAdcLocation::Hcal   + m_extension;
-  m_pinContainerName = rootOnTES() + LHCb::CaloAdcLocation::HcalPin + m_extension;
+    m_calo = getDet<DeCalorimeter>( DeCalorimeterLocation::Hcal );
+    m_outputDigits     = LHCb::CaloDigitLocation::Hcal  + m_extension;
+    m_outputADCs       = LHCb::CaloAdcLocation::Hcal    + m_extension;
+    m_pinContainerName = LHCb::CaloAdcLocation::HcalPin + m_extension;
   }
   else if( 1 == m_detectorNum ) {
     m_calo = getDet<DeCalorimeter>( DeCalorimeterLocation::Prs );
-    m_outputDigits   = rootOnTES() + LHCb::CaloDigitLocation::Prs + m_extension;
-    m_outputADCs = rootOnTES() + LHCb::CaloAdcLocation::Prs + m_extension;
+    m_outputDigits     = LHCb::CaloDigitLocation::Prs + m_extension;
+    m_outputADCs       = LHCb::CaloAdcLocation::Prs + m_extension;
     m_pinContainerName = "None";
    }
   else if( 0 == m_detectorNum ) {
     m_calo = getDet<DeCalorimeter>( DeCalorimeterLocation::Spd );
-    m_outputDigits= rootOnTES() + LHCb::CaloDigitLocation::Spd + m_extension;
-    m_outputADCs  = rootOnTES() + LHCb::CaloAdcLocation::Spd + m_extension;
+    m_outputDigits     = LHCb::CaloDigitLocation::Spd + m_extension;
+    m_outputADCs       = LHCb::CaloAdcLocation::Spd + m_extension;
     m_pinContainerName = "None";
   }
   else {
@@ -95,10 +95,10 @@ StatusCode CaloDigitsFromRaw::initialize ( ) {
     error()<< "CaloDigitsFromRaw configured to produce ** NO ** output" << endreq;
     return StatusCode::FAILURE;
   }
-  if( m_digitOnTES )debug() <<  "CaloDigitsFromRaw will produce CaloDigits on TES" 
-                            << endreq;
-  if( m_adcOnTES )debug() <<  "CaloDigitsFromRaw will produce CaloAdcs on TES" 
-                          << endreq;
+  if( m_digitOnTES )debug() <<  "CaloDigitsFromRaw will produce CaloDigits on TES at " 
+                            << rootInTES() + m_outputDigits << endreq;
+  if( m_adcOnTES )debug() <<  "CaloDigitsFromRaw will produce CaloAdcs on TES at "
+                          << rootInTES() + m_outputADCs << endreq;
 
   return StatusCode::SUCCESS;
 }
