@@ -4,6 +4,35 @@
 ! Purpose     : General purpose algorithms and tools for LHCb
 !-----------------------------------------------------------------------------
 
+!========================= LHCbAlgs v2r54 2013-02-14 =========================
+! 2012-02-12 - Paul Szczypka
+ - Added protection from warnings due to "Tr" being in detector list.
+
+! 2012-02-11 - Paul Szczypka
+ - Small edit of CondDB().Upgrade code.
+ - Added ConDBUpgrade property, but unused as yet.
+
+! 2013-02-10 - Paul Szczypka
+ - Correction to setting CondDB().Upgrade
+
+! 2013-02-10 - Paul Szczypka
+ - Extended method in Configuration which sets DB dataTypes to also set
+   CondBD().Upgrade to True if appropriate.
+
+! 2013-02-06 - Paul Szczypka
+ - Added method to Configuration.py which returns list of Upgrade detectors.
+
+! 2013-02-05 - Paul Szczypka
+ - Added missing pairs to dictionary.
+
+! 2013-02-04 - Paul Szczypka
+ - Added methods in Configuration.py to derive local dataTypes from detector list.
+
+! 2012-12-07 - Marco Cattaneo
+ - Use getIfExists wherever it makes sense
+ - Fix an UNINIT_CTOR defect
+ - Remove 'do nothing' finalize methods
+
 !========================= LHCbAlgs v2r53 2012-11-26 =========================
 ! 2012-11-15 - Marco Clemencic
  - Added CMake configuration file.

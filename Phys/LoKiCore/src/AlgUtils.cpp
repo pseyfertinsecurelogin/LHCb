@@ -46,7 +46,7 @@ LoKi::AlgUtils::getGaudiAlg ( const LoKi::AuxFunBase& base  ,
   //
   SmartIF<IAlgContextSvc> cntx ( svc ) ;
   if ( force  ) { base.Assert( !(!cntx) , "IAlgContextSvc* points to NULL!" ) ; }
-  else if ( !svc     ) { return 0 ; }
+  else if ( !cntx     ) { return 0 ; }
   //
   return Gaudi::Utils::getGaudiAlg ( cntx ) ;
 }

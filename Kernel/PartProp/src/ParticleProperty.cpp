@@ -1,4 +1,4 @@
-// $Id: ParticleProperty.cpp 115314 2011-01-13 16:18:55Z cattanem $
+// $Id: ParticleProperty.cpp 151438 2013-02-01 11:19:58Z ibelyaev $
 // ============================================================================
 // Include files
 // ============================================================================
@@ -463,8 +463,18 @@ LHCb::ParticleProperties::printAsTable
   return s.str() ;
 }
 // ============================================================================
-
- 
+const LHCb::ParticleProperty* std::abs 
+( const LHCb::ParticleProperty* p )
+{
+  if ( 0 == p ) { return 0 ;}
+  //
+  if ( p->selfcc() || 0 <= p->particleID().pid() ) { return p ; }
+  //
+  const LHCb::ParticleProperty* a = p->anti() ;
+  if ( 0 != a && 0 <= a->particleID().pid()      ) { return a ; }
+  //
+  return p ; // should it be 0 ? 
+}
 // ============================================================================
 // The END
 // ============================================================================

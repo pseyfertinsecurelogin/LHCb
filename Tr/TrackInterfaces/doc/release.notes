@@ -4,6 +4,23 @@
 ! Purpose     : package for tracking tools interfaces
 !-----------------------------------------------------------------------------
 
+!========================= TrackInterfaces v4r23 2013-02-06 =========================
+! 2013-02-06 - Marco Cattaneo
+ - Fix the dictionaries, broken by previous change....
+
+! 2013-02-05 - Sascha Stahl
+ - Renamed IPatVeloUTFit.h to IPrVeloUTFit.h.
+
+! 2013-02-04 - Mariusz Witek
+ - change void to StatusCode for removeTracksAndRecalculatePV (IPVOfflineTool)
+   to give the information that PV recalculation failed and original PV is returned
+
+! 2013-01-30 - Jianchun Wang
+ - Replace PatUTHit with PatTTHit
+
+! 2013-01-07 - Jianchun Wang
+ - Add UT cluster and VeloUT interface
+
 !========================= TrackInterfaces v4r22 2012-11-26 =========================
 ! 2012-11-15 - Marco Clemencic
  - Added CMake configuration file.

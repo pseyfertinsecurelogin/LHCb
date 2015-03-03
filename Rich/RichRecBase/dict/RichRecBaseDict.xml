@@ -17,6 +17,7 @@
   <class name = "Rich::ObjPtn&lt;LHCb::RichRecPixel::Tracks&gt;" />
   <class name = "LHCb::RichRecPixel::Photons" />
   <class name = "Rich::ObjPtn&lt;LHCb::RichRecPixel::Photons&gt;" />
+  <class name = "LHCb::RichRecRingOnPixel" />
   <class name = "LHCb::RichRecPixel::RingsOnPixel" />
   <class name = "Rich::ObjPtn&lt;LHCb::RichRecPixel::RingsOnPixel&gt;" />
   <class name = "Rich::ObjPtn&lt;Rich::HPDPixelCluster&gt;" />
@@ -39,10 +40,21 @@
 
   <class name = "LHCb::RichRecPointOnRing" />
   <class name = "LHCb::RichRecPointOnRing::Vector" />
-  <class name = "std::vector&lt;LHCb::RichRecPixelOnRing&gt;" />
+  <class name = "LHCb::RichRecPixelOnRing::Vector" />
 
   <class name = "Rich::ObjPtn&lt;LHCb::RichGeomPhoton&gt;" />
   <class name = "Rich::ObjPtn&lt;LHCb::RichTrackSegment&gt;" />
+
+  <class name = "LHCb::RichRecSegments" />
+  <class name = "LHCb::RichRecTracks" />
+  <class name = "LHCb::RichRecPixels" />
+  <class name = "LHCb::RichRecPhotons" />
+  <class name = "LHCb::RichRecRings" />
+
+  <class name = "LHCb::RichRecSegment::PDGeomEffs" />
+  <class name = "LHCb::RichRecSegment::PDGeomEffsVector" />
+  <class name = "LHCb::RichRecSegment::Pixels" />
+  <class name = "LHCb::RichRecSegment::Photons" />
 
   <class name = "Rich::Rec::IBaseTrackSelector" />
   <class name = "Rich::Rec::ICherenkovAngle" />

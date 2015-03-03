@@ -3,7 +3,7 @@
 # Maintainer : Gloria CORTI
 #============================================================================
 package           SimComponents
-version           v2r23
+version           v2r24
 
 #============================================================================
 # Structure, i.e. directories to process. 
@@ -21,6 +21,7 @@ use   MCInterfaces v*    Kernel
 use   Boost        v*    LCG_Interfaces
 use   CaloDet      v*    Det
 use   AIDA         v*    LCG_Interfaces -no_auto_imports
+use   DecFiles     v*    Gen            -no_auto_imports
 
 #============================================================================
 # Component library building rule

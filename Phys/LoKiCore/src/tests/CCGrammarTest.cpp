@@ -1,6 +1,3 @@
-// $Id: CCGrammarTest.cpp 53291 2010-08-05 14:35:53Z ibelyaev $
-// ============================================================================
-// CVS tag $Name: not supported by cvs2svn $, version $Revision: 53291 $
 // ============================================================================
 // Include files 
 // ============================================================================
@@ -15,6 +12,15 @@
 // ============================================================================
 /** @file
  *  Simple application to test CC-utilities parsers 
+ *
+ *  This file is a part of LoKi project - 
+ *    "C++ ToolKit  for Smart and Friendly Physics Analysis"
+ *
+ *  The package has been designed with the kind help from
+ *  Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas, 
+ *  contributions and advices from G.Raven, J.van Tilburg, 
+ *  A.Golutvin, P.Koppenburg have been used in the design.
+ *
  *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
  *  @date 2009-05-12
  */

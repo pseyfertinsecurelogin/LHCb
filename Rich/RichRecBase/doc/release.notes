@@ -4,6 +4,21 @@
 ! Purpose     : Base package for RICH Reconstruction Packages
 !-----------------------------------------------------------------------------
 
+!========================= RichRecBase v4r16 2013-02-04 =========================
+! 2013-02-01 - Chris Jones
+ - Add preliminary support for PatVeloUT track types, mapping them to
+   Rich::Rec::Track::VeloTT
+
+! 2012-12-07 - Chris Jones
+ - More improvements to the python dictionary, adding some missing entries for
+   LHCb::RichRecRingOnPixel
+
+! 2012-12-05 - Marco Cattaneo
+ - Mask icc11 warnings from auto-generated dict following previous change
+
+! 2012-12-04 - Chris Jones
+ - Add KeyedContainers to python dictionary
+
 !========================= RichRecBase v4r15 2012-11-26 =========================
 ! 2012-11-15 - Marco Clemencic
  - Added CMake configuration file.

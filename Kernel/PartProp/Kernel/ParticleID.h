@@ -1,4 +1,4 @@
-// $Id: ParticleID.h 135995 2012-02-28 20:17:14Z jonrob $ 
+// $Id: ParticleID.h 151438 2013-02-01 11:19:58Z ibelyaev $ 
 // ============================================================================
 #ifndef LHCbKernel_ParticleID_H
 #define LHCbKernel_ParticleID_H 1
@@ -7,6 +7,7 @@
 // ============================================================================
 #include <iosfwd>
 #include <string>
+#include <cmath>
 // ============================================================================
 // GaudiKernel
 // ============================================================================
@@ -217,8 +218,10 @@ namespace LHCb
 } //                                                      end of namespace LHCb
 // ============================================================================
 #include "GaudiKernel/HashMap.h"
+// ============================================================================
 namespace GaudiUtils 
 {
+  // ==========================================================================
   // Hash functions for maps
   template <> struct Hash<LHCb::ParticleID>
   { inline size_t operator() ( const LHCb::ParticleID& s ) const { return (size_t)s.pid(); } };
@@ -228,6 +231,16 @@ namespace GaudiUtils
   { inline size_t operator() ( const LHCb::ParticleID& s ) const { return (size_t)s.pid(); } };
   template <> struct Hash<const LHCb::ParticleID&>
   { inline size_t operator() ( const LHCb::ParticleID& s ) const { return (size_t)s.pid(); } };
+  // ==========================================================================
+}
+// ============================================================================
+namespace std
+{
+  // ==========================================================================
+  inline 
+  LHCb::ParticleID abs ( const LHCb::ParticleID& p )  
+  { return LHCb::ParticleID ( p.abspid() ) ; }
+  // ==========================================================================
 }
 // ============================================================================
 #endif ///LHCbKernel_ParticleID_H

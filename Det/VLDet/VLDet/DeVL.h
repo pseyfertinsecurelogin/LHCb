@@ -20,6 +20,8 @@
 static const CLID CLID_DeVL = 8300; 
 
 namespace DeVLLocation {
+  //Change back to VL when new database is released
+  //static const std::string& Default = "/dd/Structure/LHCb/BeforeMagnetRegion/VL";
   static const std::string& Default = "/dd/Structure/LHCb/BeforeMagnetRegion/VeloLite";
 }
 

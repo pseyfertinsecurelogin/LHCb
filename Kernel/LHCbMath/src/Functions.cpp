@@ -1,4 +1,4 @@
-// $Id: Functions.cpp 146847 2012-10-12 12:41:30Z marcocle $
+// $Id: Functions.cpp 150522 2013-01-05 08:38:49Z ibelyaev $
 // ============================================================================
 // Include files
 // ============================================================================
@@ -44,8 +44,8 @@
  *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
  *  @date 2010-04-19
  *
- *                    $Revision: 146847 $
- *  Last modification $Date: 2012-10-12 14:41:30 +0200 (Fri, 12 Oct 2012) $
+ *                    $Revision: 150522 $
+ *  Last modification $Date: 2013-01-05 09:38:49 +0100 (Sat, 05 Jan 2013) $
  *                 by $author$
  */
 // ============================================================================
@@ -937,6 +937,18 @@ namespace
     return (*f)(x) ;
   }
   // ==========================================================================
+  /** helper function for itegration of StudentT-shape
+   *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+   *  @date 2013-01-05
+   */
+  double studentT_GSL ( double x , void* params )
+  {
+    //
+    const Gaudi::Math::StudentT* f = (Gaudi::Math::StudentT*) params ;
+    //
+    return (*f)(x) ;
+  }
+  // ==========================================================================
   /** helper function for itegration of Voigt shape
    *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
    *  @date 2010-05-23
@@ -968,9 +980,10 @@ namespace
     //
     // attention: normalization factors and phase space are here!
     //
-    const double d = 2 * std::abs ( m0 * gamma  * x ) / M_PI ;
+    // const double d = 2 / M_PI ;
+    // const double d = 2 * std::abs ( m0 * gamma  * x ) / M_PI ;
     //
-    return  std::sqrt ( d ) / v ;
+    return  1.0 / v ;
   }
   // ==========================================================================
   typedef double (*rho_fun) ( double , double , double , double ) ;
@@ -2935,15 +2948,7 @@ Gaudi::Math::BreitWigner::amplitude ( const double x ) const
   const double g  = gamma ( x ) ;
   if ( 0 >= g ) { return 0 ; }
   //
-  static const std::complex<double> s_j ( 0 , 1 ) ;
-  //
-  const std::complex<double> v = m0() * m0 () - x * x - s_j * m0() * g ;
-  //
-  const double q  = Gaudi::Math::PhaseSpace2::q ( x    , m1 () , m2 () ) ;
-  const double q0 = Gaudi::Math::PhaseSpace2::q ( m0() , m1 () , m2 () ) ;
-  //
-  return
-    std::sqrt ( m0 () * gam0 () ) * Gaudi::Math::pow ( q / q0 , m_L ) / v ;
+  return std::sqrt ( m0 () * gam0 () ) * breit_amp ( x , m0() , g ) ;
 }
 // ============================================================================
 /*  calculate the Breit-Wigner shape
@@ -2958,11 +2963,15 @@ double Gaudi::Math::BreitWigner::breit_wigner ( const double x ) const
   const double g  = gamma ( x ) ;
   if ( 0 >= g ) { return 0 ; }
   //
-  const double omega2 = m_m0 * m_m0 ;
-  const double delta = omega2        -          x * x ;
-  const double v     = delta * delta + omega2 * g * g ;
+  std::complex<double> a = amplitude ( x ) ;
   //
-  return 2 * x * m_m0 * g / v / M_PI  ;
+  return 2 * x * std::norm ( a )* g / gam0() / M_PI ;
+  //
+  // const double omega2 = m_m0 * m_m0 ;
+  // const double delta = omega2        -          x * x ;
+  // const double v     = delta * delta + omega2 * g * g ;
+  //
+  // return 2 * x * m_m0 * g / v / M_PI  ;
 }
 // ============================================================================
 /*  calculate the Breit-Wigner shape
@@ -4349,21 +4358,24 @@ double Gaudi::Math::BW23L::operator() ( const double x ) const
 {
   if (  lowEdge() >= x || highEdge()  <= x ) { return 0 ; }
   //
-  const double bw = m_bw ( x ) ;
+  const double bw = std::norm ( m_bw.amplitude ( x ) )   ;
   //
-  // get the incomplete phase space factor
-  const double ps  =                   // get the incomplete phase space factor
-    x / M_PI *
-    // =======================================================================
-    // the second factor is already in our BW !!!
-    // Gaudi::Math::PhaseSpace2::phasespace ( x   , m_m1 , m_m2 , m_l  ) *
-    // =======================================================================
-    Gaudi::Math::PhaseSpace2::phasespace ( m_ps.m  () ,
-                                           x          ,
-                                           m_ps.m3 () ,
-                                           m_ps.L  () ) ;
+  // // get the incomplete phase space factor
+  // const double ps  =                   // get the incomplete phase space factor
+  //   x / M_PI *
+  //   // =======================================================================
+  //   // the second factor is already in our BW !!!
+  //   Gaudi::Math::PhaseSpace2::phasespace ( x          , 
+  //                                          m_bw.m1 () , 
+  //                                          m_bw.m2 () , 
+  //                                          m_bw.L  () ) *
+  //   // =======================================================================
+  //   Gaudi::Math::PhaseSpace2::phasespace ( m_ps.m  () ,
+  //                                          x          ,
+  //                                          m_ps.m3 () ,
+  //                                          m_ps.L  () ) ;
   //
-  return bw * ps ;
+  return bw * m_ps ( x ) ;
 }
 // ============================================================================
 // get the integral between low and high limits
@@ -4995,6 +5007,150 @@ bool Gaudi::Math::Positive::updateBernstein ( const unsigned short k )
   //
   return update ;
 }
+
+
+
+
+// ============================================================================
+// StudetnT 
+// ============================================================================
+/*  constructor from mass, resolution and "n"-parameter 
+ *  @param M     mass 
+ *  @param sigma width parameter
+ *  @param N     n-parameter  ( actually  n=1+|N| ) 
+ */
+// ============================================================================
+Gaudi::Math::StudentT::StudentT 
+( const double mass  , 
+  const double sigma ,
+  const double n     ) 
+  : std::unary_function<double,double>  ()
+//
+  , m_M    (      std::abs ( mass  ) )
+  , m_s    (      std::abs ( sigma ) )
+  , m_n    ( -1 )
+  , m_norm ( -1 ) 
+{
+  setN ( n ) ;  
+}
+// ============================================================================
+// destructor
+// ============================================================================
+Gaudi::Math::StudentT::~StudentT (){}
+// ============================================================================
+// set the proper parameters
+// ============================================================================
+bool Gaudi::Math::StudentT::setM ( const double x )
+{
+  //
+  const double v = std::abs ( x ) ;
+  if ( s_equal ( v , m_M ) ) { return false ; }
+  //
+  m_M = v ;
+  //
+  return true ;
+}
+// ============================================================================
+// set the proper parameters
+// ============================================================================
+bool Gaudi::Math::StudentT::setSigma ( const double x )
+{
+  //
+  const double v = std::abs ( x ) ;
+  if ( s_equal ( v , m_s ) ) { return false ; }
+  //
+  m_s = v ;
+  //
+  return true ;
+}
+// ============================================================================
+// set the proper parameters
+// ============================================================================
+bool Gaudi::Math::StudentT::setN ( const double x )
+{
+  //
+  const double v = 1 + std::abs ( x ) ;
+  //
+  if ( m_norm < 0 ) 
+  {
+    m_norm  = gsl_sf_gamma ( 0.5 * ( v + 1 ) ) / gsl_sf_gamma ( 0.5 * v ) ;  
+    m_norm /= std::sqrt    ( M_PI * v ) ;
+  }
+  //
+  if ( s_equal ( v , m_n ) ) { return false ; }
+  //
+  m_n = v ;
+  //
+  m_norm  = gsl_sf_gamma ( 0.5 * ( v + 1 ) ) / gsl_sf_gamma ( 0.5 * v ) ;  
+  m_norm /= std::sqrt    ( M_PI * v ) ;
+  //
+  return true ;
+}
+// ==========================================================================
+double Gaudi::Math::StudentT::operator () ( const double x ) const
+{
+  //
+  const double y = ( x - M () ) / sigma() ;
+  //
+  const double f = std::pow (  1 + y * y / n() ,  -0.5 * ( n() + 1 ) ) ;
+  //
+  return m_norm * f / sigma () ; // sigma comes from dx = dy * sigma 
+}
+// ============================================================================
+// get the integral 
+// ============================================================================
+double Gaudi::Math::StudentT::integral() const { return 1 ; }
+// ============================================================================
+// get the integral 
+// ============================================================================
+double Gaudi::Math::StudentT::integral
+( const double low  , 
+  const double high ) const 
+{
+  //
+  if ( s_equal ( low , high ) ) { return                 0.0 ; } // RETURN
+  if (           low > high   ) { return - integral ( high ,
+                                                      low  ) ; } // RETURN
+  //
+  // split large pieces 
+  if ( high - low > 8 * sigma() ) 
+  {
+    const double split = 0.5 * ( low + high ) ;
+    return integral ( low , split ) + integral ( split , high ) ;  // RETURN
+  }
+  //
+  // use GSL to evaluate the integral
+  //
+  Sentry sentry ;
+  //
+  gsl_function F                   ;
+  F.function             = &studentT_GSL ;
+  const StudentT* _ps    = this  ;
+  F.params               = const_cast<StudentT*> ( _ps ) ;
+  //
+  double result   = 1.0 ;
+  double error    = 1.0 ;
+  //
+  const int ierror = gsl_integration_qag
+    ( &F                ,            // the function
+      low   , high      ,            // low & high edges
+      s_PRECISION       ,            // absolute precision
+      s_PRECISION       ,            // relative precision
+      s_SIZE            ,            // size of workspace
+      GSL_INTEG_GAUSS31 ,            // integration rule
+      workspace ( m_workspace ) ,    // workspace
+      &result           ,            // the result
+      &error            ) ;          // the error in result
+  //
+  if ( ierror )
+  {
+    gsl_error ( "Gaudi::Math::StudentT::QAG" ,
+                __FILE__ , __LINE__ , ierror ) ;
+  }
+  //
+  return result ;
+}
+
 // ============================================================================
 // The END
 // ============================================================================

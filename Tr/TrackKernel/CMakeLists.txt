@@ -1,15 +1,16 @@
 ################################################################################
 # Package: TrackKernel
 ################################################################################
-gaudi_subdir(TrackKernel v1r11)
+gaudi_subdir(TrackKernel v1r12)
 
-gaudi_depends_on_subdirs(Event/TrackEvent
+gaudi_depends_on_subdirs(Det/DetDesc
+			 Event/TrackEvent
                          Kernel/LHCbKernel
                          Kernel/LHCbMath)
 
 gaudi_add_library(TrackKernel
                   src/*.cpp
-                  PUBLIC_HEADERS TrackKernel
+                  PUBLIC_HEADERS TrackKernel DetDesc
                   LINK_LIBRARIES TrackEvent LHCbKernel LHCbMathLib)
 
 gaudi_add_dictionary(TrackKernel
