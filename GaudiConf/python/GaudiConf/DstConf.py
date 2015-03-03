@@ -110,10 +110,13 @@ class DstConf(LHCbConfigurableUser):
             depth = "#1"
 
         writer.ItemList += [   "/Event/Rec/Header"                       + depth
-                             , "/Event/Rec/Status"                       + depth
-                             , "/Event/Rec/Summary"                      + depth
-                             , "/Event/" + recDir + "/Track/Best"        + depth
-                               ]
+                             , "/Event/Rec/Status"                       + depth]
+        from Configurables import LHCbApp
+
+        writer.ItemList += [ "/Event/Rec/Summary"                      + depth]
+
+        writer.ItemList += [ "/Event/" + recDir + "/Track/Best"        + depth]
+        
         if "Rich" in self.getProp("Detectors"):
             writer.ItemList += [ "/Event/" + recDir + "/Rich/PIDs"         + depth]
         if "Muon" in self.getProp("Detectors"):
@@ -185,6 +188,8 @@ class DstConf(LHCbConfigurableUser):
                     # Objects propagated from Boole
                     # Digi headers
                     DigiConf().addHeaders(writer)
+                    DigiConf().addMCTrackInfo(writer)
+                    DigiConf().addMCCaloInfo(writer)
 
                     if dType == "XDST":
                         # Digitisation summaries
@@ -550,7 +555,7 @@ class DstConf(LHCbConfigurableUser):
 
         # Propagate SpilloverPaths and DataType to DigiConf and to SimConf via DigiConf
         self.setOtherProps(DigiConf(),["SpilloverPaths","DataType", "Detectors"])
-        DigiConf().setOtherProps(SimConf(),["SpilloverPaths","DataType", "Detectors"])
+        DigiConf().setOtherProps(SimConf(),["SpilloverPaths","DataType"])
 
         pType = self.getProp( "PackType" ).upper()
         if pType not in self.KnownPackTypes:

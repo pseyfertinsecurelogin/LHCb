@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # =============================================================================
-# $Id: functions.py 141170 2012-06-18 09:45:16Z ibelyaev $
+# $Id: functions.py 152702 2013-02-21 11:32:49Z ibelyaev $
 # =============================================================================
 ## @file LoKiGen/functions.py
 #  The full set of useful objects from LoKiGen library 
@@ -20,8 +20,8 @@
 #  @author Vanya BELYAEV ibelyaev@physics.syr.edu
 #  @date 2007-12-01
 #
-#                    $Revision: 141170 $
-#  Last modification $Date: 2012-06-18 11:45:16 +0200 (Mon, 18 Jun 2012) $
+#                    $Revision: 152702 $
+#  Last modification $Date: 2013-02-21 12:32:49 +0100 (Thu, 21 Feb 2013) $
 #                 by $Author: ibelyaev $
 # =============================================================================
 """
@@ -43,7 +43,7 @@ with the smear campaign of Dr.O.Callot et al.:
 # =============================================================================
 __author__  = "Vanya BELYAEV ibelyaev@physics.syr.edu" 
 __date__    = "2007-12-01"
-__version__ = "$Revision: 141170 $ "
+__version__ = "$Revision: 152702 $ "
 # =============================================================================
 
 import LoKiCore.decorators as _LoKiCore 
@@ -258,7 +258,7 @@ GY        = LoKi.GenParticles.Rapidity ()
 GRAPIDITY = LoKi.GenParticles.Rapidity
 
 ## @see LoKi::Cuts::GY0
-GY         = LoKi.GenParticles.Rapidity0 ()
+GY0        = LoKi.GenParticles.Rapidity0 ()
 ## @see LoKi::Cuts::GRAPIDITY0
 GRAPIDITY0 = LoKi.GenParticles.Rapidity0
 

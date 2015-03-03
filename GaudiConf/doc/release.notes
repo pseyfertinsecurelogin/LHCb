@@ -3,6 +3,39 @@
 ! package manager: M.Cattaneo
 !------------------------------------------------------------------------------
 
+!========================= GaudiConf v17r8 2013-03-21 =========================
+
+! 2013-03-21 - Chris Jones
+ - Add the Ecal and Hcal linkers back to the standard Digi format, which was
+   accidentally removed in the last change ...
+
+! 2013-03-11 - Chris Jones
+ - Add Ecal and Hcal linkers back to standard DSTs, as they are needed for MC
+   matching in DaVinci.
+
+!========================= GaudiConf v17r7 2013-03-06 =========================
+! 2013-03-06 - Gloria Corti
+ - Fix type of SaveHepMC to be a bool in SimConf. Bug, introduced in v17r0,
+   affects only Gauss.
+
+! 2013-03-03 - Sascha Stahl
+ - Removed test for upgrade detectors when adding Rec/Summary to writer
+   in DstConf.
+   RecSummary supports upgrade detectors now.
+
+!========================= GaudiConf v17r6 2013-02-15 =========================
+! 2013-02-15 - Marco Cattaneo
+ - Add a new function DigiConf().AddMCTrackInfo, to add MC/TrackInfo to the
+   output, called by both DigiConf and DstConf. Previously this was part of 
+   AddMCParticleLinks, so MC/TrackInfo was not added to defalut MC DST, only
+   XDST (bug introduced in v17r0, fixed also in v17r4b branch)
+
+! 2013-02-08 - Paul Szczypka
+ - Remove debug statement.
+
+! 2013-02-08 - Paul Szczypka
+ - Add test for upgrade detectors when adding Rec/Summary to writer in DstConf.
+
 !========================= GaudiConf v17r5 2013-02-09 =========================
 ! 2013-02-08 - Paul Szczypka
  - Add upgrade detector switching in DstConf

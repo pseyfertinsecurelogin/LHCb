@@ -4,6 +4,12 @@
 ! Purpose     : Interface between LHCb and LGC/COOL project
 !-----------------------------------------------------------------------------
 
+!========================= DetCond v12r29p1 2013-03-19 =======================
+! built on branch v12r29b
+
+! 2013-03-18 - Vanya Belyaev
+ - comment usage of python module from removed package HistoStrings
+
 !========================= DetCond v12r29 2013-02-04 =========================
 ! 2012-12-20 - Marco Clemencic
  - Stop the TimeOutChecker thread when explicitly disconnected. The thread is

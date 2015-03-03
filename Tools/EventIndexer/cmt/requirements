@@ -1,0 +1,40 @@
+#============================================================================
+# Created    : 2013-03-13
+# Maintainer : Marco Clemencic
+#============================================================================
+package          EventIndexer
+version          v1r0
+
+#============================================================================
+# Structure, i.e. directories to process.
+#============================================================================
+branches         cmt doc src tests
+
+#============================================================================
+# Used packages.
+#============================================================================
+use              GaudiAlg        v*
+use              RecEvent        v*        Event
+use              ROOT            v*        LCG_Interfaces
+
+private
+#============================================================================
+# Component library building rule
+#============================================================================
+library          EventIndexer    ../src/*.cpp ../$(CMTCONFIG)/dict/EventIndexerDict.cpp -no_static
+macro_append     EventIndexer_dependencies " EventIndexerDict "
+
+#============================================================================
+# define component library link options
+#============================================================================
+apply_pattern    component_library library=EventIndexer
+
+apply_pattern    QMTest
+
+include_dirs  $(EventIndexer_root)/src
+
+macro EventIndexer_cintflags " $(includes) $(use_includes) "
+
+document rootcint EventIndexerDict EventIndexer.h
+
+end_private

@@ -3,6 +3,21 @@
 ! Responsible : Alessia Satta
 !----------------------------------------------------------------------------
 
+!========================= MuonDet v9r10 2013-03-20 =========================
+! 2013-02-25 - Marco Cattaneo for Danilo Piparo
+ - In DeMuonDetector.h: (see https://savannah.cern.ch/bugs/?100553)
+   . remove define directives in favour of private static const members
+   . remove unused defines
+
+! 2013-02-15 - Maddalena Frosini
+ - src/Lib/MuonBasicGeometry.cpp changed the M1 status message level from 
+   INFO to DEBUG.
+
+! 2013-02-14 - Maddalena Frosini
+ - src/Lib/MuonBasicGeometry.cpp, MuonDet/MuonBasicGeometry.h
+   added a check on the muonSystem children to skip the muon filter and keep
+   only the muon stations.
+
 ! 2012-11-15 - Marco Clemencic
  - Added CMake configuration file.
 
