@@ -1,9 +1,17 @@
-! $Id: release.notes,v 1.67 2009-05-06 15:11:20 cattanem Exp $ 
+! $Id: release.notes,v 1.70 2009-11-27 12:28:08 cattanem Exp $ 
 ! =============================================================================
 ! package DetDescSvc
 ! package manager : Marco Clemencic, Juan Palacios ?
 ! purpose:          Component library for Detector Description Services
 ! =============================================================================
+
+!========================= DetDescSvc v2r4 2009-11-27 =========================
+! 2009-11-16 - Marco Cattaneo
+ - remove obsolete file DetDescSvc_dll.cpp
+
+! 2009-11-15 - Vanya Belyaev
+ - remove "use" of GSL 
+ - cmt/requirements: version increment to v2r4 
 
 !========================= DetDescSvc v2r3p1 2009-05-06 =======================
 ! 2009-04-17 - Marco Cattaneo

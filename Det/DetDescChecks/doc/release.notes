@@ -1,11 +1,22 @@
 ! ------------------------------------------------------------------------------
-! $Id: release.notes,v 1.47 2009-07-14 07:57:04 cattanem Exp $ 
+! $Id: release.notes,v 1.50 2009-11-27 12:26:15 cattanem Exp $ 
 ! ------------------------------------------------------------------------------
 ! Package     : Det/DetDescChecks
 ! Responsible : Vanya Belyaev Ivan.Belyaev@itep.ru
 ! Purpose     : Collection of useful components for checking of 
 !               Detector Description, Material Budget etc 
 ! ------------------------------------------------------------------------------
+
+!======================= DetDescChecks v5r0 2009-11-27 =========================
+! 2009-11-16 - Marco Cattaneo
+ - Remove obsolete files DetDescChecks_dll.cpp and DirHbookName.h
+
+! 2009-11-15 - Vanya Belyaev
+ - rename algorithms, put minor fixes 
+ - provide python-scripts to run checks 
+ - add qmtests for the algorithms 
+ - remove opts-files & directory 
+ - cmt/requirements: version increment to v5r0 
 
 !======================= DetDescChecks v4r11 2009-07-14 ========================
 ! 2009-07-09 - Marco Clemencic
