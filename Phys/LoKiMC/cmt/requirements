@@ -1,10 +1,9 @@
-# $Id: requirements 124207 2011-06-02 16:05:29Z ibelyaev $ 
 # ============================================================================
 # Created    : 2006-01-17
 # Maintainer : Vanya BELYAEV ibelyaev@physics.syr.edu 
 # ============================================================================
 package           LoKiMC
-version           v10r1
+version           v10r2
 	
 # =============== structure ==================================================
 branches          cmt doc src dict python LoKi 

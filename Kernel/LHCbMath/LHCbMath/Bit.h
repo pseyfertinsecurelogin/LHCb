@@ -1,4 +1,4 @@
-// $Id: Bit.h,v 1.5 2010-05-18 09:08:21 cattanem Exp $
+// $Id: Bit.h 124901 2011-06-16 12:46:28Z ibelyaev $
 // ============================================================================
 #ifndef LHCBMATH_BIT_H 
 #define LHCBMATH_BIT_H 1

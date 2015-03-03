@@ -1,4 +1,4 @@
-// $Id: GenParticles.h 124208 2011-06-02 16:05:48Z ibelyaev $
+// $Id: GenParticles.h 126041 2011-07-15 10:53:15Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_GENPARTICLES_H 
 #define LOKI_GENPARTICLES_H 1
@@ -1473,7 +1473,9 @@ namespace LoKi
     public:
       // ======================================================================
       /// constructor from the actual node
-      DecTree ( const iTree& node ) ;
+      DecTree ( const iTree& node , const bool autovalidate = true ) ;
+      /// constructor from the decay descriptor 
+      DecTree ( const std::string& descriptor ) ;
       /// MANDATORY: virtual destructor
       virtual ~DecTree() {}
       /// MANDATORY: clone method ("virtual constructor")
@@ -1505,6 +1507,8 @@ namespace LoKi
       // ======================================================================
       /// the decay tree itself
       Tree m_tree ;                                    // the decay tree itself
+      //
+      bool m_autovalidate ;
       // ======================================================================
     };
     // ========================================================================

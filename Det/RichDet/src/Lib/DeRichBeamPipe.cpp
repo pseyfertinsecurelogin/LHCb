@@ -1,3 +1,4 @@
+
 //=============================================================================
 /** @file DeRichBeamPipe.cpp
  *
@@ -43,27 +44,45 @@ const CLID& DeRichBeamPipe::classID()
 //=========================================================================
 StatusCode DeRichBeamPipe::initialize ( )
 {
-  debug() << "Initialize " << name() << endmsg;
-  debug() << geometry()->lvolume()->name() << endmsg;
+  if ( msgLevel(MSG::DEBUG) )
+  {
+    debug() << "Initialize " << name() << endmsg;
+    debug() << geometry()->lvolume()->name() << endmsg;
+  }
 
   m_solid = geometry()->lvolume()->solid();
-
-  if ( m_solid->typeName() == "SolidCons" ) 
+  if ( m_solid )
   {
-    const SolidCons* coneSolid = dynamic_cast<const SolidCons*>(m_solid);
-    m_zHalfLength = coneSolid->zHalfLength();
-    m_localCone = new SolidCons( "LocalRichCone",
-                                 m_zHalfLength,
-                                 coneSolid->outerRadiusAtMinusZ(),
-                                 coneSolid->outerRadiusAtPlusZ()
-                                 );
+    if ( m_solid->typeName() == "SolidCons" ) 
+    {
+      const SolidCons* coneSolid = dynamic_cast<const SolidCons*>(m_solid);
+      if ( coneSolid )
+      {
+        m_zHalfLength = coneSolid->zHalfLength();
+        m_localCone = new SolidCons( "LocalRichCone",
+                                     m_zHalfLength,
+                                     coneSolid->outerRadiusAtMinusZ(),
+                                     coneSolid->outerRadiusAtPlusZ()
+                                     );
+      }
+      else
+      {
+        fatal() << "Problem casting to SolidCons" << endmsg;
+        return StatusCode::FAILURE;
+      }
+    }
+    else
+    {
+      fatal() << "Beam pipe solid is not a cone" << endmsg;
+      return StatusCode::FAILURE;
+    }
   }
   else
   {
-    fatal() << "Beam pipe solid is not a cone" << endmsg;
+    fatal() << "Problem loading Geometry" << endmsg;
     return StatusCode::FAILURE;
   }
-
+    
   return StatusCode::SUCCESS;
 }
 

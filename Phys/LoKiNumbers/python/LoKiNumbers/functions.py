@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # =============================================================================
-# $Id: functions.py 120746 2011-03-24 19:20:43Z ibelyaev $ 
+# $Id: functions.py 126316 2011-07-20 20:22:53Z ibelyaev $ 
 # =============================================================================
 ## @file LoKiNumbers/functions.py
 #  The full set of useful objects from LoKiNumbers library 
@@ -14,13 +14,13 @@
 #  A.Golutvin, P.Koppenburg have been used in the design.
 #
 #  By usage of this code one clearly states the disagreement 
-#  with the campain of Dr.O.Callot et al.: 
+#  with the smear campaign of Dr.O.Callot et al.: 
 #  ``No Vanya's lines are allowed in LHCb/Gaudi software.''
 #
 #  @author Vanya BELYAEV ibelyaev@physics.syr.edu
 #
-# $Revision: 120746 $
-# Last modification $Date: 2011-03-24 20:20:43 +0100 (Thu, 24 Mar 2011) $
+# $Revision: 126316 $
+# Last modification $Date: 2011-07-20 22:22:53 +0200 (Wed, 20 Jul 2011) $
 #                by $Author: ibelyaev $ 
 # =============================================================================
 """
@@ -39,15 +39,15 @@ with the campain of Dr.O.Callot et al.:
  ``No Vanya's lines are allowed in LHCb/Gaudi software.''
 
 
- $Revision: 120746 $
- Last modification $Date: 2011-03-24 20:20:43 +0100 (Thu, 24 Mar 2011) $
+ $Revision: 126316 $
+ Last modification $Date: 2011-07-20 22:22:53 +0200 (Wed, 20 Jul 2011) $
                 by $Author: ibelyaev $ 
 
 """
 # =============================================================================
 __author__  = "Vanya BELYAEV ibelyaev@physics.syr.edu"
 __date__    = ' xxxx-xx-xx '
-__version__ = " version $Revision: 120746 $ " 
+__version__ = " version $Revision: 126316 $ " 
 # =============================================================================
 
 # Namespaces:
@@ -204,6 +204,28 @@ if not hasattr ( Gaudi.Math , 'blind' ) :
         
 ## @see Gaudi::Math::blind
 blind     = Gaudi.Math.blind
+
+## 
+cpp.Rndm
+
+# =============================================================================
+## helper function to create ``smart'' RecSumary functor 
+#  @see HASRECSUMMARY
+#  @see    RECSUMMARY
+#  @see      CONTAINS
+def  recSummary ( index , location ) :
+    """
+    Helper function to create ``smart'' RecSummary-fucntor
+    
+    result = has summary  ? summary : contains
+    
+    """
+    #
+    from LoKiCore.functions import switch
+    #
+    return switch ( HASRECSUMMARY ( index      ) ,
+                    RECSUMMARY    ( index , -1 ) ,
+                    CONTAINS      ( location   ) )  
 
 # =============================================================================
 if '__main__' == __name__ :

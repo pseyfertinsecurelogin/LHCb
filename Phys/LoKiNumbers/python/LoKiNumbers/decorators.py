@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # =============================================================================
-# $Id: decorators.py 120053 2011-03-10 17:16:34Z ibelyaev $
+# $Id: decorators.py 126316 2011-07-20 20:22:53Z ibelyaev $
 # =============================================================================
 ## @file decorators.py LoKiNumbers/decorators.py
 #  The set of basic decorator for objects from LoKiNumberslibrary
@@ -16,11 +16,11 @@
 #  A.Golutvin, P.Koppenburg have been used in the design.
 #
 #  By usage of this code one clearly states the disagreement 
-#  with the campain of Dr.O.Callot et al.: 
+#  with the smear campaign of Dr.O.Callot et al.: 
 #  ``No Vanya's lines are allowed in LHCb/Gaudi software.''
 #
-# $Revision: 120053 $
-# Last modification $Date: 2011-03-10 18:16:34 +0100 (Thu, 10 Mar 2011) $
+# $Revision: 126316 $
+# Last modification $Date: 2011-07-20 22:22:53 +0200 (Wed, 20 Jul 2011) $
 #                by $Author: ibelyaev $ 
 # =============================================================================
 """
@@ -39,15 +39,15 @@ with the campain of Dr.O.Callot et al.:
  ``No Vanya's lines are allowed in LHCb/Gaudi software.''
 
 
- $Revision: 120053 $
- Last modification $Date: 2011-03-10 18:16:34 +0100 (Thu, 10 Mar 2011) $
+ $Revision: 126316 $
+ Last modification $Date: 2011-07-20 22:22:53 +0200 (Wed, 20 Jul 2011) $
                 by $Author: ibelyaev $ 
 
 """
 # =============================================================================
 __author__  = ' Vanya BELYAEV ibelyaev@physics.syr.edu '
 __date__    = ' xxxx-xx-xx '
-__version__ = ' version $Revision: 120053 $ '
+__version__ = ' version $Revision: 126316 $ '
 # =============================================================================
 
 from   LoKiNumbers.functions   import *

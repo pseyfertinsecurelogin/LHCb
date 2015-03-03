@@ -1,4 +1,4 @@
-// $Id: GenParticles.cpp 124208 2011-06-02 16:05:48Z ibelyaev $
+// $Id: GenParticles.cpp 126502 2011-07-25 07:29:40Z ibelyaev $
 // ============================================================================
 // Include files 
 // ============================================================================
@@ -6,12 +6,23 @@
 // ============================================================================
 #include <cmath>
 // ============================================================================
+// GaudiKernel
+// ============================================================================
+#include "GaudiKernel/IToolSvc.h"
+#include "GaudiKernel/SmartIF.h"
+// ============================================================================
+// PartProp
+// ============================================================================
+#include "Kernel/Nodes.h"
+// ============================================================================
 // LoKi
 // ============================================================================
 #include "LoKi/Constants.h"
 #include "LoKi/valid.h"
 #include "LoKi/MoreFunctions.h"
 #include "LoKi/ParticleProperties.h"
+#include "LoKi/Trees.h"
+#include "LoKi/Services.h"
 // ============================================================================
 // LoKiGen
 // ============================================================================
@@ -19,6 +30,7 @@
 #include "LoKi/GenExtract.h"
 #include "LoKi/GenAlgs.h"
 #include "LoKi/GenOscillated.h"
+#include "LoKi/IGenDecay.h"
 // ============================================================================
 /** @file
  *
@@ -31,6 +43,10 @@
  *  Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas, 
  *  contributions and advices from G.Raven, J.van Tilburg, 
  *  A.Golutvin, P.Koppenburg have been used in the design.
+ *
+ *  By usage of this code one clearly states the disagreement 
+ *  with the smear campaign of Dr. O.Callot et al.: 
+ *  "No Vanya's lines are allowed in LHCb/Gaudi software."
  *
  *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
  *  @date 2001-01-23 
@@ -1692,16 +1708,64 @@ std::ostream& LoKi::GenParticles::DecNode::fillStream( std::ostream& s ) const
   return s << "GDECNODE( " << m_node << ")";
 }
 // ============================================================================
-
-
+namespace 
+{ 
+  // ==========================================================================
+  // Suppress Intel compiler warnings about missing default constructor
+  // In this case the compiler generated constructor is fine, since there are
+  // no member data to be intialised
+#ifdef __INTEL_COMPILER
+#pragma warning(disable:854)
+#pragma warning(push)
+#endif
+  // ==========================================================================
+  /// invalid Node 
+  const Decays::Nodes::Invalid                                      s_NODE ;
+  /// invalid decay
+  const Decays::Trees::Types_<const HepMC::GenParticle*>::Invalid   s_TREE ;
+  /// "Factory"
+  const std::string  s_FACTORY = "LoKi::GenDecay" ;
+  // ==========================================================================
+#ifdef __INTEL_COMPILER
+#pragma warning(pop) // End disable ICC warning #854
+#endif
+  // ==========================================================================
+}
 // ============================================================================
 // constructor from the actual tree
 // ============================================================================
 LoKi::GenParticles::DecTree::DecTree
-( const LoKi::GenParticles::DecTree::iTree& tree )
+( const LoKi::GenParticles::DecTree::iTree& tree         , 
+  const bool                                autovalidate ) 
   : LoKi::BasicFunctors<const HepMC::GenParticle*>::Predicate()
-  , m_tree ( tree )
+  , m_tree         ( tree         )
+  , m_autovalidate ( autovalidate )
 {}
+// ============================================================================
+// constructor from the decay descriptor 
+// ============================================================================
+LoKi::GenParticles::DecTree::DecTree
+( const std::string& descriptor )
+  : LoKi::BasicFunctors<const HepMC::GenParticle*>::Predicate()
+  , m_tree         ( s_TREE )
+  , m_autovalidate ( true   )
+{
+  LoKi::ILoKiSvc* ls = lokiSvc() ;
+  SmartIF<IToolSvc> toolSvc ( ls ) ;
+  Assert ( !(!toolSvc) , "Unable to aquire IToolSvc tool" ) ;
+  
+  Decays::IGenDecay* tool = 0 ;
+  StatusCode sc = toolSvc -> retrieveTool ( s_FACTORY , tool ) ;
+  Assert ( sc.isSuccess () , "Unable to retrieve '" + s_FACTORY + "'" , sc ) ; 
+  Assert ( 0 != tool  , "Decays::IGenDecay* points to NULL" ) ; 
+  //                                            
+  m_tree   = tool -> tree ( descriptor  ) ;
+  toolSvc -> releaseTool ( tool ) ; // do not need the tool anymore 
+  //
+  Assert ( !(!m_tree)       , "The tree is invalid : '" + descriptor + "'" ) ;   
+  Assert ( !m_tree.marked() , "The tree is marked  : '" + descriptor + "'" ) ;
+  //
+}
 // ============================================================================
 // MANDATORY: the only one essential method
 // ============================================================================
@@ -1713,6 +1777,15 @@ LoKi::GenParticles::DecTree::operator()
   {
     Error ( "HepMC::GenParticle* point to NULL, return false") ;
     return false ;
+  }
+  //
+  if ( !valid () && m_autovalidate ) 
+  {
+    const LoKi::Services& svcs = LoKi::Services::instance () ;
+    const LHCb::IParticlePropertySvc* ppsvc  = svcs.ppSvc() ;
+    Assert ( 0 != ppsvc , "LHCb::ParticlePropertySvc* poinst to NULL!") ;
+    StatusCode sc = validate ( ppsvc ) ;
+    Assert ( sc.isSuccess() , "Unable to validate Decays::Tree" , sc ) ;
   }
   if ( !valid() )
   {
@@ -1737,3 +1810,4 @@ std::ostream& LoKi::GenParticles::DecTree::fillStream( std::ostream& s ) const
 // ============================================================================
 // The END 
 // ============================================================================
+

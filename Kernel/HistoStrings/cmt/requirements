@@ -1,9 +1,8 @@
-# $Id: requirements,v 1.1.1.1 2009-10-22 09:17:02 ibelyaev Exp $
 # =============================================================================
 package HistoStrings
 author  Vanya Belyaev 
 
-version v1r0
+version v1r1
 
 # ============================================================================
 branches cmt doc Kernel src dict python

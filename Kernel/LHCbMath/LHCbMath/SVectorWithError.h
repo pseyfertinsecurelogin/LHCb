@@ -1,4 +1,4 @@
-// $Id: SVectorWithError.h,v 1.3 2009-09-12 19:29:26 ibelyaev Exp $
+// $Id: SVectorWithError.h 124901 2011-06-16 12:46:28Z ibelyaev $
 // ============================================================================
 #ifndef LHCBMATH_SVECTORWITHERROR_H 
 #define LHCBMATH_SVECTORWITHERROR_H 1

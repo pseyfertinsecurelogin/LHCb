@@ -1,4 +1,4 @@
-// $Id: TypeWrapper.h,v 1.2 2008-08-01 10:36:27 ibelyaev Exp $
+// $Id: TypeWrapper.h 124901 2011-06-16 12:46:28Z ibelyaev $
 // ============================================================================
 #ifndef LHCBMATH_TYPEWRAPPER_H 
 #define LHCBMATH_TYPEWRAPPER_H 1

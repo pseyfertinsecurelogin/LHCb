@@ -57,10 +57,31 @@ public:
 
 public:
 
-  /** Access the Aerogel tile ID number
-   *  @return The tile ID */
-  inline int tileID() const { return m_tileNumber; }
+  /// Indicates if this represents a sub-tile(true) or full primary tile (false)
+  inline bool subTile() const { return m_subTile; }
 
+  /// Access the primary Aerogel tile ID number
+  inline int primaryTileID()     const { return m_tileNumber; }
+
+  /** Returns the sub tile copy number (unique number for all subtiles)
+   *
+   *  If sub tiles are not active, returns -1
+   */
+  inline int subtileCopynumber() const { return m_subtilecopynumber; }
+
+  /** Returns the sub-tile number within a primary tile 
+   *
+   *  If sub tiles are not active, returns -1
+   */
+  inline int subtileIDInTile()   const { return m_subtileNumInTile;  }
+
+  /// Returns a unique tile ID number, when sub-tiles are both active in inactive
+  inline int tileID() const 
+  { 
+    return ( !subTile() ? primaryTileID() :
+             1000*primaryTileID() + subtileIDInTile() );
+  }
+  
 private:
 
   /// method to update the refractive index of the radiator
@@ -98,6 +119,15 @@ private:
   /// Aerogel tile number
   int m_tileNumber;
 
+  /// Aerogel sub tile copy number
+  int m_subtilecopynumber;
+  
+  /// Aerogel subtile number in a tile
+  int m_subtileNumInTile;
+
+  /// Flag to say if this is a sub tile or not
+  bool m_subTile;
+  
 };
 
 #endif // RICHDET_DERICHAEROGELRADIATOR_H

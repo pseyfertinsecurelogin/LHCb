@@ -1,4 +1,4 @@
-// $Id: Scalers.cpp 127138 2011-08-03 09:13:27Z graven $
+// $Id: Scalers.cpp 53291 2010-08-05 14:35:53Z ibelyaev $
 // ============================================================================
 // Include files 
 // ============================================================================
@@ -307,8 +307,6 @@ LoKi::Scalers::RateLimitV::RateLimitV
   {
   case LoKi::Scalers::RandomPhasePeriodicLimiter : 
     m_next += m_interval * m_uniform ( m_next ) ; break ;
-  case LoKi::Scalers::RandomLimiter : 
-    m_next += 1 + m_interval * -std::log ( m_uniform ( m_next ) ) ; break ;
   default:
     m_next += 1 ; // wait at least one tick
   }

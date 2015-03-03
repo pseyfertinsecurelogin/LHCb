@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # =============================================================================
-# $Id: HepMC.py 124225 2011-06-04 19:32:00Z ibelyaev $ 
+# $Id: HepMC.py 126452 2011-07-23 11:54:54Z ibelyaev $ 
 # =============================================================================
 ## @file
 #  collection of utilities for useful 'decoration' of HepMC-objects
@@ -31,7 +31,7 @@ A.Golutvin, P.Koppenburg have been used in the design.
 # =============================================================================
 __author__  = 'Vanya BELYAEV ibelyaev@physics.syr.edu'
 __date__    = "2007-08-11"
-__version__ = "CVS Tag: $Name: not supported by cvs2svn $, version $Revision: 124225 $ "
+__version__ = "CVS Tag: $Name: not supported by cvs2svn $, version $Revision: 126452 $ "
 # =============================================================================
 import LoKiCore.decorators as _LoKiCore
 from   LoKiGen.functions   import HepMC,LoKi, Gaudi, std, cpp 
@@ -84,6 +84,9 @@ if not hasattr ( HepMC.GenParticle , '__child__'     ) :
 if not hasattr ( HepMC.GenParticle , '__daughter__'  ) :
     HepMC.GenParticle  . __daughter__  = child 
 
+
+HepMC.GenParticle. __call__    = child
+HepMC.GenParticle. __getitem__ = child
 
 # =============================================================================
 ## Get all 'in'-particles for the given HepMC::Vertex
@@ -548,6 +551,19 @@ if not hasattr ( HepMC.GenParticle , 'Range' ) :
 if not hasattr ( HepMC.GenVertex   , 'Range' ) :
     HepMC.GenVertex.Range   = Gaudi.NamedRange_( HepMC.GenVertex.ConstVector   ) 
 
+for r in ( HepMC.GenParticle.Range ,
+           HepMC.GenVertex.Range   ,
+           cpp.Gaudi.Range_ ( HepMC.GenParticle.ConstVector ) ,
+           cpp.Gaudi.Range_ ( HepMC.GenVertex.ConstVector   ) ) :
+
+    import LoKiCore.decorators as _LCD
+    
+    r.__iter__     = _LCD . _iter_1_
+    r.__getslice__ = _LCD . _slice_
+    r.__getitem__  =    r . __call__ 
+    r.__setitem__  =          None
+
+   
 if not hasattr ( LHCb.HepMCEvent , 'Container' ) :
     LHCb.HepMCEvent.Container = cpp.KeyedContainer(LHCb.HepMCEvent,'Containers::KeyedObjectManager<Containers::hashmap>')
 
@@ -586,6 +602,7 @@ _print_ . __doc__ += "\n" + LoKi.GenDecayChain.print_ . __doc__
 
 for t in ( HepMC.GenParticle             ,
            HepMC.GenParticle.Range       , 
+           cpp.Gaudi.Range_ ( HepMC.GenParticle.ConstVector ) ,
            HepMC.GenParticle.ConstVector ,
            HepMC.GenEvent                ,
            LHCb.HepMCEvent               ,

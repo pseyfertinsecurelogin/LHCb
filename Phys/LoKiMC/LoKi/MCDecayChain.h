@@ -1,4 +1,4 @@
-// $Id: MCDecayChain.h 124236 2011-06-05 12:37:56Z ibelyaev $
+// $Id: MCDecayChain.h 125100 2011-06-20 16:21:19Z ibelyaev $
 #ifndef LOKI_MCDECAYCHAIN_H 
 #define LOKI_MCDECAYCHAIN_H 1
 // ============================================================================
@@ -31,8 +31,8 @@
  *  @author Vanya Belyaev Ivan.Belyaev@cern.ch
  *  @date   2011-06-03
  * 
- *                    $Revision: 124236 $
- *  Last modification $Date: 2011-06-05 14:37:56 +0200 (Sun, 05 Jun 2011) $
+ *                    $Revision: 125100 $
+ *  Last modification $Date: 2011-06-20 18:21:19 +0200 (Mon, 20 Jun 2011) $
  *                 by $Author: ibelyaev $
  */
 // ============================================================================
@@ -229,9 +229,9 @@ namespace LoKi
           // use the terminator 
           stream << term     ;
           stream << blank ( _indent + 5 );
-          stream << " EndVtx[" << (ev-endVertices.begin() ) << "] " ;
+          stream << " EndVtx[" << ( ev - endVertices.begin() ) << "] " ;
           stream << toString ( evertex -> position() ) ; 
-          if ( vertex -> hasKey() )  
+          if ( evertex -> hasKey() )  
           { stream << " #" << toString ( evertex -> key() ) ; }
           stream << " "    << evertex->type()  ;
         }

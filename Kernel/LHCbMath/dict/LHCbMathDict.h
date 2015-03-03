@@ -1,4 +1,4 @@
-// $Id: LHCbMathDict.h,v 1.12 2010-05-25 10:12:19 ibelyaev Exp $
+// $Id: LHCbMathDict.h 126095 2011-07-17 18:38:13Z ibelyaev $
 // ============================================================================
 #ifndef DICT_LHCBMATHDICT_H 
 #define DICT_LHCBMATHDICT_H 1
@@ -20,6 +20,8 @@
 #include "LHCbMath/ParticleParams.h"
 #include "LHCbMath/Blind.h"
 #include "LHCbMath/EigenSystem.h"
+#include "LHCbMath/Functions.h"
+#include "LHCbMath/LHCbMath.h"
 #include <vector>
 #include <list>
 // ============================================================================

@@ -1,5 +1,3 @@
-// $Id: XmlBaseConditionCnv.cpp,v 1.16 2009-12-05 14:46:03 dgolubko Exp $
-
 // include files
 #include "GaudiKernel/CnvFactory.h"
 #include "GaudiKernel/MsgStream.h"
@@ -102,11 +100,13 @@ XmlBaseConditionCnv::~XmlBaseConditionCnv () {
 StatusCode XmlBaseConditionCnv::initialize() {
   StatusCode sc = XmlGenericCnv::initialize();
   if (sc.isSuccess()) {
-    verbose() << "Initializing converter for class ID " << classID() << endmsg;
+    if( msgLevel(MSG::VERBOSE) )
+      verbose() << "Initializing converter for class ID " << classID() << endmsg;
     if (0 != m_xmlSvc) {
       m_doGenericCnv = m_xmlSvc->allowGenericCnv();
-      debug() << "Generic conversion status: "
-              << (unsigned int)m_doGenericCnv << endmsg;
+      if( msgLevel(MSG::DEBUG) )
+        debug() << "Generic conversion status: "
+                << (unsigned int)m_doGenericCnv << endmsg;
     }
   }
   return sc;
@@ -147,7 +147,8 @@ StatusCode XmlBaseConditionCnv::updateObjRefs (IOpaqueAddress* /*childElement*/,
 StatusCode XmlBaseConditionCnv::i_createObj (xercesc::DOMElement* /*element*/,
                                              DataObject*& refpObject) {
   // creates an object for the node found
-  debug() << "Normal generic condition conversion" << endmsg;
+  if( msgLevel(MSG::VERBOSE) )
+    verbose() << "Normal generic condition conversion" << endmsg;
   // const XMLCh* elementName = element->getAttribute(nameString);
   // Since the name is never used afterwars, we just don't pass it to
   // the condition object
@@ -225,9 +226,10 @@ StatusCode XmlBaseConditionCnv::i_fillObj (xercesc::DOMElement* childElement,
 
     if (0 == xercesc::XMLString::compareString(paramString, tagName)) {
       // adds the new parameter to the detectorElement
-      debug() << "Adding user parameter " << name << " with value "
-              << value << ", type " << type << " and comment \"" << comment
-              << "\"" << endmsg;
+      if( msgLevel(MSG::VERBOSE) )
+        verbose() << "Adding user parameter " << name << " with value "
+                  << value << ", type " << type << " and comment \"" << comment
+                  << "\"" << endmsg;
       if (type == "int") {
         dataObj->addParam<int>(name,(int)xmlSvc()->eval(value, false),comment);
       } else if(type == "double") {
@@ -271,16 +273,19 @@ StatusCode XmlBaseConditionCnv::i_fillObj (xercesc::DOMElement* childElement,
         }
       }
       // adds the new parameterVector to the detectorElement
-      debug() << "Adding user parameter vector " << name
-              << " with values ";
-      std::vector<std::string>::iterator it2;
-      for (it2 = vect.begin();
-           vect.end() != it2;
-           ++it2) {
-        debug() << *it2 << " ";
+      if( msgLevel(MSG::VERBOSE) ) {
+        verbose() << "Adding user parameter vector " << name
+                  << " with values ";
+        std::vector<std::string>::iterator it2;
+        for (it2 = vect.begin();
+             vect.end() != it2;
+             ++it2) {
+          verbose() << *it2 << " ";
+        }
+        verbose() << ", type " << type << " and comment \""
+                  << comment << "\"." << endmsg;
       }
-      debug() << ", type " << type << " and comment \""
-              << comment << "\"." << endmsg;
+      
       if ("int" == type) {
         dataObj->addParam(name,i_vect,comment);
       } else if ("double" == type) {

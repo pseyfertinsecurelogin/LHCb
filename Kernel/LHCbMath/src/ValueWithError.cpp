@@ -1,4 +1,4 @@
-// $Id: ValueWithError.cpp,v 1.5 2010-03-18 18:26:01 ibelyaev Exp $
+// $Id: ValueWithError.cpp 126089 2011-07-17 09:56:22Z ibelyaev $
 // ============================================================================
 // Include files
 // ============================================================================
@@ -18,16 +18,47 @@
 // local
 // ============================================================================
 #include "LHCbMath/ValueWithError.h"
+#include "LHCbMath/Power.h"
 // ============================================================================
 // Boost 
 // ============================================================================
 #include "boost/format.hpp"
+#include "boost/math/special_functions/fpclassify.hpp"
 // ============================================================================
 /** @file 
  *  Implementation file for class Gaudi::Math::ValueWithError
  *  @date 2009-06-03 
  *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
  */
+// ============================================================================
+// local namespace to hide the details 
+// ============================================================================
+namespace 
+{
+  // ==========================================================================
+  const unsigned int _maxULPs = 10000 ;
+  // ==========================================================================
+  inline bool _equal ( const double value1 , 
+                       const double value2 ) 
+  { return value1 == value2 || 
+      Gaudi::Math::lomont_compare_double ( value1 ,value2 , _maxULPs ) ; }
+  // ==========================================================================
+  // check if the double value close to zero 
+  inline bool _zero  ( const double value ) { return _equal ( value , 0 ) ; }
+  // ==========================================================================
+  // check if the double value close to one 
+  inline bool _one   ( const double value ) { return _equal ( value , 1 ) ; }
+  // ========================================================================== 
+  /// helper wrapper 
+  inline double _pow ( const double v , const int n ) 
+  { 
+    return 
+      0 <= n ? 
+      Gaudi::Math::pow ( v , (unsigned long) n ) :
+      std::pow         ( v , n                 ) ; 
+  }
+  // ==========================================================================
+}
 // ============================================================================
 // constructor from the value and covariance 
 // ============================================================================
@@ -232,9 +263,12 @@ Gaudi::Math::ValueWithError::mean
 double Gaudi::Math::ValueWithError::chi2 
 ( const Gaudi::Math::ValueWithError& b ) const
 {
+  //
+  if ( _equal ( value () , b.value() ) ) { return 0 ; } // RETURN
+  //
   const double s_cov2 = cov2() + b.cov2() ;
-  if      ( 0 >= s_cov2 ) { return -1 ; } // RETURN 
-
+  if ( 0 >= s_cov2 )                     { return -1 ; } // RETURN 
+  //
   const double diff = value() - b.value() ;  
   return diff*diff/s_cov2 ;
 }
@@ -243,9 +277,43 @@ double Gaudi::Math::ValueWithError::chi2
 // =============================================================================
 double Gaudi::Math::ValueWithError::chi2 ( const double b ) const
 {
-  if      ( 0 >= cov2 () ) { return -1 ; } // RETURN
+  //
+  if ( _equal ( value() , b ) ) { return  0 ; } // RETURN
+  //
+  if ( 0 >= cov2 ()           ) { return -1 ; } // RETURN
   const double diff = value() - b ;  
   return diff*diff/cov2() ;
+}
+// =============================================================================
+// evaluate residual: signed sqrt(chi2) 
+// =============================================================================
+double Gaudi::Math::ValueWithError::residual 
+( const Gaudi::Math::ValueWithError& b ) const
+{
+  //
+  if ( _equal ( value () , b.value() ) ) { return     0 ; } // RETURN
+  //
+  const double s_cov2 = cov2() + b.cov2() ;
+  if ( 0 >= s_cov2 )                     { return -1000 ; } // RETURN
+  //
+  const double diff = value() - b.value() ;  
+  //
+  return diff / std::sqrt ( s_cov2 ) ;
+}
+// =============================================================================
+// evaluate residual: signed sqrt(chi2) 
+// =============================================================================
+double Gaudi::Math::ValueWithError::residual 
+( const double b ) const
+{
+  //
+  if ( _equal ( value() , b ) ) { return     0 ; } // RETURN
+  //
+  if ( 0 >= cov2 () )           { return -1000 ; } // RETURN
+  //
+  const double diff = value() - b ;  
+  //
+  return diff / error () ;
 }
 // ============================================================================
 /*  evaluate the "fraction" \f$  \frac{a}{a+b} \f$ 
@@ -313,6 +381,42 @@ Gaudi::Math::ValueWithError::asym
 Gaudi::Math::ValueWithError 
 Gaudi::Math::ValueWithError::asym ( const double  b ) const 
 { return asym ( ValueWithError ( b ) ) ; }
+// =============================================================================
+// check for NaN
+// =============================================================================
+bool Gaudi::Math::ValueWithError::isnan    () const 
+{
+  return
+    boost::math::isnan    ( m_value ) ||
+    boost::math::isnan    ( m_cov2  )  ;
+}
+// =============================================================================
+// check for finiteness 
+// =============================================================================
+bool Gaudi::Math::ValueWithError::isfinite () const 
+{
+  return
+    boost::math::isfinite ( m_value ) && 
+    boost::math::isfinite ( m_cov2  )  ;
+}
+// =============================================================================
+// check for finiteness 
+// =============================================================================
+bool Gaudi::Math::ValueWithError::isnormal () const 
+{
+  return
+    boost::math::isnormal ( m_value ) && 
+    boost::math::isnormal ( m_cov2  )  ;
+}
+// =============================================================================
+// check for finiteness 
+// =============================================================================
+bool Gaudi::Math::ValueWithError::isinf () const 
+{
+  return
+    boost::math::isinf ( m_value ) ||
+    boost::math::isinf ( m_cov2  )  ;
+}
 // =============================================================================
 // for easy pythonization
 // =============================================================================
@@ -473,8 +577,8 @@ Gaudi::Math::ValueWithError Gaudi::Math::binomEff
 ( const size_t n , 
   const size_t N ) 
 {
-  if  ( n >  N ) { return binomEff       ( N , n ) ; }
-  if  ( 0 == N ) { return ValueWithError ( 1 , 1 ) ; }
+  if       ( n >  N ) { return binomEff       ( N , n ) ; }
+  else if  ( 0 == N ) { return ValueWithError ( 1 , 1 ) ; }
   //
   const long n1 = 0 == n ? 1 :     n ;
   const long n2 = n == N ? 1 : N - n ;
@@ -485,18 +589,65 @@ Gaudi::Math::ValueWithError Gaudi::Math::binomEff
   return Gaudi::Math::ValueWithError  ( eff , c2 ) ;  
 }
 // ============================================================================
-namespace 
+/*  evaluate the binomial efficiency interval using Wilson's prescription
+ *  @param n (INPUT) number of 'success' 
+ *  @param N (INPUT) total number 
+ *  @return the binomial efficiency 
+ */
+// ============================================================================
+Gaudi::Math::ValueWithError Gaudi::Math::wilsonEff   
+( const size_t n , 
+  const size_t N ) 
 {
-  // ==========================================================================
-  const unsigned int _maxULPs = 10000 ;
-  // ==========================================================================
-  // check if the double value close to zero 
-  inline bool _zero ( const double value ) 
-  { return 0.0 == value || Gaudi::Math::lomont_compare_double ( value , 0.0 , _maxULPs ) ; }
-  // check if the double value close to one 
-  inline bool _one  ( const double value ) 
-  { return 1.0 == value || Gaudi::Math::lomont_compare_double ( value , 1.0 , _maxULPs ) ; }
-  // ==========================================================================
+  //
+  if      ( n >  N ) { return wilsonEff      ( N , n ) ; }
+  else if ( 0 == N ) { return ValueWithError ( 1 , 1 ) ; }
+  //
+  const long n1       = 0 == n ? 1 :     n ;
+  const long n2       = n == N ? 1 : N - n ;
+  //
+  const double p      = double ( n1 ) / N ;
+  const double q      = double ( n2 ) / N ;
+  //
+  const double kappa  =             1 ; // "1*sigma"
+  const double kappa2 = kappa * kappa ;
+  //
+  const double nK     = N + kappa2 ;
+  const double eff    = ( n + 0.5 * kappa2 ) / nK ;
+  //
+  const double prefix = kappa2 * N / ( nK * nK ) ;
+  const double c2     = prefix * ( q * p + 0.25 * kappa2 / N ) ;
+  //
+  return Gaudi::Math::ValueWithError  ( eff , c2 ) ;  
+}
+// ============================================================================
+/*  evaluate the binomial efficiency interval using Agresti-Coull's prescription
+ *  @param n (INPUT) number of 'success' 
+ *  @param N (INPUT) total number 
+ *  @return the binomial efficiency 
+ */
+// ============================================================================
+Gaudi::Math::ValueWithError Gaudi::Math::agrestiCoullEff   
+( const size_t n , 
+  const size_t N ) 
+{
+  //
+  if      ( n >  N ) { return wilsonEff      ( N , n ) ; }
+  else if ( 0 == N ) { return ValueWithError ( 1 , 1 ) ; }
+  //
+  const double kappa  =             1 ; // "1*sigma"
+  const double kappa2 = kappa * kappa ;
+  //
+  const double n1 = n + 0.5 * kappa2 ;
+  const double n2 = N +       kappa2 ;
+  //
+  const double p  = n1/n2 ;
+  const double q  = 1 - p ;
+  //
+  const double eff = p ;
+  const double c2  = kappa2 * p * q / n2 ;
+  //
+  return Gaudi::Math::ValueWithError  ( eff , c2 ) ;  
 }
 // ============================================================================
 /*  evaluate pow(a,b)
@@ -509,13 +660,15 @@ Gaudi::Math::ValueWithError Gaudi::Math::pow
 ( const Gaudi::Math::ValueWithError& a , 
   const int                          b ) 
 {
+  //
   if      ( 0 == b         ) { return 1 ; }          // RETURN
   else if ( 1 == b         ) { return a ; }          // RETURN
-  else if ( 0 >= a.cov2 () || _zero ( a.cov2() ) )  
-  { return std::pow ( a.value() , b ) ; }            // RETURN
   //
-  const double v  =     std::pow ( a.value () , b     ) ;
-  const double e1 = b * std::pow ( a.value () , b - 1 ) ;
+  else if ( 0 >= a.cov2 () || _zero ( a.cov2() ) )  
+  { return _pow ( a.value() , b ) ;  }               // RETURN
+  //
+  const double v  =     _pow ( a.value () , b     ) ;
+  const double e1 = b * _pow ( a.value () , b - 1 ) ;
   //
   return Gaudi::Math::ValueWithError ( v , e1 * e1 * a.cov2 () ) ;
   //
@@ -671,6 +824,7 @@ Gaudi::Math::ValueWithError Gaudi::Math::log10
 // ============================================================================
 #include "GaudiKernel/Parsers.h"
 #include "GaudiKernel/Grammars.h"
+#include "GaudiKernel/Parsers.icpp"
 // ============================================================================
 namespace Gaudi
 {
@@ -756,12 +910,12 @@ StatusCode Gaudi::Parsers::parse
   const std::string&           input  ) 
 {
   ValueWithErrorGrammar gr ;
-  
+  //
   return parse
-    ( input.begin () , 
-      input.end   () ,
-      gr[var(result)=arg1] , 
-      SkipperGrammar()).full;
+    ( createIterator ( input ) , 
+      IteratorT ()             ,
+      gr[var(result)=arg1]     , 
+      SkipperGrammar()         ).full ;
 }
 // =============================================================================
 /* parse the input string into the result 
@@ -776,11 +930,12 @@ StatusCode Gaudi::Parsers::parse
   const std::string&                        input  ) 
 {
   VectorGrammar<ValueWithErrorGrammar> gr ;
-  
-  return parse ( input.begin () , 
-                 input.end   () , 
-                 gr[var(result)=arg1],
-                 SkipperGrammar()).full;
+  // 
+  return parse 
+    ( createIterator ( input ) , 
+      IteratorT ()             ,
+      gr[var(result)=arg1]     ,
+      SkipperGrammar()         ) . full ;
 }
 // =============================================================================
 

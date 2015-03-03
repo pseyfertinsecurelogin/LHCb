@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # =============================================================================
-# $Id: Types.py 101260 2010-11-14 18:02:25Z ibelyaev $
+# $Id: Types.py 126112 2011-07-18 09:31:29Z ibelyaev $
 # =============================================================================
-# $URL: http://svn.cern.ch/guest/lhcb/LHCb/tags/Kernel/LHCbMath/v3r25/python/LHCbMath/Types.py $
+# $URL: http://svn.cern.ch/guest/lhcb/LHCb/tags/Kernel/LHCbMath/v3r26/python/LHCbMath/Types.py $
 # =============================================================================
 ## @file
 #
@@ -37,7 +37,7 @@
 #  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
 #  @date 2009-09-12
 #
-#  Last modification $Date: 2010-11-14 19:02:25 +0100 (Sun, 14 Nov 2010) $
+#  Last modification $Date: 2011-07-18 11:31:29 +0200 (Mon, 18 Jul 2011) $
 #                 by $Author: ibelyaev $
 #
 #
@@ -71,14 +71,14 @@ Simple file to provide 'easy' access in python for the basic ROOT::Math classes
   >>> dir( Gaudi.Math )
   >>> dir( Gaudi      )
   
-  Last modification $Date: 2010-11-14 19:02:25 +0100 (Sun, 14 Nov 2010) $
+  Last modification $Date: 2011-07-18 11:31:29 +0200 (Mon, 18 Jul 2011) $
                  by $Author: ibelyaev $
 
 """
 # =============================================================================
 __author__  = "Vanya BELYAEV Ivan.Belyaev@nikhef.nl"
 __date__    = "2009-09-12"
-__version__ = "Version$Revision: 101260 $"
+__version__ = "Version$Revision: 126112 $"
 # =============================================================================
 __all__     = () ## nothing to be imported !
 # =============================================================================
@@ -184,8 +184,7 @@ Gaudi.Math.frac              = Gaudi.Math.Functions.frac
 Gaudi.Math.asym              = Gaudi.Math.Functions.asym
 Gaudi.Math.binomEff          = Gaudi.Math.Functions.binomEff 
 
-
-## vetcors of vectors
+## vectors of vectors
 Gaudi.Vectors2       = std.vector( Gaudi.Vector2 )
 Gaudi.Vectors3       = std.vector( Gaudi.Vector3 )
 Gaudi.Vectors4       = std.vector( Gaudi.Vector4 )
@@ -890,6 +889,17 @@ def _fit_mass_ ( particle , mass )  :
     return (_fitted,_chi2)
 
 Gaudi.Math.ParticleParams.fitMass = _fit_mass_
+
+
+LHCb  = cpp.LHCb
+Gaudi.Math.round                 = LHCb.Math.round 
+Gaudi.Math.equal_to_int          = LHCb.Math.equal_to_int 
+Gaudi.Math.equal_to_uint         = LHCb.Math.equal_to_uint 
+Gaudi.Math.isint                 = LHCb.Math.isint
+Gaudi.Math.islong                = LHCb.Math.islong
+Gaudi.Math.knuth_equal_to_double = LHCb.Math.knuth_equal_to_double
+__lomont = Gaudi.Math.lomont_compare_double
+Gaudi.Math.lomont_compare_double = __lomont
 
 # =============================================================================
 if '__main__' == __name__ :

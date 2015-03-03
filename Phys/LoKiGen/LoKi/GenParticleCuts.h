@@ -1,4 +1,4 @@
-// $Id: GenParticleCuts.h 124208 2011-06-02 16:05:48Z ibelyaev $
+// $Id: GenParticleCuts.h 126502 2011-07-25 07:29:40Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_GENPARTICLECUTS_H 
 #define LOKI_GENPARTICLECUTS_H 1
@@ -26,6 +26,10 @@
  *  Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas, 
  *  contributions and advices from G.Raven, J.van Tilburg, 
  *  A.Golutvin, P.Koppenburg have been used in the design.
+ *
+ *  By usage of this code one clearly states the disagreement 
+ *  with the smear campaign of Dr. O.Callot et al.: 
+ *  "No Vanya's lines are allowed in LHCb/Gaudi software."
  *
  *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
  *  @date 2006-01-23 

@@ -1,4 +1,4 @@
-// $Id: GenHybridTool.cpp 124208 2011-06-02 16:05:48Z ibelyaev $
+// $Id: GenHybridTool.cpp 126041 2011-07-15 10:53:15Z ibelyaev $
 // ============================================================================
 // Include files 
 // ============================================================================
@@ -33,8 +33,8 @@
  *
  *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
  *  @date 2004-06-29
- *                    $Revision: 124208 $
- *  Last modification $Date: 2011-06-02 18:05:48 +0200 (Thu, 02 Jun 2011) $
+ *                    $Revision: 126041 $
+ *  Last modification $Date: 2011-07-15 12:53:15 +0200 (Fri, 15 Jul 2011) $
  *                 by $Author: ibelyaev $
  */
 namespace LoKi 
@@ -450,7 +450,7 @@ LoKi::Hybrid::GenTool::GenTool
   declareInterface<LoKi::IGenHybridFactory>( this ) ;
   //
   m_modules.push_back ( "LoKiGen.decorators"   ) ;
-  m_modules.push_back ( "LoKiGenMC.decorators" ) ;
+  // m_modules.push_back ( "LoKiGenMC.decorators" ) ;
   m_modules.push_back ( "LoKiCore.functions"   ) ;
   //
   declareProperty ( "Modules" , m_modules , "Python modules to be imported"          ) ;

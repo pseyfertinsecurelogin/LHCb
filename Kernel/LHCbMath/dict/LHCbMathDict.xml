@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
+
 <!--- $Id: -->
 <!--- Author  : Juan PALACIOS -->
 <!--- Created : 2008-06-20 -->
+
 <lcgdict>
   <class name    = "Gaudi::Math::XYZLine"/>
   <class name    = "Gaudi::Math::Polar3DLine"/>
@@ -26,18 +28,42 @@
   <class name    = "Gaudi::Math::ParticleParams"     />
   <class name    = "Gaudi::Math::FitMass"            />
   
-  <class name    = "Gaudi::Math::EigenSystems"       />
+  <class name    = "Gaudi::Math::EigenSystems"            />
+  <class name    = "Gaudi::Math::Chebyshev"               />
+  <class name    = "Gaudi::Math::Legendre"                />  
+  <class name    = "Gaudi::Math::Hermite"                 />  
+  <class name    = "Gaudi::Math::Bukin"                   />
+  <class name    = "Gaudi::Math::Novosibirsk"             />
+  <class name    = "Gaudi::Math::CrystalBall"             />
+  <class name    = "Gaudi::Math::CrystalBallDoubleSided"  />
+  <class name    = "Gaudi::Math::BifurcatedGauss"         />
+  <class name    = "Gaudi::Math::GramCharlierA"           />
   
   <class name    = "std::vector<ROOT::Math::SVector<double,2> >" />
   <class name    = "std::vector<ROOT::Math::SVector<double,3> >" />
   <class name    = "std::vector<ROOT::Math::SVector<double,4> >" />
   
-  <function name = "Gaudi::Math::blind" />
-  <function name = "Gaudi::Math::pow"   />
-  <function name = "Gaudi::Math::exp"   />
-  <function name = "Gaudi::Math::log"   />
-  <function name = "Gaudi::Math::log10" />
+  <function name = "Gaudi::Math::blind"           />
+  <function name = "Gaudi::Math::pow"             />
+  <function name = "Gaudi::Math::exp"             />
+  <function name = "Gaudi::Math::log"             />
+  <function name = "Gaudi::Math::log10"           />
+  <function name = "Gaudi::Math::chi2"            />
+  <function name = "Gaudi::Math::mean"            />
+  <function name = "Gaudi::Math::asym"            />
+  <function name = "Gaudi::Math::frac"            />
+  <function name = "Gaudi::Math::binomEff"        />
+  <function name = "Gaudi::Math::wilsonEff"       />
+  <function name = "Gaudi::Math::agrestiCoullEff" />
   
+  <function name    = "LHCb::Math::round"                  />
+  <function name    = "LHCb::Math::isint"                  />
+  <function name    = "LHCb::Math::islong"                 />
+  <function name    = "LHCb::Math::equal_to_int"           />
+  <function name    = "LHCb::Math::equal_to_uint"          />
+  <function name    = "LHCb::Math::knuth_equal_to_double"  />
+  <function name    = "Gaudi::Math::lomont_compare_double" />
+
   <exclusion>
     <class name = "ROOT::Math::SVector&lt;double,2&gt;"     />
     <class name = "ROOT::Math::SVector&lt;double,4&gt;"     />
@@ -56,6 +82,10 @@
     <class name = "Gaudi::Math::SVectorWithError&lt;7,double&gt;::Covariance"  />
     <class name = "Gaudi::Math::SVectorWithError&lt;8,double&gt;::Value"       />
     <class name = "Gaudi::Math::SVectorWithError&lt;8,double&gt;::Covariance"  />
+    
+    <class name = "Gaudi::Math::Bukin">  
+      <field name = "m_workspace"/>      
+    </class>
   </exclusion> 
   
 

@@ -1,9 +1,13 @@
-! $Id: release.notes 116529 2011-01-31 16:12:31Z cattanem $ 
 ! -----------------------------------------------------------------------------
 ! Package     : Kernel/PartProp
 ! Responsible : Vanya BELYAEV Ivan.Belyaev@nikhef.nl
 ! Purpose     : 
 ! -----------------------------------------------------------------------------
+
+!========================= PartProp v1r10 2011-07-25 =========================
+! 2011-07-21 - Marco Cattaneo
+ - Create MSG::VERBOSE and MSG::DEBUG messages only when output level requires
+   it, also using UNLIKELY macro 
 
 !========================= PartProp v1r9 2011-01-31 =========================
 ! 2011-01-13 - Marco Cattaneo

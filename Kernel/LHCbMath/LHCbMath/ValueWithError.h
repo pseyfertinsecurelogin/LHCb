@@ -1,4 +1,4 @@
-// $Id: ValueWithError.h,v 1.5 2010-03-18 18:26:00 ibelyaev Exp $
+// $Id: ValueWithError.h 126089 2011-07-17 09:56:22Z ibelyaev $
 // ============================================================================
 #ifndef LHCBMATH_ERRORS_H 
 #define LHCBMATH_ERRORS_H 1
@@ -47,12 +47,14 @@ namespace Gaudi
       /// constructor from the value and covariance 
       ValueWithError ( const double value      = 0 , 
                        const double covariance = 0 ) ;
+      // ======================================================================
       /** constructor from the (value,error)-pair 
        *   - first  element is "value" 
        *   - second element is "error" 
        *  @param pair_  (value,error)-pair 
        */
       ValueWithError ( const std::pair<double,double>& pair_ ) ;
+      // ======================================================================
       /** constructor from string representation 
        *  - ( value +- error ) 
        *  - ( value  , error ) 
@@ -132,6 +134,14 @@ namespace Gaudi
       double chi2 ( const ValueWithError& right ) const ;
       /// get chi2 distance 
       double chi2 ( const double          right ) const ;
+      /** get ``residual''
+       *  defined as  signed \f$\sqrt \chi^2 \f$
+       */
+      double residual ( const ValueWithError& right ) const ;
+      /** get ``residual''
+       *  defined as  signed \f$\sqrt \chi^2 \f$
+       */
+      double residual ( const double          right ) const ;
       // ======================================================================
     public:
       // ======================================================================
@@ -155,6 +165,24 @@ namespace Gaudi
        *  @return (a-b)/(a+b) 
        */
       ValueWithError asym ( const double          b ) const ;
+      // ======================================================================
+    public: // NaN and Finite 
+      // ======================================================================
+      ///  finite ? 
+      bool isfinite () const ;      
+      ///  normal ? 
+      bool isnormal () const ;      
+      ///  check for NaN
+      bool isnan    () const ;
+      ///  check for inf
+      bool isinf    () const ;
+      // ======================================================================
+    public: // good ?
+      // ======================================================================
+      /// check for goodness: finite values and non-negative covariance 
+      bool isgood   () const { return isfinite () &&  0 <= m_cov2 ; }
+      /// check for goodness: finite values and non-negative covariance 
+      bool good     () const { return isgood   () ; }
       // ======================================================================
     public: // helper functions for Python:
       // ======================================================================
@@ -334,7 +362,7 @@ namespace Gaudi
     GAUDI_API
     ValueWithError abs 
     ( const ValueWithError& a ) ;
-    // ========================================================================    
+    // ========================================================================
     /** evaluate the binomial efficiency for Bernulli scheme 
      *  @param n (INPUT) number of 'success' 
      *  @param N (INPUT) total number 
@@ -342,6 +370,27 @@ namespace Gaudi
      */
     GAUDI_API
     ValueWithError binomEff   
+    ( const size_t n , 
+      const size_t N ) ;
+    // ========================================================================
+    /** evaluate the binomial efficiency interval using Wilson's prescription
+     *  @param n (INPUT) number of 'success' 
+     *  @param N (INPUT) total number 
+     *  @return the binomial efficiency 
+     */
+    GAUDI_API
+    ValueWithError wilsonEff   
+    ( const size_t n , 
+      const size_t N ) ;
+    // ========================================================================
+    /** evaluate the binomial efficiency interval 
+     *  using Agresti-Coull's prescription
+     *  @param n (INPUT) number of 'success' 
+     *  @param N (INPUT) total number 
+     *  @return the binomial efficiency 
+     */
+    GAUDI_API
+    ValueWithError agrestiCoullEff   
     ( const size_t n , 
       const size_t N ) ;
     // ========================================================================
@@ -426,6 +475,19 @@ namespace Gaudi
     GAUDI_API
     ValueWithError log10
     ( const ValueWithError& b ) ;
+    // ========================================================================    
+    /// check for NaN
+    inline bool isnan    ( const ValueWithError& v ) { return v.isnan    () ; }
+    /// finite ?
+    inline bool isfinite ( const ValueWithError& v ) { return v.isfinite () ; }
+    /// infinte ? 
+    inline bool isinf    ( const ValueWithError& v ) { return v.isinf    () ; }    
+    /// normal ?
+    inline bool isnormal ( const ValueWithError& v ) { return v.isnormal () ; }    
+    /// check for goodness 
+    inline bool isgood   ( const ValueWithError& v ) { return v.isgood   () ; }    
+    /// check for goodness 
+    inline bool good     ( const ValueWithError& v ) { return v.good     () ; }    
     // ========================================================================    
   } //                                             end of namespace Gaudi::Math 
   // ==========================================================================

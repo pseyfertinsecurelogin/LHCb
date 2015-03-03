@@ -1,6 +1,4 @@
 ! -----------------------------------------------------------------------------
-! $Id: release.notes 121335 2011-04-04 08:34:08Z cattanem $
-! -----------------------------------------------------------------------------
 ! Package     : Phys/LoKiNumbers
 ! Responsible : Vanya BELYAEV ibelyaev@physics.syr.edu
 ! Purpose     : Set of dictionaries for LoKi functions 
@@ -19,6 +17,10 @@
 !   ``No Vanya's lines are allowed in LHCb/Gaudi software.''
 !
 ! -----------------------------------------------------------------------------
+
+!========================= LoKiNumbers v10r1 2011-07-25 =========================
+! 2011-07-20 - Vanya Belyaev
+ - add helper functor for ``smart'' creation of RecSummary functors 
 
 !========================= LoKiNumbers v10r0 2011-04-04 =========================
 ! 2011-04-02 - Vanya Belyaev
@@ -42,8 +44,8 @@
 
 !========================= LoKiNumbers v9r5 2011-02-22 =========================
 ! 2011-02-12 - Vanya Belyaev
- - add COUNTER & STAT symbols 
- - cmt/requirements
+ - add COUNTER & STAT symbols
+  - cmt/requirements
    version increment to v9r5
 
 !========================= LoKiNumbers v9r4 2010-10-25 =========================

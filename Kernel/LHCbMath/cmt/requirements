@@ -3,8 +3,8 @@
 # Maintainer : Juan Palacios
 #============================================================================
 
-package LHCbMath
-version           v3r25
+package           LHCbMath
+version           v3r26
 
 #============================================================================
 # Structure, i.e. directories to process. 
