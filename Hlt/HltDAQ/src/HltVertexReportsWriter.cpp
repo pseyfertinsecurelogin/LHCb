@@ -47,6 +47,8 @@ HltVertexReportsWriter::HltVertexReportsWriter( const std::string& name,
     m_inputHltVertexReportsLocation= LHCb::HltVertexReportsLocation::Default);  
   declareProperty("OutputRawEventLocation",
     m_outputRawEventLocation= LHCb::RawEventLocation::Default);
+  declareProperty("SourceID",
+    m_sourceID= kSourceID_Dummy );  
 
   m_hltANNSvc = 0;
 
@@ -66,6 +68,12 @@ StatusCode HltVertexReportsWriter::initialize() {
   if ( msgLevel(MSG::DEBUG) ) debug() << "==> Initialize" << endmsg;
 
   m_hltANNSvc = svc<IANNSvc>("HltANNSvc");
+
+  if( m_sourceID > kSourceID_Max ){
+    m_sourceID = m_sourceID & kSourceID_Max;
+    return Error("Illegal SourceID specified; maximal allowed value is 7" , StatusCode::FAILURE, 50 );
+  }
+
 
   return StatusCode::SUCCESS;
 }
@@ -96,9 +104,9 @@ StatusCode HltVertexReportsWriter::execute() {
   std::vector<IANNSvc::minor_value_type> selectionNameToIntMap;  
   //    std::vector<IANNSvc::minor_value_type> hlt = m_hltANNSvc->items("SelectionID"); // old style
   //    selectionNameToIntMap.insert( selectionNameToIntMap.end(),hlt.begin(),hlt.end() );
-  std::vector<IANNSvc::minor_value_type> hlt1 = m_hltANNSvc->items("Hlt1SelectionID"); // new style
+  std::vector<IANNSvc::minor_value_type> hlt1 = m_hltANNSvc->items(Gaudi::StringKey(std::string("Hlt1SelectionID"))); // new style
   selectionNameToIntMap.insert( selectionNameToIntMap.end(),hlt1.begin(),hlt1.end() );
-  std::vector<IANNSvc::minor_value_type> hlt2 = m_hltANNSvc->items("Hlt2SelectionID");
+                                                                   std::vector<IANNSvc::minor_value_type> hlt2 = m_hltANNSvc->items(Gaudi::StringKey(std::string("Hlt2SelectionID")));
   selectionNameToIntMap.insert( selectionNameToIntMap.end(),hlt2.begin(),hlt2.end() );
 
   std::vector< unsigned int > hltVertexReportsRawBank;
@@ -154,11 +162,30 @@ StatusCode HltVertexReportsWriter::execute() {
      }
   }
 
-  rawEvent->addBank(  kSourceID, RawBank::HltVertexReports, kVersionNumber, hltVertexReportsRawBank );
+  // delete any previously inserted vtx reports
+  const std::vector<RawBank*> hltvtxreportsRawBanks = rawEvent->banks( RawBank::HltVertexReports );
+  for( std::vector<RawBank*>::const_iterator b=hltvtxreportsRawBanks.begin();
+       b!=hltvtxreportsRawBanks.end(); ++b){
+    unsigned int sourceID=kSourceID_Hlt;
+    if( (*b)->version() > 1 ){
+      sourceID = (*b)->sourceID() >> kSourceID_BitShift;
+    }
+    if( m_sourceID != sourceID )continue;
+
+    rawEvent->removeBank(*b);
+    if ( msgLevel(MSG::VERBOSE) ){ verbose() << " Deleted previosuly inserted HltVertexReports bank " << endmsg;
+    }    
+  }
+
+  // shift bits in sourceID for the same convention as in HltSelReports
+  rawEvent->addBank(  int(m_sourceID<<kSourceID_BitShift), RawBank::HltVertexReports, kVersionNumber, hltVertexReportsRawBank );
   
   if ( msgLevel(MSG::VERBOSE) ){
 
     verbose() << " ======= HltVertexReports RawBank size= " << hltVertexReportsRawBank.size() << endmsg;
+
+    verbose() << " VersionNumber= " << kVersionNumber;  
+    verbose() << " SourceID= " << m_sourceID;
 
     verbose() << " number of selections stored = " << hltVertexReportsRawBank[0] << endmsg;
     

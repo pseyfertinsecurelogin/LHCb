@@ -6,8 +6,8 @@
     <tuple><text>daqsys.decoder-setup</text><enumeral>PASS</enumeral></tuple>
   </set></argument>
   <argument name="args"><set>
-    <text>../options/test-calosegfault.py</text>
-    <text>../options/fixedevttime.py</text>
+    <text>../options/setup-crazy-split.py</text>
+    <text>../options/crazy-split.py</text>
     <text>--option</text>
     <text>from PRConfig import TestFileDB; TestFileDB.test_file_db['2012_raw_default'].run();from Configurables import LHCbApp; LHCbApp().EvtMax=10;</text>
   </set></argument>

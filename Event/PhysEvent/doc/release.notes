@@ -3,6 +3,10 @@
 ! Responsible : P. Koppenburg, C. Jones
 !----------------------------------------------------------------------------
 
+!========================= PhysEvent v11r23 2013-12-09 =========================
+! 2013-11-30 - Stefania Vecchi
+ - Added SS_Proton and OS_Charm tagger type in Tagger.xml and Tagger.h
+
 !========================= PhysEvent v11r22 2013-08-19 =========================
 
 ! 2013-08-14 - Albert Puig

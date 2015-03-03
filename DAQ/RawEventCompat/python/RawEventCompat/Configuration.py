@@ -249,32 +249,38 @@ class RecombineRawEvent(ConfigurableUser):
     __slots__ = {
         "Method" : "Simple"  #Simple or Map combiner
         , "Regex" : ".*"  #locations or RawBanks to copy.
-        , "Version" : 2.0 #version to copy from
+        , "Version" : None #version to copy from
         }
     _propertyDocDct={
         "Method" : "Simple or Map combiner, see the documentation of the methods in __known_methods__, default Simple"  #Simple or Map combiner
         , "Regex" : "locations or RawBanks to copy. A regular expression such that you can ignore certain locations or bank names. Default .*"  #locations or RawBanks to copy.
-        , "Version" : "Version to copy from, float. Default 2.0" #version to copy from
+        , "Version" : "Version to copy from, float. Default 2.0" #version to copy from, can be string or float
         }
     
     __known_methods__={
         "Simple": RecombineWholeEvent,
         "Map" : RecombineEventByMap
         }
-
+    
     def __apply_configuration__(self):
         #check arguments
+        if self.isPropertySet("Version") and self.getProp("Version") is not None:
+            pass
+        else:
+            #default 2.0, split raw event
+            self.setProp("Version",2.0)
         if self.getProp("Method") not in self.__known_methods__:
             raise KeyError("You have asked for an undefined method ", self.getProp("Method"))
-        if self.getProp("Version") in [0.0,1.0]:
-            raise KeyError("Versions 0.0 and 1.0 anyway have a combined raw event... why would you want to do this? ", self.getProp("Version"))
         #make sure the dictionaries are there... Hack! %TODO -> Remove this!
         RawEventFormatConf().loadIfRequired()
         #then get them
         loc,rec=_getDict()
         #call correct method
+        version=_checkv(self.getProp("Version"),loc,rec)
+        if version in [0.0,1.0]:
+            raise KeyError("Versions 0.0 and 1.0 anyway have a combined raw event... why would you want to do this? ", self.getProp("Version"))
         self.__known_methods__[self.getProp("Method")](
-            version=self.getProp("Version"),
+            version=version,
             regex=self.getProp("Regex"),
             locations=loc,
             recodict=rec
@@ -299,6 +305,7 @@ class RawEventJuggler(ConfigurableUser):
         , "KillInputBanksAfter" : None #Regex of banks to kill AFTER copying around, from input locations
         , "KillExtraBanks" : False #Bool, whether or not to remove banks which don't exist in target format
         , "KillExtraNodes" : False #Bool, whether to remove nodes which don't exist in target format
+        , "KillExtraDirectories" : False #Kill not only the RawEvent, but also unlink the parent directories. Requires KillExtraNodes.
         , "WriterOptItemList" : None #append a writer here to add output locations as OptItemList
         , "WriterItemList" : None #append a writer here to add output locations as ItemList
         , "Sequencer" : None #send in a sequencer to add the juggling into
@@ -306,6 +313,7 @@ class RawEventJuggler(ConfigurableUser):
         , "Depth" : "#1"
         , "TCK" : None
         , "TCKReplacePattern" : "#TCK#"
+        , "RootInTES" : "/Event"
         , "GenericReplacePatterns" : {}
         }
     def __safeset__(self,other, prop):
@@ -313,7 +321,17 @@ class RawEventJuggler(ConfigurableUser):
             other.setProp(prop,self.getProp(prop))
     
     def __opWrap__(self,loc):
-        return [_replaceWrap(aloc) +self.getProp("Depth") for aloc in loc]
+        retlist=[]
+        for aloc in loc:
+            aloc=_replaceWrap(aloc)
+            if not aloc.startswith(self.getProp("RootInTES")):
+                aloc=(self.getProp("RootInTES")+"/"+aloc).replace("//","/")
+            if aloc.endswith("/"):
+                aloc=aloc.rstrip("/")
+            if not aloc.endswith(self.getProp("Depth")):
+                aloc=aloc+self.getProp("Depth")
+            retlist.append(aloc)
+        return retlist
     
     def __apply_configuration__(self):
         #make sure the dictionaries are there... Hack! %TODO -> Remove this!
@@ -324,9 +342,13 @@ class RawEventJuggler(ConfigurableUser):
         
         if not self.isPropertySet("Output") or  not self.isPropertySet("Input"):
             raise AttributeError("You must set both the input and the output version, this can be a version number (float, int) or a name, see: "+rec.__str__())
-
-        output_locations=ReverseDict(self.getProp("Output"),locs,rec)
-        input_locations=ReverseDict(self.getProp("Input"),locs,rec)
+        
+        #swap logical for numeric, and check it exists
+        ov=_checkv(self.getProp("Output"),locs,rec)
+        iv=_checkv(self.getProp("Input"),locs,rec)
+        
+        output_locations=ReverseDict(ov,locs,rec)
+        input_locations=ReverseDict(iv,locs,rec)
         #check if a Trigger TCK is needed
 
         if len([loc for loc in input_locations if self.getProp("TCKReplacePattern") in loc]) or len([loc for loc in output_locations if self.getProp("TCKReplacePattern") in loc]):
@@ -362,7 +384,7 @@ class RawEventJuggler(ConfigurableUser):
         ##################################
         # The part which does the juggling
         ##################################
-        if self.getProp("Input")!=self.getProp("Output"):
+        if iv!=ov:
             ######################################
             # Stage 2: Check options
             ######################################
@@ -382,10 +404,11 @@ class RawEventJuggler(ConfigurableUser):
             #if KillBanks or KillNodes... has been requested, I can't use DoD, it's unsafe. I don't know what's "before" and "after"
             if self.getProp("DataOnDemand")  and (self.getProp("KillExtraNodes") or self.isPropertySet("KillInputBanksBefore") or self.isPropertySet("KillInputBanksAfter") or self.getProp("KillExtraBanks")):
                 raise AttributeError("You have asked for some killing of banks, and asked for DoD, which is not a safe way to run. Either cope with the extra banks, or use a sequencer instead of DoD")
-
+            if self.getProp("KillExtraDirectories") and not self.getProp("KillExtraNodes"):
+                raise AttributeError("In order to kill extra directories, you must also be killing the extra nodes (raw events)")
             #raise import error if you don't have the correct requirements
             from Configurables import RawEventMapCombiner, EventNodeKiller, bankKiller
-
+            
             ###############################################
             # Stage 3: Recombine banks from given locations
             ###############################################
@@ -395,7 +418,7 @@ class RawEventJuggler(ConfigurableUser):
             for loc in output_locations:
                 if loc not in input_locations:
                     #if none of the banks are available, skip
-                    if len([abank for abank in output_locations[loc] if abank in locs[self.getProp("Input")]])==0:
+                    if len([abank for abank in output_locations[loc] if abank in locs[iv]])==0:
                         print "#WARNING, nowhere to copy any banks for "+loc+" from, skipping"
                         continue
                     wloc=_replaceWrap(loc)
@@ -406,10 +429,10 @@ class RawEventJuggler(ConfigurableUser):
                     added_locations.append(wloc)
                     
                     for abank in output_locations[loc]:
-                        if abank not in locs[self.getProp("Input")]:
+                        if abank not in locs[iv]:
                             print "#WARNING, nowhere to copy "+abank+" from, skipping"
                             continue
-                        loc_to_alg_dict[wloc].RawBanksToCopy[abank]=WhereBest(abank,self.getProp("Input"),locs,rec)
+                        loc_to_alg_dict[wloc].RawBanksToCopy[abank]=WhereBest(abank,iv,locs,rec)
                         
             
             ###############################################
@@ -444,7 +467,12 @@ class RawEventJuggler(ConfigurableUser):
                     for loc in input_locations:
                         if loc not in output_locations:
                             enk.Nodes.append(_replaceWrap(loc))
-
+                            if self.getProp("KillExtraDirectories"):
+                                dloc=loc.replace("/RawEvent","")
+                                flags=[o.startswith(dloc) for o in output_locations]
+                                if (True not in flags) and (dloc not in enk.Nodes):
+                                    enk.Nodes.append(_replaceWrap(dloc))
+        
         elif self.isPropertySet("KillInputBanksAfter") or self.getProp("KillExtraNodes") or self.isPropertySet("KillExtraBanks"):
             raise AttributeError("You've asked to kill something from the input *after* copying, but you aren't actually doing any copying. Please kill them yourself without this configurable, or use KillInputBanksBefore!")
         

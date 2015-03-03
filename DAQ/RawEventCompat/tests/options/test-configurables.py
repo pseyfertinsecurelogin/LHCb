@@ -35,7 +35,7 @@ RawEventFormatConf().RecoDict=test_versions
 
 
 #test RecombineRawEvent with all options
-RecombineRawEvent().Version=99.0
+RecombineRawEvent().Version="Eggs"
 RecombineRawEvent().Method="Map"
 RecombineRawEvent().Regex=".*(_A|_B)"
 RecombineRawEvent().__apply_configuration__()
@@ -52,7 +52,7 @@ if expected_combiner.RawBanksToCopy!={'Bank_A' : 'FooBar', 'Bank_B' : "FooBar"}:
 
 #test RawEventJuggler with all options
 RawEventJuggler().Sequencer=GS("JuggleRawEvent")
-RawEventJuggler().Input=99.0
+RawEventJuggler().Input="Eggs"
 RawEventJuggler().Output=0.0
 RawEventJuggler().KillExtraNodes=True
 RawEventJuggler().KillExtraBanks=True
@@ -68,7 +68,7 @@ if [ent.getFullName() for ent in GS("JuggleRawEvent").Members] != ['bankKiller/k
     print [ent.getFullName() for ent in GS("JuggleRawEvent").Members]
     raise ValueError("Configuration order or members are wrong")
 
-if ics("WriteAsOptItems").OptItemList!=os("WriteAsItems").ItemList or ics("WriteAsOptItems").OptItemList!=['/Foo#1', '/Bar#1', '/SpamAndEggs#1', 'FooBar/Null/#1']:
+if ics("WriteAsOptItems").OptItemList!=os("WriteAsItems").ItemList or ics("WriteAsOptItems").OptItemList!=['/Event/Foo#1', '/Event/Bar#1', '/Event/SpamAndEggs#1', '/Event/FooBar/Null#1']:
     print ics("WriteAsOptItems").OptItemList, os("WriteAsItems").ItemList
     raise ValueError("Output locations are wrong")
 

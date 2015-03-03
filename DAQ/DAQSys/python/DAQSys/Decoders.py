@@ -22,19 +22,44 @@ Decoder("ODINDecodeTool",active=False,#tool handle??
         conf=DecoderDB)
 
 #===========VELO===========
-Decoder("DecodeVeloRawBuffer/createVeloClusters",
-        active=True, banks=["Velo"],
+
+#first create a decoder which can decode either location.
+#This is not active by default, but is turned on later
+# by RecoTracking.py when rewuired for Brunel, alignment, etc.
+vd=Decoder("DecodeVeloRawBuffer/createBothVeloClusters",
+        active=False, banks=["Velo"],
         inputs={"RawEventLocations" : ["Other/RawEvent","DAQ/RawEvent"]},
-        outputs={"VeloClusterLocation" : None},
-        properties={"DecodeToVeloClusters": True,"DecodeToVeloLiteClusters":False},
+        outputs={"VeloClusterLocation" : None, "VeloLiteClustersLocation" : None},
+        properties={"DecodeToVeloClusters": True,"DecodeToVeloLiteClusters":True},
         conf=DecoderDB)
 
-Decoder("DecodeVeloRawBuffer/createVeloLiteClusters",
-        active=True, banks=["Velo"],
-        inputs={"RawEventLocations" : ["Other/RawEvent","DAQ/RawEvent"]},
-        outputs={"VeloLiteClustersLocation" : None},
-        properties={"DecodeToVeloClusters": False,"DecodeToVeloLiteClusters":True},
+#now clone into two algs which can decode these things separately
+vdClus=vd.clone("DecodeVeloRawBuffer/createVeloClusters")
+vdClus.Active=True
+#delete the other unused output location...
+del vdClus.Outputs["VeloLiteClustersLocation"]
+vdClus.Properties["DecodeToVeloClusters"]=True
+vdClus.Properties["DecodeToVeloLiteClusters"]=False
+
+vdLite=vd.clone("DecodeVeloRawBuffer/createVeloLiteClusters")
+vdLite.Active=True
+#delete the other unused output location...
+del vdLite.Outputs["VeloClusterLocation"]
+vdLite.Properties["DecodeToVeloClusters"]=False
+vdLite.Properties["DecodeToVeloLiteClusters"]=True
+
+
+#===========PU==========
+
+#actually this is almost two different decoders in one, steered with a property
+#unfortunately the location of these two banks are different in S20, so for now I can only declare the L0PU decoder... needs thought!
+Decoder("DecodePileUpData",
+        active=True, banks=["L0PU"],#,"L0PUFull"],
+        inputs={"RawEventLocations" : ["Trigger/RawEvent","Other/RawEvent","DAQ/RawEvent"]},#different from the default!
+        outputs={"PUClusterLocation" : None, "PUClusterNZSLocation": None},
+        #properties={"NonZeroSupp": False},
         conf=DecoderDB)
+
 
 #===========TT===========
 Decoder("RawBankToSTLiteClusterAlg/createTTLiteClusters",
@@ -98,16 +123,24 @@ Decoder("RawBankToSTClusterAlg/createITClusters",
 #outputs={"clusterLocation":"Raw/IT/LiteClusters"}, set logically in the code, resetting may not work...
 
 #===========OT===========
-Decoder("OTTimeCreator",
-        active=True,banks=["OT","OTFull","OTError"],
-        privateTools=["OTRawBankDecoder/RawBankDecoder"],#tool handle??
+ott=Decoder("OTTimeCreator", #the only one which makes a TES location
+        active=True,banks=["OT","OTRaw","OTError"],
+        #privateTools=["OTRawBankDecoder/RawBankDecoder"],#tool handle??
+        #I hope the tool handle actually calls *this* public tool...
+        publicTools=["OTRawBankDecoder/ToolSvc.OTRawBankDecoder"],
         outputs={"OutputLocation": None},
         conf=DecoderDB)
 
-Decoder("OTRawBankDecoder/RawBankDecoder",#tool handle??
+from GaudiKernel.SystemOfUnits import ns
+rbd=Decoder(ott.PublicTools[0],#tool handle??
+        banks=ott.Banks,
         active=False,
         inputs={"RawEventLocations":["Other/RawEvent","DAQ/RawEvent"]},
+        properties={"TimeWindow":(-8.0*ns, 56.0*ns)},
         conf=DecoderDB)
+
+#prbd=rbd.clone("OTRawBankDecoder/ToolSvc.OTRawBankDecoder")
+# copy into PublicTool, actually it's the same instance used in OTTimeCreator
 
 #===========SPD===========
 name="SpdFromRaw" #as in C++
@@ -196,6 +229,7 @@ Decoder("L0CaloCandidatesFromRaw/L0CaloFromRaw",
 Decoder("L0DUFromRawAlg/L0DUFromRaw",
         active=True, banks=["L0DU"],
         privateTools=["L0DUFromRawTool"],
+        inputs={"RawEventLocations" : None},
         outputs={"L0DUReportLocation": None, "ProcessorDataLocation": None},
         conf=DecoderDB)
 
@@ -204,6 +238,52 @@ Decoder("L0DUFromRawTool",
         inputs={"RawLocations" : ["Trigger/RawEvent","DAQ/RawEvent"]},
         conf=DecoderDB)
 
+#TRIGGER ==========HLT===========
+
+dec=Decoder("HltSelReportsDecoder",
+        active=True, banks=["HltSelReports"],
+        inputs=["Trigger/RawEvent","DAQ/RawEvent"],
+        #currently cannot be configured, it's a list not present in constructor
+        outputs={"OutputHltSelReportsLocation":None},
+        conf=DecoderDB)
+
+#split Hlt1/2 scenario
+dec2=dec.clone(dec.FullName+"/Hlt2SelReportsDecoder")
+dec2.overrideOutputs({"OutputHltSelReportsLocation":"Hlt2/SelReports"})
+
+dec=Decoder("HltDecReportsDecoder",
+        active=True, banks=["HltDecReports"],
+        inputs=["Trigger/RawEvent","DAQ/RawEvent"],
+        #currently cannot be configured, it's a list not present in constructor
+        outputs={"OutputHltDecReportsLocation":None},
+        conf=DecoderDB)
+
+#split Hlt1/2 scenario
+dec1=dec.clone(dec.FullName+"/Hlt1DecReportsDecoder")
+dec1.overrideOutputs({"OutputHltDecReportsLocation":"Hlt1/DecReports"})
+
+dec2=dec.clone(dec.FullName+"/Hlt2DecReportsDecoder")
+dec2.overrideOutputs({"OutputHltDecReportsLocation":"Hlt2/DecReports"})
+
+Decoder("HltVertexReportsDecoder",
+        active=True, banks=["HltVertexReports"],
+        inputs=["Trigger/RawEvent","DAQ/RawEvent"],
+        #currently cannot be configured properly, it's a list not present in constructor
+        outputs={"OutputHltVertexReportsLocation":None},
+        conf=DecoderDB)
+
+#is a Routing bits filter really a decoder? it doesn't create output...
+Decoder("HltRoutingBitsFilter",
+        active=False, banks=["HltRoutingBits"],
+        inputs=["Trigger/RawEvent","DAQ/RawEvent"],
+        #currently cannot be configured properly, it's a list not present in constructor
+        conf=DecoderDB)
+
+Decoder("HltLumiSummaryDecoder",
+        active=True, banks=["HltLumiSummary"],
+        inputs={"RawEventLocation":None},
+        outputs={"OutputContainerName":None},
+        conf=DecoderDB)
 
 #UPGRADE ===========VP===========
 Decoder("VPRawBankToLiteCluster/createVPLiteClusters",

@@ -1,7 +1,7 @@
 import commands
 
 #extra locations known to be added
-known_extras=['Raw/Hcal/Adcs', 'Trig/L0/L0DUData', 'Raw/Spd/Adcs', 'Raw/Prs/Adcs', 'Raw/Ecal/Adcs']
+known_extras=['Raw/Prs/Adcs', 'Hlt1/DecReports', 'Hlt2/DecReports', 'Hlt/SelReports', 'Raw/Velo/PUClustersNZS', 'Hlt2/SelReports', 'Raw/Hcal/Adcs', 'Raw/Ecal/Adcs', 'Hlt/VertexReports', 'Hlt/DecReports', 'Trig/L0/L0DUData', 'Raw/Spd/Adcs', 'Raw/Velo/PUClusters', 'Hlt/LumiSummary']
 
 #known differences
 known_diffs={"Raw/VL/Clusters":{"VLRawBankDecoder/createVLClusters":{"DecodeToLiteClusters":[True,'-->',False]}}}
@@ -19,7 +19,11 @@ default_opts_diffs={'Raw/VL/Clusters': {'VLRawBankDecoder/createVLClusters': {'R
                     'Raw/Velo/LiteClusters': {'DecodeVeloRawBuffer/createVeloLiteClusters': {'RawEventLocations': [[], '-->', ['Other/RawEvent', 'DAQ/RawEvent']]}},
                     'Raw/IT/Clusters': {'RawBankToSTClusterAlg/createITClusters': {'RawEventLocations': [[], '-->', ['Other/RawEvent', 'DAQ/RawEvent']]}},
                     'Raw/Velo/Clusters': {'DecodeVeloRawBuffer/createVeloClusters': {'RawEventLocations': [[], '-->', ['Other/RawEvent', 'DAQ/RawEvent']]}},
-                    'Raw/TT/LiteClusters': {'RawBankToSTLiteClusterAlg/createTTLiteClusters': {'RawEventLocations': [[], '-->', ['Other/RawEvent', 'DAQ/RawEvent']]}}
+                    'Raw/TT/LiteClusters': {'RawBankToSTLiteClusterAlg/createTTLiteClusters': {'RawEventLocations': [[], '-->', ['Other/RawEvent', 'DAQ/RawEvent']]}},
+                    'Raw/Hcal/Digits': {'CaloZSupAlg/HcalZSup' : {"OutputLevel" : [3,'-->',0], 'Context': ['Offline','-->',''] }},
+                    'Raw/Ecal/Digits': {'CaloZSupAlg/EcalZSup' : {"OutputLevel" : [3,'-->',0], 'Context': ['Offline','-->',''] }},
+                    'Raw/Prs/Digits': {'CaloDigitsFromRaw/PrsFromRaw' : {"OutputLevel" : [3,'-->',0], 'Context': ['Offline','-->',''] }},
+                    'Raw/Spd/Digits': {'CaloDigitsFromRaw/SpdFromRaw' : {"OutputLevel" : [3,'-->',0], 'Context': ['Offline','-->',''] }}
                     }
 
 def parse(stdout):

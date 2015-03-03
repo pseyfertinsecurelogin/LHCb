@@ -20,10 +20,13 @@ class Decoder(object):
         Inputs={} # list of input locations or {Property : value dict}
         Outputs={} # list of output locations or {Property: value} dict
         Properties={} # {Property: value dict of misc properties
-        PrivateTools=[] #related private toolsmust also be in the DB at configuration time
+        PrivateTools=[] #related private tools, must also be in the DB at configuration time
+        PublicTools=[] #related public tools, must also be in the DB at configuration time
+        Required=[] list of possible decoders which must be run before me, should also be defined in the DB
 
     Private member:
         __db__ reference to the databse in which I am stored. Can be overwritten if required, or used to validate the database. Used to find the public/private tools.
+        __used__: someone has actually used this tool
     """
     FullName="" #the full Gaudi name of the low-level configurable
     Active=False # Flags this as an alg to be configured, which somehow writes something on the TES
@@ -51,21 +54,36 @@ class Decoder(object):
         PrivateTools and PublicTools are configured at the same time as this decoder, providing that they exist in the DB.
         Required partners are not configured automatically, but must be declared active and configured separately.
         """
-        self.FullName=fullname
+        #ensure I actually construct the members!!
+        self.FullName="" #the full Gaudi name of the low-level configurable
+        self.Active=False # Flags this as an alg to be configured, which somehow writes something on the TES
+        self.Banks={} # list of banks I decode
+        self.Inputs={} # list of input locations or {Property : value dict}
+        self.Outputs={} # list of output locations or {Property: value} dict
+        self.Properties={} # {Property: value dict of misc properties
+        self.PrivateTools=[] #related private toolsmust also be in the DB at configuration time
+        self.PublicTools=[] #related public tools, must also be in the DB at configuration time
+        self.Required=[] #required other algorithms, must also be in the DB at configuration time
+        #deepcopy things that were sent in...
+        self.FullName=fullname[:]
         self.Active=active
-        self.Banks=banks
-        self.Inputs=inputs
-        self.Outputs=outputs
-        self.Properties=properties
-        self.PrivateTools=privateTools
-        self.PublicTools=publicTools
+        self.__used__=False
+        self.Banks=banks[:]
+        tipi=type(inputs)
+        self.Inputs=tipi(inputs)
+        tipo=type(outputs)
+        self.Outputs=tipo(outputs)
+        self.Properties=dict(properties)
+        self.PrivateTools=privateTools[:]
+        self.PublicTools=publicTools[:]
         self.Required=required
         if conf is not None:
             conf[self.FullName]=self
             self.__db__=conf
+    
     def listRequired(self):
         """
-        Return a unique ordered list of the requirements, from lowest to highest level
+        Return a unique ordered list of the requirements, i.e entries added to 'Required', from lowest to highest level
         """
         retlist=[]
         for alg in self.PrivateTools+self.PublicTools:
@@ -87,10 +105,40 @@ class Decoder(object):
             if alg not in unique:
                 unique.append(alg)
         return unique
+    def allDaughters(self):
+        """
+        Return a unique ordered list of all the daugter tools and required algorithms, from lowest to highest level
+        """
+        retlist=[]
+        for alg in self.PrivateTools+self.PublicTools:
+            if alg not in self.__db__:
+                continue
+            retlist+=[alg]
+            res=self.__db__[alg].allDaughters()
+            res.reverse()
+            retlist+=res
+        for alg in self.Required:
+            if alg not in self.__db__:
+                continue
+            retlist+=[alg]
+            res=self.__db__[alg].allDaughters()
+            res.reverse()
+            retlist+=res
+        retlist.reverse()
+        unique=[]
+        for alg in retlist:
+            if alg not in unique:
+                unique.append(alg)
+        return unique
     def activate(self):
         self.Active=True
     def deactivate(self):
         self.Active=False
+    def wasUsed(self):
+        """
+        setup was called on this decoder already somewhere...
+        """
+        return (self.__used__==True)
     def clone(self, newname):
         """return another copy of this guy with a new name
         deep copy dictionaries,  but not the DB!!"""
@@ -98,13 +146,13 @@ class Decoder(object):
         op=self.Outputs
         pr=self.Properties
         #construct new dictionaries to avoid having the same objects
-        if type(ip) is dict:
-            ip=dict(ip)
-        if type(op) is dict:
-            op=dict(op)
-        if type(pr) is dict:
-            pr=dict(pr)
-        return Decoder(newname,self.Active,self.Banks,ip,op,pr,self.PrivateTools,self.PublicTools,self.Required,self.__db__)
+        tipi=type(ip)
+        ip=tipi(ip)
+        tipo=type(op)
+        op=tipo(op)
+        tipp=type(pr)
+        pr=tipp(pr)
+        return Decoder(newname,self.Active,self.Banks[:],ip,op,pr,self.PrivateTools[:],self.PublicTools[:],self.Required[:],self.__db__)
     def __setprop__(self,top,prop,val):
         """
         Handle tool handles? not 100% sure...
@@ -135,13 +183,16 @@ class Decoder(object):
     
     def overrideInputs(self,input):
         """
-        List of input locations to search, set to all daughters
+        Set a List of input locations to search, set to all daughters
         """
         if not self.isInputSettable():
             raise AttributeError("My input is not settable "+self.FullName)
-        if type(self.Inputs) is list and len(self.Inputs):
-            self.Inputs=input
-        elif type(self.Inputs) is dict and len(self.Inputs):
+        #if type(self.Inputs) is list and len(self.Inputs):
+        #    if type(input) is list:
+        #        self.Inputs=input
+        #    if type(input) is str:
+        #        self.Inputs=[input]
+        if type(self.Inputs) is dict and len(self.Inputs):
             for k,ip in self.Inputs.items():
                 ensuretype=list
                 if ip is None:
@@ -166,14 +217,27 @@ class Decoder(object):
     
     def overrideOutputs(self,output):
         """
-        List of output locations to search, set to all daughters
+        Set a list or dict of OutputLocations, set to all daughters
         """
+        #print "GAAAAAAAHHHHHHHHH!!!!!!", output, self.FullName
         if not self.isOutputSettable():
             raise AttributeError("My output is not settable "+self.FullName)
-        if type(self.Outputs) is list and len(self.Outputs):
-            self.Outputs=output
-        elif type(self.Outputs) is dict and len(self.Outputs):
+        #if type(self.Outputs) is list and len(self.Outputs):
+        #    if type(output) is list:
+        #        self.Outputs=output
+        #    elif type(output) is str:
+        #        self.Outputs=[output]
+        if type(self.Outputs) is dict and len(self.Outputs):
+            #print "recognized I can set the output"
             for k,op in self.Outputs.items():
+                #get this entry in any supplied dictionary
+                setoutput=output
+                if type(setoutput) is dict:
+                    if k in setoutput:
+                        setoutput=setoutput[k]
+                    else:
+                        continue
+                #determine the type I need to set
                 ensuretype=list
                 if op is None:
                     #determine default type, first get my configurable
@@ -181,14 +245,18 @@ class Decoder(object):
                     ensuretype=type(self.__getprop__(thedecoder,k))
                 else:
                     ensuretype=type(op)
-                if type(output)==ensuretype:
-                    self.Outputs[k]=output
-                elif type(output) is list and len(output)>0 and ensuretype is str:
-                    raise TypeError("Cannot set property of type list to this string, "+self.FullName+" "+output.__str__())
-                elif ensuretype is list and type(output) is str:
-                    self.Outputs[k]=[output]
+                #set this type
+                #print "Type converted"
+                if type(setoutput)==ensuretype:
+                    self.Outputs[k]=setoutput
+                elif type(setoutput) is list and (len(setoutput)>1 or len(setoutput)==0) and ensuretype is str:
+                    raise TypeError("Cannot set property of type list to this string, "+self.FullName+" "+setoutput.__str__())
+                elif type(setoutput) is list and len(setoutput)==1 and ensuretype is str:
+                    self.Outputs[k]=setoutput[0]
+                elif ensuretype is list and type(setoutput) is str:
+                    self.Outputs[k]=[setoutput]
                 else:
-                    raise TypeError(self.FullName+": Cannot convert from type "+ str(type(output)) +" to "+ str(ensuretype))
+                    raise TypeError(self.FullName+": Cannot convert from type "+ str(type(setoutput)) +" to "+ str(ensuretype))
         #then cascade downwards
         for tool in self.PublicTools+self.PrivateTools:
             if tool in self.__db__:
@@ -309,20 +377,22 @@ class Decoder(object):
                     if self.Outputs[prop] is not None:
                         self.__setprop__(thedecoder,prop, self.Outputs[prop])
         if not cascade or self.__db__ is None:
+            self.__used__=True
             return thedecoder
         #configure public tools
         for atool in self.PublicTools:
             if atool in self.__db__:
                 self.__db__[atool].setup(True,onlyInputs=onlyInputs)
             else:
-                raise KeyError("Error: "+tool+" not found in DB, set cascade=False, remove this from the list, or re-validate the db")
+                raise KeyError("Error: "+atool+" not found in DB, set cascade=False, remove this from the list, or re-validate the db")
         #configure private tools
         for atool in self.PrivateTools:
             if atool in self.__db__:
                 thetool=addPrivateToolFromString(thedecoder,atool)
                 self.__db__[atool].setup(True,thetool,onlyInputs=onlyInputs)
             else:
-                raise KeyError("Error: "+tool+" not found in DB, set cascade=False, remove this from the list, or re-validate the db")
+                raise KeyError("Error: "+atool+" not found in DB, set cascade=False, remove this from the list, or re-validate the db")
+        self.__used__=True
         return thedecoder
 
 # =============== Database tools =======================
@@ -380,3 +450,17 @@ def decoderToLocation(db,location,ignoreActive=False):
     if not len(retlist):
         return None
     return retlist[0]
+
+def usedDecoders(db,bank=None):
+    """
+    Obtain any used decoders irrespective of whether they were 'active'
+    A "used" decoder is any decoder which was previously "setup()" by someone
+    """
+    retlist=[]
+    for k,v in db.items():
+        if not v.wasUsed():
+            continue
+        if bank is None or bank in v.Banks:
+            retlist.append(v)
+    return retlist
+    

@@ -4,6 +4,24 @@
 ! Purpose     : To hold configurables for splitting/joining raw events
 !-----------------------------------------------------------------------------
 
+!========================= RawEventCompat v1r4 2013-12-09 =========================
+! 2013-12-06 - Rob Lambert
+ - Extend the juggler to also remove extra directories if asked to.
+ - see task #19106
+
+! 2013-12-02 - Rob Lambert
+ - Add a test validator which can interpret the contents of DSTs
+   and work out if the required locations are there or not
+
+! 2013-11-26 - Rob Lambert
+ - Check for bad/unknown banks!
+ - Fix missing addition of Depth!! Why did I remove it?
+ - Adapt test to new addition of /Event/ when needed (always?)
+
+! 2013-11-22 - Rob Lambert
+ - Solve bug due to lack of _checkv in some configurables/methods
+ - Now all configurables accept versions as strings or numbers
+
 !========================= RawEventCompat v1r3 2013-10-23 =========================
 ! 2013-10-15 - Rob Lambert
  - Solve indentation bug and add a test which checks for TCK replacement

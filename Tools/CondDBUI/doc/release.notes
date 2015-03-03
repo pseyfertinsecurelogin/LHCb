@@ -3,6 +3,10 @@
 ! package manager : Marco Clemencic
 ! ========================================================================
 
+!========================= CondDBUI v3r26 2013-12-09 =========================
+! 2013-12-02 - Liang Sun
+ - __init__.py: Fixed a glitch of only translating strings from the 'data' key in the DB payload
+
 !========================= CondDBUI v3r25 2013-09-30 =========================
 ! 2013-08-08 - Liang Sun
  - decompress_db_metadata.py: new script to decompress the content of a CondDB file.

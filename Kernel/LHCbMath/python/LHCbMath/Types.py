@@ -1,6 +1,7 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 # =============================================================================
-# $Id: Types.py 159629 2013-07-11 10:27:12Z ibelyaev $
+# $Id: Types.py 165595 2013-12-03 13:22:00Z albarano $
 # =============================================================================
 ## @file
 #
@@ -35,8 +36,8 @@
 #  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
 #  @date 2009-09-12
 #
-#  Last modification $Date: 2013-07-11 12:27:12 +0200 (Thu, 11 Jul 2013) $
-#                 by $Author: ibelyaev $
+#  Last modification $Date: 2013-12-03 14:22:00 +0100 (Tue, 03 Dec 2013) $
+#                 by $Author: albarano $
 #
 #
 # =============================================================================
@@ -69,14 +70,14 @@ Simple file to provide 'easy' access in python for the basic ROOT::Math classes
   >>> dir( Gaudi.Math )
   >>> dir( Gaudi      )
   
-  Last modification $Date: 2013-07-11 12:27:12 +0200 (Thu, 11 Jul 2013) $
-                 by $Author: ibelyaev $
+  Last modification $Date: 2013-12-03 14:22:00 +0100 (Tue, 03 Dec 2013) $
+                 by $Author: albarano $
 
 """
 # =============================================================================
 __author__  = "Vanya BELYAEV Ivan.Belyaev@nikhef.nl"
 __date__    = "2009-09-12"
-__version__ = "Version$Revision: 159629 $"
+__version__ = "Version$Revision: 165595 $"
 # =============================================================================
 __all__     = () ## nothing to be imported !
 # =============================================================================

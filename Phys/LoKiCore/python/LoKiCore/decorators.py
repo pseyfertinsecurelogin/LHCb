@@ -2,7 +2,7 @@
 # =============================================================================
 # $Id: decorators.py 155775 2013-04-29 09:31:21Z cattanem $ 
 # =============================================================================
-# $URL: http://svn.cern.ch/guest/lhcb/LHCb/tags/Phys/LoKiCore/v11r15/python/LoKiCore/decorators.py $ 
+# $URL: http://svn.cern.ch/guest/lhcb/LHCb/tags/Phys/LoKiCore/v11r16/python/LoKiCore/decorators.py $ 
 # =============================================================================
 ## @file decorators.py LoKiCore/decorators.py
 #
