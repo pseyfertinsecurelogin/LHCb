@@ -1,4 +1,4 @@
-// $Id: DeVeloRType.cpp,v 1.33 2006-11-01 19:15:00 mtobin Exp $
+// $Id: DeVeloRType.cpp,v 1.38 2006-12-20 15:34:30 cattanem Exp $
 //==============================================================================
 #define VELODET_DEVELORTYPE_CPP 1
 //==============================================================================
@@ -10,6 +10,7 @@
 #include "GaudiKernel/IJobOptionsSvc.h"
 #include "GaudiKernel/ISvcLocator.h"
 #include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/PhysicalConstants.h"
 
 // From LHCb
 #include "Kernel/LHCbMath.h"
@@ -159,7 +160,7 @@ StatusCode DeVeloRType::initialize()
   IJobOptionsSvc* jobSvc;
   ISvcLocator* svcLoc = Gaudi::svcLocator();
   StatusCode sc = svcLoc->service("JobOptionsSvc", jobSvc);
-  jobSvc->setMyProperties("DeVeloRType", pmgr);
+  if( sc.isSuccess() ) jobSvc->setMyProperties("DeVeloRType", pmgr);
   if ( 0 < outputLevel ) {
     msgSvc()->setOutputLevel("DeVeloRType", outputLevel);
   }
@@ -330,9 +331,8 @@ double DeVeloRType::phiMaxZone(unsigned int zone, double radius) const {
 /// Convert local phi to ideal global phi
 //==============================================================================
 double DeVeloRType::localPhiToGlobal(double phiLocal) const {
-  if(isDownstream()) phiLocal = -phiLocal;
+  if(!isDownstream()) phiLocal = -phiLocal;
   if(isRight()) phiLocal += Gaudi::Units::pi;
-  phiLocal = 2*Gaudi::Units::pi - phiLocal; 
   return phiLocal;
 } 
 //==============================================================================
@@ -676,20 +676,24 @@ std::auto_ptr<LHCb::Trajectory> DeVeloRType::trajectory(const LHCb::VeloChannelI
     Gaudi::XYZPoint lOrigin(0.,0.,0.);
     Gaudi::XYZPoint lBegin(radius*cos(phiMin),radius*sin(phiMin),z);
     Gaudi::XYZPoint lEnd(radius*cos(phiMax),radius*sin(phiMax),z);
-    // Downstream sensors rotated by 180 degrees around x axis
-    // Swap meaning of points before local to global transform
-    if(isDownstream()) {
-      Gaudi::XYZPoint lTmp=lBegin;
-      lBegin=lEnd;
-      lEnd=lTmp;
-    }
 
     // move to global frame
     Gaudi::XYZPoint gOrigin, gBegin, gEnd;
     localToGlobal(lOrigin, gOrigin);
     localToGlobal(lBegin, gBegin);
     localToGlobal(lEnd, gEnd);
-    
+    /* Covert phi range to 0-360 to make sure trajectories run in right direction
+       and protect against crossing boundaries */
+    double phiBeginTmp=gBegin.phi();
+    if(phiBeginTmp < 0) phiBeginTmp += 2*Gaudi::Units::pi;
+    double phiEndTmp=gEnd.phi();
+    if(phiEndTmp < 0) phiEndTmp += 2*Gaudi::Units::pi;
+    if(phiBeginTmp > phiEndTmp){
+      Gaudi::XYZPoint gTmp=gBegin;
+      gBegin=gEnd;
+      gEnd=gTmp;
+    }
+
     // put into trajectory
     LHCb::Trajectory* tTraj = new LHCb::CircleTraj(gOrigin,gBegin-gOrigin,gEnd-gOrigin,radius);
 

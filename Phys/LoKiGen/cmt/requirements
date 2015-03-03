@@ -1,22 +1,22 @@
-# $Id: requirements,v 1.10 2006-11-09 16:35:31 ibelyaev Exp $ 
+# $Id: requirements,v 1.12 2006-12-15 08:40:24 ranjard Exp $ 
 # =============================================================================
-# CVS tag $Name: not supported by cvs2svn $, version $Revision: 1.10 $
+# CVS tag $Name: not supported by cvs2svn $, version $Revision: 1.12 $
 # =============================================================================
 # Created    : 2006-01-16
 # Maintainer : Vanya BELYAEV ibelyaev@physics.syr.edu 
 # =============================================================================
 package            LoKiGen
-version            v1r7
+version            v2r0
 
 # ================ structure ==================================================
 branches           cmt doc src LoKi 
 
-# ================ own includes ===============================================
-include_dirs       $(LOKIGENROOT)
-
 # ================ dependencies ===============================================
 use   LoKiCore     v*    Phys 
 use   GenEvent     v*    Event
+
+# ================ own includes ===============================================
+apply_pattern install_more_includes more=LoKi
 
 # ================ constituents ===============================================
 library            LoKiGenLib    ../src/*.cpp 
@@ -26,8 +26,8 @@ apply_pattern      linker_library library=LoKiGenLib
 
 # =============================================================================
 # $Log: not supported by cvs2svn $
-# Revision 1.9  2006/10/05 11:53:37  ibelyaev
-#  fix compilation problem at slc4_ia32_gcc345
+# Revision 1.11  2006/11/25 19:14:19  ibelyaev
+#  improve Doxygen
 #
 # =============================================================================
 # The END 

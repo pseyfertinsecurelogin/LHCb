@@ -1,4 +1,4 @@
-// $Id: CaloEnergyFromRaw.cpp,v 1.11 2006-09-29 15:33:52 odescham Exp $
+// $Id: CaloEnergyFromRaw.cpp,v 1.13 2006-11-23 13:38:32 cattanem Exp $
 // Include files 
 
 // from Gaudi
@@ -15,10 +15,7 @@
 // 2005-01-10 : Olivier Callot
 //-----------------------------------------------------------------------------
 
-// Declaration of the Tool Factory
-static const  ToolFactory<CaloEnergyFromRaw>          s_factory ;
-const        IToolFactory& CaloEnergyFromRawFactory = s_factory ; 
-
+DECLARE_TOOL_FACTORY( CaloEnergyFromRaw );
 
 //=============================================================================
 // Standard constructor, initializes variables
@@ -103,7 +100,7 @@ std::vector<LHCb::CaloDigit>&  CaloEnergyFromRaw::digits ( ) {
 //=========================================================================
 std::vector<LHCb::CaloAdc>& CaloEnergyFromRaw::adcs ( ) {
   m_adcs.clear();
-  LHCb::RawEvent* rawEvt = get<LHCb::RawEvent> ( LHCb::RawEventLocation::Default );
+  LHCb::RawEvent* rawEvt = get<LHCb::RawEvent> ( rootOnTES() + LHCb::RawEventLocation::Default );
 
   const std::vector<LHCb::RawBank*>* banks = 0;  
   if( !m_packedIsDefault)banks = &rawEvt->banks( m_shortType );

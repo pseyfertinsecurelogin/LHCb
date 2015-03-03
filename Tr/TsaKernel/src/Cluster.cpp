@@ -1,4 +1,5 @@
-// $Id: Cluster.cpp,v 1.4 2006-09-08 16:01:43 mneedham Exp $
+//Id: Cluster.cpp,v 1.4 2006/09/08 16:01:43 mneedham Exp $
+
 #include "TsaKernel/Cluster.h"
 #include "Kernel/Trajectory.h"
 

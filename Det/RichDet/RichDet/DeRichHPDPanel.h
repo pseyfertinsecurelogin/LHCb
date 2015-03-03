@@ -4,7 +4,7 @@
  *
  *  Header file for detector description class : DeRichHPDPanel
  *
- *  $Id: DeRichHPDPanel.h,v 1.37 2006-11-01 17:50:52 jonrob Exp $
+ *  $Id: DeRichHPDPanel.h,v 1.39 2006-11-29 16:28:58 papanest Exp $
  *
  *  @author Antonis Papanestis a.papanestis@rl.ac.uk
  *  @date   2004-06-18
@@ -132,7 +132,7 @@ public:
    */
   inline const double localOffset() const
   {
-    return m_panelColumnSideEdge;
+    return m_localOffset;
   }
 
   /**
@@ -183,7 +183,6 @@ public:
                                     Gaudi::XYZPoint& windowPointGlobal, // return
                                     LHCb::RichSmartID& smartID,          // return
                                     const LHCb::RichTraceMode mode ) const;
-  //const RichTraceMode mode ) const; // CRJ : Use this for BR v30r7
 
   /**
    * Returns the intersection point with the detector plane given a vector
@@ -202,7 +201,6 @@ public:
                               const Gaudi::XYZVector& vGlobal,
                               Gaudi::XYZPoint& hitPosition,
                               const LHCb::RichTraceMode mode ) const;
-  //const RichTraceMode mode ) const; // CRJ : Use this for BR v30r7
 
   /**
    * Converts a global position to the coordinate system of the
@@ -339,7 +337,8 @@ protected:
   double m_panelStartColPosOdd;    ///< Bottom/Start point of the odd HPD columns
   /// abs max of even and odd start points used as the edge across columns
   double m_panelStartColPos;
-
+  double m_localOffset;           ///< offset applied in the global to panel coordinates
+  
 public:
   /**
    * Prints coordinates on anode and cathode: for test only porposes.

@@ -1,10 +1,8 @@
-// $Id: EvtTypeChecker.cpp,v 1.2 2005-12-15 23:23:39 gcorti Exp $
+// $Id: EvtTypeChecker.cpp,v 1.4 2007-01-12 10:10:51 cattanem Exp $
 // Include files 
 
 // from Gaudi
 #include "GaudiKernel/AlgFactory.h"
-#include "GaudiKernel/MsgStream.h" 
-#include "GaudiKernel/SmartDataPtr.h"
 
 // from Event
 #include "Event/HepMCEvent.h"
@@ -23,9 +21,7 @@
 //-----------------------------------------------------------------------------
 
 // Declaration of the Algorithm Factory
-static const  AlgFactory<EvtTypeChecker>          s_factory ;
-const        IAlgFactory& EvtTypeCheckerFactory = s_factory ; 
-
+DECLARE_ALGORITHM_FACTORY(EvtTypeChecker)
 
 //=============================================================================
 // Standard constructor, initializes variables

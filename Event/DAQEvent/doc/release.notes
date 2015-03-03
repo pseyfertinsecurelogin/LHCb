@@ -4,6 +4,19 @@
 !Purpose: Define the classes delivered to the online farm by the DAQ
 !----------------------------------------------------------------------
 
+!================ DAQEvent v7r0 2007-01-31 ============================
+! 2007-01-31 - Marco Cattaneo
+ - fix reflex dict pattern for Windows and retag requirements
+
+! 2006-12-06 - Florence RANJARD
+ - replace include_dirs with apply_pattern install_more_includes
+ - fix for new Plugins (P.Mato)
+
+!================ DAQEvent v6r8 2006-11-15 ============================
+! 2006-11-14 - Markus Frank
+ - Delete bank memory if it is owned by the mirror array 
+   ie. the bank got added with RawEvent::adoptBank.
+
 !================ DAQEvent v6r7p1 2006-10-20 ==========================
 ! 2006-10-20 - Marco Cattaneo
  - Add RawEventLocation::Emulated, for Velo Tell1 emulation studies
@@ -11,7 +24,7 @@
 !================ DAQEvent v6r7 2006-09-28 ============================
 ! 2006-09-26 - Marco Clemencic
  - Add ODIN class to decode ODIN raw banks and expose the informations.
- - Add the tool OdinTimeDecoder (implementing Kernel/IEventTimedecoder)
+ - Add the tool OdinTimeDecoder (implementing Kernel/IEventTimeDecoder)
    to create an ODIN object in the transient store and return the event
    time to EventClockSvc.
 

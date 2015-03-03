@@ -1,4 +1,4 @@
-// $Id: DeVelo.h,v 1.49 2006-08-01 14:56:56 krinnert Exp $
+// $Id: DeVelo.h,v 1.51 2006-12-06 23:24:31 mjohn Exp $
 #ifndef       VELODET_DEVELO_H
 #define       VELODET_DEVELO_H 1
 // ============================================================================

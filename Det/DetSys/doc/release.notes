@@ -4,6 +4,28 @@
 ! Purpose     : collect Det packages and build corresponding dictionaries
 !-----------------------------------------------------------------------------
 
+!========================= DetSys v9r0 2006-01-31 ============================
+! 2007-01-31 - Marco Cattaneo
+ - Fix reflex dict link for Windows and retag requirements
+
+! 2007-01-19 - Juan PALACIOS for Thomas RUF
+  - dict/DetDict{.h, .xml}
+    . Add class DeMuonDetector to dictionaries.
+
+! 2006-12-07 - Florence RANJARD
+ - use CaloDet v8r0, CaloDetXmlCnv v3r0, DetDesc v17r0, DetDescCnv v4r0,
+   XmlTools v4r0, VeloDet v11r0, OTDet v7r0, MuonDet v6r0, RichDet v10r0, 
+   STDet v3r0, DetDescSvc v1r9
+ - Remove duplicate dictionaries already done in GaudiKernel
+
+!========================= DetSys v8r15 2006-12-01 =========================
+! 2006-12-01 - Marco Cattaneo
+ - Use RichDet v9r9, VeloDet v10r11
+
+! 2006-11-21 - Juan Palacios
+  - dict/DetDict.xml, DetDict.h
+    . Add DeSTBaseElement.
+
 !========================= DetSys v8r14 2006-11-03 =========================
 ! 2006-11-03 - Marco Cattaneo
  - Use DetDesc v16r9, RichDet v9r8, VeloDet v10r10, DetDescSvc v1r8

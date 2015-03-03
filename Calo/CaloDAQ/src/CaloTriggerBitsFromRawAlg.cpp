@@ -1,8 +1,8 @@
-// $Id: CaloTriggerBitsFromRawAlg.cpp,v 1.2 2006-09-26 12:42:03 odescham Exp $
+// $Id: CaloTriggerBitsFromRawAlg.cpp,v 1.4 2007-01-12 10:42:57 cattanem Exp $
 // Include files 
 
 // from Gaudi
-#include "GaudiKernel/DeclareFactoryEntries.h" 
+#include "GaudiKernel/AlgFactory.h" 
 #include "Event/L0PrsSpdHit.h"
 
 // local
@@ -31,10 +31,10 @@ CaloTriggerBitsFromRawAlg::CaloTriggerBitsFromRawAlg( const std::string& name,
   m_toolType  = "CaloTriggerBitsFromRaw";
   m_toolName = name + "Tool";
   if ( "Prs" == name.substr( 0 , 3 ) ) {
-    m_outputData =  LHCb::L0PrsSpdHitLocation::Prs;
+    m_outputData = rootOnTES() + LHCb::L0PrsSpdHitLocation::Prs;
     m_isPrs = true;
   } else if ( "Spd" == name.substr( 0 , 3 ) ) {
-    m_outputData =  LHCb::L0PrsSpdHitLocation::Spd;
+    m_outputData = rootOnTES() + LHCb::L0PrsSpdHitLocation::Spd;
     m_isPrs = false;
   }
 

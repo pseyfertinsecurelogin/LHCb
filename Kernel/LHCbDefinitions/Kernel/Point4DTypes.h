@@ -1,19 +1,21 @@
-// $Id: Point4DTypes.h,v 1.1 2005-12-02 16:59:36 cattanem Exp $
+
+//---------------------------------------------------------------------------------
+/** @file Point4DTypes.h
+ *
+ *  This file is obsolete. Please use equivalent file from GaudiKernel
+ *
+ *  CVS Log :-
+ *  $Id: Point4DTypes.h,v 1.3 2006-12-15 14:38:55 cattanem Exp $
+ *
+ *  @author Juan PALACIOS
+ *  @date   2005-11-21
+ */
+//---------------------------------------------------------------------------------
+
 #ifndef KERNEL_POINT4DTYPES_H 
 #define KERNEL_POINT4DTYPES_H 1
 
 // Include files
-#include "Kernel/Vector4DTypes.h"
-
-/** @namespace Gaudi Point4DTypes.h Kernel/Point4DTypes.h
- *  
- *
- *  @author Marco Cattaneo
- *  @date   2005-11-29
- */
-
-namespace Gaudi {
-  typedef LorentzVector XYZTPoint; ///< 4D point (space-time) @todo use Point4D from MathCore
-}
+#include "GaudiKernel/Point4DTypes.h"
 
 #endif // KERNEL_POINT4DTYPES_H

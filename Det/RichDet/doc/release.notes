@@ -4,6 +4,26 @@
 ! Purpose     : interface to the xml description
 !-----------------------------------------------------------------------------
 
+!======================== RichDet v10r0 2006-12-14 ========================
+! 2006-12-06 - Florence RANJARD
+ - apply_pattern install_more_includes
+
+! 2006-12-02 - Chris Jones
+ - Add method to DeRichBeamPipe to only test for intersection.
+   Skips computing the entry and exit points in global coords, 
+   so is a bit faster.
+
+!======================== RichDet v9r9 2006-12-01 =========================
+! 2006-12-01 - Marco Cattaneo
+ - Use DECLARE_CONVERTER_FACTORY macros
+
+! 2006-11-29 - Antonis Papanestis
+ - Add DeRichBeamPipe class, requires update in the XmlDDDB
+ - Minor bug fixes
+
+! 2006-11-23 - Chris Jones
+ - Remove the use of "using namespace LHCb" in DeRichSystem.h
+
 !======================== RichDet v9r8 2006-11-03 =========================
 ! 2006-11-03 - Marco Cattaneo
  - Remove second format() call from DeRichSystem.cpp

@@ -1,4 +1,4 @@
-// $Id: DeVelo.cpp,v 1.74 2006-07-31 17:01:17 mtobin Exp $
+// $Id: DeVelo.cpp,v 1.78 2006-12-20 15:34:30 cattanem Exp $
 //
 // ============================================================================
 #define  VELODET_DEVELO_CPP 1
@@ -13,6 +13,7 @@
 #include "GaudiKernel/IJobOptionsSvc.h"
 #include "GaudiKernel/ISvcLocator.h"
 #include "GaudiKernel/IUpdateManagerSvc.h"
+#include "GaudiKernel/SystemOfUnits.h"
 
 #include "DetDesc/Condition.h"
 
@@ -63,7 +64,7 @@ StatusCode DeVelo::initialize() {
   IJobOptionsSvc* jobSvc;
   ISvcLocator* svcLoc = Gaudi::svcLocator();
   StatusCode sc = svcLoc->service("JobOptionsSvc", jobSvc);
-  jobSvc->setMyProperties("DeVelo", pmgr);
+  if( sc.isSuccess() ) jobSvc->setMyProperties("DeVelo", pmgr);
   if ( 0 < outputLevel ) {
     msgSvc()->setOutputLevel("DeVelo", outputLevel);
   }

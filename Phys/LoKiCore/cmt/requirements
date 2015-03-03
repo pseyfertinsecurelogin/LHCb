@@ -1,17 +1,15 @@
+# $Id: requirements,v 1.20 2006-12-15 08:37:19 ranjard Exp $ 
 # =============================================================================
-# CVS tag $Name: not supported by cvs2svn $, version $Revision: 1.18 $
+# CVS tag $Name: not supported by cvs2svn $, version $Revision: 1.20 $
 # =============================================================================
 # Created    : 2006-01-16
 # Maintainer : Vanya BELYAEV ibelyaev@physics.syr.edu 
 # =============================================================================
 package            LoKiCore
-version            v1r8
+version            v2r0
 
 # ================ structure ==================================================
 branches           cmt doc src LoKi 
-
-# ================ own includes ===============================================
-include_dirs       $(LOKICOREROOT)
 
 # ================ dependencies ===============================================
 use                GaudiAlg         v* 
@@ -19,6 +17,9 @@ use                LHCbKernel       v* Kernel
 use                LHCbDefinitions  v* Kernel 
 use                Boost            v* LCG_Interfaces 
 use                ROOT             v* LCG_Interfaces 
+
+# ================ own includes ===============================================
+apply_pattern install_more_includes more=LoKi
  
 # ================ constituents ===============================================
 library            LoKiCoreLib    ../src/*.cpp
@@ -31,11 +32,9 @@ apply_pattern      component_library library=LoKiCore
 
 # =============================================================================
 # $Log: not supported by cvs2svn $
-# Revision 1.17  2006/11/06 12:11:16  ibelyaev
-#  RangeList: add missing destructor
+# Revision 1.19  2006/11/25 19:12:49  ibelyaev
+#  improve Doxygen
 #
-# Revision 1.16  2006/10/27 13:34:19  ibelyaev
-#  v1r7p1: fix warnings for SLC4 platform
 #
 # =============================================================================
 # The END

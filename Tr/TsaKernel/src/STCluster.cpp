@@ -1,4 +1,5 @@
-// $Id: STCluster.cpp,v 1.4 2006-10-11 15:36:09 mneedham Exp $
+// $Id: STCluster.cpp,v 1.5 2006-12-06 14:35:19 mneedham Exp $
+
 #include "TsaKernel/STCluster.h"
 
 Tsa::STCluster* Tsa::STCluster::clone() const {

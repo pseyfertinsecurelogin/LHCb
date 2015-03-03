@@ -1,4 +1,4 @@
-// $Id: IOTDataSvc.h,v 1.3 2006-09-05 15:38:19 mneedham Exp $
+// $Id: IOTDataSvc.h,v 1.4 2006-12-06 14:35:19 mneedham Exp $
 #ifndef _IOTDataSvc_H
 #define _IOTDataSvc_H
 
@@ -12,6 +12,7 @@
 
 #include "GaudiKernel/IAlgTool.h"
 #include "TsaKernel/Types.h"
+#include "TsaKernel/OTCluster.h"
 
 static const InterfaceID IID_IOTDataSvc( "IOTDataSvc", 0, 0 );
 
@@ -24,6 +25,9 @@ public:
 
   /// event-by-event init
   virtual StatusCode initializeEvent() = 0;
+
+  // init event
+  virtual StatusCode initializeEvent(Tsa::OTClusters* clusters) = 0;
 
   virtual  Tsa::OTRange layer(const int& iStation, const int& iLayer) const = 0;
   

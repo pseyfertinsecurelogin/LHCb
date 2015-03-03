@@ -1,4 +1,4 @@
-// $Id: ITsaCollector.h,v 1.1 2006-09-05 15:38:19 mneedham Exp $
+// $Id: ITsaCollector.h,v 1.2 2006-12-06 14:35:19 mneedham Exp $
 #ifndef _ITsaCollector_H
 #define _ITsaCollector_H
 
@@ -31,15 +31,15 @@ public:
 
   /// the method
   virtual StatusCode collect(const LHCb::State& aState,
-                             Tsa::Clusters* clusters) const = 0;
+                             Tsa::Clusters* clusters, const unsigned int nSigma) const = 0;
 
 
  virtual StatusCode collect(const LHCb::State& aState, 
-                            Tsa::STClusters* clusters) const = 0;
+                            Tsa::STClusters* clusters, const unsigned int nSigma) const = 0;
 
 
  virtual StatusCode collect(const LHCb::State& aState, 
-                            Tsa::OTClusters* clusters) const = 0;
+                            Tsa::OTClusters* clusters, const unsigned int nSigma) const = 0;
 
 
 };

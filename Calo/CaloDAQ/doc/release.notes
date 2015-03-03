@@ -4,6 +4,19 @@
 ! Purpose     : Convert Calo Digit and Trigger information to RawEvent banks.
 !-----------------------------------------------------------------------------
 
+!========================== CaloDAQ v2r6 2007-01-12 ==========================
+! 2006-12-06 - Florence RANJARD
+ - apply_pattern install_more_includes
+ - use DECLARE_xxx_FACTORY macros
+
+!========================== CaloDAQ v2r6 2006-11-23 ==========================
+! 2006-11-23 - Marco Cattaneo
+ - Use DECLARE_xxx_FACTORY macros
+ - Get SystemOfUnits.h from GaudiKernel
+
+! 2006-11-22 - Olivier Callot
+ - Add the rootOnTES() prefix for coding/deconding in the Raw Event.
+
 !========================== CaloDAQ v2r5 2006-09-29 ==========================
 ! 2006-09-29 - Olivier Deschamps
   - Adapt CaloTriggerAdcsFromRaw to please L0Calo

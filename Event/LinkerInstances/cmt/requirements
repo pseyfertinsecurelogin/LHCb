@@ -1,12 +1,10 @@
-# $Id: requirements,v 1.11 2006-06-13 07:54:05 cattanem Exp $
+# $Id: requirements,v 1.15 2007-01-31 13:56:08 cattanem Exp $
 # =============================================================================
 package LinkerInstances
 author  Stefan Roiser
 manager Thomas Ruf
 
-version v3r1
-
-include_dirs $(LINKERINSTANCESROOT)
+version v3r2
 
 use LinkerEvent  v*    Event
 use MCEvent      v*    Event
@@ -22,13 +20,11 @@ apply_pattern reflex_dictionary                                             \
               selectionfile=$(LINKERINSTANCESROOT)/xml/lcg_selection.xml \
               options="-U__MINGW32__"
 
-# Build libraries (including dictionary)
-#============================================================================
-library LinkerInstancesDict ../$(tag)/dict/LinkerInstances/*.cpp
-        
+# Hack for cmt v1r19 bug to link dictionary on windows
+macro LinkerInstancesDict_use_linkopts $(use_linkopts)
+
 # Standard patterns
 #============================================================================
-apply_pattern component_library library=LinkerInstancesDict
 path_remove PATH "/LinkerInstances/" WIN32 "\LinkerInstances\"
 path_append PATH "${LINKERINSTANCESROOT}/$(BINDIR)" \
                  WIN32 "${LINKERINSTANCESROOT}\$(BINDIR)" 

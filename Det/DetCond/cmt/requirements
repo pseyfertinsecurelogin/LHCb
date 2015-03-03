@@ -1,13 +1,10 @@
-# $Id: requirements,v 1.58 2006-09-05 06:34:04 marcocle Exp $
+# $Id: requirements,v 1.61 2007-01-31 09:04:05 cattanem Exp $
 # =============================================================================
 package       DetCond
-version       v9r1
+version       v10r0
 
 # =========== structure =======================================================
 branches      DetCond doc cmt src
-
-# =========== own includes ====================================================
-include_dirs  $(DETCONDROOT)
 
 # =========== dependencies ====================================================
 use           GaudiKernel       v*
@@ -15,8 +12,14 @@ use           COOL              v*      LCG_Interfaces
 use           CORAL             v*      LCG_Interfaces
 use           Boost             v*      LCG_Interfaces
 use           SEAL              v*      LCG_Interfaces
+use           rx                v*      LCG_Interfaces
 #use           PCRE              v*      LCG_Interfaces
 use           DetDesc           v*      Det
+
+# =========== own includes ====================================================
+apply_pattern	install_more_includes more=DetCond
+
+#==============================================================================
 # Needed to resolve references to CoolApplication
 apply_tag   NEEDS_COOL_FACTORY
 apply_tag   NEEDS_CORAL_BASE
@@ -27,6 +30,10 @@ apply_pattern     reflex_dictionary                                     \
                   headerfiles=$(DETCONDROOT)/src/dict/DetCondDict.h     \
                   selectionfile=$(DETCONDROOT)/src/dict/DetCondDict.xml \
                   options="-U__MINGW32__"
+
+# Hack for windows to workaround bug in cmt v1r19
+macro DetCondDict_use_linkopts "" \
+                         WIN32 " $(use_linkopts)"
 
 # =========== constituents =====================================================
 library       DetCondLib        Lib/*.cpp

@@ -1,0 +1,16 @@
+<lcgdict>
+  <class name = "MCTrackInfo" />
+
+  <class name = "IMCDecayFinder"     />
+  <class name = "IMCReconstructible" />
+  <class name = "IMuonPad2MCTool" />
+  <class name = "ISiDepositedCharge" />
+  <class name = "IVisPrimVertTool"   />
+
+  <exclusion>
+    <class name = "KeyedObject<LHCb::CaloCellID>" />
+    <class name = "KeyedObject<LHCb::STChannelID>" />
+    <class name = "KeyedObject<LHCb::VeloChannelID>" />
+  </exclusion>
+
+</lcgdict>

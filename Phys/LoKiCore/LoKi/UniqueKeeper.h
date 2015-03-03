@@ -1,8 +1,14 @@
-// $Id: UniqueKeeper.h,v 1.4 2006-10-10 09:03:21 ibelyaev Exp $
+// $Id: UniqueKeeper.h,v 1.6 2007-01-20 14:25:44 ibelyaev Exp $
 // ============================================================================
-// CVS tag $Name: not supported by cvs2svn $, version $Revision: 1.4 $ 
+// CVS tag $Name: not supported by cvs2svn $, version $Revision: 1.6 $ 
 // ============================================================================
 // $Log: not supported by cvs2svn $
+// Revision 1.5  2006/11/25 19:12:56  ibelyaev
+//  improve Doxygen
+//
+// Revision 1.4  2006/10/10 09:03:21  ibelyaev
+//  many tiny fixed needed for good&valid dictionaries
+//
 // Revision 1.3  2006/05/02 14:29:10  ibelyaev
 //  censored
 //
@@ -119,6 +125,9 @@ namespace LoKi
     /// get the object by index 
     const OBJECT*  at         ( const int index ) const 
     { return object ( index ) ; }
+  public:
+    /// clear the underlying container 
+    void clear() { m_objects.clear() ; }
   public:
     /// append the valid objects to the end 
     void push_back ( const OBJECT* o ) { addObject ( o ) ; } ;
@@ -243,7 +252,7 @@ namespace LoKi
   };
   
   
-}; // end of the namespace LoKi
+} // end of the namespace LoKi
 
 
 // ============================================================================

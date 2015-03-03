@@ -4,7 +4,7 @@
  *
  *  Header file for tool interface : IRichRayTracing
  *
- *  $Id: IRichRayTracing.h,v 1.21 2006-08-09 10:55:11 jonrob Exp $
+ *  $Id: IRichRayTracing.h,v 1.25 2006-12-03 09:57:58 jonrob Exp $
  *
  *  @author Antonis Papanestis
  *  @date   2003-10-28
@@ -47,7 +47,7 @@ static const InterfaceID IID_IRichRayTracing( "IRichRayTracing", 1, 0 );
  */
 //-----------------------------------------------------------------------------
 
-class IRichRayTracing : public virtual IAlgTool 
+class IRichRayTracing : public virtual IAlgTool
 {
 
 public:
@@ -57,16 +57,16 @@ public:
    */
   static const InterfaceID& interfaceID() { return IID_IRichRayTracing; }
 
-  /** For a given detector, raytraces a given direction from a given point to
+  /** For a given detector, ray-traces a given direction from a given point to
    *  the photo detectors. Returns the result in the form of a RichGeomPhoton
-   *  which contains the full ray tracing information (mirror numbers etc.)
+   *  which contains the full ray tracing information.
    *
-   *  @param rich       The RICH detector
-   *  @param startPoint The start point to use for the ray tracing
-   *  @param startDir   The direction to ray trace from the start point
-   *  @param photon     The result of the raytracing, encapsulated as a RichGeomPhoton
-   *  @param mode       The ray tracing mode configuration
-   *  @param forcedSide If configured to do so, the forced side to use
+   *  @param[in]  rich       The RICH detector
+   *  @param[in]  startPoint The start point to use for the ray tracing
+   *  @param[in]  startDir   The direction to ray trace from the start point
+   *  @param[out] photon     The result of the raytracing, encapsulated as a RichGeomPhoton
+   *  @param[in]  mode       The ray tracing mode configuration
+   *  @param[in]  forcedSide If configured to do so, the forced side to use
    *
    *  @return Status of the ray tracing
    *  @retval StatusCode::SUCCESS Ray tracing was successful
@@ -80,16 +80,15 @@ public:
                     const LHCb::RichTraceMode mode = LHCb::RichTraceMode(),
                     const Rich::Side forcedSide = Rich::top ) const = 0;
 
-
   /** For a given detector, raytraces a given direction from a given point to
    *  the photo detectors. Returns the result in the form of a RichGeomPhoton
    *
-   *  @param rich       The RICH detector
-   *  @param startPoint The start point to use for the ray tracing
-   *  @param startDir   The direction to ray trace from the start point
-   *  @param hitPosition The result of the tracing, the hit point on the HPD panel
-   *  @param mode       The ray tracing mode configuration
-   *  @param forcedSide If configured to do so, the forced side to use
+   *  @param[in]  rich        The RICH detector
+   *  @param[in]  startPoint  The start point to use for the ray tracing
+   *  @param[in]  startDir    The direction to ray trace from the start point
+   *  @param[out] hitPosition The result of the tracing, the hit point on the HPD panel
+   *  @param[in]  mode        The ray tracing mode configuration
+   *  @param[in]  forcedSide  If configured to do so, the forced side to use
    *
    *  @return Status of the ray tracing
    *  @retval StatusCode::SUCCESS Ray tracing was successful
@@ -123,10 +122,10 @@ public:
 
   /** Intersection a given direction, from a given point with a given plane.
    *
-   *  @param position      The start point to use for the ray tracing
-   *  @param direction     The direction to ray trace from the start point
-   *  @param plane         The plane to intersect
-   *  @param intersection  The intersection point of the direction with the plane
+   *  @param[in]  position      The start point to use for the ray tracing
+   *  @param[in]  direction     The direction to ray trace from the start point
+   *  @param[in]  plane         The plane to intersect
+   *  @param[out] intersection  The intersection point of the direction with the plane
    *
    *  @return Status of the ray tracing
    *  @retval StatusCode::SUCCESS Ray tracing was successful
@@ -140,10 +139,12 @@ public:
 
   /** Reflect a given direction off a spherical mirror. Can be used for intersection.
    *
-   *  @param position   The start point to use for the ray tracing
-   *  @param direction  The direction to ray trace from the start point
-   *  @param CoC        The centre of curvature of the spherical mirror
-   *  @param radius     The radius of curvature of the spherical mirror
+   *  @param[in,out] position   The start point to use for the ray tracing.
+   *                            Afterwards gives the reflection point on the spherical mirror.
+   *  @param[in,out] direction  The direction to ray trace from the start point.
+   *                            Afterwards represents the reflection direction from the spherical mirror.
+   *  @param[in] CoC        The centre of curvature of the spherical mirror
+   *  @param[in] radius     The radius of curvature of the spherical mirror
    *
    *  @return StatusCode indicating if the ray tracing was succesful
    *  @retval StatusCode::SUCCESS Ray tracing was successful
@@ -154,6 +155,20 @@ public:
                      Gaudi::XYZVector& direction,
                      const Gaudi::XYZPoint& CoC,
                      const double radius ) const = 0;
+
+  /** Ray trace from given position in given direction off flat mirrors
+   *
+   *  @param[in,out] position  On input the start point. On output the reflection point
+   *  @param[in,out] direction On input the starting direction. On output the reflected direction.
+   *
+   *  @return StatusCode indicating if the ray tracing was succesful
+   *  @retval StatusCode::SUCCESS Ray tracing was successful
+   *  @retval StatusCode::FAILURE Ray tracing was unsuccessful
+   */
+  virtual StatusCode
+  reflectFlatPlane ( Gaudi::XYZPoint& position,
+                     Gaudi::XYZVector& direction,
+                     const Gaudi::Plane3D& plane ) const = 0;
 
 };
 

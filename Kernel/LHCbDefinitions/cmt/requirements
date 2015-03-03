@@ -3,17 +3,16 @@
 #
 
 package LHCbDefinitions
-version v1r11
+version v2r0
 
 # Structure, i.e. directories to process. 
 #============================================================================
 branches          cmt doc Kernel
 
-# Include directories
-#============================================================================
-include_dirs $(LHCBDEFINITIONSROOT)
-
 # Used packages. 
 #============================================================================
 use   LHCbMath       v*      Kernel
+
+# Include directories
 #============================================================================
+apply_pattern install_more_includes more=Kernel

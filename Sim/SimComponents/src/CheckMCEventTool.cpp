@@ -1,10 +1,8 @@
-// $Id: CheckMCEventTool.cpp,v 1.1.1.1 2005-12-15 14:29:30 gcorti Exp $
+// $Id: CheckMCEventTool.cpp,v 1.3 2007-01-12 10:10:51 cattanem Exp $
 // Include files 
 
 // from Gaudi
 #include "GaudiKernel/ToolFactory.h"
-#include "GaudiKernel/SmartDataPtr.h"
-#include "GaudiKernel/IDataProviderSvc.h"
 
 // Event model
 #include "Event/MCHeader.h"
@@ -21,9 +19,7 @@
 //-----------------------------------------------------------------------------
 
 // Declaration of the Tool Factory
-static const  ToolFactory<CheckMCEventTool>          s_factory ;
-const        IToolFactory& CheckMCEventToolFactory = s_factory ; 
-
+DECLARE_TOOL_FACTORY(CheckMCEventTool)
 
 //=============================================================================
 // Standard constructor, initializes variables

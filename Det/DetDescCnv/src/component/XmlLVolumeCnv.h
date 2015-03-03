@@ -1,4 +1,4 @@
-// $Id: XmlLVolumeCnv.h,v 1.5 2005-12-05 18:06:48 jpalac Exp $
+// $Id: XmlLVolumeCnv.h,v 1.7 2006-09-28 11:21:01 cattanem Exp $
 
 #ifndef DETDESCCNV_XMLCNVSVC_XMLLVOLUMECNV_H
 #define DETDESCCNV_XMLCNVSVC_XMLLVOLUMECNV_H

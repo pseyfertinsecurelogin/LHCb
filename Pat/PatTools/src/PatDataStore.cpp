@@ -1,4 +1,4 @@
-// $Id: PatDataStore.cpp,v 1.5 2006-06-01 13:43:25 ocallot Exp $
+// $Id: PatDataStore.cpp,v 1.6 2006-12-15 08:33:24 ranjard Exp $
 // Include files 
 
 // from Gaudi
@@ -16,9 +16,7 @@ using namespace LHCb;
 //-----------------------------------------------------------------------------
 
 // Declaration of the Tool Factory
-static const  ToolFactory<PatDataStore>          s_factory ;
-const        IToolFactory& PatDataStoreFactory = s_factory ; 
-
+DECLARE_TOOL_FACTORY(PatDataStore)
 
 //=============================================================================
 // Standard constructor, initializes variables

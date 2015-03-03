@@ -8,8 +8,8 @@
  */
 
 // from Kernel/LHCbDefinitions
-#include "Kernel/Point3DTypes.h"
-#include "Kernel/Vector3DTypes.h"
+#include "GaudiKernel/Point3DTypes.h"
+#include "GaudiKernel/Vector3DTypes.h"
 #include "LHCbMath/Line.h"
 #include "TsaKernel/Line.h"
 

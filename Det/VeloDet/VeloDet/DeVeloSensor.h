@@ -1,4 +1,4 @@
-// $Id: DeVeloSensor.h,v 1.26 2006-11-02 11:52:41 mtobin Exp $
+// $Id: DeVeloSensor.h,v 1.28 2006-11-30 07:57:41 cattanem Exp $
 #ifndef VELODET_DEVELOSENSOR_H 
 #define VELODET_DEVELOSENSOR_H 1
 
@@ -8,7 +8,6 @@
 
 // from Kernel
 #include "Kernel/Point3DTypes.h"
-#include "GaudiKernel/PhysicalConstants.h"
 
 /// from Det/DetDesc
 #include "DetDesc/DetectorElement.h"
@@ -147,7 +146,7 @@ public:
  
   /// Convert local phi to ideal global phi
   virtual double localPhiToGlobal(double phiLocal) const = 0;
-
+  
   /// Return the z position of the sensor in the global frame
   inline double z() const {return m_z;}
   

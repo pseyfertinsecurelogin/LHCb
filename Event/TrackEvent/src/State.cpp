@@ -1,18 +1,15 @@
-// $Id: State.cpp,v 1.25 2006-09-21 16:05:10 mneedham Exp $
+// $Id: State.cpp,v 1.27 2006-12-15 14:04:21 cattanem Exp $
 
 #include <math.h>
 #include <gsl/gsl_math.h>
 
-// from LHCbDefinitions
-#include "Kernel/TrackTypes.h"
-#include "Kernel/GenericMatrixTypes.h"
-#include "Kernel/GenericVectorTypes.h"
-#include "Kernel/SymmetricMatrixTypes.h"
-
-// from LHCbMath
-#include "LHCbMath/MatrixManip.h"
+// from GaudiKernel
+#include "GaudiKernel/GenericMatrixTypes.h"
+#include "GaudiKernel/GenericVectorTypes.h"
+#include "GaudiKernel/SymmetricMatrixTypes.h"
 
 // local
+#include "Event/TrackTypes.h"
 #include "Event/State.h"
 #include "Event/TrackParameters.h"
 

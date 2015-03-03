@@ -5,11 +5,8 @@
 #include <algorithm>
 #include <vector>
 
-#include "Kernel/TrackTypes.h"
+#include "Event/TrackTypes.h"
 #include "GaudiKernel/KeyedObject.h"
-
-#include "GaudiKernel/ObjectList.h"
-#include "GaudiKernel/ObjectVector.h"
 
 // Forward declarations
 

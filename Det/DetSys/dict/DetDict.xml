@@ -6,7 +6,6 @@
   <class name="IPVolume"          />
   <class name="ISolid"            />
   <class name="ITransportSvc"     />
-  <class name="IUpdateManagerSvc" />
 
   <class name="IAlignment"        />
   <class name="ICalibration"      />
@@ -60,20 +59,21 @@
   <class name="DeOTModule"       />
   <class name="DeOTQuarter"      />
 
-  <class name="DeSTDetector"       />
-  <class name="DeITDetector"       />
-  <class name="DeTTDetector"       />
+  <class name="DeSTDetector"      />
+  <class name="DeITDetector"      />
+  <class name="DeTTDetector"      />
   <class name="DeSTStation"       />
   <class name="DeITStation"       />
   <class name="DeTTStation"       />
-  <class name="DeSTLayer"       />
-  <class name="DeITLayer"       />
-  <class name="DeTTLayer"       />
-  <class name="DeSTSector"       />
-  <class name="DeITSector"       />
-  <class name="DeTTSector"       />
-  <class name="DeITBox"       />
-  <class name="DeTTHalfModule"       />
+  <class name="DeSTBaseElement" />
+  <class name="DeSTLayer"         />
+  <class name="DeITLayer"         />
+  <class name="DeTTLayer"         />
+  <class name="DeSTSector"        />
+  <class name="DeITSector"        />
+  <class name="DeTTSector"        />
+  <class name="DeITBox"           />
+  <class name="DeTTHalfModule"    />
 
   <class name="DeRich"                    />
   <class name="DeRich1"                   />
@@ -85,21 +85,18 @@
   <class name="DeRichSingleSolidRadiator" />
   <class name="RichMirrorSegPosition"     />
 
+  <class name="DeMuonDetector"      />
   <class name="DeMuonChamber"      />
   <class name="DeMuonRegion"       />
   <class name="DeMuonGasGap"       />
   <class name="MuonBasicGeometry"  />
-  <!-- class name="MuonReadoutCond"    /-->
   <class name="MuonTSMap"          />
   <class name="MuonL1Board"        />
   <class name="MuonODEBoard"       />
   <class name="MuonStationCabling" />
   <class name="IMuonPosTool"       />
 
-  <class pattern="std::vector<*>"    contid="VECTOR" />
-  <class pattern="std::pair<*>"                      />
-  <class pattern="SmartRef<*>"                       />
-  <class pattern="SmartRefVector<*>" contid="VECTOR" />
+  <class pattern="std::pair<*>"    />
 
   <exclusion>
     <class name="SolidPolycone::CmpZ" />

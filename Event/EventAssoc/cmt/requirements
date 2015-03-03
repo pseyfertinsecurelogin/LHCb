@@ -1,30 +1,23 @@
-# $Id: requirements,v 1.16 2006-11-03 15:23:36 cattanem Exp $
+# $Id: requirements,v 1.21 2007-01-31 14:25:02 cattanem Exp $
 # =============================================================================
 # Created    : 19/12/2003
 # =============================================================================
 # Maintainer : Vanya BELYAEV ibelyaev@physics.syr.edu
 # =============================================================================
 package           EventAssoc
-version           v3r3
+version           v3r4
 
 # =============== structure ===================================================
 branches          cmt doc dict 
 
 # =============== dependencies ================================================
 use               L0Event     v* Event
-use               PhysEvent   v* Event
+use               GenEvent    v* Event
 use               MCEvent     v* Event
+use               TrackEvent  v* Event
+use               PhysEvent   v* Event
 use               Relations   v* Kernel
 
-# ========= temporary fix for the LCG_48 release cycle =======================
-use               HltEvent    v* Event
-use               DAQEvent    v* Event
-use               GenEvent    v* Event
-use               LinkerEvent v* Event
-use               PackedEvent v* Event
-use               VeloEvent   v* Event
-# ========= end of temporary fix for LCG_48 ==================================
-        
 #private               
 use               GaudiPython v* -no_auto_imports 
         
@@ -35,14 +28,9 @@ apply_pattern     reflex_dictionary                              \
                   selectionfile=../dict/selection.xml            \
                   options="-U__MINGW32__"
 
-# =============== standard patterns ===========================================
-apply_pattern     component_library library=EventAssocDict
+# Hack for cmt v1r19 bug to link dictionary on windows
+macro EventAssocDict_use_linkopts $(use_linkopts)
 
-# =============================================================================
-# $Log: not supported by cvs2svn $
-# Revision 1.15  2006/06/11 20:43:14  ibelyaev
-#  fix the updates selection files
-#
 # =============================================================================
 # The END 
 # =============================================================================

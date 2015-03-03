@@ -1,4 +1,4 @@
-// $Id: MuonCandidate.h,v 1.4 2006-03-06 09:56:00 jucogan Exp $
+// $Id: MuonCandidate.h,v 1.6 2006-08-22 13:29:35 jucogan Exp $
 
 #ifndef L0MUONKERNEL_MUONCANDIDATE_H
 #define L0MUONKERNEL_MUONCANDIDATE_H     1
@@ -24,6 +24,10 @@ namespace L0Muon {
 
     /// Default Constructor 
     MuonCandidate();
+
+
+    /// Copy Constructor 
+    MuonCandidate(const MuonCandidate& cand);
 
     /// Get the address in M3
     const int addM3() const
@@ -143,6 +147,15 @@ namespace L0Muon {
     }
 
     std::string dump();
+ 
+    /// comparison operator using key.
+    bool operator<(const MuonCandidate& cand) const;
+
+    /// equality operator using key.
+    bool operator==(const MuonCandidate& cand) const;
+
+    /// non-equality operator using key.
+    bool operator!=(const MuonCandidate& cand) const;
     
     
   private:
@@ -160,5 +173,23 @@ namespace L0Muon {
   typedef boost::shared_ptr<MuonCandidate> PMuonCandidate;
 
 }; // namespace L0Muon
+
+inline bool L0Muon::MuonCandidate::operator<(const L0Muon::MuonCandidate& cand) const
+{
+  return pT()<  cand.pT() ;
+}
+
+inline bool L0Muon::MuonCandidate::operator==(const L0Muon::MuonCandidate& cand) const
+{
+  bool eq =   (pT()      == cand.pT()   )  && (charge()  == cand.charge() )                         
+           && (addM3()   == cand.addM3())  && (pu()      == cand.pu()     )  
+           && (board()   == cand.board())  && (quarter() == cand.quarter());
+  return  eq ;
+}
+
+inline bool L0Muon::MuonCandidate::operator!=(const L0Muon::MuonCandidate& cand) const
+{
+ return !(cand == *this) ;
+}
 
 #endif      // L0MUONKERNEL_MUONCANDIDATE_H

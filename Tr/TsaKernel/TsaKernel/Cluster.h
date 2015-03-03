@@ -1,12 +1,11 @@
-// $Id: Cluster.h,v 1.5 2006-10-11 15:36:08 mneedham Exp $
+// $Id: Cluster.h,v 1.6 2007-01-16 12:42:17 cattanem Exp $
 #ifndef TsaCluster_H
 #define TsaCluster_H 1
 
 // Include files
-//#include "GaudiKernel/KeyedObject.h"
 #include "GaudiKernel/ContainedObject.h"
 #include "GaudiKernel/ObjectVector.h"
-#include "Kernel/Point3DTypes.h"
+#include "GaudiKernel/Point3DTypes.h"
 #include "Kernel/LHCbID.h"
 
 #include <vector>

@@ -1,8 +1,36 @@
-! $Id: release.notes,v 1.51 2006-09-01 11:32:12 cattanem Exp $
+! $Id: release.notes,v 1.60 2007-01-15 16:12:05 cattanem Exp $
 ! Package     : Event/MCEvent
 ! Responsible : Marco Cattaneo, Gloria Corti
 ! Purpose     : LHCb Event model. MC truth classes (Gauss and Boole output) 
 !-----------------------------------------------------------------------------
+
+!======================== MCEvent v2r0 2007-01-15 ============================
+! 2007-01-15 - Marco Cattaneo
+ - Add IMuonPad2MCTool interface
+
+! 2007-01-12 - Marco Cattaneo
+ - Add Kernel/IVisPrimVertTool.h, IMCReconstructible interfaces, previously
+   in DaVinciMCKernel
+ - Add IVisPrimVertTool, IMCReconstructible dictionaries
+
+! 2006-12-21 - Marco Cattaneo
+ - Add an exclusion block to lcg_selection.xml. Needs GaudiObjDesc v9r8 for
+   correct parsing
+ - Get includes previously in LHCbDefinitions from GaudiKernel. Needs Gaudi v19r0
+
+! 2006-12-06 - Florence RANJARD
+ - replace include_dirs with apply_pattern install_more_includes
+
+!========================== MCEvent v1r7 2006-11-27 ==========================
+! 2006-11-27 - Eduardo Rodrigues
+ - added creation of dictionaries for the MCTrackInfo class and the
+   MCDecayFinder and ISiDepositedCharge interfaces.
+   These are now available in Python.
+ - added includes to MCTrackInfo.h, to please genreflex
+
+! 2006-11-03 - Chris Jones
+ - Fix minor buglet in MCRichHit::isSignal() method 
+     (should check scattered photon flag)
 
 !========================== MCEvent v1r6 2006-09-01 ==========================
 ! 2006-09-01 - Chris Jones

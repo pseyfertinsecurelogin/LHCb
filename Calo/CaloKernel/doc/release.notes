@@ -1,4 +1,4 @@
-! $Id: release.notes,v 1.37 2006-06-14 16:10:04 cattanem Exp $
+! $Id: release.notes,v 1.39 2007-01-12 11:06:41 cattanem Exp $
 ! =============================================================================
 ! Package     : CaloKernel
 ! Responsible : Vanya Belyaev Ivan.Belyaev@itep.ru
@@ -6,6 +6,10 @@
 ! The package contains the general Calo Kernel classes and utilities,
 ! which are essentially independent from Detector and Event models
 ! =============================================================================
+
+!======================= CaloKernel v5r0 2007-01-12 ===========================
+! 2006-12-06 - Florence RANJARD
+ - apply_pattern install_more_includes
 
 !======================= CaloKernel v4r0p1 2006-06-14 =========================
 ! 2006-06-14 - Vanya Belyaev

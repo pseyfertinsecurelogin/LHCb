@@ -1,4 +1,4 @@
-// $Id: CaloTriggerAdcsFromRaw.cpp,v 1.6 2006-10-02 06:50:54 cattanem Exp $
+// $Id: CaloTriggerAdcsFromRaw.cpp,v 1.8 2006-11-23 13:38:32 cattanem Exp $
 // Include files
 
 // from Gaudi
@@ -13,10 +13,7 @@
 // 2005-01-05 : Olivier Callot
 //-----------------------------------------------------------------------------
 
-// Declaration of the Tool Factory
-static const  ToolFactory<CaloTriggerAdcsFromRaw>          s_factory ;
-const        IToolFactory& CaloTriggerAdcsFromRawFactory = s_factory ;
-
+DECLARE_TOOL_FACTORY( CaloTriggerAdcsFromRaw );
 
 //=============================================================================
 // Standard constructor, initializes variables
@@ -67,7 +64,7 @@ StatusCode CaloTriggerAdcsFromRaw::initialize ( ) {
 //  Unpack a new event if needed, and return the vector of L0CaloAdc
 //=========================================================================
 std::vector<LHCb::L0CaloAdc>& CaloTriggerAdcsFromRaw::adcs ( ) {
-  LHCb::RawEvent* rawEvt = get<LHCb::RawEvent>( LHCb::RawEventLocation::Default );
+  LHCb::RawEvent* rawEvt = get<LHCb::RawEvent>( rootOnTES() + LHCb::RawEventLocation::Default );
 
   const std::vector<LHCb::RawBank*>*  banks = 0;
   if( !m_packedIsDefault)banks= &rawEvt->banks( m_packedType );

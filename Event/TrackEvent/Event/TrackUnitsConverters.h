@@ -1,11 +1,12 @@
 #ifndef TRACKEVENT_TRACKUNITSCONVERTERS_H
-#define TRACKEVENT_TRACKUNITSCONVERTERS_H_H 1
+#define TRACKEVENT_TRACKUNITSCONVERTERS_H 1
 
 // Include files
 // -------------
+// local
+#include "Event/TrackTypes.h"
 // from LHCbKernel
-#include "GaudiKernel/PhysicalConstants.h"
-#include "Kernel/TrackTypes.h"
+#include "GaudiKernel/SystemOfUnits.h"
 
 /** @namespace TrackUnitsConverters
  *
@@ -22,7 +23,7 @@ namespace TrackUnitsConverters
   //===========================================================================
   // Change some units for better matrix invertability
   //===========================================================================
-  void convertToG3( Gaudi::TrackSymMatrix& C )
+  inline void convertToG3( Gaudi::TrackSymMatrix& C )
   {
     C(0,0) /= Gaudi::Units::cm2;
     C(0,1) /= Gaudi::Units::cm2; 
@@ -45,7 +46,7 @@ namespace TrackUnitsConverters
   //===========================================================================
   // Change some units for better matrix invertability
   //===========================================================================
-  void convertToG3( Gaudi::SymMatrix4x4& C )
+  inline void convertToG3( Gaudi::SymMatrix4x4& C )
   {
     C(0,0) /= Gaudi::Units::cm2;
     C(0,1) /= Gaudi::Units::cm2; 
@@ -60,7 +61,7 @@ namespace TrackUnitsConverters
   //===========================================================================
   // Restore units after inversion. same as convertToG3 !
   //===========================================================================
-  void convertToG4( Gaudi::TrackSymMatrix& invC )
+  inline void convertToG4( Gaudi::TrackSymMatrix& invC )
   {
     invC(0,0) /= Gaudi::Units::cm2;
     invC(0,1) /= Gaudi::Units::cm2;
@@ -83,7 +84,7 @@ namespace TrackUnitsConverters
   //===========================================================================
   // Restore units after inversion. same as convertToG3 !
   //===========================================================================
-  void convertToG4( Gaudi::SymMatrix4x4& invC )
+  inline void convertToG4( Gaudi::SymMatrix4x4& invC )
   {
     invC(0,0) /= Gaudi::Units::cm2;
     invC(0,1) /= Gaudi::Units::cm2; 

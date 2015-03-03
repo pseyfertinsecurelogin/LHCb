@@ -6,6 +6,26 @@
 !               higher.
 !-----------------------------------------------------------------------------
 
+!======================== LHCbDefinitions v2r0 2006-12-15 ==================
+! 2006-12-15 - Marco Cattaneo
+ - This package is now obsolete. Includes just forward to maintained versions
+   elsewhere
+
+! 2006-12-06 - Florence RANJARD
+ - apply_pattern install_more_includes
+
+!======================== LHCbDefinitions v1r12 2006-12-01 ===================
+! 2006-12-01 - Gerhard Raven
+ - Kernel/GenericMatrixTypes.h
+    . Add Matrix1x3, Matrix1x6, Matrix3x5, Matrix3x6 typedefs
+
+! 2006-11-24 - Juan Palacios
+ - Kernel/Coord3DTypes.h
+    . Add missing includes.
+
+! 2006-11-24 - Chris Jones
+ - Add doxygen comments where missing
+
 !======================== LHCbDefinitions v1r11 2006-11-01 ===================
 ! 2006-11-01 - Juan PALACIOS
   - cmt/requirements

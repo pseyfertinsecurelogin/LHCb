@@ -1,4 +1,4 @@
-// $Id: TsaDataFunctor.h,v 1.1.1.1 2006-07-24 14:56:20 mneedham Exp $
+// $Id: TsaDataFunctor.h,v 1.2 2006-12-06 14:35:19 mneedham Exp $
 #ifndef _TsaDataFunctor_H_
 #define _TsaDataFunctor_H_
 
@@ -150,7 +150,7 @@ public:
   }
 };
 
-};
+}
 
 #endif
 

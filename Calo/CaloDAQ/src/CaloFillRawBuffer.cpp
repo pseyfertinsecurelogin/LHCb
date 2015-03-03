@@ -1,4 +1,4 @@
-// $Id: CaloFillRawBuffer.cpp,v 1.10 2006-02-14 16:20:02 ocallot Exp $
+// $Id: CaloFillRawBuffer.cpp,v 1.13 2006-11-23 13:38:32 cattanem Exp $
 // Include files 
 // from Gaudi
 #include "GaudiKernel/AlgFactory.h" 
@@ -15,10 +15,7 @@
 // 2004-12-17 : Olivier Callot
 //-----------------------------------------------------------------------------
 
-// Declaration of the Algorithm Factory
-static const  AlgFactory<CaloFillRawBuffer>          s_factory ;
-const        IAlgFactory& CaloFillRawBufferFactory = s_factory ; 
-
+DECLARE_ALGORITHM_FACTORY( CaloFillRawBuffer );
 
 //=============================================================================
 // Standard constructor, initializes variables
@@ -31,16 +28,16 @@ CaloFillRawBuffer::CaloFillRawBuffer( const std::string& name,
   if ( "Ecal" == name.substr( 0, 4 ) ) {
     m_detectorName     = "Ecal";
     m_detectorLocation = DeCalorimeterLocation::Ecal;
-    m_inputBank        = LHCb::CaloAdcLocation::Ecal;
-    m_triggerBank      = LHCb::L0CaloAdcLocation::Ecal;
+    m_inputBank        = rootOnTES() + LHCb::CaloAdcLocation::Ecal;
+    m_triggerBank      = rootOnTES() + LHCb::L0CaloAdcLocation::Ecal;
     m_bankType         = LHCb::RawBank::EcalE;
     m_triggerBankType  = LHCb::RawBank::EcalTrig;
     m_numberOfBanks    = 1;
   } else if ("Hcal" == name.substr( 0, 4 ) ) {
     m_detectorName     = "Hcal";
     m_detectorLocation = DeCalorimeterLocation::Hcal;
-    m_inputBank        = LHCb::CaloAdcLocation::Hcal;
-    m_triggerBank      = LHCb::L0CaloAdcLocation::Hcal;
+    m_inputBank        = rootOnTES() + LHCb::CaloAdcLocation::Hcal;
+    m_triggerBank      = rootOnTES() + LHCb::L0CaloAdcLocation::Hcal;
     m_bankType         = LHCb::RawBank::HcalE;
     m_triggerBankType  = LHCb::RawBank::HcalTrig;
     m_numberOfBanks    = 1;
@@ -74,10 +71,10 @@ StatusCode CaloFillRawBuffer::initialize() {
     m_numberOfBanks =  m_roTool->nbTell1();
     if ( "Ecal" == m_detectorName ) {
       m_bankType  = LHCb::RawBank::EcalPacked;
-      m_inputBank = LHCb::CaloAdcLocation::FullEcal;
+      m_inputBank = rootOnTES() + LHCb::CaloAdcLocation::FullEcal;
     } else {
       m_bankType  = LHCb::RawBank::HcalPacked;
-      m_inputBank = LHCb::CaloAdcLocation::FullHcal;
+      m_inputBank = rootOnTES() + LHCb::CaloAdcLocation::FullHcal;
     }
     info() << "Processing " << m_roTool->nbFECards() 
            << " FE Cards and " << m_roTool->nbTell1() << " TELL1"
@@ -133,7 +130,7 @@ StatusCode CaloFillRawBuffer::execute() {
   int totDataSize = 0;
   int totTrigSize = 0;
 
-  LHCb::RawEvent* rawEvent = get<LHCb::RawEvent>( LHCb::RawEventLocation::Default );
+  LHCb::RawEvent* rawEvent = get<LHCb::RawEvent>( rootOnTES() + LHCb::RawEventLocation::Default );
   for ( unsigned int kk = 0; m_banks.size() > kk; kk++ ) {
     rawEvent->addBank( kk, m_bankType, m_dataCodingType, m_banks[kk] );
     totDataSize += m_banks[kk].size();

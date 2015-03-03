@@ -4,6 +4,44 @@
 ! Purpose     : Define and build the POOL dictionaries for the relations
 !-----------------------------------------------------------------------------
 
+!======================= EventAssoc v4r0 2007-01-31 ==========================
+! 2007-01-31 - Marco Cattaneo
+ - Fix reflex dict link for Windows and retag requirements
+
+! 2007-01-22 - Marco Cattaneo
+ - Fix for new plugins: EventAssocDict is not a component library
+
+!======================= EventAssoc v3r4 2006-11-27 ==========================
+! 2006-11-27 - Vanya BELYAEV
+ - dict/selection.py
+      Replace all occurances of "size_t" with  "unsigned int" to 
+      suppress the messages form genreflex 
+
+! 2006-11-25 - Vanya BELYAEV
+ - dict/selection.py
+     add dictionaries for the relations tables used in LoKi/Phys/DaVinci/Bender:
+ 
+    # $DAVINCIMCKERNELROOT/Kernel/HepMC2MC.h:
+    classes += [ Relations.Rel2D  ( 'HepMC::GenParticle*' , 'LHCb::MCParticle'   ) ]
+    # $DAVINCIMCKERNELROOT/Kernel/MC2Collision.h:
+    classes += [ Relations.Rel1D  ( 'LHCb::MCVertex'      , 'LHCb::GenCollision' ) ]
+    # $DAVINCIMCKERNELROOT/Kernel/PC2MC.h:
+    classes += [ Relations.RelW2D ('LHCb::RecVertex','LHCb::GenCollision','std::pair<size_t,float>') ]
+    classes += [ Relations.RelW2D ('LHCb::RecVertex','LHCb::MCVertex'    ,'std::pair<size_t,float>') ]
+    # $DAVINCIMCKERNELROOT/Kernel/Track2MC.h:
+    classes += [ Relations.RelW2D ('LHCb::Track'    , 'LHCb::MCParticle' ,'double' ) ]
+    # $DAVINCIMCKERNELROOT/Kernel/RC2HepMC.h:
+    classes += [ Relations.Rel2D  ('LHCb::Particle' , 'HepMC::GenParticle*' ) ]
+    # $DAVINCIMCKERNELROOT/Kernel/Particle2MC.h:
+    classes += [ Relations.RelW2D ('LHCb::Particle' , 'LHCb::MCParticle' ,'double' ) ]
+    classes += [ Relations.Rel2D  ('LHCb::Particle' , 'LHCb::MCParticle'           ) ]
+    
+ - dict/selection.h, dict/selection.xml 
+     files are regenerated from updated dict/selection.py
+
+! 2006-11-23 - Marco Cattaneo
+ - Remove temporary fix for enums, should be OK in LCG_v48a (root 5.13.04c)
+
 !======================= EventAssoc v3r3 2006-11-03 ==========================
 ! 2006-11-03 - Marco Cattaneo for Stefan Roiser
  - Add explicit generation of dictionaries for all enums in the event model,

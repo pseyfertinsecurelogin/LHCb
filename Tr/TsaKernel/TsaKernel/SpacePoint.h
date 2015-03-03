@@ -14,12 +14,9 @@
 #include <algorithm>
 #include <vector>
 
-// CLHEP
-#include "Kernel/Point3DTypes.h"
-
 // Gaudi
 #include "GaudiKernel/KeyedObject.h"
-#include "GaudiKernel/ObjectVector.h"
+#include "GaudiKernel/Point3DTypes.h"
 
 #include "TsaKernel/Cluster.h"
 

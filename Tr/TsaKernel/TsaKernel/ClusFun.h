@@ -1,11 +1,11 @@
-// $Id: ClusFun.h,v 1.2 2006-07-24 15:37:31 cattanem Exp $
+// $Id: ClusFun.h,v 1.3 2007-01-16 12:42:17 cattanem Exp $
 #ifndef _ClusFun_H_
 #define _ClusFun_H_
 
 #include <functional>
-#include "Kernel/Plane3DTypes.h"
-#include "Kernel/Point3DTypes.h"
-#include "Kernel/Vector3DTypes.h"
+#include "GaudiKernel/Plane3DTypes.h"
+#include "GaudiKernel/Point3DTypes.h"
+#include "GaudiKernel/Vector3DTypes.h"
 
 namespace Tsa{
   class Cluster;
