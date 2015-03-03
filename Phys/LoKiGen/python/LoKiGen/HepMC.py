@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # =============================================================================
-# $Id: HepMC.py 126452 2011-07-23 11:54:54Z ibelyaev $ 
+# $Id: HepMC.py 134319 2012-01-29 17:47:25Z ibelyaev $ 
 # =============================================================================
 ## @file
 #  collection of utilities for useful 'decoration' of HepMC-objects
@@ -13,8 +13,16 @@
 #  contributions and advices from G.Raven, J.van Tilburg, 
 #  A.Golutvin, P.Koppenburg have been used in the design.
 #
+#  By usage of this code one clearly states the disagreement 
+#  with the smear campaign of Dr.O.Callot et al.: 
+#  ``No Vanya's lines are allowed in LHCb/Gaudi software.''
+#
 #  @author Vanya BELYAEV ibelyaev@physics.syr.edu
-#  @date 2007-08-11 
+#  @date 2007-08-11
+#
+#                    $Revision: 134319 $
+#  Last modification $Date: 2012-01-29 18:47:25 +0100 (Sun, 29 Jan 2012) $
+#                 by $Author: ibelyaev $
 # =============================================================================
 """
 Collection of utilities for useful 'decoration' of HepMC-objects
@@ -27,16 +35,55 @@ Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas,
 contributions and advices from G.Raven, J.van Tilburg, 
 A.Golutvin, P.Koppenburg have been used in the design.
 
+By usage of this code one clearly states the disagreement 
+with the smear campaign of Dr.O.Callot et al.: 
+``No Vanya's lines are allowed in LHCb/Gaudi software.''
+
+
 """
 # =============================================================================
 __author__  = 'Vanya BELYAEV ibelyaev@physics.syr.edu'
 __date__    = "2007-08-11"
-__version__ = "CVS Tag: $Name: not supported by cvs2svn $, version $Revision: 126452 $ "
+__version__ = "$Revision: 134319 $ "
 # =============================================================================
 import LoKiCore.decorators as _LoKiCore
-from   LoKiGen.functions   import HepMC,LoKi, Gaudi, std, cpp 
+from   LoKiGen.functions   import HepMC, LoKi, Gaudi, std, cpp 
 from   LoKiCore.decorators import LHCb
+import LHCbMath.Types 
 
+## namespace HepMC {
+##     /// type of iteration
+##     enum IteratorRange { parents, children, family, 
+##                          ancestors, descendants, relatives };
+## } // HepMC
+if not hasattr ( HepMC , 'parents'     ) : HepMC.parents     = 0
+if not hasattr ( HepMC , 'children'    ) : HepMC.children    = 1 
+if not hasattr ( HepMC , 'family'      ) : HepMC.family      = 2 
+if not hasattr ( HepMC , 'ancestors'   ) : HepMC.ancestors   = 3 
+if not hasattr ( HepMC , 'descendants' ) : HepMC.descendants = 4
+if not hasattr ( HepMC , 'relatives'   ) : HepMC.relatives   = 5
+
+
+if not hasattr ( HepMC.GenParticle , '_orig_momentum_' ) :
+    _orig_momentum_                   = HepMC.GenParticle.momentum
+    HepMC.GenParticle._orig_momentum_ = _orig_momentum_ 
+    def _momentum_ ( p ) :
+        """
+        4-momenemtum of HepMC::GenParticle
+        
+        >>> p = ...
+        >>> v = p.momentum()
+        
+        """
+        m = p._orig_momentum_ ()
+        return Gaudi.LorentzVector ( m.px () ,
+                                     m.py () ,
+                                     m.pz () ,
+                                     m.e  () )
+    
+    HepMC.GenParticle.momentum = _momentum_ 
+    
+                                     
 # =============================================================================
 ## Get number of child particles :
 def nChildren ( p ) :

@@ -1,4 +1,4 @@
-// $Id: IGenHybridTool.h 124208 2011-06-02 16:05:48Z ibelyaev $
+// $Id: IGenHybridTool.h 134316 2012-01-29 13:55:54Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_IGENHYBRIDTOOL_H 
 #define LOKI_IGENHYBRIDTOOL_H 1
@@ -21,7 +21,7 @@
 namespace LoKi
 { 
   // ==========================================================================
-  /** @class IGenHybridTool IMCHybridTool.h LoKi/IMCHybridTool.h
+  /** @class IGenHybridTool LoKi/IGenHybridTool.h
    *
    *  Helper interface for implementation of C++/Python "Hybrid" solution
    *
@@ -37,11 +37,10 @@ namespace LoKi
    *  with the smear campaign of Dr.O.Callot et al.: 
    *  ``No Vanya's lines are allowed in LHCb/Gaudi software.''
    *
-   *
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date   2004-06-29
    */
-  class IGenHybridTool : public virtual IAlgTool 
+  class GAUDI_API IGenHybridTool : public virtual IAlgTool 
   {
   public:
     // ========================================================================

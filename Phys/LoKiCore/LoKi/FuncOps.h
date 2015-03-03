@@ -1,9 +1,9 @@
-// $Id: FuncOps.h 130709 2011-10-30 18:29:40Z ibelyaev $
+// $Id: FuncOps.h 134317 2012-01-29 17:46:17Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_FUNCOPS_H 
 #define LOKI_FUNCOPS_H 1
 // ============================================================================
-// $URL: http://svn.cern.ch/guest/lhcb/LHCb/tags/Phys/LoKiCore/v11r5/LoKi/FuncOps.h $
+// $URL: http://svn.cern.ch/guest/lhcb/LHCb/tags/Phys/LoKiCore/v11r6/LoKi/FuncOps.h $
 // ============================================================================
 // Include files
 // ============================================================================
@@ -20,6 +20,7 @@
 #include  "LoKi/ExtraInfo.h"
 #include  "LoKi/Math.h"
 #include  "LoKi/Streamers.h"
+#include  "LoKi/Dumper.h"
 // ============================================================================
 /** @file
  *
@@ -32,7 +33,7 @@
  *  A.Golutvin, P.Koppenburg have been used in the design.
  *
  *  By usage of this code one clearly states the disagreement 
- *  with the campain of Dr.O.Callot et al.: 
+ *  with the smear campaign of Dr.O.Callot et al.: 
  *  ``No Vanya's lines are allowed in LHCb/Gaudi software.''
  *
  *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
@@ -408,6 +409,12 @@ namespace LoKi
                                const std::vector<unsigned int>& fun2 ) 
       { return fun == fun2 ; }
       // ======================================================================
+    public: // simple dumpers 
+      // ======================================================================
+      static Fun __dump1__  ( const Func&       fun                  ,
+                              const bool        right = true         ,
+                              const LoKi::Dump& dump  = LoKi::Dump() ) 
+      { return LoKi::dump1  ( fun  , right , dump ) ; }
     } ;
     // ========================================================================
     /** @class FuncOps
@@ -680,6 +687,13 @@ namespace LoKi
       static Cut __scale__ ( const Cuts&                     cuts , 
                              const LoKi::Functor<void,bool>& sf   ) 
       { return LoKi::scale ( cuts , sf ) ; }
+      // ======================================================================
+    public : // simple dumpers 
+      // ======================================================================
+      static Cut __dump1__  ( const Cuts&       fun                  ,
+                              const bool        right = true         ,
+                              const LoKi::Dump& dump  = LoKi::Dump() ) 
+      { return LoKi::dump1 ( fun  , right , dump ) ; }
       // ======================================================================
     } ;
     // ========================================================================

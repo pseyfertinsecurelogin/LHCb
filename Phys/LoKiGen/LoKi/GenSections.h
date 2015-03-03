@@ -1,4 +1,4 @@
-// $Id: GenSections.h 124208 2011-06-02 16:05:48Z ibelyaev $
+// $Id: GenSections.h 134316 2012-01-29 13:55:54Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_GENSECTIONS_H 
 #define LOKI_GENSECTIONS_H 1
@@ -13,9 +13,23 @@
 // ============================================================================
 #include "LoKi/GenChild.h"
 // ============================================================================
-/** @file
+/** @file LoKi/GenSections.h
+ *
  *  Collection of varios functions related to the "sections" for 
  *  the certain graph/tree
+ *
+ *  This file is a part of LoKi project - 
+ *    "C++ ToolKit  for Smart and Friendly Physics Analysis"
+ *
+ *  The package has been designed with the kind help from
+ *  Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas, 
+ *  contributions and advices from G.Raven, J.van Tilburg, 
+ *  A.Golutvin, P.Koppenburg have been used in the design.
+ *
+ *  By usage of this code one clearly states the disagreement 
+ *  with the smear campaign of Dr.O.Callot et al.: 
+ *  ``No Vanya's lines are allowed in LHCb/Gaudi software.''
+ *
  *  @author Vanya  BELYAEV Ivan.Belyaev@nikhef.nl
  *  @date   2008-04-29
  */

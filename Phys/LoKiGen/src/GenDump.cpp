@@ -1,4 +1,4 @@
-// $Id: GenDump.cpp 124235 2011-06-05 12:25:53Z ibelyaev $
+// $Id: GenDump.cpp 134319 2012-01-29 17:47:25Z ibelyaev $
 // ============================================================================
 // Include files 
 // ============================================================================
@@ -29,8 +29,8 @@
  *  @author Vanya Belyaev Ivan.Belyaev@cern.ch
  *  @date   2011-06-03
  * 
- *                    $Revision: 124235 $
- *  Last modification $Date: 2011-06-05 14:25:53 +0200 (Sun, 05 Jun 2011) $
+ *                    $Revision: 134319 $
+ *  Last modification $Date: 2012-01-29 18:47:25 +0100 (Sun, 29 Jan 2012) $
  *                 by $Author: ibelyaev $
  */
 // ============================================================================
@@ -64,6 +64,108 @@ LoKi::Functors::Dump_<const HepMC::GenParticle*>::operator()
   m_stream << m_dump.close () ;
   //
   return a ;
+}
+// ============================================================================
+/*  template specialization of ``dumpers''
+ *  @see LoKi::Functors::Dump1_
+ *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
+ *  @date   2012-01-28
+ */  
+// ============================================================================
+template <>
+LoKi::Functors::Dump1_<const HepMC::GenParticle*,bool>::result_type 
+LoKi::Functors::Dump1_<const HepMC::GenParticle*,bool>::operator() 
+  ( LoKi::Functors::Dump1_<const HepMC::GenParticle*,bool>::argument a ) const 
+{
+  //
+  if ( m_right ) 
+  {
+    m_stream << m_dump.open  () ;
+    //
+    LoKi::GenDecayChain printer ;
+    printer.print
+      ( a                      , 
+        m_stream               , 
+        '\n'                   , 
+        LoKi::Objects::_VALID_ , 
+        LoKi::Objects::_NONE_  , 
+        " "                    , 
+        0                      ) ;
+    //
+    m_stream << m_dump.close () ;
+    //
+    return m_fun ( a ) ;
+  }
+  //
+  result_type result = m_fun ( a ) ;
+  //
+  m_stream << m_dump.open  () ;
+  //
+  LoKi::GenDecayChain printer ;
+  printer.print
+    ( a                      , 
+      m_stream               , 
+      '\n'                   , 
+      LoKi::Objects::_VALID_ , 
+      LoKi::Objects::_NONE_  , 
+      " "                    , 
+      0                      ) ;
+  //
+  m_stream << m_dump.close () ;
+  //
+  return result ;
+  
+}
+// ============================================================================
+/*  template specialization of ``dumpers''
+ *  @see LoKi::Functors::Dump1_
+ *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
+ *  @date   2012-01-28
+ */  
+// ============================================================================
+template <>
+LoKi::Functors::Dump1_<const HepMC::GenParticle*,double>::result_type 
+LoKi::Functors::Dump1_<const HepMC::GenParticle*,double>::operator() 
+  ( LoKi::Functors::Dump1_<const HepMC::GenParticle*,double>::argument a ) const 
+{
+  //
+  if ( m_right ) 
+  {
+    m_stream << m_dump.open  () ;
+    //
+    LoKi::GenDecayChain printer ;
+    printer.print
+      ( a                      , 
+        m_stream               , 
+        '\n'                   , 
+        LoKi::Objects::_VALID_ , 
+        LoKi::Objects::_NONE_  , 
+        " "                    , 
+        0                      ) ;
+    //
+    m_stream << m_dump.close () ;
+    //
+    return m_fun ( a ) ;
+  }
+  //
+  result_type result = m_fun ( a ) ;
+  //
+  m_stream << m_dump.open  () ;
+  //
+  LoKi::GenDecayChain printer ;
+  printer.print
+    ( a                      , 
+      m_stream               , 
+      '\n'                   , 
+      LoKi::Objects::_VALID_ , 
+      LoKi::Objects::_NONE_  , 
+      " "                    , 
+      0                      ) ;
+  //
+  m_stream << m_dump.close () ;
+  //
+  return result ;
+  
 }
 // ============================================================================
 // The END 

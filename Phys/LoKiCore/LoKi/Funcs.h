@@ -1,4 +1,4 @@
-// $Id: Funcs.h 120050 2011-03-10 17:10:51Z ibelyaev $
+// $Id: Funcs.h 133878 2012-01-18 19:33:38Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_FUNCS_H 
 #define LOKI_FUNCS_H 1
@@ -23,7 +23,7 @@
  *  A.Golutvin, P.Koppenburg have been used in the design.
  *
  *  By usage of this code one clearly states the disagreement 
- *  with the campain of Dr.O.Callot et al.: 
+ *  with the smear campaign of Dr.O.Callot et al.: 
  *  ``No Vanya's lines are allowed in LHCb/Gaudi software.''
  *
  *  @author Vanya BELYAEV ibelyaev@physics.syr.edu

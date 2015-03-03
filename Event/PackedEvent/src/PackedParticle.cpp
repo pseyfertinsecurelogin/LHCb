@@ -12,14 +12,11 @@
 using namespace LHCb;
 
 void ParticlePacker::pack( const DataVector & parts,
-                           PackedDataVector & pparts ) const
-{
+                           PackedDataVector & pparts ) const {
   pparts.data().reserve( parts.size() );
-  if ( 0 == pparts.packingVersion()  )
-  {
+  if ( 0 == pparts.packingVersion()  ) {
     for ( DataVector::const_iterator iD = parts.begin();
-          iD != parts.end(); ++iD )
-    {
+          iD != parts.end(); ++iD ) {
       const Data & part = **iD;
 
       // Make a new packed data object and save
@@ -27,14 +24,14 @@ void ParticlePacker::pack( const DataVector & parts,
       PackedData & ppart = pparts.data().back();
 
       // fill ppart from part
+      ppart.key = part.key();
 
       // Particle ID
       ppart.particleID = part.particleID().pid();
 
       // Mass and error
-      // CRJ - Semi arbitary scaling of values for better packing ...
-      ppart.measMass    = m_pack.energy( 1.0e2 * part.measuredMass()    );
-      ppart.measMassErr = m_pack.energy( 1.0e5 * part.measuredMassErr() );
+      ppart.measMass    = m_pack.mass( part.measuredMass()    );
+      ppart.measMassErr = m_pack.mass( part.measuredMassErr() );
 
       // Lorentz vector
       const double px = part.momentum().px();
@@ -163,8 +160,8 @@ void ParticlePacker::unpack( const PackedDataVector & pparts,
       part->setParticleID( LHCb::ParticleID(ppart.particleID) );
 
       // Mass and error
-      part->setMeasuredMass   ( m_pack.energy(ppart.measMass)    / 1.0e2 );
-      part->setMeasuredMassErr( m_pack.energy(ppart.measMassErr) / 1.0e5 );
+      part->setMeasuredMass   ( m_pack.mass(ppart.measMass) );
+      part->setMeasuredMassErr( m_pack.mass(ppart.measMassErr) );
 
       // Lorentz momentum vector
       const double pz   = m_pack.energy( ppart.lv_pz );

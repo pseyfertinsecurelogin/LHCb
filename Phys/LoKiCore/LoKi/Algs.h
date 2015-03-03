@@ -1,4 +1,4 @@
-// $Id: Algs.h 120050 2011-03-10 17:10:51Z ibelyaev $
+// $Id: Algs.h 133878 2012-01-18 19:33:38Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_ALGS_H 
 #define LOKI_ALGS_H 1
@@ -24,14 +24,14 @@
  *  A.Golutvin, P.Koppenburg have been used in the design.
  *
  *  By usage of this code one clearly states the disagreement 
- *  with the campain of Dr.O.Callot et al.: 
+ *  with the smear campaign of Dr.O.Callot et al.: 
  *  ``No Vanya's lines are allowed in LHCb/Gaudi software.''
  *
  *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
  *  @date 2006-02-10
  *
- *                    $Revision: 120050 $
- *  Last modification $Date: 2011-03-10 18:10:51 +0100 (Thu, 10 Mar 2011) $
+ *                    $Revision: 133878 $
+ *  Last modification $Date: 2012-01-18 20:33:38 +0100 (Wed, 18 Jan 2012) $
  *                 by $Author: ibelyaev $
  */
 // ============================================================================

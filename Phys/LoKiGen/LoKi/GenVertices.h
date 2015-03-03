@@ -1,4 +1,4 @@
-// $Id: GenVertices.h 132877 2011-12-13 19:09:00Z ibelyaev $
+// $Id: GenVertices.h 134316 2012-01-29 13:55:54Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_GENVERTICES_H 
 #define LOKI_GENVERTICES_H 1
@@ -15,7 +15,7 @@
 #include "LoKi/Constants.h"
 #include "LoKi/GenTypes.h"
 // ============================================================================
-/** @file
+/** @file LoKi/GenVertices.h
  *
  *  This file is a part of LoKi project - 
  *    "C++ ToolKit  for Smart and Friendly Physics Analysis"
@@ -32,8 +32,8 @@
  *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
  *  @date 2006-02-08 
  * 
- *                    $Revision: 132877 $
- *  Last modification $Date: 2011-12-13 20:09:00 +0100 (Tue, 13 Dec 2011) $
+ *                    $Revision: 134316 $
+ *  Last modification $Date: 2012-01-29 14:55:54 +0100 (Sun, 29 Jan 2012) $
  *                 by $Author: ibelyaev $
  */
 namespace LoKi 
@@ -219,7 +219,7 @@ namespace LoKi
       /// MANDATORY: the only one essential method 
       virtual result_type operator() ( argument v ) const ;
       /// "SHORT" representation, @see LoKi::AuxFunBase 
-      virtual  std::ostream& fillStream( std::ostream& s ) const ;
+      virtual  std::ostream& fillStream ( std::ostream& s ) const ;
       // ======================================================================
     private:
       // ======================================================================

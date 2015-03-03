@@ -4,6 +4,26 @@
 ! Purpose: LHCb specific Kernel classes
 !--------------------------------------------------------------------------
 
+!========================= LHCbKernel v13r8 2012-01-31 =========================
+! 2012-01-31 - Olivier Callot
+ - New method in StandardPacker to pack a SmartRef
+
+! 2012-01-31 - Marco Cattaneo
+ - Add dictionary for new interfaces and fix compilation of IDQScanner.h
+
+! 2012-01-30 - Marco Clemencic
+ - Added new interfaces for Data Quality filtering:
+   - IDQFilter
+   - IDQScanner
+
+! 2012-01-25 - Olivier Callot
+ - New functions in StandardPacker for long links
+
+! 2012-01-12 - Sajan Easo
+ - declared  new RICH radiators CO2 and PMTQuartz in RichRadiatorType.h
+! 2011-12-20 - Marco Cattaneo
+ - Fix trivial icc remark
+
 !========================= LHCbKernel v13r7 2011-12-14 =========================
 ! 2011-11-24 - Chris Jones
  - Extend the RichSmartID class with an 'Undefined' PD type enum
@@ -23,7 +43,7 @@
  - Fix trivial ICC remarks
 
 ! 2011-10-05 - Chris Jones
- - Rename NHPDPanelsPerRICH as NPDPanelsPerRICH and NTotalHPDPanels as 
+ - Rename NHPDPanelsPerRICH as NPDPanelsPerRICH and NTotalHPDPanels as
    NTotalPDPanels in RichSide.h, to be PD 'neutral'
 
 !====================== LHCbKernel v13r5 2011-09-06 =======================

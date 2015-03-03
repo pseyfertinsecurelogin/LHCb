@@ -1,4 +1,4 @@
-// $Id: Functor.h 116907 2011-02-03 10:46:23Z ibelyaev $
+// $Id: Functor.h 133878 2012-01-18 19:33:38Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_FUNCTOR_H 
 #define LOKI_FUNCTOR_H 1
@@ -37,7 +37,7 @@ namespace LoKi
    *  A.Golutvin, P.Koppenburg have been used in the design 
    *
    *  By usage of this code one clearly states the disagreement 
-   *  with the campain of Dr.O.Callot et al.: 
+   *  with the smear campaign of Dr.O.Callot et al.: 
    *  ``No Vanya's lines are allowed in LHCb/Gaudi software.''
    *
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu

@@ -22,5 +22,8 @@
 #include "Event/PackedParticle.h"
 #include "Event/PackedVertex.h"
 #include "Event/PackedWeightsVector.h"
+#include "Event/PackedDecReport.h"
+#include "Event/PackedRelations.h"
+#include "Event/PackedParticle2Ints.h"
 
 #endif // DICT_PACKEDEVENTDICT_H

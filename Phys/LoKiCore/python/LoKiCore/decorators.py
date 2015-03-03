@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # =============================================================================
-# $Id: decorators.py 130709 2011-10-30 18:29:40Z ibelyaev $ 
+# $Id: decorators.py 134317 2012-01-29 17:46:17Z ibelyaev $ 
 # =============================================================================
-# $URL: http://svn.cern.ch/guest/lhcb/LHCb/tags/Phys/LoKiCore/v11r5/python/LoKiCore/decorators.py $ 
+# $URL: http://svn.cern.ch/guest/lhcb/LHCb/tags/Phys/LoKiCore/v11r6/python/LoKiCore/decorators.py $ 
 # =============================================================================
 ## @file decorators.py LoKiCore/decorators.py
 #
@@ -22,8 +22,8 @@
 #
 #  @author Vanya BELYAEV ibelyaev@physics.syr.edu
 #
-#  $Revision: 130709 $
-#  Last modification $Date: 2011-10-30 19:29:40 +0100 (Sun, 30 Oct 2011) $
+#  $Revision: 134317 $
+#  Last modification $Date: 2012-01-29 18:46:17 +0100 (Sun, 29 Jan 2012) $
 #                 by $Author: ibelyaev $
 # =============================================================================
 """
@@ -46,7 +46,7 @@ with the campain of Dr.O.Callot et al.:
 # =============================================================================
 __author__  = "Vanya BELYAEV ibelyaev@physics.syr.edu" 
 __date__    = "????-??-??"
-__version__ = "SVN $Revision: 130709 $ "
+__version__ = "SVN $Revision: 134317 $ "
 # =============================================================================
 
 from LoKiCore.basic import cpp, std, LoKi, LHCb, Gaudi  
@@ -488,7 +488,8 @@ def decorateFunctionOps ( funcs , opers ) :
     _monitor_   = None 
     _equal_to_  = None 
     _in_range_  = None 
-    _in_list_   = None 
+    _in_list_   = None
+    _dump1_     = None
 
     _yields_          = None
     _process_         = None
@@ -1239,6 +1240,20 @@ def decorateFunctionOps ( funcs , opers ) :
             return opers.__timer__ ( fun , *args )    
         _timer_ . __doc__ += opers.__timer__ .  __doc__ 
 
+   # dump argument 
+    if hasattr ( opers , '__dump1__' ) :
+        def _dump1_ ( s , *args ) :
+            """
+            Simple ``Dump''-metafunctor 
+            
+            >>> cut = ...
+            >>> cut = dump1 ( cut , True )
+            
+            Uses:\n
+            """
+            return opers.__dump1__  ( s , *args )
+        _dump1_  . __doc__  += opers.__dump1__   . __doc__
+
     # 'yields'
     if hasattr ( opers , '__yields__' ) :
         def _yields_ ( s ) :
@@ -1555,7 +1570,8 @@ def decorateFunctionOps ( funcs , opers ) :
         if _in_range_        : fun . __in_range__        = _in_range_  #
         if _in_list_         : fun . __in_list__         = _in_list_   #
 
-        if _timer_           : fun . __timer__           = _timer_  #
+        if _timer_           : fun . __timer__           = _timer_     #
+        if _dump1_           : fun . __dump1__           = _dump1_     #
 
         # functional part:
         if _yields_          : fun . __yields__          = _yields_           #
@@ -1620,6 +1636,7 @@ def decoratePredicateOps ( cuts , opers ) :
     
     _eff_     = None
     _effErr_  = None
+    _dump1_   = None
 
     _timer_  = None
 
@@ -1706,6 +1723,20 @@ def decoratePredicateOps ( cuts , opers ) :
             """
             return opers.__effErr__  ( s , *args )
         _effErr_  . __doc__  += opers.__effErr__   . __doc__
+
+   # dump argument 
+    if hasattr ( opers , '__dump1__' ) :
+        def _dump1_ ( s , *args ) :
+            """
+            Simple ``Dump''-metafunctor 
+            
+            >>> cut = ...
+            >>> cut = dump1 ( cut , True )
+            
+            Uses:\n
+            """
+            return opers.__dump1__  ( s , *args )
+        _dump1_  . __doc__  += opers.__dump1__   . __doc__
 
 
     # timer 
@@ -1928,6 +1959,7 @@ def decoratePredicateOps ( cuts , opers ) :
         if _count_   : cut . __count__   = _count_     # process 
         if _has_     : cut . __has__     = _has_       # process 
         if _timer_   : cut . __timer__   = _timer_     # timer
+        if _dump1_   : cut . __dump1__   = _dump1_     # dump-1
 
         if _union_         :
             cut . __union__         =  _union_

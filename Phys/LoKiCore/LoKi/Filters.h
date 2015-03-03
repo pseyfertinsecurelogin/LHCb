@@ -1,4 +1,4 @@
-// $Id: Filters.h 130709 2011-10-30 18:29:40Z ibelyaev $
+// $Id: Filters.h 134317 2012-01-29 17:46:17Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_FILTERS_H 
 #define LOKI_FILTERS_H 1
@@ -45,11 +45,11 @@
  *  A.Golutvin, P.Koppenburg have been used in the design.
  *
  *  By usage of this code one clearly states the disagreement 
- *  with the campain of Dr.O.Callot et al.: 
+ *  with the smear campaign of Dr.O.Callot et al.: 
  *  ``No Vanya's lines are allowed in LHCb/Gaudi software.''
  *
- *                    $Revision: 130709 $
- *  Last modification $Date: 2011-10-30 19:29:40 +0100 (Sun, 30 Oct 2011) $
+ *                    $Revision: 134317 $
+ *  Last modification $Date: 2012-01-29 18:46:17 +0100 (Sun, 29 Jan 2012) $
  *                 by $Author: ibelyaev $
  */
 // ============================================================================
@@ -74,8 +74,8 @@ namespace LoKi
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date 2007-10-30
    *
-   *                    $Revision: 130709 $
-   *  Last modification $Date: 2011-10-30 19:29:40 +0100 (Sun, 30 Oct 2011) $
+   *                    $Revision: 134317 $
+   *  Last modification $Date: 2012-01-29 18:46:17 +0100 (Sun, 29 Jan 2012) $
    *                 by $Author: ibelyaev $
    */
   namespace Functors
@@ -1721,9 +1721,11 @@ namespace LoKi
                                       std::vector<TYPE>  >
     {
     private: 
+      // ======================================================================
       typedef LoKi::Functor<std::vector<TYPE>,std::vector<TYPE> >      Pipe_ ;
       typedef typename Pipe_::argument                              argument ;
       typedef typename Pipe_::result_type                        result_type ;
+      // ======================================================================
     public:
       // =====================================================================
       /// the constructor from the stopper 
@@ -1769,8 +1771,10 @@ namespace LoKi
     class Cause : public LoKi::Functor<void,std::vector<TYPE> >
     {
     private: 
+      // ======================================================================
       typedef LoKi::Functor<void,std::vector<TYPE> >                 Source_ ;
       typedef typename Source_::result_type                      result_type ;
+      // ======================================================================
     public:
       // =====================================================================
       /// the constructor from the start & source 
@@ -1992,9 +1996,11 @@ namespace LoKi
                                        std::vector<TYPE> >
     {
     private: 
+      // ======================================================================
       typedef LoKi::Functor<std::vector<TYPE>,std::vector<TYPE> >      Pipe_ ;
       typedef typename Pipe_::argument                              argument ;
       typedef typename Pipe_::result_type                        result_type ;
+      // ======================================================================
     public:
       // =====================================================================
       /// the constructor 
@@ -2774,4 +2780,4 @@ LoKi::Functors::Reverse_<TYPE>::fillStream
 // The END 
 // ============================================================================     
 #endif // LOKI_FILTERS_H
-// ============================================================================     
+// ============================================================================

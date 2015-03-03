@@ -1,4 +1,4 @@
-// $Id: GenDump.h 124235 2011-06-05 12:25:53Z ibelyaev $
+// $Id: GenDump.h 134319 2012-01-29 17:47:25Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_GENDUMP_H 
 #define LOKI_GENDUMP_H 1
@@ -9,6 +9,7 @@
 // ============================================================================
 #include "LoKi/Filters.h"
 #include "LoKi/GenTypes.h"
+#include "LoKi/Dumper.h"
 // ============================================================================
 /** @file
  *
@@ -27,8 +28,8 @@
  *  @author Vanya Belyaev Ivan.Belyaev@cern.ch
  *  @date   2011-06-03
  * 
- *                    $Revision: 124235 $
- *  Last modification $Date: 2011-06-05 14:25:53 +0200 (Sun, 05 Jun 2011) $
+ *                    $Revision: 134319 $
+ *  Last modification $Date: 2012-01-29 18:47:25 +0100 (Sun, 29 Jan 2012) $
  *                 by $Author: ibelyaev $
  */
 // ============================================================================
@@ -38,7 +39,7 @@ namespace LoKi
   namespace Functors 
   {
     // ========================================================================
-    /** template specialization of ``dumper''
+    /** template specialization of ``dumpers''
      *  @see LoKi::Functors::Dump_
      *  @author Vanya Belyaev Ivan.Belyaev@cern.ch
      *  @date   2011-06-03
@@ -48,7 +49,27 @@ namespace LoKi
     Dump_<const HepMC::GenParticle*>::operator() 
       ( Dump_<const HepMC::GenParticle*>::argument a ) const ;
     // ========================================================================
-  } //                                          end of namesapce LoKi::Functors 
+    /** template specialization of ``dumpers''
+     *  @see LoKi::Functors::Dump1_
+     *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
+     *  @date   2012-01-28
+     */  
+    template <>
+    Dump1_<const HepMC::GenParticle*,bool>::result_type 
+    Dump1_<const HepMC::GenParticle*,bool>::operator() 
+      ( Dump1_<const HepMC::GenParticle*,bool>::argument a ) const ;
+    // ========================================================================
+    /** template specialization of ``dumpers''
+     *  @see LoKi::Functors::Dump1_
+     *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
+     *  @date   2012-01-28
+     */  
+    template <>
+    Dump1_<const HepMC::GenParticle*,double>::result_type 
+    Dump1_<const HepMC::GenParticle*,double>::operator() 
+      ( Dump1_<const HepMC::GenParticle*,double>::argument a ) const ;
+    // ========================================================================
+  } //                                          end of namesapce LoKi::Functors
   // ==========================================================================
 } //                                                      end of namespace LoKi
 // ============================================================================

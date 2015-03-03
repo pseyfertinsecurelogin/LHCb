@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # =============================================================================
-# $Id: decorators.py 124208 2011-06-02 16:05:48Z ibelyaev $ 
+# $Id: decorators.py 134308 2012-01-28 17:57:24Z ibelyaev $ 
 # =============================================================================
 ## @file LoKiGen/decorators.py
 #  The set of basic decorator for objects from LoKiGen library
@@ -13,7 +13,15 @@
 #  contributions and advices from G.Raven, J.van Tilburg, 
 #  A.Golutvin, P.Koppenburg have been used in the design.
 #
+#  By usage of this code one clearly states the disagreement 
+#  with the smear campaign of Dr.O.Callot et al.: 
+#  ``No Vanya's lines are allowed in LHCb/Gaudi software.''
+#
 #  @author Vanya BELYAEV ibelyaev@physics.syr.edu
+#
+#                    $Revision: 134308 $
+#  Last modification $Date: 2012-01-28 18:57:24 +0100 (Sat, 28 Jan 2012) $
+#                 by $Author: ibelyaev $
 # =============================================================================
 """
 The set of basic decorators for obejcts from LoKiGen library
@@ -25,11 +33,16 @@ The package has been designed with the kind help from
 Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas, 
 contributions and advices from G.Raven, J.van Tilburg, 
 A.Golutvin, P.Koppenburg have been used in the design.
+
+By usage of this code one clearly states the disagreement 
+with the smear campaign of Dr.O.Callot et al.: 
+``No Vanya's lines are allowed in LHCb/Gaudi software.''
+
 """
 # =============================================================================
 __author__  = "Vanya BELYAEV ibelyaev@physics.syr.edu" 
 __date__    = "????-??-??"
-__version__ = "CVS Tag: $Name: not supported by cvs2svn $, version $Revision: 124208 $ "
+__version__ = "$Revision: 134308 $ "
 # =============================================================================
 
 from   LoKiGen.functions   import *

@@ -5,6 +5,17 @@
 !               Detector Description, Material Budget etc
 ! ------------------------------------------------------------------------------
 
+!========================= DetDescChecks v5r7 2012-01-31 =======================
+! 2012-01-28 - Marco Clemencic
+ - Fixed a glitch in the changes in the configuration of the tests.
+
+! 2012-01-27 - Marco Clemencic
+ - Ensure that the event time used by LoadDDDB is the one defined in the
+   configuration of EventClockSvc (from DDDBConf.DataType).
+
+! 2012-01-26 - Illya Shapoval
+ -  Added tests 'loaddddb2012.qmt','loaddddb-sim-2012.qmt' and 'loaddddb-sim-mc11.qmt'
+
 !========================= DetDescChecks v5r6p1 2011-12-14 =========================
 ! 2011-11-21 - Marco Cattaneo
  - Remove obsolete HepMCBack dependency

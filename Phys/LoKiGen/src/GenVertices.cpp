@@ -1,4 +1,4 @@
-// $Id: GenVertices.cpp 124208 2011-06-02 16:05:48Z ibelyaev $
+// $Id: GenVertices.cpp 134308 2012-01-28 17:57:24Z ibelyaev $
 // ============================================================================
 // Include files 
 // ============================================================================
@@ -387,7 +387,7 @@ LoKi::GenVertices::SumIF::operator()
     const HepMC::GenParticle* p = *ip ;
     if ( 0 == p ) 
     {
-      Warning("HepMC::GenPArticle* points to 0; skip it") ;
+      Warning("HepMC::GenParticle* points to 0; skip it") ;
       continue ;
     }
     if ( m_cut ( p ) ) { result += m_fun ( p ) ; }

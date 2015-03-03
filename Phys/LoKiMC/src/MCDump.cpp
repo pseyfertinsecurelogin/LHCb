@@ -1,4 +1,4 @@
-// $Id: MCDump.cpp 124236 2011-06-05 12:37:56Z ibelyaev $
+// $Id: MCDump.cpp 134318 2012-01-29 17:46:59Z ibelyaev $
 // ============================================================================
 // Include files 
 // ============================================================================
@@ -25,8 +25,8 @@
  *  @author Vanya Belyaev Ivan.Belyaev@cern.ch
  *  @date   2011-06-03
  * 
- *                    $Revision: 124236 $
- *  Last modification $Date: 2011-06-05 14:37:56 +0200 (Sun, 05 Jun 2011) $
+ *                    $Revision: 134318 $
+ *  Last modification $Date: 2012-01-29 18:46:59 +0100 (Sun, 29 Jan 2012) $
  *                 by $Author: ibelyaev $
  */
 // ============================================================================
@@ -61,6 +61,98 @@ LoKi::Functors::Dump_<const LHCb::MCParticle*>::operator()
   //
   return a ;
 }
+// ============================================================================
+template <>
+LoKi::Functors::Dump1_<const LHCb::MCParticle*,bool>::result_type 
+LoKi::Functors::Dump1_<const LHCb::MCParticle*,bool>::operator() 
+  ( LoKi::Functors::Dump1_<const LHCb::MCParticle*,bool>::argument a ) const 
+{
+  //
+  if ( m_right )
+  {
+    m_stream << m_dump.open  () ;
+    //
+    LoKi::MCDecayChain printer ;
+    printer.print
+      ( a                                   , 
+        m_stream                            , 
+        '\n'                                , 
+        LoKi::Objects::_VALID_              , 
+        LoKi::Objects::_NONE_               , 
+        " "                                 , 
+        0                                   ) ;
+    //
+    m_stream << m_dump.close () ;
+    //
+    return m_fun ( a ) ;
+  }
+  //
+  result_type result = m_fun ( a ) ;
+  //
+  m_stream << m_dump.open  () ;
+  //
+  LoKi::MCDecayChain printer ;
+  printer.print
+    ( a                                   ,
+      m_stream                            , 
+      '\n'                                , 
+      LoKi::Objects::_VALID_              , 
+      LoKi::Objects::_NONE_               , 
+        " "                                 , 
+      0                                   ) ;
+  //
+  m_stream << m_dump.close () ;
+  //
+  return result ;
+}
+// ============================================================================
+template <>
+LoKi::Functors::Dump1_<const LHCb::MCParticle*,double>::result_type 
+LoKi::Functors::Dump1_<const LHCb::MCParticle*,double>::operator() 
+  ( LoKi::Functors::Dump1_<const LHCb::MCParticle*,double>::argument a ) const 
+{
+  //
+  if ( m_right )
+  {
+    m_stream << m_dump.open  () ;
+    //
+    LoKi::MCDecayChain printer ;
+    printer.print
+      ( a                                   ,
+        m_stream                            , 
+        '\n'                                , 
+        LoKi::Objects::_VALID_              , 
+        LoKi::Objects::_NONE_               , 
+        " "                                 , 
+        0                                   ) ;
+    //
+    m_stream << m_dump.close () ;
+    //
+    return m_fun ( a ) ;
+  }
+  //
+  result_type result = m_fun ( a ) ;
+  //
+  m_stream << m_dump.open  () ;
+  //
+  LoKi::MCDecayChain printer ;
+  printer.print
+    ( a                                   ,
+      m_stream                            , 
+      '\n'                                , 
+      LoKi::Objects::_VALID_              , 
+      LoKi::Objects::_NONE_               , 
+        " "                                 , 
+      0                                   ) ;
+  //
+  m_stream << m_dump.close () ;
+  //
+  return result ;
+}
+
+
+
+
 // ============================================================================
 // The END 
 // ============================================================================

@@ -1,4 +1,4 @@
-// $Id: ExtraInfo.h 114430 2010-12-06 16:42:05Z ibelyaev $
+// $Id: ExtraInfo.h 133878 2012-01-18 19:33:38Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_EXTRAINFO_H 
 #define LOKI_EXTRAINFO_H 1
@@ -15,8 +15,25 @@
 #include "LoKi/Functions.h"
 #include "LoKi/Info.h"
 // ============================================================================
+/** @file LoKi/ExtraInfo.h
+ *
+ *  This file is a part of LoKi project -
+ *    "C++ ToolKit  for Smart and Friendly Physics Analysis"
+ *
+ *  The package has been designed with the kind help from
+ *  Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas,
+ *  contributions and advices from G.Raven, J.van Tilburg,
+ *  A.Golutvin, P.Koppenburg have been used in the design.
+ *
+ *   By usage of this code one clearly states the disagreement 
+ *    with the smear campaign of Dr.O.Callot et al.: 
+ *  ``No Vanya's lines are allowed in LHCb/Gaudi software.''
+ * 
+ *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+ */
 namespace LoKi 
 {
+  // ==========================================================================
   namespace ExtraInfo 
   {
     // ========================================================================

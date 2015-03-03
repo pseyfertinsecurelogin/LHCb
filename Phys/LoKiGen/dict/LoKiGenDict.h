@@ -1,4 +1,4 @@
-// $Id: LoKiGenDict.h 132877 2011-12-13 19:09:00Z ibelyaev $
+// $Id: LoKiGenDict.h 134319 2012-01-29 17:47:25Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_LOKICOREDICT_H 
 #define LOKI_LOKICOREDICT_H 1
@@ -8,13 +8,15 @@
 // HepMC 
 // ============================================================================
 #ifdef __INTEL_COMPILER
-  #pragma warning (disable:1572) // floating-point equality and inequality comparisons are unreliable
-  #pragma warning(push)
+#pragma warning (disable:1572) // floating-point equality and inequality comparisons are unreliable
+#pragma warning(push)
 #endif
+// ============================================================================
 #include "HepMC/GenVertex.h"
 #include "HepMC/GenParticle.h"
+// ============================================================================
 #ifdef __INTEL_COMPILER
-  #pragma warning(pop)
+#pragma warning(pop)
 #endif
 // ============================================================================
 // LoKi
@@ -27,14 +29,15 @@
 #include "LoKi/Trees.h"
 #include "LoKi/TreeOps.h"
 // ============================================================================
+#include "LoKi/GenDump.h"
 #include "LoKi/Dicts.h"
 #include "LoKi/GenExtractDicts.h"
 #include "LoKi/GenAlgsDicts.h"
 #include "LoKi/GenMoniDicts.h"
 #include "LoKi/GenDecays.h"
 #include "LoKi/GenDecayChain.h"
-#include "LoKi/GenDump.h"
 #include "LoKi/GenChildSelector.h"
+#include "LoKi/GenParticles2.h"
 // ============================================================================
 #include "LoKi/IGenDecay.h"
 #include "LoKi/FinderDict.h"
@@ -60,8 +63,8 @@
  *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
  *  @date 2007-12-01
  *
- *                    $Revision: 132877 $
- *  Last modification $Date: 2011-12-13 20:09:00 +0100 (Tue, 13 Dec 2011) $
+ *                    $Revision: 134319 $
+ *  Last modification $Date: 2012-01-29 18:47:25 +0100 (Sun, 29 Jan 2012) $
  *                 by $Author: ibelyaev $
  */
 // ============================================================================

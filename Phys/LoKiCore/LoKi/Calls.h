@@ -1,4 +1,4 @@
-// $Id: Calls.h 120050 2011-03-10 17:10:51Z ibelyaev $
+// $Id: Calls.h 133878 2012-01-18 19:33:38Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_CALLS_H 
 #define LOKI_CALLS_H 1
@@ -14,6 +14,22 @@
 #include "LoKi/Functions.h"
 #include "LoKi/BasicFunctors.h"
 // ============================================================================
+/** @file LoKi/Calls.h
+ *
+ *  This file is a part of LoKi project -
+ *    "C++ ToolKit  for Smart and Friendly Physics Analysis"
+ *
+ *  The package has been designed with the kind help from
+ *  Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas,
+ *  contributions and advices from G.Raven, J.van Tilburg,
+ *  A.Golutvin, P.Koppenburg have been used in the design.
+ *
+ *   By usage of this code one clearly states the disagreement 
+ *    with the smear campaign of Dr.O.Callot et al.: 
+ *  ``No Vanya's lines are allowed in LHCb/Gaudi software.''
+ * 
+ *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+ */
 namespace LoKi
 {
   // ==========================================================================

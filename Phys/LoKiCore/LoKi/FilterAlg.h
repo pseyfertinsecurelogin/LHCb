@@ -1,4 +1,4 @@
-// $Id: FilterAlg.h 124231 2011-06-05 11:23:58Z ibelyaev $
+// $Id: FilterAlg.h 133878 2012-01-18 19:33:38Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_FILTERALG_H 
 #define LOKI_FILTERALG_H 1
@@ -20,11 +20,11 @@
  *  A.Golutvin, P.Koppenburg have been used in the design.
  *
  *  By usage of this code one clearly states the disagreement 
- *  with the campain of Dr.O.Callot et al.: 
+ *  with the smear campaign of Dr.O.Callot et al.: 
  *  ``No Vanya's lines are allowed in LHCb/Gaudi software.''
  *
- *                    $Revision: 124231 $
- *  Last modification $Date: 2011-06-05 13:23:58 +0200 (Sun, 05 Jun 2011) $
+ *                    $Revision: 133878 $
+ *  Last modification $Date: 2012-01-18 20:33:38 +0100 (Wed, 18 Jan 2012) $
  *                 by $Author: ibelyaev $
  */
 // ============================================================================

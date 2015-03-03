@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # =============================================================================
-# $Id: functions.py 130709 2011-10-30 18:29:40Z ibelyaev $
+# $Id: functions.py 134317 2012-01-29 17:46:17Z ibelyaev $
 # =============================================================================
-# $URL: http://svn.cern.ch/guest/lhcb/LHCb/tags/Phys/LoKiCore/v11r5/python/LoKiCore/functions.py $ 
+# $URL: http://svn.cern.ch/guest/lhcb/LHCb/tags/Phys/LoKiCore/v11r6/python/LoKiCore/functions.py $ 
 # =============================================================================
 ## @file functions.py LoKiCore/function.py
 #  The set of basic functions for from LoKiCore library
@@ -32,7 +32,7 @@ A.Golutvin, P.Koppenburg have been used in the design.
 # =============================================================================
 __author__  = "Vanya BELYAEV ibelyaev@physics.syr.edu"
 __date__    = "????-??-??"
-__version__ = "Version $Revision: 130709 $ "
+__version__ = "Version $Revision: 134317 $ "
 # =============================================================================
 
 from LoKiCore.basic import cpp, std, LoKi, LHCb, Gaudi
@@ -875,6 +875,28 @@ def timer ( obj , *args ) :
             if hasattr ( arg0 , '__timer__' ) : return timer ( arg0 , obj ) 
     ##
     raise TypeErorr, "Invalid arguments "
+
+# =============================================================================
+## create the simple dump-1 meta-functor
+#
+#  @code
+#
+#    >>> fun   = ...
+#    >>> fun_t = dump1 ( fun )
+#
+#  @endcode     
+#
+#  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+#  @date 2012-01-28 
+def dump1 ( obj , *args ) :
+    """
+    Define the dump-1 functor
+
+    >>> fun   = ...
+    >>> fun_t = dump1 ( fun )
+    
+    """
+    return obj.__dump1__ ( *args ) 
 
 # =============================================================================
 ## create 'mean-over-stream' vector-functor:

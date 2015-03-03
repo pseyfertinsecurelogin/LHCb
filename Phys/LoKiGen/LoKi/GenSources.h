@@ -1,4 +1,4 @@
-// $Id: GenSources.h 124208 2011-06-02 16:05:48Z ibelyaev $
+// $Id: GenSources.h 134316 2012-01-29 13:55:54Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_GENSOURCES_H 
 #define LOKI_GENSOURCES_H 1
@@ -19,7 +19,7 @@
 #include "LoKi/Interface.h"
 #include "LoKi/GenTypes.h"
 // ============================================================================
-/** @file
+/** @file LoKi/GenSources.h
  *
  *  This file is a part of LoKi project - 
  *    "C++ ToolKit  for Smart and Friendly Physics Analysis"
@@ -33,8 +33,8 @@
  *  with the smear campaign of Dr.O.Callot et al.: 
  *  ``No Vanya's lines are allowed in LHCb/Gaudi software.''
  *
- *                    $Revision: 124208 $
- *  Last modification $Date: 2011-06-02 18:05:48 +0200 (Thu, 02 Jun 2011) $
+ *                    $Revision: 134316 $
+ *  Last modification $Date: 2012-01-29 14:55:54 +0100 (Sun, 29 Jan 2012) $
  *                 by $Author: ibelyaev $
  */
 // ============================================================================

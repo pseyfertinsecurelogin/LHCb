@@ -1,4 +1,4 @@
-// $Id: MCDump.h 124236 2011-06-05 12:37:56Z ibelyaev $
+// $Id: MCDump.h 134318 2012-01-29 17:46:59Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_MCDUMP_H 
 #define LOKI_MCDUMP_H 1
@@ -9,6 +9,7 @@
 // ============================================================================
 #include "LoKi/Filters.h"
 #include "LoKi/MCTypes.h"
+#include "LoKi/Dumper.h"
 // ============================================================================
 /** @file
  *
@@ -27,8 +28,8 @@
  *  @author Vanya Belyaev Ivan.Belyaev@cern.ch
  *  @date   2011-06-03
  * 
- *                    $Revision: 124236 $
- *  Last modification $Date: 2011-06-05 14:37:56 +0200 (Sun, 05 Jun 2011) $
+ *                    $Revision: 134318 $
+ *  Last modification $Date: 2012-01-29 18:46:59 +0100 (Sun, 29 Jan 2012) $
  *                 by $Author: ibelyaev $
  */
 // ============================================================================
@@ -47,6 +48,26 @@ namespace LoKi
     Dump_<const LHCb::MCParticle*>::result_type 
     Dump_<const LHCb::MCParticle*>::operator() 
       ( Dump_<const LHCb::MCParticle*>::argument a ) const ;
+    // ========================================================================
+    /** template specialization of ``dumper''
+     *  @see LoKi::Fuctors::Dump1_
+     *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
+     *  @date   2012-01-28
+     */  
+    template <>
+    Dump1_<const LHCb::MCParticle*,bool>::result_type 
+    Dump1_<const LHCb::MCParticle*,bool>::operator() 
+      ( Dump1_<const LHCb::MCParticle*,bool>::argument a ) const ;
+    // ========================================================================
+    /** template specialization of ``dumper''
+     *  @see LoKi::Fuctors::Dump1_
+     *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
+     *  @date   2012-01-28
+     */  
+    template <>
+    Dump1_<const LHCb::MCParticle*,double>::result_type 
+    Dump1_<const LHCb::MCParticle*,double>::operator() 
+      ( Dump1_<const LHCb::MCParticle*,double>::argument a ) const ;
     // ========================================================================
   } //                                          end of namespace LoKi::Functors 
   // ==========================================================================

@@ -8,6 +8,7 @@ from Configurables import ( CondDBEntityResolver,
                             XmlCnvSvc,
                             XmlParserSvc )
 from DetCond.Configuration import CondDB
+from datetime import datetime, timedelta
 
 __all__ = ["DDDBConf"]
 
@@ -16,12 +17,12 @@ class DDDBConf(ConfigurableUser):
     ConfigurableUser for the configuration of the detector description.
     """
     __slots__ = { "DbRoot"    : "conddb:/lhcb.xml",
-                  "DataType"  : "2011",
-                  "Simulation": False,
+                  "DataType"  : "2012",
+                  "Simulation": False
                    }
     _propertyDocDct = {
                        'DbRoot' : """ Root file of the detector description """,
-                       'DataType' : """ Symbolic name for the data type. Allowed values: ["2011", "2010", "2009","2008","MC09","Upgrade"] """,
+                       'DataType' : """ Symbolic name for the data type. Allowed values: ["2012", "2011", "2010", "2009","2008","MC09","Upgrade"] """,
                        'Simulation' : """ Boolean flag to select the simulation or real-data configuration """,
                        }
 
@@ -109,6 +110,36 @@ class DDDBConf(ConfigurableUser):
                 cdb.Tags[p] = tag
                 log.warning("Default tag requested for partition %s (using %s)", p, tag )
 
+    def __set_init_time__(self, utcDatetime):
+        """
+        Configure the initialization time using the lower between the proposed time and
+        the current time,
+        """
+        utcDatetime = min(datetime.utcnow(), utcDatetime)
+        from Configurables import EventClockSvc
+        ecs = EventClockSvc()
+        # do not overwrite already set values
+        if not ecs.isPropertySet("InitialTime"):
+            dt = utcDatetime - datetime(1970, 1, 1, 0)
+            ns = (dt.days * 24 * 60 * 60 + dt.seconds) * 1000000000
+            ecs.InitialTime = ns
+        else:
+            t = datetime(1970, 1, 1, 0) + timedelta(seconds=ecs.InitialTime/1000000000)
+            log.warning("EventClockSvc().InitialTime already set to %s UTC (requested %s UTC)",
+                        t.isoformat(), utcDatetime.isoformat())
+
+    def __2012_conf__(self):
+        """
+        Default configuration for 2012 data (and MonteCarlo for DDDB)
+        """
+        # Set the tags
+        self.__set_tag__(["DDDB"], "head-20111102")
+        self.__set_tag__(["LHCBCOND"], "head-20111111")
+        self.__set_tag__(["DQFLAGS"], "tt-20110126")
+        if not self.getProp("Simulation"):
+            # set initialization time to a safe default
+            self.__set_init_time__(datetime(2012, 12, 31, 21, 0))
+
     def __2011_conf__(self):
         """
         Default configuration for 2011 data (and MonteCarlo for DDDB)
@@ -117,6 +148,8 @@ class DDDBConf(ConfigurableUser):
         self.__set_tag__(["DDDB"], "head-20111102")
         self.__set_tag__(["LHCBCOND"], "head-20111111")
         self.__set_tag__(["DQFLAGS"], "tt-20110126")
+        if not self.getProp("Simulation"):
+            self.__set_init_time__(datetime.utcfromtimestamp(1319991087)) # End of fill 2267
 
     def __2010_conf__(self):
         """
@@ -126,6 +159,8 @@ class DDDBConf(ConfigurableUser):
         self.__set_tag__(["DDDB"], "head-20110721")
         self.__set_tag__(["LHCBCOND"], "head-20110614")
         self.__set_tag__(["DQFLAGS"], "tt-20110126")
+        if not self.getProp("Simulation"):
+            self.__set_init_time__(datetime.utcfromtimestamp(1288505611)) # End of fill 1459
 
     def __2009_conf__(self):
         """
@@ -136,6 +171,8 @@ class DDDBConf(ConfigurableUser):
         self.__set_tag__(["LHCBCOND"], "head-20110614")
         self.__set_tag__(["SIMCOND"], "MC-20101026-vc15mm-md100")
         self.__set_tag__(["DQFLAGS"], "tt-20110126")
+        if not self.getProp("Simulation"):
+            self.__set_init_time__(datetime(2009, 12, 31, 21, 0)) # 31/12/2009 21:00
 
     def __2008_conf__(self):
         """
@@ -146,6 +183,8 @@ class DDDBConf(ConfigurableUser):
         self.__set_tag__(["LHCBCOND"], "head-20101010")
         self.__set_tag__(["SIMCOND"], "sim-20090212")
         self.__set_tag__(["DQFLAGS"], "tt-20110126")
+        if not self.getProp("Simulation"):
+            self.__set_init_time__(datetime(2008, 12, 31, 21, 0)) # 31/12/2008 21:00
 
     def __MC09_conf__(self):
         """
@@ -162,7 +201,8 @@ class DDDBConf(ConfigurableUser):
         # Need also to change connection string to DDDB
         CondDB().PartitionConnectionString = { "DDDB":"sqlite_file:$SQLITEDBPATH/DDDB_upgrade.db/DDDB"}
 
-    __data_types_handlers__ =  { "2011": __2011_conf__,
+    __data_types_handlers__ =  { "2012": __2012_conf__,
+                                 "2011": __2011_conf__,
                                  "2010": __2010_conf__,
                                  "2009": __2009_conf__,
                                  "2008": __2008_conf__,

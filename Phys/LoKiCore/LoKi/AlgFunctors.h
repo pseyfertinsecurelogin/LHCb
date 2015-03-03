@@ -1,4 +1,4 @@
-// $Id: AlgFunctors.h 102879 2010-11-17 16:41:01Z ibelyaev $
+// $Id: AlgFunctors.h 133878 2012-01-18 19:33:38Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_ALGFUNCTORS_H 
 #define LOKI_ALGFUNCTORS_H 1
@@ -33,7 +33,7 @@
  *  A.Golutvin, P.Koppenburg have been used in the design.
  *
  *  By usage of this code one clearly states the disagreement 
- *  with the campain of Dr.O.Callot et al.: 
+ *  with the smear campaign of Dr.O.Callot et al.: 
  *  ``No Vanya's lines are allowed in LHCb/Gaudi software.''
  *
  *  @see IAlgorithm
@@ -43,7 +43,7 @@
  *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
  *  @date 2008-010-14 
  *
- *  $Revision: 102879 $
+ *  $Revision: 133878 $
  *  Last Modi
  */
 // ============================================================================

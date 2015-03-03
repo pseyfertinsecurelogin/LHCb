@@ -1,4 +1,4 @@
-// $Id: GenChildSelector.h 132877 2011-12-13 19:09:00Z ibelyaev $
+// $Id: GenChildSelector.h 134307 2012-01-28 16:12:54Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_GENCHILDSELECTOR_H 
 #define LOKI_GENCHILDSELECTOR_H 1
@@ -37,8 +37,8 @@
  *  @author Vanya Belyaev  Ivan.Belyaev@cern.ch
  *  @date 2011-12-11
  * 
- *                    $Revision: 132877 $
- *  Last modification $Date: 2011-12-13 20:09:00 +0100 (Tue, 13 Dec 2011) $
+ *                    $Revision: 134307 $
+ *  Last modification $Date: 2012-01-28 17:12:54 +0100 (Sat, 28 Jan 2012) $
  *                 by $Author: ibelyaev $
  */
 // ============================================================================
@@ -153,8 +153,46 @@ namespace LoKi
       // ======================================================================
     };
     // ========================================================================
+    /** Trivial accessor to the daughter particles for the given particle.
+     *  @param  particle (const) pointer to mother particle 
+     *  @param  selector the selector 
+     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+     *  @date   2012-01-26
+     */
+    GAUDI_API 
+    const HepMC::GenParticle* child 
+    ( const HepMC::GenParticle*        particle , 
+      const LoKi::GenChild::Selector& selector ) ;
+    // ========================================================================
+    /** accessor to certain children particles for the given particle 
+     *  @param  particle (INPUT) pointer to mother particle 
+     *  @param  selector (INPUT) the selector 
+     *  @param  result   (OUTPUT) the container of found particles
+     *  @return number of found particles 
+     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+     *  @date   2012-01-26
+     */
+    GAUDI_API 
+    unsigned int children 
+    ( const HepMC::GenParticle*       particle  , 
+      const LoKi::GenChild::Selector& selector  , 
+      LoKi::GenTypes::ConstVector&    daughters ) ;
+    // ========================================================================
+    /** accessor to certain children particles for the given particle 
+     *  @param  particle (INPUT) pointer to mother particle 
+     *  @param  selector (INPUT) the selector 
+     *  @return the container of found particles
+     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+     *  @date   2010-05-29
+     */
+    GAUDI_API 
+    LoKi::GenTypes::ConstVector
+    children 
+    ( const HepMC::GenParticle*        particle , 
+      const LoKi::GenChild::Selector& selector ) ;
+    // ========================================================================
   } //                                          end of namespace LoKi::GenChild
-  // =========================================================================
+  // ==========================================================================
 } //                                                      end of namespace LoKi
 // ============================================================================
 //                                                                      The END 

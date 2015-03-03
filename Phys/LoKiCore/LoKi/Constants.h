@@ -1,4 +1,4 @@
-// $Id: Constants.h 53291 2010-08-05 14:35:53Z ibelyaev $
+// $Id: Constants.h 133878 2012-01-18 19:33:38Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_CONSTANTS_H 
 #define LOKI_CONSTANTS_H 1
@@ -14,7 +14,7 @@
 #include "GaudiKernel/SystemOfUnits.h"
 #include "GaudiKernel/PhysicalConstants.h"
 // ============================================================================
-/** @file
+/** @file LoKi/Constants.h
  *
  *  This file is a part of LoKi project - 
  *    "C++ ToolKit  for Smart and Friendly Physics Analysis"
@@ -24,13 +24,19 @@
  *  contributions and advices from G.Raven, J.van Tilburg, 
  *  A.Golutvin, P.Koppenburg have been used in the design.
  *
+ *   By usage of this code one clearly states the disagreement 
+ *    with the smear campaign of Dr.O.Callot et al.: 
+ *  ``No Vanya's lines are allowed in LHCb/Gaudi software.''
+ * 
+ *
  *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
  *  @date 2001-01-23 
  */
 // ============================================================================
 namespace LoKi 
 {
-  /** @namespace LoKi::Constants Constants.h LoKi/Constants.h
+  // ==========================================================================
+  /** @namespace LoKi::Constants LoKi/Constants.h
    *
    *  Namespace  with the collection of useful constants
    *

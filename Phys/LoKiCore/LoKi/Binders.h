@@ -1,4 +1,4 @@
-// $Id: Binders.h 53291 2010-08-05 14:35:53Z ibelyaev $
+// $Id: Binders.h 133878 2012-01-18 19:33:38Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_BINDERS_H 
 #define LOKI_BINDERS_H 1
@@ -11,6 +11,19 @@
 // =========================================================l===================
 /** @file 
  *  collection of various adapters for binding of the LoKi-functions
+ *
+ *  This file is a part of LoKi project -
+ *    "C++ ToolKit  for Smart and Friendly Physics Analysis"
+ *
+ *  The package has been designed with the kind help from
+ *  Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas,
+ *  contributions and advices from G.Raven, J.van Tilburg,
+ *  A.Golutvin, P.Koppenburg have been used in the design.
+ *
+ *   By usage of this code one clearly states the disagreement 
+ *    with the smear campaign of Dr.O.Callot et al.: 
+ *  ``No Vanya's lines are allowed in LHCb/Gaudi software.''
+ * 
  *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
  *  @date 2007-08-17
  */

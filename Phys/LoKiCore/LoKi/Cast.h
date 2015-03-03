@@ -1,4 +1,4 @@
-// $Id: Cast.h 53291 2010-08-05 14:35:53Z ibelyaev $
+// $Id: Cast.h 133878 2012-01-18 19:33:38Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_CAST_H 
 #define LOKI_CAST_H 1
@@ -13,6 +13,10 @@
  *  contributions and advices from G.Raven, J.van Tilburg, 
  *  A.Golutvin, P.Koppenburg have been used in the design.
  *
+ *   By usage of this code one clearly states the disagreement 
+ *    with the smear campaign of Dr.O.Callot et al.: 
+ *  ``No Vanya's lines are allowed in LHCb/Gaudi software.''
+ * 
  *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
  *  @date 2006-02-20 
  */

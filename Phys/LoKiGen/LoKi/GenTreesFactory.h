@@ -1,9 +1,7 @@
-// $Id: GenTreesFactory.h 124208 2011-06-02 16:05:48Z ibelyaev $
+// $Id: GenTreesFactory.h 134316 2012-01-29 13:55:54Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_GENTREESFACTORY_H 
 #define LOKI_GENTREESFACTORY_H 1
-// ============================================================================
-// CVS tag $Name: not supported by cvs2svn $, version $Revision: 124208 $
 // ============================================================================
 // Include files
 // ============================================================================
@@ -13,7 +11,30 @@
 #include "LoKi/Trees.h"
 // ============================================================================
 // forward declarations 
+// ============================================================================
 namespace HepMC { class GenParticle ; }
+// ============================================================================
+/** @file LoKi/GenTreesFactory.h
+ *
+ *  This file is a part of LoKi project - 
+ *    "C++ ToolKit  for Smart and Friendly Physics Analysis"
+ *
+ *  The package has been designed with the kind help from
+ *  Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas, 
+ *  contributions and advices from G.Raven, J.van Tilburg, 
+ *  A.Golutvin, P.Koppenburg have been used in the design.
+ *
+ *  By usage of this code one clearly states the disagreement 
+ *  with the smear campaign of Dr.O.Callot et al.: 
+ *  ``No Vanya's lines are allowed in LHCb/Gaudi software.''
+ *
+ *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
+ *  @date 2001-01-23 
+ *
+ *                    $Revision: 134316 $
+ *  Last modification $Date: 2012-01-29 14:55:54 +0100 (Sun, 29 Jan 2012) $
+ *                 by $Author: ibelyaev $
+ */
 // ============================================================================
 namespace Decays 
 {

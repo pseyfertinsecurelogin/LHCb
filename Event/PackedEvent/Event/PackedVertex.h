@@ -31,10 +31,13 @@ namespace LHCb
   {
     /// Default constructor
     PackedVertex()
-      : technique(0),
+      : key(0),
+        technique(0),
         firstOutgoingPart(0), lastOutgoingPart(0)
     {}
     
+    int key; ///< Key and possibly container index.
+
     // packed data members
     int technique;
 
@@ -51,6 +54,7 @@ namespace LHCb
   namespace PackedVertexLocation
   {
     static const std::string& User = "pPhys/User/Vertices";
+    static const std::string& InStream = "/pPhys/Vertices";
   }
 
   /** @class PackedVertices Event/PackedVertex.h

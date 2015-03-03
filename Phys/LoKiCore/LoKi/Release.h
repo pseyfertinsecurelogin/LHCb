@@ -1,11 +1,8 @@
-// $Id: Release.h 53291 2010-08-05 14:35:53Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_RELEASE_H 
 #define LOKI_RELEASE_H 1
 // ============================================================================
 // Include files
-// ============================================================================
-// Include files 
 // ============================================================================
 // GaudiKernel
 // ============================================================================
@@ -14,7 +11,6 @@
 // LoKiCore 
 // ============================================================================
 #include "LoKi/Convertible.h"
-#include "LoKi/AddRef.h"
 // ============================================================================
 /** @file
  *
@@ -26,6 +22,10 @@
  *  contributions and advices from G.Raven, J.van Tilburg, 
  *  A.Golutvin, P.Koppenburg have been used in the design.
  *
+ *   By usage of this code one clearly states the disagreement 
+ *    with the smear campaign of Dr.O.Callot et al.: 
+ *  ``No Vanya's lines are allowed in LHCb/Gaudi software.''
+ * 
  *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
  *  @date 2006-01-23 
  */

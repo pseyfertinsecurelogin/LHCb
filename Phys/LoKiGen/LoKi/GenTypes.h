@@ -1,4 +1,4 @@
-// $Id: GenTypes.h 132877 2011-12-13 19:09:00Z ibelyaev $
+// $Id: GenTypes.h 134316 2012-01-29 13:55:54Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_GENTYPES_H 
 #define LOKI_GENTYPES_H 1
@@ -17,7 +17,7 @@
 namespace HepMC { class GenParticle ; } 
 namespace HepMC { class GenVertex   ; } 
 // ============================================================================
-/** @file
+/** @file LoKi/GenTypes.h
  *
  *  Collection of useful function to extract the information from  HepMC 
  *
@@ -36,8 +36,8 @@ namespace HepMC { class GenVertex   ; }
  *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
  *  @date 2001-01-23 
  *
- *                    $Revision: 132877 $
- *  Last modification $Date: 2011-12-13 20:09:00 +0100 (Tue, 13 Dec 2011) $
+ *                    $Revision: 134316 $
+ *  Last modification $Date: 2012-01-29 14:55:54 +0100 (Sun, 29 Jan 2012) $
  *                 by $Author: ibelyaev $
  */
 // ============================================================================

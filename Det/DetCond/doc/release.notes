@@ -4,6 +4,31 @@
 ! Purpose     : Interface between LHCb and LGC/COOL project
 !-----------------------------------------------------------------------------
 
+!========================= DetCond v12r23 2012-02-01 =========================
+! 2012-02-01 - Marco Clemencic
+ - Modified DQScanTest to work around a small problem in the configuration on
+   32 bits builds.
+
+! 2012-01-31 - Marco Clemencic
+ - Implemented CondDBDQScanner: a tool to collect (merge) the DQ flags from the
+   Conditions Database in a given IOV.
+ - Added a test to validate the output of CondDBDQScanner.
+
+! 2012-01-31 - Marco Clemencic
+ - Fixed a couple of compilation warnings.
+
+! 2012-01-30 - Marco Clemencic
+ - Added new methods to the ICondDBReader interface (getIOVs), to retrieve the
+   list of IOVs in a folder for an IOV.
+ - Added a test for the implementation of getIOVs in CondDBAccessSvc, and fixes.
+
+! 2012-01-06 - Marco Clemencic
+ - Modified LoadDDDB to trigger the initialization of the UpdateManagerSvc in
+   the initialize (to avoid that is gets triggered in the middle of an event).
+
+! 2012-01-05 - Marco Clemencic
+ - Fixed ICC warning (Boost 1.48).
+
 !========================= DetCond v12r22 2011-12-14 =========================
 ! 2011-12-09 - Marco Cattaneo
  - Add explicit Boost_linkopts for compatibility with Gaudi v23
