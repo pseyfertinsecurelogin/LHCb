@@ -6,6 +6,31 @@
 !               All headers included in directory LHCbMath
 !-----------------------------------------------------------------------------
 
+!========================= LHCbMath v3r1 2008-07-16 ==========================
+! 2008-07-15 - Wouter Hulsbergen (code provided by Manuel Schiller)
+ - LHCbMath/MatrixInversion.h: matrix inversion for pos-def
+   symmetric matrices based on cholesky decomposition.
+
+! 2008-07-09 - Vanya BELYAEV
+ - LHCbMath/Digit.h    
+    new (templated) function to get the Nth decimal digit for integer type:
+
+     #include "LHCbMath/Digit.h"
+
+     ...
+     const int number = ... ;
+     if( 5 != Gaudi::Math::digit ( number , 1 ) ) { ... } 
+
+ - LHCbMath/Bit.h: Function to check Nth bit of the integer type 
+
+     #include "LHCbMath/Bit.h"
+
+     ...
+     const int number = ... ;
+     if (  Gaudi::Math::bit ( number , 11 ) ) { ... } 
+
+  - cmt/requirements:  version increment to v3r1 
+ 
 !========================= LHCbMath v3r0 2008-07-01 ==========================
 ! 2008-07-01 - Gerhard Raven
  - add MD5 and vector<MD5> to the dictionary

@@ -2,6 +2,10 @@
 ! package manager: C.Parkes, T.Szumlak
 !-------------------------------------------------------------------------
 
+!====================== Tell1Kernel v1r5 2008-07-16 ======================
+! 2008-07-15 - Marco Cattaneo
+ - Remove cmt/version.cmt file, breaks cmt when running with version directory!
+
 !====================== Tell1Kernel v1r4 2008-06-30 ======================
 ! 2008-06-30 - Marco Cattaneo
  - Add a cmt/version.cmt file to make cmt happy when running without

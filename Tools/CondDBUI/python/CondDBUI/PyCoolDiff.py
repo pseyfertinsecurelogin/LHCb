@@ -15,10 +15,6 @@ import logging
 _log = logging.getLogger( __name__ )
 _log.setLevel( logging.INFO )
 
-_handler = logging.StreamHandler()
-_handler.setFormatter( logging.Formatter( "%(levelname)s:%(name)s: %(message)s" ) )
-_log.addHandler( _handler )
-
 # COOL application
 _app = None
 
@@ -42,7 +38,13 @@ def diff( originalDB, modifiedDB, diffDB,
         import os
         if 'CORAL_LFC_BASEDIR' in os.environ and 'LFC_HOST' in os.environ and not 'COOL_IGNORE_LFC' in os.environ:
             # Load CORAL LFCReplicaService into the context of cool::Application
-            _app.loadComponent("CORAL/Services/LFCReplicaService")
+            LFCRepSvcName = "CORAL/Services/LFCReplicaService"
+            if hasattr(_app,"loadComponent"):
+                _app.loadComponent(LFCRepSvcName)
+            elif  hasattr(_app,"connectionSvc") and hasattr(_app.connectionSvc(),"configuration"):
+                _app.connectionSvc().configuration().setLookupService(LFCRepSvcName)
+                _app.connectionSvc().configuration().setAuthenticationService(LFCRepSvcName)
+            del LFCRepSvcName
 
     dbs = _app.databaseService()
     

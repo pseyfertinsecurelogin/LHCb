@@ -1,4 +1,4 @@
-// $Id: OTChannelMapTool.cpp,v 1.3 2008-06-03 14:13:53 wouter Exp $
+// $Id: OTChannelMapTool.cpp,v 1.6 2008-07-05 14:55:18 janos Exp $
 // Include files
 
 // Include files
@@ -164,28 +164,29 @@ unsigned char OTChannelMapTool::computeStrawV3( const OTDAQ::EModuleLayout& layo
   // depending on the type of module, we now correct this 'default'
   // numbering with rotation or mirror operations
   unsigned char rc(1) ;
-  switch( layout ) {
-  case OddLayerPosY:
-  case OddLayerPosYShort: 
-    // most regular
-    rc = tmpMono*NumStrawPerMono + tmpStrawInMono ;
-    break ;
-  case EvenLayerPosY:
-  case EvenLayerPosYShort:
-    // rotated around y
-    rc = (2-tmpMono)*NumStrawPerMono - tmpStrawInMono + 1 ;
-    break;
-  case OddLayerNegY:
-  case OddLayerNegYShort: 
-    // mirrored in x
-    rc = (1+tmpMono)*NumStrawPerMono - tmpStrawInMono + 1 ;
-    break ;
-  case EvenLayerNegY:
-  case EvenLayerNegYShort:
-  case NumDefaultModuleLayouts:
-    // rotated and mirrored (--> monolayers are swapped)
-    rc = (1-tmpMono)*NumStrawPerMono + tmpStrawInMono ;
-    break ;
+  switch ( layout ) {
+    case EvenLayerNegY:
+    case EvenLayerNegYShort:
+    case NumDefaultModuleLayouts:
+      // All "oprations" are w.r.t. "regular"
+      // "regular" i.e. bottom half even layer
+      rc = tmpMono*NumStrawPerMono + tmpStrawInMono ;
+      break ;
+    case EvenLayerPosY:
+    case EvenLayerPosYShort:
+      // mirrored in X
+      rc = (1 + tmpMono)*NumStrawPerMono - tmpStrawInMono + 1 ;
+      break;
+    case OddLayerNegY:
+    case OddLayerNegYShort: 
+      // rotated around Y
+      rc = (2 - tmpMono)*NumStrawPerMono - tmpStrawInMono + 1 ;
+      break ;
+    case OddLayerPosY:
+    case OddLayerPosYShort:
+      // mirrored in X and rotated around Y ( monolayers are swapped )
+      rc = (1 - tmpMono)*NumStrawPerMono + tmpStrawInMono ;
+      break ;
   }
 
   // now treat the short modules. otis 0 and 3 must be in the realm
@@ -247,7 +248,7 @@ void OTChannelMapTool::updateChannelMap() const
 	module.m_channelToStraw[ichan] = computeStrawDC06(ichan) ;
     } else {
       for(unsigned int ichan = 0; ichan < OTDAQ::ChannelMap::Module::NumChannels; ++ichan)
-	module.m_channelToStraw[ichan] = computeStrawV3( it->first, ichan ) ; 
+        module.m_channelToStraw[ichan] =computeStrawV3( it->first, ichan ) ; 
     }
     
     // finally, fill the inverse table

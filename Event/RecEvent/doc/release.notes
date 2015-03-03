@@ -1,9 +1,13 @@
 !-----------------------------------------------------------------------------
-! $Id: release.notes,v 1.97 2008-06-30 19:54:43 cattanem Exp $
+! $Id: release.notes,v 1.99 2008-07-16 20:38:20 cattanem Exp $
 ! Package     : Event/RecEvent
 ! Responsible : Marco Cattaneo
 ! Purpose     : LHCb Event model. Reconstruction classes (Brunel output) 
 !-----------------------------------------------------------------------------
+
+!========================= RecEvent v2r14 2008-07-16 =========================
+! 2008-07-14 M Needham 
+ - Add new attributes to STSummary class
           
 !========================= RecEvent v2r13 2008-06-30 =========================
 ! 2008-06-27 Olivier Deschamps

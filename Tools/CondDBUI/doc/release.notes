@@ -1,9 +1,33 @@
 ! =============================================================================
-! $Id: release.notes,v 1.80 2008-06-30 20:23:15 cattanem Exp $
+! $Id: release.notes,v 1.86 2008-07-16 21:26:20 cattanem Exp $
 ! =============================================================================
 ! package Tools/CondDBUI
-! package manager : Marco Clemencic / Nicolas Gilardi
+! package manager : Marco Clemencic
 ! =============================================================================
+
+!===================== Tools/CondDBUI v2r11 2008-07-16 ========================
+! 2008-07-16 - Marco Clemencic
+ - Minor esthetic improvements.
+ - Added method CondDB.isMultiVersionFolder.
+
+! 2008-07-14 - Marco Clemencic
+ - Minor improvements (documentation) to CondDBAdmin_Commit.py and
+   CondDBAdmin_MakeSnapshot.py.
+
+! 2008-07-10 - Marco Clemencic
+ - Removed some obsolete files:
+   - cmt/dblookup.xml
+   - scripts/create_SQLDDDB.py
+ - Converted the python module CondDBUI.Admin to a module with sub-modules
+ - Added the scripts
+   - CondDBAdmin_Commit.py: takes user-provided patches and apply them to
+       official database.
+   - CondDBAdmin_MakeSnapshot.py: simple script to make CondDB snapshots.
+ - Added the script CondDBAdmin_Commit.py, which takes user-provided patches
+   and apply them to official database.
+ - Modify CondDBBrowser.py to accept on the command line the name of a CondDB
+   partition and open the corresponding database (guessed from SQLDDDB options)
+ - Minor improvements in other scripts
 
 !===================== Tools/CondDBUI v2r10 2008-06-30 ========================
 ! 2008-06-26 - Marco Clemencic

@@ -1,7 +1,23 @@
-!$Id: release.notes,v 1.134 2008-06-30 14:44:03 cattanem Exp $
+!$Id: release.notes,v 1.140 2008-07-16 20:15:37 cattanem Exp $
 !Package         : STDet
 !Package manager : M. Needham
 !-------------------------------------------------------------------------
+
+!======================== STDet v4r3 2008-07-16 ==========================
+! 2008-07-15 M Needham
+ - Bug fixes in dead strip handling
+
+! 2008-07-15 M needham
+ - Add some information in DeSTSector printout
+
+!  2008-07-14 M Needham
+ - Add active fraction functions
+
+! 2006-07-04 M Needham
+ - Bug fix in trajectory
+
+! 2008-07-3 M Needham
+ - Change way interact with update service
 
 !======================== STDet v4r2 2008-06-30 ==========================
 ! 2008-06-16 M Needham

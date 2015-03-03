@@ -1,9 +1,10 @@
-// $Id: MagFieldReader.cpp,v 1.11 2008-03-03 10:04:01 cattanem Exp $
+// $Id: MagFieldReader.cpp,v 1.15 2008-07-14 15:28:49 ahicheur Exp $
 // Include files 
-
+#include "Riostream.h"
 // from Gaudi
 #include "GaudiKernel/AlgFactory.h"
 #include "GaudiKernel/IMagneticFieldSvc.h"
+#include "GaudiKernel/IChronoStatSvc.h"
 #include "GaudiKernel/SystemOfUnits.h"
 #include "GaudiKernel/RndmGenerators.h"
 
@@ -61,6 +62,7 @@ StatusCode MagFieldReader::initialize() {
   debug() << "FieldReader intialize() has been called" << endmsg;
   
   m_pIMF = svc<IMagneticFieldSvc>( m_FieldServiceName, true );
+  // m_pIAF = svc<IMagneticFieldSvc>( "AnalyticFieldSvc", true );
 
   info() << "MagFieldReader initialized with service ==> " <<  m_FieldServiceName << endmsg;
   return StatusCode::SUCCESS;
@@ -82,15 +84,18 @@ StatusCode MagFieldReader::execute() {
   Gaudi::XYZVector B(0.0,0.0,0.0);
 
 
-        
+
   for ( double z = m_zMin; z <= m_zMax; z += m_step ) {
     for( double y = m_yMin; y <= m_yMax; y += m_step ) {
       for( double x = m_xMin; x <= m_xMax; x += m_step ) {
         Gaudi::XYZPoint P( x, y, z );
         
-        // get field at point P
-        m_pIMF->fieldVector( P, B );
-     
+
+          m_pIMF->fieldVector( P, B );
+
+        
+        
+        
         // fill ntuple
         nt1->column( "x", P.x()/Gaudi::Units::cm );
         nt1->column( "y", P.y()/Gaudi::Units::cm );
@@ -103,9 +108,10 @@ StatusCode MagFieldReader::execute() {
       }
     }
 
-     Gaudi::XYZPoint P0( 0.0, 0.0, z );
-
+     Gaudi::XYZPoint P0( 0.0, 0.0, z);
+     Gaudi::XYZPoint P02( 0.0, 0.0, z);
       m_pIMF->fieldVector( P0, B );
+  
 
       debug() << "Magnetic Field at ("
               << P0.x() << ", " << P0.y() << ", " << P0.z() << " ) = "
@@ -122,6 +128,17 @@ StatusCode MagFieldReader::execute() {
   // Return status code.
   return StatusCode::SUCCESS;
 }
+
+
+StatusCode MagFieldReader::finalize() {
+
+  StatusCode sc = GaudiTupleAlg::finalize(); // must be executed first
+  if ( sc.isFailure() ) return sc;  // error printed already by GaudiAlgorithm
+if ( sc.isSuccess() )
+    info() << "Service finalized successfully" << endmsg;
+  return StatusCode::SUCCESS;
+};
+
 
 void MagFieldReader::TestBdl() 
 {

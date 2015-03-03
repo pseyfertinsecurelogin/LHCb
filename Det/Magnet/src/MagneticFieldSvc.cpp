@@ -1,11 +1,10 @@
-// $Id: MagneticFieldSvc.cpp,v 1.28 2008-05-13 11:16:02 smenzeme Exp $
+// $Id: MagneticFieldSvc.cpp,v 1.33 2008-07-16 16:34:58 cattanem Exp $
 
 // Include files
 #include "GaudiKernel/SvcFactory.h"
 #include "GaudiKernel/ISvcLocator.h"
 #include "GaudiKernel/MsgStream.h"
 #include "GaudiKernel/SystemOfUnits.h"
-#include <iostream>
 
 #include "MagneticFieldSvc.h"
 
@@ -29,7 +28,9 @@ DECLARE_SERVICE_FACTORY( MagneticFieldSvc );
 // Standard constructor, initializes variables
 //=============================================================================
 MagneticFieldSvc::MagneticFieldSvc( const std::string& name, 
-            ISvcLocator* svc ) : Service( name, svc )
+                                    ISvcLocator* svc ) : Service( name, svc ),
+                                                         m_condition(0),
+                                                         m_updMgrSvc(0)
 {
 
 
@@ -46,9 +47,12 @@ MagneticFieldSvc::MagneticFieldSvc( const std::string& name,
   declareProperty( "ConstantFieldVector", m_constFieldVector );
   declareProperty( "ScaleFactor",         m_scaleFactor = 1. );
   declareProperty( "UseRealMap", m_useRealMap = false);
-  //magnet current in kA, the default is the nominal value
-  declareProperty( "MagnetCurrent", m_current = 5.85);
-  declareProperty( "CondPath", m_condpath = "CondPathNotSet");
+  //Nominal magnet current in A
+  declareProperty( "NominalCurrent", m_nominalCurrent = 5850);
+  declareProperty( "CondPath", m_condPath = "/dd/Conditions/Online/LHCb/Magnet/Measured",
+                   "Path to the magnetic field condition in the transient store");
+  declareProperty( "UseConditions", m_UseConditions = true);
+  
   
   
 }
@@ -64,6 +68,7 @@ MagneticFieldSvc::~MagneticFieldSvc()
 //=============================================================================
 StatusCode MagneticFieldSvc::initialize()
 {
+  
   MsgStream log(msgSvc(), name());
   StatusCode status = Service::initialize();
   if( status.isFailure() ) return status;
@@ -73,13 +78,26 @@ StatusCode MagneticFieldSvc::initialize()
         << m_constFieldVector << " (Tesla)" << endmsg;
     return StatusCode::SUCCESS;
   }
-  //retrieve current from conditions, then compute the scale factor:
-  // m_scaleFactor = retrieved_current/m_current;
-  
-  if( fabs(m_scaleFactor-1.) > 1e-6 ) {
-    log << MSG::WARNING << "Field map will be scaled by a factor = "
-        << m_scaleFactor << endmsg;
+
+  if(m_UseConditions) {
+    //retrieve current from conditions, set the scale factor:
+    status = service("UpdateManagerSvc",m_updMgrSvc);
+    if ( status.isFailure() ) {
+      log << MSG::ERROR << "Cannot find the UpdateManagerSvc" << endmsg;
+      return status;
+    }
+    
+    m_updMgrSvc->registerCondition(this,m_condPath,
+                                   &MagneticFieldSvc::i_updateScaling,
+                                   m_condition);
+    
+    status = m_updMgrSvc->update(this);
+    if ( status.isFailure() ) {
+      log << MSG::ERROR << "Cannot find " << m_condPath << endmsg;
+      return status;
+    }
   }
+ 
   
   if (m_useRealMap) { 
     log << MSG::INFO << "*** Real Field parameterization will be used *** " << endreq;
@@ -100,13 +118,19 @@ StatusCode MagneticFieldSvc::initialize()
       m_max_FL[iC] = m_min_FL[iC]+( m_Nxyz[iC]-1 )* m_Dxyz[iC];
     } // iC
     
-    return status;
+    //    return status;
   }
   else {
     log << MSG::DEBUG << "Magnetic field parse failed" << endreq;
     return StatusCode::FAILURE;
   }
+
+  return StatusCode::SUCCESS;  
+
+
 }
+
+
 
 //=============================================================================
 // QueryInterface
@@ -191,6 +215,7 @@ StatusCode MagneticFieldSvc::parseFile() {
     m_Nxyz[2] = atoi( sGeom[5].c_str() );
     m_zOffSet = atof( sGeom[6].c_str() ) * Gaudi::Units::cm;
     
+    m_Q.clear();
     m_Q.reserve(npar - 7);
     // Number of lines with data to be read
     long int nlines = ( npar - 7 ) / 3;
@@ -302,6 +327,7 @@ for(int ifile=0;ifile<4;ifile++) {
     m_Nxyz[2] = atoi( sGeom[5].c_str() );
     m_zOffSet = atof( sGeom[6].c_str() ) * Gaudi::Units::cm;
     
+    m_Q_quadr[ifile].clear();
     m_Q_quadr[ifile].reserve(npar - 7);
     // Number of lines with data to be read
     long int nlines = ( npar - 7 ) / 3;
@@ -353,13 +379,11 @@ for(int ifile=0;ifile<4;ifile++) {
   return sc;
 }
 
-
 //=============================================================================
 // FieldVector: find the magnetic field value at a given point in space
 //=============================================================================
 StatusCode MagneticFieldSvc::fieldVector(const Gaudi::XYZPoint&  r,
                                                Gaudi::XYZVector& bf ) const {
-
 
   if( m_useConstField ) {
     bf.SetXYZ( m_constFieldVector[0]*Gaudi::Units::tesla,
@@ -380,7 +404,6 @@ StatusCode MagneticFieldSvc::fieldVector(const Gaudi::XYZPoint&  r,
   int i = int( x/m_Dxyz[0]);
   int j = int( y/m_Dxyz[1] );
   int k = int( z/m_Dxyz[2] );
-
   
   int ijk000 = 3*( m_Nxyz[0]*( m_Nxyz[1]*k     + j )     + i );
   int ijk001 = 3*( m_Nxyz[0]*( m_Nxyz[1]*(k+1) + j )     + i );
@@ -390,6 +413,9 @@ StatusCode MagneticFieldSvc::fieldVector(const Gaudi::XYZPoint&  r,
   int ijk101 = 3*( m_Nxyz[0]*( m_Nxyz[1]*(k+1) + j)      + i + 1 );
   int ijk110 = 3*( m_Nxyz[0]*( m_Nxyz[1]*k     + j + 1)  + i + 1 );
   int ijk111 = 3*( m_Nxyz[0]*( m_Nxyz[1]*(k+1) + j + 1 ) + i + 1 );
+
+
+  
   // auxiliary variables defined at the vertices of the cube that
   // contains the (x, y, z) point where the field is interpolated
 
@@ -397,67 +423,72 @@ StatusCode MagneticFieldSvc::fieldVector(const Gaudi::XYZPoint&  r,
 
   if(!m_useRealMap) {
     
-    cx000 = m_Q[ ijk000 ];
-    cx001 = m_Q[ ijk001 ];
-    cx010 = m_Q[ ijk010 ];
-    cx011 = m_Q[ ijk011 ];
-    cx100 = m_Q[ ijk100 ];
-    cx101 = m_Q[ ijk101 ];
-    cx110 = m_Q[ ijk110 ];
-    cx111 = m_Q[ ijk111 ];
-    cy000 = m_Q[ ijk000+1 ];
-    cy001 = m_Q[ ijk001+1 ];
-    cy010 = m_Q[ ijk010+1 ];
-    cy011 = m_Q[ ijk011+1 ];
-    cy100 = m_Q[ ijk100+1 ];
-    cy101 = m_Q[ ijk101+1 ];
-    cy110 = m_Q[ ijk110+1 ];
-    cy111 = m_Q[ ijk111+1 ];
-    cz000 = m_Q[ ijk000+2 ];
-    cz001 = m_Q[ ijk001+2 ];
-    cz010 = m_Q[ ijk010+2 ];
-    cz011 = m_Q[ ijk011+2 ];
-    cz100 = m_Q[ ijk100+2 ];
-    cz101 = m_Q[ ijk101+2 ];
-    cz110 = m_Q[ ijk110+2 ];
-    cz111 = m_Q[ ijk111+2 ];
-    
+  cx000 = m_Q[ ijk000 ];
+  cx001 = m_Q[ ijk001 ];
+  cx010 = m_Q[ ijk010 ];
+  cx011 = m_Q[ ijk011 ];
+  cx100 = m_Q[ ijk100 ];
+  cx101 = m_Q[ ijk101 ];
+  cx110 = m_Q[ ijk110 ];
+  cx111 = m_Q[ ijk111 ];
+  cy000 = m_Q[ ijk000+1 ];
+  cy001 = m_Q[ ijk001+1 ];
+  cy010 = m_Q[ ijk010+1 ];
+  cy011 = m_Q[ ijk011+1 ];
+  cy100 = m_Q[ ijk100+1 ];
+  cy101 = m_Q[ ijk101+1 ];
+  cy110 = m_Q[ ijk110+1 ];
+  cy111 = m_Q[ ijk111+1 ];
+  cz000 = m_Q[ ijk000+2 ];
+  cz001 = m_Q[ ijk001+2 ];
+  cz010 = m_Q[ ijk010+2 ];
+  cz011 = m_Q[ ijk011+2 ];
+  cz100 = m_Q[ ijk100+2 ];
+  cz101 = m_Q[ ijk101+2 ];
+  cz110 = m_Q[ ijk110+2 ];
+  cz111 = m_Q[ ijk111+2 ];
+  
   } else {
     
     int iquadr=999;
     
-    if(r.x() >=0 )
-      if (r.y() >=0 ) iquadr=0;
-      else iquadr=2;
-    else 
-      if (r.y() >=0 ) iquadr=1;
-      else iquadr=3;
-    
-    cx000 = (m_Q_quadr[iquadr])[ ijk000 ];
-    cx001 = (m_Q_quadr[iquadr])[ ijk001 ];
-    cx010 = (m_Q_quadr[iquadr])[ ijk010 ];
-    cx011 = (m_Q_quadr[iquadr])[ ijk011 ];
-    cx100 = (m_Q_quadr[iquadr])[ ijk100 ];
-    cx101 = (m_Q_quadr[iquadr])[ ijk101 ];
-    cx110 = (m_Q_quadr[iquadr])[ ijk110 ];
-    cx111 = (m_Q_quadr[iquadr])[ ijk111 ];
-    cy000 = (m_Q_quadr[iquadr])[ ijk000+1 ];
-    cy001 = (m_Q_quadr[iquadr])[ ijk001+1 ];
-    cy010 = (m_Q_quadr[iquadr])[ ijk010+1 ];
-    cy011 = (m_Q_quadr[iquadr])[ ijk011+1 ];
-    cy100 = (m_Q_quadr[iquadr])[ ijk100+1 ];
-    cy101 = (m_Q_quadr[iquadr])[ ijk101+1 ];
-    cy110 = (m_Q_quadr[iquadr])[ ijk110+1 ];
-    cy111 = (m_Q_quadr[iquadr])[ ijk111+1 ];
-    cz000 = (m_Q_quadr[iquadr])[ ijk000+2 ];
-    cz001 = (m_Q_quadr[iquadr])[ ijk001+2 ];
-    cz010 = (m_Q_quadr[iquadr])[ ijk010+2 ];
-    cz011 = (m_Q_quadr[iquadr])[ ijk011+2 ];
-    cz100 = (m_Q_quadr[iquadr])[ ijk100+2 ];
-    cz101 = (m_Q_quadr[iquadr])[ ijk101+2 ];
-    cz110 = (m_Q_quadr[iquadr])[ ijk110+2 ];
-    cz111 = (m_Q_quadr[iquadr])[ ijk111+2 ];
-    
+  if(r.x() >=0)
+    if( r.y() >=0) 
+      iquadr=0;
+    else
+      iquadr=2;
+  else
+    if(r.y() >=0)
+      iquadr=1;
+    else
+      iquadr=3;
+
+
+  cx000 = (m_Q_quadr[iquadr])[ ijk000 ];
+  cx001 = (m_Q_quadr[iquadr])[ ijk001 ];
+  cx010 = (m_Q_quadr[iquadr])[ ijk010 ];
+  cx011 = (m_Q_quadr[iquadr])[ ijk011 ];
+  cx100 = (m_Q_quadr[iquadr])[ ijk100 ];
+  cx101 = (m_Q_quadr[iquadr])[ ijk101 ];
+  cx110 = (m_Q_quadr[iquadr])[ ijk110 ];
+  cx111 = (m_Q_quadr[iquadr])[ ijk111 ];
+  cy000 = (m_Q_quadr[iquadr])[ ijk000+1 ];
+  cy001 = (m_Q_quadr[iquadr])[ ijk001+1 ];
+  cy010 = (m_Q_quadr[iquadr])[ ijk010+1 ];
+  cy011 = (m_Q_quadr[iquadr])[ ijk011+1 ];
+  cy100 = (m_Q_quadr[iquadr])[ ijk100+1 ];
+  cy101 = (m_Q_quadr[iquadr])[ ijk101+1 ];
+  cy110 = (m_Q_quadr[iquadr])[ ijk110+1 ];
+  cy111 = (m_Q_quadr[iquadr])[ ijk111+1 ];
+  cz000 = (m_Q_quadr[iquadr])[ ijk000+2 ];
+  cz001 = (m_Q_quadr[iquadr])[ ijk001+2 ];
+  cz010 = (m_Q_quadr[iquadr])[ ijk010+2 ];
+  cz011 = (m_Q_quadr[iquadr])[ ijk011+2 ];
+  cz100 = (m_Q_quadr[iquadr])[ ijk100+2 ];
+  cz101 = (m_Q_quadr[iquadr])[ ijk101+2 ];
+  cz110 = (m_Q_quadr[iquadr])[ ijk110+2 ];
+  cz111 = (m_Q_quadr[iquadr])[ ijk111+2 ];
+  
   }
   
   double hx1 = ( x-i*m_Dxyz[0] )/m_Dxyz[0];
@@ -517,4 +548,30 @@ StatusCode MagneticFieldSvc::fieldVector(const Gaudi::XYZPoint&  r,
     bf.SetZ( -bf.z() );
   } 
   return StatusCode::SUCCESS;      
+}
+
+
+StatusCode MagneticFieldSvc::i_updateScaling() 
+{
+  MsgStream log(msgSvc(), name());
+  //  m_scaleFactor= m_condition->param<double>("Current") / m_nominalCurrent*m_condition->param<int>("Polarity");
+  m_scaleFactor= m_condition->param<double>("Current") / m_nominalCurrent;
+  
+  
+  //  log << MSG::INFO << "*** Print Magnet conditions *** " << endmsg;
+  log << MSG::INFO << "Conditions path name: "<<m_condPath<<endmsg;
+  log << MSG::INFO << "Current: "<< m_condition->param<double>("Current") << " || Polarity: "<< m_condition->param<int>("Polarity") <<endmsg;  
+ 
+  if( fabs(m_scaleFactor-1.) > 1e-6 ) {
+    log << MSG::WARNING << "Field map will be scaled by a factor = "
+        << m_scaleFactor << endmsg;
+  }
+  
+  return StatusCode::SUCCESS; 
+  
+}
+
+double MagneticFieldSvc::GetScale() 
+{
+  return m_scaleFactor;
 }

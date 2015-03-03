@@ -4,6 +4,34 @@
 ! Purpose     : 
 !-----------------------------------------------------------------------------
 
+!============================ L0MuonKernel v8r0 2008-07-16 ============== 
+! 2008-07-16 - Julien Cogan
+ - Bug fixes
+ - Encoding of L0MuonProcData part 1 without compression
+
+! 2008-07-15 - Marco Cattaneo
+ - Remove cmt/version.cmt file, breaks cmt when running with version directory!
+
+! 2008-07-15 - Julien Cogan
+ - Encoding of banks L0MuonCtrlCand (to be tested)
+ - Possibility to zero-supress bank with candidates (to be tested)
+ - By default, use the status to compute the number of candidates
+
+! 2008-07-11 - Julien Cogan
+ - Improve the error managment when decoding the bank v2
+ - Fix some compilation warnings	
+
+! 2008-06-30 - Marco Cattaneo
+ - Add a cmt/version.cmt file to make cmt happy when running without
+   version directory (otherwise it thinks the version is 'L0MuonKernel')
+ - Increment version to v7r5
+
+! 2008-06-18 - Julien Cogan
+ - Bug fix and improvements
+
+! 2008-06-05 - Julien Cogan
+ - Decoding of the bank version 2 without Zero suppression
+ - Possibility to run witout M1 or M2 
 
 !============================ L0MuonKernel v7r4 2008-04-11 ============== 
 ! 2008-04-11 - Julien Cogan

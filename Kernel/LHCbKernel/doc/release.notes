@@ -4,6 +4,24 @@
 ! Purpose: LHCb specific Kernel classes
 !--------------------------------------------------------------------------
 
+!===================== LHCbKernel v8r6 2008-07-16 ========================
+! 2008-07-15 Gerhard Raven, M.Cattaneo
+ - protect FPEGuard for multiple definitions, i.e. add 'inline' keyword
+
+! 2008-07-10 - Marco Cattaneo
+ - Fix FPEGuard implementation for Windows
+ - Undo Vanya's change because dependency on LHCbMath is undesirable in
+   this package. A better packaging solution should be found 
+
+! 2008-07-09 - Vanya BELYAEV
+ - src/ParticleID.cpp
+   use more efficient algorithm to extract the Nth decimal digit
+   from the integral type 
+   
+ - cmt/requirements 
+    use LHCbMath
+    version increment to v8r6   
+
 !===================== LHCbKernel v8r5 2008-07-04 ========================
 ! 2008-07-04 Marco Cattaneo
  - Remove FPEGuard implementation for Windows (always throws exceptions!)

@@ -16,10 +16,18 @@
 #include <string>
 #include <map>
 #include <vector>
+#include "L0MuonKernel/ProcDataErrors.h"
 
 namespace L0Muon {
   
   class ProcDataCnv {
+
+  private:
+
+    static const unsigned int PB_OpticalLinks_size = 24;
+    static const unsigned int PB_Neighbours_size   = 34;
+    static const unsigned int PU_OpticalLinks_size_16 = 10;
+    static const unsigned int PU_Neighbours_size_16   = 17;
 
   public:
 
@@ -32,20 +40,40 @@ namespace L0Muon {
     /// Destructor
     ~ProcDataCnv();
 
+    LHCb::MuonTileID mid_BCSU(int ib);
+    LHCb::MuonTileID mid_PU(int ib, int ipu);
+
     void release();
 
-//     std::vector<LHCb::MuonTileID> ols(int board, int pu);
-//     std::vector<LHCb::MuonTileID> neighs(int board, int pu);
     std::vector<LHCb::MuonTileID> ols(LHCb::MuonTileID puid);    
     std::vector<LHCb::MuonTileID> neighs(LHCb::MuonTileID puid);
     std::vector<LHCb::MuonTileID> pus();
 
-    void decodeBank(std::vector<unsigned int> raw, int version);
-    std::vector<unsigned int> rawBank(int version,int mode);
+    int decodeBank(const std::vector<unsigned int> raw, int version);
+    int decodeBank_v1(const std::vector<unsigned int> &raw);
+    int decodeBank_v2(const std::vector<unsigned int> &raw);
+    int rawBank(std::vector<unsigned int> &raw, int version,int mode, bool compression);
+    int rawBank_v1(std::vector<unsigned int> &raw, int mode);
+    int rawBank_v2(std::vector<unsigned int> &raw, int mode, bool compression);
 
+    const bool inError(int ib, int ipu) const { return m_errors[ib].inError(ipu);}
+    const int  decodingError(int ib) const { return ((int(m_errors[ib].decodingError())<<1)&2);}
+    const int  hardwareError(int ib, int ipu) const {return m_errors[ib].hardwareError(ipu);}
+
+    const ProcDataErrors * errors(int ib) const {return &m_errors[ib];}
 
   private:
 
+    int setRegisters_for_PB_OpticalLinks(int iboard, boost::dynamic_bitset<> & rawbitset );
+    int setRegisters_for_PB_Neighbours(int iboard, boost::dynamic_bitset<> & rawbitset );
+    
+    int compressedPBWords_to_bitset(const std::vector<unsigned int> & raw, const int size, 
+                                    unsigned int & word_index, int & bit_index,
+                                    boost::dynamic_bitset<> & rawbitset);
+    int notcompressedPBWords_to_bitset(const std::vector<unsigned int> & raw, const int size, 
+                                       unsigned int & word_index,
+                                       boost::dynamic_bitset<> & rawbitset);
+    
     int m_compressionParameter;
 
     boost::dynamic_bitset<> applyCompression(boost::dynamic_bitset<> bitset_to_compress);
@@ -61,6 +89,8 @@ namespace L0Muon {
     std::map<LHCb::MuonTileID, TileRegister*> m_olsMap;
     std::map<LHCb::MuonTileID, TileRegister*> m_neighsMap;
     
+    // Error Handlers
+    ProcDataErrors m_errors[12];
 
   };
 }; // namespace L0Muon

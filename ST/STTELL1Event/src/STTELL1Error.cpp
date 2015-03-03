@@ -11,7 +11,7 @@
 
 std::ostream& LHCb::STTELL1Error::fillStream(std::ostream& s) const
 {
-  s  << "################################################" << std::endl;
+
   s  << "Tell1 Sent " << sentWords() << " "  << " words " << std::endl; 
 
   if (ErrorBankLength() == 0x14){
@@ -66,15 +66,16 @@ std::ostream& LHCb::STTELL1Error::fillStream(std::ostream& s) const
     s << "Pedestal bank length: " << PedBankLength() << std::endl;
   }
 
-  s << "Summary info " << std::endl;
-  const unsigned pcn = pcnVote();
-  s << "majority PCN vote: " << pcn << std::endl;
-  for (unsigned int iLink = 0u; iLink < nBeetle ; ++iLink){
-    for (unsigned int iPort = 0u; iPort < nPort ; ++iPort){
-      s << "Beetle:"  << iLink << " Port "<<  iPort << "Status: " <<linkInfo(iLink, iPort , pcn) << std::endl;
-    } // port
-  } // link
-
+  if (ErrorBankLength() == 0x14 ){
+    s << "Summary info of errors" << std::endl;
+    const unsigned pcn = pcnVote();
+    s << "majority PCN vote: " << pcn << std::endl;
+    for (unsigned int iLink = 0u; iLink < nBeetle ; ++iLink){
+      for (unsigned int iPort = 0u; iPort < nPort ; ++iPort){
+        s << "Beetle:"  << iLink << " Port "<<  iPort << "Status: " <<linkInfo(iLink, iPort , pcn) << std::endl;
+      } // port
+    } // link
+  }
   return s << "################################################" << std::endl;
 }
 
@@ -122,8 +123,8 @@ unsigned int LHCb::STTELL1Error::findPCN(const unsigned int beetle) const{
       case 1: return pcnBeetle1();
       case 2: return pcnBeetle2();
       case 3: return pcnBeetle3();
-      case 4: return pcnBeetle2();
-      case 5: return pcnBeetle3();
+      case 4: return pcnBeetle4();
+      case 5: return pcnBeetle5();
       default : return 200u; // 
     }
 
@@ -156,7 +157,7 @@ void LHCb::STTELL1Error::fillErrorInfo() {
       // pseudo error = 1 word per port
       for (unsigned int iPort = 0 ; iPort < nPort; ++iPort ){
 	const unsigned int link = linkID(iLink,iPort);
-        addLinkInfo(link, kPseudoHeader); 
+        if ( HeaderPseudoError() >> link & 1) addLinkInfo(link, kPseudoHeader); 
       } // iport 
     } // if
   } // iOLink  

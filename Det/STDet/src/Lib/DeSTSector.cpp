@@ -1,4 +1,4 @@
-// $Id: DeSTSector.cpp,v 1.40 2008-06-16 14:24:04 mneedham Exp $
+// $Id: DeSTSector.cpp,v 1.45 2008-07-15 15:25:03 mneedham Exp $
 #include "STDet/DeSTSector.h"
 
 #include "DetDesc/IGeometryInfo.h"
@@ -50,15 +50,18 @@ std::ostream& DeSTSector::printOut( std::ostream& os ) const{
 
   // stream to cout  
   os << " Sector :  "  << name() << std::endl;
-  os   << " Nickname: " << m_nickname 
-      << "\n ID " << id() 
-      << "\n layer " << elementID().layer()
+  os << " Nickname: " << m_nickname 
+     << "\n ID " << id() 
+     << "\n layer " << elementID().layer()
      << "\n type  " << type() 
      << "\n pitch " << m_pitch 
      << "\n strip " << m_nStrip
      << "\n capacitance " << m_capacitance/Gaudi::Units::picofarad
      << "\n dead width " << m_deadWidth
      << "\n center " << globalCentre()
+     << "\n Sector status " << sectorStatus() 
+     << "\n fraction active " << fractionActive() 
+     << "\n version " << m_versionString 
      << std::endl; 
   return os;
 }
@@ -75,6 +78,8 @@ MsgStream& DeSTSector::printOut( MsgStream& os ) const{
      << " capacitance \n " << m_capacitance/Gaudi::Units::picofarad
      << "dead width \n " << m_deadWidth
      << "\n center " << globalCentre()
+     << "\n fraction active " << fractionActive() 
+     << "\n version " << m_versionString 
      << std::endl;
 
   return os;
@@ -106,7 +111,7 @@ StatusCode DeSTSector::initialize() {
  
     if (m_versionString != "DC06"){
       StatusCode sc = registerCondition(this,m_statusString,
-                                        &DeSTSector::updateStatusCondition);
+                                        &DeSTSector::updateStatusCondition,true);
       if (sc.isFailure() ){
         msg << MSG::ERROR << "Failed to register status conditions" << endreq;
         return StatusCode::FAILURE; 
@@ -157,18 +162,24 @@ std::auto_ptr<LHCb::Trajectory> DeSTSector::createTraj(const unsigned int strip,
     STTraj* traj = new STTraj(); 
     for (; iterS != theSensors.end(); ++iterS) {                
       std::auto_ptr<LHCb::Trajectory> sensTraj = (*iterS)->trajectory(strip,offset);
-      if (traj->numberOfPieces() != 0) {
-         // double d1 = (sensTraj->beginPoint()-traj->endPoint()).mag2();      
-         //double d2 = (sensTraj->endPoint()-traj->beginPoint()).mag2();      
-         //     if (d1 < d2) {
-        double mu = sensTraj->muEstimate(traj->endPoint());        
-        sensTraj->setRange(mu,sensTraj->endRange());              
-      } 
-      traj->append(sensTraj.release());          
- 	//} else {                                                           
-	//  double mu = sensTraj->muEstimate(traj->beginPoint());      
-	//	sensTraj->setRange(sensTraj->beginRange(),mu);             
-	//traj->prepend(sensTraj.release());                        
+      if (traj->numberOfPieces() == 0) {
+         traj->append(sensTraj.release());  
+      }
+      else {
+
+        double d1 = (sensTraj->beginPoint()-traj->endPoint()).mag2();      
+        double d2 = (sensTraj->endPoint()-traj->beginPoint()).mag2();      
+        if (d1 < d2) {
+          double mu = sensTraj->muEstimate(traj->endPoint());        
+          sensTraj->setRange(mu,sensTraj->endRange());               
+          traj->append(sensTraj.release());          
+ 	} 
+        else {                                                           
+	  double mu = sensTraj->muEstimate(traj->beginPoint());      
+	  sensTraj->setRange(sensTraj->beginRange(),mu);             
+	  traj->prepend(sensTraj.release());                        
+	}
+      }
     } // loop
     return std::auto_ptr<LHCb::Trajectory>(traj);
   } // if 
@@ -332,6 +343,16 @@ bool DeSTSector::globalInBondGap(const Gaudi::XYZPoint& point,
   return (aSensor ?  aSensor->globalInBondGap(point, tol) : false ); 
 };
 
+double DeSTSector::fractionActive() const {
 
+  unsigned int nActive = 0u;
+  std::vector<DeSTSector::Status> statusVector = stripStatus();
+  std::vector<DeSTSector::Status>::iterator iter = statusVector.begin();
+  for (; iter != statusVector.end(); ++iter){
+    if ( *iter == DeSTSector::OK || *iter == DeSTSector::Pinhole  ) ++nActive;
+  }
+
+  return nActive/double(nStrip());
+}
 
 

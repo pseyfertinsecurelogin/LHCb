@@ -1,4 +1,4 @@
-// $Id: DVAlgorithm.cpp,v 1.32 2008-04-15 13:26:50 ibelyaev Exp $
+// $Id: DVAlgorithm.cpp,v 1.34 2008-07-10 15:18:20 pkoppenb Exp $
 // ============================================================================
 // Include 
 // ============================================================================
@@ -80,8 +80,8 @@ DVAlgorithm::DVAlgorithm
   m_vertexFitNames [ "ParticleAdder" ] = "ParticleAdder"       ;
   declareProperty ( "VertexFitters"     , m_vertexFitNames    ) ;
   //
+  m_geomToolNames  [ "" ] = "GeomDispCalculator" ;
   m_geomToolNames  [ "Offline" ] = "GeomDispCalculator" ;
-  m_geomToolNames  [ "Trigger" ] = "TrgDispCalculator"  ;
   declareProperty ( "GeomTools"         , m_geomToolNames     ) ;
   //
   declareProperty ( "CheckOverlapTool"  , m_checkOverlapName  ) ;
@@ -217,37 +217,24 @@ StatusCode DVAlgorithm::loadTools()
           << m_vertexFitNames[""] << " as IVertexFit " << endmsg;
   vertexFitter() ;
   
-  // geometry
-  if ( m_geomToolNames.end() == m_geomToolNames.find("") )
+  // geometry THIS IS OBSOLETE
+  if ( m_distanceCalculatorNames.end() == m_distanceCalculatorNames.find("") )
   {
     if ( 0==onof ) onof = tool<IOnOffline>("OnOfflineTool",this);
-    m_geomToolNames[""] = onof->dispCalculator() ;
+    m_distanceCalculatorNames[""] = onof->distanceCalculator() ;
   }
   
+  // distance geometry
   if (msgLevel(MSG::DEBUG)) debug() << ">>> Preloading " 
-          << m_geomToolNames[""] 
-          << " as IGeomDispCalculator" << endmsg;
-  geomDispCalculator();
+          << m_distanceCalculatorNames[""] 
+          << " as IDistanceCalculator" << endmsg;
+  distanceCalculator();
   
   if (msgLevel(MSG::DEBUG)) debug() << ">>> Preloading CheckOverlap Tool" << endmsg;
   checkOverlap();
   
   if (msgLevel(MSG::DEBUG)) debug() << ">>> Preloading WriteSelResults Tool" << endmsg;
   writeSelResult();
-  
-  /*  Not preloading non-mandatory tools
-  // particle filter
-  for ( size_t i = 0; i < m_fileNames.size();++i) {
-  if (msgLevel(MSG::DEBUG)) debug() << ">>> Preloading ParticleFilter " << m_filterName.at(i) << " as " << i << endmsg;
-  particleFilter(i); 
-  }
-  
-  if (msgLevel(MSG::DEBUG)) debug() << ">>> Preloading BTagging Tool" << endmsg;
-  flavourTagging();
-
-  if (msgLevel(MSG::DEBUG)) debug() << ">>> Preloading ParticleDescendants Tool" << endmsg;
-  descendants();
-  */
 
   if (msgLevel(MSG::DEBUG)) debug() << ">>> Preloading ParticlePropertySvc" << endmsg;
   m_ppSvc = svc<IParticlePropertySvc>("ParticlePropertySvc", true);

@@ -1,4 +1,4 @@
-// $Id: DaVinciKernelDict.h,v 1.12 2008-03-30 17:59:18 ibelyaev Exp $
+// $Id: DaVinciKernelDict.h,v 1.14 2008-07-11 13:11:28 ibelyaev Exp $
 #ifndef DICT_DAVINCIKERNELDICT_H 
 #define DICT_DAVINCIKERNELDICT_H 1
 
@@ -39,7 +39,6 @@
 #include "Kernel/IP2VVPartAngleCalculator.h"
 #include "Kernel/IParticleArrayFilter.h"
 #include "Kernel/IParticle2State.h"
-#include "Kernel/IParticle2VertexAsct.h"
 #include "Kernel/IParticleCombiner.h"
 #include "Kernel/IParticleDescendants.h"
 #include "Kernel/IParticleFilter.h"
@@ -60,6 +59,7 @@
 #include "Kernel/ITriggerTisTos.h"
 #include "Kernel/IVertexFit.h"
 #include "Kernel/IPrintDecay.h"
+#include "Kernel/ISetInputParticles.h"
 #include "Kernel/DVAlgorithm.h" // Has to be last for compilation on Windows
 
 #endif // DICT_DAVINCIKERNELDICT_H

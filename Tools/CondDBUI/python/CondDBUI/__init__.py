@@ -12,6 +12,8 @@ browser.
 
 import os, md5, random, sys, re, time, datetime
 
+LOG_FORMAT = "%(levelname)s: (%(name)s) %(message)s"
+
 import PyCoolCopy
 from PyCool import cool
 import PyCool
@@ -28,6 +30,10 @@ if 'CORAL_LFC_BASEDIR' in os.environ and 'LFC_HOST' in os.environ and not 'COOL_
         _app.connectionSvc().configuration().setLookupService(LFCRepSvcName)
         _app.connectionSvc().configuration().setAuthenticationService(LFCRepSvcName)
     del LFCRepSvcName
+
+# disable CORAL time-out thread
+_app.connectionSvc().configuration().disablePoolAutomaticCleanUp()
+_app.connectionSvc().configuration().setConnectionTimeOut(0)
 
 #########################################################################################
 #                                    Tag Class                                          #
@@ -343,6 +349,23 @@ class CondDB:
         else:
             return False
 
+    def isMultiVersionFolder(self, path):
+        '''
+        Check if path corresponds to a multi version folder
+        inputs:
+            path: string; path to the node to check
+        outputs:
+            boolean; True if the node is a multi version folder, False in all other cases
+           (i.e. if the node is a single version folder OR if it is a folderset or does not
+           exist).
+        '''
+        assert self.db != None, "Database not connected !"
+        if self.db.existsFolder(path):
+            folder = self.db.getFolder(path)
+            return folder.versioningMode() == cool.FolderVersioning.MULTI_VERSION
+        else:
+            return False
+    
     def setDefaultTag(self, tagName):
         '''
         Set the value of the default tag.
@@ -1151,7 +1174,7 @@ class CondDB:
         """
         nodes = self.findNodesWithTag(local_tag, base = basepath, leaves = False)
         if not nodes:
-            # nothig to do
+            # nothing to do
             print "Warning: Tag '%s' not found"%local_tag
             return
         nodes_tags = {}
@@ -1178,7 +1201,9 @@ class CondDB:
         is completely defined and folders (in case a common folderset couldn be identified).
         """
         # this finds all the leaves in which a tag can be resolved
-        l = filter(lambda p: self.db.existsFolder(p) and self.resolveTag(p,tag), self.getAllChildNodes(base))
+        l = filter(lambda p: self.isMultiVersionFolder(p) and
+                             self.resolveTag(p,tag),
+                   self.getAllChildNodes(base))
         
         if leaves:
             # enough
@@ -1679,12 +1704,8 @@ def merge( sourceDB, targetDB,
     """
     import logging
 
-    _log = logging.getLogger( __name__ )
+    _log = logging.getLogger( "CondDBUI.merge" )
     _log.setLevel( logging.INFO )
-
-    _handler = logging.StreamHandler()
-    _handler.setFormatter( logging.Formatter( "%(levelname)s:%(name)s: %(message)s" ) )
-    _log.addHandler( _handler )
 
     from PyCoolDiff import CondDBDiffError
     
