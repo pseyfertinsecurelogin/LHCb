@@ -1,4 +1,3 @@
-// $Id: $
 // Include files 
 
 // from Gaudi
@@ -48,10 +47,20 @@ StatusCode PackDecReport::execute()
   if ( !m_alwaysOutput && 
        !exist<LHCb::HltDecReports>(m_inputName) ) return StatusCode::SUCCESS;
 
-  LHCb::HltDecReports* reports = getOrCreate<LHCb::HltDecReports,LHCb::HltDecReports>( m_inputName );
+  // Create the output output
+  if ( exist<LHCb::PackedDecReport>(m_outputName) )
+  {
+    // Need for use case of uDST writing from DSTS...
+    return Warning( "Packed DecReports already exist at '" + 
+                    m_outputName + "' -> Packing aborted", StatusCode::SUCCESS );
+  }
   LHCb::PackedDecReport* out = new LHCb::PackedDecReport();
   put( out, m_outputName );
 
+  // Get the input
+  LHCb::HltDecReports* reports = getOrCreate<LHCb::HltDecReports,LHCb::HltDecReports>( m_inputName );
+
+  // loop and pack
   for ( LHCb::HltDecReports::Container::const_iterator itR = reports->decReports().begin();
         reports->decReports().end() != itR; ++itR) 
   {
@@ -84,11 +93,15 @@ StatusCode PackDecReport::execute()
   }
 
   // If requested, remove the input data from the TES and delete
-  if ( m_deleteInput )
+  if ( UNLIKELY(m_deleteInput) )
   {
-    evtSvc()->unregisterObject( reports );
-    delete reports; 
-    reports = NULL;
+    StatusCode sc = evtSvc()->unregisterObject( reports );
+    if( sc.isSuccess() ) {
+      delete reports; 
+      reports = NULL;
+    }
+    else
+      return Error("Failed to delete input data as requested", sc );
   }
   else
   {

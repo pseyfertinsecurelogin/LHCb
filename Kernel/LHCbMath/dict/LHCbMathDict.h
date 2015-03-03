@@ -1,14 +1,18 @@
-// $Id: LHCbMathDict.h 126095 2011-07-17 18:38:13Z ibelyaev $
+// $Id: LHCbMathDict.h 139270 2012-04-28 17:33:47Z ibelyaev $
 // ============================================================================
 #ifndef DICT_LHCBMATHDICT_H 
 #define DICT_LHCBMATHDICT_H 1
 // ============================================================================
 // Include files
 // ============================================================================
+#include <vector>
+#include <list>
+// ============================================================================
 #ifdef _WIN32
 #pragma warning ( disable : 4305 ) // truncation double to Scalar in GenVector
 #pragma warning ( disable : 4244 ) // conversion double to float in GenVector
 #endif
+// ============================================================================
 #include "LHCbMath/GeomFun.h"
 #include "LHCbMath/LineTypes.h"
 #include "GaudiKernel/Plane3DTypes.h"
@@ -22,8 +26,7 @@
 #include "LHCbMath/EigenSystem.h"
 #include "LHCbMath/Functions.h"
 #include "LHCbMath/LHCbMath.h"
-#include <vector>
-#include <list>
+#include "LHCbMath/Chi2Solution.h"
 // ============================================================================
 /** @file LHCbMathDict.h 
  *  
@@ -294,6 +297,7 @@ namespace
     Gaudi::Math::SVectorWithError<3,double> __sv3 ;
     Gaudi::Math::SVectorWithError<4,double> __sv4 ;
     Gaudi::Math::SVectorWithError<5,double> __sv5 ;
+    Gaudi::Math::SVectorWithError<6,double> __sv6 ;
     Gaudi::Math::SVectorWithError<8,double> __sv8 ;
     //
     std::vector<Gaudi::Math::ValueWithError>  _dver ;
@@ -301,6 +305,20 @@ namespace
     std::vector<Gaudi::Vector2>  _vct_2 ;
     std::vector<Gaudi::Vector3>  _vct_3 ;
     std::vector<Gaudi::Vector3>  _vct_4 ;
+    
+    Gaudi::Math::Chi2Solution<4,2>          __cs11 ;
+    Gaudi::Math::Chi2Solution<4,2>::DATA    __cs21 ;
+    Gaudi::Math::Chi2Solution<4,2>::COV2    __cs31 ;
+    Gaudi::Math::Chi2Solution<4,2>::CMTRX2  __cs41 ;
+    Gaudi::Math::Chi2Solution<4,2>::COFF    __cs51 ;
+    Gaudi::Math::Chi2Solution<4,2>::VECT    __cs61 ;
+    
+    Gaudi::Math::Chi2Solution<6,2>          __cs12 ;
+    Gaudi::Math::Chi2Solution<6,2>::DATA    __cs22 ;
+    Gaudi::Math::Chi2Solution<6,2>::COV2    __cs32 ;
+    Gaudi::Math::Chi2Solution<6,2>::CMTRX2  __cs42 ;
+    Gaudi::Math::Chi2Solution<6,2>::COFF    __cs52 ;
+    Gaudi::Math::Chi2Solution<6,2>::VECT    __cs62 ;
     
   };
 }

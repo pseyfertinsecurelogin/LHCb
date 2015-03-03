@@ -19,6 +19,7 @@
 #include "Event/PackedParticle.h"
 #include "Event/PackedVertex.h"
 #include "Event/PackedWeightsVector.h"
+#include "Event/PackedCaloCluster.h"
 #include "Event/RecHeader.h"
 #include "Event/ProcStatus.h"
 #include "Event/ODIN.h"
@@ -129,10 +130,10 @@ StatusCode WritePackedDst::execute()
 
       LHCb::PackedTracks* in = get<LHCb::PackedTracks>( *itC );
       PackedBank bank( in );
-      storeInBlob( bank, &(*in->begin())      , (in->end() - in->begin()) , sizeof( LHCb::PackedTrack) );
-      storeInBlob( bank, &(*in->beginState()) , in->sizeState()           , sizeof( LHCb::PackedState) );
-      storeInBlob( bank, &(*in->beginIds())   , in->sizeId()              , sizeof( int ) );
-      storeInBlob( bank, &(*in->beginExtra()) , in->sizeExtra()           , sizeof( std::pair<int,int> ) );
+      storeInBlob( bank, &(*in->tracks().begin())  , in->tracks().size()  , sizeof( LHCb::PackedTrack) );
+      storeInBlob( bank, &(*in->states().begin())  , in->states().size()  , sizeof( LHCb::PackedState) );
+      storeInBlob( bank, &(*in->ids().begin())     , in->ids().size()     , sizeof( int ) );
+      storeInBlob( bank, &(*in->extras().begin())  , in->extras().size()  , sizeof( std::pair<int,int> ) );
       m_dst->addBank( m_bankNb++, LHCb::RawBank::DstBank, in->version(), bank.data() );
 
     } else if ( LHCb::CLID_PackedRichPIDs        == myClID ) {
@@ -153,8 +154,8 @@ StatusCode WritePackedDst::execute()
 
       LHCb::PackedCaloHypos* in = get<LHCb::PackedCaloHypos>( *itC );
       PackedBank bank( in );
-      storeInBlob( bank, &(*in->begin())     , (in->end() - in->begin()) , sizeof( LHCb::PackedCaloHypo) );
-      storeInBlob( bank, &(*in->beginRefs()) , in->sizeRef()             , sizeof( int ) );
+      storeInBlob( bank, &(*in->hypos().begin())  , in->hypos().size(), sizeof( LHCb::PackedCaloHypo) );
+      storeInBlob( bank, &(*in->refs().begin())   , in->refs().size() , sizeof( int ) );
       m_dst->addBank( m_bankNb++, LHCb::RawBank::DstBank, in->version(), bank.data() );
 
     } else if ( LHCb::CLID_PackedProtoParticles  == myClID ) {
@@ -237,6 +238,14 @@ StatusCode WritePackedDst::execute()
       PackedBank bank( in );
       storeInBlob( bank, &(*in->data().begin()), in->data().size(), sizeof(LHCb::PackedWeights) );
       storeInBlob( bank, &(*in->weights().begin()), in->weights().size(), sizeof(LHCb::PackedWeight) );
+      m_dst->addBank( m_bankNb++, LHCb::RawBank::DstBank, in->version(), bank.data() );
+
+    } else if ( LHCb::CLID_PackedCaloClusters   == myClID ) {
+
+      LHCb::PackedCaloClusters* in = get<LHCb::PackedCaloClusters>( *itC );
+      PackedBank bank( in );
+      storeInBlob( bank, &(*in->data().begin()), in->data().size(), sizeof(LHCb::PackedCaloCluster) );
+      storeInBlob( bank, &(*in->entries().begin()), in->entries().size(), sizeof(LHCb::PackedCaloClusterEntry) );
       m_dst->addBank( m_bankNb++, LHCb::RawBank::DstBank, in->version(), bank.data() );
 
     } else if ( LHCb::CLID_ProcStatus == myClID ) {

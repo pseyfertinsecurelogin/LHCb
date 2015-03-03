@@ -1,4 +1,4 @@
-// $Id: Functions.h 132619 2011-12-06 16:23:39Z ibelyaev $
+// $Id: Functions.h 139270 2012-04-28 17:33:47Z ibelyaev $
 // ============================================================================
 #ifndef LHCBMATH_FUNCTIONS_H 
 #define LHCBMATH_FUNCTIONS_H 1
@@ -9,6 +9,7 @@
 // ============================================================================
 #include <functional>
 #include <vector>
+#include <complex>
 // ============================================================================
 // GaudiKernel
 // ============================================================================
@@ -21,8 +22,8 @@
  *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
  *  @date 2010-04-19
  *  
- *                    $Revision: 132619 $
- *  Last modification $Date: 2011-12-06 17:23:39 +0100 (Tue, 06 Dec 2011) $
+ *                    $Revision: 139270 $
+ *  Last modification $Date: 2012-04-28 19:33:47 +0200 (Sat, 28 Apr 2012) $
  *                 by $author$
  */
 // ============================================================================
@@ -561,12 +562,12 @@ namespace Gaudi
       // ======================================================================
       /** constructor from all parameters 
        *  @param peak    the peak posiion 
-       *  @param sigma   ("mean" sigma)
-       *  @param phi     (mixing angle)
+       *  @param sigmaL  (left  sigma)
+       *  @param sigmaR  (right sigma)
        */
       BifurcatedGauss 
       ( const double peak  , 
-        const double sigma , 
+        const double sigmaL , 
         const double asym  ) ;
       // ======================================================================
       /// destructor 
@@ -581,16 +582,18 @@ namespace Gaudi
       // ====================================================================== 
       double peak    () const { return m_peak    ; }
       double m0      () const { return peak()    ; }
-      double sigma   () const { return m_sigma   ; }
-      double asym    () const { return m_asym    ; }
+      double sigmaL  () const { return m_sigmaL  ; }
+      double sigmaR  () const { return m_sigmaR  ; }
+      double sigma   () const ;
+      double asym    () const ;
       // ====================================================================== 
     public:
       // ======================================================================
       bool setPeak    ( const double value ) ;
       bool setM0      ( const double value ) { return setPeak ( value ) ; }
       bool setMass    ( const double value ) { return setPeak ( value ) ; }
-      bool setSigma   ( const double value ) ;
-      bool setAsym    ( const double value ) ;
+      bool setSigmaL  ( const double value ) ;
+      bool setSigmaR  ( const double value ) ;
       // ====================================================================== 
     public:
       // ====================================================================== 
@@ -609,10 +612,10 @@ namespace Gaudi
       // ======================================================================
       /// the peak position 
       double m_peak    ;      //                              the peak position 
-      /// sigma 
-      double m_sigma   ;      // sigma 
-      /// asymmetry 
-      double m_asym    ;      // phi
+      /// sigma left  
+      double m_sigmaL ;       // sigma-left 
+      /// sigma right
+      double m_sigmaR ;       // sigma-right 
       // ======================================================================
     } ;
     // ========================================================================
@@ -1126,7 +1129,7 @@ namespace Gaudi
     public :
       // ======================================================================
       /** calculate the triangle function 
-       *  \f$ \lambda ( a , b, c ) = a^2 + b^2 + c^2 - 2ab - 2bc - 2 ca \f$ 
+       *  \f[ \lambda ( a , b, c ) = a^2 + b^2 + c^2 - 2ab - 2bc - 2ca \f] 
        *  @param a parameter a 
        *  @param b parameter b 
        *  @param c parameter b 
@@ -1138,6 +1141,8 @@ namespace Gaudi
         const double c ) ;
       // ======================================================================
       /** calculate the particle momentum in rest frame 
+       *  \f[ q = \frac{1}{2}\frac{ \lambda^{\frac{1}{2}} 
+       *        \left( m^2 , m_1^2, m_2^2 \right) }{ m }\f], 
        *  @param m the mass 
        *  @param m1 the mass of the first particle 
        *  @param m2 the mass of the second particle 
@@ -1152,13 +1157,28 @@ namespace Gaudi
        *  @param m the mass 
        *  @param m1 the mass of the first particle 
        *  @param m2 the mass of the second particle 
-       *  @return the momentum in rest frame  (negative for non-physical branch)
+       *  @return the momentum in rest frame  (imaginary for non-physical branch)
        */
-      static double  q1
+      static std::complex<double> q1
       ( const double m  , 
         const double m1 , 
         const double m2 ) ;
       // ====================================================================== 
+      /** calculate the phase space for   m -> m1 + m2 
+       *  \f[ \Phi = \frac{1}{8\pi} \left( \frac{ \lambda^{\frac{1}{2}} 
+       *       \left( m^2 , m_1^2, m_2^2 \right) }{ m^2 }\right)^{2L+1}\f], 
+       *  where \f$\lambda\f$ is a triangle function 
+       *  @param m the mass 
+       *  @param m1 the mass of the first particle 
+       *  @param m2 the mass of the second particle 
+       *  @return two-body phase space  
+       */
+      static double phasespace 
+      ( const double         m      , 
+        const double         m1     , 
+        const double         m2     , 
+        const unsigned short L  = 0 ) ;
+      // ======================================================================
     } ;  
     // ========================================================================
     /** @class PhaseSpaceLeft
@@ -1309,7 +1329,102 @@ namespace Gaudi
       // ======================================================================
     } ;
     // ========================================================================
-    /** @class BeitWigner
+    /** @class PhaseSpace23L
+     *  simple function to represent the phase 
+     *   space of 2 particles from 3-body decays:
+     *   \f$ f \propto q^{2\ell+1}p^{2L+1}\f$, where
+     *     \f$\ell\f$ is the orbital momentum of the pair of particles, 
+     *    and \f$L\f$ is the orbital momentum between the pair and 
+     *    the third particle. 
+     *   E.g. taking \f$\ell=0, L=1\f$, one can get the S-wave contribution for 
+     *   \f$\pi^+\pi^-\f$-mass from \f$B^0\rightarrowJ/\psi\pi^+\pi^-\f$ decay.
+     *  @author Vanya BELYAEV Ivan.BElyaev@itep.ru
+     *  @date 2012-04-01
+     */
+    class GAUDI_API PhaseSpace23L
+      : public std::unary_function<double,double>     
+    {
+      // ======================================================================
+    public:
+      // ======================================================================
+      /** constructor from four masses and angular momenta 
+       *  @param m1 the mass of the first  particle 
+       *  @param m2 the mass of the second particle 
+       *  @param m3 the mass of the third  particle 
+       *  @param m  the mass of the mother particle (m>m1+m2+m3)
+       *  @param L  the angular momentum between the first pair and 
+       *  the third particle
+       *  @param l  the angular momentum between the first and the second particle
+       */
+      PhaseSpace23L ( const double         m1     , 
+                      const double         m2     , 
+                      const double         m3     , 
+                      const double         m      , 
+                      const unsigned short L      ,
+                      const unsigned short l  = 0 ) ;
+      /// deststructor 
+      ~PhaseSpace23L () ;                                     // deststructor 
+      // ======================================================================
+    public:
+      // ====================================================================== 
+      /// evaluate N/L-body phase space 
+      double operator () ( const double x ) const ;
+      // ====================================================================== 
+    public:
+      // ====================================================================== 
+      double m1        () const { return m_m1 ; }
+      double m2        () const { return m_m2 ; }      
+      double m3        () const { return m_m3 ; }      
+      double m         () const { return m_m  ; }      
+      unsigned short l () const { return m_l  ; }      
+      unsigned short L () const { return m_L  ; }      
+      // ======================================================================
+      double lowEdge   () const { return m1 () + m2 () ; }      
+      double highEdge  () const { return m  () - m3 () ; }      
+      /// get the momentum of 1st particle in rest frame of (1,2)
+      double         q ( const double x ) const ;
+      /// get the momentum of 3rd particle in rest frame of mother
+      double         p ( const double x ) const ;
+      // ====================================================================== 
+    public:
+      // ====================================================================== 
+      /// get the integral 
+      double integral () const ;
+      /// get the integral between low and high limits 
+      double integral ( const double low  , 
+                        const double high ) const ;
+      // ====================================================================== 
+    private:
+      // ======================================================================
+      /// the default constructor is disabled 
+      PhaseSpace23L () ;               // the default constructor is disabled 
+      // ======================================================================
+    private:
+      // ======================================================================
+      /// the first mass 
+      double m_m1 ;            // the first mass 
+      /// the second mass 
+      double m_m2 ;            // the second mass 
+      /// the third  mass 
+      double m_m3 ;            // the third mass 
+      /// the mass of mother particle 
+      double m_m  ;            // the mass of mother particle 
+      /// the orbital momentum between the first and the second particle 
+      unsigned short m_l ; // the orbital momentum between the 1st and 2nd 
+      /// the orbital momentum between the pair an dthe third particle  
+      unsigned short m_L ; // the orbital momentum between the (12) and 3rd 
+      // ======================================================================
+      /// helper normalization parameter 
+      double m_norm ; // helper normalization parameter 
+      // ======================================================================
+    private:
+      // ======================================================================
+      /// integration workspace 
+      Gaudi::Math::WorkSpace m_workspace ;    // integration workspace 
+      // ======================================================================
+    } ;
+    // ========================================================================
+    /** @class BreitWigner
      *
      *  J.D.Jackson, 
      *  "Remarks on the Phenomenological Analysis of Resonances",
@@ -1331,12 +1446,12 @@ namespace Gaudi
        *  In Nuovo Cimento, Vol. XXXIV, N.6
        */
       enum JacksonRho {
-        Jackson_0  = 0 ,  /// \f$\rho(\omega) = 1 \f$ 
-        Jackson_A2     ,  /// (A.2) \f$ 1^- \rightarrow 0^- 0^- \f$ , l = 1 
-        Jackson_A3     ,  /// (A.3) \f$          1^- \rightarrow 0^- 1^- \f$ , l = 1 
-        Jackson_A4     ,  /// (A.4) \f$ \frac{3}{2}+ \rightarrow 0^- \frac{1}{2}^+ \f$ , l = 1
-        Jackson_A5     ,  /// (A.5) \f$ \frac{3}{2}- \rightarrow 0^- \frac{1}{2}^+ \f$ , l = 2
-        Jackson_A7     ,  /// (A.7) - recommended for rho0 -> pi+ pi-
+        Jackson_0  = 0 ,/// \f$\rho(\omega) = 1 \f$ 
+        Jackson_A2 ,/// \f$ 1^- \rightarrow 0^- 0^- \f$ , l = 1 
+        Jackson_A3 ,/// \f$          1^- \rightarrow 0^- 1^- \f$ , l = 1 
+        Jackson_A4 ,/// \f$ \frac{3}{2}+ \rightarrow 0^- \frac{1}{2}^+ \f$ , l = 1
+        Jackson_A5 ,/// \f$ \frac{3}{2}- \rightarrow 0^- \frac{1}{2}^+ \f$ , l = 2
+        Jackson_A7 ,/// recommended for rho0 -> pi+ pi-
       } ;
       // ======================================================================
     protected:
@@ -1459,9 +1574,9 @@ namespace Gaudi
     public:
       // ======================================================================
       // constructor from all parameters
-      Rho0  ( const double m0       = 770 , 
-              const double gam0     = 150 ,
-              const double pi_mass  = 139 ) ;
+      Rho0  ( const double m0       = 770   , 
+              const double gam0     = 150   ,
+              const double pi_mass  = 139.6 ) ;
       /// destructor 
       virtual ~Rho0 () ;
       // ======================================================================
@@ -1476,13 +1591,13 @@ namespace Gaudi
     public:
       // ======================================================================
       /// constructor from all parameters
-      Rho0FromEtaPrime  ( const double m0        = 770 , 
-                          const double gam0      = 150 ,
-                          const double pi_mass   = 139 , 
-                          const double eta_prime = 958 ) ;
+      Rho0FromEtaPrime  ( const double m0        = 770   , 
+                          const double gam0      = 150   ,
+                          const double pi_mass   = 139.6 , 
+                          const double eta_prime = 957.7 ) ;
       /// constructor from all parameters
-      Rho0FromEtaPrime  ( const Gaudi::Math::Rho0& rho , 
-                          const double eta_prime = 958 ) ;
+      Rho0FromEtaPrime  ( const Gaudi::Math::Rho0& rho   , 
+                          const double eta_prime = 957.7 ) ;
       /// destructor 
       virtual ~Rho0FromEtaPrime () ;
       // ======================================================================
@@ -1518,8 +1633,8 @@ namespace Gaudi
       Flatte  ( const double m0    = 980      , 
                 const double m0g1  = 165*1000 ,  
                 const double g2og1 = 4.21     , 
-                const double mK    = 497      , 
-                const double mPi   = 139      ) ;                
+                const double mK    = 493.7    , 
+                const double mPi   = 139.6    ) ;                
       /// destructor 
       virtual ~Flatte () ;  
       // ======================================================================
@@ -1598,8 +1713,8 @@ namespace Gaudi
       Flatte2  ( const double m0    = 980      , 
                  const double m0g1  = 165*1000 ,  
                  const double g2og1 = 4.21     , 
-                 const double mK    = 497      , 
-                 const double mPi   = 139      ) ;                
+                 const double mK    = 493.7    , 
+                 const double mPi   = 139.6    ) ;                
       /// destructor 
       virtual ~Flatte2 () ;  
       // ======================================================================
@@ -1771,7 +1886,93 @@ namespace Gaudi
                           double    m1    , 
                           double    m2    ) ;
       // ======================================================================
-    } // end of namespace Jackson 
+    } //                                               end of namespace Jackson 
+    // ========================================================================
+    /** @class LASS23L
+     *  simple function to represent the phase 
+     *   space of 2 particles from 3-body decays:
+     *   \f$ f \propto q^{2\ell+1}p^{2L+1}\f$, where
+     *     \f$\ell\f$ is the orbital momentum of the pair of particles, 
+     *    and \f$L\f$ is the orbital momentum between the pair and 
+     *    the third particle. 
+     *   E.g. taking \f$\ell=0, L=1\f$, one can get the S-wave contribution for 
+     *   \f$\pi^+\pi^-\f$-mass from \f$B^0\rightarrowJ/\psi\pi^+\pi^-\f$ decay.
+     *  @author Vanya BELYAEV Ivan.BElyaev@itep.ru
+     *  @date 2012-04-01
+     */
+    class GAUDI_API LASS23L : public std::unary_function<double,double>     
+    {
+      // ======================================================================
+    public:
+      // ======================================================================
+      /** constructor from all masses and angular momenta 
+       *  @param m1 the mass of the first  particle 
+       *  @param m2 the mass of the second particle 
+       *  @param m3 the mass of the third  particle 
+       *  @param m  the mass of the mother particle (m>m1+m2+m3)
+       *  @param L  the angular momentum between the first pair and the third 
+       *  @param a  the LASS parameter 
+       *  @param r  the LASS parameter 
+       */
+      LASS23L ( const double         m1 =  493.7  , 
+                const double         m2 =  139.6  , 
+                const double         m3 = 3097    , 
+                const double         m  = 5278    , 
+                const double         m0 = 1435    , 
+                const double         g0 =  279    ,
+                const unsigned short L  =    1    ,
+                const double         a  = 1.94e-3 , 
+                const double         r  = 1.76e-3 , 
+                const double         e  = 1.0     ) ;
+      /// destructor 
+      virtual ~LASS23L () ;                                     // deststructor 
+      // ======================================================================
+    public:
+      // ====================================================================== 
+      /// get the (complex) LASS amplitude 
+      std::complex<double> amplitude  ( const double x ) const ;
+      /// get the phase space factor 
+      double               phaseSpace ( const double x ) const ;
+      /// evaluate LASS 
+      double operator () ( const double x ) const ;
+      // ====================================================================== 
+    public:
+      // ====================================================================== 
+      bool setM0 ( const double value ) ;
+      bool setG0 ( const double value ) ;
+      bool setA  ( const double value ) ;
+      bool setR  ( const double value ) ;
+      bool setE  ( const double value ) ;
+      // ====================================================================== 
+    public:
+      // ====================================================================== 
+      /// get the integral 
+      double integral () const ;
+      /// get the integral between low and high limits 
+      double integral ( const double low  , 
+                        const double high ) const ;
+      // ====================================================================== 
+    private:
+      // ======================================================================
+      /// the pole position for scalar meson 
+      double   m_m0 ;
+      double   m_g0 ;
+      /// LASS-parameters 
+      double   m_a  ;
+      double   m_r  ;      
+      double   m_e  ;      
+      // ======================================================================
+    private:
+      // ======================================================================
+      /// phase space 
+      Gaudi::Math::PhaseSpace23L m_ps    ;    // phase space 
+      // ======================================================================
+    private:
+      // ======================================================================
+      /// integration workspace 
+      Gaudi::Math::WorkSpace m_workspace ;    // integration workspace 
+      // ======================================================================
+    } ;
     // ========================================================================
   } //                                             end of namespace Gaudi::Math
   // ==========================================================================

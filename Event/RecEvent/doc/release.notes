@@ -4,6 +4,19 @@
 ! Purpose     : LHCb Event model. Reconstruction classes (Brunel output) 
 !-----------------------------------------------------------------------------
 
+!========================= RecEvent v2r42 2012-04-27 =========================
+
+! 2012-04-27 - Chris Jones
+ - Fix a bug in the RecVertex class when a vertex had tracks but no weights.
+
+! 2012-04-26 - Chris Jones
+ - Improvements to the fillStream methods for VertexBase
+ - Change the default initialisation for VertexBase::position from
+   (0,0,-1*km) to (0,0,-100*m) to avoid packing truncation issues.
+
+! 2012-04-12 - Chris Jones
+ - Improvements to the fillStream methods for CaloPosition and CaloHypo
+
 !========================= RecEvent v2r41 2012-03-26 =========================
 ! 2012-03-22 - Chris Jones
  - Include Track pointer in ProtoParticle printout

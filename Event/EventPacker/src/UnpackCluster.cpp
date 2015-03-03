@@ -27,6 +27,8 @@ DECLARE_ALGORITHM_FACTORY( UnpackCluster )
 {
   declareProperty( "InputName" , m_inputName = LHCb::PackedClusterLocation::Default );
   declareProperty( "Extension",  m_extension = "" );
+  declareProperty( "AlwaysCreateOutput", m_alwaysOutput = false );
+  //setProperty( "OutputLevel", 1 );
 }
 
 //=============================================================================
@@ -43,6 +45,10 @@ StatusCode UnpackCluster::execute()
   m_running = true;
   if ( msgLevel(MSG::DEBUG) ) debug() << "==> Execute" << endmsg;
 
+  // If input does not exist, and we aren't making the output regardless, just return
+  if ( !m_alwaysOutput && 
+       !exist<LHCb::PackedClusters>(m_inputName) ) return StatusCode::SUCCESS;
+  
   // If any clusters already exist, return
   if ( exist<LHCb::VeloClusters>(LHCb::VeloClusterLocation::Default+m_extension)  ||
        exist<LHCb::STClusters>  (LHCb::STClusterLocation::TTClusters+m_extension) ||
@@ -62,7 +68,8 @@ StatusCode UnpackCluster::execute()
   put( itClus, LHCb::STClusterLocation::ITClusters + m_extension );
 
   // Get the packed data
-  const LHCb::PackedClusters* dst = get<LHCb::PackedClusters>( m_inputName );
+  const LHCb::PackedClusters* dst =
+    getOrCreate<LHCb::PackedClusters,LHCb::PackedClusters>( m_inputName );
   if ( msgLevel(MSG::DEBUG) )
   {
     debug() << "Size of packed clusters = " << dst->clusters().size() << " clusters" << endmsg;
@@ -90,6 +97,8 @@ StatusCode UnpackCluster::execute()
       bool high = ( id & 0x10 ) != 0;
       const LHCb::VeloLiteCluster vl( vId, frac, size, high );
       LHCb::VeloCluster* vCl = new LHCb::VeloCluster( vl, adcs );
+      if ( msgLevel(MSG::VERBOSE) )
+        verbose() << " Unpacked " << vCl->channelID() << endmsg;
       vClus->insert( vCl, vCl->channelID() );
     } 
     else if ( 2 == det || 3 == det )
@@ -115,6 +124,8 @@ StatusCode UnpackCluster::execute()
         {
           itClus->insert( sCl, sCl->channelID() );
         }
+        if ( msgLevel(MSG::VERBOSE) )
+          verbose() << " Unpacked " << sCl->channelID() << endmsg;
       } 
       else 
       {

@@ -6,6 +6,25 @@
 !               All headers included in directory LHCbMath
 !-----------------------------------------------------------------------------
 
+!========================= LHCbMath v3r30 2012-05-02 =========================
+! 2012-04-29 - Vanya Belyaev
+ - minor polishing 
+
+! 2012-04-28 - Vanya Belyaev
+ - fix Bifurcated gaussian,
+   extend the generic solution for Chi2-problem,
+   add the dictionary
+   extend random-module with asymmetric gaussian 
+
+! 2012-04-27 - Vanya Belyaev
+ - add generic solved for N-dimensional Chi2-problem with R-constraint
+
+! 2012-04-02 - Vanya Belyaev
+ - add LASS shape for S-wave Kpi 
+
+! 2012-04-01 - Vanya Belyaev
+ - add phase space function for 2-from-3 decays with orbital momentum
+
 !========================= LHCbMath v3r29 2012-01-31 =========================
 ! 2012-01-18 - Vanya Belyaev
  - minor fix in Gaudi::Math::trace function 

@@ -1,4 +1,4 @@
-// $Id: ValueWithError.h 126089 2011-07-17 09:56:22Z ibelyaev $
+// $Id: ValueWithError.h 139291 2012-04-29 16:09:19Z ibelyaev $
 // ============================================================================
 #ifndef LHCBMATH_ERRORS_H 
 #define LHCBMATH_ERRORS_H 1
@@ -488,6 +488,48 @@ namespace Gaudi
     inline bool isgood   ( const ValueWithError& v ) { return v.isgood   () ; }    
     /// check for goodness 
     inline bool good     ( const ValueWithError& v ) { return v.good     () ; }    
+    // ========================================================================    
+    /** simple linear interpolation 
+     *  @param  x  the point to evaluate the function 
+     *  @param  x0 the abscissa for the first  point
+     *  @param  y0 the function value for the first  point
+     *  @param  x1 the abscissa for the second point
+     *  @param  y1 the function value for the second point
+     *  @return linear interpolation at point x
+     */
+    GAUDI_API 
+    ValueWithError interpolate_1D 
+    ( const double          x  , 
+      const double          x0 ,
+      const ValueWithError& y0 , 
+      const double          x1 ,
+      const ValueWithError& y1 ) ;    
+    // ========================================================================
+    /** simple (bi)linear interpolation 
+     *  @param x  the x-coordiate to evaluate the function 
+     *  @param y  the y-coordiate to evaluate the function 
+     *  @param x0 the x-coordinate for the first  pair of points
+     *  @param x1 the x-coordinate for the second pair of points
+     *  @param y0 the y-coordinate for the first  pair of points
+     *  @param y1 the y-coordinate for the second pair of points
+     *  @param v00 the function value 
+     *  @param v01 the function value 
+     *  @param v10 the function value 
+     *  @param v11 the function value 
+     *  @return bilinear interpolation at point (x,y)
+     */
+    GAUDI_API 
+    ValueWithError interpolate_2D 
+    ( const double          x   , 
+      const double          y   , 
+      const double          x0  ,
+      const double          x1  ,
+      const double          y0  ,
+      const double          y1  ,
+      const ValueWithError& v00 , 
+      const ValueWithError& v01 , 
+      const ValueWithError& v10 , 
+      const ValueWithError& v11 ) ;
     // ========================================================================    
   } //                                             end of namespace Gaudi::Math 
   // ==========================================================================

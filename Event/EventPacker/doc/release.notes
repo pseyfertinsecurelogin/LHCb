@@ -4,6 +4,33 @@
 ! Purpose     : Pack and unpack events classes for smaller events
 !-----------------------------------------------------------------------------
 
+!========================= EventPacker v2r16 2012-04-27 =========================
+
+! 2012-04-26 - Chris Jones
+ - Protect UnpackCluster against the possibility that the packed clusters 
+   are missing
+ - Add protection in PackDecReport in case the packer tries to repack existing
+   reports. Needed for the use case of creating a packed private (u)DST from an
+   already packed (u)DST
+
+! 2012-04-23 - Chris Jones
+ - Fix a few more untested StatusCodes
+
+! 2012-04-18 - Marco Cattaneo
+ - Fix untested StatusCodes
+ - Packers return Error if they fail to unregister data when requested in options
+
+! 2012-04-12 - Chris Jones
+ - Improvements to the packers, adding an option to allow checking of the 
+   packing to be done directly by the packing algorithms.
+
+! 2012-03-30 - Chris Jones
+ - Add support for packing CaloClusters.
+ - Clean up CaloHypo packing and unpacking
+
+! 2012-03-29 - Chris Jones
+ - Small change to how duplicate LHCbIDs are removed in PackCluster
+
 !========================= EventPacker v2r15 2012-03-27 =========================
 
 ! 2012-03-27 - Chris Jones
@@ -24,7 +51,7 @@
 
 !========================= EventPacker v2r13 2012-03-14 =========================
 ! 2012-03-06 - Olivier Callot
- - New algorithmc PackCluster and UnpackCluster. Thefirst one process a container
+ - New algorithmc PackCluster and UnpackCluster. The first one process a container
    of track and store in a PackedCluster container the Velo + ST clusters. Input
    and output names controlled as usual by InputName and OutputName.
    UnpackCluster generate the Velo and  ST cluster containers from the PackedCluster

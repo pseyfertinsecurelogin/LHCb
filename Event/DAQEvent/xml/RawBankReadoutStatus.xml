@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<!--- $Id: -->
 <!--- Author  : Marco Clemencic -->
 <!--- Created : 2006-09-22 -->
 
@@ -16,7 +15,7 @@
       >
       
 
-       <location name = "Default"   place = "DAQ/Status" />
+       <location name = "Default"   place = "Transient/DAQ/Status" />
 
       <enum
         name   = 'Status'
@@ -35,7 +34,7 @@
         MissingStatus = 512,  
         BadMagicPattern  = 1024,
         DuplicateEntry   = 2048,
-        Unknown    = 5096 ' 
+        Unknown    = 4096 ' 
         access = 'PUBLIC' />
       <!-- 'Unknown' MUST BE THE LAST ITEM -->
 

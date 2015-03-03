@@ -1,4 +1,3 @@
-// $Id: PackedParticle.cpp,v 1.3 2010-05-19 09:04:08 jonrob Exp $
 
 // local
 #include "Event/PackedParticle.h"
@@ -15,7 +14,7 @@ void ParticlePacker::pack( const Data & part,
                            PackedData & ppart,
                            PackedDataVector & pparts ) const
 {
-  if ( 0 == pparts.packingVersion()  )
+  if ( 1 == pparts.packingVersion() )
   {
 
     // Particle ID
@@ -26,12 +25,9 @@ void ParticlePacker::pack( const Data & part,
     ppart.measMassErr = m_pack.mass( part.measuredMassErr() );
 
     // Lorentz vector
-    const double px = part.momentum().px();
-    const double py = part.momentum().py();
-    const double pz = part.momentum().pz();
-    ppart.lv_px = m_pack.slope( fabs(pz) > 0 ? px/pz : 0.0 );
-    ppart.lv_py = m_pack.slope( fabs(pz) > 0 ? py/pz : 0.0 );
-    ppart.lv_pz = m_pack.energy( pz );
+    ppart.lv_px = m_pack.energy( part.momentum().px() );
+    ppart.lv_py = m_pack.energy( part.momentum().py() );
+    ppart.lv_pz = m_pack.energy( part.momentum().pz() );
     ppart.lv_mass = (float) part.momentum().M() ;
 
     // reference point
@@ -44,8 +40,8 @@ void ParticlePacker::pack( const Data & part,
     const double merr11 = std::sqrt( part.momCovMatrix()(1,1) );
     const double merr22 = std::sqrt( part.momCovMatrix()(2,2) );
     const double merr33 = std::sqrt( part.momCovMatrix()(3,3) );
-    ppart.momCov00 = m_pack.slope( merr00/px );
-    ppart.momCov11 = m_pack.slope( merr11/py );
+    ppart.momCov00 = m_pack.energy( merr00 );
+    ppart.momCov11 = m_pack.energy( merr11 );
     ppart.momCov22 = m_pack.energy( merr22 );
     ppart.momCov33 = m_pack.energy( merr33 );
     ppart.momCov10 = m_pack.fraction( part.momCovMatrix()(1,0) / (merr11*merr00) );
@@ -159,23 +155,29 @@ void ParticlePacker::unpack( const PackedData       & ppart,
                              const PackedDataVector & pparts,
                              DataVector             & parts ) const
 {
-  if ( 0 == pparts.packingVersion() )
+  if ( 0 == pparts.packingVersion() ||
+       1 == pparts.packingVersion() )
   {
+    const bool isVZero = ( 0 == pparts.packingVersion() );
 
     // particle ID
     part.setParticleID( LHCb::ParticleID(ppart.particleID) );
 
     // Mass and error
-    part.setMeasuredMass   ( m_pack.mass(ppart.measMass) );
+    part.setMeasuredMass   ( m_pack.mass(ppart.measMass)    );
     part.setMeasuredMassErr( m_pack.mass(ppart.measMassErr) );
 
     // Lorentz momentum vector
-    const double pz   = m_pack.energy( ppart.lv_pz );
-    const double px   = m_pack.slope( ppart.lv_px ) * pz;
-    const double py   = m_pack.slope( ppart.lv_py ) * pz;
+    const double pz = m_pack.energy( ppart.lv_pz );
+    const double px = ( isVZero ? 
+                        m_pack.slope ( ppart.lv_px ) * pz :
+                        m_pack.energy( ppart.lv_px ) );
+    const double py = ( isVZero ? 
+                        m_pack.slope ( ppart.lv_py ) * pz :
+                        m_pack.energy( ppart.lv_py ) );
     const double mass = ppart.lv_mass;
-    part.setMomentum( Gaudi::LorentzVector( px, py, pz,
-                                            std::sqrt(px*px+py*py+pz*pz+mass*mass) ) );
+    const double E    = std::sqrt( (px*px) + (py*py) + (pz*pz) + (mass*mass) );
+    part.setMomentum( Gaudi::LorentzVector( px, py, pz, E ) );
 
     // reference point
     part.setReferencePoint( Gaudi::XYZPoint( m_pack.position(ppart.refx),
@@ -184,8 +186,12 @@ void ParticlePacker::unpack( const PackedData       & ppart,
 
     // Mom Cov
     Gaudi::SymMatrix4x4 & momCov = *(const_cast<Gaudi::SymMatrix4x4*>(&part.momCovMatrix()));
-    const double merr00 = m_pack.slope( ppart.momCov00 ) * px;
-    const double merr11 = m_pack.slope( ppart.momCov11 ) * py;
+    const double merr00 = ( isVZero ? 
+                            m_pack.slope ( ppart.momCov00 ) * px :
+                            m_pack.energy( ppart.momCov00 ) );
+    const double merr11 = ( isVZero ? 
+                            m_pack.slope ( ppart.momCov11 ) * py :
+                            m_pack.energy( ppart.momCov11 ) );
     const double merr22 = m_pack.energy( ppart.momCov22 );
     const double merr33 = m_pack.energy( ppart.momCov33 );
     momCov(0,0) = std::pow( merr00, 2 );
@@ -255,7 +261,7 @@ void ParticlePacker::unpack( const PackedData       & ppart,
     for ( unsigned int iiD = ppart.firstDaughter; iiD < ppart.lastDaughter; ++iiD )
     {
       int hintID(0), key(0);
-      m_pack.hintAndKey64( pparts.daughters()[iiD], 
+      m_pack.hintAndKey64( pparts.daughters()[iiD],
                            &pparts, &parts, hintID, key );
       SmartRef<LHCb::Particle> ref(&parts,hintID,key);
       part.addToDaughters( ref );
@@ -291,113 +297,136 @@ void ParticlePacker::unpack( const PackedDataVector & pparts,
 }
 
 StatusCode ParticlePacker::check( const DataVector & dataA,
-                                  const DataVector & dataB,
-                                  GaudiAlgorithm & parent ) const
+                                  const DataVector & dataB ) const
 {
   StatusCode sc = StatusCode::SUCCESS;
-
-  // checker
-  const DataPacking::DataChecks ch(parent);
 
   // Loop over data containers together and compare
   DataVector::const_iterator iA(dataA.begin()), iB(dataB.begin());
   for ( ; iA != dataA.end() && iB != dataB.end(); ++iA, ++iB )
   {
-    // assume OK from the start
-    bool ok = true;
-
-    // checks here
-
-    // PID
-    ok &= (*iA)->particleID() == (*iB)->particleID();
-
-    // Mass
-    ok &= ch.compareDoubles( "MeasuredMass",
-                             (*iA)->measuredMass(), (*iB)->measuredMass() );
-    ok &= ch.compareDoubles( "MeasuredMassError",
-                             (*iA)->measuredMassErr(), (*iB)->measuredMassErr() );
-
-    // momentum
-    ok &= ch.compareLorentzVectors( "Momentum",
-                                    (*iA)->momentum(), (*iB)->momentum() );
-
-    // reference position
-    ok &= ch.comparePoints( "ReferencePoint",
-                            (*iA)->referencePoint(), (*iB)->referencePoint() );
-
-    // Mom Cov
-    ok &= ch.compareMatrices<Gaudi::SymMatrix4x4,4,4>( "MomCov",
-                                                       (*iA)->momCovMatrix(),
-                                                       (*iB)->momCovMatrix() );
-
-    // Pos Cov
-    ok &= ch.compareMatrices<Gaudi::SymMatrix3x3,3,3>( "PosCov",
-                                                       (*iA)->posCovMatrix(),
-                                                       (*iB)->posCovMatrix() );
-
-    // PosMom Cov
-    ok &= ch.compareMatrices<Gaudi::Matrix4x3,4,3>( "PosMomCov",
-                                                    (*iA)->posMomCovMatrix(),
-                                                    (*iB)->posMomCovMatrix() );
-
-    // Extra info
-    const bool extraSizeOK = (*iA)->extraInfo().size() == (*iB)->extraInfo().size();
-    ok &= extraSizeOK;
-    if ( extraSizeOK )
-    {
-      LHCb::Particle::ExtraInfo::const_iterator iEA = (*iA)->extraInfo().begin();
-      LHCb::Particle::ExtraInfo::const_iterator iEB = (*iB)->extraInfo().begin();
-      for ( ; iEA != (*iA)->extraInfo().end() && iEB != (*iB)->extraInfo().end();
-            ++iEA, ++iEB )
-      {
-        const bool keyOK   = iEA->first == iEB->first;
-        const bool valueOK = ch.compareDoubles( "ExtraInfo", iEA->second, iEB->second );
-        ok &= keyOK && valueOK;
-      }
-    }
-    else
-    {
-      parent.warning() << "ExtraInfo different sizes" << endmsg;
-    }
-
-    // end vertex
-    ok &= ch.comparePointers( "EndVertex", (*iA)->endVertex(), (*iB)->endVertex() );
-
-    // proto particle
-    ok &= ch.comparePointers( "ProtoParticle", (*iA)->proto(), (*iB)->proto() );
-
-    // daughters
-    const bool dauSizeOK = (*iA)->daughters().size() == (*iB)->daughters().size();
-    ok &= dauSizeOK;
-    if ( dauSizeOK )
-    {
-      SmartRefVector<LHCb::Particle>::const_iterator iDA = (*iA)->daughters().begin();
-      SmartRefVector<LHCb::Particle>::const_iterator iDB = (*iB)->daughters().begin();
-      for ( ; iDA != (*iA)->daughters().end() && iDB != (*iB)->daughters().end();
-            ++iDA, ++iDB )
-      {
-        ok &= ch.comparePointers( "Daughters", &**iDA, &**iDB );
-      }
-    }
-    else
-    {
-      parent.warning() << "Daughters different sizes" << endmsg;
-    }
-
-    // force printout for tests
-    //ok = false;
-    // If comparison not OK, print full information
-    if ( !ok )
-    {
-      parent.warning() << "Problem with Particle data packing :-" << endmsg
-                       << "  Original Particle : " << **iA
-                       << endmsg
-                       << "  Unpacked Particle : " << **iB
-                       << endmsg;
-      sc = StatusCode::FAILURE;
-    }
+    sc = sc && check( **iA, **iB );
   }
 
   // Return final status
   return sc;
+}
+
+StatusCode ParticlePacker::check( const Data & dataA,
+                                  const Data & dataB ) const
+{
+  // assume OK from the start
+  bool ok = true;
+
+  // checker
+  const DataPacking::DataChecks ch(parent());
+
+  // checks here
+
+  // PID
+  ok &= dataA.particleID() == dataB.particleID();
+
+  // Mass
+  ok &= ch.compareEnergies( "MeasuredMass",
+                            dataA.measuredMass(), dataB.measuredMass() );
+
+  ok &= ch.compareEnergies( "MeasuredMassError",
+                            dataA.measuredMassErr(), dataB.measuredMassErr() );
+
+  // momentum
+  ok &= ch.compareLorentzVectors( "Momentum",
+                                  dataA.momentum(), dataB.momentum() );
+
+  // reference position
+  ok &= ch.comparePoints( "ReferencePoint",
+                          dataA.referencePoint(), dataB.referencePoint() );
+
+  // Mom Cov
+  const boost::array<double,4> tolDiagMomCov = {{ 5.0e-3, 5.0e-3, 5.0e-3, 5.0e-3 }};
+  ok &= ch.compareCovMatrices<Gaudi::SymMatrix4x4,4>( "MomCov",
+                                                      dataA.momCovMatrix(),
+                                                      dataB.momCovMatrix(),
+                                                      tolDiagMomCov, 2.0e-5 );
+
+  // Pos Cov
+  const boost::array<double,3> tolDiagPosCov = {{ 5.0e-3, 5.0e-3, 5.0e-3 }};
+  ok &= ch.compareCovMatrices<Gaudi::SymMatrix3x3,3>( "PosCov",
+                                                      dataA.posCovMatrix(),
+                                                      dataB.posCovMatrix(),
+                                                      tolDiagPosCov, 2.0e-5 );
+
+  // PosMom Cov
+  ok &= ch.compareMatrices<Gaudi::Matrix4x3,4,3>( "PosMomCov",
+                                                  dataA.posMomCovMatrix(),
+                                                  dataB.posMomCovMatrix() );
+
+  // Extra info
+  const bool extraSizeOK = dataA.extraInfo().size() == dataB.extraInfo().size();
+  ok &= extraSizeOK;
+  if ( extraSizeOK )
+  {
+    LHCb::Particle::ExtraInfo::const_iterator iEA = dataA.extraInfo().begin();
+    LHCb::Particle::ExtraInfo::const_iterator iEB = dataB.extraInfo().begin();
+    for ( ; iEA != dataA.extraInfo().end() && iEB != dataB.extraInfo().end();
+          ++iEA, ++iEB )
+    {
+      std::ostringstream mess;
+      mess << "ExtraInfo:" << (LHCb::Particle::additionalInfo)iEA->first;
+      const bool keyOK   = iEA->first == iEB->first;
+      if ( !keyOK ) parent().warning() << mess << " Different Keys" << endmsg;
+      ok &= keyOK;
+      const double relTol = 1.0e-3;
+      double tol = relTol * fabs(iEA->second);
+      if ( tol < relTol ) tol = relTol;
+      const bool valueOK = ch.compareDoubles( mess.str(),
+                                              iEA->second, iEB->second,
+                                              tol );
+      ok &= valueOK;
+    }
+  }
+  else
+  {
+    parent().warning() << "ExtraInfo has different sizes" << endmsg;
+  }
+
+  // end vertex
+  ok &= ch.comparePointers( "EndVertex", dataA.endVertex(), dataB.endVertex() );
+
+  // proto particle
+  ok &= ch.comparePointers( "ProtoParticle", dataA.proto(), dataB.proto() );
+
+  // daughters
+  const bool dauSizeOK = dataA.daughters().size() == dataB.daughters().size();
+  ok &= dauSizeOK;
+  if ( dauSizeOK )
+  {
+    SmartRefVector<LHCb::Particle>::const_iterator iDA = dataA.daughters().begin();
+    SmartRefVector<LHCb::Particle>::const_iterator iDB = dataB.daughters().begin();
+    for ( ; iDA != dataA.daughters().end() && iDB != dataB.daughters().end();
+          ++iDA, ++iDB )
+    {
+      ok &= ch.comparePointers( "Daughters", &**iDA, &**iDB );
+    }
+  }
+  else
+  {
+    parent().warning() << "Daughters different sizes" << endmsg;
+  }
+
+  // force printout for tests
+  //ok = false;
+  // If comparison not OK, print full information
+  if ( !ok )
+  {
+    const std::string loc = ( dataA.parent() && dataA.parent()->registry() ?
+                              dataA.parent()->registry()->identifier() : "Not in TES" );
+    parent().warning() << "Problem with Particle data packing :-" << endmsg
+                       << "  Original Particle key=" << dataA.key() 
+                       << " in '" << loc << "'" << endmsg
+                       << dataA << endmsg
+                       << "  Unpacked Particle" << endmsg
+                       << dataB << endmsg;
+  }
+
+  return ( ok ? StatusCode::SUCCESS : StatusCode::FAILURE );
 }

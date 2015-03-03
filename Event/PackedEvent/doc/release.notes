@@ -1,8 +1,43 @@
 !-----------------------------------------------------------------------------
 ! Package     : Event/PackedEvent
-! Responsible : Olivier Callot
+! Responsible : Olivier Callot, Chris Jones
 ! Purpose     : Pack, Unpack and Compare containers for optimized persistency
 !-----------------------------------------------------------------------------
+
+!========================= PackedEvent v4r10 2012-04-28 =========================
+
+! 2012-04-28 - Chris Jones
+ - Some more tune tuning of the packing checks. 
+ - Add the object key to and warnings that are issued.
+
+! 2012-04-27 - Chris Jones
+ - Some final fine tuning of the packing checks, to removal some residual
+   warnings from LorentzVector energy checks.
+
+! 2012-04-24 - Chris Jones
+ - Improvements to the checks of Particle packing, to remove some false
+   positives when comparing the momentum covariance matrix.
+ - Change the 'mass' check for LorentzVectors to energy, to avoid machine 
+   precision issues with comparsions of small differences of large numbers.
+
+! 2012-04-23 - Chris Jones
+ - New version of the Particle packing, to (try) and fix consistency problems.
+ - Improve the CaloCluster checking to avoid some false positives.
+ - Print the TES location of Particles and Vertices with packing problems.
+
+! 2012-04-12 - Chris Jones
+ - Various improvements to the packers, to improve the way the checks are 
+   implemented. Allows the checking to be run directly by the packing algorithms.
+
+! 2012-04-04 - Chris Jones
+ - Fix gcc 4.6 warning in PackedCaloCluster
+
+! 2012-04-01 - Chris Jones
+ - Improve checks for PackedCaloCluster
+ - Clean up PackedCaloHypo class
+
+! 2012-03-30 - Chris Jones
+ - Add a new PackedCaloCluster class
 
 !========================= PackedEvent v4r9p1 2012-03-27 =========================
 
