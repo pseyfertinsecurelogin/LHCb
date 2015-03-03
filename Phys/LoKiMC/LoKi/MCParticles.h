@@ -1,4 +1,4 @@
-// $Id: MCParticles.h,v 1.22 2010-02-10 17:36:38 ibelyaev Exp $
+// $Id: MCParticles.h,v 1.24 2010-02-18 14:18:51 ibelyaev Exp $
 // ============================================================================
 #ifndef LOKI_MCPARTICLES_H 
 #define LOKI_MCPARTICLES_H 1
@@ -402,12 +402,14 @@ namespace LoKi
       : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Function
     { 
     public:
+      // ======================================================================
       /// clone method (mandatory!)
       virtual ProperLifeTime* clone() const ;
       /// the only one essential method 
       result_type operator() ( argument p ) const ;
       /// "SHORT" representation, @see LoKi::AuxFunBase 
       virtual  std::ostream& fillStream( std::ostream& s ) const ;      
+      // ======================================================================
     };
     // ========================================================================    
     /** @class HasQuark 
@@ -420,6 +422,7 @@ namespace LoKi
       : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate
     {
     public:
+      // ======================================================================
       HasQuark (  const LHCb::ParticleID::Quark quark ) ;
       // copy constructor 
       HasQuark (  const HasQuark& right ) ;
@@ -431,10 +434,15 @@ namespace LoKi
       virtual  std::ostream& fillStream( std::ostream& s ) const ;      
       //
       LHCb::ParticleID::Quark quark() const { return m_quark ; }
+      // ======================================================================
     private:
+      // ======================================================================
       HasQuark();
+      // ======================================================================
     private :
+      // ======================================================================
       LHCb::ParticleID::Quark m_quark ;
+      // ======================================================================
     };
     // ========================================================================    
     /** @class IsCharged
@@ -463,12 +471,14 @@ namespace LoKi
       : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate
     {
     public:
+      // ======================================================================
       /// clone method (mandatory!)
       virtual IsNeutral* clone() const ;
       /// the only one essential method 
       result_type operator() ( argument p ) const ;
       /// "SHORT" representation, @see LoKi::AuxFunBase 
       virtual  std::ostream& fillStream( std::ostream& s ) const ;      
+      // ======================================================================
     };
     // ========================================================================    
     /** @class IsLepton
@@ -480,12 +490,14 @@ namespace LoKi
       : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate
     {
     public:
+      // ======================================================================
       /// clone method (mandatory!)
       virtual IsLepton* clone() const ;
       /// the only one essential method 
       result_type operator() ( argument p ) const ;
       /// "SHORT" representation, @see LoKi::AuxFunBase 
       virtual  std::ostream& fillStream( std::ostream& s ) const ;      
+      // ======================================================================
     };
     // ========================================================================    
     /** @class IsMeson
@@ -496,12 +508,14 @@ namespace LoKi
     class IsMeson : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate
     {
     public:
+      // ======================================================================
       /// clone method (mandatory!)
       virtual IsMeson* clone() const ;
       /// the only one essential method 
       result_type operator() ( argument p ) const ;
       /// "SHORT" representation, @see LoKi::AuxFunBase 
       virtual  std::ostream& fillStream( std::ostream& s ) const ;      
+      // ======================================================================
     };
     // ========================================================================    
     /** @class IsBaryon
@@ -513,12 +527,14 @@ namespace LoKi
       : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate
     {
     public:
+      // ======================================================================
       /// clone method (mandatory!)
       virtual IsBaryon* clone() const ;
       /// the only one essential method 
       result_type operator() ( argument p ) const ;
       /// "SHORT" representation, @see LoKi::AuxFunBase 
       virtual  std::ostream& fillStream( std::ostream& s ) const ;      
+      // ======================================================================
     };
     // ========================================================================    
     /** @class IsHadron
@@ -607,7 +623,9 @@ namespace LoKi
       result_type operator() ( argument p ) const ;
       /// "SHORT" representation, @see LoKi::AuxFunBase 
       virtual  std::ostream& fillStream( std::ostream& s ) const ;      
+      // ======================================================================
     public: 
+      // ======================================================================
       /** the add MCparticle into the list of tested particles 
        *  @param p pointe to the particle 
        *  @return status code 
@@ -630,7 +648,7 @@ namespace LoKi
           if ( code.isFailure() ) { sc = code ; }
         } 
         return sc ;
-      };
+      }
       /** remove LHCb::MCParticle from the list of tested LHCb::MCParticles 
        *  @param p pointe to the LHCb::MCParticle 
        *  @return status code 
@@ -663,15 +681,98 @@ namespace LoKi
       { 
         m_cont.clear() ;
         return add ( first , last ) ;
-      };
+      }
+      // ======================================================================
     private:
+      // ======================================================================
       FromMCDecayTree();
+      // ======================================================================
     private:
+      // ======================================================================
       MCCont m_cont ;
+      // ======================================================================
+    };
+    // ========================================================================    
+    /** @class InAncestors 
+     *  Simple predicate to check certain cut for ancestors (recursive) 
+     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+     *  @see LoKi::Cuts::MCINANCESTORS 
+     *  @date 2010-02-16
+     */
+    class InAncestors 
+      : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate
+    {
+    public:
+      // ======================================================================
+      /// constructor from the predicate 
+      InAncestors ( const LoKi::MCTypes::MCCuts& cut ) ;
+      /// MANDATORY: virtual destructor 
+      virtual ~InAncestors() ;
+      /// MANDATORY: clone method ("virtual constructor")
+      virtual  InAncestors* clone() const ;
+      /// MANDATORY: the only one important method 
+      virtual result_type operator() ( argument p ) const ;
+      /// OPTIONAL: "SHORT" representation
+      virtual  std::ostream& fillStream( std::ostream& s ) const ;      
+      // ======================================================================
+    private:
+      // ======================================================================
+      /// the defautl constructor is disabled 
+      InAncestors () ;                  // the default constructor is disabled
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// the actual evaluator 
+      bool inAncestors ( const LHCb::MCParticle* p ) const ;
+      // ======================================================================
+    private:
+      // ======================================================================
+      /// the actual predicate 
+      LoKi::MCTypes::MCCut m_cut ;                      // the actual predicate 
+      // ======================================================================
+    };
+    // ========================================================================    
+    /** @class NinAncestors 
+     *  Simple functor for count the certain cut for ancestors (recursive) 
+     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+     *  @see LoKi::Cuts::MCNINANCESTORS 
+     *  @date 2010-02-16
+     */
+    class NinAncestors 
+      : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Function
+    {
+    public:
+      // ======================================================================
+      /// constructor from the predicate 
+      NinAncestors ( const LoKi::MCTypes::MCCuts& cut ) ;
+      /// MANDATORY: virtual destructor 
+      virtual ~NinAncestors() ;
+      /// MANDATORY: clone method ("virtual constructor")
+      virtual  NinAncestors* clone() const ;
+      /// MANDATORY: the only one important method 
+      virtual result_type operator() ( argument p ) const ;
+      /// OPTIONAL: "SHORT" representation
+      virtual  std::ostream& fillStream( std::ostream& s ) const ;      
+      // ======================================================================
+    private:
+      // ======================================================================
+      /// the defautl constructor is disabled 
+      NinAncestors () ;                  // the default constructor is disabled
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// the actual evaluator 
+      int nInAncestors ( const LHCb::MCParticle* p ) const ;
+      // ======================================================================
+    private:
+      // ======================================================================
+      /// the actual predicate 
+      LoKi::MCTypes::MCCut m_cut ;                      // the actual predicate 
+      // ======================================================================
     };
     // ========================================================================    
     /** @class NinMCdownTree 
-     *  Simple function to count teh appearence 
+     *  Simple function to count the appearence 
      *  of predicate over the decay tree (down!)
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date   2004-11-17 
@@ -768,9 +869,12 @@ namespace LoKi
       virtual result_type operator() ( argument p ) const ;
       /// "SHORT" representation, @see LoKi::AuxFunBase 
       virtual  std::ostream& fillStream( std::ostream& s ) const ;      
+      // ======================================================================
     private:
+      // ======================================================================
       bool                 m_val ;
       LoKi::MCTypes::MCCut m_cut ;
+      // ======================================================================
     };
     // ========================================================================    
     /** @class IsParticle
@@ -862,7 +966,7 @@ namespace LoKi
         OBJECT end   ) 
         : LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate() 
         , m_objects ( begin , end ) 
-      {};
+      {}
       /** copy constructor
        *  @param right  object to be copied 
        */
@@ -1078,6 +1182,7 @@ namespace LoKi
     class DeltaEta : public PseudoRapidity
     {
     public:
+      // ======================================================================
       /// constructor from the eta
       DeltaEta ( const double eta ) ;
       /// constructor from the vector 
@@ -1836,6 +1941,7 @@ namespace LoKi
     class MinTree : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Function
     {
     public:
+      // ======================================================================
       /** standard constructor 
        *  @param fun the function to be evaluated 
        *  @param cut cut to be applied 
@@ -1870,14 +1976,19 @@ namespace LoKi
       virtual  result_type   operator() ( argument p ) const ;
       /// OPTIONAL: the specific printout 
       virtual std::ostream& fillStream( std::ostream& s ) const ;
+      // ======================================================================
     private:
+      // ======================================================================
       // the default constructor is disabled 
       MinTree() ; ///< the default constructor is disabled 
+      // ======================================================================
     private:
+      // ======================================================================
       LoKi::MCTypes::MCFun m_fun       ;
       LoKi::MCTypes::MCCut m_cut       ;
       bool                 m_decayOnly ;
       double               m_res       ;
+      // ======================================================================
     };
     // ========================================================================    
     /** @class MaxTree
@@ -2047,9 +2158,74 @@ namespace LoKi
       // ======================================================================
     };
     // ========================================================================
-  } // end of namespace LHCb::MCParticles
+    /** @classFromDecays 
+     *  simple predicate to check if the particle comes only form 'decays'
+     *  using LHCb::MCVertex::MCVertexType 
+     *  @see LHCb::MCVertex 
+     *  @see LHCb::MCVertex::MCVertexType 
+     *  The functor return true, if all valid "mother" vertices
+     *  are of type: 
+     *
+     *     - LHCb::MCVertex::DecayVertex and 
+     *     - LHCb::MCVertex::OscillatedAndDecay
+     *     - LHCb::MCVertex::ppCollision
+     *
+     *  @see LoKi::Cuts::MCFROMDECAYS
+     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+     *  @date 2010-02-18
+     */
+    class FromDecays 
+      : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate
+    {
+    public:
+      // ======================================================================
+      /// MANDATORY: virtual destructor 
+      virtual ~FromDecays() ;
+      /// MANDATORY: clone method ("virtual constructor")
+      virtual  FromDecays* clone() const ;
+      /// MANDATORY: the only one essential method
+      virtual result_type operator() ( argument p ) const ;
+      /// OPTIONAL: the nice printout
+      virtual std::ostream& fillStream ( std::ostream& s ) const ;      
+      // ======================================================================
+    } ;
+    // ========================================================================
+    /** @class FromInteractions
+     *  simple predicate to check if the particle comes from 'interactions'
+     *  using LHCb::MCVertex::MCVertexType 
+     *
+     *  @see LHCb::MCVertex 
+     *  @see LHCb::MCVertex::MCVertexType 
+     *
+     *  The functor return true, if at least one 'mother' vertex
+     *  is not of the type:
+     *
+     *     - LHCb::MCVertex::DecayVertex and 
+     *     - LHCb::MCVertex::OscillatedAndDecay
+     *     - LHCb::MCVertex::ppCollision
+     *
+     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+     *  @date 2010-02-18
+     */
+    class FromInteractions 
+      : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate
+    {
+    public:
+      // ======================================================================
+      /// MANDATORY: virtual destructor 
+      virtual ~FromInteractions () ;
+      /// MANDATORY: clone method ("virtual constructor")
+      virtual  FromInteractions* clone() const ;
+      /// MANDATORY: the only one essential method
+      virtual result_type operator() ( argument p ) const ;
+      /// OPTIONAL: the nice printout
+      virtual std::ostream& fillStream ( std::ostream& s ) const ;      
+      // ======================================================================
+    } ;
+    // ========================================================================
+  } //                                       end of namespace LHCb::MCParticles
   // ==========================================================================
-} // end of namespace LoKi
+} //                                                      end of namespace LoKi
 // ============================================================================
 // The END 
 // ============================================================================

@@ -1,4 +1,4 @@
-// $Id: LHCbKernelDict.h,v 1.19 2009-12-04 13:07:06 graven Exp $
+// $Id: LHCbKernelDict.h,v 1.21 2010-02-15 21:20:08 cattanem Exp $
 #ifndef DICT_LHCBKERNELDICT_H 
 #define DICT_LHCBKERNELDICT_H 1
 

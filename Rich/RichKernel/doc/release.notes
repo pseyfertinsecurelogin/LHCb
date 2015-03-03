@@ -1,8 +1,15 @@
-! $Id: release.notes,v 1.254 2010-02-12 17:17:31 cattanem Exp $
+! $Id: release.notes,v 1.255 2010-02-12 17:18:13 cattanem Exp $
 ! Package     : Rich/RichKernel
 ! Responsible : Chris Jones
 ! Purpose     : General purpose RICH classes
 !-----------------------------------------------------------------------
+
+!====================== RichKernel v7r31 2010-02-24 ====================
+! 2010-02-16 - Chris Jones
+ - Improvements to RichHistogramID full IDs and histogram titles
+
+! 2010-02-12 - Chris Jones
+ - CPU optimisation of the previous commit, to speed up histogram lookup.
 
 !====================== RichKernel v7r30 2010-02-12 ====================
 ! 2010-02-11 - Chris Jones

@@ -1,4 +1,4 @@
-// $Id: MCParticleCuts.h,v 1.14 2010-02-10 17:36:38 ibelyaev Exp $
+// $Id: MCParticleCuts.h,v 1.16 2010-02-18 14:18:51 ibelyaev Exp $
 // ============================================================================
 #ifndef LOKI_MCPARTICLECUTS_H 
 #define LOKI_MCPARTICLECUTS_H 1
@@ -28,6 +28,7 @@
 // ============================================================================
 namespace LoKi
 {
+  // ==========================================================================
   namespace Cuts
   {   
     // ========================================================================
@@ -626,6 +627,62 @@ namespace LoKi
      */
     const LoKi::MCParticles::PseudoRapidity                             MCETA ;
     // ========================================================================
+    /** @var MCFROMDECAYS 
+     *  Simple predicate to check if particle comes from "decays"
+     *  using LHCb::MCVertex::MCVertexType 
+     *
+     *  @see LHCb::MCVertex 
+     *  @see LHCb::MCVertex::MCVertexType 
+     *
+     *  The functor return true, if all valid "mother" vertices
+     *  are of type: 
+     *
+     *     - LHCb::MCVertex::DecayVertex and 
+     *     - LHCb::MCVertex::OscillatedAndDecay
+     *     - LHCb::MCVertex::ppCollision
+     *
+     *  @code 
+     *  
+     *  const LHCb::MCParticle* mcp = ... ;
+     * 
+     *  const bool fromDecays = MCFROMDECAYS ( mcp ) ;
+     *
+     *  @endcode
+     *
+     *  @see LoKi::MCParticles::FromDecays
+     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+     *  @date 2010-02-18
+     */
+    const LoKi::MCParticles::FromDecays                          MCFROMDECAYS ;
+    // ========================================================================
+    /** @var MCFROMXS
+     *  Simple predicate to check if particle comes from "interactions"
+     *  using LHCb::MCVertex::MCVertexType 
+     *
+     *  @see LHCb::MCVertex 
+     *  @see LHCb::MCVertex::MCVertexType 
+     *
+     *  The functor return true, if at least one 'mother' vertex
+     *  is not of the type:
+     *
+     *     - LHCb::MCVertex::DecayVertex and 
+     *     - LHCb::MCVertex::OscillatedAndDecay
+     *     - LHCb::MCVertex::ppCollision
+     *
+     *  @code 
+     *  
+     *  const LHCb::MCParticle* mcp = ... ;
+     * 
+     *  const bool fromXs = MCFROMXS ( mcp ) ;
+     *
+     *  @endcode
+     *
+     *  @see LoKi::MCParticles::FromInteractions
+     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+     *  @date 2010-02-18
+     */
+    const LoKi::MCParticles::FromInteractions                        MCFROMXS ;
+    // ========================================================================
     /** @var MCID 
      *  MCParticle ID 
      * 
@@ -642,6 +699,25 @@ namespace LoKi
      *  @date 2004-03-01
      */
     const LoKi::MCParticles::Identifier                                  MCID ;
+    // ========================================================================
+    /** @typedef MCINANCESTORS 
+     *  Simple predicate to chck the presence of certain criteria 
+     *  within ancestors 
+     *  
+     *  @code
+     * 
+     *   const MCINANCESTOS fromBeauty = MCINANCESTOS  ( BEAUTY )  ;
+     *     
+     *   const MCParticle* p  = ...         ;
+     *
+     *   const bool ok = fromBeauty ( p ) ;
+     *
+     *  @endcode 
+     *  @see LoKi::MCParticles::InAncestors 
+     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+     *  @date 2010-02-16
+     */
+    typedef LoKi::MCParticles::InAncestors                      MCINANCESTORS ;
     // ========================================================================
     /** @typedef MCINTREE
      *  Simple predicate to check the presence of a certain 
@@ -822,6 +898,25 @@ namespace LoKi
      *  @date 2007-06-02
      */
     typedef LoKi::MCParticles::MultTree                            MCMULTTREE ;
+    // ========================================================================
+    /** @typedef MCNINANCESTORS 
+     *  Simple function to count the presence of certain criteria 
+     *  within ancestors 
+     *  
+     *  @code
+     * 
+     *   const MCINANCESTOS fromBeauty = MCINANCESTOS  ( BEAUTY )  ;
+     *     
+     *   const MCParticle* p  = ...         ;
+     *
+     *   const double num = fromBeauty ( p ) ;
+     *
+     *  @endcode 
+     *  @see LoKi::MCParticles::NinAncestors 
+     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+     *  @date 2010-02-16
+     */
+    typedef LoKi::MCParticles::NinAncestors                    MCNINANCESTORS ;
     // ========================================================================
     /** @typedef MCNINTREE
      *  Simple function to count a certain particles in the decay tree
@@ -1602,8 +1697,9 @@ namespace LoKi
      */
     const  LoKi::MCParticles::HasQuark          TOP ( LHCb::ParticleID::top ) ;
     // ========================================================================
-  } // end of namespace LoKi::Cuts
-} // end of namespace LoKi
+  } //                                              end of namespace LoKi::Cuts
+  // ==========================================================================
+} //                                                      end of namespace LoKi
 // ============================================================================
 // The END 
 // ============================================================================

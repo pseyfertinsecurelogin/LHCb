@@ -1,9 +1,51 @@
-! $Id: release.notes,v 1.27 2010-02-12 17:11:09 cattanem Exp $ 
+! $Id: release.notes,v 1.31 2010-02-24 15:48:28 cattanem Exp $ 
 ! -----------------------------------------------------------------------------
 ! Package     : Phys/LoKiHlt
 ! Responsible : Vanya BELYAEV Ivan.Belyaev@nikhef.nl
 ! Purpose     : collection of functors&factory for HLT 
 ! -----------------------------------------------------------------------------
+
+!========================== LoKiHlt v2r7 2010-02-24 ===========================
+! 2010-02-19 - Vanya Belyaev
+ - EvtTupleTool: fix a stupid typos ( extra blanks in th eproperty name).
+   Many thanks to Marco Clemencic for finding the problem!
+
+! 2010-02-18 - Vanya Belyaev
+ - EvtTupleTool: fix a stupid bug (missing declareInterface )
+
+! 2010-02-17 - Vanya Belyaev
+ - add new tuple tool: 
+     LoKi::Hybrid::EvtTupelTool 
+
+   The major properties:
+
+     *  @code 
+     * 
+     *    XXXTool.ODIN_Variables = 
+     *    { 
+     *      "Run" : "ODIN_RUN"
+     *    }
+     *
+     *    XXXTool.ODIN_Variables = 
+     *    { 
+     *      "L0" : " switch ( L0_DECISION , 1 ,  0 ) "
+     *    }
+     *
+     *    XXXTool.HLT_Variables = 
+     *    { 
+     *      "size" : " HLT_SIZE "      
+     *    }
+     *
+     *    XXXTool.Void_Variables = 
+     *    { 
+     *      "nPV" : " CONTAINS ( 'Rex/Vertex/Primary') "
+     *    }
+     *
+     *  @endcode
+
+ - cmt/requirements
+
+     version increment to v2r7 
 
 !========================== LoKiHlt v2r6 2010-02-12 ===========================
 ! 2010-02-12 - Vanya Belyaev
