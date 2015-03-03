@@ -1,4 +1,4 @@
-# $Id: DDDB.py,v 1.1 2008-02-29 19:10:17 marcocle Exp $
+
 __author__ = "Marco Clemencic <Marco.Clemencic@cern.ch>"
 
 from Gaudi.Configuration import *
@@ -6,7 +6,7 @@ from Configurables import ( CondDBAccessSvc,
                             CondDBDispatcherSvc, 
                             CondDBLayeringSvc, 
                             CondDBCnvSvc,
-                            CondDBEntityResolverSvc,
+                            CondDBEntityResolver,
                             XmlCnvSvc,
                             XmlParserSvc )
 
@@ -46,7 +46,7 @@ xmlParserSvc = XmlParserSvc(
                             
                             # Tell to the XmlParserSvc how to resolve entities
                             # in the CondDB
-                            EntityResolverSvc = CondDBEntityResolverSvc()
+                            EntityResolver = CondDBEntityResolver()
                             )
 
 ##########################################################################
@@ -69,27 +69,33 @@ SIMCOND  = CondDBAccessSvc("SIMCOND")
 
 # Standard configurations
 #  - Reconstruction / analisys
-mainReader = CondDBDispatcherSvc("MainCondDBReader",
-                                 MainAccessSvc = DDDB,
-                                 Alternatives = [
-                                    "/Conditions=" + LHCBCOND.getFullName(),
-                                    # Not yet available
-                                    # "/Online=" + ONLINE.getFullName()
-                                 ]
-                                 )
+CondDBDispatcherSvc("MainCondDBReader",
+                     MainAccessSvc = DDDB,
+                     Alternatives = [
+                       "/Conditions=" + LHCBCOND.getFullName(),
+                       # Not yet available
+                       # "/Conditions/Online=" + ONLINE.getFullName()
+                       ]
+                    )
 
 #  - Simulation
-simReader = CondDBDispatcherSvc("SimulationCondDBReader",
-                                 MainAccessSvc = DDDB,
-                                 Alternatives = [
-                                    "/Conditions=" + SIMCOND.getFullName(),
-                                    "/Online="     + SIMCOND.getFullName()
-                                 ]
-                                 )
+CondDBDispatcherSvc("SimulationCondDBReader",
+                    MainAccessSvc = DDDB,
+                    Alternatives = [
+                      "/Conditions=" + SIMCOND.getFullName()
+                      ]
+                    )
 
-condDBCnvSvc = CondDBCnvSvc( CondDBReader = mainReader )
+# Default is real data
+CondDBCnvSvc( CondDBReader = allConfigurables["MainCondDBReader"] )
+
+# Use this for simulated data
+#CondDBCnvSvc( CondDBReader = allConfigurables["SimulationCondDBReader"] )
 
 ##########################################################################
 # Technology dependent options
 ##########################################################################
 importOptions("$SQLDDDBROOT/options/SQLDDDB.py")
+
+# Suppress pointless warning from COOL_2_5_0
+MessageSvc().setError.append("RelationalDatabase")

@@ -4,6 +4,48 @@
 ! Purpose     : General purpose algorithms and tools for LHCb
 !-----------------------------------------------------------------------------
 
+!======================== LHCbAlgs v2r19 2008-07-08 ==========================
+! 2008-07-08 - Marco Cattaneo
+ - In FPEAuditor, move exception in case of no implementation to initialize
+   (previously in constructor) otherwise genconf fails on platforms where
+   FPEGuard is not implemented
+
+! 2008-06-10 - Gerhard Raven
+ - Move FPEGuard.h to LHCbKernel
+
+! 2008-06-10 - Chris Jones
+ - Add method FPE::Guard::mask_type mask( const std::string & excpt )
+ - Final improvements to doxygen comments
+
+! 2008-06-10 - Gerhard Raven
+ - FPE::Guard: take into account that the FPU might not yet have completed
+   its transition when checking for restoration of the initial state. Add
+   an explicit 'fwait' in that case, and check again.
+
+! 2008-06-09 - Chris Jones
+ - Improve doxygen comments in FPE code + add a simple constructor
+
+! 2008-06-09 - Gerhard Raven
+ - more improvements to FPEAuditor: 
+   o fix chicken-and-egg problem when auditing initialize: 'after'
+     will get called for the IAuditerSvc implementation without 'before'
+   o split FPEGuard in dedicated header, to be moved 'upstream'
+   o put platform specific code in the FPE::details namespace,
+     renamve FPEGuard into FPE::Guard.
+   o add doxygen comments to FPE::Guard.
+   o change in behaviour: when using the Auditor on a platform without
+     support, it will throw an exception. However, when using the Guard
+     on an unsupported platform, it becomes a no-op.
+
+! 2008-06-06 - Gerhard Raven
+ - general improvements to FPEAuditor: 
+   o  clear exception flags before switching on trapping (otherwise, any
+      error generated earlier will generate a trap the moment trapping is
+      switched on -- and hence produce a confusing traceback)
+   o  put platform dependent code together in a single place...
+   o  add "Invalid" to possible checks (oops, forgot about that one)
+   o  simplify FPEGuard, deal with type differences between linux & win32
+
 !======================== LHCbAlgs v2r18 2008-06-04 ==========================
 ! 2008-06-04 - Gerhard Raven
  - add option to FPEAuditor to disable trapping for specified algorithms

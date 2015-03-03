@@ -1,4 +1,4 @@
-// $Id: Calo2Dview.h,v 1.1 2008-01-23 23:43:54 odescham Exp $
+// $Id: Calo2Dview.h,v 1.3 2008-06-07 01:31:27 odescham Exp $
 #ifndef CALODAQ_CALO2DVIEW_H 
 #define CALODAQ_CALO2DVIEW_H 1
 
@@ -47,20 +47,26 @@ protected:
   void reset(const HistoID unit,std::string title="");
   void resetTitle(const HistoID unit,std::string title);
   void getCaloParam(unsigned int calo);
-  void setThreshold(int threshold){m_threshold=threshold;};
+  void setThreshold(double threshold){m_threshold=threshold;};
   void setPinView(bool pin){m_pin=pin ;};
   void setActualSize(bool dim){m_dim=dim ;};
   void setL0ClusterView(bool l0){m_l0=l0 ;};
-  void setOffset(int offset){m_offset = offset;};
+  void setOffset(double offset){m_offset = offset;};
 
 
   // attributes
-  long m_threshold;
-  bool m_pin;
-  int  m_offset;
+  DeCalorimeter* m_calo;
+  int m_caloType;
+  unsigned int m_reg;
+  unsigned int m_centre;
+  double m_xsize;
+  double m_ysize;
+  double  m_threshold;
+  double  m_offset;
   bool m_dim;
   bool m_l0;
-
+  bool m_pin;
+ 
 private:
   std::map<int,DeCalorimeter*> m_caloMap;
   std::map<int,int> m_centreMap;
@@ -68,12 +74,6 @@ private:
   std::map<int,double> m_xsizeMap;
   std::map<int,double> m_ysizeMap;
   //
-  DeCalorimeter* m_calo;
-  int m_caloType;
-  unsigned int m_reg;
-  unsigned int m_centre;
-  double m_xsize;
-  double m_ysize;
   //
   std::map<HistoID,unsigned int> caloViewMap;
   

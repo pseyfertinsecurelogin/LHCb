@@ -1,9 +1,42 @@
-! $Id: release.notes,v 1.61 2008-06-03 15:47:08 cattanem Exp $ 
+! $Id: release.notes,v 1.65 2008-06-30 19:47:12 cattanem Exp $ 
 ! -----------------------------------------------------------------------------
 ! Package     : Phys/LoKiPhys
 ! Responsible : Vanya Belyaev
 ! Purpose     : "Phys"-part of new restructurized LoKi 
 ! -----------------------------------------------------------------------------
+
+!========================== LoKiPhys v7r5 2008-06-30 ==========================
+! 2008-06-25 - Vanya BELYAEV
+ - src/PhysSources.cpp
+
+   LoKi::*::*Sources : 
+     suppress warning messages for the used used DVAlgorithms.
+     use "alg->debug()" instead 
+     (thanks to Alison Bates & Patrick Koppenburg for spotting 
+      the problem and providing the idea for solution)
+
+
+! 2008-06-20 - Vanya BELYAEV 
+ - add new function 
+    LoKi::Vertices::VertexChi2PerDoF 
+  for evaluation on of chi2/nDoF 
+  C++ symbol VCHI2PDOF and python symbol VCHI2PDOF are introudes
+  
+   As concern "CombineParticles" it 
+   helps to substitute "VSAFPS(VCHI2/VDOF)" with "VFASPF(VCHI2PDOF)"
+   and saves one virtual call
+ 
+
+! 2008-06-12 - Vanya BELYAEV
+
+ - LoKi/Decays.h
+   src/Decays.h
+
+    Implementation of "trees" (functors which acts on the decay structure),
+    needed for new implementation of DecayFinders
+
+ - cmt/requirements    
+     version increment to v7r5 
 
 !========================== LoKiPhys v7r4 2008-06-03 ==========================
 ! 2008-06-03 - Marco Cattaneo

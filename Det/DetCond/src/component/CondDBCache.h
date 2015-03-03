@@ -1,4 +1,4 @@
-// $Id: CondDBCache.h,v 1.7 2008-01-26 15:47:46 marcocle Exp $
+// $Id: CondDBCache.h,v 1.9 2008-06-26 14:22:45 marcocle Exp $
 #ifndef COMPONENT_CONDDBCACHE_H 
 #define COMPONENT_CONDDBCACHE_H 1
 
@@ -82,6 +82,8 @@ public:
   
   void getSubNodes(const std::string &path, std::vector<std::string> &node_names);
 
+  void getSubNodes(const std::string &path, std::vector<std::string> &folders, std::vector<std::string> &foldersets);
+
   /// Remove all entries from the cache;
   inline void clear() {m_cache.clear();}
   
@@ -97,14 +99,37 @@ public:
   
   void clean_up();
 
-  /// Check if the given path is present in the cash.
+  /// Check if the given path is present in the cache.
   inline bool hasPath(const std::string &path) const { return m_cache.count(path); }
   
-  /// Check if the given path,time pair is present in the cash.
+  /// Check if the path is a folderset.
+  inline bool isFolderSet(const std::string &path) const {
+    return hasPath(path) && (m_cache.find(path)->second.spec.get() == 0);
+  }
+
+  /// Check if the path is a folderset.
+  inline bool isFolder(const std::string &path) const {
+    return hasPath(path) && (m_cache.find(path)->second.spec.get() != 0);
+  }
+  
+  /// Check if the given path,time pair is present in the cache.
   bool hasTime(const std::string &path, const cool::ValidityKey &when, const cool::ChannelId &channel = 0) const;
 
   void dump();
-  
+
+  /// Set the flag to enable the check that the inserted IOVs are not compatible with the latest
+  /// requested time (needed to avoid that the cache is modified for the current event).
+  /// @return previous value
+  bool setIOVCheck(bool enable) 
+  {
+    bool old = m_checkLastReqTime;
+    m_checkLastReqTime = enable;
+    return old;
+  }
+
+  /// Tell if the check on inserted IOVs is enabled.
+  bool IOVCheck() { return m_checkLastReqTime; }
+
 protected:
 
 private:
@@ -211,6 +236,8 @@ private:
   MsgStream m_log;
 
   cool::ValidityKey m_lastRequestedTime;
+  bool m_checkLastReqTime;
+  
 };
 
 inline size_t CondDBCache::size() const {

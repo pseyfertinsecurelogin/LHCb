@@ -1,0 +1,15 @@
+! $Id: release.notes,v 1.4 2008-06-30 19:20:19 cattanem Exp $
+! Package     : HltInterfaces
+! Responsible : Gerhard Raven
+!------------------------------------------------------------------------------
+
+!============ Kernel/HltInterfaces v1r0 2008-06-30 ============================
+! 2008-06-25 - Gerhard Raven
+ - Add IANSvc, a restricted version of IANNSvc: only access keys, not values;
+   IANNSvc, as extension, inherits from IANSvc.
+   
+! 2008-06-17 - Patrick Koppenburg
+ - First import
+ - IANNSvc and IHltSummaryTool moved to here
+
+

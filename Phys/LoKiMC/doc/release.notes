@@ -1,4 +1,4 @@
-! $Id: release.notes,v 1.41 2008-05-05 13:43:54 cattanem Exp $ 
+! $Id: release.notes,v 1.43 2008-06-30 19:43:59 cattanem Exp $ 
 ! -----------------------------------------------------------------------------
 ! Package     : Phys/LoKiMC
 ! Responsible : Vanya BELYAEV ibelyaev@physics.syr.edu
@@ -14,6 +14,18 @@
 !   A.Golutvin, P.Koppenburg have been used in the design.
 !
 ! -----------------------------------------------------------------------------
+
+!========================== LoKiMC v7r4 2008-06-30 ============================
+! 2008-06-12 - Vanya BELYAEV
+ - LoKi/MCDecays.h
+   src/MCDecays.cpp
+    implements the MC-trees (functors which acts on the decay structure), 
+    needed for implementation of new (MC)DecayFinders
+
+ - fix many  Doxygen warnings  (tanks to Marco Cattaneo)
+
+ - cmt/requiremens 
+   version imcrement to v7r4 
 
 !========================== LoKiMC v7r3 2008-05-05 ============================
 ! 2008-05-05 - Marco Cattaneo

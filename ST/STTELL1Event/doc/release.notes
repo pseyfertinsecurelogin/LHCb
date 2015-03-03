@@ -1,0 +1,49 @@
+! $Id: release.notes,v 1.11 2008-06-30 20:13:24 cattanem Exp $
+! Package     : STTELL1Event
+! Responsible : Mathias Knecht
+!-----------------------------------------------------------------------------
+
+!======================== STTELL1Event v1r2 2008-06-30 =======================
+! 2008-06-30 - Marco Cattaneo
+ - Add a cmt/version.cmt file to make cmt happy when running without
+   version directory (otherwise it thinks the version is 'STTELL1Event')
+
+! 2008-06-27 M Needham
+ - Add summary info map to STTELL1Error
+ - Add majority voting for the PCN in STTELL1Error
+ - Tidy up some constants in STTELL1Error
+ - Improve printout in STTELL1Error  
+
+! 2008-06-24 M Needham
+ - Changes in printout code 
+
+! 2008-06-24 M Needham
+ - Add missing .cpp
+
+! 2008-06-26 M. Needham
+  - Add print functions to error classes
+  - Add functionality to STTELL1Error
+
+! 2008-06-18 M Needham
+ - Clean up of STTELL1BoardErrorBank class
+
+! 2008-05-23 T Szumlak
+ -Retag for joint Velo+ST Vetra release 
+
+! 2007-12-05 M Needham
+ -Remove unneeded files from Event directory
+
+! 2007-12-05 M Needham
+ - Add STError decoding classes
+
+! 2007-11-16 M Needham
+ - Add non const accessor to STTell1Event
+
+! 2007-10-10 M. Needham
+ - Clean up cmt requirements for new release area
+ - Add Proc full locations
+
+! 2007-09-18 - M Knecht
+ - First release of the package
+! ====================================================================
+ 

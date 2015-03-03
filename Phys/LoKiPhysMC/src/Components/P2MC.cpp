@@ -1,21 +1,28 @@
-// $Id: P2MC.cpp,v 1.2 2007-04-16 16:16:48 pkoppenb Exp $
-// ============================================================================
-// CVS tag $Name: not supported by cvs2svn $, version $Revision: 1.2 $ 
-// ============================================================================
-// $Log: not supported by cvs2svn $
-// Revision 1.1  2007/02/24 18:28:03  ibelyaev
-//  remove code duplication, retag as v4r0
-// 
+// $Id: P2MC.cpp,v 1.3 2008-06-25 17:27:39 ibelyaev Exp $
 // ============================================================================
 // Include files 
-// ============================================================================
+// ===========================================================================
+// GaudiKernel
+// ===========================================================================
+#include "GaudiKernel/AlgFactory.h" 
+#include "GaudiKernel/DeclareFactoryEntries.h" 
+// ===========================================================================
+// Relations 
+// ===========================================================================
+#include "Relations/Relation2D.h"
+// ===========================================================================
+// DaVinciMCKernel
+// ===========================================================================
+#include "Kernel/Particle2MC.h"
+// ===========================================================================
 // Local
-// ============================================================================
-#include "P2MC.h"
-// ============================================================================
+// ===========================================================================
+#include "P2MCBase.h"
+// ===========================================================================
 /** @file
  *
- *  Implementation file for class LoKi::P2MC
+ *  Simple algorithm for conversion of Particle->MC links from 
+ *  "linker" form into usable form of relation table 
  *
  *  This file is a part of LoKi project - 
  *    "C++ ToolKit  for Smart and Friendly Physics Analysis"
@@ -26,79 +33,89 @@
  *  A.Golutvin, P.Koppenburg have been used in the design.
  *
  *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
+ *  @date 2006-08-17 
  */
 // ============================================================================
-/// standard constructor
-// ============================================================================
-LoKi::P2MC::P2MC
-( const std::string& name , 
-  ISvcLocator*       pSvc ) 
-  : GaudiAlgorithm ( name , pSvc ) 
-  , m_inputs  (   ) 
-  , m_method  ( Particle2MCMethod::No ) 
-  , m_output  (   ) 
-  , m_linker  ( 0 )
+namespace LoKi 
 {
-  declareProperty ( "Inputs"  , m_inputs  ) ;
-  declareProperty ( "Method"  , m_method  ) ;
-  declareProperty ( "Output"  , m_output  ) ;
-  // declare handlers 
-  m_inputs.declareUpdateHandler ( &LoKi::P2MC::inputsHandler , this );
-  m_method.declareUpdateHandler ( &LoKi::P2MC::methodHandler , this );
-} ;
+  /** @class P2MC
+   *
+   *  Simple algorithm for conversion of Particle->MC links from 
+   *  "linker" form into usable form of relation table 
+   *
+   *  Many thanks to Edwin Bos for kind help!
+   *
+   *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
+   *  @date 2006-08-17 
+   */
+  class P2MC : public LoKi::P2MCBase
+  {
+    // ========================================================================
+    /// the friend factory for algorithm instantiation 
+    friend class AlgFactory<LoKi::P2MC> ;
+    // ========================================================================
+  public:
+    // ========================================================================
+    /// execution of the algorithm 
+    virtual StatusCode execute    () 
+    {
+      // avoid long names 
+      typedef LHCb::Relation2D<LHCb::Particle,LHCb::MCParticle> Table ;
+      // check the inheritance scheme 
+      BOOST_STATIC_ASSERT(INHERITS(Table,LHCb::P2MC2D));
+      // create the new relation table and register it in TES 
+      Table* table = new Table( 100 ) ;
+      put ( table , m_output ) ;
+      // copy all links from the linker to the table 
+      return fillTable ( table ) ;
+    }
+    // ========================================================================
+    /// initialize the algorithm 
+    virtual StatusCode initialize () 
+    {
+      StatusCode sc = LoKi::P2MCBase::initialize() ;
+      if ( sc.isFailure() ) {  return sc ; }  
+      // check the method 
+      switch ( m_method ) 
+      {
+      case Particle2MCMethod::Chi2      : break ;                   // BREAK 
+      case Particle2MCMethod::Links     : break ;                   // BREAK 
+      case Particle2MCMethod::Composite : break ;                   // BREAK 
+      case Particle2MCMethod::WithChi2  :
+        Warning ( "Weighted method is selected" , sc ) ; break ;
+      default:
+        return Error("Invalid method is choosen!") ;                // RETURN 
+      }
+      return StatusCode::SUCCESS ;                                  // RETURN   
+    }
+    // ========================================================================
+  protected:
+    // ========================================================================
+    /// standard constructor 
+    P2MC
+    ( const std::string& name , 
+      ISvcLocator*       pSvc ) 
+      : LoKi::P2MCBase ( name , pSvc ) 
+    { m_method  = Particle2MCMethod::Chi2 ; } ;
+    /// virtual protected destructor 
+    virtual ~P2MC() {} ;
+    // ========================================================================
+  private:
+    // ========================================================================
+    // default constructor is disabled 
+    P2MC () ;
+    // copy  constructor is disabled 
+    P2MC ( const P2MC& );
+    // assignement operator is disabled 
+    P2MC& operator=( const P2MC& );
+    // ========================================================================
+  };
+  // ==========================================================================
+} // end of namespacee LoKi 
 // ============================================================================
-/// virtual protected destructors 
+/// Declaration of the Algorithm Factory
 // ============================================================================
-LoKi::P2MC::~P2MC() {}
+DECLARE_NAMESPACE_ALGORITHM_FACTORY(LoKi,P2MC);
 // ============================================================================
-/// initialize the algorithm 
-// ============================================================================
-StatusCode LoKi::P2MC::initialize () 
-{
-  // inittialize the base 
-  StatusCode sc = GaudiAlgorithm::initialize() ;
-  if ( sc.isFailure()   ) {  return sc ; }                         // RETURN 
-  // check the inputs
-  if ( m_inputs.value().empty() ) { Warning ( "Empty list of inputs!") ; }
-  /// delete linker 
-  if ( 0 != m_linker    ) { delete m_linker ; m_linker = 0  ; }
-  return StatusCode::SUCCESS ;                                    // RETURN 
-};
-// ============================================================================
-/// finalize   the algorithm 
-// ============================================================================
-StatusCode LoKi::P2MC::finalize   () 
-{
-  // delete linker if needed 
-  if ( 0 != m_linker ) { delete m_linker ; m_linker = 0  ; }  
-  // finalize the base class 
-  return GaudiAlgorithm::finalize () ; 
-} ;
-// ============================================================================
-// handler for inputs 
-// ============================================================================
-void LoKi::P2MC::inputsHandler ( Property& /* p */ ) 
-{
-  if ( 0 == m_linker ) { return ; }                       // NO ACTION 
-  // linker exists (and probably initialized already) 
-  warning() 
-    << "Linker must be reinitialized for " << m_inputs << endreq  ;
-  if ( 0 != m_linker ) { delete m_linker ; m_linker = 0 ; }
-} ;
-// ============================================================================
-// handler for method 
-// ============================================================================
-void LoKi::P2MC::methodHandler ( Property& /* p */ ) 
-{
-  if ( 0 == m_linker ) { return ; }                       // NO ACTION 
-  // linker exists (and probably initialized already) 
-  warning() 
-    << "Linker must be reinitialized for " << m_method << endreq  ;
-  if ( 0 != m_linker ) { delete m_linker ; m_linker = 0 ; }
-} ;
-// ============================================================================
-
-
-// ============================================================================
-// The END 
+/// The END 
 // ============================================================================

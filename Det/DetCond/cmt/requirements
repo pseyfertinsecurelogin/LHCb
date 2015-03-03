@@ -1,7 +1,7 @@
-# $Id: requirements,v 1.83 2008-05-19 09:08:21 cattanem Exp $
+# $Id: requirements,v 1.88 2008-07-02 12:42:47 marcocle Exp $
 # =============================================================================
 package       DetCond
-version       v11r11
+version       v12r0
 
 # =========== structure =======================================================
 branches      DetCond doc cmt src
@@ -12,7 +12,6 @@ use           GaudiAlg          v*
 use           COOL              v*      LCG_Interfaces
 use           CORAL             v*      LCG_Interfaces
 use           Boost             v*      LCG_Interfaces
-use           SEAL              v*      LCG_Interfaces
 use           rx                v*      LCG_Interfaces
 use           DetDesc           v*      Det
 
@@ -23,7 +22,7 @@ use           LHCbKernel        v*      Kernel
 apply_pattern	install_more_includes more=DetCond
 
 #==============================================================================
-# Needed to resolve references to CoolApplication
+# Needed to resolve external symbols
 apply_tag   NEEDS_COOL_FACTORY
 apply_tag   NEEDS_CORAL_BASE
 
@@ -36,7 +35,7 @@ apply_pattern     reflex_dictionary                                     \
 
 # =========== constituents =====================================================
 library       DetCondLib        Lib/*.cpp
-library       DetCond           component/*.cpp
+library       DetCond           component/*.cpp ../tests/src/*.cpp
 
 # =========== standard patterns (the order is essential!) ====================== 
 apply_pattern component_library library=DetCond 
@@ -52,5 +51,15 @@ macro_append DetCond_use_linkopts " $(Boost_linkopts_thread) $(Boost_linkopts_fi
 macro_append DetCond_use_linkopts " -lboost_date_time-$(Boost_compiler_version)-mt " \
         Darwin                    " -lboost_date_time-mt-$(Boost_file_version) " \
         WIN32                     "   boost_date_time-vc71-mt-$(Boost_file_version).lib "
+
+apply_pattern QMTest
+# =====================================
+# Packages needed for tests 
+macro DetCond_use_CondDBUI "" QMTest "CondDBUI v* Tools"
+use $(DetCond_use_CondDBUI)
+
+macro DetCond_use_DDDB "" QMTest "DDDB v* Det"
+use $(DetCond_use_DDDB)
+# =====================================
 
 end_private

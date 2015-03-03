@@ -1,9 +1,21 @@
-! $Id: release.notes,v 1.38 2008-06-03 15:24:15 cattanem Exp $
+! $Id: release.notes,v 1.42 2008-06-30 19:32:28 cattanem Exp $
 !-----------------------------------------------------------------------------
 ! Package     : Phys/DaVinciMCKernel
 ! Responsible : Juan PALACIOS
 ! Purpose     : MCEvent dependent interfaces and base classes.
 !-----------------------------------------------------------------------------
+
+!====================== DaVinciMCKernel v2r9 2008-06-30 =====================
+! 2008-06-27 - P. Koppenburg
+ - Increment to v2r9
+
+! 2008-06-27 - Juan PALACIOS
+ - dict/DaVinciMCKernelDict.h, dict/DaVinciMCKernelDict.xml
+  . Add dictionaries for interface IDaVinciassociatorsWrapper.
+
+! 2008-06-26 - V. Gligorov
+ - Added interface for new DaVinci Associators wrapper tool,
+   IDaVinciAssociatorsWrapper.h 
 
 !====================== DaVinciMCKernel v2r8 2008-06-03 =====================
 ! 2008-06-03 - Marco Cattaneo

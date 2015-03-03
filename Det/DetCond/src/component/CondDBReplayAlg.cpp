@@ -1,8 +1,8 @@
-// $Id: CondDBReplayAlg.cpp,v 1.1 2008-01-26 15:47:28 marcocle Exp $
+// $Id: CondDBReplayAlg.cpp,v 1.3 2008-06-12 18:47:18 marcocle Exp $
 // Include files 
 
 // needed to sleep between two operations
-#include "SealBase/TimeInfo.h"
+#include "Sleep.h"
 
 // from Gaudi
 #include "GaudiKernel/AlgFactory.h"
@@ -124,9 +124,7 @@ StatusCode CondDBReplayAlg::execute() {
       double ns_to_sleep = (op->time.ns() - last_optime.ns()) // time between operations
         - (Gaudi::Time::current().ns() - last_time.ns()); // time wasted
 
-      // @TODO: find a portable alternative to SEAL sleep function.
-      // sleep...
-      if ( ns_to_sleep > 0 ) seal::TimeInfo::nanosleep(ns_to_sleep);
+      if ( ns_to_sleep > 0 ) NanoSleep(static_cast<long long>(ns_to_sleep));
     }
 
     last_optime = op->time;

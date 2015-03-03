@@ -4,6 +4,13 @@
 ! Purpose     : Event model for HLT tracks
 !-----------------------------------------------------------------------------
 
+!======================== HltEvent v8r10 2008-06-30 ==========================
+! 2008-06-25 - Patrick Koppenburg
+ - HltSelectionSummary : make it very simple: a string, a bool, the candidates.
+
+! 2008-06-24 - Patrick Koppenburg
+ - Removed all Hlt2 enums
+
 !======================== HltEvent v8r9 2008-05-19 ===========================
 ! 2008-05-19 - Gerhard Raven
  - In HltSummary, replace the integer ID with a string ID which better matches

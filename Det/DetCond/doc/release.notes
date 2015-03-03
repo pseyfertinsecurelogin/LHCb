@@ -1,9 +1,44 @@
-# $Id: release.notes,v 1.130 2008-05-19 09:08:21 cattanem Exp $
+# $Id: release.notes,v 1.140 2008-07-02 12:59:24 cattanem Exp $
 !-----------------------------------------------------------------------------
 ! Package     : Det/DetCond
 ! Responsible : Marco Clemencic
 ! Purpose     : Interface between LHCb and LGC/COOL project
 !-----------------------------------------------------------------------------
+
+!===================== Det/DetCond v12r0 2008-06-30 ==========================
+! 2008-07-02 - Marco Clemencic
+ - Introduced a work-around for COOL bug #38422, which was preventing the usage
+   of local tags as overlays.
+ - Removed a left-over in the requirements file needed for some tests.
+   (It was breaking compilation on win32)
+
+! 2008-06-27 - Marco Clemencic
+ - Introduced the ICondDBReader implementation CondDBTimeSwitch.
+   - it allows to use different partitions for different IOVs
+   - added a simple test for it (using a test algorithm added to the package:
+     DetCondTest::TestConditionAlg).
+ 
+! 2008-06-26 - Marco Clemencic
+ - Improved direct mapping between the COOL hierarchy and the transient store
+   one:
+   - direct mapping enabled by default (can be turned off via options to improve
+     the performances of CondDBLayeringSvc and CondDBDispatcherSvc)
+   - correct mapping in CondDBDispatcherSvc and CondDBLayeringSvc:
+     - CondDBDispatcherSvc: add entries implied by alternatives
+     - CondDBLayeringSvc: expose all the possible entries
+   - modified ICondDBReader (needed for a generic implementation of the mapping)
+   - added tests for foreseen use-cases
+   - the code to generate the XML catalog has been moved to a separate file to
+     be shared among the implementations of ICondDBReader
+ - Added dictionaries for few CORAL interfaces that are not available through
+   COOL.
+
+! 2008-06-24 - Marco Clemencic
+ - Fixed a bug in the direct mapping between the hierarchy of the COOL
+   database and the transient store one.
+
+! 2008-06-10 - Marco Clemencic
+ - Adapted to the new SEAL-less COOL and CORAL. Needs LCG_55 (Gaudi v20r0)
 
 !===================== Det/DetCond v11r11 2008-05-19 =========================
 ! 2008-05-19 - Marco Clemencic

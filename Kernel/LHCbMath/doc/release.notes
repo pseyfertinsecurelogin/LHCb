@@ -6,6 +6,47 @@
 !               All headers included in directory LHCbMath
 !-----------------------------------------------------------------------------
 
+!========================= LHCbMath v3r0 2008-07-01 ==========================
+! 2008-07-01 - Gerhard Raven
+ - add MD5 and vector<MD5> to the dictionary
+ - Add default c'tor of MD5 which is required if you want a vector<MD5> in
+   a dictionary...
+
+! 2008-07-01 - Marco Cattaneo
+ - On Windows, disable some dictionaries that do not compile
+  
+! 2008-06-30 - Marco Cattaneo
+ - Removed  <class name = "Gaudi::Math::Math::Dummy"/> from selection file
+
+! 2008-06-25 - Juan PALACIOS
+ - dict/LHCbMathDict.h
+  . Add all the GeomFun::Gaudi::Math free functions to the dictionary.
+ - cmt/requirements
+  . Change version to v3r0 since namespace changes are not backwards 
+    compatible.
+
+! 2008-06-24 - Juan PALACIOS
+ - LHCbMath/Line.h
+ - LHCbMath/LineTypes.h
+ - dict/LHCbMathDict.h
+ - dict/LHCbMathDict.xml
+  . Put everything directly under the Gaudi:: namespace under Gaudi::Math::
+ - python/LHCbMath.py
+  . Adapt to changes above.
+
+! 2008-06-24 Juan PALACIOS
+ - cmt/requirements
+  . Remove LHCbMath from PYTHONPATH and add apply_pattern install_python_modules
+! 2008-06-24 Juan PALACIOS
+ - add dict/LHCbMath.h, LHCbMath.xml
+  . Python dictionaries for some Line types and GeomFun free functions.
+ - add python/LHCbMath.py
+  . Python module to ease the use of Lines and GeomFun free functions.
+ - cmt/requirements
+  . Increase version to v2r9
+  . Add LHCbMath to PYTHONPATH
+  . Make linker library from src/*.cpp files
+
 !========================= LHCbMath v2r8 2008-06-04 ==========================
 ! 2008-06-04 M Needham
  - Avoid a comparision of == of doubles in round function

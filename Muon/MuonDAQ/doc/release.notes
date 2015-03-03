@@ -4,6 +4,10 @@
 ! Purpose     : Muon System Raw Buffer coding and decoding algorithms
 !-----------------------------------------------------------------------------
 
+!========================== MuonDAQ v4r2 2008-06-30 ==========================
+! 2008-06-30 - Alessia Satta
+ - Add Tell1 header decoding  
+
 !========================== MuonDAQ v4r1 2008-06-04 ==========================
 ! 2008-06-04 - Marco Cattaneo
  - Fix the previous fix

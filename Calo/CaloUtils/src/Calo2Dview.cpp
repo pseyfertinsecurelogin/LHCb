@@ -1,4 +1,4 @@
-// $Id: Calo2Dview.cpp,v 1.7 2008-05-30 12:48:57 odescham Exp $
+// $Id: Calo2Dview.cpp,v 1.10 2008-06-09 09:48:43 odescham Exp $
 // Include files 
 
 // from Gaudi
@@ -29,13 +29,18 @@ Calo2Dview::Calo2Dview( const std::string& name,
     m_reg(),
     m_centre(),
     m_xsize(),
-    m_ysize()
+    m_ysize(),
+    m_threshold(-256.),
+    m_offset(0.0),
+    m_dim(true),
+    m_l0(false),
+    m_pin(false)
 {
-  declareProperty( "Threshold"     ,  m_threshold = -256 );
-  declareProperty( "PinView"       ,  m_pin  = false );
-  declareProperty( "Offset"        ,  m_offset  = 0 );
-  declareProperty( "ActualSize"    ,  m_dim  = true );
-  declareProperty( "L0ClusterView" ,  m_l0  = false );
+  declareProperty( "Threshold"     ,  m_threshold  );
+  declareProperty( "PinView"       ,  m_pin   );
+  declareProperty( "Offset"        ,  m_offset );
+  declareProperty( "ActualSize"    ,  m_dim );
+  declareProperty( "L0ClusterView" ,  m_l0  );
 
 
   setHistoDir( name );
@@ -87,10 +92,6 @@ StatusCode Calo2Dview::initialize() {
   m_regMap[0]    = 6;
   m_xsizeMap[0]   = m_caloMap[0]->cellSize( refSpd ) ;
   m_ysizeMap[0]  = m_xsizeMap[0] ;
-
-
-
-
 
   return StatusCode::SUCCESS;
 }
@@ -219,18 +220,20 @@ AIDA::IHistogram2D*  Calo2Dview::fillCalo2D(const HistoID unit, LHCb::CaloCellID
 
   // threshold
   if( value < m_threshold){
-    if ( msgLevel(MSG::DEBUG) )debug() << "value = " << value << " < threshold = "<< m_threshold << endreq;
+    if ( msgLevel(MSG::DEBUG) ){
+      debug() << "value = " << value << " < threshold = "<< m_threshold << endreq;
+    }
     return histo2D(unit);
   }
   
 
   // check the cellID is consistent with the calo
   if(caloViewMap[unit] !=  calo){
-    warning() << "Cannot put the  " 
-              << CaloCellCode::CaloNameFromNum(calo) 
-              << " CaloCellID " << id << " in the "
-              << CaloCellCode::CaloNameFromNum( caloViewMap[unit] ) 
-              << " view " << unit << endreq;
+    info() << "Cannot put the  " 
+           << CaloCellCode::CaloNameFromNum(calo) 
+           << " CaloCellID " << id << " in the "
+           << CaloCellCode::CaloNameFromNum( caloViewMap[unit] ) 
+           << " view " << unit << endreq;
     return histo2D(unit);
   }
   // get calo parameters
@@ -277,6 +280,9 @@ AIDA::IHistogram2D*  Calo2Dview::fillCalo2D(const HistoID unit, LHCb::CaloCellID
           }
           double x = m_xsize *  ((double) iic+0.5 ) /(double) m_reg ;
           double y = m_ysize *  ((double) iir+0.5 ) /(double) m_reg ;
+          if ( msgLevel(MSG::VERBOSE) ){
+            verbose() << " FILLING " << x << " " << y << " " << value+m_offset << endreq;
+          }
           GaudiHistoAlg::fill( histo2D(unit) ,  x, y , value + m_offset);
         }
       }
@@ -313,11 +319,11 @@ AIDA::IHistogram2D*  Calo2Dview::fillCaloPin2D(const HistoID unit, LHCb::CaloCel
   
   // check the cellID is consistent with the calo
   if(caloViewMap[(HistoID)lun.str()] !=  id.calo() ){
-    warning() << "Cannot put the  " 
-              << CaloCellCode::CaloNameFromNum(id.calo() ) 
-              << " CaloCellID " << id << " in the "
-              << CaloCellCode::CaloNameFromNum( caloViewMap[(HistoID) lun.str() ] ) 
-              << " view " << lun.str() << endreq;
+    info() << "Cannot put the  " 
+           << CaloCellCode::CaloNameFromNum(id.calo() ) 
+           << " CaloCellID " << id << " in the "
+           << CaloCellCode::CaloNameFromNum( caloViewMap[(HistoID) lun.str() ] ) 
+           << " view " << lun.str() << endreq;
     return histo2D( (HistoID) lun.str());
   }
 

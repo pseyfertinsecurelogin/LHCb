@@ -4,7 +4,7 @@
  *
  *  Implementation file for detector description class : DeRichHPDPanel
  *
- *  $Id: DeRichHPDPanel.cpp,v 1.66 2008-04-10 15:23:02 papanest Exp $
+ *  $Id: DeRichHPDPanel.cpp,v 1.68 2008-06-24 09:13:13 jonrob Exp $
  *
  *  @author Antonis Papanestis a.papanestis@rl.ac.uk
  *  @date   2004-06-18
@@ -220,8 +220,9 @@ StatusCode DeRichHPDPanel::initialize()
   // get the inside radius of the window
   ISolid::Ticks windowTicks;
   unsigned int windowTicksSize = windowSolid0->
-    intersectionTicks(Gaudi::XYZPoint(0.0, 0.0, 0.0),Gaudi::XYZVector(0.0, 0.0, 1.0),
-                      windowTicks);
+    intersectionTicks ( Gaudi::XYZPoint  ( 0.0, 0.0, 0.0 ),
+                        Gaudi::XYZVector ( 0.0, 0.0, 1.0 ),
+                        windowTicks );
   if (windowTicksSize != 2) {
     msg << MSG::FATAL << "Problem getting window radius" << endreq;
     return StatusCode::FAILURE;
@@ -617,12 +618,12 @@ DeRichHPDPanel::globalPosition( const Gaudi::XYZPoint& localPoint,
   {
     const int sign = ( side == Rich::top ? -1 : 1 );
     x = localPoint.x();
-    y = localPoint.y()+sign*m_panelColumnSideEdge;
+    y = localPoint.y()+sign*localOffset();
   }
   else
   {
     const int sign = ( side == Rich::left ? -1 : 1 );
-    x = localPoint.x()+sign*m_panelColumnSideEdge;
+    x = localPoint.x()+sign*localOffset();
     y = localPoint.y();
   }
 

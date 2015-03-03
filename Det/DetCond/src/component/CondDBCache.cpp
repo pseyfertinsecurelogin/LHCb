@@ -1,4 +1,4 @@
-// $Id: CondDBCache.cpp,v 1.8 2008-01-26 15:47:46 marcocle Exp $
+// $Id: CondDBCache.cpp,v 1.10 2008-06-26 14:22:45 marcocle Exp $
 // Include files 
 
 
@@ -15,7 +15,7 @@
 // Standard constructor, initializes variables
 //=============================================================================
 CondDBCache::CondDBCache(const MsgStream& log, size_t highLvl, size_t lowLvl):
-  m_highLvl(highLvl),m_lowLvl(lowLvl),m_level(0),m_log(log),m_lastRequestedTime(0)
+  m_highLvl(highLvl),m_lowLvl(lowLvl),m_level(0),m_log(log),m_lastRequestedTime(0),m_checkLastReqTime(true)
 {
   if ( highLvl == 0 ) {
     m_log << MSG::WARNING << "High level == 0 : forced to 100" << endmsg;
@@ -116,8 +116,11 @@ bool CondDBCache::addFolderSet(const std::string &path, const std::string &descr
 bool CondDBCache::addObject(const std::string &path, const cool::ValidityKey &since, const cool::ValidityKey &until,
                             const cool::IRecord& rec, const cool::ChannelId &channel, IOVType *iov_before) {
   // new objects cannot be already valid. check it!
-  if ( m_lastRequestedTime != 0 && ( since <= m_lastRequestedTime && m_lastRequestedTime < until ) ) {
-    m_log << MSG::WARNING << "New item IOV is compatible with last requested time: I cannot add it" << endmsg;
+  if ( IOVCheck() && (m_lastRequestedTime != 0)
+       && ( since <= m_lastRequestedTime && m_lastRequestedTime < until ) ) {
+    m_log << MSG::WARNING
+          << "New item IOV is compatible with last requested time:"
+          << " not allowed to avoid inconsistencies" << endmsg;
     return false;
   }
   // increment object count and check the limit
@@ -221,8 +224,33 @@ bool CondDBCache::getChannelId(const std::string &path,const std::string &name,
 //=========================================================================
 //  
 //=========================================================================
-void CondDBCache::getSubNodes (const std::string &path, std::vector<std::string> &node_names) {
+void CondDBCache::getSubNodes (const std::string &path, std::vector<std::string> &folders, std::vector<std::string> &foldersets) {
 
+  folders.clear();
+  foldersets.clear();
+
+  StorageType::iterator f;
+  for ( f = m_cache.begin(); f != m_cache.end(); ++f ) {
+    const std::string &p = f->first;
+    if ( p.find(path) == 0  // the string must start with path
+         && ( p.size() > path.size() ) // it must contain something more than the path
+         && ( p.find('/',path.size()+1) == p.npos ) ) { // and I should have only one extra name
+      if ( f->second.spec.get() ) {
+        // this is a folder
+        folders.push_back(p.substr(path.size()));
+      } else {
+        // this is a folderset
+        foldersets.push_back(p.substr(path.size()));
+      }
+    }
+  }
+}
+//=========================================================================
+//  
+//=========================================================================
+void CondDBCache::getSubNodes (const std::string &path, std::vector<std::string> &node_names) {
+  // @todo: could be implemented as getSubNodes(path,node_names,node_names);
+  
   node_names.clear();
 
   StorageType::iterator f;

@@ -1,9 +1,14 @@
 ! =============================================================================
-! $Id: release.notes,v 1.367 2008-06-04 14:26:40 cattanem Exp $ 
+! $Id: release.notes,v 1.369 2008-06-30 14:01:28 cattanem Exp $ 
 ! =============================================================================
 ! package DetDesc
 ! package manager : Marco Clemencic, Juan Palacios
 ! =============================================================================
+
+!====================== DetDesc v18r6 2008-06-30 ==============================
+! 2008-06-24 - Chris Jones
+ - Fix division by zero errors in Solidbase.h 
+ - Remove some multiple return statements in SolidBase.h (prevents inlining).
 
 !====================== DetDesc v18r5 2008-06-04 ==============================
 ! 2008-06-04 M Needham

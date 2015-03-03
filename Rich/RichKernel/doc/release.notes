@@ -1,8 +1,16 @@
-! $Id: release.notes,v 1.181 2008-06-03 14:39:11 cattanem Exp $
+! $Id: release.notes,v 1.185 2008-06-30 20:02:18 cattanem Exp $
 ! Package     : Rich/RichKernel
 ! Responsible : Chris Jones
 ! Purpose     : General purpose RICH classes
 !-----------------------------------------------------------------------
+
+!====================== RichKernel v7r13 2008-06-30 ==================
+! 2008-06-30 - Chris Jones
+ - Update RichSmartIDCnv for RICH1 (Young Min Kim)
+
+! 2008-06-23 - Chris Jones
+ - Extend the L0Header words to allow full decoding of the information
+   contained in the various bits.
 
 !====================== RichKernel v7r12 2008-06-03 ==================
 ! 2008-06-03 - Marco Cattaneo
