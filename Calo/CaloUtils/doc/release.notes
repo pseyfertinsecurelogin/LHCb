@@ -3,6 +3,13 @@
 ! Responsible : Olivier Deschamps odescham@in2p3.fr
 !------------------------------------------------------------------------------
 
+!========================= CaloUtils v10r2 2013-10-23 =========================
+! 2013-10-11 - Olivier Deschamps
+ - Calo2Dview :  fix trivial bug
+
+! 2013-10-09 - Olivier Deschamps
+ - Calo2Dview :  protect against the upgrade configuration with no Spd/Prs
+
 !========================= CaloUtils v10r1 2013-07-17 =========================
 ! 2013-06-06 - Marco Cattaneo
  - Remove CaloHistoTrackAlh.{h,cpp}, no longer used

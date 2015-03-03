@@ -3,6 +3,17 @@
 ! package manager: M.Cattaneo
 !------------------------------------------------------------------------------
 
+!========================= GaudiConf v17r13 2013-10-23 =========================
+! 2013-10-09 - Olivier Deschamps
+ - options/DecodeRawEvent.py : relies on CaloDigitsConf for decoding calorimeter onDemand
+
+! 2013-10-04 - Marco Cattaneo
+ - Add a QMTest replace string to allow changes in HltTCK package version numbers
+
+! 2013-10-02 - Chris Jones
+ - Add to the valgrind suppressions file, Gaudi.supp, some entries to suppress
+   warnings when accessing data via XRootD.
+
 !========================= GaudiConf v17r12 2013-09-30 =========================
 ! 2013-09-24 - Marco Cattaneo
  - Add a QMTest replace string to accept afs paths pointing to $LHCBDEV/nightlies

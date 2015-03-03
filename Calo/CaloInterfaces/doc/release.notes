@@ -3,6 +3,16 @@
 ! Responsible : Olivier Deschamps odescham@in2p3.fr
 ! =========================================================================
 
+!========================= CaloInterfaces v8r7 2013-10-23 =========================
+! 2013-10-09 - Olivier Deschamps
+ - ICaloGetterTool : new virtual method to access the sub-detectors mask (increment release number)
+
+! 2013-10-07 - Olivier Deschamps
+ - fix circular dependency with CaloUtils in ICaloRelationsGetter
+
+! 2013-10-04 - Olivier Deschamps
+ - Add ICaloRelationsGetter interfaces
+
 !========================= CaloInterfaces v8r6 2013-07-17 =========================
 ! 2013-06-12 - Marco Cattaneo
  - Add virtual destructor to ICaloSubClusterTag and IPart2Calo interface classes.
