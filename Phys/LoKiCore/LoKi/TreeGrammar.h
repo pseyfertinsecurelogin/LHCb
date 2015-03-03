@@ -1,4 +1,4 @@
-// $Id: TreeGrammar.h,v 1.1 2009-05-22 18:12:36 ibelyaev Exp $
+// $Id: TreeGrammar.h,v 1.3 2009-06-02 16:47:34 ibelyaev Exp $
 // ============================================================================
 #ifndef DECAYS_TREEGRAMMAR_H 
 #define DECAYS_TREEGRAMMAR_H 1
@@ -79,9 +79,10 @@ namespace Decays
             tree      [ expression.tree = arg1 ] | 
             operation [ expression.tree = arg1 ] |
             head      [ expression.tree = arg1 ] |
-            (   str_p ( "^")                  >> expression [ expression.tree = arg1 ] ) [ expression.tree /= true ] |
-            ( ( str_p ( "~") | str_p ( "!") ) >> operation  [ expression.tree = arg1 ] ) [ expression.tree *= true ] |
-            ( ( str_p ( "~") | str_p ( "!") ) >> tree       [ expression.tree = arg1 ] ) [ expression.tree *= true ] ;
+            ( str_p ( "(") >> expression [ expression.tree = arg1 ] >> ')') | 
+            ( str_p ( "^") >> expression [ expression.tree = arg1 ] ) [ expression.tree /= true ] |
+            ( str_p ( "~") >> operation  [ expression.tree = arg1 ] ) [ expression.tree *= true ] |
+            ( str_p ( "~") >> tree       [ expression.tree = arg1 ] ) [ expression.tree *= true ] ;
 
           tree = str_p("(") 
             >> head [ tree.tree = arg1 ] 
@@ -99,12 +100,17 @@ namespace Decays
             >> !( str_p("...") [ tree.tree += true ]        )                  // inclusive 
             >> ')' ;
           
-          operation  = str_p ( "(" ) 
-            >> expression [ operation.tree = arg1 ] 
-            >> +( (   str_p( "&&" )        >> expression [ operation.tree  &= arg1 ] ) | 
-                  ( ( str_p( "||" ) | ',') >> expression [ operation.tree  |= arg1 ] ) ) 
-            >> ')' ;
-          
+          operation  = 
+            ( str_p ( "(" ) 
+              >> expression [ operation.tree = arg1 ] 
+              >> +( ( str_p( "&&" ) >> expression [ operation.tree  &= arg1 ] ) | 
+                    ( str_p( "||" ) >> expression [ operation.tree  |= arg1 ] ) ) 
+              >> ')' ) | 
+            ( str_p ( "[" ) 
+              >> expression [ operation.tree = arg1 ] 
+              >> +( str_p( "," ) >> expression [ operation.tree  |= arg1 ] )
+              >> ']' ) ;
+              
           res = expression [ self.tree = arg1 ] ; 
           
         }      

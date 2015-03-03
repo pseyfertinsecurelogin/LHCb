@@ -65,7 +65,7 @@
         name="operator="
         type="LHCb::LumiFSR&amp;"
 	>
-	<arg name="rhs" type="LumiFSR" const='TRUE'/>
+	<arg name="rhs" type="LHCb::LumiFSR" const='TRUE'/>
         <code>
    if ( this != &amp;rhs ) {
       m_runNumbers        = rhs.m_runNumbers;
@@ -81,6 +81,16 @@
 	name = "runNumbers"
 	desc = "Set of run numbers summed up in this job"
 	/>
+
+      <method
+        desc="get method"
+        name="runNumbers"
+        type="RunNumbers&amp;"
+	>
+        <code>
+   return m_runNumbers;
+        </code>
+      </method>
       
       <method
 	type = "void"
@@ -128,6 +138,16 @@
 	name = "fileIDs"
 	desc = "Set of file IDs summed up in this job"
 	/>
+
+      <method
+        desc="get method"
+        name="fileIDs"
+        type="FileIDs&amp;"
+	>
+        <code>
+   return m_fileIDs;
+        </code>
+      </method>
       
       <method
 	type = "void"
@@ -282,7 +302,7 @@
         name="operator+"
         type="LHCb::LumiFSR&amp;"
 	>
-	<arg name="rhs" type="LumiFSR" const="TRUE"/>   
+	<arg name="rhs" type="LHCb::LumiFSR" const="TRUE"/>   
         <code>   
    if ( this != &amp;rhs ) {
       // merge run number sets
@@ -296,9 +316,53 @@
         </code>
       </method> 
 
+      <method
+        desc="Addition operator"
+        name="operator+"
+        type="LHCb::LumiFSR&amp;"
+	>
+	<arg name="rhs" type="LHCb::LumiFSR*" const="TRUE"/>   
+        <code>   
+
+   if ( this != rhs ) {   
+      // merge run number sets
+      mergeRuns(rhs->m_runNumbers);
+      // merge file ID sets
+      mergeFileIDs(rhs->m_fileIDs);
+      // merge the extraInfo
+      mergeInfo(rhs->m_extraInfo);
+   }
+   return *this;
+
+        </code>
+      </method> 
+ 
+
+      <method
+        desc="Addition operator"
+        name="operator+="
+        type="LHCb::LumiFSR&amp;"
+	>
+	<arg name="rhs" type="LHCb::LumiFSR" const="TRUE"/>   
+        <code>   
+   return *this + rhs;
+        </code>
+      </method> 
+ 
+
+      <method
+        desc="Addition operator"
+        name="operator+="
+        type="LHCb::LumiFSR&amp;"
+	>
+	<arg name="rhs" type="LHCb::LumiFSR*" const="TRUE"/>   
+        <code>   
+   return *this + *rhs;
+        </code>
+      </method> 
+ 
 
       <!-- readable printout -->
-
       <method
         name='fillStream'
         type='std::ostream&amp;'
@@ -315,7 +379,7 @@
     for ( run = m_runNumbers.begin(); run != m_runNumbers.end(); run++ ) {
       ss &lt;&lt; *run &lt;&lt; " ";
     }
-    LHCb::LumiFSR::FileIDs::const_iterator file;
+    LumiFSR::FileIDs::const_iterator file;
     ss &lt;&lt; " files : " ; 
     for ( file = m_fileIDs.begin(); file != m_fileIDs.end(); file++ ) {
       ss &lt;&lt; *file &lt;&lt; " ";
@@ -327,7 +391,7 @@
     for (infoIter = m_extraInfo.begin(); infoIter != m_extraInfo.end(); infoIter++) {
       // get the key and value of the input info
       int key = infoIter->first;
-      LHCb::LumiFSR::ValuePair values = infoIter->second;
+      LumiFSR::ValuePair values = infoIter->second;
       int incr = values.first;
       longlong count = values.second;
       ss &lt;&lt; key &lt;&lt; " " 

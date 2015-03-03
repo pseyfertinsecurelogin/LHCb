@@ -1,6 +1,10 @@
-// $Id: TreeHelpers.cpp,v 1.1 2009-05-22 18:12:36 ibelyaev Exp $
+// $Id: TreeHelpers.cpp,v 1.3 2009-06-02 16:47:35 ibelyaev Exp $
 // ============================================================================
 // Include files 
+// ============================================================================
+// STD & STL 
+// ============================================================================
+#include <sstream>
 // ============================================================================
 // GaudiKernel
 // ============================================================================
@@ -23,7 +27,7 @@
 // default constructor 
 // ============================================================================
 Decays::Parsers::Tree::Tree()
-  : m_head ( Decays::Nodes::_Node::Invalid() ) 
+  : m_head ( Decays::Nodes::Invalid() ) 
   , m_or    ()
   , m_and   ()
   , m_arrow      ( Decays::Trees::Single    )
@@ -234,9 +238,18 @@ std::ostream& Decays::Parsers::Tree::fillStream ( std::ostream& s ) const
   }
   
   if ( m_children.empty() && m_optional.empty() ) { return s << m_head  ; } // RETURN
+
+
+  s << " (" ;
   
-  
-  s << " (" << m_head ; 
+  switch  ( m_oscillated ) 
+  {
+  case Decays::Trees::Oscillated    : 
+    s << " [" << m_head << "]os "  ; break ;   
+  case Decays::Trees::NotOscillated : 
+    s << " [" << m_head << "]nos " ; break ;   
+  default : s << m_head ;
+  }
   
   s << " " << Decays::Trees::arrow ( m_arrow ) ;
   
@@ -250,13 +263,24 @@ std::ostream& Decays::Parsers::Tree::fillStream ( std::ostream& s ) const
   // 
   return s << " ) " ;
 }
-
-
+// ============================================================================
+// convert to string 
+// ============================================================================
+std::string Decays::Parsers::Tree::toString() const 
+{
+  std::ostringstream s ;
+  fillStream ( s ) ;
+  return s.str() ;
+}
 // ============================================================================
 // operator 
 // ============================================================================
 std::ostream& operator<< ( std::ostream& s , const Decays::Parsers::Tree& t )  
 { return t.fillStream ( s ) ; }
+// ============================================================================
+
+
+
 
 // ============================================================================
 // The END 

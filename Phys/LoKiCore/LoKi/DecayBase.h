@@ -1,4 +1,4 @@
-// $Id: DecayBase.h,v 1.1 2009-05-22 19:15:14 ibelyaev Exp $
+// $Id: DecayBase.h,v 1.4 2009-06-02 16:47:33 ibelyaev Exp $
 // ============================================================================
 #ifndef LOKI_DECAYFINDERBASE_H 
 #define LOKI_DECAYFINDERBASE_H 1
@@ -58,7 +58,7 @@ namespace LoKi
      *  @return status code
      */
     StatusCode _parse 
-    ( Decays::Node&          node , const std::string& input ) const ;
+    ( Decays::Node& node , std::string input ) const ;
     // ========================================================================
     /** parse the tree
      *  @param tree  (OUTPUT) parsed node 
@@ -66,14 +66,16 @@ namespace LoKi
      *  @return status code
      */
     StatusCode _parse 
-    ( Decays::Parsers::Tree& tree , const std::string& input ) const ;
+    ( Decays::Parsers::Tree& tree , std::string input ) const ;
     // ========================================================================
-    /// convert the string ' [ a ]cc ' into 'a'
-    bool _stripCC ( const std::string& input , 
-                    std::string&       cc    ) const ;
+    /** convert the substring ' [ a ]cc ' into ' [ a , aCC ] '  
+     *  The lines are coded by Sascha Mazurov
+     */
+    std::string _makeCC ( std::string input ) const ;
     // ========================================================================
-    /// convert the string ' [ a ]cc ' into ' ( a , aCC ) '  
-    std::string _makeCC ( const std::string& input ) const ;
+  protected:
+    // ========================================================================
+    Decays::Node node ( const std::string& descriptor ) const ;  
     // ========================================================================
   protected:
     // ========================================================================
@@ -84,6 +86,9 @@ namespace LoKi
         ( "LHCb::ParticlePropertySvc" , true ) ;
       return m_ppSvc ;                                                // RETURN 
     }
+    // ========================================================================
+    const std::string& defaultNode () const { return m_default_node ; }
+    const std::string& defaultTree () const { return m_default_tree ; }      
     // ========================================================================
   private:
     // ========================================================================  
@@ -99,9 +104,14 @@ namespace LoKi
     /// the particle proeprty service 
     mutable const LHCb::IParticlePropertySvc* m_ppSvc ; //  particle properties
     // ========================================================================    
+    /// the default node  
+    std::string m_default_node ;                            // the default node  
+    /// the default tree 
+    std::string m_default_tree ;                            // the default tree
+    // ========================================================================    
   };
   // ==========================================================================
-} // end of namespace LoKi 
+} //                                                      end of namespace LoKi
 // ============================================================================
 // The END 
 // ============================================================================

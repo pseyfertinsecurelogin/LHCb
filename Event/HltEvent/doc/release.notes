@@ -4,6 +4,23 @@
 ! Purpose     : Event model for HLT tracks
 !-----------------------------------------------------------------------------
 
+!======================== HltEvent v8r18 2009-06-16 ==========================
+! 2009-06-11 - Juan PALACIOS
+ - Remove operators == and < for HltDecReport and HltObjectSummary, and 
+   exclude them from the reflex dictionaries.
+ - Add std::pair<std::string, T> and std::vector<std::pair<std::string,T> >
+   to dictionaries.
+
+! 2009-06-04 - Tomasz Skwarnicki
+ - duplicate Juan's additions also for HltObjectSummary,HltVertexReports
+ - add numericalInfoKeys() method to HltObjectSummary
+
+! 2009-06-03 - Juan PALACIOS
+ - xml/HltDecReport.xml
+  . Add operators < and ==
+ - dict/lcgDict.h, xml/lcgdict/lcg_selection.xml
+  . Add dictionary for LHCb::HltDecReports::Container
+
 !======================== HltEvent v8r17 2009-05-28 ==========================
 ! 2009-05-28 - Marco Cattaneo
  - In requirements, add hack for Gaudi v21r1 to link dictionary on Windows 

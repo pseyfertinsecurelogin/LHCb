@@ -1,10 +1,10 @@
-# $Id: requirements,v 1.55 2009-05-30 13:09:17 ibelyaev Exp $ 
+# $Id: requirements,v 1.57 2009-06-02 16:47:34 ibelyaev Exp $ 
 # =============================================================================
 # Created    : 2006-01-16
 # Maintainer : Vanya BELYAEV ibelyaev@physics.syr.edu 
 # =============================================================================
 package            LoKiCore
-version            v9r1
+version            v9r2
 
 # ================ structure ==================================================
 branches           cmt doc src dict python LoKi 
@@ -32,6 +32,7 @@ library            LoKiCore        ../src/Components/*.cpp
 
 application        NodeGrammarTest  tests/NodeGrammarTest.cpp
 application        TreeGrammarTest  tests/TreeGrammarTest.cpp
+application        CCGrammarTest    tests/CCGrammarTest.cpp
 
 # ================ Produce LCG dictionary =====================================
 apply_pattern      reflex_dictionary                                     \
@@ -44,6 +45,7 @@ macro_append       LoKiCore_dependencies        " LoKiCoreLib "
 macro_append       LoKiCoreDict_dependencies    " LoKiCoreLib " 
 macro_append       NodeGrammarTest_dependencies " LoKiCoreLib " 
 macro_append       TreeGrammarTest_dependencies " LoKiCoreLib " 
+macro_append       CCGrammarTest_dependencies   " LoKiCoreLib " 
 
 # ================ patterns ===================================================
 apply_pattern      linker_library    library=LoKiCoreLib
