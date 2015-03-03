@@ -48,13 +48,17 @@ __date__ = id.split()[3]
 __version__ = id.split()[2]
 
 try:
-    from xml.etree import ElementTree as __ElementTree__
+    from xml.etree import cElementTree as __ElementTree__
 except ImportError:
     try:
-        from etree import ElementTree as __ElementTree__
+        from xml.etree import ElementTree as __ElementTree__
     except ImportError:
+        try:
+            from etree import ElementTree as __ElementTree__
+        except ImportError:
             import ElementTree as __ElementTree__
             #finally fail here if module cannot be found!
+
 import os as __os__
 
 
@@ -159,17 +163,17 @@ class VTree(object):
             #list of attributes which must exist
             if str(type([])) in str(type(attrib)):
                 for att in attrib:
-                    if att not in ele.attrib.keys(): return False
+                    if att not in ele.attrib: return False
                 
             #list of attribute:value pairs
             elif str(type({})) in str(type(attrib)):
-                for att in attrib.keys():
-                    if att not in ele.attrib.keys(): return False
+                for att in attrib:
+                    if att not in ele.attrib: return False
                     vc=self.__schema__.Tag_castValue(att,attrib[att])
                     vatt=self.__schema__.Tag_castValue(att, ele.attrib[att])
                     if vc is None or vatt is None: return False
                     if vc!=vatt: return False
-            elif attrib not in ele.attrib.keys(): return False
+            elif attrib not in ele.attrib: return False
         #check for value
         if value is not None:
             if not ele.text: return False
@@ -188,7 +192,7 @@ class VTree(object):
     #def __init__(self,V):
     #    self.V=V''' 
     #    type=None
-    #    if name in self.attrib().keys():
+    #    if name in self.attrib():
     #        docstr='''
     #    ###ATTRIB###(value=None), to get/set '###ATTRIB###' '''
     #        dstr=dstr+'''
@@ -218,6 +222,8 @@ class VTree(object):
     #    #only increase the docstring if the process completes OK
     #    self.__doc__+=docstr
     #    return ret
+
+    
         
     def __append_element__(self, child):
         '''internal method to append validated elements'''
@@ -245,6 +251,51 @@ class VTree(object):
             if self.__element__.text is None or self.__element__.text.strip()=='':
                 self.__element__.getchildren()[-2].tail=str(self.__element__.text)
         return True
+
+
+    def __insert_element__(self,child,index):
+        '''internal method to insert validated elements'''
+        element_size=len(self.__element__.getchildren())
+
+        if (element_size==0 or index>=element_size):
+            return self.__append_element__(child)
+
+        if (index<=(-element_size)):
+            real_index=0
+        elif (index<0):
+            real_index=index + element_size
+        else:
+            real_index=index     
+        self.__element__.insert(real_index,child.__element__)
+        
+        #set the level
+        # now size==element_size+1
+        if real_index!=element_size-1:
+            self.__element__.getchildren()[real_index].tail=self.__element__.getchildren()[real_index+1].tail
+        else:
+            self.__element__.getchildren()[real_index].tail=self.__element__.getchildren()[real_index+1].tail[:-1]
+
+        return True
+
+    def __remove_element__(self,child):
+        '''internal method to remove validated elements'''
+        children=self.__element__.getchildren()
+        element_size=len(children)
+        if element_size==1:
+            self.__element__.remove(child.__element__)
+            # remove text if there were only \n's or \t's
+            if self.__element__.text is not None and self.__element__.text.strip()=='':
+                self.__element__.text=None
+            return True
+        elif element_size>1:
+            if child.__element__==children[element_size-1]:
+                # copy tail on the previous child
+                children[-2].tail=children[-1].tail
+            self.__element__.remove(child.__element__) 
+            return True
+        else:
+            raise TypeError, 'This should never happen since child is supposed to belong to the children of the element'
+            return False
 
     def test(self):
         '''tests that the object is OK'''
@@ -303,7 +354,7 @@ class VTree(object):
         #print all attribs
         if att is None:
             list={}
-            for c in self.__element__.attrib.keys():
+            for c in self.__element__.attrib:
                 list[c]=self.__schema__.__cast_from_tag__(c,self.__element__.attrib[c])
             return list
         #print the given attrib
@@ -330,7 +381,8 @@ class VTree(object):
         '''Add the child to the first mother'''
         return self.find(mother)[0].add(child)
 
-    def add(self, child):
+    # ORDER IN SEQUENCES IS NOT CHECKED !!!
+    def add(self, child,index=None):
         '''add a child to the tree'''
         name=''
         if 'VTree' in child.__str__():
@@ -350,9 +402,28 @@ class VTree(object):
             raise TypeError, 'cannot add'+ name+ ' to ' + self.tag()+ ' as there are enough of this child already', name
             return False
         if 'VTree' in child.__str__():
-            return self.__append_element__(child)
+            if index is None:
+                return self.__append_element__(child)
+            else:
+                return self.__insert_element__(child,index)
         else:
-            return self.__append_element__(self.__schema__.create_default(name))
+            if index is None:
+                return self.__append_element__(self.__schema__.create_default(name))
+            else:
+                return self.__insert_element__(self.__schema__.create_default(name),index)
+
+
+    def remove(self,child):
+        '''remove a child from the tree'''
+        if child.__element__ not in self.__element__.getchildren():
+            raise TypeError, 'This object does not contain this child, the child cannot be removed'
+            return False
+        if self.nChildren(child.tag())==self.__schema__.Tag_nChild(self.tag(),child.tag())[0]:
+            raise TypeError, 'cannot remove '+ child.tag()+ ' to ' + self.tag()+ ' as there will not be enough of this child'
+            return False
+        else:
+            return self.__remove_element__(child)
+        
     
     def value(self, val=None):
         '''return the existing value, or None
@@ -490,19 +561,32 @@ class Schema(object):
         self.__ns__=ns+':'
         self.__uri__="{http://www.w3.org/2001/XMLSchema}"
         #all known tags
-        self.__tags__=[]
+        self.__tags__=set()
         self.__tagelement__={}
         #all known types
-        self.__basetypes__=["integer",
+        self.__basetypes__=set(["integer",
                         "long",
                         "unsignedLong",
                         "double",
                         "string",
-                        "boolean"]
-        self.__types__=[]
+                        "normalizedString",
+                        "boolean"])
+        #types I can cast into
+        self.__cast_types__=set([t.lower() for t in self.__basetypes__ ])
+        #dictionary to remove namespace without string manipulation
+        self.__type_remove_namespace__={}
+        self.__func_cast__={
+            'n' : lambda x: str(x),   #normalizedString
+            's' : lambda x: str(x),   #string
+            'f' : lambda x: float(x), #float
+            'l' : lambda x: long(x),  #long
+            'i' : lambda x: int(x),   #integer
+            'd' : lambda x: float(x)  #double
+            }
+        self.__types__=set()
         self.__typelement__={}
         #all known attributes
-        self.__attribs__=[ ]
+        self.__attribs__=set()
         #type of that attribute
         self.__attribelement__={}
         #self.__attrib_rules__=[
@@ -520,9 +604,9 @@ class Schema(object):
             pf.close()
             self.__parseschema__(self.__schemafile_long__)
             self.__isconsistent__()
-            if self.__root__=='' and len(self.__tags__)>0:
-                self.__root__=self.__tags__[0]
-            elif self.__root__ not in self.__tags__:
+            #if self.__root__=='' and len(self.__tags__)>0:
+            #    self.__root__=self.__tags__[0]
+            if self.__root__ not in self.__tags__:
                 raise TypeError, 'root of schema not found '+self.__root__
                 return self.__init__()
             self.__rootattribs__[
@@ -543,6 +627,8 @@ class Schema(object):
                         ]=(
                            self.__schemafile_long__
                            )
+            
+    # ORDER IN SEQUENCES IS NOT CHECKED !!!
     def __check__(self,element):
         '''internal method to check an element conforms to the schema'''
         #check tag
@@ -556,7 +642,7 @@ class Schema(object):
                     raise ValueError, 'element '+ element.tag+ ' has the wrong entry type for the schema'
                     return False
         #check attribs
-        for att in element.attrib.keys():
+        for att,val in element.items():
             #check the root attributes
             #if self.Tag_isRoot(element.tag):
             #    for att in self.__rootattribs__.keys():
@@ -573,21 +659,21 @@ class Schema(object):
                 if element.attrib[att].split('/')[-1]!=self.__schemafile_long__.split('/')[-1]:
                     raise AttributeError, ('root element '+ element.tag+
                                            ' must be from the same schema!! '+
-                                            ' attribute '+att +' is '+ element.attrib[att]+
+                                            ' attribute '+att +' is '+ val+
                                             ' versus '+self.__schemafile_long__
                                             )
                     return False
-            elif not self.Tag_canHaveValue(att, element.attrib[att]):
+            elif not self.Tag_canHaveValue(att, val):
                 raise AttributeError, ('element '+ element.tag + 
                                        ' cannot have attribute ' + att +
-                                       ' with value '+ element.attrib[att]+
+                                       ' with value '+ val+
                                        ' in the schema'
                                        )
                 return False
         #check required attribs
         for att in self.Tag_attribs(element.tag):
             if self.Tag_isAttribRequired(element.tag, att):
-                if att not in element.attrib.keys():
+                if att not in element.attrib:
                     raise AttributeError, ( 'element '+ element.tag+ 
                                             ' must have attribute '+att +' in the schema'
                                             )  
@@ -596,7 +682,7 @@ class Schema(object):
         #check children
         kiddic={}
         for child in element.getchildren():
-            if child.tag in kiddic.keys():
+            if child.tag in kiddic:
                 kiddic[child.tag]=kiddic[child.tag]+1
             else:
                 kiddic[child.tag]=1
@@ -612,7 +698,7 @@ class Schema(object):
             if self.Tag_nChild(element.tag, child)[0]>0:
                 #print child, kiddic, element.tag
                 try:
-                    if self.Tag_nChild(element.tag, child)[0]<kiddic[child]:
+                    if self.Tag_nChild(element.tag, child)[0]>kiddic[child]:
                         raise AttributeError, ( 'element '+ element.tag+ 
                                                 ' has not enough copies of '+child +
                                                 ' for the schema'
@@ -625,9 +711,12 @@ class Schema(object):
                                             )
                     
             if self.Tag_nChild(element.tag, child)[1]>0:
-                if self.Tag_nChild(element.tag, child)[1]<kiddic[child]:
-                    print 'element', element.tag, 'has too many copies of',child ,'for the schema'
-                    return False
+                try:
+                    if self.Tag_nChild(element.tag, child)[1]<kiddic[child]:
+                        print 'element', element.tag, 'has too many copies of',child ,'for the schema'
+                        return False
+                except KeyError:
+                    pass
         return True
     
     def __str__(self):
@@ -642,37 +731,43 @@ class Schema(object):
             rt=self.__tree__.getroot()
             if rt:
                 self.__uri__=rt.tag[:rt.tag.find('schema')]
-                l=len(self.__basetypes__)
-                for i in range(l):
+                for i in list(self.__basetypes__):
                     #add namespace to basic types
-                    self.__basetypes__.append(
-                        self.__ns__+self.__basetypes__[i])
-                    self.__basetypes__[i]=self.__uri__+self.__basetypes__[i]
+                    self.__basetypes__.add(
+                        self.__ns__+i)
+                    self.__basetypes__.add(self.__uri__+i)
+                    self.__basetypes__.remove(i)
+                    self.__type_remove_namespace__[self.__uri__+i]=i.lower()
+                    self.__type_remove_namespace__[self.__ns__+i]=i.lower()
+                    
                     
                 for e in rt.getiterator( self.__uri__+"element"):
                     try:
-                        self.__tags__.append( e.attrib['name'])
+                        self.__tags__.add( e.attrib['name'])
                         #print 'adding tagelement'
                         self.__tagelement__[e.attrib['name']]=e
                         #print 'added tagelement'
+                        #root by default is the first thing in the list
+                        if self.__root__=='':
+                            self.__root__=e.attrib['name']
                     except KeyError: pass
                 for e in rt.getiterator( self.__uri__+"simpleType"):
                     try:
-                        self.__types__.append( e.attrib['name'])
+                        self.__types__.add( e.attrib['name'])
                         #print 'adding typelement'
                         self.__typelement__[e.attrib['name']]=e
                         #print 'added typelement'
                     except KeyError: pass
                 for e in rt.getiterator( self.__uri__+"complexType"):
                     try:
-                        self.__types__.append( e.attrib['name'])
+                        self.__types__.add( e.attrib['name'])
                         #print 'adding typelement'
                         self.__typelement__[e.attrib['name']]=e
                         #print 'added typelement'
                     except KeyError: pass
                 for e in rt.getiterator( self.__uri__+"attribute"):
                     try:
-                        self.__attribs__.append( e.attrib['name'])
+                        self.__attribs__.add( e.attrib['name'])
                         #print 'adding attribelement'
                         self.__attribelement__[e.attrib['name']]=e
                         #print 'added attribelement'
@@ -780,51 +875,38 @@ class Schema(object):
     def __cast__(self, atype,test):
         '''internal method cast to the type of the tag'''
         #print 'cast of', test ,'to', atype
-        if 'string' in atype:
-            return str(test)
+        btype=atype
+        if btype in self.__type_remove_namespace__:
+            btype=self.__type_remove_namespace__[atype]
+        else:
+            btype=btype.lower()
+        
+        #print 'moving to', btype
         
         a=False
-        if 'unsigned' in atype: a=True
+        #should I make it absolute?
+        if 'unsigned'==btype[:8]:
+            a=True
+            btype=btype[8:]
         
-        if 'double' in atype.lower():
-            #print 'checking double'
-            if a:
-                return abs(float(test))
-            else:
-                return float(test)
-        
-        elif 'float' in atype.lower():
-            #print 'checking float'
-            if a:
-                return abs(float(test))
-            else:
-                return float(test)
+        if btype in self.__cast_types__:
             
-        elif 'long' in atype.lower():
-            #print 'checking long'
-            if a:
-                return abs(long(test))
+            if 'b'==btype[0]:
+                #print 'checking bool'
+                if type('')==type(test):
+                    if test.lower()=='true':
+                        return True
+                    elif test.lower()=='false':
+                        return False
+                    return bool(float(test))
+                return bool(float(test)!=0)
             else:
-                return long(test)
-            
-        elif 'integer' in atype.lower():
-            #print 'checking integer'
-            if a:
-                return abs(int(test))
-            else:
-                return int(test)
-                
-        elif 'boolean' in atype.lower():
-            #print 'checking bool'
-            if type('')==type(test):
-                if test.lower()=='true':
-                    return True
-                elif test.lower()=='false':
-                    return False
-                return bool(float(test))
-            return bool(float(test)!=0)
+                v=self.__func_cast__[btype[0]](test)
+                if a:
+                    v=abs(v)
+                return v
         
-        raise TypeError, 'do not no how to convert to type', atype
+        raise TypeError, ('do not no how to convert to type '+ atype)
         return None
     
     def __list2str__(self,list):
@@ -895,7 +977,9 @@ class Schema(object):
             if tag in self.__basetypes__:
                 return False
             raise NameError, str(tag)+' tag is not in the schema' 
-        if len(ele.getiterator(self.__ns__+compound)) or len(ele.getiterator(self.__uri__+compound)):
+        for e in ele.getiterator(self.__ns__+compound):
+            return True
+        for e in ele.getiterator(self.__uri__+compound):
             #print 'iterated'
             return True
         for atype in self.__types__:
@@ -919,9 +1003,9 @@ class Schema(object):
             if self.__etype__(ele)==atype:#ele.attrib['type']==atype:
                 return self.__hasConstraint__(atype,constr)
         return False
-    
-    def parse(self,xmlfile):
-        '''parse an xml document and validate against this schema'''
+
+    def __fast_parse__(self,xmlfile):
+        '''Parse without checking'''
         xmlfile=__os__.path.expanduser(__os__.path.expandvars(xmlfile))
         if not __os__.path.exists(xmlfile):
             raise IOError, 'file does not exist '+str(xmlfile)
@@ -932,11 +1016,16 @@ class Schema(object):
         if not rt or not self.Tag_isRoot(rt.tag):
             raise TypeError, 'This file does not have the root of the schema'
             return None
-        if not self.__check__(rt):
+        return VTree(rt,self,None,False)
+                                                                                                
+    def parse(self,xmlfile):
+        '''parse an xml document and validate against this schema'''
+        thetree=self.__fast_parse__(xmlfile)
+        if not self.__check__(thetree.__element__):
             raise TypeError, 'This file could not be validated against the schema'
             return None
         #print 'file', xmlfile, 'sucessfully validated against the schema'
-        return VTree(rt,self,None,False)
+        return thetree
     
     def validate(self,xmlfile):
         '''parse an xml document and validate against this schema'''
@@ -948,7 +1037,7 @@ class Schema(object):
             raise NameError, 'This tag, ' + tag + ' is not in the schema'
             return None
         
-        if (level==0) and (tag in self.__def_cache__.keys()):
+        if (level==0) and (tag in self.__def_cache__):
             #return a clone
             #self.__def_cache__[tag].__internal_clone__()
             return self.__def_cache__[tag].clone()
@@ -1034,13 +1123,13 @@ class Schema(object):
                       self.__schemafile_long__,self.__schemafile_short__)
     def types(self):
         '''list of defined types'''
-        return self.__types__[:]
+        return set(self.__types__)
     def attribs(self):
         '''list of defined attributes'''
-        return self.__attribs__[:]
+        return set(self.__attribs__)
     def tags(self):
         '''list of defined tags'''
-        return self.__tags__[:]
+        return set(self.__tags__)
     def Tag_isRoot(self,tag):
         '''return true if the tag is the xml root'''
         return tag==self.__root__
@@ -1100,7 +1189,7 @@ class Schema(object):
                 types=types[0]
             nval=[]
             #print 'casting', val, 'type', str(type(val))
-            if 'str' in str(type(val)):
+            if type('')==type(val):
                 #print 'splitting'
                 nval=val.split(' ')
             elif type(val)==type([]):
@@ -1138,7 +1227,7 @@ class Schema(object):
     def Tag_castValue(self, tag,val):
         '''can I set this value to the tag?'''
         ret=self.__cast_from_tag__(tag,val)
-
+        
         f=self.Tag_fixed(tag)
         if f is not None:
             #print 'recognised fixed'
@@ -1158,7 +1247,7 @@ class Schema(object):
     
     def Tag_isSequence(self, tag):
         '''does this tag define a sequence?'''
-        if tag in self.__seq_cache__.keys():
+        if tag in self.__seq_cache__:
             return self.__seq_cache__[tag]
         ise=self.__compound__(tag,'sequence')
         self.__seq_cache__[tag]=ise
@@ -1166,7 +1255,7 @@ class Schema(object):
     
     def Tag_isList(self, tag):
         '''does this tag take a list?'''
-        if tag in self.__list_cache__.keys():
+        if tag in self.__list_cache__:
             return self.__list_cache__[tag]
         ile=self.__compound__(tag,'list')
         self.__list_cache__[tag]=ile
@@ -1175,7 +1264,7 @@ class Schema(object):
     
     def Tag_isUnion(self, tag):
         '''does this tag take a union?'''
-        if tag in self.__union_cache__.keys():
+        if tag in self.__union_cache__:
             return self.__union_cache__[tag]
         iu=self.__compound__(tag,'union')
         self.__union_cache__[tag]=iu
@@ -1187,7 +1276,7 @@ class Schema(object):
         
     def Tag_default(self, tag):
         '''get the default value for this tag/attribute'''
-        if tag in self.__default_cache__.keys():
+        if tag in self.__default_cache__:
             return self.__default_cache__[tag]
         defa=self.__default__(tag)
         if defa is None:
@@ -1199,7 +1288,7 @@ class Schema(object):
     
     def Tag_isFixed(self, tag):
         '''is there a fixed value for this tag/attribute?'''
-        if tag in self.__fixed_cache__.keys():
+        if tag in self.__fixed_cache__:
             if self.__fixed_cache__[tag] is not None:
                 return True
             return False
@@ -1207,7 +1296,7 @@ class Schema(object):
 
     def Tag_fixed(self, tag):
         '''what is the fixed value for this tag/attribute?'''
-        if tag in self.__fixed_cache__.keys():
+        if tag in self.__fixed_cache__:
             return self.__fixed_cache__[tag]
         fix=self.__fixed__(tag)
         if fix is None:
@@ -1219,7 +1308,7 @@ class Schema(object):
     
     def Tag_hasEnumeration(self, tag):
         '''are there Enumerated values for this tag/attribute?'''
-        if tag in self.__enum_cache__.keys():
+        if tag in self.__enum_cache__:
             if self.__enum_cache__[tag] is not None:
                 if len(self.__enum_cache__[tag]) > 0:
                     return True
@@ -1239,7 +1328,7 @@ class Schema(object):
     
     def Tag_enumeration(self, tag):
         '''return the Enumerated values for this tag/attribute?'''
-        if tag in self.__enum_cache__.keys():
+        if tag in self.__enum_cache__:
             return self.__enum_cache__[tag]
         enum=self.__enumeration__(tag)
         if enum is None:
@@ -1253,11 +1342,11 @@ class Schema(object):
     
     def Tag_valueTypes(self,tag):
         '''what are the allowed value types for this tag/attribute?'''
-        if tag in self.__type_cache__.keys():
+        if tag in self.__type_cache__:
             return self.__type_cache__[tag]
-        if self.Tag_isSequence(tag):
-            self.__type_cache__[tag]=None
-            return None
+##         if self.Tag_isSequence(tag):
+##             self.__type_cache__[tag]=None
+##             return None
         ele=self.__getele__(tag)
         if ele is None:
             if tag in self.__basetypes__:
@@ -1287,7 +1376,7 @@ class Schema(object):
     def Tag_isAttribRequired(self,tag,att):
         '''is this attribute required?'''
         try:
-            if self.Tag_isRoot(tag) and att in self.__rootattribs__.keys():
+            if self.Tag_isRoot(tag) and att in self.__rootattribs__:
                 return( att==self.__rootattribs__.keys()[0])
             
             ele=self.__attribelement__[att]
@@ -1316,7 +1405,7 @@ class Schema(object):
     
     def Tag_whitespace(self,tag):
         '''how is whitespace handled for this object?'''
-        if tag in self.__whitespace_cache__.keys():
+        if tag in self.__whitespace_cache__:
             return self.__whitespace_cache__[tag]
         ele=self.__getele__(tag)
         if ele is None:
@@ -1342,9 +1431,9 @@ class Schema(object):
     
     def Tag_hasAttrib(self,tag,att):
         '''is this an attribute of the tag?'''
-        if self.Tag_isRoot(tag) and att in self.__rootattribs__.keys():
+        if self.Tag_isRoot(tag) and att in self.__rootattribs__:
             return True
-        if tag in self.__attrib_cache__.keys():
+        if tag in self.__attrib_cache__:
             return (att in self.__attrib_cache__[tag])
         if att not in self.__attribs__:
             return False
@@ -1371,7 +1460,7 @@ class Schema(object):
     
     def Tag_attribs(self,tag):
         '''list all attributes for the tag'''
-        if tag in self.__attrib_cache__.keys():
+        if tag in self.__attrib_cache__:
             return self.__attrib_cache__[tag]
         
         ele=self.__getele__(tag,True,False,True)
@@ -1403,39 +1492,40 @@ class Schema(object):
     
     def Tag_children(self, tag):
         '''list all possible children for the tag'''
-        if tag in self.__child_cache__.keys():
+        if tag in self.__child_cache__:
             return self.__child_cache__[tag]
-        
+
+        #if not a sequence there are no children
         if not self.Tag_isSequence(tag):
             self.__child_cache__[tag]=[]
             return []
+        #retreive the element based on the tag
         ele=self.__getele__(tag,True,False,True)
         if ele is None:
             self.__child_cache__[tag]=[]
             return []
         child=[]
+        #I iterate over everything looking for elements
         for pref in [self.__ns__,self.__uri__]:
             for ec in ele.getiterator(pref+'element'):
-                try:
+                if 'name' in ec.attrib:
                     if ec.attrib['name']==tag:
                         continue
-                except KeyError: pass
-                try:
-                    #print 'trying', ec.attrib['name']
                     child.append(ec.attrib['name'])
-                except KeyError: continue
             if len(child):
                 self.__child_cache__[tag]=child
                 return child
-        for atype in self.__types__:
-            if self.__etype__(ele)==atype:#ele.attrib['type']==atype:
-                return self.Tag_children(atype)
+        #then I go to the type if the tag doesn't define it
+        et=self.__etype__(ele)
+        if et in self.__types__:
+            return self.Tag_children(et)
+        
         self.__child_cache__[tag]=child
         return child
         
     def Tag_mothers(self, tag):
         '''list all possible mothers for the tag'''
-        if tag in self.__mother_cache__.keys():
+        if tag in self.__mother_cache__:
             return self.__mother_cache__[tag]
         mothers=[]
         if self.Tag_isRoot(tag): return None

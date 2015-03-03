@@ -3,10 +3,10 @@
 # Maintainer : Marco Cattaneo
 #============================================================================
 package LHCbAlgs
-version v2r34p1
+version v2r35
 
 #============================================================================
-# Structure, i.e. directories to process. 
+# Structure, i.e. directories to process.
 #============================================================================
 branches        cmt doc src
 include_path    none
@@ -17,6 +17,7 @@ include_path    none
 use GaudiAlg   v*
 use LHCbKernel v* Kernel -no_auto_imports
 use DAQEvent   v* Event
+use RecEvent   v* Event
 use DetDesc    v* Det
 
 #============================================================================

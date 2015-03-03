@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # =============================================================================
-# $Id: functions.py 53291 2010-08-05 14:35:53Z ibelyaev $
+# $Id: functions.py 86706 2010-09-27 12:48:42Z ibelyaev $
+# =============================================================================
+# $URL: http://svn.cern.ch/guest/lhcb/LHCb/tags/Phys/LoKiCore/v10r4/python/LoKiCore/functions.py $ 
 # =============================================================================
 ## @file functions.py LoKiCore/function.py
 #  The set of basic functions for from LoKiCore library
@@ -28,11 +30,12 @@ A.Golutvin, P.Koppenburg have been used in the design.
 
 """
 # =============================================================================
-__author_   = "Vanya BELYAEV ibelyaev@physics.syr.edu"
+__author__  = "Vanya BELYAEV ibelyaev@physics.syr.edu"
 __date__    = "????-??-??"
-__version__ = "CVS Tag: $Name: not supported by cvs2svn $, version $Revision: 53291 $ "
+__version__ = "Version $Revision: 86706 $ "
 # =============================================================================
-from LoKiCore.decorators import LoKi
+
+from LoKiCore.basic import cpp, std, LoKi, LHCb, Gaudi
 
 # =============================================================================
 def monitor ( o  , *m ) :
@@ -805,7 +808,7 @@ def strings ( arg1 , *args ) :
     >>> v3 = strings ( [ 'sadfsdf' , 'sadf' , 'afadf' ] )
     
     """
-    from LoKiCore.decorators import std
+    from LoKiCore.basic import std
     _vt = std.vector('std::string')
     vct = _vt () 
     #
@@ -828,7 +831,7 @@ def doubles ( arg1 , *args ) :
     >>> v3 = doubles ( [ 1.01 , 1.02 , 1.03 ] )
     
     """
-    from LoKiCore.decorators import std
+    from LoKiCore.basic import std
     _vt = std.vector('double')
     vct = _vt () 
     #
@@ -851,7 +854,7 @@ def ints ( arg1 , *args ) :
     >>> v3 = ints ( [ 1 , 2 , 3 ] )
     
     """
-    from LoKiCore.decorators import std
+    from LoKiCore.basic import std
     _vt = std.vector('int')
     vct = _vt ()
     #
@@ -875,7 +878,7 @@ def uints ( arg1 , *args ) :
     >>> v3 = uints ( [ 1 , 2 , 3 ] )
     
     """
-    from LoKiCore.decorators import std
+    from LoKiCore.basic import std
     _vt = std.vector('unsigned int')
     vct = _vt ()
     #
@@ -898,7 +901,7 @@ def llongs ( arg1 , *args ) :
     >>> v3 = llongs ( [ 1 , 2 , 3 ] )
     
     """
-    from LoKiCore.decorators import std
+    from LoKiCore.basic import std
     _vt = std.vector('long long')
     vct = _vt ()
     #
@@ -922,7 +925,7 @@ def ullongs ( arg1 , *args ) :
     >>> v3 = ullongs ( [ 1 , 2 , 3 ] )
     
     """
-    from LoKiCore.decorators import std
+    from LoKiCore.basic import std
     _vt = std.vector('unsigned long long')
     vct = _vt ()
     #
@@ -942,6 +945,7 @@ def _has_string ( arg1 , *args ) :
     if issubclass ( type ( arg1 ) , ( list , tuple ) ) :
         for a in arg1 :
             if issubclass ( type(a) , str ) : return True
+    elif issubclass ( type(arg1) , str )    : return True
     ## 
     for a in args :
         if issubclass ( type(a) , str ) : return True
@@ -955,15 +959,10 @@ def _has_float ( arg1 , *args ) :
     if issubclass ( type ( arg1 ) , ( list , tuple ) ) :
         for a in arg1 :
             if   issubclass ( type(a) , float ) : return True
-            ##elif issubclass ( type(a) , long  ) :
-            ##    if a >  2**64                 : return True 
-            ##    if a < -2**64                 : return True 
+    elif   isinstance ( arg1 , float ) : return True
     ## 
     for a in args :
-        if   issubclass ( type(a) , float ) : return True
-        ##elif issubclass ( type(a) , long  ) :
-        ##    if a >  2**64                 : return True 
-        ##    if a < -2**64                 : return True 
+        if isinstance ( a , float ) : return True
     ##
     return False 
 ## ============================================================================
@@ -974,6 +973,10 @@ def _has_long ( arg1 , *args ) :
             if issubclass ( type ( a ) , ( int ,long ) ) :
                 if a >=  2**32 : return True
                 if a <= -2**32 : return True
+    else:
+        if arg1 >=  2**32 : return True
+        if arg1 <= -2**32 : return True
+        
     ## 
     for a in args :
         if issubclass ( type ( a ) , ( int , long ) ) : 
@@ -987,6 +990,7 @@ def _has_nega ( arg1 , *args ) :
     if issubclass ( type ( arg1 ) , ( list , tuple ) ) :
         for a in arg1 :
             if a < 0 : return True
+    elif arg1 < 0    : return True  
     ## 
     for a in args :
         if a < 0 : return True
@@ -996,7 +1000,9 @@ def _has_nega ( arg1 , *args ) :
 # =============================================================================
 ## convert the "list" into C++ vector of primitives 
 def vct_from_list  ( lst , *args ) :
-    
+    """
+    Convert the ``list'' into C++ vector of primitives
+    """    
     ## at least one string?
     if _has_string  ( lst , *args ) : return strings ( lst , *args )
     

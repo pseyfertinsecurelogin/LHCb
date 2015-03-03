@@ -30,13 +30,37 @@ __author__ = 'Rob Lambert Rob.Lambert@cern.ch'
 # =============================================================================
 
 import os as __os__
+#print __file__
+__schema__= None
+
+try:
+    import imp as __imp__
+    __schema__=__imp__.load_source('schema',__os__.sep.join(__file__.split(__os__.sep)[:-1]+['schema.py']))
+    #print 'loaded from file'
+except (ImportError, IOError):
+    try:
+        from XMLSummaryBase import schema as __schema__
+    except ImportError:
+        import schema as __schema__
+
 
 #import the schema-handling
-try:
-    from   XMLSummaryBase.schema import *
-except ImportError:
-    from schema import *
+#def cleverImport(path=None):
+#    global __schema__
+#    if __schema__ is not None:
+#        return
+#    if path is None:
+#try:
+#    from XMLSummaryBase import schema as __schema__
+#except ImportError:
+#    import schema as __schema__
     #finally fail here if module cannot be found!
+    
+#    import imp
+#    __schema__=imp.load_module('schema',__os__.path.expanduser(__os__.path.expandvars(path)))
+#    return
+
+#from __schema_module__ import *
 
 __default_schema__='$XMLSUMMARYBASEROOT/xml/XMLSummary.xsd'
 __file_tag__ = 'file'
@@ -45,7 +69,7 @@ __count_tag__= 'counter'
 # =============================================================================
 # Simple algorithm which manipulates with counters 
 # =============================================================================
-class Summary(VTree):
+class Summary(__schema__.VTree):
     """ Simple helper functions for writing the xml summary in python
     This class inherits from the VTree object, and has some hard coded element names
     merging might also be done here"""
@@ -53,34 +77,41 @@ class Summary(VTree):
     #__count_dict__={}
     #a dictionary of name:object
     #__file_dict__={}
-    def __init__ ( self, schemafile=__default_schema__ ) :
-        """ Constructor. Variables in schemafile are expanded """
+    def __init__ ( self, schemafile=__default_schema__, construct_default=True ) :
+        """ Constructor. Variables in schemafile are expanded.
+        construct_default should always be left true unless you wish to parse a file straight away.
+        module path optionally imports the schema module from a different path if it isn't already here"""
+        #print 'crap'
         if 'Schema' not in str(type(schemafile)):
             #print str(type(schemafile))
             #print "I think it's a string"
-            self.__schema__=Schema(schemafile)
+            self.__schema__=__schema__.Schema(schemafile)
         else:
             self.__schema__=schemafile
-        self.__element__=self.__schema__.create_default(self.__schema__.root()).__element__
+        if construct_default:
+            self.__element__=self.__schema__.create_default(self.__schema__.root()).__element__
+        else:
+            self.__element__=None
         self.__count_dict__={}
         for mother in self.__schema__.Tag_mothers(__count_tag__):
             self.__count_dict__[mother]={}
         self.__file_dict__={}
         for mother in self.__schema__.Tag_mothers(__file_tag__):
             self.__file_dict__[mother]={}
-        VTree.__init__(self,self.__element__,self.__schema__,False)
-
+        super(Summary,self).__init__(element=self.__element__,schema=self.__schema__,mother=None,check=False)
+        
+    
     def __file_exists__(self, GUID, filename, isOutput=False):
         '''internal method, return the file if it already exists'''
-        mothers=self.__schema__.Tag_mothers(__file_tag__)
+        #mothers=self.__schema__.Tag_mothers(__file_tag__)
         self.file_dict()
-        mother=mothers[0]
-        if isOutput: mother=mothers[1]
+        mother='input'
+        if isOutput: mother='output'
         
         #if it exists, return it
-        if (GUID is not None) and (GUID in self.__file_dict__[mother].keys()):
+        if (GUID is not None) and (GUID in self.__file_dict__[mother]):
             return self.__file_dict__[mother][GUID]
-        elif (filename is not None) and (filename in self.__file_dict__[mother].keys()):
+        elif (filename is not None) and (filename in self.__file_dict__[mother]):
             return self.__file_dict__[mother][filename]
         
         return None
@@ -88,8 +119,8 @@ class Summary(VTree):
     def __file_merger__(self, destination, filename=None, GUID=None, status=None, addevents=0, isOutput=False):
         '''merge two file objects'''
         mothers=self.__schema__.Tag_mothers(__file_tag__)
-        mother=mothers[0]
-        if isOutput: mother=mothers[1]
+        mother='input'
+        if isOutput: mother='output'
         
         #update filename or GUID if only one is present
         if (GUID is not None) and (filename is not None):
@@ -142,8 +173,8 @@ class Summary(VTree):
             return False
         
         mothers=self.__schema__.Tag_mothers(__file_tag__)
-        mother=mothers[0]
-        if isOutput: mother=mothers[1]
+        mother='input'
+        if isOutput: mother='output'
         
         if filename is not None:
             if "LFN:" not in filename.upper():
@@ -175,6 +206,9 @@ class Summary(VTree):
         return self.__file_merger__(open_file, filename,
                             GUID,status,
                             addevents, isOutput)
+    def __recache__(self):
+        self.counter_dict(True)
+        self.file_dict(True)
                   
     def __buildcounter__(self, name, flag, nEntries=None, flag2=None, min=None,  max=None):
         '''method to build a VTree counter'''
@@ -214,8 +248,8 @@ class Summary(VTree):
         '''append or merge a vtree file into the tree'''
 
         mothers=self.__schema__.Tag_mothers(__file_tag__)
-        mother=mothers[0]
-        if isOutput: mother=mothers[1]
+        mother='input'
+        if isOutput: mother='output'
         
         if file.__element__.attrib['name']!="":
             if "LFN:" not in file.__element__.attrib['name'].upper():
@@ -261,7 +295,9 @@ class Summary(VTree):
     def parse(self, xmlfile):
         """ parse an existing xml file, and load it into THIS object """
         self.__element__=self.__schema__.parse(xmlfile).__element__
-    
+        self.__recache__()
+        
+        
     def fill_output(self, filename=None, GUID=None, status=None, addevents=0):
         '''Method to fill the file processed information
         filename and GUID are the file to find/create
@@ -284,9 +320,9 @@ class Summary(VTree):
             raise TypeError, 'expected VTree, got '+str(type(counter))+' instead'
         if counter.tag() not in ['statEntity', __count_tag__]:
             raise TypeError, 'expected counter, got '+counter.tag()+' instead'
-        mother=self.__schema__.Tag_mothers(counter.tag())[0]
+        mother='counters'#self.__schema__.Tag_mothers(counter.tag())[0]
         if isLumi:
-            mother=self.__schema__.Tag_mothers(counter.tag())[1]
+            mother='lumiCounters'#self.__schema__.Tag_mothers(counter.tag())[1]
 
         #this takes a lot of time, why is it needed??
         #self.counter_dict(True)
@@ -298,8 +334,8 @@ class Summary(VTree):
         #check if it exists. If not, just add it
         #print self.__count_dict__
         #print self.__count_dict__[mother]
-        if name not in self.__count_dict__[mother].keys():
-            counters=VTree([bt for bt in self.__element__.getchildren() if mother in bt.tag][0],self.__schema__,self,False)
+        if name not in self.__count_dict__[mother]:
+            counters=__schema__.VTree([bt for bt in self.__element__.getchildren() if mother in bt.tag][0],self.__schema__,self,False)
             #counter=counter.clone()
             counters.__append_element__(counter)
             self.__count_dict__[mother][name]=counter
@@ -387,110 +423,133 @@ class Summary(VTree):
                         if(file.attrib('name')!=""): self.__file_dict__[mother][file.attrib('name')]=file
                         if(file.attrib('GUID')!=""): self.__file_dict__[mother][file.attrib('GUID')]=file
         return self.__file_dict__
+
     
-def Merge(summaries, schema=__default_schema__):
+def Merge(summaries, schemafile=__default_schema__):
     '''Merge a list of summaries, return a new summary
     summaries can be a list of xml files to be parsed, or a list of summary objects'''
+    if type("")==type(schemafile):
+        schemafile=__schema__.Schema(schemafile)
     if type([]) != type(summaries): 
         raise TypeError, 'you should send a list into the merger, I got a ' + str(type(summaries)) + ' object instead'
     sum_objects=[]
-    if type("")==type(summaries[0]):
-        for asummary in summaries:
-            #print asummary
-            sum_object=Summary(schema)
-            sum_object.parse(asummary)
-            #print sum_object
-            sum_objects.append(sum_object)
-    elif str(type(Summary()))== str(type(summaries[0])):
+
+    if type("")==type(summaries[0]) and str(type(Summary(schemafile=schemafile)))== str(type(summaries[0])):
+        raise TypeError, 'you should send strings or Summaries into the merger, I got a ' + str(type(summaries[0])) + ' object instead'
+    
+    if str(type(Summary(schemafile=schemafile)))== str(type(summaries[0])):
         sum_objects=summaries
         #check they all have the same schema
         schema=sum_objects[0].__schema__.__schemafile_short__
         for asummary in sum_objects:
             if asummary.__schema__.__schemafile_short__ != schema:
                 raise AttributeError, 'these xml files have different schema so cannot be merged'
-    else:
-        raise TypeError, 'you should send strings or Summaries into the merger, I got a ' + str(type(summaries[0])) + ' object instead'
-    #make default object
-    merged=Summary(sum_objects[0].__schema__)
-    #print 'made default object'
-    #merge success
-    #print 'merge success'
-    flag = True
-    for asummary in sum_objects:
-        if asummary.isFailure():
-            flag =False
-            break
-    merged.children('success')[0].value(flag)
-    #merge step
-    #print 'merge step'
-    #enum will be in order
-    steps=merged.__schema__.Tag_enumeration(merged.children('step')[0].tag())
-    flag=''
-    for asummary in sum_objects:
-        if flag==asummary.children('step')[0].__element__.text: continue
-        for step in steps:
-            #retain the lowest possible step
-            if flag==step: break
-            if step==asummary.children('step')[0].__element__.text: 
-                flag=step
+    
+    #try-except, in case you haven't given real summaries!
+    
+    try:
+        
+        if type("")==type(summaries[0]):
+            for asummary in summaries:
+                #print asummary
+                sum_object=Summary(schemafile,construct_default=False)
+                #don't check every summary, unless the merging fails
+                #sum_object.parse(asummary)
+                asummary=__os__.path.expanduser(__os__.path.expandvars(asummary))
+                if not __os__.path.exists(asummary):
+                    raise IOError, 'file does not exist '+str(asummary)
+                sum_object.__element__=schemafile.__fast_parse__(asummary).__element__
+                sum_object.__recache__()
+                #print sum_object
+                sum_objects.append(sum_object)
+        
+        #make default object
+        merged=Summary(sum_objects[0].__schema__)
+        #print 'made default object'
+        #merge success
+        #print 'merge success'
+        flag = True
+        for asummary in sum_objects:
+            if asummary.isFailure():
+                flag =False
                 break
-    merged.children('step')[0].__element__.text=flag
-    #merge input/output, simple counters, usage
-    #print 'merge ip/op simple counters, usage'
-    counters={}
-    #lumiCounters={}
-    for asummary in sum_objects:
-        #print sum_objects.index(asummary)
-        #print 'usage'
-        for stat in asummary.children('usage')[0].children('stat'):
-            merged.fill_memory(stat.value(),stat.__element__.attrib['unit'])
-        #print 'input'
-        for file in asummary.children('input')[0].children():
-            merged.fill_VTree_file(file,False)
-            #merged.fill_input(file.__element__.attrib['name'],
-            #                  file.__element__.attrib['GUID'],
-            #                  file.__element__.attrib['status'],
-            #                  int(file.__element__.text))
-        #print 'output'
-        for file in asummary.children('output')[0].children():
-            merged.fill_VTree_file(file,True)
-            #merged.fill_output(file.__element__.attrib['name'],
-            #                  file.__element__.attrib['GUID'],
-            #                  file.__element__.attrib['status'],
-            #                  int(file.__element__.text))
-        #merge counters
-        #print 'counters'
-        for cnt in asummary.children('counters')[0].children(__count_tag__):
-            #print 'counter'
-            #print cnt
-            name=cnt.__element__.attrib['name']
-            if name not in counters.keys():
-                counters[name]=int(cnt.__element__.text)
-            else:
-                counters[name]=(counters[name]+int(cnt.__element__.text))
-            #if name not in merged.__count_dict__['counters'].keys():
-            #    cnt=cnt.clone()
-            #merged.fill_VTree_counter(cnt)
-        #merge counters
-        #print 'lumiCounters'
-        for cnt in asummary.children('lumiCounters')[0].children(__count_tag__):
-            name=cnt.__element__.attrib['name']
-            if name not in merged.__count_dict__['lumiCounters'].keys():
-                cnt=cnt.clone()
-            merged.fill_VTree_counter(cnt,isLumi=True)
-    #merge collected counters
-    for c in counters.keys():
-        merged.fill_counter(c,counters[c])
-    #print 'merge statCounters'
-    for asummary in sum_objects:
-        #print sum_objects.index(asummary)
-        #merge statCounters
-        for cnt in asummary.children('counters')[0].children('statEntity'):
-            merged.fill_VTree_counter(cnt.clone())
-        #merge counters
-        for cnt in asummary.children('lumiCounters')[0].children('statEntity'):
-            merged.fill_VTree_counter(cnt.clone(), isLumi=True)
-    return merged
-    
-    
-    
+        merged.children('success')[0].value(flag)
+        #merge step
+        #print 'merge step'
+        #enum will be in order
+        steps=merged.__schema__.Tag_enumeration(merged.children('step')[0].tag())
+        flag=''
+        for asummary in sum_objects:
+            if flag==asummary.children('step')[0].__element__.text: continue
+            for step in steps:
+                #retain the lowest possible step
+                if flag==step: break
+                if step==asummary.children('step')[0].__element__.text: 
+                    flag=step
+                    break
+        merged.children('step')[0].__element__.text=flag
+        #merge input/output, simple counters, usage
+        #print 'merge ip/op simple counters, usage'
+        counters={}
+        #lumiCounters={}
+        for asummary in sum_objects:
+            #print sum_objects.index(asummary)
+            #print 'usage'
+            for stat in asummary.children('usage')[0].children('stat'):
+                merged.fill_memory(stat.value(),stat.__element__.attrib['unit'])
+            #print 'input'
+            for file in asummary.children('input')[0].children():
+                #merged.fill_VTree_file(file,False)
+                merged.fill_input(file.__element__.attrib['name'],
+                                  file.__element__.attrib['GUID'],
+                                  file.__element__.attrib['status'],
+                                  int(file.__element__.text))
+            #print 'output'
+            for file in asummary.children('output')[0].children():
+                #merged.fill_VTree_file(file,True)
+                merged.fill_output(file.__element__.attrib['name'],
+                                  file.__element__.attrib['GUID'],
+                                  file.__element__.attrib['status'],
+                                  int(file.__element__.text))
+            #merge counters
+            #print 'counters'
+            for cnt in asummary.children('counters')[0].children(__count_tag__):
+                #print 'counter'
+                #print cnt
+                name=cnt.__element__.attrib['name']
+                if name not in counters:
+                    counters[name]=int(cnt.__element__.text)
+                else:
+                    counters[name]=(counters[name]+int(cnt.__element__.text))
+                #if name not in merged.__count_dict__['counters']:
+                #    cnt=cnt.clone()
+                #merged.fill_VTree_counter(cnt)
+            #merge counters
+            #print 'lumiCounters'
+            for cnt in asummary.children('lumiCounters')[0].children(__count_tag__):
+                name=cnt.__element__.attrib['name']
+                if name not in merged.__count_dict__['lumiCounters']:
+                    cnt=cnt.clone()
+                merged.fill_VTree_counter(cnt,isLumi=True)
+        #merge collected counters
+        for c in counters:
+            merged.fill_counter(c,counters[c])
+        #print 'merge statCounters'
+        for asummary in sum_objects:
+            #print sum_objects.index(asummary)
+            #merge statCounters
+            for cnt in asummary.children('counters')[0].children('statEntity'):
+                merged.fill_VTree_counter(cnt.clone())
+            #merge counters
+            for cnt in asummary.children('lumiCounters')[0].children('statEntity'):
+                merged.fill_VTree_counter(cnt.clone(), isLumi=True)
+        if merged.__schema__.__check__(merged.__element__):
+            return merged
+        else:
+            raise AttributeError, 'merged file could not be verified'
+    except:
+        print 'Something went horribly wrong, I will now check all your summaries'
+        for asummary in sum_objects:
+            asummary.__schema__.__check__(asummary.__element__)
+        raise
+    return None

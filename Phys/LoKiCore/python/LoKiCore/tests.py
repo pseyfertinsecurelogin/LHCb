@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # =============================================================================
-# $Id: tests.py 53291 2010-08-05 14:35:53Z ibelyaev $
+# $Id: tests.py 86706 2010-09-27 12:48:42Z ibelyaev $
+# =============================================================================
+# $URL: http://svn.cern.ch/guest/lhcb/LHCb/tags/Phys/LoKiCore/v10r4/python/LoKiCore/tests.py $
 # =============================================================================
 ## @file   LoKiCore/tests.py
 #
@@ -14,6 +16,11 @@
 #
 #  @author Vanya BELYAEV ibelyaev@physics.syr.edu
 #  @date 2007-05-29
+#
+#  $Revision: 86706 $
+#  Last modification $Date: 2010-09-27 14:48:42 +0200 (Mon, 27 Sep 2010) $
+#                 by $Author: ibelyaev $
+#
 # =============================================================================
 """
 The basic tests for LoKiCore package
@@ -26,11 +33,15 @@ Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas,
 contributions and advices from G.Raven, J.van Tilburg, 
 A.Golutvin, P.Koppenburg have been used in the design.
 
+  $Revision: 86706 $
+  Last modification $Date: 2010-09-27 14:48:42 +0200 (Mon, 27 Sep 2010) $
+                 by $Author: ibelyaev $
+
 """
 # =============================================================================
 __author__   = "Vanya BELYAEV  Ivan.Belyaev@nikhef.nl"
 __date__     = "2007-05-29"
-__version__  = "CVS tag $Name: not supported by cvs2svn $, verison $Revision: 53291 $ "
+__version__  = "Verison $Revision: 86706 $ "
 # =============================================================================
 ## The most trivial test function
 def test() :
@@ -39,7 +50,7 @@ def test() :
     """
     import LoKiCore.decorators
     import LoKiCore.math
-    from LoKiCore.functions import LoKi 
+    from   LoKiCore.basic import LoKi 
     
     LoKi.Welcome.instance().welcome() 
     

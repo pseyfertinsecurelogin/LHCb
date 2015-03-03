@@ -4,6 +4,32 @@
 ! Purpose     : Pack, Unpack and Compare containers for optimized persistency
 !-----------------------------------------------------------------------------
 
+!======================= PackedEvent v4r3 2010-09-27 =========================
+! 2010-09-24 - Chris Jones
+ - Fix compilation warning on windows, due to implicit double to float conversion
+
+! 2010-09-23 - Chris Jones
+ - Update LHCb::WeightsVector packing to store the packed weight as a short 
+   int, exploiting the fact it will only ever be in the range 0 to 1
+
+! 2010-09-22 - Chris Jones
+ - Add packed data classes for LHCb::WeightsVector class.
+ - Fix bugs in the PackedParticle and PackedVertex class, where some smartrefs 
+   were stored in a way that would break things for WritePackedDst and 
+   ReadPackedDst in Event/EventPacker
+ - Add a few additional const statements here and there.
+
+! 2010-09-18 - Chris Jones
+ - Fix some compilation warnings from the Particle and Vertex packers on 
+   gcc 3.4
+
+! 2010-09-15 - Chris Jones
+ - Add a first try at full implementations of the packers for Particles and
+   Vertices, for use in the stripping. The packing is not 100% ideal yet, the
+   MomCov matrix in the Particle class has room for improvement I think and 
+   should be improved before this is put into production, but what is there 
+   is OK and enough to start testing against.
+
 !======================= PackedEvent v4r2 2010-07-19 =========================
 ! 2010-05-18 - Chris Jones
  - Add (empty) implementations of the Packers for Particles and Vertices.

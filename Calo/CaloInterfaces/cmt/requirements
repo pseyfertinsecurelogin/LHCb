@@ -1,7 +1,7 @@
 # $Id: requirements,v 1.50 2010-03-17 14:00:37 cattanem Exp $
 # =============================================================================
 package           CaloInterfaces
-version           v7r18
+version           v7r19
 
 # =============== structure ===================================================
 branches          cmt doc CaloInterfaces src 
@@ -11,6 +11,7 @@ use GaudiKernel     v*
 use LHCbKernel      v*    Kernel
 use DigiEvent       v*    Event
 use RecEvent        v*    Event
+use L0Event         v*    Event
 use CaloDet         v*    Det
 
 # =============== include directories =========================================

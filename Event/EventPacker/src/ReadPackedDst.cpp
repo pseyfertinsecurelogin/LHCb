@@ -15,6 +15,7 @@
 #include "Event/PackedMuonPID.h"
 #include "Event/PackedParticle.h"
 #include "Event/PackedVertex.h"
+#include "Event/PackedWeightsVector.h"
 #include "Event/RecHeader.h"
 #include "Event/ProcStatus.h"
 #include "Event/ODIN.h"
@@ -239,17 +240,28 @@ StatusCode ReadPackedDst::execute() {
 
     } else if ( LHCb::CLID_PackedParticles        == classID ) {
 
-      LHCb::PackedParticles* pids = new LHCb::PackedParticles();
-      put( pids, name + m_postfix );
-      processLinks( pids, version );
-      getFromBlob<LHCb::PackedParticle> ( pids->data(), blobs );
+      LHCb::PackedParticles* parts = new LHCb::PackedParticles();
+      put( parts, name + m_postfix );
+      processLinks( parts, version );
+      getFromBlob<LHCb::PackedParticle> ( parts->data(), blobs );
+      getFromBlob<std::pair<int,int> >  ( parts->extra(), blobs );
+      getFromBlob<int>                  ( parts->daughters(), blobs );
 
     } else if ( LHCb::CLID_PackedVertices        == classID ) {
 
-      LHCb::PackedVertices* pids = new LHCb::PackedVertices();
-      put( pids, name + m_postfix );
-      processLinks( pids, version );
-      getFromBlob<LHCb::PackedVertex> ( pids->data(), blobs );
+      LHCb::PackedVertices* verts = new LHCb::PackedVertices();
+      put( verts, name + m_postfix );
+      processLinks( verts, version );
+      getFromBlob<LHCb::PackedVertex> ( verts->data(), blobs );
+      getFromBlob<int>                ( verts->outgoingParticles(), blobs );
+
+    } else if ( LHCb::CLID_PackedWeightsVector   == classID ) {
+      
+      LHCb::PackedWeightsVector* weights = new LHCb::PackedWeightsVector();
+      put( weights, name + m_postfix );
+      processLinks( weights, version );
+      getFromBlob<LHCb::PackedWeights> ( weights->data(),    blobs );
+      getFromBlob<LHCb::PackedWeight>  ( weights->weights(), blobs );
 
     } else if ( LHCb::CLID_ProcStatus == classID ) {
 

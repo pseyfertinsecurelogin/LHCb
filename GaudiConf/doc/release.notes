@@ -3,6 +3,30 @@
 ! package manager: M.Cattaneo
 !----------------------------------------------------------------------------
 
+!======================== GaudiConf v13r7 2010-09-27 ========================
+! 2010-09-22 - Chris Jones
+ - Add support for packing of the PV vertex weights
+
+! 2010-09-21 - Marco Cattaneo
+ - Add Rec/Vertex/Weights to DST. For the time being without packing, as no
+   packer exists.
+
+! 2010-09-21 - Chris Jones
+ - Extend the data unpacking data-on-demand options to include some additional
+   algorithms, that previously where run by default in PhysConf. This change
+   means they are now only run when really needed, on demand.
+
+!======================== GaudiConf v13r6 2010-09-21 ========================
+! 2010-09-14 - Vanya Belyaev
+ - fix the typo: remove extra comma 
+
+! 2010-09-07 - Marco Cattaneo
+ - Remove prints from previous commit, use log.debug instead.
+
+! 2010-08-30 - Vanya Belyaev
+ - Enable calodst unpacking only if the property has not been set explicitly. 
+   It is useful to force calorimeter reconstruction on-flight 
+
 !======================== GaudiConf v13r5 2010-04-26 ========================
 ! 2010-04-21 - Marco Cattaneo
  - Add SDST ("slim" or "stripping" DST) type to DstConf. Content is identical

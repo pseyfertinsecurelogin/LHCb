@@ -122,7 +122,7 @@ class CaloDstUnPackConf ( ConfigurableUser ) :
         Apply the configuration 
         """
         self.checkConfiguration()
-        
+
         log.info ('CaloDstUnPackConf: Apply Calo Dst-UnPacking Configuration ')
         log.info ( self )
 

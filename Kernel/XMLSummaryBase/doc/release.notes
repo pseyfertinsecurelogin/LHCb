@@ -4,6 +4,32 @@
 ! Purpose     : Holds the bare minumum code for manipulating XML
 !-----------------------------------------------------------------------------
 
+!======================== XmlSummaryBase v1r2 2010-09-27 =====================
+! 2010-09-21 - Rob Lambert
+ - Changes to allow the summary class to be imported using imp
+   imp.load_source('summary_application_version',<path>)
+
+! 2010-09-18 - Rob Lambert
+ - Fix bug with merging input/output to the same filename
+ - Added test of this functionality in test_parse_summary.py
+
+! 2010-09-13 - Rob Lambert
+ - Switch to cElementTree, faster implimentation
+ - Stop validating every summary file before merging, now only do it if there's a problem
+ - benchmark 60 files with 3000 counters constructs in 10s, merge in -5 s
+   (i.e. merging is now faster than constructing all the summaries)
+
+! 2010-09-12 - Rob Lambert
+ - Stop constructing lists of keys from dictionaries, where "for i in dict"
+   works just as well
+ - Only parse the schema once in the merging step
+ - benchmark 60 files with 3000 counters constructs in 12s, merge in 3s
+
+! 2010-08-02 - Nicolas Cousin
+ - Added __insert_element__ and __remove_element__ methods
+ - Added support for type 'normalizedString'
+ - Fixed a few minor bugs
+
 !======================== XmlSummaryBase v1r1 2010-05-21 =====================
 ! 2010-04-30 - Rob Lambert
  - Fixed bug from last commit, event count made a double

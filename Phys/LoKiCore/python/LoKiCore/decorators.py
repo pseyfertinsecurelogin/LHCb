@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # =============================================================================
-# $Id: decorators.py 53337 2010-08-06 10:52:06Z ibelyaev $ 
+# $Id: decorators.py 86706 2010-09-27 12:48:42Z ibelyaev $ 
 # =============================================================================
-# $URL: http://svn.cern.ch/guest/lhcb/LHCb/tags/Phys/LoKiCore/v10r3/python/LoKiCore/decorators.py $ 
+# $URL: http://svn.cern.ch/guest/lhcb/LHCb/tags/Phys/LoKiCore/v10r4/python/LoKiCore/decorators.py $ 
 # =============================================================================
 ## @file decorators.py LoKiCore/decorators.py
 #
@@ -22,8 +22,8 @@
 #
 #  @author Vanya BELYAEV ibelyaev@physics.syr.edu
 #
-#  $Revision: 53337 $
-#  Last modification $Date: 2010-08-06 12:52:06 +0200 (Fri, 06 Aug 2010) $
+#  $Revision: 86706 $
+#  Last modification $Date: 2010-09-27 14:48:42 +0200 (Mon, 27 Sep 2010) $
 #                 by $Author: ibelyaev $
 # =============================================================================
 """
@@ -46,18 +46,10 @@ with the campain of Dr.O.Callot et al.:
 # =============================================================================
 __author__  = "Vanya BELYAEV ibelyaev@physics.syr.edu" 
 __date__    = "????-??-??"
-__version__ = "SVN $Revision: 53337 $ "
+__version__ = "SVN $Revision: 86706 $ "
 # =============================================================================
 
-import PyCintex
-
-# construct the global namespace 
-_global   = PyCintex.makeNamespace('')
-# namespace LoKi
-cpp  = _global 
-std  = _global.std
-LoKi = _global.LoKi
-LHCb = _global.LHCb
+from LoKiCore.basic import cpp, std, LoKi, LHCb, Gaudi  
 
 # (auto) load the objects from LoKiCoreDict dictionary 
 LoKi.RangeBase_ = cpp.Gaudi.RangeBase_ 
@@ -139,10 +131,10 @@ def getInherited ( name , base ) :
     """
     if not issubclass ( base.__class__ , type ) : base = base.__class__
     ##
-    import sys,types,sets
-    result = sets.Set()
+    result = set()
     # get the whole content of the module:
     _mod = {}
+    import sys
     if sys.modules.has_key ( name ) : _mod = sys.modules[name].__dict__
     # loop over the module members:
     for key in _mod :
