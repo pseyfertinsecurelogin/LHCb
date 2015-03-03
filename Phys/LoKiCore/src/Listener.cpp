@@ -1,4 +1,4 @@
-// $Id: Listener.cpp,v 1.2 2010-04-04 12:20:56 ibelyaev Exp $
+// $Id: Listener.cpp,v 1.5 2010-04-21 12:28:37 ibelyaev Exp $
 // ============================================================================
 // Include files 
 // ============================================================================
@@ -27,6 +27,25 @@
  *  @date   2010-04-03
  */
 // ============================================================================
+/// local anonymous namespace to hide some technical details 
+namespace 
+{
+  // ==========================================================================
+  struct match_first 
+  {
+    match_first ( const std::string& _val) 
+      : val(_val) {}
+    //
+    bool operator()( const std::pair<std::string,long>& x ) const 
+    { return x.first == val ; }
+    
+    std::string val;
+  };
+  // ==========================================================================
+  const std::string s_ALL = "ALL" ;
+  // ==========================================================================  
+} //                                           end of local anonymous namespace 
+// ============================================================================
 // default constructor (empty)
 // ============================================================================
 LoKi::Listener::Listener() 
@@ -38,13 +57,17 @@ LoKi::Listener::Listener()
 // copy constructor 
 // ============================================================================
 LoKi::Listener::Listener ( const LoKi::Listener& right ) 
-  : LoKi::AuxFunBase ( right          ) 
-  , m_incSvc         ( right.m_incSvc )
-  , m_incidents      () 
+  : LoKi::AuxFunBase  ( right          ) 
+  , IInterface        ( right          ) 
+  , IIncidentListener ( right          ) 
+  , extend_interfaces1<IIncidentListener> ( right ) 
+  , implements1<IIncidentListener>        ( right ) 
+  , m_incSvc          ( right.m_incSvc )
+  , m_incidents       () 
 {
   // subscribe to all incidents 
   for ( Incidents::const_iterator ii = right.m_incidents.begin() ;
-        right.m_incidents.end() != ii ; ++ii ) { subscribe ( *ii ).ignore() ; }
+        right.m_incidents.end() != ii ; ++ii ) { subscribe ( ii->first, ii->second ).ignore() ; }
 }
 // ============================================================================
 // MANDATORY: virtual destructor
@@ -52,10 +75,11 @@ LoKi::Listener::Listener ( const LoKi::Listener& right )
 LoKi::Listener::~Listener()
 {
   while ( !m_incidents.empty()  && m_incSvc.validPointer() )
-  {
-    m_incSvc->removeListener ( this , m_incidents.back() ) ;
-    m_incidents.pop_back() ;
-  }
+    {
+      m_incSvc->removeListener ( this , m_incidents.back().first ) ;
+      m_incidents.pop_back() ;
+    }
+  m_incSvc.release() ;
 }
 // ============================================================================
 // assignement 
@@ -78,21 +102,25 @@ LoKi::Listener& LoKi::Listener:: operator=( const LoKi::Listener& right )
   m_incSvc = right.m_incSvc ;
   // 3. subscribe to all incidents from the right: 
   for ( Incidents::const_iterator ii = right.m_incidents.begin() ;
-        right.m_incidents.end() != ii ; ++ii ) { subscribe ( *ii ).ignore() ; }
+        right.m_incidents.end() != ii ; ++ii ) 
+  { subscribe ( ii->first, ii->second ).ignore() ; }
   // 
   return *this ;
 }
 // ============================================================================
 // subscribe the incident 
 // ============================================================================
-StatusCode LoKi::Listener::subscribe  ( const std::string& incident ) 
+StatusCode LoKi::Listener::subscribe  
+( const std::string& incident , 
+  const long         priority ) 
 {
   // specific incident ? 
-  Incidents::const_iterator ifind = std::find 
-    ( m_incidents.begin() , m_incidents.end() , incident ) ;
+  Incidents::const_iterator ifind = std::find_if
+    ( m_incidents.begin() , m_incidents.end() , match_first ( incident ) ) ;
+  //
   if ( m_incidents.end() != ifind ) 
   {
-    return Warning ( "subscribe: Incident '" + incident + "' alsready in the list", 
+    return Warning ( "subscribe: Incident '" + incident + "' already in the list", 
                      StatusCode::SUCCESS ) ;
   }
   // 
@@ -101,16 +129,17 @@ StatusCode LoKi::Listener::subscribe  ( const std::string& incident )
     SmartIF<IIncidentSvc> iis ( lokiSvc().getObject() ) ;
     m_incSvc = iis ;
   }
-  Assert ( !(!m_incSvc) , "Unable to get IIncident Service" ) ;
+  Assert ( !(!m_incSvc) , "Unable to get Incident Service" ) ;
   //
-  m_incSvc->addListener ( this , incident ) ;
-  m_incidents.push_back ( incident ) ;
+  m_incSvc->addListener ( this , incident, priority ) ;
+  m_incidents.push_back ( std::make_pair ( incident , priority ) ) ;
   //
   return StatusCode::SUCCESS ;
 }
 // ============================================================================
-// unsibscrive the incident
+// unsubscribe the incident
 // ============================================================================
+
 StatusCode LoKi::Listener::unsubscribe ( const std::string& incident ) 
 {
   // no incidents? 
@@ -120,7 +149,7 @@ StatusCode LoKi::Listener::unsubscribe ( const std::string& incident )
     return Error ( "unsubscribe: Empty list of incidents!", sc ) ;
   }
   // all incidents? 
-  if ( incident.empty() ) 
+  if ( incident.empty() || s_ALL == incident ) 
   {
     //
     if ( !m_incSvc ) 
@@ -132,13 +161,13 @@ StatusCode LoKi::Listener::unsubscribe ( const std::string& incident )
     //
     while ( !m_incidents.empty() )
     {
-      m_incSvc->removeListener ( this , m_incidents.back() ) ;
+      m_incSvc->removeListener ( this , m_incidents.back().first ) ;
       m_incidents.pop_back() ;
     }
   }
   // specific incident ? 
-  Incidents::iterator ifind = std::find 
-    ( m_incidents.begin() , m_incidents.end() , incident ) ;
+  Incidents::iterator ifind = std::find_if
+    ( m_incidents.begin() , m_incidents.end() , match_first(incident) ) ;
   if ( m_incidents.end() == ifind ) 
   {
     StatusCode sc ( 811 , true ) ;

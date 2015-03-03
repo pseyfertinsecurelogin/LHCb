@@ -4,6 +4,10 @@
 ! Purpose     : Pack, Unpack and Compare containers for optimized persistency
 !-----------------------------------------------------------------------------
 
+!======================= PackedEvent v4r1p1 2010-04-26 =======================
+! 2010-04-11 - Chris Jones
+ - Fix printout of packing version number in case of exception
+
 !======================= PackedEvent v4r1 2010-03-17 =========================
 ! 2010-03-09 - Chris Jones
  - Update RichPID packing to support the Below Threshold DLLs

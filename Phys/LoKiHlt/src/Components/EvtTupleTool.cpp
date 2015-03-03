@@ -1,4 +1,4 @@
-// $Id: EvtTupleTool.cpp,v 1.3 2010-02-19 11:52:27 ibelyaev Exp $
+// $Id: EvtTupleTool.cpp,v 1.6 2010-04-22 12:18:09 ibelyaev Exp $
 // ============================================================================
 // Include files
 // ============================================================================
@@ -59,7 +59,7 @@ namespace LoKi
      *      "size" : " HLT_SIZE "      
      *    }
      *
-     *    XXXTool.Void_Variables = 
+     *    XXXTool.VOID_Variables = 
      *    { 
      *      "nPV" : " CONTAINS ( 'Rex/Vertex/Primary') "
      *    }
@@ -244,8 +244,8 @@ LoKi::Hybrid::EvtTupleTool::EvtTupleTool
   : GaudiTool ( type , name , parent ) 
 // preambulo:
   , m_preambulo ( ) 
-  , m_core      ( "LoKi::Hybrid::Tool/HybridFactory:PUBLIC"     )
-  , m_hlt       ( "LoKi::Hybrid::HltFactory/HltFactory:PUBLIC"  ) 
+  , m_core      ( "LoKi::Hybrid::CoreFactory/CoreFactory:PUBLIC" )
+  , m_hlt       ( "LoKi::Hybrid::HltFactory/HltFactory:PUBLIC"   ) 
 // maps:
   , m_map_odin  ( ) 
   , m_map_l0    ( ) 
@@ -286,19 +286,19 @@ LoKi::Hybrid::EvtTupleTool::EvtTupleTool
   //
   declareProperty 
     ( "L0DU_Variables" , 
-      m_map_odin       , 
+      m_map_l0         , 
       "The map { 'name' : 'functor'} of variables: LHCb::L0DUReport -> double   " ) 
     -> declareUpdateHandler  ( &LoKi::Hybrid::EvtTupleTool::handleL0DU , this ) ;
   //
   declareProperty 
     ( "HLT_Variables"  , 
-      m_map_odin       , 
+      m_map_hdr        , 
       "The map { 'name' : 'functor'} of variables:  LHCb::HltDecReports-> double " ) 
     -> declareUpdateHandler ( &LoKi::Hybrid::EvtTupleTool::handleHLT , this ) ;
   //
   declareProperty 
     ( "VOID_Variables" , 
-      m_map_odin       , 
+      m_map_void       , 
       "The map { 'name' : 'functor'} of variables: void -> double "     ) 
     -> declareUpdateHandler ( &LoKi::Hybrid::EvtTupleTool::handleVOID , this ) ;
 }
@@ -549,10 +549,10 @@ StatusCode LoKi::Hybrid::EvtTupleTool::updateHLT ()  // update HLT-variables
 // ============================================================================
 // update  Void-variables 
 // ============================================================================
-StatusCode LoKi::Hybrid::EvtTupleTool::updateVOID ()  // update HLT-variables 
+StatusCode LoKi::Hybrid::EvtTupleTool::updateVOID ()  // update VOID-variables 
 {
   // get the factory
-  ICoreFactory* factory = tool<ICoreFactory> ( m_hlt , this ) ;
+  ICoreFactory* factory = tool<ICoreFactory> ( m_core , this ) ;
   //
   m_void.clear() ;
   m_void.reserve ( m_map_void.size() ) ;

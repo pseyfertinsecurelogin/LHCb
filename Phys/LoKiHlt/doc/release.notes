@@ -1,9 +1,26 @@
-! $Id: release.notes,v 1.36 2010-03-17 17:33:01 cattanem Exp $ 
+! $Id: release.notes,v 1.40 2010-04-26 06:41:15 cattanem Exp $ 
 ! -----------------------------------------------------------------------------
 ! Package     : Phys/LoKiHlt
 ! Responsible : Vanya BELYAEV Ivan.Belyaev@nikhef.nl
 ! Purpose     : collection of functors&factory for HLT 
 ! -----------------------------------------------------------------------------
+
+!========================== LoKiHlt v3r0 2010-04-26 ===========================
+! 2010-04-22 - Vanya Belyaev
+
+ - one more fix, thanks to Albert Bursche 
+
+! 2010-04-21 - Vanya Belyaev
+
+ - LoKi::Hybrid::EvtTupleTool
+
+     fix a stupid bug. Many thanks to Albert Bursche for kind help...
+
+! 2010-04-06 - Vanya Belyaev
+
+ - replace LoKi::Range with Gaudi::Range 
+ - new decorators 
+ - version increment to v3r0 
 
 !========================== LoKiHlt v2r8 2010-03-17 ===========================
 ! 2010-03-12 - Vanya Belyaev

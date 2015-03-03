@@ -1,4 +1,4 @@
-! $Id: release.notes,v 1.82 2010-02-12 17:10:07 cattanem Exp $ 
+! $Id: release.notes,v 1.85 2010-04-26 06:39:43 cattanem Exp $ 
 ! -----------------------------------------------------------------------------
 ! Package     : Phys/LoKiGen
 ! Responsible : Vanya BELYAEV
@@ -13,6 +13,21 @@
 !   contributions and advices from G.Raven, J.van Tilburg, 
 !   A.Golutvin, P.Koppenburg have been used in the design.
 ! -----------------------------------------------------------------------------
+
+!========================== LoKiGen v9r0 2010-04-26 ===========================
+! 2010-04-09 - Vanya Belyaev
+
+  - LoKiGen/functions.py
+
+     LoKi.NamedRange -> Gaudi.NamedRange 
+
+! 2010-04-06 - Vanya Belyaev
+
+ - replace LoKi::Raneg by Gaudi::Range 
+
+ - cmt/requirements 
+     version incremen tto v9r0 
+
 
 !========================== LoKiGen v8r8 2010-02-12 ===========================
 ! 2010-02-10 - Vanya Belyaev

@@ -1,4 +1,4 @@
-// $Id: Listener.h,v 1.2 2010-04-04 12:20:56 ibelyaev Exp $
+// $Id: Listener.h,v 1.4 2010-04-21 12:28:37 ibelyaev Exp $
 // ============================================================================
 #ifndef LOKI_LISTENER_H 
 #define LOKI_LISTENER_H 1
@@ -32,8 +32,8 @@ namespace LoKi
   {
   protected: 
     // ========================================================================
-    /// the actual type of incidens
-    typedef std::vector<std::string>                                Incidents ;
+    /// the actual type of incidents and their priority
+    typedef std::vector<std::pair<std::string,long> >               Incidents ;
     // ========================================================================
   public:
     // ========================================================================
@@ -50,10 +50,11 @@ namespace LoKi
      *  @param incident (IN) the incident to be subscribed 
      *  @reuturn status code
      */
-    StatusCode subscribe   ( const std::string& incident      ) ;
+    StatusCode subscribe   ( const std::string& incident     , 
+                             const long         priority = 0 ) ;
     /** unsubscribe the incident 
      *  @param incident (IN) the incident to be subscribed  
-     *                      (empt\y string - for all incidents)
+     *                      (empty string - for all incidents)
      *  @reuturn status code
      */
     StatusCode unsubscribe ( const std::string& incident = "" ) ;

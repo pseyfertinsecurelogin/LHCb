@@ -1,7 +1,17 @@
-! $Id: release.notes,v 1.88 2010-04-09 15:17:59 cattanem Exp $
+! $Id: release.notes,v 1.92 2010-04-26 07:06:15 cattanem Exp $
 ! Package     : STKernel
 ! Responsible : M. Needham
 !----------------------------------------------------------------------------
+
+!====================== STKernel v2r1 2010-04-26 ============================
+! 2010-04-25 M Needham
+ - Add dependency on RecEvent
+
+! 2010-04-24 M. Needham
+  - Add procFailure method to base class 
+
+! 2010-03-20 M Needham
+ - Comment out hack for TED run
 
 !====================== STKernel v2r0 2010-04-09 ============================
 !  2010-03-20 M.Needham

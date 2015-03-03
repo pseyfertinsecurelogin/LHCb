@@ -1,10 +1,11 @@
-// $Id: Scalers.cpp,v 1.4 2010-04-04 12:20:56 ibelyaev Exp $
+// $Id: Scalers.cpp,v 1.7 2010-04-21 12:28:37 ibelyaev Exp $
 // ============================================================================
 // Include files 
 // ============================================================================
 // STD & STL 
 // ============================================================================
 #include <cmath>
+#include <limits>
 // ============================================================================
 // GaudiKernel
 // ============================================================================
@@ -64,7 +65,6 @@ std::ostream& LoKi::Scalers::RandomScaleV::fillStream( std::ostream& s ) const
 { return s << " FSCALE( " << m_prob << " ) " ; }
 // ===========================================================================
 
-
 // ===========================================================================
 /*  constructor from probability and random service 
  *  @param prop accep probability 
@@ -104,7 +104,6 @@ bool LoKi::Scalers::RandomScale::eval
 std::ostream& LoKi::Scalers::RandomScale::fillStream( std::ostream& s ) const 
 { return s << " XSCALE( " << m_scaler.prob() << " ) " ; }
 // ===========================================================================
-
 
 // ===========================================================================
 /* constructor from probability and random service 
@@ -278,8 +277,8 @@ void LoKi::Scalers::RateLimitV::initialize_ ( const std::string& svc )
   //
   // subscribe the incident:
   //
-  subscribe (              "RunChange" ).ignore() ;
-  subscribe ( IncidentType::BeginRun   ).ignore() ;
+  subscribe (              "RunChange", std::numeric_limits<long>::max() ).ignore() ;
+  subscribe ( IncidentType::BeginRun,   std::numeric_limits<long>::max() ).ignore() ;
   //
 }
 // ============================================================================
@@ -290,6 +289,10 @@ void LoKi::Scalers::RateLimitV::initialize_ ( const std::string& svc )
 LoKi::Scalers::RateLimitV::RateLimitV 
 ( const LoKi::Scalers::RateLimitV& right ) 
   : LoKi::AuxFunBase           ( right ) 
+  , IInterface                 ( right ) 
+  , IIncidentListener          ( right ) 
+  , extend_interfaces1<IIncidentListener> ( right ) 
+  , implements1<IIncidentListener>        ( right ) 
   , LoKi::Functor<void,bool>   ( right ) 
   , LoKi::Listener             ( right ) 
   , m_rateSvc   ( right.m_rateSvc   )
@@ -299,7 +302,7 @@ LoKi::Scalers::RateLimitV::RateLimitV
   , m_interval  ( right.m_interval  ) 
   , m_next      ( right.m_next      ) 
 {
-  // randomize initial phase in case of perioding limiter
+  // randomize initial phase in case of periodic limiter
   switch ( limitType() ) 
   {
   case LoKi::Scalers::RandomPhasePeriodicLimiter : 
@@ -343,6 +346,9 @@ bool LoKi::Scalers::RateLimitV::eval
   // adjust the next:
   if ( accept ) 
   {
+    // recompute interval -- the rate of the rateSvc may have changed!
+    m_interval = m_rateSvc->rate() / m_rate ; 
+
     switch ( limitType() ) 
     {
     case LoKi::Scalers::RandomLimiter : 

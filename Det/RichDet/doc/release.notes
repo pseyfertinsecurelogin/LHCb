@@ -4,17 +4,29 @@
 ! Purpose     : Interface to the xml description
 !-----------------------------------------------------------------------------
 
-!======================== RichDet v14r1p1 2010-05-20 ===========================
-! 2010-05-17 - Antonis Papanestis
- - Update to allow the detector element to initialize even if the
-   normal gas conditions are not there. The HLT gas conditions are required
-   in this case. If the normal refarctive index is asked for in the HLT
-   environment an exception is thrown.
+!======================== RichDet v14r2 2010-04-26 ===========================
+! 2010-04-23 - Antonis Papanestis
+ - Added protection for a zero second order demagnification factor. The
+   solution becomes linear with inverse 1st order factor
+
+! 2010-04-23 - Antonis Papanestis
+ - Fixed a bug (m_MDMS_version was a bool instead of an int)
+
+! 2010-04-23 - Chris Jones
+ - Include (n-1) scale factor in printout on gas refractive index updates.
+
+! 2010-04-22 - Antonis Papanestis
+ - Changes for a new HPD magnification algorithm in the presence of magnetic 
+   field.
+
+! 2010-04-22 - Stephanie Hansmann-Menzemer
+ - addapt to changes in magnetic field service
 
 !======================== RichDet v14r1 2010-04-09 ===========================
-! 2010-03-25  - Sajan Easo 
- - Added the capability to use the C3F8  as RICH1Gas in DeRichGasRadiator.cpp.
+! 2010-03-25 - Sajan Easo 
+ - Added the capability to use the C3F8 as RICH1 Gas in DeRichGasRadiator.cpp.
    This modification is backward compatible.
+
 ! 2010-03-23 - Chris Jones
  - Minor speed improvements to DeRichHPD when updating for T/P condition changes.
 

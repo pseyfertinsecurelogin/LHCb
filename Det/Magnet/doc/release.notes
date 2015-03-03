@@ -4,6 +4,21 @@
 ! Purpose     : Provides magnetic field map and Bdl tools
 !-----------------------------------------------------------------------------
 
+!====================== Magnet v7r0 2010-04-26 ===============================
+! 2010-04-23 - Stephanie Hansmann-Menzemer
+ - one more fix for changes committed yesterday
+
+! 2010-04-22 - Stephanie Hansmann-Menzemer
+ - change to unabmigious names of accessor functions for MagneticFieldSvc
+  (scaleFactor -> signedRelativeCurrent, polarity => is Down)
+
+!====================== Magnet v6r0 2010-04-13 ===============================
+! 2010-04-13 - Wouter Hulsbergen
+ - Fix definition of polarity and scaleFactor in MagneticFielsSvc
+   interface. These calls should be depricated.
+ - Make sure that if fieldmap is specified by property, it is still 
+   read when using ConDB.
+
 !====================== Magnet v5r7 2010-02-12 ===============================
 ! 2010-02-08 - Marco Cattaneo
  - Register MagneticFieldSvc with UpdateManagerSvc even in cases when not using

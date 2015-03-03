@@ -1,4 +1,4 @@
-// $Id: Scalers.h,v 1.4 2010-04-04 12:20:56 ibelyaev Exp $
+// $Id: Scalers.h,v 1.6 2010-04-17 22:05:07 graven Exp $
 // ============================================================================
 #ifndef LOKI_SCALERS_H 
 #define LOKI_SCALERS_H 1
@@ -119,19 +119,19 @@ namespace LoKi
     // ========================================================================
     /** @enum RateLimitType
      *  helper enum to define the actual type of rate limiter
-     *  The idea comes from Wouter Hulsbergen and Gerhard ``The Great'' Raven
+     *  The idea comes from Wouter Hulsbergen and Gerhard Raven
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2010-04-04
      */
     enum RateLimitType
       {
         // ====================================================================
-        /// pure random limiter 
-        RandomLimiter              = 0 ,  // pure random limiter 
         /// periodic limiter with random intial phase 
-        RandomPhasePeriodicLimiter     ,  // periodic limiter with random phase 
+        RandomPhasePeriodicLimiter = 0 ,  // periodic limiter with random phase 
+        /// pure random limiter 
+        RandomLimiter              = 1 ,  // pure random limiter 
         /// plain periodic limiter
-        PlainPeriodicLimiter              // plain periodic limiter
+        PlainPeriodicLimiter       = 2    // plain periodic limiter
         // ====================================================================
       } ;  
     // ========================================================================
@@ -237,7 +237,7 @@ namespace LoKi
     private:
       // ======================================================================
       /// Tick interval 
-      long double         m_interval ;                         // Tick interval 
+      mutable long double m_interval ;                         // Tick interval 
       /// the next tick 
       mutable long double m_next     ;                         // the next tick 
       // ======================================================================
@@ -412,7 +412,7 @@ namespace LoKi
     /** @typedef RATE 
      *  Trivial predicate to determine the accept rate limit 
      * 
-     *  The actual code and concept belongs to Gerhard "The Great" Raven and 
+     *  The actual code and concept belongs to Gerhard Raven and 
      *  Wouter Hulsbergen
      *
      *  @code
@@ -436,7 +436,7 @@ namespace LoKi
     /** @typedef XRATE 
      *  Trivial predicate to determine the accept rate limit 
      * 
-     *  The actual code and concept belongs to Gerhard "The Great" Raven and 
+     *  The actual code and concept belongs to Gerhard Raven and 
      *  Wouter Hulsbergen
      *
      *  @code

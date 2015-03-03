@@ -17,7 +17,6 @@
 
 // Math typedefs
 #include "GaudiKernel/Point3DTypes.h"
-#include "GaudiKernel/GaudiException.h"
 
 // DetDesc
 #include "DetDesc/ISolid.h"
@@ -85,15 +84,13 @@ public:
   }
 
   /**
-   * Retrieves the refractive index of the radiator with the option to use HLT
-   * conditions for pressure and temperature (first checking if it is valid)
-   * @param hlt Return the HLT refractive index if true
+   * Retrieves The refractive index of the radiator
    * @return A pointer to the refractive index  interpolated function of the radiator
    * @retval NULL No interpolation function
    */
   inline const Rich::TabulatedProperty1D* refIndex( bool hlt = false ) const
   {
-    return ( hlt ? hltRefIndex() : checkRefIndex() );
+    return ( hlt ? hltRefIndex() : m_refIndex );
   }
 
   /**
@@ -200,7 +197,6 @@ public:
 
   /** Returns the refractive index at the given photon energy for this radiator
    *  @param energy The photon energy
-   *  @param hlt Return the HLT refractive index if true
    *  @return The refractive index at that energy
    */
   virtual double refractiveIndex( const double energy, bool hlt = false ) const = 0;
@@ -216,21 +212,6 @@ protected:
    * @retval NULL No interpolation function
    */
   virtual const Rich::TabulatedProperty1D* generateHltRefIndex() const;
-
-  /**
-   * Checks if the refractive index is valid. If not it throws an exception
-   * @return A pointer to the refractive index  interpolated function of the radiator
-   * @retval NULL No interpolation function
-   */
-  inline const Rich::TabulatedProperty1D* checkRefIndex() const
-  {
-    if ( m_refIndex )
-      return m_refIndex;
-    else
-      throw GaudiException( "Invalid refractive index", "DeRichRadiator", StatusCode::FAILURE );
-
-  }
-
 
 protected:
 

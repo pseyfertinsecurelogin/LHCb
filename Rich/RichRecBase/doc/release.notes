@@ -4,6 +4,17 @@
 ! Purpose     : Base package for RICH Reconstruction Packages
 !-----------------------------------------------------------------------------
 
+!===================== RichRecBase v3r30 2010-04-26 ==========================
+! 2010-04-23 - Chris Jones
+ - Fix inconsistency in the naming convention used by the Segment Hypo rings
+   "OfflineEvent" -> "RecoEvent", in order to be the same as other RichRec 
+   Event model classes.
+
+! 2010-04-18 - Chris Jones
+ - Add to Rec base class methods to access the ProcStatus object
+ - Update pixel and photon creator base classes to update ProcStatus when the 
+   RICH processing is aborted due to too many hits or photon candidates.
+
 !===================== RichRecBase v3r29 2010-04-09 ==========================
 ! 2010-04-08 - Chris Jones
  - Add protection to pixel, track and photon creator base class to abort event
