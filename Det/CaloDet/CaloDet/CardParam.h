@@ -1,5 +1,5 @@
 /// ===========================================================================
-/// $Id: CardParam.h,v 1.7 2007-06-14 16:10:16 odescham Exp $
+/// $Id: CardParam.h,v 1.9 2007-07-19 20:37:00 odescham Exp $
 /// ===========================================================================
 #ifndef CALODET_CARDPARAM_H 
 #define CALODET_CARDPARAM_H 1
@@ -24,6 +24,8 @@ public:
       @param iArea  calorimeter area 
       @param iRow   row 
       @param iCol   column
+      @param ilRow
+      @param ilCol
       @param iNum
       @param iCrate
       @param iSlot
@@ -93,7 +95,6 @@ private:
   std::vector<LHCb::CaloCellID> m_ids;
   int m_crate;
   int m_slot;
-  int m_code;
   int m_tell1;
 };
 

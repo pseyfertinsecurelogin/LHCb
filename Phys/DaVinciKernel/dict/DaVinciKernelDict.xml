@@ -17,11 +17,13 @@
   <class name = "IDirectionFit"/>
   <class name = "IFilterCriteriaTESTool"/>
   <class name = "IFilterCriterion"/>
+  <class name = "IFilterParticles"/>
   <class name = "IGeomDispCalculator"/>
   <class name = "IJetMaker"/>
   <class name = "ILifetimeFitter"/>
   <class name = "IMassVertexFit"/>
   <class name = "IOnOffline"/>
+  <class name = "IParticleArrayFilter"/>
   <class name = "IParticle2State"/>
   <class name = "IParticle2VertexAsct"/>
   <class name = "IParticleCombiner"/>

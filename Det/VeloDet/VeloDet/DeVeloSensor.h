@@ -1,4 +1,4 @@
-// $Id: DeVeloSensor.h,v 1.32 2007-03-21 17:04:42 mtobin Exp $
+// $Id: DeVeloSensor.h,v 1.34 2007-07-23 01:08:55 krinnert Exp $
 #ifndef VELODET_DEVELOSENSOR_H 
 #define VELODET_DEVELOSENSOR_H 1
 
@@ -8,6 +8,7 @@
 
 // Gaudi Math definitions
 #include "GaudiKernel/Point3DTypes.h"
+#include "GaudiKernel/PhysicalConstants.h"
 
 /// from Det/DetDesc
 #include "DetDesc/DetectorElement.h"
@@ -22,6 +23,9 @@
 // Unique class identifier
 static const CLID CLID_DeVeloSensor = 1008101 ;
 
+// forward declarations needed for fast casting
+class DeVeloRType;
+class DeVeloPhiType;
 
 /** @class DeVeloSensor DeVeloSensor.h VeloDet/DeVeloSensor.h
  *  
@@ -105,6 +109,9 @@ public:
   /// Determine if local point is in corner cut-offs
   virtual bool isCutOff(double x, double y) const = 0;
 
+  /// Return the length of a strip
+  virtual double stripLength(const unsigned int strip) const = 0;
+
   /// Convert local position to global position
   /// Local from is +ve x (and Upstream for phi sensors)
   inline Gaudi::XYZPoint localToGlobal(const Gaudi::XYZPoint& localPos) const {
@@ -153,10 +160,17 @@ public:
   }
  
   /// Convert local phi to ideal global phi
-  virtual double localPhiToGlobal(double phiLocal) const = 0;
+  double localPhiToGlobal(double phiLocal) const {
+    if(isDownstream()) phiLocal = -phiLocal;
+    if(isRight()) phiLocal += Gaudi::Units::pi;
+    return phiLocal;
+  }
   
   /// Return the z position of the sensor in the global frame
   inline double z() const {return m_z;}
+  
+  /// Return station number, station contains 2 modules (right and left)
+  inline unsigned int station() const { return (m_sensorNumber & 0x3E) >> 1; }
   
   /// Return true for X<0 side of the detector (-ve x is Right)
   inline bool isRight() const {return !m_isLeft;}
@@ -167,15 +181,21 @@ public:
   /// Returns true if sensor is downstream
   inline bool isDownstream() const {return m_isDownstream;}
 
-  /// Returns true if R Sensor
+  /// Returns true if  pile up Sensor
   inline bool isPileUp() const {return m_isPileUp;}  
 
   /// Returns true if R Sensor
   inline bool isR() const {return m_isR;}
 
-  /// Returns true if R Sensor
+  /// Returns true if Phi Sensor
   inline bool isPhi() const {return m_isPhi;}
 
+  /// fast cast to R sensor, returns 0 for wrong type
+  inline const DeVeloRType* rType() const;
+  
+  /// fast cast to Phi sensor, returns 0 for wrong type
+  inline const DeVeloPhiType* phiType() const; 
+  
   /// Return the number of strips
   inline unsigned int numberOfStrips() const {return m_numberOfStrips;}
 
@@ -403,16 +423,20 @@ protected:
   unsigned int m_numberOfZones;
   static const unsigned int m_minRoutingLine=1;
   static const unsigned int m_maxRoutingLine=2048;
+  static const unsigned int m_numberOfStrips=2048;
 
   mutable std::map<unsigned int, unsigned int> m_mapRoutingLineToStrip;//<Map of routing line to strips
   mutable std::map<unsigned int, unsigned int> m_mapStripToRoutingLine;//<Map of strips to routing line
   std::vector<std::pair<Gaudi::XYZPoint,Gaudi::XYZPoint> > m_stripLimits;//<Begin and end point of strips
   
+  IGeometryInfo* m_geometry;
+
+  IGeometryInfo* m_halfBoxGeom; ///< Geometry info of the parent half box
+
 private:
 
   void initSensor();
 
-  static const unsigned int m_numberOfStrips=2048;
   std::string m_module;
   std::string m_type;
   std::string m_fullType;
@@ -426,10 +450,6 @@ private:
   double m_z;
   double m_innerRadius;
   double m_outerRadius;
-
-  IGeometryInfo* m_geometry;
-
-  IGeometryInfo* m_halfBoxGeom; ///< Geometry info of the parent half box
 
   // condition cache
   std::string m_stripCapacitanceConditionName;

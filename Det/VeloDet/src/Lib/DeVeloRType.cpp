@@ -1,4 +1,4 @@
-// $Id: DeVeloRType.cpp,v 1.41 2007-03-22 10:27:50 dhcroft Exp $
+// $Id: DeVeloRType.cpp,v 1.43 2007-07-23 01:08:55 krinnert Exp $
 //==============================================================================
 #define VELODET_DEVELORTYPE_CPP 1
 //==============================================================================
@@ -11,6 +11,7 @@
 #include "GaudiKernel/ISvcLocator.h"
 #include "GaudiKernel/MsgStream.h"
 #include "GaudiKernel/PhysicalConstants.h"
+#include "GaudiKernel/IUpdateManagerSvc.h"
 
 // From LHCb
 #include "LHCbMath/LHCbMath.h"
@@ -119,6 +120,10 @@ DeVeloRType::DeVeloRType(const std::string& name) :
   DeVeloSensor(name),
   m_halfAngle(90.0 * Gaudi::Units::degree),
   m_quarterAngle(.5 * m_halfAngle),
+  m_globalR(m_numberOfStrips,0.0),
+  m_halfboxR(m_numberOfStrips,0.0),
+  m_associatedPhiSensor(0),
+  m_otherSideRSensor(0),
   m_rStrips(VeloDet::deVeloRTypeStaticRStrips()),
   m_rPitch(VeloDet::deVeloRTypeStaticRPitch()),
   m_phiMin(VeloDet::deVeloRTypeStaticPhiMin()),
@@ -183,6 +188,17 @@ StatusCode DeVeloRType::initialize()
   /// Build up map of strips to routing lines
   BuildRoutingLineMap();
   
+  // fill global r cache
+  sc = updateGeometryCache();
+  if(!sc.isSuccess()) {
+    msg << MSG::ERROR << "Failed to update geometry cache." << endreq;
+    return sc;
+  }
+  
+  // geometry conditions, update global r of strip cache
+  updMgrSvc()->
+    registerCondition(this,this->m_geometry,&DeVeloRType::updateGeometryCache);
+
   return StatusCode::SUCCESS;
 }
 //==============================================================================
@@ -315,13 +331,17 @@ double DeVeloRType::phiMaxZone(unsigned int zone, double radius) const {
   return phiMax;
 }
 //==============================================================================
-/// Convert local phi to ideal global phi
+/// Return the length of a strip
 //==============================================================================
-double DeVeloRType::localPhiToGlobal(double phiLocal) const {
-  if(!isDownstream()) phiLocal = -phiLocal;
-  if(isRight()) phiLocal += Gaudi::Units::pi;
-  return phiLocal;
-} 
+double DeVeloRType::stripLength(const unsigned int strip) const { 
+  double phiMin=m_stripPhiLimits[strip].first;
+  double phiMax=m_stripPhiLimits[strip].second;
+  if(phiMin < 0) phiMin += 2*Gaudi::Units::pi;
+  if(phiMax < 0) phiMax += 2*Gaudi::Units::pi;
+  double radius=m_rStrips[strip];
+  double length=2*(phiMax-phiMin)*radius;
+  return length;
+}
 //==============================================================================
 /// Get the nth nearest neighbour within a sector for a given channel
 //==============================================================================
@@ -684,4 +704,49 @@ std::auto_ptr<LHCb::Trajectory> DeVeloRType::trajectory(const LHCb::VeloChannelI
     
     return autoTraj;  
 
+}
+
+StatusCode DeVeloRType::updateGlobalR()
+{
+  for (unsigned int strip=0; strip<m_numberOfStrips; ++strip) {
+    double phi = (phiMaxStrip(strip) + phiMinStrip(strip))/2.0;
+    double r   = rOfStrip(strip);
+    Gaudi::XYZPoint lp(r*cos(phi),r*sin(phi),0.0);
+    Gaudi::XYZPoint gp = localToGlobal(lp);
+    m_globalR[strip] = gp.rho();
+  }
+  
+  return StatusCode::SUCCESS;
+}
+
+StatusCode DeVeloRType::updateHalfboxR()
+{
+  for (unsigned int strip=0; strip<m_numberOfStrips; ++strip) {
+    double phi = (phiMaxStrip(strip) + phiMinStrip(strip))/2.0;
+    double r   = rOfStrip(strip);
+    Gaudi::XYZPoint lp(r*cos(phi),r*sin(phi),0.0);
+    Gaudi::XYZPoint hbp = localToVeloHalfBox(lp);
+    m_halfboxR[strip] = hbp.rho();
+  }
+
+  return StatusCode::SUCCESS;
+}
+
+StatusCode DeVeloRType::updateGeometryCache()
+{
+  MsgStream msg(msgSvc(), "DeVeloRType");
+  
+  StatusCode sc = updateGlobalR();
+  if(!sc.isSuccess()) {
+    msg << MSG::ERROR << "Failed to update global r cache." << endreq;
+    return sc;
+  }
+  
+  sc = updateHalfboxR();
+  if(!sc.isSuccess()) {
+    msg << MSG::ERROR << "Failed to update halfbox r cache." << endreq;
+    return sc;
+  }
+
+  return StatusCode::SUCCESS;
 }

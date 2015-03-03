@@ -3,6 +3,18 @@
 ! Responsible : J.P. Palacios
 !============================================================================
 
+!========================= DaVinciKernel v6r5 2007-07-24 ====================
+! 2007-07-24 - Juan Palacios
+ - Add interface Kernel/IParticleArrayFilter.h
+   . For filtering out LHCb::Particles from an array.
+ - dict/DaVinciKernel.h, DaVinciKernel.xml
+   . Add interface IParticleArrayFilter to dictionary.
+
+! 2007-07-20 - Juan Palacios
+ - Add interface IFilterParticles and base class FilterParticlesBase.
+ - cmt/requirements
+   . Increase version to v6r5
+
 !========================= DaVinciKernel v6r4 2007-06-11 ====================
 ! 2007-06-11 - Marco Cattaneo
  - Put back IParticleTransporter interface (was in PhysEvent)

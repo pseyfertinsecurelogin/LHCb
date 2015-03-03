@@ -1,4 +1,4 @@
-// $Id: DeVeloPhiType.cpp,v 1.34 2007-03-22 10:27:50 dhcroft Exp $
+// $Id: DeVeloPhiType.cpp,v 1.36 2007-07-23 01:08:55 krinnert Exp $
 //==============================================================================
 #define VELODET_DEVELOPHITYPE_CPP 1
 //==============================================================================
@@ -11,6 +11,7 @@
 #include "GaudiKernel/ISvcLocator.h"
 #include "GaudiKernel/MsgStream.h"
 #include "GaudiKernel/PhysicalConstants.h"
+#include "GaudiKernel/IUpdateManagerSvc.h"
 
 // From LHCb
 #include "LHCbMath/LHCbMath.h"
@@ -18,6 +19,27 @@
 
 // From Velo
 #include "VeloDet/DeVeloPhiType.h"
+
+namespace VeloDet {
+/** This function simply provides access to a local static
+ *  data which is used to initialize references in each instance
+ *  of DeVeloPhiType.
+ *  The purpose of this function is to work around
+ *  a Microsoft(tm) specific extension in VC++ that makes
+ *  awkward to have static data mebers accessed by inline
+ *  funtions.
+ *
+ *  @see DeVeloPhiType
+ */
+  static std::vector<double>& deVeloPhiTypeStaticStripLengths()
+  {
+    static std::vector<double> s_stripLengths;
+    return s_stripLengths;
+  }
+}
+
+// used to control initialization
+bool DeVeloPhiType::m_staticDataInvalid = true;
 
 std::vector<std::pair<double,double> > DeVeloPhiType::m_stripLines;
 //std::vector<std::pair<Gaudi::XYZPoint,Gaudi::XYZPoint> > DeVeloPhiType::m_stripLimits;
@@ -33,7 +55,14 @@ std::vector<std::pair<double,double> > DeVeloPhiType::m_stripLines;
 //==============================================================================
 /// Standard constructor
 //==============================================================================
-DeVeloPhiType::DeVeloPhiType(const std::string& name) : DeVeloSensor(name)
+DeVeloPhiType::DeVeloPhiType(const std::string& name) 
+  : DeVeloSensor(name)
+  , m_globalPhi(m_numberOfStrips,0.0)
+  , m_halfboxPhi(m_numberOfStrips,0.0)
+  , m_idealPhi(m_numberOfStrips,0.0)
+  , m_associatedRSensor(0)
+  , m_otherSidePhiSensor(0)
+  , m_stripLengths(VeloDet::deVeloPhiTypeStaticStripLengths())
 {
 }
 //==============================================================================
@@ -125,8 +154,22 @@ StatusCode DeVeloPhiType::initialize()
   /// Parametrize strips as lines
   calcStripLines();
 
+  /// Calculated the length of the strips
+  calcStripLengths();
+
   /// Build up map of strips to routing lines
   BuildRoutingLineMap();
+
+  // fill global phi cache
+  sc = updateGeometryCache();
+  if(!sc.isSuccess()) {
+    msg << MSG::ERROR << "Failed to update geometry cache." << endreq;
+    return sc;
+  }
+  
+  // register geometry conditions, update global r of strip cache
+  updMgrSvc()->
+    registerCondition(this,this->m_geometry,&DeVeloPhiType::updateGeometryCache);
 
   return StatusCode::SUCCESS;
 }
@@ -187,6 +230,29 @@ void DeVeloPhiType::calcStripLines()
     //StatusCode sc=this->localToGlobal(Gaudi::XYZPoint(x1,y1,0),begin);
     //sc=this->localToGlobal(Gaudi::XYZPoint(x2,y2,0),end);
     m_stripLimits.push_back(std::pair<Gaudi::XYZPoint,Gaudi::XYZPoint>(begin,end));
+  }
+}
+//==============================================================================
+/// Fill vector of strip lengths
+//==============================================================================
+void DeVeloPhiType::calcStripLengths()
+{
+  // we only have to do this once. the strip lengths are 
+  // stored in statics, i.e. are technically the same
+  // for all instances of DeVeloPhiType
+  if (m_staticDataInvalid) {
+    m_staticDataInvalid=false;
+    std::vector< std::pair<Gaudi::XYZPoint,Gaudi::XYZPoint> >::const_iterator iStLi = m_stripLimits.begin(); 
+    for( ; iStLi != m_stripLimits.end() ; ++iStLi ) {
+      double x1 = iStLi->first.x();
+      double y1 = iStLi->first.y();
+      double z1 = iStLi->first.z();
+      double x2 = iStLi->second.x();
+      double y2 = iStLi->second.y();
+      double z2 = iStLi->second.z();
+      double length = gsl_pow_2(x2-x1) + gsl_pow_2(y2-y1) + gsl_pow_2(z2-z1);
+      m_stripLengths.push_back(sqrt(length));
+    }
   }
 }
 //==============================================================================
@@ -479,13 +545,11 @@ double DeVeloPhiType::rMax(const unsigned int zone) const
   return rMax;
 }
 //==============================================================================
-/// Convert local phi to ideal global phi
+/// Return the length of a strip
 //==============================================================================
-double DeVeloPhiType::localPhiToGlobal(double phiLocal) const {
-  if(isDownstream()) phiLocal = -phiLocal;
-  if(isRight()) phiLocal += Gaudi::Units::pi;
-  return phiLocal;
-} 
+double DeVeloPhiType::stripLength(const unsigned int strip) const { 
+  return m_stripLengths[strip];
+}
 //=============================================================================
 // Build map of strips to routing line and back
 //=============================================================================
@@ -560,4 +624,35 @@ std::auto_ptr<LHCb::Trajectory> DeVeloPhiType::trajectory(const LHCb::VeloChanne
 
 }
 
+StatusCode DeVeloPhiType::updatePhiCache()
+{
+  for (unsigned int strip=0; strip<m_numberOfStrips; ++ strip) {
+    std::pair<Gaudi::XYZPoint,Gaudi::XYZPoint>  limits = localStripLimits(strip);
+    double x = (limits.first.x()  + limits.second.x())/2.0;
+    double y = (limits.first.y()  + limits.second.y())/2.0;
+    
+    Gaudi::XYZPoint lp(x,y,0.0);
+    m_idealPhi[strip]=localPhiToGlobal(lp.phi());
+    
+    Gaudi::XYZPoint gp = localToGlobal(lp);
+    m_globalPhi[strip] = gp.phi();
+    
+    Gaudi::XYZPoint hbp = localToVeloHalfBox(lp);
+    m_halfboxPhi[strip] = hbp.phi();
+  }
+  
+  return StatusCode::SUCCESS;
+}
 
+StatusCode DeVeloPhiType::updateGeometryCache()
+{
+  MsgStream msg(msgSvc(), "DeVeloPhiType");
+  
+  StatusCode sc = updatePhiCache();
+  if(!sc.isSuccess()) {
+    msg << MSG::ERROR << "Failed to update phi cache." << endreq;
+    return sc;
+  }
+
+  return StatusCode::SUCCESS;
+}
