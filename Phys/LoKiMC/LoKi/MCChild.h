@@ -1,4 +1,4 @@
-// $Id: MCChild.h,v 1.6 2010-05-31 20:33:53 ibelyaev Exp $
+// $Id: MCChild.h 124207 2011-06-02 16:05:29Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_MCCHILD_H 
 #define LOKI_MCCHILD_H 1

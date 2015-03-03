@@ -1,4 +1,4 @@
-// $Id: MCHybridEngine.cpp,v 1.2 2008-02-19 15:04:01 ibelyaev Exp $
+// $Id: MCHybridEngine.cpp 124207 2011-06-02 16:05:29Z ibelyaev $
 // ============================================================================
 // Include files
 // ============================================================================
@@ -19,14 +19,14 @@
  *  A.Golutvin, P.Koppenburg have been used in the design.
  *
  *  By usage of this code one clearly states the disagreement 
- *  with the campain of Dr.O.Callot et al.: 
+ *  with the smear campaign of Dr.O.Callot et al.: 
  *  ``No Vanya's lines are allowed in LHCb/Gaudi software.''
  *
  *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
  *  @date 2004-06-30 
- *                    $Revision$
- *  Last modification $Date$
- *                 by $Author$
+ *                    $Revision: 124207 $
+ *  Last modification $Date: 2011-06-02 18:05:29 +0200 (Thu, 02 Jun 2011) $
+ *                 by $Author: ibelyaev $
  */
 // ============================================================================
 // constructor
@@ -117,6 +117,20 @@ StatusCode LoKi::Hybrid::MCEngine::process
 StatusCode LoKi::Hybrid::MCEngine::process
 ( const std::string&             name , 
   const LoKi::Types::MCVFunVals& cut  ) const { return _process ( name , cut ) ; }
+// ============================================================================
+// cut-vals:
+// ============================================================================
+// add the cut-val 
+// ============================================================================
+StatusCode LoKi::Hybrid::MCEngine::process
+( const std::string&            name , 
+  const LoKi::Types::MCCutVals& cut  ) const { return _process ( name , cut ) ; }
+// ============================================================================
+// add the cut-val 
+// ============================================================================
+StatusCode LoKi::Hybrid::MCEngine::process
+( const std::string&            name , 
+  const LoKi::Types::MCVCutVals& cut ) const { return _process ( name , cut ) ; }
 // ============================================================================
 // sources 
 // ============================================================================

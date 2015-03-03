@@ -1,8 +1,27 @@
-! $Id: release.notes,v 1.54 2010-01-20 17:13:32 cattanem Exp $
+!-------------------------------------------------------------------------------
 ! Package: IOExample
 ! Package Manager: M.Frank
-! Purpose: Demonstrate how to write and read back event data using POOL I/O.
+! Purpose: Demonstrate how to write and read back event data
 !-------------------------------------------------------------------------------
+
+!========================= IOExample v4r0 2011-06-14 =========================
+! 2011-05-24 - Marco Cattaneo
+ - Adapt to use IOHelper instead of IOConf
+
+! 2011-05-20 - Marco Cattaneo
+ - Follow changes in IOConf, tests also FileRecords
+
+! 2011-05-17 - Marco Cattaneo
+ - Add DataType slot to IOTest configurable, used to switch on HepMCBack DLL
+   in case of MC09 data
+ - Add tests for 2009, Reco08 (dst+mdst), Reco09 (dst+mdst) and MC10 data.
+
+! 2011-05-16 - Marco Cattaneo
+ - Major reorganisation of package:
+   . Added configurable for tests
+   . Options directory removed, all examples are now in tests/options
+   . Tests updated for I/O in both POOL and ROOT persistency format
+     (needs RootCnv)
 
 !====================== IOExample v3r5 2010-09-27 ==============================
 ! 2010-09-07 - Marco Cattaneo

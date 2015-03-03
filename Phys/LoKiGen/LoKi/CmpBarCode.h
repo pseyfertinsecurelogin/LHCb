@@ -1,4 +1,4 @@
-// $Id: CmpBarCode.h,v 1.3 2009-05-09 19:21:38 ibelyaev Exp $
+// $Id: CmpBarCode.h 124208 2011-06-02 16:05:48Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_CMPBARCODE_H 
 #define LOKI_CMPBARCODE_H 1
@@ -28,9 +28,9 @@
  *
  *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
  *
- *                    $Revision$
- *  Last modification $Date$
- *                 by $Author$
+ *                    $Revision: 124208 $
+ *  Last modification $Date: 2011-06-02 18:05:48 +0200 (Thu, 02 Jun 2011) $
+ *                 by $Author: ibelyaev $
  */
 // ============================================================================
 namespace LoKi

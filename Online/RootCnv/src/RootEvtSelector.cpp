@@ -11,7 +11,7 @@
 #define GAUDIROOTCNV_ROOTEVTSELECTORCONTEXT_H
 
 // Include files
-#include "RootCnv/RootEvtSelector.h"
+#include "RootEvtSelector.h"
 #include <vector>
 
 // Forward declarations
@@ -84,15 +84,17 @@ namespace Gaudi {
 // Include files
 #include "GaudiKernel/ClassID.h"
 #include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/SvcFactory.h"
 #include "GaudiKernel/Tokenizer.h"
 #include "GaudiKernel/IDataManagerSvc.h"
 #include "GaudiKernel/ISvcLocator.h"
-#include "RootCnv/RootCnvSvc.h"
-#include "RootCnv/RootDataConnection.h"
+#include "RootCnvSvc.h"
+#include "RootDataConnection.h"
 #include "TBranch.h"
 
 using namespace Gaudi;
 using namespace std;
+
 
 // Service Constructor
 RootEvtSelector::RootEvtSelector(const string& name,ISvcLocator* svcloc )
@@ -348,3 +350,6 @@ RootEvtSelector::resetCriteria(const string& criteria, Context& context)  const
   }
   return error("Invalid iteration context.");
 }
+
+#include "GaudiKernel/DeclareFactoryEntries.h"
+DECLARE_NAMESPACE_SERVICE_FACTORY(Gaudi,RootEvtSelector)

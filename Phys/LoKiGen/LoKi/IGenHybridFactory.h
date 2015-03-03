@@ -1,4 +1,4 @@
-// $Id: IGenHybridFactory.h,v 1.2 2008-02-19 13:16:25 ibelyaev Exp $
+// $Id: IGenHybridFactory.h 124208 2011-06-02 16:05:48Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_IGENHYBRIDFACTORY_H 
 #define LOKI_IGENHYBRIDFACTORY_H 1
@@ -32,9 +32,9 @@
  *  with the campain of Dr.O.Callot et al.: 
  *  ``No Vanya's lines are allowed in LHCb/Gaudi software.''
  *
- *                    $Revision$
- *  Last modification $Date$
- *                 by $Author$
+ *                    $Revision: 124208 $
+ *  Last modification $Date: 2011-06-02 18:05:48 +0200 (Thu, 02 Jun 2011) $
+ *                 by $Author: ibelyaev $
  */
 namespace LoKi
 {

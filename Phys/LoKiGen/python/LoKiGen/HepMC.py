@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # =============================================================================
-# $Id: HepMC.py,v 1.9 2010-05-30 17:09:55 ibelyaev Exp $ 
+# $Id: HepMC.py 124225 2011-06-04 19:32:00Z ibelyaev $ 
 # =============================================================================
 ## @file
 #  collection of utilities for useful 'decoration' of HepMC-objects
@@ -31,7 +31,7 @@ A.Golutvin, P.Koppenburg have been used in the design.
 # =============================================================================
 __author__  = 'Vanya BELYAEV ibelyaev@physics.syr.edu'
 __date__    = "2007-08-11"
-__version__ = "CVS Tag: $Name: not supported by cvs2svn $, version $Revision: 1.9 $ "
+__version__ = "CVS Tag: $Name: not supported by cvs2svn $, version $Revision: 124225 $ "
 # =============================================================================
 import LoKiCore.decorators as _LoKiCore
 from   LoKiGen.functions   import HepMC,LoKi, Gaudi, std, cpp 
@@ -547,6 +547,55 @@ if not hasattr ( HepMC.GenParticle , 'Range' ) :
     HepMC.GenParticle.Range = Gaudi.NamedRange_( HepMC.GenParticle.ConstVector ) 
 if not hasattr ( HepMC.GenVertex   , 'Range' ) :
     HepMC.GenVertex.Range   = Gaudi.NamedRange_( HepMC.GenVertex.ConstVector   ) 
+
+if not hasattr ( LHCb.HepMCEvent , 'Container' ) :
+    LHCb.HepMCEvent.Container = cpp.KeyedContainer(LHCb.HepMCEvent,'Containers::KeyedObjectManager<Containers::hashmap>')
+
+
+# =============================================================================
+## define various printers 
+def _print_ ( self                                     ,
+              accept   = None                          ,
+              mark     = None                          ,
+              maxDepth = 5                             ,
+              vertex   = False                         , 
+              mode     = LoKi.DecayChainBase.LV_WITHPT ,
+              fg       = cpp.MSG.YELLOW                ,
+              bg       = cpp.MSG.RED                   ,
+              vertexe  = True                          ) :
+    
+    """
+    Define the print functions for some MC-objects
+    for details see LoKi::GenDecayChain 
+    """
+    _printer = LoKi.GenDecayChain ( maxDepth ,
+                                    vertex   , 
+                                    mode     ,
+                                    fg       ,
+                                    bg       ,
+                                    vertexe  )
+    if    accept and not mark : 
+        return _printer.print_ ( self , accept )
+    elif  accept and     mark : 
+        return _printer.print_ ( self , accept , mark )
+    #
+    return _printer.print_ ( self )
+
+_print_ . __doc__ += "\n" + LoKi.GenDecayChain.print_ . __doc__ 
+
+
+for t in ( HepMC.GenParticle             ,
+           HepMC.GenParticle.Range       , 
+           HepMC.GenParticle.ConstVector ,
+           HepMC.GenEvent                ,
+           LHCb.HepMCEvent               ,
+           LHCb.HepMCEvent.Container     ) :
+    t._print_   = _print_
+    t.__str__   = _print_
+    t.__repr__  = _print_
+    
+
+    
     
 # =============================================================================
 if '__main__' == __name__ :

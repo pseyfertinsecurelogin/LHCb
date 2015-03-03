@@ -1,4 +1,4 @@
-// $Id: GenExtractDicts.h,v 1.4 2009-07-12 12:34:41 ibelyaev Exp $
+// $Id: GenExtractDicts.h 124208 2011-06-02 16:05:48Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_GENEXTRACTDICTS_H 
 #define LOKI_GENEXTRACTDICTS_H 1

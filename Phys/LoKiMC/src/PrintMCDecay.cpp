@@ -1,4 +1,4 @@
-// $Id: PrintMCDecay.cpp,v 1.13 2009-05-21 14:45:15 ibelyaev Exp $
+// $Id: PrintMCDecay.cpp 124226 2011-06-04 19:34:02Z ibelyaev $
 // ============================================================================
 // Include files 
 // ============================================================================
@@ -96,7 +96,7 @@ std::ostream& LoKi::PrintMC::printDecay
     ( particle , std::back_inserter( daugs ) , decayOnly ) ;
   // own name 
   std::string name = 
-    LoKi::Particles::nameFromPID ( particle->particleID() ) ;
+    LoKi::Particles::nameIdFromPID ( particle->particleID() ) ;
   if ( particle -> hasOscillated() ) { name = "[" + name + "]os" ; }
   if ( daugs.empty() ) 
   { return stream << " " << name << " " ; } ;               // RETURN 

@@ -1,4 +1,4 @@
-// $Id: MCAlgs.h,v 1.11 2010-05-31 20:33:53 ibelyaev Exp $
+// $Id: MCAlgs.h 124207 2011-06-02 16:05:29Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_MCALGS_H 
 #define LOKI_MCALGS_H 1

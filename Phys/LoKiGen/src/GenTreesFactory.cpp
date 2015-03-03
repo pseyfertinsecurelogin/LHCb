@@ -1,6 +1,6 @@
-// $Id: GenTreesFactory.cpp,v 1.2 2009-05-23 15:56:20 ibelyaev Exp $
+// $Id: GenTreesFactory.cpp 124208 2011-06-02 16:05:48Z ibelyaev $
 // ============================================================================
-// CVS tag $Name: not supported by cvs2svn $, version $Revision: 1.2 $
+// CVS tag $Name: not supported by cvs2svn $, version $Revision: 124208 $
 // ============================================================================
 // Include files 
 // ============================================================================

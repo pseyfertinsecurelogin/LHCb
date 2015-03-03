@@ -5,23 +5,147 @@
 ! Purpose     : LHCb base classes and event model
 !-----------------------------------------------------------------------------
 
-</PRE><H1><A NAME=v32r3g3>2011-11-15 LHCbSys v32r3g3</A></H1><PRE>
-This version uses Gaudi v22r5 and LCG_61b
+</PRE><H1><A NAME=v32r4>2011-06-15 LHCbSys v32r4</A></H1><PRE>
+This version uses Gaudi v22r2 and LCG_60a
+Production version for 2011 data after July 2011 technical stop
+Development release for commissioning of RootCnv persistency
 
-</PRE><H1><A NAME=v32r3g2>2011-11-08 LHCbSys v32r3g2</A></H1><PRE>
-Re-build.
+- Packages added:   Online/RootCnv: supports ROOT persistency. Also released as
+                                    part of ONLINE project
+                    Event/MicroDst: Contains DaVinci::Maps classes stored on
+                                    MicroDst, previously in Phys/DaVinciMaps
 
-</PRE><H1><A NAME=v32r3g1>2011-11-03 LHCbSys v32r3g1</A></H1><PRE>
-This version uses Gaudi v22r4 and LCG_61
-Production version for Swimming
+- Packages modified: CaloInterfaces v8r2, CaloUtils v9r1, MDF v3r30, DDDB v1r45,
+    DetCond v12r19, DetDesc v18r26, OTDet v8r6, RichDet v16r4, DigiEvent v2r18,
+    GenEvent v6r0, L0Event v19r4, MCEvent v2r20, PhysEvent v11r14,
+    IOExample v4r0, GaudiConf v14r0, LHCbAlgs v2r39, LHCbKernel v13r2,
+    L0Interfaces v1r8, OTDAQ v7r10, LoKiCore v11r1, LoKiGen v10r2, LoKiMC v10r1,
+    RichKernel v7r44, TfKernel v2r21, CondDBUI v3r10
 
-- Packages added: Event/SwimmingEvent: new package
-                  Online/RootCnv:      copied from Online
-                  Tools/FileStager:    backported
-- Packages backported from LHCb v33r0:
-        Event/GenEvent v6r1, GaudiConf v15r2, Phys/LoKiCore v11r3,
-        Event/PhysEvent v11r14, Online/RootCnv v1r8 (new),
-        Tools/FileStager v1r3 (new)
+- In CaloInterfaces v8r2
+  . add new interface : ICaloGammaPi0SeparationTool.h
+  . extend ICaloHypoEstimator enum
+
+- In CaloUtils v9r1
+  . CaloAlgUtils : new method StringMatcher()
+  . src/CaloNeighbours::_neighbours : fix infinite loop when level < 0
+
+- In MDF v3r30
+  . Improve handling (and printouts) when files get retired.
+
+- In DDDB v1r45
+  . Update database tags for SQLDDDB v6r10:
+    o LHCBCOND, 2011, 2010, 2009: head-20110524
+
+- In DetCond v12r19
+  . Another minor add-on for the 'UseLatestTags' warning output case.
+  . Added a missing configuration bit for the case of per-year-made ONLINE
+    snapshots: if per-year scheme is met 'CondDBAccessSvc' services are also
+    created per-year (before they were created per-month but pointing to a
+    single per-year ONLINE snapshot). SQLDDDB needs a minor change to enable
+    this configuration change.
+  . Warnings about latest tags usage are made more meaningful.
+
+- In DetDesc v18r26
+  . Add SmartRef<Condition>, SmartRef<AlignmentCondition> to python dictionary
+
+- In L0Interfaces v1r8
+  . IL0DUFromRawTool : new virtual method datas() return <string,value> data map
+
+- In OTDet v8r6
+  . Fixed bug with usage of calibration instead of status for channel status
+  . Added walk parameterization which describes propagation time correction
+  . Added reading of walk parameters from database.
+
+- In RichDet v16r4
+  . Add some missing protection for failed dynamic casts in DeRichHPDPanel and
+    DeRichSphMirror
+  . Some other minor code tidy ups
+
+- In DigiEvent v2r18
+  . Added BcmDigit.xml, CLID 3001
+
+- In GenEvent v6r0
+  . xml/BeamParameters.xml: new class to contain beam parameter informations
+    for the generator step.
+  . xml/GenHeader.xml: move the beam related functions to BeamParameters.
+    Changes are backward compatible for reading old data
+  . src/BeamForInitialization.cpp, GenEvent/BeamForInitialization.h: utility
+    class for Pythia initialization.
+
+- In L0Event v19r4
+  . L0DUCounter : counter base change from 10^3 to 10^6 : 
+                  WAS NOT PROPERLY DONE IN XML ON 2011-01-24 !!
+
+- In MCEvent v2r20
+  . Added MCBcmDigit.xml, CLID 3000
+
+- In PhysEvent v11r14
+  . Add LHCb::Particle::Selection into dictionary
+  . Remove obsolete FilterCriterionResult. Completes Task #12929.
+- In IOExample v4r0
+  . Major reorganisation of package:
+    o Added IOTest configurable for tests
+    o Options directory removed, all examples are now in tests/options
+    o Tests updated for I/O in both POOL and ROOT persistency format
+      (needs RootCnv)
+    o Add tests for 2009, Reco08 (dst+mdst), Reco09 (dst+mdst) and MC10 data
+
+- In GaudiConf v14r0
+  . Added IOHelper configurable to transprently support ROOT and POOL persistency
+    (see code for documentation and release notes for details of changes)
+  . Adapted LHCbApp, DstConf to use IOHelper
+  . SimConf: add write out of BeamParameters class for Gauss, only
+             for 2011 DataType.
+  . Minor fix to python/GaudiConf/QMTest/LHCbExclusions.py
+
+- In LHCbAlgs v2r39
+  . AlgorithmCorreations : Fix bug https://savannah.cern.ch/bugs/index.php?82587
+  . Added an algorithm to produce the TES finger print (quantitative image). Two
+    heuristics levels are possible:
+    o Plain data objects statistics through the store ('Low' level);
+    o Mentioned above + more closer look on the container object contents
+      ('Medium' level).
+
+- In LHCbKernel v13r2
+  . Remove RICHDEBUG preprocessor directive. Use Gaudi NDEBUG instead.
+  . Add LHCb::RichSmartID::Vector to python dictionary
+
+- In OTDAQ v7r10
+  . Add possibility to apply a fiducial time window in OTRawBankDecoder.
+    Default behaviour is backwards compatible.
+
+- In LoKiCore v11r1
+  . reduce number of warnings for ICC compiler
+  . add base class LoKi::FilterTool
+  . add utilities for better printout of decay trees
+
+- In LoKiGen v10r2
+  . reduce compilation warnings for ICC compiler
+  . better printout of decay chains
+  . add LoKi::GenFilter algorithm to allow some filtering based on
+    properties of generator event.
+
+- In LoKiMC v10r1
+  . reduce warnings for ICC compiler
+  . add "CutVal" to the list of known types
+  . add MC-filter
+
+- In RichKernel v7r44
+  . Add a workaround to RichConfigurableUser to deal with the fact that
+   _context_defaults_ is a singleton between all instances.
+
+- In TfKernel v2r21
+  . Move code from DeOTModule::propagationTime to OTHit::propagationTime to
+    improve performance
+  . Change OTHit::propagationTime to use DeOTModule::propagationTime
+
+- In CondDBUI v3r10
+  . TagsFilter.py is updated:
+    + 'BookkeepingSystem' module is changed to 'NewBookkeepingSystem' one;
+    + SQLDDDBROOT environment variable is changed to the SQLITEDBPATH one
+      (latter is set in the SQLDDDB package). This is needed in the frame of
+     SQLite db files distribution model migration where CVMFS will host the files
 
 </PRE><H1><A NAME=v32r3>2011-04-27 LHCbSys v32r3</A></H1><PRE>
 This version uses Gaudi v22r2 and LCG_60a
@@ -62,7 +186,7 @@ Development version for 2011 data
   . Remove some obsolete DC06 compatibility hacks
   . Return StatusCode FAILURE from DeRichSystem::initialize() if initial
     update fails.
-  . Improve the way various cached information is handled w.r.t. condition
+  . Improve the way various cached information is handled w.r.t. condition 
     updates.
   . Move all of the initialisation of variables in DeRichSphMirror::initialize()
     to DeRichSphMirror::updateGeometry(), in order to make sure everything
@@ -70,7 +194,7 @@ Development version for 2011 data
 
 - In EventPacker v2r9, v2r8
   . Fix defect 15762, memory leak in WritePackedDst::storeInBlob
-  . Fix the handling of unsigned short as index in the list of LHCbIDs,
+  . Fix the handling of unsigned short as index in the list of LHCbIDs, 
     when it overflows 65k.
 
 - In L0Event v19r3
@@ -87,7 +211,7 @@ Development version for 2011 data
   . Remove obsolete options files DC06Conditions.opts, DetDesc.opts
 
 - In LHCbAlgs v2r38
-  . Fix bug #81362: added missing 'break' in loop over RawEvent locations in
+  . Fix bug #81362: added missing 'break' in loop over RawEvent locations in 
     ODINDecodeTool.cpp
   . Remove EventNodeKiller, moved to Gaudi
 
@@ -100,7 +224,7 @@ Development version for 2011 data
     the max number of muon Tell1 banks
 
 - In LoKiGen v10r1
-  . Add missing "cutvals" into Tool/Factory interface, needed for generic
+  . Add missing "cutvals" into Tool/Factory interface, needed for generic 
     cut-tool in Gauss
 
 - In LoKiHlt v3r7
@@ -153,7 +277,7 @@ Production version for 2011 data
   . Changes in DeRichGasRadiator to allow easy change of gas in RICH1 Gas mixture
     is supported only if CO2 parameterisation is used for C4F10 as well
     (currently not the case).
-  . Add missing clear() on L0 to L1 Hardware ID map during
+  . Add missing clear() on L0 to L1 Hardware ID map during 
     DeRichSystem::buildHPDMappings()
   . Add new method to DeRichSystem to return the Level1 Hardware ID for a
     given Level0 ID
@@ -204,7 +328,7 @@ Production version for 2011 data
   . Kinematics.h: fix LaTeX typos in doxygen comments
   . Add "fetch" decorator
   . Add "Fetch" vector-function
-  . Fix the names for FUnOps:
+  . Fix the names for FUnOps: 
     Reflex now ignores names prepended by single underscore... :-(
   . Optimize the "set-difference" and "set-intersection"
   . Add more "streamer" functions
@@ -247,7 +371,7 @@ This version uses Gaudi v22r1 and LCG_60a
 Production version for 2011 startup
 
 This is a patch release to take a few package revisions required for
-2011 data taking.
+2011 data taking. 
 
 - Event/RecEvent v2r36:
   . Added rawID to the RecHeader, the string raw file UID.
@@ -292,7 +416,7 @@ Production version for 2011 startup
 
 - In DetDesc v18r23
   . Add to Material and Mixture classes a new reset() method, that resets the
-    objects back to their default constructor states.
+    objects back to their default constructor states. 
     Developmental, so may evolve. Does NOT affect any existing functionality.
 
 - In DetDescChecks v5r5
@@ -404,8 +528,8 @@ Development version on top of the latest Gaudi/Root for 2011 data
 For links to the changesets see:
 https://cern.ch/lhcb-tag-collector/display.html?project=LHCb&version=v32r0
 
-- Functionality changes:
- . New default DataType: 2011 (DDDB v1r40)
+- Functionality changes: 
+ . New default DataType: 2011 (DDDB v1r40) 
  . New default database tags, updated for SQLDDDB v5r44 (DDDB v1r40):
    + DDDB, 2009, 2010: head-20101206
    + 2011 defaults currently the same as for 2010
@@ -415,7 +539,7 @@ https://cern.ch/lhcb-tag-collector/display.html?project=LHCb&version=v32r0
     Added DQFilter algorithm to filter events according to these flags; it can
     operate during BeginEvent (default) or as a standard filter (LHCbAlgs v2r36)
 
- . Added support for 2011 Rich gas mixture (RichDet v16r0).
+ . Added support for 2011 Rich gas mixture (RichDet v16r0). 
    Previous versions of RichDet do not support 2011 CondDB tags for Rich
  . Added support for lists of active and inactive HPDs (RichDet v15r3)
 
@@ -476,7 +600,7 @@ https://cern.ch/lhcb-tag-collector/display.html?project=LHCb&version=v32r0
  . Remove most icc compilation warnings and many remarks
    (CaloInterfaces v8r1, Tell1Kernel v1r12, CaloDet v10r9, DetCond v12r17,
     DetDesc v18r22, DetDescCnv v4r12, MuonDet v9r3, RichDet v16r0, STDet v4r23,
-    VeloDet v13r13, VeloPixDet v1r9, DAQEvent v9r3, DigiEvent v2r17,
+    VeloDet v13r13, VeloPixDet v1r9, DAQEvent v9r3, DigiEvent v2r17, 
     EventAssoc v5r1, GenEvent v5r7, HltEvent v9r1, L0Event v19r1, LumiEvent v3r1,
     MCEvent v2r18, PackedEvent v4r4, PhysEvent v11r13, TrackEvent v5r10,
     VeloEvent v16r10, DetCondExample v11r10, GaudiObjDesc v11r11,
@@ -498,7 +622,7 @@ This version uses Gaudi v21r11 and LCG_58f
     DaVinciInterfaces v2r7, DaVinciTypes v2r2, LoKiCore v10r7, CondDBUI v3r7
 
 - In Det/OTDet v8r5
-  . Remove unneccessary public include of boost/assign/list_of.hpp that was
+  . Remove unneccessary public include of boost/assign/list_of.hpp that was 
     breaking compilation with icc
   . Remove a superfluous ; (icc remark)
 
@@ -509,17 +633,17 @@ This version uses Gaudi v21r11 and LCG_58f
   . Remove ANNSvc, moved to HltDAQ
 
 - In Phys/DaVinciInterfaces v2r7
-  . IDistanceCalculator: add methods to calculate the impact parameter &
-                         distance of closest approach for tracks
+  . IDistanceCalculator: add methods to calculate the impact parameter & 
+                         distance of closest approach for tracks 
 
 - In Phys/DaVinciTypes v2r2
-  . Fix stupid bug in RecVertexHolder destructor
+  . Fix stupid bug in RecVertexHolder destructor 
   . Add tests for RecVertexHolder.
   . Add QM test davincitypes.test_recvertexholder.
 
 - In Phys/LoKiCore v10r7
   . Info/ExtraInfo/InfoOps functions.py & decorators.py
-    add "logging"-functors & functions
+    add "logging"-functors & functions 
 
 - In Tools/CondDBUI v3r7
   . TSDB scheme is extended to be more generic (all classes machninery is
@@ -540,7 +664,7 @@ This version uses Gaudi v21r11 and LCG_58f
 - Packages modified: CaloDet v10r8, DDDB v1r39, RichDet v15r2, VeloPixDet v1r8,
   L0Event v19r0, PhysEvent v11r12p2, RecEvent v2r33, RecreatePIDTools v1r1,
   LHCbKernel v12r6, LHCbMath v3r22, MCInterfaces v1r12, PartProp v1r8,
-  L0MuonKernel v9r5, ProcessorKernel v6r1, DaVinciInterfaces v2r6,
+  L0MuonKernel v9r5, ProcessorKernel v6r1, DaVinciInterfaces v2r6, 
   DaVinciTypes v2r1, LoKiCore v10r6, LoKiGen v9r4, LoKiHlt v3r3,
   RichKernel v7r40, RichRecBase v4r2, CondDBUI v3r6
 
@@ -561,13 +685,13 @@ This version uses Gaudi v21r11 and LCG_58f
   . Bug fix in the finding neighbourg function of DeVeloPixSquareType.
 
 - In Event/L0Event v19r0
-  . L0DUReport.xml : - change data member m_configuration from pointer to
-                       SmartRef<LHCb::L0DUConfig>
-    WARNING : THE CHANGE IS NOT BACKWARD-COMPATIBLE FOR MDST PRODUCED WITH
+  . L0DUReport.xml : - change data member m_configuration from pointer to 
+                       SmartRef<LHCb::L0DUConfig> 
+    WARNING : THE CHANGE IS NOT BACKWARD-COMPATIBLE FOR MDST PRODUCED WITH 
               L0DUReport EXPLICITELY IN
   . New method globalDecisionFromChannel(std::string channelName, type=PHYSICS) :
     return the decision from channel when participating to a global L0 decision
-    (default PHYSICS)
+    (default PHYSICS) 
 
 - In Event/PhysEvent v11r12p2
   . Added dictionary for LHCb::Vertex::ConstVector. Fixes bug #75884
@@ -583,22 +707,22 @@ This version uses Gaudi v21r11 and LCG_58f
   . Fixed a compilation problem with ICC + Boost 1.44
   . Add some public method to VeloPixChannelID to access the masks
   . Add new classes to represent the notion of 'persistifiable counters-in-TES'
-     Gaudi::Counter   CLID=150 - trivial couneter of StatEntity   in TES
-     Gaudi::Counters  CLID=151 - the map  { string : StatEntity } in TES
-     Gaudi::Numbers   CLID=152 - the map  { string : double     } in TES
-    The classes are decorated using new python module Counters.py
+     Gaudi::Counter   CLID=150 - trivial couneter of StatEntity   in TES 
+     Gaudi::Counters  CLID=151 - the map  { string : StatEntity } in TES 
+     Gaudi::Numbers   CLID=152 - the map  { string : double     } in TES 
+    The classes are decorated using new python module Counters.py 
 
 - In Kernel/LHCbMath v3r22
   . Add (python) accessor to correlation matrix
-  . Add eigenvalues and eigenvectors in python for 2x2,3x3 and 4x4 matrices
+  . Add eigenvalues and eigenvectors in python for 2x2,3x3 and 4x4 matrices 
 
 - In Kernel/MCInterfaces v1r12
-  . Added methods to easily access MC info for scintillation in
+  . Added methods to easily access MC info for scintillation in 
     IRichRecMCTruthTool and IRichMCTruthTool
 
 - In Kernel/PartProp v1r8
   . Add printout for  set<LHCb::ParticleID>
-  . Add GAUDI_API declarations
+  . Add GAUDI_API declarations 
 
 - In L0/L0MuonKernel v9r5, L0/ProcessorKernel v6r1
   . Fix windows error (misuse of pow)
@@ -610,19 +734,19 @@ This version uses Gaudi v21r11 and LCG_58f
   . LHCb::RecVertexHolder: "return"-value for vertexfitters/refitters
 
 - In Phys/LoKiCore v10r6
-  . Add LoKi::transform
+  . Add LoKi::transform 
   . Add Gate, Dump, Cause
-
+ 
 - In Phys/LoKiGen v9r4
   . Remove print statement
 
 - In Phys/LoKiHlt v3r3
-  . LoKiHlt/algorithms.py:  add function execute as alias for allRun function
+  . LoKiHlt/algorithms.py:  add function execute as alias for allRun function 
   . Add new symbols ALG_RUN & ALG_RUNALL
 
 - In Rich/RichKernel v7r40
   . Add a new method to RichCommonBase to propagate job options
-  . Add a new class for L1 'Copy Number'. Just a number that starts at 0
+  . Add a new class for L1 'Copy Number'. Just a number that starts at 0 
     in RICH1 and increments through the boards.
 
 - In Rich/RichRecBase v4r2
@@ -638,7 +762,7 @@ This version uses Gaudi v21r11 and LCG_58f
       New clases to interact with the TagStatus database designed to monitor
       the CondDB global tag availability status at Tier1's level.
     + "CondDBAdmin_HashTag.py":
-      generates master hash sums for global tags and places it to
+      generates master hash sums for global tags and places it to 
       release_notes.xml to be used then to fill TagStatusDB.
     + "TSDBAdmin_MasterAgent.py":
       explains to Tier script agents what validity status do global tags have at

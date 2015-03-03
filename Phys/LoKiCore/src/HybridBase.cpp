@@ -1,4 +1,4 @@
-// $Id: HybridBase.cpp 126317 2011-07-20 20:53:18Z ibelyaev $
+// $Id: HybridBase.cpp 53291 2010-08-05 14:35:53Z ibelyaev $
 // ============================================================================
 // Include files 
 // ============================================================================
@@ -18,7 +18,6 @@
 // Boots 
 // ============================================================================
 #include "boost/algorithm/string/trim.hpp"
-#include "boost/algorithm/string/replace.hpp"
 // ============================================================================
 // Python 
 // ============================================================================
@@ -44,7 +43,6 @@
 // ============================================================================
 namespace 
 {
-  // ==========================================================================
   /// replace all new lines with "newline+comments"
   std::string addComment ( std::string str )
   {
@@ -57,7 +55,6 @@ namespace
     }
     return str ;
   }
-  // ==========================================================================
   /// prepare the actual code: trim and remove the paired quotes 
   std::string trimCode ( std::string code ) 
   {
@@ -74,7 +71,6 @@ namespace
     //
     return trimCode ( std::string ( ifront , iback ) ) ;
   }
-  // ==========================================================================
 }
 // ============================================================================
 // Standard constructor
@@ -345,12 +341,15 @@ std::string LoKi::Hybrid::Base::makeCode
   const LoKi::Hybrid::Base::Strings& lines   ,
   const std::string&                 context ) const 
 {
-  // 
   std::string _code = code ;
-  boost::algorithm::replace_all ( _code , "\n"  , " " ) ;
-  boost::algorithm::replace_all ( _code , "\\n" , " " ) ;
-  boost::algorithm::trim        ( _code ) ;
-  //
+  {
+    std::string::size_type pos = _code.find ( '\n' ) ;
+    while ( std::string::npos != pos ) 
+    {
+      _code.replace( pos , 1 , " " ) ;
+      pos = _code.find ('\n') ;
+    }
+  }
   // trim and remove the paired quotes:
   _code = trimCode ( _code ) ;
   //
@@ -360,7 +359,7 @@ std::string LoKi::Hybrid::Base::makeCode
   stream << "# python pseudomodule, generated for the tool '" 
          << name() << "'" << std::endl ;
   stream << "# " << std::string(78,'=') << std::endl ;
-  stream << "# Arguments: "  << std::endl ;
+  stream << "# Arguments: " << std::endl ;
   stream << "# \tcode    = " << Gaudi::Utils::toString ( _code   )  << std::endl ;
   stream << "# \tactor   = " << Gaudi::Utils::toString ( actor   )  << std::endl ;
   stream << "# \tmodules = " << Gaudi::Utils::toString ( modules )  << std::endl ;

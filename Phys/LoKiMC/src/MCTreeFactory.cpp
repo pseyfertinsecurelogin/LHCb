@@ -1,6 +1,6 @@
-// $Id: MCTreeFactory.cpp,v 1.2 2009-05-23 15:58:12 ibelyaev Exp $
+// $Id: MCTreeFactory.cpp 124207 2011-06-02 16:05:29Z ibelyaev $
 // ============================================================================
-// CVS tag $Name: not supported by cvs2svn $, version $Revision: 1.2 $
+// CVS tag $Name: not supported by cvs2svn $, version $Revision: 124207 $
 // ============================================================================
 // Include files 
 // ============================================================================

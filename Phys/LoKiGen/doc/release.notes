@@ -13,6 +13,20 @@
 !   A.Golutvin, P.Koppenburg have been used in the design.
 ! -----------------------------------------------------------------------------
 
+!========================= LoKiGen v10r2 2011-06-14 =========================
+! 2011-06-05 - Vanya Belyaev
+ - reduce compilation warnings for ICC compiler 
+
+! 2011-06-04 - Vanya Belyaev
+ - better printout of decay chains 
+
+! 2011-06-02 - Vanya Belyaev  
+ - add LoKi::GenFilter algorithm to allow some filtering based on 
+  properties of generator event.
+
+ - cmt/requirements
+     version incrment to v10r2
+
 !========================= LoKiGen v10r1 2011-04-26 =========================
 ! 2011-04-09 - Vanya Belyaev
  - add missing "cutvals" into Tool/Factory interface 

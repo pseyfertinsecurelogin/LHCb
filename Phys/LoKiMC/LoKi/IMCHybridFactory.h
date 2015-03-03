@@ -1,4 +1,4 @@
-// $Id: IMCHybridFactory.h,v 1.2 2008-02-19 15:04:01 ibelyaev Exp $
+// $Id: IMCHybridFactory.h 124207 2011-06-02 16:05:29Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_IMCHYBRIDFACTORY_H 
 #define LOKI_IMCHYBRIDFACTORY_H 1
@@ -29,12 +29,12 @@
  *  A.Golutvin, P.Koppenburg have been used in the design.
  *
  *  By usage of this code one clearly states the disagreement 
- *  with the campain of Dr.O.Callot et al.: 
+ *  with the smear campaign of Dr.O.Callot et al.: 
  *  ``No Vanya's lines are allowed in LHCb/Gaudi software.''
  *
- *                    $Revision$
- *  Last modification $Date$
- *                 by $Author$
+ *                    $Revision: 124207 $
+ *  Last modification $Date: 2011-06-02 18:05:29 +0200 (Thu, 02 Jun 2011) $
+ *                 by $Author: ibelyaev $
  */
 namespace LoKi
 {
@@ -178,6 +178,32 @@ namespace LoKi
     virtual StatusCode get
     ( const std::string&      pycode       , 
       LoKi::Types::MCVFunVal& func         , 
+      const std::string&      context = "" ) = 0 ;
+    // ========================================================================
+  public:
+    // ========================================================================
+    // cut-vals:
+    // ========================================================================
+    /** "Factory": get the the object form python code 
+     *  @param pycode the python pseudo-code of the function
+     *  @param func the placeholder for the result 
+     *  @param context the code fragment to be pre-executed
+     *  @return StatusCode 
+     */
+    virtual StatusCode get
+    ( const std::string&     pycode       , 
+      LoKi::Types::MCCutVal& func         ,
+      const std::string&     context = "" ) = 0 ;
+    // ========================================================================
+    /** "Factory": get the the object form python code 
+     *  @param pycode the python pseudo-code of the function
+     *  @param func the placeholder for the result 
+     *  @param context the code fragment to be pre-executed
+     *  @return StatusCode 
+     */
+    virtual StatusCode get
+    ( const std::string&      pycode       , 
+      LoKi::Types::MCVCutVal& func         ,
       const std::string&      context = "" ) = 0 ;
     // ========================================================================
   public:

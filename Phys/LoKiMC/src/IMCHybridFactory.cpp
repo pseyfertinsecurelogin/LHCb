@@ -1,4 +1,4 @@
-// $Id: IMCHybridFactory.cpp,v 1.2 2008-02-19 15:04:01 ibelyaev Exp $
+// $Id: IMCHybridFactory.cpp 124207 2011-06-02 16:05:29Z ibelyaev $
 // ============================================================================
 // Include files 
 // ============================================================================
@@ -23,20 +23,22 @@
  *  A.Golutvin, P.Koppenburg have been used in the design.
  *
  *  By usage of this code one clearly states the disagreement 
- *  with the campain of Dr.O.Callot et al.: 
+ *  with the smear campaign of Dr.O.Callot et al.: 
  *  ``No Vanya's lines are allowed in LHCb/Gaudi software.''
  *
  *  @date 2004-06-29 
  *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
  *
- *                    $Revision$
- *  Last modification $Date$
- *                 by $Author$
+ *                    $Revision: 124207 $
+ *  Last modification $Date: 2011-06-02 18:05:29 +0200 (Thu, 02 Jun 2011) $
+ *                 by $Author: ibelyaev $
  */
 // ============================================================================
 namespace 
 {
-  const InterfaceID IID_IMCHybridFactory( "LoKi::IMCHybridFactory" , 4 , 0 ) ;
+  // ==========================================================================
+  const InterfaceID IID_IMCHybridFactory( "LoKi::IMCHybridFactory" , 5 , 0 ) ;
+  // ==========================================================================
 }
 // ============================================================================
 // Return the unique interface ID

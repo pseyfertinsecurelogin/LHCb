@@ -1,4 +1,4 @@
-// $Id: GenVertices.h,v 1.6 2007-11-28 14:08:29 ibelyaev Exp $
+// $Id: GenVertices.h 124208 2011-06-02 16:05:48Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_GENVERTICES_H 
 #define LOKI_GENVERTICES_H 1

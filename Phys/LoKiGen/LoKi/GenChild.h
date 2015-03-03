@@ -1,4 +1,4 @@
-// $Id: GenChild.h,v 1.6 2008-06-25 10:05:45 ibelyaev Exp $
+// $Id: GenChild.h 124208 2011-06-02 16:05:48Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_GENCHILD_H 
 #define LOKI_GENCHILD_H 1

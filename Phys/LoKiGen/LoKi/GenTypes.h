@@ -1,4 +1,4 @@
-// $Id: GenTypes.h,v 1.12 2008-11-23 19:36:05 ibelyaev Exp $
+// $Id: GenTypes.h 124208 2011-06-02 16:05:48Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_GENTYPES_H 
 #define LOKI_GENTYPES_H 1
@@ -36,9 +36,9 @@ namespace HepMC { class GenVertex   ; }
  *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
  *  @date 2001-01-23 
  *
- *                    $Revision$
- *  Last modification $Date$
- *                 by $Author$
+ *                    $Revision: 124208 $
+ *  Last modification $Date: 2011-06-02 18:05:48 +0200 (Thu, 02 Jun 2011) $
+ *                 by $Author: ibelyaev $
  */
 // ============================================================================
 namespace LoKi

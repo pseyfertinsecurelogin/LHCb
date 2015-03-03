@@ -1,7 +1,13 @@
-! $Id: release.notes,v 1.155 2010-06-01 08:05:05 graven Exp $
 ! Package     : CaloUtils
 ! Responsible : Olivier Deschamps odescham@in2p3.fr
 !------------------------------------------------------------------------------
+
+!========================= CaloUtils v9r1 2011-06-14 =========================
+! 2011-06-14 - Olivier Deschamps
+ - CaloAlgUtils : new method StringMatcher()
+
+! 2011-05-15 - Olivier Deschamps
+  - src/CaloNeighbours::_neighbours : fix infinite loop when level < 0
 
 !========================== CaloUtils v9r0 2010-09-27 =========================
 ! 2010-08-31 - Olivier Deschamps

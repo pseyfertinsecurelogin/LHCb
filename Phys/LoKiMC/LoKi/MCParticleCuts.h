@@ -1,4 +1,4 @@
-// $Id: MCParticleCuts.h,v 1.17 2010-05-31 20:33:53 ibelyaev Exp $
+// $Id: MCParticleCuts.h 124207 2011-06-02 16:05:29Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_MCPARTICLECUTS_H 
 #define LOKI_MCPARTICLECUTS_H 1

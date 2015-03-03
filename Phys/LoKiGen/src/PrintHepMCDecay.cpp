@@ -1,4 +1,4 @@
-// $Id: PrintHepMCDecay.cpp,v 1.8 2009-05-21 15:49:59 ibelyaev Exp $
+// $Id: PrintHepMCDecay.cpp 124225 2011-06-04 19:32:00Z ibelyaev $
 // ============================================================================
 // Include files 
 // ============================================================================
@@ -133,7 +133,7 @@ std::ostream& LoKi::PrintHepMC::printDecay
     self    = osc1     ;
     source  = particle ;
     name    = "[" + 
-      LoKi::Particles::nameFromPID ( LHCb::ParticleID ( self->pdg_id() ) )
+      LoKi::Particles::nameIdFromPID ( LHCb::ParticleID ( self->pdg_id() ) )
       + "]os''" ;
   }
   else if ( 0 != osc2 ) 
@@ -141,16 +141,15 @@ std::ostream& LoKi::PrintHepMC::printDecay
     self   = particle ;
     source = osc2     ;
     name    = "[" + 
-      LoKi::Particles::nameFromPID ( LHCb::ParticleID ( self->pdg_id() ) )
+      LoKi::Particles::nameIdFromPID ( LHCb::ParticleID ( self->pdg_id() ) )
       + "]os'" ;
   }
   else 
   {
     self   = particle ;
     source = particle ;
-    name   = LoKi::Particles::nameFromPID ( LHCb::ParticleID ( self->pdg_id() ) ) ;
+    name   = LoKi::Particles::nameIdFromPID ( LHCb::ParticleID ( self->pdg_id() ) ) ;
   }
-
   // get daughters
   HepMC::GenVertex* ev = source->end_vertex() ;
   if ( 0 == ev      ) { return stream << " " << name << " " ; }   // RETURN

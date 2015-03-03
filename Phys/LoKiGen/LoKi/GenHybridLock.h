@@ -1,4 +1,4 @@
-// $Id: GenHybridLock.h,v 1.1 2007-07-25 15:07:57 ibelyaev Exp $
+// $Id: GenHybridLock.h 124208 2011-06-02 16:05:48Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_GENHYBRIDLOCK_H 
 #define LOKI_GENHYBRIDLOCK_H 1
@@ -27,9 +27,9 @@
  *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
  *  @date 2007-10-31 
  *
- *                    $Revision$
- *  Last modification $Date$
- *                 by $Author$
+ *                    $Revision: 124208 $
+ *  Last modification $Date: 2011-06-02 18:05:48 +0200 (Thu, 02 Jun 2011) $
+ *                 by $Author: ibelyaev $
  */
 namespace LoKi
 {

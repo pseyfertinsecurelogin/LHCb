@@ -1,4 +1,4 @@
-! $Id: release.notes,v 1.92 2010-06-06 08:07:22 ibelyaev Exp $ 
+! $Id: release.notes 124661 2011-06-14 13:52:28Z cattanem $ 
 ! -----------------------------------------------------------------------------
 ! Package     : Phys/LoKiMC
 ! Responsible : Vanya BELYAEV ibelyaev@physics.syr.edu
@@ -14,6 +14,17 @@
 !   A.Golutvin, P.Koppenburg have been used in the design.
 !
 ! -----------------------------------------------------------------------------
+
+!========================= LoKiMC v10r1 2011-06-14 =========================
+! 2011-06-05 - Vanya Belyaev
+ - reduce warnings for ICC compiler 
+
+! 2011-06-02 - Vanya Belyaev
+
+ - add "CutVal" to the list of known types 
+ - add MC-filter 
+ - cmt/requirements
+    version increment to v10r1 
 
 !========================= LoKiMC v10r0 2011-04-04 =========================
 ! 2011-03-18 - Vanya Belyaev

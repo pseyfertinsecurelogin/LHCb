@@ -1,4 +1,4 @@
-// $Id: GenOscillated.h,v 1.1 2008-07-09 16:19:16 ibelyaev Exp $
+// $Id: GenOscillated.h 124208 2011-06-02 16:05:48Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_GENOSCILLATED_H 
 #define LOKI_GENOSCILLATED_H 1

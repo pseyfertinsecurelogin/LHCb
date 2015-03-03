@@ -1,4 +1,4 @@
-// $Id: GenHybridTool.cpp,v 1.2 2008-02-19 13:16:26 ibelyaev Exp $
+// $Id: GenHybridTool.cpp 124208 2011-06-02 16:05:48Z ibelyaev $
 // ============================================================================
 // Include files 
 // ============================================================================
@@ -33,9 +33,9 @@
  *
  *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
  *  @date 2004-06-29
- *                    $Revision$
- *  Last modification $Date$
- *                 by $Author$
+ *                    $Revision: 124208 $
+ *  Last modification $Date: 2011-06-02 18:05:48 +0200 (Thu, 02 Jun 2011) $
+ *                 by $Author: ibelyaev $
  */
 namespace LoKi 
 {
@@ -451,6 +451,8 @@ LoKi::Hybrid::GenTool::GenTool
   //
   m_modules.push_back ( "LoKiGen.decorators"   ) ;
   m_modules.push_back ( "LoKiGenMC.decorators" ) ;
+  m_modules.push_back ( "LoKiCore.functions"   ) ;
+  //
   declareProperty ( "Modules" , m_modules , "Python modules to be imported"          ) ;
   declareProperty ( "Actor"   , m_actor   , "The processing engine"                  ) ;
   declareProperty ( "Lines"   , m_lines   , "Additional Python lines to be executed" ) ;

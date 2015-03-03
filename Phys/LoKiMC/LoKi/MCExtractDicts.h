@@ -1,4 +1,4 @@
-// $Id: MCExtractDicts.h,v 1.4 2009-07-12 12:34:58 ibelyaev Exp $
+// $Id: MCExtractDicts.h 124207 2011-06-02 16:05:29Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_MCEXTRACTDICTS_H 
 #define LOKI_MCEXTRACTDICTS_H 1

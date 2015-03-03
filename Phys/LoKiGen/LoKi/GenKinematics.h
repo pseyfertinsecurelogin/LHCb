@@ -1,4 +1,4 @@
-// $Id: GenKinematics.h,v 1.10 2009-05-09 19:21:38 ibelyaev Exp $
+// $Id: GenKinematics.h 124208 2011-06-02 16:05:48Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_GENKINEMATICS_H 
 #define LOKI_GENKINEMATICS_H 1

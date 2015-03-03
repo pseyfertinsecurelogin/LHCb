@@ -3,6 +3,7 @@
 
 // Framework include files
 #include "GaudiKernel/Tokenizer.h"
+#include "GaudiKernel/AlgFactory.h"
 #include "GaudiKernel/IRegistry.h"
 #include "GaudiKernel/IAlgManager.h"
 #include "GaudiKernel/ISvcLocator.h"
@@ -18,11 +19,14 @@
 #include "GaudiKernel/strcasecmp.h"
 #include "GaudiKernel/DataObject.h"
 #include "GaudiKernel/DataStoreItem.h"
-#include "RootCnv/RootOutputStream.h"
-#include "RootCnv/RootCnvSvc.h"
+#include "RootOutputStream.h"
+#include "RootCnvSvc.h"
 
 using namespace std;
 using namespace Gaudi;
+
+// Define the algorithm factory for the standard output data writer
+DECLARE_ALGORITHM_FACTORY(RootOutputStream)
 
 // Standard Constructor
 RootOutputStream::RootOutputStream(const string& name, ISvcLocator* pSvcLocator)

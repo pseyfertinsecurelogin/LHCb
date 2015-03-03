@@ -1,4 +1,4 @@
-// $Id: IGenDecay.h,v 1.3 2009-08-12 09:50:20 ibelyaev Exp $
+// $Id: IGenDecay.h 124208 2011-06-02 16:05:48Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_IGENDECAY_H 
 #define LOKI_IGENDECAY_H 1

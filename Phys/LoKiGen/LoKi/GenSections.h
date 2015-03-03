@@ -1,4 +1,4 @@
-// $Id: GenSections.h,v 1.3 2008-12-04 14:37:59 ibelyaev Exp $
+// $Id: GenSections.h 124208 2011-06-02 16:05:48Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_GENSECTIONS_H 
 #define LOKI_GENSECTIONS_H 1

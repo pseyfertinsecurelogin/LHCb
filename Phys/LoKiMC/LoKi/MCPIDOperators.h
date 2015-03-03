@@ -1,4 +1,4 @@
-// $Id: MCPIDOperators.h,v 1.7 2010-04-06 20:14:39 ibelyaev Exp $
+// $Id: MCPIDOperators.h 124207 2011-06-02 16:05:29Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_MCPIDOPERATORS_H 
 #define LOKI_MCPIDOPERATORS_H 1

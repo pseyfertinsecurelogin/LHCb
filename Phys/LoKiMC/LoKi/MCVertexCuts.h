@@ -1,4 +1,4 @@
-// $Id: MCVertexCuts.h,v 1.10 2008-06-12 08:16:49 ibelyaev Exp $
+// $Id: MCVertexCuts.h 124207 2011-06-02 16:05:29Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_MCVERTEXCUTS_H 
 #define LOKI_MCVERTEXCUTS_H 1

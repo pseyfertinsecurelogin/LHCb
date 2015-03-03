@@ -1,4 +1,4 @@
-// $Id: GenParticleCuts.h,v 1.20 2010-02-10 17:37:00 ibelyaev Exp $
+// $Id: GenParticleCuts.h 124208 2011-06-02 16:05:48Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_GENPARTICLECUTS_H 
 #define LOKI_GENPARTICLECUTS_H 1

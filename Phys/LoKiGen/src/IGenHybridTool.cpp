@@ -1,4 +1,4 @@
-// $Id: IGenHybridTool.cpp,v 1.2 2008-02-19 13:16:25 ibelyaev Exp $
+// $Id: IGenHybridTool.cpp 124208 2011-06-02 16:05:48Z ibelyaev $
 // ============================================================================
 // Include files 
 // ============================================================================
@@ -29,9 +29,9 @@
  *  @date 2004-06-29 
  *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
  *
- *                    $Revision$
- *  Last modification $Date$
- *                 by $Author$
+ *                    $Revision: 124208 $
+ *  Last modification $Date: 2011-06-02 18:05:48 +0200 (Thu, 02 Jun 2011) $
+ *                 by $Author: ibelyaev $
  */
 // ============================================================================
 namespace 

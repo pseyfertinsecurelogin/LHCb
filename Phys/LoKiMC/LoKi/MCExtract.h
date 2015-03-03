@@ -1,4 +1,4 @@
-// $Id: MCExtract.h,v 1.11 2008-11-19 12:29:44 cattanem Exp $
+// $Id: MCExtract.h 124207 2011-06-02 16:05:29Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_EXTRACT_H 
 #define LOKI_EXTRACT_H 1

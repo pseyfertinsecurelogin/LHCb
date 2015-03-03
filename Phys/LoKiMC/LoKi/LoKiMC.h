@@ -1,4 +1,4 @@
-// $Id: LoKiMC.h,v 1.10 2007-12-09 18:20:17 ibelyaev Exp $
+// $Id: LoKiMC.h 124207 2011-06-02 16:05:29Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_LOKIMC_H 
 #define LOKI_LOKIMC_H 1

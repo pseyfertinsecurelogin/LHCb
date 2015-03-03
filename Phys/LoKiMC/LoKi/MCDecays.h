@@ -1,4 +1,4 @@
-// $Id: MCDecays.h,v 1.9 2009-05-23 15:58:12 ibelyaev Exp $
+// $Id: MCDecays.h 124207 2011-06-02 16:05:29Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_MCDECAYS_H
 #define LOKI_MCDECAYS_H 1

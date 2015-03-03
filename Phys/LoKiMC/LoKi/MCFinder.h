@@ -1,4 +1,4 @@
-// $Id: MCFinder.h,v 1.6 2007-07-23 17:27:30 ibelyaev Exp $
+// $Id: MCFinder.h 124207 2011-06-02 16:05:29Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_MCFINDER_H 
 #define LOKI_MCFINDER_H 1

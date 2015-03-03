@@ -1,4 +1,4 @@
-# $Id: __init__.py,v 1.2 2007-12-01 13:52:14 ibelyaev Exp $
+# $Id: __init__.py 124208 2011-06-02 16:05:48Z ibelyaev $
 # =============================================================================
 ## @file  LoKiGen/__init__.py
 #  Helper file to manage LoKiGen package
