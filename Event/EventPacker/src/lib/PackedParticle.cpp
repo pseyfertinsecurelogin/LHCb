@@ -36,31 +36,31 @@ void ParticlePacker::pack( const Data & part,
     ppart.refz = m_pack.position( part.referencePoint().z() );
 
     // Mom Cov
-    const double merr00 = std::sqrt( part.momCovMatrix()(0,0) );
-    const double merr11 = std::sqrt( part.momCovMatrix()(1,1) );
-    const double merr22 = std::sqrt( part.momCovMatrix()(2,2) );
-    const double merr33 = std::sqrt( part.momCovMatrix()(3,3) );
+    const double merr00 = safe_sqrt( part.momCovMatrix()(0,0) );
+    const double merr11 = safe_sqrt( part.momCovMatrix()(1,1) );
+    const double merr22 = safe_sqrt( part.momCovMatrix()(2,2) );
+    const double merr33 = safe_sqrt( part.momCovMatrix()(3,3) );
     ppart.momCov00 = m_pack.energy( merr00 );
     ppart.momCov11 = m_pack.energy( merr11 );
     ppart.momCov22 = m_pack.energy( merr22 );
     ppart.momCov33 = m_pack.energy( merr33 );
-    ppart.momCov10 = m_pack.fraction( part.momCovMatrix()(1,0) / (merr11*merr00) );
-    ppart.momCov20 = m_pack.fraction( part.momCovMatrix()(2,0) / (merr22*merr00) );
-    ppart.momCov21 = m_pack.fraction( part.momCovMatrix()(2,1) / (merr22*merr11) );
-    ppart.momCov30 = m_pack.fraction( part.momCovMatrix()(3,0) / (merr33*merr00) );
-    ppart.momCov31 = m_pack.fraction( part.momCovMatrix()(3,1) / (merr33*merr11) );
-    ppart.momCov32 = m_pack.fraction( part.momCovMatrix()(3,2) / (merr33*merr22) );
+    ppart.momCov10 = m_pack.fraction( part.momCovMatrix()(1,0), (merr11*merr00) );
+    ppart.momCov20 = m_pack.fraction( part.momCovMatrix()(2,0), (merr22*merr00) );
+    ppart.momCov21 = m_pack.fraction( part.momCovMatrix()(2,1), (merr22*merr11) );
+    ppart.momCov30 = m_pack.fraction( part.momCovMatrix()(3,0), (merr33*merr00) );
+    ppart.momCov31 = m_pack.fraction( part.momCovMatrix()(3,1), (merr33*merr11) );
+    ppart.momCov32 = m_pack.fraction( part.momCovMatrix()(3,2), (merr33*merr22) );
 
     // Pos Cov
-    const double perr00 = std::sqrt( part.posCovMatrix()(0,0) );
-    const double perr11 = std::sqrt( part.posCovMatrix()(1,1) );
-    const double perr22 = std::sqrt( part.posCovMatrix()(2,2) );
+    const double perr00 = safe_sqrt( part.posCovMatrix()(0,0) );
+    const double perr11 = safe_sqrt( part.posCovMatrix()(1,1) );
+    const double perr22 = safe_sqrt( part.posCovMatrix()(2,2) );
     ppart.posCov00 = m_pack.position( perr00 );
     ppart.posCov11 = m_pack.position( perr11 );
     ppart.posCov22 = m_pack.position( perr22 );
-    ppart.posCov10 = m_pack.fraction( part.posCovMatrix()(1,0) / (perr11*perr00) );
-    ppart.posCov20 = m_pack.fraction( part.posCovMatrix()(2,0) / (perr22*perr00) );
-    ppart.posCov21 = m_pack.fraction( part.posCovMatrix()(2,1) / (perr22*perr11) );
+    ppart.posCov10 = m_pack.fraction( part.posCovMatrix()(1,0), (perr11*perr00) );
+    ppart.posCov20 = m_pack.fraction( part.posCovMatrix()(2,0), (perr22*perr00) );
+    ppart.posCov21 = m_pack.fraction( part.posCovMatrix()(2,1), (perr22*perr11) );
 
     // PosMom Cov
     ppart.pmCov00 = m_pack.fltPacked( part.posMomCovMatrix()(0,0) );
@@ -176,7 +176,7 @@ void ParticlePacker::unpack( const PackedData       & ppart,
                         m_pack.slope ( ppart.lv_py ) * pz :
                         m_pack.energy( ppart.lv_py ) );
     const double mass = ppart.lv_mass;
-    const double E    = std::sqrt( (px*px) + (py*py) + (pz*pz) + (mass*mass) );
+    const double E    = safe_sqrt( (px*px) + (py*py) + (pz*pz) + (mass*mass) );
     part.setMomentum( Gaudi::LorentzVector( px, py, pz, E ) );
 
     // reference point

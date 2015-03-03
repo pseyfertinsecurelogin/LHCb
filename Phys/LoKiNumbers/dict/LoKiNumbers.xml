@@ -1,5 +1,5 @@
 <!-- 
-     * $Id: LoKiNumbers.xml 154345 2013-03-29 13:54:40Z ibelyaev $ 
+     * $Id: LoKiNumbers.xml 167811 2014-02-01 16:37:05Z ibelyaev $ 
      * ========================================================================
      * @file
      * The XML seleciton file to build Reflex 
@@ -42,6 +42,7 @@
   
   <class pattern   = "LoKi::Dicts::*Ops<*>"        />
   <class pattern   = "LoKi::Dicts::*Ops_<*>"       />
+  <class pattern   = "LoKi::Dicts::*Ops__<*>"      />
   <class pattern   = "LoKi::Dicts::*Calls*>"       />
   
   <class pattern   = "LoKi::Random::*"       />

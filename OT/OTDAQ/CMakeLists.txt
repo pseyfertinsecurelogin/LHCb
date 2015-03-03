@@ -1,19 +1,20 @@
 ################################################################################
 # Package: OTDAQ
 ################################################################################
-gaudi_subdir(OTDAQ v7r16p1)
+gaudi_subdir(OTDAQ v7r17)
 
 gaudi_depends_on_subdirs(Det/OTDet
                          Event/DAQEvent
                          Event/DigiEvent
+			 DAQ/DAQKernel
                          GaudiAlg)
 
 find_package(GSL)
 
 gaudi_add_module(OTDAQ
                  src/*.cpp
-                 INCLUDE_DIRS GSL Event/DigiEvent
-                 LINK_LIBRARIES GSL OTDetLib DAQEventLib GaudiAlgLib)
+                 INCLUDE_DIRS GSL Event/DigiEvent 
+                 LINK_LIBRARIES GSL OTDetLib DAQKernelLib DAQEventLib GaudiAlgLib)
 
 gaudi_add_dictionary(OTDAQ
                      dict/OTDAQDict.h

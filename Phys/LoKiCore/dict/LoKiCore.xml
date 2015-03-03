@@ -1,7 +1,7 @@
 <!-- 
-     * $Id: LoKiCore.xml 154653 2013-04-06 17:53:32Z ibelyaev $ 
+     * $Id: LoKiCore.xml 167827 2014-02-02 18:43:48Z ibelyaev $ 
      * ========================================================================
-     * CVS tag:$Name: not supported by cvs2svn $, version $Revision: 154653 $ 
+     * CVS tag:$Name: not supported by cvs2svn $, version $Revision: 167827 $ 
      * ======================================================================== 
      * @file
      * The selection file to build Reflex dictionaries for Phys/LoKiCore package
@@ -46,6 +46,7 @@
   <class name    = "LoKi::Sort"            />
   <class name    = "LoKi::Timer"           />
   <class name    = "LoKi::DecayChainBase"  />  
+  <class name    = "LoKi::Param"           />
   
   <class name    = "Bender::Welcome"       />
   
@@ -72,6 +73,8 @@
   <enum     name = "Decays::Trees::Arrow" />
   <class    name = "Decays::iTree"      />
   <class    name = "Decays::IDecayNode" />
+
+  <class name    = "LoKi::Parameters::ParamBase"  />
   
   <enum name = "LoKi::Monitoring::Flag"  />
 

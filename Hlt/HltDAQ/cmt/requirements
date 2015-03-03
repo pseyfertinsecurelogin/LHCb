@@ -1,30 +1,31 @@
-#=========================================================================
+#=====================================================================
 # Created    : 2009-06-23
 # Maintainer : Tomasz Skwarnicki
-#=========================================================================
+#=====================================================================
 package           HltDAQ
-version           v3r0
+version           v3r1
 
-#=========================================================================
+#=====================================================================
 # Structure, i.e. directories to process.
-#=========================================================================
-branches          cmt doc src xml
-#=========================================================================
+#=====================================================================
+branches          cmt doc src tests xml
+#=====================================================================
 # Used packages
-#=========================================================================
+#=====================================================================
 
 use GaudiKernel         v*
 private
 use GaudiObjDesc v* -no_auto_imports
 end_private
 
-use Boost               v*    LCG_Interfaces
+use Boost               v*    LCG_Interfaces 
 use AIDA                v*    LCG_Interfaces -no_auto_imports
 
 use GaudiAlg            v*
 use HltInterfaces       v*    Kernel
 use HltEvent            v*    Event
 use DAQEvent            v*    Event
+use DAQKernel           v*    DAQ
 use LoKiHlt             v*    Phys
 use HltServices         v*    Hlt
 
@@ -37,23 +38,31 @@ use DetDesc             v*    Det
 use HltTCK              v*    TCK         -no_auto_imports
 
 # include_path      none
-#=========================================================================
+#=====================================================================
 # Produce Header-Files from XML description
-#=========================================================================
+#=====================================================================
 apply_pattern god_headers files=../xml/*.xml
 
 macro HltDAQObj2Doth_GODflags " -s ../src/ " \
       WIN32                   " -s ..\src\ "
 
-#=========================================================================
+
+#=====================================================================
 # Component library building rule
-#=========================================================================
+#=====================================================================
 library          HltDAQ    ../src/*.cpp -import=AIDA
-#=========================================================================
+
+#=====================================================================
 # define component library link options
-#=========================================================================
+#=====================================================================
 apply_pattern    component_library library=HltDAQ
-macro_append Boost_linkopts " $(Boost_linkopts_iostreams)  $(Boost_linkopts_filesystem) "
+
+
+#=====================================================================
+# unit test application building rule
+#=====================================================================
+application      utestTrackingCoder -import=Boost   ../src/utest/utestTrackingCoder.cpp ../src/HltTrackingCoder.cpp
+macro_append Boost_linkopts " $(Boost_linkopts_iostreams)  $(Boost_linkopts_filesystem) -lboost_unit_test_framework-${Boost_compiler_version}-mt-${Boost_file_version}"
 
 private
 # Work around to be able to compile with Gaudi v22r5
@@ -64,4 +73,22 @@ end_private
 #macro_remove cppoptimized_s "-O2"
 #macro_append cppoptimized_s "-g"
 #end_private
+
+#=====================================================================
+private
+# Note: libgslcblas is needed by libgsl, but the link is missing.
+macro_prepend GSL_linkopts " -Wl,--no-as-needed " \
+                    Darwin "" \
+                     WIN32 ""
+macro_append  GSL_linkopts " -Wl,--as-needed " \
+                    Darwin "" \
+                     WIN32 "" \
+                target-icc ""
+
+
+end_private
+
+private
+apply_pattern QMTest
+end_private
 

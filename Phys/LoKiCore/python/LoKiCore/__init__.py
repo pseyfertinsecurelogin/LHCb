@@ -1,17 +1,34 @@
-# $Id: __init__.py 53291 2010-08-05 14:35:53Z ibelyaev $
+# $Id: __init__.py 167781 2014-01-31 11:25:26Z marcocle $
 # =============================================================================
-# CVS tag $Name: not supported by cvs2svn $, version $Revision: 53291 $
+# CVS tag $Name: not supported by cvs2svn $, version $Revision: 167781 $
 # =============================================================================
-# $Log: not supported by cvs2svn $ 
+# $Log: not supported by cvs2svn $
 # =============================================================================
 ## @file  LoKiCore/__init__.py
 #  @author Vanya BELYAEV ibelyaev@physics.syr.edu
 #  @date 2007-05-29
 # =============================================================================
 """ Helper file to manager LoKiCore package """
-_author_ = "Vanya BELYAEV ibelyaev@physics.syr.edu" 
+_author_ = "Vanya BELYAEV ibelyaev@physics.syr.edu"
 # =============================================================================
 
+try:
+    from GaudiKernel import ROOT6WorkAroundEnabled
+except ImportError:
+    # dummy implementation
+    def ROOT6WorkAroundEnabled(id=None):
+        return False
+if ROOT6WorkAroundEnabled('ROOT-5721'):
+    try:
+        import cppyy
+    except ImportError:
+        # FIXME: backward compatibility
+        print "# WARNING: using PyCintex as cppyy implementation"
+        import PyCintex as cppyy
+        import sys
+        sys.modules['cppyy'] = cppyy
+    cppyy.gbl.gROOT.ProcessLine('#define ROOT_5721_WORKAROUND')
+
 # =============================================================================
-# The END 
+# The END
 # =============================================================================

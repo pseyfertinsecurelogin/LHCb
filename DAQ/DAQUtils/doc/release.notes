@@ -4,6 +4,16 @@
 ! Purpose     : Various utilities for manipulating RawEvent
 !-----------------------------------------------------------------------------
 
+!========================= DAQUtils v1r12 2014-02-17 =========================
+! 2014-02-14 - Rob Lambert
+ - Bank killer should not kill banks it was not asked explicitly to kill!
+
+! 2014-02-11 - Rob Lambert
+ - Assimilate Decoder baseclass for task #49078 into RawEventDump
+
+! 2014-02-06 - Rob Lambert
+ - Add RawEventLocations to RawEventDump, also translate bank types into strings to dump for better clarity, see task #48399
+
 !========================= DAQUtils v1r11 2013-04-29 =========================
 ! 2013-04-18 - Rob Lambert
  - Merge in RawEventCombiners from the swimming branch. 

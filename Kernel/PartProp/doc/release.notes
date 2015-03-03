@@ -4,6 +4,17 @@
 ! Purpose     :
 ! -----------------------------------------------------------------------------
 
+!========================= PartProp v1r17 2014-02-17 =========================
+! 2014-01-06 - Marco Clemencic
+ - Replaced import of GaudiPython with import of cppyy (to allow usage of the
+   modules in configuration files).
+
+! 2013-07-18 - Marco Clemencic
+ - Removed unnecessary dependency on Reflex.
+
+! 2013-06-27 - Marco Clemencic
+ - Replaced PyCintex with ROOT (preparing migration to ROOT 6).
+
 !========================= PartProp v1r16 2013-04-29 =========================
 ! 2013-04-15 - Marco Clemencic
  - Move 'operator<<' inside a namespace to fix compilation errors with clang.

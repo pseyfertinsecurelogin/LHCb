@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 # =============================================================================
-# $Id: decorators.py 155775 2013-04-29 09:31:21Z cattanem $ 
-# =============================================================================
-# $URL: http://svn.cern.ch/guest/lhcb/LHCb/tags/Phys/LoKiCore/v11r16/python/LoKiCore/decorators.py $ 
+# $Id: decorators.py 167827 2014-02-02 18:43:48Z ibelyaev $ 
 # =============================================================================
 ## @file decorators.py LoKiCore/decorators.py
 #
@@ -18,9 +16,9 @@
 #
 #  @author Vanya BELYAEV ibelyaev@physics.syr.edu
 #
-#  $Revision: 155775 $
-#  Last modification $Date: 2013-04-29 11:31:21 +0200 (Mon, 29 Apr 2013) $
-#                 by $Author: cattanem $
+#  $Revision: 167827 $
+#  Last modification $Date: 2014-02-02 19:43:48 +0100 (Sun, 02 Feb 2014) $
+#                 by $Author: ibelyaev $
 # =============================================================================
 """
 The set of basic decorators for objects from LoKiCore library
@@ -37,7 +35,7 @@ A.Golutvin, P.Koppenburg have been used in the design.
 # =============================================================================
 __author__  = "Vanya BELYAEV ibelyaev@physics.syr.edu" 
 __date__    = "????-??-??"
-__version__ = "SVN $Revision: 155775 $ "
+__version__ = "SVN $Revision: 167827 $ "
 # =============================================================================
 
 from LoKiCore.basic import cpp, std, LoKi, LHCb, Gaudi  

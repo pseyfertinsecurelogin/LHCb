@@ -13,6 +13,62 @@
 !   A.Golutvin, P.Koppenburg have been used in the design.
 ! -----------------------------------------------------------------------------
 
+!========================= LoKiCore v11r17 2014-02-17 =========================
+! 2014-02-03 - Vanya Belyaev
+ - fix compiler warning 
+
+! 2014-02-02 - Vanya Belyaev
+
+ - add "right" counter-partners for math-operations with "parameters" 
+
+! 2014-02-02 - Vanya Belyaev
+
+ - add the notion of "parameters" and operations with them:
+
+   use scalar properties as parameters :
+
+         PT > PARAM('Ptmin') 
+ 
+   use map-like properties as parameters :
+   
+         PT > PARAM('Parameters[Ptmin]') 
+
+  look for scalar property and check regex-pattenn for the algorithm name 
+ 
+         PT > PARAM('Ptmin/.*Line') 
+
+  look for map-like property and check regex-pattens for the algorithm name 
+
+         PT > PARAM('Params[Ptmin]/.*Line') 
+
+! 2014-02-01 - Vanya Belyaev
+ - make few first steps to intorduce configurable parameters 
+
+! 2014-01-31 - Marco Clemencic
+ - Fixed workaround for ROOT-5721 (I forgot that LoKiCore is needed in option
+   files).
+
+! 2014-01-30 - Marco Clemencic
+ - Added workaround for bug ROOT-5721 (to be removed ASAP).
+   https://sft.its.cern.ch/jira/browse/ROOT-5721
+
+! 2014-01-20 - Sasha Mazurov
+ - Fixed compilation problem with Boost Spirit when using Pheonix V3
+   (mandatory in Clang).
+
+! 2014-01-06 - Marco Clemencic
+ - Replaced import of GaudiPython with import of cppyy (to allow usage of the
+   modules in configuration files).
+
+! 2013-12-05 - Marco Clemencic
+ - Added include for boost::smart_ptr.
+
+! 2013-07-18 - Marco Clemencic
+ - Removed unnecessary dependency on Reflex.
+
+! 2013-06-27 - Marco Clemencic
+ - Replaced PyCintex with ROOT (preparing migration to ROOT 6).
+
 !========================= LoKiCore v11r16 2013-12-09 =========================
 ! 2013-10-31 - Bram Bouwens
  - Primitives.h: make it generate the void version as well,
@@ -24,7 +80,7 @@
  - Algs.h: reorder _found_2 (see https://savannah.cern.ch/bugs/?102220)
 
 ! 2013-09-03 - Vanya Belyaev
- - Trees.h: fix a stupid bug in negation of decay trees 
+ - Trees.h: fix a stupid bug in negation of decay trees
 
 !========================= LoKiCore v11r14 2013-08-27 =========================
 ! 2013-08-21 - Gerhard Raven
@@ -32,7 +88,7 @@
 
 !========================= LoKiCore v11r13 2013-06-03 =========================
 ! 2013-05-15 - Chris Jones
- - Fix a bug in addMomenta in Kinematics.h where the Predicate cut was not 
+ - Fix a bug in addMomenta in Kinematics.h where the Predicate cut was not
    being properly applied.
 
 !========================= LoKiCore v11r12 2013-04-29 =========================

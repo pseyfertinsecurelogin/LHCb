@@ -1,52 +1,61 @@
 #!/usr/bin/env python
 # =============================================================================
-# $Id: functions.py 162387 2013-09-17 05:53:34Z cattanem $ 
+# $Id: functions.py 167826 2014-02-02 18:36:40Z ibelyaev $
 # =============================================================================
 ## @file LoKiNumbers/functions.py
-#  The full set of useful objects from LoKiNumbers library 
+#  The full set of useful objects from LoKiNumbers library
 #
-#        This file is a part of LoKi project - 
+#        This file is a part of LoKi project -
 #    "C++ ToolKit  for Smart and Friendly Physics Analysis"
 #
 #  The package has been designed with the kind help from
-#  Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas, 
-#  contributions and advices from G.Raven, J.van Tilburg, 
+#  Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas,
+#  contributions and advices from G.Raven, J.van Tilburg,
 #  A.Golutvin, P.Koppenburg have been used in the design.
 #
 #  @author Vanya BELYAEV ibelyaev@physics.syr.edu
 #
-# $Revision: 162387 $
-# Last modification $Date: 2013-09-17 07:53:34 +0200 (Tue, 17 Sep 2013) $
-#                by $Author: cattanem $ 
+# $Revision: 167826 $
+# Last modification $Date: 2014-02-02 19:36:40 +0100 (Sun, 02 Feb 2014) $
+#                by $Author: ibelyaev $
 # =============================================================================
 """
 Few useful objects from LoKiNumbers library
 
-    This file is a part of LoKi project - 
+    This file is a part of LoKi project -
 ``C++ ToolKit  for Smart and Friendly Physics Analysis''
 
 The package has been designed with the kind help from
-Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas, 
-contributions and advices from G.Raven, J.van Tilburg, 
+Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas,
+contributions and advices from G.Raven, J.van Tilburg,
 A.Golutvin, P.Koppenburg have been used in the design.
 
- $Revision: 162387 $
- Last modification $Date: 2013-09-17 07:53:34 +0200 (Tue, 17 Sep 2013) $
-                by $Author: cattanem $ 
+ $Revision: 167826 $
+ Last modification $Date: 2014-02-02 19:36:40 +0100 (Sun, 02 Feb 2014) $
+                by $Author: ibelyaev $
 
 """
 # =============================================================================
 __author__  = "Vanya BELYAEV ibelyaev@physics.syr.edu"
 __date__    = ' xxxx-xx-xx '
-__version__ = " version $Revision: 162387 $ " 
+__version__ = " version $Revision: 167826 $ "
 # =============================================================================
 
 # Namespaces:
-from LoKiCore.basic import cpp, std, LoKi, Gaudi 
+from LoKiCore.basic import cpp, std, LoKi, Gaudi
+
+try:
+    from GaudiKernel import ROOT6WorkAroundEnabled
+except ImportError:
+    # dummy implementation
+    def ROOT6WorkAroundEnabled(id=None):
+        return False
+if ROOT6WorkAroundEnabled('template-autoloading'):
+    cpp.gSystem.Load('libLoKiNumbersDict')
 
 _d = 'double'
-## _v = std.vector( _d ) 
-_v = 'std::vector<double>' 
+## _v = std.vector( _d )
+_v = 'std::vector<double>'
 XFunc     = LoKi.Functor            ( _d , _d   )
 XFun      = LoKi.FunctorFromFunctor ( _d , _d   )
 XCuts     = LoKi.Functor            ( _d , bool )
@@ -54,7 +63,7 @@ XCut      = LoKi.FunctorFromFunctor ( _d , bool )
 
 XMaps     = LoKi.Functor            ( _v , _v   )
 XMap      = LoKi.FunctorFromFunctor ( _v , _v   )
-XPipes    = XMaps 
+XPipes    = XMaps
 XPipe     = XMap
 
 XFunVals  = LoKi.Functor            ( _v , _d   )
@@ -98,12 +107,12 @@ XVector   = std.vector(_d)
 
 ## @see LoKi::Cuts::EXISTS
 EXISTS    = LoKi.TES.Exists
-## @see LoKi::Cuts::CONTAINS 
+## @see LoKi::Cuts::CONTAINS
 CONTAINS  = LoKi.TES.Contains
 ## @see LoKi::Cuts::COUNTER
-COUNTER   = LoKi.TES.Counter 
+COUNTER   = LoKi.TES.Counter
 ## @see LoKi::Cuts::STAT
-STAT      = LoKi.TES.Stat 
+STAT      = LoKi.TES.Stat
 
 # RecSummary for Sophie Redford & Andy Powell
 
@@ -115,20 +124,20 @@ RECSUMMARY    = LoKi.TES.RecSummary
 
 ## @see LoKi::Cuts::CHECK
 CHECK     = LoKi.Status.Check
-## @see LoKi::Cuts::ACCEPT 
+## @see LoKi::Cuts::ACCEPT
 ACCEPT    = LoKi.Status.Accept
 
 # random numbers:
-## @see LoKi::Cuts::XRANDOM 
+## @see LoKi::Cuts::XRANDOM
 XRANDOM   = LoKi.Random.Numbers
-## @see LoKi::Cuts::XRND 
+## @see LoKi::Cuts::XRND
 XRND      = LoKi.Random.Uniform
 ## @see LoKi::Cuts::XRNDM
 XRNDM     = XRND  ( 0 , 1 )
 ## @see LoKi::Cuts::XGAUS
 XGAUS     = LoKi.Random.Gaussian
 ## @see LoKi::Cuts::XGAUSS
-XGAUSS    = XGAUS ( 0 , 1 ) 
+XGAUSS    = XGAUS ( 0 , 1 )
 ## @see LoKi::Cuts::XRAND_
 XRAND_    = LoKi.Random.Rand
 ## @see LoKi::Cuts::XRAND
@@ -136,26 +145,26 @@ XRAND     = LoKi.Random.Rand ( )
 
 # scalers
 
-## @see LoKi::Cuts::XRATE 
+## @see LoKi::Cuts::XRATE
 XRATE = LoKi.Scalers.RateLimit
 ## @see LoKi::Cuts::XSCALE
-XSCALE = LoKi.Scalers.RandomScale 
+XSCALE = LoKi.Scalers.RandomScale
 ## @see LoKi::Cuts::XSKIP
-XSKIP  = LoKi.Scalers.Skipper 
+XSKIP  = LoKi.Scalers.Skipper
 
 ## trivia
 
-## @see LoKi::Cuts::XEMPTY 
+## @see LoKi::Cuts::XEMPTY
 XEMPTY    = LoKi.Functors.Empty ( 'double' ) ()
-## @see LoKi::Cuts::XSIZE 
+## @see LoKi::Cuts::XSIZE
 XSIZE     = LoKi.Functors.Size  ( 'double' ) ()
 
 ## blinders
 
-## @see LoKi::Cuts::BLIND 
-BLIND     = LoKi.Random.Blind 
-## @see LoKi::Cuts::XBLIND 
-XBLIND    = LoKi.Random.XBlind 
+## @see LoKi::Cuts::BLIND
+BLIND     = LoKi.Random.Blind
+## @see LoKi::Cuts::XBLIND
+XBLIND    = LoKi.Random.XBlind
 
 
 # =============================================================================
@@ -167,13 +176,13 @@ def _vct_iter_ ( self ) :
     >>> vct = ...
     >>> for item in vct :
         ...
-        
+
     """
     _range = self
     _size  = _range.size()
-    _curr  = 0 
+    _curr  = 0
     while _curr < _size :
-        yield _range.at(_curr)                                  ## YIELD 
+        yield _range.at(_curr)                                  ## YIELD
         _curr += 1
 
 def _vct_prnt_ ( self ) :
@@ -182,41 +191,44 @@ def _vct_prnt_ ( self ) :
     """
     lst = []
     for item in self : lst += [item]
-    return str(lst)  
+    return str(lst)
 
 if not hasattr ( XVector , "__iter__" ) :
     XVector. __iter__ = _vct_iter_
     XVector. __str__  = _vct_prnt_
     XVector. __repr__ = _vct_prnt_
-    
+
 
 if not hasattr ( Gaudi.Math , 'blind' ) :
     import LHCbMath.Types
-        
+
 ## @see Gaudi::Math::blind
 blind     = Gaudi.Math.blind
 
-## 
+##
 cpp.Rndm
 
+## @see LoKi::Param 
+PARAM  = cpp.LoKi.Param
+
 # =============================================================================
-## helper function to create ``smart'' RecSumary functor 
+## helper function to create ``smart'' RecSumary functor
 #  @see HASRECSUMMARY
 #  @see    RECSUMMARY
 #  @see      CONTAINS
 def  recSummary ( index , location ) :
     """
     Helper function to create ``smart'' RecSummary-fucntor
-    
+
     result = has summary  ? summary : contains
-    
+
     """
     #
     from LoKiCore.functions import switch
     #
     return switch ( HASRECSUMMARY ( index      ) ,
                     RECSUMMARY    ( index , -1 ) ,
-                    CONTAINS      ( location   ) )  
+                    CONTAINS      ( location   ) )
 
 
 # =============================================================================
@@ -224,5 +236,5 @@ if '__main__' == __name__ :
     for o in dir() : print o
 
 # =============================================================================
-# The END 
+# The END
 # =============================================================================

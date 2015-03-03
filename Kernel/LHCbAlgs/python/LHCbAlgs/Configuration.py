@@ -78,7 +78,6 @@ class LHCbApp(LHCbConfigurableUser):
         "ut"         : "UT", 
         "ft"         : "FT", 
         "vp"         : "VP", 
-        "vl"         : "VL", 
         "rich"       : "Rich", 
         "richpmt"    : "RichPmt", 
         "rich1"      : "Rich1", 
@@ -175,7 +174,10 @@ class LHCbApp(LHCbConfigurableUser):
             # Ensure output is always kept
             getConfigurable("StatusCodeSvc").OutputLevel = INFO
         if "FPE" in self.getProp("Monitors"):
-            importOptions( "$STDOPTS/FPEAudit.opts" )
+            #importOptions( "$STDOPTS/FPEAudit.opts" )
+            from Configurables import AuditorSvc
+            ApplicationMgr().ExtSvc += [ 'AuditorSvc' ]
+            AuditorSvc().Auditors   += [ "FPEAuditor" ]
     
     def defineXMLSum(self):
         if hasattr( self, "XMLSummary" ):

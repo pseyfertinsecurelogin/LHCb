@@ -1,30 +1,29 @@
-# ========================================================================
+# ====================================================================
 # Created    : 2006-01-16
-# Maintainer : Vanya BELYAEV ibelyaev@physics.syr.edu 
-# ========================================================================
+# Maintainer : Vanya BELYAEV ibelyaev@physics.syr.edu
+# ====================================================================
 package           LoKiCore
-version           v11r16
+version           v11r17
 
-# ================ structure ==================================================
-branches           cmt doc src dict python LoKi 
+# ================ structure ==============================================
+branches           cmt doc src dict python LoKi
 
-# ================ dependencies ===============================================
-use                GaudiAlg         v* 
-use                LHCbKernel       v* Kernel 
-use                LHCbMath         v* Kernel 
-use                PartProp         v* Kernel 
-use                Boost            v* LCG_Interfaces 
-use                ROOT             v* LCG_Interfaces 
-use                AIDA             v* LCG_Interfaces 
-use                RELAX            v* LCG_Interfaces 	
-use                Reflex           v* LCG_Interfaces 
-use                Python           v* LCG_Interfaces 
+# ================ dependencies ===========================================
+use                GaudiAlg         v*
+use                LHCbKernel       v* Kernel
+use                LHCbMath         v* Kernel
+use                PartProp         v* Kernel
+use                Boost            v* LCG_Interfaces
+use                ROOT             v* LCG_Interfaces
+use                AIDA             v* LCG_Interfaces
+use                RELAX            v* LCG_Interfaces
+use                Python           v* LCG_Interfaces
 
-# ================ own includes ===============================================
+# ================ own includes ===========================================
 apply_pattern install_more_includes   more=LoKi
-apply_pattern install_python_modules 
- 
-# ================ constituents ===============================================
+apply_pattern install_python_modules
+
+# ================ constituents ============================================
 library            LoKiCoreLib   -import=RecEvent   ../src/*.cpp
 library            LoKiCore                         ../src/Components/*.cpp
 
@@ -38,23 +37,24 @@ apply_pattern      reflex_dictionary                                     \
                    headerfiles=$(LOKICOREROOT)/dict/LoKiCoreDict.h       \
                    selectionfile=$(LOKICOREROOT)/dict/LoKiCore.xml       \
                    options=" -U__MINGW32__ "
-	        
-macro_append       LoKiCore_dependencies        " LoKiCoreLib " 
-macro_append       LoKiCoreDict_dependencies    " LoKiCoreLib " 
-macro_append       NodeGrammarTest_dependencies " LoKiCoreLib " 
-macro_append       TreeGrammarTest_dependencies " LoKiCoreLib " 
-macro_append       CCGrammarTest_dependencies   " LoKiCoreLib " 
 
-# ================ patterns ==================================================
+macro_append       LoKiCore_dependencies        " LoKiCoreLib "
+macro_append       LoKiCoreDict_dependencies    " LoKiCoreLib "
+macro_append       NodeGrammarTest_dependencies " LoKiCoreLib "
+macro_append       TreeGrammarTest_dependencies " LoKiCoreLib "
+macro_append       CCGrammarTest_dependencies   " LoKiCoreLib "
+
+# ================ patterns ==============================================
 apply_pattern      linker_library    library=LoKiCoreLib
 apply_pattern      component_library library=LoKiCore
 apply_pattern      QMTest
 
-# ========================================================================
-private : 
-use                RecEvent v* Event -no_auto_imports
-        
+# ====================================================================
+private :       
+use                RecEvent     v* Event -no_auto_imports
+macro_append       Boost_linkopts " $(Boost_linkopts_regex) "
 
-# ========================================================================
-# The END 
-# ========================================================================
+
+# ====================================================================
+# The END
+# ====================================================================

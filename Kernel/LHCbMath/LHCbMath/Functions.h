@@ -1,4 +1,4 @@
-// $Id: Functions.h 165103 2013-11-23 14:28:04Z ibelyaev $
+// $Id: Functions.h 167196 2014-01-22 11:27:26Z ibelyaev $
 // ============================================================================
 #ifndef LHCBMATH_FUNCTIONS_H
 #define LHCBMATH_FUNCTIONS_H 1
@@ -15,6 +15,10 @@
 // ============================================================================
 #include "GaudiKernel/Kernel.h"
 // ============================================================================
+// Local
+// ============================================================================
+#include "LHCbMath/NSphere.h"
+// ============================================================================
 /** @file LHCbMath/Functions.h
  *
  *  set of useful math-functions
@@ -22,8 +26,8 @@
  *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
  *  @date 2010-04-19
  *
- *                    $Revision: 165103 $
- *  Last modification $Date: 2013-11-23 15:28:04 +0100 (Sat, 23 Nov 2013) $
+ *                    $Revision: 167196 $
+ *  Last modification $Date: 2014-01-22 12:27:26 +0100 (Wed, 22 Jan 2014) $
  *                 by $author$
  */
 // ============================================================================
@@ -376,15 +380,15 @@ namespace Gaudi
     public:
       // ======================================================================
       /// get number of parameters
-      std::size_t npars () const { return m_phases.size() ; }
+      std::size_t npars () const { return m_sphere.nPhi () ; }
       /// set k-parameter
       bool setPar       ( const unsigned short k , const double value ) ;
       /// set k-parameter
       bool setParameter ( const unsigned short k , const double value )
       { return setPar   ( k , value ) ; }
-      /// get the parameter value
-      double  par       ( const unsigned short k ) const
-      { return ( k < m_phases.size() ) ? m_phases [k] : 0.0 ; }
+      /// get the parameter value 
+      double  par       ( const unsigned short k ) const 
+      { return m_sphere.par ( k ) ; }
       // ======================================================================
     public:
       // ======================================================================
@@ -403,23 +407,21 @@ namespace Gaudi
       /// get the integral between xmin and xmax
       double integral () const { return m_bernstein.integral() ; }
       /// get the underlying Bernstein polynomial
-      const Gaudi::Math::Bernstein& bernstein() const { return m_bernstein ; }
+      const Gaudi::Math::Bernstein& bernstein () const { return m_bernstein ; }
+      /// get the parameter sphere 
+      const Gaudi::Math::NSphere&   sphere    () const { return m_sphere    ; }
       // ======================================================================
     private:
       // ======================================================================
       /// update bernstein coefficinects
-      bool updateBernstein ( const unsigned int i = 0 ) ;
+      bool updateBernstein () ;
       // ======================================================================
     private:
       // ======================================================================
       /// the actual bernstein polynomial
       Gaudi::Math::Bernstein m_bernstein ; // the actual bernstein polynomial
-      /// the external parameters
-      std::vector<double>    m_phases ;
-      /// the starting phases
-      std::vector<double>    m_phi0   ;
-      /// sin^2 for parameters
-      std::vector<double>    m_sin2   ;
+      /// arameters sphere 
+      Gaudi::Math::NSphere   m_sphere    ;
       // ======================================================================
     } ;
     // ========================================================================
@@ -955,7 +957,7 @@ namespace Gaudi
      *  \mathrm{e}^{-\frac{1}{2}\left(\frac{x-x_0}{\sigma}\right)^2} 
      *  & \text{for}~\frac{x-x_0}\ge-\alpha\sigma \\ 
      *  \mathrm{- \frac{\alpha^2}{2}} \times 
-     *  \left(  \frac{n+1}{ n+1 - \alpha^2 - \left|\alpha\right\frac{x-x_0}{\sigma}}\right)^{n+1}
+     *  \left(  \frac{n+1}{ n+1 - \alpha^2 - \left|\alpha\right|\frac{x-x_0}{\sigma}}\right)^{n+1}
      *  & \text{for}~\frac{x-x_0}\le-\alpha\sigma 
      *  \end{array}
      *  \right.\f]
@@ -965,6 +967,7 @@ namespace Gaudi
      * \f[ C = \frac{n+1}{\left|\alpha\right|\times \frac{1}{n} \times \mathrm{e}^{-\frac{\alpha^2}{2}}  \f] 
      * \f[ B = \sqrt{\frac{\pi}{2}}\left(1+\mathrm{erf}\left(-\frac{\alpha}{\sqrt{2}}\right)\right) \f] 
      *
+     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2011-05-25
      */
     class GAUDI_API CrystalBall : public std::unary_function<double,double>
@@ -999,6 +1002,9 @@ namespace Gaudi
       double sigma () const { return m_sigma ; }
       double alpha () const { return m_alpha ; }
       double n     () const { return m_n     ; }
+      // ======================================================================
+      double aa    () const { return std::abs ( m_alpha ) ; }
+      double np1   () const { return n()  + 1 ; }
       // ======================================================================
     public: // trivial accessors
       // ======================================================================
@@ -1269,6 +1275,109 @@ namespace Gaudi
       double m_B        ;  // integral over the gaussian part 
       double m_TL       ;  // integral over the left  power-law tail 
       double m_TR       ;  // integral over the right power-law tail
+      // ======================================================================
+    } ;
+    // ========================================================================
+    /** @class Apolonios 
+     *  A modified gaussian with power-law tail on rigth ride and exponential
+     *  tail on low-side 
+     *  The function is proposed by Diego Martinez Santos 
+     *  https://indico.cern.ch/getFile.py/access?contribId=2&resId=1&materialId=slides&confId=262633
+     *  Here a bit modified version is used with redefined parameter <code>n</code>
+     *  to be coherent with local definitions of Crystal Ball
+     *  
+     * 
+     *  \f[ f(x;\alpha,n,x_0,\sigma) = \left\{
+     *  \begin{array}{ll}
+     *  \mathrm{e}^{-\left|b\right|\sqrt{1+(\delta x)^2}} & \text{for}~~\delta x >-a \\ 
+     *  A \times \left( \frac{\left|n\right|+1}{ \left|n\right|+1 - \frac{(a+\delta x)\left|ab\right|} 
+     *  {\sqrt{1+a^2}} } \right)^{ \left|n\right|+1} & \text{otherwise} 
+     *  \end{array}
+     *  \right. \f] 
+     *
+     * where 
+     *
+     * \f[ \delta x  = \frac{ x - x_0}{\left|\sigma\right|} \f]
+     * \f[ A = \mathrm{e}^{-\left|b\right|\sqrt{1+a^2}}     \f]
+     *
+     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+     *  @date  2013-12-01
+     */
+    class GAUDI_API Apolonios : public std::unary_function<double,double>
+    {
+    public:
+      // ======================================================================
+      /** constructor from all parameters
+       *  @param m0     m0       parameter
+       *  @param sigma  sigma    parameter
+       *  @param alpha  alpha    parameter
+       *  @param n      n        parameter (equal for N-1 for "standard" definition)
+       *  @param b      n        parameter
+       */
+      Apolonios 
+      ( const double m0    = 0 ,
+        const double sigma = 1 ,
+        const double alpha = 2 ,
+        const double n     = 1 , 
+        const double b     = 1 ) ;
+      /// destructor
+      ~Apolonios () ;
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// evaluate Apolonios's function
+      double pdf        ( const double x ) const ;
+      /// evaluate Apolonios's function
+      double operator() ( const double x ) const { return pdf ( x ) ; }
+      // ======================================================================
+    public: // trivial accessors
+      // ======================================================================
+      double m0    () const { return m_m0     ; }
+      double peak  () const { return   m0 ()  ; }
+      double sigma () const { return m_sigma  ; }
+      double alpha () const { return m_alpha  ; }
+      double n     () const { return m_n      ; }
+      double b     () const { return m_b      ; }
+      // ======================================================================
+      double a1    () const { return std::sqrt ( 1 + alpha() * alpha() ) ; }
+      double aa    () const { return std::abs ( alpha() * b() ) / a1 ()  ; }
+      double np1   () const { return n()  + 1 ; }
+      // ======================================================================
+    public: // trivial accessors
+      // ======================================================================
+      bool setM0    ( const double value ) ;
+      bool setPeak  ( const double value ) { return setM0 ( value ) ; }
+      bool setMass  ( const double value ) { return setPeak ( value ) ; }
+      bool setSigma ( const double value ) ;
+      bool setAlpha ( const double value ) ;
+      bool setN     ( const double value ) ;
+      bool setB     ( const double value ) ;
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// get the integral between low and high
+      double integral ( const double low ,
+                        const double high ) const ;
+      // ======================================================================
+    private:
+      // ======================================================================
+      /// the peak position
+      double m_m0       ;  // the peak position
+      /// the peak resolution
+      double m_sigma    ;  // the peak resolution
+      /// parameter alpha
+      double m_alpha    ;  // parameter alpha
+      /// parameter n
+      double m_n        ;  // parameter 
+      /// parameter b 
+      double m_b        ;  // parameter n
+      /// helper constants 
+      double m_A        ;  // exp(-0.5*alpha^2) 
+      // ======================================================================
+    private:
+      // ======================================================================
+      /// workspace
+      Gaudi::Math::WorkSpace m_workspace ;
       // ======================================================================
     } ;
     // ========================================================================
@@ -3863,15 +3972,14 @@ namespace Gaudi
     public:
       // ======================================================================
       /// get number of parameters
-      std::size_t npars () const { return m_phases.size() ; }
+      std::size_t npars () const { return m_sphere.nPhi () ; }
       /// set k-parameter
       bool setPar       ( const unsigned int k , const double value ) ;
       /// set k-parameter
       bool setParameter ( const unsigned int k , const double value )
       { return setPar   ( k , value ) ; }
       /// get the parameter value
-      double  par       ( const unsigned int k ) const
-      { return ( k < m_phases.size() ) ? m_phases [k] : 0.0 ; }
+      double  par       ( const unsigned int k ) const ;
       /// get the parameter value
       double  parameter ( const unsigned int k ) const { return par ( k ) ; }
       // ======================================================================
@@ -3897,18 +4005,14 @@ namespace Gaudi
     private:
       // ======================================================================
       /// update bernstein coefficients 
-      bool updateBernstein ( const unsigned int i = 0 ) ;
+      bool updateBernstein () ;
       // ======================================================================
     private:
       // ======================================================================
       /// the actual bernstein polynomial
       Gaudi::Math::Bernstein2D m_bernstein ; // the actual bernstein polynomial
-      /// the external parameters
-      std::vector<double>    m_phases ;
-      /// the starting phases
-      std::vector<double>    m_phi0   ;
-      /// sin^2 for parameters
-      std::vector<double>    m_sin2   ;
+      /// the external parameter sphere 
+      Gaudi::Math::NSphere     m_sphere    ;
       // ======================================================================
     } ;
     // ========================================================================
@@ -4029,15 +4133,14 @@ namespace Gaudi
     public:
       // ======================================================================
       /// get number of parameters
-      std::size_t npars () const { return m_phases.size() ; }
+      std::size_t npars () const { return m_sphere.nPhi () ; }
       /// set k-parameter
       bool setPar       ( const unsigned int k , const double value ) ;
       /// set k-parameter
       bool setParameter ( const unsigned int k , const double value )
       { return setPar   ( k , value ) ; }
       /// get the parameter value
-      double  par       ( const unsigned int k ) const
-      { return ( k < m_phases.size() ) ? m_phases [k] : 0.0 ; }
+      double  par       ( const unsigned int k ) const ;
       /// get the parameter value
       double  parameter ( const unsigned int k ) const { return par ( k ) ; }
       /// get lower/upper edges
@@ -4059,24 +4162,17 @@ namespace Gaudi
       // ======================================================================
     private:
       // ======================================================================
-      /// update bernstein coefficinects
-      bool updateBernstein ( const unsigned int i = 0 ) ;
+      /// update bernstein coefficients 
+      bool updateBernstein () ;
       // ======================================================================
     private:
       // ======================================================================
       /// the actual bernstein polynomial
       Gaudi::Math::Bernstein2DSym m_bernstein ; // the actual bernstein polynomial
-      /// the external parameters
-      std::vector<double>    m_phases ;
-      /// the starting phases
-      std::vector<double>    m_phi0   ;
-      /// sin^2 for parameters
-      std::vector<double>    m_sin2   ;
+      /// Parameter sphere 
+      Gaudi::Math::NSphere        m_sphere ;
       // ======================================================================
     } ;
-
-
-
     // ========================================================================
   } //                                             end of namespace Gaudi::Math
   // ==========================================================================

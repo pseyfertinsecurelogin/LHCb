@@ -4,6 +4,37 @@
 ! Purpose     : Hlt RawBanks writers/decoders/monitors
 !-------------------------------------------------------------------------------
 
+!========================= HltDAQ v3r1 2014-02-17 =========================
+! 2014-02-11 - Rob Lambert
+ - Assimilate Decoder baseclass for task #49078 into all HLT decoders
+
+! 2014-01-27 - Sebastian Neubert
+ - Renamed TrackingWriter/Decoder to TrackWriter/Decoder
+
+! 2014-01-20 - Sebastian Neubert
+ - New signature for the decodeTracks function: 
+   now it takes a pointer to the rawBank data as delivered by RawBank::data()
+ - Updated unit tests
+ - HltTrackingDecoder implemented.
+
+! 2014-01-17 - Marco Clemencic
+ - Updated CMake configuration.
+ - Minor fix to HltTrackingCoder.cpp.
+
+! 2014-01-17 - Sebastian Neubert
+ - Nested unittest suite under hltdaqtests suite
+ - test executable called without relative path
+ - fixed file extension of utestHltTrackingCoder.cpp
+ - reverted package to work without additional HltDAQcore library
+   test executable directly compiles with the sources needed
+
+! 2014-01-16 - Sebastian Neubert
+ - Added Writer and Decoder for Tracks
+ - see task #48807
+ - Added unit testing support
+ - added HltDAQcore library to hold core en/decoder functions (so far only for HltTrackingCoder)  
+ - these changes depend on an updated RawEvent (to include tha HltTrackingReports RawBank type)
+
 !========================= HltDAQ v3r0 2013-12-09 =========================
 ! 2013-12-05 - Rob Lambert
  - Changes to comply with new Gaudi::StringKey types in IANSvc and related

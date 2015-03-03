@@ -1,4 +1,4 @@
-// $Id: ValueWithError.cpp 155622 2013-04-25 12:47:40Z ibelyaev $
+// $Id: ValueWithError.cpp 167469 2014-01-25 18:05:11Z ibelyaev $
 // ============================================================================
 // Include files
 // ============================================================================
@@ -776,12 +776,72 @@ Gaudi::Math::ValueWithError
 Gaudi::Math::exclusiveEff
 ( const Gaudi::Math::ValueWithError& accepted , 
   const Gaudi::Math::ValueWithError& rejected )
+{ return Gaudi::Math::binomEff2 ( accepted , rejected ) ; }
+// ============================================================================
+/*  evaluate the binomial efficiency for Bernulli scheme with weights 
+ *  @param nAccepted (INPUT) number of accepted (weighted) events 
+ *  @param nRejected (INPUT) number of rejected (weighted) events 
+ *  @return the binomial efficiency 
+ */
+// ============================================================================
+Gaudi::Math::ValueWithError 
+Gaudi::Math::binomEff2
+( const ValueWithError& nAccepted , 
+  const ValueWithError& nRejected ) 
 {
-  const bool z_a = _zero ( accepted.value() ) ;
-  const bool z_r = _zero ( rejected.value() ) ;
-  return 
-    z_a ? ( z_r ? ValueWithError ( 1, 1 ) : ( 1. - 1. / ( 1. + accepted / rejected ) ) )  :
-    1. / ( 1. + rejected / accepted ) ;
+  const double vA = nAccepted.value() ;
+  const double vR = nRejected.value() ;
+  //
+  const bool zeroA = _zero ( vA      ) ;
+  const bool zeroR = _zero ( vR      ) ;
+  //
+  if ( zeroA && zeroR ) { return ValueWithError ( 1 , -1 ) ; }
+  //
+  const double vB  = vA + vR ;
+  const bool zeroB = _zero ( vB ) ;
+  //
+  if ( zeroB          ) { return ValueWithError ( 0 , -1 ) ; }
+  //
+  double cov2   =  vA * vA * nRejected.cov2() ;
+  cov2         +=  vR * vR * nAccepted.cov2() ;
+  cov2         /=  vB * vB   ;
+  //
+  return ValueWithError ( vA / vB , cov2 ) ;
+}
+// ============================================================================
+/*  calculate the ratio of weighted to unweighted sample with uncertainties
+ *  \f[ R = \frac{N_w}{N}  = \frac{ \sum_1^{N} w_i }{N} \f] 
+ *  using jackknife method:
+ *  \f[ \sigma^2(R) = \left( \sum_1^N w_i^2 - NR^2 \right) / (N-1)^2 \f] 
+ *  @thanks Wouter Hulsbergen 
+ *  @see http://en.wikipedia.org/wiki/Jackknife_%28statistics%29
+ *  The result has proper behaviour : 
+ *  uncertainty in R goes to zero if 
+ *  dispersion on weights go to zero.
+ *  @param   nWeighted (input) statistic of weighted sample 
+ *  @param   n         (input) size      of origial sample 
+ *  @return  ratio R with the proper uncertaities 
+ */
+// ============================================================================
+Gaudi::Math::ValueWithError 
+Gaudi::Math::effJackknife 
+( const ValueWithError& nWeighted , 
+  const unsigned long   n         ) 
+{
+  //
+  if      ( 0 == n ) { return ValueWithError (-1,-1)                   ; }
+  else if ( 1 == n ) { return ValueWithError ( nWeighted.value() , 0 ) ; }
+  //
+  const unsigned long n1 = n - 1 ;
+  //
+  const double r  = nWeighted.value() / n ;
+  //
+  double c2 = nWeighted.cov2 () - r*r*n ;
+  //
+  c2 /= n1 ;
+  c2 /= n1 ;
+  //
+  return ValueWithError ( r , c2 ) ;
 }
 // ============================================================================
 /*  Simple evaluation of efficiency using Zech's prescription 
@@ -964,7 +1024,7 @@ Gaudi::Math::ValueWithError Gaudi::Math::log
   return Gaudi::Math::ValueWithError ( v , e1 * e1 * b.cov2 () ) ;
 }
 // ============================================================================
-/*  make a sum two elements taking into acocunt the 
+/*  make a sum two elements taking into account the 
  *  correlation coefficient  
  *  @param a  (input) the first value 
  *  @param b  (input) the second value 
@@ -1004,6 +1064,22 @@ Gaudi::Math::ValueWithError Gaudi::Math::sum
   //
   return ValueWithError ( v , ac2 + bc2 + 2 * r * std::sqrt ( ac2 * bc2 ) ) ;    
 }
+// ============================================================================
+/*  make a sum two elements taking into account the 
+ *  correlation coefficient  
+ *  @param a  (input) the first value 
+ *  @param b  (input) the second value 
+ *  @param c  (input) the correlation coefficient
+ *  @return a+b 
+ *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
+ *  @date 2012-11-09
+ */
+// ============================================================================
+Gaudi::Math::ValueWithError Gaudi::Math::sum2
+( const Gaudi::Math::ValueWithError& a , 
+  const Gaudi::Math::ValueWithError& b , 
+  const double                       c ) 
+{ return sum ( a , b , c ) ; }
 // ============================================================================
 /*  make a difference  two elements taking into acocunt the 
  *  correlation coefficient  
@@ -1250,6 +1326,18 @@ Gaudi::Math::sum
   return ini ;
   //
 }
+// ============================================================================
+/*  get the sum of the vector 
+ *  @param vct the vector
+ *  @param ini the intial value 
+ *  @return the sum over the vector 
+ */
+// ============================================================================
+Gaudi::Math::ValueWithError 
+Gaudi::Math::accumulate  
+( const std::vector<Gaudi::Math::ValueWithError>& vct , 
+  Gaudi::Math::ValueWithError                     ini ) 
+{ return sum ( vct , ini ) ; }
 // ============================================================================
 /*  get the sum of absolute values for the vector 
  *  @param vct the vector

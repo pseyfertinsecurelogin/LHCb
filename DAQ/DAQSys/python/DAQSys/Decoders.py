@@ -17,8 +17,8 @@ Decoder("OdinTimeDecoder/ToolSvc.OdinTimeDecoder",active=False,
         conf=DecoderDB)
 
 Decoder("ODINDecodeTool",active=False,#tool handle??
-        inputs={"RawEventLocations":["Trigger/RawEvent","DAQ/RawEvent"]},
-        outputs={"ODINLocation":"DAQ/ODIN"},
+        inputs={"RawEventLocations":None},
+        outputs={"ODINLocation":None},
         conf=DecoderDB)
 
 #===========VELO===========
@@ -28,7 +28,7 @@ Decoder("ODINDecodeTool",active=False,#tool handle??
 # by RecoTracking.py when rewuired for Brunel, alignment, etc.
 vd=Decoder("DecodeVeloRawBuffer/createBothVeloClusters",
         active=False, banks=["Velo"],
-        inputs={"RawEventLocations" : ["Other/RawEvent","DAQ/RawEvent"]},
+        inputs={"RawEventLocations" : None},
         outputs={"VeloClusterLocation" : None, "VeloLiteClustersLocation" : None},
         properties={"DecodeToVeloClusters": True,"DecodeToVeloLiteClusters":True},
         conf=DecoderDB)
@@ -55,7 +55,7 @@ vdLite.Properties["DecodeToVeloLiteClusters"]=True
 #unfortunately the location of these two banks are different in S20, so for now I can only declare the L0PU decoder... needs thought!
 Decoder("DecodePileUpData",
         active=True, banks=["L0PU"],#,"L0PUFull"],
-        inputs={"RawEventLocations" : ["Trigger/RawEvent","Other/RawEvent","DAQ/RawEvent"]},#different from the default!
+        inputs={"RawEventLocations" : None},
         outputs={"PUClusterLocation" : None, "PUClusterNZSLocation": None},
         #properties={"NonZeroSupp": False},
         conf=DecoderDB)
@@ -65,7 +65,7 @@ Decoder("DecodePileUpData",
 Decoder("RawBankToSTLiteClusterAlg/createTTLiteClusters",
         active=True, banks=["TT","TTPedestal","TTFull","TTProcFull","TTError"],
         outputs={"clusterLocation":None},
-        inputs={"RawEventLocations" : ["Other/RawEvent","DAQ/RawEvent"]},#also set in the C++...
+        inputs={"RawEventLocations" : None},
         required=["createODIN"],
         conf=DecoderDB)
 #outputs={"clusterLocation":None}, set logically in the code, resetting may not work...
@@ -73,7 +73,7 @@ Decoder("RawBankToSTLiteClusterAlg/createTTLiteClusters",
 Decoder("RawBankToSTClusterAlg/createTTClusters",
         active=True, banks=["TT","TTPedestal","TTFull","TTProcFull","TTError"],
         outputs={"clusterLocation":None},
-        inputs={"RawEventLocations" : ["Other/RawEvent","DAQ/RawEvent"]},#also set in the C++...
+        inputs={"RawEventLocations" : None},
         required=["createODIN"],
         conf=DecoderDB)
 #outputs={"clusterLocation":None}, set logically in the code, resetting may not work...
@@ -100,14 +100,14 @@ Decoder(tname, active=False,
         conf=DecoderDB)
 
 Decoder(t2name, active=False,
-        inputs={"RawEventLocations":["Rich/RawEvent","DAQ/RawEvent"]},
+        inputs={"RawEventLocations":None},
         conf=DecoderDB)
 
 #===========IT===========
 Decoder("RawBankToSTLiteClusterAlg/createITLiteClusters",
         active=True, banks=["IT","ITPedestal","ITFull","ITProcFull","ITError"],
         outputs=["Raw/IT/LiteClusters"],
-        inputs={"RawEventLocations" : ["Other/RawEvent","DAQ/RawEvent"]},#also set in the C++...
+        inputs={"RawEventLocations" : None},
         properties={"DetType":"IT"},
         required=["createODIN"],
         conf=DecoderDB)
@@ -116,7 +116,7 @@ Decoder("RawBankToSTLiteClusterAlg/createITLiteClusters",
 Decoder("RawBankToSTClusterAlg/createITClusters",
         active=True, banks=["IT","ITPedestal","ITFull","ITProcFull","ITError"],
         outputs=["Raw/IT/Clusters"],
-        inputs={"RawEventLocations" : ["Other/RawEvent","DAQ/RawEvent"]},#also set in the C++...
+        inputs={"RawEventLocations" : None},
         properties={"DetType":"IT"},
         required=["createODIN"],
         conf=DecoderDB)
@@ -135,12 +135,10 @@ from GaudiKernel.SystemOfUnits import ns
 rbd=Decoder(ott.PublicTools[0],#tool handle??
         banks=ott.Banks,
         active=False,
-        inputs={"RawEventLocations":["Other/RawEvent","DAQ/RawEvent"]},
+        inputs={"RawEventLocations":None},
         properties={"TimeWindow":(-8.0*ns, 56.0*ns)},
         conf=DecoderDB)
 
-#prbd=rbd.clone("OTRawBankDecoder/ToolSvc.OTRawBankDecoder")
-# copy into PublicTool, actually it's the same instance used in OTTimeCreator
 
 #===========SPD===========
 name="SpdFromRaw" #as in C++
@@ -154,7 +152,7 @@ Decoder("CaloDigitsFromRaw/"+name,
 #outputs={"DigitsContainer" : "Raw/Spd/Digits", "AdcsContainer" : "Raw/Spd/Adcs"} #set logically in code, so overwriting here won't actually work
 
 Decoder(toolname,active=False,
-        inputs={"RawEventLocations" : ["Calo/RawEvent","DAQ/RawEvent"]},
+        inputs={"RawEventLocations" : None},
         conf=DecoderDB)
 
 #===========PRS===========
@@ -169,49 +167,72 @@ Decoder("CaloDigitsFromRaw/"+name,
 #outputs={"DigitsContainer" : "Raw/Prs/Digits", "AdcsContainer" : "Raw/Prs/Adcs"} #set logically in code, so overwriting here won't actually work
 
 Decoder(toolname,active=False,
-        inputs={"RawEventLocations" : ["Calo/RawEvent","DAQ/RawEvent"]},
+        inputs={"RawEventLocations" : None},
         conf=DecoderDB)
 
-#===========ECAL===========
-name="EcalZSup"#as in C++
-toolname="CaloEnergyFromRaw/"+name+"Tool" #as in C++
+#===========ECAL and HCAL===========
 
-Decoder("CaloZSupAlg/"+name, active=True,
-        privateTools=[toolname],banks=['EcalE','EcalPacked','EcalPackedError'],
-        outputs=["Raw/Ecal/Adcs","Raw/Ecal/Digits"],
-        conf=DecoderDB)
+#ECAL and HCAL use the same algorithms, where the name of the alg
+#decides which detector is decoded!
+#Two versions are needed, one with zero suppression for Brunel and up, one without zero suppression for Boole
+
+dec_calo_zs=[]
+dec_calo_nzs=[]
+
+for cal in ["Ecal","Hcal"]:
+    #first       Zero suppressed (Brunel),      Non-zero suppressed (Boole)
+    for algs in [("CaloZSupAlg","ZSup",True),("CaloDigitsFromRaw","FromRaw",False)]:
+        alg,nametag,zs=algs
+        # \/ e.g. EcalZSup (Brunel) or EcalFromRaw (Boole)
+        name=cal+nametag
+        algname=alg+"/"+name
+        #push into a list for my helper function
+        if zs:
+            dec_calo_zs.append(algname)
+        else:
+            dec_calo_nzs.append(algname)
+        toolname="CaloEnergyFromRaw/"+name+"Tool" #as in C++
+        # Zero suppressed is "active", NZS is "not active", only activated in Boole
+        Decoder(algname, active=zs,
+                privateTools=[toolname],banks=[cal+'E',cal+'Packed',cal+'PackedError'],
+                outputs=["Raw/"+cal+"/Adcs","Raw/"+cal+"/Digits"],
+                conf=DecoderDB)
         #outputs={"OutputADCData": "Raw/Ecal/Adcs","OutputDigitData": "Raw/Ecal/Digits"}#set logically in code, so overwriting here won't actually work
+        
+        Decoder(toolname,active=False,
+                inputs={"RawEventLocations" : None},
+                conf=DecoderDB)
 
-Decoder(toolname,active=False,
-        inputs={"RawEventLocations" : ["Calo/RawEvent","DAQ/RawEvent"]},
-        conf=DecoderDB)
-
-
-#===========HCAL===========
-name="HcalZSup"#as in C++
-toolname="CaloEnergyFromRaw/"+name+"Tool" #as in C++
-
-Decoder("CaloZSupAlg/"+name, active=True,
-        privateTools=[toolname],banks=['HcalE','HcalPacked','HcalPackedError'],
-        outputs=["Raw/Hcal/Adcs","Raw/Hcal/Digits"],
-        conf=DecoderDB)
-#outputs={"OutputADCData": "Raw/Hcal/Adcs","OutputDigitData": "Raw/Hcal/Digits"}#set logically in code, so overwriting here won't actually work
-
-Decoder(toolname,active=False,
-        inputs={"RawEventLocations" : ["Calo/RawEvent","DAQ/RawEvent"]},
-        conf=DecoderDB)
+def caloSetZeroSuppressed(ddb, zerosuppression=True,dec_calo_zs=dec_calo_zs,dec_calo_nzs=dec_calo_nzs):
+    """
+    helper function to switch between zero-suppressed and NSZ-banks
+    """
+    for calos,zs in [(dec_calo_zs, True), (dec_calo_nzs, False)]:
+        for adec in calos:
+            ddb[adec].Active=(zerosuppression==zs)
 
 
 #===========MUON===========
+tname="MuonRawBuffer"
+
 Decoder("MuonRec",active=True,banks=["Muon"],
-        outputs=["Raw/Muon/Coords"],
-        inputs=["DAQ/RawEvent"],
-        conf=DecoderDB)#No way to configure input or output!!!
+        outputs={"OutputLocation": None},
+        privateTools=[tname], #used in TAE mode
+        publicTools=[tname+"/ToolSvc."+tname], #used in TAE mode
+        conf=DecoderDB)
+
+tool=Decoder("MuonRawBuffer",active=False,
+             inputs={"RawEventLocations":None},
+             conf=DecoderDB)
+
+tool2=tool.clone(tname+"/ToolSvc."+tname)
+
 
 #TRIGGER ===========L0===========
 Decoder("L0MuonCandidatesFromRaw/L0MuonFromRaw",
         active=True, banks=["L0Muon","L0MuonProcCand"],
         privateTools=["L0MuonOutputs/OutputTool"],
+        required=["createODIN"], #needed in TAE mode
         inputs={"RawEventLocations" : None},
         conf=DecoderDB)
 
@@ -233,93 +254,113 @@ Decoder("L0DUFromRawAlg/L0DUFromRaw",
         outputs={"L0DUReportLocation": None, "ProcessorDataLocation": None},
         conf=DecoderDB)
 
+#this is new, really I should let the banks be determined from the sum of lower banks so that I could in the future split up the calo banks
 Decoder("L0DUFromRawTool",
         active=False,
-        inputs={"RawLocations" : ["Trigger/RawEvent","DAQ/RawEvent"]},
+        banks=['EcalE','EcalTrig','EcalPacked','EcalPackedError',
+               'HcalE','HcalTrig','HcalPacked','HcalPackedError',
+               "PrsE",'PrsTrig',"PrsPacked"],
+        inputs={"RawEventLocations" : None},
         conf=DecoderDB)
+
+Decoder("L0CaloAlg/L0Calo",
+        active=False, #false by default, does not run usually, only in Boole?
+        privateTools=["CaloTriggerAdcsFromRaw/EcalTriggerAdcTool","CaloTriggerAdcsFromRaw/HcalTriggerAdcTool","CaloTriggerBitsFromRaw"],
+        conf=DecoderDB)
+
+Decoder("CaloTriggerAdcsFromRaw/EcalTriggerAdcTool",
+        active=False,
+        banks=['EcalE','EcalTrig','EcalPacked','EcalPackedError'],
+        inputs={"RawEventLocations":None},
+        conf=DecoderDB)
+
+Decoder("CaloTriggerAdcsFromRaw/HcalTriggerAdcTool",
+        active=False,
+        banks=['HcalE','HcalTrig','HcalPacked','HcalPackedError'],
+        inputs={"RawEventLocations":None},
+        conf=DecoderDB)
+
+Decoder("CaloTriggerBitsFromRaw",
+        active=False,
+        banks=["PrsE",'PrsTrig',"PrsPacked"],
+        inputs={"RawEventLocations":None},
+        conf=DecoderDB)
+
+        
 
 #TRIGGER ==========HLT===========
 
-dec=Decoder("HltSelReportsDecoder",
-        active=True, banks=["HltSelReports"],
-        inputs=["Trigger/RawEvent","DAQ/RawEvent"],
-        #currently cannot be configured, it's a list not present in constructor
-        outputs={"OutputHltSelReportsLocation":None},
-        conf=DecoderDB)
+#firstly the Dec/Sel/Vertex reports,
+#these need separate versions for Hlt1/2 split scenario,
+#decoding into different locations
 
-#split Hlt1/2 scenario
-dec2=dec.clone(dec.FullName+"/Hlt2SelReportsDecoder")
-dec2.overrideOutputs({"OutputHltSelReportsLocation":"Hlt2/SelReports"})
+#create them all in a similar way, since they have similar options
+#for each decoder we have an HLT1, HLT2 and combined version.
+#Decoders look like "Hlt(''/1/2)(Sel/Dec/Vertex)ReportsDecoder"
 
-dec=Decoder("HltDecReportsDecoder",
-        active=True, banks=["HltDecReports"],
-        inputs=["Trigger/RawEvent","DAQ/RawEvent"],
-        #currently cannot be configured, it's a list not present in constructor
-        outputs={"OutputHltDecReportsLocation":None},
-        conf=DecoderDB)
+#report, the type of report
+for report in ["Dec","Sel","Vertex"]:
+    #hlt, which HLT to decode? None=both, 1=Hlt1, 2=Hlt2
+    for hlt in [None,1,2]:
+        hltname="Hlt"
+        algtype="Hlt"+report+"ReportsDecoder"
+        algname=algtype
+        if hlt is not None:
+            hltname=hltname+str(hlt)
+            algname=algtype+"/"+hltname+report+"ReportsDecoder"
+        #create the decoder
+        dec=Decoder(
+            #\/ e.g. HltSelReportsDecoder/Hlt1SelReportsDecoder
+            algname,
+            active=True,
+            #\/ e.g. HltSelReports
+            banks=["Hlt"+report+"Reports"],
+            inputs={"RawEventLocations":None},
+            #\/ e.g. OutputHltSelReportsLocation: Hlt1/SelReports
+            outputs={"OutputHlt"+report+"ReportsLocation" : hltname+"/"+report+"Reports"},
+            properties={"SourceID" : hlt}, #None=default(0)
+            conf=DecoderDB
+            )
 
-#split Hlt1/2 scenario
-dec1=dec.clone(dec.FullName+"/Hlt1DecReportsDecoder")
-dec1.overrideOutputs({"OutputHltDecReportsLocation":"Hlt1/DecReports"})
-
-dec2=dec.clone(dec.FullName+"/Hlt2DecReportsDecoder")
-dec2.overrideOutputs({"OutputHltDecReportsLocation":"Hlt2/DecReports"})
-
-Decoder("HltVertexReportsDecoder",
-        active=True, banks=["HltVertexReports"],
-        inputs=["Trigger/RawEvent","DAQ/RawEvent"],
-        #currently cannot be configured properly, it's a list not present in constructor
-        outputs={"OutputHltVertexReportsLocation":None},
-        conf=DecoderDB)
+#Also TrackingDecoder, but don't make it active, it's only used during HLT2 stand-alone!
+Decoder("HltTrackReportsDecoder/Hlt1TrackReportsDecoder",
+        active=False, banks=["HltTrackReports"],
+        inputs = {"RawEventLocations":None},
+        outputs={"OutputHltTrackReportsLocation" : "Hlt/Track/Velo"},
+        properties={"SourceID" : 1}, #None=default(0)
+        conf=DecoderDB
+        )
 
 #is a Routing bits filter really a decoder? it doesn't create output...
 Decoder("HltRoutingBitsFilter",
         active=False, banks=["HltRoutingBits"],
-        inputs=["Trigger/RawEvent","DAQ/RawEvent"],
-        #currently cannot be configured properly, it's a list not present in constructor
+        inputs={"RawEventLocations":None},
         conf=DecoderDB)
 
 Decoder("HltLumiSummaryDecoder",
         active=True, banks=["HltLumiSummary"],
-        inputs={"RawEventLocation":None},
+        inputs={"RawEventLocations":None},
         outputs={"OutputContainerName":None},
         conf=DecoderDB)
 
 #UPGRADE ===========VP===========
 Decoder("VPRawBankToLiteCluster/createVPLiteClusters",
         active=True, banks=["VP"],
-        inputs={"RawEventLocations" : ["Other/RawEvent","DAQ/RawEvent"]},
-        outputs={"ClusterLocation": "Raw/VP/LiteClusters"},
+        inputs={"RawEventLocations" : None},
+        outputs={"ClusterLocation": None},
         conf=DecoderDB)
 
 Decoder("VPRawBankToPartialCluster/createVPClusters",
         active=True, banks=["VP"],
-        inputs={"RawEventLocations" : ["Other/RawEvent","DAQ/RawEvent"]},
-        outputs={"ClusterLocation": "Raw/VP/Clusters"},
-        conf=DecoderDB)
-
-#UPGRADE ===========VL===========
-Decoder("VLRawBankDecoder/createVLLiteClusters",
-        active=True, banks=["VL"],
-        inputs={"RawEventLocations" : ["Other/RawEvent","DAQ/RawEvent"]},
-        outputs={"LiteClusterLocation": None},
-        properties={"DecodeToLiteClusters":True,"DecodeToClusters":False},
-        conf=DecoderDB)
-
-Decoder("VLRawBankDecoder/createVLClusters",
-        active=True, banks=["VL"],
-        inputs={"RawEventLocations" : ["Other/RawEvent","DAQ/RawEvent"]},
+        inputs={"RawEventLocations" : None},
         outputs={"ClusterLocation": None},
-        properties={"DecodeToLiteClusters":False,"DecodeToClusters":True},
         conf=DecoderDB)
-
-
 
 #UPGRADE ===========UT===========
 Decoder("RawBankToSTLiteClusterAlg/createUTLiteClusters",
         active=True, banks=["UT","UTPedestal","UTFull","UTError"],
         outputs=["Raw/UT/LiteClusters"],
-        inputs={"RawEventLocations" : ["Other/RawEvent","DAQ/RawEvent"]},
+        inputs={"RawEventLocations" : None},
         #publicTools=["STOfflinePosition/ToolSvc.UTClusterPosition"],
         properties={"DetType":"UT"},
         required=["createODIN"],
@@ -330,7 +371,7 @@ Decoder("RawBankToSTLiteClusterAlg/createUTLiteClusters",
 Decoder("RawBankToSTClusterAlg/createUTClusters",
         active=True, banks=["UT","UTPedestal","UTFull","UTError"],
         outputs=["Raw/UT/Clusters"],
-        inputs={"RawEventLocations" : ["Other/RawEvent","DAQ/RawEvent"]},
+        inputs={"RawEventLocations" : None},
         #publicTools=["STOfflinePosition/ToolSvc.UTClusterPosition"],
         properties={"DetType":"UT"},
         required=["createODIN"],
@@ -348,7 +389,6 @@ Decoder("RawBankToSTClusterAlg/createUTClusters",
 #UPGRADE ===========FT===========
 Decoder("FTRawBankDecoder/createFTClusters",
         active=True, banks=["FTCluster"],
-        inputs={"RawEventLocations" : ["Other/RawEvent","DAQ/RawEvent"]},
-        outputs=["Raw/FT/RawClusters"],
+        inputs={"RawEventLocations" : None},
+        outputs={"OutputLocation":None},
         conf=DecoderDB)
-#no way to steer the output!!

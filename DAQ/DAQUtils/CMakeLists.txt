@@ -1,20 +1,21 @@
 ################################################################################
 # Package: DAQUtils
 ################################################################################
-gaudi_subdir(DAQUtils v1r11)
+gaudi_subdir(DAQUtils v1r12)
 
 gaudi_depends_on_subdirs(Event/DAQEvent
                          Event/RecEvent
                          GaudiAlg
                          GaudiKernel
-                         GaudiSvc)
+                         GaudiSvc
+			 DAQ/DAQKernel)
 
 find_package(RELAX)
 
 gaudi_add_module(DAQUtils
                  src/*.cpp
                  INCLUDE_DIRS RELAX
-                 LINK_LIBRARIES RELAX DAQEventLib RecEvent GaudiAlgLib GaudiKernel)
+                 LINK_LIBRARIES RELAX DAQEventLib DAQKernelLib RecEvent GaudiAlgLib GaudiKernel)
 
 gaudi_install_headers(Event)
 

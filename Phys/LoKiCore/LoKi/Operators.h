@@ -1,4 +1,4 @@
-// $Id: Operators.h 121101 2011-03-30 11:40:02Z ibelyaev $
+// $Id: Operators.h 167810 2014-02-01 16:35:30Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_OPERATORS_H 
 #define LOKI_OPERATORS_H 1
@@ -1062,6 +1062,130 @@ operator% ( const LoKi::Functor<TYPE,double>& divident ,
             const unsigned int                divisor  ) 
 { return LoKi::Modulo<TYPE> ( divident , divisor ) ; }
 // ============================================================================
+
+
+
+// ============================================================================
+#include "LoKi/Value.h"
+// ============================================================================
+// mixed types: TYPE & void 
+// ============================================================================
+// less
+template <class TYPE, class TYPE2>
+inline   LoKi::Less<TYPE,TYPE2> 
+operator<  ( const  LoKi::Functor<TYPE,TYPE2>&  fun1 , 
+             const  LoKi::Functor<void,TYPE2>&  fun2 ) 
+{ return LoKi::Less<TYPE,TYPE2> ( fun1   , LoKi::Value<TYPE,TYPE2> ( fun2 ) ) ; }
+//
+template <class TYPE, class TYPE2>
+inline   LoKi::Less<TYPE,TYPE2> 
+operator<  ( const  LoKi::Functor<void,TYPE2>&  fun1 , 
+             const  LoKi::Functor<TYPE,TYPE2>&  fun2 ) 
+{ return LoKi::Less<TYPE,TYPE2> ( LoKi::Value<TYPE,TYPE2> ( fun1 ) , fun2 ) ; }
+// less or equal 
+template <class TYPE, class TYPE2>
+inline   LoKi::LessOrEqual<TYPE,TYPE2> 
+operator<= ( const  LoKi::Functor<TYPE,TYPE2>&  fun1 , 
+             const  LoKi::Functor<void,TYPE2>&  fun2 ) 
+{ return LoKi::LessOrEqual<TYPE,TYPE2> ( fun1   , LoKi::Value<TYPE,TYPE2> ( fun2 ) ) ; }
+template <class TYPE, class TYPE2>
+//
+inline   LoKi::LessOrEqual<TYPE,TYPE2> 
+operator<= ( const  LoKi::Functor<void,TYPE2>&  fun1 , 
+             const  LoKi::Functor<TYPE,TYPE2>&  fun2 ) 
+{ return LoKi::LessOrEqual<TYPE,TYPE2> ( LoKi::Value<TYPE,TYPE2> ( fun1 ) , fun2 ) ; }
+// greater 
+template <class TYPE, class TYPE2>
+inline   LoKi::Less<TYPE,TYPE2> 
+operator>  ( const  LoKi::Functor<TYPE,TYPE2>&  fun1 , 
+             const  LoKi::Functor<void,TYPE2>&  fun2 ) 
+{ return LoKi::Less<TYPE,TYPE2> ( LoKi::Value<TYPE,TYPE2> ( fun2 ) , fun1 ) ; }
+//
+template <class TYPE, class TYPE2>
+inline   LoKi::Less<TYPE,TYPE2> 
+operator>  ( const  LoKi::Functor<void,TYPE2>&  fun1 , 
+             const  LoKi::Functor<TYPE,TYPE2>&  fun2 ) 
+{ return LoKi::Less<TYPE,TYPE2> ( fun2 , LoKi::Value<TYPE,TYPE2> ( fun1 ) ) ; }
+// greater or equal 
+template <class TYPE, class TYPE2>
+inline   LoKi::LessOrEqual<TYPE,TYPE2> 
+operator>= ( const  LoKi::Functor<TYPE,TYPE2>&  fun1 , 
+             const  LoKi::Functor<void,TYPE2>&  fun2 ) 
+{ return LoKi::LessOrEqual<TYPE,TYPE2> ( LoKi::Value<TYPE,TYPE2> ( fun2 ) , fun1 ) ; }
+//
+template <class TYPE, class TYPE2>
+inline   LoKi::LessOrEqual<TYPE,TYPE2> 
+operator>= ( const  LoKi::Functor<void,TYPE2>&  fun1 , 
+             const  LoKi::Functor<TYPE,TYPE2>&  fun2 ) 
+{ return LoKi::LessOrEqual<TYPE,TYPE2> ( fun2 , LoKi::Value<TYPE,TYPE2> ( fun1 ) ) ; }
+// equality 
+template <class TYPE, class TYPE2>
+inline   LoKi::Equal<TYPE,TYPE2> 
+operator== ( const LoKi::Functor<TYPE,TYPE2>&  fun1 , 
+             const LoKi::Functor<void,TYPE2>&  fun2 ) 
+{ return LoKi::Equal<TYPE,TYPE2>  ( fun1   , LoKi::Value<TYPE,TYPE2> ( fun2 )  ) ; }
+// 
+template <class TYPE, class TYPE2>
+inline   LoKi::Equal<TYPE,TYPE2> 
+operator== ( const LoKi::Functor<void,TYPE2>&  fun1 , 
+             const LoKi::Functor<TYPE,TYPE2>&  fun2 ) 
+{ return LoKi::Equal<TYPE,TYPE2>  ( LoKi::Value<TYPE,TYPE2> ( fun1 ) , fun2  ) ; }
+// non-equality 
+template <class TYPE, class TYPE2>
+inline LoKi::NotEqual<TYPE,TYPE2> 
+operator!= ( const LoKi::Functor<TYPE,TYPE2>&  fun1 , 
+             const LoKi::Functor<void,TYPE2>&  fun2 ) 
+{ return LoKi::NotEqual<TYPE,TYPE2> ( fun1 , LoKi::Value<TYPE,TYPE2> ( fun2 ) )  ; } 
+// 
+template <class TYPE, class TYPE2>
+inline LoKi::NotEqual<TYPE,TYPE2> 
+operator!= ( const LoKi::Functor<void,TYPE2>&  fun1 , 
+             const LoKi::Functor<TYPE,TYPE2>&  fun2 ) 
+{ return LoKi::NotEqual<TYPE,TYPE2> ( LoKi::Value<TYPE,TYPE2> ( fun1 ) , fun2 )  ; } 
+
+// ============================================================================
+// and repeate everything again for 2*void  :-( 
+// ============================================================================
+
+// less 
+template <class TYPE2>
+inline   LoKi::Less<void,TYPE2> 
+operator<  ( const  LoKi::Functor<void,TYPE2>&  fun1 , 
+             const  LoKi::Functor<void,TYPE2>&  fun2 ) 
+{ return LoKi::Less<void,TYPE2> ( fun1   , fun2   ) ; }
+// less or equal 
+template <class TYPE2>
+inline   LoKi::LessOrEqual<void,TYPE2> 
+operator<= ( const  LoKi::Functor<void,TYPE2>&  fun1 , 
+             const  LoKi::Functor<void,TYPE2>&  fun2 ) 
+{ return LoKi::LessOrEqual<void,TYPE2> ( fun1   , fun2   ) ; }
+// greater
+template <class TYPE2>
+inline   LoKi::Less<void,TYPE2> 
+operator>  ( const  LoKi::Functor<void,TYPE2>&  fun1 , 
+             const  LoKi::Functor<void,TYPE2>&  fun2 ) 
+{ return LoKi::Less<void,TYPE2> ( fun2   , fun1   ) ; }
+// greater or equal 
+template <class TYPE2>
+inline   LoKi::LessOrEqual<void,TYPE2> 
+operator>= ( const  LoKi::Functor<void,TYPE2>&  fun1 , 
+             const  LoKi::Functor<void,TYPE2>&  fun2 ) 
+{ return LoKi::LessOrEqual<void,TYPE2> ( fun2   , fun1   ) ; }
+// equality 
+template <class TYPE2>
+inline   LoKi::Equal<void,TYPE2> 
+operator== ( const LoKi::Functor<void,TYPE2>&  fun1 , 
+             const LoKi::Functor<void,TYPE2>&  fun2 ) 
+{ return LoKi::Equal<void,TYPE2>  ( fun1 , fun2  ) ; }
+// non-equality 
+template <class TYPE2>
+inline LoKi::NotEqual<void,TYPE2> 
+operator!= ( const LoKi::Functor<void,TYPE2>&  fun1 , 
+             const LoKi::Functor<void,TYPE2>&  fun2 ) 
+{ return LoKi::NotEqual<void,TYPE2> ( fun1 , fun2 )  ; } 
+
+
+
 
 // ============================================================================
 // The END 

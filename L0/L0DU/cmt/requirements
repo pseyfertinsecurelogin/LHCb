@@ -1,5 +1,5 @@
 package		  L0DU
-version           v10r30
+version           v10r31
 
 # ================ structure =============================================
 branches	src cmt doc options python
@@ -11,6 +11,7 @@ set L0DUOPTS	$(L0DUROOT)/options
 # ================ used packages =========================================
 use L0Event      v*    Event
 use DAQEvent     v*    Event
+use DAQKernel    v*    DAQ
 use CaloDet      v*    Det
 use CaloDAQ      v*    Calo
 use CaloUtils    v*    Calo

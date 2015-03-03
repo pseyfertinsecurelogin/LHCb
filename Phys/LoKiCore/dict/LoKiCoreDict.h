@@ -1,4 +1,4 @@
-// $Id: LoKiCoreDict.h 154653 2013-04-06 17:53:32Z ibelyaev $
+// $Id: LoKiCoreDict.h 167827 2014-02-02 18:43:48Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_LOKICOREDICT_H 
 #define LOKI_LOKICOREDICT_H 1
@@ -32,6 +32,7 @@
 #include "LoKi/DecayChainBase.h"
 #include "LoKi/TES.h"
 #include "LoKi/Tensors.h"
+#include "LoKi/Param.h"
 // ============================================================================
 // Stefan Roiser's trick to allow compilation on Win32
 // ============================================================================

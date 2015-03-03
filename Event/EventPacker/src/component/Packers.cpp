@@ -1,5 +1,3 @@
-// $Id: Packers.cpp,v 1.5 2010-05-18 09:03:21 jonrob Exp $
-
 #include "PackerBaseAlg.icpp"
 
 #include "Event/PackedMCRichHit.h"
@@ -57,10 +55,6 @@ template class DataPacking::Pack<LHCb::MCVPHitPacker>;
 typedef DataPacking::Pack<LHCb::MCVPHitPacker> Fp;
 DECLARE_ALGORITHM_FACTORY( Fp )
 
-template class DataPacking::Pack<LHCb::MCVLHitPacker>;
-typedef DataPacking::Pack<LHCb::MCVLHitPacker> Fl;
-DECLARE_ALGORITHM_FACTORY( Fl )
-
 template class DataPacking::Pack<LHCb::MCPuVetoHitPacker>;
 typedef DataPacking::Pack<LHCb::MCPuVetoHitPacker> G;
 DECLARE_ALGORITHM_FACTORY( G )
@@ -114,8 +108,8 @@ typedef DataPacking::Pack<LHCb::CaloClusterPacker> R;
 DECLARE_ALGORITHM_FACTORY( R )
 
 template class DataPacking::Pack<LHCb::MCFTHitPacker>;
-typedef DataPacking::Pack<LHCb::MCFTHitPacker> S;
-DECLARE_ALGORITHM_FACTORY( S )
+typedef DataPacking::Pack<LHCb::MCFTHitPacker> S_;
+DECLARE_ALGORITHM_FACTORY( S_ )
 
 template class DataPacking::Pack<LHCb::MCSLHitPacker>;
 typedef DataPacking::Pack<LHCb::MCSLHitPacker> T;

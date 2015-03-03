@@ -1,6 +1,6 @@
-# ========================================================================
+# ====================================================================
 package           OTDet 
-version           v8r10
+version           v8r11
 
 # =============== structure ===============================================	
 branches         src cmt doc OTDet dict
@@ -11,6 +11,7 @@ use LHCbKernel	 v*   Kernel
 use LHCbMath     v*   Kernel
 use Boost        v*   LCG_Interfaces
 use GSL		 v*   LCG_Interfaces
+use vdt         v*   LCG_Interfaces
 
 # =============== own includes ============================================
 apply_pattern install_more_includes more=OTDet

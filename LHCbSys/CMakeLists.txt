@@ -1,13 +1,14 @@
 ################################################################################
 # Package: LHCbSys
 ################################################################################
-gaudi_subdir(LHCbSys v36r4)
+gaudi_subdir(LHCbSys v37r0)
 
 gaudi_depends_on_subdirs(Associators/MCAssociators
                          Calo/CaloDAQ
                          Calo/CaloInterfaces
                          Calo/CaloKernel
                          Calo/CaloUtils
+			 DAQ/DAQKernel
                          DAQ/DAQSys
                          DAQ/DAQUtils
                          DAQ/MDF
@@ -29,7 +30,6 @@ gaudi_depends_on_subdirs(Associators/MCAssociators
                          Det/OTDet
                          Det/RichDet
                          Det/STDet
-                         Det/VLDet
                          Det/VPDet
                          Det/VeloDet
                          Event/DAQEvent
@@ -103,7 +103,6 @@ gaudi_depends_on_subdirs(Associators/MCAssociators
                          Tools/FileStager
                          Tools/XmlTools
 			 Velo/VeloDAQ
-			 VL/VLDAQ
 			 VP/VPDAQ)
 
 

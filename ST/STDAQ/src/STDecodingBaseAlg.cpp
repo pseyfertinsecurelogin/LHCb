@@ -59,7 +59,7 @@ m_bankTypeString(""){
  
  declareProperty( "rawEventLocation",  m_rawEventLocation = "", 
                   "OBSOLETE. Use RawEventLocations instead" );
- declareProperty( "RawEventLocations", m_rawEventLocations,
+ declareProperty( "RawEventLocations", m_rawEventLocations={LHCb::RawEventLocation::Other,LHCb::RawEventLocation::Default},
                   "List of possible locations of the RawEvent object in the"
                   " transient store. By default it is LHCb::RawEventLocation::Other,"
                   " LHCb::RawEventLocation::Default.");
@@ -80,8 +80,6 @@ StatusCode STDecodingBaseAlg::initialize() {
   if (sc.isFailure()) return sc;
   if( UNLIKELY( msgLevel(MSG::DEBUG) ) ) debug() << "==> initialize " << endmsg;
 
-  // Initialise the RawEvent locations
-  bool usingDefaultLocation = m_rawEventLocations.empty() && m_rawEventLocation.empty();
   if (! m_rawEventLocation.empty()) {
     warning() << "The rawEventLocation property is obsolete, use RawEventLocations instead" << endmsg;
     m_rawEventLocations.insert(m_rawEventLocations.begin(), m_rawEventLocation);
@@ -94,6 +92,14 @@ StatusCode STDecodingBaseAlg::initialize() {
     m_rawEventLocations.push_back(LHCb::RawEventLocation::Default);
   }
 
+  // Initialise the RawEvent locations
+  bool usingDefaultLocation = true;
+  //if (!m_rawEventLocation.empty()) usingDefaultLocation=false;
+  if (m_rawEventLocations.size()>2 || m_rawEventLocations.empty()) usingDefaultLocation=false;
+  if (m_rawEventLocations.size()>0 
+      && m_rawEventLocations[0]!=LHCb::RawEventLocation::Other 
+      && m_rawEventLocations[0]!=LHCb::RawEventLocation::Default) usingDefaultLocation=false;
+  
   if (!usingDefaultLocation) {
     info() << "Using '" << m_rawEventLocations << "' as search path for the RawEvent object" << endmsg;
   }
