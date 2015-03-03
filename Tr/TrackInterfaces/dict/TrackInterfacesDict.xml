@@ -1,8 +1,11 @@
 <lcgdict>
   <class name    = "IAddTTClusterTool"       />
+  <class name    = "IFastMomentumEstimate"   />
   <class name    = "IHitExpectation"         />
   <class name    = "IMaterialLocator"        />
   <class name    = "IMeasurementProvider"    />
+  <class name    = "IPatDebugTool"           />
+  <class name    = "IPatDebugTTTool"         />
   <class name    = "IPatForwardTool"         />
   <class name    = "IPatSeedingTool"         />
   <class name    = "IStateCorrectionTool"    />

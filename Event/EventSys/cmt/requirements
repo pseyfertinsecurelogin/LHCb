@@ -1,35 +1,34 @@
 package EventSys
-version v23r9
+version v23r10
 
 branches doc cmt
 
 # LHCb Event libraries
 
 use EventBase   v2r4    Event
-use MCEvent     v2r5    Event
+use MCEvent     v2r5p1  Event
 use DigiEvent   v2r2    Event
-use RecEvent    v2r6    Event
-use L0Event     v16r5   Event
-use PhysEvent   v11r3   Event
-use DAQEvent    v7r6    Event
+use RecEvent    v2r7    Event
+use L0Event     v16r6   Event
+use PhysEvent   v11r4   Event
+use DAQEvent    v7r6p1  Event
 use GenEvent    v5r1    Event
 use EventAssoc  v4r2    Event
 use LinkerEvent v3r2    Event
-use TrackEvent  v4r7    Event
+use TrackEvent  v4r8    Event
 use PackedEvent v3r2    Event
 use VeloEvent   v16r0   Event
 use HltEvent    v8r4    Event
-
 
 private
 use RELAX       v*      LCG_Interfaces
 
 #----This is only for RELAX 1_1_9 that had an inconsistent library names in rootmap files 
 pattern copy_relax_rootmap \
-  macro fixup_rootmap<dict> "i=open('$(RELAX_home)/lib/lib<dict>Rflx.rootmap');\
+  macro fixup_rootmap<dict> "i=open(r'$(RELAX_home)/lib/lib<dict>Rflx.rootmap');\
                              lines=[line.replace('lib<dict>Dict.so','lib<dict>Rflx.so') for line in i.readlines()];\
                              open('lib<dict>Rflx.rootmap','w').writelines(lines)" \
-        WIN32                "i=open('$(RELAX_home)/lib/<dict>Rflx.rootmap');\
+        WIN32                "i=open(r'$(RELAX_home)/lib/<dict>Rflx.rootmap');\
                              lines=[line.replace('<dict>Dict.dll','<dict>Rflx.dll') for line in i.readlines()];\
                              open('<dict>Rflx.rootmap','w').writelines(lines)" ;\
   action copy_relax_rootmap<dict> 'python -c "$(fixup_rootmap<dict>)";\

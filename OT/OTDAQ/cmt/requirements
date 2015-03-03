@@ -1,5 +1,5 @@
 package OTDAQ
-version v5r3
+version v5r6
 
 branches OTDAQ cmt dict doc src options xml Event
 
@@ -19,10 +19,6 @@ apply_pattern install_more_includes more=OTDAQ offset=Event
 # ================= component library ====================
 library OTDAQ *.cpp
 apply_pattern component_library library=OTDAQ
-
-#================== linker library =======================
-library OTDAQLib   ../src/OTLiteTime.cpp 
-apply_pattern linker_library library=OTDAQLib
 
 # =============== LCG Dictionaries ============================================
 apply_pattern     reflex_dictionary                             \

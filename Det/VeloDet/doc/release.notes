@@ -1,7 +1,27 @@
-! $Id: release.notes,v 1.179 2007-10-08 15:10:53 cattanem Exp $
+! $Id: release.notes,v 1.186 2007-11-15 15:22:26 cattanem Exp $
 ! package VeloDet
 ! package manager : Velo Group
 !-----------------------------------------------------------------------------
+
+!======================== VeloDet v12r3 2007-11-15 ===========================
+! 2007-11-15 - Mark Tobin
+ - Added method to DeVeloSensor that returns the module id from the conditions
+   database. Value is set in DeVelo. 
+ - Added protection for invalid sensor in registering of conditions.
+
+! 2007-11-08 - Mark Tobin
+ - Also now protects against possible case where there is no R sensor 
+   (although this is unlikely!).
+
+! 2007-11-07 - Mark Tobin
+ - protect against empty velo half in registerConditionCallBacks so that code
+   can run with test beam geometry.
+
+! 2007-11-06 - Kurt Rinnert
+ - bugfix in cache update for half box offset.  The update was not protected
+   against an empty VELO half, leading to a crash when running on test beam
+   geometry.  The problem was not noticed before because the code previously
+   resided in PatVeloAlignTool which was not used on test beam geometry.
 
 !======================== VeloDet v12r2 2007-10-05 ===========================
 ! 2007-10-01 - Kurt Rinnert

@@ -1,9 +1,9 @@
-# $Id: requirements,v 1.80 2007-08-23 09:50:01 jpalac Exp $
+# $Id: requirements,v 1.82 2007-11-09 08:24:09 cattanem Exp $
 # Created      : 20/06/2001
 # Maintainer   : P. Koppenburg
 #
 package           PhysEvent
-version           v11r3
+version           v11r4
 
 # Structure, i.e. directories to process. 
 #============================================================================
@@ -26,7 +26,6 @@ apply_pattern install_more_includes more=Event
 
 # Generate dictionaries with lcgdict via GOD
 #============================================================================
-macro PhysEventDict_dependencies PhysEvent
 apply_pattern god_dictionary files=../xml/*.xml
 
 # Make the linker library

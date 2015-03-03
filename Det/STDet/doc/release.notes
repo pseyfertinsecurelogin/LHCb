@@ -1,7 +1,20 @@
-!$Id: release.notes,v 1.111 2007-09-17 09:29:26 cattanem Exp $
+!$Id: release.notes,v 1.117 2007-11-06 10:55:58 cattanem Exp $
 !Package         : STDet
 !Package manager : M. Needham
 !-------------------------------------------------------------------------
+
+!======================== STDet v3r7 2007-11-06 ==========================
+! 2007-11-06 M Needham
+ - Remove isInside from base class DeSTBaseElement (functionality now 
+   provided by DetectorElement)
+ - stripToChan method added to DeSTSector
+
+! 2007-10-26 M. Needham
+ - Clean up condition registration (DeSTLayer,DeSTBaseElement,DeSTSector)
+ - Add functionality to flag dead beetles, dead strips etc
+
+! 2007-10-13 M Needham
+ - Add find box methods to DeITDetector
 
 !======================== STDet v3r6 2007-09-17 ==========================
 ! 2007-09-12 M Needham

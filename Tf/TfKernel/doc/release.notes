@@ -4,6 +4,13 @@
 ! Purpose     : Core classes for the Tf framework
 !-----------------------------------------------------------------------------
 
+!============================ TfKernel v2r1 2007-11-14 =======================
+! 2007-11-14 - Wouter Hulsbergen
+ - moved calibratedTime from OTHit to OTLiteTime
+
+! 2007-11-14 - Stephanie Hansmann-Menzemer
+ - add double to float conversion in RecoFuncs.h to remove compiler warning
+
 !============================ TfKernel v2r0 2007-10-11 =======================
 ! 2007-10-11 - Marco Cattaneo
  - Change major version to v2r0 to reflect this change

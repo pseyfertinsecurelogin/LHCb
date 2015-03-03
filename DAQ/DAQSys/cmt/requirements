@@ -1,11 +1,11 @@
 package DAQSys
-version v3r5
+version v3r6
 
 branches doc cmt
 
 # LHCb DAQ buffer libraries
 
 use MuonDAQ     v3r2    Muon
-use OTDAQ       v5r5    OT
-use CaloDAQ     v4r0    Calo
+use OTDAQ       v5r6    OT
+use CaloDAQ     v4r1    Calo
 use SiDAQ       v2r0    Si

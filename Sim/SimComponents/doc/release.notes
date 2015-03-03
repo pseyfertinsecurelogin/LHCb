@@ -5,6 +5,17 @@
 !               processing stage accessing the MC event classes
 !-----------------------------------------------------------------------------
 
+!====================== SimComponents v2r7 2007-11-02 ========================
+! 2007-11-02 - Marco Cattaneo
+ - Fix units in printout of MCParticleSelector cuts
+
+! 2007-10-29 M. Needham
+ - Modifications to MCReconstructible to protect against unknown category
+ - Change MCParticleSelector defaults to do no selection
+
+! 2007-10-23 - Chris Jones
+ - Add option to MCParticleSelector to select only B decay products
+
 !====================== SimComponents v2r6 2007-10-10 ========================
 ! 2007-10-10 - Juan PALACIOS
  - Import src/PrintMCTree{.cpp, .h} from Phys/DaVinciMCTools.
