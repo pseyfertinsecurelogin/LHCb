@@ -1,14 +1,4 @@
-// $Id: LoKiMC.h,v 1.6 2007-06-03 20:41:10 ibelyaev Exp $
-// ============================================================================
-// CVS tag $Name: not supported by cvs2svn $ , version $Revision: 1.6 $
-// ============================================================================
-// $Log: not supported by cvs2svn $
-// Revision 1.5  2007/04/16 16:16:08  pkoppenb
-// removed polemic comment
-//
-// Revision 1.4  2006/03/14 19:04:29  ibelyaev
-//  rename LoKi.cpp -> LoKiMC.cpp
-//
+// $Id: LoKiMC.h,v 1.9 2007-08-16 13:51:41 ibelyaev Exp $
 // ============================================================================
 #ifndef LOKI_LOKIMC_H 
 #define LOKI_LOKIMC_H 1
@@ -32,6 +22,9 @@
 #include "LoKi/MCFinderObj.h"
 #include "LoKi/MCChild.h"
 #include "LoKi/MCDecayVertex.h"
+#include "LoKi/PrintMCDecay.h"
+// ============================================================================
+#include "LoKi/IMCHybridFactory.h"
 // ============================================================================
 /** @file
  *

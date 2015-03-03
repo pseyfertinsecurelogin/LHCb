@@ -1,4 +1,4 @@
-// $Id: DeVeloRType.cpp,v 1.43 2007-07-23 01:08:55 krinnert Exp $
+// $Id: DeVeloRType.cpp,v 1.46 2007-09-03 19:50:35 krinnert Exp $
 //==============================================================================
 #define VELODET_DEVELORTYPE_CPP 1
 //==============================================================================
@@ -124,6 +124,7 @@ DeVeloRType::DeVeloRType(const std::string& name) :
   m_halfboxR(m_numberOfStrips,0.0),
   m_associatedPhiSensor(0),
   m_otherSideRSensor(0),
+  m_otherSidePhiSensor(0),
   m_rStrips(VeloDet::deVeloRTypeStaticRStrips()),
   m_rPitch(VeloDet::deVeloRTypeStaticRPitch()),
   m_phiMin(VeloDet::deVeloRTypeStaticPhiMin()),
@@ -188,17 +189,17 @@ StatusCode DeVeloRType::initialize()
   /// Build up map of strips to routing lines
   BuildRoutingLineMap();
   
-  // fill global r cache
-  sc = updateGeometryCache();
+  // geometry conditions, update global r of strip cache
+  updMgrSvc()->
+    registerCondition(this,this->m_geometry,&DeVeloRType::updateGeometryCache);
+
+  // first update
+  sc = updMgrSvc()->update(this);
   if(!sc.isSuccess()) {
     msg << MSG::ERROR << "Failed to update geometry cache." << endreq;
     return sc;
   }
   
-  // geometry conditions, update global r of strip cache
-  updMgrSvc()->
-    registerCondition(this,this->m_geometry,&DeVeloRType::updateGeometryCache);
-
   return StatusCode::SUCCESS;
 }
 //==============================================================================
@@ -706,27 +707,117 @@ std::auto_ptr<LHCb::Trajectory> DeVeloRType::trajectory(const LHCb::VeloChannelI
 
 }
 
-StatusCode DeVeloRType::updateGlobalR()
+StatusCode DeVeloRType::updateStripRCache()
 {
+  // We do not use the radius at the centre of the strip, because in
+  // the global frame this is no longer the occupancy weighted mean.
+  // Instead we integrate over the strip wighted by occupancy which is
+  // o = const./r.  The constant cancels in the weighted mean.
   for (unsigned int strip=0; strip<m_numberOfStrips; ++strip) {
-    double phi = (phiMaxStrip(strip) + phiMinStrip(strip))/2.0;
-    double r   = rOfStrip(strip);
-    Gaudi::XYZPoint lp(r*cos(phi),r*sin(phi),0.0);
+    double phiMin = phiMaxStrip(strip) > phiMinStrip(strip) ? phiMinStrip(strip) : phiMaxStrip(strip);
+    double phiMax = phiMaxStrip(strip) > phiMinStrip(strip) ? phiMaxStrip(strip) : phiMinStrip(strip);
+    double rLocal =  rOfStrip(strip);
+
+    double dphi   = (phiMax-phiMin)/10.0;
+    double num   = 0.0;
+    double hbden = 0.0;
+    double gden  = 0.0;
+    double phiLocal=phiMin;
+
+    // integrate over strip
+    for ( ; phiLocal < phiMax; phiLocal += dphi) {
+      Gaudi::XYZPoint lp(rLocal*cos(phiLocal),rLocal*sin(phiLocal),0.0);
+      
+      num += dphi;
+      
+      Gaudi::XYZPoint hbp = localToVeloHalfBox(lp);
+      hbden += dphi/hbp.rho();
+      
+      Gaudi::XYZPoint gp = localToGlobal(lp);
+      gden += dphi/gp.rho();
+    }
+
+    // deal with the last interval, it might be shorter than the original dphi
+    dphi = phiMax - phiLocal + dphi;
+    num += dphi;
+    
+    Gaudi::XYZPoint lp(rLocal*cos(phiMax),rLocal*sin(phiMax),0.0);
+    
+    Gaudi::XYZPoint hbp = localToVeloHalfBox(lp);
+    hbden += dphi/hbp.rho();
+    
     Gaudi::XYZPoint gp = localToGlobal(lp);
-    m_globalR[strip] = gp.rho();
+    gden += dphi/gp.rho();
+
+    // store the results
+    m_halfboxR[strip] = static_cast<float>(num/hbden);
+    m_globalR [strip] = static_cast<float>(num/gden);
+
   }
   
   return StatusCode::SUCCESS;
 }
 
-StatusCode DeVeloRType::updateHalfboxR()
+StatusCode DeVeloRType::updateZoneLimits()
 {
-  for (unsigned int strip=0; strip<m_numberOfStrips; ++strip) {
-    double phi = (phiMaxStrip(strip) + phiMinStrip(strip))/2.0;
-    double r   = rOfStrip(strip);
-    Gaudi::XYZPoint lp(r*cos(phi),r*sin(phi),0.0);
-    Gaudi::XYZPoint hbp = localToVeloHalfBox(lp);
-    m_halfboxR[strip] = hbp.rho();
+  for (unsigned int localZone=0; localZone<4; ++localZone) {
+    unsigned int minStrip = localZone*512;
+    unsigned int maxStrip = minStrip+511;
+    unsigned int midStrip = (minStrip+maxStrip)/2;
+    unsigned int zone     = (isDownstream() ? 3-localZone : localZone);
+
+    // determine the phi ranges of the zones in global frame
+    std::pair<Gaudi::XYZPoint, Gaudi::XYZPoint> globalLimitsMin = globalStripLimits(minStrip);
+    std::pair<Gaudi::XYZPoint, Gaudi::XYZPoint> globalLimitsMax = globalStripLimits(maxStrip);
+    std::pair<Gaudi::XYZPoint, Gaudi::XYZPoint> globalLimitsMid = globalStripLimits(midStrip);
+    std::vector<double> phiLimits;
+    phiLimits.push_back(globalLimitsMin.first.phi()); phiLimits.push_back(globalLimitsMin.second.phi());
+    phiLimits.push_back(globalLimitsMax.first.phi()); phiLimits.push_back(globalLimitsMax.second.phi());
+    phiLimits.push_back(globalLimitsMid.first.phi()); phiLimits.push_back(globalLimitsMid.second.phi());
+    // map to [0,2pi] for right hand side sensors
+    if (isRight()) {
+      for (unsigned int i=0; i<phiLimits.size(); ++i) {
+        if (phiLimits[i]<0) phiLimits[i] += 2.0*Gaudi::Units::pi;
+      }
+    }
+    m_globalPhiLimitsZone[zone].first  = *std::min_element(phiLimits.begin(),phiLimits.end());
+    m_globalPhiLimitsZone[zone].second = *std::max_element(phiLimits.begin(),phiLimits.end());
+    // map back to [-pi,pi]
+    if (isRight()) {
+      if (m_globalPhiLimitsZone[zone].first  > Gaudi::Units::pi) m_globalPhiLimitsZone[zone].first  -= 2.0*Gaudi::Units::pi;   
+      if (m_globalPhiLimitsZone[zone].second > Gaudi::Units::pi) m_globalPhiLimitsZone[zone].second -= 2.0*Gaudi::Units::pi;   
+    } 
+    
+    // determine the phi ranges of the zones in VELO half box frame
+    std::pair<Gaudi::XYZPoint, Gaudi::XYZPoint> halfBoxLimitsMin
+      (globalToVeloHalfBox(globalLimitsMin.first),globalToVeloHalfBox(globalLimitsMin.second));
+    std::pair<Gaudi::XYZPoint, Gaudi::XYZPoint> halfBoxLimitsMax
+      (globalToVeloHalfBox(globalLimitsMax.first),globalToVeloHalfBox(globalLimitsMax.second));
+    std::pair<Gaudi::XYZPoint, Gaudi::XYZPoint> halfBoxLimitsMid
+      (globalToVeloHalfBox(globalLimitsMid.first),globalToVeloHalfBox(globalLimitsMid.second));
+    phiLimits.clear();
+    phiLimits.push_back(halfBoxLimitsMin.first.phi()); phiLimits.push_back(halfBoxLimitsMin.second.phi());
+    phiLimits.push_back(halfBoxLimitsMax.first.phi()); phiLimits.push_back(halfBoxLimitsMax.second.phi());
+    phiLimits.push_back(halfBoxLimitsMid.first.phi()); phiLimits.push_back(halfBoxLimitsMid.second.phi());
+    // map to [0,2pi] for right hand side sensors
+    if (isRight()) {
+      for (unsigned int i=0; i<phiLimits.size(); ++i) {
+        if (phiLimits[i]<0) phiLimits[i] += 2.0*Gaudi::Units::pi;
+      }
+    }
+    m_halfboxPhiLimitsZone[zone].first  = *std::min_element(phiLimits.begin(),phiLimits.end());
+    m_halfboxPhiLimitsZone[zone].second = *std::max_element(phiLimits.begin(),phiLimits.end());
+    // map back to [-pi,pi]
+    if (isRight()) {
+      if (m_halfboxPhiLimitsZone[zone].first  > Gaudi::Units::pi) m_halfboxPhiLimitsZone[zone].first  -= 2.0*Gaudi::Units::pi;   
+      if (m_halfboxPhiLimitsZone[zone].second > Gaudi::Units::pi) m_halfboxPhiLimitsZone[zone].second -= 2.0*Gaudi::Units::pi;   
+    } 
+
+    // r limits are the radii of the outer strip + local pitch/2 and the innder strip - local pitch/2
+    m_globalRLimitsZone [zone].first  = globalROfStrip(minStrip)  - rPitch(minStrip)/2.0;
+    m_globalRLimitsZone [zone].second = globalROfStrip(maxStrip)  + rPitch(maxStrip)/2.0;
+    m_halfboxRLimitsZone[zone].first  = halfboxROfStrip(minStrip) - rPitch(minStrip)/2.0;
+    m_halfboxRLimitsZone[zone].second = halfboxROfStrip(maxStrip) + rPitch(maxStrip)/2.0;
   }
 
   return StatusCode::SUCCESS;
@@ -736,15 +827,15 @@ StatusCode DeVeloRType::updateGeometryCache()
 {
   MsgStream msg(msgSvc(), "DeVeloRType");
   
-  StatusCode sc = updateGlobalR();
+  StatusCode sc = updateStripRCache();
   if(!sc.isSuccess()) {
-    msg << MSG::ERROR << "Failed to update global r cache." << endreq;
+    msg << MSG::ERROR << "Failed to update strip r cache." << endreq;
     return sc;
   }
-  
-  sc = updateHalfboxR();
+
+  sc = updateZoneLimits();
   if(!sc.isSuccess()) {
-    msg << MSG::ERROR << "Failed to update halfbox r cache." << endreq;
+    msg << MSG::ERROR << "Failed to update zone limit cache." << endreq;
     return sc;
   }
 

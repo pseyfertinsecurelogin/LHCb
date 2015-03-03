@@ -1,10 +1,38 @@
 ! =============================================================================
-! $Id: release.notes,v 1.30 2007-05-31 12:35:19 cattanem Exp $ 
+! $Id: release.notes,v 1.35 2007-09-17 09:24:32 cattanem Exp $ 
 ! =============================================================================
 ! package DetDescSvc
 ! package manager : Marco Clemencic, Juan Palacios ?
 ! purpose:          Component library for Detector Description Services
 ! =============================================================================
+
+!========================= DetDescSvc v1r13 2007-09-17 ========================
+! 2007-09-13 - Wouter Hulsbergen
+ - fixed bug in caching in TransportSvc
+
+! 2007-09-12 - Juan Palacios
+ - cmt/requirements
+   . Increase version to v1r13
+ - src/TransportSvcGoodLocalGI.h, TransportSvcIntersections.h
+   . Adapt to new IGeometryInfo interface: IGeometryInfo::matrix() is now 
+     IGeometryInfo::toLocalMatrix.
+
+! 2007-08-02 - Marco Clemencic
+ - Added an option to dump the network of dependencies as a DIA file (see
+   http://live.gnome.org/Dia). The format is very preliminary (e.g. the boxes
+   are all collapsed in one point), but it can be useful.
+ - Fixed a couple of flows for the "purge" feature. The reload was not working
+   correctly. 
+
+! 2007-07-31 - Marco Clemencic
+ - Added to the UpdateManagerSvc the possibility to "purge" the dependencies,
+   i.e. reset all the pointers of objects that can be reloaded, so that one can
+   clean the detector transient store.
+   The added method is not yet in the abstract interface, so cannot be used yet.
+   Note: to make the feature work, the objects registered to the U.M.S. that
+         cannot be "reloaded" must be unregistered on deletion.
+ - Improvements in the unregister method of UpdateManagerSvc to make it more
+   robust.
 
 !========================= DetDescSvc v1r12 2007-05-31 ========================
 ! 2007-05-29 - Marco Clemencic

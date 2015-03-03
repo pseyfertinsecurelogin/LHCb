@@ -4,9 +4,10 @@
  *
  *  Header file for tool interface : Rich::ISmartIDTool
  *
- *  $Id: IRichSmartIDTool.h,v 1.21 2007-05-02 13:29:46 cattanem Exp $
+ *  $Id: IRichSmartIDTool.h,v 1.23 2007-07-20 09:28:42 jonrob Exp $
  *
  *  @author Antonis Papanestis  a.papanestis@rl.ac.uk
+ *  @author Chris Jones   Christopher.Rob.Jones@cern.ch
  *  @date   2003-10-28
  */
 //---------------------------------------------------------------------------------
@@ -45,6 +46,7 @@ namespace Rich
    *  Interface to tools providing manipulation of RichSmartID channel identifiers
    *
    *  @author Antonis Papanestis  a.papanestis@rl.ac.uk
+   *  @author Chris Jones   Christopher.Rob.Jones@cern.ch
    *  @date   2003-10-28
    */
   //---------------------------------------------------------------------------------
@@ -60,7 +62,7 @@ namespace Rich
     static const InterfaceID& interfaceID() { return IID_IRichSmartIDTool; }
 
     /** Converts a RichSmartID channel identification into a position in
-     *  global LHCb coordinates
+     *  global LHCb coordinates, on the HPD entrance window.
      *
      *  @param[in]  smartid      The RichSmartID channel identifier
      *  @param[out] detectPoint  The detection point in global coordinates
@@ -73,6 +75,7 @@ namespace Rich
                                         Gaudi::XYZPoint& detectPoint ) const = 0;
 
     /** Finds the average position of a cluster of RichSmartIDs, in global LHCb coordinates
+     *  on the HPD entrance window.
      *
      *  @param[in]  cluster      The RichSmartID cluster
      *  @param[out] detectPoint  The detection point in global coordinates
@@ -84,10 +87,36 @@ namespace Rich
     virtual StatusCode globalPosition ( const Rich::HPDPixelCluster& cluster,
                                         Gaudi::XYZPoint& detectPoint ) const = 0;
 
+    /** Converts a RichSmartID channel identification into a position in
+     *  global LHCb coordinates, on the pixel anode chip.
+     *
+     *  @param[in]  smartid      The RichSmartID channel identifier
+     *  @param[out] detectPoint  The detection point in global coordinates
+     *
+     *  @return The status of the conversion
+     *  @retval StatusCode::SUCCESS The conversion to a global coordinate was successful
+     *  @retval StatusCode::FAILURE The conversion to a global coordinate failed
+     */
+    virtual StatusCode anodeGlobalPosition ( const LHCb::RichSmartID smartid,
+                                             Gaudi::XYZPoint& detectPoint ) const = 0;
+
+    /** Finds the average position of a cluster of RichSmartIDs, in global LHCb coordinates, 
+     *  on the pixel anode chip.
+     *
+     *  @param[in]  cluster      The RichSmartID cluster
+     *  @param[out] detectPoint  The detection point in global coordinates
+     *
+     *  @return The status of the conversion
+     *  @retval StatusCode::SUCCESS The conversion to a global coordinate was successful
+     *  @retval StatusCode::FAILURE The conversion to a global coordinate failed
+     */
+    virtual StatusCode anodeGlobalPosition ( const Rich::HPDPixelCluster& cluster,
+                                             Gaudi::XYZPoint& detectPoint ) const = 0;
+
     /** @brief Converts an HPD RichSmartID identification into a position in
      *  global LHCb coordinates.
      *
-     *  Return coordinate is the centre of the HPD wafer in global LHCb coordinates.
+     *  Return coordinate is the centre of the HPD entrance window in global LHCb coordinates.
      *
      *  @param[in]  hpdid      The RichSmartID HPD identifier
      *  @param[out] hpdPoint   The HPD position in global coordinates
@@ -99,8 +128,8 @@ namespace Rich
     virtual StatusCode hpdPosition ( const LHCb::RichSmartID hpdid,
                                      Gaudi::XYZPoint& hpdPoint ) const = 0;
 
-    /** Computes the global position coordinate for a given position in local
-     *  HPD panel coordinates and RICH detector and panel identifiers.
+    /** Computes the global position coordinate (on HPD entrance window) for a given 
+     *  position in local HPD panel coordinates and RICH detector and panel identifiers.
      *
      *  @param[in] localPoint   The local coordinate position
      *  @param[in] rich         The RICH detector
@@ -112,7 +141,7 @@ namespace Rich
                                              const Rich::DetectorType rich,
                                              const Rich::Side side ) const = 0;
 
-    /** Converts a position in global coordinates to the corresponding
+    /** Converts a position (on the pixel chip) in global coordinates to the corresponding
      *  RichSmartID identifier.
      *
      *  @param  globalPoint The global coordinate to convert

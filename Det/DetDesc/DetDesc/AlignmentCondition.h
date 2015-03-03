@@ -1,4 +1,4 @@
-// $Id: AlignmentCondition.h,v 1.14 2007-06-25 15:53:25 jpalac Exp $
+// $Id: AlignmentCondition.h,v 1.16 2007-09-18 08:43:51 jpalac Exp $
 #ifndef DETDESC_ALIGNMENTCONDITION_H 
 #define DETDESC_ALIGNMENTCONDITION_H 1
 
@@ -39,39 +39,41 @@ public:
   /// Class ID of this class
   inline static  const CLID& classID() { return CLID_AlignmentCondition; };
   /**
-   * Return the misaligned -> nominal 3D transformation matrix.
+   * Return the nominal -> off-nominal 3D transformation.
    */
-  inline const Gaudi::Transform3D& matrix() const
-  {
-    return m_matrix;
-  }
-  /**
-   * Return the nominal -> misaligned 3D transformation matrix.
-   */
-  inline const Gaudi::Transform3D& matrixInv() const
+  inline const Gaudi::Transform3D& offNominalMatrix() const
   {
     return m_matrixInv;
   }
-
   /**
-   * Set a new 3D transformation starting directly from from a Transform3D
-   * @param newMatrix new full transformation object describing aligned to 
-   *        misalinged transformation in the frame of the detector element..
+   * Return the off-nominal -> nominal 3D transformation.
    */
-  void matrix(const Gaudi::Transform3D& newMatrix);
+  inline const Gaudi::Transform3D& toNominalMatrix() const
+  {
+    return m_matrix;
+  }
 
   /**
-   * Set a new 3D transformation starting from the basic set of parameters
-   * describing a rotation about Z, Y and X axes in that order.
+   * Set a nominal -> off-nomunal 3D transformation starting directly 
+   * from from a Transform3D
+   * @param newMatrix new full transformation object describing nominal to 
+   *        off-nominal transformation in the frame of the detector element..
+   */
+  void offNominalMatrix(const Gaudi::Transform3D& newMatrix);
+
+  /**
+   * Set a new nominal -> off-nominal 3D transformation starting 
+   * from the basic set of parameters describing a 
+   * rotation about the Z, Y' and X" axes in that order.
    * 
    * @param translation vector containing X,Y,Z translation parameters.
    * @param rotation    vector containing rotation angles about Z,Y,X.
    * @param pivot       vector containing X,Y,Z pivot point for rotation.
    * @return            StatusCode
    */
-  StatusCode setTransformation( const std::vector<double>& translation,
-                                const std::vector<double>& rotation,
-                                const std::vector<double>& pivot);
+  StatusCode setOffNominalTransformation( const std::vector<double>& translation,
+                                          const std::vector<double>& rotation,
+                                          const std::vector<double>& pivot);
 
 protected:
 

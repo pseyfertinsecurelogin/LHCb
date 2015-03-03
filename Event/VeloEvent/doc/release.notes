@@ -1,6 +1,18 @@
-! $Id: release.notes,v 1.44 2007-06-08 14:32:39 cattanem Exp $
-package Event/VeloEvent
-package manager: C.Parkes, T.Szumlak
+! $Id: release.notes,v 1.47 2007-09-19 14:35:30 cattanem Exp $
+! package Event/VeloEvent
+! package manager: C.Parkes, T.Szumlak
+!========================================================================
+
+!====================== VeloEvent v16r0 2007-09-19 ======================
+! 2007-09-19 - Marco Cattaneo
+ - Add a missing STL include
+
+! 2007-09-18 - Marco Cattaneo
+ - Adapt to new location of Tell1Kernel headers
+
+! 2007-09-17 - Tomasz Szumlak
+ - Add classes needed for non-zero suppressed data decoding
+   (see VeloDAQ)
 
 !====================== VeloEvent v15r1 2007-06-07 ======================
 ! 2007-06-07 - Marco Cattaneo

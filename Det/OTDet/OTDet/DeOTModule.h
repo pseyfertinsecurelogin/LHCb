@@ -1,4 +1,4 @@
-// $Id: DeOTModule.h,v 1.27 2007-07-23 09:33:25 wouter Exp $
+// $Id: DeOTModule.h,v 1.29 2007-09-07 13:24:53 wouter Exp $
 #ifndef OTDET_DEOTMODULE_H
 #define OTDET_DEOTMODULE_H 1
 
@@ -274,9 +274,9 @@ public:
                                               const double = 0 /*offset*/ ) const;
 
 
-  /** Get a simple line representing the trajectory of straw wire. */
-  Gaudi::XYZLineF lineTrajectory(unsigned int straw) const ;
-
+  /** Trajectory parameterized along y-axis */
+  void trajectory(unsigned int aStraw, float& dxdy, float& dzdy, 
+		  float& xAtYEq0, float& zAtYEq0, float& ybegin, float& yend) const ;
 
   /** Set the t0 for a straw in this module */
   void setStrawT0(unsigned int iStraw, float t0)  ;
@@ -291,21 +291,24 @@ public:
   const OTDet::RtRelation& rtRelation() const ;
 
   /** Drift distance for given drift time */
-  float driftDistance(float drifttime ) const ;
+  float driftRadius(float drifttime ) const ;
+
+  /** Drift radius plus resolution for given drift time */
+  OTDet::RadiusWithError driftRadiusWithError( float drifttime ) const ;
 
   /** Drift distance for given drift time. Extrapolate outside cell if
       time is outside [tmin,tmax]. Usefull for pattern recognition,
       but kind of slow. */
-  float untruncatedDriftDistance( float drifttime ) const ;
+  float untruncatedDriftRadius( float drifttime ) const ;
   
+  /** Drift time plus resolution for given drift radius */
+  OTDet::DriftTimeWithError driftTimeWithError( float radius ) const ;
+
   /** Maximum drift time */
   float maxDriftTime() const ;
 
-  /** Resolution for given drift time */ 
-  float resolution(float drifttime ) const ;
-  
   /** Drifttime resolution for given drift time */ 
-  float driftTimeResolution( float drifttime ) const ;
+  float driftTimeResolution( float radius ) const ;
   
   /** Propagation velocity */
   float propagationVelocity() const ;
@@ -400,13 +403,14 @@ private:
   Gaudi::Plane3D m_entryPlane;                  ///< entry plane
   Gaudi::Plane3D m_exitPlane;                   ///< exit plane
   Gaudi::XYZPoint m_centerModule;               ///< center of module 
-  Gaudi::XYZVectorF m_vectorMonoLayer ;         ///< vector representing direction of mono layer
-  Gaudi::XYZPointF  m_positionMonoLayer[2] ;    ///< position of begin point of first straw in mono layer
-  Gaudi::XYZVectorF m_vectorStraw[2];           ///< vector representing lone along straw
+  float m_dxdy ;                                ///< dx/dy along straw
+  float m_dzdy ;                                ///< dx/dz along straw
+  float m_dy[2] ;                               ///< difference in y coordinates of straw end points 
+  Gaudi::XYZVectorF m_dp0di ;                   ///< vector with change in straw position in units of pitch in y-line coordinates
+  Gaudi::XYZPointF  m_p0[2] ;                   ///< position of first straw in y-line coordinates
   std::vector<float> m_strawt0 ;                ///< vector with t0 for every straw
   std::vector<float> m_strawdefaulttof ;        ///< vector with default tof correction for straw
   OTDet::RtRelation m_rtrelation ;              ///< rt-relation
-  float m_resolution ;                          ///< resolution
   float m_propagationVelocity ;                 ///< propagation velocity
   float m_propagationVelocityY ;                ///< propagation velocity in y-direction (cached for speed)
 };
@@ -637,30 +641,43 @@ inline bool DeOTModule::isEfficientB(const double y) const {
 	   ((m_yMaxLocal - y) < m_inefficientRegion));
 }
 
-inline Gaudi::XYZLineF DeOTModule::lineTrajectory(unsigned int aStraw) const {
+inline void DeOTModule::trajectory(unsigned int aStraw,
+				   float& dxdy, float& dzdy, 
+				   float& xAtYEq0, float& zAtYEq0, 
+				   float& ybegin, float& yend) const
+{
   unsigned int mono     = monoLayerA(aStraw) ? 0u : 1u ;
   unsigned int tmpstraw = mono==0u ? aStraw-1u : aStraw - m_nStraws -1u ;
-  return Gaudi::XYZLineF( m_positionMonoLayer[mono] + tmpstraw * m_vectorMonoLayer, m_vectorStraw[mono] ) ;
+  dxdy    = m_dxdy ;
+  dzdy    = m_dzdy ;
+  xAtYEq0 = m_p0[mono].x() + tmpstraw * m_dp0di.x() ;
+  zAtYEq0 = m_p0[mono].z() + tmpstraw * m_dp0di.z() ;
+  ybegin  = m_p0[mono].y() + tmpstraw * m_dp0di.y() ;
+  yend    = ybegin + m_dy[mono] ;
 }
 
-inline float DeOTModule::driftDistance( float drifttime ) const {
+inline float DeOTModule::driftRadius( float drifttime ) const {
   return m_rtrelation.radius(drifttime) ;
 }
 
-inline float DeOTModule::untruncatedDriftDistance( float drifttime ) const {
+inline float DeOTModule::untruncatedDriftRadius( float drifttime ) const {
   return m_rtrelation.extrapolatedradius(drifttime) ;
+}
+
+inline OTDet::RadiusWithError DeOTModule::driftRadiusWithError( float drifttime ) const {
+  return m_rtrelation.radiusWithError(drifttime) ;
+}
+
+inline OTDet::DriftTimeWithError DeOTModule::driftTimeWithError( float radius ) const {
+  return m_rtrelation.drifttimeWithError(radius) ;
 }
 
 inline float DeOTModule::maxDriftTime() const {
   return m_rtrelation.tmax() ;
 }
 
-inline float DeOTModule::resolution(float /*drifttime*/ ) const {
-  return m_resolution ;
-}  
-
-inline float DeOTModule::driftTimeResolution( float drifttime ) const {
-  return m_resolution / m_rtrelation.drdt( drifttime ) ;
+inline float DeOTModule::driftTimeResolution( float radius ) const {
+  return m_rtrelation.drifttimeError( radius ) ;
 }
 
 inline float DeOTModule::propagationVelocity() const {

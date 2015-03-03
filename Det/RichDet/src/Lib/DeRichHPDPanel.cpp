@@ -3,7 +3,7 @@
  *
  *  Implementation file for detector description class : DeRichHPDPanel
  *
- *  $Id: DeRichHPDPanel.cpp,v 1.57 2007-04-23 12:28:13 jonrob Exp $
+ *  $Id: DeRichHPDPanel.cpp,v 1.60 2007-09-13 13:10:55 jpalac Exp $
  *
  *  @author Antonis Papanestis a.papanestis@rl.ac.uk
  *  @date   2004-06-18
@@ -47,10 +47,10 @@ DeRichHPDPanel::DeRichHPDPanel() :
 DeRichHPDPanel::~DeRichHPDPanel() {}
 
 // Retrieve Pointer to class defininition structure
-const CLID& DeRichHPDPanel::classID() {
+const CLID& DeRichHPDPanel::classID() 
+{
   return CLID_DeRichHPDPanel;
 }
-
 
 //=========================================================================
 //  Initialize
@@ -131,12 +131,12 @@ StatusCode DeRichHPDPanel::initialize()
 
   m_HPDColumns = param<int>("HPDColumns");
   m_HPDNumInCol = param<int>("HPDNumberInColumn");
-  m_HPDMax = m_HPDColumns * m_HPDNumInCol;
+  m_HPDMax = nHPDColumns() * nHPDsPerCol();
 
   m_HPDPitch = param<double>("HPDPitch");
   m_HPDColPitch = sqrt( 0.75 * m_HPDPitch*m_HPDPitch );
-  msg << MSG::DEBUG << "HPDColumns:" << m_HPDColumns << " HPDNumberInColumns:"
-      << m_HPDNumInCol << endmsg;
+  msg << MSG::DEBUG << "HPDColumns:" << nHPDColumns() << " HPDNumberInColumns:"
+      << nHPDsPerCol() << endmsg;
 
   if ( m_HPDColPitch  < activeRadius*2) {
     msg << MSG::WARNING << "The active area is bigger by:"
@@ -200,12 +200,12 @@ StatusCode DeRichHPDPanel::initialize()
       << endmsg;
   msg << MSG::VERBOSE << "Centre of HPD#0 " << geometry()->lvolume()->
     pvolume(0)->toMother( zero ) << endmsg;
-  msg << MSG::VERBOSE << "Centre of HPD#" << m_HPDNumInCol-1 << " " << geometry()->lvolume()->
-    pvolume(m_HPDNumInCol-1)->toMother( zero ) << endmsg;
-  msg << MSG::VERBOSE << "Centre of HPD#" << m_HPDNumInCol << " " << geometry()->lvolume()->
-    pvolume(m_HPDNumInCol)->toMother( zero ) << endmsg;
-  msg << MSG::VERBOSE << "Centre of HPD#" << 2*m_HPDNumInCol-1 << " " << geometry()->lvolume()->
-    pvolume(2*m_HPDNumInCol-1)->toMother( zero ) << endmsg;
+  msg << MSG::VERBOSE << "Centre of HPD#" << nHPDsPerCol()-1 << " " << geometry()->lvolume()->
+    pvolume(nHPDsPerCol()-1)->toMother( zero ) << endmsg;
+  msg << MSG::VERBOSE << "Centre of HPD#" << nHPDsPerCol() << " " << geometry()->lvolume()->
+    pvolume(nHPDsPerCol())->toMother( zero ) << endmsg;
+  msg << MSG::VERBOSE << "Centre of HPD#" << 2*nHPDsPerCol()-1 << " " << geometry()->lvolume()->
+    pvolume(2*nHPDsPerCol()-1)->toMother( zero ) << endmsg;
 
   // get the pv and the solid for the HPD quartz window
   const IPVolume* pvWindow0 = pvHPDSMaster0->lvolume()->
@@ -236,12 +236,12 @@ StatusCode DeRichHPDPanel::initialize()
 
   // for second point go to HPD at the end of the column.
   //The relative position inside the HPD is the same
-  const IPVolume* pvHPDMasterB = geometry()->lvolume()->pvolume(m_HPDNumInCol-1);
+  const IPVolume* pvHPDMasterB = geometry()->lvolume()->pvolume(nHPDsPerCol()-1);
   Gaudi::XYZPoint pointBInPanel = pvHPDMasterB->toMother(pointAInHPD);
   Gaudi::XYZPoint pointB = geometry()->toGlobal(pointBInPanel);
 
   // now point C at the other end.
-  int numberForC = m_HPDMax - m_HPDNumInCol/2;
+  int numberForC = nHPDs() - nHPDsPerCol()/2;
   const IPVolume* pvHPDMasterC = geometry()->lvolume()->pvolume(numberForC);
   Gaudi::XYZPoint pointCInPanel = pvHPDMasterC->toMother(pointAInHPD);
   Gaudi::XYZPoint pointC = geometry()->toGlobal(pointCInPanel);
@@ -260,7 +260,7 @@ StatusCode DeRichHPDPanel::initialize()
   m_localPlaneNormal2 = m_localPlane2.Normal();
 
   // Cache information for PDWindowPoint method
-  m_vectorTransf = geometry()->matrix();
+  m_vectorTransf = geometry()->toLocalMatrix();
   m_kaptonSolid = 
     pvHPDSMaster0->lvolume()->pvolume("pvRichHPDKaptonShield")->lvolume()->solid();
 
@@ -271,7 +271,7 @@ StatusCode DeRichHPDPanel::initialize()
   m_pvKapton.clear();
   m_pvWindow.clear();
   m_HPDCentres.clear();
-  for ( unsigned int HPD = 0; HPD < m_HPDMax; ++HPD ) {
+  for ( unsigned int HPD = 0; HPD < nHPDs(); ++HPD ) {
     const IPVolume* pvHPDMaster = geometry()->lvolume()->pvolume(HPD);
     if ( !pvHPDMaster )
     {
@@ -308,7 +308,7 @@ StatusCode DeRichHPDPanel::initialize()
     m_pvWindow.push_back( pvWindow );
     m_pvKapton.push_back( pvKapton );
     m_HPDCentres.push_back( pvHPDMaster->toMother(zero) );
-    m_HPDWindowToGlobal.push_back( geometry()->matrixInv() * pvHPDMaster->matrixInv() *
+    m_HPDWindowToGlobal.push_back( geometry()->toGlobalMatrix() * pvHPDMaster->matrixInv() *
                                    pvHPDSMaster->matrixInv() * pvWindow->matrixInv() );
     m_panelToSilicon.push_back( pvSilicon->matrix() * pvHPDSMaster->matrix() *
                                 pvHPDMaster->matrix() );
@@ -394,26 +394,30 @@ StatusCode DeRichHPDPanel::smartID ( const Gaudi::XYZPoint& globalPoint,
 //=========================================================================
 //  find an intersection with the inside of the HPD window
 //=========================================================================
-StatusCode DeRichHPDPanel::PDWindowPoint( const Gaudi::XYZVector& vGlobal,
-                                          const Gaudi::XYZPoint& pGlobal,
-                                          Gaudi::XYZPoint& windowPointGlobal,
-                                          LHCb::RichSmartID& smartID,
-                                          const LHCb::RichTraceMode mode ) const
+LHCb::RichTraceMode::RayTraceResult 
+DeRichHPDPanel::PDWindowPoint( const Gaudi::XYZVector& vGlobal,
+                               const Gaudi::XYZPoint& pGlobal,
+                               Gaudi::XYZPoint& windowPointGlobal,
+                               LHCb::RichSmartID& smartID,
+                               const LHCb::RichTraceMode mode ) const
 {
 
-  // transform point and vector to the HPDPanel coordsystem.
-  const Gaudi::XYZPoint  pInPanel( geometry()->toLocal(pGlobal) );
+  // transform pvector to the HPDPanel coordsystem.
   const Gaudi::XYZVector vInPanel( m_vectorTransf*vGlobal );
 
-  // find the intersection with the detection plane (localPlane2)
+  // find the intersection with the detection plane
   const double scalar = vInPanel.Dot(m_localPlaneNormal2);
-  if ( fabs(scalar) < 1e-50 ) return StatusCode::FAILURE;
+  if ( fabs(scalar) < 1e-50 ) return LHCb::RichTraceMode::RayTraceFailed;
 
+  // transform point to the HPDPanel coordsystem.
+  const Gaudi::XYZPoint pInPanel( geometry()->toLocal(pGlobal) );
+
+  // get panel intersection point
   const double distance = -m_localPlane2.Distance( pInPanel )/scalar;
   const Gaudi::XYZPoint panelIntersection( pInPanel + distance*vInPanel );
 
   // Get HPD column and row numbers
-  if ( !findHPDColAndPos(panelIntersection, smartID) ) return StatusCode::FAILURE;
+  if ( !findHPDColAndPos(panelIntersection, smartID) ) return LHCb::RichTraceMode::RayTraceFailed;
 
   // HPD number
   const unsigned int HPDNumber = hpdNumber(smartID);
@@ -425,10 +429,20 @@ StatusCode DeRichHPDPanel::PDWindowPoint( const Gaudi::XYZVector& vGlobal,
     const Gaudi::XYZPoint & centre = m_HPDCentres[HPDNumber];
     const double x = panelIntersection.x() - centre.x();
     const double y = panelIntersection.y() - centre.y();
-    if ( ( x*x + y*y ) > m_activeRadiusSq ) return StatusCode::FAILURE;
+    if ( ( x*x + y*y ) > m_activeRadiusSq )
+    {
+      // not in an HPD, but are we in the HPD panel ?
+      const LHCb::RichTraceMode::RayTraceResult res = checkPanelAcc(panelIntersection);
+      if ( res == LHCb::RichTraceMode::InHPDPanel )
+      {
+        // set the window point to panel intersection point
+        windowPointGlobal = geometry()->toGlobal( panelIntersection );
+        return res;
+      }
+    }
 
     // check if the HPD is active or dead
-    if ( !m_deRichS->hpdIsActive( smartID ) ) return StatusCode::FAILURE;
+    if ( !m_deRichS->hpdIsActive( smartID ) ) return LHCb::RichTraceMode::OutsideHPDPanel;
 
     // Check for shadowing effects by HPD kapton shields
     if ( mode.hpdKaptonShadowing() )
@@ -438,10 +452,10 @@ StatusCode DeRichHPDPanel::PDWindowPoint( const Gaudi::XYZVector& vGlobal,
       const Gaudi::XYZVector vInHPD( pvHPDMaster->matrix()*vInPanel );
       ISolid::Ticks kaptonTicks;
       if ( 0 != m_kaptonSolid->intersectionTicks(pInHPD, vInHPD, kaptonTicks) )
-        return StatusCode::FAILURE;
+        return LHCb::RichTraceMode::OutsideHPDPanel;
     }
 
-    // finally, set the window point
+    // set the window point to panel intersection point
     windowPointGlobal = geometry()->toGlobal( panelIntersection );
 
   }
@@ -459,7 +473,7 @@ StatusCode DeRichHPDPanel::PDWindowPoint( const Gaudi::XYZVector& vGlobal,
       const Gaudi::XYZVector vInHPD( pvHPDMaster->matrix()*vInPanel );
       ISolid::Ticks kaptonTicks;
       if ( 0 != m_kaptonSolid->intersectionTicks(pInHPD, vInHPD, kaptonTicks) )
-        return StatusCode::FAILURE;
+        return LHCb::RichTraceMode::OutsideHPDPanel;
     }
 
     const IPVolume* pvHPDSMaster = m_pvHPDSMaster[HPDNumber];
@@ -477,7 +491,7 @@ StatusCode DeRichHPDPanel::PDWindowPoint( const Gaudi::XYZVector& vGlobal,
     const unsigned int noTicks = windowSolid->intersectionTicks( pInWindow,
                                                                  vInHPDMaster,
                                                                  HPDWindowTicks );
-    if ( 0 == noTicks ) return StatusCode::FAILURE;
+    if ( 0 == noTicks ) return LHCb::RichTraceMode::OutsideHPDPanel;
 
     const Gaudi::XYZPoint windowPoint( pInWindow + HPDWindowTicks[1]*vInHPDMaster );
     const Gaudi::XYZPoint windowPointInHPD( pvHPDSMaster->
@@ -485,10 +499,14 @@ StatusCode DeRichHPDPanel::PDWindowPoint( const Gaudi::XYZVector& vGlobal,
     // check the active radius.
     const double hitRadius2 = ( windowPointInHPD.x()*windowPointInHPD.x() +
                                 windowPointInHPD.y()*windowPointInHPD.y() );
-    if ( hitRadius2 > m_activeRadiusSq ) return StatusCode::FAILURE;
+    if ( hitRadius2 > m_activeRadiusSq )
+    {
+      // not in an HPD, but are we in the HPD panel ?
+      return checkPanelAcc(windowPointInHPD);
+    }
 
     // check if the HPD is active or dead
-    if ( !m_deRichS->hpdIsActive( smartID ) ) return StatusCode::FAILURE;
+    if ( !m_deRichS->hpdIsActive( smartID ) ) return LHCb::RichTraceMode::OutsideHPDPanel;
 
     // finally, set the window point
     windowPointGlobal =
@@ -496,7 +514,7 @@ StatusCode DeRichHPDPanel::PDWindowPoint( const Gaudi::XYZVector& vGlobal,
 
   }
 
-  return StatusCode::SUCCESS;
+  return LHCb::RichTraceMode::InHPDTube;
 }
 
 //=========================================================================
@@ -509,11 +527,11 @@ DeRichHPDPanel::readoutChannelList ( LHCb::RichSmartID::Vector& readoutChannels 
   // Square of active radius
   const double activeRadiusSq = m_siliconHalfLengthX*m_siliconHalfLengthX;
 
-  for ( unsigned int PD = 0; PD < m_HPDMax; ++PD )
+  for ( unsigned int PD = 0; PD < nHPDs(); ++PD )
   {
     // Get HPD row and column numbers outside loops.
-    const unsigned int pdCol = PD/m_HPDNumInCol;
-    const unsigned int pdPosInCol = PD%m_HPDNumInCol;
+    const unsigned int pdCol = PD/nHPDsPerCol();
+    const unsigned int pdPosInCol = PD%nHPDsPerCol();
 
     // Loop over pixels
     for ( unsigned int pixRow = 0; pixRow < m_pixelRows; ++pixRow )
@@ -544,81 +562,98 @@ DeRichHPDPanel::readoutChannelList ( LHCb::RichSmartID::Vector& readoutChannels 
 //=========================================================================
 //  returns the intersection point with the detection plane
 //=========================================================================
-bool DeRichHPDPanel::detPlanePoint( const Gaudi::XYZPoint& pGlobal,
-                                    const Gaudi::XYZVector& vGlobal,
-                                    Gaudi::XYZPoint& hitPosition,
-                                    const LHCb::RichTraceMode mode ) const
+LHCb::RichTraceMode::RayTraceResult 
+DeRichHPDPanel::detPlanePoint( const Gaudi::XYZPoint& pGlobal,
+                               const Gaudi::XYZVector& vGlobal,
+                               Gaudi::XYZPoint& hitPosition,
+                               LHCb::RichSmartID& smartID,
+                               const LHCb::RichTraceMode mode ) const
 {
+  LHCb::RichTraceMode::RayTraceResult result = LHCb::RichTraceMode::RayTraceFailed;
 
   // transform to the Panel coord system.
   Gaudi::XYZVector vInPanel( m_vectorTransf*vGlobal );
 
+  // find the intersection with the detection plane
   const double scalar = vInPanel.Dot(m_localPlaneNormal);
-  if ( scalar == 0.0 ) return false;
+  if ( fabs(scalar) < 1e-5 ) return result;
 
+  // transform point to the HPDPanel coordsystem.
   const Gaudi::XYZPoint pInPanel( geometry()->toLocal(pGlobal) );
-  const double distance = -m_localPlane.Distance(pInPanel) / scalar;
-  const Gaudi::XYZPoint hitInPanel( pInPanel + distance*vInPanel );
 
+  // get panel intersection point
+  const double distance = -m_localPlane.Distance(pInPanel) / scalar;
+  const Gaudi::XYZPoint panelIntersection( pInPanel + distance*vInPanel );
+
+  // set the (closest) HPD number
+  findHPDColAndPos(panelIntersection,smartID);
+
+  result = LHCb::RichTraceMode::InHPDPanel;
   if ( mode.detPlaneBound() == LHCb::RichTraceMode::RespectHPDPanel )
   {
-    double u(0.0);
-    double v(0.0);
-    if ( m_rich == Rich::Rich1 ) {
-      u = hitInPanel.y();
-      v = hitInPanel.x();
-    }
-    else {
-      u = hitInPanel.x();
-      v = hitInPanel.y();
-    }
-
+    const double u = ( m_rich == Rich::Rich1 ? panelIntersection.y() : panelIntersection.x() );
+    const double v = ( m_rich == Rich::Rich1 ? panelIntersection.x() : panelIntersection.y() );
     if ( fabs(u) >= fabs(m_panelColumnSideEdge) ||
-         fabs(v) >= m_panelStartColPos ) { return false; }
+         fabs(v) >= m_panelStartColPos ) { result = LHCb::RichTraceMode::OutsideHPDPanel; }
   }
 
-  hitPosition = geometry()->toGlobal( hitInPanel );
-  return true;
+  // set final position
+  hitPosition = geometry()->toGlobal( panelIntersection );
+
+  // return status
+  return result;
 }
 
 
 //=========================================================================
-//  findHPDColAndPos
+// findHPDColAndPos
 //=========================================================================
 bool DeRichHPDPanel::findHPDColAndPos ( const Gaudi::XYZPoint& inPanel,
                                         LHCb::RichSmartID& id ) const
 {
-  double u(0.0);
-  double v(0.0);
-  if ( m_rich == Rich::Rich1 ) {
-    u = inPanel.y();
-    v = inPanel.x();
-  }
-  else {
-    u = inPanel.x();
-    v = inPanel.y();
-  }
+  bool OK = true;
 
-  const unsigned int HPDCol =
-    static_cast<unsigned int>(floor(u - m_panelColumnSideEdge) /
-                              m_HPDColPitch);
-  if (HPDCol >= m_HPDColumns) return false;
+  const double u = ( m_rich == Rich::Rich1 ? inPanel.y() : inPanel.x() );
+  const double v = ( m_rich == Rich::Rich1 ? inPanel.x() : inPanel.y() );
+
+  // work out nearest column
+  int HPDCol = static_cast<int>(floor(u-m_panelColumnSideEdge)/m_HPDColPitch);
+  if      ( HPDCol >= (int)nHPDColumns() ) { OK = false; HPDCol = nHPDColumns()-1; }
+  else if ( HPDCol < 0                   ) { OK = false; HPDCol = 0;              }
   id.setHPDCol( HPDCol );
 
-  unsigned int HPDNumInCol( 0 );
-  if (0 == HPDCol%2) {
-    HPDNumInCol = static_cast<unsigned int>
-      (floor((v - m_panelStartColPosEven) / m_HPDPitch));
-  } else {
-    HPDNumInCol = static_cast<unsigned int>
-      (floor((v - m_panelStartColPosOdd) / m_HPDPitch));
-  }
+  // nearest number in column
+  int HPDNumInCol 
+    = ( 0 == HPDCol%2 ?
+        static_cast<int>(floor((v-m_panelStartColPosEven)/m_HPDPitch)) :
+        static_cast<int>(floor((v-m_panelStartColPosOdd)/m_HPDPitch)) );
+  if      ( HPDNumInCol >= (int)nHPDsPerCol() ) { OK = false; HPDNumInCol = nHPDsPerCol()-1; }
+  else if ( HPDNumInCol < 0                   ) { OK = false; HPDNumInCol = 0;               }
+  id.setHPDNumInCol(HPDNumInCol);
 
-  if (HPDNumInCol >= m_HPDNumInCol) return false;
+  return OK;
+}
+/*
+{
+  const double u = ( m_rich == Rich::Rich1 ? inPanel.y() : inPanel.x() );
+  const double v = ( m_rich == Rich::Rich1 ? inPanel.x() : inPanel.y() );
+
+  const unsigned int HPDCol =
+    static_cast<unsigned int>(floor(u-m_panelColumnSideEdge)/m_HPDColPitch);
+  if (HPDCol >= nHPDColumns()) return false;
+  id.setHPDCol( HPDCol );
+
+  unsigned int HPDNumInCol 
+    = ( 0 == HPDCol%2 ?
+        static_cast<unsigned int>(floor((v-m_panelStartColPosEven)/m_HPDPitch)) :
+        static_cast<unsigned int>(floor((v-m_panelStartColPosOdd)/m_HPDPitch)) );
+
+  if (HPDNumInCol >= nHPDsPerCol()) return false;
   id.setHPDNumInCol(HPDNumInCol);
 
   return true;
 }
+*/
 
 //=========================================================================
 //  convert a point from the panel to the global coodinate system

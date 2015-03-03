@@ -1,4 +1,4 @@
-// $Id: DeOTModule.cpp,v 1.28 2007-07-23 09:33:25 wouter Exp $
+// $Id: DeOTModule.cpp,v 1.30 2007-09-07 13:24:53 wouter Exp $
 // GaudiKernel
 #include "GaudiKernel/Point3DTypes.h"
 #include "GaudiKernel/IUpdateManagerSvc.h"
@@ -98,8 +98,13 @@ StatusCode DeOTModule::initialize() {
   // Added for the A-team. This is the calibration for the
   // simulation. In the end, we need to read this from a database.
   m_propagationVelocity = 1/(4.0*Gaudi::Units::ns/Gaudi::Units::m) ;
-  m_resolution          =  0.200*Gaudi::Units::mm ;
-  m_rtrelation = OTDet::RtRelation(0*Gaudi::Units::ns, 42*Gaudi::Units::ns,boost::assign::list_of(0.0)(m_cellRadius)) ;
+  double resolution     = 0.200*Gaudi::Units::mm ;
+  // Coefficients of polynomial t(r): for MC this is just t = 0 + 42/2.5 * r
+  std::vector<double> tcoeff    = boost::assign::list_of(0.0)(42*Gaudi::Units::ns / m_cellRadius) ;
+  // Coefficients of polynomial sigma_t(r): for MC this is just sigma_t = 0.200 * 42/2.5 
+  std::vector<double> terrcoeff = boost::assign::list_of(resolution * 42*Gaudi::Units::ns / m_cellRadius) ;
+  // Since everything is so simple, we need just two bins in the table
+  m_rtrelation = OTDet::RtRelation(m_cellRadius,tcoeff,terrcoeff,2) ;
   
   // Get the lenght of the module
   //const ILVolume* lv = (this->geometry())->lvolume();
@@ -375,15 +380,21 @@ StatusCode DeOTModule::cacheInfo() {
   m_centerModule = globalPoint(0.,0.,0.);
 
   // I'll extract these from trajectories, although that's a bit
-  // nonsense, of course. Right now store the midpoint of the
-  // straw.
-  m_vectorMonoLayer = (g4[0]-g3[0]).unit() * m_xPitch ;
+  // nonsense, of course.
+  m_dxdy = m_dir.x()/m_dir.y() ;
+  m_dzdy = m_dir.z()/m_dir.y() ;
+  Gaudi::XYZVector vectormono = (g4[0]-g3[0]).unit() * m_xPitch ;
+  m_dp0di.SetY( vectormono.y() ) ;
+  m_dp0di.SetX( vectormono.x() - vectormono.y() * m_dxdy ) ;
+  m_dp0di.SetZ( vectormono.z() - vectormono.y() * m_dzdy ) ;
   for( int imono=0; imono<2; ++imono) {
     std::auto_ptr<Trajectory> traj = trajectoryFirstWire(imono) ;
-    Gaudi::XYZPoint p1 = traj->position(traj->beginRange()) ;
-    Gaudi::XYZPoint p2 = traj->position(traj->endRange()) ;
-    m_vectorStraw[imono]       = p2 - p1 ;
-    m_positionMonoLayer[imono] = p1  ; 
+    Gaudi::XYZPoint p0 = traj->position(traj->beginRange()) ;
+    Gaudi::XYZPoint p1 = traj->position(traj->endRange()) ;
+    m_dy[imono] = p1.y() - p0.y() ;
+    m_p0[imono].SetY(p0.y()) ;
+    m_p0[imono].SetX(p0.x() - p0.y() * m_dxdy) ;
+    m_p0[imono].SetZ(p0.z() - p0.y() * m_dzdy) ;
   }
 
   // Update the stereo angle. We correct by 'pi' if necessary.
@@ -394,7 +405,7 @@ StatusCode DeOTModule::cacheInfo() {
   m_sinAngle    = sin( m_angle ) ;
 
   // propagation velocity along y-direction (includes correction for readout side)
-  m_propagationVelocityY = m_propagationVelocity * m_vectorStraw[0].y()/m_vectorStraw[0].r() ;
+  m_propagationVelocityY = m_propagationVelocity * m_dir.y() ;
   
   // now the calibration. This is a real mess and it will only work
   // for MC. Cannot use ReadOutGate tool becaus eof circular
@@ -414,8 +425,12 @@ StatusCode DeOTModule::cacheInfo() {
   m_strawt0.resize( 2*m_nStraws, 0 ) ;
   m_strawdefaulttof.resize( 2*m_nStraws, 0 ) ;
   for(unsigned int istraw=1; istraw<=2*m_nStraws; ++istraw) {
-    Gaudi::XYZLineF  strawline = lineTrajectory( istraw ) ;
-    double defaulttof = strawline.position(0.5).r() / Gaudi::Units::c_light;
+    OTChannelID id(stationID(),layerID(),quarterID(),moduleID(),istraw,0) ;
+    std::auto_ptr<Trajectory> traj = trajectory(id) ;
+    Gaudi::XYZPoint p0 = traj->position(0.5*(traj->beginRange()+traj->endRange())) ;
+    // to get same results as with old OTTimeCreator, use x-z plane only
+    //double defaulttof = p0.r() / Gaudi::Units::c_light;
+    double defaulttof = sqrt(p0.x()*p0.x() + p0.z()*p0.z()) / Gaudi::Units::c_light;
     m_strawdefaulttof[istraw - 1] = defaulttof ;
     m_strawt0[istraw - 1]         = defaulttof - thisModuleStartReadOutGate ;
   }

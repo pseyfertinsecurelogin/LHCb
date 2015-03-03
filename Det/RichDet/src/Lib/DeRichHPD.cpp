@@ -3,7 +3,7 @@
  *
  * Implementation file for class : DeRichHPD
  *
- * $Id: DeRichHPD.cpp,v 1.5 2007-04-23 12:28:13 jonrob Exp $
+ * $Id: DeRichHPD.cpp,v 1.7 2007-09-13 13:10:55 jpalac Exp $
  *
  * @author Antonis Papanestis a.papanestis@rl.ac.uk
  * @date   2006-09-19
@@ -154,10 +154,14 @@ StatusCode DeRichHPD::initialize ( )
 
   // Transformation for HPD window to global ccord system
   m_fromWindowToGlobal = 
-    geometry()->matrixInv() * pvHPDSMaster->matrixInv() * m_pvWindow->matrixInv();
+    geometry()->toGlobalMatrix() * pvHPDSMaster->matrixInv() * m_pvWindow->matrixInv();
 
   // get the pointer to the silicon sensor detector element
   m_deSiSensor = childIDetectorElements().front();
+
+  // Cache the local matrix for the sensor, for speed reasons
+  // Should probably make this 'conditions updates' aware
+  m_localMatrixInv = m_deSiSensor->geometry()->ownMatrix().Inverse();
 
   if (m_UseHpdMagDistortions) 
   {

@@ -1,14 +1,4 @@
-// $Id: Welcome.h,v 1.6 2006-11-25 19:12:56 ibelyaev Exp $
-// ============================================================================
-// CVS tag $Name: not supported by cvs2svn $, version $Revision: 1.6 $
-// ============================================================================
-// $Log: not supported by cvs2svn $
-// Revision 1.5  2006/11/09 17:01:06  ibelyaev
-//  v1r8: improve printout
-//
-// Revision 1.4  2006/06/24 17:18:41  ibelyaev
-//  reduce the printout
-//
+// $Id: Welcome.h,v 1.8 2007-08-15 13:44:02 ibelyaev Exp $
 // ============================================================================
 #ifndef LOKI_WELCOME_H 
 #define LOKI_WELCOME_H 1
@@ -20,8 +10,6 @@
 #include <string>
 #include <vector>
 #include <iostream>
-// ============================================================================
-
 // ============================================================================
 /** @file
  *
@@ -39,9 +27,8 @@
 // ============================================================================
 namespace LoKi 
 {
+  // ==========================================================================
   /** @class Welcome Welcome.h LoKi/Welcome.h
-   *  
-   *
    *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
    *  @date   2004-02-23
    */
@@ -70,10 +57,42 @@ namespace LoKi
     mutable bool             m_wel_printed ;
     mutable bool             m_bye_printed ;    
   };
-  
 } // end of namespace LoKi
-
-
+// ============================================================================
+namespace Bender 
+{
+  // ==========================================================================
+  /** @class BenderWelcome
+   *  welcome for Bender application
+   *  @author Vanya BELYAEV@physics.syr.edu
+   *  @date 2007-08-15
+   */
+  class Welcome 
+  {
+  public:
+    /// get the static instance of class Bender::Welcome 
+    static const Welcome& instance() ;
+  public:
+    // destructor 
+    ~Welcome () ;
+  public:
+    void welcome ( std::ostream& s = std::cout ) const ;
+    void goodbye ( std::ostream& s = std::cout ) const ;    
+  protected:
+    // Standard constructor
+    Welcome ();
+  private:
+    Welcome ( const Welcome& );
+  private: 
+    size_t       m_len1        ;
+    std::string  m_str1        ;    
+    std::string  m_fmt1        ;    
+    std::string  m_fmt2        ;    
+    std::string  m_fmt3        ;
+    mutable bool m_wel_printed ;
+    mutable bool m_bye_printed ;    
+  } ;
+} // end of namespace Bender 
 // ============================================================================
 // The END 
 // ============================================================================

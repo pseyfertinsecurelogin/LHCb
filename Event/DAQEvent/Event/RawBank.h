@@ -85,6 +85,13 @@ namespace LHCb
                    EcalPackedError, //34
                    HcalPackedError, //35  
                    PrsPackedError,  //36
+                   L0CaloFull,      //37
+                   L0CaloError,     //38
+                   L0MuonCtrlAll,   //39
+                   L0MuonProcCand,  //40
+                   L0MuonProcData,  //41
+                   L0MuonRaw,       //42
+		               L0MuonError,     //43
                    LastType    // LOOP Marker; add new bank types ONLY before!
     };
 

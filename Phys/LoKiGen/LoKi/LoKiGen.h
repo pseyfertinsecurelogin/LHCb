@@ -1,17 +1,11 @@
-// $Id: LoKiGen.h,v 1.8 2007-06-03 20:39:37 ibelyaev Exp $
-// ============================================================================
-// CVS tag $Name: not supported by cvs2svn $ , version $Revision: 1.8 $
-// ============================================================================
-// $Log: not supported by cvs2svn $
-// Revision 1.7  2007/06/01 11:48:06  ibelyaev
-// prepare for v3r0
-//
-//
+// $Id: LoKiGen.h,v 1.10 2007-07-25 15:07:57 ibelyaev Exp $
 // ============================================================================
 #ifndef LOKI_LOKIGEN_H 
 #define LOKI_LOKIGEN_H 1
 // ============================================================================
 // Include files
+// ============================================================================
+#include "LoKi/MoreFunctions.h"
 // ============================================================================
 #include "LoKi/GenTypes.h"
 #include "LoKi/GenParticles.h"
@@ -25,6 +19,7 @@
 #include "LoKi/BuildGenTrees.h"
 #include "LoKi/GenChild.h"
 #include "LoKi/GetHepMC.h"
+#include "LoKi/IGenHybridFactory.h"
 // ============================================================================
 /** @file
  *

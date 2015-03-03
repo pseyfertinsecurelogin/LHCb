@@ -1,4 +1,4 @@
-// $Id: GeometryInfoPlus.h,v 1.7 2007-06-25 08:58:12 jpalac Exp $
+// $Id: GeometryInfoPlus.h,v 1.10 2007-09-20 16:56:18 jonrob Exp $
 #ifndef LIB_GEOMETRYINFOPLUS_H 
 #define LIB_GEOMETRYINFOPLUS_H 1
 
@@ -104,102 +104,45 @@ public:
   StatusCode cache();
 
   StatusCode updateChildren();
-  /// Is this "geometry object" assosiated with Logical Volume?
-  inline bool hasLVolume() const { return m_gi_has_logical; }   //     
-                        
-  /// Is this "geometry object" supported?
-  inline bool hasSupport() const { return m_gi_has_support; }   //
 
-  inline const AlignmentCondition* alignmentCondition() const 
-  {
-    return m_alignmentCondition;
-  }
+  bool hasLVolume() const;
 
-  /// transformation matrix from global reference
-  /// system to the local one
-  inline const Gaudi::Transform3D&  matrix() const 
-  {
-    return  *m_matrix;
-  }
+  bool hasSupport() const;
+
+  const AlignmentCondition* alignmentCondition() const ;
   
-  /// transformation matrix from local  reference
-  /// system to the global one.
-  /// Full transformation including misalignments.
-  const Gaudi::Transform3D&  matrixInv() const 
-  {
-    return *m_matrixInv;  
-  }
-
-  /// transformation matrix from global reference
-  /// system to the local one.
-  /// Ideal transformation with no misalignments.
-  const Gaudi::Transform3D& idealMatrix() const 
-  {
-    return *m_idealMatrix;
-  }
-
-  /// transformation matrix from local reference
-  /// system to the global one.
-  /// Ideal geometry with no misalignments.
-  inline const Gaudi::Transform3D&  idealMatrixInv() const 
-  {
-    return *m_idealMatrixInv;
-  }
-
-
-  /// Transformation matrix for the volume corresponding
-  /// to this IGeometryInfo. Uses the transformations of parent 
-  /// volumes that are on this detector element level.
-  const Gaudi::Transform3D& localIdealMatrix() const;
-
-  const Gaudi::Transform3D& localDeltaMatrix() const;
-
-  /**
-   * Transformation relating this frame to frame of the parent.
-   * Includes local misalignment.
-   */
-  const Gaudi::Transform3D  localMatrix() const 
-  {
-    return Gaudi::Transform3D(this->localDeltaMatrix() * this->localIdealMatrix() );
-    
-  }
+  const Gaudi::Transform3D&  toLocalMatrix() const;
   
-  
-  /// Upate the DELTA transformation matrix of this IGeometryInfo.
-  /// Will re-do calculation of all matrices.
-  /// Works even if this GeometryInfo has no AlignmentCondition.
-  StatusCode localDeltaMatrix(const Gaudi::Transform3D&);
+  const Gaudi::Transform3D&  toGlobalMatrix() const;
 
-  /// Update the transformation parametrs in this GeometryInfo's
-  /// AlignmentCondifion and re-do calculation of all matrices.
-  StatusCode localDeltaParams(const std::vector<double>& trans,
-                              const std::vector<double>& rot,
-                              const std::vector<double>& pivot =
-                              std::vector<double>(3) );
+  const Gaudi::Transform3D& toLocalMatrixNominal() const;
 
-  /// tranform the point from the global reference systemn 
-  /// to the local reference system  
-  inline Gaudi::XYZPoint toLocal( const Gaudi::XYZPoint& globalPoint ) const {
-    return ( matrix() * globalPoint );
-  }
-  
-  
-  /// tranform the point from the local reference system 
-  ///  to the global reference system  
-  inline Gaudi::XYZPoint toGlobal( const Gaudi::XYZPoint& localPoint  ) const 
-  {
-    return ( matrixInv() * localPoint  );
-  }
+  const Gaudi::Transform3D&  toGlobalMatrixNominal() const;
 
-  /// is the given point in the global reference system
-  /// inside this detector element?
-  inline bool isInside( const Gaudi::XYZPoint& globalPoint ) const 
-  {
-    return ( hasLVolume() && 0 != lvolume() ) ?
-      lvolume()->isInside( toLocal( globalPoint ) ) :
-      isInsideDaughter( globalPoint );
-  }
+  const Gaudi::Transform3D& ownToLocalMatrixNominal() const;
+
+  const Gaudi::Transform3D& ownToNominalMatrix() const;
+
+  const Gaudi::Transform3D ownToOffNominalMatrix() const;
+
+  const Gaudi::Transform3D  ownMatrix() const;
   
+  StatusCode ownToOffNominalMatrix(const Gaudi::Transform3D&);
+
+  StatusCode ownToOffNominalParams(const std::vector<double>& trans,
+                                   const std::vector<double>& rot,
+                                   const std::vector<double>& pivot =
+                                   std::vector<double>(3) );
+
+  Gaudi::XYZPoint toLocal( const Gaudi::XYZPoint& globalPoint ) const;
+
+  Gaudi::XYZPoint toGlobal( const Gaudi::XYZPoint& localPoint  ) const;
+  
+  Gaudi::XYZVector toLocal( const Gaudi::XYZVector& globalDirection ) const;
+
+  Gaudi::XYZVector toGlobal( const Gaudi::XYZVector& localDirection  ) const;
+
+  bool isInside( const Gaudi::XYZPoint& globalPoint ) const ;
 
   ///  return the name of the daughter element to which
   /// the given point belongs to
@@ -387,7 +330,7 @@ private:
   IUpdateManagerSvc* m_ums;
   
 
-  inline MsgStream log() const  { return *m_log; }
+  inline MsgStream& log() const  { return *m_log; }
 
   inline bool isInsideDaughter( const Gaudi::XYZPoint& globalPoint ) const 
   {
@@ -426,8 +369,8 @@ private:
 
   /// Force the local delta matrix to be newDelta and re-do all
   /// necessary matrix calculations
-  StatusCode setLocalDeltaMatrix(const Gaudi::Transform3D& 
-                                 newDelta);
+  StatusCode setLocalOffNominalDeltaMatrix(const Gaudi::Transform3D& 
+                                           newDelta);
   
 
   StatusCode getAlignmentCondition();

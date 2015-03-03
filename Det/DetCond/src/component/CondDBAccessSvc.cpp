@@ -1,4 +1,4 @@
-// $Id: CondDBAccessSvc.cpp,v 1.40 2007-07-05 09:53:05 marcocle Exp $
+// $Id: CondDBAccessSvc.cpp,v 1.42 2007-08-01 16:18:18 marcocle Exp $
 // Include files
 #include <sstream>
 //#include <cstdlib>
@@ -252,7 +252,6 @@ StatusCode CondDBAccessSvc::initialize(){
       sc = i_initializeConnection();
       if (!sc.isSuccess()) return sc;
     }
-    
 
   } 
   else {
@@ -270,13 +269,6 @@ StatusCode CondDBAccessSvc::initialize(){
   } else {
     log << MSG::DEBUG << "CondDB cache not needed" << endmsg;
     m_cache = NULL;
-  }
-
-  // start TimeOut thread
-  if (!m_noDB && m_connectionTimeOut) {
-    touchLastAccess();
-    TimeOutChecker tc(this);
-    m_timeOutCheckerThread = std::auto_ptr<boost::thread>(new boost::thread(tc));
   }
 
   return sc;
@@ -317,6 +309,14 @@ StatusCode CondDBAccessSvc::i_initializeConnection(){
   log << MSG::DEBUG << "Connection string = \"" << connectionString() << "\"" << endmsg;
   StatusCode sc = i_openConnection();
   if (!sc.isSuccess()) return sc;
+  
+  // start TimeOut thread
+  if (m_connectionTimeOut) {
+    touchLastAccess();
+    TimeOutChecker tc(this);
+    m_timeOutCheckerThread = std::auto_ptr<boost::thread>(new boost::thread(tc));
+  }
+
   return i_validateDefaultTag();
 }
 
@@ -457,7 +457,7 @@ StatusCode CondDBAccessSvc::i_checkTag(const std::string &tag) const {
   if (m_rootFolderSet) {
     // HEAD tags are always good
     //if ( (tag.empty()) || (tag == "HEAD") ) return StatusCode::SUCCESS;
-    if ( m_rootFolderSet->isHeadTag(tag) ) {
+    if ( cool::IHvsNode::isHeadTag(tag) ) {
       log << MSG::VERBOSE << "\"" << tag << "\" is a HEAD tag: OK" << endmsg;
       return StatusCode::SUCCESS;
     }
@@ -1008,7 +1008,7 @@ void CondDBAccessSvc::defaultTags ( std::vector<LHCb::CondDBNameTagPair>& tags )
   /// <quote>
   /// tags.push_back(LHCb::CondDBNameTagPair(database()->dbName(),tag()));
   /// </quote>
-  /// but COOL API does not provide that function yet.
+  /// but COOL API does not provide that function yet. (Available since 2.2.0)
 
   std::string dbName;
   // Parsing of COOL connection string to find database name
@@ -1033,7 +1033,7 @@ void CondDBAccessSvc::defaultTags ( std::vector<LHCb::CondDBNameTagPair>& tags )
   }
   // If the tag is a "HEAD" tag, I want to show "HEAD"
   std::string tagName = tag();
-  if (m_rootFolderSet->isHeadTag(tagName)) {
+  if (cool::IHvsNode::isHeadTag(tagName)) {
     tagName = "HEAD";
   }
 

@@ -1,8 +1,4 @@
-// $Id: LoKiPIDTest.cpp,v 1.1 2007-06-01 11:35:28 ibelyaev Exp $
-// ============================================================================
-// CVS tag $Nama:$, version $Revision: 1.1 $
-// ============================================================================
-// $Log: not supported by cvs2svn $
+// $Id: LoKiPIDTest.cpp,v 1.3 2007-08-22 17:25:27 pkoppenb Exp $
 // ============================================================================
 // Include files 
 // ============================================================================
@@ -58,7 +54,7 @@ namespace LoKi
         debug() << "Name/PID: "
                 << "'" << pp->particle() << "':" << pp->pdgID() << endreq ;
         // verify name -> pid map  
-        Assert ( pp->particle() == nameFromPID ( pp->pdgID    () )       , 
+        Assert ( pp->particle() == nameFromPID ( LHCb::ParticleID( pp->pdgID    () ))       , 
                  "Mismatch in Name/PID map for '" + pp->particle() + "'" ) ;
         // verify pid  -> name map  
         Assert ( pp->pdgID   () == pidFromName ( pp->particle () ).pid() , 

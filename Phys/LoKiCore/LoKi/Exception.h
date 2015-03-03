@@ -1,8 +1,4 @@
-// $Id: Exception.h,v 1.4 2006-05-02 14:29:09 ibelyaev Exp $
-// ============================================================================
-// CVS tag $Name: not supported by cvs2svn $ 
-// ============================================================================
-// $Log: not supported by cvs2svn $
+// $Id: Exception.h,v 1.6 2007-08-11 20:17:00 ibelyaev Exp $
 // ============================================================================
 #ifndef LOKI_EXCEPTION_H 
 #define LOKI_EXCEPTION_H 1
@@ -13,7 +9,9 @@
 // ============================================================================
 #include "GaudiKernel/GaudiException.h"
 // ============================================================================
-
+// LoKi
+// ============================================================================
+#include "LoKi/Assert.h"
 // ============================================================================
 /** @file
  *
@@ -29,21 +27,16 @@
  *  @date 2001-01-23 
  */
 // ============================================================================
-
 namespace LoKi
-{
-  
+{ 
   /** @class Exception Exception.h LoKi/Exception.h
-   *  
    *  Standard exception for LoKi objects 
-   *
    *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
    *  @date   2002-07-12
    */
   class Exception : public GaudiException
   {    
-  public:
-    
+  public:    
     /** Constructor
      *  @param Message error message
      *  @param Code status code 
@@ -53,7 +46,6 @@ namespace LoKi
       const StatusCode &   Code    = StatusCode::FAILURE , 
       const std::string&   file    = ""                  , 
       const unsigned long& line    = 0                   ) ;
-    
     /** Constructor 
      *  @param Message error message
      *  @param Code status code
@@ -65,23 +57,18 @@ namespace LoKi
       const GaudiException&  Exception       ,
       const std::string&     file       = "" , 
       const unsigned long&   line       = 0  ) ;
-    
+    /// virtual destructor 
     virtual ~Exception() throw() {} ;
-    
     /** clone operation
      *  @see GaudiException
      *  @return the clone
      */
     virtual Exception* clone() const;
-    
   private:
     /// the default constructor is disabled 
     Exception();
-    
-  }; // end of class Exception 
-  
-}; // end of namespace  LooK
-
+  }; // end of class Exception
+}// end of namespace  LooK
 // ============================================================================
 /** @def LOKI_EXCEPTION
  *  

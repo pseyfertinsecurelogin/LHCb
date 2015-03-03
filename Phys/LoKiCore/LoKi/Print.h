@@ -1,9 +1,4 @@
-// $Id: Print.h,v 1.8 2007-06-01 11:35:26 ibelyaev Exp $
-// ============================================================================
-// CVS tag $Name: not supported by cvs2svn $, version $Revision: 1.8 $ 
-// ============================================================================
-// $Log: not supported by cvs2svn $
-//
+// $Id: Print.h,v 1.10 2007-08-11 20:17:00 ibelyaev Exp $
 // ============================================================================
 #ifndef LOKI_PRINT_H 
 #define LOKI_PRINT_H 1
@@ -42,12 +37,15 @@ namespace LoKi
    */
   namespace Print
   {
+    // ============================================================================
     template <class TYPE> 
     inline  std::string toString ( const TYPE& value ) 
     { return Gaudi::Utils::toString ( value ) ; }
+    // ============================================================================
     template <class TYPE> 
     inline  std::string print    ( const TYPE& value ) 
     { return toString ( value ) ; }
+    // ============================================================================
     /** Trivial generic printout to some stream 
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date   2006-02-16
@@ -58,17 +56,19 @@ namespace LoKi
     ( std::ostream&   stream , 
       const TYPE&     object ) 
     { 
-      return Gaudi::Utils::toStream ( stream , object ) ; 
+      return Gaudi::Utils::toStream ( object , stream ) ; 
     }
+    // ============================================================================
     template <class TYPE>
     inline MsgStream& toStream 
     ( MsgStream&   stream , 
       const TYPE&  object ) 
     { 
       if ( stream.isActive() )
-      { Gaudi::Utils::toStream ( stream.stream() , object ) ; }
+      { Gaudi::Utils::toStream ( object , stream ) ; }
       return stream ;      
     }
+    // ============================================================================
   } // end of namespace LoKi::Print
 } // end of namespace LoKi
 // ============================================================================

@@ -1,4 +1,4 @@
-// $Id: SolidTicks.h,v 1.12 2007-01-17 12:10:24 cattanem Exp $ 
+// $Id: SolidTicks.h,v 1.14 2007-09-20 15:41:06 wouter Exp $ 
 // ===========================================================================
 #ifndef     DETDESC_SOLIDTICKS_H
 #define     DETDESC_SOLIDTICKS_H 1 
@@ -137,7 +137,8 @@ namespace SolidTicks
     return RemoveAdjancent( ticks , point , vect , solid );
   };
 
-  /** Eliminate duplicates and remove all adjancent ticks, 
+
+ /** Eliminate duplicates and remove all adjancent ticks, 
    *  Assume that "ticks" are already sorted  and 
    *  all adjancent ticks are removed!
    *  @author      Vanya Belyaev   Ivan.Belyaev@itep.ru 
@@ -209,6 +210,66 @@ namespace SolidTicks
     return ticks.size () ;
   };
   
+  /** Eliminate duplicate ticks. Not as safe as the original, but a
+   *   bit more efficient: it will not call the 'isInside' stuff
+   *   unless it has reason to belief there is actually something
+   *   wrong with this vector of ticks. It decides that there is
+   *   something wrong if there are an odd number of ticks or if there
+   *   are 'double' ticks.
+   *  @author      Wouter Hulsbergen
+   *  @date        20.09.2007
+   *  @see ISolid 
+   *  @param ticks   container of "ticks" (sorted!) 
+   *  @param point   point for line perametrisation 
+   *  @param vect    vector along the line
+   *  @param solid   reference to SOLID 
+   *  @return number of ticks 
+   */
+  template <class SOLID, class aPoint, class aVector, class TickContainer>
+  inline unsigned int RemoveAdjacentTicksFast ( TickContainer & ticks , 
+						const aPoint  & point , 
+						const aVector & vect  , 
+						const SOLID   & solid )
+  {
+    // only call the expensive method if we find that something is wrong:
+    typename TickContainer::iterator newend  = std::unique( ticks.begin() , ticks.end() ) ;
+    if( newend != ticks.end() || ticks.size()%2 != 0 ) {
+      ticks.erase( newend, ticks.end()) ;
+      RemoveAdjancent( ticks , point , vect , solid );
+    }
+    return ticks.size() ;
+  } ;
+
+   /** Remove or adjust intervals such that they overlap with tick range
+   *  Assume that "ticks" are already sorted, come in pairs and 
+   *  that adjancent ticks are removed.
+   *  @author      Wouter Hulsbergen
+   *  @date        10.09.2007 
+   *  @see ISolid 
+   *  @param ticks   container of "ticks" (sorted and in pairs) 
+   *  @param tickMin minimal value of tick 
+   *  @param tickMax maximal value of tick 
+   *  @return number of ticks 
+   */
+  template <class TickContainer>
+  unsigned int adjustToTickRange( TickContainer& ticks, const ISolid::Tick & tickMin, const ISolid::Tick & tickMax ) 
+  {
+    // useful local typedefs 
+    typedef ISolid::Tick            Tick     ; 
+    typedef ISolid::Ticks::iterator iterator ;
+    if( !ticks.empty() ) {
+      static ISolid::Ticks validticks ; validticks.clear() ;
+      // explicitely use that ticks come in pairs
+      for( typename TickContainer::const_iterator it = ticks.begin() ; it+1 < ticks.end(); it +=2) 
+	if( *it <= tickMax && *(it+1) >= tickMin ) {
+	  validticks.push_back( std::max( tickMin, *it) ) ;
+	  validticks.push_back( std::min( tickMax, *(it+1)) ) ;
+	}
+      ticks.swap(validticks) ;
+    }
+    return ticks.size () ;
+  };
+
 }; ///< end of namespace SolidTicks
 
 // ============================================================================

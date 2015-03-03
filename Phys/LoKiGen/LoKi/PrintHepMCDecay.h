@@ -1,14 +1,4 @@
-// $Id: PrintHepMCDecay.h,v 1.3 2007-02-26 11:03:03 cattanem Exp $
-// ============================================================================
-// CVS tag $Name: not supported by cvs2svn $,  version $Revision: 1.3 $
-// ============================================================================
-// $Log: not supported by cvs2svn $
-// Revision 1.2  2006/11/09 16:35:31  ibelyaev
-//  v1r7: improve the printout functions
-//
-// Revision 1.1  2006/05/27 11:38:44  ibelyaev
-//  add PrintHepMCDecay utilities
-// 
+// $Id: PrintHepMCDecay.h,v 1.5 2007-08-16 13:51:04 ibelyaev Exp $
 // ============================================================================
 #ifndef LOKI_PRINTHEPMCDECAY_H 
 #define LOKI_PRINTHEPMCDECAY_H 1
@@ -21,9 +11,9 @@
 #include <iostream>
 #include <limits>
 // ===========================================================================
-// Event
+// HepMC
 // ===========================================================================
-#include "Event/HepMCEvent.h"
+#include "HepMC/GenParticle.h"
 // ===========================================================================
 // LoKi
 // ===========================================================================
@@ -32,8 +22,6 @@
 // forward declarations 
 // ===========================================================================
 class MsgStream ;
-// ===========================================================================
-
 // ============================================================================
 /** @file
  *
@@ -46,115 +34,21 @@ class MsgStream ;
  *  A.Golutvin, P.Koppenburg have been used in the design.
  *
  *  By usage of this code one clearly states the disagreement 
- *  with the campain of \<XXXXXXX\> et al.: 
+ *  with the campain of Dr. O.Callot et al.: 
  *  "No Vanya's lines are allowed in LHCb/Gaudi software."
  *
  *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
  *  @date 2006-05-26 
  */
 // ============================================================================
-
-
 namespace LoKi 
 {  
-  namespace Print 
+  namespace PrintHepMC 
   {
-    /// maximal possible recursion level 
+    // ========================================================================
+    /// the maximal recursion level 
     const int s_maxLevel1 = std::numeric_limits<int>::max() ;
-    
-    /** Simple function to print HepMC decay in more or less "readable" format 
-     *
-     *  @code
-     *
-     *  const HepMC::GenParticle* p = ... ;
-     * 
-     *  printHepMCDecay( p , std::cout ) ;
-     *
-     *  @endcode 
-     *
-     *  @param particle pointer to HepMC::GenParticle to be printed 
-     *  @param stream   stream to be used 
-     *  @param cut      condition 
-     *  @param blank    to be printed instead of cutted particles 
-     *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
-     *  @date   2006-01-18
-     */
-    std::ostream& printHepMCDecay 
-    ( const HepMC::GenParticle*      particle                   , 
-      std::ostream&                  stream                     , 
-      const LoKi::GenTypes::GCuts&   cut   = 
-      LoKi::BooleanConstant<const HepMC::GenParticle*> ( true ) , 
-      const int                      level = s_maxLevel1        ,
-      const std::string&             blank = "<cut>"            ) ;
-    /** Simple function to print HepMC decay in more or less "readable" format 
-     *
-     *  @code
-     *
-     *  const HepMC::GenParticle* p = ... ;
-     * 
-     *  printHepMCDecay( p , always() ) ;
-     *
-     *  @endcode 
-     *
-     *  @param particle pointer to HepMC::GenParticle to be printed 
-     *  @param stream   stream to be used 
-     *  @param cut      condition 
-     *  @param blank    to be printed instead of cutted particles 
-     *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
-     *  @date   2006-01-18
-     */
-    MsgStream& printHepMCDecay 
-    ( const HepMC::GenParticle*    particle                     , 
-      MsgStream&                   stream                       , 
-      const LoKi::GenTypes::GCuts& cut   = 
-      LoKi::BooleanConstant<const HepMC::GenParticle*> ( true ) , 
-      const int                    level = s_maxLevel1          ,
-      const std::string&           blank = "<cut>"              ) ;
-    /** Simple function to print HepMC decay in more or less "readable" format 
-     *
-     *  @code
-     *
-     *  const HepMC::GenParticle* p = ... ;
-     * 
-     *  info() << printHepMCDecay( p ) ;
-     *
-     *  @endcode 
-     *
-     *  @param particle pointer to HepMC::GenParticle to be printed 
-     *  @param cut      condition 
-     *  @param blank    to be printed instead of cutted particles 
-     *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
-     *  @date   2006-01-18
-     */
-    std::string printHepMCDecay 
-    ( const HepMC::GenParticle*    particle                     , 
-      const LoKi::GenTypes::GCuts& cut   = 
-      LoKi::BooleanConstant<const HepMC::GenParticle*> ( true ) , 
-      const int                    level = s_maxLevel1          ,
-      const std::string&           blank = "<cut>"              ) ;
-    /** Simple function to print HepMC decay in more or less "readable" format 
-     *
-     *  @code
-     *
-     *  const HepMC::GenParticle* p = ... ;
-     * 
-     *  info() << printDecay( p ) ;
-     *
-     *  @endcode 
-     *
-     *  @param particle pointer to HepMC::GenParticle to be printed 
-     *  @param cut      condition 
-     *  @param blank    to be printed instead of cutted particles 
-     *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
-     *  @date   2006-01-18
-     */
-    inline std::string printDecay 
-    ( const HepMC::GenParticle*    particle                     , 
-      const LoKi::GenTypes::GCuts& cut   = 
-      LoKi::BooleanConstant<const HepMC::GenParticle*> ( true ) , 
-      const int                    level = s_maxLevel1          ,
-      const std::string&           blank = "<cut>"              )
-    { return printHepMCDecay ( particle , cut , level , blank ) ; }
+    // ========================================================================
     /** Simple function to print HepMC decay in more or less "readable" format 
      *
      *  @code
@@ -172,14 +66,34 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date   2006-01-18
      */
-    inline std::ostream& printDecay 
-    ( const HepMC::GenParticle*      particle                   , 
-      std::ostream&                  stream                     , 
-      const LoKi::GenTypes::GCuts&   cut   = 
-      LoKi::BooleanConstant<const HepMC::GenParticle*> ( true ) , 
-      const int                      level = s_maxLevel1        ,
-      const std::string&             blank = "<cut>"             ) 
-    { return printHepMCDecay ( particle , stream , cut , level , blank ) ; }
+    std::ostream& 
+    printDecay 
+    ( const HepMC::GenParticle*      particle            , 
+      std::ostream&                  stream              , 
+      const LoKi::GenTypes::GCuts&   cut                 ,
+      const int                      level = s_maxLevel1 ,
+      const std::string&             blank = "<cut>"     ) ;
+    // ========================================================================
+    /** Simple function to print HepMC decay in more or less "readable" format 
+     *
+     *  @code
+     *
+     *  const HepMC::GenParticle* p = ... ;
+     * 
+     *  printDecay( p , std::cout ) ;
+     *
+     *  @endcode 
+     *
+     *  @param particle pointer to HepMC::GenParticle to be printed 
+     *  @param stream   stream to be used 
+     *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
+     *  @date   2006-01-18
+     */
+    std::ostream& 
+    printDecay 
+    ( const HepMC::GenParticle*      particle  , 
+      std::ostream&                  stream    ) ;
+    // ========================================================================
     /** Simple function to print HepMC decay in more or less "readable" format 
      *
      *  @code
@@ -197,18 +111,86 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date   2006-01-18
      */
-    inline MsgStream& printDecay 
-    ( const HepMC::GenParticle*    particle                     , 
-      MsgStream&                   stream                       , 
-      const LoKi::GenTypes::GCuts& cut   = 
-      LoKi::BooleanConstant<const HepMC::GenParticle*> ( true ) , 
-      const int                    level = s_maxLevel1          ,
-      const std::string&           blank = "<cut>"              ) 
-    { return printHepMCDecay ( particle , stream , cut , level , blank ) ; }
-    
-  } // end of namespace Print  
+    MsgStream& 
+    printDecay   
+    ( const HepMC::GenParticle*    particle            , 
+      MsgStream&                   stream              , 
+      const LoKi::GenTypes::GCuts& cut                 ,
+      const int                    level = s_maxLevel1 ,
+      const std::string&           blank = "<cut>"     ) ;
+    // ========================================================================
+    /** Simple function to print HepMC decay in more or less "readable" format 
+     *
+     *  @code
+     *
+     *  const HepMC::GenParticle* p = ... ;
+     * 
+     *  printDecay( p , always() ) ;
+     *
+     *  @endcode 
+     *
+     *  @param particle pointer to HepMC::GenParticle to be printed 
+     *  @param stream   stream to be used 
+     *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
+     *  @date   2006-01-18
+     */
+    MsgStream& 
+    printDecay 
+    ( const HepMC::GenParticle*    particle  , 
+      MsgStream&                   stream    ) ;
+    // ========================================================================
+    /** Simple function to print HepMC decay in more or less "readable" format 
+     *
+     *  @code
+     *
+     *  const HepMC::GenParticle* p = ... ;
+     * 
+     *  info() << printHepMCDecay( p ) ;
+     *
+     *  @endcode 
+     *
+     *  @param particle pointer to HepMC::GenParticle to be printed 
+     *  @param cut      condition 
+     *  @param blank    to be printed instead of cutted particles 
+     *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
+     *  @date   2006-01-18
+     */
+    std::string 
+    printDecay 
+    ( const HepMC::GenParticle*    particle            , 
+      const LoKi::GenTypes::GCuts& cut                 , 
+      const int                    level = s_maxLevel1 ,
+      const std::string&           blank = "<cut>"     ) ;
+    // ========================================================================
+    /** Simple function to print HepMC decay in more or less "readable" format 
+     *
+     *  @code
+     *
+     *  const HepMC::GenParticle* p = ... ;
+     * 
+     *  info() << printDecay( p ) ;
+     *
+     *  @endcode 
+     *
+     *  @param particle pointer to HepMC::GenParticle to be printed 
+     *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
+     *  @date   2006-01-18
+     */
+    std::string 
+    printDecay 
+    ( const HepMC::GenParticle*    particle ) ;
+    // ========================================================================
+  } // end of namespace LoKi::PrintHepMC
+  // ==========================================================================
+  namespace Print 
+  {
+    // ========================================================================
+    // import into namespace LoKi::Print
+    // ========================================================================
+    using namespace LoKi::PrintHepMC ;
+    // ========================================================================
+  } // end of namespace LoKi::Print  
 } // end of namespace LoKi
-
 // ============================================================================
 // The END 
 // ============================================================================

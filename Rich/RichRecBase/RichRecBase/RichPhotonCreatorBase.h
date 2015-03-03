@@ -5,7 +5,7 @@
  *  Header file for tool base class : Rich::Rec::PhotonCreatorBase
  *
  *  CVS Log :-
- *  $Id: RichPhotonCreatorBase.h,v 1.9 2007-03-09 18:04:33 jonrob Exp $
+ *  $Id: RichPhotonCreatorBase.h,v 1.11 2007-08-13 12:41:32 jonrob Exp $
  *
  *  @author Chris Jones   Christopher.Rob.Jones@cern.ch
  *  @date   20/05/2005
@@ -14,6 +14,9 @@
 
 #ifndef RICHRECBASE_RICHPHOTONCREATORBASE_H
 #define RICHRECBASE_RICHPHOTONCREATORBASE_H 1
+
+// STD
+#include <set>
 
 // Gaudi
 #include "GaudiKernel/IIncidentListener.h"
@@ -28,10 +31,14 @@
 #include "RichRecBase/IRichPhotonSignal.h"
 #include "RichRecBase/IRichCherenkovAngle.h"
 #include "RichRecBase/IRichCherenkovResolution.h"
+#include "RichKernel/IRichParticleProperties.h"
 
 // RichKernel
 #include "RichKernel/RichStatDivFunctor.h"
 #include "RichKernel/RichHashMap.h"
+
+// RichDet
+#include "RichDet/DeRichHPDPanel.h"
 
 namespace Rich
 {
@@ -253,11 +260,20 @@ namespace Rich
       /// Pointer to Cherenkov angle resolution tool
       const ICherenkovResolution * m_ckRes;
 
+      /// Pointer to RichParticleProperties interface
+      const IParticleProperties * m_richPartProp;
+
+      /// Photon detector panels
+      const DeRichHPDPanel* m_hpdPanels[Rich::NRiches][Rich::NHPDPanelsPerRICH];
+
       /// Number of events processed tally
       unsigned int m_Nevts;
 
       /// Tolerence on Cherenkov Angle
-      std::vector<double> m_CKTol;
+      //std::vector<double> m_CKTol;
+
+      /// N sigma for acceptance bands
+      std::vector<double> m_nSigma;   
 
       /// Absolute maximum allowed Cherenkov Angle
       std::vector<double> m_maxCKtheta;
@@ -284,6 +300,12 @@ namespace Rich
       mutable std::vector<unsigned long int> m_photCount;
       mutable std::vector<unsigned long int> m_photCountLast;
 
+      /// Particle ID types to consider in the photon creation checks
+      Rich::Particles m_pidTypes;
+
+      /// Flag to turn on use of nearest-HPD hit selection
+      //std::vector<bool> m_useNearHPD;
+
     private: // methods
 
       /// Printout the photon creation statistics
@@ -293,12 +315,12 @@ namespace Rich
 
     inline double
     PhotonCreatorBase::ckSearchRange( LHCb::RichRecSegment * segment,
-                                      const Rich::ParticleIDType /* id */ ) const
+                                      const Rich::ParticleIDType id ) const
     {
-      // Range depends on track resolution
-      //return m_CKTol[segment->trackSegment().radiator()] * m_ckRes->ckThetaResolution(segment,id);
+      // # sigma * resolution
+      return m_nSigma[segment->trackSegment().radiator()] * m_ckRes->ckThetaResolution(segment,id);
       // Fixed range per radiator
-      return m_CKTol[segment->trackSegment().radiator()];
+      //return m_CKTol[segment->trackSegment().radiator()];
     }
 
     inline double

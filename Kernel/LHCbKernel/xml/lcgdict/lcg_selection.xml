@@ -1,4 +1,5 @@
 <lcgdict>
+  <class name="std::vector<LHCb::VeloChannelID>"/>
   <class name="std::vector<std::pair<LHCb::VeloChannelID,int> >"/>
   <class name="std::pair<LHCb::VeloChannelID,int>"/>
   <class name="std::vector<std::pair<LHCb::STChannelID,int> >"/>
@@ -13,6 +14,7 @@
   <class name="LHCb::CircleTraj"/>
   <class name="LHCb::LineTraj"/>
   <class name="LHCb::ParabolaTraj"/>
+  <class name="MuonLayout"/>
   <class name="std::auto_ptr<LHCb::Trajectory>"/>
   <class pattern ="LHCb::DifTraj<*"/>
   <class pattern ="LHCb::SiPositionInfo<*>"/>

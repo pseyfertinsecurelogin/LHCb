@@ -1,0 +1,12 @@
+!-----------------------------------------------------------------------------
+! Package     : Kernel/RecInterfaces
+! Responsible : Marco Cattaneo
+! Purpose     : Interfaces depending on Rec classes
+!-----------------------------------------------------------------------------
+
+!========================= RecInterfaces v1r0 2007-09-07 =====================
+! 2007-09-07 - Marco Cattaneo
+ - Add dictionary generation, remove unneccessary include from interface
+
+! 2007-09-07 - Patrick Koppenburg
+ - Import with IWriteSelResult tool

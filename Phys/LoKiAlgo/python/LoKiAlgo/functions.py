@@ -1,8 +1,11 @@
 #!/usr/bin/env python
 # =============================================================================
-# CVS tag $Name: not supported by cvs2svn $, version $Revision: 1.2 $
+# CVS tag $Name: not supported by cvs2svn $, version $Revision: 1.4 $
 # =============================================================================
 # $Log: not supported by cvs2svn $
+# Revision 1.2  2007/06/10 20:13:35  ibelyaev
+#  prepare for v4r0
+#
 # Revision 1.1  2007/06/01 12:21:33  ibelyaev
 #  prepare for v4r0
 #
@@ -22,7 +25,6 @@ import LoKiPhys.decorators as _LoKiPhys
 LoKi  = _LoKiPhys.LoKi
 LHCb  = _LoKiPhys.LHCb
 
-_AlgoChild = LoKi.Child.AlgoChild 
 
 # =============================================================================
 if '__main__' == __name__ :

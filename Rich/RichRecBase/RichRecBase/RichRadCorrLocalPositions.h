@@ -1,4 +1,4 @@
-// $Id: RichRadCorrLocalPositions.h,v 1.2 2007-04-26 21:23:43 jonrob Exp $
+// $Id: RichRadCorrLocalPositions.h,v 1.4 2007-09-04 16:46:57 jonrob Exp $
 #ifndef RICHRECBASE_RICHRADCORRLOCALPOSITIONS_H
 #define RICHRECBASE_RICHRADCORRLOCALPOSITIONS_H 1
 
@@ -11,8 +11,7 @@
 
 // Kernel
 #include "Kernel/RichRadiatorType.h"
-#include "RichKernel/BoostMemPoolAlloc.h"
-#include "RichKernel/BoostArray.h"
+#include "Kernel/MemPoolAlloc.h"
 
 namespace Rich
 {
@@ -27,19 +26,28 @@ namespace Rich
      *  @date   2007-03-28
      */
 
-    class RadCorrLocalPositions : public Rich::BoostMemPoolAlloc<Rich::Rec::RadCorrLocalPositions>
+    class RadCorrLocalPositions : public LHCb::MemPoolAlloc<Rich::Rec::RadCorrLocalPositions>
     {
 
     public:
 
       /// Standard constructor
-      RadCorrLocalPositions( ) { }
+      RadCorrLocalPositions( ) : m_pos(Rich::NRadiatorTypes) { }
+
+      /// Constructor from a default position
+      RadCorrLocalPositions( const Gaudi::XYZPoint & point ) : m_pos(Rich::NRadiatorTypes,point) { }
 
       /// Destructor
       ~RadCorrLocalPositions( ) { }
 
-      /// Get the position for the given radiator
+      /// Get the position for the given radiator (const)
       inline const Gaudi::XYZPoint & position( const Rich::RadiatorType rad ) const
+      {
+        return m_pos[rad];
+      }
+
+      /// Get the position for the given radiator (non const)
+      inline Gaudi::XYZPoint & position( const Rich::RadiatorType rad )
       {
         return m_pos[rad];
       }
@@ -65,7 +73,7 @@ namespace Rich
     private:
 
       /// The corrected local positions
-      boost::array<Gaudi::XYZPoint,Rich::NRadiatorTypes> m_pos;
+      std::vector<Gaudi::XYZPoint> m_pos;
 
     };
 

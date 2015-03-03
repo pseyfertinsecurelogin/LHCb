@@ -1,7 +1,21 @@
-! $Id: release.notes,v 1.125 2007-06-11 07:47:45 cattanem Exp $
+! $Id: release.notes,v 1.128 2007-09-04 14:16:56 cattanem Exp $
 ! Package     : PhysEvent 
 ! Responsible : P. Koppenburg, J.P. Palacios
 !----------------------------------------------------------------------------
+
+!======================== PhysEvent v11r3 2007-09-04 ========================
+! 2007-08-23 - Juan PALACIOS
+ - xml/Particle.xml
+   . Remove new method setKeyedObjectKey(int key).
+   . Add constructor Particle(const ParticleID& pid, const int key) 
+ -cmt/requirements
+   . increase version to v11r3
+
+! 2007-08-22 - Patrick Koppenburg
+ - Particle: remove constructor from int key
+ - Create new method setKeyedObjectKey(int key). Could be removed
+   if a smarter way of associating Particles to MCParticles is found
+   in the MCParticleMaker
 
 !======================== PhysEvent v11r2 2007-06-11 ========================
 ! 2007-06-11 - Marco Cattaneo

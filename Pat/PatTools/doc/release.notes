@@ -4,6 +4,10 @@
 ! Purpose     : Public tools for pattern recognition
 !-----------------------------------------------------------------------------
 
+!============================ PatTools v3r2 2007-09-04 ======================
+! 2007-08-27 M Needham
+ - Bug fix in PatContainer - iterators become invalid  on windows after clear()
+
 !============================ PatTools v3r1 2007-03-05 ======================
 ! 2007-03-05 - Marco Cattaneo
  - Remove obsolete PatTools_load.cpp file

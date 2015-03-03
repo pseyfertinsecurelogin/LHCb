@@ -1,0 +1,134 @@
+!-----------------------------------------------------------------------------
+! Package     : Tf/TfKernel
+! Responsible : Tracking 'A-Team' for the moment ... Then someone else.
+! Purpose     : Core classes for the Tf framework
+!-----------------------------------------------------------------------------
+
+!============================ TfKernel v1r0 2007-09-19 =======================
+! 2007-09-19 - Kurt Rinnert
+ - Fixed windows warnings in VELO related classes and HitBase
+ - added dll loader to component library
+
+! 2007-09-19 - Marco Cattaneo
+ - Fix Windows compilation error
+
+! 2007-09-18 - Marco Cattaneo
+ - Remove dictionary entries for Tf::OTHit::DetectorElementType and
+   Tf::STHit::DetectorElementType, as they translate to DeOTModule and
+   DeSTSector already in OTDet and STDet dictionaries
+
+! 2007-09-17 - Kurt Rinnert
+ - added some more status query methods to HitBase.  This change is completely
+   transparent.
+
+! 2007-09-11 - Kurt Rinnert
+ - changed overloading in VeloSensorHits from hit type tags to sensor type.
+   This expresses more clearly what is meant and also makes it easier to use
+   the new methods in derived hit managers.
+
+! 2007-09-10 - Kurt Rinnert
+ - propagated sort coordinate interface to VELO hit extension base class.
+
+! 2007-09-10 - Kurt Rinnert
+ - moved unknown and unusable flags to the beginning of the list in HitBase.
+   This is just a minor cosmetic change ensuring they can keep their special
+   position after future extensions.
+ - added concept of sort coordinate to VELO hits.  For r hits this is simply
+   the coordinate.  For phi hits in the right VELO half this is the coordinate
+   mapped to [pi/2,3/2pi].  This coordinate is used for sorting, when
+   looking for hits in a range and when looking up the hit closest to a
+   given position.
+ - implemented proper sorting and lookup for phi hits in the right VELO half.
+   This is now based on the concept of a sort coordinate (see above).  The
+   change is completely transparent to clients which still operate in [-pi,pi]
+   only. 
+ - added convenience wrapper for access to sensor number of a VeloSensorHits
+   instance
+ - added accessor to VeloSensorHits to retrieve the closest hit at a given
+   reference radius in all frames.  This only makes sense for phi type sensor
+   hits.  There is no implementation for r type sensor hits and any attempt to
+   call the mehtod in this case will result in a compile time error.
+
+! 2007-09-10 - Wouter Hulsbergen
+ - split STHitCreator in IT/TTHitCreator
+
+! 2007-09-07 - Wouter Hulsbergen
+ - moved OTLiteTime and OTRawBankDecoder to OT/OTDAQ
+ - removed building of linker library since nothing left to link 
+ - adapted OTHit to interface change in DeOTModule
+ - reimplemented OTHitCleaner to speed it up
+
+! 2007-09-06 - Stephanie Hansmann-Menzemer
+ - remove prepareIT/OT interfaces for all but region level
+ - move prepareIT/OT interfaces to private
+ - modify prepareHitsInWindow functions: instead of template SELECTOR
+   use inherited classes from IStationSelector, to allow to override
+   prepareHitsInWindow in inherited TStationManagers
+
+! 2007-08-28 - 
+ - Various minor fixes for WIN32 compilation
+
+! 2007-08-26 - Kurt Rinnert
+ - improved interface of VELO hit managers
+ - some methods have more descriptive names
+ - added interface for iterating over all station irrespective of VELO half
+ - added direct access to station pointers by sensor number
+ - added VELO related documentation to RegionID
+
+! 2007-08-25 - Kurt Rinnert
+ - removed obsolete method declarations from VeloSensorHits (accidently left
+   over)
+ - added method to retrieve the VELO half index from VeloSensorHits
+
+! 2007-08-25 - Kurt Rinnert
+ - a little documentation
+ - removed redundant zone member from VeloHit
+ - removed functionality from VeloSensorHits that is now provide by the VELO
+   detector element
+ - adapted VELO hit constructors to the improved interface of the VELO
+   detector element
+ - the first update of geometry related caches in VELO hit managers is now
+   triggered via the update manager service, avoiding double initialisation at
+   job startup.
+
+! 2007-08-21 - Chris Jones
+ - Add CMT incantations to generate Reflex dictionary
+
+! 2007-08-21 - Kurt Rinnert
+ - made the number of zones in the VELO hit managers available to
+   non-templated derived classes (avoids hardcoding in custom hit managers)
+ - changed some member names in VELO hit managers to follow convention
+
+! 2007-08-21 - Chris Jones
+ - Minor bug fixes to the T and TT hit managers
+  + Fix ambiguities in method names
+  + OTRangeID -> ITRangeID 
+ - Add test alg to exercise hit managers
+
+! 2007-08-21 - Wouter Hulsbergen
+ - fixed bug in OTHitCleaner::removeClusters
+ - removed maps from OTHitCleaner::removeHotModules and STHitCleaner::removeHotBeetles to speed things up
+
+! 2007-08-20 - Chris Jones
+ - Add new methods to TStationHitManager that select hits using a generic
+   selector object.
+
+! 2007-08-19 - Chris Jones
+ - Add new 'ID' objects for use in the various hit creator/manager 
+   interfaces. Help to clarify the inter-relationships between the various
+   interfaces and also introduces a little type safety.
+
+! 2007-08-18 - Chris Jones
+ - Update data managers so on-demand hit creation is now done, region by
+   region, instead of simply doing the all hits at once.
+ - Remove the OTStationHitManager and ITStationHitManager classes, as they are
+   no longer needed with the above on-demand decoding.
+
+! 2007-08-16 - Chris Jones
+ - Update the data managers so "prepareHits" is called on demand. No longer
+   neccessary for the users to call it themselves.
+
+! 2007-08-13 - Chris Jones
+ - First import from ATEAM CVS of TfData and TfTools packages. 
+   Currently imported into a single package, TfKernel, that creates both
+   linker and component libraries. Could be split later if deemed appropriate.

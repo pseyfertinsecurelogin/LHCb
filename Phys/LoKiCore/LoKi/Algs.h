@@ -1,9 +1,4 @@
-// $Id: Algs.h,v 1.8 2007-06-03 20:38:24 ibelyaev Exp $
-// ============================================================================
-// CVS tag $Name: not supported by cvs2svn $, version $Revision: 1.8 $
-// ============================================================================
-// $Log: not supported by cvs2svn $
-//
+// $Id: Algs.h,v 1.10 2007-08-18 14:10:56 ibelyaev Exp $
 // ============================================================================
 #ifndef LOKI_ALGS_H 
 #define LOKI_ALGS_H 1
@@ -12,6 +7,7 @@
 // ============================================================================
 // STD & STL 
 // ============================================================================
+#include <utility>
 #include <algorithm>
 #include <functional>
 // ============================================================================
@@ -94,6 +90,7 @@ namespace LoKi
       { result = binop ( result , functor( *first ) ) ; } }
       return result ;
     } 
+    // ========================================================================
     /** The missing "copy_if" algorithm from STL 
      *
      *  @param first 'begin'-iterator for the input sequence of objects
@@ -116,6 +113,7 @@ namespace LoKi
       { if ( cut( *first ) ) { *output = *first ; ++output ; } }
       return output ;
     }
+    // ========================================================================
     /// a bit modified version of std::count_if 
     template <class OBJECT, class PREDICATE>
     inline std::size_t count_if 
@@ -128,6 +126,7 @@ namespace LoKi
       { if ( cuts ( *first ) ) { ++result ; } }
       return result ;
     }    
+    // ========================================================================
     /// a bit modified version of std::count_if 
     template <class OBJECT, class PREDICATE>
     inline OBJECT find_if 
@@ -139,6 +138,7 @@ namespace LoKi
       { if ( cuts ( *first ) ) { return first ; } }
       return last  ;
     }
+    // ========================================================================
     /// useful shortcut
     template <class OBJECT,class PREDICATE>
     inline bool found 
@@ -148,7 +148,86 @@ namespace LoKi
     {
       return last != LoKi::Algs::find_if ( first , last , cuts ) ;
     }
-    /** select element form the sequence with maximal value of 
+    // ========================================================================
+    /** helper function to find "extremum" (minimum or maximum)
+     *  of the certain function over the sequence of values 
+     *  @see LoKi::select_min
+     *  @see LoKi::select_max 
+     *  @author Vanya BELYAEV  ibelyaev@physics.syr.edu
+     *  @date 2007-08-17
+     */
+    template<class OBJECT,class FUNCTION,class BINOP>
+    inline std::pair<OBJECT,double> 
+    extremum
+    ( OBJECT           first , 
+      OBJECT           last  , 
+      const FUNCTION&  fun   , 
+      BINOP            binop )
+    {
+      // empty sequence?
+      if ( first == last ) { return std::pair<OBJECT,double> ( last , 0 ) ; }
+      // store the first result: 
+      OBJECT result = first        ;
+      double value  = fun(*result) ;
+      for ( ; first != last ; ++first ) 
+      {
+        const double tmp =  fun(*first) ;
+        if ( binop ( tmp , value )  ) 
+        {
+          result = first ;
+          value  = tmp   ;
+        } 
+      }
+      return std::pair<OBJECT,double> ( result , value ) ;     // RETURN 
+    }
+    // ========================================================================
+    /** helper function to find "extremum" (minimum or maximum)
+     *  of the certain function over the sequence of values 
+     *  @see LoKi::select_min
+     *  @see LoKi::select_max 
+     *  @author Vanya BELYAEV  ibelyaev@physics.syr.edu
+     *  @date 2007-08-17
+     */    
+    template<class OBJECT,class FUNCTION,class PREDICATE,class BINOP>
+    inline std::pair<OBJECT,double> 
+    extremum
+    ( OBJECT           first , 
+      OBJECT           last  , 
+      const FUNCTION&  fun   , 
+      const PREDICATE& cut   ,
+      BINOP            binop )
+    {
+      // empty sequence?
+      if ( first == last ) { return std::pair<OBJECT,double>( last , 0 )  ; }
+      // store 
+      OBJECT result = last ;
+      double value  = 0    ;
+      for ( ; first != last ; ++first ) 
+      {
+        // good value?
+        if ( !cut ( *first ) ) { continue ; }                  // CONTINUE 
+        // the first good value? 
+        if ( last == result ) 
+        {
+          result = first ;
+          value  = fun( *result ) ;
+          continue ;                                          // CONTINUE 
+        }
+        // evaluate the  function  
+        const double tmp = fun ( *first ) ;
+        // compare it!
+        if ( binop ( tmp , value ) ) 
+        {
+          result = first ;
+          value  = tmp   ;
+          continue  ;                                         // CONTINUE   
+        }
+      }
+      // return the pair of result and  value 
+      return std::pair<OBJECT,double> ( result , value ) ;    // RETURN 
+    }
+    // ========================================================================
+    /** select element from the sequence with maximal value of 
      *  given function 
      *
      *  It is just an extension of the STL <tt>std::max_element</tt> 
@@ -186,19 +265,11 @@ namespace LoKi
       const FUNCTION&  fun   , 
       const PREDICATE& cut   )
     {
-      // empty sequence?
-      if ( first == last ) { return last ; }
-      // store 
-      OBJECT result = last ;
-      for ( ; first != last ; ++first ) 
-      {
-        if ( !cut ( *first) ) { continue ; }              // CONTINUE 
-        if ( last == result || 
-             ( fun(*first) < fun(*result) ) ) { result = first ; }  
-      }
-      return result ;
+      return LoKi::Algs::extremum 
+        ( first , last , fun , cut , std::less<double> () ).first  ;
     }
-    /** select element form the sequence with maximal value of 
+    // ========================================================================
+    /** select element from the sequence with maximal value of 
      *  given function 
      *
      *  It is just an extension of the STL <tt>std::max_element</tt> 
@@ -236,19 +307,11 @@ namespace LoKi
       const FUNCTION&  fun   , 
       const PREDICATE& cut   )
     {
-      // empty sequence?
-      if ( first == last ) { return last ; }
-      // store 
-      OBJECT result = last ;
-      for ( ; first != last ; ++first ) 
-      {
-        if ( !cut ( *first) ) { continue ; }              // CONTINUE 
-        if ( last == result || 
-             ( fun(*result) < fun(*first) ) )  { result = first ; }  
-      }
-      return result ;
-    }    
-    /** select element form the sequence with maximal value of 
+      return LoKi::Algs::extremum 
+        ( first , last , fun , cut , std::greater<double>() ).first ;
+    }
+    // ========================================================================
+    /** select element from the sequence with maximal value of 
      *  given function 
      *
      *  It is just an extension of the STL <tt>std::max_element</tt> 
@@ -283,17 +346,10 @@ namespace LoKi
       OBJECT           last  , 
       const FUNCTION&  fun   )
     {
-      // empty sequence?
-      if ( first == last ) { return last ; }
-      // store 
-      OBJECT result = last ;
-      for ( ; first != last ; ++first ) 
-      {
-        if ( last == result || 
-             ( fun(*first) < fun(*result) ) ) { result = first ; }  
-      }
-      return result ;
+      return LoKi::Algs::extremum 
+        ( first , last , fun , std::less<double>() ).first ;
     }
+    // ========================================================================
     /** select element form the sequence with maximal value of 
      *  given function 
      *
@@ -329,21 +385,87 @@ namespace LoKi
       OBJECT           last  , 
       const FUNCTION&  fun   )
     {
-      // empty sequence?
-      if ( first == last ) { return last ; }
-      // store 
-      OBJECT result = last ;
+      return LoKi::Algs::extremum 
+        ( first , last , fun , std::greater<double>() ).first ;
+    }
+    // ========================================================================    
+    /** very simple algorithm for minimum value of the function over the 
+     *  sequence 
+     *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
+     *  @date   2007-07-20
+     */
+    template <class OBJECT, class FUNCTION,class RESULT>
+    inline RESULT min_value 
+    ( OBJECT           first  , 
+      OBJECT           last   , 
+      const FUNCTION&  fun    , 
+      RESULT           result )
+    {
+      for ( ; first != last ; ++first ) 
+      { result = std::min ( result , fun (*first) ) ; }
+      return result ;
+    }
+    // ========================================================================    
+    /** very simple algorithm for maximum value of the function over the 
+     *  sequence 
+     *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
+     *  @date   2007-07-20
+     */
+    template <class OBJECT, class FUNCTION, class PREDICATE, class RESULT>
+    inline RESULT min_value 
+    ( OBJECT           first  , 
+      OBJECT           last   , 
+      const FUNCTION&  fun    , 
+      const PREDICATE& cut    , 
+      RESULT           result )
+    {
       for ( ; first != last ; ++first ) 
       {
-        if ( last == result || 
-             ( fun(*result) < fun(*first) ) )  { result = first ; }  
+        if ( cut ( *first ) ) 
+        {  result = std::min ( result , fun ( *first ) ) ; } 
       }
       return result ;
     }
-    
-  } // end of namespace LoKi::Algs
+    // ========================================================================    
+    /** very simple algorithm for maximum value of the function over the 
+     *  sequence 
+     *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
+     *  @date   2007-07-20
+     */
+    template <class OBJECT, class FUNCTION,class RESULT>
+    inline RESULT max_value 
+    ( OBJECT           first  , 
+      OBJECT           last   , 
+      const FUNCTION&  fun    , 
+      RESULT           result )
+    {
+      for ( ; first != last ; ++first ) 
+      { result = std::max ( result , fun ( *first ) ) ; }
+      return result ;
+    }
+    // ========================================================================    
+    /** very simple algorithm for maximum value of the function over the 
+     *  sequence 
+     *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
+     *  @date   2007-07-20
+     */
+    template <class OBJECT, class FUNCTION, class PREDICATE, class RESULT>
+    inline RESULT max_value 
+    ( OBJECT           first  , 
+      OBJECT           last   , 
+      const FUNCTION&  fun    , 
+      const PREDICATE& cut    , 
+      RESULT           result )
+    {
+      for ( ; first != last ; ++first ) 
+      {
+        if ( cut ( *first ) ) 
+        {  result = std::max ( result , fun (*first) ) ; } 
+      }
+      return result ;
+    }
+  } // end of namespace LoKi::Algs  
 } // end of namespace LoKi
-
 // ============================================================================
 // The END 
 // ============================================================================

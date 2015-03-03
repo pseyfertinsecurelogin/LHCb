@@ -1,6 +1,6 @@
-// $Id: WrongMass.h,v 1.5 2007-02-26 13:13:09 cattanem Exp $
+// $Id: WrongMass.h,v 1.7 2007-07-26 13:27:05 ibelyaev Exp $
 // ============================================================================
-// CVS tag $Name: not supported by cvs2svn $, verision $Revision: 1.5 $
+// CVS tag $Name: not supported by cvs2svn $, verision $Revision: 1.7 $
 // ============================================================================
 #ifndef LOKI_WRONGMASS_H 
 #define LOKI_WRONGMASS_H 1
@@ -27,12 +27,11 @@ namespace LHCb { class ParticleID ; } ;
  *  @date 2006-03-08
  */
 // ============================================================================
-
 namespace LoKi
 {
   namespace Kinematics 
   {
-
+    // ========================================================================
     /** Use a wrong mass-hypothesis for the given 4-momemtum
      *  @param v vector of 4-momentum 
      *  @param m mass to be used 
@@ -49,8 +48,8 @@ namespace LoKi
       LoKi::LorentzVector v0 = LoKi::LorentzVector() ;
       v0.SetXYZT ( v.Px() , v.Py() , v.Pz() , ::sqrt ( v.P2() + m * m ) ) ;
       return v0 ; 
-    } ;
-    
+    } 
+    // ========================================================================    
     /** Use a wrong mass-hypothesis for the given 4-momentum 
      *  @param v    vector of 4-momentum 
      *  @param name particle name  
@@ -63,7 +62,7 @@ namespace LoKi
     wrongMass
     ( const LoKi::LorentzVector& v    , 
       const std::string&         name ) ;
-    
+    // ========================================================================    
     /** Use a wrong mass-hypothesis for the given 4-momentum 
      *  @param v    vector of 4-momentum 
      *  @param name particle name  
@@ -76,7 +75,7 @@ namespace LoKi
     wrongMass
     ( const LoKi::LorentzVector& v    , 
       const LHCb::ParticleID&    pid  ) ;
-
+    // ========================================================================
     /** Use a wrong mass-hypothesis for the given 4-momenta 
      *  to evaluate the effective invarinat mass 
      *
@@ -97,7 +96,7 @@ namespace LoKi
       const double               m2 ) 
     { return mass ( wrongMass ( v1 , m1 ) , 
                     wrongMass ( v2 , m2 ) ) ; }
-
+    // ========================================================================
     /** Use a wrong mass-hypothesis for the given 4-momenta 
      *  to evaluate the effective invarinat mass 
      *
@@ -116,7 +115,7 @@ namespace LoKi
       const std::string&         name1 ,
       const LoKi::LorentzVector& v2    , 
       const std::string&         name2 ) ;
-
+    // ========================================================================
     /** Use a wrong mass-hypothesis for the given 4-momenta 
      *  to evaluate the effective invarinat mass 
      *
@@ -135,10 +134,61 @@ namespace LoKi
       const LHCb::ParticleID&    pid1  ,
       const LoKi::LorentzVector& v2    , 
       const LHCb::ParticleID&    pid2  ) ;
-    
+    // ========================================================================    
+    /** get the four momentum fo the combination of particles 
+     *  using the mass hypothesis (masses, pids of names) form some 
+     *  vector 
+     *  
+     *  evaluate the 4 momentum using wrong hypos for particles:
+     *  @code 
+     *  
+     *  const LHCb::Particle::ConstVector& parts = ... ;
+     *  // it works also for LHCb::MCParticle 
+     *  // const LHCb::Particle::ConstVector& parts = ... ;
+     *
+     *  // vector of wrong masses:
+     *  const std::vector<double>&         masses = ... ;
+     * 
+     *  LoKi::LorentzVector r1 = 
+     *     wrongMass ( parts.begin()  , parts.end() , 
+     *                 masses.begin() , _VALID_     ) ;
+     *
+     *  // vector of wrong pids
+     *  const std::vector<LHCb::ParticleID>&    pids = ... ;
+     * 
+     *  LoKi::LorentzVector r2 = 
+     *     wrongMass ( parts.begin()  , parts.end() , 
+     *                 masses.begin() , _VALID_     ) ;
+     *
+     *  // vector of wrong mass-hypos:
+     *  const std::vector<std::string>&  hypos = ... ;
+     * 
+     *  LoKi::LorentzVector r3 = 
+     *     wrongMass ( parts.begin()  , parts.end() , 
+     *                 hypos.begin() , _VALID_     ) ;
+     *
+     *  @endcode 
+     */
+    template <class PARTICLE,class WMASSVAL,class PREDICATE>
+    inline 
+    LoKi::LorentzVector 
+    wrongMass 
+    ( PARTICLE            first  , 
+      PARTICLE            last   , 
+      WMASSVAL            begin  ,
+      PREDICATE           cut    , 
+      LoKi::LorentzVector result = LoKi::LorentzVector() ) 
+    {
+      for ( ; first != last ; ++first , ++begin )
+      {
+        if ( cut (*first) ) 
+        { result += wrongMass ( (*first)->momentum() , *begin ) ; }  
+      }
+      return result ;
+    }
+    // ========================================================================
   } // end of namespace LoKi::Kinematics 
 } // end of namespace LoKi
-
 // ============================================================================
 // The END 
 // ============================================================================

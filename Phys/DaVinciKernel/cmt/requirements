@@ -1,10 +1,10 @@
-# $Id: requirements,v 1.45 2007-07-20 15:04:49 jpalac Exp $
+# $Id: requirements,v 1.47 2007-09-07 13:26:52 pkoppenb Exp $
 # Created    : 05/02/2002
 # Maintainer : P. Koppenburg, J. Palcios
 #============================================================================
 
 package           DaVinciKernel
-version           v6r5
+version           v6r6
 
 
 # Structure, i.e. directories to process. 
@@ -13,10 +13,10 @@ branches          cmt doc dict src Kernel
 
 # Used packages. 
 #============================================================================
-use RecEvent   v* Event
 use PhysEvent  v* Event
 use GaudiAlg   v* 
 use Relations  v* Kernel
+use RecInterfaces v* Kernel
 
 # Exported header files
 #============================================================================

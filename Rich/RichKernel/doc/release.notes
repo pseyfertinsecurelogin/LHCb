@@ -1,8 +1,35 @@
-! $Id: release.notes,v 1.153 2007-07-09 15:31:09 cattanem Exp $
+! $Id: release.notes,v 1.160 2007-09-17 09:51:01 cattanem Exp $
 ! Package     : Rich/RichKernel
 ! Responsible : Chris Jones
 ! Purpose     : General purpose RICH classes
 !----------------------------------------------------------------------
+
+!====================== RichKernel v7r8 2007-09-17 ====================
+! 2007-09-04 - Chris Jones
+ - Add header file defining some 'fast' math functions
+ - Various speed optimisations to clustering tool interfaces and DAQ
+   definitions
+ - Switch to using memory pool classes from LHCbKernel
+
+! 2007-08-13 - Chris Jones
+ - Remove the use of boost::format in RichDAQDefinitions.h
+ - Downgrade, for speed reasons, the HPDPixelCluster in RichGeomPhoton
+   to a single RichSmartID. In practise the ability to store a cluster
+   here was never used. Removing it speeds things up a little.
+
+! 2007-08-09 - Chris Jones
+ - Add to IRichParticleProperties a method to return the list of all 
+   mass hypothesis to be considered.
+ - Extend IRichRayTracing to return ray tracing summary result object.
+
+! 2007-08-03 - Chris Jones
+ - Add == and != operators for EventID and BXID that check the correct 
+   number of bits
+
+! 2007-07-20 - Chris Jones
+ - Add two new methods, anodeGlobalPosition, which return the position 
+   for a given RichSmartID or Rich::HPDPixelCluster on the anode 
+   pixel chip.
 
 !====================== RichKernel v7r7 2007-07-09 ====================
 ! 2007-06-25 - Chris Jones

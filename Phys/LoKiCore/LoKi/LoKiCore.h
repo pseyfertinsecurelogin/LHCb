@@ -1,9 +1,4 @@
-// $Id: LoKiCore.h,v 1.17 2007-06-01 11:35:26 ibelyaev Exp $
-// ============================================================================
-// CVS tag $Name: not supported by cvs2svn $, version $Revision: 1.17 $
-// ============================================================================
-// $Log: not supported by cvs2svn $
-//
+// $Id: LoKiCore.h,v 1.20 2007-08-18 14:10:56 ibelyaev Exp $
 // ============================================================================
 // Include files 
 // ============================================================================
@@ -16,7 +11,6 @@
 #include "LoKi/Report.h"
 #include "LoKi/AuxFunBase.h"
 #include "LoKi/Power.h"
-#include "LoKi/cpower.h"
 #include "LoKi/Functions.h"
 #include "LoKi/Math.h"
 #include "LoKi/Operators.h"
@@ -51,8 +45,10 @@
 #include "LoKi/ConstIterator.h"
 #include "LoKi/ConstView.h"
 #include "LoKi/GetType.h"
-// ============================================================================
-
+#include "LoKi/Monitoring.h"
+#include "LoKi/Info.h"
+#include "LoKi/ExtraInfo.h"
+#include "LoKi/StdMath.h"
 // ============================================================================
 /** @file
  *
@@ -68,7 +64,6 @@
  *  @date 2006-11-25 
  */
 // ============================================================================
-
 /** @namespace LoKi 
  *  The major namespace for all LoKi project
  *  all classes, functions and onbjects (Except for operators)
@@ -88,9 +83,8 @@ namespace LoKi
   namespace Types      {}
   namespace Cuts       {}
   namespace Objects    {}
-}
-
-
+  namespace Monitoring {}
+} // end of namespace LoKi
 // ============================================================================
 // The END 
 // ============================================================================

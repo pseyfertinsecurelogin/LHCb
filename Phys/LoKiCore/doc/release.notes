@@ -1,4 +1,4 @@
-! $Id: release.notes,v 1.51 2007-06-11 09:13:46 cattanem Exp $ 
+! $Id: release.notes,v 1.57 2007-09-04 12:11:25 cattanem Exp $ 
 ! -----------------------------------------------------------------------------
 ! Package     : Phys/LoKiCore
 ! Responsible : Vanya BELYAEV ibelyaev@physics.syr.edu
@@ -14,6 +14,44 @@
 !   A.Golutvin, P.Koppenburg have been used in the design.
 ! 
 ! -----------------------------------------------------------------------------
+
+!=========================== LoKiCore v6r0 2007-09-04 ======================
+! 2007-08-22 - Patrick Koppenburg
+ - src/ParticleProperties.cpp src/Components/LoKiPIDTest.cpp
+   . No implicit construction of ParticleID from int
+
+! 2007-08-20 - Vanya Belyaev
+ - increment the major version to v6r0 
+
+! 2007-07-25 - Vanya BELYAEV
+ - few minor fixes due to Liniux ocmpiler 
+ - move the "hybrid" stuff from LoKiHybridBase 
+
+
+! 2007-07-23 - Vanya BELYAEV 
+  - many fixes and reshufling of the code 
+  - improve in doxygen comments
+  - reduce the numebr of included headers to speedup the compilation
+  - new functionality 
+     LoKi/Monitoring.h : 
+      three new  metafunctions, Counter, Stat and Plot for self-monitoring 
+      Many thanks to Hugo RUIZ! 
+     LoKi/Info.f and LoKi/ExtraInfo.h 
+      generic utilities and functors for manipulation with "extraInfo" data 
+      members
+    LoKi/ILoKiSvc and LoKi/Services.h
+      add access to AlgContext Service
+
+ - cmt/requirements 
+    version increment to v3r1
+
+
+! 2007-06-27 - Vanya BELYAEV 
+
+ - LoKi/Reference.h
+    fix a compilation problem for Reflex dictionaries at Win32 platform
+ - LoKi/Exception.h
+    remove extra CVS keywords
 
 !=========================== LoKiCore v3r0 2007-06-11 ======================
 ! 2007-06-10 - Vanya BELYAEV
@@ -337,6 +375,24 @@
 
 ! -----------------------------------------------------------------------------
 ! $Log: not supported by cvs2svn $
+! Revision 1.56  2007/08/22 17:25:27  pkoppenb
+! ParticleID constructor
+!
+! Revision 1.55  2007/08/20 13:15:08  ibelyaev
+!  update version to v6r0
+!
+! Revision 1.54  2007/07/25 15:14:13  ibelyaev
+!  add all 'hybrid' stuff
+!
+! Revision 1.53  2007/07/23 17:07:42  ibelyaev
+!  v3r1: minor update + fixes fro Doxygen
+!
+! Revision 1.52  2007/06/27 14:09:40  ibelyaev
+!  minor changes to allow compilation of Reflex dictionaries at Win32
+!
+! Revision 1.51  2007/06/11 09:13:46  cattanem
+! move tag
+!
 ! Revision 1.50  2007/06/10 19:54:07  ibelyaev
 !  prepare for v3r0
 !

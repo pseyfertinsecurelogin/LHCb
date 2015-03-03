@@ -1,7 +1,14 @@
-! $Id: release.notes,v 1.86 2007-07-20 12:21:22 cattanem Exp $
+! $Id: release.notes,v 1.89 2007-09-04 16:13:47 cattanem Exp $
 ! Package     : CaloUtils
 ! Responsible : Olivier Deschamps odescham@in2p3.fr
 !------------------------------------------------------------------------------
+
+!========================== CaloUtils v7r5 2007-09-04 =========================
+! 2007-08-27 - Olivier Deschamps
+ - clean unchecked StatusCode
+
+! 2007-08-24 - Olivier Deschamps
+ - Fix the unchecked StatusCodes
 
 !========================== CaloUtils v7r4 2007-07-20 =========================
 ! 2007-06-25 - Olivier Deschamps

@@ -5,7 +5,7 @@
  *  Header file for tool base class : Rich::Rec::PixelCreatorBase
  *
  *  CVS Log :-
- *  $Id: RichPixelCreatorBase.h,v 1.18 2007-04-23 12:56:12 jonrob Exp $
+ *  $Id: RichPixelCreatorBase.h,v 1.21 2007-09-14 13:36:57 jonrob Exp $
  *
  *  @author Chris Jones   Christopher.Rob.Jones@cern.ch
  *  @date   20/04/2005
@@ -31,12 +31,14 @@
 #include "RichKernel/IRichPixelClusteringTool.h"
 #include "RichKernel/IRichSmartIDTool.h"
 #include "RichKernel/IRichRawBufferToSmartIDsTool.h"
+#include "RichRecBase/IRichRecGeomTool.h"
 
 // RichKernel
 #include "RichKernel/RichStatDivFunctor.h"
 #include "RichKernel/RichMap.h"
 #include "RichKernel/RichHashMap.h"
 #include "RichKernel/BoostArray.h"
+//#include "RichKernel/RichSmartIDSorter.h"
 
 // RichDet
 #include "RichDet/DeRichSystem.h"
@@ -62,7 +64,7 @@ namespace Rich
      *  @date   20/04/2005
      *
      *  @todo Find a better way to handle the filling of the pixel iterators, that avoids a
-     *        seperate loop and if possible maps
+     *        seperate loop and if possible the maps
      */
     //---------------------------------------------------------------------------------------
 
@@ -96,25 +98,16 @@ namespace Rich
       // Returns a pointer to the RichRecPixels
       LHCb::RichRecPixels * richPixels() const;
 
-      // Access the begin iterator for the pixels in the given RICH detector
-      LHCb::RichRecPixels::iterator begin( const Rich::DetectorType rich ) const;
+      
+      // Access the range for the pixels in the given RICH detector
+      IPixelCreator::PixelRange range( const Rich::DetectorType rich ) const;
 
-      // Access the end iterator for the pixels in the given RICH detector
-      LHCb::RichRecPixels::iterator end( const Rich::DetectorType rich ) const;
-
-      // Access the begin iterator for the pixels in the given RICH detector
-      LHCb::RichRecPixels::iterator begin( const Rich::DetectorType rich,
-                                           const Rich::Side         panel ) const;
-
-      // Access the end iterator for the pixels in the given RICH detector
-      LHCb::RichRecPixels::iterator end( const Rich::DetectorType rich,
-                                         const Rich::Side         panel ) const;
+      // Access the range for the pixels in the given RICH detector and HPD panel
+      IPixelCreator::PixelRange range( const Rich::DetectorType rich,
+                                       const Rich::Side         panel ) const;
 
       // Access the begin iterator for the pixels in the given RICH HPD
-      LHCb::RichRecPixels::iterator begin( const LHCb::RichSmartID hpdID ) const;
-
-      // Access end begin iterator for the pixels in the given RICH HPD
-      LHCb::RichRecPixels::iterator end( const LHCb::RichSmartID hpdID ) const;
+      IPixelCreator::PixelRange range( const LHCb::RichSmartID hpdID ) const;
 
       // Form all possible RichRecPixels from RawBuffer
       // The most efficient way to make all RichRecPixel objects in the event.
@@ -185,6 +178,9 @@ namespace Rich
       /// Build a new RichRecPixel from an Rich::HPDPixelCluster
       virtual LHCb::RichRecPixel * buildPixel ( const Rich::HPDPixelCluster& cluster ) const;
 
+      /// Build a new RichRecPixel from a single LHCb::RichSmartID
+      virtual LHCb::RichRecPixel * buildPixel( const LHCb::RichSmartID & id ) const;
+
       /// Access the RichSmartIDTool
       inline const ISmartIDTool * smartIDTool() const
       {
@@ -227,6 +223,9 @@ namespace Rich
       /// Raw Buffer Decoding tool
       mutable const Rich::DAQ::IRawBufferToSmartIDsTool * m_decoder;
 
+      /// Geometry tool
+      const IGeomTool * m_geomTool;
+
       /// Pointer to RichRecPixels
       mutable LHCb::RichRecPixels * m_pixels;
 
@@ -267,13 +266,12 @@ namespace Rich
       /// End iterators for each RICH
       mutable boost::array<LHCb::RichRecPixels::iterator,Rich::NRiches> m_richEnd;
 
-      typedef Rich::Map<const LHCb::RichSmartID,LHCb::RichRecPixels::iterator> HPDItMap;
+      /// HPD range map type
+      typedef std::pair<LHCb::RichRecPixels::iterator,LHCb::RichRecPixels::iterator> HPDItPair;
+      typedef Rich::Map<const LHCb::RichSmartID,HPDItPair> HPDItMap;
 
-      /// Begin iterators for each HPD
-      mutable HPDItMap m_hpdBegin;
-
-      /// End iterators for each HPD
-      mutable HPDItMap m_hpdEnd;
+      /// iterators for each HPD
+      mutable HPDItMap m_hpdIts;
 
       /// Hit count tally
       mutable boost::array<unsigned int, Rich::NRiches> m_hitCount;
@@ -300,12 +298,6 @@ namespace Rich
 
       /// returns a pointer to the HPD clustering tool for the given RICH
       const Rich::DAQ::IPixelClusteringTool * hpdClusTool( const Rich::DetectorType rich ) const;
-
-      /** @brief Build a new RichRecPixel from a single LHCb::RichSmartID
-       *  Essentially replicated functionality from buildPixel(Rich::HPDPixelCluster) version...
-       *  Provided mainly for speed for HLT
-       */
-      LHCb::RichRecPixel * buildPixel( const LHCb::RichSmartID & id ) const;
 
     private: // helper classes
 
@@ -380,8 +372,7 @@ namespace Rich
       m_richEnd[Rich::Rich2]   = richPixels()->begin();
 
       // HPD
-      m_hpdBegin.clear();
-      m_hpdEnd.clear();
+      m_hpdIts.clear();
 
     }
 

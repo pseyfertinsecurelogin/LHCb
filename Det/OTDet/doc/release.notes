@@ -1,7 +1,21 @@
-! $Id: release.notes,v 1.91 2007-07-23 11:17:13 cattanem Exp $
+! $Id: release.notes,v 1.99 2007-09-19 08:24:37 cattanem Exp $
 ! Package     : OTDet
 ! Responsible : Jeroen van Tilburg, Jacopo Nardulli, Jan Amoraal
 !--------------------------------------------------------------------------
+
+!========================== OTDet v7r6 2007-09-19 =========================
+! 2007-09-19 - Wouter Hulsbergen
+ - fix in RtRelation for compilation warnings on windows
+
+! 2007-09-07 - Wouter Hulsbergen
+ - revision of RtRelation class to be better suited for calibration algorithm
+ - moved resolution to RtRelation
+
+! 2007-08-23 - Wouter Hulsbergen
+ - bug fixes in rt-relation, affecting use of inverse
+
+! 2007-07-25 - Wouter Hulsbergen (more a-team changes)
+ - changed parameterization for fast geometry access
 
 !========================== OTDet v7r5 2007-07-23 =========================
 ! 2007-07-23 - Marco Cattaneo

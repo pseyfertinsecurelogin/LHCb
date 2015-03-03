@@ -27,27 +27,25 @@ DVAlgorithm::DVAlgorithm( const std::string& name, ISvcLocator* pSvcLocator )
   , m_particleReFitterNames ()
   , m_particleReFitters     ()
   //
-  , m_checkOverlapName      ( "CheckOverlap" )
+  , m_checkOverlapName      ( "CheckOverlap" ) 
   , m_checkOverlap          ( 0 )
-  , m_algorithm2IDToolName  ( "Algorithm2ID" )
-  , m_algorithm2IDTool      ( 0 )
-  , m_taggingTool           ( 0 )
   , m_taggingToolName       ( "BTaggingTool" )
-  //
-  ,
-  m_descendants(0),
-  m_descendantsName("ParticleDescendants"),
-  m_ppSvc(0),
-  m_setFilterCalled(false),
-  m_countFilterWrite(0),
-  m_countFilterPassed(0),
-  m_algorithmID(-1)
+  , m_taggingTool           ( 0 )
+  , m_descendants           (0)
+  , m_descendantsName         ("ParticleDescendants")
+  , m_writeSelResultName      ( "WriteSelResult" )
+  , m_writeSelResult          ( 0 )
+  , m_ppSvc                  (0)
+  , m_setFilterCalled          (false)
+  , m_countFilterWrite        (0)
+  , m_countFilterPassed       (0)
 {
   // 
-  m_vertexFitNames [ "Offline" ] = "OfflineVertexFitter" ;
-  m_vertexFitNames [ "Trigger" ] = "TrgVertexFitter"     ;
-  m_vertexFitNames [ "Kalman"  ] = "BlindVertexFitter"   ;
-  m_vertexFitNames [ "Blind"   ] = "BlindVertexFitter"   ;
+  m_vertexFitNames [ "Offline"       ] = "OfflineVertexFitter" ;
+  m_vertexFitNames [ "Trigger"       ] = "TrgVertexFitter"     ;
+  m_vertexFitNames [ "Kalman"        ] = "BlindVertexFitter"   ;
+  m_vertexFitNames [ "Blind"         ] = "BlindVertexFitter"   ;
+  m_vertexFitNames [ "ParticleAdder" ] = "ParticleAdder"       ;
   declareProperty ( "VertexFitters"     , m_vertexFitNames    ) ;
   //
   m_geomToolNames  [ "Offline" ] = "GeomDispCalculator" ;
@@ -56,22 +54,26 @@ DVAlgorithm::DVAlgorithm( const std::string& name, ISvcLocator* pSvcLocator )
   //
   declareProperty ( "CheckOverlapTool"  , m_checkOverlapName  ) ;
   //
+  declareProperty ( "WriteSelResultTool"  , m_writeSelResultName  ) ;
+  //
   m_filterNames    [ "" ]        = "ParticleFilter" ;
   declareProperty ( "ParticleFilters"   , m_filterNames       ) ;
   // 
   declareProperty ( "FilterCriteria"    , m_criteriaNames     ) ; // empty! 
   // 
-  m_particleCombinerNames [ ""        ] = "OfflineVertexFitter" ;
-  m_particleCombinerNames [ "Offline" ] = "OfflineVertexFitter" ;
-  m_particleCombinerNames [ "Trigger" ] = "TrgVertexFitter"     ;
-  m_particleCombinerNames [ "Kalman"  ] = "BlindVertexFitter"   ;
-  m_particleCombinerNames [ "Blind"   ] = "BlindVertexFitter"   ;
+  m_particleCombinerNames [ ""              ] = "OfflineVertexFitter" ;
+  m_particleCombinerNames [ "Offline"       ] = "OfflineVertexFitter" ;
+  m_particleCombinerNames [ "Trigger"       ] = "TrgVertexFitter"     ;
+  m_particleCombinerNames [ "Kalman"        ] = "BlindVertexFitter"   ;
+  m_particleCombinerNames [ "Blind"         ] = "BlindVertexFitter"   ;
+  m_particleCombinerNames [ "ParticleAdder" ] = "ParticleAdder"       ;
   declareProperty ( "ParticleCombiners"  , m_particleCombinerNames ) ;
   //
-  m_particleReFitterNames [ ""        ] = "OfflineVertexFitter" ;
-  m_particleReFitterNames [ "Offline" ] = "OfflineVertexFitter" ;
-  m_particleReFitterNames [ "Kalman"  ] = "BlindVertexFitter"   ;
-  m_particleReFitterNames [ "Blind"   ] = "BlindVertexFitter"   ;
+  m_particleReFitterNames [ ""              ] = "OfflineVertexFitter" ;
+  m_particleReFitterNames [ "Offline"       ] = "OfflineVertexFitter" ;
+  m_particleReFitterNames [ "Kalman"        ] = "BlindVertexFitter"   ;
+  m_particleReFitterNames [ "Blind"         ] = "BlindVertexFitter"   ;
+  m_particleReFitterNames [ "ParticleAdder" ] = "ParticleAdder"       ;
   declareProperty ( "ParticleReFitters" , m_particleReFitterNames ) ;
   //
   declareProperty ( "DecayDescriptor"   , m_decayDescriptor   = "not specified" ) ;
@@ -144,6 +146,9 @@ StatusCode DVAlgorithm::loadTools() {
   debug() << ">>> Preloading CheckOverlap Tool" << endmsg;
   checkOverlap();
   
+  debug() << ">>> Preloading WriteSelResults Tool" << endmsg;
+  writeSelResult();
+  
   /*  Not preloading non-mandatory tools
   // particle filter
   for ( size_t i = 0; i < m_fileNames.size();++i) {
@@ -151,9 +156,6 @@ StatusCode DVAlgorithm::loadTools() {
   particleFilter(i); 
   }
   
-  debug() << ">>> Preloading Algorithm2ID Tool" << endmsg;
-  algorithm2ID();
-
   debug() << ">>> Preloading BTagging Tool" << endmsg;
   flavourTagging();
 
@@ -213,37 +215,22 @@ void DVAlgorithm::setFilterPassed  (  bool    state  )
 //=============================================================================
 StatusCode DVAlgorithm::fillSelResult () {
 
-  std::string location = LHCb::SelResultLocation::Default;
-  verbose() << "SelResult to be saved to " << location << endmsg ;
-
-  LHCb::SelResults* resultsToSave = 0 ;
-  // Check if SelResult contained has been registered by another algorithm
-  if ( exist<LHCb::SelResults>(location) ){
-    verbose() << "SelResult exists already " << endmsg ;
-    resultsToSave = get<LHCb::SelResults>(location);
-  } else {
-    verbose() << "Putting new SelResult container " << endmsg ;
-    resultsToSave = new LHCb::SelResults();
-    put(resultsToSave,location);
-  }
-
-  // Create and fill selection result object
-  LHCb::SelResult* myResult = new LHCb::SelResult();
-  myResult->setFound(filterPassed());
-  myResult->setLocation( ("/Event/Phys/"+name()));
+   // Create and fill selection result object
+  LHCb::SelResult myResult;
+  myResult.setFound(filterPassed());
+  myResult.setLocation( ("/Event/Phys/"+name()));
   verbose() << "SelResult location set to " << "/Event/Phys/"+name() 
             << endmsg;
-  myResult->setDecay(m_decayDescriptor);
+  myResult.setDecay(m_decayDescriptor);
+
+  StatusCode sc = writeSelResult()->write(myResult);
     
   if (filterPassed()) m_countFilterPassed++;
   m_countFilterWrite++;
   verbose() << "wrote " << filterPassed() << " -> " <<
     m_countFilterWrite << " & " << m_countFilterPassed << endmsg ;
 
-  resultsToSave->insert(myResult);
-  verbose() << "Number of objects in existingSelRes: "
-            << resultsToSave->size() << endmsg;
-  return StatusCode::SUCCESS ;
+  return sc ;
 
 }
 
@@ -290,13 +277,4 @@ void DVAlgorithm::imposeOutputLocation(const std::string& outputLocationString){
   }
   desktop()->imposeOutputLocation(outputLocationString);  
   return;  
-}
-// ============================================================================
-// Algorithm ID
-//=============================================================================
-int DVAlgorithm::getAlgorithmID(){
-  if ( m_algorithmID < 0 ) {
-    m_algorithmID = algorithmID()->idFromName(name());
-  }
-  return  m_algorithmID ;
 }

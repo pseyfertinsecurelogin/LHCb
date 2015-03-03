@@ -1,14 +1,4 @@
-// $Id: PrintDecay.cpp,v 1.3 2006-11-27 12:01:32 ibelyaev Exp $
-// ============================================================================
-// CVS tag $Name: not supported by cvs2svn $, verison $Revision: 1.3 $
-// ============================================================================
-// $Log: not supported by cvs2svn $
-// Revision 1.2  2006/11/09 16:34:31  ibelyaev
-//  v2r2: improve the printout functions
-//
-// Revision 1.1  2006/05/27 11:44:03  ibelyaev
-//  add PrintDecay utilities
-// 
+// $Id: PrintDecay.cpp,v 1.6 2007-08-16 13:52:08 ibelyaev Exp $
 // ============================================================================
 // Include files
 // ============================================================================
@@ -30,12 +20,11 @@
 // ============================================================================
 #include "LoKi/ParticleProperties.h"
 #include "LoKi/Report.h"
+#include "LoKi/Primitives.h"
 // ============================================================================
 // LoKiPhys 
 // ============================================================================
 #include "LoKi/PrintDecay.h"
-// ============================================================================
-
 // ============================================================================
 /** @file
  *
@@ -57,11 +46,9 @@
  *  @date 2006-05-26 
  */
 // ============================================================================
-
+// Simple function to print decay in more or less "readable" format 
 // ============================================================================
-/// Simple function to print decay in more or less "readable" format 
-// ============================================================================
-MsgStream& LoKi::Print::printDecay 
+MsgStream& LoKi::PrintPhys::printDecay 
 ( const LHCb::Particle*        particle , 
   MsgStream&                   stream   , 
   const LoKi::Types::Cuts&     cut      ,
@@ -69,27 +56,28 @@ MsgStream& LoKi::Print::printDecay
   const std::string&           blank    ) 
 {
   if ( stream.isActive() ) 
-  { LoKi::Print::printDecay 
+  { LoKi::PrintPhys::printDecay 
       ( particle , stream.stream() , cut , level , blank ) ; }
   return stream ;
-} ;
+} 
 // ============================================================================
-/// Simple function to print decay in more or less "readable" format 
+// Simple function to print decay in more or less "readable" format 
 // ============================================================================
-std::string LoKi::Print::printDecay 
+std::string LoKi::PrintPhys::printDecay 
 ( const LHCb::Particle*        particle , 
   const LoKi::Types::Cuts&     cut      ,
   const int                    level    ,
   const std::string&           blank    ) 
 {
   std::ostringstream stream ;
-  LoKi::Print::printDecay ( particle , stream, cut , level , blank ) ;
+  LoKi::PrintPhys::printDecay 
+    ( particle , stream, cut , level , blank ) ;
   return stream.str() ;
-} ;
+} 
 // ============================================================================
-/// Simple function to print decay in more or less "readable" format 
+// Simple function to print decay in more or less "readable" format 
 // ============================================================================
-std::ostream& LoKi::Print::printDecay 
+std::ostream& LoKi::PrintPhys::printDecay 
 ( const LHCb::Particle*        particle , 
   std::ostream&                stream   , 
   const LoKi::Types::Cuts&     cut      ,
@@ -115,14 +103,42 @@ std::ostream& LoKi::Print::printDecay
   // print the decay 
   stream << " ( " << name << " -> " ;
   for ( DAUGS::const_iterator id = daugs.begin() ; daugs.end() != id ; ++id ) 
-  { LoKi::Print::printDecay 
+  { LoKi::PrintPhys::printDecay 
       ( *id , stream , cut , level - 1 , blank ) ; }            // RECURSION
   //  
   return stream << " ) " ;                                      // RETURN 
-} ;
+} 
 // ============================================================================
-
-
+// Simple function to print decay in more or less "readable" format 
+// ========================================================================    
+std::ostream& LoKi::PrintPhys::printDecay 
+( const LHCb::Particle*        particle  , 
+  std::ostream&                stream    ) 
+{
+  return LoKi::PrintPhys::printDecay 
+    ( particle , stream , 
+      LoKi::BooleanConstant<const  LHCb::Particle*> ( true ) ) ;
+}
+// ========================================================================    
+//  Simple function to print decay in more or less "readable" format 
+// ========================================================================
+MsgStream& LoKi::PrintPhys::printDecay 
+( const LHCb::Particle*        particle  , 
+  MsgStream&                   stream    ) 
+{
+  return LoKi::PrintPhys::printDecay 
+    ( particle , stream , 
+      LoKi::BooleanConstant<const  LHCb::Particle*> ( true ) ) ;
+}
+// ========================================================================
+//  Simple function to print decay in more or less "readable" format 
+// ========================================================================
+std::string LoKi::PrintPhys::printDecay 
+( const LHCb::Particle*        particle ) 
+{
+  return LoKi::PrintPhys::printDecay 
+    ( particle , LoKi::BooleanConstant<const  LHCb::Particle*> ( true ) ) ;
+}
 // ============================================================================
 // The END 
 // ============================================================================

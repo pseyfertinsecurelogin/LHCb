@@ -4,6 +4,16 @@
 ! Purpose     : Implementation of the Linker package, to associate objects
 !-----------------------------------------------------------------------------
 
+!======================= LinkerEvent v3r2 2007-09-04 =========================
+! 2007-08-28 - Olivier Callot
+ - Insert keys in keyRange using explicitly KEY( int value)
+
+! 2007-07-26 - Olivier Callot
+ - Add a third template class to LinkedFrom, specifying the type of KEY of the 
+   SOURCE object.
+ - Removed method intRange of LinkedFrom.
+ - New method keyRange of LinkedFrom returning a vector of KEYS.
+
 !======================= LinkerEvent v3r1 2007-06-07 =========================
 ! 2007-06-07 - Marco Cattaneo
  - Adapt requirements to new GaudiObjDesc v10r0 patterns

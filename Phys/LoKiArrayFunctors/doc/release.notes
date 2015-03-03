@@ -1,0 +1,39 @@
+$Id: release.notes,v 1.7 2007-09-17 11:16:47 cattanem Exp $ 
+! -----------------------------------------------------------------------------
+! Package     : Phys/LoKiArrayFunctors
+! Responsible : Vanya BELYAEV
+! Purpose     : Some special "vector-like" functors to Exclusive "HLT"
+! -----------------------------------------------------------------------------
+
+!========================== LoKiArrayFunctors v6r0 2007-09-17 ===================
+! 2007-08-20 - Vanya BELYAEV
+ - increment the major version to v6r0 
+
+! 2007-07-26 - Vanya BELYAEV
+ - src/Component/HybridFilterParticles.cpp
+    new tool LoKi::Hybrid::FilterParticles - 
+    the first "hybrid" implementation of IFilterParticles interface 
+ - src/Component/HybridParticleArrayFilter.cpp
+    new tool LoKi::Hybrid::ParticleArrayFilter - 
+    the first "hybrid" implementation of IParticleArrayFilter interface 
+
+! 2007-07-26 - Vanya BELYAEV
+ - new functor LoKi::AParticles::WrongMass, whcih allows to get the 
+   invarinat mass of the combination using the specified 
+   mass-hypotheses for daughter particles.
+ - add all "hybrid"-stuff from LoKiHybrid package 
+
+
+! 2007-07-04 - Vanya BELYAEV
+ - python/LoKiArrayFunctors/functions.py
+   fix the errors and typos 
+ - cmt/requirements 
+   version increment to v1r1 
+
+!========================== LoKiArrayFunctors v1r0 2007-06-18 ===================
+! 2007-06-10 - Vanya BELYAEV
+ - new package 
+
+! -----------------------------------------------------------------------------
+! The END 
+! -----------------------------------------------------------------------------

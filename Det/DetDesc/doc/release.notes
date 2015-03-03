@@ -1,9 +1,64 @@
 ! =============================================================================
-! $Id: release.notes,v 1.321 2007-07-11 16:37:25 jpalac Exp $ 
+! $Id: release.notes,v 1.338 2007-09-21 07:01:03 cattanem Exp $ 
 ! =============================================================================
 ! package DetDesc
 ! package manager : Marco Clemencic, Juan Palacios
 ! =============================================================================
+
+!====================== DetDesc v18r0 2007-09-21 ==============================
+! 2007-09-21 - Marco Cattaneo
+ - Do not unregister from UMS in GeometryInfoPlus destructor, as this causes
+   crash in Brunel. To be understood
+
+! 2007-09-20 - Chris Jones
+ - Make log() in GeometryInfoPlus.h return MsgStream by reference not value
+
+! 2007-09-20 - Wouter Hulsbergen
+ - changed tick container to a fixed capacity array
+ - optimizations in calculations of intersections in cone and polycone
+ - changed logic in LVolume::intersectLine and LVolume::intersectBody such that
+   volumes only once intersected if they are their own cover colume
+
+! 2007-09-18 - Juan PALACIOS
+ - DetDesc/IGeometryInfo.h
+   . Improve some doxygen comments
+ - DetDesc/GeometryInfoPlus.h
+   . Remove "duplicated" doxygen comments. These should be picked up from 
+     abstract base class IGeometryInfo.
+   . Remove "inline" virtual methods and move to implementation file.
+ - DetDesc/AlignmentCondition.h
+   . Improve some doxygen comments
+ - src/Lib/GeometryInfoPlus.cpp
+   . Import some implementations which were "inlined" in the corresponding .h file
+
+! 2007-09-14 - Wouter Hulsbergen
+  - modifications to SolidBox and SolidTubs to speed things up
+
+! 2007-09-12 - Juan Palacios
+  - cmt/requirements
+    . Increase version to 18r0
+  - DetDesc/IGeometryInfo.h, AlignmentCondition.h
+    . Change names of methods returning 3D transformations for more explicit 
+      and hopefully clearer ones.
+    . Increase IGeometryInfo interface major version to 3.
+  - DetDesc/GeometryInfoPlus.h
+  - src/Lib/GeometryInfoPlus.cpp, AlignmentCondition.cpp, GlobalToLocalDelta.cpp
+    . Adapt to changes in interfaces above.
+
+! 2007-09-07 - Marco Cattaneo
+ - Remove duplicate dictionaries already in libSTLRflx.so and libMathRflx.so
+
+! 2007-09-04 - Marco Cattaneo for Brett Viren
+ - Fix gcc 4.0.3 compilation (Savannah patch 28908)
+
+! 2007-08-01 - Marco Clemencic
+ - Made GeometryInfoPlus objects unregister from the UpdateManagerSvc on deletion
+   and added the missing release of UMS.
+
+! 2007-07-17 - Juan Palacios
+ - DetDesc/GlobalToLocalDelta.h
+   . Clarify signature and doxygen documentation localDeltaFromGlobalTransform
+     methods.
 
 !====================== DetDesc v17r5 2007-07-11 ==============================
 ! 2007-07-11 - Juan PALACIOS

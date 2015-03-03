@@ -4,7 +4,7 @@
 <package name="RichRecBase">
 
 <!-- **************************************************************************
-  * $Id: RichRecSegment.xml,v 1.12 2007-04-23 12:56:12 jonrob Exp $
+  * $Id: RichRecSegment.xml,v 1.14 2007-09-04 16:46:57 jonrob Exp $
   *****************************************************************************
   * XML-description of RichRecTrack class                                     *
   * author: Chris Jones   Christopher.Rob.Jones@cern.ch                       *
@@ -31,6 +31,7 @@
         <import name="RichKernel/RichObjPtn"/>
         <import name="RichKernel/RichMap"/>
         <import name="Kernel/RichSmartID"/>
+        <import name="Kernel/FastAllocVector"/>
 
         <import name="Event/RichRecRing"    soft="TRUE" />
         <import name="Event/RichRecTrack"   soft="TRUE" />
@@ -69,7 +70,10 @@
                 <arg const="TRUE"  inout="BYVALUE" name="enBins"  type="unsigned int"      />
                 <arg const="TRUE"  inout="BYVALUE" name="minEn"   type="LHCb::RichRecSegment::FloatType"  />
                 <arg const="TRUE"  inout="BYVALUE" name="maxEn"   type="LHCb::RichRecSegment::FloatType"  />
-                <code/>
+                <code>
+                  m_richRecPixels.reserve(30);
+                  m_richRecPhotons.reserve(30);
+                </code>
         </constructor>
             
         <method 
@@ -579,7 +583,7 @@
         <attribute
                 desc        = "Ray traced HPD panel impact point in global coordinates, when forced to go to a given panel side" 
                 name        = "pdPanelHitPointForcedSide" 
-                type        = "std::vector&lt; Gaudi::XYZPoint &gt;"
+                type        = "LHCb::FastAllocVector&lt; Gaudi::XYZPoint &gt;"
                 init        = "Rich::NHPDPanelsPerRICH"
                 setMeth     = "FALSE"
                 getMeth     = "FALSE"
@@ -604,7 +608,7 @@
         <attribute 
                 desc        = "Ray traced HPD panel impact point in local coordinates, when forced to go to a given panel side" 
                 name        = "pdPanelHitPointForcedSideLocal" 
-                type        = "std::vector&lt; Gaudi::XYZPoint &gt;"
+                type        = "LHCb::FastAllocVector&lt; Gaudi::XYZPoint &gt;"
                 init        = "Rich::NHPDPanelsPerRICH"
                 setMeth     = "FALSE"
                 getMeth     = "FALSE"
@@ -642,14 +646,14 @@
                 access       = "PUBLIC" 
                 def          = "Pixels" 
                 desc         = "Container type for RichRecPixels" 
-                type         = "std::vector&lt;LHCb::RichRecPixel*&gt;"
+                type         = "LHCb::FastAllocVector&lt;LHCb::RichRecPixel*&gt;"
         />
 
         <typedef 
                 access       = "PUBLIC" 
                 def          = "Photons" 
                 desc         = "Container type for RichRecPhotons" 
-                type         = "std::vector&lt;LHCb::RichRecPhoton*&gt;"
+                type         = "LHCb::FastAllocVector&lt;LHCb::RichRecPhoton*&gt;"
         />
             
         <attribute 
@@ -716,6 +720,26 @@
                 name        = "hypothesisRings" 
                 type        = "Rich::ObjPtn&lt; Rich::HypoData&lt;LHCb::RichRecRing*&gt; &gt;"
         />
+
+        <attribute 
+                desc        = "The RichSmartID identifier for the HPD closest to the ray traced impact point on the HPD panel" 
+                name        = "closestHPD" 
+                type        = "LHCb::RichSmartID"
+        />  
+
+        <method 
+                desc         = "Does the segment have the possibility of photons in the given panel" 
+                inline       = "TRUE"
+                type         = "bool"
+                const        = "TRUE"
+                name         = "hasPhotonsIn" >
+                <arg const="TRUE" inout="BYVALUE" name="panel" type="Rich::Side"/>
+                <code>
+                    return ( Rich::Rich1 == trackSegment().rich() ?
+                             ( Rich::top  == panel ? photonsInYPlus() : photonsInYMinus() ) :
+                             ( Rich::left == panel ? photonsInXPlus() : photonsInXMinus() ) );
+                </code>
+        </method>
 
 </class>
 

@@ -1,11 +1,4 @@
-// $Id: Welcome.cpp,v 1.7 2006-11-09 18:26:53 ibelyaev Exp $
-// ============================================================================
-// CVS tag $Name: not supported by cvs2svn $ , version $Revision: 1.7 $
-// ============================================================================
-// $Log: not supported by cvs2svn $
-// Revision 1.6  2006/11/09 17:01:06  ibelyaev
-//  v1r8: improve printout
-//
+// $Id: Welcome.cpp,v 1.9 2007-08-15 13:44:02 ibelyaev Exp $
 // ============================================================================
 // Include files
 // ============================================================================
@@ -21,8 +14,6 @@
 // Boost
 // ============================================================================
 #include "boost/format.hpp"
-// ============================================================================
-
 // ============================================================================
 /** @file
  *
@@ -40,17 +31,15 @@
  *  @date 2001-01-23 
  */
 // ============================================================================
-
-// ============================================================================
-/// Meyers's singleton
+// Meyers's singleton
 // ============================================================================
 const LoKi::Welcome& LoKi::Welcome::instance () 
 {
   static LoKi::Welcome s_welcome = Welcome() ;
   return s_welcome ;
-};
+}
 // ============================================================================
-/// standard constructor 
+// standard constructor 
 // ============================================================================
 LoKi::Welcome::Welcome ()
   : m_len1   ( 103      ) 
@@ -60,12 +49,9 @@ LoKi::Welcome::Welcome ()
   , m_fmt3   ( "%|=94|" ) 
   , m_wel_printed ( false )
   , m_bye_printed ( false )
-{ 
-} ;
+{} 
 // ============================================================================
 LoKi::Welcome::~Welcome() { goodbye () ; };
-// ============================================================================
-
 // ============================================================================
 void LoKi::Welcome::welcome( std::ostream& stream ) const
 {
@@ -143,9 +129,7 @@ void LoKi::Welcome::welcome( std::ostream& stream ) const
   stream << m_str2    << std::endl ;  
   stream << std::endl << std::endl ;
   
-};
-// ============================================================================
-
+}
 // ============================================================================
 void LoKi::Welcome::goodbye ( std::ostream& stream ) const 
 {
@@ -217,10 +201,169 @@ void LoKi::Welcome::goodbye ( std::ostream& stream ) const
   stream << m_str2    << std::endl ;  
   stream << m_str2    << std::endl ;  
   stream << std::endl << std::endl ;
-} ;
+} 
 // ============================================================================
 
+// ============================================================================
+// Meyers's singleton
+// ============================================================================
+const Bender::Welcome& Bender::Welcome::instance() 
+{
+  // make sure that LoKi is instantiated *BEFORE*
+  LoKi::Welcome::instance() ;
+  static Bender::Welcome s_welcome = Bender::Welcome() ;
+  return s_welcome ;
+}
+// ============================================================================
+// standard constructor 
+// ============================================================================
+Bender::Welcome::Welcome () 
+  : m_len1   ( 103      ) 
+  , m_str1   ( "Bender" ) 
+  , m_fmt1   ( "%|-7|"  ) 
+  , m_fmt2   ( "%|-90|" ) 
+  , m_fmt3   ( "%|=90|" ) 
+  , m_wel_printed ( false )
+  , m_bye_printed ( false )
+{
+  // own welcome 
+  welcome  () ;
+}
+// ============================================================================
+// destructor 
+// ============================================================================
+Bender::Welcome::~Welcome() { goodbye () ; }
+// ============================================================================
+// print welcome message 
+// ============================================================================
+void Bender::Welcome::welcome( std::ostream& stream ) const
+{
+  // LoKi welcome 
+  LoKi::Welcome::instance().welcome ( stream ) ;
+  //
+  if ( m_wel_printed ) { return ; }                          // RETURN 
+  m_wel_printed = true ;
+  //
+  std::string m_str2 = "" ;
+  while ( m_str2.size() < m_len1 ) { m_str2 += "Welcome " ; }
+  m_str2 = std::string( m_str2.begin() , m_str2.begin() + m_len1 ) ;
+  //
+  stream << std::endl << std::endl ;
+  //
+  stream << m_str2    << std::endl ;
+  stream << m_str2    << std::endl ;
+  //
+  stream << boost::format ( m_fmt1 ) % m_str1 ;
+  stream << boost::format ( m_fmt3 ) % "" ;
+  stream << boost::format ( m_fmt1 ) % m_str1 << std::endl ;
+  //
+  stream << boost::format ( m_fmt1 ) % m_str1 ;
+  stream << boost::format ( m_fmt3 ) % "" ;
+  stream << boost::format ( m_fmt1 ) % m_str1 << std::endl ;
+  //
+  stream << boost::format ( m_fmt1 ) % m_str1 ;
+  stream << boost::format ( m_fmt3 ) % "Welcome to Bender!" ;
+  stream << boost::format ( m_fmt1 ) % m_str1 << std::endl ;
+  //
+  stream << boost::format ( m_fmt1 ) % m_str1 ;
+  stream << boost::format ( m_fmt3 ) % "" ;
+  stream << boost::format ( m_fmt1 ) % m_str1 << std::endl ;
+  //
+  stream << boost::format ( m_fmt1 ) % m_str1 ;
+  stream << boost::format ( m_fmt3 ) % 
+    "Python-based Physics Analysis Application" ;
+  stream << boost::format ( m_fmt1 ) % m_str1 << std::endl ;
+  //
+  stream << boost::format ( m_fmt1 ) % m_str1 ;
+  stream << boost::format ( m_fmt3 ) % "" ;
+  stream << boost::format ( m_fmt1 ) % m_str1 << std::endl ;
+  //
+  stream << boost::format ( m_fmt1 ) % m_str1 ;
+  stream << boost::format ( m_fmt3 ) % 
+    "Author:  Vanya BELYAEV ibelyaev@physics.syr.edu " ;
+  stream << boost::format ( m_fmt1 ) % m_str1 << std::endl ;
+  //
+  stream << boost::format ( m_fmt1 ) % m_str1 ;
+  stream << boost::format ( m_fmt3 ) % 
+    "With the kind help of Pere Mato & Andrey Tsaregorodtsev " ;
+  stream << boost::format ( m_fmt1 ) % m_str1 << std::endl ;
+  //
+  stream << boost::format ( m_fmt1 ) % m_str1 ;
+  stream << boost::format ( m_fmt2 ) % "" ;
+  stream << boost::format ( m_fmt1 ) % m_str1 << std::endl ;  
+  //
+  stream << boost::format ( m_fmt1 ) % m_str1 ;
+  stream << boost::format ( m_fmt3 ) % "Have fun and enjoy! Good Luck!" ;
+  stream << boost::format ( m_fmt1 ) % m_str1 << std::endl ;  
+  //
+  stream << boost::format ( m_fmt1 ) % m_str1 ;
+  stream << boost::format ( m_fmt2 ) % "" ;
+  stream << boost::format ( m_fmt1 ) % m_str1 << std::endl ;  
+  //
+  stream << m_str2    << std::endl ;  
+  stream << m_str2    << std::endl ;  
+  stream << std::endl << std::endl ;
+}
+// ============================================================================
+// print good bye message 
+// ============================================================================
 
+void Bender::Welcome::goodbye ( std::ostream& stream ) const 
+{
+  if ( !m_wel_printed ) { return ; }
+  if (  m_bye_printed ) { return ; }
+  //
+  m_bye_printed = true ;
+  //
+  std::string m_str2 = "" ;
+  while ( m_str2.size() < m_len1 ) { m_str2 += "Good Bye " ; }
+  m_str2 = std::string ( m_str2.begin() ,  m_str2.begin() + m_len1 ) ;
+  
+  stream << std::endl << std::endl ;
+  
+  stream << m_str2    << std::endl ;
+  stream << m_str2    << std::endl ;
+  
+  stream << boost::format ( m_fmt1 ) % m_str1 ;
+  stream << boost::format ( m_fmt3 ) % "" ;
+  stream << boost::format ( m_fmt1 ) % m_str1 << std::endl ;
+  
+  stream << boost::format ( m_fmt1 ) % m_str1 ;
+  stream << boost::format ( m_fmt3 ) % "Good Bye from Bender!" ;
+  stream << boost::format ( m_fmt1 ) % m_str1 << std::endl ;  
+  
+  stream << boost::format ( m_fmt1 ) % m_str1 ;
+  stream << boost::format ( m_fmt3 ) % "" ;
+  stream << boost::format ( m_fmt1 ) % m_str1 << std::endl ;
+  
+  stream << boost::format ( m_fmt1 ) % m_str1 ;
+  stream << boost::format ( m_fmt3 ) % 
+    "Python-based Physics Analysis Application" ;
+  stream << boost::format ( m_fmt1 ) % m_str1 << std::endl ;
+  
+  stream << boost::format ( m_fmt1 ) % m_str1 ;
+  stream << boost::format ( m_fmt3 ) % "" ;
+  stream << boost::format ( m_fmt1 ) % m_str1 << std::endl ;
+  
+  stream << boost::format ( m_fmt1 ) % m_str1 ;
+  stream << boost::format ( m_fmt3 ) % 
+    "Bender mailing list : lhcb-bender@cern.ch ";
+  stream << boost::format ( m_fmt1 ) % m_str1 << std::endl ;
+  
+  stream << boost::format ( m_fmt1 ) % m_str1 ;
+  std::string _s("Comments, suggestions, criticism, ideas, ") ;
+  _s += "questions and requests are *ALWAYS* welcome";
+  stream << boost::format ( m_fmt3 ) % _s ;
+  stream << boost::format ( m_fmt1 ) % m_str1 << std::endl ;
+  
+  stream << boost::format ( m_fmt1 ) % m_str1 ;
+  stream << boost::format ( m_fmt3 ) % "" ;
+  stream << boost::format ( m_fmt1 ) % m_str1 << std::endl ;
+  
+  stream << m_str2    << std::endl ;  
+  stream << m_str2    << std::endl ;  
+  stream << std::endl << std::endl ;
+}
 // ============================================================================
 // The END 
 // ============================================================================

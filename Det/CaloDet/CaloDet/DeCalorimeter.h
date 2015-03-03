@@ -1,4 +1,4 @@
-// $Id: DeCalorimeter.h,v 1.29 2007-07-18 12:20:15 cattanem Exp $ 
+// $Id: DeCalorimeter.h,v 1.31 2007-08-23 17:53:40 odescham Exp $ 
 // ============================================================================
 #ifndef       CALODET_DECALORIMETER_H
 #define       CALODET_DECALORIMETER_H 1
@@ -83,15 +83,15 @@ public:
   ///  if initialized in a proper way?
   inline  bool  isInitialized() const  { return m_initialized ; }
   ///  accessor to number of builded cells  ('virtual' cells associated to PIN are removed)
-  unsigned int   numberOfCells () { buildCells() ; return m_cells.size() - numberOfPins();  };
+  unsigned int   numberOfCells () { return buildCells().isSuccess() ? m_cells.size() - numberOfPins() : 0 ;  };
   ///  accessor to number of builded FEcards 
-  unsigned int   numberOfCards () { buildCards() ; return m_feCards.size(); };
+  unsigned int   numberOfCards () { return buildCards().isSuccess() ? m_feCards.size() : 0 ; };
  ///  accessor to number of builded tell1Boards
-  unsigned int   numberOfTell1s () { buildTell1s() ; return m_tell1Boards.size(); };
+  unsigned int   numberOfTell1s () { return buildTell1s().isSuccess() ?  m_tell1Boards.size() : 0 ; };
   ///  accessor to number of builded PIN-diodes
-  unsigned int   numberOfPins () { buildMonitoringSystem() ; return m_pins.size(); };
+  unsigned int   numberOfPins () { return buildMonitoringSystem().isSuccess() ? m_pins.size() : 0; };
   ///  accessor to number of builded LEDs
-  unsigned int   numberOfLeds () { buildMonitoringSystem() ; return m_leds.size(); };
+  unsigned int   numberOfLeds () { return buildMonitoringSystem().isSuccess() ? m_leds.size() : 0; };
   ///  accessor to pinArea
   unsigned int   pinArea () { return m_pinArea; };
   ///  set function for coding
@@ -221,6 +221,8 @@ public:
                                   int&      corner )  const ;
   ///  Validation card number
   inline int validationNumber   ( const int card   )  const ;
+  // Selection Board Type
+  inline int selectionType      ( const int card   )  const ;
   ///  card area 
   inline int cardArea           ( const int card   )  const ;
   ///  card first row 
@@ -540,6 +542,12 @@ inline int DeCalorimeter::previousCardNumber(const int card ) const
 // ============================================================================
 inline int DeCalorimeter::validationNumber(const int card ) const
 {  return m_feCards[card].validationNumber();}
+
+// ============================================================================
+//  selection board type
+// ============================================================================
+inline int DeCalorimeter::selectionType(const int card ) const
+{  return m_feCards[card].selectionType();}
 
 // ============================================================================
 //  card neighbours

@@ -53,6 +53,10 @@
 	          MuonTriggerSingle=110,
 	          MuonTriggerDiMuon=112,
 	          MuonTriggerIPDiMuon=114,
+	          MuonPreTriggerPureDiMuon=116,
+	          MuonPreTriggerPureIPDiMuon=118,
+	          MuonTriggerPureDiMuon=120,
+	          MuonTriggerPureIPDiMuon=122,
                   MuonHadEntry=200,
                   MuonHadL0Conf=202,
 	          MuonHadPreTrigger=204,
@@ -80,9 +84,13 @@
                   HltSelBs2DsH=1011,
                   HltSelBs2PhiGamma=1012,
                   HltSelBs2PhiPhi=1013,
-                  HltSelLastSelection=1014'
+	          HltSelBs2DsDs=1014,
+	          HltSelB2DstarMu=1015,
+                  HltSelBd2PiPiPi=1016,
+	          HltSelBu2D0K_KsHH=1017,
+                  HltSelBd2D0Kstar_KsHH=1018,
+                  HltSelLastSelection=1019'
         access = 'PUBLIC' />
-      
 
       <enum
         name   = 'HltParticleInfo'
@@ -107,6 +115,10 @@
 	VertexIPS,
 	Muon2DChi2,
 	Muon3DChi2,
+        Muon2DxDist,
+        Muon3DxDist,
+        Muon3DyDist,
+        MuonTdist,
 	CaloEt,
 	Calo2DChi2,
 	Calo3DChi2,

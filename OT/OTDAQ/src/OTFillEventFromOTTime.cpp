@@ -1,4 +1,4 @@
-// $Id: OTFillEventFromOTTime.cpp,v 1.3 2006-05-01 17:04:24 janos Exp $
+// $Id: OTFillEventFromOTTime.cpp,v 1.5 2007-09-18 11:12:03 cattanem Exp $
 // Include files
 
 // Gaudi
@@ -107,7 +107,7 @@ StatusCode OTFillEventFromOTTime::execute()
 
     int bankID = iBank->first;
     dataBank& bBank = (*aBank);
-    rawEvent->addBank( bankID , LHCb::RawBank::OT, 1, bBank);
+    rawEvent->addBank(bankID , LHCb::RawBank::OT, 1, bBank);
     aBank->clear();
   }
   

@@ -1,12 +1,5 @@
 #!/usr/bin/env python
 # =============================================================================
-# CVS tag $Name: not supported by cvs2svn $, version $Revision: 1.2 $
-# =============================================================================
-# $Log: not supported by cvs2svn $
-# Revision 1.1  2007/06/01 11:35:27  ibelyaev
-#  prepare for v3r0
-#
-# =============================================================================
 ## @file decorators.py LoKiCore/decorators.py
 #  The set of basic decorator for objects from LoKiCore library
 #  The file is a part of LoKi and Bender projects
@@ -33,7 +26,14 @@ LoKi.KeeperBase
 # =============================================================================
 ## simple function to provide the iteration over LoKi's range objects
 def _iter_1_ ( self ) :
-    """ Iteration over the range """
+    """
+    Iteration over the range:
+
+    >>> r = ...
+    >>> for o in r :
+    ...   print o
+    
+    """
     _range = self
     _size  = _range.size()
     _curr  = 0 
@@ -43,7 +43,15 @@ def _iter_1_ ( self ) :
 # =============================================================================
 ## simple function to provide the iteration over LoKi's keepers objects   
 def _iter_2_ ( self ) :
-    """ Iteration over Keeper/UniqueKeeper """
+    """
+    Iteration over Keeper/UniqueKeeper
+
+    >>> k = ...
+    >>> for o in k :
+    ...   print o
+
+    
+    """
     _range = self.toVector()
     _size  = _range.size()
     _curr  = 0 
@@ -53,7 +61,13 @@ def _iter_2_ ( self ) :
 # =============================================================================
 ## get the possibility to build the slices 
 def _slice_ ( self , i , j ) :
-    """ slicing abilities for range and keepers """    
+    """
+    Slicing abilities for range and keepers:
+    
+    >>> o =
+    >>> n = o[13:28]
+    
+    """    
     return self.slice( i , j )                                   ## RETURN 
 # =============================================================================
 
@@ -266,7 +280,7 @@ def decorateFunctions ( funcs , calls , opers ) :
             return opers.__neg__  (s)
         def _abs_  (s)   :
             """
-            Construct the absoluet value function: abs(fun)
+            Construct the absolute value function: abs(fun)
             
             >>> abs(fun)
             
@@ -297,6 +311,224 @@ def decorateFunctions ( funcs , calls , opers ) :
             Uses:\n
             """
             return opers.__rpow__ (s,a)
+        # home-made math (just to be coherent)
+        def _sin_(s) :
+            """
+            Construct the sin-function: sin(fun)
+            
+            >>> sin(fun)
+            
+            Uses:\n
+            """
+            return opers.__sin__ (s)
+        def _cos_(s) :
+            """
+            Construct the cos-function: cos(fun)
+            
+            >>> cos(fun)
+            
+            Uses:\n
+            """
+            return opers.__cos__ (s)
+        def _tan_(s) :
+            """
+            Construct the tan-function: tan(fun)
+            
+            >>> tan(fun)
+            
+            Uses:\n
+            """
+            return opers.__tan__ (s)
+        def _sinh_(s) :
+            """
+            Construct the sinh-function: sinh(fun)
+            
+            >>> sinh(fun)
+            
+            Uses:\n
+            """
+            return opers.__sinh__ (s)
+        def _cosh_(s) :
+            """
+            Construct the cosh-function: cosh(fun)
+            
+            >>> cosh(fun)
+            
+            Uses:\n
+            """
+            return opers.__cosh__ (s)
+        def _tanh_(s) :
+            """
+            Construct the tanh-function: tanh(fun)
+            
+            >>> tanh(fun)
+            
+            Uses:\n
+            """
+            return opers.__tanh__ (s)
+        def _asin_(s) :
+            """
+            Construct the asin-function: asin(fun)
+            
+            >>> asin(fun)
+            
+            Uses:\n
+            """
+            return opers.__asin__ (s)
+        def _acos_(s) :
+            """
+            Construct the acos-function: acos(fun)
+            
+            >>> acos(fun)
+            
+            Uses:\n
+            """
+            return opers.__acos__ (s)
+        def _atan_(s,*a) :
+            """
+            Construct the atan-function: atan(fun)
+            
+            >>> atan(fun)
+            >>> atan(fun1,fun2)
+            >>> atan(fun1,number)
+            
+            Uses:\n
+            """
+            return opers.__atan__ (s,*a)
+        def _atan2_(s,a) :
+            """
+            Construct the atan2-function: atan(fun,fun2)
+            
+            >>> atan2(fun1,fun2)
+            >>> atan2(fun1,number)
+            
+            Uses:\n
+            """
+            return opers.__atan2__ (s,a)
+        def _exp_(s) :
+            """
+            Construct the exp-function: exp(fun)
+            
+            >>> exp(fun)
+            
+            Uses:\n
+            """
+            return opers.__exp__ (s)
+        def _log_(s) :
+            """
+            Construct the log-function: log(fun)
+            
+            >>> log(fun)
+            
+            Uses:\n
+            """
+            return opers.__log__ (s)
+        def _log10_(s) :
+            """
+            Construct the log10-function: log10(fun)
+            
+            >>> log10(fun)
+            
+            Uses:\n
+            """
+            return opers.__log10__ (s)
+        def _sqrt_(s) :
+            """
+            Construct the sqrt-function: sqrt(fun)
+            
+            >>> sqrt(fun)
+            
+            Uses:\n
+            """
+            return opers.__sqrt__ (s)
+        def _cbrt_(s) :
+            """
+            Construct the cbrt-function: cbrt(fun)
+            
+            >>> cbrt(fun)
+            
+            Uses:\n
+            """
+            return opers.__cbrt__ (s)
+        def _pow2_(s) :
+            """
+            Construct the pow2-function: pow2(fun)
+            
+            >>> pow2(fun)
+            
+            Uses:\n
+            """
+            return opers.__pow2__ (s)
+        def _pow3_(s) :
+            """
+            Construct the pow3-function: pow3(fun)
+            
+            >>> pow3(fun)
+            
+            Uses:\n
+            """
+            return opers.__pow3__ (s)
+        def _pow4_(s) :
+            """
+            Construct the pow4-function: pow4(fun)
+            
+            >>> pow4(fun)
+            
+            Uses:\n
+            """
+            return opers.__pow4__ (s)
+        def _min_(s,a,*b) :
+            """
+            Construct the min-function: min(fun1,fun2,...)
+            
+            >>> min(fun1,10)
+            >>> min(fun1,fun2)
+            >>> min(fun1,fun2,fun3)
+            >>> min(fun1,fun2,fun3,fun4)
+            
+            
+            Uses:\n
+            """
+            return opers.__min__ (s,a,*b)
+        def _max_(s,a,*b) :
+            """
+            Construct the max-function: max(fun1,fun2,...)
+            
+            >>> max(fun1,10)
+            >>> max(fun1,fun2)
+            >>> max(fun1,fun2,fun3)
+            >>> max(fun1,fun2,fun3,fun4)
+            
+            
+            Uses:\n
+            """
+            return opers.__max__ (s,a,*b)
+        def _monitor_ (s,m) :
+            """
+            Contruct the monitored function:
+
+            Make monitored function ( see LoKi::Monitoring::Stat )
+            >>>  counter = ...
+            >>>  fun = monitor ( fun , counter )
+
+            Make monitored function ( see LoKi::Monitoring::Plot )
+            >>>  histogram = ...
+            >>>  fun = monitor ( fun , histogram )
+
+            Uses:\n
+            """
+            return opers.__monitor__(s,m)
+        def _equal_to_ (f,v) :
+            """
+            Create the predicate which efficiently checks the equality of the
+            function to some predefined value. Logically it is just 'operator==',
+            b ut it should be more efficient 
+            
+            >>> cut = equal_to ( TrTYPE , LHCb.Track.Long )
+            
+            Uses:\n
+            """
+            return opers.__equal_to__(f,v)
         # documentation:
         _call_ . __doc__  += calls.__call__ . __doc__
         _lt_   . __doc__  += opers.__lt__   . __doc__
@@ -317,6 +549,29 @@ def decorateFunctions ( funcs , calls , opers ) :
         _abs_  . __doc__  += opers.__abs__  . __doc__
         _pow_  . __doc__  += opers.__pow__  . __doc__
         _rpow_ . __doc__  += opers.__rpow__ . __doc__
+        # others:
+        _sin_  . __doc__  += opers.__sin__  . __doc__
+        _cos_  . __doc__  += opers.__cos__  . __doc__
+        _tan_  . __doc__  += opers.__tan__  . __doc__
+        _sinh_ . __doc__  += opers.__sinh__ . __doc__
+        _cosh_ . __doc__  += opers.__cosh__ . __doc__
+        _tanh_ . __doc__  += opers.__tanh__ . __doc__
+        _asin_ . __doc__  += opers.__asin__ . __doc__
+        _acos_ . __doc__  += opers.__acos__ . __doc__
+        _atan_ . __doc__  += opers.__atan__ . __doc__
+        _exp_  . __doc__  += opers.__exp__  . __doc__
+        _log_  . __doc__  += opers.__log__  . __doc__
+        _log10_. __doc__  += opers.__log10__. __doc__
+        _sqrt_ . __doc__  += opers.__sqrt__ . __doc__
+        _cbrt_ . __doc__  += opers.__cbrt__ . __doc__
+        _pow2_ . __doc__  += opers.__pow2__ . __doc__
+        _pow3_ . __doc__  += opers.__pow3__ . __doc__
+        _pow4_ . __doc__  += opers.__pow4__ . __doc__
+        _atan2_. __doc__  += opers.__atan2__. __doc__
+        _min_  . __doc__  += opers.__min__  . __doc__
+        _max_  . __doc__  += opers.__max__  . __doc__
+        _monitor_  . __doc__  += opers.__monitor__  . __doc__
+        _equal_to_ . __doc__  += opers.__equal_to__ . __doc__
         # use also other docs: 
         _call_ . __doc__  += '\n\t' + fun.__call__   . __doc__ 
         _call_ . __doc__  += '\n\t' + fun.eval       . __doc__ 
@@ -341,6 +596,29 @@ def decorateFunctions ( funcs , calls , opers ) :
         fun . __abs__    = _abs_   # 
         fun . __pow__    = _pow_   # 
         fun . __rpow__   = _rpow_  #
+        # some other math:
+        fun . __sin__    = _sin_   #
+        fun . __cos__    = _cos_   #
+        fun . __tan__    = _tan_   #
+        fun . __sinh__   = _sinh_  #
+        fun . __cosh__   = _cosh_  #
+        fun . __tanh__   = _tanh_  #
+        fun . __asin__   = _asin_  #
+        fun . __acos__   = _acos_  #
+        fun . __atan__   = _atan_  #
+        fun . __atan2__  = _atan2_ #
+        fun . __exp__    = _exp_   #
+        fun . __log__    = _log_   #
+        fun . __log10__  = _log10_ #
+        fun . __sqrt__   = _sqrt_  #
+        fun . __cbrt__   = _cbrt_  #
+        fun . __pow2__   = _pow2_  #
+        fun . __pow3__   = _pow3_  #
+        fun . __pow4__   = _pow4_  #
+        fun . __min__    = _min_   #
+        fun . __max__    = _max_   #
+        fun . __monitor__  = _monitor_    #
+        fun . __equal_to__ = _equal_to_   #
     return funcs                                          ## RETURN 
 # =============================================================================        
 ## Decorate the predicates using the proper adapters 
@@ -410,25 +688,48 @@ def decoratePredicates ( cuts , calls , opers ) :
             Uses:\n
             """
             return opers.__invert__  (s)
-            
+        def _monitor_ (s,m) :
+            """
+            Contruct the monitored predicate:
+
+            Make monitored predicate ( see LoKi::Monitoring::Counter)
+            >>>  counter = ...
+            >>>  cut = monitor ( cut , counter )
+
+            Uses:\n
+            """
+            return opers.__monitor__(s,m)            
+        def _switch_ (s,v1,v2) :
+            """
+            Contruct the function which acts according to the rule  ' s ? v1 : v2 '  
+
+            >>>  fun = switch ( Q > 0 , P , PT ) 
+
+            Uses:\n
+            """
+            return opers.__switch__(s,v1,v2)            
         # documentation: 
-        _call_   . __doc__ += calls.__call__   . __doc__
-        _or_     . __doc__ += opers.__or__     . __doc__
-        _and_    . __doc__ += opers.__and__    . __doc__
-        _ror_    . __doc__ += opers.__ror__    . __doc__
-        _rand_   . __doc__ += opers.__rand__   . __doc__
-        _invert_ . __doc__ += opers.__invert__ . __doc__
+        _call_    . __doc__  += calls.__call__     . __doc__
+        _or_      . __doc__  += opers.__or__       . __doc__
+        _and_     . __doc__  += opers.__and__      . __doc__
+        _ror_     . __doc__  += opers.__ror__      . __doc__
+        _rand_    . __doc__  += opers.__rand__     . __doc__
+        _invert_  . __doc__  += opers.__invert__   . __doc__
+        _monitor_ . __doc__  += opers.__monitor__  . __doc__
+        _switch_  . __doc__  += opers.__switch__   . __doc__
         # use also other docs: 
-        _call_ . __doc__  += '\n\t' + cut.__call__   . __doc__ 
-        _call_ . __doc__  += '\n\t' + cut.evaluate   . __doc__ 
-        _call_ . __doc__  += '\n\t' + cut.evaluate   . __doc__ 
-        # finally redefine the fcuntions:
+        _call_ . __doc__  += '\n\t' + cut.__call__  . __doc__ 
+        _call_ . __doc__  += '\n\t' + cut.evaluate  . __doc__ 
+        _call_ . __doc__  += '\n\t' + cut.evaluate  . __doc__ 
+        # finally redefine the functions:
         cut .__call__   = _call_   # operator() 
         cut .__or__     = _or_     # operator||
         cut .__and__    = _and_    # operator&&
         cut .__ror__    = _ror_    #
         cut .__rand__   = _rand_   #
         cut .__invert__ = _invert_ # operator!
+        cut . __monitor__ = _monitor_   # monitoring 
+        cut . __switch__  = _switch_    # switch 
         for attr in ( '__eq__' , '__ne__' ,
                       '__lt__' , '__lt__' ,
                       '__gt__' , '__ge__' ) :
@@ -447,9 +748,9 @@ def getAndDecoratePredicates ( name , base , calls , opers ) :
     funcs = getInherited ( name , base )
     return decoratePredicates ( funcs , calls , opers )  ## RETURN 
 # =============================================================================
-# the special case of decoration of ID/ANSID functions:
+# the special case of decoration of ID/ABSID functions:
 def decoratePID ( fun , opers ) :
-    """ the special case of decoration of ID/ANSID functions """
+    """ the special case of decoration of ID/ABSID functions """
     # equality 
     def _eq_ (s,a) :
         """

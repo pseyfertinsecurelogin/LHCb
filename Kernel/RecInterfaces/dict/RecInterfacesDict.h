@@ -1,0 +1,7 @@
+#ifndef DICT_RECINTERFACESDICT_H 
+#define DICT_RECINTERFACESDICT_H 1
+
+#include "Kernel/IWriteSelResult.h"
+
+#endif // DICT_RECINTERFACESDICT_H
+

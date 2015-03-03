@@ -4,7 +4,7 @@
 <package name="RichRecBase">
 
 <!-- **************************************************************************
-  * $Id: RichRecRing.xml,v 1.11 2007-02-06 15:01:22 cattanem Exp $
+  * $Id: RichRecRing.xml,v 1.13 2007-08-13 13:21:26 jonrob Exp $
   *****************************************************************************
   * XML-description of RichRecRing class                                      *
   * author: Chris Jones   Christopher.Rob.Jones@cern.ch                       *
@@ -26,6 +26,7 @@
         <import name="Kernel/RichDetectorType"/>
         <import name="Kernel/RichParticleIDType"/>
         <import name="Kernel/RichSide"/>
+        <import name="GaudiKernel/PhysicalConstants"/>
         <import name="Event/RichRecPointOnRing" soft="FALSE" />
         <import name="Event/RichRecPixelOnRing" soft="FALSE" />
         <import name="Event/RichRecSegment" soft="TRUE" />
@@ -39,6 +40,17 @@
 		def    = "FloatType" 
 		type   = "float"
 	/>
+
+       <constructor 
+                desc     = "Constructor with arguments" 
+                initList = "m_centrePointGlobal(segment->pdPanelHitPoint()),m_centrePointLocal(segment->pdPanelHitPointLocal()),m_radius(radius),m_massHypo(hypo),m_historyCode(0),m_richRecSegment(segment)">
+                <arg inout="BYVALUE"  const="TRUE"  name="segment"    type="LHCb::RichRecSegment*"   />
+                <arg inout="BYVALUE"  const="TRUE"  name="radius"     type="LHCb::RichRecRing::FloatType"   />
+                <arg inout="BYVALUE"  const="TRUE"  name="hypo"       type="Rich::ParticleIDType"           />
+                <code>
+  setRich(segment->trackSegment().rich());
+                </code>
+        </constructor>
 
         <constructor 
                 desc     = "Copy Constructor. Creates a new RichRecRing with the same physics content" 
@@ -99,10 +111,11 @@
                 name = "historyCode" 
                 init = "0"
                 type = "bitfield" >
-                <bitfield desc="The Rich detector. Either Rich::Rich1 or Rich::Rich2"                                    length="1" name="rich"  type="Rich::DetectorType" />
-                <bitfield desc="The Rich panel. For Rich1(Rich2) either Rich::up(Rich::left) or Rich::down(Rich::right)" length="1" name="panel" type="Rich::Side"         />
-                <bitfield desc="The ring type"                                                                           length="4" name="type"  type="LHCb::RichRecRing::RingType" />
-                <bitfield desc="The algorithm used to create this ring"                                                  length="4" name="algorithm" type="LHCb::RichRecRing::RingAlgorithm" />
+                <bitfield desc="The Rich detector. Either Rich::Rich1 or Rich::Rich2"                                    length="1"  name="rich"  type="Rich::DetectorType" />
+                <bitfield desc="The Rich panel. For Rich1(Rich2) either Rich::up(Rich::left) or Rich::down(Rich::right)" length="1"  name="panel" type="Rich::Side"         />
+                <bitfield desc="The ring type"                                                                           length="4"  name="type"  type="LHCb::RichRecRing::RingType" />
+                <bitfield desc="The algorithm used to create this ring"                                                  length="4"  name="algorithm" type="LHCb::RichRecRing::RingAlgorithm" />
+                <bitfield desc="The total number of samples used when ray tracing the points for this ring"              length="10" name="nTotalPointSamples" type="unsigned int" />
         </attribute>
 
         <relation 
@@ -118,6 +131,25 @@
                 type         = "std::vector&lt;LHCb::RichRecPixelOnRing&gt;"
                 nonconstaccessor = "TRUE"
         />
+
+        <method 
+                const = "TRUE" 
+                type  = "const LHCb::RichRecPointOnRing*"
+                desc  = "Return the point on the ring closest to the given azimuth" 
+                name  = "getPointClosestInAzimuth" >
+                <arg const="TRUE" inout="BYVALUE" name="angle" type="double"/>
+                <code>
+  const LHCb::RichRecPointOnRing* point =  NULL;
+  const unsigned int nPoints = ringPoints().size();
+  if ( nPoints&gt;0 )
+  {
+    const unsigned int iPoint 
+      = static_cast&lt;unsigned int&gt;( (angle*static_cast&lt;double&gt;(nPoints)/Gaudi::Units::twopi) - 0.5 );
+    point = &amp;ringPoints()[ iPoint &lt; nPoints ? iPoint : nPoints-1 ];
+  }
+  return point;
+                </code>
+        </method>
 
 </class>
 

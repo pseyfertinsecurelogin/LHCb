@@ -1,4 +1,4 @@
-// $Id: PatContainer.h,v 1.6 2006-09-22 11:38:04 ocallot Exp $
+// $Id: PatContainer.h,v 1.7 2007-08-27 14:06:11 mneedham Exp $
 #ifndef PATTOOLS_PATCONTAINER_H 
 #define PATTOOLS_PATCONTAINER_H 1
 
@@ -106,6 +106,7 @@ public:
     m_it   = m_vector.begin();
     if (m_onTES) {
       m_vector.clear();
+      m_it   = m_vector.begin();
       retrieveKeyedContainer();    
     }
 

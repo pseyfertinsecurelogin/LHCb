@@ -1,7 +1,15 @@
-!$Id: release.notes,v 1.107 2007-07-23 09:52:13 cattanem Exp $
+!$Id: release.notes,v 1.111 2007-09-17 09:29:26 cattanem Exp $
 !Package         : STDet
 !Package manager : M. Needham
 !-------------------------------------------------------------------------
+
+!======================== STDet v3r6 2007-09-17 ==========================
+! 2007-09-12 M Needham
+ - Add short cuts to gets # box, # station, ....
+ - Access boxes
+
+! 2007-07-25 - Wouter Hulsbergen (more a-team changes)
+ - changed parameterization for fast geometry access
 
 !======================== STDet v3r5 2007-07-23 ==========================
 ! 2007-07-23 - Wouter Hulsbergen (a-team changes)

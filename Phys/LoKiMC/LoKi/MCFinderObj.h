@@ -1,4 +1,4 @@
-// $Id: MCFinderObj.h,v 1.8 2007-06-04 09:57:29 cattanem Exp $
+// $Id: MCFinderObj.h,v 1.11 2007-08-20 10:13:11 ibelyaev Exp $
 // ============================================================================
 #ifndef LOKI_MCFINDEROBJ_H 
 #define LOKI_MCFINDEROBJ_H 1
@@ -45,6 +45,7 @@
 // ============================================================================
 namespace LoKi 
 { 
+  // ==========================================================================
   /** determine if the decay members need to be extracted 
    *  @param decay decay descritor 
    *  @return true if decay descriptor contains special symbols for
@@ -53,7 +54,8 @@ namespace LoKi
    *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
    */
   inline bool extractMembers ( const std::string& decay )
-  { return std::string::npos != decay.find_first_of ( ":^" ) ; } ;  
+  { return std::string::npos != decay.find_first_of ( ":^" ) ; } 
+  // ==========================================================================
   /** @class MCFinderObj MCFinderObj.h LoKi/MCFinderObj.h
    *  
    *
@@ -215,14 +217,7 @@ namespace LoKi
     { 
       /// the most trivial case 
       if ( first == last ) { return LoKi::Types::MCRange() ; }
-      LoKi::MCTypes::MCContainer vct ;
-      vct.reserve( std::distance ( first , last ) ) ;
-      for ( ; first != last ; ++first ) 
-      {
-        const LHCb::MCParticle* mc = *first ;
-        vct.push_back( const_cast<LHCb::MCParticle*>( mc ) ) ;
-      } ;
-      return _findDecays ( decay , vct ) ; 
+      return _findDecays ( decay , LoKi::MCTypes::MCContainer ( first , last ) ) ; 
     } ;    
     /// clear the internal storage of decays
     void clear() ;
@@ -252,7 +247,7 @@ namespace LoKi
     // data provider 
     LoKi::Interface<GaudiAlgorithm> m_algo   ; ///< data provider 
   } ;
-}  // end of the namespace LoKi
+} // end of the namespace LoKi
 // ===========================================================================
 /** templated decay extractor to eliminate code duplication 
  *  @paran decay decay descriptor
@@ -280,7 +275,7 @@ LoKi::MCFinderObj::_findDecays
   decays.clear() ;                                              // CLEAR!!
   // prepare for member extraction 
   const bool members =  extractMembers( decay ) ;
-  LHCb::MCParticle::Vector mcVct ;
+  LHCb::MCParticle::ConstVector mcVct ;
   /// @see IMCDecayFinder 
   const LHCb::MCParticle* init   = 0 ;
   for ( bool  found = true ; found ; ) 
@@ -299,7 +294,7 @@ LoKi::MCFinderObj::_findDecays
     { decays.push_back( const_cast<LHCb::MCParticle*>( init ) ) ; } 
   }
   //
-  return LoKi::Types::MCRange( decays.begin() , decays.end() );
+  return LoKi::Types::MCRange ( decays.begin() , decays.end() );
 } 
 // ============================================================================
 // The END 

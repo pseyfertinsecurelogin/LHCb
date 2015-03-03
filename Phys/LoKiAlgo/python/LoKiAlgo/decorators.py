@@ -323,6 +323,31 @@ LoKi.Loop.m           = _mass_
 LoKi.Loop.p           = _momentum_
 
 
+# =============================================================================
+## Print the decay tree for LoKi::Loop object:
+def printDecay ( s , *a ) :
+    """
+    Print the decay tree for LoKi::Loop object:
+
+    >>> l = ...
+    >>> printDecay ( l )
+
+    """
+    return LoKi.PrintLoop.printDecay ( s , *a )
+
+printDecay . __doc__ += "\n\n" + LoKi.PrintLoop.printDecay . __doc__
+
+
+if not hasattr ( LoKi.Loop ,   "printDecay"   ) :
+    LoKi.Loop.   printDecay   = printDecay
+if not hasattr ( LoKi.Loop , "__printDecay__" ) :
+    LoKi.Loop. __printDecay__ = printDecay
+    
+import LoKiCore.functions  as _LCF 
+_LCF.printDecay    . __doc__ += "\n" + LoKi.PrintLoop.printDecay    . __doc__ 
+
+
+
 
 ## ============================================================================
 ## decorate LoKi::Algo class
@@ -339,14 +364,15 @@ def _decorateAlg ( alg ) :
         """
         pass
     ## setup the base 
-    Algo . Base       = _Alg
-    ## initialze with N-tupels 
+    Algo .  Base      = _Alg
+    Algo . _Base      = _Alg
+    ## initialze with N-tuples 
     Algo . initialize = GaudiAlgs._initialize_tuple_
     ## the default execute 
     Algo . execute    = Algo   .execute_
     ## the default analyse
     Algo . analyse    = Algo   .analyse_
-    ## soem accessors 
+    ## some accessors 
     Algo . ntupleSvc  = GaudiAlgs._ntupleSvc
     Algo . tupleSvc   = GaudiAlgs._ntupleSvc
     Algo . ntupSvc    = GaudiAlgs._ntupleSvc

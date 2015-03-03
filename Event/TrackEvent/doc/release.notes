@@ -4,6 +4,40 @@
 ! Purpose     : Package for the tracking event model classes
 !-----------------------------------------------------------------------------
 
+!======================= TrackEvent v4r6 2007-09-17 ==========================
+! 2007-09-17 - Chris Jones
+ - Improve fillstream method to printout more info (ExtraInfo etc.)
+ - Make a few good inline-candidate methods inline
+ - Reduced the three clone extraInfo enums to one
+
+! 2007-09-17 - Marco Cattaneo
+ - Remove some unneccessary includes from .cpp files
+
+! 2007-09-14 - Chris Jones
+ - Add to extraInfo enum enters for KL Clone variables at the vertex, Rich1 
+   and Rich2
+
+! 2007-09-11 M Needham
+ - Add number of expected hits in VELO, TT, OT, IT to track extraInfo
+
+! 2007-09-06 M Needham
+ - Ensure no comparisions with != == between floats
+ 
+! 2007-09-05 - Wouter Hulsbergen
+ - Add 'propagationTolerance' to TrackParameters
+
+! 2007-09-05 - M. Needham 
+ - Ensure state flags is initialized
+
+! 2007-09-04 - Wouter Hulsbergen
+ - Added 'extra-info' fields in track enum for information from track fit.
+
+! 2007-08-16 - Eduardo Rodrigues
+ - fillStream method of Track:
+   - corrected the latest modifications: it was assuming a track always has
+     a state (problem if printing a default-constructed track e.g. in Python)
+   - added more info to the printout
+
 !======================= TrackEvent v4r5 2007-07-10 ==========================
 ! 2007-07-10 M. Needham
  - Remove VeloMissed from track enum

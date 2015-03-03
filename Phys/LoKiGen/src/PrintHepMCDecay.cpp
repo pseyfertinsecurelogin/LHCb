@@ -1,11 +1,4 @@
-// $Id: PrintHepMCDecay.cpp,v 1.4 2007-02-26 11:03:03 cattanem Exp $
-// ============================================================================
-// CVS tag $Name: not supported by cvs2svn $, version $Revision: 1.4 $
-// ============================================================================
-// $Log: not supported by cvs2svn $
-// Revision 1.3  2006/11/25 19:14:19  ibelyaev
-//  improve Doxygen
-//
+// $Id: PrintHepMCDecay.cpp,v 1.6 2007-08-16 13:51:04 ibelyaev Exp $
 // ============================================================================
 // Include files 
 // ============================================================================
@@ -20,15 +13,15 @@
 // ============================================================================
 #include "GaudiKernel/MsgStream.h"
 // ============================================================================
-// Event
-// ===========================================================================
-#include "Event/HepMCEvent.h"
+// HepMC
+// ============================================================================
+#include "HepMC/GenVertex.h"
 // ============================================================================
 // LoKiCore
 // ============================================================================
 #include "LoKi/ParticleProperties.h"
 #include "LoKi/Report.h"
-#include "LoKi/Print.h"
+#include "LoKi/Primitives.h"
 // ===========================================================================
 // LoKiGen
 // ===========================================================================
@@ -37,8 +30,6 @@
 // Local 
 // ===========================================================================
 #include "LoKi/PrintHepMCDecay.h"
-// ===========================================================================
-
 // ============================================================================
 /** @file
  *
@@ -60,11 +51,9 @@
  *  @date 2006-05-26 
  */
 // ============================================================================
-
+// Simple function to print decay in more or less "readable" format 
 // ============================================================================
-/// Simple function to print decay in more or less "readable" format 
-// ============================================================================
-MsgStream& LoKi::Print::printHepMCDecay 
+MsgStream& LoKi::PrintHepMC::printDecay 
 ( const HepMC::GenParticle*    particle , 
   MsgStream&                   stream   , 
   const LoKi::GenTypes::GCuts& cut      ,
@@ -72,27 +61,27 @@ MsgStream& LoKi::Print::printHepMCDecay
   const std::string&           blank    ) 
 {
   if ( stream.isActive() ) 
-  { LoKi::Print::printHepMCDecay 
+  { LoKi::PrintHepMC::printDecay 
       ( particle , stream.stream() , cut , level , blank ) ; }
   return stream ;
-} ;
+} 
 // ============================================================================
-/// Simple function to print decay in more or less "readable" format 
+// Simple function to print decay in more or less "readable" format 
 // ============================================================================
-std::string LoKi::Print::printHepMCDecay 
+std::string LoKi::PrintHepMC::printDecay 
 ( const HepMC::GenParticle*    particle , 
   const LoKi::GenTypes::GCuts& cut      ,
   const int                    level    , 
   const std::string&           blank    ) 
 {
   std::ostringstream stream ;
-  LoKi::Print::printHepMCDecay ( particle , stream, cut , level , blank ) ;
+  LoKi::PrintHepMC::printDecay ( particle , stream, cut , level , blank ) ;
   return stream.str() ;
-} ;
+} 
 // ============================================================================
-/// Simple function to print decay in more or less "readable" format 
+// Simple function to print decay in more or less "readable" format 
 // ============================================================================
-std::ostream& LoKi::Print::printHepMCDecay 
+std::ostream& LoKi::PrintHepMC::printDecay 
 ( const HepMC::GenParticle*    particle , 
   std::ostream&                stream   , 
   const LoKi::GenTypes::GCuts& cut      ,
@@ -121,11 +110,43 @@ std::ostream& LoKi::Print::printHepMCDecay
   // print the decay 
   stream << " ( " << name << " ->  " ;
   for ( ; begin != end ; ++begin ) 
-  { LoKi::Print::printHepMCDecay 
+  { LoKi::PrintHepMC::printDecay 
       ( *begin , stream , cut , level - 1 , blank ) ; }          // RECURSION
   //
   return stream << " ) " ;                                       // RETURN  
-} ;
+}
+// ============================================================================
+//  Simple function to print HepMC decay in more or less "readable" format 
+// ============================================================================
+std::ostream& LoKi::PrintHepMC::printDecay 
+( const HepMC::GenParticle*      particle , 
+  std::ostream&                  stream   ) 
+{
+  return LoKi::PrintHepMC::printDecay 
+    ( particle , stream , 
+      LoKi::BooleanConstant<const HepMC::GenParticle*> ( true ) ) ;  
+}
+// ============================================================================
+//  Simple function to print HepMC decay in more or less "readable" format 
+// ============================================================================ 
+MsgStream& LoKi::PrintHepMC::printDecay 
+( const HepMC::GenParticle*    particle , 
+  MsgStream&                   stream   ) 
+{
+  return LoKi::PrintHepMC::printDecay 
+    ( particle , stream , 
+      LoKi::BooleanConstant<const HepMC::GenParticle*> ( true ) ) ;  
+}
+// ============================================================================
+//  Simple function to print HepMC decay in more or less "readable" format 
+// ============================================================================
+std::string LoKi::PrintHepMC::printDecay 
+( const HepMC::GenParticle*    particle ) 
+{
+  return LoKi::PrintHepMC::printDecay 
+    ( particle , LoKi::BooleanConstant<const HepMC::GenParticle*> ( true ) ) ;  
+}
+// ============================================================================
 
 // ============================================================================
 // The END 

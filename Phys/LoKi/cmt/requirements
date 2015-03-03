@@ -1,0 +1,31 @@
+# $Id: requirements,v 1.16 2007-09-18 11:47:39 cattanem Exp $ 
+# =============================================================================
+# Created    : 2006-04-09
+# Maintainer : Vanya BELYAEV ibelyaev@physics.syr.edu
+# =============================================================================
+package           LoKi
+version           v6r0
+
+# =============== structure ===================================================
+branches          LoKi cmt doc src
+
+# =============== dependencies ================================================
+use               LoKiAlgo          v*   Phys
+use               LoKiGenMC         v*   Phys
+use               LoKiAlgoMC        v*   Phys
+use               LoKiArrayFunctors v*   Phys 
+#use               LoKiTrigger       v*   Phys
+#use               LoKiJets          v*   Phys 
+
+# ================ own includes ===============================================
+apply_pattern install_more_includes more=LoKi
+
+# ================ constituents ===============================================
+library           LoKi    ../src/*.cpp
+
+# ================ patterns ===================================================
+apply_pattern     linker_library    library=LoKi
+
+# =============================================================================
+# The END
+# =============================================================================
