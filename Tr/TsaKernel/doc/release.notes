@@ -4,6 +4,10 @@
 ! Purpose     : Core Tsa classes
 !----------------------------------------------------------------------------
 
+!======================= TsaKernel v2r4 2007-05-16 ==========================
+! 2007-05-13 M. Needham
+ - ILHCbIDsToMCHits, ILHCbIDsToMCParticles interfaces moved to TrackMCInterfaces
+
 !======================= TsaKernel v2r3 2007-03-13 ==========================
 ! 2007-03-13 - Marco Cattaneo
  - fix two more doxygen warnings

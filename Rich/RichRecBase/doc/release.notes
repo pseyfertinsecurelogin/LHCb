@@ -4,6 +4,20 @@
 ! Purpose     : Base package for RICH Reconstruction Packages
 !-----------------------------------------------------------------------------
 
+!===================== RichRecBase v3r4 2007-05-14 =======================
+! 2007-05-14 - Marco Cattaneo
+ - Add missing forward declaration in IRichRecMCTruthTool.h
+
+! 2007-05-08 - Chris Jones
+ - Add protection against PixelCreatorBase::buildPixel returning a null pointer
+
+! 2007-05-08 - Chris Jones
+ - Add new method to MC truth tool to get MC CK rings
+
+! 2007-04-26 - Chris Jones
+ - Fixes for lcg dictionaries on windows + add dictionaries for various 
+   utility classes
+
 !===================== RichRecBase v3r3 2007-04-23 =======================
 ! 2007-04-23 - Marco Cattaneo
  - Add lcg dictionary for public interface classes. Some dictionaries are

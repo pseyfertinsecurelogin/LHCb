@@ -5,6 +5,11 @@
 !               processing stage accessing the MC event classes
 !-----------------------------------------------------------------------------
 
+!====================== SimComponents v2r2 2007-05-16 ========================
+! 2007-05-15 M Needham
+ - Add possibility to remove hadronic interactions to MCParticleSelector
+ - Use MCTrackGeomCriteria in MCReconstructible
+
 !====================== SimComponents v2r1 2007-03-05 ========================
 ! 2007-03-05 - Chris Jones
  - Add new 'Outside Acceptance' category to MC reconstructibility

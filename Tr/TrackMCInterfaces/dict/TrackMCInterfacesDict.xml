@@ -2,4 +2,7 @@
   <class name    = "IIdealStateCreator"     />
   <class name    = "ITrackCriteriaSelector" />
   <class name    = "ITrackReconstructible"  />
+  <class name    = "ILHCbIDsToMCParticles"  />                               
+  <class name    = "ILHCbIDsToMCHits"  />
+  <class name    = "ITrackGhostClassification" />
 </lcgdict>

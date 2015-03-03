@@ -1,9 +1,32 @@
-# $Id: release.notes,v 1.98 2007-04-23 08:21:05 cattanem Exp $
+# $Id: release.notes,v 1.103 2007-05-16 15:13:51 cattanem Exp $
 !-----------------------------------------------------------------------------
 ! Package     : Det/DetCond
 ! Responsible : Marco Clemencic
 ! Purpose     : Interface between LHCb and LGC/COOL project
 !-----------------------------------------------------------------------------
+
+!===================== Det/DetCond v11r3 2007-05-16 ==========================
+                           NEEDS: LHCbKernel >= v7r3 (ICondDBInfo)
+																	LCGCMT >= 51 (if macro CORAL_1_8_x is set,
+                                                for CORAL 1.8.0)
+
+! 2007-05-16 - Marco Clemencic
+ - The parts that depend on CORAL 1.8.0 API are now enclosed in #ifdef/#endif
+   directives, so that DetCond can be compiled with the old version of CORAL.
+
+! 2007-05-11 - Marco Clemencic
+ - Extended ICondDBReader with the interface ICondDBInfo from LHCbKernel and
+   implemented the new function in all the ICondDBReader's (CondDBCnvSvc,
+   CondDBAccessSvc, CondDBLayeringSvc, CondDBDispatcherSvc).
+   NOTE: this introduce a dependency on LHCbKernel.
+
+! 2007-05-03 - Marco Clemencic
+ - Added service OnlineDBValidatorSvc to check if the Online CondDB replica
+   is recent enough. (see doxygen documentation)
+
+! 2007-05-02 - Marco Clemencic
+ - First implementation of the algorithm to sort DB replicas extracted from
+   LFC.
 
 !===================== Det/DetCond v11r2 2007-04-23 ==========================
 ! 2007-04-20 - Marco Clemencic

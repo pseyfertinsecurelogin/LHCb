@@ -4,6 +4,22 @@
 ! Purpose: LHCb specific Kernel classes
 !--------------------------------------------------------------------------
 
+!===================== LHCbKernel v7r4 2007-05-18 ========================
+! 2007-05-18 - Marco Cattaneo
+ - In LbAppInit, add pointer to ICondDBInfo interface of CondDBSvc
+
+! 2007-05-14 - Marco Cattaneo
+ - Move Kernel/lcgStl.h selection file to dict/LHCbKernelDict.h
+
+! 2007-05-11 - Marco Clemencic
+ - Added the two header files Kernel/CondDBNameTagPair.h and
+   Kernel/ICondDBInfo.h to provide a simplified interface to access the
+   conditions database names and tags without the need to depend on
+   DetCond (and COOL).
+
+! 2007-05-09 - Marco Cattaneo
+ - Fix typo in a doxygen comment
+
 !===================== LHCbKernel v7r3 2007-04-20 ========================
 ! 2007-04-20 - Marco Cattaneo
  - Add dictionary for std::pair<Gaudi::XYZPoint,Gaudi::XYZPoint>, previously 

@@ -8,6 +8,7 @@
 // forward declarations
 namespace LHCb {
  class MCParticle;
+ class MCHit;
  class State;
 };
 
@@ -32,11 +33,16 @@ public:
   /// Create a state at a z-position from an MCParticle's entry/exit points
   virtual StatusCode createState( const LHCb::MCParticle* mcPart,
                                   double zrec,
-                                  LHCb::State*& pState ) const = 0;
+                                  LHCb::State& pState ) const = 0;
+
+  /// Create a state at a z-position from an MCHits entry/exit points
+  virtual StatusCode createState(const LHCb::MCHit* mcHit,
+                                  double zrec,
+                                  LHCb::State& pState ) const = 0;
 
   /// Create a state at an MCParticle's vertex
   virtual StatusCode createStateVertex( const LHCb::MCParticle* mcPart,
-                                        LHCb::State*& pState ) const = 0;
+                                        LHCb::State& pState ) const = 0;
 };
 
 #endif // TRACKMCINTERFACES_IIDEALSTATECREATOR_H

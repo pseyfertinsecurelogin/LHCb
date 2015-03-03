@@ -4,6 +4,13 @@
 ! Purpose     : Package for tracking tools interfaces accessing MC information
 !-----------------------------------------------------------------------------
 
+!======================= TrackMCInterfaces v3r1 2007-05-15 ====================
+! 2007-05-13 M Needham
+ - Add ITrackGhostClassification, ILHCbIDsToMCParticles, ILHCbIDsToMCHits
+
+! 2007-05-06 M Needham
+ - Changes in IIdealStateCreator interface (takes State& instead of State*&)
+
 !======================= TrackMCInterfaces v3r0 2007-02-19 ====================
 ! 2007-02-19 - Marco Cattaneo
  - Add reflex dictionary for all interface classes

@@ -1,7 +1,10 @@
+//  $Id: ILHCbIDsToMCHits.h,v 1.2 2007-05-15 14:17:18 cattanem Exp $
+
 #ifndef _ILHCbIDsToMCHits_H
 #define _ILHCbIDsToMCHits_H
 
 #include "GaudiKernel/IAlgTool.h"
+#include <utility>
 #include <vector>
 #include <map>
 

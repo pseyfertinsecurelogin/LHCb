@@ -1,4 +1,4 @@
-// $Id: TypeMap.h,v 1.2 2007-03-01 12:08:55 cattanem Exp $ 
+// $Id: TypeMap.h,v 1.3 2007-05-15 08:30:10 mneedham Exp $ 
 #ifndef _TsaTypeMap_H
 #define _TsaTypeMap_H 1
 
@@ -15,36 +15,36 @@
 namespace Tsa{
 class TypeMap{
 
-public:
+  public:
 
-  /// map to enum
-  Tsa::SpacePoint::pointType toType(std::string aName) const;
+    /// map to enum
+    Tsa::SpacePoint::pointType toType(std::string aName) const;
 
-  /// map to type
-  std::string toString(Tsa::SpacePoint::pointType aType) const;
+    /// map to type
+    std::string toString(Tsa::SpacePoint::pointType aType) const;
 
-  /// destructer
-  virtual ~TypeMap() {}
+    /// destructer
+    virtual ~TypeMap() {}
 
-  friend TypeMap& theMap();
+    friend TypeMap& theMap();
 
-private:
+  private:
 
-  /// constructer
-  TypeMap();  
-  TypeMap(const TypeMap& rhs){
-    m_mapping = rhs.m_mapping;
+    /// constructer
+    TypeMap();  
+    TypeMap(const TypeMap& rhs){
+      m_mapping = rhs.m_mapping;
+    }
+
+    typedef std::map<std::string, Tsa::SpacePoint::pointType> typeMap; 
+    mutable typeMap m_mapping;
+
+  };
+
+  TypeMap& theMap(){
+    static TypeMap sMap;
+    return sMap;
   }
-
-  typedef std::map<std::string, Tsa::SpacePoint::pointType> typeMap; 
-  mutable typeMap m_mapping;
-
-};
-
-TypeMap& theMap(){
-  static TypeMap sMap;
-  return sMap;
-}
 
 };
 
