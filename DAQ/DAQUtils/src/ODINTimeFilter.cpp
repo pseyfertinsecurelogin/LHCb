@@ -90,7 +90,7 @@ StatusCode ODINTimeFilter::execute() {
   }
   // get time & eventID 
   Gaudi::Time time = odin->eventTime();
-  int       event  = odin->eventNumber();
+  ulonglong event  = odin->eventNumber();
   int       run  = odin->runNumber();
   int       bx  = odin->bunchId();
   
@@ -112,7 +112,7 @@ StatusCode ODINTimeFilter::execute() {
   Gaudi::Time maxTime = Gaudi::Time(val(m_yRange.second   , time.year(m_loc)   ),
                                     val(m_mRange.second   , time.month(m_loc)  , -1),
                                     val(m_dRange.second   , time.day(m_loc)    ),
-                                    val(m_hRange.second  , time.hour(m_loc)   ),
+                                    val(m_hRange.second   , time.hour(m_loc)   ),
                                     val(m_mnRange.second  , time.minute(m_loc) ),
                                     val(m_sRange.second   , time.second(m_loc) ),
                                     val(m_nsRange.second  , time.nsecond() ),
@@ -150,11 +150,15 @@ StatusCode ODINTimeFilter::execute() {
   return StatusCode::SUCCESS;
 }
 
+
 int ODINTimeFilter::val(int v1,int v2,int v3){
-  if( v1 < 0)return v2;
-  return v1+v3;
+  if( v1 < 0)return  v2;
+  return  (v1+v3) ;
 }
 
+bool ODINTimeFilter::def(std::pair<double,double> range){
+  return (range.first>=0 && range.second>=0);
+}
 bool ODINTimeFilter::def(std::pair<int,int> range){
   return (range.first>=0 && range.second>=0);
 }
@@ -192,9 +196,15 @@ void ODINTimeFilter::criteriaPrintOut(){
   }
 }
 
+bool ODINTimeFilter::check(ulonglong val, std::pair<double,double> range){
+  if( !def(range) )return true;
+  if( val >= (ulonglong) range.first && val <= (ulonglong) range.second )return true;
+  return false;
+}
+    
 bool ODINTimeFilter::check(int val, std::pair<int,int> range){
   if( !def(range) )return true;
-  if( val >= range.first && val <= range.second )return true;
+  if( val >= range.first && val <=  range.second )return true;
   return false;
 }
     

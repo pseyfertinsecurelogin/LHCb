@@ -1,4 +1,4 @@
-! $Id: release.notes,v 1.192 2010-04-26 06:38:16 cattanem Exp $ 
+! $Id: release.notes,v 1.198 2010-05-21 12:50:56 cattanem Exp $ 
 ! -----------------------------------------------------------------------------
 ! Package     : Phys/LoKiCore
 ! Responsible : Vanya BELYAEV ibelyaev@physics.syr.edu
@@ -14,6 +14,15 @@
 !   A.Golutvin, P.Koppenburg have been used in the design.
 ! 
 ! -----------------------------------------------------------------------------
+
+! =========================== LoKiCore v10r1 2010-05-21 =======================
+! 2010-05-19 - Gerhard Raven
+ - Scalers: make sure that one waits at least one tick to avoid an avalanche
+   at the first event when processing in parallel
+
+! 2010-05-17 - Gerhard Raven
+ - Scalers: listen to runchanges with low priority so that random numbers
+   are seeded first..
 
 ! =========================== LoKiCore v10r0 2010-04-26 =======================
 ! 2010-04-21 - Vanya Belyaev
@@ -42,7 +51,7 @@
    + new shifters (streamers) 
   
 
-! =========================== LoKiCore v9r13 2010-04-18 =======================
+! =========================== LoKiCore v9r13p1 2010-04-30 =======================
 ! 2010-04-17 - Gerhard Raven
  - Listeners: specify priority
  - Scalers: do not assume reference rate is constant
@@ -52,7 +61,7 @@
   Listener + Scalers:
     fix compilation warnings for slc4-platform 
 
-
+! =========================== LoKiCore v9r13 2010-04-07 =======================
 ! 2010-04-04 - Vanya Belyaev
 
  - few fixes into LoKi::Listener  

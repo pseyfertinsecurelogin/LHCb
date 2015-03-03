@@ -4,6 +4,15 @@
 ! Purpose     : Holds the bare minumum code for manipulating XML
 !-----------------------------------------------------------------------------
 
+!======================== XmlSummaryBase v1r1 2010-05-21 =====================
+! 2010-04-30 - Rob Lambert
+ - Fixed bug from last commit, event count made a double
+ - Sped up by a factor of two by not reparsing the schema a million times
+
+! 2010-04-28 - Rob Lambert
+ - Discovered the Merger takes a very long time, 
+   sped up by several orders of magnitude
+
 !======================== XmlSummaryBase v1r0 2009-10-16 =====================
 ! 2009-10-07 - Rob Lambert
  - Additional protection against losing the objects

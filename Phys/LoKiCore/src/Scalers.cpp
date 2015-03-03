@@ -1,4 +1,4 @@
-// $Id: Scalers.cpp,v 1.7 2010-04-21 12:28:37 ibelyaev Exp $
+// $Id: Scalers.cpp,v 1.9 2010-05-19 13:14:40 graven Exp $
 // ============================================================================
 // Include files 
 // ============================================================================
@@ -272,13 +272,13 @@ void LoKi::Scalers::RateLimitV::initialize_ ( const std::string& svc )
   case LoKi::Scalers::RandomPhasePeriodicLimiter : 
     m_next += m_interval * m_uniform ( m_next ) ;  break ;
   default:
-    m_next += 0 ;
+    m_next += 1 ; // wait at least one tick..
   }
   //
   // subscribe the incident:
   //
-  subscribe (              "RunChange", std::numeric_limits<long>::max() ).ignore() ;
-  subscribe ( IncidentType::BeginRun,   std::numeric_limits<long>::max() ).ignore() ;
+  subscribe (              "RunChange", std::numeric_limits<long>::min() ).ignore() ;
+  subscribe ( IncidentType::BeginRun,   std::numeric_limits<long>::min() ).ignore() ;
   //
 }
 // ============================================================================
@@ -308,7 +308,7 @@ LoKi::Scalers::RateLimitV::RateLimitV
   case LoKi::Scalers::RandomPhasePeriodicLimiter : 
     m_next += m_interval * m_uniform ( m_next ) ; break ;
   default:
-    m_next += 0 ;
+    m_next += 1 ; // wait at least one tick
   }
 }
 // ============================================================================
@@ -399,7 +399,7 @@ void LoKi::Scalers::RateLimitV:: handle ( const Incident& /* incident */ )
   case LoKi::Scalers::RandomPhasePeriodicLimiter : 
     m_next += m_interval * m_uniform ( m_next ) ; break ;
   default:
-    m_next += 0 ;
+    m_next += 1 ; // wait at least one tick...
   }
   //
 }

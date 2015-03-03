@@ -1,4 +1,4 @@
-// $Id: ProtoParticle.cpp,v 1.11 2010-03-16 08:41:28 jonrob Exp $
+// $Id: ProtoParticle.cpp,v 1.13 2010-05-21 15:40:08 odescham Exp $
 
 // STL
 #include <algorithm>
@@ -41,15 +41,25 @@ LHCb::ProtoParticle::clearCalo( const LHCb::CaloHypo::Hypothesis & hypo )
   // number of hypos removed
   LHCb::ProtoParticle::ExtraInfo::size_type removed = 0;
 
+
+  
+  const SmartRefVector<LHCb::CaloHypo>::iterator it = std::remove ( m_calo.begin(), m_calo.end(), 0 );
+
+  // remove selected hypos
+  if ( m_calo.end() != it ){
+    removed += m_calo.end() - it;
+    m_calo.erase ( it , m_calo.end() );
+  }
+
+
   // Find hypos to remove
   const SmartRefVector<LHCb::CaloHypo>::iterator iHypoRemove =
     std::remove_if ( m_calo.begin(), m_calo.end(),
                      bind( &LHCb::CaloHypo::hypothesis, _1 ) == hypo );
 
   // remove selected hypos
-  if ( m_calo.end() != iHypoRemove )
-  {
-    removed = m_calo.end() - iHypoRemove;
+  if ( m_calo.end() != iHypoRemove ){
+    removed += m_calo.end() - iHypoRemove;
     m_calo.erase ( iHypoRemove , m_calo.end() );
   }
 

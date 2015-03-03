@@ -6,6 +6,10 @@
 !               All headers included in directory LHCbMath
 !-----------------------------------------------------------------------------
 
+!========================= LHCbMath v3r17p1 2010-05-21 =======================
+! 2010-05-18 - Marco Cattaneo
+ - LHCbMath/Bit.h, dict/LHCbMathDict.h: Fix Windows compilation warnings
+
 !========================= LHCbMath v3r17 2010-04-09 =========================
 ! 2010-03-22 - Vanya Belyaev
 
