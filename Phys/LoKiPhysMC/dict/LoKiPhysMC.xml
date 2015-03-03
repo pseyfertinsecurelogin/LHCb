@@ -1,5 +1,5 @@
 <!-- 
-     * $Id: LoKiPhysMC.xml,v 1.3 2008-11-02 20:22:08 ibelyaev Exp $ 
+     * $Id: LoKiPhysMC.xml,v 1.5 2009-08-12 15:54:07 ibelyaev Exp $ 
      * ========================================================================
      * @file
      * The seleciton file to build Reflex dictionaries 
@@ -21,6 +21,11 @@
   <class name = "LoKi::PhysMCParticles::RCTruth"    />
   <class name = "LoKi::PhysMCParticles::MCTruth"    />
   <class name = "LoKi::PhysMCParticles::GenMCTruth" />
+
+  <class name = "LoKi::PhysMCParticles::MCMatcherBase" />
+  <class name = "LoKi::PhysMCParticles::MCSelMatch"    />
+  <class name = "LoKi::PhysMCParticles::MCTreeMatch"   />
+  <class name = "LoKi::PhysMCParticles::MCNodeMatch"   />
   
   <function pattern="LoKi::Dicts::MCMatchDicts::*" />
   

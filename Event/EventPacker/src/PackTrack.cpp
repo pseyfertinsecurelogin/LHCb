@@ -1,4 +1,4 @@
-// $Id: PackTrack.cpp,v 1.8 2009-07-09 09:44:16 cattanem Exp $
+// $Id: PackTrack.cpp,v 1.10 2009-09-01 15:17:43 ocallot Exp $
 // Include files 
 
 // from Gaudi
@@ -43,7 +43,7 @@ StatusCode PackTrack::execute() {
   LHCb::Tracks* tracks = get<LHCb::Tracks>( m_inputName );
   LHCb::PackedTracks* out = new LHCb::PackedTracks();
   put( out, m_outputName );
-  out->setVersion( 2 );
+  out->setVersion( 3 );
 
   StandardPacker pack;
   
@@ -55,7 +55,9 @@ StatusCode PackTrack::execute() {
     newTrk.chi2PerDoF = pack.fltPacked( track->chi2PerDoF() );
     newTrk.nDoF       = track->nDoF();
     newTrk.flags      = track->flags();
-
+    newTrk.likelihood = pack.fltPacked( track->likelihood() );
+    newTrk.ghostProba = pack.fltPacked( track->ghostProbability() );
+    
     //== Store the LHCbID as int 
     newTrk.firstId    = out->sizeId();
     for ( std::vector<LHCb::LHCbID>::const_iterator itI = track->lhcbIDs().begin();

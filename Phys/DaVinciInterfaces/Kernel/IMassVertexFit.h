@@ -56,10 +56,14 @@
  *  @author Vanya BELYAEV belyaev@lapp.in2p3.fr
  *  @date   2004-12-19
  */
-class IMassVertexFit : 
-  public virtual IParticleCombiner ,
-  public virtual IParticleReFitter 
+class GAUDI_API IMassVertexFit : 
+  virtual public extend_interfaces2<IParticleCombiner , IParticleReFitter> 
 {
+public:
+  // ==========================================================================
+  /// inteface machinery
+  DeclareInterfaceID(IMassVertexFit, 2, 0);
+  // ==========================================================================
 public:
   // ========================================================================== 
   /** The major method for mass-vertex constrain fit
@@ -235,15 +239,10 @@ public:
     return fit( children , mother , vertex ) ;
   } 
   // ==========================================================================
-public: 
-  // ==========================================================================
-  /// the unique interface identifier 
-  static const InterfaceID& interfaceID() ;
-  // ==========================================================================  
 protected:
   // ==========================================================================  
-  // virtual and protected destructor 
-  virtual ~IMassVertexFit(); ///< virtual and protected destructor 
+  /// virtual and protected destructor 
+  virtual ~IMassVertexFit();                // virtual and protected destructor 
   // ==========================================================================  
 };
 // ============================================================================

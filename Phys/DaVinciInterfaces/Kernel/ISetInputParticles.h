@@ -1,4 +1,4 @@
-// $Id: ISetInputParticles.h,v 1.1.1.1 2009-07-22 20:54:51 jpalac Exp $
+// $Id: ISetInputParticles.h,v 1.4 2009-08-17 08:04:22 jpalac Exp $
 // ============================================================================
 #ifndef KERNEL_ISETINPUTPARTICLES_H 
 #define KERNEL_ISETINPUTPARTICLES_H 1
@@ -9,6 +9,10 @@
 // ============================================================================
 #include "GaudiKernel/IInterface.h"
 // ============================================================================
+// Event
+// ============================================================================
+#include "Event/Particle.h"
+// ============================================================================
 /** @class ISetInputParticles ISetInputParticles.h Kernel/ISetInputParticles.h
  *
  *  A bit technical interface to allow some interactive manipulations 
@@ -17,8 +21,13 @@
  *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
  *  @date   2008-07-11
  */
-class ISetInputParticles : virtual public IInterface 
+class GAUDI_API ISetInputParticles : virtual public IInterface 
 {
+public:
+  // ==========================================================================
+  /// interface machinery
+  DeclareInterfaceID(ISetInputParticles, 2, 0);
+  // ==========================================================================
 public:
   // ==========================================================================  
   /** the only one essential method:
@@ -29,42 +38,12 @@ public:
   virtual StatusCode setInput 
   ( const LHCb::Particle::ConstVector& input )  = 0 ;
   // ==========================================================================
-public: 
-  // ==========================================================================
-  /// Return the unique interface ID
-  static const InterfaceID& interfaceID() ;
-  // ==========================================================================  
 protected:
   // ==========================================================================
   /// the destructor is virtual and protected 
-  virtual ~ISetInputParticles() ;
+  virtual ~ISetInputParticles() ;    // the destructor is virtual and protected 
   // ==========================================================================
 };
-// ============================================================================
-namespace DaVinci
-{
-  // ==========================================================================
-  namespace Utils
-  {
-    // ========================================================================
-    /** set the input particles for some component
-     *  @param component the component inself
-     *  @param input the intut data 
-     *  @return status code 
-     * 
-     *  - 300 : invalid component 
-     *  - 301 : no valid ISetInputParticles interface 
-     * 
-     *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
-     *  @date   2008-07-11
-     */
-    StatusCode setInput 
-    ( IInterface*                        component , 
-      const LHCb::Particle::ConstVector& input     ) ;
-    // ========================================================================
-  } // end of namespace DaVinci::Utils 
-  // ==========================================================================
-} // end of namespace DaVinci 
 // ============================================================================
 // The END 
 // ============================================================================

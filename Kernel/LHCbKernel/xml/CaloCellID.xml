@@ -3,7 +3,7 @@
 <gdd>
 
 <!-- **************************************************************************
-  * $Id: CaloCellID.xml,v 1.12 2009-04-06 15:57:15 odescham Exp $
+  * $Id: CaloCellID.xml,v 1.14 2009-08-04 20:41:39 ibelyaev Exp $
   *****************************************************************************
   * XML-description of CaloCellIDclass                                        *
   * author: Vanya BELYAEV Ivan.Belyaev@itep.ru                                *
@@ -30,6 +30,12 @@
     def    = "ContentType"
     type   = "CaloCellCode::ContentType"
     desc   = "Representation type (presumably 32bits)"
+    access = "PUBLIC" />
+
+  <typedef
+    def    = "Vector"
+    type   = "std::vector&lt;LHCb::CaloCellID&gt;"
+    desc   = "vector of cell IDs"
     access = "PUBLIC" />
   
    <attribute
@@ -338,6 +344,16 @@
     </code>
   </method>
   
+  <method
+    desc   = "hash-function for python"
+    name   = "__hash__"
+    type   = "unsigned int"
+    const  = "TRUE"
+    access = "PUBLIC" >
+    <code>
+      return index() ; 
+    </code>
+  </method>
   
   </class>
   </package>

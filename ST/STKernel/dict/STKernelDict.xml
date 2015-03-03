@@ -4,13 +4,16 @@
   <class name = "ISTSignalToNoiseTool" />
   <class name = "ISTClusterSelector" />
   <class name = "ISTChannelIDSelector" />
+  <class name = "ISTRawADCInfo" />
   <class name = "STTell1ID" />
   <class name = "STTell1Board" />
   <class name = "STBitsPolicy" />
   <class name = "STDAQ::BeetleRepresentation" />
   <class name = "STDAQ::PPRepresentation" />
   <class name = "STDAQ::StripRepresentation" />
-  <class name = "std::pair<STTell1ID, unsigned int>" />
+  <class name = "ST::ITDetectorPlot" />
+  <class name = "ST::TTDetectorPlot" />
+  <class name = "std::pair<STTell1ID, unsigned int>" /> 
 
   <enum pattern = "STDAQ::version" />
   <enum pattern="STBitsPolicy::bits" />
@@ -19,5 +22,5 @@
   <function pattern= "STBoardMapping::printTTMap" />
   <function pattern= "STBoardMapping::printITMap" />
   <function pattern = "STBoardMapping::find" />
-
+  <function pattern = "ST::XMLUtils*" />
 </lcgdict>

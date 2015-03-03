@@ -1,4 +1,4 @@
-// $Id: DVAlgorithm.cpp,v 1.53 2009-07-27 12:31:32 jpalac Exp $
+// $Id: DVAlgorithm.cpp,v 1.58 2009-09-01 16:08:28 jpalac Exp $
 // ============================================================================
 // Include 
 // ============================================================================
@@ -12,6 +12,7 @@
 #include "Kernel/IOnOffline.h"
 #include "Kernel/IRelatedPVFinder.h"
 #include "Kernel/DaVinciFun.h"
+#include "Kernel/DaVinciGuards.h"
 // ============================================================================
 /** @file
  *  The implementation for class DVAlgorithm
@@ -98,7 +99,7 @@ DVAlgorithm::DVAlgorithm
   declareProperty ( "ParticleFilters"   , m_filterNames, "Names of ParticleFilters"   ) ;
   // 
   declareProperty ( "ReFitPVs"    , m_refitPVs, "Refit PV"     ) ; 
-  m_particleCombinerNames [ ""              ] = "OfflineVertexFitter" ;
+
   m_particleCombinerNames [ "Offline"       ] = "OfflineVertexFitter" ;
   m_particleCombinerNames [ "Trigger"       ] = "TrgVertexFitter"     ;
   m_particleCombinerNames [ "Kalman"        ] = "LoKi::VertexFitter"  ;
@@ -109,7 +110,10 @@ DVAlgorithm::DVAlgorithm
   m_particleCombinerNames [ "Combiner"      ] = "MomentumCombiner"    ;
   m_particleCombinerNames [ "Momenta"       ] = "MomentumCombiner"    ;
   m_particleCombinerNames [ "Jet"           ] = "MomentumCombiner"    ;
-  declareProperty ( "ParticleCombiners"  , m_particleCombinerNames, "Names of particle combiners" ) ;
+  declareProperty
+    ( "ParticleCombiners"     , 
+      m_particleCombinerNames , 
+      "Names of particle combiners, the basic tools for creation of composed particles" ) ;
   //
   m_particleReFitterNames [ ""              ] = "OfflineVertexFitter"   ;
   m_particleReFitterNames [ "Offline"       ] = "OfflineVertexFitter"   ;
@@ -206,9 +210,12 @@ StatusCode DVAlgorithm::initialize ()
     { debug() << "Decay Descriptor: " << m_decayDescriptor << endmsg; }
   }
 
-  if (msgLevel(MSG::DEBUG)) debug() << ">>> Preloading PhysDesktop with P->PV locations " << m_p2PVInputLocations << endmsg;
-  desktop()->setP2PVInputLocations(m_p2PVInputLocations);
-
+  if (!m_p2PVInputLocations.empty() ) 
+  {
+    if (msgLevel(MSG::DEBUG)) debug() << ">>> Preloading PhysDesktop with P->PV locations " << endmsg;
+    desktop()->setP2PVInputLocations(m_p2PVInputLocations);
+  }
+      
   if (msgLevel(MSG::DEBUG)) debug() << "End of DVAlgorithm::initialize with " << sc << endmsg;
   
   return sc;
@@ -229,6 +236,13 @@ StatusCode DVAlgorithm::loadTools()
   
   // vertex fitter
   IOnOffline* onof = NULL;
+  
+  if ( m_particleCombinerNames.end() == m_particleCombinerNames.find("") )
+  {
+    if ( 0==onof) { onof = tool<IOnOffline>( "OnOfflineTool" , this ) ; }
+    m_particleCombinerNames[""] = onof->particleCombinerType() ;
+  }
+  
   if ( m_vertexFitNames.end() == m_vertexFitNames.find("") )
   {
     if ( 0==onof) onof = tool<IOnOffline>("OnOfflineTool",this);
@@ -279,6 +293,8 @@ StatusCode DVAlgorithm::sysExecute ()
   // setup sentry/guard
   Gaudi::Utils::AlgContext sentry ( ctx , this ) ;
 
+  DaVinci::Guards::CleanDesktopGuard desktopGuard(desktop());
+
   StatusCode sc = desktop()->getEventInput();
   if ( sc.isFailure()) 
   { return Error (  "Not able to fill PhysDesktop" , sc ) ; }
@@ -288,7 +304,7 @@ StatusCode DVAlgorithm::sysExecute ()
   if ( sc.isFailure() ) return sc;
   
   if ( !m_setFilterCalled ) 
-  { Warning ( "SetFilterPassed not called for this event!" ) ; }
+  { Warning ( "SetFilterPassed not called for this event!" ).ignore() ; }
   
   /// count number of "effective filters"  
   counter("#accept") += filterPassed() ;
@@ -306,9 +322,6 @@ StatusCode DVAlgorithm::sysExecute ()
   { sc = desktop()->writeEmptyContainerIfNeeded(); }
   else 
   { verbose() << "Avoiding mandatory output" << endmsg ; }
-
-  sc = desktop()->cleanDesktop();
-  if (msgLevel(MSG::VERBOSE) && sc) verbose() << "Happily cleaned Desktop" << endmsg ;
 
   return sc ;
 }
@@ -340,6 +353,7 @@ const LHCb::VertexBase* DVAlgorithm::calculateRelatedPV(const LHCb::Particle* p)
       return 0;
     }
     LHCb::RecVertex::ConstVector reFittedPVs;
+    DaVinci::Guards::PointerContainerGuard<LHCb::RecVertex::ConstVector> guard(reFittedPVs);
     for (LHCb::RecVertex::Container::const_iterator iPV = PVs->begin();
          iPV != PVs->end(); ++iPV) {
       LHCb::RecVertex* reFittedPV = new LHCb::RecVertex(**iPV);
@@ -354,30 +368,31 @@ const LHCb::VertexBase* DVAlgorithm::calculateRelatedPV(const LHCb::Particle* p)
                                           << " re-fitted PVs" 
                                           << endmsg;
 
-    const Particle2Vertex::LightTable table = finder->relatedPVs(p, reFittedPVs);
-    const Particle2Vertex::Range range = table.relations(p);
-    if (msgLevel(MSG::VERBOSE)) verbose() << "have " << range.size()
-                                          << " related, re-fitted PVs" 
-                                          << endmsg;    
-    const LHCb::RecVertex* pv = DaVinci::bestRecVertex(range);
+    const LHCb::VertexBase* vb = finder->relatedPV(p, reFittedPVs);
+
+    if (0==vb) {
+      Warning("IRelatedPVFinder found no best vertex",
+              StatusCode::FAILURE, 10).ignore();
+      return 0;
+    }
+    
+    const LHCb::RecVertex*  pv = dynamic_cast<const LHCb::RecVertex*>(vb) ;
+
     if (0==pv) {
-      Warning("VertexBase -> RecVertex dynamic cast failed",StatusCode::FAILURE, 10).ignore();
+      Warning("VertexBase -> RecVertex dynamic cast failed",
+              StatusCode::FAILURE, 10).ignore();
       return 0;
     } else {
       const LHCb::RecVertex* returnPV = desktop()->keep(pv);
-      // clear container
-      for (LHCb::RecVertex::ConstVector::const_iterator iObj = reFittedPVs.begin();
-           iObj != reFittedPVs.end(); ++iObj) delete *iObj;
-      reFittedPVs.clear();
       return returnPV;
     }
   } else { // no PV re-fit
     if (msgLevel(MSG::VERBOSE)) verbose() << "Getting related PV from finder" << endmsg;
-    const Particle2Vertex::LightTable table = finder->relatedPVs(p, *PVs);
-    const Particle2Vertex::Range range = table.relations(p);
-    const LHCb::VertexBase* pv = DaVinci::bestVertexBase(range);
+    const LHCb::VertexBase* pv  = finder->relatedPV(p, *PVs);
+
     if (0!=pv) {
-      if (msgLevel(MSG::VERBOSE)) verbose() << "Returning related vertex\n" << pv << endmsg;
+      if (msgLevel(MSG::VERBOSE)) verbose() << "Returning related vertex\n" 
+                                            << pv << endmsg;
     } else {
       if (msgLevel(MSG::VERBOSE)) verbose() << "no related PV found" << endmsg;
     }
@@ -393,12 +408,8 @@ const LHCb::VertexBase* DVAlgorithm::getRelatedPV(const LHCb::Particle* part) co
     error() << "input particle is NULL" << endmsg;
     return 0;
   }
-  const Particle2Vertex::Range p2pvRange = desktop()->particle2Vertices(part);
-  if (msgLevel(MSG::VERBOSE)) {
-    verbose() << "getRelatedPV! Got range with size " << endmsg;
-    verbose() << p2pvRange.size() << endmsg;
-  }
-  if (p2pvRange.empty()) {
+
+  if (!hasStoredRelatedPV(part) ) {
     if (msgLevel(MSG::VERBOSE)) {
       verbose() << "particle2Vertices empty. Calling calculateRelatedPV" 
                 << endmsg;
@@ -415,8 +426,14 @@ const LHCb::VertexBase* DVAlgorithm::getRelatedPV(const LHCb::Particle* part) co
     }
   }
 
-  const Particle2Vertex::Range range = desktop()->particle2Vertices(part);
+  const Particle2Vertex::Table::Range range = desktop()->particle2Vertices(part);
   return DaVinci::bestVertexBase(range);
+}
+// ============================================================================
+bool DVAlgorithm::hasStoredRelatedPV(const LHCb::Particle* particle) const
+{
+  const Particle2Vertex::Table::Range p2pvRange = desktop()->particle2Vertices(particle);
+  return !p2pvRange.empty();
 }
 // ============================================================================
 StatusCode DVAlgorithm::fillSelResult () {

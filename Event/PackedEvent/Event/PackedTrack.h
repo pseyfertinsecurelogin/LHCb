@@ -1,4 +1,4 @@
-// $Id: PackedTrack.h,v 1.5 2009-01-26 09:41:02 ocallot Exp $
+// $Id: PackedTrack.h,v 1.7 2009-09-01 15:17:25 ocallot Exp $
 #ifndef EVENT_PACKEDTRACK_H 
 #define EVENT_PACHEDTRACK_H 1
 
@@ -12,8 +12,10 @@ namespace LHCb {
   /** @class PackedTrack PackedTrack.h Event/PackedTrack.h
    *  Packed description of a track
    *
+   *  Version 2: Added new data members to PackedTrack to follow the upgraded Track.
+   *
    *  @author Olivier Callot
-   *  @date   2008-11-07
+   *  @date   2009-08-26
    */
   struct PackedTrack {
 
@@ -23,7 +25,8 @@ namespace LHCb {
       key( c.key), chi2PerDoF( c.chi2PerDoF), nDoF( c.nDoF ), flags( c.flags ),
       firstId( c.firstId ), lastId (c.lastId ),
       firstState( c.firstState ), lastState( c.lastState ),
-      firstExtra( c.firstExtra ), lastExtra( c.lastExtra )
+      firstExtra( c.firstExtra ), lastExtra( c.lastExtra ),
+      likelihood( c.likelihood ), ghostProba( c.ghostProba )
       {};
   
     int key;
@@ -36,6 +39,9 @@ namespace LHCb {
     unsigned short int lastState;
     unsigned short int firstExtra;
     unsigned short int lastExtra;
+    //== Added for version 3, August 2009
+    int likelihood;
+    int ghostProba;
 
     //== Note that Nodes and Measurements on Track are transient only, an thus never stored.
   };

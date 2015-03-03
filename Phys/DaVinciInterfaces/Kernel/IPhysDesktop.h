@@ -1,4 +1,4 @@
-// $Id: IPhysDesktop.h,v 1.1.1.1 2009-07-22 20:54:51 jpalac Exp $
+// $Id: IPhysDesktop.h,v 1.3 2009-08-31 20:33:39 jpalac Exp $
 #ifndef DAVINCIKERNEL_IPHYSDESKTOP_H 
 #define DAVINCIKERNEL_IPHYSDESKTOP_H 1
 
@@ -10,10 +10,6 @@
 // Forward declarations
 class StatusCode;
 class IRelatedPVFinder;
-
-// Declaration of the interface ID ( interface id, major version, minor version)
-static const InterfaceID IID_IPhysDesktop("IPhysDesktop", 1, 3);
-
 
 /** @class IPhysDesktop IPhysDesktop.h Kernel/IPhysDesktop.h
  *
@@ -62,11 +58,11 @@ static const InterfaceID IID_IPhysDesktop("IPhysDesktop", 1, 3);
  *  @author Sandra Amato
  *  @date   18/02/2002
  */
-class IPhysDesktop : virtual public IAlgTool {
+class GAUDI_API IPhysDesktop : virtual public IAlgTool {
 
 public:
-  /// Retrieve interface ID
-  static const InterfaceID& interfaceID() { return IID_IPhysDesktop; }
+
+  DeclareInterfaceID(IPhysDesktop, 2, 0);
 
   /// Load Input particles and vertices (in local data) from various input
   /// locations filled with previous processings and  
@@ -98,8 +94,8 @@ public:
   virtual Particle2Vertex::LightTable& Particle2VertexRelations() = 0;
 
   /// Store relations over-writing previously existing ones
-  virtual void overWriteRelations(Particle2Vertex::Range::const_iterator begin,
-                                  Particle2Vertex::Range::const_iterator end) = 0;
+  virtual void overWriteRelations(Particle2Vertex::Table::Range::const_iterator begin,
+                                  Particle2Vertex::Table::Range::const_iterator end) = 0;
 
   /// Keep for future use: Register the new particles in the Desktop, 
   /// pass ownership, return pointer to new particle
@@ -150,15 +146,10 @@ public:
   
   /// Establish a relation between an LHCb::Particle and an LHCb::VertexBase
   virtual void relate(const LHCb::Particle* part, 
-                      const LHCb::VertexBase* vert,
-                      const double weight=1.) = 0;
+                      const LHCb::VertexBase* vert ) = 0;
 
-  /// Obtain the weight relating an LHCb::Particle and an LHCb::VertexBase
-  virtual double weight(const LHCb::Particle* part, 
-                        const LHCb::VertexBase* vert ) const = 0;
-  
   /// Obtain a range of weighted LHCb::VertexBase related to an LHCb::Particle
-  virtual Particle2Vertex::Range particle2Vertices(const LHCb::Particle* part ) const = 0;
+  virtual Particle2Vertex::Table::Range particle2Vertices(const LHCb::Particle* part ) const = 0;
 
   /// Clean desktop
   virtual StatusCode cleanDesktop() = 0;

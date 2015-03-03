@@ -158,7 +158,7 @@ const State* Track::stateAt( const LHCb::State::Location& location ) const
 {
   StateContainer::const_iterator iter =
     std::find_if( m_states.begin(),m_states.end(),
-                  TrackFunctor::HasKey<State,const LHCb::State::Location&>
+                 TrackFunctor::HasKey<State,const LHCb::State::Location&>
                   (&State::checkLocation,location) );
   return iter == m_states.end() ? 0 : *iter ;
 }

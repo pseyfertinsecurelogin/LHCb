@@ -2,7 +2,7 @@
 Utilities to interact with XML ReleaseNotes. 
 """
 __author__ = "Marco Clemencic <marco.clemencic@cern.ch>"
-__version__ = "$Id: ReleaseNotes.py,v 1.5 2009-05-12 15:35:55 marcocle Exp $"
+__version__ = "$Id: ReleaseNotes.py,v 1.8 2009-09-01 20:05:06 ishapova Exp $"
 
 # exported symbols
 __all__ = [ "ReleaseNotes" ]
@@ -42,6 +42,8 @@ class ReleaseNotes(object):
         self.filename = filename
         # load XML
         self.tree = ET.parse(self.filename)
+        import logging
+        self.log = logging.getLogger("CondDB.Admin.ReleaseNotes")
         
     def _setDescription(self, node, description, patch = None):
         """
@@ -83,7 +85,64 @@ class ReleaseNotes(object):
 
         self.tree.getroot().insert(pos, entry)
         
-    def addNote(self, contributor, partitions, description, date = None, patch = None):
+    def _findHomogeneous(self, contributor, date, tag = None, patch = None, description = None):
+        """
+        This internal function does look-up in the release_note.xml file for possible previously added homogeneous 
+        tags entries, checking whether coincidence takes place for "tag" name, date and contributor in case of 
+        a global tag processing, and date, contributor, patch and description for a local tag entry processing.
+        It returns the object of found entry for further modifications. The homogeneous entry is looked only in 
+        the area of release_notes.xml which is after the last one sqldddb release. 
+        
+        contributor: person providing the changes
+        date: date in the format "YYYY-MM-DD", the current date is used if omitted
+        tag: the name of the global tag
+        patch: numeric id of the patch (on savannah)
+        description: list of comments, ["comment1","comment2"]
+        """
+        
+        if date is None:
+            date = time.strftime("%Y-%m-%d")
+        
+        # Accessing the root element in .xml file  
+        rootelement = self.tree.getroot()
+        
+        # Starting of iteration procedure for analyzing each element in the tree for duplications
+        counter = 0 # counter for number of current entries found with proposed global tag name per one partition
+        partitionList = [] # list of partitions found already containing proposed global tag name
+        if not description:
+            description = []
+        
+        for element in rootelement:
+            if counter > 0: break
+            if element.tag != _xel("sqldddb_tag"):
+                bingoGeneral = 0 # Number of general for global and local tags matchings found in a target entry
+                bingoLT = 0 # Number of local tag matchings (for description text and patch number) found in a target entry
+                if element.tag == _xel("global_tag") or element.tag == _xel("note"):
+                    for subelement in element:
+                        if subelement.text == contributor or subelement.text == date or subelement.text == tag:
+                            bingoGeneral += 1
+                            continue
+                        if bingoGeneral >= 2 and subelement.tag == _xel("partition"):
+                            for subsubelement in subelement:
+                                if subsubelement.tag == _xel("name"): partitionList.append(subsubelement.text)
+                        elif bingoGeneral == 2 and subelement.tag == _xel("description"):
+                            for subsubelement in subelement:
+                                for line in description:
+                                    if subsubelement.text == line:
+                                        bingoLT += 1
+                                if subsubelement.text == str(patch):
+                                    bingoLT += 1
+                    if bingoGeneral == 3 or bingoLT == len(description)+1:
+                        counter += 1
+                        homogenEntry = element
+                        self.log.info('Homogeneous entry with tag name "%s" is found to be used in the CondDB for %d partition(s): %s' % (tag,counter,partitionList))
+                        self.log.info('Merging will be done in release notes for homogeneous entries for patch "%s" ...' % patch)
+                    else: homogenEntry = False
+            else: break
+                                             
+        return homogenEntry
+                
+    def addNote(self, contributor, partitions, description, date = None, patch = None, forceNewLT = False):
         """
         And a basic entry to the release notes.
         
@@ -92,10 +151,21 @@ class ReleaseNotes(object):
         description: list of comments, ["comment1","comment2"]
         date: date in the format "YYYY-MM-DD", the current date is used if omitted
         patch: numeric id of the patch (on savannah)
+        forceNewLT: boolean flag to control unconditional creation of local tag entry in release_notes.xml
         """
+        local_tag = partitions[partitions.keys()[0]][0]
         
-        note = self._makeEntry("note", contributor, date)
+        homogenEntry = self._findHomogeneous(contributor, date, local_tag, patch, description)
+        if forceNewLT or not homogenEntry:
+            note = self._makeEntry("note", contributor, date)
+            # Adding new local tag entry element to the root element of release_notes.xml tree
+            self._prependEntry(note)
+        elif homogenEntry:
+            note = homogenEntry
+            descr_ChildElem = note.find(str(_xel("description")))
+            homogenEntry.remove(descr_ChildElem) 
         
+        # Attaching sub-sub-elements to new sub-element or element of a new local tag entry
         for part in partitions:
             tag, files = partitions[part]
             part_el = ET.SubElement(note,_xel("partition"))
@@ -105,12 +175,10 @@ class ReleaseNotes(object):
             files.sort()
             for f in files:
                 ET.SubElement(part_el,_xel("file")).text = f
-        
+                
         self._setDescription(note, description, patch)
         
-        self._prependEntry(note)
-        
-    def addGlobalTag(self, contributor, tag, partitions, description = None, date = None, patch = None):
+    def addGlobalTag(self, contributor, tag, partitions, description = None, date = None, patch = None, forceNewGT = False):
         """
         And an entry for a global tag to the release notes.
         
@@ -120,13 +188,21 @@ class ReleaseNotes(object):
         description: list of comments, ["comment1","comment2"]
         date: date in the format "YYYY-MM-DD", the current date is used if omitted
         patch: numeric id of the patch (on savannah)
+        forceNewGT: flag for forcing creation of a new global tag entry in a release_notes.xml file 
+                    as a stand-alone entry in case any previous homogeneous entries are found.  
         """
         
-        global_tag = self._makeEntry("global_tag", contributor, date)
-        ET.SubElement(global_tag,_xel("tag")).text = tag
+        homogenEntry = self._findHomogeneous(contributor,date,tag)
+        if forceNewGT or not homogenEntry:
+            global_tag = self._makeEntry("global_tag", contributor, date)
+            ET.SubElement(global_tag,_xel("tag")).text = tag
+            self._setDescription(global_tag, description, patch)
+            # Adding new global tag entry element to the root element of release_notes.xml tree
+            self._prependEntry(global_tag)
+        elif homogenEntry:
+            global_tag = homogenEntry
         
-        self._setDescription(global_tag, description, patch)
-        
+        # Attaching sub-sub-elements to new sub-element or element of a new global tag entry
         for part in partitions:
             base_tag, tags = partitions[part]
             part_el = ET.SubElement(global_tag,_xel("partition"))
@@ -134,9 +210,7 @@ class ReleaseNotes(object):
             ET.SubElement(part_el,_xel("base")).text = base_tag
             tags = list(tags)
             for t in tags:
-                ET.SubElement(part_el,_xel("tag")).text = t
-        
-        self._prependEntry(global_tag)
+                ET.SubElement(part_el,_xel("tag")).text = t      
         
     def write(self, filename = None , encoding = "utf-8"):
         if filename is None:

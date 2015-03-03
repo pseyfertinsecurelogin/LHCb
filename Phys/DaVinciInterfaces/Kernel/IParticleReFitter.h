@@ -1,4 +1,4 @@
-// $Id: IParticleReFitter.h,v 1.1.1.1 2009-07-22 20:54:51 jpalac Exp $
+// $Id: IParticleReFitter.h,v 1.3 2009-08-17 08:04:22 jpalac Exp $
 // ============================================================================
 #ifndef VERTEXFITTER_IPARTICLEREFITTER_H 
 #define VERTEXFITTER_IPARTICLEREFITTER_H 1
@@ -32,8 +32,13 @@ namespace LHCb { class Particle ; }
  *  @author Vanya BELYAEV belyaev@lapp.in2p3.fr
  *  @date   2004-12-19
  */
-class IParticleReFitter : virtual public IAlgTool 
+class GAUDI_API IParticleReFitter : virtual public IAlgTool 
 {
+public:
+  // ==========================================================================
+  /// interface machinery 
+  DeclareInterfaceID(IParticleReFitter, 2, 0);  
+  // ==========================================================================  
 public:
   // ==========================================================================  
   /** The basic method for "refit" of the particle
@@ -103,11 +108,6 @@ public:
     }
     return code ;
   } 
-  // ==========================================================================  
-public:
-  // ==========================================================================
-  /// Return the unique interface identifier 
-  static const InterfaceID& interfaceID() ;
   // ==========================================================================  
 protected:
   // ==========================================================================

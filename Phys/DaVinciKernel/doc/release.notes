@@ -1,8 +1,72 @@
-!$Id: release.notes,v 1.310 2009-07-28 08:53:15 cattanem Exp $
+!$Id: release.notes,v 1.323 2009-09-02 15:55:17 cattanem Exp $
 !============================================================================
 ! Package     : DaVinciKernel
 ! Responsible : J.P. Palacios
 !============================================================================
+
+!======================== DaVinciKernel v8r1 2009-09-02 =====================
+! 2009-09-01 - Juan PALACIOS
+ - Kernel/RelationOneToOne.h
+  . Wrapper for 1D unweighted relations table. Mimicks one-to-one table.
+
+ - src/Lib/DVAlgorithm.cpp
+  . Use CleanDesktopGuard.
+ - Kernel/DaVinciGuards.h
+  . Add CleanDesktopGuard. Calls PhysDekstop's cleanDesktop method from 
+    destructor.
+  . Make all constructors explicit.
+  . Add OrphanPointerContainerGuard, which only deletes pointers if they 
+    are not on the TES.
+
+! 2009-08-31 - Juan PALACIOS
+ - DVAlgorithm
+  . Use single, unweighted relations.
+ - Add Kernel/DaVinciGuards.h with guard to delete entries in a container of
+   newed pointers.
+
+! 2009-08-19 - Vanya BELYAEV
+ - Kernel/DecayTree.h
+    1. moveclass DecayTreeFitter::Tree by Wouter Hulsbergen from Phys/DecayTreeFitter package
+    2. rename is as LHCb::DecayTree
+
+
+! 2009-08-18 - Juan PALACIOS
+ - src/Lib/DVAlgorithm.cpp
+  . Do not attempt to set PhysDesktop's P2PVInputLocations if locations empty.
+
+! 2009-08-16 - Juan PALACIOS
+ - Remove FilterCriterionBase class. Moved to Phys/DaVinciFilters.
+
+! 2009-08-13 - Vanya BELYAEV
+
+ - remove the default value of DVAlgorithm.ParticleCombiners
+
+    now the default value (if not specified explicitly) 
+    is picked up from IOnOffLineTool 
+     
+! 2009-08-06 - Juan PALACIOS
+ - Kernel/Particle2VertexAsct.h
+  . Removed. Obsolete and not used anywhere.
+
+! 2009-08-05 - Juan PALACIOS
+ - Added Kernel/BestPV.h
+  . Defines functor DaVinci::BestPV. To be used in tools owned by DVAlgorithms
+    at some level. Used to get the best PV for a given particle using the
+    DVAlgorithm::getRelatedPV method.
+
+! 2009-08-02 - Juan PALACIOS
+ - Added src/Lib/DaVinciFun.cpp
+  . Has implementations of non-template methods in DaVinci and 
+    DaVInci::P2VVAngles
+
+! 2009-08-02 - Greig Cowan
+ - Arguments to all P2VV functions changed to be const references.
+
+! 2009-08-02 - Greig Cowan
+ - Added DaVinci::P2VVAngles:: namespace to DaVinciFun.h. To be used for 
+   calculating helicity and transversity angles in P2VV decays like 
+   Bs2JpsiPhi. These only deal with kinematics and first boost all decay
+   products to the B rest frame before proceeding with the calculation.
 
 !======================== DaVinciKernel v8r0 2009-07-28 =====================
 ! 2009-07-28 - Juan PALACIOS

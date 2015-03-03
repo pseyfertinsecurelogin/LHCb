@@ -4,6 +4,19 @@
 ! Purpose     : Provides magnetic field map and Bdl tools
 !-----------------------------------------------------------------------------
 
+!====================== Magnet v5r4 2009-09-04 ===============================
+! 2009-09-04 - Wouter Hulsbergen
+ - Adjusted log messages of FieldSvc such that they look as they did for
+   version v5r3
+
+! 2009-09-02 - Marco Cattaneo
+ - Remove obsolete file Magnet_dll.cpp
+
+! 2009-09-01 - Wouter Hulsbergen
+ - Magnetic field grid is now stored in class DetDesc/MagneticFieldGrid. 
+   New utility 'MagneticFieldGridReader' reads the field from a file (thereby
+   replacing the IMagFieldTools)
+
 !====================== Magnet v5r3 2009-06-16 ===============================
 ! 2009-06-12 - Marco Cattaneo
  - Fix a gcc43 compilation warning in MultipleMagneticFieldSvc.cpp

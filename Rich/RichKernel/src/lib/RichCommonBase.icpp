@@ -1,0 +1,196 @@
+
+//-----------------------------------------------------------------------------
+/** @file RichCommonBase.icpp
+ *
+ *  Implementation file for RICH base class : Rich::CommonBase
+ *
+ *  CVS Log :-
+ *  $Id: RichCommonBase.icpp,v 1.1 2009-08-10 12:12:05 jonrob Exp $
+ *
+ *  @author Chris Jones    Christopher.Rob.Jones@cern.ch
+ *  @date   2005-08-27
+ */
+//-----------------------------------------------------------------------------
+
+// STL
+#include <sstream>
+
+// local
+#include "RichKernel/RichCommonBase.h"
+
+// Gaudi
+#include "GaudiKernel/IJobOptionsSvc.h"
+
+// Disable warning on windows
+#ifdef _WIN32
+#pragma warning ( disable:4661 ) // incomplete explicit templates
+#endif
+
+//=============================================================================
+// Destructor
+//=============================================================================
+template <class PBASE>
+Rich::CommonBase<PBASE>::~CommonBase() {}
+
+//=============================================================================
+// Initialisation
+//=============================================================================
+template <class PBASE>
+StatusCode Rich::CommonBase<PBASE>::initialize()
+{
+  // Execute the base class initialize
+  const StatusCode sc = PBASE::initialize();
+  if ( sc.isFailure() )
+  { return this -> Error( "Failed to initialise Gaudi Base class", sc ); }
+
+  // Printout from initialize
+  if ( this -> msgLevel(MSG::DEBUG) )
+    this -> debug() << "Initialize" << endmsg;
+
+  return sc;
+}
+//=============================================================================
+
+//=============================================================================
+// Finalisation
+//=============================================================================
+template <class PBASE>
+StatusCode Rich::CommonBase<PBASE>::finalize()
+{
+  // Printout from finalization
+  if ( this -> msgLevel(MSG::DEBUG) )
+    this -> debug() << "Finalize" << endmsg;
+
+  // Finalise base class and return
+  return PBASE::finalize();
+}
+//=============================================================================
+
+//=============================================================================
+// Access job options service
+//=============================================================================
+template <class PBASE>
+IJobOptionsSvc* Rich::CommonBase<PBASE>::joSvc() const
+{
+  if (!m_jos)
+  { m_jos = this -> template svc<IJobOptionsSvc>( "JobOptionsSvc" ); }
+  return m_jos;
+}
+//=============================================================================
+
+//=============================================================================
+// Sets Properties
+//=============================================================================
+template <class PBASE>
+bool Rich::CommonBase<PBASE>::setProperties( const std::string & name ) const
+{
+  return ( this->my_setToolProperty<StringProperty> ( name , "Context"     ) &&
+           this->my_setToolProperty<StringProperty> ( name , "OutputLevel" ) );
+}
+//=============================================================================
+
+//=============================================================================
+// set properties
+//=============================================================================
+template < class PBASE        >
+template < class PROPERTYTYPE >
+bool Rich::CommonBase<PBASE>::my_setToolProperty( const std::string & name,
+                                                  const std::string & property ) const
+{
+  bool sc = true;
+
+  if ( ! this->joSvc() )
+  {
+    this -> Error( "Null Job Options Service !!" ).ignore();
+    sc = false;
+  }
+  else
+  {
+
+    // full tool name
+    const std::string fullname = "ToolSvc." + name;
+
+    // get properties for this tool name
+    const PROPERTYTYPE * test_sp = this->my_getProperty<PROPERTYTYPE>( fullname, property );
+
+    // If Context not set, set it
+    if ( !test_sp )
+    {
+
+      // do we have a tool registry ?
+      if ( ! this->toolRegistry() )
+      {
+        this -> Error( "Null RichToolRegistry !!" ).ignore();
+        sc = false;
+      }
+      else
+      {
+
+        // get Tool registry OutputLevel
+        const PROPERTYTYPE * ts_sp
+          = this->my_getProperty<PROPERTYTYPE>( this->toolRegistry()->name(), property );
+        if ( ts_sp )
+        {
+          if ( this -> msgLevel(MSG::VERBOSE) )
+          { this -> verbose() << "Setting " << *ts_sp << " for " << fullname << endmsg; }
+          sc = this->joSvc()->addPropertyToCatalogue(fullname,*ts_sp).isSuccess();
+          if ( !sc ) { this -> Error( "Error setting "+property+" for " + fullname ).ignore(); }
+        }
+        else if ( this -> msgLevel(MSG::DEBUG) )
+        {
+          this -> debug() << this->toolRegistry()->name() << " has no " << property << endmsg;
+        }
+
+      } // tool registry OK
+
+    } // tool already has property
+
+  } // JO service OK
+
+  return sc;
+}
+
+//=============================================================================
+// get properties
+//=============================================================================
+template < class PBASE        >
+template < class PROPERTYTYPE >
+const PROPERTYTYPE *
+Rich::CommonBase<PBASE>::my_getProperty( const std::string & name,
+                                         const std::string & property ) const
+{
+  // get properties for this name
+  const PROPERTYTYPE * sp = NULL;
+  const std::vector<const Property*> * properties = this -> joSvc()->getProperties( name );
+  if ( properties )
+  {
+    if ( this -> msgLevel(MSG::VERBOSE) )
+    { this -> verbose() << "Found " << properties->size() << " Properties for " << name << endmsg; }
+    for ( std::vector<const Property*>::const_reverse_iterator itProp = properties->rbegin();
+          itProp != properties->rend(); ++itProp )
+    {
+      if ( this -> msgLevel(MSG::VERBOSE) )
+      { this->verbose() << " -> " << **itProp << endmsg; }
+      if ( property == (*itProp)->name() )
+      {
+        sp = dynamic_cast<const PROPERTYTYPE*>(*itProp);
+        if ( NULL != sp )
+        {
+          if ( this -> msgLevel(MSG::VERBOSE) )
+          { this -> verbose() << "  -> Found requested property" << *sp << " for " << name << endmsg; }
+          break;
+        }
+        else
+        {
+          std::ostringstream mess;
+          mess << "Property " + property + " has wrong type : Expected "
+               << System::typeinfoName( typeid(PROPERTYTYPE) )
+               << " Found "
+               << System::typeinfoName( typeid(**itProp) );
+          this -> Exception( mess.str() );
+        }
+      }
+    }
+  }
+  return sp;
+}

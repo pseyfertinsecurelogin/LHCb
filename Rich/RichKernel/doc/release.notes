@@ -1,8 +1,33 @@
-! $Id: release.notes,v 1.230 2009-07-28 08:57:18 cattanem Exp $
+! $Id: release.notes,v 1.239 2009-09-02 16:15:40 cattanem Exp $
 ! Package     : Rich/RichKernel
 ! Responsible : Chris Jones
 ! Purpose     : General purpose RICH classes
 !-----------------------------------------------------------------------
+
+!====================== RichKernel v7r26 2009-09-02 ====================
+! 2009-09-02 - Marco Cattaneo
+ - Remove obsolete file src/component/RichKernel_dll.cpp
+
+! 2009-08-27 - Gareth Rogers
+ - Added functions to give the dimensions of the a RICH panel in x and y.
+
+! 2009-08-10 - Chris Jones
+ - Move Linker library source files to src/lib/ directory
+ - Slight simplification of the booking methods in RichHistoBase.icpp
+
+! 2009-08-07 - Ross Young
+ - globalPixelX() and globalPixelY() in RichSmartIDCnv.h updated to display 
+	 correct hitmaps
+
+! 2009-08-05 - Chris Jones
+ - Remove ICameraTool.h - Now part of Online/Camera
+
+! 2009-07-31 - Chris Jones
+ - Add new pixelCreator type "AllMCRichHits" to RichTools() Configurable.
+
+! 2009-07-30 - Chris Jones
+ - Add hash functions for Rich::DAQ::HPDCopyNumber in RichDAQDefinitions.h
+ - Replace all endreq with endmsg
 
 !====================== RichKernel v7r25 2009-07-28 ====================
 ! 2009-07-27 - Chris Jones

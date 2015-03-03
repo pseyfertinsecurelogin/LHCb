@@ -1,9 +1,16 @@
 ! =============================================================================
-! $Id: release.notes,v 1.401 2009-06-16 06:40:19 cattanem Exp $ 
+! $Id: release.notes,v 1.403 2009-09-02 12:38:52 cattanem Exp $ 
 ! =============================================================================
 ! package DetDesc
 ! package manager : Marco Clemencic, Juan Palacios
 ! =============================================================================
+
+!====================== DetDesc v18r15 2009-09-02 =============================
+! 2009-09-02 - Marco Cattaneo
+ - In requirements, remove support for slc3 and for Root < 5.19
+
+! 2009-09-01 - Wouter Hulsbergen
+ - Added MagneticFieldGrid class
 
 !====================== DetDesc v18r14 2009-06-16 =============================
 ! 2009-06-15 - Vanya Belyaev
