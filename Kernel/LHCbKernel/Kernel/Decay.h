@@ -1,7 +1,7 @@
-// $Id: Decay.h,v 1.4 2008-04-03 12:19:20 ibelyaev Exp $
+// $Id: Decay.h,v 1.1 2008-05-05 11:44:14 ibelyaev Exp $
 // ============================================================================
-#ifndef DAVINCIKERNEL_DECAY_H 
-#define DAVINCIKERNEL_DECAY_H 1
+#ifndef LHCBKERNEL_DECAY_H 
+#define LHCBKERNEL_DECAY_H 1
 // ============================================================================
 // Include files
 // ============================================================================
@@ -20,7 +20,7 @@ class IDecodeSimpleDecayString ;
 class IParticlePropertySvc     ;
 class  ParticleProperty        ;
 // ============================================================================
-namespace DaVinci
+namespace LHCb
 {
   // ==========================================================================
   /** @class Decay Kernel/Decay.h
@@ -199,116 +199,16 @@ namespace DaVinci
   };
   // ==========================================================================
   /// the actual type for the vector of decays 
-  typedef std::vector<DaVinci::Decay>                                  Decays ;
+  typedef std::vector<LHCb::Decay>                                     Decays ;
   // ==========================================================================
-  namespace Utils
-  {
-    // ========================================================================
-    /** simple function for filtering (by PID) the particles, which 
-     *  matched the PID
-     *  
-     *  @code
-     *  
-     *   const LHCb::Particle::ConstVector input = ... ;
-     *   const DaVinci::Decay& decay = ... ;
-     *
-     *   LHCb::Particle::ConstVector result ;
-     * 
-     *   // use the function:
-     *
-     *   DaVinci::Utils::getParticles 
-     *            ( input . begin () , 
-     *              input . end   () , 
-     *              decay ( 1 )      , // get the first component 
-     *              std::back_inserter ( result ) ) ;
-     *
-     *  @endcode 
-     *
-     *  It is also applicable to Monte-Carlo data:
-     *
-     *  @code
-     *  
-     *   const LHCb::MCParticle::ConstVector input = ... ;
-     *   const DaVinci::Decay& decay = ... ;
-     *
-     *   LHCb::MCParticle::ConstVector result ;
-     * 
-     *   // use the function:
-     *
-     *   DaVinci::Utils::getParticles 
-     *            ( input . begin () , 
-     *              input . end   () , 
-     *              decay ( 1 )      , // get the first component 
-     *              std::back_inserter ( result ) ) ;
-     *
-     *  @endcode 
-     *
-     *  @param begin the begin iterator for the input sequence  
-     *  @param end   the end   iterator for the input sequence  
-     *  @param item  the decay component 
-     *  @param result the output iterator 
-     *  @param return the updated output iterator 
-     *
-     *  @author  Vanya BELYAEV Ivan.Belyaev@nikhef.nl
-     *  @date   2008-03-31
-     */
-    template <class INPUT , class OUTPUT>
-    inline 
-    OUTPUT 
-    getParticles 
-    ( INPUT                       begin  , 
-      INPUT                       end    ,
-      const DaVinci::Decay::Item& item   , 
-      OUTPUT                      result ) 
-    {
-      for ( ; begin != end ; ++begin ) 
-      {
-        if ( ! (*begin)        ) { continue ; }   // CONTINUE 
-        const LHCb::ParticleID& pid = (*begin)->particleID() ;
-        if ( pid != item.pid() ) { continue ; }   // CONTINUE 
-        *result = *begin ;
-        ++result ;
-      }
-      return result ;
-    }
-    // ========================================================================
-  } // end of namespace DaVinci::Utils
-  // ==========================================================================
-  /** create decay object from the descriptor
-   *  @attention only "main" decay is created!
-   *  @param descriptor the decay descriptor 
-   *  @param decode the decoder tool
-   *  @return the constructed decay
-   */
-  DaVinci::Decay decay 
-  ( const std::string&        descriptor , 
-    IDecodeSimpleDecayString* decoder    ) ;
-  // ========================================================================    
-  /** create all decay objects from the descriptor
-   *  @param descriptor the decay descriptor 
-   *  @param decode the decoder tool
-   *  @return the constructed decay
-   */
-  DaVinci::Decays decays
-  ( const std::string&        descriptor , 
-    IDecodeSimpleDecayString* decoder    ) ;
-  /** create all decay objects from the descriptor
-   *  @param descriptors the decay descriptors 
-   *  @param decode the decoder tool
-   *  @return the constructed decay
-   */
-  DaVinci::Decays decays
-  ( const std::vector<std::string>& descriptors , 
-    IDecodeSimpleDecayString*       decoder     ) ;
-  // ========================================================================    
-} // end of namespace DaVinci
+} // end of namespace LHCb
 // ============================================================================
 /// the printout operator to the stream 
 inline std::ostream& operator<<
-( std::ostream& s , const DaVinci::Decay& decay ) 
-{ return decay.fillStream ( s ) ; }
+  ( std::ostream&      s     , 
+    const LHCb::Decay& decay ) { return decay.fillStream ( s ) ; }
 // ============================================================================
 // The END
 // ============================================================================
-#endif // DAVINCIKERNEL_DECAY_H
+#endif // LHCBKERNEL_DECAY_H
 // ============================================================================

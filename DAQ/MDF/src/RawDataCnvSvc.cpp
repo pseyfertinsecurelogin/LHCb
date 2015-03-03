@@ -1,4 +1,4 @@
-// $Id: RawDataCnvSvc.cpp,v 1.27 2008-04-16 14:56:09 cattanem Exp $
+// $Id: RawDataCnvSvc.cpp,v 1.29 2008-05-13 15:42:01 frankb Exp $
 //  ====================================================================
 //  RawDataCnvSvc.cpp
 //  --------------------------------------------------------------------
@@ -136,7 +136,7 @@ StatusCode RawDataCnvSvc::finalize()    {
   return ConversionSvc::finalize();
 }
 
-// Helper to print errors and return bad status
+/// Helper to print errors and return bad status
 StatusCode RawDataCnvSvc::error(CSTR msg) const {
   MsgStream err(msgSvc(), name());
   err << MSG::ERROR << msg << endmsg;
@@ -216,8 +216,9 @@ RawDataCnvSvc::createObj(IOpaqueAddress* pA, DataObject*& refpObj) {
                 else if ( typ == RawDataAddress::MEP_TYPE ) {
                   sc = unpackMEP(dat,pReg->identifier(),raw.get());
                 }
-                else
+                else {
                   return error("UNKNOWN decoding requested - not yet implemented:"+pA->par()[0]);
+		}
               }
               if ( sc.isSuccess() )   {
                 refpObj = raw.release();
@@ -301,25 +302,31 @@ RawDataCnvSvc::unpackMEP(const MDFDescriptor& dat, const std::string& loc, RawEv
     StatusCode sc = decodeMEP((MEPEvent*)dat.first,pID,evts);
     if ( sc.isSuccess() )  {
       RawEvent* r = 0;
+      MsgStream log(msgSvc(), name());
       std::map<unsigned int,std::vector<RawBank*> >::iterator it = evts.begin();
       std::vector<std::string> names = buffersMEP(dat.first);
       std::vector<std::string>::const_iterator i=names.begin();
+      setupMDFIO(msgSvc(),dataProvider());
       for(; i != names.end() && it != evts.end(); ++i, ++it)   {
-        if ( (*i) == loc )    {
+        std::string obj_loc = (*i)+"/DAQ/RawEvent";
+        if ( obj_loc == loc )    {
           r = raw;
         }
         else  {
-          sc = dataProvider()->retrieveObject((*i)+"/DAQ/RawEvent",(DataObject*&)r);
+          sc = dataProvider()->retrieveObject(obj_loc,(DataObject*&)r);
           if ( !sc.isSuccess() )  {
-            return error("Failed to access raw event at:"+(*i));
+            return error("Failed to access raw event at:"+obj_loc);
           }
         }
-        //std::cout << "Filling banks for " << *i << " " << r->clID() << " " << loc << std::endl;
+	log << MSG::DEBUG
+	    << "unpackMEP: Filling banks for " << obj_loc << " " << r->clID() 
+	    << " " << " [" << (*it).second.size() << " banks] (" << loc << ") " 
+	    << (void*)r << "<>" << (void*)raw << endmsg;
         sc = adoptBanks(r,(*it).second);
         if ( sc.isSuccess() )  {
           continue;
         }
-        return error("Failed to add MEP banks to raw event structure.");
+        return error("Failed to add MEP banks to raw event structure:"+obj_loc);
       }
       return StatusCode::SUCCESS;
     }

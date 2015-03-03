@@ -1,4 +1,4 @@
-// $Id: Algo.cpp,v 1.18 2008-03-31 15:06:00 ibelyaev Exp $
+// $Id: Algo.cpp,v 1.21 2008-05-05 13:31:24 ibelyaev Exp $
 // ============================================================================
 // Include files 
 // ============================================================================
@@ -312,13 +312,13 @@ LoKi::Loop LoKi::Algo::loop
 } 
 // ============================================================================
 /* Create the loop object from "decay"
- *  @see DaVinci::Decay
+ *  @see LHCb::Decay
  *  @param decay the decay desctrptor
  *  @param combined the combiner
  *  @return the valid looping-object
  */
 LoKi::Loop LoKi::Algo::loop 
-( const DaVinci::Decay&    decay    , 
+( const LHCb::Decay&       decay    , 
   const IParticleCombiner* combiner ) 
 {
   // verify the decay descriptor
@@ -335,8 +335,8 @@ LoKi::Loop LoKi::Algo::loop
   // configure the loop object
   object -> setPID ( decay.mother().pp() ) ;
   // feed the data
-  const DaVinci::Decay::Items& children = decay.children() ;
-  for ( DaVinci::Decay::Items::const_iterator ic = 
+  const LHCb::Decay::Items& children = decay.children() ;
+  for ( LHCb::Decay::Items::const_iterator ic = 
           children.begin() ; children.end() != ic ; ++ic ) 
   {
     const std::string& c = ic->name()  ;
@@ -359,9 +359,9 @@ StatusCode LoKi::Algo::save
   if( 0 == particle ) 
   { return Error("save('"+tag+"'): invalid particle could not be saved!") ; }
   
-  const LHCb::Particle* saved = desktop()->save( particle );
+  const LHCb::Particle* saved = desktop()->keep( particle );
   
-  if( 0 == saved ) { return Error("Particle '"+tag+"' is not saved! " ) ; }
+  if( 0 == saved ) { return Error("Particle '"+tag+"' is not kept! " ) ; }
   
   m_selected.add ( tag , saved ) ;
   
@@ -752,28 +752,33 @@ StatusCode LoKi::Algo::finalize ()
   }
   //
   return DVAlgorithm::finalize () ;
-} 
+}
 // ============================================================================
 // get the helper "geometry" object
 // ============================================================================
-LoKi::Vertices::ImpParBase 
-LoKi::Algo::geo ( const LHCb::VertexBase* vertex ) const 
+LoKi::Vertices::ImpParBase LoKi::Algo::geo 
+( const LHCb::VertexBase* vertex , 
+  const std::string&      nick   ) const 
 {
-  IGeomDispCalculator* t = geomDispCalculator() ;
-  if ( 0 == t ) { Error("geo(): IGeomDispCalculator points to NULL!") ;}
+  const IDistanceCalculator* t = distanceCalculator ( nick ) ;
+  if ( 0 == t ) 
+  { Error("geo(): IDistanceCalculator('"+nick+"') points to NULL!") ;}
   return LoKi::Vertices::ImpParBase ( vertex , t ) ;
 } 
 // ============================================================================
 // get the helper "geometry" object
 // ============================================================================
-LoKi::Vertices::ImpParBase 
-LoKi::Algo::geo ( const LoKi::Point3D& point ) const 
+LoKi::Vertices::ImpParBase LoKi::Algo::geo 
+( const LoKi::Point3D& point ,
+  const std::string&   nick  ) const 
 {
-  IGeomDispCalculator* t = geomDispCalculator() ;
-  if ( 0 == t ) { Error("geo(): IGeomDispCalculator points to NULL!") ;}
+  const IDistanceCalculator* t = distanceCalculator ( nick ) ;
+  if ( 0 == t ) 
+  { Error("geo(): IDistanceCalculator'"+nick+"' points to NULL!") ;}
   return LoKi::Vertices::ImpParBase ( point , t ) ;
 } 
 // ============================================================================
+
 
 // ============================================================================
 // The END 

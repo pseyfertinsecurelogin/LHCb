@@ -1,4 +1,4 @@
-// $Id: Decay.cpp,v 1.5 2008-04-10 15:46:53 ibelyaev Exp $
+// $Id: Decay.cpp,v 1.2 2008-05-05 14:28:07 cattanem Exp $
 // ============================================================================
 // Include files 
 // ============================================================================
@@ -11,21 +11,20 @@
 // LHCbKernel
 // ============================================================================
 #include "Kernel/ParticleID.h"
-#include "Kernel/IDecodeSimpleDecayString.h"
 // ============================================================================
-// DaVinciKernel
+// LHCbKernel
 // ============================================================================
 #include "Kernel/Decay.h"
 // ============================================================================
 /** @file
- *  Implementation file for class DaVinci::Decay
+ *  Implementation file for class LHCb::Decay
  *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
  *  @date 2008-03-31
  */
 // ============================================================================
 // the constructor from the particle property 
 // ============================================================================
-DaVinci::Decay::Item::Item ( const ParticleProperty* pp ) 
+LHCb::Decay::Item::Item ( const ParticleProperty* pp ) 
   : m_name () 
   , m_pid  () 
   , m_pp ( pp ) 
@@ -36,7 +35,7 @@ DaVinci::Decay::Item::Item ( const ParticleProperty* pp )
 // ============================================================================
 // the constructor from the particle name 
 // ============================================================================
-DaVinci::Decay::Item::Item ( const std::string& name )
+LHCb::Decay::Item::Item ( const std::string& name )
   : m_name ( name ) 
   , m_pid  (   ) 
   , m_pp   ( 0 )
@@ -44,7 +43,7 @@ DaVinci::Decay::Item::Item ( const std::string& name )
 // ============================================================================
 // the constructor from the particle PID
 // ============================================================================
-DaVinci::Decay::Item::Item ( const LHCb::ParticleID& pid  )
+LHCb::Decay::Item::Item ( const LHCb::ParticleID& pid  )
   : m_name (     ) 
   , m_pid  ( pid ) 
   , m_pp   (  0  )
@@ -52,7 +51,7 @@ DaVinci::Decay::Item::Item ( const LHCb::ParticleID& pid  )
 // ============================================================================
 // the constructor from the particle PID
 // ============================================================================
-DaVinci::Decay::Item::Item ( const int               pid  )
+LHCb::Decay::Item::Item ( const int               pid  )
   : m_name (     ) 
   , m_pid  ( pid ) 
   , m_pp   (  0  )
@@ -60,7 +59,7 @@ DaVinci::Decay::Item::Item ( const int               pid  )
 // ============================================================================    
 // validate the item using the service 
 // ============================================================================    
-StatusCode DaVinci::Decay::Item::validate 
+StatusCode LHCb::Decay::Item::validate 
 (       IParticlePropertySvc* svc  ) const
 {
   if ( 0 != m_pp ) 
@@ -92,7 +91,7 @@ StatusCode DaVinci::Decay::Item::validate
 // ============================================================================
 // validate the item using the particle property object
 // ============================================================================    
-StatusCode DaVinci::Decay::Item::validate 
+StatusCode LHCb::Decay::Item::validate 
 ( const ParticleProperty* pp  ) const
 {
   if      ( 0 != m_pp && 0 == pp ) 
@@ -113,14 +112,14 @@ StatusCode DaVinci::Decay::Item::validate
 // ============================================================================
 // the default constructor 
 // ============================================================================
-DaVinci::Decay::Decay ()
+LHCb::Decay::Decay ()
   : m_mother    () 
   , m_daughters ()
 {}
 // ============================================================================
 // the constructor from mother and daughters 
 // ============================================================================
-DaVinci::Decay::Decay 
+LHCb::Decay::Decay 
 ( const                   ParticleProperty*   mother    ,   // the mother 
   const std::vector<const ParticleProperty*>& daughters )   // the daughtrers 
   : m_mother    ( mother ) 
@@ -131,7 +130,7 @@ DaVinci::Decay::Decay
 // ============================================================================
 // the constructor from mother and daughters 
 // ============================================================================
-DaVinci::Decay::Decay 
+LHCb::Decay::Decay 
 ( const             std::string&              mother    ,   // the mother 
   const std::vector<std::string>&             daughters )   // the daughters 
   : m_mother    ( mother ) 
@@ -142,7 +141,7 @@ DaVinci::Decay::Decay
 // ============================================================================
 // the constructor from mother and daughters 
 // ============================================================================
-DaVinci::Decay::Decay 
+LHCb::Decay::Decay 
 ( const             LHCb::ParticleID&         mother    ,   // the mother 
   const std::vector<LHCb::ParticleID>&        daughters )   // the daughters 
   : m_mother    ( mother ) 
@@ -153,7 +152,7 @@ DaVinci::Decay::Decay
 // ============================================================================
 // the constructor from mother and daughters 
 // ============================================================================
-DaVinci::Decay::Decay 
+LHCb::Decay::Decay 
 ( const             int   mother    ,   // the mother 
   const std::vector<int>& daughters )   // the daughters 
   : m_mother    ( mother )
@@ -164,7 +163,7 @@ DaVinci::Decay::Decay
 // ============================================================================
 // validate the decay using the service 
 // ============================================================================
-StatusCode DaVinci::Decay::validate ( IParticlePropertySvc* svc ) const
+StatusCode LHCb::Decay::validate ( IParticlePropertySvc* svc ) const
 {
    // validate the mother
   StatusCode sc = m_mother.validate ( svc ) ;
@@ -183,16 +182,16 @@ StatusCode DaVinci::Decay::validate ( IParticlePropertySvc* svc ) const
 // ============================================================================
 // virtual destructor 
 // ============================================================================
-DaVinci::Decay::~Decay () {}
+LHCb::Decay::~Decay () {}
 // ============================================================================
 // the default printout 
 // ============================================================================
-std::ostream& DaVinci::Decay::fillStream 
+std::ostream& LHCb::Decay::fillStream 
 ( std::ostream& s ) const { return s << toString () ; }
 // ============================================================================
 // the conversion to the string
 // ============================================================================
-std::string DaVinci::Decay::toString () const
+std::string LHCb::Decay::toString () const
 {
   std::string result = " " + m_mother.name() ;
   result += " ->" ;
@@ -205,7 +204,7 @@ std::string DaVinci::Decay::toString () const
 // ============================================================================
 // set daughters 
 // ============================================================================
-void DaVinci::Decay::setDaughters 
+void LHCb::Decay::setDaughters 
 ( const std::vector<const ParticleProperty*>& daugs ) 
 {
   m_daughters.clear() ;
@@ -219,7 +218,7 @@ void DaVinci::Decay::setDaughters
 // ============================================================================
 // set daughters 
 // ============================================================================
-void DaVinci::Decay::setDaughters 
+void LHCb::Decay::setDaughters 
 ( const std::vector<std::string>& daugs ) 
 {
   m_daughters.clear() ;
@@ -233,7 +232,7 @@ void DaVinci::Decay::setDaughters
 // ============================================================================
 // set daughters 
 // ============================================================================
-void DaVinci::Decay::setDaughters 
+void LHCb::Decay::setDaughters 
 ( const std::vector<LHCb::ParticleID>& daugs ) 
 {
   m_daughters.clear() ;
@@ -247,7 +246,7 @@ void DaVinci::Decay::setDaughters
 // ============================================================================
 // set daughters 
 // ============================================================================
-void DaVinci::Decay::setDaughters 
+void LHCb::Decay::setDaughters 
 ( const std::vector<int>& daugs ) 
 {
   m_daughters.clear() ;
@@ -259,79 +258,6 @@ void DaVinci::Decay::setDaughters
   }
 }
 // ============================================================================
-
-
-
-// ============================================================================
-/*  create decay object from the descriptor
- *  @attention only "main" decay is created!
- *  @param descriptor the decay descriptor 
- *  @param decode the decoder tool
- *  @return the constructed decay
- */
-// ============================================================================
-DaVinci::Decay DaVinci::decay 
-( const std::string&        descriptor , 
-  IDecodeSimpleDecayString* decoder    ) 
-{
-  if ( 0 == decoder   ) { return DaVinci::Decay () ; }      // RETURN 
-  StatusCode sc = decoder -> setDescriptor ( descriptor ) ;
-  if ( sc.isFailure() ) { return DaVinci::Decay () ;  }     // RETURN 
-  DaVinci::Decay dec ;
-  sc = decoder -> getDecay ( dec ) ;
-  if ( sc.isFailure() ) { return DaVinci::Decay () ;  }     // RETURN
-  return dec ;
-}
-// ============================================================================
-/*  create all decay objects from the descriptor
- *  @param descriptor the decay descriptor 
- *  @param decode the decoder tool
- *  @return the constructed decay
- */
-// ============================================================================
-DaVinci::Decays DaVinci::decays
-( const std::string&        descriptor , 
-  IDecodeSimpleDecayString* decoder    ) 
-{
-  if ( 0 == decoder   ) { return DaVinci::Decays () ; }      // RETURN 
-  StatusCode sc = decoder -> setDescriptor ( descriptor ) ;
-  if ( sc.isFailure() ) { return DaVinci::Decays () ;  }     // RETURN 
-  DaVinci::Decay dec ;
-  sc = decoder -> getDecay ( dec ) ;
-  if ( sc.isFailure() ) { return DaVinci::Decays () ;  }     // RETURN
-  DaVinci::Decays result ( 1 , dec ) ;
-  if ( decoder->is_cc()  )
-  {
-    DaVinci::Decay dec_cc ;
-    sc = decoder -> getDecay_cc ( dec_cc ) ;
-    if ( sc.isFailure() ) { return DaVinci::Decays () ;  }    // RETURN 
-    result.push_back ( dec_cc ) ;
-  }
-  return result ;
-}
-// ============================================================================
-/* create all decay objects from the descriptor
- *  @param descriptors the decay descriptors 
- *  @param decode the decoder tool
- *  @return the constructed decay
- */
-// ============================================================================
-DaVinci::Decays DaVinci::decays
-( const std::vector<std::string>& descriptors , 
-  IDecodeSimpleDecayString*       decoder     ) 
-{
-  if ( 0 == decoder ) { return DaVinci::Decays () ; }             // RETURN 
-  //
-  DaVinci::Decays result ;
-  for ( std::vector<std::string>::const_iterator idesc = descriptors.begin() ;
-        descriptors.end() != idesc ; ++idesc ) 
-  {
-    DaVinci::Decays res = decays ( *idesc , decoder ) ;
-    if ( res.empty() ) { return DaVinci::Decays () ; }           // RETURN
-    result.insert ( result.end() , res.begin() , res.end() ) ;
-  }
-  return result ;
-}
 
 // ============================================================================
 // The END

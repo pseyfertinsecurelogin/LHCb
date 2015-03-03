@@ -1,7 +1,7 @@
 """
 High level configuration tools for LHCb applications
 """
-__version__ = "$Id: Configuration.py,v 1.1 2008-04-17 11:51:37 cattanem Exp $"
+__version__ = "$Id: Configuration.py,v 1.4 2008-05-09 14:01:26 cattanem Exp $"
 __author__  = "Marco Cattaneo <Marco.Cattaneo@cern.ch>"
 
 from os import environ
@@ -14,6 +14,7 @@ class LHCbApp(ConfigurableUser):
        ,"skipEvents":             0 # events to skip
        ,"DDDBtag":    "DC06-latest" # geometry   database tag
        ,"condDBtag":  "DC06-latest" # conditions database tag
+       ,"monitors"  :  []           # monitor actions
         }
 
     def getProp(self,name):
@@ -22,17 +23,23 @@ class LHCbApp(ConfigurableUser):
         else:
             return self.getDefaultProperties()[name]
 
+    def setProp(self,name,value):
+        return setattr(self,name,value)
+
     def defineDB(self):
         condDBtag = self.getProp("condDBtag")
         DDDBtag   = self.getProp("DDDBtag")
         # For all DC06 cases, use latest DC06 tag
         if condDBtag.find("DC06") != -1 and DDDBtag.find("DC06") != -1 :
             importOptions( "$DDDBROOT/options/DC06.py" )
-        else:
+        # For all 2008 cases, except DC06, use latest 2008 global tag
+        elif condDBtag.find("-2008") and DDDBtag.find("-2008") != -1 :
+            importOptions( "$DDDBROOT/options/LHCb-2008.py" )
+        else :
             CondDBAccessSvc( "DDDB",     DefaultTAG = condDBtag )
             CondDBAccessSvc( "LHCBCOND", DefaultTAG = condDBtag )
-            #-- Always DC06 magnetic field for now....
-            MagneticFieldSvc().FieldMapFile = os.environ['FIELDMAPROOT']+'/cdf/field047.cdf'
+            #-- Default field map set by Fieldmap package
+            MagneticFieldSvc().FieldMapFile = os.environ['FIELDMAP']
 
     def defineEvents(self):
         skipEvents = self.getProp("skipEvents")
@@ -47,6 +54,11 @@ class LHCbApp(ConfigurableUser):
         else:
             ApplicationMgr().EvtMax = evtMax
 
+    def defineMonitors(self):
+        if "SC" in self.getProp("monitors"):
+            ApplicationMgr().StatusCodeCheck = True
+
     def applyConf(self):
         self.defineDB()
         self.defineEvents()
+        self.defineMonitors()

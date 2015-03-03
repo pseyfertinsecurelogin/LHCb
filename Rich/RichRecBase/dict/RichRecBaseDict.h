@@ -36,6 +36,10 @@
 #include "RichRecBase/IRichStatusCreator.h"
 #include "RichRecBase/IRichTrackCreator.h"
 #include "RichRecBase/IRichPhotonEmissionPoint.h"
+#include "RichRecBase/IRichPIDPlots.h"
+#include "RichRecBase/IRichStereoFitter.h"
+#include "RichRecBase/IRichStereoProjection.h"
+#include "RichRecBase/IRichIsolatedTrack.h"
 
 // instantiate some templated classes, to get them into the dictionary
 namespace 

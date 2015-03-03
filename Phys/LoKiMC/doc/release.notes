@@ -1,4 +1,4 @@
-! $Id: release.notes,v 1.39 2008-04-03 11:28:31 cattanem Exp $ 
+! $Id: release.notes,v 1.41 2008-05-05 13:43:54 cattanem Exp $ 
 ! -----------------------------------------------------------------------------
 ! Package     : Phys/LoKiMC
 ! Responsible : Vanya BELYAEV ibelyaev@physics.syr.edu
@@ -14,6 +14,19 @@
 !   A.Golutvin, P.Koppenburg have been used in the design.
 !
 ! -----------------------------------------------------------------------------
+
+!========================== LoKiMC v7r3 2008-05-05 ============================
+! 2008-05-05 - Marco Cattaneo
+ - Fix a few doxygen warnings, many more remain to be fixed
+
+ - LoKi/MCSections.h, src/MCSections.cpp
+     add functions to produce "sections" for the decay trees 
+
+ - LoKi/MCChild.h,  src/MCChild.cpp
+     add "daughters" 
+
+ - cmt/reqirements 
+		  version increment to v7r3 
 
 !========================== LoKiMC v7r2 2008-04-03 ============================
 ! 2008-03-30 - Vanya BELYAEV

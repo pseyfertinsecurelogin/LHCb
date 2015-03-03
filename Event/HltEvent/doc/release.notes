@@ -4,6 +4,11 @@
 ! Purpose     : Event model for HLT tracks
 !-----------------------------------------------------------------------------
 
+!======================== HltEvent v8r9 2008-05-19 ===========================
+! 2008-05-19 - Gerhard Raven
+ - In HltSummary, replace the integer ID with a string ID which better matches
+   the vast majority of its use
+
 !======================== HltEvent v8r8 2008-04-17 ===========================
 ! 2007-04-17 - Jose A. Hernando
  - Renamed enum type HltSelectionSummary to avoid conflicts with Python dictionaries

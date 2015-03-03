@@ -1,5 +1,8 @@
 #include "STDet/DeTTSector.h"
 #include "STDet/DeTTHalfModule.h"
+#include "STDet/DeTTSensor.h"
+#include "STDet/DeSTSensor.h"
+#include "STDet/STDetFun.h"
 
 /** @file DeTTSector.cpp
 *
@@ -33,6 +36,7 @@ StatusCode DeTTSector::initialize() {
   StatusCode sc = DeSTSector::initialize();
   if (sc.isFailure() ){
     msg << MSG::ERROR << "Failed to initialize detector element" << endreq;
+    return sc;
   }
   else {
 
@@ -77,7 +81,27 @@ StatusCode DeTTSector::initialize() {
                      parentID.detRegion(),  id(), 0);
     setElementID(chan);
 
+    std::vector<DeTTSensor*> sensors = getChildren<DeTTSector>();
+    std::sort(sensors.begin(),sensors.end(),STDetFun::SortByY());
+    std::vector<DeTTSensor*>::iterator iterS = sensors.begin();  
+    for(; iterS != sensors.end(); ++iterS){
+      m_sensors.push_back(*iterS);
+    } // iterS    
+    m_thickness = m_sensors.front()->thickness();
+
+    sc = registerConditionsCallbacks();
+    if (sc.isFailure()){
+      msg << MSG::ERROR << "Failed to registerConditions call backs" << endmsg;
+      return sc;
+    }
+    sc = cacheInfo();
+    if (sc.isFailure()){
+      msg << MSG::ERROR << "Failed to cache geometry" << endmsg;
+      return sc;
+    }
+
   }
+
   return StatusCode::SUCCESS;
 }
 

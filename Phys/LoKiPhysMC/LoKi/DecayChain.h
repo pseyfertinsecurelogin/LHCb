@@ -1,4 +1,4 @@
-// $Id: DecayChain.h,v 1.6 2007-11-28 14:54:09 ibelyaev Exp $
+// $Id: DecayChain.h,v 1.9 2008-05-19 06:46:13 cattanem Exp $
 // ============================================================================
 #ifndef LOKI_DECAYCHAIN_H 
 #define LOKI_DECAYCHAIN_H 1
@@ -43,7 +43,7 @@ namespace LoKi
     /** set the colors for output stream (not active for WIN32)
      *  @param  stream  reference for stream 
      *  @param  fg      color for foreground 
-     *  @param  fg      color for foreground 
+     *  @param  bg      color for background 
      *  @return true if color are changed 
      */
     bool setColor 
@@ -54,13 +54,25 @@ namespace LoKi
     /** set the colors for output stream (not active for WIN32)
      *  @param  stream  reference for stream 
      *  @param  fg      color for foreground 
-     *  @param  fg      color for foreground 
+     *  @param  bg      color for background 
      *  @return true if color are changed 
      */
     bool setColor 
     ( MsgStream&        stream              , 
       const MSG::Color& fg     = MSG::BLACK , 
       const MSG::Color& bg     = MSG::WHITE ) ;
+    // ========================================================================
+    /** reset the colors for output stream (not active for WIN32)
+     *  @param  stream  reference for stream 
+     *  @return true if color are changed 
+     */
+    bool resetColor ( std::ostream&     stream ) ;
+    // ========================================================================
+    /** reset the colors for output stream (not active for WIN32)
+     *  @param  stream  reference for stream 
+     *  @return true if color are changed 
+     */
+    bool resetColor ( MsgStream&        stream ) ;
     // ========================================================================
   }
   // ==========================================================================  
@@ -82,7 +94,7 @@ namespace LoKi
         , m_bg     ( bg     )
     { if ( m_mark )  {  LoKi::Colors::setColor ( m_stream , m_fg , m_bg ) ; } }
     //
-    ~MarkStream  () { if( m_mark ) { LoKi::Colors::setColor ( m_stream ) ; } }
+    ~MarkStream  () { if( m_mark ) { LoKi::Colors::resetColor ( m_stream ) ; } }
   private:
     MarkStream   ()       ;
   private:
@@ -91,6 +103,9 @@ namespace LoKi
     MSG::Color  m_fg      ;
     MSG::Color  m_bg      ;
   };
+  // ==========================================================================
+  /// the default indentation string 
+  const std::string s_indent = std::string(84,' ') ;
   // ==========================================================================  
   /** @class DecayChain DecayChain.h LoKi/DecayChain.h
    *
@@ -130,6 +145,7 @@ namespace LoKi
      *  @param mode      mode for printout of 4-vectors 
      *  @param fg        color for foreground for 'marked' lines 
      *  @param bg        color for background for 'marked' lines 
+     *  @param vertexd   only DECAY vertex info to be printed  (MC)
      */
     DecayChain
     ( const size_t          maxDepth = 5            , 
@@ -137,7 +153,8 @@ namespace LoKi
       const bool            vertexe  = false        ,
       const Mode            mode     = LV_WITHPT    ,
       const MSG::Color&     fg       = MSG::YELLOW  ,
-      const MSG::Color&     bg       = MSG::RED     ) ;
+      const MSG::Color&     bg       = MSG::RED     , 
+      const bool            vertexd  = true         ) ;
     /// virtual & protected destructor 
     virtual ~DecayChain() ;
     // ========================================================================
@@ -153,10 +170,15 @@ namespace LoKi
     void              setVertex   (  const bool value ) 
     { m_vertex     = value ; }
     // ========================================================================
-    /// print momentum info ?
+    /// print end-vertex info ?
     bool              vertexe     () const { return m_vertexe  ; }
     void              setVertexE  (  const bool value ) 
     { m_vertexe    = value ; }
+    // ========================================================================
+    /// print decay-vertices only?
+    bool              vertexd     () const { return m_vertexd  ; }
+    void              setVertexD  (  const bool value ) 
+    { m_vertexd    = value ; }
     // ========================================================================
     /// color for foreground (for marked entities)
     const MSG::Color& fg          () const { return m_fg ; }
@@ -243,7 +265,14 @@ namespace LoKi
       const LHCb::Vertex* vertex = particle->endVertex ();
       
       if ( m_vertex && 0 != vertex ) 
-      { stream << " EndVertex " << toString( vertex->position() ) ; }
+      { 
+        // use the terminator 
+        stream << term     ;  
+        stream << s_indent ;
+        stream << " EndVertex " << toString( vertex->position() ) ; 
+        if ( vertex -> hasKey() )  
+        { stream << " #" << toString ( vertex -> key() ) ; }
+      }
       // use the terminator 
       stream << term ;  
       
@@ -320,40 +349,53 @@ namespace LoKi
       const LHCb::MCVertex* vertex = particle->originVertex ();
       if     ( m_vertex && 0 != vertex ) 
       {
-        stream << " Origin x/y/z " << toString ( vertex -> position() ) ;
+        // use the terminator 
+        stream << term     ;  
+        stream << s_indent ;
+        stream << " Origin    " << toString ( vertex -> position() ) ;
         if ( vertex -> hasKey() )  
         { stream << " #" << toString ( vertex -> key() ) ; }
+        stream << " "   << vertex->type()  ;
       }
-      
-      // use the terminator 
-      stream << term ;  
       
       typedef SmartRefVector<LHCb::MCVertex>   EndVertices ;
       const EndVertices& endVertices = particle->endVertices() ;
+      
+      if ( endVertices.empty() ) 
+      {
+        stream << term ;
+        return stream ;
+      }
+      
       // print all end-vertices 
       for ( EndVertices::const_iterator ev = endVertices.begin() ; 
             endVertices.end() != ev ; ++ev ) 
       {
         const LHCb::MCVertex* vertex = *ev ;
         if ( 0 == vertex ) { continue ; }
-        if ( m_vertex && m_vertexe ) 
+        // keep only "decay"-endvertices  
+        if ( m_vertexd && !vertex->isDecay() ) { continue ; } // CONTINUE 
+        //
+        if ( m_vertex && m_vertexe )  
         {
-          stream << std::string( 92 , ' ' ) ;          
+          // use the terminator 
+          stream << term     ;
+          stream << s_indent ;          
           stream << " EndVtx[" << (ev-endVertices.begin() ) << "] " ;
           stream << toString( vertex -> position() ) ; 
-          stream << " type "   << vertex->type()  ;
           if ( vertex -> hasKey() )  
           { stream << " #" << toString ( vertex -> key() ) ; }
-          // use terminator 
-          stream << term ; 
+          stream << " "   << vertex->type()  ;
         }
+        // use terminator 
+        stream << term ; 
         print ( vertex->products().begin ()  ,
                 vertex->products().end   ()  ,  
                 stream           , term      , 
                 accept           , mark      ,
                 prefix + "   "   , depth + 1 ) ;   // RECURSION 
       }
-      
+  
       return stream ;
     }
     // ========================================================================
@@ -413,31 +455,35 @@ namespace LoKi
       { stream << " ... (skip  by cuts) " << term ; return stream ; }
       
       stream << toString( particle->momentum() ) ;
-      stream << " #" << toString ( particle->barcode() ) ; 
+      stream << " #" << toString ( particle->barcode () ) 
+             << "/"  << toString ( particle->status  () )  ;
       ///
       
       HepMC::GenVertex* vertex = particle->production_vertex ();
       if     ( m_vertex && 0 != vertex ) 
       {
-        stream << " Origin x/y/z " 
+        // use the terminator 
+        stream << term ;  
+        stream << s_indent ;
+        stream << " Origin    " 
                << toString ( vertex -> point3d() ) ;
         stream << " #" << toString ( vertex -> barcode() ) ; 
       }
-      
-      // use the terminator 
-      stream << term ;  
       
       // print all end-vertices 
       HepMC::GenVertex* evertex = particle->end_vertex() ;
       if ( m_vertex && m_vertexe && 0 != evertex ) 
       { 
-        stream << std::string( 92 , ' ' ) ;          
-        stream << " EndVtx " 
-               << toString( evertex -> point3d() ) ; 
-        stream << " #" << toString ( evertex -> barcode() ) ; 
         // use terminator 
         stream << term ;
+        stream << s_indent ;          
+        stream << " EndVertex " 
+               << toString( evertex -> point3d() ) ; 
+        stream << " #" << toString ( evertex -> barcode() ) ; 
       }
+      // use terminator 
+      stream << term ;
+      //
       if ( 0 != evertex ) 
       {
         HepMC::GenVertex::particle_iterator begin = 
@@ -449,6 +495,7 @@ namespace LoKi
                 accept , mark , 
                 prefix + "   " , depth + 1 ) ; 
       }
+      //
       return stream ;
     }
     // ========================================================================    
@@ -492,20 +539,6 @@ namespace LoKi
       { 
         Error ( " HepMC::GenEvent* points to NULL" ) ; 
         stream << term  ; return stream ; 
-      }
-      // use "signal vertex"
-      HepMC::GenVertex* vertex = event->signal_process_vertex() ;
-      if ( 0 == vertex ) 
-      {
-        // use the convention :
-        vertex = event->barcode_to_vertex ( -1 ) ;
-      }
-      if ( 0 != vertex ) 
-      {
-        return print 
-          ( vertex->particles_begin( HepMC::children ) , 
-            vertex->particles_end  ( HepMC::children ) , 
-            stream , term , accept , mark , prefix , depth ) ;
       }
       // select the trees 
       LoKi::GenTypes::GenContainer trees ;
@@ -662,8 +695,8 @@ namespace LoKi
         ( trees.begin () , 
           trees.end   () , 
           stream , term , accept , mark , prefix , depth ) ;
-    } ;
-
+    } 
+    // ========================================================================
     /** print decay chain for sequence of Particles/MCParticles/HepMCParticles
      * 
      *  @param first    begin of sequence to (MC/HepMC) particles 
@@ -708,7 +741,7 @@ namespace LoKi
      *
      *  @endcode 
      * 
-     *  @param event    pointer to the container of events 
+     *  @param events   pointer to the container of events 
      *  @param stream   reference to output stream 
      *  @param term     stream terminator 
      */
@@ -753,9 +786,9 @@ namespace LoKi
      *  @endcode 
      * 
      *  @see LoKi::MCTrees::buildTrees 
-     *  @param event    pointer to the container of particles 
-     *  @param stream   reference to output stream 
-     *  @param term     stream terminator 
+     *  @param particles pointer to the container of particles 
+     *  @param stream    reference to output stream 
+     *  @param term      stream terminator 
      */
     template < class STREAM     , 
                class TERMINATOR , 
@@ -803,9 +836,9 @@ namespace LoKi
      *  @endcode 
      * 
      *  @see LoKi::MCTrees::buildTrees 
-     *  @param event    pointer to the container of particles 
-     *  @param stream   reference to output stream 
-     *  @param term     stream terminator 
+     *  @param particles pointer to the container of particles 
+     *  @param stream    reference to output stream 
+     *  @param term      stream terminator 
      */
     template < class STREAM     , 
                class TERMINATOR , 
@@ -847,9 +880,9 @@ namespace LoKi
      *  @endcode 
      * 
      *  @see LoKi::MCTrees::buildTrees 
-     *  @param event    pointer to the container of particles 
-     *  @param stream   reference to output stream 
-     *  @param term     stream terminator 
+     *  @param particles pointer to the container of particles 
+     *  @param stream    reference to output stream 
+     *  @param term      stream terminator 
      */
     template < class STREAM     , 
                class TERMINATOR , 
@@ -891,9 +924,9 @@ namespace LoKi
      *  @endcode 
      * 
      *  @see LoKi::MCTrees::buildTrees 
-     *  @param event    pointer to the container of particles 
-     *  @param stream   reference to output stream 
-     *  @param term     stream terminator 
+     *  @param particles pointer to the container of particles 
+     *  @param stream    reference to output stream 
+     *  @param term      stream terminator 
      */
     template < class STREAM     , 
                class TERMINATOR , 
@@ -1066,7 +1099,7 @@ namespace LoKi
     inline const std::string toString 
     ( const HepGeom::Point3D<double>& v ) const 
     { return toString ( LoKi::Point3D( v.x() , v.y() , v.z() ) )  ; }
-    // ========================================================================    
+    // ========================================================================
   private: 
     // ========================================================================    
     /// copy constructor is disabled
@@ -1074,12 +1107,20 @@ namespace LoKi
     // ========================================================================
   private: 
     // ========================================================================
-    size_t                m_maxDepth ;
-    bool                  m_vertex   ;
-    bool                  m_vertexe  ;
-    MSG::Color            m_fg       ;
-    MSG::Color            m_bg       ;
-    Mode                  m_mode     ;
+    /// the maximal depth 
+    size_t                m_maxDepth ; // the maximal depth 
+    /// print (main) vertex information 
+    bool                  m_vertex   ; // print (main) vertex information  
+    /// print END -vertex infomration 
+    bool                  m_vertexe  ; // print END vertices 
+    /// print only DECAY vertex information (MC) 
+    bool                  m_vertexd  ; // print only DECAY vertex  (MC) 
+    /// The default color for  foreground 
+    MSG::Color            m_fg       ; // The default color for  foreground 
+    /// The default color for  background 
+    MSG::Color            m_bg       ; // The default color for  background 
+    /// printout mode 
+    Mode                  m_mode     ; // the printout mode 
     // format for "mass" 
     std::string           m_fmt_m    ; 
     // format for "PT" 
@@ -1092,6 +1133,7 @@ namespace LoKi
     std::string           m_fmt_d    ;
     // general format for integers  
     std::string           m_fmt_i    ;
+    // ========================================================================
   };
   // ==========================================================================
 } // end of namespace LoKi

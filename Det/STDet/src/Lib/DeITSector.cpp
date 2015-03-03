@@ -1,5 +1,8 @@
 #include "STDet/DeITSector.h"
-#include "STDet/DeITLayer.h"
+#include "STDet/DeITSensor.h"
+#include "STDet/DeSTSensor.h"
+#include "STDet/DeITLadder.h"
+#include "STDet/STDetFun.h"
 
 /** @file DeITSector.cpp
 *
@@ -7,6 +10,8 @@
 *
 *    @author Matthew Needham
 */
+
+
 
 using namespace LHCb;
 
@@ -35,6 +40,7 @@ StatusCode DeITSector::initialize() {
   StatusCode sc = DeSTSector::initialize();
   if (sc.isFailure() ){
     msg << MSG::ERROR << "Failed to initialize detector element" << endreq;
+    return sc;
   }
   else {
     // get the parent
@@ -45,6 +51,26 @@ StatusCode DeITSector::initialize() {
 
     // build the id
     setID(parentID.sector());
+    
+    std::vector<DeITSensor*> sensors = getChildren<DeITSector>();
+    std::sort(sensors.begin(),sensors.end(),STDetFun::SortByY());
+    std::vector<DeITSensor*>::iterator iterS = sensors.begin();  
+    for(; iterS != sensors.end(); ++iterS){
+      m_sensors.push_back(*iterS);
+    } // iterS    
+
+    m_thickness = m_sensors.front()->thickness();
+
+    sc = registerConditionsCallbacks();
+    if (sc.isFailure()){
+      msg << MSG::ERROR << "Failed to registerConditions call backs" << endmsg;
+      return sc;
+    }
+    sc = cacheInfo();
+    if (sc.isFailure()){
+      msg << MSG::ERROR << "Failed to cache geometry" << endmsg;
+      return sc;
+    }
 
   }
   return StatusCode::SUCCESS;

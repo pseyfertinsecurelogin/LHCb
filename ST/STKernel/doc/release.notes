@@ -1,7 +1,20 @@
-! $Id: release.notes,v 1.12 2008-04-03 11:43:56 cattanem Exp $
+! $Id: release.notes,v 1.17 2008-05-13 09:55:28 cattanem Exp $
 ! Package     : STKernel
 ! Responsible : M. Needham
 !----------------------------------------------------------------------------
+
+!====================== STKernel v1r4 2008-05-13 ============================
+! 2008-05-12 M Needham
+ - Improve printout in mapping printout in STTell1Board
+ - Add validChannel function
+
+! 2008-05-07 M Needham
+ - Improve printout in mapping printout in STTell1Board
+ - Give access to list of sectors on a Tell1 board
+
+! 2008-05-05 M Needham
+ - Add invalid pcn constant
+ - cleanup STTell1Board [orientation data member was public]
 
 !====================== STKernel v1r3 2008-04-03 ============================
 ! 2008-04-03 - Marco Cattaneo

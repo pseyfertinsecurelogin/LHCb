@@ -1,7 +1,26 @@
-!$Id: release.notes,v 1.122 2008-01-08 15:56:35 cattanem Exp $
+!$Id: release.notes,v 1.130 2008-05-09 07:36:09 cattanem Exp $
 !Package         : STDet
 !Package manager : M. Needham
 !-------------------------------------------------------------------------
+
+!======================== STDet v4r0 2008-05-09 ==========================
+! 2008-05-09 M Needham
+ - Fix untested status codes
+
+! 2008-05-05 M Needham/G. Raven
+ - Sort sensors by increasing y in DeITSector and DeTTSector
+ - Add fuctor for sorting detector elements by y (STDetFun.h)
+ - Bug fixes in DeSTSector to get correct piecewise traj
+ - Clean up compiler warning
+
+! 2008-04-09 M Needham
+ - Avoid double counting bondgap
+
+! 2008-03-14 M Needham
+ - Changes to add new level (DeSTSensor and derived classes)
+   * These are major changes.
+   * Interface and functionality of DeSTSector has changed. 
+   * See talk in ST software meeting 13/03/08   
 
 !======================== STDet v3r9 2008-01-08 ==========================
 ! 2008-01-08 - Marco Cattaneo

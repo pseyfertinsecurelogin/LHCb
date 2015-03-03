@@ -1,4 +1,4 @@
-// $Id: STTell1Board.h,v 1.1.1.1 2007-11-16 16:15:15 mneedham Exp $
+// $Id: STTell1Board.h,v 1.4 2008-05-12 13:08:26 mneedham Exp $
 #ifndef _STTell1Board_H
 #define _STTell1Board_H 1
 
@@ -57,6 +57,14 @@ public:
                             const unsigned int sectorIndex,
 			    double isf) const;
 
+  // check channel is valid
+  bool validChannel(const unsigned int daqChan) const;
+
+  // vector of sectors on the board
+  const std::vector<LHCb::STChannelID>& sectorIDs() const;
+  
+  // vector of hybrid orientations
+  const std::vector<int>& orientation() const;
 
   /// Operator overloading for stringoutput
   friend std::ostream& operator<< (std::ostream& s, const STTell1Board& obj)
@@ -68,21 +76,31 @@ public:
   // Fill the ASCII output stream
   virtual std::ostream& fillStream(std::ostream& s) const;
 
-
   //std::ostream& STTell1Board::printOut( std::ostream& os ) const;
-
-  std::vector<int> m_orientation;
 
 private:
 
   STTell1ID m_boardID;
   unsigned int m_nStripsPerHybrid;
   std::vector<LHCb::STChannelID> m_sectorsVector;
+  std::vector<int> m_orientation;
+
 };
 
 inline STTell1ID STTell1Board::boardID() const{
   return m_boardID;
 }
 
+inline const std::vector<int>& STTell1Board::orientation() const{
+  return m_orientation;
+}
 
+inline const std::vector<LHCb::STChannelID>& STTell1Board::sectorIDs() const{
+  return m_sectorsVector;
+}
+
+inline bool STTell1Board::validChannel(const unsigned int daqChan) const{
+  return (daqChan < m_nStripsPerHybrid*m_sectorsVector.size()); 
+}
+  
 #endif // _STTell1Board_H
