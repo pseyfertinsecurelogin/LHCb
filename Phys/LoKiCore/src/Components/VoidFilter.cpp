@@ -1,4 +1,4 @@
-// $Id: VoidFilter.cpp 53291 2010-08-05 14:35:53Z ibelyaev $
+// $Id: VoidFilter.cpp 117672 2011-02-12 17:17:09Z ibelyaev $
 // ============================================================================
 // Include files 
 // ============================================================================
@@ -10,6 +10,26 @@
 // ============================================================================
 #include "LoKi/FilterAlg.h"
 #include "LoKi/ICoreFactory.h"
+// ============================================================================
+/** @file 
+ *
+ *  This file is a part of LoKi project - 
+ *    "C++ ToolKit  for Smart and Friendly Physics Analysis"
+ *
+ *  The package has been designed with the kind help from
+ *  Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas, 
+ *  contributions and advices from G.Raven, J.van Tilburg, 
+ *  A.Golutvin, P.Koppenburg have been used in the design.
+ *
+ *  By usage of this code one clearly states the disagreement 
+ *  with the campain of Dr.O.Callot et al.: 
+ *  ``No Vanya's lines are allowed in LHCb/Gaudi software.''
+ *
+ *  
+ *                    $Revision: 117672 $
+ *  Last modification $Date: 2011-02-12 18:17:09 +0100 (Sat, 12 Feb 2011) $
+ *                 by $Author: ibelyaev $
+ */
 // ============================================================================
 namespace LoKi 
 {

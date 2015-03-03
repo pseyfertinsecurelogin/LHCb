@@ -4,6 +4,10 @@
 ! Purpose     : Tool interfaces and dictionaries for DaVinci
 !-----------------------------------------------------------------------------
 
+!========================= DaVinciInterfaces v2r9 2011-02-22 =========================
+! 2011-02-15 - Vanya Belyaev
+ - add extend_interfaces* pattern into dictionries 
+
 !========================= DaVinciInterfaces v2r8 2011-01-31 =========================
 ! 2011-01-24 - Juan Palacios
  - IDecayFinder

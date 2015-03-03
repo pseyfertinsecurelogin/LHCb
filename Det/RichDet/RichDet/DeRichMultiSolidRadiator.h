@@ -85,10 +85,10 @@ public:
   // Finds the intersections (entry/exit) with radiator. For boolean solids there
   virtual unsigned int intersections( const Gaudi::XYZPoint& pGlobal,
                                       const Gaudi::XYZVector& vGlobal,
-                                      RichRadIntersection::Vector& intersections ) const;
+                                      Rich::RadIntersection::Vector& intersections ) const;
 
   // Returns the refractive index at the given photon energy for this radiator
-  virtual double refractiveIndex( const double energy, bool hlt = false ) const;
+  virtual double refractiveIndex( const double energy, const bool hlt = false ) const;
 
 public:
 

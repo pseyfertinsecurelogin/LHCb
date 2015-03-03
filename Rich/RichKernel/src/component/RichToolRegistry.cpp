@@ -4,9 +4,6 @@
  *
  * Implementation file for class : RichToolRegistry
  *
- * CVS Log :-
- * $Id: RichToolRegistry.cpp,v 1.7 2009-10-10 18:22:50 jonrob Exp $
- *
  * @author Chris Jones   Christopher.Rob.Jones@cern.ch
  * @date 14/01/2002
  */
@@ -108,7 +105,7 @@ void Rich::ToolRegistry::setUpTools( const ToolList & toolList )
   for ( ToolList::const_iterator it = toolList.begin();
         it != toolList.end(); ++it )
   {
-    const int slash = (*it).find_first_of( "/" );
+    const std::string::size_type slash = (*it).find_first_of( "/" );
     addEntry( ( slash>0 ? (*it).substr(slash+1) : *it ),
               ( slash>0 ? (*it).substr(0,slash) : *it ) );
   }
@@ -131,7 +128,7 @@ Rich::ToolRegistry::toolType( const std::string & nickname ) const
     // Exception( "Unknown RICH tool nickname '" + nickname + "'" );
     // or... just assume same as nickname and issue a Warning
     Warning( "Unknown nickname '" + nickname + "' -> Assuming same class name",
-             StatusCode::SUCCESS );
+             StatusCode::SUCCESS ).ignore();
     addEntry( nickname, nickname );
   }
 

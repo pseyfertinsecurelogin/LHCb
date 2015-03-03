@@ -3,7 +3,7 @@
 # Maintainer : Vanya BELYAEV Ivan.Belyaev@nikhef.nl
 # ============================================================================
 package           LoKiHlt
-version           v3r4
+version           v3r5
         
 # =============== structure ==================================================
 branches          cmt doc src dict python LoKi 
@@ -41,7 +41,7 @@ apply_pattern    reflex_dictionary                                \
                  options=" -U__MINGW32__ "                          
 # Disable some compiler warnings in the automatically generated dict code
 macro_append LoKiHltDict_cppflags "" \
-                       target-icc " -wd191"
+                       target-icc " -wd177 -wd191"
 
 # =============== patterns ===================================================
 apply_pattern    linker_library    library=LoKiHltLib

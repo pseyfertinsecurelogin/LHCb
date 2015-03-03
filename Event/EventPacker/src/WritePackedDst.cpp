@@ -39,14 +39,17 @@
 //-----------------------------------------------------------------------------
 
 // Declaration of the Algorithm Factory
-DECLARE_ALGORITHM_FACTORY( WritePackedDst );
+DECLARE_ALGORITHM_FACTORY( WritePackedDst )
 
 //=============================================================================
 // Standard constructor, initializes variables
 //=============================================================================
 WritePackedDst::WritePackedDst( const std::string& name,
                                 ISvcLocator* pSvcLocator)
-  : GaudiAlgorithm ( name , pSvcLocator )
+  : GaudiAlgorithm ( name , pSvcLocator ),
+    m_dst          ( NULL ),
+    m_blobNumber   ( 0    ),
+    m_bankNb       ( 0    )
 {
   declareProperty( "Containers", m_containers );
 }

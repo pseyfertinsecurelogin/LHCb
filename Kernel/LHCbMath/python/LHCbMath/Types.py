@@ -2,7 +2,7 @@
 # =============================================================================
 # $Id: Types.py 101260 2010-11-14 18:02:25Z ibelyaev $
 # =============================================================================
-# $URL: http://svn.cern.ch/guest/lhcb/LHCb/tags/Kernel/LHCbMath/v3r23/python/LHCbMath/Types.py $
+# $URL: http://svn.cern.ch/guest/lhcb/LHCb/tags/Kernel/LHCbMath/v3r24/python/LHCbMath/Types.py $
 # =============================================================================
 ## @file
 #

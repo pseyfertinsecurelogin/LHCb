@@ -17,8 +17,7 @@
 //-----------------------------------------------------------------------------
 
 // Declaration of the Algorithm Factory
-DECLARE_ALGORITHM_FACTORY( UnpackCaloHypo );
-
+DECLARE_ALGORITHM_FACTORY( UnpackCaloHypo )
 
 //=============================================================================
 // Standard constructor, initializes variables
@@ -59,14 +58,16 @@ StatusCode UnpackCaloHypo::execute() {
   StandardPacker pack;
   
   for ( std::vector<LHCb::PackedCaloHypo>::const_iterator itS = dst->begin();
-        dst->end() != itS; ++itS ) {
+        dst->end() != itS; ++itS )
+  {
     const LHCb::PackedCaloHypo& src = (*itS);
 
     LHCb::CaloHypo* hypo = new LHCb::CaloHypo( );
     newCaloHypos->insert( hypo, src.key );
     hypo->setHypothesis( (LHCb::CaloHypo::Hypothesis) src.hypothesis );
     hypo->setLh( pack.fltPacked( src.lh ) );
-    if ( 0. != src.z ) {
+    if ( 0 != src.z ) 
+    {
       LHCb::CaloPosition* pos = new LHCb::CaloPosition();
       hypo->setPosition( pos );
       pos->setZ( pack.position( src.z ) );
@@ -98,22 +99,21 @@ StatusCode UnpackCaloHypo::execute() {
       spr(1,1) = err1 * err1;
       pos->setSpread( spr );
     }
-    int kk;
     int hintID;
     int key;
-    for ( kk = src.firstDigit; src.lastDigit > kk; ++kk ) {
+    for ( int kk = src.firstDigit; src.lastDigit > kk; ++kk ) {
       int reference = *(dst->beginRefs()+kk);
       pack.hintAndKey( reference, dst, newCaloHypos, hintID, key );
       SmartRef<LHCb::CaloDigit> ref( newCaloHypos, hintID, key );
       hypo->addToDigits( ref );
     }
-    for ( kk = src.firstCluster; src.lastCluster > kk; ++kk ) {
+    for ( int kk = src.firstCluster; src.lastCluster > kk; ++kk ) {
       int reference = *(dst->beginRefs()+kk);
       pack.hintAndKey( reference, dst, newCaloHypos, hintID, key );
       SmartRef<LHCb::CaloCluster> ref( newCaloHypos, hintID, key );
       hypo->addToClusters( ref );
     }
-    for ( kk = src.firstHypo; src.lastHypo > kk; ++kk ) {
+    for ( int kk = src.firstHypo; src.lastHypo > kk; ++kk ) {
       int reference = *(dst->beginRefs()+kk);
       pack.hintAndKey( reference, dst, newCaloHypos, hintID, key );
       SmartRef<LHCb::CaloHypo> ref( newCaloHypos, hintID, key );

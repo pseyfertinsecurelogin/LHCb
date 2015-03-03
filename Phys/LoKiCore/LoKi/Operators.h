@@ -1,4 +1,4 @@
-// $Id: Operators.h 115323 2011-01-14 08:08:25Z cattanem $
+// $Id: Operators.h 116907 2011-02-03 10:46:23Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_OPERATORS_H 
 #define LOKI_OPERATORS_H 1
@@ -1047,7 +1047,6 @@ operator != ( const std::vector<unsigned int>&  vct ,
               const LoKi::Functor<TYPE,double>& fun )
 { return LoKi::NotEqualToList<TYPE>( fun , vct ) ; }
 // ============================================================================
-
 
 
 

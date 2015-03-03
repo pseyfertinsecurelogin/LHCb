@@ -4,8 +4,6 @@
  *
  *  Header file for utility class : Rich::PhotonSpectra
  *
- *  $Id: RichPhotonSpectra.h,v 1.18 2007-09-04 16:46:57 jonrob Exp $
- *
  *  @author Chris Jones   Christopher.Rob.Jones@cern.ch
  *  @date   2003-07-12
  */
@@ -180,20 +178,20 @@ namespace Rich
   public:
 
     /// Implement ostream << method for PhotonSpectra<TYPE>
-    friend inline std::ostream& operator << ( std::ostream& os,
+    friend inline std::ostream& operator << ( std::ostream& photS_os,
                                               const PhotonSpectra<TYPE>& spectra )
     {
-      os << "{ " << std::endl
-         << " energy bins:\t" << spectra.energyBins() << std::endl
-         << " minimum energy:\t" << spectra.minEnergy() << std::endl
-         << " maximum energy:\t" << spectra.maxEnergy() << std::endl
+      photS_os << "{ " << std::endl
+               << " energy bins:\t" << spectra.energyBins() << std::endl
+               << " minimum energy:\t" << spectra.minEnergy() << std::endl
+               << " maximum energy:\t" << spectra.maxEnergy() << std::endl
         //<< " electron data:\t" << spectra.energyDist(Rich::Electron) << std::endl
         //<< " muon data:\t" << spectra.energyDist(Rich::Muon) << std::endl
         //<< " pion data:\t" << spectra.energyDist(Rich::Pion) << std::endl
         //<< " kaon data:\t" << spectra.energyDist(Rich::Kaon) << std::endl
         //<< " proton data:\t" << spectra.energyDist(Rich::Proton) << std::endl
-         << " } " << std::endl;
-      return os;
+               << " } " << std::endl;
+      return photS_os;
     }
 
   private: // data
@@ -257,19 +255,19 @@ namespace Rich
   template <class TYPE>
   inline TYPE PhotonSpectra<TYPE>::binEnergyLowerEdge( const unsigned int bin ) const
   {
-    return ( minEnergy() + static_cast<TYPE>(bin)*binSize() );
+    return ( minEnergy() + ((TYPE)(bin))*binSize() );
   }
 
   template <class TYPE>
   inline TYPE PhotonSpectra<TYPE>::binEnergyUpperEdge( const unsigned int bin ) const
   {
-    return ( minEnergy() + static_cast<TYPE>(1+bin)*binSize() );
+    return ( minEnergy() + ((TYPE)(1+bin))*binSize() );
   }
 
   template <class TYPE>
   inline TYPE PhotonSpectra<TYPE>::binEnergy( const unsigned int bin ) const
   {
-    return ( minEnergy() + static_cast<TYPE>(0.5+bin)*binSize() );
+    return ( minEnergy() + ((TYPE)(0.5+bin))*binSize() );
   }
 
   template <class TYPE>

@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # =============================================================================
-# $Id: functions.py 114430 2010-12-06 16:42:05Z ibelyaev $
+# $Id: functions.py 116907 2011-02-03 10:46:23Z ibelyaev $
 # =============================================================================
-# $URL: http://svn.cern.ch/guest/lhcb/LHCb/tags/Phys/LoKiCore/v10r8/python/LoKiCore/functions.py $ 
+# $URL: http://svn.cern.ch/guest/lhcb/LHCb/tags/Phys/LoKiCore/v10r9/python/LoKiCore/functions.py $ 
 # =============================================================================
 ## @file functions.py LoKiCore/function.py
 #  The set of basic functions for from LoKiCore library
@@ -32,7 +32,7 @@ A.Golutvin, P.Koppenburg have been used in the design.
 # =============================================================================
 __author__  = "Vanya BELYAEV ibelyaev@physics.syr.edu"
 __date__    = "????-??-??"
-__version__ = "Version $Revision: 114430 $ "
+__version__ = "Version $Revision: 116907 $ "
 # =============================================================================
 
 from LoKiCore.basic import cpp, std, LoKi, LHCb, Gaudi
@@ -800,6 +800,36 @@ def includes ( fun1 , fun2 ) :
     return fun1._includes_ ( fun2 )
 
 
+# =============================================================================
+## create the timer predicate or timer symbol :
+#
+#  @code
+#
+#    >>> fun   = ...
+#    >>> fun_t = timer ( 'ququ' ) % fun
+#
+#    >>> fun   = ... 
+#    >>> fun_t = timer ( fun , 'wuwu' ) 
+#
+#  @endcode     
+#
+#  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
+#  @date 2010-06-06 
+def timer ( obj , *args ) :
+    """
+    Define the timers
+    """
+    ##
+    if hasattr ( obj , '__timer__' )         : return obj.__timer__ ( *args )
+    ## 
+    if isinstance ( obj , str ) :
+        if   not args          : return LoKi.Timer ( obj )
+        elif 1 == len ( args ) :
+            arg0 = args[0]
+            if hasattr ( arg0 , '__timer__' ) : return timer ( arg0 , obj ) 
+    ##
+    raise TypeErorr, "Invalid arguments "
+    
 # =============================================================================
 ##  create the 'conditional source/cause' 
 #

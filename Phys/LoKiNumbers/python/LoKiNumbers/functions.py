@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # =============================================================================
-# $Id: functions.py 87550 2010-10-10 15:40:48Z ibelyaev $ 
+# $Id: functions.py 117671 2011-02-12 17:12:33Z ibelyaev $ 
 # =============================================================================
 ## @file LoKiNumbers/functions.py
 #  The full set of useful objects from LoKiNumbers library 
@@ -19,8 +19,8 @@
 #
 #  @author Vanya BELYAEV ibelyaev@physics.syr.edu
 #
-# $Revision: 87550 $
-# Last modification $Date: 2010-10-10 17:40:48 +0200 (Sun, 10 Oct 2010) $
+# $Revision: 117671 $
+# Last modification $Date: 2011-02-12 18:12:33 +0100 (Sat, 12 Feb 2011) $
 #                by $Author: ibelyaev $ 
 # =============================================================================
 """
@@ -39,15 +39,15 @@ with the campain of Dr.O.Callot et al.:
  ``No Vanya's lines are allowed in LHCb/Gaudi software.''
 
 
- $Revision: 87550 $
- Last modification $Date: 2010-10-10 17:40:48 +0200 (Sun, 10 Oct 2010) $
+ $Revision: 117671 $
+ Last modification $Date: 2011-02-12 18:12:33 +0100 (Sat, 12 Feb 2011) $
                 by $Author: ibelyaev $ 
 
 """
 # =============================================================================
 __author__  = "Vanya BELYAEV ibelyaev@physics.syr.edu"
 __date__    = ' xxxx-xx-xx '
-__version__ = " version $Revision: 87550 $ " 
+__version__ = " version $Revision: 117671 $ " 
 # =============================================================================
 
 # Namespaces:
@@ -111,6 +111,11 @@ XVector   = std.vector(_d)
 EXISTS    = LoKi.TES.Exists
 ## @see LoKi::Cuts::CONTAINS 
 CONTAINS  = LoKi.TES.Contains
+## @see LoKi::Cuts::COUNTER
+COUNTER   = LoKi.TES.Counter 
+## @see LoKi::Cuts::STAT
+STAT      = LoKi.TES.Stat 
+
 ## @see LoKi::Cuts::CHECK
 CHECK     = LoKi.Status.Check
 ## @see LoKi::Cuts::ACCEPT 

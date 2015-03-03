@@ -92,20 +92,39 @@ public:
    */
   virtual Rich::Side side( const Gaudi::XYZPoint& point) const;
 
+  /// Align the primary mirrors
   virtual StatusCode alignSphMirrors();
+
+  /// Align the secondary mirrors
   virtual StatusCode alignSecMirrors();
+
+private:
+
+  /// Access the name for a given panel
+  virtual const std::string panelName( const Rich::Side panel ) const;
 
 private:
 
   Gaudi::Plane3D m_nominalPlaneTop;    ///< The top nominal flat mirror plane
   Gaudi::Plane3D m_nominalPlaneBottom; ///< The bottom nominal flat mirror plane
 
-
   /// The nominal centre of curvature of the spherical mirror (negative side)
   Gaudi::XYZPoint  m_nominalCentreOfCurvatureBottom;
 
+  /// The nominal centre of curvature of the spherical mirror (positive side)
+  Gaudi::XYZPoint  m_nominalCentreOfCurvatureTop;
+
   /// The nominal normal vector of the flat mirror plane (negative side)
   Gaudi::XYZVector m_nominalNormalBottom;
+
+  /// The nominal normal vector of the flat mirror plane (positive side)
+  Gaudi::XYZVector m_nominalNormalTop;
+
+  /// Condition for the alignment of the spherical mirrors
+  SmartRef<Condition> m_sphMirAlignCond;
+
+  /// Condition for the alignment of the secondary mirrors
+  SmartRef<Condition> m_secMirAlignCond;
 
 };
 

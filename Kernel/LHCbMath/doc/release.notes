@@ -6,6 +6,15 @@
 !               All headers included in directory LHCbMath
 !-----------------------------------------------------------------------------
 
+!========================= LHCbMath v3r24 2011-02-22 =========================
+! 2011-02-21 - Vanya Belyaev
+ - ValueWithErorr:
+    add constructor from textual representation 
+
+! 2011-02-08 - Marco Clemencic
+ - Fixed defect #10002.10607
+   http://lhcb-coverity.cern.ch:8080/sourcebrowser.htm?projectId=10002#mergedDefectId=10607
+
 !========================= LHCbMath v3r23 2011-01-31 =========================
 ! 2011-01-22 - Vanya Belyaev
  - add more functions for Gaudi::Math::ValueWithErrors 

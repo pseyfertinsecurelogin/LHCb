@@ -24,7 +24,7 @@ extern const CLID CLID_DERich2;
  * @author Antonis Papanestis a.papanestis@rl.ac.uk
  */
 
-class DeRich2: public DeRich 
+class DeRich2: public DeRich
 {
 
 public:
@@ -90,8 +90,16 @@ public:
    */
   virtual Rich::Side side( const Gaudi::XYZPoint& point ) const;
 
+  /// Align the primary mirrors
   virtual StatusCode alignSphMirrors();
+
+  /// Align the secondary mirrors
   virtual StatusCode alignSecMirrors();
+
+private:
+
+  /// Access the name for a given panel
+  virtual const std::string panelName( const Rich::Side panel ) const;
 
 private:
 
@@ -101,8 +109,20 @@ private:
   /// The nominal centre of curvature of the spherical mirror (negative side)
   Gaudi::XYZPoint  m_nominalCentreOfCurvatureRight;
 
+  /// The nominal centre of curvature of the spherical mirror (positive side)
+  Gaudi::XYZPoint  m_nominalCentreOfCurvatureLeft;
+
   /// The nominal normal vector of the flat mirror plane (negative side)
   Gaudi::XYZVector m_nominalNormalRight;
+
+  /// The nominal normal vector of the flat mirror plane (positive side)
+  Gaudi::XYZVector m_nominalNormalLeft;
+
+  /// Condition for the alignment of the spherical mirrors
+  SmartRef<Condition> m_sphMirAlignCond;
+
+  /// Condition for the alignment of the secondary mirrors
+  SmartRef<Condition> m_secMirAlignCond;
 
 };
 

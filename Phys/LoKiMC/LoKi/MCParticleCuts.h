@@ -33,6 +33,13 @@ namespace LoKi
   // ==========================================================================
   namespace Cuts
   {   
+    // Suppress Intel compiler warnings about missing default constructor
+    // In this case the compiler generated constructor is fine, since there are
+    // no member data to be initialised
+    #ifdef __INTEL_COMPILER
+      #pragma warning(disable:854)
+      #pragma warning(push)
+    #endif
     // ========================================================================
     /** @var BARYON 
      *  Check for particle type   
@@ -1642,6 +1649,10 @@ namespace LoKi
      *  @date 2006-01-18
      */
     const  LoKi::MCParticles::HasQuark          TOP ( LHCb::ParticleID::top ) ;
+
+    #ifdef __INTEL_COMPILER
+      #pragma warning(pop) // End disable ICC warning #854
+    #endif
     // ========================================================================
   } //                                              end of namespace LoKi::Cuts
   // ==========================================================================

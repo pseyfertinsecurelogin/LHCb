@@ -239,6 +239,8 @@ SolidSphere::SolidSphere( const std::string& name )
   , m_sphere_startThetaAngle ( 0.0              ) 
   , m_sphere_deltaThetaAngle ( 180.0 *Gaudi::Units:: degree )
   , m_sphere_coverModel      (       0          ) 
+  , m_sphere_outerR          ( 1000000.0        )  
+  , m_sphere_insideR         ( 0.0              ) 
   , m_noPhiGap               ( true )
   , m_noThetaGap             ( true )
 {}

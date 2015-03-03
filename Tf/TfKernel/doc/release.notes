@@ -4,6 +4,10 @@
 ! Purpose     : Core classes for the Tf framework
 !-----------------------------------------------------------------------------
 
+!========================= TfKernel v2r20 2011-02-22 =========================
+! 2011-02-16 - Chris Jones
+ - Fully initialise EnvelopeBase in default constructor
+
 !========================= TfKernel v2r19 2010-10-25 =========================
 
 ! 2010-10-08 - Marco Clemencic

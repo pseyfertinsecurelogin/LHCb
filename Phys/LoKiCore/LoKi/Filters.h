@@ -1,4 +1,4 @@
-// $Id: Filters.h 102973 2010-11-19 12:27:44Z ibelyaev $
+// $Id: Filters.h 116907 2011-02-03 10:46:23Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_FILTERS_H 
 #define LOKI_FILTERS_H 1
@@ -26,6 +26,7 @@
 #include "LoKi/Algs.h"
 #include "LoKi/Primitives.h"
 #include "LoKi/Dump.h"
+#include "LoKi/Timers.h"
 // ============================================================================
 // Boost 
 // ============================================================================
@@ -53,8 +54,8 @@ namespace LoKi
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date 2007-10-30
    *
-   *                    $Revision: 102973 $
-   *  Last modification $Date: 2010-11-19 13:27:44 +0100 (Fri, 19 Nov 2010) $
+   *                    $Revision: 116907 $
+   *  Last modification $Date: 2011-02-03 11:46:23 +0100 (Thu, 03 Feb 2011) $
    *                 by $Author: ibelyaev $
    */
   namespace Functors

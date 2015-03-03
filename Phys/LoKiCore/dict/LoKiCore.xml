@@ -1,7 +1,7 @@
 <!-- 
-     * $Id: LoKiCore.xml 102913 2010-11-18 16:03:12Z ibelyaev $ 
+     * $Id: LoKiCore.xml 116907 2011-02-03 10:46:23Z ibelyaev $ 
      * ========================================================================
-     * CVS tag:$Name: not supported by cvs2svn $, version $Revision: 102913 $ 
+     * CVS tag:$Name: not supported by cvs2svn $, version $Revision: 116907 $ 
      * ======================================================================== 
      * @file
      * The seleciton file to build Reflex dictionaries for Phys/LoKiCore package
@@ -41,6 +41,7 @@
   <function name = "LoKi::Print::toString" />
   
   <class name    = "LoKi::Dump"            />
+  <class name    = "LoKi::Timer"           />
   
   <class name    = "Bender::Welcome"       />
   

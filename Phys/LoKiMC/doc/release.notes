@@ -15,6 +15,29 @@
 !
 ! -----------------------------------------------------------------------------
 
+!========================= LoKiMC v9r5 2011-02-22 =========================
+! 2011-02-21 - Marco Cattaneo
+ - Suppress Intel compiler warnings about missing default constructor
+   In this case the compiler generated constructor is fine, since there are
+   no member data to be initialised 
+
+! 2011-02-20 - Vanya Belyaev
+
+ - undo ICC-fixed 
+
+! 2011-02-20 - Vanya Belyaev
+
+ - LoKi/MCVertexCuts.h:
+
+     fix typo...
+
+! 2011-02-14 - Vanya Belyaev
+
+ - add more symbols 
+
+ - cmt/requirements
+    version increment to v9r5
+
 !========================= LoKiMC v9r4 2011-01-31 =========================
 ! 2011-01-26 - Vanya Belyaev
  - MCDecays.cpp:

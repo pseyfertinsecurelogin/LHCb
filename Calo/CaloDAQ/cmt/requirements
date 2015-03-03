@@ -4,7 +4,7 @@
 # Maintainer : Olivier Deschamps
 # =============================================================================
 package           CaloDAQ
-version           v4r20
+version           v4r21
 
 # =============================================================================
 # Structure, i.e. directories to process. 
@@ -18,7 +18,9 @@ use     GaudiAlg        v*
 use     CaloDet         v*      Det
 use	DAQEvent	v*	Event
 use     DigiEvent       v*      Event
+use     RecEvent        v*      Event
 use	L0Event		v*	Event
+use     CaloUtils       v*      Calo
 
 # ============================================================================
 # Own include-files 
