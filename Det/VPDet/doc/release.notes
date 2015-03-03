@@ -4,6 +4,10 @@
 ! Purpose     : Detector element for Velo Upgrade Pixel solutions
 !-----------------------------------------------------------------------------
 
+!========================= VPDet v2r1 2012-11-26 =========================
+! 2012-11-15 - Marco Clemencic
+ - Added CMake configuration file.
+
 !========================= VPDet v2r0 2012-09-28 =========================
 ! 2012-09-13 - Paul Szczypka
  - Rename EVERYTHING from VeloPix to VP including veloPix to vP, VELOPIX to VP

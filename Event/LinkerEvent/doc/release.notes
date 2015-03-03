@@ -4,6 +4,14 @@
 ! Purpose     : Implementation of the Linker package, to associate objects
 !-----------------------------------------------------------------------------
 
+!========================= LinkerEvent v3r9 2012-11-26 =========================
+! 2012-11-20 - Olivier Callot
+ - In LinkerWithKey, make it dummy if the specified container name is empty. Needed 
+   by the DaVinci associators as a dummy one is created.
+
+! 2012-11-15 - Marco Clemencic
+ - Added CMake configuration file.
+
 !========================= LinkerEvent v3r8 2011-04-26 =========================
 ! 2011-04-19 - Olivier Callot
  - Fix a warining for Coverity in LinkerTable, uninitialized variable.

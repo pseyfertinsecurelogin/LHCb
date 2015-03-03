@@ -3,6 +3,14 @@
 ! package manager : Marco Clemencic
 ! =============================================================================
 
+
+!========================= CondDBUI v3r19 2012-11-26 =========================
+! 2012-11-15 - Marco Clemencic
+ - Added CMake configuration file.
+
+! 2012-10-25 - Liang Sun
+ - Making flow cotrol file ".stopUpdatingSnapshots" able to stop the update process on ONLINE snapshots for the CondDB_UpdateOnlineSnapshots.py script.
+
 !========================= CondDBUI v3r18 2012-09-28 =========================
 ! 2012-09-13 - Marco Clemencic
  - Removed dependencies on CORAL LFCReplicaSvc (dropped in LCGCMT 64).

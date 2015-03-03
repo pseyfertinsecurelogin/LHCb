@@ -1,4 +1,3 @@
-// $Id: TES.h 127297 2011-08-05 14:50:10Z marcocle $
 // ============================================================================
 #ifndef LOKI_TES_H
 #define LOKI_TES_H 1
@@ -28,13 +27,7 @@
  *  contributions and advices from G.Raven, J.van Tilburg,
  *  A.Golutvin, P.Koppenburg have been used in the design.
  *
- *  By usage of this code one clearly states the disagreement
- *  with the campain of Dr.O.Callot et al.:
- *  ``No Vanya's lines are allowed in LHCb/Gaudi software.''
- *
- *                    $Revision: 127297 $
- *  Last modification $Date: 2011-08-05 16:50:10 +0200 (Fri, 05 Aug 2011) $
- *                 by $Author: marcocle $
+ *  @author Vanya BELYAEV  Ivan.Belyaev@nikhef.nl
  */
 // ============================================================================
 namespace LoKi

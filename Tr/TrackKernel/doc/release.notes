@@ -4,6 +4,13 @@
 ! Purpose     : 
 !-----------------------------------------------------------------------------
 
+!========================= TrackKernel v1r11 2012-11-26 =========================
+! 2012-11-21 - Marco Clemencic
+ - Fixed a warning (-pedantic).
+
+! 2012-11-15 - Marco Clemencic
+ - Added CMake configuration file.
+
 !========================= TrackKernel v1r10 2012-06-25 =========================
 ! 2012-06-21 - Wouter Hulsbergen
  - Added adaptive fit to TrackStateVertex

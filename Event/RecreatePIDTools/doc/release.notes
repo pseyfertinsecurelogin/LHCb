@@ -4,6 +4,13 @@
 ! Purpose     : Components to fully rebuild PIDs from packed DST
 !-----------------------------------------------------------------------------
 
+!========================= RecreatePIDTools v1r6 2012-11-26 =========================
+! 2012-11-15 - Marco Clemencic
+ - Added CMake configuration file.
+
+! 2012-11-09 - Chris Jones
+ - Replace exist/get calls with getIfExists
+
 !========================= RecreatePIDTools v1r5 2012-05-02 =========================
 ! 2012-04-12 - Chris Jones
  - Improve a bit the debugging messages from ChargedProtoParticleAddMuonInfo

@@ -2,6 +2,10 @@
 ! package manager: Marco Cattaneo
 !-------------------------------------------------------------------------
 
+!========================= EventSys v25r1 2012-11-26 =========================
+! 2012-11-15 - Marco Clemencic
+ - Added CMake configuration file.
+
 !======================== EventSys v25r0 2009-02-18 ======================
 ! 2009-02-18 - Marco Cattaneo
  - Remove explicit versions from requirements

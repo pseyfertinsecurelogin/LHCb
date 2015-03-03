@@ -3,6 +3,13 @@
 ! Responsible : Olivier Deschamps odescham@in2p3.fr
 ! =============================================================================
 
+!========================= CaloInterfaces v8r5 2012-11-26 =========================
+! 2012-11-20 - Marco Clemencic
+ - Fixed a warning.
+
+! 2012-11-15 - Marco Clemencic
+ - Added CMake configuration file.
+
 !========================= CaloInterfaces v8r4 2012-06-25 =========================
 ! 2012-05-22 - Olivier Deschamps 
  - IGammaPi0SeparationTool  : update interface for tool update

@@ -36,6 +36,18 @@ DECLARE_ALGORITHM_FACTORY( UnpackCluster )
 }
 
 //=============================================================================
+// explicite comparison for cluster sorting (hidden in anonymous namespace)
+//=============================================================================
+namespace {
+  inline bool compareVeloClusterKeys(LHCb::VeloCluster* i1, LHCb::VeloCluster* i2) {
+    return ((i1)->key()<(i2)->key());
+  }
+  inline bool compareSTClusterKeys(LHCb::STCluster* i1, LHCb::STCluster* i2) {
+    return ((i1)->key()<(i2)->key());
+  }
+}
+
+//=============================================================================
 // Destructor
 //=============================================================================
 UnpackCluster::~UnpackCluster() {}
@@ -169,6 +181,12 @@ StatusCode UnpackCluster::execute()
     }
 
   } // end loop over clusters
+
+  // Sort any filled containers.
+  if ( m_vClus  ) { std::sort( m_vClus->begin(),  m_vClus->end() , compareVeloClusterKeys ); }
+  if ( m_ttClus ) { std::sort( m_ttClus->begin(), m_ttClus->end() , compareSTClusterKeys ); }
+  if ( m_utClus ) { std::sort( m_utClus->begin(), m_utClus->end() , compareSTClusterKeys ); }
+  if ( m_itClus ) { std::sort( m_itClus->begin(), m_itClus->end() , compareSTClusterKeys ); }
 
   //== If we stored in a different location, compare...
   if ( !m_extension.empty() )

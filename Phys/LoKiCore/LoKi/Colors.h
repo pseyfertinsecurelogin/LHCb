@@ -1,4 +1,3 @@
-// $Id: Colors.h 124231 2011-06-05 11:23:58Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_COLORS_H 
 #define LOKI_COLORS_H 1
@@ -22,16 +21,8 @@
  *  contributions and advices from G.Raven, J.van Tilburg, 
  *  A.Golutvin, P.Koppenburg have been used in the design.
  *
- *  By usage of this code one clearly states the disagreement 
- *  with the smear campaign of Dr.O.Callot et al.: 
- *  ``No Vanya's lines are allowed in LHCb/Gaudi software.''
- *
  *  @author Vanya Belyaev Ivan.Belyaev@cern.ch
  *  @date   2011-06-03
- * 
- *                    $Revision: 124231 $
- *  Last modification $Date: 2011-06-05 13:23:58 +0200 (Sun, 05 Jun 2011) $
- *                 by $Author: ibelyaev $
  */
 // ============================================================================
 namespace LoKi 

@@ -1,4 +1,3 @@
-// $Id: RecStat.h 121023 2011-03-29 18:09:53Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_RECSTAT_H 
 #define LOKI_RECSTAT_H 1
@@ -23,13 +22,7 @@
  *  contributions and advices from G.Raven, J.van Tilburg, 
  *  A.Golutvin, P.Koppenburg have been used in the design.
  *
- *  By usage of this code one clearly states the disagreement 
- *  with the campain of Dr.O.Callot et al.: 
- *  ``No Vanya's lines are allowed in LHCb/Gaudi software.''
- *
- *                    $Revision: 121023 $
- *  Last modification $Date: 2011-03-29 20:09:53 +0200 (Tue, 29 Mar 2011) $
- *                 by $Author: ibelyaev $
+ *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
  */
 // ============================================================================
 namespace LoKi 

@@ -3,7 +3,7 @@
 # Maintainer : Olivier Callot, Chris Jones
 #============================================================================
 package           PackedEvent
-version           v4r12
+version           v4r13
 
 #============================================================================
 # Structure, i.e. directories to process. 
@@ -34,5 +34,4 @@ apply_pattern linker_library library=PackedEventLib
 apply_pattern reflex_dictionary \
                   dictionary=PackedEvent \
                   headerfiles=$(PACKEDEVENTROOT)/dict/PackedEventDict.h     \
-                  selectionfile=$(PACKEDEVENTROOT)/dict/PackedEventDict.xml \
-                  imports=ROOT
+                  selectionfile=$(PACKEDEVENTROOT)/dict/PackedEventDict.xml

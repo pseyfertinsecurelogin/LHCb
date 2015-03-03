@@ -1,6 +1,3 @@
-// $Id: NodeGrammar.h 132790 2011-12-12 09:50:46Z amazurov $
-// ============================================================================
-// $Revision: 132790 $
 // ============================================================================
 #ifndef LOKI_NODEGRAMMAR_H 
 #define LOKI_NODEGRAMMAR_H 1
@@ -34,16 +31,8 @@
  *  contributions and advices from G.Raven, J.van Tilburg, 
  *  A.Golutvin, P.Koppenburg have been used in the design.
  *
- *  By usage of this code one clearly states the disagreement 
- *  with the campain of Dr.O.Callot et al.: 
- *  ``No Vanya's lines are allowed in LHCb/Gaudi software.''
- *
  *  @author Alexander Mazurov
  *  @date   2011-12-11
- *  
- *  Version           $Revision: 132790 $
- *  Last modification $Date: 2011-12-12 10:50:46 +0100 (Mon, 12 Dec 2011) $
- *                 by $Author: amazurov $
  */
 // ============================================================================
 namespace Decays 

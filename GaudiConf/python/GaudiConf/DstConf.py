@@ -1,7 +1,7 @@
 """
 High level configuration tools for LHCb applications
 """
-__version__ = "v16r0"
+__version__ = "v17r0"
 __author__  = "Marco Cattaneo <Marco.Cattaneo@cern.ch>"
 
 __all__ = [
@@ -154,7 +154,7 @@ class DstConf(LHCbConfigurableUser):
                 if sType == "Full":
 
                     writer.ItemList += [
-                        # Links to MCParticles created in Brunel
+                        # Links to from reconstructed objects to MCParticles
                         "/Event/Link/Rec/Track/Best#1",
                         "/Event/Link/Rec/Calo/Photons#1",
                         "/Event/Link/Rec/Calo/Electrons#1",
@@ -173,13 +173,13 @@ class DstConf(LHCbConfigurableUser):
                     DigiConf().addHeaders(writer)
                     # Digitisation summaries
                     DigiConf().addMCDigitSummaries(writer)
-                    # Links to MCParticles
-                    DigiConf().addMCParticleLinks(writer)
 
                     if dType == "XDST":
                         # Add the MCHits (from Gauss) and links to them (from Boole)
                         SimConf().addSubDetSimInfo(writer)
                         DigiConf().addMCHitLinks(writer)
+                        # Links from Digits to MCParticles
+                        DigiConf().addMCParticleLinks(writer)
 
 
     def _doWriteROOT( self, items, optItems ):
@@ -419,14 +419,14 @@ class DstConf(LHCbConfigurableUser):
         unpackNeutrals = UnpackProtoParticle(name       = "UnpackNeutralProtos",
                                              OutputName = neutralLoc,
                                              InputName  = "/Event/pRec/ProtoP/Neutrals")
-        DataOnDemandSvc().AlgMap[neutralLoc]   = unpackNeutrals
+        DataOnDemandSvc().AlgMap[neutralLoc] = unpackNeutrals
 
         # Charged
         # -------
 
         chargedLoc = "/Event/Rec/ProtoP/Charged"
         chargedSeq = GaudiSequencer("UnpackChargedProtosSeq")
-        DataOnDemandSvc().AlgMap[chargedLoc]    = chargedSeq
+        DataOnDemandSvc().AlgMap[chargedLoc] = chargedSeq
 
         # Unpacker
         unpackCharged = UnpackProtoParticle(name       = "UnpackChargedProtos",
@@ -441,10 +441,16 @@ class DstConf(LHCbConfigurableUser):
             # PID calibration
             from Configurables import ( ChargedProtoParticleAddRichInfo,
                                         ChargedProtoParticleAddMuonInfo,
-                                        ChargedProtoCombineDLLsAlg )
+                                        ChargedProtoCombineDLLsAlg,
+                                        TESCheck )
             recalib = GaudiSequencer("ProtoParticleCombDLLs")
-            recalib.IgnoreFilterPassed = True
+            recalib.IgnoreFilterPassed = False
             chargedSeq.Members += [ recalib ]
+            # Filter to check in Protos exist
+            recalib.Members += [ TESCheck( name        = "CheckChargedProtosExist",
+                                           Inputs      = [chargedLoc],
+                                           OutputLevel = 5,
+                                           Stop        = False ) ]
             # Add Rich and Muon PID results to protoparticles
             recalib.Members += [ChargedProtoParticleAddMuonInfo("ChargedProtoPAddMuon")]
             recalib.Members += [ChargedProtoParticleAddRichInfo("ChargedProtoPAddRich")]
@@ -456,15 +462,13 @@ class DstConf(LHCbConfigurableUser):
         from Configurables import ( ConversionDODMapper,
                                     ParticlesAndVerticesMapper,
                                     TrackClustersMapper )
-                                    
-        mapper     = ConversionDODMapper("UnpackRecPhysMapper")
-        pvmapper   = ParticlesAndVerticesMapper("UnpackPsAndVsMapper")
-        clusmapper = TrackClustersMapper("UnpackTkClustersMapper")
 
+        # General unpacking mapping
+        mapper     = ConversionDODMapper("UnpackRecPhysMapper")
         # The input <-> output mappings
         mapper.Transformations = [ ( '(.*)/Rec(.*)',  '$1/pRec$2'  ),
-                                   ( '(.*)/Phys(.*)', '$1/pPhys$2' ) ]
-
+                                   ( '(.*)/Phys(.*)', '$1/pPhys$2' ),
+                                   ( '(.*)/MC(.*)',   '$1/pMC$2'   ) ]
         # algorithm types from source ClassIDs
         mapper.Algorithms[1550] = "UnpackTrack"
         mapper.Algorithms[1552] = "UnpackProtoParticle"
@@ -476,9 +480,24 @@ class DstConf(LHCbConfigurableUser):
         mapper.Algorithms[1581] = "UnpackParticlesAndVertices"
         mapper.Algorithms[1559] = "UnpackDecReport"
         mapper.Algorithms[1541] = "DataPacking::Unpack<LHCb::CaloClusterPacker>"
+        mapper.Algorithms[1510] = "UnpackMCParticle"
+        mapper.Algorithms[1511] = "UnpackMCVertex"
 
+        # Packed Particles and Vertices
+        pvmapper = ParticlesAndVerticesMapper("UnpackPsAndVsMapper")
+
+        # Cluster upacking
+        clusmapper = TrackClustersMapper("UnpackTkClustersMapper")
+        # Lite cluster creation
+        lclusmapper = ConversionDODMapper("LiteClusterMapper")
+        lclusmapper.InputOptionName  = "inputLocation"
+        lclusmapper.OutputOptionName = "outputLocation"
+        lclusmapper.Transformations = [ ('(.*)/Raw/(.*)/LiteClusters','$1/Raw/$2/Clusters') ]
+        lclusmapper.Algorithms[397222] = "VeloClustersToLite"
+        lclusmapper.Algorithms[402220] = "STClustersToLite"
+       
         # Add the tools to the DOD service tools lists
-        tools = [clusmapper,pvmapper,mapper]
+        tools = [clusmapper,lclusmapper,pvmapper,mapper]
         DataOnDemandSvc().NodeMappingTools += tools
         DataOnDemandSvc().AlgMappingTools  += tools
 

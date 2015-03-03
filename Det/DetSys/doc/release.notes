@@ -4,6 +4,10 @@
 ! Purpose     : collect Det packages and build corresponding dictionaries
 !-----------------------------------------------------------------------------
 
+!========================= DetSys v17r2 2012-11-26 =========================
+! 2012-11-15 - Marco Clemencic
+ - Added CMake configuration file.
+
 !========================= DetSys v17r1 2012-07-24 =========================
 ! 2012-07-13 - Marco Clemencic
  - Minor fix in the requirements branches.

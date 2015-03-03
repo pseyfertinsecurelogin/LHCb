@@ -32,14 +32,17 @@ using namespace LHCb;
 //=============================================================================
 MuonDigitToRawBuffer::MuonDigitToRawBuffer( const std::string& name,
                                             ISvcLocator* pSvcLocator)
-  : GaudiAlgorithm ( name , pSvcLocator )
+  : GaudiAlgorithm ( name , pSvcLocator ),
+    m_muonDet(NULL),
+    m_TotL1Board(0),
+    m_M1Tell1(0)
 {
   declareProperty("VType" , m_vtype=2) ;
 }
 //=============================================================================
 // Destructor
 //=============================================================================
-MuonDigitToRawBuffer::~MuonDigitToRawBuffer() {};
+MuonDigitToRawBuffer::~MuonDigitToRawBuffer() {}
 
 //=============================================================================
 // Initialisation. Check parameters
@@ -73,7 +76,7 @@ StatusCode MuonDigitToRawBuffer::initialize() {
 
 
   return StatusCode::SUCCESS;
-};
+}
 //=============================================================================
 // Main execution
 //=============================================================================
@@ -93,7 +96,7 @@ StatusCode MuonDigitToRawBuffer::execute() {
 
   if( UNLIKELY( msgLevel(MSG::DEBUG) ) ) debug()<<" exit "<<endmsg;
   return StatusCode::SUCCESS;
-};
+}
 
 //=============================================================================
 //  Finalize
@@ -745,7 +748,7 @@ StatusCode MuonDigitToRawBuffer::ProcessPads()
   }
    return StatusCode::SUCCESS;
 
-};
+}
 
 
 StatusCode MuonDigitToRawBuffer::ProcessDigitV1()

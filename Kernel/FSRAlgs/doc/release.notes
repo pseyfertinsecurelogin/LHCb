@@ -4,6 +4,41 @@
 ! Purpose     : Generic FSR manipulation and creation algorithms
 !-----------------------------------------------------------------------------
 
+!========================= FSRAlgs v1r1 2012-11-26 =========================
+! 2012-11-15 - Marco Clemencic
+ - Added CMake configuration file.
+
+! 2012-11-12 - Rob Lambert
+ - Segfault not fixed, but a coverity problem has been fixed.
+
+! 2012-11-09 - Rob Lambert
+ - Segfault identified on opening multiple files...
+ - Don't understand this yet, needs investigating
+ - minor other bugfixes to the service following testing
+
+! 2012-11-08 - Rob Lambert
+ - Automatic cleaning is implemented.
+ - Tested IOFSRSvc, seems to work. I get a provenance tree, etc.
+ - Simple options file test is added
+ - TODO: add a test for several use-cases and specific failure modes
+
+! 2012-11-07 - Rob Lambert
+ - Add IIOFSRSvc, the interface for this new service.
+ - Clone OutputStreamAgent, OutputStream, RecordStream and write a new class on top
+ - Add LHCbFSRStream, derived from LHCbRecordStream
+ - If the IOFSR and services are moved to Gaudi this would be simpler.
+ - TODO: clean FSR tree automatically before writing.
+ - TODO: needs testing
+
+! 2012-09-27 - Rob Lambert
+ - Add FSRIOSvc, which polls data to fill the FSR and fills it for you.
+ - Needs testing, might need an interface.
+ - New writer will simply need to call buildIOFSR, and register it to the TES
+ - At least it compiles at the moment...
+
+! 2012-10-16 - Marco Cattaneo
+ - Update merge-small-files reference following changed input files
+
 !========================= FSRAlgs v1r0 2012-09-28 =========================
 ! 2012-09-26 - Marco Clemencic
  - Added empty __init__.py in the top Python module.

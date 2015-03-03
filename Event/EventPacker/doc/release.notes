@@ -4,6 +4,29 @@
 ! Purpose     : Pack and unpack events classes for smaller events
 !-----------------------------------------------------------------------------
 
+!========================= EventPacker v2r20 2012-11-27 =========================
+! 2012-11-27 - Paul Seyfert
+ - Explicit definition of comparison function for sorting in cluster unpacking.
+
+! 2012-11-15 - Marco Clemencic
+ - Added CMake configuration file.
+
+! 2012-11-08 - Chris Jones
+ - Various changes to better support packing and unpacking of MC related 
+   stripping information.
+
+! 2012-11-05 - Chris Jones
+ - Load the clusters in PackCluster only when really needed. Avoids problems
+   with attempts to load UT clusters in non-upgrade detector versions ...
+
+! 2012-10-11 - Chris Jones
+ - Extend ConversionDODMapper with new job options to allow the property name
+   for the input and output data locations to be configurable
+
+! 2012-10-10 - Chris Jones
+ - Sort the unpacked cluster containers in UnpackCluster. Workaround for an
+   issue in Stripping20 where the clusters are not sorted prior to packing.
+
 !========================= EventPacker v2r19 2012-09-28 =========================
 ! 2012-09-27 - Chris Jones
  - Add back a call to std::sort that went AWOL in PackCluster

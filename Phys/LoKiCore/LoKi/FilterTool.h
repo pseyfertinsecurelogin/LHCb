@@ -1,4 +1,3 @@
-// $Id: FilterTool.h 133878 2012-01-18 19:33:38Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_FILTERTOOL_H 
 #define LOKI_FILTERTOOL_H 1
@@ -19,13 +18,8 @@
  *  contributions and advices from G.Raven, J.van Tilburg, 
  *  A.Golutvin, P.Koppenburg have been used in the design.
  *
- *  By usage of this code one clearly states the disagreement 
- *  with the smear campaign of Dr.O.Callot et al.: 
- *  ``No Vanya's lines are allowed in LHCb/Gaudi software.''
- *
- *                    $Revision: 133878 $
- *  Last modification $Date: 2012-01-18 20:33:38 +0100 (Wed, 18 Jan 2012) $
- *                 by $Author: ibelyaev $
+ *  @author Vanya Belyaev Ivan.Belyaev@cern.ch
+ *  @date   2011-06-05
  */
 // ============================================================================
 namespace LoKi 

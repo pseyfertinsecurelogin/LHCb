@@ -4,6 +4,14 @@
 ! Purpose     : Interface between LHCb and LGC/COOL project
 !-----------------------------------------------------------------------------
 
+!========================= DetCond v12r28 2012-11-26 =========================
+! 2012-11-21 - Marco Clemencic
+ - Modified the ICondDBReader interface to allow explicit disconnection from
+   databases (useful after a fork).
+
+! 2012-11-15 - Marco Clemencic
+ - Added CMake configuration file.
+
 !========================= DetCond v12r27 2012-09-28 =========================
 ! 2012-09-26 - Marco Clemencic
  - Removed comments from __init__.py

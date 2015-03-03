@@ -4,6 +4,13 @@
 ! Purpose     : BCM DetectorElement
 !----------------------------------------------------------------------------
 
+!========================= BcmDet v1r4 2012-11-26 =========================
+! 2012-11-26 - Marco Cattaneo
+ - Remove obsolete file BcmDet_dll.cpp
+
+! 2012-11-15 - Marco Clemencic
+ - Added CMake configuration file.
+
 !========================= BcmDet v1r3 2009-05-06 ==========================
 ! 2009-05-04 - Olivier Callot
  - Call the base class constructor in DeBcm and DeBcmSens

@@ -4,6 +4,28 @@
 ! Purpose     : Interface package to Geometry and Conditions DB
 !-----------------------------------------------------------------------------
 
+!========================= DDDB v1r59 2012-11-26 =========================
+! 2012-11-16 - Marco Cattaneo
+ - Update database tags for latest global tags:
+   . LHCBCOND, 2012: cond-20121116
+
+! 2012-11-15 - Marco Clemencic
+ - Added CMake configuration file.
+
+! 2012-11-12 - Marco Cattaneo
+ - Update database tags for latest global tags:
+   . LHCBCOND, 2012: cond-20121108
+
+! 2012-10-26 - Marco Cattaneo
+ - Update database tags for latest global tags:
+   . LHCBCOND, 2012: cond-20121025
+   . LHCBCOND, 2011: cond-20120724 (was cond-20120829, which is only for 2012)
+   . DQFLAGS,  2012: dq-20121016
+
+! 2012-10-11 - Marco Cattaneo
+ - Update database tags for latest global tags:
+   . LHCBCOND, 2012: cond-20121008
+
 !========================= DDDB v1r58 2012-09-28 =========================
 ! 2012-09-28 - Marco Cattaneo
  - Update database tags for latest global tags:

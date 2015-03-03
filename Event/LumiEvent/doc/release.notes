@@ -4,6 +4,14 @@
 ! Purpose     : EventModel for Lumi data
 !-----------------------------------------------------------------------------
 
+!========================= LumiEvent v3r3 2012-11-26 =========================
+! 2012-11-15 - Marco Clemencic
+ - Added CMake configuration file.
+
+! 2012-10-17 - Marco Cattaneo
+ - Fix unprotected debug()
+ - Fix trivial Coverity defects
+
 !========================= LumiEvent v3r2 2011-08-30 =========================
 ! 2011-08-11 - Jaap Panman
  - Add Vertex and PoissonVertex values to counterKey enum

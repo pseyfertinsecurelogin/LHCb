@@ -1,4 +1,3 @@
-// $Id: AlgFunctors.cpp 127137 2011-08-03 09:06:59Z graven $
 // ============================================================================
 // Include files 
 // ============================================================================
@@ -47,16 +46,8 @@
  *  contributions and advices from G.Raven, J.van Tilburg, 
  *  A.Golutvin, P.Koppenburg have been used in the design.
  *
- *  By usage of this code one clearly states the disagreement 
- *  with the smear campaign of Dr.O.Callot et al.: 
- *  ``No Vanya's lines are allowed in LHCb/Gaudi software.''
- *
  *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
  *  @date 2008-010-14 
- *
- *                     $Revision: 127137 $
- *   Last modification $Date: 2011-08-03 11:06:59 +0200 (Wed, 03 Aug 2011) $
- *                  by $Author: graven $
  */ 
 // ============================================================================
 namespace 

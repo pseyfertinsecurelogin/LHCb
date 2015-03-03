@@ -4,6 +4,10 @@
 ! Purpose     : collection of functors&factory for HLT 
 ! -----------------------------------------------------------------------------
 
+!========================= LoKiHlt v3r11 2012-11-26 =========================
+! 2012-11-15 - Marco Clemencic
+ - Added CMake configuration file.
+
 !========================= LoKiHlt v3r10 2012-06-25 =========================
 ! 2012-06-04 - Vanya Belyaev
  - minor improvement in treatment of event numbers 

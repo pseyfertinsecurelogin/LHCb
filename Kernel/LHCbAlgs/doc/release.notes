@@ -4,6 +4,21 @@
 ! Purpose     : General purpose algorithms and tools for LHCb
 !-----------------------------------------------------------------------------
 
+!========================= LHCbAlgs v2r53 2012-11-26 =========================
+! 2012-11-15 - Marco Clemencic
+ - Added CMake configuration file.
+
+! 2012-11-09 - Chris Jones
+ - Use getIfExists in DataObjectVersionFilter + increase default max 
+   version number
+
+! 2012-11-08 - Chris Jones
+ - Add a trivial new algorithm DataRemove that just removes a TES location. 
+   Useful in the stripping packing options.
+
+! 2012-10-12 - Marco Clemencic
+ - Fixed warning 'virtual function override'.
+
 !========================= LHCbAlgs v2r52 2012-09-28 =========================
 ! 2012-09-21 - Marco Clemencic
  - Fixed compilation with -std=c++11 (-std=c++0x).

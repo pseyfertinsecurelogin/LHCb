@@ -1,4 +1,3 @@
-// $Id: AlgUtils.h 133878 2012-01-18 19:33:38Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_ALGUTILS_H 
 #define LOKI_ALGUTILS_H 1
@@ -26,16 +25,8 @@ class GaudiAlgorithm ;
  *  contributions and advices from G.Raven, J.van Tilburg, 
  *  A.Golutvin, P.Koppenburg have been used in the design.
  *
- *  By usage of this code one clearly states the disagreement 
- *  with the smear campaign of Dr.O.Callot et al.: 
- *  ``No Vanya's lines are allowed in LHCb/Gaudi software.''
- *
  *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
  *  @date 2010-12-06
- *
- *                    $Revision: 133878 $
- *  Last Modification $Date: 2012-01-18 20:33:38 +0100 (Wed, 18 Jan 2012) $ 
- *                 by $Author: ibelyaev $ 
  */
 // ============================================================================
 namespace LoKi

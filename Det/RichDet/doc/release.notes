@@ -4,6 +4,40 @@
 ! Purpose     : Interface to the xml description
 !-----------------------------------------------------------------------------
 
+!========================= RichDet v16r14 2012-11-26 =========================
+! 2012-11-20 - Antonis Papanestis
+ - Check the list of inactive Photo-Detectors for possible errors in 
+   DeRichSystem
+
+! 2012-11-15 - Marco Clemencic
+ - Added CMake configuration file.
+
+! 2012-10-31 - Antonis Papanestis
+ - Added method rich() to DeRich to return the DetectorType
+ - Added missing converters for DeHorizRich
+ - Added DeHorizRich in the dictionary files.
+
+
+! 2012-10-24 - Antonis Papanestis
+ - Addition of new clas DeHorizRich
+ - Modifications in DeRichSphMirror DeRichPMTPanel DeRichPMT &
+   DeRichBase to be able to run with a single Rich detector
+ - The idea is that the available RICH detectors can be found as a user
+   parameter of detector element AfterMagnetRegion
+ - The location DeRichSystem can be found as a parameter in the first
+   RICH detector in the list of AfterMagnetRegion
+
+! 2012-10-18 - Marco Cattaneo
+ - Fix an unprotected verbose message
+ - Fix an UNINIT_CTOR
+
+! 2012-10-15 - Antonis Papanestis
+ - Bug fix in previous commit of DeRichRadiator
+
+! 2012-10-12 - Antonis Papanestis
+ - Updated DeRichRadiator to set correctly the rich() and radiatorID() for
+   the upgrade to a signle Rich detector
+
 !========================= RichDet v16r13 2012-09-28 =========================
 ! 2012-09-21 - Marco Clemencic
  - Fixed compilation with -std=c++11 (-std=c++0x).

@@ -3,6 +3,13 @@
 !Package manager : M. Needham
 !-------------------------------------------------------------------------
 
+!========================= STDet v4r29 2012-11-26 =========================
+! 2012-11-15 - Marco Clemencic
+ - Added CMake configuration file.
+
+! 2012-10-01 - Jianchun Wang
+ - Fix multiple return in inline functions.
+
 !========================= STDet v4r28 2012-09-28 =========================
 ! 2012-09-21 - Jianchun Wang
  - Add UT detector.

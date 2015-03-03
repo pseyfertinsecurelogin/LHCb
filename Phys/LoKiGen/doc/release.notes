@@ -13,6 +13,15 @@
 !   A.Golutvin, P.Koppenburg have been used in the design.
 ! -----------------------------------------------------------------------------
 
+!========================= LoKiGen v10r10 2012-11-26 =========================
+! 2012-11-15 - Marco Clemencic
+ - Added CMake configuration file.
+
+!========================= LoKiGen v10r9 2012-10-22 =========================
+! 2012-10-19 - Vanya Belyaev
+ - bug fix in 4-vector-functors
+   many tahnks to Regis Lefevre for problem report 
+
 !========================= LoKiGen v10r8 2012-06-25 =========================
 ! 2012-06-18 - Vanya Belyaev
  - redesign kinematical functors 

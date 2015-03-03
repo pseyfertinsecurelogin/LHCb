@@ -4,6 +4,22 @@
 ! Purpose: LHCb specific Kernel classes
 !--------------------------------------------------------------------------------
 
+!========================= LHCbKernel v13r14 2012-11-26 =========================
+! 2012-11-15 - Marco Clemencic
+ - Added CMake configuration file.
+
+! 2012-10-26 - Antonis Papanestis
+ - Changed the enum for Rich/TRID to 1, same as Rich2
+
+! 2012-10-23 - Marco Cattaneo
+ - Fix a gcc -pedantic warning
+
+! 2012-10-15 - Antonis Papanestis
+ - Added one more Rich DetectorType for the upgrade with a single Rich/TRID
+
+! 2012-10-12 - Marco Clemencic
+ - Fixed Eclipse warnings.
+
 !========================= LHCbKernel v13r13 2012-09-28 =========================
 ! 2012-09-24 - Jianchun Wang
  - Small modification in STChannelID.xml to avoid warnings

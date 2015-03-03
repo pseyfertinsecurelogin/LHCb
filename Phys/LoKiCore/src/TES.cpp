@@ -1,4 +1,3 @@
-// $Id: TES.cpp 127297 2011-08-05 14:50:10Z marcocle $
 // ============================================================================
 // Include files
 // ============================================================================
@@ -40,16 +39,8 @@
  *  contributions and advices from G.Raven, J.van Tilburg,
  *  A.Golutvin, P.Koppenburg have been used in the design.
  *
- *  By usage of this code one clearly states the disagreement
- *  with the smear campaign of Dr.O.Callot et al.:
- *  ``No Vanya's lines are allowed in LHCb/Gaudi software.''
- *
  *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
  *  @date 2020-02-13
- *
- *                    $Revision: 127297 $
- *  Last modification $Date: 2011-08-05 16:50:10 +0200 (Fri, 05 Aug 2011) $
- *                 by $Author: marcocle $
  */
 // ============================================================================
 namespace
