@@ -1,4 +1,4 @@
-// $Id: CondDBGenericCnv.h,v 1.12 2006-04-25 17:20:18 marcocle Exp $
+// $Id: CondDBGenericCnv.h,v 1.14 2006-07-14 09:27:32 marcocle Exp $
 #ifndef DETCOND_CONDDBGENERICCNV_H 
 #define DETCOND_CONDDBGENERICCNV_H 1
 
@@ -10,15 +10,13 @@
 #include "GaudiKernel/ClassID.h"
 #include "GaudiKernel/Time.h"
 
-#include "DetCond/ICondDBAccessSvc.h"
-
 #include "CoolKernel/types.h"
 
 // Forward and external declarations
 class ISvcLocator;
 class IDetDataSvc;
 class DataObject;
-class ICondDBCnvSvc;
+class ICondDBReader;
 namespace coral {
   class AttributeList;
 }
@@ -91,11 +89,11 @@ protected:
 
   /// Pointer to the DetectorDataService.
   IDetDataSvc         *m_detDataSvc;
-  /// Pointer to the ICondDBCnvSvc interface;
-  ICondDBCnvSvc       *m_condDBCnvSvc;
+  /// Pointer to the ICondDBReader interface;
+  ICondDBReader       *m_condDBReader;
   
   /**
-   * Get an object from the Conditions DB. It tries all the CondDBAccessSvcs
+   * Get an object from the Conditions DB. It tries all the CondDBReaders
    * known by CondDBCnvSvc before returing a failure code.
    * @param[in]  path  the path inside the CondDB
    * @param[in]  channel  CondDB channel id

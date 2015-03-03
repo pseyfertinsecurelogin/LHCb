@@ -1,4 +1,4 @@
-// $Id: RelyConverter.cpp,v 1.16 2006-04-25 17:20:20 marcocle Exp $
+// $Id: RelyConverter.cpp,v 1.19 2006-09-04 11:38:10 marcocle Exp $
 // Include files 
 #include "RelyConverter.h"
 
@@ -203,7 +203,21 @@ StatusCode RelyConverter::i_delegatedCreation(IOpaqueAddress* pAddress, DataObje
   
   log << MSG::DEBUG << "Entering \"i_delegatedCreation\"" << endmsg;
 
-  sc = getObject(pAddress->par()[0], pAddress->ipar()[0], data, description, since, until);
+  std::string path = pAddress->par()[0];
+  std::string data_field_name = "data";
+  
+  // Extract the COOL field name from the condition path
+  std::string::size_type at_pos = path.find('@');
+  if ( at_pos != path.npos ) {
+    std::string::size_type slash_pos = path.rfind('/',at_pos);
+    if ( slash_pos+1 < at_pos ) { // item name is not null
+      data_field_name = path.substr(slash_pos+1,at_pos - (slash_pos +1));
+    } // if I have "/@", I should use the default ("data")
+    // always remove '@' from the path
+    path = path.substr(0,slash_pos+1) +  path.substr(at_pos+1);
+  }  
+
+  sc = getObject(path, pAddress->ipar()[0], data, description, since, until);
   if ( !sc.isSuccess() ) return sc;
 
   if ( !data ) {
@@ -219,7 +233,6 @@ StatusCode RelyConverter::i_delegatedCreation(IOpaqueAddress* pAddress, DataObje
     case FillObjectRefs:
       {
         log << MSG::DEBUG << "Create addresses for sub-folders" << endmsg;
-        std::string path = pAddress->par()[0];
         
         // find subnodes
         std::vector<std::string> children;
@@ -267,7 +280,7 @@ StatusCode RelyConverter::i_delegatedCreation(IOpaqueAddress* pAddress, DataObje
     return StatusCode::SUCCESS;
   }
 
-  long storage_type = getStorageType(description);
+  long storage_type = getStorageType(path,description);
   if (storage_type <= 0) {
     log << MSG::ERROR <<
       "Folder description does not contain a valid storage type: " << endmsg;
@@ -281,7 +294,7 @@ StatusCode RelyConverter::i_delegatedCreation(IOpaqueAddress* pAddress, DataObje
   IOpaqueAddress *tmpAddress;
   std::string xml_data;
   try {
-    xml_data = (*data)["data"].data<std::string>();
+    xml_data = (*data)[data_field_name].data<std::string>();
   } catch (coral::AttributeListException &e) {
     log << MSG::ERROR << "I cannot find the data inside COOL object: " << e.what() << endmsg;
     return StatusCode::FAILURE;
@@ -294,8 +307,9 @@ StatusCode RelyConverter::i_delegatedCreation(IOpaqueAddress* pAddress, DataObje
   const std::string par[3] = { xml_data, 
                                pAddress->par()[1],
                                src_href.str() };
+  unsigned long ipar[2] = { 1,0 };
   sc = conversionSvc()->addressCreator()
-    ->createAddress( storage_type,pAddress->clID() , par, 0, tmpAddress );
+    ->createAddress( storage_type,pAddress->clID() , par, ipar, tmpAddress );
   if (sc.isFailure()){
     log << MSG::ERROR 
         << "Persistency service could not create a new address" << endreq;
@@ -348,9 +362,11 @@ StatusCode RelyConverter::i_delegatedCreation(IOpaqueAddress* pAddress, DataObje
 
 //=============================================================================
 
-long RelyConverter::getStorageType(const std::string &desc){
+long RelyConverter::getStorageType(const std::string &path, const std::string &desc){
   // the description string should contain a substring of the form (regexp)
   // "< *storage_type *= *[0-9]+ *>"
+
+  if ( path.rfind(".xml") != path.npos ) return XML_StorageType;
 
   const char delimiter_begin = '<';
   const char delimiter_end = '>';

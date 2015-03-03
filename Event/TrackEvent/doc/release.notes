@@ -5,7 +5,73 @@
 ! Purpose     : Package for the tracking event model classes
 !-----------------------------------------------------------------------------
 
-!========================= TrackEvent v2r6 2006-06-21 ========================
+!========================= TrackEvent v3r4 2006-10-20 ========================
+! 2006-10-20 - Jeroen VAN TILBURG
+ - Added setChi2AndDoF method to Track class.
+
+! 2006-10-03 - Eduardo Rodrigues
+ - 2 new track flags introduced for the HLT needs
+ - clean-up and improvements to the doxygen documentation
+ - obsolete files TrackStreamer.* removed
+
+!========================= TrackEvent v3r3 2006-08-22 ========================
+! 2006-09-21 M. Needham
+ - Add extraInfo to reset
+ - Minor tidy up of copy contructors in Node and State
+
+!========================= TrackEvent v3r2 2006-08-21 ========================
+! 2006-08-14 - Eduardo Rodrigues
+ - non-const accessor to ancestor tracks
+
+!========================= TrackEvent v3r1 2006-08-03 ========================
+! 2006-08-03 -Ph. Charpentier, Eduardo Rodrigues
+ - re-re-re Fix in computation of the position and momentum covariance matrix
+
+! 2006-08-03 - J. Palacios
+ - Bug re-fix in State method to compute position/momentum covariance
+
+! 2006-08-03 - M. Needham
+ - Bug fixs in State method to compute position/momentum covariance
+
+! 2006-08-02 Eduardo Rodrigues
+ - added new file StateParameters.h. For now it contains some pre-defined
+   z-positions of states refering to certain state locations
+
+! 2006-08-01 Eduardo Rodrigues
+ - additions to Track class:
+   - added checkFitStatus and setExtraInfo methods
+   - bug fix: clone method now copies the ExtraInfo to the cloned track
+
+!========================= TrackEvent v3r0 2006-07-20 ========================
+! 2006-07-20 Eduardo Rodrigues
+ - Track class: set the appropriate flag is case the last measurement
+   is removed
+
+! 2006-07-20 M Needham
+ - Modify expection thrown if state not found to give location and type
+
+! 2006-07-19 - Marco Cattaneo
+ - Remove TrackVertex class, replaced by RecVertex (in RecEvent)
+
+! 2006-07-19 M Needham
+ - Add ExtraInfo map to track 
+
+!========================= TrackEvent v2r7 2006-06-30 ========================
+! 2006-06-29 - Jeroen van Tilburg
+ - Changed closestState methods in Track.cpp to loop over the node when they
+   exist.
+ - Added the position method to Node.xml.
+
+! 2006-06-29 - Edwin Bos
+ - Fixed definition of kappa in TrackParameters.h
+
+! 2006-06-27 - M Needham
+ - fix bug in unit interconversion
+
+! 2006-06-21 - M Needham
+ - clean up track enums
+
+!========================= TrackEvent v2r6 2006-06-20 ========================
 ! 2006-06-20 Eduardo Rodrigues
  - changes in Track class:
    - Status enum split into PatRecStatus and FitStatus, to allow a correct

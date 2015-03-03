@@ -1,0 +1,32 @@
+package TsaKernel
+version v1r4
+
+branches cmt doc src TsaKernel
+
+include_dirs $(TSAKERNELROOT)
+
+use DigiEvent   v* Event
+use TrackEvent  v* Event
+use LoKiCore    v* Phys  
+use OTDet       v* Det  
+use STDet       v* Det
+use GSL         v* LCG_Interfaces
+use LHCbMath    v* Kernel
+
+#---- link library
+library TsaKernel ../src/*.cpp 
+
+apply_pattern linker_library    library=TsaKernel
+
+
+
+
+
+
+
+
+
+
+
+
+

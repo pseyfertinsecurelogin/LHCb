@@ -1,0 +1,21 @@
+$(dest)$(package).lcgdict : ${OBJS} 
+	@echo Producing dictionaries using genreflex command
+	@cd $(dest)
+	@"$(genreflex_cmd)" $(package)_dictionary.h --no_membertypedefs --selection_file $(package)_selection.xml --capabilities=$(package)_capabilities.cpp --gccxmlpath=$(GCCXML_home)/bin $(includes) $(use_pp_cppflags) -U__MINGW32__ $(use_obj2dict_gccxmlflags)
+	@echo "" > $(package).lcgdict 
+
+clean :: ${CONSTITUENT}clean
+	@cd .
+
+${CONSTITUENT}clean ::
+	$(cleanup_echo) dictionaries and .obj2dict files
+	-$(cleanup_silent) del $(dest)*.obj2dict
+	-$(cleanup_silent) del $(dest)*.cpp
+	-$(cleanup_silent) del $(dtdfile)
+	-$(cleanup_silent) del $(dest)$(package)_dictionary.h
+	-$(cleanup_silent) del $(dest)$(package)_selection.xml 
+	-$(cleanup_silent) del $(dest)$(package)_dictionary.xml 
+	-$(cleanup_silent) del $(dest)$(package).lcgdict
+
+
+ 

@@ -1,4 +1,4 @@
-! $Id: release.notes,v 1.11 2006-06-09 09:01:46 cattanem Exp $ 
+! $Id: release.notes,v 1.20 2006-11-10 07:37:15 cattanem Exp $ 
 ! -----------------------------------------------------------------------------
 ! Package     : Phys/LoKiGen
 ! Responsible : Vanya BELYAEV
@@ -13,6 +13,50 @@
 !   contributions and advices from G.Raven, J.van Tilburg, 
 !   A.Golutvin, P.Koppenburg have been used in the design.
 ! -----------------------------------------------------------------------------
+
+!=========================== LoKiGen v1r7 2006-11-10 ==========================
+! 2006-11-09 - Vanya BELYAEV
+ - LoKi/PrintHepMCDecay.h
+   src/PrintHepMCDecay.h
+     1) move all functions into the namespace LoKi::Print 
+     2) add a maximum recursion level 
+ - cmt/requirements 
+     version increment to v1r7 
+
+!=========================== LoKiGen v1r6 2006-10-12 ==========================
+! 2006-10-10 - Vanya BELYAEV
+ - LoKi/GenExtract.h
+   fix for dictionaries 
+
+! 2006-10-05 - Vanya BELYAEV
+ - LoKi/GenAlgs.h
+    fix for SLC4 compilation error 
+ - cmt/requirements 
+    version increment to b1r6 
+
+!=========================== LoKiGen v1r5 2006-09-09 ==========================
+! 2006-09-06 - Vanya BELYAEV
+ - LoKi/GenTypes.h
+     add the formal defintions of containers and ranges [needed for Phys/AlgoMC]
+ - cmt/requirements
+     version increment to v1r5 
+
+!=========================== LoKiGen v1r4 2006-08-30 ==========================
+! 2006-08-26 - Vanya BELYAEV
+ - LoKi/GenParticles.h 
+   src/GenParticles.cpp
+
+     add the new primitive function(functor) LoKi::GenPArticles::Status 
+      for evaluation of HepMC::GenParticles::status() 
+
+ - LoKi/GenParticleCuts.h
+ 
+     add a shortcut LoKi::Cuts::GSTATUS as a shortcut for the instance 
+     fo LoKi::GenParticles::Status() 
+
+ - cmt/requirements 
+  
+      version increment to v1r4 
 
 !=========================== LoKiGen v1r3 2006-06-09 ==========================
 ! 2006-06-09 - Marco Cattaneo

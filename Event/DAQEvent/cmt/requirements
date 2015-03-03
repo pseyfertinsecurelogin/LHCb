@@ -1,10 +1,15 @@
 package DAQEvent
-version v6r4p1
+version v6r7p1
 
-use GaudiAlg  v*
+use GaudiKernel v*
 branches cmt doc Event src tests xml
 
 include_dirs $(DAQEVENTROOT)
+
+# Produce Header-Files & dictionary from XML description
+#============================================================================
+document obj2doth DAQEventObj2Doth ../xml/*.xml
+document obj2dict DAQEventObj2Dict ../xml/*.xml
 
 # ==================== Produce LCG dictionary ===============================
 apply_pattern     reflex_dictionary                            \
@@ -17,7 +22,7 @@ macro_append DAQEvent_reflex_options ' --comments '
 library DAQEventLib     *.cpp
 
 # ==================== component libraries ==================================
-library DAQEvent        component/*.cpp
+library DAQEvent        component/*.cpp -import=GaudiAlg
 
 # ==================== Standard patterns (order is important!) ==============
 apply_pattern component_library library=DAQEventDict
@@ -25,6 +30,15 @@ apply_pattern component_library library=DAQEvent
 apply_pattern linker_library    library=DAQEventLib
 
 private
+use GaudiAlg     v*      -no_auto_imports
+use GaudiObjDesc v*      -no_auto_imports
+
+# we need LHCbKernel just for an include file
+use LHCbKernel   v* Kernel
+macro_remove DAQEvent_use_linkopts '$(LHCbKernel_linkopts)'
+macro_remove DAQEventLib_use_linkopts '$(LHCbKernel_linkopts)'
+macro_remove DAQEventDict_use_linkopts '$(LHCbKernel_linkopts)'
+
 #========= Uncomment 5 lines to build and run the Test application ==========
 #use GaudiConf   v*      -no_auto_imports
 #use GaudiSvc    v*      -no_auto_imports

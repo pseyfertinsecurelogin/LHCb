@@ -1,11 +1,11 @@
-// $Id: Vector4DTypes.h,v 1.5 2006-05-17 06:11:33 cattanem Exp $
+// $Id: Vector4DTypes.h,v 1.6 2006-08-01 08:52:36 jonrob Exp $
 #ifndef EVENT_VECTOR4DTYPES_H 
 #define EVENT_VECTOR4DTYPES_H 1
 
 // Include files
 #include "Math/Vector4D.h"
 
-/** @namespace Gaudi Vector4DTypes.h Event/Vector4DTypes.h
+/** @namespace Gaudi Vector4DTypes.h Kernel/Vector4DTypes.h
  *  
  *
  *  @author Juan PALACIOS

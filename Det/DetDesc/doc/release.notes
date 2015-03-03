@@ -1,9 +1,50 @@
 ! =============================================================================
-! $Id: release.notes,v 1.263 2006-06-16 11:53:53 cattanem Exp $ 
+! $Id: release.notes,v 1.285 2006-11-03 14:14:25 cattanem Exp $ 
 ! =============================================================================
 ! package DetDesc
 ! package manager : Marco Clemencic, Juan Palacios
 ! =============================================================================
+
+!====================== DetDesc v16r8 2006-11-03 ==============================
+! 2006-10-23 - Marco Clemencic
+ - Fixed a problem with copy constructor of Condition, ParamValidDataObject and
+   ValidDataObject.
+ - Add a function to ParamList and ParamValidDataObject to insert a parameter
+   as pointer to BasicParameter (used by the UpdateManagerSvc).
+
+!====================== DetDesc v16r8 2006-10-18 ==============================
+! 2006-10-17 - Matt Needham
+ - Changes in: SolidBox::IntersectTicks method speeded up
+               LAssembly ++not++, remove/protect MsgStream calls
+               DetectorElement: reduce number of virtual function calls   
+ 
+! 2006-10-11 - Marco Cattaneo
+ - Use SystemOfUnits.h from GaudiKernel
+
+! 2006-10-10 - Juan PALACIOS
+  - DetDesc/IGeometryInfo.h
+    . Add method 
+      virtual const ILVolume::ReplicaPath& IGeometryInfo::supportPath()
+
+  - DetDesc/GeometryInfoPlus.h, src/Lib/GeometryInfoPlus.cpp
+    . supportPath() now returns const ILVolume::ReplicaPath&
+
+! 2006-10-04 - Marco Clemencic
+ - Fix a minor bug in Condition. The method update should take a
+   ValidDataObject and not a Condition object. It does not harm because it is
+   not used, but it can confund other developers.
+
+!====================== DetDesc v16r7 2006-09-28 ==============================
+! 2006-09-25 - Juan PALACIOS
+  - DetDesc/IGeometryInfo.h
+    . Add method idealMatrixInv(), returning the inverse of the ideal matrix 
+      linking the GeometryInfo to the global frame.
+
+! 2006-08-08 - Juan PALACIOS
+  - Added DetDesc/SU2LHCb.h
+    . In-line methods for transformations from LHCb cavern surveying frame of
+      reference to LHCb frame and back. Accounts for X <-> Y axis shift and 
+      tilt wrt. beam. 
 
 !====================== DetDesc v16r6 2006-06-16 ==============================
 ! 2006-06-16 - Marco Cattaneo

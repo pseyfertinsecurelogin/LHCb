@@ -1,5 +1,5 @@
 package LHCb
-version v21r1
+version v21r11
 
 branches doc cmt options
 
@@ -7,22 +7,22 @@ branches doc cmt options
 # LHCb packages
 #===============================================================
 
-use GaudiConf           v9r7
+use GaudiConf           v9r11
 
 # Kernel packages
-use KernelSys           v5r6    Kernel
+use KernelSys           v5r14   Kernel
 
 # Detector description
-use DetSys              v8r6    Det
+use DetSys              v8r14   Det
 
 # Event data model
-use EventSys            v21r6  Event
+use EventSys            v22r7   Event
 
 # DAQ Buffer encoding and decoding
-use DAQSys              v2r4    DAQ
+use DAQSys              v2r10   DAQ
 
 # Extra stuff
-use LHCbAlgs            v2r0    Kernel
-use CaloInterfaces      v6r0    Calo
-use CaloUtils           v6r3    Calo
+use LHCbAlgs            v2r4    Kernel
+use CaloInterfaces      v6r1    Calo
+use CaloUtils           v6r6    Calo
 use SimComponents       v1r2p1  Sim

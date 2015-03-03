@@ -1,8 +1,14 @@
-// $Id: Reporter.cpp,v 1.3 2006-05-02 14:29:11 ibelyaev Exp $
+// $Id: Reporter.cpp,v 1.6 2006-11-09 18:26:53 ibelyaev Exp $
 // ============================================================================
-// CVS tag $Name: not supported by cvs2svn $ , version $Revision: 1.3 $
+// CVS tag $Name: not supported by cvs2svn $ , version $Revision: 1.6 $
 // ============================================================================
 // $Log: not supported by cvs2svn $
+// Revision 1.5  2006/11/09 17:01:06  ibelyaev
+//  v1r8: improve printout
+//
+// Revision 1.4  2006/06/24 17:18:41  ibelyaev
+//  reduce the printout
+//
 // ============================================================================
 // Include files
 // ============================================================================
@@ -19,9 +25,6 @@
 #include "LoKi/IReporter.h"
 #include "LoKi/Welcome.h"
 #include "LoKi/ErrorReport.h"
-// ============================================================================
-
-
 // ============================================================================
 /** @file
  *
@@ -54,51 +57,50 @@ namespace LoKi
   {
     // friend factory for instantiation 
     friend class ToolFactory<LoKi::Reporter>;
-  public:
-    
+  public:    
+    //
     virtual StatusCode Error     
     ( const std::string& msg , 
       const StatusCode   st  = StatusCode::FAILURE ,
       const size_t       mx  = 10                  ) const 
     {  return GaudiTool::Error   ( msg , st , mx ) ; }
-    
+    //
     virtual StatusCode Warning   
     ( const std::string& msg , 
       const StatusCode   st  = StatusCode::FAILURE ,
       const size_t       mx  = 10                  ) const 
     {  return GaudiTool::Warning ( msg , st , mx ) ; }
-    
+    //
     virtual StatusCode Print     
     ( const std::string& msg , 
       const StatusCode   st  = StatusCode::SUCCESS ,
       const MSG::Level   lev = MSG::INFO           ) const 
     {  return GaudiTool::Print ( msg , st , lev ) ; }
-    
+    //
     virtual StatusCode Assert 
     ( const bool         ok                            , 
       const std::string& message = ""                  , 
       const StatusCode   sc      = StatusCode::FAILURE ) const 
     {  return GaudiTool::Assert ( ok , message , sc ) ; }
-    
+    //
     virtual StatusCode Exception 
     ( const std::string    & msg                        ,  
       const GaudiException & exc                        , 
       const StatusCode       sc  = StatusCode::FAILURE  ) const 
     {  return GaudiTool::Exception ( msg , exc , sc ) ; }
-    
+    //
     virtual StatusCode Exception 
     ( const std::string    & msg                        ,  
       const std::exception & exc                        , 
       const StatusCode       sc  = StatusCode::FAILURE  ) const 
     {  return GaudiTool::Exception ( msg , exc , sc ) ; }
-    
+    //
     virtual StatusCode Exception 
     ( const std::string& msg = "no message"        ,  
       const StatusCode   sc  = StatusCode::FAILURE ) const 
     {  return GaudiTool::Exception ( msg      , sc ) ; }
-    
+    //
   public:
-    
     /** standard initialization
      *  @see AlgTool
      *  @return status code 
@@ -113,7 +115,6 @@ namespace LoKi
       // locate LoKi service 
       return StatusCode::SUCCESS ;
     } ;
-    
     /** standard finalization  
      *  @see AlgTool
      *  @return status code 
@@ -127,9 +128,7 @@ namespace LoKi
       // finalize the base class 
       return GaudiTool::finalize();
     } ;
-    
   protected:
-    
     /** Standard constructor for AlgTools
      *  @see AlgTool 
      *  @param type   tool type 
@@ -143,27 +142,17 @@ namespace LoKi
       : GaudiTool ( type, name , parent ) 
     {
       // declare the interface 
-      declareInterface<LoKi::IReporter> ( this );
-      declareInterface<IErrorTool>      ( this );
-      //
-      LoKi::Welcome::instance();
-    };
-    
+      declareInterface<LoKi::IReporter> ( this ) ;
+      declareInterface<IErrorTool>      ( this ) ;
+    } ;
     /// virtual destructor 
-    virtual ~Reporter(){} ; 
-    
-  private:    
-    
+    virtual ~Reporter(){} ;
+  private:
     Reporter            (                 ) ;
     Reporter            ( const Reporter& ) ;
     Reporter& operator= ( const Reporter& ) ;
-    
   };
-
-};
-// ============================================================================
-
-
+}
 // ============================================================================
 // anonymouse namepsace to hide static factory
 // ============================================================================

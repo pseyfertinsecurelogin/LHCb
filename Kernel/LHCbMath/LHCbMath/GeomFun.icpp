@@ -1,4 +1,3 @@
-#include "Kernel/Vector3DTypes.h"
 #include "gsl/gsl_math.h"
 
 template<typename aLine, typename aPlane, typename aPoint>
@@ -10,7 +9,7 @@ bool Gaudi::Math::intersection(const aLine& line,
   bool canCalculate = true;
   
   const double scalar = line.direction().Dot( plane.Normal() );
-  if ( scalar < 1e-20 ) {
+  if ( fabs(scalar) < 1e-20 ) {
     canCalculate = false;
   }
   else { 
@@ -55,17 +54,10 @@ bool Gaudi::Math::intersection(const aPlane& plane0,
                                aPoint& intersect)
 {
 
-  ///@todo Revert to aPlane::Vector when available in MathCore
-
-//   typename aPlane::Vector n0 = plane0.Normal();
-//   typename aPlane::Vector n1 = plane1.Normal();
-//   typename aPlane::Vector n2 = plane2.Normal();
-//   typename aPlane::Vector::Scalar denom = n0.Dot( n1.Cross(n2) );
-
-  Gaudi::XYZVector n0 = plane0.Normal();
-  Gaudi::XYZVector n1 = plane1.Normal();
-  Gaudi::XYZVector n2 = plane2.Normal();
-  Gaudi::XYZVector::Scalar denom = n0.Dot( n1.Cross(n2) );
+  typename aPlane::Vector n0 = plane0.Normal();
+  typename aPlane::Vector n1 = plane1.Normal();
+  typename aPlane::Vector n2 = plane2.Normal();
+  typename aPlane::Vector::Scalar denom = n0.Dot( n1.Cross(n2) );
 
   typename aPlane::Scalar   d0 = -1*plane0.HesseDistance();
   typename aPlane::Scalar   d1 = -1*plane1.HesseDistance();
@@ -73,7 +65,7 @@ bool Gaudi::Math::intersection(const aPlane& plane0,
 
 
 
-  if ( std::fabs(denom) < 1e-20 ) return false;
+  if ( fabs(denom) < 1e-20 ) return false;
 
   intersect = (d0*(n1.Cross(n2)) + d1*(n2.Cross(n0)) + 
                d2*(n0.Cross(n1)))/denom;
@@ -87,7 +79,7 @@ template <typename aLine, typename aPoint>
 aPoint Gaudi::Math::closestPoint(const aPoint&  point ,
                                  const aLine& line)
 {
-  return line.position( line.direction().Dot( point-line.beginPoint() ) );
+  return line.position( line.direction().Unit().Dot( point-line.beginPoint() ) );
 
 }
 
@@ -95,7 +87,7 @@ template <typename aLine, typename aPoint>
 double Gaudi::Math::closestPointParam(const aPoint&  point ,
                                       const aLine& line)
 {
-  return line.direction().Dot(point - line.beginPoint() );
+  return line.direction().Unit().Dot(point - line.beginPoint() );
 }
 
 
@@ -114,9 +106,9 @@ bool Gaudi::Math::closestPointParams(const aLine& line0,
                                      double& mu0, double& mu1) {
 
   const typename aLine::Point&  p0 = line0.beginPoint();
-  const typename aLine::Vector& v0 = line0.direction();
+  const typename aLine::Vector  v0 = line0.direction().Unit();
   const typename aLine::Point&  p1 = line1.beginPoint();
-  const typename aLine::Vector& v1 = line1.direction();
+  const typename aLine::Vector  v1 = line1.direction().Unit();
   bool canCalculate = true; 
 
   const double e_pDote_w = v0.Dot(v1);
@@ -174,6 +166,6 @@ bool Gaudi::Math::parallel(const aLine& line0,
 
   const typename aLine::Vector& v0 = line0.direction();
   const typename aLine::Vector& v1 = line1.direction();
-  return 1. - std::fabs(v0.Dot(v1)) < 1e-10;
+  return 1. - fabs(v0.Dot(v1)) < 1e-10;
 }
 

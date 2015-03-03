@@ -1,6 +1,16 @@
-$Id: release.notes,v 1.55 2006-05-09 08:50:34 cattanem Exp $
+$Id: release.notes,v 1.58 2006-11-03 14:58:50 cattanem Exp $
 Package : L0Event
 Package manager : Olivier Callot
+
+!======================== L0Event v15r3p1 2006-11-03 ========================
+! 2006-11-03 - Marco Cattaneo
+ - Add missing guard for multiple inclusion in L0DUBase.h
+ - Use SystemOfUnits.h from GaudiKernel
+
+!======================== L0Event v15r3 2006-07-31 ========================
+! 2006-07-31 - Marco Cattaneo
+ - Adapt to SerializeStl.h changes
+ - Adapt to changes in GaudiObjDesc v9r7
 
 !======================== L0Event v15r2 2006-05-09 ========================
 ! 2006-05-09 - Marco Cattaneo

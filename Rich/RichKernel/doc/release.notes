@@ -1,7 +1,37 @@
-! $Id: release.notes,v 1.123 2006-06-15 14:29:58 jonrob Exp $
+! $Id: release.notes,v 1.132 2006-10-20 15:37:28 cattanem Exp $
 ! Package     : Rich/RichKernel
 ! Responsible : Chris Jones
 ! Purpose     : General purpose RICH classes
+
+!======================= RichKernel v6r7 2006-10-20 ====================
+! 2006-10-20 - Chris Jones
+ - Update RichTrackSegment to use RichRadIntersection class
+ - Update to RichradiatorTool interface for new RichRadIntersection
+ - Add some protection in RichGeomFunctions for when calculating the 
+   angle between two vectors
+
+! 2006-09-27 - Chris Jones
+ - Update acquireTool methods to allow a custom instance name to be specified
+
+! 2006-09-07 - Chris Jones
+ - Remove obsolete forward declaration in IRawDataFormatTool.h which
+   conflicted with new classes in RichDAQ
+
+!======================= RichKernel v6r6 2006-09-04 ====================
+! 2006-09-04 - Marco Cattaneo
+ - Adapt to changed addPropertyToCatalogue interface in Gaudi v18r7
+
+! 2006-08-13 - Chris Jones
+ - Make joSvc() method protected
+
+! 2006-08-09 - Chris Jones
+ - Update to RayTracing interface to remove the "withoutEff" ray tracing 
+   method. Instead tracing decides what to do based on the configuration 
+   object RichTraceMode.
+
+!======================= RichKernel v6r5 2006-07-31 =======================
+! 2006-07-31 - Marco Cattaneo
+ - Fix memory leak due to changed IJobOptionsSvc behaviour
 
 !======================= RichKernel v6r4 2006-06-15 =======================
 ! 2006-06-13 - Chris Jones

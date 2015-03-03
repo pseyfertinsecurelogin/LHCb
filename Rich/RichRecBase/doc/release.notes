@@ -4,6 +4,53 @@
 ! Purpose     : Base package for RICH Reconstruction Packages
 !-----------------------------------------------------------------------------
 
+!====================== RichRecBase v2r8 2006-11-06 ======================
+! 2006-11-06 - Chris Jones
+ - Allow RichRecSegment to store ray trace HPD panel points for both 
+   RICH sides
+ - Add method to Track Creator base to store HPD panel points in segments
+
+! 2006-11-01 - Chris Jones
+ - Improvements to debug info in pixel and photon creator base classes
+
+!====================== RichRecBase v2r7 2006-10-20 ======================
+! 2006-10-04 - Chris Jones
+ - Add simple workaround to RichPixelCreatorBase to avoid loading tools 
+   during first event, but during initialize instead
+
+!====================== RichRecBase v2r6 2006-09-04 ======================
+! 2006-09-04 - Marco Cattaneo
+ - Move definition of DefMinWeightTrToMCP outside IRichRecMCTruthTool
+ - Adapt to changed addPropertyToCatalogue interface in Gaudi v18r7
+
+! 2006-08-31 - Marco Cattaneo
+ - Remove include of Kernel/PhysicalConstants.h from public includes, as this
+   introduces a "using namespace Gaudi::Units"
+
+! 2006-08-28 - Chris Jones
+ - Add base class for track selector (to allow MC and MC-free implementations)
+ - Add optional weith to Track->MCParticle associations in MC truth tool
+ - Update pixel creator base to handle different suppression tools for
+   RICH1 and RICH2
+
+! 2006-08-13 - Chris Jones
+ - Rewrite utility class RichTrackSelector as a full GaudiTool
+
+! 2006-08-09 - Chris Jones
+ - Updates due to changes in ray tracing tool
+ - Add options to specify the number of points to use in ray tracing
+   the Cherenkov cones
+ - Add RichRecPointOnRing to allow the storage of additional data
+   (such as acceptance flags) with space points on the RichRecRings
+
+! 2006-08-03 - Chris Jones
+ - Add missing initialisations to RichRecRing copy constructor
+ - Add new classes for Ring <-> Pixel associations
+
+!====================== RichRecBase v2r5 2006-07-31 ========================
+! 2006-07-31 - Marco Cattaneo
+ - Adapt to changes in GaudiObjDesc v9r7
+
 !====================== RichRecBase v2r4 2006-06-21 ========================
 ! 2006-06-21 - Chris Jones
  - Update for new track enums

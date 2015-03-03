@@ -1,13 +1,13 @@
-# $Id: requirements,v 1.33 2006-06-06 11:59:52 ibelyaev Exp $
+# $Id: requirements,v 1.39 2006-10-31 12:52:45 ibelyaev Exp $
 # =============================================================================
-# CVS tag $Name: not supported by cvs2svn $ , version $Revision: 1.33 $
+# CVS tag $Name: not supported by cvs2svn $ , version $Revision: 1.39 $
 # =============================================================================
 # Created    : 02/11/2001
 # Author     : Vanya BELYAEV belyaev@lapp.in2p3.fr 
 # Maintainer : Olivier Deschamps odescham@in2p3.fr
 # =============================================================================
 package             CaloUtils
-version             v6r4
+version             v6r6
 
 # ================= structure =================================================
 branches            cmt doc src CaloUtils
@@ -20,6 +20,7 @@ use CaloInterfaces   v*      Calo
 use TrackInterfaces  v*      Tr
 use CaloDet          v*      Det 
 use RecEvent         v*      Event
+use PhysEvent        v*      Event
 use TrackEvent       v*      Event 
 use LHCbMath         v*      Kernel
 

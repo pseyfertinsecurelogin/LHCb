@@ -1,4 +1,4 @@
-// $Id: CaloTriggerAdcsFromRaw.cpp,v 1.3 2006-02-02 16:16:50 ocallot Exp $
+// $Id: CaloTriggerAdcsFromRaw.cpp,v 1.6 2006-10-02 06:50:54 cattanem Exp $
 // Include files
 
 // from Gaudi
@@ -27,8 +27,11 @@ CaloTriggerAdcsFromRaw::CaloTriggerAdcsFromRaw( const std::string& type,
   : GaudiTool ( type, name , parent )
 {
   declareInterface<ICaloTriggerAdcsFromRaw>(this);
-  m_detectorName = name.substr( 8, 4 );
+  int index = name.find_first_of(".",0) +1 ; // return -1+1=0 if '.' not found --> OK !!
+  m_detectorName = name.substr( index, 4 );
+
   declareProperty( "DetectorName", m_detectorName );
+  declareProperty( "PackedIsDefault", m_packedIsDefault = false);
   m_adcs.clear();
 }
 //=============================================================================
@@ -44,7 +47,7 @@ StatusCode CaloTriggerAdcsFromRaw::initialize ( ) {
   if ( sc.isFailure() ) return sc;  // error printed already by GaudiTool
 
   debug() << "==> Initialize" << endmsg;
-
+  
   if ( "Ecal" == m_detectorName ) {
     m_roTool  = tool<CaloReadoutTool>( "CaloReadoutTool/EcalReadoutTool" );
     m_packedType = LHCb::RawBank::EcalPacked;
@@ -65,10 +68,13 @@ StatusCode CaloTriggerAdcsFromRaw::initialize ( ) {
 //=========================================================================
 std::vector<LHCb::L0CaloAdc>& CaloTriggerAdcsFromRaw::adcs ( ) {
   LHCb::RawEvent* rawEvt = get<LHCb::RawEvent>( LHCb::RawEventLocation::Default );
-  const std::vector<LHCb::RawBank*>*  banks = &rawEvt->banks( m_packedType );
-  if ( 0 == banks->size() ) {
+
+  const std::vector<LHCb::RawBank*>*  banks = 0;
+  if( !m_packedIsDefault)banks= &rawEvt->banks( m_packedType );
+  if ( 0 == banks || 0 == banks->size() ) {
     banks = &rawEvt->banks( m_shortType );
     debug() << "Found " << banks->size() << " banks of short type " << m_shortType << endreq;
+    if ( 0 == banks->size() )warning() << " Requested packed Banks has not been found "<< endreq;
   } else {
     debug() << "Found " << banks->size() << " banks of packed type " << m_packedType << endreq;
   }

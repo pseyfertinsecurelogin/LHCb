@@ -1,0 +1,10 @@
+ 
+clean :: ${CONSTITUENT}clean
+	@cd .
+
+${CONSTITUENT}clean ::
+	$(cleanup_echo) .obj2doth files
+	-$(cleanup_silent) rm $(dest)*.obj2doth 
+	-$(cleanup_silent) rm -f $(dtdfile)
+
+

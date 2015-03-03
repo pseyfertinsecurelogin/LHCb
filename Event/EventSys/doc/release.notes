@@ -1,6 +1,45 @@
 package EventSys
 package manager: Marco Cattaneo
 
+!======================== EventSys v22r7 2006-11-03 ======================
+! 2006-11-03 - Marco Cattaneo
+ - Use L0Event v15r3p1, HltEvent v7r1, EventAssoc v3r3
+
+!======================== EventSys v22r6 2006-10-24 ======================
+! 2006-10-24 - Florence RANJARD
+ - use GenEvent v4r6 to use HepMC from LCGCMT
+
+!======================== EventSys v22r5 2006-10-20 ========================
+! 2006-10-20 - Marco Cattaneo
+ - Use TrackEvent v3r4, RecEvent v1r9, DAQEvent v6r7p1
+
+!======================== EventSys v22r4 2006-09-27 ========================
+! 2006-09-27 - Marco Cattaneo
+ - Add HltEvent v7r0
+ - Use DAQEvent v6r7, TrackEvent v3r3, RecEvent v1r8
+
+!======================== EventSys v22r3 2006-08-30 ========================
+! 2006-08-30 - Marco Cattaneo
+ - Use DAQEvent v6r6, MCEvent v1r6, RecEvent v1r7, PhysEvent v10r1
+
+!======================== EventSys v22r2 2006-08-21 ========================
+! 2006-08-21 - Tim Adye
+ - Use TrackEvent v3r2
+
+!======================== EventSys v22r1 2006-08-02 ========================
+! 2006-08-02 - Marco Cattaneo
+ - Use L0Event v15r3, MCEvent v1r5, GenEvent v4r5, LinkerEvent v2r2p2,
+       TrackEvent v3r1
+
+!======================== EventSys v22r0 2006-07-26 ========================
+! 2006-07-26 - Marco Cattaneo
+ - Use TrackEvent v3r0, RecEvent v1r6, PhysEvent v10r0, MCEvent v1r4
+
+!======================== EventSys v21r7 2006-07-07 ========================
+! 2006-07-07 - Marco Cattaneo
+ - Use DAQEvent v6r5, RecEvent v1r5, PackedEvent v2r1, TrackEvent v2r7,
+       PhysEvent v9r6
+
 !======================== EventSys v21r6 2006-06-12 ========================
 ! 2006-06-12 - Marco Cattaneo
  - Use GenEvent v4r4, PhysEvent v9r5, RecEvent v1r4, TrackEvent v2r6,

@@ -1,6 +1,52 @@
 package LHCb
 package manager: M.Cattaneo
 
+!========================== LHCb v21r11 2006-11-07 ========================
+! 2006-11-07 - Marco Cattaneo
+ - Use KernelSys v5r14, DetSys v8r14, EventSys v2r7, DAQSys v2r10, 
+       CaloUtils v6r6, GaudiConf v9r11
+
+!========================== LHCb v21r10 2006-10-24 ========================
+! 2006-10-24 - Florence RANJARD
+ - use EventSys v22r6
+
+!========================== LHCb v21r9 2006-10-23 ==========================
+! 2006-10-23 - Marco Cattaneo
+ - Use GaudiConf v9r10, KernelSys v5r13, DetSys v8r13, EventSys v22r5,
+       DAQSys v2r9, CaloUtils v6r5p1
+
+!========================== LHCb v21r8 2006-09-28 ==========================
+! 2006-09-278 - Marco Cattaneo
+ - Use KernelSys v5r12, DetSys v8r12, EventSys v22r4, DAQSys v2r8,
+       CaloUtils v6r5, GaudiConf v9r9
+
+!========================== LHCb v21r7 2006-09-04 ==========================
+! 2006-09-04 - Marco Cattaneo
+ - Use KernelSys v5r11, EventSys v22r3, DetSys v8r11, DAQSys v2r7, 
+       CaloUtils v6r4, LHCbAlgs v2r4
+
+!========================== LHCb v21r6 2006-08-21 ==========================
+! 2006-08-21 - Tim Adye
+ - Use KernelSys v5r10, EventSys v22r2
+
+!========================== LHCb v21r5 2006-08-21 ==========================
+! 2006-08-21 - Tim Adye
+ - Use DetSys v8r10
+
+!========================== LHCb v21r4 2006-08-02 ==========================
+! 2006-08-02 - Marco Cattaneo
+ - Use KernelSys v5r9, DetSys v8r9, EventSys v22r1, LHCbAlgs v2r3
+
+!========================== LHCb v21r3 2006-07-24 ==========================
+! 2006-07-24 - Marco Cattaneo
+ - Use GaudiConf v9r8, KernelSys v5r8, DetSys v8r8, EventSys v22r0,
+       DAQSys v2r6, CaloUtils v6r3p2, LHCbAlgs v2r2
+
+!========================== LHCb v21r2 2006-07-06 ==========================
+! 2006-07-06 - Marco Cattaneo
+ - Use KernelSys v5r7, DetSys v8r7, EventSys v21r7, DAQSys v2r5, LHCbAlgs v2r1,
+       CaloInterfaces v6r1, CaloUtils v6r3p1
+
 !========================== LHCb v21r1 2006-06-19 ==========================
 ! 2006-06-19 - Marco Cattaneo
  - Use DetSys v8r6, EventSys v21r6, KernelSys v5r6, CaloUtils v6r3,

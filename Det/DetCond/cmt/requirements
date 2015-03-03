@@ -1,7 +1,7 @@
-# $Id: requirements,v 1.51 2006-04-25 17:20:19 marcocle Exp $
+# $Id: requirements,v 1.58 2006-09-05 06:34:04 marcocle Exp $
 # =============================================================================
 package       DetCond
-version       v8r0
+version       v9r1
 
 # =========== structure =======================================================
 branches      DetCond doc cmt src
@@ -15,6 +15,7 @@ use           COOL              v*      LCG_Interfaces
 use           CORAL             v*      LCG_Interfaces
 use           Boost             v*      LCG_Interfaces
 use           SEAL              v*      LCG_Interfaces
+#use           PCRE              v*      LCG_Interfaces
 use           DetDesc           v*      Det
 # Needed to resolve references to CoolApplication
 apply_tag   NEEDS_COOL_FACTORY
@@ -34,3 +35,6 @@ library       DetCond           component/*.cpp
 # =========== standard patterns (the order is essential!) ====================== 
 apply_pattern component_library library=DetCond 
 apply_pattern linker_library    library=DetCondLib 
+
+private
+macro_append DetCond_use_linkopts $(Boost_linkopts_thread)

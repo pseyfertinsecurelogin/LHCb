@@ -1,4 +1,4 @@
-// $Id: CircleTraj.cpp,v 1.8 2006-05-03 15:00:47 graven Exp $
+// $Id: CircleTraj.cpp,v 1.10 2006-07-11 09:49:54 mneedham Exp $
 // Include files
 
 // local
@@ -32,7 +32,7 @@ CircleTraj::CircleTraj( const Point& origin,
                         const Vector& normal,
                         const Vector& origin2point,
                         const Range& range)
-  : DifTraj<kSize>(range.first,range.second),
+  : DifTraj<kSize>(range),
     m_origin(origin),
     m_normal(normal.unit()),
     m_dirStart(origin2point-origin2point.Dot(m_normal)*m_normal),
@@ -89,9 +89,18 @@ double CircleTraj::arclength( const Point& point ) const
   // into the plane of the circle. (i.e. this vector is normal
   // to m_normal)
   Vector r( (point - m_normal.Dot(point-m_origin)*m_normal)-m_origin );
-  // determine the delta-phi with the start direction, properly signed!!!
-  double dphi=std::asin( m_dirStart.Cross(r.unit()).Dot(m_normal) );
-  return m_radius*dphi;
+
+  // Determine delta phi angle between arclength=0 angle and angle of r
+  double dphi = r.phi() - m_dirStart.phi();
+  
+  // Check whether angle outside of -pi/2 till +pi/2
+  double check = m_dirStart.Dot( r );
+  if( 0. > check ) {
+    if( dphi > M_PI ) dphi -= 2.*M_PI;
+    else dphi += 2.*M_PI;    
+  }
+
+  return m_radius * dphi;
 };
 
 /// arclength until deviation of the trajectory from the expansion

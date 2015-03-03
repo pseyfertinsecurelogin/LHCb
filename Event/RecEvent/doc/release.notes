@@ -1,7 +1,57 @@
-! $Id: release.notes,v 1.30 2006-06-21 21:37:33 odescham Exp $
+!-----------------------------------------------------------------------------
+! $Id: release.notes,v 1.48 2006-10-20 15:20:33 cattanem Exp $
 ! Package     : Event/RecEvent
 ! Responsible : Marco Cattaneo
 ! Purpose     : LHCb Event model. Reconstruction classes (Brunel output) 
+!-----------------------------------------------------------------------------
+
+!========================== RecEvent v1r9 2006-10-20 =========================
+! 2006-10-20 - Chris Jones
+ - Add expected number of signal photons to RICH segment summary information
+
+! 2006-10-12 - Marco Cattaneo
+ - Change default location of MuonCoord to Raw/Muon/Coords (from Rec)
+
+!========================== RecEvent v1r8 2006-09-28 =========================
+! 2006-09-28 - Marco Cattaneo
+ - Remove event time from RecHeader - now in DAQ/ODIN
+
+! 2006-09-26 - Olivier Deschamps
+ - Add ProtoParticle enums (Spd/Prs digits info) for Calo
+
+!========================== RecEvent v1r7 2006-08-30 =========================
+! 2006-08-17 - Juan PALACIOS
+  - xml/ProtoParticle.xml
+    . Add stdVectorTypeDef="TRUE" to generate typedefs 
+      LHCb::ProtoParticle::Vector and LHCb::ProtoParticle::ConstVector.
+
+! 2006-08-15 - Juan PALACIOS
+  - Make VertexBase::isPrimary a virtual method and implement in RecVertex 
+    according to creation technique enums.
+  - Make VertexBase::clone() and RecVertex::clone() virtual.
+
+! 2006-08-09 - Olivier Deschamps
+ - Add enum comments for CaloID
+
+! 2006-08-09 - Chris Jones
+ - Update enum in ProtoParticle to use new G.O.D. scheme with comments
+
+!========================== RecEvent v1r6 2006-07-19 =========================
+! 2006-07-19 - Juan PALACIOS
+  - xml/VertexBase.xml
+    . New base class for Rec and Phys vertices
+  - xml/RecVertex.xml
+    . New class for Rec vertices. Inherits from VertexBase.
+  - cmt/requirements
+    . Increase version to v1r6.
+
+!========================== RecEvent v1r5 2006-07-07 =========================
+! 2006-07-04 - Juan PALACIOS
+  - Import SelResult from PhysEvent.
+
+! 2006-06-27 - Olivier Deschamps
+ - Event/CaloHypotheses.h removed  (enum now in CaloHypo)
+ - xml/CaloClusterType.xml removed (enum now in CaloCluster)
 
 !========================== RecEvent v1r4 2006-06-19 =========================
 ! 2006-06-21 - Olivier Deschamps

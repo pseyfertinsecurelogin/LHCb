@@ -1,6 +1,6 @@
-// $Id: GeomFun.h,v 1.2 2006-05-31 14:18:19 jpalac Exp $
-#ifndef _GeomFun_H_
-#define _GeomFun_H_
+// $Id: GeomFun.h,v 1.4 2006-10-27 15:34:42 jpalac Exp $
+#ifndef LHCBMATH_GEOMFUN_H
+#define LHCBMATH_GEOMFUN_H 1
 
 
 namespace Gaudi{
@@ -83,9 +83,6 @@ namespace Gaudi{
      *  @param   point: aPoint who's distance to line is to be calculated
      *  @param   line: aLine who's distance to point is to be calculated
      *  @return  distance between point and line (double)
-     *  @todo    Revert to aPlane vector and point typedefs 
-     *           when available in MathCore and get rid of Gaudi::XYZVector
-     *           dependence
      */
     template<typename aPoint, typename aLine>
     double impactParameter(const aPoint&  point ,

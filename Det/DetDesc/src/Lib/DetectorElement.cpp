@@ -1,4 +1,4 @@
-// $Id: DetectorElement.cpp,v 1.35 2006-04-20 14:39:56 ranjard Exp $
+// $Id: DetectorElement.cpp,v 1.37 2006-10-19 08:24:40 cattanem Exp $
 #include "GaudiKernel/Kernel.h"
 #include "GaudiKernel/IDataManagerSvc.h"
 #include "GaudiKernel/IDataProviderSvc.h"
@@ -346,11 +346,13 @@ const int DetectorElement::sensitiveVolumeID(const Gaudi::XYZPoint& globalPoint)
 {
   if (!isInside(globalPoint)) return -1;
   const IDetectorElement* child = childDEWithPoint(globalPoint);
-  return (child) ? child->sensitiveVolumeID(globalPoint) :-1;
+  return (child) ? child->sensitiveVolumeID(globalPoint) : -1;
 };
 
 bool DetectorElement::isInside(const Gaudi::XYZPoint& globalPoint) const {
-  return (geometry()) ? geometry()->isInside(globalPoint) : false;
+  const IGeometryInfo* gi = geometry();
+  return (0!=gi) ? gi->isInside(globalPoint) : false; 
+  //  return (geometry()) ? geometry()->isInside(globalPoint) : false;
 };
 
 const IDetectorElement* DetectorElement::childDEWithPoint(const Gaudi::XYZPoint& globalPoint) const 
@@ -366,7 +368,7 @@ const IDetectorElement* DetectorElement::childDEWithPoint(const Gaudi::XYZPoint&
 const std::string& DetectorElement::name () const {
   static std::string s_empty = "";
   IRegistry* pReg = registry();
-  return (0!=pReg) ? pReg->identifier() : s_empty;;
+  return (0!=pReg) ? pReg->identifier() : s_empty;
 };
 // ============================================================================
 // End 

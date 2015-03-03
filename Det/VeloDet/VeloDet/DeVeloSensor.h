@@ -1,4 +1,4 @@
-// $Id: DeVeloSensor.h,v 1.22 2006-06-14 13:37:08 mtobin Exp $
+// $Id: DeVeloSensor.h,v 1.26 2006-11-02 11:52:41 mtobin Exp $
 #ifndef VELODET_DEVELOSENSOR_H 
 #define VELODET_DEVELOSENSOR_H 1
 
@@ -73,13 +73,20 @@ public:
                               double &chi2) const = 0;
 
   /// Residual [see DeVelo for explanation]
-  virtual StatusCode residual(const Gaudi::XYZPoint& point,
+  /*  virtual StatusCode residual(const Gaudi::XYZPoint& point,
                               const LHCb::VeloChannelID& channel,
                               const double localOffset,
                               const double width,
                               double &residual,
-                              double &chi2) const = 0;
+                              double &chi2) const = 0;*/
   
+ /// Residual of a 3-d point to a VeloChannelID + interstrip fraction
+  virtual StatusCode residual(const Gaudi::XYZPoint& point, 
+                              const LHCb::VeloChannelID& channel,
+                              const double interStripFraction,
+                              double &residual,
+                              double &chi2) const =0 ;
+
   /// The zones number for a given strip
   //  virtual unsigned int zoneOfStrip(const LHCb::VeloChannelID& channel)=0;
   virtual unsigned int zoneOfStrip(const unsigned int strip) const = 0;
@@ -108,6 +115,24 @@ public:
   StatusCode globalToLocal(const Gaudi::XYZPoint& global, 
                            Gaudi::XYZPoint& local) const;
 
+  /// Convert local position to position inside Velo half Box (one per side)
+  /// Local from is +ve x and Upstream 
+  StatusCode localToVeloHalfBox(const Gaudi::XYZPoint& local, 
+                                Gaudi::XYZPoint& box) const;
+
+  /// Convert position inside Velo half Box (one per side) into local position
+  /// Local from is +ve x and Upstream 
+  StatusCode veloHalfBoxToLocal(const Gaudi::XYZPoint& box, 
+                                Gaudi::XYZPoint& local) const;
+
+  /// Convert position inside Velo half Box (one per side) to global
+  StatusCode veloHalfBoxToGlobal(const Gaudi::XYZPoint& box, 
+                                 Gaudi::XYZPoint& global) const;
+
+  /// Convert global position to  inside Velo half Box (one per side) 
+  StatusCode globalToVeloHalfBox(const Gaudi::XYZPoint& global, 
+                                 Gaudi::XYZPoint& box) const;
+
   /// Returns a pair of points which define the begin and end points of a strip in the local frame
   inline std::pair<Gaudi::XYZPoint,Gaudi::XYZPoint> localStripLimits(unsigned int strip) const {
     return m_stripLimits[strip];
@@ -120,12 +145,8 @@ public:
     return std::pair<Gaudi::XYZPoint,Gaudi::XYZPoint>(begin,end);
   }
  
-  /// Convert local phi to rough global phi
-  inline double localPhiToGlobal(double phiLocal) const {
-    if(isDownstream()) phiLocal = -phiLocal;
-    if(isRight()) phiLocal += Gaudi::Units::pi;
-    return phiLocal;
-  } 
+  /// Convert local phi to ideal global phi
+  virtual double localPhiToGlobal(double phiLocal) const = 0;
 
   /// Return the z position of the sensor in the global frame
   inline double z() const {return m_z;}
@@ -401,6 +422,8 @@ private:
 
   IGeometryInfo* m_geometry;
 
+  IGeometryInfo* m_halfBoxGeom; ///< Geometry info of the parent half box
+
   // condition cache
   std::string m_stripCapacitanceConditionName;
   std::string m_stripInfoConditionName;
@@ -414,5 +437,9 @@ private:
   std::vector<StripInfo> m_stripInfos;
   bool m_isReadOut;
   bool m_tell1WithoutSensor;
+
+  // Set output level for message service
+  bool m_debug;
+  bool m_verbose;
 };
 #endif // VELODET_DEVELOSENSOR_H

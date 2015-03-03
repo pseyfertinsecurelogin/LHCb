@@ -4,7 +4,7 @@
 <package name="RichRecBase">
 
 <!-- **************************************************************************
-  * $Id: RichRecTrack.xml,v 1.9 2006-01-25 16:12:36 cattanem Exp $
+  * $Id: RichRecTrack.xml,v 1.11 2006-08-13 17:12:25 jonrob Exp $
   *****************************************************************************
   * XML-description of RichrecTrack class                                     *
   * author: Chris Jones   Christopher.Rob.Jones@cern.ch                       *
@@ -31,9 +31,6 @@
 	<import name="Event/RichRecSegment" soft="TRUE" />
 	<import name="Event/RichRecPixel"   soft="TRUE" />
 	<import name="Event/RichRecPhoton"  soft="TRUE" />
-
-	<import ignore="TRUE" name="Rich"/>
-        <import ignore="TRUE" name="ParticleIDType"/>
 
         <location name="Offline" place="Rec/Rich/OfflineEvent/Tracks"/>
         <location name="HLT"     place="Rec/Rich/HLTEvent/Tracks"/>
@@ -201,12 +198,36 @@
 		desc        = "Reconstructed momentum at track production vertex" 
 		init        = "0" 
 	/>
+
+  	<attribute 
+		name        = "vertexPt" 
+		type        = "LHCb::RichRecTrack::FloatType"
+		compression = "FALSE" 
+		desc        = "Reconstructed pt at track production vertex" 
+		init        = "0" 
+	/>
         
     	<attribute 
 		name        = "charge" 
 		type        = "LHCb::RichRecTrack::FloatType"
 		compression = "FALSE" 
 		desc        = "Track charge" 
+		init        = "0" 
+	/>
+
+   	<attribute 
+		name        = "chi2PerDoF" 
+		type        = "LHCb::RichRecTrack::FloatType"
+		compression = "FALSE" 
+		desc        = "chi^2 per degree of freedom" 
+		init        = "0" 
+	/>
+
+   	<attribute 
+		name        = "nDoF" 
+		type        = "LHCb::RichRecTrack::FloatType"
+		compression = "FALSE" 
+		desc        = "number of degrees of freedom" 
 		init        = "0" 
 	/>
             

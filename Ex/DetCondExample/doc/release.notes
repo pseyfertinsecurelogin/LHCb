@@ -1,9 +1,82 @@
 ! =============================================================================
-! $Id: release.notes,v 1.72 2006-04-25 17:26:07 marcocle Exp $
+! $Id: release.notes,v 1.89 2006-11-03 16:05:58 cattanem Exp $
 ! =============================================================================
 ! package Ex/DetCondExample
 ! package manager : Marco Clemencic
 ! =============================================================================
+
+!=========== Ex/DetCondExample v9r3 2006-11-03 ==============================
+ ### requires DetDescSvc >= v1r8 ###
+! 2006-10-25 - Marco Clemencic
+ - Fix a bug in testXml.opts
+   (EventClockSvc cannot be put in the ExtSvc option)
+ - Add test for UpdateManagerSvc.ConditionsOverride.
+
+!=========== Ex/DetCondExample v9r2 2006-09-26 ==============================
+! 2006-09-26 - Marco Clemencic
+ - Modified to follow changes in EventClockSvc (DetDescSvc > v1r5)
+
+! 2006-09-21 - Marco Clemencic
+ - Improved the test for time-out (added re-connection)
+
+!=========== Ex/DetCondExample v9r1 2006-09-04 ==============================
+! 2006-09-04 - Marco Clemencic
+ - Adapted to the change in DetCond for the way of specifying one of the
+   element of the condition.
+
+! 2006-08-31 - Marco Clemencic
+ - Added a test for the new features of DetCond (more than one file in a single
+   condition)
+ - Adapted to the new API.
+ - Updated reference log files.
+ - Added the possibility possibility of printing the content of condition
+   objects when dumping the DetectorDataStore/
+
+! 2006-08-31 - Marco Clemencic
+ - Added a test for the database connection time-out introduced in
+   CondDBAccessSvc (and updated reference log files).
+
+!=========== Ex/DetCondExample v9r0 2006-07-20 ==============================
+   ***** NEEDS DetCond >= v9r0 *****
+! 2006-07-20 - Marco CLEMENCIC
+ - Removed oracle_linkopts because it is not needed at compile time.
+   (problem when linking on win32)
+
+! 2006-07-18 - Marco CLEMENCIC
+ - Explicitely use read-write connection in fillCondDB.opts
+
+! 2006-07-17 - Marco CLEMENCIC
+ - Win32 Compilation fix
+
+! 2006-07-14 - Marco CLEMENCIC
+ - Modified following the changes in DetCond (addition of CondDBLayeringSvc and
+   removal of ICondDBCnvSvc).
+
+! 2006-07-12 - Marco CLEMENCIC
+ - Modified the python script to prepare the DBs
+   (fill the DBs for multi DB tests)
+ - Removed the DB editing from alg. MultiDBTest
+ - Option file testMultiDB.opts now tets the CondDBDispatcher.
+ - The layering feature is tested in testLayers.opts.
+ - Updated the script run_all.csh and the reference logs
+ - Updated to the new interfaces in DetCond
+
+! 2006-07-10 - Marco Clemencic
+ - Added a script to automatically run all the examples. (cmt/run_all.csh)
+
+! 2006-06-16 - Marco Clemencic
+ - Since CondDbAccessSvc cannot create a new database if it does not exists,
+   I added a small script to create an empty database (python/create_empty_db.py)
+   and a shell script to prepare the databases (cmt/prepare_DBs.csh).
+
+! 2006-06-12 - Marco Clemencic
+ - Updated to latest changes in Det/DetCond head version.
+   In two words changes in API and tagging (based on COOL CVS).
+   (see release.notes in DetCond for more details)
+
+! 2006-06-08 - Marco Clemencic
+ - Updated the Python script copy_files_to_db.py to COOL_1_3_x
+   (I forgot to do it at the right time)
 
 !=========== Ex/DetCondExample v8r0 2006-04-25 ==============================
 ! 2006-04-25 - Marco Clemencic

@@ -1,8 +1,20 @@
-// $Id: Functions.h,v 1.10 2006-06-13 09:05:02 ibelyaev Exp $
+// $Id: Functions.h,v 1.14 2006-10-27 13:34:18 ibelyaev Exp $
 // ============================================================================
-// CVS tag $Name: not supported by cvs2svn $ , version $Revision: 1.10 $
+// CVS tag $Name: not supported by cvs2svn $ , version $Revision: 1.14 $
 // ============================================================================
 // $Log: not supported by cvs2svn $
+// Revision 1.13  2006/10/11 12:14:16  ibelyaev
+//  optimize the operators
+//
+// Revision 1.12  2006/10/10 09:03:20  ibelyaev
+//  many tiny fixed needed for good&valid dictionaries
+//
+// Revision 1.11  2006/10/05 11:52:05  ibelyaev
+//  fix compilation warnings for slc4_ia32_gcc345
+//
+// Revision 1.10  2006/06/13 09:05:02  ibelyaev
+//  fix compiler warnings for gcc3.4.5
+//
 // ============================================================================
 #ifndef LOKI_FUNCTIONS_H 
 #define LOKI_FUNCTIONS_H 1
@@ -112,10 +124,10 @@ namespace LoKi
       OUTPUT output ) const 
     {
       // overall length 
-      const size_t length = last - first ;
+      size_t length = 0  ;
       // 'transform'
-      for ( ; first != last ; ++first , ++output ) 
-        { *output = (*this)( *first ) ; }
+      for ( ; first != last ; ++first , ++output , ++length ) 
+      { *output = (*this)( *first ) ; }
       return length ;
     };   
     /** apply the function to the sequence of arguments 
@@ -124,7 +136,7 @@ namespace LoKi
      *  @code 
      *   CONTAINER                 objects  = ... ; 
      *   const Function<SOMETYPE>& function = ... ;
-     *   std:vector<double> result  = 
+     *   std::vector<double> result  = 
      *     function.evaluate ( objects.begin () ,
      *                         objects.end   () ) ;
      *  @endcode
@@ -137,8 +149,8 @@ namespace LoKi
     ( INPUT  first  , 
       INPUT  last   ) const 
     {
-      vector_result result( last - first );
-      (*this) ( first , last , result.begin() ) ;
+      vector_result result ( std::distance ( first , last ) );
+      evaluate( first , last , result.begin() ) ;
       return result ;
     };
   protected:
@@ -215,10 +227,10 @@ namespace LoKi
       OUTPUT output ) const 
     {
       // overall length 
-      const size_t length = last - first ;
+      size_t length = 0 ;
       // 'transform'
-      for ( ; first != last ; ++first , ++output ) 
-        { *output = (*this)( *first ) ; }
+      for ( ; first != last ; ++first , ++output , ++length ) 
+      { *output = (*this)( *first ) ; }
       return length ;
     };
     /** apply the predicate to the sequence of arguments 
@@ -241,10 +253,10 @@ namespace LoKi
     ( INPUT  first  , 
       INPUT  last   ) const 
     {
-      vector_result result( last - first );
-      (*this) ( first , last , result.begin() );
+      vector_result result ( std::distance ( first , last ) );
+      evaluate ( first , last , result.begin() ) ;
       return result ;
-    };
+    } ;
   protected:
     /// protected default constructor 
     Predicate(): AuxFunBase() {};
@@ -433,8 +445,8 @@ namespace LoKi
         , m_pr2 ( pr2.           clone ()  ) {};
     /// deep copy  
     PredicateFromTwoPredicates ( const Self& right   )
-      : FunB       ( right )
-      , AuxFunBase ( right )
+      : AuxFunBase ( right )
+      , FunB       ( right )
       , m_pr1 ( right.m_pr1 -> clone ()  )
       , m_pr2 ( right.m_pr2 -> clone ()  ) {};
     /// destructor 
@@ -537,8 +549,8 @@ namespace LoKi
       , m_fun2 ( fun2.           clone ()  ) {};
     /// deep copy  
     FunctionFromTwoFunctions ( const Self& right   )
-      : FunB       ( right )
-      , AuxFunBase ( right )
+      : AuxFunBase ( right )
+      , FunB       ( right )
       , m_fun1 ( right.m_fun1 -> clone ()  )
       , m_fun2 ( right.m_fun2 -> clone ()  ) {};
     /// destructor 
@@ -672,8 +684,8 @@ namespace LoKi
     /// deep copy  
     PredicateFromFunctionAndValue
     ( const PredicateFromFunctionAndValue& right   )
-      : _Predicate ( right ) 
-      , AuxFunBase ( right )
+      : AuxFunBase ( right )
+      , _Predicate ( right ) 
       , m_fun   ( right.m_fun   )
       , m_value ( right.m_value )
     {};
@@ -941,6 +953,52 @@ namespace LoKi
     /// the basic printout method 
     virtual std::ostream& fillStream( std::ostream& s ) const 
     { return s << "("  << this->fun1() << "<=" << this->fun2() << ")" ; };
+  };
+  
+  /** @class NotEqual 
+   *  The helper function to implement NotEqual of 2 functions 
+   *
+   *  It is used by LoKi for implementation of comparison 
+   *  operator for functions:
+   *  @code 
+   *  typedef Function<SomeType>      Func ;
+   *  typedef PredicateFromPredicate  PfP  ;
+   *
+   *  void func( const Func& A , const Func& B )
+   *  { 
+   *    PfP p1 = A != B                  ; // operator form
+   *    PfP p2 = LoKi::NotEqual( A , B ) ; // explicit form
+   *  }
+   *  @endcode 
+   *  @see LoKi/Operators.h
+   *  @see LoKi::Function
+   *  @see LoKi::PredicateFromPredicate
+   *  @see LoKi::PredicateFromTwoFunctions
+   *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
+   *  @date   2002-07-15
+   */
+  template<class TYPE> 
+  class NotEqual : public PredicateFromTwoFunctions<TYPE> 
+  {
+  public:
+    /// define all nesessary types 
+    _LOKI_PREDICATE_TYPES_( NotEqual , TYPE ) ;    
+    typedef Function<TYPE> func ;
+    /// constructor 
+    NotEqual ( const func& fun1 , 
+               const func& fun2 )
+      : PredicateFromTwoFunctions<TYPE>( fun1 , fun2 ) {};
+    virtual ~NotEqual(){}
+    /// clone method (mandatory!)
+    virtual Self* clone() const { return new Self( *this ); }    
+    /// the only one essential method ("function")      
+    virtual result_type operator() ( argument object ) const 
+    { return this->fun1( object ) != this->fun2( object ) ; }
+    /// the basic printout method 
+    virtual std::ostream& fillStream( std::ostream& s ) const 
+    { return s << "("  << this->fun1() << "!=" << this->fun2() << ")" ; };
+  private:
+    NotEqual();
   };
   
   /** @struct Plus 
@@ -1441,10 +1499,11 @@ namespace LoKi
      *  @right object to be copied 
      */
     SimpleSwitch ( const Self& right ) 
-      : FunB    ( right        ) 
-      , m_cut   ( right.m_cut  ) 
-      , m_val1  ( right.m_val1 ) 
-      , m_val2  ( right.m_val2 ) 
+      : AuxFunBase ( right )
+      , FunB       ( right        ) 
+      , m_cut      ( right.m_cut  ) 
+      , m_val1     ( right.m_val1 ) 
+      , m_val2     ( right.m_val2 ) 
     {};
     /// destructor 
     virtual ~SimpleSwitch() {}
@@ -1584,10 +1643,11 @@ namespace LoKi
      *  @right object to be copied 
      */
     Switch ( const Self& right ) 
-      : FunB    ( right        ) 
-      , m_cut   ( right.m_cut  ) 
-      , m_fun1  ( right.m_fun1 ) 
-      , m_fun2  ( right.m_fun2 ) 
+      : AuxFunBase ( right        ) 
+      , FunB       ( right        ) 
+      , m_cut      ( right.m_cut  ) 
+      , m_fun1     ( right.m_fun1 ) 
+      , m_fun2     ( right.m_fun2 ) 
     {}
     /// destructor 
     virtual ~Switch() {}
@@ -1626,7 +1686,9 @@ namespace LoKi
     /// constructor 
     Valid() : FunB() {} ;
     /// copy constructor 
-    Valid( const Valid& right ) : FunB( right ) {};
+    Valid( const Valid& right ) 
+      : LoKi::AuxFunBase ( right ) 
+      , FunB             ( right ) {};
     /// virtual destructor 
     virtual ~Valid() {}
     /// MANDATORY: clone method ("virtual constructor")
@@ -1661,7 +1723,8 @@ namespace LoKi
     /// copy constructor 
     TheSame
     ( const TheSame& right ) 
-      : LoKi::Predicate<TYPE>( right )
+      : LoKi::AuxFunBase     ( right ) 
+      , LoKi::Predicate<TYPE>( right )
       , m_value              ( right.m_value )
     {}
     /// virtual destructor 
@@ -1717,7 +1780,8 @@ namespace LoKi
     /// copy contructor 
     EqualToValue 
     ( const EqualToValue& right )
-      : PredicateFromFunctionAndValue<TYPE>( right )
+      : LoKi::AuxFunBase                   ( right ) 
+      , PredicateFromFunctionAndValue<TYPE>( right )
     {};
     /// MANDATORY: virtual destructor 
     virtual ~EqualToValue(){} ;
@@ -1736,6 +1800,60 @@ namespace LoKi
     EqualToValue& operator=( const  EqualToValue& ) ;
   };
   
+  /** @class NotEqualToValue 
+   *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
+   *  @date 2006-04-07
+   */
+  template <class TYPE>
+  class NotEqualToValue 
+    : public PredicateFromFunctionAndValue<TYPE>
+  {
+  public:
+    typedef PredicateFromFunctionAndValue<TYPE> _Base ;
+    typedef typename _Base::_Function       _Function ;
+    typedef typename _Base::value_type     value_type ;
+    typedef typename _Base::result_type   result_type ;
+    typedef typename _Base::argument         argument ;
+  public:
+    /** constructor fro the function and the value 
+     *  @param fun the function
+     *  @param val the reference value 
+     */
+    NotEqualToValue 
+    ( const _Function&  fun , 
+      const value_type& val ) 
+      : PredicateFromFunctionAndValue<TYPE>( fun , val ) 
+    {};
+    /** constructor fro the function and the value 
+     *  @param val the reference value 
+     */
+    NotEqualToValue 
+    ( const value_type& val ,
+      const _Function&  fun )
+      : PredicateFromFunctionAndValue<TYPE>( fun , val ) 
+    {};
+    /// copy contructor 
+    NotEqualToValue 
+    ( const NotEqualToValue& right )
+      : LoKi::AuxFunBase                   ( right ) 
+      , PredicateFromFunctionAndValue<TYPE>( right )
+    {};
+    /// MANDATORY: virtual destructor 
+    virtual ~NotEqualToValue(){} ;
+    /// MANDATORY: clone method ("virtual construcor")
+    virtual  NotEqualToValue* clone() const { return new NotEqualToValue(*this); }
+    /// MANDATORY: the only one essential method :
+    virtual  result_type operator() ( argument a ) const
+    { return this->value() != this->fun( a )  ; }
+    /// OPTIONAL: the specific printout 
+    virtual std::ostream& fillStream ( std::ostream& s ) const 
+    { return s << "(" << this->fun() << "!=" << this->value() << ")" ; }
+  private:
+    /// The default constructor is disabled 
+    NotEqualToValue();
+    /// The assignement operator is disabled 
+    NotEqualToValue& operator=( const  NotEqualToValue& ) ;
+  };
 
 }; // end of namespace LoKi
 

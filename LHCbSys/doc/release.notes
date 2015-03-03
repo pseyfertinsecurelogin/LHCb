@@ -5,6 +5,669 @@
 ! Purpose     : LHCb OO kernel packages
 !-----------------------------------------------------------------------------
 
+</PRE><H1><A NAME=v21r11>2006-11-10 LHCbSys v21r11</A></H1><PRE>
+This version uses Gaudi v18r10 and is fully compatible with DC06 production data
+
+- Packages modified: GaudiConf v9r11, KernelSys v1r14, LHCbMath v1r3,
+    LHCbDefinitions v1r11, LHCbKernel v6r14, DAQSys v2r10, OTDAQ v4r4,
+    DetSys v8r14, DetDesc v16r9, RichDet v9r8, VeloDet v10r10, DetDescSvc v1r8,
+    EventSys v2r7, L0Event v15r3p1, HltEvent v7r1, EventAssoc v3r3, 
+    PatTools v2r9, CaloUtils v6r6, RichRecBase v2r8, HltBase v1r1, 
+    DetCondExample v9r3, LoKiCore v1r8, LoKiGen v1r7
+
+- In GaudiConf v9r11
+  . Add MC truth links for tracking clusters to MCDST
+
+- In LHCbMath v1r3
+  . Removed dependency on LHCbDefinitions. MathCore and SMatrix added to the
+    linkopts, previously done in LHCBDefinitions 
+  . LHCbMath/GeomFun.icpp: Fix a few bugs. Some functions were assuming Line had
+    unit direction vector
+  . Implement cube root method Gaudi::Math::cbrt(x) that works on all platforms,
+    but uses the fast in built cbrt on GCC systems
+  . LHCbMath/GeomFun.icpp: Remove explicit dependency on ROOT::Math vector type.
+    Functions are now totally generic.
+  . Added LHCbMath/IPower.hpp: template metafunction for compile-time calculation
+    of even, positive powers of integer numbers.
+  . Added LHCbMath/Power.hpp: template metafunction to calculate integer powers
+    of integer and floating point numbers.
+
+- In LHCbDefinitions v1r11
+  . Add dependency on LHCbMath
+  . Kernel/Point3DTypes.h: Fix erroneous definition of RhoZPhiPoint.
+  . Add file Kernel/LineTypes.h with definitions for Line types.
+
+- In LHCbKernel v6r14
+  . Add PrintFreq option to LbAppInit
+
+- In OTDAQ v4r4
+  . Minor changes in OTTimeCreator to speed up decoding 
+
+- In DetDesc v16r9
+  . Fixed a problem with copy constructor of Condition, ParamValidDataObject and
+    ValidDataObject.
+  . Add a function to ParamList and ParamValidDataObject to insert a parameter
+    as pointer to BasicParameter
+
+- In DetDescSvc v1r8
+  . Add the possiblility to define a condition in the job options via an option
+    of the UpdateManagerSvc (use boost::spirit).
+
+- In RichDet v9r8
+  . Updates to RichDet to implement refraction correction at HPD
+    Improves CK theta resolution a little. Requires XmlDDDB v30r13 or greater
+  . Remove second format() call from DeRichSystem.cpp
+
+- In VeloDet v10r10
+  . Use interstrip fraction in calculation of residual for phi sensor.
+  . Add the real bug fix for localPhiToGlobal for R sensors.
+  . Added functions to move points from sensor local to the velo half box frame
+
+- in L0Event v15r3p1
+  . Add missing guard for multiple inclusion in L0DUBase.h
+
+- In HltEvent v7r1
+	. xml/HltSummay.xml : 
+       -- renaming HltSummaryBox to HltSelectionSummary
+       -- adding particles in the HltSelectionSummary
+          adding ContainedObject to have a polimorfic container.
+	. xml/HltSummay.xml : adding CaloEt info 
+  . python/translateEnums.py : python to translate enums into HltNames.h file
+
+- In EventAssoc v3r3 
+  . Add explicit generation of dictionaries for all enums in the event model,
+    due to a bug with the implicit generation in root 5.13.04b. Fix to be 
+    removed with future versions of root.
+
+- In PatTools v2r9
+  . New data member "HighThreshold" for PatTCoord
+  . Local saving of default measure in PatTCoord, with possibility of restore
+  . Modify PatTCoord updateHit method to get the coordinates directly, not from
+    a passed trajectory. Sppeds up the decoding by a factor 2.5.
+
+- In CaloUtils v6r6
+  . CaloMomentum.cpp: Remove an unneccessary division in a sqrt
+  . SpreadEstimator.cpp: increase the efficient "minimal cluster size threshold"
+                         from (0.1*cellsize) to (cellsize/sqrt(24))
+
+- In RichRecBase v2r8
+  . Improvements to debug info in pixel and photon creator base classes
+  . Allow RichRecSegment to store ray trace HPD panel points for both RICH sides
+  . Add method to Track Creator base to store HPD panel points in segments
+
+- In HltBase v1r1 
+	. HltBase/HltAlgorithm : minor changes
+	. HltBase/HltMonitorAlgorithm : base class to monitor from HltSummary
+  . HltBase/ERelations : helper class to keep relations 
+
+- In LoKiCore v1r8
+  . LoKi/RangeList.h: add missing destructor
+  . Welcome and good bye messages are explicitly enabled only if LoKi service
+    is instantiated 
+
+- In LoKiGen v1r7
+  . In src/PrintHepMCDecay.h
+     1) move all functions into the namespace LoKi::Print 
+     2) add a maximum recursion level 
+
+- In DetCondExample v9r3
+  . Fix a bug in testXml.opts (EventClockSvc cannot be put in the ExtSvc option)
+  . Add test for UpdateManagerSvc.ConditionsOverride
+
+</PRE><H1><A NAME=v21r10>2006-10-24 LHCbSys v21r10</A></H1><PRE>
+This version uses Gaudi v18r9 and is fully compatible with DC06 production data
+it uses HepMC 1.27.2 through the LCGCMT interface package
+it fixes some compilation bugs in LoKiCore on SLC4 and WIN32
+
+- Packages modified: GenEvent v4r6, EventSys v22r6, LoKiCore v1r7p1
+
+</PRE><H1><A NAME=v21r9>2006-10-23 LHCbSys v21r9</A></H1><PRE>
+This version uses Gaudi v18r8 and is fully compatible with DC06 production data
+
+- Packages modified: GaudiConf v9r10, KernelSys v5r13, LHCbKernel v6r13,
+    DetSys v8r13, VeloDet v10r9, DetDesc v16r8, DetDescSvc v1r7, OTDet v6r7,
+    STDet v2r7, EventSys v22r5, TrackEvent v3r4, PatTools v2r8, TsaKernel v1r4,
+    LoKiCore v1r7, LoKiGen v1r6, RecEvent v1r9, LHCbDefinitions v1r10,
+    Magnet v3r4, DAQSys v2r9, MuonDAQ v2r2, DAQEvent v6r7p1, RichKernel v9r7,
+    RichDet v6r7, RichRecBase v2r7, CaloUtils v6r5p1, IOExample v2r0p2
+
+- In GaudiConf v9r10
+  . In DecodeRawEvent.opts: update algorithm for decoding Muon raw banks
+                            add algorithm to decode L0DU banks
+  . Add DC06Conditions.opts: defines standard conditions for DC06 data
+  . In Units.opts: introduce new units for angles (rad and mrad) and short cut
+                   for luminosity (1 LumiUnit = 1 cm-2 s-1)
+  . In SimContent.opts: reset list of objects to write using = instead of += and
+                        remove inclusion of GenContent.opts
+
+- In LHCbDefinitions v1r10
+  . Remove sse compilation options, now in GaudiPolicy
+
+- In LHCbKernel v6r13
+  . Add interface IDetElemFinder
+  . Add RichRadIntersection class from RichDet
+
+- In RichKernel v6r7
+ - Update RichTrackSegment to use RichRadIntersection class
+ - Update to RichradiatorTool interface for new RichRadIntersection
+ - Add some protection in RichGeomFunctions for when calculating the 
+   angle between two vectors
+ - Update acquireTool methods to allow a custom instance name to be specified
+
+- In VeloDet v10r9
+  . Bug fix in localPhiToGlobal for R sensors.
+
+- In DetDesc v16r8
+  . In DetDesc/IGeometryInfo.h - add new supportPath method, used in 
+       GeometryInfoPlus.h
+  . Fix a minor bug in Condition. The method update should take a
+    ValidDataObject and not a Condition object
+  . Changes in: SolidBox::IntersectTicks method speeded up
+                LAssembly ++not++, remove/protect MsgStream calls
+                DetectorElement: reduce number of virtual function calls   
+
+- In DetDescSvc v1r7
+  . Add service implementing of IDetElemFinder. Allows to find the 
+    DetectorElement associated to a path in the physical volumes hierarchy
+
+- In OTDet v6r7
+  . Clean up in DeOTModule::calculateHits to gain some time
+
+- In STDet v2r7
+  . Adapt channel validation algorithm
+
+- In RichDet v9r7
+ - Add DeRichHPD class to handle conditions and misalignments.
+ - Add the modifications from Marco Musy for the magnetic field distortions.
+   Requires XmlDDDB v30r12 and XmlConditions v2r4 or greater
+ - Add new L1 data versions
+
+- In Magnet v3r4
+  . Adapt requirements to run test application with cmt v1r18p*
+  . Default field map file no longer set. Must always be set with 
+    MagneticFieldSvc.FieldMapFile option
+
+- In TrackEvent v3r4
+  . 2 new track flags intoduced for the HLT needs
+  . clean-up and improvements to the doxygen documentation
+  . Added setChi2AndDoF method to Track class.
+
+- In RecEvent v1r9
+  . Change default location of MuonCoord to Raw/Muon/Coords (from Rec)
+  . Add expected number of signal photons to RICH segment summary information
+
+- In DAQEvent v6r7p1
+  . Add RawEventLocation::Emulated, for Velo Tell1 emulation studies
+
+- In PatTools v2r8
+  . Add a vector of int to PatVeloCoord, to hold MCParticle keys
+  . Store the sensor number, a bit faster when comparing clusters on tracks.
+
+- In TsaKernel v1r4,
+  . Add same channel function to clusters
+  . Add possibility to reset drift radius in OTCluster
+
+- In RichRecBase v2r7
+  . Add simple workaround to RichPixelCreatorBase to avoid loading tools 
+    during first event, but during initialize instead
+
+- In MuonDAQ v2r2
+  . Add MuonRec algorithm to decode RawBank into MuonCoord
+
+- In CaloUtils v6r5p1
+  . Fix in CaloParticle
+
+- In LoKiCore v1r7
+  . Make equality and non-equality operators more efficient
+  . New functor to "strip-down" the type (remove all qualifiers [*,&,const])
+  . Many tiny fixes to improve functionality of python/reflex dictionaries
+  . Fix compilation warnings for slc4_ia32_gcc345 platform
+
+- In IOExample v2r0p2
+  . Use more up to date input files
+
+- In LoKiGen v1r6
+  . Fixes for dictionaries and for SLC4 compilation error
+
+</PRE><H1><A NAME=v21r8>2006-09-28 LHCbSys v21r8</A></H1><PRE>
+This version uses Gaudi v18r7 and is fully compatible with DC06 production data
+
+- Packages added:    HltEvent v7r0 - for Hlt summary class
+                     HltBase  v1r0 - base classes for Hlt algorithms
+                     PatTools v2r7 - previously in REC
+- Packages modified: GaudiConf v9r9, DetSys v8r12, DetDesc v16r7, MuonDet v5r5,
+    DetDescSvc v1r6, EventSys v22r4, DAQEvent v6r7, TrackEvent v3r3,
+    RecEvent v1r8, DAQSys v2r8, CaloDAQ v2r5, KernelSys v5r12, LHCbKernel v6r12,
+    LHCbDefinitions v1r9, ProcessorKernel v3r3, TsaKernel v1r3, LoKiGen v1r5,
+    CaloUtils v6r5, DetCondExample v9r2
+
+- In DetDesc v16r7
+  . In IGeometryInfo.h, add method idealMatrixInv()
+  . Added DetDesc/SU2LHCb.h, inline methods for transformations from LHCb cavern
+    surveying frame of reference to LHCb frame and back
+
+- In LHCbDefinitions v1r9
+  . In GenericMatrixTypes.h, add Matrix3x4 typedefs
+
+- In MuonDet v5r5, DetSys v8r12
+  . Add IMuonPosTool interface
+
+- In DetDescSvc v1r6
+  . Modify EventClockSvc to use a tool implementing IEventTimeDecoder for the
+    actual decoding of the event time.
+  . Add FakeEventTime as an example of implementation of IEventTimeDecoder and
+    to provide the same functionality already present in EventClockSvc.
+  . Fixed minor "feature" of UpdateManagerSvc: it was compulsory to specify the
+    root name in the path of a condition. Now it can be avoided and it is
+    removed if present.
+
+- In DAQEvent v6r7
+  . Add bankKiller algorithm to component library, removes banks from RawEvent
+  . Add ODIN class to decode ODIN raw banks and expose the informations.
+  . Add the tool OdinTimeDecoder (implementing Kernel/IEventTimedecoder)
+    to create an ODIN object in the transient store and return the event
+    time to EventClockSvc.
+
+- In TrackEvent v3r3
+  . Add extraInfo to Track->reset
+  . Minor tidy up of copy contructors in Node and State
+
+- In RecEvent v1r8
+  . Add ProtoParticle enums (Spd/Prs digits info) for Calo
+  . Remove event time from RecHeader - now in DAQ/ODIN
+
+- In CaloDAQ v2r5
+  . Add CheckCaloBank.{cpp,h} algorithm
+  . Add options/CaloBankHandler.opts : 
+      - Handling separatly Prs/Ecal & Hcal banks
+      - Check if 'Short' banks exist at the begining of the sequence
+      - If only 'Packed'  -> create 'Shorts' and remove 'Packed'
+      - If 'Short' is already there (e.g. from real Data) -> sequence stop.
+  . Add the property 'PackedIsDefault' in decoding tools:
+      - allow to force the packed banks to be the default input banks in case 
+        of both 'packed' and 'short' exist (default is false).
+
+- In LHCbKernel v6r12
+  . Add sorter in STDataFunctor for elementID
+  . Add creation of dictionaries for ISTClusterPosition, IVeloClusterPosition
+    and the templated SiPositionInfo
+  . Add interface IEventTimeDecoder (used by EventClockSvc)
+
+- In ProcessorKernel v3r3
+  . Fix uninitialized variable warning from valgrind
+
+- In TsaKernel v1r3
+  . Tidy up the cluster copy constructors and add a clone
+  . Add ITsaCollector interface
+
+- In LoKiGen v1r5
+  . LoKi/GenTypes.h, add the formal definitions of containers and ranges
+
+- In GaudiConf v9r9
+  . Remove explicit saving of directory nodes on persistency file definitions
+  . Add Link/Trig/L0/FullCalo to MCDstContent.opts
+  . Add Rec/Calo/Electrons, DAQ/ODIN to rDST (and DST)
+
+- In PatTools v2r7
+  . Replace two calls to trajectory in PatTTCoord to speed-up the decoding of TT
+  . New method updateTable() of PatContainer to adjust the m_vector content
+    if the container was modified by direct access to TES, e.g. in PatForward
+
+- In CaloUtils v6r5
+  . Modify CaloParticle so that it can work with a bunch of LHCb::Particles
+
+- In DetCondExample v9r2
+  . Modified to follow changes in EventClockSvc (DetDescSvc > v1r5)
+  . Improved the test for time-out (added re-connection)
+
+</PRE><H1><A NAME=v21r7>2006-09-04 LHCbSys v21r7</A></H1><PRE>
+This version uses Gaudi v18r7 and is fully compatible with DC06 production data
+
+Changes since last official release (v21r4):
+
+- Packages modified: KernelSys v5r11, LHCbKernel v6r11, ProcessorKernel v3r2,
+    RichKernel v6r6, DetSys v8r11, Magnet v3r3, OTDet v6r6, STDet v2r6, 
+    RichDet v9r6, EventSys v22r3, DAQEvent v6r6, MCEvent v1r6, TrackEvent v3r2,
+    RecEvent v1r7, PhysEvent v10r1, DAQSys v2r7, CaloDAQ v2r4, CaloUtils v6r4, 
+    TrackInterfaces v2r8, TsaKernel v1r2, RichRecBase v2r6, LHCbAlgs v2r4, 
+    LoKiCore v1r6, LoKiGen v1r4, DetCond v9r1, DetCondExample v9r1
+
+- In LHCbKernel v6r11
+  . add IUsedLHCbID.h
+  . Make RichSmartID constructor from an int explicit
+  . Add RichSmartID HPD panel level constructor
+  . Fix LHCbID for explicit RichSmartID constructor
+  . Update RichTraceMode to be generated by GOD, to make maintenance easier
+    by using the automatically generated bitfields etc.
+    + Has the side affect that RichTraceMode is now in the LHCb namespace
+    + Also take the opportunity to clarify some of the enums.
+
+- In RichKernel v6r6
+  . Make joSvc() method protected
+  . Remove the "withoutEff" ray tracing method from RayTracing interface. Now 
+    decides what to do based on the configuration object RichTraceMode.
+
+- In ProcessorKernel v3r2
+  . Add a reset method to RegisterFactory
+  . Initialize pointers in Property.cpp to please valgrind. 
+
+- In Magnet v3r3
+  . Put default number of steps in integration tool to 101 (was 501) to save time
+
+- In OTDet v6r6
+  . Change the centerOfStraw method to use trajectory
+  . Cache global center, entrance and exit planes of the module
+
+- In STDet v2r6
+  . Add entrance and exit planes, thickness function in DeSTSector
+  . Bug fix in DeSTLayer contains
+
+- In RichDet v9r6
+  . Introduce new constructor for Rich1DTabFunc
+  . Adapt to improvements in ray tracing mode object RichTraceMode
+  . Fixed a bug in ray tracing
+  . Added a function to convert the HPD number to the HPD copy number
+
+- In DAQEvent v6r6
+  . Remove export dependency on GaudiAlg
+  . Add the possibility to remove banks from the RawEvent structure
+
+- In MCEvent v1r6
+  . add typedefs LHCb::MCVertex::Vector and LHCb::MCVertex::ConstVector
+  . Add class MCRichDigitHit
+  . Update MCRichDigit to store FULL simulation AND digitisation history
+    for each associated MCRichHit
+  . Update fillstream methods for MCRichDigit and MCRichDigitHistoryCode
+    to be more human-friendly
+
+- In TrackEvent v3r2
+  . non-const accessor to ancestor tracks
+
+- In RecEvent v1r7
+  . add typedefs LHCb::ProtoParticle::Vector, LHCb::ProtoParticle::ConstVector
+  . Make VertexBase::isPrimary a virtual method and implement in RecVertex 
+    according to creation technique enums.
+  . Make VertexBase::clone() and RecVertex::clone() virtual.
+  . Add enum comments for CaloID and ProtoParticle
+
+- In PhysEvent v10r1
+  . Implement Vertex::isPrimary in terms of creation technique enums.
+  . Make Vertex::clone() virtual.
+
+- In CaloDAQ v2r4
+  . Update options/CaloDigitsOnDemand.opts
+
+- In CaloUtils v6r4
+  . Add two new classes : CaloMomentum{.h,.cpp} and CaloParticle{.h,.cpp}
+
+- In TrackInterfaces v2r8
+  . add IStateCorrectionTool.h
+
+- In TsaKernel v1r2, v1r1
+  . Add hot flag to cluster class
+  . Clean up of cluster classes
+
+- In RichRecBase v2r6
+  . Add base class for track selector (to allow MC and MC-free implementations)
+  . Add optional weight to Track->MCParticle associations in MC truth tool
+  . Update pixel creator base to handle different suppression tools for
+    RICH1 and RICH2
+  . Rewrite utility class RichTrackSelector as a full GaudiTool
+  . Updates due to changes in ray tracing tool
+  . Add options to specify no. of points to use in ray tracing of Cherenkov cones
+  . Add RichRecPointOnRing to allow the storage of additional data
+    (such as acceptance flags) with space points on the RichRecRings
+  . Add missing initialisations to RichRecRing copy constructor
+  . Add new classes for Ring <-> Pixel associations
+
+- In LHCbAlgs v2r4
+  . Adapt to changed interface of addPropertyToCatalogue in Gaudi v18r7
+
+- In LoKiCore v1r6
+  . LoKi/Interface.h - fix a problem with reference counters
+  . Add a fictive base class LoKi::RangeBase_ to all ranges 
+  . LoKi/WrongMass.h,.cpp - add 2 functions for kinematics with "wrong" mass
+
+- In LoKiGen v1r4
+  . Add functor LoKi::GenParticles::Status and shortcut LoKi::Cuts::GSTATUS
+
+- In DetCond v9r1
+  . Added the possibility of using one CondDB condition to store more than one
+    file using elements of the attribute list.
+  . Backward compatible chages in the API (with deprecated functions).
+  . Added the possibility of disconnection from the DB after an inactivity
+    period defined by CondDBAccessSvc.ConnectionTimeOut.
+  . Fixed a bug in CondDBDispatcherSvc: the correct alternative database was
+    never selected
+  . Fixed a bug in RelyConverter that was causing a segmentation fault if the
+    retreived XML string didn't start with "<?xml"
+  . Modified the way of specifying one of the element of the condition. Now the
+    path to a condition in XML is:
+    "conddb:/path/to/condition/[attribute@]Folder.xml[:channel][#Name]"
+
+- In DetCondExample v9r1
+  . Added a test for the new features of DetCond (more than one file in a single
+    condition)
+  . Adapted to the new API.
+  . Added the possibility possibility of printing the content of condition
+    objects when dumping the DetectorDataStore
+  . Added a test for the database connection time-out introduced in
+    CondDBAccessSvc
+  . Updated reference log files.
+
+</PRE><H1><A NAME=v21r6>2006-08-22 LHCbSys v21r6</A></H1><PRE>
+This an intermediate version built in DEV with changes in the following packages:
+  Magnet v3r3, DetSys v8r10, TrackEvent v3r2, EventSys v22r2, LHCbKernel v6r10c, 
+  KernelSys v5r10, TsaKernel v1r1, LHCb v21r6
+
+This version was never officially released
+
+</PRE><H1><A NAME=v21r4>2006-08-03 LHCbSys v21r4</A></H1><PRE>
+This version uses Gaudi v18r6 and is fully compatible with DC06 production data
+
+- Packages added:    GaudiObjDesc v9r7 - added temporarily to have acces to many
+                                         improvements ahead of next Gaudi release
+- Packages modified: KernelSys v5r9, LHCbKernel v6r9, RichKernel v6r5, 
+    LHCbDefinitions v1r8, DetSys v8r9, VeloDet v10r8,
+    EventSys v22r1, L0Event v15r3, MCEvent v1r5, GenEvent v4r5, TrackEvent v3r1,
+    LinkerEvent v2r2p2, LHCbAlgs v2r3, RichRecBase v2r5, TrackInterfaces v2r7
+
+- In LHCbKernel v6r9
+  . Fix a counter increment in SerializeStl.h and remove obsolete StreamBuffer
+    implementations
+  . Use new virtual='FALSE' tag in xml definition of xxxID classes
+  . Replace explicit coding of copy constructors by new copyconstructor xml tag
+  . Remove redundant fillStream(MsgStream&) method from CaloCellID
+
+- In RichKernel v6r5, LHCbAlgs v2r3
+  . Fix a memory leak due to changed IJobOptionsSvc behaviour
+
+- In LHCbDefinitions v1r8
+  . Add Quaternion, Matrix3x2, Matrix2x3 typedefs
+
+- In VeloDet v10r8
+  . Bug fix in reverse iterator accessors which corrected rend() for the
+ 	  number of pile up sensors
+  . New residual calculation, uses inter strip fraction with the channel number.
+    Phi sensor is still using old calculation but interface has been added.
+  . Added VeloDetChecker algorithm to the component library.
+  . Some tidying up and optimization of code
+
+- In L0Event v15r3, LinkerEvent v2r2p2
+  . Adapt to SerializeStl.h changes
+
+- In LHCbKernel v6r9, L0Event v15r3, MCEvent v1r5, GenEvent v4r5,
+     RichRecBase v2r5  
+  . Adapt to GaudiObjDesc v9r7 changes
+
+- In TrackEvent v3r1
+  . Added checkFitStatus and setExtraInfo methods to Track class
+  . Bug fix: Track clone method now copies the ExtraInfo to the cloned track
+  . Added StateParameters.h. Contains z-positions of predefined state locations
+  . Bug fixes in State method to compute position/momentum covariance
+
+- In TrackInterfaces v2r7
+  . Add ITrackInterpolator interface
+
+</PRE><H1><A NAME=v21r3>2006-07-26 LHCbSys v21r3</A></H1><PRE>
+This version uses Gaudi v18r6 and is fully compatible with DC06 production data
+
+- Packages added   : TsaKernel v1r0 - Tsa base classes
+- Packages modified: KernelSys v5r8, LHCbDefinitions v1r7p1, LHCbKernel v6r9,
+    EventSys v22r0, TrackEvent v3r0, RecEvent v1r6, PhysEvent v10r0,MCEvent v1r4,
+    DetSys v8r8, STDet v2r5, Magnet v3r2, OTDet v6r5,  DetDescSvc v1r5
+    DetCond v9r0, DetCondExample v9r0, CondDBEntityResolver v3r0, GaudiConf v9r8,
+    DAQSys v2r6, OTDAQ v4r3, LHCbAlgs v2r2, CaloUtils v6r3p2, 
+    TrackInterfaces v2r6, LoKiCore v1r5p2, IOExample v2r0p1
+
+- In GaudiConf v9r8
+  . GaudiMain.cpp propagates status code of application manager to exit status
+  . Fix units.opts for new property parser
+  . Add options describing contents of official datasets (.sim,.digi,.rdst,.dst)
+
+- In LHCbAlgs v2r2
+  . Fix string handling for compliance with new job options service
+
+- In LHCbDefinitions v1r7p1
+  . Add a missing include, needed for Root 5.12.00
+  . Add LHCbMath::sqrt_12 and LHCBMath::inv_sqrt_12 constants
+
+- In LHCbKernel v6r9
+  . Provide Boost allocators for LineTraj, CircleTraj, ParabolaTraj
+  . Add destructors to Trajectory base classes
+  . Change to make trajectory constructors faster
+  . Inline LineTraj constructors
+  . Remove Root::Math::RowOffsets dictionaries, now in Root
+  . Add explicit LHCbID(unsigned int theID) constructor
+  . Add PreloadGeometry option to LbAppInit (default false)
+
+- In TrackEvent v3r0
+  . Remove TrackVertex class, use RecVertex instead
+  . Add ExtraInfo map to Track, set appropriate flag if last measurement removed
+  . Bug fixes in State method to compute position/momentum covariance
+
+- In RecEvent v1r6
+  . Add VertexBase class - new base for Phys and Rec vertices
+  . Add RecVertex class - a VertexBase with Tracks
+
+- In PhysEvent v10r0
+  . Reimplement Vertex class. Now a VertexBase with Particles
+  . Remove PrimVertex class, use RecVertex instead
+  . In Particle.h, use symmetric matrix construction from regular matrix lower
+    block instead of LHCb-made Gaudi::Math::Symmetrize function.
+
+- In MCEvent v1r4
+  . Add new class MCExtendedHit to debug trackers. Derived from MCHit with in 
+    addition momentum of particle at entry point
+
+- In STDet v2r5
+  . Cosmetic changes in getting trajectories
+
+- In Magnet v3r2
+  . New options to allow zero field, non-zero constant field or a scling factor
+    on the entire field map
+  . Fix a job option of the test program, for new job options parser
+  . Fix requirements so that debug build does not link with non-debug libraries
+
+- In DetDescSvc v1r5
+  . Add PreloadGeometryTool
+
+- In OTDet v6r5, OTDAQ v2r6
+  . Minor cleanups
+
+- In CaloUtils v6r3p2, LoKiCore v1r5p2
+  . Use SMatrix::Inverse() instead of Sinverse(), for Root 5.12.00
+
+- In TrackInterfaces v2r6
+  . Add interface for Velo dE/dx charge tool
+
+- In DetCond v9r0, DetCondExample v9r0
+  . Many changes to interface and functionality, see release notes
+
+- In CondDBEntityResolver v3r0
+  . Adapt to changes in DetCond
+
+- In IOExample v2r0p1
+  . Update input files for LHCb v21r3
+
+</PRE><H1><A NAME=v21r2>2006-07-07 LHCbSys v21r2</A></H1><PRE>
+This version uses Gaudi v18r5 and is fully compatible with DC06 production data
+
+- Packages modified: KernelSys v5r7, LHCbMath v1r2,LHCbKernel v6r8,LHCbAlgs v2r1,
+    DAQSys v2r5, CaloDAQ v2r3, OTDAQ v4r2p1, EventSys v21r7, DAQEvent v6r5,
+    RecEvent v1r5, PackedEvent v2r1, TrackEvent v2r7, PhysEvent v9r7,
+    DetSys v8r7, DetDescCnv v3r3, CaloDet v7r4, STDet v2r4,  XmlTools v3r10,
+    CaloInterfaces v6r1, CaloUtils v6r3p1, LoKiCore v1r5p1
+
+- In LHCbMath v1r2
+  . Bug fix in plane-line intersection parallelity test 
+  . Add Power.h, efficient pow function for large integer powers
+
+- In LHCbKernel v6r8
+  . Replaced asin angle calculation in CircleTraj::arclength(point)
+    by robust angle determination
+  . Add ITrajPoca interface (was in ITrackInterfaces)
+
+- In LHCbAlgs v2r1
+  . Add poca tool (was in TrackTools)
+
+- In DAQEvent v6r5
+  . Fix a warning from gcc 3.4.5, may also fix free/delete mismatch
+  . Change an unsigned int into size_t, to please gcc 3.4.5 on amd64
+
+- In RecEvent v1r5
+  . Event/CaloHypotheses.h removed  (enum now in CaloHypo)
+  . xml/CaloClusterType.xml removed (enum now in CaloCluster)
+  . Add xml/SelResult.xml, add copy constructor & assignment op. (from PhysEvent)
+
+- In PackedEvent v2r1
+  . Add default and copy constructor to PackedMCVertex struct
+
+- In TrackEvent v2r7
+  . Clean up track enums (forgotten from previous release)
+  . Fix bug in unit interconversion
+  . Fix definition of kappa in TrackParameters.h
+  . Changed closestState methods in Track.cpp to loop over nodes when they exist
+  . Added position method to Node.xml
+
+- PhysEvent v9r7
+  . Move SelResult to RecEvent
+  . Add or fix constructors and assignment operators for Particle, Vertex,
+    FilterCriterionResult, FlavourTag
+
+- In CaloDAQ v2r3
+  . add src/CaloTriggerBitsFromRawAlg algorithm (produce PrsSpdL0Bit in TES)
+  . add options/CaloFillRawBank.opts (create "Compressed" banks from "Packed")
+  . bug fix in CaloTriggerBitsFromRaw & CaloFillPrsSpdRawBuffer
+  
+- In OTDAQ v4r2p1
+  . Minor cleanups
+
+- In DetDescCnv v3r3
+  . Fixes in string handling for AMD64
+
+- In XmlTools v3r10
+  . Fixes in string handling for AMD64
+
+- In CaloDet v7r4
+  . Get PedShift from XmlConditions (requires XmlConditions from v1r8)
+
+- In STDet v2r4
+  . Small bug fix in DeSTSector
+  . Only cache the plane in DeSTLayer once
+
+- In CaloInterfaces v6r1
+  . Adapt to changes in RecEvent
+
+- In TrackInterfaces v2r5
+  . Remove ITrajPoca interface (moved to LHCbKernel) 
+
+- In CaloUtils v6r3p1
+  . Remove Assert() in CaloTrackMatch.h - Error message instead of exception
+
+- In LoKiCore v1r5p1
+  . Remove Welcome and Goodbye printout
+
 </PRE><H1><A NAME=v21r1>2006-06-20 LHCbSys v21r1</A></H1><PRE>
 This version uses Gaudi v18r5 and is fully compatible with DC06 production data
 It is the first release supporting also slc4_ia32_gcc345 platform

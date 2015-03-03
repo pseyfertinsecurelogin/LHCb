@@ -1,6 +1,40 @@
-! $Id: release.notes,v 1.138 2006-06-16 06:32:22 cattanem Exp $
+! $Id: release.notes,v 1.148 2006-11-03 14:06:10 cattanem Exp $
 package VeloDet
 package manager : Velo Group
+
+!========================= VeloDet v10r10 2006-11-03 ========================
+! 2006-11-02 - Mark TOBIN
+ - Renamed functions which move points from sensor local to the velo half box
+   frame.
+
+! 2006-11-01 - Mark TOBIN
+ - Use interstrip fraction in calculation of residual for phi sensor.
+ - Add the real bug fix for localPhiToGlobal for R sensors.
+
+! 2006-10-25 - David Hutchcroft
+ - Added functions to move points from sensor local to the velo half box frame
+
+!========================= VeloDet v10r9 2006-10-11 ========================
+! 2006-10-10 - Mark TOBIN
+ - Bug fix in localPhiToGlobal for R sensors.
+
+!========================= VeloDet v10r8 2006-08-02 ========================
+! 2006-08-01 - Kurt Rinnert
+ - Bug fix in reverse iterator accessors which corrected rend() for the
+ 	 number of pile up sensors (for reverse iterators + means - and - means +).
+
+! 2006-07-31 - Mark TOBIN
+ - New residual calculation which uses inter strip fraction with
+   the channel number.  Currently phi sensor is still using old calculation but
+   interface has been added.
+ - Added VeloDetChecker algorithm to the component library.  This fills an
+   n-tuple with things like start and end point of strips, radii, pitch etc....
+ - Some tidying up of code:
+   - Removed obsolete residual methods.
+   - Removed obsolete data members from DeVelo.
+   - Removed unnecesary calls to message service.
+   - ++ not ++.
+   - Use gsl_pow_2 instead of pow.
 
 !========================= VeloDet v10r7 2006-06-14 ========================
 ! 2006-06-14 - Mark Tobin

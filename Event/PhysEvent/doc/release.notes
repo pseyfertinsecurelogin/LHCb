@@ -1,7 +1,75 @@
-! $Id: release.notes,v 1.98 2006-06-01 06:26:56 cattanem Exp $
+! $Id: release.notes,v 1.119 2006-08-30 07:06:06 cattanem Exp $
 ! Package     : PhysEvent 
 ! Responsible : P. Koppenburg, J.P. Palacios
+!----------------------------------------------------------------------------
 
+!======================= PhysEvent v10r1 2006-08-30 =========================
+! 2006-08-15 - Juan PALACIOS
+  - Implement Vertex::isPrimary in terms of creation technique enums.
+  - Make Vertex::clone() virtual.
+
+!======================= PhysEvent v10r0 2006-07-28 =========================
+! 2006-07-28 - Juan PALACIOS
+  - xml/Particle.xml
+    . Remove code from covMatrix method from header to avoid problems generating dictionary on Windows.
+  - src/Particle.cpp
+    . This file now contains implementation of Gaudi::SymMatrix7x7 covMatrix() const; method
+  - cmt/requirements
+    . Re-instate patterns for link library generation from src/*.cpp
+
+! 2006-07-27 - Juan PALACIOS
+  - xml/Particle.xml
+    Fix bug in construction of 7x7 covariance matrix: position block was missing!
+
+! 2006-07-21 - Juan PALACIOS
+  - xml/Particle.xml
+    . Move implementations previously in src/Particle.cpp to header.
+    . Use symmetric matrix construction from regular matrix lower block
+      instead of LHCb-made Gaudi::Math::Symmetrize function.
+  - src/Particle.cpp REMOVED
+  - cmt/requirements
+    . Remove linker library build and pattern.
+
+! 2006-07-20 - Juan PALACIOS
+  - xml/Vertex.xml
+    . Add typedefs for KeyedContainer of Vertex. Was not generated 
+      automatically as Vertex no longer inherits directly from KeyedObject.
+
+! 2006-07-19 - Juan PALACIOS
+  - xml/Vertex.xml
+    . New class, inheriting from VertexBase (RecEvent). Public interface 
+			remains the same as in previous Vertex class.
+
+  - xml/PrimVertex.xml
+    . REMOVED. Primary vertices are now of type RecVertex (RecEvent)
+
+  - src/Vertex.cpp
+    . REMOVED. Old implementation of Vertex copy constructor and assignment
+			operator. New Vertex class has implementations in header.
+
+  - cmt/requirements
+    . Increase version number to 10r0
+
+!======================= PhysEvent v9r6 2006-07-07 ==========================
+! 2006-07-04 - Juan PALACIOS	
+  - Move SelResult to RecEvent. Remove xml/SelResult.xml.
+
+! 2006-06-09 - Juan PALACIOS
+  - xml/Particle.xml: Add explicit single argument constructor from key. 
+                      Add default value initialization to single argument
+                          constructor from PID and make explicit. 
+
+! 2006-06-06 - Juan PALACIOS
+  - xml/FilterCriterionResult.xml: Add copy constructor + assignment operator
+    xml/FlavourTag.xml: Add assignment operator
+    xml/SelResult.xml: Add copy constructor + assignment operator
+
+! 2006-06-02 - Juan PALACIOS
+  - src/Particle.cpp: 
+    . Fix copy constructor and assignment operator to copy vector of daughters,
+      and SmartRefs to end vertex and protoparticle.
+  - xml/Vertex.xml, src/Vertex.cpp
+    . Fix copy constructor. Add assignment operator. Inline clone() method.
 
 !======================= PhysEvent v9r5 2006-05-31 ==========================
 ! 2006-05-31 - Juan PALACIOS

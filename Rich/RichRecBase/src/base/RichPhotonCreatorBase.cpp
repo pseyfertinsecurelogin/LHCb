@@ -5,7 +5,7 @@
  *  Implementation file for tool base class : RichPhotonCreatorBase
  *
  *  CVS Log :-
- *  $Id: RichPhotonCreatorBase.cpp,v 1.12 2006-06-14 22:35:53 jonrob Exp $
+ *  $Id: RichPhotonCreatorBase.cpp,v 1.15 2006-11-01 17:57:07 jonrob Exp $
  *
  *  @author Chris Jones   Christopher.Rob.Jones@cern.ch
  *  @date   20/05/2005
@@ -26,10 +26,10 @@ RichPhotonCreatorBase::RichPhotonCreatorBase( const std::string& type,
                                               const IInterface* parent )
   : RichRecToolBase         ( type, name, parent ),
     m_hasBeenCalled         ( false ),
-    m_photonPredictor       ( 0 ),
-    m_photonSignal          ( 0 ),
-    m_ckAngle               ( 0 ),
-    m_ckRes                 ( 0 ),
+    m_photonPredictor       ( NULL ),
+    m_photonSignal          ( NULL ),
+    m_ckAngle               ( NULL ),
+    m_ckRes                 ( NULL ),
     m_Nevts                 ( 0 ),
     m_bookKeep              ( false ),
     m_photons               ( 0 ),
@@ -91,7 +91,7 @@ StatusCode RichPhotonCreatorBase::initialize()
   }
 
   // get tools
-  acquireTool( m_photPredName, m_photonPredictor  );
+  acquireTool( m_photPredName, "Predictor", m_photonPredictor, this  );
   acquireTool( "RichPhotonSignal", m_photonSignal );
   acquireTool( "RichCherenkovAngle",  m_ckAngle   );
   acquireTool( "RichCherenkovResolution", m_ckRes );
@@ -171,70 +171,80 @@ void RichPhotonCreatorBase::printStats() const
 StatusCode RichPhotonCreatorBase::reconstructPhotons() const
 {
 
-  // make a rough guess at a size to reserve based on number of pixels
-  if ( richPhotons()->empty() )
-    richPhotons()->reserve( 10 * pixelCreator()->richPixels()->size() );
-
   if ( msgLevel(MSG::DEBUG) )
   {
-    debug() << "Found " << trackCreator()->richTracks()->size() 
-            << " RichRecTracks and " <<  pixelCreator()->richPixels()->size() 
+    debug() << "Found " << trackCreator()->richTracks()->size()
+            << " RichRecTracks and " << pixelCreator()->richPixels()->size()
             << " RichRecPixels" << endreq;
   }
-
-  // Iterate over all tracks
-  for ( RichRecTracks::const_iterator iTrack =
-          trackCreator()->richTracks()->begin();
-        iTrack != trackCreator()->richTracks()->end();
-        ++iTrack )
+  if ( !trackCreator()->richTracks()->empty() &&
+       !pixelCreator()->richPixels()->empty() )
   {
-    RichRecTrack * track = *iTrack;
 
-    if ( !track->inUse() ) continue; // skip tracks not "on"
-    if ( !track->allPhotonsDone() )
+    // make a rough guess at a size to reserve based on number of pixels
+    if ( richPhotons()->empty() )
+      richPhotons()->reserve( trackCreator()->richTracks()->size() *
+                              pixelCreator()->richPixels()->size() );
+
+    // Iterate over all tracks
+    for ( RichRecTracks::const_iterator iTrack =
+            trackCreator()->richTracks()->begin();
+          iTrack != trackCreator()->richTracks()->end();
+          ++iTrack )
     {
+      RichRecTrack * track = *iTrack;
 
-      if ( msgLevel(MSG::VERBOSE) )
+      if ( !track->inUse() ) continue; // skip tracks not "on"
+      if ( !track->allPhotonsDone() )
       {
-        verbose() << "Trying track " << track->key() << endreq
-                  << " -> Found " << track->richRecSegments().size() 
-                  << " RichRecSegments" << endreq;
-      }
-
-      // Iterate over segments
-      for ( RichRecTrack::Segments::const_iterator iSegment =
-              track->richRecSegments().begin();
-            iSegment != track->richRecSegments().end();
-            ++iSegment)
-      {
-        RichRecSegment * segment = *iSegment;
 
         if ( msgLevel(MSG::VERBOSE) )
         {
-          verbose() << " -> Trying segment " << segment->key() << " "
-                    << segment->trackSegment().radiator() << endreq;
+          verbose() << "Trying track " << track->key() << endreq
+                    << " -> Found " << track->richRecSegments().size()
+                    << " RichRecSegments" << endreq;
         }
 
-        if ( !segment->allPhotonsDone() )
+        // Iterate over segments
+        for ( RichRecTrack::Segments::const_iterator iSegment =
+                track->richRecSegments().begin();
+              iSegment != track->richRecSegments().end();
+              ++iSegment)
         {
-          // Iterate over pixels in same RICH as this segment
-          const Rich::DetectorType rich = segment->trackSegment().rich();
-          RichRecPixels::const_iterator iPixel( pixelCreator()->begin(rich) );
-          RichRecPixels::const_iterator endPix( pixelCreator()->end(rich)   );
-          for ( ; iPixel != endPix; ++iPixel )
+          RichRecSegment * segment = *iSegment;
+
+          if ( msgLevel(MSG::VERBOSE) )
           {
-            reconstructPhoton( segment, *iPixel );
-          } // pixel loop
+            verbose() << " -> Trying segment " << segment->key() << " "
+                      << segment->trackSegment().radiator() << endreq;
+          }
 
-          segment->setAllPhotonsDone(true);
-        }
+          if ( !segment->allPhotonsDone() )
+          {
+            // Iterate over pixels in same RICH as this segment
+            const Rich::DetectorType rich = segment->trackSegment().rich();
+            RichRecPixels::const_iterator iPixel( pixelCreator()->begin(rich) );
+            RichRecPixels::const_iterator endPix( pixelCreator()->end(rich)   );
+            for ( ; iPixel != endPix; ++iPixel )
+            {
+              if ( msgLevel(MSG::VERBOSE) )
+              {
+                verbose() << " -> Trying pixel " << (*iPixel)->key() << endreq;
+              }
+              reconstructPhoton( segment, *iPixel );
+            } // pixel loop
 
-      } // segment loop
+            segment->setAllPhotonsDone(true);
+          }
 
-      track->setAllPhotonsDone(true);
-    }
+        } // segment loop
 
-  } // track loop
+        track->setAllPhotonsDone(true);
+      }
+
+    } // track loop
+
+  } // have tracks and pixels
 
   return StatusCode::SUCCESS;
 }
@@ -254,8 +264,26 @@ RichRecPhoton*
 RichPhotonCreatorBase::reconstructPhoton( RichRecSegment * segment,
                                           RichRecPixel * pixel ) const
 {
+  if ( msgLevel(MSG::VERBOSE) )
+  {
+    verbose() << "Trying photon reco. with segment " << segment->key() 
+              << " and pixel " << pixel->key() << " " << pixel->smartID() 
+              << endreq;
+  }
+
   // check photon is possible before proceeding
-  if ( !m_photonPredictor->photonPossible(segment, pixel) ) return NULL;
+  if ( !m_photonPredictor->photonPossible(segment, pixel) )
+  {
+    if ( msgLevel(MSG::VERBOSE) )
+    {
+      verbose() << "   -> FAILED predictor check -> reject" << endreq;
+    }
+    return NULL;
+  }
+  else if (  msgLevel(MSG::VERBOSE) )
+  {
+    verbose() << "   -> PASSED predictor check" << endreq;
+  }
 
   // flag this tool as having been called
   m_hasBeenCalled = true;
@@ -447,7 +475,7 @@ RichPhotonCreatorBase::checkAngleInRange( LHCb::RichRecSegment * segment,
   {
     if ( msgLevel(MSG::VERBOSE) )
     {
-      verbose() << "Photon CK theta " << ckTheta << " outside absolute range "
+      verbose() << " -> Photon CK theta " << ckTheta << " outside absolute range "
                 << absMinCKTheta(segment) << "->" << absMaxCKTheta(segment) << endreq;
     }
   }
@@ -460,10 +488,10 @@ RichPhotonCreatorBase::checkAngleInRange( LHCb::RichRecSegment * segment,
     {
       const Rich::ParticleIDType id = static_cast<Rich::ParticleIDType>(ihypo);
       const double tmpT = m_ckAngle->avgCherenkovTheta( segment, id );
-      if ( fabs(tmpT-ckTheta) < ckSearchRange(segment,id) ) { ok = true; }
+      ok = ( fabs(tmpT-ckTheta) < ckSearchRange(segment,id) );
       if ( msgLevel(MSG::VERBOSE) )
       {
-        verbose() << " -> " << id << " expected CK theta = " << tmpT
+        verbose() << " -> " << id << " fabs(delta_theta) = " << fabs(tmpT-ckTheta)
                   << " CK tolerance " << ckSearchRange(segment,id) << " status = " << ok
                   << endreq;
       }
@@ -472,6 +500,17 @@ RichPhotonCreatorBase::checkAngleInRange( LHCb::RichRecSegment * segment,
 
   }
 
+  if ( msgLevel(MSG::VERBOSE) )
+  {
+    if ( ok )
+    {
+      verbose() << "  -> Photon PASSED CK theta angle checks" << endreq;
+    }
+    else
+    {
+      verbose() << "  -> Photon FAILED CK theta angle checks" << endreq;
+    }
+  }
   return ok;
 }
 

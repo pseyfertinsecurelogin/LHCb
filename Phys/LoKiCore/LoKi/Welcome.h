@@ -1,8 +1,11 @@
-// $Id: Welcome.h,v 1.3 2006-05-02 14:29:10 ibelyaev Exp $
+// $Id: Welcome.h,v 1.5 2006-11-09 17:01:06 ibelyaev Exp $
 // ============================================================================
-// CVS tag $Name: not supported by cvs2svn $, version $Revision: 1.3 $
+// CVS tag $Name: not supported by cvs2svn $, version $Revision: 1.5 $
 // ============================================================================
 // $Log: not supported by cvs2svn $
+// Revision 1.4  2006/06/24 17:18:41  ibelyaev
+//  reduce the printout
+//
 // ============================================================================
 #ifndef LOKI_WELCOME_H 
 #define LOKI_WELCOME_H 1
@@ -43,27 +46,26 @@ namespace LoKi
   {
   public:
     /// get the static instance of class LoKi::Welcome 
-    static Welcome& instance() ;
+    static const Welcome& instance() ;
   public:
     // destructor 
     ~Welcome () ;
   public:
-    void welcome () const ;
-  protected:
-    void goodbye () const ;    
+    void welcome  ( std::ostream& stream = std::cout ) const ;
+    void goodbye  ( std::ostream& stream = std::cout ) const ;    
   protected:
     // Standard constructor
-    Welcome  ( std::ostream& stream ) ;
-  private:
     Welcome ();
+  private:
     Welcome ( const Welcome& );
-  private: 
-    std::ostream&            m_stream ;
-    size_t                   m_len1   ;
-    std::string              m_str1   ;    
-    std::string              m_fmt1   ;    
-    std::string              m_fmt2   ;    
-    std::string              m_fmt3   ;    
+  private:
+    size_t                   m_len1        ;
+    std::string              m_str1        ;    
+    std::string              m_fmt1        ;    
+    std::string              m_fmt2        ;    
+    std::string              m_fmt3        ;    
+    mutable bool             m_wel_printed ;
+    mutable bool             m_bye_printed ;    
   };
   
 }; // end of namespace LoKi

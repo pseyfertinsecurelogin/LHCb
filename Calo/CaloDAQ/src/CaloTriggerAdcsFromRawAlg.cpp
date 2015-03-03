@@ -1,4 +1,4 @@
-// $Id: CaloTriggerAdcsFromRawAlg.cpp,v 1.1 2006-04-19 16:37:46 odescham Exp $
+// $Id: CaloTriggerAdcsFromRawAlg.cpp,v 1.4 2006-09-29 15:33:52 odescham Exp $
 // Include files 
 
 // from Gaudi
@@ -28,12 +28,12 @@ CaloTriggerAdcsFromRawAlg::CaloTriggerAdcsFromRawAlg( const std::string& name,
   declareProperty("OutputData"  , m_outputData  );  
   declareProperty("ToolName"    , m_toolName    );
 
+  m_toolType = "CaloTriggerAdcsFromRaw";  
+  m_toolName  = name + "Tool";  
   if ( "Ecal" == name.substr( 0 , 4 ) ) {
-    m_toolName    = "CaloTriggerAdcsFromRaw/EcalTriggerADCTool";
     m_outputData =  LHCb::L0CaloAdcLocation::Ecal ;
     
   } else if ( "Hcal" == name.substr( 0 , 4 ) ) {
-    m_toolName    = "CaloTriggerAdcsFromRaw/HcalTriggerADCTool";
     m_outputData =  LHCb::L0CaloAdcLocation::Hcal ;
   }
 
@@ -51,7 +51,7 @@ StatusCode CaloTriggerAdcsFromRawAlg::initialize() {
   if ( sc.isFailure() ) return sc;  // error printed already by GaudiAlgorithm
 
   debug() << "==> Initialize" <<  endreq;  
-  m_l0AdcTool = tool<ICaloTriggerAdcsFromRaw>( m_toolName);
+  m_l0AdcTool = tool<ICaloTriggerAdcsFromRaw>( m_toolType , m_toolName,this);
   return StatusCode::SUCCESS;
 }
 
@@ -73,7 +73,8 @@ StatusCode CaloTriggerAdcsFromRawAlg::execute() {
     LHCb::L0CaloAdc* adc = new LHCb::L0CaloAdc( (*il0Adc).cellID(), (*il0Adc).adc() );
     newL0Adcs->insert( adc ) ;
   };
-  
+
+  debug() << " L0CaloAdcs container size " << newL0Adcs->size() << endreq;
   
   return StatusCode::SUCCESS;
 }

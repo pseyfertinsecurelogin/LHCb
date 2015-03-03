@@ -1,5 +1,20 @@
 Package         : OTDAQ
 Package manager : J. Nardulli
+!---------------------------------------------------------------------
+
+!====================== OTDAQ v4r4 2006-11-07 ========================
+! 2006-11-07 M Needham
+ - Make some minor changes in OTTimeCreator that speed up decoding a bit 
+
+!====================== OTDAQ v4r3 2006-07-25 ========================
+! 2006-07-21 - Jan Amoraal
+ - Minor cleanups
+ - Use gsl_hypot(x,y) == sqrt(x^2 + y^2)
+ - Use GaudiKernel/SystemOfUnits and GaudiKernel/PhysicalConstants
+
+!====================== OTDAQ v4r2p1 2006-06-27 ======================
+! 2006-06-22 - Jan Amoraal
+ - Minor cleanups
 
 !====================== OTDAQ v4r2 2006-05-01 ======================
 ! 2006-05-01 - Jan Amoraal

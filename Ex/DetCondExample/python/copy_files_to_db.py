@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-from PyCool import cool,pool
+from PyCool import cool, coral
 
 from optparse import OptionParser
 import os
@@ -80,7 +80,8 @@ def main():
     folderspec.push_back("data","string",cool.PredefinedStorageHints.STRING_MAXSIZE_16M)
     folderdesc = "<storage_type=7>"
 
-    payload = pool.AttributeList(folderspec.attributeListSpecification())
+    payload = coral.AttributeList()
+    payload.extend("data","string")
     payload["data"] = "XML stuff" # dummy value, just to start
     
     #### initialize COOL
@@ -132,11 +133,12 @@ def main():
             if db.existsFolder(folder_path):
                 folder = db.getFolder(folder_path)
             else:
-                folder = db.createFolderExtended(folder_path,
-                                                 folderspec,folderdesc,
-                                                 cool.FolderVersioning.MULTI_VERSION)
+                folder = db.createFolder(folder_path,
+                                         folderspec,folderdesc,
+                                         cool.FolderVersioning.MULTI_VERSION)
             xml_data = open(os.path.join(root,f)).read()
             fixed_data = fix_system_ids(xml_data,"conddb:"+dbroot)
+            #fixed_data = xml_data
             fixed_data = fix_env_vars(fixed_data)
             payload["data"] = fixed_data
             folder.storeObject(cool.ValidityKeyMin,cool.ValidityKeyMax,payload,0)    

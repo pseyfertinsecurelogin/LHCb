@@ -1,0 +1,17 @@
+// $Id: GenContent.opts,v 1.3 2006-10-23 07:04:41 gcorti Exp $
+
+/** @file 
+ * 
+ *  Contents of .sim generator level output
+ *
+ *  @author F.Ranjard
+ *  @author G.Corti
+ *  @date: modified 21 Feb 2001
+ */
+
+// Generator output
+GaussTape.ItemList = {
+   "/Event/Gen/Header#1"
+  ,"/Event/Gen/Collisions#1"
+  ,"/Event/Gen/HepMCEvents#1"
+};

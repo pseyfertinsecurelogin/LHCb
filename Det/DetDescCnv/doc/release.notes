@@ -4,6 +4,10 @@
 ! Purpose     : standard converters for the LHCb Detector Description
 !-----------------------------------------------------------------------------
 
+!================ DetDescCnv v3r3 2006-06-27 ============================
+! 2006-06-27 - Marco Clemencic
+ - Fix in string handling for AMD64.
+
 !================ DetDescCnv v3r2p1 2006-06-16 ==========================
 ! 2006-06-16 - Marco Cattaneo
  - Backward compatible fix to gcc345 compilation warnings

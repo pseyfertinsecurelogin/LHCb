@@ -1,4 +1,4 @@
-// $Id: DeSTSector.cpp,v 1.21 2006-04-19 08:13:56 mneedham Exp $
+// $Id: DeSTSector.cpp,v 1.26 2006-08-30 14:23:14 cattanem Exp $
 #include "STDet/DeSTSector.h"
 
 #include "DetDesc/IGeometryInfo.h"
@@ -7,10 +7,10 @@
 #include <algorithm>
 
 // Kernel
-#include "Kernel/SystemOfUnits.h"
 #include "Kernel/LineTraj.h"
 #include "Kernel/LHCbID.h"
 
+#include "GaudiKernel/SystemOfUnits.h"
 #include "GaudiKernel/GaudiException.h"
 
 /** @file DeSTSector.cpp
@@ -55,7 +55,7 @@ std::ostream& DeSTSector::printOut( std::ostream& os ) const{
      << "\n type  " << type() 
      << "\n pitch " << m_pitch 
      << "\n strip " << m_nStrip
-     << "\n capacitance " << m_capacitance/picofarad
+     << "\n capacitance " << m_capacitance/Gaudi::Units::picofarad
      << "\n active width" << m_uMaxLocal - m_uMinLocal
      << "\n total width " << mainBox->xsize()
      << "\n active height" << m_vMaxLocal - m_vMinLocal
@@ -74,7 +74,7 @@ MsgStream& DeSTSector::printOut( MsgStream& os ) const{
      << "type \n " << type() 
      << " pitch \n " << m_pitch 
      << "n strip \n " << m_nStrip
-     << " capacitance \n " << m_capacitance/picofarad
+     << " capacitance \n " << m_capacitance/Gaudi::Units::picofarad
      << " u min \n " << m_uMinLocal 
      << " u max \n " << m_uMaxLocal
      << " v min \n " << m_vMinLocal 
@@ -125,6 +125,9 @@ StatusCode DeSTSector::initialize() {
       double vDead = m_vMinLocal - m_deadWidth + (height*(double)iSensor);
       m_deadRegions.push_back(vDead);
     } //i
+
+    // thickness 
+    m_thickness = mainBox->zsize();
 
     // sense in x and y...
     determineSense();
@@ -218,48 +221,39 @@ bool DeSTSector::localInBox( const double u, const double v,
 {
   return ((u + uTol) <(m_uMaxLocal+(0.5*m_pitch)) &&
           (u - uTol)>(m_uMinLocal-(0.5*m_pitch)) &&
-          ((v + uTol)<m_vMaxLocal) &&((v-vTol) > m_vMinLocal));
+          ((v + vTol)<m_vMaxLocal) &&((v-vTol) > m_vMinLocal));
 }
 
 std::auto_ptr<LHCb::Trajectory> 
 DeSTSector::trajectory(const STChannelID& aChan, const double offset) const 
 {
-  LineTraj* traj = 0;  
-
-  if (contains(aChan) == true){
-    double arclen = (offset + aChan.strip() - m_firstStrip)*m_pitch ;
   
-    Gaudi::XYZPoint midPoint = m_midTraj->position( arclen + 
-                                                    m_midTraj->beginRange());
-  
-    traj = new LineTraj(midPoint,m_direction,m_range);
-
-  } 
-  else {
+  if (contains(aChan) == false){
     MsgStream msg(msgSvc(), name() );
     msg << MSG::ERROR << "Failed to link " << aChan.uniqueSector() << " " 
         << elementID().uniqueSector() << endmsg; 
     throw GaudiException( "Failed to make trajectory",
                            "DeSTSector.cpp", StatusCode::FAILURE );
   }
-
-  return std::auto_ptr<LHCb::Trajectory>(traj);
+  
+  const double arclen = (offset + aChan.strip() - m_firstStrip)*m_pitch ;
+  
+  Gaudi::XYZPoint midPoint = m_midTraj->position( arclen + 
+                                                    m_midTraj->beginRange());
+  
+  return std::auto_ptr<LHCb::Trajectory>( new LineTraj(midPoint,m_direction,m_range, true));
 }
 
 std::auto_ptr<LHCb::Trajectory> DeSTSector::trajectoryFirstStrip() const 
 {
-  LineTraj* traj = 0;
   Gaudi::XYZPoint begPoint = m_midTraj->position(m_midTraj->beginRange());
-  traj = new LineTraj(begPoint,m_direction,m_range);
-  return std::auto_ptr<LHCb::Trajectory>(traj);
+  return std::auto_ptr<LHCb::Trajectory>( new LineTraj(begPoint,m_direction,m_range, true));
 }
 
 std::auto_ptr<LHCb::Trajectory> DeSTSector::trajectoryLastStrip() const 
 {
-  LineTraj* traj = 0;  
-   Gaudi::XYZPoint endPoint = m_midTraj->position( m_midTraj->endRange() );
-  traj = new LineTraj(endPoint,m_direction,m_range);
-  return std::auto_ptr<LHCb::Trajectory>(traj);
+  Gaudi::XYZPoint endPoint = m_midTraj->position( m_midTraj->endRange() );
+  return std::auto_ptr<LHCb::Trajectory>( new LineTraj(endPoint,m_direction,m_range, true));
 }
 
 void DeSTSector::determineSense()
@@ -291,6 +285,7 @@ void DeSTSector::cacheInfo()
   Gaudi::XYZPoint g1 = globalPoint(xLower, yLower, 0.);
   Gaudi::XYZPoint g2 = globalPoint(xLower, yUpper, 0.);
   m_direction = g2 - g1;
+  m_direction = m_direction.Unit();
 
   // trajectory of middle  
   Gaudi::XYZPoint g3 = globalPoint(xLower, 0., 0.);
@@ -302,6 +297,9 @@ void DeSTSector::cacheInfo()
 
   // plane
   m_plane =  Gaudi::Plane3D(g1,g2,g4);
+  
+  m_entryPlane = Gaudi::Plane3D(m_plane.Normal(), globalPoint(0.,0.,-0.5*m_thickness));
+  m_exitPlane = Gaudi::Plane3D(m_plane.Normal(), globalPoint(0.,0., 0.5*m_thickness));
 
 }
 

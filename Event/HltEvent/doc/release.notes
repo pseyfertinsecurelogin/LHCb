@@ -1,0 +1,83 @@
+!-----------------------------------------------------------------------------
+! Package     : Event/HltEvent
+! Responsible : Jose A. Hernando
+! Purpose     : Event model for HLT tracks
+!-----------------------------------------------------------------------------
+
+!======================== HltEvent v7r1 2006-11-03 ========================
+! 2006-10-18 - Jose A. Hernando
+	- xml/HltSummay.xml : 
+       -- renaming HltSummaryBox to HltSelectionSummary
+       -- adding particles in the HltSelectionSummary
+          adding ContainedObject to have a polimorfic container.
+	- xml/HltSummay.xml : adding CaloEt info 
+  - python/translateEnums.py : python to translate enums into HltNames.h file
+
+!======================== HltEvent v7r0 2006-09-26 ========================
+! 2006-09-26 - Marco Cattaneo
+ - Remove obsolete files
+ - Clean up requirements
+ - Change HltSummary ClassID to aviod possible clash with obsolete HltTrack class
+
+! 2006-09-25 - Jose A. Hernando
+	- xml/HltSummay.xml : using VectorMap to store info
+	- Event/HltNames.h : conversion from strings to enums.
+  TODO: note that this is a prototype, the summary class will be changed.
+
+! 2006-01-25 - Jose A. Hernando
+	- xml/HltSummary.xml
+    using int instead of enums, enums are only for developer code better understangind
+    TODO: replace map for vectorMap (from Vanya)
+
+!======================== HltEvent v6r1 2006-01-19 ========================
+! 2006-01-17 - Jose A. Hernando
+	- xml/HltSummary.xml
+		defines the HltSummaryBox and HltSummary classes
+	  in HltSummaryBox we will store the relevant information of any decision box of the trigger
+    HltSummary stores the list of HltSummaryBoxes and final information of the trigger
+
+! 2006-01-12 - Jose A. Hernando
+	- cleaning the package to be use for the 1 MHz readout 
+
+!===========================================================================
+
+!===========================================================================
+
+!======================== HltEvent v5r0 2003-12-16 ========================
+! 2003-12-16 - Marco Cattaneo
+ - Changes for POOL persistency (Gaudi v14)
+
+!======================== HltEvent v4r0 2003-10-03 ========================
+! 2003-10-03 - Olivier Callot
+ - Fix the default location for HltVertices, to be comaptible with tracks and
+   make the use by the Desktop easier.
+
+! 2003-09-08 - Olivier Callot
+ - New object HltVertex to store the PV found with HLT tracks. They have a list
+   of HltTrack*.
+ - New member 'chiSquared' on the track, to store the fit's quality. This is
+   the ChiSquared per degree of freedom.
+
+!======================== HltEvent v3r0 2003-06-17 ========================
+! 2003-06-16 - Sebastien Ponce
+ - use more recent GaudiObjDesc
+
+! 2003-06-13 - Olivier Callot
+ - Add two new members, chargeInVelo and particleID to store the relevant 
+	information.  
+
+!======================== HltEvent v2r0 2003-06-03 ===========================
+! 2003-06-03 - Marco Cattaneo
+ - Add HltEvent_loadRef external function, for Windows linking
+
+! 2003-05-13 - Olivier Callot
+ - Add a position and slopes after the field, to allow Muon matching
+
+!======================== HltEvent v1r1 2003-04-24 ===========================
+! 2003-04-24 - Olivier Callot
+ - changed 'momentum' to 'qDivP', 'velo' to 'type' and 'unique' to 'status'
+ - added an 'ancestor' to allow a pointer to the track this track was made 
+   from.
+
+! 2003-04-10 - Olivier Callot
+ - Initial creation. Simple HltTrack with list of clusters and a single 'state'

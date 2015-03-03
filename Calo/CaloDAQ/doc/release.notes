@@ -4,6 +4,37 @@
 ! Purpose     : Convert Calo Digit and Trigger information to RawEvent banks.
 !-----------------------------------------------------------------------------
 
+!========================== CaloDAQ v2r5 2006-09-29 ==========================
+! 2006-09-29 - Olivier Deschamps
+  - Adapt CaloTriggerAdcsFromRaw to please L0Calo
+  - Adapt CaloEnergyFromRaw to be uniform
+  
+! 2006-09-26 - Olivier Deschamps
+  - Add CheckCaloBank.{cpp,h} algorithm
+  - Adapt options/CaloBankHandler.opts : 
+      - Handling separatly Prs/Ecal & Hcal banks
+      - Check if 'Short' banks exist at the begining of the sequence
+      - If only 'Packed'  -> create 'Shorts' and remove 'Packed'
+      - If 'Short' is already there (e.g. from real Data) -> sequence stop.  
+  - add the property 'PackedIsDefault' in the tools CaloEnergyFromRaw, CaloTriggerBitsFromRaw and CaloTriggerADCsFromRaw.
+      - allow to force the packed banks to be the default input banks in case 
+        of both 'packed' and 'short' exist.(default is false, i.e short when exist else packed). 
+        Should be usefull at start-up when both bank will be stored
+  - adapt CaloZSupAlg, CaloDigitFromRaw, CaloTriggerAdcsFromRawAlg and CaloTriggerBitsFromRawAlg algorithms
+
+! 2006-09-07 - Olivier Deschamps
+  - Add options/CaloBankHandler.opts : fill Compressed Calo Banks and remove Packed one
+
+!========================== CaloDAQ v2r4 2006-09-04 ==========================
+! 2006-09-01 - Olivier Deschamps
+  - Update options/CaloDigitsOnDemand.opts
+
+!========================== CaloDAQ v2r3 2006-06-28 ==========================
+! 2006-06-27 - Olivier Deschamps
+  - add src/CaloTriggerBitsFromRawAlg algorithm (produce PrsSpdL0Bit in TES)
+  - add options/CaloFillRawBank.opts (create "Compressed" banks from "Packed")
+  - bug fix in CaloTriggerBitsFromRaw & CaloFillPrsSpdRawBuffer
+
 !========================== CaloDAQ v2r2 2006-04-20 ==========================
 ! 2006-04-19 - Olivier Deschamps
  - modification of CaloZsupAlg (option driven output: CaloDigits and/or CaloADCs)

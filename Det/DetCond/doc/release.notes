@@ -1,11 +1,99 @@
-# $Id: release.notes,v 1.67 2006-04-25 17:20:19 marcocle Exp $
+# $Id: release.notes,v 1.83 2006-09-05 06:34:04 marcocle Exp $
 !-----------------------------------------------------------------------------
 ! Package     : Det/DetCond
 ! Responsible : Marco Clemencic
 ! Purpose     : Interface between LHCb and LGC/COOL project
 !-----------------------------------------------------------------------------
 
-!=========== Ex/DetCondExample v8r0 2006-04-25 ==============================
+!================= Det/DetCond v9r1 2006-09-04 ==============================
+! 2006-09-04 - Marco Clemencic
+ - Modified the way of specifying one of the element of the condition. Now the
+   path to a condition in XML is:
+
+   "conddb:/path/to/condition/[attribute@]Folder.xml[:channel][#Name]"
+
+! 2006-08-31 - Marco Clemencic
+ - Added the possibility of using one CondDB condition to store more than one
+   file using elements of the attribute list.
+   Backward compatible chages in the API (with deprecated functions).
+
+! 2006-08-31 - Marco Clemencic
+ - Added the possibility of disconnection from the DB after an inactivity
+   period defined by CondDBAvvessSvc.ConnectionTimeOut.
+   (The feature is implemented using Boost.Thread)
+
+! 2006-08-30 - Marco Clemencic
+ - Fixed a bug in CondDBDispatcherSvc: the correct alternative database was
+   never selected
+ - Fixed a bug in RelyConverter that was causing a segmentation fault if the
+   retreived XML string didn't start with "<?xml" (it is not a valid XML
+   string, but it does not justfy a segfault ;)
+
+!================= Det/DetCond v9r0 2006-07-18 ==============================
+! 2006-07-18 - Marco CLEMENCIC
+ - Added to CondDBAccessSvc the possibility of chosing between read-only and
+   read-write connections to the database. (default is read-only)
+
+! 2006-07-17 - Marco CLEMENCIC
+ - Using Gaudi random generator service instad of the posix one in
+   CondDBAccessSvc (needed for recursive tagging)
+
+! 2006-07-14 - Marco CLEMENCIC
+ - Removed interface ICondDBCnvSvc. Now CondDBCnvSvc is an ICondDBReader and
+   the layering of databases is delegated to the class CondDBLayeringSvc.
+ - Removed the obsolete method ICondDBEditor::createFolder
+
+! 2006-07-12 - Marco CLEMENCIC
+ - Fixed a small bug in the code for the selection of the alternative in
+   CondDBDispatcherSvc.
+
+! 2006-07-11 - Marco CLEMENCIC
+   *** will be v9r0 ***
+ - Completely redesigned the support for alternative DBs:
+    - Reverted to previous implementation of CondDBAccessSvc
+    - Splitted ICondDBAccessSvc in 3:
+       1) ICondDBReader: read only functions
+       2) ICondDBEditor: write functions (storeXML, createNode, etc.)
+       3) ICondDBAccessSvc: access function (setTag, etc.)
+    - Added the class CondDBDispatcherSvc as an implementation of ICondDBReader.
+      This one is selecting the appropriate alternative AccessSvc to use.
+      The alternative is declared with something like:
+        CondDBDispatcherSvc.Alternatives += { "/OnLine=CondDBAccessSvc/OnlineAccSvc" };
+   The new functionality is not tested, but it is backward compatible even using
+   CondDBDispatcherSvc with only the default access service (CondDBAccessSvc).
+ - Dictionary updated to include the 2 new interfaces.
+ - Removed dependency on PCRE (not needed anymore)
+ - Documentation still to be updated.
+
+! 2006-07-07 - Marco CLEMENCIC
+ - Added the possibility of specifying alternative databases for certain
+   sub trees to a CondDBAccessSvc.
+   Now you have a default DB (backward compatible) and you can use a different
+   COOL DB for all the directories under e.g. "/OnLine", with an option like
+   CondDBAccessSvc.AlternativeDBs += { "/OnLine=<connectionString>" };
+   Note: it still has to be tested, but it is backward compatible.
+ - Added dependency on PCRE (used to parse the string to specify alternative DB)
+
+! 2006-06-16 - Marco CLEMENCIC
+ - Removed some code used for debugging which is not needed.
+ - Added the possibility to wait that the requested tag appears
+   (configurable number of trials and time between trials)
+
+! 2006-06-12 - Marco CLEMENCIC
+ - Many API changes
+   - remamed ICondDBAccessSvc::createFolder to ICondDBAccessSvc::createNode
+   - removed the version of ICondDBAccessSvc::storeXMLString taking two doubles
+     because it was obsolete and confunding
+   - replaced ICondDBAccessSvc::tagFolder with the two functions
+     ICondDBAccessSvc::tagLeafNode and ICondDBAccessSvc::recursiveTag
+     (the first for Folders, the second for sub-trees)
+   - removed obsolete properties: HostName, User, Password, HidePassword,
+     Database, Schema, BackEnd
+   - property TAG renamed to DefaultTAG
+   - default value for property UseCache set to true (it was false)
+ - Enabled tagging functionalities (based on COOL HVS)
+
+!================= Det/DetCond v8r0 2006-04-25 ==============================
 ! 2006-04-25 - Marco Clemencic
  **** requires LCGCMT_43 ****
  - Updated to COOL_1_3_x

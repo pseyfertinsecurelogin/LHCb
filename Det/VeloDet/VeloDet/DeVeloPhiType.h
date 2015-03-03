@@ -1,4 +1,4 @@
-// $Id: DeVeloPhiType.h,v 1.17 2006-04-12 14:23:20 mtobin Exp $
+// $Id: DeVeloPhiType.h,v 1.19 2006-10-10 08:57:16 mtobin Exp $
 #ifndef VELODET_DEVELOPHITYPE_H 
 #define VELODET_DEVELOPHITYPE_H 1
 
@@ -65,12 +65,19 @@ public:
 
 
   /// Residual [see DeVelo for explanation]
-  virtual StatusCode residual(const Gaudi::XYZPoint& point,
+  /*virtual StatusCode residual(const Gaudi::XYZPoint& point,
                       const LHCb::VeloChannelID& channel,
                       const double localOffset,
                       const double width,
                       double &residual,
-                      double &chi2) const;
+                      double &chi2) const;*/
+
+  /// Residual of a 3-d point to a VeloChannelID + interstrip fraction
+  virtual StatusCode residual(const Gaudi::XYZPoint& point, 
+                              const LHCb::VeloChannelID& channel,
+                              const double interStripFraction,
+                              double &residual,
+                              double &chi2) const;
 
   /// The number of zones in the detector
   virtual unsigned int numberOfZones() const {return m_numberOfZones;}
@@ -132,6 +139,9 @@ public:
       return (effectiveStrip*m_outerPitch) + m_outerTilt;
     }
   }
+
+  /// Convert local phi to ideal global phi
+  virtual double localPhiToGlobal(double phiLocal) const;
 
   /// The angle of the strip wrt to the x axis in a rough global frame to mimic
   /// DeVelo v8r* and earlier verions
@@ -234,5 +244,10 @@ private:
     unsigned int patNum=patternNumber(routLine);
     return m_patternConfig[patElem].first+patNum*m_patternConfig[patElem].second;
   };
+
+  // Set output level for message service
+  bool m_debug;
+  bool m_verbose;
+
 };
 #endif // VELODET_DEVELOPHITYPE_H

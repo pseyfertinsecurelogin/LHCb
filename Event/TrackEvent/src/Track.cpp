@@ -1,9 +1,10 @@
-// $Id: Track.cpp,v 1.27 2006-06-20 17:29:52 erodrigu Exp $ // Include files
+// $Id: Track.cpp,v 1.34 2006-09-22 12:25:51 mneedham Exp $ // Include files
 
 // local
 #include "Event/Track.h"
 #include "Event/TrackFunctor.h"
 #include <functional>
+#include <string>
 
 using namespace Gaudi;
 using namespace LHCb;
@@ -94,13 +95,23 @@ void Track::posMomCovariance( SymMatrix6x6& cov6D ) const
 //=============================================================================
 State& Track::closestState( double z )
 {
-  std::vector<State*>::iterator iter = 
-    std::min_element( m_states.begin(),m_states.end(),
-                      TrackFunctor::distanceAlongZ<State>(z) );
-  if ( iter == m_states.end() )
-    throw GaudiException( "No state closest to z","Track.cpp",
-                          StatusCode::FAILURE );
-  return *(*iter);
+  if ( !m_nodes.empty() ) {
+    std::vector<Node*>::iterator iter = 
+      std::min_element( m_nodes.begin(),m_nodes.end(),
+                        TrackFunctor::distanceAlongZ<Node>(z) );
+    if ( iter == m_nodes.end() )
+      throw GaudiException( "No state closest to z","Track.cpp",
+                            StatusCode::FAILURE );
+    return (*iter)->state();    
+  } else {
+    std::vector<State*>::iterator iter = 
+      std::min_element( m_states.begin(),m_states.end(),
+                        TrackFunctor::distanceAlongZ<State>(z) );
+    if ( iter == m_states.end() )
+      throw GaudiException( "No state closest to z","Track.cpp",
+                            StatusCode::FAILURE );
+    return *(*iter);
+  }
 };
 
 //=============================================================================
@@ -108,13 +119,23 @@ State& Track::closestState( double z )
 //=============================================================================
 const State & Track::closestState( double z ) const
 {
-  std::vector<State*>::const_iterator iter = 
-    std::min_element( m_states.begin(),m_states.end(),
-                      TrackFunctor::distanceAlongZ<State>(z) );
-  if ( iter == m_states.end() )
-    throw GaudiException( "No state closest to z","Track.cpp",
-                          StatusCode::FAILURE );
-  return *(*iter);
+  if ( !m_nodes.empty() ) {
+    std::vector<Node*>::const_iterator iter = 
+      std::min_element( m_nodes.begin(),m_nodes.end(),
+                        TrackFunctor::distanceAlongZ<Node>(z) );
+    if ( iter == m_nodes.end() )
+      throw GaudiException( "No state closest to z","Track.cpp",
+                            StatusCode::FAILURE );
+    return (*iter)->state();    
+  } else {
+    std::vector<State*>::const_iterator iter = 
+      std::min_element( m_states.begin(),m_states.end(),
+                        TrackFunctor::distanceAlongZ<State>(z) );
+    if ( iter == m_states.end() )
+      throw GaudiException( "No state closest to z","Track.cpp",
+                            StatusCode::FAILURE );
+    return *(*iter);
+  }
 };
 
 //=============================================================================
@@ -122,13 +143,23 @@ const State & Track::closestState( double z ) const
 //=============================================================================
 State & Track::closestState( const Plane3D& plane )
 {
-  std::vector<State*>::iterator iter = 
-    std::min_element( m_states.begin(),m_states.end(),
-                      TrackFunctor::distanceToPlane<State>(plane) );
-  if ( iter == m_states.end() )
-    throw GaudiException( "No state closest to plane","Track.cpp",
-                          StatusCode::FAILURE );
-  return *(*iter);
+  if ( !m_nodes.empty() ) {
+    std::vector<Node*>::iterator iter = 
+      std::min_element( m_nodes.begin(),m_nodes.end(),
+                        TrackFunctor::distanceToPlane<Node>(plane) );
+    if ( iter == m_nodes.end() )
+      throw GaudiException( "No state closest to plane","Track.cpp",
+                            StatusCode::FAILURE );
+    return (*iter)->state();
+  } else {
+    std::vector<State*>::iterator iter = 
+      std::min_element( m_states.begin(),m_states.end(),
+                        TrackFunctor::distanceToPlane<State>(plane) );
+    if ( iter == m_states.end() )
+      throw GaudiException( "No state closest to plane","Track.cpp",
+                            StatusCode::FAILURE );
+    return *(*iter);
+  }
 };
 
 //=============================================================================
@@ -136,13 +167,23 @@ State & Track::closestState( const Plane3D& plane )
 //=============================================================================
 const State & Track::closestState( const Plane3D& plane ) const
 {
-  std::vector<State*>::const_iterator iter = 
-    std::min_element( m_states.begin(),m_states.end(),
-                      TrackFunctor::distanceToPlane<State>(plane) );
-  if ( iter == m_states.end() )
-    throw GaudiException( "No state closest to plane","Track.cpp",
-                          StatusCode::FAILURE );
-  return *(*iter);
+  if ( !m_nodes.empty() ) {
+    std::vector<Node*>::const_iterator iter = 
+      std::min_element( m_nodes.begin(),m_nodes.end(),
+                        TrackFunctor::distanceToPlane<Node>(plane) );
+    if ( iter == m_nodes.end() )
+      throw GaudiException( "No state closest to plane","Track.cpp",
+                            StatusCode::FAILURE );
+    return (*iter)->state();
+  } else {
+    std::vector<State*>::const_iterator iter = 
+      std::min_element( m_states.begin(),m_states.end(),
+                        TrackFunctor::distanceToPlane<State>(plane) );
+    if ( iter == m_states.end() )
+      throw GaudiException( "No state closest to plane","Track.cpp",
+                            StatusCode::FAILURE );
+    return *(*iter);
+  }
 };
 
 //=============================================================================
@@ -166,10 +207,16 @@ State& Track::stateAt( const LHCb::State::Location& location )
     std::find_if( m_states.begin(),m_states.end(),
                   TrackFunctor::HasKey<State,const LHCb::State::Location&>
                   (&State::checkLocation,location) );
-  if ( iter == m_states.end() )
-    throw GaudiException( "There is no state at requested location",
+  if ( iter == m_states.end() ) {
+
+    std::ostringstream mess;
+    mess << "There is no state at requested location " << location 
+         << " track type " << type();      
+
+    throw GaudiException( mess.str(),
                           "Track.cpp",
                           StatusCode::FAILURE );
+  }
   return *(*iter);
 };
 
@@ -182,10 +229,16 @@ const State& Track::stateAt( const LHCb::State::Location& location ) const
     std::find_if( m_states.begin(),m_states.end(),
                   TrackFunctor::HasKey<State,const LHCb::State::Location&>
                   (&State::checkLocation,location) );
-  if ( iter == m_states.end() )
-    throw GaudiException( "There is no state at requested location",
+  if ( iter == m_states.end() ){
+
+    std::ostringstream mess;
+    mess << "There is no state at requested location " << location 
+         << " track type " << type();      
+
+    throw GaudiException( mess.str(),
                           "Track.cpp",
                           StatusCode::FAILURE );
+  }
   return *(*iter);
 };
 
@@ -250,6 +303,8 @@ void Track::removeFromStates( State* state )
 void Track::removeFromMeasurements( Measurement* meas )
 {
   TrackFunctor::deleteFromList<Measurement>( m_measurements, meas );
+  // set the appropriate flag is case the last measurement was removed ;-)
+  if ( m_measurements.empty() ) setPatRecStatus( Track::PatRecIDs );
 };
 
 //=============================================================================
@@ -291,7 +346,8 @@ bool Track::isOnTrack( const Measurement& value ) const
 };
 
 //=============================================================================
-// Check whether the Measurement on the Track corresponding to the input LHCbID is present
+// Check whether the Measurement on the Track corresponding to the input LHCbID
+// is present
 //=============================================================================
 bool Track::isMeasurementOnTrack( const LHCbID& value ) const
 {
@@ -311,7 +367,8 @@ const Measurement& Track::measurement( const LHCbID& value ) const
         it != m_measurements.end(); ++it ) {
     if ( (*it) -> lhcbID() == value ) return *(*it);
   }
-  throw GaudiException( "Measurement for LHCbID not present on Track","Track.cpp",
+  throw GaudiException( "Measurement for LHCbID not present on Track",
+                        "Track.cpp",
                         StatusCode::FAILURE );
 };
 
@@ -324,7 +381,8 @@ Measurement& Track::measurement( const LHCbID& value )
         it != m_measurements.end(); ++it ) {
     if ( (*it) -> lhcbID() == value ) return *(*it);
   }
-  throw GaudiException( "Measurement for LHCbID not present on Track","Track.cpp",
+  throw GaudiException( "Measurement for LHCbID not present on Track",
+                        "Track.cpp",
                         StatusCode::FAILURE );
 };
 
@@ -347,6 +405,7 @@ void Track::reset()
   m_measurements.clear();
   m_nodes.clear();
   m_ancestors.clear();
+  m_extraInfo.clear();
 };
 
 //=============================================================================
@@ -380,6 +439,7 @@ void Track::copy( const Track& track )
   setNDoF( track.nDoF() );
   setFlags( track.flags() );
   setLhcbIDs( track.lhcbIDs() );
+  setExtraInfo( track.extraInfo() );
   const std::vector<State*>& states = track.states();
   for (std::vector<State*>::const_iterator it = states.begin();
        it != states.end(); ++it) addToStates( *(*it));
@@ -404,5 +464,97 @@ void Track::clearStates() {
 };
 
 //=============================================================================
+/** Check the presence of the information associated with 
+ *  a given key
+ *  
+ *  @code
+ * 
+ *  const Track* p = ... ;
+ *
+ *  Track::Key key = ... ; 
+ *  bool hasKey = p->hasInfo( key ) ;
+ *
+ *  @endcode 
+ *  @param    key key to be checked 
+ *  @return  'true' if there is informaiton with the 'key', 
+ *           'false' otherwise
+ */
+//=============================================================================
+bool LHCb::Track::hasInfo ( const int key ) const
+{ return m_extraInfo.end() != m_extraInfo.find( key ) ; }
 
+//=============================================================================
+/** add/replace new information , associated with the key
+ *  
+ *  @code
+ * 
+ *  Track* p = ... ;
+ *
+ *  Track::Key  key   = ... ; 
+ *  Track::Info info  = ... ;
+ * 
+ *  bool inserted = p->addInfo( key , info ) ;
+ *
+ *  @endcode 
+ * 
+ *  @param key key for the information
+ *  @param info information to be associated with the key
+ *  @param 'true' if informaiton is inserted, 
+ *         'false' if the previous information has been replaced 
+ */
+//=============================================================================
+bool  LHCb::Track::addInfo ( const int key, const double info )
+{ return m_extraInfo.insert( key , info ).second ;}
+
+//=============================================================================
+/** extract the information associated with the given key 
+ *  If there is no such infomration the default value will 
+ *  be returned 
+ * 
+ *  @code
+ * 
+ *  const Track* p = ... ;
+ *
+ *  Track::Key  key   = ... ; 
+ *
+ *  // extract the information
+ *  Track::Info info = p->info( key, -999 ) ;
+ * 
+ *  @endcode 
+ *
+ *  @param key key for the information
+ *  @param def the default value to be returned 
+ *         in the case of missing info
+ *  @return information associated with the key if there 
+ *          is such information, the default value otherwise 
+ */
+//=============================================================================
+double LHCb::Track::info( const int key, const double def ) const 
+{
+  ExtraInfo::iterator i = m_extraInfo.find( key ) ;
+  return m_extraInfo.end() == i ? def : i->second ;
+}
+
+//=============================================================================
+/** erase the information associated with the given key
+ *
+ *  @code
+ * 
+ *  Track* p = ... ;
+ *
+ *  Track::Key  key   = ... ; 
+ * 
+ *  int erased = p->eraseInfo( key ) ;
+ *
+ *  @endcode 
+ * 
+ *  @param key key for the information
+ *  @return return number of erased elements 
+ */
+//=============================================================================
+LHCb::Track::ExtraInfo::size_type 
+LHCb::Track::eraseInfo( const int key )
+{ 
+  return m_extraInfo.erase( key ) ; 
+}
 

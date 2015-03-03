@@ -1,4 +1,4 @@
-// $Id: DeSTSector.h,v 1.10 2006-04-19 07:41:37 mneedham Exp $
+// $Id: DeSTSector.h,v 1.12 2006-08-28 08:04:05 mneedham Exp $
 #ifndef _DeSTSector_H_
 #define _DeSTSector_H_
 
@@ -104,6 +104,17 @@ public:
   Gaudi::Plane3D plane() const;  
  
 
+
+  /** plane corresponding to the module entrance
+  * @return the plane 
+  */
+  Gaudi::Plane3D entryPlane() const; 
+
+  /** plane corresponding to the module exit
+  * @return the plane 
+  */
+  Gaudi::Plane3D exitPlane() const; 
+
   /** 
   * @param point in local frame
   * @param tolerance
@@ -164,6 +175,12 @@ public:
   */
   double stripLength() const;
 
+
+  /** thickness 
+  * @return thickness
+  */
+  double thickness() const;
+
   /** get the next channel left */
   LHCb::STChannelID nextLeft(const LHCb::STChannelID testChan) const;
 
@@ -188,6 +205,9 @@ private:
   void cacheInfo();
 
   Gaudi::Plane3D m_plane;
+  Gaudi::Plane3D m_entryPlane;
+  Gaudi::Plane3D m_exitPlane;
+
   Gaudi::XYZVector m_direction;
   std::pair<double,double> m_range;
 
@@ -198,6 +218,7 @@ private:
   double m_capacitance;
   double m_stripLength;
 
+  double m_thickness;
   double m_uMinLocal;
   double m_uMaxLocal;
   double m_vMinLocal; 
@@ -249,12 +270,24 @@ inline double DeSTSector::stripLength() const {
   return m_stripLength;
 }
 
+inline double DeSTSector::thickness() const{
+  return m_thickness;
+}
+
 inline std::string DeSTSector::type() const {
   return m_type;
 }
 
 inline Gaudi::Plane3D DeSTSector::plane() const {
   return m_plane;
+}
+
+inline Gaudi::Plane3D DeSTSector::entryPlane() const {
+  return m_entryPlane;
+}
+
+inline Gaudi::Plane3D DeSTSector::exitPlane() const {
+  return m_exitPlane;
 }
 
 /** ouput operator for class DeSTSector

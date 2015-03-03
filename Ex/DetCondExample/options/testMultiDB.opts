@@ -1,4 +1,4 @@
-//$Id: testMultiDB.opts,v 1.8 2006-01-19 18:32:10 marcocle Exp $
+//$Id: testMultiDB.opts,v 1.12 2006-09-26 10:51:09 marcocle Exp $
 //==============================================================
 // Job options to test double CondDB usage in DetCondExample
 //==============================================================
@@ -22,11 +22,11 @@ GaudiSequencer.Members  += { "DumpDetectorStore" };
 ApplicationMgr.EvtSel = "NONE";
 
 // Number of events to be processed (default is 10)
-ApplicationMgr.EvtMax = 2;
+ApplicationMgr.EvtMax = 1;
 
 // Event clock attributes
-EventClockSvc.StartTime = 5;
-EventClockSvc.TimeStep = 10;
+EventClockSvc.FakeEventTime.StartTime = 5;
+EventClockSvc.FakeEventTime.TimeStep = 10;
 
 //--------------------------------------------------------------
 // Message service options
@@ -41,23 +41,10 @@ MessageSvc.OutputLevel = 1;
 //--------------------------------------------------------------
 ApplicationMgr.DLLs += { "DetCond" };
 
-CondDBCnvSvc.CondDBAccessServices = { "DB1", "DB2" };
 DetectorPersistencySvc.CnvServices += { "CondDBCnvSvc" };
+CondDBCnvSvc.CondDBReader = "CondDBDispatcherSvc";
+CondDBDispatcherSvc.MainAccessSvc =   "CondDBAccessSvc/DB1"  ;
+CondDBDispatcherSvc.Alternatives  = { "/multiDBTest/Folder2=CondDBAccessSvc/DB2" };
 
-DB1.HostName     = "$CONDDBHOST";
-DB1.User         = "$CONDDBUSER";
-DB1.Password     = "$CONDDBPWD";
-DB1.HidePassword = true;
-DB1.Database     = "$CONDDBNAME1";
-DB1.Schema       = "$CONDDBSCHEMA1";
-DB1.BackEnd      = "$CONDDBENGINE";
-DB1.RecreateDB   = true;
-
-DB2.HostName     = "$CONDDBHOST";
-DB2.User         = "$CONDDBUSER";
-DB2.Password     = "$CONDDBPWD";
-DB2.HidePassword = true;
-DB2.Database     = "$CONDDBNAME2";
-DB2.Schema       = "$CONDDBSCHEMA2";
-DB2.BackEnd      = "$CONDDBENGINE";
-DB2.RecreateDB   = true;
+DB1.ConnectionString     = "$CONDDBCONNECTIONSTRING1";
+DB2.ConnectionString     = "$CONDDBCONNECTIONSTRING2";

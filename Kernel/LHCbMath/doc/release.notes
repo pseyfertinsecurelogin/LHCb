@@ -3,11 +3,71 @@
 ! Responsible : Juan Palacios
 ! Purpose     : A collection of simple generic classes and functions 
 !               for geometry and matrix algebra
-!               All headers uncluded indirectory LHCbMath
+!               All headers included in directory LHCbMath
 !-----------------------------------------------------------------------------
 
-!========================== LHCbMath v1r1 2006-05-31 ==========================
+!========================== LHCbMath v1r3 2006-11-02 ==========================
+! 2006-11-02 - Chris Jones
+ - Fix windows compilation error with ambiguity in pow with Gaudi::Math::cbrt
 
+! 2006-11-01 - Marco Cattaneo
+ - Update requirements to add MathCore and SMatrix to the linkopts, previously
+   done in LHCBDefinitions 
+
+! 2006-11-01 - Chris Jones
+ - Update Gaudi::Math::cbrt to be non-templated, to avoid problems with
+    cbrt(int) returning a truncated int
+
+! 2006-11-01 - Juan PALACIOS
+  - LHCbMath/GeomFun.icpp
+    . Fix a few bugs. Some functions were assuming Line had unit direction
+      vector. This is not necessarily the case so use line.direction().Unit()
+      where appropriate.
+
+! 2006-10-27 - Chris Jones
+ - Implement cube root method Gaudi::Math::cbrt(x) that works on all platforms,
+   but uses the fast in built cbrt on GCC systems
+
+! 2006-10-27 - Juan PALACIOS
+  - LHCbMath/GeomFun.icpp
+    . Remove explicit dependency on ROOT::Math vector type. Functions are now
+      totally generic.
+
+  - cmt/requirements
+    . Removed dependency on Kernel/LHCbDefinitions
+    . Increase version number to v1r3
+
+  Added:
+
+  - LHCbMath/IPower.hpp: 
+    . Template metafunction for compile-time calculation of even, positive 
+      powers of integer numbers.
+      Example usage:
+
+      // assign 2**35 to result.
+        const int result = Gaudi::Math::IPower< int, 2,  35>::value;
+  - LHCbMath/Power.hpp:
+    .  Template metafunction to calculate integer powers of integer 
+       and floating point numbers.
+       Example useage:
+
+       // calculate 50.**10
+       const double result = Gaudi::Math::pow<double, 10> ( 50. ) ;
+
+! 2006-10-26 - Juan PALACIOS
+  - LHCbMath/Power.h
+    . Add doxygen comment: pow only works for positive interer powers.
+
+!========================== LHCbMath v1r2 2006-06-30 ==========================
+! 2006-06-29 M. Needham
+  - Bug fix in plane-line intersection parallelity test 
+
+! 2006-06-06 - Juan PALACIOS  
+  - Add LHCbMath/Power.h
+    . Fast and efficient pow function for large integer powers
+      by Ivan Belyaev. Imported from LoKi.
+
+!========================== LHCbMath v1r1 2006-05-31 ==========================
 ! 2006-05-31 - Juan PALACIOS
 
   - Add LHCbMath/EigenSystem.h, .icpp and src/EigenSystem.cpp from 

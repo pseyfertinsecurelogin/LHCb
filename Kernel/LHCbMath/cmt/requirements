@@ -4,7 +4,7 @@
 #============================================================================
 
 package Kernel/LHCbMath
-version v1r1
+version v1r3
 
 #============================================================================
 # Structure, i.e. directories to process. 
@@ -12,20 +12,21 @@ version v1r1
 
 branches cmt doc LHCbMath src
 
-include_dirs $(LHCBMATHROOT)
+include_path none
+include_dirs $(LHCBMATHROOT) $(ROOT_home)/include
 
 #============================================================================
-# Used packages. Specify the version, * at the end specifies 'any revision'
-#    Put as many lines as needed, with all packages, without the '#'
+# Used packages
 #============================================================================
-use GaudiPolicy     v*
 use GaudiKernel     v*
-use LHCbDefinitions v* Kernel        
-use GSL             v* LCG_Interfaces
+use ROOT            v*      LCG_Interfaces -no_auto_imports
+use GSL             v*      LCG_Interfaces
 
+macro LHCbMath_linkopts  " -L$(ROOT_home)/lib  -lMathCore -lSmatrix " \
+         WIN32  " /LIBPATH:$(ROOT_home)/lib libMathCore.lib libSmatrix.lib "
 
 # ================= constituens: linker library ===============================
-library             LHCbMath    ../src/*.cpp
+library             LHCbMath    *.cpp
 
 # ================= patterns ==================================================
 apply_pattern       linker_library library=LHCbMath

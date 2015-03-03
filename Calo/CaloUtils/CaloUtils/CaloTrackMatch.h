@@ -1,8 +1,6 @@
-// $Id: CaloTrackMatch.h,v 1.4 2006-06-18 18:32:55 ibelyaev Exp $
+// $Id: CaloTrackMatch.h,v 1.7 2006-07-19 07:37:42 cattanem Exp $
 // ============================================================================
-// CVS tag $Name: not supported by cvs2svn $ , version $Revision: 1.4 $ 
-// ============================================================================
-// $Log: not supported by cvs2svn $
+// CVS tag $Name: not supported by cvs2svn $ , version $Revision: 1.7 $ 
 // ============================================================================
 #ifndef CALOUTILS_CALOTRACKMATCH_H 
 #define CALOUTILS_CALOTRACKMATCH_H 1
@@ -87,7 +85,7 @@ protected:
     bool invert() 
     {
       if ( m_inverted   ) { return m_ok    ; }    // RETURN 
-      m_ok = m_matrix.Sinvert () ;
+      m_ok = m_matrix.Invert () ;
       if ( m_ok         ) { m_inverted = true ; }
       return ok() ;
     } ;
@@ -113,15 +111,28 @@ protected:
     typedef typename Match_<D>::Vector Vector ;
     typedef typename Match_<D>::Matrix Matrix ;
     // check input data 
-    Assert ( m1.inverted() && m1.ok() && 
-             m2.inverted() && m2.ok()     , 
-             "chi2(): invalid data are detected " ) ;
+    //    Assert ( m1.inverted() && m1.ok() && 
+    //         m2.inverted() && m2.ok()     , 
+    //         "chi2(): invalid data are detected " ) ;
+
+    if (  !m1.inverted() || !m1.ok() || 
+	  !m2.inverted() || !m2.ok() )
+      { 
+	Error(  "chi2(): invalid data are detected - return bad chi2" );
+	return 99999999. ; 
+      }
+
+
     // local storage to avoid the dynamic allocation 
     static Matrix s_cov ;
     // evaluate the overall covariance matrix 
     s_cov = m1.matrix() +  m2.matrix() ;
-    Assert ( s_cov.Sinvert() , 
-             "chi2(): Can not invert the matrix !" );
+    if ( !s_cov.Invert() ) 
+    { 
+      Error(  "chi2(): can not invert the matrix - return bad chi2" ) ; 
+      return 99999999. ; 
+    }
+
     // get the weighted and mean parameters 
     Vector pw = m1.matrix()*m1.params() + m2.matrix()*m2.params() ;
     Vector pm = s_cov * pw ;

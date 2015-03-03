@@ -1,10 +1,41 @@
 ! =============================================================================
-! $Id: release.notes,v 1.10 2006-04-27 14:58:30 cattanem Exp $ 
+! $Id: release.notes,v 1.19 2006-11-03 14:54:14 cattanem Exp $ 
 ! =============================================================================
 ! package DetDescSvc
 ! package manager : Marco Clemencic, Juan Palacios ?
 ! purpose:          Component library for Detector Description Services
 ! =============================================================================
+
+!========================= DetDescSvc v1r8 2006-11-03 =========================
+ ### requires DetDesc >= v16r9 ###
+! 2006-10-23 - Marco Clemencic
+ - Add the possiblility to define a condition in the job options via an option
+   of the UpdateManagerSvc (use boost::spirit).
+ - Move part of UpdateManagerSvc_Item.icpp into UpdateManagerSvc_Item.cpp
+   (It does not make sense to have them in a header file)
+
+!========================= DetDescSvc v1r7 2006-10-12 =========================
+! 2006-10-11 - Marco Clemencic
+ - Add implementation of interface IDetElemFinder. It is a service that allows
+   to find the DetectorElement associated to a path in the physical volumes
+   hierarchy.
+
+!========================= DetDescSvc v1r6 2006-09-28 =========================
+! 2006-09-26 - Marco Clemencic
+ - Modify EventClockSvc to use a tool implementing IEventTimeDecoder for the
+   actual decoding of the event time.
+ - Add FakeEventTime as an example of implementation of IEventTimeDecoder and
+   to provide the same functionality already present in EventClockSvc.
+
+! 2006-09-21 - Marco Clemencic
+ - Fixed minor "feature" of UpdateManagerSvc: it was compulsory to specify the
+   root name in the path of a condition. Now it can be avoided and it is
+   removed if present.
+
+!========================= DetDescSvc v1r5 2006-07-26 =========================
+! 2006-07-26 - Marco Cattaneo
+ - Add PreloadGeometryTool
+ - Minor code cleanups
 
 !========================= DetDescSvc v1r4 2006-04-27 =========================
 ! 2006-04-13 - Marco Clemencic

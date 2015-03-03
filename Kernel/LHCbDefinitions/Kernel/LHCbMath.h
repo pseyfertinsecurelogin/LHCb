@@ -1,4 +1,4 @@
-// $Id: LHCbMath.h,v 1.1 2005-11-25 13:13:44 cattanem Exp $
+// $Id: LHCbMath.h,v 1.3 2006-07-25 09:30:24 cattanem Exp $
 #ifndef KERNEL_LHCBMATH_H 
 #define KERNEL_LHCBMATH_H 1
 
@@ -18,7 +18,9 @@ namespace LHCbMath
   static const double hiTolerance = 1e-40;
   static const double lowTolerance = 1e-20;
   static const double looseTolerance = 1e-5;
-
+  static const double     sqrt_12 = 3.4641016151377546; // sqrt(12.)
+  static const double inv_sqrt_12 = 0.2886751345948129; // 1./sqrt(12.)
+ 
   // Round to nearest integer. Rounds half integers to the nearest even integer.
   // Provided by Matt Needham 
   inline int round(const double x)  {

@@ -1,4 +1,4 @@
-// $Id: DeVeloSensor.cpp,v 1.21 2006-06-14 13:37:08 mtobin Exp $
+// $Id: DeVeloSensor.cpp,v 1.24 2006-11-02 11:52:42 mtobin Exp $
 //==============================================================================
 #define VELODET_DEVELOSENSOR_CPP 1
 //==============================================================================
@@ -71,24 +71,43 @@ StatusCode DeVeloSensor::initialize()
     msg << MSG::ERROR << "Failed to initialise DetectorElement" << endreq;
     return sc;
   }
+  m_debug   = (msgSvc()->outputLevel("DeVeloSensor") == MSG::DEBUG  ) ;
+  m_verbose = (msgSvc()->outputLevel("DeVeloSensor") == MSG::VERBOSE) ;
+  if( m_verbose ){
+    m_debug = true;
+  }
 
   initSensor();
   IGeometryInfo* geom = geometry();
   m_geometry = geom;
   cacheGeometry();
-  
-  msg << MSG::DEBUG << "Module " << m_module << " sensor " << m_sensorNumber 
-      << " full type " << m_fullType << " z= " << m_z
-      << " R " << isR() 
-      << " Phi " << isPhi()  
-      << " PU " << isPileUp()
-      << " Left " << m_isLeft
-      << " Right " << isRight() 
-      << " Downstream " << isDownstream() << endreq;
 
+  // get parent Velo Half box for pattern recognition alignment purposes
+  // heirarchy should be sensor -> R/Phi Pair -> Module -> Velo(Left|Right)
+  IDetectorElement* halfBox = 
+    this->parentIDetectorElement()->parentIDetectorElement()
+    ->parentIDetectorElement();
+  if(m_debug)
+    msg << MSG::DEBUG 
+	<< "Great grandparent of " << this->name() << " is " 
+	<< halfBox->name() <<endreq;
+  m_halfBoxGeom = halfBox->geometry();
+
+  if(m_debug)
+    msg << MSG::DEBUG
+	<< "Module " << m_module << " sensor " << m_sensorNumber 
+	<< " full type " << m_fullType << " z= " << m_z
+	<< " R " << isR() 
+	<< " Phi " << isPhi()  
+	<< " PU " << isPileUp()
+	<< " Left " << m_isLeft
+	<< " Right " << isRight() 
+	<< " Downstream " << isDownstream() << endreq;
+  
   sc = registerConditionCallBacks();
   if (sc.isFailure()) {
-    msg << MSG::ERROR << "Failure to register condition update call backs." << endreq;    
+    msg << MSG::ERROR 
+	<< "Failure to register condition update call backs." << endreq;
     return sc;
   }
 
@@ -107,14 +126,16 @@ void DeVeloSensor::cacheGeometry()
 StatusCode DeVeloSensor::localToGlobal(const Gaudi::XYZPoint& localPos, 
                                        Gaudi::XYZPoint& globalPos) const
 {
-  MsgStream msg(msgSvc(), "DeVeloSensor");
   globalPos = m_geometry->toGlobal(localPos);
-  msg << MSG::VERBOSE << "localToGlobal for sensor " << m_sensorNumber
-      << " Local x " << localPos.x() << " y " << localPos.y() 
-      << " z " << localPos.z()
-      << " Global x " << globalPos.x() << " y " << globalPos.y()
-      << " z " << globalPos.z()
-      << endreq;
+  if(m_verbose) {
+    MsgStream msg(msgSvc(), "DeVeloSensor");
+    msg << MSG::VERBOSE << "localToGlobal for sensor " << m_sensorNumber
+        << " Local x " << localPos.x() << " y " << localPos.y() 
+        << " z " << localPos.z()
+        << " Global x " << globalPos.x() << " y " << globalPos.y()
+        << " z " << globalPos.z()
+        << endreq;
+  }
   return StatusCode::SUCCESS;
 }
 //==============================================================================
@@ -123,14 +144,87 @@ StatusCode DeVeloSensor::localToGlobal(const Gaudi::XYZPoint& localPos,
 StatusCode DeVeloSensor::globalToLocal(const Gaudi::XYZPoint& globalPos, 
                          Gaudi::XYZPoint& localPos) const
 {
-  MsgStream msg(msgSvc(), "DeVeloSensor");
   localPos = m_geometry->toLocal(globalPos);
-  msg << MSG::VERBOSE << "GlobalToLocal for sensor " << m_sensorNumber
-      << " Global x " << globalPos.x() << " y " << globalPos.y()
-      << " z " << globalPos.z()
-      << " Local x " << localPos.x() << " y " << localPos.y() 
-      << " z " << localPos.z()
-      << endreq;
+  if(m_verbose) {
+    MsgStream msg(msgSvc(), "DeVeloSensor");
+    msg << MSG::VERBOSE << "GlobalToLocal for sensor " << m_sensorNumber
+        << " Global x " << globalPos.x() << " y " << globalPos.y()
+        << " z " << globalPos.z()
+        << " Local x " << localPos.x() << " y " << localPos.y() 
+        << " z " << localPos.z()
+        << endreq;
+  }
+  return StatusCode::SUCCESS;
+}
+
+//============================================================================
+/// Convert local position in a sensor to the position in Velo half box
+//============================================================================
+StatusCode DeVeloSensor::localToVeloHalfBox(const Gaudi::XYZPoint& localPos, 
+                                            Gaudi::XYZPoint& boxPos) const
+{
+  Gaudi::XYZPoint globalPos = m_geometry->toGlobal(localPos);
+  boxPos = m_halfBoxGeom->toLocal(globalPos);
+  if(m_verbose) {
+    MsgStream msg(msgSvc(), "DeVeloSensor");
+    msg << MSG::VERBOSE << "localToBox for sensor " << m_sensorNumber
+        << " Local " << localPos
+        << " Global " << globalPos
+	<< " Box " << boxPos
+        << endreq;
+  }
+  return StatusCode::SUCCESS;
+}
+//============================================================================
+/// Convert position in Velo half box to sensor local
+//============================================================================
+StatusCode DeVeloSensor::veloHalfBoxToLocal(const Gaudi::XYZPoint& boxPos, 
+                                            Gaudi::XYZPoint& localPos) const
+{
+  Gaudi::XYZPoint globalPos = m_halfBoxGeom->toGlobal(boxPos);
+  localPos = m_geometry->toLocal(globalPos);
+  if(m_verbose) {
+    MsgStream msg(msgSvc(), "DeVeloSensor");
+    msg << MSG::VERBOSE << "bocToLocal for sensor " << m_sensorNumber
+        << " Global " << globalPos
+        << " Local " << localPos
+	<< " Box " << boxPos
+        << endreq;
+  }
+  return StatusCode::SUCCESS;
+}
+
+
+//============================================================================
+/// Convert local position in a sensor to the position in Velo half box
+//============================================================================
+StatusCode DeVeloSensor::veloHalfBoxToGlobal(const Gaudi::XYZPoint& boxPos, 
+                                             Gaudi::XYZPoint& globalPos) const
+{
+  globalPos = m_halfBoxGeom->toGlobal(boxPos);
+  if(m_verbose) {
+    MsgStream msg(msgSvc(), "DeVeloSensor");
+    msg << MSG::VERBOSE << "localToBox for sensor " << m_sensorNumber
+	<< " Box " << boxPos
+        << " Global " << globalPos
+        << endreq;
+  }
+  return StatusCode::SUCCESS;
+}
+//============================================================================
+/// Convert position in Velo half box to sensor local
+//============================================================================
+StatusCode DeVeloSensor::globalToVeloHalfBox(const Gaudi::XYZPoint& globalPos, 
+                                             Gaudi::XYZPoint& boxPos) const
+{
+  boxPos = m_halfBoxGeom->toLocal(globalPos);
+  if(m_verbose) {
+    MsgStream msg(msgSvc(), "DeVeloSensor");
+    msg << MSG::VERBOSE << "bocToLocal for sensor " << m_sensorNumber
+        << " Global " << globalPos
+	<< " Box " << boxPos
+        << endreq;
+  }
   return StatusCode::SUCCESS;
 }
 

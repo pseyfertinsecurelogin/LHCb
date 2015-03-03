@@ -1,4 +1,4 @@
-// $Id: ICondDBAccessSvc.h,v 1.11 2006-04-25 17:20:19 marcocle Exp $
+// $Id: ICondDBAccessSvc.h,v 1.14 2006-08-31 13:53:02 marcocle Exp $
 #ifndef DETCOND_ICONDDBACCESSSVC_H 
 #define DETCOND_ICONDDBACCESSSVC_H 1
 
@@ -6,6 +6,8 @@
 // from STL
 #include <string>
 #include <vector>
+#include <set>
+#include <map>
 
 // from Gaudi
 #include <GaudiKernel/IInterface.h>
@@ -45,30 +47,8 @@ public:
   /// Return the interface ID
   static const InterfaceID& interfaceID() { return IID_ICondDBAccessSvc; }
 
-  // Utilities:
-
   /// Used to obtain direct access to the database.
   virtual cool::IDatabasePtr& database() = 0;
-
-  /// Possible recognized node types.
-  enum StorageType { FOLDERSET, XML, Native };
-  /// Known types of leaf nodes (aka Folders).
-  enum VersionMode { SINGLE, MULTI };
-  
-  /// Create a CondDB node in the hierarchy (Folder or FolderSet)
-  virtual StatusCode createFolder(const std::string &path,
-                                  const std::string &descr,
-                                  StorageType storage = XML,
-                                  VersionMode vers = MULTI) const = 0;
- 
-  /// Utility function that simplifies the storage of an XML string.
-  virtual StatusCode storeXMLString(const std::string &path, const std::string &data,
-                                    const Gaudi::Time &since, const Gaudi::Time &until, cool::ChannelId channel = 0) const = 0;
-
-  /// Utility function that simplifies the storage of an XML string.
-  /// (Useful for Python, the times are in seconds)
-  virtual StatusCode storeXMLString(const std::string &path, const std::string &data,
-                                    const double since_s, const double until_s, cool::ChannelId channel = 0) const = 0;
   
   /// Convert from Gaudi::Time class to cool::ValidityKey.
   virtual cool::ValidityKey timeToValKey(const Gaudi::Time &time) const = 0;
@@ -82,20 +62,6 @@ public:
   /// Set the TAG to use.
   virtual StatusCode setTag(const std::string &_tag) = 0;
 
-  /// Tag the given folder with the given tag-name. If the requested folder is
-  /// a folderset, the tag is applied to all the folders below it. (waiting for HVS)
-  virtual StatusCode tagFolder(const std::string &path, const std::string &tagName,
-                               const std::string &description = "", cool::ChannelId channel = 0) = 0;
-
-  /// Retrieve data from the condition database.
-  /// Returns a shared pointer to an attribute list, the folder description and the IOV limits.
-  virtual StatusCode getObject (const std::string &path, const Gaudi::Time &when,
-                                boost::shared_ptr<coral::AttributeList> &data,
-                                std::string &descr, Gaudi::Time &since, Gaudi::Time &until, cool::ChannelId channel = 0) = 0;
-
-  /// Retrieve the names of the children nodes of a FolderSet.
-  virtual StatusCode getChildNodes (const std::string &path, std::vector<std::string> &node_names) = 0;
-
   /// Add a folder to the cache (bypass the DB)
   virtual StatusCode cacheAddFolder(const std::string &path, const std::string &descr,
                                     const cool::ExtendedAttributeListSpecification& spec) = 0;
@@ -106,17 +72,32 @@ public:
   /// Add an XML folder to the cache (bypass the DB)
   virtual StatusCode cacheAddXMLFolder(const std::string &path) = 0;
 
+  /// Add an XML folder to the cache (bypass the DB)
+  virtual StatusCode cacheAddXMLFolder(const std::string &path, const std::set<std::string> &fields) = 0;
+
   /// Add an object to the cache (bypass the DB)
   virtual StatusCode cacheAddObject(const std::string &path, const Gaudi::Time &since, const Gaudi::Time &until,
-                                    const coral::AttributeList& payload, cool::ChannelId channel = 0) = 0;
+                                    const coral::AttributeList &payload, cool::ChannelId channel = 0) = 0;
   
+  /// Deprecated: use ICondDBAccessSvc::cacheAddXMLData instead
+  inline StatusCode cacheAddXMLObject(const std::string &path, const Gaudi::Time &since, const Gaudi::Time &until,
+                                      const std::string &data, cool::ChannelId channel = 0)
+  {
+    return cacheAddXMLData(path, since, until, data, channel);
+  }
+  
+
   /// Add an XML object to the cache (bypass the DB)
-  virtual StatusCode cacheAddXMLObject(const std::string &path, const Gaudi::Time &since, const Gaudi::Time &until,
-                                       const std::string& data, cool::ChannelId channel = 0) = 0;
+  virtual StatusCode cacheAddXMLData(const std::string &path, const Gaudi::Time &since, const Gaudi::Time &until,
+                                     const std::string &data, cool::ChannelId channel = 0) = 0;
+
+  /// Add an XML object to the cache (bypass the DB)
+  virtual StatusCode cacheAddXMLData(const std::string &path, const Gaudi::Time &since, const Gaudi::Time &until,
+                                     const std::map<std::string,std::string> &data, cool::ChannelId channel = 0) = 0;
 
   /// Dump the cache (debug)
   virtual void dumpCache() const = 0;
-  
+
 protected:
 
 private:

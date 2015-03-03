@@ -1,4 +1,4 @@
-// $Id: GenericMatrixTypes.h,v 1.4 2006-06-15 09:31:53 cattanem Exp $
+// $Id: GenericMatrixTypes.h,v 1.6 2006-09-26 15:40:35 jpalac Exp $
 #ifndef KERNEL_GENERICMATRIXTYPES_H 
 #define KERNEL_GENERICMATRIXTYPES_H 1
 
@@ -24,6 +24,9 @@ namespace Gaudi {
 
   typedef ROOT::Math::SMatrix<double, 1, 5> Matrix1x5;
   typedef ROOT::Math::SMatrix<double, 4, 3> Matrix4x3;
+  typedef ROOT::Math::SMatrix<double, 3, 4> Matrix3x4;
+  typedef ROOT::Math::SMatrix<double, 2, 3> Matrix2x3;
+  typedef ROOT::Math::SMatrix<double, 3, 2> Matrix3x2;
 
   typedef ROOT::Math::SMatrix<float, 1, 1> Matrix1x1F;
   typedef ROOT::Math::SMatrix<float, 2, 2> Matrix2x2F;
@@ -37,6 +40,9 @@ namespace Gaudi {
 
   typedef ROOT::Math::SMatrix<float, 1, 5> Matrix1x5F;
   typedef ROOT::Math::SMatrix<float, 4, 3> Matrix4x3F;
+  typedef ROOT::Math::SMatrix<float, 3, 4> Matrix3x4F;
+  typedef ROOT::Math::SMatrix<float, 2, 3> Matrix2x3F;
+  typedef ROOT::Math::SMatrix<float, 3, 2> Matrix3x2F;
 
 };
 #endif // KERNEL_GENERICMATRIXTYPES_H

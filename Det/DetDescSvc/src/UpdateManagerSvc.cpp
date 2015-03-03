@@ -1,18 +1,22 @@
-// $Id: UpdateManagerSvc.cpp,v 1.7 2006-04-13 10:53:12 marcocle Exp $
+// $Id: UpdateManagerSvc.cpp,v 1.9 2006-10-25 13:46:06 marcocle Exp $
 // Include files 
 
 #include "GaudiKernel/SvcFactory.h"
 #include "GaudiKernel/IDetDataSvc.h"
 #include "GaudiKernel/IDataProviderSvc.h"
+#include "GaudiKernel/IDataManagerSvc.h"
 #include "GaudiKernel/IRegistry.h"
 #include "GaudiKernel/GaudiException.h"
 #include "GaudiKernel/IIncidentSvc.h"
 #include "GaudiKernel/IEventProcessor.h"
 
 #include "DetDesc/ValidDataObject.h"
+#include "DetDesc/Condition.h"
 
 // local
 #include "UpdateManagerSvc.h"
+
+#include "ConditionParser.h"
 
 // Factory implementation
 static SvcFactory<UpdateManagerSvc> s_factory;
@@ -21,7 +25,7 @@ const ISvcFactory &UpdateManagerSvcFactory = s_factory;
 //-----------------------------------------------------------------------------
 // Implementation file for class : UpdateManagerSvc
 //
-// 2005-03-30 : Marco CLEMENCIC
+// 2005-03-30 : Marco Clemencic
 //-----------------------------------------------------------------------------
 
 //=============================================================================
@@ -37,6 +41,7 @@ UpdateManagerSvc::UpdateManagerSvc(const std::string& name, ISvcLocator* svcloc)
 #endif
   declareProperty("DataProviderSvc", m_dataProviderName = "DetectorDataSvc");
   declareProperty("DetDataSvc",      m_detDataSvcName);
+  declareProperty("ConditionsOverride", m_conditionsOveridesDesc);
 }
 //=============================================================================
 // Destructor
@@ -68,39 +73,52 @@ StatusCode UpdateManagerSvc::queryInterface(const InterfaceID& riid, void** ppvU
 // IService implementation
 //=============================================================================
 StatusCode UpdateManagerSvc::initialize(){
-	// base class initialization
-	StatusCode sc = Service::initialize();
-	if (!sc.isSuccess()) return sc;
-	// local initialization
-	// TODO: initialization to be implemented
-	MsgStream log(msgSvc(),name());
-	log << MSG::DEBUG << "--- initialize ---" << endmsg;
+  // base class initialization
+  StatusCode sc = Service::initialize();
+  if (!sc.isSuccess()) return sc;
+  // local initialization
+  MsgStream log(msgSvc(),name());
+  log << MSG::DEBUG << "--- initialize ---" << endmsg;
 
   // find the data provider
   sc = serviceLocator()->service<IDataProviderSvc>(m_dataProviderName,m_dataProvider,true);
-	if (!sc.isSuccess()) {
-		log << MSG::ERROR << "Unable to get a handle to the data provider" << endmsg;
-		return sc;
-	} else {
-		log << MSG::DEBUG << "Got pointer to IDataProviderSvc \"" << m_dataProviderName << '"' << endmsg;
+  if (!sc.isSuccess()) {
+    log << MSG::ERROR << "Unable to get a handle to the data provider" << endmsg;
+    return sc;
+  } else {
+    log << MSG::DEBUG << "Got pointer to IDataProviderSvc \"" << m_dataProviderName << '"' << endmsg;
+    IDataManagerSvc * dMgr;
+    sc = m_dataProvider->queryInterface(IDataManagerSvc::interfaceID(),(void **) &dMgr);
+    if ( sc.isSuccess() ) {
+      m_dataProviderRootName = dMgr->rootName() + "/";
+      dMgr->release();
+      if (!sc.isSuccess()) {
+        return sc;
+      }
+    }
+    else {
+      log << MSG::WARNING << "Cannot access IDataManagerSvc interface of \"" << m_dataProviderName
+          << "\": using empty RootName" << endmsg;
+      m_dataProviderRootName = "";
+    } 
   }
 
   // find the detector data service
   if (m_detDataSvcName == "") m_detDataSvcName = m_dataProviderName;
   sc = serviceLocator()->service(m_detDataSvcName,m_detDataSvc,true);
-	if (!sc.isSuccess()) {
-		log << MSG::WARNING << "Unable to get a handle to the detector data service interface:"
+  if (!sc.isSuccess()) {
+    log << MSG::WARNING << "Unable to get a handle to the detector data service interface:"
       " all the calls to newEvent(void) will fail!" << endmsg;
-		m_detDataSvc = NULL;
-	} else {
-		log << MSG::DEBUG << "Got pointer to IDetDataSvc \"" << m_detDataSvcName << '"' << endmsg;
-	}
+    m_detDataSvc = NULL;
+  } else {
+    log << MSG::DEBUG << "Got pointer to IDetDataSvc \"" << m_detDataSvcName << '"' << endmsg;
+  }
   
   // before registering to the incident service I have to be sure that the EventClockSvc is ready
   IService *evtClockSvc;
   sc = service("EventClockSvc", evtClockSvc, true);
   if ( sc.isSuccess() ) {
-		log << MSG::DEBUG << "Good: EventClockSvc found" << endmsg;
+    log << MSG::DEBUG << "Good: EventClockSvc found" << endmsg;
     evtClockSvc->release();
   } else {
     log << MSG::WARNING << "Unable find EventClockSvc, probably I'll not work." << endmsg;
@@ -110,7 +128,7 @@ StatusCode UpdateManagerSvc::initialize(){
   sc = service("IncidentSvc", m_incidentSvc, false);
   if ( sc.isSuccess() ) {
     m_incidentSvc->addListener(this,IncidentType::BeginEvent);
-		log << MSG::DEBUG << "Got pointer to IncidentSvc" << endmsg;
+    log << MSG::DEBUG << "Got pointer to IncidentSvc" << endmsg;
   } else {
     log << MSG::ERROR << "Unable to register to the incident service." << endmsg;
     m_incidentSvc = NULL;
@@ -122,49 +140,97 @@ StatusCode UpdateManagerSvc::initialize(){
     log << MSG::ERROR << "Cannot find an event processor." << endmsg;
     return sc;
   }
-  
-	return StatusCode::SUCCESS;
+
+  // Loop over overridden conditions
+  for ( std::vector<std::string>::iterator co = m_conditionsOveridesDesc.begin();
+        co != m_conditionsOveridesDesc.end(); ++co ) {
+    std::string name;
+    Condition *cond = new Condition();
+    if (ConditionParser(*co,name,*cond)) {
+      
+      // Remove TS root name from the path
+      if ( name[0] == '/'
+           && name.compare(0,m_dataProviderRootName.size(),m_dataProviderRootName) == 0 ){
+        name.erase(0,m_dataProviderRootName.size());
+      }
+      
+      // If a condition override with that name already exists, delete it
+      Condition * dest = m_conditionsOverides[name];
+      if ( dest ) {
+        log << MSG::WARNING << "Override condition for path '" << name
+            << "' is defined more than once (I use the last one)." << endmsg;
+        delete dest;
+      }
+      
+      // Add the condition to internal list
+      m_conditionsOverides[name] = cond;
+      log << MSG::DEBUG << "Added condition: " << name << "\n" << cond->printParams() << endmsg;
+      
+    } else {
+      // something went wrong while parsing: delete the temporary
+      delete cond;
+      log << MSG::ERROR << "Cannot understand condition:" << endmsg;
+      log << MSG::ERROR << *co << endmsg;
+      return StatusCode::FAILURE;
+    }
+  }
+
+  return StatusCode::SUCCESS;
 }
 
 StatusCode UpdateManagerSvc::finalize(){
-	// local finalization
-	
-	MsgStream log(msgSvc(),name());
-	log << MSG::DEBUG << "--- finalize ---" << endmsg;
+  // local finalization
+  
+  MsgStream log(msgSvc(),name());
+  log << MSG::DEBUG << "--- finalize ---" << endmsg;
 
   if (msgSvc()->outputLevel() <= 1) dump();
 
-	// release the interfaces used
-	if (m_dataProvider != NULL) m_dataProvider->release();
-	if (m_detDataSvc != NULL) m_detDataSvc->release();
-	if (m_incidentSvc != NULL) {
+  // release the interfaces used
+  if (m_dataProvider != NULL) m_dataProvider->release();
+  if (m_detDataSvc != NULL) m_detDataSvc->release();
+  if (m_incidentSvc != NULL) {
     // unregister from the incident svc
     m_incidentSvc->removeListener(this,IncidentType::BeginEvent);
     m_incidentSvc->release();
   }
   if (m_evtProc != NULL) m_evtProc->release();
 
-	// base class finalization
-	return Service::finalize();
+  // delete unused overridden conditions (the others are deleted together with the T.S.)
+  if ( ! m_conditionsOverides.empty() ) {
+    log << MSG::WARNING << "Few overrided conditions were not used:" << endmsg;
+    for (GaudiUtils::Map<std::string,Condition*>::iterator c = m_conditionsOverides.begin();
+         c != m_conditionsOverides.end(); ++c ) {
+      log << MSG::WARNING << c->first << endmsg;
+      delete c->second;
+    }
+  }
+
+  // base class finalization
+  return Service::finalize();
 }
 //=============================================================================
 // IUpdateManagerSvc implementation
 //=============================================================================
 IDataProviderSvc *UpdateManagerSvc::dataProvider() const {
-	return m_dataProvider;
+  return m_dataProvider;
 }
 IDetDataSvc *UpdateManagerSvc::detDataSvc() const {
-	return m_detDataSvc;
+  return m_detDataSvc;
 }
 void UpdateManagerSvc::i_registerCondition(const std::string &condition, BaseObjectMemberFunction *mf,
                                            BasePtrSetter *ptr_dest){
-	MsgStream log(msgSvc(),name());
-//   if (condition.empty()) {
-//     log << MSG::WARNING << "Ignoring request for no condition (empty string given)" << endmsg;
-//     return StatusCode::SUCCESS;
-//   }
-  if (!condition.empty()) {
-    log << MSG::DEBUG << "registering condition \"" << condition
+  MsgStream log(msgSvc(),name());
+
+  std::string cond_copy(condition);
+
+  if (!cond_copy.empty()) {
+    // remove the root name if present
+    if ( cond_copy[0] == '/'
+         && cond_copy.compare(0,m_dataProviderRootName.size(),m_dataProviderRootName) == 0 ){
+      cond_copy.erase(0,m_dataProviderRootName.size());
+    }
+    log << MSG::DEBUG << "registering condition \"" << cond_copy
         << "\" for object of type " << mf->type().name() << endmsg;
   }
   else {
@@ -179,12 +245,25 @@ void UpdateManagerSvc::i_registerCondition(const std::string &condition, BaseObj
     m_all_items.push_back(mf_item);
     m_head_items.push_back(mf_item); // since it is new, it has no parents
   }
-  if (!condition.empty()) {  
+  if (!cond_copy.empty()) {
     // find the condition
-    Item *cond_item = findItem(condition);
+    Item *cond_item = findItem(cond_copy);
     if (!cond_item){ // a new condition
-      cond_item = new Item(condition,ptr_dest);
+
+      // Check if the requested condition is in the override list.
+      GaudiUtils::Map<std::string,Condition*>::iterator cond_ov = m_conditionsOverides.find(cond_copy);
+      if ( cond_ov != m_conditionsOverides.end() ) {
+        // yes, it is!
+        cond_item = new Item(cond_copy,ptr_dest,cond_ov->second);
+        // I do not need it anymore in the list
+        m_conditionsOverides.erase(cond_ov);
+      } else {
+        // no override
+        cond_item = new Item(cond_copy,ptr_dest);
+      }
+
       m_all_items.push_back(cond_item);
+      
     } else {
       if (ptr_dest){
         // I already have this condition registered, but a new user wants to set the pointer to it.
@@ -196,7 +275,7 @@ void UpdateManagerSvc::i_registerCondition(const std::string &condition, BaseObj
     }
     link(mf_item,mf,cond_item);
   } else {
-    // this is usually don inside Item::addChild (called by "link")
+    // this is usually done inside Item::addChild (called by "link")
     Item::MembFuncList::iterator mfIt = mf_item->find(mf);
     if (mfIt == mf_item->memFuncs.end()) {
       // I do not have the MF registered inside the item
@@ -214,9 +293,9 @@ void UpdateManagerSvc::i_registerCondition(const std::string &condition, BaseObj
   m_head_until = 0;
 }
 void UpdateManagerSvc::i_registerCondition(void *obj, BaseObjectMemberFunction *mf){
-	MsgStream log(msgSvc(),name());
-	log << MSG::DEBUG << "registering object at " << std::hex << obj << std::dec
-	    << " for object of type " << mf->type().name() << endmsg;
+  MsgStream log(msgSvc(),name());
+  log << MSG::DEBUG << "registering object at " << std::hex << obj << std::dec
+      << " for object of type " << mf->type().name() << endmsg;
   // find the "condition"
   Item *cond_item = findItem(obj);
   if (!cond_item){ // Error!!!
@@ -237,15 +316,15 @@ void UpdateManagerSvc::i_registerCondition(void *obj, BaseObjectMemberFunction *
   m_head_until = 0;
 }
 StatusCode UpdateManagerSvc::newEvent(){
-	if (detDataSvc() != NULL){
-		if (detDataSvc()->validEventTime()) {
+  if (detDataSvc() != NULL){
+    if (detDataSvc()->validEventTime()) {
       return newEvent(detDataSvc()->eventTime());
-		} else {
-			MsgStream log(msgSvc(),name());
-			log << MSG::WARNING << "newEvent(): the event time is not defined!" << endmsg;
-		}
-	}
-	return StatusCode::FAILURE;
+    } else {
+      MsgStream log(msgSvc(),name());
+      log << MSG::WARNING << "newEvent(): the event time is not defined!" << endmsg;
+    }
+  }
+  return StatusCode::FAILURE;
 }
 StatusCode UpdateManagerSvc::newEvent(const Gaudi::Time &evtTime){
   StatusCode sc = StatusCode::SUCCESS;
@@ -262,8 +341,8 @@ StatusCode UpdateManagerSvc::newEvent(const Gaudi::Time &evtTime){
 #ifndef WIN32
     log << MSG::VERBOSE << "newEvent(evtTime): releasing mutex lock" << endmsg;
     releaseLock();
-#endif  	
-  	return sc; // no need to update
+#endif    
+    return sc; // no need to update
   }
 
 #ifndef WIN32
@@ -306,7 +385,7 @@ StatusCode UpdateManagerSvc::newEvent(const Gaudi::Time &evtTime){
 #ifndef WIN32
   } catch (...) {
     log << MSG::VERBOSE << "newEvent(evtTime): releasing mutex lock (exception occurred)" << endmsg;
-  	releaseLock();
+    releaseLock();
     throw;
   }
 
@@ -322,7 +401,7 @@ StatusCode UpdateManagerSvc::i_update(void *instance){
     log << MSG::DEBUG << "Update specific object at " << instance << endmsg;
   }
   if (detDataSvc() != NULL){
-		if (detDataSvc()->validEventTime()) {
+    if (detDataSvc()->validEventTime()) {
       Item *item = findItem(instance);
       if (item) {
         StatusCode sc;

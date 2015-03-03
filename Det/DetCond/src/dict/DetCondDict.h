@@ -1,4 +1,4 @@
-// $Id: DetCondDict.h,v 1.2 2006-03-24 07:17:52 cattanem Exp $
+// $Id: DetCondDict.h,v 1.4 2006-07-14 09:27:33 marcocle Exp $
 // ============================================================================
 #ifndef DETCOND_DETCONDDICT_H 
 #define DETCOND_DETCONDDICT_H 1
@@ -18,7 +18,8 @@
 // DetCond 
 // ============================================================================
 #include "DetCond/ICondDBAccessSvc.h"
-#include "DetCond/ICondDBCnvSvc.h"
+#include "DetCond/ICondDBEditor.h"
+#include "DetCond/ICondDBReader.h"
 // ============================================================================
 #endif // DETCOND_DETCONDDICT_H
 // ============================================================================

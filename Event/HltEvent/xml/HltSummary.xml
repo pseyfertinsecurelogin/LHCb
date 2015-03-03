@@ -1,0 +1,410 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE gdd SYSTEM 'gdd.dtd'>
+<gdd>
+  <package name='HltEvent'>
+
+<!-- HltSummary Class : Auxiliar Class-->
+
+    <class
+      name = "HltEnums"
+      author      = 'Jose Hernando'
+      desc = "Enumerations for the Hlt Summary classes">
+
+      <enum
+        name   = 'HltDecisionType'
+        desc   = 'Trigger type decision: muon, dimuon ,etc'
+        value  = 'Decision=1,
+	          Forced=2,
+                  Muon=4,
+	          DiMuon=8,
+	          JPsi=16,
+	          MuonHadron=32,
+	          Hadron=64,
+	          DiHadron=128,
+	          Electron=256,
+ 	          DiElectron=512,
+	          Gamma=1024'
+        access = 'PUBLIC' />
+
+      <enum
+        name   = 'HltAlley'
+        desc   = 'Hlt alley'
+        value  = 'AlleyUnknown=0,
+	          MuonAlley,
+	          MuonHadAlley,
+	          HadronAlley,
+                  CalAlley'
+        access = 'PUBLIC' />
+
+      <enum
+        name   = 'HltSelectionSummary'
+        desc   = 'Hlt selection summary'
+        value  = 'HltSelectionSummaryUnknown=0,
+	          MuonEntry,
+	          MuonL0Conf,
+	          MuonPreTriggerSingle,
+	          MuonPreTriggerDiMuon,
+	          MuonPreTriggerIPDiMuon,
+	          MuonTriggerSingle,
+	          MuonTriggerDiMuon,
+	          MuonTriggerIPDiMuon,
+                  MuonHadEntry,
+                  MuonHadL0Conf,
+	          MuonHadPreTrigger,
+                  MuonHadTrigger,
+	          HadEntry,
+                  HadL0Conf,
+                  HadPreTriggerSingle,
+                  HadPreTriggerDiHadron,
+                  HadTrigger,
+                  CalEntry,
+                  CalL0Conf,
+                  CalPreTrigger,
+	          CalTrigger'
+        access = 'PUBLIC' />
+      
+
+      <enum
+        name   = 'HltParticleInfo'
+        desc   = 'Monitoring Quantities'
+        value  = 'HltParticleInfoUnknown=0,
+	RZVeloKey,
+	VeloKey,
+	VeloTTKey,
+	ForwardKey,
+	MuonKey,
+	CaloKey,
+	PVKey,
+        CaloEt,
+	rIP,
+	IP,
+	IPS,
+	PT,
+	Mass,
+	DOCA,
+	VertexChi2,
+	VertexD,
+	VertexDS,
+	VertexRho,
+	VertexDz,
+	VertexPointing,
+	Muon2DChi2,
+	Muon3DChi2,
+	Calo2DChi2,
+	Calo3DChi2'
+	access = ' PUBLIC' />	
+    </class>
+    
+    <class
+      name        = 'HltSelectionSummary'
+      author      = 'Jose Hernando'
+      desc        = 'Summary class for Hlt box'>
+
+      <import name='GaudiKernel/VectorMap' />
+      <import name='Event/Particle' />
+      <import name='Event/Track' />
+      <import name='Event/RecVertex' />
+
+      <attribute
+        type = 'bitfield'
+        name = 'pattern'
+        desc = 'trigger pattern'
+	init = '0'
+	access = 'PROTECTED' >
+	<bitfield
+	  type = 'LHCb::Hlt::HltDecisionType'
+	  name = 'decisionType'
+	  length = '20'
+	  desc = 'trigger decision type: muon, dimuon, etc'
+	  setMeth = 'FALSE'
+	  getMeth = 'FALSE'
+	  checkMeth = 'FALSE' /> 
+      </attribute>
+
+      <relation
+        type      = 'LHCb::Particle'
+        name      = 'particles'
+        desc      = 'particle passing a trigger decision algorithm'
+	setMeth   = 'FALSE'
+        access    = 'PROTECTED'
+	multiplicity = 'N' />
+
+      <attribute
+        type      = 'std::vector &lt; ContainedObject* &gt; '
+        name      = 'data'
+        desc      = 'data passing a trigger decision algorithm'
+	setMeth   = 'FALSE'
+        access    = 'PROTECTED' 
+      />
+
+
+ <method
+	type = 'bool'
+	name = 'decision'
+	desc = 'returns the trigger decision'
+	const = 'TRUE' >
+	<code>
+return checkDecisionType(1);
+	</code>
+      </method>
+
+      <method
+	name = 'setDecision'
+	desc = 'returns the trigger decision'
+	argList = 'bool decision' >
+	<code>
+setDecisionType(1,decision);
+	</code>
+      </method>
+      
+      <method
+	name    = 'setDecisionType'
+	argList = 'unsigned int decisionType, bool ok'
+	desc    = 'Update the decisionType (see the DecisionTypes enum)'>
+	<code>
+unsigned int val = (((unsigned int) decisionType) &lt;&lt; decisionTypeBits) &amp; decisionTypeMask;
+if (ok) m_pattern |= val;
+else m_pattern &amp;= ~val;
+if (ok &amp;&amp; (decisionType != 1) ) setDecision(ok);
+        </code>
+      </method>
+
+      <method
+	type    = 'bool'
+	name    = 'checkDecisionType'
+        argList = 'unsigned int decisionType'
+        desc    = 'Check the status of the decisionType (see the DecisionTypes enum)'
+        const   = 'TRUE'>
+        <code>
+unsigned int val = ((unsigned int) decisionType &lt;&lt; decisionTypeBits);  
+bool ok = (0 != ( m_pattern &amp; decisionTypeMask &amp; val ));
+return ok;
+        </code>
+      </method>
+      
+      <method
+        name    = 'addParticle'
+        desc    = 'Add a Particle to the list of saved Particle'>
+        <arg type = 'const LHCb::Particle ' name='particle' />
+        <code>
+  m_particles.push_back( (LHCb::Particle*) &amp; particle );
+        </code>
+      </method>
+
+      <method
+        name    = 'addData'
+        desc    = 'Add data to the list of saved Particle'>
+        <arg type = 'const ContainedObject ' name='obj' />
+        <code>
+  m_data.push_back( (ContainedObject*) &amp; obj );
+        </code>
+      </method>
+
+    </class>
+    
+<!-- HltSummary Class -->
+
+    <class
+      name        = 'HltSummary'
+      author      = 'Jose Hernando'
+      desc        = 'Summary class for Hlt'
+      id          = '7510'>
+
+      <location name="Default"   place="Hlt/Summary"/>
+ 
+      <base name='DataObject' />
+      &DataObject;
+
+      <import name='GaudiKernel/GaudiException' />
+      <import name="GaudiKernel/KeyedObject"/>
+      <import name='GaudiKernel/VectorMap' />
+      <import name='Event/HltSelectionSummary' />
+
+      <attribute
+        type = 'bitfield'
+        name = 'pattern'
+        desc = 'trigger pattern'
+	init = '0'
+	access = 'PUBLIC' >
+	<bitfield
+	  type = 'int'
+	  name = 'decisionType'
+	  length = '20'
+	  desc = 'trigger decision type: muon, dimuon, etc'
+	  setMeth = 'FALSE'
+	  getMeth = 'FALSE'
+	  checkMeth = 'FALSE' /> 
+      </attribute>
+
+      <attribute
+        type = 'bitfield'
+        name = 'patternError'
+        desc = 'trigger pattern error'
+	init = '0'
+	access = 'PUBLIC' >
+	<bitfield
+	  type = 'int'
+	  name = 'errorType'
+	  length = '20'
+	  desc = 'trigger error decision type: etc'
+	  setMeth = 'FALSE'
+	  getMeth = 'FALSE'
+	  checkMeth = 'FALSE' /> 
+      </attribute>
+
+      <attribute
+        type      = 'GaudiUtils::VectorMap&lt; int, LHCb::HltSelectionSummary &gt;'
+        name      = 'selections'
+        desc      = 'map of HltSelectionSummary es'
+        access    = 'PROTECTED' />
+      
+      <method
+	type = 'bool'
+	name = 'decision'
+	desc = 'returns the trigger decision'
+	const = 'TRUE' >
+	<code>
+return checkDecisionType(1);
+	</code>
+      </method>
+
+      <method
+	name = 'setDecision'
+	desc = 'returns the trigger decision'
+	argList = 'bool decision' >
+	<code>
+setDecisionType(1,decision);
+	</code>
+      </method>
+      
+      <method
+	name    = 'setDecisionType'
+	argList = 'unsigned int decisionType, bool ok'
+	desc    = 'Update the decisionType (see the DecisionTypes enum)'>
+	<code>
+unsigned int val = (((unsigned int) decisionType) &lt;&lt; decisionTypeBits) &amp; decisionTypeMask;
+if (ok) m_pattern |= val;
+else m_pattern &amp;= ~val;
+if (ok &amp;&amp; decisionType != 1) setDecision(ok);
+        </code>
+      </method>
+
+      <method
+	type    = 'bool'
+	name    = 'checkDecisionType'
+        argList = 'unsigned int decisionType'
+        desc    = 'Check the status of the decisionType (see the DecisionTypes enum)'
+        const   = 'TRUE'>
+        <code>
+unsigned int val = ((unsigned int) decisionType &lt;&lt; decisionTypeBits);  
+bool ok = (0 != ( m_pattern &amp; decisionTypeMask &amp; val ));
+return ok;
+        </code>
+      </method>
+
+  <method
+	type = 'bool'
+	name = 'error'
+	desc = 'returns the trigger error'
+	const = 'TRUE' >
+	<code>
+return checkErrorType(1);
+	</code>
+      </method>
+
+      <method
+	name = 'setError'
+	desc = 'returns the trigger error'
+	argList = 'bool error' >
+	<code>
+setErrorType(1,error);
+	</code>
+      </method>
+      
+      <method
+	name    = 'setErrorType'
+	argList = 'unsigned int errorType, bool ok'
+	desc    = 'Update the errorType (see the ErrorTypes enum)'>
+	<code>
+unsigned int val = (((unsigned int) errorType) &lt;&lt; errorTypeBits) &amp; errorTypeMask;
+if (ok) m_patternError |= val;
+else m_patternError &amp;= ~val;
+if (ok &amp;&amp; errorType != 1) setError(ok);
+        </code>
+      </method>
+
+      <method
+	type    = 'bool'
+	name    = 'checkErrorType'
+        argList = 'unsigned int errorType'
+        desc    = 'Check the status of the errorType (see the ErrorTypes enum)'
+        const   = 'TRUE'>
+        <code>
+unsigned int val = ((unsigned int) errorType &lt;&lt; errorTypeBits);  
+bool ok = (0 != ( m_patternError &amp; errorTypeMask &amp; val ));
+return ok;
+        </code>
+      </method>    
+
+      <method
+        type = 'bool'
+        name = 'hasSelectionSummary'
+        desc = 'has a summary from this trigger box?'
+        argList = 'int boxid'
+        const = 'TRUE'>
+        <code>
+    return (m_selections.find(boxid) != m_selections.end());
+        </code>
+      </method>
+
+      <method
+        type = 'const LHCb::HltSelectionSummary &amp;'
+        name = 'selectionSummary'
+        desc = 'return summary box from this triger selection'
+        argList = 'int boxid'
+        const = 'TRUE' >
+        <code>
+   GaudiUtils::VectorMap&lt;int,LHCb::HltSelectionSummary&gt;::iterator it = m_selections.find(boxid);  
+   if (it != m_selections.end()) return it->second;
+   else 
+      throw GaudiException( "No requested HltSelectionSummary in HltSummary","HltSummary",StatusCode::FAILURE );
+        </code>
+      </method>
+      
+      <method
+        type = 'LHCb::HltSelectionSummary &amp;'
+        name = 'selectionSummary'
+        desc = 'returns selection sumary , if not in map, it will create it'
+        argList = 'int boxid'
+        const = 'FALSE'>
+        <code>
+   GaudiUtils::VectorMap&lt;int,LHCb::HltSelectionSummary&gt;::iterator it = m_selections.find(boxid);
+   if (it == m_selections.end()) {
+       LHCb::HltSelectionSummary thebox;
+       m_selections.insert(boxid,thebox);
+   }
+   it = m_selections.find(boxid);
+   LHCb::HltSelectionSummary* thebox = (LHCb::HltSelectionSummary*) (&amp;(it->second));
+   return *thebox;
+        </code>
+      </method>
+
+      <method
+        type = 'std::vector &lt; int &gt;'
+        name = 'selectionSummaryIDs'
+        desc = 'return the selections names stored in the summary'
+        const = 'TRUE' >
+        <code>
+    std::vector&lt;int&gt; names;
+    GaudiUtils::VectorMap&lt;int,LHCb::HltSelectionSummary&gt;::iterator it = m_selections.begin();
+    for (; it != m_selections.end(); it++) names.push_back(it->first);
+    return names;
+        </code>
+      </method>
+      
+
+    </class>
+
+  </package>
+
+</gdd>

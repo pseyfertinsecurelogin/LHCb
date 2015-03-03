@@ -2,6 +2,32 @@
 !Package manager : M. Needham
 !-----------------------------------------------------------------------
 
+!========================= STDet v2r7 2006-10-11 =======================
+! 2006-10-10 M Needham
+ - Adapt channel validation algorithm
+
+!========================= STDet v2r6 2006-08-30 =======================
+! 2006-08-30 - Marco Cattaneo
+ - Use SystemOfUntis.h from GaudiKernel
+
+! 2006-08-28
+ - Add entrance and exit planes in DeSTSector
+ - Bug fix in DeSTLayer contains
+
+! 2006-07-12 M Needham
+ - add thickness function to DeSTSector
+
+!========================= STDet v2r5 2006-07-11 =======================
+! 2006-07-11 M Needham
+ - cosmetic changes in getting trajectories
+
+!========================= STDet v2r4 2006-06-30 =======================
+! 2006-05-26 M. Needham
+ - Small bug fix in DeSTSector
+
+! 2006-05-05 M. Needham
+ - only cache the plane in DeSTLayer once
+
 !========================= STDet v2r3 2006-04-19 =======================
 ! 2006-04-19 M. Needham
  - Changes to findSector methods of DeSTDetector - factor 2 faster

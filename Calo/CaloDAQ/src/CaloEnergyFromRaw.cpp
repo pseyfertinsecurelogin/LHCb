@@ -1,4 +1,4 @@
-// $Id: CaloEnergyFromRaw.cpp,v 1.8 2006-02-02 16:16:50 ocallot Exp $
+// $Id: CaloEnergyFromRaw.cpp,v 1.11 2006-09-29 15:33:52 odescham Exp $
 // Include files 
 
 // from Gaudi
@@ -29,10 +29,13 @@ CaloEnergyFromRaw::CaloEnergyFromRaw( const std::string& type,
   : GaudiTool ( type, name , parent )
 {
   declareInterface<ICaloEnergyFromRaw>(this);
-  m_detectorName = name.substr( 8, 4 );
-  if ( name.substr(8,3) == "Prs" ) m_detectorName = "Prs";
+
+  int index = name.find_first_of(".",0) +1 ; // return -1+1=0 if '.' not found --> OK !!
+  m_detectorName = name.substr( index, 4 );
+  if ( name.substr(index,3) == "Prs" ) m_detectorName = "Prs";
   
   declareProperty( "DetectorName", m_detectorName );
+  declareProperty( "PackedIsDefault", m_packedIsDefault = false);
   m_adcs.clear();
   m_digits.clear();
 }
@@ -54,19 +57,16 @@ StatusCode CaloEnergyFromRaw::initialize ( ) {
   if ( "Ecal" == m_detectorName ) {
     m_calo     = getDet<DeCalorimeter>( DeCalorimeterLocation::Ecal );
     m_roTool   = tool<CaloReadoutTool>( "CaloReadoutTool/EcalReadoutTool" );
-    m_pedShift = 0.6;
     m_packedType = LHCb::RawBank::EcalPacked;
     m_shortType  = LHCb::RawBank::EcalE;
   } else if ( "Hcal" == m_detectorName ) {
     m_calo     = getDet<DeCalorimeter>( DeCalorimeterLocation::Hcal );
     m_roTool   = tool<CaloReadoutTool>( "CaloReadoutTool/HcalReadoutTool" );
-    m_pedShift = 0.6;
     m_packedType = LHCb::RawBank::HcalPacked;
     m_shortType  = LHCb::RawBank::HcalE;
   } else if ( "Prs" == m_detectorName ) {
     m_calo     = getDet<DeCalorimeter>( DeCalorimeterLocation::Prs );
     m_roTool   = tool<CaloReadoutTool>( "CaloReadoutTool/PrsReadoutTool" );
-    m_pedShift = 0.;
     m_packedType = LHCb::RawBank::PrsPacked;
     m_shortType  = LHCb::RawBank::PrsE;
   } else {
@@ -74,6 +74,7 @@ StatusCode CaloEnergyFromRaw::initialize ( ) {
     return StatusCode::FAILURE;
   }
   
+  m_pedShift = m_calo->pedestalShift();
   m_adcs.reserve( m_calo->numberOfCells() );
   m_digits.reserve( m_calo->numberOfCells() );
   debug() << "Got detector element for " << m_detectorName << endreq;
@@ -103,10 +104,13 @@ std::vector<LHCb::CaloDigit>&  CaloEnergyFromRaw::digits ( ) {
 std::vector<LHCb::CaloAdc>& CaloEnergyFromRaw::adcs ( ) {
   m_adcs.clear();
   LHCb::RawEvent* rawEvt = get<LHCb::RawEvent> ( LHCb::RawEventLocation::Default );
-  const std::vector<LHCb::RawBank*>* banks = &rawEvt->banks( m_shortType );
-  if ( 0 == banks->size() ) {
+
+  const std::vector<LHCb::RawBank*>* banks = 0;  
+  if( !m_packedIsDefault)banks = &rawEvt->banks( m_shortType );
+  if ( 0 == banks  || 0 == banks->size() ) {
     banks = &rawEvt->banks( m_packedType );
     debug() << "Found " << banks->size() << " banks of packed type " << m_packedType << endreq;
+    if ( 0 == banks->size() )warning() << " Requested packed Banks has not been found "<< endreq;
   } else {
     debug() << "Found " << banks->size() << " banks of short type " << m_shortType << endreq;
   }

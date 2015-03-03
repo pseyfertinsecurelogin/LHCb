@@ -4,6 +4,39 @@
 ! Purpose     : Provides magnetic field map and Bdl tools
 !-----------------------------------------------------------------------------
 
+!====================== Magnet v3r4 2006-10-19 ===============================
+! 2006-10-19 - Marco Cattaneo
+ - Adapt requirements to run test application with cmt v1r18p*
+ - Use DECLARE_xxx_FACTORY macro everywhere
+ - Use units from GaudiKernel
+ - Remove default name for field map file: 
+   MagneticFieldSvc.FieldMapFile option must be provided
+
+!====================== Magnet v3r3 2006-08-21 ===============================
+! 2006-08-17 M Needham
+ - Put default number of steps in integration tool to 101
+ - saves some time !
+
+!====================== Magnet v3r2 2006-07-20 ===============================
+! 2006-07-20 - Marco Cattaneo
+ - Add possibilities to have a zero field, a constant non-zero field, or a 
+   scale factor applied to the field map. Job options are:
+
+// Set zero field - default is false
+//MagneticFieldSvc.UseConstantField = true;
+
+// Set non-zero constant field (in Tesla units)
+//MagneticFieldSvc.UseConstantField = true;
+//MagneticFieldSvc.ConstantFieldVector = { 0., 0.1, 0. };
+
+// Set a scale factor applied to whole field map - default is 1.
+//MagneticFieldSvc.ScaleFactor = 0.8;
+
+! 2006-07-20 - Marco Cattaneo
+ - Fix requirements so that debug build does not require existence of non-debug
+   libraries
+ - Fix syntax error in job options of test program, for new options parser 
+
 !====================== Magnet v3r1 2006-01-20 ===============================
 ! 2006-01-20 - Marco Cattaneo
  - IMagneticFieldSvc.h is now in GaudiKernel, since GAUDI v18r1

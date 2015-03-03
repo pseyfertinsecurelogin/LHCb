@@ -1,4 +1,4 @@
-// $Id: DeVeloPhiType.cpp,v 1.25 2006-05-17 16:03:29 cattanem Exp $
+// $Id: DeVeloPhiType.cpp,v 1.28 2006-11-01 19:15:00 mtobin Exp $
 //==============================================================================
 #define VELODET_DEVELOPHITYPE_CPP 1
 //==============================================================================
@@ -13,6 +13,7 @@
 
 // From LHCb
 #include "Kernel/LHCbMath.h"
+#include "gsl/gsl_math.h"
 
 // From Velo
 #include "VeloDet/DeVeloPhiType.h"
@@ -67,6 +68,9 @@ StatusCode DeVeloPhiType::initialize()
     msg << MSG::ERROR << "Failed to initialise DeVeloSensor" << endreq;
     return sc;
   }
+  m_debug   = (msgSvc()->outputLevel("DeVeloPhiType") == MSG::DEBUG  ) ;
+  m_verbose = (msgSvc()->outputLevel("DeVeloPhiType") == MSG::VERBOSE) ;
+
   m_numberOfZones=2;
   m_nbInner = param<int>("NbPhiInner");
   m_stripsInZone.clear();
@@ -122,10 +126,9 @@ StatusCode DeVeloPhiType::initialize()
 //==============================================================================
 void DeVeloPhiType::calcStripLines()
 {
-  MsgStream msg(msgSvc(), "DeVeloPhiType");
   m_stripLines.clear();
   double x1,y1,x2,y2;
-  for(unsigned int strip=0; strip<numberOfStrips(); strip++){
+  for(unsigned int strip=0; strip<numberOfStrips(); ++strip){
     if(m_nbInner > strip) {
       x1 = innerRadius() * cos(phiOfStrip(strip,0.,innerRadius()));
       y1 = innerRadius() * sin(phiOfStrip(strip,0.,innerRadius()));
@@ -155,7 +158,10 @@ void DeVeloPhiType::calcStripLines()
     }
     Gaudi::XYZPoint begin(x1,y1,0);
     Gaudi::XYZPoint end(x2,y2,0);
-    msg << MSG::VERBOSE << "Sensor " << sensorNumber() << " " << x1 << " " << y1 << " " << x2 << " " << y2 << std::endl;
+    if(m_verbose) {
+      MsgStream msg(msgSvc(), "DeVeloPhiType");
+      msg << MSG::VERBOSE << "Sensor " << sensorNumber() << " " << x1 << " " << y1 << " " << x2 << " " << y2 << std::endl;
+    }
     //Gaudi::XYZPoint begin;
     //Gaudi::XYZPoint end;
     //StatusCode sc=this->localToGlobal(Gaudi::XYZPoint(x1,y1,0),begin);
@@ -196,7 +202,6 @@ StatusCode DeVeloPhiType::pointToChannel(const Gaudi::XYZPoint& point,
                           double& fraction,
                           double& pitch) const
 {
-  MsgStream msg(msgSvc(), "DeVeloPhiType");
   Gaudi::XYZPoint localPoint(0,0,0);
   StatusCode sc = globalToLocal(point,localPoint);
   if(!sc.isSuccess()) return sc;
@@ -233,12 +238,15 @@ StatusCode DeVeloPhiType::pointToChannel(const Gaudi::XYZPoint& point,
   channel.setStrip(closestStrip);
   channel.setType(LHCb::VeloChannelID::PhiType);
 
-  msg << MSG::VERBOSE << "pointToChannel; local phi " << localPoint.phi()/Gaudi::Units::degree
-      << " radius " << localPoint.Rho() 
-      << " phiOffset " << phiOffset(radius)/Gaudi::Units::degree
-      << " phi corrected " << phi/Gaudi::Units::degree << endreq;
-  msg << MSG::VERBOSE << " strip " << strip << " closest strip " << closestStrip
-      << " fraction " << fraction <<endreq;
+  if(m_verbose) {
+    MsgStream msg(msgSvc(), "DeVeloPhiType");
+    msg << MSG::VERBOSE << "pointToChannel; local phi " << localPoint.phi()/Gaudi::Units::degree
+        << " radius " << localPoint.Rho() 
+        << " phiOffset " << phiOffset(radius)/Gaudi::Units::degree
+        << " phi corrected " << phi/Gaudi::Units::degree << endreq;
+    msg << MSG::VERBOSE << " strip " << strip << " closest strip " << closestStrip
+        << " fraction " << fraction <<endreq;
+  }
   return StatusCode::SUCCESS;
 }
 //==============================================================================
@@ -269,11 +277,11 @@ StatusCode DeVeloPhiType::neighbour(const LHCb::VeloChannelID& start,
 //==============================================================================
 StatusCode DeVeloPhiType::isInActiveArea(const Gaudi::XYZPoint& point) const
 {
-  MsgStream msg(msgSvc(), "DeVeloPhiType");
+  //  MsgStream msg(msgSvc(), "DeVeloPhiType");
   // check boundaries....  
   double radius=point.Rho();
   if(innerRadius() >= radius || outerRadius() <= radius) {
-    msg << MSG::VERBOSE << "Outside active radii " << radius << endreq;
+    //    msg << MSG::VERBOSE << "Outside active radii " << radius << endreq;
     return StatusCode::FAILURE;
   }
   bool isInner=true;
@@ -283,17 +291,17 @@ StatusCode DeVeloPhiType::isInActiveArea(const Gaudi::XYZPoint& point) const
   // Is it inside angular coverage
   double xCross=m_middleRadius*cos(phiOfStrip(0,0.,m_middleRadius));
   if(xCross > point.x()) {
-    msg << MSG::VERBOSE << "Inner " << isInner 
-        << " Outside angular coverage: x, xmax " << point.x()
-        << "," << xCross << endreq;
+    /*    msg << MSG::VERBOSE << "Inner " << isInner 
+          << " Outside angular coverage: x, xmax " << point.x()
+          << "," << xCross << endreq;*/
     return StatusCode::FAILURE;
   }
 
   // Dead region
   if(m_middleRadius+m_rGap > radius && m_middleRadius-m_rGap < radius){
-    msg << MSG::VERBOSE << "Inner " << isInner 
-        << " Inside dead region from bias line: " << radius 
-        << endreq;
+    /*    msg << MSG::VERBOSE << "Inner " << isInner 
+          << " Inside dead region from bias line: " << radius 
+          << endreq;*/
     return StatusCode::FAILURE;
   }
   // Corner cut-offs
@@ -302,8 +310,8 @@ StatusCode DeVeloPhiType::isInActiveArea(const Gaudi::XYZPoint& point) const
   double y=point.y();
   bool cutOff=isCutOff(x,y);
   if(cutOff) {
-    msg << MSG::VERBOSE << "Inner " << isInner << " Inside corner cut-off " 
-        << x << "," << y << endreq;
+    /*    msg << MSG::VERBOSE << "Inner " << isInner << " Inside corner cut-off " 
+          << x << "," << y << endreq;*/
     return StatusCode::FAILURE;
   }
   // Work out if x/y is outside first/last strip in zone..
@@ -336,26 +344,26 @@ StatusCode DeVeloPhiType::isInActiveArea(const Gaudi::XYZPoint& point) const
   double yAtX=gradient*x+intercept;
   if(0 < y && isInner) {
     if(0 < gradient && yAtX < y) {
-      msg << MSG::VERBOSE << "end strip " << endStrip << " +ve gradient"
-          << " yAtX " << yAtX << " y " << y << " inner " << isInner << endreq;
+      /*      msg << MSG::VERBOSE << "end strip " << endStrip << " +ve gradient"
+              << " yAtX " << yAtX << " y " << y << " inner " << isInner << endreq;*/
       return StatusCode::FAILURE;
     }
   } else if(0 < y && !isInner) {
     if(0 > gradient && yAtX > y) {
-      msg << MSG::VERBOSE << "end strip " << endStrip << " -ve gradient"
-          << " yAtX " << yAtX << " y " << y << " inner " << isInner << endreq;
+      /*      msg << MSG::VERBOSE << "end strip " << endStrip << " -ve gradient"
+              << " yAtX " << yAtX << " y " << y << " inner " << isInner << endreq;*/
       return StatusCode::FAILURE;
     }
   } else if(0 > y && isInner) {
     if(0 < gradient && yAtX < y) {
-      msg << MSG::VERBOSE << "end strip " << endStrip << " +ve gradient"
-          << " yAtX " << yAtX << " y " << y << " inner " << isInner << endreq;
+      /*      msg << MSG::VERBOSE << "end strip " << endStrip << " +ve gradient"
+              << " yAtX " << yAtX << " y " << y << " inner " << isInner << endreq;*/
       return StatusCode::FAILURE;
     }    
   } else if(0 > y && !isInner) {
     if(0 > gradient && yAtX > y) {
-      msg << MSG::VERBOSE << "end strip " << endStrip << " -ve gradient"
-          << " yAtX " << yAtX << " y " << y << " inner " << isInner << endreq;
+      /*      msg << MSG::VERBOSE << "end strip " << endStrip << " -ve gradient"
+              << " yAtX " << yAtX << " y " << y << " inner " << isInner << endreq;*/
       return StatusCode::FAILURE;
     }
   }
@@ -396,6 +404,17 @@ StatusCode DeVeloPhiType::residual(const Gaudi::XYZPoint& point,
                                    double &residual,
                                    double &chi2) const
 {
+  return this->residual(point, channel, 0.0, residual, chi2);
+}
+//==============================================================================
+/// Residual of 3-d point to a VeloChannelID + interstrip fraction
+//==============================================================================
+StatusCode DeVeloPhiType::residual(const Gaudi::XYZPoint& point,
+                                   const LHCb::VeloChannelID& channel,
+                                   const double interStripFraction,
+                                   double &residual,
+                                   double &chi2) const
+{
   MsgStream msg(msgSvc(), "DeVeloPhiType");
   Gaudi::XYZPoint localPoint(0,0,0);
   StatusCode sc=DeVeloSensor::globalToLocal(point,localPoint);
@@ -403,23 +422,49 @@ StatusCode DeVeloPhiType::residual(const Gaudi::XYZPoint& point,
   sc = isInActiveArea(localPoint);
   if(!sc.isSuccess()) return sc;
 
-  double x=localPoint.x();
-  double y=localPoint.y();
-  //  if(this->isDownstream()) y = -y;
-  // Work out closest point on line
+  // Get start/end co-ordinates of channel's strip
   unsigned int strip;
   strip=channel.strip();
-  double xNear = (m_stripLines[strip].first*y+x-
-                  m_stripLines[strip].first*m_stripLines[strip].second);
-  xNear /= (1+pow(m_stripLines[strip].first,2));
+  std::pair<Gaudi::XYZPoint,Gaudi::XYZPoint> stripLimits = localStripLimits(strip);
+  Gaudi::XYZPoint stripBegin = stripLimits.first;
+  Gaudi::XYZPoint stripEnd   = stripLimits.second;
+
+  // Add offset a la trajectory
+  Gaudi::XYZPoint nextStripBegin, nextStripEnd;
+  if(interStripFraction > 0. ){
+    stripLimits = localStripLimits(strip+1);
+    nextStripBegin = stripLimits.first;
+    nextStripEnd   = stripLimits.second;
+    stripBegin += (nextStripBegin-stripBegin)*interStripFraction;
+    stripEnd   += (nextStripEnd-stripEnd)*interStripFraction;
+  }else if(interStripFraction < 0.) { // This should never happen for clusters
+    stripLimits = localStripLimits(strip-1);
+    nextStripBegin = stripLimits.first;
+    nextStripEnd   = stripLimits.second;
+    stripBegin += (stripBegin-nextStripBegin)*interStripFraction;
+    stripEnd   += (stripEnd-nextStripEnd)*interStripFraction;
+  }
+  // calculate equation of line for strip
+  double gradient = (stripEnd.y()-stripBegin.y()) / (stripEnd.x()-stripBegin.x());
+  double intercept = stripBegin.y() - gradient*stripBegin.x();
+
+  double x=localPoint.x();
+  double y=localPoint.y();
+  double xNear = (gradient*y+x-gradient*intercept);
+  xNear /= (1+gsl_pow_2(gradient));
   
-  double yNear = m_stripLines[strip].first*xNear + m_stripLines[strip].second;
+  double yNear = gradient*xNear + intercept;
   
-  residual = sqrt(pow(xNear-x,2)+pow(yNear-y,2));
-  if(yNear > y) residual *= -1;
+  residual = sqrt(gsl_pow_2(xNear-x)+gsl_pow_2(yNear-y));
+
+  // Work out how to calculate the sign!
+  Gaudi::XYZPoint localNear(xNear,yNear,0.0),globalNear;
+  sc = DeVeloSensor::localToGlobal(localNear,globalNear);
+  if(point.phi() < globalNear.phi()) residual *= -1.;
+
   double radius = localPoint.Rho();
   double sigma = m_resolution.first*phiPitch(radius) - m_resolution.second;
-  chi2 = pow(residual/sigma,2);
+  chi2 = gsl_pow_2(residual/sigma);
   
   msg << MSG::VERBOSE << "Residual; sensor " << channel.sensor()
       << " strip " << strip 
@@ -427,18 +472,6 @@ StatusCode DeVeloPhiType::residual(const Gaudi::XYZPoint& point,
   msg << MSG::VERBOSE << " xNear " << xNear << " yNear " << yNear 
       << " residual " << residual << " sigma = " << sigma
       << " chi2 = " << chi2 << endreq;
-  return StatusCode::SUCCESS;
-}
-//==============================================================================
-/// Residual [see DeVelo for explanation]
-//==============================================================================
-StatusCode DeVeloPhiType::residual(const Gaudi::XYZPoint& /*point*/,
-                                   const LHCb::VeloChannelID& /*channel*/,
-                                   const double /*localOffset*/,
-                                   const double /*width*/,
-                                   double &/*residual*/,
-                                   double &/*chi2*/) const
-{
   return StatusCode::SUCCESS;
 }
 //==============================================================================
@@ -467,6 +500,14 @@ double DeVeloPhiType::rMax(const unsigned int zone) const
   }
   return rMax;
 }
+//==============================================================================
+/// Convert local phi to ideal global phi
+//==============================================================================
+double DeVeloPhiType::localPhiToGlobal(double phiLocal) const {
+  if(isDownstream()) phiLocal = -phiLocal;
+  if(isRight()) phiLocal += Gaudi::Units::pi;
+  return phiLocal;
+} 
 //=============================================================================
 // Build map of strips to routing line and back
 //=============================================================================
@@ -481,9 +522,9 @@ void DeVeloPhiType::BuildRoutingLineMap(){
 
   unsigned int count=0;
   MsgStream msg( msgSvc(), "DeVeloPhiType" );
-  /*msg << MSG::DEBUG << "Building routing line map for sensor " 
-    << (this->sensorNumber()) << endreq;*/
-  for(unsigned int routLine=m_minRoutingLine;routLine<=m_maxRoutingLine;routLine++){
+  msg << MSG::DEBUG << "Building routing line map for sensor " 
+      << (this->sensorNumber()) << endreq;
+  for(unsigned int routLine=m_minRoutingLine;routLine<=m_maxRoutingLine;++routLine,++count){
     if(0 == count%6){
       msg << MSG::DEBUG << "Pattern of six ---------------------------------------\n";
     }
@@ -497,7 +538,6 @@ void DeVeloPhiType::BuildRoutingLineMap(){
         << " number " << (patternNumber(routLine))
         << " strip " << strip
         << endreq;
-    count++;
   }
 }
 //==============================================================================

@@ -1,8 +1,21 @@
 !-----------------------------------------------------------------------------
 ! Package     : L0/ProcessorKernel
-! Responsible : A. Tsaregorodtsev
+! Responsible : Julien Cogan, A. Tsaregorodtsev
 ! Purpose     : Base classes for a generic processor simulation
 !-----------------------------------------------------------------------------
+
+!======================== ProcessorKernel v3r3 2006-09-18 ====================
+! 2006-09-14 - Julien Cogan
+ - Reorganize the loop inside the getVectorOf... methods of the class Property
+   in order to avoid valgrind complaint. Remove unnecessary initialization 
+   introduced on the 2006-08-08. 
+
+!======================== ProcessorKernel v3r2 2006-08-30 ====================
+! 2006-08-21 - Julien Cogan
+ - Add a reset method to RegisterFactory
+
+! 2006-08-08 - Julien Cogan
+ - Initialize pointers in Property.cpp to please valgrind. 
 
 !======================== ProcessorKernel v3r1 2006-06-02 ====================
 ! 2006-06-02 - Marco Cattaneo

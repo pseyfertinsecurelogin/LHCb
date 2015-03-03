@@ -1,6 +1,6 @@
-# $Id: requirements,v 1.48 2006-04-25 17:26:07 marcocle Exp $
+# $Id: requirements,v 1.56 2006-11-03 16:05:58 cattanem Exp $
 package DetCondExample
-version v8r0
+version v9r3
 
 branches doc src job options cmt XMLDDDB python logs
 ignore_pattern package_stamps 
@@ -19,6 +19,7 @@ use DetDescSvc v* Det
 use DetDescCnv v* Det
 use XmlDDDB v* Det
 use XmlConditions v* Det
+# use CondDBConditions v* Det
 
 # Xml Parsing services (XmlCnvSvc)
 use XmlTools v* Tools
@@ -38,6 +39,8 @@ use sqlite   v* LCG_Interfaces
 
 # library path needed for oracle backend
 use oracle   v* LCG_Interfaces
+# we do not need to lik against Oracle libraries
+macro oracle_linkopts
 
 # XML detector description database location
 set DETCONDEXAMPLE_XMLDDDB ${DETCONDEXAMPLEROOT}/XMLDDDB
@@ -45,14 +48,9 @@ set DETCONDEXAMPLE_XMLDDDB ${DETCONDEXAMPLEROOT}/XMLDDDB
 # DAQ test parameters (number of events, folder name and record size in bytes)
 set DETCONDEXAMPLE_DAQEVTMAX 10
 set DETCONDEXAMPLE_DAQFOLDERNAME DAQ
-#set DETCONDEXAMPLE_DAQRECORDSIZE 100000
-# currently COOL can store only strings <= 4000 chars
-set DETCONDEXAMPLE_DAQRECORDSIZE 3999
+set DETCONDEXAMPLE_DAQRECORDSIZE 100000
 
-# Path to some useful scripts using sql
-#path_append PATH ${DETCONDEXAMPLEROOT}/sql
-
-apply_pattern ld_library_path
+apply_pattern application_path
 
 #==================================================================
 private
@@ -61,21 +59,14 @@ private
 application DetCondExample *.cpp $(GAUDICONFROOT)/src/GaudiMain.cpp
 
 # Set default environment variables to use SQLite by default for tests.
-set CONDDBCONNECTIONSTRING "sqlite://;schema=CONDDB.sqlite;dbname=CONDDB;user=none"
-set CONDDBHOST   "none"
-set CONDDBUSER   "none"
-set CONDDBPWD    ""
-set CONDDBNAME   "CONDDB"
-set CONDDBSCHEMA "CONDDB.sqlite"
-set CONDDBENGINE "sqlite"
+set CONDDBCONNECTIONSTRING  "sqlite://none;schema=CONDDB.sqlite;dbname=CONDDB"
 
-# for testMultiDB.opts
-set CONDDBNAME1   "CONDDB1"
-set CONDDBSCHEMA1 "CONDDB1.sqlite"
-set CONDDBNAME2   "CONDDB2"
-set CONDDBSCHEMA2 "CONDDB2.sqlite"
+# for testMultiDB.opts and testLayering.opts
+set CONDDBCONNECTIONSTRING1 "sqlite://none;schema=CONDDB1.sqlite;dbname=CONDDB1"
+set CONDDBCONNECTIONSTRING2 "sqlite://none;schema=CONDDB2.sqlite;dbname=CONDDB2"
 
 macro_append SEAL_linkopts ' -llcg_SealServices ' WIN32 ' lcg_SealServices.lib '
-#macro_append POOL_linkopts ' -llcg_CollectionBase ' WIN32 ' lcg_CollectionBase.lib '
 
 path JOBOPTSEARCHPATH ../options
+
+# set CONDITIONS_PATH "${CONDDBCONDITIONSROOT}/xml/Conditions/MainCatalog"

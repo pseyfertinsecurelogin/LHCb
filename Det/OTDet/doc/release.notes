@@ -1,6 +1,22 @@
-! $Id: release.notes,v 1.62 2006-06-08 12:24:02 janos Exp $
+! $Id: release.notes,v 1.68 2006-10-11 13:57:25 cattanem Exp $
 ! Package     : OTDet
 ! Responsible : Jeroen van Tilburg, Jacopo Nardulli, Jan Amoraal
+
+!========================== OTDet v6r7 2006-10-10 ==========================
+! 2006-10-10 M. Needham
+ - Clean things up a bit in DeOTModule::calculateHits
+ - gains some time
+
+!========================== OTDet v6r6 2006-08-30 ==========================
+! 2006-08-28 - M Needham
+ - change the centerOfStraw method to use trajectory
+ - cache the global center of the module
+ - Cache the entrance and exit planes of the module
+
+!========================== OTDet v6r5 2006-07-25 ==========================
+! 2006-07-21 - Jan Amoraal
+ - Use gsl_hypot(x,y) == \sqrt(x^2+y^2)
+ - Remove lambda from DeOTModule::doca(...). Not needed.
 
 !========================== OTDet v6r4 2006-06-08 ==========================
 ! 2006-06-08 - Jan Amoraal

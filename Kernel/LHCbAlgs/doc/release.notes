@@ -4,6 +4,24 @@
 ! Purpose     : General purpose algorithms and tools for LHCb
 !-----------------------------------------------------------------------------
 
+!======================== LHCbAlgs v2r4 2006-09-04 =======================
+! 2006-09-04 - Marco Cattaneo
+ - Adapt to changed interface of addPropertyToCatalogue in Gaudi v18r7
+
+!======================== LHCbAlgs v2r3 2006-07-31 =======================
+! 2006-07-31 - Marco Cattaneo
+ - Fix memory leak in ProcessPhase initialization, due to changed behaviour
+   of addPropertyToCatalogue (Gaudi Savannah bug #18581)
+
+!======================== LHCbAlgs v2r2 2006-07-18 =======================
+! 2006-07-18 - Marco Cattaneo
+ - Change string handling in ProcessPhase initialization, to comply with
+   new job options service
+
+!======================== LHCbAlgs v2r1 2006-06-30 =======================
+!2006-06-29 M Needham
+ - Add poca tool here - was in TrackTools
+
 !======================== LHCbAlgs v2r0 2006-03-09 =======================
 ! 2006-03-09 - Marco Cattaneo
  - Fix uninitialized variable in MemoryTool

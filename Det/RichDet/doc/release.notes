@@ -1,8 +1,47 @@
-!-----------------------------------------------------------------------------
+]!-----------------------------------------------------------------------------
 ! Package     : Det/RichDet
 ! Responsible : Antonis Papanestis
 ! Purpose     : interface to the xml description
 !-----------------------------------------------------------------------------
+
+!======================== RichDet v9r8 2006-11-03 =========================
+! 2006-11-03 - Marco Cattaneo
+ - Remove second format() call from DeRichSystem.cpp
+ - Always take SystemOfUnits.h from GaudiKernel 
+
+! 2006-11-01 - Chris Jones
+ - Updates to RichDet to implement refraction correction at HPD (Antonis)
+   Improves CK theta resolution a little. Requires XmlDDDB v30r13 or greater
+
+!======================== RichDet v9r7 2006-10-20 =========================
+! 2006-11-03 - Marco Cattaneo
+ - Add missing converter factory to RichDet_load.cpp
+
+! 2006-10-20 - Chris Jones
+ - Updates for new RichRadIntersection class (now in LHCbKernel)
+
+! 2006-10-18 - Antonis Papanestis
+ - Add DeRichHPD class to handle conditions and misalignments.
+ - Add the modifications from Marco Musy for the magnetic field distortions.
+   Requires new version of XmlDDDB and XmlConditions.
+
+! 2006-09-07 - Chris Jones
+ - Add new L1 data versions
+
+!======================== RichDet v9r6 2006-08-31 =========================
+! 2006-08-31 - Marco Cattaneo
+ - Get Gaudi::Units includes from GaudiKernel
+
+! 2006-08-28 - Chris Jones
+ - Introduce new constructor for Rich1DTabFunc
+
+! 2006-08-09 - Chris Jones
+ - Adapt to improvements in ray tracing mode object RichTraceMode
+
+! 2006-08-02 - Antonis Papanestis
+ - Fixed a bug in ray tracing
+ - Added a function to convert the HPD number (start at 0 in every panel) to
+   the HPD copy number (unique in the Rich system, same as in G4)
 
 !========================= RichDet v9r5 2006-06-15 =========================
 ! 2006-06-07 - Antonis Papanestis

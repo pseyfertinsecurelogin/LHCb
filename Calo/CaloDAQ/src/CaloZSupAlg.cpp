@@ -1,4 +1,4 @@
-// $Id: CaloZSupAlg.cpp,v 1.2 2006-04-19 16:37:46 odescham Exp $
+// $Id: CaloZSupAlg.cpp,v 1.4 2006-09-26 12:42:03 odescham Exp $
 
 // LHCbDefinitions
 #include "Kernel/SystemOfUnits.h"
@@ -48,22 +48,20 @@ CaloZSupAlg::CaloZSupAlg( const std::string& name, ISvcLocator* pSvcLocator)
 
 
   //=== Default values according to the name of the algorithm !
+  m_inputToolType = "CaloEnergyFromRaw";
+  m_inputToolName = name + "Tool";
   if ( "Ecal" == name.substr( 0 , 4 ) ) {
     m_detectorName     = DeCalorimeterLocation::Ecal;
     m_outputADCData    = LHCb::CaloAdcLocation::Ecal;
     m_outputDigitData  = LHCb::CaloDigitLocation::Ecal;
     m_zsupMethod       = "2D";
     m_zsupThreshold    = 20;
-    m_inputToolName    = "CaloEnergyFromRaw/EcalEnergyFromRaw";
-    m_pedShift = 0.6;
   } else if ( "Hcal" == name.substr( 0 , 4 ) ) {
     m_detectorName     = DeCalorimeterLocation::Hcal;
     m_outputADCData    = LHCb::CaloAdcLocation::Hcal;
     m_outputDigitData  = LHCb::CaloDigitLocation::Hcal;
     m_zsupMethod       = "1D";
     m_zsupThreshold    = 4;
-    m_inputToolName    = "CaloEnergyFromRaw/HcalEnergyFromRaw";
-    m_pedShift = 0.6;
   }
 };
 
@@ -80,18 +78,26 @@ StatusCode CaloZSupAlg::initialize() {
   StatusCode sc = GaudiAlgorithm::initialize();
   if( sc.isFailure() ) return sc;
 
-  if(m_outputType == "Digits" || m_outputType == "CaloDigits" || m_outputType == "Both")m_digitOnTES = true;
-  if(m_outputType == "ADCs" || m_outputType == "CaloAdcs" || m_outputType == "Both")m_adcOnTES = true;
+  if( m_outputType == "Digits" || 
+      m_outputType == "CaloDigits" || 
+      m_outputType == "Both") m_digitOnTES = true;
+  if(m_outputType == "ADCs" || 
+     m_outputType == "CaloAdcs" || 
+     m_outputType == "Both")m_adcOnTES = true;
   if( !m_adcOnTES && !m_digitOnTES ){
     error() << "CaloZSupAlg configured to produce ** NO ** output" << endreq;
     return StatusCode::FAILURE;
   }  
-
+  if( m_digitOnTES )debug() <<  "CaloZSupAlg will produce CaloDigits on TES" 
+                            << endreq;
+  if( m_adcOnTES )debug() <<  "CaloZSupAlg will produce CaloAdcs on TES" 
+                          << endreq;
   
   // Retrieve the calorimeter we are working with.
   m_calo = getDet<DeCalorimeter>( m_detectorName );
   m_numberOfCells = m_calo->numberOfCells();
-
+  m_pedShift      = m_calo->pedestalShift();
+  
   //*** A few check of the parameters
 
   if ( "NO" != m_zsupMethod && 
@@ -115,8 +121,9 @@ StatusCode CaloZSupAlg::initialize() {
          << " cells. Zsup method "  << m_zsupMethod 
          << " Threshold " << m_zsupThreshold << endreq;
 
-  m_adcTool = tool<ICaloEnergyFromRaw>( m_inputToolName );
+  m_adcTool = tool<ICaloEnergyFromRaw>( m_inputToolType , m_inputToolName,this);
 
+  
   return StatusCode::SUCCESS;
 };
 
@@ -130,9 +137,9 @@ StatusCode CaloZSupAlg::execute() {
   
   //*** some trivial printout
 
-  if ( isDebug && m_adcOnTES) debug() << "Perform zero suppression to "
+  if ( isDebug && m_adcOnTES) debug() << "Perform zero suppression - return CaloAdcs on TES at "
                                       << m_outputADCData << endreq;
-  if ( isDebug && m_digitOnTES) debug() << "Perform zero suppression to "
+  if ( isDebug && m_digitOnTES) debug() << "Perform zero suppression - return CaloDigits on TES at "
                                       << m_outputDigitData << endreq;
 
 

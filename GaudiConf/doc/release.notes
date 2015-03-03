@@ -1,6 +1,39 @@
 package GaudiConf
 package manager: M.Cattaneo
 
+!======================== GaudiConf v9r11 2006-11-03 ========================
+! 2006-11-03 - Marco Cattaneo
+ - Add MC truth links for tracking clusters to MCDST
+
+!======================== GaudiConf v9r10 2006-10-23 ========================
+! 2006-10-23 - Gloria CORTI
+ - Introduce new units for angles (rad and mrad) and short cut for luminosity
+   (1 LumiUnit = 1 cm-2 s-1) in units.opts
+ - Reset list of objects to write using = instead of += and remove inclusion
+   of GenContent.opts from SimContent.opts preventing its use by its own with
+   new properties parses
+
+! 2006-10-19 - Marco Cattaneo
+ - in DecodeRawEvent.opts: update algorithm for decoding Muon raw banks
+                           add algorithm to decode L0DU banks
+ - Add DC06Conditions.opts, defining standard conditions for DC06 data 
+
+!======================== GaudiConf v9r9 2006-09-28 ========================
+! 2006-09-28 - Marco Cattaneo
+ - Add Rec/Calo/Electrons to rDST (and DST) to allow updating of CaloPID tuning
+ - Add DAQ/ODIN to rDST (and DST) for event time etc.
+
+! 2006-09-21 - Marco Cattaneo
+ - Remove explicit saving of directory nodes on persistency file definitions,
+   automatic since Gaudi v18r7
+ - Add Link/Trig/L0/FullCalo to MCDstContent.opts
+
+!======================== GaudiConf v9r8 2006-07-26 ========================
+! 2006-07-26 - Marco Cattaneo
+ - GaudiMain now propagates appMgr status code to exit status
+ - Remove unneccesary ; in units.opts, breaks new properties parser
+ - Add options describing contents of official datasets (.sim,.digi,.rdst,.dst)
+
 !======================== GaudiConf v9r7 2006-06-19 ========================
 ! 2006-06-19 - Marco Cattaneo
  - Remove CERN specific setting of STAGE_HOST and RFIO_CASTOR_V2, now done in

@@ -1,8 +1,29 @@
-! $Id: release.notes,v 1.44 2006-05-16 08:56:51 cattanem Exp $
+! $Id: release.notes,v 1.51 2006-09-01 11:32:12 cattanem Exp $
 ! Package     : Event/MCEvent
 ! Responsible : Marco Cattaneo, Gloria Corti
 ! Purpose     : LHCb Event model. MC truth classes (Gauss and Boole output) 
 !-----------------------------------------------------------------------------
+
+!========================== MCEvent v1r6 2006-09-01 ==========================
+! 2006-09-01 - Chris Jones
+ - Update MCRichDigit to store FULL simulation AND digitisation history
+   for each associated MCRichHit
+  + Add class MCRichDigitHit
+ - Update fillstream methods for MCRichDigit and MCRichDigitHistoryCode
+   to be more human-friendly
+
+! 2006-08-17 - Juan PALACIOS  
+  - xml/MCVertex.xml
+    . generate typedefs LHCb::MCVertex::Vector and LHCb::MCVertex::ConstVector.
+
+!========================== MCEvent v1r5 2006-07-31 ==========================
+! 2006-07-31 - Marco Cattaneo
+ - Adapt to changes in GaudiObjDesc v9r7
+
+!========================== MCEvent v1r4 2006-07-26 ==========================
+! 2006-07-26 - Gloria CORTI
+ - Add new class for trackers debugging purposes MCExtendedHit, derived from
+   MCHit and with in addition momentum of particle at entry point
 
 !========================== MCEvent v1r3 2006-05-16 ==========================
 ! 2006-05-16 M. Needham
