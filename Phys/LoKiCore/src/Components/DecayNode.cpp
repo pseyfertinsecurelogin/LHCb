@@ -1,6 +1,6 @@
-// $Id: DecayNode.cpp,v 1.1 2009-05-27 18:37:50 ibelyaev Exp $
+// $Id: DecayNode.cpp 53291 2010-08-05 14:35:53Z ibelyaev $
 // ============================================================================
-// CVS tag $Name: not supported by cvs2svn $, version $Revision: 1.1 $
+// CVS tag $Name: not supported by cvs2svn $, version $Revision: 53291 $
 // ============================================================================
 // Include files 
 // ============================================================================

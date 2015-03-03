@@ -1,4 +1,4 @@
-// $Id: compose.h,v 1.1 2007-12-03 12:03:23 ibelyaev Exp $
+// $Id: compose.h 53291 2010-08-05 14:35:53Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_COMPOSE_H 
 #define LOKI_COMPOSE_H 1

@@ -1,4 +1,4 @@
-// $Id: CoreTypes.h,v 1.8 2008-10-19 16:11:40 ibelyaev Exp $
+// $Id: CoreTypes.h 53291 2010-08-05 14:35:53Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_CORETYPES_H 
 #define LOKI_CORETYPES_H 1

@@ -1,4 +1,4 @@
-// $Id: Selected.h,v 1.9 2010-04-06 20:06:39 ibelyaev Exp $
+// $Id: Selected.h 53291 2010-08-05 14:35:53Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_SELECTED_H 
 #define LOKI_SELECTED_H 1

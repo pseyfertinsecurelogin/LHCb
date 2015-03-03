@@ -1,4 +1,4 @@
-// $Id: Separators.h,v 1.5 2007-07-23 17:07:40 ibelyaev Exp $
+// $Id: Separators.h 53291 2010-08-05 14:35:53Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_TUPLES_H 
 #define LOKI_TUPLES_H 1

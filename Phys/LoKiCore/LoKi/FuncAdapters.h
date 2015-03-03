@@ -1,4 +1,4 @@
-// $Id: FuncAdapters.h,v 1.9 2007-11-28 13:56:32 ibelyaev Exp $
+// $Id: FuncAdapters.h 53291 2010-08-05 14:35:53Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_FUNCADAPTERS_H 
 #define LOKI_FUNCADAPTERS_H 1

@@ -13,7 +13,52 @@
 !   contributions and advices from G.Raven, J.van Tilburg, 
 !   A.Golutvin, P.Koppenburg have been used in the design.
 ! 
+!
 ! -----------------------------------------------------------------------------
+
+! =========================== LoKiCore v10r3 2010-08-25 =======================
+! 2010-08-24 - Gerhard Raven
+ - add max print to Error and Warning
+
+! 2010-08-06 - Vanya Belyaev
+
+ - more fixed in doxygenurl module 
+
+! 2010-08-06 - Vanya Belyaev
+ - fix errors in documentation 
+   
+
+! 2010-08-05 - Vanya Belyaev
+ - one more fix for const-pipes & sources 
+
+! 2010-08-04 - Vanya Belyaev
+ - fix const-pipes 
+
+
+! 2010-08-02 - Vanya Belyaev
+
+ - LoKi/Status.h
+   src/Status.cpp
+
+    new functors, needed for Global Event Cuts in Hlt, see task #16675 
+
+! 2010-07-30 - Vanya Belyaev
+ - Cast.h
+   Const.h
+   apply.h
+
+      solve the problem with const/non-const ambiguity 
+
+! 2010-07-29 - Vanya Belyaev
+
+ - LoKi/Streamers.h
+   LoKi/apply.h
+
+    minor modification for streamers 
+
+ - cmt/requirements 
+
+     version increment to v10r3 
 
 ! =========================== LoKiCore v10r2 2010-06-19 =======================
 ! 2010-06-19 - Vanya Belyaev
@@ -21,7 +66,7 @@
  - Primitives:
     fix the MAJOR bug in boolean operators 
     the bug has been incrodiced recently with 
-    reshuffling of line sin Primitives 
+    reshuffling of lines in Primitives 
 
 ! 2010-06-05 - Vanya Belyaev
 

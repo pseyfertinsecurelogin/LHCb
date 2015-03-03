@@ -1,4 +1,4 @@
-// $Id: AddRef.h,v 1.5 2009-05-09 19:15:53 ibelyaev Exp $
+// $Id: AddRef.h 53291 2010-08-05 14:35:53Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_ADDREF_H 
 #define LOKI_ADDREF_H 1

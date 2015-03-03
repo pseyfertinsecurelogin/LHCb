@@ -1,4 +1,4 @@
-// $Id: Constants.h,v 1.12 2010-06-04 12:20:32 ibelyaev Exp $
+// $Id: Constants.h 53291 2010-08-05 14:35:53Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_CONSTANTS_H 
 #define LOKI_CONSTANTS_H 1

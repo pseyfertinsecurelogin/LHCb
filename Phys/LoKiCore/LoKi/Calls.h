@@ -1,4 +1,4 @@
-// $Id: Calls.h,v 1.5 2008-03-30 13:31:28 ibelyaev Exp $
+// $Id: Calls.h 53291 2010-08-05 14:35:53Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_CALLS_H 
 #define LOKI_CALLS_H 1

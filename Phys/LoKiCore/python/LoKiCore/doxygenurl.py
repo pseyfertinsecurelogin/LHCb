@@ -1,5 +1,9 @@
 #!/usr/bin/env python
 # =============================================================================
+# $Id: doxygenurl.py 53341 2010-08-06 13:17:49Z ibelyaev $ 
+# =============================================================================
+# $URL: http://svn.cern.ch/guest/lhcb/LHCb/tags/Phys/LoKiCore/v10r3/python/LoKiCore/doxygenurl.py $ 
+# =============================================================================
 ## @file LoKiCore/doxygenurl.py
 #
 # Simple module to provide access to Doxygen documentation for the various
@@ -15,9 +19,22 @@
 # and the minor helper function
 #
 #  - httpExists ( url )
+#
+#
+#   This file is part of LoKi project: 
+#    ``C++ ToolKit for Smart and Friendly Physics Analysis''
 # 
+#   By usage of this code one clearly states the disagreement 
+#  with the campain of Dr.O.Callot et al.: 
+#  ``No Vanya's lines are allowed in LHCb/Gaudi software.''
+#
 #  @author Vanya BELYAEV ibelyaev@physics.syr.edu
 #  @date 2007-07-22
+#
+#  $Revision: 53341 $
+#  Last modification $Date: 2010-08-06 15:17:49 +0200 (Fri, 06 Aug 2010) $
+#                 by $Author: ibelyaev $
+#
 # =============================================================================
 """
 Simple module to provide access to Doxygen documentation for the various
@@ -34,9 +51,22 @@ and the minor helper function
 
   - httpExists ( url )
   
+  
+  This file is part of LoKi project: 
+  ``C++ ToolKit for Smart and Friendly Physics Analysis''
+  
+  By usage of this code one clearly states the disagreement 
+  with the campain of Dr.O.Callot et al.: 
+  ``No Vanya's lines are allowed in LHCb/Gaudi software.''
+
+  
+$Revision: 53341 $
+Last modification $Date: 2010-08-06 15:17:49 +0200 (Fri, 06 Aug 2010) $
+               by $Author: ibelyaev $
+  
 """
 # =============================================================================
-__version__ = " CVS tag $Name: not supported by cvs2svn $, version $Revision: 1.4 $ "
+__version__ = " SVN $Revision: 53341 $ "
 __author__  = " Vanya BELYAEV ibelyaev@physics.syr.edu "
 __date__    = " 2007-07-22"
 __all__     = (
@@ -50,7 +80,8 @@ __all__     = (
 ## URL-s patterns
 # =============================================================================
 _ROOTURL    = 'http://root.cern.ch/root/html/%s.html'
-_GAUDIURL   = 'http://cern.ch/proj-gaudi/releases/GAUDI/%s/doc/html/%s'
+##_GAUDIURL   = 'http://cern.ch/proj-gaudi/releases/GAUDI/%s/doc/html/%s'
+_GAUDIURL   = 'http://cern.ch/proj-gaudi/releases/%s/doxygen/%s'
 _LHCBURL    = 'http://cern.ch/LHCb-release-area/DOC/%s/releases/%s/doxygen/'
 
 ## the default list of projects (if not specified)
@@ -103,26 +134,29 @@ def _projVersion ( project = None ) :
         for p in _PROJECTS :
             version = _projVersion ( p )
             if version : return (p,version)    ## RETURN 
-        return None
+        return (None,None)
 
 
     ##  "/PROJECT/PROJECT_" or "\PROJECT\PROJECT_"    
     PROJECT     = project.upper()
-    PROJECTROOT = PROJECT + 'ROOT'
-    if not os.environ.has_key( PROJECTROOT ) : return None   ## RETURN
-    
-    root   = os.environ[ PROJECTROOT ]
-    target = os.sep + PROJECT + os.sep + PROJECT + "_"
-    l      = root.rfind ( target )
-    if 0 > l :                                return None    ## RETURN 
 
-    l = l + 2 *len(PROJECT) + 3 
-    root = root[l:]
+    target      = os.sep + PROJECT + os.sep + PROJECT + "_"
+    
+    found = ''
+    for key in os.environ :
+        root = os.environ[key] 
+        l      = root.rfind ( target )
+        if 0 <= l :
+            l = l + 2 *len(PROJECT) + 3 
+            found = root[l:]
+            break 
+        
+    if not found : return None 
     
     ## "PROJECT_vers1:"
-    vers1 = root.split ( os.pathsep ) [0]
+    vers1 = found.split ( os.pathsep ) [0]
     ## "PROJECT_vers1/"
-    vers2 = root.split ( os.sep     ) [0]
+    vers2 = found.split ( os.sep     ) [0]
     ## 
     return min(vers1,vers2)
 
@@ -166,7 +200,7 @@ def _namspDoxName ( klassname ) :
 # =============================================================================
 ## Helper method to loop over projects and find the proper pages
 # =============================================================================
-def _getURL ( klass , dox , projects , latest = False ) :
+def _getURL ( klass , dox , projects , latest = True ) :
     """
     Helper method to loop over projects and find the proper pages
     """
@@ -176,14 +210,15 @@ def _getURL ( klass , dox , projects , latest = False ) :
     for project in projects :
         project = project.upper()
         if   'ROOT'  == project :
-            url = _ROOTURL % klass 
+            url = _ROOTURL % klass
+            print project , url 
             if httpExists( url ) : return url                   ## RETURN 
         else :
             version = _projVersion ( project )
-            if not version :
-                if not latest : continue                         ## CONTINUE 
-                ## try to use the latest version 
+            
+            if not version and latest :
                 version = 'latest'
+                
             if 'GAUDI' == project :
                 dox = dox.replace('classi','class')
                 url = _GAUDIURL %(version,dox)
@@ -245,12 +280,21 @@ def getURL ( o , projects = None , latest = False ) :
 
     ## loop over all projects
     url = _getURL ( klass , dox , projects , latest  )
+
+    print klass
+    print dox 
+    print projects
+    print latest 
+    print url 
+    
+    
     if not url :  ## is it namespace ?
         from PyCintex import gbl
         if type(o) is gbl.PyRootType and not type(o.__init__) is gbl.MethodProxy :
             ## it is namespace !!!
             dox = _namspDoxName ( klass )
             url = _getURL ( klass , dox , projects , latest )
+            
     return url
 
 # =============================================================================

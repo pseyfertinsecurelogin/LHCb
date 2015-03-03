@@ -1,4 +1,4 @@
-// $Id: Operations.h,v 1.1 2010-06-05 20:13:30 ibelyaev Exp $
+// $Id: Operations.h 53291 2010-08-05 14:35:53Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_OPERATIONS_H 
 #define LOKI_OPERATIONS_H 1

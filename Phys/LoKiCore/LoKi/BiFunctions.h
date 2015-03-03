@@ -1,4 +1,4 @@
-// $Id: BiFunctions.h,v 1.8 2009-06-11 15:30:14 ibelyaev Exp $
+// $Id: BiFunctions.h 53291 2010-08-05 14:35:53Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_BIFUNCTIONS_H 
 #define LOKI_BIFUNCTIONS_H 1

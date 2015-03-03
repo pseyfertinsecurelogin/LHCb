@@ -3,7 +3,7 @@
 # Maintainer : Olivier Callot
 #============================================================================
 package           EventPacker
-version           v2r3
+version           v2r4
 
 #============================================================================
 # Structure, i.e. directories to process. 
@@ -26,6 +26,7 @@ use   MCEvent      v*    Event
 use   TrackEvent   v*    Event
 use   RecEvent     v*    Event
 use   DAQEvent     v*    Event
+use   MDF          v*    DAQ
 use   Boost        v*    LCG_Interfaces
 
 #============================================================================

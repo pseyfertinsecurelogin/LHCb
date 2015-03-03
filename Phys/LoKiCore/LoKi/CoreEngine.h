@@ -1,4 +1,4 @@
-// $Id: CoreEngine.h,v 1.1 2008-10-19 16:11:40 ibelyaev Exp $
+// $Id: CoreEngine.h 53291 2010-08-05 14:35:53Z ibelyaev $
 #ifndef LOKI_COREENGINE_H 
 #define LOKI_COREENGINE_H 1
 // ============================================================================

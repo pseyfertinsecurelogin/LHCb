@@ -1,6 +1,6 @@
-// $Id: NodeGrammar.h,v 1.6 2009-12-03 15:52:40 ibelyaev Exp $
+// $Id: NodeGrammar.h 53291 2010-08-05 14:35:53Z ibelyaev $
 // ============================================================================
-// CVS tag $Name: not supported by cvs2svn $, version $Revision: 1.6 $
+// CVS tag $Name: not supported by cvs2svn $, version $Revision: 53291 $
 // ============================================================================
 #ifndef LOKI_NODEGRAMMAR_H 
 #define LOKI_NODEGRAMMAR_H 1

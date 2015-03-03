@@ -1,4 +1,4 @@
-// $Id: IDecayNode.h,v 1.2 2009-05-28 08:55:34 ibelyaev Exp $
+// $Id: IDecayNode.h 53291 2010-08-05 14:35:53Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_IDECAYNODEFINDER_H 
 #define LOKI_IDECAYNODEFINDER_H 1

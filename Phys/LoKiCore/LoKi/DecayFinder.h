@@ -1,4 +1,4 @@
-// $Id: DecayFinder.h,v 1.5 2010-06-01 17:05:03 ibelyaev Exp $
+// $Id: DecayFinder.h 53291 2010-08-05 14:35:53Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_DECAYFINDER_H 
 #define LOKI_DECAYFINDER_H 

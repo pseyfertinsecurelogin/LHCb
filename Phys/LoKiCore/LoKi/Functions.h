@@ -1,4 +1,4 @@
-// $Id: Functions.h,v 1.21 2007-11-28 13:56:32 ibelyaev Exp $
+// $Id: Functions.h 53291 2010-08-05 14:35:53Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_FUNCTIONS_H 
 #define LOKI_FUNCTIONS_H 1

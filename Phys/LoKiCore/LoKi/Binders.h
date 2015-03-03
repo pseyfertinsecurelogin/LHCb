@@ -1,4 +1,4 @@
-// $Id: Binders.h,v 1.2 2007-11-28 13:56:32 ibelyaev Exp $
+// $Id: Binders.h 53291 2010-08-05 14:35:53Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_BINDERS_H 
 #define LOKI_BINDERS_H 1

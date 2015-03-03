@@ -1,4 +1,4 @@
-// $Id: ParticleProperties.h,v 1.9 2008-12-04 14:37:31 ibelyaev Exp $
+// $Id: ParticleProperties.h 53291 2010-08-05 14:35:53Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_PARTICLEPROPERTIES_H 
 #define LOKI_PARTICLEPROPERTIES_H 1

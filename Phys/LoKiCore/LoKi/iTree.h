@@ -1,4 +1,4 @@
-// $Id: iTree.h,v 1.12 2009-06-02 16:47:34 ibelyaev Exp $
+// $Id: iTree.h 53291 2010-08-05 14:35:53Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_ITREE_H 
 #define LOKI_ITREE_H 1

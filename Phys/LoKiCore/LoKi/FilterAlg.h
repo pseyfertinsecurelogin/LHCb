@@ -1,4 +1,4 @@
-// $Id: FilterAlg.h,v 1.7 2010-05-19 13:14:40 graven Exp $
+// $Id: FilterAlg.h 53291 2010-08-05 14:35:53Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_FILTERALG_H 
 #define LOKI_FILTERALG_H 1

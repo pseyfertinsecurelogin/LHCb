@@ -1,4 +1,4 @@
-// $Id: ICoreFactory.h,v 1.1 2008-10-19 16:11:40 ibelyaev Exp $
+// $Id: ICoreFactory.h 53291 2010-08-05 14:35:53Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_IFUNCTORFACTORY_H 
 #define LOKI_IFUNCTORFACTORY_H 1

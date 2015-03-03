@@ -1,4 +1,4 @@
-// $Id: Power.h,v 1.11 2008-10-19 16:11:40 ibelyaev Exp $
+// $Id: Power.h 53291 2010-08-05 14:35:53Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_POWER_H 
 #define LOKI_POWER_H 1

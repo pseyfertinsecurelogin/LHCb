@@ -1,5 +1,5 @@
 
-// $Id: Funcs.h,v 1.9 2008-11-22 17:20:51 ibelyaev Exp $
+// $Id: Funcs.h 53291 2010-08-05 14:35:53Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_FUNCS_H 
 #define LOKI_FUNCS_H 1

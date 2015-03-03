@@ -1,4 +1,4 @@
-// $Id: apply.h,v 1.5 2010-04-06 20:06:40 ibelyaev Exp $
+// $Id: apply.h 53291 2010-08-05 14:35:53Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_APPLY_H 
 #define LOKI_APPLY_H 1
@@ -17,6 +17,8 @@
 // LoKi
 // ============================================================================
 #include "LoKi/Functor.h"
+#include "LoKi/BasicFunctors.h"
+#include "LoKi/Const.h"
 // ============================================================================
 namespace LoKi 
 {
@@ -273,25 +275,26 @@ namespace LoKi
     const CONTAINER cnt ( first , last ) ;
     return LoKi::apply ( o , cnt ) ;  
   }
-  // ==========================================================================  
-  //   template <class CONTAINER, class TYPE2> 
-  //   inline 
-  //   typename LoKi::Functor<CONTAINER,TYPE2>::result_type 
-  //   apply ( const LoKi::Functor<CONTAINER,TYPE2>& o , 
-  //           const Gaudi::Range_<CONTAINER>&       a )
-  //   {
-  //     return LoKi::apply ( o , a.begin() , a.end() ) ;
-  //   }
-  //   // ==========================================================================
-  //   template <class CONTAINER, class TYPE2> 
-  //   inline 
-  //   typename LoKi::Functor<CONTAINER,TYPE2>::result_type 
-  //   apply ( const LoKi::Functor<CONTAINER,TYPE2>& o , 
-  //           const Gaudi::NamedRange_<CONTAINER>&  a )
-  //   {
-  //     return LoKi::apply ( o , a.begin() , a.end() ) ;
-  //   }
   // ==========================================================================
+  template <class TYPE>
+  inline 
+  std::vector<TYPE*> 
+  apply 
+  ( const LoKi::Functor<std::vector<const TYPE*>,std::vector<const TYPE*> >& pipe  ,
+    const std::vector<TYPE*>&                                                input )
+  {
+    typedef  std::vector<typename LoKi::Const<TYPE>::Value*>  _CVector ;
+    typedef  std::vector<                     TYPE*        >  _NVector ;
+    // adapt the argument:
+    const _CVector* _vct_ = reinterpret_cast<const _CVector*> ( &input ) ;
+    // use functor 
+    const _CVector& _out  = pipe.evaluate ( *_vct_) ;
+    // adapt result:
+    const _NVector* _out_ = reinterpret_cast<const _NVector*>  ( &_out  ) ;
+    //
+    return *_out_;
+  }
+  // ==============================================================================
   template <class CONTAINER, class TYPEI, class TYPE2> 
   inline 
   typename LoKi::Functor<std::vector<TYPEI>,TYPE2>::result_type 

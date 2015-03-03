@@ -1,4 +1,4 @@
-// $Id: NamedRange.h,v 1.9 2010-04-06 20:06:39 ibelyaev Exp $
+// $Id: NamedRange.h 53291 2010-08-05 14:35:53Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_NAMEDRANGE_H 
 #define LOKI_NAMEDRANGE_H 1

@@ -1,4 +1,4 @@
-// $Id: IReporter.h,v 1.6 2008-07-27 18:19:27 ibelyaev Exp $
+// $Id: IReporter.h 53291 2010-08-05 14:35:53Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_IREPORTER_H 
 #define LOKI_IREPORTER_H 1

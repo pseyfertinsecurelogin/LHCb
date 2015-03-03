@@ -1,4 +1,4 @@
-// $Id: valid.h,v 1.3 2007-11-28 13:56:33 ibelyaev Exp $
+// $Id: valid.h 53291 2010-08-05 14:35:53Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_VALID_H 
 #define LOKI_VALID_H 1

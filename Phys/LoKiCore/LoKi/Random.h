@@ -1,4 +1,4 @@
-// $Id: Random.h,v 1.3 2010-02-13 16:31:22 ibelyaev Exp $
+// $Id: Random.h 53291 2010-08-05 14:35:53Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_RANDOM_H 
 #define LOKI_RANDOM_H 1

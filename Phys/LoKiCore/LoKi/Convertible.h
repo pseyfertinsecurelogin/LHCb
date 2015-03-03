@@ -1,4 +1,4 @@
-// $Id: Convertible.h,v 1.6 2008-11-29 13:24:59 ibelyaev Exp $
+// $Id: Convertible.h 53291 2010-08-05 14:35:53Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_CONVERTIBLE_H 
 #define LOKI_CONVERTIBLE_H 1

@@ -1,4 +1,4 @@
-// $Id: AuxFunBase.h,v 1.12 2008-12-04 14:37:30 ibelyaev Exp $
+// $Id: AuxFunBase.h 53815 2010-08-24 14:18:43Z graven $
 // ============================================================================
 #ifndef LOKI_AUXFUNBASE_H 
 #define LOKI_AUXFUNBASE_H 1
@@ -67,14 +67,16 @@ namespace LoKi
      */
     StatusCode Error
     ( const std::string& msg                                             , 
-      const StatusCode&  sc  = StatusCode ( StatusCode::FAILURE , true ) ) const ;
+      const StatusCode&  sc  = StatusCode ( StatusCode::FAILURE , true ) ,
+      int mxprint = 10                                                   ) const ;
     /** print warning message 
      *  @param msg  warning message 
      *  @param sc   status code 
      */
     StatusCode Warning
     ( const std::string& msg                                             , 
-      const StatusCode&  sc  = StatusCode ( StatusCode::FAILURE , true ) ) const ;
+      const StatusCode&  sc  = StatusCode ( StatusCode::FAILURE , true ) ,
+      int mxprint = 10                                                   ) const ;
     /** thrown an exception 
      *  @param msg  warning message 
      *  @param sc   status code 

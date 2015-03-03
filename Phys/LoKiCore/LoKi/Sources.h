@@ -1,4 +1,4 @@
-// $Id: Sources.h,v 1.3 2010-06-05 20:13:30 ibelyaev Exp $
+// $Id: Sources.h 53291 2010-08-05 14:35:53Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_SOURCES_H 
 #define LOKI_SOURCES_H 1

@@ -1,4 +1,4 @@
-// $Id: Objects.h,v 1.9 2009-05-09 19:15:53 ibelyaev Exp $
+// $Id: Objects.h 53291 2010-08-05 14:35:53Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_OBJECTS_H 
 #define LOKI_OBJECTS_H 1

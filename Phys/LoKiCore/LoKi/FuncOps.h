@@ -1,7 +1,9 @@
-// $Id: FuncOps.h,v 1.28 2010-06-05 20:13:30 ibelyaev Exp $
+// $Id: FuncOps.h 53291 2010-08-05 14:35:53Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_FUNCOPS_H 
 #define LOKI_FUNCOPS_H 1
+// ============================================================================
+// $URL: http://svn.cern.ch/guest/lhcb/LHCb/tags/Phys/LoKiCore/v10r3/LoKi/FuncOps.h $
 // ============================================================================
 // Include files
 // ============================================================================
@@ -1003,7 +1005,7 @@ namespace LoKi
     public:
       // ======================================================================
       // __rshift__
-      static typename Source::result_type __rshift__ 
+      static typename Source::result_type& __rshift__ 
       ( const Source& fun , std::vector<TYPE>& res ) 
       { res = fun() ; return res ; }
       // __rshift__

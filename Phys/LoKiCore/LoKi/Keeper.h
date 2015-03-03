@@ -1,4 +1,4 @@
-// $Id: Keeper.h,v 1.14 2009-08-11 18:19:25 ibelyaev Exp $
+// $Id: Keeper.h 53291 2010-08-05 14:35:53Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_KEEPER_H 
 #define LOKI_KEEPER_H 1

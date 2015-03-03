@@ -1,4 +1,4 @@
-// $Id: Dicts.h,v 1.4 2008-04-03 11:27:10 cattanem Exp $
+// $Id: Dicts.h 53291 2010-08-05 14:35:53Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_DICTS_H 
 #define LOKI_DICTS_H 1

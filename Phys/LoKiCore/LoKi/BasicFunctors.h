@@ -1,4 +1,4 @@
-// $Id: BasicFunctors.h,v 1.6 2008-11-21 08:52:18 ibelyaev Exp $
+// $Id: BasicFunctors.h 53291 2010-08-05 14:35:53Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_BASICFUNCTORS_H 
 #define LOKI_BASICFUNCTORS_H 1

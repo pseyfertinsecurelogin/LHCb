@@ -1,4 +1,4 @@
-// $Id: Range.h,v 1.17 2010-04-06 20:06:39 ibelyaev Exp $
+// $Id: Range.h 53291 2010-08-05 14:35:53Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_RANGE_H
 #define LOKI_RANGE_H 1

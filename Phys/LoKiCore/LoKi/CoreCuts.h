@@ -1,4 +1,4 @@
-// $Id: CoreCuts.h,v 1.3 2007-07-23 17:07:37 ibelyaev Exp $
+// $Id: CoreCuts.h 53291 2010-08-05 14:35:53Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_CORECUTS_H 
 #define LOKI_CORECUTS_H 1

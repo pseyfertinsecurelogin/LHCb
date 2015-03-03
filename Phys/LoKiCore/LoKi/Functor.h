@@ -1,4 +1,4 @@
-// $Id: Functor.h,v 1.6 2009-05-09 19:15:53 ibelyaev Exp $
+// $Id: Functor.h 53291 2010-08-05 14:35:53Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_FUNCTOR_H 
 #define LOKI_FUNCTOR_H 1

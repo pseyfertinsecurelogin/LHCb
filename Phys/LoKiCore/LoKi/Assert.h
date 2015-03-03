@@ -1,4 +1,4 @@
-// $Id: Assert.h,v 1.1 2007-08-11 20:17:00 ibelyaev Exp $
+// $Id: Assert.h 53291 2010-08-05 14:35:53Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_ASSERT_H 
 #define LOKI_ASSERT_H 1
