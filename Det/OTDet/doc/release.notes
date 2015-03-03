@@ -2,6 +2,54 @@
 ! Responsible : Alexandr Kozlinskiy, Lucia Grillo
 !--------------------------------------------------------------------------
 
+!========================= OTDet v8r15 2015-02-23 =========================
+! 2015-02-18 - Manuel Tobias Schiller
+ - WalkRelation: fix bug in initializer list of constructor (member used
+   before it was set - why did the compiler not complain about the
+   initialisation order?)
+
+! 2015-02-17 - Manuel Tobias Schiller
+ - prevent ROOT's dictionary generation phase from seeing the clever bits in
+   WalkRelation's padeTanh implementation, and fall back on a slower but safer
+   default, as this can cause problems in the dictionary generation phase
+
+! 2015-02-17 - Manuel Tobias Schiller
+ - WalkRelation: optimise code further, but get rid of run-time switching the
+   implementation of the fast approximation code, as this can't be inlined, and
+   inlining gains about 1% of time in pattern reco
+ - RtRelation: reimplement using ChebyshevApprox class to get rid of the large
+   lookup tables, the order of ChebyshevApprox is chosen to be of similar
+   quality as the fast approximation in WalkRelation (equivalent to about a
+   quarter of an OTIS time bin), and the approximation errors of r(t) and
+   sigma_r(t) are now of a similar order of magnitude (before, the error made
+   in sigma_r(t) was an order of magnitude larger than the one on r(t))
+   Also, it uses float internally, as the OTIS does not have the resolution to
+   require double precision...
+ - DeOTModule: add protection code which monitors accuracy of approximations
+   in WalkRelation and RtRelation when they are set/changed; warning
+   thresholds are set to the equivalent of half an OTIS time bin (6.5-7.8% of
+   OT resolution), and error messages are printed if the accuracy is worse
+   than twice that
+   this should leave sufficient "headroom" in the approximation error for
+   small variations due to different calibrations etc., but will catch
+   pathological cases, and complain (visibly) about them - the old code did
+   not monitor the accuracy of the LUT in the old version of RtRelation, so
+   it's a step in the right direction because feedback is given when things
+   start to go wrong
+
+! 2015-02-06 - Marco Clemencic
+ - Fixed include of LHCbMath/ChebyshevApprox.h in WalkRelation.cpp.
+
+! 2015-02-05 - Manuel Tobias Schiller
+ - WalkRelation: use new ChebyshevApprox class from LHCbMath; this should be
+   40% faster than the previous code, and is accurate to better than half an
+   OTIS bin (i.e. better than about 0.2 ns), more than accurate enough not to
+   cause trouble in code using this fast version (this corresponds to about 6
+   to 8 % of the OT resolution)
+
+! 2015-01-19 - Wouter Hulsbergen
+ - Added condition for global t0 of OT
+
 !========================= OTDet v8r14 2015-01-14 =========================
 ! 2015-01-02 - Wouter Hulsbergen
  - Create separate condition for mono layer alignment in geometry
@@ -40,7 +88,7 @@
 
 !========================= OTDet v8r10 2014-02-05 =========================
 ! 2014-02-05 - Christoph Langenbruch
- - Using the vdt library for the calculation of the tanh in WalkRelation::walk. 
+ - Using the vdt library for the calculation of the tanh in WalkRelation::walk.
    This results in a significant performance increase.
 
 !========================= OTDet v8r10 2013-06-03 =========================

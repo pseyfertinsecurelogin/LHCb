@@ -1,4 +1,4 @@
-// $Id: MCParticles.h 155029 2013-04-15 14:48:04Z marcocle $
+// $Id: MCParticles.h 182777 2015-01-19 12:33:36Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_MCPARTICLES_H
 #define LOKI_MCPARTICLES_H 1
@@ -29,6 +29,7 @@
 #include "LoKi/Constants.h"
 #include "LoKi/MCTypes.h"
 #include "LoKi/MCPIDOperators.h"
+#include "LoKi/PidFunctions.h"
 // ============================================================================
 /** @file
  *
@@ -383,6 +384,128 @@ namespace LoKi
       // ======================================================================
     };
     // ========================================================================
+    /** @class IsID 
+     *  new verison of PID-comparison 
+     */
+    // ========================================================================
+    class GAUDI_API IsID  
+      : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate
+      , public LoKi::Pids::GetPids 
+    {
+    public:
+      // ======================================================================
+      IsID ( const long                           id  ) ;
+      IsID ( const unsigned long                  id  ) ;
+      IsID ( const LHCb::ParticleID&              id  ) ;
+      IsID ( const std::string&                   id  ) ;
+      IsID ( const std::vector<int>&              ids ) ;
+      IsID ( const std::vector<long>&             ids ) ;
+      IsID ( const std::vector<unsigned int>&     ids ) ;
+      IsID ( const std::vector<unsigned long>&    ids ) ;
+      IsID ( const std::vector<LHCb::ParticleID>& ids ) ;
+      IsID ( const std::vector<std::string>&      ids ) ;
+      IsID ( const LoKi::Pids::GetPids&           ids ) ;
+      // ======================================================================
+      virtual IsID* clone() const ;
+      /// the only one essential method
+      result_type operator() ( argument p ) const ;
+      /// "SHORT" representation, @see LoKi::AuxFunBase
+      virtual  std::ostream& fillStream( std::ostream& s ) const ;
+      // ======================================================================
+    private:
+      // ======================================================================      
+      IsID() ;
+      // ======================================================================
+    } ;
+    // ========================================================================
+    /** @class IsNotID 
+     *  new verison of PID-comparison 
+     */
+    // ========================================================================
+    class GAUDI_API IsNotID : public LoKi::MCParticles::IsID 
+    {
+    public:
+      // ======================================================================
+      IsNotID ( const long                           id  ) ;
+      IsNotID ( const unsigned long                  id  ) ;
+      IsNotID ( const LHCb::ParticleID&              id  ) ;
+      IsNotID ( const std::string&                   id  ) ;
+      IsNotID ( const std::vector<int>&              ids ) ;
+      IsNotID ( const std::vector<long>&             ids ) ;
+      IsNotID ( const std::vector<unsigned int>&     ids ) ;
+      IsNotID ( const std::vector<unsigned long>&    ids ) ;
+      IsNotID ( const std::vector<LHCb::ParticleID>& ids ) ;
+      IsNotID ( const std::vector<std::string>&      ids ) ;
+      IsNotID ( const LoKi::Pids::GetPids&           ids ) ;
+      // ======================================================================
+      virtual IsNotID* clone() const ;
+      /// the only one essential method
+      result_type operator() ( argument p ) const ;
+      /// "SHORT" representation, @see LoKi::AuxFunBase
+      virtual  std::ostream& fillStream( std::ostream& s ) const ;
+      // ======================================================================
+    private:
+      // ======================================================================      
+      IsNotID() ;
+      // ======================================================================
+    } ;
+    // ========================================================================
+    class GAUDI_API IsAbsID : public LoKi::MCParticles::IsID   
+    {
+    public:
+      // ======================================================================
+      IsAbsID ( const long                           id  ) ;
+      IsAbsID ( const unsigned long                  id  ) ;
+      IsAbsID ( const LHCb::ParticleID&              id  ) ;
+      IsAbsID ( const std::string&                   id  ) ;
+      IsAbsID ( const std::vector<int>&              ids ) ;
+      IsAbsID ( const std::vector<long>&             ids ) ;
+      IsAbsID ( const std::vector<unsigned int>&     ids ) ;
+      IsAbsID ( const std::vector<unsigned long>&    ids ) ;
+      IsAbsID ( const std::vector<LHCb::ParticleID>& ids ) ;
+      IsAbsID ( const std::vector<std::string>&      ids ) ;
+      IsAbsID ( const LoKi::Pids::GetPids&           ids ) ;
+      // ======================================================================
+      virtual IsAbsID* clone() const ;
+      /// the only one essential method
+      result_type operator() ( argument p ) const ;
+      /// "SHORT" representation, @see LoKi::AuxFunBase
+      virtual  std::ostream& fillStream( std::ostream& s ) const ;
+      // ======================================================================
+    private:
+      // ======================================================================      
+      IsAbsID() ;
+      // ======================================================================
+    } ;
+    // ========================================================================
+    class GAUDI_API IsNotAbsID : public LoKi::MCParticles::IsAbsID
+    {
+    public:
+      // ======================================================================
+      IsNotAbsID ( const long                           id  ) ;
+      IsNotAbsID ( const unsigned long                  id  ) ;
+      IsNotAbsID ( const LHCb::ParticleID&              id  ) ;
+      IsNotAbsID ( const std::string&                   id  ) ;
+      IsNotAbsID ( const std::vector<int>&              ids ) ;
+      IsNotAbsID ( const std::vector<long>&             ids ) ;
+      IsNotAbsID ( const std::vector<unsigned int>&     ids ) ;
+      IsNotAbsID ( const std::vector<unsigned long>&    ids ) ;
+      IsNotAbsID ( const std::vector<LHCb::ParticleID>& ids ) ;
+      IsNotAbsID ( const std::vector<std::string>&      ids ) ;
+      IsNotAbsID ( const LoKi::Pids::GetPids&           ids ) ;
+      // ======================================================================
+      virtual IsNotAbsID* clone() const ;
+      /// the only one essential method
+      result_type operator() ( argument p ) const ;
+      /// "SHORT" representation, @see LoKi::AuxFunBase
+      virtual  std::ostream& fillStream( std::ostream& s ) const ;
+      // ======================================================================
+    private:
+      // ======================================================================      
+      IsNotAbsID() ;
+      // ======================================================================
+    } ;
+    // ========================================================================
     /** @class AbsIdentifier
      *  evaluator of the id of the particle
      *
@@ -661,6 +784,7 @@ namespace LoKi
      *  MC decay tree of other MC particle
      *  @author Vanya BELYAEV  Ivan.Belyaev@itep.ru
      *  @date   2004-07-07
+     *  @warning for this class <c>toCpp</c> method is not properly defined 
      */
     class GAUDI_API FromMCDecayTree
       : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate
@@ -966,6 +1090,7 @@ namespace LoKi
      *  to some other Particle
      *  @author Vanya BELYAEV belyaev@lapp.in2p3.fr
      *  @date 2005-02-02
+     *  @warning for this class <c>toCpp</c> method is not defined properly
      */
     class GAUDI_API IsParticle
       : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate
@@ -1014,6 +1139,7 @@ namespace LoKi
      *  Trivial predicate to check
      *  if particle is identical
      *  to some ContainedObject
+     *  @warning for this class <c>toCpp</c> method is not defined properly
      *  @author Vanya BELYAEV belyaev@lapp.in2p3.fr
      *  @date 2005-02-02
      */
@@ -1166,7 +1292,7 @@ namespace LoKi
       virtual result_type operator() ( argument p ) const ;
       /// "SHORT" representation, @see LoKi::AuxFunBase
       virtual  std::ostream& fillStream( std::ostream& s ) const ;
-      // ======================================================================
+      // =====================================================================
     private:
       // ======================================================================
       /// default constructor is private

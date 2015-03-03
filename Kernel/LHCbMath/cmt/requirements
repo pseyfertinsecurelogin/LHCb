@@ -3,7 +3,7 @@
 # Maintainer : Vanya Belyaev
 #=====================================================================
 package           LHCbMath
-version           v3r53
+version           v3r54
 
 #=====================================================================
 # Structure, i.e. directories to process. 
@@ -14,13 +14,17 @@ branches cmt doc LHCbMath src dict python tests
 # Used packages
 #=====================================================================
 use GaudiKernel     v*
+use VectorClass     v*      Kernel  -no_auto_imports
 use ROOT            v*      LCG_Interfaces
 use Boost           v*      LCG_Interfaces
 use GSL             v*      LCG_Interfaces
+use vdt             v*      LCG_Interfaces
+use eigen           v*      LCG_Interfaces
 use GaudiGSL        v*   
-use GaudiPython     v*                     -no_auto_imports
+use GaudiPython     v*              -no_auto_imports
 
-apply_pattern install_more_includes more=LHCbMath
+apply_pattern install_more_includes more=LHCbMath 
+#apply_pattern install_more_includes more=LHCbMath offset=Eigen 
 
 apply_pattern install_python_modules
 
@@ -64,7 +68,11 @@ application  TestBloomFilter   ../tests/TestBloomFilter.cpp
 macro_append TestBloomFilter_dependencies   " LHCbMathLib "
 application  TestSimilarity   ../tests/TestSimilarity.cpp 
 macro_append TestSimilarity_dependencies   " LHCbMathLib "
-        
+application  TestEigenGeometry   ../tests/TestEigenGeometry.cpp
+macro_append TestEigenGeometry_dependencies   " LHCbMathLib "
+application  TestXYZTypes   ../tests/TestXYZTypes.cpp
+macro_append TestXYZTypes_dependencies   " LHCbMathLib "
+
 # ================= patterns =============================================
 apply_pattern       linker_library library=LHCbMathLib
 #=====================================================================

@@ -1,4 +1,4 @@
-// $Id: Monitoring.cpp 149830 2012-12-12 17:09:11Z cattanem $
+// $Id: Monitoring.cpp 182487 2015-01-14 16:55:10Z ibelyaev $
 // ============================================================================
 // Include files 
 // ============================================================================
@@ -21,6 +21,7 @@
 #include "LoKi/Monitoring.h"
 #include "LoKi/Report.h"
 #include "LoKi/Services.h"
+#include "LoKi/Monitor.h"
 // ============================================================================
 /*  get the (global) counter by name using IStatSvc 
  *  @param IStatSvc 
@@ -256,6 +257,14 @@ StatEntity* LoKi::Monitoring::getCounter
       getCounter ( stat    ,               name  ) :
       getCounter ( stat    , name + "::" + group ) ;    
   }
+}
+// ============================================================================
+StatEntity* LoKi::Monitoring::getCounter 
+( const LoKi::CounterDef& cnt ) 
+{
+  return getCounter ( cnt.flag  () , 
+                      cnt.group () , 
+                      cnt.name  () );  
 }
 // ============================================================================
 // The END 

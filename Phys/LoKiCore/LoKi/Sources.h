@@ -59,7 +59,8 @@ namespace LoKi
       Source 
       ( IDataProviderSvc*  svc   , 
         const std::string& path  )
-        : Self() 
+        : LoKi::AuxFunBase ( std::tie ( path ) ) 
+        , Self   () 
         , m_svc  ( svc   ) 
         , m_path ( path  )
       {}
@@ -67,7 +68,8 @@ namespace LoKi
       Source 
       ( const std::string& path     , 
         IDataProviderSvc*  svc  = 0 )
-        : Self() 
+        : LoKi::AuxFunBase ( std::tie ( path ) ) 
+        , Self() 
         , m_svc  ( svc   ) 
         , m_path ( path  )
       {}
@@ -79,7 +81,8 @@ namespace LoKi
         , m_path ( right.m_path  )
       {}
       /// MANDATORY: virtual desctrutor
-      virtual ~Source() {}
+      virtual ~Source() 
+      { if ( this->m_svc() && !this->gaudi() ) { this->m_svc.reset() ; } }
       /// MANDATORY: clone method ("virtual constructor")
       virtual  Source* clone() const { return new Source ( *this ) ; }
       /// MANATORY: the only one essenial method 

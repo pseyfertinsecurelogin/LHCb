@@ -1,4 +1,4 @@
-// $Id: MCVertices.h 166344 2013-12-19 15:04:14Z marcocle $
+// $Id: MCVertices.h 182540 2015-01-15 13:54:38Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_MCVERTICES_H
 #define LOKI_MCVERTICES_H 1
@@ -250,8 +250,6 @@ namespace LoKi
        *  @param point 3D-point
        */
       MCVertexDistance ( const LHCb::MCVertex*   point ) ;
-      /// copy constructor
-      MCVertexDistance ( const MCVertexDistance& ) ;
       /// virtual descructor
       virtual ~MCVertexDistance() ;
       /// clone method (mandatory!)

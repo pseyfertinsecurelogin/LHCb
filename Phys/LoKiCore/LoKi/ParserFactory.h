@@ -1,4 +1,4 @@
-// $Id: ParserFactory.h 95098 2010-10-24 17:48:42Z ibelyaev $
+// $Id: ParserFactory.h 182776 2015-01-19 12:31:55Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_PARSERFACTORY_H 
 #define LOKI_PARSERFACTORY_H 1
@@ -8,11 +8,27 @@
 // LoKi
 // ============================================================================
 #include "LoKi/TreeHelpers.h"
+#include "LoKi/iTree.h"
 #include "LoKi/Trees.h"
 // ============================================================================
 namespace Decays 
 {
   // ==========================================================================
+  namespace Trees 
+  {
+    // ========================================================================
+    template <class PARTICLE>
+    StatusCode factory 
+    ( typename Decays::Trees::Types_<PARTICLE>::Tree&               tree       ,
+      const Decays::iNode&                                          mother     , 
+      const Decays::Trees::Oscillation&                             oscillated ,
+      const Decays::Trees::Arrow&                                   arrow      ,
+      const typename Decays::Trees::Types_<PARTICLE>::TreeList&     daughters  , 
+      const bool                                                    inclusive  ,
+      const typename Decays::Trees::Types_<PARTICLE>::TreeList&     optional   , 
+      std::ostream&                                                 stream     ) ;
+  }
+  // ========================================================================
   namespace Parsers 
   {
     // ========================================================================
@@ -89,6 +105,7 @@ namespace Decays
      *  @date 2009-05-23
      */
     template <class PARTICLE>
+    inline 
     StatusCode factory
     ( Decays::Tree_<PARTICLE>&     tree   ,
       const Decays::Parsers::Tree& parsed ,

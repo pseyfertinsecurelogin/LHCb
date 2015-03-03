@@ -1,4 +1,4 @@
-// $Id: MatrixUtils.h 155742 2013-04-27 12:26:24Z ibelyaev $
+// $Id: MatrixUtils.h 183766 2015-02-11 19:33:37Z ibelyaev $
 // ============================================================================
 #ifndef LHCBMATH_MATRIXUTILS_H
 #define LHCBMATH_MATRIXUTILS_H 1
@@ -1205,6 +1205,26 @@ namespace Gaudi
       }
     }
     // ========================================================================
+    /** inversion of symmetric positively defined matrices
+     *  1) try fast method based on Cholesky's decomposiion 
+     *  2) in case of failure, swith to the regular inversion
+     *  @param what (INPUT) matrix to be inverted 
+     *  @param result (UPDATE) th einverse matrix 
+     *  @return problem flag     
+     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+     *  @thanks Manuel Schiller 
+     *  @date 2015-02-11
+     */
+    template <class T, unsigned int D>
+    inline int inverse 
+    ( const ROOT::Math::SMatrix<T,D,D,ROOT::Math::MatRepSym<T,D> >& what   , 
+      ROOT::Math::SMatrix<T,D,D,ROOT::Math::MatRepSym<T,D> >&       result ) 
+    {
+      int ifail = 0 ;     result = what.InverseChol ( ifail ) ;
+      if ( 0 != ifail ) { result = what.Inverse     ( ifail ) ; }
+      return ifail ;  
+    }
+    // ==========================================================================
   } //                                                    end of namespace Math
   // ==========================================================================
 } //                                                     end of namespace Gaudi

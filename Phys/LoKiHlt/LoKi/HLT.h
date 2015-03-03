@@ -118,29 +118,21 @@ namespace LoKi
     public:
       // ======================================================================
       /// constructor from the decision name
-      PassDecision ( const std::string& name  )
-        : HasDecision ( name )
-      {}
+      PassDecision ( const std::string& name  ) ;
       /// constructor from the decision names ("OR")
       PassDecision ( const std::string& name1 ,
-                     const std::string& name2 )
-        : HasDecision ( name1 , name2 )
-      {}
+                     const std::string& name2 );
       /// constructor from the decision names ("OR")
       PassDecision ( const std::string& name1 ,
                      const std::string& name2 ,
-                     const std::string& name3 )
-        : HasDecision ( name1 , name2 , name3 )
-      {}
+                     const std::string& name3 ) ;
       /// constructor from the decision names ("OR")
       PassDecision ( const std::string& name1 ,
                      const std::string& name2 ,
                      const std::string& name3 ,
-                     const std::string& name4 )
-        : HasDecision ( name1 , name2 , name3 , name4 )
-      {}
+                     const std::string& name4 ) ;
       /// constructor form the decision names ("OR")
-      PassDecision ( const Names& names ) : HasDecision ( names ) {}
+      PassDecision ( const Names& names ) ; 
       /// MANDATORY: virtual destructor
       virtual ~PassDecision () {}
       /// MANDATORY: clone method ("virtual constructor")
@@ -511,8 +503,6 @@ namespace LoKi
       // ======================================================================
       /// constructor from the channel name
       ErrorBits ( const std::string&      name ) ;
-      /// constructor from the channel name
-      ErrorBits ( const Gaudi::StringKey& name ) ;
       /// MANDATORY: virtual destructor
       virtual ~ErrorBits() ;
       /// MANDATORY: clone method ( "virtual constructor")
@@ -550,8 +540,6 @@ namespace LoKi
       // ======================================================================
       /// constructor from the channel name
       NonTurboPass ( const std::string&      name ) ;
-      /// constructor from the channel name
-      NonTurboPass ( const Gaudi::StringKey& name ) ;
       /// MANDATORY: virtual destructor
       virtual ~NonTurboPass() ;
       /// MANDATORY: clone method ( "virtual constructor")
@@ -578,8 +566,6 @@ namespace LoKi
       // ======================================================================
       /// constructor from the channel name
       TurboPass ( const std::string&      name ) ;
-      /// constructor from the channel name
-      TurboPass ( const Gaudi::StringKey& name ) ;
       /// MANDATORY: virtual destructor
       virtual ~TurboPass() ;
       /// MANDATORY: clone method ( "virtual constructor")
@@ -607,8 +593,6 @@ namespace LoKi
       // ======================================================================
       /// constructor from the channel name
       ExecutionStage ( const std::string&      name ) ;
-      /// constructor from the channel name
-      ExecutionStage ( const Gaudi::StringKey& name ) ;
       /// MANDATORY: virtual destructor
       virtual ~ExecutionStage() ;
       /// MANDATORY: clone method ( "virtual constructor")
@@ -638,8 +622,6 @@ namespace LoKi
       // ======================================================================
       /// constructor from the channel name
       NumberOfCandidates ( const std::string&      name ) ;
-      /// constructor from the channel name
-      NumberOfCandidates ( const Gaudi::StringKey& name ) ;
       /// MANDATORY: virtual destructor
       virtual ~NumberOfCandidates() ;
       /// MANDATORY: clone method ( "virtual constructor")
@@ -671,8 +653,6 @@ namespace LoKi
       // ======================================================================
       /// constructor from the channel name
       Saturated ( const std::string&      name ) ;
-      /// constructor from the channel name
-      Saturated ( const Gaudi::StringKey& name ) ;
       /// MANDATORY: virtual destructor
       virtual ~Saturated() ;
       /// MANDATORY: clone method ( "virtual constructor")

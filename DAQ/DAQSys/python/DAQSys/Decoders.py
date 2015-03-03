@@ -157,7 +157,7 @@ Decoder("RawBankToSTClusterAlg/createITClustersExpert",
 #outputs={"clusterLocation":"Raw/IT/LiteClusters"}, set logically in the code, resetting may not work...
 
 #===========OT===========
-ott=Decoder("OTTimeCreator", #the only one which makes a TES location
+ottNormal=Decoder("OTTimeCreator", #the only one which makes a TES location
         active=True,banks=["OT"],
         #privateTools=["OTRawBankDecoder/RawBankDecoder"],#tool handle??
         #I hope the tool handle actually calls *this* public tool...
@@ -165,16 +165,18 @@ ott=Decoder("OTTimeCreator", #the only one which makes a TES location
         outputs={"OutputLocation": None},
         conf=DecoderDB)
 
-ott=Decoder("OTTimeCreator/OTTimeCreatorExpert", #the only one which makes a TES location
+ottExpert=Decoder("OTTimeCreator/OTTimeCreatorExpert", #the only one which makes a TES location
         active=False,banks=["OTRaw", "OTError"],
+        properties={"RawBankDecoder":"OTRawBankDecoder/OTRawBankDecoderExpert"},
         #privateTools=["OTRawBankDecoder/RawBankDecoder"],#tool handle??
         #I hope the tool handle actually calls *this* public tool...
-        publicTools=["OTRawBankDecoder/ToolSvc.OTRawBankDecoder"],
+        publicTools=["OTRawBankDecoder/ToolSvc.OTRawBankDecoderExpert"],
         outputs={"OutputLocation": None},
         conf=DecoderDB)
 
 from GaudiKernel.SystemOfUnits import ns
-rbd=Decoder(ott.PublicTools[0],#tool handle??
+for ott in [ ottNormal, ottExpert ]:
+    Decoder(ott.PublicTools[0],#tool handle??
         banks=ott.Banks,
         active=False,
         inputs={"RawEventLocations":None},
@@ -386,7 +388,7 @@ for report in ["Dec","Sel","Vertex"]:
 Decoder("HltTrackReportsDecoder",
         active=False, banks=["HltTrackReports"],
         inputs = {"RawEventLocations":None},
-        outputs={"Output2SourceId": { "Hlt/Track/Velo" : 1, "Hlt1/Track/ForwardHPT" : 4 }},
+        outputs={"Output2SourceId": { "Hlt/Track/Velo" : 1, "Hlt/Track/VeloTTHPT" : 2, "Hlt/Track/ForwardHPT" : 4 }},
         conf=DecoderDB
         )
 #outputs={"Output2SourceId": { "Hlt/Track/Velo" : 1, "Hlt1/Track/PestiForward" : 3 }}, set logically in the code, resetting may not work...

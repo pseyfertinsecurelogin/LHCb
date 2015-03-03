@@ -1,4 +1,4 @@
-// $Id: KinTypes.h 53291 2010-08-05 14:35:53Z ibelyaev $
+// $Id: KinTypes.h 182487 2015-01-14 16:55:10Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_KINTYPES_H 
 #define LOKI_KINTYPES_H 1
@@ -27,6 +27,7 @@
 // ============================================================================
 namespace LoKi
 {
+  // ==========================================================================
   // the actual type of Lorentz vector  
   typedef Gaudi::LorentzVector LorentzVector ;  // the vector in 4D 
   // the actual type of Lorentz vector 

@@ -18,7 +18,7 @@
 #include "HltConfigSvc.h"
 
 //TODO: check for IEEE 1003.1 compliance instead of Linux...
-#if linux
+#ifndef _WIN32
 #include <netdb.h>
 #include <unistd.h>
 #endif
@@ -58,6 +58,7 @@ HltConfigSvc::HltConfigSvc( const std::string& name, ISvcLocator* pSvcLocator)
   declareProperty("checkOdin", m_checkOdin = true);
   declareProperty("maskL0TCK", m_maskL0TCK = false);
   declareProperty("HltDecReportsLocations", m_outputContainerName = {"/Event/Hlt1/DecReports","/Event/Hlt2/DecReports"} );
+  declareProperty("Hlt2Mode", m_hlt2mode = false);
 }
 
 void HltConfigSvc::updateMap(Property&) {
@@ -157,9 +158,9 @@ StatusCode HltConfigSvc::start() {
   static boost::regex expr("^HLT.*_([^_]*)_([0-9]+)");
   boost::smatch what;
   if (boost::regex_match(taskName,what,expr)) m_id = ( std::stoul( what[2] ) << 16 );
-#if linux
-  char name[HOST_NAME_MAX]; size_t len=0;
-  if (!gethostname(name,len)) {
+#ifndef _WIN32
+  char name[_POSIX_HOST_NAME_MAX];
+  if (!gethostname(name,sizeof(name))) {
       auto *x = gethostbyname(name);
       if (x) {
           unsigned char *addr = (unsigned char*)(x->h_addr+x->h_length-2);

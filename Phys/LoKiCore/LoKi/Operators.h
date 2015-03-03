@@ -1,4 +1,4 @@
-// $Id: Operators.h 169187 2014-02-21 18:04:58Z marcocle $
+// $Id: Operators.h 183264 2015-01-27 15:54:05Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_OPERATORS_H
 #define LOKI_OPERATORS_H 1
@@ -27,635 +27,636 @@
  *  @date 2001-01-23
  */
 // ============================================================================
-namespace LoKi {
-// ============================================================================
-/** inline construction of logical 'AND'
- *
- *  @code
- *
- *  typedef LoKi::Functor<SomeType,bool>             Pred ;
- *  typedef LoKi::FunctorFromFunctor<SomeType,bool>  PfP  ;
- *
- *  void func( const Pred& A , const Pred& B )
- *  {
- *    PfP p1 = A && B             ; // operator form
- *  }
- *
- *  @endcode
- *
- *  @see LoKi::And
- *  @return functor
- *
- *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
- *  @date 2001-01-23
- */
-template <class TYPE,class TYPE2>
-inline   LoKi::And<TYPE,TYPE2>
-operator&&  ( const  LoKi::Functor<TYPE,TYPE2>& fun1 ,
-              const  LoKi::Functor<TYPE,TYPE2>& fun2 )
-{ return LoKi::And<TYPE,TYPE2>  ( fun1   , fun2   ) ; }
-// ============================================================================
-/** inline construction of logical 'OR'
- *
- *  @code
- *
- *  typedef LoKi::Functor<SomeType,bool>             Pred ;
- *  typedef LoKi::FunctorFromFunctor<SomeType,bool>  PfP  ;
- *
- *  void func( const Pred& A , const Pred& B )
- *  {
- *    PfP p1 = A || B             ; // operator form
- *  }
- *
- *  @endcode
- *
- *  @see LoKi::Or
- *  @return functor
- *
- *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
- *  @date 2001-01-23
- */
-template <class TYPE, class TYPE2>
-inline   LoKi::Or<TYPE,TYPE2>
-operator|| ( const  LoKi::Functor<TYPE,TYPE2>& fun1 ,
-             const  LoKi::Functor<TYPE,TYPE2>& fun2 )
-{ return LoKi::Or<TYPE,TYPE2> ( fun1   , fun2 ) ; }
-// ============================================================================
-/** inline construction for logical negate
- *
- *  @code
- *
- *  typedef LoKi::Functor<SomeType,bool>             Pred ;
- *  typedef LoKi::FunctorFromFunctor<SomeType,bool>  PfP  ;
- *
- *  void func( const Pred& A  )
- *  {
- *    PfP p1 = !A            ; // operator form
- *  }
- *
- *  @endcode
- *
- *
- *  @see std::logical_not
- *  @see LoKi::Not
- *  @return functor
- *
- *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
- *  @date 2001-01-23
- */
-template <class TYPE, class TYPE2>
-inline LoKi::Not<TYPE,TYPE2>
-operator!  ( const  LoKi::Functor<TYPE,TYPE2>& fun  )
-{ return LoKi::Not<TYPE,TYPE2> ( fun )  ; }
-// ============================================================================
-/** inline construction for unary negate
- *
- *  @code
- *
- *  typedef LoKi::Functor<SomeType,double>             Func;
- *  typedef LoKi::FunctorFromFunctor<SomeType,double>  FfF  ;
- *
- *  void func( const Func& A  )
- *  {
- *    FfF p1 = -A             ; // operator form
- *  }
- *
- *  @endcode
- *
- *
- *  @see std::negate
- *  @see LoKi::Negate
- *  @return functor
- *
- *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
- *  @date 2001-01-23
- */
-template <class TYPE, class TYPE2>
-inline LoKi::Negate<TYPE,TYPE2>
-operator-( const  LoKi::Functor<TYPE,TYPE2>& fun  )
-{ return LoKi::Negate<TYPE,TYPE2> ( fun )  ; }
-// ============================================================================
-/** inline construction of operator "<"
- *
- *  @code
- *
- *  typedef LoKi::Functor<SomeType,double>          Func ;
- *  typedef LoKi::FunctorFromFunctor<SomeType,bool> PfP  ;
- *
- *  void func( const Func& A , const Func& B )
- *  {
- *    PfP f = A < B             ; // operator form
- *  }
- *
- *  @endcode
- *
- *  @see LoKi::Less
- *  @return functor
- *
- *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
- *  @date 2001-01-23
- */
-template <class TYPE, class TYPE2>
-inline   LoKi::Less<TYPE,TYPE2>
-operator<  ( const  LoKi::Functor<TYPE,TYPE2>&  fun1 ,
-             const  LoKi::Functor<TYPE,TYPE2>&  fun2 )
-{ return LoKi::Less<TYPE,TYPE2> ( fun1   , fun2   ) ; }
-// ============================================================================
-/** inline construction of operator "<"
- *
- *  @code
- *
- *  typedef LoKi::Functor<SomeType,double>          Func ;
- *  typedef LoKi::FunctorFromFunctor<SomeType,bool> PfP  ;
- *
- *  void func( const Func& A , const double B  )
- *  {
- *    PfP f = A < B             ; // operator form
- *  }
- *
- *  @endcode
- *
- *  @see LoKi::Less
- *  @see LoKi::Constant
- *  @return functor
- *
- *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
- *  @date 2001-01-23
- */
-template <class TYPE,class TYPE2>
-inline   LoKi::Less<TYPE,TYPE2>
-operator< ( const  LoKi::Functor<TYPE,TYPE2>&       fun ,
-            typename LoKi::Constant<TYPE,TYPE2>::T2 val )
-{ return LoKi::Less<TYPE,TYPE2>( fun , val ) ; }
-// ============================================================================
-/** inline construction for operator "<"
- *
- *  @code
- *
- *  typedef LoKi::Functor<SomeType,double>          Func ;
- *  typedef LoKi::FunctorFromFunctor<SomeType,bool> PfP  ;
- *
- *  void func( const Func& A , const double B  )
- *  {
- *    PfP f = B < A             ; // operator form
- *  }
- *
- *  @endcode
- *
- *  @see LoKi::Less
- *  @see LoKi::Constant
- *  @return functor
- *
- *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
- *  @date 2001-01-23
- */
-template <class TYPE, class TYPE2>
-inline   LoKi::Less<TYPE,TYPE2>
-operator< ( typename LoKi::Constant<TYPE,TYPE2>::T2 val ,
-            const  LoKi::Functor<TYPE,TYPE2>&       fun )
-{ return LoKi::Less<TYPE,TYPE2>( val , fun ) ; }
-// ============================================================================
-/** inline construction for operator ">"
- *
- *  @code
- *
- *  typedef Functor<SomeType,double>          Func ;
- *  typedef FunctorFrinFunctor<SomeType,bool> PfP  ;
- *
- *  void func( const Func& A , const Func& B )
- *  {
- *    PfP f = A > B             ; // operator form
- *  }
- *
- *  @endcode
- *
- *  @see LoKi::Less
- *  @return functor
- *
- *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
- *  @date 2001-01-23
- */
-template <class TYPE, class TYPE2>
-inline   LoKi::Less<TYPE, TYPE2>
-operator>  ( const  LoKi::Functor<TYPE,TYPE2>&  fun1 ,
-             const  LoKi::Functor<TYPE,TYPE2>&  fun2 )
-{ return LoKi::Less<TYPE,TYPE2> ( fun2 , fun1 ) ; }
-// ============================================================================
-/** inline construction for operator ">"
- *
- *  @code
- *
- *  typedef Functor<SomeType,double>          Func ;
- *  typedef FunctorFrinFunctor<SomeType,bool> PfP  ;
- *
- *  void func( const Func& A , const double B )
- *  {
- *    PfP f = A > B             ; // operator form
- *  }
- *
- *  @endcode
- *
- *  @see LoKi::Less
- *  @see LoKi::Constant
- *  @return functor
- *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
- *  @date 2001-01-23
- */
-template <class TYPE, class TYPE2>
-inline   LoKi::Less<TYPE,TYPE2>
-operator>  ( const  LoKi::Functor<TYPE,TYPE2>&       fun  ,
-             typename LoKi::Constant<TYPE,TYPE2>::T2 val )
-{ return LoKi::Less<TYPE,TYPE2>( val , fun ) ; }
-// ============================================================================
-/** inline construction of operator ">"
- *
- *  @code
- *
- *  typedef Functor<SomeType,double>          Func ;
- *  typedef FunctorFrinFunctor<SomeType,bool> PfP  ;
- *
- *  void func( const Func& A , const double B )
- *  {
- *    PfP f = B > A             ; // operator form
- *  }
- *
- *  @endcode
- *
- *  @see LoKi::Less
- *  @see LoKi::Constant
- *  @return functor
- *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
- *  @date 2001-01-23
- */
-template <class TYPE, class TYPE2>
-inline   LoKi::Less<TYPE,TYPE2>
-operator> ( typename LoKi::Constant<TYPE,TYPE2>::T2 val ,
-            const  LoKi::Functor<TYPE,TYPE2>&       fun  )
-{ return LoKi::Less<TYPE,TYPE2>( fun , val ) ; }
-// ============================================================================
-/** inline construction of operator "=="
- *
- *  @code
- *
- *  typedef Functor<SomeType,double>          Func ;
- *  typedef FunctorFromFunctor<SomeType,bool> PfP  ;
- *
- *  void func( const Func& A , const Func& B )
- *  {
- *    PfP f = A == B             ; // operator form
- *  }
- *
- *  @endcode
- *
- *  @see LoKi::Equal
- *  @return functor
- *
- *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
- *  @date 2001-01-23
- */
-template <class TYPE, class TYPE2>
-inline   LoKi::Equal<TYPE,TYPE2>
-operator== ( const LoKi::Functor<TYPE,TYPE2>&  fun1 ,
-             const LoKi::Functor<TYPE,TYPE2>&  fun2 )
-{ return LoKi::Equal<TYPE,TYPE2>  ( fun1   , fun2   ) ; }
-// ============================================================================
-/** inline construction of operator "=="
- *
- *  @code
- *
- *  typedef Functor<SomeType,double>          Func ;
- *  typedef FunctorFromFunctor<SomeType,bool> PfP  ;
- *
- *  void func( const Func& A , const double B )
- *  {
- *    PfP f = A == B             ; // operator form
- *  }
- *
- *  @endcode
- *
- *  @see LoKi::EqualToValue
- *  @return functor
- *
- *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
- *  @date 2001-01-23
- */
-template <class TYPE, class TYPE2>
-inline   LoKi::EqualToValue<TYPE,TYPE2>
-operator== ( const LoKi::Functor<TYPE,TYPE2>&        fun  ,
-             typename LoKi::Constant<TYPE,TYPE2>::T2 val  )
-{ return LoKi::EqualToValue<TYPE,TYPE2> ( fun   , val  ) ; }
-// ============================================================================
-/** inline construction of operator "=="
- *
- *  @code
- *
- *  typedef Functor<SomeType,double>          Func ;
- *  typedef FunctorFromFunctor<SomeType,bool> PfP  ;
- *
- *  void func( const Func& A , const double B )
- *  {
- *    PfP f = B == A             ; // operator form
- *  }
- *
- *  @endcode
- *
- *  @see LoKi::EqualToValue
- *  @return functor
- *
- *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
- *  @date 2001-01-23
- */
-template <class TYPE, class TYPE2>
-inline   LoKi::EqualToValue<TYPE,TYPE2>
-operator== ( typename LoKi::Constant<TYPE,TYPE2>::T2 val  ,
-             const LoKi::Functor<TYPE,TYPE2>&        fun  )
-{ return LoKi::EqualToValue<TYPE,TYPE2> ( val , fun  ) ; }
-// ============================================================================
-template <class TYPE, class TYPE2>
-inline LoKi::EqualToValue<TYPE,TYPE2>
-operator== ( const int                        val  ,
-             const LoKi::Functor<TYPE,TYPE2>& fun  )
-{ return LoKi::EqualToValue<TYPE,TYPE2> ( val , fun  ) ; }
-// ============================================================================
-template <class TYPE, class TYPE2>
-inline LoKi::EqualToValue<TYPE,TYPE2>
-operator== ( const unsigned int               val ,
-             const LoKi::Functor<TYPE,TYPE2>& fun  )
-{ return LoKi::EqualToValue<TYPE,TYPE2> ( val , fun  ) ; }
-// ============================================================================
-template <class TYPE, class TYPE2>
-inline LoKi::EqualToValue<TYPE,TYPE2>
-operator== ( const LoKi::Functor<TYPE,TYPE2>& fun ,
-             const int                        val )
-{ return LoKi::EqualToValue<TYPE,TYPE2> ( val , fun  ) ; }
-// ============================================================================
-template <class TYPE, class TYPE2>
-inline LoKi::EqualToValue<TYPE,TYPE2>
-operator== ( const LoKi::Functor<TYPE,TYPE2>& fun ,
-             const unsigned int               val )
-{ return LoKi::EqualToValue<TYPE,TYPE2> ( val , fun  ) ; }
-// ============================================================================
-template <class TYPE, class TYPE2>
-inline LoKi::NotEqualToValue<TYPE,TYPE2>
-operator!= ( const int                        val ,
-             const LoKi::Functor<TYPE,TYPE2>& fun  )
-{ return LoKi::NotEqualToValue<TYPE,TYPE2> ( val , fun  ) ; }
-// ============================================================================
-template <class TYPE, class TYPE2>
-inline LoKi::NotEqualToValue<TYPE,TYPE2>
-operator!= ( const unsigned int               val ,
-             const LoKi::Functor<TYPE,TYPE2>& fun  )
-{ return LoKi::NotEqualToValue<TYPE,TYPE2> ( val , fun  ) ; }
-// ============================================================================
-template <class TYPE, class TYPE2>
-inline LoKi::NotEqualToValue<TYPE,TYPE2>
-operator!= ( const LoKi::Functor<TYPE,TYPE2>& fun ,
-             const int                        val )
-{ return LoKi::NotEqualToValue<TYPE,TYPE2> ( val , fun  ) ; }
-// ============================================================================
-template <class TYPE, class TYPE2>
-inline LoKi::NotEqualToValue<TYPE,TYPE2>
-operator!= ( const LoKi::Functor<TYPE,TYPE2>& fun ,
-             const unsigned int               val )
-{ return LoKi::NotEqualToValue<TYPE,TYPE2> ( val , fun  ) ; }
-// ============================================================================
-/** inline construction of operator "<="
- *
- *  @code
- *
- *  typedef Functor<SomeType,double>          Func ;
- *  typedef FunctorFromFunctor<SomeType,bool> PfP  ;
- *
- *  void func( const Func& A , const Func& B )
- *  {
- *    PfP f = A <= B             ; // operator form
- *  }
- *
- *  @endcode
- *
- *  @see LoKi::LessOrEqual
- *  @return functor
- *
- *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
- *  @date 2001-01-23
- */
-template <class TYPE, class TYPE2>
-inline   LoKi::LessOrEqual<TYPE,TYPE2>
-operator<= ( const  LoKi::Functor<TYPE,TYPE2>&  fun1 ,
-             const  LoKi::Functor<TYPE,TYPE2>&  fun2 )
-{ return LoKi::LessOrEqual<TYPE,TYPE2> ( fun1 , fun2 ) ; }
-// ============================================================================
-/** inline construction of operator "<="
- *
- *  @code
- *
- *  typedef Functor<SomeType,double>          Func ;
- *  typedef FunctorFromFunctor<SomeType,bool> PfP  ;
- *
- *  void func( const Func& A , const double  B )
- *  {
- *    PfP f = A <= B             ; // operator form
- *  }
- *
- *  @endcode
- *
- *  @see LoKi::LessOrEqual
- *  @see LoKi::Constant
- *  @return functor
- *
- *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
- *  @date 2001-01-23
- */
-template <class TYPE, class TYPE2>
-inline   LoKi::LessOrEqual<TYPE,TYPE2>
-operator<= ( const  LoKi::Functor<TYPE,TYPE2>&       fun ,
-             typename LoKi::Constant<TYPE,TYPE2>::T2 val )
-{ return LoKi::LessOrEqual<TYPE,TYPE2>( fun , val ) ; }
-// ============================================================================
-/** inline construction of operator "<="
- *
- *  @code
- *
- *  typedef Functor<SomeType,double>          Func ;
- *  typedef FunctorFromFunctor<SomeType,bool> PfP  ;
- *
- *  void func( const Func& A , const double  B )
- *  {
- *    PfP f = B <= A             ; // operator form
- *  }
- *
- *  @endcode
- *
- *  @see LoKi::LessOrEqual
- *  @see LoKi::Constant
- *  @return functor
- *
- *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
- *  @date 2001-01-23
- */
-template <class TYPE,class TYPE2>
-inline   LoKi::LessOrEqual<TYPE,TYPE2>
-operator<= ( typename LoKi::Constant<TYPE,TYPE2>::T2 val ,
-             const  LoKi::Functor<TYPE,TYPE2>&       fun )
-{ return LoKi::LessOrEqual<TYPE,TYPE2>( val , fun ) ; }
-// ============================================================================
-/** inline construction of operator ">="
- *
- *  @code
- *
- *  typedef Functor<SomeType,double>          Func ;
- *  typedef FunctorFromFunctor<SomeType,bool> PfP  ;
- *
- *  void func( const Func& A , const Func&  B )
- *  {
- *    PfP f = A >= B             ; // operator form
- *  }
- *
- *  @endcode
- *
- *  @see LoKi::LessOrEqual
- *  @return functor
- *
- *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
- *  @date 2001-01-23
- */
-template <class TYPE, class TYPE2>
-inline   LoKi::LessOrEqual<TYPE,TYPE2>
-operator>= ( const  LoKi::Functor<TYPE,TYPE2>& fun1 ,
-             const  LoKi::Functor<TYPE,TYPE2>& fun2 )
-{ return LoKi::LessOrEqual<TYPE,TYPE2> ( fun2 , fun1 ) ; }
-// ============================================================================
-/** inline construction of operator ">="
- *
- *  @code
- *
- *  typedef Functor<SomeType,double>          Func ;
- *  typedef FunctorFromFunctor<SomeType,bool> PfP  ;
- *
- *  void func( const Func& A , const double  B )
- *  {
- *    PfP f = A >= B             ; // operator form
- *  }
- *
- *  @endcode
- *
- *  @see LoKi::LessOrEqual
- *  @return functor
- *
- *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
- *  @date 2001-01-23
- */
-template <class TYPE, class TYPE2>
-inline   LoKi::LessOrEqual<TYPE,TYPE2>
-operator>= ( const  LoKi::Functor<TYPE,TYPE2>&       fun ,
-             typename LoKi::Constant<TYPE,TYPE2>::T2 val )
-{ return LoKi::LessOrEqual<TYPE,TYPE2> ( val , fun ) ; }
-// ============================================================================
-/** inline construction of operator ">="
- *
- *  @code
- *
- *  typedef Functor<SomeType,double>          Func ;
- *  typedef FunctorFromFunctor<SomeType,bool> PfP  ;
- *
- *  void func( const Func& A , const double  B )
- *  {
- *    PfP f = B >= A             ; // operator form
- *  }
- *
- *  @endcode
- *
- *  @see LoKi::LessOrEqual
- *  @return functor
- *
- *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
- *  @date 2001-01-23
- */
-template <class TYPE, class TYPE2>
-inline   LoKi::LessOrEqual<TYPE,TYPE2>
-operator>= ( typename LoKi::Constant<TYPE,TYPE2>::T2 val ,
-             const  LoKi::Functor<TYPE,TYPE2>&       fun )
-{ return LoKi::LessOrEqual<TYPE,TYPE2> ( fun , val ) ; }
-// ============================================================================
-/** inline construction of operator "!="
- *
- *  @code
- *
- *  typedef Functor<SomeType,double>          Func ;
- *  typedef FunctorFromFunctor<SomeType,bool> PfP  ;
- *
- *  void func( const Func& A , const Func& B )
- *  {
- *    PfP f = A != B             ; // operator form
- *  }
- *
- *  @endcode
- *
- *  @see LoKi::NotEqual
- *  @return functor
- *
- *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
- *  @date 2001-01-23
- */
-template <class TYPE, class TYPE2>
-inline LoKi::NotEqual<TYPE,TYPE2>
-operator!= ( const LoKi::Functor<TYPE,TYPE2>&  fun1 ,
-             const LoKi::Functor<TYPE,TYPE2>&  fun2 )
-{ return LoKi::NotEqual<TYPE,TYPE2> ( fun1 , fun2 ) ; }
-// ============================================================================
-/** inline construction of operator "!="
- *
- *  @code
- *
- *  typedef Functor<SomeType,double>          Func ;
- *  typedef FunctorFromFunctor<SomeType,bool> PfP  ;
- *
- *  void func( const Func& A , const double B )
- *  {
- *    PfP f = A != B             ; // operator form
- *  }
- *
- *  @endcode
- *
- *  @see LoKi::NotEqual
- *  @return functor
- *
- *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
- *  @date 2001-01-23
- */
-template <class TYPE, class TYPE2>
-inline LoKi::NotEqualToValue<TYPE,TYPE2>
-operator!= ( const LoKi::Functor<TYPE,TYPE2>&        fun ,
-             typename LoKi::Constant<TYPE,TYPE2>::T2 val )
-{ return LoKi::NotEqualToValue<TYPE,TYPE2> ( fun , val ) ; }
-// ============================================================================
-/** inline construction of operator "!="
- *
- *  @code
- *
- *  typedef Functor<SomeType,double>          Func ;
- *  typedef FunctorFromFunctor<SomeType,bool> PfP  ;
- *
- *  void func( const Func& A , const double B )
- *  {
- *    PfP f = B != A             ; // operator form
- *  }
- *
- *  @endcode
- *
- *  @see LoKi::NotEqual
- *  @return functor
- *
- *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
- *  @date 2001-01-23
- */
-template <class TYPE, class TYPE2>
-inline LoKi::NotEqualToValue<TYPE,TYPE2>
-operator!= ( typename LoKi::Constant<TYPE,TYPE2>::T2 val ,
-             const LoKi::Functor<TYPE,TYPE2>&        fun )
-{ return LoKi::NotEqualToValue<TYPE,TYPE2> ( val , fun ) ; }
-// ============================================================================
-/** inline construction of operator "+"
+namespace LoKi 
+{
+  // ============================================================================
+  /** inline construction of logical 'AND'
+   *
+   *  @code
+   *
+   *  typedef LoKi::Functor<SomeType,bool>             Pred ;
+   *  typedef LoKi::FunctorFromFunctor<SomeType,bool>  PfP  ;
+   *
+   *  void func( const Pred& A , const Pred& B )
+   *  {
+   *    PfP p1 = A && B             ; // operator form
+   *  }
+   *
+   *  @endcode
+   *
+   *  @see LoKi::And
+   *  @return functor
+   *
+   *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
+   *  @date 2001-01-23
+   */
+  template <class TYPE,class TYPE2>
+  inline   LoKi::And<TYPE,TYPE2>
+  operator&&  ( const  LoKi::Functor<TYPE,TYPE2>& fun1 ,
+                const  LoKi::Functor<TYPE,TYPE2>& fun2 )
+  { return LoKi::And<TYPE,TYPE2>  ( fun1   , fun2   ) ; }
+  // ============================================================================
+  /** inline construction of logical 'OR'
+   *
+   *  @code
+   *
+   *  typedef LoKi::Functor<SomeType,bool>             Pred ;
+   *  typedef LoKi::FunctorFromFunctor<SomeType,bool>  PfP  ;
+   *
+   *  void func( const Pred& A , const Pred& B )
+   *  {
+   *    PfP p1 = A || B             ; // operator form
+   *  }
+   *
+   *  @endcode
+   *
+   *  @see LoKi::Or
+   *  @return functor
+   *
+   *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
+   *  @date 2001-01-23
+   */
+  template <class TYPE, class TYPE2>
+  inline   LoKi::Or<TYPE,TYPE2>
+  operator|| ( const  LoKi::Functor<TYPE,TYPE2>& fun1 ,
+               const  LoKi::Functor<TYPE,TYPE2>& fun2 )
+  { return LoKi::Or<TYPE,TYPE2> ( fun1   , fun2 ) ; }
+  // ============================================================================
+  /** inline construction for logical negate
+   *
+   *  @code
+   *
+   *  typedef LoKi::Functor<SomeType,bool>             Pred ;
+   *  typedef LoKi::FunctorFromFunctor<SomeType,bool>  PfP  ;
+   *
+   *  void func( const Pred& A  )
+   *  {
+   *    PfP p1 = !A            ; // operator form
+   *  }
+   *
+   *  @endcode
+   *
+   *
+   *  @see std::logical_not
+   *  @see LoKi::Not
+   *  @return functor
+   *
+   *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
+   *  @date 2001-01-23
+   */
+  template <class TYPE, class TYPE2>
+  inline LoKi::Not<TYPE,TYPE2>
+  operator!  ( const  LoKi::Functor<TYPE,TYPE2>& fun  )
+  { return LoKi::Not<TYPE,TYPE2> ( fun )  ; }
+  // ============================================================================
+  /** inline construction for unary negate
+   *
+   *  @code
+   *
+   *  typedef LoKi::Functor<SomeType,double>             Func;
+   *  typedef LoKi::FunctorFromFunctor<SomeType,double>  FfF  ;
+   *
+   *  void func( const Func& A  )
+   *  {
+   *    FfF p1 = -A             ; // operator form
+   *  }
+   *
+   *  @endcode
+   *
+   *
+   *  @see std::negate
+   *  @see LoKi::Negate
+   *  @return functor
+   *
+   *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
+   *  @date 2001-01-23
+   */
+  template <class TYPE, class TYPE2>
+  inline LoKi::Negate<TYPE,TYPE2>
+  operator-( const  LoKi::Functor<TYPE,TYPE2>& fun  )
+  { return LoKi::Negate<TYPE,TYPE2> ( fun )  ; }
+  // ============================================================================
+  /** inline construction of operator "<"
+   *
+   *  @code
+   *
+   *  typedef LoKi::Functor<SomeType,double>          Func ;
+   *  typedef LoKi::FunctorFromFunctor<SomeType,bool> PfP  ;
+   *
+   *  void func( const Func& A , const Func& B )
+   *  {
+   *    PfP f = A < B             ; // operator form
+   *  }
+   *
+   *  @endcode
+   *
+   *  @see LoKi::Less
+   *  @return functor
+   *
+   *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
+   *  @date 2001-01-23
+   */
+  template <class TYPE, class TYPE2>
+  inline   LoKi::Less<TYPE,TYPE2>
+  operator<  ( const  LoKi::Functor<TYPE,TYPE2>&  fun1 ,
+               const  LoKi::Functor<TYPE,TYPE2>&  fun2 )
+  { return LoKi::Less<TYPE,TYPE2> ( fun1   , fun2   ) ; }
+  // ============================================================================
+  /** inline construction of operator "<"
+   *
+   *  @code
+   *
+   *  typedef LoKi::Functor<SomeType,double>          Func ;
+   *  typedef LoKi::FunctorFromFunctor<SomeType,bool> PfP  ;
+   *
+   *  void func( const Func& A , const double B  )
+   *  {
+   *    PfP f = A < B             ; // operator form
+   *  }
+   *
+   *  @endcode
+   *
+   *  @see LoKi::Less
+   *  @see LoKi::Constant
+   *  @return functor
+   *
+   *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
+   *  @date 2001-01-23
+   */
+  template <class TYPE,class TYPE2>
+  inline   LoKi::LessThanValue<TYPE,TYPE2>
+  operator< ( const  LoKi::Functor<TYPE,TYPE2>&       fun ,
+              typename LoKi::Constant<TYPE,TYPE2>::T2 val )
+  { return LoKi::LessThanValue<TYPE,TYPE2>( fun , val ) ; }
+  // ============================================================================
+  /** inline construction for operator "<"
+   *
+   *  @code
+   *
+   *  typedef LoKi::Functor<SomeType,double>          Func ;
+   *  typedef LoKi::FunctorFromFunctor<SomeType,bool> PfP  ;
+   *
+   *  void func( const Func& A , const double B  )
+   *  {
+   *    PfP f = B < A             ; // operator form
+   *  }
+   *
+   *  @endcode
+   *
+   *  @see LoKi::Less
+   *  @see LoKi::Constant
+   *  @return functor
+   *
+   *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
+   *  @date 2001-01-23
+   */
+  template <class TYPE, class TYPE2>
+  inline   LoKi::GreaterThanValue<TYPE,TYPE2>
+  operator< ( typename LoKi::Constant<TYPE,TYPE2>::T2 val ,
+              const  LoKi::Functor<TYPE,TYPE2>&       fun )
+  { return LoKi::GreaterThanValue<TYPE,TYPE2>( fun , val ) ; }
+  // ============================================================================
+  /** inline construction for operator ">"
+   *
+   *  @code
+   *
+   *  typedef Functor<SomeType,double>          Func ;
+   *  typedef FunctorFrinFunctor<SomeType,bool> PfP  ;
+   *
+   *  void func( const Func& A , const Func& B )
+   *  {
+   *    PfP f = A > B             ; // operator form
+   *  }
+   *
+   *  @endcode
+   *
+   *  @see LoKi::Less
+   *  @return functor
+   *
+   *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
+   *  @date 2001-01-23
+   */
+  template <class TYPE, class TYPE2>
+  inline   LoKi::Less<TYPE, TYPE2>
+  operator>  ( const  LoKi::Functor<TYPE,TYPE2>&  fun1 ,
+               const  LoKi::Functor<TYPE,TYPE2>&  fun2 )
+  { return LoKi::Less<TYPE,TYPE2> ( fun2 , fun1 ) ; }
+  // ============================================================================
+  /** inline construction for operator ">"
+   *
+   *  @code
+   *
+   *  typedef Functor<SomeType,double>          Func ;
+   *  typedef FunctorFrinFunctor<SomeType,bool> PfP  ;
+   *
+   *  void func( const Func& A , const double B )
+   *  {
+   *    PfP f = A > B             ; // operator form
+   *  }
+   *
+   *  @endcode
+   *
+   *  @see LoKi::Less
+   *  @see LoKi::Constant
+   *  @return functor
+   *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
+   *  @date 2001-01-23
+   */
+  template <class TYPE, class TYPE2>
+  inline   LoKi::GreaterThanValue<TYPE,TYPE2>
+  operator>  ( const  LoKi::Functor<TYPE,TYPE2>&       fun  ,
+               typename LoKi::Constant<TYPE,TYPE2>::T2 val )
+  { return LoKi::GreaterThanValue<TYPE,TYPE2>( fun , val ) ; }
+  // ============================================================================
+  /** inline construction of operator ">"
+   *
+   *  @code
+   *
+   *  typedef Functor<SomeType,double>          Func ;
+   *  typedef FunctorFrinFunctor<SomeType,bool> PfP  ;
+   *
+   *  void func( const Func& A , const double B )
+   *  {
+   *    PfP f = B > A             ; // operator form
+   *  }
+   *
+   *  @endcode
+   *
+   *  @see LoKi::Less
+   *  @see LoKi::Constant
+   *  @return functor
+   *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
+   *  @date 2001-01-23
+   */
+  template <class TYPE, class TYPE2>
+  inline   LoKi::LessThanValue<TYPE,TYPE2>
+  operator> ( typename LoKi::Constant<TYPE,TYPE2>::T2 val ,
+              const  LoKi::Functor<TYPE,TYPE2>&       fun  )
+  { return LoKi::LessThanValue<TYPE,TYPE2>( fun , val ) ; }
+  // ============================================================================
+  /** inline construction of operator "=="
+   *
+   *  @code
+   *
+   *  typedef Functor<SomeType,double>          Func ;
+   *  typedef FunctorFromFunctor<SomeType,bool> PfP  ;
+   *
+   *  void func( const Func& A , const Func& B )
+   *  {
+   *    PfP f = A == B             ; // operator form
+   *  }
+   *
+   *  @endcode
+   *
+   *  @see LoKi::Equal
+   *  @return functor
+   *
+   *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
+   *  @date 2001-01-23
+   */
+  template <class TYPE, class TYPE2>
+  inline   LoKi::Equal<TYPE,TYPE2>
+  operator== ( const LoKi::Functor<TYPE,TYPE2>&  fun1 ,
+               const LoKi::Functor<TYPE,TYPE2>&  fun2 )
+  { return LoKi::Equal<TYPE,TYPE2>  ( fun1   , fun2   ) ; }
+  // ============================================================================
+  /** inline construction of operator "=="
+   *
+   *  @code
+   *
+   *  typedef Functor<SomeType,double>          Func ;
+   *  typedef FunctorFromFunctor<SomeType,bool> PfP  ;
+   *
+   *  void func( const Func& A , const double B )
+   *  {
+   *    PfP f = A == B             ; // operator form
+   *  }
+   *
+   *  @endcode
+   *
+   *  @see LoKi::EqualToValue
+   *  @return functor
+   *
+   *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
+   *  @date 2001-01-23
+   */
+  template <class TYPE, class TYPE2>
+  inline   LoKi::EqualToValue<TYPE,TYPE2>
+  operator== ( const LoKi::Functor<TYPE,TYPE2>&        fun  ,
+               typename LoKi::Constant<TYPE,TYPE2>::T2 val  )
+  { return LoKi::EqualToValue<TYPE,TYPE2> ( fun   , val  ) ; }
+  // ============================================================================
+  /** inline construction of operator "=="
+   *
+   *  @code
+   *
+   *  typedef Functor<SomeType,double>          Func ;
+   *  typedef FunctorFromFunctor<SomeType,bool> PfP  ;
+   *
+   *  void func( const Func& A , const double B )
+   *  {
+   *    PfP f = B == A             ; // operator form
+   *  }
+   *
+   *  @endcode
+   *
+   *  @see LoKi::EqualToValue
+   *  @return functor
+   *
+   *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
+   *  @date 2001-01-23
+   */
+  template <class TYPE, class TYPE2>
+  inline   LoKi::EqualToValue<TYPE,TYPE2>
+  operator== ( typename LoKi::Constant<TYPE,TYPE2>::T2 val  ,
+               const LoKi::Functor<TYPE,TYPE2>&        fun  )
+  { return LoKi::EqualToValue<TYPE,TYPE2> ( val , fun  ) ; }
+  // ============================================================================
+  template <class TYPE, class TYPE2>
+  inline LoKi::EqualToValue<TYPE,TYPE2>
+  operator== ( const int                        val  ,
+               const LoKi::Functor<TYPE,TYPE2>& fun  )
+  { return LoKi::EqualToValue<TYPE,TYPE2> ( val , fun  ) ; }
+  // ============================================================================
+  template <class TYPE, class TYPE2>
+  inline LoKi::EqualToValue<TYPE,TYPE2>
+  operator== ( const unsigned int               val ,
+               const LoKi::Functor<TYPE,TYPE2>& fun  )
+  { return LoKi::EqualToValue<TYPE,TYPE2> ( val , fun  ) ; }
+  // ============================================================================
+  template <class TYPE, class TYPE2>
+  inline LoKi::EqualToValue<TYPE,TYPE2>
+  operator== ( const LoKi::Functor<TYPE,TYPE2>& fun ,
+               const int                        val )
+  { return LoKi::EqualToValue<TYPE,TYPE2> ( val , fun  ) ; }
+  // ============================================================================
+  template <class TYPE, class TYPE2>
+  inline LoKi::EqualToValue<TYPE,TYPE2>
+  operator== ( const LoKi::Functor<TYPE,TYPE2>& fun ,
+               const unsigned int               val )
+  { return LoKi::EqualToValue<TYPE,TYPE2> ( val , fun  ) ; }
+  // ============================================================================
+  template <class TYPE, class TYPE2>
+  inline LoKi::NotEqualToValue<TYPE,TYPE2>
+  operator!= ( const int                        val ,
+               const LoKi::Functor<TYPE,TYPE2>& fun  )
+  { return LoKi::NotEqualToValue<TYPE,TYPE2> ( val , fun  ) ; }
+  // ============================================================================
+  template <class TYPE, class TYPE2>
+  inline LoKi::NotEqualToValue<TYPE,TYPE2>
+  operator!= ( const unsigned int               val ,
+               const LoKi::Functor<TYPE,TYPE2>& fun  )
+  { return LoKi::NotEqualToValue<TYPE,TYPE2> ( val , fun  ) ; }
+  // ============================================================================
+  template <class TYPE, class TYPE2>
+  inline LoKi::NotEqualToValue<TYPE,TYPE2>
+  operator!= ( const LoKi::Functor<TYPE,TYPE2>& fun ,
+               const int                        val )
+  { return LoKi::NotEqualToValue<TYPE,TYPE2> ( val , fun  ) ; }
+  // ============================================================================
+  template <class TYPE, class TYPE2>
+  inline LoKi::NotEqualToValue<TYPE,TYPE2>
+  operator!= ( const LoKi::Functor<TYPE,TYPE2>& fun ,
+               const unsigned int               val )
+  { return LoKi::NotEqualToValue<TYPE,TYPE2> ( val , fun  ) ; }
+  // ============================================================================
+  /** inline construction of operator "<="
+   *
+   *  @code
+   *
+   *  typedef Functor<SomeType,double>          Func ;
+   *  typedef FunctorFromFunctor<SomeType,bool> PfP  ;
+   *
+   *  void func( const Func& A , const Func& B )
+   *  {
+   *    PfP f = A <= B             ; // operator form
+   *  }
+   *
+   *  @endcode
+   *
+   *  @see LoKi::LessOrEqual
+   *  @return functor
+   *
+   *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
+   *  @date 2001-01-23
+   */
+  template <class TYPE, class TYPE2>
+  inline   LoKi::LessOrEqual<TYPE,TYPE2>
+  operator<= ( const  LoKi::Functor<TYPE,TYPE2>&  fun1 ,
+               const  LoKi::Functor<TYPE,TYPE2>&  fun2 )
+  { return LoKi::LessOrEqual<TYPE,TYPE2> ( fun1 , fun2 ) ; }
+  // ============================================================================
+  /** inline construction of operator "<="
+   *
+   *  @code
+   *
+   *  typedef Functor<SomeType,double>          Func ;
+   *  typedef FunctorFromFunctor<SomeType,bool> PfP  ;
+   *
+   *  void func( const Func& A , const double  B )
+   *  {
+   *    PfP f = A <= B             ; // operator form
+   *  }
+   *
+   *  @endcode
+   *
+   *  @see LoKi::LessOrEqual
+   *  @see LoKi::Constant
+   *  @return functor
+   *
+   *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
+   *  @date 2001-01-23
+   */
+  template <class TYPE, class TYPE2>
+  inline   LoKi::LessOrEqualValue<TYPE,TYPE2>
+  operator<= ( const  LoKi::Functor<TYPE,TYPE2>&       fun ,
+               typename LoKi::Constant<TYPE,TYPE2>::T2 val )
+  { return LoKi::LessOrEqualValue<TYPE,TYPE2>( fun , val ) ; }
+  // ============================================================================
+  /** inline construction of operator "<="
+   *
+   *  @code
+   *
+   *  typedef Functor<SomeType,double>          Func ;
+   *  typedef FunctorFromFunctor<SomeType,bool> PfP  ;
+   *
+   *  void func( const Func& A , const double  B )
+   *  {
+   *    PfP f = B <= A             ; // operator form
+   *  }
+   *
+   *  @endcode
+   *
+   *  @see LoKi::LessOrEqual
+   *  @see LoKi::Constant
+   *  @return functor
+   *
+   *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
+   *  @date 2001-01-23
+   */
+  template <class TYPE,class TYPE2>
+  inline   LoKi::GreaterOrEqualValue<TYPE,TYPE2>
+  operator<= ( typename LoKi::Constant<TYPE,TYPE2>::T2 val ,
+               const  LoKi::Functor<TYPE,TYPE2>&       fun )
+  { return LoKi::GreaterOrEqualValue<TYPE,TYPE2>( fun , val ) ; }
+  // ============================================================================
+  /** inline construction of operator ">="
+   *
+   *  @code
+   *
+   *  typedef Functor<SomeType,double>          Func ;
+   *  typedef FunctorFromFunctor<SomeType,bool> PfP  ;
+   *
+   *  void func( const Func& A , const Func&  B )
+   *  {
+   *    PfP f = A >= B             ; // operator form
+   *  }
+   *
+   *  @endcode
+   *
+   *  @see LoKi::LessOrEqual
+   *  @return functor
+   *
+   *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
+   *  @date 2001-01-23
+   */
+  template <class TYPE, class TYPE2>
+  inline   LoKi::LessOrEqual<TYPE,TYPE2>
+  operator>= ( const  LoKi::Functor<TYPE,TYPE2>& fun1 ,
+               const  LoKi::Functor<TYPE,TYPE2>& fun2 )
+  { return LoKi::LessOrEqual<TYPE,TYPE2> ( fun2 , fun1 ) ; }
+  // ============================================================================
+  /** inline construction of operator ">="
+   *
+   *  @code
+   *
+   *  typedef Functor<SomeType,double>          Func ;
+   *  typedef FunctorFromFunctor<SomeType,bool> PfP  ;
+   *
+   *  void func( const Func& A , const double  B )
+   *  {
+   *    PfP f = A >= B             ; // operator form
+   *  }
+   *
+   *  @endcode
+   *
+   *  @see LoKi::LessOrEqual
+   *  @return functor
+   *
+   *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
+   *  @date 2001-01-23
+   */
+  template <class TYPE, class TYPE2>
+  inline   LoKi::GreaterOrEqualValue<TYPE,TYPE2>
+  operator>= ( const  LoKi::Functor<TYPE,TYPE2>&       fun ,
+               typename LoKi::Constant<TYPE,TYPE2>::T2 val )
+  { return LoKi::GreaterOrEqualValue<TYPE,TYPE2> ( fun , val ) ; }
+  // ============================================================================
+  /** inline construction of operator ">="
+   *
+   *  @code
+   *
+   *  typedef Functor<SomeType,double>          Func ;
+   *  typedef FunctorFromFunctor<SomeType,bool> PfP  ;
+   *
+   *  void func( const Func& A , const double  B )
+   *  {
+   *    PfP f = B >= A             ; // operator form
+   *  }
+   *
+   *  @endcode
+   *
+   *  @see LoKi::LessOrEqual
+   *  @return functor
+   *
+   *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
+   *  @date 2001-01-23
+   */
+  template <class TYPE, class TYPE2>
+  inline   LoKi::LessOrEqualValue<TYPE,TYPE2>
+  operator>= ( typename LoKi::Constant<TYPE,TYPE2>::T2 val ,
+               const    LoKi::Functor<TYPE,TYPE2>&     fun )
+  { return LoKi::LessOrEqualValue<TYPE,TYPE2> ( fun , val ) ; }
+  // ============================================================================
+  /** inline construction of operator "!="
+   *
+   *  @code
+   *
+   *  typedef Functor<SomeType,double>          Func ;
+   *  typedef FunctorFromFunctor<SomeType,bool> PfP  ;
+   *
+   *  void func( const Func& A , const Func& B )
+   *  {
+   *    PfP f = A != B             ; // operator form
+   *  }
+   *
+   *  @endcode
+   *
+   *  @see LoKi::NotEqual
+   *  @return functor
+   *
+   *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
+   *  @date 2001-01-23
+   */
+  template <class TYPE, class TYPE2>
+  inline LoKi::NotEqual<TYPE,TYPE2>
+  operator!= ( const LoKi::Functor<TYPE,TYPE2>&  fun1 ,
+               const LoKi::Functor<TYPE,TYPE2>&  fun2 )
+  { return LoKi::NotEqual<TYPE,TYPE2> ( fun1 , fun2 ) ; }
+  // ============================================================================
+  /** inline construction of operator "!="
+   *
+   *  @code
+   *
+   *  typedef Functor<SomeType,double>          Func ;
+   *  typedef FunctorFromFunctor<SomeType,bool> PfP  ;
+   *
+   *  void func( const Func& A , const double B )
+   *  {
+   *    PfP f = A != B             ; // operator form
+   *  }
+   *
+   *  @endcode
+   *
+   *  @see LoKi::NotEqual
+   *  @return functor
+   *
+   *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
+   *  @date 2001-01-23
+   */
+  template <class TYPE, class TYPE2>
+  inline LoKi::NotEqualToValue<TYPE,TYPE2>
+  operator!= ( const LoKi::Functor<TYPE,TYPE2>&        fun ,
+               typename LoKi::Constant<TYPE,TYPE2>::T2 val )
+  { return LoKi::NotEqualToValue<TYPE,TYPE2> ( fun , val ) ; }
+  // ============================================================================
+  /** inline construction of operator "!="
+   *
+   *  @code
+   *
+   *  typedef Functor<SomeType,double>          Func ;
+   *  typedef FunctorFromFunctor<SomeType,bool> PfP  ;
+   *
+   *  void func( const Func& A , const double B )
+   *  {
+   *    PfP f = B != A             ; // operator form
+   *  }
+   *
+   *  @endcode
+   *
+   *  @see LoKi::NotEqual
+   *  @return functor
+   *
+   *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
+   *  @date 2001-01-23
+   */
+  template <class TYPE, class TYPE2>
+  inline LoKi::NotEqualToValue<TYPE,TYPE2>
+  operator!= ( typename LoKi::Constant<TYPE,TYPE2>::T2 val ,
+               const LoKi::Functor<TYPE,TYPE2>&        fun )
+  { return LoKi::NotEqualToValue<TYPE,TYPE2> ( val , fun ) ; }
+  // ============================================================================
+  /** inline construction of operator "+"
  *
  *  @code
  *
@@ -704,10 +705,10 @@ operator+ ( const LoKi::Functor<TYPE,TYPE2>&  fun1 ,
  *  @date 2001-01-23
  */
 template <class TYPE, class TYPE2>
-inline   LoKi::Plus<TYPE,TYPE2>
+inline   LoKi::SumByValue<TYPE,TYPE2>
 operator+ ( const LoKi::Functor<TYPE,TYPE2>&        fun ,
             typename LoKi::Constant<TYPE,TYPE2>::T2 val )
-{ return LoKi::Plus<TYPE,TYPE2>( fun , val ) ; }
+{ return LoKi::SumByValue<TYPE,TYPE2>( fun , val ) ; }
 // ============================================================================
 /** inline construction of operator "+"
  *
@@ -730,10 +731,10 @@ operator+ ( const LoKi::Functor<TYPE,TYPE2>&        fun ,
  *  @date 2001-01-23
  */
 template <class TYPE, class TYPE2>
-inline   LoKi::Plus<TYPE,TYPE2>
+inline   LoKi::SumByValue<TYPE,TYPE2>
 operator+ ( typename LoKi::Constant<TYPE,TYPE2>::T2 val ,
             const LoKi::Functor<TYPE,TYPE2>&        fun )
-{ return LoKi::Plus<TYPE,TYPE2>( val , fun ) ; }
+{ return LoKi::SumByValue<TYPE,TYPE2>( val , fun ) ; }
 // ============================================================================
 /** inline construction of operator "-"
  *
@@ -782,10 +783,10 @@ operator- ( const LoKi::Functor<TYPE,TYPE2>&  fun1 ,
  *  @date 2001-01-23
  */
 template <class TYPE, class TYPE2>
-inline   LoKi::Minus<TYPE,TYPE2>
+inline   LoKi::Minus1<TYPE,TYPE2>
 operator- ( const LoKi::Functor<TYPE,TYPE2>&        fun ,
             typename LoKi::Constant<TYPE,TYPE2>::T2 val )
-{ return LoKi::Minus<TYPE,TYPE2> ( fun  , val ) ; }
+{ return LoKi::Minus1<TYPE,TYPE2> ( fun  , val ) ; }
 // ============================================================================
 /** inline construction of operator "-"
  *
@@ -809,10 +810,10 @@ operator- ( const LoKi::Functor<TYPE,TYPE2>&        fun ,
  *  @date 2001-01-23
  */
 template <class TYPE, class TYPE2>
-inline   LoKi::Minus<TYPE,TYPE2>
+inline   LoKi::Minus2<TYPE,TYPE2>
 operator- ( typename LoKi::Constant<TYPE,TYPE2>::T2 val ,
             const LoKi::Functor<TYPE,TYPE2>&        fun )
-{ return LoKi::Minus<TYPE,TYPE2> ( val , fun ) ; }
+{ return LoKi::Minus2<TYPE,TYPE2> ( val , fun ) ; }
 // ============================================================================
 /** inline construction of operator "/"
  *
@@ -862,10 +863,10 @@ operator/ ( const LoKi::Functor<TYPE,TYPE2>&  fun1 ,
  *  @date 2001-01-23
  */
 template <class TYPE,class TYPE2>
-inline   LoKi::Divide<TYPE,TYPE2>
+inline   LoKi::Divide1<TYPE,TYPE2>
 operator/ ( const LoKi::Functor<TYPE,TYPE2>&        fun ,
             typename LoKi::Constant<TYPE,TYPE2>::T2 val )
-{ return LoKi::Divide<TYPE,TYPE2>  ( fun  , val ) ; }
+{ return LoKi::Divide1<TYPE,TYPE2>  ( fun  , val ) ; }
 // ============================================================================
 /** inline construction of operator "/"
  *
@@ -890,10 +891,10 @@ operator/ ( const LoKi::Functor<TYPE,TYPE2>&        fun ,
  *  @date 2001-01-23
  */
 template <class TYPE,class TYPE2>
-inline   LoKi::Divide<TYPE,TYPE2>
+inline   LoKi::Divide2<TYPE,TYPE2>
 operator/ ( typename LoKi::Constant<TYPE,TYPE2>::T2 val ,
             const LoKi::Functor<TYPE,TYPE2>&        fun )
-{ return LoKi::Divide<TYPE,TYPE2>  ( val , fun ) ; }
+{ return LoKi::Divide2<TYPE,TYPE2>  ( val , fun ) ; }
 // ============================================================================
 /** inline construction of operator "*"
  *
@@ -943,10 +944,10 @@ operator* ( const LoKi::Functor<TYPE,TYPE2>&  fun1 ,
  *  @date 2001-01-23
  */
 template <class TYPE,class TYPE2>
-inline   LoKi::Multiply<TYPE,TYPE2>
+inline   LoKi::MultiplyByValue<TYPE,TYPE2>
 operator* ( const LoKi::Functor<TYPE,TYPE2>&        fun ,
             typename LoKi::Constant<TYPE,TYPE2>::T2 val )
-{ return LoKi::Multiply<TYPE,TYPE2> ( fun , val ) ; }
+{ return LoKi::MultiplyByValue<TYPE,TYPE2> ( fun , val ) ; }
 // ============================================================================
 /** inline construction of operator "*"
  *
@@ -969,12 +970,10 @@ operator* ( const LoKi::Functor<TYPE,TYPE2>&        fun ,
  *  @date 2001-01-23
  */
 template <class TYPE,class TYPE2>
-inline   LoKi::Multiply<TYPE,TYPE2>
+inline   LoKi::MultiplyByValue<TYPE,TYPE2>
 operator* ( typename LoKi::Constant<TYPE,TYPE2>::T2 val ,
             const LoKi::Functor<TYPE,TYPE2>&        fun )
-{ return LoKi::Multiply<TYPE,TYPE2> ( val , fun ) ; }
-
-
+{ return LoKi::MultiplyByValue<TYPE,TYPE2> ( val , fun ) ; }
 // ============================================================================
 template <class TYPE>
 inline LoKi::EqualToList<TYPE>

@@ -27,6 +27,7 @@
 // local
 #include "OTDet/DeOTModule.h"
 #include "OTDet/OTWireTraj.h"
+#include "OTDet/DeOTDetector.h"
 
 /** @file DeOTModule.cpp
  *
@@ -92,7 +93,7 @@ StatusCode DeOTModule::initialize() {
   IDetectorElement* quarter = this->parentIDetectorElement();
   IDetectorElement* layer = quarter->parentIDetectorElement();
   IDetectorElement* station = layer->parentIDetectorElement();
-  IDetectorElement* ot = station->parentIDetectorElement();
+  DeOTDetector* ot = dynamic_cast<DeOTDetector*>(station->parentIDetectorElement()) ;
 
   // Get specific parameters from the module
   m_moduleID = (unsigned int)param<int>("moduleID");
@@ -153,6 +154,9 @@ StatusCode DeOTModule::initialize() {
     if ( hasCondition( m_calibrationName ) ) { ///< Only do this if condtion is in LHCBCOND
       m_calibration = condition( m_calibrationName );
       updMgrSvc()->registerCondition( this, m_calibration.path(), &DeOTModule::calibrationCallback );
+      if( ot->globalCalibration() )
+	updMgrSvc()->registerCondition( this, const_cast<DeOTDetector::Calibration*>(ot->globalCalibration()),
+					&DeOTModule::calibrationCallback );
     } else {
       if( msg.level() <= MSG::VERBOSE )
         msg << MSG::VERBOSE << "Going to use DC06 defaults for RT-relation and T0s" << endmsg;
@@ -577,12 +581,13 @@ StatusCode DeOTModule::calibrationCallback() {
       m_calibration->param< std::vector<double> >( "TRParameters" ); // in ns
     const std::vector<double>& sigmaTParameters =
       m_calibration->param< std::vector<double> >( "STParameters" ); // in ns
-    const std::vector<double>& t0Parameters =
+    std::vector<double> t0Parameters =
       m_calibration->param< std::vector<double> >( "TZero" );
 
     // Here we assume the cell radius is the same for all straws. Should be  ;)
     // Maybe add the number of bins to the conditions
     m_rtrelation = OTDet::RtRelation( m_cellRadius, trParameters, sigmaTParameters ) ;
+    checkRtRelation(msg);
 
 //    double propagationVelocity = 1.0 / (4.0 * Gaudi::Units::ns/Gaudi::Units::m);
 //    if(m_calibration->exists("PropagationVelocity")) propagationVelocity = m_calibration->param<double>("PropagationVelocity");
@@ -603,6 +608,15 @@ StatusCode DeOTModule::calibrationCallback() {
       }
     }
     else m_walkrelation = OTDet::WalkRelation();
+    checkWalkRelation(msg);
+    
+    // add the global t0 to the given t0 parameters:
+    const IDetectorElement* quarter = this->parentIDetectorElement();
+    const IDetectorElement* layer = quarter->parentIDetectorElement();
+    const IDetectorElement* station = layer->parentIDetectorElement();
+    const DeOTDetector* ot = dynamic_cast<const DeOTDetector*>(station->parentIDetectorElement()) ;
+    const double globalT0 = ot->globalT0() ;
+    for( auto& t0 : t0Parameters ) t0 += globalT0 ;
 
     // how we set the straw t0 depends on the size of the vector.  we
     // allow that the calibration sets either every connected channel,
@@ -774,8 +788,8 @@ const std::vector<double>&  DeOTModule::getStrawT0s() const {
 StatusCode DeOTModule::setRtRelation(const OTDet::RtRelation& rtr) {
   if ( hasCondition( m_calibrationName ) ) {
     /// First we need to get the tr and st parameters
-    std::vector< double > trParameters     = rtr.tcoeff();
-    std::vector< double > sigmaTParameters = rtr.terrcoeff();
+    std::vector< double > trParameters(std::begin(rtr.tcoeff()), std::end(rtr.tcoeff()));
+    std::vector< double > sigmaTParameters(std::begin(rtr.terrcoeff()), std::end(rtr.terrcoeff()));
     /// Ok now we modify the conditions in the tes
     m_calibration->param< std::vector< double > >( "TRParameters" ) = trParameters;
     m_calibration->param< std::vector< double > >( "STParameters" ) = sigmaTParameters;
@@ -798,6 +812,7 @@ StatusCode DeOTModule::setRtRelation(const OTDet::RtRelation& rtr) {
 }
 
 void DeOTModule::fallbackDefaults() {
+  MsgStream msg( msgSvc(), name() );
   /// Need some default t0s and rt-relation
   /// Only to ensure backwards compatibility with DC06
   /// Frist the rt-relation
@@ -813,9 +828,10 @@ void DeOTModule::fallbackDefaults() {
   // Coefficients of polynomial sigma_t(r/rmax): for MC this is just sigma_t = 0.200 * 42/2.5
   std::vector<double> terrcoeff = boost::assign::list_of(resolution * 42*Gaudi::Units::ns / m_cellRadius) ;
 #endif
-  // Since everything is so simple, we need just two bins in the table
-  m_rtrelation = OTDet::RtRelation(m_cellRadius,tcoeff,terrcoeff,2) ;
+  m_rtrelation = OTDet::RtRelation(m_cellRadius,tcoeff,terrcoeff) ;
+  checkRtRelation(msg);
   m_walkrelation = OTDet::WalkRelation();
+  checkWalkRelation(msg);
   // Now the T0s
   const double startReadOutGate[]   = { 28.0*Gaudi::Units::ns, 30.0*Gaudi::Units::ns, 32.0*Gaudi::Units::ns } ;
   double thisModuleStartReadOutGate = startReadOutGate[m_stationID-1] ;
@@ -912,4 +928,64 @@ Gaudi::XYZPoint DeOTModule::centerOfStraw(const unsigned int aStraw) const {
   double dy = 0.5*m_dy[mono] ;
   pos += Gaudi::XYZVector( dy * m_dxdy[mono], dy, dy * m_dzdy[mono] ) ;
   return pos ;
+}
+
+void DeOTModule::checkWalkRelation(MsgStream& msg) const
+{
+    // approximations must be better than one OTIS bin (around 13-16% of OT
+    // resolution), and should usually be better than half that value
+    const auto thresh = 25. * Gaudi::Units::ns / 64.;
+    const auto err = m_walkrelation.walk_fast_error_estimate();
+    if (msg.level() <= MSG::VERBOSE) {
+	msg << MSG::VERBOSE << "Fast walk relation approximation error: " <<
+	    err << endmsg;
+    }
+    if (err > thresh) {
+	msg << MSG::ERROR << "Fast walk relation approximation error "
+	    "larger than one OTIS bin (" << err << "), please check "
+	    "your calibration parameters and/or increase Chebyshev order "
+	    "in Det/OTDet/WalkRelation." << endmsg;
+    } else if (err > 0.5 * thresh) {
+	msg << MSG::WARNING << "Fast walk relation approximation error "
+	    "larger than half an OTIS bin (" << err << "), please check "
+	    "your calibration parameters and/or increase Chebyshev order "
+	    "in Det/OTDet/WalkRelation." << endmsg;
+    }
+}
+
+void DeOTModule::checkRtRelation(MsgStream& msg) const
+{
+    // approximations must be better than one OTIS bin (around 13-16% of OT
+    // resolution), and should usually be better than half that value
+    const auto thresh = (25. * Gaudi::Units::ns / 64.) * m_rtrelation.drdt();
+    const decltype(thresh) threshs[3] = {
+       	thresh, thresh / (m_rtrelation.rmax() - m_rtrelation.rmin()), thresh };
+    const decltype(m_rtrelation.error_estimate(OTDet::RtRelation::Rt)) errs[3] = {
+	m_rtrelation.error_estimate(OTDet::RtRelation::Rt),
+       	m_rtrelation.error_estimate(OTDet::RtRelation::Drdt),
+	m_rtrelation.error_estimate(OTDet::RtRelation::Rerr)
+    };
+    const std::string names[3] = { "r(t)", "drdt(t)", "rerr(t)" };
+    for (unsigned i = 0; i < sizeof(threshs) / sizeof(threshs[0]); ++i) {
+	const auto th = threshs[i];
+	const auto err = errs[i];
+	const auto& name = names[i];
+	if (msg.level() <= MSG::VERBOSE) {
+	    msg << MSG::VERBOSE << "Fast " << name <<
+		" relation approximation error: " << err << endmsg;
+	}
+	if (err > th) {
+	    msg << MSG::ERROR << "Fast " << name <<
+		" relation approximation error larger than one OTIS bin "
+		"equivalent (" << err << ", threshold " << th << "), please "
+		"check your calibration parameters and/or increase Chebyshev "
+		"order in Det/OTDet/RtRelation." << endmsg;
+	} else if (err > 0.5 * th) {
+	    msg << MSG::WARNING << "Fast " << name <<
+		" relation approximation error larger than half an OTIS bin "
+		"equivalent (" << err << ", threshold " << th << "), please "
+		"check your calibration parameters and/or increase Chebyshev "
+		"order in Det/OTDet/RtRelation." << endmsg;
+	}
+    }
 }

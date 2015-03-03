@@ -1,4 +1,4 @@
-// $Id: Functions.h 181005 2014-12-02 13:39:03Z ibelyaev $
+// $Id: Functions.h 184368 2015-02-23 17:05:41Z ibelyaev $
 // ============================================================================
 #ifndef LHCBMATH_FUNCTIONS_H
 #define LHCBMATH_FUNCTIONS_H 1
@@ -18,6 +18,8 @@
 // Local
 // ============================================================================
 #include "LHCbMath/NSphere.h"
+#include "LHCbMath/Bernstein.h"
+#include "LHCbMath/Polynomials.h"
 // ============================================================================
 /** @file LHCbMath/Functions.h
  *
@@ -26,8 +28,8 @@
  *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
  *  @date 2010-04-19
  *
- *                    $Revision: 181005 $
- *  Last modification $Date: 2014-12-02 14:39:03 +0100 (Tue, 02 Dec 2014) $
+ *                    $Revision: 184368 $
+ *  Last modification $Date: 2015-02-23 18:05:41 +0100 (Mon, 23 Feb 2015) $
  *                 by $author$
  */
 // ============================================================================
@@ -36,462 +38,6 @@ namespace Gaudi
   // ==========================================================================
   namespace Math
   {
-    // ========================================================================
-    //  Chebyshev
-    // ========================================================================
-    template <unsigned int N> class  Chebyshev_ ;
-    // ========================================================================
-    /** @class Chebychev_
-     *  Efficient evaluator of Chebyshev polynomial
-     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
-     *  @date 2011-04-19
-     */
-    template <unsigned int N>
-    class  Chebyshev_ : public std::unary_function<double,double>
-    {
-    public:
-      // ======================================================================
-      /// the only one important method
-      inline double operator() ( const double    x    ) const
-      { return 2 * x * m_N1 ( x ) - m_N2 ( x ) ; }
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// T (N-1)
-      Chebyshev_<N-1>  m_N1 ;                                        // T (N-1)
-      /// T (N-2)
-      Chebyshev_<N-2>  m_N2 ;                                        // T (N-2)
-      // ======================================================================
-    } ;
-    // ========================================================================
-    /// specialization for 0
-    template <>
-    class  Chebyshev_<0> : public std::unary_function<double,double>
-    {
-    public:
-      // ======================================================================
-      inline double operator() ( const double /* x */ ) const { return    1 ; }
-      // ======================================================================
-    } ;
-    // ========================================================================
-    /// specialization for N=1
-    template <>
-    class  Chebyshev_<1> : public std::unary_function<double,double>
-    {
-    public:
-      // ======================================================================
-      /// the only one important method
-      inline double operator() ( const double    x    ) const { return   x ; }
-      // ======================================================================
-    } ;
-    // ========================================================================
-    /** @class Chebyshev
-     *  evaluate the chebyshev polynomials
-     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
-     *  @date 2011-04-19
-     */
-    class GAUDI_API Chebyshev : public std::unary_function<double,double>
-    {
-    public :
-      // ======================================================================
-      /// constructor
-      Chebyshev ( const unsigned int N = 0 ) : m_N ( N ) {}
-      // ======================================================================
-    public:
-      // ======================================================================
-      /// evaluate the polynomial
-      double operator() ( const double x ) const ;
-      // ======================================================================
-    public:
-      // ======================================================================
-      unsigned int order() const { return m_N ; }
-      // ======================================================================
-    private:
-      // ======================================================================
-      unsigned int m_N ;
-      // ======================================================================
-    } ;
-    // ========================================================================
-    // Legendre
-    // ========================================================================
-    template <unsigned int N> class  Legendre_ ;
-    // ========================================================================
-    /** @class Legendre_
-     *  Efficienct evaluator of Legendre polynomial
-     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
-     *  @date 2011-04-19
-     */
-    template <unsigned int N>
-    class  Legendre_ : public std::unary_function<double,double>
-    {
-    private:
-      // ======================================================================
-      enum
-        {
-          A = 2 * N - 1 ,
-          B =     N - 1
-        } ;
-      // =======================================================================
-    public:
-      // ======================================================================
-      /// the only one important method
-      inline double operator() ( const double    x    ) const
-      { return ( A * x * m_N1 ( x ) - B * m_N2 ( x ) ) / N ; }
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// L (N-1)
-      Legendre_<N-1>  m_N1 ;                                         // L (N-1)
-      /// L (N-2)
-      Legendre_<N-2>  m_N2 ;                                         // L (N-2)
-      // ======================================================================
-    } ;
-    // ========================================================================
-    /// specialization for 0
-    template <>
-    class  Legendre_<0> : public std::unary_function<double,double>
-    {
-    public:
-      // ======================================================================
-      /// the only one important method
-      inline double operator() ( const double /* x */ ) const { return    1 ; }
-      // ======================================================================
-    } ;
-    // ========================================================================
-    /// specialization for N=1
-    template <>
-    class  Legendre_<1> : public std::unary_function<double,double>
-    {
-    public:
-      // ======================================================================
-      /// the only one important method
-      inline double operator() ( const double    x    ) const { return   x ; }
-      // ======================================================================
-    } ;
-    // ========================================================================
-    /** @class Legendre
-     *  evaluate the Legendre polynomials
-     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
-     *  @date 2011-04-19
-     */
-    class GAUDI_API Legendre : public std::unary_function<double,double>
-    {
-    public :
-      // ======================================================================
-      /// constructor
-      Legendre ( const unsigned int N = 0  ) : m_N ( N ) {}
-      // ======================================================================
-    public:
-      // ======================================================================
-      /// evaluate the polynomial
-      double operator() ( const double x ) const ;
-      // ======================================================================
-    public:
-      // ======================================================================
-      unsigned int order() const { return m_N ; }
-      // ======================================================================
-    private:
-      // ======================================================================
-      unsigned int m_N ;
-      // ======================================================================
-    } ;
-    // ========================================================================
-    // Hermite
-    // ========================================================================
-    template <unsigned int N> class  Hermite_ ;
-    // ========================================================================
-    /** @class Hermite_
-     *  Efficienct evaluator of Hermite polynomial
-     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
-     *  @date 2011-04-19
-     */
-    template <unsigned int N>
-    class  Hermite_ : public std::unary_function<double,double>
-    {
-    public:
-      // ======================================================================
-      /// the only one important method
-      inline double operator() ( const double    x    ) const
-      { return x * m_N1 ( x ) - ( N - 1 ) * m_N2 ( x ) ; }
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// H (N-1)
-      Hermite_<N-1>  m_N1 ;                                        // H (N-1)
-      /// H (N-2)
-      Hermite_<N-2>  m_N2 ;                                        // H (N-2)
-      // ======================================================================
-    } ;
-    // ========================================================================
-    /// specialization for 0
-    template <>
-    class  Hermite_<0> : public std::unary_function<double,double>
-    {
-    public:
-      // ======================================================================
-      inline double operator() ( const double /* x */ ) const { return 1 ; }
-      // ======================================================================
-    } ;
-    // ========================================================================
-    /// specialization for N=1
-    template <>
-    class  Hermite_<1> : public std::unary_function<double,double>
-    {
-    public:
-      // ======================================================================
-      /// the only one important method
-      inline double operator() ( const double    x    ) const { return   x ; }
-      // ======================================================================
-    } ;
-    // ========================================================================
-    /** @class Hermite
-     *  evaluate the Hermite polynomials
-     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
-     *  @date 2011-04-19
-     */
-    class GAUDI_API Hermite : public std::unary_function<double,double>
-    {
-    public :
-      // ======================================================================
-      /// constructor
-      Hermite ( const unsigned int N = 0 ) : m_N ( N ) {}
-      // ======================================================================
-    public:
-      // ======================================================================
-      /// evaluate the polynomial
-      double operator() ( const double x ) const ;
-      // ======================================================================
-    public:
-      // ======================================================================
-      unsigned int order() const { return m_N ; }
-      // ======================================================================
-    private:
-      // ======================================================================
-      unsigned int m_N ;
-      // ======================================================================
-    } ;
-    // ========================================================================
-    /** @class Bernstein
-     *  The Bernstein's polynomial of order N
-     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
-     */
-    class GAUDI_API Bernstein : public std::unary_function<double,double>
-    {
-      // ======================================================================
-    public:
-      // ======================================================================
-      /// helper structure to denote the basic Bernstein polynomials B(k,N)
-      class GAUDI_API Basic 
-      {
-      public:
-        // ====================================================================
-        explicit  Basic ( const unsigned short k = 0 , 
-                          const unsigned short N = 0 ) 
-          : m_k ( k ) 
-          , m_N ( N ) 
-        {}
-        // ====================================================================
-        unsigned short k () const { return m_k ; }
-        unsigned short N () const { return m_N ; }
-        // ====================================================================
-      private: 
-        // ====================================================================
-        unsigned short m_k ;
-        unsigned short m_N ;
-        // ====================================================================
-      } ;
-      // ======================================================================
-    public:
-      // ======================================================================
-      /// constructor from the order
-      Bernstein ( const unsigned short       N          ,
-                  const double               xmin  =  0 ,
-                  const double               xmax  =  1 ) ;
-      // ======================================================================
-      /// constructor from N+1 coefficients
-      Bernstein ( const std::vector<double>& pars       ,
-                  const double               xmin  =  0 ,
-                  const double               xmax  =  1 ) ;
-      /// templated constructor from the sequence of coefficients 
-      template <class ITERATOR>
-      Bernstein ( ITERATOR     first    , 
-                  ITERATOR     last     , 
-                  const double xmin = 0 , 
-                  const double xmax = 0 ) 
-        : std::unary_function<double,double>()
-        , m_pars ( first , last ) 
-        , m_xmin ( std::min ( xmin, xmax ) )
-        , m_xmax ( std::max ( xmin, xmax ) )
-      { if ( m_pars.empty() ) { m_pars.push_back ( 0 ) ; } }
-      /// construct the basic bernstein polinomial  B(k,N)
-      Bernstein  ( const Basic&         basic    ,
-                   const double         xmin = 0 , 
-                   const double         xmax = 0 ) ;
-      // ======================================================================
-    public:
-      // ======================================================================
-      /// get the value
-      double operator () ( const double x ) const ;
-      // ======================================================================
-    public:
-      // ======================================================================
-      /// get number of parameters
-      std::size_t npars  () const { return m_pars.size() ; }
-      /// are all parameters zero?
-      bool        zero   () const ;
-      /// set k-parameter
-      bool setPar        ( const unsigned short k , const double value ) ;
-      /// set k-parameter
-      bool setParameter  ( const unsigned short k , const double value )
-      { return setPar    ( k , value ) ; }
-      /// get the parameter value
-      double  par        ( const unsigned short k ) const
-      { return ( k < m_pars.size() ) ? m_pars[k] : 0.0 ; }
-      /// get the parameter value
-      double  parameter ( const unsigned short k ) const { return par ( k ) ; }
-      /// get lower edge
-      double xmin () const { return m_xmin ; }
-      /// get upper edge
-      double xmax () const { return m_xmax ; }
-      /// get all parameters:
-      const std::vector<double>& pars() const { return m_pars ; }
-      // ======================================================================
-    public:
-      // ======================================================================
-      double x ( const double t ) const
-      { return       m_xmin   + ( m_xmax - m_xmin ) * t ; }
-      double t ( const double x ) const
-      { return ( x - m_xmin ) / ( m_xmax - m_xmin )     ; }
-      // ======================================================================
-    public:
-      // ======================================================================
-      /// get the integral between xmin and xmax
-      double integral   () const ;
-      /// get the integral between low and high 
-      double integral   ( const double low , const double high ) const ;
-      /// get the derivative at point "x" 
-      double derivative ( const double x   ) const ;
-      /// get integral   as function object 
-      Bernstein indefinite_integral () const ;
-      /// get derivative as function object 
-      Bernstein derivative          () const ;
-      // ======================================================================
-    public:
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the list of parameters
-      std::vector<double>  m_pars ;                // the list of parameters
-      /// the left edge of interval
-      double m_xmin  ;                             // the left edge of interval
-      /// the right edge of interval
-      double m_xmax  ;                             // the right edge of interval
-      // ======================================================================
-    public:
-      // ======================================================================
-      /** get the integral between low and high for a product of Bernstein
-       *  polynom and the exponential function with the exponent tau
-       *  \f[  \int_{a}^{b} \mathcal{B} e^{\tau x } \mathrm{d}x \f] 
-       *  @param poly  bernstein polynomial
-       *  @param tau   slope parameter for exponential 
-       *  @param a     low  integration range 
-       *  @param b     high integration range 
-       */
-      static double integrate 
-        ( const Bernstein& poly ,
-          const double     tau  ,
-          const double     a    , 
-          const double     b    ) ;
-      // ======================================================================
-    } ;
-    // ========================================================================
-    /** @class Positive
-     *  The "positive" polynomial of order N
-     *  Actually it is a sum of basic bernstein polynomials with
-     *  non-negative coefficients
-     */
-    class GAUDI_API Positive : public std::unary_function<double,double>
-    {
-      // ======================================================================
-    public:
-      // ======================================================================
-      /// constructor from the order
-      Positive ( const unsigned short       N          ,
-                 const double               xmin  =  0 ,
-                 const double               xmax  =  1 ) ;
-      // ======================================================================
-      /// constructor from N phases
-      Positive ( const std::vector<double>& pars       ,
-                 const double               xmin  =  0 ,
-                 const double               xmax  =  1 ) ;
-      // ======================================================================
-    public:
-      // ======================================================================
-      /// get the value
-      double operator () ( const double x ) const { return m_bernstein ( x ) ; }
-      // ======================================================================
-    public:
-      // ======================================================================
-      /// get number of parameters
-      std::size_t npars () const { return m_sphere.nPhi () ; }
-      /// set k-parameter
-      bool setPar       ( const unsigned short k , const double value ) ;
-      /// set k-parameter
-      bool setParameter ( const unsigned short k , const double value )
-      { return setPar   ( k , value ) ; }
-      /// get the parameter value 
-      double  par       ( const unsigned short k ) const 
-      { return m_sphere.par ( k ) ; }
-      // ======================================================================
-    public:
-      // ======================================================================
-      /// get the parameter value
-      double  parameter ( const unsigned short k ) const { return par ( k ) ; }
-      /// get lower edge
-      double xmin () const { return m_bernstein.xmin () ; }
-      /// get upper edge
-      double xmax () const { return m_bernstein.xmax () ; }
-      /// transform variables 
-      double x ( const double t ) const { return m_bernstein. x ( t )  ; }
-      double t ( const double x ) const { return m_bernstein. t ( x )  ; }
-      // ======================================================================
-    public:
-      // ======================================================================
-      /// get the integral between xmin and xmax
-      double integral   () const { return m_bernstein.integral() ; }
-      /// get the integral between low and high 
-      double integral   ( const double low , const double high ) const 
-      { return m_bernstein.integral ( low , high )  ; }
-      /// get the derivative 
-      double derivative ( const double x ) const 
-      { return m_bernstein.derivative ( x ) ; }
-      // ======================================================================
-    public:
-      // ======================================================================
-      /// get the underlying Bernstein polynomial
-      const Gaudi::Math::Bernstein& bernstein () const { return m_bernstein ; }
-      /// get the parameter sphere 
-      const Gaudi::Math::NSphere&   sphere    () const { return m_sphere    ; }
-      /// get the indefinite integral 
-      Bernstein indefinite_intergal () const 
-      { return m_bernstein.indefinite_integral () ; }
-      /// get the derivative 
-      Bernstein derivative          () const 
-      { return m_bernstein.derivative          () ; }
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// update bernstein coefficinects
-      bool updateBernstein () ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the actual bernstein polynomial
-      Gaudi::Math::Bernstein m_bernstein ; // the actual bernstein polynomial
-      /// arameters sphere 
-      Gaudi::Math::NSphere   m_sphere    ;
-      // ======================================================================
-    } ;
     // ========================================================================
     /** @class BifurcatedGauss
      *  simple representation of bifurcated gaussian function
@@ -2404,17 +1950,22 @@ namespace Gaudi
     public:
       // ======================================================================
       /** constructor  from all parameters
+       *  \f$ f \rigtharrow A_1 + A_2\f$ 
        *  @param m0    the mass
        *  @param m0g1  parameter \f$ m_0\times g_1\f$
        *  @param g2og2 parameter \f$ g2/g_1       \f$
-       *  @param mK    kaon mass
-       *  @param mPi   pion mass
+       *  @param mA1   mass of A1 
+       *  @param mA2   mass of A2 
+       *  @param mB1   mass of B1 
+       *  @param mB2   mass of B2 
        */
-      Flatte  ( const double m0    = 980    ,
-                const double m0g1  = 165    ,
-                const double g2og1 = 4.21   ,
-                const double mK    = 493.7  ,
-                const double mPi   = 139.6  ) ;
+      Flatte  ( const double m0    = 980   ,
+                const double m0g1  = 165   ,
+                const double g2og1 = 4.21  ,
+                const double mA1   = 139.6 ,
+                const double mA2   = 139.6 ,
+                const double mB1   = 493.7 ,
+                const double mB2   = 493.7 ) ;
       /// destructor
       virtual ~Flatte () ;
       // ======================================================================
@@ -2423,14 +1974,13 @@ namespace Gaudi
       /// get the value of Flatte function
       virtual double operator() ( const double x ) const ;
       /// get the value of Flatte amplitude
-      virtual std::complex<double> amplitude ( const double x ) const ;
+      std::complex<double> amplitude ( const double x ) const 
+      { return flatte_amp ( x ) ; }
       // ======================================================================
     public:
       // ======================================================================
       /// get the amplitude for pipi-channel
       std::complex<double> flatte_amp  ( const double x ) const ;
-      /// get the amplitude for KK-channel
-      std::complex<double> flatte2_amp ( const double x ) const ;
       // ======================================================================
     public:
       // ======================================================================
@@ -2446,8 +1996,17 @@ namespace Gaudi
       double peak   () const { return   m0   () ; }
       double m0g1   () const { return m_m0g1    ; }
       double g2og1  () const { return m_g2og1   ; }
-      double mK     () const { return m_K       ; }
-      double mPi    () const { return m_Pi       ; }
+      double mA1    () const { return m_A1      ; }
+      double mA2    () const { return m_A2      ; }
+      double mB1    () const { return m_B1      ; }
+      double mB2    () const { return m_B2      ; }
+      // ======================================================================
+    public:
+      // ======================================================================
+      double thresholdA () const { return mA1() + mA2() ; }
+      double thresholdB () const { return mB1() + mB2() ; }
+      double threshold  () const 
+      { return std::min ( thresholdA () , thresholdB () ) ; }
       // ======================================================================
     public:
       // ======================================================================
@@ -2463,10 +2022,6 @@ namespace Gaudi
       virtual double integral () const ;
       /// get the integral between low and high limits
       virtual double integral  ( const double low  ,
-                                 const double high ) const 
-      { return integral1 ( low ,high ) ; }
-      /// get the integral between low and high limits
-      double         integral1 ( const double low  ,
                                  const double high ) const ;
       // ======================================================================
     private:
@@ -2474,8 +2029,10 @@ namespace Gaudi
       double m_m0     ;
       double m_m0g1   ;
       double m_g2og1  ;
-      double m_K      ;
-      double m_Pi     ;
+      double m_A1     ;
+      double m_A2     ;
+      double m_B1     ;
+      double m_B2     ;
       // ======================================================================
     private:
       // ======================================================================
@@ -2494,23 +2051,32 @@ namespace Gaudi
      *  http://www.sciencedirect.com/science/article/pii/0370269376906547
      *
      *  KK-channel
-     *  @author Vanya BELYAEV Ivan.BElyaev@itep.ru
+     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2011-11-30
      */
     class GAUDI_API Flatte2 : public Gaudi::Math::Flatte
     {
     public:
       // ======================================================================
-      /** constructor  from three parameters
+      /** constructor  from all parameters
+       *  \f$ f \rigtharrow B_1 + B_2\f$ 
        *  @param m0    the mass
        *  @param m0g1  parameter \f$ m_0\times g_1\f$
        *  @param g2og2 parameter \f$ g2/g_1       \f$
+       *  @param mA1   mass of A1 
+       *  @param mA2   mass of A2 
+       *  @param mB1   mass of B1 
+       *  @param mB2   mass of B2 
        */
-      Flatte2  ( const double m0    = 980      ,
-                 const double m0g1  = 165      ,
-                 const double g2og1 = 4.21     ,
-                 const double mK    = 493.7    ,
-                 const double mPi   = 139.6    ) ;
+      Flatte2 ( const double m0    = 980   ,
+                const double m0g1  = 165   ,
+                const double g2og1 = 4.21  ,
+                const double mA1   = 139.6 ,
+                const double mA2   = 139.6 ,
+                const double mB1   = 493.7 ,
+                const double mB2   = 493.7 ) ;
+      /// constructor  from Flatte
+      Flatte2 ( const Flatte& flatte ) ;
       /// destructor
       virtual ~Flatte2 () ;
       // ======================================================================
@@ -2518,8 +2084,6 @@ namespace Gaudi
       // ======================================================================
       /// get the value of Flatte function (KK-channel)
       virtual double operator() ( const double x ) const ;
-      /// get the value of Flatte amplitude
-      virtual std::complex<double> amplitude ( const double x ) const ;
       // ======================================================================
     } ;
     // ========================================================================
@@ -3291,8 +2855,8 @@ namespace Gaudi
        *  @param m0    the mass
        *  @param m0g1  parameter \f$ m_0\times g_1\f$
        *  @param g2og2 parameter \f$ g2/g_1       \f$
-       *  @param mK    kaon mass
-       *  @param mPi   pion mass
+       *  @param mA    A mass
+       *  @param mB    B mass
        *  @param m3    the mass of the third particle
        *  @param m     the mass of mother particle
        *  @param L     the orbital momentum between the pair and the third particle
@@ -4414,16 +3978,23 @@ namespace Gaudi
       /// get bnew valeu for the exponent  
       bool   setTau ( const  double value ) ;
       /// get number of polinomial parameters
-      std::size_t npars () const { return m_positive.npars() ; }
+      std::size_t npars () const { return 1 + m_positive.npars() ; }
       /// set k-parameter
       bool setPar       ( const unsigned short k , const double value ) 
-      { return m_positive.setPar ( k , value ) ; }
+      { return 
+          m_positive.npars() == k ? 
+          setTau            (     value ) : 
+          m_positive.setPar ( k , value ) ; }
       /// set k-parameter
       bool setParameter ( const unsigned short k , const double value )
       { return setPar   ( k , value ) ; }
       /// get the parameter value 
       double  par       ( const unsigned short k ) const 
-      { return m_positive.par ( k ) ; }
+      { 
+        return 
+          m_positive.npars() == k ? 
+          tau            (   )    : 
+          m_positive.par ( k )    ; }
       // ======================================================================
     public:
       // ======================================================================
@@ -4455,515 +4026,6 @@ namespace Gaudi
     };
     // ========================================================================
     // 2D-models 
-    // ========================================================================
-    /** @class Bernstein2D
-     *  The Bernstein's polynomial of order Nx*Ny
-     */
-    class GAUDI_API Bernstein2D 
-      : public std::binary_function<double,double,double>
-    {
-      // ======================================================================
-    public:
-      // ======================================================================
-      /// constructor from the order
-      Bernstein2D ( const unsigned short       nX    =  1 ,
-                    const unsigned short       nY    =  1 ,
-                    const double               xmin  =  0 ,
-                    const double               xmax  =  1 ,
-                    const double               ymin  =  0 ,
-                    const double               ymax  =  1 ) ;
-      // ======================================================================
-    public:
-      // ======================================================================
-      /// get the value
-      double operator () ( const double x ,
-                           const double y ) const ;
-      // ======================================================================
-    public: // setters 
-      // ======================================================================
-      /// set k-parameter
-      bool setPar       ( const unsigned int   k     ,
-                          const double         value ) ;
-      /// set k-parameter
-      bool setParameter ( const unsigned int   k     ,
-                          const double         value ) 
-      { return ( k < m_pars.size() ) && setPar ( k , value ) ; }
-      /// set (l,m)-parameter
-      bool setPar       ( const unsigned short l     ,
-                          const unsigned short m     , 
-                          const double         value ) ;
-      /// set (l,m)-parameter
-      bool setParameter ( const unsigned short l     ,
-                          const unsigned short m     , 
-                          const double         value ) 
-      { return setPar   ( l , m  , value ) ; }
-      // ======================================================================
-    public: // getters  
-      // ======================================================================
-      /// get (l,m)-parameter 
-      double  par       ( const unsigned short l ,
-                          const unsigned short m ) const ;
-      /// get (l,m)-parameter 
-      double  parameter ( const unsigned short l , 
-                          const unsigned short m ) const { return par (  l , m  ) ; }
-      /// get k-parameter 
-      double  par       ( const unsigned int k ) const 
-      { return k < m_pars.size() ? m_pars[k] : 0.0 ; }
-      /// get k-parameter
-      double  parameter ( const unsigned int k ) const { return par ( k ) ; }
-      /// get all parameters at once 
-      const std::vector<double>& pars() const { return m_pars ; }
-      // ======================================================================      
-    public:
-      // ======================================================================
-      /// get the actual number of parameters
-      std::size_t npars () const { return m_pars.size() ; }
-      /// get lower edge
-      double xmin () const { return m_xmin ; }
-      /// get upper edge
-      double xmax () const { return m_xmax ; }
-      /// get lower edge
-      double ymin () const { return m_ymin ; }
-      /// get upper edge
-      double ymax () const { return m_ymax ; }
-      /// get the polynomial order (X)
-      unsigned short nX () const { return m_nx ; } 
-      /// get the polynomial order (Y)
-      unsigned short nY () const { return m_ny ; }      
-      // ======================================================================
-    public:  // transformations 
-      // ======================================================================
-      double x  ( const double tx ) const
-      { return xmin ()  + ( xmax () - xmin () ) * tx ; }
-      double y  ( const double ty ) const
-      { return ymin ()  + ( ymax () - ymin () ) * ty ; }
-      double tx ( const double x ) const
-      { return  ( x - xmin () ) / ( xmax () - xmin () )      ; }
-      double ty ( const double y ) const
-      { return  ( y - ymin () ) / ( ymax () - ymin () )      ; }
-      // ======================================================================
-    public:
-      // ======================================================================
-      /** get the integral over 2D-region 
-       *  \f[ \int_{x_low}^{x_high}\int_{y_low}^{y_high} \mathcal{B}(x,y) \mathrm{d}x\mathrm{d}y\f] 
-       *  @param xlow  low  edge in x 
-       *  @param xhigh high edge in x 
-       *  @param ylow  low  edge in y 
-       *  @param yhigh high edge in y 
-       */
-      double integral   ( const double xlow , const double xhigh , 
-                          const double ylow , const double yhigh ) const ;
-      /** integral over x-dimension 
-       *  \f[ \int_{y_low}^{y_high} \mathcal{B}(x,y) \mathrm{d}y\f] 
-       *  @param x     variable 
-       *  @param ylow  low  edge in y 
-       *  @param yhigh high edge in y 
-       */
-      double integrateX ( const double y    , 
-                          const double xlow , const double xhigh ) const ;
-      /** integral over x-dimension 
-       *  \f[ \int_{x_low}^{x_high} \mathcal{B}(x,y) \mathrm{d}x\f] 
-       *  @param y     variable 
-       *  @param xlow  low  edge in x 
-       *  @param xhigh high edge in x 
-       */
-      double integrateY ( const double x    , 
-                          const double ylow , const double yhigh ) const ;
-      // ======================================================================
-    public: // few helper functions to expose internals 
-      // ======================================================================
-      /// evaluate the basic polynomials 
-      double basicX ( const unsigned short i , const double         x ) const 
-      { return ( i > m_nx || x < m_xmin || x < m_xmax ) ? 0.0 : m_bx[i](x) ; }
-      /// evaluate the basic polynomials 
-      double basicY ( const unsigned short i , const double         y ) const
-      { return ( i > m_ny || y < m_ymin || y < m_ymax ) ? 0.0 : m_by[i](y) ; }
-      /// expose some internals 
-      const Bernstein& basicX ( const unsigned short i ) const { return m_bx[i] ; }
-      /// expose some internals 
-      const Bernstein& basicY ( const unsigned short i ) const { return m_by[i] ; }
-      // ======================================================================
-    private:
-      // ======================================================================
-      // polynom order in x-dimension 
-      unsigned short m_nx ; // polynom order in x-dimension 
-      // polynom order in y-dimension 
-      unsigned short m_ny ; // polynom order in y-dimension 
-      /// the list of parameters
-      std::vector<double>  m_pars ;                // the list of parameters
-      /// the left edge of interval
-      double m_xmin  ;                             // the left edge of interval
-      /// the right edge of interval
-      double m_xmax  ;                             // the right edge of interval
-      /// the left edge of interval
-      double m_ymin  ;                             // the left edge of interval
-      /// the right edge of interval
-      double m_ymax  ;                             // the right edge of interval
-      // ======================================================================
-    private:
-      // ======================================================================
-      ///  vectors of basic  Bernstein polynomials 
-      typedef std::vector<Bernstein>  VB ;
-      ///  vector  of basic  Bernstein polynomials 
-      VB m_bx ; //  vector  of basic  Bernetin polynomials 
-      ///  vector  of basic  Bernstein polynomials 
-      VB m_by ; //  vector  of basic  Bernetin polynomials 
-      // ======================================================================
-    } ;
-    // ========================================================================
-    /** @class Positive2D
-     *  The "positive" 2D-polynomial of order Nx*Ny
-     *  Actually it is a sum of basic bernstein 2D-polynomials with
-     *  non-negative coefficients
-     */
-    class GAUDI_API Positive2D 
-      : public std::binary_function<double,double,double>
-    {
-      // ======================================================================
-    public:
-      // ======================================================================
-      /// constructor from the order
-      Positive2D ( const unsigned short       Nx    =  1 ,
-                   const unsigned short       Ny    =  1 ,
-                   const double               xmin  =  0 ,
-                   const double               xmax  =  1 ,
-                   const double               ymin  =  0 ,
-                   const double               ymax  =  1 ) ;
-      // ======================================================================
-    public:
-      // ======================================================================
-      /// get the value
-      double operator () ( const double x , const double y ) const 
-      { return m_bernstein ( x , y ) ; }
-      // ======================================================================
-    public:
-      // ======================================================================
-      /// get number of parameters
-      std::size_t npars () const { return m_sphere.nPhi () ; }
-      /// set k-parameter
-      bool setPar       ( const unsigned int k , const double value ) ;
-      /// set k-parameter
-      bool setParameter ( const unsigned int k , const double value )
-      { return setPar   ( k , value ) ; }
-      /// get the parameter value
-      double  par       ( const unsigned int k ) const ;
-      /// get the parameter value
-      double  parameter ( const unsigned int k ) const { return par ( k ) ; }
-      // ======================================================================
-    public:
-      // ======================================================================
-      /// get lower/upper edges
-      double         xmin () const { return m_bernstein.xmin () ; }
-      double         xmax () const { return m_bernstein.xmax () ; }
-      double         ymin () const { return m_bernstein.ymin () ; }
-      double         ymax () const { return m_bernstein.ymax () ; }
-      // polynom order 
-      unsigned short nX   () const { return m_bernstein.nX   () ; }
-      unsigned short nY   () const { return m_bernstein.nY   () ; }      
-      // ======================================================================
-    public:
-      // ======================================================================
-      // transform variables 
-      double tx ( const double  x ) const { return m_bernstein.tx (  x ) ; }
-      double ty ( const double  y ) const { return m_bernstein.ty (  y ) ; }      
-      double  x ( const double tx ) const { return m_bernstein. x ( tx ) ; }
-      double  y ( const double ty ) const { return m_bernstein. y ( ty ) ; }      
-      // ======================================================================
-    public:
-      // ======================================================================
-      /** get the integral over 2D-region 
-       *  \f[ \int_{x_low}^{x_high}\int_{y_low}^{y_high} \mathcal{B}(x,y) \mathrm{d}x\mathrm{d}y\f] 
-       *  @param xlow  low  edge in x 
-       *  @param xhigh high edge in x 
-       *  @param ylow  low  edge in y 
-       *  @param yhigh high edge in y 
-       */
-      double integral   ( const double xlow , const double xhigh , 
-                          const double ylow , const double yhigh ) const 
-      { return m_bernstein.integral ( xlow , xhigh , ylow , yhigh ) ; }
-      /** integral over x-dimension 
-       *  \f[ \int_{y_low}^{y_high} \mathcal{B}(x,y) \mathrm{d}y\f] 
-       *  @param x     variable 
-       *  @param ylow  low  edge in y 
-       *  @param yhigh high edge in y 
-       */
-      double integrateX ( const double y    , 
-                          const double xlow , const double xhigh ) const 
-      { return m_bernstein.integrateX ( y , xlow , xhigh ) ; }
-      /** integral over x-dimension 
-       *  \f[ \int_{x_low}^{x_high} \mathcal{B}(x,y) \mathrm{d}x\f] 
-       *  @param y     variable 
-       *  @param xlow  low  edge in x 
-       *  @param xhigh high edge in x 
-       */
-      double integrateY ( const double x    , 
-                          const double ylow , const double yhigh ) const 
-      { return m_bernstein.integrateY ( x , ylow , yhigh ) ; }
-      // ======================================================================
-    public: // ingeredients 
-      // =====================================================================
-      // get the bernstein polinomial in 2D 
-      const  Gaudi::Math::Bernstein2D& bernstein () const 
-      { return m_bernstein ; }
-      /// get the parameter sphere  
-      const  Gaudi::Math::NSphere&     sphere    () const 
-      { return m_sphere ; }  
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// update bernstein coefficients 
-      bool updateBernstein () ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the actual bernstein polynomial
-      Gaudi::Math::Bernstein2D m_bernstein ; // the actual bernstein polynomial
-      /// the external parameter sphere 
-      Gaudi::Math::NSphere     m_sphere    ;
-      // ======================================================================
-    } ;
-    // ========================================================================
-    /** @class Bernstein2DSym
-     *  The symmetric Bernstein's polynomial of order N*N
-     */
-    class GAUDI_API Bernstein2DSym 
-      : public std::binary_function<double,double,double>
-    {
-      // ======================================================================
-    public:
-      // ======================================================================
-      /// constructor from the order
-      Bernstein2DSym ( const unsigned short       n     =  1 ,
-                       const double               xmin  =  0 ,
-                       const double               xmax  =  1 ) ;
-      // ======================================================================
-    public:
-      // ======================================================================
-      /// get the value
-      double operator () ( const double x , 
-                           const double y ) const ;
-      // ======================================================================
-    public:
-      // ======================================================================
-      /// get number of parameters
-      std::size_t npars () const { return m_pars.size() ; }
-      /// set k-parameter
-      bool setPar       ( const unsigned int   k     ,
-                          const double         value ) ;
-      /// set k-parameter
-      bool setParameter ( const unsigned int   k     ,
-                          const double         value ) 
-      { return ( k < m_pars.size() ) && setPar ( k , value ) ; }
-      /// set (l,m)-parameter
-      bool setPar       ( const unsigned short l     ,
-                          const unsigned short m     , 
-                          const double         value ) ;
-      /// set (l,m)-parameter
-      bool setParameter ( const unsigned short l     ,
-                          const unsigned short m     , 
-                          const double         value ) 
-      { return setPar   ( l , m  , value ) ; }
-      /// get (l,m)-parameter 
-      double  par       ( const unsigned short l ,
-                          const unsigned short m ) const ;
-      /// get (l,m)-parameter value
-      double  parameter ( const unsigned short l , 
-                          const unsigned short m ) const { return par (  l , m  ) ; }
-      /// get k-parameter 
-      double  par       ( const unsigned int   k ) const 
-      { return k < m_pars.size() ? m_pars [k] : 0.0 ; }
-      /// get k-parameter
-      double  parameter ( const unsigned int   k ) const { return par ( k ) ; }
-      /// get all parameters at once 
-      const std::vector<double>& pars() const { return m_pars ; }
-      // ======================================================================
-    public:
-      // ======================================================================
-      /// get lower edge
-      double xmin () const { return m_xmin    ; }
-      /// get upper edge
-      double xmax () const { return m_xmax    ; }
-      /// get lower edge
-      double ymin () const { return   xmin () ; }
-      /// get upper edge
-      double ymax () const { return   xmax () ; }
-      // ======================================================================
-      unsigned short n  () const { return m_n  ; }
-      unsigned short nX () const { return n () ; }
-      unsigned short nY () const { return n () ; }      
-      // ======================================================================
-    public:
-      // ======================================================================
-      double x  ( const double tx ) const
-      { return xmin ()  + ( xmax () - xmin () ) * tx ; }
-      double y  ( const double ty ) const
-      { return ymin ()  + ( ymax () - ymin () ) * ty ; }
-      double tx ( const double x ) const
-      { return  ( x - xmin () ) / ( xmax () - xmin () ) ; }
-      double ty ( const double y ) const
-      { return  ( y - ymin () ) / ( ymax () - ymin () ) ; }
-      // ======================================================================
-    public:
-      // ======================================================================
-      /** get the integral over 2D-region 
-       *  \f[ \int_{x_low}^{x_high}\int_{y_low}^{y_high} \mathcal{B}(x,y) \mathrm{d}x\mathrm{d}y\f] 
-       *  @param xlow  low  edge in x 
-       *  @param xhigh high edge in x 
-       *  @param ylow  low  edge in y 
-       *  @param yhigh high edge in y 
-       */
-      double integral   ( const double xlow , const double xhigh , 
-                          const double ylow , const double yhigh ) const ;
-      /** integral over x-dimension 
-       *  \f[ \int_{y_low}^{y_high} \mathcal{B}(x,y) \mathrm{d}y\f] 
-       *  @param x     variable 
-       *  @param ylow  low  edge in y 
-       *  @param yhigh high edge in y 
-       */
-      double integrateX ( const double y    , 
-                          const double xlow , const double xhigh ) const ;
-      /** integral over x-dimension 
-       *  \f[ \int_{x_low}^{x_high} \mathcal{B}(x,y) \mathrm{d}x\f] 
-       *  @param y     variable 
-       *  @param xlow  low  edge in x 
-       *  @param xhigh high edge in x 
-       */
-      double integrateY ( const double x    , 
-                          const double ylow , const double yhigh ) const ;
-      // ======================================================================
-    public: // few helper functions to expose internals 
-      // ======================================================================
-      /// evaluate the basic polynomials 
-      double basic  ( const unsigned short i , const double         x ) const 
-      { return ( i > m_n || x < m_xmin || x < m_xmax ) ? 0.0 : m_b[i](x) ; }
-      /// expose some internals 
-      const Bernstein& basic ( const unsigned short i ) const { return m_b[i] ; }
-      // ======================================================================
-    private:
-      // ======================================================================
-      // polynom order
-      unsigned short m_n  ; // polynom order in x-dimension 
-      /// the list of parameters
-      std::vector<double>  m_pars ;                // the list of parameters
-      /// the left edge of interval
-      double m_xmin  ;                             // the left edge of interval
-      /// the right edge of interval
-      double m_xmax  ;                             // the right edge of interval
-      // ======================================================================
-    private:
-      // ======================================================================
-      ///  vectors of basic  Bernetin polynomials 
-      typedef std::vector<Bernstein>  VB ;
-      ///  vector  of basic  Bernetin polynomials 
-      VB m_b  ; //  vector  of basic  Bernstein polynomials 
-      // ======================================================================
-    } ;
-    // ========================================================================
-    /** @class Positive2DSym
-     *  The "positive" symmetrical polynomial of order Nx*Ny
-     *  Actually it is a sum of basic bernstein 2D-polynomials with
-     *  non-negative coefficients
-     */
-    class GAUDI_API Positive2DSym 
-      : public std::binary_function<double,double,double>
-    {
-      // ======================================================================
-    public:
-      // ======================================================================
-      /// constructor from the order
-      Positive2DSym ( const unsigned short       Nx    =  1 ,
-                      const double               xmin  =  0 ,
-                      const double               xmax  =  1 ) ;
-      // ======================================================================
-    public:
-      // ======================================================================
-      /// get the value
-      double operator () ( const double x , const double y ) const 
-      { return m_bernstein ( x , y ) ; }
-      // ======================================================================
-    public:
-      // ======================================================================
-      /// get number of parameters
-      std::size_t npars () const { return m_sphere.nPhi () ; }
-      /// set k-parameter
-      bool setPar       ( const unsigned int k , const double value ) ;
-      /// set k-parameter
-      bool setParameter ( const unsigned int k , const double value )
-      { return setPar   ( k , value ) ; }
-      /// get the parameter value
-      double  par       ( const unsigned int k ) const ;
-      /// get the parameter value
-      double  parameter ( const unsigned int k ) const { return par ( k ) ; }
-      /// get lower/upper edges
-      double         xmin () const { return m_bernstein.xmin () ; }
-      double         xmax () const { return m_bernstein.xmax () ; }
-      double         ymin () const { return m_bernstein.ymin () ; }
-      double         ymax () const { return m_bernstein.ymax () ; }
-      // polynom order 
-      unsigned short n    () const { return m_bernstein.n    () ; }
-      unsigned short nX   () const { return m_bernstein.nX   () ; }
-      unsigned short nY   () const { return m_bernstein.nY   () ; }      
-      // ======================================================================
-    public:
-      // ======================================================================
-      double tx ( const double  x ) const { return m_bernstein.tx (  x ) ; }
-      double ty ( const double  y ) const { return m_bernstein.ty (  y ) ; }      
-      double  x ( const double tx ) const { return m_bernstein. x ( tx ) ; }
-      double  y ( const double ty ) const { return m_bernstein. y ( ty ) ; }      
-      // ======================================================================
-    public:
-      // ======================================================================
-      /** get the integral over 2D-region 
-       *  \f[ \int_{x_low}^{x_high}\int_{y_low}^{y_high} \mathcal{B}(x,y) \mathrm{d}x\mathrm{d}y\f] 
-       *  @param xlow  low  edge in x 
-       *  @param xhigh high edge in x 
-       *  @param ylow  low  edge in y 
-       *  @param yhigh high edge in y 
-       */
-      double integral   ( const double xlow , const double xhigh , 
-                          const double ylow , const double yhigh ) const 
-      { return m_bernstein.integral ( xlow , xhigh , ylow , yhigh ) ; }
-      /** integral over x-dimension 
-       *  \f[ \int_{y_low}^{y_high} \mathcal{B}(x,y) \mathrm{d}y\f] 
-       *  @param x     variable 
-       *  @param ylow  low  edge in y 
-       *  @param yhigh high edge in y 
-       */
-      double integrateX ( const double y    , 
-                          const double xlow , const double xhigh ) const 
-      { return m_bernstein.integrateX ( y , xlow , xhigh ) ; }
-      /** integral over x-dimension 
-       *  \f[ \int_{x_low}^{x_high} \mathcal{B}(x,y) \mathrm{d}x\f] 
-       *  @param y     variable 
-       *  @param xlow  low  edge in x 
-       *  @param xhigh high edge in x 
-       */
-      double integrateY ( const double x    , 
-                          const double ylow , const double yhigh ) const 
-      { return m_bernstein.integrateY ( x , ylow , yhigh ) ; }
-      // ======================================================================
-    public:
-      // ======================================================================
-      // get the bernstein 2D polynom
-      const Gaudi::Math::Bernstein2DSym& bernstein() const 
-      { return m_bernstein ; }
-      /// get the parameter sphere  
-      const  Gaudi::Math::NSphere&       sphere   () const 
-      { return m_sphere ; }  
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// update bernstein coefficients 
-      bool updateBernstein () ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the actual bernstein polynomial
-      Gaudi::Math::Bernstein2DSym m_bernstein ; // the actual bernstein polynomial
-      /// Parameter sphere 
-      Gaudi::Math::NSphere        m_sphere ;
-      // ======================================================================
-    } ;
     // ========================================================================
     /** @class PS2DPol 
      *  The 2D-function: 
@@ -5453,6 +4515,103 @@ namespace Gaudi
       /// exponential 
       double                     m_tau      ;
       // ======================================================================
+    };
+    // ========================================================================
+    /** @class GenSigmoid 
+     *  Sigmoid function, modulated by the positive polynomial 
+     *  \f$ f(x) = ( 1 + tanh( \alpha ( x  - x_0) ) \times P_{pos} (x) \f$ 
+     *  @author Vanya BElyaev Ivan.Belyaev@itep.ru
+     *  @date 2015-02-07
+     */
+    class GAUDI_API Sigmoid 
+      : public std::binary_function<double,double,double>
+    {
+    public:
+      // ============================================================
+      /// constructor from polynom and parameters "alpha" and "x0"
+      Sigmoid 
+        ( const Gaudi::Math::Positive& poly      , 
+          const double                 alpha = 0 ,
+          const double                 x0    = 0 ) ;
+      /// constructor from polynom and parameter "alpha"
+      Sigmoid 
+        ( const unsigned short             N = 0 , 
+          const double                 xmin  = 0 , 
+          const double                 xmax  = 1 , 
+          const double                 alpha = 0 , 
+          const double                 x0    = 0 ) ;
+      /// constructor from polynom and parameter "alpha"
+      Sigmoid
+        ( const std::vector<double>&   pars       ,
+          const double                 xmin  =  0 ,
+          const double                 xmax  =  1 ,
+          const double                 alpha =  0 , 
+          const double                 x0    =  0 ) ;
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// get the value
+      double operator () ( const double x ) const ; 
+      // ======================================================================
+    public:
+      // ======================================================================
+      double alpha      () const { return m_alpha ; }
+      // set new value of alpha
+      bool setAlpha     ( const double value ) ;
+      // ======================================================================
+      double x0         () const { return m_x0    ; }
+      // set new value of alpha
+      bool setX0        ( const double value ) ;
+      // ======================================================================
+    public:
+      // ======================================================================
+      double xmin () const { return m_positive.xmin () ; }
+      double xmax () const { return m_positive.xmax () ; }      
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// get number of parameters
+      std::size_t npars () const { return 2 + m_positive.npars () ; }
+      /// set k-parameter
+      bool setPar       ( const unsigned short k , const double value ) 
+      { return 
+          m_positive.npars()     == k ? setAlpha ( value ) : 
+          m_positive.npars() + 1 == k ? setX0    ( value ) : 
+          m_positive.setPar (  k  , value ) ; }
+      /// set k-parameter
+      bool setParameter ( const unsigned short k , const double value )
+      { return setPar   ( k , value ) ; }
+      /// get the parameter value 
+      double  par       ( const unsigned short k ) const 
+      { return 
+          m_positive.npars()     == k ? alpha () :
+          m_positive.npars() + 1 == k ? x0    () : m_positive.par ( k ) ; }
+      /// get the parameter value 
+      double  parameter ( const unsigned short k ) const { return par ( k ) ; }
+      // ======================================================================
+    public:
+      // ======================================================================
+      const Gaudi::Math::Positive& positive() const { return m_positive ; }
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// get the integral between xmin and xmax
+      double integral   () const ;
+      /// get the integral between low and high 
+      double integral   ( const double low  , 
+                          const double high ) const ;
+      // ======================================================================
+    private:
+      // ======================================================================
+      Gaudi::Math::Positive  m_positive ;
+      double                 m_alpha    ;
+      double                 m_x0       ;
+      // ======================================================================
+    private: 
+      // ======================================================================
+      /// workspace for integration 
+      Gaudi::Math::WorkSpace m_workspace ;
+      // ======================================================================    
     };
     // ========================================================================
   } //                                             end of namespace Gaudi::Math

@@ -1,4 +1,4 @@
-// $Id: Power.h 175070 2014-07-16 09:36:02Z jonrob $
+// $Id: Power.h 183264 2015-01-27 15:54:05Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_POWER_H 
 #define LOKI_POWER_H 1
@@ -57,7 +57,8 @@ namespace LoKi
      */
     Power ( const LoKi::Functor<TYPE,TYPE2>& fun , 
             const int                        val ) 
-      : LoKi::Functor<TYPE,TYPE2>() 
+      : LoKi::AuxFunBase ( std::tie ( fun , val ) ) 
+      , LoKi::Functor<TYPE,TYPE2>() 
       , m_fun ( fun ) 
       , m_val ( val ) 
     {}
@@ -122,7 +123,8 @@ namespace LoKi
      */
     Power ( const LoKi::Functor<TYPE,TYPE2>& fun , 
             const int                        val ) 
-      : LoKi::Functor<TYPE,TYPE2>() 
+      : LoKi::AuxFunBase ( std::tie ( fun , val ) ) 
+      , LoKi::Functor<TYPE,TYPE2>()
       , m_fun ( fun ) 
       , m_val ( val ) 
     {}

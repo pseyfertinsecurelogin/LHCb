@@ -84,7 +84,14 @@ LoKi::Random::Numbers::Numbers
 // destructor 
 // ============================================================================
 LoKi::Random::Numbers::~Numbers() 
-{ if ( 0 != m_param ) { delete m_param ; m_param = 0 ; } }
+{ 
+  if ( 0 != m_param ) { delete m_param ; m_param = 0 ; }
+  if ( m_service && !gaudi () ) 
+  {
+    // Warning ("manual reset of IRndmGenSvc") ;
+    m_service.reset() ;
+  } 
+}
 // ============================================================================
 // MANDATORY: clone method ("virtual constructor")
 // ============================================================================
@@ -129,7 +136,8 @@ LoKi::Random::Numbers::shoot() const
 LoKi::Random::Uniform::Uniform 
 ( const Rndm::Flat& flat    , 
   IRndmGenSvc*      service ) 
-  : LoKi::Random::Numbers ( flat , service )
+  : LoKi::AuxFunBase  ( std::make_tuple ( flat.minimum() , flat.maximum()  ) ) 
+  , LoKi::Random::Numbers ( flat , service )
   , m_flat ( flat ) 
 {}
 // ============================================================================
@@ -138,7 +146,8 @@ LoKi::Random::Uniform::Uniform
 LoKi::Random::Uniform::Uniform 
 ( IRndmGenSvc*      service ,
   const Rndm::Flat& flat    )  
-  : LoKi::Random::Numbers ( flat , service )
+  : LoKi::AuxFunBase  ( std::make_tuple ( flat.minimum() , flat.maximum()  ) ) 
+  , LoKi::Random::Numbers ( flat , service )
   , m_flat ( flat ) 
 {}
 // ============================================================================
@@ -148,7 +157,8 @@ LoKi::Random::Uniform::Uniform
 ( const double      low     , 
   const double      high    , 
   IRndmGenSvc*      service ) 
-  : LoKi::Random::Numbers ( Rndm::Flat ( low , high ) , service )
+  : LoKi::AuxFunBase  ( std::tie ( low , high  ) ) 
+  , LoKi::Random::Numbers ( Rndm::Flat ( low , high ) , service )
   , m_flat ( low , high ) 
 {}
 // ============================================================================
@@ -158,7 +168,8 @@ LoKi::Random::Uniform::Uniform
 ( IRndmGenSvc*      service , 
   const double      low     , 
   const double      high    ) 
-  : LoKi::Random::Numbers ( Rndm::Flat ( low , high ) , service )
+  : LoKi::AuxFunBase  ( std::tie ( low , high  ) ) 
+  , LoKi::Random::Numbers ( Rndm::Flat ( low , high ) , service )
   , m_flat ( low , high ) 
 {}
 // ============================================================================
@@ -183,7 +194,8 @@ LoKi::Random::Uniform::fillStream ( std::ostream& s  ) const
 LoKi::Random::Gaussian::Gaussian
 ( const Rndm::Gauss& gauss   , 
   IRndmGenSvc*       service ) 
-  : LoKi::Random::Numbers ( gauss , service )
+  : LoKi::AuxFunBase  ( std::make_tuple ( gauss.mean() , gauss.sigma()  ) ) 
+  , LoKi::Random::Numbers ( gauss , service )
   , m_gauss ( gauss ) 
 {}
 // ============================================================================
@@ -192,7 +204,8 @@ LoKi::Random::Gaussian::Gaussian
 LoKi::Random::Gaussian::Gaussian
 ( IRndmGenSvc*       service ,
   const Rndm::Gauss& gauss   )
-  : LoKi::Random::Numbers ( gauss , service )
+  : LoKi::AuxFunBase  ( std::make_tuple ( gauss.mean() , gauss.sigma()  ) ) 
+  , LoKi::Random::Numbers ( gauss , service )
   , m_gauss ( gauss ) 
 {}
 // ============================================================================
@@ -202,7 +215,8 @@ LoKi::Random::Gaussian::Gaussian
 ( const double      mean    , 
   const double      sigma   , 
   IRndmGenSvc*      service ) 
-  : LoKi::Random::Numbers ( Rndm::Gauss ( mean , sigma ) , service )
+  : LoKi::AuxFunBase  ( std::tie ( mean , sigma  ) ) 
+  , LoKi::Random::Numbers ( Rndm::Gauss ( mean , sigma ) , service )
   , m_gauss ( mean , sigma  ) 
 {}
 // ============================================================================
@@ -212,7 +226,8 @@ LoKi::Random::Gaussian::Gaussian
 ( IRndmGenSvc*      service ,
   const double      mean    , 
   const double      sigma   )
-  : LoKi::Random::Numbers ( Rndm::Gauss ( mean , sigma ) , service )
+  : LoKi::AuxFunBase  ( std::tie ( mean , sigma  ) ) 
+  , LoKi::Random::Numbers ( Rndm::Gauss ( mean , sigma ) , service )
   , m_gauss ( mean , sigma  ) 
 {}
 // ============================================================================
@@ -238,7 +253,8 @@ LoKi::Random::Gaussian::fillStream ( std::ostream& s  ) const
  */
 // ============================================================================
 LoKi::Random::Rand::Rand ( const unsigned int seed ) 
-  : LoKi::BasicFunctors<double>::Function () 
+  : LoKi::AuxFunBase ( std::tie ( seed ) ) 
+  , LoKi::BasicFunctors<double>::Function () 
 {
   if ( 0 != seed ) { srand ( seed ) ; } // reset the seed 
 }
@@ -278,7 +294,8 @@ LoKi::Random::Blind::Blind
 ( const std::string& seed , 
   const double       minv , 
   const double       maxv ) 
-  : LoKi::Functor<void,double> () 
+  : LoKi::AuxFunBase ( std::tie ( seed , minv , maxv ) ) 
+  , LoKi::Functor<void,double> () 
   , m_result ( Gaudi::Math::blind ( "LoKi::Random::Blind_" + seed , minv , maxv ) ) 
   , m_seed   ( seed ) 
   , m_min    ( minv ) 
@@ -288,7 +305,8 @@ LoKi::Random::Blind::Blind
 // constructor from the seed , min & max values 
 // =============================================================================
 LoKi::Random::Blind::Blind ( const std::string& seed )  
-  : LoKi::Functor<void,double> () 
+  : LoKi::AuxFunBase ( std::tie ( seed ) ) 
+  , LoKi::Functor<void,double> () 
   , m_result ( Gaudi::Math::blind ( "LoKi::Random::Blind_" + seed , -1 , 1 ) ) 
   , m_seed   ( seed ) 
   , m_min    ( -1   ) 
@@ -332,14 +350,16 @@ LoKi::Random::XBlind::XBlind
 ( const std::string& seed , 
   const double       minv , 
   const double       maxv ) 
-  :  LoKi::BasicFunctors<double>::Function() 
+  : LoKi::AuxFunBase ( std::tie ( seed , minv , maxv ) ) 
+  , LoKi::BasicFunctors<double>::Function() 
   , m_blind  ( seed , minv , maxv ) 
 {}
 // =============================================================================
 // constructor from the seed , min & max values 
 // =============================================================================
 LoKi::Random::XBlind::XBlind ( const std::string& seed )  
-  : LoKi::BasicFunctors<double>::Function() 
+  : LoKi::AuxFunBase ( std::tie ( seed ) ) 
+  , LoKi::BasicFunctors<double>::Function() 
   , m_blind  ( seed ) 
 {}
 // ============================================================================

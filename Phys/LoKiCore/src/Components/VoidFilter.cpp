@@ -1,4 +1,4 @@
-// $Id: VoidFilter.cpp 155775 2013-04-29 09:31:21Z cattanem $
+// $Id: VoidFilter.cpp 183445 2015-02-04 10:33:42Z ibelyaev $
 // ============================================================================
 // Include files 
 // ============================================================================
@@ -21,9 +21,9 @@
  *  contributions and advices from G.Raven, J.van Tilburg, 
  *  A.Golutvin, P.Koppenburg have been used in the design.
  *
- *                    $Revision: 155775 $
- *  Last modification $Date: 2013-04-29 11:31:21 +0200 (Mon, 29 Apr 2013) $
- *                 by $Author: cattanem $
+ *                    $Revision: 183445 $
+ *  Last modification $Date: 2015-02-04 11:33:42 +0100 (Wed, 04 Feb 2015) $
+ *                 by $Author: ibelyaev $
  */
 // ============================================================================
 namespace LoKi 
@@ -84,8 +84,15 @@ namespace LoKi
       //
       StatusCode sc = setProperty ( "Code" , "FNONE" ) ;
       Assert ( sc.isSuccess () , "Unable (re)set property 'Code'"    , sc ) ;
+      //
       sc = setProperty 
-        ( "Factory" , "LoKi::Hybrid::CoreFactory/CoreFactory:PUBLIC" ) ;
+        ( "Factory" , 
+          0 == name.find ( "Hlt1" ) ? 
+          "LoKi::Hybrid::CoreFactory/Hlt1CoreFactory:PUBLIC" :
+          0 == name.find ( "Hlt2" ) ?
+          "LoKi::Hybrid::CoreFactory/Hlt2CoreFactory:PUBLIC" :
+          "LoKi::Hybrid::CoreFactory/CoreFactory:PUBLIC"     ) ;
+      //
       Assert ( sc.isSuccess () , "Unable (re)set property 'Factory'" , sc ) ;
     } 
     /// virtual and protected destructor 

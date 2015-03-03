@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # =============================================================================
-# $Id: Types.py 178887 2014-10-15 10:15:01Z ibelyaev $
+# $Id: Types.py 184166 2015-02-22 11:15:24Z ibelyaev $
 # =============================================================================
 ## @file
 #
@@ -36,7 +36,7 @@
 #  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
 #  @date 2009-09-12
 #
-#  Last modification $Date: 2014-10-15 12:15:01 +0200 (Wed, 15 Oct 2014) $
+#  Last modification $Date: 2015-02-22 12:15:24 +0100 (Sun, 22 Feb 2015) $
 #                 by $Author: ibelyaev $
 #
 #
@@ -70,14 +70,14 @@ Simple file to provide 'easy' access in python for the basic ROOT::Math classes
   >>> dir( Gaudi.Math )
   >>> dir( Gaudi      )
 
-  Last modification $Date: 2014-10-15 12:15:01 +0200 (Wed, 15 Oct 2014) $
+  Last modification $Date: 2015-02-22 12:15:24 +0100 (Sun, 22 Feb 2015) $
                  by $Author: ibelyaev $
 
 """
 # =============================================================================
 __author__  = "Vanya BELYAEV Ivan.Belyaev@nikhef.nl"
 __date__    = "2009-09-12"
-__version__ = "Version$Revision: 178887 $"
+__version__ = "Version$Revision: 184166 $"
 # =============================================================================
 __all__     = () ## nothing to be imported !
 # =============================================================================
@@ -1640,6 +1640,7 @@ ROOT.TMatrix.__repr__  = _tmg_str_
 ROOT.TMatrix.__str__   = _tmg_str_
 
 # =============================================================================
+VE            = Gaudi.Math.ValueWithError
 SE            = cpp.StatEntity 
 WSE           = Gaudi.Math.WStatEntity 
 # =============================================================================
@@ -1667,16 +1668,20 @@ SE. mean    = lambda s : VE ( s._orig_mean () , s.meanErr()**2 )
 # =============================================================================
 # minor decoration for WStatEntity 
 # ============================================================================= 
+if not hasattr ( WSE , '_orig_sum'  ) : 
+    _orig_sum     = WSE.sum
+    WSE._orig_sum = _orig_sum
+
 if not hasattr ( WSE , '_orig_mean' ) : 
     _orig_mean_wse = WSE.mean
     WSE._orig_mean = _orig_mean_wse
     
+WSE. sum     = lambda s : VE ( s._orig_sum  () , s.sum2()       )
 WSE. mean    = lambda s : VE ( s._orig_mean () , s.meanErr()**2 )
 WSE. minmax  = lambda s :            s.values  ().minmax() 
 WSE.__repr__ = lambda s : 'WStat: '+ s.toString()
 WSE.__str__  = lambda s : 'WStat: '+ s.toString()
 
-VE              = Gaudi.Math.ValueWithError
 
 # =============================================================================
 ## get the B/S estimate from the formula 
@@ -1726,6 +1731,111 @@ def _prec2_ ( s )  :
 VE . b2s        = _b2s_
 VE . prec       = _prec2_
 VE . precision  = _prec2_
+
+# =============================================================================
+## add something to std::vector 
+def _add_to ( vct , arg1 , *args ) :
+    ##
+    if hasattr ( arg1 , '__iter__' ) :
+        for a in arg1 : vct.push_back ( a ) 
+    else : vct.push_back ( arg1 ) 
+    #
+    for a in args : _add_to ( vct , a )
+        
+# =============================================================================
+## construct std::vector<double> from the arguments
+def doubles ( arg1 , *args ) :
+    """
+    Construct the std::vector<double> from the arguments
+    
+    >>> v1 = doubles ( 1.01 )
+    >>> v2 = doubles ( 1.01 , 1.02 , 1.03  )
+    >>> v3 = doubles ( [ 1.01 , 1.02 , 1.03 ] )
+    
+    """
+    ## create new vector 
+    VT  = std.vector('double')
+    vct = VT()
+    ## add arguments to the vector 
+    _add_to ( vct , arg1 , *args )
+    ## 
+    return vct
+
+# =============================================================================
+## construct std::vector<ints> from the arguments
+def ints ( arg1 , *args ) :
+    """
+    Construct the std::vector<int> from the arguments
+    
+    >>> v1 = ints ( 1 )
+    >>> v2 = ints ( 1 , 1 , 1  )
+    >>> v3 = ints ( [ 1 , 2 , 3 ] )
+    
+    """
+    ## create new vector 
+    VT  = std.vector('int')
+    vct = VT()
+    ## add arguments to the vector 
+    _add_to ( vct , arg1 , *args )
+    ## 
+    return vct
+
+# =============================================================================
+## construct std::vector<unsigned int> from the arguments
+def uints ( arg1 , *args ) :
+    """
+    Construct the std::vector<unsigned int> from the arguments
+    
+    >>> v1 = uints ( 1 )
+    >>> v2 = uints ( 1 , 1 , 1  )
+    >>> v3 = uints ( [ 1 , 2 , 3 ] )
+    
+    """
+    ## create new vector 
+    VT  = std.vector('unsigned int')
+    vct = VT()
+    ## add arguments to the vector 
+    _add_to ( vct , arg1 , *args )
+    ## 
+    return vct
+
+# =============================================================================
+## construct std::vector<long> from the arguments
+def longs ( arg1 , *args ) :
+    """
+    Construct the std::vector<long> from the arguments
+    
+    >>> v1 = longs ( 1 )
+    >>> v2 = longs ( 1 , 1 , 1  )
+    >>> v3 = longs ( [ 1 , 2 , 3 ] )
+    
+    """
+    ## create new vector 
+    VT  = std.vector('long')
+    vct = VT()
+    ## add arguments to the vector 
+    _add_to ( vct , arg1 , *args )
+    ## 
+    return vct
+
+# =============================================================================
+## construct std::vector<unsigned long> from the arguments
+def ulongs ( arg1 , *args ) :
+    """
+    Construct the std::vector<unsigned long> from the arguments
+    
+    >>> v1 = ulongs ( 1 )
+    >>> v2 = ulongs ( 1 , 1 , 1  )
+    >>> v3 = ulongs ( [ 1 , 2 , 3 ] )
+    
+    """
+    ## create new vector 
+    VT  = std.vector('unsigned long')
+    vct = VT()
+    ## add arguments to the vector 
+    _add_to ( vct , arg1 , *args )
+    ## 
+    return vct
 
 # =============================================================================
 if '__main__' == __name__ :

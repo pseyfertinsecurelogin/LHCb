@@ -1,4 +1,4 @@
-// $Id: Scalers.cpp 149830 2012-12-12 17:09:11Z cattanem $
+// $Id: Scalers.cpp 183751 2015-02-11 15:42:58Z ibelyaev $
 // ============================================================================
 // Include files 
 // ============================================================================
@@ -33,7 +33,8 @@ namespace
 LoKi::Scalers::RandomScaleV::RandomScaleV 
 ( const double prob    , 
   IRndmGenSvc* service ) 
-  : LoKi::Functor<void,bool> () 
+  : LoKi::AuxFunBase ( std::tie ( prob ) ) 
+  , LoKi::Functor<void,bool> () 
   , m_uniform ( 0.0 , 1.0 , service ) 
   , m_prob    ( prob ) 
 {}
@@ -74,7 +75,8 @@ std::ostream& LoKi::Scalers::RandomScaleV::fillStream( std::ostream& s ) const
 LoKi::Scalers::RandomScale::RandomScale 
 ( const double prob    , 
   IRndmGenSvc* service ) 
-  : LoKi::Functor<double,bool> () 
+  : LoKi::AuxFunBase ( std::tie ( prob ) ) 
+  , LoKi::Functor<double,bool> () 
   , m_scaler ( prob , service ) 
 {}
 // ============================================================================
@@ -112,7 +114,8 @@ std::ostream& LoKi::Scalers::RandomScale::fillStream( std::ostream& s ) const
  */
 // ===========================================================================
 LoKi::Scalers::SkipperV::SkipperV ( const size_t skip )
-  : LoKi::Functor<void,bool> ()
+  : LoKi::AuxFunBase ( std::tie ( skip ) ) 
+  , LoKi::Functor<void,bool> ()
   , m_skip ( skip ) 
   , m_curr ( 0    )
 {}
@@ -153,7 +156,8 @@ std::ostream& LoKi::Scalers::SkipperV::fillStream( std::ostream& s ) const
  */
 // ===========================================================================
 LoKi::Scalers::Skipper::Skipper ( const size_t skip )
-  : LoKi::Functor<double,bool> ()
+  : LoKi::AuxFunBase ( std::tie ( skip ) ) 
+  , LoKi::Functor<double,bool> ()
   , m_skipper ( skip )  
 {}
 // ===========================================================================
@@ -184,8 +188,23 @@ std::ostream& LoKi::Scalers::Skipper::fillStream( std::ostream& s ) const
 { return s << " XSKIP ( " << m_skipper.skip() << " ) " ; }
 // ===========================================================================
 
-
-
+namespace 
+{
+  inline 
+  std::string _toString ( const LoKi::Scalers::RateLimitType&  t )
+  {
+    switch ( t ) 
+    {
+    case      LoKi::Scalers::RandomPhasePeriodicLimiter : 
+      return "LoKi::Scalers::RandomPhasePeriodicLimiter" ;
+    case      LoKi::Scalers::RandomLimiter : 
+      return "LoKi::Scalers::RandomLimiter" ;
+    case      LoKi::Scalers::PlainPeriodicLimiter : 
+      return "LoKi::Scalers::PlainPeriodicLimiter" ;
+    }
+    return "static_cast<LoKi::Scalers::RateLimitType>(" + Gaudi::Utils::toCpp ( (int) t ) + ")" ;
+  }
+}
 // ============================================================================
 /*  constructor from rate and "random" flag 
  *  @param maxRate the maximal rate 
@@ -195,7 +214,8 @@ std::ostream& LoKi::Scalers::Skipper::fillStream( std::ostream& s ) const
 LoKi::Scalers::RateLimitV::RateLimitV
 ( const double                       maxRate ,
   const LoKi::Scalers::RateLimitType flag    )
-  : LoKi::Functor<void,bool> ()
+  : LoKi::AuxFunBase ( std::make_tuple ( maxRate , LoKi::StrKeep( _toString ( flag ) ) ) ) 
+  , LoKi::Functor<void,bool> ()
   , LoKi::Listener           ()
   , m_rateSvc   ()
   , m_uniform   ( 0.0 , 1.0 )
@@ -241,7 +261,8 @@ LoKi::Scalers::RateLimitV::RateLimitV
 ( const std::string&                 service ,  
   const double                       maxRate , 
   const LoKi::Scalers::RateLimitType flag    ) 
-  : LoKi::Functor<void,bool> ()  
+  : LoKi::AuxFunBase ( std::tie ( service , maxRate , flag ) ) 
+  , LoKi::Functor<void,bool> ()  
   , LoKi::Listener           () 
   , m_rateSvc   (  )
   , m_uniform   ( 0.0 , 1.0 ) 
@@ -322,7 +343,14 @@ LoKi::Scalers::RateLimitV::RateLimitV
 // ============================================================================
 // MANDATORY: virtual destructor 
 // ============================================================================
-LoKi::Scalers::RateLimitV::~RateLimitV(){}
+LoKi::Scalers::RateLimitV::~RateLimitV()
+{
+  if ( m_rateSvc && !gaudi() ) 
+  {
+    // Warning("Manual reset of IReferenceRate") ;
+    m_rateSvc.reset() ;
+  }  
+}
 // ============================================================================
 // MANDATORY: clone method ("virtual constructor")
 // ============================================================================
@@ -443,7 +471,8 @@ std::ostream& LoKi::Scalers::RateLimitV::fillStream( std::ostream& s ) const
 LoKi::Scalers::RateLimit::RateLimit
 ( const double                       maxRate , 
   const LoKi::Scalers::RateLimitType flag    ) 
-  : LoKi::Functor<double,bool> () 
+  : LoKi::AuxFunBase ( std::tie ( maxRate , flag ) ) 
+  , LoKi::Functor<double,bool> () 
   , m_rateLimit ( maxRate , flag ) 
 {}
 // ============================================================================
@@ -471,7 +500,8 @@ LoKi::Scalers::RateLimit::RateLimit
 ( const std::string&                 service ,  
   const double                       maxRate , 
   const LoKi::Scalers::RateLimitType flag    ) 
-  : LoKi::Functor<double,bool> () 
+  : LoKi::AuxFunBase ( std::tie ( service , maxRate , flag ) ) 
+  , LoKi::Functor<double,bool> () 
   , m_rateLimit ( service , maxRate , flag ) 
 {}
 // ============================================================================
@@ -515,6 +545,8 @@ std::ostream& LoKi::Scalers::RateLimit::fillStream( std::ostream& s ) const
   //
   return s << ") ";
 }
+// ===========================================================================
+// The END 
 // ===========================================================================
 
 

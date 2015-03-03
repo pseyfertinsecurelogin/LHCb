@@ -1,4 +1,4 @@
-// $Id: MCChildSelector.h 141138 2012-06-16 09:18:40Z ibelyaev $
+// $Id: MCChildSelector.h 182540 2015-01-15 13:54:38Z ibelyaev $
 // ============================================================================
 #ifndef LOKIMC_MCCHILDSELECTOR_H 
 #define LOKIMC_MCCHILDSELECTOR_H 1
@@ -92,7 +92,7 @@ namespace LoKi
       /// check the validity the child-selector 
       bool valid () const  ;
       /// try to validate it!
-      StatusCode validate ( const LHCb::IParticlePropertySvc* svc ) const ;
+      StatusCode validate ( const LHCb::IParticlePropertySvc* svc  = 0 ) const ;
       // ======================================================================
     private:
       // ======================================================================
@@ -101,22 +101,25 @@ namespace LoKi
       // ======================================================================
     private:
       // ======================================================================
-      /// build the decay tree form teh descriptor 
+      /// build the decay tree form the descriptor 
       StatusCode buildTree ( const std::string& descriptor , 
-                             const std::string& factory    ) ;
+                             const std::string& factory    ) const ;
+      
       // ======================================================================
     private:
       // ======================================================================
       /// the child selector by index 
       std::vector<unsigned int> m_indices   ;    // the child selector by index 
       /// rule to find the child 
-      Decays::IMCDecay::Finder  m_finder    ;    //      rule to find the child 
+      mutable Decays::IMCDecay::Finder  m_finder ;    // rule to find the child 
+      std::string               m_decay     ;
       /// cut set 
       bool                      m_setCut    ;    //                     cut set
       /// the cut 
       LoKi::MCTypes::MCCut      m_cut       ;    //                     the cut
       /// decay only ?
       bool                      m_decayOnly ;    // decay only ?
+      std::string               m_factory   ;
       // ======================================================================
     };
     // ========================================================================

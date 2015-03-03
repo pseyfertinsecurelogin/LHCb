@@ -32,6 +32,7 @@ namespace Gaudi
     /** @class BSpline
      *  The basic spline   ("B-spline")
      *  @see http://en.wikipedia.org/wiki/B-spline
+     *  @see http://link.springer.com/chapter/10.1007%2F978-3-0348-7692-6_6
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      */
     class GAUDI_API BSpline : public std::unary_function<double,double>
@@ -123,10 +124,42 @@ namespace Gaudi
       double  integral   ( const double low , const double high ) const ;
       /// get the derivative at point "x" 
       double  derivative ( const double x   ) const ;
-      /// get integral   as function object 
-      BSpline indefinite_integral () const ;
+      /** get integral   as function object 
+       *  @param C integration constant 
+       */
+      BSpline indefinite_integral ( const double C = 0 ) const ;
       /// get derivative as function object 
       BSpline derivative          () const ;
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// get minimal value of the function on (xmin,xmax) interval 
+      double fun_min       () const ;
+      /// get maximal value of the function on (xmin,xmax) interval 
+      double fun_max       () const ;
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// positive      function ?
+      bool   positive      () const ;
+      /// negative      function ?
+      bool   negative      () const ; 
+      /// non-positive  function ?
+      bool   nonpositive   () const ; 
+      /// non-negative  function ?
+      bool   nonnegative   () const ; 
+      ///  has roots at [xmin,xmax] ? 
+      bool   hasroots      () const { return   !positive () &&   !negative () ; }
+      ///  keep sign at [xmin,xmax] ? 
+      bool   keepsign      () const { return nonpositive () || nonnegative () ; }
+      /// is it a decreasing function?
+      bool   decreasing    () const ;
+      /// is it a increasing function?
+      bool   increasing    () const ;
+      /// is it a monothonical function?
+      bool   monothonic    () const { return increasing() || decreasing() ; }
+      /// is it a constant function?
+      bool   constant      () const ;
       // ======================================================================
     public: // B-splines 
       // ======================================================================
@@ -152,10 +185,26 @@ namespace Gaudi
       double ispline ( const          short i ,
                        const unsigned short k , const double x )  const ;
       // ======================================================================
+    public:
+      // ======================================================================
+      /// get the underlying spline 
+      const Gaudi::Math::BSpline& bspline () const { return *this ; }
+      // ======================================================================
+    public: // simple  manipulations with bernstein polynoms 
+      // ======================================================================
+      /// simple  manipulations with spline: scale it! 
+      BSpline& operator *= ( const double a ) ;     // scale it! 
+      /// simple  manipulations with spline: scale it! 
+      BSpline& operator /= ( const double a ) ;     // scale it! 
+      /// simple  manipulations with spline: shift it! 
+      BSpline& operator += ( const double a ) ;     // shift it! 
+      /// simple  manipulations with spline: shift it! 
+      BSpline& operator -= ( const double a ) ;     // shift it! 
+      // ======================================================================
     private:
       // ======================================================================
       /// the list of knots 
-      std::vector<double>  m_knots   ;              // the list of knots 
+      std::vector<double>  m_knots  ;              // the list of knots 
       /// the list of parameters
       std::vector<double>  m_pars   ;              // the list of parameters
       /// order of polynomial 
@@ -226,6 +275,8 @@ namespace Gaudi
                        const unsigned short order  = 3 ) ; 
       /// constructor from the basic spline 
       PositiveSpline ( const BSpline& spline ) ;
+      /// destructor 
+      virtual ~PositiveSpline() ;
       // ======================================================================
     public:
       // ======================================================================
@@ -256,6 +307,17 @@ namespace Gaudi
       const std::vector<double>& knots () const { return m_bspline.knots() ; }
       /// the spline order 
       unsigned short             order () const { return m_bspline.order() ; }
+      // ======================================================================
+    public: // technical: get the effective position for knot "index"
+      // ======================================================================
+      double knot_i ( const int index ) const { return m_bspline.knot_i ( index ) ; }
+      // ======================================================================
+    public:    public:
+      // ======================================================================
+      /// get minimal value of the function on (xmin,xmax) interval 
+      double fun_min       () const { return m_bspline.fun_min () ; }
+      /// get maximal value of the function on (xmin,xmax) interval 
+      double fun_max       () const { return m_bspline.fun_max () ; }
       // ======================================================================
     public:
       // ======================================================================
@@ -278,9 +340,9 @@ namespace Gaudi
     private:
       // ======================================================================
       /// update coefficients  
-      bool updateCoefficients  () ;
+      virtual bool updateCoefficients  () ;
       // ======================================================================
-    private:
+    protected:
       // ======================================================================
       /// the underlying B-spline 
       Gaudi::Math::BSpline  m_bspline ;  // the underlying B-spline 
@@ -289,7 +351,7 @@ namespace Gaudi
       // ======================================================================
     } ;
     // ========================================================================
-    /** @class IncreasingSpline
+    /** @class MonothonicSpline
      *  The special spline for non-negative increasing function, 
      *  (well, actually non-decreasing)
      *  Actually it is a sum of B-splines with 
@@ -301,7 +363,7 @@ namespace Gaudi
      *  @see http://en.wikipedia.org/wiki/B-spline
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      */
-    class GAUDI_API IncreasingSpline : public std::unary_function<double,double>
+    class GAUDI_API MonothonicSpline : public PositiveSpline 
     {
       // ======================================================================
     public:
@@ -314,8 +376,10 @@ namespace Gaudi
        *  - duplicated knots will be ignored
        *  - min/max value will be used as interval boundaries 
        */
-      IncreasingSpline ( const std::vector<double>& points    ,
-                         const unsigned short       order = 3 ) ;
+      MonothonicSpline
+        ( const std::vector<double>& points            ,
+          const unsigned short       order      = 3    , 
+          const bool                 increasing = true ) ;
       // ======================================================================
       /** Constructor from the list of knots and list of parameters 
        *  The spline order will be calculated automatically 
@@ -325,8 +389,10 @@ namespace Gaudi
        *  - duplicated knots will be ignored
        *  - min/max value will be used as interval boundaries 
        */
-      IncreasingSpline ( const std::vector<double>& points    ,
-                         const std::vector<double>& pars      ) ;
+      MonothonicSpline 
+        ( const std::vector<double>& points            ,
+          const std::vector<double>& pars              ,
+          const bool                 increasing = true ) ;
       // ======================================================================
       /** Constructor for uniform binning 
        *  @param xmin   low  edge of spline interval 
@@ -334,88 +400,46 @@ namespace Gaudi
        *  @param inner  number of inner points in   (xmin,xmax) interval
        *  @param order  the degree of splline 
        */
-      IncreasingSpline ( const double         xmin   = 0 ,  
-                         const double         xmax   = 1 , 
-                         const unsigned short inner  = 3 ,   // number of inner points 
-                         const unsigned short order  = 3 ) ; 
+      MonothonicSpline 
+        ( const double         xmin       = 0    ,  
+          const double         xmax       = 1    , 
+          const unsigned short inner      = 2    ,   // number of inner points 
+          const unsigned short order      = 3    , 
+          const bool           increasing = true ) ;
+      /// constructor from positive spline  
+      MonothonicSpline ( const PositiveSpline& spline     , 
+                         const bool            increasing ) ;
       /// constructor from the basic spline 
-      IncreasingSpline ( const BSpline& spline ) ;
+      MonothonicSpline ( const BSpline&        spline     , 
+                         const bool            increasing ) ;
+      /// destructor  
+      virtual ~MonothonicSpline() ;
       // ======================================================================
     public:
       // ======================================================================
-      /// get the value
-      double operator () ( const double x ) const { return m_bspline ( x ) ; }
+      bool increasing() const { return m_increasing    ; }
+      bool decreasing() const { return  !increasing () ; }
       // ======================================================================
-    public:
-      // ======================================================================
-      /// get number of parameters
-      std::size_t npars  () const { return m_sphere.nPhi() ; }
-      /// set k-parameter
-      bool setPar        ( const unsigned short k , const double value ) ;
-      /// set k-parameter
-      bool setParameter  ( const unsigned short k , const double value )
-      { return setPar    ( k , value ) ; }
-      /// get the parameter value
-      double  par        ( const unsigned short k ) const
-      { return m_sphere.par ( k ) ; }
-      /// get the parameter value
-      double  parameter ( const unsigned short k ) const { return par ( k ) ; }
-      /// get lower edge
-      double xmin () const { return m_bspline.xmin() ; }
-      /// get upper edge
-      double xmax () const { return m_bspline.xmax() ; }
-      /// get all parameters:
-      const std::vector<double>& pars  () const { return m_sphere.pars  () ; }
-      /// get all knots 
-      const std::vector<double>& knots () const { return m_bspline.knots() ; }
-      /// the spline order 
-      unsigned short             order () const { return m_bspline.order() ; }
-      // ======================================================================
-    public:
-      // ======================================================================
-      /// get the parameter sphere 
-      const Gaudi::Math::NSphere& sphere  () const { return m_sphere  ; }
-      /// get the underlying spline 
-      const Gaudi::Math::BSpline& bspline () const { return m_bspline ; }
-      // ======================================================================
-    public:
-      // ======================================================================
-      /// get the integral between xmin and xmax
-      double  integral   () const { return m_bspline.integral () ; } 
-      /// get the integral between low and high 
-      double  integral   ( const double low , const double high ) const 
-      { return m_bspline.integral   ( low , high ) ; }
-      /// get the derivative at point "x" 
-      double  derivative ( const double x   ) const 
-      { return m_bspline.derivative ( x          ) ; }
-      // ======================================================================
-    private:
+    protected:
       // ======================================================================
       /// update coefficients  
-      bool updateCoefficients  () ;
+      virtual bool updateCoefficients  () ;
       // ======================================================================
-    private:
+    protected:
       // ======================================================================
-      /// the underlying B-spline 
-      Gaudi::Math::BSpline m_bspline ; // the underlying B-spline 
-      /// the N-sphere of parameters 
-      Gaudi::Math::NSphere m_sphere  ; // the N-sphere of parameters
+      /// increasing function?
+      bool m_increasing ;  // increasing function?
       // ======================================================================
     } ;
     // ========================================================================
-    /** @class DecreasingSpline
-     *  The special spline for non-negative decreasing function, 
-     *  (well, actually non-increasing)
-     *  Actually it is a sum of B-splines with 
-     *  non-increasing coefficients 
-     *  \f$ f(x) = \sum_i \alpha_i * B_i^k(x) \f$,
-     *  with constraint \f$ \alpha_{i} \ge \alpha_{i+1} \ge 0 \f$ and 
-     *  normalization is\f$ f(x_{min}=1\f$ 
-     *  @see http://en.wikipedia.org/wiki/I-spline
-     *  @see http://en.wikipedia.org/wiki/B-spline
+    /** @class ConvexSpline
+     *  The special spline with following properties :
+     *   - it is positive
+     *   - it it monothonic (increasing or decreasing) 
+     *   - it is eitehr convex or concave 
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      */
-    class GAUDI_API DecreasingSpline : public std::unary_function<double,double>
+    class GAUDI_API ConvexSpline : public MonothonicSpline 
     {
       // ======================================================================
     public:
@@ -428,9 +452,11 @@ namespace Gaudi
        *  - duplicated knots will be ignored
        *  - min/max value will be used as interval boundaries 
        */
-      DecreasingSpline ( const std::vector<double>& points    ,
-                         const unsigned short       order = 3 ) ;
-      // ======================================================================
+      ConvexSpline
+        ( const std::vector<double>& points            ,
+          const unsigned short       order      = 3    , 
+          const bool                 increasing = true ,
+          const bool                 convex     = true ) ;
       /** Constructor from the list of knots and list of parameters 
        *  The spline order will be calculated automatically 
        *  @param points non-empty vector of poinst/knots 
@@ -439,81 +465,57 @@ namespace Gaudi
        *  - duplicated knots will be ignored
        *  - min/max value will be used as interval boundaries 
        */
-      DecreasingSpline ( const std::vector<double>& points    ,
-                         const std::vector<double>& pars      ) ;
-      // ======================================================================
+      ConvexSpline
+        ( const std::vector<double>& points            ,
+          const std::vector<double>& pars              ,
+          const bool                 increasing = true ,
+          const bool                 convex     = true ) ;
       /** Constructor for uniform binning 
        *  @param xmin   low  edge of spline interval 
        *  @param xmax   high edge of spline interval 
        *  @param inner  number of inner points in   (xmin,xmax) interval
        *  @param order  the degree of splline 
        */
-      DecreasingSpline ( const double         xmin   = 0 ,  
-                         const double         xmax   = 1 , 
-                         const unsigned short inner  = 3 ,   // number of inner points 
-                         const unsigned short order  = 3 ) ; 
-      /// constructor from the basic spline 
-      DecreasingSpline ( const BSpline& spline ) ;
+      ConvexSpline
+        ( const double            xmin       = 0    ,  
+          const double            xmax       = 1    , 
+          const unsigned short    inner      = 2    ,   // number of inner points 
+          const unsigned short    order      = 3    , 
+          const bool              increasing = true ,
+          const bool              convex     = true ) ;
+      /// constructor from positive spline 
+      ConvexSpline 
+        ( const PositiveSpline&   spline     , 
+          const bool              increasing ,
+          const bool              convex      ) ;
+      /// constructor from basic spline 
+      ConvexSpline 
+        ( const BSpline&          spline     , 
+          const bool              increasing ,
+          const bool              convex      ) ;
+      /// constructor from monothonic spline 
+      ConvexSpline 
+        ( const MonothonicSpline& spline     , 
+          const bool              convex      ) ;
+      /// destructor  
+      virtual ~ConvexSpline() ;
       // ======================================================================
     public:
       // ======================================================================
-      /// get the value
-      double operator () ( const double x ) const { return m_bspline ( x ) ; }
+      /// convex? 
+      bool convex   () const { return m_convex    ; } // convex? 
+      /// concave?
+      bool concave  () const { return  !convex () ; } // concave? 
       // ======================================================================
-    public:
-      // ======================================================================
-      /// get number of parameters
-      std::size_t npars  () const { return m_sphere.nPhi() ; }
-      /// set k-parameter
-      bool setPar        ( const unsigned short k , const double value ) ;
-      /// set k-parameter
-      bool setParameter  ( const unsigned short k , const double value )
-      { return setPar    ( k , value ) ; }
-      /// get the parameter value
-      double  par        ( const unsigned short k ) const
-      { return m_sphere.par ( k ) ; }
-      /// get the parameter value
-      double  parameter ( const unsigned short k ) const { return par ( k ) ; }
-      /// get lower edge
-      double xmin () const { return m_bspline.xmin() ; }
-      /// get upper edge
-      double xmax () const { return m_bspline.xmax() ; }
-      /// get all parameters:
-      const std::vector<double>& pars  () const { return m_sphere.pars  () ; }
-      /// get all knots 
-      const std::vector<double>& knots () const { return m_bspline.knots() ; }
-      /// the spline order 
-      unsigned short             order () const { return m_bspline.order() ; }
-      // ======================================================================
-    public:
-      // ======================================================================
-      /// get the parameter sphere 
-      const Gaudi::Math::NSphere& sphere  () const { return m_sphere  ; }
-      /// get the underlying spline 
-      const Gaudi::Math::BSpline& bspline () const { return m_bspline ; }
-      // ======================================================================
-    public:
-      // ======================================================================
-      /// get the integral between xmin and xmax
-      double  integral   () const { return m_bspline.integral () ; } 
-      /// get the integral between low and high 
-      double  integral   ( const double low , const double high ) const 
-      { return m_bspline.integral   ( low , high ) ; }
-      /// get the derivative at point "x" 
-      double  derivative ( const double x   ) const 
-      { return m_bspline.derivative ( x          ) ; }
-      // ======================================================================
-    private:
+    protected:
       // ======================================================================
       /// update coefficients  
-      bool updateCoefficients  () ;
+      virtual bool updateCoefficients  () ;
       // ======================================================================
-    private:
+    protected:
       // ======================================================================
-      /// the underlying B-spline 
-      Gaudi::Math::BSpline m_bspline ; // the underlying B-spline 
-      /// the N-sphere of parameters 
-      Gaudi::Math::NSphere m_sphere  ; // the N-sphere of parameters
+      /// convex function?
+      bool m_convex ;  // convex function?
       // ======================================================================
     } ;
     // =========================================================================

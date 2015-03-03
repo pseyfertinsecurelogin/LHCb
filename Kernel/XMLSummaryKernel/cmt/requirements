@@ -2,7 +2,7 @@
 # Maintainer : R. Lambert
 #=========================================================================
 package           XMLSummaryKernel 
-version           v1r12
+version           v1r12p1
 
 # Structure, i.e. directories to process. 
 #=========================================================================
@@ -27,9 +27,6 @@ apply_pattern QMTest
 
 # Packages needed for tests
 private
-macro XMLSummaryKernel_use_Python "" QMTest "Python v* LCG_Interfaces"
-use $(XMLSummaryKernel_use_Python)
-
 macro XMLSummaryKernel_use_RELAX "" QMTest "RELAX v* LCG_Interfaces"
 use $(XMLSummaryKernel_use_RELAX)
 
@@ -38,4 +35,7 @@ use $(XMLSummaryKernel_use_HepMC)
 
 macro XMLSummaryKernel_use_DDDB "" QMTest "DDDB v* Det"
 use $(XMLSummaryKernel_use_DDDB)
+
+macro XMLSummaryKernel_use_PRConfig "" QMTest "PRConfig v1r*"
+use $(XMLSummaryKernel_use_PRConfig)
 end_private

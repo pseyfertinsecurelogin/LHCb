@@ -1,6 +1,10 @@
-// $Id: MCParticles.cpp 124207 2011-06-02 16:05:29Z ibelyaev $
+// $Id: MCParticles.cpp 182777 2015-01-19 12:33:36Z ibelyaev $
 // ============================================================================
 // Include files
+// ============================================================================
+// STD &STL
+// ============================================================================
+#include <algorithm>
 // ============================================================================
 // GaudiKernel
 // ============================================================================
@@ -15,6 +19,9 @@
 #include "LoKi/Print.h"
 #include "LoKi/MCChild.h"
 #include "LoKi/MCAlgs.h"
+#include "LoKi/Math.h"
+#include "LoKi/ParticleProperties.h"
+#include "LoKi/ToCpp.h"
 // ============================================================================
 // MCInterfaces
 // ============================================================================
@@ -313,6 +320,399 @@ LoKi::MCParticles::AbsIdentifier::operator()
   Error(" Invalid Particle, return 'InvalidID'");
   return LoKi::Constants::InvalidID;                           // RETURN 
 }
+// ============================================================================
+// IsID 
+// ============================================================================
+LoKi::MCParticles::IsID::IsID ( const long                      id  ) 
+  : LoKi::AuxFunBase ( std::tie ( id ) )
+  , LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate() 
+  , LoKi::Pids::GetPids ( id ) 
+{}
+// ============================================================================
+LoKi::MCParticles::IsID::IsID( const unsigned long  id  ) 
+  : LoKi::AuxFunBase ( std::tie ( id ) )
+  , LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate() 
+  , LoKi::Pids::GetPids ( id ) 
+{}
+// ============================================================================
+LoKi::MCParticles::IsID::IsID( const LHCb::ParticleID&         id  ) 
+  : LoKi::AuxFunBase ( std::tie ( id ) )
+  , LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate() 
+  , LoKi::Pids::GetPids ( id ) 
+{}
+// ============================================================================
+LoKi::MCParticles::IsID::IsID( const std::string& id  ) 
+  : LoKi::AuxFunBase ( std::tie ( id ) )
+  , LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate() 
+  , LoKi::Pids::GetPids ( id ) 
+{}
+// ============================================================================
+LoKi::MCParticles::IsID::IsID( const std::vector<int>& id  ) 
+  : LoKi::AuxFunBase ( std::tie ( id ) )
+  , LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate() 
+  , LoKi::Pids::GetPids ( id ) 
+{}
+// ============================================================================
+LoKi::MCParticles::IsID::IsID( const std::vector<unsigned int>& id  ) 
+  : LoKi::AuxFunBase ( std::tie ( id ) )
+  , LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate() 
+  , LoKi::Pids::GetPids ( id ) 
+{}
+// ============================================================================
+LoKi::MCParticles::IsID::IsID( const std::vector<long>& id  ) 
+  : LoKi::AuxFunBase ( std::tie ( id ) )
+  , LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate() 
+  , LoKi::Pids::GetPids ( id ) 
+{}
+// ============================================================================
+LoKi::MCParticles::IsID::IsID( const std::vector<unsigned long>& id  ) 
+  : LoKi::AuxFunBase ( std::tie ( id ) )
+  , LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate() 
+  , LoKi::Pids::GetPids ( id ) 
+{}
+// ============================================================================
+LoKi::MCParticles::IsID::IsID( const std::vector<LHCb::ParticleID>& id  ) 
+  : LoKi::AuxFunBase ( std::tie ( id ) )
+  , LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate() 
+  , LoKi::Pids::GetPids ( id ) 
+{}
+// ============================================================================
+LoKi::MCParticles::IsID::IsID( const std::vector<std::string>& id  ) 
+  : LoKi::AuxFunBase ( std::tie ( id ) )
+  , LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate() 
+  , LoKi::Pids::GetPids ( id ) 
+{}
+// ============================================================================
+LoKi::MCParticles::IsID::IsID( const LoKi::Pids::GetPids& id  ) 
+  : LoKi::AuxFunBase ( std::tie ( id ) )
+  , LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate() 
+  , LoKi::Pids::GetPids ( id ) 
+{}
+// ============================================================================
+LoKi::MCParticles::IsID*
+LoKi::MCParticles::IsID::clone() const 
+{ return new LoKi::MCParticles::IsID(*this) ; }
+// ============================================================================
+std::ostream& LoKi::MCParticles::IsID::fillStream( std::ostream& s ) const
+{
+  //
+  s << "(MCID== " ;
+  //
+  if      ( 1 == m_names.size() ) { Gaudi::Utils::toStream ( m_names[0] , s ) ; }
+  else if ( !m_names.empty()    ) { Gaudi::Utils::toStream ( m_names    , s ) ; }
+  else if ( 1 == m_ints.size()  ) { Gaudi::Utils::toStream ( m_ints [0] , s ) ; }
+  else                            { Gaudi::Utils::toStream ( m_ints     , s ) ; }
+  //
+  return s << ")" ; 
+}
+// ============================================================================
+// the only one essential method
+// ============================================================================
+LoKi::MCParticles::IsID::result_type 
+LoKi::MCParticles::IsID::operator() 
+  ( LoKi::MCParticles::IsID::argument p ) const 
+{
+  //
+  if ( 0 == p ) 
+  {
+    Error("Invalid Particle, return 'False'");
+    return false ;                     // RETURN 
+  }
+  //
+  return in_list ( p->particleID () ) ;  
+}
+// ============================================================================
+// IsNotID 
+// ============================================================================
+LoKi::MCParticles::IsNotID::IsNotID ( const long                id  ) 
+  : LoKi::AuxFunBase ( std::tie ( id ) )
+  , LoKi::MCParticles::IsID ( id ) 
+{}
+// ============================================================================
+LoKi::MCParticles::IsNotID::IsNotID( const unsigned long  id  ) 
+  : LoKi::AuxFunBase ( std::tie ( id ) )
+  , LoKi::MCParticles::IsID ( id ) 
+{}
+// ============================================================================
+LoKi::MCParticles::IsNotID::IsNotID( const LHCb::ParticleID&         id  ) 
+  : LoKi::AuxFunBase ( std::tie ( id ) )
+  , LoKi::MCParticles::IsID ( id ) 
+{}
+// ============================================================================
+LoKi::MCParticles::IsNotID::IsNotID( const std::string& id  ) 
+  : LoKi::AuxFunBase ( std::tie ( id ) )
+  , LoKi::MCParticles::IsID ( id ) 
+{}
+// ============================================================================
+LoKi::MCParticles::IsNotID::IsNotID( const std::vector<int>& id  ) 
+  : LoKi::AuxFunBase ( std::tie ( id ) )
+  , LoKi::MCParticles::IsID ( id ) 
+{}
+// ============================================================================
+LoKi::MCParticles::IsNotID::IsNotID( const std::vector<unsigned int>& id  ) 
+  : LoKi::AuxFunBase ( std::tie ( id ) )
+  , LoKi::MCParticles::IsID ( id ) 
+{}
+// ============================================================================
+LoKi::MCParticles::IsNotID::IsNotID( const std::vector<long>& id  ) 
+  : LoKi::AuxFunBase ( std::tie ( id ) )
+  , LoKi::MCParticles::IsID ( id ) 
+{}
+// ============================================================================
+LoKi::MCParticles::IsNotID::IsNotID( const std::vector<unsigned long>& id  ) 
+  : LoKi::AuxFunBase ( std::tie ( id ) )
+  , LoKi::MCParticles::IsID ( id ) 
+{}
+// ============================================================================
+LoKi::MCParticles::IsNotID::IsNotID( const std::vector<LHCb::ParticleID>& id  ) 
+  : LoKi::AuxFunBase ( std::tie ( id ) )
+  , LoKi::MCParticles::IsID ( id ) 
+{}
+// ============================================================================
+LoKi::MCParticles::IsNotID::IsNotID( const std::vector<std::string>& id  ) 
+  : LoKi::AuxFunBase ( std::tie ( id ) )
+  , LoKi::MCParticles::IsID ( id ) 
+{}
+// ============================================================================
+LoKi::MCParticles::IsNotID*
+LoKi::MCParticles::IsNotID::clone() const 
+{ return new LoKi::MCParticles::IsNotID(*this) ; }
+// ============================================================================
+std::ostream& LoKi::MCParticles::IsNotID::fillStream( std::ostream& s ) const
+{
+  //
+  s << "(MCID!= " ;
+  //
+  if      ( 1 == m_names.size() ) { Gaudi::Utils::toStream ( m_names[0] , s ) ; }
+  else if ( !m_names.empty()    ) { Gaudi::Utils::toStream ( m_names    , s ) ; }
+  else if ( 1 == m_ints.size()  ) { Gaudi::Utils::toStream ( m_ints [0] , s ) ; }
+  else                            { Gaudi::Utils::toStream ( m_ints     , s ) ; }
+  //
+  return s << ")" ; 
+}
+// ============================================================================
+// the only one essential method
+// ============================================================================
+LoKi::MCParticles::IsNotID::result_type 
+LoKi::MCParticles::IsNotID::operator() 
+  ( LoKi::MCParticles::IsNotID::argument p ) const 
+{
+  //
+  if ( 0 == p ) 
+  {
+    Error("Invalid Particle, return 'False'");
+    return false ;                     // RETURN 
+  }
+  return not_in_list ( p->particleID() ) ;
+}
+
+
+// ============================================================================
+// IsAbsID 
+// ============================================================================
+LoKi::MCParticles::IsAbsID::IsAbsID ( const long id  ) 
+  : LoKi::AuxFunBase ( std::tie ( id ) )
+  , LoKi::MCParticles::IsID ( id ) 
+{}
+// ============================================================================
+LoKi::MCParticles::IsAbsID::IsAbsID ( const unsigned long  id  ) 
+  : LoKi::AuxFunBase ( std::tie ( id ) )
+  , LoKi::MCParticles::IsID ( id ) 
+{}
+// ============================================================================
+LoKi::MCParticles::IsAbsID::IsAbsID ( const LHCb::ParticleID&         id  ) 
+  : LoKi::AuxFunBase ( std::tie ( id ) )
+  , LoKi::MCParticles::IsID ( id ) 
+{}
+// ============================================================================
+LoKi::MCParticles::IsAbsID::IsAbsID ( const std::string& id  ) 
+  : LoKi::AuxFunBase ( std::tie ( id ) )
+  , LoKi::MCParticles::IsID ( id ) 
+{}
+// ============================================================================
+LoKi::MCParticles::IsAbsID::IsAbsID ( const std::vector<int>& id  ) 
+  : LoKi::AuxFunBase ( std::tie ( id ) )
+  , LoKi::MCParticles::IsID ( id ) 
+{}
+// ============================================================================
+LoKi::MCParticles::IsAbsID::IsAbsID ( const std::vector<unsigned int>& id  ) 
+  : LoKi::AuxFunBase ( std::tie ( id ) )
+  , LoKi::MCParticles::IsID ( id ) 
+{}
+// ============================================================================
+LoKi::MCParticles::IsAbsID::IsAbsID ( const std::vector<long>& id  ) 
+  : LoKi::AuxFunBase ( std::tie ( id ) )
+  , LoKi::MCParticles::IsID ( id ) 
+{}
+// ============================================================================
+LoKi::MCParticles::IsAbsID::IsAbsID ( const std::vector<unsigned long>& id  ) 
+  : LoKi::AuxFunBase ( std::tie ( id ) )
+  , LoKi::MCParticles::IsID ( id ) 
+{}
+// ============================================================================
+LoKi::MCParticles::IsAbsID::IsAbsID ( const std::vector<LHCb::ParticleID>& id  ) 
+  : LoKi::AuxFunBase ( std::tie ( id ) )
+  , LoKi::MCParticles::IsID ( id ) 
+{}
+// ============================================================================
+LoKi::MCParticles::IsAbsID::IsAbsID ( const std::vector<std::string>& id  ) 
+  : LoKi::AuxFunBase ( std::tie ( id ) )
+  , LoKi::MCParticles::IsID ( id ) 
+{}
+// ============================================================================
+LoKi::MCParticles::IsAbsID::IsAbsID ( const LoKi::Pids::GetPids& id  ) 
+  : LoKi::AuxFunBase ( std::tie ( id ) )
+  , LoKi::MCParticles::IsID ( id ) 
+{}
+// ============================================================================
+LoKi::MCParticles::IsAbsID*
+LoKi::MCParticles::IsAbsID::clone() const 
+{ return new LoKi::MCParticles::IsAbsID(*this) ; }
+// ============================================================================
+std::ostream& LoKi::MCParticles::IsAbsID::fillStream( std::ostream& s ) const
+{
+  //
+  s << "(MCABSID== " ;
+  //
+  if      ( 1 == m_names.size() ) { Gaudi::Utils::toStream ( m_names[0] , s ) ; }
+  else if ( !m_names.empty()    ) { Gaudi::Utils::toStream ( m_names    , s ) ; }
+  else if ( 1 == m_ints.size()  ) { Gaudi::Utils::toStream ( m_ints [0] , s ) ; }
+  else                            { Gaudi::Utils::toStream ( m_ints     , s ) ; }
+  //
+  return s << ")" ; 
+}
+// ============================================================================
+// the only one essential method
+// ============================================================================
+LoKi::MCParticles::IsAbsID::result_type 
+LoKi::MCParticles::IsAbsID::operator() 
+  ( LoKi::MCParticles::IsAbsID::argument p ) const 
+{
+  //
+  if ( 0 == p ) 
+  {
+    Error("Invalid Particle, return 'False'");
+    return false ;                     // RETURN 
+  }
+  //
+  return in_abs_list ( p->particleID() ) ;
+}
+
+
+
+
+// ============================================================================
+// IsNotAbsID 
+// ============================================================================
+LoKi::MCParticles::IsNotAbsID::IsNotAbsID ( const long         id  ) 
+  : LoKi::AuxFunBase ( std::tie ( id ) )
+  , LoKi::MCParticles::IsAbsID ( id ) 
+{}
+// ============================================================================
+LoKi::MCParticles::IsNotAbsID::IsNotAbsID ( const unsigned long id  ) 
+  : LoKi::AuxFunBase ( std::tie ( id ) )
+  , LoKi::MCParticles::IsAbsID ( id ) 
+{}
+// ============================================================================
+LoKi::MCParticles::IsNotAbsID::IsNotAbsID ( const LHCb::ParticleID&         id  ) 
+  : LoKi::AuxFunBase ( std::tie ( id ) )
+  , LoKi::MCParticles::IsAbsID ( id ) 
+{}
+// ============================================================================
+LoKi::MCParticles::IsNotAbsID::IsNotAbsID ( const std::string& id  ) 
+  : LoKi::AuxFunBase ( std::tie ( id ) )
+  , LoKi::MCParticles::IsAbsID ( id ) 
+{}
+// ============================================================================
+LoKi::MCParticles::IsNotAbsID::IsNotAbsID ( const std::vector<int>& id  ) 
+  : LoKi::AuxFunBase ( std::tie ( id ) )
+  , LoKi::MCParticles::IsAbsID ( id ) 
+{}
+// ============================================================================
+LoKi::MCParticles::IsNotAbsID::IsNotAbsID ( const std::vector<unsigned int>& id  ) 
+  : LoKi::AuxFunBase ( std::tie ( id ) )
+  , LoKi::MCParticles::IsAbsID ( id ) 
+{}
+// ============================================================================
+LoKi::MCParticles::IsNotAbsID::IsNotAbsID ( const std::vector<long>& id  ) 
+  : LoKi::AuxFunBase ( std::tie ( id ) )
+  , LoKi::MCParticles::IsAbsID ( id ) 
+{}
+// ============================================================================
+LoKi::MCParticles::IsNotAbsID::IsNotAbsID ( const std::vector<unsigned long>& id  ) 
+  : LoKi::AuxFunBase ( std::tie ( id ) )
+  , LoKi::MCParticles::IsAbsID ( id ) 
+{}
+// ============================================================================
+LoKi::MCParticles::IsNotAbsID::IsNotAbsID ( const std::vector<LHCb::ParticleID>& id  ) 
+  : LoKi::AuxFunBase ( std::tie ( id ) )
+  , LoKi::MCParticles::IsAbsID ( id ) 
+{}
+// ============================================================================
+LoKi::MCParticles::IsNotAbsID::IsNotAbsID ( const std::vector<std::string>& id  )  
+  : LoKi::AuxFunBase ( std::tie ( id ) )
+  , LoKi::MCParticles::IsAbsID ( id ) 
+{}
+// ============================================================================
+LoKi::MCParticles::IsNotAbsID::IsNotAbsID ( const LoKi::Pids::GetPids& id  ) 
+  : LoKi::AuxFunBase ( std::tie ( id ) )
+  , LoKi::MCParticles::IsAbsID ( id ) 
+{}
+// ============================================================================
+LoKi::MCParticles::IsNotAbsID*
+LoKi::MCParticles::IsNotAbsID::clone() const 
+{ return new LoKi::MCParticles::IsNotAbsID(*this) ; }
+// ============================================================================
+std::ostream& LoKi::MCParticles::IsNotAbsID::fillStream( std::ostream& s ) const
+{
+  //
+  s << "(MCABSID!= " ;
+  //
+  if      ( 1 == m_names.size() ) { Gaudi::Utils::toStream ( m_names[0] , s ) ; }
+  else if ( !m_names.empty()    ) { Gaudi::Utils::toStream ( m_names    , s ) ; }
+  else if ( 1 == m_ints.size()  ) { Gaudi::Utils::toStream ( m_ints [0] , s ) ; }
+  else                            { Gaudi::Utils::toStream ( m_ints     , s ) ; }
+  //
+  return s << ")" ; 
+}
+// ============================================================================
+// the only one essential method
+// ============================================================================
+LoKi::MCParticles::IsNotAbsID::result_type 
+LoKi::MCParticles::IsNotAbsID::operator() 
+  ( LoKi::MCParticles::IsNotAbsID::argument p ) const 
+{
+  //
+  if ( 0 == p ) 
+  {
+    Error("Invalid Particle, return 'False'");
+    return false ;                     // RETURN 
+  }
+  //
+  return not_in_abs_list ( p->particleID() ) ;
+}
+// ============================================================================
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // ============================================================================
 LoKi::MCParticles::AbsIdentifier*
 LoKi::MCParticles::AbsIdentifier::clone() const 
@@ -713,7 +1113,8 @@ LoKi::MCParticles::FromMCDecayTree::fillStream
 // ============================================================================
 LoKi::MCParticles::NinMCdownTree::NinMCdownTree
 ( const LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate& cut ) 
-  : LoKi::BasicFunctors<const LHCb::MCParticle*>::Function() 
+  : LoKi::AuxFunBase ( std::tie ( cut ) )
+  , LoKi::BasicFunctors<const LHCb::MCParticle*>::Function() 
   , m_cut ( cut )
 {}
 // ============================================================================
@@ -775,8 +1176,9 @@ LoKi::MCParticles::MCMotherFunction::MCMotherFunction
 // ============================================================================
 LoKi::MCParticles::MCMotherFunction::MCMotherFunction
 ( const LoKi::BasicFunctors<const LHCb::MCParticle*>::Function& fun , 
-  const double                             val )
-  : LoKi::BasicFunctors<const LHCb::MCParticle*>::Function() 
+  const double                                                  val )
+  : LoKi::AuxFunBase ( std::tie ( fun , val ) )
+  , LoKi::BasicFunctors<const LHCb::MCParticle*>::Function() 
   , m_val ( val ) 
   , m_fun ( fun ) 
 {}
@@ -806,8 +1208,9 @@ LoKi::MCParticles::MCMotherFunction::fillStream
 LoKi::MCParticles::MCMotherPredicate::MCMotherPredicate
 ( const LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate& cut , 
   const bool                                val ) 
-  : LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate() 
-    , m_val ( val ) 
+  : LoKi::AuxFunBase ( std::tie ( cut , val ) )
+  , LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate() 
+  , m_val ( val ) 
   , m_cut ( cut ) 
 {}
 // ============================================================================
@@ -947,7 +1350,8 @@ LoKi::MCParticles::IsContainedObject::fillStream
 // ============================================================================  
 LoKi::MCParticles::MomentumDistance::MomentumDistance
 ( const LoKi::LorentzVector& vct ) 
-  : LoKi::BasicFunctors<const LHCb::MCParticle*>::Function() 
+  : LoKi::AuxFunBase ( std::tie ( vct ) )  
+  , LoKi::BasicFunctors<const LHCb::MCParticle*>::Function() 
   , m_vct ( vct ) 
 {}
 // ============================================================================
@@ -958,7 +1362,8 @@ LoKi::MCParticles::MomentumDistance::MomentumDistance
   const double py , 
   const double pz , 
   const double e  ) 
-  : LoKi::BasicFunctors<const LHCb::MCParticle*>::Function() 
+  : LoKi::AuxFunBase ( std::tie ( px , py , pz , e ) ) 
+  , LoKi::BasicFunctors<const LHCb::MCParticle*>::Function() 
   , m_vct () 
 {
   m_vct.SetXYZT ( px , py , pz , e ) ;
@@ -1012,7 +1417,8 @@ LoKi::MCParticles::MomentumDistance::fillStream
 // ============================================================================
 LoKi::MCParticles::TransverseMomentumRel::TransverseMomentumRel 
 ( const double theta , const double phi ) 
-  : LoKi::BasicFunctors<const LHCb::MCParticle*>::Function() 
+  : LoKi::AuxFunBase ( std::tie ( theta , phi ) ) 
+  , LoKi::BasicFunctors<const LHCb::MCParticle*>::Function() 
   , m_vct () 
 {
   m_vct.SetXYZ 
@@ -1028,7 +1434,8 @@ LoKi::MCParticles::TransverseMomentumRel::TransverseMomentumRel
 // ============================================================================
 LoKi::MCParticles::TransverseMomentumRel::TransverseMomentumRel 
 ( const LoKi::ThreeVector& vct ) 
-  : LoKi::BasicFunctors<const LHCb::MCParticle*>::Function() 
+  : LoKi::AuxFunBase ( std::tie ( vct ) )  
+  , LoKi::BasicFunctors<const LHCb::MCParticle*>::Function() 
   , m_vct ( vct ) 
 {}
 // ============================================================================
@@ -1110,7 +1517,8 @@ LoKi::MCParticles::ValidOrigin::fillStream
 LoKi::MCParticles::MCVertexFunAdapter::MCVertexFunAdapter
 ( const LoKi::MCTypes::MCVFunc& vfunc , 
   const double                  err   ) 
-  : LoKi::BasicFunctors<const LHCb::MCParticle*>::Function() 
+  : LoKi::AuxFunBase ( std::tie ( vfunc , err ) ) 
+  , LoKi::BasicFunctors<const LHCb::MCParticle*>::Function() 
   , m_fun ( vfunc ) 
   , m_err ( err   ) 
 {}
@@ -1297,21 +1705,24 @@ LoKi::MCParticles::MCFilter::fillStream
 //  constructor from the phi 
 // ============================================================================
 LoKi::MCParticles::DeltaPhi::DeltaPhi ( const double phi )
-  : LoKi::MCParticles::Phi ()  
+  : LoKi::AuxFunBase ( std::tie ( phi ) ) 
+  , LoKi::MCParticles::Phi ()  
   , m_phi  ( phi )
 { m_phi = adjust ( m_phi ) ; }
 // ============================================================================
 //  constructor from the vector 
 // ============================================================================
 LoKi::MCParticles::DeltaPhi::DeltaPhi ( const LoKi::ThreeVector& v ) 
-  : LoKi::MCParticles::Phi ()  
+  : LoKi::AuxFunBase ( std::tie ( v ) ) 
+  , LoKi::MCParticles::Phi ()  
   , m_phi  ( v.Phi() )
 { m_phi = adjust ( m_phi ) ; }
 // ============================================================================
 //  constructor from the vector 
 // ============================================================================
 LoKi::MCParticles::DeltaPhi::DeltaPhi ( const LoKi::LorentzVector& v ) 
-  : LoKi::MCParticles::Phi ()  
+  : LoKi::AuxFunBase ( std::tie ( v ) ) 
+  , LoKi::MCParticles::Phi ()  
   , m_phi  ( v.Phi() )
 { m_phi = adjust ( m_phi ) ; }
 // ============================================================================
@@ -1348,21 +1759,24 @@ std::ostream& LoKi::MCParticles::DeltaPhi::fillStream ( std::ostream& s ) const
 //  constructor from the eta 
 // ============================================================================
 LoKi::MCParticles::DeltaEta::DeltaEta ( const double eta  ) 
-  : LoKi::MCParticles::PseudoRapidity ()  
+  : LoKi::AuxFunBase ( std::tie ( eta ) ) 
+  , LoKi::MCParticles::PseudoRapidity ()  
   , m_eta  ( eta )
 {}
 // ============================================================================
 //  constructor from the vector
 // ============================================================================
 LoKi::MCParticles::DeltaEta::DeltaEta ( const LoKi::ThreeVector& v ) 
-  : LoKi::MCParticles::PseudoRapidity ()  
+  : LoKi::AuxFunBase ( std::tie ( v ) ) 
+  , LoKi::MCParticles::PseudoRapidity ()  
   , m_eta  ( v.Eta () )
 {}
 // ============================================================================
 //  constructor from the lorentz vector
 // ============================================================================
 LoKi::MCParticles::DeltaEta::DeltaEta ( const LoKi::LorentzVector& v ) 
-  : LoKi::MCParticles::PseudoRapidity ()  
+  : LoKi::AuxFunBase ( std::tie ( v ) ) 
+  , LoKi::MCParticles::PseudoRapidity ()  
   , m_eta  ( v.Eta () )
 {}
 // ============================================================================
@@ -1400,21 +1814,24 @@ std::ostream& LoKi::MCParticles::DeltaEta::fillStream ( std::ostream& s ) const
 LoKi::MCParticles::DeltaR2::DeltaR2 
 ( const double eta , 
   const double phi ) 
-  : LoKi::MCParticles::DeltaPhi ( phi ) 
+  : LoKi::AuxFunBase ( std::tie ( eta , phi ) ) 
+  , LoKi::MCParticles::DeltaPhi ( phi ) 
   , m_deta ( eta ) 
 {}
 // ============================================================================
 //  constructor from the vector 
 // ============================================================================
 LoKi::MCParticles::DeltaR2::DeltaR2 ( const LoKi::ThreeVector& v ) 
-  : LoKi::MCParticles::DeltaPhi ( v ) 
+  : LoKi::AuxFunBase ( std::tie ( v ) ) 
+  , LoKi::MCParticles::DeltaPhi ( v ) 
   , m_deta ( v ) 
 {}
 // ============================================================================
 //  constructor from the vector 
 // ============================================================================
 LoKi::MCParticles::DeltaR2::DeltaR2 ( const LoKi::LorentzVector& v ) 
-  : LoKi::MCParticles::DeltaPhi ( v ) 
+  : LoKi::AuxFunBase ( std::tie ( v ) ) 
+  , LoKi::MCParticles::DeltaPhi ( v ) 
   , m_deta ( v ) 
 {}
 // ============================================================================
@@ -1601,7 +2018,8 @@ LoKi::MCParticles::ChildFunction::ChildFunction
 ( const LoKi::MCTypes::MCFunc& fun   , 
   const size_t                 index ,
   const double                 bad   ) 
-  : LoKi::BasicFunctors<const LHCb::MCParticle*>::Function() 
+  : LoKi::AuxFunBase ( std::tie ( fun , index , bad ) ) 
+  , LoKi::BasicFunctors<const LHCb::MCParticle*>::Function() 
   , m_fun   ( fun   ) 
   , m_index ( index ) 
   , m_bad   ( bad   ) 
@@ -1616,7 +2034,8 @@ LoKi::MCParticles::ChildFunction::ChildFunction
 ( const size_t                 index ,
   const LoKi::MCTypes::MCFunc& fun   ,
   const double                 bad   ) 
-  : LoKi::BasicFunctors<const LHCb::MCParticle*>::Function() 
+  : LoKi::AuxFunBase ( std::tie ( index , fun , bad ) ) 
+  , LoKi::BasicFunctors<const LHCb::MCParticle*>::Function() 
   , m_fun   ( fun   ) 
   , m_index ( index ) 
   , m_bad   ( bad   ) 
@@ -1679,7 +2098,8 @@ LoKi::MCParticles::ChildPredicate::ChildPredicate
 ( const LoKi::MCTypes::MCCuts& cut   , 
   const size_t                 index ,
   const bool                   bad   ) 
-  : LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate ()
+  : LoKi::AuxFunBase ( std::tie ( cut , index , bad ) ) 
+  , LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate ()
   , m_cut   ( cut   )
   , m_index ( index ) 
   , m_bad   ( bad   )
@@ -1695,7 +2115,8 @@ LoKi::MCParticles::ChildPredicate::ChildPredicate
 ( const size_t                 index ,
   const LoKi::MCTypes::MCCuts& cut   , 
   const bool                   bad   ) 
-  : LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate ()
+  : LoKi::AuxFunBase ( std::tie ( index , cut , index ) ) 
+  , LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate ()
   , m_cut   ( cut   )
   , m_index ( index ) 
   , m_bad   ( bad   )
@@ -1756,7 +2177,8 @@ std::ostream& LoKi::MCParticles::ChildPredicate::fillStream
 LoKi::MCParticles::InTree::InTree  
 ( const LoKi::MCTypes::MCCuts& cut       , 
   const bool                   decayOnly ) 
-  : LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate () 
+  : LoKi::AuxFunBase ( std::tie ( cut , decayOnly  ) )
+  , LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate () 
   , m_cut       ( cut       ) 
   , m_decayOnly ( decayOnly ) 
 {}
@@ -1803,7 +2225,8 @@ std::ostream& LoKi::MCParticles::InTree::fillStream ( std::ostream& s ) const
 LoKi::MCParticles::NinTree::NinTree  
 ( const LoKi::MCTypes::MCCuts& cut       , 
   const bool                   decayOnly ) 
-  : LoKi::BasicFunctors<const LHCb::MCParticle*>::Function () 
+  : LoKi::AuxFunBase ( std::tie ( cut , decayOnly  ) )
+  , LoKi::BasicFunctors<const LHCb::MCParticle*>::Function () 
   , m_cut       ( cut       ) 
   , m_decayOnly ( decayOnly ) 
 {}
@@ -1854,7 +2277,8 @@ LoKi::MCParticles::SumTree::SumTree
   const LoKi::MCTypes::MCCuts& cut       , 
   const bool                   decayOnly , 
   const double                 result    ) 
-  : LoKi::BasicFunctors<const LHCb::MCParticle*>::Function () 
+  : LoKi::AuxFunBase ( std::tie ( fun , cut , decayOnly  , result ) )
+  , LoKi::BasicFunctors<const LHCb::MCParticle*>::Function () 
   , m_fun       ( fun       ) 
   , m_cut       ( cut       ) 
   , m_decayOnly ( decayOnly ) 
@@ -1873,7 +2297,8 @@ LoKi::MCParticles::SumTree::SumTree
   const LoKi::MCTypes::MCFunc& fun       , 
   const bool                   decayOnly , 
   const double                 result    ) 
-  : LoKi::BasicFunctors<const LHCb::MCParticle*>::Function () 
+  : LoKi::AuxFunBase ( std::tie ( cut , fun , decayOnly  , result ) )
+  , LoKi::BasicFunctors<const LHCb::MCParticle*>::Function () 
   , m_fun       ( fun       ) 
   , m_cut       ( cut       ) 
   , m_decayOnly ( decayOnly ) 
@@ -1933,7 +2358,8 @@ LoKi::MCParticles::MultTree::MultTree
   const LoKi::MCTypes::MCCuts& cut       , 
   const bool                   decayOnly , 
   const double                 result    ) 
-  : LoKi::BasicFunctors<const LHCb::MCParticle*>::Function () 
+  : LoKi::AuxFunBase ( std::tie ( fun , cut , decayOnly  , result ) )
+  , LoKi::BasicFunctors<const LHCb::MCParticle*>::Function () 
   , m_fun       ( fun       ) 
   , m_cut       ( cut       ) 
   , m_decayOnly ( decayOnly ) 
@@ -1952,7 +2378,8 @@ LoKi::MCParticles::MultTree::MultTree
   const LoKi::MCTypes::MCFunc& fun       , 
   const bool                   decayOnly , 
   const double                 result    ) 
-  : LoKi::BasicFunctors<const LHCb::MCParticle*>::Function () 
+  : LoKi::AuxFunBase ( std::tie ( cut , fun , decayOnly  , result ) )
+  , LoKi::BasicFunctors<const LHCb::MCParticle*>::Function () 
   , m_fun       ( fun       ) 
   , m_cut       ( cut       ) 
   , m_decayOnly ( decayOnly ) 
@@ -2012,7 +2439,8 @@ LoKi::MCParticles::MinTree::MinTree
   const LoKi::MCTypes::MCCuts& cut       , 
   const bool                   decayOnly , 
   const double                 result    ) 
-  : LoKi::BasicFunctors<const LHCb::MCParticle*>::Function () 
+  : LoKi::AuxFunBase ( std::tie ( fun , cut , decayOnly  , result ) )
+  , LoKi::BasicFunctors<const LHCb::MCParticle*>::Function () 
   , m_fun       ( fun       ) 
   , m_cut       ( cut       ) 
   , m_decayOnly ( decayOnly ) 
@@ -2031,7 +2459,8 @@ LoKi::MCParticles::MinTree::MinTree
   const LoKi::MCTypes::MCFunc& fun       , 
   const bool                   decayOnly , 
   const double                 result    ) 
-  : LoKi::BasicFunctors<const LHCb::MCParticle*>::Function () 
+  : LoKi::AuxFunBase ( std::tie ( cut , fun , decayOnly  , result ) )
+  , LoKi::BasicFunctors<const LHCb::MCParticle*>::Function () 
   , m_fun       ( fun       ) 
   , m_cut       ( cut       ) 
   , m_decayOnly ( decayOnly ) 
@@ -2091,7 +2520,8 @@ LoKi::MCParticles::MaxTree::MaxTree
   const LoKi::MCTypes::MCCuts& cut       , 
   const bool                   decayOnly , 
   const double                 result    ) 
-  : LoKi::BasicFunctors<const LHCb::MCParticle*>::Function () 
+  : LoKi::AuxFunBase ( std::tie ( fun , cut , decayOnly  , result ) )
+  , LoKi::BasicFunctors<const LHCb::MCParticle*>::Function () 
   , m_fun       ( fun       ) 
   , m_cut       ( cut       ) 
   , m_decayOnly ( decayOnly ) 
@@ -2110,7 +2540,8 @@ LoKi::MCParticles::MaxTree::MaxTree
   const LoKi::MCTypes::MCFunc& fun       , 
   const bool                   decayOnly , 
   const double                 result    ) 
-  : LoKi::BasicFunctors<const LHCb::MCParticle*>::Function () 
+  : LoKi::AuxFunBase ( std::tie ( cut , fun , decayOnly  , result ) )
+  , LoKi::BasicFunctors<const LHCb::MCParticle*>::Function () 
   , m_fun       ( fun       ) 
   , m_cut       ( cut       ) 
   , m_decayOnly ( decayOnly ) 
@@ -2162,8 +2593,9 @@ std::ostream& LoKi::MCParticles::MaxTree::fillStream ( std::ostream& s ) const
 // constructor from the predicate 
 // ============================================================================
 LoKi::MCParticles::NinAncestors::NinAncestors 
-( const LoKi::MCTypes::MCCuts& cuts ) 
-  : LoKi::BasicFunctors<const LHCb::MCParticle*>::Function ()
+( const LoKi::MCTypes::MCCuts& cuts )
+  : LoKi::AuxFunBase ( std::tie ( cuts ) )
+  , LoKi::BasicFunctors<const LHCb::MCParticle*>::Function ()
   , m_cut ( cuts )
 {}
 // ============================================================================
@@ -2217,7 +2649,8 @@ LoKi::MCParticles::NinAncestors::fillStream( std::ostream& s ) const
 // ============================================================================
 LoKi::MCParticles::InAncestors::InAncestors 
 ( const LoKi::MCTypes::MCCuts& cuts ) 
-  : LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate ()
+  : LoKi::AuxFunBase ( std::tie ( cuts ) )
+  , LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate ()
   , m_cut ( cuts )
 {}
 // ============================================================================

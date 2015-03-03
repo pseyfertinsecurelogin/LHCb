@@ -1,4 +1,4 @@
-// $Id: LHCbMathDict.h 180924 2014-11-30 19:16:11Z ibelyaev $
+// $Id: LHCbMathDict.h 184368 2015-02-23 17:05:41Z ibelyaev $
 // ============================================================================
 #ifndef DICT_LHCBMATHDICT_H
 #define DICT_LHCBMATHDICT_H 1
@@ -32,9 +32,9 @@
 #include "LHCbMath/NSphere.h"
 #include "LHCbMath/WStatEntity.h"
 #include "LHCbMath/BSpline.h"
+#include "LHCbMath/Bernstein.h"
 // ============================================================================
 /** @file LHCbMathDict.h
- *
  *
  *  @author Juan PALACIOS
  *  @date   2008-06-20

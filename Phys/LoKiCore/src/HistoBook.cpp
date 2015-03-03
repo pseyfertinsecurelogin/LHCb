@@ -1,4 +1,4 @@
-// $Id: HistoBook.cpp 149830 2012-12-12 17:09:11Z cattanem $
+// $Id: HistoBook.cpp 182487 2015-01-14 16:55:10Z ibelyaev $
 // ============================================================================
 // Include files 
 // ============================================================================
@@ -24,6 +24,7 @@
 #include "LoKi/Services.h"
 #include "LoKi/HistoBook.h"
 #include "LoKi/Report.h"
+#include "LoKi/Monitor.h"
 // ============================================================================ 
 /** @file 
  *  Implementation file for namespace LoKi::HistoBook
@@ -482,6 +483,22 @@ AIDA::IHistogram1D* LoKi::HistoBook::book
   const std::string&       id   ,
   const Gaudi::Histo1DDef& hist ) 
 { return book ( svc , GaudiAlg::ID ( id ) , hist ) ; }
+// ============================================================================ 
+/*  helper function to book 1D-histogram
+ *  @param hist histogram desctription
+ *  @return booked histogram 
+ */ 
+// ============================================================================ 
+AIDA::IHistogram1D* LoKi::HistoBook::book ( const LoKi::Histo& histo ) 
+{
+  //
+  if      ( histo.hcase() && histo.id().undefined() ) 
+  { return book ( histo.path() , histo.hdef() , histo.histoSvc() ) ; }
+  else if ( histo.hcase() ) 
+  { return book ( histo.path() , histo.id() , histo.hdef() , histo.histoSvc() ) ; }
+  //
+  return book ( histo.hdef() , histo.id() , histo.contextSvc() ) ;
+}
 // ============================================================================ 
 // The END 
 // ============================================================================ 

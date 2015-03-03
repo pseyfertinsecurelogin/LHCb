@@ -1,4 +1,4 @@
-// $Id: Functions.cpp 181005 2014-12-02 13:39:03Z ibelyaev $
+// $Id: Functions.cpp 184368 2015-02-23 17:05:41Z ibelyaev $
 // ============================================================================
 // Include files
 // ============================================================================
@@ -17,6 +17,8 @@
 #include "LHCbMath/Functions.h"
 #include "LHCbMath/LHCbMath.h"
 #include "LHCbMath/Power.h"
+#include "LHCbMath/Polynomials.h"
+#include "LHCbMath/Bernstein.h"
 // ============================================================================
 // GSL
 // ============================================================================
@@ -49,8 +51,8 @@
  *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
  *  @date 2010-04-19
  *
- *                    $Revision: 181005 $
- *  Last modification $Date: 2014-12-02 14:39:03 +0100 (Tue, 02 Dec 2014) $
+ *                    $Revision: 184368 $
+ *  Last modification $Date: 2015-02-23 18:05:41 +0100 (Mon, 23 Feb 2015) $
  *                 by $author$
  */
 // ============================================================================
@@ -175,6 +177,13 @@ double Gaudi::Math::Jackson::jackson_A7
 namespace
 {
   // ==========================================================================
+  /// equality criteria for doubles
+  LHCb::Math::Equal_To<double> s_equal ;       // equality criteria for doubles
+  /// zero for doubles  
+  LHCb::Math::Zero<double>     s_zero  ;       // zero for doubles
+  /// zero fo vectors 
+  LHCb::Math::Zero< std::vector<double> > s_vzero ; // zero foro vectors
+  // ==========================================================================
   typedef Gaudi::Math::GSL::GSL_Error_Handler Sentry ;
   // ==========================================================================
   /// get GSL-workspace
@@ -241,106 +250,6 @@ namespace
    */
   const double      s_LN10 = std::log ( 10 ) ;
   // ==========================================================================
-  // Chebyshev & Co
-  // ==========================================================================
-  Gaudi::Math::Chebyshev_<2> s_c2 ;
-  Gaudi::Math::Chebyshev_<3> s_c3 ;
-  Gaudi::Math::Chebyshev_<4> s_c4 ;
-  Gaudi::Math::Chebyshev_<5> s_c5 ;
-  Gaudi::Math::Chebyshev_<6> s_c6 ;
-  Gaudi::Math::Chebyshev_<7> s_c7 ;
-  Gaudi::Math::Chebyshev_<8> s_c8 ;
-  Gaudi::Math::Chebyshev_<9> s_c9 ;
-  // ==========================================================================
-  inline double _chebyshev ( const unsigned int N , const double x )
-  {
-    switch ( N )
-    {
-    case 0  : return        1   ; //
-    case 1  : return        x   ; //
-    case 2  : return s_c2 ( x ) ; //
-    case 3  : return s_c3 ( x ) ; //
-    case 4  : return s_c4 ( x ) ; //
-    case 5  : return s_c5 ( x ) ; //
-    case 6  : return s_c6 ( x ) ; //
-    case 7  : return s_c7 ( x ) ; //
-    case 8  : return s_c8 ( x ) ; //
-    case 9  : return s_c9 ( x ) ; //
-      //
-    default : break ;
-    }
-    //
-    return 2 * x * _chebyshev ( N - 1 , x ) - _chebyshev ( N - 2 , x ) ;
-  }
-  // ==========================================================================
-  // Legendre & Co
-  // ==========================================================================
-  Gaudi::Math::Legendre_<2>  s_l2 ;
-  Gaudi::Math::Legendre_<3>  s_l3 ;
-  Gaudi::Math::Legendre_<4>  s_l4 ;
-  Gaudi::Math::Legendre_<5>  s_l5 ;
-  Gaudi::Math::Legendre_<6>  s_l6 ;
-  Gaudi::Math::Legendre_<7>  s_l7 ;
-  Gaudi::Math::Legendre_<8>  s_l8 ;
-  Gaudi::Math::Legendre_<9>  s_l9 ;
-  // ==========================================================================
-  inline double _legendre  ( const unsigned int N , const double x )
-  {
-    //
-    switch ( N )
-    {
-    case 0  : return        1   ; //
-    case 1  : return        x   ; //
-    case 2  : return s_l2 ( x ) ; //
-    case 3  : return s_l3 ( x ) ; //
-    case 4  : return s_l4 ( x ) ; //
-    case 5  : return s_l5 ( x ) ; //
-    case 6  : return s_l6 ( x ) ; //
-    case 7  : return s_l7 ( x ) ; //
-    case 8  : return s_l8 ( x ) ; //
-    case 9  : return s_l9 ( x ) ; //
-      //
-    default : break ;
-    }
-    //
-    return
-      ( ( 2 * N - 1 ) * x * _legendre ( N - 1 , x ) -
-        (     N - 1 ) *     _legendre ( N - 2 , x ) ) / N ;
-  }
-  // ==========================================================================
-  // Hermite & Co
-  // ==========================================================================
-  Gaudi::Math::Hermite_<2>  s_h2 ;
-  Gaudi::Math::Hermite_<3>  s_h3 ;
-  Gaudi::Math::Hermite_<4>  s_h4 ;
-  Gaudi::Math::Hermite_<5>  s_h5 ;
-  Gaudi::Math::Hermite_<6>  s_h6 ;
-  Gaudi::Math::Hermite_<7>  s_h7 ;
-  Gaudi::Math::Hermite_<8>  s_h8 ;
-  Gaudi::Math::Hermite_<9>  s_h9 ;
-  // ==========================================================================
-  inline double _hermite  ( const unsigned int N , const double x )
-  {
-    //
-    switch ( N )
-    {
-    case 0  : return        1   ; //
-    case 1  : return        x   ; //
-    case 2  : return s_h2 ( x ) ; //
-    case 3  : return s_h3 ( x ) ; //
-    case 4  : return s_h4 ( x ) ; //
-    case 5  : return s_h5 ( x ) ; //
-    case 6  : return s_h6 ( x ) ; //
-    case 7  : return s_h7 ( x ) ; //
-    case 8  : return s_h8 ( x ) ; //
-    case 9  : return s_h9 ( x ) ; //
-      //
-    default : break ;
-    }
-    //
-    return
-      x * _hermite ( N - 1 , x ) - ( N - 1 ) * _hermite ( N - 2 , x ) ;
-  }
   // ==========================================================================
   // Constants
   // ==========================================================================
@@ -411,13 +320,6 @@ namespace
    */
   const double s_ln2 = std::log ( 2.0 ) ;
   // ==========================================================================
-  /// equality criteria for doubles
-  LHCb::Math::Equal_To<double> s_equal ;       // equality criteria for doubles
-  /// zero for doubles  
-  LHCb::Math::Zero<double>     s_zero  ;       // zero for doubles
-  /// zero fo vectors 
-  LHCb::Math::Zero< std::vector<double> > s_vzero ; // zero foro vectors
-  // ==========================================================================
   /** helper function for itegration of Bukin's function
    *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
    *  @date 2010-04-19
@@ -448,6 +350,20 @@ namespace
       (Gaudi::Math::Novosibirsk*) params ;
     //
     return (*novosibirsk)(x) ;
+  }
+  // ==========================================================================
+  /** helper function for itegration of Sigmoid function
+   *  @see Gaudi::Math::Sigmoid
+   *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
+   *  @date 2010-05-23
+   */
+  double sigmoid_GSL ( double x , void* params )
+  {
+    //
+    const Gaudi::Math::Sigmoid* sigmoid =
+      (Gaudi::Math::Sigmoid*) params ;
+    //
+    return (*sigmoid)(x) ;
   }
   // ==========================================================================
   /** evaluate the helper function  \f[ f = \frac{\log{1+x}}{x} \f]
@@ -1217,20 +1133,9 @@ namespace
   // ==========================================================================
 } // end of the anonymous namespace
 // ============================================================================
-// evaluate Chebyshev polynomial
-// ============================================================================
-double Gaudi::Math::Chebyshev::operator() ( const double x ) const
-{ return _chebyshev ( m_N , x ) ; }
-// ============================================================================
-// evaluate Legendre polynomial
-// ============================================================================
-double Gaudi::Math::Legendre::operator() ( const double x ) const
-{ return _legendre ( m_N , x ) ; }
-// ============================================================================
-// evaluate Hermite polynomial
-// ============================================================================
-double Gaudi::Math::Hermite::operator() ( const double x ) const
-{ return _hermite  ( m_N , x ) ; }
+
+
+
 // ============================================================================
 // BifurcatedGauss
 // ============================================================================
@@ -3234,6 +3139,12 @@ Gaudi::Math::GramCharlierA::GramCharlierA
 // ============================================================================
 Gaudi::Math::GramCharlierA::~GramCharlierA() {}
 // ============================================================================
+namespace 
+{ 
+  const Gaudi::Math::Hermite_<3>  s_h3 ;
+  const Gaudi::Math::Hermite_<4>  s_h4 ;
+}
+// ============================================================================
 // evaluate Gram-Charlier type A approximation
 // ============================================================================
 double Gaudi::Math::GramCharlierA::pdf ( const double x ) const
@@ -4474,16 +4385,20 @@ Gaudi::Math::Flatte::Flatte
 ( const double m0    ,
   const double m0g1  ,
   const double g2og1 ,
-  const double mK    ,
-  const double mPi   )
+  const double mA1   ,
+  const double mA2   ,
+  const double mB1   ,
+  const double mB2   )
   : std::unary_function<double,double> ()
-//
+    //
   , m_m0    ( std::fabs ( m0    ) )
   , m_m0g1  ( std::fabs ( m0g1  ) )
   , m_g2og1 ( std::fabs ( g2og1 ) )
-  , m_K     ( std::fabs ( mK    ) )
-  , m_Pi    ( std::fabs ( mPi   ) )
-//
+  , m_A1    ( std::fabs ( mA1   ) )
+  , m_A2    ( std::fabs ( mA2   ) )
+  , m_B1    ( std::fabs ( mB1   ) )
+  , m_B2    ( std::fabs ( mB2   ) )
+    //
   , m_workspace ()
 {}
 // ============================================================================
@@ -4494,89 +4409,60 @@ Gaudi::Math::Flatte::~Flatte(){}
 // get the value of Flatte function
 // ============================================================================
 double Gaudi::Math::Flatte::operator() ( const double x ) const
-{ return flatte ( x ) ; }
-// ============================================================================
-// get the complex Flatte amplitude (pipi-channel)
-// ============================================================================
-std::complex<double> Gaudi::Math::Flatte::amplitude
-( const double x     )  const { return flatte_amp ( x ) ; }
-// ============================================================================
-// get the complex Flatte amplitude (pipi-channel)
+  { return flatte ( x ) ; }
+  // ============================================================================
+  // get the complex Flatte amplitude
 // ============================================================================
 std::complex<double> Gaudi::Math::Flatte::flatte_amp
 ( const double x     )  const
 {
   //
-  if ( 2 * mPi () >= x ) { return 0 ; }
-  //
-  const std::complex<double> rho_PP =
-    Gaudi::Math::PhaseSpace2::q1 ( x , mPi() , mPi() )  ;
-  const std::complex<double> rho_KK =
-    Gaudi::Math::PhaseSpace2::q1 ( x , mK () , mK () )  ;
+  const std::complex<double> rho_AA =
+    Gaudi::Math::PhaseSpace2::q1 ( x , mA1 () , mA2 () )  ;
+  const std::complex<double> rho_BB =
+    Gaudi::Math::PhaseSpace2::q1 ( x , mB1 () , mB2  () )  ;
   //
   static const std::complex<double> s_j ( 0 , 1 ) ;
   //
   const std::complex<double> v =
-    m0() * m0 () - x * x - s_j * m0g1() * ( rho_PP + g2og1 () * rho_KK ) ;
+    m0() * m0 () - x * x - s_j * m0g1() * ( rho_AA + g2og1 () * rho_BB ) ;
   //
   return  1.0 / v ;
 }
-// ==========================================================================
-// get the complex Flatte amplitude (KK-channel)
-// ==========================================================================
-std::complex<double>
-Gaudi::Math::Flatte::flatte2_amp
-( const double x ) const
-{
-  //
-  if ( 2 * mK() >= x ) { return 0 ; }
-  //
-  const std::complex<double> rho_PP =
-    Gaudi::Math::PhaseSpace2::q1 ( x , mPi () , mPi () ) ;
-  const std::complex<double> rho_KK =
-    Gaudi::Math::PhaseSpace2::q1 ( x , mK  () , mK  () ) ;
-  //
-  static const std::complex<double> s_j ( 0 , 1 ) ;
-  //
-  const std::complex<double> v =
-    m0 () * m0 () - x * x - s_j * m0g1 () * ( rho_PP + g2og1 () * rho_KK ) ;
-  //
-  return  1.0 / v ;
-}
-// ==========================================================================
+// ===========================================================================
 // get the function for pipi-channel
-// ============================================================================
+// ===========================================================================
 double Gaudi::Math::Flatte::flatte ( const double x ) const
 {
   //
-  if ( 2 * mPi () >= x ) { return 0 ; }
+  if ( thresholdA () >= x ) { return 0 ; }
   //
   // get the amplitude...
   std::complex<double> amp = flatte_amp ( x ) ;
   //
-  const double ps = Gaudi::Math::PhaseSpace2::phasespace ( x ,  mPi() , mPi() ) ;
+  const double ps = Gaudi::Math::PhaseSpace2::phasespace ( x ,  mA1() , mA2() ) ;
   //
   return x * ps * std::norm ( amp ) * 2 / M_PI * m0g1() ;
 }
-// ==========================================================================
+// ===========================================================================
 // get the function for KK-channel
-// ============================================================================
+// ===========================================================================
 double Gaudi::Math::Flatte::flatte2 ( const double x ) const
 {
   //
-  if ( 2 * mK () >= x ) { return 0 ; }
+  if ( thresholdB () >= x ) { return 0 ; }
   //
   // get the amplitude...
-  std::complex<double> amp = flatte2_amp ( x ) ;
+  std::complex<double> amp = flatte_amp ( x ) ;
   //
-  const double ps = Gaudi::Math::PhaseSpace2::phasespace ( x ,  mK() , mK() ) ;
+  const double ps = Gaudi::Math::PhaseSpace2::phasespace ( x ,  mB1() , mB2() ) ;
   //
   return x * ps * std::norm ( amp ) * 2 / M_PI * m0g1 () * g2og1 () ;
 }
 // ============================================================================
 // get the integral between low and high limits
 // ============================================================================
-double  Gaudi::Math::Flatte::integral1
+double  Gaudi::Math::Flatte::integral
 ( const double low  ,
   const double high ) const
 {
@@ -4585,45 +4471,32 @@ double  Gaudi::Math::Flatte::integral1
   if (           low > high   ) { return - integral ( high ,
                                                       low  ) ; } // RETURN
   //
-  if ( 2 * m_Pi >= high ) { return                           0   ; }
-  if ( 2 * m_Pi >  low  ) { return integral  ( 2 * m_Pi , high ) ; }
+  const double a = threshold() ;
+  if ( a >= high ) { return                     0 ; }
+  if ( a >  low  ) { return integral ( a , high ) ; }
   //
-  // split into reasonable sub intervals
+  const double b = std::max ( thresholdA () , thresholdB () ) ;
+  if ( low < b     && b    < high ) 
+  { return integral ( low , b ) + integral ( b , high ) ; }
   //
-  const double x_low  = m_m0
-    -  3 * std::abs ( m_m0g1 / m_m0           )
-    -  3 * std::abs ( m_m0g1 / m_m0 * m_g2og1 ) ;
-  //
-  const double x_high = m_m0
-    + 10 * std::abs ( m_m0g1 / m_m0           )
-    + 10 * std::abs ( m_m0g1 / m_m0 * m_g2og1 ) ;
-  //
-  if      ( low <  x_low  && x_low  < high )
-  {
-    return
-      integral (   low  , x_low   ) +
-      integral ( x_low  ,   high  ) ;
-  }
-  else if ( low <  x_high && x_high < high )
-  {
-    return
-      integral (   low  , x_high  ) +
-      integral ( x_high ,   high  ) ;
-  }
-  //
-  // split, if interval too large
+  if ( low < m_m0  && m_m0 < high ) 
+  { return integral ( low , m_m0 ) + integral ( m_m0 , high ) ; }
   //
   const double width =
     0 > m_m0 ? 0.0 :
-    std::fabs ( m_m0g1 / m_m0 ) +
-    std::fabs ( m_m0g1 / m_m0 * m_g2og1 ) ;
+    std::abs ( m_m0g1 / m_m0           ) +
+    std::abs ( m_m0g1 / m_m0 * m_g2og1 ) ;
   //
-  if ( 0 < width &&  3 * width < high - low  )
+  for ( unsigned int i = 0 ; ( i < 5 ) && ( 0 < width ) ; ++ i ) 
   {
-    return
-      integral ( low                   , 0.5 *  ( high + low ) ) +
-      integral ( 0.5 *  ( high + low ) ,          high         ) ;
+    const double x1 = m_m0 + i * width ;
+    if ( low < x1  && x1 < high ) { return integral ( low , x1 ) + integral ( x1 , high ) ; }
+    const double x2 = m_m0 - i * width ;
+    if ( low < x2  && x2 < high ) { return integral ( low , x2 ) + integral ( x2 , high ) ; }
   }
+  //
+  const double x_low  = 0 < width ? m_m0 - 20 * width : low  ;
+  const double x_high = 0 < width ? m_m0 + 20 * width : high ;
   //
   // use GSL to evaluate the integral
   //
@@ -4633,7 +4506,6 @@ double  Gaudi::Math::Flatte::integral1
   F.function = &flatte_GSL ;
   const Flatte* _f = this  ;
   F.params   = const_cast<Flatte*> ( _f ) ;
-  //
   //
   double result   =  1.0 ;
   double error    = -1.0 ;
@@ -4667,9 +4539,11 @@ double  Gaudi::Math::Flatte::integral () const
   //
   // split into reasonable sub intervals
   //
+  //
+  const double x_low  = threshold () ;
   const double x_high = m_m0
-    + 10 * std::abs ( m_m0g1 / m_m0           )
-    + 10 * std::abs ( m_m0g1 / m_m0 * m_g2og1 ) ;
+    + 15 * std::abs ( m_m0g1 / m_m0           )
+    + 15 * std::abs ( m_m0g1 / m_m0 * m_g2og1 ) ;
   //
   // use GSL to evaluate the integral
   //
@@ -4702,7 +4576,7 @@ double  Gaudi::Math::Flatte::integral () const
     result = 0.0 ;
   }
   //
-  return result + integral ( 2 * m_Pi , x_high );
+  return result + integral ( x_low , x_high );
 }
 // ============================================================================
 // set mass
@@ -4760,9 +4634,16 @@ Gaudi::Math::Flatte2::Flatte2
 ( const double m0    ,
   const double m0g1  ,
   const double g2og1 ,
-  const double mK    ,
-  const double mPi   )
-  : Gaudi::Math::Flatte ( m0 , m0g1 , g2og1 ,mK , mPi )
+  const double mA1   ,
+  const double mA2   ,
+  const double mB1   ,
+  const double mB2   )
+  : Gaudi::Math::Flatte ( m0 , m0g1 , g2og1 , mA1 , mA2 , mB1 , mB2 )
+{}
+// ============================================================================
+Gaudi::Math::Flatte2::Flatte2
+( const Gaudi::Math::Flatte& flatte ) 
+  : Gaudi::Math::Flatte ( flatte )
 {}
 // ============================================================================
 // destructor
@@ -4774,12 +4655,6 @@ Gaudi::Math::Flatte2::~Flatte2(){}
 double Gaudi::Math::Flatte2::operator() ( const double x ) const
 { return flatte2 ( x ) ; }
 // ============================================================================
-// get the complex Flatte amplitude (pipi-channel)
-// ============================================================================
-std::complex<double> Gaudi::Math::Flatte2::amplitude
-( const double x     )  const { return flatte2_amp ( x ) ; }
-// ============================================================================
-
 
 // ============================================================================
 // Voigtian
@@ -5067,7 +4942,8 @@ Gaudi::Math::LASS::amplitude ( const double x ) const
   // phase shift:
   const double cotR = ( m_m0 * m_m0 - x * x )  / m_m0 / gs ;
   //
-  const double sinB =  1.0 / std::sqrt ( 1 + cotB*cotB ) ;
+  // const double sinB =  1.0 / std::sqrt ( 1 + cotB*cotB ) ;
+  const double sinB =  1.0 / std::hypot ( 1.0 ,  cotB ) ;
   const double cosB = cotB * sinB ;
   //
   // exp( i*pi/2 )
@@ -6009,15 +5885,15 @@ Gaudi::Math::Flatte23L::Flatte23L
 ( const double         m0    ,     // MeV
   const double         m0g1  ,     // MeV^2
   const double         g2og1 ,     // dimensionless
-  const double         mK    ,     // MeV
-  const double         mPi   ,     // MeV
+  const double         mA    ,     // MeV
+  const double         mB    ,     // MeV
   const double         m3    ,     // MeV
   const double         m     ,     // MeV
   const unsigned short L     )
   : std::unary_function<double,double> ()
 //
-  , m_flatte    ( m0  , m0g1 , g2og1 , mK , mPi  )
-  , m_ps        ( mPi , mPi  , m3    , m  , L    )
+  , m_flatte    ( m0  , m0g1 , g2og1 , mA , mA , mB , mB ) 
+  , m_ps        ( mA  , mA  , m3    , m  , L    )
 //
   , m_workspace ()
 {}
@@ -6036,8 +5912,8 @@ Gaudi::Math::Flatte23L::Flatte23L
   : std::unary_function<double,double> ()
 //
   , m_flatte    ( fun )
-  , m_ps        ( fun.mPi() , fun.mPi()  , m3    , m  , L    )
-//
+  , m_ps        ( fun.mA1() , fun.mA2()  , m3    , m  , L    )
+    //
   , m_workspace ()
 {}
 // ============================================================================
@@ -6319,711 +6195,6 @@ double  Gaudi::Math::Gounaris23L::integral
 double  Gaudi::Math::Gounaris23L::integral () const
 { return integral ( lowEdge () , highEdge() ) ; }
 // ============================================================================
-namespace
-{
-  // ==========================================================================
-  // De Casteljau's algorithm
-  template <class ITERATOR>
-  double _casteljau_
-  ( ITERATOR first ,
-    ITERATOR last  ,
-    const double               t0   ,
-    const double               t1   )
-  {
-    // the trivial cases
-    if      ( first == last    ) { return 0       ; }
-    //
-    const std::size_t len  = std::distance ( first , last  ) ;
-    //
-    if      ( 1 == len ) { return       *first                        ; }
-    else if ( 2 == len ) { return t1 * (*first) + t0 * ( *(first+1) ) ; }
-    //
-    ITERATOR second = --last ;
-    //
-    // prepare recursion
-    for ( ITERATOR it = first ; it != second ; ++it )
-    { *it = t1 * ( *it )  + t0 * ( *( it+1 ) ) ; }
-    //
-    // recursion
-    return _casteljau_ ( first , second , t0 , t1 ) ;
-  }
-  // ==========================================================================
-}
-// ============================================================================
-// constructor from the order
-// ============================================================================
-Gaudi::Math::Bernstein::Bernstein
-( const unsigned short      N    ,
-  const double              xmin ,
-  const double              xmax )
-  : std::unary_function<double,double> ()
-//
-  , m_pars ( N + 1 , 0.0 )
-//
-  , m_xmin ( std::min ( xmin , xmax ) )
-  , m_xmax ( std::max ( xmin , xmax ) )
-//
-{}
-// ============================================================================
-// constructor from the order
-// ============================================================================
-Gaudi::Math::Bernstein::Bernstein
-( const std::vector<double>& pars ,
-  const double               xmin ,
-  const double               xmax )
-  : std::unary_function<double,double> ()
-//
-  , m_pars ( pars )
-//
-  , m_xmin ( std::min ( xmin , xmax ) )
-  , m_xmax ( std::max ( xmin , xmax ) )
-//
-{
-  if ( m_pars.empty() ) { m_pars.push_back ( 0 ) ; }
-}
-// ============================================================================
-// construct the basic bernstein polinomial
-// ============================================================================
-Gaudi::Math::Bernstein::Bernstein 
-( const Gaudi::Math::Bernstein::Basic& bb   , 
-  const double                         xmin , 
-  const double                         xmax ) 
-  : std::unary_function<double,double> ()
-  , m_pars ( bb.N() + 1 , 0  )
-    //
-  , m_xmin ( std::min ( xmin , xmax ) )
-  , m_xmax ( std::max ( xmin , xmax ) )
-    //
-{
-  if ( bb.k() <= bb.N() ) { m_pars[ bb.k() ] = 1 ; } 
-}
-// ============================================================================
-// get the integral between xmin and xmax
-// ============================================================================
-double Gaudi::Math::Bernstein::integral () const
-{
-  //
-  return
-    ( m_xmax - m_xmin ) *
-    std::accumulate ( m_pars.begin() , m_pars.end() , 0.0 ) / npars() ;
-}
-// ============================================================================
-Gaudi::Math::Bernstein
-Gaudi::Math::Bernstein::indefinite_integral () const 
-{
-  //
-  std::vector<double> ck ( npars() + 1 , 0.0 ) ;
-  std::partial_sum   ( m_pars.begin () , m_pars.end   () ,  ck.begin() + 1 ) ;
-  Gaudi::Math::scale ( ck , ( m_xmax - m_xmin ) / npars() ) ;
-  //
-  return Gaudi::Math::Bernstein ( ck.begin() , ck.end() , m_xmin , m_xmax ) ;
-}
-// ============================================================================
-double Gaudi::Math::Bernstein::integral ( const double low  ,
-                                          const double high ) const 
-{
-  //
-  if      ( s_equal ( low , high )           ) { return  0 ; }
-  else if ( low  >  high                     ) { return -1*integral ( high   , low    ) ; }
-  else if ( high <= xmin () || low >= xmax() ) { return  0 ; }
-  else if ( s_vzero ( m_pars )               ) { return  0 ; }  
-  //
-  const double xlow  = std::max ( low  , m_xmin ) ;
-  const double xhigh = std::min ( high , m_xmax ) ;
-  if ( xlow > xhigh                          ) { return 0 ;}
-  //
-  if ( 1 == npars() ) { return ( xhigh - xlow ) * m_pars[0] ; }
-  //
-  if ( s_equal ( xlow  , m_xmin ) && 
-       s_equal ( xhigh , m_xmax ) ) { return integral () ; }
-  //
-  // make integration: 
-  //
-  std::vector<double> ck ( npars() + 1 , 0.0 ) ;
-  std::partial_sum ( m_pars.begin () , m_pars.end   () ,  ck.begin() + 1 ) ;
-  Gaudi::Math::scale ( ck , ( m_xmax - m_xmin ) / npars() ) ;
-  //
-  const Gaudi::Math::Bernstein b_int ( ck.begin() , ck.end() , m_xmin , m_xmax ) ;
-  //
-  return b_int ( xhigh ) - b_int ( xlow ) ;
-}
-// ============================================================================
-Gaudi::Math::Bernstein
-Gaudi::Math::Bernstein::derivative () const 
-{
-  //
-  std::vector<double>   ck ( npars() , 0 ) ;
-  std::adjacent_difference ( m_pars.begin () , m_pars.end() , ck.begin() ) ;
-  Gaudi::Math::scale ( ck , ( npars() - 1 )/ ( m_xmax - m_xmin ) ) ;
-  //
-  return Gaudi::Math::Bernstein ( ck.begin() + 1 , ck.end() ,  m_xmin  , m_xmax ) ;
-}
-// ============================================================================
-double Gaudi::Math::Bernstein::derivative ( const double x   ) const 
-{
-  if      ( m_pars.size() <= 1       ) { return 0 ; }
-  else if ( x < m_xmin || x > m_xmax ) { return 0 ; }
-  //
-  std::vector<double>   ck ( npars() , 0 ) ;
-  std::adjacent_difference ( m_pars.begin () , m_pars.end() , ck.begin() ) ;
-  //
-  // get the t-values
-  //
-  const double t0 = t ( x ) ;
-  const double t1 = 1 - t0  ;
-  //
-  return
-    _casteljau_ ( ck.begin() + 1 , ck.end() , t0 , t1 ) * ( m_xmax - m_xmin ) / npars() ;
-}
-// ============================================================================
-/* get the integral between low and high for a product of Bernstein function
- * and the exponential function with exponent tau
- *  \f[  \int_{low}^{high} \mathcal{B} e^{\tau x } \mathrm{d}x \f] 
- *  @param poly  bernstein polynomial
- *  @param tau   slope parameter for exponential 
- *  @param low   low  integration range 
- *  @param high  high integration range 
- */
-// ============================================================================
-double Gaudi::Math::Bernstein::integrate  
-( const Gaudi::Math::Bernstein& poly , 
-  const double tau  , 
-  const double low  , 
-  const double high ) 
-{
-  //
-  if      ( s_equal ( tau , 0    )           ) { return poly.integral ( low  , high         ) ; } 
-  else if ( s_equal ( low , high )           ) { return 0 ; }
-  else if ( poly.zero ()                     ) { return 0 ; }
-  else if ( low  >  high                     ) { return integrate ( poly , tau , high , low ) ; }
-  else if ( high <  poly.xmin () || 
-            low  >  poly.xmax () ) { return  0 ; }
-  //
-  const double xlow  = std::max ( low  , poly.xmin() ) ;
-  const double xhigh = std::min ( high , poly.xmax() ) ;
-  //
-  const double p1 = ( poly ( xhigh ) * my_exp ( tau * xhigh ) - 
-                      poly ( xlow  ) * my_exp ( tau * xlow  ) ) / tau ;
-  //
-  if ( poly.npars ()  <= 1   ) { return p1 ; } // RETURN 
-  //
-  const Gaudi::Math::Bernstein  b_prime ( poly.derivative() ) ;
-  if ( b_prime.zero()        ) { return p1 ; } // RETURN
-  //
-  return p1 - integrate ( b_prime , tau , xlow , xhigh ) / tau ;
-}
-// ============================================================================
-// are all parameters zero?
-// ============================================================================
-bool Gaudi::Math::Bernstein::zero () const { return s_vzero ( m_pars ) ; }
-// ============================================================================
-// set k-parameter
-// ============================================================================
-bool Gaudi::Math::Bernstein::setPar
-( const unsigned short k , const double value )
-{
-  //
-  if ( k >= npars() )                  { return false ; }
-  //
-  if ( s_equal ( par ( k ) , value ) ) { return false ; }
-  //
-  m_pars [ k ] = value ;
-  //
-  return true ;
-}
-// ============================================================================
-// get the value
-// ============================================================================
-double Gaudi::Math::Bernstein::operator () ( const double x ) const
-{
-  //
-  // treat the trivial cases
-  //
-  if      ( m_pars.empty()                             ) { return 0 ; }
-  //  neeed for the proper integration with an exponential 
-  else if ( s_equal ( x , m_xmin )                     ) { return m_pars [0]    ; }
-  else if ( s_equal ( x , m_xmax )                     ) { return m_pars.back() ; }
-  else if ( x < m_xmin || x > m_xmax                   ) { return 0 ; }
-  else if ( 1 == npars ()                              ) { return m_pars [0]    ; }
-  else if ( s_vzero ( m_pars )                         ) { return 0 ; }
-  //
-  // get the t-values
-  //
-  const double t0 = t ( x ) ;
-  const double t1 = 1 - t0  ;
-  //
-  // start de casteljau algorithm:
-  //
-  std::vector<double> dcj ( m_pars ) ;
-  return _casteljau_ ( dcj.begin() , dcj.end() , t0 , t1 ) ;
-}
-// ============================================================================
-// constructor from the order
-// ============================================================================
-Gaudi::Math::Bernstein2D::Bernstein2D
-( const unsigned short      nX   ,
-  const unsigned short      nY   ,
-  const double              xmin ,
-  const double              xmax ,
-  const double              ymin ,
-  const double              ymax )
-  : std::binary_function<double,double,double> ()
-//
-  , m_nx   ( nX ) 
-  , m_ny   ( nY )
-//
-  , m_pars ( ( nX + 1 ) * ( nY + 1 ) , 0.0 )
-//
-  , m_xmin ( std::min ( xmin , xmax ) )
-  , m_xmax ( std::max ( xmin , xmax ) )
-  , m_ymin ( std::min ( ymin , ymax ) )
-  , m_ymax ( std::max ( ymin , ymax ) )
-    //
-  , m_bx   () 
-  , m_by   ()
-{
-  //
-  typedef  Gaudi::Math::Bernstein::Basic BB ;
-  for ( unsigned short ix = 0 ; ix <= nX ; ++ix ) 
-  { m_bx.push_back ( Bernstein ( BB ( ix , nX ) , xmin , xmax ) ) ; }
-  //
-  for ( unsigned short iy = 0 ; iy <= nY ; ++iy ) 
-  { m_by.push_back ( Bernstein ( BB ( iy , nY ) , ymin , ymax ) ) ; }
-  //
-}
-// ============================================================================
-// get the value
-// ============================================================================
-double Gaudi::Math::Bernstein2D::operator () ( const double x ,
-                                               const double y ) const
-{
-  /// the trivial cases
-  if ( x < m_xmin || x > m_xmax ) { return 0.0        ; }
-  if ( y < m_ymin || y > m_ymax ) { return 0.0        ; }
-  //
-  if      ( 0 == npars ()       ) { return 0.0        ; }
-  else if ( 1 == npars ()       ) { return m_pars [0] ; }
-  ///
-  std::vector<double> fy ( m_ny + 1 , 0 ) ;
-  for ( unsigned short i = 0 ; i <= m_ny ; ++i )
-  { fy[i] = m_by[i] ( y )  ; }
-  //
-  std::vector<double> fx ( m_nx + 1 , 0 ) ;
-  for  ( unsigned short i = 0 ; i <= m_nx ; ++i ) 
-  { fx[i] = m_bx[i] ( x )  ; }
-  //
-  double       result = 0 ;
-  for  ( unsigned short ix = 0 ; ix <= m_nx ; ++ix )
-  { 
-    for  ( unsigned short iy = 0 ; iy <= m_ny ; ++iy ) 
-    { result += par ( ix , iy ) * fx[ix] * fy[iy] ; }
-  }
-  //
-  const double scalex = ( m_nx + 1 ) / ( xmax() - xmin() ) ;
-  const double scaley = ( m_ny + 1 ) / ( ymax() - ymin() ) ;
-  //
-  return result * ( scalex * scaley ) ;
-}
-// ============================================================================
-double Gaudi::Math::Bernstein2D::integral 
-( const double xlow , const double xhigh , 
-  const double ylow , const double yhigh ) const 
-{
-  if      ( s_equal ( xlow , xhigh ) || s_equal ( ylow  , yhigh ) ) { return 0 ; }
-  //
-  else if ( xlow  > xhigh ) { return -1*integral ( xhigh , xlow  , ylow  , yhigh ) ; }
-  else if ( ylow  > yhigh ) { return -1*integral ( xlow  , xhigh , yhigh , ylow  ) ; }
-  //
-  else if ( xhigh <  xmin () || xlow >  xmax() ) { return 0 ; }
-  else if ( yhigh <  ymin () || ylow >  ymax() ) { return 0 ; }
-  //
-  const double  x_low  = std::max ( xmin() , xlow  ) ;
-  const double  x_high = std::min ( xmax() , xhigh ) ;
-  if ( x_low >= x_high ) { return 0 ; }
-  //
-  const double  y_low  = std::max ( ymin() , ylow  ) ;
-  const double  y_high = std::min ( ymax() , yhigh ) ;
-  if ( y_low >= y_high ) { return 0 ; }
-  //
-  std::vector<double> fy ( m_ny + 1 , 0 ) ;
-  for ( unsigned short i = 0 ; i <= m_ny ; ++i ) 
-  { fy[i] = m_by[i].integral ( y_low , y_high ) ; }
-  //
-  std::vector<double> fx ( m_nx + 1 , 0 ) ;
-  for  ( unsigned short i = 0 ; i <= m_nx ; ++i ) 
-  { fx[i] = m_bx[i].integral ( x_low , x_high ) ; }
-  //
-  double result = 0 ;
-  for  ( unsigned short ix = 0 ; ix <= m_nx ; ++ix ) 
-  {
-    for  ( unsigned short iy = 0 ; iy <= m_ny ; ++iy ) 
-    { result += par ( ix , iy ) * fx[ix] * fy[iy] ; }
-    //
-  }
-  //
-  const double scalex = ( m_nx + 1 ) / ( xmax() - xmin() ) ;
-  const double scaley = ( m_ny + 1 ) / ( ymax() - ymin() ) ;
-  //
-  return result * ( scalex * scaley ) ;
-}
-// ============================================================================
-double Gaudi::Math::Bernstein2D::integrateX 
-( const double y    , 
-  const double xlow , const double xhigh ) const 
-{
-  if      ( s_equal ( xlow , xhigh ) ) { return 0 ; }
-  else if ( xlow  > xhigh  ) { return -1*integrateX ( y , xhigh , xlow ) ; }
-  else if ( xhigh <= xmin () || xlow >= xmax() ) { return 0 ; }
-  else if ( y     <= ymin () || y    >= ymax() ) { return 0 ; }
-  //
-  const double  x_low  = std::max ( xmin() , xlow  ) ;
-  const double  x_high = std::min ( xmax() , xhigh ) ;
-  if ( x_low >= x_high ) { return 0 ; }
-  //
-  std::vector<double> fy ( m_ny + 1 , 0 ) ;
-  for ( unsigned short i = 0 ; i <= m_ny ; ++i ) 
-  { fy[i] = m_by[i] ( y ) ; }
-  //
-  std::vector<double> fx ( m_nx + 1 , 0 ) ;
-  for  ( unsigned short i = 0 ; i <= m_nx ; ++i ) 
-  { fx[i] = m_bx[i].integral ( x_low , x_high ) ; }
-  //
-  double result = 0 ;
-  for  ( unsigned short ix = 0 ; ix <= m_nx ; ++ix ) 
-  {
-    for  ( unsigned short iy = 0 ; iy <= m_ny ; ++iy ) 
-    { result += par ( ix , iy ) * fx[ix] * fy[iy] ; }
-    //
-  }
-  //
-  const double scalex = ( m_nx + 1 ) / ( xmax() - xmin() ) ;
-  const double scaley = ( m_ny + 1 ) / ( ymax() - ymin() ) ;
-  //
-  return result * ( scalex * scaley ) ;
-}
-// ============================================================================
-double Gaudi::Math::Bernstein2D::integrateY 
-( const double x    , 
-  const double ylow , const double yhigh ) const 
-{
-  if      ( s_equal ( ylow  , yhigh ) ) { return 0 ; }
-  else if ( ylow  >  yhigh ) { return -1*integrateY ( x , yhigh , ylow  ) ; }
-  else if ( x     <= xmin () || x    >= xmax() ) { return 0 ; }
-  else if ( yhigh <= ymin () || ylow >= ymax() ) { return 0 ; }
-  //
-  const double  y_low  = std::max ( ymin() , ylow  ) ;
-  const double  y_high = std::min ( ymax() , yhigh ) ;
-  if ( y_low >= y_high ) { return 0 ; }
-  //
-  std::vector<double> fy ( m_ny + 1 , 0 ) ;
-  for ( unsigned short i = 0 ; i <= m_ny ; ++i ) 
-  { fy[i] = m_by[i].integral ( y_low , y_high ) ; }
-  //
-  std::vector<double> fx ( m_nx + 1 , 0 ) ;
-  for  ( unsigned short i = 0 ; i <= m_nx ; ++i ) 
-  { fx[i] = m_bx[i] ( x ) ; }
-  //
-  double result = 0 ;
-  for  ( unsigned short ix = 0 ; ix <= m_nx ; ++ix ) 
-  {
-    for  ( unsigned short iy = 0 ; iy <= m_ny ; ++iy ) 
-    { result += par ( ix , iy ) * fx[ix] * fy[iy] ; }
-    //
-  }
-  //
-  const double scalex = ( m_nx + 1 ) / ( xmax() - xmin() ) ;
-  const double scaley = ( m_ny + 1 ) / ( ymax() - ymin() ) ;
-  //
-  return result * ( scalex * scaley ) ;
-}
-// ============================================================================
-
-// ============================================================================
-// set (l,m)-parameter
-// ============================================================================
-bool Gaudi::Math::Bernstein2D::setPar
-( const unsigned short l     , 
-  const unsigned short m     , 
-  const double         value )
-{
-  if ( l > m_nx || m > m_ny )             { return false ; }
-  const unsigned int k =  l * ( m_ny + 1 ) + m ;
-  return setPar ( k , value ) ;
-}
-// ============================================================================
-// set k-parameter
-// ============================================================================
-bool Gaudi::Math::Bernstein2D::setPar
-( const unsigned int   k     , 
-  const double         value )
-{
-  if ( k >= npars() )                     { return false ; }
-  if ( s_equal ( m_pars [ k ] , value ) ) { return false ; }
-  m_pars [ k ] = value ;
-  return true ;
-}
-// ============================================================================
-// get (l,m)-parameter 
-// ============================================================================
-double  Gaudi::Math::Bernstein2D::par 
-( const unsigned short l ,
-  const unsigned short m ) const 
-{
-  if ( l > m_nx || m > m_ny ) { return 0 ; }
-  const unsigned int k =  l * ( m_ny + 1 ) + m ;
-  return par ( k ) ;
-}
-// ============================================================================
-
-  
-
-// ============================================================================
-// constructor from the order
-// ============================================================================
-Gaudi::Math::Bernstein2DSym::Bernstein2DSym
-( const unsigned short      n    ,
-  const double              xmin ,
-  const double              xmax )
-  : std::binary_function<double,double,double> ()
-//
-  , m_n    ( n ) 
-//
-  , m_pars ( ( n + 1 ) * ( n + 2 ) / 2 , 0.0 )
-//
-  , m_xmin ( std::min ( xmin , xmax ) )
-  , m_xmax ( std::max ( xmin , xmax ) )
-//
-  , m_b    () 
-{
-  //
-  typedef  Gaudi::Math::Bernstein::Basic BB ;
-  for ( unsigned short i = 0 ; i <= n ; ++i ) 
-  { m_b.push_back ( Bernstein ( BB ( i , n ) , xmin , xmax ) ) ; }
-  //
-}
-// ============================================================================
-// get the value
-// ============================================================================
-double Gaudi::Math::Bernstein2DSym::operator () 
-  ( const double x ,
-    const double y ) const
-{
-  /// the trivial cases
-  if ( x < xmin () || x > xmax () ) { return 0.0        ; }
-  if ( y < ymin () || y > ymax () ) { return 0.0        ; }
-  //
-  if      ( 0 == npars ()       ) { return 0.0        ; }
-  else if ( 1 == npars ()       ) { return m_pars [0] ; }
-  ///
-  std::vector<double> fy ( m_n + 1 , 0 ) ;
-  for ( unsigned short i = 0 ; i <= m_n ; ++i ) 
-  { fy[i] = m_b[i] ( y ) ; }
-  //
-  std::vector<double> fx ( m_n + 1 , 0 ) ;
-  for  ( unsigned short i = 0 ; i <= m_n ; ++i ) 
-  { fx[i] = m_b[i] ( x ) ; }
-  //
-  double       result = 0 ;
-  for  ( unsigned short ix = 0 ; ix <= m_n ; ++ix ) 
-  {
-    for  ( unsigned short iy = 0 ; iy <= m_n ; ++iy ) 
-    { 
-      result += ( ix == iy ) ? 
-        par ( ix , iy ) * fx[ix] * fy[iy]       : 
-        par ( ix , iy ) * fx[ix] * fy[iy] * 0.5 ;
-    }
-  }
-  //
-  const double scale = ( m_n + 1 ) / ( xmax() - xmin() ) ;
-  return result * ( scale * scale ) ;
-}
-// ============================================================================
-double Gaudi::Math::Bernstein2DSym::integral 
-( const double xlow , const double xhigh ,
-  const double ylow , const double yhigh ) const 
-{
-  //
-  if      ( xlow  > xhigh   ) { return -integral ( xhigh , xlow    , ylow   , yhigh  ) ; }
-  else if ( ylow  > yhigh   ) { return -integral ( xlow  , xhigh   , yhigh  , ylow   ) ; }
-  //
-  else if ( xlow  < xmin () ) { return  integral ( xmin() , xhigh  , ylow   , yhigh  ) ; }
-  else if ( xhigh > xmax () ) { return  integral ( xlow   , xmax() , ylow   , yhigh  ) ; }
-  else if ( ylow  < ymin () ) { return  integral ( xlow   , xhigh  , ymin() , yhigh  ) ; }
-  else if ( yhigh > ymax () ) { return  integral ( xlow   , xhigh  , ylow   , ymax() ) ; }
-  //
-  else if ( s_equal ( xlow , xhigh ) || s_equal ( ylow , yhigh ) ) { return 0 ; }
-  //
-  //
-  std::vector<double> fy ( m_n + 1 , 0 ) ;
-  for ( unsigned short i = 0 ; i <= m_n ; ++i ) 
-  { fy[i] = m_b[i].integral ( ylow , yhigh ) ; }
-  //
-  std::vector<double> fx ( m_n + 1 , 0 ) ;
-  for  ( unsigned short i = 0 ; i <= m_n ; ++i ) 
-  { fx[i] = m_b[i].integral ( xlow , xhigh ) ; }
-  //
-  double       result = 0 ;
-  for  ( unsigned short ix = 0 ; ix <= m_n ; ++ix ) 
-  {
-    for  ( unsigned short iy = 0 ; iy <= m_n ; ++iy ) 
-    { 
-      result += ( ix == iy ) ? 
-        par ( ix , iy ) * fx[ix] * fy[iy]       : 
-        par ( ix , iy ) * fx[ix] * fy[iy] * 0.5 ;
-    }
-  }
-  //
-  const double scale = ( m_n + 1 ) / ( xmax() - xmin() ) ;
-  return result * ( scale * scale ) ;
-}
-// ============================================================================
-double Gaudi::Math::Bernstein2DSym::integrateX 
-( const double y    ,  
-  const double xlow , const double xhigh ) const 
-{ return integrateY ( y , xlow , xhigh ) ; }
-// ============================================================================
-double Gaudi::Math::Bernstein2DSym::integrateY
-( const double x    ,
-  const double ylow , const double yhigh ) const 
-{
-  //
-  if      ( s_equal ( ylow  , yhigh ) ) { return 0 ; }
-  else if ( ylow  > yhigh ) { return -integrateY ( x , yhigh , ylow  ) ; }
-  else if ( x     <  xmin () || x    >  xmax() ) { return 0 ; }
-  else if ( yhigh <  ymin () || ylow >  ymax() ) { return 0 ; }
-  //
-  const double  y_low  = std::max ( ymin() , ylow  ) ;
-  const double  y_high = std::min ( ymax() , yhigh ) ;
-  if ( y_low >= y_high ) { return 0 ; }
-  //
-  std::vector<double> fy ( m_n + 1 , 0 ) ;
-  for ( unsigned short i = 0 ; i <= m_n ; ++i ) 
-  { fy[i] = m_b[i].integral ( y_low , y_high ) ; }
-  //
-  std::vector<double> fx ( m_n + 1 , 0 ) ;
-  for  ( unsigned short i = 0 ; i <= m_n ; ++i ) 
-  { fx[i] = m_b[i] ( x ) ; }
-  //
-  double       result = 0 ;
-  for  ( unsigned short ix = 0 ; ix <= m_n ; ++ix ) 
-  {
-    for  ( unsigned short iy = 0 ; iy <= m_n ; ++iy ) 
-    { 
-      result += ( ix == iy ) ? 
-        par ( ix , iy ) * fx[ix] * fy[iy]       : 
-        par ( ix , iy ) * fx[ix] * fy[iy] * 0.5 ;
-    }
-  }
-  //
-  const double scale = ( m_n + 1 ) / ( xmax() - xmin() ) ;
-  return result * ( scale * scale ) ;
-}
-// ============================================================================
-// set (k)-parameter
-// ============================================================================
-bool Gaudi::Math::Bernstein2DSym::setPar
-( const unsigned int   k     , 
-  const double         value )
-{
-  //
-  if ( k >= npars() )                     { return false ; }
-  if ( s_equal ( m_pars [ k ] , value ) ) { return false ; }
-  m_pars [ k ] = value ;
-  //
-  return true ;
-}
-// ============================================================================
-// set (l,m)-parameter
-// ============================================================================
-bool Gaudi::Math::Bernstein2DSym::setPar
-( const unsigned short l     , 
-  const unsigned short m     , 
-  const double         value )
-{
-  //
-  if ( l > m_n || m > m_n )               { return false ; }
-  //
-  const unsigned int k = ( l < m ) ? 
-    ( m * ( m + 1 ) / 2 + l ) : 
-    ( l * ( l + 1 ) / 2 + m ) ;
-  //
-  return setPar ( k , value ) ;
-}
-// ============================================================================
-// get (l,m)-parameter 
-// ============================================================================
-double Gaudi::Math::Bernstein2DSym::par
-( const unsigned short l ,
-  const unsigned short m ) const 
-{
-  //
-  if ( l > m_n || m > m_n )               { return 0 ; }
-  //
-  const unsigned int k = ( l < m ) ? 
-    ( m * ( m + 1 ) / 2 + l ) : 
-    ( l * ( l + 1 ) / 2 + m ) ;
-  //
-  return par ( k ) ;
-}
-// ============================================================================
-// constructor from the order
-// ============================================================================
-Gaudi::Math::Positive::Positive
-( const unsigned short      N    ,
-  const double              xmin ,
-  const double              xmax )
-  : std::unary_function<double,double> ()
-  , m_bernstein ( N , xmin , xmax )
-  , m_sphere    ( N ) 
-{
-  updateBernstein () ;
-}
-// ============================================================================
-// constructor from the order
-// ============================================================================
-Gaudi::Math::Positive::Positive
-( const std::vector<double>& pars ,
-  const double               xmin ,
-  const double               xmax )
-  : std::unary_function<double,double> ()
-//
-  , m_bernstein ( pars.size () , xmin , xmax )
-  , m_sphere    ( pars.size () ) 
-{
-  updateBernstein () ;
-  //
-  // if ( m_bernstein.npars() != m_sphere.nX() ) 
-  // { std::cerr << " MISMATCH-(1)-!!! " << std::endl ; }
-  //
-}
-// ============================================================================
-// set k-parameter
-// ============================================================================
-bool Gaudi::Math::Positive::setPar ( const unsigned short k , const double value )
-{
-  //
-  const bool update = m_sphere.setPhase ( k , value ) ;
-  if ( !update ) { return false ; }   // no actual change 
-  //
-  return updateBernstein () ;
-}
-// =============================================================================
-// update bernstein coefficients
-// =============================================================================
-bool Gaudi::Math::Positive::updateBernstein ()
-{
-  //
-  bool update = false ;
-  for ( unsigned short ix = 0 ; ix < m_sphere.nX() ; ++ix ) 
-  {
-    const bool updated = m_bernstein.setPar ( ix , m_sphere.x2 ( ix ) ) ;
-    update = updated || update ;
-  }
-  //
-  return update ;
-}
-// ============================================================================
-
 
 // ============================================================================
 // constructor from the order
@@ -7076,106 +6247,6 @@ double Gaudi::Math::ExpoPositive::integral ( const double low  ,
 }
 // ============================================================================
 
-
-// ============================================================================
-// constructor from the order
-// ============================================================================
-Gaudi::Math::Positive2D::Positive2D
-( const unsigned short      nX   ,
-  const unsigned short      nY   ,
-  const double              xmin ,
-  const double              xmax ,
-  const double              ymin ,
-  const double              ymax )
-  : std::binary_function<double,double,double> ()
-//
-  , m_bernstein (   nX , nY , xmin , xmax , ymin , ymax ) 
-  , m_sphere    ( ( nX + 1 ) * ( nY + 1 ) - 1 )
-{
-  updateBernstein () ;
-}
-// ============================================================================
-// set k-parameter
-// ============================================================================
-bool Gaudi::Math::Positive2D::setPar 
-( const unsigned int k     , 
-  const double       value )
-{
-  //
-  const bool update = m_sphere.setPhase ( k , value ) ;
-  if ( !update ) { return false ; }   // no actual change 
-  //
-  return updateBernstein () ;
-}
-// =============================================================================
-// update bernstein coefficients
-// =============================================================================
-bool Gaudi::Math::Positive2D::updateBernstein ()
-{
-  //
-  bool update = false ;
-  for ( unsigned int ix = 0 ; ix < m_sphere.nX() ; ++ix ) 
-  { 
-    const bool updated = m_bernstein.setPar ( ix , m_sphere.x2 ( ix ) ) ;
-    update = updated || update ;  
-  }
-  //
-  return update ;
-}
-// ============================================================================
-// get the parameter value
-// ============================================================================
-double Gaudi::Math::Positive2D::par ( const unsigned int k ) const 
-{ return m_sphere.phase ( k ) ; }
-
-// ============================================================================
-// constructor from the order
-// ============================================================================
-Gaudi::Math::Positive2DSym::Positive2DSym
-( const unsigned short      N    ,
-  const double              xmin ,
-  const double              xmax )
-  : std::binary_function<double,double,double> ()
-//
-  , m_bernstein (   N , xmin , xmax ) 
-  , m_sphere    ( ( N + 1 ) * ( N + 2 ) / 2 - 1  )
-{
-  updateBernstein () ;
-}
-// ============================================================================
-// set k-parameter
-// ============================================================================
-bool Gaudi::Math::Positive2DSym::setPar 
-( const unsigned int k     , 
-  const double       value )
-{
-  //
-  const bool update = m_sphere.setPhase ( k , value ) ;
-  if ( !update ) { return false ; }   // no actual change 
-  //
-  return updateBernstein () ;
-}
-// =============================================================================
-// update bernstein coefficients
-// =============================================================================
-bool Gaudi::Math::Positive2DSym::updateBernstein ()
-{
-  //
-  //
-  bool update = false ;
-  for ( unsigned int ix = 0 ; ix < m_sphere.nX() ; ++ix ) 
-  { 
-    const bool updated = m_bernstein.setPar ( ix , m_sphere.x2 ( ix ) ) ; 
-    update = updated || update ; 
-  }
-  //
-  return update ;
-}
-// ============================================================================
-// get the parameter value
-// ============================================================================
-double Gaudi::Math::Positive2DSym::par ( const unsigned int  k ) const 
-{ return m_sphere.phase ( k ) ; }
 
 // ============================================================================
 // Student-T 
@@ -8456,8 +7527,9 @@ double Gaudi::Math::SinhAsinh::pdf ( const double x ) const
   const double z = shash ( y , epsilon() , delta() )  ;
   //
   const double r = s_SQRT2PIi * delta() 
-    * std::sqrt ( ( 1.0 + z * z ) / ( 1.0 + y * y )  ) 
-    * my_exp ( -0.5 * z * z ) ;
+    // * std::sqrt  ( ( 1.0 + z * z ) / ( 1.0 + y * y )  ) 
+    *    std::hypot ( 1 ,z )          / std::hypot ( 1 , y )  
+    *    my_exp ( -0.5 * z * z ) ;
   //
   return  r / sigma() ;
 }
@@ -9503,6 +8575,191 @@ double Gaudi::Math::Expo2DPolSym::integrateX
   const double xlow , const double xhigh ) const 
 { return integrateY ( y , xlow , xhigh ) ; }
 // ============================================================================
+
+
+// ============================================================================
+// Bernstein
+// ============================================================================
+/* get the integral between low and high for a product of Bernstein function
+ * and the exponential function with exponent tau
+ *  \f[  \int_{low}^{high} \mathcal{B} e^{\tau x } \mathrm{d}x \f] 
+ *  @param poly  bernstein polynomial
+ *  @param tau   slope parameter for exponential 
+ *  @param low   low  integration range 
+ *  @param high  high integration range 
+ */
+// ============================================================================
+double Gaudi::Math::Bernstein::integrate  
+( const Gaudi::Math::Bernstein& poly , 
+  const double tau  , 
+  const double low  , 
+  const double high ) 
+{
+  //
+  if      ( s_equal ( tau , 0    )           ) { return poly.integral ( low  , high         ) ; } 
+  else if ( s_equal ( low , high )           ) { return 0 ; }
+  else if ( poly.zero ()                     ) { return 0 ; }
+  else if ( low  >  high                     ) { return integrate ( poly , tau , high , low ) ; }
+  else if ( high <  poly.xmin () || 
+            low  >  poly.xmax () ) { return  0 ; }
+  //
+  const double xlow  = std::max ( low  , poly.xmin() ) ;
+  const double xhigh = std::min ( high , poly.xmax() ) ;
+  //
+  const double p1 = ( poly ( xhigh ) * my_exp ( tau * xhigh ) - 
+                      poly ( xlow  ) * my_exp ( tau * xlow  ) ) / tau ;
+  //
+  if ( poly.npars ()  <= 1   ) { return p1 ; } // RETURN 
+  //
+  const Gaudi::Math::Bernstein  b_prime ( poly.derivative() ) ;
+  if ( b_prime.zero()        ) { return p1 ; } // RETURN
+  //
+  return p1 - integrate ( b_prime , tau , xlow , xhigh ) / tau ;
+}
+// ============================================================================
+
+
+// ============================================================================
+// constructor from polynom and parameters "alpha" and "x0"
+// ============================================================================
+Gaudi::Math::Sigmoid::Sigmoid 
+( const Gaudi::Math::Positive& poly  , 
+  const double                 alpha ,
+  const double                 x0    ) 
+  : std::binary_function<double,double,double>() 
+  , m_positive ( poly  )
+  , m_alpha    ( alpha )
+  , m_x0       ( x0    )
+  , m_workspace() 
+{}
+// ============================================================================
+// constructor from polynom and parameters "alpha" and "x0"
+// ============================================================================
+Gaudi::Math::Sigmoid::Sigmoid 
+( const unsigned short             N , 
+  const double                 xmin  , 
+  const double                 xmax  , 
+  const double                 alpha , 
+  const double                 x0    ) 
+  : std::binary_function<double,double,double>() 
+  , m_positive ( N , xmin , xmax )
+  , m_alpha    ( alpha )
+  , m_x0       ( x0    )
+  , m_workspace() 
+{}
+// ============================================================================
+// constructor from polynom and parameters "alpha" and "x0"
+// ============================================================================
+Gaudi::Math::Sigmoid::Sigmoid 
+( const std::vector<double>&   pars  ,
+  const double                 xmin  , 
+  const double                 xmax  , 
+  const double                 alpha , 
+  const double                 x0    ) 
+  : std::binary_function<double,double,double>() 
+  , m_positive ( pars , xmin , xmax )
+  , m_alpha    ( alpha )
+  , m_x0       ( x0    )
+  , m_workspace() 
+{}
+// ============================================================================
+// set new valeu for alpha 
+// ============================================================================
+bool Gaudi::Math::Sigmoid::setAlpha( const double value )
+{
+  if ( s_equal ( m_alpha, value ) ) { return false ; }
+  m_alpha = value ;
+  //
+  return true ;
+}
+// ============================================================================
+// set new valeu for x0
+// ============================================================================
+bool Gaudi::Math::Sigmoid::setX0 ( const double value )
+{
+  if ( s_equal ( m_x0, value ) ) { return false ; }
+  m_x0 = value ;
+  //
+  return true ;
+}
+// ============================================================================
+// get the value
+// ============================================================================
+double Gaudi::Math::Sigmoid::operator () ( const double x ) const
+{
+  return 
+    x < xmin () ? 0               :
+    x > xmax () ? 0               :
+    s_zero  ( m_alpha )    ? 
+    0.5 * m_positive ( x ) :
+    0.5 * m_positive ( x ) * ( 1 + std::tanh ( m_alpha * ( x - m_x0 ) ) ) ;
+}
+// ============================================================================
+// get the integral between xmin and xmax 
+// ============================================================================
+double Gaudi::Math::Sigmoid::integral   () const 
+{ return integral ( m_positive.xmin () , m_positive.xmax() ) ; }
+// ============================================================================
+// get the integral between low and high 
+// ============================================================================
+double Gaudi::Math::Sigmoid::integral  
+( const double low  , 
+  const double high ) const 
+{
+  //
+  if      ( high < low                ) { return -integral ( high , low ) ; }
+  else if ( s_equal ( low , high )    ) { return 0 ; }
+  else if ( high < xmin ()            ) { return 0 ; }
+  else if ( low  > xmax ()            ) { return 0 ; }
+  //
+  else if ( s_zero ( m_alpha ) ) { return m_positive.integral ( high , low ) ; }
+  //
+  // split it:
+  if ( low < m_x0 && m_x0 < high ) 
+  { return integral ( low , m_x0 ) + integral ( m_x0 , high ) ; }
+  //
+  // use GSL to evaluate the integral
+  //
+  Sentry sentry ;
+  //
+  gsl_function F                   ;
+  F.function             = &sigmoid_GSL ;
+  const Sigmoid*     _ps = this  ;
+  F.params               = const_cast<Sigmoid*> ( _ps ) ;
+  //
+  double result   = 1.0 ;
+  double error    = 1.0 ;
+  //
+  const int ierror = gsl_integration_qag
+    ( &F                ,            // the function
+      low   , high      ,            // low & high edges
+      s_PRECISION       ,            // absolute precision
+      s_PRECISION       ,            // relative precision
+      s_SIZE            ,            // size of workspace
+      GSL_INTEG_GAUSS31 ,            // integration rule
+      workspace ( m_workspace ) ,    // workspace
+      &result           ,            // the result
+      &error            ) ;          // the error in result
+  //
+  if ( ierror )
+  {
+    gsl_error ( "Gaudi::Math::Sigmoid::QAG" ,
+                __FILE__ , __LINE__ , ierror ) ;
+  }
+  //
+  return result ;
+}
+
+
+  
+
+
+
+
+
+
+
+
 
 // ============================================================================
 // The END

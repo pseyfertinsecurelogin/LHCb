@@ -1,11 +1,11 @@
-// $Id: LHCbMath.h 180924 2014-11-30 19:16:11Z ibelyaev $ 
+// $Id: LHCbMath.h 183714 2015-02-10 22:10:42Z ibelyaev $ 
 // ============================================================================
 /** @file
  *
  *  Collection of math related functions for general use in LHCb
  *
  *  CVS Log :-
- *  $Id: LHCbMath.h 180924 2014-11-30 19:16:11Z ibelyaev $
+ *  $Id: LHCbMath.h 183714 2015-02-10 22:10:42Z ibelyaev $
  *
  *  @author Juan PALACIOS 
  *  @date   2005-11-21
@@ -562,18 +562,29 @@ using namespace std;
       return equal_to_uint ( val , ref , mULPS ) ; 
     }
     // ========================================================================
-    /** simple scaling of elements of non-constant sequence        
-     */
+    /// simple scaling of elements of non-constant sequence        
     template <class ITERATOR, typename SCALAR>
     void scale ( ITERATOR first  ,
                  ITERATOR last   , 
                  SCALAR   factor )
     { for ( ; first != last ; ++first ) { (*first) *= factor ; } }
     // ========================================================================
-    /// cale all elements of vector 
+    /// shift all elements of non-constant sequence        
+    template <class ITERATOR, typename SCALAR>
+    void shift ( ITERATOR first  ,
+                 ITERATOR last   , 
+                 SCALAR   factor )
+    { for ( ; first != last ; ++first ) { (*first) += factor ; } }
+    // ========================================================================
+    /// scale all elements of vector 
     template <class TYPE , typename SCALAR>
     void scale ( std::vector<TYPE>& vct , SCALAR factor ) 
     { scale    ( vct.begin() , vct.end () , factor ) ; }
+    // ========================================================================
+    /// shift all elements of vector 
+    template <class TYPE , typename SCALAR>
+    void shift ( std::vector<TYPE>& vct , SCALAR factor ) 
+    { shift    ( vct.begin() , vct.end () , factor ) ; }
     // ========================================================================
   } //                                              end of namespace LHCb::Math 
   // ==========================================================================
@@ -586,6 +597,7 @@ namespace Gaudi
   {
     // ========================================================================
     using LHCb::Math::scale ;
+    using LHCb::Math::shift ;
     // ========================================================================
   } //                                             end of namespace Gaudi::Math
   // ==========================================================================

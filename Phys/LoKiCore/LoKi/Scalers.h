@@ -1,4 +1,4 @@
-// $Id: Scalers.h 129913 2011-10-11 14:29:11Z raaij $
+// $Id: Scalers.h 182595 2015-01-16 10:49:49Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_SCALERS_H 
 #define LOKI_SCALERS_H 1

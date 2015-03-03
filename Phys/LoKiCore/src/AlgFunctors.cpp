@@ -260,12 +260,22 @@ LoKi::Algorithms::Passed::getAlgorithm
 // constructor from the algorithm name 
 // ============================================================================
 LoKi::Algorithms::Passed::Passed 
-( const std::string& name ) 
-  : LoKi::BasicFunctors<void>::Predicate () 
-  , m_name       ( name ) 
+( const std::string& name )
+  : LoKi::AuxFunBase ( std::tie ( name ) ) 
+  , LoKi::BasicFunctors<void>::Predicate () 
+  , m_name       ( name        ) 
   , m_algorithm  ( s_ALGORITHM ) 
 {
-  this->getAlgorithm ( algName() ) ;
+  if ( gaudi() ) { this->getAlgorithm ( algName() ) ; }
+}
+// ============================================================================
+LoKi::Algorithms::Passed::~Passed () 
+{
+  if ( m_algorithm && !gaudi() ) 
+  {
+    // Warning("IAlgorithm: manual reset!") ;
+    m_algorithm.reset() ;
+  }  
 }
 // ============================================================================
 // MANDATORY: the only one essential method 
@@ -312,7 +322,9 @@ std::ostream& LoKi::Algorithms::Enabled::fillStream( std::ostream& s ) const
 // constructor from the algorithm name 
 // ============================================================================
 LoKi::Algorithms::Executed::Executed 
-( const std::string& name ) : Passed ( name ){}
+( const std::string& name ) 
+  : LoKi::AuxFunBase ( std::tie ( name ) ) 
+  , Passed ( name ){}
 // ============================================================================
 // MANDATORY: the only one essential method 
 // ============================================================================
@@ -337,7 +349,8 @@ std::ostream& LoKi::Algorithms::Executed::fillStream( std::ostream& s ) const
 // constructor from the algorithm name 
 // ============================================================================
 LoKi::Algorithms::Run::Run ( const std::string& name ) 
-  : Passed ( name ){}
+  : LoKi::AuxFunBase ( std::tie ( name ) ) 
+  , Passed ( name ){}
 // ============================================================================
 // MANDATORY: the only one essential method 
 // ============================================================================
@@ -394,11 +407,15 @@ LoKi::Algorithms::AnyPassed::getAlgorithm
 // ============================================================================
 void LoKi::Algorithms::AnyPassed::getAlgorithms () const  // get the algorithm 
 {
+  // unsigned int i = 0 ;
   for ( std::vector<std::string>::const_iterator iname = 
           m_names.begin() ; m_names.end() != iname ; ++iname ) 
   {
     const IAlgorithm* a = this->getAlgorithm ( *iname ) ;
     m_algorithms.push_back ( a ) ;
+    // Warning( " AQUICRE alg: " + a->name() 
+    // + Gaudi::Utils::toCpp ( ++i ) + "/"
+    // + Gaudi::Utils::toCpp ( m_names.size() ) ) ;
   }
 }
 // ============================================================================
@@ -407,14 +424,15 @@ void LoKi::Algorithms::AnyPassed::getAlgorithms () const  // get the algorithm
 LoKi::Algorithms::AnyPassed::AnyPassed 
 ( const std::string& name1 ,
   const std::string& name2 )
-  : LoKi::BasicFunctors<void>::Predicate () 
+  : LoKi::AuxFunBase ( std::tie ( name1 , name2 ) ) 
+  , LoKi::BasicFunctors<void>::Predicate () 
   , m_names      () 
   , m_algorithms () 
 {
   m_names.push_back ( name1 ) ;
   m_names.push_back ( name2 ) ;
   //
-  getAlgorithms() ;
+  if ( gaudi() ) { getAlgorithms() ; }
 }
 // ============================================================================
 // constructor from the algorithm name 
@@ -423,7 +441,8 @@ LoKi::Algorithms::AnyPassed::AnyPassed
 ( const std::string& name1 ,
   const std::string& name2 ,
   const std::string& name3 )
-  : LoKi::BasicFunctors<void>::Predicate () 
+  : LoKi::AuxFunBase ( std::tie ( name1 , name2 , name3 ) ) 
+  , LoKi::BasicFunctors<void>::Predicate () 
   , m_names      () 
   , m_algorithms () 
 {
@@ -431,7 +450,7 @@ LoKi::Algorithms::AnyPassed::AnyPassed
   m_names.push_back ( name2 ) ;
   m_names.push_back ( name3 ) ;
   //
-  getAlgorithms() ;
+  if ( gaudi() ) { getAlgorithms() ; }
 }
 // ============================================================================
 // constructor from the algorithm name 
@@ -441,7 +460,8 @@ LoKi::Algorithms::AnyPassed::AnyPassed
   const std::string& name2 ,
   const std::string& name3 ,
   const std::string& name4 )
-  : LoKi::BasicFunctors<void>::Predicate () 
+  : LoKi::AuxFunBase ( std::tie ( name1 , name2 , name3 , name4 ) ) 
+  , LoKi::BasicFunctors<void>::Predicate () 
   , m_names      () 
   , m_algorithms () 
 {
@@ -450,18 +470,33 @@ LoKi::Algorithms::AnyPassed::AnyPassed
   m_names.push_back ( name3 ) ;
   m_names.push_back ( name4 ) ;
   //
-  getAlgorithms() ;
+  if ( gaudi() ) { getAlgorithms() ; }
 }
 // ============================================================================
 // constructor from the algorithm name 
 // ============================================================================
 LoKi::Algorithms::AnyPassed::AnyPassed 
 ( const std::vector<std::string>& names ) 
-  : LoKi::BasicFunctors<void>::Predicate () 
+  : LoKi::AuxFunBase ( std::tie ( names ) ) 
+  , LoKi::BasicFunctors<void>::Predicate () 
   , m_names     ( names ) 
   , m_algorithms ( ) 
 {
-  getAlgorithms() ;
+  if ( gaudi() ) { getAlgorithms() ; }
+}
+// ============================================================================
+// MANDATORY: virtual destructor 
+// ============================================================================
+LoKi::Algorithms::AnyPassed::~AnyPassed()
+{
+  for ( Algorithms::iterator ia = m_algorithms.begin() ; m_algorithms.end() != ia ; ++ia ) 
+  {
+    if ( ( *ia )  && !gaudi() ) 
+    {
+      // Warning("IAlgorithm: manual reset!") ;
+      ia->reset() ;
+    }
+  }   
 }
 // ============================================================================
 // MANDATORY: the only one essential method 
@@ -503,6 +538,204 @@ std::ostream& LoKi::Algorithms::AnyPassed::print
   }
   return s << name << "(" << Gaudi::Utils::toString( algNames() ) << ")" ; 
 }
+
+
+
+// ============================================================================
+// constructor from the algorithm name 
+// ============================================================================
+LoKi::Algorithms::AnyEnabled::AnyEnabled 
+( const std::string& name1 , 
+  const std::string& name2 ) 
+  : LoKi::AuxFunBase ( std::tie ( name1 , name2 ) )
+  , LoKi::Algorithms::AnyPassed ( name1 , name2 ) 
+{}
+// ============================================================================
+// constructor from the algorithm name 
+// ============================================================================
+LoKi::Algorithms::AnyEnabled::AnyEnabled
+( const std::string& name1 , 
+  const std::string& name2 ,
+  const std::string& name3 ) 
+  : LoKi::AuxFunBase ( std::tie ( name1 , name2 , name3 ) )
+  , LoKi::Algorithms::AnyPassed ( name1 , name2 , name3 ) 
+{}
+// ============================================================================
+// constructor from the algorithm name 
+// ============================================================================
+LoKi::Algorithms::AnyEnabled::AnyEnabled 
+( const std::string& name1 , 
+  const std::string& name2 ,
+  const std::string& name3 ,
+  const std::string& name4 ) 
+  : LoKi::AuxFunBase ( std::tie ( name1 , name2 , name3 , name4 ) )
+  , LoKi::Algorithms::AnyPassed ( name1 , name2 , name3 , name4 ) 
+{}
+// ============================================================================
+// constructor from the algorithm name 
+// ============================================================================
+LoKi::Algorithms::AnyEnabled::AnyEnabled
+( const std::vector<std::string>& name ) 
+  : LoKi::AuxFunBase ( std::tie ( name ) )
+  , LoKi::Algorithms::AnyPassed ( name ) 
+{}
+
+// ============================================================================
+// constructor from the algorithm name 
+// ============================================================================
+LoKi::Algorithms::AllEnabled::AllEnabled 
+( const std::string& name1 , 
+  const std::string& name2 ) 
+  : LoKi::AuxFunBase ( std::tie ( name1 , name2 ) )
+  , LoKi::Algorithms::AnyPassed ( name1 , name2 ) 
+{}
+// ============================================================================
+// constructor from the algorithm name 
+// ============================================================================
+LoKi::Algorithms::AllEnabled::AllEnabled
+( const std::string& name1 , 
+  const std::string& name2 ,
+  const std::string& name3 ) 
+  : LoKi::AuxFunBase ( std::tie ( name1 , name2 , name3 ) )
+  , LoKi::Algorithms::AnyPassed ( name1 , name2 , name3 ) 
+{}
+// ============================================================================
+// constructor from the algorithm name 
+// ============================================================================
+LoKi::Algorithms::AllEnabled::AllEnabled 
+( const std::string& name1 , 
+  const std::string& name2 ,
+  const std::string& name3 ,
+  const std::string& name4 ) 
+  : LoKi::AuxFunBase ( std::tie ( name1 , name2 , name3 , name4 ) )
+  , LoKi::Algorithms::AnyPassed ( name1 , name2 , name3 , name4 ) 
+{}
+// ============================================================================
+// constructor from the algorithm name 
+// ============================================================================
+LoKi::Algorithms::AllEnabled::AllEnabled
+( const std::vector<std::string>& name ) 
+  : LoKi::AuxFunBase ( std::tie ( name ) )
+  , LoKi::Algorithms::AnyPassed ( name ) 
+{}
+
+// ============================================================================
+// constructor from the algorithm name 
+// ============================================================================
+LoKi::Algorithms::AnyExecuted::AnyExecuted
+( const std::string& name1 , 
+  const std::string& name2 ) 
+  : LoKi::AuxFunBase ( std::tie ( name1 , name2 ) )
+  , LoKi::Algorithms::AnyPassed ( name1 , name2 ) 
+{}
+// ============================================================================
+// constructor from the algorithm name 
+// ============================================================================
+LoKi::Algorithms::AnyExecuted::AnyExecuted
+( const std::string& name1 , 
+  const std::string& name2 ,
+  const std::string& name3 ) 
+  : LoKi::AuxFunBase ( std::tie ( name1 , name2 , name3 ) )
+  , LoKi::Algorithms::AnyPassed ( name1 , name2 , name3 ) 
+{}
+// ============================================================================
+// constructor from the algorithm name 
+// ============================================================================
+LoKi::Algorithms::AnyExecuted::AnyExecuted
+( const std::string& name1 , 
+  const std::string& name2 ,
+  const std::string& name3 ,
+  const std::string& name4 ) 
+  : LoKi::AuxFunBase ( std::tie ( name1 , name2 , name3 , name4 ) )
+  , LoKi::Algorithms::AnyPassed ( name1 , name2 , name3 , name4 ) 
+{}
+// ============================================================================
+// constructor from the algorithm name 
+// ============================================================================
+LoKi::Algorithms::AnyExecuted::AnyExecuted
+( const std::vector<std::string>& name ) 
+  : LoKi::AuxFunBase ( std::tie ( name ) )
+  , LoKi::Algorithms::AnyPassed ( name ) 
+{}
+
+// ============================================================================
+// constructor from the algorithm name 
+// ============================================================================
+LoKi::Algorithms::AllExecuted::AllExecuted
+( const std::string& name1 , 
+  const std::string& name2 ) 
+  : LoKi::AuxFunBase ( std::tie ( name1 , name2 ) )
+  , LoKi::Algorithms::AnyPassed ( name1 , name2 ) 
+{}
+// ============================================================================
+// constructor from the algorithm name 
+// ============================================================================
+LoKi::Algorithms::AllExecuted::AllExecuted
+( const std::string& name1 , 
+  const std::string& name2 ,
+  const std::string& name3 ) 
+  : LoKi::AuxFunBase ( std::tie ( name1 , name2 , name3 ) )
+  , LoKi::Algorithms::AnyPassed ( name1 , name2 , name3 ) 
+{}
+// ============================================================================
+// constructor from the algorithm name 
+// ============================================================================
+LoKi::Algorithms::AllExecuted::AllExecuted
+( const std::string& name1 , 
+  const std::string& name2 ,
+  const std::string& name3 ,
+  const std::string& name4 ) 
+  : LoKi::AuxFunBase ( std::tie ( name1 , name2 , name3 , name4 ) )
+  , LoKi::Algorithms::AnyPassed ( name1 , name2 , name3 , name4 ) 
+{}
+// ============================================================================
+// constructor from the algorithm name 
+// ============================================================================
+LoKi::Algorithms::AllExecuted::AllExecuted
+( const std::vector<std::string>& name ) 
+  : LoKi::AuxFunBase ( std::tie ( name ) )
+  , LoKi::Algorithms::AnyPassed ( name ) 
+{}
+
+
+// ============================================================================
+// constructor from the algorithm name 
+// ============================================================================
+LoKi::Algorithms::AllPassed::AllPassed 
+( const std::string& name1 , 
+  const std::string& name2 ) 
+  : LoKi::AuxFunBase ( std::tie ( name1 , name2 ) )
+  , LoKi::Algorithms::AnyPassed ( name1 , name2 ) 
+{}
+// ============================================================================
+// constructor from the algorithm name      
+// ============================================================================
+LoKi::Algorithms::AllPassed::AllPassed 
+( const std::string& name1 , 
+  const std::string& name2 ,
+  const std::string& name3 ) 
+  : LoKi::AuxFunBase ( std::tie ( name1 , name2 , name3 ) )
+  , LoKi::Algorithms::AnyPassed ( name1 , name2 , name3 ) 
+{}
+// ============================================================================
+// constructor from the algorithm name      
+// ============================================================================
+LoKi::Algorithms::AllPassed::AllPassed
+( const std::string& name1 , 
+  const std::string& name2 ,
+  const std::string& name3 ,
+  const std::string& name4 ) 
+  : LoKi::AuxFunBase ( std::tie ( name1 , name2 , name3 , name4 ) )
+  , LoKi::Algorithms::AnyPassed ( name1 , name2 , name3 , name4 ) 
+{}
+// ============================================================================
+// constructor from the algorithm name      
+// ============================================================================
+LoKi::Algorithms::AllPassed::AllPassed 
+( const std::vector<std::string>& name ) 
+  : LoKi::AuxFunBase ( std::tie ( name ) )
+  , LoKi::Algorithms::AnyPassed ( name ) 
+{}
 // ============================================================================
 // MANDATORY: the only one essential method 
 // ============================================================================
@@ -573,7 +806,8 @@ LoKi::Algorithms::AllExecuted::operator() () const
 LoKi::Algorithms::NumPassed::NumPassed
 ( const std::string& name1 , 
   const std::string& name2 ) 
-  : LoKi::BasicFunctors<void>::Function ()
+  : LoKi::AuxFunBase ( std::tie ( name1 , name2 ) ) 
+  , LoKi::BasicFunctors<void>::Function ()
   , m_fun ( name1 , name2 ) 
 {}
 // ============================================================================
@@ -583,7 +817,8 @@ LoKi::Algorithms::NumPassed::NumPassed
 ( const std::string& name1 , 
   const std::string& name2 ,
   const std::string& name3 ) 
-  : LoKi::BasicFunctors<void>::Function ()
+  : LoKi::AuxFunBase ( std::tie ( name1 , name2 , name3 ) ) 
+  , LoKi::BasicFunctors<void>::Function ()
   , m_fun ( name1 , name2 , name3 ) {}
 // ============================================================================
 // constructor from the algorithm name  
@@ -593,14 +828,16 @@ LoKi::Algorithms::NumPassed::NumPassed
   const std::string& name2 ,
   const std::string& name3 ,
   const std::string& name4 ) 
-  : LoKi::BasicFunctors<void>::Function ()
+  : LoKi::AuxFunBase ( std::tie ( name1 , name2 , name3 , name4 ) ) 
+  , LoKi::BasicFunctors<void>::Function ()
   , m_fun ( name1 , name2 , name3 , name4 ) {}
 // ============================================================================
 // constructor from the algorithm name 
 // ============================================================================
 LoKi::Algorithms::NumPassed::NumPassed
 ( const std::vector<std::string>& name ) 
-  : LoKi::BasicFunctors<void>::Function ()
+  : LoKi::AuxFunBase ( std::tie ( name ) ) 
+  , LoKi::BasicFunctors<void>::Function ()
   , m_fun  ( name ) {}
 // ============================================================================
 // MANDATORY: the only one essential method 
@@ -637,13 +874,94 @@ LoKi::Algorithms::NumExecuted::operator() () const
 }
 
 
+
+// ============================================================================
+// constructor from the algorithm name 
+// ============================================================================
+LoKi::Algorithms::NumEnabled::NumEnabled 
+( const std::string& name1 , 
+  const std::string& name2 ) 
+  : LoKi::AuxFunBase ( std::tie ( name1 , name2 ) )
+  , LoKi::Algorithms::NumPassed ( name1 , name2 ) 
+{}
+// ============================================================================
+// constructor from the algorithm name      
+// ============================================================================
+LoKi::Algorithms::NumEnabled::NumEnabled 
+( const std::string& name1 , 
+  const std::string& name2 ,
+  const std::string& name3 ) 
+  : LoKi::AuxFunBase ( std::tie ( name1 , name2 , name3 ) )
+  , LoKi::Algorithms::NumPassed ( name1 , name2 , name3 ) 
+{}
+// ============================================================================
+// constructor from the algorithm name      
+// ============================================================================
+LoKi::Algorithms::NumEnabled::NumEnabled 
+( const std::string& name1 , 
+  const std::string& name2 ,
+  const std::string& name3 ,
+  const std::string& name4 ) 
+  : LoKi::AuxFunBase ( std::tie ( name1 , name2 , name3 , name4 ) )
+  , LoKi::Algorithms::NumPassed ( name1 , name2 , name3 , name4 ) 
+{}
+// ============================================================================
+// constructor from the algorithm name      
+// ============================================================================
+LoKi::Algorithms::NumEnabled::NumEnabled 
+( const std::vector<std::string>& name ) 
+  : LoKi::AuxFunBase ( std::tie ( name ) )
+  , LoKi::Algorithms::NumPassed ( name ) 
+{}
+
+// ============================================================================
+// constructor from the algorithm name 
+// ============================================================================
+LoKi::Algorithms::NumExecuted::NumExecuted
+( const std::string& name1 , 
+  const std::string& name2 ) 
+  : LoKi::AuxFunBase ( std::tie ( name1 , name2 ) )
+  , LoKi::Algorithms::NumPassed ( name1 , name2 ) 
+{}
+// ============================================================================
+// constructor from the algorithm name      
+// ============================================================================
+LoKi::Algorithms::NumExecuted::NumExecuted
+( const std::string& name1 , 
+  const std::string& name2 ,
+  const std::string& name3 ) 
+  : LoKi::AuxFunBase ( std::tie ( name1 , name2 , name3 ) )
+  , LoKi::Algorithms::NumPassed ( name1 , name2 , name3 ) 
+{}
+// ============================================================================
+// constructor from the algorithm name      
+// ============================================================================
+LoKi::Algorithms::NumExecuted::NumExecuted
+( const std::string& name1 , 
+  const std::string& name2 ,
+  const std::string& name3 ,
+  const std::string& name4 ) 
+  : LoKi::AuxFunBase ( std::tie ( name1 , name2 , name3 , name4 ) )
+  , LoKi::Algorithms::NumPassed ( name1 , name2 , name3 , name4 ) 
+{}
+// ============================================================================
+// constructor from the algorithm name      
+// ============================================================================
+LoKi::Algorithms::NumExecuted::NumExecuted
+( const std::vector<std::string>& name ) 
+  : LoKi::AuxFunBase ( std::tie ( name ) )
+  , LoKi::Algorithms::NumPassed ( name ) 
+{}
+
+
 // ============================================================================
 // constructor from the algorithm name 
 // ============================================================================
 LoKi::Algorithms::RunAll::RunAll 
 ( const std::string& name1 , 
   const std::string& name2 ) 
-  : LoKi::Algorithms::AllExecuted ( name1 , name2 ) 
+  : LoKi::AuxFunBase ( std::tie ( name1 , name2  ) ) 
+  , LoKi::Algorithms::AllExecuted ( name1 , name2 ) 
 {}
 // ============================================================================
 // constructor from the algorithm name 
@@ -652,7 +970,8 @@ LoKi::Algorithms::RunAll::RunAll
 ( const std::string& name1 , 
   const std::string& name2 ,
   const std::string& name3 ) 
-  : LoKi::Algorithms::AllExecuted ( name1 , name2 , name3 ) 
+  : LoKi::AuxFunBase ( std::tie ( name1 , name2  , name3 ) ) 
+  , LoKi::Algorithms::AllExecuted ( name1 , name2 , name3 ) 
 {}
 // ============================================================================
 // constructor from the algorithm name 
@@ -662,14 +981,16 @@ LoKi::Algorithms::RunAll::RunAll
   const std::string& name2 ,
   const std::string& name3 ,
   const std::string& name4 ) 
-  : LoKi::Algorithms::AllExecuted ( name1 , name2 , name3 , name4 ) 
+  : LoKi::AuxFunBase ( std::tie ( name1 , name2  , name3 , name4 ) ) 
+  , LoKi::Algorithms::AllExecuted ( name1 , name2 , name3 , name4 ) 
 {}
 // ============================================================================
 // constructor from the algorithm name 
 // ============================================================================
 LoKi::Algorithms::RunAll::RunAll 
 ( const std::vector<std::string>& names ) 
-  : LoKi::Algorithms::AllExecuted ( names ) 
+  : LoKi::AuxFunBase ( std::tie ( names ) ) 
+  , LoKi::Algorithms::AllExecuted ( names ) 
 {}
 // ============================================================================
 // MANDATORY: the only one essential method 

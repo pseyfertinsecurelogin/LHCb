@@ -1,3 +1,4 @@
+// $Id: Primitives.h 183264 2015-01-27 15:54:05Z ibelyaev $ 
 // ============================================================================
 #ifndef LOKI_PRIMITIVES_H 
 #define LOKI_PRIMITIVES_H 1
@@ -28,7 +29,6 @@
 // Boost 
 // ============================================================================
 #include "boost/integer_traits.hpp"
-
 // ============================================================================
 // Original Primitives first
 // ============================================================================
@@ -39,7 +39,7 @@
 #define a_unless_void a
 #define class_TYPE_unless_void class TYPE,
 #endif
-
+// ============================================================================
 #ifdef _GEN_LOKI_PRIMITIVES
 // ============================================================================
 /** @file
@@ -54,6 +54,10 @@
  *
  *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
  *  @date 2001-01-23 
+ *  
+ *                    $Revision: 183264 $
+ *  Last modification $Date: 2015-01-27 16:54:05 +0100 (Tue, 27 Jan 2015) $
+ *                 by $Author: ibelyaev $
  */
 // ============================================================================
 namespace LoKi 
@@ -169,7 +173,8 @@ namespace LoKi
     /// constructor from two functors 
     And ( const functor& f1 , 
           const functor& f2 ) 
-      : LoKi::Functor<TYPE,bool>()
+      : LoKi::AuxFunBase ( std::tie ( f1 , f2 ) ) 
+      , LoKi::Functor<TYPE,bool>()
       , m_two ( f1 , f2 ) 
     {}
     /// virtual constructor
@@ -185,6 +190,11 @@ namespace LoKi
     /// OPTIONAL: the nice printout 
     virtual std::ostream& fillStream( std::ostream& s ) const 
     { return s << " (" << func1() << " & " << func2() << ") " ; }
+    /// OPTIONAL: C++ print
+    virtual std::string   toCpp () const 
+    { return " (" 
+        + Gaudi::Utils::toCpp ( this->func1() ) + " && " 
+        + Gaudi::Utils::toCpp ( this->func2() ) + ") " ; }
     // ========================================================================
   private:
     // ========================================================================
@@ -261,7 +271,8 @@ namespace LoKi
     // ========================================================================
     /// constructor from two functors 
     Or ( const functor& f1 , const functor& f2 ) 
-      : LoKi::And<TYPE,bool>( f1 , f2 ) 
+      : LoKi::AuxFunBase ( std::tie ( f1 , f2 ) ) 
+      , LoKi::And<TYPE,bool>( f1 , f2 ) 
     {}
     /// MANDATORY: virtual constructor
     virtual ~Or(){}
@@ -276,6 +287,11 @@ namespace LoKi
     /// OPTIONAL: the nice printout 
     virtual std::ostream& fillStream( std::ostream& s ) const 
     { return s << " (" << this->func1() << " | " << this->func2() << ") " ; }
+    /// OPTIONAL: C++ print
+    virtual std::string   toCpp () const 
+    { return " (" 
+        + Gaudi::Utils::toCpp ( this->func1() ) + " || " 
+        + Gaudi::Utils::toCpp ( this->func2() ) + ") " ; }
     // ========================================================================
   private:
     // ========================================================================
@@ -327,7 +343,8 @@ namespace LoKi
     // ========================================================================
     /// constructor from the functor  
     Not ( const Functor<TYPE,TYPE2>& fun ) 
-      : Functor<TYPE,bool>() 
+      : LoKi::AuxFunBase ( std::tie ( fun ) ) 
+      , LoKi::Functor<TYPE,bool>() 
       , m_fun ( fun ) 
     {} 
     /// virtual destructor 
@@ -336,13 +353,13 @@ namespace LoKi
     virtual  Not* clone() const { return new Not( *this ); }
     /// the only one essential method ("function")      
     virtual  result_type operator() ( argument_a_unless_void ) const 
-    { 
+    {
       std::logical_not<TYPE2> lnot ;
-      return lnot ( m_fun.fun ( a_unless_void ) ) ; 
+      return lnot ( this->m_fun.fun ( a_unless_void ) ) ; 
     }
     /// the basic printout method 
     virtual std::ostream& fillStream ( std::ostream& s ) const 
-    { return s << " (~"  << m_fun << ") " ; };
+    { return s << " (~"  << this->m_fun << ") " ; };
     // ========================================================================
   private:
     // ========================================================================
@@ -400,7 +417,8 @@ namespace LoKi
     // ========================================================================
     /// constructor from the functor  
     Negate ( const LoKi::Functor<TYPE,TYPE2>& fun ) 
-      : LoKi::Functor<TYPE,TYPE2>() 
+      : LoKi::AuxFunBase ( std::tie ( fun ) ) 
+      , LoKi::Functor<TYPE,TYPE2>() 
       , m_fun ( fun ) 
     {} 
     /// virtual destructor 
@@ -415,7 +433,7 @@ namespace LoKi
     }
     /// the basic printout method 
     virtual std::ostream& fillStream( std::ostream& s ) const 
-    { return s << " (-"  << m_fun << ") " ; };
+    { return s << " (-"  << this->m_fun << ") " ; };
     // ========================================================================
   private:
     // ========================================================================
@@ -478,18 +496,21 @@ namespace LoKi
     /// constructor from two functors 
     Less ( const LoKi::Functor<TYPE,TYPE2>& f1 , 
            const LoKi::Functor<TYPE,TYPE2>& f2 ) 
-      : LoKi::Functor<TYPE,bool>() 
+      : LoKi::AuxFunBase ( std::tie ( f1 , f2 ) ) 
+      , LoKi::Functor<TYPE,bool>() 
       , m_two ( f1 , f2 )
     {}
     /// constructor from the functor and constant 
     Less ( const LoKi::Functor<TYPE,TYPE2>& f1 , T2 f2 ) 
-      : LoKi::Functor<TYPE,bool>() 
-      , m_two ( f1 , LoKi::Constant<TYPE,TYPE2>( f2 )  ) 
+      : LoKi::AuxFunBase ( std::tie ( f1 , f2 ) ) 
+      , LoKi::Functor<TYPE,bool>() 
+      , m_two ( f1 , LoKi::Constant<TYPE,TYPE2> ( f2 ) ) 
     {}
     /// constructor from the functor and constant 
     Less ( T2 f1 , const LoKi::Functor<TYPE,TYPE2>& f2 ) 
-      : LoKi::Functor<TYPE,bool>()
-      , m_two ( LoKi::Constant<TYPE,TYPE2>( f1 ) , f2  ) 
+      : LoKi::AuxFunBase ( std::tie ( f1 , f2 ) ) 
+      , LoKi::Functor<TYPE,bool>() 
+      , m_two ( LoKi::Constant<TYPE,TYPE2> ( f1 ) , f2 ) 
     {}
     /// virtual destructor 
     virtual ~Less() {}
@@ -504,6 +525,11 @@ namespace LoKi
     /// the basic printout method 
     virtual std::ostream& fillStream( std::ostream& s ) const 
     { return s << " (" << this->func1() << "<" << this->func2() << ") " ; }
+    /// OPTIONAL: C++ print
+    virtual std::string   toCpp () const 
+    { return " (" 
+        + Gaudi::Utils::toCpp ( this->func1() ) + " < " 
+        + Gaudi::Utils::toCpp ( this->func2() ) +  ") " ; }
     // ========================================================================
   private:
     // ========================================================================
@@ -581,15 +607,18 @@ namespace LoKi
     /// constructor from two functors 
     Equal ( const LoKi::Functor<TYPE,TYPE2>& f1          , 
             const LoKi::Functor<TYPE,TYPE2>& f2          ) 
-      : LoKi::Less<TYPE,TYPE2> ( f1 , f2 )
+      : LoKi::AuxFunBase ( std::tie ( f1 , f2 ) ) 
+      , LoKi::Less<TYPE,TYPE2> ( f1 , f2 )
     {}
     /// constructor from the functor and constant 
     Equal ( const LoKi::Functor<TYPE,TYPE2>& f1 , T2 f2 ) 
-      : LoKi::Less<TYPE,TYPE2> ( f1 , f2 ) 
+      : LoKi::AuxFunBase ( std::tie ( f1 , f2 ) ) 
+      , LoKi::Less<TYPE,TYPE2> ( f1 , f2 ) 
     {}
     /// constructor from the functor and constant 
     Equal ( T2 f1 , const LoKi::Functor<TYPE,TYPE2>& f2 ) 
-      : LoKi::Less<TYPE,TYPE2> ( f1 , f2  ) 
+      : LoKi::AuxFunBase ( std::tie ( f1 , f2 ) ) 
+      , LoKi::Less<TYPE,TYPE2> ( f1 , f2  ) 
     {}
     /// virtual destructor 
     virtual ~Equal() {}
@@ -601,6 +630,11 @@ namespace LoKi
     /// the basic printout method 
     virtual std::ostream& fillStream( std::ostream& s ) const 
     { return s << " (" << this->func1() << "==" << this->func2() << " ) " ; }
+    /// OPTIONAL: C++ print
+    virtual std::string   toCpp () const 
+    { return " (" 
+        + Gaudi::Utils::toCpp ( this->func1() ) + " == " 
+        + Gaudi::Utils::toCpp ( this->func2() ) + ") " ; }
     // ========================================================================
   public:
     // ========================================================================
@@ -612,7 +646,8 @@ namespace LoKi
     }
     // ========================================================================
     /// the actual comparison:
-    inline result_type not_equal ( argument_a_unless_void ) const { return !this->equal( a_unless_void ) ; }
+    inline result_type not_equal ( argument_a_unless_void ) const 
+    { return !this->equal( a_unless_void ) ; }
     // ========================================================================
   private:
     // ========================================================================
@@ -671,15 +706,18 @@ namespace LoKi
     /// constructor from twho functors 
     LessOrEqual ( const Functor<TYPE,TYPE2>& f1 , 
                   const Functor<TYPE,TYPE2>& f2 ) 
-      : LoKi::Equal<TYPE,TYPE2>( f1 , f2 ) 
+      : LoKi::AuxFunBase ( std::tie ( f1 , f2 ) ) 
+      , LoKi::Equal<TYPE,TYPE2>( f1 , f2 ) 
     {}
     /// constructor from the functor and constant 
     LessOrEqual ( const LoKi::Functor<TYPE,TYPE2>& f1 , T2 f2 ) 
-      : LoKi::Equal<TYPE,TYPE2>( f1 , f2 ) 
+      : LoKi::AuxFunBase ( std::tie ( f1 , f2 ) ) 
+      , LoKi::Equal<TYPE,TYPE2>( f1 , f2 ) 
     {}
     /// constructor from the functor and constant 
     LessOrEqual ( T2 f1 , const LoKi::Functor<TYPE,TYPE2>& f2 ) 
-      : LoKi::Equal<TYPE,TYPE2>( f1  , f2  ) 
+      : LoKi::AuxFunBase ( std::tie ( f1 , f2 ) ) 
+      , LoKi::Equal<TYPE,TYPE2>( f1  , f2  ) 
     {}
     /// virtual destructor 
     virtual ~LessOrEqual() {}
@@ -694,6 +732,11 @@ namespace LoKi
     /// the basic printout method 
     virtual std::ostream& fillStream( std::ostream& s ) const 
     { return s << " (" << this->func1() << "<=" << this->func2() << ") " ; }
+    /// OPTIONAL: C++ print
+    virtual std::string   toCpp () const 
+    { return " (" 
+        + Gaudi::Utils::toCpp ( this->func1() ) + " <= "
+        + Gaudi::Utils::toCpp ( this->func2() ) + ") " ; }
     // ========================================================================
   private:
     // ========================================================================
@@ -750,15 +793,18 @@ namespace LoKi
     /// constructor from two functors 
     NotEqual ( const LoKi::Functor<TYPE,TYPE2>& f1 , 
                const LoKi::Functor<TYPE,TYPE2>& f2 ) 
-      : LoKi::Equal<TYPE,TYPE2>( f1 , f2 ) 
+      : LoKi::AuxFunBase ( std::tie ( f1 , f2 ) ) 
+      , LoKi::Equal<TYPE,TYPE2>( f1 , f2 ) 
     {}
     /// constructor from the functor and constant 
     NotEqual ( const LoKi::Functor<TYPE,TYPE2>& f1 , T2 f2 ) 
-      : LoKi::Equal<TYPE,TYPE2> ( f1 , f2 ) 
+      : LoKi::AuxFunBase ( std::tie ( f1 , f2 ) ) 
+      , LoKi::Equal<TYPE,TYPE2> ( f1 , f2 ) 
     {}
     /// constructor from the functor and constant 
     NotEqual ( T2 f1 , const LoKi::Functor<TYPE,TYPE2>& f2 ) 
-      : LoKi::Equal<TYPE,TYPE2> ( f1  , f2  ) 
+      : LoKi::AuxFunBase ( std::tie ( f1 , f2 ) ) 
+      , LoKi::Equal<TYPE,TYPE2> ( f1  , f2  ) 
     {}
     /// virtual destructor 
     virtual ~NotEqual() {}
@@ -771,6 +817,11 @@ namespace LoKi
     virtual std::ostream& fillStream( std::ostream& s ) const 
     { return s << " (" << this->func1() 
                << "!=" << this->func2() << ") " ; }
+    /// OPTIONAL: C++ print
+    virtual std::string   toCpp () const 
+    { return " ("
+        + Gaudi::Utils::toCpp ( this->func1() ) + " != " 
+        + Gaudi::Utils::toCpp ( this->func2() ) + ") " ; }
     // ========================================================================
   private:
     // ========================================================================
@@ -830,19 +881,22 @@ namespace LoKi
     /// constructor from two functors 
     Plus ( const LoKi::Functor<TYPE,TYPE2>& f1 , 
            const LoKi::Functor<TYPE,TYPE2>& f2 ) 
-      : LoKi::Functor<TYPE,TYPE2>()
+      : LoKi::AuxFunBase ( std::tie ( f1 , f2 ) ) 
+      , LoKi::Functor<TYPE,TYPE2>()
       , m_two ( f1 , f2 ) 
     {}
-    /// constructor from the functor and constant 
-    Plus ( const LoKi::Functor<TYPE,TYPE2>& f1 , T2 f2 ) 
-      : LoKi::Functor<TYPE,TYPE2>()
-      , m_two ( f1 , LoKi::Constant<TYPE,TYPE2> ( f2 )  ) 
-    {}
-    /// constructor from the functor and constant 
-    Plus ( T2 f1 , const LoKi::Functor<TYPE,TYPE2>& f2) 
-      : LoKi::Functor<TYPE,TYPE2>()
-      , m_two ( LoKi::Constant<TYPE,TYPE2> ( f1 ) , f2 ) 
-    {}
+    // /// constructor from the functor and constant 
+    // Plus ( const LoKi::Functor<TYPE,TYPE2>& f1 , T2 f2 ) 
+    //   : LoKi::AuxFunBase ( std::tie ( f1 , f2 ) ) 
+    //   , LoKi::Functor<TYPE,TYPE2>()
+    //   , m_two ( f1 , LoKi::Constant<TYPE,TYPE2> ( f2 ) )
+    // {}
+    // /// constructor from the functor and constant 
+    // Plus ( T2 f1 , const LoKi::Functor<TYPE,TYPE2>& f2) 
+    //   : LoKi::AuxFunBase ( std::tie ( f1 , f2 ) ) 
+    //   , LoKi::Functor<TYPE,TYPE2>()
+    //   , m_two ( LoKi::Constant<TYPE,TYPE2> ( f1 ) , f2 ) 
+    // {}
     /// virtual destructor 
     virtual ~Plus() {}
     /// clone method (mandatory)
@@ -856,6 +910,11 @@ namespace LoKi
     /// the basic printout method 
     virtual std::ostream& fillStream( std::ostream& s ) const 
     { return s << " (" << this->func1() << "+" << this->func2() << ") " ; }
+    /// OPTIONAL: C++ print
+    virtual std::string   toCpp () const 
+    { return " (" 
+        + Gaudi::Utils::toCpp ( this->func1() ) + " + " 
+        + Gaudi::Utils::toCpp ( this->func2() ) + ") " ; }
     // ========================================================================
   private:
     // ========================================================================
@@ -935,16 +994,19 @@ namespace LoKi
     /// constructor from two functors 
     Minus ( const LoKi::Functor<TYPE,TYPE2>& f1 , 
             const LoKi::Functor<TYPE,TYPE2>& f2 ) 
-      : LoKi::Plus<TYPE,TYPE2>( f1 , f2 ) 
+      : LoKi::AuxFunBase ( std::tie ( f1 , f2 ) ) 
+      , LoKi::Plus<TYPE,TYPE2>( f1 , f2 ) 
     {}
-    /// constructor from the functor and constant 
-    Minus ( const LoKi::Functor<TYPE,TYPE2>& f1 , T2 f2 ) 
-      : LoKi::Plus<TYPE,TYPE2>( f1 , f2 ) 
-    {}
-    /// constructor from the functor and constant 
-    Minus ( T2 f1 , const LoKi::Functor<TYPE,TYPE2>& f2 ) 
-      : LoKi::Plus<TYPE,TYPE2>( f1 , f2 ) 
-    {}
+    // /// constructor from the functor and constant 
+    // Minus ( const LoKi::Functor<TYPE,TYPE2>& f1 , T2 f2 ) 
+    //   : LoKi::AuxFunBase ( std::tie ( f1 , f2 ) ) 
+    //   , LoKi::Plus<TYPE,TYPE2>( f1 , f2 ) 
+    // {}
+    // /// constructor from the functor and constant 
+    // Minus ( T2 f1 , const LoKi::Functor<TYPE,TYPE2>& f2 ) 
+    //   : LoKi::AuxFunBase ( std::tie ( f1 , f2 ) ) 
+    //   , LoKi::Plus<TYPE,TYPE2>( f1 , f2 ) 
+    // {}
     /// virtual destructor 
     virtual ~Minus() {}
     /// clone method (mandatory)
@@ -958,6 +1020,11 @@ namespace LoKi
     /// the basic printout method 
     virtual std::ostream& fillStream( std::ostream& s ) const 
     { return s << " (" << this->func1() << "-" << this->func2() << ") " ; }
+    /// OPTIONAL: C++ print
+    virtual std::string   toCpp () const 
+    { return " ("
+        + Gaudi::Utils::toCpp ( this->func1() ) + " - " 
+        + Gaudi::Utils::toCpp ( this->func2() ) + ") " ; }
     // ========================================================================
   private:
     // ========================================================================
@@ -1015,16 +1082,19 @@ namespace LoKi
     /// constructor from two functors 
     Divide ( const LoKi::Functor<TYPE,TYPE2>& f1 , 
              const LoKi::Functor<TYPE,TYPE2>& f2 ) 
-      : LoKi::Minus<TYPE,TYPE2>( f1 , f2 ) 
+      : LoKi::AuxFunBase ( std::tie ( f1 , f2 ) ) 
+      , LoKi::Minus<TYPE,TYPE2>( f1 , f2 ) 
     {}
-    /// constructor from the functor adn the constant 
-    Divide ( const LoKi::Functor<TYPE,TYPE2>& f1 , T2 f2 ) 
-      : LoKi::Minus<TYPE,TYPE2>( f1 , f2 ) 
-    {}
-    /// constructor from the functor adn the constant 
-    Divide ( T2 f1 , const LoKi::Functor<TYPE,TYPE2>& f2) 
-      : LoKi::Minus<TYPE,TYPE2>( f1 , f2 )
-    {}
+    // /// constructor from the functor adn the constant 
+    // Divide ( const LoKi::Functor<TYPE,TYPE2>& f1 , T2 f2 ) 
+    //   : LoKi::AuxFunBase ( std::tie ( f1 , f2 ) ) 
+    //   , LoKi::Minus<TYPE,TYPE2>( f1 , f2 ) 
+    // {}
+    // /// constructor from the functor adn the constant 
+    // Divide ( T2 f1 , const LoKi::Functor<TYPE,TYPE2>& f2) 
+    //   : LoKi::AuxFunBase ( std::tie ( f1 , f2 ) ) 
+    //   , LoKi::Minus<TYPE,TYPE2>( f1 , f2 )
+    // {}
     /// virtual destructor 
     virtual ~Divide() {}
     /// clone method (mandatory)
@@ -1038,6 +1108,11 @@ namespace LoKi
     /// the basic printout method 
     virtual std::ostream& fillStream( std::ostream& s ) const 
     { return s << " (" << this->func1() << "/" << this->func2() << ") " ; }
+    /// OPTIONAL: C++ print
+    virtual std::string   toCpp () const 
+    { return " (" 
+        + Gaudi::Utils::toCpp ( this->func1() ) + " / " 
+        + Gaudi::Utils::toCpp ( this->func2() ) + ") " ; }
     // ========================================================================
   private:
     // ========================================================================
@@ -1077,7 +1152,7 @@ namespace LoKi
   class Multiply<void,TYPE2> : public LoKi::Divide<void,double>
 #else
   template<class TYPE, class TYPE2=double> 
-  class Multiply : public Divide<TYPE,TYPE2> 
+  class Multiply             : public LoKi::Divide<TYPE,TYPE2> 
 #endif
   {
   private:
@@ -1095,16 +1170,19 @@ namespace LoKi
     /// constructor from two functors 
     Multiply ( const LoKi::Functor<TYPE,TYPE2>& f1 , 
                const LoKi::Functor<TYPE,TYPE2>& f2 ) 
-      : LoKi::Divide<TYPE,TYPE2>( f1 , f2 ) 
+      : LoKi::AuxFunBase ( std::tie ( f1 , f2 ) ) 
+      , LoKi::Divide<TYPE,TYPE2>( f1 , f2 ) 
     {}
-    /// constructor from the functor and constant 
-    Multiply ( const LoKi::Functor<TYPE,TYPE2>& f1 , T2 f2 ) 
-      : LoKi::Divide<TYPE,TYPE2>( f1 , f2 ) 
-    {}
-    /// constructor from the functor and constant 
-    Multiply ( T2 f1 , const LoKi::Functor<TYPE,TYPE2>& f2) 
-      : LoKi::Divide<TYPE,TYPE2>( f1 , f2 ) 
-    {}
+    // /// constructor from the functor and constant 
+    // Multiply ( const LoKi::Functor<TYPE,TYPE2>& f1 , T2 f2 ) 
+    //   : LoKi::AuxFunBase ( std::tie ( f1 , f2 ) ) 
+    //   , LoKi::Divide<TYPE,TYPE2>( f1 , f2 ) 
+    // {}
+    // /// constructor from the functor and constant 
+    // Multiply ( T2 f1 , const LoKi::Functor<TYPE,TYPE2>& f2) 
+    //   : LoKi::AuxFunBase ( std::tie ( f1 , f2 ) ) 
+    //   , LoKi::Divide<TYPE,TYPE2>( f1 , f2 ) 
+    // {}
     /// virtual destructor 
     virtual ~Multiply() {}
     /// clone method (mandatory)
@@ -1118,6 +1196,11 @@ namespace LoKi
     /// the basic printout method 
     virtual std::ostream& fillStream( std::ostream& s ) const 
     { return s << " (" << this->func1() << "*" << this->func2() << ") " ; }
+    /// OPTIONAL: C++ print
+    virtual std::string   toCpp () const 
+    { return " (" 
+        + Gaudi::Utils::toCpp ( this->func1() ) + " * " 
+        + Gaudi::Utils::toCpp ( this->func2() ) + ") " ; }
     // ========================================================================
   private:
     // ========================================================================
@@ -1175,17 +1258,20 @@ namespace LoKi
      */
     Min ( const LoKi::Functor<TYPE,TYPE2>& fun1 , 
           const LoKi::Functor<TYPE,TYPE2>& fun2 ) 
-      : LoKi::Functor<TYPE,TYPE2>()
+      : LoKi::AuxFunBase ( std::tie ( fun1 , fun2 ) ) 
+      , LoKi::Functor<TYPE,TYPE2>()
       , m_two ( fun1 , fun2 ) 
     {}
     /// constructor from the function and constant 
     Min ( const LoKi::Functor<TYPE,TYPE2>& fun1 , T2 fun2 ) 
-      : LoKi::Functor<TYPE,TYPE2>()
+      : LoKi::AuxFunBase ( std::tie ( fun1 , fun2 ) ) 
+      , LoKi::Functor<TYPE,TYPE2>()
       , m_two ( fun1 , LoKi::Constant<TYPE,TYPE2> ( fun2 )  ) 
     {}
     /// constructor from the function and constant 
     Min ( T2 fun1 , const LoKi::Functor<TYPE,TYPE2>& fun2 ) 
-      : LoKi::Functor<TYPE,TYPE2>()
+      : LoKi::AuxFunBase ( std::tie ( fun1 , fun2 ) ) 
+      , LoKi::Functor<TYPE,TYPE2>()
       , m_two ( LoKi::Constant<TYPE,TYPE2> ( fun1 ) , fun2 ) 
     {}
     /** constructor from 3 functions 
@@ -1196,7 +1282,8 @@ namespace LoKi
     Min ( const LoKi::Functor<TYPE,TYPE2>& fun1 , 
           const LoKi::Functor<TYPE,TYPE2>& fun2 ,
           const LoKi::Functor<TYPE,TYPE2>& fun3 ) 
-      : LoKi::Functor<TYPE,TYPE2>()
+      : LoKi::AuxFunBase ( std::tie ( fun1 , fun2 , fun3 ) ) 
+      , LoKi::Functor<TYPE,TYPE2>()
       , m_two ( Min ( fun1 , fun2 ) , fun3 ) 
     {}
     /** constructor from 4 functions 
@@ -1209,7 +1296,8 @@ namespace LoKi
           const LoKi::Functor<TYPE,TYPE2>& fun2 ,
           const LoKi::Functor<TYPE,TYPE2>& fun3 , 
           const LoKi::Functor<TYPE,TYPE2>& fun4 ) 
-      : LoKi::Functor<TYPE,TYPE2>()
+      : LoKi::AuxFunBase ( std::tie ( fun1 , fun2 , fun3 , fun4 ) ) 
+      , LoKi::Functor<TYPE,TYPE2>()
       , m_two ( Min ( Min ( fun1 , fun2 ) , fun3 ) , fun4 ) 
     {}
     /// virtual destructor 
@@ -1225,6 +1313,11 @@ namespace LoKi
     /// the basic printout method 
     virtual std::ostream& fillStream( std::ostream& s ) const 
     { return s << " min(" << this->func1() << "," << this->func2() << ") " ; }
+    /// OPTIONAL: C++ print
+    virtual std::string   toCpp () const 
+    { return " LoKi::min(" 
+        + Gaudi::Utils::toCpp ( this->func1() ) + "," 
+        + Gaudi::Utils::toCpp ( this->func2() ) + ") " ; }
     // ========================================================================
   private:
     // ========================================================================
@@ -1303,15 +1396,18 @@ namespace LoKi
      */
     Max ( const LoKi::Functor<TYPE,TYPE2>& fun1 , 
           const LoKi::Functor<TYPE,TYPE2>& fun2 ) 
-      : LoKi::Min<TYPE,TYPE2>( fun1 , fun2 )
+      : LoKi::AuxFunBase ( std::tie ( fun1 , fun2 ) ) 
+      , LoKi::Min<TYPE,TYPE2>( fun1 , fun2 )
     {}
     /// constructor from the function and constant 
     Max ( const LoKi::Functor<TYPE,TYPE2>& fun1 , T2 fun2 ) 
-      : LoKi::Min<TYPE,TYPE2>( fun1 , fun2 )
+      : LoKi::AuxFunBase ( std::tie ( fun1 , fun2 ) )  
+      , LoKi::Min<TYPE,TYPE2>( fun1 , fun2 )
     {}
     /// constructor from the function and constant 
     Max ( T2 fun1 , const LoKi::Functor<TYPE,TYPE2>& fun2 ) 
-      : LoKi::Min<TYPE,TYPE2>( fun1 , fun2 )
+      : LoKi::AuxFunBase ( std::tie ( fun1 , fun2 ) )
+      , LoKi::Min<TYPE,TYPE2>( fun1 , fun2 )
     {}
     /** constructor from 3 functions 
      *  @param fun1 the first  function
@@ -1321,7 +1417,8 @@ namespace LoKi
     Max ( const LoKi::Functor<TYPE,TYPE2>& fun1 , 
           const LoKi::Functor<TYPE,TYPE2>& fun2 ,
           const LoKi::Functor<TYPE,TYPE2>& fun3 ) 
-      : LoKi::Min<TYPE,TYPE2>( Max ( fun1 , fun2 ) , fun3 ) 
+      : LoKi::AuxFunBase ( std::tie ( fun1 , fun2 , fun3 ) )
+      , LoKi::Min<TYPE,TYPE2>( Max ( fun1 , fun2 ) , fun3 ) 
     {}
     /** constructor from 4 functions 
      *  @param fun1 the first function
@@ -1333,7 +1430,8 @@ namespace LoKi
           const LoKi::Functor<TYPE,TYPE2>& fun2 ,
           const LoKi::Functor<TYPE,TYPE2>& fun3 , 
           const LoKi::Functor<TYPE,TYPE2>& fun4 ) 
-      : LoKi::Min<TYPE,TYPE2> ( Max ( Max( fun1 , fun2 ) , fun3 ) , fun4 ) 
+      : LoKi::AuxFunBase ( std::tie ( fun1 , fun2 , fun3 , fun4 ) )
+      , LoKi::Min<TYPE,TYPE2> ( Max ( Max( fun1 , fun2 ) , fun3 ) , fun4 ) 
     {}
     /// virtual destructor 
     virtual ~Max() {}
@@ -1348,6 +1446,11 @@ namespace LoKi
     /// OPTIONAL: the basic printout method 
     virtual std::ostream& fillStream( std::ostream& s ) const 
     { return s << " max(" << this->func1() << "," << this->func2() << ") " ; }
+    /// OPTIONAL: C++ print
+    virtual std::string   toCpp () const 
+    { return " LoKi::max(" 
+        + Gaudi::Utils::toCpp ( this->func1() ) + "," 
+        + Gaudi::Utils::toCpp ( this->func2() ) + ") " ; }
     // ========================================================================
   private:
     // ========================================================================
@@ -1402,7 +1505,8 @@ namespace LoKi
      */
     SimpleSwitch
     ( const LoKi::Functor<TYPE,bool>& cut  , T2 val1 , T2 val2 )
-      : LoKi::Functor<TYPE,TYPE2> (      ) 
+      : LoKi::AuxFunBase ( std::tie ( cut , val1 , val2 ) ) 
+      , LoKi::Functor<TYPE,TYPE2> (      ) 
       , m_cut  ( cut  ) 
       , m_val1 ( val1 )
       , m_val2 ( val2 )
@@ -1416,7 +1520,10 @@ namespace LoKi
     { return m_cut( a_unless_void ) ? m_val1 : m_val2 ; }
     /// the basic printout method 
     virtual std::ostream& fillStream( std::ostream& s ) const 
-    { return s << " switch("  << m_cut << ","  << m_val1 << "," << m_val2 << ") " ; }
+    { return s << " switch("  
+               << this->m_cut  << ","  
+               << this->m_val1 << "," 
+               << this->m_val2 << ") " ; }
     // ========================================================================
   private:
     // ========================================================================
@@ -1481,7 +1588,8 @@ namespace LoKi
     ( const LoKi::Functor<TYPE,bool>&   cut  , 
       const LoKi::Functor<TYPE,TYPE2>&  fun1 , 
       const LoKi::Functor<TYPE,TYPE2>&  fun2 )
-      : Functor<TYPE,TYPE2>  (      ) 
+      : LoKi::AuxFunBase ( std::tie ( cut , fun1 , fun2 ) ) 
+      , Functor<TYPE,TYPE2>  (      ) 
       , m_cut  ( cut  ) 
       , m_two  ( fun1 , fun2 )  
     {}    
@@ -1501,7 +1609,8 @@ namespace LoKi
     Switch
     ( const LoKi::Functor<TYPE,bool>&   cut  , 
       const LoKi::Functor<TYPE,TYPE2>&  fun1 , T2 fun2 )
-      : LoKi::Functor<TYPE,TYPE2>  (      ) 
+      : LoKi::AuxFunBase ( std::tie ( cut , fun1 , fun2 ) ) 
+      , LoKi::Functor<TYPE,TYPE2>  (      ) 
       , m_cut  ( cut  ) 
       , m_two  ( fun1 , LoKi::Constant<TYPE,TYPE2>( fun2 ) )  
     {}    
@@ -1522,7 +1631,8 @@ namespace LoKi
     ( const LoKi::Functor<TYPE,bool>& cut  , 
       T2                              fun1 , 
       const Functor<TYPE,TYPE2>&      fun2 ) 
-      : LoKi::Functor<TYPE,TYPE2>  (      ) 
+      : LoKi::AuxFunBase ( std::tie ( cut , fun1 , fun2 ) ) 
+      , LoKi::Functor<TYPE,TYPE2>  (      ) 
       , m_cut  ( cut  ) 
       , m_two  ( LoKi::Constant<TYPE,TYPE2>( fun1 ) , fun2 )  
     {}
@@ -1547,7 +1657,8 @@ namespace LoKi
      */
     Switch
     ( const LoKi::Functor<TYPE,bool>&   cut  , T2 fun1 , T2 fun2 ) 
-      : LoKi::Functor<TYPE,TYPE2>  (      ) 
+      : LoKi::AuxFunBase ( std::tie ( cut , fun1 , fun2 ) ) 
+      , LoKi::Functor<TYPE,TYPE2>  (      ) 
       , m_cut  ( cut  ) 
       , m_two  ( LoKi::Constant<TYPE,TYPE2>( fun1 ) ,
                  LoKi::Constant<TYPE,TYPE2>( fun2 ) )
@@ -1558,13 +1669,16 @@ namespace LoKi
     virtual  Switch* clone() const { return new Switch ( *this ) ; }
     /// MANDATORY: the only one essential method:
     virtual  result_type operator() ( argument_a_unless_void ) const 
-    { return m_cut.fun ( a_unless_void ) ? m_two.fun1 ( a_unless_void ) : m_two.fun2 ( a_unless_void ) ; }
+    { return 
+        m_cut.fun  ( a_unless_void ) ? 
+        m_two.fun1 ( a_unless_void ) :
+        m_two.fun2 ( a_unless_void ) ; }
     /// the basic printout method 
     virtual std::ostream& fillStream( std::ostream& s ) const 
     { return s << " switch("     
-               << m_cut          << "," 
-               << m_two.func1()  << "," 
-               << m_two.func2()  << ") "  ; }
+               << this->m_cut          << "," 
+               << this->m_two.func1()  << "," 
+               << this->m_two.func2()  << ") "  ; }
     // ========================================================================
   private:
     // ========================================================================
@@ -1653,7 +1767,10 @@ namespace LoKi
     { return (*m_func) ( m_fun . fun ( a_unless_void ) ) ; }
     /// the basic printout method 
     virtual std::ostream& fillStream( std::ostream& s ) const 
-    { return s << " " << m_desc << "("  << m_fun << ") " ; };
+    { return s << " " << this->m_desc << "("  << this->m_fun << ") " ; };
+    // to C++
+    virtual std::string   toCpp() const 
+    { return "LoKi::" + this->m_desc + "("  + Gaudi::Utils::toCpp ( this->m_fun ) + ") " ; }
     // ========================================================================
   private:
     // ========================================================================
@@ -1784,6 +1901,11 @@ namespace LoKi
                << m_desc         << "("  
                << m_two.func1 () << "," 
                << m_two.func2 () << ") " ; }
+    /// to C++
+    virtual std::string toCpp() const 
+    { return "LoKi::" + this->m_desc + "("  
+        + Gaudi::Utils::toCpp ( this->m_two.func1 () ) + ", " 
+        + Gaudi::Utils::toCpp ( this->m_two.func2 () ) + ") " ; }
     // ========================================================================
   private:
     // ========================================================================
@@ -1821,7 +1943,8 @@ namespace LoKi
     Compose
     ( const LoKi::Functor<TYPE,TYPE1>&  fun1 , 
       const LoKi::Functor<TYPE3,TYPE2>& fun2 )
-      : LoKi::Functor<TYPE,TYPE2> () 
+      : LoKi::AuxFunBase ( std::tie ( fun1 , fun2 ) ) 
+      , LoKi::Functor<TYPE,TYPE2> () 
       , m_fun1 ( fun1 ) 
       , m_fun2 ( fun2 )
     {}
@@ -1845,7 +1968,7 @@ namespace LoKi
     }
     /// the basic printout method 
     virtual std::ostream& fillStream( std::ostream& s ) const 
-    { return s << " (" << m_fun1 << ">>" << m_fun2  << ") " ; }
+    { return s << " (" << this->m_fun1 << ">>" << this->m_fun2  << ") " ; }   
     // ========================================================================
   private:
     // ========================================================================
@@ -1855,6 +1978,7 @@ namespace LoKi
     LoKi::FunctorFromFunctor<TYPE3,TYPE2> m_fun2  ;       // the second functor 
     // ========================================================================
   } ;
+  // ==========================================================================
 #ifndef _GEN_LOKI_VOIDPRIMITIVES
   // ==========================================================================
   /** @class Valid 
@@ -1878,9 +2002,7 @@ namespace LoKi
   public:
     // ========================================================================
     /// constructor 
-    Valid() 
-      : Functor<TYPE,bool> () 
-    {} 
+    Valid() : Functor<TYPE,bool> () {} 
     /// copy constructor 
     Valid( const Valid& right ) 
       : LoKi::AuxFunBase   ( right ) 
@@ -1904,6 +2026,7 @@ namespace LoKi
    *  is equal to some predefined value. 
    *  @author Vanya BELYAEV belyaev@lapp.in2p3.fr
    *  @date 2004-02-11
+   *  @warning this functor has not valid <c>toCpp</c> method 
    */
   template <class TYPE>
   class TheSame : public LoKi::Functor<TYPE,bool>
@@ -1986,7 +2109,8 @@ namespace LoKi
     EqualToValue 
     ( const LoKi::Functor<TYPE,TYPE2>&  fun , 
       T2                                val )
-      : LoKi::Functor<TYPE,bool>() 
+      : LoKi::AuxFunBase ( std::tie ( fun , val ) )
+      , LoKi::Functor<TYPE,bool>() 
       , m_fun ( fun ) 
       , m_val ( val ) 
     {}
@@ -1998,7 +2122,8 @@ namespace LoKi
      */
     EqualToValue 
     ( T2 val , const LoKi::Functor<TYPE,TYPE2>&  fun ) 
-      : LoKi::Functor<TYPE,bool>() 
+      : LoKi::AuxFunBase ( std::tie ( fun , val ) )
+      , LoKi::Functor<TYPE,bool>() 
       , m_fun ( fun ) 
       , m_val ( val ) 
     {}
@@ -2024,6 +2149,11 @@ namespace LoKi
     virtual std::ostream& fillStream ( std::ostream& s ) const 
     { return s << " (" << this->func () 
                << "==" << this->val  () << ") " ; }
+    /// OPTIONAL: C++ print
+    virtual std::string   toCpp () const 
+    { return " (" 
+        + Gaudi::Utils::toCpp ( this->func () ) + " == " 
+        + Gaudi::Utils::toCpp ( this->val  () ) + ") " ; }
     // ========================================================================
   public:
     // ========================================================================
@@ -2031,11 +2161,43 @@ namespace LoKi
     { 
       // the comparator 
       LHCb::Math::Equal_To<TYPE2> _cmp ;
-      return _cmp ( m_fun.fun ( a_unless_void ) , m_val ) ; 
+      return _cmp ( this->m_fun.fun ( a_unless_void ) , this->m_val ) ; 
     }    
     // ========================================================================
     inline result_type not_equal_to ( argument_a_unless_void ) const
     { return ! this->equal_to ( a_unless_void ) ; }  
+    // ========================================================================
+    inline result_type less    ( argument_a_unless_void ) const
+    { 
+      // the comparator 
+      std::less<TYPE2> _cmp ;
+      return _cmp ( this->m_fun.fun ( a_unless_void ) , this->m_val ) ; 
+    }    
+    // ========================================================================
+    inline result_type greater ( argument_a_unless_void ) const
+    { 
+      // the comparator 
+      std::less<TYPE2> _cmp ;
+      return _cmp ( this->m_val , this->m_fun.fun ( a_unless_void ) ) ; 
+    }    
+    // ========================================================================
+    inline result_type less_or_equal ( argument_a_unless_void ) const
+    { 
+      // the comparator 
+      std::less<TYPE2>            _cmp1 ;
+      LHCb::Math::Equal_To<TYPE2> _cmp2 ;
+      TYPE2 _r = this->m_fun.fun ( a_unless_void ) ;
+      return _cmp1 ( _r , this->m_val ) || _cmp2 ( _r , this->m_val ) ; 
+    }    
+    // ========================================================================
+    inline result_type greater_or_equal ( argument_a_unless_void ) const
+    { 
+      // the comparator 
+      std::less<TYPE2>            _cmp1 ;
+      LHCb::Math::Equal_To<TYPE2> _cmp2 ;
+      TYPE2 _r = this->m_fun.fun ( a_unless_void ) ;
+      return _cmp1 ( this->m_val , _r ) || _cmp2 ( _r , this->m_val ) ; 
+    }    
     // ========================================================================
   public:
     // ========================================================================
@@ -2087,7 +2249,8 @@ namespace LoKi
      */
     NotEqualToValue
     ( const LoKi::Functor<TYPE,TYPE2>&  fun , T2 val ) 
-      : LoKi::EqualToValue<TYPE,TYPE2>( fun , val ) 
+      : LoKi::AuxFunBase ( std::tie ( fun , val ) )
+      , LoKi::EqualToValue<TYPE,TYPE2>( fun , val ) 
     {}
     /** constructor from the function and the value 
      *  @param val the reference value 
@@ -2096,7 +2259,8 @@ namespace LoKi
      */
     NotEqualToValue
     ( T2 val , const LoKi::Functor<TYPE,TYPE2>&  fun ) 
-      : LoKi::EqualToValue<TYPE,TYPE2>( val , fun ) 
+      : LoKi::AuxFunBase ( std::tie ( fun , val ) )
+      , LoKi::EqualToValue<TYPE,TYPE2>( val , fun ) 
     {}
     /// MANDATORY: virtual destructor 
     virtual ~NotEqualToValue(){} ;
@@ -2109,11 +2273,758 @@ namespace LoKi
     virtual std::ostream& fillStream ( std::ostream& s ) const 
     { return s << " (" << this -> func () 
                << "!=" << this -> val  () << ") " ; }
+    /// OPTIONAL: C++ print
+    virtual std::string   toCpp () const 
+    { return " (" 
+        + Gaudi::Utils::toCpp ( this->func () ) + " != " 
+        + Gaudi::Utils::toCpp ( this->val  () ) + ") " ; }
     // ========================================================================
   private:
     // ========================================================================
     /// The default constructor is disabled 
     NotEqualToValue();
+    // ========================================================================
+  };
+  // ==========================================================================
+  /** @class LessThanValue 
+   *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+   *  @date 2015-01-19
+   */
+#ifdef _GEN_LOKI_VOIDPRIMITIVES
+  template <class TYPE2>
+  class LessThanValue<void,TYPE2> : public LoKi::EqualToValue<void,TYPE2>
+#else
+  template <class TYPE, class TYPE2=double>
+  class LessThanValue             : public LoKi::EqualToValue<TYPE,TYPE2>
+#endif
+  {
+  private:
+    // ========================================================================
+    typedef_void_TYPE
+    /// argument type
+    typedef typename LoKi::Functor<TYPE,bool>::argument argument  ; 
+    /// result type 
+    typedef typename LoKi::Functor<TYPE,bool>::result_type result_type ; 
+    // constant type 
+    typedef typename LoKi::Constant<TYPE,TYPE2>::T2 T2 ;
+    // ========================================================================
+  public:
+    // ========================================================================
+    /** constructor from the function and the value 
+     *  @param fun the function
+     *  @param val the reference value 
+     *  @param eps the relative precision
+     */
+    LessThanValue 
+    ( const LoKi::Functor<TYPE,TYPE2>&  fun , 
+      T2                                val )
+      : LoKi::AuxFunBase   ( std::tie ( fun , val ) )
+      , LoKi::EqualToValue<TYPE,TYPE2>( fun , val ) 
+    {}
+    // ========================================================================
+    /// copy constructor 
+    LessThanValue 
+    ( const LessThanValue& right )
+      : LoKi::AuxFunBase                ( right ) 
+      , LoKi::EqualToValue<TYPE,TYPE2>  ( right )
+    {}
+    // ========================================================================
+    /// MANDATORY: virtual destructor 
+    virtual ~LessThanValue(){} ;
+    // ========================================================================
+    /// MANDATORY: clone method ("virtual construcor")
+    virtual  LessThanValue* clone() const { return new LessThanValue(*this); }
+    /// MANDATORY: the only one essential method :
+    virtual  result_type operator() ( argument_a_unless_void ) const
+    { return this->less ( a_unless_void ) ; }
+    /// OPTIONAL: the specific printout 
+    virtual std::ostream& fillStream ( std::ostream& s ) const 
+    { return s << " (" << this->func () 
+               << "<"  << this->val  () << ") " ; }
+    /// OPTIONAL: C++ print
+    virtual std::string   toCpp () const 
+    { return " (" 
+        + Gaudi::Utils::toCpp ( this->func () ) + " < " 
+        + Gaudi::Utils::toCpp ( this->val  () ) + ") " ; }
+    // ========================================================================
+  private:
+    // ========================================================================
+    /// The default constructor is disabled 
+    LessThanValue();
+    // ========================================================================
+  };
+  // ==========================================================================
+  /** @class LessOrEqualValue 
+   *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+   *  @date 2015-01-19
+   */
+#ifdef _GEN_LOKI_VOIDPRIMITIVES
+  template <class TYPE2>
+  class LessOrEqualValue<void,TYPE2> : public LoKi::EqualToValue<void,TYPE2>
+#else
+  template <class TYPE, class TYPE2=double>
+  class LessOrEqualValue             : public LoKi::EqualToValue<TYPE,TYPE2>
+#endif
+  {
+  private:
+    // ========================================================================
+    typedef_void_TYPE
+    /// argument type
+    typedef typename LoKi::Functor<TYPE,bool>::argument argument  ; 
+    /// result type 
+    typedef typename LoKi::Functor<TYPE,bool>::result_type result_type ; 
+    // constant type 
+    typedef typename LoKi::Constant<TYPE,TYPE2>::T2 T2 ;
+    // ========================================================================
+  public:
+    // ========================================================================
+    /** constructor from the function and the value 
+     *  @param fun the function
+     *  @param val the reference value 
+     *  @param eps the relative precision
+     */
+    LessOrEqualValue 
+    ( const LoKi::Functor<TYPE,TYPE2>&  fun , 
+      T2                                val )
+      : LoKi::AuxFunBase    ( std::tie ( fun , val ) )
+      , LoKi::EqualToValue<TYPE,TYPE2> ( fun , val ) 
+    {}
+    // ========================================================================
+    /// copy constructor 
+    LessOrEqualValue 
+    ( const LessOrEqualValue& right )
+      : LoKi::AuxFunBase                ( right ) 
+      , LoKi::EqualToValue<TYPE,TYPE2>  ( right )
+    {}
+    // ========================================================================
+    /// MANDATORY: virtual destructor 
+    virtual ~LessOrEqualValue(){} ;
+    // ========================================================================
+    /// MANDATORY: clone method ("virtual construcor")
+    virtual  LessOrEqualValue* clone() const { return new LessOrEqualValue(*this); }
+    /// MANDATORY: the only one essential method :
+    virtual  result_type operator() ( argument_a_unless_void ) const
+    { return this->less_or_equal ( a_unless_void ) ; }
+    /// OPTIONAL: the specific printout 
+    virtual std::ostream& fillStream ( std::ostream& s ) const 
+    { return s << " ("  << this->func () 
+               << "<="  << this->val  () << ") " ; }
+    /// OPTIONAL: C++ print
+    virtual std::string   toCpp () const 
+    { return " (" 
+        + Gaudi::Utils::toCpp ( this->func () ) + " <= " 
+        + Gaudi::Utils::toCpp ( this->val  () ) + ") " ; }
+    // ========================================================================
+  private:
+    // ========================================================================
+    /// The default constructor is disabled 
+    LessOrEqualValue();
+    // ========================================================================
+  };
+  // ==========================================================================
+  /** @class GreaterThanValue 
+   *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+   *  @date 2015-01-19
+   */
+#ifdef _GEN_LOKI_VOIDPRIMITIVES
+  template <class TYPE2>
+  class GreaterThanValue<void,TYPE2> : public LoKi::EqualToValue<void,TYPE2>
+#else
+  template <class TYPE, class TYPE2=double>
+  class GreaterThanValue             : public LoKi::EqualToValue<TYPE,TYPE2>
+#endif
+  {
+  private:
+    // ========================================================================
+    typedef_void_TYPE
+    /// argument type
+    typedef typename LoKi::Functor<TYPE,bool>::argument argument  ; 
+    /// result type 
+    typedef typename LoKi::Functor<TYPE,bool>::result_type result_type ; 
+    // constant type 
+    typedef typename LoKi::Constant<TYPE,TYPE2>::T2 T2 ;
+    // ========================================================================
+  public:
+    // ========================================================================
+    /** constructor from the function and the value 
+     *  @param fun the function
+     *  @param val the reference value 
+     *  @param eps the relative precision
+     */
+    GreaterThanValue 
+    ( const LoKi::Functor<TYPE,TYPE2>&  fun , 
+      T2                                val )
+      : LoKi::AuxFunBase   ( std::tie ( fun , val ) )
+      , LoKi::EqualToValue<TYPE,TYPE2>( fun , val ) 
+    {}
+    // ========================================================================
+    /// copy constructor 
+    GreaterThanValue 
+    ( const GreaterThanValue& right )
+      : LoKi::AuxFunBase                ( right ) 
+      , LoKi::EqualToValue<TYPE,TYPE2>  ( right )
+    {}
+    // ========================================================================
+    /// MANDATORY: virtual destructor 
+    virtual ~GreaterThanValue(){} ;
+    // ========================================================================
+    /// MANDATORY: clone method ("virtual construcor")
+    virtual  GreaterThanValue* clone() const { return new GreaterThanValue(*this); }
+    /// MANDATORY: the only one essential method :
+    virtual  result_type operator() ( argument_a_unless_void ) const
+    { return this->greater ( a_unless_void ) ; }
+    /// OPTIONAL: the specific printout 
+    virtual std::ostream& fillStream ( std::ostream& s ) const 
+    { return s << " (" << this->func () 
+               << ">"  << this->val  () << ") " ; }
+    /// OPTIONAL: C++ print
+    virtual std::string   toCpp () const 
+    { return " (" 
+        + Gaudi::Utils::toCpp ( this->func () ) + " > " 
+        + Gaudi::Utils::toCpp ( this->val  () ) + ") " ; }
+    // ========================================================================
+  private:
+    // ========================================================================
+    /// The default constructor is disabled 
+    GreaterThanValue();
+    // ========================================================================
+  };  
+  // ==========================================================================
+  /** @class GreaterOrEqualValue 
+   *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+   *  @date 2015-01-19
+   */
+#ifdef _GEN_LOKI_VOIDPRIMITIVES
+  template <class TYPE2>
+  class GreaterOrEqualValue<void,TYPE2> : public LoKi::EqualToValue<void,TYPE2>
+#else
+  template <class TYPE, class TYPE2=double>
+  class GreaterOrEqualValue             : public LoKi::EqualToValue<TYPE,TYPE2>
+#endif
+  {
+  private:
+    // ========================================================================
+    typedef_void_TYPE
+    /// argument type
+    typedef typename LoKi::Functor<TYPE,bool>::argument argument  ; 
+    /// result type 
+    typedef typename LoKi::Functor<TYPE,bool>::result_type result_type ; 
+    // constant type 
+    typedef typename LoKi::Constant<TYPE,TYPE2>::T2 T2 ;
+    // ========================================================================
+  public:
+    // ========================================================================
+    /** constructor from the function and the value 
+     *  @param fun the function
+     *  @param val the reference value 
+     *  @param eps the relative precision
+     */
+    GreaterOrEqualValue 
+    ( const LoKi::Functor<TYPE,TYPE2>&  fun , 
+      T2                                val )
+      : LoKi::AuxFunBase   ( std::tie ( fun , val ) )
+      , LoKi::EqualToValue<TYPE,TYPE2>( fun , val ) 
+    {}
+    // ========================================================================
+    /// copy constructor 
+    GreaterOrEqualValue 
+    ( const GreaterOrEqualValue& right )
+      : LoKi::AuxFunBase                ( right ) 
+      , LoKi::EqualToValue<TYPE,TYPE2>  ( right )
+    {}
+    // ========================================================================
+    /// MANDATORY: virtual destructor 
+    virtual ~GreaterOrEqualValue(){} ;
+    // ========================================================================
+    /// MANDATORY: clone method ("virtual construcor")
+    virtual  GreaterOrEqualValue* clone() const { return new GreaterOrEqualValue(*this); }
+    /// MANDATORY: the only one essential method :
+    virtual  result_type operator() ( argument_a_unless_void ) const
+    { return this->greater_or_equal ( a_unless_void ) ; }
+    /// OPTIONAL: the specific printout 
+    virtual std::ostream& fillStream ( std::ostream& s ) const 
+    { return s << " ("  << this->func () 
+               << ">="  << this->val  () << ") " ; }
+    /// OPTIONAL: C++ print
+    virtual std::string   toCpp () const 
+    { return " (" 
+        + Gaudi::Utils::toCpp ( this->func () ) + " >= " 
+        + Gaudi::Utils::toCpp ( this->val  () ) + ") " ; }
+    // ========================================================================
+  private:
+    // ========================================================================
+    /// The default constructor is disabled 
+    GreaterOrEqualValue();
+    // ========================================================================
+  };
+  // ==========================================================================
+  /** @class MultiplyByValue 
+   *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+   *  @date 2015-01-27
+   */
+#ifdef _GEN_LOKI_VOIDPRIMITIVES
+  template <class TYPE2>
+  class MultiplyByValue<void,TYPE2> : public LoKi::Functor<void,TYPE2>
+#else
+  template <class TYPE, class TYPE2=double>
+  class MultiplyByValue             : public LoKi::Functor<TYPE,TYPE2>
+#endif
+  {
+  private:
+    // ========================================================================
+    typedef_void_TYPE
+    /// argument type
+    typedef typename LoKi::Functor<TYPE,TYPE2>::argument    argument    ; 
+    /// result type 
+    typedef typename LoKi::Functor<TYPE,TYPE2>::result_type result_type ; 
+    // constant type 
+    typedef typename LoKi::Constant<TYPE,TYPE2>::T2 T2 ;
+    // ========================================================================
+  public:
+    // ========================================================================
+    /** constructor from the function and the value 
+     *  @param fun the function
+     *  @param val the reference value 
+     *  @param eps the relative precision
+     */
+    MultiplyByValue 
+    ( const LoKi::Functor<TYPE,TYPE2>&  fun , 
+      T2                                val )
+      : LoKi::AuxFunBase ( std::tie ( fun , val ) )
+      , LoKi::Functor<TYPE,TYPE2>() 
+      , m_fun ( fun ) 
+      , m_val ( val ) 
+    {}
+    // ========================================================================
+    /** constructor from the function and the value 
+     *  @param fun the function
+     *  @param val the reference value 
+     *  @param eps the relative precision
+     */
+    MultiplyByValue 
+    ( T2                                val , 
+      const LoKi::Functor<TYPE,TYPE2>&  fun ) 
+      : LoKi::AuxFunBase ( std::tie ( val , fun ) )
+      , LoKi::Functor<TYPE,TYPE2>() 
+      , m_fun ( fun ) 
+      , m_val ( val ) 
+    {}
+    // ========================================================================
+    /// copy constructor 
+    MultiplyByValue 
+    ( const MultiplyByValue& right )
+      : LoKi::AuxFunBase          ( right ) 
+      , LoKi::Functor<TYPE,TYPE2> ( right )
+      , m_fun ( right.m_fun ) 
+      , m_val ( right.m_val )
+    {}
+    // ========================================================================
+    /// MANDATORY: virtual destructor 
+    virtual ~MultiplyByValue(){} ;
+    // ========================================================================
+    /// MANDATORY: clone method ("virtual construcor")
+    virtual  MultiplyByValue* clone() const { return new MultiplyByValue(*this); }
+    /// MANDATORY: the only one essential method :
+    virtual  result_type operator() ( argument_a_unless_void ) const
+    { return this->mult ( a_unless_void ) ; }
+    /// OPTIONAL: the specific printout 
+    virtual std::ostream& fillStream ( std::ostream& s ) const 
+    { return s << " ("   << this->func () 
+               << "*"    << this->val  () << ") " ; }
+    /// OPTIONAL: C++ print
+    virtual std::string   toCpp () const 
+    { return " (" 
+        + Gaudi::Utils::toCpp ( this->func () ) + " * " 
+        + Gaudi::Utils::toCpp ( this->val  () ) + ") " ; }
+    // ========================================================================
+  public:
+    // ========================================================================
+    const LoKi::Functor<TYPE,TYPE2>& func () const { return m_fun.func() ; }
+    const TYPE2&                     val  () const { return m_val        ; }
+    // ========================================================================
+  protected :
+    // ========================================================================
+    inline result_type mult    ( argument_a_unless_void ) const
+    { return ( this->m_fun.fun ( a_unless_void ) ) * ( this->m_val ) ; }
+    // ========================================================================
+    inline result_type sum     ( argument_a_unless_void ) const
+    { return ( this->m_fun.fun ( a_unless_void ) ) + ( this->m_val ) ; }
+    // ========================================================================
+    inline result_type divide1 ( argument_a_unless_void ) const
+    { return ( this->m_fun.fun ( a_unless_void ) ) / ( this->m_val ) ; }
+    // ========================================================================
+    inline result_type divide2 ( argument_a_unless_void ) const
+    { return ( this->m_val ) / ( this->m_fun.fun ( a_unless_void ) ) ; }
+    // ========================================================================
+    inline result_type minus1  ( argument_a_unless_void ) const
+    { return ( this->m_fun.fun ( a_unless_void ) ) - ( this->m_val ) ; }
+    // ========================================================================
+    inline result_type minus2  ( argument_a_unless_void ) const
+    { return ( this->m_val ) - ( this->m_fun.fun ( a_unless_void ) ) ; }
+    // ========================================================================
+  private:
+    // ========================================================================
+    /// The default constructor is disabled 
+    MultiplyByValue();
+    // ========================================================================
+  private:
+    // ========================================================================
+    /// the functor 
+    LoKi::FunctorFromFunctor<TYPE,TYPE2> m_fun ;                 // the functor 
+    /// the value 
+    TYPE2  m_val ;                                                 // the value 
+    // ========================================================================
+  };  
+  // ==========================================================================
+  /** @class SumByValue 
+   *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+   *  @date 2015-01-27
+   */
+#ifdef _GEN_LOKI_VOIDPRIMITIVES
+  template <class TYPE2>
+  class SumByValue<void,TYPE2> : public LoKi::MultiplyByValue<void,TYPE2>
+#else
+  template <class TYPE, class TYPE2=double>
+  class SumByValue             : public LoKi::MultiplyByValue<TYPE,TYPE2>
+#endif
+  {
+  private:
+    // ========================================================================
+    typedef_void_TYPE
+    /// argument type
+    typedef typename LoKi::Functor<TYPE,TYPE2>::argument    argument    ; 
+    /// result type 
+    typedef typename LoKi::Functor<TYPE,TYPE2>::result_type result_type ; 
+    // constant type 
+    typedef typename LoKi::Constant<TYPE,TYPE2>::T2 T2 ;
+    // ========================================================================
+  public:
+    // ========================================================================
+    /** constructor from the function and the value 
+     *  @param fun the function
+     *  @param val the reference value 
+     *  @param eps the relative precision
+     */
+    SumByValue 
+    ( const LoKi::Functor<TYPE,TYPE2>&  fun , 
+      T2                                val )
+      : LoKi::AuxFunBase ( std::tie ( fun , val ) )
+      , LoKi::MultiplyByValue<TYPE,TYPE2>( fun , val ) 
+    {}
+    // ========================================================================
+    /** constructor from the function and the value 
+     *  @param fun the function
+     *  @param val the reference value 
+     *  @param eps the relative precision
+     */
+    SumByValue 
+    ( T2                                val , 
+      const LoKi::Functor<TYPE,TYPE2>&  fun ) 
+      : LoKi::AuxFunBase ( std::tie ( val , fun ) )
+      , LoKi::MultiplyByValue<TYPE,TYPE2>( val , fun ) 
+    {}
+    // ========================================================================
+    /// copy constructor 
+    SumByValue 
+    ( const SumByValue& right )
+      : LoKi::AuxFunBase                  ( right ) 
+      , LoKi::MultiplyByValue<TYPE,TYPE2> ( right )
+    {}
+    // ========================================================================
+    /// MANDATORY: virtual destructor 
+    virtual ~SumByValue(){} ;
+    // ========================================================================
+    /// MANDATORY: clone method ("virtual construcor")
+    virtual  SumByValue* clone() const { return new SumByValue(*this); }
+    /// MANDATORY: the only one essential method :
+    virtual  result_type operator() ( argument_a_unless_void ) const
+    { return this->sum ( a_unless_void ) ; }
+    /// OPTIONAL: the specific printout 
+    virtual std::ostream& fillStream ( std::ostream& s ) const 
+    { return s << " ("   << this->func () 
+               << "+"    << this->val  () << ") " ; }
+    /// OPTIONAL: C++ print
+    virtual std::string   toCpp () const 
+    { return " (" 
+        + Gaudi::Utils::toCpp ( this->func () ) + " + " 
+        + Gaudi::Utils::toCpp ( this->val  () ) + ") " ; }
+    // ========================================================================
+  private:
+    // ========================================================================
+    /// The default constructor is disabled 
+    SumByValue();
+    // ========================================================================
+  };  
+  // ==========================================================================
+  /** @class Minus1 
+   *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+   *  @date 2015-01-27
+   */
+#ifdef _GEN_LOKI_VOIDPRIMITIVES
+  template <class TYPE2>
+  class Minus1<void,TYPE2> : public LoKi::MultiplyByValue<void,TYPE2>
+#else
+  template <class TYPE, class TYPE2=double>
+  class Minus1             : public LoKi::MultiplyByValue<TYPE,TYPE2>
+#endif
+  {
+  private:
+    // ========================================================================
+    typedef_void_TYPE
+    /// argument type
+    typedef typename LoKi::Functor<TYPE,TYPE2>::argument    argument    ; 
+    /// result type 
+    typedef typename LoKi::Functor<TYPE,TYPE2>::result_type result_type ; 
+    // constant type 
+    typedef typename LoKi::Constant<TYPE,TYPE2>::T2 T2 ;
+    // ========================================================================
+  public:
+    // ========================================================================
+    /** constructor from the function and the value 
+     *  @param fun the function
+     *  @param val the reference value 
+     *  @param eps the relative precision
+     */
+    Minus1 
+    ( const LoKi::Functor<TYPE,TYPE2>&  fun , 
+      T2                                val )
+      : LoKi::AuxFunBase ( std::tie ( fun , val ) )
+      , LoKi::MultiplyByValue<TYPE,TYPE2>( fun , val ) 
+    {}
+    // ========================================================================
+    /// copy constructor 
+    Minus1 
+    ( const Minus1& right )
+      : LoKi::AuxFunBase                  ( right ) 
+      , LoKi::MultiplyByValue<TYPE,TYPE2> ( right )
+    {}
+    // ========================================================================
+    /// MANDATORY: virtual destructor 
+    virtual ~Minus1(){} ;
+    // ========================================================================
+    /// MANDATORY: clone method ("virtual construcor")
+    virtual  Minus1* clone() const { return new Minus1(*this); }
+    /// MANDATORY: the only one essential method :
+    virtual  result_type operator() ( argument_a_unless_void ) const
+    { return this->minus1 ( a_unless_void ) ; }
+    /// OPTIONAL: the specific printout 
+    virtual std::ostream& fillStream ( std::ostream& s ) const 
+    { return s << " ("   << this->func () 
+               << "-"    << this->val  () << ") " ; }
+    /// OPTIONAL: C++ print
+    virtual std::string   toCpp () const 
+    { return " (" 
+        + Gaudi::Utils::toCpp ( this->func () ) + " - " 
+        + Gaudi::Utils::toCpp ( this->val  () ) + ") " ; }
+    // ========================================================================
+  private:
+    // ========================================================================
+    /// The default constructor is disabled 
+    Minus1();
+    // ========================================================================
+  };  
+  // ==========================================================================
+  /** @class Minus2 
+   *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+   *  @date 2015-01-27
+   */
+#ifdef _GEN_LOKI_VOIDPRIMITIVES
+  template <class TYPE2>
+  class Minus2<void,TYPE2> : public LoKi::MultiplyByValue<void,TYPE2>
+#else
+  template <class TYPE, class TYPE2=double>
+  class Minus2             : public LoKi::MultiplyByValue<TYPE,TYPE2>
+#endif
+  {
+  private:
+    // ========================================================================
+    typedef_void_TYPE
+    /// argument type
+    typedef typename LoKi::Functor<TYPE,TYPE2>::argument    argument    ; 
+    /// result type 
+    typedef typename LoKi::Functor<TYPE,TYPE2>::result_type result_type ; 
+    // constant type 
+    typedef typename LoKi::Constant<TYPE,TYPE2>::T2 T2 ;
+    // ========================================================================
+  public:
+    // ========================================================================
+    /** constructor from the function and the value 
+     *  @param fun the function
+     *  @param val the reference value 
+     *  @param eps the relative precision
+     */
+    Minus2 
+    ( T2                                val ,
+      const LoKi::Functor<TYPE,TYPE2>&  fun )
+      : LoKi::AuxFunBase ( std::tie ( val , fun ) )
+      , LoKi::MultiplyByValue<TYPE,TYPE2>( val , fun ) 
+    {}
+    // ========================================================================
+    /// copy constructor 
+    Minus2 
+    ( const Minus2& right )
+      : LoKi::AuxFunBase                  ( right ) 
+      , LoKi::MultiplyByValue<TYPE,TYPE2> ( right )
+    {}
+    // ========================================================================
+    /// MANDATORY: virtual destructor 
+    virtual ~Minus2(){} ;
+    // ========================================================================
+    /// MANDATORY: clone method ("virtual construcor")
+    virtual  Minus2* clone() const { return new Minus2(*this); }
+    /// MANDATORY: the only one essential method :
+    virtual  result_type operator() ( argument_a_unless_void ) const
+    { return this->minus2 ( a_unless_void ) ; }
+    /// OPTIONAL: the specific printout 
+    virtual std::ostream& fillStream ( std::ostream& s ) const 
+    { return s << " ("   << this->val  () 
+               << "-"    << this->func () << ") " ; }
+    /// OPTIONAL: C++ print
+    virtual std::string   toCpp () const 
+    { return " (" 
+        + Gaudi::Utils::toCpp ( this->val  () ) + " - " 
+        + Gaudi::Utils::toCpp ( this->func () ) + ") " ; }
+    // ========================================================================
+  private:
+    // ========================================================================
+    /// The default constructor is disabled 
+    Minus2();
+    // ========================================================================
+  };  
+  // ==========================================================================
+  /** @class Divide1 
+   *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+   *  @date 2015-01-27
+   */
+#ifdef _GEN_LOKI_VOIDPRIMITIVES
+  template <class TYPE2>
+  class Divide1<void,TYPE2> : public LoKi::MultiplyByValue<void,TYPE2>
+#else
+  template <class TYPE, class TYPE2=double>
+  class Divide1             : public LoKi::MultiplyByValue<TYPE,TYPE2>
+#endif
+  {
+  private:
+    // ========================================================================
+    typedef_void_TYPE
+    /// argument type
+    typedef typename LoKi::Functor<TYPE,TYPE2>::argument    argument    ; 
+    /// result type 
+    typedef typename LoKi::Functor<TYPE,TYPE2>::result_type result_type ; 
+    // constant type 
+    typedef typename LoKi::Constant<TYPE,TYPE2>::T2 T2 ;
+    // ========================================================================
+  public:
+    // ========================================================================
+    /** constructor from the function and the value 
+     *  @param fun the function
+     *  @param val the reference value 
+     *  @param eps the relative precision
+     */
+    Divide1 
+    ( const LoKi::Functor<TYPE,TYPE2>&  fun , 
+      T2                                val )
+      : LoKi::AuxFunBase ( std::tie ( fun , val ) )
+      , LoKi::MultiplyByValue<TYPE,TYPE2>( fun , val ) 
+    {}
+    // ========================================================================
+    /// copy constructor 
+    Divide1 
+    ( const Divide1& right )
+      : LoKi::AuxFunBase                  ( right ) 
+      , LoKi::MultiplyByValue<TYPE,TYPE2> ( right )
+    {}
+    // ========================================================================
+    /// MANDATORY: virtual destructor 
+    virtual ~Divide1(){} ;
+    // ========================================================================
+    /// MANDATORY: clone method ("virtual construcor")
+    virtual  Divide1* clone() const { return new Divide1(*this); }
+    /// MANDATORY: the only one essential method :
+    virtual  result_type operator() ( argument_a_unless_void ) const
+    { return this->divide1 ( a_unless_void ) ; }
+    /// OPTIONAL: the specific printout 
+    virtual std::ostream& fillStream ( std::ostream& s ) const 
+    { return s << " ("   << this->func () 
+               << "/"    << this->val  () << ") " ; }
+    /// OPTIONAL: C++ print
+    virtual std::string   toCpp () const 
+    { return " (" 
+        + Gaudi::Utils::toCpp ( this->func () ) + " / " 
+        + Gaudi::Utils::toCpp ( this->val  () ) + ") " ; }
+    // ========================================================================
+  private:
+    // ========================================================================
+    /// The default constructor is disabled 
+    Divide1();
+    // ========================================================================
+  };
+  // ==========================================================================
+  /** @class Divide2 
+   *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+   *  @date 2015-01-27
+   */
+#ifdef _GEN_LOKI_VOIDPRIMITIVES
+  template <class TYPE2>
+  class Divide2<void,TYPE2> : public LoKi::MultiplyByValue<void,TYPE2>
+#else
+  template <class TYPE, class TYPE2=double>
+  class Divide2             : public LoKi::MultiplyByValue<TYPE,TYPE2>
+#endif
+  {
+  private:
+    // ========================================================================
+    typedef_void_TYPE
+    /// argument type
+    typedef typename LoKi::Functor<TYPE,TYPE2>::argument    argument    ; 
+    /// result type 
+    typedef typename LoKi::Functor<TYPE,TYPE2>::result_type result_type ; 
+    // constant type 
+    typedef typename LoKi::Constant<TYPE,TYPE2>::T2 T2 ;
+    // ========================================================================
+  public:
+    // ========================================================================
+    /** constructor from the function and the value 
+     *  @param fun the function
+     *  @param val the reference value 
+     *  @param eps the relative precision
+     */
+    Divide2 
+    ( T2                                val ,
+      const LoKi::Functor<TYPE,TYPE2>&  fun )
+      : LoKi::AuxFunBase ( std::tie ( val , fun ) )
+      , LoKi::MultiplyByValue<TYPE,TYPE2>( val , fun ) 
+    {}
+    // ========================================================================
+    /// copy constructor 
+    Divide2 
+    ( const Divide2& right )
+      : LoKi::AuxFunBase                  ( right ) 
+      , LoKi::MultiplyByValue<TYPE,TYPE2> ( right )
+    {}
+    // ========================================================================
+    /// MANDATORY: virtual destructor 
+    virtual ~Divide2(){} ;
+    // ========================================================================
+    /// MANDATORY: clone method ("virtual construcor")
+    virtual  Divide2* clone() const { return new Divide2(*this); }
+    /// MANDATORY: the only one essential method :
+    virtual  result_type operator() ( argument_a_unless_void ) const
+    { return this->divide2 ( a_unless_void ) ; }
+    /// OPTIONAL: the specific printout 
+    virtual std::ostream& fillStream ( std::ostream& s ) const 
+    { return s << " ("   << this->val  () 
+               << "/"    << this->func () << ") " ; }
+    /// OPTIONAL: C++ print
+    virtual std::string   toCpp () const 
+    { return " (" 
+        + Gaudi::Utils::toCpp ( this->val  () ) + " / " 
+        + Gaudi::Utils::toCpp ( this->func () ) + ") " ; }
+    // ========================================================================
+  private:
+    // ========================================================================
+    /// The default constructor is disabled 
+    Divide2();
     // ========================================================================
   };
   // ==========================================================================
@@ -2294,7 +3205,8 @@ namespace LoKi
     ( const double                      low  , 
       const LoKi::Functor<TYPE,double>& fun  , 
       const double                      high )
-      : LoKi::Functor<TYPE,bool> () 
+      : LoKi::AuxFunBase ( std::tie ( low , fun , high ) ) 
+      , LoKi::Functor<TYPE,bool> () 
       , m_low  ( low  ) 
       , m_fun  ( fun  ) 
       , m_high ( high ) 
@@ -2367,7 +3279,8 @@ namespace LoKi
     ( const LoKi::Functor<TYPE,double>& low  , 
       const LoKi::Functor<TYPE,double>& fun  , 
       const LoKi::Functor<TYPE,double>& high ) 
-      : LoKi::Functor<TYPE,bool> () 
+      : LoKi::AuxFunBase ( std::tie ( low , fun , high ) ) 
+      , LoKi::Functor<TYPE,bool> () 
       , m_low  ( low  ) 
       , m_fun  ( fun  ) 
       , m_high ( high ) 
@@ -2381,7 +3294,8 @@ namespace LoKi
     ( const double                      low  , 
       const LoKi::Functor<TYPE,double>& fun  , 
       const LoKi::Functor<TYPE,double>& high ) 
-      : LoKi::Functor<TYPE,bool> () 
+      : LoKi::AuxFunBase ( std::tie ( low , fun , high ) )  
+      , LoKi::Functor<TYPE,bool> () 
       , m_low  ( LoKi::Constant<TYPE,double> ( low ) ) 
       , m_fun  ( fun  ) 
       , m_high ( high ) 
@@ -2395,7 +3309,8 @@ namespace LoKi
     ( const LoKi::Functor<TYPE,double>& low  , 
       const LoKi::Functor<TYPE,double>& fun  , 
       const double                      high ) 
-      : LoKi::Functor<TYPE,bool> () 
+      : LoKi::AuxFunBase ( std::tie ( low , fun , high ) ) 
+      , LoKi::Functor<TYPE,bool> () 
       , m_low  ( low  ) 
       , m_fun  ( fun  ) 
       , m_high ( LoKi::Constant<TYPE,double> ( high ) ) 
@@ -2447,7 +3362,7 @@ namespace LoKi
   class EqualToList<void> : public LoKi::Functor<void,bool>
 #else
   template <class TYPE>
-  class EqualToList : public LoKi::Functor<TYPE,bool>
+  class EqualToList       : public LoKi::Functor<TYPE,bool>
 #endif
   {
   private:
@@ -2467,7 +3382,8 @@ namespace LoKi
     EqualToList
     ( const LoKi::Functor<TYPE,double>&  fun , 
       const std::vector<double>&         vct ) 
-      : LoKi::Functor<TYPE,bool>() 
+      : LoKi::AuxFunBase ( std::tie ( fun , vct ) ) 
+      , LoKi::Functor<TYPE,bool>() 
       , m_fun ( fun ) 
       , m_vct ( vct ) 
     { 
@@ -2480,7 +3396,8 @@ namespace LoKi
     EqualToList
     ( const LoKi::Functor<TYPE,double>&  fun , 
       const std::vector<int>&            vct ) 
-      : LoKi::Functor<TYPE,bool>() 
+      : LoKi::AuxFunBase ( std::tie ( fun , vct ) ) 
+      , LoKi::Functor<TYPE,bool>() 
       , m_fun ( fun ) 
       , m_vct ( vct.begin() , vct.end() ) 
     { 
@@ -2493,7 +3410,8 @@ namespace LoKi
     EqualToList
     ( const LoKi::Functor<TYPE,double>&  fun , 
       const std::vector<unsigned int>&   vct ) 
-      : LoKi::Functor<TYPE,bool>() 
+      : LoKi::AuxFunBase ( std::tie ( fun , vct ) ) 
+      , LoKi::Functor<TYPE,bool>() 
       , m_fun ( fun ) 
       , m_vct ( vct.begin() , vct.end() ) 
     { 
@@ -2587,7 +3505,7 @@ namespace LoKi
   class NotEqualToList<void> : public LoKi::EqualToList<void>
 #else
   template <class TYPE>
-  class NotEqualToList : public LoKi::EqualToList<TYPE>
+  class NotEqualToList       : public LoKi::EqualToList<TYPE>
 #endif
   {
   private:
@@ -2607,7 +3525,8 @@ namespace LoKi
     NotEqualToList
     ( const LoKi::Functor<TYPE,double>&  fun , 
       const std::vector<double>&         vct ) 
-      : LoKi::EqualToList<TYPE>( fun , vct ) 
+      : LoKi::AuxFunBase ( std::tie ( fun , vct ) ) 
+      , LoKi::EqualToList<TYPE>( fun , vct ) 
     {}
     /** constructor from the function and the value 
      *  @param fun the function
@@ -2616,7 +3535,8 @@ namespace LoKi
     NotEqualToList
     ( const LoKi::Functor<TYPE,double>&  fun , 
       const std::vector<int>&            vct ) 
-      : LoKi::EqualToList<TYPE>( fun , vct ) 
+      : LoKi::AuxFunBase ( std::tie ( fun , vct ) ) 
+      , LoKi::EqualToList<TYPE>( fun , vct ) 
     {}
     /** constructor from the function and the value 
      *  @param fun the function
@@ -2624,8 +3544,9 @@ namespace LoKi
      */
     NotEqualToList
     ( const LoKi::Functor<TYPE,double>&  fun , 
-      const std::vector<unsigned int>&            vct ) 
-      : LoKi::EqualToList<TYPE>( fun , vct ) 
+      const std::vector<unsigned int>&   vct ) 
+      : LoKi::AuxFunBase ( std::tie ( fun , vct ) ) 
+      , LoKi::EqualToList<TYPE>( fun , vct ) 
     {}
     /** constructor from the function and the value 
      *  @param fun the function
@@ -2690,7 +3611,8 @@ namespace LoKi
     XScaler 
     ( const LoKi::Functor<TYPE,bool>& cut   , 
       const LoKi::Functor<void,bool>& scale ) 
-      : LoKi::Functor<TYPE,bool>()
+      : LoKi::AuxFunBase ( std::tie ( cut , scale ) )  
+      , LoKi::Functor<TYPE,bool>()
       , m_cut    ( cut   ) 
       , m_scaler ( scale ) 
     {}
@@ -2752,7 +3674,8 @@ namespace LoKi
     /// constructor from the functor  
     Modulo ( const LoKi::Functor<TYPE,double>& divident  , 
              const unsigned int                divisor   )
-      : LoKi::Functor<TYPE,double>() 
+      : LoKi::AuxFunBase ( std::tie ( divident , divisor ) ) 
+      , LoKi::Functor<TYPE,double>() 
       , m_divident ( divident  ) 
       , m_divisor  ( divisor   ) 
     {} 
@@ -2808,8 +3731,9 @@ namespace LoKi
     // ========================================================================
     /// constructor from the functor and the fake argument  
     Round ( const LoKi::Functor<TYPE,double>&    fun      , 
-            const unsigned int                /* fake */  )
-      : LoKi::Functor<TYPE,double>() 
+            const unsigned int                   fake     )
+      : LoKi::AuxFunBase ( std::tie ( fun , fake ) )  
+      , LoKi::Functor<TYPE,double>() 
       , m_fun  ( fun ) 
     {} 
     /// virtual destructor 
@@ -2866,7 +3790,8 @@ namespace LoKi
     /// constructor from the functor 
     JBit ( const LoKi::Functor<TYPE,double>&    fun ,  
            const unsigned int                   j   )
-      : LoKi::Functor<TYPE,bool>() 
+      : LoKi::AuxFunBase ( std::tie ( fun , j ) )       
+      , LoKi::Functor<TYPE,bool>() 
       , m_fun  ( fun ) 
       , m_j    ( j   ) 
     {
@@ -2910,7 +3835,7 @@ namespace LoKi
   };  
   // ==========================================================================
   /** @class JBits
-   *  get the content between j1 andj2  bit of value.
+   *  get the content between j1 and j2  bit of value.
    *  The action :  
    *   - 1. f -> round ( f ) 
    *   - 2. f -> abs   ( f ) 
@@ -2941,10 +3866,11 @@ namespace LoKi
     JBits ( const LoKi::Functor<TYPE,double>&    fun ,  
             const unsigned int                   j1  ,
             const unsigned int                   j2  )
-      : LoKi::Functor<TYPE,double>() 
+      : LoKi::AuxFunBase ( std::tie ( fun , j1 , j2 ) )       
+      , LoKi::Functor<TYPE,double>() 
       , m_fun  ( fun )
-      ,  m_j1  ( j1  ) 
-      ,  m_j2  ( j2  ) 
+      , m_j1  ( j1  ) 
+      , m_j2  ( j2  ) 
     {
       // 
       BOOST_STATIC_ASSERT( boost::integer_traits<unsigned long>::is_specialized

@@ -1,5 +1,5 @@
 <!--
-     * $Id: LoKiNumbers.xml 177802 2014-09-17 15:43:12Z marcocle $
+     * $Id: LoKiNumbers.xml 182778 2015-01-19 12:35:09Z ibelyaev $
      * ========================================================================
      * @file
      * The XML seleciton file to build Reflex
@@ -103,6 +103,7 @@
     <class pattern="LoKi::Scalers::*">
       <method name="=" />
     </class>
+
 
   </exclusion>
 

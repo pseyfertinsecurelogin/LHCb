@@ -31,6 +31,7 @@
   
   <class name    = "Gaudi::Math::EigenSystems"            />
   <class name    = "Gaudi::Math::Chebyshev"               />
+  <class name    = "Gaudi::Math::ChebyshevU"              />
   <class name    = "Gaudi::Math::Legendre"                />  
   <class name    = "Gaudi::Math::Hermite"                 />  
   <class name    = "Gaudi::Math::Bukin"                   />
@@ -70,16 +71,23 @@
   <class name    = "Gaudi::Math::Kstar0"           />
   <class name    = "Gaudi::Math::Phi0"             />
   <class name    = "Gaudi::Math::Rho0FromEtaPrime" />
-  <class name    = "Gaudi::Math::WorkSpace"        >
+  <class name    = "Gaudi::Math::WorkSpace"         >
     <field name  = "m_workspace" transient = "true"/>      
   </class>
-  <class name    = "Gaudi::Math::Positive"         />
+  <class name    = "Gaudi::Math::PolySum"          />
+  <class name    = "Gaudi::Math::ChebyshevSum"     />
+  <class name    = "Gaudi::Math::LegendreSum"      />
+  <class name    = "Gaudi::Math::Polynomial"       />
   <class name    = "Gaudi::Math::Bernstein"        />
+  <class name    = "Gaudi::Math::Positive"         />
+  <class name    = "Gaudi::Math::Monothonic"       />
+  <class name    = "Gaudi::Math::Convex"           />
   <class name    = "Gaudi::Math::Bernstein::Basic" />
   <class name    = "Gaudi::Math::Positive2D"       />
   <class name    = "Gaudi::Math::Bernstein2D"      />
   <class name    = "Gaudi::Math::Positive2DSym"    />
   <class name    = "Gaudi::Math::Bernstein2DSym"   />
+  <class name    = "Gaudi::Math::Sigmoid"          />
   <class name    = "Gaudi::Math::PS2DPol"          />
   <class name    = "Gaudi::Math::PS2DPolSym"       />
   <class name    = "Gaudi::Math::ExpoPS2DPol"      />
@@ -111,8 +119,8 @@
   <class name    = "Gaudi::Math::Interp2D"         />
   <class name    = "Gaudi::Math::BSpline"          />
   <class name    = "Gaudi::Math::PositiveSpline"   />
-  <class name    = "Gaudi::Math::IncreasingSpline" />
-  <class name    = "Gaudi::Math::DecreasingSpline" />
+  <class name    = "Gaudi::Math::MonothonicSpline" />
+  <class name    = "Gaudi::Math::ConvexSpline"     />
 
   <class name    = "Gaudi::Math::Linear"       />
   <class name    = "Gaudi::Math::LinearErr"    />
@@ -152,9 +160,19 @@
   <function name = "Gaudi::Math::sin"             />
   <function name = "Gaudi::Math::cos"             />
   <function name = "Gaudi::Math::tan"             />
+  <function name = "Gaudi::Math::asin"            />
+  <function name = "Gaudi::Math::acos"            />
+  <function name = "Gaudi::Math::atan"            />
   <function name = "Gaudi::Math::sinh"            />
   <function name = "Gaudi::Math::cosh"            />
   <function name = "Gaudi::Math::tanh"            />
+  <function name = "Gaudi::Math::asinh"           />
+  <function name = "Gaudi::Math::acosh"           />
+  <function name = "Gaudi::Math::atanh"           />
+  <function name = "Gaudi::Math::erf"             />
+  <function name = "Gaudi::Math::erfc"            />
+  <function name = "Gaudi::Math::tgamma"          />
+  <function name = "Gaudi::Math::lgamma"          />
   <function name = "Gaudi::Math::chi2"            />
   <function name = "Gaudi::Math::mean"            />
   <function name = "Gaudi::Math::asym"            />
@@ -169,6 +187,7 @@
   <function name = "Gaudi::Math::divide"          />
   <function name = "Gaudi::Math::sumabs"          />
   <function name = "Gaudi::Math::abssum"          />
+  <function name = "Gaudi::Math::horner_aN"       />
   <function name = "Gaudi::Math::binomEff"        />
   <function name = "Gaudi::Math::binomEff2"       />
   <function name = "Gaudi::Math::wilsonEff"       />
@@ -176,6 +195,10 @@
   <function name = "Gaudi::Math::exclusiveEff"    />
   <function name = "Gaudi::Math::zechEff"         />
   <function name = "Gaudi::Math::effJackknife"    />
+
+  <function name = "Gaudi::Math::clenshaw_chebyshev" />
+  <function name = "Gaudi::Math::clenshaw_legendre"  />
+  <function name = "Gaudi::Math::clenshaw_polynom"   />
   
   <function name    = "LHCb::Math::round"                  />
   <function name    = "LHCb::Math::isint"                  />

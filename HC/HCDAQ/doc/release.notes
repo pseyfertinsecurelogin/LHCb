@@ -4,6 +4,13 @@
 ! Purpose     : Decoding of Herschel raw banks
 !-----------------------------------------------------------------------------
 
+!========================= HCDAQ v1r2 2015-02-23 =========================
+! 2015-02-02 - Heinrich Schindler
+ - Protect against inserting digits with existing cell IDs.
+
+! 2015-01-19 - Heinrich Schindler
+ - Add PS/SPD bank decoding.
+
 !========================= HCDAQ v1r1 2014-12-11 =========================
 ! 2014-12-04 - Heinrich Schindler
  - Add error bank decoding.
