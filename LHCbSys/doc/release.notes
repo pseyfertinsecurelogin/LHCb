@@ -5,6 +5,9 @@
 ! Purpose     : LHCb base classes and event model
 !-----------------------------------------------------------------------------
 
+</PRE><H1><A NAME=v32r3g3>2011-11-15 LHCbSys v32r3g3</A></H1><PRE>
+This version uses Gaudi v22r5 and LCG_61b
+
 </PRE><H1><A NAME=v32r3g2>2011-11-08 LHCbSys v32r3g2</A></H1><PRE>
 Re-build.
 
