@@ -1,9 +1,13 @@
-// $Id: Kinematics.h,v 1.3 2009-06-13 18:30:12 ibelyaev Exp $
+// $Id: Kinematics.h,v 1.6 2010-06-16 10:58:56 ibelyaev Exp $
 // ============================================================================
 #ifndef LHCBMATH_KINEMATICS_H 
 #define LHCBMATH_KINEMATICS_H 1
 // ============================================================================
 // Include files
+// ============================================================================
+// STD & STL 
+// ============================================================================
+#include <cmath>
 // ============================================================================
 // ROOT
 // ============================================================================
@@ -23,6 +27,13 @@ namespace Gaudi
   // ==========================================================================
   namespace Math 
   {   
+    // ========================================================================
+    /** helper function ("signed sqrt") 
+     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+     *  @date 2010-05-24
+     */
+    inline double _sqrt_ ( const double value ) 
+    { return  0 <= value ? std::sqrt ( value ) : -std::sqrt ( - value ) ; }
     // ========================================================================
     /** evaluate the dispersion of M^2 from the particle 4-vector and 
      *  the covarinace matrix
@@ -56,6 +67,17 @@ namespace Gaudi
       return ROOT::Math::Similarity ( covariance , dM2dp ) ;
     }
     // ========================================================================
+    template <class C, class T, class B , class R>
+    inline double
+    sigma2mass2 
+    ( const ROOT::Math::LorentzVector<C>& momentum   , 
+      const ROOT::Math::Expr<B,T,4,4,R> & matrix     ) 
+    {
+      return sigma2mass2 
+        ( momentum , 
+          ROOT::Math::SMatrix<T,4,4,ROOT::Math::MatRepSym<T,4> > ( matrix ) ) ;
+    }
+    // ========================================================================
     /** evaluate the dispersion of M from the particle 4-vector and 
      *  the covarinace matrix
      *
@@ -80,10 +102,22 @@ namespace Gaudi
     ( const ROOT::Math::LorentzVector<C>&                           momentum   , 
       const ROOT::Math::SMatrix<T,4,4,ROOT::Math::MatRepSym<T,4> >& covariance ) 
     {
-      const double s2m2 = sigma2mass2( momentum , covariance ) ;
+      const double s2m2 = sigma2mass2 ( momentum , covariance ) ;
       const double m2   = momentum.M2 () ;
-      if ( 0 < m2 ) { return 0.25 * s2m2 / m2 ; }
-      return -1000000 ;                                          // RETURN 
+      if ( 0 != m2 ) { return 0.25 * s2m2 / m2 ; }                    // RETURN
+      return -1.E+24;                                                 // RETURN 
+    }
+    // ========================================================================
+    template <class C, class T, class B, class R>
+    inline double
+    sigma2mass 
+    ( const ROOT::Math::LorentzVector<C>& momentum   , 
+      const ROOT::Math::Expr<B,T,4,4,R> & covariance ) 
+    {
+      const double s2m2 = sigma2mass2 ( momentum , covariance ) ;
+      const double m2   = momentum.M2 () ;
+      if ( 0 != m2 ) { return 0.25 * s2m2 / m2 ; }                    // RETURN
+      return -1.E+24;                                                 // RETURN 
     }
     // ========================================================================
     /** evaluate sigma(M) from the particle 4-vector and 
@@ -111,8 +145,17 @@ namespace Gaudi
       const ROOT::Math::SMatrix<T,4,4,ROOT::Math::MatRepSym<T,4> >& covariance ) 
     {
       const double s2m = sigma2mass ( momentum , covariance ) ;
-      if ( 0 <= s2m ) { return std::sqrt ( s2m ) ; }
-      return -1000000 ;                                          // RETURN 
+      return _sqrt_ ( s2m ) ;
+    }
+    // =========================================================================
+    template <class C, class T, class B, class R>
+    inline double
+    sigmamass 
+    ( const ROOT::Math::LorentzVector<C>& momentum   , 
+      const ROOT::Math::Expr<B,T,4,4,R> & covariance ) 
+    {
+      const double s2m = sigma2mass ( momentum , covariance ) ;
+      return _sqrt_ ( s2m ) ;
     }
     // ========================================================================
     /** evaluate the chi2 of the mass 
@@ -149,11 +192,197 @@ namespace Gaudi
       return ( dm2 * dm2 ) * s2 ;
     }
     // ========================================================================
-  } // end of namespace Gaudi::Math
+    template <class C, class T, class B, class R>
+    inline double chi2mass 
+    ( const double                        mass       , 
+      const ROOT::Math::LorentzVector<C>& momentum   , 
+      const ROOT::Math::Expr<B,T,4,4,R> & covariance ) 
+    {
+      // sigma^2(M^2):
+      const double s2 = 1.0 / Gaudi::Math::sigma2mass2 ( momentum , covariance ) ;
+      // delta(M^2)
+      const double dm2 = momentum.M2() - mass * mass ;
+      //  (delta^2(M^2))/(sigma^2(M^2))
+      return ( dm2 * dm2 ) * s2 ;
+    }
+    // ========================================================================
+    /** evaluate the dispersion of p from the particle 4-vector and 
+     *  the covarinace matrix
+     *
+     *  @code
+     *
+     *   const LHCb::Particle* p = ... ;
+     *   double s2p = sigma2p ( p -> momentum() , p -> momCovMatrix() ) ; 
+     *
+     *  @endcode
+     *  
+     *  @param momentum   (in) the particle momentum
+     *  @param covariance (in) 4x4 covarinnce matrix
+     *  @return the estimate for dispersion of p
+     *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
+     *  @date 2010-05-25
+     */
+    template <class C, class T>
+    inline double
+    sigma2p
+    ( const ROOT::Math::LorentzVector<C>&                           momentum   , 
+      const ROOT::Math::SMatrix<T,4,4,ROOT::Math::MatRepSym<T,4> >& covariance ) 
+    {
+      // get the vector d(p)/dp_i :
+      ROOT::Math::SVector<T,4> dPdP_i;
+      const double P = momentum.P() ;
+      dPdP_i [0] = momentum.Px () / P ;
+      dPdP_i [1] = momentum.Py () / P ;
+      dPdP_i [2] = momentum.Pz () / P ;
+      dPdP_i [3] = 0.0 ;
+      //
+      return ROOT::Math::Similarity ( covariance , dPdP_i ) ;
+    }
+    // ========================================================================
+    template <class C, class T, class B, class R>
+    inline double
+    sigma2p
+    ( const ROOT::Math::LorentzVector<C>& momentum   , 
+      const ROOT::Math::Expr<B,T,4,4,R>&  covariance ) 
+    {
+      // get the vector d(p)/dp_i :
+      ROOT::Math::SVector<T,4> dPdP_i;
+      const double P = momentum.P() ;
+      dPdP_i [0] = momentum.Px () / P ;
+      dPdP_i [1] = momentum.Py () / P ;
+      dPdP_i [2] = momentum.Pz () / P ;
+      dPdP_i [3] = 0.0 ;
+      //
+      return ROOT::Math::Similarity ( covariance , dPdP_i ) ;
+    }
+    // ========================================================================
+    /** evaluate the sigma of |p| from the particle 4-vector and 
+     *  the covarinace matrix
+     *
+     *  @code
+     *
+     *   const LHCb::Particle* p = ... ;
+     *   double sp = sigmap ( p -> momentum() , p -> momCovMatrix() ) ; 
+     *
+     *  @endcode
+     *  
+     *  @param momentum   (in) the particle momentum
+     *  @param covariance (in) 4x4 covarinnce matrix
+     *  @return the estimate for sigma of p
+     *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
+     *  @date 2010-05-25
+     */
+    template <class C, class T>
+    inline double
+    sigmap
+    ( const ROOT::Math::LorentzVector<C>&                           momentum   , 
+      const ROOT::Math::SMatrix<T,4,4,ROOT::Math::MatRepSym<T,4> >& covariance ) 
+    {
+      const double s2p = sigma2p ( momentum , covariance ) ;
+      return _sqrt_ ( s2p ) ;
+    }
+    // ========================================================================
+    template <class C, class T, class B, class R>
+    inline double
+    sigmap
+    ( const ROOT::Math::LorentzVector<C>& momentum   , 
+      const ROOT::Math::Expr<B,T,4,4,R> & covariance ) 
+    {
+      const double s2p = sigma2p ( momentum , covariance ) ;
+      return _sqrt_ ( s2p ) ;
+    }
+    // ========================================================================
+    /** evaluate the dispersion of pt from the particle 4-vector and 
+     *  the covariance matrix
+     *
+     *  @code
+     *
+     *   const LHCb::Particle* p = ... ;
+     *   double s2pt = sigma2pt ( p -> momentum() , p -> momCovMatrix() ) ; 
+     *
+     *  @endcode
+     *  
+     *  @param momentum   (in) the particle momentum
+     *  @param covariance (in) 4x4 covarinnce matrix
+     *  @return the estimate for dispersion of pt
+     *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
+     *  @date 2010-05-25
+     */
+    template <class C, class T>
+    inline double
+    sigma2pt
+    ( const ROOT::Math::LorentzVector<C>&                           momentum   , 
+      const ROOT::Math::SMatrix<T,4,4,ROOT::Math::MatRepSym<T,4> >& covariance ) 
+    {
+      // get the vector d(pt)/dp_i :
+      const double _Pt = momentum.Pt () ;
+      const double _ax = momentum.Px () / _Pt ;
+      const double _ay = momentum.Py () / _Pt ;
+      //
+      return 
+        covariance ( 0 , 0 ) * _ax * _ax       + 
+        covariance ( 0 , 1 ) * _ay * _ay * 2.0 +
+        covariance ( 1 , 1 ) * _ay * _ay       ;  
+    }
+    // ========================================================================
+    template <class C, class T, class B, class R>
+    inline double
+    sigma2pt
+    ( const ROOT::Math::LorentzVector<C>& momentum   , 
+      const ROOT::Math::Expr<B,T,4,4,R> & covariance ) 
+    {
+      // get the vector d(pt)/dp_i :
+      const double _Pt = momentum.Pt () ;
+      const double _ax = momentum.Px () / _Pt ;
+      const double _ay = momentum.Py () / _Pt ;
+      //
+      return 
+        covariance ( 0 , 0 ) * _ax * _ax       + 
+        covariance ( 0 , 1 ) * _ay * _ay * 2.0 +
+        covariance ( 1 , 1 ) * _ay * _ay       ;
+    }
+    // ========================================================================
+    /** evaluate the sigma of pt from the particle 4-vector and 
+     *  the covarinace matrix
+     *
+     *  @code
+     *
+     *   const LHCb::Particle* p = ... ;
+     *   double spt = sigmapt ( p -> momentum() , p -> momCovMatrix() ) ; 
+     *
+     *  @endcode
+     *  
+     *  @param momentum   (in) the particle momentum
+     *  @param covariance (in) 4x4 covarinnce matrix
+     *  @return the estimate for sigma of pt
+     *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
+     *  @date 2010-05-25
+     */
+    template <class C, class T>
+    inline double
+    sigmapt
+    ( const ROOT::Math::LorentzVector<C>&                           momentum   , 
+      const ROOT::Math::SMatrix<T,4,4,ROOT::Math::MatRepSym<T,4> >& covariance ) 
+    {
+      const double s2pt = sigma2pt ( momentum , covariance ) ;
+      return _sqrt_ ( s2pt ) ;
+    }
+    // ========================================================================
+    template <class C, class T, class B, class R>
+    inline double
+    sigmapt
+    ( const ROOT::Math::LorentzVector<C>& momentum   , 
+      const ROOT::Math::Expr<B,T,4,4,R> & covariance ) 
+    {
+      const double s2pt = sigma2pt ( momentum , covariance ) ;
+      return _sqrt_ ( s2pt ) ;
+    }
+    // ========================================================================
+  } //                                             end of namespace Gaudi::Math
   // ==========================================================================
-} // end of namespace Gaudi
+} //                                                     end of namespace Gaudi
 // ============================================================================
-// The END
+//                                                                      The END
 // ============================================================================
 #endif // LHCBMATH_KINEMATICS_H
 // ============================================================================

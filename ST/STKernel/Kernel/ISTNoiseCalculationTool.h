@@ -24,22 +24,28 @@ namespace ST {
     /// Calculate the noise for the TELL1 data
     virtual StatusCode updateNoise() = 0;
 
+    /// Return an iterator corresponding to the pedestal value of the first channel for a given TELL1 source ID
+    virtual std::vector<double>::const_iterator pedestalBegin( const unsigned int TELL1SourceID ) const = 0;
+
+    /// Return an iterator corresponding to the pedestal value of the last channel for a given TELL1 source ID
+    virtual std::vector<double>::const_iterator pedestalEnd( const unsigned int TELL1SourceID ) const = 0;
+
     /// Return an iterator corresponding to the RAW RMS noise on the first channel for a given TELL1 source ID
     virtual std::vector<double>::const_iterator rawNoiseBegin(const unsigned int TELL1SourceID ) const = 0;
 
-    /// Return an iterator corresponding to the RAW RMS noise on the first channel for a given TELL1 source ID
+    /// Return an iterator corresponding to the RAW RMS noise on the last channel for a given TELL1 source ID
     virtual std::vector<double>::const_iterator rawNoiseEnd(const unsigned int TELL1SourceID ) const = 0;
 
     /// Return an iterator corresponding to the RAW mean ADC value for the first channel for a given TELL1 source ID
     virtual std::vector<double>::const_iterator rawMeanBegin( const unsigned int TELL1SourceID ) const = 0;
 
-    /// Return an iterator corresponding to the RAW mean ADC value for the first channel for a given TELL1 source ID
+    /// Return an iterator corresponding to the RAW mean ADC value for the last channel for a given TELL1 source ID
     virtual std::vector<double>::const_iterator rawMeanEnd( const unsigned int TELL1SourceID ) const = 0;
 
     /// Return an iterator corresponding to the RAW mean squared ADC value for the first channel for a given TELL1 source ID
     virtual std::vector<double>::const_iterator rawMeanSquaredBegin( const unsigned int TELL1SourceID ) const = 0;
 
-    /// Return an iterator corresponding to the RAW mean squared ADC value for the first channel for a given TELL1 source ID
+    /// Return an iterator corresponding to the RAW mean squared ADC value for the last channel for a given TELL1 source ID
     virtual std::vector<double>::const_iterator rawMeanSquaredEnd( const unsigned int TELL1SourceID ) const = 0;
 
     /// Return an iterator corresponding to the number of events containing data in the first PP for a given TELL1 source ID
@@ -51,19 +57,19 @@ namespace ST {
     /// Return an iterator corresponding to the CMS RMS noise on the first channel for a given TELL1 source ID
     virtual std::vector<double>::const_iterator cmsNoiseBegin(const unsigned int TELL1SourceID ) const = 0;
 
-    /// Return an iterator corresponding to the CMS RMS noise on the first channel for a given TELL1 source ID
+    /// Return an iterator corresponding to the CMS RMS noise on the last channel for a given TELL1 source ID
     virtual std::vector<double>::const_iterator cmsNoiseEnd(const unsigned int TELL1SourceID ) const = 0;
 
     /// Return an iterator corresponding to the CMS mean ADC value for the first channel for a given TELL1 source ID
     virtual std::vector<double>::const_iterator cmsMeanBegin( const unsigned int TELL1SourceID ) const = 0;
 
-    /// Return an iterator corresponding to the CMS mean ADC value for the first channel for a given TELL1 source ID
+    /// Return an iterator corresponding to the CMS mean ADC value for the last channel for a given TELL1 source ID
     virtual std::vector<double>::const_iterator cmsMeanEnd( const unsigned int TELL1SourceID ) const = 0;
 
     /// Return an iterator corresponding to the CMS mean squared ADC value for the first channel for a given TELL1 source ID
     virtual std::vector<double>::const_iterator cmsMeanSquaredBegin( const unsigned int TELL1SourceID ) const = 0;
 
-    /// Return an iterator corresponding to the CMS mean squared ADC value for the first channel for a given TELL1 source ID
+    /// Return an iterator corresponding to the CMS mean squared ADC value for the last channel for a given TELL1 source ID
     virtual std::vector<double>::const_iterator cmsMeanSquaredEnd( const unsigned int TELL1SourceID ) const = 0;
 
     /// Return an iterator corresponding to the number of events containing data in the first PP for a given TELL1 source ID
@@ -81,6 +87,12 @@ namespace ST {
     /** Number of events to be skipped. Useful when running over
         common-mode-subtracted data where the pedestals have not been calculated. **/
     virtual int skipEvents() const = 0;
+
+    /// Return an iterator corresponding to the source ID of the first TELL1 in the event containing an NZS bank
+    virtual std::vector<unsigned int>::const_iterator tell1WithNZSBegin( ) const = 0;
+    
+    /// Return an iterator corresponding to the source ID of the last TELL1 in the event containing an NZS bank
+    virtual std::vector<unsigned int>::const_iterator tell1WithNZSEnd( ) const = 0;
 
   public:
     virtual std::vector<double> rawMean(const unsigned int TELL) const = 0;// {return m_rawMean[TELL];} ;

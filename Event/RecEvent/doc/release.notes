@@ -1,9 +1,22 @@
 !-----------------------------------------------------------------------------
-! $Id: release.notes,v 1.145 2010-05-22 09:34:09 cattanem Exp $
+! $Id: release.notes,v 1.146 2010-06-01 09:25:12 pkoppenb Exp $
 ! Package     : Event/RecEvent
 ! Responsible : Marco Cattaneo
 ! Purpose     : LHCb Event model. Reconstruction classes (Brunel output) 
 !-----------------------------------------------------------------------------
+
+!========================= RecEvent v2r29 2010-06-20 =========================
+! 2010-06-20 - Chris Jones
+ - Fix threshold setting methods in RichPID
+
+! 2010-06-16 - Chris Jones
+ - Add a human readable implementation of fillStream to LHCb::RichPID
+
+! 2010-06-10 - Wouter Hulsbergen
+ - added p3 and cov6 methods to TwoProngVertex
+
+! 2010-06-01 - Patrick Koppenburg
+ - Removed SelResult class
 
 !========================= RecEvent v2r28 2010-05-22 =========================
 ! 2010-05-21 - Olivier Deschamps

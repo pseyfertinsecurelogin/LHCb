@@ -1,4 +1,4 @@
-! $Id: release.notes,v 1.198 2010-05-21 12:50:56 cattanem Exp $ 
+! $Id: release.notes,v 1.204 2010-06-05 20:13:30 ibelyaev Exp $ 
 ! -----------------------------------------------------------------------------
 ! Package     : Phys/LoKiCore
 ! Responsible : Vanya BELYAEV ibelyaev@physics.syr.edu
@@ -14,6 +14,59 @@
 !   A.Golutvin, P.Koppenburg have been used in the design.
 ! 
 ! -----------------------------------------------------------------------------
+
+! =========================== LoKiCore v10r2 2010-06-19 =======================
+! 2010-06-19 - Vanya Belyaev
+
+ - Primitives:
+    fix the MAJOR bug in boolean operators 
+    the bug has been incrodiced recently with 
+    reshuffling of line sin Primitives 
+
+! 2010-06-05 - Vanya Belyaev
+
+ - add more operations with streamers :
+
+     union
+     intersection 
+     difference
+     sym_difference 
+     incldues 
+
+ - reshuffle many lines in decorators 
+
+! 2010-06-04 - Vanya Belyaev
+
+ - LoKi/Constants.h
+
+    redefine some numerical 'InvalidConstants' 
+
+
+! 2010-06-02 - Vanya Belyaev
+ 
+ - LoKi/Kinematics.h 
+
+    add functions for evaluation of ``transversity-angles''
+
+
+! 2010-06-01 - Vanya Belyaev
+
+ - add more functions for decay finders 
+
+! 2010-05-30 - Vanya Belyaev
+
+ - small polishing of functions 
+
+! 2010-05-29 - Vanya Belyaev
+
+   DecayFinder:
+
+     add more methods ...
+
+ - cmt/requirements 
+
+    version inrement to v10r2 
+
 
 ! =========================== LoKiCore v10r1 2010-05-21 =======================
 ! 2010-05-19 - Gerhard Raven

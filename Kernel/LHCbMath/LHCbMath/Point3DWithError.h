@@ -1,4 +1,4 @@
-// $Id: Point3DWithError.h,v 1.4 2009-09-12 19:29:26 ibelyaev Exp $
+// $Id: Point3DWithError.h,v 1.6 2010-05-26 13:19:16 ibelyaev Exp $
 // ============================================================================
 #ifndef LHCBMATH_POINT3DWITHERROR_H 
 #define LHCBMATH_POINT3DWITHERROR_H 1
@@ -6,6 +6,8 @@
 // Include files 
 // ============================================================================
 // GaudiKernel
+// ============================================================================
+#include "GaudiKernel/Kernel.h"
 // ============================================================================
 #include "GaudiKernel/SymmetricMatrixTypes.h"
 #include "GaudiKernel/Point3DTypes.h"
@@ -33,7 +35,7 @@ namespace Gaudi
     class Point3DWithError  ;
     class Vector3DWithError ;
     // ========================================================================
-    class Point3DWithError : public Gaudi::XYZPoint 
+    class GAUDI_API Point3DWithError : public Gaudi::XYZPoint 
     {
     public:
       // ======================================================================
@@ -104,6 +106,12 @@ namespace Gaudi
       // ======================================================================
       operator const Covariance& () const { return cov2  () ; }        
       operator       Covariance& ()       { return m_cov2   ; }        
+      // ======================================================================
+    public: // useful accessors to covarinace matrix 
+      // ======================================================================
+      /// access to elemens of covariance matrix 
+      double cov2 ( unsigned int i , unsigned int j ) const 
+      { return m_cov2 ( i , j ) ; }
       // ======================================================================
     public: // operators 
       // ======================================================================

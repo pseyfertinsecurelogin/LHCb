@@ -1,12 +1,36 @@
 #!/usr/bin/env python
 # =============================================================================
+# $Id: functions.py,v 1.26 2010-06-05 20:13:30 ibelyaev Exp $
+# =============================================================================
 ## @file functions.py LoKiCore/function.py
 #  The set of basic functions for from LoKiCore library
-#  The file is a part of LoKi and Bender projects
+#
+#        This file is a part of LoKi project - 
+#    "C++ ToolKit  for Smart and Friendly Physics Analysis"
+#
+#  The package has been designed with the kind help from
+#  Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas, 
+#  contributions and advices from G.Raven, J.van Tilburg, 
+#  A.Golutvin, P.Koppenburg have been used in the design.
+#
 #  @author Vanya BELYAEV ibelyaev@physics.syr.edu
 # =============================================================================
-""" The set of basic functions for from LoKiCore library """
-_author_ = "Vanya BELYAEV ibelyaev@physics.syr.edu" 
+"""
+The set of basic functions for from LoKiCore library
+
+      This file is a part of LoKi project - 
+``C++ ToolKit  for Smart and Friendly Physics Analysis''
+
+The package has been designed with the kind help from
+Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas, 
+contributions and advices from G.Raven, J.van Tilburg, 
+A.Golutvin, P.Koppenburg have been used in the design.
+
+"""
+# =============================================================================
+__author_   = "Vanya BELYAEV ibelyaev@physics.syr.edu"
+__date__    = "????-??-??"
+__version__ = "CVS Tag: $Name: not supported by cvs2svn $, version $Revision: 1.26 $ "
 # =============================================================================
 from LoKiCore.decorators import LoKi
 
@@ -105,6 +129,7 @@ def equal_to  ( f  , v , *args ) :
     
     
     """
+    
     if args :
         v = doubles ( v , *args )
         return equal_to ( f , v )
@@ -115,7 +140,7 @@ def equal_to  ( f  , v , *args ) :
     elif hasattr ( v , '__equal_to__' ) :
         if list == type ( f )  : f = doubles ( f ) 
         return v.__equal_to__ ( f )
-    
+
     # use the generic version:
     return f == v
 
@@ -209,6 +234,8 @@ def child ( p , *a )  :
     >>> d1  = child ( p , 1 ) 
     >>> d12 = child ( p , 1 , 2 )
 
+    Also one can use ``child-selector'' here
+    
     ATTTENTION: incides starts from 1.
     Index 0 corresponds to the particle itself.
     
@@ -619,6 +646,141 @@ def count ( cut ) :
     return cut.__count__ ()
 
 
+# =============================================================================
+##  create the 'union' for two streamers
+#
+#  @code
+#
+#    >>> fun1 = ...  # the first streamer
+#    >>> fun2 = ...  # the first streamer
+#    
+#    >>> result = union ( fun1 , fun2 )
+#
+#  @endcode     
+#
+#  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
+#  @date 2010-06-06
+def union ( fun1 , fun2 ) :
+    """
+    Create ``union'' for two streamers
+
+    >>> fun1 = ...  # the first streamer
+    >>> fun2 = ...  # the first streamer
+    
+    >>> result = union ( fun1 , fun2 ) 
+    
+    """
+    if hasattr ( fun1 , '_union_' ) : return fun1._union_ ( fun2 )
+    return fun2._union_ ( fun1 )
+
+# =============================================================================
+##  create the 'intersection' for two streamers
+#
+#  @code
+#
+#    >>> fun1 = ...  # the first streamer
+#    >>> fun2 = ...  # the first streamer
+#    
+#    >>> result = intersection( fun1 , fun2 )
+#
+#  @endcode     
+#
+#  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
+#  @date 2010-06-06
+def intersection ( fun1 , fun2 ) :
+    """
+    Create ``intersection'' for two streamers
+
+    >>> fun1 = ...  # the first streamer
+    >>> fun2 = ...  # the first streamer
+    
+    >>> result = intersection ( fun1 , fun2 ) 
+    
+    """
+    if hasattr ( fun1 , '_intersection_' ) : return fun1._intersection_ ( fun2 )
+    return fun2._intersection_ ( fun1 )
+
+
+# =============================================================================
+##  create the 'difference' for two streamers
+#
+#  @code
+#
+#    >>> fun1 = ...  # the first streamer
+#    >>> fun2 = ...  # the first streamer
+#    
+#    >>> result = difference ( fun1 , fun2 )
+#
+#  @endcode     
+#
+#  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
+#  @date 2010-06-06
+def difference ( fun1 , fun2 ) :
+    """
+    Create ``difference'' for two streamers
+
+    >>> fun1 = ...  # the first streamer
+    >>> fun2 = ...  # the first streamer
+    
+    >>> result = difference ( fun1 , fun2 ) 
+    
+    """
+    return fun1._difference_ ( fun2 )
+
+# =============================================================================
+##  create the 'symmetric-difference' for two streamers
+#
+#  @code
+#
+#    >>> fun1 = ...  # the first streamer
+#    >>> fun2 = ...  # the first streamer
+#    
+#    >>> result = sym_difference ( fun1 , fun2 )
+#
+#  @endcode     
+#
+#  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
+#  @date 2010-06-06
+def sym_difference ( fun1 , fun2 ) :
+    """
+    Create ``symmetric difference'' for two streamers
+
+    >>> fun1 = ...  # the first streamer
+    >>> fun2 = ...  # the first streamer
+    
+    >>> result = sym_difference ( fun1 , fun2 ) 
+    
+    """
+    if hasattr ( fun1 , '_sym_difference_' ) : return fun1._sym_difference_ ( fun2 )
+    return fun2._sym_difference_ ( fun1 )
+
+
+# =============================================================================
+##  create the 'includes' for two streamers
+#
+#  @code
+#
+#    >>> fun1 = ...  # the first streamer
+#    >>> fun2 = ...  # the first streamer
+#    
+#    >>> result = includes ( fun1 , fun2 )
+#
+#  @endcode     
+#
+#  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
+#  @date 2010-06-06
+def includes ( fun1 , fun2 ) :
+    """
+    Create ``includes'' for two streamers
+
+    >>> fun1 = ...  # the first streamer
+    >>> fun2 = ...  # the first streamer
+    
+    >>> result = includes ( fun1 , fun2 ) 
+    
+    """
+    return fun1._includes_ ( fun2 )
+
 
 # =============================================================================
 def mark ( tree ) :
@@ -648,7 +810,7 @@ def strings ( arg1 , *args ) :
     vct = _vt () 
     #
     if issubclass ( type ( arg1 ) , ( list , tuple ) ) :
-        for a in arg1 : vct.push_back ( a    )
+        for a in arg1 : vct.push_back ( str ( a ) )
     else :              vct.push_back ( arg1 ) 
     #
     for a in args : vct.push_back ( a )
@@ -835,11 +997,11 @@ def _has_nega ( arg1 , *args ) :
 ## convert the "list" into C++ vector of primitives 
 def vct_from_list  ( lst , *args ) :
     
-    ## at leats one string?
-    if _has_string ( lst , *args ) : return strings ( lst , *args )
+    ## at least one string?
+    if _has_string  ( lst , *args ) : return strings ( lst , *args )
     
     ## at least one double?
-    if _has_float  ( lst , *args ) : return doubles ( lst , *args )
+    if _has_float   ( lst , *args ) : return doubles ( lst , *args )
     ##
     _hn = _has_nega ( lst , *args )
     ##
@@ -860,6 +1022,16 @@ def vct_from_list  ( lst , *args ) :
     ## 
     return doubles ( lst , *args )
     
+# =============================================================================
+if '__main__' == __name__ :
+
+    print 80*'*'
+    print __doc__
+    print ' Author  : ' , __author__
+    print ' Version : ' , __version__
+    print ' Date    : ' , __date__    
+    print 80*'*'
+    for i in dir() : print i 
         
 # =============================================================================
 # The END

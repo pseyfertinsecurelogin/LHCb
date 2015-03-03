@@ -4,6 +4,13 @@
 ! Purpose     : Package for the tracking event model classes
 !-----------------------------------------------------------------------------
 
+!======================= TrackEvent v5r5 2010-06-18 ==========================
+! 2010-06-14 Albert Bursche
+ - Added Track History type for Tracks imported from Hlt
+
+! 2010-06-10 - V. Gligorov
+ - Remove obsolete default HLT track locations.
+
 !======================= TrackEvent v5r4 2010-03-17 ==========================
 ! 2010-03-17 - Victor Coco
  - Added enum value related to VeloPix in Track and Measurment

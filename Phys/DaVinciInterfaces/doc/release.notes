@@ -4,6 +4,36 @@
 ! Purpose     : Tool interfaces and dictionaries for DaVinci
 !-----------------------------------------------------------------------------
 
+!===================== DaVinciInterfaces v2r4 2010-06-20 =====================
+! 2010-06-20 - Vanya Belyaev
+ - Kernel/ICheckOverlap.h   
+    1. remove foundOverlap  method with two vectors
+    2. remove removeOverlap method with LHCb::Particle::Vector
+
+! 2010-06-09 - Juan Palacios
+ - Kernel/IPhysDesktop.h
+  . Remove keep(const Vertex*) method.
+
+! 2010-06-08 - Vanya Belyaev
+ - IDecayTreeFit:
+     add methods to extract chi2 and nDoF 
+
+! 2010-06-03 - Juan Palacios
+ - Kernel/IPhysDesktop.h
+  . Update doxygen.
+
+! 2010-06-02 - Juan Palacios
+ - Remove IFilterCriterion and IGeomDispCalculator.
+
+! 2010-05-29 - Vanya Belyaev
+ - IDVAlgorithm 
+     add accessor to decay tree fitter 
+ - IDecayTreeFit 
+    improve Doxygen comments 
+
+! 2010-05-24 - Vanya Belyaev
+ - add new (simplified) interface for decay tree fitter 
+
 !===================== DaVinciInterfaces v2r3 2010-05-21 =====================
 ! 2010-05-16 - Juan Palacios
  - Kernel/IPhysDesktop.h

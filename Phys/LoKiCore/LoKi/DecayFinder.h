@@ -1,4 +1,4 @@
-// $Id: DecayFinder.h,v 1.3 2009-08-11 18:19:24 ibelyaev Exp $
+// $Id: DecayFinder.h,v 1.5 2010-06-01 17:05:03 ibelyaev Exp $
 // ============================================================================
 #ifndef LOKI_DECAYFINDER_H 
 #define LOKI_DECAYFINDER_H 
@@ -8,6 +8,11 @@
 // STD & STL 
 // ============================================================================
 #include <algorithm>
+// ============================================================================
+// GauduiKernel
+// ============================================================================
+#include "GaudiKernel/Range.h"
+#include "GaudiKernel/NamedRange.h"
 // ============================================================================
 // LoKi
 // ============================================================================
@@ -76,6 +81,16 @@ namespace Decays
     {
       return this->hasDecay ( particles.begin() , particles.end() ) ; 
     }
+    // ======================================================================== 
+    bool hasDecay ( const Gaudi::Range_<std::vector<PARTICLE> >& particles ) const 
+    {
+      return this->hasDecay ( particles.begin() , particles.end() ) ; 
+    }
+    // ======================================================================== 
+    bool hasDecay ( const Gaudi::NamedRange_<std::vector<PARTICLE> >& particles ) const 
+    {
+      return this->hasDecay ( particles.begin() , particles.end() ) ; 
+    }
     // ========================================================================
   public:
     // ======================================================================== 
@@ -103,19 +118,33 @@ namespace Decays
      *  @return number of found particles 
      */
     template <class ITERATOR, class OUTPUT> 
-    size_t findDecay 
+    unsigned int  findDecay 
     ( ITERATOR             first  , 
       ITERATOR             last   , 
       std::vector<OUTPUT>& output ) const 
     {
-      const size_t old_size = output.size() ;
+      const unsigned int old_size = output.size() ;
       (*this)( first , last , std::back_inserter( output ) ) ;
       return output.size() - old_size ;
     }
     // ========================================================================
-    size_t findDecay 
+    unsigned int findDecay 
     ( const std::vector<PARTICLE>& input , 
       std::vector<PARTICLE>&       output ) const 
+    { 
+      return this->findDecay ( input.begin() , input.end() , output ) ; 
+    }
+    // ========================================================================
+    unsigned int findDecay 
+    ( const Gaudi::Range_<std::vector<PARTICLE> >& input , 
+      std::vector<PARTICLE>&                       output ) const 
+    { 
+      return this->findDecay ( input.begin() , input.end() , output ) ; 
+    }
+    // ========================================================================
+    unsigned int findDecay 
+    ( const Gaudi::NamedRange_<std::vector<PARTICLE> >& input  , 
+      std::vector<PARTICLE>&                            output ) const 
     { 
       return this->findDecay ( input.begin() , input.end() , output ) ; 
     }
@@ -203,10 +232,10 @@ namespace Decays
      *  @return number of added elements 
      */
     template <class INPUT,class OUTPUT> 
-    size_t operator()  ( const INPUT&         input  , 
-                         std::vector<OUTPUT>& output ) const
+    unsigned int  operator()  ( const INPUT&         input  , 
+                                std::vector<OUTPUT>& output ) const
     {
-      const size_t old_size = output.size() ;
+      const unsigned int old_size = output.size() ;
       // regirect to another method 
       (*this) ( input.begin() , input.end() , std::back_inserter ( output ) ) ;
       return output.size() - old_size ;
@@ -214,10 +243,19 @@ namespace Decays
     // ========================================================================
   public:
     // ========================================================================
+    /// access to the underlying tree 
+    const iTree_<PARTICLE>&     tree () const { return m_tree.tree() ; }
     /// cast operator to the underlyiong tree 
-    operator const iTree_<PARTICLE>& () const { return m_tree.tree() ; }// cast
+    operator const iTree_<PARTICLE>& () const { return  this->tree() ; }// cast
+    /// valid tree? 
+    bool valid     () const { return this->tree().valid  () ; }
+    /// marked tree? 
+    bool marked    () const { return this->tree().marked () ; }
     /// invalid tree? 
-    bool operator! () const { return !m_tree.valid() ; }       // invalid tree? 
+    bool operator! () const { return !(this->valid()) ; } 
+    /// validate the tree 
+    StatusCode validate ( const LHCb::IParticlePropertySvc* svc ) const 
+    { return m_tree.validate ( svc ) ; }
     // ========================================================================    
   private:
     // ========================================================================

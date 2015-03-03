@@ -9,8 +9,8 @@
 // ============================================================================
 // matrix inversion implementation
 // ============================================================================
-#include "SymMatrixInverter.h"
-#include "SymPosDefMatrixInverter.h"
+#include "LHCbMath/SymMatrixInverter.h"
+#include "LHCbMath/SymPosDefMatrixInverter.h"
 
 // ============================================================================
 /** @file
@@ -58,7 +58,6 @@ namespace Gaudi
       typedef typename ROOT::Math::SMatrix<F, N, N, R> M;
       return Gaudi::Math::SymPosDefMatrixInverter::inverter<M, F, N>()(matrix);
     }
-
     /** invert symmetric matrices
      *
      *  For matrix dimensions N <= 6, hand-optimized template specializations

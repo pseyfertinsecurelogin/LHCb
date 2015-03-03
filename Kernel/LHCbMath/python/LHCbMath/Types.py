@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # =============================================================================
-# $Id: Types.py,v 1.4 2010-03-22 14:08:19 ibelyaev Exp $
+# $Id: Types.py,v 1.9 2010-06-16 12:20:57 ibelyaev Exp $
 # =============================================================================
 ## @file
 #
@@ -70,7 +70,7 @@ Simple file to provide 'easy' access in python for the basic ROOT::Math classes
 # =============================================================================
 __author__  = " Vanya BELYAEV Ivan.Belyaev@nikhef.nl "
 __date__    = " 2009-09-12 "
-__version__ = " CVS tag $Name: not supported by cvs2svn $, version $Revision: 1.4 $ "
+__version__ = " CVS tag $Name: not supported by cvs2svn $, version $Revision: 1.9 $ "
 # =============================================================================
 __all__     = ()  ## nothing to be imported !
 # =============================================================================
@@ -114,11 +114,14 @@ if not hasattr ( Gaudi , 'Vector4' )  :
     Gaudi.Vector4      = _RM.SVector( 'double' , 4 )
 if not hasattr ( Gaudi , 'Vector5' )  :
     Gaudi.Vector5      = _RM.SVector( 'double' , 5 )
+if not hasattr ( Gaudi , 'Vector8' )  :
+    Gaudi.Vector8      = _RM.SVector( 'double' , 8 )
 
 if not hasattr ( Gaudi.Math , 'Vector2' ) : Gaudi.Math.Vector2 = Gaudi.Vector2 
 if not hasattr ( Gaudi.Math , 'Vector3' ) : Gaudi.Math.Vector3 = Gaudi.Vector3 
 if not hasattr ( Gaudi.Math , 'Vector4' ) : Gaudi.Math.Vector4 = Gaudi.Vector4 
 if not hasattr ( Gaudi.Math , 'Vector5' ) : Gaudi.Math.Vector5 = Gaudi.Vector5 
+if not hasattr ( Gaudi.Math , 'Vector8' ) : Gaudi.Math.Vector8 = Gaudi.Vector8 
 
 if not hasattr ( Gaudi , 'SymMatrix2x2' ) :
     Gaudi.SymMatrix2x2 = _RM.SMatrix('double,2,2,ROOT::Math::MatRepSym<double,2>')
@@ -133,6 +136,9 @@ if not hasattr ( Gaudi , 'SymMatrix6x6' ) :
 ## LHCb::Particle
 if not hasattr ( Gaudi , 'SymMatrix7x7' ) :
     Gaudi.SymMatrix7x7 = _RM.SMatrix('double,7,7,ROOT::Math::MatRepSym<double,7>')
+## Gaudi::Math::ParticleParams 
+if not hasattr ( Gaudi , 'SymMatrix8x8' ) :
+    Gaudi.SymMatrix8x8 = _RM.SMatrix('double,8,8,ROOT::Math::MatRepSym<double,8>')
 ## LHCb:TwoProngVertex
 if not hasattr ( Gaudi , 'SymMatrix9x9' ) :
     Gaudi.SymMatrix9x9 = _RM.SMatrix('double,9,9,ROOT::Math::MatRepSym<double,9>')
@@ -142,9 +148,10 @@ if not hasattr ( Gaudi.Math , 'SymMatrix2x2' ) : Gaudi.Math.SymMatrix3x3 = Gaudi
 if not hasattr ( Gaudi.Math , 'SymMatrix3x3' ) : Gaudi.Math.SymMatrix3x3 = Gaudi.SymMatrix3x3 
 if not hasattr ( Gaudi.Math , 'SymMatrix4x4' ) : Gaudi.Math.SymMatrix4x4 = Gaudi.SymMatrix4x4
 if not hasattr ( Gaudi.Math , 'SymMatrix5x5' ) : Gaudi.Math.SymMatrix5x5 = Gaudi.SymMatrix5x5 
-if not hasattr ( Gaudi.Math , 'SymMatrix6x6' ) : Gaudi.Math.SymMatrix5x5 = Gaudi.SymMatrix6x6 
-if not hasattr ( Gaudi.Math , 'SymMatrix7x7' ) : Gaudi.Math.SymMatrix5x5 = Gaudi.SymMatrix7x7 
-if not hasattr ( Gaudi.Math , 'SymMatrix9x9' ) : Gaudi.Math.SymMatrix5x5 = Gaudi.SymMatrix9x9 
+if not hasattr ( Gaudi.Math , 'SymMatrix6x6' ) : Gaudi.Math.SymMatrix6x6 = Gaudi.SymMatrix6x6 
+if not hasattr ( Gaudi.Math , 'SymMatrix7x7' ) : Gaudi.Math.SymMatrix7x7 = Gaudi.SymMatrix7x7 
+if not hasattr ( Gaudi.Math , 'SymMatrix8x8' ) : Gaudi.Math.SymMatrix8x8 = Gaudi.SymMatrix8x8 
+if not hasattr ( Gaudi.Math , 'SymMatrix9x9' ) : Gaudi.Math.SymMatrix9x9 = Gaudi.SymMatrix9x9 
 
 #
 # specific matrices for 'tracks'
@@ -181,6 +188,8 @@ if not hasattr ( Gaudi.Math , 'SVector4WithError' ) :
     Gaudi.Math.SVector4WithError = cpp.Gaudi.Math.SVectorWithError(4,'double')
 if not hasattr ( Gaudi.Math , 'SVector5WithError' ) :
     Gaudi.Math.SVector5WithError = cpp.Gaudi.Math.SVectorWithError(5,'double')
+if not hasattr ( Gaudi.Math , 'SVector8WithError' ) :
+    Gaudi.Math.SVector8WithError = cpp.Gaudi.Math.SVectorWithError(8,'double')
 
 if not hasattr ( Gaudi      , 'XYZLine' ) : Gaudi.XYZLine     = Gaudi.Math.XYZLine
 if not hasattr ( Gaudi      , 'Line3D'  ) : Gaudi.Line3D      = Gaudi.Math.XYZLine
@@ -222,20 +231,20 @@ def _o_sub_ ( self , other ) :
 
 
 ## Self-printout of 3D-points and 3D-vectors
-def _o1_str_ ( self ) :
+def _o1_str_ ( self , fmt = "( %g, %g, %g) ") :
     """    
     Self-printout of 3D-points and 3D-vectors
     
     """
-    return "( %g, %g, %g)"       % ( self.X() , self.Y( ), self.Z() )
+    return fmt % ( self.X() , self.Y( ), self.Z() )
 
 ## Self-printout of 4D-vectors 
-def _o2_str_ ( self ) :
+def _o2_str_ ( self , fmt = "[( %g, %g, %g), %g]" ) :
     """    
     Self-printout of 4D-vectors 
     
     """
-    return "[( %g, %g, %g), %g]" % ( self.X() , self.Y( ), self.Z() , self.E() )
+    return fmt % ( self.X() , self.Y( ), self.Z() , self.E() )
 
 
 if not hasattr ( _P3D , '__mul__' ) : _P3D.__mul__ = _o_mul_
@@ -276,6 +285,61 @@ def _l_str_ ( self ) :
 Gaudi.Math.XYZLine.__str__  = _l_str_
 Gaudi.Math.XYZLine.__repr__ = _l_str_
 
+# ============================================================================
+## self-printpout of matrices
+def _mg_str_ ( self , fmt = ' %+11.4g') :
+    """
+    Self-printout of matrices 
+    """
+    _rows = self.kRows 
+    _cols = self.kCols
+    _line = ''
+    for _irow in range ( 0 , _rows ) :
+        _line += ' |' 
+        for _icol in range ( 0 , _cols ) :
+            _line += fmt % self( _irow , _icol )
+        _line += ' |'
+        if ( _rows - 1 )  != _irow : _line += '\n'
+    return _line
+# 
+## self-printpout of symmetrical matrices
+def _ms_str_ ( self , fmt = ' %+11.4g' , width = 12 ) :
+    """
+    Self-printout of symetrical matrices 
+    """
+    _rows = self.kRows 
+    _cols = self.kCols
+    _line = ''
+    for _irow in range ( 0 , _rows ) :
+        _line += ' |' 
+        for _icol in range ( 0 , _cols  ) :
+            if _icol < _irow : _line += width*' ' 
+            else             : _line += fmt % self( _irow , _icol )
+        _line += ' |'
+        if ( _rows - 1 )  != _irow : _line += '\n'
+    return _line
+
+for m in ( Gaudi.Matrix5x5      ,
+           Gaudi.TrackMatrix    ,
+           Gaudi.Matrix4x3      ) :
+    m. __repr__ = _mg_str_
+    m. __str__  = _mg_str_
+    
+for m in ( Gaudi.SymMatrix2x2   ,
+           Gaudi.SymMatrix3x3   ,
+           Gaudi.SymMatrix4x4   ,
+           Gaudi.SymMatrix5x5   ,
+           Gaudi.SymMatrix6x6   ,
+           Gaudi.SymMatrix7x7   ,
+           Gaudi.SymMatrix8x8   ,
+           Gaudi.SymMatrix9x9   ,
+           Gaudi.TrackSymMatrix ) :
+    m. __repr__ = _ms_str_
+    m. __str__  = _ms_str_
+
+           
+           
+    
 # =============================================================================
 ## Self-printout of 3D-plane
 #  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
@@ -293,7 +357,7 @@ Gaudi.Plane3D.__repr__  = _p_str_
 ## self-printout of S-vectors 
 #  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
 #  @date 2009-09-12
-def _v_str_ ( self ) :
+def _v_str_ ( self , fmt = ' %g' ) :
     """
     Self-printout of SVectors: (...)
     """
@@ -301,7 +365,7 @@ def _v_str_ ( self ) :
     result = ''
     while index < self.kSize :
         if 0 != index : result += ', '
-        result += " %g" % self.At( index )
+        result += fmt % self.At( index )
         index  += 1 
     return "( " + result + ' )'
 
@@ -314,23 +378,32 @@ for t in  ( Gaudi.Vector2 ,
     t.__repr__ = _v_str_
 
 
-Gaudi.Math.ValueWithError.__str__      = Gaudi.Math.ValueWithError.toString 
-Gaudi.Math.ValueWithError.__repr__     = Gaudi.Math.ValueWithError.toString 
+for t in ( Gaudi.Math.ValueWithError         ,
+           Gaudi.Math.Point3DWithError       ,
+           Gaudi.Math.Vector3DWithError      ,
+           Gaudi.Math.LorentzVectorWithError ,
+           Gaudi.Math.SVector3WithError      , 
+           Gaudi.Math.SVector4WithError      , 
+           Gaudi.Math.SVector5WithError      , 
+           Gaudi.Math.SVector8WithError      ) :
+    t.__str__  = t.toString
+    t.__repr__ = t.toString
 
-Gaudi.Math.Point3DWithError.__str__    = Gaudi.Math.Point3DWithError.toString 
-Gaudi.Math.Point3DWithError.__repr__   = Gaudi.Math.Point3DWithError.toString
+# =============================================================================
+## self-printout of Gaudi::Math::ParticleParams  
+#  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
+#  @date 2010-05-26
+def _pp_str_ ( self ) :
+    """
+    Self-printout of ParticleParams
+    """
+    pos = self.position    ()
+    mom = self.momentum    ()
+    len = self.decayLength () 
+    return " ( %s/%s/%s ) " % ( pos, mom , len )
 
-Gaudi.Math.Vector3DWithError.__str__   = Gaudi.Math.Vector3DWithError.toString 
-Gaudi.Math.Vector3DWithError.__repr__  = Gaudi.Math.Vector3DWithError.toString 
-
-Gaudi.Math.LorentzVectorWithError.__str__  = Gaudi.Math.LorentzVectorWithError.toString 
-Gaudi.Math.LorentzVectorWithError.__repr__ = Gaudi.Math.LorentzVectorWithError.toString 
-
-Gaudi.Math.SVector3WithError.__str__   = Gaudi.Math.SVector3WithError.toString 
-Gaudi.Math.SVector3WithError.__repr__  = Gaudi.Math.SVector3WithError.toString 
-
-Gaudi.Math.SVector4WithError.__str__   = Gaudi.Math.SVector4WithError.toString 
-Gaudi.Math.SVector4WithError.__repr__  = Gaudi.Math.SVector4WithError.toString 
+Gaudi.Math.ParticleParams.__str__  = _pp_str_
+Gaudi.Math.ParticleParams.__repr__ = _pp_str_
 
 # =============================================================================
 ## various decorators for GeomFun.h
@@ -711,7 +784,34 @@ __parallel_lines__ . __doc__ += '\n' + _GeomFun.parallel . __doc__
 
 if not hasattr ( Gaudi.XYZLine , 'parallel' ) :
     Gaudi.XYZLine.parallel = __parallel_lines__
+
+# =============================================================================
+## helper function/wrapper for Gaudi::Math:FitMass
+#  @see Gaudi::Math::FitMass 
+#  @see Gaudi::Math::FitMass::fit 
+#  @see Gaudi::Math::ParticleParams
+#  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
+#  @param  particle (INPUT) "particle"
+#  @param  mass     (INPUT) the nominal mass 
+#  @return the tuple (fitter,chi2) 
+#  @date 2009-10-22
+def _fit_mass_ ( particle , mass )  :
+    """
+    Helper function/wrapper for Gaudi::Math::MassFit
+
+    >>> particle  =  ...   ## get Gaudi::Math::ParticleParams object
+    >>> mass = 5.279 * GeV ## get the mass
+    >>> result, chi2 = particle.fitMass ( particle , mass )
+    >>> print 'result/chi2:', result, chi2
     
+    """
+    _fitted = Gaudi.Math.ParticleParams()
+    _chi2   = Gaudi.Math.FitMass.fit ( particle  ,
+                                       mass      ,
+                                       _fitted   )
+    return (_fitted,_chi2)
+
+Gaudi.Math.ParticleParams.fitMass = _fit_mass_
 
 # =============================================================================
 if '__main__' == __name__ :
@@ -732,7 +832,8 @@ if '__main__' == __name__ :
     print ' dir(Gaudi.Math) : '
     _v.sort() 
     for v in _v : print v
-         
+
+
 # =============================================================================
 # The  END 
 # =============================================================================
