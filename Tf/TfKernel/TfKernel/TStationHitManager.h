@@ -4,7 +4,7 @@
  *
  *  Header file for class : Tf::TStationHitManager
  *
- *  $Id: TStationHitManager.h,v 1.22 2008-03-19 09:53:58 smenzeme Exp $
+ *  $Id: TStationHitManager.h,v 1.24 2008-06-02 13:49:53 smenzeme Exp $
  *
  *  @author S. Hansmann-Menzemer, W. Hulsbergen, C. Jones, K. Rinnert
  *  @date   2007-06-01
@@ -33,6 +33,7 @@
 #include "TfKernel/RegionID.h"
 #include "TfKernel/TfIDTypes.h"
 #include "TfKernel/RegionSelectors.h"
+
 
 /// Static interface ID
 static const InterfaceID IID_TStationHitManager ( "TStationHitManager", 1, 0 );
@@ -140,7 +141,7 @@ namespace Tf
     /// Handle method for incident service callbacks
     void handle ( const Incident& incident )
     {
-      if ( IncidentType::EndEvent == incident.type() ) clearHits() ;
+      if ( IncidentType::BeginEvent == incident.type() ) clearHits() ;
     }
 
   public:
@@ -598,7 +599,7 @@ namespace Tf
     if ( sc.isFailure() ) return sc;
 
     // set up to be told about each new event
-    incSvc()->addListener(this, IncidentType::EndEvent);
+    incSvc()->addListener(this, IncidentType::BeginEvent);
 
     // load our hit creators
     sc = ( m_othitcreator.retrieve() &&

@@ -1,8 +1,16 @@
-! $Id: release.notes,v 1.179 2008-04-15 13:58:40 cattanem Exp $
+! $Id: release.notes,v 1.181 2008-06-03 14:39:11 cattanem Exp $
 ! Package     : Rich/RichKernel
 ! Responsible : Chris Jones
 ! Purpose     : General purpose RICH classes
 !-----------------------------------------------------------------------
+
+!====================== RichKernel v7r12 2008-06-03 ==================
+! 2008-06-03 - Marco Cattaneo
+ - Fix doxygen warnings
+
+! 2008-06-03 - Chris Jones
+ - Minor change to decoded data structures, to allow storage of 
+   inhibited HPDs (unknown RichSmartID).
 
 !====================== RichKernel v7r11p1 2008-04-15 ==================
 ! 2008-03-25 - Chris Jones

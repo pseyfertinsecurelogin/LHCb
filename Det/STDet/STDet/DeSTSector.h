@@ -1,4 +1,4 @@
-// $Id: DeSTSector.h,v 1.25 2008-03-14 18:26:39 mneedham Exp $
+// $Id: DeSTSector.h,v 1.27 2008-05-29 11:40:51 cattanem Exp $
 #ifndef _DeSTSector_H_
 #define _DeSTSector_H_
 
@@ -115,8 +115,8 @@ public:
   std::auto_ptr<LHCb::Trajectory> trajectoryLastStrip() const;
 
   /** Trajectory parameterized along y-axis */
-  void trajectory(unsigned int strip, float offset, float& dxdy, float& dzdy,
-                  float& xAtYEq0, float& zAtYEq0, float& ybegin, float& yend) const ;
+  void trajectory(unsigned int strip, double offset, double& dxdy, double& dzdy,
+                  double& xAtYEq0, double& zAtYEq0, double& ybegin, double& yend) const ;
 
   /**
    * @return capacitance
@@ -223,7 +223,7 @@ public:
   DeSTSensor* findSensor(const Gaudi::XYZPoint& point) const;  
 
   /** check if inside the active area  
-  * @param Gaudi::XYZPoint point in global frame
+  * @param  point point in global frame
   * @return bool isInside  
   **/
   bool globalInActive(const Gaudi::XYZPoint& point ) const;
@@ -234,7 +234,7 @@ public:
    * @return bool in bondgap
    */
   bool globalInBondGap(const Gaudi::XYZPoint& point,
-                       double ol = 0) const;
+                       double tol = 0) const;
 
 protected:
 
@@ -266,9 +266,9 @@ private:
   double m_deadWidth;
   std::string m_type;
 
-  float m_dxdy ;
-  float m_dzdy ;
-  float m_dy ;
+  double m_dxdy ;
+  double m_dzdy ;
+  double m_dy ;
   Gaudi::XYZVectorF m_dp0di ;
   Gaudi::XYZPointF  m_p0 ;
   double m_angle ;
@@ -345,12 +345,12 @@ inline double DeSTSector::cosAngle() const {
 }
 
 inline void DeSTSector::trajectory(unsigned int strip,
-                                   float offset,
-                                   float& dxdy, float& dzdy,
-                                   float& xAtYEq0, float& zAtYEq0,
-                                   float& ybegin, float& yend) const
+                                   double offset,
+                                   double& dxdy, double& dzdy,
+                                   double& xAtYEq0, double& zAtYEq0,
+                                   double& ybegin, double& yend) const
 {
-  float numstrips = offset + strip - m_firstStrip ;
+  double numstrips = offset + strip - m_firstStrip ;
   dxdy    = m_dxdy ;
   dzdy    = m_dzdy ;
   xAtYEq0 = m_p0.x() + numstrips * m_dp0di.x() ;

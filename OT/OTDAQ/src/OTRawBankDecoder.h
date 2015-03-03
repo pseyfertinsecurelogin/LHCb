@@ -1,4 +1,4 @@
-// $Id: OTRawBankDecoder.h,v 1.3 2007-11-14 16:05:39 wouter Exp $
+// $Id: OTRawBankDecoder.h,v 1.10 2008-06-03 13:15:14 wouter Exp $
 #ifndef OTRAWBANKDECODER_H
 #define OTRAWBANKDECODER_H 1
 
@@ -14,11 +14,15 @@
 
 // forward declarations
 class DeOTDetector;
+class IOTChannelMapTool ;
+namespace LHCb {
+  class RawBank ;
+}
 
 namespace OTRawBankDecoderHelpers
 {
-  struct Detector ;
-  struct Module ;
+  class Detector ;
+  class Module ;
 }
 
 /** @class OTRawBankDecoder OTRawBankDecoder.h
@@ -35,16 +39,16 @@ namespace OTRawBankDecoderHelpers
  */
 
 class OTRawBankDecoder : public GaudiTool,
-       virtual public IOTRawBankDecoder,
-			 virtual public IIncidentListener
+                         virtual public IOTRawBankDecoder,
+                         virtual public IIncidentListener
 {
   
 public: 
   
   /// Standard constructor
   OTRawBankDecoder( const std::string& type,
-		    const std::string& name,
-		    const IInterface* parent);
+                    const std::string& name,
+                    const IInterface* parent);
   
   /// Destructor
   virtual ~OTRawBankDecoder( ) ; ///< Destructor
@@ -60,19 +64,24 @@ public:
   
   /// Decode all gol headers
   StatusCode decodeGolHeaders() const ;
-  
+
   /// Decode all modules
   StatusCode decode( LHCb::OTLiteTimeContainer& ottimes ) const ;
   
+  /// Translate the raw bank in an ot-specific raw bank.
+  StatusCode decode( OTDAQ::RawEvent& otevent ) const ;
+
   /// Get the conversion factor
   double nsPerTdcCount() const { return m_nsPerTdcCount ; }
   
   /// Create a single OTLiteTime
   LHCb::OTLiteTime time( LHCb::OTChannelID channel, const DeOTModule& module ) const ;
   
-private:
+protected:
   virtual void handle ( const Incident& incident );
   size_t decodeModule( OTRawBankDecoderHelpers::Module& ) const ;
+  StatusCode decodeGolHeadersV3(const LHCb::RawBank&, int bankversion) const ;
+  StatusCode decodeGolHeadersDC06(const LHCb::RawBank&, int bankversion) const ;
   
 private:
   // data
@@ -80,8 +89,11 @@ private:
   int  m_countsPerBX;                       ///< Counts per BX
   int  m_numberOfBX;                        ///< Number of BX
   double m_timePerBX;                       ///< Time Per BX
+  int m_forcebankversion;                   ///< Overwrite bank version in bank header
   DeOTDetector* m_otdet  ;                  ///< Pointer to OT geometry
+  IOTChannelMapTool* m_channelmaptool ;     ///< Pointer to IOTChannelMapTool
   double m_nsPerTdcCount ;                  ///< Conversion from tdc to ns
+  std::string m_rawEventLocation;           ///< Location where we get the RawEvent
   
   mutable OTRawBankDecoderHelpers::Detector* m_detectordata ; ///< Contains decoded data
 };
@@ -91,6 +103,7 @@ private:
 inline LHCb::OTLiteTime 
 OTRawBankDecoder::time( LHCb::OTChannelID channel, const DeOTModule& module ) const
 {
+ 
   return LHCb::OTLiteTime( channel, channel.tdcTime() * m_nsPerTdcCount - module.strawT0(channel.straw())) ;
 }
 

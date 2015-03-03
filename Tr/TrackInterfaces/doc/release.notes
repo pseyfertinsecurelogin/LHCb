@@ -4,6 +4,14 @@
 ! Purpose     : package for tracking tools interfaces
 !-----------------------------------------------------------------------------
 
+!====================== TrackInterfaces v3r15 2008-05-29 =====================
+! 2008-05-27 - Wouter Hulsbergen
+ - Extended interface of ITrackVertexer
+
+! 2008-05-22 - Marco Cattaneo
+ - Add IFunctionTool.h and ITrackMatch.h, previously in HltBase
+ - In IFunctionTool.h rename IVertexFunctionTool to IRecVertexFunctionTool
+
 !====================== TrackInterfaces v3r14 2008-05-15 =====================
 ! 2008-05-14 - Manuel Tobias Schiller
  - updated IPatSeedingTool to match changes in Tf/PatAlgorithms

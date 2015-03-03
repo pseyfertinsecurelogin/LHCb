@@ -1,4 +1,4 @@
-// $Id: CaloReadoutTool.cpp,v 1.25 2008-04-04 13:50:37 odescham Exp $
+// $Id: CaloReadoutTool.cpp,v 1.29 2008-05-30 12:50:05 odescham Exp $
 // Include files 
 
 // from Gaudi
@@ -27,6 +27,7 @@ CaloReadoutTool::CaloReadoutTool( const std::string& type,
                   const std::string& name,
                   const IInterface* parent )
   : GaudiTool ( type, name , parent )
+    , m_first(true)
 {
   declareInterface<ICaloReadoutTool>(this);
 
@@ -46,7 +47,7 @@ CaloReadoutTool::~CaloReadoutTool() {}
 //=========================================================================
 bool CaloReadoutTool::getCaloBanksFromRaw( ) {
 
-
+  
   m_readSources.clear();
 
   m_banks = NULL;
@@ -56,7 +57,8 @@ bool CaloReadoutTool::getCaloBanksFromRaw( ) {
   if( exist<LHCb::RawEvent>( m_raw ) ){
     rawEvt= get<LHCb::RawEvent>( m_raw );
   }else  {
-    Warning( "rawEvent not found at location '" + rootInTES() + m_raw ).ignore();
+    if(m_first)info()<<"rawEvent not found at location '" << rootInTES() << m_raw <<endreq;
+    m_first=false;
     return false;
   }
       
@@ -113,14 +115,14 @@ bool CaloReadoutTool::getCaloBanksFromRaw( ) {
 
   if(m_packed){  // TELL1 format : 1 source per TELL1
     std::vector<Tell1Param>& tell1s = m_calo->tell1Params();
-    for(std::vector<int>::iterator it = sources.begin() ; it != sources.end() ; it++){
+    for(std::vector<Tell1Param>::iterator itt = tell1s.begin() ; itt != tell1s.end() ; itt++){
       bool ok=false;
-      for(std::vector<Tell1Param>::iterator itt = tell1s.begin() ; itt != tell1s.end() ; itt++){
+      for(std::vector<int>::iterator it = sources.begin() ; it != sources.end() ; it++){
         if( (*itt).number() == *it){ok=true;break;}
       }
       ok ? 
-        m_status.addStatus( *it , LHCb::RawBankReadoutStatus::OK) : 
-        m_status.addStatus( *it , LHCb::RawBankReadoutStatus::Missing);
+        m_status.addStatus( (*itt).number()  , LHCb::RawBankReadoutStatus::OK) : 
+        m_status.addStatus( (*itt).number()  , LHCb::RawBankReadoutStatus::Missing);
     }
   } else { // Offline format : single source 0
     (sources.size() != 0) ? 
@@ -174,7 +176,9 @@ int CaloReadoutTool::findCardbyCode(std::vector<int> feCards , int code){
       break;
     }        
   }
-  error() << "  FE-Card [code : " << code << "] does not match the condDB cabling scheme  " << endreq;
+  std::stringstream c("");
+  c<<code;
+  Error("FE-Card [code : " + c.str() + "] does not match the condDB cabling scheme  ",StatusCode::SUCCESS).ignore();
   return -1;
 }    
 
@@ -209,7 +213,7 @@ void CaloReadoutTool::checkCtrl(int ctrl,int sourceID){
   if ( msgLevel( MSG::DEBUG) )debug()<< "Control word :" << ctrl << endreq;
   
   if( 0 != (0x1& ctrl) || 0 != (0x20& ctrl) || 0 != (0x40& ctrl)){
-    if(msgLevel(MSG::WARNING))Warning("Tell1 error bits have been detected in data", StatusCode::SUCCESS).ignore();
+    if(msgLevel(MSG::DEBUG))debug() << "Tell1 error bits have been detected in data" << endreq;
     if( 0 != (0x1  & ctrl))m_status.addStatus(sourceID,LHCb::RawBankReadoutStatus::Tell1Error );
     if( 0 != (0x20 & ctrl))m_status.addStatus(sourceID,LHCb::RawBankReadoutStatus::Tell1Sync  );      
     if( 0 != (0x40 & ctrl))m_status.addStatus(sourceID,LHCb::RawBankReadoutStatus::Tell1Link  );

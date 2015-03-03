@@ -1,7 +1,14 @@
-!$Id: release.notes,v 1.130 2008-05-09 07:36:09 cattanem Exp $
+!$Id: release.notes,v 1.132 2008-05-29 11:40:51 cattanem Exp $
 !Package         : STDet
 !Package manager : M. Needham
 !-------------------------------------------------------------------------
+
+!======================== STDet v4r1 2008-05-29 ==========================
+! 2008-05-29 - Marco Cattaneo
+ - Fix doxygen warnings
+
+! 2008-05-27 Stephanie Hansmann-Menzemer
+- Removed all float variables, changed them into doubles
 
 !======================== STDet v4r0 2008-05-09 ==========================
 ! 2008-05-09 M Needham

@@ -1,4 +1,4 @@
-// $Id: IOTRawBankDecoder.h,v 1.2 2007-11-14 16:05:39 wouter Exp $
+// $Id: IOTRawBankDecoder.h,v 1.4 2008-06-03 12:59:25 wouter Exp $
 #ifndef OTDAQ_IOTRAWBANKDECODER_H
 #define OTDAQ_IOTRAWBANKDECODER_H 1
 
@@ -8,6 +8,7 @@
 
 // Kernel
 #include "Event/OTLiteTime.h"
+#include "OTDAQ/RawEvent.h"
 
 // Forward declarations
 class DeOTModule ;
@@ -43,6 +44,9 @@ public:
   
   /// Decode all modules
   virtual StatusCode decode( LHCb::OTLiteTimeContainer& ottimes ) const = 0;
+
+  /// Translate the raw bank in an ot-specific raw bank.
+  virtual StatusCode decode( OTDAQ::RawEvent& otevent ) const = 0;
 
   /// Conversion factor from tdc to ns
   virtual double nsPerTdcCount() const = 0 ;

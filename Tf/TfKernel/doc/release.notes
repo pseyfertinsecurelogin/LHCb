@@ -4,6 +4,18 @@
 ! Purpose     : Core classes for the Tf framework
 !-----------------------------------------------------------------------------
 
+!============================ TfKernel v2r5 2008-06-02 =======================
+! 2008-06-02 - Stephanie Hansmann-Menzemer
+ - Move cleaning of hits from EndEvent to BeginEvent in
+   TStationHitManager, TTStationHitManger, VeloHitManager
+
+! 2008-05-29 - Marco Cattaneo
+ - Fix doxygen warnings
+
+! 2008-05-27 - Stephanie Hansmann-Menzemer
+ - Fix for float/double conversion issues in the rest of the tracking.
+   As well here not timing issues.
+
 !============================ TfKernel v2r4 2008-04-16 =======================
 ! 2008-04-14 - Kurt Rinnert
  - Fix for float/double conversion issue in VELO tracking: the HitBase class
