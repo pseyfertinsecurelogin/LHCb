@@ -4,7 +4,7 @@
  *  Header file for detector description class : DeRichMultiSolidRadiator
  *
  *  CVS Log :-
- *  $Id: DeRichMultiSolidRadiator.h,v 1.10 2006-03-01 14:52:59 papanest Exp $
+ *  $Id: DeRichMultiSolidRadiator.h,v 1.12 2007-02-06 15:01:53 cattanem Exp $
  *
  *  @author Antonis Papanestis  a.papanestis@rl.ac.uk
  *  @date   2004-06-18
@@ -15,7 +15,7 @@
 
 // Include files
 #include "RichDet/DeRichRadiator.h"
-#include "Kernel/Transform3DTypes.h"
+#include "GaudiKernel/Transform3DTypes.h"
 
 // External declarations
 extern const CLID& CLID_DeRichMultiSolidRadiator;
@@ -30,7 +30,8 @@ extern const CLID& CLID_DeRichMultiSolidRadiator;
  * @author Antonis Papanestis a.papanestis@rl.ac.uk
  */
 
-class DeRichMultiSolidRadiator: public DeRichRadiator {
+class DeRichMultiSolidRadiator : public DeRichRadiator 
+{
 
 public:
 

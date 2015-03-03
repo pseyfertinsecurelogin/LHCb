@@ -3,13 +3,11 @@
  *
  *  Implementation file for detector description class : DeRichSingleSolidRadiator
  *
- *  $Id: DeRichSingleSolidRadiator.cpp,v 1.19 2006-10-20 12:37:30 jonrob Exp $
+ *  $Id: DeRichSingleSolidRadiator.cpp,v 1.21 2007-02-06 15:01:53 cattanem Exp $
  *
  *  @author Antonis Papanestis a.papanestis@rl.ac.uk
  *  @date   2004-06-18
  */
-
-#define DERICHSINGLESOLIDRADIATOR_CPP
 
 // Include files
 #include "RichDet/DeRichSingleSolidRadiator.h"
@@ -18,8 +16,8 @@
 #include "GaudiKernel/MsgStream.h"
 
 // MathCore files
-#include "Kernel/Transform3DTypes.h"
-#include "Kernel/Vector3DTypes.h"
+#include "GaudiKernel/Transform3DTypes.h"
+#include "GaudiKernel/Vector3DTypes.h"
 
 /// Detector description classes
 #include "DetDesc/SolidBoolean.h"
@@ -111,22 +109,22 @@ StatusCode DeRichSingleSolidRadiator::initTabPropInterpolators()
 
   if ( m_refIndexTabProp )
   {
-    m_refIndex = new Rich1DTabProperty( m_refIndexTabProp );
+    m_refIndex = new RichTabulatedProperty1D( m_refIndexTabProp );
     if ( !m_refIndex->valid() )
     {
       log << MSG::ERROR
-          << "Invalid RINDEX Rich1DTabProperty for " << m_refIndexTabProp->name() << endreq;
+          << "Invalid RINDEX RichTabulatedProperty1D for " << m_refIndexTabProp->name() << endreq;
       return StatusCode::FAILURE;
     }
   }
 
   if ( m_rayleighTabProp )
   {
-    m_rayleigh = new Rich1DTabProperty( m_rayleighTabProp );
+    m_rayleigh = new RichTabulatedProperty1D( m_rayleighTabProp );
     if ( !m_rayleigh->valid() )
     {
       log << MSG::ERROR
-          << "Invalid RAYLEIGH Rich1DTabProperty for " << m_rayleighTabProp->name() << endreq;
+          << "Invalid RAYLEIGH RichTabulatedProperty1D for " << m_rayleighTabProp->name() << endreq;
       return StatusCode::FAILURE;
     }
   }

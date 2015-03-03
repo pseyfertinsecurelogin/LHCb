@@ -1,4 +1,4 @@
-// $Id: DeSTSector.h,v 1.13 2006-12-13 13:48:52 mneedham Exp $
+// $Id: DeSTSector.h,v 1.15 2007-02-09 13:01:57 cattanem Exp $
 #ifndef _DeSTSector_H_
 #define _DeSTSector_H_
 
@@ -9,7 +9,7 @@
 #include "Kernel/STChannelID.h"
 #include "STDet/DeSTBaseElement.h"
 
-#include "Kernel/Plane3DTypes.h"
+#include "GaudiKernel/Plane3DTypes.h"
 
 
 /** @class DeSTSector DeSTSector.h "STDet/DeSTSector.h"
@@ -107,8 +107,6 @@ public:
   */
   Gaudi::Plane3D plane() const;  
  
-
-
   /** plane corresponding to the module entrance
   * @return the plane 
   */
@@ -206,7 +204,7 @@ private:
 
   void clear();
   void determineSense();
-  void cacheInfo();
+  StatusCode cacheInfo();
 
   Gaudi::Plane3D m_plane;
   Gaudi::Plane3D m_entryPlane;

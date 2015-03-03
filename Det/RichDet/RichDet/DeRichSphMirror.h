@@ -4,29 +4,7 @@
  *  Header file for detector description class : DeRichSphMirror
  *
  *  CVS Log :-
- *  $Id: DeRichSphMirror.h,v 1.13 2006-01-26 12:03:48 papanest Exp $
- *  $Log: not supported by cvs2svn $
- *  Revision 1.12  2005/12/14 09:34:52  papanest
- *  Move from CLHEP to MathCore
- *
- *  Revision 1.11  2005/09/23 15:27:28  papanest
- *  new aerogel and sec mirrors
- *
- *  Revision 1.10  2005/07/13 15:28:24  papanest
- *  Individual reflectivity for all mirror segments
- *
- *  Revision 1.9  2005/02/25 23:28:54  jonrob
- *  set printing to debug level
- *
- *  Revision 1.8  2004/10/20 16:16:36  jonrob
- *  More minor updates to functions (adding const etc.)
- *
- *  Revision 1.7  2004/10/18 09:21:49  jonrob
- *  Minor updates to functions (adding const etc.)
- *
- *  Revision 1.6  2004/07/27 08:55:22  jonrob
- *  Add doxygen file documentation and CVS information
- *
+ *  $Id: DeRichSphMirror.h,v 1.15 2007-02-06 15:01:53 cattanem Exp $
  *
  *  @author Antonis Papanestis a.papanestis@rl.ac.uk
  *  @date   2004-06-18
@@ -36,9 +14,9 @@
 #define  RICHDET_DERICHSPHMIRROR_H 1
 
 // Include files
-#include "Kernel/Point3DTypes.h"
-#include "Kernel/Vector3DTypes.h"
-#include "Kernel/Plane3DTypes.h"
+#include "GaudiKernel/Point3DTypes.h"
+#include "GaudiKernel/Vector3DTypes.h"
+#include "GaudiKernel/Plane3DTypes.h"
 
 #include "DetDesc/DetectorElement.h"
 #include "DetDesc/ISolid.h"
@@ -56,7 +34,8 @@ extern const CLID& CLID_DeRichSphMirror;
  * @author Antonis Papanestis a.papanestis@rl.ac.uk
  * @date   2004-06-18
  */
-class DeRichSphMirror: public DetectorElement {
+class DeRichSphMirror : public DetectorElement 
+{
 
 public:
 
@@ -216,6 +195,7 @@ private:
   Gaudi::XYZVector m_centreNormal; 
   /// The normal vector at the centre of the mirror
   Gaudi::Plane3D m_centreNormalPlane; 
+
 };
 
 #endif    //  RICHDET_DERICHSPHMIRROR_H

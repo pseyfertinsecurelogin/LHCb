@@ -1,76 +1,173 @@
-// $Id: HltMonitorAlgorithm.h,v 1.1 2006-10-24 09:31:20 hernando Exp $
+// $Id: HltMonitorAlgorithm.h,v 1.3 2007-02-08 17:32:39 hernando Exp $
 #ifndef HLTBASE_HLTMONITORALGORITHM_H 
 #define HLTBASE_HLTMONITORALGORITHM_H 1
 
 // Include files
-
-#include "GaudiAlg/GaudiHistoAlg.h"
 #include "Event/HltSummary.h"
+#include "Event/HltSummaryFunctor.h"
 #include "Event/HltNames.h"
+#include "Event/Track.h"
+
+#include "HltBase/HltBaseAlg.h"
+#include "HltBase/HltContainers.h"
 
 /** @class HltMonitorAlgorithm 
  *  
- *  Base class for HltSummaryAlg monitor
+ *  Base class for HLT Monitor algorithms
+ *  functionality:
+ *        - retrieves HltSummary
+ *           allow access tracks and vertices stored in the selection summary
+ *           check is a given track is saved in a selection summary
+ *        - monitoring
+ *           provide template methods to monitor info in tracks, vertices
  *
- *  @author Jose A. Hernando 
- *  @date   2006-10-19
+ *  Options:
+ *
+ *  Note: look at HltBaseAlg for more functionality and options
+ *
+ *  @author Hugo Ruiz Perez
+ *  @author Jose Angel Hernando Morata
+ *  @date   2006-06-15
  */
-class HltMonitorAlgorithm : public GaudiHistoAlg {
+class HltMonitorAlgorithm : public HltBaseAlg {
+public:
+
+  // typedef for track and vertices container iterators
+  typedef Hlt::TrackContainer::iterator track_iterator;
+  typedef Hlt::VertexContainer::iterator vertex_iterator;
+
+  typedef Hlt::TrackContainer::const_iterator track_const_iterator;
+  typedef Hlt::VertexContainer::const_iterator vertex_const_iterator;
+
 public:
 
   /// Standard constructor
   HltMonitorAlgorithm( const std::string& name, ISvcLocator* pSvcLocator );
 
-  virtual ~HltMonitorAlgorithm( ); ///< Destructor
+  /// Standard destructor
+  virtual ~HltMonitorAlgorithm( ); 
 
-  virtual StatusCode initialize();    ///< SummaryMonitorAlg initialization
-  virtual StatusCode execute   ();
-  virtual StatusCode finalize  ();    ///< SummaryMonitorAlg finalization
+  /** initialize algorithm
+   *  Note: call HltMonitorAlgorithm::initialize() in your derived algorithm
+   *  initialize IDs, generic counters and histograms
+   **/
+  virtual StatusCode initialize();    
+
+  /** execute algorithm
+   * Note: call HltMonitorAlgorithm::beginExecute() and HltMonitorAlgorithm::endExecute() 
+   *       at the begin and end of the excute method of the derived algorithms
+   **/
+  virtual StatusCode execute   ();    ///< Algorithm execute
+
+  /** finalize algorithm
+   * Note: call HltMonitorAlgorithm::finalize()
+   * print out info of the accepted events, etc.
+   * 
+   **/
+  virtual StatusCode finalize  ();    ///< Algorithm finalization
 
 protected:
 
-  // typedef to make code compatible
-  typedef AIDA::IHistogram1D* HltHisto;
-  
-  // book and histogram that can be rebooked using the HistoDescription option
-  void initializeHisto( HltHisto& histo, const std::string& name,
-                        float min, float max, int nBins );
-  
-  // fill histo (for compatibility)
-  inline void fillHisto( HltHisto& histo, float x, float weight ) 
-  {fill(histo,x,1.);}
-
-protected:
-
-  // begin the execution
-  // It retrieves the summary and summary box (if in options)
-  // set in m_tracks and m_vertices the tracks and vertices from the box
+  /** begin the execution
+   *    call HltBaseAlgo::beginExecute() (see HltBaseAlgo)
+   *             set decesion to false, set histo monitor bool flag
+   *    retrieve selection summary if necessary
+   *    check that the input tracks and vertices containers are not empty
+   *    increase entry counters
+   **/
   bool beginExecute();
 
-  // fill the histogram with the info stored in the objects of the container
-  template <class CONTAINER >
-  void monitor(const CONTAINER& con, int key, HltHisto& histo){
-    for (typename CONTAINER::const_iterator it = con.begin(); 
-         it != con.end(); ++it) {
-      double d = (*it)->info(key,-1.);
-      verbose() << " monitor " << key << " " << d << endreq;
-      fillHisto( histo, d, 1.);
-    }
+  /** end of the execution
+   *    increase histos of output tracks/vertices and couter of accepted events
+   *    call HltBase::endExecute() (see HltBaseAlgo)
+   *             set decision to true
+   **/ 
+  bool endExecute();
+  
+
+protected:
+
+  /** get the summary 
+   **/
+  const LHCb::HltSummary& summary() {
+    if (!m_summary)  m_summary= get<LHCb::HltSummary>(m_summaryName);
+    return *m_summary;
   }
 
-  // fill histogram with the info from the keys
-  // (histos should have the same name)
+  /** returns true if selection is in summary
+   **/
+  bool hasSelection(int id)
+  {return summary().hasSelectionSummary(id);}
+
+  /** returns true if selection is in summary
+   **/
+  bool selectionDecision(int id) {
+    if (!hasSelection(id)) return false;
+    else return selectionSummary(id).decision();
+  }
+
+  /** returns true if the default (by options) decision types have triggered
+   **/
+  bool checkDecisionTypes() 
+  {return checkDecisionTypes(m_decisionTypesIDs);}
+
+  /** returns true if all decision types have triggered
+   **/
+  bool checkDecisionTypes(const std::vector<int>& ids) 
+  {
+    for (std::vector<int>::const_iterator it = ids.begin(); 
+         it != ids.end(); ++it) 
+      if (!summary().checkDecisionType(*it)) return false;
+    return true;
+  }
+
+  /** returns true if the default (by options) selections are in summary
+   **/
+  bool hasSelections() 
+  {return hasSelections(m_selectionsIDs);}
+
+  /** returns true if all the selections ids are in summary
+   **/
+  bool hasSelections(const std::vector<int>& ids) 
+  { 
+    for (std::vector<int>::const_iterator it = ids.begin(); 
+         it != ids.end(); ++it) if (!hasSelection(*it)) return false;
+    return true; 
+  }
+
+  /** get the selection summary with a give ID (see Event/HltEnums.h)
+   *  by defaul: the selection summary indicated in the option "SelectionName"
+   **/
+  const LHCb::HltSelectionSummary& selectionSummary(int id);
+  
+  /** retrieve a vector of objects saved in a summary selection info
+   *  (for the IDs of teh selecion summaries see Event/HltEnums.h)
+   **/
+  template <class T>
+  void retrieveFromSummary(int idsel, std::vector<T*>& tobjs) {
+    HltSummaryFunctor::retrieve(summary(),idsel,tobjs);
+  }
+  
+  /** returns true if this tracks is saved in a selection
+   **/
+  bool isInSelection(const LHCb::Track& track, int id);
+  
+protected:
+
+  /** monitor info from objects according with keys
+   * 
+   **/
   template <class CONTAINER>
-  void monitor(const CONTAINER& con, 
-               const std::vector<std::string>& keyNames) {
-    for (std::vector<std::string>::const_iterator it = keyNames.begin();
-         it != keyNames.end(); ++it) {
+  void monitorInfo(CONTAINER& con, std::vector<std::string> keys) {
+    if (con.size() <=0) return;
+    for (std::vector<std::string>::iterator it = keys.begin();
+         it != keys.end(); ++it) {
       const std::string& title = (*it);
       int key = HltNames::particleInfoID(title);
       if (key <0) continue;
-      for (typename CONTAINER::const_iterator it2 = con.begin();
+      for (typename CONTAINER::iterator it2 = con.begin(); 
            it2 != con.end(); it2++) {
-        if ((*it2)->hasInfo(key))
+        if ((*it2)->hasInfo(key)) 
           fill( histo1D(title), (*it2)->info(key,0), 1.);
       }
     } 
@@ -78,52 +175,38 @@ protected:
   
 protected:
 
-  // fill the vector with the objects from the summary
-  template <class T>
-  void getFromSummary(std::vector<T*>& tobjs, int idbox) {
-    if (!m_summary->hasSelectionSummary(idbox)) return;
-    const LHCb::HltSelectionSummary& box = m_summary->selectionSummary(idbox);
-    const std::vector<ContainedObject*>& dobjs = box.data();
-    for (std::vector<ContainedObject*>::const_iterator it = dobjs.begin();
-         it != dobjs.end(); ++it) {
-      ContainedObject* obj = (ContainedObject*) (*it);
-      if ((obj)->clID() == T::classID()) 
-      {T* t = dynamic_cast<T*>(obj); tobjs.push_back(t);}
-    }
-  }
-  
-  // returns a vector with the objects from the summary
-  template <class T>
-  std::vector<T*> getFromSummary(int idbox ) 
-  {std::vector<T*> tobjs; getFromSummary(tobjs,idbox); return tobjs;}
+  // initialize the counters
+  void initCounters();
 
 protected:
 
-  std::vector<LHCb::Track*> m_tracks;
-
-  std::vector<LHCb::RecVertex*> m_vertices;  
-
+  // Counter of Input and Accepted Events
+  HltCounter m_counterInput;
+  HltCounter m_counterAccepted;
+  
 protected:
   
   // name of the location of the summary
   std::string m_summaryName;
   
+  // list of hlt selections names
+  StringArrayProperty m_selectionsName;
+
+  // list of decision types names
+  StringArrayProperty m_decisionTypesName;
+
+  // list of hlt selection ids
+  std::vector<int> m_selectionsIDs;
+
+  // list of decision types ids
+  std::vector<int> m_decisionTypesIDs;
+
   // pointer to the summary
   LHCb::HltSummary* m_summary;
 
-  // name of the algorithm name to report
-  std::string m_selectionSummaryName;
-
-  // ID of the summary Box
-  int m_selectionSummaryID;
-
-  // pointer to the algorithm report
+  // pointer to the selection summary
   LHCb::HltSelectionSummary* m_selectionSummary;
 
-protected:
-
-  // Property to rebook histogram from options
-  StringArrayProperty m_histoDescriptor;
 
 };
-#endif // HLTBASE_HLTALGORITHM_H
+#endif // HLTBASE_HLTMONITORALGORITHM_H

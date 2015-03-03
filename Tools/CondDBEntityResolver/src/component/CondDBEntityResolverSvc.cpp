@@ -1,4 +1,4 @@
-// $Id: CondDBEntityResolverSvc.cpp,v 1.4 2006-07-14 10:00:35 marcocle Exp $
+// $Id: CondDBEntityResolverSvc.cpp,v 1.6 2007-02-05 18:44:45 marcocle Exp $
 // Include files 
 
 #include "GaudiKernel/IDetDataSvc.h"
@@ -6,12 +6,13 @@
 #include "GaudiKernel/SvcFactory.h"
 
 #include "GaudiKernel/Time.h"
+#include "GaudiKernel/GaudiException.h"
 
 #include "DetCond/ICondDBReader.h"
 
-#include <xercesc/util/PlatformUtils.hpp>
 #include <xercesc/util/XMLString.hpp>
-#include <xercesc/framework/MemBufInputSource.hpp>
+
+#include "XmlTools/ValidInputSource.h"
 
 #include "CoolKernel/IObject.h"
 
@@ -159,6 +160,19 @@ xercesc::InputSource *CondDBEntityResolverSvc::resolveEntity(const XMLCh *const,
   // work-around a path like "conddb:path/to/folder" should be interpreted as "conddb:/path/to/folder"
   if (path[0] != '/') path = "/" + path;
 
+  // Extract the COOL field name from the condition path
+  // "conddb:/path/to/field@folder"
+  std::string data_field_name = "data"; // default value
+  std::string::size_type at_pos = path.find('@');
+  if ( at_pos != path.npos ) {
+    std::string::size_type slash_pos = path.rfind('/',at_pos);
+    if ( slash_pos+1 < at_pos ) { // item name is not null
+      data_field_name = path.substr(slash_pos+1,at_pos - (slash_pos +1));
+    } // if I have "/@", I should use the default ("data")
+    // always remove '@' from the path
+    path = path.substr(0,slash_pos+1) +  path.substr(at_pos+1);
+  }
+
   Gaudi::Time now;
   if ( m_detDataSvc->validEventTime() ) {
     now =  m_detDataSvc->eventTime();
@@ -175,12 +189,15 @@ xercesc::InputSource *CondDBEntityResolverSvc::resolveEntity(const XMLCh *const,
   StatusCode sc = m_condDBReader->getObject(path,now,data,descr,since,until,channel).isSuccess();
 
   if (sc.isSuccess()) {
+    if ( data.get() == NULL ) {
+      throw GaudiException("Cannot find any data at " + systemIdString, name(), StatusCode::FAILURE);
+    }
+
     std::string xml_data;
     try {
-      xml_data = (*data)["data"].data<std::string>();
+      xml_data = (*data)[data_field_name].data<std::string>();
     } catch (coral::AttributeListException &e) {
-      log << MSG::ERROR << "I cannot find the data inside COOL object: " << e.what() << endmsg;
-      return NULL;
+      throw GaudiException(std::string("I cannot find the data inside COOL object: ") + e.what(), name(), StatusCode::FAILURE);
     }
     // Create a copy of the string for the InputSource
     unsigned int buff_size = xml_data.size();
@@ -193,10 +210,13 @@ xercesc::InputSource *CondDBEntityResolverSvc::resolveEntity(const XMLCh *const,
     }
     
     // Create the input source using the string
-    xercesc::MemBufInputSource *inputSource = new xercesc::MemBufInputSource((XMLByte*) buff,
-                                                                             buff_size,
-                                                                             systemId,
-                                                                             true);
+    ValidInputSource *inputSource = new ValidInputSource((XMLByte*) buff,
+                                                         buff_size,
+                                                         systemId,
+                                                         true);
+    inputSource->setSystemId(systemId);
+    inputSource->setValidity(since, until);
+    
     // Done!
     return inputSource;
   }

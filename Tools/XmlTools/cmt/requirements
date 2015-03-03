@@ -1,7 +1,7 @@
-# $Id: requirements,v 1.17 2007-01-12 12:43:41 cattanem Exp $ 
+# $Id: requirements,v 1.19 2007-02-05 18:51:47 marcocle Exp $ 
 # =============================================================================
 package       XmlTools
-version       v4r0
+version       v5r0
 
 # =========== structure =======================================================
 branches      XmlTools doc cmt src

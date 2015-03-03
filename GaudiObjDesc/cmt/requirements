@@ -1,9 +1,13 @@
 package GaudiObjDesc
 
-version v9r8
+version v9r8p1
 
 include_path none
 macro xmlsrc "xml"
+
+macro gccxmlopts "" \
+     slc3-ia32 "--gccxmlopt=\'--gccxml-cxxflags -m32\'" \
+     slc4-ia32 "--gccxmlopt=\'--gccxml-cxxflags -m32\'"
 
 # GOD fragments header file and dictionary production
 make_fragment obj2doth -header=obj2doth_header -trailer=obj2doth_trailer

@@ -1,4 +1,4 @@
-// $Id: XmlParserSvc.cpp,v 1.11 2007-01-12 12:43:42 cattanem Exp $
+// $Id: XmlParserSvc.cpp,v 1.13 2007-02-05 18:51:19 marcocle Exp $
 
 // Include Files
 #include <limits.h>
@@ -11,10 +11,13 @@
 #include "GaudiKernel/IConverter.h"
 #include "GaudiKernel/MsgStream.h"
 #include "GaudiKernel/SvcFactory.h"
-
-#include "XmlParserSvc.h"
+#include "GaudiKernel/IDetDataSvc.h"
 
 #include "XmlTools/IXmlEntityResolverSvc.h"
+#include "XmlTools/ValidInputSource.h"
+
+#include "XmlParserSvc.h"
+#include "XmlTools/IOVDOMDocument.h"
 
 // -----------------------------------------------------------------------
 // Instantiation of a static factory class used by clients to create
@@ -38,7 +41,10 @@ XmlParserSvc::XmlParserSvc (const std::string& name, ISvcLocator* svc) :
   declareProperty ("CacheBehavior", m_cacheBehavior = 2);
   
   // Name of the xerces::EntityResolver provider
-  declareProperty ("EntityResolverSvc", m_resolverSvcName = "" );    
+  declareProperty ("EntityResolverSvc", m_resolverSvcName = "" );
+  
+  // Name of the xerces::EntityResolver provider
+  declareProperty ("DetectorDataSvc", m_detDataSvcName = "DetectorDataSvc" );
   
   // initializes the cacheAge to 0
   m_cacheAge = 0;
@@ -94,6 +100,14 @@ StatusCode XmlParserSvc::initialize( ) {
     return StatusCode::FAILURE;
   }
 
+  // find the detector data svc
+  sc = service(m_detDataSvcName,m_detDataSvc,true);
+  if (!sc.isSuccess()) {
+    log << MSG::WARNING << "Unable to get a handle to the detector data service, I will not consider event time" << endmsg;
+  } else {
+    log << MSG::DEBUG << "Got pointer to IDetDataSvc \"" << m_detDataSvcName << '"' << endmsg;
+  }
+  
   return StatusCode::SUCCESS;
 }
 
@@ -106,7 +120,9 @@ StatusCode XmlParserSvc::finalize() {
   if (m_parser) delete m_parser;
 
   if (m_resolverSvc) m_resolverSvc->release();
-
+  
+  if (m_detDataSvc) m_detDataSvc->release();
+  
   xercesc::XMLPlatformUtils::Terminate();
 
   return Service::finalize();
@@ -120,16 +136,38 @@ XmlParserSvc::~XmlParserSvc() { }
 // -----------------------------------------------------------------------
 //  Parse
 // -----------------------------------------------------------------------
-xercesc::DOMDocument* XmlParserSvc::parse (const char* fileName) {
+IOVDOMDocument* XmlParserSvc::parse (const char* fileName) {
   MsgStream log (msgSvc(), name());
   // first look in the cache
   cacheType::iterator it = m_cache.find(fileName);
-  // if something was there, update it and return the document
+  
   if (it != m_cache.end()) {
-    increaseCacheAge();
-    ++it->second.utility;
-    ++it->second.lock;
-    return it->second.document;
+    // we found an object in the cache
+    if ( m_detDataSvc && m_detDataSvc->validEventTime() ) {
+      // since we have a service that knows the event time,
+      // we can check if the cached item is still valid
+      if ( it->second.document->isValid(m_detDataSvc->eventTime()) ) {
+        // the cached DOM is valid for the current event, so it is what we wanted
+        increaseCacheAge();
+        ++it->second.utility;
+        ++it->second.lock;
+        return it->second.document;
+      }
+      else {
+        // the document is not valid: I try to remove it from the cache
+        if ( ! it->second.lock ) {
+          // we can remove the object from the cache
+          delete it->second.document;
+          m_cache.erase(it);
+        }
+        else {
+          // This should never happen: a document that is not valid cannot be locked!
+          throw GaudiException("BAD status of XmlParserSvc cache:"
+                               " a cache document is invalid and locked at the same time",
+                               "XmlParserSvc::parse",StatusCode::FAILURE);
+        }
+      }
+    }
   }
   // There was nothing in the cache, try to parse the file if a parser exists
   if (0 != m_parser) {
@@ -137,17 +175,39 @@ xercesc::DOMDocument* XmlParserSvc::parse (const char* fileName) {
     m_parser->reset();
     // parses the file
     try {
-      m_parser->parse(fileName);
       log << MSG::DEBUG << "parsing file " << fileName << endreq;
+      xercesc::DOMDocument *doc = NULL;
+      std::auto_ptr<xercesc::InputSource> is;
+      // If we have an entity resolver, we try to use it
+      if (m_resolverSvc){
+        XMLCh *sysId = xercesc::XMLString::transcode(fileName);
+        is = std::auto_ptr<xercesc::InputSource>(m_resolverSvc->resolver()->resolveEntity(NULL,sysId));
+        xercesc::XMLString::release(&sysId);
+      }
+      
+      if ( is.get() != NULL ) { // If the entity resolver succeded, we parse the InputSource
+        m_parser->parse(*is);
+      }
+      else { // otherwise try to pass the filename to XercesC
+        m_parser->parse(fileName);
+      }
       // get a pointer to the DOM Document and also take the responsibility of
       // freeing the memory
-      xercesc::DOMDocument *doc = m_parser->adoptDocument();
+      doc = m_parser->adoptDocument();
       // if the document is not null, cache it
       if (doc != 0) {
-        cacheItem (fileName, doc);
+        IOVDOMDocument *cache_doc = new IOVDOMDocument(doc);
+        // Try to see if the InputSource knows about validity/
+        ValidInputSource *iov_is = dynamic_cast<ValidInputSource *>(is.get());
+        if (iov_is){ // it knows
+          cache_doc->setValidity(iov_is->validSince(),iov_is->validTill());
+        }
+        cacheItem (fileName, cache_doc);
+        // returns the parsed document
+        return cache_doc;
       }
-      // returns the parsed document
-      return doc;
+      // return empty document
+      return NULL;
     } catch (xercesc::XMLPlatformUtilsException e) {
       log << MSG::ERROR << "Unable to find file " << fileName
           << " !" << endreq;      
@@ -161,7 +221,7 @@ xercesc::DOMDocument* XmlParserSvc::parse (const char* fileName) {
 // -----------------------------------------------------------------------
 // Parses an Xml file and provides the DOM tree representing it
 // -----------------------------------------------------------------------
-xercesc::DOMDocument* XmlParserSvc::parseString (std::string source) {
+IOVDOMDocument* XmlParserSvc::parseString (std::string source) {
   // there is of course no cache for parsing XML strings directly
   // try to parse the string if a parser exists
   if (0 != m_parser) {
@@ -175,8 +235,11 @@ xercesc::DOMDocument* XmlParserSvc::parseString (std::string source) {
     m_parser->parse(inputSource);
     MsgStream log (msgSvc(), name());
     log << MSG::DEBUG << "parsing xml string..." << endreq;
-    // returns the parsed document
-    return m_parser->adoptDocument();
+    xercesc::DOMDocument *doc = m_parser->adoptDocument();
+    // returns the parsed document if successful
+    if (doc != 0) {
+      return new IOVDOMDocument(doc);
+    }
   }
   // no way to parse the string, returns an empty document
   return 0;
@@ -197,7 +260,8 @@ void XmlParserSvc::clearCache() {
       log << MSG::WARNING << "Item in cache with lock count = " << i->second.lock
           << " " << i->first << endmsg;
     }
-    i->second.document->release();
+    // i->second.document->release();
+    delete i->second.document;
   }
   //    then clear the chached pointers
   m_cache.clear();
@@ -207,7 +271,7 @@ void XmlParserSvc::clearCache() {
 //=========================================================================
 //  Release the lock for documents in cache
 //=========================================================================
-void XmlParserSvc::releaseDoc(xercesc::DOMDocument* doc) {
+void XmlParserSvc::releaseDoc(IOVDOMDocument* doc) {
   // find the DOMDocument in the cache
   cacheType::iterator it = m_cache.begin();
   while (it != m_cache.end() && it->second.document != doc) {
@@ -215,7 +279,7 @@ void XmlParserSvc::releaseDoc(xercesc::DOMDocument* doc) {
   }
   if ( it == m_cache.end() ) {
     // the item was never cached (parsed from a string) ==> delete it
-    doc->release();
+    delete doc;
   } else {
     if ( --it->second.lock < 0 ) {
       MsgStream log (msgSvc(), name());
@@ -316,7 +380,7 @@ StatusCode XmlParserSvc::queryInterface( const InterfaceID& riid,
 // CacheItem
 // -----------------------------------------------------------------------
 void XmlParserSvc::cacheItem (std::string fileName,
-                              xercesc::DOMDocument* document) {
+                              IOVDOMDocument* document) {
   // first increase the cache age
   increaseCacheAge();
   
@@ -341,7 +405,8 @@ void XmlParserSvc::cacheItem (std::string fileName,
           << ++m_maxDocNbInCache << endmsg;
     } else {
       // else release the memory used by the winner
-      winner->second.document->release();
+      //winner->second.document->release();
+      delete winner->second.document;
       // and its entry in the map
       m_cache.erase(winner);
     }

@@ -3,13 +3,11 @@
  *
  *  Implementation file for detector description class : DeRichSphMirror
  *
- *  $Id: DeRichSphMirror.cpp,v 1.24 2006-11-03 14:02:51 cattanem Exp $
+ *  $Id: DeRichSphMirror.cpp,v 1.26 2007-02-06 15:01:53 cattanem Exp $
  *
  *  @author Antonis Papanestis a.papanestis@rl.ac.uk
  *  @date   2004-06-18
  */
-
-#define DERICHSPHMIRROR_CPP
 
 // Include files
 #include "GaudiKernel/MsgStream.h"
@@ -18,8 +16,8 @@
 #include "GaudiKernel/IUpdateManagerSvc.h"
 #include "GaudiKernel/SystemOfUnits.h"
 
-#include "Kernel/Vector3DTypes.h"
-#include "Kernel/Transform3DTypes.h"
+#include "GaudiKernel/Vector3DTypes.h"
+#include "GaudiKernel/Transform3DTypes.h"
 
 /// Detector description classes
 #include "DetDesc/IGeometryInfo.h"
@@ -95,20 +93,10 @@ StatusCode DeRichSphMirror::initialize()
   m_mirrorNumber = atoi( name().substr(pos2+1).c_str() );
   const std::string mirNumString = name().substr(pos2+1);
 
-  std::string rich1GeomLoc( "Rich1" );
-  std::string rich2GeomLoc( "Rich2" );
-  std::string rich2Location;
-  std::string rich1Location;
-  if ( name().find("Magnet") == std::string::npos ){
-    rich2Location = DeRichLocation::Rich2_old;
-    rich1Location = DeRichLocation::Rich1_old;
-  }
-  else {
-    rich2Location = DeRichLocation::Rich2;
-    rich1Location = DeRichLocation::Rich1;
-    rich1GeomLoc = "BeforeMagnetRegion/"+rich1GeomLoc;
-    rich2GeomLoc = "AfterMagnetRegion/"+rich2GeomLoc;
-  }
+  const std::string & rich1GeomLoc = "BeforeMagnetRegion/Rich1";
+  const std::string & rich2GeomLoc = "AfterMagnetRegion/Rich2";
+  const std::string & rich2Location = DeRichLocation::Rich2;
+  const std::string & rich1Location = DeRichLocation::Rich1;
 
   // get DeRich1 and 2
   SmartDataPtr<DeRich> deRich1(dataSvc(), rich1Location);

@@ -1,15 +1,13 @@
-// $Id: HltAlgorithm.h,v 1.4 2006-12-14 11:21:35 hernando Exp $
+// $Id: HltAlgorithm.h,v 1.7 2007-02-08 17:32:39 hernando Exp $
 #ifndef HLTBASE_HLTALGORITHM_H 
 #define HLTBASE_HLTALGORITHM_H 1
 
 // Include files
-
-#include "GaudiAlg/GaudiHistoAlg.h"
-#include "DetDesc/Condition.h"
 #include "Event/HltSummary.h"
 #include "Event/HltSummaryFunctor.h"
 #include "Event/HltNames.h"
 
+#include "HltBase/HltBaseAlg.h"
 #include "HltBase/IHltDataStore.h"
 #include "PatTools/PatDataStore.h"
 
@@ -18,18 +16,39 @@
  *  Base class for HLT algorithms
  *  functionality:
  *        - deals with input/output tracks from Pat and Hlt stores
- *        - book and fill default histograms: i.e: number of input tracks
- *        - set a period to fill histograms
- *        - set a period to overrule the decision of the algorithm
- *        - deals with the HLT summary
+ *          options to set the pat to input/output tracks and vertices
+ *        - deals with the HltSummary
+            save an retrieve from summary, set decision and decision type.
+ *        - beginExecute, and endExecute methods to do common task 
+ *          increase counters, check input counters, fill general histos
+ *      at the begin and end of the execute method of Hlt algorithms,
+ *         (i.e increase counters, etc) 
+ *
+ *  options:
+ *      InputTracksName, InputTracks2Name,InputVerticesName,PrimaryVerticesName,
+ *      OuptutTracksName,OutputVertices:
+ *          input tracks and vertices from the HltDataStore (logical objects)
+ *          logical objects: the containers are pointers to objects owned
+ *                           by an external container (in this case PatDataStore)
+ *      PatInputTracksName,PatInputTrack2Name,PatInputVerticesName:
+ *          input tracks and vertices from the PatDataStore (own objectes)
+ *      SummaryLocation: location of the HltSummary 
+ *      SelectionName: name of the SelectionSummary of this algorithm
+ *                     (see Event/HltEnums.h)  
+ *      IsTrigger: if the decision is possitive a valid trigger will be issued 
+ *                 (normally decision indicates continuation of the trigger flow,
+ *                  isTrigger = true will indicate a trigger yes event)
+ *
+ *  Note: look at HltBaseAlg for more functionality and options
  *
  *  @author Hugo Ruiz Perez
  *  @author Jose Angel Hernando Morata
  *  @date   2006-06-15
  */
-class HltAlgorithm : public GaudiHistoAlg {
+class HltAlgorithm : public HltBaseAlg {
 public:
 
+  // typedef for track and vertices container iterators
   typedef Hlt::TrackContainer::iterator track_iterator;
   typedef Hlt::VertexContainer::iterator vertex_iterator;
 
@@ -41,259 +60,87 @@ public:
   /// Standard constructor
   HltAlgorithm( const std::string& name, ISvcLocator* pSvcLocator );
 
-  virtual ~HltAlgorithm( ); ///< Destructor
+  /// Standard destructor
+  virtual ~HltAlgorithm( ); 
 
-  virtual StatusCode initialize();    ///< Algorithm initialization
-  virtual StatusCode execute   ();
+  /** initialize algorithm
+   *  Note: call HltAlgorithm::initialize() in your derived algorithm
+   *  initialize IDs, generic counters and histograms
+   **/
+  virtual StatusCode initialize();    
+
+  /** execute algorithm
+   * Note: call HltAlgorithm::beginExecute() and HltAlgorithm::endExecute() 
+   *       at the begin and end of the excute method of the derived algorithms
+   **/
+  virtual StatusCode execute   ();    ///< Algorithm execute
+
+  /** finalize algorithm
+   * Note: call HltAlgorithm::finalize()
+   * print out info of the accepted events, etc.
+   * 
+   **/
   virtual StatusCode finalize  ();    ///< Algorithm finalization
 
 protected:
 
-  //-----------------------
-  // stop and error methods
-  //-----------------------
+  /** begin the execution
+   *    call HltBaseAlgo::beginExecute() (see HltBaseAlgo)
+   *             set decesion to false, set histo monitor bool flag
+   *    retrieve selection summary if necessary
+   *    check that the input tracks and vertices containers are not empty
+   *    increase entry counters
+   **/
+  bool beginExecute();
 
-  // check that this a required container it is not null
-  // i.e if the inputTracks needs to be there!
-  template <class CON>
-  inline void checkInput(CON*& cont, const std::string& comment) {
-    if (cont == NULL) error() << comment << endreq;
-  }
-
-  template <class T>
-  bool retrieve(T*& t, const std::string& name) {
-    t = NULL;
-    try {t  = get<T>(name);}
-    catch (GaudiException) {warning() << " No obj at " << name << endreq;}
-    return (t != NULL);
-  }
-
-  // getting out of the execute method, print a message or send a error
-  inline StatusCode stop(const std::string& message, bool err = false)
-  {
-    if (err) error() << message << endreq;
-    debug() << message << endreq;
-    return err? StatusCode::FAILURE: StatusCode::SUCCESS;
-  }
+  /** end of the execution
+   *    increase histos of output tracks/vertices and couter of accepted events
+   *    call HltBase::endExecute() (see HltBaseAlgo)
+   *             set decision to true
+   **/ 
+  bool endExecute();
 
 protected:
 
-  //---------------------------------------------
-  // methods dealing with histograms and counters 
-  //---------------------------------------------
-
-  // Counter class
-  // TODO: to be revisit, we should use histogram instead
-  class HltCounter {
-  public:
-    std::string m_name;
-    long m_counter;
-    bool m_initialized;
-    HltCounter () {  m_initialized = false; };
-    // Return counter value if treated as int
-    operator int () const { return m_counter;};
-    friend MsgStream& operator<< ( MsgStream& o, HltCounter& counter ) {
-      o << counter.m_counter;
-      return o;
-    }
-  };
-  
-  // Histo class
-  // TODO: to be revisit, update for algorithms instead?
-  unsigned m_histogramUpdatePeriod;
-  class HltHisto {
-  public:
-    std::string m_name;
-    bool m_initialized;
-    int m_updatePeriod;
-    AIDA::IHistogram1D* m_histo;
-    HltHisto () { 
-      m_initialized = false ; 
-      m_updatePeriod = -1;
-    }
-  };
-  
-  // Histo collection class
-  // TODO: how we use it?
-  class HistoCol 
-  {
-  public:
-    std::string m_name;
-    std::vector<std::string> m_variables;
-    std::vector<std::string> m_cases;
-    std::vector<AIDA::IHistogram1D*> m_histos;
-    bool m_initialized;
-    unsigned m_nVariables;
-    unsigned m_nCases;
-    HistoCol ()  { m_initialized = false ; };
- };
-
-  // initialize this histogram with a given titleID
-  void initializeHisto( HltHisto& histo, const std::string& name );
-
-  // initialize histograms
-  void initializeHistoCol( HistoCol& histoCol,
-                           const std::string& inputString,
-                           const std::vector<std::string>& inputVariables,
-                           const std::vector<std::string>& inputCases );
-  
-  // initialize and book this histogram
-  // the booking can be changed via options using the HisDescriptor
-  void initializeHisto( HltHisto& histo, const std::string& name,
-                        float min, float max, int nBins );
-  
-  // fill histogram with this wait
-  // it will be filled with the period set by options
-  void fillHisto( HltHisto& histo, float x, float weight );
-
-  // fill collection of histogram
-  void fillHistoCol( HistoCol& histoCol, 
-                     const std::vector<bool>& inputBools,
-                     const std::vector<float>& inputVariables, 
-                     float weight);
-
-  // initialize counter
-  // TODO: revisit
-  void initializeCounter( HltCounter& Counter, const std::string& name );
-  
-  // increase counter
-  // TODO: revisit
-  void increaseCounter( HltCounter& Counter, int increase = 1);
-  
-  // Formated text messages
-  void infoTotalEvents    ( int  nTotEvts );
-
-  // Formated text messages, print also fraction of events
-  void infoSubsetEvents   ( int nEventsInSubset, int  nTotEvts, 
-                            const std::string& subsetName );
-
-  void infoInputObjects   ( int nInputObjects, int  nTotEvts, 
-                            const std::string& objectsName  );
-
-  void infoAcceptedObjects( int nAcceptedObjects, int nInputObjects,
-                            int  nTotEvts, const std::string& objectsName );
-
-protected:
-  
-  // Input counters
-  HltCounter m_countInput;
-  HltCounter m_countNonEmpty;
-  HltCounter m_countEmptyTracks;
-  HltCounter m_countEmptyTracks2;
-  HltCounter m_countInputVertices;
-  HltCounter m_countEmptyVertices;
-  HltCounter m_countEmptyPVs;
-  HltCounter m_countInputPVs;
-  HltCounter m_countInputTracks;
-  HltCounter m_countInputTracks2;
-
-  // Output coutners
-  HltCounter m_countCandidates;
-  HltCounter m_countAccepted;
-  HltCounter m_countOverruled;
-  HltCounter m_countOutputTracks;
-  HltCounter m_countOutputTracks2;
-  HltCounter m_countOutputVertices;
-
-  HltCounter m_counterEntries;
+  // Counter of Input and Accepted Events
   HltCounter m_counterInput;
-  HltCounter m_counterPasses;
+  HltCounter m_counterAccepted;
 
-  // counter histograms
-  HltHisto m_histoEntries;
-  HltHisto m_histoPasses;
 
-  // Input histograms
+//   HltCounter m_countEmptyTracks;
+//   HltCounter m_countEmptyTracks2;
+//   HltCounter m_countInputVertices;
+//   HltCounter m_countEmptyVertices;
+//   HltCounter m_countEmptyPVs;
+//   HltCounter m_countInputPVs;
+//   HltCounter m_countInputTracks;
+//   HltCounter m_countInputTracks2;
+
+
+  // Input histograms for tracks and vertices
   HltHisto m_histoInputVertices;
   HltHisto m_histoInputPVs;
   HltHisto m_histoInputTracks;
   HltHisto m_histoInputTracks2;
 
+  // Input histograms for tracks and vertices from Pat container
   HltHisto m_histoPatInputTracks;
   HltHisto m_histoPatInputTracks2;
   HltHisto m_histoPatInputVertices;
 
-  // Output histograms
+  // Output histograms for track and vertices
   HltHisto m_histoCandidates;
   HltHisto m_histoOutputVertices;
   HltHisto m_histoOutputTracks;
   HltHisto m_histoOutputTracks2;
 
-protected:
-
-  // declare an integer condition to be read from the condDB
-  inline void declareCondition(const std::string& name, int& val)
-  {m_iconditions[name] = &val;}
-
-  // declare a double condition to be read from the condDB
-  inline void declareCondition(const std::string& name, double& val)
-  {m_dconditions[name] = &val;}
-
-  // declare a double condition to be read from the condDB
-  inline void declareCondition(const std::string& name, 
-                               std::vector<double>& val)
-  {m_dvconditions[name] = &val;}
 
 protected:
 
-  // begin the execution
-  //    check that the input tracks and vertices are ready
-  //    fill histograms and counters
-  //    set the decision to false, and deals with the report to the summary
-  bool beginExecute();
-
-  // end of the execution
-  //    fill histogram and counters of the output tracks and vertices
-  //    set the decision to true
-  bool endExecute();
-
-  
-  // fill histogram with the size of the container 
-  template <class CON>
-  bool size(CON*& con, int& n, HltHisto& h, const std::string& comment) {
-    if (!con) return true;
-    n = con->size(); fillHisto(h,n,1.);
-    debug() << comment << n << endreq;
-    if (n == 0) setDecision(false);
-    return (n>0);
-  }
-
-
-  // fill the histogram with the info stored in the objects of the container
-  // intended to do internal monitoring, before we apply any cut
-  template <class INPUT >
-  void monitor(INPUT& con, int key, HltHisto& histo){
-    if (!m_monitor) return;
-    for (typename INPUT::iterator it = con.begin(); it != con.end(); ++it) {
-      double d = (*it)->info(key,-1.);
-      verbose() << " monitor " << key << " " << d << endreq;
-      fillHisto( histo, d, 1.);
-    }
-  }
-  
-protected:
-
-  // Minimum number of candidates needed to set filterPassed to true
-  long m_nCandidates;
-
-  void candidateFound() { m_nCandidates++; };
-
-  // always force a positive decision of the algorithms 
-  // (controlled by options)
-  bool m_filter;
-
-  // monitor this event (depends on a period set by options)
-  bool m_monitor;
-
-  // setting the decision, inform Gaudi about the decision
-  void setDecision(bool ok) {
-    if (m_filter) setFilterPassed(ok);
-    debug() << " set decision " << ok << endreq;
-  }
-
-protected:
-
-  // set the decision type on the summary
+  /** set the decision type to true in selection summary info
+   *        (see Event/HltEnums.h for types)
+   *        automatically set decision/pass to true
+   **/
   inline void setDecisionType(int decisionType, int idsel= -1) {
     LHCb::HltSelectionSummary& sel = selectionSummary(idsel);    
     sel.setDecisionType(decisionType,true);
@@ -302,7 +149,13 @@ protected:
   }
   
 
-  // save in sammry this track
+  /** save a data object (derived from ContainedObject) as Track or RecVertex
+   * into the selecion summary info.
+   * by the default the selection summary is taked from the option SelectionName
+   * user can save an object into other selection summary, indicating the ID
+   * of the selection summary 
+   * (for IDs of selection summaries see Event/HltEnums.h) 
+   **/
   template <class T>
   void saveObjectInSummary(const T& t, int idsel = -1) {
     LHCb::HltSelectionSummary& sel = selectionSummary(idsel);
@@ -311,13 +164,23 @@ protected:
   }
   
   
-  // save in summary these tracks
+  /** save a container of data objeces (i.e Tracks and Vertices) into the
+   *  selection summary info
+   * by the default the selection summary is taked from the option SelectionName
+   * user can save an object into other selection summary, indicating the ID
+   * of the selection summary 
+   * (for IDs of selection summaries see Event/HltEnums.h) 
+   **/
   template <class CONT>
   inline void saveInSummary(const CONT& cont, int idsel = -1) {
     for (typename CONT::const_iterator it = cont.begin(); 
          it != cont.end(); ++it) saveObjectInSummary(**it,idsel);
   }
-  
+
+
+  /** retrieve a vector of objects saved in a summary selection info
+   *  (for the IDs of teh selecion summaries see Event/HltEnums.h)
+   **/
   template <class T>
   void retrieveFromSummary(int idsel, std::vector<T*>& tobjs) {
     HltSummaryFunctor::retrieve(*m_summary,idsel,tobjs);
@@ -325,9 +188,6 @@ protected:
   
 
 protected:
-
-  // initialize the Msg service
-  void initMsg();
   
   // initialize the containers
   bool initContainers();
@@ -337,9 +197,6 @@ protected:
 
   // initialize the counters
   void initCounters();
-  
-  // initialize the conditions
-  bool initConditions();
 
   // retrive a track container from a store with a given name
   void init(Hlt::TrackContainer*& con, IHltDataStore*& store,
@@ -358,32 +215,18 @@ protected:
             const std::string& name);
 protected:
 
-  // get the summary
-  LHCb::HltSelectionSummary& selectionSummary(int id = -1) {
-    if (!m_summary) m_summary = get<LHCb::HltSummary>(m_summaryName);
-    if (id>0) return m_summary->selectionSummary(id);
-    id = m_selectionSummaryID;
-    if (!m_selectionSummary)
-      info() << " retrieving selection summary id " << id << endreq;
-    m_selectionSummary = &(m_summary->selectionSummary(id));
-    return *m_selectionSummary;
+  /** get the summary 
+   **/
+  LHCb::HltSummary& summary() {
+    if (!m_summary) 
+      m_summary = getOrCreate<LHCb::HltSummary,LHCb::HltSummary>(m_summaryLocation);
+    return *m_summary;
   }
 
-protected:
-
-  // bool about the msg level
-  bool m_verbose;
-  bool m_debug;
-  bool m_info;
-  bool m_warning;
-  bool m_error;
-  bool m_fatal;
-
-  // print information that we use this container
-  template <class CON>
-  void infoContainer(CON*& con, const std::string& name, 
-                     const std::string& comment) 
-  {if (con) info() << " using container " << comment << " " << name << endreq;}
+  /** get the selection summary with a give ID (see Event/HltEnums.h)
+   *  by defaul: the selection summary indicated in the option "SelectionName"
+   **/
+  LHCb::HltSelectionSummary& selectionSummary(int id = -1);
   
 protected:
 
@@ -392,33 +235,33 @@ protected:
 
   // TODO: do we need it?
   bool m_decision;
-
-  // The period to always return a positive decision
-  int m_noFilterPeriod;
   
   // name of the location of the summary
-  std::string m_summaryName;
+  std::string m_summaryLocation;
 
-  // name of the algorithm name to report
-  std::string m_selectionSummaryName;
+  // name of the selection summary
+  std::string m_selectionName;
 
-  // ID of the algorithm name to report
+  // ID of the selection summary
   int m_selectionSummaryID;
   
+ protected:
+
   // pointer to the summary
   LHCb::HltSummary* m_summary;
 
-  // pointer to the algorithm report
+  // pointer to the selection summary
   LHCb::HltSelectionSummary* m_selectionSummary;
 
 protected:
 
   // pointer to the pat data Store
   PatDataStore* m_patDataStore;
+
   // pointer to the hlt data store
   IHltDataStore* m_hltDataStore;
 
-  // names of the pat containers
+  // names of the pat input containers
   std::string m_patInputTracksName;
   std::string m_patInputTracks2Name;
   std::string m_patInputVerticesName;
@@ -437,7 +280,7 @@ protected:
   std::string m_outputTracksName;
   std::string m_outputVerticesName;
 
-  // pointer to the hlt containers
+  // pointers to the hlt containers
   Hlt::TrackContainer* m_inputTracks;
   Hlt::TrackContainer* m_inputTracks2;
   Hlt::VertexContainer* m_inputVertices;
@@ -459,28 +302,5 @@ protected:
   // size of the output containers
   int m_nOutputTracks;
   int m_nOutputVertices;
-
-protected:
-
-  // Property to rebook histogram from options
-  StringArrayProperty m_histoDescriptor;
-
-protected:
-
-  // location of the conditions
-  std::string m_conditionsName;
-
-  // internal method to deal with the conditions
-  StatusCode i_cacheConditions();
-
-    
-  // pointer to conditions
-  Condition* m_conditions;
-
-  // maps of the conditions
-  std::map<std::string, double*> m_dconditions;
-  std::map<std::string, int*> m_iconditions;
-  std::map<std::string, std::vector<double>*> m_dvconditions;
-
 };
 #endif // HLTBASE_HLTALGORITHM_H

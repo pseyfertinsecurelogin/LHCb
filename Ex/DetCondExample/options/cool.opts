@@ -2,12 +2,13 @@
 // Common job options to use a COOL in DetCondExample
 //==============================================================
 
-//--------------------------------------------------------------
-// Extra services needed in the application
-//--------------------------------------------------------------
+#include "$DETCONDEXAMPLEROOT/options/common.opts"
 
-// Dynamically load component library for DetCond services and converters
-ApplicationMgr.DLLs += { "DetCond" };
+//--------------------------------------------------------------
+// Detector Persistency Service Setup
+//--------------------------------------------------------------
+DetectorPersistencySvc.CnvServices += { "CondDBCnvSvc" };
+XmlParserSvc.EntityResolverSvc = "CondDBEntityResolverSvc";
 
 //--------------------------------------------------------------
 // Access to the ConditionsDB

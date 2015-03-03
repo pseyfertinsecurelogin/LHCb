@@ -1,0 +1,82 @@
+!-----------------------------------------------------------------------------
+! Package     : DAQ/MDF
+! Responsible : Markus Frank
+! Purpose     : Package to handle MDF and MIF data files.
+!               Contains also the data structures to control MEPs and 
+!               MEP fragments
+!-----------------------------------------------------------------------------
+
+!======================= MDF v2r4p1 2007-02-13 ===============================
+! 2007-02-13 - Marco Cattaneo
+ - Fix requirements for InstallArea
+
+!======================= MDF v2r4 ========================================
+! 2007-02-01 - Markus Frank
+  - Modify printouts + 64 bit bug fixes
+
+!======================= MDF v2r3 ========================================
+
+! 2006-11-14 - Markus Frank
+  - Update MDFWriterLite to also compile on WIN32
+  - Update RawEventTestCreator to remove one bank through job options
+
+! 2006-10-27 - Markus Frank
+  - Improve handling of different input formats in MDFIO and propagate the
+    options to the conversion service / event selector concerned.
+
+! 2006-10-23 - Markus Frank
+  - Fix bug in reading back compressed buffers. Not enough expansion space
+    was allocated.
+  - Automatically add MDF bank when creating MDF records from TES.
+
+! 2006-10-19 - Markus Frank
+  - Add some useful decodings for MEP events, multi-fragments and 
+    fragments into banks.
+  - Add also consistency checks fro MEP events, multi-fragments and 
+    fragments
+
+! 2006-10-15 - Markus Frank
+  - Change to MDF header type 2: Add datatype word (1 Byte + byte spare)
+    MDF Headers v2 are 32 bit aligned.
+  - MDF Header length is now full record length: 
+    Generic header + specific header + opaque data length
+    Adjust to MDF header to description in 
+    https://edms.cern.ch/file/784588/1/Online_Raw_Data_Format.doc
+  
+! 2006-10-06 - Markus Frank
+  - Introduce handling of MEP events with multiple raw buffers
+  
+! 2006-09-26 - Markus Frank/Suman
+  - Fixed MDFWriterLite to switch file on new events.
+  - Allow to ignore the checksum when reading old files:
+  EventSelector.Input={"DATA='...' IgnoreChecksum='YES' SVC='...'"};
+
+
+! 2006-09-06 - Markus Frank
+  - Fix checksum calculation
+  - Fix bug(s) in MDF access from POOL files
+  - Implement MIF writer
+
+!======================= MDF v2r2 ========================================
+! 2006-09-06 - Markus Frank
+  - Fix memory corruption when reading MDF files. (reported by Tomasz Szumlak)
+
+! 2006-08-30 - Markus Frank
+  - Add small algorithm to copy RawEvent structures.
+
+! 2006-08-20 - Markus Frank
+  - Remove loading of DLL DAQEvent in options files. It's not necessary.
+
+! 2006-07-03 - Markus Frank
+  - Add Rational Rose model files
+
+! 2006-06-28 - Markus Frank
+  - Extend Streambuffer functionality to load plugins for reading POSIX IO
+    like rfio etc.
+
+! 2006-01-10 - Markus Frank
+  - Add event selector to read MEP buffers from file
+
+!========================== MDF v1r0  ===========================
+! 2005-12-20 - Markus Frank
+  - New package

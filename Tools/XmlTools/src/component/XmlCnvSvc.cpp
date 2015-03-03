@@ -1,20 +1,16 @@
-// $Id: XmlCnvSvc.cpp,v 1.11 2007-01-12 12:43:42 cattanem Exp $
+// $Id: XmlCnvSvc.cpp,v 1.13 2007-02-05 18:51:19 marcocle Exp $
 
 // Include Files
 #include <xercesc/util/PlatformUtils.hpp>
 #include <xercesc/util/XMLString.hpp>
 
-#include "GaudiKernel/DataObject.h"
 #include "GaudiKernel/SvcFactory.h"
-#include "GaudiKernel/CnvFactory.h"
-#include "GaudiKernel/IConverter.h"
 #include "GaudiKernel/ISvcLocator.h"
 #include "GaudiKernel/IDataProviderSvc.h"
 #include "GaudiKernel/MsgStream.h"
 #include "GaudiKernel/GenericAddress.h"
 
 #include "XmlCnvSvc.h"
-#include "XmlParserSvc.h"
 
 
 // -----------------------------------------------------------------------
@@ -198,7 +194,7 @@ StatusCode XmlCnvSvc::createAddress(long  svc_type,
 // -----------------------------------------------------------------------
 // Parses an Xml file and provides the DOM tree representing it
 // -----------------------------------------------------------------------
-xercesc::DOMDocument* XmlCnvSvc::parse (const char* fileName) {
+IOVDOMDocument* XmlCnvSvc::parse (const char* fileName) {
   if (0 != m_parserSvc) {
     return m_parserSvc->parse(fileName);
   }
@@ -211,7 +207,7 @@ xercesc::DOMDocument* XmlCnvSvc::parse (const char* fileName) {
 // -----------------------------------------------------------------------
 // Parses an Xml file and provides the DOM tree representing it
 // -----------------------------------------------------------------------
-xercesc::DOMDocument* XmlCnvSvc::parseString (std::string source) {
+IOVDOMDocument* XmlCnvSvc::parseString (std::string source) {
   MsgStream log (msgSvc(), name());
 
   // First prepend the proper DTD path where appropriate
@@ -265,7 +261,7 @@ void XmlCnvSvc::clearCache() {
 // -----------------------------------------------------------------------
 // release a DOMDocument pointer
 // -----------------------------------------------------------------------
-void XmlCnvSvc::releaseDoc(xercesc::DOMDocument* doc) {
+void XmlCnvSvc::releaseDoc(IOVDOMDocument* doc) {
   if (0 != m_parserSvc) {
     m_parserSvc->releaseDoc(doc);
     return;

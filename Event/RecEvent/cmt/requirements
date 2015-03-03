@@ -1,9 +1,9 @@
-# $Id: requirements,v 1.14 2006-12-14 14:41:17 ranjard Exp $
+# $Id: requirements,v 1.17 2007-02-07 13:05:01 cattanem Exp $
 # Created    : 13/12/2005
 # Maintainer : Marco Cattaneo
 #
 package           RecEvent
-version           v2r0
+version           v2r1
 
 # Structure, i.e. directories to process. 
 #============================================================================
@@ -30,8 +30,9 @@ library          RecEventDict  ../$(tag)/dict/RecEvent/*.cpp
 
 # Define link options
 #============================================================================
-apply_pattern component_library library=RecEventDict
 apply_pattern linker_library    library=RecEvent
+apply_pattern component_library library=RecEventDict
+macro_remove constituents RecEventDictRootMap
 
 private
 use GaudiObjDesc v* -no_auto_imports
