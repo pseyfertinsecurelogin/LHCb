@@ -1,5 +1,5 @@
 package DAQEvent
-version v7r6
+version v7r6p1
 
 use GaudiKernel v*
 branches cmt doc Event src tests xml
@@ -24,6 +24,7 @@ apply_pattern     reflex_dictionary                            \
 macro DAQEventDict_use_linkopts $(use_linkopts)
 
 # ==================== linker library =======================================
+macro DAQEventLib_dependencies DAQEventObj2Doth
 library DAQEventLib     *.cpp
 
 # ==================== component libraries ==================================

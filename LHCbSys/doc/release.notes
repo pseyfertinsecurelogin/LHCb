@@ -1,9 +1,13 @@
 <PRE>
 !-----------------------------------------------------------------------------
 ! Package     : LHCbSys
-! Responsible : Florence Ranjard, Marco Cattaneo
+! Responsible : Marco Cattaneo
 ! Purpose     : LHCb OO kernel packages
 !-----------------------------------------------------------------------------
+
+</PRE><H1><A NAME=v22r11>2007-11-14 LHCbSys v22r11</A></H1><PRE>
+This version uses Gaudi v19r5 and LCG_53a. Fully compatible with DC06 data. 
+This is a branch version to allow for HLT benchmark tests. Only L0 is modified.
 
 </PRE><H1><A NAME=v22r10>2007-10-11 LHCbSys v22r10</A></H1><PRE>
 This version uses Gaudi v19r5 and LCG_53a. Fully compatible with DC06 data
