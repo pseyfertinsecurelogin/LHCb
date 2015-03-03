@@ -4,6 +4,15 @@
 ! Purpose     : Tool interfaces and dictionaries for DaVinci
 !-----------------------------------------------------------------------------
 
+!===================== DaVinciInterfaces v2r5 2010-07-26 =====================
+
+! 2010-07-22 - Tomasz Skwarnicki
+ - fix window compilation warnings in changes from yesterday
+
+! 2010-07-21 - Tomasz Skwarnicki
+ - Kernel/ITisTos.h IParticleTisTos.h new, ITrigger(Selection)TisTos modified
+   needed for rewritten Phys/TisTosTobbing
+
 !===================== DaVinciInterfaces v2r4 2010-06-20 =====================
 ! 2010-06-20 - Vanya Belyaev
  - Kernel/ICheckOverlap.h   
