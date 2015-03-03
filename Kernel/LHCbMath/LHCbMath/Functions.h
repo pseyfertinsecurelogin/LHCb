@@ -1,4 +1,4 @@
-// $Id: Functions.h 174248 2014-06-26 06:59:55Z cattanem $
+// $Id: Functions.h 176843 2014-08-25 19:07:57Z ibelyaev $
 // ============================================================================
 #ifndef LHCBMATH_FUNCTIONS_H
 #define LHCBMATH_FUNCTIONS_H 1
@@ -23,11 +23,11 @@
  *
  *  set of useful math-functions
  *
- *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
+ *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
  *  @date 2010-04-19
  *
- *                    $Revision: 174248 $
- *  Last modification $Date: 2014-06-26 08:59:55 +0200 (Thu, 26 Jun 2014) $
+ *                    $Revision: 176843 $
+ *  Last modification $Date: 2014-08-25 21:07:57 +0200 (Mon, 25 Aug 2014) $
  *                 by $author$
  */
 // ============================================================================
@@ -43,7 +43,7 @@ namespace Gaudi
     // ========================================================================
     /** @class Chebychev_
      *  Efficient evaluator of Chebyshev polynomial
-     *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
+     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2011-04-19
      */
     template <unsigned int N>
@@ -87,7 +87,7 @@ namespace Gaudi
     // ========================================================================
     /** @class Chebyshev
      *  evaluate the chebyshev polynomials
-     *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
+     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2011-04-19
      */
     class GAUDI_API Chebyshev : public std::unary_function<double,double>
@@ -118,7 +118,7 @@ namespace Gaudi
     // ========================================================================
     /** @class Legendre_
      *  Efficienct evaluator of Legendre polynomial
-     *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
+     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2011-04-19
      */
     template <unsigned int N>
@@ -171,7 +171,7 @@ namespace Gaudi
     // ========================================================================
     /** @class Legendre
      *  evaluate the Legendre polynomials
-     *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
+     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2011-04-19
      */
     class GAUDI_API Legendre : public std::unary_function<double,double>
@@ -202,7 +202,7 @@ namespace Gaudi
     // ========================================================================
     /** @class Hermite_
      *  Efficienct evaluator of Hermite polynomial
-     *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
+     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2011-04-19
      */
     template <unsigned int N>
@@ -246,7 +246,7 @@ namespace Gaudi
     // ========================================================================
     /** @class Hermite
      *  evaluate the Hermite polynomials
-     *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
+     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2011-04-19
      */
     class GAUDI_API Hermite : public std::unary_function<double,double>
@@ -378,13 +378,6 @@ namespace Gaudi
       // ======================================================================
     public:
       // ======================================================================
-      /** get the intergal between low and high for a product of Bernstein
-       *  polynom and the exponential function with the exponent tau
-       */
-      double integral_exp   ( const double low  , 
-                              const double high , 
-                              const double tau  ) const ;
-      // ======================================================================
     private:
       // ======================================================================
       /// the list of parameters
@@ -393,6 +386,22 @@ namespace Gaudi
       double m_xmin  ;                             // the left edge of interval
       /// the right edge of interval
       double m_xmax  ;                             // the right edge of interval
+      // ======================================================================
+    public:
+      // ======================================================================
+      /** get the integral between low and high for a product of Bernstein
+       *  polynom and the exponential function with the exponent tau
+       *  \f[  \int_{a}^{b} \mathcal{B} e^{\tau x } \mathrm{d}x \f] 
+       *  @param poly  bernstein polynomial
+       *  @param tau   slope parameter for exponential 
+       *  @param a     low  integration range 
+       *  @param b     high integration range 
+       */
+      static double integrate 
+        ( const Bernstein& poly ,
+          const double     tau  ,
+          const double     a    , 
+          const double     b    ) ;
       // ======================================================================
     } ;
     // ========================================================================
@@ -519,8 +528,9 @@ namespace Gaudi
       double m0      () const { return peak()    ; }
       double sigmaL  () const { return m_sigmaL  ; }
       double sigmaR  () const { return m_sigmaR  ; }
-      double sigma   () const ;
-      double asym    () const ;
+      // ======================================================================
+      double sigma   () const { return 0.5  * ( m_sigmaL + m_sigmaR )            ; }         
+      double asym    () const { return 0.5  * ( m_sigmaL - m_sigmaR ) / sigma () ; }
       // ======================================================================
     public:
       // ======================================================================
@@ -791,7 +801,7 @@ namespace Gaudi
     // ========================================================================
     /** @class WorkSpace
      *  helper utility to keep the integration workspace fro GSL integration
-     *  @author Vanya Belyaev Ivan.Belyaev@cern.ch
+     *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
      *  @date 2011-12-03
      */
     class WorkSpace
@@ -823,8 +833,11 @@ namespace Gaudi
     } ;
     // ========================================================================
     /** @class Bukin
-     *  ``Bukin-function''
+     *  ``Bukin-function'', aka "Modified Novosibirsk function"
      *  for description of asymmetric peaks with the exponential tails
+     *  
+     *  @see http://arxiv.org/abs/1107.5751
+     *  @see http://dx.doi.org/10.1007/JHEP06(2012)141
      *  @date 2011-04-19
      */
     class GAUDI_API Bukin : public std::unary_function<double,double>
@@ -863,6 +876,9 @@ namespace Gaudi
       double xi    () const { return m_xi      ; }
       double rho_L () const { return m_rho_L   ; }
       double rho_R () const { return m_rho_R   ; }
+      // ======================================================================
+      double x1    () const { return m_x1      ; }
+      double x2    () const { return m_x2      ; }      
       // ======================================================================
     public:
       // ======================================================================
@@ -905,14 +921,14 @@ namespace Gaudi
     private: // internals
       // ======================================================================
       /// A/2 -region : left edge
-      double m_x1        ; // A/2 -region : left edge
+      double m_x1        ;   // A/2 -region : left edge
       /// A/2 -region : right  edge
-      double m_x2        ; // A/2 -region : right  edge
+      double m_x2        ;   // A/2 -region : right  edge
       //
-      /// the first magic constant for central region
-      double m_A         ; // the first  magic constant for central region
-      /// the second magic constant for central region
-      double m_B2        ; // the second magic constant for central region
+      /// the first magic constant for the central region
+      double m_A         ;   // the first  magic constant for the central region
+      /// the second magic constant for the central region
+      double m_B2        ;   // the second magic constant for the central region
       //
       /// tails parameters (times  Bukin's  constants)
       double m_L         ;   // left  tail
@@ -926,7 +942,7 @@ namespace Gaudi
     // ========================================================================
     /** @class Novosibirsk
      *  ``Novosibirsk-function'' for description of gaussian with tails
-     *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
+     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2011-04-19
      */
     class GAUDI_API Novosibirsk : public std::unary_function<double,double>
@@ -1115,7 +1131,7 @@ namespace Gaudi
      *    -  \f$a_2 = -5.22\times10^{-6} \f$ 
      *
      *  @see Gaudi::Math::CrystalBall
-     *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
+     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2012-05-13
      */
     class GAUDI_API Needham : public std::unary_function<double,double>
@@ -1338,13 +1354,14 @@ namespace Gaudi
     } ;
     // ========================================================================
     /** @class Apolonios 
-     *  A modified gaussian with power-law tail on rigth ride and exponential
-     *  tail on low-side 
+     *  A modified gaussian with power-law tail on right side 
+     *  and an exponential tail on low-side 
+     * 
      *  The function is proposed by Diego Martinez Santos 
-     *  https://indico.cern.ch/getFile.py/access?contribId=2&resId=1&materialId=slides&confId=262633
+     *  @see https://indico.cern.ch/getFile.py/access?contribId=2&resId=1&materialId=slides&confId=262633
+     *  @see http://arxiv.org/abs/1312.5000
      *  Here a bit modified version is used with redefined parameter <code>n</code>
-     *  to be coherent with local definitions of Crystal Ball
-     *  
+     *  to be coherent with local definitions of Crystal Ball  
      * 
      *  \f[ f(x;\alpha,n,x_0,\sigma) = \left\{
      *  \begin{array}{ll}
@@ -1371,7 +1388,7 @@ namespace Gaudi
        *  @param sigma  sigma    parameter
        *  @param alpha  alpha    parameter
        *  @param n      n        parameter (equal for N-1 for "standard" definition)
-       *  @param b      n        parameter
+       *  @param b      b        parameter
        */
       Apolonios 
       ( const double m0    = 0 ,
@@ -1440,10 +1457,104 @@ namespace Gaudi
       // ======================================================================
     } ;
     // ========================================================================
+    /** @class Apolonios2 
+     *  "Bifurcated Apolonios"
+     *  A modified gaussian with asymmetric exponential tails on both sides 
+     * 
+     *  A convinient reparameterization is applied to keep reduce 
+     *  the correlations between "sigma"s and "beta"
+     * 
+     *  \f[ f(x;\mu,\sigma_l,\sigma_r,\beta) \propto 
+     *  \mathrm{e}^{\left|\beta\right|( \left|\beta\right| - \sqrt{ \beta^2+\left(\delta x\right)^2}} 
+     *  \f] 
+     *     
+     * where 
+     *
+     * \f[ \delta x  = \left\{ \begin{array}{ccc}
+     *     \frac{x-\mu}{\sigma_l} & \text{for} & x \le \mu \\
+     *     \frac{x-\mu}{\sigma_r} & \text{for} & x \gt \mu \\
+     *     \end{array}
+     *     \right.\f]
+     * 
+     *  Large betas corresponds to gaussian 
+     * 
+     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+     *  @date  2013-12-01
+     */
+    class GAUDI_API Apolonios2 : public std::unary_function<double,double>
+    {
+    public:
+      // ======================================================================
+      /** constructor from all parameters
+       *  @param m0      m0        parameter
+       *  @param sigmaL  sigmaL    parameter
+       *  @param sigmaR  sigmaR    parameter
+       *  @param beta    beta      parameter
+       */
+      Apolonios2
+        ( const double m0      = 0   ,
+          const double sigmaL  = 1   ,
+          const double alphaR  = 1   ,
+          const double beta    = 100 ) ;  // large beta correponds to gaussian 
+      /// destructor
+      ~Apolonios2 () ;
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// evaluate Apolonios2's function
+      double pdf        ( const double x ) const ;
+      /// evaluate Apolonios2's function
+      double operator() ( const double x ) const { return pdf ( x ) ; }
+      // ======================================================================
+    public: // trivial accessors
+      // ======================================================================
+      double m0     () const { return m_m0     ; }
+      double peak   () const { return   m0 ()  ; }
+      double sigmaL () const { return m_sigmaL ; }
+      double sigmaR () const { return m_sigmaR ; }
+      double beta   () const { return m_beta   ; }
+      // ======================================================================      
+      double sigma  () const { return 0.5 * ( m_sigmaL + m_sigmaR )           ; }
+      double asym   () const { return 0.5 * ( m_sigmaL - m_sigmaR ) / sigma() ; }
+      double b2     () const { return m_beta * m_beta ; }
+      // ======================================================================
+    public: // trivial accessors
+      // ======================================================================
+      bool setM0     ( const double value ) ;
+      bool setPeak   ( const double value ) { return setM0 ( value ) ; }
+      bool setMass   ( const double value ) { return setPeak ( value ) ; }
+      bool setSigmaL ( const double value ) ;
+      bool setSigmaR ( const double value ) ;
+      bool setBeta   ( const double value ) ;
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// get the integral between low and high
+      double integral ( const double low ,
+                        const double high ) const ;
+      // ======================================================================
+    private:
+      // ======================================================================
+      /// the peak position
+      double m_m0       ;  // the peak position
+      /// the peak resolution
+      double m_sigmaL  ;  // the peak resolution
+      /// the peak resolution
+      double m_sigmaR  ;  // the peak resolution
+      /// parameter beta 
+      double m_beta    ;  // parameter beta 
+      // ======================================================================
+    private:
+      // ======================================================================
+      /// workspace
+      Gaudi::Math::WorkSpace m_workspace ;
+      // ======================================================================
+    } ;
+    // ========================================================================
     /** @class GramCharlierA4
      *  Gram-Charlier type A approximation
      *  http://en.wikipedia.org/wiki/Edgeworth_series
-     *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
+     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2011-06-13
      */
     class GAUDI_API GramCharlierA
@@ -1519,7 +1630,7 @@ namespace Gaudi
     // ========================================================================
     /** @class PhaseSpace2
      *  simple function to represent two-body phase space
-     *  @author Vanya BELYAEV Ivan.BElyaev@cern.ch
+     *  @author Vanya BELYAEV Ivan.BElyaev@itep.ru
      *  @date 2011-11-30
      */
     class GAUDI_API PhaseSpace2
@@ -1623,7 +1734,7 @@ namespace Gaudi
     // ========================================================================
     /** @class PhaseSpace3
      *  simple function to represent three-body phase space
-     *  @author Vanya BELYAEV Ivan.BElyaev@cern.ch
+     *  @author Vanya BELYAEV Ivan.BElyaev@itep.ru
      *  @date 2011-11-30
      */
     class GAUDI_API PhaseSpace3
@@ -1693,7 +1804,7 @@ namespace Gaudi
     // ========================================================================
     /** @class PhaseSpaceLeft
      *  simple function to represent N-body phase space near left-threshold
-     *  @author Vanya BELYAEV Ivan.BElyaev@cern.ch
+     *  @author Vanya BELYAEV Ivan.BElyaev@itep.ru
      *  @date 2011-11-30
      */
     class GAUDI_API PhaseSpaceLeft
@@ -1734,7 +1845,7 @@ namespace Gaudi
     // ========================================================================
     /** @class PhaseSpaceRight
      *  simple function to represent N/L-body phase space near right-threshold
-     *  @author Vanya BELYAEV Ivan.BElyaev@cern.ch
+     *  @author Vanya BELYAEV Ivan.BElyaev@itep.ru
      *  @date 2011-11-30
      */
     class GAUDI_API PhaseSpaceRight
@@ -1778,7 +1889,7 @@ namespace Gaudi
      *  simple function to represent the approximation for
      *  the mass distribution of L-particles from N-body
      *  phase space decay
-     *  @author Vanya BELYAEV Ivan.BElyaev@cern.ch
+     *  @author Vanya BELYAEV Ivan.BElyaev@itep.ru
      *  @date 2011-11-30
      */
     class GAUDI_API PhaseSpaceNL
@@ -1850,7 +1961,7 @@ namespace Gaudi
      *  simple function to represent the product of N-body phase space 
      *  and positive polynomial 
      *  @see Gaudi::Math::PhaseSpaceNL
-     *  @author Vanya BELYAEV Ivan.BElyaev@cern.ch
+     *  @author Vanya BELYAEV Ivan.BElyaev@itep.ru
      *  @date 2011-11-30
      */
     class GAUDI_API PhaseSpacePol
@@ -2042,7 +2153,7 @@ namespace Gaudi
      *
      *  http://www.springerlink.com/content/q773737260425652/
      *
-     *  @author Vanya BELYAEV Ivan.BElyaev@cern.ch
+     *  @author Vanya BELYAEV Ivan.BElyaev@itep.ru
      *  @date 2011-11-30
      */
     class GAUDI_API BreitWigner
@@ -2079,11 +2190,11 @@ namespace Gaudi
     public:
       // ======================================================================
       // constructor from all parameters
-      BreitWigner ( const double         m0       ,
-                    const double         gam0     ,
-                    const double         m1       ,
-                    const double         m2       ,
-                    const unsigned short L    = 0 ) ;
+      BreitWigner ( const double         m0     = 0.770 ,
+                    const double         gam0   = 0.150 ,
+                    const double         m1     = 0.139 ,
+                    const double         m2     = 0.139 ,
+                    const unsigned short L      = 0     ) ;
       // constructor from all parameters
       BreitWigner ( const double         m0       ,
                     const double         gam0     ,
@@ -2093,10 +2204,6 @@ namespace Gaudi
                     const JacksonRho     r        ) ;
       /// destructor
       virtual ~BreitWigner () ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      BreitWigner() ;
       // ======================================================================
     public:
       // ======================================================================
@@ -2187,7 +2294,7 @@ namespace Gaudi
      *  "Remarks on the Phenomenological Analysis of Resonances",
      *  In Nuovo Cimento, Vol. XXXIV, N.6
      *  @see Gaudi::Math::BreitWigner::Jackson_A7
-     *  @author Vanya BELYAEV Ivan.BElyaev@cern.ch
+     *  @author Vanya BELYAEV Ivan.BElyaev@itep.ru
      *  @date 2011-11-30
      */
     class GAUDI_API Rho0 : public Gaudi::Math::BreitWigner
@@ -2209,7 +2316,7 @@ namespace Gaudi
      *  "Remarks on the Phenomenological Analysis of Resonances",
      *  In Nuovo Cimento, Vol. XXXIV, N.6
      *  @see Gaudi::Math::BreitWigner::Jackson_A2
-     *  @author Vanya BELYAEV Ivan.BElyaev@cern.ch
+     *  @author Vanya BELYAEV Ivan.BElyaev@itep.ru
      *  @date 2014-04-27
      */
     class GAUDI_API Kstar0 : public Gaudi::Math::BreitWigner
@@ -2232,7 +2339,7 @@ namespace Gaudi
      *  "Remarks on the Phenomenological Analysis of Resonances",
      *  In Nuovo Cimento, Vol. XXXIV, N.6
      *  @see Gaudi::Math::BreitWigner::Jackson_A2
-     *  @author Vanya BELYAEV Ivan.BElyaev@cern.ch
+     *  @author Vanya BELYAEV Ivan.BElyaev@itep.ru
      *  @date 2014-04-27
      */
     class GAUDI_API Phi0 : public Gaudi::Math::BreitWigner
@@ -2249,7 +2356,7 @@ namespace Gaudi
     } ;
     // ========================================================================
     /** @class Rho0FromEtaPrime
-     *  @author Vanya BELYAEV Ivan.BElyaev@cern.ch
+     *  @author Vanya BELYAEV Ivan.BElyaev@itep.ru
      *  @date 2011-11-30
      */
     class GAUDI_API Rho0FromEtaPrime : public Gaudi::Math::Rho0
@@ -2288,7 +2395,7 @@ namespace Gaudi
      *  http://www.sciencedirect.com/science/article/pii/0370269376906547
      *
      *  \f$\pi\pi\f$-channel
-     *  @author Vanya BELYAEV Ivan.BElyaev@cern.ch
+     *  @author Vanya BELYAEV Ivan.BElyaev@itep.ru
      *  @date 2011-11-30
      */
     class GAUDI_API Flatte
@@ -2387,7 +2494,7 @@ namespace Gaudi
      *  http://www.sciencedirect.com/science/article/pii/0370269376906547
      *
      *  KK-channel
-     *  @author Vanya BELYAEV Ivan.BElyaev@cern.ch
+     *  @author Vanya BELYAEV Ivan.BElyaev@itep.ru
      *  @date 2011-11-30
      */
     class GAUDI_API Flatte2 : public Gaudi::Math::Flatte
@@ -2417,18 +2524,25 @@ namespace Gaudi
     } ;
     // ========================================================================
     /** @class Voight
-     *  simple Voightian function
+     *  simple Voightian function: 
+     *  convolution of Lorenzian (non-relativistic Breit-Wigner function)
+     *  with Gaussian resoltuion 
+     *  @see http://en.wikipedia.org/wiki/Voigt_profile
+     *  The implementation relied on Faddeeva function 
+     *  @see http://en.wikipedia.org/wiki/Faddeeva_function
+     *  @see http://ab-initio.mit.edu/wiki/index.php/Faddeeva_Package
+     *  @author Vanya BELYAEV Ivan.BElyaev@itep.ru
+     *  @date 2011-11-30
      */
     class GAUDI_API Voigt
       : public std::unary_function<double,double>
     {
     public:
       // ======================================================================
-      /// constructor  from three parameters
-      Voigt  ( const double m0         ,
-               const double gamma      ,
-               const double sigma      ,
-               const int    r     = 5  ) ;
+      ///  constructor  from the three parameters
+      Voigt  ( const double m0     = 1      ,
+               const double gamma  = 0.004  ,
+               const double sigma  = 0.001  ) ;
       /// destructor
       virtual ~Voigt () ;
       // ======================================================================
@@ -2445,6 +2559,11 @@ namespace Gaudi
       double peak   () const { return   m0   () ; }
       double gamma  () const { return m_gamma   ; }
       double sigma  () const { return m_sigma   ; }
+      // ======================================================================
+      /** full width at half maximum 
+       *  @see http://en.wikipedia.org/wiki/Voigt_profile
+       */
+      double fwhm   () const ;
       // ======================================================================
     public:
       // ======================================================================
@@ -2464,15 +2583,9 @@ namespace Gaudi
       // ======================================================================
     private:
       // ======================================================================
-      /// the default constructor is disabled
-      Voigt() ;                          // the default constructor is disabled
-      // ======================================================================
-    private:
-      // ======================================================================
       double m_m0     ;
       double m_gamma  ;
       double m_sigma  ;
-      int    m_r      ;
       // ======================================================================
     private:
       // ======================================================================
@@ -2487,7 +2600,7 @@ namespace Gaudi
       /** the simplest function: constant
        *  @see Gaudi::Math::BreitWigner
        *  @see Gaudi::Math::BreitWigner::rho_fun
-       *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
+       *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
        *  @date 2011-11-30
        */
       GAUDI_API
@@ -2502,7 +2615,7 @@ namespace Gaudi
        *  @see Gaudi::Math::BreitWigner::rho_fun
        *  @param m the invariant mass
        *  @return the value of rho-function
-       *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
+       *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
        *  @date 2011-11-30
        */
       GAUDI_API
@@ -2517,7 +2630,7 @@ namespace Gaudi
        *  @see Gaudi::Math::BreitWigner::rho_fun
        *  @param m the invariant mass
        *  @return the value of rho-function
-       *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
+       *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
        *  @date 2011-11-30
        */
       GAUDI_API
@@ -2535,7 +2648,7 @@ namespace Gaudi
        *  @param m1 the invariant mass of the first  (spinor) particle
        *  @param m2 the invariant mass of the secodn (scalar) particle
        *  @return the value of rho-function
-       *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
+       *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
        *  @date 2011-11-30
        */
       GAUDI_API
@@ -2553,7 +2666,7 @@ namespace Gaudi
        *  @param m1 the invariant mass of the first  (spinor) particle
        *  @param m2 the invariant mass of the secodn (scalar) particle
        *  @return the value of rho-function
-       *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
+       *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
        *  @date 2011-11-30
        */
       GAUDI_API
@@ -2570,7 +2683,7 @@ namespace Gaudi
        *  @param m the invariant mass
        *  @param m the nominam   mass
        *  @return the value of rho-function
-       *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
+       *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
        *  @date 2011-11-30
        */
       GAUDI_API
@@ -3071,9 +3184,9 @@ namespace Gaudi
     } ;
     // ========================================================================
     /** @class BW23L
-     *  @see Gaudi::Math::BreittWigner
+     *  @see Gaudi::Math::BreitWigner
      *  @see Gaudi::Math::PhaseSpace23L
-     *  @author Vanya BELYAEV Ivan.BElyaev@cern.ch
+     *  @author Vanya BELYAEV Ivan.BElyaev@itep.ru
      *  @date 2012-05-23
      */
     class GAUDI_API BW23L
@@ -3082,14 +3195,14 @@ namespace Gaudi
     public:
       // ======================================================================
       // constructor from all parameters
-      BW23L ( const double         m0       ,
-              const double         gam0     ,
-              const double         m1       ,
-              const double         m2       ,
-              const double         m3       ,
-              const double         m        ,
-              const unsigned short L1  = 0  ,
-              const unsigned short L2  = 0  ) ;
+      BW23L ( const double         m0       = 0.770 ,
+              const double         gam0     = 0.150 ,
+              const double         m1       = 0.139 ,
+              const double         m2       = 0.139 ,
+              const double         m3       = 3.096 ,
+              const double         m        = 5.278 ,
+              const unsigned short L1       = 0     ,
+              const unsigned short L2       = 0     ) ;
       // constructor from all parameters
       BW23L ( const double         m0       ,
               const double         gam0     ,
@@ -3107,11 +3220,6 @@ namespace Gaudi
               const unsigned short            L2 ) ;
       /// destructor
       virtual ~BW23L () ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      BW23L () ;                         // the default constructor is disabled
       // ======================================================================
     public:
       // ======================================================================
@@ -3171,7 +3279,7 @@ namespace Gaudi
     // ========================================================================
     /** @class Flatte23L
      *  \f$\pi\pi\f$-channel
-     *  @author Vanya BELYAEV Ivan.BElyaev@cern.ch
+     *  @author Vanya BELYAEV Ivan.BElyaev@itep.ru
      *  @date 2011-11-30
      */
     class GAUDI_API Flatte23L
@@ -4133,6 +4241,85 @@ namespace Gaudi
       // ======================================================================
     } ;
     // ========================================================================
+    /** @class SinhAsinh 
+     *  
+     *  Jones, M. C.; Pewsey, A. (2009). 
+     *  "Sinh-arcsinh distributions". Biometrika 96 (4): 761. 
+     *  doi:10.1093/biomet/asp053
+     *  http://oro.open.ac.uk/22510
+     *
+     *  Location & scale  parameters are the 
+     *  usual representation of the family of 
+     *  distributions 
+     *  - \f$\epsilon\f$ parameter control the skewness 
+     *  - \f$\delta\f$   parameter control the kurtosis 
+     *  Normal distribtion reappears as \f$\epsilon=0\f$ 
+     *  and \f$\delta=1\f$ 
+     *  The heavy tails correspond to \f$\delta<1\f$, 
+     *  light tails correpond to \f$\delta>1\f$
+     *  
+     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+     *  @date   2014-08-02
+     */
+    class GAUDI_API SinhAsinh 
+      : public std::unary_function<double,double>
+    {
+    public:
+      // ======================================================================
+      /** constructor with all parameters
+       *  @param location \f$\mu\f$-parameter       \f$-\inf<\mu<+\inf\f$
+       *  @param scale    \f$\sigma\f$-parameter    \f$0<\sigma\f$
+       *  @param epsilon  \f$\epsilon\f$-parameter  \f$-\inf<\epsilon<+\inf\f$
+       *  @param delta    \f$\delta\f$-parameter    \f$0<\epsilon<+\inf\f$
+       */
+      SinhAsinh  ( const double location  = 1   ,
+                   const double scale     = 1   , 
+                   const double epsilon   = 0   , 
+                   const double delta     = 1   ) ;
+      /// destructor
+      ~SinhAsinh() ;
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// evaluate sinhasinh-distributions
+      double pdf        ( const double x ) const ;
+      /// evaluate sinhasinh-distributions
+      double operator() ( const double x ) const { return pdf ( x ) ; }
+      // ======================================================================
+    public: // direct getters
+      // ======================================================================      
+      double location () const { return mu    () ; }
+      double scale    () const { return sigma () ; }
+      // ======================================================================      
+      double mu       () const { return m_mu      ; }
+      double sigma    () const { return m_sigma   ; }
+      double epsilon  () const { return m_epsilon ; }
+      double delta    () const { return m_delta   ; }
+      // ======================================================================      
+    public: // setters 
+      // ======================================================================      
+      bool setLocation ( const double value ) { return setMu    ( value ) ; }
+      bool setScale    ( const double value ) { return setSigma ( value ) ; }
+      bool setMu       ( const double value ) ;
+      bool setSigma    ( const double value ) ;
+      bool setEpsilon  ( const double value ) ;
+      bool setDelta    ( const double value ) ;
+      // ======================================================================
+    public: // integrals
+      // ======================================================================
+      double cdf      ( const double x    ) const ;
+      double integral ( const double low  ,
+                        const double high ) const ;
+      // ======================================================================
+    private:
+      // ======================================================================
+      double m_mu      ;
+      double m_sigma   ;
+      double m_epsilon ;
+      double m_delta   ;
+      // ======================================================================
+    } ;
+    // ========================================================================
     /** @class Argus 
      *  http://en.wikipedia.org/wiki/ARGUS_distribution
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
@@ -4357,9 +4544,31 @@ namespace Gaudi
       // ======================================================================
     public:
       // ======================================================================
-      /// get the integral over 2D-region 
-      double integral ( const double xlow , const double xhigh , 
-                        const double ylow , const double yhigh ) const ;
+      /** get the integral over 2D-region 
+       *  \f[ \int_{x_low}^{x_high}\int_{y_low}^{y_high} \mathcal{B}(x,y) \mathrm{d}x\mathrm{d}y\f] 
+       *  @param xlow  low  edge in x 
+       *  @param xhigh high edge in x 
+       *  @param ylow  low  edge in y 
+       *  @param yhigh high edge in y 
+       */
+      double integral   ( const double xlow , const double xhigh , 
+                          const double ylow , const double yhigh ) const ;
+      /** integral over x-dimension 
+       *  \f[ \int_{y_low}^{y_high} \mathcal{B}(x,y) \mathrm{d}y\f] 
+       *  @param x     variable 
+       *  @param ylow  low  edge in y 
+       *  @param yhigh high edge in y 
+       */
+      double integrateX ( const double y    , 
+                          const double xlow , const double xhigh ) const ;
+      /** integral over x-dimension 
+       *  \f[ \int_{x_low}^{x_high} \mathcal{B}(x,y) \mathrm{d}x\f] 
+       *  @param y     variable 
+       *  @param xlow  low  edge in x 
+       *  @param xhigh high edge in x 
+       */
+      double integrateY ( const double x    , 
+                          const double ylow , const double yhigh ) const ;
       // ======================================================================
     public: // few helper functions to expose internals 
       // ======================================================================
@@ -4462,11 +4671,35 @@ namespace Gaudi
       // ======================================================================
     public:
       // ======================================================================
-      /// get the integral over 2D-region 
-      double integral ( const double xlow , const double xhigh , 
-                        const double ylow , const double yhigh ) const 
+      /** get the integral over 2D-region 
+       *  \f[ \int_{x_low}^{x_high}\int_{y_low}^{y_high} \mathcal{B}(x,y) \mathrm{d}x\mathrm{d}y\f] 
+       *  @param xlow  low  edge in x 
+       *  @param xhigh high edge in x 
+       *  @param ylow  low  edge in y 
+       *  @param yhigh high edge in y 
+       */
+      double integral   ( const double xlow , const double xhigh , 
+                          const double ylow , const double yhigh ) const 
       { return m_bernstein.integral ( xlow , xhigh , ylow , yhigh ) ; }
-      // =====================================================================
+      /** integral over x-dimension 
+       *  \f[ \int_{y_low}^{y_high} \mathcal{B}(x,y) \mathrm{d}y\f] 
+       *  @param x     variable 
+       *  @param ylow  low  edge in y 
+       *  @param yhigh high edge in y 
+       */
+      double integrateX ( const double y    , 
+                          const double xlow , const double xhigh ) const 
+      { return m_bernstein.integrateX ( y , xlow , xhigh ) ; }
+      /** integral over x-dimension 
+       *  \f[ \int_{x_low}^{x_high} \mathcal{B}(x,y) \mathrm{d}x\f] 
+       *  @param y     variable 
+       *  @param xlow  low  edge in x 
+       *  @param xhigh high edge in x 
+       */
+      double integrateY ( const double x    , 
+                          const double ylow , const double yhigh ) const 
+      { return m_bernstein.integrateY ( x , ylow , yhigh ) ; }
+      // ======================================================================
     public: // ingeredients 
       // =====================================================================
       // get the bernstein polinomial in 2D 
@@ -4572,9 +4805,31 @@ namespace Gaudi
       // ======================================================================
     public:
       // ======================================================================
-      /// get the integral over 2D-region 
-      double integral ( const double xlow , const double xhigh , 
-                        const double ylow , const double yhigh ) const ;
+      /** get the integral over 2D-region 
+       *  \f[ \int_{x_low}^{x_high}\int_{y_low}^{y_high} \mathcal{B}(x,y) \mathrm{d}x\mathrm{d}y\f] 
+       *  @param xlow  low  edge in x 
+       *  @param xhigh high edge in x 
+       *  @param ylow  low  edge in y 
+       *  @param yhigh high edge in y 
+       */
+      double integral   ( const double xlow , const double xhigh , 
+                          const double ylow , const double yhigh ) const ;
+      /** integral over x-dimension 
+       *  \f[ \int_{y_low}^{y_high} \mathcal{B}(x,y) \mathrm{d}y\f] 
+       *  @param x     variable 
+       *  @param ylow  low  edge in y 
+       *  @param yhigh high edge in y 
+       */
+      double integrateX ( const double y    , 
+                          const double xlow , const double xhigh ) const ;
+      /** integral over x-dimension 
+       *  \f[ \int_{x_low}^{x_high} \mathcal{B}(x,y) \mathrm{d}x\f] 
+       *  @param y     variable 
+       *  @param xlow  low  edge in x 
+       *  @param xhigh high edge in x 
+       */
+      double integrateY ( const double x    , 
+                          const double ylow , const double yhigh ) const ;
       // ======================================================================
     public: // few helper functions to expose internals 
       // ======================================================================
@@ -4658,10 +4913,37 @@ namespace Gaudi
       // ======================================================================
     public:
       // ======================================================================
-      /// get the integral over 2D-region 
-      double integral ( const double xlow , const double xhigh , 
-                        const double ylow , const double yhigh ) const 
+      /** get the integral over 2D-region 
+       *  \f[ \int_{x_low}^{x_high}\int_{y_low}^{y_high} \mathcal{B}(x,y) \mathrm{d}x\mathrm{d}y\f] 
+       *  @param xlow  low  edge in x 
+       *  @param xhigh high edge in x 
+       *  @param ylow  low  edge in y 
+       *  @param yhigh high edge in y 
+       */
+      double integral   ( const double xlow , const double xhigh , 
+                          const double ylow , const double yhigh ) const 
       { return m_bernstein.integral ( xlow , xhigh , ylow , yhigh ) ; }
+      /** integral over x-dimension 
+       *  \f[ \int_{y_low}^{y_high} \mathcal{B}(x,y) \mathrm{d}y\f] 
+       *  @param x     variable 
+       *  @param ylow  low  edge in y 
+       *  @param yhigh high edge in y 
+       */
+      double integrateX ( const double y    , 
+                          const double xlow , const double xhigh ) const 
+      { return m_bernstein.integrateX ( y , xlow , xhigh ) ; }
+      /** integral over x-dimension 
+       *  \f[ \int_{x_low}^{x_high} \mathcal{B}(x,y) \mathrm{d}x\f] 
+       *  @param y     variable 
+       *  @param xlow  low  edge in x 
+       *  @param xhigh high edge in x 
+       */
+      double integrateY ( const double x    , 
+                          const double ylow , const double yhigh ) const 
+      { return m_bernstein.integrateY ( x , ylow , yhigh ) ; }
+      // ======================================================================
+    public:
+      // ======================================================================
       // get the bernstein 2D polynom
       const Gaudi::Math::Bernstein2DSym& bernstein() const 
       { return m_bernstein ; }
@@ -4736,9 +5018,31 @@ namespace Gaudi
       // ======================================================================
     public:
       // ======================================================================
-      /// get the integral over 2D-region 
+      /** get the integral over 2D-region 
+       *  \f[ \int_{x_low}^{x_high}\int_{y_low}^{y_high} \mathcal{B}(x,y) \mathrm{d}x\mathrm{d}y\f] 
+       *  @param xlow  low  edge in x 
+       *  @param xhigh high edge in x 
+       *  @param ylow  low  edge in y 
+       *  @param yhigh high edge in y 
+       */
       double integral ( const double xlow , const double xhigh , 
                         const double ylow , const double yhigh ) const ;
+      /** integral over x-dimension 
+       *  \f[ \int_{y_low}^{y_high} \mathcal{B}(x,y) \mathrm{d}y\f] 
+       *  @param x     variable 
+       *  @param ylow  low  edge in y 
+       *  @param yhigh high edge in y 
+       */
+      double integrateX ( const double y    , 
+                          const double xlow , const double xhigh ) const ;
+      /** integral over x-dimension 
+       *  \f[ \int_{x_low}^{x_high} \mathcal{B}(x,y) \mathrm{d}x\f] 
+       *  @param y     variable 
+       *  @param xlow  low  edge in x 
+       *  @param xhigh high edge in x 
+       */
+      double integrateY ( const double x    , 
+                          const double ylow , const double yhigh ) const ;
       // ======================================================================
     public:
       // ======================================================================
@@ -4808,9 +5112,31 @@ namespace Gaudi
       // ======================================================================
     public:
       // ======================================================================
-      /// get the integral over 2D-region 
+      /** get the integral over 2D-region 
+       *  \f[ \int_{x_low}^{x_high}\int_{y_low}^{y_high} \mathcal{B}(x,y) \mathrm{d}x\mathrm{d}y\f] 
+       *  @param xlow  low  edge in x 
+       *  @param xhigh high edge in x 
+       *  @param ylow  low  edge in y 
+       *  @param yhigh high edge in y 
+       */
       double integral ( const double xlow , const double xhigh , 
                         const double ylow , const double yhigh ) const ;
+      /** integral over x-dimension 
+       *  \f[ \int_{y_low}^{y_high} \mathcal{B}(x,y) \mathrm{d}y\f] 
+       *  @param x     variable 
+       *  @param ylow  low  edge in y 
+       *  @param yhigh high edge in y 
+       */
+      double integrateX ( const double y    , 
+                          const double xlow , const double xhigh ) const ;
+      /** integral over x-dimension 
+       *  \f[ \int_{x_low}^{x_high} \mathcal{B}(x,y) \mathrm{d}x\f] 
+       *  @param y     variable 
+       *  @param xlow  low  edge in x 
+       *  @param xhigh high edge in x 
+       */
+      double integrateY ( const double x    , 
+                          const double ylow , const double yhigh ) const ;
       // ======================================================================
     public:
       // ======================================================================
@@ -4895,9 +5221,31 @@ namespace Gaudi
       // ======================================================================
     public:
       // ======================================================================
-      /// get the integral over 2D-region 
+      /** get the integral over 2D-region 
+       *  \f[ \int_{x_low}^{x_high}\int_{y_low}^{y_high} \mathcal{B}(x,y) \mathrm{d}x\mathrm{d}y\f] 
+       *  @param xlow  low  edge in x 
+       *  @param xhigh high edge in x 
+       *  @param ylow  low  edge in y 
+       *  @param yhigh high edge in y 
+       */
       double integral ( const double xlow , const double xhigh , 
                         const double ylow , const double yhigh ) const ;
+      /** integral over x-dimension 
+       *  \f[ \int_{y_low}^{y_high} \mathcal{B}(x,y) \mathrm{d}y\f] 
+       *  @param x     variable 
+       *  @param ylow  low  edge in y 
+       *  @param yhigh high edge in y 
+       */
+      double integrateX ( const double y    , 
+                          const double xlow , const double xhigh ) const ;
+      /** integral over x-dimension 
+       *  \f[ \int_{x_low}^{x_high} \mathcal{B}(x,y) \mathrm{d}x\f] 
+       *  @param y     variable 
+       *  @param xlow  low  edge in x 
+       *  @param xhigh high edge in x 
+       */
+      double integrateY ( const double x    , 
+                          const double ylow , const double yhigh ) const ;
       // ======================================================================
     public:
       // ======================================================================
@@ -4976,9 +5324,31 @@ namespace Gaudi
       // ======================================================================
     public:
       // ======================================================================
-      /// get the integral over 2D-region 
+      /** get the integral over 2D-region 
+       *  \f[ \int_{x_low}^{x_high}\int_{y_low}^{y_high} \mathcal{B}(x,y) \mathrm{d}x\mathrm{d}y\f] 
+       *  @param xlow  low  edge in x 
+       *  @param xhigh high edge in x 
+       *  @param ylow  low  edge in y 
+       *  @param yhigh high edge in y 
+       */
       double integral ( const double xlow , const double xhigh , 
                         const double ylow , const double yhigh ) const ;
+      /** integral over x-dimension 
+       *  \f[ \int_{y_low}^{y_high} \mathcal{B}(x,y) \mathrm{d}y\f] 
+       *  @param x     variable 
+       *  @param ylow  low  edge in y 
+       *  @param yhigh high edge in y 
+       */
+      double integrateX ( const double y    , 
+                          const double xlow , const double xhigh ) const ;
+      /** integral over x-dimension 
+       *  \f[ \int_{x_low}^{x_high} \mathcal{B}(x,y) \mathrm{d}x\f] 
+       *  @param y     variable 
+       *  @param xlow  low  edge in x 
+       *  @param xhigh high edge in x 
+       */
+      double integrateY ( const double x    , 
+                          const double ylow , const double yhigh ) const ;
       // ======================================================================
     public:
       // ======================================================================
@@ -5045,9 +5415,31 @@ namespace Gaudi
       // ======================================================================
     public:
       // ======================================================================
-      /// get the integral over 2D-region 
+      /** get the integral over 2D-region 
+       *  \f[ \int_{x_low}^{x_high}\int_{y_low}^{y_high} \mathcal{B}(x,y) \mathrm{d}x\mathrm{d}y\f] 
+       *  @param xlow  low  edge in x 
+       *  @param xhigh high edge in x 
+       *  @param ylow  low  edge in y 
+       *  @param yhigh high edge in y 
+       */
       double integral ( const double xlow , const double xhigh , 
                         const double ylow , const double yhigh ) const ;
+      /** integral over x-dimension 
+       *  \f[ \int_{y_low}^{y_high} \mathcal{B}(x,y) \mathrm{d}y\f] 
+       *  @param x     variable 
+       *  @param ylow  low  edge in y 
+       *  @param yhigh high edge in y 
+       */
+      double integrateX ( const double y    , 
+                          const double xlow , const double xhigh ) const ;
+      /** integral over x-dimension 
+       *  \f[ \int_{x_low}^{x_high} \mathcal{B}(x,y) \mathrm{d}x\f] 
+       *  @param y     variable 
+       *  @param xlow  low  edge in x 
+       *  @param xhigh high edge in x 
+       */
+      double integrateY ( const double x    , 
+                          const double ylow , const double yhigh ) const ;
       // ======================================================================
     public:  // expose some internmals 
       // ======================================================================

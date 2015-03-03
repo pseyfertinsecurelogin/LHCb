@@ -4,9 +4,33 @@
 ! Purpose     : Pack and unpack events classes for smaller events
 !-----------------------------------------------------------------------------
 
+!========================= EventPacker v4r4 2014-09-08 =========================
+! 2014-09-08 - Chris Jones
+ - Add an option ClearRegistry to various packers to control if the address
+   of the input data is cleared or not after packing.
+
+! 2014-09-05 - Chris Jones
+ - Add support for packing custom MuonPID objects produced by stripping lines.
+
+! 2014-08-20 - Chris Jones
+ - Add support for packing custom Track and ProtoParticles produced by 
+   Stripping Lines.
+ - Change the key in the PackedTrack and PackedProtoParticle classes from a
+   32 to 64 bit int. Needed to allow the packing of the container information.
+   ROOT schema evolution allows for backwards support for old data.
+
+!========================= EventPacker v4r3 2014-08-16 =========================
+
+! 2014-08-07 - Sebastian Neubert
+ - added counter to DumpTracks
+
+! 2014-08-03 - Chris Jones
+ - Add support for packed RelatedInfo relations.
+
 !========================= EventPacker v4r2 2014-07-14 =========================
 ! 2014-06-29 - Chris Jones
- - Add a check in the ProtoParticle packer to test for over or under flow errors when packing ExtraInfo. 
+ - Add a check in the ProtoParticle packer to test for over or under flow errors
+   when packing ExtraInfo. 
 
 ! 2014-06-27 - Chris Jones
  - Adapt to changes in the job options of the ChargedProtoANNPID algorithm.

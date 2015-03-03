@@ -4,6 +4,33 @@
 ! Purpose     : Hlt RawBanks writers/decoders/monitors
 !------------------------------------------------------------------------------
 
+!========================= HltDAQ v4r7 2014-09-08 =========================
+! 2014-09-02 - Sebastian Neubert
+ - Added one more location to TrackReportsDecoder/Writer
+ - Changed bit shift for Major SourceID from 13 to 11 
+   to make place for SourceIDs > 3
+   All raw files containing TrackReports have to be rewritten!  
+
+!========================= HltDAQ v4r6 2014-08-16 =========================
+
+! 2014-08-07 - Sebastian Neubert
+ - HltTrackReportsDecoder: make sure counters are always filled
+ - HltTrackReportsDecoder: reset default output location
+
+! 2014-07-29 - Gerhard Raven
+ - HltSelReportsWriter: avoid problems with unsigned arithmetic in case
+   banksize is zero.
+
+! 2014-07-18 - Marco Cattaneo
+ - HltTrackReportsDecoder: Suppress unused variable warning by wrapping 
+   execute method with a #pragma
+
+! 2014-07-14 - Gerhard Raven
+ - HltTrackReportsWriter/Decoder: 
+   o change of strategy: make it possible to use one writer/decoder instance 
+     which deals with all TES location / sourceIDs if so configured
+   o make sure that an emtpy rawbank is properly written
+
 !========================= HltDAQ v4r5 2014-06-18 =========================
 
 ! 2014-06-19 - Gerhard Raven

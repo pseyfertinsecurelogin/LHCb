@@ -6,6 +6,46 @@
 !               All headers included in directory LHCbMath
 !-----------------------------------------------------------------------------
 
+!========================= LHCbMath v3r50 2014-09-08 =========================
+! 2014-09-02 - Vanya Belyaev
+ - Types.py 
+   fix for missing __iadd__, __isub__ operators 
+   extend operators for linear-algebra vectors, 3D-points and 3D-vectors
+   add new QMTEST 
+
+! 2014-09-01 - Manuel Tobias Schiller
+ - (hopefully) fix warnings about unneeded semicolons in BloomFilter.h
+
+! 2014-09-01 - Marco Clemencic
+ - Fixed CMake configuration.
+
+! 2014-09-01 - Marco Clemencic
+ - Fixed compilation problem with head version of ROOT.
+
+! 2014-08-29 - Manuel Tobias Schiller
+ - add BloomFilter class
+ - add unit test for BloomFilter class
+ - steal enough from other packages to make the tests that seem to be there
+   run within the QMTest framework, and have it check exit codes (I know this
+   is enough for the BloomFilter unit test, as it checks its results and
+   aborts, so stdout/stderr is for human consumption; for the other tests, an
+   expert should take a good look...)
+
+! 2014-08-25 - Vanya Belyaev
+ - add more efficient treatment of normalization integrals 
+
+! 2014-08-24 - Vanya Belyaev
+ - minor improvements 
+
+! 2014-08-23 - Vanya Belyaev
+ - few minor fixes in Bukin function
+
+! 2014-08-22 - Vanya Belyaev
+ - few minor fixed in Bukin function
+
+! 2014-08-02 - Vanya Belyaev
+ - add SinhAsinh function
+
 !========================= LHCbMath v3r49 2014-07-14 =========================
 ! 2014-06-26 - Vanya Belyaev
  - remove some local functions (non needed anymore)  

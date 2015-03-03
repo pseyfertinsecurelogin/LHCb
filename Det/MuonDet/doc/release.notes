@@ -3,6 +3,10 @@
 ! Responsible : Alessia Satta
 !----------------------------------------------------------------------------
 
+!========================= MuonDet v9r16 2014-09-08 =========================
+! 2014-08-21 - Giovanni Passaleva
+ - various CPU performance improvements
+
 !========================= MuonDet v9r15 2013-10-23 =========================
 ! 2013-10-21 - Giovanni Passaleva
  - fixed wrong mapping of TELL1s in case of no M1 in MuonDAQHelper

@@ -118,16 +118,57 @@ void ParticlesAndVerticesMapper::updateNodeTypeMap( const std::string & path )
 
     int key(0), linkID(0);
 
+    // Load the packed Tracks
+    {
+      LHCb::PackedTracks * ptracks =
+        getIfExists<LHCb::PackedTracks>(evtSvc(),streamR+LHCb::PackedTrackLocation::InStream);
+      if ( NULL != ptracks )
+      {
+        for ( const auto& P : ptracks->tracks() )
+        {
+          m_pack.indexAndKey64( P.key, linkID, key );
+          addPath( ptracks->linkMgr()->link(linkID)->path() );
+        }
+      }
+    }
+
+    // Load the packed MuonPIDs
+    {
+      LHCb::PackedMuonPIDs * ppids =
+        getIfExists<LHCb::PackedMuonPIDs>(evtSvc(),streamR+LHCb::PackedMuonPIDLocation::InStream);
+      if ( NULL != ppids )
+      {
+        for ( const auto& P : ppids->data() )
+        {
+          m_pack.indexAndKey64( P.key, linkID, key );
+          addPath( ppids->linkMgr()->link(linkID)->path() );
+        }
+      }
+    }
+
+    // Load the packed ProtoParticles
+    {
+      LHCb::PackedProtoParticles * pprotos =
+        getIfExists<LHCb::PackedProtoParticles>(evtSvc(),streamR+LHCb::PackedProtoParticleLocation::InStream);
+      if ( NULL != pprotos )
+      {
+        for ( const auto& P : pprotos->protos() )
+        {
+          m_pack.indexAndKey64( P.key, linkID, key );
+          addPath( pprotos->linkMgr()->link(linkID)->path() );
+        }
+      }
+    }
+
     // Load the packed Particles
     {
       LHCb::PackedParticles* pparts =
         getIfExists<LHCb::PackedParticles>(evtSvc(),streamR+LHCb::PackedParticleLocation::InStream);
       if ( NULL != pparts )
       {
-        for ( std::vector<LHCb::PackedParticle>::iterator itP = pparts->data().begin();
-              pparts->data().end() != itP; ++itP )
+        for ( const auto& P : pparts->data() )
         {
-          m_pack.indexAndKey64( (*itP).key, linkID, key );
+          m_pack.indexAndKey64( P.key, linkID, key );
           addPath( pparts->linkMgr()->link(linkID)->path() );
         }
       }
@@ -139,10 +180,9 @@ void ParticlesAndVerticesMapper::updateNodeTypeMap( const std::string & path )
         getIfExists<LHCb::PackedVertices>(evtSvc(),streamR+LHCb::PackedVertexLocation::InStream);
       if ( NULL != pverts )
       {
-        for ( std::vector<LHCb::PackedVertex>::iterator itV = pverts->data().begin();
-              pverts->data().end() != itV; ++itV )
+        for ( const auto& V : pverts->data() )
         {
-          m_pack.indexAndKey64( (*itV).key, linkID, key );
+          m_pack.indexAndKey64( V.key, linkID, key );
           addPath( pverts->linkMgr()->link(linkID)->path() );
         }
       }
@@ -154,10 +194,9 @@ void ParticlesAndVerticesMapper::updateNodeTypeMap( const std::string & path )
         getIfExists<LHCb::PackedFlavourTags>(evtSvc(),streamR+LHCb::PackedFlavourTagLocation::InStream);
       if ( NULL != pfts )
       {
-        for ( std::vector<LHCb::PackedFlavourTag>::iterator itFT = pfts->data().begin();
-              pfts->data().end() != itFT; ++itFT )
+        for ( const auto& FT : pfts->data() )
         {
-          m_pack.indexAndKey64( (*itFT).key, linkID, key );
+          m_pack.indexAndKey64( FT.key, linkID, key );
           addPath( pfts->linkMgr()->link(linkID)->path() );
         }
       }
@@ -169,11 +208,9 @@ void ParticlesAndVerticesMapper::updateNodeTypeMap( const std::string & path )
         getIfExists<LHCb::PackedRecVertices>(evtSvc(),streamR+LHCb::PackedRecVertexLocation::InStream);
       if ( NULL != pRecVerts )
       {
-        for ( std::vector<LHCb::PackedRecVertex>::iterator itV = pRecVerts->vertices().begin();
-              pRecVerts->vertices().end() != itV; ++itV )
+        for ( const auto& V : pRecVerts->vertices() )
         {
-          const int linkID = (*itV).container;
-          addPath( pRecVerts->linkMgr()->link(linkID)->path() );
+          addPath( pRecVerts->linkMgr()->link(V.container)->path() );
         }
       }
     }
@@ -184,10 +221,9 @@ void ParticlesAndVerticesMapper::updateNodeTypeMap( const std::string & path )
         getIfExists<LHCb::PackedRelations>(evtSvc(),streamR+LHCb::PackedRelationsLocation::InStream);
       if ( NULL != prels )
       {
-        for ( std::vector<LHCb::PackedRelation>::iterator itR = prels->relations().begin();
-              prels->relations().end() != itR; ++itR )
+        for ( const auto& R : prels->relations() )
         {
-          m_pack.indexAndKey64( (*itR).container, linkID, key );
+          m_pack.indexAndKey64( R.container, linkID, key );
           addPath( prels->linkMgr()->link(linkID)->path() );
         }
       }
@@ -199,10 +235,9 @@ void ParticlesAndVerticesMapper::updateNodeTypeMap( const std::string & path )
         getIfExists<LHCb::PackedRelations>(evtSvc(),streamR+LHCb::PackedRelationsLocation::P2MCP);
       if ( NULL != prelsMC )
       {
-        for ( std::vector<LHCb::PackedRelation>::iterator itR = prelsMC->relations().begin();
-              prelsMC->relations().end() != itR; ++itR )
+        for ( const auto& R : prelsMC->relations() )
         {
-          m_pack.indexAndKey64( (*itR).container, linkID, key );
+          m_pack.indexAndKey64( R.container, linkID, key );
           addPath( prelsMC->linkMgr()->link(linkID)->path() );
         }
       }
@@ -214,11 +249,24 @@ void ParticlesAndVerticesMapper::updateNodeTypeMap( const std::string & path )
         getIfExists<LHCb::PackedRelations>(evtSvc(),streamR+LHCb::PackedRelationsLocation::P2Int);
       if ( NULL != prelsInt )
       {
-        for ( std::vector<LHCb::PackedRelation>::iterator itR = prelsInt->relations().begin();
-              prelsInt->relations().end() != itR; ++itR )
+        for ( const auto& R : prelsInt->relations() )
         {
-          m_pack.indexAndKey64( (*itR).container, linkID, key );
+          m_pack.indexAndKey64( R.container, linkID, key );
           addPath( prelsInt->linkMgr()->link(linkID)->path() );
+        }
+      }
+    }
+
+    // Load the packed RelatedInfo relations
+    {
+      LHCb::PackedRelatedInfoRelations* pRelInfos =
+        getIfExists<LHCb::PackedRelatedInfoRelations>(evtSvc(),streamR+LHCb::PackedPackedRelatedInfoLocation::InStream);
+      if ( NULL != pRelInfos )
+      {
+        for ( const auto& cont : pRelInfos->containers() )
+        {
+          m_pack.indexAndKey64( cont.reference, linkID, key );
+          addPath( pRelInfos->linkMgr()->link(linkID)->path() );
         }
       }
     }

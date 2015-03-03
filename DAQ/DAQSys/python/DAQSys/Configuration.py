@@ -111,8 +111,8 @@ class DecodeRawEvent(ConfigurableUser):
                             reset_list[b]=[d]
                         elif d not in reset_list[b]:
                             reset_list[b].append(d)
-                if not len(reset_list):
-                    return
+            if not len(reset_list):
+                return
             for k,ds in reset_list.iteritems():
                 for d in ds:
                     self.overrideIfRequired(d, setup=setup)
@@ -148,7 +148,7 @@ class DecodeRawEvent(ConfigurableUser):
             return
         
         #overwrite them if able
-        #print "Overriding "+d.FullName+" from "+d.listInputs().__str__()+" to " +str(dest)
+        #print "# DecodeRawEvent: Overriding "+d.FullName+" from "+d.listInputs().__str__()+" to " +str(dest)
         d.overrideInputs(dest)
         if setup:
             d.setup(onlyInputs=True)
@@ -207,8 +207,8 @@ class DecodeRawEvent(ConfigurableUser):
                         #handle default names!
                         if testname==v.FullName or (
                             testname.split("/")[0]==testname.split("/")[-1]
-                            and v.getFullName().split("/")[0]==v.getFullName().split("/")[-1]
-                            and testname.split("/")[0]==v.getFullName().split("/")[0]):
+                            and v.FullName.split("/")[0]==v.FullName.split("/")[-1]
+                            and testname.split("/")[0]==v.FullName.split("/")[0]):
                             print "# WARNING: something else configured a decoder already, "+loc+" "+testname
                         else:
                             raise AttributeError("At least two different active algs want to write to the same location. Check your DecoderDB! "+loc+": "+testname+" & "+v.FullName)

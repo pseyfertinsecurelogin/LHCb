@@ -63,7 +63,15 @@ Decoder("DecodePileUpData",
 
 #===========TT===========
 Decoder("RawBankToSTLiteClusterAlg/createTTLiteClusters",
-        active=True, banks=["TT","TTPedestal","TTFull","TTProcFull","TTError"],
+        active=True, banks=["TT"],
+        outputs={"clusterLocation":None},
+        inputs={"RawEventLocations" : None},
+        required=["createODIN"],
+        conf=DecoderDB)
+#outputs={"clusterLocation":None}, set logically in the code, resetting may not work...
+
+Decoder("RawBankToSTLiteClusterAlg/createTTLiteClustersExpert",
+        active=False, banks=["TTPedestal","TTFull","TTProcFull","TTError"],
         outputs={"clusterLocation":None},
         inputs={"RawEventLocations" : None},
         required=["createODIN"],
@@ -71,7 +79,15 @@ Decoder("RawBankToSTLiteClusterAlg/createTTLiteClusters",
 #outputs={"clusterLocation":None}, set logically in the code, resetting may not work...
 
 Decoder("RawBankToSTClusterAlg/createTTClusters",
-        active=True, banks=["TT","TTPedestal","TTFull","TTProcFull","TTError"],
+        active=True, banks=["TT"],
+        outputs={"clusterLocation":None},
+        inputs={"RawEventLocations" : None},
+        required=["createODIN"],
+        conf=DecoderDB)
+#outputs={"clusterLocation":None}, set logically in the code, resetting may not work...
+
+Decoder("RawBankToSTClusterAlg/createTTClustersExpert",
+        active=False, banks=["TTPedestal","TTFull","TTProcFull","TTError"],
         outputs={"clusterLocation":None},
         inputs={"RawEventLocations" : None},
         required=["createODIN"],
@@ -105,7 +121,16 @@ Decoder(t2name, active=False,
 
 #===========IT===========
 Decoder("RawBankToSTLiteClusterAlg/createITLiteClusters",
-        active=True, banks=["IT","ITPedestal","ITFull","ITProcFull","ITError"],
+        active=True, banks=["IT"],
+        outputs=["Raw/IT/LiteClusters"],
+        inputs={"RawEventLocations" : None},
+        properties={"DetType":"IT"},
+        required=["createODIN"],
+        conf=DecoderDB)
+#outputs={"clusterLocation":"Raw/IT/LiteClusters"}, set logically in the code, resetting may not work...
+
+Decoder("RawBankToSTLiteClusterAlg/createITLiteClustersExpert",
+        active=False, banks=["ITPedestal","ITFull","ITProcFull","ITError"],
         outputs=["Raw/IT/LiteClusters"],
         inputs={"RawEventLocations" : None},
         properties={"DetType":"IT"},
@@ -114,7 +139,16 @@ Decoder("RawBankToSTLiteClusterAlg/createITLiteClusters",
 #outputs={"clusterLocation":"Raw/IT/LiteClusters"}, set logically in the code, resetting may not work...
 
 Decoder("RawBankToSTClusterAlg/createITClusters",
-        active=True, banks=["IT","ITPedestal","ITFull","ITProcFull","ITError"],
+        active=True, banks=["IT"],
+        outputs=["Raw/IT/Clusters"],
+        inputs={"RawEventLocations" : None},
+        properties={"DetType":"IT"},
+        required=["createODIN"],
+        conf=DecoderDB)
+#outputs={"clusterLocation":"Raw/IT/LiteClusters"}, set logically in the code, resetting may not work...
+
+Decoder("RawBankToSTClusterAlg/createITClustersExpert",
+        active=False, banks=["ITPedestal","ITFull","ITProcFull","ITError"],
         outputs=["Raw/IT/Clusters"],
         inputs={"RawEventLocations" : None},
         properties={"DetType":"IT"},
@@ -124,7 +158,15 @@ Decoder("RawBankToSTClusterAlg/createITClusters",
 
 #===========OT===========
 ott=Decoder("OTTimeCreator", #the only one which makes a TES location
-        active=True,banks=["OT","OTRaw","OTError"],
+        active=True,banks=["OT"],
+        #privateTools=["OTRawBankDecoder/RawBankDecoder"],#tool handle??
+        #I hope the tool handle actually calls *this* public tool...
+        publicTools=["OTRawBankDecoder/ToolSvc.OTRawBankDecoder"],
+        outputs={"OutputLocation": None},
+        conf=DecoderDB)
+
+ott=Decoder("OTTimeCreator/OTTimeCreatorExpert", #the only one which makes a TES location
+        active=False,banks=["OTRaw", "OTError"],
         #privateTools=["OTRawBankDecoder/RawBankDecoder"],#tool handle??
         #I hope the tool handle actually calls *this* public tool...
         publicTools=["OTRawBankDecoder/ToolSvc.OTRawBankDecoder"],
@@ -194,7 +236,13 @@ for cal in ["Ecal","Hcal"]:
         toolname="CaloEnergyFromRaw/"+name+"Tool" #as in C++
         # Zero suppressed is "active", NZS is "not active", only activated in Boole
         Decoder(algname, active=zs,
-                privateTools=[toolname],banks=[cal+'E',cal+'Packed',cal+'PackedError'],
+                privateTools=[toolname],banks=[cal+'E',cal+'Packed'],
+                outputs=["Raw/"+cal+"/Adcs","Raw/"+cal+"/Digits"],
+                conf=DecoderDB)
+        #outputs={"OutputADCData": "Raw/Ecal/Adcs","OutputDigitData": "Raw/Ecal/Digits"}#set logically in code, so overwriting here won't actually work
+        
+        Decoder(algname+"Expert", active=False,
+                privateTools=[toolname],banks=[cal+'PackedError'],
                 outputs=["Raw/"+cal+"/Adcs","Raw/"+cal+"/Digits"],
                 conf=DecoderDB)
         #outputs={"OutputADCData": "Raw/Ecal/Adcs","OutputDigitData": "Raw/Ecal/Digits"}#set logically in code, so overwriting here won't actually work
@@ -257,9 +305,9 @@ Decoder("L0DUFromRawAlg/L0DUFromRaw",
 #this is new, really I should let the banks be determined from the sum of lower banks so that I could in the future split up the calo banks
 Decoder("L0DUFromRawTool",
         active=False,
-        banks=['EcalE','EcalTrig','EcalPacked','EcalPackedError',
-               'HcalE','HcalTrig','HcalPacked','HcalPackedError',
-               "PrsE",'PrsTrig',"PrsPacked"],
+#        banks=['EcalE','EcalTrig','EcalPacked','EcalPackedError',
+#               'HcalE','HcalTrig','HcalPacked','HcalPackedError',
+#               "PrsE",'PrsTrig',"PrsPacked"],
         inputs={"RawEventLocations" : None},
         conf=DecoderDB)
 
@@ -270,19 +318,31 @@ Decoder("L0CaloAlg/L0Calo",
 
 Decoder("CaloTriggerAdcsFromRaw/EcalTriggerAdcTool",
         active=False,
-        banks=['EcalE','EcalTrig','EcalPacked','EcalPackedError'],
+        banks=['EcalE','EcalTrig','EcalPacked'],
         inputs={"RawEventLocations":None},
         conf=DecoderDB)
 
 Decoder("CaloTriggerAdcsFromRaw/HcalTriggerAdcTool",
         active=False,
-        banks=['HcalE','HcalTrig','HcalPacked','HcalPackedError'],
+        banks=['HcalE','HcalTrig','HcalPacked'],
         inputs={"RawEventLocations":None},
         conf=DecoderDB)
 
 Decoder("CaloTriggerBitsFromRaw",
         active=False,
         banks=["PrsE",'PrsTrig',"PrsPacked"],
+        inputs={"RawEventLocations":None},
+        conf=DecoderDB)
+
+Decoder("CaloTriggerAdcsFromRaw/EcalTriggerAdcToolExpert",
+        active=False,
+        banks=['EcalPackedError'],
+        inputs={"RawEventLocations":None},
+        conf=DecoderDB)
+
+Decoder("CaloTriggerAdcsFromRaw/HcalTriggerAdcToolExpert",
+        active=False,
+        banks=['HcalPackedError'],
         inputs={"RawEventLocations":None},
         conf=DecoderDB)
 
@@ -323,21 +383,14 @@ for report in ["Dec","Sel","Vertex"]:
             )
 
 #Also TrackingDecoder, but don't make it active, it's only used during HLT2 stand-alone!
-Decoder("HltTrackReportsDecoder/VeloDecoder",
+Decoder("HltTrackReportsDecoder",
         active=False, banks=["HltTrackReports"],
         inputs = {"RawEventLocations":None},
-        outputs={"OutputLocation" : "Hlt/Track/Velo"},
-        properties={"SourceID" : 1}, #None=default(0)
+        outputs=["Hlt/Track/Velo","Hlt1/Track/PestiForward"],
         conf=DecoderDB
         )
+#outputs={"Output2SourceId": { "Hlt/Track/Velo" : 1, "Hlt1/Track/PestiForward" : 3 }}, set logically in the code, resetting may not work...
 
-Decoder("HltTrackReportsDecoder/ForwardDecoder",
-        active=False, banks=["HltTrackReports"],
-        inputs = {"RawEventLocations":None},
-        outputs={"OutputLocation" : "Hlt2/Track/Forward"},
-        properties={"SourceID" : 3}, #None=default(0)
-        conf=DecoderDB
-        )
 
 #is a Routing bits filter really a decoder? it doesn't create output...
 Decoder("HltRoutingBitsFilter",
@@ -353,7 +406,18 @@ Decoder("HltLumiSummaryDecoder",
 
 #UPGRADE ===========UT===========
 Decoder("RawBankToSTLiteClusterAlg/createUTLiteClusters",
-        active=True, banks=["UT","UTPedestal","UTFull","UTError"],
+        active=True, banks=["UT"],
+        outputs=["Raw/UT/LiteClusters"],
+        inputs={"RawEventLocations" : None},
+        #publicTools=["STOfflinePosition/ToolSvc.UTClusterPosition"],
+        properties={"DetType":"UT"},
+        required=["createODIN"],
+        conf=DecoderDB)
+#outputs={"clusterLocation":"Raw/UT/LiteClusters"}, set logically in the code, resetting may not work...
+#"STOfflinePosition/ToolSvc.UTClusterPosition" is not part of decoding.
+
+Decoder("RawBankToSTLiteClusterAlg/createUTLiteClustersExpert",
+        active=False, banks=["UTPedestal","UTFull","UTError"],
         outputs=["Raw/UT/LiteClusters"],
         inputs={"RawEventLocations" : None},
         #publicTools=["STOfflinePosition/ToolSvc.UTClusterPosition"],
@@ -364,7 +428,18 @@ Decoder("RawBankToSTLiteClusterAlg/createUTLiteClusters",
 #"STOfflinePosition/ToolSvc.UTClusterPosition" is not part of decoding.
 
 Decoder("RawBankToSTClusterAlg/createUTClusters",
-        active=True, banks=["UT","UTPedestal","UTFull","UTError"],
+        active=True, banks=["UT"],
+        outputs=["Raw/UT/Clusters"],
+        inputs={"RawEventLocations" : None},
+        #publicTools=["STOfflinePosition/ToolSvc.UTClusterPosition"],
+        properties={"DetType":"UT"},
+        required=["createODIN"],
+        conf=DecoderDB)
+#outputs={"clusterLocation":"Raw/IT/LiteClusters"}, set logically in the code, resetting may not work...
+#"STOfflinePosition/ToolSvc.UTClusterPosition" is not part of decoding.
+
+Decoder("RawBankToSTClusterAlg/createUTClustersExpert",
+        active=False, banks=["UTPedestal","UTFull","UTError"],
         outputs=["Raw/UT/Clusters"],
         inputs={"RawEventLocations" : None},
         #publicTools=["STOfflinePosition/ToolSvc.UTClusterPosition"],

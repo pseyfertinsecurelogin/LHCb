@@ -3,6 +3,30 @@
 ! package manager : Marco Clemencic
 ! ====================================================================
 
+!========================= CondDBUI v3r30 2014-09-08 =========================
+! 2014-09-03 - Marco Clemencic
+ - Fixed build with ROOT 5 + CMT.
+
+! 2014-08-27 - Liang Sun
+ - Fixed a typo in Models.py which stops the program from getting IoVs
+
+! 2014-08-06 - Liang Sun
+ - Fixed a typo in ReleaseNotes.py
+
+! 2014-07-30 - Liang Sun
+ - More fixes on COOL API compatibility issues with ROOT 6, and additional exception handlings for COOL are added in the Helper.
+
+! 2014-07-29 - Marco Clemencic
+ - Ported to CMake the changes in the build (helper library etc.).
+
+! 2014-07-24 - Liang Sun
+ - Fixed the date in doc/release.notes
+
+! 2014-07-24 - Liang Sun
+ - Fixed COOL API compatibility issues with ROOT 6
+ - Exception handlings for COOL added in Helpers by hand.
+ - Admin/ReleaseNotes.py: lines altered to quell warning messages on coding convention during running 
+
 !========================= CondDBUI v3r29 2014-07-14 =========================
 ! 2014-07-11 - Marco Clemencic
  - Renamed dict/dictionary.h to avoid problems with ROOT 6.
