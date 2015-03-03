@@ -3,6 +3,20 @@
 ! Responsible : P. Koppenburg, C. Jones
 !----------------------------------------------------------------------------
 
+!========================= PhysEvent v11r25 2014-06-10 ========================
+! 2014-06-07 - Anton Poluektov 
+ - Fix dictionaries broken due to RelatedInfoMap moved to LHCb namespace. 
+
+! 2014-06-06 - Anton Poluektov 
+ - Fix of RelatedInfoMap (add dictionaries for Bender, move it to LHCb namespace)
+
+! 2014-06-02 - Marco Clemencic
+ - Fixed CMake configuration.
+
+! 2014-05-23 - Anton Poluektov 
+ - Add VectorMap<short,float> typedefs for RelatedInfo structure 
+   (new persistency for cone variables etc.)
+
 !========================= PhysEvent v11r24 2014-02-17 ========================
 ! 2014-01-26 - Stefania Vecchi & Mirco Dorigo
  - Put  SS_PionBDT tagger type in Tagger.xml as last one in the list of taggers

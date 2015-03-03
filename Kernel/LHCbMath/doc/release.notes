@@ -6,12 +6,43 @@
 !               All headers included in directory LHCbMath
 !-----------------------------------------------------------------------------
 
+!========================= LHCbMath v3r48 2014-06-10 =========================
+! 2014-06-10 - Vanya Belyaev
+ - fix compilation warning
+
+! 2014-06-09 - Vanya Belyaev
+ - add more functions 
+
+! 2014-06-08 - Vanya Belyaev
+ - add weighted statistics 
+
+! 2014-06-07 - Vanya Belyaev
+ - few minor fixes 
+
+! 2014-06-06 - Vanya Belyaev
+ - new module 
+
+! 2014-06-03 - Vanya Belyaev
+ - minor fix 
+
+! 2014-06-02 - Vanya Belyaev
+ - add few helper math-functions 
+
+! 2014-05-28 - Vanya Belyaev
+ - Functions.cpp few fixes  
+
+! 2014-05-24 - Vanya Belyaev
+ - Functions.cpp minor fix
+
+! 2014-05-21 - Marco Cattaneo
+ - Use constexpr in Functions.cpp, to fix compilation problem with clang
+
 !========================= LHCbMath v3r47 2014-05-12 =========================
 ! 2014-05-11 - Vanya Belyaev
  - improve positive polynomials 
 
 ! 2014-05-10 - Vanya Belyaev
- - impove integration and fix few bugs 
+ - improve integration and fix few bugs 
 
 ! 2014-05-09 - Vanya Belyaev
 
@@ -23,7 +54,7 @@
 
 
 ! 2014-05-04 - Vanya Belyaev
- - analytial integration of bvernsteins polynomials 
+ - analytical integration of bvernsteins polynomials 
 
 !========================= LHCbMath v3r46 2014-03-17 =========================
 ! 2014-03-16 - Vanya Belyaev

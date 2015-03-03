@@ -1,7 +1,7 @@
 ################################################################################
 # Package: SwimmingEvent
 ################################################################################
-gaudi_subdir(SwimmingEvent v1r5)
+gaudi_subdir(SwimmingEvent v1r5p1)
 
 gaudi_depends_on_subdirs(Event/PhysEvent
                          GaudiKernel
@@ -11,7 +11,7 @@ gaudi_add_dictionary(SwimmingEvent
                      dict/SwimmingEvent.h
                      dict/SwimmingEvent.xml
                      LINK_LIBRARIES PhysEvent GaudiKernel RelationsLib
-                     OPTIONS "--no_membertypedefs $(extra_gccxmlflags)")
+                     OPTIONS "--no_membertypedefs")
 
 gaudi_install_headers(Event)
 

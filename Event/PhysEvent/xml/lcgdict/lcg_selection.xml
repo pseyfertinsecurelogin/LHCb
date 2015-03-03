@@ -6,5 +6,8 @@
   
   <class name    = "LHCb::Particle::Selection" />
   <class pattern = "Gaudi::*Range*LHCb::Particle*" />
+
+  <class name    = "LHCb::RelatedInfoMap" />
+  <class pattern = "GaudUtils::VectorMap<*short*>" />
   
 </lcgdict>

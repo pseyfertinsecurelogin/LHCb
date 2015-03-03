@@ -1,11 +1,9 @@
-                                          // $Id: HltDecReportsDecoder.cpp,v 1.5 2010-08-08 18:16:28 tskwarni Exp $
+// $Id$
 // Include files 
-
 // from Gaudi
 #include "GaudiKernel/AlgFactory.h" 
-
+#include "Event/HltDecReport.h"
 #include "Event/HltDecReports.h"
-#include "Event/RawEvent.h"
 
 
 
@@ -27,8 +25,6 @@ using namespace LHCb;
 
 
 namespace { 
-const Gaudi::StringKey  Hlt1SelectionID{"Hlt1SelectionID"};
-const Gaudi::StringKey  Hlt2SelectionID{"Hlt2SelectionID"};
 
          // version 1 layout:
          // decision:  0x        1                      x
@@ -69,40 +65,13 @@ const Gaudi::StringKey  Hlt2SelectionID{"Hlt2SelectionID"};
 //=============================================================================
 HltDecReportsDecoder::HltDecReportsDecoder( const std::string& name,
                                             ISvcLocator* pSvcLocator)
-  : Decoder::AlgBase ( name , pSvcLocator ),
-    m_hltANNSvc(0)
+  : HltRawBankDecoderBase(  name, pSvcLocator )
 {
-  //new for decoders, initialize search path, and then call the base method
-  m_rawEventLocations = {LHCb::RawEventLocation::Trigger, LHCb::RawEventLocation::Copied, LHCb::RawEventLocation::Default};
-  initRawEventSearch();
-  
   declareProperty("OutputHltDecReportsLocation",
                   m_outputHltDecReportsLocation= LHCb::HltDecReportsLocation::Default);
-  
-  declareProperty("SourceID",
-		  m_sourceID= HltDecReportsWriter::kSourceID_Dummy );  
-
-
 }
-//=============================================================================
-// Destructor
-//=============================================================================
-HltDecReportsDecoder::~HltDecReportsDecoder() {} 
-
-//=============================================================================
-// Initialization
-//=============================================================================
-StatusCode HltDecReportsDecoder::initialize() {
-  StatusCode sc = Decoder::AlgBase::initialize(); // must be executed first
-  if ( sc.isFailure() ) return sc;  // error printed already by GaudiAlgorithm
-
-  if ( msgLevel(MSG::DEBUG) ) debug() << "==> Initialize" << endmsg;
-
-  
-  m_hltANNSvc = svc<IANNSvc>("ANNDispatchSvc");
-  return StatusCode::SUCCESS;
-}
-
+HltDecReportsDecoder::~HltDecReportsDecoder( )  
+{}
 //=============================================================================
 // Main execution
 //=============================================================================
@@ -110,63 +79,18 @@ StatusCode HltDecReportsDecoder::execute() {
 
   if ( msgLevel(MSG::DEBUG) ) debug() << "==> Execute" << endmsg;
 
-  LHCb::RawEvent* rawEvent = findFirstRawEvent();
-  
   // create output container and put it on TES
   HltDecReports* outputSummary = new HltDecReports();
   put( outputSummary, m_outputHltDecReportsLocation );
   
-  if( ! rawEvent ){
-    return Error(" No RawEvent found at any location. Empty HltDecReports created. ");
-  }  
-
-   // ----------------------------------------------------------
-  // get the bank from RawEvent
-  // ----------------------------------------------------------
-
-  const std::vector<RawBank*> hltdecreportsRawBanksAll = rawEvent->banks( RawBank::HltDecReports );
-  if( !hltdecreportsRawBanksAll.size() ){
-    return Warning( " No HltDecReports RawBank in RawEvent. Quiting. ",StatusCode::SUCCESS, 20 );
-  } 
-
-  std::vector<const RawBank*> hltdecreportsRawBanks;
-  for( std::vector<RawBank*>::const_iterator hltdecreportsRawBankP=hltdecreportsRawBanksAll.begin();
-	 hltdecreportsRawBankP!=hltdecreportsRawBanksAll.end(); ++hltdecreportsRawBankP ){    
-    const RawBank* hltdecreportsRawBank = *hltdecreportsRawBankP;
-
-    unsigned int sourceID=HltDecReportsWriter::kSourceID_Hlt;
-    if( hltdecreportsRawBank->version() > 1 ){
-      sourceID = hltdecreportsRawBank->sourceID() >> HltDecReportsWriter::kSourceID_BitShift;
-    }
-    if( m_sourceID != sourceID )continue;
-
-    hltdecreportsRawBanks.push_back( hltdecreportsRawBank );
+  std::vector<const RawBank*> hltdecreportsRawBanks = selectRawBanks( RawBank::HltDecReports );
+  if ( hltdecreportsRawBanks.empty() ) {
+    return Warning(" Could not find HltDecReports raw bank. Returning empty HltDecReports.", StatusCode::SUCCESS,20);
   }
-  if( !hltdecreportsRawBanks.size() ){
-    if( ( m_sourceID == HltDecReportsWriter::kSourceID_Hlt1 ) ||
-        ( m_sourceID == HltDecReportsWriter::kSourceID_Hlt2 ) ){
-
-      for( std::vector<RawBank*>::const_iterator hltdecreportsRawBankP=hltdecreportsRawBanksAll.begin();
-	   hltdecreportsRawBankP!=hltdecreportsRawBanksAll.end(); ++hltdecreportsRawBankP ){    
-	const RawBank* hltdecreportsRawBank = *hltdecreportsRawBankP;
-
-	unsigned int sourceID=HltDecReportsWriter::kSourceID_Hlt;
-	if( hltdecreportsRawBank->version() > 1 ){
-	  sourceID = hltdecreportsRawBank->sourceID() >> HltDecReportsWriter::kSourceID_BitShift;
-	}
-	if( HltDecReportsWriter::kSourceID_Hlt != sourceID )continue;
-
-	hltdecreportsRawBanks.push_back( hltdecreportsRawBank );
-      }
-
-    }
+  if( hltdecreportsRawBanks.size() != 1 ){
+    Warning(" More then one HltDecReports RawBanks for requested SourceID in RawEvent. Will only process the first one. " ,StatusCode::SUCCESS, 20 ).ignore();
   }
-  if( !hltdecreportsRawBanks.size() ){
-    return Warning( " No HltDecReports RawBank for requested SourceID in RawEvent. Quiting. ",StatusCode::SUCCESS, 20 );
-  } else if( hltdecreportsRawBanks.size() != 1 ){
-    Warning(" More then one HltDecReports RawBanks for requested SourceID in RawEvent. Will only process the first one. " ,StatusCode::SUCCESS, 20 );
-  }
-  const RawBank* hltdecreportsRawBank = hltdecreportsRawBanks.front();
+  const RawBank *hltdecreportsRawBank = hltdecreportsRawBanks.front();
   if( hltdecreportsRawBank->magic() != RawBank::MagicPattern ){
     return Error(" HltDecReports RawBank has wrong magic number. Return without decoding.",StatusCode::FAILURE );
   }
@@ -174,9 +98,6 @@ StatusCode HltDecReportsDecoder::execute() {
     return Error(
 " HltDecReports RawBank version # is larger then the known ones.... cannot decode, use newer version." ,StatusCode::FAILURE );
   }
-  //if( hltdecreportsRawBank->sourceID() != kSourceID ){
-  //  Warning( " HltDecReports RawBank has unexpected source ID. Will try to decode it anyway.",StatusCode::SUCCESS, 20 );
-  // }
 
   // ----------------------------------------------------------
   const unsigned int *content = hltdecreportsRawBank->begin<unsigned int>();  
@@ -186,25 +107,22 @@ StatusCode HltDecReportsDecoder::execute() {
      outputSummary->setConfiguredTCK( *content++ );
      outputSummary->setTaskID( *content++ );
   } 
-
   // --------------------------------- get configuration --------------------
-  // TODO: use configuredTCK to get the right mapping...
-  //       if not available, go for the value in ODIN ( _not_ guaranteed to be correct! )
-  //                      or go for the 'current' (most recent) mapping... (also not guaranteed)
+  unsigned int tck = outputSummary->configuredTCK();
+  const auto& tbl = id2string( tck ); 
 
   // ---------------- loop over decisions in the bank body; insert them into the output container
-
   int err=0;
   switch ( hltdecreportsRawBank->version() ) {
     case 0 : err+=this->decodeHDR<v0_v1>( content, hltdecreportsRawBank->end<unsigned int>(), 
-                                     *outputSummary );
+                                     *outputSummary, tbl );
         break;
     case 1 :
     case 2 : err+=this->decodeHDR<vx_vx>( content, hltdecreportsRawBank->end<unsigned int>(), 
-                                     *outputSummary );
+                                     *outputSummary, tbl );
         break;
     default : Error(
-" HltDecReports RawBank version # is larger then the known ones.... cannot decode, use newer version. " ,StatusCode::FAILURE );
+" HltDecReports RawBank version # is larger then the known ones.... cannot decode, use newer version. " ,StatusCode::FAILURE ).ignore();
     err+=1;
  }
 
@@ -214,58 +132,30 @@ StatusCode HltDecReportsDecoder::execute() {
     verbose() << " ====== HltDecReports container size=" << outputSummary->size() << endmsg;  
     verbose() << *outputSummary << endmsg;
   }
-  
-  
   return err==0 ? StatusCode::SUCCESS : StatusCode::FAILURE;
 }
 
-template <typename HDRConverter, typename I> 
-int HltDecReportsDecoder::decodeHDR(I i, I end,  HltDecReports& output ) const 
+template <typename HDRConverter, typename I, typename Table> 
+int HltDecReportsDecoder::decodeHDR(I i, I end,  HltDecReports& output, const Table& table ) const 
 {
    int ret = 0;
    HDRConverter converter;
    while (i != end ) {
-
     HltDecReport dec(  converter.convert(*i++)  );
-
     int id=dec.intDecisionID();
-
-    boost::optional<IANNSvc::minor_value_type> selName = m_hltANNSvc->value(Hlt1SelectionID,id);
-    unsigned int hltType(HltDecReportsWriter::kSourceID_Hlt2); 
-    if (!selName) 
-    {
-      selName = m_hltANNSvc->value(Hlt2SelectionID,id);
-    } 
-    else 
-    {
-      hltType=HltDecReportsWriter::kSourceID_Hlt1;
-    }
-    if( selName )
-    {
-      //   skip reports of the wrong type
-      bool store(true);
-      if( ( m_sourceID == HltDecReportsWriter::kSourceID_Hlt1 ) ||
-          ( m_sourceID == HltDecReportsWriter::kSourceID_Hlt2 ) )
-      {
-        store = ( hltType == m_sourceID );
-      } 
-      if( store )
-      {
-        if( !output.insert( selName->first, dec ).isSuccess() ) 
-        {
-          Error(" Duplicate decision report in storage "+std::string(selName->first), StatusCode::FAILURE, 20 ).ignore();
-          ++ret;
-        }
-      }
-    }
-    else 
-    {
+    auto isel  = table.find( id );
+    if ( isel == std::end(table) ) { // oops missing.
       std::ostringstream mess;
-      mess << " No string key found for trigger decision in storage "
-           << " id=" << id;
+      mess << " No string key found for trigger decision in storage id = " << id;
       Error(mess.str(), StatusCode::FAILURE, 50 ).ignore();
       ++ret;
-    }
+    } else if (!!isel->second){  // has a non-zero string -- insert!!
+        // debug() << " adding " << id << " as " << isel->second << endmsg;
+        if( !output.insert( isel->second, dec ).isSuccess() ) {
+          Error(" Duplicate decision report in storage "+std::string(isel->second), StatusCode::FAILURE, 20 ).ignore();
+          ++ret;
+        }
+    }  // otherwise, present, but should be skipped
    }
    return ret;
 }

@@ -1,4 +1,4 @@
-// $Id: Functions.h 172531 2014-05-11 18:38:18Z ibelyaev $
+// $Id: Functions.h 173565 2014-06-09 15:57:52Z ibelyaev $
 // ============================================================================
 #ifndef LHCBMATH_FUNCTIONS_H
 #define LHCBMATH_FUNCTIONS_H 1
@@ -26,8 +26,8 @@
  *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
  *  @date 2010-04-19
  *
- *                    $Revision: 172531 $
- *  Last modification $Date: 2014-05-11 20:38:18 +0200 (Sun, 11 May 2014) $
+ *                    $Revision: 173565 $
+ *  Last modification $Date: 2014-06-09 17:57:52 +0200 (Mon, 09 Jun 2014) $
  *                 by $author$
  */
 // ============================================================================
@@ -3413,7 +3413,7 @@ namespace Gaudi
     public:
       // ======================================================================
       /// calculate StudentT's shape
-      double operator() ( const double x ) const ;
+      double operator() ( const double x ) const{ return pdf ( x )  ; }
       // ======================================================================
     public:
       // ======================================================================
@@ -3429,6 +3429,7 @@ namespace Gaudi
       double gamma  () const  { return sigma () ; }
       double width  () const  { return sigma () ; }
       // ======================================================================
+      double nu     () const  { return m_n      ; }
       double n      () const  { return m_n      ; }
       // ======================================================================
       bool setM     ( const double value  ) ;
@@ -3442,6 +3443,11 @@ namespace Gaudi
       bool setWidth ( const double value  ) { return setSigma ( value ) ; }
       // ======================================================================
       bool setN     ( const double value  ) ;
+      // ======================================================================
+    public:
+      // ======================================================================
+      double pdf    ( const double x ) const ;
+      double cdf    ( const double x ) const ;
       // ======================================================================
     public:
       // ======================================================================
@@ -3464,10 +3470,110 @@ namespace Gaudi
       // ======================================================================
       double m_norm  ;
       // ======================================================================
+    } ;
+    // ========================================================================
+    /** @class BifurcatedStudentT
+     *  simple function to parameterize the asymmetric peak using
+     *  Student's ditribution
+     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+     *  @date 2013-01-05
+     */
+    class GAUDI_API BifurcatedStudentT
+      : public std::unary_function<double,double>
+    {
+    public:
+      // ======================================================================
+      /** constructor from mass, resolution and "n"-parameter
+       *  @param M     mass
+       *  @param sigma width parameter
+       *  @param N     n-parameter  ( actually  n=1+|N| )
+       */
+      BifurcatedStudentT ( const double mass   = 0 ,
+                           const double sigmaL = 1 ,
+                           const double sigmaR = 1 ,
+                           const double nL     = 2 ,
+                           const double nR     = 2 ) ;
+      /// destructor
+      ~BifurcatedStudentT() ;
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// calculate bifurcated StudentT's shape
+      double operator() ( const double x ) const{ return pdf ( x )  ; }
+      // ======================================================================
+    public:
+      // ======================================================================
+      // variables
+      // ======================================================================
+      double M       () const  { return m_M      ; }
+      double m0      () const  { return   M   () ; }
+      double mass    () const  { return   M   () ; }
+      double peak    () const  { return   M   () ; }
+      // ======================================================================
+      double sigmaL  () const  { return m_sL      ; }
+      double sL      () const  { return sigmaL () ; }
+      double gammaL  () const  { return sigmaL () ; }
+      double widthL  () const  { return sigmaL () ; }
+      // ======================================================================
+      double sigmaR  () const  { return m_sR      ; }
+      double sR      () const  { return sigmaR () ; }
+      double gammaR  () const  { return sigmaR () ; }
+      double widthR  () const  { return sigmaR () ; }
+      // ======================================================================
+      double nuL     () const  { return m_nL      ; }
+      double nL      () const  { return m_nL      ; }
+      // =========== ===========================================================
+      double nuR     () const  { return m_nR      ; }
+      double nR      () const  { return m_nR      ; }
+      // ======================================================================
+      bool setM      ( const double value  ) ;
+      bool setM0     ( const double value  ) { return setM  ( value ) ; }
+      bool setMass   ( const double value  ) { return setM  ( value ) ; }
+      bool setPeak   ( const double value  ) { return setM  ( value ) ; }
+      // ======================================================================
+      bool setSigmaL ( const double value  ) ;
+      bool setSL     ( const double value  ) { return setSigmaL ( value ) ; }
+      bool setGammaL ( const double value  ) { return setSigmaL ( value ) ; }
+      bool setWidthL ( const double value  ) { return setSigmaL ( value ) ; }
+      // ======================================================================
+      bool setSigmaR ( const double value  ) ;
+      bool setSR     ( const double value  ) { return setSigmaR ( value ) ; }
+      bool setGammaR ( const double value  ) { return setSigmaR ( value ) ; }
+      bool setWidthR ( const double value  ) { return setSigmaR ( value ) ; }
+      // ======================================================================
+      bool setNL     ( const double value  ) ;
+      bool setNR     ( const double value  ) ;
+      // ======================================================================
+    public:
+      // ======================================================================
+      double pdf    ( const double x ) const ;
+      double cdf    ( const double x ) const ;
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// get the integral
+      double integral () const ;
+      /// get the integral between low and high limits
+      double integral ( const double low  ,
+                        const double high ) const ;
+      // ======================================================================
     private:
       // ======================================================================
-      /// integration workspace
-      Gaudi::Math::WorkSpace     m_workspace  ;    // integration workspace
+      /// mass
+      double m_M  ; //
+      /// width parameter
+      double m_sL ; // width parameter
+      /// width parameter
+      double m_sR ; // width parameter
+      /// nL-parameter
+      double m_nL ; // n-parameter
+      /// nR-parameter
+      double m_nR ; // n-parameter
+      // ======================================================================
+    private: // normalization
+      // ======================================================================
+      double m_normL  ;
+      double m_normR  ;
       // ======================================================================
     } ;
     // ========================================================================
@@ -3859,7 +3965,7 @@ namespace Gaudi
        *  param alpha   \f$\alpha\f$ parameter    (>0)
        */
       LogGamma ( const double nu     = 0 ,   // shape parameter
-                 const double lambda = 1 , // scale parameter
+                 const double lambda = 1 ,   // scale parameter
                  const double alpha  = 1 ) ; // scale parameter
       /// destructor
       ~LogGamma () ;  // desctructor
@@ -3929,9 +4035,13 @@ namespace Gaudi
       /** constructor with all parameters
        *  @param alpha \f$\alpha\f$-parameter
        *  @param beta  \f$\beta\f$-parameter
+       *  @param scale scale-parameter
+       *  @param low   shift-parameter 
        */
       BetaPrime ( const double alpha = 3 ,
-                  const double beta  = 3 ) ;
+                  const double beta  = 3 , 
+                  const double scale = 1 , 
+                  const double shift = 0 ) ;
       /// destructor
       ~BetaPrime () ;
       // ======================================================================
@@ -3946,6 +4056,8 @@ namespace Gaudi
       // ======================================================================
       double alpha () const { return m_alpha ; }
       double beta  () const { return m_beta  ; }
+      double scale () const { return m_scale ; }
+      double shift () const { return m_shift ; }
       // ======================================================================
     public: // general properties
       // ======================================================================
@@ -3961,6 +4073,8 @@ namespace Gaudi
       // ======================================================================
       bool   setAlpha ( const double value ) ;
       bool   setBeta  ( const double value ) ;
+      bool   setScale ( const double value ) ;
+      bool   setShift ( const double value ) ;
       // ======================================================================
     public: // integrals
       // ======================================================================
@@ -3973,11 +4087,124 @@ namespace Gaudi
       // ======================================================================
       double m_alpha ;
       double m_beta  ;
+      double m_scale ;
+      double m_shift ;
       // ======================================================================
     private:
       // ======================================================================
       /// auxillary intermediate parameter
       double m_aux ; // auxillary intermediate parameter
+      // ======================================================================
+    } ;
+    // ========================================================================
+    /** @class Landau 
+     *  http://en.wikipedia.org/wiki/Landau_distribution
+     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+     *  @date   2013-05-11
+     */
+    class GAUDI_API Landau 
+      : public std::unary_function<double,double>
+    {
+    public:
+      // ======================================================================
+      /** constructor with all parameters
+       *  @param alpha \f$\alpha\f$-parameter
+       *  @param beta  \f$\beta\f$-parameter
+       *  @param scale scale-parameter
+       *  @param low   shift-parameter 
+       */
+      Landau ( const double scale = 1 , 
+               const double shift = 0 ) ;
+      /// destructor
+      ~Landau () ;
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// evaluate beta'-distributions
+      double pdf        ( const double x ) const ;
+      /// evaluate beta'-distributions
+      double operator() ( const double x ) const { return pdf ( x ) ; }
+      // ======================================================================
+    public: // direct getters
+      // ======================================================================
+      double scale () const { return m_scale ; }
+      double shift () const { return m_shift ; }
+      // ======================================================================
+    public: // direct setters
+      // ======================================================================
+      bool   setScale ( const double value ) ;
+      bool   setShift ( const double value ) ;
+      // ======================================================================
+    public: // integrals
+      // ======================================================================
+      double cdf      ( const double x    ) const ;
+      double integral ( const double low  ,
+                        const double high ) const ;
+      // ======================================================================
+    private:
+      // ======================================================================
+      double m_scale ;
+      double m_shift ;
+      // ======================================================================
+    } ;
+    // ========================================================================
+    /** @class Argus 
+     *  http://en.wikipedia.org/wiki/ARGUS_distribution
+     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+     *  @date   2013-05-11
+     */
+    class GAUDI_API Argus 
+      : public std::unary_function<double,double>
+    {
+    public:
+      // ======================================================================
+      /** constructor with all parameters
+       *  @param alpha \f$\alpha\f$-parameter
+       *  @param beta  \f$\beta\f$-parameter
+       *  @param scale scale-parameter
+       *  @param low   shift-parameter 
+       */
+      Argus  ( const double shape  = 1   ,
+               const double high   = 1   , 
+               const double low    = 0   ) ;
+      /// destructor
+      ~Argus () ;
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// evaluate beta'-distributions
+      double pdf        ( const double x ) const ;
+      /// evaluate beta'-distributions
+      double operator() ( const double x ) const { return pdf ( x ) ; }
+      // ======================================================================
+    public: // direct getters
+      // ======================================================================
+      double shape  () const { return m_shape  ; }
+      double low    () const { return m_low    ; }
+      double high   () const { return m_high   ; }
+      // ======================================================================
+    protected: 
+      // ======================================================================
+      double  y_ ( const double x ) const 
+      { return ( x - m_low  ) / ( m_high - m_low ) ; }
+      // ======================================================================
+    public: // direct setters
+      // ======================================================================
+      bool   setHigh  ( const double value ) ;
+      bool   setLow   ( const double value ) ;
+      bool   setShape ( const double value ) ;
+      // ======================================================================
+    public: // integrals
+      // ======================================================================
+      double cdf      ( const double x    ) const ;
+      double integral ( const double low  ,
+                        const double high ) const ;
+      // ======================================================================
+    private:
+      // ======================================================================
+      double m_shape ;
+      double m_high  ;
+      double m_low   ;
       // ======================================================================
     } ;
     // ========================================================================

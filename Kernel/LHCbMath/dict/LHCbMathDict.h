@@ -1,4 +1,4 @@
-// $Id: LHCbMathDict.h 167169 2014-01-21 17:09:35Z ibelyaev $
+// $Id: LHCbMathDict.h 173545 2014-06-08 14:31:21Z ibelyaev $
 // ============================================================================
 #ifndef DICT_LHCBMATHDICT_H
 #define DICT_LHCBMATHDICT_H 1
@@ -30,6 +30,7 @@
 #include "LHCbMath/Chi2Fit.h"
 #include "LHCbMath/Spline.h"
 #include "LHCbMath/NSphere.h"
+#include "LHCbMath/WStatEntity.h"
 // ============================================================================
 /** @file LHCbMathDict.h
  *
@@ -328,6 +329,12 @@ namespace
     Gaudi::Math::Splines::PAIR    _sd_2 ;
     Gaudi::Math::Splines::DATAERR _sd_3 ;
 
+    LHCb::Math::Equal_To<double>               __eq_1 ;
+    LHCb::Math::Equal_To<std::vector<double> > __eq_2 ;
+    LHCb::Math::Zero<double>                   __eq_3 ;
+    LHCb::Math::Zero<std::vector<double> >     __eq_4 ;
+    LHCb::Math::NotZero<double>                __eq_5 ;
+    LHCb::Math::NotZero<std::vector<double> >  __eq_6 ;
   };
 }
 

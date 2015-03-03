@@ -62,6 +62,7 @@
   <class name    = "Gaudi::Math::Gounaris23L"             />
   <class name    = "Gaudi::Math::Voigt"                   />
   <class name    = "Gaudi::Math::StudentT"                />
+  <class name    = "Gaudi::Math::BifurcatedStudentT"      />
   <class name    = "Gaudi::Math::Rho0"             />
   <class name    = "Gaudi::Math::Kstar0"           />
   <class name    = "Gaudi::Math::Phi0"             />
@@ -88,6 +89,8 @@
   <class name    = "Gaudi::Math::Amoroso"          />
   <class name    = "Gaudi::Math::LogGamma"         />
   <class name    = "Gaudi::Math::BetaPrime"        />
+  <class name    = "Gaudi::Math::Landau"           />
+  <class name    = "Gaudi::Math::Argus"            />
   <class name    = "Gaudi::Math::ExpoPositive"     />
   
   <class name    = "Gaudi::Math::GenGaussV1"       />
@@ -110,6 +113,7 @@
   <class name    = "Gaudi::Math::Splines::DATA"    />
   <class name    = "Gaudi::Math::Splines::PAIR"    />
   <class name    = "Gaudi::Math::Splines::DATAERR" />
+  <class name    = "Gaudi::Math::WStatEntity"      />
 
   <class name    = "std::unary_function<double,Gaudi::Math::ValueWithError>"/>
   <class name    = "std::binary_function<double,double,Gaudi::Math::ValueWithError>"/>
@@ -122,11 +126,24 @@
   <class name    = "std::vector<ROOT::Math::SVector<double,4> >" />
   <class name    = "std::vector<ROOT::Math::SVector<double,6> >" />
   
+  <class pattern = "LHCb::Math::Equal_To<*>"  />
+  <class pattern = "LHCb::Math::Zero<*>"      />
+  <class pattern = "LHCb::Math::NotZero<*>"   />
+  
   <function name = "Gaudi::Math::blind"           />
   <function name = "Gaudi::Math::pow"             />
   <function name = "Gaudi::Math::exp"             />
   <function name = "Gaudi::Math::log"             />
   <function name = "Gaudi::Math::log10"           />
+  <function name = "Gaudi::Math::sqrt"            />
+  <function name = "Gaudi::Math::cbrt"            />
+  <function name = "Gaudi::Math::cbrt"            />
+  <function name = "Gaudi::Math::sin"             />
+  <function name = "Gaudi::Math::cos"             />
+  <function name = "Gaudi::Math::tan"             />
+  <function name = "Gaudi::Math::sinh"            />
+  <function name = "Gaudi::Math::cosh"            />
+  <function name = "Gaudi::Math::tanh"            />
   <function name = "Gaudi::Math::chi2"            />
   <function name = "Gaudi::Math::mean"            />
   <function name = "Gaudi::Math::asym"            />
@@ -154,8 +171,11 @@
   <function name    = "LHCb::Math::islong"                 />
   <function name    = "LHCb::Math::equal_to_int"           />
   <function name    = "LHCb::Math::equal_to_uint"          />
+  <function name    = "LHCb::Math::equal_to_double"        />
   <function name    = "LHCb::Math::knuth_equal_to_double"  />
   <function name    = "Gaudi::Math::lomont_compare_double" />
+  <function name    = "Gaudi::Math::next_double"           />
+  <function name    = "Gaudi::Math::next_float"            />
   <function name    = "Gaudi::Math::interpolate_1D"        />
   <function name    = "Gaudi::Math::interpolate_2D"        />
   <function pattern = "Gaudi::Math::Jackson::jackson*"     />

@@ -4,6 +4,15 @@
 ! Purpose     : Place holder package for RawEvent decoding configurable
 !-----------------------------------------------------------------------------
 
+!========================= DAQSys v8r3 2014-06-10 =========================
+ ! 2014-06-06 - Sebastian Neubert
+ - Fixed decoderdb test
+
+ ! 2014-06-05 - Sebastian Neubert
+ - Renamed HltTrackReportsDecoder to VeloDecoder
+ - Added ForwardDecoder
+ - Locations still hardcoded
+
 !========================= DAQSys v8r2 2014-05-12 =========================
 ! 2014-04-04 - Heinrich Schindler
  - Remove decoder for VPClusters (decoding now done inside PrPixelHitManager).

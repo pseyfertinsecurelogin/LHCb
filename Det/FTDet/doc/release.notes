@@ -3,6 +3,19 @@
 ! Purpose     : Interface to the xml description
 ! Responsible : Diego Milanes
 !--------------------------------------------------------------------------
+ 
+!========================= FTDet v2r7 2014-06-10 =========================
+! 2014-05-17 - Michel De Cian
+ - Reintroduce binary search in DeFTDetector.
+
+! 2014-05-16 - Michel De Cian
+ - Fix unprotected 'debug()' in all DeFT* Classes, precompute cosine of angle in DeFTFibreMat
+
+! 2014-05-16 - Luigi Del Buono
+ - correct an unprotected zero division in createLightSharingChannels()
+
+! 2014-05-15 - Luigi Del Buono
+ - Fix inaccuracy in fractional position computation for cellID 0 and 130 in CellIDCoordinates()
 
 !========================= FTDet v2r6 2014-05-12 =========================
 ! 2014-05-06 - Diego Milanes

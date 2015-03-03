@@ -4,6 +4,48 @@
 ! Purpose     : Hlt RawBanks writers/decoders/monitors
 !------------------------------------------------------------------------------
 
+!========================= HltDAQ v4r4 2014-06-10 =========================
+! 2014-06-06 - Gerhard Raven
+ - better use of IANNSvc interface
+
+! 2014-06-05 - Sebastian Neubert
+ - using a proper counter to keep track of number of decoded tracks
+   in TrackReportsDecoder
+
+! 2014-06-03 - Gerhard Raven
+ - fix decode/encode qmtest configuration
+
+! 2014-06-02 - Gerhard Raven
+ - spelling, add .ignore to ignored StatusCodes
+
+! 2014-06-01 - Gerhard Raven
+ - print out only one line if the relevant rawbank / rawevent cannot be found
+
+! 2014-05-31 - Gerhard Raven
+ - update HltVertexReportsDecoder to use HltRawBankDecoderBase
+ - tiny optimization of HltRawBankDecoderBase
+ - fix -Wpedantic warning about extra ;
+ - HltDecReportsDecoder: for backwards compatibility, if we cannot find a RawEvent,
+                         or RawEvent does not contain a HltDecReportsRawbank, put
+                         an empty HltDecReports onto the TES, print error, and return
+ - update HltSelReportsDecoder to use HltRawBankdDecoderBase
+ 
+! 2014-05-30 - Gerhard Raven
+ - Factor out code in common between the various raw bank decoders into
+   HltRawBankDecoderBase. 
+ - HltSelReportsWriter: more optimizations + C++11 changes..
+ - HltLumiWriter: C++11 changes
+ 
+
+! 2014-05-29 - Gerhard Raven
+ - HltDecReportsDecoder now uses (if a TCK is present in the decreport rawbank)
+   TCKANNSvc instead of ANNDispatchSvc to find the uint16_t -> string mapping
+   required for decoding...
+
+! 2014-05-16 - Marco Clemencic
+ - Fixed a concurrency issue in the build (CMT cannot compile the same source
+   twice for different targets/libraries).
+
 !========================= HltDAQ v4r3 2014-05-12 =========================
 ! 2014-05-05 - Gerhard Raven
  - HltSelReportsWriter: further optimize LHCbID overlap search.
