@@ -1,0 +1,17 @@
+!-----------------------------------------------------------------------------
+! Package     : GaudiPatches
+! Responsible : Marco Cattaneo
+! Purpose     : Patches to Gaudi v20r4 while waiting for v21r0
+!-----------------------------------------------------------------------------
+
+!======================= GaudiPatches v1r0 2009-02-18 ========================
+! 2009-02-16 - Patrick Koppenburg
+ - Rename InputCopyStream to LHCbInputCopyStream to make sure
+   there is no clash with the Gaudi version. This algorithm
+   will be removed when Gaudi v21r0 is out.
+
+! 2009-02-11 - Patrick Koppenburg
+ - Import new package
+ - Copy patched OutputStream and InputCopyStream to it. 
+   See https://savannah.cern.ch/patch/?2779
+

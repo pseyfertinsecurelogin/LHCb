@@ -1,9 +1,69 @@
-! $Id: release.notes,v 1.49 2008-11-17 16:25:36 cattanem Exp $
+! $Id: release.notes,v 1.60 2009-02-18 15:53:43 cattanem Exp $
 !-----------------------------------------------------------------------------
 ! Package     : Phys/DaVinciMCKernel
 ! Responsible : Juan PALACIOS
 ! Purpose     : MCEvent dependent interfaces and base classes.
 !-----------------------------------------------------------------------------
+
+!====================== DaVinciMCKernel v3r0 2009-02-18 ======================
+! 2009-02-02 - Juan PALACIOS
+ - Kernel/IParticle2MCAssociator.h
+  . add methods thas assume MCParticles are obtained behind the scenes from
+    somewhere.
+  . Add some doxygen documentation
+ - Kernel/Particle2MCAssociatorBase.h
+  . Add new methods from interface. Add MCParticle default locaiton string
+  . Add some doxygen
+ - src/Lib/Particle2MCAssociatorBase.cpp
+  . Simple implementations of new interface methods. MCParticles are taken
+    from TES, location defined by property "MCParticleDefaultLocation", default
+    LHCb::MCParticleLocation::Default
+
+! 2009-01-30 - Juan PALACIOS
+ - Add src/Lib/Particle2MCAssociatorBase.cpp, 
+       Kernel/Particle2MCAssociatorBase.h
+  . Base class with common implementation for IParticle2MCAssociator interface.
+ - Kernel/MCAssociation.h
+  . Remove nested typedef to std::vector<MCAssociaiton>
+ - Kernel/IParticle2MCAssociator.h
+  . Add virtual double weight(const LHCb::Particle* particle, 
+                              const LHCb::MCParticle* mcParticle) const = 0;
+ - Kernel/Particle2MCParticle.h
+  . typedef std::vector<MCAssociation> as Particle2MCParticle::ToVector
+
+
+! 2009-01-21 - Patrick Koppenburg
+ - Increment to v3r0
+
+! 2009-01-20 - Juan PALACIOS
+ - Kernel/MCAssociation.h
+  . Forward declaration of LHCb::MCParticle.
+ - Kernel/IDaVinciAssociatorsWrapper.h
+  . Add default value to const std::vector< std::string >& myLocations argument.
+ - Add Kernel/Particle2MCParticle.h
+  . Namespace containing types corresponding to the Particle -> MCParticle 
+    uni-directional weighted relationship.
+ - Kernel/IParticle2MCAssociator.h
+  . Now return lightweight Particle->MCParticle relations tables.
+
+! 2009-01-19 - Juan PALACIOS
+ - Kernel/IDaVinciSmartAssociator.h
+  . IDaVinciSmartAssociator::associate returns Particle2MCLinker::ToRange
+ - Kernel/IDaVinciAssociatorsWrapper.h
+  . IDaVinciAssociatorsWrapper::linker takes arguments by const reference.
+ - Kernel/Particle2MCLinker.h
+  . Remove MCAssociation class
+ - Add kernel/MCAssociation.h with MCAssociation class
+ - Add Kernel/IParticle2MCAssociator.h
+  . Tool interface to get one to many or many to many Particle->MCParticle
+    associations.
+
+! 2009-01-19 - Patrick Koppenburg
+ - New interface IMCParticleTupleTool for plotting MCParticle-realted quantities.
+
+! 2009-01-13 - V. Gligorov
+ - Added IDaVinciSmartAssociator, the interface to a new ``smart'' association
+   tool which works for any kind of Particle.
 
 !====================== DaVinciMCKernel v2r11p1 2008-11-17 ===================
 ! 2008-10-29 - Marco Cattaneo

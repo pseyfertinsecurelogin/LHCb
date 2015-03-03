@@ -1,4 +1,4 @@
-// $Id: DVAlgorithm.h,v 1.30 2008-12-05 13:27:03 ibelyaev Exp $ 
+// $Id: DVAlgorithm.h,v 1.37 2009-02-13 15:38:06 jpalac Exp $ 
 // ============================================================================
 #ifndef DAVINCIKERNEL_DVALGORITHM_H
 #define DAVINCIKERNEL_DVALGORITHM_H 1
@@ -32,6 +32,8 @@
 #include "Kernel/IParticleDescendants.h"
 #include "Kernel/IWriteSelResult.h"
 #include "Kernel/IDistanceCalculator.h"
+#include "Kernel/IPVReFitter.h"
+class IRelatedPVFinder;
 // ============================================================================
 #include "Kernel/IMassFit.h"
 #include "Kernel/IMassVertexFit.h"
@@ -69,9 +71,11 @@
  *  - <b>ParticleCombiners</b> : the map for possible particle combiners
  *     @see IParticleCombiner
  *  
- *  - <b>ParticleReFitetr</b> : the map for possible particle re-fitters 
+ *  - <b>ParticleReFitters</b> : the map for possible particle re-fitters 
  *     @see IParticleReFit
  *
+ *  - <b>PVReFitters</b> : the map for possible primary vertex re-fitters 
+ *     @see IPVReFitter
  *
  *  - <b>DecayDescriptor</b>  : the decay descriptor ofthe algorithm 
  *               in the spirit of (MC)DecayFinder tool by Olivier Dormond.
@@ -129,7 +133,79 @@ public:
   {
     return getTool<IPhysDesktop>(m_desktopName,m_desktop,this) ;
   }
+
+  /**
+   * direct const access to the tool that calculates the Particle->PV
+   * weighted relations
+   * 
+   * @author Juan Palacios juan.palacios@nikhef.nl
+   **/
+  inline const IRelatedPVFinder* relatedPVFinder() const
+  {
+    return desktop()->relatedPVFinder();
+  }
+  /**
+   * direct const access to container of input primary vertices.
+   * 
+   * @author Juan Palacios juan.palacios@nikhef.nl
+   **/
+  inline const LHCb::RecVertex::Container* primaryVertices() const
+  {
+    return desktop()->primaryVertices();
+  }
+
+  /**
+   *
+   * Calculate the best related PV for a particle and return it to the user
+   * If property "ReFitPVs" is set to true, this triggers a re-fit of the PVs
+   * after removing tracks coming from the particle in question. If not, then 
+   * it uses the container of PVs obtained from method primaryVertices().
+   * Returns a newed pointer to a vertex either from the TES or stored in the
+   * PhysDesktop local array.
+   *
+   * @author Juan Palacios juan.palacios@nikhef.nl
+   * @param p LHCb::Particle to be related
+   * @return newed pointer to related vertex. TES or PhysDesktop in charge of
+   * memory management.
+   *
+   **/
+  const LHCb::VertexBase* calculateRelatedPV(const LHCb::Particle* p) const;
+
+  /**
+   *
+   * Get the related PV from the relations table, or call calculateRelatedPV
+   * if it isn't already there.
+   *
+   *
+   * @author Juan Palacios juan.palacios@nikhef.nl
+   * @date 10/02/2009
+   * 
+   **/
+  const LHCb::VertexBase* getRelatedPV(const LHCb::Particle* p) const;
+
+  /**
+   *
+   **/
+  inline void storeRelationWithOverwrite(const Particle2Vertex::LightTable& table) 
+  {
+    desktop()->overWriteRelations(table.i_relations().begin(), 
+                                  table.i_relations().end());
+  }
   
+  /**
+   *
+   **/
+  inline void relateWithOverwrite(const LHCb::Particle*   part, 
+                                  const LHCb::VertexBase* vert,
+                                  const double weight=1.) const
+  {
+    if (0==part || 0== vert ) return;
+    (this->desktop()->Particle2VertexRelations().i_removeFrom(part)).ignore();
+    this->desktop()->relate(part, vert, weight);
+  }
+  
+  
+
 public:
   
   /// Accessor for Vertex Fitter Tool by nickname 
@@ -193,6 +269,17 @@ public:
         m_particleReFitterNames ,
         m_particleReFitters     , this ) ; 
   }
+
+  /// Accessor for IPVReFitter tool
+  inline IPVReFitter* 
+  primaryVertexReFitter ( const std::string name = "" ) const 
+  {
+    return getTool<IPVReFitter>
+      ( name , 
+        m_pvReFitterNames ,
+        m_pvReFitters     , this ) ; 
+  }
+
 
 public:
   // ==========================================================================
@@ -450,6 +537,12 @@ protected:
   ToolMap                                             m_particleReFitterNames ;
   /// The actual map of "nickname -> tool" for Particle Refitters 
   mutable GaudiUtils::VectorMap<std::string,IParticleReFitter*> m_particleReFitters ;
+
+  /// Mapping of "nickname ->type/name" for Particle Refitters
+  ToolMap                                             m_pvReFitterNames ;
+  /// The actual map of "nickname -> tool" for Particle Refitters 
+  mutable GaudiUtils::VectorMap<std::string,IPVReFitter*> m_pvReFitters ;
+
   
 protected:
   
@@ -521,6 +614,9 @@ private:
   int m_countFilterWrite ;
   /// Number of passing events
   int m_countFilterPassed ;
+
+  /// Re-fit PVs
+  bool m_refitPVs;
   
   /// Switch PreloadTools to false no to preload any tools.
   /// This will have the effect that they will be loaded on demand, when needed,

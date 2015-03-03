@@ -1,4 +1,4 @@
-// $Id: DeSTSector.h,v 1.33 2008-11-05 09:43:33 mneedham Exp $
+// $Id: DeSTSector.h,v 1.36 2009-02-18 07:38:53 jluisier Exp $
 #ifndef _DeSTSector_H_
 #define _DeSTSector_H_
 
@@ -71,6 +71,41 @@ public:
    * @return StatusCode OK or not
    */
   virtual StatusCode initialize();
+
+  /** get the sector name as expected in the Condition DB
+   * @return std::string "sector name"
+   */
+  virtual std::string conditionsPathName() const = 0;
+
+  /** get the noise of the corresponding strip
+   * @param aChannel channel
+   * @return double noise of the strip
+   */
+  double noise(const LHCb::STChannelID& aChannel) const;
+
+  /** get the noise of the corresponding strip
+   * @param aStrip strip number
+   * @return double noise of the strip
+   */
+  double noise(const unsigned int& aStrip) const;
+
+  /** get the average noise in the sector
+   * @return double average noise
+   */
+  double sectorNoise() const;
+
+  /** get the average noise of a beetle
+   * @param beetle beetle number (1-4)
+   * @return double average noise
+   */
+  double beetleNoise(const unsigned int& beetle) const;
+
+  /** get the average noise of a beetle port
+   * @param beetle beetle number (1-4)
+   * @param port beetle port number (1-3)
+   * @return double average noise
+   */
+  double portNoise(const unsigned int& beetle, const unsigned int& port) const;
 
   /** sector identfier
    * @return id
@@ -195,6 +230,33 @@ public:
   /** get vector of strip status for all strips in sector */
   std::vector<Status> stripStatus() const;
 
+  /** set the sector status */
+  void setSectorStatus(const Status& newStatus); 
+
+  /** set vector of beetleStatus 
+  * @param unsigned int beetle [numbering from 1]
+  * @param Status newStatus 
+  **/
+  void setBeetleStatus(const unsigned int beetle, const Status& newStatus);
+
+  /** set vector of beetleStatus 
+  * @param LHCb::STChannelID chan id of beetle
+  * @param Status newStatus 
+  **/
+  void setBeetleStatus(const LHCb::STChannelID& chan, const Status& newStatus);
+
+  /** set vector of beetleStatus 
+  * @param unsigned int strip [numbering from 1]
+  * @param Status newStatus 
+  **/
+  void setStripStatus(const unsigned int strip, const Status& newStatus);
+
+  /** set vector of beetleStatus 
+  * @param LHCb::STChannelID chan id of strip
+  * @param Status newStatus 
+  **/
+  void setStripStatus(const LHCb::STChannelID& chan, const Status& newStatus);
+
   /** short cut for strip status ok 
   * @return isOKStrip
   */
@@ -307,7 +369,11 @@ private:
   mutable StatusMap m_stripStatus;
   std::string m_statusString;
   std::string m_versionString;
+
  
+  // Noise info
+  std::string m_noiseString;
+  std::vector< double > m_noiseValues;
 };
 
 inline unsigned int DeSTSector::id() const{
@@ -402,8 +468,24 @@ inline DeSTSector::Status DeSTSector::sectorStatus() const{
   return m_status;
 }
 
+inline void DeSTSector::setSectorStatus(const DeSTSector::Status& newStatus) {
+  m_status = newStatus;
+}
+
 inline DeSTSector::Status DeSTSector::beetleStatus(const LHCb::STChannelID& chan) const{
   return beetleStatus(beetle(chan));
+}
+
+inline void DeSTSector::setBeetleStatus(const LHCb::STChannelID& chan, 
+                                        const DeSTSector::Status& newStatus){
+  // just delegate 
+  setBeetleStatus(beetle(chan), newStatus);
+}
+
+inline void DeSTSector::setStripStatus(const LHCb::STChannelID& chan, 
+                                      const DeSTSector::Status& newStatus){
+  // just delegate 
+  setStripStatus(chan.strip(), newStatus);
 }
 
 inline DeSTSector::Status DeSTSector::beetleStatus(const unsigned int id) const{

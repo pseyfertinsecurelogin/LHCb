@@ -1,4 +1,4 @@
-// $Id: IPhysDesktop.h,v 1.29 2008-10-30 16:34:13 jpalac Exp $
+// $Id: IPhysDesktop.h,v 1.33 2009-02-11 14:38:44 jpalac Exp $
 #ifndef DAVINCIKERNEL_IPHYSDESKTOP_H 
 #define DAVINCIKERNEL_IPHYSDESKTOP_H 1
 
@@ -9,6 +9,7 @@
 #include "Kernel/Particle2Vertex.h"
 // Forward declarations
 class StatusCode;
+class IRelatedPVFinder;
 
 // Declaration of the interface ID ( interface id, major version, minor version)
 static const InterfaceID IID_IPhysDesktop("IPhysDesktop", 1, 3);
@@ -84,6 +85,16 @@ public:
   /// Retrieve the local secondary vertex container
   virtual const LHCb::Vertex::ConstVector& secondaryVertices() const = 0;
 
+  /// retrieve the Particle->Primary vertex relations
+  virtual const Particle2Vertex::LightTable& Particle2VertexRelations() const = 0;
+
+  /// retrieve the Particle->Primary vertex relations
+  virtual Particle2Vertex::LightTable& Particle2VertexRelations() = 0;
+
+  /// Store relations over-writing previously existing ones
+  virtual void overWriteRelations(Particle2Vertex::Range::const_iterator begin,
+                                  Particle2Vertex::Range::const_iterator end) = 0;
+
   /// Keep for future use: Register the new particles in the Desktop, 
   /// pass ownership, return pointer to new particle
   virtual const LHCb::Particle* keep( const LHCb::Particle* input ) = 0;
@@ -91,6 +102,13 @@ public:
   /// Keep for future use: Register the new vertices in the Desktop, 
   /// pass ownership, return pointer to new vertex
   virtual const LHCb::Vertex* keep( const LHCb::Vertex* input ) = 0;
+
+  /// Keep for future use: Register re-fitted primary vertices in the Desktop, 
+  /// pass ownership, return pointer to new vertex. Vertices will only
+  /// be stored in the TES if they are related to a particle being stored
+  /// there.
+  virtual const LHCb::RecVertex* keep( const LHCb::RecVertex* input ) = 0;
+
 
   /// Save particles, vertices and particle->vertices relations to the TES
   virtual StatusCode saveDesktop() const = 0;
@@ -117,7 +135,12 @@ public:
 
   /// Get the vertex with the highest weight in the association
   /// between LHCb::Particle and LHCb::VertexBase
-  virtual const LHCb::VertexBase* relatedVertex(const LHCb::Particle* part) = 0;
+  virtual const LHCb::VertexBase* relatedVertex(const LHCb::Particle* part) const = 0;
+
+  /**
+   * Get a pointer to the Particle->PV relator tool
+   **/
+  virtual const IRelatedPVFinder* relatedPVFinder() const = 0 ;
   
   /// Establish a relation between an LHCb::Particle and an LHCb::VertexBase
   virtual void relate(const LHCb::Particle* part, 

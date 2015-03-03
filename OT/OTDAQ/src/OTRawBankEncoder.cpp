@@ -6,6 +6,9 @@
 // from Gaudi
 #include "GaudiKernel/ToolFactory.h" 
 
+// from LHCbMath
+// #include "LHCbMath/Bit.h"
+
 // from Event
 #include "Event/RawEvent.h"
 #include "Event/RawBank.h"
@@ -189,7 +192,10 @@ void OTRawBankEncoder::createBanks( ) {
   for ( unsigned t = 1; t < 4u; ++t ) {
     for ( unsigned l = 0; l < 4u; ++l ) {
       for (unsigned q = 0; q < 4u; ++q ) {
-        unsigned id = 100u*t + 10u*l + 1u*q;
+        //unsigned id = 100u*t + 10u*l + 1u*q; // dec
+        // First four bits is Q next for four is L and next four is T
+        unsigned id = ( t << 8 ) | ( l << 4 ) | ( q << 0 );
+        //std::cout << "Created id " << std::dec << id << " in hex " << std::hex << id << std::endl;
         m_banks.push_back( OTDAQ::OTBank( id, nGols::v2008 ) );
       }
     }
@@ -228,9 +234,12 @@ const OTRawBankEncoder::OTRawBank& OTRawBankEncoder::createRawBank(const OTDAQ::
         /// 2) The bank id is of the format 0x0LTQ
         /// Get bank id in format 0x0TLQ
         if ( isDebug ) debug() << "Going to add empty gol with id " << gol->id() << " to bank with id " << bank.id() << endmsg;
-        const unsigned station = bank.id()/100;
-        const unsigned layer   = ( bank.id()%100 )/10;
-        const unsigned quarter = ( bank.id()%10 );
+        if ( isVerbose ) verbose() << "Empty bank id is " << std::hex << bank.id() << endmsg;
+        const unsigned bankid  = bank.id();
+        const unsigned mask    = 15;
+        const unsigned station = ( ( bankid >> 8 ) & mask );  //bank.id()/100;
+        const unsigned layer   = ( ( bankid >> 4 ) & mask );  //( bank.id()%100 )/10;
+        const unsigned quarter = ( ( bankid >> 0 ) & mask );  //( bank.id()%10 );
         const unsigned module  = gol->id();
         if ( isDebug ) debug() << "Creating gol header with id = " << module << " station = " << station 
                                << " layer = " << layer << " quarter = " << quarter << endmsg;
@@ -251,12 +260,12 @@ const OTRawBankEncoder::OTRawBank& OTRawBankEncoder::createRawBank(const OTDAQ::
       rawHits.reserve( (*gol).nChannels() );
       for ( std::vector<LHCb::OTChannelID>::const_iterator firstChannel = gol->firstChannel(); 
             firstChannel != gol->lastChannel(); ++firstChannel ) {
-        if ( isVerbose ) debug() << " Gol ID  = " << gol->id()
-                               << " Station = " << firstChannel->station()
-                               << " Layer   = " << firstChannel->layer()
-                               << " Quarter = " << firstChannel->quarter()
-                               << " Module  = " << firstChannel->module() 
-                               << " nHits   = " << gol->nChannels() << endmsg;
+        if ( isVerbose ) verbose() << " Gol ID  = " << gol->id()
+                                   << " Station = " << firstChannel->station()
+                                   << " Layer   = " << firstChannel->layer()
+                                   << " Quarter = " << firstChannel->quarter()
+                                   << " Module  = " << firstChannel->module() 
+                                   << " nHits   = " << gol->nChannels() << endmsg;
         
         size_t channel = m_channelmaptool->channel( (*firstChannel) ) ;
         rawHits.push_back( OTDAQ::RawHit( 0, channel, firstChannel->tdcTime() ) );
@@ -302,15 +311,15 @@ StatusCode OTRawBankEncoder::encodeChannels( const std::vector<LHCb::OTChannelID
   if ( isDebug ) debug() << "Going to encode " << channels.size() << " channels" << endmsg;
   for ( std::vector<LHCb::OTChannelID>::const_iterator chan = channels.begin(), chanEnd = channels.end();
         chan != chanEnd; ++chan ) {
-    if ( isDebug ) debug() << "ChannelID = " << (*chan) << endmsg;
+    if ( isVerbose ) verbose() << "ChannelID = " << (*chan) << endmsg;
     const size_t bankID = channelToBank( (*chan) );
     if ( bankID == 0u || bankID > m_banks.size() ) {
-      error() << "Trying to add channel to non-existent bank with id " << bankID <<  ", skipping!" << endmsg;
+      error() << "Trying to add channel to non-existent bank with index " << bankID <<  ", skipping!" << endmsg;
     } else {
-      if ( isVerbose ) debug() << "Adding channel " << (*chan) << " to bank with id " << bankID << endmsg;
+      if ( isVerbose ) verbose() << "Adding channel " << (*chan) << " to bank with index " << bankID << endmsg;
       /// Remember Tell1s start from 1
       m_banks[bankID-1u].addChannel( (*chan) );
-      if ( isVerbose ) debug() << "Added channel " << (*chan) << " to bank with id " << m_banks[bankID-1u].id() << endmsg;
+      if ( isVerbose ) verbose() << "Added channel " << (*chan) << " to bank with id 0x0" << std::hex << m_banks[bankID-1u].id() << endmsg;
     }
   } 
   
@@ -320,7 +329,7 @@ StatusCode OTRawBankEncoder::encodeChannels( const std::vector<LHCb::OTChannelID
       for ( std::vector<OTDAQ::OTGol>::const_iterator gol = bank->firstGol(), golEnd = bank->lastGol(); gol != golEnd; ++gol ) {
         debug() << "  ===> Gol id = " << gol->id() << endmsg;
         for ( std::vector<LHCb::OTChannelID>::const_iterator chan = gol->firstChannel(), chanEnd = gol->lastChannel(); chan != chanEnd; ++chan ) {
-          debug() << "   ++> Channel id = " << (*chan) << endmsg;
+          if ( isVerbose ) verbose() << "   ++> Channel id = " << (*chan) << endmsg;
         }
       }
     }

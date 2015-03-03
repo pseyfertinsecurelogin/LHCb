@@ -4,6 +4,29 @@
 ! Purpose     : Pack and unpack events classes for smaller events
 !-----------------------------------------------------------------------------
 
+!============================ EventPacker v1r3 2009-02-19 ====================
+! 2009-02-19 - Marco Cattaneo
+ - Add hack in ReadPackedDst.cpp to compile on Windows
+
+! 2009-02-12 - Marco Cattaneo
+ - Fix gcc43 warning
+
+! 2009-02-04 - Marco Clemencic
+ - Modified ReadPackedDst to use the ODINDecodeTool to decode the ODIN bank.
+
+! 2009-01-27 - Marco Cattaneo
+ - Fix compilation warning on slc4_ia32_gcc34
+
+! 2009-01-26 - Olivier Callot
+ - New algorithms to pack, unpack and compare TwoProngVertex.
+ - New algorithms ReadPackedDst adn WritePackedDsr to write in a RawEvent the 
+   RDST content. Thsi allows writing a RDST in MDF format.
+
+!============================ EventPacker v1r2 2009-01-21 ====================
+! 2009-01-21 - Olivier Callot
+ - Change the coding of cov_44 in track state, to be dp/p with a scale factor.
+   Affects PackTrack.cpp, UnpackTrack.cpp and CompareTrack.cpp
+
 !============================ EventPacker v1r1 2009-01-08 ====================
 ! 2008-12-16 - Marco Cattaneo
  - Fix a loop test condition in CompareTrack.cpp

@@ -4,6 +4,29 @@
 ! Purpose: LHCb specific Kernel classes
 !--------------------------------------------------------------------------
 
+!===================== LHCbKernel v11r1 2009-02-18 ========================
+! 2009-02-05 - Wouter Hulsbergen
+ - Added HitPattern
+
+! 2009-01-28 - Marco Cattaneo
+ - In LHCbConfigurableUser, reimplement setOtherProp and setOtherProps
+   functions to delegate to ConfigurableUser implementation
+   (propagateProperty, propagateProperties).
+   Also fixes a bug in propagation of defaults
+   LHCbConfigurableUser is now an empty shell, kept for future use.
+
+! 2009-01-23 - Marco Cattaneo
+ - Backward compatible changes to adapt to new Interface definitions in
+   Gaudi v21
+
+! 2009-01-22 M Needham
+ - Add toString method in STChannelID
+ - Add channelToString and stringToChannel to IT and TTNames.
+
+! 2009-01-19 - David Hutchcroft
+ - Added a direct accessor to FastClusterContainer (requires container sorted)
+   and a Less_By_Channel to SiDataFunctor to sort the container
+
 !===================== LHCbKernel v11r0 2009-01-09 ========================
 ! 2009-01-09 - Jeroen van Tilburg
  - Added the cluster size as data the SiPositionInfo struct.

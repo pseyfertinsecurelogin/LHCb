@@ -1,9 +1,25 @@
 ! =============================================================================
-! $Id: release.notes,v 1.389 2009-01-12 07:11:44 cattanem Exp $ 
+! $Id: release.notes,v 1.395 2009-02-18 12:44:10 cattanem Exp $ 
 ! =============================================================================
 ! package DetDesc
 ! package manager : Marco Clemencic, Juan Palacios
 ! =============================================================================
+
+!====================== DetDesc v18r12 2009-02-18 =============================
+! 2009-02-04 - Marco Clemencic
+ - Extended the RunChangeIncident to contain the run number too (avoid
+   dependency on ODIN).
+ - Fixed usage of GSL (-no_auto_imports).
+
+! 2009-02-03 - Marco Clemencic
+ - Added the header DetDesc/RunChangeIncident.h (was in Event/DAQEvent).
+
+! 2009-02-02 - Marco Clemencic
+ - Fixed some return type qualifiers that were causing problems in the
+   dictionaries with the head version of ROOT.
+
+! 2009-01-23 - Marco Cattaneo
+ - Backwards compatible fixes for Gaudi v21
 
 !====================== DetDesc v18r11 2009-01-12 =============================
 ! 2009-01-10 - Marco Clemencic

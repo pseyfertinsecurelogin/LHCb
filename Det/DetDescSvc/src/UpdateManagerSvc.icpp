@@ -1,4 +1,4 @@
-#ifndef UPDATEMANAGERSVC_ICPP 
+#ifndef UPDATEMANAGERSVC_ICPP
 #define UPDATEMANAGERSVC_ICPP 1
 
 // inline methods for UpdateManagerSvc
@@ -7,14 +7,16 @@ inline void UpdateManagerSvc::link(Item* parent, BaseObjectMemberFunction *mf, I
   mf = parent->addChild(mf,child);
   child->addParent(parent,mf);
 }
-inline UpdateManagerSvc::Item *UpdateManagerSvc::findItem(const std::string &path, bool is_path_to_db) const {
-  for (Item::ItemList::const_iterator i = m_all_items.begin(); i != m_all_items.end(); ++i){
-    if ((*i)->match(path,is_path_to_db)) return *i;
+inline UpdateManagerSvc::Item *UpdateManagerSvc::findItem(const std::string &path, bool is_path_to_db ) const {
+  if ( is_path_to_db ) { // "path to db" is not indexed, we need a full scan
+    for (Item::ItemList::const_iterator i = m_all_items.begin(); i != m_all_items.end(); ++i){
+      if ((*i)->match(path,is_path_to_db)) return *i;
+    }
   }
-  return NULL;
+  return const_cast<Item*>( m_pathMap(path) );
 }
 inline UpdateManagerSvc::Item *UpdateManagerSvc::findItem(void *p) const {
-  for (Item::ItemList::const_iterator i = m_all_items.begin(); i != m_all_items.end(); ++i){
+  for (Item::ItemList::const_reverse_iterator i = m_all_items.rbegin(); i != m_all_items.rend(); ++i){
     if ((*i)->match(p)) return *i;
   }
   return NULL;

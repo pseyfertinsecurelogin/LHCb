@@ -6,6 +6,19 @@
 !               All headers included in directory LHCbMath
 !-----------------------------------------------------------------------------
 
+!========================= LHCbMath v3r6 2009-02-18 ==========================
+! 2009-02-18 - Marco Cattaneo
+ - Removed slc3 cases from GSL linkopts
+
+! 2009-02-05 - Marco Clemencic
+ - Removed the -no_auto_imports of GSL.
+
+! 2009-02-04 - Marco Clemencic
+ - Fixed usage of GSL (-no_auto_imports + -no-as-needed).
+
+! 2009-01-30 M Needham
+ - Add function to get width of the half sample in ModeFunctions
+
 !========================= LHCbMath v3r5 2009-01-12 ==========================
 ! 2009-01-10 - Vanya BELYAEV 
  - LHCbMath/Digit.h

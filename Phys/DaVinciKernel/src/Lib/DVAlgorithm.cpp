@@ -1,4 +1,4 @@
-// $Id: DVAlgorithm.cpp,v 1.36 2008-12-05 13:27:04 ibelyaev Exp $
+// $Id: DVAlgorithm.cpp,v 1.44 2009-02-17 14:42:26 jpalac Exp $
 // ============================================================================
 // Include 
 // ============================================================================
@@ -10,6 +10,7 @@
 // ============================================================================
 #include "Kernel/DVAlgorithm.h"
 #include "Kernel/IOnOffline.h"
+#include "Kernel/IRelatedPVFinder.h"
 // ============================================================================
 /** @file
  *  The implementation for class DVAlgorithm
@@ -62,14 +63,15 @@ DVAlgorithm::DVAlgorithm
   , m_checkOverlap          ( 0 )
   , m_taggingToolName       ( "BTaggingTool" )
   , m_taggingTool           ( 0 )
-  , m_descendants           (0)
-  , m_descendantsName         ("ParticleDescendants")
-  , m_writeSelResultName      ( "WriteSelResult" )
-  , m_writeSelResult          ( 0 )
-  , m_ppSvc                  (0)
-  , m_setFilterCalled          (false)
-  , m_countFilterWrite        (0)
-  , m_countFilterPassed       (0)
+  , m_descendants           ( 0 )
+  , m_descendantsName       ("ParticleDescendants")
+  , m_writeSelResultName    ( "WriteSelResult" )
+  , m_writeSelResult        ( 0 )
+  , m_ppSvc                 ( 0 )
+  , m_setFilterCalled       ( false )
+  , m_countFilterWrite      ( 0 )
+  , m_countFilterPassed     ( 0 )
+  , m_refitPVs              ( false )
 {
   // 
   m_vertexFitNames [ "Offline"       ] = "OfflineVertexFitter" ;
@@ -93,6 +95,7 @@ DVAlgorithm::DVAlgorithm
   // 
   declareProperty ( "FilterCriteria"    , m_criteriaNames     ) ; // empty! 
   // 
+  declareProperty ( "ReFitPVs"    , m_refitPVs     ) ; 
   m_particleCombinerNames [ ""              ] = "OfflineVertexFitter" ;
   m_particleCombinerNames [ "Offline"       ] = "OfflineVertexFitter" ;
   m_particleCombinerNames [ "Trigger"       ] = "TrgVertexFitter"     ;
@@ -111,6 +114,12 @@ DVAlgorithm::DVAlgorithm
   m_particleReFitterNames [ "Direction"     ] = "LoKi::DirectionFitter" ;
   m_particleReFitterNames [ "ParticleAdder" ] = "ParticleAdder"         ;
   declareProperty  ( "ParticleReFitters" , m_particleReFitterNames ) ;
+  //
+  m_pvReFitterNames [ ""           ] = "AdaptivePVReFitter" ;
+  m_pvReFitterNames [ "PVReFitter" ] = "PVReFitter"         ;
+  m_pvReFitterNames [ "Adaptive"   ] = "AdaptivePVReFitter" ;
+  m_pvReFitterNames [ "Cheated"    ] = "CheatedPVReFitter"  ;
+  declareProperty  ( "PVReFitters" , m_pvReFitterNames ) ;
   //
   m_massFitterNames [ ""     ] = "LoKi::MassFitter" ;
   m_massFitterNames [ "LoKi" ] = "LoKi::MassFitter" ;
@@ -287,7 +296,7 @@ StatusCode DVAlgorithm::sysExecute ()
 
   sc = desktop()->cleanDesktop();
   if (msgLevel(MSG::VERBOSE) && sc) verbose() << "Happily cleaned Desktop" << endmsg ;
-  
+
   return sc ;
 }
 // ============================================================================
@@ -299,22 +308,98 @@ void DVAlgorithm::setFilterPassed  (  bool    state  )
   return;
 }
 // ============================================================================
+const LHCb::VertexBase* DVAlgorithm::calculateRelatedPV(const LHCb::Particle* p) const
+{
+  if (msgLevel(MSG::VERBOSE)) verbose() << "DVAlgorithm::calculateRelatedPV" << endmsg;
+  const IRelatedPVFinder* finder = this->relatedPVFinder();
+  const LHCb::RecVertex::Container* PVs = this->primaryVertices();
+  if (0==finder || 0==PVs) {
+    Error("NULL IRelatedPVFinder or primary vertex container", StatusCode::FAILURE, 1 ).ignore() ;
+    return 0;
+  }
+  // re-fit vertices, then look for the best one.
+  if (m_refitPVs) {
+    if (msgLevel(MSG::VERBOSE)) verbose() << "Re-fitting PVs" << endmsg;
+    const IPVReFitter* fitter = primaryVertexReFitter();
+    if (0==fitter) {
+      Error("NULL IPVReFitter", StatusCode::FAILURE, 1).ignore();
+      return 0;
+    }
+    LHCb::RecVertex::ConstVector reFittedPVs;
+    for (LHCb::RecVertex::Container::const_iterator iPV = PVs->begin();
+         iPV != PVs->end(); ++iPV) {
+      LHCb::RecVertex reFittedPV = LHCb::RecVertex(**iPV);
+      if ( (fitter->remove(p, &reFittedPV)).isSuccess() ) {
+        reFittedPVs.push_back(&reFittedPV); 
+      } else {
+        Error("PV re-fit failed", StatusCode::FAILURE, 1 ).ignore() ;
+      } 
+    }
+    Particle2Vertex::Range range = finder->relatedPVs(p, reFittedPVs).relations(p);
+    if (range.empty()) return 0;
+    const LHCb::RecVertex* pv = dynamic_cast<const LHCb::RecVertex*>(finder->relatedPVs(p, reFittedPVs).relations(p).back().to());
+    return (0!=pv) ? desktop()->keep(pv) : 0;
+  } else {
+    if (msgLevel(MSG::VERBOSE)) verbose() << "Getting related PV from finder" << endmsg;
+    Particle2Vertex::Range range = finder->relatedPVs(p, *PVs).relations(p);
+    if (!range.empty()) {
+      const LHCb::RecVertex* pv =  dynamic_cast<const LHCb::RecVertex*>(finder->relatedPVs(p, *PVs).relations(p).back().to());
+       if (msgLevel(MSG::VERBOSE)) verbose() 
+         << "Returning related vertex\n" << pv << endmsg;
+       return pv;
+    } else {
+      if (msgLevel(MSG::VERBOSE)) verbose() << "no related PV found" << endmsg;
+      return 0;
+    }
+
+  }
+  
+}
+// ============================================================================
+const LHCb::VertexBase* DVAlgorithm::getRelatedPV(const LHCb::Particle* part) const
+{
+  if (msgLevel(MSG::VERBOSE)) verbose() << "getRelatedPV! Getting range" << endmsg;
+  if (0==part) error() << "input particle is NULL" << endmsg;
+  Particle2Vertex::Range p2pvRange = desktop()->particle2Vertices(part);
+  if (msgLevel(MSG::VERBOSE)) {
+    verbose() << "getRelatedPV! Got range with size " << endmsg;
+    verbose() << p2pvRange.size() << endmsg;
+  }
+  if (desktop()->particle2Vertices(part).empty()) {
+    if (msgLevel(MSG::VERBOSE)) verbose() << "particle2Vertices empty. Calling calculateRelatedPV" << endmsg;
+    const LHCb::RecVertex* pv = dynamic_cast<const LHCb::RecVertex*>(calculateRelatedPV(part));
+    if (0!=pv) {
+      if (msgLevel(MSG::VERBOSE)) verbose() << "Found related vertex. Relating it" << endmsg;
+      relateWithOverwrite(part, pv);
+    } else {
+      error() << "Found no related vertex"<< endmsg;
+      return 0;
+    }
+  }
+
+  const Particle2Vertex::Range range = desktop()->particle2Vertices(part);
+  return (range.empty()) ? 0 : range.back().to();
+  
+}
+// ============================================================================
 StatusCode DVAlgorithm::fillSelResult () {
 
   // Create and fill selection result object
   LHCb::SelResult myResult;
   myResult.setFound(filterPassed());
   myResult.setLocation( ("/Event/Phys/"+name()));
-  verbose() << "SelResult location set to " << "/Event/Phys/"+name() 
-            << endmsg;
+  if (msgLevel(MSG::VERBOSE)) verbose() << "SelResult location set to " << "/Event/Phys/"+name() 
+                                        << endmsg;
   myResult.setDecay(m_decayDescriptor);
 
   StatusCode sc = writeSelResult()->write(myResult);
     
   if (filterPassed()) m_countFilterPassed++;
   m_countFilterWrite++;
-  verbose() << "wrote " << filterPassed() << " -> " <<
-    m_countFilterWrite << " & " << m_countFilterPassed << endmsg ;
+  if (msgLevel(MSG::VERBOSE)) verbose() << "wrote " << filterPassed() 
+                                        << " -> " << m_countFilterWrite 
+                                        << " & " 
+                                        << m_countFilterPassed << endmsg ;
 
   return sc ;
 

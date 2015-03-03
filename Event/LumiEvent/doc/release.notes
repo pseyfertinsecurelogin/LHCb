@@ -1,0 +1,16 @@
+!-----------------------------------------------------------------------------
+! Package     : Event/LumiEvent
+! Responsible : Jaap Panman
+! Purpose     : EventModel for Lumi data
+!-----------------------------------------------------------------------------
+
+!======================== LumiEvent v1r0 2009-02-18 ==========================
+! 2009-02-17 - Marco Cattaneo
+ - Make only the component library, linker library not needed
+
+! 2009-02-16 - Jaap Panman
+ - Package created, contains:
+ - HltLumiSummary : model for data created in HLT (moved from HltEvent)
+ - LumiFSR        : model for sums in the FSR
+ - LumiCounters   : dummy class contains enums for key/counter pairs
+

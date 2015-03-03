@@ -1,9 +1,16 @@
 ! =============================================================================
-! $Id: release.notes,v 1.111 2009-01-08 20:27:03 cattanem Exp $
+! $Id: release.notes,v 1.114 2009-02-18 14:15:28 cattanem Exp $
 ! =============================================================================
 ! package Ex/DetCondExample
 ! package manager : Marco Clemencic
 ! =============================================================================
+
+!============ Ex/DetCondExample v11r7 2009-02-18 ==============================
+! 2009-01-27 - Marco Cattaneo
+ - Remove an unneccessary service->release() from DumpDetectorStore.cpp
+
+! 2009-01-26 - Marco Cattaneo
+ - Backward compatible fix for Gaudi v21
 
 !============ Ex/DetCondExample v11r6 2009-01-08 ==============================
 ! 2008-12-16 - Marco Clemencic

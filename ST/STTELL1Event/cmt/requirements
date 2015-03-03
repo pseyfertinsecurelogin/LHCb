@@ -1,9 +1,10 @@
-# $Id: requirements,v 1.10 2008-09-06 13:16:52 mneedham Exp $
+# $Id: requirements,v 1.12 2009-02-09 10:40:44 mneedham Exp $
 package STTell1Event
-version v1r6
+version v1r7
 
 branches Event xml cmt doc src
 
+use STKernel         v* ST 
 use LHCbKernel     v* Kernel
 #use Tell1Kernel    v* DAQ
 private

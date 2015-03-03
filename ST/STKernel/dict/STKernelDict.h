@@ -1,7 +1,9 @@
-// $Id: STKernelDict.h,v 1.7 2008-11-05 15:31:43 mneedham Exp $
+// $Id: STKernelDict.h,v 1.11 2009-02-17 10:08:17 mneedham Exp $
 #ifndef DICT_STKERNELDICT_H 
 #define DICT_STKERNELDICT_H 1
 
+#include "Kernel/ISTClusterSelector.h"
+#include "Kernel/ISTChannelIDSelector.h"
 #include "Kernel/ISTReadoutTool.h"
 #include "Kernel/ISTSignalToNoiseTool.h"
 #include "Kernel/STTell1Board.h"
@@ -12,6 +14,8 @@
 #include "Kernel/PPRepresentation.h"
 #include "Kernel/StripRepresentation.h"
 #include "Kernel/STDAQDefinitions.h"
+#include "Kernel/STDAQDefinitions.h"
+#include "Kernel/STBoardMapping.h"
 
 struct _Instantiations{
 

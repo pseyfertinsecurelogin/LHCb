@@ -5,6 +5,7 @@
 #include "STDet/STDetFun.h"
 
 #include "Kernel/TTNames.h"
+#include "boost/lexical_cast.hpp"
 
 /** @file DeTTSector.cpp
 *
@@ -30,6 +31,11 @@ const CLID& DeTTSector::clID () const
   return DeTTSector::classID() ;
 }
 
+std::string DeTTSector::hybridType() const
+{
+  return m_hybridType;
+}
+
 StatusCode DeTTSector::initialize() {
   
   // initialize method
@@ -49,7 +55,7 @@ StatusCode DeTTSector::initialize() {
     m_parent->type() == "KLM" ? tSize = 3 : tSize = 2;
 
     // sub id
-    unsigned subID = param<int>("subID");
+    const unsigned subID = param<int>("subID");
 
     // sector number needs info from mother
     if (m_parent->position() == "B"){
@@ -78,20 +84,37 @@ StatusCode DeTTSector::initialize() {
     }
 
     // build the id
-    STChannelID parentID = m_parent->elementID();
+    const STChannelID parentID = m_parent->elementID();
     STChannelID chan(STChannelID::typeTT,parentID.station(),parentID.layer(), 
                      parentID.detRegion(),  id(), 0);
     setElementID(chan);
 
+    // get the nickname
     m_nickname = TTNames().UniqueSectorToString(chan); 
 
+    // get the attached sensors
     std::vector<DeTTSensor*> sensors = getChildren<DeTTSector>();
     std::sort(sensors.begin(),sensors.end(),STDetFun::SortByY());
-    std::vector<DeTTSensor*>::iterator iterS = sensors.begin();  
-    for(; iterS != sensors.end(); ++iterS){
-      m_sensors.push_back(*iterS);
-    } // iterS    
+    m_sensors.reserve(sensors.size());
+    m_sensors.insert(m_sensors.begin(), sensors.begin(), sensors.end());
     m_thickness = m_sensors.front()->thickness();
+
+    if (sensors.size() == 4)
+    {
+      m_hybridType = "L";
+    }
+    else if (sensors.size() == 3)
+      m_hybridType = "K";
+    else
+      m_hybridType = "M";
+
+    using namespace boost;
+    std::string region = lexical_cast<std::string>(chan.detRegion());
+    std::string col = lexical_cast<std::string>(column());  
+
+    m_conditionPathName = TTNames().UniqueLayerToString(chan) + "LayerR"
+      + region + "Module" + col
+      + position() + "Sector" + hybridType();
 
     sc = registerConditionsCallbacks();
     if (sc.isFailure()){
@@ -111,5 +134,10 @@ StatusCode DeTTSector::initialize() {
 
 unsigned int DeTTSector::prodID() const{
   return m_parent->prodID();
+}
+
+std::string DeTTSector::conditionsPathName() const
+{
+  return m_conditionPathName;
 }
 

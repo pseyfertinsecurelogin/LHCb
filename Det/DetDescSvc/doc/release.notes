@@ -1,9 +1,46 @@
-! $Id: release.notes,v 1.54 2009-01-12 07:13:45 cattanem Exp $ 
+! $Id: release.notes,v 1.65 2009-02-18 12:51:21 cattanem Exp $ 
 ! =============================================================================
 ! package DetDescSvc
 ! package manager : Marco Clemencic, Juan Palacios ?
 ! purpose:          Component library for Detector Description Services
 ! =============================================================================
+
+!========================= DetDescSvc v2r3 2009-02-18 =========================
+! 2009-02-16 - Marco Cattaneo
+ - Fix untested StatusCode in UpdateManagerSvc_item.cpp
+
+! 2009-02-04 - Marco Clemencic
+ - Using the extended RunChangeIncident in RunChangeHandlerSvc to get the run
+   number (avoid dependency on ODIN).
+ - Added usage of GSL (with -no_auto_imports). Not inherited anymore from
+   DetDesc.
+
+! 2009-02-03 - Marco Clemencic
+ - Added RunChangeHandlesSvc. It listens for a RunChangeIncident and change the
+   source of a set of Condition objects in the Detector Transient Store
+   notifying the UpdateManagerSvc.
+   (was in Event/DAQEvent)
+
+! 2009-01-29 - Marco Cattaneo
+ - Fix a compilation warning from Boost 1.38
+
+! 2009-01-23 - Marco Cattaneo
+ - Backwards compatible fixes for Gaudi v21
+
+! 2009-01-16 - Olivier Callot
+ - Removed the pointer map in UpdateManagerSvc: The pointer value was updated
+   on the objects in too many locations. Speed-up decreased a little.
+
+! 2009-01-16 - Marco Clemencic
+ - Fixed a memory leak occurring when registering without condition but passing
+   the pointer to be filled (happens in GeometryInfoPlus after some recent
+   changes). 
+
+! 2009-01-15 - Olivier Callot
+ - Fix the case of modification of the pointer in UpdateManagerSvc.
+
+! 2009-01-13 - Olivier Callot
+ - Added hash maps in UpdateMgrSvc to speed-up registration of conditions.
 
 !========================= DetDescSvc v2r2 2009-01-12 =========================
 ! 2009-01-10 - Marco Clemencic

@@ -1,7 +1,34 @@
-!$Id: release.notes,v 1.150 2008-11-17 14:52:13 cattanem Exp $
+!$Id: release.notes,v 1.160 2009-02-19 12:30:52 cattanem Exp $
 !Package         : STDet
 !Package manager : M. Needham
 !-------------------------------------------------------------------------
+
+!======================== STDet v4r7 2009-02-19 ==========================
+! 2009-02-19 M.Cattaneo
+ - Fix ambiguous usage of namespace, was breaking Windows compilation
+ 
+! 2009-02-18 M Needham
+ - Remove circular dependency on STKernel
+ - Remove use of STLexicalCaster
+
+! 2009-02-18 J Luisier
+ - Bug fix
+ - Add missing dependency on STKernel
+
+! 2009-02-17 J Luisier
+ - Add conditionPathName method for Sectors
+
+! 2009-02-03 M Needham
+ - bug fix in comment
+
+! 2009-2-2 M Needham
+  - Add nickname find by nickname functions
+
+! 2009-01-23 M Needham
+ - Add setters for beetle and strip update functions
+
+! 2009-01-14 M Needham
+ - Clean up initialize stage to make it few mus faster
 
 !======================== STDet v4r6 2008-11-17 ==========================
 ! 2008-11-04 M Needham

@@ -1,4 +1,4 @@
-// $Id: CondDBTimeSwitchSvc.cpp,v 1.4 2008-07-28 15:30:21 cattanem Exp $
+// $Id: CondDBTimeSwitchSvc.cpp,v 1.6 2009-01-29 13:45:11 cattanem Exp $
 // Include files
 
 #ifdef WIN32 // Hacks to compile on Windows...
@@ -37,18 +37,22 @@ namespace Gaudi { using ::operator<; }
 //=============================================================================
 // Code copied from GaudiKernel Parsers, to have a parser for
 // pair<long long,long long>.
+
 // ============================================================================
-// Boost.Bind 
+// Boost
 // ============================================================================
 #include "boost/bind.hpp"
-// ============================================================================
-// Boost.Spirit
-// ============================================================================
-#include "boost/spirit.hpp"
-// ============================================================================
-// Boost.Spirit.Phoenix
-// ============================================================================
+
+#include <boost/version.hpp>
+#if BOOST_VERSION >= 103800
+#define BOOST_SPIRIT_USE_OLD_NAMESPACE
+#include <boost/spirit/include/classic.hpp>
+#include "boost/spirit/include/phoenix1.hpp"
+#else
+#include <boost/spirit.hpp>
 #include "boost/spirit/phoenix.hpp"
+#endif
+
 // ============================================================================
 // GaudiKernel
 // ============================================================================
@@ -255,9 +259,13 @@ CondDBTimeSwitchSvc::ReaderInfo *CondDBTimeSwitchSvc::currentReader() {
 //=========================================================================
 //  retrieve an object
 //=========================================================================
-StatusCode CondDBTimeSwitchSvc::getObject (const std::string &path, const Gaudi::Time &when,
+StatusCode CondDBTimeSwitchSvc::getObject (const std::string &path,
+                                           const Gaudi::Time &when,
                                            DataPtr &data,
-                                           std::string &descr, Gaudi::Time &since, Gaudi::Time &until, cool::ChannelId channel) {
+                                           std::string &descr,
+                                           Gaudi::Time &since,
+                                           Gaudi::Time &until,
+                                           cool::ChannelId channel) {
   // get the reader for the requested time
   ReaderInfo *ri = readerFor(when);
   if (!ri) return StatusCode::FAILURE;
@@ -274,9 +282,13 @@ StatusCode CondDBTimeSwitchSvc::getObject (const std::string &path, const Gaudi:
   }
   return sc;
 }
-StatusCode CondDBTimeSwitchSvc::getObject (const std::string &path, const Gaudi::Time &when,
+StatusCode CondDBTimeSwitchSvc::getObject (const std::string &path,
+                                           const Gaudi::Time &when,
                                            DataPtr &data,
-                                           std::string &descr, Gaudi::Time &since, Gaudi::Time &until, const std::string &channel) {
+                                           std::string &descr,
+                                           Gaudi::Time &since,
+                                           Gaudi::Time &until,
+                                           const std::string &channel) {
   // get the reader for the requested time
   ReaderInfo *ri = readerFor(when);
   if (!ri) return StatusCode::FAILURE;

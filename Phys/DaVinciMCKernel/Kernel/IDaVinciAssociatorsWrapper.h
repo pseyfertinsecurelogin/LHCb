@@ -1,4 +1,4 @@
-// $Id: IDaVinciAssociatorsWrapper.h,v 1.3 2008-07-11 13:30:09 gligorov Exp $
+// $Id: IDaVinciAssociatorsWrapper.h,v 1.5 2009-01-20 15:54:56 jpalac Exp $
 #ifndef IDAVINCIASSOCIATORSWRAPPER_H 
 #define IDAVINCIASSOCIATORSWRAPPER_H 1
 
@@ -43,13 +43,8 @@ public:
   // Return the interface ID
   static const InterfaceID& interfaceID() { return IID_IDaVinciAssociatorsWrapper; }
 
-  virtual Particle2MCLinker* linker(Particle2MCMethod::AssociationMethod myMethod = Particle2MCMethod::Links, 
-                                    std::vector< std::string > myLocations
-                                      = std::vector<std::string>(1,"")
-                                   ) = 0 ; ///< returns a linker
-protected:
-
-private:
+  virtual Particle2MCLinker* linker(const Particle2MCMethod::AssociationMethod& myMethod, 
+                                    const std::vector< std::string >& myLocations = std::vector<std::string>(1,"") ) = 0 ; ///< returns a linker
 
 };
 #endif // IDAVINCIASSOCIATORSWRAPPER_H

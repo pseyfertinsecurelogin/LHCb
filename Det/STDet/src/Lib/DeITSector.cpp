@@ -48,7 +48,7 @@ StatusCode DeITSector::initialize() {
     // get the parent
     m_parent = getParent<DeITSector>();
 
-    STChannelID parentID = m_parent->elementID();
+    const STChannelID parentID = m_parent->elementID();
     setElementID(parentID);
     m_nickname = ITNames().UniqueSectorToString(parentID);
 
@@ -57,11 +57,8 @@ StatusCode DeITSector::initialize() {
     
     std::vector<DeITSensor*> sensors = getChildren<DeITSector>();
     std::sort(sensors.begin(),sensors.end(),STDetFun::SortByY());
-    std::vector<DeITSensor*>::iterator iterS = sensors.begin();  
-    for(; iterS != sensors.end(); ++iterS){
-      m_sensors.push_back(*iterS);
-    } // iterS    
-
+    m_sensors.reserve(sensors.size());
+    m_sensors.insert(m_sensors.begin(), sensors.begin(), sensors.end());
     m_thickness = m_sensors.front()->thickness();
 
     sc = registerConditionsCallbacks();
@@ -81,4 +78,28 @@ StatusCode DeITSector::initialize() {
 
 unsigned int DeITSector::prodID() const {
   return m_prodID;
+}
+
+std::string DeITSector::conditionsPathName() const
+{
+  std::string keys[3] =
+    {
+      "Top",
+      "Bottom",
+      "Side"
+    }, name( nickname() );
+
+  size_t loc;
+
+  for (unsigned int i(0); i < 3; i++)
+  {
+    loc =  name.find(keys[i]);
+    if ( loc < std::string::npos )
+    {
+      name.insert(loc + keys[i].length(), "Layer");
+      break;
+    }
+  }
+
+  return name;
 }

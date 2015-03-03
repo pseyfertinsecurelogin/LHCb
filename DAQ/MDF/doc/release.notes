@@ -6,6 +6,22 @@
 !               MEP fragments
 !-----------------------------------------------------------------------------
 
+!========================= MDF v3r17 2009-02-18 ===============================
+! 2009-02-06  Markus Frank
+ - Split the MDF library into a pure linker library (MDFLib) and a components
+   library (MDF). The presence of factories in the components 
+   library created too much trouble since the stupid rootmap generation
+   just takes every factory it can find in this world.
+
+! 2009-01-23  Markus Frank
+ - Add status code checks in MDFWriter
+
+! 2009-01-23 - Marco Cattaneo
+ - Backward compatible fixes for Gaudi v21
+
+! 2009-01-23  Markus Frank
+ - Add references to MDF file implementation.
+
 !========================= MDF v3r16 2008-12-10 ===============================
 ! 2009-01-08- Markus Frank
  - Fix bug in RawDataSelector.cpp for support for FileID bank
