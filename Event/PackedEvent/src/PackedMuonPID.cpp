@@ -15,8 +15,7 @@ void MuonPIDPacker::pack( const DataVector & pids,
                           PackedDataVector & ppids ) const
 {
   ppids.data().reserve( pids.size() );
-  if ( 1 == ppids.packingVersion() ||
-       0 == ppids.packingVersion()  )
+  if ( 0 == ppids.packingVersion() )
   {
     for ( DataVector::const_iterator iD = pids.begin();
           iD != pids.end(); ++iD )
@@ -25,7 +24,6 @@ void MuonPIDPacker::pack( const DataVector & pids,
       ppids.data().push_back( PackedData() );
       PackedData & ppid = ppids.data().back();
       // fill data
-      ppid.key      = pid.key();
       ppid.MuonLLMu = m_pack.deltaLL(pid.MuonLLMu());
       ppid.MuonLLBg = m_pack.deltaLL(pid.MuonLLBg());
       ppid.nShared  = (int)pid.nShared();
@@ -56,8 +54,7 @@ void MuonPIDPacker::unpack( const PackedDataVector & ppids,
                             DataVector       & pids ) const
 {
   pids.reserve( ppids.data().size() );
-  if ( 1 == ppids.packingVersion() ||
-       0 == ppids.packingVersion()  )
+  if ( 0 == ppids.packingVersion() )
   {
     for ( PackedDataVector::Vector::const_iterator iD = ppids.data().begin();
           iD != ppids.data().end(); ++iD )
@@ -65,8 +62,7 @@ void MuonPIDPacker::unpack( const PackedDataVector & ppids,
       const PackedData & ppid = *iD;
       // make and save new pid in container
       Data * pid  = new Data();
-      if ( ppids.packingVersion() == 0 ) { pids.add( pid ); }
-      else                  { pids.insert( pid, ppid.key ); }
+      pids.add( pid );
       // Fill data from packed object
       pid->setMuonLLMu( m_pack.deltaLL(ppid.MuonLLMu) );
       pid->setMuonLLBg( m_pack.deltaLL(ppid.MuonLLBg) );
@@ -97,12 +93,13 @@ void MuonPIDPacker::unpack( const PackedDataVector & ppids,
 }
 
 StatusCode MuonPIDPacker::check( const DataVector & dataA,
-                                 const DataVector & dataB ) const
+                                 const DataVector & dataB,
+                                 GaudiAlgorithm & parent ) const
 {
   StatusCode sc = StatusCode::SUCCESS;
 
   // checker
-  const DataPacking::DataChecks ch(parent());
+  const DataPacking::DataChecks ch(parent);
 
   // Loop over data containers together and compare
   DataVector::const_iterator iA(dataA.begin()), iB(dataB.begin());
@@ -110,12 +107,10 @@ StatusCode MuonPIDPacker::check( const DataVector & dataA,
   {
     // assume OK from the start
     bool ok = true;
-    // key
-    ok &= (*iA)->key() == (*iB)->key();
     // History code
     ok &= (*iA)->Status() == (*iB)->Status();
     // Track references
-    ok &= (*iA)->idTrack()   == (*iB)->idTrack();
+    ok &= (*iA)->idTrack() == (*iB)->idTrack();
     ok &= (*iA)->muonTrack() == (*iB)->muonTrack();
     // DLLs
     ok &= ch.compareDoubles( "MuonLLMu", (*iA)->MuonLLMu(), (*iB)->MuonLLMu() );
@@ -126,14 +121,11 @@ StatusCode MuonPIDPacker::check( const DataVector & dataA,
     // If comparison not OK, print full information
     if ( !ok )
     {
-      const std::string loc = ( dataA.registry() ?
-                                dataA.registry()->identifier() : "Not in TES" );
-      parent().warning() << "Problem with MuonPID data packing :-" << endmsg
-                         << "  Original PID key=" << (**iA).key() 
-                         << " in '" << loc << "'" << endmsg
-                         << **iA << endmsg
-                         << "  Unpacked PID" << endmsg
-                         << **iB << endmsg;
+      parent.warning() << "Problem with MuonPID data packing :-" << endmsg
+                       << "  Original PID : " << **iA
+                       << endmsg
+                       << "  Unpacked PID : " << **iB
+                       << endmsg;
       sc = StatusCode::FAILURE;
     }
   }

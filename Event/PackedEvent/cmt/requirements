@@ -1,9 +1,9 @@
 #============================================================================
 # Created    : 2005-02-07
-# Maintainer : Olivier Callot, Chris Jones
+# Maintainer : Olivier Callot
 #============================================================================
 package           PackedEvent
-version           v4r10
+version           v4r5
 
 #============================================================================
 # Structure, i.e. directories to process. 
@@ -15,7 +15,6 @@ branches          cmt doc Event dict src
 #    Put as many lines as needed, with all packages, without the '#'
 #============================================================================
 use	GaudiKernel     v*
-use	GaudiAlg        v*
 use     LHCbKernel      v*     Kernel
 use     MCEvent         v*     Event
 use     RecEvent        v*     Event

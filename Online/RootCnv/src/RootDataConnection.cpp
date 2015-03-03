@@ -320,46 +320,41 @@ TTree* RootDataConnection::getSection(CSTR section, bool create) {
         int learnEntries = m_setup->learnEntries;
         t->SetCacheSize(cacheSize);
         t->SetCacheLearnEntries(learnEntries);
+        const StringVec& vB = m_setup->vetoBranches;
+        const StringVec& cB = m_setup->cacheBranches;
         msg << MSG::DEBUG;
         if ( create ) {
           msg << "Tree:" << section << "Setting up tree cache:" << cacheSize << endmsg;
         }
         else {
-	  const StringVec& vB = m_setup->vetoBranches;
-	  const StringVec& cB = m_setup->cacheBranches;
           msg << "Tree:" << section << " Setting up tree cache:" << cacheSize << " Add all branches." << endmsg;
           msg << "Tree:" << section << " Learn for " << learnEntries << " entries." << endmsg;
-
-	  if ( cB.size()==0 && vB.size()== 0 ) {
-	    msg << "Adding (default) all branches to tree cache." << endmsg;
+          if ( cB.size()==1 && cB[0]=="*" ) {
             t->AddBranchToCache("*",kTRUE);
           }
-          if ( cB.size()==1 && cB[0]=="*" ) {
-	    msg << "Adding all branches to tree cache according to option \"CacheBranches\"." << endmsg;
+          else if ( cB.size()==0 && !(vB.size()>0 && vB[0]=="*")) {
             t->AddBranchToCache("*",kTRUE);
           }
           else {
+            bool add = false, veto = false;
             StringVec::const_iterator i;
+            // Add all branches, which should be cached
             for(TIter it(t->GetListOfBranches()); it.Next(); )  {
               const char* n = ((TNamed*)(*it))->GetName();
-	      bool add = false, veto = false;
-              for(i=cB.begin(); i != cB.end();++i) {
-                if ( !match_wild(n,(*i).c_str()) ) continue;
-                add = true;
-                break;
-              }
-              for(i=vB.begin(); !add && i!=vB.end();++i) {
+              for(i=vB.begin(); add && i!=vB.end();++i) {
                 if ( !match_wild(n,(*i).c_str()) ) continue;
                 veto = true;
+                break;
+              }
+              for(i=cB.begin(); add && i!=cB.end();++i) {
+                if ( !match_wild(n,(*i).c_str()) ) continue;
+                add = true;
                 break;
               }
               if ( add && !veto ) {
                 msg << "Add " << n << " to branch cache." << endmsg;
                 t->AddBranchToCache(n,kTRUE);
               }
-	      else {
-                msg << "Do not cache branch " << n << endmsg;
-	      }
             }
           }
         }
@@ -473,15 +468,9 @@ int RootDataConnection::loadObj(CSTR section, CSTR cnt, unsigned long entry, Dat
 	}
 	if ( nb == 0 && pObj->clID() == CLID_DataObject) {
 	  TFile* f = b->GetFile();
-	  int vsn = f->GetVersion();
-	  if ( vsn < 52400 ) {
+	  if ( f->GetVersion() < 52400 ) {
 	    // For Gaudi v21r5 (ROOT 5.24.00b) DataObject::m_version was not written!
 	    // Still this call be well be successful.
-	    nb = 1;
-	  }
-	  else if ( vsn>1000000 && (vsn%1000000)<52400 ) {
-	    // dto. Some POOL files have for unknown reasons a version
-	    // not according to ROOT standards. Hack this explicitly.
 	    nb = 1;
 	  }
 	}

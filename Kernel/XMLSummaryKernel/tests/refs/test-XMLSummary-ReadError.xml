@@ -10,7 +10,7 @@
 		<file GUID="" name="PFN:YouCannotOpenMe.dst" status="fail">0</file>
 	</input>
 	<output>
-		<file GUID="" name="PFN:RootDst.root" status="full">0</file>
+		<file GUID="" name="PFN:PoolDst.root" status="full">0</file>
 	</output>
 	<counters>
 		<counter name="CounterSummarySvc/handled">5</counter>

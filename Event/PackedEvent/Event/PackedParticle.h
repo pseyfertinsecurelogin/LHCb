@@ -31,8 +31,7 @@ namespace LHCb
   {
     /// Default constructor
     PackedParticle()
-      : key(0),
-        particleID(0),
+      : particleID(0),
         measMass(0), measMassErr(0),
         lv_px(0),lv_py(0),lv_pz(0),lv_mass(0),
         refx(0),refy(0),refz(0),
@@ -51,10 +50,10 @@ namespace LHCb
         vertex(-1),
         proto(-1),
         firstDaughter(0), lastDaughter(0)
-    { }
+    {}
 
     // packed data members
-    long long key;         ///< referenceLong to the original container + key of the particle
+
     int particleID;        ///< PID Code
     int measMass;          ///< Measured mass
     int measMassErr;       ///< Error on the measured mass
@@ -80,16 +79,16 @@ namespace LHCb
     int pmCov30,pmCov31,pmCov32;
 
     // Extra info
-    unsigned int firstExtra, lastExtra;
+    unsigned short int firstExtra, lastExtra;
 
     // End Vertex
-    long long vertex;  
+    int vertex;  
 
     // ProtoParticle
-    long long proto;
+    int proto;
 
     // daughters
-    unsigned int firstDaughter, lastDaughter;  
+    unsigned short int firstDaughter, lastDaughter;  
 
   };
 
@@ -101,7 +100,6 @@ namespace LHCb
   namespace PackedParticleLocation
   {
     static const std::string& User = "pPhys/User/Particles";
-    static const std::string& InStream = "/pPhys/Particles";
   }
 
   /** @class PackedParticles Event/PackedParticle.h
@@ -126,17 +124,12 @@ namespace LHCb
     typedef std::vector<PackedExtraInfo> PackedExtraInfoVector;
 
     /// Daughters
-    typedef std::vector<long long> Daughters;
-
-  public:
-    
-    /// Default Packing Version
-    static char defaultPackingVersion() { return 1; }
+    typedef std::vector<int> Daughters;
 
   public:
 
     /// Standard constructor
-    PackedParticles( ) : m_packingVersion(defaultPackingVersion()) { }
+    PackedParticles( ) : m_packingVersion(0) { }
 
     /// Destructor
     virtual ~PackedParticles( ) { }
@@ -210,57 +203,30 @@ namespace LHCb
     static const std::string& packedLocation()   { return LHCb::PackedParticleLocation::User; }
     static const std::string& unpackedLocation() { return LHCb::ParticleLocation::User; }
 
-  private:
-
-    /// Default Constructor hidden
-    ParticlePacker() : m_parent(NULL) {}
-
   public:
 
     /// Default Constructor
-    ParticlePacker( GaudiAlgorithm & parent ) : m_parent(&parent) {}
+    ParticlePacker() {}
 
   public:
-
-    /// Pack a single Particle
-    void pack( const Data & part,
-               PackedData & ppart,
-               PackedDataVector & pparts ) const;
 
     /// Pack Particles
     void pack( const DataVector & parts,
                PackedDataVector & pparts ) const;
 
-    /// Unpack a single Particle
-    void unpack( const PackedData       & ppart,
-                 Data                   & part,
-                 const PackedDataVector & pparts,
-                 DataVector             & parts ) const;
-
     /// Unpack Particles
     void unpack( const PackedDataVector & pparts,
                  DataVector             & parts ) const;
 
-    /// Compare two Particle vectors to check the packing -> unpacking performance
-    StatusCode check( const DataVector & dataA,
-                      const DataVector & dataB ) const;
-
     /// Compare two Particles to check the packing -> unpacking performance
-    StatusCode check( const Data & dataA,
-                      const Data & dataB ) const;
-
-  private:
-
-    /// Access the parent algorithm
-    GaudiAlgorithm& parent() const { return *m_parent; }
+    StatusCode check( const DataVector & dataA,
+                      const DataVector & dataB,
+                      GaudiAlgorithm & parent ) const;
 
   private:
 
     /// Standard packing of quantities into integers ...
     StandardPacker m_pack;
-
-    /// Pointer to parent algorithm
-    GaudiAlgorithm * m_parent;
 
   };
 

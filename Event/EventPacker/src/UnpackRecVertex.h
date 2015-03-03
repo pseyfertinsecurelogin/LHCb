@@ -13,11 +13,8 @@
  *  @author Olivier Callot
  *  @date   2008-11-17
  */
-class UnpackRecVertex : public GaudiAlgorithm 
-{
-
+class UnpackRecVertex : public GaudiAlgorithm {
 public: 
-
   /// Standard constructor
   UnpackRecVertex( const std::string& name, ISvcLocator* pSvcLocator );
 
@@ -26,12 +23,8 @@ public:
   virtual StatusCode execute   ();    ///< Algorithm execution
 
 private:
-
   std::string m_inputName;
   std::string m_outputName;
   bool m_alwaysOutput;      ///< Flag to turn on the creation of output, even when input is missing
-  std::string m_weightsLoc; ///< Location of the weights vector
-
 };
-
 #endif // UNPACKRECVERTEX_H

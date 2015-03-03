@@ -84,24 +84,4 @@
   <class name="std::vector<LHCb::PackedWeights>" />
   <class name="LHCb::PackedWeightsVector" id="00000613-0000-0000-0000-000000000000" />
 
-  <class name="LHCb::PackedDecReport" id="00000617-0000-0000-0000-000000000000" />
-
-  <class name="LHCb::PackedRelation" />
-  <class name="std::vector<LHCb::PackedRelation>" />
-  <class name="LHCb::PackedRelations" id="00000618-0000-0000-0000-000000000000" />
-
-  <class name="LHCb::PackedParticle2Int" />
-  <class name="std::vector<LHCb::PackedParticle2Int>" />
-  <class name="LHCb::PackedParticle2Ints" id="00000637-0000-0000-0000-000000000000" />
-
-  <class name="LHCb::PackedCluster" />
-  <class name="std::vector<LHCb::PackedCluster>" />
-  <class name="LHCb::PackedClusters" id="00000604-0000-0000-0000-000000000000" />
-
-  <class name="LHCb::PackedCaloCluster" />
-  <class name="std::vector<LHCb::PackedCaloCluster>" />
-  <class name="LHCb::PackedCaloClusterEntry" />
-  <class name="std::vector<LHCb::PackedCaloClusterEntry>" />
-  <class name="LHCb::PackedCaloClusters" id="00000605-0000-0000-0000-000000000000" />
-
 </lcgdict>

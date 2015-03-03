@@ -15,8 +15,7 @@ void WeightsVectorPacker::pack( const DataVector & weightsV,
                                 PackedDataVector & pweightsV ) const
 {
   pweightsV.data().reserve( weightsV.size() );
-  if ( 1 == pweightsV.packingVersion() ||
-       0 == pweightsV.packingVersion() )
+  if ( 0 == pweightsV.packingVersion() )
   {
     for ( DataVector::const_iterator iD = weightsV.begin();
           iD != weightsV.end(); ++iD )
@@ -27,9 +26,6 @@ void WeightsVectorPacker::pack( const DataVector & weightsV,
       // new packed data
       pweightsV.data().push_back( PackedData() );
       PackedData & pweights = pweightsV.data().back();
-
-      // Save the PV key
-      pweights.pvKey = weights.key();
 
       // fill packed data
       pweights.firstWeight = pweightsV.weights().size();
@@ -56,8 +52,7 @@ void WeightsVectorPacker::unpack( const PackedDataVector & pweightsV,
                                   DataVector       & weightsV ) const
 {
   weightsV.reserve( pweightsV.data().size() );
-  if ( 1 == pweightsV.packingVersion() ||
-       0 == pweightsV.packingVersion() )
+  if ( 0 == pweightsV.packingVersion() )
   {
    for ( PackedDataVector::WeightsVector::const_iterator iD = pweightsV.data().begin();
           iD != pweightsV.data().end(); ++iD )
@@ -67,14 +62,7 @@ void WeightsVectorPacker::unpack( const PackedDataVector & pweightsV,
 
       // make and save new unpacked data
       Data * weights  = new Data();
-      if ( 0 == pweightsV.packingVersion() )
-      {
-        weightsV.insert( weights );
-      }
-      else
-      { 
-        weightsV.insert( weights, pweights.pvKey );
-      }
+      weightsV.add( weights );
 
       // fill the unpacked weights vector
       LHCb::WeightsVector::WeightDataVector & wWeights = 
@@ -98,12 +86,13 @@ void WeightsVectorPacker::unpack( const PackedDataVector & pweightsV,
 }
 
 StatusCode WeightsVectorPacker::check( const DataVector & dataA,
-                                       const DataVector & dataB ) const
+                                       const DataVector & dataB,
+                                       GaudiAlgorithm & parent ) const
 {
   StatusCode sc = StatusCode::SUCCESS;
 
   // checker
-  const DataPacking::DataChecks ch(parent());
+  const DataPacking::DataChecks ch(parent);
 
   // Loop over data containers together and compare
   DataVector::const_iterator iA(dataA.begin()), iB(dataB.begin());
@@ -131,11 +120,11 @@ StatusCode WeightsVectorPacker::check( const DataVector & dataA,
     // If comparison not OK, print full information
     if ( !ok )
     {
-      parent().warning() << "Problem with WeightsVector data packing :-" << endmsg
-                         << "  Original Weight : " << *iA
-                         << endmsg
-                         << "  Unpacked Weight : " << *iB
-                         << endmsg;
+      parent.warning() << "Problem with WeightsVector data packing :-" << endmsg
+                       << "  Original Weight : " << *iA
+                       << endmsg
+                       << "  Unpacked Weight : " << *iB
+                       << endmsg;
       sc = StatusCode::FAILURE;
     }
   }

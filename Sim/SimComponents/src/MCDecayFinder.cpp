@@ -1,4 +1,3 @@
-// $Id: MCDecayFinder.cpp,v 1.9 2009-10-21 08:30:34 pkoppenb Exp $
 // Include files 
 #include <list>
 #include <functional>
@@ -22,7 +21,7 @@
 // 20/04/2002 : Olivier Dormond
 //-----------------------------------------------------------------------------
 
-DECLARE_TOOL_FACTORY( MCDecayFinder );
+DECLARE_TOOL_FACTORY( MCDecayFinder )
 
 //=============================================================================
 // Standard constructor, initializes variables
@@ -59,7 +58,7 @@ StatusCode MCDecayFinder::initialize(){
   StatusCode sc = GaudiTool::initialize();
   if (!sc) return sc;
   
-  if (msgLevel(MSG::DEBUG)) debug() << "==> Initializing" << endreq;
+  if (msgLevel(MSG::DEBUG)) debug() << "==> Initializing" << endmsg;
 
   m_ppSvc = svc<LHCb::IParticlePropertySvc>( "LHCb::ParticlePropertySvc", true );
 
@@ -68,7 +67,7 @@ StatusCode MCDecayFinder::initialize(){
   }
   if( compile(m_source) ){
     if (msgLevel(MSG::DEBUG)) debug() << "The compilation of the decay was successful"
-            << endreq;
+            << endmsg;
     return StatusCode::SUCCESS;
   }
   return Error( "Could not compile the decay description" );
@@ -82,10 +81,10 @@ StatusCode MCDecayFinder::setDecay( std::string decay ){
   m_decay = NULL;
   m_members = NULL;
 
-  if (msgLevel(MSG::DEBUG)) debug() << "Setting decay to " << decay << endreq;
+  if (msgLevel(MSG::DEBUG)) debug() << "Setting decay to " << decay << endmsg;
   if( sanityCheck(decay) && compile(decay) ) {
     if (msgLevel(MSG::DEBUG)) debug() << "The compilation of the decay was successfull"
-            << endreq;
+            << endmsg;
     m_source = decay;
     if( old_decay )
       delete old_decay;
@@ -111,7 +110,7 @@ StatusCode MCDecayFinder::setDecay( std::string decay ){
     delete m_members;
   }
   m_members = old_members;
-  err() << "Could not compile the decay description: " << decay << endreq;
+  err() << "Could not compile the decay description: " << decay << endmsg;
 
   return StatusCode::FAILURE;
 }
@@ -150,20 +149,20 @@ bool MCDecayFinder::compile( std::string &source )
   catch( DescriptorError e )
   {
     err() << "Invalid decay description '"
-          << source << "'" << endreq;
-    err() << e.cause() << endreq;
+          << source << "'" << endmsg;
+    err() << e.cause() << endmsg;
     yy_delete_buffer(bs);
     return false;
   }
   yy_delete_buffer(bs);
   if (msgLevel(MSG::DEBUG)) debug() << "Result of the compilation:\n"
-                                    << revert() << endreq;
+                                    << revert() << endmsg;
   return true;
 }
 
 bool MCDecayFinder::hasDecay( const  LHCb::MCParticle::ConstVector &event )
 {
-  if (msgLevel(MSG::VERBOSE)) verbose() << "About to test the event" << endreq;
+  if (msgLevel(MSG::VERBOSE)) verbose() << "About to test the event" << endmsg;
   if (!m_decay)   Exception("Trying to find an unspecified decay!");
   const LHCb::MCParticle *drop_me = NULL;
   bool r =  m_decay->test( event.begin(), event.end(), drop_me );
@@ -173,30 +172,30 @@ bool MCDecayFinder::hasDecay( const  LHCb::MCParticle::ConstVector &event )
 bool MCDecayFinder::findDecay( const LHCb::MCParticle::ConstVector& event,
                                const LHCb::MCParticle*& previous_result )
 {
-  if (msgLevel(MSG::VERBOSE)) verbose() << "About to test the event" << endreq;
+  if (msgLevel(MSG::VERBOSE)) verbose() << "About to test the event" << endmsg;
   if (!m_decay)   Exception("Trying to find an unspecified decay!");
   bool r = m_decay->test( event.begin(), event.end(), previous_result );
-  if (!r) Warning("Could not find decay");
+  if (!r && UNLIKELY( msgLevel(MSG::DEBUG) ) ) debug() << "Could not find decay" << endmsg;
   return r ;
 }
 
 bool MCDecayFinder::hasDecay( const LHCb::MCParticles &event )
 {
-  if (msgLevel(MSG::VERBOSE)) verbose() << "About to test the event" << endreq;
+  if (msgLevel(MSG::VERBOSE)) verbose() << "About to test the event" << endmsg;
   if (!m_decay) Exception("Trying to find an unspecified decay!");
   const LHCb::MCParticle *drop_me = NULL;
     bool r = m_decay->test( event.begin(), event.end(), drop_me );
-    if (!r) Warning("Could not find decay");
+    if (!r && UNLIKELY( msgLevel(MSG::DEBUG) ) ) debug() << "Could not find decay" << endmsg;
     return r ;
 }
 
 bool MCDecayFinder::findDecay( const LHCb::MCParticles &event,
                                const LHCb::MCParticle *&previous_result )
 {
-  if (msgLevel(MSG::VERBOSE)) verbose() << "About to test the event" << endreq;
+  if (msgLevel(MSG::VERBOSE)) verbose() << "About to test the event" << endmsg;
   if (!m_decay) Exception("Trying to find an unspecified decay!");
   bool r = m_decay->test( event.begin(), event.end(), previous_result );
-  if (!r) Warning("Could not find decay");
+  if (!r && UNLIKELY( msgLevel(MSG::DEBUG) ) ) debug() << "Could not find decay" << endmsg;
   return r;
 }
 
@@ -206,8 +205,8 @@ bool MCDecayFinder::hasDecay( void )
     get<LHCb::MCParticles>(LHCb::MCParticleLocation::Default );
   if( !mcparts )
   {
-    fatal() << "Enable to find MC particles at '"
-            << LHCb::MCParticleLocation::Default << "'" << endreq;
+    fatal() << "Unable to find MC particles at '"
+            << LHCb::MCParticleLocation::Default << "'" << endmsg;
     return false;
   }
   return hasDecay( *mcparts );
@@ -219,8 +218,8 @@ bool MCDecayFinder::findDecay( const LHCb::MCParticle *&previous_result )
     get<LHCb::MCParticles>(LHCb::MCParticleLocation::Default );
   if( !mcparts )
   {
-    fatal() << "Enable to find MC particles at '"
-            << LHCb::MCParticleLocation::Default << "'" << endreq;
+    fatal() << "Unable to find MC particles at '"
+            << LHCb::MCParticleLocation::Default << "'" << endmsg;
     return false;
   }
   return findDecay( *mcparts, previous_result );

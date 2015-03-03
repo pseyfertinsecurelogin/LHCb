@@ -36,9 +36,10 @@ namespace LHCb
         mcParticle(-1)
     {}
 
-    int history;
-    int richSmartID;
-    int mcParticle;
+    int   history;
+    int   richSmartID;
+    int   mcParticle;
+
   };
 
   // -----------------------------------------------------------------------
@@ -67,14 +68,9 @@ namespace LHCb
     typedef std::vector<LHCb::PackedMCRichDigitSummary> Vector;
 
   public:
-    
-    /// Default Packing Version
-    static char defaultPackingVersion() { return 0; }
-
-  public:
 
     /// Standard constructor
-    PackedMCRichDigitSummarys( ) : m_packingVersion(defaultPackingVersion()) { }
+    PackedMCRichDigitSummarys( ) : m_packingVersion(0) { }
 
     /// Destructor
     virtual ~PackedMCRichDigitSummarys( ) { }
@@ -130,15 +126,10 @@ namespace LHCb
     static const std::string& packedLocation()   { return LHCb::PackedMCRichDigitSummaryLocation::Default; }
     static const std::string& unpackedLocation() { return LHCb::MCRichDigitSummaryLocation::Default; }
 
-  private:
-
-    /// Default Constructor hidden
-    MCRichDigitSummaryPacker() : m_parent(NULL) {}
-
   public:
 
     /// Default Constructor
-    MCRichDigitSummaryPacker( GaudiAlgorithm & parent ) : m_parent(&parent) {}
+    MCRichDigitSummaryPacker() {}
 
   public:
 
@@ -148,24 +139,17 @@ namespace LHCb
 
     /// Unpack MCRichDigitSummarys
     void unpack( const PackedDataVector & phits,
-                 DataVector             & hits ) const;
+                 DataVector       & hits ) const;
 
     /// Compare two MCRichDigitSummarys to check the packing -> unpacking performance
     StatusCode check( const DataVector & dataA,
-                      const DataVector & dataB ) const;
-
-  private:
-
-    /// Access the parent algorithm
-    GaudiAlgorithm& parent() const { return *m_parent; }
+                      const DataVector & dataB,
+                      GaudiAlgorithm & parent ) const;
 
   private:
 
     /// Standard packing of quantities into integers ...
     StandardPacker m_pack;
-
-    /// Pointer to parent algorithm
-    GaudiAlgorithm * m_parent;
 
   };
 

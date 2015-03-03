@@ -77,12 +77,13 @@ void MCRichDigitSummaryPacker::unpack( const PackedDataVector & psums,
 }
 
 StatusCode MCRichDigitSummaryPacker::check( const DataVector & dataA,
-                                            const DataVector & dataB ) const
+                                            const DataVector & dataB,
+                                            GaudiAlgorithm & parent ) const
 {
   StatusCode sc = StatusCode::SUCCESS;
 
   // checker
-  const DataPacking::DataChecks ch(parent());
+  const DataPacking::DataChecks ch(parent);
 
   // Loop over data containers together and compare
   DataVector::const_iterator iA(dataA.begin()), iB(dataB.begin());
@@ -102,11 +103,11 @@ StatusCode MCRichDigitSummaryPacker::check( const DataVector & dataA,
     // If comparison not OK, print full information
     if ( !ok )
     {
-      parent().warning() << "Problem with MCRichDigitSummary data packing :-" << endmsg
-                         << "  Original Summary : " << **iA
-                         << endmsg
-                         << "  Unpacked Summary : " << **iB
-                         << endmsg;
+      parent.warning() << "Problem with MCRichDigitSummary data packing :-" << endmsg
+                       << "  Original Summary : " << **iA
+                       << endmsg
+                       << "  Unpacked Summary : " << **iB
+                       << endmsg;
       sc = StatusCode::FAILURE;
     }
   }

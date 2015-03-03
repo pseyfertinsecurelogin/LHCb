@@ -25,6 +25,8 @@ CaloReadoutTool::CaloReadoutTool( const std::string& type,
                   const std::string& name,
                   const IInterface* parent )
   : GaudiTool ( type, name , parent )
+  , m_banks(0)
+  , m_calo(0)
   , m_packed(false)
   , m_ok(false)
   , m_first(true)
@@ -179,8 +181,8 @@ bool CaloReadoutTool::checkCards(int nCards, std::vector<int> feCards ){
       if ( msgLevel( MSG::DEBUG) )debug() << " Unread FE-Cards : " << m_calo->cardCode( feCards[iFe] ) 
                                           << "  - Is it a PinDiode readout FE-Card ? " 
                                           << m_calo->isPinCard( feCards[iFe] ) << endmsg;
-      if ( !m_calo->isPinCard( feCards[iFe] ) ){
-        Warning(" The standard FE-Card " + Gaudi::Utils::toString( m_calo->cardCode( feCards[iFe] ) ) 
+      if ( m_calo->isPmtCard( feCards[iFe] ) ){
+        Warning(" The standard (PMT) FE-Card " + Gaudi::Utils::toString( m_calo->cardCode( feCards[iFe] ) ) 
                 + " expected in TELL1 bank has not been read !!").ignore();
         check = false;
       }

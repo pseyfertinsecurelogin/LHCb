@@ -37,6 +37,7 @@ namespace LHCb
 
     int key;           ///< key of the track this weight is associated with
     short int weight;  ///< Weight of this track in the vertex
+
   };
 
   /** @struct PackedWeights Event/PackedWeightsVector.h
@@ -50,12 +51,12 @@ namespace LHCb
   {
     /// Default constructor
     PackedWeights() 
-      : firstWeight(0), lastWeight(0), pvKey(0)
+      : firstWeight(0), lastWeight(0)
     {}
 
     unsigned short int firstWeight;  ///< index to first weight
     unsigned short int lastWeight;   ///< index to last weight
-    unsigned int pvKey;              ///< The PV Key
+
   };
 
   // -----------------------------------------------------------------------
@@ -87,14 +88,9 @@ namespace LHCb
     typedef std::vector<LHCb::PackedWeight> WeightVector;
 
   public:
-    
-    /// Default Packing Version
-    static char defaultPackingVersion() { return 0; }
-
-  public:
 
     /// Standard constructor
-    PackedWeightsVector( ) : m_packingVersion(defaultPackingVersion()) { }
+    PackedWeightsVector( ) : m_packingVersion(0) { }
 
     /// Destructor
     virtual ~PackedWeightsVector( ) { }
@@ -159,15 +155,10 @@ namespace LHCb
     static const std::string& packedLocation()   { return LHCb::PackedWeightsVectorLocation::Default; }
     static const std::string& unpackedLocation() { return LHCb::WeightsVectorLocation::Default; }
 
-  private:
-
-    /// Default Constructor hidden
-    WeightsVectorPacker() : m_parent(NULL) {}
-
   public:
 
     /// Default Constructor
-    WeightsVectorPacker( GaudiAlgorithm & parent ) : m_parent(&parent) {}
+    WeightsVectorPacker() {}
 
   public:
 
@@ -177,24 +168,17 @@ namespace LHCb
 
     /// Unpack Data
     void unpack( const PackedDataVector & pweightsV,
-                 DataVector             & weightsV ) const;
+                 DataVector       & weightsV ) const;
 
     /// Compare two data vectors to check the packing -> unpacking performance
     StatusCode check( const DataVector & dataA,
-                      const DataVector & dataB ) const;
-
-  private:
-
-    /// Access the parent algorithm
-    GaudiAlgorithm& parent() const { return *m_parent; }
+                      const DataVector & dataB,
+                      GaudiAlgorithm & parent ) const;
 
   private:
 
     /// Standard packing of quantities into integers ...
     StandardPacker m_pack;
-
-    /// Pointer to parent algorithm
-    GaudiAlgorithm * m_parent;
 
   };
 

@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # =============================================================================
-# $Id: Types.py 126112 2011-07-18 09:31:29Z ibelyaev $
+# $Id: Types.py 127019 2011-07-29 14:23:44Z ibelyaev $
 # =============================================================================
-# $URL: http://svn.cern.ch/guest/lhcb/LHCb/tags/Kernel/LHCbMath/v3r26/python/LHCbMath/Types.py $
+# $URL: http://svn.cern.ch/guest/lhcb/LHCb/tags/Kernel/LHCbMath/v3r27/python/LHCbMath/Types.py $
 # =============================================================================
 ## @file
 #
@@ -37,7 +37,7 @@
 #  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
 #  @date 2009-09-12
 #
-#  Last modification $Date: 2011-07-18 11:31:29 +0200 (Mon, 18 Jul 2011) $
+#  Last modification $Date: 2011-07-29 16:23:44 +0200 (Fri, 29 Jul 2011) $
 #                 by $Author: ibelyaev $
 #
 #
@@ -71,14 +71,14 @@ Simple file to provide 'easy' access in python for the basic ROOT::Math classes
   >>> dir( Gaudi.Math )
   >>> dir( Gaudi      )
   
-  Last modification $Date: 2011-07-18 11:31:29 +0200 (Mon, 18 Jul 2011) $
+  Last modification $Date: 2011-07-29 16:23:44 +0200 (Fri, 29 Jul 2011) $
                  by $Author: ibelyaev $
 
 """
 # =============================================================================
 __author__  = "Vanya BELYAEV Ivan.Belyaev@nikhef.nl"
 __date__    = "2009-09-12"
-__version__ = "Version$Revision: 126112 $"
+__version__ = "Version$Revision: 127019 $"
 # =============================================================================
 __all__     = () ## nothing to be imported !
 # =============================================================================
@@ -438,17 +438,17 @@ def _eigen_2_ ( self , sorted = True ) :
     >>> values, vectors = mtrx.eigenVectors( sorted = True )
     
     """
-    if   2 == mtrx.kCols :
+    if   2 == self.kCols :
         _values  = Gaudi.Vector2  ()
         _vectors = Gaudi.Vectors2 ()
-    elif 3 == mtrx.kCols :
+    elif 3 == self.kCols :
         _values  = Gaudi.Vector3  ()
         _vectors = Gaudi.Vectors3 ()
-    elif 4 == mtrx.kCols :
+    elif 4 == self.kCols :
         _values  = Gaudi.Vector4  ()
         _vectors = Gaudi.Vectors4 ()
     else :
-        raise AttributeError, "Not implemented for dimention: %s" % mtrx.kCols
+        raise AttributeError, "Not implemented for dimention: %s" % self.kCols
     
     st = Gaudi.Math.EigenSystems.eigenVectors ( self , _values , _vectors , sorted )
     if st.isFailure () :

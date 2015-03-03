@@ -1,7 +1,7 @@
 """
 High level configuration tools for LHCb applications
 """
-__version__ = "v15r5"
+__version__ = "$Id: DstConf.py,v 1.34 2009-12-17 15:16:11 cattanem Exp $"
 __author__  = "Marco Cattaneo <Marco.Cattaneo@cern.ch>"
 
 __all__ = [
@@ -30,14 +30,14 @@ class DstConf(LHCbConfigurableUser):
        , "AlwaysCreate"   : False
        , "Writer"         : "DstWriter"
        , "OutputName"     : ""
-       , "SpilloverPaths" : [ "Prev", "PrevPrev", "Next", "NextNext" ]
+       , "SpilloverPaths" : [ "Prev", "PrevPrev", "Next" ]
        , "DataType"       : ""
        , "Persistency"    : None
        , "WriteFSR"       : True
          }
 
     _propertyDocDct = {
-        'DstType'       : """ Type of dst, can be ['DST','XDST','SDST'] """
+        'DstType'       : """ Type of dst, can be ['DST','RDST','XDST','SDST'] """
        ,'SimType'       : """ Type of simulation output, can be ['None','Minimal','Full'] """
        ,'EnableUnpack'  : """ Flag to set up on demand unpacking of DST containers """
        ,'EnablePackingChecks' : """ Flag to turn on the running of various unpacking checks, to test the quality of the data packing """
@@ -60,7 +60,7 @@ class DstConf(LHCbConfigurableUser):
         ]
 
     KnownSimTypes  = ['None','Minimal','Full']
-    KnownDstTypes  = ['NONE','DST','XDST','SDST','MDST']
+    KnownDstTypes  = ['NONE','DST','RDST','XDST','SDST','MDST']
     KnownPackTypes = ['NONE','TES','MDF']
 
     def _doWrite( self, dType, pType, sType ):
@@ -73,10 +73,10 @@ class DstConf(LHCbConfigurableUser):
 
         if pType == 'MDF':
             if dType == 'DST' or dType == 'XDST' :
-                raise TypeError( "Only SDST is supported with MDF packing" )
+                raise TypeError( "Only RDST and SDST are supported with MDF packing" )
             self._doWriteMDF( writer.ItemList )
         else:
-            self._doWriteROOT( writer.ItemList, writer.OptItemList )
+            self._doWritePOOL( writer.ItemList, writer.OptItemList )
 
 
     def _defineOutputData( self, dType, pType, sType, writer ):
@@ -86,6 +86,7 @@ class DstConf(LHCbConfigurableUser):
 
         # Choose whether to write packed or unpacked objects
         if pType == 'NONE':
+            if dType == 'RDST' : raise TypeError( "RDST should always be in a packed format" )
             if dType == 'SDST' : raise TypeError( "SDST should always be in a packed format" )
             recDir = "Rec"
             if sType != "None":
@@ -120,65 +121,73 @@ class DstConf(LHCbConfigurableUser):
                              , "/Event/" + recDir + "/ProtoP/Neutrals"   + depth
                              , "/Event/" + recDir + "/Vertex/Primary"    + depth
                              , "/Event/" + recDir + "/Vertex/Weights"    + depth
-                             , "/Event/" + recDir + "/Vertex/V0"         + depth
-                             , "/Event/" + recDir + "/Track/Muon"        + depth ]
+                             , "/Event/" + recDir + "/Vertex/V0"         + depth ]
 
-        # Additional objects not on SDST and not packable as MDF
-        if dType != "SDST" and pType != "MDF":
-            writer.ItemList += [ "/Event/DAQ/RawEvent#1" ]
+        # Copy of HLT results, only on RDST
+        if dType == "RDST":
+            writer.ItemList += [ "/Event/pRec/RawEvent" + depth ]
 
-            # Add selection results if DST commes from stripping ETC
-            writer.OptItemList += [ "/Event/Phys/Selections#1" ]
+        # Additional objects not on RDST
+        else:
+            writer.ItemList += [ "/Event/" + recDir + "/Track/Muon" + depth ]
 
-            # Add the simulation objects if simulation DST
-            if sType != "None":
-                
-                eventLocations = ['']
-                if dType == "XDST":
-                    eventLocations = SimConf().allEventLocations()
+            # Additional objects not on SDST and not packable as MDF
+            if dType != "SDST" and pType != "MDF":
+                writer.ItemList += [ "/Event/DAQ/RawEvent#1" ]
 
-                # Minimal MC output.
-                SimConf().addHeaders(writer)
-                SimConf().addMCVertices(writer,eventLocations)
+                # Add selection results if DST commes from stripping ETC
+                writer.OptItemList += [ "/Event/Phys/Selections#1" ]
 
-                if sType == "Full":
+                # Add the simulation objects (POOL DST only)
+                if sType != "None":
 
-                    writer.ItemList += [
-                        # Links to MCParticles created in Brunel
-                        "/Event/Link/Rec/Track/Best#1"
-                        ]
-
-                    # Objects propagated from Gauss
-                    # Generation information
-                    SimConf().addGenInfo(writer)
-                    # MCparticles
-                    SimConf().addMCParticles(writer,eventLocations)
-
-                    # Objects propagated from Boole
-                    # Digi headers
-                    DigiConf().addHeaders(writer)
-                    # Digitisation summaries
-                    DigiConf().addMCDigitSummaries(writer)
-                    # Links to MCParticles
-                    DigiConf().addMCParticleLinks(writer)
-
+                    eventLocations = ['']
                     if dType == "XDST":
-                        # Add the MCHits (from Gauss) and links to them (from Boole)
-                        SimConf().addSubDetSimInfo(writer)
-                        DigiConf().addMCHitLinks(writer)
+                        eventLocations = SimConf().allEventLocations()
 
-        if dType == "SDST" and pType != "MDF":
-            #From Brunel v41r0 onwards...
-            #Raw events exist for Trigger and Muon
-            writer.OptItemList += [
-                # Links to MCParticles created in Brunel
-                "/Event/Trigger/RawEvent#1",
-                "/Event/Muon/RawEvent#1"
-                ]
+                    # Minimal MC output.
+                    SimConf().addHeaders(writer)
+                    SimConf().addMCVertices(writer,eventLocations)
 
-    def _doWriteROOT( self, items, optItems ):
+                    if sType == "Full":
+
+                        writer.ItemList += [
+                            # Links to MCParticles created in Brunel
+                            "/Event/Link/Rec/Track/Best#1"
+                            ]
+
+                        # Objects propagated from Gauss
+                        # Generation information
+                        SimConf().addGenInfo(writer)
+                        # MCparticles
+                        SimConf().addMCParticles(writer,eventLocations)
+
+                        # Objects propagated from Boole
+                        # Digi headers
+                        DigiConf().addHeaders(writer)
+                        # Digitisation summaries
+                        DigiConf().addMCDigitSummaries(writer)
+                        # Links to MCParticles
+                        DigiConf().addMCParticleLinks(writer)
+
+                        if dType == "XDST":
+                            # Add the MCHits (from Gauss) and links to them (from Boole)
+                            SimConf().addSubDetSimInfo(writer)
+                            DigiConf().addMCHitLinks(writer)
+
+            if dType == "SDST" and pType != "MDF":
+                #From Brunel v41r0 onwards...
+                #Raw events exist for Trigger and Muon
+                writer.OptItemList += [
+                            # Links to MCParticles created in Brunel
+                    "/Event/Trigger/RawEvent#1",
+                    "/Event/Muon/RawEvent#1"
+                    ]
+                #does this work??
+
+    def _doWritePOOL( self, items, optItems ):
         """
-        Write a DST (or SDST, XDST) in ROOT format
+        Write a DST (or RDST, SDST, XDST) in POOL format
         """
         writer = OutputStream( self.getProp("Writer") )
         writer.Preload = False
@@ -201,7 +210,7 @@ class DstConf(LHCbConfigurableUser):
 
     def _doWriteMDF( self, items ):
         """
-        Write an SDST in MDF format
+        Write an RDST or SDST in MDF format
         """
         from Configurables import  WritePackedDst, LHCb__MDFWriter
 
@@ -275,10 +284,17 @@ class DstConf(LHCbConfigurableUser):
             PackTwoProngVertex(AlwaysCreateOutput = alwaysCreate)
             ]
 
-        packDST.Members += [ PackTrack( name               = "PackMuonTracks",
-                                        AlwaysCreateOutput = alwaysCreate,
-                                        InputName          = "/Event/Rec/Track/Muon",
-                                        OutputName         = "/Event/pRec/Track/Muon" ) ]
+        if self.getProp( "DstType" ).upper() == "RDST":
+            # Copy the ODIN and HLT results from RawEvent to put them on the RDST
+            from Configurables import RawEventSelectiveCopy
+            rawEventSelectiveCopy = RawEventSelectiveCopy()
+            rawEventSelectiveCopy.RawBanksToCopy = [ "HltDecReports" , "L0DU", "ODIN" ]
+            packDST.Members += [ rawEventSelectiveCopy ]
+        else:
+            packDST.Members += [ PackTrack( name               = "PackMuonTracks",
+                                            AlwaysCreateOutput = alwaysCreate,
+                                            InputName          = "/Event/Rec/Track/Muon",
+                                            OutputName         = "/Event/pRec/Track/Muon" ) ]
 
         # In MDF case, add a sub sequence for the MDF writing
         if self.getProp( "PackType" ).upper() == "MDF":
@@ -349,15 +365,17 @@ class DstConf(LHCbConfigurableUser):
                             checkChargedPs, checkNeutralPs, checkVertex,
                             checkV0, checkPVweights ]
 
-        unpackMuTracks = UnpackTrack("UnpackMuonTracksTest")
-        unpackMuTracks.InputName  = "/Event/pRec/Track/Muon"
-        unpackMuTracks.OutputName = "/Event/Rec/Track/Muon"+tempLoc
+        if self.getProp( "DstType" ).upper() != "RDST" :
 
-        checkMuTracks = CompareTrack("CheckPackedMuonTracks")
-        checkMuTracks.InputName = "/Event/Rec/Track/Muon"
-        checkMuTracks.TestName  = unpackMuTracks.OutputName
+            unpackMuTracks = UnpackTrack("UnpackMuonTracksTest")
+            unpackMuTracks.InputName  = "/Event/pRec/Track/Muon"
+            unpackMuTracks.OutputName = "/Event/Rec/Track/Muon"+tempLoc
 
-        checks.Members += [ unpackMuTracks, checkMuTracks ]
+            checkMuTracks = CompareTrack("CheckPackedMuonTracks")
+            checkMuTracks.InputName = "/Event/Rec/Track/Muon"
+            checkMuTracks.TestName  = unpackMuTracks.OutputName
+
+            checks.Members += [ unpackMuTracks, checkMuTracks ]
 
     def _doUnpack( self ):
         """
@@ -391,11 +409,12 @@ class DstConf(LHCbConfigurableUser):
         # ProtoParticles
         self._unpackProtoParticles()
 
-        unpackMuons = UnpackTrack( name       = "UnpackMuonTracks",
-                                   OutputName = "/Event/Rec/Track/Muon",
-                                   InputName  = "/Event/pRec/Track/Muon",
-                                   AncestorFor= "/Event/pRec/Track/Muon" )
-        DataOnDemandSvc().AlgMap[ "/Event/Rec/Track/Muon" ] = unpackMuons
+        # Muon tracks do not exist on RDST, do not try to unpack them
+        if self.getProp( "DstType" ).upper() != "RDST":
+            unpackMuons = UnpackTrack( name       = "UnpackMuonTracks",
+                                       OutputName = "/Event/Rec/Track/Muon",
+                                       InputName  = "/Event/pRec/Track/Muon" )
+            DataOnDemandSvc().AlgMap[ "/Event/Rec/Track/Muon" ] = unpackMuons
 
     def _unpackMuonPIDs(self):
 

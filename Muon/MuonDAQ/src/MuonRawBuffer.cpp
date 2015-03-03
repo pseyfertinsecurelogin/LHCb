@@ -30,7 +30,7 @@ using namespace LHCb;
 MuonRawBuffer::MuonRawBuffer( const std::string& type,
                               const std::string& name,
                               const IInterface* parent )
-  : GaudiTool ( type, name , parent )
+  : GaudiTool ( type, name , parent ), m_muonDet(0)
 {
   declareInterface<IMuonRawBuffer>(this);
   m_NLink=24;
@@ -50,8 +50,10 @@ MuonRawBuffer::~MuonRawBuffer() {};
 StatusCode MuonRawBuffer::initialize()
 {
   StatusCode sc = GaudiTool::initialize() ;
-  if (!sc) return sc;
+  if(sc.isFailure())return sc;
+
   m_muonDet=getDet<DeMuonDetector>(DeMuonLocation::Default);
+  if(!m_muonDet) return Error("Could not locate Muon detector element");
   m_M1Tell1=(m_muonDet->getDAQInfo())->M1TellNumber(); 
   incSvc()->addListener( this, IncidentType::BeginEvent ); 
   for (unsigned int i=0;i<MuonDAQHelper_maxTell1Number;i++){
@@ -1159,7 +1161,7 @@ StatusCode MuonRawBuffer::checkBankSize(const LHCb::RawBank* rawdata)
       err()<<"bank_size "<<bank_size<<"read data "<<read_data<<" hit size to read "<<pp_cnt*2<<endmsg;
       err()<< "so muon bank "<<tell1Number<<" is too short in hit part "<<endmsg;   
       m_status.addStatus(tell1Number,RawBankReadoutStatus::Incomplete);
-      break;
+      //break;
       
       return StatusCode::FAILURE;
     }

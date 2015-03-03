@@ -39,6 +39,7 @@ namespace LHCb
     int key;
     std::vector<int> mcSegments;
     int mcParticle;
+
   };
 
   // -----------------------------------------------------------------------
@@ -67,14 +68,9 @@ namespace LHCb
     typedef std::vector<LHCb::PackedMCRichTrack> Vector;
 
   public:
-    
-    /// Default Packing Version
-    static char defaultPackingVersion() { return 0; }
-
-  public:
 
     /// Standard constructor
-    PackedMCRichTracks( ) : m_packingVersion(defaultPackingVersion()) { }
+    PackedMCRichTracks( ) : m_packingVersion(0) { }
 
     /// Destructor
     virtual ~PackedMCRichTracks( ) { }
@@ -130,42 +126,30 @@ namespace LHCb
     static const std::string& packedLocation()   { return LHCb::PackedMCRichTrackLocation::Default; }
     static const std::string& unpackedLocation() { return LHCb::MCRichTrackLocation::Default; }
 
-  private:
+  public:
 
     /// Default Constructor
     MCRichTrackPacker() {}
 
   public:
 
-    /// Constructor
-    MCRichTrackPacker( GaudiAlgorithm & parent ) : m_parent(&parent) {}
-
-  public:
-
     /// Pack MCRichTracks
-    void pack( const DataVector & tracks,
+    void pack( const DataVector       & tracks,
                PackedDataVector & ptracks ) const;
 
     /// Unpack MCRichTracks
     void unpack( const PackedDataVector & ptracks,
-                 DataVector             & tracks ) const;
+                 DataVector       & tracks ) const;
 
     /// Compare two MCRichHits to check the packing -> unpacking performance
     StatusCode check( const DataVector & dataA,
-                      const DataVector & dataB ) const;
-
-  private:
-
-    /// Access the parent algorithm
-    GaudiAlgorithm& parent() const { return *m_parent; }
+                      const DataVector & dataB,
+                      GaudiAlgorithm & parent ) const;
 
   private:
 
     /// Standard packing of quantities into integers ...
     StandardPacker m_pack;
-
-    /// Pointer to parent algorithm
-    GaudiAlgorithm * m_parent;
 
   };
 

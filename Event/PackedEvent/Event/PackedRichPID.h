@@ -34,15 +34,14 @@ namespace LHCb
       : pidResultCode(0),
         dllEl(0),dllMu(0),dllPi(0),dllKa(0),dllPr(0),
         track(-1),
-        dllBt(0),
-        key(0)
+        dllBt(0)
     {}
 
     int pidResultCode;                      
     int dllEl,dllMu,dllPi,dllKa,dllPr;
     int track;          
     int dllBt;
-    int key;
+
   };
 
   // -----------------------------------------------------------------------
@@ -72,13 +71,8 @@ namespace LHCb
 
   public:
 
-    /// Default Packing Version
-    static char defaultPackingVersion() { return 2; }
-
-  public:
-
     /// Standard constructor
-    PackedRichPIDs( ) : m_packingVersion(defaultPackingVersion()) { }
+    PackedRichPIDs( ) : m_packingVersion(0) { }
 
     /// Destructor
     virtual ~PackedRichPIDs( ) { }
@@ -124,7 +118,6 @@ namespace LHCb
    */
   class RichPIDPacker
   {
-
   public:
 
     // These are required by the templated algorithms
@@ -135,42 +128,30 @@ namespace LHCb
     static const std::string& packedLocation()   { return LHCb::PackedRichPIDLocation::Default; }
     static const std::string& unpackedLocation() { return LHCb::RichPIDLocation::Default; }
 
-  private:
-
-    /// Default Constructor hidden
-    RichPIDPacker() : m_parent(NULL) {}
-
   public:
 
-    /// Constructor
-    RichPIDPacker( GaudiAlgorithm & parent ) : m_parent(&parent) {}
+    /// Default Constructor
+    RichPIDPacker() {}
 
   public:
 
     /// Pack RichPIDs
-    void pack( const DataVector & pids,
-               PackedDataVector & ppids ) const;
+    void pack( const DataVector & hits,
+               PackedDataVector & phits ) const;
 
     /// Unpack RichPIDs
-    void unpack( const PackedDataVector & ppids,
-                 DataVector             & pids ) const;
+    void unpack( const PackedDataVector & phits,
+                 DataVector       & hits ) const;
 
     /// Compare two RichPIDs to check the packing -> unpacking performance
     StatusCode check( const DataVector & dataA,
-                      const DataVector & dataB ) const;
-
-  private:
-
-    /// Access the parent algorithm
-    GaudiAlgorithm& parent() const { return *m_parent; }
+                      const DataVector & dataB,
+                      GaudiAlgorithm & parent ) const;
 
   private:
 
     /// Standard packing of quantities into integers ...
     StandardPacker m_pack;
-
-    /// Pointer to parent algorithm
-    GaudiAlgorithm * m_parent;
 
   };
 

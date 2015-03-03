@@ -35,10 +35,8 @@ namespace DataPacking
 
     std::string m_inputName;  ///< Input location
     std::string m_outputName; ///< Output location
-    unsigned short int m_version; ///< Packing version number
+    unsigned int m_version;   ///< Version schema number
     bool m_alwaysOutput;      ///< Flag to turn on the creation of output, even when input is missing
-    bool m_deleteInput;       ///< Flag to turn on the removal of the input data after packing
-    bool m_enableCheck;       ///< Flag to turn on automatic unpacking and checking of the output post-packing
 
   };
 

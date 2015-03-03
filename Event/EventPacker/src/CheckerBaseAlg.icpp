@@ -25,37 +25,30 @@ Check<PACKER>::~Check() { }
 template < class PACKER >
 StatusCode Check<PACKER>::execute()
 {
-  // Check data exists at both locations
-  if ( this->exist<typename PACKER::DataVector>(m_dataA) &&
-       this->exist<typename PACKER::DataVector>(m_dataB) )
+  // Load the input data
+  typename PACKER::DataVector * dataA =
+    this->get<typename PACKER::DataVector>(m_dataA);
+  typename PACKER::DataVector * dataB =
+    this->get<typename PACKER::DataVector>(m_dataB);
+
+  // Compare versions
+  if ( dataA->version() != dataB->version() )
   {
-
-    // Load the input data
-    typename PACKER::DataVector * dataA =
-      this->get<typename PACKER::DataVector>(m_dataA);
-    typename PACKER::DataVector * dataB =
-      this->get<typename PACKER::DataVector>(m_dataB);
-
-    // Compare versions
-    if ( dataA->version() != dataB->version() )
-    {
-      return this->Error( "Containers '"+m_dataA+"' and '"+m_dataB+"' have different versions" );
-    }
-
-    // check data sizes
-    if ( dataA->size() != dataB->size() )
-    {
-      return this->Error( "Size of containers '"+m_dataA+"' and '"+m_dataB+"' differs" );
-    }
-
-    // Packer
-    const PACKER packer(*dynamic_cast<GaudiAlgorithm*>(this));
-
-    // compare the containers
-    // For the moment just carry on if an error is returned (with a message)
-    packer.check( *dataA, *dataB ).ignore();
-
+    return this->Error( "Containers '"+m_dataA+"' and '"+m_dataB+"' have different versions" );
   }
+
+  // check data sizes
+  if ( dataA->size() != dataB->size() )
+  {
+    return this->Error( "Size of containers '"+m_dataA+"' and '"+m_dataB+"' differs" );
+  }
+
+  // Packer
+  static const PACKER packer;
+
+  // compare the containers
+  // For the moment just carry on if an error is returned (with a message)
+  packer.check( *dataA, *dataB, *dynamic_cast<GaudiAlgorithm*>(this) ).ignore();
 
   // return
   return StatusCode::SUCCESS;

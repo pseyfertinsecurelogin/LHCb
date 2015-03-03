@@ -84,14 +84,9 @@ namespace LHCb
     typedef std::vector<LHCb::PackedMCRichOpticalPhoton> Vector;
 
   public:
-    
-    /// Default Packing Version
-    static char defaultPackingVersion() { return 0; }
-
-  public:
 
     /// Standard constructor
-    PackedMCRichOpticalPhotons( ) : m_packingVersion(defaultPackingVersion()) { }
+    PackedMCRichOpticalPhotons( ) : m_packingVersion(0) { }
 
     /// Destructor
     virtual ~PackedMCRichOpticalPhotons( ) { }
@@ -147,43 +142,30 @@ namespace LHCb
     static const std::string& packedLocation()   { return LHCb::PackedMCRichOpticalPhotonLocation::Default; }
     static const std::string& unpackedLocation() { return LHCb::MCRichOpticalPhotonLocation::Default; }
 
-  private:
+  public:
 
     /// Default Constructor
     MCRichOpticalPhotonPacker() : PhotEnScale ( 5.0e8 ) {}
 
   public:
 
-    /// Constructor
-    MCRichOpticalPhotonPacker( GaudiAlgorithm & parent )
-      : m_parent(&parent), PhotEnScale(5.0e8) {}
-
-  public:
-
     /// Pack an MCRichOpticalPhoton
-    void pack( const DataVector & phots,
+    void pack( const DataVector       & phots,
                PackedDataVector & pphots ) const;
 
     /// Unpack an MCRichOpticalPhoton
     void unpack( const PackedDataVector & pphots,
-                 DataVector             & phots ) const;
+                 DataVector       & phots ) const;
 
     /// Compare two MCRichHits to check the packing -> unpacking performance
     StatusCode check( const DataVector & dataA,
-                      const DataVector & dataB ) const;
-
-  private:
-
-    /// Access the parent algorithm
-    GaudiAlgorithm& parent() const { return *m_parent; }
+                      const DataVector & dataB,
+                      GaudiAlgorithm & parent ) const;
 
   private:
 
     /// Standard packing of quantities into integers ...
     StandardPacker m_pack;
-
-    /// Pointer to parent algorithm
-    GaudiAlgorithm * m_parent;
 
   private:
     

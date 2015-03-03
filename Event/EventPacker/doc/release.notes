@@ -4,137 +4,6 @@
 ! Purpose     : Pack and unpack events classes for smaller events
 !-----------------------------------------------------------------------------
 
-!========================= EventPacker v2r10p1 2013-04-24 =========================
-! 2013-03-18 - Rob Lambert
- - Branch new packer/unpackers into v2r10b
- - Remove non-backward-compatible elements
-
-!========================= EventPacker v2r16 2012-04-27 =========================
-
-! 2012-04-26 - Chris Jones
- - Protect UnpackCluster against the possibility that the packed clusters
-   are missing
- - Add protection in PackDecReport in case the packer tries to repack existing
-   reports. Needed for the use case of creating a packed private (u)DST from an
-   already packed (u)DST
-
-! 2012-04-23 - Chris Jones
- - Fix a few more untested StatusCodes
-
-! 2012-04-18 - Marco Cattaneo
- - Fix untested StatusCodes
- - Packers return Error if they fail to unregister data when requested in options
-
-! 2012-04-12 - Chris Jones
- - Improvements to the packers, adding an option to allow checking of the
-   packing to be done directly by the packing algorithms.
-
-! 2012-03-30 - Chris Jones
- - Add support for packing CaloClusters.
- - Clean up CaloHypo packing and unpacking
-
-! 2012-03-29 - Chris Jones
- - Small change to how duplicate LHCbIDs are removed in PackCluster
-
-!========================= EventPacker v2r15 2012-03-27 =========================
-
-! 2012-03-27 - Chris Jones
- - Various improvements to the PackedCluster support, following work to
-   deploy the inclusion of these packed objects in the stripping.
-
-!========================= EventPacker v2r14 2012-03-26 =========================
-! 2012-03-22 - Chris Jones
- - Take the default packing version from the packed data, instead of assuming 0.
- - Improve the debug and verbose messages from the ProtoParticle packer
-   and unpacker
-
-! 2012-03-22 - Marco Cattaneo
- - Adapt WritePackedDst, ReadPackedDst to removal of ProcessHeader::m_randomSeeds
-   Writer now writes a zero to mimic the length of the seeds vector, reader does
-   a number of dummy reads equal to the size of the seeds vector
- - Fix UNINIT_CTOR
-
-!========================= EventPacker v2r13 2012-03-14 =========================
-! 2012-03-06 - Olivier Callot
- - New algorithmc PackCluster and UnpackCluster. The first one process a container
-   of track and store in a PackedCluster container the Velo + ST clusters. Input
-   and output names controlled as usual by InputName and OutputName.
-   UnpackCluster generate the Velo and  ST cluster containers from the PackedCluster
-   object given as InputName. If the option Extension is set, the clusters are
-   created in containers with name postfixed by this extension, and the new clusters
-   are compared to the old ones.
-  *** The original VeloClusters and STClusters containers are cleared if they exist ***
-
-!========================= EventPacker v2r12 2012-02-28 =========================
-! 2012-02-21 - Chris Jones
- - Update the way some references to Particles and Vertices are stored, to
-   use 64 bit integers, to avoid packing problems.
-
-! 2012-02-17 - Chris Jones
- - Update the RecVertex packering and unpacking algorithms to support the new
-   RecVertex class with track weights.
-
-! 2012-02-16 - Chris Jones
- - Reorganise things a bit w.r.t. the Particle and Vertex packing, to avoid
-   some code duplication
-
-! 2012-02-13 - Chris Jones
- - Protect PackParticlesAndVertices against completely missing streams
-
-! 2012-02-06 - Chris Jones
- - Add a new mapping tool to support the many to one Particle and Vertex packer
-
-!========================= EventPacker v2r11 2012-02-01 ======================
-
-! 2012-02-01 - Chris Jones
- - Patch PackParticleAndVertices to only create the packed output containers
-   when there is something to pack.
-
-! 2012-01-31 - Chris Jones
- - Add a VetoedContainers option to PackParticleAndVertices, to allow some
-   containers to be skipped
-
-! 2012-01-31 - Olivier Callot
- - Implement the option "DeleteInput" in PackParticleAndVertices
- - Selection of containers by class ID in PackParticleAndVertices
- - Packing of RecVertices (primary) and Particle2LHCbID map
- - Option "ListRemaining" to list the containers in the input stream after
-   execution of PackParticleAndVertices
-
-! 2012-01-30 - Chris Jones
- - Implement the option "DeleteInput" in the packers used in the stripping.
-   If True, the input data objects will be deleted after a successful packing.
-
-! 2012-01-27 - Chris Jones
- - Add some protection to PackCaloHypo in case of invalid SmartRefs ..
-
-! 2012-01-25 - Olivier Callot
- - New algorithms PackParticlesAndVertices and Unpack... to pack in a single
-   container all particles in a tree, all vertices and all relations between them.
-   Options: InputStream, e.g. "/Event/Bhadron" to describe which part of the TES
-   should be compacted. The resulting containers are directly in this location.
-   The Pack algoruthm has an option 'ForceReading' to read all containers from file
-   if needed.
-   The Unpack algorithm has an option PostFix to append this string to the container
-   name, for tests.
-
-! 2012-01-23 - Olivier Callot
- - New algorithms PackDecReport and UnpackDecReport to unpack/pack the stripping
-   decisions. By default lines having not fired are removed. This can be changed
-   by setting the option PackDecReport().Filter = False
-
-! 2012-01-17 - Marco Clemencic
- - Added a tool to dynamically configure the DataOnDemandSvc using rules (regex)
-   to map the destination (requested) path to a source location, and a map of
-   source class IDs to conversion algorithms. If a path is recognized as a
-   candidate for conversion (e.g. intermediate paths) and the corresponding
-   source path points to a plain DataObject, the corresponding node is created.
-   See comments in ConversionDODMapper.h
-
-! 2012-01-16 - Chris Jones
- - Do not abort processing in the Checkers, if missing data locations are found
-   (Happens with Particles in stripped DSTs).
-
 !========================= EventPacker v2r10 2011-07-25 =========================
 ! 2011-07-25 - Olivier Callot
  - Fix the UnpackTrack problem: An overprotection made in some cases the offset in case
@@ -166,7 +35,7 @@
 !============================ EventPacker v2r5 2010-09-27 ====================
 ! 2010-09-23 - Marco Cattaneo
  - Fix PackedWeightsVector classID in WritePackedDst and ReadPackedDst
- - Change info() printed by PackerBaseAlg::initialize() and
+ - Change info() printed by PackerBaseAlg::initialize() and 
    UnpackerBaseAlg::initialize() to debug()
 
 ! 2010-09-22 - Chris Jones
@@ -176,7 +45,7 @@
 
 !============================ EventPacker v2r4 2010-08-25 ====================
 ! 2010-08-24 - Pere Mato
- - Added explicit [missing] dependency to DAQ/MDF package. Only needed for the CMake tests.
+ - Added explicit [missing] dependency to DAQ/MDF package. Only needed for the CMake tests. 
 
 ! 2010-07-21 - Chris Jones
  - Adapt ReadPackedDst to new ProcStatus interface
@@ -184,7 +53,7 @@
 !============================ EventPacker v2r3 2010-07-19 ====================
 ! 2010-06-22 - Olivier Callot
  - Modify UnpackTrack.cpp to create ancestors of Muon tracks from Best.
-   This is controlled by options 'AncestorFor' (name of the packed container,
+   This is controlled by options 'AncestorFor' (name of the packed container, 
    default pRec/Track/Muon) and 'AncestorSource' (name of the ancestor container
    default Rec/Track/Best ), ancestor has the same key.
 
@@ -208,7 +77,7 @@
  - Fix CompareTrack to not report saturated q/p error for poorely measured tracks
 
 ! 2009-11-10 - Chris Jones
- - Add some debug to ProtoParticle packers and unpackers + remove need for
+ - Add some debug to ProtoParticle packers and unpackers + remove need for 
    temporary packed object during packing
 
 ! 2009-11-10 - Olivier Callot
@@ -223,7 +92,7 @@
 
 ! 2009-11-04 - Christopher Rob Jones
  - Add packers for RichPIDs and MuonPIDs
- - Protect packers and unpackers from missing input data and also already
+ - Protect packers and unpackers from missing input data and also already 
    existing output data
 
 ! 2009-11-03 - Christopher Rob Jones
@@ -296,7 +165,7 @@
 
 ! 2009-01-26 - Olivier Callot
  - New algorithms to pack, unpack and compare TwoProngVertex.
- - New algorithms ReadPackedDst adn WritePackedDsr to write in a RawEvent the
+ - New algorithms ReadPackedDst adn WritePackedDsr to write in a RawEvent the 
    RDST content. Thsi allows writing a RDST in MDF format.
 
 !============================ EventPacker v1r2 2009-01-21 ====================
@@ -315,5 +184,5 @@
 ! 2008-11-19 - Olivier Callot
  - Import the Pack/Unpack/Compare algorithms for MCVertex and MCParticle
    that were in Sim/SimComponents
- - New packer for DST content, i.e. Track, CaloHypo, ProtoParticle and
+ - New packer for DST content, i.e. Track, CaloHypo, ProtoParticle and 
    RecVertex

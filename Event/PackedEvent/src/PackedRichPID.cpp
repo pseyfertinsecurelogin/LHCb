@@ -1,3 +1,4 @@
+// $Id: PackedRichPID.cpp,v 1.9 2010-04-11 14:27:15 jonrob Exp $
 
 // local
 #include "Event/PackedRichPID.h"
@@ -14,9 +15,8 @@ void RichPIDPacker::pack( const DataVector & pids,
                           PackedDataVector & ppids ) const
 {
   ppids.data().reserve( pids.size() );
-  if ( 2 == ppids.packingVersion() ||
-       1 == ppids.packingVersion() ||
-       0 == ppids.packingVersion()  )
+  if ( 0 == ppids.packingVersion() ||
+       1 == ppids.packingVersion() )
   {
     for ( DataVector::const_iterator iD = pids.begin();
           iD != pids.end(); ++iD )
@@ -24,15 +24,13 @@ void RichPIDPacker::pack( const DataVector & pids,
       const Data & pid = **iD;
       ppids.data().push_back( PackedData() );
       PackedData & ppid = ppids.data().back();
-      // fill data
-      ppid.key   = pid.key();
       ppid.pidResultCode = (int)pid.pidResultCode();
       ppid.dllEl = m_pack.deltaLL( pid.particleDeltaLL(Rich::Electron)       );
       ppid.dllMu = m_pack.deltaLL( pid.particleDeltaLL(Rich::Muon)           );
       ppid.dllPi = m_pack.deltaLL( pid.particleDeltaLL(Rich::Pion)           );
       ppid.dllKa = m_pack.deltaLL( pid.particleDeltaLL(Rich::Kaon)           );
       ppid.dllPr = m_pack.deltaLL( pid.particleDeltaLL(Rich::Proton)         );
-      if ( ppids.packingVersion() > 0 )
+      if ( 0 != ppids.packingVersion() )
         ppid.dllBt = m_pack.deltaLL( pid.particleDeltaLL(Rich::BelowThreshold) );
       if ( NULL != pid.track() )
       {
@@ -54,9 +52,8 @@ void RichPIDPacker::unpack( const PackedDataVector & ppids,
                             DataVector       & pids ) const
 {
   pids.reserve( ppids.data().size() );
-  if ( 2 == ppids.packingVersion() ||
-       1 == ppids.packingVersion() ||
-       0 == ppids.packingVersion()  )
+  if ( 0 == ppids.packingVersion() ||
+       1 == ppids.packingVersion() )
   {
     for ( PackedDataVector::Vector::const_iterator iD = ppids.data().begin();
           iD != ppids.data().end(); ++iD )
@@ -64,8 +61,7 @@ void RichPIDPacker::unpack( const PackedDataVector & ppids,
       const PackedData & ppid = *iD;
       // make and save new pid in container
       Data * pid  = new Data();
-      if ( ppids.packingVersion() < 2 ) { pids.add( pid ); }
-      else                 { pids.insert( pid, ppid.key ); }
+      pids.add( pid );
       // Fill data from packed object
       pid->setPidResultCode( ppid.pidResultCode );
       pid->setParticleDeltaLL( Rich::Electron,  (float)m_pack.deltaLL(ppid.dllEl) );
@@ -73,7 +69,7 @@ void RichPIDPacker::unpack( const PackedDataVector & ppids,
       pid->setParticleDeltaLL( Rich::Pion,      (float)m_pack.deltaLL(ppid.dllPi) );
       pid->setParticleDeltaLL( Rich::Kaon,      (float)m_pack.deltaLL(ppid.dllKa) );
       pid->setParticleDeltaLL( Rich::Proton,    (float)m_pack.deltaLL(ppid.dllPr) );
-      if ( ppids.packingVersion() > 0 )
+      if ( 0 != ppids.packingVersion() )
         pid->setParticleDeltaLL( Rich::BelowThreshold, (float)m_pack.deltaLL(ppid.dllBt) );
       if ( -1 != ppid.track )
       {
@@ -93,12 +89,13 @@ void RichPIDPacker::unpack( const PackedDataVector & ppids,
 }
 
 StatusCode RichPIDPacker::check( const DataVector & dataA,
-                                 const DataVector & dataB ) const
+                                 const DataVector & dataB,
+                                 GaudiAlgorithm & parent ) const
 {
   StatusCode sc = StatusCode::SUCCESS;
 
   // checker
-  const DataPacking::DataChecks ch(parent());
+  const DataPacking::DataChecks ch(parent);
 
   // Loop over data containers together and compare
   DataVector::const_iterator iA(dataA.begin()), iB(dataB.begin());
@@ -106,8 +103,6 @@ StatusCode RichPIDPacker::check( const DataVector & dataA,
   {
     // assume OK from the start
     bool ok = true;
-    // key
-    ok &= (*iA)->key() == (*iB)->key();
     // History code
     ok &= (*iA)->pidResultCode() == (*iB)->pidResultCode();
     // Track reference
@@ -127,14 +122,11 @@ StatusCode RichPIDPacker::check( const DataVector & dataA,
     // If comparison not OK, print full information
     if ( !ok )
     {
-      const std::string loc = ( dataA.registry() ?
-                                dataA.registry()->identifier() : "Not in TES" );
-      parent().warning() << "Problem with RichPID data packing :-" << endmsg
-                         << "  Original PID key=" << (**iA).key() 
-                         << " in '" << loc << "'" << endmsg
-                         << **iA << endmsg
-                         << "  Unpacked PID" << endmsg
-                         << **iB << endmsg;
+      parent.warning() << "Problem with RichPID data packing :-" << endmsg
+                       << "  Original PID : " << **iA
+                       << endmsg
+                       << "  Unpacked PID : " << **iB
+                       << endmsg;
       sc = StatusCode::FAILURE;
     }
   }

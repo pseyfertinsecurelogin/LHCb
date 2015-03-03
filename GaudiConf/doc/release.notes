@@ -3,54 +3,6 @@
 ! package manager: M.Cattaneo
 !----------------------------------------------------------------------------
 
-!========================= GaudiConf v15r5 2011-12-14 =========================
-! 2011-12-13 - Rob Lambert
- - IOHelper: fix a missing part of the logic with respect to sequencers
- - it will now also look for streams inside defined GaudiSequencers
- - modified the streams test for this
-
-! 2011-12-13 - Marco Cattaneo
- - In requirements, fix a dependency problem in macro GaudiConfConfUserModules
-
-! 2011-12-08 - Rob Lambert
- - Allow for the nonexistance of the GAUDISVCROOT variable
- - Print a very large warning instead fo returning false for the tests
-
-! 2011-12-08 - Marco Cattaneo
- - DstConf:
-   . Remove support for RDST (never used in real data, superseded by SDST)
-   . Rename _doWritePOOL method to _doWriteROOT
-
-! 2011-12-08 - Rob Lambert
- - Add isPoolSupported to IOHelper in preparation for POOL being removed.
- - Add .gen and .xgen to supported types of IOExtension, guess to be Root type, print warning
- - Add check on the version of GaudiSvc from the requirements file,
-   maybe there is a better way to check this, but at the moment not.
-
-! 2011-11-18 - Gloria Corti
- - Add "NextNext" to default DigiConf().SpilloverPaths
-
-!========================= GaudiConf v15r3 2011-11-07 =========================
-! 2011-11-04 - Marco Cattaneo
- - In IOHelper().SetupServices() disable by default the ROOT tree caches. Can
-   be overridden by setting the RootCnv options externally as postConfigAction
- - Update ioh-postconfig-pool2root.ref.new test reference accordingly
-
-! 2011-11-04 - Patrick Robbe
- - IOHelper.py: add "xdigi" file extension to list of known extensions
-
-! 2011-10-18 - J. Helder Lopes
- - Set the AncestorFor property of UnpackMuonTracks in DstConf.py to the same
-   path as InputName, to allow the ancestor track association.
-
-!========================= GaudiConf v15r2 2011-09-27 =========================
-! 2011-09-26 - Rob Lambert
- - Fix IOExtension problem with svcClass.
-
-!========================= GaudiConf v15r1 2011-09-20 =========================
-! 2011-09-16 - Marco Cattaneo
- - Add "NextNext" to default DstConf().SpilloverPaths
-
 !========================= GaudiConf v15r0 2011-09-15 =========================
 ! 2011-09-15 - Marco Cattaneo
  - Update test references to follow small verbosity change in ROOT persistency
@@ -69,7 +21,7 @@
  - an extra unit test is added verifying this problem is now avoided
 
 ! 2011-09-08 - Rob Lambert
- - Small bug in FSRs fixed. New test added to check for this bug.
+ - Small bug in FSRs fixed. New test added to check for this bug. 
  - Still no confirmation that it is really fixed, though. Because Stripping16
    configuration dictionary is broken
  - See bug #86527
@@ -91,7 +43,7 @@
  - Modify IOHelper to work directly with FileRecordCnvSvc for any type
  - Add information getter functions for iohelper
  - Add compatibility with connection strings not containing DATAFILE
-   OutputStream, for example, can have it set separately
+   OutputStream, for example, can have it set separately 
 
 !========================= GaudiConf v14r2 2011-08-30 =========================
 ! 2011-08-24 - Rob Lambert

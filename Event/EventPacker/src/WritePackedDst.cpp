@@ -1,3 +1,4 @@
+// $Id: WritePackedDst.cpp,v 1.7 2010-05-18 09:03:21 jonrob Exp $
 // Include files
 
 // from Gaudi
@@ -19,7 +20,6 @@
 #include "Event/PackedParticle.h"
 #include "Event/PackedVertex.h"
 #include "Event/PackedWeightsVector.h"
-#include "Event/PackedCaloCluster.h"
 #include "Event/RecHeader.h"
 #include "Event/ProcStatus.h"
 #include "Event/ODIN.h"
@@ -130,10 +130,10 @@ StatusCode WritePackedDst::execute()
 
       LHCb::PackedTracks* in = get<LHCb::PackedTracks>( *itC );
       PackedBank bank( in );
-      storeInBlob( bank, &(*in->tracks().begin())  , in->tracks().size()  , sizeof( LHCb::PackedTrack) );
-      storeInBlob( bank, &(*in->states().begin())  , in->states().size()  , sizeof( LHCb::PackedState) );
-      storeInBlob( bank, &(*in->ids().begin())     , in->ids().size()     , sizeof( int ) );
-      storeInBlob( bank, &(*in->extras().begin())  , in->extras().size()  , sizeof( std::pair<int,int> ) );
+      storeInBlob( bank, &(*in->begin())      , (in->end() - in->begin()) , sizeof( LHCb::PackedTrack) );
+      storeInBlob( bank, &(*in->beginState()) , in->sizeState()           , sizeof( LHCb::PackedState) );
+      storeInBlob( bank, &(*in->beginIds())   , in->sizeId()              , sizeof( int ) );
+      storeInBlob( bank, &(*in->beginExtra()) , in->sizeExtra()           , sizeof( std::pair<int,int> ) );
       m_dst->addBank( m_bankNb++, LHCb::RawBank::DstBank, in->version(), bank.data() );
 
     } else if ( LHCb::CLID_PackedRichPIDs        == myClID ) {
@@ -154,26 +154,26 @@ StatusCode WritePackedDst::execute()
 
       LHCb::PackedCaloHypos* in = get<LHCb::PackedCaloHypos>( *itC );
       PackedBank bank( in );
-      storeInBlob( bank, &(*in->hypos().begin())  , in->hypos().size(), sizeof( LHCb::PackedCaloHypo) );
-      storeInBlob( bank, &(*in->refs().begin())   , in->refs().size() , sizeof( int ) );
+      storeInBlob( bank, &(*in->begin())     , (in->end() - in->begin()) , sizeof( LHCb::PackedCaloHypo) );
+      storeInBlob( bank, &(*in->beginRefs()) , in->sizeRef()             , sizeof( int ) );
       m_dst->addBank( m_bankNb++, LHCb::RawBank::DstBank, in->version(), bank.data() );
 
     } else if ( LHCb::CLID_PackedProtoParticles  == myClID ) {
 
       LHCb::PackedProtoParticles* in = get<LHCb::PackedProtoParticles>( *itC );
       PackedBank bank( in );
-      storeInBlob( bank, &(*in->protos().begin()) , in->protos().size()    , sizeof( LHCb::PackedProtoParticle) );
-      storeInBlob( bank, &(*in->refs().begin())   , in->refs().size()      , sizeof( int ) );
-      storeInBlob( bank, &(*in->extras().begin()) , in->extras().size()    , sizeof( std::pair<int,int> ) );
+      storeInBlob( bank, &(*in->begin())      , (in->end() - in->begin()) , sizeof( LHCb::PackedProtoParticle) );
+      storeInBlob( bank, &(*in->beginRefs())  , in->sizeRef()             , sizeof( int ) );
+      storeInBlob( bank, &(*in->beginExtra()) , in->sizeExtra()           , sizeof( std::pair<int,int> ) );
       m_dst->addBank( m_bankNb++, LHCb::RawBank::DstBank, in->version(), bank.data() );
 
     } else if ( LHCb::CLID_PackedRecVertices     == myClID ) {
 
       LHCb::PackedRecVertices* in = get<LHCb::PackedRecVertices>( *itC );
       PackedBank bank( in );
-      storeInBlob( bank, &(*in->vertices().begin()) ,in->vertices().size(), sizeof( LHCb::PackedRecVertex) );
-      storeInBlob( bank, &(*in->refs().begin())     ,in->refs().size()    , sizeof( int ) );
-      storeInBlob( bank, &(*in->extras().begin())   ,in->extras().size()  , sizeof( std::pair<int,int> ) );
+      storeInBlob( bank, &(*in->begin())      , (in->end() - in->begin()) , sizeof( LHCb::PackedRecVertex) );
+      storeInBlob( bank, &(*in->beginRefs())  , in->sizeRefs()            , sizeof( int ) );
+      storeInBlob( bank, &(*in->beginExtra()) , in->sizeExtra()           , sizeof( std::pair<int,int> ) );
       m_dst->addBank( m_bankNb++, LHCb::RawBank::DstBank, in->version(), bank.data() );
 
     } else if ( LHCb::CLID_PackedTwoProngVertices     == myClID ) {
@@ -204,7 +204,10 @@ StatusCode WritePackedDst::execute()
       PackedBank bank( in );
       unsigned int evHigh = ((in->evtNumber() ) >> 32) && 0xFFFFFFFF;
       unsigned int evLow  = ( in->evtNumber() && 0xFFFFFFFF );
-      bank.addEntry( evHigh, evLow, 0 ); // 0 is size of random seeds vector, for backward compatibility
+      bank.addEntry( evHigh, evLow, in->randomSeeds().size() );
+      for ( unsigned int kk=0 ; in->randomSeeds().size() > kk; ++kk ) {
+        bank.storeInt( in->randomSeeds()[kk] );
+      }
       bank.storeString( in->applicationName() );
       bank.storeString( in->applicationVersion() );
       bank.storeInt( in->runNumber() );
@@ -238,14 +241,6 @@ StatusCode WritePackedDst::execute()
       PackedBank bank( in );
       storeInBlob( bank, &(*in->data().begin()), in->data().size(), sizeof(LHCb::PackedWeights) );
       storeInBlob( bank, &(*in->weights().begin()), in->weights().size(), sizeof(LHCb::PackedWeight) );
-      m_dst->addBank( m_bankNb++, LHCb::RawBank::DstBank, in->version(), bank.data() );
-
-    } else if ( LHCb::CLID_PackedCaloClusters   == myClID ) {
-
-      LHCb::PackedCaloClusters* in = get<LHCb::PackedCaloClusters>( *itC );
-      PackedBank bank( in );
-      storeInBlob( bank, &(*in->data().begin()), in->data().size(), sizeof(LHCb::PackedCaloCluster) );
-      storeInBlob( bank, &(*in->entries().begin()), in->entries().size(), sizeof(LHCb::PackedCaloClusterEntry) );
       m_dst->addBank( m_bankNb++, LHCb::RawBank::DstBank, in->version(), bank.data() );
 
     } else if ( LHCb::CLID_ProcStatus == myClID ) {
