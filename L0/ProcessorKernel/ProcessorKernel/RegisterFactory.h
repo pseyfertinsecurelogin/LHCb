@@ -1,12 +1,11 @@
-// $Id: RegisterFactory.h,v 1.8 2007-08-27 08:36:36 jucogan Exp $
+// $Id: RegisterFactory.h,v 1.10 2007-10-09 09:23:08 jucogan Exp $
 
 #ifndef PROCESSORKERNEL_REGISTERFACTORY_H
 #define PROCESSORKERNEL_REGISTERFACTORY_H     1
 
 /** @class RegisterFactory RegisterFactory.h L0MuonKernel/RegisterFactory.h
 
-Class representing a factory for creating and 
-owning registers
+Class representing a factory for creating and owning registers
    
    
 */ 
@@ -25,7 +24,6 @@ XERCES_CPP_NAMESPACE_USE
 
 namespace L0Muon {
 
-
   class RegisterFactory {
 
   protected:
@@ -40,7 +38,8 @@ namespace L0Muon {
     /// single instance for the factory
     static RegisterFactory* instance();
 
-    static void selectInstance(int i){ m_sel= i<2 ? i : 1; }
+    static void selectInstance(int i);
+    
   
     /**
        Create a register.
@@ -104,16 +103,13 @@ namespace L0Muon {
 
   private:
 
-    static RegisterFactory* m_instance_0;
-    static RegisterFactory* m_instance_1;
     std::map<std::string,Register*> m_registers;    // registers repository    
     bool m_found;
-    static int m_sel;
-    
-
-
   };
 
 };  // namespace L0Muon
 
 #endif      // PROCESSORKERNEL_REGISTERFACTORY_H  
+
+
+

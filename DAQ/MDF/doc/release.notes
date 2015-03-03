@@ -6,6 +6,22 @@
 !               MEP fragments
 !-----------------------------------------------------------------------------
 
+!========================= MDF v2r5 2007-10-05 ===============================
+! 2007-10-04 - Markus Frank
+  - Set source ID to MDF bank in MDFio to 0
+  - Fix handling of default RawEventLocation::Default in RawDataCnvSvc
+    (leftover from GaudiSerialize development)
+  - Remove hard coded strings from /Event/Raw/... to RawEventLocation::Default
+  
+! 2007-08-28 - Albert Puig
+  - Modified commitRawBanks in order to allow a different location of the 
+    raw banks in the TES.
+  - Bugfix in RawDataAddress.h.
+
+! 2007-04-01 - Markus Frank
+  - Fix structure of RawEventDescriptor to match memory layout
+    of MEP_SINGLE_EVT in MEP buffer for amd64 (int->long)
+
 !======================= MDF v2r4p2 2007-04-20 ===============================
 ! 2007-04-20 - Marco Cattaneo
  - Fix doxygen warnings

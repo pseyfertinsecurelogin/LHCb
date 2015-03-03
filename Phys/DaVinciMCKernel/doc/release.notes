@@ -4,6 +4,14 @@
 ! Purpose     : MCEvent dependent interfaces and base classes.
 !-----------------------------------------------------------------------------
 
+!====================== DaVinciMCKernel v2r4 2007-10-10 =====================
+! 2007-10-09 - Juan PALACIOS
+ - Add Kernel/IPrintDecayTreeTool.h
+ - dict/DaVinciMCKernel{.h, .xml}
+  . Add IPrintDecayTreeTool
+ - cmt/requirements
+  . Increase version to v2r4
+
 !====================== DaVinciMCKernel v2r3 2007-09-18 =====================
 ! 2007-09-18 - Patrick Koppenburg for Tom Blake
  - IP2VVMCPartAngleCalculator.h 

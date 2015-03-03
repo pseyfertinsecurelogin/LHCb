@@ -2,6 +2,20 @@ Package         : OTDAQ
 Package manager : J. Nardulli
 !---------------------------------------------------------------------
 
+!======================= OTDAQ v5r5 2007-10-08 ======================
+! 2007-10-06 - Wouter Hulsbergen
+ - Added some protection against corrupted banks
+
+! 2007-10-05 - Marco Cattaneo
+ - Provided OTDAQ/IOTRawBankDecoder.h interface and moved OTRawBankDecoder.h into
+   src directory.
+ - Modified OTTimeCreator to propertly use IOTRawBankDecoder interface
+ - Add dictionary generation for the tool interfaces
+ - Redo change of 06-15
+
+! 2007-09-26 - Wouter Hulsbergen
+ -  added OTRawBankDecoder::finalize
+
 !======================= OTDAQ v5r4 2007-09-18 ======================
 ! 2007-09-18 - Marco Cattaneo
  - Undo change of 06-15 since it needs also changes to the encoding that

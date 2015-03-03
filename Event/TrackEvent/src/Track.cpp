@@ -1,14 +1,14 @@
 // $: Track.cpp,v 1.39 2007/05/15 06:57:34 wouter Exp $ // Include files
 
-// local
-#include "Event/Track.h"
-#include "Event/TrackFunctor.h"
 #include <functional>
 #include <string>
 
 // from gsl
 #include "gsl/gsl_cdf.h"
 
+// local
+#include "Event/Track.h"
+#include "Event/TrackFunctor.h"
 
 using namespace Gaudi;
 using namespace LHCb;
@@ -377,15 +377,29 @@ void Track::copy( const Track& track )
   setFlags( track.flags() );
   setLhcbIDs( track.lhcbIDs() );
   setExtraInfo( track.extraInfo() );
-  const std::vector<State*>& states = track.states();
-  for (std::vector<State*>::const_iterator it = states.begin();
-       it != states.end(); ++it) addToStates( *(*it));
-  const std::vector<Measurement*>& measurements = track.measurements();
-  for (std::vector<Measurement*>::const_iterator it2 = measurements.begin();
-       it2 != measurements.end(); ++it2) addToMeasurements( *(*it2) );
-  const std::vector<Node*>& nodes = track.nodes();
-  for (std::vector<Node*>::const_iterator it3 = nodes.begin();
-       it3 != nodes.end(); ++it3) addToNodes( (*it3)->clone() );
+  
+  // copy the states
+  m_states.reserve( track.states().size() ) ;
+  for( std::vector<State*>::const_iterator istate = track.states().begin() ;
+       istate != track.states().end(); ++istate)
+    m_states.push_back( (*istate)->clone() ) ;
+  
+  // copy the measurements
+  m_measurements.reserve(track.measurements().size()) ;
+  for( std::vector<Measurement*>::const_iterator imeas = track.measurements().begin() ;
+       imeas != track.measurements().end(); ++imeas)
+    m_measurements.push_back( (*imeas)->clone() ) ;
+  
+  // copy the nodes. be sure to remap the measurement.
+  m_nodes.reserve(track.nodes().size()) ;
+  for (std::vector<Node*>::const_iterator inode = track.nodes().begin();
+       inode != track.nodes().end(); ++inode) {
+    m_nodes.push_back((*inode)->clone()) ;
+    if( (*inode)->hasMeasurement() )
+      m_nodes.back()->setMeasurement(const_cast<Measurement&>(measurement((*inode)->measurement().lhcbID()))) ;
+  }
+  
+  // copy the ancestors
   const SmartRefVector<Track>& ancestors = track.ancestors();
   for (SmartRefVector<Track>::const_iterator it4 = ancestors.begin();
        it4 != ancestors.end();  ++it4) addToAncestors(*(*it4));
@@ -501,37 +515,45 @@ LHCb::Track::eraseInfo( const int key )
 //=============================================================================
 std::ostream& LHCb::Track::fillStream(std::ostream& os) const
 {
-  os << "Track : key =" << key() << std::endl
-     << " #ids       =" << nLHCbIDs() << std::endl
-     << " type       =" << type() << std::endl
-     << " history    =" << history() << std::endl
-     << " p          =" << p() << std::endl
-     << " pt         =" << pt() << std::endl
-     << " chi2PerDoF =" << chi2PerDoF() << std::endl
-     << " nDoF       =" << nDoF() << std::endl;
+  os << "*** Track ***" << std::endl
+     << " key     : " << key() << std::endl
+     << " type    : " << type() << std::endl
+     << " history : " << history() << std::endl
+     << " # ids    : " << nLHCbIDs() << std::endl
+     << " # meas   : " << nMeasurements() << std::endl
+     << " chi2PerDoF : " << (float)m_chi2PerDoF << std::endl
+     << " nDoF       : " << m_nDoF << std::endl;
 
-  os << states().size() << " States at z =";
-  for ( std::vector<LHCb::State*>::const_iterator iS = states().begin();
-        iS != states().end(); ++iS )
-  {
-    if (*iS) os << " " << (*iS)->z();
-  }
-  os << " :-" << std::endl;
-  for ( std::vector<LHCb::State*>::const_iterator iS = states().begin();
-        iS != states().end(); ++iS )
-  {
-    os << **iS;
-  }
-
-  os << " extraInfo [";
+  os << " extraInfo : [";
   for ( ExtraInfo::const_iterator i = extraInfo().begin();
         i != extraInfo().end(); ++i )
   {
     const LHCb::Track::AdditionalInfo info =
       static_cast<LHCb::Track::AdditionalInfo>(i->first);
-    os << " " << info << "=" << i->second;
+    os << " " << info << "=" << i->second << " ";
   }
-  os << " ]" << std::endl;
+  os << "]" << std::endl;
+
+  if ( !m_states.empty() ) {
+    os << " p  : " << (float) firstState().p() <<std::endl
+       << " pt : " << (float) firstState().pt() <<std::endl
+       << " " << nStates() << " states at z =";
+    for ( std::vector<LHCb::State*>::const_iterator iS = states().begin();
+          iS != states().end(); ++iS )
+    {
+      if (*iS) os << " " << (*iS)->z();
+    }
+    os << "  :-" << std::endl;
+    for ( std::vector<LHCb::State*>::const_iterator iS = states().begin();
+          iS != states().end(); ++iS )
+    {
+      os << " " << **iS;
+    }
+    os << std::endl;
+  }
+  else {
+    os << " # states : " << nStates() << std::endl;
+  }
 
   return os;
 }

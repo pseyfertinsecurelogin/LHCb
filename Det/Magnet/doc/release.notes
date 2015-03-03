@@ -4,6 +4,17 @@
 ! Purpose     : Provides magnetic field map and Bdl tools
 !-----------------------------------------------------------------------------
 
+!====================== Magnet v3r6p1 2007-10-05 =============================
+! built on v3r6b branch
+
+! 2007-10-05 - Marco Cattaneo
+ - In BdlTool, objects create in initialize now deleted in finalize, not in
+   destructor (needed when generating configurables)
+
+!====================== Magnet v3r6 2007-03-19 ===============================
+! 2007-03-19 - Marco Cattaneo
+ - Cleaned up StatusCodes
+
 !====================== Magnet v3r5 2007-03-05 ===============================
 ! 2007-03-05 - Marco Cattaneo
  - Remove LHCbDefinitions dependency

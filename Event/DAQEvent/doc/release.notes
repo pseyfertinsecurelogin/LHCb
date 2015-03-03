@@ -4,6 +4,14 @@
 !Purpose: Define the classes delivered to the online farm by the DAQ
 !----------------------------------------------------------------------
 
+!================ DAQEvent v7r6 2007-10-10 ============================
+! 2007-10-10 M. Needham
+ - Add new bank types ITProcFull and TTProcFull
+
+! 2007-10-03 - Markus Frank
+ - Add bank types GaudiSerialize and GaudiHeader
+ - Fix wrong documentation entries in RawEvent.h
+
 !================ DAQEvent v7r5 2007-09-03 ============================
 ! 2007-09-03 - Marco Cattaneo for Julien Cogan
  - Add bank types L0MuonCtrlAll, L0MuonProcCand, L0MuonProcData, L0MuonRaw,

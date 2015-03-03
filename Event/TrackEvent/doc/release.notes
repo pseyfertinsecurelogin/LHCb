@@ -4,6 +4,22 @@
 ! Purpose     : Package for the tracking event model classes
 !-----------------------------------------------------------------------------
 
+!======================= TrackEvent v4r7 2007-10-08 ==========================
+!2007-10-08 - Stephanie Hansmann-Menzemer (for Adrian Perieanu)
+ - Add Cand2ndQPat, NCandCommonHits, Cand2ndChi2Mat, GhosProbability flag to
+   extra Info
+
+! 2007-10-05 - Wouter Hulsbergen
+ - fixed bug in Track::copy
+ - added zpos for beginning of T-region to StateParameters.h
+
+! 2007-09-27 - Eduardo Rodrigues
+ - more improvements to fillStream method
+ - re-corrected a bug re-introduced with latest additions to fillStream method
+
+! 2007-09-28 M. Needham
+ - Add TsaLikelihood flag to extraInfo  
+
 !======================= TrackEvent v4r6 2007-09-17 ==========================
 ! 2007-09-17 - Chris Jones
  - Improve fillstream method to printout more info (ExtraInfo etc.)

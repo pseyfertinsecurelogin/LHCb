@@ -1,10 +1,17 @@
 ! =============================================================================
-! $Id: release.notes,v 1.35 2007-09-17 09:24:32 cattanem Exp $ 
+! $Id: release.notes,v 1.37 2007-10-05 13:11:42 cattanem Exp $ 
 ! =============================================================================
 ! package DetDescSvc
 ! package manager : Marco Clemencic, Juan Palacios ?
 ! purpose:          Component library for Detector Description Services
 ! =============================================================================
+
+!========================= DetDescSvc v1r14 2007-10-04 ========================
+! 2007-10-01 - Marco Clemencic
+ - Change UpdateManagerSvc: check the state of the service (OFFLINE/INITIALIZED)
+   before any operation. If OFFLINE, the call to "unregister" results in a
+   no-operation, while all other calls throw an exception.
+   Fixes the bug causing segfault during DetDataSvc finalization.
 
 !========================= DetDescSvc v1r13 2007-09-17 ========================
 ! 2007-09-13 - Wouter Hulsbergen
