@@ -1,4 +1,4 @@
-// $Id: GenChild.cpp 124208 2011-06-02 16:05:48Z ibelyaev $
+// $Id: GenChild.cpp 132877 2011-12-13 19:09:00Z ibelyaev $
 // ============================================================================
 // Include files 
 // ============================================================================
@@ -10,6 +10,28 @@
 // LoKi
 // ============================================================================
 #include "LoKi/GenChild.h"
+// ============================================================================
+/** @file
+ *
+ *  This file is a part of LoKi project - 
+ *    "C++ ToolKit  for Smart and Friendly Physics Analysis"
+ *
+ *  The package has been designed with the kind help from
+ *  Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas, 
+ *  contributions and advices from G.Raven, J.van Tilburg, 
+ *  A.Golutvin, P.Koppenburg have been used in the design.
+ *
+ *  By usage of this code one clearly states the disagreement 
+ *  with the smear campaign of Dr.O.Callot et al.: 
+ *  ``No Vanya's lines are allowed in LHCb/Gaudi software.''
+ *
+ *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
+ *  @date 2006-01-23 
+ *
+ *                    $Revision: 132877 $
+ *  Last modification $Date: 2011-12-13 20:09:00 +0100 (Tue, 13 Dec 2011) $
+ *                 by $Author: ibelyaev $
+ */
 // ============================================================================
 /*  get the number of children for the given HepMC-particle
  *  @see HepMC::GenParticle
@@ -220,6 +242,38 @@ LoKi::GenChild::descendants ( const HepMC::GenParticle* particle )
   return LoKi::GenChild::descendants ( particle->end_vertex() ) ;
 }
 // ============================================================================
+namespace 
+{
+  // ==========================================================================
+  template <class INDEX> 
+  const HepMC::GenParticle* 
+  _child_ 
+  ( const HepMC::GenParticle* particle , 
+    INDEX                     begin    , 
+    INDEX                     end      ) 
+  {
+    //
+    if ( 0 == particle ) { return        0 ; } // RETURN 
+    if ( begin == end  ) { return particle ; } // RETURN 
+    //
+    const HepMC::GenParticle* daug = 
+      LoKi::GenChild::child ( particle , *begin ) ;
+    //
+    if ( 0 == daug     ) { return        0 ; } // RETURN
+    //
+    return _child_ ( daug , begin + 1 , end ) ;
+  }
+  // ==========================================================================
+}  
+// ============================================================================
+const HepMC::GenParticle* 
+LoKi::GenChild::child
+( const HepMC::GenParticle*        particle , 
+  const std::vector<unsigned int>& indices  )
+{ return _child_ ( particle , indices.begin () , indices.end () ) ; }
+
+
+
 
 // ============================================================================
 // The END 

@@ -96,9 +96,6 @@ class DDDBConf(ConfigurableUser):
         self.__data_types_handlers__[dataType](self)
 
         # Get particle properties table from condDB
-        # Old Gaudi implementation
-        ParticlePropertySvc().ParticlePropertiesFile = 'conddb:///param/ParticleTable.txt'
-        # New LHCb implementation
         from Configurables import LHCb__ParticlePropertySvc
         LHCb__ParticlePropertySvc( ParticlePropertiesFile = 'conddb:///param/ParticleTable.txt' )
 
@@ -118,7 +115,7 @@ class DDDBConf(ConfigurableUser):
         """
         # Set the tags
         self.__set_tag__(["DDDB"], "head-20111102")
-        self.__set_tag__(["LHCBCOND"], "head-20111102")
+        self.__set_tag__(["LHCBCOND"], "head-20111111")
         self.__set_tag__(["DQFLAGS"], "tt-20110126")
 
     def __2010_conf__(self):

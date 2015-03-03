@@ -6,6 +6,16 @@
 !               All headers included in directory LHCbMath
 !-----------------------------------------------------------------------------
 
+!========================= LHCbMath v3r28 2011-12-14 =========================
+! 2011-12-04 - Vanya Belyaev
+ - more functions 
+
+! 2011-12-03 - Vanya Belyaev
+ - few minor fixes with ValueWithError 
+
+! 2011-12-01 - Vanya Belyaev
+ - add few useful functions 
+
 !========================= LHCbMath v3r27p1 2011-11-07 =========================
 ! 2011-10-07 - Marco Cattaneo
  - Mask a couple of ICC warnings and remarks from Boost, resulting from

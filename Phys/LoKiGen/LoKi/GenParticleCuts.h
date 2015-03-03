@@ -1,4 +1,4 @@
-// $Id: GenParticleCuts.h 126502 2011-07-25 07:29:40Z ibelyaev $
+// $Id: GenParticleCuts.h 132877 2011-12-13 19:09:00Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_GENPARTICLECUTS_H 
 #define LOKI_GENPARTICLECUTS_H 1
@@ -224,6 +224,35 @@ namespace LoKi
      *  @date 2006-01-18
      */
     const LoKi::GenParticles::HasQuark     GCHARM ( LHCb::ParticleID::charm ) ;
+    // ========================================================================
+    /** @typedef GCHILD 
+     *  Simple adapter that delegates the function to certain child particle
+     *  @see LoKi::GenParticles::ChildFun 
+     *  @see LoKi::GenChild::Selector
+     *  @see LoKi::Cuts::GCHILDFUN
+     *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
+     *  @date 2011-12-13
+     */
+    typedef LoKi::GenParticles::ChildFun                               GCHILD ;
+    // ========================================================================
+    /** @typedef GCHILDCUT
+     *  Simple adapter that delegates the predicate to certain child particle
+     *  @see LoKi::GenParticles::ChildCut
+     *  @see LoKi::GenChild::Selector
+     *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
+     *  @date 2011-12-13
+     */
+    typedef LoKi::GenParticles::ChildCut                            GCHILDCUT ;
+    // ========================================================================
+    /** @typedef GCHILDFUN 
+     *  Simple adapter that delegates the function to certain child particle
+     *  @see LoKi::GenParticles::ChildFun 
+     *  @see LoKi::GenChild::Selector
+     *  @see LoKi::Cuts::GCHILD
+     *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
+     *  @date 2011-12-13
+     */
+    typedef LoKi::GenParticles::ChildFun                            GCHILDFUN ;
     // ========================================================================
     /** @typedef GCOUNTER
      *  Simple monitoring counter for predicates

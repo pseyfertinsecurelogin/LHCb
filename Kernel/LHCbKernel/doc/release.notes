@@ -4,7 +4,21 @@
 ! Purpose: LHCb specific Kernel classes
 !--------------------------------------------------------------------------
 
-!========================= LHCbKernel v13r6 2011-11-07 =========================
+!========================= LHCbKernel v13r7 2011-12-14 =========================
+! 2011-11-24 - Chris Jones
+ - Extend the RichSmartID class with an 'Undefined' PD type enum
+ - Add LHCb::RichSmartID::HPD, LHCb::RichSmartID::MaPMT and
+   LHCb::RichSmartID::IDType to the python dictionary
+ - Update the space allocated to the PD numbers by 1 when printing MaPMT
+   RichSmartIDs
+
+! 2011-11-21 - Chris Jones
+ - Update sizes of bit fields for MaPMTs
+
+! 2011-11-18 - Chris Jones
+ - Remove obsolete methods from RichSmartID
+
+!====================== LHCbKernel v13r6 2011-11-07 =======================
 ! 2011-10-11 - Marco Cattaneo
  - Fix trivial ICC remarks
 

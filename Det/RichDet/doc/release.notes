@@ -4,6 +4,24 @@
 ! Purpose     : Interface to the xml description
 !-----------------------------------------------------------------------------
 
+!========================= RichDet v16r8 2011-12-14 =========================
+! 2011-11-25 - Chris Jones
+ - Remove MaPMT specific hacks from DeRichSystem. No longer needed as DB is 
+   now correct.
+
+! 2011-11-24 - Chris Jones
+ - Add a method to the PD Panel base class to return PD type
+
+! 2011-11-24 -Sajan Easo
+ - Made a fix to DeRichPMTPanel for rich2 plane definition.
+
+! 2011-11-23 - Sajan Easo
+ - Made a fix to the pmt smartid decoding to hits in DeRichPMT and added more
+   utilities to DeRichPMTPanel
+
+! 2011-11-17 - Chris Jones
+ - Add PMT classes from Sajan
+
 !========================= RichDet v16r7 2011-11-07 =========================
 ! 2011-10-05 - Chris Jones
  - Preliminary changes for future MaPMT support

@@ -41,7 +41,11 @@ const CLID CLID_DeRichHPDPanel = 12010;  // User defined
 
 // Standard Constructor
 DeRichHPDPanel::DeRichHPDPanel(const std::string & name) :
-  DeRichPDPanel ( name ) { }
+  DeRichPDPanel ( name ) 
+{
+  // Set the PD type to HPD
+  m_pdType = LHCb::RichSmartID::HPDID;
+}
 
 // Standard Destructor
 DeRichHPDPanel::~DeRichHPDPanel() { }
@@ -134,7 +138,7 @@ StatusCode DeRichHPDPanel::smartID ( const Gaudi::XYZPoint& globalPoint,
   }
 
   // check if the HPD is active or dead
-  if ( !deRichSys()->hpdIsActive( id ) ) return StatusCode::FAILURE;
+  if ( !deRichSys()->pdIsActive( id ) ) return StatusCode::FAILURE;
 
   const unsigned int HPDNumber = pdNumber(id);
   if ( HPDNumber > nPDs() )
@@ -240,7 +244,7 @@ DeRichHPDPanel::PDWindowPoint( const Gaudi::XYZVector& vGlobal,
     else
     {
       // Inside an HPD
-      if ( !deRichSys()->hpdIsActive(smartID) ||  // check if the HPD is active or dead
+      if ( !deRichSys()->pdIsActive(smartID) ||  // check if the HPD is active or dead
            ( mode.hpdKaptonShadowing() &&       // check for intersection with kapton shield
              HPD->testKaptonShadowing(pInPanel,vInPanel) ) )
       {
@@ -304,7 +308,7 @@ DeRichHPDPanel::PDWindowPoint( const Gaudi::XYZVector& vGlobal,
         windowPointGlobal = HPD->geometry()->toGlobal( windowPointInHPD );
 
         // check if the HPD is active or dead
-        if ( !deRichSys()->hpdIsActive(smartID) )
+        if ( !deRichSys()->pdIsActive(smartID) )
         {
           res = LHCb::RichTraceMode::OutsideHPDPanel;
         }
@@ -724,6 +728,6 @@ StatusCode DeRichHPDPanel::geometryUpdate ( )
 unsigned int DeRichHPDPanel::pdNumber( const LHCb::RichSmartID smartID ) const
 {
   return ( smartID.rich() == rich() && smartID.panel() == side() ?
-           smartID.hpdCol() * nPDsPerCol() + smartID.hpdNumInCol() :
+           smartID.pdCol() * nPDsPerCol() + smartID.pdNumInCol() :
            nPDs() + 1 );
 }

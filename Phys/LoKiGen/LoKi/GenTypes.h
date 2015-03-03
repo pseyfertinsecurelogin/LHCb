@@ -1,4 +1,4 @@
-// $Id: GenTypes.h 124208 2011-06-02 16:05:48Z ibelyaev $
+// $Id: GenTypes.h 132877 2011-12-13 19:09:00Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_GENTYPES_H 
 #define LOKI_GENTYPES_H 1
@@ -30,14 +30,14 @@ namespace HepMC { class GenVertex   ; }
  *  A.Golutvin, P.Koppenburg have been used in the design.
  *
  *  By usage of this code one clearly states the disagreement 
- *  with the campain of Dr.O.Callot et al.: 
+ *  with the smear campaign of Dr.O.Callot et al.: 
  *  ``No Vanya's lines are allowed in LHCb/Gaudi software.''
  *
  *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
  *  @date 2001-01-23 
  *
- *                    $Revision: 124208 $
- *  Last modification $Date: 2011-06-02 18:05:48 +0200 (Thu, 02 Jun 2011) $
+ *                    $Revision: 132877 $
+ *  Last modification $Date: 2011-12-13 20:09:00 +0100 (Tue, 13 Dec 2011) $
  *                 by $Author: ibelyaev $
  */
 // ============================================================================
@@ -53,6 +53,8 @@ namespace LoKi
     // ========================================================================
     /// the basic imported type for the sequence of HepMC-particles 
     typedef std::vector<const HepMC::GenParticle*>  GenContainer      ;
+    /// the basic imported type for the sequence of HepMC-particles 
+    typedef GenContainer                            ConstVector       ;
     /// the basic imported type for the sequence of HepMC-vertices 
     typedef std::vector<const HepMC::GenVertex*>    GenVContainer     ;
     //

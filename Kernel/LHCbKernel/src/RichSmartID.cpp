@@ -35,7 +35,9 @@ std::ostream& LHCb::RichSmartID::fillStream(std::ostream& s) const
 #endif
 
   // Type
-  s << ( idType() == HPDID ? " HPD" : " MaPMT" );
+  s << ( idType() == HPDID   ? " HPD"   : 
+         idType() == MaPMTID ? " MaPMT" : 
+         "UndefinedPD" );
 
   // Is this smart ID valid
   if ( isValid() )
@@ -57,8 +59,9 @@ std::ostream& LHCb::RichSmartID::fillStream(std::ostream& s) const
     // PD
     if ( pdIsSet() )
     {
-      s << " PDCol"      << format("%3i",pdCol());
-      s << " PDNumInCol" << format("%3i",pdNumInCol());
+      const std::string fS = ( idType() == MaPMTID ? "%4i" : "%3i" );
+      s << " PDCol"      << format(fS.c_str(),pdCol());
+      s << " PDNumInCol" << format(fS.c_str(),pdNumInCol());
     }
 
     // Pixel

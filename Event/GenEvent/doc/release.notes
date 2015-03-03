@@ -3,18 +3,31 @@
 ! package coordinator: G.Corti
 !------------------------------------------------------------------------------
 
+!========================= GenEvent v6r3 2011-12-14 =========================
+! 2011-11-30 - Marco Clemencic
+ - Fixed the previous fix to work on 32bits too.
+
+! 2011-11-28 - Marco Clemencic
+ - Fixed a warning in genreflex on gcc 4.6.
+
+!========================= GenEvent v6r2 2011-11-22 =========================
+! 2011-11-22 - Gloria Corti
+ - Fix bugs in methods to calculate emittance and smearing on beam angles
+   in BeamParameters class.
+   Add units in default values of attributes.
+
 !========================= GenEvent v6r1 2011-09-07 =========================
 ! 2011-09-06 - Marco Cattaneo for Patrick Robbe
  - Add a dictionary for std::map<std::string,HepMC::WeightContainer::size_type>,
    this fixes the segmentation violation on 32-bit when reading the old HepMC
-   data. To be moved to LCG 
+   data. To be moved to LCG
 
 !========================= GenEvent v6r0 2011-06-14 =========================
 ! 2011-05-30 - Patrick Robbe
- - xml/GenHeader.xml, xml/BeamParameters.xml: changes to keep backward  
+ - xml/GenHeader.xml, xml/BeamParameters.xml: changes to keep backward
    compatibility for the reading of GenHeader.
 
-! 2011-05-29 - Patrick Robbe 
+! 2011-05-29 - Patrick Robbe
  - xml/BeamParameters.xml: new class to contain beam parameter informations
    for the generator step.
  - xml/GenHeader.xml: move the beam related functions to BeamParameters
@@ -37,7 +50,7 @@
 
 !======================= GenEvent v5r4 2009-02-18 =============================
 ! 2009-02-11 - Marco Cattaneo
- - Add missing dictionary for GenVertex. 
+ - Add missing dictionary for GenVertex.
    N.B. This dictionary will be provided in HepMCRflx in LCG_56
 
 !======================= GenEvent v5r3 2008-07-27 =============================
@@ -113,7 +126,7 @@
  - Changes for new Event Model
  - Use EventBase package instead of Event that has been removed
  - Renaming of GenEvent.xml into HepMCEvent.xml
- - Remove obsolete classes: 
+ - Remove obsolete classes:
    . HardInfo, merged into GenCollision
    . GenMCLink, which functionality should be provided by a tool
  - Change package name to GenEvent in GenCollision.xml, for GOD Reflex dict
@@ -161,7 +174,7 @@
    . GenEvent_load.cpp
  - Add creation of header file and dictionary in requirements and increase
    version number
-                   
+
 !================= GenEvent v3r1 2004-04-01 ===========================
 ! 2004-04-01 - Gloria CORTI
  - Remove transient declaration from GenEvent.xml to persistify with POOL
@@ -189,7 +202,7 @@
 !================== GenEvent v2r3 ==================
 ! 2002-11-11 - Florence Ranjard
   requirements - remove use GaudiKernel. It is given by EventKernel
-                 use -no_auto_import and -import= 
+                 use -no_auto_import and -import=
 
 !================== GenEvent v2r1 =====================
 ! 2002-07-19 - Witek Pokorski
@@ -207,6 +220,6 @@
     - use GaudiKernel v12
 
 ! 20020405 - GenEvent v1r0 - Witek Pokorski
-    - New Package 
+    - New Package
 
 !================== GenEvent v0r0 ====================

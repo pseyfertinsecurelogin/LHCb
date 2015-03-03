@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # =============================================================================
-# $Id: functions.py 124208 2011-06-02 16:05:48Z ibelyaev $
+# $Id: functions.py 132877 2011-12-13 19:09:00Z ibelyaev $
 # =============================================================================
 ## @file LoKiGen/functions.py
 #  The full set of useful objects from LoKiGen library 
@@ -30,7 +30,7 @@ A.Golutvin, P.Koppenburg have been used in the design.
 # =============================================================================
 __author__  = "Vanya BELYAEV ibelyaev@physics.syr.edu" 
 __date__    = "2007-12-01"
-__version__ = "CVS Tag: $Name: not supported by cvs2svn $, version $Revision: 124208 $ "
+__version__ = "CVS Tag: $Name: not supported by cvs2svn $, version $Revision: 132877 $ "
 # =============================================================================
 
 import LoKiCore.decorators as _LoKiCore 
@@ -109,6 +109,12 @@ GCHARGED  = LoKi.GenParticles.IsCharged ()
 ## @see LoKi::Cuts::GCHARM
 ##GCHARM  = GQUARK( LHCb.ParticleID.charm  )
 GCHARM    = LoKi.GenParticles.HasQuark ( 4 )
+## @see LoKi::Cuts::GCHILD 
+GCHILD    = LoKi.GenParticles.ChildFun
+## @see LoKi::Cuts::GCHILDCUT
+GCHILDCUT = LoKi.GenParticles.ChildCut
+## @see LoKi::Cuts::GCHILDFUN
+GCHILDFUN = LoKi.GenParticles.ChildFun
 ## @see LoKi::Cuts::GCTAU
 GCTAU     = LoKi.GenParticles.ProperLifeTime ()
 ## @see LoKi::Cuts::GDECNODE 

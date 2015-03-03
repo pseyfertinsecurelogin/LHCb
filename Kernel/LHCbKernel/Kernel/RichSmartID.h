@@ -73,8 +73,9 @@ namespace LHCb
      */
     enum IDType
       {
-        MaPMTID = 0, ///< Represents an MaPMT channel
-        HPDID   = 1  ///< Represents an HPD channel
+        Undefined = -1, ///< Undefined
+        MaPMTID = 0,    ///< Represents an MaPMT channel
+        HPDID   = 1     ///< Represents an HPD channel
       };
 
   public:
@@ -183,8 +184,8 @@ namespace LHCb
       // Number of bits for each data field in the word
       static const BitPackType BitsPixelCol          = 3; ///< Number of bits for MaPMT pixel column
       static const BitPackType BitsPixelRow          = 3; ///< Number of bits for MaPMT pixel row
-      static const BitPackType BitsPDNumInCol        = 6; ///< Number of bits for MaPMT 'number in column'
-      static const BitPackType BitsPDCol             = 6; ///< Number of bits for MaPMT column
+      static const BitPackType BitsPDNumInCol        = 4; ///< Number of bits for MaPMT 'number in column'
+      static const BitPackType BitsPDCol             = 9; ///< Number of bits for MaPMT column
       static const BitPackType BitsPanel             = 1; ///< Number of bits for MaPMT panel
       static const BitPackType BitsRich              = 1; ///< Number of bits for RICH detector
       static const BitPackType BitsPixelSubRowIsSet  = 1;
@@ -708,16 +709,6 @@ namespace LHCb
 
     /// Print the ID as a series of bits (0/1)
     std::ostream& dumpBits( std::ostream& s ) const;
-
-  public: // Backwards compatibility. To Be Removed.
-
-    inline void setHPD( const int col, const int nInCol ) { setPD(col,nInCol); }
-
-    inline LHCb::RichSmartID hpdID()  const { return pdID(); }
-    inline unsigned int hpdNumInCol() const { return pdNumInCol(); }
-    inline unsigned int hpdCol()      const { return pdCol(); }
-    inline bool hpdIsSet()            const { return pdIsSet(); }
-    inline bool hpdDataAreValid()     const { return pdDataAreValid(); }
 
   };
 

@@ -4,18 +4,19 @@
  *
  * Header file for utility class : RichRecPhotonKey
  *
- * $Id: RichRecPhotonKey.h,v 1.9 2007-03-09 18:04:33 jonrob Exp $
- *
  * @author Chris Jones   Christopher.Rob.Jones@cern.ch
  * @date   2003-06-20
  */
 //-----------------------------------------------------------------------------
 
-#ifndef RichRecEvent_RichRecPhotonKey_H
-#define RichRecEvent_RichRecPhotonKey_H 1
+#ifndef RichRecBase_RichRecPhotonKey_H
+#define RichRecBase_RichRecPhotonKey_H 1
 
 // Gaudi
 #include "GaudiKernel/StreamBuffer.h"
+
+// boost
+#include "boost/cstdint.hpp"
 
 namespace Rich
 {
@@ -36,51 +37,108 @@ namespace Rich
 
     public:
 
-      /** Constructor from long int
+      /// Type for packed fields
+      typedef boost::uint16_t PackedType;
+
+      /// Type for overall word
+      typedef boost::uint32_t KeyType;
+
+    private:
+
+      /// Packed pixel and segment keys into a photon key
+      union Data
+      {
+        struct
+        {
+          PackedType pixelKey   : 16; ///< The pixel key
+          PackedType segmentKey : 16; ///< The segment key
+        } packed; ///< Representation as a packed struct
+        KeyType raw; ///< Raw data
+      } m_data;
+
+    public:
+
+      /** Constructor from a full int
        *  @param key The raw data key to use as the bit-packed data
        */
-      PhotonKey( const long key = 0 ) : m_key ( key ) { }
+      PhotonKey( const KeyType key = 0 ) { m_data.raw = key; }
 
       /** Constructor from segment and pixel numbers
        *
        *  @param pixelKey    The key for the associated RichRecPixel
        *  @param segmentKey  The key for the associated RichRecSegment
        */
-      PhotonKey ( const long pixelKey,
-                  const long segmentKey )
-        : m_key ( pixelKey%65536 | segmentKey<<16 ) { }
-
-      /// Destructor
-      ~PhotonKey() {}
-
-      /// Retrieve 32 bit integer key
-      inline long key() const
+      PhotonKey ( const PackedType pixelKey,
+                  const PackedType segmentKey )
       {
-        return m_key;
+        m_data.packed.pixelKey   = pixelKey;
+        m_data.packed.segmentKey = segmentKey;
       }
 
-      /// long operator
-      inline operator long() const
+      /// Copy Constructor
+      PhotonKey( const PhotonKey & k ) { m_data.raw = k.key(); }
+
+      /// Destructor
+      ~PhotonKey() { }
+
+    public:
+
+      /// Retrieve the full key
+      inline KeyType key() const
+      {
+        return m_data.raw;
+      }
+
+      /// KeyType operator
+      inline operator KeyType() const
       {
         return key();
       }
 
-      /// Update 32 bit integer key
-      inline void setKey(const long key)
+      /// Update the full key
+      inline void setKey( const KeyType key )
       {
-        m_key = key;
+        m_data.raw = key;
       }
 
+    public:
+
       /// Retrieve associated RichRecSegment key
-      inline int segmentNumber() const
+      inline PackedType segmentNumber() const
       {
-        return key()/65536;
+        return m_data.packed.segmentKey;
       }
 
       /// Retrieve associated RichRecPixel key
-      inline int pixelNumber() const
+      inline PackedType pixelNumber() const
       {
-        return key()%65536;
+        return m_data.packed.pixelKey;
+      }
+
+    public:
+
+      /// Operator ==
+      inline bool operator== ( const PhotonKey & k ) const
+      { 
+        return k.key() == this->key(); 
+      }      
+
+      /// Operator !=
+      inline bool operator!= ( const PhotonKey & k ) const
+      { 
+        return k.key() != this->key(); 
+      }
+
+      /// Operator <
+      inline bool operator<  ( const PhotonKey & k ) const
+      { 
+        return k.key() < this->key(); 
+      }
+
+      /// Operator >
+      inline bool operator>  ( const PhotonKey & k ) const
+      { 
+        return k.key() > this->key(); 
       }
 
     public:
@@ -88,7 +146,11 @@ namespace Rich
       /// Fill the ASCII output stream
       inline std::ostream& fillStream(std::ostream& s) const
       {
-        return s << "{ " << " key:\t" << key() << " } ";
+        return s << "{" 
+                 << " pixel = "   << pixelNumber()
+                 << " segment = " << segmentNumber()
+                 << " photon = "  << key()
+                 << " } ";
       }
 
       /// Implement textual ostream << method for Rich::Rec::TrackID
@@ -98,20 +160,9 @@ namespace Rich
         return key.fillStream(s);
       }
 
-    private:
-
-      /// 32 bit integer key.
-      /// First 16 bits are segment number, last 16 pixel number.
-      unsigned long m_key;
-
     };
 
   }
-} // RICH
+}
 
-/** Backwards compatibility typedef
- * @todo Remove eventually
- */
-typedef Rich::Rec::PhotonKey RichRecPhotonKey;
-
-#endif   // RichRecEvent_RichRecPhotonKey_H
+#endif   // RichRecBase_RichRecPhotonKey_H

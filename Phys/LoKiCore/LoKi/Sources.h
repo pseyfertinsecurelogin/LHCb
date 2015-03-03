@@ -1,4 +1,4 @@
-// $Id: Sources.h 53291 2010-08-05 14:35:53Z ibelyaev $
+// $Id: Sources.h 131848 2011-11-18 12:40:32Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_SOURCES_H 
 #define LOKI_SOURCES_H 1
@@ -77,7 +77,7 @@ namespace LoKi
         /// locate the service if needed:
         if ( !m_svc ) 
         {
-          const LoKi::Services::Services& svcs = LoKi::Services::instance() ;
+          const LoKi::Services& svcs = LoKi::Services::instance() ;
           IDataProviderSvc* evtSvc = svcs.evtSvc() ;
           Assert ( 0 != evtSvc , "Could not extract EventDataService!" ) ;
           m_svc = evtSvc ;

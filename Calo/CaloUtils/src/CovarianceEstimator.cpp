@@ -1,4 +1,3 @@
-// $Id: CovarianceEstimator.cpp,v 1.17 2009-05-21 11:28:17 odescham Exp $ 
 // ============================================================================
 #define CALOUTILS_COVARIANCEESTIMATOR_CPP 1 
 // ============================================================================
@@ -45,7 +44,7 @@ CovarianceEstimator::CovarianceEstimator
   , m_s2gain       ( GainS   * GainS      )
   , m_s2incoherent ( NoiseIn * NoiseIn    )  
   , m_s2coherent   ( NoiseCo * NoiseCo    )
-{};
+{}
 
 // ============================================================================
 // (virtual) destructor 
@@ -228,7 +227,7 @@ StatusCode CovarianceEstimator::operator()( LHCb::CaloCluster* cluster ) const
   covariance( LHCb::CaloPosition::E , LHCb::CaloPosition::E ) = CovEE ;
 
   return StatusCode::SUCCESS;
-};
+}
 // ============================================================================
 
 // ============================================================================
@@ -242,18 +241,18 @@ MsgStream& CovarianceEstimator::printOut ( MsgStream& log ) const
 {
   log << " Cluster Covariance Estimator: " 
       << " Detector is " <<  ( 0 == m_detector ? "INVALID" : "VALID" )
-      << endreq 
+      << endmsg 
       << "   Resolution       is " << ( sqrt( a2GeV() / Gaudi::Units::GeV ) ) 
-      << endreq 
+      << endmsg 
       << "   Sigma Gain       is " << ( sqrt( s2gain       ()       ) ) 
-      << endreq 
+      << endmsg 
       << "   Coherent Noise   is " << ( sqrt( s2coherent   ()       ) ) 
-      << endreq 
+      << endmsg 
       << "   InCoherent Noise is " << ( sqrt( s2incoherent ()       ) )
-      << endreq ;
+      << endmsg ;
   ///
   return log ;
-};
+}
 // ============================================================================
 
 
@@ -279,7 +278,7 @@ std::ostream& CovarianceEstimator::printOut ( std::ostream& log ) const
       << std::endl ;
   ///
   return log ;
-};
+}
 // ============================================================================
 
 

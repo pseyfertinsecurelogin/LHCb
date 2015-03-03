@@ -1,4 +1,4 @@
-// $Id: ParticleID.h 101224 2010-11-12 14:08:02Z ibelyaev $ 
+// $Id: ParticleID.h 132029 2011-11-22 14:42:59Z amartens $ 
 // ============================================================================
 #ifndef LHCbKernel_ParticleID_H
 #define LHCbKernel_ParticleID_H 1
@@ -38,8 +38,8 @@ namespace LHCb
       nq3  ,
       nq2  ,
       nq1  ,
-      nr   ,
       nl   ,
+      nr   ,
       n    ,
       n8   ,
       n9   ,

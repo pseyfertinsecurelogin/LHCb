@@ -1,6 +1,16 @@
+!------------------------------------------------------------------------------
 ! Package     : CaloUtils
 ! Responsible : Olivier Deschamps odescham@in2p3.fr
 !------------------------------------------------------------------------------
+
+!========================= CaloUtils v9r2p1 2011-12-14 =========================
+! 2011-12-07 - Marco Cattaneo
+ - Fix unprotected debug() messages
+ - Replace endreq by endmsg
+ - Fix an UNINIT_CTOR coverity defect
+
+! 2011-11-23 - Marco Cattaneo
+ - Fix trivial icc remarks
 
 !========================= CaloUtils v9r2 2011-08-30 =========================
 ! 2011-08-29 - alexander.mazurov@gmail.com

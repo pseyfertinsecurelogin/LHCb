@@ -1,4 +1,4 @@
-// $Id: LoKiGenDict.h 124225 2011-06-04 19:32:00Z ibelyaev $
+// $Id: LoKiGenDict.h 132877 2011-12-13 19:09:00Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_LOKICOREDICT_H 
 #define LOKI_LOKICOREDICT_H 1
@@ -34,6 +34,7 @@
 #include "LoKi/GenDecays.h"
 #include "LoKi/GenDecayChain.h"
 #include "LoKi/GenDump.h"
+#include "LoKi/GenChildSelector.h"
 // ============================================================================
 #include "LoKi/IGenDecay.h"
 #include "LoKi/FinderDict.h"
@@ -59,8 +60,8 @@
  *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
  *  @date 2007-12-01
  *
- *                    $Revision: 124225 $
- *  Last modification $Date: 2011-06-04 21:32:00 +0200 (Sat, 04 Jun 2011) $
+ *                    $Revision: 132877 $
+ *  Last modification $Date: 2011-12-13 20:09:00 +0100 (Tue, 13 Dec 2011) $
  *                 by $Author: ibelyaev $
  */
 // ============================================================================

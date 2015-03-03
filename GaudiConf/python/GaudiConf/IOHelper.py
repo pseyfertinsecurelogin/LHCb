@@ -25,12 +25,12 @@ class IOHelper(object):
 
     2) configuring services:
         IOHelper().setupServices()
-        IOHelper("POOL","POOL").setupServices()
+        IOHelper("ROOT","ROOT").setupServices()
         ioh.setupServices()
 
     3) building an EventSelector from a list of files:
         evtsel=IOHelper().inputFiles(filelist)
-        evtsel=IOHelper("POOL","POOL").inputFiles(filelist)
+        evtsel=IOHelper("ROOT","ROOT").inputFiles(filelist)
         evtsel=ioh.inputFiles(filelist)
 
     4) adding a simple OutputStream to the OutStream of Application Manager
@@ -151,6 +151,11 @@ class IOHelper(object):
                 raise TypeError("ROOT persistency is not supported in this Application version"+
                                 "Ask your release manager for details or change to POOL")
 
+        if self._inputPersistency=='POOL' or self._outputPersistency=='POOL':
+            if not self.isPoolSupported():
+                raise TypeError("POOL persistency is not supported in this Application version"+
+                                "Ask your release manager for details or change to ROOT")
+
         if self._outputPersistency=="FSR" and self._inputPersistency not in ['ROOT','POOL']:
             raise TypeError("FSR is not a proper persistency type. To configure services, you would need to specify a proper type.")
 
@@ -188,7 +193,7 @@ class IOHelper(object):
         fileSvc.ShareFiles = "YES"
         ApplicationMgr().ExtSvc                                += [ fileSvc ]
         PersistencySvc("FileRecordPersistencySvc").CnvServices += [ fileSvc ]
-
+    
     def _isOutputStream(self, streamstr):
         '''Helper:  returns true if the string is one of the known output streams'''
         for stream in self._knownOutputStreams:
@@ -196,7 +201,14 @@ class IOHelper(object):
             if stream in streamstr.split('/')[0]:
                 return True
         return False
-
+    
+    def _isSequencer(self, confstr):
+        '''Helper:  returns true if the string is one of the known output streams'''
+        #only check the type!
+        if "GaudiSequencer" in confstr.split('/')[0]:
+            return True
+        return False
+    
     def _isPersistencySvc(self,svcstring):
         '''Helper:  Returns true if the svcstring is one of the known persistencies'''
         for service in self._knownPerServices:
@@ -255,7 +267,14 @@ class IOHelper(object):
         for key in GaudiConfigurables.allConfigurables:
             retdict[GaudiConfigurables.allConfigurables[key].getFullName()]=GaudiConfigurables.allConfigurables[key]
         return retdict
-
+    
+    def _nameFromConfigurable(self,conf):
+        if type(conf) is str:
+            return conf
+        elif hasattr(conf, "getFullName"):
+            return conf.getFullName()
+        return None
+    
     def _configurableInstanceFromString(self, config):
         '''Get a configurable instance given only the string'''
 
@@ -299,6 +318,60 @@ class IOHelper(object):
         '''
         return ("DATAFILE='" in filename or " OPT='" in filename or "SVC=" in filename or "TYP='" in filename)
 
+    def _gaudiSvcVersion(self):
+        '''Determine the version of GaudiSvc,
+        return true if it is larger than v18r3'''
+        apath="${GAUDISVCROOT}/cmt/requirements"
+        import os
+        #Without the env variable, all new Gaudi versions are fine
+        if "GAUDISVCROOT" not in os.environ:
+            return True
+        apath=os.path.expandvars(apath)
+        try:
+            requirements=file(apath)
+        except:
+            return False
+        
+        if not requirements:
+            requirements.close()
+            return False
+        version=None
+        for line in requirements.readlines():
+            if 'version' in line.strip()[:7]:
+                version=line.split('n')[-1].strip().split('v')[-1]
+                v=int(version.split('r')[0])
+                r=None
+                p=None
+                if 'r' in version:
+                    r=int(version.split('r')[-1].split('p')[0])
+                if 'p' in version:
+                    p=int(version.split('p')[-1])
+                version=(v,r,p)
+                break
+        requirements.close()
+        if version is None:
+            return False
+        #v17 or lower
+        if version[0]<18:
+            return False
+        #higher than v18
+        if version[0]>18:
+            return True
+        #v18rX
+        if version[0]==18:
+            #v18r<16
+            if version[1] is None or version[1]<16:
+                return False
+            #v18r>16
+            if version[1]>=16:
+                return True
+            #v18r16p>0
+            if version[2] is None or version[2]<1:
+                return False
+            return True
+        
+        return False
+    
     ###############################################################
     #              Information
     ###############################################################
@@ -373,11 +446,22 @@ class IOHelper(object):
     ###############################################################
     #              Services
     ###############################################################
-
+    
     def isRootSupported(self):
-        '''Services:  Check if the root services exist in this version'''
+        '''Services:  Check if the ROOT services exist in this version'''
         import Configurables
+        #check the RootCnv service exists and that the GaudiSvc version
+        #is greater than v18r16, only print a warning for the moment.
+        if not self._gaudiSvcVersion():
+            print "# WARNING: It looks like this version of GaudiSvc is from before v18r16, so will suffer from bugs"
+            print "# WARNING: To avoid segfaulting in finalize and writing out corrupted files you need to be using a patched version with at least revision r6649 of GaudiSvc"
+            print "# WARNING: If you've already patched the software, you can ignore this warning."
         return hasattr(Configurables,"Gaudi__RootCnvSvc")
+    
+    def isPoolSupported(self):
+        '''Services: Check if the POOL services exist in this version'''
+        import Configurables
+        return (hasattr(Configurables, "PoolDbCnvSvc") and hasattr(Configurables, "PoolDbCacheSvc"))
 
     def svcTypString(self,IO):
         '''Services:  given the IO type, return the selection string for the active services'''
@@ -407,7 +491,7 @@ class IOHelper(object):
             rootSvc = Gaudi__RootCnvSvc( "RootCnvSvc", EnableIncident = 1 )
             # disable caches by default
             if not rootSvc.isPropertySet("VetoBranches")  : rootSvc.VetoBranches = ["*"]
-            if not rootSvc.isPropertySet("CacheBranches") : rootSvc.CacheBranches = [] 
+            if not rootSvc.isPropertySet("CacheBranches") : rootSvc.CacheBranches = []
             EventPersistencySvc().CnvServices += [ rootSvc ]
             ApplicationMgr().ExtSvc           += [ rootSvc ]
 
@@ -767,7 +851,8 @@ class IOHelper(object):
 
     def activeStreams(self):
         '''Output:  Find the list of Output Stream-type objects,
-        search through allConfigurables AppMgr.TopAlg and and AppMgr.OutStream'''
+        search through allConfigurables AppMgr.TopAlg and and AppMgr.OutStream
+        also search all gaudi sequencers'''
         streams=[]
         from Gaudi.Configuration import ApplicationMgr
         for alg in ApplicationMgr().TopAlg:
@@ -776,19 +861,30 @@ class IOHelper(object):
                 algname=alg.getFullName()
             if self._isOutputStream(algname):
                 streams.append(alg)
-
+        
+        #everything in OutStream is an output stream
         if ApplicationMgr().OutStream is not None:
             streams+=ApplicationMgr().OutStream
 
+        #all defined configurables which match my expressions are output streams
         allConfigurables=self._fullNameConfigurables()
-        #from Gaudi.Configuration import allConfigurables
         for key in allConfigurables:
             if self._isOutputStream(key):
                 if key not in streams and allConfigurables[key] not in streams:
                     streams.append(allConfigurables[key])
-
+        
+        #all streams added to GaudiSequencers are Output Streams...
+        for sequencer in allConfigurables:
+            if self._isSequencer(sequencer):
+                if (not hasattr(allConfigurables[sequencer], "Members")) or (allConfigurables[sequencer].Members is None):
+                    continue
+                for member in allConfigurables[sequencer].Members:
+                    membername=self._nameFromConfigurable(member)
+                    if self._isOutputStream(membername):
+                        if member not in streams and membername not in streams:
+                            streams.append(member)
         return streams
-
+    
     def detectStreamType(self, stream):
         '''Output:  From the name of the stream, deduce its type'''
 
@@ -1022,6 +1118,8 @@ class IOExtension(object):
                        'XDST'  : '',
                        'MDST'  : '',
                        'SDST'  : 'Warning',
+                       'GEN'  : 'Warning',
+                       'XGEN'  : 'Warning',
                        'MDF'    : 'MDF',
                        'RAW'  : 'MDF'
                        }
