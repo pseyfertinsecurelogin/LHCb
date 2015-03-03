@@ -1,5 +1,5 @@
 package LHCbSys
-version           v32r3g1
+version           v32r3g2
 
 branches doc cmt test
 
