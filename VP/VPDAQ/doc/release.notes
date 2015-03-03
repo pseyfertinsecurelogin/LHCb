@@ -1,8 +1,33 @@
 !-----------------------------------------------------------------------------
 ! Package     : VP/VPDAQ
-! Responsible : Marcin Kucharczyk
-! Purpose     : Prepare VeloPix RawBank and decode it
+! Responsible : Kurt Rinnert, Karol Hennessy
+! Purpose     : Prepare VP RawBank and decode it
 !-----------------------------------------------------------------------------
+
+!========================= VPDAQ v2r7 2014-05-12 =========================
+! 2014-05-04 - Heinrich Schindler
+ - Replace hard-coded array size by constants.
+
+! 2014-04-25 - Heinrich Schindler
+ - Follow changes in VPChannelID format (r171869).
+
+! 2014-04-14 - Heinrich Schindler
+ - Remove do-nothing finalize method.
+ - Run clang-format for consistent style.
+
+! 2014-04-04 - Heinrich Schindler
+ - Remove en/decoders for old, cluster-based raw banks.
+ - Remove unnecessary dependencies.
+
+! 2014-04-01 - Heinrich Schindler
+ - Remove VPLiteCluster include statements from PrepareVPRawBank.
+ - Remove VPRawBankToLiteCluster algorithm.
+
+! 2014-03-30 - Heinrich Schindler 
+ - Follow changes in VPCluster format (revision r170715).
+
+! 2014-03-24 - Heinrich Schindler 
+ - Follow changes in VPDigit format and location names (revision r170468).
 
 !========================= VPDAQ v2r6 2014-03-17 =========================
 ! 2014-03-13 - Heinrich Schindler 

@@ -190,7 +190,7 @@ class DDDBConf(ConfigurableUser):
         """
         # Set the tags
         self.__set_tag__(["DDDB"],     "dddb-20130503-1" )
-        self.__set_tag__(["LHCBCOND"], "cond-20131128"   )
+        self.__set_tag__(["LHCBCOND"], "cond-20140425"   )
         self.__set_tag__(["DQFLAGS"],  "dq-20130806-1"   )
         if not self.getProp("Simulation"):
             self.__set_init_time__(datetime.utcfromtimestamp(1355694590)) # End of fill 3453
@@ -201,8 +201,8 @@ class DDDBConf(ConfigurableUser):
         """
         # Set the tags
         self.__set_tag__(["DDDB"], "dddb-20130503")
-        self.__set_tag__(["LHCBCOND"], "cond-20130522")
-        self.__set_tag__(["DQFLAGS"], "dq-20130806-1")
+        self.__set_tag__(["LHCBCOND"], "cond-20140425")
+        self.__set_tag__(["DQFLAGS"], "dq-20140428")
         if not self.getProp("Simulation"):
             self.__set_init_time__(datetime.utcfromtimestamp(1319991087)) # End of fill 2267
 
@@ -212,7 +212,7 @@ class DDDBConf(ConfigurableUser):
         """
         # Set the tags
         self.__set_tag__(["DDDB"], "head-20110721")
-        self.__set_tag__(["LHCBCOND"], "head-20110614")
+        self.__set_tag__(["LHCBCOND"], "cond-20140328")
         self.__set_tag__(["DQFLAGS"], "tt-20110126")
         if not self.getProp("Simulation"):
             self.__set_init_time__(datetime.utcfromtimestamp(1288505611)) # End of fill 1459

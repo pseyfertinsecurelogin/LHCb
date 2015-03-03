@@ -4,6 +4,27 @@
 ! Purpose: LHCb specific Kernel classes
 !--------------------------------------------------------------------------------
 
+!========================= LHCbKernel v15r2 2014-05-12 ========================
+! 2014-05-03 - Heinrich Schindler
+ - Add file VPConstants.h.
+
+! 2014-04-27 - Heinrich Schindler
+ - VPChannelID: add decoding to sensor column.
+
+! 2014-04-25 - Heinrich Schindler
+ - Change VPChannelID bitfield from row/col/chip/module to row/col/chip/sensor.
+
+! 2014-04-08 - Heinrich Schindler
+ - Remove unused get*Mask, get*Bits functions from VPChannelID.
+ - Remove unused functors from VPDataFunctor.
+
+! 2014-03-20 - Francesco Polci
+ - Modified FTChannelID.xml to include mat() and module() and redefined quarter() functions to reflect the present FT geometry. 
+
+
+! 2014-03-19 - Marco Clemencic
+ - Disabled again Boost allocators in debug mode when building with ROOT 6.
+
 !========================= LHCbKernel v15r1 2014-03-17 ========================
 ! 2014-03-07 - Chris Jones
  - Use Info(...) methods for memory pool release messages in LbAppInit, in

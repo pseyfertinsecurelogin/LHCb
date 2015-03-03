@@ -4,6 +4,17 @@
 ! Purpose     : Place holder package for RawEvent decoding configurable
 !-----------------------------------------------------------------------------
 
+!========================= DAQSys v8r2 2014-05-12 =========================
+! 2014-04-04 - Heinrich Schindler
+ - Remove decoder for VPClusters (decoding now done inside PrPixelHitManager).
+ - Adapt tests/options/OldDecodeRawEvent.py.
+
+! 2014-04-03 - Rob Lambert
+ - Adapt test for removal of VPLite clusters
+
+! 2014-04-01 - Heinrich Schindler
+ - Remove decoder for VPLiteClusters
+
 !========================= DAQSys v8r1 2014-03-17 =========================
 ! 2014-02-24 - Sebastian Neubert
  - Renamed HltTrackReportsDecoder output location

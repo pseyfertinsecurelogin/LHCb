@@ -4,6 +4,13 @@
 ! Purpose     : Interfaces previously in TrackInterfaces but needed in Lbcom
 !-----------------------------------------------------------------------------
 
+!========================= LHCbTrackInterfaces v2r1 2014-05-12 ===================
+! 2014-04-01 - Heinrich Schindler
+ - Remove functions using VPLiteCluster from IVPClusterPosition interface.
+
+! 2014-03-26 - Heinrich Schindler
+ - Add position function using VPCluster to IVPClusterPosition
+
 !========================= LHCbTrackInterfaces v2r0 2014-02-17 ===================
 ! 2014-01-13 - Marco Cattaneo
  - Remove IVLClusterPosition

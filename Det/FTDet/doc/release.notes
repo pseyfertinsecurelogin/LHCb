@@ -4,6 +4,23 @@
 ! Responsible : Diego Milanes
 !--------------------------------------------------------------------------
 
+!========================= FTDet v2r6 2014-05-12 =========================
+! 2014-05-06 - Diego Milanes
+- Optimization in beamPipeYCoord method. Fixed typo. 
+
+! 2014-05-06 - Diego Milanes
+- Optimiztion in beamPipeYCoord method. Added initialization of yIntersect in the case that it does not find intersection point between the fibre and the beam pipe hole.
+
+! 2014-03-27 - Eric Cogneras
+ - Add new method calculateMeanChannel and calculateLitsOfFiredChannels
+ - Factorisation of the code of the new methods with existing calculateHit method
+
+! 2014-03-25 - Diego Milanes
+ - Fix bug with with layerCenterZ method
+
+! 2014-03-20 - Luigi Del Buono
+ - Changes for new FTchanID (no more quarter --> module +mat) Fibremat level implemented
+
 !========================= FTDet v2r5 2014-03-17 =========================
 ! 2014-03-10 - Michel De Cian
  - Replace linear search for fibreMat with binary search in DeFTDetector

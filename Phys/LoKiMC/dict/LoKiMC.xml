@@ -1,5 +1,5 @@
 <!-- 
-     * $Id: LoKiMC.xml 167812 2014-02-01 16:51:15Z ibelyaev $ 
+     * $Id: LoKiMC.xml 171803 2014-04-23 14:53:18Z cattanem $ 
      * ========================================================================
      * @file
      * The seleciton file to build Reflex dictionaries for Phys/LoKiMC package
@@ -107,6 +107,7 @@
     <class name = "LoKi::Interface<GaudiAlgorithm>"   /> 
     <class name = "LoKi::Interface<LoKi::ILoKiSvc>"   /> 
     <class name = "LoKi::Interface<IDataProviderSvc>" /> 
+    <class name = "LoKi::Interface<IChronoSvc>"       />
     
     <class name="LoKi::MCFinder">
       <method name="=" />

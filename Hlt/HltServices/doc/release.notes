@@ -4,6 +4,34 @@
 ! Purpose     : HLT-specific services not needed for decoding
 !-----------------------------------------------------------------------------
 
+!========================= HltServices v2r2 2014-05-12 =========================
+! 2014-04-30 - Rob Lambert / Gerhard Raven
+ - migrate HltGenConfig from HltCommon to here
+
+!========================= HltServices v2r1 2014-04-29 =========================
+
+! 2014-04-27 - Gerhard Raven
+ - general cleanup
+
+! 2014-04-19 - Gerhard Raven
+ - factor common code in Config{Tar,Zip}FileAccessSvc into a new mix-in class,
+   ConfigArchiveAccessSvc from which both now inherit.
+ - C++11 changes
+
+! 2014-04-18 - Gerhard Raven
+ - add utility to inspect content of .cdb file 
+ - add command line options to cdb utility
+ - add option to dump content of cdb file to collection of files
+ - move tar and zip specific I/O in seperate cpp,h files
+
+! 2014-04-14 - Gerhard Raven
+ - add new persistence implementation: ConfigCDBAccessSvc, using tinycdb. 
+   Filesize is less than 1/3 of the default config.tar format, and 20% smaller 
+   than config.zip. 
+ - unify ConfigTarFileAccessSvc and ConfigZipFileAccessSvc
+ - improve file & error handling in ConfigCDBAccessSvc
+ - fix iniital creation of .cdb file
+
 !========================= HltServices v2r0 2013-12-09 =========================
 ! 2013-12-05 - Rob Lambert
  - Changes to comply with new Gaudi::StringKey types in IANSvc and related

@@ -4,6 +4,22 @@
 ! Purpose     : Code/Decode the FT raw data
 !-----------------------------------------------------------------------------
 
+!========================= FTDAQ v1r6 2014-05-12 =========================
+! 2014-05-02- Michel De Cian
+ - Fix bug in RawBankDecoder, in method 'RetrieveModuleMat', which was giving wrong numbers for the modules.
+
+! 2014-03-25 - Eric Cogneras
+ - change of message level for bad bank version
+
+! 2014-03-21 - Eric Cogneras
+ - Fixed bug in FTRawBankDecoder RetrieveModuleMat() function
+
+! 2014-03-19 - Eric Cogneras
+ - Modification of the bit sharing in 16-bit words according to the TDR electronic design
+
+! 2014-03-18 - Michel De Cian
+ - Changing FTRawCluster to FTLiteCluster in FTRawBankDecoder
+
 !========================= FTDAQ v1r5 2014-02-17 =========================
 ! 2014-02-13 - Rob Lambert
  - Adapt FT decoder tool to Decoder base classes, task #49078

@@ -1,5 +1,5 @@
 <!-- 
-     * $Id: LoKiGen.xml 167813 2014-02-01 16:56:04Z ibelyaev $ 
+     * $Id: LoKiGen.xml 171802 2014-04-23 14:52:56Z cattanem $ 
      * ========================================================================
      * @file
      * The seleciton file to build Reflex dictionaries for Phys/LoKiGen package
@@ -103,6 +103,7 @@
     <class name ="LoKi::GenParticles::FromHepMCTree::VERTICES" />
     <class name ="LoKi::Interface<LoKi::ILoKiSvc>"   />
     <class name ="LoKi::Interface<IDataProviderSvc>" />
+    <class name ="LoKi::Interface<IChronoSvc>"   />
 
     <class pattern="LoKi::GenParticles::*">
       <method name="=" />

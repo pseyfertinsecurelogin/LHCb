@@ -15,6 +15,7 @@ from Configurables import ( CondDBAccessSvc,
                             ApplicationMgr )
 
 import os, re
+from os.path import exists, join
 
 class CondDB(ConfigurableUser):
     """
@@ -43,7 +44,16 @@ class CondDB(ConfigurableUser):
                   "UseDBSnapshot"     : False ,
                   "DBSnapshotDirectory" : "/group/online/hlt/conditions" ,
                   "PartitionName" : "LHCb" ,
-                  'EnableRunChangeHandler' : False
+                  'EnableRunChangeHandler' : False,
+                  'RunChangeHandlerConditions' : [ "Conditions/Online/LHCb/Magnet/Set"
+                                                 , "Conditions/Online/Velo/MotionSystem"
+                                                 , "Conditions/Online/LHCb/Lumi/LumiSettings"
+                                                 , "Conditions/Online/LHCb/LHCFillingScheme"    
+                                                 , "Conditions/Online/LHCb/RunParameters"
+                                                 , "Conditions/Online/Rich1/R1HltGasParameters"
+                                                 , "Conditions/Online/Rich2/R2HltGasParameters" ],
+                  'XMLFilename' : 'online_%d.xml',
+                  'LoadCALIBDB' : "OFFLINE"
                   }
     _propertyDocDct = {
                        'Tags' : """ Dictionary of tags (partition:tag) to use for the COOL databases """,
@@ -65,6 +75,7 @@ class CondDB(ConfigurableUser):
                        'AllLocalTagsByDataType' : """ Use all CondDB local tags marked with the data type """,
                        'UseLatestTags' : """ List of the form [DataType, OnlyGlobalTags = False] to turn on the usage of the latest tags """,
                        'QueryGranularity': """Granularity of the query in the database (in time units)""",
+                       'LoadCALIBDB': """ Load CALIB*.db file as additional layers on top of ONLINE-*.db file, could be either "HLT1" (w/o layering, ONLINE only), "HLT2" (one CALIB layer above ONLINE), or "OFFLINE" (Layer CALIBOFF above CALIB & ONLINE ) """,
                        }
     LAYER = 0
     ALTERNATIVE = 1
@@ -344,16 +355,10 @@ class CondDB(ConfigurableUser):
 
         # Set the location of the Online conditions
         if self.getProp('EnableRunChangeHandler') :
-            online_xml = '%s/%s/online_%%d.xml' % (baseloc, self.getProp('PartitionName')[0:4] )
+            online_xml = '%s/%s/%s' % (baseloc, self.getProp('PartitionName') , self.getProp('XMLFilename'))
             from Configurables import RunChangeHandlerSvc
             rch = RunChangeHandlerSvc()
-            rch.Conditions = { "Conditions/Online/LHCb/Magnet/Set"        : online_xml
-                             , "Conditions/Online/Velo/MotionSystem"      : online_xml
-                             , "Conditions/Online/LHCb/Lumi/LumiSettings" : online_xml
-                             , "Conditions/Online/LHCb/RunParameters"     : online_xml
-                             , "Conditions/Online/Rich1/R1HltGasParameters" : online_xml
-                             , "Conditions/Online/Rich2/R2HltGasParameters" : online_xml
-                             }
+            rch.Conditions = dict( (cnd, online_xml ) for cnd in self.getProp("RunChangeHandlerConditions") )
             ApplicationMgr().ExtSvc.append(rch)
 
     def __apply_configuration__(self):
@@ -403,6 +408,12 @@ class CondDB(ConfigurableUser):
             log.warning("ALL local tags of %s data type(s) are added: %s"
                         %(datatypes, self.getProp("LocalTags")))
 
+        # Set up environment variables for loading CALIB/CALIBOFF layers
+        LoadCALIBDB = self.getProp('LoadCALIBDB')
+        loadcaliboptions = ["HLT1", "HLT2", "OFFLINE"]
+        if LoadCALIBDB not in loadcaliboptions:
+            raise ValueError("'%s' is not a valid LoadCALIBDB value. Allowed: %s" %(LoadCALIBDB, loadcaliboptions))
+        os.environ['LoadCALIBDB'] = LoadCALIBDB
 
         # Import SQLDDDB specific info
         if self.getProp("UseOracle") or self.getProp("UseDBSnapshot"):
@@ -424,11 +435,14 @@ class CondDB(ConfigurableUser):
         tags = self.getProp("Tags")
         # DB partitions
         partition = {}
-        for p, t in [ ("DDDB",     CondDBAccessSvc),
+        parttypes = [ ("DDDB",     CondDBAccessSvc),
                       ("LHCBCOND", CondDBAccessSvc),
                       ("ONLINE",   CondDBTimeSwitchSvc),
                       ("SIMCOND",  CondDBAccessSvc),
-                      ("DQFLAGS",  CondDBAccessSvc)]:
+                      ("DQFLAGS",  CondDBAccessSvc)]
+        if LoadCALIBDB is "OFFLINE" and exists(join(os.environ["SQLITEDBPATH"], "CALIBOFF.db")):
+            parttypes += [("CALIBOFF", CondDBAccessSvc)]
+        for (p ,t) in parttypes:
             partition[p] = getConfigurable(p, t)
             # Override connection strings:
             if p in conns and type(partition[p]) is CondDBAccessSvc:
@@ -442,12 +456,17 @@ class CondDB(ConfigurableUser):
                 partition[p].DefaultTAG = tags[p]
                 del tags[p]
             # Set the query granularity
-            self.propagateProperty("QueryGranularity", partition[p])
-            if type(partition[p]) is CondDBTimeSwitchSvc:
+            if p != "CALIBOFF": self.propagateProperty("QueryGranularity", partition[p])
+            if type(partition[p]) is CondDBTimeSwitchSvc: # also online
                 for r in partition[p].Readers:
                     config = allConfigurables[eval(r.split(':')[0]).split("/")[1]]
                     if isinstance(config, CondDBAccessSvc):
                         self.propagateProperty("QueryGranularity", config)
+                    # Pass along the configuration for the layered DBs    
+                    elif isinstance(config, CondDBLayeringSvc):
+                        for ly in config.Layers:
+                            if isinstance(ly, CondDBAccessSvc):
+                                self.propagateProperty("QueryGranularity", ly)
 
         if conns:
             log.warning("Cannot override the connection strings of the partitions %r", conns.keys())
@@ -468,6 +487,11 @@ class CondDB(ConfigurableUser):
                     config = allConfigurables[eval(latest.split(':')[0]).split("/")[1]]
                     if isinstance(config, CondDBAccessSvc):
                         self.propagateProperty("HeartBeatCondition", config)
+                    # Pass along the configuration for the layered DBs    
+                    elif isinstance(config, CondDBLayeringSvc):
+                        for ly in config.Layers:
+                            if isinstance(ly, CondDBAccessSvc):
+                                self.propagateProperty("HeartBeatCondition", ly)
 
         if not self.getProp("Simulation"):
             # Standard configurations
@@ -495,10 +519,25 @@ class CondDB(ConfigurableUser):
                 taglist = list(localTags[p])
                 taglist.reverse() # we need to stack the in reverse order to use the first as on top of the others
                 i = 0 # counter
-                for t in taglist:
-                    self._addLayer(partition[p].clone("%s_%d" % (p, i),
-                                                      DefaultTAG = t))
-                    i += 1
+                # In case of ONLINE partition, add layers for CALIBOFF only, and in time ranges
+                if p is "CALIBOFF":
+                    if LoadCALIBDB is not "OFFLINE": 
+                        raise ValueError("invalid argument LoadCALIBDB set at '%s' instead of 'OFFLINE' for accessing local tags for CALIBOFF.db" % LoadCALIBDB)
+                    pcolayers = []
+                    for t in taglist: 
+                        pcolayers.append(partition[p].clone("CALIBOFF_%d" %i, DefaultTAG = t))
+                        i += 1
+                    for r in partition["ONLINE"].Readers:
+                        config = allConfigurables[eval(r.split(':')[0]).split("/")[1]]
+                        if isinstance(config, CondDBLayeringSvc):
+                            config.Layers = pcolayers + config.Layers 
+                elif type(partition[p]) is not CondDBTimeSwitchSvc: # The case for CALIBOFF has been processed in the above lines
+                    for t in taglist:
+                        self._addLayer(partition[p].clone("%s_%d" % (p, i),
+                            DefaultTAG = t))
+                        i += 1
+                else:
+                    not_applied.append(p)
             else:
                 not_applied.append(p)
         if not_applied:
@@ -617,6 +656,42 @@ def connStrOnline(ym_tuple):
         return "sqlite_file:$SQLITEDBPATH/ONLINE-%04d%02d.db/ONLINE" % ym_tuple
     return "sqlite_file:$SQLITEDBPATH/ONLINE-%04d.db/ONLINE" % ym_tuple[0]
 
+def getOnlineDBReader(ym_tuple, granularity = 'YEARLY', connStrFunc = None):
+    cnstr = ''
+    ymstr = ''
+    if granularity == 'YEARLY':
+        ymstr = "%04d" %ym_tuple[0]
+        cnstr = connStrFunc((ym_tuple[0],13))
+    else:
+        ymstr = "%04d%02d" %ym_tuple
+        cnstr = connStrFunc(ym_tuple)
+
+    ptnm = "ONLINE_" + ymstr
+    accSvc = CondDBAccessSvc(ptnm, ConnectionString = cnstr)
+    dblayers = [ accSvc ]
+    dbpath = os.environ["SQLITEDBPATH"]
+    LoadCALIBDB = os.environ.get('LoadCALIBDB')
+    if (not LoadCALIBDB): return accSvc
+
+    layer  = 'CALIB'
+    if LoadCALIBDB is not 'HLT1' and exists(join(dbpath, "%s-%s.db" % (layer, ymstr))):
+        # If .db file available for a new layer
+        dblayers.insert(0, CondDBAccessSvc(layer + '_' + ymstr, 
+            ConnectionString = cnstr.replace('ONLINE-%s.db/ONLINE' %ymstr, "%s-%s.db/%s" % (layer, ymstr, layer))))
+        layer = 'CALIBOFF'
+        if LoadCALIBDB is not 'HLT2' and exists(join(dbpath, layer + '.db')): 
+            # Put the discovered layer on top
+            cfg = getConfigurable(layer, CondDBAccessSvc)
+            try: cfg.ConnectionString
+            except AttributeError: # Set up connection for the 1st time
+                cfg = CondDBAccessSvc("CALIBOFF", ConnectionString = 
+                        cnstr.replace('ONLINE-%s.db/ONLINE' %ymstr, "%s.db/%s" % (layer, layer)), CacheHighLevel = 200)
+
+            dblayers.insert(0, cfg)
+
+    if (len(dblayers) == 1): return accSvc
+    return CondDBLayeringSvc("ONLINELAYER_"+ymstr, Layers = dblayers )
+
 def configureOnlineSnapshots(start = None, end = None, connStrFunc = None):
     if connStrFunc is None:
         connStrFunc = connStrOnline
@@ -651,10 +726,7 @@ def configureOnlineSnapshots(start = None, end = None, connStrFunc = None):
     i = first_snapshot
     until = 0 # this makes the first service used from times starting from 0
     while i < last_snapshot:
-        if granularity == 'YEARLY':
-            accSvc = CondDBAccessSvc("ONLINE_%04d" %i[0], ConnectionString = connStrFunc((i[0],13)))
-        else:
-            accSvc = CondDBAccessSvc("ONLINE_%04d%02d" %i, ConnectionString = connStrFunc(i))
+        accSvc = getOnlineDBReader(i, granularity, connStrFunc)
         since = until
         # increment
         if granularity == 'YEARLY':
@@ -668,10 +740,7 @@ def configureOnlineSnapshots(start = None, end = None, connStrFunc = None):
         ONLINE.Readers.append(descr)
 
     # append the last database with validity extended to the maximum validity
-    if granularity == 'YEARLY':
-        accSvc = CondDBAccessSvc("ONLINE_%04d" %i[0], ConnectionString = connStrFunc((i[0],13)))
-    else:
-        accSvc = CondDBAccessSvc("ONLINE_%04d%02d" %i, ConnectionString = connStrFunc(i))
+    accSvc = getOnlineDBReader(i, granularity, connStrFunc)
     since = until
     until = 0x7fffffffffffffffL # Defined in PyCool.cool as ValidityKeyMax
     descr = "'%s':(%d,%d)" % ( accSvc.getFullName(), since, until )

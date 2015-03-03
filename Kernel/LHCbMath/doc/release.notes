@@ -6,6 +6,25 @@
 !               All headers included in directory LHCbMath
 !-----------------------------------------------------------------------------
 
+!========================= LHCbMath v3r47 2014-05-12 =========================
+! 2014-05-11 - Vanya Belyaev
+ - improve positive polynomials 
+
+! 2014-05-10 - Vanya Belyaev
+ - impove integration and fix few bugs 
+
+! 2014-05-09 - Vanya Belyaev
+
+ - Functions.h:
+     1) add integration for 2D non-factorizable models
+     2) fix a stupid bug in nSphere 
+   LHCbMath.h:
+     1) add Zero, NonZero and scale functions  
+
+
+! 2014-05-04 - Vanya Belyaev
+ - analytial integration of bvernsteins polynomials 
+
 !========================= LHCbMath v3r46 2014-03-17 =========================
 ! 2014-03-16 - Vanya Belyaev
  - add new test to illustrate #bug 104111

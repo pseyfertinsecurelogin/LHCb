@@ -4,6 +4,17 @@
 ! Purpose     : Event model for FT digitisation and reconstruction
 !-----------------------------------------------------------------------------
 
+!========================= FTEvent v1r6 2014-05-12 =========================
+! 2014-03-19 - Marco Clemencic
+ - Modified the CMake configuration to use the provided header and selection
+   in G.O.D. generated dictionary.
+
+! 2014-03-19 - Michel De Cian
+ - Removing a comment in lcgDict and putting in FTLiteCluster in lcg_selection
+
+! 2014-03-18 - Michel De Cian
+ - Introducing FTLiteCluster, a copy of FTRawCluster, to change the naming to something more logical
+
 !========================= FTEvent v1r5 2013-12-09 =========================
 ! 2013-11-28 - Maurizio Martinelli
  - modified FTDeposit structure, from map<MCHit,double energy> to a structure

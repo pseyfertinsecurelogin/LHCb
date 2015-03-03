@@ -4,6 +4,32 @@
 ! Purpose     : Detector element for upgraded VELO
 !-----------------------------------------------------------------------------
 
+!========================= VPDet v3r2 2014-05-12 =========================
+! 2014-05-03 - Heinrich Schindler
+ - Replace hardcoded numbers by constants.
+ - Remove unused function trajectory from DeVPSensor.
+ - Change return type of isInActiveArea and pointToChannel 
+   functions from StatusCode to bool  
+
+! 2014-04-25 - Heinrich Schindler
+ - Bugfix from previous commit (need to sort by sensor number not by z!).
+ - Follow change in VPChannelID format (r171869).
+
+! 2014-04-18 - Heinrich Schindler
+ - Merge m_sensors and m_vpSensors class members of DeVP.
+ - Add coarse z-cut in DeVP::sensitiveVolumeID. 
+ - Inline DeVP::sensor(const Gaudi::XYZPoint& point).
+ - Remove less_sensor functor.
+ - Remove separate lists of/iterators to left- and right-side sensors.
+ - Add comments.
+
+! 2014-04-14 - Heinrich Schindler
+ - Remove unused functions (type, isDownstream) from DeVPSensor.
+ - Run clang-format for consistent style.
+
+! 2014-04-08 - Heinrich Schindler
+ - Remove obsolete function channelToNeighbours.
+
 !========================= VPDet v3r1 2014-03-17 =========================
 ! 2014-02-27 - Kurt Rinnert
  - store all common sensor properties in static members.

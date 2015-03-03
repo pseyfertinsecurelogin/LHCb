@@ -3,7 +3,7 @@
 # Maintainer : Jaap Panman, Rob Lambert
 #=====================================================================
 package           FSRAlgs
-version           v1r5
+version           v1r6
 
 #=====================================================================
 # Structure, i.e. directories to process. 
@@ -17,6 +17,7 @@ use LumiEvent       v* Event
 use DAQEvent        v* Event
 use EventBase       v* Event
 use RecEvent        v* Event
+use FSREvent        v* Event
 use LHCbKernel      v* Kernel
 use LHCbAlgs        v* Kernel
 use DetDesc         v* Det

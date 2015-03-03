@@ -343,19 +343,6 @@ Decoder("HltLumiSummaryDecoder",
         outputs={"OutputContainerName":None},
         conf=DecoderDB)
 
-#UPGRADE ===========VP===========
-Decoder("VPRawBankToLiteCluster/createVPLiteClusters",
-        active=True, banks=["VP"],
-        inputs={"RawEventLocations" : None},
-        outputs={"ClusterLocation": None},
-        conf=DecoderDB)
-
-Decoder("VPRawBankToPartialCluster/createVPClusters",
-        active=True, banks=["VP"],
-        inputs={"RawEventLocations" : None},
-        outputs={"ClusterLocation": None},
-        conf=DecoderDB)
-
 #UPGRADE ===========UT===========
 Decoder("RawBankToSTLiteClusterAlg/createUTLiteClusters",
         active=True, banks=["UT","UTPedestal","UTFull","UTError"],

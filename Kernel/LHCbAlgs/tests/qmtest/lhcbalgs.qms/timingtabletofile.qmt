@@ -1,4 +1,19 @@
 <?xml version="1.0" ?><!DOCTYPE extension  PUBLIC '-//QM/2.3/Extension//EN'  'http://www.codesourcery.com/qm/dtds/2.3/-//qm/2.3/extension//en.dtd'>
+<!--
+#######################################################
+# SUMMARY OF THIS TEST
+# ...................
+# Author: rlambert
+# Purpose: Run a job with the new LHCbTimingAuditor, output to a tab-separated file and check that the parser works
+# Prerequisites: None
+# Common failure modes, severities and cures: 
+#               . SEVERE: Segfault or raised exception, stderr, nonzero return code
+#               . MAJOR: additional FATAL/ERROR messages always a major problem. no ERROR messages should ever be printed when running this test.
+#               . MINOR: additional WARNING messages, it is unclear how severe these may be, you will need to hunt down the cause and either fix the problem or suppress the warning.
+#               . MAJOR: If there are any missing entries in the timing table, or if the timing table is not saved to a file, that would indicate a large problem.
+#               . TRIVIAL: Anlight differences in the timng table cound indicate a change of the input file or running on a much faster machine
+#######################################################
+-->
 <extension class="GaudiTest.GaudiExeTest" kind="test">
   <argument name="program"><text>gaudirun.py</text></argument>
   <argument name="args"><set>
@@ -7,15 +22,19 @@
   <argument name="validator"><text>
 countErrorLines({"WARNING":0, "ERROR":0, "FATAL":0})
 from LHCbAlgs import TTParser
-comp=TTParser.compare("timing.dat","../refs/refsimpletiming.dat")
-if comp!=([],[],[]):
+missing,different,added=TTParser.compare("timing.dat","../refs/refsimpletiming.dat",threshold=1000.)
+td=TTParser.event_av_dict("timing.dat")
+rd=TTParser.event_av_dict("../refs/refsimpletiming.dat")
+#ignore different timings in this test!
+different=[d for d in different if td[d][0]!=rd[d][0]]
+if len(missing+different+added):
   causes.append("Timing tables do not agree, check stdout")
-  if len(comp[0]):
-    result["lhcbalgs.timingtabletofile.missing"]=result.Quote("Missing:\n\t"+"\n\t".join(comp[0]))
-  if len(comp[1]):
-    result["lhcbalgs.timingtabletofile.different"]=result.Quote("Different:\n\t"+"\n\t".join(comp[1]))
-  if len(comp[2]):
-    result["lhcbalgs.timingtabletofile.added"]=result.Quote("Added:\n\t"+"\n\t".join(comp[2]))
+  if len(missing):
+    result["lhcbalgs.timingtabletofile.missing"]=result.Quote("Missing:\n\t"+"\n\t".join(missing))
+  if len(different):
+    result["lhcbalgs.timingtabletofile.different"]=result.Quote("Different:\n\t"+"\n\t".join(different))
+  if len(added):
+    result["lhcbalgs.timingtabletofile.added"]=result.Quote("Added:\n\t"+"\n\t".join(added))
 
 </text></argument>
 </extension>

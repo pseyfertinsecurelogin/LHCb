@@ -2,7 +2,7 @@
 # =============================================================================
 # $Id: doxygenurl.py 166344 2013-12-19 15:04:14Z marcocle $
 # =============================================================================
-# $URL: http://svn.cern.ch/guest/lhcb/LHCb/tags/Phys/LoKiCore/v11r18/python/LoKiCore/doxygenurl.py $
+# $URL: http://svn.cern.ch/guest/lhcb/LHCb/tags/Phys/LoKiCore/v11r19/python/LoKiCore/doxygenurl.py $
 # =============================================================================
 ## @file LoKiCore/doxygenurl.py
 #

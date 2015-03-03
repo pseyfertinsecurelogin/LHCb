@@ -1,7 +1,7 @@
 ################################################################################
 # Package: HltServices
 ################################################################################
-gaudi_subdir(HltServices v2r0)
+gaudi_subdir(HltServices v2r2)
 
 gaudi_depends_on_subdirs(Det/DetCond
                          Det/DetDesc
@@ -13,7 +13,7 @@ gaudi_depends_on_subdirs(Det/DetCond
                          Phys/LoKiHlt)
 
 find_package(AIDA)
-find_package(Boost COMPONENTS iostreams filesystem)
+find_package(Boost COMPONENTS iostreams filesystem program_options)
 
 gaudi_add_module(HltServices
                  src/*.cpp

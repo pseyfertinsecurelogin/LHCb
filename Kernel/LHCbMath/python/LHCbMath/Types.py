@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # =============================================================================
-# $Id: Types.py 166436 2014-01-06 11:41:17Z marcocle $
+# $Id: Types.py 172531 2014-05-11 18:38:18Z ibelyaev $
 # =============================================================================
 ## @file
 #
@@ -36,8 +36,8 @@
 #  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
 #  @date 2009-09-12
 #
-#  Last modification $Date: 2014-01-06 12:41:17 +0100 (Mon, 06 Jan 2014) $
-#                 by $Author: marcocle $
+#  Last modification $Date: 2014-05-11 20:38:18 +0200 (Sun, 11 May 2014) $
+#                 by $Author: ibelyaev $
 #
 #
 # =============================================================================
@@ -70,14 +70,14 @@ Simple file to provide 'easy' access in python for the basic ROOT::Math classes
   >>> dir( Gaudi.Math )
   >>> dir( Gaudi      )
 
-  Last modification $Date: 2014-01-06 12:41:17 +0100 (Mon, 06 Jan 2014) $
-                 by $Author: marcocle $
+  Last modification $Date: 2014-05-11 20:38:18 +0200 (Sun, 11 May 2014) $
+                 by $Author: ibelyaev $
 
 """
 # =============================================================================
 __author__  = "Vanya BELYAEV Ivan.Belyaev@nikhef.nl"
 __date__    = "2009-09-12"
-__version__ = "Version$Revision: 166436 $"
+__version__ = "Version$Revision: 172531 $"
 # =============================================================================
 __all__     = () ## nothing to be imported !
 # =============================================================================
@@ -1177,6 +1177,27 @@ if not hasattr ( Gaudi.Math.Spline       , 'DATAERR' ) :
     Gaudi.Math.Spline.DATAERR       = Gaudi.Math.Splines.DATAERR
 if not hasattr ( Gaudi.Math.SplineErrors , 'DATAERR' ) :
     Gaudi.Math.SplineErrors.DATAERR = Gaudi.Math.Splines.DATAERR
+
+
+## self-printout of TMaxtrix 
+def _tmg_str_ ( self , fmt = ' %+11.4g') :
+    """
+    Self-printout of TMatrix
+    """
+    _rows = self.GetNrows()
+    _cols = self.GetNcols()
+    _line = ''
+    for _irow in range ( 0 , _rows ) :
+        _line += ' |'
+        for _icol in range ( 0 , _cols ) :
+            _line += fmt % self( _irow , _icol )
+        _line += ' |'
+        if ( _rows - 1 )  != _irow : _line += '\n'
+    return _line
+
+
+ROOT.TMatrix.__repr__  = _tmg_str_
+ROOT.TMatrix.__str__   = _tmg_str_
 
 # =============================================================================
 if '__main__' == __name__ :

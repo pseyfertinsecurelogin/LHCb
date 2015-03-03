@@ -25,7 +25,7 @@ class ConfigFileAccessSvc : public Service,
                             virtual public IConfigAccessSvc {
 public:
   ConfigFileAccessSvc(const std::string& name, ISvcLocator* pSvcLocator);
-  virtual ~ConfigFileAccessSvc( );     ///< Destructor
+  ~ConfigFileAccessSvc( ) override = default;     ///< Destructor
 
   StatusCode queryInterface(const InterfaceID& , void** );
 
@@ -51,7 +51,7 @@ private:
   MsgStream&   fatal() const { return msg(MSG::FATAL);   }
   MsgStream&  always() const { return msg(MSG::ALWAYS);  }
   
-  mutable std::auto_ptr<MsgStream>     m_msg;
+  mutable std::unique_ptr<MsgStream>     m_msg;
   std::string                          m_dir;   ///< where to read/write configurations from/to?
 
   // TODO: replace fs::path with a concrete config...

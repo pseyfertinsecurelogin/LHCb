@@ -3,7 +3,7 @@
 // from Gaudi
 #include "GaudiKernel/AlgFactory.h"
 #include "Event/VeloLiteCluster.h"
-#include "Event/FTRawCluster.h"
+#include "Event/FTLiteCluster.h"
 #include "Event/FTCluster.h"
 
 #include "Event/RawEvent.h"
@@ -32,7 +32,7 @@ DECLARE_ALGORITHM_FACTORY( FTRawBankDecoder )
   //new for decoders, initialize search path, and then call the base method
   m_rawEventLocations = {LHCb::RawEventLocation::Other, LHCb::RawEventLocation::Default};
   initRawEventSearch();
-  declareProperty("OutputLocation",m_outputClusterLocation=LHCb::FTRawClusterLocation::Default,"Output location for clusters");
+  declareProperty("OutputLocation",m_outputClusterLocation=LHCb::FTLiteClusterLocation::Default,"Output location for clusters");
   
 }
 //=============================================================================
@@ -63,34 +63,43 @@ StatusCode FTRawBankDecoder::execute() {
   // Retrieve the RawEvent:
   LHCb::RawEvent* rawEvent = findFirstRawEvent();
   
-  if( rawEvent == NULL ) {
+  if( rawEvent == nullptr ) {
     if( msgLevel( MSG::DEBUG ) )
       debug() << "Raw Event not found in " << m_rawEventLocations << endmsg;
     return StatusCode::SUCCESS;
   }
 
 
-  FastClusterContainer<LHCb::FTRawCluster,int>* clus = new FastClusterContainer<LHCb::FTRawCluster,int>();
+  FastClusterContainer<LHCb::FTLiteCluster,int>* clus = new FastClusterContainer<LHCb::FTLiteCluster,int>();
   put( clus, m_outputClusterLocation);
 
   const std::vector<LHCb::RawBank*>& banks = rawEvent->banks( LHCb::RawBank::FTCluster );
   if ( msgLevel(MSG::DEBUG) ) debug() << "Number of raw banks " << banks.size() << endmsg;
-  for ( std::vector <LHCb::RawBank*>::const_iterator itB = banks.begin(); banks.end() != itB; ++itB ) {
-    int source  = (*itB)->sourceID();
+  
+  for ( const LHCb::RawBank* bank : banks){
+    int source  = bank->sourceID();
     int layer   = source/4;
     int quarter = source & 3;
-    int size    = (*itB)->size(); // in bytes, multiple of 4
-    short int* pt = (short int*)(*itB)->data();
+    int size    = bank->size(); // in bytes, multiple of 4
+    short int* pt = (short int*)bank->data();
+    
     if ( msgLevel(MSG::DEBUG) ) debug() << "source " << source << " layer "
                                         << layer << " quarter "
                                         << quarter << " size " << size << endmsg;
-    if ( 0 == (*itB)->version()  ) {
+    if ( 1 == bank->version()  ) {
       size /= 2;   // in short int
       while( size > 0 ) {
         int sipmHeader = (*pt++);
         --size;
         if ( 0 == size && 0 == sipmHeader ) continue;  // padding at the end...
-        int mySiPM = sipmHeader >> FTRawBank::sipmShift;
+        int QuarterSiPMNber = sipmHeader >> FTRawBank::sipmShift;
+        int module = 99;
+        int mat = 9;
+
+        StatusCode sc = RetrieveModuleMat(QuarterSiPMNber,quarter,module,mat);
+        if(sc.isFailure()) return sc;
+
+        int mySiPM = QuarterSiPMNber & 15;
         int nClus  = sipmHeader &  FTRawBank::nbClusMaximum;
         if ( 0 < nClus && msgLevel(MSG::DEBUG) )
           debug() << "   SiPM " << mySiPM << " nClus " << nClus
@@ -98,14 +107,16 @@ StatusCode FTRawBankDecoder::execute() {
         while ( nClus > 0 ) {
           int fraction = ( (*pt) >> FTRawBank::fractionShift ) & FTRawBank::fractionMaximum;
           int cell     = ( (*pt) >> FTRawBank::cellShift     ) & FTRawBank::cellMaximum;
+          int sipmId   = ( (*pt) >> FTRawBank::sipmIdShift   ) & FTRawBank::sipmIdMaximum;
           int cSize    = ( (*pt) >> FTRawBank::sizeShift     ) & FTRawBank::sizeMaximum;
           int charge   = ( (*pt) >> FTRawBank::chargeShift   ) & FTRawBank::chargeMaximum;
           if ( msgLevel( MSG::VERBOSE ) ) {
-            verbose() << format(  "  cell %4d frac %3d charge %5d size %3d code %4.4x",
-                                  cell, fraction, charge, cSize, (*pt) ) << endmsg;
+            verbose() << format(  "  cell %4d sipmId %3d frac %3d charge %5d size %3d code %4.4x",
+                                  cell, sipmId,fraction, charge, cSize, (*pt) ) << endmsg;
           }
-          LHCb::FTChannelID id( layer, quarter, mySiPM, cell );
-          LHCb::FTRawCluster tmp( id, fraction, cSize, charge );
+          //LHCb::FTChannelID id( layer, quarter, mySiPM, cell );
+          LHCb::FTChannelID id( layer, module, mat, mySiPM, cell );
+          LHCb::FTLiteCluster tmp( id, fraction, cSize, charge );
           clus->push_back( tmp );
           pt++;
           --size;
@@ -113,7 +124,7 @@ StatusCode FTRawBankDecoder::execute() {
         }
       }
     } else {
-      info() << "** Unsupported FT bank version " << (*itB)->version() 
+      error() << "** Unsupported FT bank version " << bank->version() 
              << " for source " << source << " size " << size << " bytes."
              << endmsg;
       return StatusCode::FAILURE;
@@ -134,3 +145,23 @@ StatusCode FTRawBankDecoder::finalize() {
 }
 
 //=============================================================================
+StatusCode FTRawBankDecoder::RetrieveModuleMat(const int quartSipmNb, const int quarter , int &locmod, int &locmat)
+{
+  if((quarter == 0)||(quarter == 1) ) locmat = 1;
+  if((quarter == 2)||(quarter == 3) ) locmat = 0;
+  int intermod = quartSipmNb / 16;
+  if((quarter % 2) != 0) // x positive part
+  {
+    if (intermod < 5) locmod = intermod;
+    else locmod = 10;
+  }
+  else  // x negative part
+  {
+    if (intermod > 0) locmod = intermod + 4;
+    else locmod = 11;
+  }
+  if(locmat > 1)  return StatusCode::FAILURE;
+  if(locmod > 11) return StatusCode::FAILURE;
+
+  return StatusCode::SUCCESS;
+}

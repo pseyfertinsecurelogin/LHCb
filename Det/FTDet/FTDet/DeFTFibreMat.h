@@ -114,16 +114,35 @@ public:
    */
   static const CLID& classID() { return CLID_DeFTFibreMat; }
 
-  /** Get the list of traveresed SiPM channels. The particle trajectory is a
-   *  straight line defined by:
-   *  @param globalPointEntry Global entry point
-   *  @param globalPointExit Global exit point
+  /** Get the list of SiPM channels traversed by the hit, (including the light sharing)
+   *  The particle trajectory is a straight line defined by:
+   *  @param MChit providing globalPointEntry Global entry and exit point
    *  Fills a vector of 'FT pairs' (channel ID and fraction of the energy
    *  deposited in it by the MC particle passed as an argument.
    *  @return Status of the execution
    */
+  StatusCode calculateListOfFiredChannels(const LHCb::MCHit*  fthit,
+                                          VectFTPairs&        vectChanAndFrac) const;
+
+  /** Get the position of the mean SiPM channels plus fractionnal position within the channel
+   *  of the hit.
+   *  The particle trajectory is a straight line defined by:
+   *  @param MChit providing globalPointEntry Global entry and exit point
+   *  Fills a 'FT pairs' (channel ID and fraction of the energy
+   *  deposited in it by the MC particle passed as an argument.
+   *  @return Status of the execution
+   */
+  StatusCode calculateMeanChannel(const LHCb::MCHit*  fthit,
+                                  FTPair&             ChanAndFrac) const;
+
+  /** Get the list of SiPM channels traversed by the hit.
+   *  The particle trajectory is a straight line defined by:
+   *  @param MChit providing globalPointEntry Global entry and exit point
+   *  Fills a vector of 'FT pairs' (channel ID and fraction of the crossed length).
+   *  @return Status of the execution
+   */
   StatusCode calculateHits(const LHCb::MCHit*  fthit,
-                           VectFTPairs&         vectChanAndFrac) const;
+                           VectFTPairs&        vectChanAndFracPos) const;
 
 
   /** This function returns the fibre lengh and relative position of the hit 
@@ -133,13 +152,14 @@ public:
    *  @param fibre lengh for the mean y-value of the hit (from entry to exit point)
    *  @param relative position of the hit in the fibre wrt the SiPm position
    */
-  StatusCode hitPositionInFibre(const LHCb::MCHit*  fthit,
-                                double& meanfibrefullLengh,
-                                double& fibreLenghFrac)const;
+    StatusCode hitPositionInFibre(const LHCb::MCHit*  fthit,
+                                  double& meanfibrefullLengh,
+                                  double& fibreLenghFrac)const;
 
   //
-  bool isBottom() const { return m_bottom; }
+  bool isBottom() const { return m_mat; }
   int module() const { return m_module; }
+  int quarter() const { return m_quarter; }
   int layer() const { return m_layer; }
   bool isHoley () const { return m_holey; }
 
@@ -178,7 +198,7 @@ public:
   double layerMaxZ() const { return m_layerMaxZ; }
 
 
- /// Accessor to the minimal x-position of the fibreMat area covered with fibres
+  /// Accessor to the minimal x-position of the fibreMat area covered with fibres
   double fibreMatMinX() const { return m_fibreMatMinX; }
 
   /// Accessor to the maximal x-position of the fibreMat area covered with fibres
@@ -236,7 +256,8 @@ private: // private member functions
    *  @return x-position at y=0
    */
   double xAtYEq0(double x0, double y0) const {
-    return x0 - y0*m_tanAngle;
+    //return x0 - y0*m_tanAngle;
+    return x0 + y0*m_tanAngle;    //DBL
   }
 
   /** Get the sipmID, cellID and fractional position of a hit.
@@ -277,7 +298,8 @@ private: // private member functions
    *  @return FTChannelID
    */
   LHCb::FTChannelID createChannel(unsigned int hitLayer,
-                                  int          quarter,
+                                  int          module,
+                                  int          mat,
                                   unsigned int sipmID,
                                   unsigned int grossCellID) const;
 
@@ -300,7 +322,7 @@ private: // private member functions
    *  @param yIntersect y-coordinate of the crossing point (set by the function)
    *  @return StatusCode: does the fibre trajectory cross the beam-pipe circle
    */
-  StatusCode beamPipeYCoord(const double x0, const int ySign, double& yIntersect) const;
+  void beamPipeYCoord(const double x0, const int ySign, double& yIntersect) const;
 
   /** Function to determine the y coordinate of the crossing point between
    *  the beam-pipe hole (circle) and the fibres. Purely geometrical function.
@@ -309,9 +331,9 @@ private: // private member functions
    *  @param yIntersect y-coordinate of the crossing point (set by the function)
    *  @return StatusCode: does the fibre trajectory cross the beam-pipe circle
    */
-  StatusCode beamPipeYCoord(const double xcoord,
-                            const double ycoord,
-                            double& yIntersect) const;
+  void beamPipeYCoord(const double xcoord,
+		      const double ycoord,
+		      double& yIntersect) const;
 
   /** Function for light sharing between neighbouring SiPM cells.
    *  This model uses straight lines for describing the fibre fractions
@@ -349,7 +371,7 @@ private: // private data members
   double m_tanAngle;            ///< tangent of stereo angle
   double m_dzDy;                ///< layer slope in the y-z plane
 
-  bool m_bottom;
+  int m_mat;
   int m_module;
   int m_layer;
   bool m_holey;
@@ -361,7 +383,7 @@ private: // private data members
   double m_layerMinZ, m_layerMaxZ;
   double m_layerHalfSizeX, m_layerHalfSizeY, m_layerHalfSizeZ;
   double m_innerHoleRadius;
-  double m_layerPosZ;           ///< center of the layer in z
+  double m_layerPosZ;           ///< center of the fibremat in z   
  
   double m_fibreMatMinX, m_fibreMatMaxX;
   double m_fibreMatMinY, m_fibreMatMaxY;
@@ -373,7 +395,8 @@ private: // private data members
   double m_cellSizeX;
   double m_sipmSizeX;
   /// Gaps
-  double m_sipmEdgeSizeX, m_moduleEdgeSizeX;       ///< x-gap between the active area and the outer edge of a sipm and same for module
+  double m_sipmEdgeSizeX, m_moduleEdgeSizeX; ///< x-gap between the active area and the outer edge
+                                             ///of a sipm and same for module
   double  m_moduleGapH, m_moduleGapV;
   double m_gapXLayerHalves;     ///< half x-gap between left and right detector halves
 
@@ -381,15 +404,9 @@ private: // private data members
   double m_sipmPitchX;          /// = m_sipmSizeX + 2*m_gapXsipmEdge
   unsigned int m_nSipmPerQuarter;  /// = int(m_layerHalfSizeX/m_sipmPitchX)
   double m_gapXLayerOuterEdge;  /// = m_layerHalfSizeX - m_nSipmPerQuarter*m_sipmPitchX
-  /// global x@y=0 positions of the SiPM origins in the 4 quarters. Due to the SiPM numbering
-  /// these positions are chosen to signify the right/left SiPM edge for the (x>0)/(x<0) halves.
-  std::vector<double> m_sipmOriginX;
-  /// Distance between two SiPMs in the 4 quarters. Can be positive or negative which reflects
-  /// the direction of increasing the SiPM ID.
-  std::vector<double> m_sipmStepX;
 
   //variables for sipm geometrical distribution at the level of fibremats rather than at the level of layers
-  int m_nSipmPerModule;
+  unsigned int m_nSipmPerModule;
   double m_SipmGapInModule;
 
   /// Use a single MsgStream instance (created in initialize)
@@ -399,7 +416,10 @@ private: // private data members
   MsgStream& info()    const { return *m_msg << MSG::INFO; }
   MsgStream& error()   const { return *m_msg << MSG::ERROR; }
   MsgStream& fatal()   const { return *m_msg << MSG::FATAL; }
-
+  
+  int m_quarter;       //DBL
+  int m_relativemodule;
+  double m_fibreMatPosZ;   
 };
 
 // -----------------------------------------------------------------------------

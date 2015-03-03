@@ -23,6 +23,51 @@
 
 using namespace LHCb;
 
+namespace {
+  const Gaudi::StringKey InfoID{"InfoID"};
+
+
+template <typename Input1,  typename Input2,
+          typename Output1, typename Output2, typename Output3>
+void sets_decompose(Input1 first1, Input1 last1,
+                           Input2 first2, Input2 last2,
+                           Output1 result1, Output2 result2, Output3 result3)
+{
+    while (first1 != last1 && first2 != last2) {
+        if (*first1 < *first2) {
+            *result1++ = *first1++;
+        } else if (*first2 < *first1) {
+            *result2++ = *first2++;
+        } else {
+            *result3++ = *first1++;
+            ++first2; // skip common value in set2
+        }
+    }
+    std::copy(first1, last1, result1);
+    std::copy(first2, last2, result2);
+}
+
+template <typename S> class intersects {
+        const S& m_s;
+    public:
+        intersects(const S& s) : m_s(s) {};
+
+        bool operator()(const S& s) const {
+            auto first1 = std::begin(m_s);
+            auto last1  = std::end(m_s);
+            auto first2 = std::begin(s);
+            auto last2  = std::end(s);
+            while( first1!=last1 && first2!=last2) {
+                if      (*first1<*first2)  ++first1; 
+                else if (*first2<*first1)  ++first2; 
+                else return true;
+            }
+            return false;
+        }
+};
+template <typename S> intersects<S> intersects_( const S& s ) { return {s}; }
+
+}
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : HltSelReportsWriter
@@ -39,7 +84,7 @@ DECLARE_ALGORITHM_FACTORY( HltSelReportsWriter )
 //=============================================================================
 HltSelReportsWriter::HltSelReportsWriter( const std::string& name,
                                           ISvcLocator* pSvcLocator)
-    : GaudiAlgorithm ( name , pSvcLocator )
+    : GaudiAlgorithm ( name , pSvcLocator ),  m_hltANNSvc{ nullptr }
 {
 
   declareProperty("InputHltSelReportsLocation",
@@ -48,9 +93,6 @@ HltSelReportsWriter::HltSelReportsWriter( const std::string& name,
     m_outputRawEventLocation= LHCb::RawEventLocation::Default);
   declareProperty("SourceID",
     m_sourceID= kSourceID_Dummy );  
-
-    m_hltANNSvc = 0;
-
 }
 //=============================================================================
 // Destructor
@@ -121,31 +163,19 @@ StatusCode HltSelReportsWriter::execute() {
   // --------------------------------------------------------------------------------------
 
   // lhcbid sequences - recognize common hit sequences
-  LhcbidSequences lhcbidSequences;  
-  for( HltObjectSummary::Container::const_iterator iObj=objectSummaries->begin();
-       iObj!=objectSummaries->end(); ++iObj ){
-    const HltObjectSummary & hos = **iObj;
-    if( !(hos.lhcbIDs().size()) )continue;
-    LhcbidSequence* thisIDset=new LhcbidSequence();    
-    for( std::vector<LHCbID>::const_iterator iHit=hos.lhcbIDs().begin();
-         iHit!=hos.lhcbIDs().end(); ++iHit){
-      thisIDset->insert( iHit->lhcbID() );
-    }
-    addToLhcbidSequences( thisIDset, lhcbidSequences );
+  LhcbidSequences lhcbidSequences;
+  for( const auto&  hos : *objectSummaries ) {
+    if( hos->lhcbIDs().empty() ) continue;
+    LhcbidSequence thisIDset; // in C++14 set will have  a constructor from a range...
+    for( const auto&  hit : hos->lhcbIDs() ) thisIDset.emplace( hit.lhcbID() );
+    addToLhcbidSequences( std::move(thisIDset), lhcbidSequences );
   }
 
-  unsigned int nHits(0);
-  for( LhcbidSequences::const_iterator iSeq=lhcbidSequences.begin();
-       iSeq != lhcbidSequences.end(); ++iSeq ){
-    nHits += (*iSeq)->size();
-  }
+  auto nHits = std::accumulate(
+      std::begin(lhcbidSequences), std::end(lhcbidSequences), 0u,
+      [](unsigned int n, const LhcbidSequence &s) { return n += s.size(); });
 
   if( lhcbidSequences.size()/2 + 1 + nHits >  0xFFFFL  ){
-    // don't forget to clean lhcbidSequences; they own sets they are pointing to
-    for( LhcbidSequences::const_iterator iSeq=lhcbidSequences.begin();
-         iSeq != lhcbidSequences.end(); ++iSeq ){
-      delete *iSeq;
-    }
     std::ostringstream mess;
     mess << "Too many hits or hit-sequences to store hits=" << nHits << " seq=" << lhcbidSequences.size()
          << " HltSelReports RawBank cannot be created ";    
@@ -153,27 +183,20 @@ StatusCode HltSelReportsWriter::execute() {
   }
 
   HltSelRepRBHits hitsSubBank;
-  hitsSubBank.initialize( lhcbidSequences.size(),nHits );
-  for( LhcbidSequences::const_iterator iSeq=lhcbidSequences.begin();
-       iSeq != lhcbidSequences.end(); ++iSeq ){
-    const LhcbidSequence & hitset = **iSeq;
-    std::vector<unsigned int> hitvec( hitset.begin(), hitset.end() );    
-    hitsSubBank.push_back( hitvec );
-  }
+  hitsSubBank.initialize( lhcbidSequences.size(), nHits );
+  std::copy(std::begin(lhcbidSequences), std::end(lhcbidSequences),
+            std::back_inserter(hitsSubBank));
 
   // --------------------------------------------------------------------------------------
   //  ---------------- in storage banks are ordered by summarizedClassCLID ----------------
   // -------------------------------- sort them -------------------------------------------
 
   std::vector<const HltObjectSummary*> sortedHosPtrs( objectSummaries->begin(),objectSummaries->end() );
-
-  std::sort( sortedHosPtrs.begin(), sortedHosPtrs.end(), sortByCLID() );
-
+  std::sort( std::begin(sortedHosPtrs), std::end(sortedHosPtrs), sortByCLID() );
   // inverse mapping
   std::vector< unsigned int > fromIndexToNewIndex(sortedHosPtrs.size());
-  for( std::vector<const HltObjectSummary*>::const_iterator  ppHos= sortedHosPtrs.begin();
-       ppHos != sortedHosPtrs.end(); ++ppHos ){
-    fromIndexToNewIndex[ (*ppHos)->index() ] = int(ppHos - sortedHosPtrs.begin());
+  for( auto ppHos= std::begin(sortedHosPtrs); ppHos != std::end(sortedHosPtrs); ++ppHos ){
+    fromIndexToNewIndex[ (*ppHos)->index() ] = int(ppHos - std::begin(sortedHosPtrs));
   }
 
   // --------------------------------------------------------------------------------------
@@ -188,22 +211,19 @@ StatusCode HltSelReportsWriter::execute() {
   HltSelRepRBExtraInfo extraInfoSubBank;
   HltSelRepRBStdInfo stdInfoSubBank;
 
-  std::vector<IANNSvc::minor_value_type> hltinfos = m_hltANNSvc->items(Gaudi::StringKey(std::string("InfoID"))); 
+  std::vector<IANNSvc::minor_value_type> hltinfos = m_hltANNSvc->items(InfoID); 
 
   objTypSubBank.initialize();
   substrSubBank.initialize();  
   // some banks require initialization with size info 
   unsigned int nExtraInfo=0;  
   unsigned int nStdInfo=0;  
-  for( std::vector<const HltObjectSummary*>::const_iterator  iObj= sortedHosPtrs.begin();
-       iObj != sortedHosPtrs.end(); ++iObj ){
-    const HltObjectSummary & hos = **iObj;
-    for( HltObjectSummary::Info::const_iterator i=hos.numericalInfo().begin();
-         i!=hos.numericalInfo().end();++i){
-      if( i->first.find("#")!=std::string::npos ){
+  for( const auto&  hos : sortedHosPtrs ) {
+    for( const auto&  i : hos->numericalInfo() ) {
+      if( i.first.find("#")!=std::string::npos ){
         ++nStdInfo;        
       } else {
-        ++nExtraInfo;        
+        ++nExtraInfo;
       }
     }
   }  
@@ -225,13 +245,11 @@ StatusCode HltSelReportsWriter::execute() {
         Error( mess.str(), StatusCode::SUCCESS, 50 );
         // save only selection IDs
         nStdInfo=0;  
-        for( std::vector<const HltObjectSummary*>::const_iterator  iObj= sortedHosPtrs.begin();
-             iObj != sortedHosPtrs.end(); ++iObj ){
+        for( auto  iObj= sortedHosPtrs.begin(); iObj != sortedHosPtrs.end(); ++iObj ){
           const HltObjectSummary & hos = **iObj;
           if( hos.summarizedObjectCLID() == 1 ){
-            for( HltObjectSummary::Info::const_iterator i=hos.numericalInfo().begin();
-                 i!=hos.numericalInfo().end();++i){
-              if( i->first.find("#")!=std::string::npos ){
+            for( const auto&  i : hos.numericalInfo() ) {
+              if( i.first.find("#")!=std::string::npos ){
                 ++nStdInfo;        
               }
             }
@@ -244,25 +262,22 @@ StatusCode HltSelReportsWriter::execute() {
 
   // associate objects with hit sequences, or do simple substructure
   // do info banks, and object type bank
-  for( std::vector<const HltObjectSummary*>::const_iterator  iObj= sortedHosPtrs.begin();
-       iObj != sortedHosPtrs.end(); ++iObj ){
-    const HltObjectSummary & hos = **iObj;
+  for( const auto& hos : sortedHosPtrs ) {
     
-    objTypSubBank.push_back( hos.summarizedObjectCLID() );
+    objTypSubBank.push_back( hos->summarizedObjectCLID() );
 
     HltSelRepRBExtraInfo::ExtraInfo extraInfo;
     HltSelRepRBStdInfo::StdInfo stdInfo;
 
-    for( HltObjectSummary::Info::const_iterator i=hos.numericalInfo().begin();
-         i!=hos.numericalInfo().end();++i){
+    for(const auto&  i : hos->numericalInfo() ){
 
-      if( i->first.find("#")!=std::string::npos ){
+      if( i.first.find("#")!=std::string::npos ){
 
-        if( saveStdInfo || ( hos.summarizedObjectCLID() == 1 ) ){
+        if( saveStdInfo || ( hos->summarizedObjectCLID() == 1 ) ){
           
           // push floats as ints (allows for possible compression in future versions)
           union IntFloat { unsigned int mInt; float mFloat; };
-          IntFloat a; a.mFloat = i->second;
+          IntFloat a; a.mFloat = i.second;
           unsigned int intFloat = a.mInt;
           stdInfo.push_back( intFloat );
           
@@ -272,66 +287,51 @@ StatusCode HltSelReportsWriter::execute() {
 
         bool found=false;        
         // convert string-id to a short
-        for( std::vector<IANNSvc::minor_value_type>::const_iterator j= hltinfos.begin();j!=hltinfos.end();++j){
-          if( j->first == i->first  ){
-            HltSelRepRBExtraInfo::Inf a( j->second, i->second );            
-            extraInfo.push_back( a  );
-            found=true;          
-            break;          
+        for( const auto&  j : hltinfos) {
+          if( j.first == i.first  ){
+            extraInfo.emplace_back(  j.second, i.second );
+            found=true;
+            break;
           }
         }
         // this is very unexpected but shouldn't be fatal
         if( !found ) {
           std::ostringstream mess;
-          mess << "Int key for string info key=" << i->first << " not found ";
+          mess << "Int key for string info key=" << i.first << " not found ";
           Error( mess.str(), StatusCode::SUCCESS, 50 );
         }
-
-      
       }
     }
     stdInfoSubBank.push_back( stdInfo );
     extraInfoSubBank.push_back( extraInfo );
-    
 
     // substructure or hit sequence link vector
     HltSelRepRBSubstr::Substrv svect;
     unsigned int sHitType=0;    
 
-    if( hos.substructure().size() ){
+    if( hos->substructure().size() ){
       // substructure 
-      for( SmartRefVector<LHCb::HltObjectSummary>::const_iterator iS=hos.substructure().begin();
-           iS!=hos.substructure().end(); ++iS ){
+      for( auto iS=hos->substructure().begin(); iS!=hos->substructure().end(); ++iS ){
         svect.push_back( fromIndexToNewIndex[ (*iS)->index() ] );
       }
-    } else if( hos.lhcbIDs().size() ) {
+    } else if( !hos->lhcbIDs().empty() ) {
       // hits
       sHitType=1;
       
-      LhcbidSequence* thisIDset=new LhcbidSequence();    
-      for( std::vector<LHCbID>::const_iterator iHit=hos.lhcbIDs().begin();
-           iHit!=hos.lhcbIDs().end(); ++iHit){
-        thisIDset->insert( iHit->lhcbID() );
-      }
+      LhcbidSequence thisIDset;
+      for( const auto&  hit : hos->lhcbIDs() ) thisIDset.insert( hit.lhcbID() );
     
       unsigned int iSeqID(0);  
-      for( LhcbidSequences::const_iterator iSeq=lhcbidSequences.begin();
-           iSeq != lhcbidSequences.end(); ++iSeq, ++iSeqID ){
-        const LhcbidSequence & hitset = **iSeq;
-        if( thisIDset->find( *(hitset.begin()) ) != thisIDset->end() ){
+      for( const auto&  hitset :  lhcbidSequences) {
+        if( thisIDset.find( *hitset.begin() ) != std::end(thisIDset) ){
           svect.push_back( iSeqID );          
         }
+        ++iSeqID;
       }
-      delete thisIDset;      
     }
 
     HltSelRepRBSubstr::Substr aS( sHitType, svect );
     if( !substrSubBank.push_back( aS ) ){
-      // don't forget to clean lhcbidSequences; they own sets they are pointing to
-      for( LhcbidSequences::const_iterator iSeq=lhcbidSequences.begin();
-           iSeq != lhcbidSequences.end(); ++iSeq ){
-        delete *iSeq;
-      }
       hitsSubBank.deleteBank();    
       objTypSubBank.deleteBank();
       substrSubBank.deleteBank();
@@ -341,12 +341,6 @@ StatusCode HltSelReportsWriter::execute() {
                    , StatusCode::SUCCESS, 50 );
     } 
       
-  } 
-  
-  // don't forget to clean lhcbidSequences; they own sets they are pointing to
-  for( LhcbidSequences::const_iterator iSeq=lhcbidSequences.begin();
-       iSeq != lhcbidSequences.end(); ++iSeq ){
-    delete *iSeq;
   }
 
   // ----------- create HltSelReports bank body and insert subbanks to it
@@ -446,54 +440,29 @@ StatusCode HltSelReportsWriter::execute() {
 }
 
 //=============================================================================
-// this function effectively transfers ownership of set2 into lhcbidSequences
+// this function moves (the relevant parts of) set2 into lhcbidSequences
 
-void  HltSelReportsWriter::addToLhcbidSequences( LhcbidSequence* set2,
-                                                 LhcbidSequences & lhcbidSequences ) const
+void  HltSelReportsWriter::addToLhcbidSequences( LhcbidSequence&& set2,
+                                                 LhcbidSequences& lhcbidSequences ) const
 {
-  if ( set2==0 ) return;
-  if ( set2->empty() ) {
-      delete set2; set2 = 0;
-      return;
+  LhcbidSequences::difference_type offset{ 0 };
+  while ( !set2.empty() ) {
+     auto iSet1 = std::find_if(std::begin(lhcbidSequences)+offset,std::end(lhcbidSequences), intersects_( set2 ));
+     if (iSet1==std::end(lhcbidSequences)) {
+        // no overlap, add everything in one shot...
+       lhcbidSequences.emplace_back( std::move(set2) );
+       assert(set2.empty());
+       break;
+     }
+     offset = std::distance( std::begin(lhcbidSequences), iSet1 );  // start of the next iteration
+     LhcbidSequence set1p,set2p,setin;
+     sets_decompose( std::begin(*iSet1), std::end(*iSet1),
+                     std::begin(set2),   std::end(set2),
+                     std::inserter( set1p, std::end(set1p) ),  // subset of set1, not in set2
+                     std::inserter( set2p, std::end(set2p) ),  // subset of set2, not in set1 
+                     std::inserter( setin, std::end(setin) ) ) ; // intersection of set1 and set2
+     if (iSet1->size()!=setin.size()) iSet1->swap(setin); // shrink set1 to its intersection with set2 
+     if (!set1p.empty()) lhcbidSequences.emplace_back( std::move(set1p) ); // add the non-overlapping part of set1
+     set2.swap(set2p);   // shrink set2 to its non-overlapping part
   }
-  for(LhcbidSequences::iterator iSet1= lhcbidSequences.begin();
-      iSet1!=lhcbidSequences.end();++iSet1){
-    // first check full overlap -- no need to store, just skip
-    // is this needed as a special case? Is always checking == faster then set_intersection??
-    if( (**iSet1) == (*set2) ){
-      delete set2; set2 = 0;
-      break;
-    }
-    // check  for overlap
-    std::auto_ptr<LhcbidSequence> setint(new LhcbidSequence());
-    set_intersection( (*iSet1)->begin(),(*iSet1)->end(),
-                      set2->begin(),set2->end(),
-                      inserter(*setint,setint->begin()) );
-    if( !setint->empty() ){
-      // if any overlap, we replace the original with its subset not in the input
-      std::auto_ptr<LhcbidSequence> set1p(new LhcbidSequence());
-      set_difference(  (*iSet1)->begin(),(*iSet1)->end(),
-                       setint->begin(),setint->end(),
-                       inserter(*set1p,set1p->begin()) );
-      delete *iSet1;                  // given that erase invalidates iSet1, we first delete
-      lhcbidSequences.erase( iSet1 ); // and then erase...
-      if( !set1p->empty() ) lhcbidSequences.push_back( set1p.release() );
-
-      // and then we split the input into the overlap and unique parts
-      std::auto_ptr<LhcbidSequence> set2p(new LhcbidSequence());
-      set_difference(  set2->begin(),set2->end(),
-                       setint->begin(),setint->end(),
-                       inserter(*set2p,set2p->begin()) );
-      // add the overlap
-      lhcbidSequences.push_back( setint.release() );
-      // don't need the original input anymore
-      delete set2; set2 = 0;
-      // and add the unique part of the input, if any
-      if(!set2p->empty() ) addToLhcbidSequences( set2p.release(), lhcbidSequences );
-      // Done!
-      break;
-    }
-  }
-  // and if no overlap, we just add everything in one shot...
-  if( set2!=0 ) lhcbidSequences.push_back( set2 );
 }

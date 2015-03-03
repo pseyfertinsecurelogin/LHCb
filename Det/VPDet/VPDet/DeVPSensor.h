@@ -1,21 +1,19 @@
 #ifndef VPDET_DEVPSENSOR_H
 #define VPDET_DEVPSENSOR_H 1
 
-// Gaudi 
+// Gaudi
 #include "GaudiKernel/MsgStream.h"
 #include "GaudiKernel/Point3DTypes.h"
 
-// Det/Desc 
+// Det/Desc
 #include "DetDesc/DetectorElement.h"
 #include "DetDesc/IGeometryInfo.h"
 // Kernel/LHCbKernel
-#include "Kernel/Trajectory.h"
 #include "Kernel/VPChannelID.h"
+#include "Kernel/VPConstants.h"
 
 // Unique class identifier
 static const CLID CLID_DeVPSensor = 1008205;
-
-class DeVP;
 
 /** @class DeVPSensor DeVPSensor.h VPDet/DeVPSensor.h
  *
@@ -26,7 +24,7 @@ class DeVP;
 
 class DeVPSensor : public DetectorElement {
 
-public:
+ public:
 
   /// Constructor
   DeVPSensor(const std::string& name = "");
@@ -34,24 +32,18 @@ public:
   virtual ~DeVPSensor();
 
   /// Object identification
-  static  const CLID& classID() {return CLID_DeVPSensor;}
+  static const CLID& classID() { return CLID_DeVPSensor; }
   virtual const CLID& clID() const;
 
   /// Initialise the sensor.
   virtual StatusCode initialize();
 
-  /// Return a trajectory (for track fit) from channel + offset
-  std::auto_ptr<LHCb::Trajectory> trajectory(const LHCb::VPChannelID& id, 
-                                             const std::pair<double, double> offset) const;
-
   /// Calculate the nearest channel to a given point.
-  StatusCode pointToChannel(const Gaudi::XYZPoint& point,
-                            const bool local, 
-                            LHCb::VPChannelID& channel) const;
-  StatusCode pointToChannel(const Gaudi::XYZPoint& point,
-                            const bool local,
-                            LHCb::VPChannelID& channel,
-                            std::pair <double, double>& fraction) const;
+  bool pointToChannel(const Gaudi::XYZPoint& point, const bool local,
+                      LHCb::VPChannelID& channel) const;
+  bool pointToChannel(const Gaudi::XYZPoint& point, const bool local,
+                      LHCb::VPChannelID& channel,
+                      std::pair<double, double>& fraction) const;
 
   /// Return the pixel size.
   std::pair<double, double> pixelSize(LHCb::VPChannelID channel) const;
@@ -60,100 +52,73 @@ public:
   bool isLong(LHCb::VPChannelID channel) const;
 
   /// Determine if a local 3-d point is inside the sensor active area.
-  StatusCode isInActiveArea(const Gaudi::XYZPoint& point) const;
+  bool isInActiveArea(const Gaudi::XYZPoint& point) const;
 
   /// Convert local position to global position
   Gaudi::XYZPoint localToGlobal(const Gaudi::XYZPoint& point) const {
     return m_geometry->toGlobal(point);
   }
-  /// Convert global position to local position 
+  /// Convert global position to local position
   Gaudi::XYZPoint globalToLocal(const Gaudi::XYZPoint& point) const {
     return m_geometry->toLocal(point);
   }
 
   /// Return the z position of the sensor in the global frame
-  double z() const {return m_z;}
+  double z() const { return m_z; }
 
   /// Return the sensor number
-  unsigned int sensorNumber() const {return m_sensorNumber;}
+  unsigned int sensorNumber() const { return m_sensorNumber; }
   /// Return the module number
-  unsigned int module() const {return m_module;}
+  unsigned int module() const { return m_module; }
   /// Return station number (station comprises left and right module)
-  unsigned int station() const {return m_module >> 1;}
+  unsigned int station() const { return m_module >> 1; }
 
   /// Return true for x < 0 side of the detector
-  bool isRight() const {return !m_isLeft;}
+  bool isRight() const { return !m_isLeft; }
   /// Return true for x > 0 side of the detector
-  bool isLeft() const {return m_isLeft;}
-  /// Return true if sensor is downstream
-  bool isDownstream() const {return m_isDownstream;}
+  bool isLeft() const { return m_isLeft; }
 
   /// Return sensor thickness in mm.
-  double siliconThickness() const {return DeVPSensor::m_thickness;}
-
-  /// Workaround to prevent hidden base class function
-  inline const std::type_info& type(const std::string &name) const {
-    return ParamValidDataObject::type(name);
-  }
+  double siliconThickness() const { return DeVPSensor::m_thickness; }
 
   /// Return array of cached local x-coordinates by column
-  inline const double* xLocal(void) const {
-    return DeVPSensor::m_local_x;
-  }
+  inline const double* xLocal(void) const { return DeVPSensor::m_local_x; }
 
-  /// Return array of cachedd x pitches by column
-  inline const double* xPitch(void) const {
-    return DeVPSensor::m_x_pitch;
-  }
+  /// Return array of cached x pitches by column
+  inline const double* xPitch(void) const { return DeVPSensor::m_x_pitch; }
 
   /// Calculate the position of a given pixel.
   inline Gaudi::XYZPoint channelToPoint(const LHCb::VPChannelID& channel,
-      const bool local) const {
+                                        const bool local) const {
 
-    const unsigned int chip = channel.chip() % 3;
-    const unsigned int col = channel.col() + chip*256;
-    const unsigned int row = channel.row();
-    const double x = DeVPSensor::m_local_x[col];
-    const double y = (row + 0.5) * 0.055; 
+    const double x = DeVPSensor::m_local_x[channel.scol()];
+    const double y = (channel.row() + 0.5) * 0.055;
     const Gaudi::XYZPoint point(x, y, 0.0);
-    return ( local ? point : localToGlobal(point) );
+    return (local ? point : localToGlobal(point));
   }
 
   /// Calculate the position of a given pixel and inter pixel fractions.
   Gaudi::XYZPoint channelToPoint(const LHCb::VPChannelID& channel,
-      std::pair<double, double> fraction) const {
+                                 std::pair<double, double> fraction) const {
 
-    const unsigned int chip = channel.chip() % 3;
-    const unsigned int col = channel.col() + chip*256;
-    const unsigned int row = channel.row();
+    const unsigned int col = channel.scol();
     const double pitch = DeVPSensor::m_x_pitch[col];
     const double x = DeVPSensor::m_local_x[col] + fraction.first * pitch;
-    const double y = (row + 0.5 + fraction.second) * 0.055; 
+    const double y = (channel.row() + 0.5 + fraction.second) * 0.055;
     const Gaudi::XYZPoint point(x, y, 0.0);
     return localToGlobal(point);
   }
 
-  /// Function kept for backwards compatibility with VPDAQ
-  virtual StatusCode channelToNeighbours(const LHCb::VPChannelID& seedChannel, 
-                                         std::vector <LHCb::VPChannelID>& channels) const;
-
-
-private:
+ private:
 
   IGeometryInfo* m_geometry;
 
   unsigned int m_sensorNumber;
   unsigned int m_module;
   bool m_isLeft;
-  bool m_isDownstream;
-
-  /// Index of the first chip
-  unsigned int m_chip;
 
   /// Global Z position
   double m_z;
-  
-
 
   /// Dimensions of the sensor active area
   static double m_sizeX;
@@ -178,15 +143,16 @@ private:
 
   /// Message stream
   mutable MsgStream* m_msg;
+  /// On-demand access to message stream
   MsgStream& msg() const {
     if (!m_msg) m_msg = new MsgStream(msgSvc(), "DeVPSensor");
     return *m_msg;
   }
 
   /// Cache of local x-cooordinates
-  static double m_local_x[768];
+  static double m_local_x[VP::NSensorColumns];
   /// Cache of x-pitch
-  static double m_x_pitch[768];
+  static double m_x_pitch[VP::NSensorColumns];
   /// Cache validity, so we create it only once on startup
   static bool m_common_cache_valid;
 
@@ -196,4 +162,4 @@ private:
   StatusCode updateGeometryCache();
 
 };
-#endif 
+#endif

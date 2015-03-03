@@ -1,4 +1,4 @@
-// $Id: Functions.h 167196 2014-01-22 11:27:26Z ibelyaev $
+// $Id: Functions.h 172531 2014-05-11 18:38:18Z ibelyaev $
 // ============================================================================
 #ifndef LHCBMATH_FUNCTIONS_H
 #define LHCBMATH_FUNCTIONS_H 1
@@ -26,8 +26,8 @@
  *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
  *  @date 2010-04-19
  *
- *                    $Revision: 167196 $
- *  Last modification $Date: 2014-01-22 12:27:26 +0100 (Wed, 22 Jan 2014) $
+ *                    $Revision: 172531 $
+ *  Last modification $Date: 2014-05-11 20:38:18 +0200 (Sun, 11 May 2014) $
  *                 by $author$
  */
 // ============================================================================
@@ -95,7 +95,7 @@ namespace Gaudi
     public :
       // ======================================================================
       /// constructor
-      Chebyshev ( const unsigned int N ) : m_N ( N ) {}
+      Chebyshev ( const unsigned int N = 0 ) : m_N ( N ) {}
       // ======================================================================
     public:
       // ======================================================================
@@ -105,11 +105,6 @@ namespace Gaudi
     public:
       // ======================================================================
       unsigned int order() const { return m_N ; }
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      Chebyshev () ;                     // the default constructor is disabled
       // ======================================================================
     private:
       // ======================================================================
@@ -184,7 +179,7 @@ namespace Gaudi
     public :
       // ======================================================================
       /// constructor
-      Legendre ( const unsigned int N ) : m_N ( N ) {}
+      Legendre ( const unsigned int N = 0  ) : m_N ( N ) {}
       // ======================================================================
     public:
       // ======================================================================
@@ -194,11 +189,6 @@ namespace Gaudi
     public:
       // ======================================================================
       unsigned int order() const { return m_N ; }
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      Legendre () ;                      // the default constructor is disabled
       // ======================================================================
     private:
       // ======================================================================
@@ -264,7 +254,7 @@ namespace Gaudi
     public :
       // ======================================================================
       /// constructor
-      Hermite ( const unsigned int N ) : m_N ( N ) {}
+      Hermite ( const unsigned int N = 0 ) : m_N ( N ) {}
       // ======================================================================
     public:
       // ======================================================================
@@ -274,11 +264,6 @@ namespace Gaudi
     public:
       // ======================================================================
       unsigned int order() const { return m_N ; }
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      Hermite () ;                      // the default constructor is disabled
       // ======================================================================
     private:
       // ======================================================================
@@ -295,6 +280,29 @@ namespace Gaudi
       // ======================================================================
     public:
       // ======================================================================
+      /// helper structure to denote the basic Bernstein polynomials B(k,N)
+      class GAUDI_API Basic 
+      {
+      public:
+        // ====================================================================
+        explicit  Basic ( const unsigned short k = 0 , 
+                          const unsigned short N = 0 ) 
+          : m_k ( k ) 
+          , m_N ( N ) 
+        {}
+        // ====================================================================
+        unsigned short k () const { return m_k ; }
+        unsigned short N () const { return m_N ; }
+        // ====================================================================
+      private: 
+        // ====================================================================
+        unsigned short m_k ;
+        unsigned short m_N ;
+        // ====================================================================
+      } ;
+      // ======================================================================
+    public:
+      // ======================================================================
       /// constructor from the order
       Bernstein ( const unsigned short       N          ,
                   const double               xmin  =  0 ,
@@ -304,6 +312,21 @@ namespace Gaudi
       Bernstein ( const std::vector<double>& pars       ,
                   const double               xmin  =  0 ,
                   const double               xmax  =  1 ) ;
+      /// templated constructor from the sequence of coefficients 
+      template <class ITERATOR>
+      Bernstein ( ITERATOR     first    , 
+                  ITERATOR     last     , 
+                  const double xmin = 0 , 
+                  const double xmax = 0 ) 
+        : std::unary_function<double,double>()
+        , m_pars ( first , last ) 
+        , m_xmin ( std::min ( xmin, xmax ) )
+        , m_xmax ( std::max ( xmin, xmax ) )
+      { if ( m_pars.empty() ) { m_pars.push_back ( 0 ) ; } }
+      /// construct the basic bernstein polinomial  B(k,N)
+      Bernstein  ( const Basic&         basic    ,
+                   const double         xmin = 0 , 
+                   const double         xmax = 0 ) ;
       // ======================================================================
     public:
       // ======================================================================
@@ -313,14 +336,16 @@ namespace Gaudi
     public:
       // ======================================================================
       /// get number of parameters
-      std::size_t npars () const { return m_pars.size() ; }
+      std::size_t npars  () const { return m_pars.size() ; }
+      /// are all parameters zero?
+      bool        zero   () const ;
       /// set k-parameter
-      bool setPar       ( const unsigned short k , const double value ) ;
+      bool setPar        ( const unsigned short k , const double value ) ;
       /// set k-parameter
-      bool setParameter ( const unsigned short k , const double value )
-      { return setPar   ( k , value ) ; }
+      bool setParameter  ( const unsigned short k , const double value )
+      { return setPar    ( k , value ) ; }
       /// get the parameter value
-      double  par       ( const unsigned short k ) const
+      double  par        ( const unsigned short k ) const
       { return ( k < m_pars.size() ) ? m_pars[k] : 0.0 ; }
       /// get the parameter value
       double  parameter ( const unsigned short k ) const { return par ( k ) ; }
@@ -328,6 +353,8 @@ namespace Gaudi
       double xmin () const { return m_xmin ; }
       /// get upper edge
       double xmax () const { return m_xmax ; }
+      /// get all parameters:
+      const std::vector<double>& pars() const { return m_pars ; }
       // ======================================================================
     public:
       // ======================================================================
@@ -339,7 +366,24 @@ namespace Gaudi
     public:
       // ======================================================================
       /// get the integral between xmin and xmax
-      double integral () const ;
+      double integral   () const ;
+      /// get the integral between low and high 
+      double integral   ( const double low , const double high ) const ;
+      /// get the derivative at point "x" 
+      double derivative ( const double x   ) const ;
+      /// get integral   as function object 
+      Bernstein indefinite_integral () const ;
+      /// get derivative as function object 
+      Bernstein derivative          () const ;
+      // ======================================================================
+    public:
+      // ======================================================================
+      /** get the intergal between low and high for a product of Bernstein
+       *  polynom and the exponential function with the exponent tau
+       */
+      double integral_exp   ( const double low  , 
+                              const double high , 
+                              const double tau  ) const ;
       // ======================================================================
     private:
       // ======================================================================
@@ -405,11 +449,26 @@ namespace Gaudi
     public:
       // ======================================================================
       /// get the integral between xmin and xmax
-      double integral () const { return m_bernstein.integral() ; }
+      double integral   () const { return m_bernstein.integral() ; }
+      /// get the integral between low and high 
+      double integral   ( const double low , const double high ) const 
+      { return m_bernstein.integral ( low , high )  ; }
+      /// get the derivative 
+      double derivative ( const double x ) const 
+      { return m_bernstein.derivative ( x ) ; }
+      // ======================================================================
+    public:
+      // ======================================================================
       /// get the underlying Bernstein polynomial
       const Gaudi::Math::Bernstein& bernstein () const { return m_bernstein ; }
       /// get the parameter sphere 
       const Gaudi::Math::NSphere&   sphere    () const { return m_sphere    ; }
+      /// get the indefinite integral 
+      Bernstein indefinite_intergal () const 
+      { return m_bernstein.indefinite_integral () ; }
+      /// get the derivative 
+      Bernstein derivative          () const 
+      { return m_bernstein.derivative          () ; }
       // ======================================================================
     private:
       // ======================================================================
@@ -482,7 +541,7 @@ namespace Gaudi
     private: // parameters
       // ======================================================================
       /// the peak position
-      double m_peak    ;      //                              the peak position
+      double m_peak   ;       //                              the peak position
       /// sigma left
       double m_sigmaL ;       // sigma-left
       /// sigma right
@@ -731,7 +790,7 @@ namespace Gaudi
     } ;
     // ========================================================================
     /** @class WorkSpace
-     *  helper utility to keep the integration workspace
+     *  helper utility to keep the integration workspace fro GSL integration
      *  @author Vanya Belyaev Ivan.Belyaev@cern.ch
      *  @date 2011-12-03
      */
@@ -1383,6 +1442,7 @@ namespace Gaudi
     // ========================================================================
     /** @class GramCharlierA4
      *  Gram-Charlier type A approximation
+     *  http://en.wikipedia.org/wiki/Edgeworth_series
      *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
      *  @date 2011-06-13
      */
@@ -1469,8 +1529,8 @@ namespace Gaudi
     public:
       // ======================================================================
       /// constructor from two masses
-      PhaseSpace2 ( const double m1 ,
-                    const double m2 ) ;
+      PhaseSpace2 ( const double m1 = 0 ,
+                    const double m2 = 1 ) ;
       /// deststructor
       ~PhaseSpace2 () ;                                         // deststructor
       // ======================================================================
@@ -1478,11 +1538,8 @@ namespace Gaudi
       // ======================================================================
       /// evaluate 2-body phase space
       double operator () ( const double x ) const ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      PhaseSpace2 () ;                   // the default constructor is disabled
+      /// integral 
+      double integral    ( const double xmin , const double xmax ) const ;
       // ======================================================================
     public:
       // ======================================================================
@@ -1557,6 +1614,11 @@ namespace Gaudi
         const double         m2     ,
         const unsigned short L  = 0 ) ;
       // ======================================================================
+    private:
+      // ======================================================================
+      /// integration workspace
+      Gaudi::Math::WorkSpace m_workspace ;    // integration workspace
+      // ======================================================================
     } ;
     // ========================================================================
     /** @class PhaseSpace3
@@ -1577,9 +1639,9 @@ namespace Gaudi
        *  @param l1 the angular momentum between 1st and 2nd particle
        *  @param l2 the angular momentum between the pair and 3rd particle
        */
-      PhaseSpace3 ( const double         m1     ,
-                    const double         m2     ,
-                    const double         m3     ,
+      PhaseSpace3 ( const double         m1 = 0 ,
+                    const double         m2 = 1 ,
+                    const double         m3 = 2 ,
                     const unsigned short l1 = 0 ,
                     const unsigned short l2 = 0 ) ;
       /// deststructor
@@ -1589,11 +1651,6 @@ namespace Gaudi
       // ======================================================================
       /// evaluate 3-body phase space
       double operator () ( const double x ) const ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      PhaseSpace3 () ;                   // the default constructor is disabled
       // ======================================================================
     public:
       // ======================================================================
@@ -1646,8 +1703,8 @@ namespace Gaudi
     public:
       // ======================================================================
       /// constructor from threshold and number of particles
-      PhaseSpaceLeft ( const double         threshold ,
-                       const unsigned short num       ) ;
+      PhaseSpaceLeft ( const double         threshold = 0 ,
+                       const unsigned short num       = 2 ) ;
       /// constructor from list of masses
       PhaseSpaceLeft ( const std::vector<double>& masses ) ;
       /// deststructor
@@ -1658,14 +1715,13 @@ namespace Gaudi
       /// evaluate N-body phase space near left threhsold
       double operator () ( const double x    ) const ;
       // ======================================================================
+    public: // integrals  
+      // ======================================================================
+      double integral ( const double xmin , const double xmax ) const ;
+      // ======================================================================
     public:
       // ======================================================================
       bool setThreshold ( const double x ) ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      PhaseSpaceLeft () ;               // the default constructor is disabled
       // ======================================================================
     private:
       // ======================================================================
@@ -1688,9 +1744,9 @@ namespace Gaudi
     public:
       // ======================================================================
       /// constructor from threshold and number of particles
-      PhaseSpaceRight ( const double         threshold ,
-                        const unsigned short l         ,
-                        const unsigned short n         ) ;
+      PhaseSpaceRight ( const double         threshold = 10 ,
+                        const unsigned short l         = 2  ,
+                        const unsigned short n         = 3  ) ;
       /// deststructor
       ~PhaseSpaceRight () ;                                     // deststructor
       // ======================================================================
@@ -1699,14 +1755,13 @@ namespace Gaudi
       /// evaluate N/L-body phase space near right  threhsold
       double operator () ( const double x ) const ;
       // ======================================================================
+    public: // integrals  
+      // ======================================================================
+      double integral ( const double xmin , const double xmax ) const ;
+      // ======================================================================
     public:
       // ======================================================================
       bool setThreshold ( const double x ) ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      PhaseSpaceRight () ;               // the default constructor is disabled
       // ======================================================================
     private:
       // ======================================================================
@@ -1791,6 +1846,99 @@ namespace Gaudi
       // ======================================================================
     } ;
     // ========================================================================
+    /** @class PhaseSpacePol
+     *  simple function to represent the product of N-body phase space 
+     *  and positive polynomial 
+     *  @see Gaudi::Math::PhaseSpaceNL
+     *  @author Vanya BELYAEV Ivan.BElyaev@cern.ch
+     *  @date 2011-11-30
+     */
+    class GAUDI_API PhaseSpacePol
+      : public std::unary_function<double,double>
+    {
+      // ======================================================================
+    public:
+      // ======================================================================
+      /** constructor from thresholds and number of particles
+       *  @param threshold_L the low-mass  threshold
+       *  @param threshold_H the high-mass threshold
+       *  @param l           how many particles we consider
+       *  @param n           total number of particles ( n>l!)
+       *  @param N           degree of polynomial 
+       */
+      PhaseSpacePol ( const double         threshold_L =  0 ,
+                      const double         threshold_H = 10 ,
+                      const unsigned short l           =  2 ,
+                      const unsigned short n           =  3 , 
+                      const unsigned short N           =  1 ) ; // degree of polynomial
+      // =====================================================================
+      /** constructor from phase space and polynomial degree 
+       *  @param ps          phase space factor 
+       *  @param N           degree of polynomial 
+       */
+      PhaseSpacePol ( const PhaseSpaceNL&  ps      ,
+                      const unsigned short N  =  1 ) ; // degree of polynomial
+      // ======================================================================
+      /** constructor from phase space and polynomial degree 
+       *  @param ps          phase space factor 
+       *  @param N           degree of polynomial 
+       */
+      PhaseSpacePol ( const PhaseSpaceNL&  ps      ,
+                      const unsigned short N       , 
+                      const double         xlow    , 
+                      const double         xhigh   ) ;
+      /// destructor
+      ~PhaseSpacePol () ;                                     // deststructor
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// evaluate N/L-body modulated phase space
+      double operator () ( const double x ) const ;
+      // ======================================================================
+    public:
+      // ======================================================================
+      const Gaudi::Math::PhaseSpaceNL& phasespace () const { return m_phasespace ; }
+      const Gaudi::Math::Positive&     polynom    () const { return m_positive   ; }      
+      const Gaudi::Math::Positive&     positive   () const { return m_positive   ; }      
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// get number of parameters
+      std::size_t npars () const { return m_positive.npars () ; }
+      /// set k-parameter
+      bool setPar       ( const unsigned short k , const double value ) 
+      { return m_positive.setPar ( k , value ) ; }
+      /// set k-parameter
+      bool setParameter ( const unsigned short k , const double value )
+      { return setPar   ( k , value ) ; }
+      /// get the parameter value 
+      double  par       ( const unsigned short k ) const 
+      { return m_positive.par ( k ) ; }
+      /// get the parameter value 
+      double  parameter ( const unsigned short k ) const 
+      { return m_positive.par ( k ) ; }
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// get the integral
+      double integral () const ;
+      /// get the integral between low and high limits
+      double integral ( const double low  ,
+                        const double high ) const ;
+      // ======================================================================
+    private:
+      // ======================================================================
+      /// the phase space 
+      Gaudi::Math::PhaseSpaceNL   m_phasespace ; // the phase space 
+      Gaudi::Math::Positive       m_positive   ; // the positive polynom 
+      // ======================================================================
+    private:
+      // ======================================================================
+      /// integration workspace
+      Gaudi::Math::WorkSpace      m_workspace  ;    // integration workspace
+      // ======================================================================
+    } ;
+    // ========================================================================
     /** @class PhaseSpace23L
      *  simple function to represent the phase
      *   space of 2 particles from 3-body decays:
@@ -1818,12 +1966,12 @@ namespace Gaudi
        *  the third particle
        *  @param l  the angular momentum between the first and the second particle
        */
-      PhaseSpace23L ( const double         m1     ,
-                      const double         m2     ,
-                      const double         m3     ,
-                      const double         m      ,
-                      const unsigned short L      ,
-                      const unsigned short l  = 0 ) ;
+      PhaseSpace23L ( const double         m1 = 0.5 ,
+                      const double         m2 = 0.5 ,
+                      const double         m3 = 3   ,
+                      const double         m  = 5   ,
+                      const unsigned short L  = 1   ,
+                      const unsigned short l  = 0   ) ;
       /// deststructor
       ~PhaseSpace23L () ;                                     // deststructor
       // ======================================================================
@@ -1860,11 +2008,6 @@ namespace Gaudi
       /// get the integral between low and high limits
       double integral ( const double low  ,
                         const double high ) const ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      PhaseSpace23L () ;               // the default constructor is disabled
       // ======================================================================
     private:
       // ======================================================================
@@ -2137,7 +2280,7 @@ namespace Gaudi
     // ========================================================================
     /** @class Flatte
      *
-     *  S.M. Flatt�
+     *  S.M. Flatte
      *  "Coupled-channel analysis of the \f$\pi\eta\f$ and \f$K\bar{K}\f$
      *  systems near \f$K\bar{K}\f$threshold"
      *  Physics Letters B, Volume 63, Issue 2, 19 July 1976, Pages 224-227
@@ -2212,8 +2355,12 @@ namespace Gaudi
       /// get the integral
       virtual double integral () const ;
       /// get the integral between low and high limits
-      virtual double integral ( const double low  ,
-                                const double high ) const ;
+      virtual double integral  ( const double low  ,
+                                 const double high ) const 
+      { return integral1 ( low ,high ) ; }
+      /// get the integral between low and high limits
+      double         integral1 ( const double low  ,
+                                 const double high ) const ;
       // ======================================================================
     private:
       // ======================================================================
@@ -2232,7 +2379,7 @@ namespace Gaudi
     // ========================================================================
     /** @class Flatte2
      *
-     *  S.M. Flatt�
+     *  S.M. Flatte
      *  "Coupled-channel analysis of the \f$\pi\eta\f$ and \f$K\bar{K}\f$
      *  systems near \f$K\bar{K}\f$threshold"
      *  Physics Letters B, Volume 63, Issue 2, 19 July 1976, Pages 224-227
@@ -3342,7 +3489,7 @@ namespace Gaudi
       GammaDist ( const double k     = 2 ,   // shape parameter
                   const double theta = 1 ) ; // scale parameter
       /// desctructor
-      ~GammaDist() ;  // desctructor
+      ~GammaDist() ;  // destructor
       // ======================================================================
     public:
       // ======================================================================
@@ -3815,7 +3962,7 @@ namespace Gaudi
       bool   setAlpha ( const double value ) ;
       bool   setBeta  ( const double value ) ;
       // ======================================================================
-    private: // integrals
+    public: // integrals
       // ======================================================================
       double integral ()                    const ;
       double cdf      ( const double x    ) const ;
@@ -3833,6 +3980,80 @@ namespace Gaudi
       double m_aux ; // auxillary intermediate parameter
       // ======================================================================
     } ;
+    // ========================================================================
+    /** @class ExpoPositive
+     *  useful function for parameterizing smooth background:
+     *  product of the exponential and positive polinonmial 
+     *  @see Gaudi::Math::Positive 
+     */
+    class GAUDI_API ExpoPositive :  public std::unary_function<double,double>
+    {
+    public:
+      // ======================================================================
+      /// constructor from the order
+      ExpoPositive ( const unsigned short       N     =  0 ,
+                     const double               tau   =  0 , // exponent  
+                     const double               xmin  =  0 ,
+                     const double               xmax  =  1 ) ;
+      // ======================================================================
+      /// constructor from N phases
+      ExpoPositive ( const std::vector<double>& pars       ,
+                     const double               tau   =  0 , // exponent 
+                     const double               xmin  =  0 ,
+                     const double               xmax  =  1 ) ;
+      
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// get the value
+      double operator () ( const double x ) const ; 
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// get exponential 
+      double tau    () const { return m_tau ;}
+      /// get bnew valeu for the exponent  
+      bool   setTau ( const  double value ) ;
+      /// get number of polinomial parameters
+      std::size_t npars () const { return m_positive.npars() ; }
+      /// set k-parameter
+      bool setPar       ( const unsigned short k , const double value ) 
+      { return m_positive.setPar ( k , value ) ; }
+      /// set k-parameter
+      bool setParameter ( const unsigned short k , const double value )
+      { return setPar   ( k , value ) ; }
+      /// get the parameter value 
+      double  par       ( const unsigned short k ) const 
+      { return m_positive.par ( k ) ; }
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// get the parameter value
+      double  parameter ( const unsigned short k ) const { return par ( k ) ; }
+      /// get lower edge
+      double xmin () const { return m_positive.xmin () ; }
+      /// get upper edge
+      double xmax () const { return m_positive.xmax () ; }
+      /// transform variables 
+      double x ( const double t ) const { return m_positive. x ( t )  ; }
+      double t ( const double x ) const { return m_positive. t ( x )  ; }
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// get the underlying positive function 
+      const Gaudi::Math::Positive&  positive  () const { return m_positive  ; }
+      // ======================================================================
+    public:
+      // ======================================================================
+      double integral ( const double low , const double high ) const ;
+      double integral () const { return integral ( xmin() , xmax() ) ; }
+      // ======================================================================
+    private:
+      // ======================================================================
+      Gaudi::Math::Positive m_positive  ;
+      double                m_tau       ;
+      // ======================================================================
+    };
     // ========================================================================
     // 2D-models 
     // ========================================================================
@@ -3891,6 +4112,8 @@ namespace Gaudi
       { return k < m_pars.size() ? m_pars[k] : 0.0 ; }
       /// get k-parameter
       double  parameter ( const unsigned int k ) const { return par ( k ) ; }
+      /// get all parameters at once 
+      const std::vector<double>& pars() const { return m_pars ; }
       // ======================================================================      
     public:
       // ======================================================================
@@ -3920,6 +4143,25 @@ namespace Gaudi
       double ty ( const double y ) const
       { return  ( y - ymin () ) / ( ymax () - ymin () )      ; }
       // ======================================================================
+    public:
+      // ======================================================================
+      /// get the integral over 2D-region 
+      double integral ( const double xlow , const double xhigh , 
+                        const double ylow , const double yhigh ) const ;
+      // ======================================================================
+    public: // few helper functions to expose internals 
+      // ======================================================================
+      /// evaluate the basic polynomials 
+      double basicX ( const unsigned short i , const double         x ) const 
+      { return ( i > m_nx || x < m_xmin || x < m_xmax ) ? 0.0 : m_bx[i](x) ; }
+      /// evaluate the basic polynomials 
+      double basicY ( const unsigned short i , const double         y ) const
+      { return ( i > m_ny || y < m_ymin || y < m_ymax ) ? 0.0 : m_by[i](y) ; }
+      /// expose some internals 
+      const Bernstein& basicX ( const unsigned short i ) const { return m_bx[i] ; }
+      /// expose some internals 
+      const Bernstein& basicY ( const unsigned short i ) const { return m_by[i] ; }
+      // ======================================================================
     private:
       // ======================================================================
       // polynom order in x-dimension 
@@ -3939,8 +4181,12 @@ namespace Gaudi
       // ======================================================================
     private:
       // ======================================================================
-      std::vector<long double> m_cx ; // binomial coefficients 
-      std::vector<long double> m_cy ; // binimial coefficients 
+      ///  vectors of basic  Bernstein polynomials 
+      typedef std::vector<Bernstein>  VB ;
+      ///  vector  of basic  Bernstein polynomials 
+      VB m_bx ; //  vector  of basic  Bernetin polynomials 
+      ///  vector  of basic  Bernstein polynomials 
+      VB m_by ; //  vector  of basic  Bernetin polynomials 
       // ======================================================================
     } ;
     // ========================================================================
@@ -4001,6 +4247,22 @@ namespace Gaudi
       double ty ( const double  y ) const { return m_bernstein.ty (  y ) ; }      
       double  x ( const double tx ) const { return m_bernstein. x ( tx ) ; }
       double  y ( const double ty ) const { return m_bernstein. y ( ty ) ; }      
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// get the integral over 2D-region 
+      double integral ( const double xlow , const double xhigh , 
+                        const double ylow , const double yhigh ) const 
+      { return m_bernstein.integral ( xlow , xhigh , ylow , yhigh ) ; }
+      // =====================================================================
+    public: // ingeredients 
+      // =====================================================================
+      // get the bernstein polinomial in 2D 
+      const  Gaudi::Math::Bernstein2D& bernstein () const 
+      { return m_bernstein ; }
+      /// get the parameter sphere  
+      const  Gaudi::Math::NSphere&     sphere    () const 
+      { return m_sphere ; }  
       // ======================================================================
     private:
       // ======================================================================
@@ -4067,6 +4329,11 @@ namespace Gaudi
       { return k < m_pars.size() ? m_pars [k] : 0.0 ; }
       /// get k-parameter
       double  parameter ( const unsigned int   k ) const { return par ( k ) ; }
+      /// get all parameters at once 
+      const std::vector<double>& pars() const { return m_pars ; }
+      // ======================================================================
+    public:
+      // ======================================================================
       /// get lower edge
       double xmin () const { return m_xmin    ; }
       /// get upper edge
@@ -4091,6 +4358,20 @@ namespace Gaudi
       double ty ( const double y ) const
       { return  ( y - ymin () ) / ( ymax () - ymin () ) ; }
       // ======================================================================
+    public:
+      // ======================================================================
+      /// get the integral over 2D-region 
+      double integral ( const double xlow , const double xhigh , 
+                        const double ylow , const double yhigh ) const ;
+      // ======================================================================
+    public: // few helper functions to expose internals 
+      // ======================================================================
+      /// evaluate the basic polynomials 
+      double basic  ( const unsigned short i , const double         x ) const 
+      { return ( i > m_n || x < m_xmin || x < m_xmax ) ? 0.0 : m_b[i](x) ; }
+      /// expose some internals 
+      const Bernstein& basic ( const unsigned short i ) const { return m_b[i] ; }
+      // ======================================================================
     private:
       // ======================================================================
       // polynom order
@@ -4104,7 +4385,10 @@ namespace Gaudi
       // ======================================================================
     private:
       // ======================================================================
-      std::vector<long double> m_c ; // precomputed binomial coefficients 
+      ///  vectors of basic  Bernetin polynomials 
+      typedef std::vector<Bernstein>  VB ;
+      ///  vector  of basic  Bernetin polynomials 
+      VB m_b  ; //  vector  of basic  Bernetin polynomials 
       // ======================================================================
     } ;
     // ========================================================================
@@ -4160,6 +4444,19 @@ namespace Gaudi
       double  x ( const double tx ) const { return m_bernstein. x ( tx ) ; }
       double  y ( const double ty ) const { return m_bernstein. y ( ty ) ; }      
       // ======================================================================
+    public:
+      // ======================================================================
+      /// get the integral over 2D-region 
+      double integral ( const double xlow , const double xhigh , 
+                        const double ylow , const double yhigh ) const 
+      { return m_bernstein.integral ( xlow , xhigh , ylow , yhigh ) ; }
+      // get the bernstein 2D polynom
+      const Gaudi::Math::Bernstein2DSym& bernstein() const 
+      { return m_bernstein ; }
+      /// get the parameter sphere  
+      const  Gaudi::Math::NSphere&       sphere   () const 
+      { return m_sphere ; }  
+      // ======================================================================
     private:
       // ======================================================================
       /// update bernstein coefficients 
@@ -4173,6 +4470,386 @@ namespace Gaudi
       Gaudi::Math::NSphere        m_sphere ;
       // ======================================================================
     } ;
+    // ========================================================================
+    /** @class PS2DPol 
+     *  The 2D-function: 
+     *  \f$ f(x,y) = Ps(x)*Ps(y)*P_{pos}(x,y) \f$, where
+     *  \f$Ps\f$ denotes phase-space function and 
+     * \f$P_{pos}\f$ denotes the positive polynomial
+     */
+    class GAUDI_API PS2DPol
+      : public std::binary_function<double,double,double>
+    {
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// constructor from the order
+      PS2DPol ( const PhaseSpaceNL&   psx     , 
+                const PhaseSpaceNL&   psy     , 
+                const unsigned short  Nx =  1 ,
+                const unsigned short  Ny =  1 ) ;
+      /// constructor from the order
+      PS2DPol ( const PhaseSpaceNL&   psx     , 
+                const PhaseSpaceNL&   psy     , 
+                const unsigned short  Nx      ,
+                const unsigned short  Ny      , 
+                const double          xmin    , 
+                const double          xmax    , 
+                const double          ymin    , 
+                const double          ymax    ) ;
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// get the value
+      double operator () ( const double x , const double y ) const ;
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// get number of parameters
+      std::size_t npars () const { return m_positive.npars () ; }
+      /// set k-parameter
+      bool setPar       ( const unsigned int k , const double value ) 
+      { return m_positive.setPar ( k , value ) ;}
+      /// set k-parameter
+      bool setParameter ( const unsigned int k , const double value )
+      { return setPar   ( k , value ) ; }
+      /// get the parameter value
+      double  par       ( const unsigned int k ) const 
+      { return m_positive.par ( k ) ; }
+      /// get the parameter value
+      double  parameter ( const unsigned int k ) const { return par ( k ) ; }
+      /// get nX & nY 
+      unsigned short nX () const { return m_positive.nX () ; }
+      unsigned short nY () const { return m_positive.nY () ; }
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// get the integral over 2D-region 
+      double integral ( const double xlow , const double xhigh , 
+                        const double ylow , const double yhigh ) const ;
+      // ======================================================================
+    public:
+      // ======================================================================
+      const Gaudi::Math::PhaseSpaceNL& psX         () const { return m_psx      ; }
+      const Gaudi::Math::PhaseSpaceNL& psY         () const { return m_psy      ; }      
+      const Gaudi::Math::PhaseSpaceNL& phasespaceX () const { return psX ()     ; }
+      const Gaudi::Math::PhaseSpaceNL& phasespaceY () const { return psY ()     ; }      
+      const Gaudi::Math::Positive2D&   positive    () const { return m_positive ; }
+      const Gaudi::Math::Positive2D&   polynom     () const { return m_positive ; }      
+      // ====================================== ===============================
+    private:
+      // ======================================================================
+      /// the actual (positive) bernstein polynomial in 2D 
+      Gaudi::Math::Positive2D   m_positive ; // the actual bernstein polynomial
+      /// Phase space 
+      Gaudi::Math::PhaseSpaceNL m_psx      ;
+      Gaudi::Math::PhaseSpaceNL m_psy      ;
+      // ======================================================================
+    private:
+      // ======================================================================
+      /// workspace
+      Gaudi::Math::WorkSpace m_workspace   ;
+      // ======================================================================
+    };
+    // ========================================================================
+    /** @class PS2DPolSym 
+     *  The symmetric 2D-function: 
+     *  \f$ f(x,y) = Ps(x)*Ps(y)*P_{sym}(x,y) \f$, where
+     *  \f$Ps\f$ denotes phase-space function and 
+     * \f$P_{sym}\f$ denotes the symmetric positive polynomial
+     */
+    class GAUDI_API PS2DPolSym
+      : public std::binary_function<double,double,double>
+    {
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// constructor from the order
+      PS2DPolSym ( const PhaseSpaceNL&   ps      , 
+                   const unsigned short  N  =  1 ) ;
+      /// constructor from the order
+      PS2DPolSym ( const PhaseSpaceNL&   ps      , 
+                   const unsigned short  N       ,
+                   const double          xmin    , 
+                   const double          xmax    ) ;
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// get the value
+      double operator () ( const double x , const double y ) const ;
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// get number of parameters
+      std::size_t npars () const { return m_positive.npars () ; }
+      /// set k-parameter
+      bool setPar       ( const unsigned int k , const double value ) 
+      { return m_positive.setPar ( k , value ) ;}
+      /// set k-parameter
+      bool setParameter ( const unsigned int k , const double value )
+      { return setPar   ( k , value ) ; }
+      /// get the parameter value
+      double  par       ( const unsigned int k ) const 
+      { return m_positive.par ( k ) ; }
+      /// get the parameter value
+      double  parameter ( const unsigned int k ) const { return par ( k ) ; }
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// get the integral over 2D-region 
+      double integral ( const double xlow , const double xhigh , 
+                        const double ylow , const double yhigh ) const ;
+      // ======================================================================
+    public:
+      // ======================================================================
+      const Gaudi::Math::PhaseSpaceNL&  psX         () const { return m_ps       ; }
+      const Gaudi::Math::PhaseSpaceNL&  psY         () const { return m_ps       ; }      
+      const Gaudi::Math::PhaseSpaceNL&  phasespaceX () const { return psX()      ; }
+      const Gaudi::Math::PhaseSpaceNL&  phasespaceY () const { return psY()      ; }      
+      const Gaudi::Math::Positive2DSym& positive    () const { return m_positive ; }
+      const Gaudi::Math::Positive2DSym& polynom     () const { return m_positive ; }      
+      // ====================================== ===============================
+    private:
+      // ======================================================================
+      /// the actual (positive) bernstein polynomial in 2D 
+      Gaudi::Math::Positive2DSym m_positive ; // the actual bernstein polynomial
+      /// Phase space 
+      Gaudi::Math::PhaseSpaceNL m_ps        ;
+      // ======================================================================
+    private:
+      // ======================================================================
+      /// workspace for numerical integration 
+      Gaudi::Math::WorkSpace m_workspace    ;
+      // ======================================================================
+    };
+    // ========================================================================
+    /** @class ExpoPS2DPol 
+     *  The 2D-function: 
+     *  \f$ f(x,y) = exp(tau*x)*Ps(y)*P_{pos}(x,y) \f$, where
+     *  \f$Ps\f$ denotes phase-space function and 
+     * \f$P_{pos}\f$ denotes the positive polynomial
+     */
+    class GAUDI_API ExpoPS2DPol
+      : public std::binary_function<double,double,double>
+    {
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// constructor from the order
+      ExpoPS2DPol ( const PhaseSpaceNL&   psy     , 
+                    const double          xmin    , 
+                    const double          xmax    ,
+                    const unsigned short  Nx =  1 ,
+                    const unsigned short  Ny =  1 ) ;
+      /// constructor from the order
+      ExpoPS2DPol ( const PhaseSpaceNL&   psy     , 
+                    const double          xmin    , 
+                    const double          xmax    ,
+                    const unsigned short  Nx      ,
+                    const unsigned short  Ny      , 
+                    const double          ymin    , 
+                    const double          ymax    ) ;
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// get the value
+      double operator () ( const double x , const double y ) const ;
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// get number of parameters
+      std::size_t npars () const { return m_positive.npars () ; }
+      /// set k-parameter
+      bool setPar       ( const unsigned int k , const double value ) 
+      { return m_positive.setPar ( k , value ) ;}
+      /// set k-parameter
+      bool setParameter ( const unsigned int k , const double value )
+      { return setPar   ( k , value ) ; }
+      /// get the parameter value
+      double  par       ( const unsigned int k ) const 
+      { return m_positive.par ( k ) ; }
+      /// get the parameter value
+      double  parameter ( const unsigned int k ) const { return par ( k ) ; }
+      /// get nX & nY 
+      unsigned short nX () const { return m_positive.nX () ; }
+      unsigned short nY () const { return m_positive.nY () ; }
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// get tau
+      double         tau () const { return m_tau ;}
+      /// set tau 
+      bool           setTau ( const double val ) ;
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// get the integral over 2D-region 
+      double integral ( const double xlow , const double xhigh , 
+                        const double ylow , const double yhigh ) const ;
+      // ======================================================================
+    public:
+      // ======================================================================
+      const Gaudi::Math::PhaseSpaceNL& psY         () const { return m_psy      ; }      
+      const Gaudi::Math::PhaseSpaceNL& phasespaceY () const { return psY ()     ; }
+      const Gaudi::Math::Positive2D&   positive    () const { return m_positive ; }
+      const Gaudi::Math::Positive2D&   polynom     () const { return m_positive ; }      
+      // ====================================== ===============================
+    private:
+      // ======================================================================
+      /// the actual (positive) bernstein polynomial in 2D 
+      Gaudi::Math::Positive2D   m_positive ; // the actual bernstein polynomial
+      /// Phase space 
+      Gaudi::Math::PhaseSpaceNL m_psy      ;
+      /// exponential 
+      double                    m_tau      ;
+      // ======================================================================
+    private:
+      // ======================================================================
+      /// workspace
+      Gaudi::Math::WorkSpace m_workspace   ;
+      // ======================================================================
+    };
+    // ========================================================================
+    /** @class Expo2DPol 
+     *  The 2D-function: 
+     *  \f$ f(x,y) = exp(x)*expo(y)*P_{pos}(x,y) \f$, where
+     * \f$P_{pos}\f$ denotes the positive polynomial
+     */
+    class GAUDI_API Expo2DPol
+      : public std::binary_function<double,double,double>
+    {
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// constructor from the order
+      Expo2DPol ( const double          xmin    , 
+                  const double          xmax    ,
+                  const double          ymin    , 
+                  const double          ymax    ,
+                  const unsigned short  Nx =  1 ,
+                  const unsigned short  Ny =  1 ) ;
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// get the value
+      double operator () ( const double x , const double y ) const ;
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// get number of parameters
+      std::size_t npars () const { return m_positive.npars () ; }
+      /// set k-parameter
+      bool setPar       ( const unsigned int k , const double value ) 
+      { return m_positive.setPar ( k , value ) ;}
+      /// set k-parameter
+      bool setParameter ( const unsigned int k , const double value )
+      { return setPar   ( k , value ) ; }
+      /// get the parameter value
+      double  par       ( const unsigned int k ) const 
+      { return m_positive.par ( k ) ; }
+      /// get the parameter value
+      double  parameter ( const unsigned int k ) const { return par ( k ) ; }
+      /// get nX & nY 
+      unsigned short nX () const { return m_positive.nX () ; }
+      unsigned short nY () const { return m_positive.nY () ; }
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// get tau
+      double         tauX    () const { return m_tauX ;}
+      double         tauY    () const { return m_tauY ;}
+      /// set tau 
+      bool           setTauX ( const double val ) ;
+      bool           setTauY ( const double val ) ;
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// get the integral over 2D-region 
+      double integral ( const double xlow , const double xhigh , 
+                        const double ylow , const double yhigh ) const ;
+      // ======================================================================
+    public:
+      // ======================================================================
+      const Gaudi::Math::Positive2D&   positive    () const { return m_positive ; }
+      const Gaudi::Math::Positive2D&   polynom     () const { return m_positive ; }      
+      // ====================================== ===============================
+    private:
+      // ======================================================================
+      /// the actual (positive) bernstein polynomial in 2D 
+      Gaudi::Math::Positive2D   m_positive ; // the actual bernstein polynomial
+      /// exponential 
+      double                    m_tauX     ;
+      double                    m_tauY     ;
+      // ======================================================================
+    };
+    // ========================================================================
+    /** @class Expo2DPolSym 
+     *  The 2D-function: 
+     *  \f$ f(x,y) = exp(x)*expo(y)*P_{sym}(x,y) \f$, where
+     * \f$P_{pos}\f$ denotes the symmetric positive polynomial
+     */
+    class GAUDI_API Expo2DPolSym
+      : public std::binary_function<double,double,double>
+    {
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// constructor from the order
+      Expo2DPolSym ( const double          xmin    , 
+                     const double          xmax    ,
+                     const unsigned short  N  =  1 ) ;
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// get the value
+      double operator () ( const double x , const double y ) const ;
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// get number of parameters
+      std::size_t npars () const { return m_positive.npars () ; }
+      /// set k-parameter
+      bool setPar       ( const unsigned int k , const double value ) 
+      { return m_positive.setPar ( k , value ) ;}
+      /// set k-parameter
+      bool setParameter ( const unsigned int k , const double value )
+      { return setPar   ( k , value ) ; }
+      /// get the parameter value
+      double  par       ( const unsigned int k ) const 
+      { return m_positive.par ( k ) ; }
+      /// get the parameter value
+      double  parameter ( const unsigned int k ) const { return par ( k ) ; }
+      /// get nX & nY 
+      unsigned short n  () const { return m_positive.nX () ; }
+      unsigned short nX () const { return m_positive.nX () ; }
+      unsigned short nY () const { return m_positive.nY () ; }
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// get tau
+      double         tau     () const { return m_tau  ;}
+      /// set tau 
+      bool           setTau  ( const double val ) ;
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// get the integral over 2D-region 
+      double integral ( const double xlow , const double xhigh , 
+                        const double ylow , const double yhigh ) const ;
+      // ======================================================================
+    public:  // expose some internmals 
+      // ======================================================================
+      const Gaudi::Math::Positive2DSym& positive () const { return m_positive ; }
+      const Gaudi::Math::Positive2DSym& polynom  () const { return m_positive ; }      
+      // ====================================== ===============================
+    private:
+      // ======================================================================
+      /// the actual (positive) bernstein polynomial in 2D 
+      Gaudi::Math::Positive2DSym m_positive ; // the actual bernstein polynomial
+      /// exponential 
+      double                     m_tau      ;
+      // ======================================================================
+    };
     // ========================================================================
   } //                                             end of namespace Gaudi::Math
   // ==========================================================================

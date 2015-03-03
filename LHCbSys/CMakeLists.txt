@@ -1,7 +1,7 @@
 ################################################################################
 # Package: LHCbSys
 ################################################################################
-gaudi_subdir(LHCbSys v37r1p1)
+gaudi_subdir(LHCbSys v37r1)
 
 gaudi_depends_on_subdirs(Associators/MCAssociators
                          Calo/CaloDAQ
@@ -99,7 +99,6 @@ gaudi_depends_on_subdirs(Associators/MCAssociators
                          Sim/SimComponents
                          Tools/CondDBEntityResolver
                          Tools/CondDBUI
-			 Tools/EventIndexer
                          Tools/FileStager
                          Tools/XmlTools
 			 Velo/VeloDAQ

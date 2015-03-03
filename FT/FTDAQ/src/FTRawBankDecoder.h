@@ -9,7 +9,7 @@
 
 
 /** @class FTRawBankDecoder FTRawBankDecoder.h
- *  Decode the FT raw bank into FTRawClusters
+ *  Decode the FT raw bank into FTLiteClusters
  *
  *  @author Olivier Callot
  *  @date   2012-05-11
@@ -28,6 +28,7 @@ public:
 protected:
 
 private:
+  StatusCode RetrieveModuleMat(const int quartSipmNb, const int quarter , int &locmod, int &locmat);
   
   std::string m_outputClusterLocation;
 };
