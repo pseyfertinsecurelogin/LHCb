@@ -76,14 +76,29 @@ StatusCode CaloTriggerBitsFromRawAlg::execute() {
   else {
     l0Cells = m_l0BitTool->spdCells();
   }
-  if(m_statusOnTES)m_l0BitTool->putStatusOnTES();
   
 
   std::vector<LHCb::CaloCellID>::const_iterator iCell;
   for( iCell = l0Cells.begin(); l0Cells.end() != iCell ; ++iCell ) {
     LHCb::L0PrsSpdHit* l0Bit = new LHCb::L0PrsSpdHit( *iCell );
-    newL0Bits->insert( l0Bit ) ;
-  };
+
+    // protect against SEU
+    try{
+      newL0Bits->insert( l0Bit ) ;
+    }catch(GaudiException &exc) { 
+      counter("Duplicate l0Bit") += 1;
+      std::ostringstream os("");
+      os << "Duplicate l0Bit for channel " << *iCell << " " << endmsg;
+      Warning(os.str(),StatusCode::SUCCESS).ignore();
+      int card =  m_l0BitTool->deCalo()->cardNumber( *iCell );
+      int tell1=  m_l0BitTool->deCalo()->cardToTell1( card);
+      LHCb::RawBankReadoutStatus& status = m_l0BitTool->status();
+      status.addStatus( tell1 ,LHCb::RawBankReadoutStatus::DuplicateEntry);
+      delete l0Bit;
+    }     
+  }
+  
+  if(m_statusOnTES)m_l0BitTool->putStatusOnTES();
   debug() << " L0PrsSpdHits container size " << newL0Bits->size() << endmsg;
   return StatusCode::SUCCESS;
 }

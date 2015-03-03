@@ -1,4 +1,4 @@
-// $Id: Streamers.h 102913 2010-11-18 16:03:12Z ibelyaev $
+// $Id: Streamers.h 120050 2011-03-10 17:10:51Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_STREAMERS_H 
 #define LOKI_STREAMERS_H 1
@@ -12,6 +12,23 @@
 #include "LoKi/apply.h"
 #include "LoKi/compose.h"
 #include "LoKi/Filters.h"
+#include "LoKi/Stat.h"
+// ============================================================================
+/** @file
+ *
+ *  This file is a part of LoKi project - 
+ *    "C++ ToolKit  for Smart and Friendly Physics Analysis"
+ *
+ *  The package has been designed with the kind help from
+ *  Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas, 
+ *  contributions and advices from G.Raven, J.van Tilburg, 
+ *  A.Golutvin, P.Koppenburg have been used in the design.
+ *
+ *  By usage of this code one clearly states the disagreement 
+ *  with the campain of Dr.O.Callot et al.: 
+ *  ``No Vanya's lines are allowed in LHCb/Gaudi software.''
+ *
+ */
 // ============================================================================
 /** compose/chain the function 
  *

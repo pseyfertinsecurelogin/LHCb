@@ -1,4 +1,4 @@
-// $Id: BasicFunctors.h 53291 2010-08-05 14:35:53Z ibelyaev $
+// $Id: BasicFunctors.h 120050 2011-03-10 17:10:51Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_BASICFUNCTORS_H 
 #define LOKI_BASICFUNCTORS_H 1
@@ -19,8 +19,16 @@
  *  contributions and advices from G.Raven, J.van Tilburg, 
  *  A.Golutvin, P.Koppenburg have been used in the design.
  *
+ *  By usage of this code one clearly states the disagreement 
+ *  with the campain of Dr.O.Callot et al.: 
+ *  ``No Vanya's lines are allowed in LHCb/Gaudi software.''
+ *
  *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
  *  @date 2007-10-31 
+ *
+ *                    $Revision: 120050 $
+ *  Last modification $Date: 2011-03-10 18:10:51 +0100 (Thu, 10 Mar 2011) $
+ *                 by $Author: ibelyaev $
  */
 // ============================================================================
 namespace LoKi
@@ -64,19 +72,17 @@ namespace LoKi
     //
     typedef LoKi::Constant<TYPE,double>              Constant               ;
     typedef LoKi::Constant<TYPE,bool>                BooleanConstant        ;
-    
+    //
     // ========================================================================
     // for functional programing:
     // ========================================================================
-    
+    //
     // map/yield:  
     typedef LoKi::Functor<std::vector<TYPE>,std::vector<double> > Map        ;
     // filter:
     typedef LoKi::Functor<std::vector<TYPE>,std::vector<TYPE> >   Pipe       ;
     // reduce 
     typedef LoKi::Functor<std::vector<TYPE>,double>               FunVal     ;
-    // element selection
-    typedef LoKi::Functor<std::vector<TYPE>,TYPE>                 Element    ;
     // Source
     typedef LoKi::Functor<void,std::vector<TYPE> >                Source     ;
     // reduce 
@@ -84,9 +90,9 @@ namespace LoKi
     //
   } ;
   // ==========================================================================
-} // end of namespace LoKi 
+} //                                                      end of namespace LoKi 
 // ============================================================================
-// The END 
+//                                                                      The END 
 // ============================================================================
 #endif // LOKI_BASICFUNCTORS_H
 // ============================================================================

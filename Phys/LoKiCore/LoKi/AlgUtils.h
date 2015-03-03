@@ -1,4 +1,4 @@
-// $Id: $
+// $Id: AlgUtils.h 121023 2011-03-29 18:09:53Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_ALGUTILS_H 
 #define LOKI_ALGUTILS_H 1
@@ -33,8 +33,8 @@ class GaudiAlgorithm ;
  *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
  *  @date 2010-12-06
  *
- *                    $Revision:$
- *  Last Modification $Date:$ 
+ *                    $Revision: 121023 $
+ *  Last Modification $Date: 2011-03-29 20:09:53 +0200 (Tue, 29 Mar 2011) $ 
  *                 by $Author: ibelyaev $ 
  */
 // ============================================================================

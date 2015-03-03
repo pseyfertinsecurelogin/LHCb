@@ -1,5 +1,4 @@
-// $Id: LHCbKernelDict.h,v 1.22 2010-03-17 14:34:12 cocov Exp $
-#ifndef DICT_LHCBKERNELDICT_H 
+#ifndef DICT_LHCBKERNELDICT_H
 #define DICT_LHCBKERNELDICT_H 1
 
 // Additional classes to be added to automatically generated lcgdict
@@ -23,6 +22,7 @@
 #include "Kernel/ParabolaTraj.h"
 #include "Kernel/SiPositionInfo.h"
 #include "Kernel/PixelPositionInfo.h"
+#include "Kernel/RichSmartID.h"
 
 #include "Kernel/IAlgorithmCorrelations.h"
 #include "Kernel/IBdlTool.h"

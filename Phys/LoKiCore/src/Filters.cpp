@@ -1,4 +1,4 @@
-// $Id: $
+// $Id: Filters.cpp 121023 2011-03-29 18:09:53Z ibelyaev $
 // ============================================================================
 // Include files 
 // ============================================================================
@@ -28,9 +28,9 @@
  *  @author Vanya Belyaev Ivan.BElyaev@cern.ch
  *  @date 2010-11-17 
  *
- *                    $Revision$
- *  Last modification $Date$
- *                 by $Author$
+ *                    $Revision: 121023 $
+ *  Last modification $Date: 2011-03-29 20:09:53 +0200 (Tue, 29 Mar 2011) $
+ *                 by $Author: ibelyaev $
  */
 // ============================================================================
 template <>

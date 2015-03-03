@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # =============================================================================
-# $Id: functions.py 116907 2011-02-03 10:46:23Z ibelyaev $
+# $Id: functions.py 120851 2011-03-28 13:23:53Z ibelyaev $
 # =============================================================================
-# $URL: http://svn.cern.ch/guest/lhcb/LHCb/tags/Phys/LoKiCore/v10r9/python/LoKiCore/functions.py $ 
+# $URL: http://svn.cern.ch/guest/lhcb/LHCb/tags/Phys/LoKiCore/v11r0/python/LoKiCore/functions.py $ 
 # =============================================================================
 ## @file functions.py LoKiCore/function.py
 #  The set of basic functions for from LoKiCore library
@@ -32,7 +32,7 @@ A.Golutvin, P.Koppenburg have been used in the design.
 # =============================================================================
 __author__  = "Vanya BELYAEV ibelyaev@physics.syr.edu"
 __date__    = "????-??-??"
-__version__ = "Version $Revision: 116907 $ "
+__version__ = "Version $Revision: 120851 $ "
 # =============================================================================
 
 from LoKiCore.basic import cpp, std, LoKi, LHCb, Gaudi
@@ -443,6 +443,24 @@ def max_abs_value ( s , *a ) :
     return s.__max_abs_value__ ( *a )
 
 # =============================================================================
+## get a sum over stream 
+def sum ( s , *a ) :
+    """
+    Get a sum over functionin the stream
+    
+    """
+    return s.__sum__ ( *a )
+
+# =============================================================================
+## get a sum over the stream 
+def product ( s , *a ) :
+    """
+    Get a sum over functionin the stream
+    
+    """
+    return s.__product__ ( *a )
+
+# =============================================================================
 ## find the element from decay tree or container whcih minimize the function
 def min_element ( s , *a ) :
     """
@@ -663,6 +681,32 @@ def count ( cut ) :
     """
     return cut.__count__ ()
 
+# =============================================================================
+## Construct 'fetch/reduce' vector-function from the scalar functor
+#
+#  Usefult in steams:
+# 
+#  @code
+#
+#    " ... >> fetch ( PT , 1 , -1 )  >> ... "  #
+#
+#
+#    " ... >> fetch ( PT > 1 * GeV )  "  # terminate stream 
+#
+#  @endcode     
+#
+#  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
+#  @date 2011-03-28
+def fetch ( s , *args ) :
+    """
+    Construct 'fetch/reduce' vector-function from the scalar functor 
+
+    >>> functor = ...
+    >>> f = fetch ( functor , 1 , -1 )
+         
+    """
+    return s.__fetch__( *args ) 
+
 
 # =============================================================================
 ##  create the 'union' for two streamers
@@ -688,8 +732,8 @@ def union ( fun1 , fun2 ) :
     >>> result = union ( fun1 , fun2 ) 
     
     """
-    if hasattr ( fun1 , '_union_' ) : return fun1._union_ ( fun2 )
-    return fun2._union_ ( fun1 )
+    if hasattr ( fun1 , '__union__' ) : return fun1.__union__ ( fun2 )
+    return fun2.__union__ ( fun1 )
 
 # =============================================================================
 ##  create the 'intersection' for two streamers
@@ -715,8 +759,9 @@ def intersection ( fun1 , fun2 ) :
     >>> result = intersection ( fun1 , fun2 ) 
     
     """
-    if hasattr ( fun1 , '_intersection_' ) : return fun1._intersection_ ( fun2 )
-    return fun2._intersection_ ( fun1 )
+    if hasattr ( fun1 , '__intersection__' ) :
+        return fun1.__intersection__ ( fun2 )
+    return fun2.__intersection__ ( fun1 )
 
 
 # =============================================================================
@@ -743,7 +788,7 @@ def difference ( fun1 , fun2 ) :
     >>> result = difference ( fun1 , fun2 ) 
     
     """
-    return fun1._difference_ ( fun2 )
+    return fun1.__difference__ ( fun2 )
 
 # =============================================================================
 ##  create the 'symmetric-difference' for two streamers
@@ -769,8 +814,9 @@ def sym_difference ( fun1 , fun2 ) :
     >>> result = sym_difference ( fun1 , fun2 ) 
     
     """
-    if hasattr ( fun1 , '_sym_difference_' ) : return fun1._sym_difference_ ( fun2 )
-    return fun2._sym_difference_ ( fun1 )
+    if hasattr ( fun1 , '__sym_difference__' ) :
+        return fun1.__sym_difference__ ( fun2 )
+    return fun2.__sym_difference__ ( fun1 )
 
 
 # =============================================================================
@@ -797,7 +843,7 @@ def includes ( fun1 , fun2 ) :
     >>> result = includes ( fun1 , fun2 ) 
     
     """
-    return fun1._includes_ ( fun2 )
+    return fun1.__includes__ ( fun2 )
 
 
 # =============================================================================
@@ -829,7 +875,108 @@ def timer ( obj , *args ) :
             if hasattr ( arg0 , '__timer__' ) : return timer ( arg0 , obj ) 
     ##
     raise TypeErorr, "Invalid arguments "
+
+# =============================================================================
+## create 'mean-over-stream' vector-functor:
+#
+#  @code
+#
+#    >>> fun = PT
+#    >>> meanPT = mean ( PT )
+#
+#  @endcode 
+#
+#  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
+#  @date 2011-03-04
+def mean ( obj , *args ) :
+    """
+    Create ``mean-over-stream'' vector-functor
+
+    >> mean ( PT ) >> 
     
+    """
+    return obj.__mean__ ( *args )
+# =============================================================================
+## create 'mean-error-over-stream' vector-functor:
+#
+#  @code
+#
+#    >>> fun = PT
+#    >>> errPT = meanErr ( PT )
+#
+#  @endcode 
+#
+#  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
+#  @date 2011-03-04
+def meanErr ( obj , *args ) :
+    """
+    Create ``mean-error-over-stream'' vector-functor
+
+    >> meanErr ( PT ) >> 
+    
+    """
+    return obj.__meanErr__ ( *args )
+# =============================================================================
+## create 'rms-over-stream' vector-functor:
+#
+#  @code
+#
+#    >>> fun = PT
+#    >>> rmsPT = rms ( PT )
+#
+#  @endcode 
+#
+#  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
+#  @date 2011-03-04
+def rms ( obj , *args ) :
+    """
+    Create ``mean-error-over-stream'' vector-functor
+
+    >> rms ( PT ) >> 
+    
+    """
+    return obj.__rms__ ( *args )
+# =============================================================================
+## create 'efficiency-over-stream' vector-functor:
+#
+#  @code
+#
+#    >>> fun = PT > 1 * GeV 
+#    >>> effPT = eff ( fun )
+#
+#  @endcode 
+#
+#  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
+#  @date 2011-03-04
+def eff ( obj , *args ) :
+    """
+    Create ``mean-error-over-stream'' vector-functor
+
+    >> eff ( PT  > 1 * GeV  ) >> 
+    
+    """
+    return obj.__eff__ ( *args )
+# =============================================================================
+## create 'efficiency-error-over-stream' vector-functor:
+#
+#  @code
+#
+#    >>> fun = PT > 1 * GeV 
+#    >>> effPT = eff ( fun )
+#
+#  @endcode 
+#
+#  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
+#  @date 2011-03-04
+def effErr ( obj , *args ) :
+    """
+    Create ``mean-error-over-stream'' vector-functor
+
+    >> effErr ( PT  > 1 * GeV  ) >> 
+    
+    """
+    return obj.__effErr__ ( *args )
+
 # =============================================================================
 ##  create the 'conditional source/cause' 
 #

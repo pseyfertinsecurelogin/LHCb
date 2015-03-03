@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # =============================================================================
-# $Id: math.py 53291 2010-08-05 14:35:53Z ibelyaev $ 
+# $Id: math.py 121225 2011-04-02 12:41:34Z ibelyaev $ 
 # =============================================================================
 ## @file LoKiCore/math.py
 #  helper file for redefine the standard mathematical functions
@@ -13,6 +13,14 @@
 #  Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas, 
 #  contributions and advices from G.Raven, J.van Tilburg, 
 #  A.Golutvin, P.Koppenburg have been used in the design.
+#
+#   By usage of this code one clearly states the disagreement 
+#  with the campain of Dr.O.Callot et al.: 
+#  ``No Vanya's lines are allowed in LHCb/Gaudi software.''
+#
+#                    $Revision: 121225 $
+#  Last modification $Date: 2011-04-02 14:41:34 +0200 (Sat, 02 Apr 2011) $
+#                 by $Author: ibelyaev $
 #
 #  @author Vanya BELYAEV ibelyaev@physics.syr.edu
 #  @date 2007-07-17
@@ -28,11 +36,15 @@ Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas,
 contributions and advices from G.Raven, J.van Tilburg, 
 A.Golutvin, P.Koppenburg have been used in the design.
 
+By usage of this code one clearly states the disagreement 
+with the campain of Dr.O.Callot et al.:
+``No Vanya's lines are allowed in LHCb/Gaudi software.''
+
 """
 # =============================================================================
 __author_   = "Vanya BELYAEV ibelyaev@physics.syr.edu"
 __date__    = "2007-01-17"
-__version__ = "CVS Tag: $Name: not supported by cvs2svn $, version $Revision: 53291 $ "
+__version__ = "CVS Tag: $Name: not supported by cvs2svn $, version $Revision: 121225 $ "
 # =============================================================================
 import math
 
@@ -95,6 +107,14 @@ def pow3  ( o ) :
 def pow4  ( o ) :
     if hasattr ( o , "__pow4__"  ) : return o.__pow4__  ()
     return pow(o,4)
+
+
+def round ( o ) :
+    if hasattr ( o , '__round__' ) : return o.__round__()
+    return long ( o )
+
+def jbit  ( o , j )       : return o.__jbit__  ( j       ) 
+def jbits ( o , j1 , j2 ) : return o.__jbits__ ( j1 , j2 ) 
 
 _std_min_ = min 
 def min  ( o , *a ) :

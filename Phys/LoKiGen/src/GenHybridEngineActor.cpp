@@ -22,8 +22,15 @@
  *  contributions and advices from G.Raven, J.van Tilburg, 
  *  A.Golutvin, P.Koppenburg have been used in the design.
  *
+ *  By usage of this code one clearly states the disagreement 
+ *  with the campain of Dr.O.Callot et al.: 
+ *  ``No Vanya's lines are allowed in LHCb/Gaudi software.''
+ *
  *  @date 2004-06-29 
  *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+ *                    $Revision$
+ *  Last modification $Date$
+ *                 by $Author$
  */
 // ============================================================================
 // helper method to descrease number of lines 
@@ -37,13 +44,13 @@ inline StatusCode LoKi::Hybrid::GenEngineActor::_add
   {
     return LoKi::Report::Error
       ("LoKi:Hybrid::GenEngineActor::addCut/Fun(): LoKi::IGenHybridTool* is not connected!") ;  
-  };
+  }
   // one more check 
   if ( name != m_tool->name() )
   {
     return LoKi::Report::Error
       ("LoKi:Hybrid::GenEngineActor::addCut/Fun() : mismatch in LoKi::IGenHybridTool name!") ;  
-  };
+  }
   // set the cut for the tool 
   m_tool->set ( cut ) ;
   // 
@@ -87,7 +94,12 @@ StatusCode LoKi::Hybrid::GenEngineActor::releaseTool
 // ============================================================================
 StatusCode LoKi::Hybrid::GenEngineActor::connectTool 
 (       LoKi::IGenHybridTool*       tool )
-{
+{ 
+  //
+  LoKi::Report::Assert
+    ( !m_tool.validPointer() ,
+      "LoKi::Hybrid::GenEngineActor: double lock?" ) ;
+  //
   // substitute the tool 
   m_tool =  tool ;
   // 
@@ -169,20 +181,6 @@ StatusCode LoKi::Hybrid::GenEngineActor::process
 StatusCode LoKi::Hybrid::GenEngineActor::process
 ( const std::string&            name , 
   const LoKi::Types::GVFunVals& func ) const { return _add ( name , func ) ; }
-// ============================================================================
-// elements
-// ============================================================================
-// propagate the element to the tool 
-// ============================================================================
-StatusCode LoKi::Hybrid::GenEngineActor::process
-( const std::string&             name , 
-  const LoKi::Types::GElements&  func ) const { return _add ( name , func ) ; }
-// ============================================================================
-// propagate the element to the tool 
-// ============================================================================
-StatusCode LoKi::Hybrid::GenEngineActor::process
-( const std::string&             name , 
-  const LoKi::Types::GVElements& func ) const { return _add ( name , func ) ; }
 // ============================================================================
 // sources
 // ============================================================================

@@ -1,4 +1,4 @@
-// $Id:$
+// $Id: CounterAlg.cpp 121023 2011-03-29 18:09:53Z ibelyaev $
 // ============================================================================
 // Include files 
 // ============================================================================
@@ -34,9 +34,9 @@
  *  ``No Vanya's lines are allowed in LHCb/Gaudi software.''
  *
  *  
- *                    $Revision$
- *  Last modification $Date$
- *                 by $Author$
+ *                    $Revision: 121023 $
+ *  Last modification $Date: 2011-03-29 20:09:53 +0200 (Tue, 29 Mar 2011) $
+ *                 by $Author: ibelyaev $
  */
 // ============================================================================
 namespace LoKi 

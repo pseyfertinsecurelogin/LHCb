@@ -1,4 +1,4 @@
-// $Id: LoKiNumbersDict.h 87168 2010-10-03 12:45:56Z ibelyaev $
+// $Id: LoKiNumbersDict.h 120746 2011-03-24 19:20:43Z ibelyaev $
 // ============================================================================
 #ifndef DICT_LOKINUMBERSDICT_H 
 #define DICT_LOKINUMBERSDICT_H 1
@@ -20,10 +20,24 @@
 #include "LoKi/Filters.h"
 #include "LoKi/TES.h"
 #include "LoKi/Status.h"
+#include "LoKi/RecStat.h"
 // ============================================================================
 /** @file
  *  Simpe file to build the dictionaries for LoKi's functors, which 
  *  deal only with "plain numbers"
+ *
+ *  This file is a part of LoKi project -
+ *    "C++ ToolKit  for Smart and Friendly Physics Analysis"
+ *
+ *  The package has been designed with the kind help from
+ *  Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas,
+ *  contributions and advices from G.Raven, J.van Tilburg,
+ *  A.Golutvin, P.Koppenburg have been used in the design.
+ *
+ *  By usage of this code one clearly states the disagreement 
+ *  with the campain of Dr.O.Callot et al.: 
+ *  ``No Vanya's lines are allowed in LHCb/Gaudi software.''
+ *
  *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
  *  @date   2007-12-01
  */
@@ -208,7 +222,6 @@ namespace LoKi
       typedef double TYPE  ;
       typedef double TYPE2 ;
       typedef LoKi::BasicFunctors<TYPE>::Pipe          Pipe    ;
-      typedef LoKi::BasicFunctors<TYPE>::Element       Element ;
       typedef LoKi::BasicFunctors<TYPE>::CutVal        CutVal  ;
       typedef LoKi::BasicFunctors<TYPE2>::Function     Func    ;
       typedef LoKi::BasicFunctors<TYPE2>::Predicate    Cuts    ;      
@@ -219,11 +232,6 @@ namespace LoKi
       static LoKi::FunctorFromFunctor<std::vector<TYPE>,std::vector<TYPE> >
       __rshift__ 
       ( const Pipe& fun , const Pipe&      fun2 ) 
-      { return fun >>                      fun2 ; }
-      // __rshift__ 
-      static LoKi::FunctorFromFunctor<std::vector<TYPE>,TYPE>
-      __rshift__ 
-      ( const Pipe& fun , const Element&   fun2 ) 
       { return fun >>                      fun2 ; }
       // __rshift__ 
       static LoKi::FunctorFromFunctor<std::vector<TYPE>,bool>
@@ -263,47 +271,47 @@ namespace LoKi
       // ======================================================================
       // _union_ 
       static LoKi::FunctorFromFunctor<std::vector<TYPE>,std::vector<TYPE> >
-      _union_          ( const Pipe& fun  , const Pipe& fun2 ) 
+      __union__          ( const Pipe& fun  , const Pipe& fun2 ) 
       { return LoKi::Functors::Union         <std::vector<TYPE>,TYPE>( fun , fun2 ) ; }
       // _union_ 
       static LoKi::FunctorFromFunctor<std::vector<TYPE>,std::vector<TYPE> >
-      _union_          ( const Pipe& fun  , const Cuts& fun2 ) 
+      __union__          ( const Pipe& fun  , const Cuts& fun2 ) 
       { return LoKi::Functors::Union         <std::vector<TYPE>,TYPE>
           ( fun , LoKi::filter<TYPE> ( fun2 ) ) ; }
       // _intersection_ 
       static LoKi::FunctorFromFunctor<std::vector<TYPE>,std::vector<TYPE> >
-      _intersection_   ( const Pipe& fun  , const Pipe& fun2 ) 
+      __intersection__   ( const Pipe& fun  , const Pipe& fun2 ) 
       { return LoKi::Functors::Intersection  <std::vector<TYPE>,TYPE>( fun , fun2 ) ; }
       // _intersection_ 
       static LoKi::FunctorFromFunctor<std::vector<TYPE>,std::vector<TYPE> >
-      _intersection_   ( const Pipe& fun  , const Cuts& fun2 ) 
+      __intersection__   ( const Pipe& fun  , const Cuts& fun2 ) 
       { return LoKi::Functors::Intersection  <std::vector<TYPE>,TYPE>
           ( fun , LoKi::filter<TYPE> ( fun2 ) ) ; }
       // _difference_ 
       static LoKi::FunctorFromFunctor<std::vector<TYPE>,std::vector<TYPE> >
-      _difference_     ( const Pipe& fun  , const Pipe& fun2 ) 
+      __difference__     ( const Pipe& fun  , const Pipe& fun2 ) 
       { return LoKi::Functors::Difference    <std::vector<TYPE>,TYPE>( fun , fun2 ) ; }
       // _difference_ 
       static LoKi::FunctorFromFunctor<std::vector<TYPE>,std::vector<TYPE> >
-      _difference_     ( const Pipe& fun  , const Cuts& fun2 ) 
+      __difference__     ( const Pipe& fun  , const Cuts& fun2 ) 
       { return LoKi::Functors::Difference    <std::vector<TYPE>,TYPE>
           ( fun , LoKi::filter<TYPE> ( fun2 ) ) ; }
       // _sym_difference_ 
       static LoKi::FunctorFromFunctor<std::vector<TYPE>,std::vector<TYPE> >
-      _sym_difference_ ( const Pipe& fun  , const Pipe& fun2 ) 
+      __sym_difference__ ( const Pipe& fun  , const Pipe& fun2 ) 
       { return LoKi::Functors::SymDifference <std::vector<TYPE>,TYPE>( fun , fun2 ) ; }
       // _sym_difference_ 
       static LoKi::FunctorFromFunctor<std::vector<TYPE>,std::vector<TYPE> >
-      _sym_difference_ ( const Pipe& fun  , const Cuts& fun2 ) 
+      __sym_difference__ ( const Pipe& fun  , const Cuts& fun2 ) 
       { return LoKi::Functors::SymDifference <std::vector<TYPE>,TYPE>
           ( fun , LoKi::filter<TYPE> ( fun2 ) ) ; }
       // _includes_ 
       static LoKi::FunctorFromFunctor<std::vector<TYPE>,bool>
-      _includes_       ( const Pipe& fun  , const Pipe& fun2 ) 
+      __includes__       ( const Pipe& fun  , const Pipe& fun2 ) 
       { return LoKi::Functors::Includes <std::vector<TYPE>,TYPE>( fun , fun2 ) ; }
       // _includes_ 
       static LoKi::FunctorFromFunctor<std::vector<TYPE>,bool>
-      _includes_       ( const Pipe& fun  , const Cuts& fun2 ) 
+      __includes__       ( const Pipe& fun  , const Cuts& fun2 ) 
       { return LoKi::Functors::Includes <std::vector<TYPE>,TYPE>
           ( fun , LoKi::filter<TYPE>  ( fun2 ) ) ; }
       // ======================================================================
@@ -375,7 +383,6 @@ namespace LoKi
       typedef LoKi::BasicFunctors<TYPE>::Source        Source ;
       typedef LoKi::BasicFunctors<TYPE>::Pipe          Pipe    ;
       typedef LoKi::BasicFunctors<TYPE>::Map           Map     ;
-      typedef LoKi::BasicFunctors<TYPE>::Element       Element ;
       typedef LoKi::BasicFunctors<TYPE>::FunVal        FunVal  ;
       typedef LoKi::BasicFunctors<TYPE>::CutVal        CutVal  ;
       typedef LoKi::BasicFunctors<TYPE2>::Function     Func    ;
@@ -428,23 +435,23 @@ namespace LoKi
       // ======================================================================
       // _union_ 
       static LoKi::FunctorFromFunctor<void,std::vector<TYPE> >
-      _union_          ( const Source& fun  , const Source& fun2 ) 
+      __union__          ( const Source& fun  , const Source& fun2 ) 
       { return LoKi::Functors::Union         <void,TYPE>( fun , fun2 ) ; }
       // _intersection_ 
       static LoKi::FunctorFromFunctor<void,std::vector<TYPE> >
-      _intersection_   ( const Source& fun  , const Source& fun2 ) 
+      __intersection__   ( const Source& fun  , const Source& fun2 ) 
       { return LoKi::Functors::Intersection  <void,TYPE>( fun , fun2 ) ; }
       // _difference_ 
       static LoKi::FunctorFromFunctor<void,std::vector<TYPE> >
-      _difference_     ( const Source& fun  , const Source& fun2 ) 
+      __difference__     ( const Source& fun  , const Source& fun2 ) 
       { return LoKi::Functors::Difference    <void,TYPE>( fun , fun2 ) ; }
       // _sym_difference_ 
       static LoKi::FunctorFromFunctor<void,std::vector<TYPE> >
-      _sym_difference_ ( const Source& fun  , const Source& fun2 ) 
+      __sym_difference__ ( const Source& fun  , const Source& fun2 ) 
       { return LoKi::Functors::SymDifference <void,TYPE>( fun , fun2 ) ; }
       // _includes_ 
       static LoKi::FunctorFromFunctor<void,bool>
-      _includes_       ( const Source& fun  , const Source& fun2 ) 
+      __includes__       ( const Source& fun  , const Source& fun2 ) 
       { return LoKi::Functors::Includes      <void,TYPE>( fun , fun2 ) ; }
       // ======================================================================
     };    
@@ -630,9 +637,9 @@ namespace
     // ========================================================================
   }; 
   // ==========================================================================
-} // end of anonymous namespace 
+} //                                                 end of anonymous namespace 
 // ============================================================================
-// The END 
+//                                                                      The END 
 // ============================================================================
 #endif // DICT_LOKINUMBERSDICT_H
 // ============================================================================

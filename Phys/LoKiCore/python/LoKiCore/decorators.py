@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # =============================================================================
-# $Id: decorators.py 116907 2011-02-03 10:46:23Z ibelyaev $ 
+# $Id: decorators.py 121225 2011-04-02 12:41:34Z ibelyaev $ 
 # =============================================================================
-# $URL: http://svn.cern.ch/guest/lhcb/LHCb/tags/Phys/LoKiCore/v10r9/python/LoKiCore/decorators.py $ 
+# $URL: http://svn.cern.ch/guest/lhcb/LHCb/tags/Phys/LoKiCore/v11r0/python/LoKiCore/decorators.py $ 
 # =============================================================================
 ## @file decorators.py LoKiCore/decorators.py
 #
@@ -22,8 +22,8 @@
 #
 #  @author Vanya BELYAEV ibelyaev@physics.syr.edu
 #
-#  $Revision: 116907 $
-#  Last modification $Date: 2011-02-03 11:46:23 +0100 (Thu, 03 Feb 2011) $
+#  $Revision: 121225 $
+#  Last modification $Date: 2011-04-02 14:41:34 +0200 (Sat, 02 Apr 2011) $
 #                 by $Author: ibelyaev $
 # =============================================================================
 """
@@ -46,7 +46,7 @@ with the campain of Dr.O.Callot et al.:
 # =============================================================================
 __author__  = "Vanya BELYAEV ibelyaev@physics.syr.edu" 
 __date__    = "????-??-??"
-__version__ = "SVN $Revision: 116907 $ "
+__version__ = "SVN $Revision: 121225 $ "
 # =============================================================================
 
 from LoKiCore.basic import cpp, std, LoKi, LHCb, Gaudi  
@@ -334,8 +334,7 @@ def decorateShifts ( funcs , calls ) :
             return calls.__rmod__ ( s , a )
         _rmod_ . __doc__  += calls.__rmod__ . __doc__
 
-
-    # "timer" - the special meainng, if exists 
+    # "timer" - the special meaning, if exists 
     if hasattr ( calls , '__timer__' ) :                    
         def _timer_ ( s , *a ) :
             """
@@ -460,6 +459,11 @@ def decorateFunctionOps ( funcs , opers ) :
     _rpow_      = None 
 
     _rmod_      = None 
+    _mod_       = None
+    
+    _round_     = None
+    _jbit_      = None
+    _jbits_     = None
 
     _sin_       = None 
     _cos_       = None 
@@ -496,6 +500,15 @@ def decorateFunctionOps ( funcs , opers ) :
     _max_element_     = None
     _min_abs_element_ = None
     _max_abs_element_ = None
+
+    _fetch_           = None
+    
+    _sum_             = None
+    _product_         = None
+
+    _mean_            = None
+    _meanErr_         = None
+    _rms_             = None
 
     _timer_ = None 
 
@@ -796,6 +809,20 @@ def decorateFunctionOps ( funcs , opers ) :
         _rpow_ . __doc__  += opers.__rpow__ . __doc__
 
             
+    # math: modulo % 
+    if hasattr ( opers , '__mod__' ) :                    
+        def _mod_ (s,a) :
+            """
+            Construct the ``modulo''-function: 
+            
+            >>> fun = ...
+            >>> fun = fun % 2 
+            
+            Uses:\n
+            """
+            return opers.__mod__ (s,a)
+        _mod_ . __doc__  += opers.__mod__ . __doc__
+
     # pseudo-math:  rigth % 
     if hasattr ( opers , '__rmod__' ) :                    
         def _rmod_ (s,a) :
@@ -810,7 +837,51 @@ def decorateFunctionOps ( funcs , opers ) :
             return opers.__rmod__ (s,a)
         _rmod_ . __doc__  += opers.__rmod__ . __doc__
 
+
+    # math: round 
+    if hasattr ( opers , '__round__' ) :                    
+        def _round_ ( s ) :
+            """
+            Construct the ``round''-function: 
             
+            >>> fun = ...
+            >>> fun = round ( fun ) 
+            
+            Uses:\n
+            """
+            return opers.__round__ (s)
+        _round_ . __doc__  += opers.__round__ . __doc__
+
+
+    # math: get jth bit
+    if hasattr ( opers , '__jbit__' ) :                    
+        def _jbit_ ( s , j ) :
+            """
+            Get j-th bit of the result
+            
+            >>> fun   = ...
+            >>> fun_1 = jbit ( fun , 1 ) 
+            
+            Uses:\n
+            """
+            return opers.__jbit__ ( s , j )
+        _jbit_ . __doc__  += opers.__jbit__ . __doc__
+
+    # math: get j1-j2 bit range 
+    if hasattr ( opers , '__jbits__' ) :                    
+        def _jbits_ ( s , j1 , j2 ) :
+            """
+            Get j1-j2 bits range of the result
+            
+            >>> fun   = ...
+            >>> fun_1 = jbit2 ( fun , 0 , 5  ) 
+            
+            Uses:\n
+            """
+            return opers.__jbits__ ( s , j1 , j2 )
+        _jbits_ . __doc__  += opers.__jbits__ . __doc__
+
+
     # home-made math (just to be coherent)
         
     # math: 'sin'
@@ -1201,7 +1272,7 @@ def decorateFunctionOps ( funcs , opers ) :
         
     # 'min-value'
     if hasattr ( opers , '__min_value__' ) :
-        def _min_value_ ( s ) :
+        def _min_value_ ( s , *a ) :
             """
             Create 'min_value' vector-functor from the scalar functor
             
@@ -1212,12 +1283,12 @@ def decorateFunctionOps ( funcs , opers ) :
             
             Uses:\n
             """
-            return opers.__min_value__ ( s )
+            return opers.__min_value__ ( s , *a )
         _min_value_       . __doc__  += opers.__min_value__       . __doc__ 
             
     # 'max-value'
     if hasattr ( opers , '__max_value__' ) :
-        def _max_value_ ( s ) :
+        def _max_value_ ( s , *a ) :
             """
             Create 'max_value' vector-functor from the scalar functor
             
@@ -1228,12 +1299,12 @@ def decorateFunctionOps ( funcs , opers ) :
             
             Uses:\n
             """
-            return opers.__max_value__ ( s )
+            return opers.__max_value__ ( s , *a )
         _max_value_       . __doc__  += opers.__max_value__       . __doc__
         
     # 'min-abs-value'
     if hasattr ( opers , '__min_abs_value__' ) :
-        def _min_abs_value_ ( s ) :
+        def _min_abs_value_ ( s , *a ) :
             """
             Create 'min_abs_value' vector-functor from the scalar functor
             
@@ -1244,12 +1315,12 @@ def decorateFunctionOps ( funcs , opers ) :
             
             Uses:\n
             """
-            return opers.__min_abs_value__ ( s )
+            return opers.__min_abs_value__ ( s , *a )
         _min_abs_value_   . __doc__  += opers.__min_abs_value__   . __doc__ 
-            
+        
     # 'max-abs-value'
     if hasattr ( opers , '__max_abs_value__' ) :
-        def _max_abs_value_ ( s ) :
+        def _max_abs_value_ ( s , *a ) :
             """
             Create 'max_abs_value' vector-functor from the scalar functor
             
@@ -1260,8 +1331,78 @@ def decorateFunctionOps ( funcs , opers ) :
             
             Uses:\n
             """
-            return opers.__max_abs_value__ ( s )
+            return opers.__max_abs_value__ ( s , *a )
         _max_abs_value_   . __doc__  += opers.__max_abs_value__   . __doc__
+
+    # 'sum'
+    if hasattr ( opers , '__sum__' ) :
+        def _sum_ ( s , *a ) :
+            """
+            Create 'sum-over-stream' vector-functor from the scalar functor
+            
+            >>> fun = ...
+            >>> vfun = sum( fun )
+            
+            Uses:\n
+            """
+            return opers.__sum__ ( s , *a )
+        _sum_   . __doc__  += opers.__sum__   . __doc__ 
+
+    # 'product'
+    if hasattr ( opers , '__product__' ) :
+        def _product_ ( s , *a ) :
+            """
+            Create 'product-over-stream' vector-functor from the scalar functor
+            
+            >>> fun = ...
+            >>> vfun = product( fun )
+            
+            Uses:\n
+            """
+            return opers.__product__ ( s , *a )
+        _product_ . __doc__  += opers.__product__   . __doc__ 
+
+    # 'mean'
+    if hasattr ( opers , '__mean__' ) :
+        def _mean_ ( s , *a ) :
+            """
+            Create 'mean-over-stream' functor:
+            
+            >>> fun = ...
+            >>> vfun = mean ( fun )
+            
+            Uses:\n
+            """
+            return opers.__mean__ ( s , *a )
+        _mean_ . __doc__  += opers.__mean__   . __doc__ 
+
+    # 'meanErr'
+    if hasattr ( opers , '__meanErr__' ) :
+        def _meanErr_ ( s , *a ) :
+            """
+            Create 'meanErr-over-stream' functor:
+            
+            >>> fun = ...
+            >>> vfun = meanErr ( fun )
+            
+            Uses:\n
+            """
+            return opers.__meanErr__ ( s , *a )
+        _meanErr_ . __doc__  += opers.__meanErr__   . __doc__ 
+
+    # 'rms'
+    if hasattr ( opers , '__rms__' ) :
+        def _rms_ ( s , *a ) :
+            """
+            Create 'rms-over-stream' functor:
+            
+            >>> fun = ...
+            >>> vfun = rms ( fun )
+            
+            Uses:\n
+            """
+            return opers.__rms__ ( s , *a )
+        _rms_ . __doc__  += opers.__rms__   . __doc__ 
         
     # 'min-element'
     if hasattr ( opers , '__min_element__' ) :
@@ -1327,6 +1468,21 @@ def decorateFunctionOps ( funcs , opers ) :
             return opers.__max_abs_element__ ( s )
         _max_abs_element_ . __doc__  += opers.__max_abs_element__ . __doc__
 
+    # 'fetch/reduce' 
+    if hasattr ( opers , '__fetch__' ) :
+        def _fetch_ ( s , *a ) :
+            """
+            Fetch/reduce the vector stream : pick up the certain element from
+            the stream and evaluate the scalar function: 
+
+            >>> fun = fetch ( PT , 1 , -1 )
+            
+            
+            Uses:\n
+            """
+            return opers.__fetch__ ( s , *a )
+        _fetch_ . __doc__  += opers.__fetch__ . __doc__
+
     # decorate the functions 
     for fun in funcs :
         
@@ -1348,7 +1504,13 @@ def decorateFunctionOps ( funcs , opers ) :
         if _neg_             : fun . __neg__     = _neg_       #  
         if _abs_             : fun . __abs__     = _abs_       # 
         if _pow_             : fun . __pow__     = _pow_       # 
-        if _rpow_            : fun . __rpow__            = _rpow_      #
+        if _rpow_            : fun . __rpow__    = _rpow_      #
+
+        if _round_           : fun . __round__   = _round_     #
+        if _jbit_            : fun . __jbit__    = _jbit_      #
+        if _jbits_           : fun . __jbits__   = _jbits_     #
+
+        if _mod_             : fun . __mod__     = _mod_       #
         # pseudo-math
         if _rmod_            : fun . __rmod__            = _rmod_      #
         # some other math:
@@ -1391,6 +1553,15 @@ def decorateFunctionOps ( funcs , opers ) :
         if _min_abs_element_ : fun . __min_abs_element__ = _min_abs_element_  #
         if _max_abs_element_ : fun . __max_abs_element__ = _max_abs_element_  #
         
+        if _sum_             : fun . __sum__             = _sum_       #
+        if _product_         : fun . __product__         = _product_   #
+
+        if _fetch_           : fun . __fetch__           = _fetch_      #
+
+        if _mean_            : fun . __mean__            = _mean_       #
+        if _meanErr_         : fun . __meanErr__         = _meanErr_    #
+        if _rms_             : fun . __rms__             = _rms_        #
+        
         for attr in ( '__or__'     ,
                       '__and__'    ,
                       '__invert__' ) :
@@ -1428,6 +1599,10 @@ def decoratePredicateOps ( cuts , opers ) :
     _difference_      = None
     _sym_difference_  = None
     _includes_        = None
+    _fetch_           = None
+    
+    _eff_     = None
+    _effErr_  = None
 
     _timer_  = None
 
@@ -1486,6 +1661,35 @@ def decoratePredicateOps ( cuts , opers ) :
             """
             return opers.__monitor__(s,*m)
         _monitor_ . __doc__  += opers.__monitor__  . __doc__
+
+    # efficiency
+    if hasattr ( opers , '__eff__' ) :
+        def _eff_ ( s , *args ) :
+            """
+            Construct ``efficiency'' functor: 
+            
+            >>> cut = ...
+            >>> cut = eff ( cut )
+            
+            Uses:\n
+            """
+            return opers.__eff__  ( s , *args )
+        _eff_  . __doc__  += opers.__eff__   . __doc__
+
+    # efficiency error
+    if hasattr ( opers , '__effErr__' ) :
+        def _effErr_ ( s , *args ) :
+            """
+            Construct ``efficiency-error'' functor: 
+            
+            >>> cut = ...
+            >>> cut = effErr ( cut )
+            
+            Uses:\n
+            """
+            return opers.__effErr__  ( s , *args )
+        _effErr_  . __doc__  += opers.__effErr__   . __doc__
+
 
     # timer 
     if hasattr ( opers , '__timer__' ) :
@@ -1606,7 +1810,7 @@ def decoratePredicateOps ( cuts , opers ) :
         _has_ . __doc__  += opers.__has__  . __doc__
 
 
-    if hasattr ( opers , '_union_' ) :
+    if hasattr ( opers , '__union__' ) :
         def _union_ ( s , s2 ) :
             """
             Union of two streamers
@@ -1616,10 +1820,10 @@ def decoratePredicateOps ( cuts , opers ) :
             >>> u = union ( fun1 , fun2 ) 
             
             """
-            return opers._union_ ( s , s2 )
-        _union_ .__doc__ += opers ._union_ . __doc__ 
+            return opers.__union__ ( s , s2 )
+        _union_ .__doc__ += opers .__union__ . __doc__ 
 
-    if hasattr ( opers , '_intersection_' ) :
+    if hasattr ( opers , '__intersection__' ) :
         def _intersection_ ( s , s2 ) :
             """
             Intersection of two streamers
@@ -1629,10 +1833,10 @@ def decoratePredicateOps ( cuts , opers ) :
             >>> u = intersection ( fun1 , fun2 ) 
             
             """
-            return opers._intersection_ ( s , s2 )
-        _intersection_ .__doc__ += opers ._intersection_ . __doc__ 
+            return opers.__intersection__ ( s , s2 )
+        _intersection_ .__doc__ += opers .__intersection__ . __doc__ 
 
-    if hasattr ( opers , '_difference_' ) :
+    if hasattr ( opers , '__difference__' ) :
         def _difference_ ( s , s2 ) :
             """
             Difference of two streamers
@@ -1642,10 +1846,10 @@ def decoratePredicateOps ( cuts , opers ) :
             >>> u = difference ( fun1 , fun2 ) 
             
             """
-            return opers._difference_ ( s , s2 )
-        _difference_ .__doc__ += opers ._difference_ . __doc__ 
+            return opers.__difference__ ( s , s2 )
+        _difference_ .__doc__ += opers .__difference__ . __doc__ 
 
-    if hasattr ( opers , '_sym_difference_' ) :
+    if hasattr ( opers , '__sym_difference__' ) :
         def _sym_difference_ ( s , s2 ) :
             """
             Symmetric difference of two streamers
@@ -1655,10 +1859,10 @@ def decoratePredicateOps ( cuts , opers ) :
             >>> u = sym_difference ( fun1 , fun2 ) 
             
             """
-            return opers._sym_difference_ ( s , s2 )
-        _sym_difference_ .__doc__ += opers ._sym_difference_ . __doc__ 
+            return opers.__sym_difference__ ( s , s2 )
+        _sym_difference_ .__doc__ += opers .__sym_difference__ . __doc__ 
 
-    if hasattr ( opers , '_includes_' ) :
+    if hasattr ( opers , '__includes__' ) :
         def _includes_ ( s , s2 ) :
             """
             ``Includes'' of two streamers
@@ -1668,8 +1872,24 @@ def decoratePredicateOps ( cuts , opers ) :
             >>> u = includes ( fun1 , fun2 ) 
             
             """
-            return opers._includes_ ( s , s2 )
-        _includes_ .__doc__ += opers ._includes_ . __doc__ 
+            return opers.__includes__ ( s , s2 )
+        _includes_ .__doc__ += opers .__includes__ . __doc__ 
+
+    # 'fetch/reduce' 
+    if hasattr ( opers , '__fetch__' ) :
+        def _fetch_ ( s , *a ) :
+            """
+            Fetch/reduce the vector stream : pick up the certain element from
+            the stream and evaluate the scalar predicate 
+
+            >>> fun = fetch ( 1 * GeV < PT , 1 , -1 )
+            
+            
+            Uses:\n
+            """
+            return opers.__fetch__ ( s , *a )
+        _fetch_ . __doc__  += opers.__fetch__ . __doc__
+
 
     # perform the actual decoration 
     for cut in cuts : 
@@ -1693,22 +1913,24 @@ def decoratePredicateOps ( cuts , opers ) :
         if _timer_   : cut . __timer__   = _timer_     # timer
 
         if _union_         :
-            cut . _union_         =  _union_
+            cut . __union__         =  _union_
             if not hasattr ( cut , '__add__'  ) : cut .__add__  = _union_
             
         if _intersection_  :
-            cut . _intersection_  =  _intersection_
-            if not hasattr ( cut , '__mul__'  ) : cut .__mul__  = _intersection_
+            cut . __intersection__  =  _intersection_
             
         if _difference_  :
-            cut . _difference_  =  _difference_
-            if not hasattr ( cut , '__sub__'  ) : cut .__sub__  = _difference_
+            cut . __difference__  =  _difference_
+            cut . __sub__         = _difference_
 
         if _sym_difference_    :
-            cut . _sym_difference_  =  _sym_difference_
+            cut . __sym_difference__  =  _sym_difference_
         
-        if _includes_          : cut . _includes_  =  _includes_
+        if _includes_          : cut . __includes__  =  _includes_
+        if _fetch_             : cut . __fetch__     =  _fetch_
 
+        if _eff_       : cut .__eff__     =  _eff_
+        if _effErr_    : cut .__effErr__  =  _effErr_
         
         for attr in ( '__eq__' , '__ne__' ,
                       '__lt__' , '__lt__' ,
@@ -1893,9 +2115,7 @@ def decorateMaps ( funcs , opers ) :
     """
     
     _tee_             = None
-    _rshift_          = None
-    _rrshift_         = None
-    
+
     _rmul_            = None
     _union_           = None
     _intersection_    = None
@@ -1904,36 +2124,6 @@ def decorateMaps ( funcs , opers ) :
     _includes_        = None
     _cause_           = None
     
-    ## Use the vector function as streamer
-    if hasattr ( opers , '__rshift__' ) : 
-        def _rshift_ ( s ,*a ) :
-            """
-            Use the Streamers 
-            
-            >>> fun1 = ...
-            >>> fun2 = ...
-            >>> func = fun1 >> fun2 
-            
-            Uses:\n
-            """
-            return opers.__rshift__ ( s , *a )
-        # documentation
-        _rshift_ .__doc__   += opers . __rshift__  . __doc__ 
-            
-    # streamers: right right shift 
-    if hasattr ( opers , '__rrshift__' ) :                    
-        def _rrshift_ ( s , a ) :
-            """
-            Streamer (map here)
-            
-            >>> a =
-            >>> function =
-            >>> result = a >> function
-            
-            """
-            return opers.__rrshift__ ( s , a )
-        _rrshift_ . __doc__  += opers.__rrshift__ . __doc__
-
     ## streamers: right multiplication 
     #  @thanks Roel AAIJ    
     if hasattr ( opers , '__rmul__' ) :                    
@@ -1982,7 +2172,7 @@ def decorateMaps ( funcs , opers ) :
         # documentation        
         _tee_ .__doc__  += opers . __tee__     . __doc__
         
-    if hasattr ( opers , '_union_' ) :
+    if hasattr ( opers , '__union__' ) :
         def _union_ ( s , s2 ) :
             """
             Union of two streamers
@@ -1992,10 +2182,10 @@ def decorateMaps ( funcs , opers ) :
             >>> u = union ( fun1 , fun2 ) 
             
             """
-            return opers._union_ ( s , s2 )
-        _union_ .__doc__ += opers ._union_ . __doc__ 
+            return opers.__union__ ( s , s2 )
+        _union_ .__doc__ += opers .__union__ . __doc__ 
 
-    if hasattr ( opers , '_intersection_' ) :
+    if hasattr ( opers , '__intersection__' ) :
         def _intersection_ ( s , s2 ) :
             """
             Intersection of two streamers
@@ -2005,10 +2195,10 @@ def decorateMaps ( funcs , opers ) :
             >>> u = intersection ( fun1 , fun2 ) 
             
             """
-            return opers._intersection_ ( s , s2 )
-        _intersection_ .__doc__ += opers ._intersection_ . __doc__ 
+            return opers.__intersection__ ( s , s2 )
+        _intersection_ .__doc__ += opers .__intersection__ . __doc__ 
 
-    if hasattr ( opers , '_difference_' ) :
+    if hasattr ( opers , '__difference__' ) :
         def _difference_ ( s , s2 ) :
             """
             Difference of two streamers
@@ -2018,10 +2208,10 @@ def decorateMaps ( funcs , opers ) :
             >>> u = difference ( fun1 , fun2 ) 
             
             """
-            return opers._difference_ ( s , s2 )
-        _difference_ .__doc__ += opers ._difference_ . __doc__ 
+            return opers.__difference__ ( s , s2 )
+        _difference_ .__doc__ += opers .__difference__ . __doc__ 
 
-    if hasattr ( opers , '_sym_difference_' ) :
+    if hasattr ( opers , '__sym_difference__' ) :
         def _sym_difference_ ( s , s2 ) :
             """
             Symmetric difference of two streamers
@@ -2031,10 +2221,10 @@ def decorateMaps ( funcs , opers ) :
             >>> u = sym_difference ( fun1 , fun2 ) 
             
             """
-            return opers._sym_difference_ ( s , s2 )
-        _sym_difference_ .__doc__ += opers ._sym_difference_ . __doc__ 
+            return opers.__sym_difference__ ( s , s2 )
+        _sym_difference_ .__doc__ += opers .__sym_difference__ . __doc__ 
 
-    if hasattr ( opers , '_includes_' ) :
+    if hasattr ( opers , '__includes__' ) :
         def _includes_ ( s , s2 ) :
             """
             ``Includes'' of two streamers
@@ -2044,45 +2234,38 @@ def decorateMaps ( funcs , opers ) :
             >>> u = includes ( fun1 , fun2 ) 
             
             """
-            return opers._includes_ ( s , s2 )
-        _includes_ .__doc__ += opers ._includes_ . __doc__ 
+            return opers.__includes__ ( s , s2 )
+        _includes_ .__doc__ += opers .__includes__ . __doc__ 
 
     # finally redefine the functions:
     for fun in funcs :
 
         if _rmul_    : fun . __rmul__     =  _rmul_
-        if _cause_   : fun . _cause_      =  _cause_
-        
-        if _rrshift_ : fun . __rrshift__  =  _rrshift_
-        if _rshift_  : fun . __rshift__   =  _rshift_
+        if _cause_   : fun . _cause_      =  _cause_        
         if _tee_     : fun . __tee__      =  _tee_
 
         if _union_         :
-            fun . _union_         =  _union_
-            if not hasattr ( fun , '__or__'   ) : fun .__or__   = _union_
-            if not hasattr ( fun , '__add__'  ) : fun .__add__  = _union_
-            if not hasattr ( fun , '__ror__'  ) : fun .__ror__  = _union_
-            if not hasattr ( fun , '__radd__' ) : fun .__radd__ = _union_
+            fun . __union__         =  _union_
+            fun . __add__           =  _union_
+            fun . __radd__          =  _union_
             
         if _intersection_  :
-            fun . _intersection_  =  _intersection_
-            if not hasattr ( fun , '__and__'  ) : fun .__and__  = _intersection_
-            if not hasattr ( fun , '__mul__'  ) : fun .__mul__  = _intersection_
-            if not hasattr ( fun , '__rand__' ) : fun .__rand__ = _intersection_
-            if not hasattr ( fun , '__rmul__' ) : fun .__rmul__ = _intersection_
+            fun . __intersection__  =  _intersection_
             
         if _difference_  :
-            fun . _difference_  =  _difference_
-            if not hasattr ( fun , '__sub__'  ) : fun .__sub__  = _difference_
+            fun . __difference__  =  _difference_
+            fun .__sub__          = _difference_
 
         if _sym_difference_    :
-            fun . _sym_difference_  =  _sym_difference_
-            if not hasattr ( fun , '__xor__'  ) : fun .__xor__  = _sym_difference_
-            if not hasattr ( fun , '__rxor__' ) : fun .__rxor__ = _sym_difference_
+            fun . __sym_difference__  =  _sym_difference_
+            fun . __xor__             =  _sym_difference_
+            fun . __rxor__            =  _sym_difference_
         
-        if _includes_          : fun . _includes_  =  _includes_
+        if _includes_  :
+            fun . __includes__  =  _includes_
 
-    return funcs                                 ## RETURN
+
+    return decorateShifts ( funcs , opers )   ## RETURN 
 
 # =============================================================================
 ## get all Mapping functors and decorate them 
@@ -2121,16 +2304,6 @@ def getAndDecorateCutVals ( name , base , opers ) :
     funcs = getInherited         ( name  , base  )
     funcs = decorateCallsCut     ( funcs , opers )
     funcs = decoratePredicateOps ( funcs , opers )
-    funcs = decorateMaps         ( funcs , opers )  ## RETURN
-    return decorateCallsCut      ( funcs , opers )
-
-## get all Element functors and decorate them 
-def getAndDecorateElements ( name , base , opers ) :
-    """
-    get all ``elements''  and decorate them
-    """
-    funcs = getInherited         ( name , base   )
-    funcs = decorateCallsFun     ( funcs , opers )
     return decorateMaps          ( funcs , opers )  ## RETURN
 
 ## get all Source functors and decorate them 

@@ -4,6 +4,23 @@
 ! Purpose     : Interface package to Geometry and Conditions DB
 !-----------------------------------------------------------------------------
 
+!========================= DDDB v1r43 2011-04-04 =========================
+! 2011-04-01 - Marco Cattaneo
+ - Update database tags for SQLDDDB v6r6:
+   . LHCBCOND, 2011, 2010: head-20110331
+
+! 2011-03-29 - Marco Cattaneo
+ - Update database tags for SQLDDDB v6r5:
+   . LHCBCOND, 2011, 2010: head-20110328
+
+!========================= DDDB v1r42 2011-03-23 =========================
+! 2011-03-23 - Marco Cattaneo
+ - Update database tags for SQLDDDB v6r4:
+   . DDDB, 2011: head-20110302
+   . DDDB, 2010: head-20110303
+   . LHCBCOND, 2011, 2010: head-20110321
+   . LHCBCOND, 2009: head-20110131
+
 !========================= DDDB v1r41 2011-02-22 =========================
 ! 2011-02-16 - Illya Shapoval
  - Defaults for DQFLAGS db tag are added to DDDBConf configurable for 2011,

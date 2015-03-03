@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # =============================================================================
-# $Id: tests.py 87168 2010-10-03 12:45:56Z ibelyaev $
+# $Id: tests.py 121226 2011-04-02 12:44:39Z ibelyaev $
 # =============================================================================
 ## @file
 #  @author Vanya BELYAEV ibelyaev@physics.syr.edu
@@ -61,13 +61,35 @@ print 'inp >> ~in_list ( X , [ 1 , 2, 3 ] ) ) :%s' % ( inp >> ~in_list ( X , [ 1
 
 
 inp2  = doubles ( -10 , 1 , -9 , 10 , 0 , 1 , 1 , 1 ,  -1  )
-print ' inp2 >> ( X > -5 )                         :%s ' % ( inp2 >> ( X > -5 ) )
-print ' inp2 >> ( X <  5 )                         :%s ' % ( inp2 >> ( X <  5 ) )
-print ' inp2 >> union          ( X > -5 , X < 5 )  :%s ' % ( inp2 >> union           ( X > -5 , X < 5 ) )
-print ' inp2 >> intersection   ( X > -5 , X < 5 )  :%s ' % ( inp2 >> intersection    ( X > -5 , X < 5 ) )
-print ' inp2 >> difference     ( X > -5 , X < 5 )  :%s ' % ( inp2 >> difference      ( X > -5 , X < 5 ) )
-print ' inp2 >> sym_difference ( X > -5 , X < 5 )  :%s ' % ( inp2 >> sym_difference  ( X > -5 , X < 5 ) )
-print ' inp2 >> includes       ( X > -5 , X > 0 )  :%s ' % ( inp2 >> includes        ( X > -5 , X > 0 ) )
+print 'inp2 >> ( X > -5 )                         :%s ' % ( inp2 >> ( X > -5 ) )
+print 'inp2 >> ( X <  5 )                         :%s ' % ( inp2 >> ( X <  5 ) )
+print 'inp2 >> union          ( X > -5 , X < 5 )  :%s ' % ( inp2 >> union           ( X > -5 , X < 5 ) )
+print 'inp2 >> intersection   ( X > -5 , X < 5 )  :%s ' % ( inp2 >> intersection    ( X > -5 , X < 5 ) )
+print 'inp2 >> difference     ( X > -5 , X < 5 )  :%s ' % ( inp2 >> difference      ( X > -5 , X < 5 ) )
+print 'inp2 >> sym_difference ( X > -5 , X < 5 )  :%s ' % ( inp2 >> sym_difference  ( X > -5 , X < 5 ) )
+print 'inp2 >> includes       ( X > -5 , X > 0 )  :%s ' % ( inp2 >> includes        ( X > -5 , X > 0 ) )
+
+print 'inp2 >> sum ( X          )    :%s ' % ( inp2 >> sum ( X          ) )
+print 'inp2 >> sqrt( sum ( X**2 ) ) :%s ' % ( inp2 >> sqrt ( sum ( X**2 ) ) )
+print 'inp2 >> sum ( X , X <  0 )    :%s ' % ( inp2 >> sum ( X , X <  0 ) )
+print 'inp2 >> sum ( X , X >= 0 )    :%s ' % ( inp2 >> sum ( X , X >= 0 ) )
+
+
+print 'inp2 >>     ( X %% 3 )    :%s ' % ( inp2 >>     ( X % 3 ) )
+print 'inp2 >> sum ( X %% 3 )    :%s ' % ( inp2 >> sum ( X % 3 ) )
+
+
+print 'inp2 >>   round ( sin(X)*5 )          :%s ' % ( inp2 >>   round ( sin(X)*5 ) )
+print 'inp2 >> ( jbit  ( sin(X)*5 , 1     )  :%s ' % ( inp2 >> ( jbit  ( sin(X)*5,1  ) ) )
+print 'inp2 >> ( jbits ( sin(X)*5 , 0 , 1 )  :%s ' % ( inp2 >> ( jbits ( sin(X)*5,0,1) ) )
+
+print 'inp2 >> fetch ( X , 0   , -100 ) :%s ' % ( inp2 >> fetch ( X , 0   , -100 ) )
+
+print 'inp2 >> mean    ( X**3 , X >= 0 ) :%s ' % ( inp2 >> mean    ( X**3 , X >= 0 ) )
+print 'inp2 >> meanErr ( X**3 , X >= 0 ) :%s ' % ( inp2 >> meanErr ( X**3 , X >= 0 ) )
+print 'inp2 >> rms     ( X**3 , X >= 0 ) :%s ' % ( inp2 >> rms     ( X**3 , X >= 0 ) )
+print 'inp2 >> eff     ( X>0 ) :%s ' % ( inp2 >> eff    ( X > 0 ) )
+print 'inp2 >> effErr  ( X>0 ) :%s ' % ( inp2 >> effErr ( X > 0 ) )
 
 
 # =============================================================================

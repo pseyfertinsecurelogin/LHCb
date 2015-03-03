@@ -130,7 +130,20 @@ StatusCode CaloAdcFromRaw::execute() {
       if ( msgLevel( MSG::DEBUG) )
         debug() << "Inserting : " << id << " adc = " << value << "  =  " << adc.adc() << " / " << calib 
                 << "  (dead channel ? " << m_calo->isDead( id ) << ")" << endmsg;
-      outs->insert(out);
+      try{
+        outs->insert(out);
+      }
+      catch(GaudiException &exc) { 
+        counter("Duplicate CaloADC") += 1;
+        std::ostringstream os("");
+        os << "Duplicate CaloADC for channel " << id << endmsg;
+        Warning(os.str(),StatusCode::SUCCESS).ignore();
+        int card =  m_data->deCalo()->cardNumber( id );
+        int tell1=  m_data->deCalo()->cardToTell1( card);
+        LHCb::RawBankReadoutStatus& status = m_data->status();
+        status.addStatus( tell1 ,LHCb::RawBankReadoutStatus::DuplicateEntry);
+        delete out;
+      }
     }    
   }
   // L0ADCs (ecal/hcal)
@@ -156,7 +169,21 @@ StatusCode CaloAdcFromRaw::execute() {
       if ( msgLevel( MSG::DEBUG) )
         debug() << "Inserting : " << id << " l0adc = " << value << "  =  " << adc.adc() << " / " << calib 
                 << "  (dead channel ? " << m_calo->isDead( id ) << ")" << endmsg;
-      outs->insert(out);
+
+      try{
+        outs->insert(out);
+      }
+      catch(GaudiException &exc) { 
+        counter("Duplicate L0ADC") += 1;
+        std::ostringstream os("");
+        os << "Duplicate L0ADC for channel " << id << endmsg;
+        Warning(os.str(),StatusCode::SUCCESS).ignore();
+        int card =  m_data->deCalo()->cardNumber( id );
+        int tell1=  m_data->deCalo()->cardToTell1( card);
+        LHCb::RawBankReadoutStatus& status = m_data->status();
+        status.addStatus( tell1 ,LHCb::RawBankReadoutStatus::DuplicateEntry);
+        delete out;
+      }
     }
   }
   // Trigger bits (prs/spd)
@@ -177,7 +204,21 @@ StatusCode CaloAdcFromRaw::execute() {
         if ( msgLevel( MSG::DEBUG) )
           debug() << "Inserting : " << id << " bit = " << value 
                   << "  (dead channel ? " << m_calo->isDead( id ) << ")" << endmsg;
-        outs->insert(out);
+
+        try{
+          outs->insert(out);
+        }
+        catch(GaudiException &exc) { 
+          counter("Duplicate L0Bit") += 1;
+          std::ostringstream os("");
+          os << "Duplicate L0Bit for channel " << id << endmsg;
+          Warning(os.str(),StatusCode::SUCCESS).ignore();
+          int card =  m_data->deCalo()->cardNumber( id );
+          int tell1=  m_data->deCalo()->cardToTell1( card);
+          LHCb::RawBankReadoutStatus& status = m_data->status();
+          status.addStatus( tell1 ,LHCb::RawBankReadoutStatus::DuplicateEntry);
+          delete out;
+      }
       }
     }
   }

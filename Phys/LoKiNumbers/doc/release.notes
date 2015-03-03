@@ -1,10 +1,44 @@
 ! -----------------------------------------------------------------------------
-! $Id: release.notes 118569 2011-02-22 16:46:46Z cattanem $
+! $Id: release.notes 121335 2011-04-04 08:34:08Z cattanem $
 ! -----------------------------------------------------------------------------
 ! Package     : Phys/LoKiNumbers
 ! Responsible : Vanya BELYAEV ibelyaev@physics.syr.edu
 ! Purpose     : Set of dictionaries for LoKi functions 
 ! -----------------------------------------------------------------------------
+! 
+!   This file is a part of LoKi project - 
+!     "C++ ToolKit  for Smart and Friendly Physics Analysis"
+! 
+!   The package has been designed with the kind help from
+!   Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas, 
+!   contributions and advices from G.Raven, J.van Tilburg, 
+!   A.Golutvin, P.Koppenburg have been used in the design.
+! 
+!   By usage of this code one clearly states the disagreement 
+!   with the campain of Dr.O.Callot et al.: 
+!   ``No Vanya's lines are allowed in LHCb/Gaudi software.''
+!
+! -----------------------------------------------------------------------------
+
+!========================= LoKiNumbers v10r0 2011-04-04 =========================
+! 2011-04-02 - Vanya Belyaev
+ - add tests for round/jbit/jbits functions 
+
+! 2011-03-30 - Vanya Belyaev
+ - add test for 'modulo'-operator
+
+! 2011-03-28 - Vanya Belyaev
+ - add test for 'fetch'-decorator 
+
+! 2011-03-24 - Vanya Belyaev
+ - add
+     HASRECSUMMARY & RECSUMMARY symbols for Sophie Redford & Andy Powell
+
+! 2011-03-16 - Vanya Belyaev
+ - update for new method names 
+
+! 2011-03-10 - Vanya Belyaev
+ - kill bad concept of 'Element'-functor
 
 !========================= LoKiNumbers v9r5 2011-02-22 =========================
 ! 2011-02-12 - Vanya Belyaev

@@ -4,7 +4,16 @@
 ! Purpose     : General purpose RICH classes
 !-----------------------------------------------------------------------
 
-!========================= RichKernel v7r42 2011-02-22 =========================
+!========================= RichKernel v7r43 2011-04-04 =========================
+! 2011-03-18 - Chris Jones
+ - Add Rich::DAQ::PixelSize and Rich::DAQ::NumPixelRows variables
+   to RichDAQDefinitions.h
+ - Add Rich::DAQ:: variables to python dictionary
+
+! 2011-02-27 - Chris Jones
+ - More minor fixes to remove icc11 remarks
+
+!=================== RichKernel v7r42 2011-02-22 =======================
 ! 2011-02-18 - Chris Jones
  - Fix some icc warnings/remarks without pragmas
  - Update RichTools to include configuration option 

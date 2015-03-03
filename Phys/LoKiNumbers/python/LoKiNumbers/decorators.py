@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # =============================================================================
-# $Id: decorators.py 87168 2010-10-03 12:45:56Z ibelyaev $
+# $Id: decorators.py 120053 2011-03-10 17:16:34Z ibelyaev $
 # =============================================================================
 ## @file decorators.py LoKiNumbers/decorators.py
 #  The set of basic decorator for objects from LoKiNumberslibrary
@@ -19,8 +19,8 @@
 #  with the campain of Dr.O.Callot et al.: 
 #  ``No Vanya's lines are allowed in LHCb/Gaudi software.''
 #
-# $Revision: 87168 $
-# Last modification $Date: 2010-10-03 14:45:56 +0200 (Sun, 03 Oct 2010) $
+# $Revision: 120053 $
+# Last modification $Date: 2011-03-10 18:16:34 +0100 (Thu, 10 Mar 2011) $
 #                by $Author: ibelyaev $ 
 # =============================================================================
 """
@@ -39,15 +39,15 @@ with the campain of Dr.O.Callot et al.:
  ``No Vanya's lines are allowed in LHCb/Gaudi software.''
 
 
- $Revision: 87168 $
- Last modification $Date: 2010-10-03 14:45:56 +0200 (Sun, 03 Oct 2010) $
+ $Revision: 120053 $
+ Last modification $Date: 2011-03-10 18:16:34 +0100 (Thu, 10 Mar 2011) $
                 by $Author: ibelyaev $ 
 
 """
 # =============================================================================
 __author__  = ' Vanya BELYAEV ibelyaev@physics.syr.edu '
 __date__    = ' xxxx-xx-xx '
-__version__ = ' version $Revision: 87168 $ '
+__version__ = ' version $Revision: 120053 $ '
 # =============================================================================
 
 from   LoKiNumbers.functions   import *
@@ -70,7 +70,7 @@ def _decorate ( name = _name  ) :
         LoKi.Functor        (_d,_d)                      , ## the base 
         LoKi.Dicts.FunCalls (_d)                         , ## call-traits 
         LoKi.Dicts.FuncOps  (_d,_d)                      ) ## operators
-    # vetcor<double> -> double 
+    # vector<double> -> double 
     _decorated  |= _LoKiCore.getAndDecorateFunctions  (
         name                                             , ## module name 
         LoKi.Functor        (_v,_d)                      , ## the base 

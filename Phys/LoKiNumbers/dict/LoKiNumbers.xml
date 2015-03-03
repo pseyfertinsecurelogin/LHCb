@@ -1,5 +1,5 @@
 <!-- 
-     * $Id: LoKiNumbers.xml 117671 2011-02-12 17:12:33Z ibelyaev $ 
+     * $Id: LoKiNumbers.xml 120746 2011-03-24 19:20:43Z ibelyaev $ 
      * ========================================================================
      * @file
      * The XML seleciton file to build Reflex 
@@ -67,8 +67,10 @@
   <class name = "LoKi::TES::Contains" >
     <field name = "m_algorithm" transient = "true"/>
   </class>
-  <class name = "LoKi::TES::Counter" />
-  <class name = "LoKi::TES::Stat"    />
+  <class name = "LoKi::TES::Counter"       />
+  <class name = "LoKi::TES::Stat"          />
+  <class name = "LoKi::TES::HasRecSummary" />
+  <class name = "LoKi::TES::RecSummary"    />
   
   <class name = "LoKi::Status::Check"  >
     <field name = "m_tool" transient = "true"/>

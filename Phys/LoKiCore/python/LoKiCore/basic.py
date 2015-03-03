@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # =============================================================================
-# $Id$ 
+# $Id: basic.py 121023 2011-03-29 18:09:53Z ibelyaev $ 
 # =============================================================================
-# $URL$ 
+# $URL: http://svn.cern.ch/guest/lhcb/LHCb/tags/Phys/LoKiCore/v11r0/python/LoKiCore/basic.py $ 
 # =============================================================================
 ## @file decorators.py LoKiCore/basic.py
 #
@@ -22,9 +22,9 @@
 #
 #  @author Vanya BELYAEV ibelyaev@physics.syr.edu
 #
-#  $Revision: 53337 $
-#  Last modification $Date$
-#                 by $Author$
+#  $Revision: 121023 $
+#  Last modification $Date: 2011-03-29 20:09:53 +0200 (Tue, 29 Mar 2011) $
+#                 by $Author: ibelyaev $
 # =============================================================================
 """
 The set of basic decorators for objects from LoKiCore library
@@ -46,7 +46,7 @@ with the campain of Dr.O.Callot et al.:
 # =============================================================================
 __author__  = "Vanya BELYAEV Ivan.Belyaev@nikhef.nl" 
 __date__    = "2010-09-27"
-__version__ = "SVN $Revision$ "
+__version__ = "SVN $Revision: 121023 $ "
 # =============================================================================
 __all__     = (
     'cpp'   ,

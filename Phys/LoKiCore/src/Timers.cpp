@@ -1,4 +1,4 @@
-// $Id: $
+// $Id: Timers.cpp 121023 2011-03-29 18:09:53Z ibelyaev $
 // ============================================================================
 // Include files 
 // ============================================================================
@@ -27,9 +27,9 @@
  *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
  *  @date 2011-02-02
  *  
- *                    $Revision$
- *  Last modification $Date$
- *                 by $Author$
+ *                    $Revision: 121023 $
+ *  Last modification $Date: 2011-03-29 20:09:53 +0200 (Tue, 29 Mar 2011) $
+ *                 by $Author: ibelyaev $
  */
 // ============================================================================
 // constructor from the timer name 

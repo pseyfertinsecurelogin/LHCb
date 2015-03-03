@@ -15,6 +15,13 @@
 !
 ! -----------------------------------------------------------------------------
 
+!========================= LoKiMC v10r0 2011-04-04 =========================
+! 2011-03-18 - Vanya Belyaev
+ - add protetcion against double lock 
+
+! 2011-03-10 - Vanya Belyaev
+ - kill bad concept of 'Element'-functor
+
 !========================= LoKiMC v9r5 2011-02-22 =========================
 ! 2011-02-21 - Marco Cattaneo
  - Suppress Intel compiler warnings about missing default constructor

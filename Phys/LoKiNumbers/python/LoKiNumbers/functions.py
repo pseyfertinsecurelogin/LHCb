@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # =============================================================================
-# $Id: functions.py 117671 2011-02-12 17:12:33Z ibelyaev $ 
+# $Id: functions.py 120746 2011-03-24 19:20:43Z ibelyaev $ 
 # =============================================================================
 ## @file LoKiNumbers/functions.py
 #  The full set of useful objects from LoKiNumbers library 
@@ -19,8 +19,8 @@
 #
 #  @author Vanya BELYAEV ibelyaev@physics.syr.edu
 #
-# $Revision: 117671 $
-# Last modification $Date: 2011-02-12 18:12:33 +0100 (Sat, 12 Feb 2011) $
+# $Revision: 120746 $
+# Last modification $Date: 2011-03-24 20:20:43 +0100 (Thu, 24 Mar 2011) $
 #                by $Author: ibelyaev $ 
 # =============================================================================
 """
@@ -39,15 +39,15 @@ with the campain of Dr.O.Callot et al.:
  ``No Vanya's lines are allowed in LHCb/Gaudi software.''
 
 
- $Revision: 117671 $
- Last modification $Date: 2011-02-12 18:12:33 +0100 (Sat, 12 Feb 2011) $
+ $Revision: 120746 $
+ Last modification $Date: 2011-03-24 20:20:43 +0100 (Thu, 24 Mar 2011) $
                 by $Author: ibelyaev $ 
 
 """
 # =============================================================================
 __author__  = "Vanya BELYAEV ibelyaev@physics.syr.edu"
 __date__    = ' xxxx-xx-xx '
-__version__ = " version $Revision: 117671 $ " 
+__version__ = " version $Revision: 120746 $ " 
 # =============================================================================
 
 # Namespaces:
@@ -68,8 +68,6 @@ XPipe     = XMap
 
 XFunVals  = LoKi.Functor            ( _v , _d   )
 XFunVal   = LoKi.FunctorFromFunctor ( _v , _d   )
-XElements = XFunVals 
-XElement  = XFunVal 
 XSources  = LoKi.Functor            ( 'void' , _v )
 XSource   = LoKi.FunctorFromFunctor ( 'void' , _v )
 
@@ -115,6 +113,14 @@ CONTAINS  = LoKi.TES.Contains
 COUNTER   = LoKi.TES.Counter 
 ## @see LoKi::Cuts::STAT
 STAT      = LoKi.TES.Stat 
+
+# RecSummary for Sophie Redford & Andy Powell
+
+## @see LoKi::Cuts::HASRECSUMMARY
+HASRECSUMMARY = LoKi.TES.HasRecSummary
+## @see LoKi::Cuts::RECSUMMARY
+RECSUMMARY    = LoKi.TES.RecSummary
+
 
 ## @see LoKi::Cuts::CHECK
 CHECK     = LoKi.Status.Check
@@ -193,11 +199,11 @@ if not hasattr ( XVector , "__iter__" ) :
     XVector. __repr__ = _vct_prnt_
     
 
-# if not hasattr ( Gaudi.Math , 'blind' ) :
-#        import LHCbMath.Types
+if not hasattr ( Gaudi.Math , 'blind' ) :
+    import LHCbMath.Types
         
 ## @see Gaudi::Math::blind
-# blind     = Gaudi.Math.blind
+blind     = Gaudi.Math.blind
 
 # =============================================================================
 if '__main__' == __name__ :

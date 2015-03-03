@@ -1,4 +1,4 @@
-// $Id: TES.cpp 118068 2011-02-17 15:00:08Z ibelyaev $
+// $Id: TES.cpp 120745 2011-03-24 19:20:36Z ibelyaev $
 // ============================================================================
 // Include files 
 // ============================================================================
@@ -25,8 +25,25 @@
 // ============================================================================
 /** @file 
  *  Implementation file for classes from namespace LoKi::TES 
+ *
+ *  This file is a part of LoKi project - 
+ *    "C++ ToolKit  for Smart and Friendly Physics Analysis"
+ *
+ *  The package has been designed with the kind help from
+ *  Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas, 
+ *  contributions and advices from G.Raven, J.van Tilburg, 
+ *  A.Golutvin, P.Koppenburg have been used in the design.
+ *
+ *  By usage of this code one clearly states the disagreement 
+ *  with the campain of Dr.O.Callot et al.: 
+ *  ``No Vanya's lines are allowed in LHCb/Gaudi software.''
+ *
  *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
  *  @date 2020-02-13
+ *
+ *                    $Revision: 120745 $
+ *  Last modification $Date: 2011-03-24 20:20:36 +0100 (Thu, 24 Mar 2011) $
+ *                 by $Author: ibelyaev $
  */
 // ============================================================================
 namespace 

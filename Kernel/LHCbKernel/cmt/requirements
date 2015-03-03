@@ -1,10 +1,9 @@
-# $Id: requirements,v 1.171 2010-05-18 20:45:54 cattanem Exp $
 # =============================================================================
 package LHCbKernel
 author  M.Frank    CERN/LHCb
 manager M.Cattaneo CERN/LHCb
 
-version           v12r8p1
+version           v13r0
 
 branches cmt doc Event Kernel src xml
 
@@ -24,7 +23,7 @@ macro LHCbKernelObj2Doth_GODflags " -s ../Kernel/ " \
       WIN32                       " -s ..\Kernel\ "
 apply_pattern  god_headers files=../xml/*.xml
 apply_pattern  install_more_includes more=Kernel offset=Event
-apply_pattern  install_python_modules 
+apply_pattern  install_python_modules
 
 # Declare fragment for adding custom dictionary to GOD generated ones
 #============================================================================
@@ -57,3 +56,8 @@ macro_append LHCbKernel_cppflags "" \
 # Disable some compiler warnings in the automatically generated dict code
 macro_append LHCbKernel_dictionary_dict_pp_cppflags "" \
                                          target-icc " -wd177 -wd654"
+
+# RichSmartID Debug Application
+#============================================================================
+application RichSmartIDTest ../tests/RichSmartIDTest/*.cpp
+macro_append RichSmartIDTest_dependencies " LHCbKernel "

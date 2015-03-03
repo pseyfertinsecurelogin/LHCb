@@ -4,10 +4,29 @@
 ! Purpose     : Interface to the xml description
 !-----------------------------------------------------------------------------
 
-!========================= RichDet v16r1p1 2011-03-06 =========================
+!========================= RichDet v16r2 2011-04-04 =========================
+! 2011-03-31 - Antonis Papanestis
+ - Chages in DeRichGasRadiator to allow easy change of gas in RICH1
+   Gas mixture is supported only if CO2 parameterisation is used for
+   C4F10 as well (currently not the case).
+
+! 2011-03-28 - Chris Jones
+ - Add missing clear() on L0 to L1 Hardware ID map during 
+   DeRichSystem::buildHPDMappings()
+
+! 2011-03-23 - Chris Jones
+ - Add new method to DeRichSystem to return the Level1 Hardware ID for a 
+   given Level0 ID
+ - Add some checks when filling all the various maps, to
+   first see if an entry already exists. If it does a warning is printed and
+   an error returned.
+
 ! 2011-03-04 - Chris Jones
  - Add missing !HltMode to use of condition("RadiatorComposition") and some
    basic protection against null pointer dereferencing
+
+! 2011-02-27 - Chris Jones
+ - Adapt to changes in RichSmartID class.
 
 !========================= RichDet v16r1 2011-02-22 =========================
 ! 2011-02-21 - Chris Jones
