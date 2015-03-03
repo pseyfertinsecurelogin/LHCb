@@ -1,14 +1,11 @@
-// $Id: XmlMuonL1BoardCnv.cpp,v 1.2 2007-06-08 15:34:00 asatta Exp $
+// $Id: XmlMuonL1BoardCnv.cpp,v 1.5 2008-04-16 08:36:48 cattanem Exp $
 // Include files 
 
+#include <string>
 #include <vector>
 
 #include "DetDescCnv/XmlUserConditionCnv.h"
-#include "MuonDet/MuonReadoutCond.h"
 #include "MuonDet/MuonL1Board.h"
-#include "MuonDet/MuonStationCabling.h"
-#include "MuonDet/MuonODEBoard.h"
-#include "GaudiKernel/RegistryEntry.h"
 
 #include <xercesc/dom/DOMNamedNodeMap.hpp>
 #include <xercesc/dom/DOMNodeList.hpp>   
@@ -18,9 +15,9 @@
 
 // local
 
-/** @class XmlMuonL1Cnv
+/** @class XmlMuonL1BoardCnv
  *
- * XML converter for MuonODE
+ * XML converter for Muon L1 Board
  *
  * @author Alessia Satta
  */
@@ -134,7 +131,7 @@ XmlMuonL1BoardCnv::i_fillSpecificObj(xercesc::DOMElement* childElement,
                                 IOpaqueAddress*          ){
   MsgStream msg(msgSvc(), "XmlMuonL1Cnv");
   const XMLCh* tagName = childElement->getNodeName();
-  
+  unsigned int NumLink=24;
   
   
   if (0 == xercesc::XMLString::compareString(L1String, tagName)) {
@@ -164,12 +161,28 @@ XmlMuonL1BoardCnv::i_fillSpecificObj(xercesc::DOMElement* childElement,
                                    ->getNodeValue());
     std::vector<long> ODEListValue;
     StatusCode sc=splitList(ODEList,ODEListValue);
-    if(sc.isFailure())return sc;
+    if(sc.isFailure())return sc;  
+    msg<<MSG::DEBUG<<" read in "<<ODEList<<endreq;
+    if(ODEListValue.size()!=NumLink){
+      msg<<MSG::ERROR<<
+        " something wrong in Tell1 - ODE connectiom description "<<endreq;
+      return StatusCode::FAILURE;
+    }
+    for( unsigned int i =0; i<NumLink;i++){
+      msg<<MSG::DEBUG<<" link "<<i<<" ODE "<<ODEListValue[i]<<endreq;
+      msg<<MSG::DEBUG<<" ODEList length "<<ODEList.size()<<" "<<ODEListValue.size()<<endreq;
+      dataObj->setLinkConnection(i,ODEListValue[i]);      
+      //      msg<<MSG::INFO<<" ode "<<i<<" "<<ODEListValue[i]<<endreq;
+      if(ODEListValue[i]>0){        
+      }else{        
+      }      
+    }
+    
     xercesc::DOMNodeList* nodeChildren = childElement->getChildNodes();
-    unsigned int i;
+//    unsigned int i;
     unsigned int iODE=0;
     
-    for(i=0; i < nodeChildren->getLength(); ++i){   
+    for(unsigned int i=0; i < nodeChildren->getLength(); ++i){   
       msg << MSG::VERBOSE << "Processing child "<<
         dom2Std(nodeChildren->item(i)->getNodeName())<<endreq;
       if(dom2Std(nodeChildren->item(i)->getNodeName()) == 

@@ -1,4 +1,4 @@
-// $Id: CondDBAccessSvc.cpp,v 1.47 2008-02-12 09:35:09 marcocle Exp $
+// $Id: CondDBAccessSvc.cpp,v 1.49 2008-04-22 10:11:36 marcocle Exp $
 // Include files
 #include <sstream>
 //#include <cstdlib>
@@ -79,7 +79,7 @@ CondDBAccessSvc::CondDBAccessSvc(const std::string& name, ISvcLocator* svcloc):
   declareProperty("CheckTAGTimeOut",  m_checkTagTimeOut  = 60    );
   declareProperty("ReadOnly",         m_readonly         = true  );
   
-  declareProperty("ConnectionTimeOut", m_connectionTimeOut = 600 );
+  declareProperty("ConnectionTimeOut", m_connectionTimeOut = 120 );
   
   declareProperty("LazyConnect",       m_lazyConnect     = true );
   
@@ -332,7 +332,11 @@ StatusCode CondDBAccessSvc::i_checkTag(const std::string &tag) const {
     }
     // try to resolve the tag (it cannot be checked)
     try {
-      m_rootFolderSet->resolveTag(tag);
+      try {
+        m_rootFolderSet->resolveTag(tag);
+      } catch (cool::NodeRelationNotFound) {
+        // to be ignored: it means that the tag exists, but somewhere else.
+      }
       log << MSG::VERBOSE << "\"" << tag << "\" found: OK" << endmsg;
       return StatusCode::SUCCESS;
     } catch (cool::TagNotFound) {
@@ -807,6 +811,10 @@ StatusCode CondDBAccessSvc::i_getObjectFromDB(const std::string &path, const coo
     //log << MSG::ERROR << "Object not found in \"" << path <<
     //  "\" for tag \"" << (*accSvc)->tag() << "\" ("<< now << ')' << endmsg;
     //log << MSG::DEBUG << e << endmsg;
+    return StatusCode::FAILURE;
+  } catch (cool::NodeRelationNotFound) {
+    // to be ignored: it means that the tag exists, but it is not in the
+    // node '/'.
     return StatusCode::FAILURE;
   } catch (coral::Exception &e) {
     MsgStream log(msgSvc(),name());

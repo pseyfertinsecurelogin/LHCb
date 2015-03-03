@@ -274,9 +274,13 @@ bool CaloL0DataProvider::decodeBank( LHCb::RawBank* bank ){
         chanID = m_calo->cardChannels( feCards[card] );
         feCards.erase(feCards.begin()+card);
       }else{
-        error() << " FE-Card w/ [code : " << code << "] not associated with TELL1 bank " << sourceID
-                << " in condDB :  Cannot read that bank" << endreq;
-        error() << "Warning : previous data may be corrupted" << endreq;
+        std::stringstream s("");
+        s<<sourceID;
+        std::stringstream c("");
+        c<<code;
+        Error(" FE-Card w/ [code : " + c.str() + " ] is not associated with TELL1 bank sourceID : " +s.str()
+              + " in condDB :  Cannot read that bank").ignore();
+        Error("Warning : previous data may be corrupted").ignore();
         if(m_cleanCorrupted)cleanData(prevCard);
         m_status.addStatus( sourceID, LHCb::RawBankReadoutStatus::Corrupted || LHCb::RawBankReadoutStatus::Incomplete);
         return false;
@@ -298,12 +302,14 @@ bool CaloL0DataProvider::decodeBank( LHCb::RawBank* bank ){
               size--;
             }
 
+            if( offset == 0)debug() << "Data word : " << lastData << endreq;
+
             LHCb::CaloCellID id = LHCb::CaloCellID();
             if(bitNum < chanID.size())id= chanID[ bitNum ];
-
+            
 
             int adc = ( lastData >> offset ) & 0xFF;
-
+            
             // event dump
             if ( msgLevel( MSG::VERBOSE) ) {
               verbose() << " |  SourceID : " << sourceID
@@ -472,9 +478,13 @@ bool CaloL0DataProvider::decodePrsTriggerBank( LHCb::RawBank* bank ) {
         chanID = m_calo->cardChannels( feCards[card] );
         feCards.erase(feCards.begin()+card);
       }else{
-        error() << " FE-Card w/ [code : " << code << "] not associated with TELL1 bank " << sourceID
-                << " in condDB :  Cannot read that bank" << endreq;
-        error() << "Warning : previous data may be corrupted" << endreq;
+        std::stringstream s("");
+        s<<sourceID;
+        std::stringstream c("");
+        c<<code;
+        Error(" FE-Card w/ [code : " + c.str() + " ] is not associated with TELL1 bank sourceID : " +s.str()
+              + " in condDB :  Cannot read that bank").ignore();
+        Error("Warning : previous data may be corrupted").ignore();
         if(m_cleanCorrupted)cleanData(prevCard);
         m_status.addStatus( sourceID, LHCb::RawBankReadoutStatus::Corrupted || LHCb::RawBankReadoutStatus::Incomplete);
         return false;
@@ -510,17 +520,19 @@ bool CaloL0DataProvider::decodePrsTriggerBank( LHCb::RawBank* bank ) {
         }
 
 
-        
-        if ( "Spd" == m_detectorName) {
-          LHCb::CaloCellID spdId( 0, id.area(), id.row(), id.col() );
-          LHCb::L0CaloAdc temp( spdId, isSpd );
-          m_adcs.addEntry( temp , spdId);
-        }
-        else {
-          LHCb::L0CaloAdc temp( id, isPrs );
-          m_adcs.addEntry( temp, id );
+        if ( 0 != id.index() ){
+          if ( "Spd" == m_detectorName) {
+            LHCb::CaloCellID spdId( 0, id.area(), id.row(), id.col() );
+            LHCb::L0CaloAdc temp( spdId, isSpd );
+            m_adcs.addEntry( temp , spdId);
+          }
+          else {
+            LHCb::L0CaloAdc temp( id, isPrs );
+            m_adcs.addEntry( temp, id );
+          }
         }
       }
+      
       int nSkip = (lenAdc+1 ) / 2;  // Length in number of words
       size     -= nSkip;
       data     += nSkip;

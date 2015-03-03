@@ -1,4 +1,4 @@
-// $Id: DVAlgorithm.cpp,v 1.30 2008-02-24 19:41:29 ibelyaev Exp $
+// $Id: DVAlgorithm.cpp,v 1.32 2008-04-15 13:26:50 ibelyaev Exp $
 // ============================================================================
 // Include 
 // ============================================================================
@@ -12,7 +12,7 @@
 #include "Kernel/IOnOffline.h"
 // ============================================================================
 /** @file
- *  The implementatinio fiel for class DVAlgorithm
+ *  The implementation for class DVAlgorithm
  */                                                                 
 // ============================================================================
 // Standard constructor
@@ -54,6 +54,9 @@ DVAlgorithm::DVAlgorithm
   //
   , m_directionFitterNames  ()
   , m_directionFitters      ()
+    //
+  , m_distanceCalculatorNames  ()
+  , m_distanceCalculators      ()
   //
   , m_checkOverlapName      ( "CheckOverlap" ) 
   , m_checkOverlap          ( 0 )
@@ -71,8 +74,9 @@ DVAlgorithm::DVAlgorithm
   // 
   m_vertexFitNames [ "Offline"       ] = "OfflineVertexFitter" ;
   m_vertexFitNames [ "Trigger"       ] = "TrgVertexFitter"     ;
-  m_vertexFitNames [ "Kalman"        ] = "BlindVertexFitter"   ;
   m_vertexFitNames [ "Blind"         ] = "BlindVertexFitter"   ;
+  m_vertexFitNames [ "LoKi"          ] = "LoKi::VertexFitter"  ;
+  m_vertexFitNames [ "Kalman"        ] = "LoKi::VertexFitter"  ;
   m_vertexFitNames [ "ParticleAdder" ] = "ParticleAdder"       ;
   declareProperty ( "VertexFitters"     , m_vertexFitNames    ) ;
   //
@@ -92,18 +96,24 @@ DVAlgorithm::DVAlgorithm
   m_particleCombinerNames [ ""              ] = "OfflineVertexFitter" ;
   m_particleCombinerNames [ "Offline"       ] = "OfflineVertexFitter" ;
   m_particleCombinerNames [ "Trigger"       ] = "TrgVertexFitter"     ;
-  m_particleCombinerNames [ "Kalman"        ] = "BlindVertexFitter"   ;
+  m_particleCombinerNames [ "Kalman"        ] = "LoKi::VertexFitter"  ;
   m_particleCombinerNames [ "Blind"         ] = "BlindVertexFitter"   ;
+  m_particleCombinerNames [ "LoKi"          ] = "LoKi::VertexFitter"  ;
   m_particleCombinerNames [ "ParticleAdder" ] = "ParticleAdder"       ;
   declareProperty ( "ParticleCombiners"  , m_particleCombinerNames ) ;
   //
-  m_particleReFitterNames [ ""              ] = "OfflineVertexFitter" ;
-  m_particleReFitterNames [ "Offline"       ] = "OfflineVertexFitter" ;
-  m_particleReFitterNames [ "Kalman"        ] = "BlindVertexFitter"   ;
-  m_particleReFitterNames [ "Blind"         ] = "BlindVertexFitter"   ;
-  m_particleReFitterNames [ "ParticleAdder" ] = "ParticleAdder"       ;
+  m_particleReFitterNames [ ""              ] = "OfflineVertexFitter"   ;
+  m_particleReFitterNames [ "Offline"       ] = "OfflineVertexFitter"   ;
+  m_particleReFitterNames [ "Blind"         ] = "BlindVertexFitter"     ;
+  m_particleReFitterNames [ "Kalman"        ] = "LoKi::VertexFitter"    ;
+  m_particleReFitterNames [ "LoKi"          ] = "LoKi::VertexFitter"    ;
+  m_particleReFitterNames [ "Mass"          ] = "LoKi::MassFitter"      ;
+  m_particleReFitterNames [ "Direction"     ] = "LoKi::DirectionFitter" ;
+  m_particleReFitterNames [ "ParticleAdder" ] = "ParticleAdder"         ;
   declareProperty  ( "ParticleReFitters" , m_particleReFitterNames ) ;
   //
+  m_massFitterNames [ ""     ] = "LoKi::MassFitter" ;
+  m_massFitterNames [ "LoKi" ] = "LoKi::MassFitter" ;
   declareProperty  
     ( "MassFitters"       , m_massFitterNames       , 
       "The mapping of nick/name/type for IMassFit tools"        ) ;
@@ -112,16 +122,23 @@ DVAlgorithm::DVAlgorithm
     ( "MassVertexFitters" , m_massVertexFitterNames , 
       "The mapping of nick/name/type for IMassVertexFit tools"  ) ;
   //
-  m_lifetimeFitterNames  [ "" ] = "PropertimeFitter" ;
+  m_lifetimeFitterNames  [ ""     ] = "PropertimeFitter"     ;
+  m_lifetimeFitterNames  [ "LoKi" ] = "LoKi::LifetimeFitter" ;
   declareProperty  
     ( "LifetimeFitters"    , m_lifetimeFitterNames , 
       "The mapping of nick/name/type for ILifetimeFitter tools" ) ;
   //
-  m_directionFitterNames [ "" ] = "DirectionFitter" ;
+  m_directionFitterNames [ ""     ] = "DirectionFitter" ;
+  m_directionFitterNames [ "LoKi" ] = "LoKi::DirectionFitter" ;
   declareProperty  
     ( "DirectionFitters"    , m_directionFitterNames , 
       "The mapping of nick/name/type for IDirectionFit tools"   ) ;
   //
+  m_distanceCalculatorNames [ ""     ] = "LoKi::DistanceCalculator" ;
+  m_distanceCalculatorNames [ "LoKi" ] = "LoKi::DistanceCalculator" ;
+  declareProperty 
+    ( "DistanceCalculators" , m_distanceCalculatorNames , 
+      "The mapping of nick/name/type for IDistanceCalculator tools"   ) ;
   //
   declareProperty ( "DecayDescriptor"   , m_decayDescriptor   = "not specified" ) ;
   declareProperty ( "AvoidSelResult"    , m_avoidSelResult    = false           ) ;
@@ -156,19 +173,21 @@ StatusCode DVAlgorithm::initialize ()
     Warning( mgs +  "Some tools/utilities could have the problems." );
   }
   
-  if ( m_avoidSelResult ) { info() << "Avoiding SelResult" << endmsg; }
+  if ( m_avoidSelResult ) { if (msgLevel(MSG::DEBUG)) debug() << "Avoiding SelResult" << endmsg; }
   
   
   // Load tools very
   sc = loadTools() ;
   if ( sc.isFailure() ) { return Error("Unable to load tools", sc ) ; }
   
-  if ( m_decayDescriptor == "not specified" )
-  { info() << "Decay Descriptor string not specified"   << endreq; } 
-  else
-  { info() << "Decay Descriptor: " << m_decayDescriptor << endreq; }
+  if (msgLevel(MSG::DEBUG)){
+    if ( m_decayDescriptor == "not specified" )
+    { debug() << "Decay Descriptor string not specified"   << endmsg; } 
+    else
+    { debug() << "Decay Descriptor: " << m_decayDescriptor << endmsg; }
+  }
   
-  debug() << "End of DVAlgorithm::initialize with " << sc << endreq;
+  if (msgLevel(MSG::DEBUG)) debug() << "End of DVAlgorithm::initialize with " << sc << endmsg;
   
   return sc;
 }
@@ -181,9 +200,9 @@ StatusCode DVAlgorithm::loadTools()
   if ( !m_preloadTools ) 
   { return Warning( "Not preloading tools", StatusCode::SUCCESS ) ; }
   
-  debug() << ">>> Preloading tools" << endmsg;
+  if (msgLevel(MSG::DEBUG)) debug() << ">>> Preloading tools" << endmsg;
   
-  debug() << ">>> Preloading PhysDesktop" << endmsg;
+  if (msgLevel(MSG::DEBUG)) debug() << ">>> Preloading PhysDesktop" << endmsg;
   desktop();
   
   // vertex fitter
@@ -194,7 +213,7 @@ StatusCode DVAlgorithm::loadTools()
     m_vertexFitNames[""] = onof->vertexFitter() ;
   }
   
-  debug() << ">>> Preloading "
+  if (msgLevel(MSG::DEBUG)) debug() << ">>> Preloading "
           << m_vertexFitNames[""] << " as IVertexFit " << endmsg;
   vertexFitter() ;
   
@@ -205,32 +224,32 @@ StatusCode DVAlgorithm::loadTools()
     m_geomToolNames[""] = onof->dispCalculator() ;
   }
   
-  debug() << ">>> Preloading " 
+  if (msgLevel(MSG::DEBUG)) debug() << ">>> Preloading " 
           << m_geomToolNames[""] 
           << " as IGeomDispCalculator" << endmsg;
   geomDispCalculator();
   
-  debug() << ">>> Preloading CheckOverlap Tool" << endmsg;
+  if (msgLevel(MSG::DEBUG)) debug() << ">>> Preloading CheckOverlap Tool" << endmsg;
   checkOverlap();
   
-  debug() << ">>> Preloading WriteSelResults Tool" << endmsg;
+  if (msgLevel(MSG::DEBUG)) debug() << ">>> Preloading WriteSelResults Tool" << endmsg;
   writeSelResult();
   
   /*  Not preloading non-mandatory tools
   // particle filter
   for ( size_t i = 0; i < m_fileNames.size();++i) {
-  debug() << ">>> Preloading ParticleFilter " << m_filterName.at(i) << " as " << i << endmsg;
+  if (msgLevel(MSG::DEBUG)) debug() << ">>> Preloading ParticleFilter " << m_filterName.at(i) << " as " << i << endmsg;
   particleFilter(i); 
   }
   
-  debug() << ">>> Preloading BTagging Tool" << endmsg;
+  if (msgLevel(MSG::DEBUG)) debug() << ">>> Preloading BTagging Tool" << endmsg;
   flavourTagging();
 
-  debug() << ">>> Preloading ParticleDescendants Tool" << endmsg;
+  if (msgLevel(MSG::DEBUG)) debug() << ">>> Preloading ParticleDescendants Tool" << endmsg;
   descendants();
   */
 
-  debug() << ">>> Preloading ParticlePropertySvc" << endmsg;
+  if (msgLevel(MSG::DEBUG)) debug() << ">>> Preloading ParticlePropertySvc" << endmsg;
   m_ppSvc = svc<IParticlePropertySvc>("ParticlePropertySvc", true);
   
   return StatusCode::SUCCESS;

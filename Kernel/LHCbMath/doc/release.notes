@@ -6,10 +6,29 @@
 !               All headers included in directory LHCbMath
 !-----------------------------------------------------------------------------
 
-!========================= LHCbMath v2r6 2008-02-24 ==========================
+!========================= LHCbMath v2r7 2008-04-02 ==========================
+! 2008-04-02 - Marco Cattaneo
+ - In LHCbMath.h:
+   . Change namespace from LHCbMath to LHCb::Math
+   . Add floating point comparison constructs previously in LoKi::StdMath
+ - In requirements: Clean up link options for MathCore
 
+! 2008-03-10 - Vanya BELYAEV
+ -  LHCbMath/GeomFun.icpp
+    LHCbMath/GeomFun.h
+    LHCbMath/Line.h
+   fix a bug in Gaudi::Math::closestPointParam function, 
+   improve a bit the  doxygen comments... 
+
+! 2008-03-05 - Vanya BELYAEV
+ - LHCbMath/MatrixTransforms.h
+   Add many new operators into namespace Gaudi::Math::Operators 
+   The full list is availabel through the doxyen documentation of 
+   namespace Gaudi::Math::Operators. These operators  are really very
+   helpful and useful for coding of the kinamtical fitters.  
+
+!========================= LHCbMath v2r6 2008-02-24 ==========================
 ! 2008-02-24 - Vanya BELYAEV
-  
  - LHCbMath/MatrixUtils.h
 	  add a bit more optimizations 
 

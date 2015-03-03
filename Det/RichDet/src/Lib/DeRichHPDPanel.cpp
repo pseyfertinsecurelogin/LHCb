@@ -4,7 +4,7 @@
  *
  *  Implementation file for detector description class : DeRichHPDPanel
  *
- *  $Id: DeRichHPDPanel.cpp,v 1.64 2008-02-15 09:55:02 jonrob Exp $
+ *  $Id: DeRichHPDPanel.cpp,v 1.66 2008-04-10 15:23:02 papanest Exp $
  *
  *  @author Antonis Papanestis a.papanestis@rl.ac.uk
  *  @date   2004-06-18
@@ -182,8 +182,28 @@ StatusCode DeRichHPDPanel::initialize()
 
   // get the first HPD and follow down to the silicon block
   const IPVolume* pvHPDMaster0  = geometry()->lvolume()->pvolume(0);
+
+  // get subMaster volume
   const IPVolume* pvHPDSMaster0 = pvHPDMaster0->lvolume()->pvolume(0);
-  const IPVolume* pvSilicon0    = pvHPDSMaster0->lvolume()->pvolume("pvRichHPDSiDet");
+  if ( pvHPDSMaster0->name().find("HPDSMaster") == std::string::npos )
+  {
+    msg << MSG::FATAL << "Cannot find HPDSMaster volume; " << pvHPDSMaster0->name() << endmsg;
+    return StatusCode::FAILURE;
+  }
+
+  // find pvRichHPDSiDet volume
+  const IPVolume* pvSilicon0 = pvHPDSMaster0->lvolume()->pvolume("pvRichHPDSiDet");
+  if ( pvSilicon0 == NULL ) // multiple HPD volumes
+  {
+    pvSilicon0 = pvHPDSMaster0->lvolume()->pvolume(10);
+    if ( pvSilicon0 == NULL || pvSilicon0->name().find("pvRichHPDSiDet") == std::string::npos )
+    {
+      msg << MSG::FATAL << "Cannot find pvRichHPDSiDet volume ";
+      if ( pvSilicon0 != NULL ) msg << MSG::FATAL << pvSilicon0->name();
+      msg << MSG::FATAL << endmsg;
+      return StatusCode::FAILURE;
+    }
+  }
 
   const ISolid* siliconSolid = pvSilicon0->lvolume()->solid();
   msg << MSG::VERBOSE << "About to do a dynamic cast SolidBox" << endreq;
@@ -282,7 +302,7 @@ StatusCode DeRichHPDPanel::smartID ( const Gaudi::XYZPoint& globalPoint,
   if ( !m_deRichS->hpdIsActive( id ) ) return StatusCode::FAILURE;
 
   const unsigned int HPDNumber = hpdNumber(id);
-  if ( HPDNumber > m_HPDMax ) 
+  if ( HPDNumber > m_HPDMax )
   {
     MsgStream msg ( msgSvc(), "DeRichHPDPanel" );
     msg << MSG::ERROR << "Inappropriate HPDNumber : " << HPDNumber;
@@ -556,19 +576,28 @@ bool DeRichHPDPanel::findHPDColAndPos ( const Gaudi::XYZPoint& inPanel,
   const double v = ( rich() == Rich::Rich1 ? inPanel.x() : inPanel.y() );
 
   // work out nearest column
-  int HPDCol = static_cast<int>(floor(u-m_panelColumnSideEdge)/m_HPDColPitch);
+  //int HPDCol = static_cast<int>(std::floor((u-m_panelColumnSideEdge)/m_HPDColPitch));
+  // CRJ : Faster than floor. Gets it wrong for negative values, but these are reset
+  // to 0 anyway so does not matter
+  int HPDCol = (int)((u-m_panelColumnSideEdge)/m_HPDColPitch);
   if      ( HPDCol >= (int)nHPDColumns() ) { OK = false; HPDCol = nHPDColumns()-1; }
   else if ( HPDCol < 0                   ) { OK = false; HPDCol = 0;               }
   id.setHPDCol( HPDCol );
 
   // nearest number in column
+  //int HPDNumInCol
+  //  = ( 0 == HPDCol%2 ?
+  //      static_cast<int>(std::floor((v-m_panelStartColPosEven)/m_HPDPitch)) :
+  //      static_cast<int>(std::floor((v-m_panelStartColPosOdd)/m_HPDPitch)) );
+  // CRJ : Faster than floor. Gets it wrong for negative values, but these are reset
+  // to 0 anyway so does not matter
   int HPDNumInCol
     = ( 0 == HPDCol%2 ?
-        static_cast<int>(floor((v-m_panelStartColPosEven)/m_HPDPitch)) :
-        static_cast<int>(floor((v-m_panelStartColPosOdd)/m_HPDPitch)) );
+        (int)((v-m_panelStartColPosEven)/m_HPDPitch) :
+        (int)((v-m_panelStartColPosOdd)/m_HPDPitch) );
   if      ( HPDNumInCol >= (int)nHPDsPerCol() ) { OK = false; HPDNumInCol = nHPDsPerCol()-1; }
   else if ( HPDNumInCol < 0                   ) { OK = false; HPDNumInCol = 0;               }
-  id.setHPDNumInCol(HPDNumInCol);
+  id.setHPDNumInCol( HPDNumInCol );
 
   return OK;
 }
@@ -597,7 +626,7 @@ DeRichHPDPanel::globalPosition( const Gaudi::XYZPoint& localPoint,
     y = localPoint.y();
   }
 
-  return ( geometry()->toGlobal(Gaudi::XYZPoint(x, y, z) ) );
+  return ( geometry()->toGlobal(Gaudi::XYZPoint(x,y,z)) );
 }
 
 //=========================================================================

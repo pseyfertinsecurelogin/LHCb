@@ -1,4 +1,4 @@
-// $Id: RawDataCnvSvc.cpp,v 1.24 2008-02-11 07:27:47 frankm Exp $
+// $Id: RawDataCnvSvc.cpp,v 1.27 2008-04-16 14:56:09 cattanem Exp $
 //  ====================================================================
 //  RawDataCnvSvc.cpp
 //  --------------------------------------------------------------------
@@ -22,7 +22,6 @@
 #include "GaudiKernel/DataObject.h"
 #include "GaudiKernel/IRegistry.h"
 #include "GaudiKernel/MsgStream.h"
-#include "GaudiKernel/SmartIF.h"
 #include "Event/RawEvent.h"
 
 #include <memory>
@@ -86,22 +85,29 @@ StatusCode RawDataCnvSvc::initialize()     {
     log << MSG::ERROR << "Unable to initialize base class ConversionSvc." << endreq;
     return sc;
   }
+
+  // Add this conversion service to the EventPersistencySvc 
   IPersistencySvc *pSvc = 0;
   sc = service("EventPersistencySvc",pSvc,true);
   if ( !sc.isSuccess() )  {
     log << MSG::ERROR << "Unable to localize EventPersistencySvc." << endreq;
     return sc;
   }
-  IConversionSvc *pCnv = 0;
-  sc = pSvc->getService(repSvcType(), pCnv);
-  if ( pCnv == this )  {
-    sc = dataProvider()->queryInterface(IID_IDataManagerSvc,(void**)&m_dataMgr);
-    if ( !sc.isSuccess() )  {
-      log << MSG::ERROR << "Conversion service " << name() 
-          << "not registered to EventPersistencySvc." << endreq;
-      return sc;
-    }
+
+  sc = pSvc->addCnvService( this );
+  if ( !sc.isSuccess() )  {
+    log << MSG::ERROR << "Unable to add conversion service" << endreq;
+    return sc;
   }
+  
+  // get the IDataManagerSvc interface from the EventPersistencySvc
+  sc = dataProvider()->queryInterface(IID_IDataManagerSvc,(void**)&m_dataMgr);
+  if ( !sc.isSuccess() )  {
+    log << MSG::ERROR << "Conversion service " << name() 
+        << "not registered to EventPersistencySvc." << endreq;
+    return sc;
+  }
+
   // Retrieve conversion service handling event iteration
   sc = Service::service(m_ioMgrName, m_ioMgr);
   if( !sc.isSuccess() ) {
@@ -119,7 +125,7 @@ StatusCode RawDataCnvSvc::finalize()    {
   long typ = repSvcType();
   for(FileMap::iterator i=m_fileMap.begin(); i != m_fileMap.end(); ++i)  {
     if ( typ == RAWDATA_StorageType && (*i).second )  {
-      closeIO((*i).second);
+      closeIO((*i).second).ignore();
     }
   }
   m_fileMap.clear();
@@ -175,20 +181,65 @@ StatusCode RawDataCnvSvc::connectInput(CSTR fname, void*& iodesc)   {
 
 /// Object creation callback
 StatusCode 
-RawDataCnvSvc::createObj(IOpaqueAddress* pAddr, DataObject*& refpObj) {
-  if ( pAddr )  {
+RawDataCnvSvc::createObj(IOpaqueAddress* pA, DataObject*& refpObj) {
+  if ( pA )  {
     if ( m_bankLocation == RawEventLocation::Default )  {
-      if ( pAddr->clID() == CLID_DataObject )  {
+      if ( pA->clID() == CLID_DataObject )  {
         refpObj = new DataObject();
         return StatusCode::SUCCESS;
       }
-      else if ( pAddr->clID() == RawEvent::classID() )  {
-        refpObj = new RawEvent();
-        return StatusCode::SUCCESS;
+      else if ( pA->clID() == RawEvent::classID() )  {
+        try {
+          IRegistry* pReg = pA->registry();
+          RawDataAddress* pAddRaw = dynamic_cast<RawDataAddress*>(pA);
+          refpObj = 0;
+          //if ( rand() < int(RAND_MAX*0.05) )
+          //  return error("TEST: Triggered access failure for "+pReg->identifier());
+          if ( pReg && pAddRaw ) {
+            std::auto_ptr<RawEvent> raw(new RawEvent());
+            StatusCode sc  = StatusCode::FAILURE;
+            int        typ = pAddRaw->type();
+            // MBM input from event selector: banks already filled...
+            if ( pAddRaw->banks() && typ == RawDataAddress::BANK_TYPE ) {
+              sc = adoptBanks(raw.get(),*pAddRaw->banks());
+              if ( sc.isSuccess() )   {
+                refpObj = raw.release();
+                return sc;
+              }
+            }
+            else {
+              MDFDescriptor dat = accessRawData(pAddRaw);
+              if ( dat.second > 0 )  {
+                if ( typ == RawDataAddress::DATA_TYPE ) {
+                  sc = unpackTAE(dat,pReg->identifier(),raw.get());
+                }
+                else if ( typ == RawDataAddress::MEP_TYPE ) {
+                  sc = unpackMEP(dat,pReg->identifier(),raw.get());
+                }
+                else
+                  return error("UNKNOWN decoding requested - not yet implemented:"+pA->par()[0]);
+              }
+              if ( sc.isSuccess() )   {
+                refpObj = raw.release();
+                return sc;
+              }
+              return error("Failed to decode raw data from input from:"+pA->par()[0]);
+            }
+            return error("Failed to access raw data from input:"+pA->par()[0]);
+          }
+          return error("No valid object address present:"+pReg->identifier());
+	}
+        catch (std::exception& e) {
+          return error(std::string("Exception:") + e.what());
+        }
+        catch(...) {
+          return error("Exception: (Unknown)");
+        }
       }
+      return error("No valid event object address present [INVALID_CLID].");
     }
     else  {
-      RawDataAddress* rawAdd = dynamic_cast<RawDataAddress*>(pAddr);
+      RawDataAddress* rawAdd = dynamic_cast<RawDataAddress*>(pA);
       rawAdd->setSvcType(ROOT_StorageType);
       return dataProvider()->retrieveObject("/Event",refpObj);
     }
@@ -263,7 +314,7 @@ RawDataCnvSvc::unpackMEP(const MDFDescriptor& dat, const std::string& loc, RawEv
             return error("Failed to access raw event at:"+(*i));
           }
         }
-	//std::cout << "Filling banks for " << *i << " " << r->clID() << " " << loc << std::endl;
+        //std::cout << "Filling banks for " << *i << " " << r->clID() << " " << loc << std::endl;
         sc = adoptBanks(r,(*it).second);
         if ( sc.isSuccess() )  {
           continue;
@@ -286,50 +337,27 @@ StatusCode RawDataCnvSvc::fillObjRefs(IOpaqueAddress* pA, DataObject* pObj)  {
       if ( pReg && pAddRaw )  {
         std::string id = pReg->identifier().substr(6);
         if ( id.empty() )  {
-	  if ( pAddRaw->banks() && pAddRaw->type() == RawDataAddress::BANK_TYPE ) {
+          if ( pAddRaw->banks() && pAddRaw->type() == RawDataAddress::BANK_TYPE ) {
             return regAddr(pReg, pAddRaw, "/DAQ", DataObject::classID());
-	  }
-	  else {
-	    MDFDescriptor dat = pAddRaw->data();
-	    if ( dat.second>0 )  {
-	      if ( pAddRaw->type() == RawDataAddress::DATA_TYPE )
-		return registerRawAddresses(pReg,pAddRaw,buffersTAE(dat.first));
-	      else if ( pAddRaw->type() == RawDataAddress::MEP_TYPE )
-		return registerRawAddresses(pReg,pAddRaw,buffersMEP(dat.first));
-	      return regAddr(pReg, pAddRaw, "/DAQ", DataObject::classID());
-	    }
-	  }
-	  return error("Failed to access raw data input:"+pA->par()[0]);
+          }
+          else {
+            MDFDescriptor dat = pAddRaw->data();
+            if ( dat.second>0 )  {
+              if ( pAddRaw->type() == RawDataAddress::DATA_TYPE )
+                return registerRawAddresses(pReg,pAddRaw,buffersTAE(dat.first));
+              else if ( pAddRaw->type() == RawDataAddress::MEP_TYPE )
+                return registerRawAddresses(pReg,pAddRaw,buffersMEP(dat.first));
+              return regAddr(pReg, pAddRaw, "/DAQ", DataObject::classID());
+            }
+          }
+          return error("Failed to access raw data input:"+pA->par()[0]);
         }
         else if (id.substr(id.length()-4) == "/DAQ" )
           return regAddr(pReg, pAddRaw, "/RawEvent", RawEvent::classID());
         else if (id.length() == 6 && (id[1] == 'N' || id[1] == 'P') )
           return regAddr(pReg, pAddRaw, "/DAQ", DataObject::classID());
-        else if (id.substr(id.length()-9) == "/RawEvent" )  {
-          StatusCode sc  = StatusCode::FAILURE;
-	  RawEvent*  raw = dynamic_cast<RawEvent*>(pObj);
-	  int        typ = pAddRaw->type();
-	  // MBM input from event selector: banks already filled...
-	  if ( pAddRaw->banks() && typ == RawDataAddress::BANK_TYPE ) {
-	    return adoptBanks(raw,*pAddRaw->banks());
-	  }
-	  else {
-	    MDFDescriptor dat = accessRawData(pAddRaw);
-	    if ( dat.second > 0 )  {
-	      if ( typ == RawDataAddress::DATA_TYPE ) {
-		sc = unpackTAE(dat,pReg->identifier(),raw);
-	      }
-	      else if ( typ == RawDataAddress::MEP_TYPE ) {
-		sc = unpackMEP(dat,pReg->identifier(),raw);
-	      }
-	      else
-		return error("UNKNOWN decoding requested - not yet implemented:"+pA->par()[0]);
-	    }
-	    if ( sc.isSuccess() ) return sc;
-            return error("Failed to decode raw data from input from:"+pA->par()[0]);
-          }
-          return error("Failed to access raw data from input:"+pA->par()[0]);
-        }
+        // Nothing to do otherwise. Return success.
+        return StatusCode::SUCCESS;
       }
     }
     catch (std::exception& e) {

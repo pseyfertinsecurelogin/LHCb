@@ -4,6 +4,46 @@
 ! Purpose     : Implementation of the Linker package, to associate objects
 !-----------------------------------------------------------------------------
 
+!======================= LinkerEvent v3r4 2008-04-04 =========================
+! 2008-03-14 - Olivier Callot
+ - Fixed in LinkedFrom the test to not test the classID if the first template 
+   argument is 'ContainedObject' 
+ - New LinkedFromKey class to access LinkedFrom with only two templates, the TARGET
+   and the KEY type, the SOURCE being defaulted to ContainedObject
+
+! 2008-03-13 - Olivier Callot
+ - New header file 'LocalLinkerTool' that is like a LinkerTool, but doesn't store
+   the relation on TES. The links have to be created before being used. It has the same
+   method as LinkerTool (LHCb 2006-008 section 4) but the constructor has no argument,
+   plus a method 'newEvent' to clear possible existing relations, and a method 'link' 
+   like in LinkerWithKey.
+
+! 2008-03-10 - Olivier Callot
+ - New header file "LocalLinker" to make a local linker table not on TES. This class
+   has a constructor with a single argument, the event service. It has the methods 
+   'link',  'setIncreasingWeight', 'setDecreasingWeight' from LinkerWithKey,
+   'first', 'next', and 'weight' from LinkedTo, and 'firstSource' and 'nextSource' 
+   similar to fist and next from LinkedFrom. The data (Linker table) is kept internally
+   and disappear when the object runs out of scope. Example of use:
+
+  LocalLinker<LHCb::Particle, LHCb::MCParticle> myLinker( evtSvc() );
+  ...
+  LHCb::Particle*     part = ...;
+  LHCb::MCParticle* mcPart = ...;
+  myLinker.link( part, mcPart );
+  ...
+  LHCb::MCParticle* mcPart2 = myLinker.first( part );
+  while ( 0 != mcPart2 ) {
+    ... 
+    mcPart2 = myLinker.next();
+  }
+
+  LHCb::Particle* part2 = myLinker.firstSource( mcPart );
+  while ( 0 != part2 ) {
+    ...
+    part2 = myLinker.nextSource();
+  }
+
 !======================= LinkerEvent v3r3 2008-03-03 =========================
 ! 2008-02-27 - Chris Jones
  - Add missing STL includes

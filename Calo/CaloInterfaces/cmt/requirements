@@ -1,7 +1,7 @@
-# $Id: requirements,v 1.33 2007-07-20 13:14:22 cattanem Exp $
+# $Id: requirements,v 1.35 2008-04-22 09:46:51 cattanem Exp $
 # =============================================================================
 package           CaloInterfaces
-version           v7r4
+version           v7r5
 
 # =============== structure ===================================================
 branches          cmt doc CaloInterfaces
@@ -23,8 +23,5 @@ apply_pattern reflex_dictionary                                                 
               headerfiles=$(CALOINTERFACESROOT)/dict/CaloInterfacesDict.h     \
               selectionfile=$(CALOINTERFACESROOT)/dict/CaloInterfacesDict.xml \
               options="-U__MINGW32__"
-
-# Hack for cmt v1r19 bug to link dictionary on windows
-macro CaloInterfacesDict_use_linkopts $(use_linkopts)
 
 

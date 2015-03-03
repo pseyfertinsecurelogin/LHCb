@@ -10,14 +10,23 @@
 
 */
 #include "L0MuonKernel/CandRegisterHandler.h"
+#include "L0MuonKernel/CtrlRawErrors.h"
 #include "L0MuonKernel/MuonCandidate.h"
 #include <string>
 #include <map>
 #include <vector>
 
 namespace L0Muon {
+
   
   class CtrlRawCnv  {
+    
+  private:
+
+    static const unsigned int board_full_frame_size = 36;
+    static const unsigned int board_full_data_size  = board_full_frame_size*2;
+    static const unsigned int board_frame_size      = 23;
+    static const unsigned int board_data_size       = board_frame_size*2 ;
 
   public:
 
@@ -30,24 +39,60 @@ namespace L0Muon {
     /// Destructor
     ~CtrlRawCnv();
     
+    LHCb::MuonTileID mid_BCSU(int iq, int ib);
+    
     void release();
 
     std::vector<PMuonCandidate> muonCandidates();
     std::vector<PMuonCandidate> muonCandidatesBCSU();
 
-    void decodeBank(std::vector<unsigned int> raw, int version);
-    std::vector<unsigned int> rawBank(int version, int ievt);
+    int status(int i){return m_candRegHandler[i].getStatus();}
+    int status_BCSU(int i,int ib){return m_candRegHandlerBCSU[i][ib].getStatus();}
+    
+    void decodeBank(const std::vector<unsigned int> &raw, int version, int &RefL0EventNumber, int &RefL0_B_Id);
+    void rawBank(std::vector<unsigned int> &raw, int version);
 
-    void dump(int version, int ievt, std::string tab);
-    void dump(int version, int ievt);
+    void dump(const std::vector<unsigned int> &raw);
+
+    bool inError(int iq){ return m_errors[iq].inError();}
+    bool decodingError(int iq){ return m_errors[iq].decodingError();}
+    void dumpErrorHeader(int ib, std::string tab="") {std::cout<<m_errors[ib].header(tab)<<std::endl;}
+    void dumpErrorField(int ib, std::string tab="") {std::cout<<tab<<m_errors[ib]<<std::endl;}
+    void dumpErrorCounters(std::string &os);
+    
+    bool isActiv(){return m_activ;}
+    
+    int numberOfDecodedBanks() {return m_n_decoded_banks;}
+    
+      
 
   private:
     
+    bool m_activ;
+    int m_n_decoded_banks;    
     int m_side;
+
+    enum fpgas {CU,SU};
+
     // Input candidate registers
     CandRegisterHandler m_candRegHandler[2];
     CandRegisterHandler m_candRegHandlerBCSU[2][12];
 
+    //     int m_L0_B_Id[2][2];
+    //     int m_L0EventNumber[2][2];
+    //     int m_BCID[2][2];
+    //     int m_BCID_BCSU[2][2][12];
+    //     int m_BCID_SU[2];
+    //     int m_BCID_CU[2];
+    //     int m_pb_link_error[2][2][12];
+    //     int m_error[2];
+    //     int m_boardIndex[2][2];
+    
+    //     int m_decodingError[2];
+
+    CtrlRawErrors m_errors[2];
+    
+    
   };
 }; // namespace L0Muon
  

@@ -1,4 +1,4 @@
-// $Id: DeMuonDetector.h,v 1.26 2007-12-21 08:09:40 cattanem Exp $
+// $Id: DeMuonDetector.h,v 1.29 2008-04-16 11:13:49 cattanem Exp $
 // ============================================================================
 #ifndef MUONDET_DEMUONDETECTOR_H
 #define MUONDET_DEMUONDETECTOR_H 1
@@ -19,6 +19,7 @@
 #include "MuonDet/MuonStationCabling.h"
 #include "MuonDet/MuonODEBoard.h"
 #include "MuonDet/MuonTSMap.h"
+#include "MuonDet/MuonDAQHelper.h"
 
 #include "MuonDet/MuonNamespace.h"
 
@@ -143,6 +144,11 @@ public:
   DeMuonChamber* getChmbPtr(const int station, const int region,
 			    const int chmb) const;
 
+  //const DeMuonChamber* getChmbPtr(const int station, const int region,
+//			    const int chmb) const;
+
+
+
   //Fills the vector of chamber pointers  
   //void fillChmbPtr();
 
@@ -158,7 +164,7 @@ public:
   int stations();
   int regions();
   int regions(int stations);
-  float getStationZ(const int station);
+  double getStationZ(const int station);
 
   
   int gapsInRegion(const int station, const int region){
@@ -236,16 +242,16 @@ public:
     return m_sensitiveAreaZ[station*4+region];
   };
 
-  float getInnerX(const int station){
+  double getInnerX(const int station){
     return m_stationBox[station][0];
   };
-  float getInnerY(const int station){
+  double getInnerY(const int station){
     return m_stationBox[station][1];
   };
-  float getOuterX(const int station){
+  double getOuterX(const int station){
     return m_stationBox[station][2];
   };
-  float getOuterY(const int station){
+  double getOuterY(const int station){
     return m_stationBox[station][3];
   };
 
@@ -257,13 +263,13 @@ public:
   };
 
   //Returns the station (as DetectorElement pointer) identified by MuonTileID
-  IDetectorElement* Tile2Station(const LHCb::MuonTileID aTile);
+  DetectorElement* Tile2Station(const LHCb::MuonTileID aTile);
   
   // Return the chambers (as vector of DeMuonChamber pointer) from the MuonTileID
   std::vector<DeMuonChamber*> Tile2Chamber(const LHCb::MuonTileID aTile);
 
   //Returns the station (as DetectorElement pointer) from a Hit 
-  IDetectorElement* DeMuonDetector::Hit2Station(const Gaudi::XYZPoint myPoint);
+  DetectorElement* DeMuonDetector::Hit2Station(const Gaudi::XYZPoint myPoint);
   
   //Returns the chamber (as DetectorElement pointer) from a Hit 
   DeMuonChamber* DeMuonDetector::Hit2Chamber(const Gaudi::XYZPoint myPoint);
@@ -272,6 +278,9 @@ public:
 // unsigned int getReadoutType(int station, int region,MuonLayout lay);  
 // MuonODEBoard* getODEContainingTile(LHCb::MuonTileID digit);  
 // MuonL1Board* getL1ContainingTile(LHCb::MuonTileID digit);
+  inline MuonDAQHelper* getDAQInfo(){
+    return &(m_daqHelper);
+  };
 
 private:
 
@@ -317,6 +326,8 @@ private:
   float m_sensitiveAreaZ[partition];  
   double m_stationBox[5][4];
   double m_stationZ[5];
+  MuonDAQHelper m_daqHelper;
+
 };
 
 // -----------------------------------------------------------------------------
@@ -346,7 +357,7 @@ inline int DeMuonDetector::regions()
   return m_regions;
 }
 
-inline float DeMuonDetector::getStationZ(const int station){
+inline double DeMuonDetector::getStationZ(const int station){
     return m_stationZ[station];
   };
 

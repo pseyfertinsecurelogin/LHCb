@@ -4,6 +4,10 @@
 ! Purpose     : Package for the tracking event model classes
 !-----------------------------------------------------------------------------
 
+!======================= TrackEvent v4r12 2008-04-17 =========================
+! 2008-04-17 - Wouter Hulsbergen
+ - fixed bug in State::posMomCovariance found by Cedric Potterat
+
 !======================= TrackEvent v4r11 2008-02-20 =========================
 ! 2008-02-20 - Vanya BELYAEV
  - dict/lcgDict.h

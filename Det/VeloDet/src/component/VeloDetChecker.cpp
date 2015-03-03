@@ -1,4 +1,4 @@
-// $Id: VeloDetChecker.cpp,v 1.5 2008-02-14 16:15:47 cattanem Exp $
+// $Id: VeloDetChecker.cpp,v 1.7 2008-03-28 16:31:15 dhcroft Exp $
 // Include files 
 
 // from Gaudi
@@ -413,7 +413,7 @@ void VeloDetChecker::CheckAllSensorGeometry() {
       sensorTuple->column( "isPileUp",sensor->isPileUp());
       sensorTuple->column( "routLine",sensor->StripToRoutingLine(strip));
       sensorTuple->column( "chipChan",sensor->StripToChipChannel(strip));
-      sensorTuple->column( "stripCapacitance",sensor->stripCapacitance(strip));
+      sensorTuple->column( "stripNoise",sensor->stripNoise(strip));
       std::pair<Gaudi::XYZPoint,Gaudi::XYZPoint> stripLimits;
       // Strip co-ordinates in the global frame
       stripLimits=sensor->globalStripLimits(strip);
@@ -488,10 +488,7 @@ void VeloDetChecker::CheckPhiSensorGeometry() {
     phiTuple->column( "z",phiSensor->z());
     phiTuple->column( "routLine",phiSensor->StripToRoutingLine(strip));
     phiTuple->column( "chipChan",phiSensor->StripToChipChannel(strip));
-    phiTuple->column( "innerPhiOfStrip",phiSensor->phiOfStrip(strip,0.0,phiSensor->rMin(phiSensor->zoneOfStrip(strip))));
-    phiTuple->column( "outerPhiOfStrip",phiSensor->phiOfStrip(strip,0.0,phiSensor->rMax(phiSensor->zoneOfStrip(strip))));
-    phiTuple->column( "angleOfStrip",phiSensor->angleOfStrip(strip));
-    
+    phiTuple->column( "idealPhiOfStrip",phiSensor->idealPhiOfStrip(strip));
     phiTuple->column( "angleOfStrip",phiSensor->angleOfStrip(strip));
     phiTuple->column( "trgPhiDirectionOfStrip",phiSensor->trgPhiDirectionOfStrip(strip));
     phiTuple->column( "length",phiSensor->stripLength(strip));

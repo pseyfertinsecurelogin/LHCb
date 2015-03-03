@@ -4,6 +4,16 @@
 ! Purpose     : Muon System Raw Buffer coding and decoding algorithms
 !-----------------------------------------------------------------------------
 
+!========================== MuonDAQ v4r0 2008-04-08 ==========================
+! 2008-04-02 - Alessia Satta
+ - many changes. 
+   Remove all cabling readout info. They are retrieved by the 
+   DeMuonDetector via the MuonDAQ Helper class. 
+   Add the possibility to decode and encode both DC06 data format and real data
+   format (named v1)
+   several new methods for getting the raw data are available.
+   Also Non Zero Suppressed decoding is available
+
 !========================== MuonDAQ v3r3 2007-11-28 ==========================
 ! 2007-11-28 - Marco Cattaneo
  - Add dictionary fo tool interface

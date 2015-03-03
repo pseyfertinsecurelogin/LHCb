@@ -3,9 +3,105 @@
 ! Responsible : J.P. Palacios
 !============================================================================
 
+!======================== DaVinciKernel v6r12 2008-04-17 ====================
+! 2008-04-17 - Patrick Koppenburg
+ - IPhysDesktop: save methods renamed to keep. Save will be removed in the
+   next release. Thanks to Vanya for suggesting this name.
+
+! 2008-04-15 - Juan PALACIOS
+ - Add public virtual method 
+    StatusCode transportAndProject(const LHCb::Particle*, 
+                                   const double znew,
+                                    LHCb::Particle& transParticle) = 0;
+   to IParticleTransporter interface.
+
+! 2008-04-15 - Vanya BELYAEV
+ - Kernel/DVAlgorithm.h
+     add an accessor to  IDistanceCalculator tools:
+
+    /// accessor to Distance Calculator tool
+    inline IDistanceCalculator* distanceCalculator ( const std::string& name = "" ) const ;
+
+- src/Lib/DVAlgorithm.cpp
+    1 ) add new property: "DistanceCalculator" with mapping of nickname to the
+        actual type/name for distance calculator tools.
+    2 ) update the possible mapping for following proeprties:
+         "VertexFitters"    
+         "ParticleCombiners" 
+         "ParticleReFitters"
+         "MassFitters"
+         "LifetimeFitters"
+         "DirectionFitters"  
+
+
+! 2008-04-10 - Vanya BELYAEV
+ - src/Lib/Decay.cpp
+    fix a stupid bug ( "==" instead of "=" )
+
+! 2008-04-10 - Vanya BELYAEV 
+ - Kernel/IPlotTool.h
+   Add (implemented) template method to allow filling the plots for an
+   arbitrary sequence of objects, convertible to "const LHCb::Particle*"
+
+! 2008-04-04 - Vanya BELYAEV
+ - Kernel/IDistanceCalculator.h
+    Add a counterpartner for the method "projectedDistance" 
+     *without* evaluation of the error in the projected-distance 
+    (could be a bit more more efficient, if the error is not required):
+
+
+  // ==========================================================================
+  /** Calculate the projected distance 
+   *
+   *  \$s=\frac{\left(\vec{\mathbf{v}}\vec{\mathbf{p}}
+   *     \right)}{\left|\vec{\mathbf{p}}\right|}\f$,
+   *  where vector \f$\vec{\mathbf{v}}\f$ is a vector from 
+   *  the primary to the secondary vertex: 
+   *    \f$\vec{\mathbf{v}}=\vec{\mathbf{x}}_{d}-\vec{\mathbf{x}}_{pv}\f$,
+   *
+   * @param particle (input)  the pointer to the particle 
+   * @param primary  (input)  the pointer to the production vertex 
+   * @param dist     (output) the projected distance
+   * @return status code 
+   */
+  virtual StatusCode projectedDistance   
+  ( const LHCb::Particle*   particle , 
+    const LHCb::VertexBase* primary  , 
+    double&                 dist     ) const = 0 ;
+
+! 2008-04-03 - Vanya BELYAEV 
+ - Kernel/Decay.h
+     - add few very simple functions, which simplify the manipulations 
+       with DaVinci::Decay class and IDecodeSimpleDecayString interface
+    - also add a typedef for "std::vector<DaVinci::Decay>" as "DaVinci::Decays"
+
+! 2008-03-31 - Vanya BELYAEV
+ - Kernel/Decay.h:  add few simple setters
+ - modify a bit IDecodeSimpleDecayString interface to be able to get the 
+   decay descriptor in a form of DaVinci::Decay
+ - New class DaVinci::Decay, which is able to represent the simple 1-step decay
+   new files: Kernel/Decay.h, src/Lib/Decay.cpp
+   The primary goal fo thie class is to act as an argument for LoKi-loops,
+   but it can also acs as some base class for CombineParticle::Decay
+
+! 2008-03-31 - Patrick Koppenburg
+ - ParticlesFilterBase : no DECLARE_TOOL_FACTORY in linker library
+
+! 2008-03-30 - Vanya BELYAEV
+ - Kernel/IPRintDecay.h, src/Lib/IPrintDecay.cpp	
+    add new abstract interface for orintout of dec	ay tree   
+    (essentially it is MC-free version of IPrintDeca	yTreeTool) 
+
+! 2008-03-14 - Patrick Koppenburg
+ - Less verbose initialisation of DVAlgorithm
+
+! 2008-03-10 - Vanya BELYAEV
+ - Kernel/IDistanceCalculator.h
+   src/Lib/IDistanceCalculator.cpp 
+     add the new abstract interface for "distance calculator" tool  
+
 !======================== DaVinciKernel v6r11 2008-02-25 ====================
 ! 2008-02-23 - Vanya BELYAEV
-
  - Kernel/DVAlgorithm.h
    src/Lib/DVAlgorithm.cpp
   

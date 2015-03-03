@@ -1,15 +1,7 @@
-// $Id: OnlineRunInfo.h,v 1.4 2008-02-05 16:44:18 frankb Exp $
-//====================================================================
-//  OnlineRunInfo.h
-//--------------------------------------------------------------------
-//
+// $Id: OnlineRunInfo.h,v 1.6 2008-04-10 09:58:42 cattanem Exp $
 //====================================================================
 #ifndef MDF_ONLINERUNINFO_H
 #define MDF_ONLINERUNINFO_H
-// $Header: /afs/cern.ch/project/cvs/reps/lhcb/DAQ/MDF/MDF/OnlineRunInfo.h,v 1.4 2008-02-05 16:44:18 frankb Exp $
-
-// Framework include files
-#include "Event/RawBank.h"
 
 #ifdef _WIN32
 #pragma pack(push, onlineruninfo_aligment, 1)
@@ -22,9 +14,6 @@
  *  LHCb namespace declaration
  */
 namespace LHCb  {
-
-  // Forward declarations
-  class RawBank;
 
   /** @class OnlineRunInfo OnlineRunInfo.h MDF/OnlineRunInfo.h
     *
@@ -40,7 +29,8 @@ namespace LHCb  {
     unsigned      detStatus   : 24;
     unsigned      errors      :  8;
     unsigned      bunchID     : 12;
-    unsigned      pad0        :  4;
+    unsigned      TAEWindow   :  3;
+    unsigned      pad0        :  1;
     unsigned      triggerType :  3;
     unsigned      readoutType :  2;
     unsigned      forceBit    :  1;

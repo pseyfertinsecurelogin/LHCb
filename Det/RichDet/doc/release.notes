@@ -4,6 +4,15 @@
 ! Purpose     : Interface to the xml description
 !-----------------------------------------------------------------------------
 
+!======================== RichDet v10r11 2008-04-15 ==========================
+! 2008-04-10 - "Antonis Papanestis"
+ - Changes in DeRichHPD and Panel to cope with the new multiple HPD logical
+   volumes.
+
+! 2008-02-17 - Chris Jones
+ - Remove use of floor function in DeRichHPDPanel::findHPDColAndPos 
+   (surprisingly slow)
+
 !======================== RichDet v10r10 2008-02-15 ==========================
 ! 2008-02-15 - Chris Jones
  - Add a new public method to DeRichHPDPanel to return a pointer to the 

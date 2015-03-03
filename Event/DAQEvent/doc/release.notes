@@ -4,6 +4,25 @@
 !Purpose: Define the classes delivered to the online farm by the DAQ
 !----------------------------------------------------------------------
 
+!================ DAQEvent v7r10 2008-04-09 ===========================
+! 2008-04-09 - Marco Clemencic
+ - Added the TAEWindow property (timeAlignmentEventWindow) to the ODIN class.
+   Available since version 4 of ODIN bank.
+
+! 2008-04-01 - Olivier Deschamps
+ - RawBankSizeMonitor : produce profile1D histogram by default 
+  (2D histo can be activated via options RawBankSizeMonitor.Profile = false;)
+
+! 2008-03-26 - Olivier Deschamps
+ - New monitoring algorithm : RawBankSizeMonitor : 
+   produce 2d histo bankSize.vs.sourceID
+
+! 2008-03-14 - Beat Jost
+ - Add TestDet bank type, for DAQ tests
+
+! 2008-03-03 - Olivier Deschamps
+ - RawBankReadoutStatusMonitoring : minor change in 2d histo bining
+
 !================ DAQEvent v7r9 2008-03-03 ============================
 ! 2008-02-27 - Olivier Deschamps
  - new algorithm : src/components/OdinTypesFilter :
@@ -17,7 +36,7 @@
  - Cleanup stl includes in RawBank.h
 
 !================ DAQEvent v7r8 2008-01-30 ============================
-! 2008-01-30 Marco Clemencic
+! 2008-01-30 - Marco Clemencic
  - Fixed compilation warnings in ODIN.xml on Win32.  
 
 ! 2008-01-23 - Olivier Deschamps
