@@ -1,4 +1,4 @@
-// $Id: Particles2.h,v 1.8 2008-06-03 15:47:08 cattanem Exp $
+// $Id: Particles2.h,v 1.10 2008-11-02 20:13:32 ibelyaev Exp $
 // ============================================================================
 #ifndef LOKI_PARTICLES2_H 
 #define LOKI_PARTICLES2_H 1
@@ -44,43 +44,40 @@ namespace LoKi
      *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
      *  @date   2002-07-15
      */
-    class TimeDistance 
-      : public LoKi::BasicFunctors<const LHCb::Particle*>::Function
+    class TimeDistance : public LoKi::Particles::VertexDistance 
     {
     public:
       /// constructor 
       TimeDistance 
-      ( const LHCb::VertexBase*  vertex );
+      ( const LHCb::VertexBase*  vertex )
+        : LoKi::Particles::VertexDistance ( vertex ) {}
       /// constructor 
       TimeDistance 
-      ( const LoKi::Point3D&     vertex );
+      ( const LoKi::Point3D&     vertex )
+        : LoKi::Particles::VertexDistance ( vertex ) {}
       /// constructor
       TimeDistance 
-      ( const LoKi::Vertices::VertexHolder& base ) ;
-      /// constructor
-      TimeDistance 
-      ( const LoKi::Particles::VertexDistance& base ) ;
-      /// constructor
-      TimeDistance 
-      ( const LoKi::Vertices::VertexDistance& base ) ;
-      /// constructor
-      TimeDistance 
-      ( const TimeDistance & base ) ;
+      ( const LoKi::Vertices::VertexHolder& vertex ) 
+        : LoKi::Particles::VertexDistance ( vertex ) {}
       /// MANDATORY: destructor
-      virtual ~TimeDistance() ;
+      virtual ~TimeDistance(){} ;
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  TimeDistance* clone() const ;
+      virtual  TimeDistance* clone() const 
+      { return new LoKi::Particles::TimeDistance(*this) ; }
       /// MANDATORY: the only one essential method 
-      virtual result_type operator() ( argument p ) const ;
+      virtual result_type operator() ( argument p ) const 
+      { return time ( p ) ; }
       /// OPTIONAL: the specific printout 
-      virtual std::ostream& fillStream( std::ostream& s ) const ;
+      virtual std::ostream& fillStream( std::ostream& s ) const 
+      { return s << "TDIST" ; }
       /// the actual computation 
       result_type  time  ( argument p ) const ;
+      // ======================================================================
     private:
+      // ======================================================================
       /// default constructor is private 
       TimeDistance();
-    private:
-      LoKi::Particles::VertexDistance m_fun ;
+      // ======================================================================
     };
     // ========================================================================
     /** @class TimeSignedDistance
@@ -98,43 +95,41 @@ namespace LoKi
      *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
      *  @date   2002-07-15
      */
-    class TimeSignedDistance 
-      : public LoKi::BasicFunctors<const LHCb::Particle*>::Function
+    class TimeSignedDistance : public LoKi::Particles::VertexSignedDistance 
     {
     public:
+      // ======================================================================
       /// constructor 
       TimeSignedDistance 
-      ( const LHCb::VertexBase*  vertex );
+      ( const LHCb::VertexBase*  vertex )
+        : LoKi::Particles::VertexSignedDistance ( vertex ) {}
       /// constructor 
       TimeSignedDistance 
-      ( const LoKi::Point3D&     vertex );
+      ( const LoKi::Point3D&     vertex )
+        : LoKi::Particles::VertexSignedDistance ( vertex ) {}
       /// constructor
       TimeSignedDistance 
-      ( const LoKi::Vertices::VertexHolder& base ) ;
-      /// constructor
-      TimeSignedDistance 
-      ( const LoKi::Vertices::VertexDistance& base ) ;
-      /// constructor
-      TimeSignedDistance 
-      ( const LoKi::Particles::VertexSignedDistance& base ) ;
-      /// constructor
-      TimeSignedDistance 
-      ( const TimeSignedDistance & base ) ;
+      ( const LoKi::Vertices::VertexHolder& vertex ) 
+        : LoKi::Particles::VertexSignedDistance ( vertex ) {}
       /// MANDATORY: destructor
-      virtual ~TimeSignedDistance() ;
+      virtual ~TimeSignedDistance(){} 
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  TimeSignedDistance* clone() const ;
+      virtual  TimeSignedDistance* clone() const 
+      { return new TimeSignedDistance ( *this ) ; }
       /// MANDATORY: the only one essential method 
-      virtual result_type operator() ( argument p ) const ;
+      virtual result_type operator() ( argument p ) const 
+      { return time ( p ) ; }
       /// OPTIONAL: the specific printout 
-      virtual std::ostream& fillStream( std::ostream& s ) const ;
+      virtual std::ostream& fillStream( std::ostream& s ) const 
+      { return s << "TDSIGN" ; }
       /// the actual computation 
       result_type  time  ( argument p ) const ;
+      // ======================================================================
     private:
+      // ======================================================================
       /// default constructor is private 
       TimeSignedDistance();
-    private:
-      LoKi::Particles::VertexSignedDistance m_fun ;
+      // ======================================================================
     };
     // ========================================================================
     /** @class TimeDotDistance
@@ -152,41 +147,41 @@ namespace LoKi
      *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
      *  @date   2002-07-15
      */
-    class TimeDotDistance 
-      : public LoKi::BasicFunctors<const LHCb::Particle*>::Function
+    class TimeDotDistance : public LoKi::Particles::VertexDotDistance 
     {
     public:
+      // ======================================================================
       /// constructor 
       TimeDotDistance 
-      ( const LHCb::VertexBase* vertex ) ;
+      ( const LHCb::VertexBase* vertex ) 
+        : LoKi::Particles::VertexDotDistance ( vertex ) {}
       /// constructor 
       TimeDotDistance 
-      ( const LoKi::Point3D& vertex ) ;
+      ( const LoKi::Point3D& vertex ) 
+        : LoKi::Particles::VertexDotDistance ( vertex ) {}
       /// constructor 
       TimeDotDistance 
-      ( const LoKi::Vertices::VertexHolder&       base  ) ;
-      /// constructor 
-      TimeDotDistance 
-      ( const LoKi::Particles::VertexDotDistance& base  ) ;
-      /// copy constructor 
-      TimeDotDistance 
-      ( const TimeDotDistance& base  ) ;
+      ( const LoKi::Vertices::VertexHolder&    vertex ) 
+        : LoKi::Particles::VertexDotDistance ( vertex ) {}
       /// MANDATORY: virtual destructor 
-      virtual ~TimeDotDistance();
+      virtual ~TimeDotDistance () {} 
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  TimeDotDistance* clone() const ;
+      virtual  TimeDotDistance* clone() const 
+      { return new TimeDotDistance(*this) ; }
       /// MANDATORY: the only one essential method 
-      virtual result_type operator() ( argument p ) const ;
+      virtual result_type operator() ( argument p ) const 
+      { return time ( p ) ; }
       /// OPTIONAL: the specific printout 
-      virtual std::ostream& fillStream( std::ostream& s ) const ;
+      virtual std::ostream& fillStream( std::ostream& s ) const 
+      { return s << "TDOT" ; }
       /// the actual computation 
       result_type time           ( argument p ) const ;
+      // ======================================================================
     private:
+      // ======================================================================
       /// default constructor is private
       TimeDotDistance();
-    private:
-      // the evaluator 
-      LoKi::Particles::VertexDotDistance m_fun ;
+      // ======================================================================
     };
     // ========================================================================
     /** @class LifetimeDistance
@@ -211,6 +206,7 @@ namespace LoKi
       , public LoKi::Vertices::VertexHolder 
     {
     public:
+      // ======================================================================
       /// constructor 
       LifetimeDistance 
       ( const LHCb::VertexBase* vertex ) ;
@@ -228,9 +224,12 @@ namespace LoKi
       virtual  result_type operator() ( argument a ) const ;
       /// OPTIONAL: the nice printout
       virtual std::ostream& fillStream( std::ostream& s ) const ;
+      // ======================================================================
     private:
-      // The default constructor is disabled
-      LifetimeDistance() ; ///< No default constrtuctor
+      // ======================================================================
+      /// The default constructor is disabled
+      LifetimeDistance() ; // No default constrtuctor
+      // ======================================================================
     } ;
     // ========================================================================
   }  // end of namespace LoKi::Particles

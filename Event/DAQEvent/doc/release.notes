@@ -4,6 +4,25 @@
 !Purpose: Define the classes delivered to the online farm by the DAQ
 !----------------------------------------------------------------------
 
+!================ DAQEvent v7r16 2008-11-17 ===========================
+! 2008-10-28 - Marco Cattaneo
+ - Add missing include for gcc 4.3
+
+! 2008-10-28 - Olivier Deschamps 
+ - new component algorithm 'OdinBCIDFilter' : allow to filter on BCID 
+   - default : filter odd-parity BCID (can be inverted to even-parity setting
+               the 'Revert' property to 'true')
+   - to be used for Prs/Spd to monitor separatly the Very Front-End parities
+
+! 2008-10-16 - Marco Cattaneo
+ - Update test.ref reference file for Gaudi v20r3
+
+! 2008-10-14 - Marco Cattaneo
+ - Add missing dependency of dictionary generation on header file generation
+
+! 2008-10-13 - Marco Cattaneo for Martin van Beuzekom
+ - Add L0PUFull and L0PUError bank types
+
 !================ DAQEvent v7r15 2008-09-30 ===========================
 ! 2008-09-15 - Olivier Deschamps
  - Add 'MissingStatus' in RawBankReadoutStatus type

@@ -1,8 +1,17 @@
-// $Id: Relation2D.h,v 1.9 2006-11-25 18:50:40 ibelyaev Exp $
+// $Id: Relation2D.h,v 1.12 2008-11-02 16:44:38 ibelyaev Exp $
 // ============================================================================
-// CVS tag $Name: not supported by cvs2svn $ ; version $Revision: 1.9 $ 
+// CVS tag $Name: not supported by cvs2svn $ ; version $Revision: 1.12 $ 
 // ============================================================================
 // $Log: not supported by cvs2svn $
+// Revision 1.11  2008/11/01 15:53:08  ibelyaev
+//  add the method 'merge' and its shortcut '+=' for each concrete class
+//
+// Revision 1.10  2008/10/31 19:34:59  ibelyaev
+//  fixes for gcc4.3
+//
+// Revision 1.9  2006/11/25 18:50:40  ibelyaev
+//  fix a problem with Rlation2D.h
+//
 // Revision 1.8  2006/06/11 15:23:46  ibelyaev
 //  The major  upgrade: see doc/release.notes
 //
@@ -28,12 +37,11 @@
 #include "Relations/IRelation2D.h"
 #include "Relations/Relation2.h"
 // ============================================================================
-
 namespace LHCb
 {  
-  /** @class Relation2D Relation2D.h Relations/Relation2D.h
+  /** @class Relation2D Relations/Relation2D.h
    *  
-   ** Templated object which implements bidirectional relations 
+   * Templated object which implements bidirectional relations 
    *
    *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
    *  @date   28/01/2002
@@ -45,6 +53,7 @@ namespace LHCb
    , public IRelation2D<FROM,TO>
   {
   public: 
+    // ========================================================================
     /// shortcut for own type 
     typedef Relation2D<FROM,TO>              OwnType    ;
     /// shortcut for inverse type 
@@ -75,7 +84,9 @@ namespace LHCb
     typedef typename IBase::DirectType       IDirect        ;
     // shortcut for "inverse" interface 
     typedef typename IBase::InverseType      IInverse       ;
+    // ========================================================================
   public:
+    // ========================================================================
     /// Standard/default  constructor
     Relation2D 
     ( const size_t reserve  = 0 ) 
@@ -87,7 +98,7 @@ namespace LHCb
 #ifdef COUNT_INSTANCES 
       Relations::InstanceCounter::instance().increment( type() ) ;
 #endif // COUNT_INSTANCES
-    };
+    }
     /// constructor from any direct interface
     Relation2D 
     ( const IDirect& copy  )
@@ -99,7 +110,7 @@ namespace LHCb
 #ifdef COUNT_INSTANCES 
       Relations::InstanceCounter::instance().increment( type() ) ;
 #endif // COUNT_INSTANCES
-    };
+    }
     /** constructor from "inverted interface"
      *  @param inv object to be inverted
      *  @param flag artificial argument to distinguisch from 
@@ -116,7 +127,7 @@ namespace LHCb
 #ifdef COUNT_INSTANCES 
       Relations::InstanceCounter::instance().increment( type() ) ;
 #endif // COUNT_INSTANCES
-    };
+    }
     /// copy constructor 
     Relation2D 
     ( const OwnType& copy  )
@@ -128,30 +139,32 @@ namespace LHCb
 #ifdef COUNT_INSTANCES 
       Relations::InstanceCounter::instance().increment( type() ) ;
 #endif // COUNT_INSTANCES
-    };
+    }
     /// destructor (virtual) 
     virtual ~Relation2D()
     {
 #ifdef COUNT_INSTANCES 
       Relations::InstanceCounter::instance().decrement( type() ) ;
 #endif // COUNT_INSTANCES
-    };
+    }
     /// the type name 
     const std::string& type() const 
     {
       static const std::string s_type( System::typeinfoName( typeid(OwnType) ) ) ;
       return s_type ;
-    };
+    }
     /// object identification (static method) 
     static  const CLID& classID() 
     {
       static const CLID s_clid =
         Relations::clid( System::typeinfoName( typeid(OwnType) ) );
       return s_clid ;
-    };
+    }
     /// object identification (virtual method)
     virtual const CLID& clID()     const { return classID() ; }    
+    // ========================================================================
   public:  // major functional methods (fast, 100% inline)
+    // ========================================================================
     /// retrive all relations from the object (fast,100% inline)
     inline Range i_relations ( From_ object ) const
     { return m_base.i_relations ( object ) ; }
@@ -182,7 +195,33 @@ namespace LHCb
      *   mandatory to use after i_push
      */
     inline  void i_sort() { m_base.i_sort() ; }
+    // ========================================================================
+  public: // merge 
+    // ========================================================================
+    /** merge with the sorted range of relations 
+     *  @attention the range is assumed to be sorted! 
+     *  @param range the range to be added 
+     *  @return self-reference 
+     */
+    Relation2D& merge ( const Range& range ) 
+    { m_base.merge ( range ) ; return *this ; }
+    /** merge with the sorted range of relations 
+     *  @attention the range is assumed to be sorted! 
+     *  @param range the range to be added 
+     *  @return self-reference 
+     */
+    Relation2D& imerge ( const typename IInverse::Range& range ) 
+    { m_base.imerge ( range ) ; return *this ; }
+    /** merge with the sorted range of relations 
+     *  @attention the range is assumed to be sorted! 
+     *  @param range the range to be added 
+     *  @return self-reference 
+     */
+    Relation2D& operator+=( const Range& range ) 
+    { return merge ( range ) ; }
+    // ========================================================================
   public: // abstract methods from interface
+    // ========================================================================
     /// retrive all relations from the given object object
     virtual Range relations ( From_ object ) const 
     { return i_relations( object ) ; }
@@ -203,14 +242,16 @@ namespace LHCb
     /// remove ALL relations from ALL to ALL objects
     virtual StatusCode   clear () { return i_clear() ; }    
     /// rebuild ALL relations from ALL  object to ALL objects 
-    virtual  StatusCode rebuild() { return i_rebuild () ; };
+    virtual  StatusCode rebuild() { return i_rebuild () ; }
     /// update the object after POOL/ROOT reading 
     virtual StatusCode update( int flag ) 
     {
       if( 0 == flag ) { return i_rebuild() ; }
       return StatusCode::SUCCESS ;
-    };    
+    }
+    // ========================================================================
   public:
+    // ========================================================================
     /// get the "direct" interface 
     inline       typename Base::Direct*  i_direct  ()       
     { return m_base.i_direct() ; }
@@ -223,7 +264,9 @@ namespace LHCb
     /// get the "inverse" interface  (const version)
     inline const typename Base::Inverse* i_inverse () const 
     { return m_base.i_inverse() ; }
+    // ========================================================================
   public:  // abstract methods from interface
+    // ========================================================================
     /// get the "direct" interface 
     virtual       DirectType*  direct ()        { return i_direct() ; }    
     /// get the "direct" interface  (const-version)
@@ -232,7 +275,9 @@ namespace LHCb
     virtual       InverseType* inverse ()       { return i_inverse() ; }
     /// get the "inverse" interface  (const version)
     virtual const InverseType* inverse () const { return i_inverse() ; }
+    // ========================================================================
   public:
+    // ========================================================================
     /// query the interface
     virtual StatusCode queryInterface
     ( const InterfaceID& id , void** ret )
@@ -248,18 +293,30 @@ namespace LHCb
       ///
       addRef() ;
       return StatusCode::SUCCESS ;
-    };
+    }
     /// increase the reference counter
     virtual unsigned long addRef  () { return  DataObject::addRef  () ; }    
     /// release the reference counter
     virtual unsigned long release () { return  DataObject::release () ; }    
+    // ========================================================================
   public:
+    // ========================================================================
     /// POOL identifier
     static std::string GUID() { return Relations::guid ( classID() ) ; }
+    // ========================================================================
   private:
-    Base m_base ;
+    // ========================================================================
+    /// assignment operator is disabled 
+    Relation2D& operator=( const Relation2D& ) ;
+    // ========================================================================
+  private:
+    // ========================================================================
+    /// the actual relation table 
+    Base m_base ;                                  // the actual relation table 
+    // ========================================================================
   };
-} ; // end of namespace LHCb
+  // ==========================================================================
+} // end of namespace LHCb
 // ============================================================================
 // The End
 // ============================================================================

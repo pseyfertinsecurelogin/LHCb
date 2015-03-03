@@ -1,7 +1,83 @@
+!$Id: release.notes,v 1.273 2008-11-17 16:47:27 cattanem Exp $
 !============================================================================
 ! Package     : DaVinciKernel
 ! Responsible : J.P. Palacios
 !============================================================================
+
+!======================== DaVinciKernel v7r1 2008-11-17 =====================
+! 2008-11-17 - Tomasz Skwarnicki
+ - fix problem with unwanted dependencies in ITriggerTisTos
+
+! 2008-11-14 - Tomasz Skwarnicki
+ - Kernel/ITriggerTisTos.h ITriggerSelectionTisTos.h
+   Remove obsolete input parameters and methods.
+   Add new functionality with hltObjectSummaries() method.
+
+! 2008-10-31 - Juan PALACIOS
+ - src/OnOffline.h
+  . Add const std::string& trunkOnTES() const method
+
+! 2008-10-27 - Juan PALACIOS
+ - Kernel/IPhysDesktop.h
+  . getOutputLocation() is now const, and returns a const std::string&
+  . primaryVertices() in now const, and returns const RecVertex::Container*
+ - Kernel/IContextTool.h
+  . primaryVertices() in now const, and returns const RecVertex::Container*
+
+! 2008-10-21 - Juan PALACIOS
+
+ - Kernel/IPhysDesktop.h
+  . Remove Particle2Vertex::Table Table() method. The state of the table is 
+    not well defined until it is stored on the TES. So better to use other
+    methods to access the relations.
+
+ - Kernel/Particle2Vertex.h
+  . Add typedef LightTable for light 1D relation table
+    Relations::RelationWeighted<LHCb::Particle, LHCb::VertexBase, double>
+
+ - Kernel/IRelatedPVFinder.h
+  . Return Particle2Vertex::LightTable instead of Particle2Vertex::Relations
+ 
+! 2008-10-20 - Juan PALACIOS
+ - Kernel/IRelatedPVFinder.h
+  . Interface methods no longer take IDistanceCalculator* as argument. 
+    Implementation should now take care of getting it's own 
+    IDistanceCalculator.
+
+! 2008-10-14 - Juan PALACIOS
+ - Kernel/IRelatedPVFinder.h
+  . Change interface to now return Particle2Vertex::Relations instead of
+    Particle2Vertex::Range, which is essentially a couple of iterators
+    refering back to the former.
+ - cmt/requirements
+  . Increase version to v7r1
+
+! 2008-09-30 - Juan PALACIOS
+ - Kernel/IRelatedPVFinder.h
+  . relatedPVs methods now return a Particle2Vertex::Range
+  . IDistanceCalculator* is passed as function argument.
+ - Kernel/Particle2Vertex.h
+  . Add some useful typedefs to Particle2Vertex namespace.
+
+! 2008-09-29 - Juan PALACIOS
+ - Kernel/IRelatedPVFinder.h
+  . Make all methods const.
+
+! 2008-09-29 - Juan PALACIOS
+ - src/Lib/DVAlgorithm.cpp
+  . Adapt to changes in IOnOffline interface.
+
+! 2008-09-29 - Juan PALACIOS
+ - Kernel/IOnOfflineTool.h
+  . Clean up interface. Now it only gives the names of some
+    tool implementations and PV location to be used by the parent algorithm
+    or tool.
+
+! 2008-09-29 - Juan PALACIOS
+ - Backwards-incompatible changes to IRelatedPVFinder. interface now contains 
+   three simple methods taking a particle, some primary vertices, and an 
+   empty range of weighted Particle->VertexBase relations, so be filled
+   according to some "bestness" logic.
 
 !======================== DaVinciKernel v7r0 2008-07-16 =====================
 ! 2008-07-11 - Vanya BELYAEV

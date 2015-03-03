@@ -1,8 +1,22 @@
-! $Id: release.notes,v 1.27 2008-07-27 15:41:06 cattanem Exp $
+! $Id: release.notes,v 1.32 2008-11-17 15:28:45 cattanem Exp $
 ! Package: IOExample
 ! Package Manager: M.Frank
 ! Purpose: Demonstrate how to write and read back event data using POOL I/O.
 !---------------------------------------------------------------------------
+
+!====================== IOExample v2r6 2008-11-17 =========================
+! 2008-11-06 - Marco Cattaneo
+ - Update QMTest reference following changes in GaudiAlgorithm base class
+
+! 2008-11-03 - Marco Cattaneo
+ - Add a library of tests for reading/writing event model objects. Currently
+   contains an algorithm to dump Tracks
+
+! 2008-10-31 - Marco Cattaneo
+ - Update QMTest following fix to spurious warning from HepMCBack
+
+! 2008-10-16 - Marco Cattaneo
+ - Update QMTest reference files for Gaudi v20r3
 
 !====================== IOExample v2r5 2008-07-27 =========================
 ! 2008-07-23 - Marco Cattaneo

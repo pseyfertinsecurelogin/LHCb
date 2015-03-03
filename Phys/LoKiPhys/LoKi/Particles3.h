@@ -1,4 +1,4 @@
-// $Id: Particles3.h,v 1.9 2008-06-03 15:47:08 cattanem Exp $
+// $Id: Particles3.h,v 1.11 2008-11-02 20:13:32 ibelyaev Exp $
 // ============================================================================
 #ifndef LOKI_PARTICLES3_H 
 #define LOKI_PARTICLES3_H 1
@@ -93,8 +93,10 @@ namespace LoKi
       void setParticle( const LHCb::Particle* value ) const 
       { m_particle = value ; }
     private:
+      // ======================================================================
       // default constructor is private 
       ClosestApproach();
+      // ======================================================================
     private:
       // ======================================================================
       /// the particle 

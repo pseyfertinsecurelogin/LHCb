@@ -4,7 +4,7 @@
 #============================================================================
 
 package LHCbMath
-version v3r3
+version v3r4
 
 #============================================================================
 # Structure, i.e. directories to process. 
@@ -19,7 +19,7 @@ use GaudiKernel     v*
 use ROOT            v*      LCG_Interfaces
 use Boost           v*      LCG_Interfaces
 use GSL             v*      LCG_Interfaces
-use GaudiPython     v*
+use GaudiPython     v*                     -no_auto_imports
 
 apply_pattern install_more_includes more=LHCbMath
 
@@ -27,6 +27,9 @@ apply_pattern install_python_modules
 
 macro_append ROOT_linkopts " -lMathCore " \
              WIN32 " libMathCore.lib "
+macro_append ROOT_linkopts "" \
+             ROOT_GE_5_19&WIN32 " libGenVector.lib " \
+             ROOT_GE_5_19 " -lGenVector "
 
 # ================= constituents: linker library ============================
 library             LHCbMathLib    ../src/*.cpp

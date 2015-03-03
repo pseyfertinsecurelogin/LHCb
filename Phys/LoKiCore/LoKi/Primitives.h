@@ -1,4 +1,4 @@
-// $Id: Primitives.h,v 1.10 2008-09-21 13:19:11 ibelyaev Exp $
+// $Id: Primitives.h,v 1.15 2008-11-02 18:47:07 ibelyaev Exp $
 // ============================================================================
 #ifndef LOKI_PRIMITIVES_H 
 #define LOKI_PRIMITIVES_H 1
@@ -48,14 +48,17 @@ namespace LoKi
    *  helper class to keep two functors of the same type
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date 2007-11-01 
-   */
+   */ 
   template <class TYPE,class TYPE2>
   class TwoFunctors
   {
-  protected:
+  private:
+    // ========================================================================
     /// the actual type of underlying functor 
     typedef LoKi::Functor<TYPE,TYPE2> functor ;
+    // ========================================================================
   public:
+    // ========================================================================
     TwoFunctors ( const functor& f1 , 
                   const functor& f2 ) 
       : m_fun1  ( f1 ) 
@@ -63,26 +66,35 @@ namespace LoKi
     {}
     /// destructor 
     virtual ~TwoFunctors() {}
+    // ========================================================================
   public:
+    // ========================================================================
     /// evaluate the first functor 
     typename functor::result_type fun1 
     ( typename functor::argument a ) const { return m_fun1.fun ( a ) ; }
     /// evaluate the first functor 
     typename functor::result_type fun2 
     ( typename functor::argument a ) const { return m_fun2.fun ( a ) ; }
+    // ========================================================================
   public:
+    // ========================================================================
     /// get the first functor 
-    const functor& fun1 ()           const { return m_fun1.fun (   ) ; }
+    const functor& func1 ()           const { return m_fun1.func () ; }
     /// get the second functor 
-    const functor& fun2 ()           const { return m_fun2.fun (   ) ; }
+    const functor& func2 ()           const { return m_fun2.func () ; }
+    // ========================================================================
   private:
-    // no default constructor 
-    TwoFunctors(); ///< no default constructor 
+    // ========================================================================
+    /// no default constructor 
+    TwoFunctors () ;                                  // no default constructor 
+    // ========================================================================
   private:
-    // the first functor 
-    LoKi::FunctorFromFunctor<TYPE,TYPE2> m_fun1 ; ///< the first functor 
-    // the second functor 
-    LoKi::FunctorFromFunctor<TYPE,TYPE2> m_fun2 ; ///< the first functor 
+    // ========================================================================
+    /// the first functor 
+    LoKi::FunctorFromFunctor<TYPE,TYPE2> m_fun1 ;          // the first functor 
+    /// the second functor 
+    LoKi::FunctorFromFunctor<TYPE,TYPE2> m_fun2 ;         // the second functor 
+    // ========================================================================
   } ;
   // ==========================================================================
   /** @class And 
@@ -115,22 +127,27 @@ namespace LoKi
   class And : public LoKi::Functor<TYPE,bool> 
   {
   private:
+    // ========================================================================
     /// the actual type of functor
     typedef LoKi::Functor<TYPE,TYPE2> functor ;
     /// argument type
     typedef typename LoKi::Functor<TYPE,bool>::argument argument  ; 
     /// result type 
     typedef typename LoKi::Functor<TYPE,bool>::result_type result_type ; 
+    // ========================================================================
   public:
+    // ========================================================================
     /// constructor from two functors 
     And ( const functor& f1 , 
           const functor& f2 ) 
       : LoKi::Functor<TYPE,bool>()
-        , m_two ( f1 , f2 ) 
+      , m_two ( f1 , f2 ) 
     {}
     /// virtual constructor
     virtual ~And(){}
+    // ========================================================================
   public:
+    // ========================================================================
     /// MANDATORY: clone method ("")
     virtual And* clone() const { return new And(*this) ; }
     /// MANDATORY: the only one essential method ("function")      
@@ -138,13 +155,18 @@ namespace LoKi
     { return m_two.fun1( a ) ? m_two.fun2 ( a )  : false ; }  
     /// OPTIONAL: the nice printout 
     virtual std::ostream& fillStream( std::ostream& s ) const 
-    { return s << "(" << m_two.fun1() << "&" << m_two.fun2() << ")" ; }
+    { return s << "(" << m_two.func1() << "&" << m_two.func2() << ")" ; }
+    // ========================================================================
   private:
-    // the default contructor is disabled 
-    And() ; ///< the default contructor is disabled 
+    // ========================================================================
+    /// the default contructor is disabled 
+    And() ; // the default contructor is disabled 
+    // ========================================================================
   private:
-    // the storage of two functors 
-    LoKi::TwoFunctors<TYPE,TYPE2> m_two ; ///< the storage of twho fucntors 
+    // ========================================================================
+    /// the storage of two functors 
+    LoKi::TwoFunctors<TYPE,TYPE2> m_two ; // the storage of twho fucntors 
+    // ========================================================================
   };
   // ==========================================================================
   /** @struct Or 
@@ -178,13 +200,16 @@ namespace LoKi
   class Or : public LoKi::Functor<TYPE,bool> 
   {
   private:
+    // ========================================================================
     /// the actual type of functor
     typedef LoKi::Functor<TYPE,TYPE2> functor ;
     /// argument type
     typedef typename LoKi::Functor<TYPE,bool>::argument argument  ; 
     /// result type 
     typedef typename LoKi::Functor<TYPE,bool>::result_type result_type ; 
+    // ========================================================================
   public:
+    // ========================================================================
     /// constructor from twho functors 
     Or ( const functor& f1 , 
          const functor& f2 ) 
@@ -193,7 +218,9 @@ namespace LoKi
     {}
     /// virtual constructor
     virtual ~Or(){}
+    // ========================================================================
   public:
+    // ========================================================================
     /// MANDATORY: clone method ("")
     virtual Or* clone() const { return new Or(*this) ; }
     /// MANDATORY: the only one essential method ("function")      
@@ -201,13 +228,18 @@ namespace LoKi
     { return m_two.fun1 ( a ) ? true : m_two.fun2 ( a ) ; }  
     /// OPTIONAL: the nice printout 
     virtual std::ostream& fillStream( std::ostream& s ) const 
-    { return s << "(" << m_two.fun1() << "|" << m_two.fun2() << ")" ; }
+    { return s << "(" << m_two.func1() << "|" << m_two.func2() << ")" ; }
+    // ========================================================================
   private:
-    // the default contructor is disabled 
-    Or() ; ///< the default contructor is disabled 
+    // ========================================================================
+    /// the default contructor is disabled 
+    Or() ; // the default contructor is disabled 
+    // ========================================================================
   private:
-    // the storage of two functors 
-    LoKi::TwoFunctors<TYPE,TYPE2> m_two ; ///< the storage of twho fucntors 
+    // ========================================================================
+    /// the storage of two functors 
+    LoKi::TwoFunctors<TYPE,TYPE2> m_two ; // the storage of twho fucntors 
+    // ========================================================================
   };
   // ==========================================================================
   /** @class Not
@@ -237,11 +269,14 @@ namespace LoKi
   class Not : public Functor<TYPE,bool>
   {
   private:
+    // ========================================================================
     /// argument type
     typedef typename LoKi::Functor<TYPE,bool>::argument argument  ; 
     /// result type 
     typedef typename LoKi::Functor<TYPE,bool>::result_type result_type ; 
+    // ========================================================================
   public:
+    // ========================================================================
     /// constructor from the functor  
     Not ( const Functor<TYPE,TYPE2>& fun ) 
       : Functor<TYPE,bool>() 
@@ -260,12 +295,17 @@ namespace LoKi
     /// the basic printout method 
     virtual std::ostream& fillStream ( std::ostream& s ) const 
     { return s << "(!"  << m_fun << ")" ; };
+    // ========================================================================
   private:
-    // the default constrictor is disabled
-    Not() ; ///< the default constrictor is disabled 
+    // ========================================================================
+    /// the default constructor is disabled
+    Not() ; // the default constrictor is disabled 
+    // ========================================================================
   private:
-    // the functor to be negated 
-    LoKi::FunctorFromFunctor<TYPE,TYPE2> m_fun ; ///< the functor to be negated 
+    // ========================================================================
+    /// the functor to be negated 
+    LoKi::FunctorFromFunctor<TYPE,TYPE2> m_fun ; // the functor to be negated 
+    // ========================================================================
   };  
   // ==========================================================================
   /** @class Negate
@@ -296,11 +336,14 @@ namespace LoKi
   class Negate : public LoKi::Functor<TYPE,TYPE2>
   {
   private:
+    // ========================================================================
     /// argument type
     typedef typename LoKi::Functor<TYPE,TYPE2>::argument argument  ; 
     /// result type 
     typedef typename LoKi::Functor<TYPE,TYPE2>::result_type result_type ; 
+    // ========================================================================
   public:
+    // ========================================================================
     /// constructor from the functor  
     Negate ( const LoKi::Functor<TYPE,TYPE2>& fun ) 
       : LoKi::Functor<TYPE,TYPE2>() 
@@ -319,12 +362,17 @@ namespace LoKi
     /// the basic printout method 
     virtual std::ostream& fillStream( std::ostream& s ) const 
     { return s << "(-"  << m_fun << ")" ; };
+    // ========================================================================
   private:
-    // the default constrictor is disabled
-    Negate() ; ///< the default constrictor is disabled 
+    // ========================================================================
+    /// the default constructor is disabled
+    Negate() ; // the default constrictor is disabled 
+    // ========================================================================
   private:
-    // the functor to be negated 
-    LoKi::FunctorFromFunctor<TYPE,TYPE2> m_fun ; ///< the functor to be negated 
+    // ========================================================================
+    /// the functor to be negated 
+    LoKi::FunctorFromFunctor<TYPE,TYPE2> m_fun ; // the functor to be negated 
+    // ========================================================================
   };  
   // ==========================================================================
   /** @class Less 
@@ -357,13 +405,16 @@ namespace LoKi
   class Less : public LoKi::Functor<TYPE,bool> 
   {
   private:
+    // ========================================================================
     /// the constant type 
     typedef typename LoKi::Constant<TYPE,TYPE2>::T2 T2 ;
     /// argument type
     typedef typename LoKi::Functor<TYPE,bool>::argument argument  ; 
     /// result type 
     typedef typename LoKi::Functor<TYPE,bool>::result_type result_type ; 
+    // ========================================================================
   public:
+    // ========================================================================
     /// constructor from two functors 
     Less ( const LoKi::Functor<TYPE,TYPE2>& f1 , 
            const LoKi::Functor<TYPE,TYPE2>& f2 ) 
@@ -392,13 +443,18 @@ namespace LoKi
     }
     /// the basic printout method 
     virtual std::ostream& fillStream( std::ostream& s ) const 
-    { return s << "(" << m_two.fun1() << "<" << m_two.fun2() << ")" ; }
+    { return s << "(" << m_two.func1() << "<" << m_two.func2() << ")" ; }
+    // ========================================================================
   private:
-    // the default constrictor is disabled
-    Less() ; ///< the default constrictor is disabled 
+    // ========================================================================
+    /// the default constrictor is disabled
+    Less() ; // the default constrictor is disabled 
+    // ========================================================================
   private:
-    // the storage of two functors 
-    LoKi::TwoFunctors<TYPE,TYPE2> m_two ; ///< the storage of two functors 
+    // ========================================================================
+    /// the storage of two functors 
+    LoKi::TwoFunctors<TYPE,TYPE2> m_two ; // the storage of two functors 
+    // ========================================================================
   };
   // ==========================================================================
   /** @class Equal 
@@ -431,12 +487,15 @@ namespace LoKi
   class Equal : public LoKi::Functor<TYPE,bool> 
   {
   private:
+    // ========================================================================
     /// argument type
     typedef typename LoKi::Functor<TYPE,bool>::argument argument  ; 
     /// result type 
     typedef typename LoKi::Functor<TYPE,bool>::result_type result_type ; 
     typedef typename boost::call_traits<const TYPE2>::param_type T2 ;
+    // ========================================================================
   public:
+    // ========================================================================
     /// constructor from two functors 
     Equal ( const LoKi::Functor<TYPE,TYPE2>& f1          , 
             const LoKi::Functor<TYPE,TYPE2>& f2          , 
@@ -454,8 +513,10 @@ namespace LoKi
     { return equal ( a ) ; }
     /// the basic printout method 
     virtual std::ostream& fillStream( std::ostream& s ) const 
-    { return s << "(" << m_two.fun1() << "==" << m_two.fun2() << ")" ; }
+    { return s << "(" << m_two.func1() << "==" << m_two.func2() << ")" ; }
+    // ========================================================================
   public:
+    // ========================================================================
     /// the actual comparison:
     inline result_type equal ( argument a ) const 
     { 
@@ -463,17 +524,24 @@ namespace LoKi
       LHCb::Math::Equal_To<TYPE2> cmp  ( m_eps ) ;
       return cmp ( m_two.fun1 ( a ) , m_two.fun2 ( a ) ) ; 
     }
+    // ========================================================================
   public:
+    // ========================================================================
     /// get the helper structure 
     const  LoKi::TwoFunctors<TYPE,TYPE2>& functor () const { return m_two ; }
+    // ========================================================================
   private:
-    // the default constrictor is disabled
-    Equal() ; ///< the default constrictor is disabled 
+    // ========================================================================
+    /// the default constrictor is disabled
+    Equal() ;                            // the default constrictor is disabled 
+    // ========================================================================
   private:
-    // the storage of two functors 
-    LoKi::TwoFunctors<TYPE,TYPE2> m_two ; ///< the storage of two functors 
-    // the precision 
-    TYPE2 m_eps ; // the precision 
+    // ========================================================================
+    /// the storage of two functors 
+    LoKi::TwoFunctors<TYPE,TYPE2> m_two ;        // the storage of two functors 
+    /// the precision 
+    TYPE2 m_eps ;                                              // the precision 
+    // ========================================================================
   };
   // ==========================================================================
   /** @struct LessOrEqual 
@@ -507,13 +575,16 @@ namespace LoKi
   class LessOrEqual : public Functor<TYPE,bool> 
   {
   private:
+    // ========================================================================
     /// the constant type 
     typedef typename LoKi::Constant<TYPE,TYPE2>::T2 T2 ;
     /// argument type
     typedef typename LoKi::Functor<TYPE,bool>::argument argument  ; 
     /// result type 
     typedef typename LoKi::Functor<TYPE,bool>::result_type result_type ; 
+    // ========================================================================
   public:
+    // ========================================================================
     /// constructor from twho functors 
     LessOrEqual ( const Functor<TYPE,TYPE2>& f1 , 
                   const Functor<TYPE,TYPE2>& f2 ) 
@@ -542,13 +613,18 @@ namespace LoKi
     }
     /// the basic printout method 
     virtual std::ostream& fillStream( std::ostream& s ) const 
-    { return s << "(" << m_two.fun1() << "<=" << m_two.fun2() << ")" ; }
+    { return s << "(" << m_two.func1() << "<=" << m_two.func2() << ")" ; }
+    // ========================================================================
   private:
-    // the default constrictor is disabled
-    LessOrEqual() ; ///< the default constrictor is disabled 
+    // ========================================================================
+    /// the default constructor is disabled
+    LessOrEqual() ; // the default constrictor is disabled 
+    // ========================================================================
   private:
-    // the storage of two functors 
-    LoKi::TwoFunctors<TYPE,TYPE2> m_two ; ///< the storage of two functors 
+    // ========================================================================
+    /// the storage of two functors 
+    LoKi::TwoFunctors<TYPE,TYPE2> m_two ; // the storage of two functors 
+    // ========================================================================
   };
   // ==========================================================================
   /** @class NotEqual 
@@ -581,12 +657,15 @@ namespace LoKi
   class NotEqual : public LoKi::Functor<TYPE,bool> 
   {
   private:
+    // ========================================================================
     /// argument type
     typedef typename LoKi::Functor<TYPE,bool>::argument argument  ; 
     /// result type 
     typedef typename LoKi::Functor<TYPE,bool>::result_type result_type ; 
     typedef typename boost::call_traits<const TYPE2>::param_type T2 ;
+    // ========================================================================
   public:
+    // ========================================================================
     /// constructor from twho functors 
     NotEqual ( const LoKi::Functor<TYPE,TYPE2>& f1 , 
                const LoKi::Functor<TYPE,TYPE2>& f2 , 
@@ -603,14 +682,19 @@ namespace LoKi
     { return ! ( m_equal.equal ( a ) )  ; }
     /// the basic printout method 
     virtual std::ostream& fillStream( std::ostream& s ) const 
-    { return s << "("  << m_equal.functor().fun1() 
-               << "!=" << m_equal.functor().fun2() << ")" ; }
+    { return s << "("  << m_equal.functor().func1() 
+               << "!=" << m_equal.functor().func2() << ")" ; }
+    // ========================================================================
   private:
-    // the default constrictor is disabled
-    NotEqual() ; ///< the default constrictor is disabled 
+    // ========================================================================
+    /// the default constructor is disabled
+    NotEqual() ; // the default constrictor is disabled 
+    // ========================================================================
   private:
-    // the underlying functor 
-    LoKi::Equal<TYPE,TYPE2> m_equal ; ///< the underlying functor 
+    // ========================================================================
+    /// the underlying functor 
+    LoKi::Equal<TYPE,TYPE2> m_equal ; // the underlying functor 
+    // ========================================================================
   };
   // ==========================================================================
   /** @class Plus 
@@ -643,13 +727,16 @@ namespace LoKi
   class Plus : public LoKi::Functor<TYPE,TYPE2> 
   {
   private:
+    // ========================================================================
     /// the constant type 
     typedef typename LoKi::Constant<TYPE,TYPE2>::T2 T2 ;
     /// argument type
     typedef typename LoKi::Functor<TYPE,TYPE2>::argument argument  ; 
     /// result type 
     typedef typename LoKi::Functor<TYPE,TYPE2>::result_type result_type ; 
+    // ========================================================================
   public:
+    // ========================================================================
     /// constructor from two functors 
     Plus ( const LoKi::Functor<TYPE,TYPE2>& f1 , 
            const LoKi::Functor<TYPE,TYPE2>& f2 ) 
@@ -678,13 +765,18 @@ namespace LoKi
     }
     /// the basic printout method 
     virtual std::ostream& fillStream( std::ostream& s ) const 
-    { return s << "(" << m_two.fun1() << "+" << m_two.fun2() << ")" ; }
+    { return s << "(" << m_two.func1() << "+" << m_two.func2() << ")" ; }
+    // ========================================================================
   private:
-    // the default constrictor is disabled
-    Plus() ; ///< the default constrictor is disabled 
+    // ========================================================================
+    /// the default constrictor is disabled
+    Plus() ; // the default constrictor is disabled 
+    // ========================================================================
   private:
-    // the storage of two functors 
-    LoKi::TwoFunctors<TYPE,TYPE2> m_two ; ///< the storage of two functors 
+    // ========================================================================
+    /// the storage of two functors 
+    LoKi::TwoFunctors<TYPE,TYPE2> m_two ; // the storage of two functors 
+    // ========================================================================
   };
   // ==========================================================================
   /** @class Minus 
@@ -717,13 +809,16 @@ namespace LoKi
   class Minus : public LoKi::Functor<TYPE,TYPE2> 
   {
   private:
+    // ========================================================================
     /// the constant type 
     typedef typename LoKi::Constant<TYPE,TYPE2>::T2 T2 ;
     /// argument type
     typedef typename LoKi::Functor<TYPE,TYPE2>::argument argument  ; 
     /// result type 
     typedef typename LoKi::Functor<TYPE,TYPE2>::result_type result_type ; 
+    // ========================================================================
   public:
+    // ========================================================================
     /// constructor from two functors 
     Minus ( const LoKi::Functor<TYPE,TYPE2>& f1 , 
             const LoKi::Functor<TYPE,TYPE2>& f2 ) 
@@ -752,13 +847,18 @@ namespace LoKi
     }
     /// the basic printout method 
     virtual std::ostream& fillStream( std::ostream& s ) const 
-    { return s << "(" << m_two.fun1() << "-" << m_two.fun2() << ")" ; }
+    { return s << "(" << m_two.func1() << "-" << m_two.func2() << ")" ; }
+    // ========================================================================
   private:
-    // the default constrictor is disabled
-    Minus() ; ///< the default constrictor is disabled 
+    // ========================================================================
+    /// the default constrictor is disabled
+    Minus() ; // the default constrictor is disabled 
+    // ========================================================================
   private:
-    // the storage of two functors 
-    LoKi::TwoFunctors<TYPE,TYPE2> m_two ; ///< the storage of two functors 
+    // ========================================================================
+    /// the storage of two functors 
+    LoKi::TwoFunctors<TYPE,TYPE2> m_two ; // the storage of two functors 
+    // ========================================================================
   };
   // ==========================================================================
   /** @class Divide
@@ -791,13 +891,16 @@ namespace LoKi
   class Divide : public LoKi::Functor<TYPE,TYPE2> 
   { 
   private:
+    // ========================================================================
     /// the constant type 
     typedef typename LoKi::Constant<TYPE,TYPE2>::T2 T2 ;
     /// argument type
     typedef typename LoKi::Functor<TYPE,TYPE2>::argument argument  ; 
     /// result type 
     typedef typename LoKi::Functor<TYPE,TYPE2>::result_type result_type ; 
+    // ========================================================================
   public:
+    // ========================================================================
     /// constructor from two functors 
     Divide ( const LoKi::Functor<TYPE,TYPE2>& f1 , 
              const LoKi::Functor<TYPE,TYPE2>& f2 ) 
@@ -826,13 +929,18 @@ namespace LoKi
     }
     /// the basic printout method 
     virtual std::ostream& fillStream( std::ostream& s ) const 
-    { return s << "(" << m_two.fun1() << "/" << m_two.fun2() << ")" ; }
+    { return s << "(" << m_two.func1() << "/" << m_two.func2() << ")" ; }
+    // ========================================================================
   private:
-    // the default constrictor is disabled
-    Divide() ; ///< the default constrictor is disabled 
+    // ========================================================================
+    /// the default constrictor is disabled
+    Divide() ; // the default constrictor is disabled 
+    // ========================================================================
   private:
-    // the storage of two functors 
-    LoKi::TwoFunctors<TYPE,TYPE2> m_two ; ///< the storage of two functors 
+    // ========================================================================
+    /// the storage of two functors 
+    LoKi::TwoFunctors<TYPE,TYPE2> m_two ; // the storage of two functors 
+    // ========================================================================
   };
   // ==========================================================================
   /** @class Multiply
@@ -865,13 +973,16 @@ namespace LoKi
   class Multiply : public Functor<TYPE,TYPE2> 
   {
   private:
+    // ========================================================================
     /// the constant type 
     typedef typename LoKi::Constant<TYPE,TYPE2>::T2 T2 ;
     /// argument type
     typedef typename LoKi::Functor<TYPE,TYPE2>::argument argument  ; 
     /// result type 
     typedef typename LoKi::Functor<TYPE,TYPE2>::result_type result_type ; 
+    // ========================================================================
   public:
+    // ========================================================================
     /// constructor from two functors 
     Multiply ( const LoKi::Functor<TYPE,TYPE2>& f1 , 
                const LoKi::Functor<TYPE,TYPE2>& f2 ) 
@@ -900,13 +1011,18 @@ namespace LoKi
     }
     /// the basic printout method 
     virtual std::ostream& fillStream( std::ostream& s ) const 
-    { return s << "(" << m_two.fun1() << "*" << m_two.fun2() << ")" ; }
+    { return s << "(" << m_two.func1() << "*" << m_two.func2() << ")" ; }
+    // ========================================================================
   private:
-    // the default constrictor is disabled
-    Multiply() ; ///< the default constrictor is disabled 
+    // ========================================================================
+    /// the default constrictor is disabled
+    Multiply() ; // the default constrictor is disabled 
+    // ========================================================================
   private:
-    // the storage of two functors 
-    LoKi::TwoFunctors<TYPE,TYPE2> m_two ; ///< the storage of two functors 
+    // ========================================================================
+    /// the storage of two functors 
+    LoKi::TwoFunctors<TYPE,TYPE2> m_two ; // the storage of two functors 
+    // ========================================================================
   };
   // ==========================================================================
   /** @class Min 
@@ -936,12 +1052,14 @@ namespace LoKi
   class Min : public LoKi::Functor<TYPE,TYPE2>
   {
   private:
+    // ========================================================================
     /// the constant type 
     typedef typename LoKi::Constant<TYPE,TYPE2>::T2 T2 ;
     /// argument type
     typedef typename LoKi::Functor<TYPE,TYPE2>::argument argument  ; 
     /// result type 
     typedef typename LoKi::Functor<TYPE,TYPE2>::result_type result_type ; 
+    // ========================================================================
   public:    
     // ========================================================================
     /** constructor from 2 functions 
@@ -1000,13 +1118,18 @@ namespace LoKi
     }    
     /// the basic printout method 
     virtual std::ostream& fillStream( std::ostream& s ) const 
-    { return s << "min(" << m_two.fun1() << "," << m_two.fun2() << ")" ; }
+    { return s << "min(" << m_two.func1() << "," << m_two.func2() << ")" ; }
+    // ========================================================================
   private:
-    // the default constructor is disabled 
-    Min () ; ///< the default constructor is disabled
+    // ========================================================================
+    /// the default constructor is disabled 
+    Min () ; // the default constructor is disabled
+    // ========================================================================
   private:
-    // the storage of two functors 
-    LoKi::TwoFunctors<TYPE,TYPE2> m_two ; ///< the storage of two functors
+    // ========================================================================
+    /// the storage of two functors 
+    LoKi::TwoFunctors<TYPE,TYPE2> m_two ; // the storage of two functors
+    // ========================================================================
   };
   // ==========================================================================
   /** @class Max 
@@ -1037,12 +1160,14 @@ namespace LoKi
   class Max : public LoKi::Functor<TYPE,TYPE2>
   {
   private:
+    // ========================================================================
     /// the constant type 
     typedef typename LoKi::Constant<TYPE,TYPE2>::T2 T2 ;
     /// argument type
     typedef typename LoKi::Functor<TYPE,TYPE2>::argument argument  ; 
     /// result type 
     typedef typename LoKi::Functor<TYPE,TYPE2>::result_type result_type ; 
+    // ========================================================================
   public:    
     // ========================================================================
     /** constructor from 2 functions 
@@ -1101,13 +1226,18 @@ namespace LoKi
     }    
     /// OPTIONAL: the basic printout method 
     virtual std::ostream& fillStream( std::ostream& s ) const 
-    { return s << "max(" << m_two.fun1() << "," << m_two.fun2() << ")" ; }
+    { return s << "max(" << m_two.func1() << "," << m_two.func2() << ")" ; }
+    // ========================================================================
   private:
-    // the default constructor is disabled 
-    Max () ; ///< the default constructor is disabled
+    // ========================================================================
+    /// the default constructor is disabled 
+    Max () ;                             // the default constructor is disabled
+    // ========================================================================
   private:
-    // the storage of two functors 
-    LoKi::TwoFunctors<TYPE,TYPE2> m_two ; ///< the storage of two functors
+    // ========================================================================
+    /// the storage of two functors 
+    LoKi::TwoFunctors<TYPE,TYPE2> m_two ;        // the storage of two functors
+    // ========================================================================
   };
   // ==========================================================================
   /** @class SimpleSwitch
@@ -1125,13 +1255,16 @@ namespace LoKi
   class SimpleSwitch : public LoKi::Functor<TYPE,TYPE2>
   {
   private:
+    // ========================================================================
     /// the constant type 
     typedef typename LoKi::Constant<TYPE,TYPE2>::T2 T2 ;
     /// argument type
     typedef typename LoKi::Functor<TYPE,TYPE2>::argument argument  ; 
     /// result type 
     typedef typename LoKi::Functor<TYPE,TYPE2>::result_type result_type ; 
+    // ========================================================================
   public:
+    // ========================================================================
     /** constructor from the predicate and 2 constants 
      *
      *  The function return a value of the first constant  
@@ -1170,16 +1303,21 @@ namespace LoKi
     /// the basic printout method 
     virtual std::ostream& fillStream( std::ostream& s ) const 
     { return s << "switch("  << m_cut << ","  << m_val1 << "," << m_val2 << ")" ; }
+    // ========================================================================
   private:
-    // the default constructor is disabled    
+    // ========================================================================
+    /// the default constructor is disabled    
     SimpleSwitch() ; // the default constructor is disabled    
+    // ========================================================================
   private:
-    // the condiftion 
-    LoKi::FunctorFromFunctor <TYPE,bool> m_cut  ; ///< the condiftion 
-    // the first value 
-    TYPE2                                m_val1 ; ///< the first value 
-    // the second value 
-    TYPE2                                m_val2 ; ///< the second value 
+    // ========================================================================
+    /// the condition 
+    LoKi::FunctorFromFunctor <TYPE,bool> m_cut  ; // the condiftion 
+    /// the first value 
+    TYPE2                                m_val1 ; // the first value 
+    /// the second value 
+    TYPE2                                m_val2 ; // the second value 
+    // ========================================================================
   };  
   // ==========================================================================
   /** @class Switch
@@ -1196,13 +1334,16 @@ namespace LoKi
   class Switch : public LoKi::Functor<TYPE,TYPE2>
   {
   private:
+    // ========================================================================
     /// the constant type 
     typedef typename LoKi::Constant<TYPE,TYPE2>::T2 T2 ;
     /// argument type
     typedef typename LoKi::Functor<TYPE,TYPE2>::argument argument  ; 
     /// result type 
     typedef typename LoKi::Functor<TYPE,TYPE2>::result_type result_type ; 
+    // ========================================================================
   public:
+    // ========================================================================
     /** constructor from predicate and 2 functions 
      *
      *  The function return a value of the first function 
@@ -1308,17 +1449,22 @@ namespace LoKi
     /// the basic printout method 
     virtual std::ostream& fillStream( std::ostream& s ) const 
     { return s << "switch("     
-               << m_cut         << "," 
-               << m_two.fun1()  << "," 
-               << m_two.fun2()  << ")" ; }
+               << m_cut          << "," 
+               << m_two.func1()  << "," 
+               << m_two.func2()  << ")" ; }
+    // ========================================================================
   private:
-    // the default contructor is disabled 
-    Switch () ; ///< the defautl contructor is disabled 
+    // ========================================================================
+    /// the default contructor is disabled 
+    Switch () ;                           // the defautl contructor is disabled 
+    // ========================================================================
   private:
-    // the condition 
-    LoKi::FunctorFromFunctor<TYPE,bool> m_cut  ; ///< the condition 
-    // the actual storage of two functors 
-    LoKi::TwoFunctors<TYPE,TYPE2>       m_two ; /// the storage of functors 
+    // ========================================================================
+    /// the condition 
+    LoKi::FunctorFromFunctor<TYPE,bool> m_cut  ;               // the condition 
+    /// the actual storage of two functors 
+    LoKi::TwoFunctors<TYPE,TYPE2>       m_two ;      // the storage of functors 
+    // ========================================================================
   };
   // ==========================================================================
   /** @class ComposeFunction
@@ -1348,14 +1494,19 @@ namespace LoKi
   class ComposeFunction : public LoKi::Functor<TYPE,TYPE2> 
   {
   private:
+    // ========================================================================
     /// argument type
     typedef typename LoKi::Functor<TYPE,TYPE2>::argument argument  ; 
     /// result type 
     typedef typename LoKi::Functor<TYPE,TYPE2>::result_type result_type ; 
+    // ========================================================================
   protected:
+    // ========================================================================
     /// the actual type for the function
     typedef double (*Func) ( double ) ;
+    // ========================================================================
   public:
+    // ========================================================================
     /// constructor 
     ComposeFunction ( Func                             func           ,  
                       const LoKi::Functor<TYPE,TYPE2>& fun            , 
@@ -1384,16 +1535,21 @@ namespace LoKi
     /// the basic printout method 
     virtual std::ostream& fillStream( std::ostream& s ) const 
     { return s << m_desc << "("  << m_fun << ")" ; };
+    // ========================================================================
   private:
-    // the default constructor is disabled 
-    ComposeFunction() ; ///< the default constructor is disabled
+    // ========================================================================
+    /// the default constructor is disabled 
+    ComposeFunction() ; // the default constructor is disabled
+    // ========================================================================
   private:
-    // the functor 
-    LoKi::FunctorFromFunctor<TYPE,TYPE2> m_fun  ; ///< the functor 
-    // the function:
-    Func                                 m_func ; ///< the function:
-    // the function description:
-    std::string                          m_desc ; ///< description 
+    // ========================================================================
+    /// the functor 
+    LoKi::FunctorFromFunctor<TYPE,TYPE2> m_fun  ; // the functor 
+    /// the function:
+    Func                                 m_func ; // the function:
+    /// the function description:
+    std::string                          m_desc ; // description 
+    // ========================================================================
   };
   // ==========================================================================
   /** @class ComposeFunction2
@@ -1424,6 +1580,7 @@ namespace LoKi
   class ComposeFunction2 : public LoKi::Functor<TYPE,TYPE2> 
   {
   private:
+    // ========================================================================
     /// argument type
     typedef typename LoKi::Functor<TYPE,TYPE2>::argument argument  ; 
     /// result type 
@@ -1432,7 +1589,9 @@ namespace LoKi
     typedef double (*Func) ( double , double )      ;
     /// constant type 
     typedef typename LoKi::Constant<TYPE,TYPE2>::T2 T2 ;
+    // ========================================================================
   public:
+    // ========================================================================
     /// constructor 
     ComposeFunction2 
     ( Func                             func           ,  
@@ -1496,16 +1655,19 @@ namespace LoKi
     { return (*m_func) ( m_two. fun1 ( a ) , m_two.fun2( a ) ) ; }
     /// the basic printout method 
     virtual std::ostream& fillStream( std::ostream& s ) const 
-    { return s << m_desc        << "("  
-               << m_two.fun1 () << "," 
-               << m_two.fun2 () << ")" ; }
+    { return s << m_desc         << "("  
+               << m_two.func1 () << "," 
+               << m_two.func2 () << ")" ; }
+    // ========================================================================
   private:
-    // the function itself 
-    Func m_func        ; ///< the function itself 
-    // the storage of functors 
-    LoKi::TwoFunctors<TYPE,TYPE2> m_two ; ///< the storage of functors 
-    // the funtion descrition
-    std::string m_desc ; ///< the funtion descrition
+    // ========================================================================
+    /// the function itself 
+    Func m_func        ; // the function itself 
+    /// the storage of functors 
+    LoKi::TwoFunctors<TYPE,TYPE2> m_two ; // the storage of functors 
+    /// the funtion descrition
+    std::string m_desc ; // the funtion descrition
+    // ========================================================================
   };  
   // ==========================================================================
   /** @class Compose 
@@ -1556,48 +1718,6 @@ namespace LoKi
     LoKi::FunctorFromFunctor<TYPE3,TYPE2> m_fun2 ; ///< the second functor 
   } ;
   // ==========================================================================
-  template <class TYPE1, class TYPE2, class TYPE3>
-  class Compose<void,TYPE1,TYPE2,TYPE3> : public LoKi::Functor<void,TYPE2>
-  {
-  private:
-    /// result type 
-    typedef typename LoKi::Functor<void,TYPE2>::result_type result_type ; 
-  public:
-    /// contructor
-    Compose
-    ( const LoKi::Functor<void,TYPE1>&  fun1 , 
-      const LoKi::Functor<TYPE3,TYPE2>& fun2 )
-      : LoKi::Functor<void,TYPE2> () 
-      , m_fun1 ( fun1 ) 
-      , m_fun2 ( fun2 )
-    {}
-    /// copy constructor
-    Compose ( const Compose& right ) 
-      : LoKi::AuxFunBase ( right ) 
-      , LoKi::Functor<void,TYPE2> ( right ) 
-      , m_fun1 ( right.m_fun1 ) 
-      , m_fun2 ( right.m_fun2 )
-    {}
-    /// MANDATORY: virtual destructor
-    virtual ~Compose() {}
-    /// MANDATORY: clone method ("virtual constructor")
-    virtual  Compose* clone() const { return new Compose ( *this ) ; }    
-    /// the only one essential method ("function")      
-    virtual  result_type operator() () const 
-    { 
-      const LoKi::Apply<TYPE3,TYPE2> f2 ( &m_fun2.fun() ) ;
-      return f2.eval ( m_fun1.fun() ) ;
-    }
-    /// the basic printout method 
-    virtual std::ostream& fillStream( std::ostream& s ) const 
-    { return s << "(" << m_fun1 << ">>" << m_fun2  << ")" ; }
-  public:
-    // the first functor 
-    LoKi::FunctorFromFunctor<void,TYPE1>  m_fun1  ; ///< the first functor 
-    // the second functor 
-    LoKi::FunctorFromFunctor<TYPE3,TYPE2> m_fun2 ; ///< the second functor 
-  } ;
-  // ==========================================================================
   /** @class Valid 
    *  The trivial predicate to check the validity of argument.
    *  It is OK for any pointer-like types or for types with
@@ -1609,11 +1729,14 @@ namespace LoKi
   class Valid : public LoKi::Functor<TYPE,bool>
   {
   private:
+    // ========================================================================
     /// argument type
     typedef typename LoKi::Functor<TYPE,bool>::argument argument  ; 
     /// result type 
     typedef typename LoKi::Functor<TYPE,bool>::result_type result_type ; 
+    // ========================================================================
   public:
+    // ========================================================================
     /// constructor 
     Valid() 
       : Functor<TYPE,bool> () 
@@ -1633,6 +1756,7 @@ namespace LoKi
     /// the basic printout method 
     virtual std::ostream& fillStream( std::ostream& s ) const 
     { return s << "(Valid?)"; }
+    // ========================================================================
   };
   // ==========================================================================
   /** @class TheSame 
@@ -1645,11 +1769,14 @@ namespace LoKi
   class TheSame : public LoKi::Functor<TYPE,bool>
   {
   private:
+    // ========================================================================
     /// argument type
     typedef typename LoKi::Functor<TYPE,bool>::argument argument  ; 
     /// result type 
     typedef typename LoKi::Functor<TYPE,bool>::result_type result_type ; 
+    // ========================================================================
   public:
+    // ========================================================================
     /// constructor form the value 
     TheSame ( argument value ) 
       : LoKi::Functor<TYPE,bool>() 
@@ -1672,12 +1799,17 @@ namespace LoKi
     /// the basic printout method 
     virtual std::ostream& fillStream( std::ostream& s ) const 
     { return s << "(SAME?)"; }
+    // ========================================================================
   private :
+    // ========================================================================
     // the default contructor is disabled
     TheSame();
+    // ========================================================================
   private:
+    // ========================================================================
     // the predefined value 
     TYPE m_value ;
+    // ========================================================================
   };
   // ==========================================================================
   /** @class EqualToValue 
@@ -1760,19 +1892,22 @@ namespace LoKi
   public:
     // ========================================================================
     const LoKi::Functor<TYPE,TYPE2>& fun () const { return m_fun.fun() ; }
-    T2                               val () const { return m_val       ; }
+    const TYPE2&                     val () const { return m_val       ; }
     // ========================================================================
   private:
     // ========================================================================
     /// The default constructor is disabled 
     EqualToValue();
+    // ========================================================================
   private:
-    // the functor 
-    LoKi::FunctorFromFunctor<TYPE,TYPE2> m_fun ; ///< the functor 
-    // the value 
-    TYPE2  m_val ; ///< the value 
-    // the precision 
-    TYPE2  m_eps ; /// the precision 
+    // ========================================================================
+    /// the functor 
+    LoKi::FunctorFromFunctor<TYPE,TYPE2> m_fun ;                 // the functor 
+    /// the value 
+    TYPE2  m_val ;                                                 // the value 
+    /// the precision 
+    TYPE2  m_eps ;                                             // the precision 
+    // ========================================================================
   };  
   // ==========================================================================
   /** @class NotEqualToValue 
@@ -1913,7 +2048,7 @@ namespace LoKi
   public:
     // ========================================================================
     const LoKi::Functor<TYPE,TYPE2>& fun () const { return m_fun.fun() ; }
-    const int                        val () const { return m_val       ; }
+    int                              val () const { return m_val       ; }
     // ========================================================================
   private:
     // ========================================================================
@@ -2076,7 +2211,7 @@ namespace LoKi
   public:
     // ========================================================================
     const LoKi::Functor<TYPE,TYPE2>& fun () const { return m_fun.fun() ; }
-    const unsigned int               val () const { return m_val       ; }
+    unsigned int                     val () const { return m_val       ; }
     // ========================================================================
   private:
     // ========================================================================
@@ -2155,7 +2290,7 @@ namespace LoKi
   public:
     // ========================================================================
     const LoKi::Functor<TYPE,TYPE2>& fun () const { return m_fun.fun() ; }
-    const unsigned int               val () const { return m_val       ; }
+    unsigned int                     val () const { return m_val       ; }
     // ========================================================================
   private:
     // ========================================================================
@@ -2233,7 +2368,6 @@ namespace LoKi
     /// MANDATORY": the only one essential method 
     virtual  typename LoKi::Functor<TYPE,TYPE2>::result_type operator () 
       ( typename LoKi::Functor<TYPE,TYPE2>::argument a ) const { return a ; }    
-  private:
   } ;
   // ==========================================================================
   /** @class PrintOut
@@ -2257,6 +2391,10 @@ namespace LoKi
     }    
   };
 } // end of namespace LoKi
+// ============================================================================
+// specializations for void-arguments
+// ============================================================================
+#include "LoKi/VoidPrimitives.h"
 // ============================================================================
 // The END 
 // ============================================================================

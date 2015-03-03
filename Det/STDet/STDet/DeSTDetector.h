@@ -1,9 +1,10 @@
-// $Id: DeSTDetector.h,v 1.22 2008-07-14 07:38:36 mneedham Exp $
+// $Id: DeSTDetector.h,v 1.26 2008-11-05 09:43:33 mneedham Exp $
 #ifndef _DeSTDetector_H_
 #define _DeSTDetector_H_
 
 #include <string>
 #include <vector>
+#include <memory> // for auto_ptr with gcc 4.3
 
 #include "Kernel/STChannelID.h"
 #include "Kernel/LHCbID.h"
@@ -79,7 +80,7 @@ public:
   /** Implementation of sensitive volume identifier for a given point in the 
       global reference frame. This is the sensor number defined in the xml.
   */
-  const int sensitiveVolumeID(const Gaudi::XYZPoint& globalPos) const;
+  int sensitiveVolumeID(const Gaudi::XYZPoint& globalPos) const;
 
   /**  locate the station based on a channel id
   @return  station */
@@ -133,7 +134,7 @@ public:
   * @param  aChannel channel 
   * @return sector 
   */
-  DeSTSector* findSector(const LHCb::STChannelID aChannel); 
+  DeSTSector* findSector(const LHCb::STChannelID aChannel) const; 
 
   /** get the next channel left */
   LHCb::STChannelID nextLeft(const LHCb::STChannelID testChan);
@@ -176,7 +177,7 @@ public:
   double fractionActive() const;
 
   /** find a list of sectors from channelIDs **/
-  DeSTDetector::Sectors findSectors(const std::vector<LHCb::STChannelID>& vec);
+  Sectors findSectors(const std::vector<LHCb::STChannelID>& vec);
 
 protected:
 
@@ -193,7 +194,7 @@ protected:
   Layers m_layers;
 
   typedef GaudiUtils::VectorMap<unsigned int,DeSTSector*> SectorMap;
-  SectorMap m_sMap;
+  mutable SectorMap m_sMap;
 
 private:
 
@@ -272,7 +273,7 @@ inline bool DeSTDetector::isValid(const LHCb::STChannelID aChannel){
   return (aSector != 0 ? aSector->isStrip(aChannel.strip()) : false); 
 }
 
-inline DeSTSector* DeSTDetector::findSector(const LHCb::STChannelID aChannel){
+inline DeSTSector* DeSTDetector::findSector(const LHCb::STChannelID aChannel) const{
  SectorMap::iterator iter = m_sMap.find(aChannel.uniqueSector());
  return (iter != m_sMap.end() ? iter->second : 0);
 }
@@ -296,7 +297,7 @@ inline DeSTDetector::Sectors DeSTDetector::findSectors(const std::vector<LHCb::S
     DeSTSector* aSector = findSector(*iter);
     if (aSector != 0) sectors.push_back(aSector);
   }  // for 
-  std::unique(sectors.begin(), sectors.end());
+  sectors.erase(std::unique(sectors.begin(), sectors.end()), sectors.end());
   return sectors;
 }
 

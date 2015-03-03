@@ -1,4 +1,4 @@
-! $Id: release.notes,v 1.110 2008-10-01 09:37:59 ibelyaev Exp $ 
+! $Id: release.notes,v 1.121 2008-11-17 15:57:28 cattanem Exp $ 
 ! -----------------------------------------------------------------------------
 ! Package     : Phys/LoKiCore
 ! Responsible : Vanya BELYAEV ibelyaev@physics.syr.edu
@@ -14,6 +14,74 @@
 !   A.Golutvin, P.Koppenburg have been used in the design.
 ! 
 ! -----------------------------------------------------------------------------
+
+! =========================== LoKiCore v8r0 2008-11-17 ========================
+! 2008-11-11 - Vanya BELYAEV
+ - bug fix in LoKi/BiFunctions.h
+
+! 2008-11-09 - Vanya BELYAEV
+ - bug fix in LoKi/iTree.h 
+
+! 2008-10-31 - Vanya BELYAEV
+ - fixes for stange behavour of Reflex in LCG-preview 
+
+! 2008-10-29 - Vanya BELYAEV
+ - few fixes to please gcc43 
+
+! 2008-10-27 - Marco Cattaneo
+ - Add a missing include in iNode.cpp and iTree.h to please gcc43
+
+! 2008-10-24 - Marco Cattaneo
+ - Fix function signature in VoidPrimitives.h to please new version of genreflex
+
+! 2008-10-19 - Vanya BELYAEV
+ - 1) MANY improvements in the area of functors which gets 'void' ( "sources")
+   2) redesign of python decorators 
+   3) "algorithm"-functors 
+   4) "CoreFactory" for following functors:
+    
+       void -> bool 
+       void -> double 
+       double -> bool 
+       double -> double 
+       std::vector<double> -> std::vector<double>
+       std::vector<double> -> double
+       void -> std::vector<double>
+
+    4) generic "LoKi::VoidFilter" algorithm, based on "CoreFactory" 
+ 
+ - cmt/requirement 
+     increment the major version 
+
+
+! 2008-10-12 - Vanya BELYAEV
+ - src/HybridBase.cpp
+   add some treatment for the python  code strings, namely 
+   the trings are trimmed and the paired quotes are removed.
+   This is appears to be rather important for HLT
+ 
+! 2008-10-03 - Vanya BELYAEV
+ - LoKi/FuncOps.h
+   add possibility to create "binary"-switches in python, 
+
+    condition ? condidition1 : condition2
+
+  Of course formally it acts accoring to the rule
+   
+    (condition&&contion1)||(!condition&&condition2) 
+ 
+  but keeping it in a dictiory very useful, since it allows 
+  in python to create it using the ordinary "switch" function 
+  from the module LoKiCore.functions:
+
+    cut0= ...
+    cut1=...
+    cut2=...
+
+    cut = switch (cut0,cut1,cut2)     
+
+ - cmt/requirements
+    version increment to v7r9 
 
 
 ! =========================== LoKiCore v7r8 2008-09-30 ========================

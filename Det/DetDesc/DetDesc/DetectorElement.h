@@ -1,4 +1,4 @@
-// $Id: DetectorElement.h,v 1.37 2008-09-23 12:32:15 marcocle Exp $
+// $Id: DetectorElement.h,v 1.39 2008-10-28 12:04:36 cattanem Exp $
 #ifndef  DETDESC_DETECTORELEMENT_H
 #define  DETDESC_DETECTORELEMENT_H 1
 
@@ -10,16 +10,16 @@
 #endif
 
 // Include Files
-#include <algorithm>
 #include <string>
 #include <vector>
 #include <map>
 
 #include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/SmartRef.h"
 
+#include "DetDesc/Condition.h"
 #include "DetDesc/Services.h"
 #include "DetDesc/ILVolume.h"
-#include "DetDesc/IPVolume.h"
 #include "DetDesc/ParamValidDataObject.h"
 #include "DetDesc/IDetectorElement.h"
 #include "DetDesc/CLIDDetectorElement.h"
@@ -252,7 +252,7 @@ public:
    * global reference frame.
    */
 
-  virtual const int sensitiveVolumeID(const Gaudi::XYZPoint& globalPos) const;
+  virtual int sensitiveVolumeID(const Gaudi::XYZPoint& globalPos) const;
 
   /// Used to create a link with a given name to the condition at 'path' in the detector data store.
   void createCondition(std::string &name, std::string &path);

@@ -4,6 +4,13 @@
 ! Purpose     : Interface to the xml description
 !-----------------------------------------------------------------------------
 
+!======================== RichDet v11r3 2008-11-17 ===========================
+! 2008-10-28 - Marco Cattaneo
+ - Fixes for gcc 4.3 compilation
+
+! 2008-10-22 - Marco Cattaneo
+ - Remove extra qualifier in Rich1DTabFunc.h, to please latest genreflex
+
 !======================== RichDet v11r2 2008-09-30 ===========================
 ! 2008-09-30 - Marco Cattaneo
  - Protect use of condition() method following changes to DetDesc

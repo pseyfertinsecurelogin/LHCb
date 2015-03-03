@@ -1,7 +1,26 @@
-!$Id: release.notes,v 1.144 2008-09-02 16:22:02 cattanem Exp $
+!$Id: release.notes,v 1.150 2008-11-17 14:52:13 cattanem Exp $
 !Package         : STDet
 !Package manager : M. Needham
 !-------------------------------------------------------------------------
+
+!======================== STDet v4r6 2008-11-17 ==========================
+! 2008-11-04 M Needham
+ - make findSector method const in DeSTDetector
+ - add middleSensor method to DeSTSector
+
+! 2008-10-28 - Marco Cattaneo
+ - Fix compilation errors with gcc 4.3
+
+! 2008-10-26 M Needham
+ - Improve print methods
+
+! 2008-10-24 M Needham
+ - Bug fix in findSectors method
+ - Add missing entries to StatusMap
+
+! 2008-10-22 - Marco Cattaneo
+ - Remove extra qualifier in DeSTDetector.h and DeTTLayer.h, to please latest
+   genreflex
 
 !======================== STDet v4r5 2008-09-02 ==========================
 ! 2008-08-04 M Needham

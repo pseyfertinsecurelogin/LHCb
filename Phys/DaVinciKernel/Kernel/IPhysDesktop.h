@@ -1,4 +1,4 @@
-// $Id: IPhysDesktop.h,v 1.24 2008-04-29 14:17:45 pkoppenb Exp $
+// $Id: IPhysDesktop.h,v 1.29 2008-10-30 16:34:13 jpalac Exp $
 #ifndef DAVINCIKERNEL_IPHYSDESKTOP_H 
 #define DAVINCIKERNEL_IPHYSDESKTOP_H 1
 
@@ -67,24 +67,29 @@ public:
   /// Retrieve interface ID
   static const InterfaceID& interfaceID() { return IID_IPhysDesktop; }
 
-  /// Fill the particle and vertex containers. Called by DVAlgorithm::sysExecute()
+  /// Load Input particles and vertices (in local data) from various input
+  /// locations filled with previous processings and  
+  /// create new Particles starting from reconstruction objects as
+  /// requested in jobOptions. The creation of new Particles if delegated
+  /// to ParticleMakers. 
+  /// Only DVAlgorithm::sysExecute() should call this function.
   virtual StatusCode getEventInput() = 0;
 
-  /// Retrieve the particles containers
+  /// Retrieve the local particle container
   virtual const LHCb::Particle::ConstVector& particles() const = 0;
 
-  /// Retrieve the PV from vertex container
-  virtual const LHCb::RecVertex::ConstVector& primaryVertices() = 0;
+  /// Retrieve the PVs from the TES
+  virtual const LHCb::RecVertex::Container* primaryVertices() const = 0;
 
-  /// Retrieve the secondary vertices
+  /// Retrieve the local secondary vertex container
   virtual const LHCb::Vertex::ConstVector& secondaryVertices() const = 0;
 
-  /// Keep for future use: Register the new particles in the Desktop, pass ownership, 
-  /// return pointer to new particle
+  /// Keep for future use: Register the new particles in the Desktop, 
+  /// pass ownership, return pointer to new particle
   virtual const LHCb::Particle* keep( const LHCb::Particle* input ) = 0;
 
-  /// Keep for future use: Register the new vertices in the Desktop, pass ownership, 
-  /// return pointer to new vertex
+  /// Keep for future use: Register the new vertices in the Desktop, 
+  /// pass ownership, return pointer to new vertex
   virtual const LHCb::Vertex* keep( const LHCb::Vertex* input ) = 0;
 
   /// Save particles, vertices and particle->vertices relations to the TES
@@ -105,7 +110,7 @@ public:
   virtual void imposeOutputLocation(const std::string& outputLocationString) = 0;
 
   /// Get output location
-  virtual std::string getOutputLocation() const = 0 ;
+  virtual const std::string& getOutputLocation() const = 0 ;
 
   /// Make sure the PhysDesktop has written out the container
   virtual StatusCode writeEmptyContainerIfNeeded() = 0 ;
@@ -124,20 +129,11 @@ public:
                         const LHCb::VertexBase* vert ) const = 0;
   
   /// Obtain a range of weighted LHCb::VertexBase related to an LHCb::Particle
-  virtual Particle2Vertex::Range particle2Vertices(const LHCb::Particle* part ) const =0;
-
-  /// Obtain a copy of the current 1D relations table 
-  /// relating LHCb::Particles to LHCb::VertexBases
-  virtual const Particle2Vertex::Table particle2VertexTable() const = 0;
+  virtual Particle2Vertex::Range particle2Vertices(const LHCb::Particle* part ) const = 0;
 
   /// Clean desktop
   virtual StatusCode cleanDesktop() = 0;
   
-
-protected:
-
-private:
-
 };
 #endif // DAVINCIKERNEL_IPHYSDESKTOP_H
 

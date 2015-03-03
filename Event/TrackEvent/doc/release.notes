@@ -4,6 +4,20 @@
 ! Purpose     : Package for the tracking event model classes
 !-----------------------------------------------------------------------------
 
+!======================= TrackEvent v4r16 2008-11-17 =========================
+! 2008-11-05 M Needham
+ - add lite measurement types to enum
+
+! 2008-10-24 M Needham
+  - enable string to enum conversion in State, Node and Measurement
+  - Add constructors to track
+
+! 2008-10-21 Wouter Hulsbergen
+  - fix method that computes number of outliers
+	
+! 2008-10-15 Wouter Hulsbergen
+  - protect Track::probchi2 against ndof=0
+
 !======================= TrackEvent v4r15 2008-09-30 =========================
 ! 2008-10-06 - Wouter Hulsbergen
  - fix uninitialized data members in Measurement constructor

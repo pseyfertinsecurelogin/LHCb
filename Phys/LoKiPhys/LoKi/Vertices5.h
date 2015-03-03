@@ -1,4 +1,4 @@
-// $Id: Vertices5.h,v 1.1 2008-03-30 13:43:36 ibelyaev Exp $
+// $Id: Vertices5.h,v 1.3 2008-11-02 20:13:32 ibelyaev Exp $
 // ============================================================================
 #ifndef LOKI_VERTICES5_H 
 #define LOKI_VERTICES5_H 1
@@ -44,7 +44,7 @@ namespace LoKi
      *  @date 2008-03-28
      */
     class MinVertexDistanceWithSource
-      : public LoKi::BasicFunctors<const LHCb::VertexBase*>::Function
+      : public LoKi::Vertices::MinVertexDistance 
     {
       // the source of vertices 
       typedef LoKi::BasicFunctors<const LHCb::VertexBase*>::Source _Source ;
@@ -58,7 +58,8 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual constructor")
       virtual  MinVertexDistanceWithSource* clone() const ;
       /// MANDATORY: the only one essential method 
-      virtual  result_type operator() ( argument v ) const { return minvd ( v ) ; }
+      virtual  result_type operator() ( argument v ) const 
+      { return minvdsource ( v ) ; }
       /// OPTIONAL: the specific printout
       virtual  std::ostream& fillStream ( std::ostream& s ) const ;      
       // ======================================================================
@@ -69,13 +70,6 @@ namespace LoKi
       // cast to the source 
       operator const Source&() const { return source() ; }
       // ======================================================================
-    public:
-      // ======================================================================
-      /// get the functor 
-      const LoKi::Vertices::MinVertexDistance& fun() const { return m_mvd ; }
-      /// cast top the functor 
-      operator const LoKi::Vertices::MinVertexDistance& () const { return fun(); }
-      // ======================================================================
     private:
       // ======================================================================
       /// the default constructo is disabled 
@@ -84,12 +78,10 @@ namespace LoKi
     public:
       // ======================================================================
       /// make the actual evaluation
-      result_type minvd ( argument v ) const ;
+      result_type minvdsource ( argument v ) const ;
       // ======================================================================
     private:
       // ======================================================================
-      /// get the underlying functor 
-      mutable LoKi::Vertices::MinVertexDistance m_mvd    ; // the evaluator 
       /// the source of the vertices 
       LoKi::Assignable<_Source>::Type           m_source ; // the source
       // ======================================================================
@@ -113,6 +105,7 @@ namespace LoKi
       : public LoKi::Vertices::MinVertexDistanceWithSource 
     {
     public:
+      // ======================================================================
       /// the default constructor 
       MinVertexDistanceDV () ;
       /// the constructor from the vertex filter
@@ -123,12 +116,17 @@ namespace LoKi
       virtual  MinVertexDistanceDV* clone () const ;
       /// OPTIONAL: the specific printout
       virtual  std::ostream& fillStream ( std::ostream& s ) const ;
+      // ======================================================================
     public:
+      // ======================================================================
       /// get the access to the cut:
-      const LoKi::PhysTypes::VCuts& cut() const { return m_cut ; }
+      const LoKi::PhysTypes::VCuts& cut() const { return m_cut ; }  
+      // ======================================================================
     private:
+      // ======================================================================
       /// The vertex selector 
       LoKi::PhysTypes::VCut m_cut ; // The vertex selector 
+      // ======================================================================
     } ;
     // ========================================================================
     /** @class MinVertexDistanceTES
@@ -149,6 +147,7 @@ namespace LoKi
       : public LoKi::Vertices::MinVertexDistanceWithSource 
     {
     public:
+      // ======================================================================
       /// the constructor from the TES location  
       MinVertexDistanceTES ( const std::string& path ) ;
       /// the constructor from the TES locations 
@@ -175,19 +174,26 @@ namespace LoKi
       virtual  MinVertexDistanceTES* clone () const ;
       /// OPTIONAL: the specific printout
       virtual  std::ostream& fillStream ( std::ostream& s ) const ;
+      // ======================================================================
     private:
+      // ======================================================================
       /// the default constructor is disabled 
       MinVertexDistanceTES() ; // the default constructor is disabled 
+      // ======================================================================
     public:
+      // ======================================================================
       /// get the access to the cut:
       const LoKi::PhysTypes::VCuts&   cut  () const { return m_cut ; }
       /// get the access to the path
       const std::vector<std::string>& path () const { return m_path; }
+      // ======================================================================
     private:
+      // ======================================================================
       /// The vertex selector 
       LoKi::PhysTypes::VCut    m_cut  ; // The vertex selector 
       /// the TES locations 
       std::vector<std::string> m_path ; // the TES locations 
+      // ======================================================================
     } ;
     // ========================================================================
     /** @class MinVertexChi2DistanceWithSource
@@ -199,7 +205,7 @@ namespace LoKi
      *  @date 2008-03-28
      */
     class MinVertexChi2DistanceWithSource
-      : public LoKi::BasicFunctors<const LHCb::VertexBase*>::Function
+      : public LoKi::Vertices::MinVertexChi2Distance
     {
       // the source of vertices 
       typedef LoKi::BasicFunctors<const LHCb::VertexBase*>::Source _Source ;
@@ -214,7 +220,7 @@ namespace LoKi
       virtual  MinVertexChi2DistanceWithSource* clone() const ;
       /// MANDATORY: the only one essential method 
       virtual  result_type operator() ( argument v ) const 
-      { return minvdchi2 ( v ) ;}
+      { return minvdchi2source ( v ) ;}
       /// OPTIONAL: the specific printout
       virtual  std::ostream& fillStream ( std::ostream& s ) const ;      
       // ======================================================================
@@ -225,15 +231,6 @@ namespace LoKi
       // cast to the source 
       operator const Source&() const { return source() ; }
       // ======================================================================
-    public:
-      // ======================================================================
-      /// get the functor 
-      const LoKi::Vertices::MinVertexChi2Distance& fun() const 
-      { return m_mvd ; }
-      /// cast to the functor 
-      operator const LoKi::Vertices::MinVertexChi2Distance& () const 
-      { return fun(); }
-      // ======================================================================
     private:
       // ======================================================================
       /// the default constructor is disabled 
@@ -242,12 +239,10 @@ namespace LoKi
     public:
       // ======================================================================
       /// make the actual evaluation
-      result_type minvdchi2 ( argument v ) const ;
+      result_type minvdchi2source ( argument v ) const ;
       // ======================================================================
     private:
       // ======================================================================
-      /// get the underlying functor 
-      mutable LoKi::Vertices::MinVertexChi2Distance m_mvd ; // the evaluator 
       /// the source of the vertices 
       LoKi::Assignable<_Source>::Type           m_source ; // the source
       // ======================================================================
@@ -271,6 +266,7 @@ namespace LoKi
       : public LoKi::Vertices::MinVertexChi2DistanceWithSource 
     {
     public:
+      // ======================================================================
       /// the default constructor 
       MinVertexChi2DistanceDV () ;
       /// the constructor from the vertex filter
@@ -281,12 +277,17 @@ namespace LoKi
       virtual  MinVertexChi2DistanceDV* clone () const ;
       /// OPTIONAL: the specific printout
       virtual  std::ostream& fillStream ( std::ostream& s ) const ;
+      // ======================================================================
     public:
+      // ======================================================================
       /// get the access to the cut:
       const LoKi::PhysTypes::VCuts& cut() const { return m_cut ; }
+      // ======================================================================
     private:
+      // ======================================================================
       /// The vertex selector 
       LoKi::PhysTypes::VCut m_cut ; // The vertex selector 
+      // ======================================================================
     } ;
     // ========================================================================
     /** @class MinVertexChi2DistanceTES

@@ -4,6 +4,15 @@
 ! Purpose     : Define and build the POOL dictionaries for the relations
 !-----------------------------------------------------------------------------
 
+!======================= EventAssoc v4r5 2008-11-17 ==========================
+! 2008-11-02 - Vanya BELYAEV
+ - dict/selection.h
+   dict/selection.xml
+    regenerate the files using the updated Kernel/Relations package
+
+ - cmt/requirement 
+    version increment to v4r5 
+
 !======================= EventAssoc v4r4 2008-02-19 ==========================
 ! 2008-02-19 - Vanya BELYAEV
  - add the dictionary for "L0CaloCandidate -> MCParticle with the weight=double" 

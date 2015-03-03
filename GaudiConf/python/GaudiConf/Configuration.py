@@ -1,55 +1,52 @@
 """
 High level configuration tools for LHCb applications
 """
-__version__ = "$Id: Configuration.py,v 1.11 2008-09-26 14:24:20 cattanem Exp $"
+__version__ = "$Id: Configuration.py,v 1.16 2008-11-19 17:56:16 cattanem Exp $"
 __author__  = "Marco Cattaneo <Marco.Cattaneo@cern.ch>"
 
 from os import environ
 from Gaudi.Configuration import *
-from Configurables import ( CondDBAccessSvc, MagneticFieldSvc )
+from LHCbKernel.Configuration import *
+from Configurables import ( DDDBConf )
 
-class LHCbApp(ConfigurableUser):
+class LHCbApp(LHCbConfigurableUser):
     __slots__ = {
-        "EvtMax":                -1  # Maximum number of events to process
-       ,"skipEvents":             0  # events to skip
-       ,"DDDBtag":    "DC06-default" # geometry   database tag
-       ,"condDBtag":  "DC06-default" # conditions database tag
-       ,"useOracleCondDB":    False  # if False, use SQLDDDB instead
-       ,"monitors"  :  []            # monitor actions
+        "EvtMax"     : -1
+       ,"SkipEvents" : 0
+       ,"DataType"   : "2008"
+       ,"DDDBtag"    : ""
+       ,"CondDBtag"  : ""
+       ,"UseOracle"  : False
+       ,"Simulation" : False
+       ,"Monitors"   : []
         }
+
+    _propertyDocDct = { 
+        'EvtMax'     : """ Maximum number of events to process """
+       ,'SkipEvents' : """ Number of events to skip """
+       ,'DataType'   : """ Data type, can be ['DC06','2008']. Default '2008' """
+       ,'DDDBtag'    : """ Tag for DDDB. Default as set in DDDBConf for DataType """
+       ,'CondDBtag'  : """ Tag for CondDB. Default as set in DDDBConf for DataType """
+       ,'UseOracle'  : """ Flag to enable Oracle CondDB. Default False (use SQLDDDB) """
+       ,'Simulation' : """ Flag to indicate usage of simulation conditions """
+       ,'Monitors'   : """ List of monitors to execute """
+       }
+
+    __used_configurables__ = [ DDDBConf ]
 
     def knownMonitors(self):
         return ["SC", "FPE"]
 
-    def getProp(self,name):
-        if hasattr(self,name):
-            return getattr(self,name)
-        else:
-            return self.getDefaultProperties()[name]
-
-    def setProp(self,name,value):
-        return setattr(self,name,value)
-
     def defineDB(self):
-        condDBtag = self.getProp("condDBtag")
-        DDDBtag   = self.getProp("DDDBtag")
-        importOptions( "$DDDBROOT/options/DDDB.py" )
-            
-        # If a default is requested, use it
-        if DDDBtag.find("-default") != -1 or condDBtag.find("-default") != -1:
-            if condDBtag.find("DC06") != -1 and DDDBtag.find("DC06") != -1 :
-                importOptions( "$DDDBROOT/options/DC06.py" )
-            elif condDBtag.find("2008") != -1 and DDDBtag.find("2008") != -1 :
-                importOptions( "$DDDBROOT/options/LHCb-2008.py" )
-            else :
-                raise RuntimeError("Invalid combination of default tags. CondDB: '%s' DDDB: '%s'"%(condDBtag,DDDBtag))
-
-        # Otherwise, take the tag supplied
-        if DDDBtag.find("-default") == -1:
-            CondDBAccessSvc( "DDDB",     DefaultTAG = DDDBtag )
-        if condDBtag.find("-default") == -1:
-            CondDBAccessSvc( "LHCBCOND", DefaultTAG = condDBtag )
-            CondDBAccessSvc( "SIMCOND",  DefaultTAG = condDBtag )
+        # Delegate handling of properties to DDDBConf
+        self.setOtherProps( DDDBConf(), ["Simulation", "UseOracle", "DataType" ] )
+        # Set the CondDB tags if not using defaults
+        from Configurables import CondDB
+        if hasattr( self, "DDDBtag" ):
+            CondDB().Tags [ "DDDB" ] = self.getProp("DDDBtag")
+        if hasattr( self, "CondDBtag" ):
+            CondDB().Tags [ "LHCBCOND" ] = self.getProp("CondDBtag")
+            CondDB().Tags [ "SIMCOND"  ] = self.getProp("CondDBtag")
             
     def defineEvents(self):
         # Set up transient store and data on demand service
@@ -57,28 +54,37 @@ class LHCbApp(ConfigurableUser):
                       RootCLID           =    1,
                       EnableFaultHandler = True )
 
-        skipEvents = self.getProp("skipEvents")
-        if skipEvents > 0 :
+        SkipEvents = self.getProp("SkipEvents")
+        if SkipEvents > 0 :
             if hasattr(EventSelector(),"FirstEvent"):
-                print "EventSelector().FirstEvent already defined, ignoring LHCbApp().skipEvents"
-            else:
-                EventSelector().FirstEvent = skipEvents + 1
-        evtMax = self.getProp("EvtMax")
-        if hasattr(ApplicationMgr(),"EvtMax"):
-            print "ApplicationMgr().EvtMax already defined, ignoring LHCbApp().EvtMax"
+                log.warning( "EventSelector().FirstEvent and LHCBApp().SkipEvents both defined, using LHCbApp().SkipEvents")
+            EventSelector().FirstEvent = SkipEvents + 1
+
+        # Delegate handling to ApplicationMgr configurable
+        self.setOtherProps(ApplicationMgr(),["EvtMax"])
+
+    def evtMax(self):
+        if hasattr(ApplicationMgr(),"EvtMax") and not hasattr(self,"EvtMax"):
+            return ApplicationMgr().getProp("EvtMax")
         else:
-            ApplicationMgr().EvtMax = evtMax
+            return self.getProp("EvtMax")
+
+    def skipEvents(self):
+        if hasattr(EventSelector(),"FirstEvent") and not hasattr(self,"SkipEvents"):
+            return EventSelector().getProp("FirstEvent") - 1
+        else:
+            return self.getProp("SkipEvents")
 
     def defineMonitors(self):
-        for prop in self.getProp("monitors"):
+        for prop in self.getProp("Monitors"):
             if prop not in self.knownMonitors():
                 raise RuntimeError("Unknown monitor '%s'"%prop)
-        if "SC" in self.getProp("monitors"):
+        if "SC" in self.getProp("Monitors"):
             ApplicationMgr().StatusCodeCheck = True
-        if "FPE" in self.getProp("monitors"):
+        if "FPE" in self.getProp("Monitors"):
             importOptions( "$STDOPTS/FPEAudit.opts" )
 
-    def applyConf(self):
+    def __apply_configuration__(self):
         self.defineDB()
         self.defineEvents()
         self.defineMonitors()

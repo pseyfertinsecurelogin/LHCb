@@ -1,7 +1,17 @@
-! $Id: release.notes,v 1.121 2008-09-02 10:13:28 cattanem Exp $
+! $Id: release.notes,v 1.125 2008-11-17 14:44:37 cattanem Exp $
 ! Package     : MuonDet
 ! Responsible : Alessia Satta
 !----------------------------------------------------------------------------
+
+!========================= MuonDet v8r4 2008-11-17 ==========================
+! 2008-10-28 - Marco Cattaneo
+ - Fixes for gcc 4.3
+
+! 2008-10-22 - Marco Cattaneo
+ - Remove extra qualifier in DeMuonDetector.h, to please latest genreflex
+
+! 2008-10-21 - Alessia Satta
+  - Fix compilation warnings
 
 !========================= MuonDet v8r3 2008-09-01 ==========================
 ! 2008-09-01 - Alessia Satta

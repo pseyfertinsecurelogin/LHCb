@@ -1,9 +1,37 @@
-# $Id: release.notes,v 1.150 2008-09-30 12:27:30 cattanem Exp $
+# $Id: release.notes,v 1.158 2008-11-17 14:33:09 cattanem Exp $
 !-----------------------------------------------------------------------------
 ! Package     : Det/DetCond
 ! Responsible : Marco Clemencic
 ! Purpose     : Interface between LHCb and LGC/COOL project
 !-----------------------------------------------------------------------------
+
+!===================== Det/DetCond v12r4 2008-11-17 ==========================
+! 2008-11-17 - Marco Cattaneo
+ - Fix to requirements avoid warnings when making configurables database 
+ - Add LoadDDDB algorithm, moved from DetDescChecks to avoid tests dependency
+   on DetDescChecks package
+ - Add missing dependencies for QMTest
+
+! 2008-11-14 - Marco Cattaneo
+ - In Configurable, set up VFSSvc, e.g. for use by ParticlePropertySvc
+
+! 2008-11-11 - Marco Clemencic
+ - Fixed configuration problems in the test after the changes in DDDB.
+
+! 2008-11-06 - Marco Clemencic
+ - Added the ConfigurableUser CondDB for the high level configuration of the
+   conditions database. The old configuration function (addCondDBLayer etc.) are
+   still available for backward compatibility, but implemented using the new
+   configurable which allows to specify local tags too. 
+
+! 2008-10-31 - Marco Cattaneo
+ - Fix for gcc 4.3
+
+                           NEEDS: LCGCMT > 55a
+                           
+! 2008-10-10 - Marco Clemencic
+ - Modified the requirements file following the changes in the CORAL interface
+   package (see bug #41579).
 
 !===================== Det/DetCond v12r3 2008-09-30 ==========================
 ! 2008-09-29 - Marco Clemencic

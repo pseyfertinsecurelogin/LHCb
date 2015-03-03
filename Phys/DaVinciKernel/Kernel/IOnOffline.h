@@ -1,4 +1,4 @@
-// $Id: IOnOffline.h,v 1.7 2008-07-10 15:18:20 pkoppenb Exp $
+// $Id: IOnOffline.h,v 1.11 2008-10-31 06:53:50 jpalac Exp $
 #ifndef DAVINCIKERNEL_IONOFFLINE_H 
 #define DAVINCIKERNEL_IONOFFLINE_H 1
 
@@ -9,7 +9,7 @@
 // from Gaudi
 #include "GaudiKernel/IAlgTool.h"
 
-static const InterfaceID IID_IOnOffline ( "IOnOffline", 2, 1 );
+static const InterfaceID IID_IOnOffline ( "IOnOffline", 3, 0 );
 
 /** @class IOnOffline IOnOffline.h Kernel/IOnOffline.h
  *  
@@ -18,8 +18,10 @@ static const InterfaceID IID_IOnOffline ( "IOnOffline", 2, 1 );
  *
  *  @author Patrick KOPPENBURG
  *  @date   2005-06-08
+ *
+ *  @author Juan PALACIOS
+ *  @date   2008-09-29
  */
-class IRelatedPVFinder ;
 class IOnOffline : virtual public IAlgTool {
 public: 
 
@@ -27,19 +29,26 @@ public:
   static const InterfaceID& interfaceID() { return IID_IOnOffline; }
 
   /// On or Offline ?
-  virtual bool online(void) const = 0 ;
+  virtual const bool online() const = 0 ;
 
-  /// Return DistanceCalculator
-  virtual std::string distanceCalculator() const = 0 ;
+  /// Return name of IDistanceCalculator implementation 
+  virtual const std::string& distanceCalculatorType() const = 0 ;
 
-  /// Return Unconstrained Vertex Fitter
-  virtual std::string vertexFitter() const = 0 ;
+  /// Return name of unconstrained vertex fitter
+  virtual const std::string& vertexFitterType() const = 0 ;
 
-  /// Get PV location in TES
-  virtual std::string getPVLocation(void) const = 0 ;
+  /// Return name of IRelatedPVFinder implementation
+  virtual const std::string& relatedPVFinderType() const = 0;
 
-  /// PV relator
-  virtual IRelatedPVFinder* pvRelator(void) const = 0 ;
+  /// Return location of default primary vertices
+  virtual const std::string& primaryVertexLocation() const = 0 ;
 
+  /// Return root of a TES location.
+  /// Typical values could be "Phys" or "Hlt"
+  /// Parent code would then append to "/Event/" to create
+  /// absolute TES trunk location for data under control
+  /// of the parent.
+  virtual const std::string& trunkOnTES() const = 0;
+  
 };
 #endif // DAVINCIKERNEL_IONOFFLINE_H

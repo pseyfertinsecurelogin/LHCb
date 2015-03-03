@@ -1,8 +1,17 @@
-// $Id: Relation2.h,v 1.10 2006-06-11 19:37:02 ibelyaev Exp $
+// $Id: Relation2.h,v 1.13 2008-11-02 16:44:38 ibelyaev Exp $
 // =============================================================================
-// CV Stag $Name: not supported by cvs2svn $ ; version $Revision: 1.10 $
+// CV Stag $Name: not supported by cvs2svn $ ; version $Revision: 1.13 $
 // =============================================================================
 // $Log: not supported by cvs2svn $
+// Revision 1.12  2008/11/01 15:53:08  ibelyaev
+//  add the method 'merge' and its shortcut '+=' for each concrete class
+//
+// Revision 1.11  2008/10/31 19:34:59  ibelyaev
+//  fixes for gcc4.3
+//
+// Revision 1.10  2006/06/11 19:37:02  ibelyaev
+//  remove some extra classes + fix all virtual bases
+//
 // Revision 1.9  2006/06/11 15:23:46  ibelyaev
 //  The major  upgrade: see doc/release.notes
 //
@@ -54,14 +63,14 @@ namespace Relations
    *
    *  @author Vanya Belyaev Ivan.Belyaev@itep.ru 
    *  @date   23/03/2002
-   */
-  
+   */  
   template<class FROM,class TO>
   class Relation2 
     : public BaseTable 
     , public IRelation2D<FROM,TO> 
   {  
   public:
+    // ========================================================================
     /// short cut for own     type
     typedef Relation2<FROM,TO>               OwnType        ;
     /// short cut for inverse type
@@ -90,7 +99,9 @@ namespace Relations
     typedef typename IBase::To               To             ;
     /// import "To"    type from interface 
     typedef typename IBase::To_              To_            ;    
+    // ========================================================================
   public:
+    // ========================================================================
     /// the default constructor
     Relation2
     ( const size_t reserve = 0  )
@@ -102,7 +113,7 @@ namespace Relations
       /// set cross-links 
       m_direct  .setInverseBase ( m_inverse .directBase () ) ;
       m_inverse .setInverseBase ( m_direct  .directBase () ) ;
-    };
+    }
     /// constructor from any "direct" interface 
     Relation2 
     ( const DirectType& copy ) 
@@ -145,10 +156,12 @@ namespace Relations
       /// set cross-links 
       m_direct  .setInverseBase ( m_inverse  .directBase () ) ;
       m_inverse .setInverseBase ( m_direct   .directBase () );
-    };
+    }
     /// destructor (virtual)
     virtual ~Relation2() {} ;
+    // ========================================================================
   public:  // major functional methods (fast, 100% inline)
+    // ========================================================================
     /// retrive all relations from the object (fast,100% inline)
     inline   Range i_relations ( From_ object ) const
     { return m_direct.i_relations ( object ) ; }
@@ -168,9 +181,9 @@ namespace Relations
     inline   StatusCode i_removeTo ( To_ object )
     { return m_direct.i_removeTo( object ) ; }
     /// remove ALL relations form ALL  object to ALL objects  (fast,100% inline)
-    inline  StatusCode i_clear() { return m_direct.i_clear() ; };
+    inline  StatusCode i_clear() { return m_direct.i_clear() ; }
     /// rebuild ALL relations form ALL  object to ALL objects(fast,100% inline)
-    inline  StatusCode i_rebuild() { return m_direct.i_rebuild() ; };
+    inline  StatusCode i_rebuild() { return m_direct.i_rebuild() ; }
     /** make the relation between 2 objects (fast,100% inline method) 
      *  - Call for i_sort() is mandatory!
      */
@@ -180,7 +193,33 @@ namespace Relations
      *   mandatory to use after i_push
      */
     inline  void i_sort() { m_direct.i_sort() ; }
+    // ========================================================================
+  public: // merge 
+    // ========================================================================
+    /** merge with the sorted range of relations 
+     *  @attention the range is assumed to be sorted! 
+     *  @param range the range to be added 
+     *  @return self-reference 
+     */
+    Relation2& merge ( const Range& range ) 
+    { m_direct.merge ( range ) ; return *this ; }
+    /** merge with the sorted range of relations 
+     *  @attention the range is assumed to be sorted! 
+     *  @param range the range to be added 
+     *  @return self-reference 
+     */
+    Relation2& imerge ( const typename InvType::Range& range ) 
+    { m_direct.imerge ( range ) ; return *this ; }
+    /** merge with the sorted range of relations 
+     *  @attention the range is assumed to be sorted! 
+     *  @param range the range to be added 
+     *  @return self-reference 
+     */
+    Relation2& operator+=( const Range& range ) 
+    { return merge ( range ) ; }
+    // ========================================================================
   public:  // abstract methods from interface
+    // ========================================================================
     /// retrive all relations from the object
     virtual  Range       relations ( From_ object ) const 
     { return i_relations( object ) ; }
@@ -210,8 +249,10 @@ namespace Relations
       m_inverse .setInverseBase ( m_direct   .directBase () );
       if ( 0 == flag ) { return i_rebuild() ; }
       return StatusCode::SUCCESS ;
-    };
+    }
+    // ========================================================================
   public:
+    // ========================================================================
     /// get the "direct" interface 
     inline       Direct*  i_direct  ()       { return &m_direct ; }
     /// get the "direct" interface  (const-version)
@@ -220,7 +261,9 @@ namespace Relations
     inline       Inverse* i_inverse ()       { return &m_inverse ; }
     /// get the "inverse" interface  (const version)
     inline const Inverse* i_inverse () const { return &m_inverse ; }
+    // ========================================================================
   public:  // abstract methods from interface
+    // ========================================================================
     /// get the "direct" interface 
     virtual       DirectType*  direct ()        { return i_direct () ; }    
     /// get the "direct" interface  (const-version)
@@ -229,7 +272,9 @@ namespace Relations
     virtual       InverseType* inverse ()       { return i_inverse() ; }    
     /// get the "inverse" interface  (const version)
     virtual const InverseType* inverse () const { return i_inverse() ;  }    
+    // ========================================================================
   public:
+    // ========================================================================
     /// query the interface
     virtual StatusCode queryInterface
     ( const InterfaceID& id , void** ret )
@@ -245,24 +290,33 @@ namespace Relations
       ///
       addRef() ;
       return StatusCode::SUCCESS ;
-    };
+    }
     /// increase the reference counter (artificial)
     virtual unsigned long addRef  () { return 1 ; }    
     /// release the reference counter (artificial)
     virtual unsigned long release () { return 1 ; }    
+    // ========================================================================
   public: // other methods
+    // ========================================================================
     /// reserve the relations (for efficiency reasons)
     inline StatusCode reserve ( const size_t num ) 
-    { return m_direct.reserve( num ) ; };    
+    { return m_direct.reserve( num ) ; }
+    // ========================================================================
   private:    
+    // ========================================================================
     /// assignement operator is private!
-    Relation2& operator=( const OwnType& copy );
+    Relation2& operator=( const Relation2& copy );
+    // ========================================================================
   private:
-    Direct    m_direct  ;  ///< direct table 
-    Inverse   m_inverse ;  ///< the "inverse table"
+    // ========================================================================
+    /// the tabele for direct relations 
+    Direct    m_direct  ;                    // the tabele for direct relations 
+    /// the table for inverse relations 
+    Inverse   m_inverse ;                    // the table for inverse relations 
+    // ========================================================================
   };
-}; // end of namespace Relations
-
+  // ==========================================================================
+} // end of namespace Relations
 // ============================================================================
 // The End 
 // ============================================================================

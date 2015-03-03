@@ -1,0 +1,37 @@
+#============================================================================
+# Created    : 2008-11-18
+# Maintainer : Olivier Callot
+#============================================================================
+package           EventPacker
+version           v1r0
+
+#============================================================================
+# Structure, i.e. directories to process. 
+#============================================================================
+branches          cmt doc src
+#============================================================================
+# Used packages. Specify the version, * at the end specifies 'any revision'
+#    Put as many lines as needed, with all packages, without the '#'
+#============================================================================
+include_path      none
+
+#============================================================================
+# Used packages. 
+#============================================================================
+use   GaudiKernel  v*
+use   GaudiAlg     v*
+use   LHCbKernel   v*    Kernel
+use   PackedEvent  v*    Event
+use   MCEvent      v*    Event
+use   TrackEvent   v*    Event
+use   RecEvent     v*    Event
+use   Boost        v*    LCG_Interfaces
+
+#============================================================================
+# Component library building rule
+#============================================================================
+library          EventPacker    ../src/*.cpp
+#============================================================================
+# define component library link options
+#============================================================================
+apply_pattern    component_library library=EventPacker

@@ -1,10 +1,10 @@
-# $Id: requirements,v 1.26 2008-08-04 14:06:16 ibelyaev Exp $ 
+# $Id: requirements,v 1.28 2008-11-02 19:25:25 ibelyaev Exp $ 
 # =============================================================================
 # Created    : 2006-01-16
 # Maintainer : Vanya BELYAEV ibelyaev@physics.syr.edu 
 # =============================================================================
 package            LoKiGen
-version            v7r6
+version            v8r0
 
 # ================ structure ==================================================
 branches           cmt doc src dict python LoKi 
@@ -31,6 +31,7 @@ apply_pattern    reflex_dictionary                                   \
 
 # ================ patterns ===================================================
 apply_pattern      linker_library    library=LoKiGenLib
+
 apply_pattern      component_library library=LoKiGen
 
 macro LoKiGenDict_use_linkopts $(use_linkopts)

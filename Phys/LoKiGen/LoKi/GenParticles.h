@@ -1,4 +1,4 @@
-// $Id: GenParticles.h,v 1.19 2008-07-09 16:19:16 ibelyaev Exp $
+// $Id: GenParticles.h,v 1.21 2008-11-02 19:25:25 ibelyaev Exp $
 // ============================================================================
 #ifndef LOKI_GENPARTICLES_H 
 #define LOKI_GENPARTICLES_H 1
@@ -160,6 +160,7 @@ namespace LoKi
     class PseudoRapidity : public LoKi::GenTypes::GFunc
     {   
     public:
+      // ======================================================================
       /// clone method (mandatory!)
       virtual  PseudoRapidity* clone() const ;
       /// MANDATORY: virtual destructor 
@@ -168,6 +169,12 @@ namespace LoKi
       virtual  result_type operator() ( argument p ) const ;
       /// "SHORT" representation, @see LoKi::AuxFunBase 
       virtual  std::ostream& fillStream( std::ostream& s ) const ;
+      // ======================================================================
+    public:
+      // ======================================================================
+      double eta ( argument p ) const 
+      { return LoKi::LorentzVector  ( p-> momentum() ) . Eta () ; }
+      // ======================================================================
     };
     // ========================================================================
     /** @class Phi
@@ -181,6 +188,7 @@ namespace LoKi
     class Phi : public LoKi::GenTypes::GFunc
     { 
     public:
+      // ======================================================================
       /// clone method (mandatory!)
       virtual  Phi* clone() const ;
       /// MANDATORY: virtual destructor 
@@ -189,6 +197,24 @@ namespace LoKi
       virtual  result_type operator() ( argument p ) const ;
       /// "SHORT" representation, @see LoKi::AuxFunBase 
       virtual  std::ostream& fillStream( std::ostream& s ) const ;
+      // =====================================================================
+    public:
+      // ======================================================================
+      /// get phi 
+      double phi ( argument p ) const 
+      { return LoKi::LorentzVector  ( p-> momentum() ) . Phi () ; }
+      /// adjust delta phi into the raneg of [-180:180]degrees 
+      double adjust ( double angle ) const 
+      { 
+        static const double s_180 = 180 * Gaudi::Units::degree ;
+        static const double s_360 = 360 * Gaudi::Units::degree ;
+        //
+        while ( angle >      s_180 ) { angle -= s_360 ; }
+        while ( angle < -1 * s_180 ) { angle += s_360 ; }
+        //
+        return angle ;
+      }
+      // ======================================================================
     };
     // ========================================================================
     /** @class Theta
@@ -819,6 +845,7 @@ namespace LoKi
     class AdapterToProductionVertex : public LoKi::GenTypes::GFunc
     {
     public:
+      // ======================================================================
       /** constructor from vertex function and "bad" value 
        *  @param fun verted function to be used 
        *  @param bad the value to be returnedd for invalid vertex 
@@ -836,16 +863,18 @@ namespace LoKi
       /// the only one essential method 
       result_type operator() ( argument p ) const ;
       /// "SHORT" representation, @see LoKi::AuxFunBase 
-      virtual  std::ostream& fillStream( std::ostream& s ) const ;      
-    private:
+      virtual  std::ostream& fillStream( std::ostream& s ) const ;       
+      // ======================================================================
+   private:
+      // ======================================================================
       // default constructor is disabled 
       AdapterToProductionVertex();
-      // assignement operator is disabled 
-      AdapterToProductionVertex& operator= 
-      ( const AdapterToProductionVertex& ) ;
+      // ======================================================================
     private:
+      // ======================================================================
       LoKi::Types::GVFun    m_fun ;
       double                m_bad ;
+      // ======================================================================
     };
     // ========================================================================
     /** @class AdapterToEndVertex 
@@ -860,6 +889,7 @@ namespace LoKi
     class AdapterToEndVertex : public LoKi::GenTypes::GFunc
     {
     public:
+      // ======================================================================
       /** constructor from vertex function and "bad" value 
        *  @param fun verted function to be used 
        *  @param bad the value to be returnedd for invalid vertex 
@@ -878,15 +908,17 @@ namespace LoKi
       result_type operator() ( argument p ) const ;
       /// "SHORT" representation, @see LoKi::AuxFunBase 
       virtual  std::ostream& fillStream( std::ostream& s ) const ;      
+      // ======================================================================
     private:
+      // ======================================================================
       // default constructor is disabled 
       AdapterToEndVertex();
-      // assignement operator is disabled 
-      AdapterToEndVertex& operator= 
-      ( const AdapterToEndVertex& ) ;
+      // ======================================================================
     private:
+      // ======================================================================
       LoKi::Types::GVFun    m_fun ;
       double                m_bad ;
+      // ======================================================================
     };
     // ========================================================================
     /** @class ThreeCharge
@@ -924,39 +956,38 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2007-03-03
      */
-    class DeltaPhi : public LoKi::GenTypes::GFunc
+    class DeltaPhi : public Phi
     {
     public:
+      // ======================================================================
       /// constructor from the angle
       DeltaPhi ( const double phi ) ;
       /// constructor from the vector 
       DeltaPhi ( const LoKi::ThreeVector& v ) ;
       /// constructor from the vector 
       DeltaPhi ( const LoKi::LorentzVector& v ) ;
-      /// templated constructor from vector 
-      template <class VECTOR> 
-      DeltaPhi ( const VECTOR& v ) 
-        : LoKi::GenTypes::GFunc () 
-        , m_eval (         )
-        , m_phi  ( v.phi() )
-      { 
-        m_phi = adjust ( m_phi ) ;
-      } ;
       /// constructor from the particle
       DeltaPhi ( const HepMC::GenParticle* p ) ;
+      /// templated constructor from vector 
+      //       template <class VECTOR> 
+      //       DeltaPhi ( const VECTOR& v ) 
+      //         : LoKi::GenTypes::GFunc () 
+      //         , m_eval (         )
+      //         , m_phi  ( v.phi() )
+      //       { 
+      //         m_phi = adjust ( m_phi ) ;
+      //       } ;
       /// templated constructor from particle
-      template <class PARTICLE> 
-      DeltaPhi ( const PARTICLE* p ) 
-        : LoKi::GenTypes::GFunc () 
-        , m_eval (  )
-        , m_phi  (  )
-      { 
-        if ( 0 == p ) { Exception("Invalid PARTICLE*") ;}
-        m_phi = p->momentum().phi() ;
-        m_phi = adjust ( m_phi ) ;
-      } ;
-      /// copy constructor
-      DeltaPhi ( const DeltaPhi& right ) ;
+      //       template <class PARTICLE> 
+      //       DeltaPhi ( const PARTICLE* p ) 
+      //         : LoKi::GenTypes::GFunc () 
+      //         , m_eval (  )
+      //         , m_phi  (  )
+      //       { 
+      //         if ( 0 == p ) { Exception("Invalid PARTICLE*") ;}
+      //         m_phi = p->momentum().phi() ;
+      //         m_phi = adjust ( m_phi ) ;
+      //       } 
       /// MANDATORY: virtual destructor 
       virtual ~DeltaPhi() {}
       /// MANDATORY: clone method ("virtual constructor")
@@ -965,20 +996,24 @@ namespace LoKi
       virtual result_type operator() ( argument p ) const ;
       /// OPTIONAL: "SHORT" representation
       virtual  std::ostream& fillStream( std::ostream& s ) const ;
+      // ======================================================================
     public:
-      /// adjust delta phi into the raneg of [-180:180]degrees 
-      const double adjust ( double phi ) const ;
-    public:
-      // get the phi
-      double phi() const { return m_phi ; }
+      // ======================================================================
+      /// get the phi
+      double phi0 () const { return m_phi ; }                  // get the phi
+      double dphi ( argument p ) const 
+      { return adjust ( phi ( p ) - phi0 () ) ;}
+      // ======================================================================
     private:
-      // the default constructor is disabled 
-      DeltaPhi ();
+      // ======================================================================
+      /// the default constructor is disabled 
+      DeltaPhi ();                       // the default constructor is disabled 
+      // ======================================================================
     private:
-      // the actual evaluator of phi
-      LoKi::GenParticles::Phi m_eval ; ///< the actual evaluator of phi
-      // the angle itself 
-      double                  m_phi  ; ///< the angle itself 
+      // ======================================================================
+      /// the angle itself 
+      double                  m_phi  ;                      // the angle itself 
+      // ======================================================================
     } ;
     // ========================================================================
     /** @class DeltaEta
@@ -989,36 +1024,35 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2007-03-03
      */
-    class DeltaEta : public LoKi::GenTypes::GFunc
+    class DeltaEta : public PseudoRapidity 
     {
     public:
+      // ======================================================================
       /// constructor from the eta
       DeltaEta ( const double eta ) ;
       /// constructor from the vector 
       DeltaEta ( const LoKi::ThreeVector&   v ) ;
       /// constructor from the vector 
       DeltaEta ( const LoKi::LorentzVector& v ) ;
-      /// templated constructor from vector 
-      template <class VECTOR> 
-      DeltaEta ( const VECTOR& v ) 
-        : LoKi::GenTypes::GFunc () 
-        , m_eval (         )
-        , m_eta  ( v.Eta() )
-      {} ;
       /// constructor from the particle
       DeltaEta ( const HepMC::GenParticle* p ) ;
+      /// templated constructor from vector 
+      //       template <class VECTOR> 
+      //       DeltaEta ( const VECTOR& v ) 
+      //         : LoKi::GenTypes::GFunc () 
+      //         , m_eval (         )
+      //         , m_eta  ( v.Eta() )
+      //       {} ;
       /// templated constructor from particle
-      template <class PARTICLE> 
-      DeltaEta ( const PARTICLE* p ) 
-        : LoKi::GenTypes::GFunc () 
-        , m_eval (  )
-        , m_eta  (  )
-      { 
-        if ( 0 == p ) { Exception("Invalid PARTICLE*") ;}
-        m_eta = p->momentum().Eta() ;
-      } ;
-      /// copy constructor
-      DeltaEta ( const DeltaEta& right ) ;
+      //       template <class PARTICLE> 
+      //       DeltaEta ( const PARTICLE* p ) 
+      //         : LoKi::GenTypes::GFunc () 
+      //         , m_eval (  )
+      //         , m_eta  (  )
+      //       { 
+      //         if ( 0 == p ) { Exception("Invalid PARTICLE*") ;}
+      //         m_eta = p->momentum().Eta() ;
+      //       } ;
       /// MANDATORY: virtual destructor 
       virtual ~DeltaEta() {}
       /// MANDATORY: clone method ("virtual constructor")
@@ -1027,17 +1061,23 @@ namespace LoKi
       virtual result_type operator() ( argument p ) const ;
       /// OPTIONAL: "SHORT" representation
       virtual  std::ostream& fillStream( std::ostream& s ) const ;
+      // ======================================================================
     public:
-      // get the eta
-      double eta() const { return m_eta ; }
+      // ======================================================================
+      /// get the eta
+      double eta0 () const { return m_eta ; }
+      double deta ( argument p ) const { return eta ( p ) - eta0 () ; }
+      // ======================================================================
     private:
-      // the default constructor is disabled 
-      DeltaEta ();
+      // ======================================================================
+      /// the default constructor is disabled 
+      DeltaEta ();                       // the default constructor is disabled
+      // ======================================================================
     private:
-      // the actual evaluator of eta
-      LoKi::GenParticles::PseudoRapidity m_eval ; ///< the actual evaluator of eta
-      // the angle itself 
-      double                             m_eta  ; ///< the angle itself 
+      // ======================================================================
+      /// the angle itself 
+      double                             m_eta  ; // the angle itself 
+      // ======================================================================
     } ;
     // ========================================================================
     /** @class DeltaR2
@@ -1055,33 +1095,32 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2007-03-03
      */
-    class DeltaR2 : public LoKi::GenTypes::GFunc
+    class DeltaR2 : public DeltaPhi 
     {
     public:
+      // ======================================================================
       /// constructor from eta & phi
       DeltaR2 ( const double eta , const double phi ) ;
       /// constructor from the vector 
       DeltaR2 ( const LoKi::ThreeVector&   v ) ;
       /// constructor from the vector 
       DeltaR2 ( const LoKi::LorentzVector& v ) ;
-      /// templated constructor from vector 
-      template <class VECTOR> 
-      DeltaR2 ( const VECTOR& v ) 
-        : LoKi::GenTypes::GFunc () 
-        , m_dphi ( v )
-        , m_deta ( v )
-      {} ;
       /// constructor from the particle
       DeltaR2 ( const HepMC::GenParticle* p ) ;
+      /// templated constructor from vector 
+      //       template <class VECTOR> 
+      //       DeltaR2 ( const VECTOR& v ) 
+      //         : LoKi::GenTypes::GFunc () 
+      //         , m_dphi ( v )
+      //         , m_deta ( v )
+      //       {} ;
       /// templated constructor from particle
-      template <class PARTICLE> 
-      DeltaR2 ( const PARTICLE* p ) 
-        : LoKi::GenTypes::GFunc () 
-        , m_dphi ( p )
-        , m_deta ( p )
-      {} ;
-      /// copy constructor
-      DeltaR2 ( const DeltaR2& right ) ;
+      //       template <class PARTICLE> 
+      //       DeltaR2 ( const PARTICLE* p ) 
+      //         : LoKi::GenTypes::GFunc () 
+      //         , m_dphi ( p )
+      //         , m_deta ( p )
+      //       {} ;
       /// MANDATORY: virtual destructor 
       virtual ~DeltaR2() {}
       /// MANDATORY: clone method ("virtual constructor")
@@ -1090,14 +1129,23 @@ namespace LoKi
       virtual result_type operator() ( argument p ) const ;
       /// OPTIONAL: "SHORT" representation
       virtual  std::ostream& fillStream( std::ostream& s ) const ;
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// get the eta
+      double eta0 () const { return m_deta.eta0()  ; }
+      double deta ( argument p ) const { return m_deta.deta ( p )  ; }
+      // ======================================================================
     private:
+      // ======================================================================
       // the default constructor is disabled 
-      DeltaR2 ();
+      DeltaR2 ();                       /// the default constructor is disabled 
+      // ======================================================================
     private:
-      // the actual evaluator of delta phi
-      LoKi::GenParticles::DeltaPhi m_dphi ; ///< the actual evaluator of delta phi
-      // the actual evaluator of delta eta
-      LoKi::GenParticles::DeltaEta m_deta ; ///< the actual evaluator of delta eta
+      // ======================================================================
+      /// the actual evaluator of delta eta
+      LoKi::GenParticles::DeltaEta m_deta ; // the actual evaluator of delta eta
+      // ======================================================================
     } ;
     // ========================================================================
     /** @class NInTree 
@@ -1140,6 +1188,7 @@ namespace LoKi
     class NInTree : public LoKi::GenTypes::GFunc
     {
     public:
+      // ======================================================================
       /** constructor 
        *  @param cut    predicate to be used for counting
        *  @param range  "iterator range", see HepMC::IteratorRange
@@ -1159,7 +1208,9 @@ namespace LoKi
       virtual result_type operator() ( argument p ) const ;
       /// "SHORT" representation, @see LoKi::AuxFunBase 
       virtual  std::ostream& fillStream( std::ostream& s ) const ;      
+      // ======================================================================
     protected:
+      // ======================================================================
       /** count the particles in the tree according 
        *  the predicat eand iterator range 
        *  @see HepMC::GenVertex
@@ -1167,12 +1218,17 @@ namespace LoKi
        *  @return number of particles 
        */
       size_t count( HepMC::GenVertex* vertex ) const ;
+      // ======================================================================
     private:
-      // default constructor is disabled 
-      NInTree();
+      // ======================================================================
+      /// default constructor is disabled 
+      NInTree() ;                            // default constructor is disabled 
+      // ======================================================================
     private:
+      // ======================================================================
       LoKi::GenTypes::GCut  m_cut   ;
       HepMC::IteratorRange  m_range ;
+      // ======================================================================
     } ;
     // ========================================================================
     /** @class InTree
@@ -1207,11 +1263,15 @@ namespace LoKi
       /// OPTIONAL: the specific printout 
       virtual std::ostream& fillStream ( std::ostream& s ) const ;
     private:
-      // default constructor is disabled 
-      InTree () ; ///< default constructor is disabled 
+      // ======================================================================
+      /// default constructor is disabled 
+      InTree () ;                            // default constructor is disabled 
+      // ======================================================================
     private:
-      // the criteria itself:
-      LoKi::GenTypes::GCut m_cut       ; ///< the criteria itself:
+      // ======================================================================
+      /// the criteria itself:
+      LoKi::GenTypes::GCut m_cut ;                       // the criteria itself
+      // ======================================================================
     } ;    
     // ========================================================================
     /** @class Oscillated 
@@ -1226,6 +1286,7 @@ namespace LoKi
     class Oscillated : public LoKi::GenTypes::GCuts 
     {
     public:
+      // ======================================================================
       /// MANDATORY: virtual desctructor 
       virtual ~Oscillated() {} ;
       /// MANDATORY: clone method ("virtual constructor")
@@ -1234,6 +1295,7 @@ namespace LoKi
       virtual  result_type   operator() ( argument p ) const ;
       /// OPTIONAL: the specific printout 
       virtual std::ostream& fillStream ( std::ostream& s ) const ;      
+      // ======================================================================
     } ;
   } // end of namespace GenParticles  
 } // end of namespace LoKi

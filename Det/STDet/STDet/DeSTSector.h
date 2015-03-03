@@ -1,4 +1,4 @@
-// $Id: DeSTSector.h,v 1.31 2008-07-18 09:31:14 mneedham Exp $
+// $Id: DeSTSector.h,v 1.33 2008-11-05 09:43:33 mneedham Exp $
 #ifndef _DeSTSector_H_
 #define _DeSTSector_H_
 
@@ -6,6 +6,7 @@
 #include <vector>
 #include <map>
 #include <utility>
+#include <memory> // for auto_ptr with gcc 4.3
 
 #include "Kernel/STChannelID.h"
 #include "Kernel/LHCbConstants.h"
@@ -229,6 +230,10 @@ public:
   /** locate sensor based on a point  
   * @return module */
   DeSTSensor* findSensor(const Gaudi::XYZPoint& point) const;  
+
+
+  /** find the middle sensor. rounding down if odd **/
+  DeSTSensor* middleSensor() const;
 
   /** check if inside the active area  
   * @param  point point in global frame
@@ -475,6 +480,9 @@ inline const DeSTSector::Sensors& DeSTSector::sensors() const{
   return m_sensors;
 }
 
+inline DeSTSensor* DeSTSector::middleSensor() const {
+  return m_sensors[m_sensors.size()/2u];
+}
 
 /** ouput operator for class DeSTSector
  *  @see DeSTSector

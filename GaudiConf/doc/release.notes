@@ -2,6 +2,22 @@
 ! package manager: M.Cattaneo
 !----------------------------------------------------------------------------
 
+!======================== GaudiConf v11r0 2008-11-19 ========================
+! 2008-11-19 - Marco Cattaneo
+ - Add LHCbApp().DataType option, improve propagation of CondDB+DDDBConf settings
+
+! 2008-11-14 - Marco Cattaneo
+ - Capitalize name of all LHCbApp() options
+
+! 2008-11-11 - Marco Cattaneo
+ - Adapt configurable to changes in Gaudi v20r3
+
+! 2008-10-28 - Chris Jones
+ - Remove DecodeRawEvent.opts - replace with DecodeRawEvent.py
+
+! 2008-10-16 - Marco Cattaneo
+ - Remove gaudirun.py script, to take fixed version from Gaudi v20r3
+
 !======================== GaudiConf v10r13 2008-09-30 =======================
 ! 2008-09-28 - Stephanie Hansmann-Menzemer
  - added option file to write out muon-long tracks for alignment

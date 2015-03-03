@@ -4,6 +4,21 @@
 ! Purpose     : General purpose algorithms and tools for LHCb
 !-----------------------------------------------------------------------------
 
+!======================== LHCbAlgs v2r22 2008-11-17 ==========================
+! 2008-11-13 - Marco Cattaneo
+ - Fix untested StatusCode in EventNodeKiller
+
+! 2008-11-04 - Patrick Koppenburg
+ - Protect debug() in DeterministicPrescaler
+
+! 2008-10-30 - Marco Cattaneo
+ - More fixes gcc 4.3 compilation, and fix an uninitialised property
+
+! 2008-10-29 - Patrick Koppenburg
+ - AlgorithmCorrelations : 
+   . Fix compilation warning from gcc 4.3
+   . Remove all references to SelResult
+
 !======================== LHCbAlgs v2r21 2008-09-04 ==========================
 ! 2008-08-17 Gerhard Raven
  - make sure DeterministicPrescaler does not crash on events without ODIN

@@ -26,10 +26,13 @@ using namespace LHCb;
 //=============================================================================
 double Track::probChi2() const
 {
+  double val(0) ; 
+  if (nDoF()>0) { 
     const double limit = 1e-15;
-    double chi2max = gsl_cdf_chisq_Qinv (limit, nDoF());
-    return chi2() < chi2max ? gsl_cdf_chisq_Q(chi2(),nDoF()) : 0;
-   
+    double chi2max = gsl_cdf_chisq_Qinv (limit, nDoF()); 
+    val = chi2() < chi2max ? gsl_cdf_chisq_Q(chi2(),nDoF()) : 0; 
+  } 
+  return val ;
 };
 
 //=============================================================================
@@ -553,6 +556,19 @@ double LHCb::Track::info( const int key, const double def ) const
 {
   ExtraInfo::iterator i = m_extraInfo.find( key ) ;
   return m_extraInfo.end() == i ? def : i->second ;
+}
+
+//=============================================================================
+// Count the number of outliers
+//=============================================================================
+
+unsigned int LHCb::Track::nMeasurementsRemoved() const 
+{
+  size_t noutlier(0) ;
+  for( NodeContainer::const_iterator inode = nodes().begin() ;
+       inode != nodes().end(); ++inode)
+    if( (*inode)->type() == LHCb::Node::Outlier ) ++noutlier ;
+  return noutlier ;
 }
 
 //=============================================================================

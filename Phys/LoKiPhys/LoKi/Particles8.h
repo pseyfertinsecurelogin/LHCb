@@ -1,4 +1,4 @@
-// $Id: Particles8.h,v 1.7 2008-06-03 15:47:08 cattanem Exp $
+// $Id: Particles8.h,v 1.9 2008-11-02 20:13:32 ibelyaev Exp $
 // ============================================================================
 #ifndef LOKI_PARTICLES8_H 
 #define LOKI_PARTICLES8_H 1
@@ -84,6 +84,7 @@ namespace LoKi
       virtual  result_type operator() ( argument p ) const ;
       /// OPTIONAL: the specific printout 
       virtual std::ostream& fillStream( std::ostream& s ) const ;
+      // ======================================================================
     } ;
     // ========================================================================    
     /** @class HasProtosInTree
@@ -143,6 +144,7 @@ namespace LoKi
       virtual  result_type operator() ( argument p ) const ;
       /// OPTIONAL: the specific printout 
       virtual std::ostream& fillStream( std::ostream& s ) const ;
+      // ======================================================================
     private: 
       LoKi::Particles::HasProtos m_cut ;
     } ;

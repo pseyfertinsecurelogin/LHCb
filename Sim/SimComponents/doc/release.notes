@@ -5,6 +5,20 @@
 !               processing stage accessing the MC event classes
 !-----------------------------------------------------------------------------
 
+!====================== SimComponents v2r14 2008-11-17 =======================
+! 2008-11-17 - Olivier Callot
+ - Remove the Pack, Unpack and Compare for MC particles and vertices
+   and movethem to a new package Event/EventPacker with reconstruction packers
+
+! 2008-11-14 - Marco Cattaneo
+ - Add sanity check in MCParticleSelector.cpp, to avoid FPE on ia32
+
+! 2008-11-13 - Marco Cattaneo
+ - Improve underflow protection for MCVertex times, to work also on ia32
+
+! 2008-10-28 - Marco Cattaneo
+ - Fixes for gcc 4.3 compilation
+
 !====================== SimComponents v2r13 2008-09-30 =======================
 ! 2008-09-08 - Marco Cattaneo
  - Improve FPE protection of CompareMCVertex (was failing on ia32)

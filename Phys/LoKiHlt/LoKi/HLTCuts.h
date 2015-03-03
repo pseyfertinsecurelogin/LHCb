@@ -1,4 +1,4 @@
-// $Id: HLTCuts.h,v 1.1.1.1 2008-09-21 14:41:20 ibelyaev Exp $
+// $Id: HLTCuts.h,v 1.3 2008-10-04 11:48:55 ibelyaev Exp $
 // ============================================================================
 #ifndef LOKI_HLTCUTS_H 
 #define LOKI_HLTCUTS_H 1
@@ -85,7 +85,7 @@ namespace LoKi
      *
      *  @endcode 
      * 
-     *  @see LoKi::HLT::PasSelection
+     *  @see LoKi::HLT::PassSelection
      *  @see LHCb::HltDecReports 
      *  @see LHCb::HltDecReport::decision
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
@@ -93,6 +93,33 @@ namespace LoKi
      */
     typedef LoKi::HLT::PassSelection                                 HLT_PASS ;
     // ========================================================================
+    /** @typedef HLT_PASSIGNORING 
+     *  simple predicate which checks the overall decision, 
+     *  ignoring "the special" decisions:
+     *
+     *  @code 
+     *
+     *   const LHCb::HtlDecReports* hlt = ... ;
+     * 
+     *   std::vector<std::string>& special = ... ; 
+     * 
+     *   const HLT_PASSIGNORING p1 = HLT_PASSIGNORING ( "some selection" ) ;
+     *   const HLT_PASSIGNORING p2 = HLT_PASSIGNORING ( "selection1" ,"selection2" ) ; 
+     *   const HLT_PASSIGNORING p3 = HLT_PASSIGNORING (  special ) ;              
+     *
+     *   const bool pass1 = p1 ( hlt ) ;
+     *   const bool pass2 = p2 ( hlt ) ;
+     *   const bool pass3 = p3 ( hlt ) ;
+     *
+     *  @endcode 
+     *  @see LoKi::HLT::DecisionBut 
+     *  @see LHCb::HltDecReports 
+     *  @see LHCb::HltDecReport::decision
+     *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
+     *  @date 2008-10-03
+     */
+    typedef LoKi::HLT::DecisionBut                           HLT_PASSIGNORING ;
+    // ========================================================================        
     /** @var HLT_SIZE 
      *  simple functor which evaluates number of known selections  
      *  @see LoKi::HLT::Size

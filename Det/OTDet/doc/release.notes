@@ -1,7 +1,25 @@
-! $Id: release.notes,v 1.117 2008-10-06 15:08:46 wouter Exp $
+! $Id: release.notes,v 1.124 2008-11-17 14:45:51 cattanem Exp $
 ! Package     : OTDet
 ! Responsible : Jeroen van Tilburg, Jacopo Nardulli, Jan Amoraal
 !--------------------------------------------------------------------------
+
+!========================== OTDet v8r2 2008-11-17 =========================
+! 2008-10-28 - Marco Cattaneo
+ - Follow changes in DetDesc for gcc 4.3 compilation
+
+! 2008-10-23 - Wouter Hulsbergen
+ - truncated distance at rmax in RtRelation::driftTime( distance )
+ - fixed bug in RtRelation::initRTable
+
+! 2008-10-23 - Jan Amoraal
+ - Fix inefficient region around y = 0 in F-modules in odd layers see 
+   http://www.nikhef.nl/pub/experiments/bfys/lhcb/outerTracker/NamingConventions/Modules/index.html
+
+! 2008-10-22 - Marco Cattaneo
+ - Remove extra qualifier in DeOTQuarter.h, to please latest genreflex
+
+! 2008-10-14 - Wouter Hulsbergen
+ - Added accessor for vector of T0s from conditions
 
 !========================== OTDet v8r1 2008-10-02 =========================
 ! 2008-10-06 - Wouter Hulsbergen

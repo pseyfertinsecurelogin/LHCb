@@ -1,9 +1,54 @@
-! $Id: release.notes,v 1.73 2008-09-30 11:45:39 cattanem Exp $ 
+! $Id: release.notes,v 1.81 2008-11-21 15:11:29 cattanem Exp $ 
 ! -----------------------------------------------------------------------------
 ! Package     : Phys/LoKiPhys
 ! Responsible : Vanya Belyaev
 ! Purpose     : "Phys"-part of new restructurized LoKi 
 ! -----------------------------------------------------------------------------
+
+!========================== LoKiPhys v8r0 2008-11-21 ==========================
+! 2008-11-21 - Marco Cattaneo
+ - Fix frustrating typos in Latex comments that break doxygen generation
+
+! 2008-11-02 - Vanya BELYAEV
+ - more fixes for various compilers 
+ - remove unnesessary assignements form dictionaries 
+   (and from the code)
+
+! 2008-10-31 - Vanya BELYAEV
+ - dirty fixes for the starnge behavour of reflex in LCG-preview 
+
+
+! 2008-10-29 - Vanya BELYAEV
+ - fixes for gcc43 compilation 
+
+
+! 2008-10-28 - Juan PALACIOS
+ - src/PhysSources.cpp
+  . Adapt to change to new IPhysDesktop::primaryVertices() method.
+
+! 2008-10-19 - Vanya BELYAEV
+  - adaptation to new Phys/LoKiCore v8r0
+
+     new structure of decorators 
+
+ - cmt/requirements 
+   version incrmeent to v8r0 
+
+! 2008-10-13 - Vanya BELYAEV
+ - LoKi/Particles23.h
+   src/Particle23.cpp
+   python/LoKiPhys/functions.py 
+
+   new functor
+
+    WM & WMASS  LoKi::Particles::WrongMass 
+
+       evaluatethemass of mothe rparticles taking the alternative 
+       'wrong'-mass hypotheses for daughter particles
+
+  - cmt/requirements 
+
+    version increment to v7r9 
 
 !========================== LoKiPhys v7r8 2008-09-30 ==========================
 ! 2008-09-29 - Vanya BELYAEV

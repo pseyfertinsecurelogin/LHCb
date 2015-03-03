@@ -1,4 +1,4 @@
-// $Id: Particles0.h,v 1.15 2008-09-23 16:10:44 ibelyaev Exp $
+// $Id: Particles0.h,v 1.17 2008-11-02 20:13:32 ibelyaev Exp $
 // ============================================================================
 #ifndef LOKI_PARTICLES0_H 
 #define LOKI_PARTICLES0_H 1
@@ -53,12 +53,14 @@ namespace LoKi
       : public LoKi::BasicFunctors<const LHCb::Particle*>::Predicate
     {
     public:
+      // ======================================================================
       /// clone method (mandatory!)
       virtual HasKey* clone() const { return new HasKey(*this); }
       /// the only one essential method 
       result_type operator() ( argument p ) const ;
       /// the specific printout 
       virtual std::ostream& fillStream( std::ostream& s ) const ;      
+      // ======================================================================
     } ;
     // ========================================================================
     /** @class Key 
@@ -99,9 +101,12 @@ namespace LoKi
       result_type operator() ( argument p ) const ;
       /// the specific printout 
       virtual std::ostream& fillStream( std::ostream& s ) const ;      
+      // ======================================================================
     private :
+      // ======================================================================
       LHCb::Particle::key_type m_bad    ;
       LHCb::Particle::key_type m_nokey  ;
+      // ======================================================================
     } ;
     // ========================================================================    
     /** @class InTES 
@@ -152,11 +157,15 @@ namespace LoKi
       /// operation mode flag 
       inline bool         fullpath () const{ return m_fullpath ; }        
     private:
-      // the defuult constructor is disabled 
+      // ======================================================================
+      // the default constructor is disabled 
       InTES() ;
+      // ======================================================================
     private:
+      // ======================================================================
       std::string m_location ;
       bool        m_fullpath  ;
+      // ======================================================================
     } ;
     // ========================================================================
     /** @class Identifier
@@ -172,12 +181,14 @@ namespace LoKi
       : public LoKi::BasicFunctors<const LHCb::Particle*>::Function
     {  
     public:
+      // ======================================================================
       /// clone method (mandatory!)
       virtual Identifier* clone() const ;
       /// the only one essential method 
       result_type operator() ( argument p ) const ;
       /// "SHORT" representation, @see LoKi::AuxFunBase 
       virtual  std::ostream& fillStream( std::ostream& s ) const ;      
+      // ======================================================================
     } ;
     // ========================================================================
     /** @class AbsIdentifier
@@ -193,12 +204,14 @@ namespace LoKi
       : public LoKi::BasicFunctors<const LHCb::Particle*>::Function
     {  
     public:
+      // ======================================================================
       /// clone method (mandatory!)
       virtual AbsIdentifier* clone() const ;
       /// the only one essential method 
       result_type operator() ( argument p ) const ;
       /// "SHORT" representation, @see LoKi::AuxFunBase 
       virtual  std::ostream& fillStream( std::ostream& s ) const ;      
+      // ======================================================================
     } ;
     // ========================================================================    
     /** @class Charge
@@ -221,6 +234,9 @@ namespace LoKi
       result_type operator() ( argument p ) const ;
       /// "SHORT" representation, @see LoKi::AuxFunBase 
       virtual  std::ostream& fillStream( std::ostream& s ) const ;      
+      /// get the actual charge 
+      double charge ( const LHCb::Particle* p ) const { return p->charge() ; }
+      // ======================================================================
     } ;
     // ========================================================================
     /** @class SumCharge
@@ -234,21 +250,19 @@ namespace LoKi
      *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
      *  @date   2006-05-22
      */
-    class SumCharge 
-      : public LoKi::BasicFunctors<const LHCb::Particle*>::Function
+    class SumCharge : public Charge 
     {  
     public:
       /// clone method (mandatory!)
       virtual SumCharge* clone() const ;
       /// the only one essential method 
-      virtual result_type operator() ( argument p ) const ;
+      virtual result_type operator() ( argument p ) const 
+      { return sumCharge ( p ) ; }
       /// "SHORT" representation, @see LoKi::AuxFunBase 
       virtual  std::ostream& fillStream( std::ostream& s ) const ;      
       /// the actual evaluator 
-      result_type _charge( argument p ) const ;
-    private:
-      // evaluator for basic particles 
-      LoKi::Particles::Charge m_charge ;
+      result_type sumCharge( argument p ) const ;
+      // ======================================================================
     } ;
     // ========================================================================    
     /** @class Momentum 
@@ -260,12 +274,14 @@ namespace LoKi
       : public LoKi::BasicFunctors<const LHCb::Particle*>::Function 
     {
     public:
+      // ======================================================================
       /// clone method (mandatory!)
       virtual Momentum* clone() const ;
       /// the only one essential method 
       result_type operator() ( argument p ) const ;
       /// the specific printout 
       virtual std::ostream& fillStream( std::ostream& s ) const ;
+      // ======================================================================
     };
     // ========================================================================    
     /** @class Momentum2
@@ -277,12 +293,14 @@ namespace LoKi
       : public LoKi::BasicFunctors<const LHCb::Particle*>::Function 
     {
     public:
+      // ======================================================================
       /// clone method (mandatory!)
       virtual Momentum2* clone() const  ;
       /// the only one essential method 
       result_type operator() ( argument p ) const ;
       /// the specific printout 
       virtual std::ostream& fillStream( std::ostream& s ) const ;
+      // ======================================================================
     };
     // ========================================================================    
     /** @class Energy 
@@ -301,6 +319,7 @@ namespace LoKi
       result_type operator() ( argument p ) const ;
       /// the specific printout 
       virtual std::ostream& fillStream( std::ostream& s ) const ;
+      // ======================================================================
     };
     // ========================================================================    
     /** @class TransverseMomentum
@@ -313,12 +332,14 @@ namespace LoKi
       : public LoKi::BasicFunctors<const LHCb::Particle*>::Function
     {
     public:
+      // ======================================================================
       /// clone method (mandatory!)
       virtual TransverseMomentum* clone() const ;
       /// the only one essential method 
       result_type operator() ( argument p ) const ;
       /// the specific printout 
       virtual std::ostream& fillStream( std::ostream& s ) const ;
+      // ======================================================================
     };
     // ========================================================================
     /** @class MomentumX
@@ -331,12 +352,14 @@ namespace LoKi
       : public LoKi::BasicFunctors<const LHCb::Particle*>::Function
     {    
     public:
+      // ======================================================================
       /// clone method (mandatory!)
       virtual MomentumX* clone() const ;
       /// the only one essential method 
       result_type operator() ( argument p ) const ;
       /// the specific printout 
       virtual std::ostream& fillStream( std::ostream& s ) const ;
+      // ======================================================================
     };
     // ========================================================================    
     /** @class MomentumY
@@ -349,12 +372,14 @@ namespace LoKi
       : public LoKi::BasicFunctors<const LHCb::Particle*>::Function
     {     
     public:
+      // ======================================================================
       /// clone method (mandatory!)
       virtual MomentumY* clone() const ;
       /// the only one essential method 
       result_type operator() ( argument p ) const ;
       /// the specific printout 
       virtual std::ostream& fillStream( std::ostream& s ) const ;
+      // ======================================================================
     };
     // ========================================================================    
     /** @class MomentumZ
@@ -367,12 +392,14 @@ namespace LoKi
       : public LoKi::BasicFunctors<const LHCb::Particle*>::Function
     {     
     public:
+      // ======================================================================
       /// clone method (mandatory!)
       virtual MomentumZ* clone() const ;
       /// the only one essential method 
       result_type operator() ( argument p ) const ;
       /// the specific printout 
       virtual std::ostream& fillStream( std::ostream& s ) const ;
+      // ======================================================================
     };
     // ========================================================================
     /** @class PseudoRapidity
@@ -385,13 +412,21 @@ namespace LoKi
       : public LoKi::BasicFunctors<const LHCb::Particle*>::Function
     {    
     public:
+      // ======================================================================
       /// clone method (mandatory!)
-      virtual PseudoRapidity* clone() const ;
+      virtual PseudoRapidity* clone() const 
+      { return new PseudoRapidity ( *this ) ; }
       /// the only one essential method 
       result_type operator() ( argument p ) const ;
       /// the specific printout 
-      virtual std::ostream& fillStream( std::ostream& s ) const ;
-    };
+      virtual std::ostream& fillStream( std::ostream& s ) const 
+      { return s << "ETA" ; }
+      // ======================================================================
+      /// get eta
+      result_type eta ( argument p ) const 
+      { return p -> momentum() . Eta () ; }
+      // ======================================================================
+   };
     // ========================================================================    
     /** @class Phi
      *  evaluator of the 'Phi' of the particle 
@@ -399,16 +434,36 @@ namespace LoKi
      *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
      *  @date   2002-07-15
      */
-    class Phi
+    class Phi 
       : public LoKi::BasicFunctors<const LHCb::Particle*>::Function
     {    
     public:
+      // ======================================================================
       /// clone method (mandatory!)
-      virtual Phi* clone() const ;
+      virtual Phi* clone() const { return new Phi ( *this ) ; }
       /// the only one essential method 
       result_type operator() ( argument p ) const ;
       /// the specific printout 
-      virtual std::ostream& fillStream( std::ostream& s ) const ;
+      virtual std::ostream& fillStream( std::ostream& s ) const 
+      { return s << "PHI" ; }
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// get phi 
+      result_type phi ( argument p ) const 
+      { return p -> momentum() . Phi () ; }
+      /// adjust phi into the raneg of [-180:180]degrees 
+      double adjust ( double angle ) const 
+      {
+        static const double s_180 = 180 * Gaudi::Units::degree ;
+        static const double s_360 = 360 * Gaudi::Units::degree ;
+        //
+        while ( angle >      s_180 ) { angle -= s_360 ; }
+        while ( angle < -1 * s_180 ) { angle += s_360 ; }
+        //
+        return angle ; 
+      }
+    // ======================================================================
     };
     // ========================================================================    
     /** @class Theta
@@ -421,12 +476,14 @@ namespace LoKi
       : public LoKi::BasicFunctors<const LHCb::Particle*>::Function
     {    
     public:
+      // ======================================================================
       /// clone method (mandatory!)
       virtual Theta* clone() const ;
       /// the only one essential method 
       result_type operator() ( argument p ) const ;
       /// the specific printout 
       virtual std::ostream& fillStream( std::ostream& s ) const ;
+      // ======================================================================
     };
     // ========================================================================    
     /** @class Mass
@@ -439,12 +496,17 @@ namespace LoKi
       : public LoKi::BasicFunctors<const LHCb::Particle*>::Function
     {    
     public:
+      // ======================================================================
       /// clone method (mandatory!)
-      virtual Mass* clone() const ;
+      virtual Mass* clone() const { return new Mass( *this ) ; }
       /// the only one essential method 
       result_type operator() ( argument p ) const ;
       /// the specific printout 
-      virtual std::ostream& fillStream( std::ostream& s ) const ;
+      virtual std::ostream& fillStream( std::ostream& s ) const 
+      { return s << "M" ; }
+      // evaluate the mass  
+      double mass ( argument p ) const { return p->momentum().M() ; }  
+      // ======================================================================
     };
     // ========================================================================    
     /** @class MeasuredMass
@@ -457,12 +519,16 @@ namespace LoKi
       : public LoKi::BasicFunctors<const LHCb::Particle*>::Function
     {    
     public:
+      // ======================================================================
       /// clone method (mandatory!)
       virtual MeasuredMass* clone() const ;
       /// the only one essential method 
       result_type operator() ( argument p ) const ;
       /// the specific printout 
       virtual std::ostream& fillStream( std::ostream& s ) const ;
+      // evaluate the mass  
+      double measuredMass ( argument p ) const { return p->measuredMass() ; }  
+      // ======================================================================
     };
     // ========================================================================
     /** @class InvariantMass
@@ -519,8 +585,11 @@ namespace LoKi
       result_type  operator() ( argument p ) const ;
       /// specific printout 
       virtual std::ostream& fillStream( std::ostream& s ) const ;
+      // ======================================================================
     private:
+      // ======================================================================
       Indices                     m_indices ;
+      // ======================================================================
     };
     // ========================================================================    
     /** @class DeltaMass
@@ -531,47 +600,34 @@ namespace LoKi
      *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
      *  @date   2002-09-09
      */
-    class DeltaMass 
-      : public LoKi::BasicFunctors<const LHCb::Particle*>::Function
+    class DeltaMass : public LoKi::Particles::Mass 
     {      
     public:
+      // ======================================================================
       /** constructor  
        *  @param mass nominal mass 
        */
       DeltaMass
-      ( const double mass ) : m_mass ( mass ) , m_eval () {};
+      ( const double mass ) 
+        : LoKi::Particles::Mass() , m_mass ( mass ) {}
       /** constructor 
        *  @param pp particle property 
        */
-      DeltaMass
-      ( const ParticleProperty& pp     ) ;
+      DeltaMass ( const ParticleProperty& pp ) ;
       /** constructor 
        *  @param name particle name 
        *  @param ppsvc  LHCb::ParticleProperty service 
        */
       DeltaMass
-      ( const std::string&      name   , 
-        IParticlePropertySvc*   ppsvc  ) ;
+      ( const std::string&      name       , 
+        IParticlePropertySvc*   ppsvc  = 0 ) ;
       /** constructor 
        *  @param pid  particle ID 
        *  @param ppsvc LHCb::ParticleProperty service 
        */
       DeltaMass
-      ( const LHCb::ParticleID& pid    , 
-        IParticlePropertySvc*   ppsvc  ) ;
-      /** constructor 
-       *  @param name particle name 
-       */
-      DeltaMass 
-      ( const std::string&      name   ) ;
-      /** constructor 
-       *  @param pid  particle ID 
-       */
-      DeltaMass 
-      ( const LHCb::ParticleID& pid    ) ;      
-      /// copy constructor 
-      DeltaMass 
-      ( const DeltaMass& copy ) ;
+      ( const LHCb::ParticleID& pid       , 
+        IParticlePropertySvc*   ppsvc = 0 ) ;
       /// virtual destructor 
       virtual ~DeltaMass(){};
       /// clone method (mandatory!)
@@ -580,15 +636,22 @@ namespace LoKi
       result_type operator() ( argument p ) const ;
       /// specific printout 
       virtual std::ostream& fillStream( std::ostream& s ) const ;
+      // ======================================================================
     public:
+      // ======================================================================
       /// get the mass
       double m0() const { return m_mass ; }
+      // ======================================================================
     private:
-      /// default constructor 
-      DeltaMass();
+      // ======================================================================
+      /// default constructor is disabled 
+      DeltaMass();                           // default constructor is disabled 
+      // ======================================================================      
     private:
+      // ======================================================================      
+      /// the reference mass 
       double                 m_mass ;
-      LoKi::Particles::Mass  m_eval ;
+      // ======================================================================      
     };
     // ========================================================================
     /** @class AbsDeltaMass
@@ -599,63 +662,51 @@ namespace LoKi
      *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
      *  @date   2002-09-09
      */
-    class AbsDeltaMass 
-      : public LoKi::BasicFunctors<const LHCb::Particle*>::Function
+    class AbsDeltaMass : public DeltaMass 
     {      
     public:
+      // ======================================================================      
       /** constructor  
        *  @param mass nominal mass 
        */
-      AbsDeltaMass 
-      ( const double mass ) ;
+      AbsDeltaMass ( const double mass ) 
+        : DeltaMass ( mass ) {}
       /** constructor 
        *  @param pp particle property 
        */
-      AbsDeltaMass 
-      ( const ParticleProperty& pp     ) ;
+      AbsDeltaMass ( const ParticleProperty& pp )
+        : DeltaMass ( pp ) {}
       /** constructor 
        *  @param name particle name 
        *  @param ppsvc LHCb::ParticleProperty service 
        */
       AbsDeltaMass 
-      ( const std::string&      name   , 
-        IParticlePropertySvc*   ppsvc  ) ;
+      ( const std::string&      name      , 
+        IParticlePropertySvc*   ppsvc = 0 ) 
+        : DeltaMass ( name , ppsvc ) {}
       /** constructor 
        *  @param pid  particle ID 
        *  @param ppsvc LHCb::ParticleProperty service 
        */
       AbsDeltaMass
-      ( const LHCb::ParticleID&       pid    , 
-        IParticlePropertySvc*   ppsvc  ) ;
-      /** constructor 
-       *  @param name particle name 
-       */
-      AbsDeltaMass 
-      ( const std::string&      name   ) ;
-      /** constructor 
-       *  @param pid  particle ID 
-       */
-      AbsDeltaMass ( const LHCb::ParticleID&       pid    ) ;      
-      /// constructor from evaluator 
-      AbsDeltaMass ( const DeltaMass& right ) ;
-      /// copy constructor 
-      AbsDeltaMass ( const AbsDeltaMass& right ) ;
+      ( const LHCb::ParticleID& pid       , 
+        IParticlePropertySvc*   ppsvc = 0 )
+        : DeltaMass ( pid , ppsvc ) {}
       /// virtual destructor 
       virtual ~AbsDeltaMass(){};
       /// clone method (mandatory!)
-      virtual  AbsDeltaMass* clone() const ;
+      virtual  AbsDeltaMass* clone() const 
+      { return new AbsDeltaMass (*this ) ;}
       /// the only one essential method 
       result_type operator() ( argument p ) const ;
       /// specific printout 
       virtual std::ostream& fillStream( std::ostream& s ) const ;
-    public:
-      /// get the mass
-      double m0() const { return m_eval.m0() ; }
+      // ======================================================================      
     private:
+      // ======================================================================      
       /// default constructor 
       AbsDeltaMass();
-    private:
-      LoKi::Particles::DeltaMass  m_eval ;
+      // ======================================================================      
     };
     // ========================================================================
     /** @class DeltaMeasuredMass
@@ -666,47 +717,34 @@ namespace LoKi
      *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
      *  @date   2002-09-09
      */
-    class DeltaMeasuredMass 
-      : public LoKi::BasicFunctors<const LHCb::Particle*>::Function
+    class DeltaMeasuredMass : public DeltaMass 
     {      
     public:
       /// constructor  
-      DeltaMeasuredMass 
-      ( const double mass ) ;
+      DeltaMeasuredMass ( const double mass ) 
+        : DeltaMass ( mass ) {}
       /** constructor 
        *  @param pp particle property 
        */
       DeltaMeasuredMass 
-      ( const ParticleProperty& pp     );
+      ( const ParticleProperty& pp )
+        : DeltaMass ( pp ) {}
       /** constructor 
        *  @param name particle name 
        *  @param ppsvc LHCb::ParticleProperty service 
        */
       DeltaMeasuredMass 
-      ( const std::string&      name   , 
-        IParticlePropertySvc*   ppsvc  );      
+      ( const std::string&      name      , 
+        IParticlePropertySvc*   ppsvc = 0 )
+        : DeltaMass ( name , ppsvc ) {}
       /** constructor 
        *  @param pid  particle ID 
        *  @param ppsvc LHCb::ParticleProperty service 
        */
       DeltaMeasuredMass 
-      ( const LHCb::ParticleID&       pid    , 
-        IParticlePropertySvc*   ppsvc  ) ;      
-      /** constructor 
-       *  @param name particle name 
-       */
-      DeltaMeasuredMass 
-      ( const std::string&      name   ) ;
-      /** constructor 
-       *  @param pid  particle ID 
-       */
-      DeltaMeasuredMass 
-      ( const LHCb::ParticleID&       pid    ) ;
-      /** copy constructor 
-       *  @param rigth object to be copied 
-       */
-      DeltaMeasuredMass 
-      ( const DeltaMeasuredMass&right  ) ;
+      ( const LHCb::ParticleID& pid       , 
+        IParticlePropertySvc*   ppsvc = 0 ) 
+        : DeltaMass ( pid , ppsvc ) {}
       /// virtual destructor 
       virtual ~DeltaMeasuredMass()  ;
       /// clone method (mandatory!)
@@ -715,15 +753,15 @@ namespace LoKi
       result_type operator() ( argument p ) const ;
       /// specific printout 
       virtual std::ostream& fillStream( std::ostream& s ) const ;
-    public:
-      /// get the mass
-      double m0() const { return m_mass ; }
+      // =======================================================================
+      // evaluate the mass  
+      double measuredMass ( argument p ) const { return p->measuredMass() ; }  
+      // ======================================================================
     private:
+      // ======================================================================
       /// default constructor 
       DeltaMeasuredMass();
-    private:
-      double                         m_mass      ;
-      LoKi::Particles::MeasuredMass  m_eval;
+      // ======================================================================
     };
     // ========================================================================
     /** @class AbsDeltaMeasuredMass 
@@ -734,54 +772,38 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date   2004-08-04
      */
-    class AbsDeltaMeasuredMass 
-      : public  LoKi::BasicFunctors<const LHCb::Particle*>::Function
+    class AbsDeltaMeasuredMass : public DeltaMeasuredMass 
     {
     public :
+      // ======================================================================
       /** constructor  from particle mass 
        *  @param mass particle mass 
        */
       AbsDeltaMeasuredMass 
-      ( const double mass ) ;
+      ( const double mass ) 
+        : DeltaMeasuredMass ( mass ) {}
       /** constructor 
        *  @param pp particle property 
        */
       AbsDeltaMeasuredMass 
-      ( const ParticleProperty& pp     );
+      ( const ParticleProperty& pp )
+        : DeltaMeasuredMass ( pp ) {}
       /** constructor 
        *  @param name particle name 
        *  @param ppsvc  LHCb::ParticleProperty service 
        */
       AbsDeltaMeasuredMass
-      ( const std::string&      name   , 
-        IParticlePropertySvc*   ppsvc  );      
+      ( const std::string&      name      , 
+        IParticlePropertySvc*   ppsvc = 0 )
+        : DeltaMeasuredMass ( name , ppsvc  ) {}
       /** constructor 
        *  @param pid  particle ID 
        *  @param ppsvc LHCb::ParticleProperty service 
        */
       AbsDeltaMeasuredMass 
-      ( const LHCb::ParticleID&       pid    , 
-        IParticlePropertySvc*   ppsvc  ) ;      
-      /** constructor 
-       *  @param name particle name 
-       */
-      AbsDeltaMeasuredMass 
-      ( const std::string&      name   ) ;
-      /** constructor 
-       *  @param pid  particle ID 
-       */
-      AbsDeltaMeasuredMass 
-      ( const LHCb::ParticleID&       pid    ) ;
-      /** constructor from evaluator 
-       *  @param measured mass evaluator 
-       */
-      AbsDeltaMeasuredMass 
-      ( const DeltaMeasuredMass& right ) ;      
-      /** copy constructor
-       *  @param right instance to be copied
-       */
-      AbsDeltaMeasuredMass 
-      ( const AbsDeltaMeasuredMass& right ) ;
+      ( const LHCb::ParticleID& pid       , 
+        IParticlePropertySvc*   ppsvc = 0 )       
+        : DeltaMeasuredMass ( pid  , ppsvc  ) {}
       /// destructor (virtual)
       virtual ~AbsDeltaMeasuredMass() ;
       /// MANDATORY: clone method ("virtual constructor")
@@ -790,12 +812,11 @@ namespace LoKi
       virtual result_type operator() ( argument p ) const ;
       /// specific printout 
       virtual std::ostream& fillStream( std::ostream& s ) const ;
-    public:
-      /// get the mass
-      double m0() const { return m_eval.m0() ; }
+      // ======================================================================
     private:
-      /// evaluator 
-      LoKi::Particles::DeltaMeasuredMass m_eval ;
+      // ======================================================================
+      AbsDeltaMeasuredMass() ;
+      // ======================================================================
     };
     // ========================================================================    
     /** @class DeltaMeasuredMassChi2 
@@ -807,48 +828,36 @@ namespace LoKi
      *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
      *  @date   2003-01-17
      */
-    class DeltaMeasuredMassChi2 
-      : public LoKi::BasicFunctors<const LHCb::Particle*>::Function
+    class DeltaMeasuredMassChi2 : public DeltaMeasuredMass 
     {      
     public:
+      // ======================================================================
       /// constructor  
       DeltaMeasuredMassChi2 
-      ( const double           mass   ) ;
+      ( const double mass   ) 
+        : DeltaMeasuredMass ( mass ) {}
       /** constructor 
        *  @param pp particle property 
        */
       DeltaMeasuredMassChi2 
-      ( const ParticleProperty& pp     ) ;
+      ( const ParticleProperty& pp ) 
+        : DeltaMeasuredMass ( pp ) {}
       /** constructor 
        *  @param name particle name 
        *  @param ppsvc ParticleProperty service 
        */
       DeltaMeasuredMassChi2 
-      ( const std::string&      name   , 
-        IParticlePropertySvc*   ppsvc  ) ;
+      ( const std::string&      name      , 
+        IParticlePropertySvc*   ppsvc = 0 ) 
+        : DeltaMeasuredMass ( name , ppsvc ) {}
       /** constructor 
        *  @param pid  particle ID 
        *  @param ppsvc ParticleProperty service 
        */
       DeltaMeasuredMassChi2 
-      ( const LHCb::ParticleID&       pid    , 
-        IParticlePropertySvc*   ppsvc  ) ;
-      /** constructor 
-       *  @param name particle name 
-       */
-      DeltaMeasuredMassChi2 
-      ( const std::string&      name   ) ;
-      /** constructor 
-       *  @param pid  particle ID 
-       */
-      DeltaMeasuredMassChi2 
-      ( const LHCb::ParticleID& pid    ) ;
-      /// constructor 
-      DeltaMeasuredMassChi2 
-      ( const DeltaMeasuredMass& pid    ) ;     
-      /// copy constructor 
-      DeltaMeasuredMassChi2 
-      ( const DeltaMeasuredMassChi2& pid    ) ;
+      ( const LHCb::ParticleID& pid       , 
+        IParticlePropertySvc*   ppsvc = 0 ) 
+        : DeltaMeasuredMass ( pid , ppsvc ) {}
       /// virtual destructor 
       ~DeltaMeasuredMassChi2(){};
       /// clone method (mandatory!)
@@ -857,14 +866,12 @@ namespace LoKi
       result_type operator() ( argument p ) const ;
       /// specific printout 
       virtual std::ostream& fillStream( std::ostream& s ) const ;
-    public:
-      /// get the mass
-      double m0() const { return m_eval.m0() ; }
+      // ======================================================================
     private:
-      /// default constructor 
+      // ======================================================================
+      /// default constructor is disabled 
       DeltaMeasuredMassChi2();
-    private:
-      LoKi::Particles::DeltaMeasuredMass  m_eval;
+      // ======================================================================
     };
     // ========================================================================    
     /** @class DeltaMassChi2 
@@ -880,44 +887,29 @@ namespace LoKi
     {      
     public:
       /// constructor  
-      DeltaMassChi2 
-      ( const double           mass   ) : DeltaMass ( mass ) {}
+      DeltaMassChi2 ( const double mass ) 
+        : DeltaMass ( mass ) {}
       /** constructor 
        *  @param pp particle property 
        */
-      DeltaMassChi2 
-      ( const ParticleProperty& pp    ) : DeltaMass ( pp ) {}
+      DeltaMassChi2 ( const ParticleProperty& pp ) 
+        : DeltaMass ( pp ) {}
       /** constructor 
        *  @param name particle name 
        *  @param ppsvc ParticleProperty service 
        */
       DeltaMassChi2 
-      ( const std::string&      name   , 
-        IParticlePropertySvc*   ppsvc  ) 
+      ( const std::string&      name       , 
+        IParticlePropertySvc*   ppsvc  = 0 ) 
         : DeltaMass ( name , ppsvc ) {}
       /** constructor 
        *  @param pid  particle ID 
        *  @param ppsvc ParticleProperty service 
        */
       DeltaMassChi2 
-      ( const LHCb::ParticleID& pid    , 
-        IParticlePropertySvc*   ppsvc  ) 
+      ( const LHCb::ParticleID& pid       , 
+        IParticlePropertySvc*   ppsvc = 0 ) 
         : DeltaMass ( pid , ppsvc ) {}
-      /** constructor 
-       *  @param name particle name 
-       */
-      DeltaMassChi2 
-      ( const std::string&      name   ) 
-        : DeltaMass ( name ) {}
-      /** constructor 
-       *  @param pid  particle ID 
-       */
-      DeltaMassChi2 
-      ( const LHCb::ParticleID& pid    ) 
-        : DeltaMass ( pid ) {}
-      /// constructor 
-      DeltaMassChi2 ( const DeltaMass& pid    ) 
-        : DeltaMass ( pid ) {}
       /// virtual destructor 
       ~DeltaMassChi2(){};
       /// clone method (mandatory!)
@@ -929,8 +921,10 @@ namespace LoKi
       virtual std::ostream& fillStream( std::ostream& s ) const ;
       // ======================================================================
     private:
+      // ======================================================================
       /// default constructor 
       DeltaMassChi2();
+      // ======================================================================
     };
     // ========================================================================    
     /** @class ConfidenceLevel
@@ -955,6 +949,7 @@ namespace LoKi
       result_type operator() ( argument p ) const ;
       /// the specific printout 
       virtual std::ostream& fillStream( std::ostream& s ) const ;
+      // ======================================================================
     };
     // ========================================================================
     /** @class  Weight
@@ -973,12 +968,14 @@ namespace LoKi
       : public LoKi::BasicFunctors<const LHCb::Particle*>::Function
     {
     public:
+      // ======================================================================
       /// clone method (mandatory!)
       virtual Weight* clone() const ;
       /// the only one essential method 
       result_type operator() ( argument p ) const ;
       /// the specific printout 
       virtual std::ostream& fillStream( std::ostream& s ) const ;
+      // ======================================================================
     };
     // ========================================================================    
     /** @class IsBasic
@@ -997,12 +994,14 @@ namespace LoKi
       : public LoKi::BasicFunctors<const LHCb::Particle*>::Predicate
     {
     public:
+      // ======================================================================
       /// clone method (mandatory!)
       virtual IsBasic* clone() const ;
       /// the only one essential method 
       result_type operator() ( argument p ) const ;
       /// the specific printout 
       virtual std::ostream& fillStream( std::ostream& s ) const ;
+      // ======================================================================
     };
     // ========================================================================    
     /** @class NumberOfDaughters
@@ -1021,12 +1020,14 @@ namespace LoKi
       : public LoKi::BasicFunctors<const LHCb::Particle*>::Function
     {
     public:
+      // ======================================================================
       /// clone method (mandatory!)
       virtual NumberOfDaughters* clone() const ;
       /// the only one essential method 
       result_type operator() ( argument p ) const ;
       /// the specific printout 
       virtual std::ostream& fillStream( std::ostream& s ) const ;
+      // ======================================================================
     };
     // ========================================================================
     /** @class HasProto
@@ -1045,12 +1046,14 @@ namespace LoKi
       : public LoKi::BasicFunctors<const LHCb::Particle*>::Predicate
     {
     public:
+      // ======================================================================
       /// clone method (mandatory!)
       virtual HasProto* clone() const ;
       /// the only one essential method 
       result_type operator() ( argument p ) const ;
       /// the specific printout 
       virtual std::ostream& fillStream( std::ostream& s ) const ;
+      // ======================================================================
     };
     // ========================================================================    
     /** @class HasVertex
@@ -1069,12 +1072,14 @@ namespace LoKi
       : public LoKi::BasicFunctors<const LHCb::Particle*>::Predicate
     {
     public:
+      // ======================================================================
       /// clone method (mandatory!)
       virtual HasVertex* clone() const ;
       /// the only one essential method 
       result_type operator() ( argument p ) const ;
       /// the specific printout 
       virtual std::ostream& fillStream( std::ostream& s ) const ;
+      // ======================================================================
     };
     // ========================================================================    
     /** @class TransverseMomentumRel 
@@ -1092,6 +1097,7 @@ namespace LoKi
       : public LoKi::BasicFunctors<const LHCb::Particle*>::Function
     {
     public:
+      // ======================================================================
       /// constructor from theta phi
       TransverseMomentumRel ( const double theta , 
                               const double phi   ) ;      
@@ -1111,15 +1117,21 @@ namespace LoKi
       result_type operator() ( argument p ) const ;
       /// OPTIONAL: the specific printout 
       virtual std::ostream& fillStream( std::ostream& s ) const ;
+      // ======================================================================
     private:
+      // ======================================================================
       /// default constructor is disabled 
       TransverseMomentumRel ( ) ;
+      // ======================================================================
     public:
+      // ======================================================================
       /// get the momentum 
       const LoKi::ThreeVector& momentum  () const { return m_momentum   ; }
       /// get the momentum (alias)
       const LoKi::ThreeVector& direction () const { return   momentum() ; }      
+      // ======================================================================
     public:
+      // ======================================================================
       /// set new momentum 
       void setMomentum  ( const LoKi::ThreeVector&   vct ) 
       { m_momentum = vct ; }
@@ -1136,7 +1148,7 @@ namespace LoKi
         if ( 0 == p ) 
         { Exception ( "Invalid LHCb::Particle* for setMomentum(..)" ) ; }
         setMomentum ( p -> momentum() ) ;
-      } ;
+      } 
       /// set new momentum 
       template <class PARTICLE>
       void setMomentum  ( const PARTICLE* p )
@@ -1144,10 +1156,13 @@ namespace LoKi
         if ( 0 != p ) 
         { Exception ( "Invalid PARTICLE* for setMomentum(..)" ) ; }
         setMomentum ( p -> momentum() ) ;
-      } ;
+      } 
+      // ======================================================================
     private:
-      // the direction 
-      LoKi::ThreeVector m_momentum ; ///< the direction 
+      // ======================================================================
+      /// the direction 
+      LoKi::ThreeVector m_momentum ;                           // the direction 
+      // ======================================================================
     } ;
     // ========================================================================
     /** @class TransverseMomentumQ 

@@ -1,4 +1,4 @@
-// $Id: MuonDigitToRawBuffer.cpp,v 1.21 2008-05-29 11:21:20 asatta Exp $
+// $Id: MuonDigitToRawBuffer.cpp,v 1.23 2008-10-27 13:00:25 asatta Exp $
 // Include files 
 
 // from Gaudi
@@ -35,7 +35,7 @@ MuonDigitToRawBuffer::MuonDigitToRawBuffer( const std::string& name,
                                             ISvcLocator* pSvcLocator)
   : GaudiAlgorithm ( name , pSvcLocator )
 {
-  declareProperty("VType" , m_vtype=1) ;
+  declareProperty("VType" , m_vtype=2) ;
 }
 //=============================================================================
 // Destructor
@@ -401,8 +401,11 @@ StatusCode MuonDigitToRawBuffer::ProcessV1()
   LHCb::RawEvent* raw = get<LHCb::RawEvent>( LHCb::RawEventLocation::Default );
 
   sc=ProcessDigitV1();
-  
+  if(sc.isFailure())return sc;  
+
   sc=ProcessPads();
+  if(sc.isFailure())return sc;  
+
   unsigned int pp_counter[4];
   
   

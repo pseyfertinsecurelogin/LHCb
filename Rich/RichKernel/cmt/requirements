@@ -2,11 +2,11 @@
 # Created    : 2003-11-06
 # Maintainer : Christopher Rob Jones
 #============================================================================
-# $Id: requirements,v 1.76 2008-09-30 12:07:48 cattanem Exp $
+# $Id: requirements,v 1.79 2008-11-17 12:55:52 cattanem Exp $
 #============================================================================
 
 package RichKernel
-version v7r17
+version v7r18
 
 # ================ structure =================================================
 branches RichKernel cmt dict doc src python
@@ -16,14 +16,20 @@ use DAQEvent           v*   Event
 use LHCbKernel         v*   Kernel
 use GaudiAlg           v*
 use Boost              v*   LCG_Interfaces
+private
+use GaudiObjDesc       v* -no_auto_imports
+end_private
 
 # ================ environment ===============================================
 apply_pattern install_more_includes more=RichKernel
-apply_pattern install_python_modules
 
 # ================ linker library ============================================
-library RichKernel ../src/*.cpp
-apply_pattern linker_library library=RichKernel
+library RichKernelLib ../src/*.cpp
+apply_pattern linker_library library=RichKernelLib
+
+# ================ component library=========================================
+library RichKernel ../src/component/*.cpp
+apply_pattern component_library library=RichKernel
 
 # =============== LCG Dictionaries ============================================
 apply_pattern reflex_dictionary                                       \
@@ -31,6 +37,13 @@ apply_pattern reflex_dictionary                                       \
               headerfiles=$(RICHKERNELROOT)/dict/RichKernelDict.h     \
               selectionfile=$(RICHKERNELROOT)/dict/RichKernelDict.xml \
               options="-U__MINGW32__"
-
 # Debug flag
 macro_append cppflags "" Linux&debug " -DRICHDEBUG "
+
+private
+# RichKernel Configurable uses the generated configurables 
+macro_append RichKernelGenConfUser_dependencies RichKernelConfDbMerge
+# Have to look in local RichKernelConf.py, install_python has to come later 
+path_prepend PYTHONPATH ${RICHKERNELROOT}/genConf
+end_private
+apply_pattern install_python_modules

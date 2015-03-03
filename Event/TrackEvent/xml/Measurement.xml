@@ -35,9 +35,11 @@
 -->
       <enum
         name    = 'Type'
-        value   = 'Unknown,VeloR,VeloPhi,TT,IT,OT,Muon'
+        value   = 'Unknown,VeloR,VeloPhi,TT,IT,OT,Muon, TTLite, ITLite'
         desc    = 'enumerator for the type of Measurement'
-        access  = 'PUBLIC' />
+        access  = 'PUBLIC'
+        strTypConv = 'TRUE' 
+      />
 
       <constructor 
 	desc     = "Copy constructor" 
