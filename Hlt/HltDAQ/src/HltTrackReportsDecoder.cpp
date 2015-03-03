@@ -41,10 +41,10 @@ HltTrackReportsDecoder::HltTrackReportsDecoder( const std::string& name,
    //new for decoders, initialize search path, and then call the base method
   m_rawEventLocations = {LHCb::RawEventLocation::Trigger, LHCb::RawEventLocation::Copied, LHCb::RawEventLocation::Default};
   initRawEventSearch();
-  
 
-  declareProperty("OutputHltTrackReportsLocation",
-    m_outputHltTrackLocation= "/Hlt2/Track/Velo" );  
+  declareProperty("OutputLocation",
+    m_outputLocation= "/Hlt/Track/Velo" );  
+
 
   declareProperty("SourceID",
 		  m_sourceID= HltTrackReportsWriter::kSourceID_Dummy );  
@@ -89,16 +89,27 @@ StatusCode HltTrackReportsDecoder::execute() {
     return Error(" No RawEvent found at any location. No HltTracks created.");
   }  
 
+  // check if the container is already present
+  
+ 
   // create output container and put it on TES
-  LHCb::Tracks* outputTracks = new LHCb::Tracks();
+  LHCb::Tracks* outputTracks = NULL;
   try {
-    put( outputTracks, m_outputHltTrackLocation );
+    outputTracks=getOrCreate<LHCb::Tracks,LHCb::Tracks>(m_outputLocation);
+    //put( outputTracks, m_outputLocation );
   }
   catch(GaudiException ex) {
-    warning() << "Failed to create output location " <<  m_outputHltTrackLocation << endmsg;
+    warning() << "Failed to create output location " <<  m_outputLocation << endmsg;
     warning() << ex.message() << endmsg;
     return StatusCode::FAILURE;
   }
+
+  if(outputTracks->size()>0) {
+    if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
+      debug() << "outputLocation already contains tracks. Skipping decoding." << endmsg;
+    return StatusCode::SUCCESS;
+  } 
+
 
   // ----------------------------------------------------------
   // get the bank from RawEvent
@@ -123,7 +134,26 @@ StatusCode HltTrackReportsDecoder::execute() {
      decodeTracks(bank->data(),bank->size()/sizeof(unsigned int),outputTracks);
    }
   
- return StatusCode::SUCCESS;
+   // for debug purposes print the contents of the outputLocation
+   if( msgLevel(MSG::VERBOSE) )
+     {
+       verbose() << "----------------------------------------\n";
+       verbose() << " Resurrected tracks: \n"; 
+       LHCb::Tracks::const_iterator pItr;
+       for(pItr = outputTracks->begin(); outputTracks->end() != pItr; ++pItr){
+	 LHCb::Track* Tr = (*pItr);
+	 verbose()  << *Tr << endmsg ;
+	 // also dump IDs
+	 verbose() << "LHCbIDs: [\n"; 
+	 unsigned int nhits= Tr->nLHCbIDs();
+	 for(unsigned int i=0;i<nhits;++i){
+	   verbose() << Tr->lhcbIDs()[i] << ",\n";
+	 }
+	 verbose() << "]" << endmsg;
+       }
+     }
+   
+   return StatusCode::SUCCESS;
 }
 
 //=============================================================================

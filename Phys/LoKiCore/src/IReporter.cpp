@@ -1,4 +1,4 @@
-// $Id: IReporter.cpp 149830 2012-12-12 17:09:11Z cattanem $
+// $Id: IReporter.cpp 169974 2014-03-12 16:09:51Z jonrob $
 // ============================================================================
 // Include files
 // ============================================================================
@@ -66,9 +66,9 @@ std::size_t LoKi::IReporter::maxWarningPrint ()
 { return s_maxWarningPrint ; }
 // ============================================================================
 /// define maximal number of prints 
-std::size_t LoKi::IReporter::s_maxErrorPrint   = 10 ;
+std::size_t LoKi::IReporter::s_maxErrorPrint   = 2 ;
 /// define maximal number of prints 
-std::size_t LoKi::IReporter::s_maxWarningPrint = 10 ;
+std::size_t LoKi::IReporter::s_maxWarningPrint = 2 ;
 // ============================================================================
 // The END 
 // ============================================================================

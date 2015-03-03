@@ -1,4 +1,4 @@
-// $Id: iNode.h 155029 2013-04-15 14:48:04Z marcocle $
+// $Id: iNode.h 169290 2014-02-24 11:31:08Z marcocle $
 // ============================================================================
 #ifndef DECAYS_NODE_H
 #define DECAYS_NODE_H 1
@@ -152,65 +152,65 @@ namespace Decays
     ( std::ostream&        s ,
       const iNode& n ) { return n.fillStream ( s ) ; }
   // ==========================================================================
+  /** equality
+   *  The node is "equal" to the PID , if the given pid satisfies the node criteria
+   *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
+   *  @date 2008-04-21
+   */
+  inline bool operator==
+  ( const Decays::iNode& node , const LHCb::ParticleID&    pid  )
+  { return node ( pid ) ; }
+  // ==========================================================================
+  /** "right" equality
+   *  The node is "equal" to the PID , if the given pid satisfies the node criteria
+   *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
+   *  @date 2008-04-21
+   */
+  inline bool operator==
+  ( const LHCb::ParticleID&    pid  , const Decays::iNode& node )
+  { return node == pid ; }
+  // ==========================================================================
+  /** non-equality
+   *  The node is "equal" to the PID , if the given PID satisfies the node criteria
+   *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
+   *  @date 2008-04-21
+   */
+  inline bool operator!=
+  ( const Decays::iNode& node , const LHCb::ParticleID&    pid  )
+  { return !( node == pid ) ; }
+  // ==========================================================================
+  /** non-equality
+   *  The node is "equal" to the PID , if the given PID satisfies the node criteria
+   *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
+   *  @date 2008-04-21
+   */
+  inline bool operator!=
+  ( const LHCb::ParticleID&    pid  , const Decays::iNode& node )
+  { return node != pid ; }
+  // ==========================================================================
+  /** "on-flight" validation of the node
+   *  @param n the node
+   *  @param svc particle property service
+   *  @return status code
+   *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
+   *  @date 2008-04-21
+   */
+  inline StatusCode operator+
+  ( const Decays::iNode&              n   ,
+    const LHCb::IParticlePropertySvc* svc ) { return n.validate ( svc ) ; }
+  // ==========================================================================
+  /** "on-flight" validation of the node
+   *  @param n the node
+   *  @param svc particle property service
+   *  @return status code
+   *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
+   *  @date 2008-04-21
+   */
+  inline StatusCode operator*
+  ( const Decays::iNode&              n   ,
+    const LHCb::IParticlePropertySvc* svc ) { return n.validate ( svc ) ; }
+  // ==========================================================================
 } // end of namespace Decays
-// ============================================================================
-/** equality
- *  The node is "equal" to the PID , if the given pid satisfies the node criteria
- *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
- *  @date 2008-04-21
- */
-inline bool operator==
-( const Decays::iNode& node , const LHCb::ParticleID&    pid  )
-{ return node ( pid ) ; }
-// ============================================================================
-/** "right" equality
- *  The node is "equal" to the PID , if the given pid satisfies the node criteria
- *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
- *  @date 2008-04-21
- */
-inline bool operator==
-( const LHCb::ParticleID&    pid  , const Decays::iNode& node )
-{ return node == pid ; }
-// ============================================================================
-/** non-equality
- *  The node is "equal" to the PID , if the given PID satisfies the node criteria
- *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
- *  @date 2008-04-21
- */
-inline bool operator!=
-( const Decays::iNode& node , const LHCb::ParticleID&    pid  )
-{ return !( node == pid ) ; }
-// ============================================================================
-/** non-equality
- *  The node is "equal" to the PID , if the given PID satisfies the node criteria
- *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
- *  @date 2008-04-21
- */
-inline bool operator!=
-( const LHCb::ParticleID&    pid  , const Decays::iNode& node )
-{ return node != pid ; }
-// ============================================================================
-/** "on-flight" validation of the node
- *  @param n the node
- *  @param svc particle property service
- *  @return status code
- *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
- *  @date 2008-04-21
- */
-inline StatusCode operator+
-( const Decays::iNode&              n   ,
-  const LHCb::IParticlePropertySvc* svc ) { return n.validate ( svc ) ; }
-// ============================================================================
-/** "on-flight" validation of the node
- *  @param n the node
- *  @param svc particle property service
- *  @return status code
- *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
- *  @date 2008-04-21
- */
-inline StatusCode operator*
-( const Decays::iNode&              n   ,
-  const LHCb::IParticlePropertySvc* svc ) { return n.validate ( svc ) ; }
 // ============================================================================
 //                                                                      The END
 // ============================================================================

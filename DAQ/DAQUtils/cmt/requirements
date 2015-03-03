@@ -1,5 +1,5 @@
 package           DAQUtils
-version           v1r12
+version           v1r13
 
 branches cmt doc Event src tests
 
@@ -19,7 +19,7 @@ private
   use GaudiSvc    v*      -no_auto_imports
   use RELAX       v*  LCG_Interfaces
   apply_pattern QMTest
-  macro SQL_use "" QMTEST "SQLDDDB v* Det --no-auto-imports"
-  macro LHCbAlgs_use "" QMTEST "LHCbAlgs v* Kernel --no-auto-imports"
+  macro LHCbAlgs_use "" QMTest "LHCbAlgs v* Kernel --no-auto-imports"
+  use ${LHCbAlgs_use}
   use PRConfig v* 
 end_private

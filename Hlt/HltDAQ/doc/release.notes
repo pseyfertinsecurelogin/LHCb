@@ -4,6 +4,48 @@
 ! Purpose     : Hlt RawBanks writers/decoders/monitors
 !-------------------------------------------------------------------------------
 
+!========================= HltDAQ v4r1 2014-03-26 =========================
+! 2014-03-26 - Marco Cattaneo
+ - Add missing EventPacker dependency
+
+! 2014-03-19 - Rob Lambert
+ - Ignore SelReport diffs
+
+! 2014-03-12 - Rob Lambert
+ - dump, decode, wipe, encode, dump tests.
+ - see task #48809
+
+! 2014-03-04 - Sebastian Neubert
+ - persisting the flags instead of Track::type. Needed for forward tracking.
+
+!========================= HltDAQ v4r0 2014-03-03 =========================
+! 2014-03-03 - Sebastian Neubert
+ - TrackReportsDecoder protected against filling already existing output location
+
+! 2014-02-28 - Sebastian Neubert
+ - full track states including covariances persisted
+
+! 2014-02-28 - Marco Clemencic
+ - Fixed CMake configuration.
+
+! 2014-02-26 - Sebastian Neubert
+ - Using the StandardPacker functions to pack the strack states 
+ 	 to 32bit per parameter
+
+! 2014-02-25 - Sebastian Neubert
+ - Added persistence of States to TrackReports
+   only state location and parameters written atm
+
+! 2014-02-24 - Sebastian Neubert
+ - Perparing persistence of track states
+
+! 2014-02-24 - Sebastian Neubert
+ - Renamed TrackReportsDecoder OutputLocation to be findable by bindMember
+ - Added track type = Velo to all tracks (needs reiteration)
+
+! 2014-02-19 - Sebastian Neubert
+ - HltTrackReportsWriter/Decoder added debug output: dumps tracks in verbose mode
+
 !========================= HltDAQ v3r1 2014-02-17 =========================
 ! 2014-02-11 - Rob Lambert
  - Assimilate Decoder baseclass for task #49078 into all HLT decoders

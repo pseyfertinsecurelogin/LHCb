@@ -40,8 +40,8 @@ def caloDigits ( context        ,
                                 RawBankReadoutStatusConverter,
                                 GaudiSequencer    ) 
     
-    
-    
+
+ 
 
     conflist=[]
     alglist=[]
@@ -55,6 +55,7 @@ def caloDigits ( context        ,
                          enableOnDemand          )
         conflist.append(spd)
         alglist.append(spd)
+
 
     if 'Prs'  in detectors :
         _log.debug('caloDigits : Prs is added to the detector list')
@@ -73,7 +74,7 @@ def caloDigits ( context        ,
             alglist.append(prsSeq)
         else :
             alglist.append(prs)
-
+        
     if 'Ecal' in detectors :
         _log.debug('caloDigits : Ecal is added to the detector list')
         ecalSeq = GaudiSequencer ('EcalDigitsSeq',Context = _cntx)
@@ -91,6 +92,7 @@ def caloDigits ( context        ,
             alglist.append(ecalSeq)
         else :
             alglist.append(ecal)
+
 
     if 'Hcal' in detectors :
         _log.debug('caloDigits : Hcal is added to the detector list')

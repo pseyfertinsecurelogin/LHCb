@@ -1,4 +1,4 @@
-// $Id: Nodes.h 155029 2013-04-15 14:48:04Z marcocle $
+// $Id: Nodes.h 169290 2014-02-24 11:31:08Z marcocle $
 // ============================================================================
 #ifndef DAVINCI_DECAYNODES_H
 #define DAVINCI_DECAYNODES_H 1
@@ -399,208 +399,213 @@ namespace Decays
       // ======================================================================
     } ;
     // ========================================================================
+    /** Create the "NOT" for the node
+     *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
+     *  @date 2008-04-12
+     */
+    inline Decays::Nodes::Not operator!
+    ( const Decays::Nodes::Not& o )
+    { return Decays::Node( o.node() ) ; }
+    // ========================================================================
+    /// output operator
+    inline
+    std::ostream& operator<<
+      ( std::ostream&               s ,
+        const Decays::Nodes::_Node& n ) { return s << n.node() ; }
+    // ========================================================================
   } //                                           end of namespace Decays::Nodes
+  // ==========================================================================
+  /** Create the "OR" of two nodes
+   *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
+   *  @date 2008-04-12
+   */
+  inline Decays::Nodes::Or operator||
+  ( const Decays::iNode& o1 ,
+    const Decays::iNode& o2 )
+  { return Decays::Nodes::Or ( o1 , o2 ) ; }
+  // ==========================================================================
+  /** Create the "OR" of two nodes
+   *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
+   *  @date 2008-04-12
+   */
+  inline Decays::Nodes::Or operator|
+  ( const Decays::iNode& o1 ,
+    const Decays::iNode& o2 )
+  { return Decays::Nodes::Or ( o1 , o2 ) ; }
+  // ==========================================================================
+  /** Create the "AND" of two nodes
+   *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
+   *  @date 2008-04-12
+   */
+  inline Decays::Nodes::And operator&&
+  ( const Decays::iNode& o1 ,
+    const Decays::iNode& o2 )
+  { return Decays::Nodes::And ( o1 , o2 ) ; }
+  // ==========================================================================
+  /** Create the "AND" of two nodes
+   *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
+   *  @date 2008-04-12
+   */
+  inline Decays::Nodes::And operator&
+  ( const Decays::iNode& o1 ,
+    const Decays::iNode& o2 )
+  { return Decays::Nodes::And ( o1 , o2 ) ; }
+  // ==========================================================================
+  /** Create the "NOT" for the node
+   *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
+   *  @date 2008-04-12
+   */
+  inline Decays::Nodes::Not operator~
+  ( const Decays::iNode& o )
+  { return Decays::Nodes::Not ( o ) ; }
+  // ==========================================================================
+  /** Create the "OR" of two nodes
+   *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
+   *  @date 2008-04-12
+   */
+  GAUDI_API
+  Decays::Nodes::Or operator||
+  ( const Decays::iNode& o1 ,
+    const std::string&   o2 ) ;
+  // ==========================================================================
+  /** Create the "OR" of two nodes
+   *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
+   *  @date 2008-04-12
+   */
+  GAUDI_API
+  Decays::Nodes::Or operator||
+  ( const Decays::iNode&    o1 ,
+    const LHCb::ParticleID& o2 ) ;
+  // ==========================================================================
+  /** Create the "OR" of two nodes
+   *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
+   *  @date 2008-04-12
+   */
+  GAUDI_API
+  Decays::Nodes::Or operator||
+  ( const Decays::iNode&     o1 ,
+    const Decays::Decay::Item& o2 ) ;
+  // ==========================================================================
+  /** Create the "OR" of two nodes
+   *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
+   *  @date 2008-04-12
+   */
+  GAUDI_API
+  Decays::Nodes::Or operator||
+  ( const Decays::iNode&          o1 ,
+    const LHCb::ParticleProperty* o2 ) ;
+  // ==========================================================================
+  /** Create the "OR" of two nodes
+   *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
+   *  @date 2008-04-12
+   */
+  GAUDI_API
+  Decays::Nodes::Or operator||
+  ( const std::string&   o2 ,
+    const Decays::iNode& o1 ) ;
+  // ==========================================================================
+  /** Create the "OR" of two nodes
+   *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
+   *  @date 2008-04-12
+   */
+  GAUDI_API
+  Decays::Nodes::Or operator||
+  ( const LHCb::ParticleID& o2 ,
+    const Decays::iNode&    o1 ) ;
+  // ==========================================================================
+  /** Create the "OR" of two nodes
+   *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
+   *  @date 2008-04-12
+   */
+  GAUDI_API
+  Decays::Nodes::Or operator||
+  ( const Decays::Decay::Item& o2 ,
+    const Decays::iNode&       o1 ) ;
+  // ==========================================================================
+  /** Create the "OR" of two nodes
+   *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
+   *  @date 2008-04-12
+   */
+  GAUDI_API
+  Decays::Nodes::Or operator||
+  ( const LHCb::ParticleProperty* o2 ,
+    const Decays::iNode&          o1 ) ;
+  // ==========================================================================
+  /** Create the "AND" of two nodes
+   *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
+   *  @date 2008-04-12
+   */
+  GAUDI_API
+  Decays::Nodes::And operator&&
+  ( const Decays::iNode& o1 ,
+    const std::string&   o2 ) ;
+  // ==========================================================================
+  /** Create the "AND" of two nodes
+   *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
+   *  @date 2008-04-12
+   */
+  GAUDI_API
+  Decays::Nodes::And operator&&
+  ( const Decays::iNode&    o1 ,
+    const LHCb::ParticleID& o2 ) ;
+  // ==========================================================================
+  /** Create the "AND" of two nodes
+   *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
+   *  @date 2008-04-12
+   */
+  GAUDI_API
+  Decays::Nodes::And operator&&
+  ( const Decays::iNode&       o1 ,
+    const Decays::Decay::Item& o2 ) ;
+  // ==========================================================================
+  /** Create the "AND" of two nodes
+   *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
+   *  @date 2008-04-12
+   */
+  GAUDI_API
+  Decays::Nodes::And operator&&
+  ( const Decays::iNode&          o1 ,
+    const LHCb::ParticleProperty* o2 ) ;
+  // ==========================================================================
+  /** Create the "AND" of two nodes
+   *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
+   *  @date 2008-04-12
+   */
+  GAUDI_API
+  Decays::Nodes::And operator&&
+  ( const std::string&   o2 ,
+    const Decays::iNode& o1 ) ;
+  // ==========================================================================
+  /** Create the "AND" of two nodes
+   *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
+   *  @date 2008-04-12
+   */
+  GAUDI_API
+  Decays::Nodes::And operator&&
+  ( const LHCb::ParticleID& o2 ,
+    const Decays::iNode&    o1 ) ;
+  // ==========================================================================
+  /** Create the "AND" of two nodes
+   *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
+   *  @date 2008-04-12
+   */
+  GAUDI_API
+  Decays::Nodes::And operator&&
+  ( const Decays::Decay::Item& o2 ,
+    const Decays::iNode&     o1 ) ;
+  // ==========================================================================
+  /** Create the "AND" of two nodes
+   *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
+   *  @date 2008-04-12
+   */
+  GAUDI_API
+  Decays::Nodes::And operator&&
+  ( const LHCb::ParticleProperty* o2 ,
+    const Decays::iNode&          o1 ) ;
   // ==========================================================================
 } //                                                    end of namespace Decays
 // ============================================================================
-/** Create the "OR" of two nodes
- *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
- *  @date 2008-04-12
- */
-inline Decays::Nodes::Or operator||
-( const Decays::iNode& o1 ,
-  const Decays::iNode& o2 )
-{ return Decays::Nodes::Or ( o1 , o2 ) ; }
-// ============================================================================
-/** Create the "OR" of two nodes
- *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
- *  @date 2008-04-12
- */
-inline Decays::Nodes::Or operator|
-( const Decays::iNode& o1 ,
-  const Decays::iNode& o2 )
-{ return Decays::Nodes::Or ( o1 , o2 ) ; }
-// ============================================================================
-/** Create the "AND" of two nodes
- *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
- *  @date 2008-04-12
- */
-inline Decays::Nodes::And operator&&
-( const Decays::iNode& o1 ,
-  const Decays::iNode& o2 )
-{ return Decays::Nodes::And ( o1 , o2 ) ; }
-// ============================================================================
-/** Create the "AND" of two nodes
- *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
- *  @date 2008-04-12
- */
-inline Decays::Nodes::And operator&
-( const Decays::iNode& o1 ,
-  const Decays::iNode& o2 )
-{ return Decays::Nodes::And ( o1 , o2 ) ; }
-// ============================================================================
-/** Create the "NOT" for the node
- *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
- *  @date 2008-04-12
- */
-inline Decays::Nodes::Not operator~
-( const Decays::iNode& o )
-{ return Decays::Nodes::Not ( o ) ; }
-// ============================================================================
-/** Create the "NOT" for the node
- *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
- *  @date 2008-04-12
- */
-inline Decays::Nodes::Not operator!
-( const Decays::Nodes::Not& o )
-{ return Decays::Node( o.node() ) ; }
-// ============================================================================
 
-
-// ============================================================================
-/** Create the "OR" of two nodes
- *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
- *  @date 2008-04-12
- */
-GAUDI_API
-Decays::Nodes::Or operator||
-( const Decays::iNode& o1 ,
-  const std::string&   o2 ) ;
-// ============================================================================
-/** Create the "OR" of two nodes
- *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
- *  @date 2008-04-12
- */
-GAUDI_API
-Decays::Nodes::Or operator||
-( const Decays::iNode&    o1 ,
-  const LHCb::ParticleID& o2 ) ;
-// ============================================================================
-/** Create the "OR" of two nodes
- *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
- *  @date 2008-04-12
- */
-GAUDI_API
-Decays::Nodes::Or operator||
-( const Decays::iNode&     o1 ,
-  const Decays::Decay::Item& o2 ) ;
-// ============================================================================
-/** Create the "OR" of two nodes
- *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
- *  @date 2008-04-12
- */
-GAUDI_API
-Decays::Nodes::Or operator||
-( const Decays::iNode&          o1 ,
-  const LHCb::ParticleProperty* o2 ) ;
-// ============================================================================
-/** Create the "OR" of two nodes
- *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
- *  @date 2008-04-12
- */
-GAUDI_API
-Decays::Nodes::Or operator||
-( const std::string&   o2 ,
-  const Decays::iNode& o1 ) ;
-// ============================================================================
-/** Create the "OR" of two nodes
- *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
- *  @date 2008-04-12
- */
-GAUDI_API
-Decays::Nodes::Or operator||
-( const LHCb::ParticleID& o2 ,
-  const Decays::iNode&    o1 ) ;
-// ============================================================================
-/** Create the "OR" of two nodes
- *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
- *  @date 2008-04-12
- */
-GAUDI_API
-Decays::Nodes::Or operator||
-( const Decays::Decay::Item& o2 ,
-  const Decays::iNode&       o1 ) ;
-// ============================================================================
-/** Create the "OR" of two nodes
- *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
- *  @date 2008-04-12
- */
-GAUDI_API
-Decays::Nodes::Or operator||
-( const LHCb::ParticleProperty* o2 ,
-  const Decays::iNode&          o1 ) ;
-// ============================================================================
-/** Create the "AND" of two nodes
- *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
- *  @date 2008-04-12
- */
-GAUDI_API
-Decays::Nodes::And operator&&
-( const Decays::iNode& o1 ,
-  const std::string&   o2 ) ;
-// ============================================================================
-/** Create the "AND" of two nodes
- *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
- *  @date 2008-04-12
- */
-GAUDI_API
-Decays::Nodes::And operator&&
-( const Decays::iNode&    o1 ,
-  const LHCb::ParticleID& o2 ) ;
-// ============================================================================
-/** Create the "AND" of two nodes
- *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
- *  @date 2008-04-12
- */
-GAUDI_API
-Decays::Nodes::And operator&&
-( const Decays::iNode&       o1 ,
-  const Decays::Decay::Item& o2 ) ;
-// ============================================================================
-/** Create the "AND" of two nodes
- *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
- *  @date 2008-04-12
- */
-GAUDI_API
-Decays::Nodes::And operator&&
-( const Decays::iNode&          o1 ,
-  const LHCb::ParticleProperty* o2 ) ;
-// ============================================================================
-/** Create the "AND" of two nodes
- *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
- *  @date 2008-04-12
- */
-GAUDI_API
-Decays::Nodes::And operator&&
-( const std::string&   o2 ,
-  const Decays::iNode& o1 ) ;
-// ============================================================================
-/** Create the "AND" of two nodes
- *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
- *  @date 2008-04-12
- */
-GAUDI_API
-Decays::Nodes::And operator&&
-( const LHCb::ParticleID& o2 ,
-  const Decays::iNode&    o1 ) ;
-// ============================================================================
-/** Create the "AND" of two nodes
- *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
- *  @date 2008-04-12
- */
-GAUDI_API
-Decays::Nodes::And operator&&
-( const Decays::Decay::Item& o2 ,
-  const Decays::iNode&     o1 ) ;
-// ============================================================================
-/** Create the "AND" of two nodes
- *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
- *  @date 2008-04-12
- */
-GAUDI_API
-Decays::Nodes::And operator&&
-( const LHCb::ParticleProperty* o2 ,
-  const Decays::iNode&          o1 ) ;
 // ============================================================================
 /** check the validness of the trees or nodes
  *  @param begin begin-iterator for the sequence of trees/nodes
@@ -636,12 +641,6 @@ inline StatusCode Decays::validate
     }
     return StatusCode::SUCCESS ;
 }
-// ========================================================================
-/// output operator
-inline
-std::ostream& operator<<
-  ( std::ostream&               s ,
-    const Decays::Nodes::_Node& n ) { return s << n.node() ; }
 // ============================================================================
 // The END
 // ============================================================================

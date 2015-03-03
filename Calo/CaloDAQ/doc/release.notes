@@ -4,6 +4,24 @@
 ! Purpose     : Convert Calo Digit and Trigger information to RawEvent banks.
 !-----------------------------------------------------------------------------
 
+!========================= CaloDAQ v4r38 2014-03-24 =========================
+! 2014-03-22 - Marco Clemencic
+ - Fixed compilation with Boost 1.55.
+
+! 2014-03-06 - Olivier Deschamps
+ -  python/Configuration.py : propagate OutputLevel value to calo sequences only when the property is explicity set
+
+! 2014-03-05 - Olivier Deschamps
+ -  remove verbose printout
+
+! 2014-03-04 - Olivier Deschamps
+ -  remove previous change due to circular dependency with DAQSys
+ -  DecoderDB deactivation moved to CaloReco configurable
+
+! 2014-03-04 - Olivier Deschamps
+ -  python/CaloDAQ/CaloDigits.py : deactivate Decoder from DecoderDB when not in Detector list
+ - cmt : add DAQSys dependency
+
 !========================= CaloDAQ v4r37 2014-02-17 =========================
 ! 2014-02-13 - Rob Lambert
  - Suppress silly info printout

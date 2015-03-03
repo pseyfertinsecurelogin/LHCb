@@ -1,12 +1,14 @@
 ################################################################################
 # Package: HltDAQ
 ################################################################################
-gaudi_subdir(HltDAQ v3r1)
+gaudi_subdir(HltDAQ v4r1)
 
 gaudi_depends_on_subdirs(Det/DetCond
                          Det/DetDesc
                          Event/DAQEvent
                          Event/HltEvent
+                         Event/LumiEvent
+                         Event/EventPacker
                          GaudiAlg
                          GaudiKernel
                          GaudiObjDesc
