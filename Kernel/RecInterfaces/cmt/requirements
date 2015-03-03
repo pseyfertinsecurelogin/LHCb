@@ -3,7 +3,7 @@
 # Maintainer : Marco Cattaneo
 #============================================================================
 package           RecInterfaces
-version           v1r0
+version           v1r0p1
 
 #============================================================================
 # Structure, i.e. directories to process. 
@@ -25,5 +25,6 @@ apply_pattern reflex_dictionary                                             \
               selectionfile=$(RECINTERFACESROOT)/dict/RecInterfacesDict.xml \
               options="-U__MINGW32__"
 
-# Hack for cmt v1r19 bug to link dictionary on windows
-macro RecInterfacesDict_use_linkopts $(use_linkopts)
+# Hack for Gaudi v21r1 to link dictionary on windows
+private
+set EXPORT_ALL_SYMBOLS "yes" GAUDI_V21 "" GAUDI_V22 "" G21_HIDE_SYMBOLS ""

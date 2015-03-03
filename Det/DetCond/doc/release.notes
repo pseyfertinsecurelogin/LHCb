@@ -1,9 +1,20 @@
-# $Id: release.notes,v 1.166 2009-05-06 15:05:33 cattanem Exp $
+# $Id: release.notes,v 1.170 2009-05-28 10:13:34 cattanem Exp $
 !-----------------------------------------------------------------------------
 ! Package     : Det/DetCond
 ! Responsible : Marco Clemencic
 ! Purpose     : Interface between LHCb and LGC/COOL project
 !-----------------------------------------------------------------------------
+
+!===================== Det/DetCond v12r6 2009-05-28 ==========================
+! 2009-04-28 - Marco Cattaneo
+ - In Configurable, do not access MessageSvc() directly, use instead
+   getConfigurable("MessageSvc"), allow to replace MessageSvc instance online
+
+! 2009-05-27 - Marco Clemencic
+ - Modified the way CondDBAccessSvc::finalize() synchronizes with the second
+   thread.
+ - Updated the usage of the Boost Thread module (use more recent classes).
+ - Added a test triggering the connection time-out.
 
 !===================== Det/DetCond v12r5p3 2009-05-06 ========================
 ! 2009-04-17 - Marco Cattaneo

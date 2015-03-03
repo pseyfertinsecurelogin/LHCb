@@ -2,6 +2,27 @@
 ! package manager: M.Cattaneo
 !----------------------------------------------------------------------------
 
+!======================== GaudiConf v12r4 2009-05-29 ========================
+! 2009-05-29 - Marco Cattaneo
+ - Add LHCbKernel dependency, to pick up LHCbConfigurableUser used by
+   Configuration.py
+   
+! 2009-05-28 - Marco Cattaneo
+ - Remove obsolete options files SimDicts.opts, SimContents.opts,
+   DigiContent.opts, DstContent.opts
+
+!======================== GaudiConf v12r3 2009-05-27 ========================
+! 2009-05-27 - Chris Jones
+ - Add the RICH extended information to the XDSTs
+
+! 2009-05-26 - Marco Cattaneo
+ - Add DstConf().DstType = "XDST", extended DST containing also MCHits
+
+! 2009-05-13 - Marco Cattaneo
+ - Add a python module GaudiConf/QMTest/LHCbExclusions.py containing a QMTest
+   preprocessor that can be given to the QMTest ValidateWithReference function
+   to exclude lines expected to change in the QMTest output.
+
 !======================== GaudiConf v12r2 2009-04-06 ========================
 ! 2009-04-06 - Marco Cattaneo
  - In DstConf(), replace bool Simulation property with string SimType. Possible

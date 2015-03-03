@@ -4,6 +4,15 @@
 ! Purpose     : Base package for RICH Reconstruction Packages
 !-----------------------------------------------------------------------------
 
+!===================== RichRecBase v3r22 2009-05-25 ==========================
+! 2009-05-21 - Chris Jones
+ - Improvements to track selector base class (add likelihood cuts)
+ - Add definitions to RichRecRing for ENN ring finder
+ - Add likelihood to RichRecTrack
+
+! 2009-05-15 - Christopher Rob Jones
+ - Improvements to enum ostream operator << overloading
+
 !===================== RichRecBase v3r21 2009-05-07 ==========================
 ! 2009-04-17 - Chris Jones
  - Add support for PatSeeding T Station tracks (cosmics).

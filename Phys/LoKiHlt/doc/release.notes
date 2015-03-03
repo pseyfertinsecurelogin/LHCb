@@ -1,9 +1,23 @@
-! $Id: release.notes,v 1.14 2009-01-08 17:15:45 cattanem Exp $ 
+! $Id: release.notes,v 1.19 2009-05-27 14:21:34 cattanem Exp $ 
 ! -----------------------------------------------------------------------------
 ! Package     : Phys/LoKiHlt
 ! Responsible : Vanya BELYAEV Ivan.Belyaev@nikhef.nl
 ! Purpose     : collection of functors&factory for HLT 
 ! -----------------------------------------------------------------------------
+
+!========================== LoKiHlt v2r2 2009-05-27 ==========================
+! 2009-05-27 - Gerhard Raven
+ - adapt to changes in HltDecReport(s)
+
+ - src/Components/HDRFilter.cpp,
+   src/Components/L0Filter.cpp 
+   src/Components/ODINFilter.cpp 
+     fix a typo in the name of HltFactory 
+
+! 2009-05-09 - Vanya BELYAEV
+ - remove unnesessary std::unary/binary_function bases 
+ - cmt/requirements
+   version increment to v2r2
 
 !========================== LoKiHlt v2r1 2009-01-08 ==========================
 ! 2009-01-08 - Marco Cattaneo

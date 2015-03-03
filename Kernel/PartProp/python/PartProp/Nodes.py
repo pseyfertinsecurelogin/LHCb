@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # =============================================================================
-# $Id: Nodes.py,v 1.2 2009-05-06 15:45:52 ibelyaev Exp $ 
+# $Id: Nodes.py,v 1.6 2009-05-22 17:00:51 ibelyaev Exp $ 
 # =============================================================================
 ## @file PartProp/Nodes.py
 #  Simple "decorator for nodes"
@@ -12,7 +12,7 @@ Simple 'decorator for nodes'
 """
 # =============================================================================
 __author__  = "Vanya BELYAEV Ivan.Belyaev@nikhef.nl" 
-__version__ = "CVS Tag $Name: not supported by cvs2svn $, version $Revision: 1.2 $"
+__version__ = "CVS Tag $Name: not supported by cvs2svn $, version $Revision: 1.6 $"
 # =============================================================================
 
 import PyCintex
@@ -173,35 +173,46 @@ def _decorate ( nodes  , opers ) :
     return nodes 
 
 ## decorate the nodes
-_decorated = _decorate ( ( Decays.iNode          ,
-                           Decays.Node           ,
+_decorated = _decorate ( ( Decays.iNode               ,
+                           Decays.Node                ,
                            #
-                           Decays.Nodes.Any      , 
-                           Decays.Nodes.Pid      , 
-                           Decays.Nodes.CC       , 
+                           Decays.Nodes.Any           , 
+                           Decays.Nodes.Pid           , 
+                           Decays.Nodes.CC            , 
                            #
-                           Decays.Nodes.Lepton   ,
-                           Decays.Nodes.Nu       ,
-                           Decays.Nodes.Ell      ,
-                           Decays.Nodes.EllPlus  ,
-                           Decays.Nodes.EllMinus ,
-                           Decays.Nodes.Hadron   ,
-                           Decays.Nodes.Meson    ,
-                           Decays.Nodes.Baryon   ,
-                           Decays.Nodes.Charged  ,
-                           Decays.Nodes.Positive ,
-                           Decays.Nodes.Negative ,
-                           Decays.Nodes.Neutral  , 
-                           Decays.Nodes.HasQuark , 
-                           Decays.Nodes.JSpin    , 
-                           Decays.Nodes.SSpin    , 
-                           Decays.Nodes.LSpin    , 
-                           Decays.Nodes.Nucleus  , 
-                           Decays.Nodes._Node    ,
+                           Decays.Nodes.Lepton        ,
+                           Decays.Nodes.Nu            ,
+                           Decays.Nodes.Ell           ,
+                           Decays.Nodes.EllPlus       ,
+                           Decays.Nodes.EllMinus      ,
+                           Decays.Nodes.Hadron        ,
+                           Decays.Nodes.Meson         ,
+                           Decays.Nodes.Baryon        ,
+                           Decays.Nodes.Charged       ,
+                           Decays.Nodes.Positive      ,
+                           Decays.Nodes.Negative      ,
+                           Decays.Nodes.Neutral       , 
+                           Decays.Nodes.HasQuark      , 
+                           Decays.Nodes.JSpin         , 
+                           Decays.Nodes.SSpin         , 
+                           Decays.Nodes.LSpin         , 
+                           Decays.Nodes.Nucleus       , 
+                           Decays.Nodes.CTau          ,
+                           Decays.Nodes.ShortLived_   ,
+                           Decays.Nodes.LongLived_    ,
+                           Decays.Nodes.Stable        ,
+                           Decays.Nodes.StableCharged ,
+                           Decays.Nodes.CTau          ,
+                           Decays.Nodes.Mass          ,
+                           Decays.Nodes.Light         ,
+                           Decays.Nodes.Heavy         ,
+                           Decays.Nodes.Symbol        ,
+                           Decays.Nodes._Node         ,
+                           Decays.Nodes._Node.Invalid ,
                            #
-                           Decays.Nodes.Or       ,
-                           Decays.Nodes.And      ,
-                           Decays.Nodes.Not      ) , ## nodes 
+                           Decays.Nodes.Or            ,
+                           Decays.Nodes.And           ,
+                           Decays.Nodes.Not           ) , ## nodes 
                          # operations 
                          opers = Decays.Dict.NodeOps ) 
 
@@ -260,7 +271,20 @@ OneHalf   = JSpin    ( 2 )
 ThreeHalf = JSpin    ( 4 ) 
 FiveHalf  = JSpin    ( 6 ) 
 
-SubNodes = std.vector( _Node ) 
+
+CTau          = Decays.Nodes.CTau              # type 
+LongLived_    = Decays.Nodes.LongLived_        # type 
+LongLived     = Decays.Nodes.LongLived_    ()  # instance
+ShortLived_   = Decays.Nodes.ShortLived_       # type 
+ShortLived    = Decays.Nodes.ShortLived_   ()  # instance
+Stable        = Decays.Nodes.Stable        ()  # instance
+StableCharged = Decays.Nodes.StableCharged ()  # instance
+Mass          = Decays.Nodes.Mass              # type 
+Light         = Decays.Nodes.Light             # type 
+Heavy         = Decays.Nodes.Heavy             # type 
+Symbol        = Decays.Nodes.Symbol            # type 
+
+NodeList      = Decays.Nodes.NodeList
 
 if '__main__' == __name__ :
     print ' decorated objects: %s ' % str(_decorated)

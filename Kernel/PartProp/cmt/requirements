@@ -1,10 +1,10 @@
-# $Id: requirements,v 1.3 2009-03-09 17:27:45 ibelyaev Exp $ 
+# $Id: requirements,v 1.5 2009-05-30 12:16:34 ibelyaev Exp $ 
 # =============================================================================
 # Created    : 2008-12-01
 # Maintainer : Vanya BELYAEV Ivan.Belyaev@nikhef.nl
 # =============================================================================
 package           PartProp
-version           v1r1
+version           v1r2
 
 # ================ structure ==================================================
 branches          cmt doc Kernel src python dict tests 
@@ -30,6 +30,8 @@ apply_pattern     reflex_dictionary                                     \
                   selectionfile=$(PARTPROPROOT)/dict/PartProp.xml       \
                   options=" -U__MINGW32__ "
 
+macro_append      PartProp_dependencies       " PartPropLib " 
+macro_append      PartPropDict_dependencies   " PartPropLib " 
 # ================ patterns ===================================================
 apply_pattern     linker_library    library=PartPropLib
 apply_pattern     component_library library=PartProp

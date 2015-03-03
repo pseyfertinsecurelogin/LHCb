@@ -1,4 +1,4 @@
-// $Id: MCDecays.cpp,v 1.4 2009-05-06 20:27:54 ibelyaev Exp $
+// $Id: MCDecays.cpp,v 1.6 2009-05-23 15:58:12 ibelyaev Exp $
 // ============================================================================
 // Include files 
 // ============================================================================
@@ -18,6 +18,9 @@
 // ============================================================================
 namespace 
 {
+  // ==========================================================================
+  /// the name of photon for PHOTOS 
+  const std::string s_GAMMA = "gamma" ; 
   // ==========================================================================
   /** make the decay sections 
    *  @author Vanya BELYAEV Ivan.BELYAEV@nikhef.nl
@@ -92,7 +95,7 @@ namespace
 // ============================================================================
 // MCEXCLUSIVE 
 // ============================================================================
-/*  constructor from the node (mother), subtrees and "final" flag
+/*  full constructor from the node (mother), subtrees and "final" flag
  *  @param mother the mother node 
  *  @param children the list of daughter substrees 
  *  @param alg the matching algorithm 
@@ -102,9 +105,9 @@ namespace
 // ============================================================================
 Decays::Trees::MCExclusive::MCExclusive
 ( const Decays::iNode&                        mother     , 
-  const Decays::Trees::MCExclusive::SubTrees& children   ,
+  const Decays::Trees::MCExclusive::TreeList& children   ,
   const Decays::Trees::Alg                    alg        , 
-  const bool                                        decayOnly  , 
+  const bool                                  decayOnly  , 
   const Decays::Trees::Oscillation            oscillation ) 
   : Decays::iTree_<const LHCb::MCParticle*> () 
   , m_mother      ( mother     )
@@ -114,16 +117,17 @@ Decays::Trees::MCExclusive::MCExclusive
   , m_oscillation ( oscillation ) 
 {}
 // ============================================================================
-/*  constructor from the node (mother), subtrees and "final" flag
- *  @param mother the mother node 
- *  @param alg the matching algorithm 
- *  @param osc require the oscillation flag for mother 
+/*  constructor from the node (mother) and flags
+ *  @param mother the mother node
+ *  @param alg the matching algorithm
+ *  @param decayOnly the flag to search only through decay products
+ *  @param oscillated check the oscilaltion flag
  */
 // ============================================================================
 Decays::Trees::MCExclusive::MCExclusive
 ( const Decays::iNode&                        mother     , 
   const Decays::Trees::Alg                    alg        , 
-  const bool                                        decayOnly  , 
+  const bool                                  decayOnly  , 
   const Decays::Trees::Oscillation            oscillation ) 
   : Decays::iTree_<const LHCb::MCParticle*> () 
   , m_mother      ( mother     )
@@ -133,99 +137,34 @@ Decays::Trees::MCExclusive::MCExclusive
   , m_oscillation ( oscillation ) 
 {}
 // ============================================================================
-/*  constructor from the node (mother), subtrees and "final" flag
- *  @param mother the mother node 
- *  @param children the list of daughter substrees 
- *  @param alg the matching algorithm 
- *  @param decayOnly the flag to search only through decay products 
- *  @param oscillation check the oscilaltion flag
+/*  constructor from the node (mother) and flags
+ *  @param oscillated check the oscilaltion flag
+ *  @param mother the mother node
  */
 // ============================================================================
 Decays::Trees::MCExclusive::MCExclusive
-( const std::string&                                mother     , 
-  const Decays::Trees::MCExclusive::SubTrees& children   ,
-  const Decays::Trees::Alg                    alg        , 
-  const bool                                        decayOnly  , 
-  const Decays::Trees::Oscillation            oscillation ) 
+( const Decays::Trees::Oscillation            oscillation ,
+  const Decays::iNode&                        mother      ) 
   : Decays::iTree_<const LHCb::MCParticle*> () 
-  , m_mother      ( Decays::Nodes::Pid ( mother ) )
-  , m_children    ( children   ) 
-  , m_alg         ( alg        )
-  , m_decayOnly   ( decayOnly  )
-  , m_oscillation ( oscillation ) 
+  , m_mother      ( mother                   )
+  , m_children    (                          ) 
+  , m_alg         ( Decays::Trees::Daughters )
+  , m_decayOnly   ( true                     )
+  , m_oscillation ( oscillation              ) 
 {}
 // ============================================================================
-/*  constructor from the node (mother), subtrees and "final" flag
- *  @param mother the mother node 
- *  @param alg the matching algorithm 
- *  @param osc require the oscillation flag for mother 
+/*  constructor from the decay and flags 
+ *  @param decay the decay descriptor
+ *  @param alg the matching algorithm
+ *  @param decayOnly the flag to search only through decay products
+ *  @param oscillated check the oscilaltion flag
  */
 // ============================================================================
 Decays::Trees::MCExclusive::MCExclusive
-( const std::string&                                mother     , 
-  const Decays::Trees::Alg                    alg        , 
-  const bool                                        decayOnly  , 
-  const Decays::Trees::Oscillation            oscillation ) 
-  : Decays::iTree_<const LHCb::MCParticle*> () 
-  , m_mother      ( Decays::Nodes::Pid ( mother ) )
-  , m_children    (            ) 
-  , m_alg         ( alg        )
-  , m_decayOnly   ( decayOnly  )
-  , m_oscillation ( oscillation ) 
-{}
-// ============================================================================
-/*  constructor from the node (mother), subtrees and "final" flag
- *  @param mother the mother node 
- *  @param children the list of daughter substrees 
- *  @param alg the matching algorithm 
- *  @param decayOnly the flag to search only through decay products 
- *  @param oscillation check the oscilaltion flag
- */
-// ============================================================================
-Decays::Trees::MCExclusive::MCExclusive
-( const LHCb::ParticleID&                           mother     , 
-  const Decays::Trees::MCExclusive::SubTrees& children   ,
-  const Decays::Trees::Alg                    alg        , 
-  const bool                                        decayOnly  , 
-  const Decays::Trees::Oscillation            oscillation ) 
-  : Decays::iTree_<const LHCb::MCParticle*> () 
-  , m_mother      ( Decays::Nodes::Pid ( mother ) )
-  , m_children    ( children   ) 
-  , m_alg         ( alg        )
-  , m_decayOnly   ( decayOnly  )
-  , m_oscillation ( oscillation ) 
-{}
-// ============================================================================
-/*  constructor from the node (mother), subtrees and "final" flag
- *  @param mother the mother node 
- *  @param alg the matching algorithm 
- *  @param osc require the oscillation flag for mother 
- */
-// ============================================================================
-Decays::Trees::MCExclusive::MCExclusive
-( const LHCb::ParticleID&                           mother     , 
-  const Decays::Trees::Alg                    alg        , 
-  const bool                                        decayOnly  , 
-  const Decays::Trees::Oscillation            oscillation ) 
-  : Decays::iTree_<const LHCb::MCParticle*> () 
-  , m_mother      ( Decays::Nodes::Pid ( mother ) )
-  , m_children    (             ) 
-  , m_alg         ( alg         )
-  , m_decayOnly   ( decayOnly   )
-  , m_oscillation ( oscillation ) 
-{}
-// ============================================================================
-/*  constructor from the decay 
- *  @param decay the decay        
- *  @param alg the matching algorithm 
- *  @param osc require the oscillation flag for mother 
- */
-// ============================================================================
-Decays::Trees::MCExclusive::MCExclusive
-( const Decays::Decay&                                decay      , 
-  const Decays::Trees::Alg                    alg        , 
-  const bool                                        decayOnly  , 
-  const Decays::Trees::Oscillation            oscillation ) 
+( const Decays::Decay&              decay       , 
+  const Decays::Trees::Alg          alg         , 
+  const bool                        decayOnly   , 
+  const Decays::Trees::Oscillation  oscillation ) 
   : Decays::iTree_<const LHCb::MCParticle*> () 
   , m_mother      ( Decays::Nodes::Pid ( decay.mother() ) )
   , m_children    (             ) 
@@ -238,25 +177,10 @@ Decays::Trees::MCExclusive::MCExclusive
         items.end() != item ; ++item ) { addDaughter ( *item ) ; } 
 }
 // ============================================================================
-// copy constructor 
-// ============================================================================
-Decays::Trees::MCExclusive::MCExclusive
-( const Decays::Trees::MCExclusive& right ) 
-  : Decays::iTree_<const LHCb::MCParticle*> ( right ) 
-  , m_mother      ( right.m_mother      )
-  , m_children    ( right.m_children    ) 
-  , m_alg         ( right.m_alg         )
-  , m_decayOnly   ( right.m_decayOnly   )
-  , m_oscillation ( right.m_oscillation ) 
-{}
-
-// ============================================================================
 // MANDATORY: check the validity 
 // ============================================================================
 bool Decays::Trees::MCExclusive::valid() const 
-{
-  return m_mother.valid() && Decays::valid ( childBegin() , childEnd() ) ;
-}
+{ return m_mother.valid() && Decays::valid ( childBegin() , childEnd() ) ; }
 // ============================================================================
 // MANDATORY: validate the tree 
 // ============================================================================
@@ -278,7 +202,7 @@ size_t Decays::Trees::MCExclusive::collect
 ( Decays::iTree_<const LHCb::MCParticle*>::Collection& output ) const 
 {
   size_t size = 0 ;
-  for ( SubTrees::const_iterator ichild = childBegin() ; 
+  for ( TreeList::const_iterator ichild = childBegin() ; 
         childEnd() != ichild ; ++ichild ) { size += ichild->collect ( output ) ; }  
   return size ;
 }
@@ -287,7 +211,7 @@ size_t Decays::Trees::MCExclusive::collect
 // ============================================================================
 bool Decays::Trees::MCExclusive::marked() const 
 {
-  for ( SubTrees::const_iterator ichild = childBegin() ; 
+  for ( TreeList::const_iterator ichild = childBegin() ; 
         childEnd() != ichild ; ++ichild ) 
   { if ( ichild->marked() ) { return true ; } }
   return false ;
@@ -355,7 +279,7 @@ Decays::Trees::MCExclusive::fillStream ( std::ostream& s ) const
   default       : s << ( decayOnly () ? " ->" : " -x>" ) ; break ;
   }
   //
-  for ( SubTrees::const_iterator itree = childBegin() ; 
+  for ( TreeList::const_iterator itree = childBegin() ; 
         childEnd() != itree ; ++itree ) { s << ( *itree ) ; }
   //
   return s << ") " ;
@@ -365,7 +289,7 @@ Decays::Trees::MCExclusive::fillStream ( std::ostream& s ) const
 // ============================================================================
 void Decays::Trees::MCExclusive::addDaughter 
 ( const Decays::iTree_<const LHCb::MCParticle*>& tree ) 
-{ m_children.push_back ( tree ) ; }
+{ m_children += tree ; }
 // ============================================================================
 // add one more node to the tree 
 // ============================================================================
@@ -404,7 +328,7 @@ void Decays::Trees::MCExclusive::addDaughter
 // ============================================================================
 // MCINCLUSIVE 
 // ============================================================================
-/*  constructor from the node (mother), subtrees and "final" flag
+/*  full constructor from the node (mother), subtrees and "final" flag
  *  @param mother the mother node 
  *  @param children the list of daughter substrees 
  *  @param alg the matching algorithm 
@@ -413,106 +337,52 @@ void Decays::Trees::MCExclusive::addDaughter
  */
 // ============================================================================
 Decays::Trees::MCInclusive::MCInclusive
-( const Decays::iNode&                        mother     , 
-  const Decays::Trees::MCExclusive::SubTrees& children   ,
-  const Decays::Trees::Alg                    alg        , 
-  const bool                                        decayOnly  , 
+( const Decays::iNode&                        mother      , 
+  const Decays::Trees::MCExclusive::TreeList& children    ,
+  const Decays::Trees::Alg                    alg         , 
+  const bool                                  decayOnly   , 
   const Decays::Trees::Oscillation            oscillation ) 
-  : Decays::Trees::MCExclusive ( mother , children , 
-                                       alg , decayOnly , oscillation ) 
+  : Decays::Trees::MCExclusive ( mother      , 
+                                 children    , 
+                                 alg         , 
+                                 decayOnly   , 
+                                 oscillation ) 
 {}
 // ============================================================================
-/*  constructor from the node (mother), subtrees and "final" flag
- *  @param mother the mother node 
- *  @param alg the matching algorithm 
- *  @param osc require the oscillation flag for mother 
+/*  constructor from the node (mother) & flags
+ *  @param mother the mother node
+ *  @param alg the matching algorithm
+ *  @param decayOnly the flag to search only through decay products
+ *  @param oscillated check the oscilaltion flag
  */
 // ============================================================================
 Decays::Trees::MCInclusive::MCInclusive
-( const Decays::iNode&                        mother     , 
-  const Decays::Trees::Alg                    alg        , 
-  const bool                                        decayOnly  , 
-  const Decays::Trees::Oscillation            oscillation ) 
-  : Decays::Trees::MCExclusive( mother , alg , decayOnly , oscillation ) 
+( const Decays::iNode&             mother      , 
+  const Decays::Trees::Alg         alg         , 
+  const bool                       decayOnly   , 
+  const Decays::Trees::Oscillation oscillation ) 
+  : Decays::Trees::MCExclusive ( mother      , 
+                                 alg         , 
+                                 decayOnly   , 
+                                 oscillation ) 
 {}
 // ============================================================================
-/*  constructor from the node (mother), subtrees and "final" flag
- *  @param mother the mother node 
- *  @param children the list of daughter substrees 
- *  @param alg the matching algorithm 
- *  @param decayOnly the flag to search only through decay products 
- *  @param oscillation check the oscilaltion flag
+/*  constructor from the decay descriptor and flags 
+ *  @param decay the decay 
+ *  @param alg the matching algorithm
+ *  @param decayOnly the flag to search only through decay products
+ *  @param oscillated check the oscilaltion flag
  */
 // ============================================================================
 Decays::Trees::MCInclusive::MCInclusive
-( const std::string&                                mother     , 
-  const Decays::Trees::MCExclusive::SubTrees& children   ,
-  const Decays::Trees::Alg                    alg        , 
-  const bool                                        decayOnly  , 
-  const Decays::Trees::Oscillation            oscillation ) 
-  : Decays::Trees::MCExclusive ( mother , children , 
-                                       alg , decayOnly , oscillation ) 
-{}
-// ============================================================================
-/*  constructor from the node (mother), subtrees and "final" flag
- *  @param mother the mother node 
- *  @param alg the matching algorithm 
- *  @param osc require the oscillation flag for mother 
- */
-// ============================================================================
-Decays::Trees::MCInclusive::MCInclusive
-( const std::string&                                mother     , 
-  const Decays::Trees::Alg                    alg        , 
-  const bool                                        decayOnly  , 
-  const Decays::Trees::Oscillation            oscillation ) 
-  : Decays::Trees::MCExclusive( mother , alg , decayOnly , oscillation ) 
-{}
-
-// ============================================================================
-/*  constructor from the node (mother), subtrees and "final" flag
- *  @param mother the mother node 
- *  @param children the list of daughter substrees 
- *  @param alg the matching algorithm 
- *  @param decayOnly the flag to search only through decay products 
- *  @param oscillation check the oscilaltion flag
- */
-// ============================================================================
-Decays::Trees::MCInclusive::MCInclusive
-( const LHCb::ParticleID&                           mother     , 
-  const Decays::Trees::MCExclusive::SubTrees& children   ,
-  const Decays::Trees::Alg                    alg        , 
-  const bool                                        decayOnly  , 
-  const Decays::Trees::Oscillation            oscillation ) 
-  : Decays::Trees::MCExclusive ( mother , children , 
-                                       alg , decayOnly , oscillation ) 
-{}
-// ============================================================================
-/*  constructor from the node (mother), subtrees and "final" flag
- *  @param mother the mother node 
- *  @param alg the matching algorithm 
- *  @param osc require the oscillation flag for mother 
- */
-// ============================================================================
-Decays::Trees::MCInclusive::MCInclusive
-( const LHCb::ParticleID&                           mother     , 
-  const Decays::Trees::Alg                    alg        , 
-  const bool                                        decayOnly  , 
-  const Decays::Trees::Oscillation            oscillation ) 
-  : Decays::Trees::MCExclusive( mother , alg , decayOnly , oscillation ) 
-{}
-// ============================================================================
-/*  constructor from the decay 
- *  @param decay the decay        
- *  @param alg the matching algorithm 
- *  @param osc require the oscillation flag for mother 
- */
-// ============================================================================
-Decays::Trees::MCInclusive::MCInclusive
-( const Decays::Decay&                                decay      , 
-  const Decays::Trees::Alg                    alg        , 
-  const bool                                        decayOnly  , 
-  const Decays::Trees::Oscillation            oscillation ) 
-  : Decays::Trees::MCExclusive( decay  , alg , decayOnly , oscillation ) 
+( const Decays::Decay&             decay       , 
+  const Decays::Trees::Alg         alg         , 
+  const bool                       decayOnly   , 
+  const Decays::Trees::Oscillation oscillation ) 
+  : Decays::Trees::MCExclusive ( decay       , 
+                                 alg         , 
+                                 decayOnly   , 
+                                 oscillation ) 
 {}
 // ============================================================================
 /*  constructor from the tree 
@@ -520,13 +390,6 @@ Decays::Trees::MCInclusive::MCInclusive
 // ============================================================================
 Decays::Trees::MCInclusive::MCInclusive
 ( const Decays::Trees::MCExclusive& right ) 
-  : Decays::Trees::MCExclusive( right ) 
-{}
-// ============================================================================
-// copy constrcutor 
-// ============================================================================
-Decays::Trees::MCInclusive::MCInclusive
-( const Decays::Trees::MCInclusive& right ) 
   : Decays::Trees::MCExclusive( right ) 
 {}
 // ============================================================================
@@ -592,8 +455,8 @@ bool Decays::Trees::MCInclusive::operator()
       if ( LoKi::Algs::found_N 
            ( isect->begin  () , 
              isect->end    () , 
-             children ()      ) ) { return true ; }            // RETURN 
-      continue ;                                               // CONTINUE ;  
+             children ().trees() ) ) { return true ; }            //   RETURN 
+      continue ;                                                  // CONTINUE  
     }
     
     // never go further, unfortunately the most generic algorithm
@@ -637,7 +500,7 @@ Decays::Trees::MCInclusive::fillStream ( std::ostream& s ) const
   default       : s << ( decayOnly () ? " ->" : " -x>" ) ; break ;
   }
   //
-  for ( SubTrees::const_iterator itree = childBegin() ; 
+  for ( TreeList::const_iterator itree = childBegin() ; 
         childEnd() != itree ; ++itree ) { s << ( *itree ) ; }
   //
   return s << " ... ) " ;
@@ -647,100 +510,59 @@ Decays::Trees::MCInclusive::fillStream ( std::ostream& s ) const
 // ============================================================================
 // MCOPTIONAL
 // ============================================================================
+/*  full constructor from the node (mother) and subtrees
+ *  @param mother the mother node 
+ *  @param children the list of children 
+ *  @param optional the list of optional components 
+ *  @param alg the matching algorithm 
+ *  @param decayOnly the flag to search only through decay products 
+ *  @param oscillation check the oscilaltion flag
+ */
+// ============================================================================
 Decays::Trees::MCOptional::MCOptional
 ( const Decays::iNode&                        mother     , 
-  const Decays::Trees::MCExclusive::SubTrees& children   ,
-  const Decays::Trees::MCExclusive::SubTrees& optional   ,
-  const Alg                                         alg        ,
-  const bool                                        decayOnly  , 
+  const Decays::Trees::MCExclusive::TreeList& children   ,
+  const Decays::Trees::MCExclusive::TreeList& optional   ,
+  const Decays::Trees::Alg                    alg        ,
+  const bool                                  decayOnly  , 
   const Decays::Trees::Oscillation            oscillation ) 
-  : Decays::Trees::MCExclusive ( mother , children , alg , 
-                                       decayOnly , oscillation )
+  : Decays::Trees::MCExclusive ( mother      , 
+                                 children    , 
+                                 alg         , 
+                                 decayOnly   , 
+                                 oscillation )
   , m_optional ( optional ) 
 {}
 // ============================================================================
-Decays::Trees::MCOptional::MCOptional
-( const Decays::iNode&                           mother     , 
-  const Decays::Trees::MCExclusive::SubTrees&    children   ,
-  const Decays::iTree_<const LHCb::MCParticle*>& optional   ,
-  const Alg                                            alg        ,
-  const bool                                           decayOnly  , 
-  const Decays::Trees::Oscillation               oscillation ) 
-  : Decays::Trees::MCExclusive ( mother , children , alg , 
-                                       decayOnly , oscillation )
-  , m_optional ( 1 , optional ) 
-{}
+/*  constructor from decay descriptor, optional and flags 
+ *  @param decay the decay descriptor
+ *  @param optional the list of optional components 
+ *  @param alg the matching algorithm 
+ *  @param decayOnly the flag to search only through decay products 
+ *  @param oscillation check the oscilaltion flag
+ */
 // ============================================================================
 Decays::Trees::MCOptional::MCOptional
-( const Decays::iNode&                           mother     , 
-  const Decays::Trees::MCExclusive::SubTrees&    children   ,
-  const Decays::iNode&                           optional   ,
-  const Alg                                            alg        ,
-  const bool                                           decayOnly  , 
-  const Decays::Trees::Oscillation               oscillation ) 
-  : Decays::Trees::MCExclusive ( mother , children , alg , 
-                                       decayOnly , oscillation )
-  , m_optional ( 1 , MCExclusive ( optional ) ) 
-{}
-// ============================================================================
-Decays::Trees::MCOptional::MCOptional
-( const std::string&                                mother     , 
-  const Decays::Trees::MCExclusive::SubTrees& children   ,
-  const Decays::Trees::MCExclusive::SubTrees& optional   ,
-  const Alg                                         alg        ,
-  const bool                                        decayOnly  , 
+( const Decays::Decay&                        decay      , 
+  const Decays::Trees::MCExclusive::TreeList& optional   ,
+  const Decays::Trees::Alg                    alg        ,
+  const bool                                  decayOnly  , 
   const Decays::Trees::Oscillation            oscillation ) 
-  : Decays::Trees::MCExclusive ( mother , children , alg , 
-                                       decayOnly , oscillation )
+  : Decays::Trees::MCExclusive ( decay       , 
+                                 alg         , 
+                                 decayOnly   , 
+                                 oscillation )
   , m_optional ( optional ) 
 {}
 // ============================================================================
-Decays::Trees::MCOptional::MCOptional
-( const std::string&                                   mother     , 
-  const Decays::Trees::MCExclusive::SubTrees&    children   ,
-  const Decays::iTree_<const LHCb::MCParticle*>& optional   ,
-  const Alg                                            alg        ,
-  const bool                                           decayOnly  , 
-  const Decays::Trees::Oscillation               oscillation ) 
-  : Decays::Trees::MCExclusive ( mother , children , alg , 
-                                       decayOnly , oscillation )
-  , m_optional ( 1 , optional ) 
-{}
-// ============================================================================
-Decays::Trees::MCOptional::MCOptional
-( const std::string&                                   mother     , 
-  const Decays::Trees::MCExclusive::SubTrees&    children   ,
-  const Decays::iNode&                           optional   ,
-  const Alg                                            alg        ,
-  const bool                                           decayOnly  , 
-  const Decays::Trees::Oscillation               oscillation ) 
-  : Decays::Trees::MCExclusive ( mother , children , alg , 
-                                       decayOnly , oscillation )
-  , m_optional ( 1 , MCExclusive ( optional ) ) 
-{}
+// constructor form the constructed tree 
 // ============================================================================
 Decays::Trees::MCOptional::MCOptional
 ( const Decays::Trees::MCExclusive&           right    ,
-  const Decays::Trees::MCExclusive::SubTrees& optional )
+  const Decays::Trees::MCExclusive::TreeList& optional )
   : Decays::Trees::MCExclusive ( right ) 
   , m_optional ( optional ) 
 {}
-// ============================================================================
-Decays::Trees::MCOptional::MCOptional
-( const Decays::Trees::MCExclusive& right    ,
-  const std::vector<std::string>&         optional )
-  : Decays::Trees::MCExclusive ( right ) 
-  , m_optional () 
-{ 
-  setOptional ( optional ) ; 
-}
-// ============================================================================
-Decays::Trees::MCOptional::MCOptional
-( const Decays::Trees::MCExclusive& right ) 
-  : Decays::Trees::MCExclusive ( right ) 
-  , m_optional () 
-{}
-
 // ============================================================================
 // MANDATORY: check the validity of the tree 
 // ============================================================================
@@ -764,7 +586,7 @@ StatusCode Decays::Trees::MCOptional::validate
 // ============================================================================
 bool Decays::Trees::MCOptional::marked() const 
 {
-  for ( SubTrees::const_iterator iopt = optBegin() ; 
+  for ( TreeList::const_iterator iopt = optBegin() ; 
         optEnd() != iopt ; ++iopt ) 
   { if ( iopt->marked() ) { return true ; } }
   // check the base class:
@@ -795,11 +617,11 @@ std::ostream& Decays::Trees::MCOptional::fillStream
   default       : s << ( decayOnly () ? " ->" : " -x>" ) ; break ;
   }
   //
-  for ( SubTrees::const_iterator itree = childBegin() ;
+  for ( TreeList::const_iterator itree = childBegin() ;
         childEnd() != itree ; ++itree ) 
   { s << ( *itree ) ; }
   //
-  for ( SubTrees::const_iterator itree = optBegin() ; 
+  for ( TreeList::const_iterator itree = optBegin() ; 
         optEnd () != itree ; ++itree ) 
   { s << " {" << ( *itree ) << "} "; }
   //
@@ -833,7 +655,7 @@ bool Decays::Trees::MCOptional::operator()
     if ( !LoKi::Algs::found_N 
          ( isect->begin (), 
            isect->end   (), 
-           children() )   ) { continue ; }                        // CONTINUE
+           children().trees() )   ) { continue ; }                    // CONTINUE
     // (6) make all possible permutations:
     do // make all possible permutations:
     {
@@ -843,7 +665,7 @@ bool Decays::Trees::MCOptional::operator()
         // the temporary iterator 
         Decays::MCSection::iterator aux = isect->begin() + nChildren() ;
         // create the local container for permutations 
-        SubTrees opt ( m_optional ) ;
+        TreeList opt ( m_optional ) ;
         std::stable_sort ( opt.begin () , opt.end() ) ; // sort it!!!
         // start all possible permutations of the optional stuff 
         do // start all possible permutations of the optional stuff 
@@ -864,13 +686,13 @@ bool Decays::Trees::MCOptional::operator()
 // ============================================================================
 void Decays::Trees::MCOptional::addOptional 
 ( const Decays::iTree_<PARTICLE>& tree ) 
-{ m_optional.push_back ( tree ) ; }
+{ m_optional += tree ; }
 // ============================================================================
 // add one more daughter to the decay 
 // ============================================================================
 void Decays::Trees::MCOptional::addOptional 
 ( const Decays::iNode& node ) 
-{ m_optional.push_back ( MCExclusive ( node ) ) ; }
+{ addOptional ( MCExclusive ( node ) ) ; }
 // ============================================================================
 // add one more daughter to the decay 
 // ============================================================================
@@ -918,68 +740,54 @@ void Decays::Trees::MCOptional::setOptional
 // ============================================================================
 // PHOTOS 
 // ============================================================================
-// constructor from the node (mother) and subtrees 
+/*  full constructor from the node (mother) and subtrees
+ *  @param mother the mother node 
+ *  @param children the list of children
+ *  @param alg the matching algorithm 
+ *  @param decayOnly the flag to search only through decay products 
+ *  @param oscillation check the oscilaltion flag
+ */
 // ============================================================================
 Decays::Trees::Photos::Photos
 ( const Decays::iNode&                   mother     , 
-  const Decays::Trees::Photos::SubTrees& children   ,
+  const Decays::Trees::Photos::TreeList& children   ,
   const Decays::Trees::Alg               alg        , 
-  const bool                                   decayOnly  ,
+  const bool                             decayOnly  ,
   const Decays::Trees::Oscillation       oscillation ) 
-  : Decays::Trees::MCExclusive ( mother    , children , alg , 
-                                       decayOnly , oscillation ) 
-  , m_photon    ( "gamma"   )
+  : Decays::Trees::MCExclusive ( mother      , 
+                                 children    , 
+                                 alg         , 
+                                 decayOnly   , 
+                                 oscillation ) 
+    , m_photon    ( s_GAMMA )
 {}
 // ============================================================================
-// constructor from the node (mother) and subtrees 
-// ============================================================================
-Decays::Trees::Photos::Photos
-( const std::string&                           mother     , 
-  const Decays::Trees::Photos::SubTrees& children   ,
-  const Decays::Trees::Alg               alg        , 
-  const bool                                   decayOnly  ,
-  const Decays::Trees::Oscillation       oscillation ) 
-  : Decays::Trees::MCExclusive ( mother    , children , alg , 
-                                       decayOnly , oscillation ) 
-  , m_photon    ( "gamma"   )
-{}
-// ============================================================================
-// constructor from the node (mother) and subtrees 
-// ============================================================================
-Decays::Trees::Photos::Photos
-( const LHCb::ParticleID&                      mother     , 
-  const Decays::Trees::Photos::SubTrees& children   ,
-  const Decays::Trees::Alg               alg        , 
-  const bool                                   decayOnly  ,
-  const Decays::Trees::Oscillation       oscillation ) 
-  : Decays::Trees::MCExclusive ( mother    , children , alg , 
-                                       decayOnly , oscillation ) 
-    , m_photon    ( "gamma"   )
-{}
-// ============================================================================
-// constructor from the decay
+/** constructor from the decay descriptor and flags 
+ *  @param decay the decay descriptor 
+ *  @param alg the matching algorithm 
+ *  @param decayOnly the flag to search only through decay products 
+ *  @param oscillation check the oscilaltion flag
+ */
 // ============================================================================
 Decays::Trees::Photos::Photos
 ( const Decays::Decay&                   decay      , 
   const Decays::Trees::Alg               alg        , 
   const bool                             decayOnly  ,
   const Decays::Trees::Oscillation       oscillation ) 
-  : Decays::Trees::MCExclusive ( decay , alg , decayOnly , oscillation ) 
-  , m_photon    ( "gamma"   )
+  : Decays::Trees::MCExclusive ( decay       , 
+                                 alg         , 
+                                 decayOnly   , 
+                                 oscillation ) 
+    , m_photon    ( s_GAMMA )
 {}
 // ============================================================================
-// constructor from the decay
+// constructor from the tree 
 // ============================================================================
 Decays::Trees::Photos::Photos
 ( const  Decays::Trees::MCExclusive& right ) 
   : Decays::Trees::MCExclusive  ( right ) 
-  , m_photon    ( "gamma"   )
+  , m_photon    ( s_GAMMA )
 {}
-
-
-
-
-
 // ============================================================================
 // MANDATORY: the proper validation of the tree
 // ============================================================================
@@ -1013,7 +821,7 @@ std::ostream& Decays::Trees::Photos::fillStream ( std::ostream& s ) const
   default       : s << ( decayOnly () ? " =>" : " =x>" ) ; break ;
   }
   //
-  for ( SubTrees::const_iterator itree = childBegin() ; 
+  for ( TreeList::const_iterator itree = childBegin() ; 
         childEnd() != itree ; ++itree ) { s << ( *itree ) ; }
   //
   return s << ") " ;
@@ -1049,7 +857,7 @@ bool Decays::Trees::Photos::operator()
     if ( !LoKi::Algs::found_N 
          ( isect -> begin () , 
            isect -> end   () , 
-           children()        ) ) { continue ; }                        // CONTINUE 
+           children().trees() ) ) { continue ; }                     // CONTINUE 
     // (5) make all possible permutations:
     do 
     {
@@ -1069,58 +877,66 @@ bool Decays::Trees::Photos::operator()
 // ============================================================================
 // PHOTOSOPTIONAL
 // ============================================================================
-Decays::Trees::PhotosOptional::PhotosOptional
-( const Decays::iNode&                        mother     , 
-  const Decays::Trees::MCExclusive::SubTrees& children   ,
-  const Decays::Trees::MCExclusive::SubTrees& optional   ,
-  const Decays::Trees::Alg                    alg        ,
-  const bool                                        decayOnly  , 
-  const Decays::Trees::Oscillation            oscillation ) 
-  : Decays::Trees::MCOptional ( mother , children , optional , alg , decayOnly , oscillation )
-  , m_photon ( "gamma")  
-{}
+/*  full constructor from the node (mother) and subtrees
+ *  @param mother the mother node 
+ *  @param children the list of children 
+ *  @param optional the list of optional components 
+ *  @param alg the matching algorithm 
+ *  @param decayOnly the flag to search only through decay products 
+ *  @param oscillation check the oscilaltion flag
+ */
 // ============================================================================
 Decays::Trees::PhotosOptional::PhotosOptional
 ( const Decays::iNode&                        mother     , 
-  const Decays::Trees::MCExclusive::SubTrees& children   ,
-  const Decays::iNode&                        optional   ,
+  const Decays::Trees::MCExclusive::TreeList& children   ,
+  const Decays::Trees::MCExclusive::TreeList& optional   ,
   const Decays::Trees::Alg                    alg        ,
-  const bool                                        decayOnly  , 
+  const bool                                  decayOnly  , 
   const Decays::Trees::Oscillation            oscillation ) 
-  : Decays::Trees::MCOptional ( mother , children , optional , alg , decayOnly , oscillation )
-    , m_photon ( "gamma")  
+  : Decays::Trees::MCOptional ( mother      , 
+                                children    , 
+                                optional    , 
+                                alg         , 
+                                decayOnly   , 
+                                oscillation )
+  , m_photon ( s_GAMMA )  
 {}
 // ============================================================================
+/*  constructor from decay descriptor, optional and flags 
+ *  @param decay the decay descriptor
+ *  @param optional the list of optional components 
+ *  @param alg the matching algorithm 
+ *  @param decayOnly the flag to search only through decay products 
+ *  @param oscillation check the oscilaltion flag
+ */
+// ============================================================================
 Decays::Trees::PhotosOptional::PhotosOptional
-( const Decays::iNode&                           mother     , 
-  const Decays::Trees::MCExclusive::SubTrees&    children   ,
-  const Decays::iTree_<const LHCb::MCParticle*>& optional   ,
-  const Decays::Trees::Alg                       alg        ,
-  const bool                                           decayOnly  , 
-  const Decays::Trees::Oscillation               oscillation ) 
-  : Decays::Trees::MCOptional ( mother , children , optional , alg , decayOnly , oscillation )
-  , m_photon ( "gamma")  
+( const Decays::Decay&                        decay      ,
+  const Decays::Trees::MCExclusive::TreeList& optional   ,
+  const Decays::Trees::Alg                    alg        ,
+  const bool                                  decayOnly  ,
+  const Decays::Trees::Oscillation            oscillated ) 
+  : Decays::Trees::MCOptional ( decay      , 
+                                optional   , 
+                                alg        , 
+                                decayOnly  , 
+                                oscillated )
+  , m_photon ( s_GAMMA )  
 {}
 // ============================================================================
 Decays::Trees::PhotosOptional::PhotosOptional
 ( const Decays::Trees::MCOptional& right ) 
   : Decays::Trees::MCOptional ( right )
-  , m_photon ( "gamma")  
+  , m_photon ( s_GAMMA )  
 {}
 // ============================================================================
 Decays::Trees::PhotosOptional::PhotosOptional
 ( const Decays::Trees::MCExclusive&           right    ,   
-  const Decays::Trees::MCExclusive::SubTrees& optional ) 
+  const Decays::Trees::MCExclusive::TreeList& optional ) 
   : Decays::Trees::MCOptional ( right , optional )
-  , m_photon ( "gamma")  
+  , m_photon ( s_GAMMA )  
 {}
 // ============================================================================
-Decays::Trees::PhotosOptional::PhotosOptional
-( const Decays::Trees::MCExclusive& right    ,   
-  const std::vector<std::string>&         optional ) 
-  : Decays::Trees::MCOptional ( right , optional )
-    , m_photon ( "gamma")  
-{}
 
 
 // ============================================================================
@@ -1162,11 +978,11 @@ std::ostream& Decays::Trees::PhotosOptional::fillStream
   default       : s << ( decayOnly () ? "=>"  : "=x>"  ) ; break ;
   }
   //
-  for ( SubTrees::const_iterator itree = childBegin() ; 
+  for ( TreeList::const_iterator itree = childBegin() ; 
         childEnd() != itree ; ++itree ) 
   { s << ( *itree ) ; }
   //
-  for ( SubTrees::const_iterator itree = optBegin() ; 
+  for ( TreeList::const_iterator itree = optBegin() ; 
         optEnd () != itree ; ++itree ) 
   { s << " {" << ( *itree ) << "} "; }
   //
@@ -1197,7 +1013,7 @@ bool Decays::Trees::PhotosOptional::operator()
     if ( !LoKi::Algs::found_N 
          ( isect->begin (), 
            isect->end   (), 
-           children() )   ) { continue ; }                        // CONTINUE
+           children().trees() ) ) { continue ; }                    // CONTINUE
     // (5) sort the section 
     std::stable_sort ( isect->begin() , isect->end() ) ;
     // (6) make all possible permutations:
@@ -1211,12 +1027,12 @@ bool Decays::Trees::PhotosOptional::operator()
         // nothing to match? 
         if ( aux == isect->end() ) { return true ; } // RETURN
         // create the local container for permutations 
-        SubTrees opt ( optBegin() , optEnd() ) ;
+        TreeList opt ( optBegin() , optEnd() ) ;
         std::stable_sort ( opt.begin () , opt.end() ) ; // sort it!!!
         // make the nesessary permutations 
         do 
         {                                     // make the nesessary permutations 
-          for ( SubTrees::iterator it = opt.begin() ; opt.end() != it ; ++it )
+          for ( TreeList::iterator it = opt.begin() ; opt.end() != it ; ++it )
           {
             // select only the subsequence of the right length 
             if ( it - opt.begin() <= isect->end() - aux ) 
@@ -1247,73 +1063,6 @@ bool Decays::Trees::PhotosOptional::operator()
   return false ; // RETURN 
 }
 // ============================================================================
-/*  operator for easy construction of trees 
- *  @author Vanya BELYAEV  Ivan.Belyaev@nikhef.nl
- *  @date 2008-07-07
- */
-// ============================================================================
-Decays::Trees::And_<const LHCb::MCParticle*>
-operator&& 
-( const Decays::iTree_<const LHCb::MCParticle*>& t , 
-  const Decays::iNode&                           n ) 
-{ return t && Decays::Trees::MCExclusive ( n ) ; }
-// ============================================================================
-/*  operator for easy construction of trees 
- *  @author Vanya BELYAEV  Ivan.Belyaev@nikhef.nl
- *  @date 2008-07-07
- */
-// ============================================================================
-Decays::Trees::And_<const LHCb::MCParticle*>
-operator&& 
-( const Decays::iTree_<const LHCb::MCParticle*>& t , 
-  const std::string&                                   n ) 
-{ return t && Decays::Trees::MCExclusive ( n ) ; }
-// ============================================================================
-/*  operator for the easy construction of trees 
- *  @author Vanya BELYAEV  Ivan.Belyaev@nikhef.nl
- *  @date 2008-07-07
- */
-// ============================================================================
-Decays::Trees::And_<const LHCb::MCParticle*>
-operator&& 
-( const Decays::iTree_<const LHCb::MCParticle*>& t , 
-  const LHCb::ParticleID&                              n ) 
-{ return t && Decays::Trees::MCExclusive ( n ) ; }
-// ============================================================================
-/*  operator for easy construction of trees 
- *  @author Vanya BELYAEV  Ivan.Belyaev@nikhef.nl
- *  @date 2008-07-07
- */
-// ============================================================================
-Decays::Trees::Or_<const LHCb::MCParticle*>
-operator|| 
-( const Decays::iTree_<const LHCb::MCParticle*>& t , 
-  const Decays::iNode&                           n ) 
-{ return t || Decays::Trees::MCExclusive ( n ) ; }
-// ============================================================================
-/*  operator for easy construction of trees 
- *  @author Vanya BELYAEV  Ivan.Belyaev@nikhef.nl
- *  @date 2008-07-07
- */
-// ============================================================================
-Decays::Trees::Or_<const LHCb::MCParticle*>
-operator||
-( const Decays::iTree_<const LHCb::MCParticle*>& t , 
-  const std::string&                                   n ) 
-{ return t || Decays::Trees::MCExclusive ( n ) ; }
-// ============================================================================
-/*  operator for the easy construction of trees 
- *  @author Vanya BELYAEV  Ivan.Belyaev@nikhef.nl
- *  @date 2008-07-07
- */
-// ============================================================================
-Decays::Trees::Or_<const LHCb::MCParticle*>
-operator||
-( const Decays::iTree_<const LHCb::MCParticle*>& t , 
-  const LHCb::ParticleID&                              n ) 
-{ return t || Decays::Trees::MCExclusive ( n ) ; }
-// ============================================================================
-
 
 // ============================================================================
 // The END 

@@ -1,4 +1,4 @@
-// $Id: PartPropDict.h,v 1.2 2008-12-03 17:35:54 ibelyaev Exp $
+// $Id: PartPropDict.h,v 1.4 2009-05-11 15:49:28 ibelyaev Exp $
 // ============================================================================
 #ifndef PARTPROP_PARTPROPDICT_H 
 #define PARTPROP_PARTPROPDICT_H 1
@@ -13,6 +13,8 @@
 #include "Kernel/Decay.h"
 #include "Kernel/iNode.h"
 #include "Kernel/Nodes.h"
+#include "Kernel/NodesPIDs.h"
+#include "Kernel/Symbols.h"
 // ============================================================================
 namespace Decays 
 {

@@ -1,10 +1,10 @@
-# $Id: requirements,v 1.9 2009-01-08 17:14:58 cattanem Exp $ 
+# $Id: requirements,v 1.11 2009-06-02 11:28:40 cattanem Exp $ 
 # =============================================================================
 # Created    : 2007-12-01
 # Maintainer : Vanya BELYAEV ibelyaev@physics.syr.edu 
 # =============================================================================
 package            LoKiNumbers
-version            v8r1
+version            v8r2
 # ================ structure ==================================================
 branches           cmt doc dict python 
 
@@ -28,6 +28,10 @@ apply_pattern    reflex_dictionary                                       \
 macro LoKiNumbersDict_use_linkopts $(use_linkopts)
 
 apply_pattern QMTest 
+
+# Hack for Gaudi v21r1 to link dictionary on windows
+private
+set EXPORT_ALL_SYMBOLS "yes" GAUDI_V21 "" GAUDI_V22 "" G21_HIDE_SYMBOLS ""
 
 # =============================================================================
 # The END 

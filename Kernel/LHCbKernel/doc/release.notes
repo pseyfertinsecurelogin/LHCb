@@ -4,6 +4,16 @@
 ! Purpose: LHCb specific Kernel classes
 !--------------------------------------------------------------------------
 
+!===================== LHCbKernel v11r4 2009-05-25 ========================
+! 2008-09-26 - Marco Cattaneo
+ - In LineTraj.h, CircleTraj.h, ParapolaTraj.h, MemPoolAlloc.h: 
+   add temporary workaround for windows: define NOMINMAX when including
+   GaudiKernel/boost_allocator.h, to avoid conflict with max() macro 
+   defined in windows.h. This will become unnecessary with Gaudi v21r2
+
+! 2009-05-15 - Christopher Rob Jones
+ - Some improvements to the ostream operator overloading for enums
+
 !===================== LHCbKernel v11r3 2009-05-07 ========================
 ! 2009-04-06 - Olivier Deschamps 
  - CaloCellID.xml : new method : isPin() return true if cellID is a pin ID

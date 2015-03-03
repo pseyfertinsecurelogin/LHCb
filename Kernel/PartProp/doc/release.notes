@@ -1,9 +1,56 @@
-! $Id: release.notes,v 1.16 2009-05-07 12:11:28 cattanem Exp $ 
+! $Id: release.notes,v 1.28 2009-05-30 13:06:28 cattanem Exp $ 
 ! -----------------------------------------------------------------------------
 ! Package     : Kernel/PartProp
 ! Responsible : Vanya BELYAEV Ivan.Belyaev@nikhef.nl
 ! Purpose     : 
 ! -----------------------------------------------------------------------------
+
+!======================== PartProp v1r2 2009-05-30 ============================
+! 2009-05-30 - Vanya BELYAEV 
+ - put a proper fix for operator|= and operator&=
+ - undo the previous patch with dictionaries 
+
+! 2009-05-29 - Vanya BELYAEV
+     temporary fix: 
+
+           exclude "|=" and "&=" operators from the dictionary
+
+     better solution needs to be found.
+
+! 2009-05-24 - Vanya BELYAEV
+ - add the missing dictionary 
+
+! 2009-05-22 - Vanya BELYAEV
+ - substitute SubNodes with NodeList 
+
+! 2009-05-14 - Vanya BELYAEV
+ - add &= and |= operators 
+
+! 2009-05-13 - Vanya Belyaev
+ - (undo): move the operators 
+    back form local namespace Decays 
+    to the global namespace
+
+! 2009-05-11 - Vanya Belyaev
+ - fix typo 
+
+! 2009-05-11 - Vanya BELYAEV
+ - Kernel/Nodes.h 
+     move unnecessary concrete symbols into a separate file 
+ - Kernel/Symbols.h
+     make it singleton 
+ - src/Components/ParticlePropertySvc.cpp
+     remove the duplicated list of symbols 
+
+! 2009-05-07 - Vanya BELYAEV
+ - Kernel/Symbols.h
+   src/Symbols.cpp
+    new class Decays::Symbols, which contains the information about the 
+    allowed symbols for decay descriptors.
+ - dict/PartProp.xml
+    add dictionary for class Decays::Symbols 
+ - cmt/requirements 
+    version incremen to v1r2 
 
 !======================== PartProp v1r1 2009-05-07 ============================
 ! 2009-05-06 - Vanya BELYAEV

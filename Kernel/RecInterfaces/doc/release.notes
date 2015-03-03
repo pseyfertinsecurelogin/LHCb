@@ -4,6 +4,10 @@
 ! Purpose     : Interfaces depending on Rec classes
 !-----------------------------------------------------------------------------
 
+!========================= RecInterfaces v1r0p1 2009-05-28 ===================
+! 2009-05-28 - Marco Cattaneo
+ - In requirements, add hack for Gaudi v21r1 to link dictionary on Windows 
+
 !========================= RecInterfaces v1r0 2007-09-07 =====================
 ! 2007-09-07 - Marco Cattaneo
  - Add dictionary generation, remove unneccessary include from interface

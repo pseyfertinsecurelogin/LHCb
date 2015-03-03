@@ -1,7 +1,7 @@
-# $Id: requirements,v 1.41 2009-05-06 14:55:00 cattanem Exp $
+# $Id: requirements,v 1.43 2009-05-28 14:15:18 cattanem Exp $
 # =============================================================================
 package           CaloInterfaces
-version           v7r10
+version           v7r11
 
 # =============== structure ===================================================
 branches          cmt doc CaloInterfaces
@@ -11,7 +11,6 @@ use GaudiKernel     v*
 use LHCbKernel      v*    Kernel
 use DigiEvent       v*    Event
 use RecEvent        v*    Event
-use PhysEvent       v*    Event
 use CaloDet         v*    Det
 
 # =============== include directories =========================================
@@ -25,4 +24,6 @@ apply_pattern reflex_dictionary                                                 
               selectionfile=$(CALOINTERFACESROOT)/dict/CaloInterfacesDict.xml \
               options="-U__MINGW32__"
 
-
+# Hack for Gaudi v21r1 to link dictionary on windows
+private
+set EXPORT_ALL_SYMBOLS "yes" GAUDI_V21 "" GAUDI_V22 "" G21_HIDE_SYMBOLS ""

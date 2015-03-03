@@ -1,8 +1,15 @@
-! $Id: release.notes,v 1.52 2009-05-06 14:55:00 cattanem Exp $
+! $Id: release.notes,v 1.55 2009-05-28 14:15:18 cattanem Exp $
 ! =============================================================================
 ! Package     : CaloInterfaces
 ! Responsible : Olivier Deschamps odescham@in2p3.fr
 ! =============================================================================
+
+!========================= CaloInterfaces v7r11 2009-05-28 ====================
+! 2009-05-28 - Marco Cattaneo
+ - In requirements, add hack for Gaudi v21r1 to link dictionary on Windows 
+
+! 2009-05-19 - Marco Cattaneo
+ - Remove unnecessary dependence on PhysEvent
 
 !========================= CaloInterfaces v7r10 2009-05-06 ====================
 ! 2008-04-17 - Olivier Deschamps

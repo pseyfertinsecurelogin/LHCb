@@ -1,4 +1,4 @@
-// $Id: LoKiCoreDict.h,v 1.9 2009-05-06 20:20:01 ibelyaev Exp $
+// $Id: LoKiCoreDict.h,v 1.12 2009-05-22 19:15:14 ibelyaev Exp $
 // ============================================================================
 #ifndef LOKI_LOKICOREDICT_H 
 #define LOKI_LOKICOREDICT_H 1
@@ -26,6 +26,7 @@
 #include "LoKi/ICoreAntiFactory.h"
 #include "LoKi/CoreEngine.h"
 #include "LoKi/iTree.h"
+#include "LoKi/IDecayNode.h"
 // ============================================================================
 // Stefan Roiser's trick to allow compilation on Win32
 // ============================================================================
@@ -35,12 +36,12 @@
 #endif 
 #endif
 // ============================================================================
-
 namespace 
 {
+  // ==========================================================================
   struct _Interfaces 
-  {
-    // 
+  { 
+    // ========================================================================
     LoKi::Interface<LoKi::ILoKiSvc>   m_1 ;
     LoKi::Interface<LoKi::IReporter>  m_2 ;
     LoKi::Interface<GaudiTool>        m_3 ;
@@ -48,7 +49,9 @@ namespace
     LoKi::Interface<IDataProviderSvc> m_5 ;
     // fictive constructor 
     _Interfaces() ;
+    // ========================================================================
   } ;  
+  // ==========================================================================
 }
 // ============================================================================
 // The END 

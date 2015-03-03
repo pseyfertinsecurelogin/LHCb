@@ -1,4 +1,4 @@
-// $Id: Decays.h,v 1.5 2009-05-06 20:32:42 ibelyaev Exp $
+// $Id: Decays.h,v 1.8 2009-05-23 15:59:51 ibelyaev Exp $
 // ============================================================================
 #ifndef LOKI_DECAYS_H 
 #define LOKI_DECAYS_H 1
@@ -8,6 +8,7 @@
 // PartProp
 // ============================================================================
 #include "Kernel/Nodes.h"
+#include "Kernel/NodesPIDs.h"
 // ============================================================================
 // Event 
 // ============================================================================
@@ -41,67 +42,39 @@ namespace Decays
     class Exclusive: public Decays::iTree_<const LHCb::Particle*>
     {
     protected:
-      typedef const LHCb::Particle*                   PARTICLE ;
+      // ======================================================================
+      typedef const LHCb::Particle*                                  PARTICLE ;
+      typedef Decays::Trees::Types_<PARTICLE>                           Types ;
+      // ======================================================================
     public:
-      // ====================================================================
-      /// the actual type of the ocntainer of children trees 
-      typedef Decays::Trees::_Tree_<PARTICLE>::SubTrees SubTrees ;
-      // ====================================================================
+      // ======================================================================
+      /// the actual type of the container of children trees 
+      typedef Types::TreeList                                        TreeList ;
+      // ======================================================================
     public:
-      // ====================================================================
-      /** constructor from the node (mother), subtrees and "final" flag
-       *  @param mother the mother node 
-       *  @param children the list of daughter substrees 
-       *  @param alg the matching algorithm 
+      // ======================================================================
+      /** full constructor from the node (mother), subtrees & flag
+       *  @param mother the mother node
+       *  @param children the list of daughter substrees
+       *  @param alg the matching algorithm
        */
       Exclusive
-      ( const Decays::iNode& mother                 , 
-        const SubTrees&            children               ,
+      ( const Decays::iNode&       mother                 ,
+        const TreeList&            children               ,
         const Alg                  alg        = Daughters ) ;
-      /** constructor from the node (mother), subtrees and "final" flag
+      /** constructor from the node (mother) & flag
        *  @param mother the mother node 
        *  @param alg the matching algorithm 
        */
       Exclusive
-      ( const Decays::iNode& mother                 , 
-        const Alg                  alg        = Daughters ) ;
-      /** constructor from the node (mother), subtrees and "final" flag
-       *  @param mother the mother node 
-       *  @param alg the matching algorithm 
-       */
-      Exclusive
-      ( const std::string&         mother                 , 
-        const SubTrees&            children               ,
-        const Alg                  alg        = Daughters ) ;
-      /** constructor from the node (mother), subtrees and "final" flag
-       *  @param mother the mother node 
-       *  @param alg the matching algorithm 
-       */
-      Exclusive
-      ( const std::string&         mother                 , 
-        const Alg                  alg        = Daughters ) ;
-      /** constructor from the node (mother), subtrees and "final" flag
-       *  @param mother the mother node 
-       *  @param children the list of daughter substrees 
-       *  @param alg the matching algorithm 
-       */
-      Exclusive
-      ( const LHCb::ParticleID&    mother                 , 
-        const SubTrees&            children               ,
-        const Alg                  alg        = Daughters ) ;
-      /** constructor from the node (mother), subtrees and "final" flag
-       *  @param mother the mother node 
-       *  @param alg the matching algorithm 
-       */
-      Exclusive
-      ( const LHCb::ParticleID&    mother                 , 
+      ( const Decays::iNode&       mother                 , 
         const Alg                  alg        = Daughters ) ;
       /** constructor from the decay 
        *  @param decay  the decay       
        *  @param alg the matching algorithm 
        */
       Exclusive
-      ( const Decays::Decay&         decay                  , 
+      ( const Decays::Decay&       decay                  , 
         const Alg                  alg        = Daughters ) ;
       /// MANDATORY: virtual destructor 
       virtual ~Exclusive () {}
@@ -142,7 +115,7 @@ namespace Decays
     public:
       // ====================================================================        
       /// set children 
-      void setChildren ( const SubTrees& children ) { m_children = children ; }
+      void setChildren ( const TreeList& children ) { m_children = children ; }
       /// set children 
       void setChildren ( const std::vector<std::string>& children ) ;
       /// set children 
@@ -158,15 +131,15 @@ namespace Decays
       /// add one more daughter to the decay 
       void addDaughter ( const Decays::iTree_<PARTICLE>& tree ) ;
       /// add one more daughter to the decay 
-      void addDaughter ( const Decays::iNode& node ) ; 
+      void addDaughter ( const Decays::iNode&          node ) ; 
       /// add one more daughter to the decay 
-      void addDaughter ( const Decays::Decay::Item&   node ) ; 
+      void addDaughter ( const Decays::Decay::Item&    node ) ; 
       /// add one more daughter to the decay 
-      void addDaughter ( const std::string&         node ) ; 
+      void addDaughter ( const std::string&            node ) ; 
       /// add one more daughter to the decay 
-      void addDaughter ( const LHCb::ParticleID&    node ) ; 
+      void addDaughter ( const LHCb::ParticleID&       node ) ; 
       /// add one more daughter to the decay 
-      void addDaughter ( const LHCb::ParticleProperty*    node ) ; 
+      void addDaughter ( const LHCb::ParticleProperty* node ) ; 
       // ====================================================================        
     public:
       // ====================================================================
@@ -180,26 +153,26 @@ namespace Decays
       Exclusive& operator+= ( const Decays::Decay::Item&   node ) 
       { addDaughter ( node ) ; return *this ; }
       /// add one more node to the tree 
-      Exclusive& operator+= ( const std::string&         node ) 
+      Exclusive& operator+= ( const std::string&           node ) 
       { addDaughter ( node ) ; return *this ; }
       /// add one more node to the tree 
-      Exclusive& operator+= ( const LHCb::ParticleID&    node ) 
+      Exclusive& operator+= ( const LHCb::ParticleID&      node ) 
       { addDaughter ( node ) ; return *this ; }
       /// add one more node to the tree 
-      Exclusive& operator+= ( const LHCb::ParticleProperty*    node ) 
+      Exclusive& operator+= ( const LHCb::ParticleProperty* node ) 
       { addDaughter ( node ) ; return *this ; }
       // ====================================================================
     protected:
       // ====================================================================
-      inline const SubTrees& children() const { return m_children ; }
+      inline const TreeList& children() const { return m_children ; }
       // ====================================================================
-      SubTrees::const_iterator  childBegin () const { return m_children.begin () ; }
-      SubTrees::const_iterator  childEnd   () const { return m_children.end   () ; }
-      SubTrees::const_reference front      () const { return m_children.front () ; }
-      SubTrees::const_reference back       () const { return m_children.back  () ; }
-      // ====================================================================
+      TreeList::const_iterator  childBegin () const { return m_children.begin () ; }
+      TreeList::const_iterator  childEnd   () const { return m_children.end   () ; }
+      TreeList::const_reference front      () const { return m_children.front () ; }
+      TreeList::const_reference back       () const { return m_children.back  () ; }
+      // ======================================================================
       size_t nChildren () const { return m_children.size() ; }    
-      // ====================================================================
+      // ======================================================================
       // reset the cache 
       inline void i_reset () const 
       {
@@ -207,29 +180,28 @@ namespace Decays
           ( childBegin() , childEnd() , 
             std::mem_fun_ref (&_Tree_<PARTICLE>::reset) ) ;
       }
-      // ====================================================================
+      // ======================================================================
       const Decays::iNode& mother () const { return m_mother ; }
-      // ====================================================================
+      // ======================================================================
       inline bool mother ( const LHCb::ParticleID& pid ) const 
       { return m_mother.node ( pid ) ;  }
-      // ====================================================================
+      // ======================================================================
     private:
-      // ====================================================================
+      // ======================================================================
       /// the default constructor is disabled 
-      Exclusive () ; // the default constructor is disabled
-      // ====================================================================
+      Exclusive () ;                     // the default constructor is disabled
+      // ======================================================================
     private:
-      // ====================================================================
+      // ======================================================================
       /// The mother 
-      Decays::Node m_mother   ; // the mother 
+      Decays::Node       m_mother   ;                          //    the mother 
       /// The children
-      SubTrees           m_children ; // the children 
-      // ====================================================================
+      TreeList           m_children ;                          //  the children 
       /// The algorithm 
-      Decays::Trees::Alg m_alg        ; // the algorithm 
-      // ====================================================================
+      Decays::Trees::Alg m_alg      ;                          // the algorithm 
+      // ======================================================================
     } ;
-    // ======================================================================
+    // ========================================================================
     /** @class Inclusive 
      *  Simple sub tree which consists of the node ("mother") and 
      *  subtrees ("children"). Essentially it represent the 
@@ -240,62 +212,29 @@ namespace Decays
     class Inclusive : public Exclusive 
     {
     public:
-      // ====================================================================
-      /** constructor from the node (mother), subtrees and "final" flag
-       *  @param mother the mother node 
-       *  @param children the list of daughter substrees 
-       *  @param alg the matching algorithm 
+      // ======================================================================
+      /** full constructor from the node (mother), subtrees & flag
+       *  @param mother the mother node
+       *  @param children the list of daughter substrees
+       *  @param alg the matching algorithm
        */
-      Inclusive
-      ( const Decays::iNode& mother                 , 
-        const SubTrees&            children               ,
+      Inclusive 
+      ( const Decays::iNode&       mother                 ,
+        const TreeList&            children               ,
         const Alg                  alg        = Daughters ) ;
-      /** constructor from the node (mother), subtrees and "final" flag
+      /** constructor from the node (mother) & flag
        *  @param mother the mother node 
        *  @param alg the matching algorithm 
        */
-      Inclusive
-      ( const Decays::iNode& mother                 , 
-        const Alg                  alg        = Daughters ) ;
-      // ====================================================================
-      /** constructor from the node (mother), subtrees and "final" flag
-       *  @param mother the mother node 
-       *  @param children the list of daughter substrees 
-       *  @param alg the matching algorithm 
-       */
-      Inclusive
-      ( const std::string&         mother                 , 
-        const SubTrees&            children               ,
-        const Alg                  alg        = Daughters ) ;
-      /** constructor from the node (mother), subtrees and "final" flag
-       *  @param mother the mother node 
-       *  @param alg the matching algorithm 
-       */
-      Inclusive
-      ( const std::string&         mother                 , 
-        const Alg                  alg        = Daughters ) ;
-      /** constructor from the node (mother), subtrees and "final" flag
-       *  @param mother the mother node 
-       *  @param children the list of daughter substrees 
-       *  @param alg the matching algorithm 
-       */
-      Inclusive
-      ( const LHCb::ParticleID&    mother                 , 
-        const SubTrees&            children               ,
-        const Alg                  alg        = Daughters ) ;
-      /** constructor from the node (mother), subtrees and "final" flag
-       *  @param mother the mother node 
-       *  @param alg the matching algorithm 
-       */
-      Inclusive
-      ( const LHCb::ParticleID&    mother                 , 
+      Inclusive 
+      ( const Decays::iNode&       mother                 , 
         const Alg                  alg        = Daughters ) ;
       /** constructor from the decay 
-       *  @param decay the decay        
+       *  @param decay  the decay       
        *  @param alg the matching algorithm 
        */
-      Inclusive
-      ( const Decays::Decay&         decay                  , 
+      Inclusive 
+      ( const Decays::Decay&       decay                  , 
         const Alg                  alg        = Daughters ) ;
       /// constructor from exclusive decay 
       Inclusive ( const Exclusive& right ) ;
@@ -334,14 +273,14 @@ namespace Decays
       /// add one more node to the tree 
       Inclusive& operator+= ( const LHCb::ParticleProperty*    node ) 
       { addDaughter ( node ) ; return *this ; }
-      // ====================================================================
+      // ======================================================================
     private:
-      // ====================================================================
+      // ======================================================================
       /// the default constructor is disabled 
-      Inclusive () ; // the default constructor is disabled
-      // ====================================================================
+      Inclusive () ;                     // the default constructor is disabled
+      // ======================================================================
     };
-    // ======================================================================
+    // ========================================================================
     /** @class Optional
      *  Simple sub tree which consists of the node ("mother") and 
      *  subtrees ("children") and optional nodes. Essentially it represent the 
@@ -352,37 +291,32 @@ namespace Decays
     class Optional : public Exclusive
     {
     public:
-      // ====================================================================
-      /// constructor from the node (mother) and subtrees 
+      // ======================================================================
+      /** full constructor from the node (mother) and subtrees
+       *  @param mother the mother node 
+       *  @param children the list of children 
+       *  @param optional the list of optional components 
+       *  @param alg the matching algorithm 
+       */
       Optional
-      ( const Decays::iNode& mother                  , 
-        const SubTrees&            children = SubTrees  () ,
-        const SubTrees&            optional = SubTrees  () ,
-        const Alg                  alg      = Daughters    ) ;
+      ( const Decays::iNode&       mother                   ,
+        const TreeList&            children   = TreeList () ,
+        const TreeList&            optional   = TreeList () ,
+        const Alg                  alg        = Daughters   ) ;
       // ====================================================================
-      /// constructor from the node (mother) and subtrees 
+      /** constructor from decay descriptor, optional and flags 
+       *  @param decay the decay descriptor
+       *  @param optional the list of optional components 
+       *  @param alg the matching algorithm 
+       */
       Optional
-      ( const std::string&         mother                 , 
-        const SubTrees&            children = SubTrees () ,
-        const SubTrees&            optional = SubTrees () ,
-        const Alg                  alg      = Daughters   ) ;
-      // ====================================================================
-      /// constructor from the node (mother) and subtrees 
-      Optional
-      ( const LHCb::ParticleID&    mother                 , 
-        const SubTrees&            children = SubTrees () ,
-        const SubTrees&            optional = SubTrees () ,
-        const Alg                  alg      = Daughters   ) ;
-      // ====================================================================
-      /// constructor  from the decay & optional
+      ( const Decays::Decay&       decay                    ,
+        const TreeList&            optional   = TreeList () ,
+        const Alg                  alg        = Daughters   ) ;
+      /// constructor form the constructed tree 
       Optional 
-      ( const Decays::Decay&  decay                  ,
-        const SubTrees&     optional = SubTrees () ,
-        const Alg           alg      = Daughters   ) ;
-      /// constructor  from
-      Optional 
-      ( const Exclusive&    right                  ,
-        const SubTrees&     optional = SubTrees () ) ;
+      ( const Exclusive& right                  , 
+        const TreeList&  optional = TreeList () ) ;
       /// MANDATORY: virtual destructor 
       virtual ~Optional () {}
       // ====================================================================
@@ -406,7 +340,7 @@ namespace Decays
     public:
       // ====================================================================
       /// set optional
-      void setOptional ( const SubTrees& optional ) { m_optional = optional ; }
+      void setOptional ( const TreeList& optional ) { m_optional = optional ; }
       /// set optional
       void setOptional ( const std::vector<std::string>&       optional ) ;
       /// set children 
@@ -452,172 +386,32 @@ namespace Decays
       /// add one more node to the tree 
       Optional& operator+= ( const LHCb::ParticleProperty* node ) 
       { addDaughter ( node ) ; return *this ; }
-      // ====================================================================
+      // ======================================================================
     protected:
-      // ====================================================================
-      SubTrees::const_iterator optBegin () const { return m_optional.begin () ; }
-      SubTrees::const_iterator optEnd   () const { return m_optional.end   () ; }
+      // ======================================================================
+      TreeList::const_iterator optBegin () const { return m_optional.begin () ; }
+      TreeList::const_iterator optEnd   () const { return m_optional.end   () ; }
       size_t                   optSize  () const { return m_optional.size  () ; }
       size_t nOptional() const { return optSize() ; }
-      // ====================================================================
+      // ======================================================================
     private:
-      // ====================================================================
+      // ======================================================================
       /// the default constructor is disabled 
-      Optional () ; // the default constructor is disabled
-      // ====================================================================
+      Optional () ;                      // the default constructor is disabled
+      // ======================================================================
     private:
-      // ====================================================================
+      // ======================================================================
       /// the optional particles in the tree 
-      SubTrees m_optional ;
-      // ====================================================================
+      TreeList m_optional ;               // the optional particles in the tree 
+      // ======================================================================
     } ;
-    // ======================================================================
-  } // end of namespace Decays::Trees 
-} // end of namespace LoKi::Decays
+    // ========================================================================
+  } //                                           end of namespace Decays::Trees 
+  // ==========================================================================
+} //                                              end of namespace LoKi::Decays
 // ============================================================================
-/** operator for easy construction of trees 
- *  @author Vanya BELYAEV  Ivan.Belyaev@nikhef.nl
- *  @date 2008-07-07
- */
-Decays::Trees::And_<const LHCb::Particle*>
-operator&& 
-( const Decays::iTree_<const LHCb::Particle*>& t , 
-  const Decays::iNode&                         n ) ;
-// ============================================================================
-/** operator for easy construction of trees 
- *  @author Vanya BELYAEV  Ivan.Belyaev@nikhef.nl
- *  @date 2008-07-07
- */
-Decays::Trees::And_<const LHCb::Particle*>
-operator&& 
-( const Decays::iTree_<const LHCb::Particle*>& t , 
-  const Decays::Decay::Item&                           n ) ;
-// ============================================================================
-/** operator for easy construction of trees 
- *  @author Vanya BELYAEV  Ivan.Belyaev@nikhef.nl
- *  @date 2008-07-07
- */
-Decays::Trees::And_<const LHCb::Particle*>
-operator&& 
-( const Decays::iTree_<const LHCb::Particle*>& t , 
-  const std::string&                                 n ) ;
-// ============================================================================
-/** operator for the easy construction of trees 
- *  @author Vanya BELYAEV  Ivan.Belyaev@nikhef.nl
- *  @date 2008-07-07
- */
-Decays::Trees::And_<const LHCb::Particle*>
-operator&& 
-( const Decays::iTree_<const LHCb::Particle*>& t , 
-  const LHCb::ParticleID&                            n ) ;
-// ============================================================================
-/** operator for easy construction of trees 
- *  @author Vanya BELYAEV  Ivan.Belyaev@nikhef.nl
- *  @date 2008-07-07
- */
-inline Decays::Trees::And_<const LHCb::Particle*>
-operator&& 
-( const Decays::iNode&                         n ,
-  const Decays::iTree_<const LHCb::Particle*>& t ) { return t && n ; }
-// ============================================================================
-/** operator for easy construction of trees 
- *  @author Vanya BELYAEV  Ivan.Belyaev@nikhef.nl
- *  @date 2008-07-07
- */
-inline Decays::Trees::And_<const LHCb::Particle*>
-operator&& 
-( const Decays::Decay::Item&                           n ,
-  const Decays::iTree_<const LHCb::Particle*>& t ) { return t && n ; }
-// ============================================================================
-/** operator for easy construction of trees 
- *  @author Vanya BELYAEV  Ivan.Belyaev@nikhef.nl
- *  @date 2008-07-07
- */
-inline Decays::Trees::And_<const LHCb::Particle*>
-operator&& 
-( const std::string&                                 n ,
-  const Decays::iTree_<const LHCb::Particle*>& t ) { return t && n ; }
-// ============================================================================
-/** operator for the easy construction of trees 
- *  @author Vanya BELYAEV  Ivan.Belyaev@nikhef.nl
- *  @date 2008-07-07
- */
-inline Decays::Trees::And_<const LHCb::Particle*>
-operator&& 
-( const LHCb::ParticleID&                            n ,
-  const Decays::iTree_<const LHCb::Particle*>& t ) { return t && n ; }
-// ============================================================================
-/** operator for easy construction of trees 
- *  @author Vanya BELYAEV  Ivan.Belyaev@nikhef.nl
- *  @date 2008-07-07
- */
-Decays::Trees::Or_<const LHCb::Particle*>
-operator|| 
-( const Decays::iTree_<const LHCb::Particle*>& t , 
-  const Decays::iNode&                         n ) ;
-// ============================================================================
-/** operator for easy construction of trees 
- *  @author Vanya BELYAEV  Ivan.Belyaev@nikhef.nl
- *  @date 2008-07-07
- */
-Decays::Trees::Or_<const LHCb::Particle*>
-operator||
-( const Decays::iTree_<const LHCb::Particle*>& t , 
-  const Decays::Decay::Item&                           n ) ;
-// ============================================================================
-/** operator for easy construction of trees 
- *  @author Vanya BELYAEV  Ivan.Belyaev@nikhef.nl
- *  @date 2008-07-07
- */
-Decays::Trees::Or_<const LHCb::Particle*>
-operator||
-( const Decays::iTree_<const LHCb::Particle*>& t , 
-  const std::string&                                 n ) ;
-// ============================================================================
-/** operator for the easy construction of trees 
- *  @author Vanya BELYAEV  Ivan.Belyaev@nikhef.nl
- *  @date 2008-07-07
- */
-Decays::Trees::Or_<const LHCb::Particle*>
-operator||
-( const Decays::iTree_<const LHCb::Particle*>& t , 
-  const LHCb::ParticleID&                            n ) ;
-// ============================================================================
-/** operator for easy construction of trees 
- *  @author Vanya BELYAEV  Ivan.Belyaev@nikhef.nl
- *  @date 2008-07-07
- */
-inline Decays::Trees::Or_<const LHCb::Particle*>
-operator||
-( const Decays::iNode&                         n ,
-  const Decays::iTree_<const LHCb::Particle*>& t ) { return t || n ; }
-// ============================================================================
-/** operator for easy construction of trees 
- *  @author Vanya BELYAEV  Ivan.Belyaev@nikhef.nl
- *  @date 2008-07-07
- */
-inline Decays::Trees::Or_<const LHCb::Particle*>
-operator||
-( const Decays::Decay::Item&                           n ,
-  const Decays::iTree_<const LHCb::Particle*>& t ) { return t || n ; }
-// ============================================================================
-/** operator for easy construction of trees 
- *  @author Vanya BELYAEV  Ivan.Belyaev@nikhef.nl
- *  @date 2008-07-07
- */
-inline Decays::Trees::Or_<const LHCb::Particle*>
-operator||
-( const std::string&                                 n ,
-  const Decays::iTree_<const LHCb::Particle*>& t ) { return t || n ; }
-// ============================================================================
-/** operator for the easy construction of trees 
- *  @author Vanya BELYAEV  Ivan.Belyaev@nikhef.nl
- *  @date 2008-07-07
- */
-inline Decays::Trees::Or_<const LHCb::Particle*>
-operator|| 
-( const LHCb::ParticleID&                          n ,
-  const Decays::iTree_<const LHCb::Particle*>& t ) { return t || n ; }
+
+
 // ============================================================================
 // The END 
 // ============================================================================
