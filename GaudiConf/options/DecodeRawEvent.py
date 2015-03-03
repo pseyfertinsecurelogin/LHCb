@@ -1,5 +1,6 @@
 
 # Job options to configure the data on demand service for decoding the RawEvent
+print "# WARNING: You have imported DecodeRawEvent.py, there is now a configurable doing the same job. See savannah task #19106."
 
 from Gaudi.Configuration import *
 from Configurables import ( DataOnDemandSvc,
@@ -47,9 +48,10 @@ RawBankToSTLiteClusterAlg("createITLiteClusters").DetType  = "IT"
 RawBankToSTClusterAlg("createUTClusters").DetType          = "UT"
 RawBankToSTLiteClusterAlg("createUTLiteClusters").DetType  = "UT"
 
-from Configurables import STOfflinePosition
-UT = STOfflinePosition('ToolSvc.UTClusterPosition')
-UT.DetType = "UT"
+#Moved to ST/STTools/python/STTools/STOfflineConf, as with TT and IT
+#from Configurables import STOfflinePosition
+#UT = STOfflinePosition('ToolSvc.UTClusterPosition')
+#UT.DetType = "UT"
 
 DecodeVeloRawBuffer("createVeloClusters").DecodeToVeloClusters     = True
 DecodeVeloRawBuffer("createVeloClusters").DecodeToVeloLiteClusters = False

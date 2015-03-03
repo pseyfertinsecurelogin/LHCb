@@ -13,6 +13,15 @@
 !   A.Golutvin, P.Koppenburg have been used in the design.
 ! -----------------------------------------------------------------------------
 
+!========================= LoKiGen v10r13 2013-09-30 =========================
+! 2013-09-30 - Pieter David
+ - Decays::GenExclusive (and derived): make sure the cache is emptied
+   when no match is found
+
+!========================= LoKiGen v10r12p1 2013-09-30 =========================
+! 2013-09-17 - Marco Cattaneo
+ - Remove unnecessary linkopts macro from requirements
+
 !========================= LoKiGen v10r12 2013-04-29 =========================
 ! 2013-04-29 - Marco Cattaneo
  - Replace endreq by endmsg

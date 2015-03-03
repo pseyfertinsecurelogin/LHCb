@@ -4,6 +4,32 @@
 ! Purpose     : Place holder package for RawEvent decoding configurable
 !-----------------------------------------------------------------------------
 
+!========================= DAQSys v7r1 2013-09-30 =========================
+! 2013-09-19 - Rob Lambert
+ - Adding test for Calo segfault specifically. Only does the calo.
+ - Added more tests using fixed and reset event times.
+
+! 2013-09-18 - Rob Lambert
+ - Static event time for the decoding tests to avoid a problem with Calo decoding *for now*.
+
+! 2013-07-29 - Rob Lambert
+ - Resolve dependency trees, declare that the ST decoders need createODIN
+ - see task #19106
+
+! 2013-07-25 - Rob Lambert
+ - Suppress STOfflineTool configuration
+ - add tests without upgrade decoding
+ - creates a segfault!!
+
+! 2013-07-24 - Rob Lambert
+ - Minor renaming after Core soft meeting. See task #19106
+ - Adapt test for new warning in DecodeRawEvent.py
+
+! 2013-07-23 - Rob Lambert
+ - First full implementation of drop-in replacement for DecodeRawEvent.py
+ - Requires manipulators module of GaudiConf, and latest DAQ/RawEventCompat.
+ - Test suite added which demonstrates the key behaviours.
+
 !========================= DAQSys v7r0 2013-06-03 =========================
 ! 2013-05-24 - Marco Cattaneo
  - Add dependency on L0Calo, L0DU. L0Muon. RichDAQ, STDAQ, VeloDAQ

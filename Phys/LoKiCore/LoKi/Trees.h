@@ -1,4 +1,4 @@
-// $Id: Trees.h 155443 2013-04-23 10:25:48Z marcocle $
+// $Id: Trees.h 162083 2013-09-03 15:38:10Z ibelyaev $
 // ============================================================================
 #ifndef DECAYS_TREES_H
 #define DECAYS_TREES_H 1
@@ -800,7 +800,7 @@ namespace Decays
       {
         const bool result = m_tree.tree ( p ) ;
         m_tree.tree().reset () ;
-        return result ;
+        return !result ;
       }
       /// MANDATORY: the specific printout
       virtual  std::ostream& fillStream( std::ostream& s ) const

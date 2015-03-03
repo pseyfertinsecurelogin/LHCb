@@ -4,8 +4,34 @@
 ! Responsible : Diego Milanes
 !--------------------------------------------------------------------------
 
+!========================= FTDet v2r3p1 2013-09-25 =========================
+! 2013-09-25 - Diego Milanes
+ - Correct z position of FibreMat in DeFTFibreMat.cpp
+
+!========================= FTDet v2r3 2013-09-11 =========================
+! 2013-09-11 - Michel De Cian
+ - Fix for wrong z position of FibreMat in DeFTFibreMat.cpp
+
+! 2013-07-30 - Francesco Polci
+- modified a FATAL into DEBUG in DeFTDetector.cpp
+- modified DeFTTestAlg.h and .cpp to produced a ntuple for performing checks
+
+!========================= FTDet v2r2 2013-07-26 =========================
+! 2013-07-25 - Francesco Polci
+- Modified function findFibreMat in DeFTDetector.cpp to avoid returning null fibermat at the borders of the layer.
+
+!========================= FTDet v2r1 2013-07-24 =========================
+! 2013-12-24 - Diego Milanes
+- bug fix. Inverted of U-V stereo angles, which causing Sipm for those layers to be shifted wrt those in X layers
+
+! 2013-12-23 - Diego Milanes
+-Changes odd behaviour on getting local coordinates on the layer construction from a FibreMat
+
+! 2012-12-20 - Diego Milanes
+-Changes in main classes to cope with errors at the level reconstruction, associated to th new geometry. 
+
 !========================= FTDet v2r0 2013-07-17 =========================
-! 2013-07-12 - Diego Milanes 
+! 2013-07-12 - Diego Milanes
 - Adaptation of the code to new geometry. DRASTIC CHANGES! Detector with more granularity
   and therefore more detailed description implemented. Full set of new classes to describe 
   new detector elements in the database. Backward compatibility intended to be able to run on

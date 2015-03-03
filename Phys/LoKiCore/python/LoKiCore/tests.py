@@ -2,7 +2,7 @@
 # =============================================================================
 # $Id: tests.py 86706 2010-09-27 12:48:42Z ibelyaev $
 # =============================================================================
-# $URL: http://svn.cern.ch/guest/lhcb/LHCb/tags/Phys/LoKiCore/v11r13/python/LoKiCore/tests.py $
+# $URL: http://svn.cern.ch/guest/lhcb/LHCb/tags/Phys/LoKiCore/v11r15/python/LoKiCore/tests.py $
 # =============================================================================
 ## @file   LoKiCore/tests.py
 #

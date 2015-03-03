@@ -14,6 +14,15 @@
 !
 ! -----------------------------------------------------------------------------
 
+!========================= LoKiMC v10r9 2013-09-30 =========================
+! 2013-09-30 - Pieter David
+ - Decays::MCExclusive (and derived): make sure the cache is emptied
+   when no match is found
+
+!========================= LoKiMC v10r8p2 2013-09-30 =========================
+! 2013-09-17 - Marco Cattaneo
+ - Remove unnecessary linkopts macro from requirements
+
 !========================= LoKiMC v10r8p1 2013-06-03 =======================
 ! 2013-05-26 - Marco Cattaneo
  - Fix trivial gcc48 warning

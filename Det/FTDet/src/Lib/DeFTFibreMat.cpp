@@ -1,10 +1,15 @@
 // $Id: $
+#include <boost/lexical_cast.hpp>
 
 // DetDesc
 #include "DetDesc/SolidSubtraction.h"
 #include "DetDesc/SolidChild.h"
 #include "DetDesc/SolidBox.h"
 #include "DetDesc/SolidCons.h"
+
+// Smartrefs
+#include "GaudiKernel/SmartDataPtr.h"
+#include "GaudiKernel/ISvcLocator.h"
 
 // Gaudi/LHCb Math
 #include "GaudiKernel/Plane3DTypes.h"
@@ -16,6 +21,7 @@
 
 // FTDet
 #include "FTDet/DeFTFibreMat.h"
+
 
 /** @file DeFTFibreMat.cpp
  *
@@ -178,15 +184,18 @@ StatusCode DeFTFibreMat::initialize(){
 
   Gaudi::XYZPoint fibreMatCenter = this->geometry()->toGlobal( Gaudi::XYZPoint(0.,0.,0.) );
 
-  m_fibreMatMinX =  fibreMatCenter.x() - m_fibreMatHalfSizeX; 
-  m_fibreMatMaxX =  fibreMatCenter.x() + m_fibreMatHalfSizeX; 
-  m_fibreMatMinY =  fibreMatCenter.y() - m_fibreMatHalfSizeY; 
-  m_fibreMatMaxY =  fibreMatCenter.y() + m_fibreMatHalfSizeY; 
-  m_fibreMatMinZ =  fibreMatCenter.z() - m_fibreMatHalfSizeZ; 
-  m_fibreMatMaxZ =  fibreMatCenter.z() + m_fibreMatHalfSizeZ; 
-  m_layerPosZ  = fibreMatCenter.z();
+  m_fibreMatMinX = fibreMatCenter.x() - m_fibreMatHalfSizeX; 
+  m_fibreMatMaxX = fibreMatCenter.x() + m_fibreMatHalfSizeX; 
+  m_fibreMatMinY = fibreMatCenter.y() - m_fibreMatHalfSizeY; 
+  m_fibreMatMaxY = fibreMatCenter.y() + m_fibreMatHalfSizeY; 
+  m_fibreMatMinZ = fibreMatCenter.z() - m_fibreMatHalfSizeZ; 
+  m_fibreMatMaxZ = fibreMatCenter.z() + m_fibreMatHalfSizeZ; 
+  m_layerPosZ = fibreMatCenter.z();
 
-  double CarHoneyKapWidth = 0.15 + 20 + 0.05;
+  
+    
+
+  double CarHoneyKapWidth = 0.15 + 20. + 0.05;
 
   m_sipmPitchX    = m_sipmSizeX + 2*m_sipmEdgeSizeX;
   m_layerHalfSizeX =  12.*( m_fibreMatHalfSizeX + m_moduleEdgeSizeX );
@@ -207,6 +216,8 @@ StatusCode DeFTFibreMat::initialize(){
   Gaudi::XYZPoint tmpGlobPoint1 = this->geometry()->toGlobal( tmpLocPoint1 );
   Gaudi::XYZPoint tmpGlobPoint2 = this->geometry()->toGlobal( tmpLocPoint2 );
   m_dzDy = (tmpGlobPoint2.z() - tmpGlobPoint1.z()) / (tmpGlobPoint2.y() - tmpGlobPoint1.y());
+
+  debug() << "mdzdy = " << m_dzDy << endmsg; 
 
   /*
   debug() << "Derived parameters:"
@@ -265,13 +276,36 @@ StatusCode DeFTFibreMat::calculateHits(const LHCb::MCHit*  fthit,
                                     VectFTPairs&         vectChanAndEnergy) const
 {
 
-  Gaudi::XYZPoint enP = this->geometry()->toLocal(fthit->entry());
-  Gaudi::XYZPoint exP = this->geometry()->toLocal(fthit->exit());
+
+  /*
+  //local coord option 1, depending on u, v angles it might generate troubles
+  double entryX = fthit->entry().x();
+  double entryY = fthit->entry().y();
+  double exitX = fthit->exit().x();
+  double exitY = fthit->exit().y();
+  Gaudi::XYZPoint enP( cos(-m_angle)*entryX+sin(-m_angle)*entryY, -sin(-m_angle)*entryX+cos(-m_angle)*entryY, fthit->entry().z() );
+  Gaudi::XYZPoint exP( cos(-m_angle)*exitX+sin(-m_angle)*exitY  , -sin(-m_angle)*exitX+cos(-m_angle)*exitY  , fthit->exit().z() );
+  */
+
+  
+  //local coord option 2 -- stable
+  std::string station = 
+    ( m_layer >= 0 && m_layer <= 3  )? "T1" : 
+    ( m_layer >= 4 && m_layer <= 7  )? "T2" : 
+    ( m_layer >= 8 && m_layer <= 11 )? "T3" : ""; 
+  std::string loc = "/dd/Structure/LHCb/AfterMagnetRegion/T/FT/" + station + "/MonoLayer" + boost::lexical_cast<std::string>( m_layer );
+  SmartDataPtr<DetectorElement> layer ( dataSvc(), loc.c_str() );
+  Gaudi::XYZPoint enP = layer -> geometry() -> toLocal( fthit -> entry() );
+  Gaudi::XYZPoint exP = layer -> geometry() -> toLocal( fthit -> exit()  );
+  
+  //returns local hit points wrt fibremat
+  //Gaudi::XYZPoint enP = this->geometry()->toLocal(fthit->entry());
+  //Gaudi::XYZPoint exP = this->geometry()->toLocal(fthit->exit());
   
   debug() << "Entry Point in Global / Local: " << fthit->entry() << enP << endmsg;
   debug() << "Exit  Point in Global / Local: " << fthit->exit() << exP << endmsg;
 
-  unsigned int hitLayer = this->FibreMatID();
+  unsigned int hitLayer = this->layer();
   debug() << "LayerID = " << hitLayer
           << ", Stereo angle = " << this->angle() << endmsg;
 
@@ -628,7 +662,7 @@ FTChannelID DeFTFibreMat::createChannel(unsigned int hitLayer,
   /// Create and push_back the corresponding FT pair
   if ( netCellID > (m_sipmNChannels-1) ) {
     debug() << "Gross cellID " << grossCellID << " corresponds to insensitive cell."
-            << " Creating invalid FT channel (the signature is: FibreMatID=15)." << endmsg;
+            << " Creating invalid FT channel (the signature is: layer=15)." << endmsg;
     channel = FTChannelID( 15, 0, 0, 0 );
   }
   else {
@@ -696,16 +730,16 @@ double DeFTFibreMat::cellUCoordinate(const FTChannelID& channel) const {
 // the cell u-coordinate and quarterID.
 //=============================================================================
 void DeFTFibreMat::cellIDCoordinates( const double  uCoord,
-                                   unsigned int  quarter,
-                                   unsigned int& sipmID,
-                                   unsigned int& cellID,
-                                   double&       fracDistCellCenter ) const
+				      unsigned int  quarter,
+				      unsigned int& sipmID,
+				      unsigned int& cellID,
+				      double&       fracDistCellCenter ) const
 {
   /// Get sipmID and local position of its right edge
 	sipmID = (unsigned int) ((uCoord - m_sipmOriginX[quarter]) / m_sipmStepX[quarter]);
 	double sipmREdgeU = m_sipmOriginX[quarter] + (sipmID + !(quarter%2)) * m_sipmStepX[quarter];
-  debug() << "quarter, sipmID, sipmREdgeU = "
-          << quarter << ", "<< sipmID << ", " << sipmREdgeU << endmsg;
+	debug() << "quarter, sipmID, sipmREdgeU = "
+		<< quarter << ", "<< sipmID << ", " << sipmREdgeU << endmsg;
   
   /// Get cellID inside the SiPM
   double distSipmREdge = uCoord - sipmREdgeU;
@@ -805,16 +839,27 @@ DetectorSegment DeFTFibreMat::createDetSegment(const FTChannelID& channel,
   /// the fibres are shorter
   
   double ds_yMin, ds_yMax;
+  double z;
   if ( channel.quarter()>1 ) {
     ds_yMin = 0.;
     ds_yMax = m_layerMaxY;
+    z = m_layerPosZ - m_dzDy* (0.5*m_moduleGapH+m_fibreMatHalfSizeY)*cos(m_angle)/sqrt(1.+m_dzDy*m_dzDy);
+    //z = m_layerPosZ - m_dzDy* (0.5*m_moduleGapH+m_fibreMatHalfSizeY);
   }
   else{
     ds_yMin = m_layerMinY;
     ds_yMax = 0.;
+    //z = m_layerPosZ + m_dzDy* (0.5*m_moduleGapH+m_fibreMatHalfSizeY);
+    z = m_layerPosZ + m_dzDy* (0.5*m_moduleGapH+m_fibreMatHalfSizeY)*cos(m_angle)/sqrt(1.+m_dzDy*m_dzDy);
   }
 
-  return DetectorSegment( segmentU, m_layerPosZ, m_tanAngle, m_dzDy, ds_yMin, ds_yMax );
+  
+ 
+  
+  
+
+  //return DetectorSegment( segmentU, m_layerPosZ, m_tanAngle, m_dzDy, ds_yMin, ds_yMax );
+  return DetectorSegment( segmentU, z, m_tanAngle, m_dzDy, ds_yMin, ds_yMax );
 }
 
 //=============================================================================

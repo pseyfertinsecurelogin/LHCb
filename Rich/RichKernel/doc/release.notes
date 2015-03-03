@@ -4,6 +4,10 @@
 ! Purpose     : General purpose RICH classes
 !------------------------------------------------------------------------------
 
+!========================= RichKernel v7r54p1 2013-09-30 =========================
+! 2013-07-19 - Marco Clemencic
+ - Fixed CMake configuration.
+
 !========================= RichKernel v7r54 2013-07-18 =========================
 ! 2013-07-17 - Marco Clemencic
  - Minor change to CMake configuration.

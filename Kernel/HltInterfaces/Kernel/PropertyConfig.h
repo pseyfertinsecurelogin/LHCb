@@ -21,7 +21,6 @@ public:
     typedef std::pair<std::string,std::string> Prop;
     typedef std::vector<Prop> Properties;
 
-
     PropertyConfig() {} ;
 
     PropertyConfig(const std::string& name, const IProperty& obj, const std::string& kind)
@@ -46,13 +45,6 @@ public:
       , m_digest(digest_type::createInvalid())
     { }
 
-    PropertyConfig(const PropertyConfig& orig )
-        : m_properties( orig.m_properties)
-        , m_type( orig.m_type )
-        , m_name( orig.m_name )
-        , m_kind( orig.m_kind )
-        , m_digest( digest_type::createInvalid())
-    { }
     PropertyConfig(const PropertyConfig& orig, const Properties& properties)
         : m_properties( properties )
         , m_type( orig.m_type )
@@ -62,10 +54,11 @@ public:
     { }
 
     bool operator==(const PropertyConfig& rhs) const { 
-        return m_type == rhs.m_type 
-            && m_name == rhs.m_name 
-            && m_kind == rhs.m_kind 
-            && m_properties == rhs.m_properties;
+        return digest() != digest_type::createInvalid() ? digest() == rhs.digest()
+                             : ( m_type == rhs.m_type 
+                              && m_name == rhs.m_name 
+                              && m_kind == rhs.m_kind 
+                              && m_properties == rhs.m_properties );
     }
 
     const std::string& name() const    { return m_name;}
@@ -83,6 +76,7 @@ public:
     template <typename T>
     PropertyConfig copyAndModify(T begin, T end) const { PropertyConfig ret(*this); while (begin!=end) ret=ret.copyAndModify(*begin++); return ret;}
 
+    std::ostream& print_json(std::ostream& os) const;
     std::ostream& print(std::ostream& os) const;
     std::istream& read(std::istream& is);
 

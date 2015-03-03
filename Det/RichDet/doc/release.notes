@@ -4,6 +4,18 @@
 ! Purpose     : Interface to the xml description
 !-----------------------------------------------------------------------------
 
+!========================= RichDet v16r19 2013-09-30 =========================
+! 2013-09-27 - Chris Jones
+ - Miscelleanous clean up of the last commit.
+
+! 2013-09-27 - Sajan Easo
+ - Adaptation for using large PMTS in RICH2. Modified DeRich, DeRichPMT, 
+   DeRichPMTPanel.
+ - Fix some compilation warnings.
+
+! 2013-07-19 - Sajan Easo
+ - Minor fix in DeRichPMTPanel.cpp to avoid compilation warnings in some platforms
+
 !========================= RichDet v16r18 2013-07-17 =========================
 ! 2013-07-17 - Chris Jones
  - Updated use of the VDT library, to use vdt::fast_sincos to compute both

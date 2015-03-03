@@ -1,7 +1,7 @@
 ################################################################################
 # Package: LHCbSys
 ################################################################################
-gaudi_subdir(LHCbSys v36r1)
+gaudi_subdir(LHCbSys v36r2)
 
 gaudi_depends_on_subdirs(Associators/MCAssociators
                          Calo/CaloDAQ
@@ -57,10 +57,13 @@ gaudi_depends_on_subdirs(Associators/MCAssociators
                          Ex/DetCondExample
                          Ex/DetDescExample
                          Ex/IOExample
+                         FT/FTDAQ
                          GaudiConf
                          GaudiConfUtils
                          GaudiMTTools
                          GaudiObjDesc
+                         Hlt/HltDAQ
+                         Hlt/HltServices
                          Kernel/FSRAlgs
                          Kernel/HltInterfaces
                          Kernel/KernelSys
@@ -99,7 +102,9 @@ gaudi_depends_on_subdirs(Associators/MCAssociators
 			 Tools/EventIndexer
                          Tools/FileStager
                          Tools/XmlTools
-			 Velo/VeloDAQ)
+			 Velo/VeloDAQ
+			 VL/VLDAQ
+			 VP/VPDAQ)
 
 
 gaudi_add_test(QMTest QMTEST)

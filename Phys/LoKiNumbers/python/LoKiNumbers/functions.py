@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # =============================================================================
-# $Id: functions.py 130710 2011-10-30 18:35:44Z ibelyaev $ 
+# $Id: functions.py 162387 2013-09-17 05:53:34Z cattanem $ 
 # =============================================================================
 ## @file LoKiNumbers/functions.py
 #  The full set of useful objects from LoKiNumbers library 
@@ -13,15 +13,11 @@
 #  contributions and advices from G.Raven, J.van Tilburg, 
 #  A.Golutvin, P.Koppenburg have been used in the design.
 #
-#  By usage of this code one clearly states the disagreement 
-#  with the smear campaign of Dr.O.Callot et al.: 
-#  ``No Vanya's lines are allowed in LHCb/Gaudi software.''
-#
 #  @author Vanya BELYAEV ibelyaev@physics.syr.edu
 #
-# $Revision: 130710 $
-# Last modification $Date: 2011-10-30 19:35:44 +0100 (Sun, 30 Oct 2011) $
-#                by $Author: ibelyaev $ 
+# $Revision: 162387 $
+# Last modification $Date: 2013-09-17 07:53:34 +0200 (Tue, 17 Sep 2013) $
+#                by $Author: cattanem $ 
 # =============================================================================
 """
 Few useful objects from LoKiNumbers library
@@ -34,20 +30,15 @@ Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas,
 contributions and advices from G.Raven, J.van Tilburg, 
 A.Golutvin, P.Koppenburg have been used in the design.
 
-By usage of this code one clearly states the disagreement 
-with the campain of Dr.O.Callot et al.:
- ``No Vanya's lines are allowed in LHCb/Gaudi software.''
-
-
- $Revision: 130710 $
- Last modification $Date: 2011-10-30 19:35:44 +0100 (Sun, 30 Oct 2011) $
-                by $Author: ibelyaev $ 
+ $Revision: 162387 $
+ Last modification $Date: 2013-09-17 07:53:34 +0200 (Tue, 17 Sep 2013) $
+                by $Author: cattanem $ 
 
 """
 # =============================================================================
 __author__  = "Vanya BELYAEV ibelyaev@physics.syr.edu"
 __date__    = ' xxxx-xx-xx '
-__version__ = " version $Revision: 130710 $ " 
+__version__ = " version $Revision: 162387 $ " 
 # =============================================================================
 
 # Namespaces:
