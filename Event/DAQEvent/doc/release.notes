@@ -4,6 +4,23 @@
 !Purpose: Define the classes delivered to the online farm by the DAQ
 !-----------------------------------------------------------------------------
 
+!================ DAQEvent v9r0 2010-01-20 ===================================
+! 2010-01-15 - Marcin Kucharczyk
+ - Add VeloPix RawBank type to RawBank.h and RawBank.cpp
+
+! 2010-01-13 - Marco Cattaneo
+ - Major strip down of package. Component library and tests removed, split
+   between new DAQ/DAQUtils (including helpers) and DAQ/DAQMonitors packages
+   See Savannah task 13031
+
+! 2010-01-11 - Marco Cattaneo
+ - Change bankKiller to always() print banks to remove at initialize(), allows
+   to keep this message while suppressing warnings and errors about missing
+   banks using OutputLevel.
+
+! 2010-01-07 - Markus Frank
+ - Fix bug in RawEvent.h, which prevented the removal of banks for MDF files.
+
 !================ DAQEvent v8r2 2009-11-13 ===================================
 ! 2009-11-06 - Marco Clemencic
  - Modified ODIN.xml with the new trigger types valid since version 6 of the bank

@@ -1,4 +1,4 @@
-// $Id: L0DUElementaryData.cpp,v 1.7 2008-09-26 13:30:22 odescham Exp $
+// $Id: L0DUElementaryData.cpp,v 1.11 2010-01-22 09:12:42 odescham Exp $
 // Include files 
 #include <utility>
 #include <string>
@@ -23,7 +23,9 @@ v_operands){
   // 2 dimensional operator (+,-)
   if(2 == v_operands.size() ){
     if( "+" == v_operator ){digit = v_operands[0] + v_operands[1] ;}
-    if( "-" == v_operator ){digit = v_operands[0] - v_operands[1] ;}
+    if( "-" == v_operator ){
+	digit = ( v_operands[0] > v_operands[1]) ? v_operands[0] - v_operands[1] : 0;
+    } 
     if( "&" == v_operator ){digit = v_operands[0] & v_operands[1] ;}
     if( "^" == v_operator ){digit = v_operands[0] ^ v_operands[1] ;}
   }
@@ -35,11 +37,11 @@ v_operands){
 
 
 std::string LHCb::L0DUElementaryData::summary(){
-  std::stringstream s(" ");
-  std::stringstream ss(" ");
+  std::ostringstream s(" ");
+  std::ostringstream ss(" ");
   if(m_operator != "Id")
     ss << " = op[" << m_operator << "](" << operandsName() << ")";
-  std::stringstream sss(" ");
+  std::ostringstream sss(" ");
   if( scale() != 1.)sss<< "  ( => " << value() << " MeV) " ;
   s << " [ " << m_name << ss.str() << "  : " <<  digit() << sss.str() << " ] ";
   return s.str();
@@ -47,8 +49,8 @@ std::string LHCb::L0DUElementaryData::summary(){
 
 
 std::string LHCb::L0DUElementaryData::description(){
-  std::stringstream s(" ");
-  std::stringstream ss(" ");
+  std::ostringstream s(" ");
+  std::ostringstream ss(" ");
   if(m_operator != "Id")ss << " = [" << m_operator << "](" << m_operandsName << ")" ;
   s << "[ " << m_name << " " << ss.str() << "] ";
   return s.str();

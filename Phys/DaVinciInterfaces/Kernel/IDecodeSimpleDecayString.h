@@ -1,4 +1,4 @@
-// $Id: IDecodeSimpleDecayString.h,v 1.3 2009-08-17 08:04:22 jpalac Exp $
+// $Id: IDecodeSimpleDecayString.h,v 1.5 2010-01-14 08:00:24 pkoppenb Exp $
 // ============================================================================
 #ifndef KERNEL_IDECODESIMPLEDECAYSTRING_H 
 #define KERNEL_IDECODESIMPLEDECAYSTRING_H 1

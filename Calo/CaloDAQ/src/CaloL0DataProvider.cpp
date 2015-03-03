@@ -444,23 +444,27 @@ bool CaloL0DataProvider::decodePrsTriggerBank( LHCb::RawBank* bank ) {
         }
         
 
-
-        if ( "Spd" == m_detectorName) {
-          LHCb::CaloCellID id ( spdId );   // SPD
-          LHCb::L0CaloAdc temp( id, (item & 2) );
-          m_adcs.addEntry( temp, id );
-        }
-        else {
-          LHCb::L0CaloAdc temp( prsId, (item & 1));
-          m_adcs.addEntry( temp, prsId );
+        if( 0 != spdId ){
+          if ( "Spd" == m_detectorName) {
+            if( (item&2) != 0 ){
+              LHCb::CaloCellID id ( spdId );   // SPD
+              LHCb::L0CaloAdc temp( id, 1 );
+              m_adcs.addEntry( temp, id );
+            } 
+          }
+          else {
+            if( (item&1) != 0 ){
+              LHCb::L0CaloAdc temp( prsId, 1 );
+              m_adcs.addEntry( temp, prsId );
+            }
+          }
         }
       }
       ++data;
       --size;
-    }
+    }  
     //==== Codage for 1 MHz
-  } else if ( 3 == version ) {
-
+  } else if ( 3 == version ) {  
     // Get the FE-Cards associated to that bank (via condDB)
     std::vector<int> feCards = m_calo->tell1ToCards( sourceID );
     int nCards = feCards.size();

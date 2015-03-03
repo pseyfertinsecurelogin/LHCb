@@ -178,19 +178,21 @@ CHI2MM    = LoKi.Particles.DeltaMeasuredMassChi2
 ## @see LoKi::Cuts::CHI2MMASS
 CHI2MMASS = CHI2MM
 ## @see LoKi::Cuts::CL  
-CL       = LoKi.Particles.ConfidenceLevel  () 
+CL       = LoKi.Particles.ConfidenceLevel   () 
 ## @see LoKi::Cuts::WEIGHT
-WEIGHT   = LoKi.Particles.Weight           () 
+WEIGHT   = LoKi.Particles.Weight            () 
 ## @see LoKi::Cuts::ISBASIC 
-ISBASIC  = LoKi.Particles.IsBasic          () 
+ISBASIC  = LoKi.Particles.IsBasic           () 
 ## @see LoKi::Cuts::ISMUON
-ISMUON   = LoKi.Particles.IsMuon           ()
+ISMUON   = LoKi.Particles.IsMuon            ()
 ## @see LoKi::Cuts::ISMUONLOOSE
-ISMUONLOOSE = LoKi.Particles.IsMuonLoose   ()
+ISMUONLOOSE = LoKi.Particles.IsMuonLoose    ()
 ## @see LoKi::Cuts::ISLOOSEMUON
-ISLOOSEMUON = LoKi.Particles.IsMuonLoose   ()
+ISLOOSEMUON = LoKi.Particles.IsMuonLoose    ()
+## @see LoKi::Cuts::INMUON
+INMUON   = LoKi.Particles.InMuonAcceptance  ()
 ## @see LoKi::Cuts::NDAUGS  
-NDAUGS   = LoKi.Particles.NumberOfDaughters() 
+NDAUGS   = LoKi.Particles.NumberOfDaughters () 
 ## @see LoKi::Cuts::HASINFO
 HASINFO  = LoKi.Particles.HasInfo
 ## @see LoKi::Cuts::INFO
@@ -404,6 +406,12 @@ QPT      = LoKi.Particles.TransverseMomentumQ
 QPT1     = LoKi.Particles.TransverseMomentumQ ( 1 ) 
 ## @see LoKi::Cuts::QPT2
 QPT2     = LoKi.Particles.TransverseMomentumQ ( 2 ) 
+
+
+## @see LoKi::Cuts::Y
+Y        = LoKi.Particles.Rapidity  ()
+## @see LoKi::Cuts::Y0
+Y0       = LoKi.Particles.Rapidity0 ()
 
 
 # cosine of the decay  angle
@@ -632,7 +640,26 @@ MASSFIT       = LoKi.Particles.MassFitter
 # =============================================================================
 ## @see LoKi::Cuts::BPVDVDOCA
 BPVDVDOCA     = LoKi.Particles.DHCoplanarity
- 
+
+# =============================================================================
+##
+# =============================================================================
+
+## @see LoKi::Cuts::DECNODE 
+DECNODE = LoKi.Particles.DecNode 
+### @see LoKi::Cuts::DECTREE
+#DECTREE = LoKi.Particles.DecTree
+## 
+## charged lepton:
+import PartProp.Nodes 
+PELL    = DECNODE ( PartProp.Nodes.Ell    , True )
+PLEPTON = DECNODE ( PartProp.Nodes.Lepton , True )
+PHADRON = DECNODE ( PartProp.Nodes.Hadron , True )
+PMESON  = DECNODE ( PartProp.Nodes.Meson  , True )
+PBARYON = DECNODE ( PartProp.Nodes.Baryon , True )
+PBEAUTY = DECNODE ( PartProp.Nodes.Beauty , True )
+PCHARM  = DECNODE ( PartProp.Nodes.Charm  , True )
+
 
 # vertex separation (for particles) with respect to *all* vertices
 

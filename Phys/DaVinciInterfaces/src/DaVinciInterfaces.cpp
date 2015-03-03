@@ -1,4 +1,4 @@
-// $Id: DaVinciInterfaces.cpp,v 1.1 2009-08-17 08:03:29 jpalac Exp $
+// $Id: DaVinciInterfaces.cpp,v 1.3 2010-01-14 08:10:03 pkoppenb Exp $
 // ============================================================================
 // Include files 
 // ============================================================================
@@ -10,6 +10,7 @@
 // ============================================================================
 #include "Kernel/IParticleReFitter.h"
 #include "Kernel/IParticleCombiner.h"
+#include "Kernel/IDecodeSimpleDecayString.h"
 #include "Kernel/IDirectionFit.h"
 #include "Kernel/IVertexFit.h"
 #include "Kernel/IMassFit.h"
@@ -19,7 +20,7 @@
 #include "Kernel/ISetInputParticles.h"
 #include "Kernel/IPrintDecay.h"
 #include "Kernel/ICheckSelResults.h"
-#include "Kernel/IDecodeSimpleDecayString.h"
+
 // ============================================================================
 /** @file
  *  Implementation file for class doem interfaces from 
@@ -42,7 +43,6 @@ ISetInputParticles       :: ~ISetInputParticles       () {}
 IPrintDecay              :: ~IPrintDecay              () {}
 ICheckSelResults         :: ~ICheckSelResults         () {}
 IDecodeSimpleDecayString :: ~IDecodeSimpleDecayString () {}
-
 
 // ============================================================================
 // The END 

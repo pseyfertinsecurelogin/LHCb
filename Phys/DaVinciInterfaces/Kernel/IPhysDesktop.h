@@ -1,4 +1,4 @@
-// $Id: IPhysDesktop.h,v 1.8 2009-11-11 08:54:54 jpalac Exp $
+// $Id: IPhysDesktop.h,v 1.13 2010-01-15 09:34:21 jpalac Exp $
 #ifndef DAVINCIKERNEL_IPHYSDESKTOP_H 
 #define DAVINCIKERNEL_IPHYSDESKTOP_H 1
 
@@ -90,8 +90,8 @@ public:
   virtual const LHCb::Particle::ConstVector& particles() const = 0;
 
   /// Retrieve the PVs from the TES
+  /// Deprecated
   virtual const LHCb::RecVertex::Container* primaryVertices() const = 0;
-
   /// Retrieve the local secondary vertex container
   virtual const LHCb::Vertex::ConstVector& secondaryVertices() const = 0;
 
@@ -147,7 +147,9 @@ public:
 
   /// Get the vertex with the highest weight in the association
   /// between LHCb::Particle and LHCb::VertexBase
+  /// Deprecated!
   virtual const LHCb::VertexBase* relatedVertex(const LHCb::Particle* part) const = 0;
+
 
   /// Establish a relation between an LHCb::Particle and an LHCb::VertexBase
   virtual void relate(const LHCb::Particle* part, 

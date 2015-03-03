@@ -1,4 +1,4 @@
-// $Id: DaVinciInterfacesDict.h,v 1.5 2009-11-10 12:54:14 cocov Exp $
+// $Id: DaVinciInterfacesDict.h,v 1.8 2010-01-14 08:00:24 pkoppenb Exp $
 #ifndef DICT_DAVINCIINTERFACESDICT_H 
 #define DICT_DAVINCIINTERFACESDICT_H 1
 
@@ -13,20 +13,18 @@
 // ============================================================================
 // DaVinciKernel
 // ============================================================================
-#include "Kernel/IBestParticles.h"
 #include "Kernel/IBremAdder.h"
 #include "Kernel/IBTaggingTool.h"
 #include "Kernel/ICaloParticleMaker.h"
 #include "Kernel/IChangePIDTool.h"
 #include "Kernel/ICheckOverlap.h"
 #include "Kernel/ICheckSelResults.h"
-#include "Kernel/IContextTool.h"
 #include "Kernel/IDecayFinder.h"
-#include "Kernel/IDecodeSimpleDecayString.h"
 #include "Kernel/IDirectionFit.h"
+#include "Kernel/IDecodeSimpleDecayString.h"
 #include "Kernel/IDistanceCalculator.h"
+#include "Kernel/IDVAlgorithm.h"
 #include "Kernel/IEventTupleTool.h"
-#include "Kernel/IFilterCriteriaTESTool.h"
 #include "Kernel/IFilterCriterion.h"
 #include "Kernel/IFilterParticles.h"
 #include "Kernel/IGeomDispCalculator.h"

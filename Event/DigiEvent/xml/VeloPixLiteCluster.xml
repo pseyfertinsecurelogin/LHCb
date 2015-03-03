@@ -5,6 +5,8 @@
 <!DOCTYPE gdd SYSTEM "gdd.dtd">
 <gdd>
 
+<!--- IF YOU PLAN TO MODIFY THE BITFIELD, PLEASE READ CAREFULLY THE FINAL COMMENT -->
+
 <package name="DigiEvent">
     <class name="VeloPixLiteCluster" 
      author="V. Coco" 
@@ -28,10 +30,6 @@
        def = "VeloPixLiteClusters"
        access = "PUBLIC " />
 
-     <typedef desc = "fast container for light clusters (old name: will be removed)"
-       type =  "FastClusterContainer &lt; LHCb::VeloPixLiteCluster, ulonglong &gt;"
-       def = "FastContainer"
-       access = "PUBLIC " />
 
      <typedef desc = "finding policy"
        type =  "SiDataFunctor::CompareByChannel &lt; LHCb::VeloPixLiteCluster&gt;"
@@ -119,7 +117,7 @@ return  double(fractionUnitsX())/double((1 &lt;&lt;( interPixelFractionYBits-int
       desc="clustToT of the cluster"
       const="TRUE">
      <code>
-return (unsigned int)((m_liteCluster &amp;clustToTMask ) &gt;&gt; clustToTBits );
+return (unsigned int)((m_liteCluster &amp;0x70000000LL ) &gt;&gt; clustToTBits );
      </code>
      </method>
 
@@ -141,7 +139,7 @@ return  double(fractionUnitsY())/double((1 &lt;&lt;( interPixelFractionYBits-int
       desc="is it an long pixel"
       const="TRUE">
      <code>
-  return (((m_liteCluster &amp; longPixMask) &gt;&gt; longPixBits) == 1);
+  return (((m_liteCluster &amp; (ulonglong)0x80000000LL) &gt;&gt; longPixBits) == 1);
      </code>
      </method>
 
@@ -153,7 +151,7 @@ return  double(fractionUnitsY())/double((1 &lt;&lt;( interPixelFractionYBits-int
       const="TRUE"
       >
       <code> 
-std::pair&lt;unsigned int,unsigned int&gt; fracUnit ((unsigned int)((m_liteCluster &amp; interPixelFractionXMask) &gt;&gt; interPixelFractionXBits),(unsigned int)((m_liteCluster &amp; interPixelFractionYMask) &gt;&gt; interPixelFractionYBits)); 
+std::pair&lt;unsigned int,unsigned int&gt; fracUnit ((unsigned int)((m_liteCluster &amp; (ulonglong)0x700000000LL) &gt;&gt; interPixelFractionXBits),(unsigned int)((m_liteCluster &amp; (ulonglong)0x3800000000LL) &gt;&gt; interPixelFractionYBits)); 
 return fracUnit;
      </code>
      </method>
@@ -167,7 +165,7 @@ return fracUnit;
       >
       <code> 
 
-return (unsigned int)((m_liteCluster &amp; interPixelFractionXMask) &gt;&gt; interPixelFractionXBits);
+return (unsigned int)((m_liteCluster &amp; (ulonglong)0x700000000LL) &gt;&gt; interPixelFractionXBits);
      </code>
      </method>
 
@@ -180,7 +178,7 @@ return (unsigned int)((m_liteCluster &amp; interPixelFractionXMask) &gt;&gt; int
       >
       <code> 
 
-return (unsigned int)((m_liteCluster &amp; interPixelFractionYMask) &gt;&gt; interPixelFractionYBits);
+return (unsigned int)((m_liteCluster &amp; (ulonglong)0x3800000000LL) &gt;&gt; interPixelFractionYBits);
      </code>
      </method>
 
@@ -191,28 +189,45 @@ return (unsigned int)((m_liteCluster &amp; interPixelFractionYMask) &gt;&gt; int
       desc="The Channel"
       const="TRUE"
       >
-      <code> return VeloPixChannelID((unsigned int)((m_liteCluster &amp; channelIDMask) &gt;&gt; channelIDBits)); 
+      <code> return VeloPixChannelID((unsigned int)((m_liteCluster &amp; 0xfffffffLL) &gt;&gt; channelIDBits)); 
      </code>
      </method>
 
 
-     <attribute type='ulonglong' name='liteCluster' setMeth="FALSE" getMeth="FALSE" desc='the lite Cluster'/>
+     <attribute type='ulonglong' name='liteCluster' setMeth="FALSE" getMeth="FALSE" desc='the lite Cluster' init='0x0LL'/>
 
      <enum name='liteClusterBits' desc='position of the first bit of a given field'>
        <enumval name = 'channelIDBits' value = '0' desc='the channelID field 1st bit position'/>
        <enumval name = 'clustToTBits' value = '28' desc='the clustToT field 1st bit position'/>
-       <enumval name = 'longPixBits' value = '31' desc='the longPixMask field 1st bit position'/>
-       <enumval name = 'interPixelFractionXBits' value = '32' desc='the interPixelFractionXMask field 1st bit position'/>
-       <enumval name = 'interPixelFractionYBits' value = '35' desc='the interPixelFractionYMask field 1st bit position'/>
-     </enum>    
+       <enumval name = 'longPixBits' value = '31' desc='the longPix field 1st bit position'/>
+       <enumval name = 'interPixelFractionXBits' value = '32' desc='the interPixelFractionX field 1st bit position'/>
+       <enumval name = 'interPixelFractionYBits' value = '35' desc='the interPixelFractionY field 1st bit position'/>
+     </enum>  
 
-     <enum name='liteClusterMask' desc='the given field mask'>
-       <enumval name = 'channelIDMask' value = '0xfffffffLL' desc='the channelID field mask'/>
-       <enumval name = 'clustToTMask' value = '0x70000000LL' desc='the clustToTMask field mask'/>
-       <enumval name = 'longPixMask' value = '0x80000000LL' desc='the longPixMask field mask'/>
-       <enumval name = 'interPixelFractionXMask' value = '0x700000000LL' desc='the interPixelFractionXMask field mask'/>
-       <enumval name = 'interPixelFractionYMask' value = '0x3800000000LL' desc='the interPixelFractionYMask field mask'/>
-     </enum>        
+<!--- First attempt was using enum also for filed mask, BUT this creates some warning (and probably errors) under win32 -->
+<!--- Since it does not recognise 64bits interger as underlying type (seams to be a known feature of win32 compiler)    -->
+
+<!--- #     <enum name='liteClusterMask' desc='the given field mask'> -->
+<!--- #       <enumval name = 'channelIDMask' value = '0xfffffffLL' desc='the channelID field mask'/> -->
+<!--- #       <enumval name = 'clustToTMask' value = '0x70000000LL' desc='the clustToTMask field mask'/> -->
+<!--- #       <enumval name = 'longPixMask' value = '0x80000000LL' desc='the longPixMask field mask'/> -->
+<!--- #       <enumval name = 'interPixelFractionXMask' value = '0x700000000LL' desc='the interPixelFractionXMask field mask'/> -->
+<!--- #       <enumval name = 'interPixelFractionYMask' value = '0x3800000000LL' desc='the interPixelFractionYMask field mask'/> -->
+<!--- #     </enum>       -->  
+
+
+<!--- Second attempt was to declare the mask fields as single attributes of type ulonglong. It solve the win32 problems    -->
+<!--- BUT the size of the class goes from 8 to 48 (8 for each ulonglong) causing runtime error in the constructor of FastClusterContainer -->
+<!--- since sizeof(ulonglong)!=sizeof(VeloPixLiteCluster) -->
+
+<!--- #    <attribute type='ulonglong' name='channelIDMask' setMeth="FALSE" getMeth="FALSE" desc='the channelID field mask' init='0xfffffffLL'/>-->
+<!--- #    <attribute type='ulonglong' name='clustToTMask' setMeth="FALSE" getMeth="FALSE" desc='the clustToTMask field mask' init='0x70000000LL'/>-->
+<!--- #    <attribute type='ulonglong' name='longPixMask' setMeth="FALSE" getMeth="FALSE" desc='the longPixMask field mask' init='0x80000000LL'/>-->
+<!--- #    <attribute type='ulonglong' name='interPixelFractionXMask' setMeth="FALSE" getMeth="FALSE" desc='the interPixelFractionXMask field mask' init='0x700000000LL'/> -->
+<!--- #    <attribute type='ulonglong' name='interPixelFractionYMask' setMeth="FALSE" getMeth="FALSE" desc='the interPixelFractionYMask field mask' init='0x3800000000LL'/> -->
+
+<!--- Final choice was to hard code the mask. Since they are private it does not hurt outside world. Devellopers needs to be carefull -->
+<!--- if changing the bitfield structure: the filed Mask will not automatically be updated. -->
 
   </class>
 </package>

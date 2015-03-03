@@ -4,6 +4,53 @@
 ! Purpose     : Tool interfaces and dictionaries for DaVinci
 !-----------------------------------------------------------------------------
 
+!===================== DaVinciInterfaces v2r0 2010-01-20 =====================
+! 2010-01-20 - Juan Palacios
+ - Kernel/IDVAlgorithm.h
+  . Change Particle and RecVertex accessors to Particle::Range and RecVertex::Range.
+
+! 2010-01-18 - Juan Palacios
+ - Kernel/IDVAlgorithm.h
+  . Make a INamedInterface. Fix some doxygen.
+
+! 2010-01-16 - Juan PALACIOS
+ - dict/DaVinciInterfacesDict.xml
+  . Fix typo
+
+! 2010-01-14 - Juan PALACIOS
+ - Kernel/IPhysDesktop
+  . Add back relatedVertex and primaryVertices methods.
+
+! 2010-01-14 - Juan PALACIOS
+ - Kernel/IDVAlgorithm
+  . primaryVertices() back to original behaviour.
+ - Kernel/IPhysDesktop
+  . Remove relatedVertex and primaryVertices methods.
+  . revert previous behaviour of primaryVertices().
+
+! 2010-01-14 - Patrick Koppenburg
+ - Restore IDecodeSimpleDecayString.h
+
+! 2010-01-14 - Juan PALACIOS
+ - src/DavinciInterfaces.cpp
+  . Remove references to IDecodeSimpleDecayString.h
+ - Kernel/IPhysDesktop
+  . primaryVertices() now returns LHCb::RecVertex::ConstVector&
+ - Kernel/IDVAlgorithm
+  . primaryVertices() now returns LHCb::RecVertex::ConstVector*
+
+! 2010-01-13 - Patrick Koppenburg
+ - task #12929: Remove all obsolete algorithms and tools :
+   . Removed IBestParticles.h, IContextTool.h, IDecodeSimpleDecayString.h, IFilterCriteriaTESTool.h
+ - v2r0
+
+! 2010-01-12 - Juan PALACIOS
+ - Add Kernel/IDVAlgorithm.h
+  . IInterface exporting a few useful methods from DVAlgorithm.
+ - dict/DaVinciInterfaces[.h, .xml]
+  . Add IDVAlgorithm dictionaries.
+ - Increase version to v1r4
+
 !===================== DaVinciInterfaces v1r3p1 2009-12-11 ===================
 ! 2009-12-01 - Patrick Koppenburg
  - Add doxygen description of chi in IDistanceCalculator
