@@ -4,6 +4,20 @@
 ! Purpose     : General purpose RICH classes
 !-----------------------------------------------------------------------
 
+!====================== RichKernel v7r33 2010-04-09 ====================
+! 2010-04-01 - Chris Jones
+ - Make the histogramming methods in RichHistoBase const
+ - Make the 'Functional' CK resolution tool the Offline default. HLT 
+   still using the binned implementation, awaiting testing of the
+   Functional tool.
+
+! 2010-03-30 - Chris Jones
+ - Protect against negative errors (squared !) from Track States.
+
+! 2010-03-23 - Chris Jones
+ - Add option to python configurables to run photon reconstruction with
+   additional smearing, to simulate worse CK theta resolution.
+
 !====================== RichKernel v7r32 2010-03-17 ====================
 ! 2010-03-12 - Chris Jones
  - Some fixes for missing items in the python dictionary

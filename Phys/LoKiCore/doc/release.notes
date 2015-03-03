@@ -1,4 +1,4 @@
-! $Id: release.notes,v 1.180 2010-03-17 17:31:52 cattanem Exp $ 
+! $Id: release.notes,v 1.186.2.1 2010-04-07 20:55:08 graven Exp $ 
 ! -----------------------------------------------------------------------------
 ! Package     : Phys/LoKiCore
 ! Responsible : Vanya BELYAEV ibelyaev@physics.syr.edu
@@ -15,6 +15,34 @@
 ! 
 ! -----------------------------------------------------------------------------
 
+! =========================== LoKiCore v9r13 2010-04-07 =======================
+! 2010-04-04 - Vanya Belyaev
+
+ - few fixes into LoKi::Listener  
+ - add enum instead of boolean argumetn for RateLimit/RateLimitV 
+    ( needed for Moore) 
+
+
+! 2010-04-04 - Vanya Belyaev 
+
+ - LoKi/Listener.h, src/Listener.cpp 
+
+    helper class for listeting incidents 
+
+ - LoKi::Scalers::RateLimitV
+
+     implements listeting the incidents (needed for Moore)
+
+! 2010-03-22 - Vanya Belyaev
+
+ - LoKiCore/DataUtils.py
+
+    few helper utilities for Bender 
+
+ - cmt/requirements 
+    
+     verison increment to v9r13 
+   
 ! =========================== LoKiCore v9r12 2010-03-17 =======================
 ! 2010-03-15 - Vanya Belyaev
 
@@ -72,6 +100,10 @@
 
        version increment to v9r12 
 
+! =========================== LoKiCore v9r11p1 2010-04-02 =======================
+! 2010-04-02 - Gerhard Raven
+ - randomize the initial phase of the periodic rate limiter, to avoid multiple
+   HLT tasks from running in sync.
 
 ! =========================== LoKiCore v9r11 2010-02-24 =======================
 ! 2010-02-13 - Vanya Belyaev
@@ -79,7 +111,6 @@
     new "void"-functors:
         EXISTS    LoKi::TES::Exists   to check existence of object in TES 
         CONTAINS  LoKi::TES::Contains to check existence and size of Container in TES 
-    The concept belongs to Gerhard The Great Raven 
 
  - cmt/requirements 
     version incremement to v9r11  
@@ -740,7 +771,7 @@
 
 ! 2007-11-30 - Vanya BELYAEV  
  - new MAJOR version of LoKi  
-   Many new concepts from Gerhard "The Great" for functional programming
+   Many new concepts from Gerhard for functional programming
    essentially the whole "functor"-business is reqritten 
  - cmt/requirements 
    version incrmeent to v7r0

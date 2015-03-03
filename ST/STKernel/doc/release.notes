@@ -1,7 +1,11 @@
-! $Id: release.notes,v 1.86 2010-02-12 17:21:02 cattanem Exp $
+! $Id: release.notes,v 1.88 2010-04-09 15:17:59 cattanem Exp $
 ! Package     : STKernel
 ! Responsible : M. Needham
 !----------------------------------------------------------------------------
+
+!====================== STKernel v2r0 2010-04-09 ============================
+!  2010-03-20 M.Needham
+ - Remove ISTSignalToNoiseTool
 
 !====================== STKernel v1r19 2010-02-12 ===========================
 ! 2010-02-11 - Mark Tobin

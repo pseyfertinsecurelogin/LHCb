@@ -142,7 +142,7 @@ class RichTools(RichConfigurableUser):
         self.setRichDefaults( "TrackSelectorType",   { "Offline" : "Reco",         "HLT" : "Reco" } )
         self.setRichDefaults( "TrSegMakerType",      { "Offline" : "Detailed",     "HLT" : "Detailed" } )
         self.setRichDefaults( "GeomEffType",         { "Offline" : "CKMassRing",   "HLT" : "CKMassRing" } )
-        self.setRichDefaults( "CkResType",           { "Offline" : "Binned",       "HLT" : "Binned" } )
+        self.setRichDefaults( "CkResType",           { "Offline" : "Functional",   "HLT" : "Binned" } )
         self.setRichDefaults( "SignalDetEffType",    { "Offline" : "Tabulated",    "HLT" : "NominalTabulated" } )
                
     ## @brief Make an instance of the given configurable and configure this
@@ -345,6 +345,11 @@ class RichTools(RichConfigurableUser):
                                         Rich__Rec__MC__PhotonCreatorCheatedTrackDir )
             tool = self.__makeRichTool( Rich__Rec__MC__PhotonCreatorCheatedTrackDir, nickname, private )
             self.__makeRichTool( Rich__Rec__PhotonCreator, "RichDelPhotonCreator", False )
+        elif phottype == "SmearCKTheta" :
+            from Configurables import ( Rich__Rec__PhotonCreator,
+                                        Rich__Rec__MC__PhotonCreatorWithGaussianCKSmear )
+            tool = self.__makeRichTool( Rich__Rec__MC__PhotonCreatorWithGaussianCKSmear, nickname, private )
+            self.__makeRichTool( Rich__Rec__PhotonCreator, "RichDelegatedPhotonCreator", False )
         else:
             raise RuntimeError("Unknown Photon Creator '%s'"%phottype)
         return tool
