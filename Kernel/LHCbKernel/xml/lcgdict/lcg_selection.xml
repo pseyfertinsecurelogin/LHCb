@@ -12,14 +12,16 @@
   <class name="std::pair<LHCb::MuonTileID,int>"/>
   <class name="std::vector<std::pair<LHCb::MuonTileID,int> >"/>
   <class name="LHCb::Trajectory"/>
+  <class name="LHCb::AlignTraj"/>
   <class name="LHCb::CircleTraj"/>
   <class name="LHCb::LineTraj"/>
   <class name="LHCb::ParabolaTraj"/>
   <class name="MuonLayout"/>
   <class name="std::auto_ptr<LHCb::Trajectory>"/>
-  <class pattern ="LHCb::DifTraj<*"/>
   <class pattern ="LHCb::SiPositionInfo<*>"/>
   <class pattern ="GaudiUtils::VectorMap<*>"/>
+<!--- Next should really be in L0Event, is an L0DUReport return type -->
+  <class name ="std::map<std::pair<int,unsigned int>,unsigned int>"/>
 <!--- Add here all interfaces from Kernel directory --> 
   <class name = "IAlgorithmCorrelations" />
   <class name = "IBdlTool"             />
@@ -35,8 +37,9 @@
   <class name = "ISTClusterPosition"   />
   <class name = "ITrajPoca"            />
   <class name = "IUsedLHCbID"          />
-  <class name = "LHCb::TTNames" />
-  <class name = "LHCb::ITNames" />
+  <class name = "LHCb::TTNames"   />
+  <class name = "LHCb::ITNames"   />
+  <class name = "LHCb::Inspector" />
 <!--- These should really be moved to GaudiKernel or Reflex --> 
   <class name="std::pair<Gaudi::XYZPoint,Gaudi::XYZPoint>" />
 </lcgdict>

@@ -1,7 +1,16 @@
-! $Id: release.notes,v 1.23 2008-07-27 16:10:40 cattanem Exp $
+! $Id: release.notes,v 1.26 2008-09-04 13:36:09 cattanem Exp $
 ! Package     : STTELL1Event
 ! Responsible : Mathias Knecht
 !-----------------------------------------------------------------------------
+
+!======================== STTELL1Event v1r5 2008-09-04 =======================
+! 2008-08-31 M Needhan
+ - add method to test if link is enabled to STTell1Error
+
+! 2008-08-15 M Needham
+ - Add ErrorInfo method to STTell1BoardErrorBank
+ - Change location of error bank
+ - Cleanup/bug fix in STTELL1Error bankLink method  
 
 !======================== STTELL1Event v1r4 2008-07-27 =======================
 ! 2008-07-24 - Marco Cattaneo

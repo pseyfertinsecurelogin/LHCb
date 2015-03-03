@@ -4,6 +4,16 @@
 ! Purpose     : Event model for HLT tracks
 !-----------------------------------------------------------------------------
 
+!======================== HltEvent v8r12 2008-09-03 ==========================
+! 2008-08-29 - Jaap Panman
+ - LumiResult container added to hold "R" results in extraInfo
+
+! 2008-08-26 - Jaap Panman
+ - LumiSummary container is now a single object
+
+! 2008-08-06 - Tomasz Skwarnicki
+ - added HltVertexReports.xml
+
 !======================== HltEvent v8r11 2008-07-29 ==========================
 ! 2008-07-28 - Tomasz Skwarnicki
  - Added HltDecReports and HltSelReports, containers of Hlt decisions and 

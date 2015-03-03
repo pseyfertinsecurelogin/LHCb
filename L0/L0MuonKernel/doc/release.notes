@@ -4,6 +4,17 @@
 ! Purpose     : 
 !-----------------------------------------------------------------------------
 
+!============================ L0MuonKernel v8r2 2009-08-04 =================== 
+! 2008-09-04 - Julien Cogan
+ - Decoding of the L0Muon compressed mode + transparent mode v2 
+
+! 2008-08-01 - Julien Cogan
+ - Fix compilation warning
+
+! 2008-07-31 - Julien Cogan
+ - Bug fix in the handling of status error 
+ - Minor bug fix in the handling of decoding error counter
+
 !============================ L0MuonKernel v8r1 2008-07-27 =================== 
 ! 2008-07-25 - Julien Cogan
  - Add new functions in MonUtilities

@@ -1,4 +1,4 @@
-// $Id: STTell1Board.h,v 1.7 2008-07-25 15:42:49 mneedham Exp $
+// $Id: STTell1Board.h,v 1.11 2008-09-05 14:11:49 mneedham Exp $
 #ifndef _STTell1Board_H
 #define _STTell1Board_H 1
 
@@ -26,13 +26,14 @@ public:
 
   /// constructer
   STTell1Board(const STTell1ID aBoard, 
-               const unsigned int stripsPerHybrid);
+               const unsigned int stripsPerHybrid, 
+               const std::string& type);
 
   /// destructer
   virtual ~STTell1Board();
 
   /// add wafer
-  void addSector(LHCb::STChannelID aOfflineChan, unsigned int orientation);
+  void addSector(LHCb::STChannelID aOfflineChan, unsigned int orientation, const std::string& serviceBox);
 
   /// board indentifer
   STTell1ID boardID() const;
@@ -45,12 +46,12 @@ public:
                 unsigned int& sectorIndex) const;
 
   /// construct LHCb::STChannelID from DAQ Channel
-  chanPair DAQToOffline(const unsigned int aDAQChan, 
-			const unsigned int fracStrip,
-			const int version) const;
+  chanPair DAQToOffline(const unsigned int fracStrip,
+			const int version,
+                        const unsigned int aDAQChan) const;
 
   /// fill adc values offline 
-    void ADCToOffline(const unsigned int aDAQChan,
+  void ADCToOffline(const unsigned int aDAQChan,
 		      LHCb::STCluster::ADCVector& adcs,
 		      const int version,
 		      const unsigned int offset,
@@ -62,14 +63,29 @@ public:
                             const unsigned int sectorIndex,
 			    double isf) const;
 
-  // check channel is valid
+  /// check channel is valid
   bool validChannel(const unsigned int daqChan) const;
 
-  // vector of sectors on the board
+  /// vector of sectors on the board
   const std::vector<LHCb::STChannelID>& sectorIDs() const;
   
-  // vector of hybrid orientations
+  /// vector of hybrid orientations
   const std::vector<int>& orientation() const;
+
+  /// vector of service boxes
+  const std::vector<std::string>& serviceBoxes() const;
+
+  /// service box
+  std::string serviceBox(const LHCb::STChannelID& chan) const; 
+
+  /// service box
+  std::string BeetleRepServiceBox(const unsigned int beetle) const;
+
+  /// service box
+  std::string PPRepServiceBox(const unsigned int pp, const unsigned int beetle) const;
+
+  /// number of readout sectors
+  unsigned int nSectors() const;
 
   /// Operator overloading for stringoutput
   friend std::ostream& operator<< (std::ostream& s, const STTell1Board& obj)
@@ -77,18 +93,20 @@ public:
     return obj.fillStream(s);
   }
 
-
   // Fill the ASCII output stream
   virtual std::ostream& fillStream(std::ostream& s) const;
 
-  //std::ostream& STTell1Board::printOut( std::ostream& os ) const;
-
 private:
+
+  /// service box
+  std::string serviceBox(const unsigned int& waferIndex) const; 
 
   STTell1ID m_boardID;
   unsigned int m_nStripsPerHybrid;
   std::vector<LHCb::STChannelID> m_sectorsVector;
   std::vector<int> m_orientation;
+  std::vector<std::string> m_serviceBoxVector;
+  std::string m_detType;
 
 };
 
@@ -104,8 +122,22 @@ inline const std::vector<int>& STTell1Board::orientation() const{
   return m_orientation;
 }
 
+inline const std::vector<std::string>& STTell1Board::serviceBoxes() const{
+  return m_serviceBoxVector;
+}
+
 inline const std::vector<LHCb::STChannelID>& STTell1Board::sectorIDs() const{
   return m_sectorsVector;
+}
+
+inline std::string STTell1Board::serviceBox(const unsigned int& waferIndex) const {
+  return (waferIndex < m_serviceBoxVector.size() ? m_serviceBoxVector[waferIndex] : std::string("Unknown"));
+}
+
+inline std::string STTell1Board::serviceBox(const LHCb::STChannelID& chan) const{
+  unsigned int waferIndex;
+  isInside(chan, waferIndex);
+  return serviceBox(waferIndex);
 }
 
 inline bool STTell1Board::validChannel(const unsigned int daqChan) const{
@@ -115,4 +147,8 @@ inline bool STTell1Board::validChannel(const unsigned int daqChan) const{
   return true; 
 }
   
+inline unsigned int STTell1Board::nSectors() const{
+  return m_sectorsVector.size();
+}
+
 #endif // _STTell1Board_H

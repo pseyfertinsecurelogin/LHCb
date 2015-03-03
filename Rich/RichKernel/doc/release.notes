@@ -1,8 +1,24 @@
-! $Id: release.notes,v 1.188 2008-07-27 16:07:10 cattanem Exp $
+! $Id: release.notes,v 1.193 2008-09-03 16:35:32 cattanem Exp $
 ! Package     : Rich/RichKernel
 ! Responsible : Chris Jones
 ! Purpose     : General purpose RICH classes
 !-----------------------------------------------------------------------
+
+!====================== RichKernel v7r15 2008-09-03 ====================
+! 2008-09-03 - Marco Cattaneo
+ - Add dictionaries for moved interfaces
+
+! 2008-08-28 - Ulrich Kerzel
+- update interface to HPDDisableTool and add method based on minimal
+  information required
+
+! 2008-08-27 - Chris Jones
+ - Import tool interface header files from Rich/RichMonitoringTools
+
+! 2008-08-07 - Chris Jones
+ - Add python configuration files
+ - Change ToolRegistry names from Offline.XXX to Offline_XXX to avoid 
+   problems with python configurables
 
 !====================== RichKernel v7r14 2008-07-27 ====================
 ! 2008-07-25 - Chris Jones

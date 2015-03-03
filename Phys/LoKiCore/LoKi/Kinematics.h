@@ -1,4 +1,4 @@
-// $Id: Kinematics.h,v 1.14 2008-07-26 17:19:56 ibelyaev Exp $
+// $Id: Kinematics.h,v 1.17 2008-08-02 13:34:27 ibelyaev Exp $
 // ============================================================================
 #ifndef LOKI_KINEMATICS_H 
 #define LOKI_KINEMATICS_H 1
@@ -8,6 +8,7 @@
 // LoKi
 // ============================================================================
 #include "LoKi/KinTypes.h"
+#include "LoKi/Constants.h"
 // ============================================================================
 /** @file
  *
@@ -39,19 +40,28 @@ namespace LoKi
   {
     // ========================================================================
     /** simple function for evaluation of the euclidiam norm
-     *  for LorentzVectors 
-     *  (E**2+Px**2+Py**2+Pz**2)
+     *  for LorentzVectors:
+     * 
+     *  \f$  \left| v \right|_{euclid}^2 = 
+     *    e^2 + p_x^2 + p_y^2 + p_z^2 \f$ 
+     *  
+     *  @attention this value is <b>NOT</b> Lorentz Invariant!
+     *
      *  @param vct the vector
      *  @return euclidian norm squared   
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-01-17
      */
-    double euclidianNorm2 
-    ( const LoKi::LorentzVector& vct ) ;
+    double euclidianNorm2 ( const LoKi::LorentzVector& vct ) ;
     // ========================================================================
     /** simple function for evaluation of the euclidiam norm
      *  for LorentzVectors 
-     *  sqrt(E**2+Px**2+Py**2+Pz**2)
+     *
+     *  \f$  \left| v \right|_{euclid} = 
+     *      \sqrt{ e^2 + p_x^2 + p_y^2 + p_z^2 } \f$ 
+     *
+     *  @attention this value is <b>NOT</b> Lorentz Invariant!
+     *
      *  @param vct the vector
      *  @return euclidian norm    
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
@@ -61,8 +71,16 @@ namespace LoKi
     ( const LoKi::LorentzVector& vct ) ;
     // ========================================================================
     /** simple function for evaluation of the square of 
-     *  the euclidian distance inbetwee 2 LorentzVectors 
-     *  (DeltaE**2+DeltaPx**2+DeltaPy**2+DeltaPz**2)
+     *  the euclidian distance in between two Lorentz-vectors:
+     *  
+     *  \f$ \delta^2_{euclid}\left( v_1 , v_2 \right) = 
+     *   \left| v_1 - v_2 \right|^2_{euclid} = 
+     *    (e_1-e_2)^2 + (p_{x1}-p_{x2})^2 
+     *    + (p_{y1}-p_{y2})^2 
+     *    + (p_{z1}-p_{z2})^2 \f$ 
+     *   
+     *  @attention this value is <b>NOT</b> Lorentz Invariant!
+     *
      *  @param vct1 the first vector
      *  @param vct2 the second vector
      *  @return the square of euclidian distance 
@@ -74,7 +92,15 @@ namespace LoKi
       const LoKi::LorentzVector& vct2 ) ;
     // ========================================================================    
     /** simple function which evaluates the transverse 
-     *  momentum with respect a certain 3D-direction
+     *  momentum with respect a certain 3D-direction:
+     * 
+     * \f$
+     *  r_T = \left| \vec{r} \right| = 
+     *  = \left| \vec{v} - 
+     * \vec{d}\frac{\left(\vec{v}\vec{d}\right)}
+     *  { \left| \vec{d} \right|^2 } \right|
+     *  \f$
+     *  
      *  @param mom the momentum
      *  @param dir the direction
      *  @return the transverse moementum with respect to the direction
@@ -123,7 +149,7 @@ namespace LoKi
       v0 += v3 ;      
       return mass ( v0 ) ; 
     } 
-    // ========================================================================    
+    // ========================================================================
     /** trivial function to evaluate the mass of 4-vectors  
      *  @param v1  the first  lorenz vector 
      *  @param v2  the second lorenz vector
@@ -216,7 +242,7 @@ namespace LoKi
       { if ( 0 != (*begin) ) { result += (*begin)->momentum() ; } }
       return result ;
     }
-    // ========================================================================    
+    // ========================================================================
     /** the simple function which adds a 4-momenta of all (MC)Particles
      *  from a sequence [begin,end).
      *  The actual type of elements is irrelevant, 
@@ -266,7 +292,7 @@ namespace LoKi
       }
       return result ;
     }
-    // ========================================================================    
+    // ========================================================================
     /** the simple function which adds a 4-momenta of all (MC)Particles
      *  fron "container/sequence/range"
      *  The actual type of container is irrelevant it could be, e.g. 
@@ -305,42 +331,33 @@ namespace LoKi
     ( const OBJECTS&             seq                            ,
       const LoKi::LorentzVector& result = LoKi::LorentzVector() ) 
     { return addMomenta ( seq.begin() , seq.end() , result ) ; }
-    // ========================================================================    
-    /** This routine returns the cosine angle theta 
-     *  The decay angle calculated  is that between 
-     *  the flight direction of the daughter neson, "D",
-     *  in the rest frame of "M" (the parent of "D"), 
-     *  with respect to the boost direction from 
-     *  "M"'s rest frame 
-     *  
-     *  @param D 4-momentum of the daughter particle 
-     *  @param M 4-momentum of mother particle 
-     *  @return cosine of decay angle 
-     *
-     *  @see LoKi::LorentzVector.h
-     *
-     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
-     *  @date 2004-12-03
-     */
-    double decayAngle
-    ( const LoKi::LorentzVector& D , 
-      const LoKi::LorentzVector& M ) ;
     // ========================================================================
     /** This routine returns the cosine angle theta 
      *  The decay angle calculated  is that between 
      *  the flight direction of the daughter neson, "D",
      *  in the rest frame of "Q" (the parent of "D"), 
-     *  with respect to "Q"'s fligth direction in "P"'s
+     *  with respect to "Q"'s flight direction in "P"'s
      *  (the parent of "Q") rest frame
      * 
-     *  it is a EvtDecayAngle(P,Q,D) routine form EvtGen package
+     *  \f$ 
+     *  \cos \theta = \frac
+     *  { \left(P \cdot D\right)Q^2 - 
+     *    \left(P \cdot Q\right)\left(D \cdot Q \right) }
+     *  {\sqrt{ \left[ \left( P \cdot Q \right)^2 - Q^2 P^2 \right] 
+     *          \left[ \left( D \cdot Q \right)^2 - Q^2 D^2 \right] } } 
+     *  \f$ 
      *  
-     *  @param D 4-momentum of the daughetr particle 
+     *  Note that the expression has the symmetry: \f$ P \leftrightarrow D \f$ 
+     *  
+     *  Essentially it is a rewritten <c>EvtDecayAngle(P,Q,D)</c> 
+     *  routine from EvtGen package
+     *  
+     *  @param D 4-momentum of the daughter particle 
      *  @param Q 4-momentum of mother particle 
      *  @param P "rest frame system"
      *  @return cosine of decay angle 
      *
-     *  @see LoKi::LorentzVector.h
+     *  @see LoKi::LorentzVector
      *
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2004-12-03
@@ -349,55 +366,365 @@ namespace LoKi
     ( const LoKi::LorentzVector& P , 
       const LoKi::LorentzVector& Q ,
       const LoKi::LorentzVector& D ) ;
-    // ========================================================================    
-//     /** This routine evaluates the cosine of "transversity angle", 
-//      *  useful e.g. to disantangle the different partial waves in 
-//      *  0 -> 1 + 1 decay (e.g. Bs -> J/psi Phi) 
-//      *  
-//      *  The code is kindly provided by Gerhard Raven 
-//      * 
-//      *  @param l1 4-vector of the first  particle, e.g. mu+
-//      *  @param l2 4-vector of the second particle, e.g. mu- 
-//      *  @param p1 4-vector of the third  particle, e.g. K+
-//      *  @param p2 4-vector of the fourth particle, e.g. K- 
-//      *  @return the cosine of transversity angle 
-//      * 
-//      *  @see LoKi::LorentzVector.h
-//      *
-//      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
-//      *  @date 2004-12-03
-//      */ 
-//     double transversityAngle 
-//     ( const LoKi::LorentzVector& l1 , 
-//       const LoKi::LorentzVector& l2 , 
-//       const LoKi::LorentzVector& p1 , 
-//       const LoKi::LorentzVector& p2 ) ;
+    // ========================================================================
+    /** This routine returns the cosine angle theta 
+     *  The decay angle calculated  is that between 
+     *  the flight direction of the daughter neson, "D",
+     *  in the rest frame of "Q" (the parent of "D"), 
+     *  with respect to "Q"'s flight direction in "P"'s
+     *  (the parent of "Q") rest frame
+     * 
+     *  \f$ 
+     *  \cos \theta = \frac
+     *  { \left(P \cdot D\right)Q^2 - 
+     *    \left(P \cdot Q\right)\left(D \cdot Q \right) }
+     *  {\sqrt{ \left[ \left( P \cdot Q \right)^2 - Q^2 P^2 \right] 
+     *          \left[ \left( D \cdot Q \right)^2 - Q^2 D^2 \right] } } 
+     *  \f$ 
+     *  
+     *  Note that the expression has the symmetry: \f$ P \leftrightarrow D \f$ 
+     *  
+     *  Essentially it is a rewritten <c>EvtDecayAngle(P,Q,D)</c> 
+     *  routine from EvtGen package
+     *  
+     *  @param D 4-momentum of the daughter particle 
+     *  @param Q 4-momentum of mother particle 
+     *  @param P "rest frame system"
+     *  @return cosine of decay angle 
+     *
+     *  @see LoKi::LorentzVector
+     *
+     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+     *  @date 2004-12-03
+     */    
+    inline double cosDecayAngle
+    ( const LoKi::LorentzVector& P , 
+      const LoKi::LorentzVector& Q ,
+      const LoKi::LorentzVector& D ) { return decayAngle ( P , Q, D ) ; }
+    // ========================================================================
+    /** This routine returns the cosine angle theta 
+     *  The decay angle calculated  is that between 
+     *  the flight direction of the daughter neson, "D",
+     *  in the rest frame of "M" (the parent of "D"), 
+     *  with respect to the boost direction from 
+     *  "M"'s rest frame 
+     *
+     *  @param D 4-momentum of the daughter particle 
+     *  @param M 4-momentum of mother particle 
+     *  @return cosine of decay angle 
+     *
+     *  Clearly it is a variant of 3-argument with the 
+     *  P-argument to be of type (0,0,0,E) 
+     *  (=="laborator frame") 
+     *
+     *  @see LoKi::LorentzVector
+     *
+     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+     *  @date 2004-12-03
+     */
+    inline double decayAngle
+    ( const LoKi::LorentzVector& D , 
+      const LoKi::LorentzVector& M ) 
+    {
+      return decayAngle ( LoKi::LorentzVector (0,0,0,2*M.E()) , M , D ) ;
+    }
+    // ========================================================================
+    /** This routine returns the cosine angle theta 
+     *  The decay angle calculated  is that between 
+     *  the flight direction of the daughter neson, "D",
+     *  in the rest frame of "M" (the parent of "D"), 
+     *  with respect to the boost direction from 
+     *  "M"'s rest frame 
+     *
+     *  @param D 4-momentum of the daughter particle 
+     *  @param M 4-momentum of mother particle 
+     *  @return cosine of decay angle 
+     *
+     *  Clearly it is a variant of 3-argument with the 
+     *  P-argument to be of type (0,0,0,E) 
+     *  (=="laborator frame") 
+     *
+     *  @see LoKi::LorentzVector
+     *
+     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+     *  @date 2004-12-03
+     */    
+    inline double cosDecayAngle
+    ( const LoKi::LorentzVector& D , 
+      const LoKi::LorentzVector& M ) { return decayAngle ( D , M ) ; }
+    // ========================================================================
+    /** This routine returns the cosine angle theta 
+     *  The decay angle calculated  is that between 
+     *  the flight direction of the daughter neson, "D",
+     *  in the rest frame of "M" (the parent of "D"), 
+     *  with respect to the boost direction from 
+     *  "M"'s rest frame 
+     *
+     *  @param D 4-momentum of the daughter particle 
+     *  @param M 4-momentum of mother particle 
+     *  @return cosine of decay angle 
+     *
+     *  @see LoKi::LorentzVector
+     *
+     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+     *  @date 2004-12-03
+     */
+    double decayAngle_
+    ( const LoKi::LorentzVector& D , 
+      const LoKi::LorentzVector& M ) ;
+    // ========================================================================
+    //     /** This routine evaluates the cosine of "transversity angle", 
+    //      *  useful e.g. to disantangle the different partial waves in 
+    //      *  0 -> 1 + 1 decay (e.g. Bs -> J/psi Phi) 
+    //      *  
+    //      *  The code is kindly provided by Gerhard Raven 
+    //      * 
+    //      *  @param l1 4-vector of the first  particle, e.g. mu+
+    //      *  @param l2 4-vector of the second particle, e.g. mu- 
+    //      *  @param p1 4-vector of the third  particle, e.g. K+
+    //      *  @param p2 4-vector of the fourth particle, e.g. K- 
+    //      *  @return the cosine of transversity angle 
+    //      * 
+    //      *  @see LoKi::LorentzVector.h
+    //      *
+    //      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+    //      *  @date 2004-12-03
+    //      */ 
+    //     double transversityAngle 
+    //     ( const LoKi::LorentzVector& l1 , 
+    //       const LoKi::LorentzVector& l2 , 
+    //       const LoKi::LorentzVector& p1 , 
+    //       const LoKi::LorentzVector& p2 ) ;
     
-//     /** This routine evaluated the angle theta_FB
-//      *  used e.g. for evaluation of forward-backward 
-//      *  asymmetry for decay B -> K* mu+ mu- 
-//      *  The angle calculated is that 
-//      *  between between the mu+ and K^*0 momenta 
-//      *  in the di-muon rest frame
-//      *  
-//      *  The code is kindly provided by Helder Lopes 
-//      *
-//      *  @param  K  4-momenutm of   "K*"
-//      *  @param  l1 4-momentum of the first  lepton
-//      *  @param  l2 4-momentum of the second lepton
-//      *  @return the cosine of theta_FB 
-//      * 
-//      *  @see LoKi::LorentzVector.h
-//      *
-//      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
-//      *  @date 2004-12-03
-//      */
-//     double forwardBackwardAngle
-//     ( const LoKi::LorentzVector& K  , 
-//       const LoKi::LorentzVector& l1 , 
-//       const LoKi::LorentzVector& l2 ) ;
+    //     /** This routine evaluated the angle theta_FB
+    //      *  used e.g. for evaluation of forward-backward 
+    //      *  asymmetry for decay B -> K* mu+ mu- 
+    //      *  The angle calculated is that 
+    //      *  between between the mu+ and K^*0 momenta 
+    //      *  in the di-muon rest frame
+    //      *  
+    //      *  The code is kindly provided by Helder Lopes 
+    //      *
+    //      *  @param  K  4-momenutm of   "K*"
+    //      *  @param  l1 4-momentum of the first  lepton
+    //      *  @param  l2 4-momentum of the second lepton
+    //      *  @return the cosine of theta_FB 
+    //      * 
+    //      *  @see LoKi::LorentzVector
+    //      *
+    //      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+    //      *  @date 2004-12-03
+    //      */
+    //     double forwardBackwardAngle
+    //     ( const LoKi::LorentzVector& K  , 
+    //       const LoKi::LorentzVector& l1 , 
+    //       const LoKi::LorentzVector& l2 ) ;
+    // ========================================================================
+    /** simple function which evaluates the magnitude of 3-momentum 
+     *  of particle "v" in the rest system of particle "M" 
+     *
+     *  \f$ \left|\vec{p}\right| = 
+     *     \sqrt{  \frac{\left(v\cdot M\right)^2}{M^2} -v^2} \f$
+     * 
+     *  Note that this is clear Lorentz invarinat expresssion. 
+     * 
+     *  @attention particle M must be time-like particle: M^2 > 0 !
+     *
+     *  @param v the vector to be checked 
+     *  @param M the defintion of "rest"-system
+     *  @return the magnitude of 3D-momentum of v in rest-frame of M 
+     *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
+     *  @date 2008-07-27
+     */
+    double restMomentum 
+    ( const LoKi::LorentzVector& v , 
+      const LoKi::LorentzVector& M ) ;
+    // ========================================================================
+    /** simple function which evaluates the energy
+     *  of particle "v" in the rest system of particle "M" 
+     * 
+     *  \f$ e = \frac{ v \cdot M }{\sqrt{ M^2 } } \f$
+     *  
+     *  Note that this is clear Lorentz invarinat expresssion. 
+     * 
+     *  @attention particle M must be time-like particle: M^2 > 0 !
+     *
+     *  @param v the vector to be checked 
+     *  @param M the defintion of "rest"-system
+     *  @return the energy of v in rest-frame of M 
+     *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
+     *  @date 2008-07-27
+     */
+    double restEnergy 
+    ( const LoKi::LorentzVector& v , 
+      const LoKi::LorentzVector& M ) ;
+    // ========================================================================
+    /** simple function to evaluate the cosine angle between 
+     *  two directions (v1 and v2) in the rest system of M 
+     *
+     * \f$ 
+     * \cos\theta = 
+     * \frac{\vec{p}_1\vec{p}_2}{\left|\vec{p}_1\right|
+     * \left|\vec{p}_2\right|} = 
+     * \frac{1}{\left|\vec{p}_1\right|\left|\vec{p}_2\right|} 
+     * \left( E_1E_2 -\frac{1}{2}
+     * \left(\left(v_1+v_2\right)^2-v_1^2-v_2^2 \right) \right), 
+     * \f$ 
+     *  where 
+     *  \f$ 
+     *  E_1 E_2 = \frac{ \left ( v_1 \cdot M\right) \left (v_2 \cdot M \right ) }{M^2}
+     *  \f$ 
+     *  and 
+     *  \f$ 
+     * \left|\vec{p}_1\right|\left|\vec{p}_2\right| = 
+     * \sqrt{ 
+     * \left( \frac{\left(v_1\cdot M\right)^2}{M^2}-v_1^2 \right)   
+     *      \left( \frac{\left(v_2\cdot M\right)^2}{M^2}-v_2^2 \right) }
+     * \f$ 
+     *
+     *  Note that the expressions are clear Lorentz invarinats.
+     * 
+     *  @attention the particle M must be time-like particle: M^2 > 0 ! 
+     *  @param v1 the first vector 
+     *  @param v2 the last vector 
+     *  @param M  the defintion of rest-system
+     *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
+     *  @date 2008-07-27
+     */
+    double cosThetaRest 
+    ( const LoKi::LorentzVector& v1 ,
+      const LoKi::LorentzVector& v2 , 
+      const LoKi::LorentzVector& M  ) ; 
+    // ========================================================================
+    /** evaluate the angle \f$\chi\f$ 
+     *  beween two decay planes, 
+     *  formed by particles v1&v2 and h1&h2 correspondingly. 
+     *  The angle is evaluated in the rest frame 
+     *  of "mother" particles (defined as v1+v2+h1+h2) 
+     *      
+     *  The sign is set according to Thomas Blake's code from
+     *  P2VVAngleCalculator tool
+     *  @see P2VVAngleCalculator 
+     *
+     *  @see LoKi::Kinematics::cosDecayAngleChi 
+     *  @see LoKi::Kinematics::sinDecayAngleChi 
+     *
+     *  @param d1 the 1st daughter 
+     *  @param d2 the 2nd daughter 
+     *  @param h1 the 3rd daughter 
+     *  @param h2 the 4th daughter 
+     *  @return angle chi 
+     *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
+     *  @date 2008-07-27
+     */
+    double decayAngleChi 
+    ( const LoKi::LorentzVector& d1 , 
+      const LoKi::LorentzVector& d2 , 
+      const LoKi::LorentzVector& h1 , 
+      const LoKi::LorentzVector& h2 ) ;  
+    // ========================================================================
+    /** evaluate \f$\cos \chi\f$, where \f$\chi\f$ if the angle  
+     *  beween two decay planes, formed by particles d1&d2 
+     *  and h1&h2 correspondingly. 
+     *
+     *  The angle is evaluated in the rest frame 
+     *  of "mother" particles (defined as d1+d2+h1+h2) 
+     *
+     *  The angle is evaluated using the explicit 
+     *  Lorenzt-invariant expressions
+     *
+     *  \f$ 
+     *  \cos \chi = 
+     *   - \frac{ 
+	   *     \epsilon_{ijkl}d_1^{j}d_2^{k}\left(h_1+h_2\right)^l
+     *     \epsilon_{imnp}h_1^{m}h_2^{p}\left(d_1+d_2\right)^p }
+     *     { \sqrt{ \left[ -L_D^2 \right]\left[ -L_H^2 \right] }},
+     *  \f$ 
+     *  where "4-normales" are defined as:
+     *  \f$ 
+     *   L_D^{\mu} = \epsilon_{\mu\nu\lambda\kappa}
+     *                d_1^{\nu}d_2^{\lambda}\left(h_1+h_2\right)^{\kappa} 
+     *  \f$ 
+     *   and 
+     *  \f$ 
+     *   L_H^{\mu} = \epsilon_{\mu\lambda\delta\rho}
+     *                h_1^{\lambda}h_2^{\delta}\left(d_1+d_2\right)^{\rho} 
+     *   \f$.
+     *
+     *  @param d1 the 1st daughter 
+     *  @param d2 the 2nd daughter 
+     *  @param h1 the 3rd daughter 
+     *  @param h2 the 4th daughter 
+     *  @return cos(chi) 
+     *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
+     *  @date 2008-07-27
+     */
+     double cosDecayAngleChi 
+     ( const LoKi::LorentzVector& d1 , 
+       const LoKi::LorentzVector& d2 , 
+       const LoKi::LorentzVector& h1 , 
+       const LoKi::LorentzVector& h2 ) ; 
+    // ========================================================================
+    /** evaluate \f$\sin\chi\f$, where \f$\chi\f$ is the angle 
+     *  beween two decay planes, 
+     *  formed by particles v1&v2 and h1&h2 correspondingly. 
+     *  The angle is evaluated in the rest frame 
+     *  of "mother" particles (defined as v1+v2+h1+h2) 
+     *      
+     *  The angle is  calculated using the explicit 
+     *   Lorentz-invariant expression:
+     *  
+     * \f$ 
+     *   \sin \chi = 
+     *   \frac  { 
+     *   \epsilon_{\mu\nu\lambda\delta}
+     *   L_D^{\mu}L_H^{\nu}H^{\lambda}M^{\delta} }
+     *   { \sqrt{ 
+	   *   \left[ -L_D^2 \right]\left[ -L_H^2 \right] 
+     *   \left[ \left( H\ cdot M\right)^2-H^2M^2 \right] 
+     *   }} = \frac { 
+     *   \epsilon_{\mu\nu\lambda\delta}
+     *   d_1^{\mu}d_2^{\nu}h_1^{\lambda}h_2^{\delta}
+     *   \left( \left( D \cdot H \right)^2 - D^2H^2 \right) }
+     *   { \sqrt{ 
+	   *   \left[ -L_D^2 \right]\left[ -L_H^2    \right] 
+     *   \left[ \left(H\cdot M\right)^2-H^2M^2 \right] 
+	   *   }},
+     * \f$ 
+     *  where "4-normales" are defined as:
+     *  \f$
+     *  L_D^{\mu} = \epsilon_{\mu\nu\lambda\kappa}
+     *                d_1^{\nu}d_2^{\lambda}\left(h_1+h_2\right)^{\kappa} 
+     *  \f$, 
+     *  \f$ 
+     *  L_H^{\mu} = \epsilon_{\mu\lambda\delta\rho}
+     *  h_1^{\lambda}h_2^{\delta}\left(d_1+d_2\right)^{\rho} 
+     *  \f$
+     *  and   \f$ D = d_1 + d_2 \f$, 
+     *        \f$ H = h_1 + h_2 \f$, 
+     *        \f$ M = D + H = d_1 + d_2 + h_1+h_2 \f$. 
+     *
+     *  The sign for <c>sin</c> is set according to 
+     *  Thomas Blake's code from
+     *  P2VVAngleCalculator tool
+     *  @see P2VVAngleCalculator 
+     *
+     *  @param d1 the 1st daughter 
+     *  @param d2 the 2nd daughter 
+     *  @param h1 the 3rd daughter 
+     *  @param h2 the 4th daughter 
+     *  @return angle chi 
+     *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
+     *  @date 2008-07-27
+     */ 
+    double sinDecayAngleChi 
+    ( const LoKi::LorentzVector& d1 , 
+      const LoKi::LorentzVector& d2 , 
+      const LoKi::LorentzVector& h1 , 
+      const LoKi::LorentzVector& h2 ) ;
     // ========================================================================
   }  // end of namespace Kinematics  
+  // ==========================================================================
 } // end of namespace LoKi
 // ============================================================================
 // The END 

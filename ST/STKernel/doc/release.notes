@@ -1,7 +1,30 @@
-! $Id: release.notes,v 1.25 2008-07-27 16:12:00 cattanem Exp $
+! $Id: release.notes,v 1.33 2008-09-05 15:19:32 cattanem Exp $
 ! Package     : STKernel
 ! Responsible : M. Needham
 !----------------------------------------------------------------------------
+
+!====================== STKernel v1r8 2008-09-05 ============================
+! 2008-09-05 M Needham
+ - Add detector type to STTellBoard 
+
+! 2008-08-31 M Needham
+ - bug fixes in Representation classes
+
+! 2008-08-23 M Needham
+ - Remove some of the functionality from STTell1Board
+ - Add Strip,Beetle and PPRepresentation classes
+
+! 2008-08-18 J Luisier
+ - Bug fix in STBoardMapping.h (first IT TELL1 number is 1, not 0)
+
+! 2008-08-15 M Needham
+ - Add functionality to STTell1Board
+ - Add functionality to ITSTReadoutTool, STTell1Board related to service box
+   mapping
+
+! 2008-08-04 M Needham
+ - Add functionality to STTell1Board
+ - Add dictionary stuff [lots done, but still incomplete !]
 
 !====================== STKernel v1r7 2008-07-27 ============================
 ! 2008-07-25 M Needham

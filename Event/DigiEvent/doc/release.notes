@@ -4,6 +4,16 @@
 ! Purpose     : Event model classes related to Digitization
 !-----------------------------------------------------------------------------
 
+!========================== DigiEvent v2r8 2008-09-03 ========================
+! 2008-09-03 - Marco Cattaneo
+ - Add custom dictionary, and populate it with FastClusterContainers
+
+! 2008-09-01 M Needham
+ - Add shortcuts to station, layer etc to STCluster classes
+
+! 2008-08-23 M Needham
+ - Add accessor to liteCluster form Cluster class 
+
 !========================== DigiEvent v2r7 2008-07-16 ========================
 ! 2008-07-14 M Needham
  - Add Tell1 strip number to STCluster class

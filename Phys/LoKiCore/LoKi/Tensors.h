@@ -1,4 +1,4 @@
-// $Id: Tensors.h,v 1.2 2008-07-26 17:19:56 ibelyaev Exp $
+// $Id: Tensors.h,v 1.5 2008-08-02 13:34:27 ibelyaev Exp $
 // ===============================================================
 #ifndef LOKI_TENSORS_H 
 #define LOKI_TENSORS_H 1
@@ -25,6 +25,29 @@ namespace LoKi
   namespace Tensors 
   {
     // ========================================================================
+    /** @enum Indices 
+     *  The list of Lorentz indices 
+     *  The numbers are in accordance to 
+     *  ROOT::Math::LorentzVector 
+     *  @see ROOT::Math::Lorentz::Vector 
+     *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
+     *  @date 2008-0725
+     */  
+    enum {
+      //
+      X    = 0 , 
+      Y    = 1 , 
+      Z    = 2 , 
+      T    = 3 , 
+      //
+      PX   = X , 
+      PY   = Y , 
+      PZ   = Z , 
+      E    = T ,
+      //
+      LAST = 4  
+    } ;
+    // ========================================================================
     /** @struct Delta_
      *
      *  (Compile-time) Kronecker delta: \f$ \delta^{\mu}_{\nu} \f$ 
@@ -40,7 +63,7 @@ namespace LoKi
      */
     template <unsigned int I, unsigned int J> 
     struct Delta_      { enum { value =  0 } ; } ;
-    /// the proper template speciazation 
+    /// the proper template specialization for diagonal elements 
     template <unsigned int I> 
     struct Delta_<I,I> { enum { value =  1 } ; } ;
     // ========================================================================
@@ -78,14 +101,21 @@ namespace LoKi
     /** @struct G_ 
      *
      *  (Compile-time) Minkowski metric: 
-     *    \f$ g_{\mu\nu} = diag\left(-1,-1,-1,+1\right) \f$ 
+     * \f$  g_{\mu\nu} = 
+     *   \begin{pmatrix}
+     *      -1 &  0  &  0  & 0 \\
+     *       0 & -1  &  0  & 0 \\
+     *       0 &  0  & -1  & 0 \\
+     *       0 &  0  &  0  & 1  
+     * \end{pmatrix} 
+     * \f$ 
      *
-     *  The metric has been chossen in the way (-,-,-,+) in 
+     *  The metric has been choosen in the way (-,-,-,+) in 
      *   accordance with ROOT::Math::LorentzVector 
      *
      *  @code
      *
-     *    int g00 = G_<0,0>::value ;
+     *    const int gXX = G_<X,X>::value ;
      *
      *  @endcode
      *
@@ -99,15 +129,22 @@ namespace LoKi
     struct G_<I,I>     { enum { value = -1 } ; } ;
     /// the proper template specialzation for time component 
     template <>
-    struct G_<3,3>     { enum { value =  1 } ; } ;
+    struct G_<T,T>     { enum { value =  1 } ; } ;
     // ========================================================================
     /** struct G 
      *
      *  Minkowski metric: 
-     *    \f$ g_{\mu\nu} = diag\left(-1,-1,-1,+1\right) \f$ 
+     * \f$  g_{\mu\nu} = 
+     *   \begin{pmatrix}
+     *      -1 &  0  &  0  & 0 \\
+     *       0 & -1  &  0  & 0 \\
+     *       0 &  0  & -1  & 0 \\
+     *       0 &  0  &  0  & 1  
+     * \end{pmatrix} 
+     * \f$ 
      *
      *  The metric has been choosen in the way (-,-,-,+) in 
-     *   accordance with ROOT::Math::LorentzVector 
+     *  accordance with ROOT::Math::LorentzVector 
      *
      *  @code
      *
@@ -131,7 +168,12 @@ namespace LoKi
       inline int  g
       ( const size_t i , 
         const size_t j ) const 
-      { return ( i != j ) ?  0 : ( i < 3 ) ? -1 : ( 3 == i ) ? 1 : 0  ; }
+      { 
+        return    
+          ( i    != j )  ?  0 : 
+          ( LAST <= i )  ?  0 :
+          ( T    == i )  ?  1 : -1 ;
+      }
       // ======================================================================
     };
     // ========================================================================
@@ -140,11 +182,11 @@ namespace LoKi
      *  (Compile-time) 4D Antisymmetric Levy-Civita tensor
      *   \f$ \epsilon_{\mu\nu\lambda\delta} \f$ 
      *
-     *  Convention here: \f$ \epsilon_{0,1,2,3} = \epsilon_{x,y,z,t} = 1 \f$ 
+     *  Convention here: \f$ \epsilon_{0123} = \epsilon_{XYZT} = 1 \f$ 
      *
      *  @code
      *
-     *   int result = Epsilon_<0,1,2,3>::value ;
+     *   int result = Epsilon_<X,Y,Z,T>::value ;
      *
      *  @endcode
      *
@@ -203,7 +245,7 @@ namespace LoKi
     // ========================================================================
     /// stopping criteria for compile-time recursion    
     template <>
-    struct Epsilon_<0,1,2,3> { enum { value = 1 } ; } ;
+    struct Epsilon_<X,Y,Z,T> { enum { value = 1 } ; } ;
     // ========================================================================    
     namespace detail 
     {
@@ -244,15 +286,100 @@ namespace LoKi
       enum { value = !valid ? 0 : 
              detail::_Value<(I<J),
              detail::_Value<(J<K),
-             detail::_Value<(K<L),(L<4)?1:0,_34>::value,_23>::value,_12>::value } ;
+             detail::_Value<(K<L),(L<LAST)?1:0,_34>::value,_23>::value,_12>::value } ;
       // ======================================================================
     };
+    // ========================================================================
+    /** @struct Epsilon1_ 
+     *  (Compile-time) evaluation of the tensor product of 
+     *  two Levy-Civita symbols:
+     *
+     *  The following identity has been used:
+     * \f[ 
+     *  \alpha^{IJK}_{LMN} = 
+     *  \epsilon^{IJK\kappa}
+     *  \epsilon_{LMN\kappa} = - 
+     *  \begin{Vmatrix}
+     *    \delta^{I}_{L} & \delta^{I}_{M} & \delta^{I}_{N} \\ 
+     *    \delta^{J}_{L} & \delta^{J}_{M} & \delta^{J}_{N}  \\ 
+     *    \delta^{K}_{L} & \delta^{K}_{M} & \delta^{K}_{N} 
+     *  \end{Vmatrix} 
+     * = \delta^{I}_{N}\delta^{J}_{M}\delta^{K}_{L}
+     *  + \delta^{I}_{M}\delta^{J}_{L}\delta^{K}_{N}
+     *  + \delta^{I}_{L}\delta^{J}_{N}\delta^{K}_{M}
+     *  - \delta^{I}_{L}\delta^{J}_{M}\delta^{K}_{N}
+     *  - \delta^{I}_{M}\delta^{J}_{N}\delta^{K}_{L}
+     *  - \delta^{I}_{N}\delta^{J}_{L}\delta^{K}_{M}
+     * \f] 
+     *  
+     *  @code
+     *
+     *  const int alpha_XYZXYE = Epsilon1_<X,Y,Z,X,Y,E>::value ;
+     *
+     *  @endcode 
+     *
+     *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
+     *  @date 2008-07-28
+     */
+    template <unsigned int I, 
+              unsigned int J, 
+              unsigned int K, 
+              unsigned int L,
+              unsigned int M,
+              unsigned int N>
+    struct Epsilon1_ 
+    {
+      enum 
+        {
+          value = Delta_<I,N>::value * Delta_<J,M>::value * Delta_<K,L>::value 
+          +       Delta_<I,M>::value * Delta_<J,L>::value * Delta_<K,N>::value 
+          +       Delta_<I,L>::value * Delta_<J,N>::value * Delta_<K,M>::value 
+          //
+          -       Delta_<I,L>::value * Delta_<J,M>::value * Delta_<K,N>::value 
+          -       Delta_<I,M>::value * Delta_<J,N>::value * Delta_<K,L>::value 
+          -       Delta_<I,N>::value * Delta_<J,L>::value * Delta_<K,M>::value 
+        } ;
+    } ;
+    // ========================================================================
+    /** @struct Epsilon2_ 
+     *  (Compile-time) evaluation of the tensor product of 
+     *  two Levy-Civita symbols:
+     *
+     * \f[
+     *  \alpha^{IJ}_{KL} = 
+     *  \epsilon^{IJ\gamma\kappa}
+     *  \epsilon_{KL\rho\kappa} = - 
+     *  \begin{Vmatrix}
+     *    \delta^{I}_{K} & \delta^{I}_{L} \\ 
+     *    \delta^{J}_{K} & \delta^{J}_{L}  \\ 
+     *  \end{Vmatrix} 
+     * \f]
+     *  
+     *  @code
+     *
+     *  const int alpha_XYYE = Epsilon2_<X,Y,Y,E>::value ;
+     *
+     *  @endcode 
+     *
+     *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
+     *  @date 2008-07-28
+     */
+    template <unsigned int I, 
+              unsigned int J, 
+              unsigned int K, 
+              unsigned int L>
+    struct Epsilon2_ 
+    {
+      enum 
+        { value = -2 * ( Delta_<I,K>::value * Delta_<J,L>::value - 
+                         Delta_<J,K>::value * Delta_<I,L>::value ) } ;
+    } ;
     // ========================================================================
     /** @struct Epsilon
      *  Simple implementation of 4D Antisymmetric Levy-Civita symbols
      *   \f$ \epsilon_{\mu\nu\lambda\delta} \f$ and some related operations 
      *
-     *  Convention here: \f$ \epsilon_{0,1,2,3} = \epsilon_{x,y,z,t} = 1 \f$ 
+     *  Convention here: \f$ \epsilon_{0123} = \epsilon_{XYZT} = 1 \f$ 
      *
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-0725
@@ -261,15 +388,10 @@ namespace LoKi
     {
     public:
       // ======================================================================
-      /// indices...
-      enum { X  = 0 , Y  = 1 , Z = 2 , T = 3 , E = T } ;             // indices 
-      // ======================================================================
-    public:
-      // ======================================================================
       /** the major method for evaluation of elements of Levy-Civita tensor
        *   \f$ \epsilon_{\mu\nu\lambda\delta} \f$ 
        *  
-       *  Convention here: \f$ \epsilon_{0,1,2,3} = \epsilon_{x,y,z,t} = 1 \f$ 
+       *  Convention here: \f$ \epsilon_{0123} = \epsilon_{XYZT} = 1 \f$ 
        *
        *  @code 
        *
@@ -307,12 +429,11 @@ namespace LoKi
        *
        *   Epsilon e ;
        *
-       *   const double t_XYE = e ( Epsilon::X , 
-       *                            Epsilon::Y ,
-       *                            Epsilon::E , v ) ;
+       *   const double t_XYE = e ( X , Y , E , v ) ;
+       *
        *  @endcode 
        *
-       *  Convention here: \f$ \epsilon_{0,1,2,3} = \epsilon_{x,y,z,t} = 1 \f$ 
+       *  Convention here: \f$ \epsilon_{0123} = \epsilon_{xyzt} = 1 \f$ 
        *
        *  @attention the evaluation could be rather CPU expensive, 
        *             please use the templated form if indices 
@@ -345,12 +466,11 @@ namespace LoKi
        *
        *   Epsilon e ;
        *
-       *   const double v_XY = e ( Epsilon::X ,
-       *                           Epsilon::Y , v1 , v2 ) ;
+       *   const double v_XY = e ( X , Y , v1 , v2 ) ;
        *
        *  @endcode 
        *
-       *  Convention here: \f$ \epsilon_{0,1,2,3} = \epsilon_{x,y,z,t} = 1 \f$ 
+       *  Convention here: \f$ \epsilon_{0123} = \epsilon_{XYZT} = 1 \f$ 
        *
        *  @attention the evaluation could be rather CPU expensive, 
        *             please use the templated form if indices 
@@ -384,11 +504,11 @@ namespace LoKi
        *
        *   Epsilon e ;
        *
-       *   const double v_X = e ( Epsilon::X , v1 , v2 , v3 ) ; 
+       *   const double v_X = e ( X , v1 , v2 , v3 ) ; 
        *
        *  @endcode 
        *
-       *  Convention here: \f$ \epsilon_{0,1,2,3} = \epsilon_{x,y,z,t} = 1 \f$ 
+       *  Convention here: \f$ \epsilon_{0123} = \epsilon_{XYZT} = 1 \f$ 
        *
        *  @param mu the first index 
        *  @param v1 the first  vector 
@@ -416,11 +536,11 @@ namespace LoKi
        *
        *   Epsilon e ;
        *
-       *   const double v_X = e ( Epsilon::X , v1 , v2 , v3 ) ; 
+       *   const LorentzVector = e ( v1 , v2 , v3 ) ; 
        *
        *  @endcode 
        *
-       *  Convention here: \f$ \epsilon_{0,1,2,3} = \epsilon_{x,y,z,t} = 1 \f$ 
+       *  Convention here: \f$ \epsilon_{0123} = \epsilon_{xyzt} = 1 \f$ 
        *
        *  The following identity holds numerically:
        *  @code
@@ -428,7 +548,6 @@ namespace LoKi
        *   const LorentzVector& v1  = ... ;
        *   const LorentzVector& v2  = ... ;
        *   const LorentzVector& v3  = ... ;
-       *   const LorentzVector& v4  = ... ;
        * 
        *   Epsilon e ;
        *
@@ -454,8 +573,11 @@ namespace LoKi
       /** evaluate the e*v1*v2*v3*v4 product
        * 
        *  \f$  r = 
-       *  \epsilon_{\mu\nu\lambda\kappa}v_1^{\mu}
-       *          v_2^{\nu}v_3^{\lambda}v_4^{\kappa} \f$
+       *  \epsilon_{\mu\nu\lambda\kappa}
+       *       v_1^{\mu}
+       *       v_2^{\nu}
+       *       v_3^{\lambda}
+       *       v_4^{\kappa} \f$
        *
        *  @code 
        *  
@@ -470,7 +592,7 @@ namespace LoKi
        *
        *  @endcode 
        *
-       *  Convention here: \f$ \epsilon_{0,1,2,3} = \epsilon_{x,y,z,t} = 1 \f$ 
+       *  Convention here: \f$ \epsilon_{0123} = \epsilon_{XYZT} = 1 \f$ 
        * 
        *  The following identity holds numerically:
        *  @code
@@ -501,6 +623,51 @@ namespace LoKi
           const LoKi::LorentzVector& v4 ) const 
       { return epsilon ( v1 , v2 , v3 , v4 ) ; }
       // ======================================================================
+      /* evaluate the tensor product: (e*v1*v2*v3)*(e*v4*v5*v6)
+       * 
+       *  \f$  r = 
+       *  \epsilon_{\mu\nu\lambda\kappa}
+       *  \epsilon_{\mu\rho\delta\tau}
+       *      v_1^{\nu}v_2^{\lambda}v_3^{\kappa} 
+       *      v_4^{\rho}v_5^{\delta}v_6^{\tau}   \f$
+       *
+       *  This expression typically appears in evaution of 
+       *  various "plane-angles".
+       *
+       *  @code 
+       *  
+       *   const LorentzVector& v1 = ... ;
+       *   const LorentzVector& v2 = ... ;
+       *   const LorentzVector& v3 = ... ;
+       *   const LorentzVector& v4 = ... ;
+       *   const LorentzVector& v5 = ... ;
+       *   const LorentzVector& v6 = ... ;
+       *
+       *   Epsilon e ;
+       *
+       *   const double r = e ( v1 , v2 , v3 , v4 , v5 , v6 ) ; 
+       *
+       *  @endcode 
+       *
+       *  Convention here: \f$ \epsilon_{0123} = \epsilon_{XYZT} = 1 \f$ 
+       * 
+       *  @param v1 the first  vector 
+       *  @param v2 the second vector 
+       *  @param v3 the third  vector 
+       *  @param v4 the fourth vector 
+       *  @param v5 the fith   vector 
+       *  @param v6 the sixth  vector 
+       *  @return the tensor product
+       */
+      double operator() 
+        ( const LoKi::LorentzVector& v1 , 
+          const LoKi::LorentzVector& v2 , 
+          const LoKi::LorentzVector& v3 , 
+          const LoKi::LorentzVector& v4 , 
+          const LoKi::LorentzVector& v5 , 
+          const LoKi::LorentzVector& v6 ) const 
+      { return epsilon ( v1 , v2 , v3 , v4 , v5 , v6 ) ; }
+      // =====================================================================
     public:
       // ======================================================================
       /** the major method for evaluation of elements of Levy-Civita tensor
@@ -516,6 +683,8 @@ namespace LoKi
        *             If the indices are known at compile time, try to use 
        *             the templated methods - they are much efficient 
        *  
+       *  Convention here: \f$ \epsilon_{0123} = \epsilon_{XYZT} = 1 \f$ 
+       * 
        *  @param i the first  index 
        *  @param j the second index 
        *  @param k the third  index 
@@ -551,10 +720,12 @@ namespace LoKi
        *
        *   Epsilon e ;
        *
-       *   const double t_XYE = e.e_1<Epsilon::X,Epsilon::Y,Epsilon::E>( v ) 
+       *   const double t_XYE = e.e_1<X,Y,E>( v ) 
        *
        *  @endcode 
        *
+       *  Convention here: \f$ \epsilon_{0123} = \epsilon_{XYZT} = 1 \f$ 
+       * 
        *  @see Epsilon::e_3
        *
        *  @param v the input vector 
@@ -577,16 +748,17 @@ namespace LoKi
         const double z = -v.Pz () ;
         const double e =  v.E  () ;
         //
-        return -x * epsilon ( 0  , mu , nu     , lambda )   // 3permutations 
-          +     y * epsilon ( mu ,  1 , nu     , lambda )   // 2 permutation 
-          -     z * epsilon ( mu , nu ,  2     , lambda )   // 1 permutations
+        return -x * epsilon ( 0  , mu , nu     , lambda )   //  3 permutations 
+          +     y * epsilon ( mu ,  1 , nu     , lambda )   //  2 permutations 
+          -     z * epsilon ( mu , nu ,  2     , lambda )   //  1 permutation
           +     e * epsilon ( mu , nu , lambda ,      3 ) ; // no permitations
       }
       // ======================================================================
       /** evaluate the tensor e*v1*v2 product
        * 
        *  \f$  v_{\mu\nu} = 
-       *  \epsilon_{\mu\nu\lambda\kappa}v_1^{\lambda}v_2^{\kappa} \f$
+       *  \epsilon_{\mu\nu\lambda\kappa}
+       *       v_1^{\lambda}v_2^{\kappa} \f$
        *
        *  @code 
        *  
@@ -595,10 +767,12 @@ namespace LoKi
        *
        *   Epsilon e ;
        *
-       *   const double v_XY = e.e_2<Epsilon::X,Epsilon::Y>( v1 , v2 ) 
+       *   const double v_XY = e.e_2<X,Y>( v1 , v2 ) 
        *
        *  @endcode 
        *
+       *  Convention here: \f$ \epsilon_{0123} = \epsilon_{XYZT} = 1 \f$ 
+       * 
        *  @see Epsilon::e_2
        *
        *  @param mu the first index 
@@ -630,6 +804,8 @@ namespace LoKi
        *
        *  @endcode 
        *
+       *  Convention here: \f$ \epsilon_{0123} = \epsilon_{XYZT} = 1 \f$ 
+       * 
        *  @see Epsilon::e_1
        *
        *  @param mu the index of the result 
@@ -647,7 +823,8 @@ namespace LoKi
       /** evaluate the e*v1*v2*v3 product
        * 
        *  \f$  v_{\mu} = 
-       *  \epsilon_{\mu\nu\lambda\kappa}v_1^{\nu}v_2^{\lambda}v_3^{\kappa} \f$
+       *  \epsilon_{\mu\nu\lambda\kappa}
+       *   v_1^{\nu}v_2^{\lambda}v_3^{\kappa} \f$
        *
        *  @code 
        *  
@@ -661,6 +838,8 @@ namespace LoKi
        *
        *  @endcode 
        *
+       *  Convention here: \f$ \epsilon_{0123} = \epsilon_{XYZT} = 1 \f$ 
+       * 
        *  @see Epsilon::e_1
        *
        *  @param v1 the first  vector 
@@ -676,8 +855,11 @@ namespace LoKi
       /** evaluate the tensor product: e*v1*v2*v3*v4
        * 
        *  \f$  r = 
-       *  \epsilon_{\mu\nu\lambda\kappa}v_1^{\mu}
-       *          v_2^{\nu}v_3^{\lambda}v_4^{\kappa} \f$
+       *  \epsilon_{\mu\nu\lambda\kappa}
+       *    v_1^{\mu}
+       *    v_2^{\nu}
+       *    v_3^{\lambda}
+       *    v_4^{\kappa} \f$
        *
        *  @code 
        *  
@@ -692,6 +874,8 @@ namespace LoKi
        *
        *  @endcode 
        *
+       *  Convention here: \f$ \epsilon_{0123} = \epsilon_{XYZT} = 1 \f$ 
+       * 
        *  @param v1 the first  vector 
        *  @param v2 the second vector 
        *  @param v3 the third  vector 
@@ -703,6 +887,89 @@ namespace LoKi
         const LoKi::LorentzVector& v2 , 
         const LoKi::LorentzVector& v3 ,
         const LoKi::LorentzVector& v4 ) const ;
+      // ======================================================================
+      /** evaluate the tensor product: (e*a1*a2*a3)*(e*b1*b2*b3)
+       * 
+       *  \f$  r = 
+       *  \epsilon_{\mu\nu\lambda\kappa}
+       *  \epsilon_{\mu\rho\delta\tau}
+       *          a_1^{\nu}a_2^{\lambda}a_3^{\kappa} 
+       *          b_1^{\rho}b_2^{\delta}b_3^{\tau}   \f$
+       *
+       *  This expression typically appears in evalution of 
+       *  various "plane-angles" (for this case a3=b3) 
+       *
+       *  @code 
+       *  
+       *   const LorentzVector& a1 = ... ;
+       *   const LorentzVector& a2 = ... ;
+       *   const LorentzVector& a3 = ... ;
+       *   const LorentzVector& b1 = ... ;
+       *   const LorentzVector& b2 = ... ;
+       *   const LorentzVector& b3 = ... ;
+       *
+       *   Epsilon e ;
+       *
+       *   const double r = e.epsilon ( a1 , a2 , a3 , b1 , b2 , b3 ) ; 
+       *
+       *  @endcode 
+       *
+       *  The following identity has been used:
+       * \f[ 
+       *     \epsilon^{\alpha\beta\gamma\kappa}
+       *     \epsilon_{\mu\mu\rho\kappa} = - 
+       *  \begin{Vmatrix}
+       *   \delta^{\alpha}_{\mu} & \delta^{\alpha}_{\nu} & \delta^{\alpha}_{\rho} \\ 
+       *   \delta^{\beta}_{\mu}  & \delta^{\beta}_{\nu}  & \delta^{\beta}_{\rho}  \\ 
+       *   \delta^{\gamma}_{\mu} & \delta^{\gamma}_{\nu} & \delta^{\gamma}_{\rho} 
+       *  \end{Vmatrix} 
+       * \f]
+       *  
+       *  Convention here: \f$ \epsilon_{0123} = \epsilon_{XYZT} = 1 \f$ 
+       * 
+       *  @param a1 the first  vector 
+       *  @param a2 the second vector 
+       *  @param a3 the third  vector 
+       *  @param b1 the fourth vector 
+       *  @param b2 the fith   vector 
+       *  @param b3 the sixth  vector 
+       *  @return the tensor product
+       */
+      double epsilon 
+      ( const LoKi::LorentzVector& a1 , 
+        const LoKi::LorentzVector& a2 , 
+        const LoKi::LorentzVector& a3 , 
+        const LoKi::LorentzVector& b1 , 
+        const LoKi::LorentzVector& b2 , 
+        const LoKi::LorentzVector& b3 ) const ;  
+      // ======================================================================
+    public:
+      // ======================================================================     
+      /** evaluate the magnitude of the "4-normal" 
+       * 
+       *  \f$ l^2 = L_{\mu}L^{\mu} 
+       *      = \left( \epsilon_{\mu\nu\lambda\delta}
+       *     a^{\nu}b^{\lambda}c^{\delta} \right)^2 
+       *    = 
+       *     \left(ab\right)c^2 +      
+       *     \left(ac\right)b^2 +     
+       *     \left(bc\right)a^2 -     
+       *      a^2b^2c^2 - 2\left(ab\right)\left(bc\right)\left(ac\right)
+       *   \f$ 
+       *
+       *  @attention For time-like input vectors, 
+       *             the 4-normal is a space-like vector,  
+       *             and therefore the result must be non-positive! 
+       *
+       *  @param a the first  vector 
+       *  @param b the second vector 
+       *  @param c the third  vector 
+       *  @return the magnitude of 4-normal
+       */
+      double mag2 
+      ( const LoKi::LorentzVector& a , 
+        const LoKi::LorentzVector& b , 
+        const LoKi::LorentzVector& c  ) const ;
       // ======================================================================
     public:
       // ======================================================================

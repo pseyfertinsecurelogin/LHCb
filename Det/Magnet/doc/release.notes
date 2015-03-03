@@ -4,6 +4,24 @@
 ! Purpose     : Provides magnetic field map and Bdl tools
 !-----------------------------------------------------------------------------
 
+!====================== Magnet v5r1 2008-09-02 ===============================
+! 2008-09-02 - Marco Cattaneo
+ - Add an option UseSetCurrent to get Set instead of Measured current from
+   CondDB (default false)
+ - Remove a duplicate registration to a condition
+ - Fix a bug in use case without condDB (was crashing if scale factor was set)
+
+! 2008-08-01 - Marco Cattaneo
+ - If MagneticFieldSvc.UseConstantField option is set, all other options are
+   ignored
+
+! 2008-07-31 - Marco Cattaneo
+ - Fix uninitialised pointer to Real field map tools
+ - Clean up dependencies in requirements
+ - Remove unneccessary TestMagnet.exe. Test can be run with 
+   "Gaudi.exe ../options/job.opts" or  "gaudirun.py ../options/job.opts"
+ - Improve messages when scaling factor changes
+
 !====================== Magnet v5r0 2008-07-29 ===============================
 ! 2008-07-29 - Marco Cattaneo
  - Revised implementation of MagneticFieldSvc

@@ -1,10 +1,11 @@
-// $Id: LHCbKernelDict.h,v 1.13 2008-07-21 14:46:34 cattanem Exp $
+// $Id: LHCbKernelDict.h,v 1.16 2008-09-04 09:56:47 cattanem Exp $
 #ifndef DICT_LHCBKERNELDICT_H 
 #define DICT_LHCBKERNELDICT_H 1
 
 // Additional classes to be added to automatically generated lcgdict
 
 // begin include files
+#include <map>
 #include <vector>
 #include <utility>
 #include "GaudiKernel/VectorMap.h"
@@ -15,6 +16,7 @@
 #include "Kernel/MuonTileID.h"
 #include "Kernel/MuonLayout.h"
 #include "Kernel/Trajectory.h"
+#include "Kernel/AlignTraj.h"
 #include "Kernel/CircleTraj.h"
 #include "Kernel/LineTraj.h"
 #include "Kernel/ParabolaTraj.h"
@@ -36,6 +38,7 @@
 #include "Kernel/IUsedLHCbID.h"
 #include "Kernel/TTNames.h"
 #include "Kernel/ITNames.h"
+#include "Kernel/Inspectors.h"
 
 // end include files
 
@@ -59,6 +62,7 @@ namespace {
     std::pair<Gaudi::XYZPoint,Gaudi::XYZPoint>       m_std_pair_XYZPoint_XYZPoint;
     std::vector<LHCb::VeloChannelID>                 m_std_vector_VeloChannelID;
     std::vector<LHCb::LHCbID>::const_iterator        m_std_vector_LHCbID_const_iterator;
+    std::map<std::pair<int,unsigned int>,unsigned int> m_L0DUReport_Summaries;
     // end instantiations
   };
 }
