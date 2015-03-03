@@ -1,4 +1,4 @@
-// $Id: ParticleID.h 132029 2011-11-22 14:42:59Z amartens $ 
+// $Id: ParticleID.h 135995 2012-02-28 20:17:14Z jonrob $ 
 // ============================================================================
 #ifndef LHCbKernel_ParticleID_H
 #define LHCbKernel_ParticleID_H 1
@@ -215,6 +215,20 @@ namespace LHCb
   { return LHCb::ParticleID::printQuark ( q , s ) ; }
   // ==========================================================================
 } //                                                      end of namespace LHCb
+// ============================================================================
+#include "GaudiKernel/HashMap.h"
+namespace GaudiUtils 
+{
+  // Hash functions for maps
+  template <> struct Hash<LHCb::ParticleID>
+  { inline size_t operator() ( const LHCb::ParticleID& s ) const { return (size_t)s.pid(); } };
+  template <> struct Hash<const LHCb::ParticleID>
+  { inline size_t operator() ( const LHCb::ParticleID& s ) const { return (size_t)s.pid(); } };
+  template <> struct Hash<LHCb::ParticleID&>
+  { inline size_t operator() ( const LHCb::ParticleID& s ) const { return (size_t)s.pid(); } };
+  template <> struct Hash<const LHCb::ParticleID&>
+  { inline size_t operator() ( const LHCb::ParticleID& s ) const { return (size_t)s.pid(); } };
+}
 // ============================================================================
 #endif ///LHCbKernel_ParticleID_H
 // ============================================================================

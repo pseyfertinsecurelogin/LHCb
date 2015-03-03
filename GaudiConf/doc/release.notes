@@ -3,6 +3,17 @@
 ! package manager: M.Cattaneo
 !------------------------------------------------------------------------------
 
+!========================= GaudiConf v15r9 2012-03-27 =========================
+
+! 2012-03-27 - Chris Jones
+ - Update the stripping DST unpacking options in DstConf to add a new mapping
+   tool to handle automatic unpacking of the track clusters.
+
+!========================= GaudiConf v15r8 2012-03-26 =========================
+! 2012-03-22 - Chris Jones
+ - Remove the line in DstConf setting the packing version for RichPIDs. The
+   correct value is set by default in the class itself.
+
 !========================= GaudiConf v15r7 2012-02-28 =========================
 ! 2012-02-17 - Chris Jones
  - Update DstConf to no longer include the PV weights vector in DSTs. 

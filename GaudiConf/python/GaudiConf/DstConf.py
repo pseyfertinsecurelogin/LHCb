@@ -234,7 +234,6 @@ class DstConf(LHCbConfigurableUser):
 
         richpidpack = DataPacking__Pack_LHCb__RichPIDPacker_( name               = "PackRichPIDs",
                                                               AlwaysCreateOutput = alwaysCreate )
-        richpidpack.PackingVersion = 1 # For want of a better place, put here for the moment ...
         muonpidpack = DataPacking__Pack_LHCb__MuonPIDPacker_( name               = "PackMuonPIDs",
                                                               AlwaysCreateOutput = alwaysCreate )
         packDST.Members += [ richpidpack, muonpidpack ]
@@ -482,10 +481,12 @@ class DstConf(LHCbConfigurableUser):
     def _unpackStripping(self):
 
         from Configurables import ( ConversionDODMapper,
-                                    ParticlesAndVerticesMapper )
+                                    ParticlesAndVerticesMapper,
+                                    TrackClustersMapper )
                                     
-        mapper   = ConversionDODMapper("UnpackRecPhysMapper")
-        pvmapper = ParticlesAndVerticesMapper("UnpackPsAndVsMapper")
+        mapper     = ConversionDODMapper("UnpackRecPhysMapper")
+        pvmapper   = ParticlesAndVerticesMapper("UnpackPsAndVsMapper")
+        clusmapper = TrackClustersMapper("UnpackTkClustersMapper")
 
         # The input <-> output mappings
         mapper.Transformations = [ ( '(.*)/Rec(.*)',  '$1/pRec$2'  ),
@@ -503,8 +504,9 @@ class DstConf(LHCbConfigurableUser):
         mapper.Algorithms[1559] = "UnpackDecReport"
 
         # Add the tools to the DOD service tools lists
-        DataOnDemandSvc().NodeMappingTools += [pvmapper,mapper]
-        DataOnDemandSvc().AlgMappingTools  += [pvmapper,mapper]
+        tools = [clusmapper,pvmapper,mapper]
+        DataOnDemandSvc().NodeMappingTools += tools
+        DataOnDemandSvc().AlgMappingTools  += tools
 
     def __apply_configuration__(self):
 

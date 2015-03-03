@@ -1,4 +1,3 @@
-// $Id: ReadPackedDst.cpp,v 1.13 2010-05-18 09:03:21 jonrob Exp $
 // Include files
 
 // from Gaudi
@@ -237,12 +236,12 @@ StatusCode ReadPackedDst::execute() {
       longlong eventNumber = nextInt();
       eventNumber = (eventNumber << 32) + nextInt();
       recHeader->setEvtNumber( eventNumber );
+      // Dummy reads from old data when RecHeader contained random seeds.
+      // Data encoded after random seeds were removed has nb=0
       unsigned nb = nextInt();
-      std::vector<long int> seeds;
       for ( unsigned int kk=0 ; nb > kk; ++kk ) {
-        seeds.push_back( nextInt() );
+        nextInt();
       }
-      recHeader->setRandomSeeds( seeds );
       recHeader->setApplicationName( stringFromData() );
       recHeader->setApplicationVersion( stringFromData() );
       recHeader->setRunNumber( nextInt() );

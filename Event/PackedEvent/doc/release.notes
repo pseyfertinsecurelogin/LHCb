@@ -4,6 +4,27 @@
 ! Purpose     : Pack, Unpack and Compare containers for optimized persistency
 !-----------------------------------------------------------------------------
 
+!========================= PackedEvent v4r9p1 2012-03-27 =========================
+
+! 2012-03-27 - Chris Jones
+ - Some small improvements to the PackedCluster class
+
+!========================= PackedEvent v4r9 2012-03-26 =========================
+! 2012-03-22 - Chris Jones
+ - Fix the packing of RichPID and MuonPID objects, where the key was not 
+   properly restored.
+
+! 2012-03-16 - Olivier Callot
+ - Fix the unpacking of Vertices: the reference is a long long,.
+
+!========================= PackedEvent v4r8 2012-03-14 =========================
+! 2012-03-14 - Olivier Callot
+ - Fix the PackedVertex class: most of the information was not stored!
+  https://savannah.cern.ch/bugs/?92524 
+
+! 2012-03-06 - Olivier Callot
+ - New class PackedCluster to store the Velo and ST clusters on track
+
 !========================= PackedEvent v4r7 2012-02-28 =========================
 ! 2012-02-21 - Chris Jones
  - Update the way some references to Particles and Vertices are stored, to

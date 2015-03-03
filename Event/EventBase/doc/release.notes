@@ -1,8 +1,13 @@
-! $Id: release.notes,v 1.19 2009-06-05 05:36:34 cattanem Exp $
+!---------------------------------------------------------------------------
 ! Package     : Event/EventBase
 ! Responsible : Marco Cattaneo, Gloria Corti
 ! Purpose     : LHCb Event model
 !---------------------------------------------------------------------------
+
+!========================= EventBase v3r0 2012-03-26 =========================
+! 2012-03-22 - Marco Cattaneo
+ - Remove ProcessHeader::m_randomSeeds since they are not used anywhere and
+   causes portability problems with persistency of vector<long>
 
 !========================== EventBase v2r5p1 2009-06-05 ====================
 ! 2009-06-05 - Marco Cattaneo

@@ -1,4 +1,3 @@
-// $Id: WritePackedDst.cpp,v 1.7 2010-05-18 09:03:21 jonrob Exp $
 // Include files
 
 // from Gaudi
@@ -162,9 +161,9 @@ StatusCode WritePackedDst::execute()
 
       LHCb::PackedProtoParticles* in = get<LHCb::PackedProtoParticles>( *itC );
       PackedBank bank( in );
-      storeInBlob( bank, &(*in->begin())      , (in->end() - in->begin()) , sizeof( LHCb::PackedProtoParticle) );
-      storeInBlob( bank, &(*in->beginRefs())  , in->sizeRef()             , sizeof( int ) );
-      storeInBlob( bank, &(*in->beginExtra()) , in->sizeExtra()           , sizeof( std::pair<int,int> ) );
+      storeInBlob( bank, &(*in->protos().begin()) , in->protos().size()    , sizeof( LHCb::PackedProtoParticle) );
+      storeInBlob( bank, &(*in->refs().begin())   , in->refs().size()      , sizeof( int ) );
+      storeInBlob( bank, &(*in->extras().begin()) , in->extras().size()    , sizeof( std::pair<int,int> ) );
       m_dst->addBank( m_bankNb++, LHCb::RawBank::DstBank, in->version(), bank.data() );
 
     } else if ( LHCb::CLID_PackedRecVertices     == myClID ) {
@@ -204,10 +203,7 @@ StatusCode WritePackedDst::execute()
       PackedBank bank( in );
       unsigned int evHigh = ((in->evtNumber() ) >> 32) && 0xFFFFFFFF;
       unsigned int evLow  = ( in->evtNumber() && 0xFFFFFFFF );
-      bank.addEntry( evHigh, evLow, in->randomSeeds().size() );
-      for ( unsigned int kk=0 ; in->randomSeeds().size() > kk; ++kk ) {
-        bank.storeInt( in->randomSeeds()[kk] );
-      }
+      bank.addEntry( evHigh, evLow, 0 ); // 0 is size of random seeds vector, for backward compatibility
       bank.storeString( in->applicationName() );
       bank.storeString( in->applicationVersion() );
       bank.storeInt( in->runNumber() );
