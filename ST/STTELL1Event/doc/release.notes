@@ -1,7 +1,14 @@
-! $Id: release.notes,v 1.26 2008-09-04 13:36:09 cattanem Exp $
+! $Id: release.notes,v 1.29 2008-09-30 11:56:01 cattanem Exp $
 ! Package     : STTELL1Event
 ! Responsible : Mathias Knecht
 !-----------------------------------------------------------------------------
+
+!======================== STTELL1Event v1r5 2008-09-30 =======================
+! 2008-09-13 M Needham
+ - Add fractionOK functions to STTELL1Error, STTELL1BoardErrorBank
+
+! 2008-09-06 M Needham
+ - bug fix in STTELL1Error::linkInfo
 
 !======================== STTELL1Event v1r5 2008-09-04 =======================
 ! 2008-08-31 M Needhan

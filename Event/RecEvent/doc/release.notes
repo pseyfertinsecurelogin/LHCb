@@ -1,9 +1,13 @@
 !-----------------------------------------------------------------------------
-! $Id: release.notes,v 1.104 2008-09-03 14:36:47 cattanem Exp $
+! $Id: release.notes,v 1.106 2008-09-30 09:48:16 cattanem Exp $
 ! Package     : Event/RecEvent
 ! Responsible : Marco Cattaneo
 ! Purpose     : LHCb Event model. Reconstruction classes (Brunel output) 
 !-----------------------------------------------------------------------------
+
+!========================= RecEvent v2r16 2008-09-30 =========================
+! 2008-09-21 O Deschamps
+ - remove CaloDataFunctor (moved to CaloUtils)
 
 !========================= RecEvent v2r15 2008-09-03 =========================
 ! 2008-08-18 - Chris Jones

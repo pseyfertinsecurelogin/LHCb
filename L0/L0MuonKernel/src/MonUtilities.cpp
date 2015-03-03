@@ -1,4 +1,4 @@
-// $Id: MonUtilities.cpp,v 1.2 2008-07-25 14:42:15 jucogan Exp $
+// $Id: MonUtilities.cpp,v 1.4 2008-09-21 21:36:58 jucogan Exp $
 // Include files 
 
 #include <sstream>
@@ -90,6 +90,14 @@ std::string  L0Muon::MonUtilities::boardName(int board)
   return name.str();
 };
   
+std::string  L0Muon::MonUtilities::puName(int pu)
+{ 
+  std::stringstream name("");
+  name<<"PU";
+  name<<pu;
+  return name.str();
+};
+  
 std::string  L0Muon::MonUtilities::regionName(int reg)
 { 
   switch ( reg ) {   
@@ -177,16 +185,30 @@ std::string L0Muon::MonUtilities::hname_pads_multiBx_region(int sta, int reg,std
   return toolname+"multiplicity_per_time_slot_"+stationName(sta)+"_"+regionName(reg);
 }
 
-std::string L0Muon::MonUtilities::hname_error_ctrl1(int type, std::string toolname)  {
+std::string L0Muon::MonUtilities::hname_error_gen(int type, std::string toolname)  {
   return toolname+errorName(type);
 }
 
-std::string L0Muon::MonUtilities::hname_error_ctrl2(int type, int qua, std::string toolname)  {
+std::string L0Muon::MonUtilities::hname_error_quarter(int type, int qua, std::string toolname)  {
   return toolname+errorName(type)+"_"+quarterName(qua);
 }
 
-std::string L0Muon::MonUtilities::hname_error_proc(int type, int qua, int board, std::string toolname)  {
+std::string L0Muon::MonUtilities::hname_error_board(int type, int qua, int board, std::string toolname)  {
   return toolname+errorName(type)+"_"+quarterName(qua)+"_"+boardName(board);
+}
+
+std::string L0Muon::MonUtilities::hname_error_pu(int qua, int board, int pu, std::string toolname)  {
+  return toolname+"LinkError_"+quarterName(qua)+"_"+boardName(board)+"_"+puName(pu) ;
+}
+
+std::string L0Muon::MonUtilities::hname_error_multi_opt(int qua,  std::string toolname)  {
+  return toolname+"Nb_of_opt_link_error"+quarterName(qua) ;
+}
+std::string L0Muon::MonUtilities::hname_error_multi_ser(int qua,  std::string toolname)  {
+  return toolname+"Nb_of_ser_link_error"+quarterName(qua) ;
+}
+std::string L0Muon::MonUtilities::hname_error_multi_par(int qua,  std::string toolname)  {
+  return toolname+"Nb_of_par_link_error"+quarterName(qua) ;
 }
 
 std::string L0Muon::MonUtilities::hname_channels_hist(int qua,Channel_type type, int sta, int reg,std::string toolname)    {
@@ -204,6 +226,34 @@ std::string L0Muon::MonUtilities::hname_channels_histBX(int qua,Channel_type typ
 
 std::string L0Muon::MonUtilities::hname_channels_histDT(int qua,Channel_type type, int sta, int reg,std::string toolname)  {
   return hname_channels_hist(qua,type,sta,reg,toolname)+"-wrt-Muon";
+}
+
+std::string L0Muon::MonUtilities::hname_optlinks_evt(std::string toolname)    {
+  return toolname+"evt_in_error";
+}
+
+std::string L0Muon::MonUtilities::hname_optlinks_multitot(std::string toolname)    {
+  return toolname+"OLs_multiplicity";
+}
+
+std::string L0Muon::MonUtilities::hname_optlinks_multi(int qua,std::string toolname)    {
+  return toolname+"OLs_multiplicity_"+quarterName(qua);
+}
+
+std::string L0Muon::MonUtilities::hname_optlinks_hist(int qua, int sta, int reg,std::string toolname)    {
+  return toolname+"OLs_"+quarterName(qua)+"_"+stationName(sta)+"_"+regionName(reg);
+}
+
+std::string L0Muon::MonUtilities::hname_optlinks_hist2D(int qua, int sta, int reg,std::string toolname)  {
+  return hname_optlinks_hist(qua,sta,reg,toolname)+"2D";
+}
+
+std::string L0Muon::MonUtilities::hname_optlinks_histBX(int qua, int sta, int reg,std::string toolname)  {
+  return hname_optlinks_hist(qua,sta,reg,toolname)+"-VS-BX";
+}
+
+std::string L0Muon::MonUtilities::hname_optlinks_histDT(int qua, int sta, int reg,std::string toolname)  {
+  return hname_optlinks_hist(qua,sta,reg,toolname)+"-wrt-Muon";
 }
 
 std::string L0Muon::MonUtilities::hname_cand_pt(std::string toolname)  {
@@ -224,4 +274,12 @@ std::string L0Muon::MonUtilities::hname_cand_number(std::string toolname)  {
 
 std::string L0Muon::MonUtilities::hname_cand_sum(std::string toolname)  {
   return toolname+"number_of_candidates";
+}
+
+std::string L0Muon::MonUtilities::hname_cand_bid(std::string toolname)  {
+  return toolname+"bid_with_l0muon_candidates";
+}
+
+std::string L0Muon::MonUtilities::hname_cand_evtbid(std::string toolname)  {
+  return toolname+"bid_for_evt_with_l0muon_candidates";
 }

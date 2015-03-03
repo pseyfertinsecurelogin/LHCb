@@ -1,4 +1,4 @@
-// $Id: MagneticFieldSvc.cpp,v 1.39 2008-09-02 09:11:50 cattanem Exp $
+// $Id: MagneticFieldSvc.cpp,v 1.41 2008-09-12 13:32:35 jonrob Exp $
 
 // Include files
 #include "GaudiKernel/SvcFactory.h"
@@ -155,6 +155,21 @@ StatusCode MagneticFieldSvc::initialize()
   }
   
   return status;  
+}
+
+//=============================================================================
+// Finalize
+//=============================================================================
+StatusCode MagneticFieldSvc::finalize()
+{
+  StatusCode sc = StatusCode::SUCCESS;
+  // release the used tools
+  if ( m_DC06FieldUp   ) { sc = sc && m_toolSvc->releaseTool(m_DC06FieldUp);   }
+  if ( m_DC06FieldDown ) { sc = sc && m_toolSvc->releaseTool(m_DC06FieldDown); }
+  if ( m_RealFieldUp   ) { sc = sc && m_toolSvc->releaseTool(m_RealFieldUp);   }
+  if ( m_RealFieldDown ) { sc = sc && m_toolSvc->releaseTool(m_RealFieldDown); }
+  // base clase finalize
+  return sc && Service::finalize();
 }
 
 //=============================================================================
@@ -348,7 +363,6 @@ StatusCode MagneticFieldSvc::updateTool( int polarity )
 {
   // Depending on the polarity and the type of field map, update the tool
   MsgStream log(msgSvc(), name());
-  StatusCode sc = StatusCode::FAILURE;
 
   if( polarity == 0 ) {
     polarity = 1;
@@ -359,55 +373,68 @@ StatusCode MagneticFieldSvc::updateTool( int polarity )
     // DC06 case
     if( polarity > 0 ) {
       if( 0 == m_DC06FieldUp ) {
-        sc = m_toolSvc->retrieveTool( "MagFieldToolDC06", "MagToolDC06Up",
-                                      m_DC06FieldUp, this );
+        StatusCode sc = m_toolSvc->retrieveTool( "MagFieldToolDC06",
+                                                 "MagToolDC06Up",
+                                                 m_DC06FieldUp, this );
         if( sc.isFailure() ) {
           log << MSG::ERROR << "Could not retrieve MagToolDC06Up" << endmsg;
           return sc;
         }
-        m_fieldTool = m_DC06FieldUp;
       }
+      m_fieldTool = m_DC06FieldUp;
     }
     else {
       if( 0 == m_DC06FieldDown ) {
-        sc = m_toolSvc->retrieveTool( "MagFieldToolDC06", "MagToolDC06Down",
-                                      m_DC06FieldDown, this );
+        StatusCode sc = m_toolSvc->retrieveTool( "MagFieldToolDC06",
+                                                 "MagToolDC06Down",
+                                                 m_DC06FieldDown, this );
         if( sc.isFailure() ) {
           log << MSG::ERROR << "Could not retrieve MagToolDC06Down" << endmsg;
           return sc;
         }
-        m_fieldTool = m_DC06FieldDown;
       }
+      m_fieldTool = m_DC06FieldDown;
     }
   }
   else if( m_mapFileNames.size() == 4 ) {
     // Real map case
     if( polarity > 0 ) {
       if( 0 == m_RealFieldUp ) {
-        sc = m_toolSvc->retrieveTool( "MagFieldTool", "MagToolRealUp",
-                                      m_RealFieldUp, this );
+        StatusCode sc = m_toolSvc->retrieveTool( "MagFieldTool",
+                                                 "MagToolRealUp",
+                                                 m_RealFieldUp, this );
         if( sc.isFailure() ) {
           log << MSG::ERROR << "Could not retrieve MagToolRealUp" << endmsg;
           return sc;
         }
-        m_fieldTool = m_RealFieldUp;
       }
+      m_fieldTool = m_RealFieldUp;
     }
     else {
       if( 0 == m_RealFieldDown ) {
-        sc = m_toolSvc->retrieveTool( "MagFieldTool", "MagToolRealDown",
-                                      m_RealFieldDown, this );
+        StatusCode sc = m_toolSvc->retrieveTool( "MagFieldTool",
+                                                 "MagToolRealDown",
+                                                 m_RealFieldDown, this );
         if( sc.isFailure() ) {
           log << MSG::ERROR << "Could not retrieve MagToolRealDown" << endmsg;
           return sc;
         }
-        m_fieldTool = m_RealFieldDown;
       }
+      m_fieldTool = m_RealFieldDown;
     }
   }
   else {
     log << MSG::ERROR 
         << "Wrong number of field map files, don't know what to do" << endmsg;
+    return StatusCode::FAILURE;
+  }
+
+  if ( !m_fieldTool ) 
+  {
+    log << MSG::ERROR
+        << "Null FieldTool pointer | polarity = " << polarity
+        << ", # FieldMap Files = " << m_mapFileNames.size() 
+        << endmsg;
     return StatusCode::FAILURE;
   }
 

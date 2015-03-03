@@ -1,4 +1,4 @@
-// $Id: ParticleCuts.h,v 1.26 2008-06-03 15:47:08 cattanem Exp $
+// $Id: ParticleCuts.h,v 1.29 2008-09-29 16:50:40 ibelyaev Exp $
 // ============================================================================
 #ifndef LOKI_PHYSPARTICLECUTS_H 
 #define LOKI_PHYSPARTICLECUTS_H 1
@@ -218,6 +218,45 @@ namespace LoKi
      */        
     typedef LoKi::Particles::AbsDeltaMeasuredMass                     ADMMASS ;    
     // ========================================================================
+    /** @var ADPDGM 
+     *  Simple (but not very efficient)  function to evaluate the absolute 
+     *  value for the difference between the particle mass and the 
+     *  nominal(PDG) mass
+     * 
+     *  @code 
+     *
+     *   const LHCb::Particle* B = ... ;
+     *   
+     *   const adelta = ADPDGM ( B ) ;
+     *
+     *  @endcode 
+     *
+     *  @see LoKi::Particles::AbsDeltaNominalMass 
+     *  @see LoKi::Cuts::ADPDGMASS 
+     *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
+     *  @date 2008-09-23
+     */
+    const LoKi::Particles::AbsDeltaNominalMass                         ADPDGM ;
+    // ========================================================================
+    /** @var ADPDGMASS
+     *  Simple (but not very efficient)  function to evaluate the absolute 
+     *  value for the difference between particle mass and the nominal(PDG) mass
+     * 
+     *  @code 
+     *
+     *   const LHCb::Particle* B = ... ;
+     *   
+     *   const adelta = ADPDGMASS ( B ) ;
+     *
+     *  @endcode 
+     *
+     *  @see LoKi::Particles::AbsDeltaNominalMass 
+     *  @see LoKi::Cuts::ADPDGM 
+     *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
+     *  @date 2008-09-23
+     */
+    const LoKi::Particles::AbsDeltaNominalMass                      ADPDGMASS ;
+    // ========================================================================
     /** @var ALL
      *  the trivial functor which always evaluates to "true"
      *  
@@ -228,6 +267,53 @@ namespace LoKi
      *  @date 2006-02-15
      */
     const LoKi::Constant<const LHCb::Particle*,bool>           ALL ( true ) ;    
+    // ========================================================================
+    /** @var ARMENTEROS 
+     *  Simple evaluator of Armenteros-Podolanski 
+     *  variable \f$\mathbf{\alpha}\f$, defined as:
+     *  \f[
+     *  \mathbf{\alpha} = \dfrac
+     *  { \mathrm{p}^{\mathrm{L},1} - \mathrm{p}^{\mathrm{L},1} }
+     *  { \mathrm{p}^{\mathrm{L},1} + \mathrm{p}^{\mathrm{L},1} },
+     *  \f]
+     *  where 
+     *   \f$ \mathrm{p}^{\mathrm{L},1}\f$ and 
+     *   \f$ \mathrm{p}^{\mathrm{L},2}\f$ are longitudinal momentum
+     *   components for the first and the seco ddaughter particles 
+     *   with respect to the total momentum direction. 
+     *
+     *  Clearly this expression could be rewritten in an equivalent 
+     *  form which however much more easier for calculation:
+     *  \f[
+     *  \mathbf{\alpha} = \dfrac
+     *  { \vec{\mathbf{p}}_1^2 - \vec{\mathbf{p}}_2^2 }  
+     *  { \left( \vec{\mathbf{p}}_1 + \vec{\mathbf{p}}_2 \right)^2 }  
+     *  \f]
+     *
+     *  @code
+     * 
+     *   const LHCb::Particle* p = ... ;
+     *   const double alpha  = ARMENTEROS ( p ) ;
+     *  
+     *  @endcode 
+     *
+     *  @attention instead of 
+     *     2D \f$\left(\mathrm{p_T},\mathbf{\alpha}\right)\f$ diagram, 
+     *     in the case of twobody decays at LHCb it is much better to 
+     *     use 2D diagram \f$\left(\cos \theta, \mathrm{m} \right)\f$
+     *     diagram, where \f$\cos\theta\f$-is the decay 
+     *     angle,see the variable LV01, and \f$\mathrm{m}\f$ is an 
+     *     invariant evalauted for some (fixed) mass prescription, 
+     *     e.g. \f$\pi^+\pi^-\f$.  
+     * 
+     *  
+     *  @see LoKi::Particles::ArmenterosPodolaski
+     *  @see LoKi::Kinematics::armenterosPodolanskiX 
+     *
+     *  @author Vanya BELYAEV Ivan.BElyaev@nikhef.nl
+     *  @date 2008-09-21 
+     */
+    const LoKi::Particles::ArmenterosPodolanski                    ARMENTEROS ;
     // ========================================================================
     /** @var BASIC 
      *  The trivial predicate which evaluates to "true" for 
@@ -342,12 +428,13 @@ namespace LoKi
     typedef LoKi::Particles::ImpParChi2                                CHI2IP ;
     // ========================================================================
     /** @typedef CHI2M 
-     *  Delta Measured Mass in chi2 units 
+     *  Delta Mass in chi2 units, defined as chi2 value for 1-step 
+     *  mass-fit procedure
      *
      *  @code 
      *
      *     const Particle* particle = ... ; //  get the particle
-     *     Fun dmm = CHI2M ( 3.010 * GeV );
+     *     Fun dmm = CHI2M  ( 3.010 * GeV );
      *     const double  chi2  = dmm( particle ) ;
      *
      *  @endcode
@@ -363,11 +450,11 @@ namespace LoKi
      *     IParticlePropertySvc* ppsvc    = ... ; // get the service 
      *     const ParticleProperty& D0     = ... ; // get from the service 
      *
-     *     Fun dmm1 = CHI2M( "D0" , ppsvc ) ;
+     *     Fun dmm1 = CHI2M ( "D0" , ppsvc ) ;
      *     const double    chi2_1       = dmm1 ( particle ) ;
-     *     Fun dmm2 = CHI2M( 241  , ppsvc ) ;
+     *     Fun dmm2 = CHI2M ( 241  , ppsvc ) ;
      *     const double    chi2_2       = dmm2 ( particle ) ;
-     *     Fun dmm3 = CHI2M( D0 ) ;
+     *     Fun dmm3 = CHI2M ( D0 ) ;
      *     const double    chi2_3       = dmm3 ( particle ) ;
      *
      *  @endcode
@@ -378,30 +465,33 @@ namespace LoKi
      *
      *     const Particle*       particle = ... ; // get the particle
      *
-     *     Fun dmm1 = CHI2M( LHCb::ParticleID( 241 ) ) ;
+     *     Fun dmm1 = CHI2M ( LHCb::ParticleID( 241 ) ) ;
      *     const double    chi2_1       = dmm1 ( particle ) ;
-     *     Fun dmm2 = CHI2M( "D0" ) ;
+     *     Fun dmm2 = CHI2M ( "D0" ) ;
      *     const double    chi2_2       = dmm2 ( particle ) ;
      *
      *  @endcode
      *
+     *  @attention mind the difference with CHI2MM and CHI2MMASS functions!
+     * 
      *  @see Particle
-     *  @see LoKi::Particle::DeltaMeasuredMassChi2
-     *  @see LoKi::Particle::DeltaMeasuredMass
-     *  @see LoKi::Particle::MeasuredMass
-     *  @see LoKi::Function
-     *  @see LoKi::Cuts::Fun
-     *  @attention LoKi::Particles::ErrorValue returned on error 
+     *  @see LoKi::Kinematics::chi2mass 
+     *  @see LoKi::Particle::DeltaMassChi2
+     *  @see LoKi::Particle::DeltaMass
+     *  @see LoKi::Cuts::CHI2MASS
+     *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
+     *  @date 2008-09-23
      */        
-    typedef LoKi::Particles::DeltaMeasuredMassChi2                      CHI2M ;
+    typedef LoKi::Particles::DeltaMassChi2                              CHI2M ;
     // ========================================================================
-    /** @typedef CHI2MASS 
-     *  Delta Measured Mass in chi2 units 
+    /** @typedef CHI2MASS
+     *  Delta Mass in chi2 units, defined as chi2 value for 1-step 
+     *  mass-fit procedure
      *
      *  @code 
      *
      *     const Particle* particle = ... ; //  get the particle
-     *     Fun dmm = CHI2MASS ( 3.010 * GeV );
+     *     Fun dmm = CHI2MASS  ( 3.010 * GeV );
      *     const double  chi2  = dmm( particle ) ;
      *
      *  @endcode
@@ -417,11 +507,11 @@ namespace LoKi
      *     IParticlePropertySvc* ppsvc    = ... ; // get the service 
      *     const ParticleProperty& D0     = ... ; // get from the service 
      *
-     *     Fun dmm1 = CHI2MASS( "D0" , ppsvc ) ;
+     *     Fun dmm1 = CHI2MASS ( "D0" , ppsvc ) ;
      *     const double    chi2_1       = dmm1 ( particle ) ;
-     *     Fun dmm2 = CHI2MASS( 241  , ppsvc ) ;
+     *     Fun dmm2 = CHI2MASS ( 241  , ppsvc ) ;
      *     const double    chi2_2       = dmm2 ( particle ) ;
-     *     Fun dmm3 = CHI2MASS( D0 ) ;
+     *     Fun dmm3 = CHI2MASS ( D0 ) ;
      *     const double    chi2_3       = dmm3 ( particle ) ;
      *
      *  @endcode
@@ -432,13 +522,71 @@ namespace LoKi
      *
      *     const Particle*       particle = ... ; // get the particle
      *
-     *     Fun dmm1 = CHI2MASS( LHCb::ParticleID( 241 ) ) ;
+     *     Fun dmm1 = CHI2MASS ( LHCb::ParticleID( 241 ) ) ;
      *     const double    chi2_1       = dmm1 ( particle ) ;
-     *     Fun dmm2 = CHI2MASS( "D0" ) ;
+     *     Fun dmm2 = CHI2MASS ( "D0" ) ;
      *     const double    chi2_2       = dmm2 ( particle ) ;
      *
      *  @endcode
      *
+     *  @attention mind the difference with CHI2MM and CHI2MMASS functions!
+     * 
+     *  @see Particle
+     *  @see LoKi::Kinematics::chi2mass 
+     *  @see LoKi::Particle::DeltaMassChi2
+     *  @see LoKi::Particle::DeltaMass
+     *  @see LoKi::Cuts::CHI2M
+     *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
+     *  @date 2008-09-23
+     */        
+    typedef LoKi::Particles::DeltaMassChi2                           CHI2MASS ;
+    // ========================================================================
+    /** @typedef CHI2MM 
+     *  Delta Measured Mass in chi2 units 
+     *
+     *  @code 
+     *
+     *     const Particle* particle = ... ; //  get the particle
+     *     Fun dmm = CHI2MM ( 3.010 * GeV );
+     *     const double  chi2  = dmm( particle ) ;
+     *
+     *  @endcode
+     *
+     *  Alternatively the function object could be created
+     *  from Particle ID or particle name, in this case it requires
+     *  to be supplied with pointer to <tt>IParticlePpopertySvc</tt>
+     *  service: 
+     *
+     *  @code 
+     *
+     *     const Particle*       particle = ... ; // get the particle
+     *     IParticlePropertySvc* ppsvc    = ... ; // get the service 
+     *     const ParticleProperty& D0     = ... ; // get from the service 
+     *
+     *     Fun dmm1 = CHI2MM( "D0" , ppsvc ) ;
+     *     const double    chi2_1       = dmm1 ( particle ) ;
+     *     Fun dmm2 = CHI2MM( 241  , ppsvc ) ;
+     *     const double    chi2_2       = dmm2 ( particle ) ;
+     *     Fun dmm3 = CHI2MM( D0 ) ;
+     *     const double    chi2_3       = dmm3 ( particle ) ;
+     *
+     *  @endcode
+     *
+     *  More simple ways are also valid:
+     *
+     *  @code 
+     *
+     *     const Particle*       particle = ... ; // get the particle
+     *
+     *     Fun dmm1 = CHI2MM( LHCb::ParticleID( 241 ) ) ;
+     *     const double    chi2_1       = dmm1 ( particle ) ;
+     *     Fun dmm2 = CHI2MM( "D0" ) ;
+     *     const double    chi2_2       = dmm2 ( particle ) ;
+     *
+     *  @endcode
+     *
+     *  @attention mind the difference with CHI2M and CHI2MASS functions!
+     * 
      *  @see Particle
      *  @see LoKi::Particle::DeltaMeasuredMassChi2
      *  @see LoKi::Particle::DeltaMeasuredMass
@@ -447,7 +595,63 @@ namespace LoKi
      *  @see LoKi::Cuts::Fun
      *  @attention LoKi::Particles::ErrorValue returned on error 
      */        
-    typedef LoKi::Particles::DeltaMeasuredMassChi2                   CHI2MASS ;
+    typedef LoKi::Particles::DeltaMeasuredMassChi2                     CHI2MM ;
+    // ========================================================================
+    /** @typedef CHI2MMASS 
+     *  Delta Measured Mass in chi2 units 
+     *
+     *  @code 
+     *
+     *     const Particle* particle = ... ; //  get the particle
+     *     Fun dmm = CHI2MMASS ( 3.010 * GeV );
+     *     const double  chi2  = dmm( particle ) ;
+     *
+     *  @endcode
+     *
+     *  Alternatively the function object could be created
+     *  from Particle ID or particle name, in this case it requires
+     *  to be supplied with pointer to <tt>IParticlePpopertySvc</tt>
+     *  service: 
+     *
+     *  @code 
+     *
+     *     const Particle*       particle = ... ; // get the particle
+     *     IParticlePropertySvc* ppsvc    = ... ; // get the service 
+     *     const ParticleProperty& D0     = ... ; // get from the service 
+     *
+     *     Fun dmm1 = CHI2MMASS( "D0" , ppsvc ) ;
+     *     const double    chi2_1       = dmm1 ( particle ) ;
+     *     Fun dmm2 = CHI2MMASS( 241  , ppsvc ) ;
+     *     const double    chi2_2       = dmm2 ( particle ) ;
+     *     Fun dmm3 = CHI2MMASS( D0 ) ;
+     *     const double    chi2_3       = dmm3 ( particle ) ;
+     *
+     *  @endcode
+     *
+     *  More simple ways are also valid:
+     *
+     *  @code 
+     *
+     *     const Particle*       particle = ... ; // get the particle
+     *
+     *     Fun dmm1 = CHI2MMASS( LHCb::ParticleID( 241 ) ) ;
+     *     const double    chi2_1       = dmm1 ( particle ) ;
+     *     Fun dmm2 = CHI2MMASS( "D0" ) ;
+     *     const double    chi2_2       = dmm2 ( particle ) ;
+     *
+     *  @endcode
+     *
+     *  @attention mind the difference with CHI2M and CHI2MASS functions!
+     * 
+     *  @see Particle
+     *  @see LoKi::Particle::DeltaMeasuredMassChi2
+     *  @see LoKi::Particle::DeltaMeasuredMass
+     *  @see LoKi::Particle::MeasuredMass
+     *  @see LoKi::Function
+     *  @see LoKi::Cuts::Fun
+     *  @attention LoKi::Particles::ErrorValue returned on error 
+     */        
+    typedef LoKi::Particles::DeltaMeasuredMassChi2                  CHI2MMASS ;
     // ========================================================================
     /** @typedef CHI2MIP 
      *  Evaluation of minimal value of chi2 for the impact parameter of 
@@ -479,6 +683,47 @@ namespace LoKi
      *  @date   2002-07-15
      */
     typedef LoKi::Particles::MinImpParChi2                            CHI2MIP ;
+    // ========================================================================
+    /** @var CIH2PDGM 
+     *  Simple (but not very efficient)  function to evaluate the chi2
+     *  between the particle mass and the nominal(PDG) mass
+     *  Chi2 is evaluate ans chi2 of 1-step mass-fit procedure.
+     * 
+     *  @code 
+     *
+     *   const LHCb::Particle* B = ... ;
+     *   
+     *   const double chi2 = CHI2PDGM ( B ) ;
+     *
+     *  @endcode 
+     *
+     *  @see LoKi::Particles::DeltaNominalMassChi2
+     *  @see LoKi::Cuts::CHI2PDGMASS 
+     *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
+     *  @date 2008-09-23
+     */
+    const LoKi::Particles::DeltaNominalMassChi2                      CHI2PDGM ;
+    // ========================================================================
+    /** @var CHI2PDGMASS
+     *  Simple (but not very efficient)  function to evaluate the 
+     *  che2 of the difference between particle mass and the nominal(PDG) 
+     *  mass.
+     *  Chi2 is evaluate ans chi2 of 1-step mass-fit procedure.
+     * 
+     *  @code 
+     *
+     *   const LHCb::Particle* B = ... ;
+     *   
+     *   const double chi2 = CHI2PDGMASS ( B ) ;
+     *
+     *  @endcode 
+     *
+     *  @see LoKi::Particles::DeltaNominalMassChi2
+     *  @see LoKi::Cuts::CHI2PDGM 
+     *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
+     *  @date 2008-09-23
+     */
+    const LoKi::Particles::DeltaNominalMassChi2                   CHI2PDGMASS ;
     // ========================================================================
     /** @var CHI2TR 
      *  The trivial funtion which evaluates LHCb::Track::chi2
@@ -970,6 +1215,142 @@ namespace LoKi
      */
     typedef LoKi::Particles::ChildPredicate                          CUTCHILD ;
     // ========================================================================
+    /** @typedef D2DVVD 
+     *  Evaluate the 3D-vertex-vertex distance for the various daughter particles
+     *  in the cascade decay
+     *   
+     *  @code 
+     * 
+     *   const LHCb::Particle* B = ... ;
+     *
+     *   // distance between 1st and 2nd daugher vertices 
+     *   const D2DVVD d2d1 ( 1 , 2 ) ; 
+     *   // distance between 1st daughetr vertex and the mother vertex 
+     *   const D2DVVD d2d2 ( 1 ) ; 
+     * 
+     *   const double distance12 = d2d1 ( B ) ;
+     *   const double distance1  = d2d2 ( B ) ;
+     * 
+     *  @endcode 
+     * 
+     *  @see LoKi::Particles::DaughterVertexDistance
+     *  @see LoKi::Vertices::VertexDistance 
+     *  @see LoKi::Cuts::VVD 
+     *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
+     *  @date 2008-09-29
+     */
+    typedef LoKi::Particles::DaughterVertexDistance                    D2DVVD ;
+    // ========================================================================
+    /** @typedef D2DVVDCHI2
+     *  Evaluate the \f$\chi^2\f$-vertex-vertex signed distance 
+     *  for the various 
+     *  daughter particles in the cascade decay
+     *   
+     *  @code 
+     * 
+     *   const LHCb::Particle* B = ... ;
+     *
+     *   // chi2-distance between 1st and 2nd daugher vertices 
+     *   const D2DVVDCIH2 d2d1 ( 1 , 2 ) ; 
+     *   // chi2-distance between 1st daughetr vertex and the mother vertex 
+     *   const D2DVVDCHI2 d2d2 ( 1 ) ; 
+     * 
+     *   const double chi2_1 = d2d1 ( B ) ;
+     *   const double cih2_2 = d2d2 ( B ) ;
+     * 
+     *  @endcode 
+     * 
+     *  @see LoKi::Particles::DaughterVertexDistanceChi2
+     *  @see LoKi::Vertices::VertexChi2Distance 
+     *  @see LoKi::Cuts::VDCHI2  
+     *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
+     *  @date 2008-09-29
+     */
+    typedef LoKi::Particles::DaughterVertexDistanceChi2            D2DVVDCHI2 ;
+    // ========================================================================
+    /** @typedef D2DVVDCHI2SIGN
+     *  Evaluate the signed \f$\chi^2\f$-vertex-vertex distance 
+     *  for the various daughter particles in the cascade decay.
+     *  The sign is evaluated from the sign of the expresion:
+     *   \f$ \left( \vect{v}_1-\vetc{v}_2\right)\cdot \vect{p}_1 \f$ 
+     *   
+     *  @code 
+     * 
+     *   const LHCb::Particle* B = ... ;
+     *
+     *   // chi2-distance between 1st and 2nd daugher vertices 
+     *   const D2DVVDCHI2SIGN d2d1 ( 1 , 2 ) ; 
+     *   // chi2-distance between 1st daughetr vertex and the mother vertex 
+     *   const D2DVVDCHI2SIGN d2d2 ( 1 ) ; 
+     * 
+     *   const double chi2_1 = d2d1 ( B ) ;
+     *   const double cih2_2 = d2d2 ( B ) ;
+     * 
+     *  @endcode 
+     * 
+     *  @see LoKi::Particles::DaughterVertexDistanceSignedChi2
+     *  @see LoKi::Vertices::VertexChi2Distance 
+     *  @see LoKi::Cuts::VDCHI2  
+     *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
+     *  @date 2008-09-29
+     */
+    typedef LoKi::Particles::DaughterVertexDistanceSignedChi2  D2DVVDCHI2SIGN ;
+    // ========================================================================
+    /** @typedef D2DVVDDOT
+     *  Evaluate the 'dot'-vertex-vertex distance 
+     *  for the various daughter particles in the cascade decay.
+     *  It is a projectioof the distance between  vertices to the 
+     *  direction of the monetum of the first particle 
+     *   
+     *  @code 
+     * 
+     *   const LHCb::Particle* B = ... ;
+     *
+     *   // 'dot'-distance between 1st and 2nd daugher vertices 
+     *   const D2DVVDDOT d2d1 ( 1 , 2 ) ; 
+     *   // 'dot'-distance between 1st daughetr vertex and the mother vertex 
+     *   const D2DVVDDOTd2d2 ( 1 ) ; 
+     * 
+     *   const double dot_1 = d2d1 ( B ) ;
+     *   const double dot_2 = d2d2 ( B ) ;
+     * 
+     *  @endcode 
+     * 
+     *  @see LoKi::Particles::DaughterVertexDistanceDot
+     *  @see LoKi::Partcles::VertexDotDistance 
+     *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
+     *  @date 2008-09-29
+     */
+    typedef LoKi::Particles::DaughterVertexDistanceDot              D2DVVDDOT ;
+    // ========================================================================
+    /** @typedef D2DVVDSIGN 
+     *  Evaluate the 3D-vertex-vertex signed distance for the various 
+     *  daughter particles in the cascade decay
+     *  The sign is prescribed according to \f$\Delta z \f$
+     *   
+     *  @code 
+     * 
+     *   const LHCb::Particle* B = ... ;
+     *
+     *   // distance between 1st and 2nd daugher vertices 
+     *   const D2DVVDSIGN d2d1 ( 1 , 2 ) ; 
+     *   // distance between 1st daughetr vertex and the mother vertex 
+     *   const D2DVVDSIGN d2d2 ( 1 ) ; 
+     * 
+     *   const double distance12 = d2d1 ( B ) ;
+     *   const double distance1  = d2d2 ( B ) ;
+     * 
+     *  @endcode 
+     * 
+     *  @see LoKi::Particles::DaughterVertexSignedDistance
+     *  @see LoKi::Vertices::VertexSignedDistance 
+     *  @see LoKi::Cuts::VVDSIGN 
+     *  @see LoKi::Cuts::D2DVVD
+     *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
+     *  @date 2008-09-29
+     */
+    typedef LoKi::Particles::DaughterVertexSignedDistance          D2DVVDSIGN ;
+    // ========================================================================    
     /** @typedef DANG
      *  Simple function which evalutes the coside of the angle inbetween
      *  the particle momentum and the vector from the primary to the secondary
@@ -1258,6 +1639,44 @@ namespace LoKi
      *  @date   2002-07-15
      */
     typedef LoKi::Particles::MinClosestApproach                       DOCAMIN ;
+    // ========================================================================
+    /** @var DPDGM 
+     *  Simple (but not very efficient)  function to evaluate the difference 
+     *  between the particle mass and the nominal(PDG) mass
+     * 
+     *  @code 
+     *
+     *   const LHCb::Particle* B = ... ;
+     *   
+     *   const adelta = DPDGM ( B ) ;
+     *
+     *  @endcode 
+     *
+     *  @see LoKi::Particles::DeltaNominalMass 
+     *  @see LoKi::Cuts::DPDGMASS 
+     *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
+     *  @date 2008-09-23
+     */
+    const LoKi::Particles::DeltaNominalMass                             DPDGM ;
+    // ========================================================================
+    /** @var DPDGMASS
+     *  Simple (but not very efficient)  function to evaluate the 
+     *  difference between particle mass and the nominal(PDG) mass
+     * 
+     *  @code 
+     *
+     *   const LHCb::Particle* B = ... ;
+     *   
+     *   const delta = DPDGMASS ( B ) ;
+     *
+     *  @endcode 
+     *
+     *  @see LoKi::Particles::DeltaNominalMass 
+     *  @see LoKi::Cuts::DPDGM 
+     *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
+     *  @date 2008-09-23
+     */
+    const LoKi::Particles::DeltaNominalMass                          DPDGMASS ;
     // ========================================================================
     /** @typedef DPHI
      *  simple evaluator of "delta phi" of the particle momenta
@@ -3406,6 +3825,25 @@ namespace LoKi
      */
     typedef LoKi::Particles::NinTree                                  NINTREE ;
     // ========================================================================
+    /** @var NMASS 
+     *  The simple evaluato of the nominal(PDG) particle mass 
+     *
+     *  @code 
+     *
+     *   const LHCb::Particle* B = ... ;
+     *
+     *   const double nominal = NMASS ( B ) ;
+     *
+     *  @endcode 
+     *
+     *  @see LoKi::Particles::NominalMass 
+     *  @see LoKi::Cuts::PDGMASS 
+     *
+     *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
+     *  @date 2008-09-23
+     */
+    const LoKi::Particles::NominalMass                                  NMASS ;
+    // ========================================================================
     /** @var NONE
      *  the trivial functor which always evaluates to "false"
      *  
@@ -3478,6 +3916,26 @@ namespace LoKi
      */
     const LoKi::Constant<const LHCb::Particle*,bool>           PALL ( true ) ;
     // ========================================================================
+    /** @var PDGMASS 
+     *  The simple evaluator of the nominal(PDG) particle mass 
+     *
+     *  @code 
+     *
+     *   const LHCb::Particle* B = ... ;
+     *
+     *   const double nominal = PDGMASS ( B ) ;
+     *
+     *  @endcode 
+     *
+     *  @see LoKi::Particles::NominalMass 
+     *  @see LoKi::Cuts::NMASS
+     *
+     *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
+     *  @date 2008-09-23
+     */
+    const LoKi::Particles::NominalMass                                PDGMASS ;
+    // ========================================================================
+
     /** @var PFALSE
      *  the trivial functor which always evaluates to "false"
      *  
@@ -4351,6 +4809,81 @@ namespace LoKi
      *  @date   2006-05-22
      */
     const LoKi::Particles::Charge                                           Q ;
+    // ========================================================================
+    /** @typedef QPT    
+     *  Simple evalautor of the value of the transverse momentum of 
+     *  the daughter particle with respect to the direction of the 
+     *  mother particle. 
+     *  It is useful e.g. as Y-variable for Armenteros-Podolanski plot or 
+     *  for jet-studies 
+     *  @code
+     *  
+     *   const LHCb::Particle* p = ... ;
+     *
+     *   const QPT qpt = QPT ( 3 ) ;
+     *
+     *   const double pt3 = qpt( p ) 
+     *
+     *  @endcode 
+     *  
+     *  @see  LoKi::Particles::TransverseMomentumQ 
+     *  @see  LoKi::Cuts::QPT1
+     *  @see  LoKi::Cuts::QPT2
+     * 
+     *  @author Vanya BELYAEV  Ivan.Belyaev@nikhef.nl
+     *  @date 2008-09-21
+     */
+    typedef LoKi::Particles::TransverseMomentumQ                          QPT ;
+    // ========================================================================
+    /** @var QPT1    
+     *  Simple evalautor of the value of the transverse momentum of 
+     *  the first daughter particle with respect to the direction of 
+     *  the mother particle. 
+     *  It is useful e.g. as Y-variable for Armenteros-Podolanski plot or 
+     *  for jet-studies 
+     *
+     *  @code
+     *  
+     *   const LHCb::Particle* p = ... ;
+     *
+     *   const double pt1 = QPT1( p ) 
+     *
+     *  @endcode 
+     *  
+     *  @see  LoKi::Particles::TransverseMomentumQ 
+     *  @see  LoKi::Cuts::QPT
+     *  @see  LoKi::Cuts::QPT2
+     * 
+     *  @author Vanya BELYAEV  Ivan.Belyaev@nikhef.nl
+     *  @date 2008-09-21
+     */
+    const LoKi::Particles::TransverseMomentumQ                     QPT1 ( 1 ) ;
+    // ========================================================================
+    /** @var QPT2    
+     *  Simple evalautor of the value of the transverse momentum of 
+     *  the second daughter particle with respect to the direction of 
+     *  the mother particle. 
+     *  It is useful e.g. as Y-variable for Armenteros-Podolanski plot or 
+     *  for jet-studies 
+     *
+     *  @code
+     *  
+     *   const LHCb::Particle* p = ... ;
+     *
+     *   const double pt2 = QPT2( p ) 
+     *
+     *  @endcode 
+     *
+     *  Clearly for two-body decays: QPT2 = QPT1 
+     *
+     *  @see  LoKi::Particles::TransverseMomentumQ 
+     *  @see  LoKi::Cuts::QPT
+     *  @see  LoKi::Cuts::QPT1
+     * 
+     *  @author Vanya BELYAEV  Ivan.Belyaev@nikhef.nl
+     *  @date 2008-09-21
+     */
+    const LoKi::Particles::TransverseMomentumQ                     QPT2 ( 2 ) ;
     // ========================================================================
     /** @typedef SAME 
      *  The trivial predicate which check the identity of 2 particles

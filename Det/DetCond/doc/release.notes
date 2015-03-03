@@ -1,9 +1,14 @@
-# $Id: release.notes,v 1.148 2008-07-30 12:08:10 marcocle Exp $
+# $Id: release.notes,v 1.150 2008-09-30 12:27:30 cattanem Exp $
 !-----------------------------------------------------------------------------
 ! Package     : Det/DetCond
 ! Responsible : Marco Clemencic
 ! Purpose     : Interface between LHCb and LGC/COOL project
 !-----------------------------------------------------------------------------
+
+!===================== Det/DetCond v12r3 2008-09-30 ==========================
+! 2008-09-29 - Marco Clemencic
+ - Fixed a bug in CondDBCommon::generateXMLCatalog, failing for folders with
+   names shorter than 4 chars.
 
 !===================== Det/DetCond v12r2 2008-07-30 ==========================
 ! 2008-07-30 - Marco Clemencic

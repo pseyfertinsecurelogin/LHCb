@@ -1,4 +1,4 @@
-// $Id: Kinematics.cpp,v 1.12 2008-09-12 13:13:32 hmdegaud Exp $
+// $Id: Kinematics.cpp,v 1.14 2008-09-23 15:55:36 ibelyaev Exp $
 // ============================================================================
 // Include files 
 // ============================================================================
@@ -6,6 +6,10 @@
 // ============================================================================
 #include <climits>
 #include <limits.h>
+// ============================================================================
+// GaudiKrrnel
+// ============================================================================
+#include "GaudiKernel/GenericVectorTypes.h"
 // ============================================================================
 // LoKi
 // ============================================================================
@@ -91,13 +95,12 @@ double LoKi::Kinematics::delta2euclidian
  */
 // ============================================================================
 double LoKi::Kinematics::transverseMomentumDir 
-( const LoKi::LorentzVector& mom , 
-  const LoKi::ThreeVector&   dir ) 
+( const LoKi::ThreeVector& mom , 
+  const LoKi::ThreeVector& dir ) 
 {
   const double dmag2 = dir.Mag2() ;
-  if ( 0 == dmag2 ) { return mom.P() ; }
-  const LoKi::ThreeVector v( mom ) ;
-  const LoKi::ThreeVector perp = v - dir * ( v.Dot( dir ) / dmag2 ) ;
+  if ( 0 == dmag2 ) { return mom.R() ; }
+  const LoKi::ThreeVector perp = mom - dir * ( mom.Dot( dir ) / dmag2 ) ;
   return perp.R() ;
 }
 // ============================================================================
@@ -474,8 +477,50 @@ double LoKi::Kinematics::sinDecayAngleChi
   return sinChi ;  
 }
 // ============================================================================
-
-
+/*  evaluate the Armenteros-Podolanski variable \f$\mathbf{\alpha}\f$,     
+ *  @param d1  three momentum of the first  daughter particle 
+ *  @param d2  three momentum of the second daughter particle 
+ *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
+ *  @date 2008-09-21 
+ */
+// ============================================================================
+double LoKi::Kinematics::armenterosPodolanskiX 
+( const LoKi::ThreeVector& d1 , 
+  const LoKi::ThreeVector& d2 )
+{
+  return  ( d1.Mag2() - d2.Mag2() ) / ( d1 + d2 ).Mag2() ;
+}
+// ============================================================================
+/*  evaluate the chi2 of the mass  \f$\chi^2_{M}\f$.
+ *  @param mass  the nominal mass 
+ *  @param mom   four momentum 
+ *  @param cov   four momentum covariance matrix 
+ *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
+ *  @date 2008-09-23 
+ */
+// ============================================================================
+double LoKi::Kinematics::chi2mass 
+( const double               mass , 
+  const LoKi::LorentzVector& mom  , 
+  const Gaudi::SymMatrix4x4& cov  ) 
+{ 
+  const double dmass2 = mom.M2() - mass * mass ;
+  
+  // reduced part of the projection matrix 
+  static Gaudi::Vector4 s_D ;
+  
+  // fill the reduced projection matrix 
+  s_D [ 0 ] = -2 * mom.Px () ;
+  s_D [ 1 ] = -2 * mom.Py () ;
+  s_D [ 2 ] = -2 * mom.Pz () ;
+  s_D [ 3 ] =  2 * mom.E  () ;
+  
+  // evaluate V_D     = (D*V*D^T)-1
+  const double v_D    = 1.0 / ROOT::Math::Similarity ( s_D , cov ) ;
+  
+  // evaluate chi2 
+  return dmass2*dmass2*v_D ;
+}
 
 
 // ============================================================================

@@ -91,11 +91,25 @@ bool  LHCb::STTELL1Error::addLinkInfo (const unsigned int key,
   return m_badLinks.insert( key , mode ).second ;
 }
 
+
+double LHCb::STTELL1Error::fractionOK(const unsigned int pcn) const{
+  unsigned int goodLinks = 0u;
+  for (unsigned int iLink = 0u; iLink < nBeetle ; ++iLink){
+    for (unsigned int iPort = 0u; iPort < nPort ; ++iPort){
+      if (!badLink(iLink,iPort,pcn)) ++goodLinks;
+    } // port
+  }  // link
+  return goodLinks/double(totalNumberOfPorts); 
+} 
+
 LHCb::STTELL1Error::FailureMode LHCb::STTELL1Error::linkInfo(const unsigned int beetle, 
                                                              const unsigned int port, 
                                                              const unsigned int testpcn) const
 {
 
+  // if link is not in error we have nothhing to do
+  if (hasErrorInfo() == false) return STTELL1Error::kNone;
+ 
   const unsigned int key = linkID(beetle,port);
   LHCb::STTELL1Error::FailureInfo::iterator i = m_badLinks.find( key ) ;
   if (m_badLinks.end() !=i) { 

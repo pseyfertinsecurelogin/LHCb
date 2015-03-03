@@ -1,0 +1,33 @@
+! $Id: release.notes,v 1.3 2008-09-30 11:48:47 cattanem Exp $ 
+! -----------------------------------------------------------------------------
+! Package     : Phys/LoKiHlt
+! Responsible : Vanya BELYAEV Ivan.Belyaev@nikhef.nl
+! Purpose     : collection of functors&factory for HLT 
+! -----------------------------------------------------------------------------
+
+!============================= LoKiHlt v1r0 2008-09-30 ========================
+! 2008-09-23 - Vanya BELYAEV
+
+ - rename, according to requiest by Gerhard 
+
+    C++    : "::O1::" --> "::Odin::" 
+    Python : "O1_"    --> "ODIN_"
+
+ - add new filter algorithms:
+
+     LoKi::ODINFilter   --> filters on LHCb::ODIN
+     LoKi::L0Filter     --> filters on LHCb::L0DUReport
+     LoKi::HDRFilter    --> filters on LHCb::HltDecReports
+     
+
+! 2008-09-21 - Vanya BELYAEV
+ - new package, it contains three series of functors:
+
+    "L0"  : functors, dealing with LHCb::L0DUReport 
+    "O1"  : functors, dealing with LHCb::ODIN 
+    "HLT" : functors, dealing with LHCb::HtlDecReports 
+
+
+! -----------------------------------------------------------------------------
+! The END 
+! -----------------------------------------------------------------------------

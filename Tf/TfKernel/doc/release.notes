@@ -1,8 +1,12 @@
 !-----------------------------------------------------------------------------
 ! Package     : Tf/TfKernel
-! Responsible : Tracking 'A-Team' for the moment ... Then someone else.
+! Responsible : Stephanie Hansmann-Menzemer
 ! Purpose     : Core classes for the Tf framework
 !-----------------------------------------------------------------------------
+
+!============================ TfKernel v2r8 2008-09-30 =======================
+! 2008-09-30 - Stephanie Hansmann-Menzemer
+ - fix in LineHit (FPE in computation of cos of stereo angle)
 
 !============================ TfKernel v2r7 2008-09-04 =======================
 ! 2008-08-20 - Stephanie Hansmann-Menzemer

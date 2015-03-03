@@ -1,9 +1,49 @@
-! $Id: release.notes,v 1.69 2008-09-04 13:30:00 cattanem Exp $ 
+! $Id: release.notes,v 1.73 2008-09-30 11:45:39 cattanem Exp $ 
 ! -----------------------------------------------------------------------------
 ! Package     : Phys/LoKiPhys
 ! Responsible : Vanya Belyaev
 ! Purpose     : "Phys"-part of new restructurized LoKi 
 ! -----------------------------------------------------------------------------
+
+!========================== LoKiPhys v7r8 2008-09-30 ==========================
+! 2008-09-29 - Vanya BELYAEV
+ - new functors 
+
+    D2DVVD          LoKi::Particles::DaughterVertexVertexDistance:
+            3D-vertex-vertex distance between vertices in the cascade decay
+    D2DVVDCHI2      LoKi::Particles::DaughterVertexVertexDistanceChi2:
+            chi2-vertex-vertex distance between vertices in the cascade decay
+    D2DVVDCHI2SIGN  LoKi::Particles::DaughterVertexVertexDistanceSignedChi2:
+            signed chi2-vertex-vertex distance between evrtices in the cascade decay, 
+            the sign is according to (v1-v2)*p1 
+    D2DVVDDOT      LoKi::Particles::DaughterVertexVertexDistanceDot:
+            'dot'-vertex-vertex distance between vertices in the cascade decay
+            (== projected distance on the momentum direction of the first component)
+    D2DVVDSIGN  LoKi::Particles::DaughterVertexVertexSignedDistance:
+            signed 3D-vertex-vertex distance between vertices in the cascade decay, 
+            the sign is according to (v1-v2).Z() 
+   
+  new files:
+    LoKi/Particle22.h, src/Particles22.cpp
+
+! 2008-09-23 - Vanya BELYAEV
+
+ - new functors:
+
+     NMASS       LoKi::Particles::NominalMass          : get Nominal/PDG mass 
+     DPDGM       LoKi::Particles::DeltaNominalMass     : get (mass-nominal_mass) 
+     DPDGMASS    LoKi::Particles::DeltaNominalMass     : get (mass-nominal_mass)
+     ADPDGM      LoKi::Particles::AbsDeltaNominalMass  : get |mass-nominal_mass| 
+     ADPDGMASS   LoKi::Particles::AbsDeltaNominalMass  : get |mass-nominal_mass|
+     CHI2PDGM    LoKi::Particles::DeltaNominalMassChi2 : get chi2(mass-nominal_mass)
+     CHI2PDGMASS LoKi::Particles::DeltaNominalMassChi2 : get chi2(mass-nominal_mass)
+
+  
+
+! 2008-09-21 - Vanya BELYAEV
+
+ - add the functor ARMENTEROS for evaluation of armenteros-podolanski 
+   variable
 
 !========================== LoKiPhys v7r7 2008-09-04 ==========================
 ! 2008-08-07 - Vanya BELYAEV

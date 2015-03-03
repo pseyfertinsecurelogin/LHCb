@@ -1,8 +1,26 @@
-! $Id: release.notes,v 1.193 2008-09-03 16:35:32 cattanem Exp $
+! $Id: release.notes,v 1.199 2008-09-30 12:07:48 cattanem Exp $
 ! Package     : Rich/RichKernel
 ! Responsible : Chris Jones
 ! Purpose     : General purpose RICH classes
 !-----------------------------------------------------------------------
+
+!====================== RichKernel v7r17 2008-09-30 ====================
+! 2008-09-30 - Christopher Rob JONES
+ - (G. Rogers) Added functions to return the maximum local coordinates in 
+   the x and y axis.
+
+! 2008-09-23 - Christopher Rob JONES
+ - Update Raw Buffer tool interfaces (IRichRawBufferToSmartIDsTool.h and
+   IRichRawDataFormatTool.h) for improved TAE event support.
+ - Adapt python configurable to changes in DAQ tools
+
+!====================== RichKernel v7r16 2008-09-21 ====================
+! 2008-09-21 - Christopher Rob JONES
+ - Add missing include in RichDAQDefinitions.h for ulonglong typedef 
+   (GaudiKernel/Kernel.h)
+
+! 2008-09-11 - Chris Jones
+ - Update python Configuration to reflect changes in RichDAQ decoding tool
 
 !====================== RichKernel v7r15 2008-09-03 ====================
 ! 2008-09-03 - Marco Cattaneo

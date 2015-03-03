@@ -1,7 +1,33 @@
-! $Id: release.notes,v 1.108 2008-09-02 11:56:20 cattanem Exp $
+! $Id: release.notes,v 1.117 2008-10-06 15:08:46 wouter Exp $
 ! Package     : OTDet
 ! Responsible : Jeroen van Tilburg, Jacopo Nardulli, Jan Amoraal
 !--------------------------------------------------------------------------
+
+!========================== OTDet v8r1 2008-10-02 =========================
+! 2008-10-06 - Wouter Hulsbergen
+ - Make DeOTModule more robust against badly formed conditions
+
+! 2008-10-01 - Jan Amoraal
+ - Default tofs weren't filled (caused Brunel to crash)
+ 
+! 2008-09-25 - Jan Amoraal
+ - Head of DetDesc/DetectorElement now has a hasCondition method.
+ - Was still asking for calibration condition without checking if it existed.
+ - Added some more checks to get/set methods
+
+! 2008-09-22 - Jan Amoraal
+ - Added method to set default RT-relation and T0s if claibration condition
+   doesn't exist. For backwards compatibility with DC06.
+ - Add missing inlcude and namespace
+
+! 2008-09-19 - Jan Amoraal
+ - Added callbacks for calibration conditions. T0s and RTs are now in CONDDB.
+   Modified set functions to reflect this.
+ 
+! 2008-09-15 - Wouter Hulsbergen
+ - Changed definition of coefficients t(r) and sigma_t(r) in
+   RtRelation.h: Those coefficiencts now define a polynomial in r/rmax,
+   such that they all have unit [ns].
 
 !========================== OTDet v8r0 2008-09-02 =========================
 ! 2008-08-29 - Jan Amoraal

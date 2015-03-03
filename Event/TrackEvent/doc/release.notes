@@ -4,6 +4,16 @@
 ! Purpose     : Package for the tracking event model classes
 !-----------------------------------------------------------------------------
 
+!======================= TrackEvent v4r15 2008-09-30 =========================
+! 2008-10-06 - Wouter Hulsbergen
+ - fix uninitialized data members in Measurement constructor
+
+! 2008-09-25 - Stephanie Hansmann-Menzemer
+ - make computation of probChi2 of track safe for FPE
+
+! 2008-09-11 - Gerhard Raven
+ - enable string <-> enum conversion in Track.xml
+
 !======================= TrackEvent v4r14 2008-06-02 =========================
 ! 2008-07-10 - Wouter Hulsbergen
  - use god to generate Measurement::detectorElement 

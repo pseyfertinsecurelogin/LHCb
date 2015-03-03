@@ -4,6 +4,18 @@
 ! Purpose: LHCb specific Kernel classes
 !--------------------------------------------------------------------------
 
+!===================== LHCbKernel v9r2 2008-10-03 =========================
+! 2008-10-03 - Marco Cattaneo
+ - Make GOD_NOALLOC flag public
+
+! 2008-09-26 - Marco Cattaneo
+ - Use GOD_NOALLOC flag to switch off custom allocators in classes where
+   where boost_allocators are added by hand
+
+! 2008-09-12 - Chris Jones
+ - Remove space in string "below threshold" in RichParticleIDType.cpp as
+   it was causing problems elsewhere with component names.
+
 !===================== LHCbKernel v9r1 2008-09-03 =========================
 ! 2008-09-03 - Marco Cattaneo
  - Add some missing dictionaries and missing includes

@@ -1,4 +1,4 @@
-// $Id: DeCaloTiming.cpp,v 1.1 2007-08-22 19:05:13 odescham Exp $
+// $Id: DeCaloTiming.cpp,v 1.2 2008-09-26 15:45:39 odescham Exp $
 // Include files 
 
 // from Gaudi
@@ -8,6 +8,10 @@
 #include "DeCaloTiming.h"
 //-----------------------------------------------------------------------------
 // Implementation file for class : DeCaloTiming
+//
+// Simple algorithm to add time shift  (user-defined or Gaussian or flat randomly
+// distributed) at the DeCalorimeter initialisation level
+// Useful to produce time misalignment (in Gauss) and check/develop alignment procedure
 //
 // 2007-08-22 : Olivier DESCHAMPS
 //-----------------------------------------------------------------------------
@@ -28,7 +32,7 @@ DeCaloTiming::DeCaloTiming( const std::string& name,
   declareProperty( "DetectorName"   , m_detectorName );
   declareProperty( "Method"         , m_method = "Flat"); // Flat/Gauss/User
   declareProperty( "Params"         , m_params);
-  declareProperty( "deltaKey"       , m_key = "CellID" );
+  declareProperty( "Key"            , m_key = "CellID" );
   declareProperty( "deltaTime"      , m_deltas);
 
   m_params.push_back( 0.0  * Gaudi::Units::ns );
