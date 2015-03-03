@@ -43,16 +43,14 @@ class CondDB(ConfigurableUser):
                   "QueryGranularity" : 0,
                   "UseDBSnapshot"     : False ,
                   "DBSnapshotDirectory" : "/group/online/hlt/conditions" ,
-                  "PartitionName" : "LHCb" ,
                   'EnableRunChangeHandler' : False,
-                  'RunChangeHandlerConditions' : [ "Conditions/Online/LHCb/Magnet/Set"
-                                                 , "Conditions/Online/Velo/MotionSystem"
-                                                 , "Conditions/Online/LHCb/Lumi/LumiSettings"
-                                                 , "Conditions/Online/LHCb/LHCFillingScheme"    
-                                                 , "Conditions/Online/LHCb/RunParameters"
-                                                 , "Conditions/Online/Rich1/R1HltGasParameters"
-                                                 , "Conditions/Online/Rich2/R2HltGasParameters" ],
-                  'XMLFilename' : 'online_%d.xml',
+                  'RunChangeHandlerConditions' : { 'online_%d.xml' :  [ "Conditions/Online/LHCb/Magnet/Set"
+                                                                      , "Conditions/Online/Velo/MotionSystem"
+                                                                      , "Conditions/Online/LHCb/Lumi/LumiSettings"
+                                                                      , "Conditions/Online/LHCb/LHCFillingScheme"    
+                                                                      , "Conditions/Online/LHCb/RunParameters"
+                                                                      , "Conditions/Online/Rich1/R1HltGasParameters"
+                                                                      , "Conditions/Online/Rich2/R2HltGasParameters" ] },
                   'LoadCALIBDB' : "OFFLINE"
                   }
     _propertyDocDct = {
@@ -347,19 +345,15 @@ class CondDB(ConfigurableUser):
         for part in dbPartitions[ self.getProp('Simulation') ] :
             if tag[part] is 'default' : raise KeyError('must specify an explicit %s tag'%part)
             self.PartitionConnectionString[part] = "sqlite_file:%(dir)s/%(part)s_%(tag)s.db/%(part)s" % {"dir":  baseloc,
-                                                                                                           "part": part,
-                                                                                                           "tag":  tag[part]}
-            # always use HEAD -- blindly trust the snapshot to be
-            # right (this is faster, but less safe)
-            # conddb.Tags[part] = 'HEAD'
+                                                                                                         "part": part,
+                                                                                                         "tag":  tag[part]}
             self.Tags[part] = tag[part]
 
-        # Set the location of the Online conditions
+        # Set the location of the Online run-by-run conditions
         if self.getProp('EnableRunChangeHandler') :
-            online_xml = '%s/%s/%s' % (baseloc, self.getProp('PartitionName') , self.getProp('XMLFilename'))
             from Configurables import RunChangeHandlerSvc
             rch = RunChangeHandlerSvc()
-            rch.Conditions = dict( (cnd, online_xml ) for cnd in self.getProp("RunChangeHandlerConditions") )
+            rch.Conditions = dict( (c,'/'.join([baseloc,f])) for f,cs in self.getProp("RunChangeHandlerConditions").iteritems() for c in cs )
             ApplicationMgr().ExtSvc.append(rch)
 
     def __apply_configuration__(self):
@@ -479,7 +473,7 @@ class CondDB(ConfigurableUser):
 
         if conns:
             log.warning("Cannot override the connection strings of the partitions %r", conns.keys())
-        if tags:
+        if tags and tags.keys()!=['ONLINE']:
             log.warning("Cannot set the tag for partitions %r", tags.keys())
 
         # In the Online environment, IgnoreHeartBeat should be defaulted to True

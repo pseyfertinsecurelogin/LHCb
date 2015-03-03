@@ -1,4 +1,4 @@
-// $Id: Functions.cpp 176843 2014-08-25 19:07:57Z ibelyaev $
+// $Id: Functions.cpp 178683 2014-10-09 15:25:18Z ibelyaev $
 // ============================================================================
 // Include files
 // ============================================================================
@@ -49,8 +49,8 @@
  *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
  *  @date 2010-04-19
  *
- *                    $Revision: 176843 $
- *  Last modification $Date: 2014-08-25 21:07:57 +0200 (Mon, 25 Aug 2014) $
+ *                    $Revision: 178683 $
+ *  Last modification $Date: 2014-10-09 17:25:18 +0200 (Thu, 09 Oct 2014) $
  *                 by $author$
  */
 // ============================================================================
@@ -2978,7 +2978,7 @@ double Gaudi::Math::Apolonios::pdf ( const double x ) const
   //
   if  ( dx < -m_alpha )
   {
-    const double frac = np1 () / ( np1 () - ( m_alpha + dx ) / aa () )  ;
+    const double frac = np1 () / ( np1 () - ( m_alpha + dx ) * aa () )  ;
     return std::pow ( frac , np1 () ) * m_A * s_SQRT2PIi / sigma() ;
   }
   //

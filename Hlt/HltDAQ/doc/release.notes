@@ -4,6 +4,21 @@
 ! Purpose     : Hlt RawBanks writers/decoders/monitors
 !------------------------------------------------------------------------------
 
+!========================= HltDAQ v4r8 2014-09-30 =========================
+
+! 2014-09-26 - Alex Shires
+ - adding recvertex chi2 to summary objects
+
+! 2014-09-24 - Marco Clemencic
+ - Updated hack for LCG experimental builds.
+
+! 2014-09-19 - Marco Clemencic
+ - Small hack to be able to compile against LCG experimental builds.
+
+! 2014-09-13 - Sebastian Neubert
+ - Hlt track root locations changed to Hlt1/Track and Hlt/Track   
+ - Renamed track location Hlt/Track/ForwardPEsti to Hlt1/Track/ForwardHPT 
+
 !========================= HltDAQ v4r7 2014-09-08 =========================
 ! 2014-09-02 - Sebastian Neubert
  - Added one more location to TrackReportsDecoder/Writer

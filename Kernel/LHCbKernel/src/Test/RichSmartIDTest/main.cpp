@@ -47,14 +47,53 @@ int main ( int /*argc*/, char** /*argv*/ )
                 }
 
                 // Test conversion to and from an LHCbID
-                const LHCb::LHCbID lID( id );
-                const LHCb::RichSmartID nid( lID.richID() );
-                if ( nid.key() != id.key() )
                 {
-                  cerr << "Problem with RichSmartID <-> LHCbID conversion" << endl;
-                  cerr << "  Original  ID : " << id  << endl;
-                  cerr << "  Converted ID : " << nid << endl;
-                  OK = false;
+                  const LHCb::LHCbID lID( id );
+                  const LHCb::RichSmartID nid( lID.richID() );
+                  if ( nid.key() != id.key() )
+                  {
+                    cerr << "Problem with RichSmartID <-> LHCbID conversion" << endl;
+                    cerr << "  Original  ID : " << id  << endl;
+                    cerr << "  Converted ID : " << nid << endl;
+                    OK = false;
+                  }
+                }
+
+                // Test conversion to/from various int types
+                {
+                  const           int isHPD  = id;
+                  const unsigned  int iuHPD  = id;
+                  const          long ilsHPD = id;
+                  const unsigned long iluHPD = id;
+                  const LHCb::RichSmartID s_id(isHPD), u_id(iuHPD), sl_id(ilsHPD), ul_id(iluHPD);
+                  if ( id != s_id )
+                  {
+                    cerr << "Problem with RichSmartID <-> signed int conversion" << endl;
+                    cerr << "  Original  ID : " << id  << endl;
+                    cerr << "  Converted ID : " << s_id << endl;
+                    OK = false;
+                  }
+                  if ( id != u_id )
+                  {
+                    cerr << "Problem with RichSmartID <-> unsigned int conversion" << endl;
+                    cerr << "  Original  ID : " << id  << endl;
+                    cerr << "  Converted ID : " << u_id << endl;
+                    OK = false;
+                  }
+                  if ( id != sl_id )
+                  {
+                    cerr << "Problem with RichSmartID <-> signed long int conversion" << endl;
+                    cerr << "  Original  ID : " << id  << endl;
+                    cerr << "  Converted ID : " << sl_id << endl;
+                    OK = false;
+                  }
+                  if ( id != ul_id )
+                  {
+                    cerr << "Problem with RichSmartID <-> unsigned long int conversion" << endl;
+                    cerr << "  Original  ID : " << id  << endl;
+                    cerr << "  Converted ID : " << ul_id << endl;
+                    OK = false;
+                  }
                 }
 
               }
@@ -99,14 +138,53 @@ int main ( int /*argc*/, char** /*argv*/ )
               }
 
               // Test conversion to and from an LHCbID
-              const LHCb::LHCbID lID( id );
-              const LHCb::RichSmartID nid( lID.richID() );
-              if ( nid.key() != id.key() )
               {
-                cerr << "Problem with RichSmartID <-> LHCbID conversion" << endl;
-                cerr << "  Original  ID : " << id  << endl;
-                cerr << "  Converted ID : " << nid << endl;
-                OK = false;
+                const LHCb::LHCbID lID( id );
+                const LHCb::RichSmartID nid( lID.richID() );
+                if ( nid.key() != id.key() )
+                {
+                  cerr << "Problem with RichSmartID <-> LHCbID conversion" << endl;
+                  cerr << "  Original  ID : " << id  << endl;
+                  cerr << "  Converted ID : " << nid << endl;
+                  OK = false;
+                }
+              }
+
+              // Test conversion to/from various int types
+              {
+                const           int isHPD  = id;
+                const unsigned  int iuHPD  = id;
+                const          long ilsHPD = id;
+                const unsigned long iluHPD = id;
+                const LHCb::RichSmartID s_id(isHPD), u_id(iuHPD), sl_id(ilsHPD), ul_id(iluHPD);
+                if ( id != s_id )
+                {
+                  cerr << "Problem with RichSmartID <-> signed int conversion" << endl;
+                  cerr << "  Original  ID : " << id  << endl;
+                  cerr << "  Converted ID : " << s_id << endl;
+                  OK = false;
+                }
+                if ( id != u_id )
+                {
+                  cerr << "Problem with RichSmartID <-> unsigned int conversion" << endl;
+                  cerr << "  Original  ID : " << id  << endl;
+                  cerr << "  Converted ID : " << u_id << endl;
+                  OK = false;
+                }
+                if ( id != sl_id )
+                {
+                  cerr << "Problem with RichSmartID <-> signed long int conversion" << endl;
+                  cerr << "  Original  ID : " << id  << endl;
+                  cerr << "  Converted ID : " << sl_id << endl;
+                  OK = false;
+                }
+                if ( id != ul_id )
+                {
+                  cerr << "Problem with RichSmartID <-> unsigned long int conversion" << endl;
+                  cerr << "  Original  ID : " << id  << endl;
+                  cerr << "  Converted ID : " << ul_id << endl;
+                  OK = false;
+                }
               }
 
             }

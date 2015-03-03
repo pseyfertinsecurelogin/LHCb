@@ -4,6 +4,20 @@
 ! Purpose     : Interface between LHCb and LGC/COOL project
 !-----------------------------------------------------------------------------
 
+!========================= DetCond v12r39 2014-10-14 =========================
+! 2014-10-07 - Gerhard Raven
+ - DetCond configurable: remove explicit paritition name and defer this to the
+   keys (i.e. filename) in the RunChangeHandlerCondiions map.
+
+!========================= DetCond v12r38 2014-09-30 =========================
+
+! 2014-09-30 - Gerhard Raven
+ - DetCond configurable: combine the RunChangeHandlerConditions and XMLFilename 
+   properties into a single dictioary of filename -> list of conditions so that 
+   the RunChangeHandler can be configured to use multiple <subsystem>_<runnr>.xml 
+   files.
+ - avoid a spurios warning about ONLINE tag
+
 !========================= DetCond v12r37 2014-09-08 =========================
 ! 2014-09-02 - Liang Sun
  - In Configuration.py: Keep the lines related to the import of SQLDDDB-Oracle.py for the UseOracle option, in order not to fail the nightlies

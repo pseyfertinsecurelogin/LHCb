@@ -1,5 +1,5 @@
 <!-- 
-     * $Id: LoKiGen.xml 171802 2014-04-23 14:52:56Z cattanem $ 
+     * $Id: LoKiGen.xml 177799 2014-09-17 15:43:06Z marcocle $ 
      * ========================================================================
      * @file
      * The seleciton file to build Reflex dictionaries for Phys/LoKiGen package
@@ -65,7 +65,6 @@
   <class pattern   = "LoKi::Dicts::SourceOps<*HepMC::*>"  />
 
   <class pattern   = "LoKi::Dicts::PIDOps<LoKi::Gen*>"    />
-  <class pattern   = "LoKi::Dicts::Maths<*HepMC*>"        />
   <class pattern   = "LoKi::Dicts::FunCalls<HepMC::Gen*>" />
   <class pattern   = "LoKi::Dicts::CutCalls<HepMC::Gen*>" />
   
@@ -137,10 +136,6 @@
     <class pattern="LoKi::TheSame&lt;*&gt;">
       <method name="=" />
     </class>
-    <class pattern="LoKi::Identity&lt;*&gt;">
-      <method name="=" />
-    </class>
-    
     <class pattern="Gaudi::Range_&lt;*&gt;">
       <method name="=" />
     </class>

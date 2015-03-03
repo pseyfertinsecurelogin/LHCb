@@ -4,6 +4,13 @@
 ! Purpose     : collection of functors&factory for HLT
 ! -----------------------------------------------------------------------------
 
+!========================= LoKiHlt v3r16 2014-10-14 =========================
+! 2014-10-01 - Pieter David
+ - LoKi::Hybrid::EvtTupleTool: get HltDecReports from the location in the HLT_Location property
+
+! 2014-09-17 - Marco Clemencic
+ - Fixed genreflex warnings (ROOT 6).
+
 !========================= LoKiHlt v3r15 2014-09-08 =========================
 ! 2014-08-28 - Pieter David
  - Add HLT_TCK functor which gets the TCK from the HltDecReports

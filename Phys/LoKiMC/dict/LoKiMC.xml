@@ -1,5 +1,5 @@
 <!-- 
-     * $Id: LoKiMC.xml 171803 2014-04-23 14:53:18Z cattanem $ 
+     * $Id: LoKiMC.xml 177801 2014-09-17 15:43:10Z marcocle $ 
      * ========================================================================
      * @file
      * The seleciton file to build Reflex dictionaries for Phys/LoKiMC package
@@ -38,7 +38,6 @@
   <class pattern   = "LoKi::Constant<*LHCb::MC*>"         />
 
   <class pattern   = "LoKi::Valid<*LHCb::MC*>"            />
-  <class pattern   = "LoKi::TheSame<*LHCb::MC*>"          />
 
   <class pattern   = "LoKi::Functors::Size<*LHCb::MC*>"     />
   <class pattern   = "LoKi::Functors::Empty<*LHCb::MC*>"     />
@@ -143,12 +142,6 @@
       <method name="=" />
     </class>
     <class pattern="LoKi::Valid&lt;*&gt;">
-      <method name="=" />
-    </class>
-    <class pattern="LoKi::TheSame&lt;*&gt;">
-      <method name="=" />
-    </class>
-    <class pattern="LoKi::Identity&lt;*&gt;">
       <method name="=" />
     </class>
     

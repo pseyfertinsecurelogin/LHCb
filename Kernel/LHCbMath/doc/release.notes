@@ -6,6 +6,36 @@
 !               All headers included in directory LHCbMath
 !-----------------------------------------------------------------------------
 
+!========================= LHCbMath v3r51 2014-10-15 =========================
+! 2014-10-15 - Vanya Belyaev
+ - Types.py
+   fix for ROOT5/ROOT6 issues 
+
+! 2014-10-09 - Vanya Belyaev
+ - Functions.cpp 
+   fix stupid typo 
+
+! 2014-09-17 - Marco Clemencic
+ - Fixed genreflex warnings (ROOT 6).
+
+! 2014-09-12 - Manuel Tobias Schiller
+ - BloomFilter: make old clang versions happy
+
+! 2014-09-11 - Manuel Tobias Schiller
+ - BloomFilter: be nice and undefine the preprocessor macros which do not have
+   the BLOOMFILTER prefix...
+
+! 2014-09-11 - Manuel Tobias Schiller
+ - BloomFilter: constexpr is nice, but it's not well supported with the
+   version of icc we usually build with, so add the old template based log2
+   again for that compiler (this should be REMOVED AS SOON AS THE INTEL AND
+   CLANG COMPILERS FULLY SUPPORT CONSTEXPR!)
+
+! 2014-09-10 - Manuel Tobias Schiller
+ - BloomFilter: get the constexpr qualifiers correct (icc warning); now that I
+   understand about constexpr a bit better, the whole template metaprogrammed
+   fixed point log2 story can be replaced by nice and short constexpr functions
+
 !========================= LHCbMath v3r50 2014-09-08 =========================
 ! 2014-09-02 - Vanya Belyaev
  - Types.py 

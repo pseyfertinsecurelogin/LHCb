@@ -43,14 +43,23 @@ namespace LHCb
 
   public:
 
-    /// Retrieve const  The bit-packed internal data word
-    inline KeyType key() const { return m_key; }
+    /// Retrieve the bit-packed internal data word
+    inline KeyType key()             const { return m_key; }
 
-    /// implicit conversion to internal type
-    inline operator LHCb::RichSmartID::KeyType() const { return key(); }
+    /// implicit conversion to unsigned int
+    inline operator unsigned int()   const { return key(); }
 
-    /// Update  The bit-packed internal data word
-    inline void setKey( const KeyType value ) { m_key = value; }
+    /// implicit conversion to unsigned long
+    inline operator unsigned long()  const { return (unsigned long)key(); }
+
+    /// implicit conversion to signed int
+    inline operator int()            const { return as_int(); }
+
+    /// implicit conversion to signed long
+    inline operator long()           const { return (long)as_int(); }
+
+    /// Set the bit-packed internal data word
+    inline void setKey( const LHCb::RichSmartID::KeyType value ) { m_key = value; }
 
   private:
 
@@ -234,6 +243,9 @@ namespace LHCb
     };
 
   private:
+    
+    /// Reinterpret the internal unsigned representation as a signed int
+    inline int as_int( ) const { return reinterpret_cast<const int&>(m_key); }
 
     /// Set the given data into the given field, without validity bit
     inline void setData( const int value,
@@ -270,9 +282,22 @@ namespace LHCb
     /// Default Constructor
     RichSmartID() : m_key(0) { setIDType( HPDID ); }
 
-    /// Constructor from internal type
-    explicit RichSmartID( const LHCb::RichSmartID::KeyType key ) : m_key(key) { }
+    /// Constructor from internal type (unsigned int)
+    explicit RichSmartID( const LHCb::RichSmartID::KeyType key ) 
+      : m_key( key ) { }
+    
+    /// Constructor from unsigned long int
+    explicit RichSmartID( const unsigned long int key ) 
+      : m_key( (LHCb::RichSmartID::KeyType) ( key & 0x00000000FFFFFFFF ) ) { }
 
+    /// Constructor from signed int type
+    explicit RichSmartID( int key ) 
+      : m_key( reinterpret_cast<LHCb::RichSmartID::KeyType&>(key) ) { }
+
+    /// Constructor from signed long type 
+    explicit RichSmartID( const long int key )
+      : m_key( (LHCb::RichSmartID::KeyType) ( key & 0x00000000FFFFFFFF ) ) { }
+    
     /// Pixel level constructor including sub-pixel information
     RichSmartID( const Rich::DetectorType rich,
                  const Rich::Side panel,
@@ -281,8 +306,7 @@ namespace LHCb
                  const int pixelRow,
                  const int pixelCol,
                  const int pixelSubRow,
-                 const IDType type = HPDID )
-      : m_key( 0 )
+                 const IDType type = HPDID ) : m_key( 0 )
     {
       setIDType        ( type              );
       setRich          ( rich              );
@@ -300,8 +324,7 @@ namespace LHCb
                  const int pdCol,
                  const int pixelRow,
                  const int pixelCol,
-                 const IDType type = HPDID )
-      : m_key( 0 )
+                 const IDType type = HPDID ) : m_key( 0 )
     {
       setIDType        ( type              );
       setRich          ( rich              );
@@ -316,8 +339,7 @@ namespace LHCb
                  const Rich::Side panel,
                  const int pdNumInCol,
                  const int pdCol,
-                 const IDType type = HPDID )
-      : m_key( 0 )
+                 const IDType type = HPDID ) : m_key( 0 )
     {
       setIDType        ( type              );
       setRich          ( rich              );
@@ -328,8 +350,7 @@ namespace LHCb
     /// PD panel level constructor
     RichSmartID( const Rich::DetectorType rich,
                  const Rich::Side panel,
-                 const IDType type = HPDID )
-      : m_key( 0 )
+                 const IDType type = HPDID ) : m_key( 0 )
     {
       setIDType        ( type  );
       setRich          ( rich  );
@@ -344,10 +365,40 @@ namespace LHCb
 
   public:
 
-    /// Comparison operator using internal representation
+    /// Equality operator
     inline bool operator==( const LHCb::RichSmartID& id ) const
     {
       return ( key() == id.key() );
+    }
+
+    /// Inequality operator
+    inline bool operator!=( const LHCb::RichSmartID& id ) const
+    {
+      return ( key() != id.key() );
+    }
+
+    /// > operator
+    inline bool operator>( const LHCb::RichSmartID& id ) const
+    {
+      return ( key() >  id.key() );
+    }
+
+    /// < operator
+    inline bool operator<( const LHCb::RichSmartID& id ) const
+    {
+      return ( key() <  id.key() );
+    }
+
+    /// >= operator
+    inline bool operator>=( const LHCb::RichSmartID& id ) const
+    {
+      return ( key() >= id.key() );
+    }
+
+    /// <= operator
+    inline bool operator<=( const LHCb::RichSmartID& id ) const
+    {
+      return ( key() <= id.key() );
     }
 
   public:

@@ -3,7 +3,7 @@
 # Maintainer : Rob Lambert, Gerhard Raven
 #=====================================================================
 package           HltServices
-version           v2r3
+version           v2r4
 
 #=====================================================================
 # Structure, i.e. directories to process.
@@ -55,5 +55,5 @@ end_private
 #end_private
 
 
-application  hlttck_cdb_listkeys     ../utilities/main.cpp ../src/cdb.cpp
+application  hlttck_cdb_listkeys     ../utilities/main.cpp ../src/cdb.cpp ../src/tar.cpp
 # macro_append hlttck_listkeys_dependencies  " HltServicesLib "

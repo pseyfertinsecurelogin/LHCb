@@ -3,6 +3,14 @@
 ! package manager: M.Cattaneo
 !------------------------------------------------------------------------------
 
+!========================= GaudiConf v19r5 2014-10-17 =========================
+! 2014-10-16 - Marco Cattaneo
+ - Add LDST to DstConf. New simulation DST type, same as DST but with Boole
+   linkers added (links from digits to MCParticles)
+
+! 2014-09-29 - Chris Jones
+ - Add FMDST to list of known file extensions in IOHelper.
+
 !========================= GaudiConf v19r4 2014-09-08 =========================
 ! 2014-09-07 - Chris Jones
  - Add option ClearRegistry to CaloPackingConf.py

@@ -12,11 +12,142 @@
 #include <limits>
 #include <string>
 #include <cstdint>
-#include <type_traits>
+#include <numeric>
 #include <algorithm>
+#include <type_traits>
 
+#undef _nBits
+#undef _nNashes
+#undef _canUseVeryFastHash
 /// implementation details for BloomFilter
 namespace BloomFilterImpl {
+#if !defined(__INTEL_COMPILER) && !defined(__clang__)
+    // GCC and other compilers that implement decent C++11 support just use
+    // std::log....
+    using std::log;
+#elif defined(__clang__) || (defined(__INTEL_COMPILER) && __INTEL_COMPILER >=1400)
+    // ICC (the Intel C++ compiler) and Clang currently need a workarounds,
+    // because they cannot deal with a constexpr std::log...
+#warning "activating constexpr workarounds for std::log for Intel or clang compilers"
+#if defined(__clang__) && (__clang_major__ < 3 || \
+	(__clang_major__ == 3 && __clang_minor__ <=3))
+    static constexpr double abs(const double x) { return (x < 0.) ? -x : x; }
+#else
+    using std::abs;
+#endif
+    /// for tiny x - 1, use a Taylor expansion
+    static constexpr double log2_tiny(const double xm1)
+    {
+	return (((((((((((((((((((-xm1 / 20. + 1. / 19.) * xm1 - 1. / 18.) *
+		xm1 + 1. / 17.) * xm1 - 1. / 16.) * xm1 + 1. / 15.) *
+		xm1 - 1. / 14.) * xm1 + 1. / 13.) * xm1 - 1. / 12.) *
+		xm1 + 1. / 11.) * xm1 - 1. / 10.) * xm1 + 1. / 9.) *
+		xm1 - 1. / 8.) * xm1 + 1. / 7.) * xm1 - 1. / 6.) *
+		xm1 + 1. / 5.) * xm1 - 1. / 4.) * xm1 + 1. / 3.) *
+		xm1 - 1. / 2.) * xm1 + 1. / 1.) * xm1 / 0.69314718055995;
+    }
+
+    /// for slightly larger x, use a Padé approximant
+    static constexpr double log2_small(const double x)
+    {
+	return (abs(x - 1.) < 0.18) ?  log2_tiny(x - 1.) :
+	    ((((((((((6.9334366458438446E+10 * x + 3.3811243166750752E+12) * x +
+		     3.5283588930136203E+13) * x + 1.1756441702477491E+14) * x +
+		   1.133968217106985E+14) * x - 5.7135488589275375E+13) * x -
+		 1.3605784210515297E+14) * x - 6.4737928386652203E+13) * x -
+	       1.1115029743498373E+13) * x - 6.4096316616289868E+11) * x -
+	     8.0343580013031902E+9) / ((((((((((1.23046875E+10 * x + 9.84375E+11) *
+						 x + 1.5946875E+13) * x +
+					     9.072E+13) * x + 2.22264E+14) * x +
+				     2.56048128E+14) * x + 1.4224896E+14) * x +
+			     3.7158912E+13) * x + 4.1803776E+12) * x +
+		     1.6515072E+11) * x + 1.32120576E+9) / 0.69314718055995;
+    }
+
+    /// log2 for finite arguments
+    static constexpr double log2_finite(const double x)
+    {
+	return (abs(x - 1.) <= 0.5) ?
+	    log2_small(x) :
+	    ((x > 1.) ? (1. + log2_finite(0.5 * x)) :
+	     (-1. + log2_finite(2.0 * x)));
+    }
+
+    /** @brief log2 for any argument (computable at compile time, error better than
+     * about 1e-15 relative)
+     */
+    static constexpr double log2(const double x)
+    {
+	return (x < 0 || x != x) ? std::numeric_limits<double>::quiet_NaN() :
+	    ((x > std::numeric_limits<double>::max()) ?
+	     std::numeric_limits<double>::infinity() :
+	     ((x == 0.) ? -std::numeric_limits<double>::infinity() :
+	      log2_finite(x)));
+    }
+
+    /// log implementation (computable at compile time)
+    static constexpr double log(const double x)
+    { return 0.69314718055995 * log2(x); }
+#endif
+
+#if !defined(__INTEL_COMPILER) || __INTEL_COMPILER >= 1400
+    // nice and simple code for gcc, clang, and newer versions of the Intel compiler
+
+    /** @brief compute length of Bloom filter in bits
+     *
+     * @param CAPACITY	appox. number of elements
+     * @param PNUMER	numerator of false positive probability
+     * @param PDENOM	denominator of false positive probability
+     *
+     * @author Manuel Schiller <manuel.schiller@cern.ch>
+     * @date 2014-09-10
+     */
+    static constexpr unsigned _nBits(const unsigned capacity,
+	    const unsigned pnumer, const unsigned pdenom)
+    { return -double(capacity) * (log(pnumer) - log(pdenom)) / (log(2.) * log(2.)); }
+
+    /** @brief compute number of hash functions for Bloom filter
+     *
+     * @param PNUMER	numerator of false positive probability
+     * @param PDENOM	denominator of false positive probability
+     *
+     * @author Manuel Schiller <manuel.schiller@cern.ch>
+     * @date 2014-09-10
+     */
+    static constexpr unsigned _nHashes(const unsigned pnumer, const unsigned pdenom)
+    { return -(log(pnumer) - log(pdenom)) / log(2.); }
+
+    /** @brief decide if very fast hashing can be used
+     *
+     * @author Manuel Schiller <manuel.schiller@cern.ch>
+     * @date 2014-09-10
+     *
+     * If NBITS ^ NHASHES <= MAX, we can get our NHASHES hashes from a single
+     * hash function invocation by extracting base NBITS digits from the hash
+     * value...
+     */
+    static constexpr bool _canUseVeryFastHash(uint64_t MAX,
+	    uint64_t NBITS, unsigned NHASHES)
+    { return (0 == NHASHES) ? (0 != MAX) :
+	    _canUseVeryFastHash(MAX / NBITS, NBITS, NHASHES - 1); }
+
+    // the abomination pays us a visit...
+#define _nBits(capacity, pnumer, pdenom) \
+    BloomFilterImpl::_nBits(capacity, pnumer, pdenom)
+
+    // the abomination pays us a visit...
+#define _nHashes(pnumer, pdenom) \
+    BloomFilterImpl::_nHashes(pnumer, pdenom)
+
+    // the abomination pays us a visit...
+#define _canUseVeryFastHash(max, nbits, nhashes) \
+    BloomFilterImpl::_canUseVeryFastHash(max, nbits, nhashes)
+
+#else
+    // old versions of the Intel compiler s..., no, are not much fun to work
+    // with...
+#warning "Intel compilers before 14.x are really difficult to support"
+    using std::log;
     /// implementation details for template metaprogram log2
     namespace log2impl {
 	/// integer part of log2(_N) (rounding down to next integer)
@@ -92,7 +223,7 @@ namespace BloomFilterImpl {
      * @author Manuel Schiller <manuel.schiller@nikhef.nl>
      * @date 2014-08-15
      */
-    template<unsigned N, unsigned PNUMER, unsigned PDENOM> struct bits {
+    template<unsigned N, unsigned PNUMER, unsigned PDENOM> struct nbits {
 	static_assert(PNUMER < PDENOM, "Probability >= 1, error.");
 	enum { value = int(
 		((-int64_t(N) *
@@ -145,6 +276,20 @@ namespace BloomFilterImpl {
     struct canUseVeryFastHash<MAX, NBITS, 0> {
 	enum { value = MAX != 0 };
     };
+
+    // the abomination pays us a visit...
+#define _nBits(capacity, pnumer, pdenom) \
+    BloomFilterImpl::nbits<capacity, pnumer, pdenom>::value
+
+    // the abomination pays us a visit...
+#define _nHashes(pnumer, pdenom) \
+    BloomFilterImpl::nhashes<pnumer, pdenom>::value
+
+    // the abomination pays us a visit...
+#define _canUseVeryFastHash(max, nbits, nhashes) \
+    BloomFilterImpl::canUseVeryFastHash<max, nbits, nhashes>::value
+
+#endif
 
     /// very dumb FNV1a implementation
     template<class T> struct __doFNV1a
@@ -418,19 +563,22 @@ template <class T, unsigned CAPACITY = 128,
 	 class HASH = BloomFilterImpl::HashFNV1a<T> >
 class BloomFilter
 {
+    private:
+	static_assert(PNUMER < PDENOM, "Probability >= 1, error.");
+
     public:
 	/// capacity of Bloom filter
 	enum { capacity = CAPACITY };
-	/// probability for false positive at capacity
-	constexpr static double pFalsePositive()
-	{ return std::pow(2., BloomFilterImpl::log2<PNUMER, PDENOM>::value()); }
 	/// target probability for false positive at capacity
 	constexpr static double pFalsePositiveTarget()
 	{ return double(PNUMER) / double(PDENOM); }
 	/// number of hash functions used by Bloom filter
-	enum { nHashes = BloomFilterImpl::nhashes<PNUMER, PDENOM>::value };
+	enum { nHashes = _nHashes(PNUMER, PDENOM) };
 	/// number of bits in Bloom filter
-	enum { nBits = BloomFilterImpl::bits<CAPACITY, PNUMER, PDENOM>::value };
+	enum { nBits = _nBits(CAPACITY, PNUMER, PDENOM) };
+	/// probability for false positive at capacity
+	constexpr static double pFalsePositive()
+	{ return std::pow(2., -nBits * BloomFilterImpl::log(2.) / capacity); }
     private:
 	/// bits in Bloom filter
 	std::bitset<nBits> m_bits;
@@ -457,16 +605,14 @@ class BloomFilter
 	static BloomFilterImpl::HashFNV1a<hashresult1_type> s_hashfn2;
 #endif
 	/// true if number if bits is small enough to use very fast hashing
-	enum { canUseVeryFastHash =
-	    BloomFilterImpl::canUseVeryFastHash<
-		std::numeric_limits<hashresult1_type>::max(),
-	        nBits, nHashes>::value
+	enum { canUseVeryFastHash = _canUseVeryFastHash(
+		std::numeric_limits<hashresult1_type>::max(), nBits, nHashes)
 	};
 
     public:
 	/** @brief create empty set
 	 */
-	BloomFilter() { }
+	constexpr BloomFilter() { }
 
 	/// clear the Bloom filter
 	void clear() { m_bits.reset(); }
@@ -496,7 +642,7 @@ class BloomFilter
 	 * \frac{m}{k} \ln(1-\frac{\mathrm{popcount}}{m})@f$ where popcount
 	 * denotes the number of bits set in the Bloom filter's bit set.
 	 */
-	inline constexpr size_t size() const
+	inline size_t size() const
 	{
 	    return std::round(-double(nBits) / double(nHashes) *
 		    std::log(1. - double(popcount()) / double(nBits)));
@@ -511,7 +657,8 @@ class BloomFilter
 	    if (!canUseVeryFastHash) {
 #ifdef BLOOMFILTER_FASTHASH
 		const auto h = s_hashfn1(val);
-		const auto h1 = h & 0xfffffffful, h2= h >> 32;
+		const auto h1 = h & 0xfffffffful;
+		const auto h2 = h >> 32;
 #else
 		const auto h1 = s_hashfn1(val);
 		const auto h2 = s_hashfn2(h1);
@@ -593,7 +740,8 @@ class BloomFilter
 	    if (!canUseVeryFastHash) {
 #ifdef BLOOMFILTER_FASTHASH
 		const auto h = s_hashfn1(val);
-		const auto h1 = h & 0xfffffffful, h2= h >> 32;
+		const auto h1 = h & 0xfffffffful;
+		const auto h2 = h >> 32;
 #else
 		const auto h1 = s_hashfn1(val);
 		const auto h2 = s_hashfn2(h1);
@@ -648,7 +796,6 @@ class BloomFilter
 	}
 };
 
-
 /// perform set intersection
 template <class T, unsigned CAPACITY, unsigned PNUMER, unsigned PDENOM, class HASH>
 BloomFilter<T, CAPACITY, PNUMER, PDENOM, HASH> operator&(
@@ -662,6 +809,10 @@ BloomFilter<T, CAPACITY, PNUMER, PDENOM, HASH> operator|(
 	const BloomFilter<T, CAPACITY, PNUMER, PDENOM, HASH>& s1,
 	const BloomFilter<T, CAPACITY, PNUMER, PDENOM, HASH>& s2)
 { return BloomFilter<T, CAPACITY, PNUMER, PDENOM, HASH>(s1) |= s2; }
+
+#undef _nBits
+#undef _nNashes
+#undef _canUseVeryFastHash
 
 #endif // BLOOMFILTER_H
 
