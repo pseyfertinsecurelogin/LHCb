@@ -80,8 +80,7 @@ const CLID& Gaudi::Counter::classID() { return CLID_Counter ; }
 // ============================================================================
 // printout  to std::ostream
 // ============================================================================
-std::ostream& Gaudi::Counter::fillStream ( std::ostream& o ) const 
-{ return o ; }
+std::ostream& Gaudi::Counter::fillStream ( std::ostream& o ) const { return o ; }
 // ============================================================================
 
 
@@ -108,8 +107,7 @@ const CLID& Gaudi::Counters::classID() { return CLID_Counters ; }
 // ============================================================================
 // printout  to std::ostream
 // ============================================================================
-std::ostream& Gaudi::Counters::fillStream ( std::ostream& o ) const 
-{ return o ; }
+std::ostream& Gaudi::Counters::fillStream ( std::ostream& o ) const { return o ; }
 
 // ============================================================================
 // constructor from counters
@@ -126,7 +124,7 @@ Gaudi::Numbers::~Numbers(){}
 // ============================================================================
 // retrieve the unique object identifier  (virtual) 
 // ============================================================================
-const CLID& Gaudi::Numbers::clID() const { return Gaudi::Counters::classID() ; }
+const CLID& Gaudi::Numbers::clID() const { return Gaudi::Numbers::classID() ; }
 // ============================================================================
 // retrieve the unique object identifier  (static) 
 // ============================================================================
@@ -134,8 +132,8 @@ const CLID& Gaudi::Numbers::classID() { return CLID_Numbers ; }
 // ============================================================================
 // printout  to std::ostream
 // ============================================================================
-std::ostream& Gaudi::Numbers::fillStream ( std::ostream& o ) const 
-{ return o ; }
+std::ostream& Gaudi::Numbers::fillStream ( std::ostream& o ) const { return o ; }
+// ============================================================================
 
 
 

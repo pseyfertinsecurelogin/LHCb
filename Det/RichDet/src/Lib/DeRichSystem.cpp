@@ -262,6 +262,12 @@ StatusCode DeRichSystem::fillMaps( const Rich::DetectorType rich )
     const Rich::DAQ::Level0ID      L0ID   ( *iL0    );
     const Rich::DAQ::Level1Input   L1IN   ( *iL1In  );
     const Rich::DAQ::HPDCopyNumber copyN  ( *icopyN );
+
+    // debug printout
+    verbose() << "PD     " << (int)hpdID << " " << hpdID
+              << " HPDhardID " << hardID << " L0 " << L0ID << " L1 HardID " << L1ID
+              << " L1 input " << L1IN << endmsg;
+
     // Sanity checks that this HPD is not already in the maps
     if ( m_soft2hard.find(hpdID) != m_soft2hard.end() )
     {

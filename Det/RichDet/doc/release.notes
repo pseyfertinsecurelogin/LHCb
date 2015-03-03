@@ -4,6 +4,11 @@
 ! Purpose     : Interface to the xml description
 !-----------------------------------------------------------------------------
 
+!========================= RichDet v16r1p1 2011-03-06 =========================
+! 2011-03-04 - Chris Jones
+ - Add missing !HltMode to use of condition("RadiatorComposition") and some
+   basic protection against null pointer dereferencing
+
 !========================= RichDet v16r1 2011-02-22 =========================
 ! 2011-02-21 - Chris Jones
  - A few more miscellaneous tidy ups
