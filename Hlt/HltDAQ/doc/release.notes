@@ -4,6 +4,21 @@
 ! Purpose     : Hlt RawBanks writers/decoders/monitors
 !------------------------------------------------------------------------------
 
+!========================= HltDAQ v4r12 2015-01-14 =========================
+! 2015-01-12 - Sean Benson
+ - Fix CMake config.
+ - Move ReportConvertTool to src.
+
+! 2015-01-11 - Sean Benson
+ - Major change to accommodate ReportConvert tool (needed for versioning).
+
+! 2015-01-08 - Marco Cattaneo
+ - Fix hltdaq.b_dumpafterreformat test to follow SelReports bank version change
+
+!========================= HltDAQ v4r11 2015-01-08 =========================
+! 2015-1-7 - Sean Benson
+ - Increase SelReport bank version to 3 (for productions with Turbo reports).
+
 !========================= HltDAQ v4r10 2014-12-11 =========================
 ! 2014-12-10 - Sebastian Neubert
  - adjusted track locations to shared ones for the upfront tracking  

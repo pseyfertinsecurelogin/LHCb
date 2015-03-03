@@ -2,6 +2,14 @@
 ! Responsible : Alexandr Kozlinskiy, Lucia Grillo
 !--------------------------------------------------------------------------
 
+!========================= OTDet v8r14 2015-01-14 =========================
+! 2015-01-02 - Wouter Hulsbergen
+ - Create separate condition for mono layer alignment in geometry
+ - Fix position of wire locators for short modules
+
+! 2014-12-17 - Wouter Hulsbergen
+ - Modify approximation of 3-segment wire for pattern reco
+
 !========================= OTDet v8r13 2014-12-11 =========================
 ! 2014-12-10 - Wouter Hulsbergen
  - Implemented trajectory in three parts for monolayer shifts

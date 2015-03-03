@@ -1,7 +1,7 @@
 ################################################################################
 # Package: HltDAQ
 ################################################################################
-gaudi_subdir(HltDAQ v4r10)
+gaudi_subdir(HltDAQ v4r12)
 
 gaudi_depends_on_subdirs(Det/DetCond
                          Det/DetDesc
@@ -23,11 +23,13 @@ find_package(Boost COMPONENTS iostreams filesystem)
 include(GaudiObjDesc)
 
 god_build_headers(xml/*.xml
-                  PRIVATE)
+                  DESTINATION HltDAQ)
+
+gaudi_install_headers(HltDAQ)
 
 gaudi_add_module(HltDAQ
                  src/*.cpp
-                 INCLUDE_DIRS Boost AIDA
+                 INCLUDE_DIRS Boost AIDA HltDAQ
                  LINK_LIBRARIES Boost DetCondLib DetDescLib DAQEventLib DAQKernelLib HltEvent GaudiAlgLib GaudiKernel HltInterfaces LoKiHltLib)
 
 gaudi_add_unit_test(utestTrackingCoder

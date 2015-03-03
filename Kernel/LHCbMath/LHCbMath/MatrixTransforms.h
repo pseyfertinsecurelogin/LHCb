@@ -1,4 +1,4 @@
-// $Id: MatrixTransforms.h 155802 2013-04-29 11:26:07Z cattanem $
+// $Id: MatrixTransforms.h 182111 2015-01-05 12:40:43Z graven $
 // ============================================================================
 #ifndef LHCBMATH_MATRIXTRANSFORMS_H 
 #define LHCBMATH_MATRIXTRANSFORMS_H 1
@@ -663,7 +663,7 @@ namespace Gaudi
       double px = p*tx/n ;
       double py = p*ty/n ;
       double pz = p/n ;
-      double E = std::sqrt(p*p+mass*mass) ;
+      double E = std::hypot(p,mass) ;
       
       J(0,0) = p * (1+ty*ty)/n3 ; // dpx/dtx
       J(0,1) = p * tx * -ty/n3  ; // dpx/dty

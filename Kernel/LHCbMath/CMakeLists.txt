@@ -1,7 +1,7 @@
 ################################################################################
 # Package: LHCbMath
 ################################################################################
-gaudi_subdir(LHCbMath v3r52)
+gaudi_subdir(LHCbMath v3r53)
 
 gaudi_depends_on_subdirs(GaudiGSL
                          GaudiKernel
@@ -23,6 +23,10 @@ gaudi_add_dictionary(LHCbMath
                      INCLUDE_DIRS Boost GSL ROOT
                      LINK_LIBRARIES Boost GSL ROOT GaudiKernel LHCbMathLib
                      OPTIONS "-U__MINGW32__")
+
+set_property(SOURCE src/Similarity_AVX.cpp PROPERTY COMPILE_FLAGS " -mavx -O3 " )
+set_property(SOURCE src/Similarity_SSE3.cpp PROPERTY COMPILE_FLAGS " -msse3 -O3 " )
+set_property(SOURCE src/Similarity_generic.cpp PROPERTY COMPILE_FLAGS " -O3 " )
 
 if(GAUDI_BUILD_TESTS)
   gaudi_add_executable(TestPow
@@ -87,6 +91,10 @@ if(GAUDI_BUILD_TESTS)
                        LINK_LIBRARIES Boost GSL ROOT GaudiKernel LHCbMathLib)
   gaudi_add_executable(TestBloomFilter
                        tests/TestBloomFilter.cpp
+                       INCLUDE_DIRS Boost GSL ROOT
+                       LINK_LIBRARIES Boost GSL ROOT GaudiKernel LHCbMathLib)
+  gaudi_add_executable(TestSimilarity
+                       tests/TestSimilarity.cpp
                        INCLUDE_DIRS Boost GSL ROOT
                        LINK_LIBRARIES Boost GSL ROOT GaudiKernel LHCbMathLib)
 endif()

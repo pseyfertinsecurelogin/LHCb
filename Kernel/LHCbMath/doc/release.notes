@@ -6,12 +6,50 @@
 !               All headers included in directory LHCbMath
 !-----------------------------------------------------------------------------
 
+!========================= LHCbMath v3r53 2015-01-14 =========================
+! 2015-01-13 - Gerhard Raven
+ - optimize AVX versions of 'average' and 'filter'
+
+! 2015-01-09 - Ben Couturier 
+ - Add test for Similarity_5_7 and 5_1 
+
+! 2015-01-08 - Ben Couturier 
+ - Fix CMakeLists.txt to build Similarity test 
+
+! 2015-01-08 - Gerhard Raven
+ - cleanup namespace convention & dispatcher, add 'LHCb::Math::Filter'
+
+! 2015-01-07 - Marco Cattaneo
+ - Fix gcc49 unused function warning in Hesse.cpp
+ - Fix gcc49 unused local typedef warning in BSpline.cpp
+
+! 2015-01-07 - Gerhard Raven
+ - Add generic & initial AVX version of 'average' used in Kalman Bi-Smoother.
+   Generalize dispatcher to be able to deal with both void and non-void functions
+
+! 2015-01-07 - Ben Couturier
+ - Added Unit test that checks the 5x5 similarity calculation in LHCbMath is
+   identical when done on the various instruction sets (SSE3, AVX)
+
+! 2015-01-06 - Gerhard Raven
+ - Similarity transforms: clean up dispatching code
+
+! 2015-01-05 - Gerhard Raven
+ - Similarity transforms: fix bug in SSE3 dot product, add (5x5) -> (1x1)
+   transform. Speed up SSE3 version by computing two dot products simultaneously.
+
+! 2015-01-03 - Gerhard Raven
+ - add vectorized (5x5) -> (5x5) and (5x5) -> (7x7) symmetric matrix
+   similarity transforms -- these come in three flavours 'generic',
+   'SSE3' and 'AVX'; the relevant version is choosen dynamically
+   at runtime, on its first invocation.
+
 !========================= LHCbMath v3r52 2014-12-11 =========================
 ! 2014-12-02 - Vanya Belyaev
  - some improvement in the integration of 2D-polynomials 
 
 ! 2014-11-30 - Vanya Belyaev
- - add varios Splines (B,I,M,..)
+ - add various Splines (B,I,M,..)
 
 ! 2014-11-20 - Manuel Tobias Schiller
  - BloomFilter: make various overloads a bit more specific, so compilers don't
