@@ -1,4 +1,4 @@
-// $Id: ParticleCuts.h,v 1.21 2007-11-28 14:39:29 ibelyaev Exp $
+// $Id: ParticleCuts.h,v 1.23 2008-02-11 10:11:11 ibelyaev Exp $
 // ============================================================================
 #ifndef LOKI_PHYSPARTICLECUTS_H 
 #define LOKI_PHYSPARTICLECUTS_H 1
@@ -293,9 +293,9 @@ namespace LoKi
      *  const LHCb:Particle* K1 = ... ;
      *  const LHCb:Particle* K2 = ... ;
      * 
-     *  Cun clapp = CHI2DOCA ( K1 , geo() ) ;
+     *  Cun fun = CHI2DOCA ( K1 , geo() ) ;
      *  
-     *  const double chi2 = clapp( K2 ) ;
+     *  const double value = clapp( K2 ) ;
      *
      *  @endcode 
      *
@@ -612,6 +612,7 @@ namespace LoKi
      *
      *  @endcode 
      *
+     *  @see LoKi::Cuts::CLOSESTAPPROACH
      *  @see LoKi::Particles::ClosestApproach
      *  @see LHCb::Particle
      *  @see IGeomDispCalculator
@@ -649,6 +650,67 @@ namespace LoKi
      *  @date   2002-07-15
      */
     typedef LoKi::Particles::ClosestApproachChi2                    CLAPPCHI2 ;
+    // ========================================================================
+    /** @typedef CLOSESTAPPROACH
+     *  Evaluator of the closest approach 
+     *  distance between 2 particles 
+     *  
+     *  The tool IGeomDispCalculator is used 
+     *  for evaluation
+     *
+     *  @code 
+     *
+     *  const LHCb:Particle* K1 = ... ;
+     *  const LHCb:Particle* K2 = ... ;
+     * 
+     *  Fun fun = CLAPP( K1 , geo() ) ;
+     *  
+     *  const double value = fun ( K2 ) ;
+     *
+     *  @endcode 
+     *
+     *  The name comes from Vava GLIGOROV v.gligorov@physics.gla.ac.uk
+     *
+     *  @see LoKi::Cuts::CLAPP
+     *  @see LoKi::Particles::ClosestApproach
+     *  @see LHCb::Particle
+     *  @see IGeomDispCalculator
+     * 
+     *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
+     *  @date   2002-07-15
+     */
+    typedef LoKi::Particles::ClosestApproach                  CLOSESTAPPROACH ;
+    // ========================================================================
+    /** @typedef CLOSESTAPPROACHCHI2
+     *  Evaluator of the closest approach chi2 
+     *  distance between 2 particles 
+     *  
+     *  The tool IGeomDispCalculator is used 
+     *  for evaluation
+     *
+     *  @code 
+     *
+     *  const LHCb:Particle* K1 = ... ;
+     *  const LHCb:Particle* K2 = ... ;
+     * 
+     *  Fun fun = CLOSESTAPPROACHCHI2 ( K1 , geo() ) ;
+     *  
+     *  const double value = fun ( K2 ) ;
+     *
+     *  @endcode 
+     *
+     *  The name comes from Vava GLIGOROV v.gligorov@physics.gla.ac.uk
+     *
+     *  @see LoKi::Particles::ClosestApproachChi2 
+     *  @see LHCb::Particle
+     *  @see LoKi::Cuts::DOCACHI2
+     *  @see LoKi::Cuts::CHI2DOCA
+     *  @see IGeomDispCalculator
+     * 
+     *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
+     *  @date   2002-07-15
+     */
+    typedef LoKi::Particles::ClosestApproachChi2          CLOSESTAPPROACHCHI2 ;
     // ========================================================================
     /** @var CONFLEV
      *  Trivial function which evaluates "confidence level" for 
@@ -693,6 +755,36 @@ namespace LoKi
      *  @date 2006-02-15
      */
     const   LoKi::Particles::ConfidenceLevel                        CONFLEVEL ;
+    // ========================================================================
+    /** @typedef COSPF
+     *  Simple function which evalutes the coside of the angle inbetween
+     *  the particle momentum and the vector from the primary to the secondary
+     *  vertex 
+     * 
+     *  @code
+     * 
+     *  const LHCb::Particle* B = ... ;
+     *
+     *  // get the tool 
+     *  const LHCb::VertexBase* primary = ... ;
+     *
+     *  // construct a function
+     *  Fun fun = COSPF ( primary ) ;
+     *
+     *  // use it!
+     *  const double cosTheta = dira( B ) ;
+     *
+     *  @endcode
+     *
+     *  The name comes from Vava GLIGOROV v.gligorov@physics.gla.ac.uk
+     *
+     *  @see LoKi::Particles::CosineDirectionAngle
+     *  @see LoKi::Cuts::DANG
+     *  @see LoKi::Cuts::DIRA
+     *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
+     *  @date 2006-03-20
+     */
+    typedef LoKi::Particles::CosineDirectionAngle                       COSPF ;
     // ========================================================================
     /** @typedef COUNTER
      *  Simple monitoring counter for predicates
@@ -900,6 +992,7 @@ namespace LoKi
      *
      *  @see LoKi::Particles::CosineDirectionAngle
      *  @see LoKi::Cuts::DIRA
+     *  @see LoKi::Cuts::COSPF
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-03-20
      */
@@ -979,6 +1072,7 @@ namespace LoKi
      *
      *  @see LoKi::Particles::CosineDirectionAngle
      *  @see LoKi::Cuts::DANG
+     *  @see LoKi::Cuts::COSPF
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-03-20
      */
@@ -2136,7 +2230,369 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-02-10
      */
-    const   LoKi::Particles::Mass                                           M ;
+    const   LoKi::Particles::Mass                                           M ; 
+    // ========================================================================
+    /** @typedef LIFETIME
+     *  The simple functor for evalution of the lifetime of the particle
+     *  using the tool, which implements ILifetimeFitter interface
+     *
+     *  @code
+     *
+     *  // the primary vertex:
+     *  const LHCb::VertexBase* pv      = ...;
+     *  // the fitting tool itself:
+     *  const ILifetimeFitter*  fitter  = ... ;
+     *
+     *  // create the functor:
+     *  const LIFETIME fun ( pv , fitter ) ;
+     *
+     *  // get B-candidate:
+     *  const LHCb::Particle* B = ... ;
+     *
+     *  // use the functor:
+     *  const double ltime = fun ( B ) ;
+     *
+     *  @endcode
+     *
+     *  @attention Please mind the units! Unlike all other "time" quantities in LoKi,
+     *             this functor returns "time"-units instead of "length"-units!
+     * 
+     *  @see LoKi::Particles::LifeTime
+     *  @see LoKi::Cuts::LTIME
+     *  @see ILifetimeFitter
+     *
+     *  @author Vanya BELYAEV Ivan.BElyaev@itep.ru
+     *  @date 2008-01-24
+     */
+    typedef  LoKi::Particles::LifeTime                               LIFETIME ;
+    // ========================================================================
+    /** @typedef LIFETIMECHI2
+     *  The simple functor for evalution of the lifetime chi2 of the particle
+     *  using the tool, which implements ILifetimeFitter interface
+     *
+     *  @code
+     *
+     *  // the primary vertex:
+     *  const LHCb::VertexBase* pv      = ...;
+     *  // the fitting tool itself:
+     *  const ILifetimeFitter*  fitter  = ... ;
+     *
+     *  // create the functor:
+     *  const LIFETIMECHI2 chi2 ( pv , fitter ) ;
+     *
+     *  // get B-candidate:
+     *  const LHCb::Particle* B = ... ;
+     *
+     *  // use the functor:
+     *  const double ltimechi2 = chi2 ( B ) ;
+     *
+     *  @endcode
+     *
+     *  @see LoKi::Particles::LifeTimeChi2
+     *  @see LoKi::Cuts::LTIMECHI2
+     *  @see LoKi::Cuts::LTCHI2
+     *  @see ILifetimeFitter
+     *
+     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+     *  @date 2008-01-24
+     */
+    typedef  LoKi::Particles::LifeTimeChi2                       LIFETIMECHI2 ;
+    // ========================================================================
+    /** @typedef LIFETIMEFITCHI2
+     *  The simple functor for evalution of the chi2 of the "lifetime fit"
+     *  of the particle using the tool, which implements ILifetimeFitter 
+     *  interface
+     *
+     *  @code
+     *
+     *  // the primary vertex:
+     *  const LHCb::VertexBase* pv      = ...;
+     *  // the fitting tool itself:
+     *  const ILifetimeFitter*  fitter  = ... ;
+     *
+     *  // create the functor:
+     *  const LIFETIMEFITCHI2 chi2 ( pv , fitter ) ;
+     *
+     *  // get B-candidate:
+     *  const LHCb::Particle* B = ... ;
+     *
+     *  // use the functor:
+     *  const double ltimefit = chi2 ( B ) ;
+     *
+     *  @endcode
+     *
+     *  @see LoKi::Particles::LifeTimeFitChi2
+     *  @see LoKi::Cuts::LTCHI2
+     *  @see LoKi::Cuts::LTIMECHI2
+     *  @see ILifetimeFitter
+     *
+     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+     *  @date 2008-01-24
+     */
+    typedef  LoKi::Particles::LifeTimeFitChi2                 LIFETIMEFITCHI2 ;
+    // ========================================================================
+    /** @typedef LIFETIMESIGNCHI2
+     *  The simple functor for evalution of the SIGNED lifetime chi2 of the particle
+     *  using the tool, which implements ILifetimeFitter interface.
+     *  The signs is prescribed according teh sign of lifetiem itself 
+     *
+     *  @code
+     *
+     *  // the primary vertex:
+     *  const LHCb::VertexBase* pv      = ...;
+     *  // the fitting tool itself:
+     *  const ILifetimeFitter*  fitter  = ... ;
+     *
+     *  // create the functor:
+     *  const LIFETIMESIGNCHI2 chi2 ( pv , fitter ) ;
+     *
+     *  // get B-candidate:
+     *  const LHCb::Particle* B = ... ;
+     *
+     *  // use the functor:
+     *  const double ltimechi2 = chi2 ( B ) ;
+     *
+     *  @endcode
+     *
+     *  @see LoKi::Particles::LifeTimeSignedChi2
+     *  @see LoKi::Cuts::LTSIGNCHI2
+     *  @see LoKi::Cuts::LTIMESIGNCHI2
+     *  @see ILifetimeFitter
+     *
+     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+     *  @date 2008-01-24
+     */
+    typedef  LoKi::Particles::LifeTimeSignedChi2             LIFETIMESIGNCHI2 ;
+    // ========================================================================
+    /** @typedef LTCHI2
+     *  The simple functor for evalution of the lifetime chi2 of the particle
+     *  using the tool, which implements ILifetimeFitter interface
+     *
+     *  @code
+     *
+     *  // the primary vertex:
+     *  const LHCb::VertexBase* pv      = ...;
+     *  // the fitting tool itself:
+     *  const ILifetimeFitter*  fitter  = ... ;
+     *
+     *  // create the functor:
+     *  const LTCHI2 chi2 ( pv , fitter ) ;
+     *
+     *  // get B-candidate:
+     *  const LHCb::Particle* B = ... ;
+     *
+     *  // use the functor:
+     *  const double ltimechi2 = chi2 ( B ) ;
+     *
+     *  @endcode
+     *
+     *  @see LoKi::Particles::LifeTimeChi2
+     *  @see LoKi::Cuts::LTIMECHI2
+     *  @see LoKi::Cuts::LIFETIMECHI2
+     *  @see ILifetimeFitter
+     *
+     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+     *  @date 2008-01-24
+     */
+    typedef  LoKi::Particles::LifeTimeChi2                             LTCHI2 ;
+    // ========================================================================
+    /** @typedef LTFITCHI2
+     *  The simple functor for evalution of the chi2 of the "lifetime fit"
+     *  of the particle using the tool, which implements ILifetimeFitter 
+     *  interface
+     *
+     *  @code
+     *
+     *  // the primary vertex:
+     *  const LHCb::VertexBase* pv      = ...;
+     *  // the fitting tool itself:
+     *  const ILifetimeFitter*  fitter  = ... ;
+     *
+     *  // create the functor:
+     *  const LTFITCHI2 chi2 ( pv , fitter ) ;
+     *
+     *  // get B-candidate:
+     *  const LHCb::Particle* B = ... ;
+     *
+     *  // use the functor:
+     *  const double ltimefit = chi2 ( B ) ;
+     *
+     *  @endcode
+     *
+     *  @see LoKi::Particles::LifeTimeFitChi2
+     *  @see LoKi::Cuts::LTIMECHI2
+     *  @see LoKi::Cuts::LIFETIMECHI2
+     *  @see ILifetimeFitter
+     *
+     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+     *  @date 2008-01-24
+     */
+    typedef  LoKi::Particles::LifeTimeFitChi2                       LTFITCHI2 ;
+    // ========================================================================
+    /** @typedef LTIMECHI2
+     *  The simple functor for evalution of the lifetime chi2 of the particle
+     *  using the tool, which implements ILifetimeFitter interface
+     *
+     *  @code
+     *
+     *  // the primary vertex:
+     *  const LHCb::VertexBase* pv      = ...;
+     *  // the fitting tool itself:
+     *  const ILifetimeFitter*  fitter  = ... ;
+     *
+     *  // create the functor:
+     *  const LTIMECHI2 chi2 ( pv , fitter ) ;
+     *
+     *  // get B-candidate:
+     *  const LHCb::Particle* B = ... ;
+     *
+     *  // use the functor:
+     *  const double ltimechi2 = chi2 ( B ) ;
+     *
+     *  @endcode
+     *
+     *  @see LoKi::Particles::LifeTimeChi2
+     *  @see LoKi::Cuts::LTCHI2
+     *  @see LoKi::Cuts::LIFETIMECHI2
+     *  @see ILifetimeFitter
+     *
+     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+     *  @date 2008-01-24
+     */
+    typedef  LoKi::Particles::LifeTimeChi2                          LTIMECHI2 ;
+    // ========================================================================
+    /** @typedef LTIMEFITCHI2
+     *  The simple functor for evalution of the chi2 of the "lifetime fit"
+     *  of the particle using the tool, which implements ILifetimeFitter 
+     *  interface
+     *
+     *  @code
+     *
+     *  // the primary vertex:
+     *  const LHCb::VertexBase* pv      = ...;
+     *  // the fitting tool itself:
+     *  const ILifetimeFitter*  fitter  = ... ;
+     *
+     *  // create the functor:
+     *  const LTIMEFITCHI2 chi2 ( pv , fitter ) ;
+     *
+     *  // get B-candidate:
+     *  const LHCb::Particle* B = ... ;
+     *
+     *  // use the functor:
+     *  const double ltimefit = chi2 ( B ) ;
+     *
+     *  @endcode
+     *
+     *  @see LoKi::Particles::LifeTimeFitChi2
+     *  @see LoKi::Cuts::LTCHI2
+     *  @see LoKi::Cuts::LIFETIMECHI2
+     *  @see ILifetimeFitter
+     *
+     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+     *  @date 2008-01-24
+     */
+    typedef  LoKi::Particles::LifeTimeFitChi2                     LTIMEFITCHI2 ;
+    // ========================================================================
+    /** @typedef LTIME
+     *  The simple functor for evalution of the lifetime of the particle
+     *  using the tool, which implements ILifetimeFitter interface
+     *
+     *  @code
+     *
+     *  // the primary vertex:
+     *  const LHCb::VertexBase* pv      = ...;
+     *  // the fitting tool itself:
+     *  const ILifetimeFitter*  fitter  = ... ;
+     *
+     *  // create the functor:
+     *  const LTIME fun ( pv , fitter ) ;
+     *
+     *  // get B-candidate:
+     *  const LHCb::Particle* B = ... ;
+     *
+     *  // use the functor:
+     *  const double ltime = fun ( B ) ;
+     *
+     *  @endcode
+     *
+     *  @attention Please mind the units! Unlike all other "time" quantities in LoKi,
+     *             this functor returns "time"-units instead of "length"-units!
+     * 
+     *  @see LoKi::Particles::LifeTime
+     *  @see LoKi::Cuts::LIFETIME
+     *  @see ILifetimeFitter
+     *
+     *  @author Vanya BELYAEV Ivan.BElyaev@itep.ru
+     *  @date 2008-01-24
+     */
+    typedef  LoKi::Particles::LifeTime                                  LTIME ;
+    // ========================================================================
+    /** @typedef LTIMESIGNCHI2
+     *  The simple functor for evalution of the SIGNED lifetime chi2 of the particle
+     *  using the tool, which implements ILifetimeFitter interface.
+     *  The signs is prescribed according teh sign of lifetiem itself 
+     *
+     *  @code
+     *
+     *  // the primary vertex:
+     *  const LHCb::VertexBase* pv      = ...;
+     *  // the fitting tool itself:
+     *  const ILifetimeFitter*  fitter  = ... ;
+     *
+     *  // create the functor:
+     *  const LTIMESIGNCHI2 chi2 ( pv , fitter ) ;
+     *
+     *  // get B-candidate:
+     *  const LHCb::Particle* B = ... ;
+     *
+     *  // use the functor:
+     *  const double ltimechi2 = chi2 ( B ) ;
+     *
+     *  @endcode
+     *
+     *  @see LoKi::Particles::LifeTimeSignedChi2
+     *  @see LoKi::Cuts::LTSIGNCHI2
+     *  @see LoKi::Cuts::LIFETIMESIGNCHI2
+     *  @see ILifetimeFitter
+     *
+     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+     *  @date 2008-01-24
+     */
+    typedef  LoKi::Particles::LifeTimeSignedChi2                LTIMESIGNCHI2 ;
+    // ========================================================================
+    /** @typedef LTSIGNCHI2
+     *  The simple functor for evalution of the SIGNED lifetime chi2 of the particle
+     *  using the tool, which implements ILifetimeFitter interface.
+     *  The signs is prescribed according teh sign of lifetiem itself 
+     *
+     *  @code
+     *
+     *  // the primary vertex:
+     *  const LHCb::VertexBase* pv      = ...;
+     *  // the fitting tool itself:
+     *  const ILifetimeFitter*  fitter  = ... ;
+     *
+     *  // create the functor:
+     *  const LTSIGNCHI2 chi2 ( pv , fitter ) ;
+     *
+     *  // get B-candidate:
+     *  const LHCb::Particle* B = ... ;
+     *
+     *  // use the functor:
+     *  const double ltimechi2 = chi2 ( B ) ;
+     *
+     *  @endcode
+     *
+     *  @see LoKi::Particles::LifeTimeSignedChi2
+     *  @see LoKi::Cuts::LTIMESIGNCHI2
+     *  @see LoKi::Cuts::LIFETIMESIGNCHI2
+     *  @see ILifetimeFitter
+     *
+     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+     *  @date 2008-01-24
+     */
+    typedef  LoKi::Particles::LifeTimeSignedChi2                   LTSIGNCHI2 ;
     // ========================================================================
     /** @typedef LV0 
      *

@@ -1,4 +1,4 @@
-// $Id: HybridBase.cpp,v 1.2 2007-12-11 18:37:04 ibelyaev Exp $
+// $Id: HybridBase.cpp,v 1.5 2008-02-18 12:42:11 ibelyaev Exp $
 // ============================================================================
 // Include files 
 // ============================================================================
@@ -13,6 +13,7 @@
 // local
 // ============================================================================
 #include "LoKi/HybridBase.h"
+#include "LoKi/ILoKiSvc.h"
 // ============================================================================
 // Python 
 // ============================================================================
@@ -32,6 +33,22 @@
  *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
  *  @date 2004-06-29
  */
+// ============================================================================
+namespace 
+{
+  /// replace all new lines with "newline+comments"
+  std::string addComment ( std::string str )
+  {
+    static const std::string comm = "\n##! " ;
+    std::string::size_type pos = str.find ( '\n' ) ;
+    while ( std::string::npos != pos ) 
+    {
+      str.insert ( pos + 1 , comm );
+      pos = str.find ( '\n' , pos + 2 ) ;
+    }
+    return str ;
+  } 
+}
 // ============================================================================
 // Standard constructor
 // ============================================================================
@@ -57,6 +74,8 @@ StatusCode LoKi::Hybrid::Base::initialize ()
 {
   StatusCode sc = GaudiTool::initialize() ;
   if ( sc.isFailure() ) { return sc ; }  
+  // force the loading/initialization of  LoKi Service 
+  svc<LoKi::ILoKiSvc>( "LoKiSvc" , true ) ;
   // Initialize python if it not yet done 
   if ( !Py_IsInitialized() ) 
   {
@@ -137,20 +156,24 @@ StatusCode LoKi::Hybrid::Base::executeCode ( const std::string& pycode ) const
     ( const_cast<char*> ( pycode.c_str() ) ,                // EXECUTE CODE 
       Py_file_input  , globals  , locals ) ;
   
-  if ( PyErr_Occurred()        ) { PyErr_Print() ; }
+  bool ok = true ;
+  if ( PyErr_Occurred()        ) { PyErr_Print() ; ok = false ; }
   
   if ( 0 != globals && globnew ) { Py_XDECREF( globals ) ; }
   
-  if ( 0 != result             ) { Py_XDECREF ( result ) ; }
-  else 
+  if ( 0 != result             ) { Py_XDECREF ( result )      ; }
+  else if ( PyErr_Occurred()   ) { PyErr_Print() ; ok = false ; }
+  else { ok = false ; }
+  
+  if ( !ok ) 
   {
-    if ( PyErr_Occurred() ) { PyErr_Print() ; }
     err () << " Error has occured in Python: the problematic code is : "
            << endreq 
            << pycode  
            << endreq ;
     return Error( " Error has occured in Python " ) ;
   }
+
   return StatusCode::SUCCESS ;
 }
 // ============================================================================
@@ -176,11 +199,11 @@ std::string LoKi::Hybrid::Base::makeCode
          << name() << "'" << std::endl ;
   stream << "# " << std::string(78,'=') << std::endl ;
   stream << "# Arguments: " << std::endl ;
-  stream << "# \tcode    = " << Gaudi::Utils::toString( code    )  << std::endl ;
-  stream << "# \tactor   = " << Gaudi::Utils::toString( actor   )  << std::endl ;
-  stream << "# \tmodules = " << Gaudi::Utils::toString( modules )  << std::endl ;
-  stream << "# \tlines   = " << Gaudi::Utils::toString( lines   )  << std::endl ;
-  stream << "# \tcontext = " << Gaudi::Utils::toString( context )  << std::endl ;
+  stream << "# \tcode    = " << Gaudi::Utils::toString ( code    )  << std::endl ;
+  stream << "# \tactor   = " << Gaudi::Utils::toString ( actor   )  << std::endl ;
+  stream << "# \tmodules = " << Gaudi::Utils::toString ( modules )  << std::endl ;
+  stream << "# \tlines   = " << Gaudi::Utils::toString ( lines   )  << std::endl ;
+  stream << "# \tcontext = " << Gaudi::Utils::toString ( addComment ( "\n" + context ) )  << std::endl ;
   stream << "# " << std::string(78,'=') << std::endl ;
   // define imported modules:
   stream << "##        MODULES :" << std::endl ;

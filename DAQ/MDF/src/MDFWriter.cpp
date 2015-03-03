@@ -1,4 +1,4 @@
-// $Id: MDFWriter.cpp,v 1.20 2008-02-05 16:44:18 frankb Exp $
+// $Id: MDFWriter.cpp,v 1.25 2008-02-22 16:33:58 frankb Exp $
 //  ====================================================================
 //  MDFWriter.cpp
 //  --------------------------------------------------------------------
@@ -50,8 +50,8 @@ void MDFWriter::construct()   {
   declareProperty("Compress",       m_compress=2);        // File compression
   declareProperty("ChecksumType",   m_genChecksum=1);     // Generate checksum
   declareProperty("GenerateMD5",    m_genMD5=true);       // Generate MD5 checksum
-  declareProperty("DataType",       m_inputType);         // Input data type
-  declareProperty("MDFDataType",    m_dataType);          // Output data type
+  declareProperty("InputDataType",  m_inputType);         // Input data type
+  declareProperty("DataType",       m_dataType);          // Output data type
   declareProperty("BankLocation",   m_bankLocation=RawEventLocation::Default);  // Location of the banks in the TES
   declareProperty("DataManager",    m_ioMgrName="Gaudi::IODataManager/IODataManager");
   declareProperty("ForceTAE",       m_forceTAE = false);
@@ -110,16 +110,64 @@ MDFIO::MDFDescriptor MDFWriter::getDataSpace(void* const /* ioDesc */, size_t le
 
 /// Execute procedure
 StatusCode MDFWriter::execute()    {
+  StatusCode sc;
+  std::pair<const char*,int> data;
   setupMDFIO(msgSvc(),eventSvc());
   MsgStream log(msgSvc(), name());
-  switch(m_inputType) {
+  log << MSG::VERBOSE << "Got data as " << m_inputType 
+      << " Send as " << m_dataType << endreq;
+  switch(m_inputType)   {
     case MDFIO::MDF_NONE:
       return commitRawBanks(m_compress, m_genChecksum, m_connection, m_bankLocation);
     case MDFIO::MDF_BANKS:
-    case MDFIO::MDF_RECORDS:
-      return commitRawBuffer(m_dataType, m_compress, m_genChecksum, m_connection);
-    default:
+      data = getDataFromAddress();
+      if ( data.first )  {
+	RawBank* b = (RawBank*)data.first;
+	switch(m_dataType) {
+	case MDFIO::MDF_RECORDS:
+	  sc = writeBuffer(m_connection,b->data(), data.second-b->hdrSize());
+	  sc.isSuccess() ? ++m_writeActions : ++m_writeErrors;
+	  return sc;
+	case MDFIO::MDF_BANKS:
+	  sc = writeBuffer(m_connection,data.first, data.second);
+	  sc.isSuccess() ? ++m_writeActions : ++m_writeErrors;
+	  return sc;
+	default:
+	  break;
+	}
+      }
       break;
+    case MDFIO::MDF_RECORDS:
+      data = getDataFromAddress();
+      if ( data.first )  {
+	switch(m_dataType) {
+	case MDFIO::MDF_RECORDS:
+	  sc = writeBuffer(m_connection,data.first, data.second);
+	  sc.isSuccess() ? ++m_writeActions : ++m_writeErrors;
+	  return sc;
+	case MDFIO::MDF_BANKS:
+	  {
+	    MDFHeader* h = (MDFHeader*)data.first;
+	    m_data.reserve(data.second+100*sizeof(int));
+	    RawBank* b = (RawBank*)m_data.data();
+	    size_t len = sizeof(MDFHeader)+h->subheaderLength();
+	    b->setMagic();
+	    b->setType(RawBank::DAQ);
+	    b->setSize(len);
+	    b->setVersion(DAQ_STATUS_BANK);
+	    b->setSourceID(0);
+	    ::memcpy(b->data(), data.first, data.second);
+	    sc = writeBuffer(m_connection,m_data.data(),data.second+b->hdrSize());
+	    sc.isSuccess() ? ++m_writeActions : ++m_writeErrors;
+	    return sc;
+	  }	    
+	default:
+	  break;
+	}
+      }
+      break;
+  default:
+    break;
   }
   return StatusCode::FAILURE;
 }

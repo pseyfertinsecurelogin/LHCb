@@ -1,4 +1,4 @@
-// $Header: /afs/cern.ch/project/cvs/reps/lhcb/DAQ/MDF/src/MDFIO.cpp,v 1.27 2008-02-05 16:44:18 frankb Exp $
+// $Header: /afs/cern.ch/project/cvs/reps/lhcb/DAQ/MDF/src/MDFIO.cpp,v 1.31 2008-03-03 20:05:04 frankb Exp $
 //  ====================================================================
 //  MDFIO.cpp
 //  --------------------------------------------------------------------
@@ -88,10 +88,10 @@ StatusCode LHCb::MDFIO::commitRawBanks(RawEvent*         raw,
       m_spaceActions++;
       encodeRawBanks(raw, space.first+hdrSize, len, true);
       StatusCode sc = 
-  writeDataSpace(compTyp, chksumTyp, ioDesc, hdr_bank, space.first, len);
+	writeDataSpace(compTyp, chksumTyp, ioDesc, hdr_bank, space.first, len);
       if ( sc.isSuccess() ) {
-  m_writeActions++;
-  return sc;
+	m_writeActions++;
+	return sc;
       }
       MsgStream err(m_msgSvc, m_parent);
       err << MSG::ERROR << "Failed write data to output device." << endmsg;
@@ -151,13 +151,23 @@ LHCb::MDFIO::commitRawBanks(int compTyp, int chksumTyp, void* const ioDesc, cons
     std::vector<int> ctrlData;
     ctrlData.reserve(sizeCtrlBlock);
     size_t offset = 0;
+    RawBank *centerMDF=0;
     for ( int n = -7; 7 >= n; ++n ) {
       std::string loc = rootFromBxOffset(n)+"/"+location;
       SmartDataPtr<RawEvent> rawEvt(m_evtSvc, loc);
       if ( rawEvt ) {
         theRawEvents.push_back( rawEvt );
         ctrlData.push_back( n );               // BX offset
-        ctrlData.push_back( offset );          // offset in buffer, after end of this bank
+        ctrlData.push_back( offset );          // offset in buffer, after end of this bank 
+	if ( centerMDF == 0 || n == 0 ) {
+	  const _V& bnks = raw->banks(RawBank::DAQ);
+	  for(_V::const_iterator i=bnks.begin(); i != bnks.end(); ++i)  {
+	    if ( (*i)->version() == DAQ_STATUS_BANK )  {
+	      centerMDF = *i;
+	      break;
+	    }
+	  }
+	}
         size_t l = rawEventLengthTAE(rawEvt); 
         ctrlData.push_back(l);                 // size of this BX information
         offset += l;
@@ -170,6 +180,14 @@ LHCb::MDFIO::commitRawBanks(int compTyp, int chksumTyp, void* const ioDesc, cons
     // Create now the complete event header (MDF header) with complete length
     len = offset + ctrlBank->totalSize();
     RawBank* hdrBank = createDummyMDFHeader(&privateBank, len);
+    if ( centerMDF ) {
+      MDFHeader::SubHeader inf = hdrBank->begin<MDFHeader>()->subHeader();
+      MDFHeader::SubHeader center = centerMDF->begin<MDFHeader>()->subHeader();
+      inf.H1->setTriggerMask(center.H1->triggerMask());
+      inf.H1->setRunNumber(center.H1->runNumber());
+      inf.H1->setOrbitNumber(center.H1->orbitNumber());
+      inf.H1->setBunchID(center.H1->bunchID());
+    }
     len += hdrBank->totalSize();
 
     // Prepare the input to add these two banks to an output buffer
@@ -203,7 +221,7 @@ LHCb::MDFIO::commitRawBanks(int compTyp, int chksumTyp, void* const ioDesc, cons
         msg << MSG::ERROR << "Failed write data to output device." << endmsg;
       }
       msg << MSG::DEBUG << "Wrote TAE event of length:" << total 
-    << " bytes from " << theRawEvents.size() << " Bxs" << endmsg;
+          << " bytes from " << theRawEvents.size() << " Bxs" << endmsg;
       privateBank.removeBank( ctrlBank );
       privateBank.removeBank( hdrBank );
       return sc;
@@ -257,10 +275,10 @@ LHCb::MDFIO::commitRawBuffer(const void*       data,
         int hdrSize  = sizeof(MDFHeader)+h->subheaderLength();
         int bnkSize  = hdr->totalSize();
         writeBuffer(ioDesc, h, hdrSize);
-  // Need two write due to RAW bank alignment
-  sc = writeBuffer(ioDesc, ptr+bnkSize, len-bnkSize);
-  sc.isSuccess() ? ++m_writeActions : ++m_writeErrors;
-  return sc;
+	// Need two write due to RAW bank alignment
+	sc = writeBuffer(ioDesc, ptr+bnkSize, len-bnkSize);
+	sc.isSuccess() ? ++m_writeActions : ++m_writeErrors;
+	return sc;
       }
     case MDF_RECORDS:  // Already ready to write MDF record
       sc = writeBuffer(ioDesc, ptr, len);
@@ -398,7 +416,8 @@ LHCb::MDFIO::readLegacyBanks(const MDFHeader& h, void* const ioDesc, bool dbg)
     if ( compress != 0 )  {
       m_tmp.reserve(readSize);
       size_t new_len = 0;
-      if ( readBuffer(ioDesc, m_tmp.data(), readSize).isSuccess() )  {
+      StatusCode sc = readBuffer(ioDesc, m_tmp.data(), readSize);
+      if ( sc.isSuccess() )  {
         const char* src = m_tmp.data();
         hdr->setHeaderVersion(3);
         hdr->setDataType(MDFHeader::BODY_TYPE_BANKS);
@@ -428,13 +447,20 @@ LHCb::MDFIO::readLegacyBanks(const MDFHeader& h, void* const ioDesc, bool dbg)
         log0 << MSG::ERROR << "Cannot allocate sufficient space for decompression." << endmsg;
         return MDFDescriptor(0,-1);
       }
+      else if ( sc == 0 ) {
+        MsgStream log(m_msgSvc, m_parent);
+        log << MSG::INFO << "Cannot read more data. End-of-File reached." << endmsg;
+        return MDFDescriptor(0,-1);
+      }
+
       MsgStream log1(m_msgSvc, m_parent);
       log1 << MSG::ERROR << "Cannot read " << readSize << " bytes of compressed data." << endmsg;
       return MDFDescriptor(0,-1);
     }
     // Read uncompressed data file...
     int off = bnkSize - hdrSize;
-    if ( readBuffer(ioDesc, data+off, readSize).isSuccess() )  {
+    StatusCode sc = readBuffer(ioDesc, data+off, readSize);
+    if ( sc.isSuccess() )  {
       if ( m_ignoreChecksum )  {
         hdr->setChecksum(0);
       }
@@ -463,6 +489,12 @@ LHCb::MDFIO::readLegacyBanks(const MDFHeader& h, void* const ioDesc, bool dbg)
       }
       return std::pair<char*, int>(data, bnkSize+datSize);
     }
+    else if ( sc == 0 ) {
+      MsgStream log(m_msgSvc, m_parent);
+      log << MSG::INFO << "Cannot read more data. End-of-File reached." << endmsg;
+      return MDFDescriptor(0,-1);
+    }
+
     MsgStream log2(m_msgSvc, m_parent);
     log2 << MSG::ERROR << "Cannot allocate buffer to read:" << readSize << " bytes "  << endmsg;
     return MDFDescriptor(0,-1);
@@ -508,54 +540,60 @@ LHCb::MDFIO::readBanks(const MDFHeader& h, void* const ioDesc, bool dbg)  {
     if ( compress != 0 )  {
       m_tmp.reserve(readSize+rawSize);
       ::memcpy(m_tmp.data(),&h,rawSize); // Need to copy header to get checksum right
-      if ( readBuffer(ioDesc,m_tmp.data()+rawSize,readSize).isSuccess() )  {
-  int space_retry = 0;
-  while ( space_retry++ < 5 ) {
-    if ( space_retry>1 ) {
-      MsgStream log(m_msgSvc, m_parent);
-      alloc_len *= 2;
-      log << MSG::INFO << "Retry with increased buffer space of " << alloc_len << " bytes." << endmsg;
-      space = getDataSpace(ioDesc, alloc_len+sizeof(int)+sizeof(RawBank));
-      data = space.first;
-      if ( !data )  {
-        m_spaceErrors++;
-        goto NoSpace;
-      }
-      m_spaceActions++;
-      b = (RawBank*)data;
-      b->setMagic();
-      b->setType(RawBank::DAQ);
-      b->setSize(rawSize+hdrSize);
-      b->setVersion(DAQ_STATUS_BANK);
-      b->setSourceID(0);
-      bnkSize = b->totalSize();
-      ::memcpy(b->data(), &h, rawSize);
-      bptr = (char*)b->data();
-      hdr = (MDFHeader*)bptr;
-    }
-    ::memcpy(bptr+rawSize, m_tmp.data()+rawSize, hdrSize);
-    if ( m_ignoreChecksum )  {
-      hdr->setChecksum(0);
-    }
-    else if ( checksum && checksum != genChecksum(1,m_tmp.data()+4*sizeof(int),chkSize) )  {
-      return MDFDescriptor(0,-1);
-    }
-    // Checksum is correct...from all we know data integrity is proven
-    size_t new_len = 0;
-    const char* src = m_tmp.data()+rawSize;
-    char* ptr = ((char*)data) + bnkSize;
-    size_t space_size = space.second - bnkSize;
-    if ( decompressBuffer(compress,ptr,space_size,src+hdrSize,h.size(),new_len).isSuccess()) {
-      hdr->setSize(new_len);
-      hdr->setCompression(0);
-      hdr->setChecksum(0);
-      return std::pair<char*, int>(data,bnkSize+new_len);
-    }
-    ++space_retry;
-  }
-  NoSpace:
+      StatusCode sc = readBuffer(ioDesc,m_tmp.data()+rawSize,readSize);
+      if ( sc.isSuccess() )  {
+        int space_retry = 0;
+        while ( space_retry++ < 5 ) {
+          if ( space_retry>1 ) {
+            MsgStream log(m_msgSvc, m_parent);
+            alloc_len *= 2;
+            log << MSG::INFO << "Retry with increased buffer space of " << alloc_len << " bytes." << endmsg;
+            space = getDataSpace(ioDesc, alloc_len+sizeof(int)+sizeof(RawBank));
+            data = space.first;
+            if ( !data )  {
+              m_spaceErrors++;
+              goto NoSpace;
+            }
+            m_spaceActions++;
+            b = (RawBank*)data;
+            b->setMagic(); 
+            b->setType(RawBank::DAQ);
+            b->setSize(rawSize+hdrSize);
+            b->setVersion(DAQ_STATUS_BANK);
+            b->setSourceID(0);
+            bnkSize = b->totalSize();
+            ::memcpy(b->data(), &h, rawSize);
+            bptr = (char*)b->data();
+            hdr = (MDFHeader*)bptr;
+          }
+          ::memcpy(bptr+rawSize, m_tmp.data()+rawSize, hdrSize); 
+          if ( m_ignoreChecksum )  {
+            hdr->setChecksum(0);
+          }
+          else if ( checksum && checksum != genChecksum(1,m_tmp.data()+4*sizeof(int),chkSize) )  {
+            return MDFDescriptor(0,-1);
+          }
+          // Checksum is correct...from all we know data integrity is proven
+          size_t new_len = 0;
+          const char* src = m_tmp.data()+rawSize;
+          char* ptr = ((char*)data) + bnkSize;
+          size_t space_size = space.second - bnkSize;
+          if ( decompressBuffer(compress,ptr,space_size,src+hdrSize,h.size(),new_len).isSuccess()) {
+            hdr->setSize(new_len);
+            hdr->setCompression(0);
+            hdr->setChecksum(0);
+            return std::pair<char*, int>(data,bnkSize+new_len);
+          }
+          ++space_retry;
+        }
+        NoSpace:
         MsgStream log0(m_msgSvc, m_parent);
         log0 << MSG::ERROR << "Cannot allocate sufficient space for decompression." << endmsg;
+        return MDFDescriptor(0,-1);
+      }
+      else if ( sc == 0 ) {
+        MsgStream log(m_msgSvc, m_parent);
+        log << MSG::INFO << "Cannot read more data. End-of-File reached." << endmsg;
         return MDFDescriptor(0,-1);
       }
       MsgStream log1(m_msgSvc, m_parent);
@@ -563,7 +601,8 @@ LHCb::MDFIO::readBanks(const MDFHeader& h, void* const ioDesc, bool dbg)  {
       return MDFDescriptor(0,-1);
     }
     // Read uncompressed data file...
-    if ( readBuffer(ioDesc, bptr+rawSize,readSize).isSuccess() )  {
+    StatusCode sc = readBuffer(ioDesc, bptr+rawSize,readSize);
+    if ( sc.isSuccess() )  {
       if ( m_ignoreChecksum )  {
         hdr->setChecksum(0);
       }
@@ -571,6 +610,11 @@ LHCb::MDFIO::readBanks(const MDFHeader& h, void* const ioDesc, bool dbg)  {
         return MDFDescriptor(0,-1);
       }
       return std::pair<char*, int>(data, bnkSize+h.size());
+    }
+    else if ( sc == 0 ) {
+      MsgStream log(m_msgSvc, m_parent);
+      log << MSG::INFO << "Cannot read more data. End-of-File reached." << endmsg;
+      return MDFDescriptor(0,-1);
     }
     MsgStream log2(m_msgSvc, m_parent);
     log2 << MSG::ERROR << "Cannot allocate buffer to read:" << readSize << " bytes "  << endmsg;
@@ -585,13 +629,19 @@ MDFDescriptor
 LHCb::MDFIO::readBanks(void* const ioDesc, bool dbg)   {
   MDFHeader h;
   int rawSize = sizeof(MDFHeader);
-  if ( readBuffer(ioDesc, &h, rawSize).isSuccess() )  {
+  StatusCode sc = readBuffer(ioDesc, &h, rawSize);
+  if ( sc.isSuccess() )  {
     bool velo_patch = h.subheaderLength()==sizeof(int);
     bool vsn1_hdr   = !velo_patch && h.headerVersion()==1;
     if ( velo_patch || vsn1_hdr )  {
       return readLegacyBanks(h,ioDesc,dbg);
     }
     return readBanks(h,ioDesc,dbg);
+  }
+  else if ( sc == 0 ) {
+    MsgStream log(m_msgSvc, m_parent);
+    log << MSG::INFO << "Cannot read more data. End-of-File reached." << endmsg;
+    return MDFDescriptor(0,-1);
   }
   MsgStream log(m_msgSvc, m_parent);
   log << MSG::DEBUG << "Cannot read " << rawSize << " bytes of header data." << endmsg;

@@ -1,8 +1,39 @@
-! $Id: release.notes,v 1.167 2008-01-28 09:42:15 cattanem Exp $
+! $Id: release.notes,v 1.177 2008-02-22 13:14:13 cattanem Exp $
 ! Package     : Rich/RichKernel
 ! Responsible : Chris Jones
 ! Purpose     : General purpose RICH classes
 !-----------------------------------------------------------------------
+
+!====================== RichKernel v7r11 2008-02-22 ====================
+! 2008-02-22 - Chris Jones
+ - Changes to RichSmartIDCnv for test pattern monitoring
+
+! 2008-02-17 - Chris Jones
+ - Update Ray Tracing interface to pass back booleans instead of
+   StatusCodes. Slightly improves CPU performance (due to StatusCode 
+   checks).
+ - Add method RichTrackSegment::vectorAtCosSinThetaPhi
+
+! 2008-02-16 - Chris Jones
+ - Some fixes for windows problems
+
+! 2008-02-15 - Marco Cattaneo
+ - Clean up some includes
+
+! 2008-02-15 - Chris Jones
+ - Update RichGeomPhoton to store a pointer to the associated 
+   DeRichSphMirror for the primary and secondary mirrors, instead of just
+   the mirror number.
+ - Update RichTrackSegment to have more reasonable guesses for the 
+   average photon energy in each radiator (previously was set to 0).
+
+! 2008-02-07 - Chris Jones
+ - Add new method to RichHistoID.h
+
+! 2008-02-06 - Chris Jones
+ - Add new utility (RichSmartIDCnv.h) to perform conversions of
+   RichSmartIDs to various schemes. Currently implemented is a global
+   pixel ordering scheme (useful for monitoring).
 
 !====================== RichKernel v7r10 2008-01-28 ====================
 ! 2008-01-10 - Chris Jones

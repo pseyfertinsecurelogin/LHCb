@@ -1,4 +1,4 @@
-// $Id: DeVeloPhiType.h,v 1.27 2007-09-16 13:39:02 krinnert Exp $
+// $Id: DeVeloPhiType.h,v 1.29 2008-02-14 16:15:46 cattanem Exp $
 #ifndef VELODET_DEVELOPHITYPE_H 
 #define VELODET_DEVELOPHITYPE_H 1
 
@@ -7,20 +7,21 @@
 // Gaudi Math definitions
 #include "GaudiKernel/Point3DTypes.h"
 
-/// from VeloDet
+// from VeloDet
 #include "VeloDet/DeVeloSensor.h"
 
-/// From LHCb Kernel
-#include "Kernel/VeloChannelID.h"
-
 // get trajectory
-#include "Kernel/LineTraj.h"
+#include "Kernel/Trajectory.h"
 
 // Unique class identifier
 static const CLID CLID_DeVeloPhiType = 1008103 ;
 
 // Forward declaration needed for link to associated R sensor
 class DeVeloRType;
+
+namespace LHCb {
+  class VeloChannelID;
+}
 
 /** @class DeVeloPhiType DeVeloPhiType.h VeloDet/DeVeloPhiType.h
  *  
@@ -185,6 +186,21 @@ public:
     double c0 = m_idealOffsetAtR0[zone];
     double d0 = m_idealDistToOrigin[zone];
     return asin(d0/radius) - c0;
+  }
+  
+  /// get the global frame phi distance to origin 
+  inline double globalDistToOrigin(unsigned int zone) const {
+    return m_globalDistToOrigin[zone];
+  }
+  
+  /// get the half box frame phi distance to origin 
+  inline double halfboxDistToOrigin(unsigned int zone) const {
+    return m_halfboxDistToOrigin[zone];
+  }
+  
+  /// get the ideal frame phi distance to origin 
+  inline double idealDistToOrigin(unsigned int zone) const {
+    return m_idealDistToOrigin[zone];
   }
   
   /// phi for a given inter strip fraction and strip in the global frame

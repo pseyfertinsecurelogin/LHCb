@@ -5,7 +5,7 @@
  *  Header file for pixel clustering class Rich::DAQ::PixelCluster
  *
  *  CVS Log :-
- *  $Id: RichPixelCluster.h,v 1.9 2007-12-21 12:16:43 jonrob Exp $
+ *  $Id: RichPixelCluster.h,v 1.11 2008-02-15 18:09:21 jonrob Exp $
  *
  *  @author Chris Jones  Christopher.Rob.Jones@cern.ch
  *  @date   02/02/2007

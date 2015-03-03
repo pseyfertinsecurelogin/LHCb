@@ -4,6 +4,18 @@
 ! Purpose: LHCb specific Kernel classes
 !--------------------------------------------------------------------------
 
+!===================== LHCbKernel v8r2 2008-03-03 ========================
+! 2008-02-27 - Chris Jones
+ - Force inclusion of #include<vector> in RichSmartID.h
+
+! 2008-02-07 - Chris Jones
+ - Add new method to Rich::Side enum, to convert side to text more precisely 
+   when combined with the Rich::DetectorType enum.
+
+! 2008-02-06 - Chris Jones
+ - Slight tweek to RichSmartID fillStream method, to print panel in a
+   more human friendly way.
+
 !===================== LHCbKernel v8r1 2008-01-28 ========================
 ! 2008-01-28 M Needham
  - fix to make PiecewiseTrajectory compile under windows
@@ -18,7 +30,6 @@
 ! 2008-01-23 - Gerhard Raven
  - Fix derivatives in AlignTraj (forgot to zero three numbers!).
    Credit goes to Wouter Hulsbergen for pointing out the mistake...
-
 
 !===================== LHCbKernel v8r0 2007-11-23 ========================
 ! 2007-11-23 - Marco Cattaneo

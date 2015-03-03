@@ -10,6 +10,8 @@
       author      = 'Jose Hernando'
       desc = "Enumerations for the Hlt Summary classes">
 
+      <import name="string" std="TRUE"/>
+
       <enum
         name   = 'HltDecisionType'
         desc   = 'Trigger type decision: muon, dimuon ,etc'
@@ -33,7 +35,17 @@
 	          Calibration=16384'
         access = 'PUBLIC' />
 
-      <enum
+     <method
+	type = 'GaudiUtils::VectorMap &lt; std::string, LHCb::HltEnums::HltDecisionType &gt; &amp;'
+	name = 'hltDecisionTypeTypMap'
+	desc = 'gets map of enum and name. Useful for looping over all enums. Needs an instance of LHCb::HltEnums class.'
+	const = 'TRUE' >
+	<code>
+  return s_HltDecisionTypeTypMap() ;
+	</code>
+     </method>
+
+     <enum
         name   = 'HltAlley'
         desc   = 'Hlt alley'
         strTypConv = 'TRUE'
@@ -45,7 +57,17 @@
                   CalAlley'
         access = 'PUBLIC' />
 
-      <enum
+      <method
+	type = 'GaudiUtils::VectorMap &lt; std::string, LHCb::HltEnums::HltAlley &gt; &amp;'
+	name = 'hltAlleyTypMap'
+	desc = 'gets map of enum and name. Useful for looping over all enums. Needs an instance of LHCb::HltEnums class.'
+	const = 'TRUE' >
+	<code>
+  return s_HltAlleyTypMap() ;
+	</code>
+     </method>
+
+     <enum
         name   = 'HltSelectionSummary'
         desc   = 'Hlt selection summary'
         strTypConv = 'TRUE'
@@ -101,6 +123,16 @@
                   HltSelLastSelection=1021'
         access = 'PUBLIC' />
 
+     <method
+	type = 'GaudiUtils::VectorMap &lt; std::string, LHCb::HltEnums::HltSelectionSummary &gt; &amp;'
+	name = 'hltSelectionSummaryTypMap'
+	desc = 'gets map of enum and name. Useful for looping over all enums. Needs an instance of LHCb::HltEnums class.'
+	const = 'TRUE' >
+	<code>
+  return s_HltSelectionSummaryTypMap() ;
+	</code>
+     </method>
+
       <enum
         name   = 'HltParticleInfo'
         desc   = 'Monitoring Quantities'
@@ -154,8 +186,18 @@
 	TrackFlagL0 = 202,   
         UserQuantity = 1000'
 	access = ' PUBLIC' />	
+     <method
+	type = 'GaudiUtils::VectorMap &lt; std::string, LHCb::HltEnums::HltParticleInfo &gt; &amp;'
+	name = 'hltParticleInfoTypMap'
+	desc = 'gets map of enum and name. Useful for looping over all enums. Needs an instance of LHCb::HltEnums class.'
+	const = 'TRUE' >
+	<code>
+  return s_HltParticleInfoTypMap() ;
+	</code>
+     </method>
     </class>
     
+
     <class
       name        = 'HltSelectionSummary'
       author      = 'Jose Hernando'
@@ -163,8 +205,7 @@
 
       <import name='GaudiKernel/VectorMap' />
       <import name='Event/Particle' />
-      <import name='Event/Track' />
-      <import name='Event/RecVertex' />
+      <import name="vector" std="TRUE"/>
 
       <attribute
         type = 'bitfield'
@@ -279,6 +320,7 @@ return ok;
 
       <location name="Default"   place="Hlt/Summary"/>
  
+      <import name="vector" std="TRUE"/>
       <base name='DataObject' />
       &DataObject;
 

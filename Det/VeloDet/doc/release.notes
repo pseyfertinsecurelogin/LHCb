@@ -1,7 +1,21 @@
-! $Id: release.notes,v 1.186 2007-11-15 15:22:26 cattanem Exp $
+! $Id: release.notes,v 1.189 2008-02-14 16:15:47 cattanem Exp $
 ! package VeloDet
 ! package manager : Velo Group
 !-----------------------------------------------------------------------------
+
+!======================== VeloDet v12r4 2008-02-14 ===========================
+! 2008-02-14 - Marco Cattaneo
+ - Cleaned up includes
+
+! 2008-02-13 - Kurt Rinnert
+ - removed all explicit 2048 in sensor classes and replaced them with
+   m_numberOfStrips (or m_maxRouting line, where more suitable).
+
+! 2008-02-13 - Kurt Rinnert
+ - made accessors for strip capicitance and strip info inline.
+ - moved sanity check for strip capacitance and strip info conditions
+   from accessors to update call back method.
+ - added accessors for phi strip impact parameters in all frames.
 
 !======================== VeloDet v12r3 2007-11-15 ===========================
 ! 2007-11-15 - Mark Tobin

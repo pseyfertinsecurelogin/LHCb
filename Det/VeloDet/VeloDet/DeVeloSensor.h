@@ -1,4 +1,4 @@
-// $Id: DeVeloSensor.h,v 1.37 2007-11-15 10:58:46 mtobin Exp $
+// $Id: DeVeloSensor.h,v 1.40 2008-02-14 16:15:46 cattanem Exp $
 #ifndef VELODET_DEVELOSENSOR_H
 #define VELODET_DEVELOSENSOR_H 1
 
@@ -10,12 +10,9 @@
 #include "GaudiKernel/Point3DTypes.h"
 #include "GaudiKernel/PhysicalConstants.h"
 
-/// from Det/DetDesc
+// from Det/DetDesc
 #include "DetDesc/DetectorElement.h"
 #include "DetDesc/IGeometryInfo.h"
-
-/// From LHCb Kernel
-#include "Kernel/VeloChannelID.h"
 
 // get LHCbID for trajectory
 #include "Kernel/Trajectory.h"
@@ -27,6 +24,10 @@ static const CLID CLID_DeVeloSensor = 1008101 ;
 class DeVelo;
 class DeVeloRType;
 class DeVeloPhiType;
+
+namespace LHCb {
+  class VeloChannelID;
+}
 
 /** @class DeVeloSensor DeVeloSensor.h VeloDet/DeVeloSensor.h
  *
@@ -238,7 +239,7 @@ public:
 
   /// Convert routing line to chip channel (1234 -> 0213)
   unsigned int RoutingLineToChipChannel(unsigned int routLine) const {
-    routLine = (2048-routLine);
+    routLine = (m_maxRoutingLine-routLine);
     if(1 == routLine%4){
       routLine++;
     }else if(2 == routLine%4){
@@ -253,7 +254,7 @@ public:
     } else if(2 == chipChan%4) {
       chipChan--;
     }
-    return (2048-chipChan);
+    return (m_numberOfStrips-chipChan);
   }
   /// Convert chip channel to strip number
   unsigned int ChipChannelToStrip(unsigned int chipChan) const {
@@ -382,15 +383,15 @@ public:
    *  This information is based on CondDB, i.e. it can change
    *  with time.
    */
-  double stripCapacitance(unsigned int strip) const;
+  double stripCapacitance(unsigned int strip) const { return m_stripCapacitance[strip]; }
 
   /** Get info for this strip (cached condition).
    *  This information is based on CondDB, i.e. it can change
    *  with time.
    *  @see StripInfo
    */
-  StripInfo stripInfo(unsigned int strip) const;
-
+  StripInfo stripInfo(unsigned int strip) const { return m_stripInfos[strip]; }
+ 
   /// call back function for strip capacitance condition update
   StatusCode updateStripCapacitanceCondition();
 

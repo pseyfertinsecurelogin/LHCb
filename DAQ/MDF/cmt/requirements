@@ -2,7 +2,7 @@
 # Maintainer : Markus Frank
 #============================================================================
 package           MDF
-version           v3r2
+version           v3r5
 
 #============================================================================
 branches          cmt doc src MDF
@@ -23,3 +23,4 @@ macro MDFlib_linkopts  ' -L$(MDFROOT)/$(tag) -lMDF ' WIN32 ' /libpath:"$(MDFROOT
 
 private
 use GaudiSvc v*
+##use GaudiPoolDb v*

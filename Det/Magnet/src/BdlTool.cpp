@@ -1,4 +1,4 @@
-// $Id: BdlTool.cpp,v 1.5.2.1 2007-10-05 11:39:58 cattanem Exp $
+// $Id: BdlTool.cpp,v 1.6 2007-10-05 11:50:50 cattanem Exp $
 
 // Include files
 #include "GaudiKernel/ToolFactory.h"

@@ -136,18 +136,26 @@ M        = LoKi.Particles.Mass           ()
 MM       = LoKi.Particles.MeasuredMass   () 
 ## @see LoKi::Cuts::MASS 
 MASS     = LoKi.Particles.InvariantMass     
+## @see LoKi::Cuts::M1
+M1       = MASS(1)
 ## @see LoKi::Cuts::M12  
 M12      = MASS(1,2)
 ## @see LoKi::Cuts::M13  
 M13      = MASS(1,3)
 ## @see LoKi::Cuts::M14  
 M14      = MASS(1,4)
+## @see LoKi::Cuts::M2  
+M2       = MASS(2)
 ## @see LoKi::Cuts::M23  
 M23      = MASS(2,3)
 ## @see LoKi::Cuts::M24  
 M124     = MASS(2,4)
+## @see LoKi::Cuts::M3  
+M3       = MASS(3)
 ## @see LoKi::Cuts::M34  
 M34      = MASS(3,4)
+## @see LoKi::Cuts::M4  
+M4       = MASS(4)
 ## @see LoKi::Cuts::DMASS 
 DMASS    = LoKi.Particles.DeltaMass         
 ## @see LoKi::Cuts::ADMASS 
@@ -166,6 +174,8 @@ CL       = LoKi.Particles.ConfidenceLevel  ()
 WEIGHT   = LoKi.Particles.Weight           () 
 ## @see LoKi::Cuts::ISBASIC 
 ISBASIC  = LoKi.Particles.IsBasic          () 
+## @see LoKi::Cuts::ISMUON
+ISMUON   = LoKi.Particles.IsMuon           ()
 ## @see LoKi::Cuts::NDAUGS  
 NDAUGS   = LoKi.Particles.NumberOfDaughters  () 
 ## @see LoKi::Cuts::HASINFO
@@ -348,6 +358,43 @@ FILTER   = LoKi.Particles.Filter
 DANG     = LoKi.Particles.CosineDirectionAngle 
 ## @see LoKi::Cuts::DIRA
 DIRA     = LoKi.Particles.CosineDirectionAngle 
+## @see LoKi::Cuts::DETA
+DETA     = LoKi.Particles.DeltaEta
+## @see LoKi::Cuts::DPHI
+DPHI     = LoKi.Particles.DeltaPhi
+## @see LoKi::Cuts::DELTAR2
+DELTAR2  = LoKi.Particles.DeltaR2
+## @see LoKi::Cuts::DR2
+DR2      = LoKi.Particles.DeltaR2
+
+
+
+## @see LoKi::Cuts::LIFETIME
+LIFETIME         = LoKi.Particles.LifeTime
+## @see LoKi::Cuts::LIFETIMECHI2
+LIFETIMECHI2     = LoKi.Particles.LifeTimeChi2
+## @see LoKi::Cuts::LIFETIMESIGNCHI2
+LIFETIMESIGNCHI2 = LoKi.Particles.LifeTimeSignedChi2
+## @see LoKi::Cuts::LIFETIMEFITCHI2
+LIFETIMEFITCHI2  = LoKi.Particles.LifeTimeFitChi2
+
+## @see LoKi::Cuts::LIFETIME
+LTIME         = LoKi.Particles.LifeTime
+## @see LoKi::Cuts::LIFETIMECHI2
+LTIMECHI2     = LoKi.Particles.LifeTimeChi2
+## @see LoKi::Cuts::LIFETIMESIGNCHI2
+LTIMESIGNCHI2 = LoKi.Particles.LifeTimeSignedChi2
+## @see LoKi::Cuts::LIFETIMEFITCHI2
+LTIMEFITCHI2  = LoKi.Particles.LifeTimeFitChi2
+
+## @see LoKi::Cuts::LIFETIMECHI2
+LTCHI2     = LoKi.Particles.LifeTimeChi2
+## @see LoKi::Cuts::LIFETIMESIGNCHI2
+LTSIGNCHI2 = LoKi.Particles.LifeTimeSignedChi2
+## @see LoKi::Cuts::LIFETIMEFITCHI2
+LTFITCHI2  = LoKi.Particles.LifeTimeFitChi2
+
+
 
 ## @see LoKi::Cuts::VTRUE
 VTRUE     = LoKi.Constant( _RCV , bool )(True)
@@ -393,6 +440,10 @@ VINFO     = LoKi.Vertices.Info
 NTRACKS   = LoKi.Vertices.NumberOfTracks   ()
 ## @see LoKi::Cuts::NPRONGS 
 NPRONGS   = LoKi.Vertices.NumberOfOutgoing ()
+## @see LoKi::Cuts::VPCHI2N
+VPCHI2N   = LoKi.Vertices.Chi2Prob
+## @see LoKi::Cuts::VPCHI2
+VPCHI2    = VPCHI2N(-1)
 ## @see LoKi::Cuts::VVDIST
 VVDIST    = LoKi.Vertices.VertexDistance 
 ## @see LoKi::Cuts::VVD
@@ -411,13 +462,82 @@ VIP        = LoKi.Vertices.ImpPar
 VIPCHI2    = LoKi.Vertices.ImpParChi2
 
 
+# =============================================================================
+# Aliases from Vava GLIGOROV
+# =============================================================================
+CLOSESTAPPROACH         = CLAPP
+CLOSESTAPPROACHCHI2     = CLAPPCHI2 
+COSPF                   = DIRA
+DPHI2DETA2              = DR2
+PDGID                   = ID
+MEASUREDMASS            = MM
+MINCLOSESTAPPROACH      = MINCLAPP
+MINCLOSESTAPPROACHCHI2  = MINCLAPPCHI2 
+MINIPCHI2               = MIPCHI2
+NDAUGHTERS              = NDAUGS
+VERTEXSEP               = VD
+VERTEXSEPCHI2           = VDCHI2
+VERTEXSEPSIGN           = VDSIGN
+APPLYVERTEXFUNTOENDVERT = VFASPF 
 
-# functional part:
+# =============================================================================
+# CONTEXT-DEPENDENT FUNCTORS
+# =============================================================================
+BPVDIRA               = LoKi.Particles.CosineDirectionAngleWithTheBestPV()
+BESTPVCOSPF           = LoKi.Particles.CosineDirectionAngleWithTheBestPV() ## by Vava GLIGOROV
+
+BPVIP                 = LoKi.Particles.ImpParWithTheBestPV
+BESTPVIP              = LoKi.Particles.ImpParWithTheBestPV                ## by Vava GLIGOROV
+
+BPVIPCHI2             = LoKi.Particles.ImpParChi2WithTheBestPV
+BESTPVIPCHI2          = LoKi.Particles.ImpParChi2WithTheBestPV            ## by Vava GLIGOROV
+
+MIPSOURCE             = LoKi.Particles.MinImpParWithSource
+MINIPWITHSOURCE       = LoKi.Particles.MinImpParWithSource                ## by Vava GLIGOROV 
+
+MIPDV                 = LoKi.Particles.MinImpParDV
+MINIPWITHDV           = LoKi.Particles.MinImpParDV                        ## by Vava GLIGOROV 
+
+MIPTES                = LoKi.Particles.MinImpParTES
+MINIPWITHTES          = LoKi.Particles.MinImpParTES                       ## by Vava GLIGOROV 
+
+MIPCHI2SOURSE         = LoKi.Particles.MinImpParChi2WithSource
+MINIPCHI2WITHSOURSE   = LoKi.Particles.MinImpParChi2WithSource            ## by Vava GLIGOROV
+
+MIPCHI2DV             = LoKi.Particles.MinImpParChi2DV
+MINIPCHI2WITHDV       = LoKi.Particles.MinImpParChi2DV                    ## by Vava GLIGOROV
+
+MIPCHI2TES            = LoKi.Particles.MinImpParChi2TES
+MINIPCHI2WITHTES      = LoKi.Particles.MinImpParChi2TES                   ## by Vava GLIGOROV 
+
+BPVVD                 = LoKi.Particles.VertexDistanceDV ()
+BESTPVVERTSEP         = LoKi.Particles.VertexDistanceDV ()                ## by Vava GLIGOROV 
+
+BPVVDSIGN             = LoKi.Particles.VertexSignedDistanceDV ()
+BESTPVVERTSEPSIGN     = LoKi.Particles.VertexSignedDistanceDV ()          ## by Vava GLIGOROV 
+
+BPVVDDOT              = LoKi.Particles.VertexDotDistanceDV  ()
+BESTPVVERTSEPALONGMOM = LoKi.Particles.VertexDotDistanceDV  ()            ## by Vava GLIGOROV 
+
+BPVVDCHI2             = LoKi.Particles.VertexChi2DistanceDV ()
+BPVLTIME              = LoKi.Particles.LifeTimeDV           
+BPVLT                 = LoKi.Particles.LifeTimeDV           
+BPVLTCHI2             = LoKi.Particles.LifeTimeChi2DV
+BPVLTSIGNCHI2         = LoKi.Particles.LifeTimeSignedChi2DV
+BPVLTFITCHI2          = LoKi.Particles.LifeTimeFitChi2DV
+
+
+# =============================================================================
+# Functional part: 
+# =============================================================================
 
 ## functional part
-_vp       = std.vector ( _RCP    )
-_vv       = std.vector ( _RCV    )
-_vd       = std.vector ('double')
+#_vp       = std.vector ( _RCP    )
+#_vv       = std.vector ( _RCV    )
+#_vd       = std.vector ('double')
+_vp       = 'std::vector<const LHCb::Particle*>'   ## std.vector ( _RCP    )
+_vv       = 'std::vector<const LHCb::VertexBase*>' ## std.vector ( _RCV    )
+_vd       = 'std::vector<double>'                  ## std.vector ('double')
 #
 Maps      = LoKi.Functor             ( _vp    , _vd      )
 Map       = LoKi.FunctorFromFunctor  ( _vp    , _vd      )

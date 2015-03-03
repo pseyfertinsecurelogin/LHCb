@@ -1,4 +1,4 @@
-// $Id: IPrintDecayTreeTool.h,v 1.3 2007-10-10 13:04:43 jpalac Exp $
+// $Id: IPrintDecayTreeTool.h,v 1.5 2008-02-11 12:33:48 jpalac Exp $
 #ifndef DAVINCIMCTOOLS_IPRINTDECAYTREETOOL_H
 #define DAVINCIMCTOOLS_IPRINTDECAYTREETOOL_H 1
 
@@ -12,8 +12,6 @@
 
 #include "Event/Particle.h"
 #include "Event/MCParticle.h"
-
-// From DaVinci
 #include "Kernel/Particle2MCLinker.h"
 
 // Declaration of the interface ID (interface id, major version, minor version)

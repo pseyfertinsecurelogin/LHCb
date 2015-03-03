@@ -4,6 +4,20 @@
 ! Purpose     : Core classes for the Tf framework
 !-----------------------------------------------------------------------------
 
+!============================ TfKernel v2r3 2008-03-03 =======================
+! 2008-02-27 - Kurt Rinnert
+ - bug fix in DefaultVeloHitManager: the configurable cluster locations where
+   actually not used.
+ - The names of the default VELO hit manager instances used by the extended
+   VELO hit managers can now be configured via options.  
+
+! 2008-02-14 - Marco Cattaneo
+ - Cleaned up includes
+
+! 2008-02-13 - Kurt Rinnert
+ - fixed typo in VeloSensorHits<>::closestHitAtRHalfBoxImp().  This went
+   undetected because the method was never instantiatet before.
+
 !============================ TfKernel v2r2 2008-01-21 =======================
 ! 2008-01-20 - Kurt Rinnert
  - added hit preparation on demand to the VELO hit managers. Client code that

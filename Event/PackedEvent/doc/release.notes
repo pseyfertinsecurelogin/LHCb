@@ -4,6 +4,10 @@
 ! Purpose     : Pack, Unpack and Compare containers for optimized persistency
 !-----------------------------------------------------------------------------
 
+!======================= PackedEvent v3r3 2008-03-03 =========================
+! 2008-02-27 - Chris Jones
+ - Add missing STL includes
+
 !======================= PackedEvent v3r2 2007-06-05 =========================
 ! 2007-06-05 - Marco Cattaneo
  - Standardize location of dict generation files. Old ones broken in LCG_52a

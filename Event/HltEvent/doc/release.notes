@@ -4,6 +4,20 @@
 ! Purpose     : Event model for HLT tracks
 !-----------------------------------------------------------------------------
 
+!======================== HltEvent v8r7 2008-03-03 ===========================
+! 2008-02-27 - Chris Jones
+ - Add missing STL includes
+
+! 2008-02-07 - Patrick Koppenburg
+ - HltEnums : get reference to GaudiMap.
+
+! 2008-02-07 - Marco Cattaneo
+ - Remove unnecessary includes and dependencies
+
+! 2008-02-05 - Patrick Koppenburg
+ - HltEnums: accessor methods allowing to get the GaudiMap of enum and string.
+   That's very useful for looping over enums.
+
 !======================== HltEvent v8r6 2008-01-24 ===========================
 ! 2008-01-23 - Patrick Koppenburg
  - Used GOD-given conversion to string in HltEnums

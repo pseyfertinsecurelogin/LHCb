@@ -4,6 +4,17 @@
 ! Purpose     : Package for the tracking event model classes
 !-----------------------------------------------------------------------------
 
+!======================= TrackEvent v4r11 2008-02-20 =========================
+! 2008-02-20 - Vanya BELYAEV
+ - dict/lcgDict.h
+    add explicitly the dictionary for std::vector<LHCb::Track*>
+
+! 2008-02-06 - Marco Cattaneo
+ - Cleanup includes, using forward declaration possibility in GaudiObjDesc v11r2
+
+! 2008-02-04 - Wouter Hulsbergen
+ - Added pointer to detector element to Measurement class
+
 !======================= TrackEvent v4r10 2008-01-10 =========================
 ! 2008-01-10 - Marco Cattaneo
  - Make the Track(int key) constructor explicit

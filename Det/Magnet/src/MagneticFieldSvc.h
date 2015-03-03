@@ -1,4 +1,4 @@
-// $Id: MagneticFieldSvc.h,v 1.13 2007-03-19 10:31:10 cattanem Exp $
+// $Id: MagneticFieldSvc.h,v 1.15 2007-06-14 09:54:54 ahicheur Exp $
 #ifndef MAGNETICFIELDSVC_H
 #define MAGNETICFIELDSVC_H 1
 

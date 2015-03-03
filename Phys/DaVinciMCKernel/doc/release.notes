@@ -1,8 +1,39 @@
+! $Id: release.notes,v 1.31 2008-02-14 07:20:22 cattanem Exp $
 !-----------------------------------------------------------------------------
 ! Package     : Phys/DaVinciMCKernel
 ! Responsible : Juan PALACIOS
 ! Purpose     : MCEvent dependent interfaces and base classes.
 !-----------------------------------------------------------------------------
+
+!====================== DaVinciMCKernel v2r6 2008-02-14 =====================
+! 2008-02-13 - Patrick Koppenburg
+ - Remove IDebugTool interface
+
+! 2008-02-11 - Juan PALACIOS
+ - Kernel/IDebugTool.h, IPrintDecayTreeTool.h
+  . revert cleaning up of includes from  2008-02-07. Kernel/Particle2MCLinker
+    HAS to be included as Particle2MCLinker is a typedef of a templated 
+    classs, so no forward declaration is possible.
+
+! 2008-02-11 - Juan PALACIOS
+ - Kernel/Particle2MCLinker.icpp
+  . Fix some of my own typos.
+
+! 2008-02-07 - Marco Cattaneo
+ - Clean up some public includes by using forward declarations if possible
+ - Fix a couple of Doxygen warnings
+
+! 2008-02-04 - Patrick Koppenburg
+ - IBackgroundCategoryTool: getMap method not virtual.
+
+! 2008-01-22 - Juan PALACIOS
+ - Kernel/Particle2MCLinker.h
+  . Fix some problems with MCAssociation class.
+
+! 2007-12-18 - Vladimir Gligorov
+ - Added method getDaughtersAndPartners(Particle*) to BackgroundCategory, which
+   returns a veector of <Particle*,MCParticle*> pairs giving the B daughters and
+   their associated MCParticles (if any).
 
 !====================== DaVinciMCKernel v2r5 2007-11-27 =====================
 ! 2007-11-23 - Vladimir Gligorov

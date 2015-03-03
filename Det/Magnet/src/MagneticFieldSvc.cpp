@@ -1,4 +1,4 @@
-// $Id: MagneticFieldSvc.cpp,v 1.20 2007-03-19 10:31:10 cattanem Exp $
+// $Id: MagneticFieldSvc.cpp,v 1.26 2008-03-03 16:36:45 cattanem Exp $
 
 // Include files
 #include "GaudiKernel/SvcFactory.h"
@@ -29,8 +29,6 @@ DECLARE_SERVICE_FACTORY( MagneticFieldSvc );
 MagneticFieldSvc::MagneticFieldSvc( const std::string& name, 
             ISvcLocator* svc ) : Service( name, svc )
 {
-  m_Q.reserve(736278);
-
   m_constFieldVector.push_back( 0. );
   m_constFieldVector.push_back( 0. );
   m_constFieldVector.push_back( 0. );
@@ -167,6 +165,7 @@ StatusCode MagneticFieldSvc::parseFile() {
     m_Nxyz[2] = atoi( sGeom[5].c_str() );
     m_zOffSet = atof( sGeom[6].c_str() ) * Gaudi::Units::cm;
     
+    m_Q.reserve(npar - 7);
     // Number of lines with data to be read
     long int nlines = ( npar - 7 ) / 3;
     
@@ -220,8 +219,7 @@ StatusCode MagneticFieldSvc::parseFile() {
 // FieldVector: find the magnetic field value at a given point in space
 //=============================================================================
 StatusCode MagneticFieldSvc::fieldVector(const Gaudi::XYZPoint&  r,
-                                               Gaudi::XYZVector& bf ) const
-{
+                                               Gaudi::XYZVector& bf ) const {
 
   if( m_useConstField ) {
     bf.SetXYZ( m_constFieldVector[0]*Gaudi::Units::tesla,
@@ -234,11 +232,11 @@ StatusCode MagneticFieldSvc::fieldVector(const Gaudi::XYZPoint&  r,
 
   ///  Linear interpolated field
   double z = r.z() - m_zOffSet;
-  if( z < m_min_FL[2] || z >= m_max_FL[2] )  return StatusCode::SUCCESS;
+  if( !(z >= m_min_FL[2] && z < m_max_FL[2]) )  return StatusCode::SUCCESS;
   double x = fabs( r.x() );  
-  if( x < m_min_FL[0] || x >= m_max_FL[0] )  return StatusCode::SUCCESS;
+  if( !(x >= m_min_FL[0] && x < m_max_FL[0]) )  return StatusCode::SUCCESS;
   double y = fabs( r.y() );
-  if( y < m_min_FL[1] || y >= m_max_FL[1] )  return StatusCode::SUCCESS;
+  if( !(y >= m_min_FL[1] && y < m_max_FL[1]) )  return StatusCode::SUCCESS;
   int i = int( x/m_Dxyz[0]);
   int j = int( y/m_Dxyz[1] );
   int k = int( z/m_Dxyz[2] );

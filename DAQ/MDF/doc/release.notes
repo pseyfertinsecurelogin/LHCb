@@ -6,6 +6,22 @@
 !               MEP fragments
 !-----------------------------------------------------------------------------
 
+!========================= MDF v3r5 2008-03-03 ===============================
+! 2008-03-03 - Markus Frank
+ - Detector EOF when reading MDF files with ROOT.
+
+!========================= MDF v3r4 2008-02-22 ===============================
+! 2008-02-21 - Markus Frank
+ - Set proper MDF header when writing TAE events. Use the MDF header information
+   (triggermask, run, orbit and bunch counters) from central events.
+   If central event has no MDF information take as fallback first other found.
+ - Fix bug in default MDF writer when doing format conversions between
+   MDF_BANKS, MDF_RECORDS and MDF_BANKS.
+
+!========================= MDF v3r3 2008-02-11 ===============================
+! 2008-02-11 - Markus Frank
+ - Use ROOT as default for: rfio, castor, dcache, dcap, gsidcap and gfal
+
 !========================= MDF v3r2 2008-02-05 ===============================
 ! 2008-02-05 - Markus Frank
  - Add support for ROOT protocol as back up for any non-implemented protocols.

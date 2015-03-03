@@ -5,7 +5,7 @@
  *  Header file for tool interface : RichTrackSegment
  *
  *  CVS Log :-
- *  $Id: RichTrackSegment.h,v 1.3 2007-09-04 16:45:09 jonrob Exp $
+ *  $Id: RichTrackSegment.h,v 1.9 2008-02-21 16:35:40 jonrob Exp $
  *
  *  @author Antonis Papanestis   Antonis.Papanestis@cern.ch
  *  @author Chris Jones          Christopher.Rob.Jones@cern.ch
@@ -13,8 +13,8 @@
  */
 //-----------------------------------------------------------------------------
 
-#ifndef RICHEVENT_RICHTRACKSEGMENT_H
-#define RICHEVENT_RICHTRACKSEGMENT_H 1
+#ifndef RICHKERNEL_RichTrackSegment_H
+#define RICHKERNEL_RichTrackSegment_H 1
 
 // std include
 #include <iostream>
@@ -32,7 +32,6 @@
 // Kernel
 #include "Kernel/MemPoolAlloc.h"
 #include "RichKernel/RichException.h"
-
 
 // General LHCb namespace
 namespace LHCb
@@ -67,6 +66,17 @@ namespace LHCb
     inline Gaudi::XYZPoint add_points ( const Gaudi::XYZPoint & p1, const Gaudi::XYZPoint & p2 )
     {
       return Gaudi::XYZPoint ( p1.x()+p2.x(), p1.y()+p2.y(), p1.z()+p2.z() );
+    }
+
+    /** Returns the average photon energy for the given RICH radiator
+     *  @param[in] rad The radiator type
+     *  @return The average photon energy */
+    inline double avPhotEn( const Rich::RadiatorType rad ) const
+    {
+      return ( Rich::Aerogel  == rad ? 3.00 :   // Aerogel
+               Rich::Rich1Gas == rad ? 4.25 :   // C4F10
+               4.4                              // CF4
+               );
     }
 
   public: // helper classes
@@ -112,11 +122,11 @@ namespace LHCb
       inline float errTY2() const { return m_errTY2; }  ///< Access the ty error squared
       inline float errP2()  const { return m_errP2;  }  ///< Access the P error squared
 
-      inline float errX()  const { return sqrt(errX2());  }  ///< Access the x error
-      inline float errY()  const { return sqrt(errY2());  }  ///< Access the y error
-      inline float errTX() const { return sqrt(errTX2()); }  ///< Access the tx error
-      inline float errTY() const { return sqrt(errTY2()); }  ///< Access the ty error
-      inline float errP()  const { return sqrt(errP2());  }  ///< Access the P error
+      inline float errX()  const { return std::sqrt(errX2());  }  ///< Access the x error
+      inline float errY()  const { return std::sqrt(errY2());  }  ///< Access the y error
+      inline float errTX() const { return std::sqrt(errTX2()); }  ///< Access the tx error
+      inline float errTY() const { return std::sqrt(errTY2()); }  ///< Access the ty error
+      inline float errP()  const { return std::sqrt(errP2());  }  ///< Access the P error
 
       ///< send to std::ostream
       inline friend std::ostream& operator << ( std::ostream& s,
@@ -187,16 +197,16 @@ namespace LHCb
                       const StateErrors entryErrors  = StateErrors(), ///< The segment errors at the entry point
                       const StateErrors exitErrors   = StateErrors()  ///< The segment errors at the exit point
                       )
-      : m_type             ( t          ),
-        m_radIntersections ( intersects ),
-        m_radiator         ( rad  ),
-        m_rich             ( rich ),
-        m_errorsEntry      ( entryErrors  ),
+      : m_type             ( t             ),
+        m_radIntersections ( intersects    ),
+        m_radiator         ( rad           ),
+        m_rich             ( rich          ),
+        m_errorsEntry      ( entryErrors   ),
         m_errorsMiddle     ( Rich::Rich1Gas == rad ? exitErrors : entryErrors ), // CRJ : Is this best ?
-        m_errorsExit       ( exitErrors   ),
-        m_avPhotonEnergy   ( 0 ),
-        m_rotation         ( NULL ),
-        m_rotation2        ( NULL )
+        m_errorsExit       ( exitErrors    ),
+        m_avPhotonEnergy   ( avPhotEn(rad) ),
+        m_rotation         ( NULL          ),
+        m_rotation2        ( NULL          )
     {
       if      ( RichTrackSegment::UseAllStateVectors    == type() )
       {
@@ -226,18 +236,18 @@ namespace LHCb
                       const StateErrors middleErrors = StateErrors(), ///< The segment errors at the mid point
                       const StateErrors exitErrors   = StateErrors()  ///< The segment errors at the exit point
                       )
-      : m_type             ( t          ),
-        m_radIntersections ( intersects ),
-        m_middlePoint      ( middP      ),
-        m_middleMomentum   ( middV      ),
-        m_radiator         ( rad   ),
-        m_rich             ( rich  ),
-        m_errorsEntry      ( entryErrors  ),
-        m_errorsMiddle     ( middleErrors ),
-        m_errorsExit       ( exitErrors   ),
-        m_avPhotonEnergy   ( 0 ),
-        m_rotation         ( NULL ),
-        m_rotation2        ( NULL )
+      : m_type             ( t             ),
+        m_radIntersections ( intersects    ),
+        m_middlePoint      ( middP         ),
+        m_middleMomentum   ( middV         ),
+        m_radiator         ( rad           ),
+        m_rich             ( rich          ),
+        m_errorsEntry      ( entryErrors   ),
+        m_errorsMiddle     ( middleErrors  ),
+        m_errorsExit       ( exitErrors    ),
+        m_avPhotonEnergy   ( avPhotEn(rad) ),
+        m_rotation         ( NULL          ),
+        m_rotation2        ( NULL          )
     {
       if      ( RichTrackSegment::UseAllStateVectors == type() )
       {
@@ -309,12 +319,27 @@ namespace LHCb
     Gaudi::XYZVector vectorAtThetaPhi ( const double theta,
                                         const double phi ) const;
 
+    /** Creates a vector at an given angle and azimuth to the track segment
+     *
+     *  @param cosTheta Cosine of the angle between this track segment and the created vector
+     *  @param sinTheta Sine   of the angle between this track segment and the created vector
+     *  @param cosPhi   Cosine of the azimuthal angle of the vector to this track segment
+     *  @param sinPhi   Sine   of the azimuthal angle of the vector to this track segment
+     *
+     *  @return The vector at the given theta and phi angles to this track segment
+     */
+    Gaudi::XYZVector vectorAtCosSinThetaPhi ( const double cosTheta,
+                                              const double sinTheta,
+                                              const double cosPhi,
+                                              const double sinPhi ) const;
+
     /** Calculates the path lenth of a track segment.
      *  @returns The total length of the track inside the radiator
      */
     inline double pathLength() const
     {
-      return sqrt((entryPoint()-middlePoint()).mag2()) + sqrt((middlePoint()-exitPoint()).mag2());
+      return ( std::sqrt((entryPoint()-middlePoint()).mag2()) + 
+               std::sqrt((middlePoint()-exitPoint()).mag2())  );
     }
 
     /// Returns the segment entry point to the radiator
@@ -359,7 +384,7 @@ namespace LHCb
       return radIntersections().front().entryMomentum();
     }
 
-    // Returns the momentum vector at the mid point
+    /// Returns the momentum vector at the mid point
     inline const Gaudi::XYZVector& middleMomentum() const
     {
       return m_middleMomentum;
@@ -570,10 +595,21 @@ inline Gaudi::XYZVector
 LHCb::RichTrackSegment::vectorAtThetaPhi( const double theta,
                                           const double phi ) const
 {
-  const double sinTheta = sin(theta);
-  return rotationMatrix2() * Gaudi::XYZVector( sinTheta*cos(phi),
-                                               sinTheta*sin(phi),
-                                               cos(theta) );
+  const double sinTheta = std::sin(theta);
+  return rotationMatrix2() * Gaudi::XYZVector( sinTheta*std::cos(phi),
+                                               sinTheta*std::sin(phi),
+                                               std::cos(theta) );
+}
+
+inline Gaudi::XYZVector 
+LHCb::RichTrackSegment::vectorAtCosSinThetaPhi ( const double cosTheta,
+                                                 const double sinTheta,
+                                                 const double cosPhi,
+                                                 const double sinPhi ) const
+{ 
+  return rotationMatrix2() * Gaudi::XYZVector( sinTheta*cosPhi,
+                                               sinTheta*sinPhi,
+                                               cosTheta );
 }
 
 inline void LHCb::RichTrackSegment::reset() const
@@ -581,4 +617,4 @@ inline void LHCb::RichTrackSegment::reset() const
   cleanUpRotations();
 }
 
-#endif // RICHEVENT_RICHTRACKSEGMENT_H
+#endif // RICHKERNEL_RichTrackSegment_H

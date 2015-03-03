@@ -1,7 +1,27 @@
-! $Id: release.notes,v 1.80 2007-12-05 17:04:55 cattanem Exp $
+! $Id: release.notes,v 1.88 2008-03-03 10:26:48 cattanem Exp $
 ! Package : L0Event
-! Package manager : Olivier Callot
+! Package manager : Olivier Deschamps, Julien Cogan
 !-----------------------------------------------------------------------------
+
+!======================== L0Event v16r8 2008-03-03 ===========================
+! 2008-02-27 - Chris Jones
+ - Add missing STL includes
+
+! 2008-02-19 - Julien Cogan
+ - Add new classes to handle L0Muon informations and errors :
+    o L0MuonInfo
+    o L0MuonCtrlError
+    o L0MuonProcError
+          
+! 2008-02-15 - Marco Clemencic
+ - Modified the selection file for missing dictionaries to avoid compilation
+   error on Windows (but the dictionary is not complete on that platform).
+
+! 2008-02-13 - Marco Cattaneo
+ - Add some missing dictionaries
+
+! 2008-02-12 - O. Deschamps 	
+ - fix bug in L0DUBase.h (wrong mask/shift for BCID in the 2nd PileUp word)
 
 !======================== L0Event v16r7 2007-12-05 ===========================
 ! 2007-12-03 - Marie-Helene Schune, Patrick Robbe, O. Deschamps 	

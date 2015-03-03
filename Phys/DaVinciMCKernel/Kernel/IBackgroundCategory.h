@@ -1,26 +1,27 @@
-// $Id: IBackgroundCategory.h,v 1.1.1.1 2006-10-11 13:35:09 jpalac Exp $
+// $Id: IBackgroundCategory.h,v 1.4 2008-02-07 12:48:40 cattanem Exp $
 #ifndef DAVINCIMCTOOLS_IBACKGROUNDCATEGORY_H 
 #define DAVINCIMCTOOLS_IBACKGROUNDCATEGORY_H 1
 
 // Include files
 // from STL
+#include <map>
 #include <string>
+#include <utility>
+#include <vector>
 
 // from Gaudi
-#include "Event/Particle.h"
-#include "Event/MCParticle.h"
 #include "GaudiKernel/IAlgTool.h"
-#include <map>
-
-//using namespace LHCb;
 
 // forward declarations
-//class Particle;
-//class MCParticle;
+namespace LHCb 
+{
+  class Particle;
+  class MCParticle;
+}
 
 static const InterfaceID IID_IBackgroundCategory ( "IBackgroundCategory", 1, 0 );
 
-/** @class IBackgroundCategory IBackgroundCategory.h pkoppenb/IBackgroundCategory.h
+/** @class IBackgroundCategory IBackgroundCategory.h Kernel/IBackgroundCategory.h
  *
  *  Returns the background category for a reconstructed candidate Particle. Many thanks
  *  go to all the users who tested this tool, but especially to Luis Fernandez,
@@ -184,8 +185,12 @@ public:
   /// category < 60 it returns the mc_mother of the final state particles
   virtual const LHCb::MCParticle* origin( const LHCb::Particle* ) = 0 ;
 
+  //Method to return the daughters of the candidate Particle as used by BackCat
+  virtual const std::vector<std::pair<const LHCb::Particle*, const LHCb::MCParticle*> > 
+  getDaughtersAndPartners( const LHCb::Particle* ) = 0 ;
+
   /// Returns the map between enum values and enum names of the categories
-  virtual const std::map<int, std::string>& getCategoryMap(){return m_cat;};
+  const std::map<int, std::string>& getCategoryMap(){return m_cat;};
 
 protected:
   std::map<int, std::string> m_cat;

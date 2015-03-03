@@ -5,7 +5,7 @@
  *  Header file for RICH DAQ general definitions
  *
  *  CVS Log :-
- *  $Id: RichDAQDefinitions.h,v 1.20 2007-12-03 13:47:49 jonrob Exp $
+ *  $Id: RichDAQDefinitions.h,v 1.22 2008-02-21 16:35:03 jonrob Exp $
  *
  *  @author Chris Jones  Christopher.Rob.Jones@cern.ch
  *  @date   2003-11-06
@@ -16,10 +16,10 @@
 #define RICHKERNEL_RICHDAQDEFINITIONS_H 1
 
 // from STL
+#include <sstream>
 #include <vector>
 
 // GaudiKernel
-#include "GaudiKernel/MsgStream.h"
 #include "GaudiKernel/HashMap.h"
 
 // Kernel
@@ -61,8 +61,9 @@ namespace Rich
     /// Number of Ingress's per L1 board
     static const ShortType NumIngressPerL1 = 4;
 
-    /// Number of L1 inputs per ingress
-    //static const ShortType NumL1InputsPerIngress = 9;
+    /** @brief Number of L1 inputs per ingress.
+     *  Allow for 12 here even thought the UKL1 boards only have 9, to allow the decoding
+     *  to work for some prototype boards which do have 12 inputs */
     static const ShortType NumL1InputsPerIngress = 12;
 
     /// Total number of inputs to an L1 board
