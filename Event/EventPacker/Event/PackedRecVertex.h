@@ -13,8 +13,6 @@
 // Event
 #include "Event/RecVertex.h"
 
-class GaudiAlgorithm;
-
 namespace LHCb
 {
 
@@ -83,8 +81,21 @@ namespace LHCb
     static const std::string& InStream = "/pPhys/RecVertices";
   }
 
+  /** @class PackedRecVertices Event/PackedRecVertex.h
+   *
+   *  COntainer of packed RecVertex objects
+   *
+   *  @author Olivier Callot
+   *  @date   2008-11-14
+   */
+
   class PackedRecVertices : public DataObject 
   {
+
+  public:
+    
+    /// Default Packing Version
+    static char defaultPackingVersion() { return 1; }
 
   public:
 
@@ -94,41 +105,50 @@ namespace LHCb
   public:
   
     /// Standard constructor
-    PackedRecVertices( ) 
+    PackedRecVertices( ) : m_packingVersion(0)
     {
-      m_vect.reserve(10);
-      m_refs.reserve(200);
-      m_extra.reserve(500);
+      m_vect.reserve    ( 5   );
+      m_refs.reserve    ( 100 );
+      m_weights.reserve ( 100 );
+      m_extra.reserve   ( 250 );
     }
 
     virtual ~PackedRecVertices( ) {}; ///< Destructor
     virtual const CLID& clID()  const { return PackedRecVertices::classID(); }
     static  const CLID& classID()     { return CLID_PackedRecVertices;       }
 
-    void addEntry( PackedRecVertex& obj ) { m_vect.push_back( obj ); }
+  public:
+
     std::vector<PackedRecVertex>& vertices()                   { return m_vect; }
     const std::vector<PackedRecVertex>& vertices() const       { return m_vect; }
 
-    void addRef( int i ) { m_refs.push_back( i ); }
-    /// Avoid hidden method
-    virtual unsigned long addRef() { return DataObject::addRef(); }
-    std::vector<int>& refs()                           { return m_refs; }
-    const std::vector<int>& refs() const               { return m_refs; }
+    std::vector<long long>& refs()                         { return m_refs; }
+    const std::vector<long long>& refs() const             { return m_refs; }
 
-    void addExtra( int a, int b ) { std::pair<int,int> tmp( a, b ); m_extra.push_back( tmp ); }
+    void addExtra( const int a, const int b ) { m_extra.push_back( std::make_pair(a,b) ); }
     std::vector<std::pair<int,int> >& extras()             { return m_extra; }
     const std::vector<std::pair<int,int> >& extras() const { return m_extra; }
 
-    void addWeight( const short int weight ) { m_weights.push_back( weight ); }
     std::vector<short int>& weights()             { return m_weights; }
     const std::vector<short int>& weights() const { return m_weights; }
+
+  public:
+
+    /// Set the packing version
+    void setPackingVersion( const char ver ) { m_packingVersion = ver; }
+
+    /// Access the packing version
+    char packingVersion() const { return m_packingVersion; }
 
   private:
 
     std::vector<PackedRecVertex>     m_vect;
-    std::vector<int>                 m_refs;
+    std::vector<long long>           m_refs;
     std::vector<std::pair<int,int> > m_extra;
     std::vector<short int>           m_weights;
+
+    /// Data packing version
+    char m_packingVersion;
 
   };
 
@@ -162,7 +182,7 @@ namespace LHCb
   public:
 
     /// Constructor
-    RecVertexPacker( GaudiAlgorithm & parent ) : m_parent(&parent) {}
+    RecVertexPacker( const GaudiAlgorithm & parent ) : m_pack(&parent) {}
 
   public:
 
@@ -189,7 +209,7 @@ namespace LHCb
   private:
 
     /// Access the parent algorithm
-    GaudiAlgorithm& parent() const { return *m_parent; }
+    inline const GaudiAlgorithm& parent() const { return *(m_pack.parent()); }
 
     /// Safe sqrt ...
     inline double safe_sqrt( const double x ) const
@@ -199,9 +219,6 @@ namespace LHCb
 
     /// Standard packing of quantities into integers ...
     StandardPacker m_pack;
-
-    /// Pointer to parent algorithm
-    GaudiAlgorithm * m_parent;
 
   };
 

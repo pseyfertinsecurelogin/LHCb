@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # =============================================================================
-# $Id: functions.py 167826 2014-02-02 18:36:40Z ibelyaev $
+# $Id: functions.py 185279 2015-03-12 12:05:08Z ibelyaev $
 # =============================================================================
 ## @file LoKiNumbers/functions.py
 #  The full set of useful objects from LoKiNumbers library
@@ -15,8 +15,8 @@
 #
 #  @author Vanya BELYAEV ibelyaev@physics.syr.edu
 #
-# $Revision: 167826 $
-# Last modification $Date: 2014-02-02 19:36:40 +0100 (Sun, 02 Feb 2014) $
+# $Revision: 185279 $
+# Last modification $Date: 2015-03-12 13:05:08 +0100 (Thu, 12 Mar 2015) $
 #                by $Author: ibelyaev $
 # =============================================================================
 """
@@ -30,15 +30,15 @@ Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas,
 contributions and advices from G.Raven, J.van Tilburg,
 A.Golutvin, P.Koppenburg have been used in the design.
 
- $Revision: 167826 $
- Last modification $Date: 2014-02-02 19:36:40 +0100 (Sun, 02 Feb 2014) $
+ $Revision: 185279 $
+ Last modification $Date: 2015-03-12 13:05:08 +0100 (Thu, 12 Mar 2015) $
                 by $Author: ibelyaev $
 
 """
 # =============================================================================
 __author__  = "Vanya BELYAEV ibelyaev@physics.syr.edu"
 __date__    = ' xxxx-xx-xx '
-__version__ = " version $Revision: 167826 $ "
+__version__ = " version $Revision: 185279 $ "
 # =============================================================================
 
 # Namespaces:
@@ -166,7 +166,8 @@ BLIND     = LoKi.Random.Blind
 ## @see LoKi::Cuts::XBLIND
 XBLIND    = LoKi.Random.XBlind
 
-
+XFAKESOURCE   = LoKi.Functors.FakeSource( 'double' )
+                                           
 # =============================================================================
 ## The iterator function for the vector of something
 def _vct_iter_ ( self ) :

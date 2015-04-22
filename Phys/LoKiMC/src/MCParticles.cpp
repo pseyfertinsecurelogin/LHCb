@@ -1,4 +1,4 @@
-// $Id: MCParticles.cpp 182777 2015-01-19 12:33:36Z ibelyaev $
+// $Id: MCParticles.cpp 186003 2015-03-28 16:34:33Z ibelyaev $
 // ============================================================================
 // Include files
 // ============================================================================
@@ -2642,7 +2642,7 @@ int LoKi::MCParticles::NinAncestors::nInAncestors
 // ============================================================================
 std::ostream& 
 LoKi::MCParticles::NinAncestors::fillStream( std::ostream& s ) const 
-{ return s << " MCNINANCESTOS( " << m_cut << " ) " ; }
+{ return s << " MCNINANCESTORS( " << m_cut << " ) " ; }
 
 // ============================================================================
 // constructor from the predicate 
@@ -2697,7 +2697,7 @@ bool LoKi::MCParticles::InAncestors::inAncestors
 // ============================================================================
 std::ostream& 
 LoKi::MCParticles::InAncestors::fillStream( std::ostream& s ) const 
-{ return s << " MCINANCESTOS( " << m_cut << " ) " ; }
+{ return s << " MCINANCESTORS( " << m_cut << " ) " ; }
 // ============================================================================
 
 

@@ -52,9 +52,10 @@
   <class name    = "Gaudi::Math::PhaseSpaceNL"            />
   <class name    = "Gaudi::Math::PhaseSpacePol"           />
   <class name    = "Gaudi::Math::PhaseSpace23L"           />
-  <class name    = "Gaudi::Math::BreitWigner">
-    <field name = "m_rho_fun" transient = "true"/>      
-  </class>
+  <class name    = "Gaudi::Math::BreitWigner"             />
+  <class name    = "Gaudi::Math::FormFactor"              />
+  <class name    = "Gaudi::Math::FormFactors::Jackson"        />
+  <class name    = "Gaudi::Math::FormFactors::BlattWeisskopf" />
   <class name    = "Gaudi::Math::LASS"                    />
   <class name    = "Gaudi::Math::Bugg"                    />
   <class name    = "Gaudi::Math::Flatte"                  />
@@ -88,6 +89,7 @@
   <class name    = "Gaudi::Math::Positive2DSym"    />
   <class name    = "Gaudi::Math::Bernstein2DSym"   />
   <class name    = "Gaudi::Math::Sigmoid"          />
+  <class name    = "Gaudi::Math::TwoExpos"         />
   <class name    = "Gaudi::Math::PS2DPol"          />
   <class name    = "Gaudi::Math::PS2DPolSym"       />
   <class name    = "Gaudi::Math::ExpoPS2DPol"      />
@@ -107,6 +109,7 @@
   <class name    = "Gaudi::Math::Landau"           />
   <class name    = "Gaudi::Math::Argus"            />
   <class name    = "Gaudi::Math::ExpoPositive"     />
+  <class name    = "Gaudi::Math::TwoExpoPositive"  />
   
   <class name    = "Gaudi::Math::GenGaussV1"       />
   <class name    = "Gaudi::Math::GenGaussV2"       />
@@ -122,6 +125,8 @@
   <class name    = "Gaudi::Math::MonothonicSpline" />
   <class name    = "Gaudi::Math::ConvexSpline"     />
 
+  <enum name = "GaudiMath::FormFactors::JacksonRho" />
+
   <class name    = "Gaudi::Math::Linear"       />
   <class name    = "Gaudi::Math::LinearErr"    />
   <class name    = "Gaudi::Math::Parabola"     />
@@ -133,6 +138,7 @@
   <class name    = "Gaudi::Math::Splines::PAIR"    />
   <class name    = "Gaudi::Math::Splines::DATAERR" />
   <class name    = "Gaudi::Math::WStatEntity"      />
+  <class name    = "Gaudi::Math::NStatEntity"      />
 
   <class name    = "std::unary_function<double,Gaudi::Math::ValueWithError>"/>
   <class name    = "std::binary_function<double,double,Gaudi::Math::ValueWithError>"/>
@@ -188,6 +194,16 @@
   <function name = "Gaudi::Math::sumabs"          />
   <function name = "Gaudi::Math::abssum"          />
   <function name = "Gaudi::Math::horner_aN"       />
+  <function name = "Gaudi::Math::continued_fraction"       />
+  <function name = "Gaudi::Math::continued_fraction_simple"/>
+  <function name = "Gaudi::Math::continued_fraction_b"     />
+  <function name = "Gaudi::Math::exp_N"           />
+  <function name = "Gaudi::Math::exp_rel_N"       />
+  <function name = "Gaudi::Math::gamma_star"      />
+  <function name = "Gaudi::Math::alpha_N"         />
+  <function name = "Gaudi::Math::alpha_prime_N"   />
+  <function name = "Gaudi::Math::beta_N"          />
+  <function name = "Gaudi::Math::kummer"          />  
   <function name = "Gaudi::Math::binomEff"        />
   <function name = "Gaudi::Math::binomEff2"       />
   <function name = "Gaudi::Math::wilsonEff"       />
@@ -196,6 +212,7 @@
   <function name = "Gaudi::Math::zechEff"         />
   <function name = "Gaudi::Math::effJackknife"    />
 
+  <function name = "Gaudi::Math::casteljau"          />  
   <function name = "Gaudi::Math::clenshaw_chebyshev" />
   <function name = "Gaudi::Math::clenshaw_legendre"  />
   <function name = "Gaudi::Math::clenshaw_polynom"   />
@@ -214,6 +231,14 @@
   <function name    = "Gaudi::Math::interpolate_2D"        />
   <function pattern = "Gaudi::Math::Jackson::jackson*"     />
   
+  <function name = "Gaudi::Math::integrate"        />  
+  <function name = "Gaudi::Math::integrate_poly"   />  
+
+  <function name = "Gaudi::Math::choose"           />  
+  <function name = "Gaudi::Math::gen_choose"       />  
+  <function name = "Gaudi::Math::choose_half"      />  
+  <function name = "Gaudi::Math::choose_double"    />
+  <function name = "Gaudi::Math::affine_transform" />
   
   <class name = "Gaudi::Math::Chi2Fit"   />
 
@@ -265,10 +290,6 @@
       <field name = "m_b"/>      
     </class>
     
-    <class name = "Gaudi::Math::BreitWigner::rho_fun"/>  
-    <class name = "Gaudi::Math::BreitWigner">  
-      <field name = "m_rho_fun"/>      
-    </class>
     <class name = "Gaudi::Math::Chi2Fit">  
       <field name = "m_solu" />      
       <field name = "m_cov2" />      

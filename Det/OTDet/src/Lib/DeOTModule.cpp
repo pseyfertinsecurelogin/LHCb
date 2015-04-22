@@ -18,8 +18,6 @@
 #include "DetDesc/IGeometryInfo.h"
 #include "DetDesc/SolidBox.h"
 
-// GSL
-#include "gsl/gsl_math.h"
 #if !(defined(__GXX_EXPERIMENTAL_CXX0X__) || __cplusplus >= 201103L)
 #include <boost/assign/list_of.hpp>
 #endif
@@ -194,12 +192,11 @@ void DeOTModule::findStraws(const Gaudi::XYZPoint& entryPoint,
   if (lo > hi) std::swap(lo , hi);
 
   const int exStraw = 1; ///< Add extra straws to the the left and right
-  unsigned int strawLo = GSL_MAX_INT(0, int(std::floor(lo)) - exStraw);
-  unsigned int strawHi = GSL_MIN_INT(int(m_nStraws)-1, GSL_MAX_INT(0, int(std::ceil(hi)) + exStraw));
+  unsigned int strawLo = std::max(0, int(std::floor(lo)) - exStraw);
+  unsigned int strawHi = std::min(int(m_nStraws)-1, std::max(0, int(std::ceil(hi)) + exStraw));
 
   /// Now let's fill the vector. Remember straw numbering starts at 1, i.e. i+1
   straws.clear();
-  straws.reserve(strawHi-strawLo + 1u);
   for (unsigned int i = strawLo; i <= strawHi; ++i) straws.push_back(i+1);
 }
 
@@ -229,52 +226,41 @@ void DeOTModule::calculateHits(const Gaudi::XYZPoint& entryPoint,
       const double z = 0.5*m_zPitch;
       Gaudi::XYZPoint wB(0.0, m_yMinLocal, -z);
       Gaudi::XYZPoint wT(0.0, m_yMaxLocal, -z);
-      Gaudi::Math::XYZLine wire;
-      /// Are the wire and track parallel
-      bool notParallel = true;
       Gaudi::XYZPoint mu;
       Gaudi::XYZPoint lambda;
-      /// is in efficient region of (F-modules)
-      bool efficientY = true;
-      unsigned int straw = 0u;
-      double x = 0.0;
-      double dist = 0.0; /// lambda - mu
-      OTChannelID aChannel; /// channelID
       /// loop over straws
       /// First monolayer
       Straws::const_iterator iS;
-      for (iS= straws.begin(); iS != straws.end(); ++iS) {
-        straw = (*iS);
-        x = localUOfStraw(straw);
+      for (auto straw: straws) {
+        const double x = localUOfStraw(straw);
         wB.SetX(x);
         wT.SetX(x);
-        wire = Gaudi::Math::XYZLine(wB, (wT-wB).Unit());
-        notParallel = Gaudi::Math::closestPoints(wire, track, mu, lambda);
+        const auto wire = Gaudi::Math::XYZLine(wB, (wT-wB).Unit());
+        const auto notParallel = Gaudi::Math::closestPoints(wire, track, mu, lambda);
         if (notParallel) {
-          dist = driftDistance(lambda-mu);
-          efficientY = isEfficientA(mu.y());
-          if (efficientY && std::abs(dist) < m_cellRadius) {
-            aChannel = OTChannelID(m_stationID, m_layerID, m_quarterID, m_moduleID, straw);
-            chanAndDist.push_back(std::make_pair(aChannel, dist));
+          const auto dist = driftDistance(lambda-mu);
+          if (isEfficientA(mu.y()) && std::abs(dist) < m_cellRadius) {
+            chanAndDist.push_back(std::make_pair(
+			OTChannelID(m_stationID, m_layerID, m_quarterID, m_moduleID, straw),
+			dist));
           }
         }
       }
       /// Second monolayer
       wB.SetZ(z);
       wT.SetZ(z);
-      for (iS= straws.begin(); iS != straws.end(); ++iS) {
-        straw = (*iS) + m_nStraws;
-        x = localUOfStraw(straw);
+      for (auto straw: straws) {
+        const double x = localUOfStraw(straw);
         wB.SetX(x);
         wT.SetX(x);
-        wire = Gaudi::Math::XYZLine(wB, (wT-wB).Unit());
-        notParallel = Gaudi::Math::closestPoints(wire, track, mu, lambda);
+        const auto wire = Gaudi::Math::XYZLine(wB, (wT-wB).Unit());
+        const auto notParallel = Gaudi::Math::closestPoints(wire, track, mu, lambda);
         if (notParallel) {
-          dist = driftDistance(lambda-mu);
-          efficientY = isEfficientB(mu.y());
-          if (efficientY && std::abs(dist) < m_cellRadius) {
-            aChannel = OTChannelID(m_stationID, m_layerID, m_quarterID, m_moduleID, straw);
-            chanAndDist.push_back(std::make_pair(aChannel, dist));
+          const auto dist = driftDistance(lambda-mu);
+          if (isEfficientB(mu.y()) && std::abs(dist) < m_cellRadius) {
+            chanAndDist.push_back(std::make_pair(
+			OTChannelID(m_stationID, m_layerID, m_quarterID, m_moduleID, straw),
+			dist));
           }
         }
       }
@@ -286,7 +272,7 @@ void DeOTModule::calculateHits(const Gaudi::XYZPoint& entryPoint,
 
       double uLow = x1;
       double uHigh = x2;
-      if ( uLow > uHigh ) std::swap(uLow, uHigh);
+      std::tie(uLow, uHigh) = std::make_pair(std::min(uLow, uHigh), std::max(uLow, uHigh));
 
       // zfrac is between 0 and 1. 2.7839542167 means nothing.
       // This seems to acts as a random number generator.
@@ -304,23 +290,20 @@ void DeOTModule::calculateHits(const Gaudi::XYZPoint& entryPoint,
 
 
       double uStep = uLow;
-      double distCirc = 0.0;
-      int amb = 0;
-      double dist = 0.0;
-      OTChannelID aChannel;
 
       // monolayer A
       unsigned int strawA = hitStrawA(uLow);
       const double zStrawA = -0.5*m_zPitch;//localZOfStraw(strawA);
       while ( (uStep < uHigh) && strawA != 0 ) {
         uStep = localUOfStraw(strawA);
-        distCirc = gsl_hypot((zCirc-zStrawA), (uCirc-uStep));
-        amb = ((-(uStep-(x1+x2)/2.0)*(distCirc-rCirc)) < 0.0) ? -1 : 1;
-        dist = amb*std::abs(distCirc-rCirc);
+        const auto distCirc = std::hypot((zCirc-zStrawA), (uCirc-uStep));
+        const auto amb = ((-(uStep-(x1+x2)/2.0)*(distCirc-rCirc)) < 0.0) ? -1 : 1;
+        const auto dist = amb*std::abs(distCirc-rCirc);
         const unsigned int straw = strawA;
         if ( std::abs(dist) < m_cellRadius ) {
-          aChannel = OTChannelID(m_stationID, m_layerID, m_quarterID, m_moduleID, straw);
-          chanAndDist.push_back(std::make_pair(aChannel, dist));
+          chanAndDist.push_back(std::make_pair(
+		      OTChannelID(m_stationID, m_layerID, m_quarterID, m_moduleID, straw),
+		      dist));
         }
         strawA = nextRightStraw(straw);
       }
@@ -331,13 +314,14 @@ void DeOTModule::calculateHits(const Gaudi::XYZPoint& entryPoint,
       uStep = uLow;
       while ( (uStep < uHigh) && strawB != 0 ) {
         uStep = localUOfStraw(strawB);
-        distCirc = gsl_hypot((zCirc-zStrawB), (uCirc-uStep));
-        amb = ((-(uStep-(x1+x2)/2.0)*(distCirc-rCirc))< 0.0) ?  -1 : 1;
-        dist = amb*std::abs(distCirc-rCirc);
+        const auto distCirc = std::hypot((zCirc-zStrawB), (uCirc-uStep));
+        const auto amb = ((-(uStep-(x1+x2)/2.0)*(distCirc-rCirc))< 0.0) ?  -1 : 1;
+        const auto dist = amb*std::abs(distCirc-rCirc);
         const unsigned int straw = strawB;
         if ( std::abs(dist) < m_cellRadius ) {
-          aChannel = OTChannelID(m_stationID, m_layerID, m_quarterID, m_moduleID, straw);
-          chanAndDist.push_back(std::make_pair(aChannel, dist));
+          chanAndDist.push_back(std::make_pair(
+		      OTChannelID(m_stationID, m_layerID, m_quarterID, m_moduleID, straw),
+		      dist));
         }
         strawB = nextRightStraw(straw);
       }
@@ -352,12 +336,10 @@ void DeOTModule::calculateHits(const Gaudi::XYZPoint& entryPoint,
 void DeOTModule::sCircle(const double z1, const double u1, const double z2,
                          const double u2, const double z3c,
                          double& zc, double& uc, double& rc) const {
-  const double zw=(z1+z2)/2.0;
-  double uw=(u2+u1)/2.0;
-
-  zc=0.5*(z3c*z3c-zw*zw-(u1-uw)*(u1-uw))/(z3c-zw);
-  uc=uw;
-  rc=std::abs(zc-z3c);
+  const double zw = 0.5 * (z1 + z2);
+  uc = 0.5 * (u2 + u1);
+  zc = 0.5 * ((z3c + zw)  - (u1 - uc) * (u1 - uc) / (z3c - zw));
+  rc = std::abs(zc - z3c);
 }
 
 double DeOTModule::distanceToWire(const unsigned int aStraw,
@@ -370,7 +352,7 @@ double DeOTModule::distanceToWire(const unsigned int aStraw,
 
   // calculate distance to the straw
   double u = localPoint.x()+localVec.x()*(localZOfStraw(aStraw)-localPoint.z());
-  double cosU = 1.0/gsl_hypot(1.0, (localVec.x()/localVec.z()));
+  double cosU = 1.0/std::hypot(1.0, (localVec.x()/localVec.z()));
 
   // return distance to straw
   return (u-localUOfStraw(aStraw))*cosU;

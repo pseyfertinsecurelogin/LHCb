@@ -4,6 +4,20 @@
 ! Purpose     : collection of functors&factory for HLT
 ! -----------------------------------------------------------------------------
 
+!========================= LoKiHlt v3r20 2015-04-20 =========================
+! 2015-03-17 - Vanya Belyaev
+ - fix compliation warning 
+
+! 2015-03-13 - Vanya Belyaev
+ - HDRFilter : add two special cases 
+     1) Hlt2*Hlt1* name  for filtering of Hlt1 decisions 
+     2) stripping case 
+
+! 2015-03-06 - Vanya Belyaev
+ - HDRFilter: 
+   make default location dependent on the name 
+   Check in initialzation consitency of name/code/location 
+
 !========================= LoKiHlt v3r19 2015-02-23 =========================
 ! 2015-01-15 -> 2015-01-19 - Vanya Belyaev
  - steps towards autogeneration of C++ code 

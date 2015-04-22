@@ -11,37 +11,40 @@
 
 using namespace LHCb;
 
-void MCRichHitPacker::pack( const DataVector  & hits,
+void MCRichHitPacker::pack( const DataVector & hits,
                             PackedDataVector & phits ) const
 {
-  phits.data().reserve( hits.size() );
-  if ( 0 == phits.packingVersion() )
+  const char ver = phits.packingVersion();
+  if ( 0 == ver || 1 == ver )
   {
-    for ( DataVector::const_iterator iD = hits.begin();
-          iD != hits.end(); ++iD )
+    phits.data().reserve( hits.size() );
+    for ( const Data * hit : hits )
     {
-      const Data & hit = **iD;
       phits.data().push_back( PackedData() );
       PackedData & phit = phits.data().back();
-      phit.x          = m_pack.position ( hit.entry().x() );
-      phit.y          = m_pack.position ( hit.entry().y() );
-      phit.z          = m_pack.position ( hit.entry().z() );
-      phit.energy     = m_pack.energy   ( hit.energy()    );
-      phit.tof        = m_pack.time     ( hit.timeOfFlight() );
-      phit.sensDetID  = hit.sensDetID().key();
-      phit.history    = hit.historyCode();
-      if ( NULL != hit.mcParticle() )
+      phit.x          = m_pack.position ( hit->entry().x() );
+      phit.y          = m_pack.position ( hit->entry().y() );
+      phit.z          = m_pack.position ( hit->entry().z() );
+      phit.energy     = m_pack.energy   ( hit->energy()    );
+      phit.tof        = m_pack.time     ( hit->timeOfFlight() );
+      phit.sensDetID  = hit->sensDetID().key();
+      phit.history    = hit->historyCode();
+      if ( NULL != hit->mcParticle() )
       {
-        phit.mcParticle = m_pack.reference( &phits,
-                                            hit.mcParticle()->parent(),
-                                            hit.mcParticle()->key() );
+        phit.mcParticle = ( UNLIKELY( 0==ver ) ?
+                            m_pack.reference32( &phits,
+                                                hit->mcParticle()->parent(),
+                                                hit->mcParticle()->key() ) :
+                            m_pack.reference64( &phits,
+                                                hit->mcParticle()->parent(),
+                                                hit->mcParticle()->key() ) );
       }
     }
   }
   else
   {
     std::ostringstream mess;
-    mess << "Unknown packed data version " << (int)phits.packingVersion();
+    mess << "Unknown packed data version " << (int)ver;
     throw GaudiException( mess.str(), "MCRichHitPacker", StatusCode::FAILURE );
   }
 }
@@ -49,13 +52,12 @@ void MCRichHitPacker::pack( const DataVector  & hits,
 void MCRichHitPacker::unpack( const PackedDataVector & phits,
                               DataVector             & hits ) const
 {
-  hits.reserve( phits.data().size() );
-  if ( 0 == phits.packingVersion() )
+  const char ver = phits.packingVersion();
+  if ( 0 == ver || 1 == ver )
   {
-    for ( PackedDataVector::Vector::const_iterator iD = phits.data().begin();
-          iD != phits.data().end(); ++iD )
+    hits.reserve( phits.data().size() );
+    for ( const PackedData & phit : phits.data() )
     {
-      const PackedData & phit = *iD;
       // make and save new hit in container
       Data * hit  = new Data();
       hits.add( hit );
@@ -70,16 +72,20 @@ void MCRichHitPacker::unpack( const PackedDataVector & phits,
       if ( -1 != phit.mcParticle )
       {
         int hintID(0), key(0);
-        m_pack.hintAndKey( phit.mcParticle, &phits, &hits, hintID, key );
-        SmartRef<LHCb::MCParticle> ref(&hits,hintID,key);
-        hit->setMCParticle( ref );
+        if ( ( 0!=ver && m_pack.hintAndKey64(phit.mcParticle,&phits,&hits,hintID,key) ) ||
+             ( 0==ver && m_pack.hintAndKey32(phit.mcParticle,&phits,&hits,hintID,key) ) )
+        {
+          SmartRef<LHCb::MCParticle> ref(&hits,hintID,key);
+          hit->setMCParticle( ref );
+        }
+        else { parent().Error( "Corrupt MCRichHit MCParticle SmartRef detected." ).ignore(); }
       }
     }
   }
   else
   {
     std::ostringstream mess;
-    mess << "Unknown packed data version " << (int)phits.packingVersion();
+    mess << "Unknown packed data version " << (int)ver;
     throw GaudiException( mess.str(), "MCRichHitPacker", StatusCode::FAILURE );
   }
 }

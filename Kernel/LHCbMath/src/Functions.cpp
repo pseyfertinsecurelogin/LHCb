@@ -1,4 +1,4 @@
-// $Id: Functions.cpp 184368 2015-02-23 17:05:41Z ibelyaev $
+// $Id: Functions.cpp 186000 2015-03-28 16:26:34Z ibelyaev $
 // ============================================================================
 // Include files
 // ============================================================================
@@ -11,6 +11,10 @@
 #include <complex>
 #include <algorithm>
 #include <numeric>
+// ============================================================================
+// GaudiKernel
+// ============================================================================
+#include "GaudiKernel/GaudiException.h"
 // ============================================================================
 // LHCbMath
 // ============================================================================
@@ -51,8 +55,8 @@
  *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
  *  @date 2010-04-19
  *
- *                    $Revision: 184368 $
- *  Last modification $Date: 2015-02-23 18:05:41 +0100 (Mon, 23 Feb 2015) $
+ *                    $Revision: 186000 $
+ *  Last modification $Date: 2015-03-28 17:26:34 +0100 (Sat, 28 Mar 2015) $
  *                 by $author$
  */
 // ============================================================================
@@ -130,7 +134,7 @@ double Gaudi::Math::Jackson::jackson_A4
  *  @see Gaudi::Math::BreitWigner::rho_fun
  *  @param m the invariant mass
  *  @param m1 the invariant mass of the first  (spinor) particle
- *  @param m2 the invariant mass of the secodn (scalar) particle
+ *  @param m2 the invariant mass of the second (scalar) particle
  *  @return the value of rho-function
  *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
  *  @date 2011-11-30
@@ -152,8 +156,10 @@ double Gaudi::Math::Jackson::jackson_A5
  *  $\rho(\omega)= \left[ q_0^2 + q^2 \right]^{-1}f$
  *  @see Gaudi::Math::BreitWigner
  *  @see Gaudi::Math::BreitWigner::rho_fun
- *  @param m the invariant mass
- *  @param m the nominam   mass
+ *  @param m  the invariant mass
+ *  @param m0 the nominal   mass
+ *  @param m1 the invariant mass of the first  particle
+ *  @param m2 the invariant mass of the second particle
  *  @return the value of rho-function
  *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
  *  @date 2011-11-30
@@ -1105,15 +1111,15 @@ namespace
     return  1.0 / v ;
   }
   // ==========================================================================
-  typedef double (*rho_fun) ( double , double , double , double ) ;
   //// calculate the current width
-  double gamma_run ( const double gam0    ,
-                     const double x       ,
-                     const double m1      ,
-                     const double m2      ,
-                     const double m0      ,
-                     const unsigned int L ,
-                     rho_fun fun = 0      )
+  double gamma_run 
+  ( const double gam0    ,
+    const double x       ,
+    const double m1      ,
+    const double m2      ,
+    const double m0      ,
+    const unsigned int L ,
+    const Gaudi::Math::FormFactor* fun  = 0 )
   {
     //
     if ( m1 + m2 >= x ) { return 0 ; }   // RETURN
@@ -4007,6 +4013,7 @@ double  Gaudi::Math::PhaseSpacePol::integral
   //
   return result ;
 }
+// ============================================================================
 // constructor
 // ============================================================================
 Gaudi::Math::BreitWigner::BreitWigner
@@ -4016,16 +4023,16 @@ Gaudi::Math::BreitWigner::BreitWigner
   const double         m2   ,
   const unsigned short L    )
   : std::unary_function<double,double> ()
-//
-  , m_m0        (             m0    )
-  , m_gam0      ( std::abs ( gam0 ) )
-  , m_m1        ( std::abs (   m1 ) )
-  , m_m2        ( std::abs (   m2 ) )
-  , m_L         (              L    )
-  , m_rho_fun   ( &Gaudi::Math::Jackson::jackson_0 )
-//
-  , m_workspace ()
-//
+    //
+  , m_m0         (             m0    )
+  , m_gam0       ( std::abs ( gam0 ) )
+  , m_m1         ( std::abs (   m1 ) )
+  , m_m2         ( std::abs (   m2 ) )
+  , m_L          (              L    )
+  , m_formfactor ( nullptr ) 
+    //
+  , m_workspace  ()
+    //
 {}
 // ============================================================================
 // constructor
@@ -4036,44 +4043,84 @@ Gaudi::Math::BreitWigner::BreitWigner
   const double                                m1   ,
   const double                                m2   ,
   const unsigned short                        L    ,
-  const Gaudi::Math::BreitWigner::JacksonRho  r    )
+  const Gaudi::Math::FormFactors::JacksonRho  r    )
   : std::unary_function<double,double> ()
-//
-  , m_m0        (             m0    )
-  , m_gam0      ( std::abs ( gam0 ) )
-  , m_m1        ( std::abs (   m1 ) )
-  , m_m2        ( std::abs (   m2 ) )
-  , m_L         (              L    )
-//
-  , m_rho_fun   ( &Gaudi::Math::Jackson::jackson_0 )
-//
-  , m_workspace ()
-//
+    //
+  , m_m0         (             m0    )
+  , m_gam0       ( std::abs ( gam0 ) )
+  , m_m1         ( std::abs (   m1 ) )
+  , m_m2         ( std::abs (   m2 ) )
+  , m_L          (              L    )
+    //
+  , m_formfactor ( new Gaudi::Math::FormFactors::Jackson ( r ) ) 
+    //
+  , m_workspace  ()
+    //
+{}
+// ============================================================================
+// constructor
+// ============================================================================
+Gaudi::Math::BreitWigner::BreitWigner
+( const double                   m0   ,
+  const double                   gam0 ,
+  const double                   m1   ,
+  const double                   m2   ,
+  const unsigned short           L    ,
+  const Gaudi::Math::FormFactor& ff   )
+  : std::unary_function<double,double> ()
+    //
+  , m_m0         (             m0    )
+  , m_gam0       ( std::abs ( gam0 ) )
+  , m_m1         ( std::abs (   m1 ) )
+  , m_m2         ( std::abs (   m2 ) )
+  , m_L          (              L    )
+    //
+  , m_formfactor ( ff.clone() ) 
+    //
+  , m_workspace  ()
+    //
+{}
+// ============================================================================
+// copy constructor 
+// ============================================================================
+Gaudi::Math::BreitWigner::BreitWigner 
+( const Gaudi::Math::BreitWigner& bw ) 
+  : std::unary_function<double,double> ( bw )
+  , m_m0         ( bw.m_m0    )
+  , m_gam0       ( bw.m_gam0  )
+  , m_m1         ( bw.m_m1    )
+  , m_m2         ( bw.m_m2    )
+  , m_L          ( bw.m_L     )
+    //
+  , m_formfactor ( nullptr == bw.m_formfactor ? nullptr : bw.m_formfactor->clone() ) 
+    //
+  , m_workspace  ()
+    //
+{}
+// ============================================================================
+// move constructor 
+// ============================================================================
+Gaudi::Math::BreitWigner::BreitWigner 
+( Gaudi::Math::BreitWigner&& bw ) 
+  : std::unary_function<double,double> ( bw )
+  , m_m0         ( bw.m_m0    )
+  , m_gam0       ( bw.m_gam0  )
+  , m_m1         ( bw.m_m1    )
+  , m_m2         ( bw.m_m2    )
+  , m_L          ( bw.m_L     )
+    //
+  , m_formfactor ( bw.m_formfactor ) 
+    //
+  , m_workspace  ()
+    //
 {
-  //
-  switch ( r )
-  {
-  case Jackson_0  :
-    m_rho_fun = &Gaudi::Math::Jackson::jackson_0  ; break ;
-  case Jackson_A2 :
-    m_rho_fun = &Gaudi::Math::Jackson::jackson_A2 ; break ;
-  case Jackson_A3 :
-    m_rho_fun = &Gaudi::Math::Jackson::jackson_A3 ; break ;
-  case Jackson_A4 :
-    m_rho_fun = &Gaudi::Math::Jackson::jackson_A4 ; break ;
-  case Jackson_A5 :
-    m_rho_fun = &Gaudi::Math::Jackson::jackson_A5 ; break ;
-  case Jackson_A7 :
-    m_rho_fun = &Gaudi::Math::Jackson::jackson_A7 ; break ;
-  default         :
-    m_rho_fun = &Gaudi::Math::Jackson::jackson_0  ; break ;
-  }
-  //
+  bw.m_formfactor = nullptr ;
 }
 // ============================================================================
 // destructor
 // ============================================================================
-Gaudi::Math::BreitWigner::~BreitWigner (){}
+Gaudi::Math::BreitWigner::~BreitWigner ()
+{ if ( 0 != m_formfactor ) { delete m_formfactor ; m_formfactor = nullptr ; } }
 // ============================================================================
 //  calculate the Breit-Wigner amplitude
 // ============================================================================
@@ -4124,15 +4171,27 @@ double Gaudi::Math::BreitWigner::operator() ( const double x ) const
 double Gaudi::Math::BreitWigner::gamma ( const double x ) const
 {
   //
-  return gamma_run ( m_gam0    ,
-                     x         ,
-                     m_m1      ,
-                     m_m2      ,
-                     m_m0      ,
-                     m_L       ,
-                     m_rho_fun ) ;
+  return gamma_run ( m_gam0       ,
+                     x            ,
+                     m_m1         ,
+                     m_m2         ,
+                     m_m0         ,
+                     m_L          ,
+                     m_formfactor ) ;
   //
 }
+// ===========================================================================
+// get the value of formfactor at given m 
+// ============================================================================
+double Gaudi::Math::BreitWigner::formfactor ( const double m ) const 
+{ 
+  return 
+    nullptr == m_formfactor ? 1. : 
+    (*m_formfactor)( m , m_m0 , m_m1 , m_m2 ) ; 
+}
+// ============================================================================
+
+
 // ============================================================================
 bool Gaudi::Math::BreitWigner::setM0     ( const double x )
 {
@@ -4274,6 +4333,145 @@ double  Gaudi::Math::BreitWigner::integral () const
   return result + integral ( m_m1 + m_m2 , x_high );
 }
 // ============================================================================
+// virtual destructor 
+// ============================================================================
+Gaudi::Math::FormFactor::~FormFactor (){}
+// ============================================================================
+// default constructor
+// ============================================================================
+Gaudi::Math::FormFactors::Jackson::Jackson() 
+  : Gaudi::Math::FormFactor() 
+  , m_rho ( nullptr ) 
+{}
+// ============================================================================
+// constructor from enum
+// ============================================================================
+Gaudi::Math::FormFactors::Jackson::Jackson
+( const Gaudi::Math::FormFactors::JacksonRho rho ) 
+  : Gaudi::Math::FormFactor() 
+  , m_rho ( nullptr ) 
+{
+  switch ( rho )
+  {
+  case   Gaudi::Math::FormFactors::Jackson_0  :
+    m_rho = &Gaudi::Math::Jackson::jackson_0  ; break ;
+  case   Gaudi::Math::FormFactors::Jackson_A2 :
+    m_rho = &Gaudi::Math::Jackson::jackson_A2 ; break ;
+  case   Gaudi::Math::FormFactors::Jackson_A3 :
+    m_rho = &Gaudi::Math::Jackson::jackson_A3 ; break ;
+  case   Gaudi::Math::FormFactors::Jackson_A4 :
+    m_rho = &Gaudi::Math::Jackson::jackson_A4 ; break ;
+  case   Gaudi::Math::FormFactors::Jackson_A5 :
+    m_rho = &Gaudi::Math::Jackson::jackson_A5 ; break ;
+  case   Gaudi::Math::FormFactors::Jackson_A7 :
+    m_rho = &Gaudi::Math::Jackson::jackson_A7 ; break ;
+  default         :
+    m_rho = nullptr ; 
+  }
+  //
+}
+// ============================================================================
+// constructor from function itself 
+// ============================================================================
+Gaudi::Math::FormFactors::Jackson::Jackson
+( const Gaudi::Math::FormFactors::rho_fun rho ) 
+  : Gaudi::Math::FormFactor() 
+  , m_rho ( rho ) 
+{ if ( !m_rho ) { m_rho = &Gaudi::Math::Jackson::jackson_0 ; } }
+// ============================================================================
+// virtual destructor 
+// ============================================================================
+Gaudi::Math::FormFactors::Jackson::~Jackson(){}
+// ============================================================================
+// clone method ("virtual constructor")
+// ============================================================================
+Gaudi::Math::FormFactors::Jackson* 
+Gaudi::Math::FormFactors::Jackson:: clone() const 
+{ return new Gaudi::Math::FormFactors::Jackson ( *this ) ; }
+// ============================================================================
+// the only important method 
+// ============================================================================
+double Gaudi::Math::FormFactors::Jackson::operator() 
+  ( const double m  , const double m0 ,
+    const double m1 , const double m2 ) const
+{ 
+  return nullptr == m_rho ? 1.0 : (*m_rho)( m , m0 , m1 , m2 ) ; 
+}
+
+
+// ============================================================================
+// constructor
+// ============================================================================
+Gaudi::Math::FormFactors::BlattWeisskopf::BlattWeisskopf
+( const Gaudi::Math::FormFactors::BlattWeisskopf::Case L , 
+  const double                                         b )
+  : Gaudi::Math::FormFactor() 
+  , m_L ( L ) 
+  , m_b ( b )
+{
+  switch ( L ) 
+  {
+  case Zero : break ;
+  case One  : break ;
+  case Two  : break ;
+  default:   
+    throw GaudiException( "Illegal Blatt-Weisskopf form factor" , 
+                          "LHCbMath" , StatusCode::FAILURE      ) ;
+  }
+}
+// ============================================================================
+// destructor 
+// ============================================================================
+Gaudi::Math::FormFactors::BlattWeisskopf::~BlattWeisskopf(){}
+// ============================================================================
+// clone method ("virtual constructor")
+// ============================================================================
+Gaudi::Math::FormFactors::BlattWeisskopf*
+Gaudi::Math::FormFactors::BlattWeisskopf::clone() const 
+{ return new Gaudi::Math::FormFactors::BlattWeisskopf(*this) ; }
+// ============================================================================
+// get the barrier factor 
+// ============================================================================
+double Gaudi::Math::FormFactors::BlattWeisskopf::b 
+( const double z   , 
+  const double z0  ) const 
+{
+  if     ( Zero == m_L ) { return 1 ; }
+  //
+  return 
+    One == m_L ? std::sqrt (   ( 1 + z0 ) / ( 1  + z ) ) : 
+    Two == m_L ? std::sqrt ( ( ( z0 - 3 ) * ( z0 - 3 ) + 9 * z0 ) / 
+                             ( ( z  - 3 ) * ( z  - 3 ) + 9 * z  ) ) : 1.0 ;  
+}
+// ============================================================================
+// the only important method 
+// ============================================================================
+double Gaudi::Math::FormFactors::BlattWeisskopf::operator() 
+  ( const double m  , const double m0 ,
+    const double m1 , const double m2 ) const 
+{
+  //
+  if  ( s_equal ( m , m0 ) ) { return 1 ; }
+  //
+  /// get the momenta 
+  const double q  = Gaudi::Math::PhaseSpace2::q ( m  , m1 , m2 ) ;
+  const double q0 = Gaudi::Math::PhaseSpace2::q ( m0 , m1 , m2 ) ;
+  ///
+  const double _z  = q  * m_b ;
+  const double _z0 = q0 * m_b ;
+  //
+  return ( m0 / m ) * b ( _z * _z , _z0 * _z0 ) ;
+}
+// ============================================================================
+
+
+
+
+
+
+
+
+// ============================================================================
 // constructor from all parameters
 // ============================================================================
 Gaudi::Math::Rho0::Rho0
@@ -4285,7 +4483,7 @@ Gaudi::Math::Rho0::Rho0
                                pi_mass    ,
                                pi_mass    ,
                                1          ,
-                               Jackson_A7 )
+                               Gaudi::Math::FormFactors::Jackson_A7 )
 {}
 // ============================================================================
 // destructor
@@ -4305,7 +4503,7 @@ Gaudi::Math::Kstar0::Kstar0
                                k_mass     ,
                                pi_mass    ,
                                1          ,
-                               Jackson_A2 )
+                               Gaudi::Math::FormFactors::Jackson_A2 )
 {}
 // ============================================================================
 // destructor
@@ -4324,7 +4522,7 @@ Gaudi::Math::Phi0::Phi0
                                k_mass     ,
                                k_mass     ,
                                1          ,
-                               Jackson_A2 )
+                               Gaudi::Math::FormFactors::Jackson_A2 )
 {}
 // ============================================================================
 // destructor
@@ -5754,7 +5952,7 @@ Gaudi::Math::BW23L::BW23L
   const double                               m    ,
   const unsigned short                       L1   ,
   const unsigned short                       L2   ,
-  const Gaudi::Math::BreitWigner::JacksonRho r    )
+  const Gaudi::Math::FormFactors::JacksonRho r    )
   : std::unary_function<double,double>()
 //
   , m_bw ( m0 , gam0 , m1  , m2 , L1 , r  )
@@ -6243,7 +6441,7 @@ double Gaudi::Math::ExpoPositive::operator () ( const double x ) const
 double Gaudi::Math::ExpoPositive::integral ( const double low  , 
                                              const double high ) const 
 {
-  return Gaudi::Math::Bernstein::integrate ( m_positive.bernstein() , m_tau , low ,high ) ;
+  return Gaudi::Math::integrate ( m_positive.bernstein() , m_tau , low ,high ) ;
 }
 // ============================================================================
 
@@ -8171,7 +8369,7 @@ double Gaudi::Math::ExpoPS2DPol::integral
   //
   std::vector<double> fx ( nx + 1 , 0 ) ;
   for  ( unsigned short i = 0 ; i <= nx ; ++i )
-  { fx[i] = Gaudi::Math::Bernstein::integrate ( b2d.basicX ( i ) , m_tau , x_low , x_high ) ; }
+  { fx[i] = Gaudi::Math::integrate ( b2d.basicX ( i ) , m_tau , x_low , x_high ) ; }
   //
   double result = 0 ;
   for  ( unsigned short ix = 0 ; ix <= nx ; ++ix ) 
@@ -8252,7 +8450,7 @@ double Gaudi::Math::ExpoPS2DPol::integrateX
   //
   std::vector<double> fx ( nx + 1 , 0 ) ;
   for  ( unsigned short i = 0 ; i <= nx ; ++i )
-  { fx[i] = Gaudi::Math::Bernstein::integrate ( b2d.basicX ( i ) , m_tau , x_low , x_high ) ; }
+  { fx[i] = Gaudi::Math::integrate ( b2d.basicX ( i ) , m_tau , x_low , x_high ) ; }
   //
   double result = 0 ;
   for  ( unsigned short ix = 0 ; ix <= nx ; ++ix ) 
@@ -8350,11 +8548,11 @@ double Gaudi::Math::Expo2DPol::integral
   //
   std::vector<double> fy ( ny + 1 , 0 ) ;
   for ( unsigned short i = 0 ; i <= ny ; ++i ) 
-  { fy[i] =  Gaudi::Math::Bernstein::integrate ( b2d.basicY ( i ) , m_tauY , y_low , y_high ) ; }
+  { fy[i] =  Gaudi::Math::integrate ( b2d.basicY ( i ) , m_tauY , y_low , y_high ) ; }
   //
   std::vector<double> fx ( nx + 1 , 0 ) ;
   for  ( unsigned short i = 0 ; i <= nx ; ++i ) 
-  { fx[i] =  Gaudi::Math::Bernstein::integrate ( b2d.basicX ( i ) , m_tauX , x_low , x_high  ) ; }
+  { fx[i] =  Gaudi::Math::integrate ( b2d.basicX ( i ) , m_tauX , x_low , x_high  ) ; }
   //
   double result = 0 ;
   for  ( unsigned short ix = 0 ; ix <= nx ; ++ix ) 
@@ -8390,7 +8588,7 @@ double Gaudi::Math::Expo2DPol::integrateY
   //
   std::vector<double> fy ( ny + 1 , 0 ) ;
   for ( unsigned short i = 0 ; i <= ny ; ++i ) 
-  { fy[i] =  Gaudi::Math::Bernstein::integrate ( b2d.basicY ( i ) , m_tauY , y_low , y_high ) ; }
+  { fy[i] =  Gaudi::Math::integrate ( b2d.basicY ( i ) , m_tauY , y_low , y_high ) ; }
   //
   std::vector<double> fx ( nx + 1 , 0 ) ;
   for  ( unsigned short i = 0 ; i <= nx ; ++i ) 
@@ -8434,7 +8632,7 @@ double Gaudi::Math::Expo2DPol::integrateX
   //
   std::vector<double> fx ( nx + 1 , 0 ) ;
   for  ( unsigned short i = 0 ; i <= nx ; ++i ) 
-  { fx[i] =  Gaudi::Math::Bernstein::integrate ( b2d.basicX ( i ) , m_tauX , x_low , x_high  ) ; }
+  { fx[i] =  Gaudi::Math::integrate ( b2d.basicX ( i ) , m_tauX , x_low , x_high  ) ; }
   //
   double result = 0 ;
   for  ( unsigned short ix = 0 ; ix <= nx ; ++ix ) 
@@ -8514,11 +8712,11 @@ double Gaudi::Math::Expo2DPolSym::integral
   //
   std::vector<double> fy ( ny + 1 , 0 ) ;
   for ( unsigned short i = 0 ; i <= ny ; ++i ) 
-  { fy[i] = Gaudi::Math::Bernstein::integrate ( b2d.basic ( i ) , m_tau , y_low , y_high ) ; }
+  { fy[i] = Gaudi::Math::integrate ( b2d.basic ( i ) , m_tau , y_low , y_high ) ; }
   //
   std::vector<double> fx ( nx + 1 , 0 ) ;
   for  ( unsigned short i = 0 ; i <= nx ; ++i )
-  { fx[i] = Gaudi::Math::Bernstein::integrate ( b2d.basic ( i ) , m_tau , x_low , x_high ) ; }
+  { fx[i] = Gaudi::Math::integrate ( b2d.basic ( i ) , m_tau , x_low , x_high ) ; }
   //
   double result = 0 ;
   for  ( unsigned short ix = 0 ; ix <= nx ; ++ix ) 
@@ -8554,7 +8752,7 @@ double Gaudi::Math::Expo2DPolSym::integrateY
   //
   std::vector<double> fy ( ny + 1 , 0 ) ;
   for ( unsigned short i = 0 ; i <= ny ; ++i ) 
-  { fy[i] = Gaudi::Math::Bernstein::integrate ( b2d.basic ( i ) , m_tau , y_low , y_high ) ; }
+  { fy[i] = Gaudi::Math::integrate ( b2d.basic ( i ) , m_tau , y_low , y_high ) ; }
   //
   std::vector<double> fx ( nx + 1 , 0 ) ;
   for  ( unsigned short i = 0 ; i <= nx ; ++i )
@@ -8578,55 +8776,13 @@ double Gaudi::Math::Expo2DPolSym::integrateX
 
 
 // ============================================================================
-// Bernstein
-// ============================================================================
-/* get the integral between low and high for a product of Bernstein function
- * and the exponential function with exponent tau
- *  \f[  \int_{low}^{high} \mathcal{B} e^{\tau x } \mathrm{d}x \f] 
- *  @param poly  bernstein polynomial
- *  @param tau   slope parameter for exponential 
- *  @param low   low  integration range 
- *  @param high  high integration range 
- */
-// ============================================================================
-double Gaudi::Math::Bernstein::integrate  
-( const Gaudi::Math::Bernstein& poly , 
-  const double tau  , 
-  const double low  , 
-  const double high ) 
-{
-  //
-  if      ( s_equal ( tau , 0    )           ) { return poly.integral ( low  , high         ) ; } 
-  else if ( s_equal ( low , high )           ) { return 0 ; }
-  else if ( poly.zero ()                     ) { return 0 ; }
-  else if ( low  >  high                     ) { return integrate ( poly , tau , high , low ) ; }
-  else if ( high <  poly.xmin () || 
-            low  >  poly.xmax () ) { return  0 ; }
-  //
-  const double xlow  = std::max ( low  , poly.xmin() ) ;
-  const double xhigh = std::min ( high , poly.xmax() ) ;
-  //
-  const double p1 = ( poly ( xhigh ) * my_exp ( tau * xhigh ) - 
-                      poly ( xlow  ) * my_exp ( tau * xlow  ) ) / tau ;
-  //
-  if ( poly.npars ()  <= 1   ) { return p1 ; } // RETURN 
-  //
-  const Gaudi::Math::Bernstein  b_prime ( poly.derivative() ) ;
-  if ( b_prime.zero()        ) { return p1 ; } // RETURN
-  //
-  return p1 - integrate ( b_prime , tau , xlow , xhigh ) / tau ;
-}
-// ============================================================================
-
-
-// ============================================================================
 // constructor from polynom and parameters "alpha" and "x0"
 // ============================================================================
 Gaudi::Math::Sigmoid::Sigmoid 
 ( const Gaudi::Math::Positive& poly  , 
   const double                 alpha ,
   const double                 x0    ) 
-  : std::binary_function<double,double,double>() 
+  : std::unary_function<double,double>() 
   , m_positive ( poly  )
   , m_alpha    ( alpha )
   , m_x0       ( x0    )
@@ -8641,7 +8797,7 @@ Gaudi::Math::Sigmoid::Sigmoid
   const double                 xmax  , 
   const double                 alpha , 
   const double                 x0    ) 
-  : std::binary_function<double,double,double>() 
+  : std::unary_function<double,double>() 
   , m_positive ( N , xmin , xmax )
   , m_alpha    ( alpha )
   , m_x0       ( x0    )
@@ -8656,7 +8812,7 @@ Gaudi::Math::Sigmoid::Sigmoid
   const double                 xmax  , 
   const double                 alpha , 
   const double                 x0    ) 
-  : std::binary_function<double,double,double>() 
+  : std::unary_function<double,double>() 
   , m_positive ( pars , xmin , xmax )
   , m_alpha    ( alpha )
   , m_x0       ( x0    )
@@ -8749,18 +8905,266 @@ double Gaudi::Math::Sigmoid::integral
   //
   return result ;
 }
+// ============================================================================
 
 
-  
+// ============================================================================
+Gaudi::Math::TwoExpos::TwoExpos
+( const double alpha ,
+  const double delta , 
+  const double x0    ) 
+  : std::unary_function<double,double>() 
+  , m_alpha ( std::abs ( alpha ) ) 
+  , m_delta ( std::abs ( delta ) ) 
+  , m_x0    ( x0 ) 
+{}
+// ============================================================================
+// set new value for x0
+// ============================================================================
+bool Gaudi::Math::TwoExpos::setX0 ( const double value )
+{
+  if ( s_equal ( m_x0, value ) ) { return false ; }
+  m_x0 = value ;
+  //
+  return true ;
+}
+// ============================================================================
+// set new value for alpha
+// ============================================================================
+bool Gaudi::Math::TwoExpos::setAlpha ( const double value )
+{
+  const double nv = std::abs ( value ) ;
+  if ( s_equal ( m_alpha, nv ) ) { return false ; }
+  m_alpha = nv ;
+  //
+  return true ;
+}
+// ============================================================================
+// set new value for delta
+// ============================================================================
+bool Gaudi::Math::TwoExpos::setDelta ( const double value )
+{
+  const double nv = std::abs ( value ) ;
+  if ( s_equal ( m_delta, nv ) ) { return false ; }
+  m_delta = nv ;
+  //
+  return true ;
+}
+// ============================================================================
+// get the value 
+// ============================================================================
+double Gaudi::Math::TwoExpos::operator() ( const double x ) const 
+{ return x < m_x0 ? 0 : derivative ( x , 0 ) ; }
+// ============================================================================
+// get the integral between -inf and +inf
+// ============================================================================
+double Gaudi::Math::TwoExpos::integral   () const { return 1 ; }
+// ============================================================================
+// get the integral between low and high 
+// ============================================================================
+double Gaudi::Math::TwoExpos::integral   
+( const double low  , 
+  const double high ) const 
+{
+  //
+  if      ( s_equal ( low , high ) ) { return 0 ; }
+  else if ( low  > high            ) { return -integral ( high , low  ) ; }
+  else if ( high <= m_x0           ) { return 0 ; }
+  else if ( low  <  m_x0           ) { return  integral ( m_x0 , high ) ; }
+  //
+  const double a     = m_alpha            ;
+  const double b     = m_alpha + m_delta  ;
+  //
+  const double xlow  = low  - m_x0 ;
+  const double xhigh = high - m_x0 ;  
+  //
+  const double norm  = 1.0 / m_alpha - 1.0 / ( m_alpha + m_delta ) ;
+  return 
+    ( ( std::exp ( -b * xhigh ) - std::exp ( -b * xlow ) ) / b -
+      ( std::exp ( -a * xhigh ) - std::exp ( -a * xlow ) ) / a ) / norm ;
+}
+// ============================================================================
+namespace 
+{
+  // ==========================================================================
+  inline unsigned long long _factorial_ ( const unsigned short N ) 
+  {
+    return 
+      0 == N ?  1 : 
+      0 == N ?  1 : 
+      2 == N ?  2 : 
+      3 == N ?  6 : 
+      4 == N ? 24 : N * _factorial_ ( N - 1 ) ;
+  }
+  // ==========================================================================
+  /// get (un-normalized) moment 
+  inline long double _moment_ 
+  ( const long double    alpha , 
+    const long double    delta , 
+    const unsigned short N     ) 
+  {
+    return _factorial_ ( N ) *  
+      ( 1 / Gaudi::Math::pow ( alpha         , N + 1 ) - 
+        1 / Gaudi::Math::pow ( alpha + delta , N + 1 ) ) ;  
+  }
+  // ==========================================================================
+}
+// ============================================================================
+// get normalization constant
+// ============================================================================
+double Gaudi::Math::TwoExpos::norm () const 
+{ return 1.L / _moment_ ( m_alpha , m_delta , 0 ) ; } 
+// ============================================================================
+// mean-value (for -inf,+inf) interval 
+// ============================================================================
+double Gaudi::Math::TwoExpos::mean  () const 
+{
+  const long double n0 = _moment_ ( m_alpha , m_delta , 0 ) ;
+  const long double n1 = _moment_ ( m_alpha , m_delta , 1 ) ;
+  //
+  return m_x0 + n1 / n0 ;
+}
+// ============================================================================
+// mode 
+// ============================================================================
+double  Gaudi::Math::TwoExpos::mode  () const 
+{
+  const long double delta = m_delta ;
+  return m_x0 + std::log1p ( delta / m_alpha ) / delta ; 
+}
+// ============================================================================
+// variance 
+// ============================================================================
+double Gaudi::Math::TwoExpos::variance () const 
+{
+  const long double n0 = _moment_ ( m_alpha , m_delta , 0 ) ;
+  const long double n1 = _moment_ ( m_alpha , m_delta , 1 ) ;
+  const long double n2 = _moment_ ( m_alpha , m_delta , 2 ) ;
+  //
+  return ( n2 * n0 - n1 * n1 ) / ( n0 * n0 )  ;
+}
+// ============================================================================
+// sigma 
+// ============================================================================
+double Gaudi::Math::TwoExpos::sigma () const { return std::sqrt ( variance() ) ; }
+// ============================================================================
+// get the derivative at given value 
+// ============================================================================
+double Gaudi::Math::TwoExpos::derivative  ( const double x    ) const 
+{ return x < m_x0 ? 0 : derivative ( x , 1 ) ; }
+// ============================================================================
+// get the second derivative at given value
+// ============================================================================
+double Gaudi::Math::TwoExpos::derivative2 ( const double x    ) const
+{ return x < m_x0 ? 0 : derivative ( x , 2 ) ; }
+// ============================================================================
+// get the Nth derivative at given value
+// ============================================================================
+double Gaudi::Math::TwoExpos::derivative
+( const double   x , 
+  const unsigned N ) const 
+{
+  if      ( x <  m_x0 ) { return            0 ; }
+  //
+  const long double n0 = _moment_ ( m_alpha , m_delta , 0 ) ;
+  const long double dx = x - m_x0 ;
+  //
+  const long double a  = tau1 () ;
+  const long double b  = tau2 () ;
+  //
+  return 
+    ( Gaudi::Math::pow ( a , N ) *  std::exp ( a * dx ) - 
+      Gaudi::Math::pow ( b , N ) *  std::exp ( b * dx ) ) / n0 ;
+}
+// ============================================================================
 
 
-
-
-
-
-
-
-
+// ============================================================================
+Gaudi::Math::TwoExpoPositive::TwoExpoPositive  
+( const unsigned short N     , 
+  const double         alpha , 
+  const double         delta , 
+  const double         x0    ,
+  const double         xmin  , 
+  const double         xmax  ) 
+  : std::unary_function<double,double> () 
+  , m_positive ( N , xmin , xmax    )
+  , m_2exp     ( alpha , delta , x0 )
+{}
+// ============================================================================
+Gaudi::Math::TwoExpoPositive::TwoExpoPositive  
+( const std::vector<double>& pars  ,
+  const double               alpha , 
+  const double               delta , 
+  const double               x0    ,
+  const double               xmin  , 
+  const double               xmax  ) 
+  : std::unary_function<double,double> () 
+  , m_positive ( pars  , xmin  , xmax )
+  , m_2exp     ( alpha , delta , x0   )
+{}
+// ============================================================================
+Gaudi::Math::TwoExpoPositive::TwoExpoPositive  
+( const Gaudi::Math::Positive& poly  ,  
+  const double                 alpha , 
+  const double                 delta , 
+  const double                 x0    ) 
+  : std::unary_function<double,double> () 
+  , m_positive ( poly                 )
+  , m_2exp     ( alpha , delta , x0   )
+{}
+// ============================================================================
+Gaudi::Math::TwoExpoPositive::TwoExpoPositive  
+( const Gaudi::Math::Positive& poly   , 
+  const Gaudi::Math::TwoExpos& expos  ) 
+  : std::unary_function<double,double> () 
+  , m_positive ( poly  )
+  , m_2exp     ( expos )
+{}
+// ============================================================================
+Gaudi::Math::TwoExpoPositive::TwoExpoPositive  
+( const Gaudi::Math::TwoExpos& expos  , 
+  const Gaudi::Math::Positive& poly   )
+  : std::unary_function<double,double> () 
+  , m_positive ( poly  )
+  , m_2exp     ( expos )
+{}
+// ============================================================================
+// get the value 
+// ============================================================================
+double Gaudi::Math::TwoExpoPositive::operator() ( const double x ) const 
+{
+  return 
+    x < x0   () ? 0 :  
+    x < xmin () ? 0 : 
+    x > xmax () ? 0 : m_positive ( x ) * m_2exp ( x ) ;
+}
+// ============================================================================
+// get the integral between xmin and xmax
+// ============================================================================ 
+double Gaudi::Math::TwoExpoPositive::integral () const
+{
+  const double xlow = std::max ( x0() , xmin () ) ;
+  return xlow < xmax() ? integral ( xlow , xmax () ) : 0 ;
+}
+// ============================================================================
+// get the integral between low and high
+// ============================================================================
+double Gaudi::Math::TwoExpoPositive::integral 
+( const double low  , 
+  const double high ) const 
+{
+  //
+  if      ( s_equal ( low, high ) ) { return 0 ; }
+  else if ( low > high            ) { return -integral ( high , low ) ; }
+  //
+  const long double r1 = 
+    Gaudi::Math::integrate ( m_positive.bernstein() , tau1 () , low , high ) ;
+  const long double r2 = 
+    Gaudi::Math::integrate ( m_positive.bernstein() , tau2 () , low , high ) ;
+  //
+  return ( r1 - r2 ) / _moment_ ( alpha() , delta () , 0 ) ;
+}
 // ============================================================================
 // The END
 // ============================================================================

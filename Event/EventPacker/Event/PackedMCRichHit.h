@@ -14,8 +14,6 @@
 #include "GaudiKernel/DataObject.h"
 #include "GaudiKernel/StatusCode.h"
 
-class GaudiAlgorithm;
-
 namespace LHCb
 {
   // -----------------------------------------------------------------------
@@ -42,7 +40,7 @@ namespace LHCb
     int   tof;
     int   sensDetID;
     int   history;
-    int   mcParticle;
+    long long mcParticle;
   };
 
   // -----------------------------------------------------------------------
@@ -73,7 +71,7 @@ namespace LHCb
   public:
     
     /// Default Packing Version
-    static char defaultPackingVersion() { return 0; }
+    static char defaultPackingVersion() { return 1; }
 
   public:
 
@@ -105,7 +103,7 @@ namespace LHCb
 
   private:
 
-    /// Data packing version (not used as yet, but for any future schema evolution)
+    /// Data packing version
     char   m_packingVersion;
 
     /// The packed data objects
@@ -142,7 +140,7 @@ namespace LHCb
   public:
 
     /// Constructor
-    MCRichHitPacker( GaudiAlgorithm & parent ) : m_parent(&parent) {}
+    MCRichHitPacker( const GaudiAlgorithm & p ) : m_pack(&p) {}
 
   public:
 
@@ -161,15 +159,12 @@ namespace LHCb
   private:
 
     /// Access the parent algorithm
-    GaudiAlgorithm& parent() const { return *m_parent; }
+    const GaudiAlgorithm& parent() const { return *(m_pack.parent()); }
 
   private:
 
     /// Standard packing of quantities into integers ...
     StandardPacker m_pack;
-
-    /// Pointer to parent algorithm
-    GaudiAlgorithm * m_parent;
 
   };
 

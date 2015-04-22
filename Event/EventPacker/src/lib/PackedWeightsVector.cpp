@@ -1,4 +1,3 @@
-// $Id: PackedWeightsVector.cpp,v 1.9 2010-04-11 14:27:15 jonrob Exp $
 
 // local
 #include "Event/PackedWeightsVector.h"
@@ -14,30 +13,25 @@ using namespace LHCb;
 void WeightsVectorPacker::pack( const DataVector & weightsV,
                                 PackedDataVector & pweightsV ) const
 {
-  pweightsV.data().reserve( weightsV.size() );
-  if ( 1 == pweightsV.packingVersion() ||
-       0 == pweightsV.packingVersion() )
+  const char pVer = pweightsV.packingVersion();
+  if ( 1 == pVer || 0 == pVer )
   {
-    for ( DataVector::const_iterator iD = weightsV.begin();
-          iD != weightsV.end(); ++iD )
+    pweightsV.data().reserve( weightsV.size() );
+    for ( const Data * weights : weightsV )
     {
-      // original data
-      const Data & weights = **iD;
-
       // new packed data
       pweightsV.data().push_back( PackedData() );
       PackedData & pweights = pweightsV.data().back();
 
       // Save the PV key
-      pweights.pvKey = weights.key();
+      pweights.pvKey = weights->key();
 
       // fill packed data
       pweights.firstWeight = pweightsV.weights().size();
-      pweightsV.weights().reserve( pweightsV.weights().size() + weights.weights().size() );
-      for ( LHCb::WeightsVector::WeightDataVector::const_iterator iW = weights.weights().begin();
-            iW != weights.weights().end(); ++iW )
+      pweightsV.weights().reserve( pweightsV.weights().size() + weights->weights().size() );
+      for ( const auto& W : weights->weights() )
       {
-        pweightsV.weights().push_back( LHCb::PackedWeight(iW->first,m_pack.fraction(iW->second)) );
+        pweightsV.weights().push_back( LHCb::PackedWeight(W.first,m_pack.fraction(W.second)) );
       }
       pweights.lastWeight = pweightsV.weights().size();
 
@@ -47,7 +41,7 @@ void WeightsVectorPacker::pack( const DataVector & weightsV,
   else
   {
     std::ostringstream mess;
-    mess << "Unknown packed data version " << (int)pweightsV.packingVersion();
+    mess << "Unknown packed data version " << (int)pVer;
     throw GaudiException( mess.str(), "WeightsVectorPacker", StatusCode::FAILURE );
   }
 }
@@ -55,26 +49,16 @@ void WeightsVectorPacker::pack( const DataVector & weightsV,
 void WeightsVectorPacker::unpack( const PackedDataVector & pweightsV,
                                   DataVector       & weightsV ) const
 {
-  weightsV.reserve( pweightsV.data().size() );
-  if ( 1 == pweightsV.packingVersion() ||
-       0 == pweightsV.packingVersion() )
+  const char pVer = pweightsV.packingVersion();
+  if ( 1 == pVer || 0 == pVer )
   {
-   for ( PackedDataVector::WeightsVector::const_iterator iD = pweightsV.data().begin();
-          iD != pweightsV.data().end(); ++iD )
+    weightsV.reserve( pweightsV.data().size() );
+    for ( const PackedData & pweights : pweightsV.data() )
     {
-      // packed vector of weights
-      const PackedData & pweights = *iD;
-
       // make and save new unpacked data
       Data * weights  = new Data();
-      if ( 0 == pweightsV.packingVersion() )
-      {
-        weightsV.insert( weights );
-      }
-      else
-      { 
-        weightsV.insert( weights, pweights.pvKey );
-      }
+      if ( 0 == pVer ) { weightsV.insert( weights ); }
+      else             { weightsV.insert( weights, pweights.pvKey ); }
 
       // fill the unpacked weights vector
       LHCb::WeightsVector::WeightDataVector & wWeights = 
@@ -92,7 +76,7 @@ void WeightsVectorPacker::unpack( const PackedDataVector & pweightsV,
   else
   {
     std::ostringstream mess;
-    mess << "Unknown packed data version " << (int)pweightsV.packingVersion();
+    mess << "Unknown packed data version " << (int)pVer;
     throw GaudiException( mess.str(), "WeightsVectorPacker", StatusCode::FAILURE );
   }
 }

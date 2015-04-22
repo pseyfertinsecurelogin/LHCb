@@ -3,6 +3,7 @@
 #define EVENT_PACKEDRICHPID_H 1
 
 #include <string>
+#include <sstream>
 
 // Kernel
 #include "Event/StandardPacker.h"
@@ -13,8 +14,7 @@
 // Gaudi
 #include "GaudiKernel/DataObject.h"
 #include "GaudiKernel/StatusCode.h"
-
-class GaudiAlgorithm;
+#include "GaudiKernel/GaudiException.h"
 
 namespace LHCb
 {
@@ -40,9 +40,9 @@ namespace LHCb
 
     int pidResultCode;                      
     int dllEl,dllMu,dllPi,dllKa,dllPr;
-    int track;          
+    long long track;          
     int dllBt;
-    int key;
+    long long key;
   };
 
   // -----------------------------------------------------------------------
@@ -52,7 +52,8 @@ namespace LHCb
   /// Namespace for locations in TDS
   namespace PackedRichPIDLocation
   {
-    static const std::string& Default = "pRec/Rich/PIDs";
+    static const std::string& Default  = "pRec/Rich/PIDs";
+    static const std::string& InStream = "/pRec/Rich/CustomPIDs";
   }
 
   /** @class PackedRichPIDs Event/PackedRichPID.h
@@ -73,7 +74,7 @@ namespace LHCb
   public:
 
     /// Default Packing Version
-    static char defaultPackingVersion() { return 2; }
+    static char defaultPackingVersion() { return 3; }
 
   public:
 
@@ -105,7 +106,7 @@ namespace LHCb
 
   private:
 
-    /// Data packing version (not used as yet, but for any future schema evolution)
+    /// Data packing version
     char   m_packingVersion;
 
     /// The packed data objects
@@ -138,39 +139,64 @@ namespace LHCb
   private:
 
     /// Default Constructor hidden
-    RichPIDPacker() : m_parent(NULL) {}
+    RichPIDPacker() {}
 
   public:
 
     /// Constructor
-    RichPIDPacker( GaudiAlgorithm & parent ) : m_parent(&parent) {}
+    RichPIDPacker( const GaudiAlgorithm & parent ) : m_pack(&parent) { }
 
   public:
+
+    /// Pack a RichPID
+    void pack( const Data & pid,
+               PackedData & ppid,
+               PackedDataVector & ppids ) const;
 
     /// Pack RichPIDs
     void pack( const DataVector & pids,
                PackedDataVector & ppids ) const;
 
+    /// Unpack a single RichPID
+    void unpack( const PackedData       & ppid,
+                 Data                   & pid,
+                 const PackedDataVector & ppids,
+                 DataVector             & pids ) const;
+
     /// Unpack RichPIDs
     void unpack( const PackedDataVector & ppids,
                  DataVector             & pids ) const;
 
-    /// Compare two RichPIDs to check the packing -> unpacking performance
+    /// Compare two RichPID containers to check the packing -> unpacking performance
     StatusCode check( const DataVector & dataA,
                       const DataVector & dataB ) const;
+
+    /// Compare two MuonPIDs to check the packing -> unpacking performance
+    StatusCode check( const Data & dataA,
+                      const Data & dataB ) const;
 
   private:
 
     /// Access the parent algorithm
-    GaudiAlgorithm& parent() const { return *m_parent; }
+    const GaudiAlgorithm& parent() const { return *(m_pack.parent()); }
+
+    /// Check if the given packing version is supported
+    bool isSupportedVer( const char& ver ) const
+    {
+      const bool OK = ( 0 <= ver && ver <= 3 );
+      if ( !OK )
+      {
+        std::ostringstream mess;
+        mess << "Unknown packed data version " << (int)ver;
+        throw GaudiException( mess.str(), "RichPIDPacker", StatusCode::FAILURE );
+      }
+      return OK;
+    }
 
   private:
 
     /// Standard packing of quantities into integers ...
     StandardPacker m_pack;
-
-    /// Pointer to parent algorithm
-    GaudiAlgorithm * m_parent;
 
   };
 

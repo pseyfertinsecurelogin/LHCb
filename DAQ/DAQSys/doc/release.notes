@@ -4,6 +4,14 @@
 ! Purpose     : Place holder package for RawEvent decoding configurable
 !-----------------------------------------------------------------------------
 
+!========================= DAQSys v8r8p1 2015-04-20 =========================
+! 2015-04-01 - Marco Cattaneo
+ - Fix decoder-compare test following change of L0Muon decoding default
+
+!========================= DAQSys v8r8 2015-03-31 =========================
+! 2015-03-31 - Roel Aaij
+ - Enable full L0Muon decoding by default.
+
 !========================= DAQSys v8r7 2015-03-02 =========================
 ! 2015-03-03 - Marco Cattaneo
  - Decoders.py: set up separate configurations for the decoder of OT "normal"

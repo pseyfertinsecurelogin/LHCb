@@ -1,4 +1,4 @@
-// $Id: LHCbMathDict.h 184368 2015-02-23 17:05:41Z ibelyaev $
+// $Id: LHCbMathDict.h 186313 2015-04-03 10:48:44Z ibelyaev $
 // ============================================================================
 #ifndef DICT_LHCBMATHDICT_H
 #define DICT_LHCBMATHDICT_H 1
@@ -31,8 +31,12 @@
 #include "LHCbMath/Spline.h"
 #include "LHCbMath/NSphere.h"
 #include "LHCbMath/WStatEntity.h"
+#include "LHCbMath/NStatEntity.h"
 #include "LHCbMath/BSpline.h"
 #include "LHCbMath/Bernstein.h"
+#include "LHCbMath/Polynomials.h"
+#include "LHCbMath/Choose.h"
+#include "LHCbMath/MoreFunctions.h"
 // ============================================================================
 /** @file LHCbMathDict.h
  *

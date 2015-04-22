@@ -103,11 +103,9 @@ void ParticlePacker::pack( const Data & part,
 
     // daughters
     ppart.firstDaughter = pparts.daughters().size();
-    for ( SmartRefVector<LHCb::Particle>::const_iterator iD1 = part.daughters().begin();
-          iD1 != part.daughters().end(); ++iD1 )
+    for ( const auto& P : part.daughters() )
     {
-      const LHCb::Particle * P = *iD1;
-      if ( P )
+      if ( P.target() )
       {
         pparts.daughters().push_back( m_pack.reference64( &pparts,
                                                           P->parent(),
@@ -239,28 +237,37 @@ void ParticlePacker::unpack( const PackedData       & ppart,
     if ( -1 != ppart.vertex )
     {
       int hintID(0), key(0);
-      m_pack.hintAndKey64( ppart.vertex, &pparts, &parts, hintID, key );
-      SmartRef<LHCb::Vertex> ref(&parts,hintID,key);
-      part.setEndVertex( ref );
+      if ( m_pack.hintAndKey64( ppart.vertex, &pparts, &parts, hintID, key ) )
+      {
+        SmartRef<LHCb::Vertex> ref(&parts,hintID,key);
+        part.setEndVertex( ref );
+      }
+      else { parent().Error("Corrupt Particle Vertex SmartRef found").ignore(); }
     }
 
     // protoparticle
     if ( -1 != ppart.proto )
     {
       int hintID(0), key(0);
-      m_pack.hintAndKey64( ppart.proto, &pparts, &parts, hintID, key );
-      SmartRef<LHCb::ProtoParticle> ref(&parts,hintID,key);
-      part.setProto( ref );
+      if ( m_pack.hintAndKey64( ppart.proto, &pparts, &parts, hintID, key ) )
+      {
+        SmartRef<LHCb::ProtoParticle> ref(&parts,hintID,key);
+        part.setProto( ref );
+      }
+      else { parent().Error("Corrupt Particle ProtoParticle SmartRef found").ignore(); }
     }
 
     // daughters
     for ( unsigned int iiD = ppart.firstDaughter; iiD < ppart.lastDaughter; ++iiD )
     {
       int hintID(0), key(0);
-      m_pack.hintAndKey64( pparts.daughters()[iiD],
-                           &pparts, &parts, hintID, key );
-      SmartRef<LHCb::Particle> ref(&parts,hintID,key);
-      part.addToDaughters( ref );
+      if ( m_pack.hintAndKey64( pparts.daughters()[iiD],
+                                &pparts, &parts, hintID, key ) )
+      {
+        SmartRef<LHCb::Particle> ref(&parts,hintID,key);
+        part.addToDaughters( ref );
+      }
+      else { parent().Error("Corrupt Particle Daughter Particle SmartRef found").ignore(); }
     }
 
   }

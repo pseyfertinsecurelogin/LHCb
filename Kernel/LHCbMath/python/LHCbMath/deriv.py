@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # =============================================================================
-# $Id: deriv.py 183705 2015-02-10 14:20:55Z ibelyaev $
+# $Id: deriv.py 186000 2015-03-28 16:26:34Z ibelyaev $
 # =============================================================================
 ## @file  LHCbMath/deriv.py 
 #  Simple adaptive numerical differentiation (for pyroot/PyRoUts/Ostap)
@@ -13,8 +13,8 @@
 #  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
 #  @date   2014-06-06
 #  
-#                    $Revision: 183705 $
-#  Last modification $Date: 2015-02-10 15:20:55 +0100 (Tue, 10 Feb 2015) $
+#                    $Revision: 186000 $
+#  Last modification $Date: 2015-03-28 17:26:34 +0100 (Sat, 28 Mar 2015) $
 #  by                $Author: ibelyaev $
 # =============================================================================
 """
@@ -37,7 +37,7 @@ there are also object form:
 
 """
 # =============================================================================
-__version__ = "$Revision: 183705 $"
+__version__ = "$Revision: 186000 $"
 __author__  = "Vanya BELYAEV Ivan.Belyaev@itep.ru"
 __date__    = "2014-06-06"
 __all__     = (
@@ -323,7 +323,7 @@ class Derivative(object) :
 #  @endcode 
 #  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
 #  @date   2014-06-06
-def integral ( func , x0 , x , err = False ) :
+def integral ( func , x0 , x , err = False , *args ) :
     """
     Calculate the integral for the 1D-function using scipy
     
@@ -331,7 +331,7 @@ def integral ( func , x0 , x , err = False ) :
     >>> i = integral(func,0,1)
     """
     from scipy import integrate
-    result = integrate.quad ( func , x0 , x )
+    result = integrate.quad ( func , x0 , x , args = args )
     return VE( result[0] , result[1] * result[1] ) if err else result[0] 
 
 # =============================================================================
@@ -349,7 +349,7 @@ class Integral(object) :
     Calculate the integral for the 1D-function using scipy
     """
     ## Calculate the integral for the 1D-function using scipy
-    def __init__ ( self , func , x0 = 0 , err = False ) :
+    def __init__ ( self , func , x0 = 0 , err = False , *args ) :
         """
         Calculate the integral for the 1D-function using scipy
         
@@ -358,9 +358,11 @@ class Integral(object) :
         """
         self._func   = func 
         self._x0     = x0
-        self._err    = err 
+        self._err    = err
+        self._args   = args
+        
     ## Calculate the integral for the 1D-function using scipy
-    def __call__ ( self , x ) :
+    def __call__ ( self , x , *args ) :
         """
         Calculate the integral for the 1D-function using scipy
         
@@ -369,8 +371,124 @@ class Integral(object) :
         >>> func_0 ( 10 ) 
         """
         from scipy import integrate
-        result = integrate.quad ( self._func , self._x0 , x )
+        args   = args if args else self._args 
+        result = integrate.quad ( self._func , self._x0 , x , args = args )
         return VE ( result[0] , result[1] * result[1] ) if self._err else result[0] 
+
+# =============================================================================
+## @class Moment
+#  Calculate the N-th moment for the distribution 
+#  @code
+#   xmin,xmax = 0,math.pi 
+#   mean  = Moment(1,xmin,xmax)  ## specify min/max
+#   value = mean  ( math.sin )
+#  @endcode 
+#  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+#  @date   2014-06-06
+class Moment(object) :
+    """
+    Calculate the N-th moment for the distribution
+    
+    >>> xmin,xmax = 0,math.pi 
+    >>> mean  = Moment(1,xmin,xmax)  ## specify min/max
+    >>> value = mean  ( math.sin )
+    
+    """
+    ## constructor
+    def __init__ ( self , N , xmin , xmax , err = False , x0 = 0 , *args ) :
+        """
+        Contructor 
+        """
+        if not isinstance ( N , ( int , long ) ) :
+            raise TypeError('Moment: illegal order')
+        
+        self._N    = N 
+        self._xmin = xmin
+        self._xmax = xmax
+        self._x0   = x0  
+        self._err  = err
+        self._args = args
+        
+    ## calculate un-normalized k-moment  
+    def _moment0_ ( self , func , *args ) :
+        from scipy import integrate
+        args = args if args else self._args 
+        return integrate.quad ( func , self._xmin , self._xmax , args = args )
+        
+    ## calculate un-normalized k-moment  
+    def _momentK_ ( self , k , func , *args ) :
+        from scipy import integrate
+        x0     = self._x0 
+        func_N = lambda x,*a : func( x , *a ) * ( ( x - x0 ) ** k  )
+        ##
+        args = args if args else self._args 
+        return integrate.quad ( func_N , self._xmin , self._xmax , args = args )
+    
+    ## calculate the moment 
+    def __call__ ( self , func , *args ) :
+        ## 
+        n0  = self._moment0_ (            func , *args ) 
+        nN  = self._momentK_ ( self._N  , func , *args ) 
+        ##
+        if not self._err : return nN[0]/n0[0]
+        ##
+        n_0    = VE ( n0[0] , n0[1] * n0[1] )
+        n_N    = VE ( nN[0] , nN[1] * nN[1] )
+        ##
+        return n_N/n_0
+
+# =============================================================================
+## get the mean-value
+#  Calculate the mean-value for the distribution 
+#  @code
+#   xmin,xmax = 0,math.pi 
+#   mean  = Mean(xmin,xmax)  ## specify min/max
+#   value = mean  ( math.sin )
+#  @endcode 
+#  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+#  @date   2014-06-06
+class Mean(Moment) :
+    """
+    Calculate the N-th moment for the distribution
+    
+    >>> xmin,xmax = 0,math.pi 
+    >>> mean  = Mean ( xmin , xmax )  ## specify min/max
+    >>> value = mean ( math.sin    )
+    
+    """
+    def __init__ ( self , xmin , xmax , err = False , x0  = 0 ) :
+        Moment.__init__ ( self , 1 , xmin , xmax , err , x0 )
+
+# =============================================================================
+## get the variance
+#  Calculate the mean-value for the distribution 
+#  @code
+#   xmin,xmax = 0,math.pi 
+#   variance  = Variance ( xmin,xmax )  ## specify min/max
+#   value     = variance ( math.sin  )
+#  @endcode 
+#  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+#  @date   2014-06-06
+class Variance(Moment) :
+    def __init__ ( self , xmin , xmax , err = False , x0  = 0 ) :
+        Moment.__init__ ( self , 2 , xmin , xmax , err , x0 )
+    ## calculate the variance 
+    def __call__ ( self , func , *args ) :
+        ## 
+        n0 = self._moment0_ (     func , *args ) 
+        n1 = self._momentK_ ( 1 , func , *args ) 
+        n2 = self._momentK_ ( 2 , func , *args ) 
+        ##
+        if not self._err :
+            n_0 = n0[0]
+            n_1 = n1[0]
+            n_2 = n2[0]
+        else : 
+            n_0 = VE ( n0[0] , n0[1] * n0[1] )
+            n_1 = VE ( n1[0] , n1[1] * n1[1] )
+            n_2 = VE ( n2[0] , n2[1] * n2[1] )
+        ##
+        return (n_2*n_0 - n_1*n_1)/(n_0*n_0)
     
 # =============================================================================
 if '__main__' == __name__ :

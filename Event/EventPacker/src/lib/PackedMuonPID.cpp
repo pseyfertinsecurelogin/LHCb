@@ -1,4 +1,3 @@
-// $Id: PackedMuonPID.cpp,v 1.4 2010-04-11 14:27:15 jonrob Exp $
 
 // local
 #include "Event/PackedMuonPID.h"
@@ -15,31 +14,43 @@ void MuonPIDPacker::pack( const Data & pid,
                           PackedData & ppid,
                           PackedDataVector & ppids ) const
 {
-  ppid.MuonLLMu = m_pack.deltaLL(pid.MuonLLMu());
-  ppid.MuonLLBg = m_pack.deltaLL(pid.MuonLLBg());
-  ppid.nShared  = (int)pid.nShared();
-  ppid.status   = (int)pid.Status();
-  if ( NULL != pid.idTrack() )
+  const char ver = ppids.packingVersion();
+  if ( isSupportedVer(ver) )
   {
-    ppid.idtrack = m_pack.reference( &ppids,
-                                     pid.idTrack()->parent(),
-                                     pid.idTrack()->key() );
-  }
-  if ( NULL != pid.muonTrack() )
-  {
-    ppid.mutrack = m_pack.reference( &ppids,
-                                     pid.muonTrack()->parent(),
-                                     pid.muonTrack()->key() );
+    ppid.MuonLLMu = m_pack.deltaLL(pid.MuonLLMu());
+    ppid.MuonLLBg = m_pack.deltaLL(pid.MuonLLBg());
+    ppid.nShared  = (int)pid.nShared();
+    ppid.status   = (int)pid.Status();
+    if ( NULL != pid.idTrack() )
+    {
+      ppid.idtrack = ( UNLIKELY( 1 >= ver ) ?
+                       m_pack.reference32( &ppids,
+                                           pid.idTrack()->parent(),
+                                           pid.idTrack()->key() ) :
+                       m_pack.reference64( &ppids,
+                                           pid.idTrack()->parent(),
+                                           pid.idTrack()->key() ) );
+    }
+    if ( NULL != pid.muonTrack() )
+    {
+      ppid.mutrack = ( UNLIKELY( 1 >= ver ) ?
+                       m_pack.reference32( &ppids,
+                                           pid.muonTrack()->parent(),
+                                           pid.muonTrack()->key() ) :
+                       m_pack.reference64( &ppids,
+                                           pid.muonTrack()->parent(),
+                                           pid.muonTrack()->key() ) );
+    }
   }
 }
 
 void MuonPIDPacker::pack( const DataVector & pids,
                           PackedDataVector & ppids ) const
 {
-  ppids.data().reserve( pids.size() );
-  if ( 1 == ppids.packingVersion() ||
-       0 == ppids.packingVersion()  )
+  const char ver = ppids.packingVersion();
+  if ( isSupportedVer(ver) )
   {
+    ppids.data().reserve( pids.size() );
     for ( const Data * pid : pids )
     {
       ppids.data().push_back( PackedData() );
@@ -50,12 +61,6 @@ void MuonPIDPacker::pack( const DataVector & pids,
       pack( *pid, ppid, ppids );
     }
   }
-  else
-  {
-    std::ostringstream mess;
-    mess << "Unknown packed data version " << (int)ppids.packingVersion();
-    throw GaudiException( mess.str(), "MuonPIDPacker", StatusCode::FAILURE );
-  }
 }
 
 void MuonPIDPacker::unpack( const PackedData       & ppid,
@@ -63,48 +68,54 @@ void MuonPIDPacker::unpack( const PackedData       & ppid,
                             const PackedDataVector & ppids,
                             DataVector             & pids ) const
 {
-  pid.setMuonLLMu( m_pack.deltaLL(ppid.MuonLLMu) );
-  pid.setMuonLLBg( m_pack.deltaLL(ppid.MuonLLBg) );
-  pid.setNShared( ppid.nShared );
-  pid.setStatus( ppid.status );
-  if ( -1 != ppid.idtrack )
+  const char ver = ppids.packingVersion();
+  if ( isSupportedVer(ver) )
   {
-    int hintID(0), key(0);
-    m_pack.hintAndKey( ppid.idtrack, &ppids, &pids, hintID, key );
-    SmartRef<LHCb::Track> ref(&pids,hintID,key);
-    pid.setIDTrack( ref );
-  }
-  if ( -1 != ppid.mutrack )
-  {
-    int hintID(0), key(0);
-    m_pack.hintAndKey( ppid.mutrack, &ppids, &pids, hintID, key );
-    SmartRef<LHCb::Track> ref(&pids,hintID,key);
-    pid.setMuonTrack( ref );
+    pid.setMuonLLMu( m_pack.deltaLL(ppid.MuonLLMu) );
+    pid.setMuonLLBg( m_pack.deltaLL(ppid.MuonLLBg) );
+    pid.setNShared( ppid.nShared );
+    pid.setStatus( ppid.status );
+    if ( -1 != ppid.idtrack )
+    {
+      int hintID(0), key(0);
+      if ( ( 1 <  ver && m_pack.hintAndKey64(ppid.idtrack,&ppids,&pids,hintID,key) ) ||
+           ( 1 >= ver && m_pack.hintAndKey32(ppid.idtrack,&ppids,&pids,hintID,key) ) )
+      {
+        SmartRef<LHCb::Track> ref(&pids,hintID,key);
+        pid.setIDTrack( ref );
+      }
+      else { parent().Error( "Corrupt MuonPID Track SmartRef detected." ).ignore(); }
+    }
+    if ( -1 != ppid.mutrack )
+    {
+      int hintID(0), key(0);
+      if ( ( 1 <  ver && m_pack.hintAndKey64(ppid.mutrack,&ppids,&pids,hintID,key) ) ||
+           ( 1 >= ver && m_pack.hintAndKey32(ppid.mutrack,&ppids,&pids,hintID,key) ) )
+      {
+        SmartRef<LHCb::Track> ref(&pids,hintID,key);
+        pid.setMuonTrack( ref );
+      }
+      else { parent().Error( "Corrupt MuonPID MuTrack SmartRef detected." ).ignore(); }
+    }
   }
 }
 
 void MuonPIDPacker::unpack( const PackedDataVector & ppids,
                             DataVector             & pids ) const
 {
-  pids.reserve( ppids.data().size() );
-  if ( 1 == ppids.packingVersion() ||
-       0 == ppids.packingVersion()  )
+  const char ver = ppids.packingVersion();
+  if ( isSupportedVer(ver) )
   {
+    pids.reserve( ppids.data().size() );
     for ( const PackedData & ppid : ppids.data() )
     {
       // make and save new pid in container
       Data * pid  = new Data();
-      if ( ppids.packingVersion() == 0 ) { pids.add( pid ); }
-      else                  { pids.insert( pid, ppid.key ); }
+      if ( 0 == ver ) { pids.add( pid ); }
+      else            { pids.insert( pid, ppid.key ); }
       // Fill data from packed object
       unpack( ppid, *pid, ppids, pids );
     }
-  }
-  else
-  {
-    std::ostringstream mess;
-    mess << "Unknown packed data version " << (int)ppids.packingVersion();
-    throw GaudiException( mess.str(), "MuonPIDPacker", StatusCode::FAILURE );
   }
 }
 

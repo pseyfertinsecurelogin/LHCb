@@ -1,4 +1,4 @@
-// $Id: Functions.h 184368 2015-02-23 17:05:41Z ibelyaev $
+// $Id: Functions.h 186000 2015-03-28 16:26:34Z ibelyaev $
 // ============================================================================
 #ifndef LHCBMATH_FUNCTIONS_H
 #define LHCBMATH_FUNCTIONS_H 1
@@ -28,8 +28,8 @@
  *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
  *  @date 2010-04-19
  *
- *                    $Revision: 184368 $
- *  Last modification $Date: 2015-02-23 18:05:41 +0100 (Mon, 23 Feb 2015) $
+ *                    $Revision: 186000 $
+ *  Last modification $Date: 2015-03-28 17:26:34 +0100 (Sat, 28 Mar 2015) $
  *                 by $author$
  */
 // ============================================================================
@@ -1691,6 +1691,38 @@ namespace Gaudi
       // ======================================================================
     } ;
     // ========================================================================
+    /// base class for formfactors 
+    class FormFactor ;
+    // ========================================================================
+    namespace FormFactors
+    {
+      // ======================================================================
+      /** @typedef rho_fun
+       *  the \f$\rho(\omega)\f$ function from Jackson
+       *  Arguments
+       *    - the        mass
+       *    - the pole   mass
+       *    - the first  daughter mass
+       *    - the second daughter mass
+       */
+      typedef double (*rho_fun) ( double , double , double , double ) ;
+      // ======================================================================
+      /** parameterization for \f$\rho(\omega)\f$-function from (A.1)
+       *  J.D.Jackson,
+       *  "Remarks on the Phenomenological Analysis of Resonances",
+       *  In Nuovo Cimento, Vol. XXXIV, N.6
+       */
+      enum JacksonRho {
+        Jackson_0  = 0 ,/// \f$\rho(\omega) = 1 \f$
+        Jackson_A2 ,/// \f$ 1^- \rightarrow 0^- 0^- \f$ , l = 1
+        Jackson_A3 ,/// \f$          1^- \rightarrow 0^- 1^- \f$ , l = 1
+        Jackson_A4 ,/// \f$ \frac{3}{2}+ \rightarrow 0^- \frac{1}{2}^+ \f$ , l = 1
+        Jackson_A5 ,/// \f$ \frac{3}{2}- \rightarrow 0^- \frac{1}{2}^+ \f$ , l = 2
+        Jackson_A7 /// recommended for rho0 -> pi+ pi-
+      } ;
+      // ======================================================================
+    }
+    // ========================================================================
     /** @class BreitWigner
      *
      *  J.D.Jackson,
@@ -1707,47 +1739,33 @@ namespace Gaudi
     {
     public:
       // ======================================================================
-      /** parameterization for \f$\rho(\omega)\f$-function from (A.1)
-       *  J.D.Jackson,
-       *  "Remarks on the Phenomenological Analysis of Resonances",
-       *  In Nuovo Cimento, Vol. XXXIV, N.6
-       */
-      enum JacksonRho {
-        Jackson_0  = 0 ,/// \f$\rho(\omega) = 1 \f$
-        Jackson_A2 ,/// \f$ 1^- \rightarrow 0^- 0^- \f$ , l = 1
-        Jackson_A3 ,/// \f$          1^- \rightarrow 0^- 1^- \f$ , l = 1
-        Jackson_A4 ,/// \f$ \frac{3}{2}+ \rightarrow 0^- \frac{1}{2}^+ \f$ , l = 1
-        Jackson_A5 ,/// \f$ \frac{3}{2}- \rightarrow 0^- \frac{1}{2}^+ \f$ , l = 2
-        Jackson_A7 /// recommended for rho0 -> pi+ pi-
-      } ;
-      // ======================================================================
-    protected:
-      // ======================================================================
-      /** @typedef rho
-       *  the \f$\rho(\omega)\f$ function from Jackson
-       *  Arguments
-       *    - the        mass
-       *    - the pole   mass
-       *    - the first  daughter mass
-       *    - the second daughter mass
-       */
-      typedef double (*rho_fun) ( double , double , double , double ) ;
-      // ======================================================================
-    public:
-      // ======================================================================
-      // constructor from all parameters
+      /// constructor from all parameters
       BreitWigner ( const double         m0     = 0.770 ,
                     const double         gam0   = 0.150 ,
                     const double         m1     = 0.139 ,
                     const double         m2     = 0.139 ,
                     const unsigned short L      = 0     ) ;
-      // constructor from all parameters
+      /// constructor from all parameters
       BreitWigner ( const double         m0       ,
                     const double         gam0     ,
                     const double         m1       ,
                     const double         m2       ,
                     const unsigned short L        ,
-                    const JacksonRho     r        ) ;
+                    const FormFactors::JacksonRho     r ) ;
+      /// constructor from all parameters
+      BreitWigner ( const double         m0       ,
+                    const double         gam0     ,
+                    const double         m1       ,
+                    const double         m2       ,
+                    const unsigned short L        ,
+                    const FormFactor&    f ) ;
+      /// copy constructor 
+      BreitWigner ( const BreitWigner&  bw ) ;
+      ///
+      // ======================================================================
+      /// move constructor 
+      BreitWigner (       BreitWigner&& bw ) ;
+      // ======================================================================
       /// destructor
       virtual ~BreitWigner () ;
       // ======================================================================
@@ -1793,13 +1811,16 @@ namespace Gaudi
       // ======================================================================
     public:
       // ======================================================================
-      /// set rho-function
-      void setRhoFun ( rho_fun rho ) { m_rho_fun = rho ; }
+      /// calculate the current width
+      double gamma ( const double x ) const ;
       // ======================================================================
     public:
       // ======================================================================
-      /// calculate the current width
-      double gamma ( const double x ) const ;
+      /// get the value of formfactor at given m 
+      double            formfactor ( const double m ) const ;
+      /// get the formfactor itself 
+      const FormFactor* 
+        formfactor () const { return m_formfactor ; }
       // ======================================================================
     public:
       // ======================================================================
@@ -1819,13 +1840,18 @@ namespace Gaudi
     private:
       // ======================================================================
       /// the mass of the first  particle
-      double       m_m1      ;
+      double            m_m1         ;
       /// the mass of the second particle
-      double       m_m2      ;
+      double            m_m2         ;
       /// the orbital momentum
-      unsigned int m_L       ; // the orbital momentum
-      /// the Jackson-Rho function
-      rho_fun      m_rho_fun ; // the Jackson-Rho function
+      unsigned int      m_L          ; // the orbital momentum
+      /// the formfactor 
+      const FormFactor* m_formfactor ; // the formfactor 
+      // ======================================================================
+    private:
+      // ======================================================================
+      /// assignement operator is disabled 
+      BreitWigner& operator=( const BreitWigner& ) ; // no assignement 
       // ======================================================================
     private:
       // ======================================================================
@@ -2257,6 +2283,104 @@ namespace Gaudi
                           double    m2    ) ;
       // ======================================================================
     } //                                               end of namespace Jackson
+    // ========================================================================
+    /** @class FormFactor
+     *  abstract class to implement various formfactors 
+     */
+    class FormFactor 
+    {
+    public :
+      // ======================================================================
+      /// the only important method 
+      virtual double operator()
+      ( const double m  , const double m0 ,
+        const double m1 , const double m2 ) const  = 0 ;
+      /// virtual destructor 
+      virtual ~FormFactor () ;
+      /// clone method ("virtual constructor" ) 
+      virtual  FormFactor* clone() const = 0 ;
+      // ======================================================================
+    } ;
+    // ========================================================================
+    namespace FormFactors 
+    {
+      // ======================================================================
+      /** Formfactor for Breit-Wigner amplitude 
+       *  parameterization for \f$\rho(\omega)\f$-function from (A.1)
+       *  J.D.Jackson,
+       *  "Remarks on the Phenomenological Analysis of Resonances",
+       *  In Nuovo Cimento, Vol. XXXIV, N.6
+       */
+      class Jackson : public Gaudi::Math::FormFactor
+      {
+      public:
+        // ====================================================================
+        /// default constructor 
+        Jackson () ;
+        /// constructor from enum
+        Jackson ( const Gaudi::Math::FormFactors::JacksonRho rho ) ;
+        /// constructor from rho-function 
+        Jackson (       Gaudi::Math::FormFactors::rho_fun    rho ) ;
+        /// virtual destructor 
+        virtual ~Jackson  () ; 
+        /// clone method ("virtual constructor")
+        virtual  Jackson* clone() const  ;
+        /// the only important method 
+        virtual double operator() ( const double m  , const double m0 ,
+                                    const double m1 , const double m2 ) const ;
+        // ====================================================================
+      private:
+        // ====================================================================
+        /// the finction itself 
+        Gaudi::Math::FormFactors::rho_fun m_rho ; // the finction itself 
+        // ====================================================================
+      } ;
+      // ======================================================================
+      /** Blatt-Weisskopf formfactor/barrier factor
+       *  actually it is "traslation" of 
+       *  Blatt-Weiskopf barrier factor into in Jackson's "rho"-function 
+       */
+      class BlattWeisskopf : public Gaudi::Math::FormFactor
+      {
+      public:
+        // ====================================================================
+        /// orbital momentum 
+        enum Case {
+          Zero = 0 , 
+          One  = 1 , 
+          Two  = 2 
+        } ;
+        // ====================================================================
+      public:
+        // ====================================================================
+        /// constructor from enum and barrier factor 
+        BlattWeisskopf ( const Case   L , const double b ) ;
+        /// virtual destructor 
+        virtual ~BlattWeisskopf () ; 
+        /// clone method ("virtual constructor")
+        virtual  BlattWeisskopf* clone() const  ;
+        /// the only important method 
+        virtual double operator() ( const double m  , const double m0 ,
+                                    const double m1 , const double m2 ) const ;
+        // ====================================================================
+      protected:
+        // ====================================================================
+        /// get the barrier factor 
+        double   b ( const double z , const double z0 ) const ;
+        // ====================================================================
+      private:
+        // ====================================================================
+        /// default constructor is disabled 
+        BlattWeisskopf () ; // default constructor is disabled        
+        // ====================================================================
+      private:
+        // ====================================================================
+        Case   m_L ;
+        double m_b ;
+        // ====================================================================
+      } ;
+      // ======================================================================
+    } // end of namespace Gaudi:Math::FormFactors
     // ========================================================================
     /** @class LASS
      *  The LASS parameterization (Nucl. Phys. B296, 493 (1988))
@@ -2776,7 +2900,7 @@ namespace Gaudi
               const double         m        ,
               const unsigned short L1       ,
               const unsigned short L2       ,
-              const Gaudi::Math::BreitWigner::JacksonRho r ) ;
+              const Gaudi::Math::FormFactors::JacksonRho r ) ;
       /// constructor from BreitWigner
       BW23L ( const Gaudi::Math::BreitWigner& bw ,
               const double                    m3 ,
@@ -4523,8 +4647,7 @@ namespace Gaudi
      *  @author Vanya BElyaev Ivan.Belyaev@itep.ru
      *  @date 2015-02-07
      */
-    class GAUDI_API Sigmoid 
-      : public std::binary_function<double,double,double>
+    class GAUDI_API Sigmoid : public std::unary_function<double,double>
     {
     public:
       // ============================================================
@@ -4613,6 +4736,224 @@ namespace Gaudi
       Gaudi::Math::WorkSpace m_workspace ;
       // ======================================================================    
     };
+    // ========================================================================
+    /** @class TwoExpos
+     *  simple difference of two exponents
+     *  \f$ f \propto 
+     *        \mathrm{e}^{-a_1    x}       -\mathrm{e}^{-a_2 x} = 
+     *        \mathrm{e}^{-\alpha x}\left(1-\mathrm{e}^{-\delta x}\right) \f$
+     *  @author Vanya BElyaev Ivan.Belyaev@itep.ru
+     *  @date 2015-02-07
+     */
+    class GAUDI_API TwoExpos : public std::unary_function<double,double>
+    {
+    public:
+      // ======================================================================
+      TwoExpos ( const double alpha = 1 , 
+                 const double delta = 1 , 
+                 const double x0    = 0 ) ;
+      // ======================================================================
+    public:
+      // ======================================================================   
+      /// get the value 
+      double operator() ( const double x ) const ;
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// get alpha 
+      double alpha () const { return m_alpha ; }
+      /// get delta 
+      double delta () const { return m_delta ; }
+      /// get x0 
+      double x0    () const { return m_x0    ; }
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// slope for the first  exponent 
+      double a1         () const { return m_alpha           ; }
+      /// slope for the second exponent  
+      double a2         () const { return m_alpha + m_delta ; }
+      /// mean-value (for -inf,+inf) interval 
+      double mean       () const ;
+      /// mode 
+      double mode       () const ;
+      /// variance  
+      double variance   () const ;
+      /// dispersion 
+      double dispersion () const { return variance () ; }
+      /// sigma 
+      double sigma      () const ;
+      // get normalization constant
+      double norm       () const ;
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// slope for the first  exponent 
+      double tau1       () const { return -a1() ; }
+      /// slope for the second exponent  
+      double tau2       () const { return -a2() ; }
+      // ======================================================================
+    public:
+      // ======================================================================
+      bool setAlpha ( const double value ) ;
+      bool setDelta ( const double value ) ;      
+      bool setX0    ( const double value ) ;      
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// get the integral between -inf and +inf 
+      double integral    () const ;
+      /// get the integral between low and high 
+      double integral    ( const double low  , 
+                           const double high ) const ;
+      /// get the derivative at given value 
+      double derivative  ( const double x    ) const ;
+      /// get the second at given value 
+      double derivative2 ( const double x    ) const ;
+      /// get the Nth derivative at given value 
+      double derivative  ( const double   x  , 
+                           const unsigned N  ) const ;
+      // ======================================================================
+    private: 
+      // ======================================================================
+      double m_alpha ;
+      double m_delta ;
+      double m_x0    ;
+      // ======================================================================
+    } ;  
+    // ========================================================================
+    /** @class TwoExpoPositive
+     *  simple difference of two exponents modulated with positive polynomials 
+     *  @see TwoExpos 
+     *  @see Positive 
+     *  @see ExpoPositive 
+     *  \f$ f(x) = e_2(x) * p_n(x) \f$, where 
+     *  \f$ e_2(x) \propto 
+     *        \mathrm{e}^{-a_1    x}       -\mathrm{e}^{-a_2 x} = 
+     *        \mathrm{e}^{-\alpha x}\left(1-\mathrm{e}^{-\delta x}\right) \f$
+     *  and $p_2(s)$ is positive polynomial function 
+     *  @author Vanya BElyaev Ivan.Belyaev@itep.ru
+     *  @date 2015-03-28
+     */
+    class GAUDI_API TwoExpoPositive : public std::unary_function<double,double>
+    {
+    public:
+      // ======================================================================
+      TwoExpoPositive  
+        ( const unsigned short N , 
+          const double alpha = 1 , 
+          const double delta = 1 , 
+          const double x0    = 0 ,
+          const double xmin  = 0 , 
+          const double xmax  = 1 ) ;
+      // ======================================================================
+      TwoExpoPositive  
+        ( const std::vector<double>& pars , 
+          const double alpha  = 1 , 
+          const double delta  = 1 , 
+          const double x0     = 0 ,
+          const double xmin   = 0 , 
+          const double xmax   = 1 ) ;
+      // ======================================================================
+      TwoExpoPositive  
+        ( const Positive& poly    ,  
+          const double alpha  = 1 , 
+          const double delta  = 1 , 
+          const double x0     = 0 ) ;
+      // ======================================================================
+      TwoExpoPositive  
+        ( const Positive& poly   , 
+          const TwoExpos& expos  ) ;
+      // ======================================================================
+      TwoExpoPositive  
+        ( const TwoExpos& expos  , 
+          const Positive& poly   ) ;
+      // ======================================================================
+    public:
+      // ======================================================================   
+      /// get the value 
+      double operator() ( const double x ) const ;
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// get number of polinomial parameters
+      std::size_t npars () const { return 3 + m_positive.npars() ; }
+      /// set k-parameter
+      bool setPar       ( const unsigned short k , const double value ) 
+      { return 
+          m_positive.npars()     == k ? setAlpha ( value ) : 
+          m_positive.npars() + 1 == k ? setDelta ( value ) : 
+          m_positive.npars() + 2 == k ? setX0    ( value ) : 
+          m_positive.setPar ( k , value ) ; }
+      /// set k-parameter
+      bool setParameter ( const unsigned short k , const double value )
+      { return setPar   ( k , value ) ; }
+      /// get the parameter value 
+      double  par       ( const unsigned short k ) const 
+      { return 
+          m_positive.npars()     == k ? alpha () :
+          m_positive.npars() + 1 == k ? delta () :
+          m_positive.npars() + 2 == k ? x0    () : m_positive.par ( k ) ; }
+      /// get the parameter value
+      double  parameter ( const unsigned short k ) const { return par ( k ) ; }
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// get lower edge
+      double xmin () const { return m_positive.xmin () ; }
+      /// get upper edge
+      double xmax () const { return m_positive.xmax () ; }
+      /// transform variables 
+      double x ( const double t ) const { return m_positive. x ( t )  ; }
+      double t ( const double x ) const { return m_positive. t ( x )  ; }
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// get alpha 
+      double alpha () const { return m_2exp.alpha () ; }
+      /// get delta 
+      double delta () const { return m_2exp.delta () ; }
+      /// get x0 
+      double x0    () const { return m_2exp.x0    () ; }
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// slope for the first  exponent 
+      double a1         () const { return m_2exp.a1   () ; }
+      /// slope for the second exponent  
+      double a2         () const { return m_2exp.a2   () ; }
+      /// slope for the first  exponent 
+      double tau1       () const { return m_2exp.tau1 () ; }
+      /// slope for the second exponent  
+      double tau2       () const { return m_2exp.tau2 () ; }
+      // ======================================================================
+    public:
+      // ======================================================================
+      bool setAlpha ( const double value ) { return m_2exp.setAlpha ( value ) ; }
+      bool setDelta ( const double value ) { return m_2exp.setDelta ( value ) ; }
+      bool setX0    ( const double value ) { return m_2exp.setX0    ( value ) ; }
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// get the integral between xmin and xmax 
+      double integral    () const ;
+      /// get the integral between low and high 
+      double integral    ( const double low  , 
+                           const double high ) const ;
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// get the underlying positive function 
+      const Gaudi::Math::Positive&  positive  () const { return m_positive  ; }
+      /// get the underlying exponents       
+      const Gaudi::Math::TwoExpos&  twoexpos  () const { return m_2exp      ; }
+      // ======================================================================
+    private: 
+      // ======================================================================
+      Gaudi::Math::Positive m_positive ;
+      Gaudi::Math::TwoExpos m_2exp     ;
+      // ======================================================================
+    } ;  
     // ========================================================================
   } //                                             end of namespace Gaudi::Math
   // ==========================================================================

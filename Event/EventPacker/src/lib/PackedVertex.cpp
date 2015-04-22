@@ -1,4 +1,3 @@
-// $Id: PackedVertex.cpp,v 1.3 2010-05-19 09:04:09 jonrob Exp $
 
 // STL
 #include <algorithm>
@@ -41,11 +40,9 @@ void VertexPacker::pack( const Data & vert,
 
     // outgoing particles
     pvert.firstOutgoingPart = pverts.outgoingParticles().size();
-    for ( SmartRefVector<LHCb::Particle>::const_iterator iP = vert.outgoingParticles().begin();
-          iP != vert.outgoingParticles().end(); ++iP )
+    for ( const auto& P : vert.outgoingParticles() )
     {
-      const LHCb::Particle * P = *iP;
-      if ( P )
+      if ( P.target() )
       {
         pverts.outgoingParticles().push_back( m_pack.reference64( &pverts,
                                                                   P->parent(),
@@ -56,12 +53,12 @@ void VertexPacker::pack( const Data & vert,
 
     //== Handles the ExtraInfo
     pvert.firstInfo = pverts.extras().size();
-    for ( GaudiUtils::VectorMap<int,double>::iterator itE = vert.extraInfo().begin();
-          vert.extraInfo().end() != itE; ++itE )
+    for ( const auto& E : vert.extraInfo() )
     {
-      pverts.addExtra( (*itE).first, m_pack.fltPacked( (*itE).second ) );
+      pverts.addExtra( E.first, m_pack.fltPacked(E.second) );
     }
     pvert.lastInfo = pverts.extras().size();
+
   }
   else
   {
@@ -76,20 +73,17 @@ void VertexPacker::pack( const DataVector & verts,
 {
   pverts.data().reserve( verts.size() );
 
-  for ( DataVector::const_iterator iD = verts.begin();
-        iD != verts.end(); ++iD )
+  for ( const Data * vert : verts )
   {
-    const Data & vert = **iD;
-
     // new packed data object
     pverts.data().push_back( PackedData() );
     PackedData & pvert = pverts.data().back();
 
     // Key
-    pvert.key = vert.key();
+    pvert.key = vert->key();
 
     // fill physics info from vert to pvert
-    pack( vert, pvert, pverts );
+    pack( *vert, pvert, pverts );
   }
 
 }
@@ -125,9 +119,12 @@ void VertexPacker::unpack( const PackedData       & pvert,
     {
       const long long & iP = pverts.outgoingParticles()[iiP];
       int hintID(0), key(0);
-      m_pack.hintAndKey64( iP, &pverts, &verts, hintID, key );
-      SmartRef<LHCb::Particle> ref(&verts,hintID,key);
-      vert.addToOutgoingParticles( ref );
+      if ( m_pack.hintAndKey64( iP, &pverts, &verts, hintID, key ) )
+      {
+        SmartRef<LHCb::Particle> ref(&verts,hintID,key);
+        vert.addToOutgoingParticles( ref );
+      }
+      else { parent().Error("Corrupt Vertex Particle SmartRef found").ignore(); }
     }
     //== Handles the ExtraInfo
     for ( unsigned short int kEx = pvert.firstInfo; pvert.lastInfo > kEx; ++kEx )
@@ -135,6 +132,7 @@ void VertexPacker::unpack( const PackedData       & pvert,
       const PackedDataVector::ExtraInfo& info = *(pverts.extras().begin()+kEx);
       vert.addInfo( info.first, m_pack.fltPacked( info.second ) );
     }
+
   }
   else
   {
@@ -142,18 +140,16 @@ void VertexPacker::unpack( const PackedData       & pvert,
     mess << "Unknown packed data version " << (int)pverts.packingVersion();
     throw GaudiException( mess.str(), "VertexPacker", StatusCode::FAILURE );
   }
+
 }
 
 void VertexPacker::unpack( const PackedDataVector & pverts,
                            DataVector             & verts ) const
 {
   verts.reserve( pverts.data().size() );
-
-  for ( PackedDataVector::Vector::const_iterator iD = pverts.data().begin();
-        iD != pverts.data().end(); ++iD )
+  
+  for ( const auto & pvert : pverts.data() )
   {
-    const PackedData & pvert = *iD;
-
     // make and save new pid in container
     Data * vert = new Data();
     verts.insert( vert, pvert.key );

@@ -18,7 +18,8 @@
 UnpackParticlesAndVertices::
 UnpackParticlesAndVertices( const std::string& name,
                             ISvcLocator* pSvcLocator )
-  : GaudiAlgorithm ( name, pSvcLocator )
+  : GaudiAlgorithm ( name, pSvcLocator ),
+    m_pack( this )
 {
   declareProperty( "InputStream", m_inputStream = "/Event/" );
   declareProperty( "PostFix",     m_postFix     = "" );
@@ -135,6 +136,56 @@ StatusCode UnpackParticlesAndVertices::execute()
       debug() << "Retrieved " << nbPart << " MuonPIDs in " << nbPartContainer << " containers" << endmsg;
     }
     counter("# Unpacked MuonPIDs") += nbPart;
+  }
+
+  //=================================================================
+  //== Process the RichPIDs
+  //=================================================================
+  {
+    int prevLink = -1;
+    unsigned int nbPartContainer(0), nbPart(0);
+    LHCb::PackedRichPIDs * ppids =
+      getIfExists<LHCb::PackedRichPIDs>( m_inputStream + LHCb::PackedRichPIDLocation::InStream );
+    if ( ppids )
+    {
+      const LHCb::RichPIDPacker tPacker(*dynamic_cast<GaudiAlgorithm*>(this));
+      LHCb::RichPIDs * pids = NULL;
+      for ( const LHCb::PackedRichPID& ppid : ppids->data() )
+      {
+        int key(0),linkID(0);
+        m_pack.indexAndKey64( ppid.key, linkID, key );
+        if ( linkID != prevLink )
+        {
+          prevLink = linkID;
+          const std::string & containerName = ppids->linkMgr()->link(linkID)->path() + m_postFix;
+          // Check to see if container already exists. If it does, unpacking has already been run this
+          // event so quit
+          if ( exist<LHCb::Tracks>(containerName) )
+          {
+            if ( msgLevel(MSG::DEBUG) )
+              debug() << " -> " << containerName << " exists" << endmsg;
+            return StatusCode::SUCCESS;
+          }
+          pids = new LHCb::RichPIDs();
+          put( pids, containerName );
+          ++nbPartContainer;
+        }
+
+        // Make new object and insert into the output container
+        LHCb::RichPID * pid = new LHCb::RichPID();
+        pids->insert( pid, key );
+        ++nbPart;
+
+        // Unpack the physics info
+        tPacker.unpack( ppid, *pid, *ppids, *pids );
+
+      }
+    }
+    if ( msgLevel(MSG::DEBUG) )
+    {
+      debug() << "Retrieved " << nbPart << " RichPIDs in " << nbPartContainer << " containers" << endmsg;
+    }
+    counter("# Unpacked RichPIDs") += nbPart;
   }
 
   //=================================================================
@@ -380,6 +431,11 @@ StatusCode UnpackParticlesAndVertices::execute()
   //== Process the P2MCP relations
   //=================================================================
   unpackP2PRelations<LHCb::Particle,LHCb::MCParticle,LHCb::Particles,const LHCb::MCParticles>(m_inputStream+LHCb::PackedRelationsLocation::P2MCP);
+
+  //=================================================================
+  //== Process the PP2MCP relations
+  //=================================================================
+  unpackP2PWeightedRelations<LHCb::ProtoParticle,LHCb::MCParticle,LHCb::ProtoParticles,const LHCb::MCParticles,double>(m_inputStream+LHCb::PackedWeightedRelationsLocation::PP2MCP);
 
   //=================================================================
   //== Process the P2Int relations

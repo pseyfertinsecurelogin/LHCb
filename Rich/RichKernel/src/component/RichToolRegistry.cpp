@@ -10,8 +10,6 @@
 //-----------------------------------------------------------------------------
 
 #include "GaudiKernel/ToolFactory.h"
-// Suppress "debug information truncated" warnings on Windows
-#include "GaudiKernel/Kernel.h"
 
 // local
 #include "RichToolRegistry.h"
@@ -29,6 +27,8 @@ Rich::ToolRegistry::ToolRegistry( const std::string& type,
 
   // job option for mapping between nickname and class name
   declareProperty( "Tools", m_names );
+
+  //setProperty( "OutputLevel", 1 );
 }
 
 StatusCode Rich::ToolRegistry::initialize()
@@ -149,8 +149,15 @@ void Rich::ToolRegistry::addEntry( const std::string & nickname,
 {
   if ( !m_myTools[nickname].empty() && type != m_myTools[nickname] )
   {
-    Print( "Nickname '" + nickname + "' mapping changed : '"
-           + m_myTools[nickname] + "' to '" + type + "'", StatusCode::SUCCESS ).ignore();
+    std::ostringstream mess;
+    mess << "Nickname '" << nickname << "' mapping changed : '"
+         << m_myTools[nickname] << "' to '" << type + "'";
+    // Print info for any tool type changes, other than to the MC
+    // association tools as these always change when running on real data
+    if ( "RichMCTruthTool" != nickname && "RichRecMCTruthTool" != nickname )
+    { Print( mess.str(), StatusCode::SUCCESS ).ignore(); }
+    else if ( msgLevel(MSG::DEBUG) )
+    { debug() << mess.str() << endmsg; }
   }
   if ( msgLevel(MSG::DEBUG) )
   {

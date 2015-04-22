@@ -2,12 +2,21 @@
 // ============================================================================
 // Include files 
 // ============================================================================
+// STD& STL
+// ============================================================================
+#include <array>
+#include <climits>
+#include <cassert>
+// ============================================================================
 // LHCbMath 
 // ============================================================================
 #include "LHCbMath/LHCbMath.h"
 #include "LHCbMath/NSphere.h"
 #include "LHCbMath/Power.h"
+#include "LHCbMath/Choose.h"
 #include "LHCbMath/Bernstein.h"
+#include "LHCbMath/Polynomials.h"
+#include "LHCbMath/MoreFunctions.h"
 // ============================================================================
 /** @file 
  *  Implementation file for functions, related to BErnstein's polynomnials 
@@ -30,14 +39,26 @@ namespace
   const LHCb::Math::Zero<double>     s_zero  ; // zero for doubles
   /// zero fo vectors 
   const LHCb::Math::Zero< std::vector<double> > s_vzero ; // zero for vectors
+  ///
+  static_assert( std::numeric_limits<double>::is_specialized , 
+                 "std::numeric_limits<double> is not specialized" ) ;
+  static_assert( std::numeric_limits<long double>::is_specialized , 
+                 "std::numeric_limits<long double> is not specialized" ) ;
+  /// machine epsilon (double)
+  const double s_epsilon   = std::numeric_limits<double>::epsilon() ;
+  /// machine epsilon (long double) 
+  const double s_ld_epsilon = std::numeric_limits<long double>::epsilon() ;
+  /// small value 
+  const LHCb::Math::Small<long double> s_small
+  ( 2.0L * std::numeric_limits<double>::epsilon() ) ;
   // ==========================================================================
   // De Casteljau's algorithm
   template <class ITERATOR>
-  double _casteljau_
-  ( ITERATOR     first ,
-    ITERATOR     last  ,
-    const double t0    ,
-    const double t1    )
+  long double _casteljau_
+  ( ITERATOR          first ,
+    ITERATOR          last  ,
+    const long double t0    ,
+    const long double t1    )
   {
     // the trivial cases
     if      ( first == last    ) { return 0       ; }
@@ -94,6 +115,32 @@ Gaudi::Math::Bernstein::Bernstein
 {
   if ( bb.k() <= bb.N() ) { m_pars[ bb.k() ] = 1 ; } 
 }
+// ============================================================================
+// copy assignement 
+// ============================================================================
+Gaudi::Math::Bernstein&
+Gaudi::Math::Bernstein::operator=( const Gaudi::Math::Bernstein&  right ) 
+{
+  if ( &right == this ) { return *this ; }
+  m_xmin = right.m_xmin ;
+  m_xmax = right.m_xmax ;
+  Gaudi::Math::PolySum::operator=( right ) ;
+  return *this ;
+}
+// ============================================================================
+// move assignement 
+// ============================================================================
+Gaudi::Math::Bernstein&
+Gaudi::Math::Bernstein::operator=(       Gaudi::Math::Bernstein&& right ) 
+{
+  if ( &right == this ) { return *this ; }
+  m_xmin = right.m_xmin ;
+  m_xmax = right.m_xmax ;
+  Gaudi::Math::PolySum::operator=( std::move ( right ) ) ;
+  return *this ;
+}
+// ============================================================================
+
 // ============================================================================
 // get minimal value of the function on (xmin,xmax) interval 
 // ============================================================================
@@ -172,25 +219,6 @@ bool Gaudi::Math::Bernstein::constant () const
   return true ;
 }
 // ============================================================================
-// express the Bernstein polynomial in Bernstein basis of order n+r 
-// ============================================================================
-// Gaudi::Math::Bernstein::elevate ( const unsigned short r ) const 
-// {
-//   if ( 0 == r ) { return *this ; }
-//   //
-//   std::vector<double> ck ( npars() + r , 0 ) ;
-//   for ( unsigned short k = 0 ; k <= npars() + r ; ++k ) 
-//   {
-//     for ( unsigned j  = std::max ( 0 , k - r ) ; j <= std::min ( n,k ) ; ++ j ) 
-//     {
-//       ck[k] += m_pars[j] 
-//         * binom_ ( r     , k - j ) 
-//         * binom_ ( n     ,     j )
-//         / binom_ ( n + r , k     ) ;
-//     }
-//   } 
-// }
-// ============================================================================
 // get the integral between xmin and xmax
 // ============================================================================
 double Gaudi::Math::Bernstein::integral () const
@@ -211,18 +239,18 @@ Gaudi::Math::Bernstein::indefinite_integral
 ( const double C ) const 
 {
   //
-  std::vector<double> ck ( npars() + 1 , 0.0 ) ;
+  std::vector<long double> ck ( npars() + 1 , 0.0 ) ;
   std::partial_sum   ( m_pars.begin () , m_pars.end   () ,  ck.begin() + 1 ) ;
   Gaudi::Math::scale ( ck , ( m_xmax - m_xmin ) / npars() ) ;
   //
   // add the integration constant 
   if ( !s_zero ( C ) ) 
   {
-    for ( std::vector<double>::iterator ic = ck.begin() ; ck.end() != ic ; ++ic ) 
+    for ( std::vector<long double>::iterator ic = ck.begin() ; ck.end() != ic ; ++ic ) 
     { (*ic) += C ; }
   }
   //
-  return Gaudi::Math::Bernstein ( ck.begin() , ck.end() , m_xmin , m_xmax ) ;
+  return Gaudi::Math::Bernstein ( ck.begin() , ck.end  () , m_xmin , m_xmax ) ;
 }
 // ============================================================================
 double Gaudi::Math::Bernstein::integral ( const double low  ,
@@ -245,11 +273,12 @@ double Gaudi::Math::Bernstein::integral ( const double low  ,
   //
   // make integration: 
   //
-  std::vector<double> ck ( npars() + 1 , 0.0 ) ;
+  std::vector<long double> ck ( npars() + 1 , 0.0 ) ;
   std::partial_sum ( m_pars.begin () , m_pars.end   () ,  ck.begin() + 1 ) ;
   Gaudi::Math::scale ( ck , ( m_xmax - m_xmin ) / npars() ) ;
   //
-  const Gaudi::Math::Bernstein b_int ( ck.begin() , ck.end() , m_xmin , m_xmax ) ;
+  const Gaudi::Math::Bernstein b_int ( ck.begin() ,
+                                       ck.end  ()  , m_xmin , m_xmax ) ;
   //
   return b_int ( xhigh ) - b_int ( xlow ) ;
 }
@@ -258,7 +287,7 @@ Gaudi::Math::Bernstein
 Gaudi::Math::Bernstein::derivative () const 
 {
   //
-  std::vector<double>   ck ( npars() , 0 ) ;
+  std::vector<long double>   ck ( npars() , 0 ) ;
   std::adjacent_difference ( m_pars.begin () , m_pars.end() , ck.begin() ) ;
   Gaudi::Math::scale ( ck , ( npars() - 1 )/ ( m_xmax - m_xmin ) ) ;
   //
@@ -270,7 +299,7 @@ double Gaudi::Math::Bernstein::derivative ( const double x   ) const
   if      ( m_pars.size() <= 1       ) { return 0 ; }
   else if ( x < m_xmin || x > m_xmax ) { return 0 ; }
   //
-  std::vector<double>   ck ( npars() , 0 ) ;
+  std::vector<long double>   ck ( npars() , 0 ) ;
   std::adjacent_difference ( m_pars.begin () , m_pars.end() , ck.begin() ) ;
   //
   // get the t-values
@@ -299,14 +328,503 @@ double Gaudi::Math::Bernstein::operator () ( const double x ) const
   //
   // get the t-values
   //
-  const double t0 = t ( x ) ;
-  const double t1 = 1 - t0  ;
+  const long double t0 = t ( x ) ;
+  const long double t1 = 1 - t0  ;
   //
   // start de casteljau algorithm:
   //
-  std::vector<double> dcj ( m_pars ) ;
+  // use fixed size: 
+  if (  npars() < 16 ) 
+  {
+    std::array<long double,16> _pars;
+    std::copy( m_pars.begin() , m_pars.end() , _pars.begin() ) ;
+    return _casteljau_ ( _pars.begin() , _pars.begin() + npars() , t0 , t1 ) ;
+  }
+  // generic case:
+  std::vector<long double> dcj ( m_pars.begin() , m_pars.end() ) ;
   return _casteljau_ ( dcj.begin() , dcj.end() , t0 , t1 ) ;
 }
+// ============================================================================
+Gaudi::Math::Bernstein&
+Gaudi::Math::Bernstein::operator+=( const double a ) 
+{
+  for ( std::vector<double>::iterator ip = m_pars.begin() ; m_pars.end() != ip ; ++ip ) 
+  { (*ip) += a ; }
+  //
+  return *this ;
+}
+// ============================================================================
+Gaudi::Math::Bernstein&
+Gaudi::Math::Bernstein::operator-=( const double a ) 
+{
+  for ( std::vector<double>::iterator ip = m_pars.begin() ; m_pars.end() != ip ; ++ip ) 
+  { (*ip) -= a ; }
+  //
+  return *this ;
+}
+// ============================================================================
+namespace 
+{
+  // ==========================================================================
+  inline long double
+  c_nk ( const unsigned short n , 
+         const unsigned short k ) 
+  {
+    return 
+      n < 63 ? 
+      Gaudi::Math::choose        ( n , k ) : 
+      Gaudi::Math::choose_double ( n , k ) ;  
+  }
+  // ==========================================================================
+}
+// ============================================================================
+/*  elevate it: 
+ *  represent as Bernstein polynomial of order N+r 
+ *  @param r  INPUT increase of degree 
+ *  @return new polynomial of order N+r 
+ */
+// ============================================================================
+Gaudi::Math::Bernstein
+Gaudi::Math::Bernstein::elevate ( const unsigned short r ) const 
+{
+  // no need in elevation 
+  if ( 0 == r ){ return *this ; }
+  //
+  std::vector<long double>    nc ( npars  () + r ) ; // new coefficients 
+  const std::vector<double>&  oc =  pars  () ;       // old coefficients 
+  const unsigned short         n = degree () ;
+  //
+  for ( unsigned short k = 0 ; k < nc.size() ; ++k ) 
+  {
+    const unsigned short jmax = std::min ( n , k ) ;
+    const unsigned short jmin = k <= r ? 0 : k - r ;
+    for ( unsigned short j = jmin ; j <= jmax ; ++j ) 
+    {
+      const long double  cj = oc[j] ;
+      if ( s_zero ( cj ) ) { continue ; }
+      //
+      nc[k] +=  c_nk ( r , k - j ) * c_nk ( n , j ) / c_nk ( n+r , k ) * cj ;
+    }
+  }
+  return Bernstein ( nc.begin() , nc.end  () , xmin() , xmax() ) ;
+}
+// ============================================================================
+/* de Casteljau algorithm for summation of Bernstein polynomials 
+ *  \f$ f(x) = \sum_i p_i B_ik(x) \f$
+ *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+ *  @date 2015-02-10
+ */
+// ============================================================================
+double Gaudi::Math::casteljau
+( const std::vector<double>& pars , 
+  const double               x    ) 
+{
+  std::vector<long double> _tmp ( pars.begin() , pars.end () ) ;
+  //
+  const long double t0 =     x  ;
+  const long double t1 = 1 - t0 ;
+  //
+  return _casteljau_ ( _tmp.begin() , _tmp.end  () , t0 , t1 ) ;
+}
+// ============================================================================
+namespace 
+{
+  inline short signm1 ( const long i ) { return 0 == i%2 ? 1 : -1 ; }
+  // ==========================================================================
+  /** transformation matrix from legendre to bernstein basis 
+   *  @see http://www.sciencedirect.com/science/article/pii/S0377042700003769 eq.20 
+   */
+  inline 
+  double l2b_mtrx ( const unsigned short j , 
+                    const unsigned short k ,
+                    const unsigned short n ) 
+  {
+    //
+    const unsigned short imin = std::max ( 0 , j + k - n ) ;
+    const unsigned short imax = std::min ( j ,     k     ) ;
+    long long r = 0 ;
+    for ( unsigned short i = imin ; i <= imax ; ++i ) 
+    {
+      0 == ( k + i ) % 2 ? 
+        r +=
+        Gaudi::Math::choose ( j     , i     ) * 
+        Gaudi::Math::choose ( k     , i     ) * 
+        Gaudi::Math::choose ( n - j , k - i ) :
+        r -=
+        Gaudi::Math::choose ( j     , i     ) * 
+        Gaudi::Math::choose ( k     , i     ) * 
+        Gaudi::Math::choose ( n - j , k - i ) ;
+    }
+    //
+    return r / double ( Gaudi::Math::choose ( n , k ) ) ;
+  }
+  // ==========================================================================
+  /** transformation matrix from chebyshev to bernstein basis 
+   *  http://www.degruyter.com/view/j/cmam.2003.3.issue-4/cmam-2003-0038/cmam-2003-0038.xml  eq. 15
+   */
+  inline 
+  long double c2b_mtrx ( const unsigned short j , 
+                         const unsigned short k ,
+                         const unsigned short n ) 
+  {
+    const unsigned short imin = std::max ( 0 , j + k - n ) ;
+    const unsigned short imax = std::min ( j ,     k     ) ;
+    long long r = 0 ;
+    for ( unsigned short i = imin ; i <= imax ; ++i ) 
+    {
+      0 == ( k - i ) % 2 ? 
+        r +=
+        Gaudi::Math::choose ( 2 * k , 2 * i ) * 
+        Gaudi::Math::choose ( n - k , j - i ) :
+        r -=
+        Gaudi::Math::choose ( 2 * k , 2 * i ) * 
+        Gaudi::Math::choose ( n - k , j - i ) ;
+    }
+    //
+    return r / (  (long double)  Gaudi::Math::choose ( n , j ) ) ;
+  }
+  // ==========================================================================
+  /** transformation matrix from monomial to bernstein basis
+   */
+  inline 
+  long double m2b_mtrx 
+  ( const unsigned short j , 
+    const unsigned short k ,
+    const unsigned short n ) 
+  {
+    //
+    return
+      j < k ? 0.0 : 
+      (double) ( Gaudi::Math::choose ( j , k ) ) / 
+      (double) ( Gaudi::Math::choose ( n , k ) ) ; 
+  }
+  // ==========================================================================
+  /// affine transformation of polynomial
+  inline 
+  long double m2m_mtrx_2
+  ( const unsigned short j , 
+    const unsigned short k ) 
+  {
+    if ( k < j ) { return 0 ; }
+    const long double c = 
+      Gaudi::Math::choose ( k , j ) * Gaudi::Math::pow ( 2 , j ) ;
+    //
+    return 0 == ( k - j ) % 2 ?  c : -c ;
+  }
+  // ==========================================================================
+}
+// ============================================================================
+// constructor from Legendre polynomial
+// ============================================================================
+Gaudi::Math::Bernstein::Bernstein
+( const Gaudi::Math::LegendreSum& poly )  
+  : Gaudi::Math::PolySum ( poly.degree () ) 
+  , m_xmin ( poly.xmin() ) 
+  , m_xmax ( poly.xmax() ) 
+{
+  for ( unsigned short i = 0 ; i < npars() ; ++i ) 
+  { 
+    for ( unsigned short k = 0 ; k < npars() ; ++k ) 
+    { 
+      const double p = poly.par ( k ) ;
+      if ( s_zero ( p ) ) { continue ; }
+      m_pars[i] += l2b_mtrx ( i , k , degree() ) * p ; 
+    } 
+  }
+}
+// ============================================================================
+// constructor from Chebyshev polynomial
+// ============================================================================
+Gaudi::Math::Bernstein::Bernstein
+( const Gaudi::Math::ChebyshevSum& poly )  
+  : Gaudi::Math::PolySum ( poly.degree () ) 
+  , m_xmin ( poly.xmin() ) 
+  , m_xmax ( poly.xmax() ) 
+{
+  //
+  for ( unsigned short i = 0 ; i < npars() ; ++i ) 
+  { 
+    for ( unsigned short k = 0 ; k < npars() ; ++k ) 
+    { 
+      const double p = poly.par ( k ) ;
+      if ( s_zero ( p ) ) { continue ; }
+      m_pars[i] += c2b_mtrx ( i , k , degree() ) * p ; 
+    } 
+  }
+  //
+}
+// ============================================================================
+// constructor from simple monomial form 
+// ============================================================================
+Gaudi::Math::Bernstein::Bernstein
+( const Gaudi::Math::Polynomial& poly )  
+  : Gaudi::Math::PolySum ( poly.degree () ) 
+  , m_xmin ( poly.xmin() ) 
+  , m_xmax ( poly.xmax() ) 
+{
+  //
+  const unsigned short np = npars() ;
+  // 2-step transformation
+  //
+  // 1: affine transform to [0,1]
+  //
+  std::vector<double> _pars ( np ) ;
+  for ( unsigned short i = 0 ; i < np ; ++i ) 
+  { 
+    for ( unsigned short k = i ; k < np ; ++k )  
+    { 
+      const double p = poly.par ( k )  ;
+      if ( s_zero ( p ) ) { continue ; }
+      _pars[i] += m2m_mtrx_2 ( i , k ) * p ; 
+    } 
+  }  
+  //
+  // 2: tramsform from shifted poly basis:
+  //
+  for ( unsigned short i = 0 ; i < np ; ++i ) 
+  { 
+    for ( unsigned short k = 0 ; k <= i ;  ++k )  // ATTENTION!!
+    { 
+      const double p = _pars[ k ] ;
+      if ( s_zero ( p ) ) { continue ; }
+      m_pars[i] += m2b_mtrx ( i , k , degree() ) * p ; 
+    } 
+  }
+  //
+}
+// ============================================================================
+
+// ============================================================================
+/* get the integral between 0 and 1 for a product of basic  Bernstein
+ *  polynom and the exponential function with the exponent tau
+ *  \f[ \int_{0}^{1} \mathcal{B}_{ik} e^{\tau x } \mathrm{d}x \f] 
+ *  @param poly  bernstein polynomial
+ *  @param tau   slope parameter for an exponential function
+ */
+// ============================================================================
+double Gaudi::Math::integrate 
+( const Gaudi::Math::Bernstein::Basic& b    ,
+  const double                         tau  ) 
+{
+  //
+  if ( b.k() > b.N()  ) { return 0                   ; }
+  if ( s_zero ( tau ) ) { return 1.0 / ( b.N() + 1 ) ; }
+  //
+  // make use Kummer function as default scenario 
+  return Gaudi::Math::kummer ( b.k () + 1 , b.N () + 2 , tau ) / ( b.N() + 1 ) ;
+  //
+}
+// ============================================================================
+/* get the integral between \f$x_{min}\f$ and \f$x_{max}\f$ for a product of Bernstein
+ *  polynom and the exponential function with the exponent tau
+ *  \f[  \int_{x_{min}}^{x_{max}} \mathcal{B} e^{\tau x } \mathrm{d}x \f] 
+ *  @param poly  bernstein polynomial
+ *  @param tau   slope parameter for exponential 
+ */
+// ============================================================================
+double Gaudi::Math::integrate 
+( const Gaudi::Math::Bernstein& poly ,
+  const double                  tau  ) 
+{
+  if ( s_zero ( tau ) ) { return poly.integral() ; }
+  //
+  const long double xmin = poly.xmin () ;
+  const long double xmax = poly.xmax () ;
+  //
+  const long double _tau =            ( xmax - xmin ) * tau ;
+  const long double _fac = std::exp   (  tau * xmin ) ;
+  //
+  long double result = 0 ;
+  const unsigned short       N    = poly.degree () ;
+  const std::vector<double>& pars = poly.pars   () ;
+  //
+  for ( std::vector<double>::const_iterator ip = pars.begin() ; pars.end() != ip ; ++ip ) 
+  {
+    if ( s_zero ( *ip ) ) { continue ; } // skip zeroes 
+    const unsigned short k =  ip - pars.begin() ;
+    const long double    p = *ip ;
+    result +=  p * integrate ( Gaudi::Math::Bernstein::Basic ( k , N ) , _tau ) ;
+  }
+  //
+  return result * ( xmax - xmin ) * _fac ;
+}
+// ============================================================================
+namespace 
+{
+  // ==========================================================================
+  inline long double r_kNm  
+  ( const unsigned short k , 
+    const unsigned short N , 
+    const unsigned short m ) 
+  {
+    long double r = 1.0L ;
+    for ( unsigned short i = 1 ; i <= m ; ++i ) 
+    {
+      r *= ( k + i ) ;
+      r /= ( N + i ) ;
+      r /= i         ;
+    }    
+    return r ;
+  }
+  // ==========================================================================
+}
+// ============================================================================
+/* get the integral between 0 and 1 for a product of basic  Bernstein
+ *  polynom and monomial or degree m 
+ *  \f[  \int_{0}^{1} \mathcal{B} \frac{x^m}{m!} \mathrm{d}x \f] 
+ *  @param b     basic bernstein polynomial
+ *  @param m     degree of monomial 
+ */
+// ============================================================================ 
+double Gaudi::Math::integrate_poly 
+( const Gaudi::Math::Bernstein::Basic& b ,
+  const unsigned short                 m )
+{
+  //
+  const unsigned short N = b.N () ;
+  const unsigned short k = b.k () ;
+  //
+  return r_kNm ( k , N , m ) / ( N + m + 1 ) ;
+}
+// ============================================================================ 
+/*  get the integral between xmin and xmax Bernstein
+ *  polynom and monomial or degree m 
+ *  \f[  \int_{x_min}^{x_max} \mathcal{B} \frac{x^m}{m!} \mathrm{d}x \f] 
+ *  @param b     basic bernstein polynomial
+ *  @param m     degree of monomial 
+ */
+// ============================================================================ 
+double Gaudi::Math::integrate_poly 
+( const Gaudi::Math::Bernstein& b ,
+  const unsigned short          m ) 
+{
+  //
+  if ( 0 == m ) { return b.integral () ; }
+  //
+  const std::vector<double>& pars = b.pars()   ;
+  const unsigned short       N    = b.degree() ;
+  std::vector<long double>   nc  ( pars.size() , 0.0L ) ;
+  for ( unsigned short k = 0 ; k < nc.size() ; ++k ) 
+  {
+    const long double ci = pars[k] ;
+    if ( s_zero ( ci ) ) { continue ; }
+    nc[k] = r_kNm ( k , N , m ) * ci ;  
+  }
+  //
+  return 
+    Gaudi::Math::pow ( b.xmax() - b.xmin()  , m + 1 ) * 
+    std::accumulate  ( nc.begin() , nc.end() , 0.0L ) / ( N + m + 1 ) ;
+}
+// ============================================================================ 
+namespace 
+{
+  // ==========================================================================
+  long double _integrate_poly_ 
+  ( const Gaudi::Math::Bernstein& b    ,
+    const unsigned short          m    , 
+    const double                  low  , 
+    const double                  high )
+  {
+    const std::vector<double>& pars = b.pars()   ;
+    const unsigned short       N    = b.degree() ;
+    std::vector<long double>   nc  ( pars.size() + m , 0.0L ) ;
+    for ( unsigned short k = 0 ; k < pars.size() ; ++k ) 
+    {
+      const long double ci = pars[k] ;
+      if ( s_zero ( ci ) ) { continue ; }
+      nc[ k + m ] = r_kNm ( k , N , m ) * ci ;  
+    }
+    //
+    Gaudi::Math::Bernstein a ( nc.begin() , nc.end  () , b.xmax() , b.xmin() ) ;
+    //
+    return Gaudi::Math::pow ( b.xmax() - b.xmin()  , m ) * a.integral ( low , high ) ;  
+  }
+  // ==========================================================================
+}
+// ============================================================================ 
+/** get the integral between xmin and xmax Bernstein
+ *  polynom and monomial or degree m 
+ *  \f[  \int_{low}^{high} \mathcal{B} \frac{(x-x_min)^m}{m!} \mathrm{d}x \f] 
+ *  @param b     basic bernstein polynomial
+ *  @param m     degree of monomial 
+ *  @param low   low  integration limit 
+ *  @param high  high integtation limit 
+ */
+// ============================================================================ 
+double Gaudi::Math::integrate_poly 
+( const Gaudi::Math::Bernstein& b    ,
+  const unsigned short          m    , 
+  const double                  low  , 
+  const double                  high )
+{
+  //
+  if      ( s_equal ( low , high )      ) { return  0 ; }
+  else if ( 0 == m                      ) { return  b.integral ( low ,high ) ; }
+  else if ( low  > high                 ) { return -integrate_poly ( b , m , high , low ) ; }
+  else if ( high < b.xmin ()            ) { return  0 ; }
+  else if ( low  > b.xmax ()            ) { return  0 ; } 
+  else if ( low  < b.xmin ()            ) { return  integrate_poly ( b , m , b.xmin() , high     ) ; }
+  else if ( high > b.xmax ()            ) { return  integrate_poly ( b , m , low      , b.xmax() ) ; }
+  else if ( s_equal ( low  , b.xmin() ) && 
+            s_equal ( high , b.xmax() ) ) { return  integrate_poly ( b , m ) ; }
+  //
+  // make the actual integration
+  return _integrate_poly_ ( b , m , low , high ) ;
+}
+// ============================================================================
+/*  get the integral between low and high for a product of Bernstein
+ *  polynom and the exponential function with the exponent tau
+ *  \f[  \int_{a}^{b} \mathcal{B} e^{\tau x } \mathrm{d}x \f] 
+ *  @param poly  bernstein polynomial
+ *  @param tau   slope parameter for exponential 
+ *  @param low   low  integration range 
+ *  @param high  high integration range 
+ */
+// ============================================================================
+double Gaudi::Math::integrate 
+( const Gaudi::Math::Bernstein& poly ,
+  const double                  tau  ,
+  const double                  low  , 
+  const double                  high ) 
+{
+  if      ( s_small ( tau )           ) { return  poly.integral ( low , high ) ; }
+  else if ( s_equal ( low , high )    ) { return  0 ; }
+  else if ( poly.zero ()              ) { return  0 ; }
+  else if ( low  >  high              ) { return -integrate ( poly , tau , high , low ) ; }  
+  else if ( high <  poly.xmin () || 
+            low  >  poly.xmax ()      ) { return  0 ; }
+  else if ( low  <  poly.xmin ()      ) { return  integrate ( poly , tau , poly.xmin() , high        ) ; }
+  else if ( high >  poly.xmax ()      ) { return  integrate ( poly , tau , low         , poly.xmax() ) ; }
+  //
+  if ( s_equal ( low  , poly.xmin() ) && 
+       s_equal ( high , poly.xmax() ) ) { return integrate ( poly , tau ) ; }               
+  //
+  // start series expansion
+  // 
+  long double result =  poly.integral ( low , high ) ;
+  long double dd1    = 1 ;
+  long double dd2    = 1 ;
+  long double taum   = 1 ;
+  //
+  const long double xmin = poly.xmin () ;
+  // const long double xmax = poly.xmax () ;
+  //
+  // const long double _tau =            ( xmax - xmin ) * tau ;
+  const long double _fac = std::exp   (  tau * xmin ) ;
+  //
+  for ( unsigned int m = 1 ; m < 10000 ; ++m ) 
+  {
+    taum   *=  tau ;
+    dd2     = _integrate_poly_ ( poly , m , low , high ) * taum  ;
+    result += dd2 ;
+    if ( s_small ( dd1 / result ) && s_small ( dd2 / result ) ) { break ; }
+    dd1     = dd2 ;
+  }
+  //
+  return result * _fac ; 
+}
+// ============================================================================
+// POSITIVE 
 // ============================================================================
 
 
@@ -342,6 +860,24 @@ Gaudi::Math::Positive::Positive
   //
 }
 // ============================================================================
+// copy 
+// ============================================================================
+Gaudi::Math::Positive::Positive
+( const Gaudi::Math::Positive&  right ) 
+  : std::unary_function<double,double> ( right )
+  , m_bernstein ( right.m_bernstein ) 
+  , m_sphere    ( right.m_sphere    ) 
+{}
+// ============================================================================
+// move 
+// ============================================================================
+Gaudi::Math::Positive::Positive
+(       Gaudi::Math::Positive&& right ) 
+  : std::unary_function<double,double> ( right )
+  , m_bernstein ( std::move ( right.m_bernstein ) ) 
+  , m_sphere    ( std::move ( right.m_sphere    ) ) 
+{}
+// ============================================================================
 Gaudi::Math::Positive::~Positive() {}
 // ============================================================================
 // set k-parameter
@@ -373,6 +909,27 @@ bool Gaudi::Math::Positive::updateBernstein ()
   return update ;
 }
 // ============================================================================
+// copy assignement 
+// ============================================================================
+Gaudi::Math::Positive&
+Gaudi::Math::Positive::operator=( const Gaudi::Math::Positive&  right ) 
+{
+  if ( &right == this ) { return *this ; }
+  m_bernstein = right.m_bernstein ;
+  m_sphere    = right.m_sphere    ;
+  return *this ;
+}
+// ============================================================================
+// move assignement 
+// ============================================================================
+Gaudi::Math::Positive&
+Gaudi::Math::Positive::operator=(      Gaudi::Math::Positive&& right ) 
+{
+  if ( &right == this ) { return *this ; }
+  m_bernstein = std::move ( right.m_bernstein ) ;
+  m_sphere    = std::move ( right.m_sphere    ) ;
+  return *this ;
+}
 
 
 

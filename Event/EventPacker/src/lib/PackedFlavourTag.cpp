@@ -34,29 +34,27 @@ void FlavourTagPacker::pack( const Data & ft,
   // Taggers
   pft.firstTagger = pfts.taggers().size();
   pfts.taggers().reserve( pfts.taggers().size() + ft.taggers().size() );
-  for ( std::vector<LHCb::Tagger>::const_iterator iT = ft.taggers().begin();
-        iT != ft.taggers().end(); ++iT )
+  for ( const auto & T : ft.taggers() )
   {
     // make a new packed tagger object
     pfts.taggers().push_back( PackedTagger() );
     PackedTagger & ptagger = pfts.taggers().back();
 
     // save data members
-    ptagger.type     = (*iT).type();
-    ptagger.decision = (*iT).decision();
-    ptagger.omega    = m_pack.fraction( (*iT).omega() );
+    ptagger.type     = T.type();
+    ptagger.decision = T.decision();
+    ptagger.omega    = m_pack.fraction( T.omega() );
 
     // tagging particles
     ptagger.firstTagP = pfts.taggeringPs().size();
-    pfts.taggeringPs().reserve( pfts.taggeringPs().size() + (*iT).taggerParts().size() );
-    for ( SmartRefVector<LHCb::Particle>::const_iterator iTP = (*iT).taggerParts().begin();
-          iTP !=(*iT).taggerParts().end(); ++iTP )
+    pfts.taggeringPs().reserve( pfts.taggeringPs().size() + T.taggerParts().size() );
+    for ( const auto& TP : T.taggerParts() )
     {
-      if ( *iTP )
+      if ( TP.target() )
       {
         pfts.taggeringPs().push_back( m_pack.reference64( &pfts,
-                                                          (*iTP)->parent(),
-                                                          (*iTP)->key() ) );
+                                                          TP->parent(),
+                                                          TP->key() ) );
       }
     }
     ptagger.lastTagP = pfts.taggeringPs().size();
@@ -71,20 +69,17 @@ void FlavourTagPacker::pack( const DataVector & fts,
 {
   pfts.data().reserve( fts.size() );
 
-  for ( DataVector::const_iterator iD = fts.begin();
-        iD != fts.end(); ++iD )
+  for ( const auto * ft : fts )
   {
-    const Data & ft = **iD;
-
     // Make a new packed data object and save
     pfts.data().push_back( PackedData() );
     PackedData & pft = pfts.data().back();
 
     // fill ppart key from part
-    pft.key = ft.key();
+    pft.key = ft->key();
 
     // Pack all the physics information
-    pack( ft, pft, pfts );
+    pack( *ft, pft, pfts );
   }
 
 }
@@ -107,9 +102,12 @@ void FlavourTagPacker::unpack( const PackedData       & pft,
   if ( -1 != pft.taggedB )
   {
     int hintID(0), key(0);
-    m_pack.hintAndKey64( pft.taggedB, &pfts, &fts, hintID, key );
-    SmartRef<LHCb::Particle> ref(&fts,hintID,key);
-    ft.setTaggedB( ref );
+    if ( m_pack.hintAndKey64( pft.taggedB, &pfts, &fts, hintID, key ) )
+    {
+      SmartRef<LHCb::Particle> ref(&fts,hintID,key);
+      ft.setTaggedB( ref );
+    }
+    else { parent().Error("Corrupt FlavourTag Particle SmartRef found").ignore(); }
   }
 
   // Taggers
@@ -134,10 +132,13 @@ void FlavourTagPacker::unpack( const PackedData       & pft,
     for ( unsigned int iP = ptagger.firstTagP; iP < ptagger.lastTagP; ++iP )
     {
       int hintID(0), key(0);
-      m_pack.hintAndKey64( pfts.taggeringPs()[iP],
-                           &pfts, &fts, hintID, key );
-      SmartRef<LHCb::Particle> ref(&fts,hintID,key);
-      tagger.addToTaggerParts( ref );
+      if ( m_pack.hintAndKey64( pfts.taggeringPs()[iP],
+                                &pfts, &fts, hintID, key ) )
+      {
+        SmartRef<LHCb::Particle> ref(&fts,hintID,key);
+        tagger.addToTaggerParts( ref );
+      }
+      else { parent().Error("Corrupt FlavourTag Tagging Particle SmartRef found").ignore(); }
     }
   }
 
@@ -148,11 +149,8 @@ void FlavourTagPacker::unpack( const PackedDataVector & pfts,
 {
   fts.reserve( pfts.data().size() );
 
-  for ( PackedDataVector::Vector::const_iterator iD = pfts.data().begin();
-        iD != pfts.data().end(); ++iD )
+  for ( const auto & pft : pfts.data() )
   {
-    const PackedData & pft = *iD;
-
     // make and save new pid in container
     Data * ft = new Data();
     fts.insert( ft, pft.key );

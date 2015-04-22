@@ -4,6 +4,25 @@
 ! Purpose     : Hlt RawBanks writers/decoders/monitors
 !------------------------------------------------------------------------------
 
+!========================= HltDAQ v4r13 2015-04-20 =========================
+! 2015-04-19 - Sean Benson
+ - isMuon in full.
+
+! 2015-04-13 - Sean Benson
+ - Extra variables for ProbNNs.
+
+! 2015-03-11 - Sean Benson
+ - Update test to allow for bank version change.
+
+! 2015-03-11 - Sean Benson
+ - Moved to version 4 of sel. reports (in writer and decoder).
+ - Full support for RecVertex bank (anticipating PV refitting).
+ - Expanded protoparticle bank.
+
+! 2015-03-06 - Sascha Stahl
+ - HltTrackReportsWriter: Added property (WriteStates) to write or not write out states.
+   Default is true to keep the old behaviour.
+
 !========================= HltDAQ v4r12 2015-01-14 =========================
 ! 2015-01-12 - Sean Benson
  - Fix CMake config.

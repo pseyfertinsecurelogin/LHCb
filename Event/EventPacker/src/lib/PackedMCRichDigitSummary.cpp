@@ -14,31 +14,34 @@ using namespace LHCb;
 void MCRichDigitSummaryPacker::pack( const DataVector & sums,
                                      PackedDataVector & psums ) const
 {
-  psums.data().reserve( sums.size() );
-  if ( 0 == psums.packingVersion() )
+  const char ver = psums.packingVersion();
+  if ( 0 == ver || 1 == ver )
   {
-    for ( DataVector::const_iterator iD = sums.begin();
-          iD != sums.end(); ++iD )
+    psums.data().reserve( sums.size() );
+    for ( const Data * sum : sums )
     {
-      const Data & sum = **iD;
       // make new packed data
       psums.data().push_back( PackedData() );
       PackedData & psum = psums.data().back();
       // fill packed data
-      psum.history     = sum.history().historyCode();
-      psum.richSmartID = sum.richSmartID().key();
-      if ( NULL != sum.mcParticle() )
+      psum.history     = sum->history().historyCode();
+      psum.richSmartID = sum->richSmartID().key();
+      if ( NULL != sum->mcParticle() )
       {
-        psum.mcParticle = m_pack.reference( &psums,
-                                            sum.mcParticle()->parent(),
-                                            sum.mcParticle()->key() );
+        psum.mcParticle = ( UNLIKELY( 0 == ver ) ?
+                            m_pack.reference32( &psums,
+                                                sum->mcParticle()->parent(),
+                                                sum->mcParticle()->key() ) :
+                            m_pack.reference64( &psums,
+                                                sum->mcParticle()->parent(),
+                                                sum->mcParticle()->key() ) );
       }
     }
   }
   else
   {
     std::ostringstream mess;
-    mess << "Unknown packed data version " << (int)psums.packingVersion();
+    mess << "Unknown packed data version " << (int)ver;
     throw GaudiException( mess.str(), "MCRichDigitSummaryPacker", StatusCode::FAILURE );
   }
 }
@@ -46,15 +49,14 @@ void MCRichDigitSummaryPacker::pack( const DataVector & sums,
 void MCRichDigitSummaryPacker::unpack( const PackedDataVector & psums,
                                        DataVector       & sums ) const
 {
-  sums.reserve( psums.data().size() );
-  if ( 0 == psums.packingVersion() )
+  const char ver = psums.packingVersion();
+  if ( 0 == ver || 1 == ver )
   {
-    for ( PackedDataVector::Vector::const_iterator iD = psums.data().begin();
-          iD != psums.data().end(); ++iD )
+    sums.reserve( psums.data().size() );
+    for ( const auto & psum : psums.data() )
     {
-      const PackedData & psum = *iD;
       // make and save new sum in container
-      Data * sum  = new Data();
+      Data * sum = new Data();
       sums.add( sum );
       // Fill data from packed object
       sum->setHistory( LHCb::MCRichDigitHistoryCode(psum.history) );
@@ -62,16 +64,20 @@ void MCRichDigitSummaryPacker::unpack( const PackedDataVector & psums,
       if ( -1 != psum.mcParticle )
       {
         int hintID(0), key(0);
-        m_pack.hintAndKey( psum.mcParticle, &psums, &sums, hintID, key );
-        SmartRef<LHCb::MCParticle> ref(&sums,hintID,key);
-        sum->setMCParticle( ref );
+        if ( ( 0!=ver && m_pack.hintAndKey64(psum.mcParticle,&psums,&sums,hintID,key) ) ||
+             ( 0==ver && m_pack.hintAndKey32(psum.mcParticle,&psums,&sums,hintID,key) ) )
+        {
+          SmartRef<LHCb::MCParticle> ref(&sums,hintID,key);
+          sum->setMCParticle( ref );
+        }
+        else { parent().Error( "Corrupt MCRichDigitSummary MCParticle SmartRef detected." ).ignore(); }
       }
     }
   }
   else
   {
     std::ostringstream mess;
-    mess << "Unknown packed data version " << (int)psums.packingVersion();
+    mess << "Unknown packed data version " << (int)ver;
     throw GaudiException( mess.str(), "MCRichDigitSummaryPacker", StatusCode::FAILURE );
   }
 }

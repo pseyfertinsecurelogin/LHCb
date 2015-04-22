@@ -4,6 +4,61 @@
 ! Purpose     : Pack and unpack events classes for smaller events
 !-----------------------------------------------------------------------------
 
+!========================= EventPacker v5r1 2015-04-20 =========================
+! 2015-04-16 - Chris Jones
+ - Update PackParticlesAndVertices to only need to traverse the TES once per
+   event to find the data objects to pack.
+
+! 2015-04-13 - Chris Jones
+ - Add support for packed Weighted Relations.
+ - Update PackParticlesAndVertices to search for and pack weighted
+   ProtoParticle to MCParticle relations.
+
+! 2015-04-10 - Chris Jones
+ - Add support for custom RichPID objects in the 'PackParticlesAndVertices'
+   packing.
+ - Make packed RichPID objects key a long long.
+
+! 2015-04-02 - Chris Jones
+ - Optimise things a bit for the most likely (recent) packing versions.
+
+! 2015-03-24 - Chris Jones
+ - Add support for the new flags data member in MCParticle.
+
+! 2015-03-23 - Chris Jones
+ - Various small cleanups.
+ - Tune a bit better than reserved vector sizes in PackedRecVertex.
+
+! 2015-03-15 - Chris Jones
+ - Add some future proofing packing version checks to packers which had
+   versioning added in the last commit.
+
+!========================= EventPacker v5r0 2015-03-13 =========================
+! 2015-03-10 - Chris Jones
+ - Fix typo in MuonPIDPacker where version 2 was not declared as a known 
+   packing version in MuonPIDPacker::unpack
+
+! 2015-03-08 - Chris Jones
+ - Implement 64 bit reference packing for MCParticle, MCVertex and
+   TwoProngVertex classes.
+ - Add a warning message to reference32 to warn if any code is still creating
+   potentially problematic 32 bit packed references. Method is retained for
+   backwards compatibility...
+ - Add checks for remaining calls to hintAndKey64 for corrupt references
+   (should be impossible for 64 bit packing).
+
+! 2015-03-07 - Chris Jones
+ - Add protection to StandardPacker to prevent segmentation faults from a NULL
+   pointer dereference in the case of corrupted reference information, due
+   to truncation when attempting to pack it to a 32 bit int. Fixes issues
+   seen when running over Stripping21 MC samples where some Track references
+   in packed ProtoParticles have been corrupted due to data truncation. In 
+   these cases the smart refs are now just skipped (so set to NULL).
+ - Update the packing of all remaining classes that still use 32 bit reference
+   packing to use 64 bit packing. Reading is backwards compatible with old data
+   using the packing data version flags. Consequently data written with this
+   update can only be read by this version.
+
 !========================= EventPacker v4r7 2015-02-23 =========================
 ! 2015-02-12 - Heinrich Schindler
  - Add support for BCM and BLS hits.

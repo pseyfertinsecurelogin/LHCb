@@ -14,8 +14,6 @@
 #include "GaudiKernel/DataObject.h"
 #include "GaudiKernel/StatusCode.h"
 
-class GaudiAlgorithm;
-
 namespace LHCb
 {
   // -----------------------------------------------------------------------
@@ -42,8 +40,8 @@ namespace LHCb
     int MuonLLBg;
     int nShared;
     int status;
-    int idtrack;
-    int mutrack;
+    long long idtrack;
+    long long mutrack;
     long long key;
   };
 
@@ -76,7 +74,7 @@ namespace LHCb
   public:
     
     /// Default Packing Version
-    static char defaultPackingVersion() { return 1; }
+    static char defaultPackingVersion() { return 2; }
     
   public:
 
@@ -99,6 +97,8 @@ namespace LHCb
 
     /// Read access to the data vector
     const Vector & data() const { return m_vect; }
+
+  public:
 
     /// Set the packing version
     void setPackingVersion( const char ver ) { m_packingVersion = ver; }
@@ -140,12 +140,12 @@ namespace LHCb
   private:
 
     /// Default Constructor hidden
-    MuonPIDPacker() : m_parent(NULL) {}
+    MuonPIDPacker() {}
 
   public:
 
     /// Default Constructor
-    MuonPIDPacker( GaudiAlgorithm & parent ) : m_parent(&parent) {}
+    MuonPIDPacker( const GaudiAlgorithm & p ) : m_pack(&p) {}
 
   public:
 
@@ -179,15 +179,25 @@ namespace LHCb
   private:
 
     /// Access the parent algorithm
-    GaudiAlgorithm& parent() const { return *m_parent; }
+    const GaudiAlgorithm& parent() const { return *(m_pack.parent()); }
+
+    /// Check if the given packing version is supported
+    bool isSupportedVer( const char& ver ) const
+    {
+      const bool OK = ( 2 == ver || 1 == ver || 0 == ver );
+      if ( !OK )
+      {
+        std::ostringstream mess;
+        mess << "Unknown packed data version " << (int)ver;
+        throw GaudiException( mess.str(), "MuonPIDPacker", StatusCode::FAILURE );
+      }
+      return OK;
+    }
 
   private:
 
     /// Standard packing of quantities into integers ...
     StandardPacker m_pack;
-
-    /// Pointer to parent algorithm
-    GaudiAlgorithm * m_parent;
 
   };
 

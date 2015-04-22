@@ -3,6 +3,12 @@
 ! package manager : Marco Clemencic
 ! ====================================================================
 
+!========================= CondDBUI v3r33 2015-04-20 =========================
+! 2015-03-04 - Liang Sun
+ - Added writeDuplicate argument for method CondDB.storeXMLStringList() which is set to True be default. When writeDuplicate 
+   is set to False, there will be a check on whether the new & old payload contents are identical and only in the case of no
+   the new payload contents are saved.
+
 !========================= CondDBUI v3r32 2014-12-11 =========================
 ! 2014-12-05 - Liang Sun
  - The workaround for PyCoolCopy issue is now marked with FIXME. This is due to a current ROOT6 bug 

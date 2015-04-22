@@ -6,6 +6,91 @@
 !               All headers included in directory LHCbMath
 !-----------------------------------------------------------------------------
 
+!========================= LHCbMath v3r56 2015-04-20 =========================
+! 2015-04-11 - Vanya Belyaev
+ - and one more fix in bernstein 
+
+! 2015-04-10 - Vanya Belyaev
+ - minor fix in bernstein 
+
+! 2015-04-10 - Vanya Belyaev
+ - minor fix in bernstein 
+
+! 2015-04-03 - Gerhard Raven
+ - use VectorLib to improve Similarity_AVX
+
+! 2015-04-03 - Vanya Belyaev
+ - add running counter 
+
+! 2015-04-02 - Ben Couturier 
+ - Added timing test for The Similarity functions 
+
+!========================= LHCbMath v3r55 2015-04-01 =========================
+! 2015-03-28 - Vanya Belyaev
+ - improve numerical stability 
+
+! 2015-03-26 - Vanya Belyaev
+ - minor reshuffling 
+
+! 2015-03-25 - Vanya Belyaev
+ - minor reshuffling 
+
+! 2015-03-24 - Vanya Belyaev
+ - minor update 
+
+! 2015-03-19 - Vanya Belyaev
+ - minor fix 
+
+! 2015-03-17 - Ben Couturier 
+ - Updated check threshold for TestSimilarity
+
+! 2015-03-16 - Vanya Belyaev
+ - remove compilation warning
+
+! 2015-03-15 - Vanya Belyaev
+ - update test 
+
+! 2015-03-14 - Vanya Belyaev
+ - improve numerial stability
+
+! 2015-03-13 - Vanya Belyaev
+ - fix stupid recently introduced bug, update tests  
+
+! 2015-03-12 - Vanya Belyaev
+ - add one more test
+
+! 2015-03-10 - 
+ - fix a bug in the interration of the product
+   of Bernstein polynomial and an exponential function  
+
+! 2015-03-09 - Vanya Belyaev
+ - add conversions of polynomial bases  
+
+! 2015-03-05 - Vanya Belyaev
+ - nSphere: use vtd::fast_sincos...  
+   For real case situation the gain is questionable...
+
+! 2015-03-01 - Manuel Tobias Schiller
+ - FastRoots: the code is safe on big endian machines (verified on powerpc),
+   so reenable the code for big endian machines
+
+! 2015-02-26 - Manuel Tobias Schiller
+ - FastRoots: add protection if this code is ever compiled on big endian
+   machines (produces an #error)
+
+! 2015-02-26 - Manuel Tobias Schiller
+ - add new header FastRoots.h which implement fast cube and fifth roots and
+   their inverses which are accurate to almost the full precision of the
+   underlying floating point type, and also a very quick and dirty
+   approximation to the hypot function (hypot(x, y) = sqrt(x * x + y * y), the
+   approximation of hypot is good to about 4% relative error)
+
+! 2015-02-25 - Vanya Belyaev
+ - add dependency on pyanalysis  (needed for test_poly.py)
+   question:
+    should it be used with -no_auto_imports directive(for CMT?)
+     if so, what is the corresponding CMake function?
+                   
 !========================= LHCbMath v3r54 2015-02-24 =========================
 ! 2015-02-23 - Vanya Belyaev
  - reshuffle polinomials 
@@ -1459,5 +1544,4 @@
 
 ! 2006-05-08 - Juan Palacios
  - First release of Kernel/LHCbMath
-
 

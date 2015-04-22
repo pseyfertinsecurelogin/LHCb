@@ -1,4 +1,4 @@
-// $Id: PackedMCRichDigitSummary.h,v 1.4 2009-11-07 12:20:26 jonrob Exp $
+
 #ifndef EVENT_PackedMCRichDigitSummary_H
 #define EVENT_PackedMCRichDigitSummary_H 1
 
@@ -13,8 +13,6 @@
 // Gaudi
 #include "GaudiKernel/DataObject.h"
 #include "GaudiKernel/StatusCode.h"
-
-class GaudiAlgorithm;
 
 namespace LHCb
 {
@@ -38,7 +36,7 @@ namespace LHCb
 
     int history;
     int richSmartID;
-    int mcParticle;
+    long long mcParticle;
   };
 
   // -----------------------------------------------------------------------
@@ -69,7 +67,7 @@ namespace LHCb
   public:
     
     /// Default Packing Version
-    static char defaultPackingVersion() { return 0; }
+    static char defaultPackingVersion() { return 1; }
 
   public:
 
@@ -101,7 +99,7 @@ namespace LHCb
 
   private:
 
-    /// Data packing version (not used as yet, but for any future schema evolution)
+    /// Data packing version
     char   m_packingVersion;
 
     /// The packed data objects
@@ -133,12 +131,12 @@ namespace LHCb
   private:
 
     /// Default Constructor hidden
-    MCRichDigitSummaryPacker() : m_parent(NULL) {}
+    MCRichDigitSummaryPacker() {}
 
   public:
 
     /// Default Constructor
-    MCRichDigitSummaryPacker( GaudiAlgorithm & parent ) : m_parent(&parent) {}
+    MCRichDigitSummaryPacker( const GaudiAlgorithm & p ) : m_pack(&p) {}
 
   public:
 
@@ -157,15 +155,12 @@ namespace LHCb
   private:
 
     /// Access the parent algorithm
-    GaudiAlgorithm& parent() const { return *m_parent; }
+    const GaudiAlgorithm& parent() const { return *(m_pack.parent()); }
 
   private:
 
     /// Standard packing of quantities into integers ...
     StandardPacker m_pack;
-
-    /// Pointer to parent algorithm
-    GaudiAlgorithm * m_parent;
 
   };
 

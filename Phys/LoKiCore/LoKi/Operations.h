@@ -1,4 +1,4 @@
-// $Id: Operations.h 120216 2011-03-15 16:07:40Z ibelyaev $
+// $Id: Operations.h 185685 2015-03-19 14:29:43Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_OPERATIONS_H 
 #define LOKI_OPERATIONS_H 1
@@ -102,7 +102,7 @@ namespace LoKi
                          _b.begin () , _ib , std::back_inserter( _r ) ) ;
         //
         return _r ;
-      }  
+      }
       // ======================================================================
     } ;
     // ========================================================================
@@ -277,6 +277,41 @@ namespace LoKi
         //
       } 
       // ======================================================================
+    } ;
+    // ========================================================================
+    /** @struct NonEmptyUnion 
+     *  Helper structure to represent the non-empty union of two containters 
+     *  It is empty if some of the container is empty 
+     *  @see LoKi::Operations::Union            
+     *  @see LoKi::BasicFunctors::Pipe
+     *  @see LoKi::BasicFunctors::Source
+     *  @author Vanya Belyaev Ivan.BElyaev@nikhef.nl
+     *  @date 2010-06-05
+     */
+    template <class TYPE> 
+    struct NoEmptyUnion : public std::binary_function < std::vector<TYPE> , 
+                                                        std::vector<TYPE> , 
+                                                        std::vector<TYPE> >
+    {
+      // ======================================================================
+      typedef std::vector<TYPE> _Type ;
+      // ======================================================================
+      /// the main method 
+      _Type operator() ( const _Type& a , const _Type& b )  const
+      {
+        // 
+        if ( &a == &b         ) { return a ; } // RETURN
+        //
+        if      (  a.empty () ) { return a ; } // RETURN EMPTY  
+        else if (  b.empty () ) { return b ; } // RETURN EMPTY 
+        //
+        return m_union ( a , b ) ;
+      }
+      // ======================================================================
+    private:
+      // ======================================================================
+      Union<TYPE> m_union ;
+      // = ====================================================================
     } ;
     // ========================================================================
   } //                                    the end of namespace LoKi::Operations 

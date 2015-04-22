@@ -15,8 +15,6 @@
 #include "GaudiKernel/MsgStream.h"
 #include "GaudiKernel/StatusCode.h"
 
-class GaudiAlgorithm;
-
 namespace LHCb
 {
   // -----------------------------------------------------------------------
@@ -55,7 +53,7 @@ namespace LHCb
     int   energy;
     int   pmomx, pmomy, pmomz;
     int   hpdqwx, hpdqwy, hpdqwz;
-    int   mcrichhit;
+    long long mcrichhit;
 
   };
 
@@ -86,7 +84,7 @@ namespace LHCb
   public:
     
     /// Default Packing Version
-    static char defaultPackingVersion() { return 0; }
+    static char defaultPackingVersion() { return 1; }
 
   public:
 
@@ -118,7 +116,7 @@ namespace LHCb
 
   private:
 
-    /// Data packing version (not used as yet, but for any future schema evolution)
+    /// Data packing version
     char   m_packingVersion;
 
     /// The packed data objects
@@ -155,8 +153,8 @@ namespace LHCb
   public:
 
     /// Constructor
-    MCRichOpticalPhotonPacker( GaudiAlgorithm & parent )
-      : m_parent(&parent), PhotEnScale(5.0e8) {}
+    MCRichOpticalPhotonPacker( const GaudiAlgorithm & parent )
+      : m_pack(&parent), PhotEnScale(5.0e8) {}
 
   public:
 
@@ -175,15 +173,12 @@ namespace LHCb
   private:
 
     /// Access the parent algorithm
-    GaudiAlgorithm& parent() const { return *m_parent; }
+    const GaudiAlgorithm& parent() const { return *(m_pack.parent()); }
 
   private:
 
     /// Standard packing of quantities into integers ...
     StandardPacker m_pack;
-
-    /// Pointer to parent algorithm
-    GaudiAlgorithm * m_parent;
 
   private:
     

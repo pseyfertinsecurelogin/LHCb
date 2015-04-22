@@ -1,7 +1,7 @@
 ################################################################################
 # Package: LHCbMath
 ################################################################################
-gaudi_subdir(LHCbMath v3r54)
+gaudi_subdir(LHCbMath v3r56)
 
 gaudi_depends_on_subdirs(GaudiGSL
                          GaudiKernel
@@ -13,6 +13,7 @@ find_package(GSL)
 find_package(ROOT COMPONENTS MathCore GenVector)
 find_package(VDT)
 find_package(Eigen)
+find_package(pyanalysis)
 
 gaudi_install_headers(LHCbMath)
 #gaudi_install_headers(Eigen)
@@ -31,7 +32,7 @@ gaudi_add_dictionary(LHCbMath
                      LINK_LIBRARIES Boost GSL ROOT GaudiKernel LHCbMathLib
                      OPTIONS "-U__MINGW32__")
 
-set_property(SOURCE src/Similarity_AVX.cpp PROPERTY COMPILE_FLAGS " -mavx -O3 " )
+set_property(SOURCE src/Similarity_AVX.cpp PROPERTY COMPILE_FLAGS " -mavx -O3 -fabi-version=0 " )
 set_property(SOURCE src/Similarity_SSE3.cpp PROPERTY COMPILE_FLAGS " -msse3 -O3 " )
 set_property(SOURCE src/Similarity_generic.cpp PROPERTY COMPILE_FLAGS " -O3 " )
 
@@ -102,6 +103,10 @@ if(GAUDI_BUILD_TESTS)
                        LINK_LIBRARIES Boost GSL ROOT GaudiKernel LHCbMathLib)
   gaudi_add_executable(TestSimilarity
                        tests/TestSimilarity.cpp
+                       INCLUDE_DIRS Boost GSL ROOT
+                       LINK_LIBRARIES Boost GSL ROOT GaudiKernel LHCbMathLib)
+  gaudi_add_executable(TestSimilarityTiming
+                       tests/TestSimilarityTiming.cpp
                        INCLUDE_DIRS Boost GSL ROOT
                        LINK_LIBRARIES Boost GSL ROOT GaudiKernel LHCbMathLib)
   gaudi_add_executable(TestEigenGeometry   

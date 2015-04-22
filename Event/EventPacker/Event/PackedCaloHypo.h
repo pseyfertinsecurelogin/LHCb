@@ -1,9 +1,10 @@
-// $Id: PackedCaloHypo.h,v 1.4 2009-11-07 12:20:26 jonrob Exp $
+
 #ifndef EVENT_PACKEDCALOHYPO_H
 #define EVENT_PACKEDCALOHYPO_H 1
 
 #include "GaudiKernel/DataObject.h"
 #include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/GaudiException.h"
 
 // Kernel
 #include "Event/StandardPacker.h"
@@ -13,8 +14,6 @@
 
 #include <string>
 #include <vector>
-
-class GaudiAlgorithm;
 
 namespace LHCb
 {
@@ -102,9 +101,14 @@ namespace LHCb
   {
 
   public:
+    
+    /// Default Packing Version
+    static char defaultPackingVersion() { return 1; }
+    
+  public:
 
     /// Standard constructor
-    PackedCaloHypos( )
+    PackedCaloHypos( ) : m_packingVersion(0)
     {
       m_vect.reserve(100);
       m_refs.reserve(1000);
@@ -122,13 +126,24 @@ namespace LHCb
     std::vector<PackedCaloHypo>& hypos()              { return m_vect; }
     const std::vector<PackedCaloHypo>& hypos() const  { return m_vect; }
 
-    std::vector<int>& refs()                          { return m_refs; }
-    const std::vector<int>& refs() const              { return m_refs; }
+    std::vector<long long>& refs()                    { return m_refs; }
+    const std::vector<long long>& refs() const        { return m_refs; }
+
+  public:
+
+    /// Set the packing version
+    void setPackingVersion( const char ver ) { m_packingVersion = ver; }
+
+    /// Access the packing version
+    char packingVersion() const { return m_packingVersion; }
 
   private:
 
     std::vector<PackedCaloHypo> m_vect;
-    std::vector<int>            m_refs;
+    std::vector<long long>      m_refs;
+
+    /// Data packing version
+    char m_packingVersion;
 
   };
 
@@ -152,12 +167,12 @@ namespace LHCb
   private:
 
     /// Default Constructor hidden
-    CaloHypoPacker() : m_parent(NULL) {}
+    CaloHypoPacker() {}
 
   public:
 
     /// Default Constructor
-    CaloHypoPacker( GaudiAlgorithm & parent ) : m_parent(&parent) {}
+    CaloHypoPacker( const GaudiAlgorithm & p ) : m_pack(&p) {}
 
   public:
 
@@ -176,19 +191,29 @@ namespace LHCb
   private:
 
     /// Access the parent algorithm
-    GaudiAlgorithm& parent() const { return * m_parent; }
+    const GaudiAlgorithm& parent() const { return *(m_pack.parent()); }
 
     /// Safe sqrt ...
     inline double safe_sqrt( const double x ) const
     { return ( x > 0 ? std::sqrt(x) : 0.0 ); }
 
+    /// Check if the given packing version is supported
+    bool isSupportedVer( const char& ver ) const
+    {
+      const bool OK = ( 1 == ver || 0 == ver );
+      if ( !OK )
+      {
+        std::ostringstream mess;
+        mess << "Unknown packed data version " << (int)ver;
+        throw GaudiException( mess.str(), "CaloHypoPacker", StatusCode::FAILURE );
+      }
+      return OK;
+    }
+
   private:
 
     /// Standard packing of quantities into integers ...
     StandardPacker m_pack;
-
-    /// Pointer to parent algorithm
-    GaudiAlgorithm * m_parent;
 
   };
 

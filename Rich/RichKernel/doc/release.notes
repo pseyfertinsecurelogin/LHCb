@@ -1,8 +1,19 @@
-!------------------------------------------------------------------------------
+------------------------------------------------------------------------------
 ! Package     : Rich/RichKernel
 ! Responsible : Chris Jones
 ! Purpose     : General purpose RICH classes
 !------------------------------------------------------------------------------
+
+!========================= RichKernel v7r59 2015-04-20 =========================
+! 2015-03-10 - Chris Jones
+ - Add common option to toolRegistry() method.
+
+! 2015-03-09 - Chris Jones
+ - Suppress info messages about MC Association tool type change from the tool
+   registry, as this change is normal and always happens when running on data.
+
+! 2015-03-09 - Chris Jones
+ - Add an additional iteration to the calculation in fast_cbrt.
 
 !========================= RichKernel v7r58 2015-02-23 =========================
 ! 2015-02-08 - Chris Jones

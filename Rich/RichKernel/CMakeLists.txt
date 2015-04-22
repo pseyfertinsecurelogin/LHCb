@@ -1,7 +1,7 @@
 ################################################################################
 # Package: RichKernel
 ################################################################################
-gaudi_subdir(RichKernel v7r58)
+gaudi_subdir(RichKernel v7r59)
 
 gaudi_depends_on_subdirs(Event/DAQEvent
                          GaudiAlg
@@ -42,4 +42,3 @@ gaudi_add_dictionary(RichKernel
 #endif()
 
 gaudi_install_python_modules()
-

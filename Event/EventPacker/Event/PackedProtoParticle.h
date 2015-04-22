@@ -14,12 +14,11 @@
 // Event
 #include "Event/ProtoParticle.h"
 
-class GaudiAlgorithm;
-
 namespace LHCb
 {
 
   /** @class PackedProtoParticle PackedProtoParticle.h Event/PackedProtoParticle.h
+   *
    *  This is the packed version of the ProtoParticle
    *
    *  @author Olivier Callot
@@ -45,9 +44,9 @@ namespace LHCb
     {}
 
     long long key;
-    int track;
-    int richPID;
-    int muonPID;
+    long long track;
+    long long richPID;
+    long long muonPID;
     unsigned short int firstHypo;
     unsigned short int lastHypo;
     unsigned short int firstExtra;
@@ -65,33 +64,61 @@ namespace LHCb
     static const std::string& InStream = "/pRec/ProtoP/Custom";
   }
 
+  /** @class PackedProtoParticles PackedProtoParticle.h Event/PackedProtoParticle.h
+   *
+   *  Container of PackedProtoParticle objects
+   *
+   *  @author Olivier Callot
+   *  @date   2008-11-13
+   */
   class PackedProtoParticles : public DataObject 
   {
+
+  public:
+    
+    /// Default Packing Version
+    static char defaultPackingVersion() { return 1; }
     
   public: 
   
-    /// Standard constructor
-    PackedProtoParticles( ) { }
+    /** Standard constructor
+     *  Note the default packing version here must stay as zero, for compatibility
+     *  with data written before the packing version was added, to implicitly
+     *  define the version as 0 for this data  */
+    PackedProtoParticles( ) : m_packingVersion(0) { } 
 
     virtual ~PackedProtoParticles( ) {}; ///< Destructor
 
     virtual const CLID& clID()  const { return PackedProtoParticles::classID(); }
     static  const CLID& classID()     { return CLID_PackedProtoParticles;       }
 
-    std::vector<PackedProtoParticle>& protos()                     { return m_vect; }
-    const std::vector<PackedProtoParticle>& protos() const         { return m_vect; }
+  public:
 
-    std::vector<int>& refs()                           { return m_refs; }
-    const std::vector<int>& refs() const               { return m_refs; }
+    std::vector<PackedProtoParticle>& protos()             { return m_vect; }
+    const std::vector<PackedProtoParticle>& protos() const { return m_vect; }
+
+    std::vector<long long>& refs()                         { return m_refs; }
+    const std::vector<long long>& refs() const             { return m_refs; }
  
     std::vector<std::pair<int,int> >& extras()             { return m_extra; }
     const std::vector<std::pair<int,int> >& extras() const { return m_extra; }
 
+  public:
+
+    /// Set the packing version
+    void setPackingVersion( const char ver ) { m_packingVersion = ver; }
+
+    /// Access the packing version
+    char packingVersion() const { return m_packingVersion; }
+
   private:
 
     std::vector<PackedProtoParticle> m_vect;
-    std::vector<int>                 m_refs;
+    std::vector<long long>           m_refs;
     std::vector<std::pair<int,int> > m_extra;
+
+    /// Data packing version
+    char m_packingVersion;
 
   };
 
@@ -115,12 +142,12 @@ namespace LHCb
   private:
 
     /// Default Constructor hidden
-    ProtoParticlePacker() : m_parent(NULL) {}
+    ProtoParticlePacker() {}
 
   public:
 
     /// Default Constructor
-    ProtoParticlePacker( GaudiAlgorithm & parent ) : m_parent(&parent) {}
+    ProtoParticlePacker( const GaudiAlgorithm & p ) : m_pack(&p) {}
 
   public:
 
@@ -154,15 +181,12 @@ namespace LHCb
   private:
 
     /// Access the parent algorithm
-    GaudiAlgorithm& parent() const { return * m_parent; }
+    inline const GaudiAlgorithm& parent() const { return *(m_pack.parent()); }
 
   private:
 
     /// Standard packing of quantities into integers ...
     StandardPacker m_pack;
-
-    /// Pointer to parent algorithm
-    GaudiAlgorithm * m_parent;
 
   };
 

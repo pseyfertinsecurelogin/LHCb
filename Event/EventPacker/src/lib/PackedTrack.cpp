@@ -25,11 +25,7 @@ void TrackPacker::pack( const Data & track,
 
   //== Store the LHCbID as int
   ptrack.firstId    = ptracks.ids().size();
-  for ( std::vector<LHCb::LHCbID>::const_iterator itI = track.lhcbIDs().begin();
-        track.lhcbIDs().end() != itI; ++itI )
-  {
-    ptracks.ids().push_back( (*itI).lhcbID() );
-  }
+  for ( const auto& id : track.lhcbIDs() ) { ptracks.ids().push_back( id.lhcbID() ); }
   ptrack.lastId    = ptracks.ids().size();
   if( UNLIKELY( parent().msgLevel(MSG::DEBUG) ) )
     parent().debug() << "Stored LHCbIDs from "
@@ -37,11 +33,7 @@ void TrackPacker::pack( const Data & track,
 
   //== Handle the states in the track
   ptrack.firstState = ptracks.states().size();
-  for ( std::vector<LHCb::State*>::const_iterator itS = track.states().begin();
-        track.states().end() != itS; ++itS )
-  {
-    convertState( **itS, ptracks );
-  }
+  for ( const auto* S : track.states() ) { convertState( *S, ptracks ); }
   ptrack.lastState = ptracks.states().size();
   if( UNLIKELY( parent().msgLevel(MSG::DEBUG) ) )
     parent().debug() << "Stored states from " << ptrack.firstState
@@ -49,11 +41,10 @@ void TrackPacker::pack( const Data & track,
 
   //== Handles the ExtraInfo
   ptrack.firstExtra = ptracks.extras().size();
-  for ( GaudiUtils::VectorMap<int,double>::iterator itE = track.extraInfo().begin();
-        track.extraInfo().end() != itE; ++itE )
+  for ( const auto& E : track.extraInfo() )
   {
-    ptracks.extras().push_back( std::pair<int,int>( (*itE).first,
-                                                    m_pack.fltPacked((*itE).second) ) );
+    ptracks.extras().push_back( std::make_pair( E.first,
+                                                m_pack.fltPacked(E.second) ) );
   }
   ptrack.lastExtra = ptracks.extras().size();
 
@@ -154,14 +145,11 @@ void TrackPacker::unpack( const PackedData       & ptrack,
   std::vector<LHCb::LHCbID>::iterator lhcbit = lhcbids.begin() ;
   for ( int kId = firstId; lastId > kId; ++kId, ++lhcbit )
   {
-    const unsigned int& id = *(ptracks.ids().begin()+kId);
-    *lhcbit = LHCb::LHCbID( id ) ;
+    *lhcbit = LHCb::LHCbID( *(ptracks.ids().begin()+kId) ) ;
   }
   // schema change: sorting no longer needed when we write DSTs with sorted lhcbids
   if ( ptracks.version() <= 1 )
-  {
-    std::sort( lhcbids.begin(), lhcbids.end() ) ;
-  }
+  { std::sort( lhcbids.begin(), lhcbids.end() ); }
   track.addSortedToLhcbIDs( lhcbids ) ;
 
   int firstState = ptrack.firstState;
@@ -206,7 +194,7 @@ void TrackPacker::unpack( const PackedData       & ptrack,
 
   for ( int kEx = firstExtra; lastExtra > kEx; ++kEx )
   {
-    const std::pair<int,int>& info = *(ptracks.extras().begin()+kEx);
+    const auto& info = *(ptracks.extras().begin()+kEx);
     track.addInfo( info.first, m_pack.fltPacked( info.second ) );
   }
 
@@ -239,10 +227,8 @@ void TrackPacker::unpack( const PackedDataVector & ptracks,
   // reset the cached variables to handle the wrapping bug ...
   resetWrappingCounts();
 
-  for ( std::vector<PackedTrack>::const_iterator itS = ptracks.tracks().begin();
-        ptracks.tracks().end() != itS; ++itS )
+  for ( const auto& ptrack : ptracks.tracks() )
   {
-    const LHCb::PackedTrack& ptrack = (*itS);
     LHCb::Track* track = new LHCb::Track( );
     //parent().debug() << "Unpacked Track key=" << ptrack.key << endmsg;
     tracks.insert( track, ptrack.key );

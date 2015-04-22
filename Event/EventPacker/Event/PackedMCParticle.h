@@ -22,14 +22,23 @@ namespace LHCb
 
     /// Default Constructor
     PackedMCParticle() :
-      key(0), px(0), py(0), pz(0), mass(0), PID(0),
-      originVertex(-1)
+      key(0), 
+      px(0), py(0), pz(0), 
+      mass(0), 
+      PID(0),
+      originVertex(-1),
+      flags(0)
     {}
 
     /// copy constructor
     PackedMCParticle( const PackedMCParticle& c ) :
-      key( c.key), px( c.px), py(c.py), pz(c.pz), mass(c.mass), PID( c.PID),
-      originVertex( c.originVertex ), endVertices( c.endVertices)
+      key(c.key), 
+      px(c.px), py(c.py), pz(c.pz), 
+      mass(c.mass), 
+      PID(c.PID),
+      originVertex(c.originVertex), 
+      endVertices(c.endVertices),
+      flags(c.flags)
     {}
 
     int key;
@@ -38,8 +47,9 @@ namespace LHCb
     int pz;
     float mass;
     int PID;
-    int originVertex;
-    std::vector<int>endVertices;
+    long long originVertex;
+    std::vector<long long> endVertices;
+    unsigned int flags;
 
   };
 
@@ -52,6 +62,7 @@ namespace LHCb
   }
 
   /** @class PackedMCParticles Event/PackedMCParticle.h
+   *
    *  DataObject containing a vector of packed MCParticles
    *
    *  @author Olivier Callot
@@ -61,24 +72,42 @@ namespace LHCb
   {
 
   public:
+    
+    /// Default Packing Version
+    static char defaultPackingVersion() { return 1; }
+
+  public:
 
     /// Standard constructor
-    PackedMCParticles( ) {}
+    PackedMCParticles( ) : m_packingVersion(0) {}
 
     virtual ~PackedMCParticles( ) {}; ///< Destructor
+
+  public:
+
     virtual const CLID& clID() const { return PackedMCParticles::classID(); }
     static  const CLID& classID()    { return CLID_PackedMCParticles;       }
 
-    void addEntry(  PackedMCParticle& obj ) { m_vect.push_back( obj ); }
-    std::vector<PackedMCParticle>::const_iterator begin() const { return m_vect.begin(); }
-    std::vector<PackedMCParticle>::const_iterator end()   const { return m_vect.end(); }
+  public:
 
-    void reserve( const unsigned int size ) { m_vect.reserve(size); }
-    unsigned int size() const { return m_vect.size(); }
+    std::vector<PackedMCParticle>&       mcParts()       { return m_vect; }
+    const std::vector<PackedMCParticle>& mcParts() const { return m_vect; }
 
+  public:
+    
+    /// Set the packing version
+    void setPackingVersion( const char ver ) { m_packingVersion = ver; }
+    
+    /// Access the packing version
+    char packingVersion() const { return m_packingVersion; }
+    
   private:
 
+    /// Packed MCParticles
     std::vector<PackedMCParticle> m_vect;
+
+    /// Data packing version
+    char   m_packingVersion;
 
   };
 
