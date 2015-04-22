@@ -1,4 +1,4 @@
-// $Id: CounterAlg.cpp 155775 2013-04-29 09:31:21Z cattanem $
+// $Id$
 // ============================================================================
 // Include files 
 // ============================================================================
@@ -29,9 +29,9 @@
  *  contributions and advices from G.Raven, J.van Tilburg, 
  *  A.Golutvin, P.Koppenburg have been used in the design.
  *
- *                    $Revision: 155775 $
- *  Last modification $Date: 2013-04-29 11:31:21 +0200 (Mon, 29 Apr 2013) $
- *                 by $Author: cattanem $
+ *                    $Revision$
+ *  Last modification $Date$
+ *                 by $Author$
  */
 // ============================================================================
 namespace LoKi 

@@ -1,6 +1,6 @@
 #!/usr/bin/env gaudirun.py
 # =============================================================================
-# $Id: PartPropAlg.py 95074 2010-10-22 15:06:40Z ibelyaev $
+# $Id$
 # =============================================================================
 ## @file
 #  The configurationi file to run QMTest for the package Kernel/PartProp
@@ -12,7 +12,7 @@ The configurationi file to run QMTest for the package Kernel/PartProp
 """
 # =============================================================================
 __author__  =  "Vanya BELYAEV Ivan.Belyaev@nikhef.nl"
-__version__ =  "CVS tag $Name: not supported by cvs2svn $, version $Revision: 95074 $"
+__version__ =  "CVS tag $Name: not supported by cvs2svn $, version $Revision$"
 # =============================================================================
 
 from Gaudi.Configuration import *

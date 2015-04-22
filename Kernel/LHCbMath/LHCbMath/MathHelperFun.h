@@ -1,4 +1,4 @@
-// $Id: MathHelperFun.h 124901 2011-06-16 12:46:28Z ibelyaev $
+// $Id$
 #ifndef KERNEL_MATHHELPERFUN_H 
 #define KERNEL_MATHHELPERFUN_H 1
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # =============================================================================
-# $Id: functions.py 155779 2013-04-29 11:00:51Z cattanem $ 
+# $Id$ 
 # =============================================================================
 ## @file functions.py LoKiMC/functions.py
 #  The set of basic functions from LoKiMC library
@@ -31,7 +31,7 @@ A.Golutvin, P.Koppenburg have been used in the design.
 # =============================================================================
 __author__  = "Vanya BELYAEV ibelyaev@physics.syr.edu" 
 __date__    = "????-??-??"
-__version__ = "$Revision: 155779 $ "
+__version__ = "$Revision$ "
 # =============================================================================
 
 import LoKiCore.decorators as _LoKiCore

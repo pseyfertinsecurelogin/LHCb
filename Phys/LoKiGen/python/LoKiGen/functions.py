@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # =============================================================================
-# $Id: functions.py 166436 2014-01-06 11:41:17Z marcocle $
+# $Id$
 # =============================================================================
 ## @file LoKiGen/functions.py
 #  The full set of useful objects from LoKiGen library
@@ -16,9 +16,9 @@
 #  @author Vanya BELYAEV ibelyaev@physics.syr.edu
 #  @date 2007-12-01
 #
-#                    $Revision: 166436 $
-#  Last modification $Date: 2014-01-06 12:41:17 +0100 (Mon, 06 Jan 2014) $
-#                 by $Author: marcocle $
+#                    $Revision$
+#  Last modification $Date$
+#                 by $Author$
 # =============================================================================
 """
 The full set of useful objects from LoKiGen library
@@ -35,7 +35,7 @@ A.Golutvin, P.Koppenburg have been used in the design.
 # =============================================================================
 __author__  = "Vanya BELYAEV <ibelyaev@physics.syr.edu>"
 __date__    = "2007-12-01"
-__version__ = "$Revision: 166436 $"
+__version__ = "$Revision$"
 # =============================================================================
 
 import LoKiCore.decorators as _LoKiCore

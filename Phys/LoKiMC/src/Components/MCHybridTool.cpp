@@ -1,4 +1,4 @@
-// $Id: MCHybridTool.cpp 183391 2015-02-02 14:08:04Z ibelyaev $
+// $Id$
 // ============================================================================
 // Include files 
 // ============================================================================
@@ -29,9 +29,9 @@
  *
  *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
  *  @date 2004-06-29
- *                    $Revision: 183391 $
- *  Last modification $Date: 2015-02-02 15:08:04 +0100 (Mon, 02 Feb 2015) $
- *                 by $Author: ibelyaev $
+ *                    $Revision$
+ *  Last modification $Date$
+ *                 by $Author$
  */
 namespace LoKi 
 {

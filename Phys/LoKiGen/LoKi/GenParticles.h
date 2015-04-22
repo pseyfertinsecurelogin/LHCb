@@ -1,4 +1,4 @@
-// $Id: GenParticles.h 183167 2015-01-23 14:27:42Z ibelyaev $
+// $Id$
 // ============================================================================
 #ifndef LOKI_GENPARTICLES_H
 #define LOKI_GENPARTICLES_H 1
@@ -37,9 +37,9 @@
  *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
  *  @date 2006-01-23
  *
- *                    $Revision: 183167 $
- *  Last modification $Date: 2015-01-23 15:27:42 +0100 (Fri, 23 Jan 2015) $
- *                 by $Author: ibelyaev $
+ *                    $Revision$
+ *  Last modification $Date$
+ *                 by $Author$
  */
 // ============================================================================
 namespace LoKi

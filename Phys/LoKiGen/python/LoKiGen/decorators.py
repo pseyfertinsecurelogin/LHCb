@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # =============================================================================
-# $Id: decorators.py 155778 2013-04-29 10:03:16Z cattanem $ 
+# $Id$ 
 # =============================================================================
 ## @file LoKiGen/decorators.py
 #  The set of basic decorator for objects from LoKiGen library
@@ -15,9 +15,9 @@
 #
 #  @author Vanya BELYAEV ibelyaev@physics.syr.edu
 #
-#                    $Revision: 155778 $
-#  Last modification $Date: 2013-04-29 12:03:16 +0200 (Mon, 29 Apr 2013) $
-#                 by $Author: cattanem $
+#                    $Revision$
+#  Last modification $Date$
+#                 by $Author$
 # =============================================================================
 """
 The set of basic decorators for obejcts from LoKiGen library
@@ -34,7 +34,7 @@ A.Golutvin, P.Koppenburg have been used in the design.
 # =============================================================================
 __author__  = "Vanya BELYAEV ibelyaev@physics.syr.edu" 
 __date__    = "????-??-??"
-__version__ = "$Revision: 155778 $ "
+__version__ = "$Revision$ "
 # =============================================================================
 
 from   LoKiGen.functions   import *

@@ -1,4 +1,4 @@
-// $Id: LoKiGenDict.h 169182 2014-02-21 16:21:46Z marcocle $
+// $Id$
 // ============================================================================
 #ifndef LOKI_LOKIGENDICT_H
 #define LOKI_LOKIGENDICT_H 1
@@ -63,9 +63,9 @@
  *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
  *  @date 2007-12-01
  *
- *                    $Revision: 169182 $
- *  Last modification $Date: 2014-02-21 17:21:46 +0100 (Fri, 21 Feb 2014) $
- *                 by $Author: marcocle $
+ *                    $Revision$
+ *  Last modification $Date$
+ *                 by $Author$
  */
 // ============================================================================
 namespace LoKi

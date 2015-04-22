@@ -1,4 +1,4 @@
-// $Id: MCDecays.h 162964 2013-09-30 12:48:44Z piedavid $
+// $Id$
 // ============================================================================
 #ifndef LOKI_MCDECAYS_H
 #define LOKI_MCDECAYS_H 1

@@ -1,4 +1,4 @@
-// $Id: MCHybridEngineActor.cpp 155779 2013-04-29 11:00:51Z cattanem $
+// $Id$
 // ============================================================================
 // Include files 
 // ============================================================================
@@ -25,9 +25,9 @@
  *  @date 2004-06-29 
  *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
  *
- *                    $Revision: 155779 $
- *  Last modification $Date: 2013-04-29 13:00:51 +0200 (Mon, 29 Apr 2013) $
- *                 by $Author: cattanem $
+ *                    $Revision$
+ *  Last modification $Date$
+ *                 by $Author$
  */
 // ============================================================================
 // helper method to descrease number of lines 

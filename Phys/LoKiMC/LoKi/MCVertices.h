@@ -1,4 +1,4 @@
-// $Id: MCVertices.h 182540 2015-01-15 13:54:38Z ibelyaev $
+// $Id$
 // ============================================================================
 #ifndef LOKI_MCVERTICES_H
 #define LOKI_MCVERTICES_H 1

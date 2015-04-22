@@ -1,4 +1,4 @@
-// $Id: Nodes.h 169290 2014-02-24 11:31:08Z marcocle $
+// $Id$
 // ============================================================================
 #ifndef DAVINCI_DECAYNODES_H
 #define DAVINCI_DECAYNODES_H 1

@@ -1,4 +1,4 @@
-// $Id: LoKiMCDict.h 140459 2012-05-24 13:13:19Z ibelyaev $
+// $Id$
 // ============================================================================
 #ifndef LOKI_LOKIMCDICT_H 
 #define LOKI_LOKIMCDICT_H 1

@@ -1,4 +1,4 @@
-// $Id: GenHybridEngineActor.h 169182 2014-02-21 16:21:46Z marcocle $
+// $Id$
 // ===========================================================================
 #ifndef LOKI_GENCUTSHOLDER_H
 #define LOKI_GENCUTSHOLDER_H 1
@@ -20,9 +20,9 @@
  *  contributions and advices from G.Raven, J.van Tilburg,
  *  A.Golutvin, P.Koppenburg have been used in the design.
  *
- *                    $Revision: 169182 $
- *  Last modification $Date: 2014-02-21 17:21:46 +0100 (Fri, 21 Feb 2014) $
- *                 by $Author: marcocle $
+ *                    $Revision$
+ *  Last modification $Date$
+ *                 by $Author$
  */
 // ============================================================================
 namespace LoKi

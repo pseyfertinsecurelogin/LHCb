@@ -1,4 +1,4 @@
-// $Id: UniqueKeeper.h 115323 2011-01-14 08:08:25Z cattanem $
+// $Id$
 // ============================================================================
 #ifndef LOKI_UNIQUEKEEPER_H 
 #define LOKI_UNIQUEKEEPER_H 1

@@ -1,4 +1,4 @@
-// $Id: MatrixTransforms.h 182111 2015-01-05 12:40:43Z graven $
+// $Id$
 // ============================================================================
 #ifndef LHCBMATH_MATRIXTRANSFORMS_H 
 #define LHCBMATH_MATRIXTRANSFORMS_H 1

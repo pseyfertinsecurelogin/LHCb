@@ -1,4 +1,4 @@
-// $Id: RangeList.h 53291 2010-08-05 14:35:53Z ibelyaev $
+// $Id$
 // ============================================================================
 #ifndef LOKI_RANGELIST_H 
 #define LOKI_RANGELIST_H 1

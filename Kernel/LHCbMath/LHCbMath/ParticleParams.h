@@ -1,4 +1,4 @@
-// $Id: ParticleParams.h 124901 2011-06-16 12:46:28Z ibelyaev $
+// $Id$
 // ============================================================================
 #ifndef LHCBMATH_PARTICLEPARAMS_H 
 #define LHCBMATH_PARTICLEPARAMS_H 1

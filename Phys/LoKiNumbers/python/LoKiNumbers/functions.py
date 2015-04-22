@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # =============================================================================
-# $Id: functions.py 185279 2015-03-12 12:05:08Z ibelyaev $
+# $Id$
 # =============================================================================
 ## @file LoKiNumbers/functions.py
 #  The full set of useful objects from LoKiNumbers library
@@ -15,9 +15,9 @@
 #
 #  @author Vanya BELYAEV ibelyaev@physics.syr.edu
 #
-# $Revision: 185279 $
-# Last modification $Date: 2015-03-12 13:05:08 +0100 (Thu, 12 Mar 2015) $
-#                by $Author: ibelyaev $
+# $Revision$
+# Last modification $Date$
+#                by $Author$
 # =============================================================================
 """
 Few useful objects from LoKiNumbers library
@@ -30,15 +30,15 @@ Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas,
 contributions and advices from G.Raven, J.van Tilburg,
 A.Golutvin, P.Koppenburg have been used in the design.
 
- $Revision: 185279 $
- Last modification $Date: 2015-03-12 13:05:08 +0100 (Thu, 12 Mar 2015) $
-                by $Author: ibelyaev $
+ $Revision$
+ Last modification $Date$
+                by $Author$
 
 """
 # =============================================================================
 __author__  = "Vanya BELYAEV ibelyaev@physics.syr.edu"
 __date__    = ' xxxx-xx-xx '
-__version__ = " version $Revision: 185279 $ "
+__version__ = " version $Revision$ "
 # =============================================================================
 
 # Namespaces:

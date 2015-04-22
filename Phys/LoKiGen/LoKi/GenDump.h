@@ -1,4 +1,4 @@
-// $Id: GenDump.h 155778 2013-04-29 10:03:16Z cattanem $
+// $Id$
 // ============================================================================
 #ifndef LOKI_GENDUMP_H 
 #define LOKI_GENDUMP_H 1
@@ -24,9 +24,9 @@
  *  @author Vanya Belyaev Ivan.Belyaev@cern.ch
  *  @date   2011-06-03
  * 
- *                    $Revision: 155778 $
- *  Last modification $Date: 2013-04-29 12:03:16 +0200 (Mon, 29 Apr 2013) $
- *                 by $Author: cattanem $
+ *                    $Revision$
+ *  Last modification $Date$
+ *                 by $Author$
  */
 // ============================================================================
 namespace LoKi 

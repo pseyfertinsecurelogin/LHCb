@@ -1,4 +1,4 @@
-// $Id: Operations.h 185685 2015-03-19 14:29:43Z ibelyaev $
+// $Id$
 // ============================================================================
 #ifndef LOKI_OPERATIONS_H 
 #define LOKI_OPERATIONS_H 1

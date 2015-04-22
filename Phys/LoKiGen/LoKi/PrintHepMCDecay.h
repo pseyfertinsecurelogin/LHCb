@@ -1,4 +1,4 @@
-// $Id: PrintHepMCDecay.h 155778 2013-04-29 10:03:16Z cattanem $
+// $Id$
 // ============================================================================
 #ifndef LOKI_PRINTHEPMCDECAY_H 
 #define LOKI_PRINTHEPMCDECAY_H 1

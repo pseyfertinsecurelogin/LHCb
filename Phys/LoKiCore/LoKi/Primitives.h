@@ -1,4 +1,4 @@
-// $Id: Primitives.h 185903 2015-03-25 17:24:09Z ibelyaev $ 
+// $Id$ 
 // ============================================================================
 #ifndef LOKI_PRIMITIVES_H 
 #define LOKI_PRIMITIVES_H 1
@@ -55,9 +55,9 @@
  *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
  *  @date 2001-01-23 
  *  
- *                    $Revision: 185903 $
- *  Last modification $Date: 2015-03-25 18:24:09 +0100 (Wed, 25 Mar 2015) $
- *                 by $Author: ibelyaev $
+ *                    $Revision$
+ *  Last modification $Date$
+ *                 by $Author$
  */
 // ============================================================================
 namespace LoKi 

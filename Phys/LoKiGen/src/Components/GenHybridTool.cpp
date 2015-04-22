@@ -1,4 +1,4 @@
-// $Id: GenHybridTool.cpp 155778 2013-04-29 10:03:16Z cattanem $
+// $Id$
 // ============================================================================
 // Include files 
 // ============================================================================
@@ -29,9 +29,9 @@
  *
  *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
  *  @date 2004-06-29
- *                    $Revision: 155778 $
- *  Last modification $Date: 2013-04-29 12:03:16 +0200 (Mon, 29 Apr 2013) $
- *                 by $Author: cattanem $
+ *                    $Revision$
+ *  Last modification $Date$
+ *                 by $Author$
  */
 namespace LoKi 
 {

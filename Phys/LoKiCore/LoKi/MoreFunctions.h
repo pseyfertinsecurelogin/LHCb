@@ -1,4 +1,4 @@
-// $Id: MoreFunctions.h 53291 2010-08-05 14:35:53Z ibelyaev $
+// $Id$
 // ============================================================================
 #ifndef LOKI_MOREFUNCTIONS_H 
 #define LOKI_MOREFUNCTIONS_H 1

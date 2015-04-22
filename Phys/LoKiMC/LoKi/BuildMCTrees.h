@@ -1,4 +1,4 @@
-// $Id: BuildMCTrees.h 124207 2011-06-02 16:05:29Z ibelyaev $
+// $Id$
 // ============================================================================
 #ifndef LOKI_BUILDMCTREES_H 
 #define LOKI_BUILDMCTREES_H 1

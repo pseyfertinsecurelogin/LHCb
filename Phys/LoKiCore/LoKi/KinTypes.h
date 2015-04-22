@@ -1,4 +1,4 @@
-// $Id: KinTypes.h 182487 2015-01-14 16:55:10Z ibelyaev $
+// $Id$
 // ============================================================================
 #ifndef LOKI_KINTYPES_H 
 #define LOKI_KINTYPES_H 1

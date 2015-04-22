@@ -1,4 +1,4 @@
-// $Id: LHCbMathDict.h 186313 2015-04-03 10:48:44Z ibelyaev $
+// $Id$
 // ============================================================================
 #ifndef DICT_LHCBMATHDICT_H
 #define DICT_LHCBMATHDICT_H 1

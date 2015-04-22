@@ -1,4 +1,4 @@
-// $Id: IGenHybridFactory.h 155778 2013-04-29 10:03:16Z cattanem $
+// $Id$
 // ============================================================================
 #ifndef LOKI_IGENHYBRIDFACTORY_H 
 #define LOKI_IGENHYBRIDFACTORY_H 1
@@ -28,9 +28,9 @@
  *  contributions and advices from G.Raven, J.van Tilburg, 
  *  A.Golutvin, P.Koppenburg have been used in the design.
  *
- *                    $Revision: 155778 $
- *  Last modification $Date: 2013-04-29 12:03:16 +0200 (Mon, 29 Apr 2013) $
- *                 by $Author: cattanem $
+ *                    $Revision$
+ *  Last modification $Date$
+ *                 by $Author$
  */
 namespace LoKi
 {

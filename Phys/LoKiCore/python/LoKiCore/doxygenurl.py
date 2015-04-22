@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # =============================================================================
-# $Id: doxygenurl.py 166344 2013-12-19 15:04:14Z marcocle $
+# $Id$
 # =============================================================================
-# $URL: http://svn.cern.ch/guest/lhcb/LHCb/tags/Phys/LoKiCore/v11r23/python/LoKiCore/doxygenurl.py $
+# $URL$
 # =============================================================================
 ## @file LoKiCore/doxygenurl.py
 #
@@ -27,9 +27,9 @@
 #  @author Vanya BELYAEV ibelyaev@physics.syr.edu
 #  @date 2007-07-22
 #
-#  $Revision: 166344 $
-#  Last modification $Date: 2013-12-19 16:04:14 +0100 (Thu, 19 Dec 2013) $
-#                 by $Author: marcocle $
+#  $Revision$
+#  Last modification $Date$
+#                 by $Author$
 #
 # =============================================================================
 """
@@ -51,13 +51,13 @@ and the minor helper function
   This file is part of LoKi project:
   ``C++ ToolKit for Smart and Friendly Physics Analysis''
 
-$Revision: 166344 $
-Last modification $Date: 2013-12-19 16:04:14 +0100 (Thu, 19 Dec 2013) $
-               by $Author: marcocle $
+$Revision$
+Last modification $Date$
+               by $Author$
 
 """
 # =============================================================================
-__version__ = " SVN $Revision: 166344 $ "
+__version__ = " SVN $Revision$ "
 __author__  = " Vanya BELYAEV ibelyaev@physics.syr.edu "
 __date__    = " 2007-07-22"
 __all__     = (

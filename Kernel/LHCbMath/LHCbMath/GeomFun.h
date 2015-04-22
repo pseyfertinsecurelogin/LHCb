@@ -1,4 +1,4 @@
-// $Id: GeomFun.h 124901 2011-06-16 12:46:28Z ibelyaev $
+// $Id$
 // ============================================================================
 #ifndef LHCBMATH_GEOMFUN_H
 #define LHCBMATH_GEOMFUN_H 1

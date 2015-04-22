@@ -1,4 +1,4 @@
-// $Id: ParticleProperty.h 151438 2013-02-01 11:19:58Z ibelyaev $
+// $Id$
 // ============================================================================
 #ifndef LHCBKERNEL_PARTICLEPROPERTY_H
 #define LHCBKERNEL_PARTICLEPROPERTY_H 1

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # =============================================================================
-# $Id: deriv.py 186000 2015-03-28 16:26:34Z ibelyaev $
+# $Id$
 # =============================================================================
 ## @file  LHCbMath/deriv.py 
 #  Simple adaptive numerical differentiation (for pyroot/PyRoUts/Ostap)
@@ -13,9 +13,9 @@
 #  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
 #  @date   2014-06-06
 #  
-#                    $Revision: 186000 $
-#  Last modification $Date: 2015-03-28 17:26:34 +0100 (Sat, 28 Mar 2015) $
-#  by                $Author: ibelyaev $
+#                    $Revision$
+#  Last modification $Date$
+#  by                $Author$
 # =============================================================================
 """
 Simple adaptive numerical differentiation (for pyroot/PyRoUts/Ostap/...)
@@ -37,7 +37,7 @@ there are also object form:
 
 """
 # =============================================================================
-__version__ = "$Revision: 186000 $"
+__version__ = "$Revision$"
 __author__  = "Vanya BELYAEV Ivan.Belyaev@itep.ru"
 __date__    = "2014-06-06"
 __all__     = (

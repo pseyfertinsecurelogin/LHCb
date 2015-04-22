@@ -1,4 +1,4 @@
-// $Id: SolidIntersections.h 124901 2011-06-16 12:46:28Z ibelyaev $
+// $Id$
 #ifndef KERNEL_SOLIDINTERSECTIONS_H 
 #define KERNEL_SOLIDINTERSECTIONS_H 1
 

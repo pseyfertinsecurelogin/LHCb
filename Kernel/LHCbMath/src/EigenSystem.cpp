@@ -1,6 +1,6 @@
-// $Id: EigenSystem.cpp 124901 2011-06-16 12:46:28Z ibelyaev $
+// $Id$
 // ============================================================================
-// CVS tag $Name: not supported by cvs2svn $, version $Revision: 124901 $ 
+// CVS tag $Name: not supported by cvs2svn $, version $Revision$ 
 // ============================================================================
 // $Log: not supported by cvs2svn $ 
 // ============================================================================

@@ -1,4 +1,4 @@
-# $Id: __init__.py 155778 2013-04-29 10:03:16Z cattanem $
+# $Id$
 # =============================================================================
 ## @file  LoKiGen/__init__.py
 #  Helper file to manage LoKiGen package
@@ -14,9 +14,9 @@
 #  @author Vanya BELYAEV ibelyaev@physics.syr.edu
 #  @date 2007-05-29
 #
-#                    $Revision: 155778 $
-#  Last modification $Date: 2013-04-29 12:03:16 +0200 (Mon, 29 Apr 2013) $
-#                 by $Author: cattanem $
+#                    $Revision$
+#  Last modification $Date$
+#                 by $Author$
 # =============================================================================
 """
 Helper file to manage LoKiGen package
@@ -33,7 +33,7 @@ A.Golutvin, P.Koppenburg have been used in the design.
 # =============================================================================
 __author__  = "Vanya BELYAEV ibelyaev@physics.syr.edu" 
 __date__    = "2007-05-29"
-__version__ = "$Revision: 155778 $ "
+__version__ = "$Revision$ "
 # =============================================================================
 import LoKiCore.decorators
 # =============================================================================

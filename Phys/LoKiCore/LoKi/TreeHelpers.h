@@ -1,4 +1,4 @@
-// $Id: TreeHelpers.h 155029 2013-04-15 14:48:04Z marcocle $
+// $Id$
 // ============================================================================
 #ifndef LOKI_TREEHELPERS_H
 #define LOKI_TREEHELPERS_H 1
