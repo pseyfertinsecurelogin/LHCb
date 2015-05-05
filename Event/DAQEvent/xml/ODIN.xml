@@ -49,7 +49,7 @@
         access = 'PUBLIC' />
 
       <enum
-        name   = 'EventTypeBitMasks'
+        name   = 'EventTypes'
         desc   = 'Meaning of the EventType bits'
         value  = 'VeloOpen        = 0x0001,
                   Physics         = 0x0002,
