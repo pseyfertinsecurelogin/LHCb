@@ -1,4 +1,4 @@
-// $Id$
+// $Id: LineTypes.h 124901 2011-06-16 12:46:28Z ibelyaev $
 #ifndef LHCBMATH_LINETYPES_H 
 #define LHCBMATH_LINETYPES_H 1
 

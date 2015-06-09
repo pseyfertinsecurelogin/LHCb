@@ -1,4 +1,4 @@
-// $Id$
+// $Id: EigenSystem.h 124901 2011-06-16 12:46:28Z ibelyaev $
 // ============================================================================
 #ifndef LHCBMATH_EIGENSYSTEM_H 
 #define LHCBMATH_EIGENSYSTEM_H 1

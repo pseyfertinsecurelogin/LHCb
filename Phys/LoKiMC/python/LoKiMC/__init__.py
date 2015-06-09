@@ -1,4 +1,4 @@
-# $Id$
+# $Id: __init__.py 124207 2011-06-02 16:05:29Z ibelyaev $
 # =============================================================================
 ## @file  LoKiMC/__init__.py
 #  Helper file to manage LoKiMC package 

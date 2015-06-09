@@ -1,4 +1,4 @@
-// $Id$
+// $Id: MatrixManip.h 124901 2011-06-16 12:46:28Z ibelyaev $
 #ifndef LHCBMATH_MATRIXMANIP_H 
 #define LHCBMATH_MATRIXMANIP_H 1
 

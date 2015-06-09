@@ -1,4 +1,4 @@
-// $Id$
+// $Id: VoidFilter.cpp 183445 2015-02-04 10:33:42Z ibelyaev $
 // ============================================================================
 // Include files 
 // ============================================================================
@@ -21,9 +21,9 @@
  *  contributions and advices from G.Raven, J.van Tilburg, 
  *  A.Golutvin, P.Koppenburg have been used in the design.
  *
- *                    $Revision$
- *  Last modification $Date$
- *                 by $Author$
+ *                    $Revision: 183445 $
+ *  Last modification $Date: 2015-02-04 11:33:42 +0100 (Wed, 04 Feb 2015) $
+ *                 by $Author: ibelyaev $
  */
 // ============================================================================
 namespace LoKi 

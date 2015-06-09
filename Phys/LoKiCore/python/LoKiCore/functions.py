@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # =============================================================================
-# $Id$
+# $Id: functions.py 135306 2012-02-14 11:01:23Z ibelyaev $
 # =============================================================================
-# $URL$ 
+# $URL: http://svn.cern.ch/guest/lhcb/LHCb/tags/Phys/LoKiCore/v11r23/python/LoKiCore/functions.py $ 
 # =============================================================================
 ## @file functions.py LoKiCore/function.py
 #  The set of basic functions for from LoKiCore library
@@ -32,7 +32,7 @@ A.Golutvin, P.Koppenburg have been used in the design.
 # =============================================================================
 __author__  = "Vanya BELYAEV ibelyaev@physics.syr.edu"
 __date__    = "????-??-??"
-__version__ = "Version $Revision$ "
+__version__ = "Version $Revision: 135306 $ "
 # =============================================================================
 
 from LoKiCore.basic import cpp, std, LoKi, LHCb, Gaudi

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # =============================================================================
-# $Id$
+# $Id: decorators.py 162387 2013-09-17 05:53:34Z cattanem $
 # =============================================================================
 ## @file decorators.py LoKiNumbers/decorators.py
 #  The set of basic decorator for objects from LoKiNumberslibrary
@@ -15,9 +15,9 @@
 #  contributions and advices from G.Raven, J.van Tilburg, 
 #  A.Golutvin, P.Koppenburg have been used in the design.
 #
-# $Revision$
-# Last modification $Date$
-#                by $Author$ 
+# $Revision: 162387 $
+# Last modification $Date: 2013-09-17 07:53:34 +0200 (Tue, 17 Sep 2013) $
+#                by $Author: cattanem $ 
 # =============================================================================
 """
 The set of basic decorators for objects from LoKiNumbers library
@@ -30,15 +30,15 @@ Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas,
 contributions and advices from G.Raven, J.van Tilburg, 
 A.Golutvin, P.Koppenburg have been used in the design.
 
- $Revision$
- Last modification $Date$
-                by $Author$ 
+ $Revision: 162387 $
+ Last modification $Date: 2013-09-17 07:53:34 +0200 (Tue, 17 Sep 2013) $
+                by $Author: cattanem $ 
 
 """
 # =============================================================================
 __author__  = ' Vanya BELYAEV ibelyaev@physics.syr.edu '
 __date__    = ' xxxx-xx-xx '
-__version__ = ' version $Revision$ '
+__version__ = ' version $Revision: 162387 $ '
 # =============================================================================
 
 from   LoKiNumbers.functions   import *

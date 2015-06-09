@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # =============================================================================
-# $Id$
+# $Id: random_ext.py 183693 2015-02-10 09:18:07Z ibelyaev $
 # =============================================================================
 # @file LHCbMath/random.py
 #
@@ -10,9 +10,9 @@
 # @author Vanya BELYAEV
 # @date   2012-04-28
 #
-#                   $Revision$
-# Last modification $Date$
-#                by $Author$
+#                   $Revision: 183693 $
+# Last modification $Date: 2015-02-10 10:18:07 +0100 (Tue, 10 Feb 2015) $
+#                by $Author: ibelyaev $
 # =============================================================================
 """
 
@@ -21,7 +21,7 @@ The simple extension for the standard python module random
 """
 # =============================================================================
 __author__  = "Vanya BELYAEV Ivan.Belyaev@itep.ru"
-__version__ = "$Revision$"
+__version__ = "$Revision: 183693 $"
 __date__    = "2012-04-28"
 # =============================================================================
 __all__ = (

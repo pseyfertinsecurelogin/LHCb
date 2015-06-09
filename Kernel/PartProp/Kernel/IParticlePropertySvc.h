@@ -1,4 +1,4 @@
-// $Id$
+// $Id: IParticlePropertySvc.h 101224 2010-11-12 14:08:02Z ibelyaev $
 // ============================================================================
 #ifndef LHCBKERNEL_IPARTICLEPROPERTYSVC_H
 #define LHCBKERNEL_IPARTICLEPROPERTYSVC_H

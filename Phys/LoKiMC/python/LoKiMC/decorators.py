@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # =============================================================================
-# $Id$ 
+# $Id: decorators.py 124207 2011-06-02 16:05:29Z ibelyaev $ 
 # =============================================================================
 ## @file LoKiMC/decorators.py
 #  The set of basic decorator for objects from LoKiMC library
@@ -30,7 +30,7 @@ A.Golutvin, P.Koppenburg have been used in the design.
 # =============================================================================
 __author__  = "Vanya BELYAEV ibelyaev@physics.syr.edu" 
 __date__    = "????-??-??"
-__version__ = "CVS Tag: $Name: not supported by cvs2svn $, version $Revision$ "
+__version__ = "CVS Tag: $Name: not supported by cvs2svn $, version $Revision: 124207 $ "
 # =============================================================================
 
 from   LoKiMC.functions import *

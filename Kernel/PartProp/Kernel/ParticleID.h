@@ -1,4 +1,4 @@
-// $Id$ 
+// $Id: ParticleID.h 151438 2013-02-01 11:19:58Z ibelyaev $ 
 // ============================================================================
 #ifndef LHCbKernel_ParticleID_H
 #define LHCbKernel_ParticleID_H 1

@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # =============================================================================
-# $Id$
+# $Id: tests.py 86706 2010-09-27 12:48:42Z ibelyaev $
 # =============================================================================
-# $URL$
+# $URL: http://svn.cern.ch/guest/lhcb/LHCb/tags/Phys/LoKiCore/v11r23/python/LoKiCore/tests.py $
 # =============================================================================
 ## @file   LoKiCore/tests.py
 #
@@ -17,9 +17,9 @@
 #  @author Vanya BELYAEV ibelyaev@physics.syr.edu
 #  @date 2007-05-29
 #
-#  $Revision$
-#  Last modification $Date$
-#                 by $Author$
+#  $Revision: 86706 $
+#  Last modification $Date: 2010-09-27 14:48:42 +0200 (Mon, 27 Sep 2010) $
+#                 by $Author: ibelyaev $
 #
 # =============================================================================
 """
@@ -33,15 +33,15 @@ Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas,
 contributions and advices from G.Raven, J.van Tilburg, 
 A.Golutvin, P.Koppenburg have been used in the design.
 
-  $Revision$
-  Last modification $Date$
-                 by $Author$
+  $Revision: 86706 $
+  Last modification $Date: 2010-09-27 14:48:42 +0200 (Mon, 27 Sep 2010) $
+                 by $Author: ibelyaev $
 
 """
 # =============================================================================
 __author__   = "Vanya BELYAEV  Ivan.Belyaev@nikhef.nl"
 __date__     = "2007-05-29"
-__version__  = "Verison $Revision$ "
+__version__  = "Verison $Revision: 86706 $ "
 # =============================================================================
 ## The most trivial test function
 def test() :

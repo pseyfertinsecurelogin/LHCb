@@ -1,4 +1,4 @@
-// $Id$
+// $Id: MCParticleCuts.h 155779 2013-04-29 11:00:51Z cattanem $
 // ============================================================================
 #ifndef LOKI_MCPARTICLECUTS_H
 #define LOKI_MCPARTICLECUTS_H 1

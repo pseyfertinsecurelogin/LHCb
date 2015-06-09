@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # =============================================================================
-# $Id$ 
+# $Id: MC.py 155779 2013-04-29 11:00:51Z cattanem $ 
 # =============================================================================
 ## @file LoKiMC/MC.py
 #  collection of utilities for useful 'decoration' of MC-objects
@@ -16,9 +16,9 @@
 #  @author Vanya BELYAEV ibelyaev@physics.syr.edu
 #  @date 2007-08-11
 #
-#                    $Revision$
-#  Last modification $Date$
-#                 by $Author$
+#                    $Revision: 155779 $
+#  Last modification $Date: 2013-04-29 13:00:51 +0200 (Mon, 29 Apr 2013) $
+#                 by $Author: cattanem $
 # =============================================================================
 """
 Collection of utilities for useful 'decoration' of MC-objects
@@ -35,7 +35,7 @@ A.Golutvin, P.Koppenburg have been used in the design.
 # =============================================================================
 __author__  = 'Vanya BELYAEV ibelyaev@physics.syr.edu'
 __date__    = "2007-08-11"
-__version__ = "$Revision$ "
+__version__ = "$Revision: 155779 $ "
 # =============================================================================
 
 from   LoKiMC.functions    import LoKi,LHCb,cpp

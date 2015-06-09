@@ -1,4 +1,4 @@
-// $Id$
+// $Id: Selected.h 115323 2011-01-14 08:08:25Z cattanem $
 // ============================================================================
 #ifndef LOKI_SELECTED_H 
 #define LOKI_SELECTED_H 1

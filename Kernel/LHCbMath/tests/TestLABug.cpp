@@ -1,4 +1,4 @@
-// $Id$
+// $Id: TestLABug.cpp 170068 2014-03-16 13:57:08Z ibelyaev $
 // ============================================================================
 // Include files 
 // ============================================================================
@@ -17,9 +17,9 @@
  *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
  *  @date 2014-03-16
  *
- *                    $Revision$
- *  LAst modification $Date$
- *                 by $Author$
+ *                    $Revision: 170068 $
+ *  LAst modification $Date: 2014-03-16 14:57:08 +0100 (Sun, 16 Mar 2014) $
+ *                 by $Author: ibelyaev $
  */
 // ============================================================================
 int main()

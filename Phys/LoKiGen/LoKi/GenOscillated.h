@@ -1,4 +1,4 @@
-// $Id$
+// $Id: GenOscillated.h 155778 2013-04-29 10:03:16Z cattanem $
 // ============================================================================
 #ifndef LOKI_GENOSCILLATED_H 
 #define LOKI_GENOSCILLATED_H 1
@@ -23,9 +23,9 @@ namespace HepMC { class GenParticle ; }
  *
  *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
  *
- *                    $Revision$
- *  Last modification $Date$
- *                 by $Author$
+ *                    $Revision: 155778 $
+ *  Last modification $Date: 2013-04-29 12:03:16 +0200 (Mon, 29 Apr 2013) $
+ *                 by $Author: cattanem $
  */
 // ===========================================================================
 namespace LoKi 

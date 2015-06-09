@@ -1,11 +1,11 @@
-// $Id$ 
+// $Id: LHCbMath.h 186000 2015-03-28 16:26:34Z ibelyaev $ 
 // ============================================================================
 /** @file
  *
  *  Collection of math related functions for general use in LHCb
  *
  *  CVS Log :-
- *  $Id$
+ *  $Id: LHCbMath.h 186000 2015-03-28 16:26:34Z ibelyaev $
  *
  *  @author Juan PALACIOS 
  *  @date   2005-11-21

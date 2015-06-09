@@ -1,4 +1,4 @@
-// $Id$
+// $Id: PrintMCDecay.h 124207 2011-06-02 16:05:29Z ibelyaev $
 // ===========================================================================
 #ifndef LOKI_PRINTMCDECAY_H 
 #define LOKI_PRINTMCDECAY_H 1

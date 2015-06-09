@@ -1,4 +1,4 @@
-// $Id$
+// $Id: MCFinder.h 124207 2011-06-02 16:05:29Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_MCFINDER_H 
 #define LOKI_MCFINDER_H 1

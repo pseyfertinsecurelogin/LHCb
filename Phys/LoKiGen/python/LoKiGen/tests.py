@@ -1,6 +1,6 @@
 #!/usr/bin/env python 
 # =============================================================================
-# $Id$
+# $Id: tests.py 155778 2013-04-29 10:03:16Z cattanem $
 # =============================================================================
 ## @file   LoKiGen/tests.py
 #
@@ -15,9 +15,9 @@
 #  @author Vanya BELYAEV ibelyaev@physics.syr.edu
 #  @date 2007-05-29
 #
-#                    $Revision$
-#  Last modification $Date$
-#                 by $Author$
+#                    $Revision: 155778 $
+#  Last modification $Date: 2013-04-29 12:03:16 +0200 (Mon, 29 Apr 2013) $
+#                 by $Author: cattanem $
 # =============================================================================
 """
 The basic tests for LoKiGen package
@@ -34,7 +34,7 @@ A.Golutvin, P.Koppenburg have been used in the design.
 # =============================================================================
 __author__  = "Vanya BELYAEV ibelyaev@physics.syr.edu" 
 __date__    = "2007-05-29"
-__version__ = "$Revision$ "
+__version__ = "$Revision: 155778 $ "
 # =============================================================================
 
 # temporary

@@ -1,4 +1,4 @@
-// $Id$
+// $Id: Decay.h 101224 2010-11-12 14:08:02Z ibelyaev $
 // ============================================================================
 #ifndef LHCBKERNEL_DECAY_H 
 #define LHCBKERNEL_DECAY_H 1

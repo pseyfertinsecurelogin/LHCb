@@ -1,4 +1,4 @@
-// $Id$
+// $Id: GenDecays.h 162965 2013-09-30 12:49:08Z piedavid $
 // ============================================================================
 #ifndef LOKI_GENDECAYS_H 
 #define LOKI_GENDECAYS_H 1

@@ -1,4 +1,4 @@
-// $Id$
+// $Id: GenExtractDicts.h 124208 2011-06-02 16:05:48Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_GENEXTRACTDICTS_H 
 #define LOKI_GENEXTRACTDICTS_H 1

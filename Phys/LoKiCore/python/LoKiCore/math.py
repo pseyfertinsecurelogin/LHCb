@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # =============================================================================
-# $Id$ 
+# $Id: math.py 155775 2013-04-29 09:31:21Z cattanem $ 
 # =============================================================================
 ## @file LoKiCore/math.py
 #  helper file for redefine the standard mathematical functions
@@ -14,9 +14,9 @@
 #  contributions and advices from G.Raven, J.van Tilburg, 
 #  A.Golutvin, P.Koppenburg have been used in the design.
 #
-#                    $Revision$
-#  Last modification $Date$
-#                 by $Author$
+#                    $Revision: 155775 $
+#  Last modification $Date: 2013-04-29 11:31:21 +0200 (Mon, 29 Apr 2013) $
+#                 by $Author: cattanem $
 #
 #  @author Vanya BELYAEV ibelyaev@physics.syr.edu
 #  @date 2007-07-17
@@ -36,7 +36,7 @@ A.Golutvin, P.Koppenburg have been used in the design.
 # =============================================================================
 __author_   = "Vanya BELYAEV ibelyaev@physics.syr.edu"
 __date__    = "2007-01-17"
-__version__ = "CVS Tag: $Name: not supported by cvs2svn $, version $Revision$ "
+__version__ = "CVS Tag: $Name: not supported by cvs2svn $, version $Revision: 155775 $ "
 # =============================================================================
 import math
 

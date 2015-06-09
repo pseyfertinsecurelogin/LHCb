@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # =============================================================================
-# $Id$
+# $Id: decorators.py 166347 2013-12-19 16:02:34Z marcocle $
 # =============================================================================
 ## @file PartProp/decorators.py
 #  The set of basic decorator for objects from Kernel/PartProp package
@@ -12,7 +12,7 @@ The set of basic decorators for objects from Kernel/PartProp package
 """
 # =============================================================================
 __author__  = "Vanya BELYAEV <Ivan.Belyaev@nikhef.nl>"
-__version__ = "CVS tag $Name: not supported by cvs2svn $, version $Revision$"
+__version__ = "CVS tag $Name: not supported by cvs2svn $, version $Revision: 166347 $"
 # =============================================================================
 
 import GaudiPython

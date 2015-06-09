@@ -1,4 +1,4 @@
-// $Id$
+// $Id: MatrixUtils.h 183766 2015-02-11 19:33:37Z ibelyaev $
 // ============================================================================
 #ifndef LHCBMATH_MATRIXUTILS_H
 #define LHCBMATH_MATRIXUTILS_H 1

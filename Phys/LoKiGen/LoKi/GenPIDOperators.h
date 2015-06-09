@@ -1,4 +1,4 @@
-// $Id$
+// $Id: GenPIDOperators.h 183167 2015-01-23 14:27:42Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_GENPIDOPERATORS_H
 #define LOKI_GENPIDOPERATORS_H 1
