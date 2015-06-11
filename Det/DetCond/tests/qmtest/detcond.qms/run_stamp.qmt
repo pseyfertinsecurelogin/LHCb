@@ -42,7 +42,7 @@ expected = '''
 RunStampCheck       DEBUG Checking '/Conditions/Online/LHCb/RunStamp.xml' for event time 1433851200.0
 RunStampCheck       DEBUG Found '/Conditions/Online/LHCb/RunStamp.xml' valid in [1433808000.0, 1433894400.0)
 RunStampCheck       DEBUG Checking '/Conditions/Online/LHCb/RunStamp.xml' for event time 1433937600.0
-RunStampCheck       ERROR Database not up-to-date. No valid data for run at 1433937600.0
+RunStampCheck       ERROR Database not up-to-date. No valid data for run at 2015-06-10 12:00:00.0 UTC
 EventLoopMgr      SUCCESS Terminating event processing loop due to a stop scheduled by an incident listener
 EventLoopMgr      SUCCESS Terminating event processing loop due to scheduled stop
 '''.strip().splitlines()

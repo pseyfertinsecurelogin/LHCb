@@ -6,8 +6,34 @@
 #include "GaudiKernel/IEventProcessor.h"
 #include "DetCond/ICondDBReader.h"
 
+/** Simple service to check if the run stamp condition exists for the current
+ *  event.
+ *
+ *  To ensure that the content of the conditions database includes alignments
+ *  and calibrations for the event being processed, when these conditions are
+ *  stored we also store a special condition with closed Interval Of Validity
+ *  (IOV) covering only the run for which they are valid (RunStamp condition).
+ *
+ *  The time line of the RunStamp conditions is not completely covered, and the
+ *  holes in the time line implicitly flag the events for which the alignments
+ *  are not available.
+ *
+ *  When RunStampCheck is instantiated in a Gaudi application, it checks for
+ *  each event time if the RunStamp condition exists or not, in which case the
+ *  application is terminated with an error code.
+ *
+ *  So, to enable the check, it is enough to add to the options:
+ *  \code{.py}
+ *  from Configurables import ApplicationMgr, RunStampCheck
+ *  ApplicationMgr().ExtSvc.append(RunStampCheck())
+ *  \endcode
+ *
+ *  \see https://its.cern.ch/jira/browse/LBCORE-831
+ *  \see https://its.cern.ch/jira/browse/LHCBPS-1421
+ */
 class RunStampCheck: public extends1<Service, IIncidentListener> {
 public:
+  /// Constructor. Declares properties.
   RunStampCheck(const std::string& name, ISvcLocator* svcloc):
     base_class(name, svcloc) {
     declareProperty("RunStamp", m_runStampCondition,
@@ -15,6 +41,7 @@ public:
     declareProperty("CondDBReader", m_condDBReaderName,
         "Name of the ICondDBReader instance to query for the RunStamp.");
   }
+  /// Connect to the required services and register as BeginEvent listener.
   StatusCode start() override {
     StatusCode sc = Service::start();
     if (UNLIKELY(!sc)) return sc;
@@ -48,6 +75,7 @@ public:
     m_currentRunIOV = {Gaudi::Time::epoch(), Gaudi::Time::epoch()};
     return sc;
   }
+  /// Deregister as BeginEvent listener and release reference to services.
   StatusCode stop() override {
     m_incSvc->removeListener(this, IncidentType::BeginEvent);
     m_incSvc.reset();
@@ -56,6 +84,7 @@ public:
     m_evtProc.reset();
     return Service::stop();
   }
+  /// Handle the BeginEvent incident to check if the RunStamp condition exists.
   void handle(const Incident&) override {
     auto when = m_detSvc->eventTime();
     // run the check only if the current event time falls outside the boundaries
@@ -73,7 +102,8 @@ public:
         // we didn't manage to get the entry from the DB: we do not have data
         // for this run
         error() << "Database not up-to-date. No valid data for run at "
-            << when << endmsg;
+            << when.format(false, "%Y-%m-%d %H:%M:%S")
+            << "." << when.nanoformat() << " UTC" << endmsg;
         m_evtProc->stopRun();
       } else if (UNLIKELY(msgLevel(MSG::DEBUG))) {
         debug() << "Found '" << m_runStampCondition
