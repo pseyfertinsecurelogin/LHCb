@@ -24,14 +24,12 @@ ecs.EventTimeDecoder.TimeStep = 24 * 60 * 60 * 1000000000 # 1 day
 RSTEST = CondDBAccessSvc("RSTEST", ConnectionString="sqlite_file:../data/RSTEST.db/RSTEST")
 
 CondDB().addAlternative(RSTEST, "/Conditions/Online/LHCb/RunStamp.xml")
+CondDB().EnableRunStampCheck = True
+RunStampCheck(OutputLevel=DEBUG)
 
 algMgr = ApplicationMgr(EvtSel = "NONE", EvtMax = 4)
-algMgr.ExtSvc += [RunStampCheck(OutputLevel=VERBOSE),
-      	          UpdateManagerSvc()]
+algMgr.ExtSvc.append(ecs)
 #MessageSvc(OutputLevel = 1)
-
-UpdateManagerSvc().OutputLevel = DEBUG
-MessageSvc().setDebug += ["UpdateManagerSvc::Item"]
 </text></argument>
 <argument name="exit_code"><integer>4</integer></argument>
 <argument name="validator"><text>
