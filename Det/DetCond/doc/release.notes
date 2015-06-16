@@ -5,6 +5,12 @@
 !-----------------------------------------------------------------------------
 
 ! 2014-06-16 - Marco Clemencic
+ - LHCBPS-1421: Modified RunStampCheck to instantiate EventClockSvc.
+   To ensure that it does get a "current event time", RunStampCheck triggers
+   the instantiation of EventClockSvc, so that it is not needed to explicitly
+   do it in the configuration.
+
+! 2014-06-16 - Marco Clemencic
  - LHCBPS-1421: Updated CondDB configurable to enable/disable RunStampCheck
    The RunStampCheck is enabled by default for "Offline" (i.e. not Online
    nor Simulation).

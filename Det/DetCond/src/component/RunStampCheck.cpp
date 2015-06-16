@@ -46,6 +46,13 @@ public:
     StatusCode sc = Service::start();
     if (UNLIKELY(!sc)) return sc;
 
+    // ensure that we have the EventClocksvc (to get the current event time in
+    // the DetectorDataSvc).
+    if (UNLIKELY(!serviceLocator()->service("EventClockSvc"))) {
+      error() << "Cannot get EventClockSvc" << endmsg;
+      return StatusCode::FAILURE;
+    }
+
     m_incSvc = serviceLocator()->service("IncidentSvc");
     if (UNLIKELY(!m_incSvc)) {
       error() << "Cannot get IncidentSvc" << endmsg;

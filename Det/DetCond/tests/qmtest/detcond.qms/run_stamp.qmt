@@ -28,7 +28,6 @@ CondDB().EnableRunStampCheck = True
 RunStampCheck(OutputLevel=DEBUG)
 
 algMgr = ApplicationMgr(EvtSel = "NONE", EvtMax = 4)
-algMgr.ExtSvc.append(ecs)
 #MessageSvc(OutputLevel = 1)
 </text></argument>
 <argument name="exit_code"><integer>4</integer></argument>
