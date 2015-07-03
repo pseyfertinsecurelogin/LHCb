@@ -15,6 +15,7 @@
 
 ! 2015-07-03 - Marco Clemencic
  - Added some documentation for the generation of LoKi Functors caches.
+ - Minor improvements to LoKiFunctorsCache.cmake.
 
 ! 2015-07-03 - Marco Clemencic
  - Moved here the CMake code to generate functors factories from StrippingCache.

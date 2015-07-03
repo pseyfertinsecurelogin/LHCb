@@ -10,7 +10,8 @@
 #                            [LINK_LIBRARIES library1 library2...]
 #                            [INCLUDE_DIRS dir1 dir2...]
 #                            [DEPENDS target1 target2...]
-#                            [SPLIT <N>])
+#                            [SPLIT <N>]
+#                            [FACTORIES factory1 factory2...])
 #
 # where:
 # - <cache library name> defines the name of the generated library
@@ -21,6 +22,9 @@
 # - DEPENDS target1 target2... declare tergets to be build before we can
 #                              generate the cache code (e.g. "genconf" steps)
 # - SPLIT <N> stated the number of files to generate per factory (default: 1)
+# - FACTORIES factory1 factory2... name of the hybrids factories that will be
+#                                  invoked (default: CoreFactory, HltFactory,
+#                                  HybridFactory)
 #
 # @author Marco Clemencic <marco.clemencic@cern.ch>
 #
@@ -33,11 +37,13 @@ mark_as_advanced(LOKI_FUNCTORS_CACHE_POST_ACTION_OPTS)
 # Usage: loki_functors_cache(cache_name option_file_1 [option_file_2 ...])
 function(loki_functors_cache name)
 
+  # default values
+  set(ARG_FACTORIES CoreFactory HltFactory HybridFactory)
   CMAKE_PARSE_ARGUMENTS(ARG "" "SPLIT"
-                            "LIBRARIES;LINK_LIBRARIES;INCLUDE_DIRS;DEPENDS" ${ARGN})
+                            "LINK_LIBRARIES;INCLUDE_DIRS;DEPENDS;FACTORIES" ${ARGN})
 
   # Output filename(s)
-  foreach(factory_type CoreFactory HltFactory HybridFactory)
+  foreach(factory_type ${ARG_FACTORIES})
     if(ARG_SPLIT)
       set(idx ${ARG_SPLIT})
       while(${idx} GREATER 0)
@@ -80,8 +86,9 @@ function(loki_functors_cache name)
                      COMMAND touch ${output}
                      DEPENDS ${name}.${tmp_ext})
 
-  gaudi_common_add_build(${output} LIBRARIES ${ARG_LIBRARIES}
-                         LINK_LIBRARIES ${ARG_LINK_LIBRARIES} INCLUDE_DIRS ${ARG_INCLUDE_DIRS})
+  gaudi_common_add_build(${output}
+                         LINK_LIBRARIES ${ARG_LINK_LIBRARIES}
+                         INCLUDE_DIRS ${ARG_INCLUDE_DIRS})
 
   add_library(${name} MODULE ${output})
   target_link_libraries(${name} GaudiPluginService
