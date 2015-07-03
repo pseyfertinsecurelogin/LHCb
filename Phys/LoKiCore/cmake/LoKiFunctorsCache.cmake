@@ -1,3 +1,29 @@
+################################################################################
+# LoKiFunctorsCache
+# -----------------
+#
+# This module provides a function to generate and build cache libraries for
+# LoKi Functors.
+# @see https://its.cern.ch/jira/browse/LHCBPS-1357
+#
+# Usage: loki_functors_cache(<cache library name> optionfile1 [optionfile2...]
+#                            [LINK_LIBRARIES library1 library2...]
+#                            [INCLUDE_DIRS dir1 dir2...]
+#                            [DEPENDS target1 target2...]
+#                            [SPLIT <N>])
+#
+# where:
+# - <cache library name> defines the name of the generated library
+# - optionfile1 [optionfile2...] are the options defining the functors
+#                                (usually the options used for the application
+#                                we need to generate the cache for)
+# - LINK_LIBRARIES, INCLUDE_DIRS have the same meaning as in gaudi_add_module()
+# - DEPENDS target1 target2... declare tergets to be build before we can
+#                              generate the cache code (e.g. "genconf" steps)
+# - SPLIT <N> stated the number of files to generate per factory (default: 1)
+#
+# @author Marco Clemencic <marco.clemencic@cern.ch>
+#
 
 set(LOKI_FUNCTORS_CACHE_POST_ACTION_OPTS
     ${CMAKE_CURRENT_LIST_DIR}/LoKiFunctorsCachePostActionOpts.py
