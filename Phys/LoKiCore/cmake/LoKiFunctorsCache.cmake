@@ -42,6 +42,9 @@ function(loki_functors_cache name)
   CMAKE_PARSE_ARGUMENTS(ARG "" "SPLIT"
                             "LINK_LIBRARIES;INCLUDE_DIRS;DEPENDS;FACTORIES" ${ARGN})
 
+  # where all the files are generated
+  file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${name}_srcs)
+
   # Output filename(s)
   foreach(factory_type ${ARG_FACTORIES})
     if(ARG_SPLIT)
@@ -57,12 +60,14 @@ function(loki_functors_cache name)
         else()
           set(idx_string "${idx}")
         endif()
-        set(output FUNCTORS_${factory_type}_${idx_string}.cpp ${output})
+        set(output_names FUNCTORS_${factory_type}_${idx_string}.cpp ${output_names})
+        set(outputs ${name}_srcs/FUNCTORS_${factory_type}_${idx_string}.cpp ${outputs})
         math(EXPR idx "${idx} - 1")
       endwhile()
     else()
       set(ARG_SPLIT 0)
-      set(output FUNCTORS_${factory_type}_0001.cpp ${output})
+      set(output_names FUNCTORS_${factory_type}_0001.cpp)
+      set(outputs ${name}_srcs/FUNCTORS_${factory_type}_0001.cpp)
     endif()
   endforeach()
 
@@ -75,22 +80,25 @@ function(loki_functors_cache name)
   endforeach()
 
   set(tmp_ext pkl)
-  add_custom_command(OUTPUT ${name}.${tmp_ext}
+  add_custom_command(OUTPUT ${name}_srcs/${name}.${tmp_ext}
                      COMMAND ${env_cmd} --xml ${env_xml}
-                       gaudirun.py -n -o ${name}.${tmp_ext} ${inputs} ${LOKI_FUNCTORS_CACHE_POST_ACTION_OPTS}
-                     DEPENDS ${inputs} ${ARG_DEPENDS})
+                       gaudirun.py -n -o ${name}_srcs/${name}.${tmp_ext} ${inputs} ${LOKI_FUNCTORS_CACHE_POST_ACTION_OPTS}
+                     DEPENDS ${inputs} ${ARG_DEPENDS}
+                     COMMENT "Preprocess options for ${name}")
 
-  add_custom_command(OUTPUT ${output}
+  add_custom_command(OUTPUT ${outputs}
                      COMMAND ${env_cmd} --xml ${env_xml} LOKI_GENERATE_CPPCODE=${ARG_SPLIT}
                        gaudirun.py ${name}.${tmp_ext}
-                     COMMAND touch ${output}
-                     DEPENDS ${name}.${tmp_ext})
+                     COMMAND touch ${output_names}
+                     WORKING_DIRECTORY ${name}_srcs
+                     DEPENDS ${name}_srcs/${name}.${tmp_ext}
+                     COMMENT "Generating sources for ${name}")
 
-  gaudi_common_add_build(${output}
+  gaudi_common_add_build(${outputs}
                          LINK_LIBRARIES ${ARG_LINK_LIBRARIES}
                          INCLUDE_DIRS ${ARG_INCLUDE_DIRS})
 
-  add_library(${name} MODULE ${output})
+  add_library(${name} MODULE ${outputs})
   target_link_libraries(${name} GaudiPluginService
                                 ${ARG_LINK_LIBRARIES})
   _gaudi_detach_debinfo(${name})
