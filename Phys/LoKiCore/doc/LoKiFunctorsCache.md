@@ -40,6 +40,10 @@ The argument `LINK_LIBRARIES` has the same meaning as in the function
 argument is used to distribute the functors across several files, which is very
 useful to reduce the compile time when the number of functors is very high.
 
+The special CMake option `LOKI_BUILD_FUNCTOR_CACHE` (ON by default) can be
+used to disable (globally to the project) the build of cache libraries, for
+example to speed up the build during development.
+
 
 ## Running with the Cache Libraries
 

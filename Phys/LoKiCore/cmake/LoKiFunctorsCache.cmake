@@ -26,6 +26,9 @@
 #                                  invoked (default: CoreFactory, HltFactory,
 #                                  HybridFactory)
 #
+# Note: the CMake option LOKI_BUILD_FUNCTOR_CACHE can be set to False to disable
+#       generation/build of declared functor caches.
+#
 # @author Marco Clemencic <marco.clemencic@cern.ch>
 #
 
@@ -34,11 +37,19 @@ set(LOKI_FUNCTORS_CACHE_POST_ACTION_OPTS
     CACHE FILEPATH "Special options file for LoKi Functors cache generation.")
 mark_as_advanced(LOKI_FUNCTORS_CACHE_POST_ACTION_OPTS)
 
+option(LOKI_BUILD_FUNCTOR_CACHE "Enable building of LoKi Functors Caches."
+       TRUE)
+
 # Usage: loki_functors_cache(cache_name option_file_1 [option_file_2 ...])
 function(loki_functors_cache name)
+  # ignore cache declaration if requested
+  if(NOT LOKI_BUILD_FUNCTOR_CACHE)
+    return()
+  endif()
 
   # default values
   set(ARG_FACTORIES CoreFactory HltFactory HybridFactory)
+
   CMAKE_PARSE_ARGUMENTS(ARG "" "SPLIT"
                             "LINK_LIBRARIES;INCLUDE_DIRS;DEPENDS;FACTORIES" ${ARGN})
 
