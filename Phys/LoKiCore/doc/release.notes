@@ -14,6 +14,11 @@
 ! -----------------------------------------------------------------------------
 
 ! 2015-08-26 - Marco Clemencic
+ - Modified cache generation to ignore the already existing caches.
+   It ensures that the generated cache contains also the factories already
+   present in other caches.
+
+! 2015-08-26 - Marco Clemencic
  - Updated doc/LoKiFunctorsCache.md
 
 !========================= LoKiCore v11r26 2015-08-24 =========================
