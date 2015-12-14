@@ -12,6 +12,11 @@
 !   contributions and advices from G.Raven, J.van Tilburg,
 !   A.Golutvin, P.Koppenburg have been used in the design.
 ! -----------------------------------------------------------------------------
+
+! 2015-12-14 - Marco Clemencic
+ - Add hash id for functor not in the cache in the error message
+   from Hybrid::CoreFactory.
+
 ! 2015-12-08 - Gerhard Raven
  - remove unneeded include of select.h
 
