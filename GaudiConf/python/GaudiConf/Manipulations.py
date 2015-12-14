@@ -14,6 +14,7 @@ or same with postConfForAll...
 """
 # Copied from GaudiConf, IOHelper. Manipulators of configurables.
 import Gaudi.Configuration as GaudiConfigurables
+import Configurables
 
 def fullNameConfigurables():
     """
@@ -35,18 +36,13 @@ def nameFromConfigurable(conf):
 
 def configurableClassFromString(config):
     '''Get a configurable class given only the string'''
-    #Since I didn't find it, I need to create it:
-    config=config.replace('::','__')
-    wclass=None
+    config = config.split('/')[0]
+    config = config.replace('::','__')
 
-    if hasattr(GaudiConfigurables, config.split('/')[0]):
-        wclass = getattr(GaudiConfigurables,config.split('/')[0])
-    else:
-        import Configurables
-        wclass = getattr(Configurables,config.split('/')[0])
-        #otherwise it must be a configurable
-
-    return wclass
+    try:
+        return getattr(Configurables, config)
+    except AttributeError:
+        return None
 
 def addPrivateToolFromString(amother,atool):
     '''
