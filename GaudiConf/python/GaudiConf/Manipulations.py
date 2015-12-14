@@ -37,7 +37,7 @@ def nameFromConfigurable(conf):
 def configurableClassFromString(config):
     '''Get a configurable class given only the string'''
     config = config.split('/')[0]
-    config = config.replace('::','__')
+    config = config.replace('::', '__')
 
     try:
         return getattr(Configurables, config)
@@ -63,9 +63,7 @@ def addPrivateToolFromString(amother,atool):
 def configurableInstanceFromString(config):
     '''Get a configurable instance given a type/name the string.
 
-    If the configurable was not instantiated yet, instantiate it.
-    Uses  fullNameConfigurables() to get all defined configurables
-    If this configurable has not been instantiated, I instantiate it'''
+    If the configurable was not instantiated yet, instantiate it.'''
 
     if '/' in config:
         typename, name = config.split('/', 1)
