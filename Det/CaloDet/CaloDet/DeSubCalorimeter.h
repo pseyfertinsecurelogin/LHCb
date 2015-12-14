@@ -23,17 +23,17 @@ public:
   /// Constructors
   DeSubCalorimeter( const std::string& name    = ""  );
   /// Destructor
-  virtual ~DeSubCalorimeter();
+  ~DeSubCalorimeter() override = default;
   /// object identification 
   static  const CLID& classID()       { return CLID_DeSubCalorimeter ; }
   /// printout to standard STL stream 
-  virtual std::ostream& printOut( std::ostream& os = std::cerr ) const ; 
+  virtual std::ostream& printOut( std::ostream& os = std::cerr ) const override; 
   /// printout to standard Gaudi stream 
-  virtual MsgStream&    printOut( MsgStream&                   ) const ;
+  virtual MsgStream&    printOut( MsgStream&                   ) const override;
   /// object identification 
-  virtual const CLID& clID   () const ;
+  virtual const CLID& clID   () const override;
   /// standard initialization
-  virtual StatusCode    initialize() ;
+  virtual StatusCode    initialize() override;
   /// get side
   inline int side    ()            const    { return m_side; };
   inline std::string sideName()       const    { 
@@ -49,7 +49,7 @@ public:
   
 
 private:
-  int    m_side;      ///< Calo side (0=C-side=Right , 1=A-side=Left)
+  int    m_side = 0;      ///< Calo side (0=C-side=Right , 1=A-side=Left)
   SubSubCalos   m_subSubCalos  ;
 };
 // ============================================================================

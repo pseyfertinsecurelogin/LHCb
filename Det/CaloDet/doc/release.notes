@@ -3,6 +3,27 @@
 ! Package manager : Olivier Deschamps odescham@in2p3.fr
 ! ====================================================================
 
+! 2015-12-11 - Marco Cattaneo
+ - DeSubCalorimeter: add a few more 'override' qualifications
+
+! 2015-12-11 - Gerhard Raven
+ - DeCalorimeter: 
+   o add a few more 'override' qualifications,
+   o make resetCellParam standalone function in anonymous namespace
+
+! 2015-12-10 - Gerhard Raven
+ - modernize code:
+  o qualify implementations of virtual functions with override
+  o prefer STL algorithms over raw loops
+  o prefer direct member initialization
+  o use lambda in resetCellParam to avoid a string comparison in inner loop
+  o prefer auto
+  o prefer range-based loops
+  o prefer to not compare pointers to 0
+  o prefer service<T> over svc<T>
+  o prefer std::array over std::vector
+ - use dataSPD as optional pileup calibration for SPD
+
 !========================= CaloDet v10r20p1 2015-10-12 =========================
 ! 2015-08-03 - Gerhard Raven
  - remove #include of obsolete Gaudi headers
