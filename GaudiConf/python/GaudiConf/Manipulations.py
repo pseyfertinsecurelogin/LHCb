@@ -61,38 +61,26 @@ def addPrivateToolFromString(amother,atool):
     return getattr(amother,toolName)
 
 def configurableInstanceFromString(config):
-    '''Get a configurable instance given only the string
+    '''Get a configurable instance given a type/name the string.
+
+    If the configurable was not instantiated yet, instantiate it.
     Uses  fullNameConfigurables() to get all defined configurables
     If this configurable has not been instantiated, I instantiate it'''
 
-    #if it's in Gaudi.Configuration with this name, return it
-
-    fnConfs = fullNameConfigurables()
-    if config in fnConfs:
-        return fnConfs[config]
-
-    #might be using a short name instead:
-    if config in GaudiConfigurables.allConfigurables:
-        return GaudiConfigurables.allConfigurables[config]
-
-    config=config.replace('::','__')
-
-    #Try again with __ instead of :: to cope with namespaces!
-
-    if config in fnConfs:
-        return fnConfs[config]
-
-    if config in GaudiConfigurables.allConfigurables:
-        return GaudiConfigurables.allConfigurables[config]
-
-    #Since I didn't find it, I need to create it:
-    wclass=configurableClassFromString(config)
-
-    #check if it has an instance name
-    if '/' not in config:
-        return wclass()
+    if '/' in config:
+        typename, name = config.split('/', 1)
     else:
-        return wclass(name=config.split('/')[-1])
+        typename = name = config
+
+    try:
+        return (GaudiConfigurables.allConfigurables.get(config) or
+                getattr(Configurables, typename)(name))
+    except AttributeError:
+        # this is if the type is not in Configurables,
+        # so we try replacing the namespace separator
+        # FIXME: the logic is wrong because we replace '::' not only in the typename,
+        #        but it's the same logic that was there before the change
+        return configurableInstanceFromString(config.replace('::', '__'))
 
 def removeConfigurables(conf_list):
     '''Helper: get rid of all configurables from a list'''
