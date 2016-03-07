@@ -3,7 +3,25 @@
 ! package manager: M.Cattaneo
 !------------------------------------------------------------------------------
 
-!========================= GaudiConf v19r16 2016-01-27 =========================
+!========================= GaudiConf v19r16 2016-02-05 =========================
+
+! 2016-02-03 - Sean Benson
+ - Add option to DstConf to unpack calo containers.
+ - Add option to DstConf to unpack full HLT reco.
+
+! 2016-02-03 - Rosen Matev
+ - Add special treatment for ConfigurableGeneric instances in
+   setPropertiesAndAddTools()
+
+! 2016-02-02 - Rosen Matev
+ - Remove the slow forAllConf() and derivatives from Manipulations.py
+ - Add a new generic recurseConfigurables() and a payload function
+   setPropertiesAndAddTools(). Together these replace the old functions.
+   See help(...) for more details.
+
+! 2016-10-29 - Marco Cattaneo
+ - Update ioh-fsr-dressing test reference to follow changes in Gaudi v27r0 output
+
 ! 2015-12-16 - Marco Clemencic
  - LHCBPS-1472: Fixed another flaw in the new logic of configurableInstanceFromString.
 

@@ -23,7 +23,6 @@ std::string Rich::text( const Rich::ParticleIDType particle )
   case Rich::Kaon:           return "kaon";
   case Rich::Proton:         return "proton";
   case Rich::BelowThreshold: return "below_threshold";
-  case Rich::Deuteron: 	     return "deuteron";
   case Rich::Unknown:        return "unknown";
   default:                   return "?"; // should never happen
   }
@@ -32,6 +31,6 @@ std::string Rich::text( const Rich::ParticleIDType particle )
 const Rich::Particles & Rich::particles() noexcept
 {
   static Rich::Particles pids =
-    {Rich::Electron, Rich::Muon, Rich::Pion, Rich::Kaon, Rich::Proton, Rich::BelowThreshold, Rich::Deuteron};
+    {Rich::Electron, Rich::Muon, Rich::Pion, Rich::Kaon, Rich::Proton, Rich::BelowThreshold};
   return pids;
 }
