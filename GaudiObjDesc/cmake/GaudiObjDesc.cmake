@@ -140,7 +140,9 @@ function(god_build_dictionary)
   add_custom_command(OUTPUT ${header} ${selection}
                      COMMAND ${env_cmd}
                        --xml ${env_xml}
-                     ${god_cmd} ${cmd_args} -g dct -r ${GOD_DATA_DIR} -t ${GOD_DTD_FILE} -d ${dest} ${xmlfiles}
+                     ${god_cmd} ${cmd_args} -g dct -r ${GOD_DATA_DIR} -t ${GOD_DTD_FILE}
+                       -d ${dest} -p ${package}
+                       ${xmlfiles}
                      DEPENDS ${xmlfiles} ${package}Obj2doth
                      COMMENT "Generating dictionary from ${xmlfiles}")
 

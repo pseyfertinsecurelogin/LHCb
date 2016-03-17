@@ -157,6 +157,8 @@ class godII(object):
                      help='path to the DTD file (gdd.dtd). '
                      '[default: use the value of GODDTDPATH if defined, or find it in the '
                      'same directory as the xml file]')
+        p.add_option('-p', '--package', action='store',
+                     help='override the package name defined in the XML files')
         p.add_option('--allocator', action='store', type='choice',
                      choices=('FROMXML', 'NO', 'BOOST', 'BOOST2', 'DEBUG', 'ORDERED', 'DEFAULT'),
                      help='chose the type of allocator to use. Allowed values are: '
@@ -236,6 +238,8 @@ class godII(object):
 
             gdd = x.parseSource(srcFile)
             godPackage = gdd['package'][0]
+            if self.opts.package:
+                godPackage['attrs']['name'] = self.opts.package
 
             # Set default namespace if not set in <package>
             try:
