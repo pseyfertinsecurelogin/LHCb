@@ -3,6 +3,9 @@
 ! package manager : Marco Clemencic
 ! ====================================================================
 
+! 2016-03-19 - Marco Clemencic
+ - removed obsolete CondDBBrowserOld.py
+
 !========================= CondDBUI v3r36 2016-01-27 =========================
 ! 2015-11-27 - Marco Clemencic
  - Added missing bit of the fix.

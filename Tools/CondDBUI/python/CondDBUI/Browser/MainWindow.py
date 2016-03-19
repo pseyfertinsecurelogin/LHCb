@@ -54,8 +54,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self._connectionString = None
         # Maximum number of entries in the list of recent databases
         self.maxRecentEntries = 10
-        # Whether to show the welcome message
-        self._showWelcome = True # set in readSettings
         # External editor, to be passed to the add condition dialog
         self._externalEditor = "emacs" # set in readSettings
         # Prepare the GUI.
@@ -146,8 +144,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.menuPanels.addAction(self.filterPanel.toggleViewAction())
 
         self.readSettings()
-        if self._showWelcome:
-            self._showWelcome = self.showWelcomeInfo(cancel = True)
 
     ## Store settings into the configuration file
     def writeSettings(self):
@@ -196,7 +192,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         settings.endArray()
 
         settings.beginGroup("Misc")
-        settings.setValue("ShowWelcome", QVariant(self._showWelcome))
         settings.setValue("ExternalEditor", QVariant(self._externalEditor))
         settings.endGroup()
 
@@ -250,7 +245,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         settings.endArray()
 
         settings.beginGroup("Misc")
-        self._showWelcome = settings.value("ShowWelcome", QVariant(True)).toBool()
         self._externalEditor = str(settings.value("ExternalEditor", QVariant("emacs")).toString())
         settings.endGroup()
 
@@ -754,30 +748,3 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     ## Copy the current connection string to the clipboard.
     def copyConnStrToClipboard(self):
         QApplication.clipboard().setText(self._connectionString)
-    ## Display the initial info message to notify that this is the new version
-    #  of the CondDBBrowser.
-    def showWelcomeInfo(self, cancel = False):
-        mb = QMessageBox(self)
-        mb.setWindowTitle("Welcome to the CondDBBrowser")
-        mb.setText("""<html><body>
-<p>Welcome to the Qt4-based version of the CondDBBrowser.</p>
-<p>This is a complete rewrite of the old application,  which includes a lot of
-improvements and clean up.</p>
-<p>Since it is completely new, some features may not work. In that case you can
-still use the old version invoking <tt>CondDBBrowserOld.py</tt></p>
-<p>Among the improvements you can find:
-<ul>
-<li>based on Qt4</li>
-<li>better responsiveness</li>
-<li>contextual menus</li>
-<li>improved managing of recent and standard databases</li>
-<li>extensive usage of tooltips</li>
-</ul></p>
-<p>If you find a bug post it to <a href="https://savannah.cern.ch/bugs/?group=lhcbcore">savannah</a>, for comments and
-suggestions send an email to <a href="mailto:Marco.Clemencic@cern.ch">Marco Clemencic</a>.</p>
-</body></html>""")
-        ok = mb.addButton(QMessageBox.Ok)
-        if cancel:
-            mb.addButton(QMessageBox.Cancel)
-        mb.exec_()
-        return mb.clickedButton() != ok
