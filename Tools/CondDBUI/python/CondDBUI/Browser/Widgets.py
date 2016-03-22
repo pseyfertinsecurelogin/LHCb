@@ -1,8 +1,10 @@
-from PyQt4 import QtGui, QtCore
-from PyQt4.QtCore import (QObject, pyqtSignal, pyqtSlot,
-                          QDateTime, QDate, QTime,
-                          Qt)
-from PyQt4.QtGui import QSizePolicy
+from PyQt4.Qt import (QObject, pyqtSignal, pyqtSlot,
+                      QDateTime, QDate, QTime,
+                      Qt, QMetaObject,
+                      QMessageBox,
+                      QWidget, QHBoxLayout, QDateTimeEdit,
+                      QSizePolicy, QAction, QCheckBox,
+                      QPlainTextEdit, QTextDocument, QTextCursor, QFont)
 
 from Utils import valKeyToDateTime, dateTimeToValKey
 
@@ -11,7 +13,7 @@ from PyCool import cool
 __all__ = ["TimePointEdit", "SearchableTextEdit"]
 
 
-class TimePointEdit(QtGui.QWidget):
+class TimePointEdit(QWidget):
     timeChanged = pyqtSignal('QTime')
     dateChanged = pyqtSignal('QDate')
     dateTimeChanged = pyqtSignal('QDateTime')
@@ -23,11 +25,11 @@ class TimePointEdit(QtGui.QWidget):
     def __init__(self, parent = None):
         super(TimePointEdit,self).__init__(parent)
 
-        self._layout = QtGui.QHBoxLayout(self)
+        self._layout = QHBoxLayout(self)
         self._layout.setObjectName("layout")
         self._layout.setContentsMargins(0,0,0,0)
 
-        self._edit = QtGui.QDateTimeEdit(self)
+        self._edit = QDateTimeEdit(self)
         self._edit.setObjectName("edit")
         self._edit.setTimeSpec(Qt.UTC)
         self._edit.setContextMenuPolicy(Qt.NoContextMenu)
@@ -38,39 +40,39 @@ class TimePointEdit(QtGui.QWidget):
         self._edit.setDateTimeRange(self._minDateTime, self._maxDateTime)
         self._edit.setDisplayFormat("dd-MM-yyyy hh:mm:ss")
         self._edit.setCalendarPopup(True)
-        self._edit.setSizePolicy(QtGui.QSizePolicy.MinimumExpanding,
-                                 QtGui.QSizePolicy.Minimum)
+        self._edit.setSizePolicy(QSizePolicy.MinimumExpanding,
+                                 QSizePolicy.Minimum)
         self._layout.addWidget(self._edit)
 
-        self._utc = QtGui.QCheckBox(self)
+        self._utc = QCheckBox(self)
         self._utc.setObjectName("utc")
         self._utc.setText("UTC")
         self._utc.setChecked(True)
-        self._utc.setSizePolicy(QtGui.QSizePolicy.Minimum,
-                                QtGui.QSizePolicy.Minimum)
+        self._utc.setSizePolicy(QSizePolicy.Minimum,
+                                QSizePolicy.Minimum)
         self._layout.addWidget(self._utc)
 
-        self._max = QtGui.QCheckBox(self)
+        self._max = QCheckBox(self)
         self._max.setObjectName("max")
         self._max.setText("Max")
         self._max.setChecked(False)
-        self._max.setSizePolicy(QtGui.QSizePolicy.Minimum,
-                                QtGui.QSizePolicy.Minimum)
+        self._max.setSizePolicy(QSizePolicy.Minimum,
+                                QSizePolicy.Minimum)
         self._layout.addWidget(self._max)
 
-        self.actionSet_to_minimum = QtGui.QAction(self)
+        self.actionSet_to_minimum = QAction(self)
         self.actionSet_to_minimum.setObjectName("actionSet_to_minimum")
         self.actionSet_to_minimum.setText("Set to &minimum")
         self.addAction(self.actionSet_to_minimum)
         self.actionSet_to_minimum.triggered.connect(self.setToMinimum)
 
-        self.actionSet_to_now = QtGui.QAction(self)
+        self.actionSet_to_now = QAction(self)
         self.actionSet_to_now.setObjectName("actionSet_to_now")
         self.actionSet_to_now.setText("Set to &now")
         self.addAction(self.actionSet_to_now)
         self.actionSet_to_now.triggered.connect(self.setToNow)
 
-        self.actionSet_to_maximum = QtGui.QAction(self)
+        self.actionSet_to_maximum = QAction(self)
         self.actionSet_to_maximum.setObjectName("actionSet_to_maximum")
         self.actionSet_to_maximum.setText("Set to ma&ximum")
         self.addAction(self.actionSet_to_maximum)
@@ -78,7 +80,7 @@ class TimePointEdit(QtGui.QWidget):
 
         self.setContextMenuPolicy(Qt.ActionsContextMenu)
 
-        QtCore.QMetaObject.connectSlotsByName(self)
+        QMetaObject.connectSlotsByName(self)
 
         # propagate edit field signals:
         for signal in ["timeChanged",
@@ -221,7 +223,7 @@ class TimePointEdit(QtGui.QWidget):
 #  The extensions to a QPlainTextEdit are a "find" dialog (activated with Ctrl+F
 #  or the contextual menu) and the possibility to switch to/from fixed width
 #  font (via contextual menu).
-class SearchableTextEdit(QtGui.QPlainTextEdit):
+class SearchableTextEdit(QPlainTextEdit):
     ## Contructor.
     def __init__(self, parent = None):
         super(SearchableTextEdit,self).__init__(parent)
@@ -229,7 +231,7 @@ class SearchableTextEdit(QtGui.QPlainTextEdit):
         from Dialogs import FindDialog
         self.findDialog = FindDialog(self)
 
-        self.actionFind = QtGui.QAction(self)
+        self.actionFind = QAction(self)
         self.actionFind.setObjectName("actionFind")
         self.actionFind.setText("&Find...")
         self.actionFind.setShortcut("Ctrl+F")
@@ -239,7 +241,7 @@ class SearchableTextEdit(QtGui.QPlainTextEdit):
         self.findDialog.find.connect(self.findInText)
 
         self._defaultFont = self.font()
-        self.actionFixedWidthFont = QtGui.QAction(self)
+        self.actionFixedWidthFont = QAction(self)
         self.actionFixedWidthFont.setObjectName("actionFixedWidthFont")
         self.actionFixedWidthFont.setText("Use fi&xed width font")
         self.actionFixedWidthFont.setCheckable(True)
@@ -264,25 +266,25 @@ class SearchableTextEdit(QtGui.QPlainTextEdit):
         found = self.find(text, flags)
         if not found and wrapped:
             # try again for wrapped search
-            if flags & QtGui.QTextDocument.FindBackward:
-                where = QtGui.QTextCursor.End
+            if flags & QTextDocument.FindBackward:
+                where = QTextCursor.End
             else:
-                where = QtGui.QTextCursor.Start
+                where = QTextCursor.Start
             self.moveCursor(where)
             found = self.find(text, flags)
         if not found:
-            QtGui.QMessageBox.information(self, "Not found",
-                                          "String '%s' not found in the document." % text)
+            QMessageBox.information(self, "Not found",
+                                    "String '%s' not found in the document." % text)
 
     ## FixedWidthFont property
     def setFixedWidthFont(self, value):
         if self.actionFixedWidthFont.isEnabled():
             if value:
-                font = QtGui.QFont("Currier")
+                font = QFont("Currier")
                 font.setFixedPitch(value)
                 self.setFont(font)
             else:
-                font = QtGui.QFont(self._defaultFont)
+                font = QFont(self._defaultFont)
                 font.setFixedPitch(value)
                 self.setFont(font)
             if self.actionFixedWidthFont.isChecked() != value:

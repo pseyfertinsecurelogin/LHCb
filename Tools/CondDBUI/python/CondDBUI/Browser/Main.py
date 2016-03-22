@@ -50,7 +50,7 @@ def getStandardConnectionStrings(optionFiles):
 #  retrieved from the options file.
 #  @see getStandardConnectionStrings()
 def main(argv=None):
-    from PyQt4.QtGui import QApplication
+    from PyQt4.Qt import QApplication
     from MainWindow import MainWindow
 
     try:
