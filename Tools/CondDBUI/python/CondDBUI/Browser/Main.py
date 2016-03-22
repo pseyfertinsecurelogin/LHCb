@@ -32,7 +32,7 @@ def getStandardConnectionStrings(optionFiles):
     for o in optionFiles:
         try:
             importOptions(o)
-        except ParserError, x:
+        except (ParserError, ImportError), x:
             # Ignore errors from the parser (e.g. file not found)
             logging.info("Problems importing %s: %s", o, x)
     for name in allConfigurables:
