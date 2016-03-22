@@ -3,7 +3,7 @@
 ################################################################################
 gaudi_subdir(CondDBUI v3r36)
 
-gaudi_depends_on_subdirs(Det/DDDB)
+gaudi_depends_on_subdirs(Det/DDDB Tools/CondDBEntityResolver)
 
 find_package(Boost)
 find_package(COOL COMPONENTS CoolKernel CoolApplication)
@@ -42,3 +42,10 @@ __versionDate__ = '${today}'
 ")
 install(FILES ${CMAKE_BINARY_DIR}/python/CondDBUI/Browser/__version__.py
         DESTINATION python/CondDBUI/Browser)
+
+# Special target to prepare only what is needed to run the CondDBBrowser
+add_custom_target(CondDBBrowser)
+add_dependencies(CondDBBrowser CondDBUIDict
+                               CondDBUI.Browser.Resources
+                               CondDBUI.Browser.UI
+                               CondDBCompression)
