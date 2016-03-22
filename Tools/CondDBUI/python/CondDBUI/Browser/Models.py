@@ -13,18 +13,8 @@ from Utils import *
 
 from CondDBUI import CondDB
 
-# Import the dictionary for helper functions
-try:
-    import cppyy # enable Cintex
-except ImportError:
-    # FIXME: backward compatibility
-    print "# WARNING: using PyCintex as cppyy implementation"
-    import PyCintex as cppyy
-
-Helpers = cppyy.gbl.CondDBUI.Helpers
-
-#import ROOT
-#Helpers = ROOT.CondDBUI.Helpers
+# Import helper functions
+from ..Helpers import Helpers
 
 __all__ = ["setModelsIcons",
            "tagsGlobalCache",

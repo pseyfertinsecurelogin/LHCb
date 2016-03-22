@@ -16,15 +16,9 @@ find_package(pygraphics)
 find_package(pytools)
 
 gaudi_add_library(CondDBUIHelperLib src/helper/*.cpp
-                  INCLUDE_DIRS PythonLibs COOL
-                  LINK_LIBRARIES PythonLibs COOL
+                  INCLUDE_DIRS PythonLibs COOL CORAL
+                  LINK_LIBRARIES PythonLibs COOL CORAL
                   PUBLIC_HEADERS CondDBUIHelper)
-
-gaudi_add_dictionary(CondDBUI
-                     dict/conddbui_dictionary.h
-                     dict/dictionary.xml
-                     INCLUDE_DIRS ROOT PythonLibs COOL Boost CORAL
-                     LINK_LIBRARIES -Wl,--no-as-needed CondDBUIHelperLib -Wl,--as-needed ROOT PythonLibs COOL Boost CORAL)
 
 # gen_pyqt_* functions are provided by 'pygraphics'
 gen_pyqt_resource(CondDBUI.Browser.Resources CondDBUI/Browser qt_resources/*.qrc)
@@ -45,7 +39,7 @@ install(FILES ${CMAKE_BINARY_DIR}/python/CondDBUI/Browser/__version__.py
 
 # Special target to prepare only what is needed to run the CondDBBrowser
 add_custom_target(CondDBBrowser)
-add_dependencies(CondDBBrowser CondDBUIDict
-                               CondDBUI.Browser.Resources
+add_dependencies(CondDBBrowser CondDBUI.Browser.Resources
                                CondDBUI.Browser.UI
-                               CondDBCompression)
+                               CondDBCompression
+                               CondDBUIHelperLib)
