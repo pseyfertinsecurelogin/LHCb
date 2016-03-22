@@ -1,6 +1,6 @@
-from .Qt import (QObject, QString,
+from .Qt import (QObject,
                  QAbstractItemModel, QAbstractListModel, QAbstractTableModel,
-                 QVariant, QModelIndex,
+                 QModelIndex,
                  Qt, pyqtSignal, pyqtSlot,
                  QIcon, QApplication, QItemSelectionModel,
                  QItemDelegate,
@@ -84,7 +84,7 @@ class TagsCache(QObject):
         if path in self.cache:
             del self.cache[path]
             self._allTags = None
-            qpath = QString(path)
+            qpath = str(path)
             self.tagsCacheUpdated.emit(qpath)
 
 tagsGlobalCache = TagsCache()
@@ -201,20 +201,20 @@ class CondDBStructureItem(object):
     def data(self, role):
         global icons
         if role == Qt.DisplayRole:
-            return QVariant(self.name)
+            return self.name
         elif role == Qt.ToolTipRole:
             if self.channel is None:
-                return QVariant(self.path)
+                return self.path
             else:
-                return QVariant(str(self.channel))
+                return str(self.channel)
         elif role == Qt.DecorationRole:
             if self.leaf:
                 icon = icons.get("folder", None)
             else:
                 icon = icons.get("folderset", None)
             if icon:
-                return QVariant(icon)
-        return QVariant()
+                return icon
+        return None
 
 
 ## ItemModel used by the CondDB tree view
@@ -230,7 +230,7 @@ class CondDBStructureModel(QAbstractItemModel):
 
     ## Set the CondDBUI.CondDB instance to use (triggering a refresh of the caches)
     def connectDB(self, db):
-        self.reset()
+        self.beginResetModel()
         if self.root:
             self.root.release()
         self.db = db
@@ -242,6 +242,7 @@ class CondDBStructureModel(QAbstractItemModel):
             self.root.index = QModelIndex()
         else:
             self.root = None
+        self.endResetModel()
 
     ## Number of columns to reserve for the children of the parent index.
     def columnCount(self, parent):
@@ -285,17 +286,17 @@ class CondDBStructureModel(QAbstractItemModel):
                 return index.internalPointer().parent.index
         return QModelIndex()
 
-    ## Returns a QVariant object to represent the item in the view.
+    ## Returns an object to represent the item in the view.
     def data(self, index, role):
         if index.isValid():
             return index.internalPointer().data(role)
-        return QVariant()
+        return None
 
     ## Header for the structure view (not used).
     def headerData(self, section, orientation ,role):
         if orientation == Qt.Horizontal and role == Qt.DisplayRole and section == 0:
-            return QVariant("Name")
-        return QVariant()
+            return 'Name'
+        return None
 
     ## Return the index of the specified path
     def findPath(self, path):
@@ -337,7 +338,7 @@ class CondDBNodesListModel(QAbstractListModel):
 
     ## Set the CondDBUI.CondDB instance to use (triggering a refresh of the caches)
     def connectDB(self, db):
-        self.reset()
+        self.beginResetModel()
         self.db = db
         if db:
             # prepare to fill the cache of node names
@@ -345,6 +346,7 @@ class CondDBNodesListModel(QAbstractListModel):
         else:
             # without db we need a fake empty cache
             self._nodes = []
+        self.endResetModel()
 
     ## Python property to cache the list of nodes in the database.
     #  It doesn't include "/".
@@ -369,14 +371,14 @@ class CondDBNodesListModel(QAbstractListModel):
     def data(self, index, role):
         if index.isValid():
             if role == Qt.DisplayRole:
-                return QVariant(self.nodes[index.row()])
-        return QVariant()
+                return self.nodes[index.row()]
+        return None
 
     ## Header for the view (not used).
     def headerData(self, section, orientation ,role):
         if orientation == Qt.Horizontal and role == Qt.DisplayRole and section == 0:
-            return QVariant("Name")
-        return QVariant()
+            return 'Name'
+        return None
 
 ## Model class to retrieve the available tags in a folder.
 class CondDBTagsListModel(QAbstractListModel):
@@ -409,9 +411,10 @@ class CondDBTagsListModel(QAbstractListModel):
     def setHideAutoTags(self, value):
         newval = bool(value)
         if self._hideAutoTags != newval:
-            self.reset()
+            self.beginResetModel()
             self._tags = None
             self._hideAutoTags = newval
+            self.endResetModel()
 
     ## Get the current folder.
     def path(self):
@@ -421,24 +424,27 @@ class CondDBTagsListModel(QAbstractListModel):
     @pyqtSlot(str)
     def setPath(self, path):
         global tagsGlobalCache
-        self.reset()
+        self.beginResetModel()
         if path is not None:
             path = str(path) # Convert to Python string since we may get QString
         self._path = path
         self._tags = None # Invalidate the internal cache
+        self.endResetModel()
         self.setViewEnabled.emit(bool(path and
                                       tagsGlobalCache.db.db.existsFolder(path)))
 
     ## Slot to receive the notification of changes in the cache of tags
     def _refreshedCachePath(self, path):
         if path == self._path:
-            self.reset()
+            self.beginResetModel()
             self._tags = None
+            self.endResetModel()
 
     ## Slot to receive the notification of changes in the cache of tags
     def _refreshedCache(self):
-        self.reset()
+        self.beginResetModel()
         self._tags = None
+        self.endResetModel()
 
     ## Expanded list of tags.
     #  The information in the list is in for of tuples with (name, path, group_id)
@@ -468,19 +474,19 @@ class CondDBTagsListModel(QAbstractListModel):
         if index.isValid():
             tag, path, group = self.tags()[index.row()]
             if role == Qt.DisplayRole:
-                return QVariant(tag)
+                return tag
             elif role == Qt.ToolTipRole:
-                return QVariant(path)
+                return path
             elif role == Qt.BackgroundRole:
                 if group % 2:
-                    return QVariant(QBrush(Qt.lightGray))
-        return QVariant()
+                    return QBrush(Qt.lightGray)
+        return None
 
     ## Header for the view (not used).
     def headerData(self, section, orientation ,role):
         if orientation == Qt.Horizontal and role == Qt.DisplayRole and section == 0:
-            return QVariant("Tag")
-        return QVariant()
+            return 'Tag'
+        return None
 
     ## Find the position of the specified tag in the list of known tags
     def findPosOfTag(self, tag):
@@ -521,9 +527,10 @@ class GlobalTagsListModel(QAbstractListModel):
     def setHideLocalTags(self, value):
         newval = bool(value)
         if self._hideLocalTags != newval:
-            self.reset()
+            self.beginResetModel()
             self._tags = None
             self._hideLocalTags = newval
+            self.endResetModel()
 
     ## Expanded list of tags.
     #  If the hideLocalTags property is set to True, the tags not defined in the
@@ -543,14 +550,14 @@ class GlobalTagsListModel(QAbstractListModel):
     def data(self, index, role):
         if index.isValid():
             if role == Qt.DisplayRole:
-                return QVariant(self.tags()[index.row()])
-        return QVariant()
+                return self.tags()[index.row()]
+        return None
 
     ## Header for the view (not used).
     def headerData(self, section, orientation ,role):
         if orientation == Qt.Horizontal and role == Qt.DisplayRole and section == 0:
-            return QVariant("Tag")
-        return QVariant()
+            return 'Tag'
+        return None
 
 ## Base class for functionalities shared by all the models handling IoVs
 class BaseIoVModel(QAbstractTableModel):
@@ -670,9 +677,10 @@ class CondDBIoVModel(BaseIoVModel):
         if not channel:
             channel = 0
         if self._channel != channel:
+            self.beginResetModel()
             self._cleanCache()
             self._channel = channel
-            self.reset()
+            self.endResetModel()
 
     ## Return the cool::ChannelSelection object corresponding to the set channel.
     def channelSelection(self):
@@ -690,9 +698,10 @@ class CondDBIoVModel(BaseIoVModel):
         else:
             tag = str(tag)
         if self._tag != tag:
+            self.beginResetModel()
             self._cleanCache()
             self._tag = tag
-            self.reset()
+            self.endResetModel()
 
     ## Add new IoVs from the folder to the end of the cache.
     def _appendIoVs(self, newUntil):
@@ -809,7 +818,8 @@ class CondDBIoVModel(BaseIoVModel):
                 self.setSelected(min(self._sinceIndex - old[0] + oldSelected, self._untilIndex))
                 # notify view
                 # FIXME: Should be done better
-                self.reset()
+                self.beginResetModel()
+                self.endResetModel()
 
     ## Value of the property since.
     def since(self):
@@ -861,7 +871,8 @@ class CondDBIoVModel(BaseIoVModel):
                 self._path = path
                 self._folder = self.db.db.getFolder(path)
             # Notify the views
-            self.reset()
+            self.beginResetModel()
+            self.endResetModel()
             # The actual logic for enable is (self.db and self._path)
             self.setViewEnabled.emit(bool(self._path))
 
@@ -886,20 +897,20 @@ class CondDBIoVModel(BaseIoVModel):
             data = self.allIoVs()[self._sinceIndex + index.row()]
             if role == Qt.DisplayRole:
                 valkey = data[index.column()]
-                return QVariant(self.validityKeyToString(valkey))
+                return self.validityKeyToString(valkey)
             elif role == Qt.ToolTipRole:
                 s = "Insertion time: %s" % data[self.INSERTION_TIME]
-                return QVariant(s)
-        return QVariant()
+                return s
+        return None
 
     ## Header for the view (not used).
     def headerData(self, section, orientation ,role):
         if role == Qt.DisplayRole:
             if orientation == Qt.Horizontal:
-                return QVariant(("Since", "Until")[section])
+                return ("Since", "Until")[section]
             else:
-                return QVariant(section)
-        return QVariant()
+                return section
+        return None
 
     def setSelectedTime(self, validityKey):
         if self._allIoVs:
@@ -961,7 +972,7 @@ class CondDBPayloadFieldModel(QAbstractListModel):
     ## Set the folder for which to get the tags.
     @pyqtSlot(str)
     def setPath(self, path):
-        self.reset()
+        self.beginResetModel()
         if path is not None: # Needed to use this function as a slot accepting QString
             path = str(path)
         self._path = path
@@ -975,6 +986,7 @@ class CondDBPayloadFieldModel(QAbstractListModel):
             # If no folder is specified or the path is a folderset, use an empty cache
             self._fields = []
             self.setViewEnabled.emit(False)
+        self.endResetModel()
 
     ## Number of tags to display.
     def rowCount(self, parent):
@@ -984,14 +996,14 @@ class CondDBPayloadFieldModel(QAbstractListModel):
     def data(self, index, role):
         if index.isValid():
             if role == Qt.DisplayRole:
-                return QVariant(self._fields[index.row()])
-        return QVariant()
+                return self._fields[index.row()]
+        return None
 
     ## Header for the view (not used).
     def headerData(self, section, orientation ,role):
         if orientation == Qt.Horizontal and role == Qt.DisplayRole and section == 0:
-            return QVariant("Name")
-        return QVariant()
+            return 'Name'
+        return None
 
     ## Set the current selection.
     #  Emit the setCurrentIndex signal if the parameter "emit" is set to True.
@@ -1060,7 +1072,7 @@ class NodeFieldsDelegate(QItemDelegate):
             value = editor.currentText()
         else:
             value = editor.text()
-        model.setData(index, QVariant(value), Qt.EditRole)
+        model.setData(index, value, Qt.EditRole)
     def updateEditorGeometry(self, editor, option, index):
         editor.setGeometry(option.rect)
 
@@ -1081,18 +1093,18 @@ class NodeFieldsModel(QAbstractTableModel):
     def data(self, index, role):
         if index.isValid():
             if role == Qt.DisplayRole or role == Qt.EditRole:
-                return QVariant(self.fields[index.row()][index.column()])
+                return self.fields[index.row()][index.column()]
             elif role == Qt.ToolTipRole:
-                return QVariant()
-        return QVariant()
+                return None
+        return None
     ## Header for the view (not used).
     def headerData(self, section, orientation ,role):
         if role == Qt.DisplayRole:
             if orientation == Qt.Horizontal:
-                return QVariant(("Name", "Type")[section])
+                return ("Name", "Type")[section]
             else:
-                return QVariant()
-        return QVariant()
+                return None
+        return None
     ## Flags for the item (to make the item editable)
     def flags(self, index):
         if not index.isValid():
@@ -1179,31 +1191,31 @@ class AddConditionsStackModel(BaseIoVModel):
                 c = index.column()
                 cond = self.conditions[r]
                 if c == 2:
-                    return QVariant(str(cond.channel))
+                    return str(cond.channel)
                 elif c == 0:
                     valkey = cond.since
                 else:
                     valkey = cond.until
-                return QVariant(self.validityKeyToString(valkey))
+                return self.validityKeyToString(valkey)
             elif r in self.conflicts:
                 # Visual feedback for conflicts
                 if role == Qt.ToolTipRole:
-                    return QVariant("This Interval of Validity is overlapping with another.")
+                    return "This Interval of Validity is overlapping with another."
                 elif role == Qt.BackgroundRole:
-                    return QVariant(QBrush(Qt.red))
+                    return QBrush(Qt.red)
                 elif role == Qt.FontRole:
                     font = QFont()
                     font.setItalic(True)
-                    return QVariant(font)
-        return QVariant()
+                    return font
+        return None
     ## Header for the view (not used).
     def headerData(self, section, orientation ,role):
         if role == Qt.DisplayRole:
             if orientation == Qt.Horizontal:
-                return QVariant(("Since", "Until", "Channel")[section])
+                return ("Since", "Until", "Channel")[section]
             else:
-                return QVariant()
-        return QVariant()
+                return None
+        return None
     ## Check for conflicts and fill the conflicts list:
     def _checkConflicts(self):
         count = len(self.conditions)
@@ -1288,18 +1300,18 @@ class CondDBSelectionsModel(BaseIoVModel):
                 c = index.column()
                 s = self.selections[r]
                 if c in [0, 3]:
-                    return QVariant(str(s[c]))
+                    return str(s[c])
                 else:
-                    return QVariant(self.validityKeyToString(s[c]))
-        return QVariant()
+                    return self.validityKeyToString(s[c])
+        return None
     ## Header for the view (not used).
     def headerData(self, section, orientation ,role):
         if role == Qt.DisplayRole:
             if orientation == Qt.Horizontal:
-                return QVariant(("Path", "Since", "Until", "Tags")[section])
+                return ("Path", "Since", "Until", "Tags")[section]
             else:
-                return QVariant()
-        return QVariant()
+                return None
+        return None
     ## Add a new condition object to the stack
     def addSelection(self, path, since, until, tags):
         # Search where to insert the selection in the list
@@ -1347,7 +1359,7 @@ class ChildTagDelegate(QItemDelegate):
         editor.setCurrentIndex(editor.model().findPosOfTag(value))
     def setModelData(self, editor, model, index):
         value = editor.currentText()
-        model.setData(index, QVariant(value), Qt.EditRole)
+        model.setData(index, value, Qt.EditRole)
     def updateEditorGeometry(self, editor, option, index):
         editor.setGeometry(option.rect)
 
@@ -1368,6 +1380,7 @@ class ChildTagsModel(QAbstractTableModel):
             n = n.rsplit("/", 1)[-1]
             self._data.append((n, "HEAD"))
     def setFromParentTag(self, tag):
+        self.beginResetModel()
         newData = []
         for n, _t in self._data:
             path = self._path + "/" + n
@@ -1378,7 +1391,7 @@ class ChildTagsModel(QAbstractTableModel):
             except:
                 newData.append((n, "HEAD"))
         self._data = newData
-        self.reset()
+        self.endResetModel()
     ## Mapping interface: __len__
     def __len__(self):
         return len(self._data)
@@ -1432,18 +1445,18 @@ class ChildTagsModel(QAbstractTableModel):
     def data(self, index, role):
         if index.isValid():
             if role == Qt.DisplayRole or role == Qt.EditRole:
-                return QVariant(self._data[index.row()][index.column()])
+                return self._data[index.row()][index.column()]
             elif role == Qt.ToolTipRole:
-                return QVariant()
-        return QVariant()
+                return None
+        return None
     ## Header for the view (not used).
     def headerData(self, section, orientation ,role):
         if role == Qt.DisplayRole:
             if orientation == Qt.Horizontal:
-                return QVariant(("Child", "Tag")[section])
+                return ("Child", "Tag")[section]
             else:
-                return QVariant()
-        return QVariant()
+                return None
+        return None
     ## Flags for the item (to make the item editable)
     def flags(self, index):
         if not index.isValid():

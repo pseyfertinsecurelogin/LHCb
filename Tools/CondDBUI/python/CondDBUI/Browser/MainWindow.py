@@ -5,7 +5,7 @@
 
 from .Qt import (Qt, QObject,
                  pyqtSlot, pyqtSignal,
-                 QVariant, QDateTime,
+                 QDateTime,
                  QSettings,
                  QSize, QPoint,
                  PYQT_VERSION_STR, qVersion,
@@ -150,49 +150,49 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         settings = QSettings()
 
         settings.beginGroup("MainWindow")
-        settings.setValue("Size", QVariant(self.size()))
-        settings.setValue("Pos", QVariant(self.pos()))
+        settings.setValue("Size", self.size())
+        settings.setValue("Pos", self.pos())
         settings.endGroup()
 
         settings.beginGroup("BrowsePanel")
-        settings.setValue("Visible", QVariant(self.browsePanel.isVisible()))
-        settings.setValue("Floating", QVariant(self.browsePanel.isFloating()))
-        settings.setValue("Size", QVariant(self.browsePanel.size()))
-        settings.setValue("Pos", QVariant(self.browsePanel.pos()))
+        settings.setValue("Visible", self.browsePanel.isVisible())
+        settings.setValue("Floating", self.browsePanel.isFloating())
+        settings.setValue("Size", self.browsePanel.size())
+        settings.setValue("Pos", self.browsePanel.pos())
         settings.endGroup()
 
         settings.beginGroup("FilterPanel")
-        settings.setValue("Visible", QVariant(self.filterPanel.isVisible()))
-        settings.setValue("Floating", QVariant(self.filterPanel.isFloating()))
-        settings.setValue("Size", QVariant(self.filterPanel.size()))
-        settings.setValue("Pos", QVariant(self.filterPanel.pos()))
+        settings.setValue("Visible", self.filterPanel.isVisible())
+        settings.setValue("Floating", self.filterPanel.isFloating())
+        settings.setValue("Size", self.filterPanel.size())
+        settings.setValue("Pos", self.filterPanel.pos())
         settings.endGroup()
 
         settings.beginGroup("DataView")
-        settings.setValue("FixedWidthFont", QVariant(self.dataView.isFixedWidthFont()))
+        settings.setValue("FixedWidthFont", self.dataView.isFixedWidthFont())
         settings.endGroup()
 
         settings.beginGroup("FindDialog")
         d = self.dataView.findDialog
-        settings.setValue("Visible", QVariant(d.isVisible()))
-        settings.setValue("Pos", QVariant(d.pos()))
-        settings.setValue("Flags", QVariant(d.getFindFlags()))
-        settings.setValue("WrappedSearch", QVariant(d.getWrappedSearch()))
+        settings.setValue("Visible", d.isVisible())
+        settings.setValue("Pos", d.pos())
+        settings.setValue("Flags", d.getFindFlags())
+        settings.setValue("WrappedSearch", d.getWrappedSearch())
         settings.endGroup()
 
-        settings.setValue("IOVs/UTC", QVariant(self.iovUTCCheckBox.isChecked()))
+        settings.setValue("IOVs/UTC", self.iovUTCCheckBox.isChecked())
 
         settings.beginWriteArray("Recent")
         recents = self.menuRecent.actions()
         i = 0
         for action in recents:
             settings.setArrayIndex(i)
-            settings.setValue("ConnString", QVariant(action.text()))
+            settings.setValue("ConnString", action.text())
             i += 1
         settings.endArray()
 
         settings.beginGroup("Misc")
-        settings.setValue("ExternalEditor", QVariant(self._externalEditor))
+        settings.setValue("ExternalEditor", self._externalEditor)
         settings.endGroup()
 
     ## Load settings from the configuration file
@@ -200,44 +200,42 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         settings = QSettings()
 
         settings.beginGroup("MainWindow")
-        self.resize(settings.value("Size", QVariant(QSize(965, 655))).toSize())
-        self.move(settings.value("Pos", QVariant(QPoint(0, 0))).toPoint())
+        self.resize(settings.value("Size", QSize(965, 655)))
+        self.move(settings.value("Pos", QPoint(0, 0)))
         settings.endGroup()
 
         settings.beginGroup("BrowsePanel")
-        self.browsePanel.setVisible(settings.value("Visible", QVariant(True)).toBool())
-        self.browsePanel.setFloating(settings.value("Floating", QVariant(False)).toBool())
-        self.browsePanel.resize(settings.value("Size", QVariant(QSize(250, 655))).toSize())
-        self.browsePanel.move(settings.value("Pos", QVariant(QPoint(0, 0))).toPoint())
+        self.browsePanel.setVisible(settings.value("Visible", True, type=bool))
+        self.browsePanel.setFloating(settings.value("Floating", False, type=bool))
+        self.browsePanel.resize(settings.value("Size", QSize(250, 655)))
+        self.browsePanel.move(settings.value("Pos", QPoint(0, 0)))
         settings.endGroup()
 
         settings.beginGroup("FilterPanel")
-        self.filterPanel.setVisible(settings.value("Visible", QVariant(True)).toBool())
-        self.filterPanel.setFloating(settings.value("Floating", QVariant(False)).toBool())
-        self.filterPanel.resize(settings.value("Size", QVariant(QSize(270, 655))).toSize())
-        self.filterPanel.move(settings.value("Pos", QVariant(QPoint(0, 0))).toPoint())
+        self.filterPanel.setVisible(settings.value("Visible", True, type=bool))
+        self.filterPanel.setFloating(settings.value("Floating", False, type=bool))
+        self.filterPanel.resize(settings.value("Size", QSize(270, 655)))
+        self.filterPanel.move(settings.value("Pos", QPoint(0, 0)))
         settings.endGroup()
 
         settings.beginGroup("DataView")
-        self.dataView.setFixedWidthFont(settings.value("FixedWidthFont", QVariant(False)).toBool())
+        self.dataView.setFixedWidthFont(settings.value("FixedWidthFont", False, type=bool))
         settings.endGroup()
 
         settings.beginGroup("FindDialog")
         d = self.dataView.findDialog
-        d.setVisible(settings.value("Visible", QVariant(False)).toBool())
-        d.move(settings.value("Pos", QVariant(QPoint(0, 0))).toPoint())
-        # Note: QVariant.toInt returns a tuple with the result of the conversion
-        # and a boolean for the successful conversion
-        d.setFindFlags(settings.value("Flags", QVariant(0)).toInt()[0])
-        d.setWrappedSearch(settings.value("WrappedSearch", QVariant(True)).toBool())
+        d.setVisible(settings.value("Visible", False, type=bool))
+        d.move(settings.value("Pos", QPoint(0, 0)))
+        d.setFindFlags(settings.value("Flags", 0, type=int))
+        d.setWrappedSearch(settings.value("WrappedSearch", True, type=bool))
         settings.endGroup()
 
-        self.iovUTCCheckBox.setChecked(settings.value("IOVs/UTC", QVariant(True)).toBool())
+        self.iovUTCCheckBox.setChecked(settings.value("IOVs/UTC", True, type=bool))
 
         size = settings.beginReadArray("Recent")
         for i in range(size):
             settings.setArrayIndex(i)
-            conn = settings.value("ConnString").toString()
+            conn = settings.value("ConnString", type=str)
             action = QAction(self)
             action.setText(conn)
             action.triggered.connect(self.openRecentDatabase)
@@ -245,7 +243,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         settings.endArray()
 
         settings.beginGroup("Misc")
-        self._externalEditor = str(settings.value("ExternalEditor", QVariant("emacs")).toString())
+        self._externalEditor = str(settings.value("ExternalEditor", "emacs"))
         settings.endGroup()
 
     ## Close Event handler
@@ -263,7 +261,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             conn = connStrings[name]
             action = QAction(self)
             action.setText(name)
-            action.setData(QVariant(conn))
+            action.setData(conn)
             action.setStatusTip(conn)
             action.triggered.connect(self.openStandardDatabase)
             self.menuStandard.addAction(action)
@@ -285,7 +283,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                                      "the list of known database." % name)
                 return
         # Open the database using the connection string in the action
-        self.openDatabase(str(sender.data().toString()), readOnly = readOnly)
+        self.openDatabase(str(sender.data()), readOnly = readOnly)
 
     ## Slot called by the actions in the menu "Database->Recent"
     def openRecentDatabase(self):
@@ -419,7 +417,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         and the Python API to COOL: PyCool.</p>
         <p>The Graphical Library is PyQt %s, based on Qt %s</p>
         <p><i>Marco Clemencic, Nicolas Gilardi</i></p>''' \
-        % (app.objectName(), app.applicationVersion(), PYQT_VERSION_STR, qVersion())
+        % (app.applicationName(), app.applicationVersion(), PYQT_VERSION_STR, qVersion())
 
         QMessageBox.about(self, app.objectName(), message)
 

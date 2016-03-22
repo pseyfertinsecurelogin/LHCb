@@ -879,7 +879,7 @@
   </connection>
   <connection>
    <sender>actionCopy_path</sender>
-   <signal>activated()</signal>
+   <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
    <slot>copyPathToClipboard()</slot>
    <hints>
@@ -1023,7 +1023,7 @@
   </connection>
   <connection>
    <sender>actionCopy_connection_string</sender>
-   <signal>activated()</signal>
+   <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
    <slot>copyConnStrToClipboard()</slot>
    <hints>

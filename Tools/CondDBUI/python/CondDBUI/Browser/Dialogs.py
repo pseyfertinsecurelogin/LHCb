@@ -5,7 +5,6 @@
 
 from .Qt import (Qt, QObject,
                  pyqtSignal, pyqtSlot,
-                 QString,
                  QDateTime,
                  QRegExp,
                  QDialog,
@@ -549,14 +548,14 @@ class FindDialog(QDialog, Ui_FindDialog):
         # Prepare the GUI.
         self.setupUi(self)
         # data members
-        self._text = QString()
+        self._text = ''
         self._findFlags = QTextDocument.FindFlags()
         self._wrappedSearch = True
         self._updateCheckBoxes()
 
     ## Text property
     def setText(self, value):
-        self._text = QString(value)
+        self._text = str(value)
     ## Text property
     def text(self):
         return self._text
