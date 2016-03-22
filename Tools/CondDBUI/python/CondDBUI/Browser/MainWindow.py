@@ -4,7 +4,7 @@
 #  Definition of the browser MainWindow class.
 
 from PyQt4.QtCore import (Qt, QObject,
-                          SIGNAL, SLOT,
+                          pyqtSlot, pyqtSignal,
                           QVariant, QDateTime,
                           QSettings,
                           QSize, QPoint,
@@ -32,6 +32,13 @@ import os
 
 ## Class containing the logic of the application.
 class MainWindow(QMainWindow, Ui_MainWindow):
+    # Signals
+    changedPath = pyqtSignal(str)
+    changedPathChannel = pyqtSignal(str, 'unsigned int')
+    databaseOpen = pyqtSignal(bool)
+    databaseOpenReadOnly = pyqtSignal(bool)
+    openedDB = pyqtSignal(object)
+
     ## Constructor.
     #  Initialises the base class and defines some internal structures.
     def __init__(self, parent = None, flags = Qt.Widget):
@@ -76,49 +83,44 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.iovView.setModel(self.models["iovs"])
         self.fieldsView.setModel(self.models["fields"])
         for m in [self.models[n] for n in ["tree", "nodes", "iovs", "fields"]]:
-            QObject.connect(self, SIGNAL("openedDB"), m.connectDB)
-        QObject.connect(self, SIGNAL("openedDB"), tagsGlobalCache.setDB)
+            self.openedDB.connect(m.connectDB)
+        self.openedDB.connect(tagsGlobalCache.setDB)
 
-        QObject.connect(self.hierarchyTreeView.selectionModel(), SIGNAL("currentChanged(QModelIndex,QModelIndex)"),
-                        self.selectedItem)
+        self.hierarchyTreeView.selectionModel().currentChanged.connect(self.selectedItem)
 
         # special settings for the tags model
         tagsmodel = self.models["tags"]
-        QObject.connect(self, SIGNAL("changedPath"), tagsmodel.setPath)
-        QObject.connect(self.hideAutoCheckBox, SIGNAL("stateChanged(int)"), tagsmodel.setHideAutoTags)
-        QObject.connect(tagsmodel, SIGNAL("setViewEnabled(bool)"), self.tagComboBox, SLOT("setEnabled(bool)"))
-        QObject.connect(tagsmodel, SIGNAL("setViewEnabled(bool)"), self.hideAutoCheckBox, SLOT("setEnabled(bool)"))
+        self.changedPath.connect(tagsmodel.setPath)
+        self.hideAutoCheckBox.stateChanged.connect(tagsmodel.setHideAutoTags)
+        tagsmodel.setViewEnabled.connect(self.tagComboBox.setEnabled)
+        tagsmodel.setViewEnabled.connect(self.hideAutoCheckBox.setEnabled)
         tagsmodel.setHideAutoTags(self.hideAutoCheckBox.checkState())
         # connection for the iovModel
         iovsmodel = self.models["iovs"]
-        QObject.connect(self, SIGNAL("changedPathChannel"), iovsmodel.setPathChannel)
-        QObject.connect(self.sinceFilterWidget, SIGNAL("validityKeyChange"), iovsmodel.setSince)
-        QObject.connect(self.untilFilterWidget, SIGNAL("validityKeyChange"), iovsmodel.setUntil)
-        QObject.connect(self.tagComboBox, SIGNAL("currentIndexChanged(QString)"), iovsmodel.setTag)
-        QObject.connect(iovsmodel, SIGNAL("setViewEnabled(bool)"), self.iovView, SLOT("setEnabled(bool)"))
+        self.changedPathChannel.connect(iovsmodel.setPathChannel)
+        self.sinceFilterWidget.validityKeyChange.connect(iovsmodel.setSince)
+        self.untilFilterWidget.validityKeyChange.connect(iovsmodel.setUntil)
+        self.tagComboBox.currentIndexChanged[str].connect(iovsmodel.setTag)
+        iovsmodel.setViewEnabled.connect(self.iovView.setEnabled)
         self.iovView.setEnabled(False)
         self.iovView.horizontalHeader().setResizeMode(QHeaderView.ResizeToContents)
-        QObject.connect(self.iovView.selectionModel(), SIGNAL("currentChanged(QModelIndex,QModelIndex)"),
-                        iovsmodel.selectionChanged)
-        QObject.connect(iovsmodel, SIGNAL("setCurrentIndex(QModelIndex,QItemSelectionModel::SelectionFlags)"),
-                        self.iovView.selectionModel(), SLOT("setCurrentIndex(QModelIndex,QItemSelectionModel::SelectionFlags)"))
-        QObject.connect(self.iovUTCCheckBox, SIGNAL("stateChanged(int)"), iovsmodel.setShowUTC)
+        self.iovView.selectionModel().currentChanged.connect(iovsmodel.selectionChanged)
+        iovsmodel.setCurrentIndex.connect(self.iovView.selectionModel().setCurrentIndex)
+        self.iovUTCCheckBox.stateChanged.connect(iovsmodel.setShowUTC)
         iovsmodel.setShowUTC(self.iovUTCCheckBox.checkState())
         # Use a consistent DisplayFormat
         iovsmodel.setDisplayFormat(self.sinceFilterWidget.displayFormat())
 
         # connection for the fields model
         fieldsmodel = self.models["fields"]
-        QObject.connect(self, SIGNAL("changedPath"), fieldsmodel.setPath)
-        #QObject.connect(fieldsmodel, SIGNAL("setViewEnabled(bool)"), self.fieldsView, SLOT("setEnabled(bool)"))
+        self.changedPath.connect(fieldsmodel.setPath)
+        #fieldsmodel.setViewEnabled.connect(self.fieldsView.setEnabled)
         #self.fieldsView.setEnabled(False)
-        QObject.connect(fieldsmodel, SIGNAL("setViewEnabled(bool)"), self.payloadGroupBox, SLOT("setVisible(bool)"))
+        fieldsmodel.setViewEnabled.connect(self.payloadGroupBox.setVisible)
         self.payloadGroupBox.setVisible(False)
 
-        QObject.connect(self.fieldsView.selectionModel(), SIGNAL("currentChanged(QModelIndex,QModelIndex)"),
-                        fieldsmodel.selectionChanged)
-        QObject.connect(fieldsmodel, SIGNAL("setCurrentIndex(QModelIndex,QItemSelectionModel::SelectionFlags)"),
-                        self.fieldsView.selectionModel(), SLOT("setCurrentIndex(QModelIndex,QItemSelectionModel::SelectionFlags)"))
+        self.fieldsView.selectionModel().currentChanged.connect(fieldsmodel.selectionChanged)
+        fieldsmodel.setCurrentIndex.connect(self.fieldsView.selectionModel().setCurrentIndex)
 
         # Filter panel
         # Default startup values for the IOV filter.
@@ -129,15 +131,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         #iovsmodel.setUntil(self.untilFilterWidget.toValidityKey())
 
         # When created, we have to ensure that everything is grayed out.
-        self.emit(SIGNAL("databaseOpen(bool)"), False)
+        self.databaseOpen.emit(False)
         self.menuEdit.setEnabled(False)
         self.menuAdvanced.setEnabled(False)
 
         # Triggers for the update of the central panel
-        QObject.connect(self.iovView.selectionModel(), SIGNAL("currentChanged(QModelIndex,QModelIndex)"),
-                        self.showData)
-        QObject.connect(self.fieldsView.selectionModel(), SIGNAL("currentChanged(QModelIndex,QModelIndex)"),
-                        self.showData)
+        self.iovView.selectionModel().currentChanged.connect(self.showData)
+        self.fieldsView.selectionModel().currentChanged.connect(self.showData)
 
         # Add the list of actions to show/hide the panels
         self.menuPanels.addAction(self.browsePanel.toggleViewAction())
@@ -240,7 +240,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             conn = settings.value("ConnString").toString()
             action = QAction(self)
             action.setText(conn)
-            QObject.connect(action, SIGNAL("triggered()"), self.openRecentDatabase)
+            action.triggered.connect(self.openRecentDatabase)
             self.menuRecent.addAction(action)
         settings.endArray()
 
@@ -265,13 +265,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             action.setText(name)
             action.setData(QVariant(conn))
             action.setStatusTip(conn)
-            QObject.connect(action, SIGNAL("triggered()"), self.openStandardDatabase)
+            action.triggered.connect(self.openStandardDatabase)
             self.menuStandard.addAction(action)
             self.defaultDatabases[name] = action
         self.menuStandard.setEnabled(not self.menuStandard.isEmpty())
 
     ## Slot called by the actions in the menu "Database->Standard".
     #  It can also be called passing the name of one of those databases.
+    @pyqtSlot()
     def openStandardDatabase(self, name = None, readOnly = True):
         if name is None:
             sender = self.sender()
@@ -280,7 +281,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 sender = self.defaultDatabases[name]
             else:
                 QMessageBox.critical(self, "Database nickname not known",
-                                     "The conditions database '%s' is not in the list of known database." % name)
+                                     "The conditions database '%s' is not in "
+                                     "the list of known database." % name)
                 return
         # Open the database using the connection string in the action
         self.openDatabase(str(sender.data().toString()), readOnly = readOnly)
@@ -325,7 +327,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if action is None:
             action = QAction(self)
             action.setText(connString)
-            QObject.connect(action, SIGNAL("triggered()"), self.openRecentDatabase)
+            action.triggered.connect(self.openRecentDatabase)
         # if the menu is not empty
         if self.menuRecent.actions():
             # add the action at the beginning of the list
@@ -359,10 +361,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     raise
                 title = "%s - %s" % (connString, self.appName)
                 # Notify the widgets that the database is open
-                self.emit(SIGNAL("databaseOpen(bool)"), True)
+                self.databaseOpen.emit(True)
                 # Notify the widgets if the database is open in read-only mode
                 editable = not readOnly
-                self.emit(SIGNAL("databaseOpenReadOnly(bool)"), bool(readOnly))
+                self.databaseOpenReadOnly.emit(bool(readOnly))
                 self.menuEdit.setEnabled(editable)
                 self.menuAdvanced.setEnabled(editable)
                 if editable:
@@ -377,7 +379,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.db = None
                 title = self.appName
                 # Notify the widgets that there is no database open
-                self.emit(SIGNAL("databaseOpen(bool)"), False)
+                self.databaseOpen.emit(False)
                 self.menuEdit.setEnabled(False)
                 self.menuAdvanced.setEnabled(False)
             self.setWindowTitle(title)
@@ -386,7 +388,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self._connectionString = connString
             self._addToRecents(connString)
             # update the DB instance of the models
-            self.emit(SIGNAL("openedDB"), self.db)
+            self.openedDB.emit(self.db)
         except:
             self.exceptionDialog()
 
@@ -421,18 +423,19 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         QMessageBox.about(self, app.objectName(), message)
 
-    ## Slots to react to a selected item in the structure view
+    ## Slot to react to a selected item in the structure view
+    @pyqtSlot('QModelIndex')
     def selectedItem(self, index):
         item = index.internalPointer()
         if self._path != (item.path, item.channel):
             try:
                 i = self.models["nodes"].nodes.index(item.path)
                 self._path = (item.path, item.channel)
-                self.emit(SIGNAL("changedPath"), item.path)
+                self.changedPath.emit(item.path)
                 if item.leaf and not item.children:
-                    self.emit(SIGNAL("changedPathChannel"), item.path, item.channel)
+                    self.changedPathChannel.emit(item.path, item.channel or 0)
                 else:
-                    self.emit(SIGNAL("changedPathChannel"), None, None)
+                    self.changedPathChannel.emit('', 0)
                 # Nodes can be deleted only if the database is in r/w mode and
                 # they are Folders or empty FolderSets
                 self.actionDelete_node.setEnabled(not self.db.readOnly
@@ -447,7 +450,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 i = -1
             self.pathComboBox.setCurrentIndex(i)
 
-    ## Slots to react to a selected entry in the path combo box
+    ## Slot to react to a selected entry in the path combo box
+    @pyqtSlot(str)
     def selectedPath(self, path):
         path = str(path)
         if self._path != (path, None) and path:
@@ -455,11 +459,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.hierarchyTreeView.setCurrentIndex(index)
             self._path = (path, None)
             item = index.internalPointer()
-            self.emit(SIGNAL("changedPath"), item.path)
+            self.changedPath.emit(item.path)
             if item.leaf and not item.children:
-                self.emit(SIGNAL("changedPathChannel"), path, None)
+                self.changedPathChannel.emit(path, 0)
             else:
-                self.emit(SIGNAL("changedPathChannel"), None, None)
+                self.changedPathChannel.emit('', 0)
             # Nodes can be deleted only if they are Folders or empty FolderSets
             self.actionDelete_node.setEnabled(item.leaf or not item.children)
 
@@ -525,7 +529,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     #  of node if specified.
     def _refreshModels(self, selectPath = None):
         # trigger a refresh of the caches in the models
-        self.emit(SIGNAL("openedDB"), self.db)
+        self.openedDB.emit(self.db)
         self._selectPath(selectPath)
 
     ## Helper function to select a path in both the combo box and the hierarchy
@@ -648,7 +652,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     copyTool.append(connStr, selectionList)
                 else:
                     # FIXME : https://sft.its.cern.ch/jira/browse/ROOT-5603
-                    targetDb = CondDB(connStr,create_new_db=True,readOnly=False).db                    
+                    targetDb = CondDB(connStr,create_new_db=True,readOnly=False).db
                     copyTool.copy(targetDb, selectionList)
             except:
                 self.exceptionDialog()
