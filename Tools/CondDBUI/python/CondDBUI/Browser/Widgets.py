@@ -1,10 +1,10 @@
-from PyQt4.Qt import (QObject, pyqtSignal, pyqtSlot,
-                      QDateTime, QDate, QTime,
-                      Qt, QMetaObject,
-                      QMessageBox,
-                      QWidget, QHBoxLayout, QDateTimeEdit,
-                      QSizePolicy, QAction, QCheckBox,
-                      QPlainTextEdit, QTextDocument, QTextCursor, QFont)
+from .Qt import (QObject, pyqtSignal, pyqtSlot,
+                 QDateTime, QDate, QTime,
+                 Qt, QMetaObject,
+                 QMessageBox,
+                 QWidget, QHBoxLayout, QDateTimeEdit,
+                 QSizePolicy, QAction, QCheckBox,
+                 QPlainTextEdit, QTextDocument, QTextCursor, QFont)
 
 from Utils import valKeyToDateTime, dateTimeToValKey
 

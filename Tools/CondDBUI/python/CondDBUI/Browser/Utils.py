@@ -1,7 +1,7 @@
 ## Utility functions useful across the various modules of the browser
 
 from datetime import datetime, timedelta
-from PyQt4.Qt import Qt, QDateTime, QApplication
+from .Qt import Qt, QDateTime, QApplication
 
 __all__ = ["report", "DEBUG",
            "valKeyToDateTime", "dateTimeToValKey",

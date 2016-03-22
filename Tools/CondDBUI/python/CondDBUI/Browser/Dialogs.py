@@ -3,21 +3,21 @@
 #
 #  Definition of the browser MainWindow class.
 
-from PyQt4.Qt import (Qt, QObject,
-                      pyqtSignal, pyqtSlot,
-                      QString,
-                      QDateTime,
-                      QRegExp,
-                      QDialog,
-                      QFileDialog,
-                      QProgressDialog,
-                      QDialogButtonBox,
-                      QMessageBox,
-                      QValidator,
-                      QRegExpValidator,
-                      QHeaderView,
-                      QItemSelectionModel,
-                      QTextDocument)
+from .Qt import (Qt, QObject,
+                 pyqtSignal, pyqtSlot,
+                 QString,
+                 QDateTime,
+                 QRegExp,
+                 QDialog,
+                 QFileDialog,
+                 QProgressDialog,
+                 QDialogButtonBox,
+                 QMessageBox,
+                 QValidator,
+                 QRegExpValidator,
+                 QHeaderView,
+                 QItemSelectionModel,
+                 QTextDocument)
 
 from Models import (NodeFieldsModel, NodeFieldsDelegate,
                     CondDBTagsListModel, GlobalTagsListModel,

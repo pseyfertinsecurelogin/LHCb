@@ -3,19 +3,19 @@
 #
 #  Definition of the browser MainWindow class.
 
-from PyQt4.Qt import (Qt, QObject,
-                      pyqtSlot, pyqtSignal,
-                      QVariant, QDateTime,
-                      QSettings,
-                      QSize, QPoint,
-                      PYQT_VERSION_STR, qVersion,
-                      QApplication, QMainWindow, QMessageBox,
-                      QHeaderView,
-                      QLabel, QIcon,
-                      QMenu, QAction,
-                      QTextDocument,
-                      QTextCursor,
-                      QStyle, QStyleFactory)
+from .Qt import (Qt, QObject,
+                 pyqtSlot, pyqtSignal,
+                 QVariant, QDateTime,
+                 QSettings,
+                 QSize, QPoint,
+                 PYQT_VERSION_STR, qVersion,
+                 QApplication, QMainWindow, QMessageBox,
+                 QHeaderView,
+                 QLabel, QIcon,
+                 QMenu, QAction,
+                 QTextDocument,
+                 QTextCursor,
+                 QStyle, QStyleFactory)
 
 from Ui_MainWindow import Ui_MainWindow
 

@@ -1,11 +1,11 @@
-from PyQt4.QtCore import (QObject, QString,
-                          QAbstractItemModel, QAbstractListModel, QAbstractTableModel,
-                          QVariant, QModelIndex,
-                          Qt, pyqtSignal, pyqtSlot)
-from PyQt4.QtGui import (QIcon, QApplication, QItemSelectionModel,
-                         QItemDelegate,
-                         QComboBox, QLineEdit,
-                         QBrush, QFont)
+from .Qt import (QObject, QString,
+                 QAbstractItemModel, QAbstractListModel, QAbstractTableModel,
+                 QVariant, QModelIndex,
+                 Qt, pyqtSignal, pyqtSlot,
+                 QIcon, QApplication, QItemSelectionModel,
+                 QItemDelegate,
+                 QComboBox, QLineEdit,
+                 QBrush, QFont)
 
 from PyCool import cool
 
