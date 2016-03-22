@@ -33,3 +33,12 @@ gen_pyqt_uic(CondDBUI.Browser.UI CondDBUI/Browser qt_resources/*.ui)
 gaudi_install_python_modules()
 gaudi_install_scripts()
 
+execute_process(COMMAND date -I OUTPUT_VARIABLE today OUTPUT_STRIP_TRAILING_WHITESPACE)
+# This must be done after 'gaudi_install_python_modules'
+file(WRITE ${CMAKE_BINARY_DIR}/python/CondDBUI/Browser/__version__.py
+"# generated file, do not edit
+__versionNumber__ = '${subdir_version}'
+__versionDate__ = '${today}'
+")
+install(FILES ${CMAKE_BINARY_DIR}/python/CondDBUI/Browser/__version__.py
+        DESTINATION python/CondDBUI/Browser)

@@ -3,7 +3,6 @@
 #
 #  This module contains the "main" function, which initializes the application
 #  and starts the event loop.
-
 __author__ = "Marco Clemencic <marco.clemencic@cern.ch>"
 
 # Define few global variables to tune the behavior depending on the environment
@@ -21,6 +20,7 @@ __default_option_files__ = [
     ]
 
 import logging
+import sys
 
 ## Imports an options file to find the configured conditions databases.
 #  @return A dictionary associating names (of the services) to connection strings.
@@ -49,20 +49,17 @@ def getStandardConnectionStrings(optionFiles):
 #  If an argument is passed on the command line, it is used to open the corresponding database
 #  retrieved from the options file.
 #  @see getStandardConnectionStrings()
-def main(argv = []):
+def main(argv=None):
     from PyQt4.QtGui import QApplication
     from MainWindow import MainWindow
 
-    # Extract version informations from CVS keywords
-    __versionNumber__ = '$Name: not supported by cvs2svn $'.split()[1]
-    if __versionNumber__ == "$":
-        __versionNumber__ = 'HEAD version'
+    try:
+        from __version__ import __versionNumber__, __versionDate__
+    except ImportError:
+        __versionNumber__ = __versionDate__ = 'unknown'
 
-    __versionId__  = '$Id: Main.py,v 1.8 2009-12-08 14:19:59 marcocle Exp $'.split()
-    if len(__versionId__) < 4:
-        __versionDate__ = 'unknown'
-    else:
-        __versionDate__ = __versionId__[3]
+    if argv is None:
+        argv = sys.argv
 
     # Initializes the Qt application
     app = QApplication(argv)
