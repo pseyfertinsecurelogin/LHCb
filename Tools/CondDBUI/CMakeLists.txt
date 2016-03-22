@@ -9,7 +9,13 @@ find_package(Boost)
 find_package(COOL COMPONENTS CoolKernel CoolApplication)
 find_package(CORAL COMPONENTS CoralBase CoralKernel RelationalAccess)
 find_package(PythonLibs)
-find_package(Qt)
+if(DESIRED_QT_VERSION STREQUAL "5")
+  find_package(Qt5 COMPONENTS Gui)
+else()
+  find_package(Qt)
+endif()
+message(STATUS "CondDBBrowser using Qt${DESIRED_QT_VERSION}")
+
 find_package(ROOT)
 find_package(XercesC)
 find_package(pygraphics)
@@ -33,6 +39,7 @@ file(WRITE ${CMAKE_BINARY_DIR}/python/CondDBUI/Browser/__version__.py
 "# generated file, do not edit
 __versionNumber__ = '${subdir_version}'
 __versionDate__ = '${today}'
+__qt_version__ = '${DESIRED_QT_VERSION}'
 ")
 install(FILES ${CMAKE_BINARY_DIR}/python/CondDBUI/Browser/__version__.py
         DESTINATION python/CondDBUI/Browser)

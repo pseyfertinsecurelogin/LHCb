@@ -103,7 +103,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.tagComboBox.currentIndexChanged[str].connect(iovsmodel.setTag)
         iovsmodel.setViewEnabled.connect(self.iovView.setEnabled)
         self.iovView.setEnabled(False)
-        self.iovView.horizontalHeader().setResizeMode(QHeaderView.ResizeToContents)
+        hh = self.iovView.horizontalHeader()
+        if hasattr(hh, 'setSectionResizeMode'): # Qt5
+            hh.setSectionResizeMode(QHeaderView.ResizeToContents)
+        else: # Qt4
+            hh.setResizeMode(QHeaderView.ResizeToContents)
         self.iovView.selectionModel().currentChanged.connect(iovsmodel.selectionChanged)
         iovsmodel.setCurrentIndex.connect(self.iovView.selectionModel().setCurrentIndex)
         self.iovUTCCheckBox.stateChanged.connect(iovsmodel.setShowUTC)
