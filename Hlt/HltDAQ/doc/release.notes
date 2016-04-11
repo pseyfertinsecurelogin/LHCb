@@ -4,6 +4,8 @@
 ! Purpose     : Hlt RawBanks writers/decoders/monitors
 !------------------------------------------------------------------------------
 
+!========================= HltDAQ v4r27 2016-04-11 =========================
+
 ! 2016-04-06 - Rosen Matev
  - Improve failure error message in HltPackedDataWriter
 
