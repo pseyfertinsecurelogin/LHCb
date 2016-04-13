@@ -4,6 +4,7 @@
 ! Purpose     : Package for the tracking event model classes
 !-------------------------------------------------------------------------------
 
+!========================= TrackEvent v6r7 2016-04-13 =========================
 ! 2016-04-13 - Wouter Hulsbergen
  - Fixed another bug in 'State::linearTransportTo'
 
