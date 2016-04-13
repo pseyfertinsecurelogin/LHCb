@@ -214,9 +214,11 @@ void State::linearTransportTo( double z )
   cov(1,0) += dz2*cov(3,2) + dz*(cov(3,0)+cov(2,1)) ;
   cov(2,0) += dz*cov(2,2) ;
   cov(3,0) += dz*cov(3,2) ;
+  cov(4,0) += dz*cov(4,2) ;
   cov(1,1) += dz2*cov(3,3) + 2*dz*cov(3,1) ;
   cov(2,1) += dz*cov(3,2) ;
   cov(3,1) += dz*cov(3,3) ;
+  cov(4,1) += dz*cov(4,3) ;
   m_z = z ;
 }
 
