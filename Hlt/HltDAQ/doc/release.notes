@@ -4,6 +4,8 @@
 ! Purpose     : Hlt RawBanks writers/decoders/monitors
 !------------------------------------------------------------------------------
 
+!========================= HltDAQ v4r28 2016-04-18 =========================
+
 ! 2016-04-18 - Rosen Matev
  - Improvements to HltPackedDataWriter/Decoder
    o Add support for persisting packed RecVertex containers in the raw event
