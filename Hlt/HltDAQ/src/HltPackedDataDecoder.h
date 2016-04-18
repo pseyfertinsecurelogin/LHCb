@@ -16,23 +16,28 @@ class HltPackedDataDecoder: public HltRawBankDecoderBase {
 public:
 
   enum HeaderIDs { kVersionNumber = 2 };
-  
+
   /// Standard constructor
   HltPackedDataDecoder(const std::string& name, ISvcLocator* pSvcLocator);
   /// Destructor
   ~HltPackedDataDecoder( ) override = default;
-  
+
   StatusCode initialize() override; ///< Algorithm initialization
   StatusCode execute() override; ///< Algorithm execution
   StatusCode finalize() override; ///< Algorithm finalization
-  
+
 private:
+  /// register the packed objects that can be loaded
+  template<typename PackedData> void register_object();
+
+  /// Property giving the mapping between packed containers and containers
+  std::map<std::string, std::string> m_containerMap;
   /// Property enabling calculation and print of checksums
   bool m_enableChecksum;
-  
+
   /// Load an object from the buffer and save it to TES.
   template<typename T> std::pair<DataObject*, size_t> loadObject(const std::string& location);
-  
+
   /// Map between CLIDs and load functions
   std::map<CLID, std::function<std::pair<DataObject*, size_t>(const std::string&)> > m_loaders;
   /// Buffer for de-serialization of the packed objects

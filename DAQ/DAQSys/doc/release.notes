@@ -4,6 +4,9 @@
 ! Purpose     : Place holder package for RawEvent decoding configurable
 !-----------------------------------------------------------------------------
 
+! 2016-04-18 - Rosen Matev
+ - Take persist reco locations for decoder from GaudiConf.PersistRecoConf
+
 !========================= DAQSys v8r11 2016-04-11 =========================
 
 ! 2016-04-07 - Rosen Matev

@@ -61,9 +61,13 @@ private:
   void addBanks(LHCb::RawEvent& rawEvent, const std::vector<uint8_t>& data, Compression compression);
   /// Save an object to the buffer.
   template<typename T> size_t saveObject(const DataObject& dataObject);
+  /// register the packed objects that can be saved
+  template<typename PackedData> void register_object();
 
-  /// Property giving the locations of containers to be persisted
-  std::vector<std::string> m_containers; 
+  /// Property giving the locations of packed containers to be persisted
+  std::vector<std::string> m_packedContainers;
+  /// Property giving the mapping between containers and packed containers
+  std::map<std::string, std::string> m_containerMap;
   /// Property giving the location of the raw event
   StringProperty m_outputRawEventLocation;
   /// Property setting the compression algorithm

@@ -45,6 +45,15 @@ void PackedDataChecksum::processObject(const LHCb::PackedProtoParticles& x) {
   processVector(x.extras());
 }
 
+void PackedDataChecksum::processObject(const LHCb::PackedRecVertices& x) {
+  process(x.packingVersion());
+  process(x.version());
+  processVector(x.vertices());
+  processVector(x.refs());
+  processVector(x.extras());
+  processVector(x.weights());
+}
+
 template<typename T>
 void PackedDataChecksum::process(const T& x) {
   m_result.process_bytes((void*)&x, sizeof(x));
