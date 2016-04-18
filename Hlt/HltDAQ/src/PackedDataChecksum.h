@@ -9,6 +9,7 @@
 #include "Event/PackedMuonPID.h"
 #include "Event/PackedCaloHypo.h"
 #include "Event/PackedProtoParticle.h"
+#include "Event/PackedRecVertex.h"
 
 namespace PackedDataPersistence {
 
@@ -27,6 +28,7 @@ public:
   void processObject(const LHCb::PackedMuonPIDs& object);
   void processObject(const LHCb::PackedCaloHypos& object);
   void processObject(const LHCb::PackedProtoParticles& object);
+  void processObject(const LHCb::PackedRecVertices& object);
 
   /// Obtain the current value of the checksum
   int checksum() const { return m_result.checksum(); }

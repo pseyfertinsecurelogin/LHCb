@@ -7,6 +7,7 @@
 #include "Event/PackedMuonPID.h"
 #include "Event/PackedCaloHypo.h"
 #include "Event/PackedProtoParticle.h"
+#include "Event/PackedRecVertex.h"
 
 #include "PackedDataChecksum.h"
 #include "PackedDataBuffer.h"
@@ -22,35 +23,36 @@ DECLARE_ALGORITHM_FACTORY(HltPackedDataWriter)
 HltPackedDataWriter::HltPackedDataWriter(const std::string& name, ISvcLocator* pSvcLocator)
   : GaudiAlgorithm(name, pSvcLocator)
 {
-  declareProperty("Containers", m_containers);
+  declareProperty("PackedContainers", m_packedContainers);
+  declareProperty("ContainerMap", m_containerMap);
   declareProperty("OutputRawEventLocation",
                   m_outputRawEventLocation=LHCb::RawEventLocation::Default);
   declareProperty("Compression", m_compression = LZMA);
   declareProperty("CompressionLevel", m_compressionLevel = 6);
   declareProperty("EnableChecksum", m_enableChecksum = false);
-
-  using namespace std::placeholders; 
-  m_savers[LHCb::CLID_PackedTracks] =
-    std::bind(&HltPackedDataWriter::saveObject<LHCb::PackedTracks>, this, _1);
-  m_savers[LHCb::CLID_PackedRichPIDs] = 
-    std::bind(&HltPackedDataWriter::saveObject<LHCb::PackedRichPIDs>, this, _1);
-  m_savers[LHCb::CLID_PackedMuonPIDs] = 
-    std::bind(&HltPackedDataWriter::saveObject<LHCb::PackedMuonPIDs>, this, _1);
-  m_savers[LHCb::CLID_PackedCaloHypos] = 
-    std::bind(&HltPackedDataWriter::saveObject<LHCb::PackedCaloHypos>, this, _1);
-  m_savers[LHCb::CLID_PackedProtoParticles] = 
-    std::bind(&HltPackedDataWriter::saveObject<LHCb::PackedProtoParticles>, this, _1);
-  m_savers[LHCb::CLID_PackedCaloClusters] = 
-    std::bind(&HltPackedDataWriter::saveObject<LHCb::PackedCaloClusters>, this, _1);
 }
 
+template<typename PackedData>
+void HltPackedDataWriter::register_object() {
+  using namespace std::placeholders;
+  m_savers[PackedData::classID()] =
+    std::bind(&HltPackedDataWriter::saveObject<PackedData>, this, _1);
+}
 
 StatusCode HltPackedDataWriter::initialize() {
   const StatusCode sc = GaudiAlgorithm::initialize();
   if (sc.isFailure()) return sc;
 
+  register_object<LHCb::PackedTracks>();
+  register_object<LHCb::PackedRichPIDs>();
+  register_object<LHCb::PackedMuonPIDs>();
+  register_object<LHCb::PackedCaloHypos>();
+  register_object<LHCb::PackedProtoParticles>();
+  register_object<LHCb::PackedCaloClusters>();
+  register_object<LHCb::PackedRecVertices>();
+
   info() << "Configured to persist containers ";
-  for (const auto& path: m_containers) {
+  for (const auto& path: m_packedContainers) {
     info() << " '" << path << "',";
   }
   info() << endmsg;
@@ -101,7 +103,7 @@ StatusCode HltPackedDataWriter::execute() {
 
   m_buffer.clear();
 
-  for (const auto& containerPath: m_containers) {
+  for (const auto& containerPath: m_packedContainers) {
     const auto* dataObject = getIfExists<DataObject>(containerPath);
     if (!dataObject) {
       return Error("Container " + containerPath + " does not exist.");
@@ -137,16 +139,27 @@ StatusCode HltPackedDataWriter::execute() {
     unsigned int nlinks = linkMgr->size();
     m_buffer.saveSize(nlinks);
     for (unsigned int id = 0; id < nlinks; ++id) {
-      const auto& linkPath = linkMgr->link(id)->path();
-      auto linkLocationID = m_hltANNSvc->value(PackedObjectLocations, linkPath);
-      // TODO fail if unknown location, even if HltANNSvc.allowUndefined=True
-      if (linkLocationID) {
-        m_buffer.save<int32_t>(linkLocationID->second);
-      } else {
-        error() << "Requested to persist link to " << linkPath
-                << " but no ID is registered for it in the HltANNSvc, skipping!"
-                << endmsg;
-        status = StatusCode::FAILURE;
+      const auto& location = linkMgr->link(id)->path();
+
+      auto packedLocation = m_containerMap.find(location);
+      if (packedLocation == std::end(m_containerMap)) {
+        status = Error("Cannot persist link to " + location +
+                       ". Location is not in ContainerMap!");
+        continue;
+      }
+
+      auto linkID = m_hltANNSvc->value(PackedObjectLocations, packedLocation->second);
+      if (!linkID) {
+        status = Error("Requested to persist link to " + packedLocation->second +
+                       " but no ID is registered for it in the HltANNSvc!");
+        continue;
+      }
+
+      m_buffer.save<int32_t>(linkID->second);
+
+      if (msgLevel(MSG::DEBUG)) {
+        debug() << "Packed link " << id << "/" << nlinks << " to " << location
+                << " (" << packedLocation->second << ") with ID " << linkID->second << endmsg;
       }
     }
     if (!status) return status;
@@ -157,15 +170,6 @@ StatusCode HltPackedDataWriter::execute() {
     if (msgLevel(MSG::DEBUG)) {
       debug() << "Packed " << containerPath << " with ID " << locationID->second
               << " and CLID " << classID << " into " << objectSize << " bytes" << endmsg;
-      debug() << "Packed " << nlinks << " links: ";
-      for (unsigned int id = 0; id < nlinks; ++id) {
-        auto linkLocationID = m_hltANNSvc->value(PackedObjectLocations,
-                                                 linkMgr->link(id)->path());
-        debug() << id << ": {" << linkMgr->link(id)->path()
-                << " (" << linkLocationID->second << "), ";
-      }
-      debug() << "}" << endmsg;
-
       counter(containerPath) += objectSize;
     }
   }

@@ -7,6 +7,7 @@
 #include "Event/PackedMuonPID.h"
 #include "Event/PackedCaloHypo.h"
 #include "Event/PackedProtoParticle.h"
+#include "Event/PackedRecVertex.h"
 
 #include "HltPackedDataWriter.h"
 #include "HltPackedDataDecoder.h"
@@ -20,30 +21,30 @@ HltPackedDataDecoder::HltPackedDataDecoder(const std::string& name,
   : HltRawBankDecoderBase(name, pSvcLocator)
 {
   declareProperty("EnableChecksum", m_enableChecksum = false);
-  
+  declareProperty("ContainerMap", m_containerMap);
   // The default m_sourceID=0 triggers a warning in HltRawBankDecoderBase::initialize
   // Since we only care about HLT2 persistence, set it explicitly:
   m_sourceID = kSourceID_Hlt2;
-
-  using namespace std::placeholders; 
-  m_loaders[LHCb::CLID_PackedTracks] =
-    std::bind(&HltPackedDataDecoder::loadObject<LHCb::PackedTracks>, this, _1);
-  m_loaders[LHCb::CLID_PackedRichPIDs] = 
-    std::bind(&HltPackedDataDecoder::loadObject<LHCb::PackedRichPIDs>, this, _1);
-  m_loaders[LHCb::CLID_PackedMuonPIDs] = 
-    std::bind(&HltPackedDataDecoder::loadObject<LHCb::PackedMuonPIDs>, this, _1);
-  m_loaders[LHCb::CLID_PackedCaloHypos] = 
-    std::bind(&HltPackedDataDecoder::loadObject<LHCb::PackedCaloHypos>, this, _1);
-  m_loaders[LHCb::CLID_PackedProtoParticles] = 
-    std::bind(&HltPackedDataDecoder::loadObject<LHCb::PackedProtoParticles>, this, _1);
-  m_loaders[LHCb::CLID_PackedCaloClusters] = 
-    std::bind(&HltPackedDataDecoder::loadObject<LHCb::PackedCaloClusters>, this, _1);
 }
 
+template<typename PackedData>
+void HltPackedDataDecoder::register_object() {
+  using namespace std::placeholders;
+  m_loaders[PackedData::classID()] =
+    std::bind(&HltPackedDataDecoder::loadObject<PackedData>, this, _1);
+}
 
 StatusCode HltPackedDataDecoder::initialize() {
   const StatusCode sc = HltRawBankDecoderBase::initialize();
   if (sc.isFailure()) return sc;
+
+  register_object<LHCb::PackedTracks>();
+  register_object<LHCb::PackedRichPIDs>();
+  register_object<LHCb::PackedMuonPIDs>();
+  register_object<LHCb::PackedCaloHypos>();
+  register_object<LHCb::PackedProtoParticles>();
+  register_object<LHCb::PackedCaloClusters>();
+  register_object<LHCb::PackedRecVertices>();
 
   if (UNLIKELY(m_enableChecksum)) {
     m_checksum = new PackedDataPersistence::PackedDataChecksum();
@@ -187,13 +188,23 @@ StatusCode HltPackedDataDecoder::execute() {
 
     // Restore the links to other containers on the TES
     for (const auto& linkLocationID: linkLocationIDs) {
-      auto locationIt = locationsMap.find(linkLocationID);
-      if (locationIt == std::end(locationsMap)) {
-        error() << "Packed object location not found in ANNSvc for id=" << linkLocationID
-                << ". Skipping this link, unpacking may fail!" << endmsg;
+      auto packedLocation = locationsMap.find(linkLocationID);
+      if (packedLocation == std::end(locationsMap)) {
+        Error("Packed object location not found in ANNSvc for id=" +
+              std::to_string(linkLocationID) +
+              ". Skipping this link, unpacking may fail!").ignore();
         continue;
       }
-      dataObject->linkMgr()->addLink(locationIt->second, nullptr);
+
+      auto location = m_containerMap.find(packedLocation->second);
+      if (location == std::end(m_containerMap)) {
+        Error("Cannot restore link to " + packedLocation->second.str() +
+              (". Packed location is not in ContainerMap! "
+               "Skipping this link, unpacking may fail!")).ignore();
+        continue;
+      }
+
+      dataObject->linkMgr()->addLink(location->second, nullptr);
     }
   }
 
