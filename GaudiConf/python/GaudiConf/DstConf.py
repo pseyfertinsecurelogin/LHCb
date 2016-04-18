@@ -15,6 +15,8 @@ from Configurables   import LHCbConfigurableUser
 from Configurables   import RawEventFormatConf
 from SimConf  import SimConf
 from DigiConf import DigiConf
+from GaudiConf.PersistRecoConf import PersistRecoPacking
+
 
 class DummyWriter(LHCbConfigurableUser):
     __slots__ = { "ItemList" : [], "OptItemList" : [] }
@@ -411,99 +413,54 @@ class DstConf(LHCbConfigurableUser):
             unpackFittedVeloTracks.OutputName = "Rec/Track/FittedHLT1VeloTracks"
             DataOnDemandSvc().AlgMap[ "/Event/Rec/Track/FittedHLT1VeloTracks" ] = unpackFittedVeloTracks
 
-        if self.getProp("Turbo"): 
-            unpackers=[]
-            ## HLT full reco unpacking
-            from Configurables import UnpackProtoParticle
-            proto1=UnpackProtoParticle(name="UnpackProtoParticleLong",
-                    InputName="/Event/Hlt2/pRec/long/Protos",
-                    OutputName="/Event/Hlt2/long/Protos")
-            proto2=UnpackProtoParticle(name="UnpackProtoParticleDown",
-                    InputName="/Event/Hlt2/pRec/down/Protos",
-                    OutputName="/Event/Hlt2/down/Protos")
-            from Configurables import DataPacking__Unpack_LHCb__RichPIDPacker_ as UnpackRichPIDs
-            rich1=UnpackRichPIDs( name = "Hlt2UnpackLongRichPIDs",
-                    InputName          = "/Event/Hlt2/pRec/long/RichPIDs",
-                    OutputName         = "/Event/Hlt2/TrackFitted/Long/PID/RICH/electronmuonpionkaonprotondeuteronbelowThreshold/Rich1GasRich2GasLong" )
-            rich2=UnpackRichPIDs( name = "Hlt2UnpackDownRichPIDs",
-                    InputName          = "/Event/Hlt2/pRec/down/RichPIDs",
-                    OutputName         = "/Event/Hlt2/TrackFitted/Downstream/PID/RICH/electronmuonpionkaonprotondeuteronbelowThreshold/Rich1GasRich2GasDownstream" )
-            from Configurables import DataPacking__Unpack_LHCb__MuonPIDPacker_ as UnpackMuonPIDs
-            muon1=UnpackMuonPIDs( name = "Hlt2UnpackMuonPIDs",
-                    InputName          = "/Event/Hlt2/pRec/long/MuonIDs",
-                    OutputName         = "/Event/Hlt2/PID/Muon" )
-            from Configurables import UnpackTrack
-            track1=UnpackTrack( name = "UnpackLongTracks",
-                    InputName          = "/Event/Hlt2/pRec/long/Tracks",
-                    OutputName         = "/Event/Hlt2/TrackFitted/Long" )
-            track2=UnpackTrack( name = "UnpackDownTracks",
-                    InputName          = "/Event/Hlt2/pRec/down/Tracks",
-                    OutputName         = "/Event/Hlt2/TrackFitted/Downstream" )
-            track3=UnpackTrack( name = "UnpackDownPIDMuonSegments",
-                    InputName          = "/Event/Hlt2/pRec/down/PID/MuonSegments",
-                    OutputName         = "/Event/Hlt2/TrackFitted/Downstream/PID/MuonSegments" )
-            proto3=UnpackProtoParticle( name = "UnpackNeutralProtoP",
-                    InputName          = "/Event/Hlt2/pRec/neutral/Protos",
-                    OutputName         = "/Event/Hlt2/neutral/Protos" )
-            from Configurables import DataPacking__Unpack_LHCb__CaloClusterPacker_ as UnpackCaloClusters
-            clusters1=UnpackCaloClusters( name = "UnpackCaloClusters",
-                    InputName          = "/Event/Hlt2/pRec/neutral/CaloClusters", 
-                    OutputName         = "Hlt/Calo/EcalClusters" )
-            clusters2=UnpackCaloClusters( name = "UnpackEcalSplitClusters",
-                    InputName          = "/Event/Hlt2/pRec/neutral/EcalSplitClusters",
-                    OutputName         = "Hlt/Calo/EcalSplitClusters" )
-            clustersRep=UnpackCaloClusters( name = "UnpackCaloClustersRep",
-                    InputName          = "/Event/Turbo/pRec/neutral/Clusters", 
-                    OutputName         = "Turbo/CaloClusters" )
-            from Configurables import UnpackCaloHypo as UnpackCaloHypos
-            hypos1=UnpackCaloHypos( name = "UnpackCaloElectronHypos",
-                    InputName          = "/Event/Hlt2/pRec/neutral/Electrons",
-                    OutputName         = "/Event/Hlt2/PID/CALO/Calo/Electrons" )
-            hypos2=UnpackCaloHypos( name = "UnpackCaloPhotonHypos",
-                    InputName          = "/Event/Hlt2/pRec/neutral/Photons",
-                    OutputName         = "/Event/Hlt2/PID/CALO/Calo/Photons" )
-            hypos3=UnpackCaloHypos( name = "UnpackCaloMergedPi0Hypos",
-                    InputName          = "/Event/Hlt2/pRec/neutral/MergedPi0s",
-                    OutputName         = "/Event/Hlt2/PID/CALO/Calo/MergedPi0s" )
-            hypos4=UnpackCaloHypos( name = "UnpackCaloSplitPhotonHypos",
-                    InputName          = "/Event/Hlt2/pRec/neutral/SplitPhotons",
-                    OutputName         = "/Event/Hlt2/PID/CALO/Calo/SplitPhotons" )
-            hyposRep=UnpackCaloHypos( name = "UnpackCaloHyposRep",
-                    InputName          = "/Event/Turbo/pRec/neutral/Hypos", 
-                    OutputName         = "Turbo/CaloHypos" )
-            unpackers+=[proto1,proto2,proto3,rich1,rich2,muon1,track1,track2,track3,clusters1,clusters2,hypos1,hypos2,hypos3,hypos4,clustersRep,hyposRep]
-            
-            recProtos = GaudiSequencer("TurboProtosAsRec")
-            recNeutralProtos = GaudiSequencer("TurboNeutralProtosAsRec")
-            #from Configurables import TESMergerProtoParticle
-            from Configurables import TESMerger_LHCb__ProtoParticle_ as TESMergerProtoParticle
-            mergedProtos = TESMergerProtoParticle("mergedProtos")
-            mergedProtos.inputLocations+=["/Event/Hlt2/long/Protos","/Event/Hlt2/down/Protos"]
-            mergedProtos.outputLocation="/Event/Hlt2/Protos/Charged"
-            from Configurables import Gaudi__DataLink
-            gdl = Gaudi__DataLink ( 'HltRecProtos' 
-                    , What   =      '/Event/Hlt2/Protos/Charged'
-                    , Target =       '/Event/Rec/ProtoP/Charged')
-            gdl_neutral = Gaudi__DataLink ( 'HltRecNeutralProtos' 
-                    , What   =      '/Event/Hlt2/neutral/Protos'
-                    , Target =       '/Event/Rec/ProtoP/Neutral')
-            #recProtos.Members+=unpackers
-            recProtos.Members+=[mergedProtos,gdl]
-            #recNeutralProtos.Members+=unpackers
-            recNeutralProtos.Members+=[gdl_neutral]
+        if self.getProp("Turbo"):
+            # Hlt persisted reconstruction
+            packing = PersistRecoPacking()
+            unpackers = packing.unpackers()
 
-            DataOnDemandSvc().AlgMap["Rec/ProtoP/Charged"] = recProtos
-            DataOnDemandSvc().AlgMap["Rec/ProtoP/Neutral"] = recNeutralProtos
-            
-            gdl_pv = Gaudi__DataLink ( 'HltRec_PV' 
-                    , What   =      '/Event/Turbo/Primary'
-                    , Target =       '/Event/Rec/Vertex/Primary')
-            DataOnDemandSvc().AlgMap["Rec/Vertex/Primary"] = gdl_pv
-            
-            # Update data on demand
+            from Configurables import DataPacking__Unpack_LHCb__CaloClusterPacker_ as UnpackCaloClusters
+            clustersRep = UnpackCaloClusters(
+                name="UnpackCaloClustersRep",
+                InputName="/Event/Turbo/pRec/neutral/Clusters",
+                OutputName="Turbo/CaloClusters")
+            from Configurables import UnpackCaloHypo as UnpackCaloHypos
+            hyposRep = UnpackCaloHypos(
+                name="UnpackCaloHyposRep",
+                InputName="/Event/Turbo/pRec/neutral/Hypos",
+                OutputName="Turbo/CaloHypos")
+            unpackers += [clustersRep, hyposRep]
+
             for alg in unpackers:
                 DataOnDemandSvc().AlgMap[alg.OutputName] = alg
 
+            # Make Turbo data look like Rec
+            from Configurables import TESMerger_LHCb__ProtoParticle_ as TESMergerProtoParticle
+            from Configurables import Gaudi__DataLink as DataLink
+            mergedProtos = TESMergerProtoParticle("MergeProtos")
+            mergedProtos.inputLocations = [
+                packing.outputs["Hlt2LongProtos"],
+                packing.outputs["Hlt2DownstreamProtos"],
+            ]
+            mergedProtos.outputLocation = '/Event/Hlt2/Protos/Charged'
+            gdl = DataLink('HltRecProtos',
+                           What='/Event/Hlt2/Protos/Charged',
+                           Target='/Event/Rec/ProtoP/Charged')
+            recProtos = GaudiSequencer("TurboProtosAsRec")
+            recProtos.Members = [mergedProtos, gdl]
+
+            gdl_neutral = DataLink('HltRecNeutralProtos',
+                                   What=packing.outputs["Hlt2NeutralProtos"],
+                                   Target='/Event/Rec/ProtoP/Neutral')
+            recNeutralProtos = GaudiSequencer("TurboNeutralProtosAsRec")
+            recNeutralProtos.Members = [gdl_neutral]
+
+            DataOnDemandSvc().AlgMap["Rec/ProtoP/Charged"] = recProtos
+            DataOnDemandSvc().AlgMap["Rec/ProtoP/Neutral"] = recNeutralProtos
+
+            gdl_pv = DataLink('HltRec_PV',
+                              What='/Event/Turbo/Primary',
+                              Target='/Event/Rec/Vertex/Primary')
+            DataOnDemandSvc().AlgMap["Rec/Vertex/Primary"] = gdl_pv
 
         if "Tracking" in self.getProp("EnableUnpack") : return # skip the rest
 

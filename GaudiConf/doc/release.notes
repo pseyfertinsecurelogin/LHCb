@@ -3,6 +3,10 @@
 ! package manager: M.Cattaneo
 !------------------------------------------------------------------------------
 
+! 2016-04-18 - Rosen Matev
+ - Separate out packing configuration for persist reco.
+   This eliminates duplication in HltPersistReco and DAQSys.Decoders.
+
 !========================= GaudiConf v19r18 2016-04-11 =========================
 
 ! 2016-04-06 - Rosen Matev
