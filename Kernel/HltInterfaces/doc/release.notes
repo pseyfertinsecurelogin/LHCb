@@ -3,6 +3,10 @@
 ! Responsible : Gerhard Raven
 !------------------------------------------------------------------------------
 
+! 2016-04-18 - Stefano Perazzini
+ - Removed check on technical TCK from Kernel/HltInterfaces/src/ConfigTreeNodeAlias.cpp 
+   into TCKsh functions.
+ 
 !========================= HltInterfaces v6r6 2016-03-16 =========================
 ! 2016-03-05 - Gerhard Raven
  - fix coverity warnings
