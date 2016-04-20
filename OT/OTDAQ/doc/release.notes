@@ -3,6 +3,9 @@
 ! Package manager : A.Kozlinskiy
 !------------------------------------------------------------------------------
 
+! 2016-04-19 - Francesco Dettori
+ - Adding LHCb::RawEventLocation::Tracker to comply with RawEvent format >4.0 
+
 !========================= OTDAQ v8r1 2016-02-26 =========================
 
 ! 2016-02-22 - Sascha Stahl
