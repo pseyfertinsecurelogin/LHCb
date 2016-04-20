@@ -10,6 +10,7 @@ use GaudiPolicy    v*
 use L0DU           v*    L0
 use RawEventCompat v*    DAQ
 use RawEventFormat v*
+use EventPacker    v*    Event
 
 ignore_pattern package_stamps
 

@@ -3,6 +3,9 @@
 ! package manager: M.Cattaneo
 !------------------------------------------------------------------------------
 
+! 2016-04-20 - Rosen Matev
+ - Add explicit dependency on EventPacker
+
 ! 2016-04-18 - Rosen Matev
  - Separate out packing configuration for persist reco.
    This eliminates duplication in HltPersistReco and DAQSys.Decoders.
