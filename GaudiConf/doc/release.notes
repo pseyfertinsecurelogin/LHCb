@@ -3,6 +3,8 @@
 ! package manager: M.Cattaneo
 !------------------------------------------------------------------------------
 
+!========================= GaudiConf v19r20 2016-04-21 =========================
+
 ! 2016-04-21 - Rosen Matev
  - Separate out Turbo configuration from DstConf into TurboConf.
    PersistReco = True enables unpacking of PR data and linking to the proper PVs
