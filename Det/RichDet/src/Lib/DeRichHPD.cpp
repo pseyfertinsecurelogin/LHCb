@@ -41,8 +41,7 @@ namespace
 {
   static const std::string& XmlHpdDemagPath =
     "/dd/Materials/RichMaterialTabProperties/RichHpdDemag";
-  static const int simtotbins = 50; // do not change !!!
-  static const int rectotbins = 60;
+  static const int totbins = 50; // do not change !!!
 }
 
 //=============================================================================
@@ -433,7 +432,7 @@ StatusCode DeRichHPD::fillHpdDemagTable(const unsigned int field)
   }
   TabulatedProperty::Table & simTable = dem->table();
   simTable.clear();
-  simTable.reserve(simtotbins+1);
+  simTable.reserve(totbins+1);
 
   // working data tables, used to initialise the interpolators
   std::map<double,double> tableR, tablePhi;
@@ -464,11 +463,11 @@ StatusCode DeRichHPD::fillHpdDemagTable(const unsigned int field)
   BLong = m_LongitudinalBField;
 
   // Simulation from cathode->anode
-  for ( int i = 0; i < simtotbins+1; ++i )
+  for ( int i = 0; i < totbins+1; ++i )
   {
 
     double r_anode(0), phi_anode(0);
-    const double r_cathode = (m_activeRadius/simtotbins) * (double)i;
+    const double r_cathode = m_activeRadius/totbins * (double)i;
 
     if ( m_UseBFieldTestMap )
     {
@@ -577,21 +576,20 @@ StatusCode DeRichHPD::fillHpdMagTable( const unsigned int field )
 
     // Scale r1
     const double Rscale = ( R_data > 0.1 && R_MDMS > 0.1 ? R_data / R_MDMS : 1.0 );
-    _ri_debug << "R_data = " << R_data << " R_MDMS = " << R_MDMS 
+    if ( msgLevel(MSG::DEBUG) )
+      debug() << "R_data = " << R_data << " R_MDMS = " << R_MDMS 
               << " Scale = " << Rscale 
               << endmsg;
     r_a1 *= Rscale;
 
   }
 
-  // image size. Scale by 20% to add some leaway to the interpolator tables
-  const auto halfL = 1.2 * std::min(m_siliconHalfLengthX,m_siliconHalfLengthY);
-
   // Reconstruction from anode->cathode
-  for ( int i = 0; i < rectotbins+1; ++i )
+  for ( int i = 0; i < totbins+1; ++i )
   {
 
-    const double r_anode = (halfL/rectotbins) * (double)i;
+    const double r_anode =
+      std::min(m_siliconHalfLengthX,m_siliconHalfLengthY)/totbins * (double)i;
     double r_cathode(0), phi_cathode(0);
 
     if ( m_UseBFieldTestMap )
@@ -671,7 +669,7 @@ StatusCode DeRichHPD::magnifyToGlobalMagnetON( Gaudi::XYZPoint& detectPoint,
   }
   else
   {
-    rCathode = magnification_RtoR(field)->value(rAnode);
+    rCathode = magnification_RtoR(field)->value( rAnode );
   }
 
   // check if this point could have come from the photoCathode
