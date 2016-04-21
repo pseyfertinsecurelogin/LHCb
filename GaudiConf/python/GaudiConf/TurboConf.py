@@ -67,6 +67,7 @@ class TurboConf(LHCbConfigurableUser):
     def _register_pr_links(self, packing):
         """Set up DataOnDemandSvc to create links to standard rec locations."""
         from Configurables import TESMerger_LHCb__ProtoParticle_ as TESMergerProtoParticle
+        from Configurables import GaudiSequencer
 
         mergeProtos = TESMergerProtoParticle("MergeProtos")
         mergeProtos.inputLocations = [
