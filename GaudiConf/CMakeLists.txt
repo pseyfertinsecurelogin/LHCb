@@ -9,7 +9,9 @@ gaudi_depends_on_subdirs(Kernel/LHCbKernel
                          Event/EventPacker
                          )
 
-set_property(DIRECTORY PROPERTY CONFIGURABLE_USER_MODULES GaudiConf.SimConf GaudiConf.DigiConf GaudiConf.CaloPackingConf GaudiConf.DstConf)
+set_property(DIRECTORY PROPERTY CONFIGURABLE_USER_MODULES
+             GaudiConf.SimConf GaudiConf.DigiConf GaudiConf.CaloPackingConf
+             GaudiConf.DstConf GaudiConf.TurboConf)
 gaudi_install_python_modules()
 
 gaudi_env(SET STDOPTS \${GAUDICONFROOT}/options)
