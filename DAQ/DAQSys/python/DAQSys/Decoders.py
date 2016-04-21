@@ -412,6 +412,15 @@ Decoder("HltLumiSummaryDecoder",
         outputs={"OutputContainerName":None},
         conf=DecoderDB)
 
+from GaudiConf.PersistRecoConf import PersistRecoPacking
+__packing = PersistRecoPacking()
+Decoder("HltPackedDataDecoder/Hlt2PackedDataDecoder",
+        active=True, banks=["DstData"],
+        inputs={"RawEventLocations": None},
+        outputs=__packing.packedLocations(),
+        properties={"ContainerMap": __packing.packedToOutputLocationMap()},
+        conf=DecoderDB)
+
 #UPGRADE ===========UT===========
 Decoder("RawBankToSTLiteClusterAlg/createUTLiteClusters",
         active=True, banks=["UT"],

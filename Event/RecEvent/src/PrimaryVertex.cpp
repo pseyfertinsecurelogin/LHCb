@@ -13,38 +13,6 @@ namespace LHCb
     }
   } ;
 
-  // uint32_t PrimaryVertex::uniqueVeloSegmentID( const LHCb::Track& track )
-  // {
-  //   // create a 'hash' from the velo IDs on the track
-  //   const auto& lhcbids = track.lhcbIDs() ;
-
-  //   // // need a trick to find the last velo id: TT comes after velo. so
-  //   // // we use lowerbound with the smallest TT ID. unfortunately need a
-  //   // // number that is private in lhcbid:
-  //   const int detectorTypeBits = 28 ;
-  //   // auto it = std::lower_bound( begin(lhcbids), end(lhcbids), 
-  //   // 				LHCb::LHCbID( LHCb::LHCbID::TT << /*LHCb::LHCbID::*/ detectorTypeBits ) ) ;
-  //   // // take the sum of the first and the last? may be better just to
-  //   // // add them all up with std::accumulate ...
-  //   // uint32_t sum(0) ;
-  //   // // this is far too slow!
-  //   // //std::accumulate( begin(lhcbids), it, sum, LHCbIDAdder()) ;
-  //   // // so, let's just use a cast:
-  //   // const uint32_t* uibegin = reinterpret_cast<const uint32_t*>(&(*(lhcbids.begin()))) ;
-  //   // const uint32_t* uiend   = reinterpret_cast<const uint32_t*>(&(*(it))) ;
-  //   // std::accumulate(uibegin,uiend,sum) ;
-  //   // return sum ;
-
-  //   const uint32_t* begin = reinterpret_cast<const uint32_t*>(&(*(lhcbids.begin()))) ;
-  //   const uint32_t* end   = reinterpret_cast<const uint32_t*>(&(*(lhcbids.end()))) ;
-  //   uint32_t sum(1) ;
-  //   const uint32_t* it = begin ;
-  //   const uint32_t maxval =  LHCb::LHCbID::TT << detectorTypeBits ;
-  //   while( it < end && *it < maxval ) { sum *= *it ; ++it; }
-  //   return sum ;
-  //   // we can also just the first and last two: never less than 4 lhcbids on velo track.
-  //   //return (lhcbids.front().lhcbID() + (--it)->lhcbID()) ;
-  // }
 
   uint32_t PrimaryVertex::uniqueVeloSegmentID( const LHCb::Track& track )
   {
@@ -118,23 +86,26 @@ namespace LHCb
     }
   }
 
-  void PrimaryVertex::fit()
+  bool PrimaryVertex::fit()
   {
     // recompute position and chi2
     SymMatrix3 covariance = m_sumhalfD2Chi2DX2 ;
-    covariance.InvertChol() ;
-    Vector3 delta = covariance * m_sumhalfDChi2DX ;
-    double chi2  = m_sumchi2 - ROOT::Math::Dot(delta,m_sumhalfDChi2DX) ;
-    setCovMatrix( covariance ) ;
-    setPosition( Gaudi::XYZPoint(delta(0),delta(1),delta(2) + m_refZ) ) ;
-    setChi2AndDoF( chi2,nDoF() ) ;
+    bool success = covariance.InvertChol() ; 
+    if( success ) {
+      Vector3 delta = covariance * m_sumhalfDChi2DX ;
+      double chi2  = m_sumchi2 - ROOT::Math::Dot(delta,m_sumhalfDChi2DX) ;
+      setCovMatrix( covariance ) ;
+      setPosition( Gaudi::XYZPoint(delta(0),delta(1),delta(2) + m_refZ) ) ;
+      setChi2AndDoF( chi2,nDoF() ) ;
+    }
+    return success ;
   }
   
     
-  size_t PrimaryVertex::unbias( const std::vector<const LHCb::Track*>& tracksToRemove )
+  int PrimaryVertex::unbias( const std::vector<const LHCb::Track*>& tracksToRemove )
   {
     // subtract all the tracks from the cached chi2 sums
-    size_t nremoved(0) ;
+    int nremoved(0) ;
     for( const auto& track : tracksToRemove ) {
       TrackContainer::iterator it = find(uniqueVeloSegmentID(*track)) ;
       if( it != m_tracks.end() ) {
@@ -150,23 +121,74 @@ namespace LHCb
 	}
       }
     }
-    
+
     if(nremoved>0) {
       setNDoF( this->nDoF() - 2*nremoved ) ;
-      fit() ;
+      bool success = fit() ;
+      if(!success) nremoved = -1 ;
     }
     return nremoved ;
   }
 
-  size_t PrimaryVertex::unbiasedPosition( const std::vector<const LHCb::Track*>& tracksToRemove,
-					  Gaudi::XYZPoint& pos, Gaudi::SymMatrix3x3& cov) const 
+  int PrimaryVertex::unbias( const std::vector<const LHCb::Track*>& tracksToRemove,
+				LHCb::VertexBase& target ) const
   {
-    size_t nremoved(0) ;
+    // default: copy everything from the vertexbase
+    target = *this ;
+    
+    // subtract all the tracks
+    int nremoved(0) ;
+    SymMatrix3 W  = m_sumhalfD2Chi2DX2 ;
+    Vector3    WX = m_sumhalfDChi2DX ;
+    double     chi2 = m_sumchi2 ;
+    for( const auto& track : tracksToRemove ) {
+      TrackContainer::const_iterator it = find(uniqueVeloSegmentID(*track)) ;
+      if( it != m_tracks.end() ) {
+	const auto& trk = *it ;
+	const double w =  trk.weight() ;
+	if( w > 0 ) {
+	  W    -= it->weight() * it->halfD2Chi2DX2() ;
+	  WX   -= it->weight() * it->halfDChi2DX() ;
+	  chi2 -= w * trk.chi2() ;
+	  ++nremoved ;
+	}
+      }
+    }
+    if( nremoved > 0 ) {
+      bool success = W.InvertChol() ;
+      if(success) {
+	Vector3 delta = W * WX ;
+	double chi2  = m_sumchi2 - ROOT::Math::Dot(delta,WX) ;
+	target.setCovMatrix( W ) ;
+	target.setPosition( Gaudi::XYZPoint(delta(0),delta(1),delta(2) + m_refZ) ) ;
+	target.setChi2AndDoF( chi2,nDoF() - 2* nremoved) ;
+      } else {
+	nremoved = -1 ;
+      }
+    }
+    return nremoved ;
+  }
+
+  int PrimaryVertex::unbiasedPosition( const std::vector<const LHCb::Track*>& tracksToRemove,
+				       Gaudi::XYZPoint& pos, Gaudi::SymMatrix3x3& cov) const 
+  {
+    const size_t N = tracksToRemove.size() ;
+    std::vector< VeloSegmentID > idsToRemove(N) ;
+    for( unsigned int i=0; i<N; ++i)
+      idsToRemove[i] = uniqueVeloSegmentID(*tracksToRemove[i]) ;
+    return unbiasedPosition(idsToRemove,pos,cov) ;
+  }
+
+
+  int PrimaryVertex::unbiasedPosition( const std::vector<VeloSegmentID>& tracksToRemove,
+				       Gaudi::XYZPoint& pos, Gaudi::SymMatrix3x3& cov) const 
+  {
+    int nremoved(0) ;
     // subtract all the tracks
     SymMatrix3 W  = m_sumhalfD2Chi2DX2 ;
     Vector3    WX = m_sumhalfDChi2DX ;
     for( const auto& track : tracksToRemove ) {
-      TrackContainer::const_iterator it = find(uniqueVeloSegmentID(*track)) ;
+      TrackContainer::const_iterator it = find(track) ;
       if( it != m_tracks.end() ) {
 	const auto& trk = *it ;
 	const double w =  trk.weight() ;
@@ -178,14 +200,34 @@ namespace LHCb
       }
     }
     if( nremoved > 0 ) {
-      W.InvertChol() ;
-      Vector3 delta = W * WX ;
-      pos = Gaudi::XYZPoint( delta(0),delta(1),delta(2) + m_refZ) ;
-      cov = W ;
+      bool success = W.InvertChol() ;
+      if( success ) {
+	Vector3 delta = W * WX ;
+	pos = Gaudi::XYZPoint( delta(0),delta(1),delta(2) + m_refZ) ;
+	cov = W ;
+      } else {
+	pos = position() ;
+	cov = covMatrix() ;
+	nremoved = -1 ;
+      }
     } else {
       pos = position() ;
       cov = covMatrix() ;
     }
     return nremoved ;
+  }
+
+  void PrimaryVertex::updateTukeyWeights(double maxchi2)
+  {
+    Vector3 pos ;
+    pos(0) = position().x() ;
+    pos(1) = position().y() ;
+    pos(2) = position().z() - m_refZ ;
+    for( auto& track : m_tracks ) {
+      double chi2   = track.chi2(pos) ;
+      double weight = chi2 < maxchi2 ? std::pow(1 - chi2/maxchi2,2) : 0 ;
+      track.setWeight( weight ) ;
+    }
+    initCache() ;
   }
 }

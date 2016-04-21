@@ -403,7 +403,7 @@ OTRawBankDecoder::OTRawBankDecoder( const std::string& type,
   declareProperty("TimeWindow", m_timewindow );
   declareProperty("VetoOutOfTimeHitPairs", m_vetoOutOfTimeHitPairs = true);
   //new for decoders, initialize search path, and then call the base method
-  m_rawEventLocations = {LHCb::RawEventLocation::Other, LHCb::RawEventLocation::Default};
+  m_rawEventLocations = {LHCb::RawEventLocation::Tracker, LHCb::RawEventLocation::Other, LHCb::RawEventLocation::Default};
   initRawEventSearch();
 
 }

@@ -43,6 +43,24 @@ namespace LHCb
     unsigned short int firstTrack{0},  lastTrack{0};
     unsigned short int firstInfo{0},   lastInfo{0};
     int container{0};
+
+    template<typename T>
+    inline void save(T& buf) const {
+      buf.io(
+        key, technique, chi2, nDoF,
+        x, y, z,
+        cov00, cov11, cov22, cov10, cov20, cov21,
+        firstTrack, lastTrack,
+        firstInfo, lastInfo
+        // "container" is not needed here as it is used only in the packing of
+        // custom stripping objects ((Un)PackParticlesAndVertices)
+      );
+    }
+
+    template<typename T>
+    inline void load(T& buf, unsigned int /*version*/) {
+      save(buf); // identical operation until version is incremented
+    }
   };
 
   // -----------------------------------------------------------------------
@@ -115,6 +133,32 @@ namespace LHCb
 
     /// Access the packing version
     char packingVersion() const { return m_packingVersion; }
+
+    /// Describe serialization of object
+    template<typename T>
+    inline void save(T& buf) const {
+      buf.template save<uint8_t>(m_packingVersion);
+      buf.template save<uint8_t>(version());
+      buf.save(m_vect);
+      buf.save(m_refs);
+      buf.save(m_extra);
+      buf.save(m_weights);
+    }
+
+    /// Describe de-serialization of object
+    template<typename T>
+    inline void load(T& buf) {
+      setPackingVersion(buf.template load<uint8_t>());
+      setVersion(buf.template load<uint8_t>());
+      if (m_packingVersion < 1 || m_packingVersion > defaultPackingVersion()) {
+        throw std::runtime_error("RecVertices packing version is not supported: "
+                                 + std::to_string(m_packingVersion));
+      }
+      buf.load(m_vect, m_packingVersion);
+      buf.load(m_refs);
+      buf.load(m_extra, m_packingVersion);
+      buf.load(m_weights);
+    }
 
   private:
 

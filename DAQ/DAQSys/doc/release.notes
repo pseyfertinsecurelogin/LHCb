@@ -4,6 +4,19 @@
 ! Purpose     : Place holder package for RawEvent decoding configurable
 !-----------------------------------------------------------------------------
 
+!========================= DAQSys v8r12 2016-04-18 =========================
+
+! 2016-04-18 - Rosen Matev
+ - Take persist reco locations for decoder from GaudiConf.PersistRecoConf
+
+!========================= DAQSys v8r11 2016-04-11 =========================
+
+! 2016-04-07 - Rosen Matev
+ - Update daqsys.decoder-compare qmtest by adding the packed object locations
+
+! 2016-04-06 - Rosen Matev
+ - Add decoder for packed objects (HltPackedDataDecoder)
+
 !========================= DAQSys v8r10 2015-11-23 =========================
 ! 2015-11-12 - Marco Clemencic
  - Updated test for Gaudi v27r0.

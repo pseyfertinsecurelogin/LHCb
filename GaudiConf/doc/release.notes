@@ -3,6 +3,21 @@
 ! package manager: M.Cattaneo
 !------------------------------------------------------------------------------
 
+! 2016-04-20 - Rosen Matev
+ - Add explicit dependency on EventPacker
+
+!========================= GaudiConf v19r19 2016-04-18 =========================
+
+! 2016-04-18 - Rosen Matev
+ - Separate out packing configuration for persist reco.
+   This eliminates duplication in HltPersistReco and DAQSys.Decoders.
+
+!========================= GaudiConf v19r18 2016-04-11 =========================
+
+! 2016-04-06 - Rosen Matev
+ - DstConf: Add persist reco unpackers for downstream Rich PID and MuonSegments
+   and EcalSplitClusters
+
 !========================= GaudiConf v19r17 2016-03-16 =========================
 ! 2016-03-16 - Gloria Corti
  - SimConf: Add possibility to write Bls and Bcm MCHits

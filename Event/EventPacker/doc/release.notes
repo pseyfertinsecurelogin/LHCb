@@ -4,6 +4,11 @@
 ! Purpose     : Pack and unpack events classes for smaller events
 !-----------------------------------------------------------------------------
 
+!========================= EventPacker v5r11 2016-04-18 =========================
+
+! 2016-04-14 - Rosen Matev
+ - Add serialization functions for PackedRecVertex and PackedRecVertices.
+
 !========================= EventPacker v5r10 2016-03-18 =========================
 ! 2016-03-18 - Rosen Matev
  - Add serialization functions to packed objects.

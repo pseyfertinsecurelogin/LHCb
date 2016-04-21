@@ -61,7 +61,10 @@ namespace Rich
      *  @param interType   GSL Interpolator type.
      */
     TabulatedFunction1D( const gsl_interp_type * interType = gsl_interp_linear )
-      : m_interType ( interType ) { }
+      : m_interType ( interType ) 
+    {
+      initInterpolator(); 
+    }
 
     /** Constructor from arrays containing x and y values
      *
@@ -143,6 +146,25 @@ namespace Rich
              const unsigned int samples = 100,
              const gsl_interp_type * interType = gsl_interp_linear ); 
 
+  private:
+
+    /** Issue an out of range warning
+     *  @param x    The requested x value
+     *  @param retx The x value to use (corrected to be in range)
+     *  @return x value to use
+     */
+    virtual double rangeWarning( const double x, const double retx ) const;
+
+    /** x value range check
+     *  @param x The x value to check
+     *  @return The x value to use
+     */
+    double checkRange( const double x ) const
+    {
+      return ( withinInputRange(x) ? x :
+               x < minX() ? rangeWarning(x,minX()) : rangeWarning(x,maxX()) );
+    }
+
   public:
 
     /** Computes the function value (y) for the given parameter (x) value
@@ -153,7 +175,7 @@ namespace Rich
      */
     inline double value( const double x ) const
     {
-      return gsl_spline_eval( m_mainDistSpline, x, m_mainDistAcc );
+      return gsl_spline_eval( m_mainDistSpline, checkRange(x), m_mainDistAcc );
     }
 
     /**  Returns the function value (y) for the given parameter (x) value
@@ -177,10 +199,12 @@ namespace Rich
     inline double meanX ( const double from, 
                           const double to ) const
     {
-      const auto bot = integral( from, to );
+      const auto _from = checkRange(from);
+      const auto _to   = checkRange(to);
+      const auto bot = integral( _from, _to );
       return ( fabs(bot) > 0 ?
                gsl_spline_eval_integ( m_weightedDistSpline,
-                                      from, to, m_weightedDistAcc )/bot : 0 );
+                                      _from, _to, m_weightedDistAcc )/bot : 0 );
     }
 
     /** Computes the definite integral of the function between limits
@@ -193,7 +217,10 @@ namespace Rich
     inline double integral ( const double from,  
                              const double to ) const
     {
-      return gsl_spline_eval_integ( m_mainDistSpline, from, to, m_mainDistAcc );
+      return gsl_spline_eval_integ( m_mainDistSpline, 
+                                    checkRange(from), 
+                                    checkRange(to), 
+                                    m_mainDistAcc );
     }
 
     /** Computes the first derivative of the function at the given parameter point
@@ -204,7 +231,7 @@ namespace Rich
      */
     inline double firstDerivative( const double x ) const
     {
-      return gsl_spline_eval_deriv( m_mainDistSpline, x, m_mainDistAcc );
+      return gsl_spline_eval_deriv( m_mainDistSpline, checkRange(x), m_mainDistAcc );
     }
 
     /** Computes the second derivative of the function at the given parameter point
@@ -215,7 +242,7 @@ namespace Rich
      */
     inline double secondDerivative( const double x ) const
     {
-      return gsl_spline_eval_deriv2( m_mainDistSpline, x, m_mainDistAcc );
+      return gsl_spline_eval_deriv2( m_mainDistSpline, checkRange(x), m_mainDistAcc );
     }
     
     /** Computes the R.M.S. value between the given parameter limits.
@@ -254,25 +281,37 @@ namespace Rich
      *
      *  @return The minimum valid paramter value
      */
-    inline double minX() const noexcept { return (*m_data.begin()).first; }
+    inline double minX() const noexcept 
+    {
+      return m_mainDistSpline->x[0];
+    }
 
     /** The function value for the minimum valid parameter
      *
      *  @return The function value at the minimum valid parameter
      */
-    inline double minY() const noexcept { return (*m_data.begin()).second; }
+    inline double minY() const noexcept 
+    {
+      return m_mainDistSpline->y[0];
+    }
 
     /** The maximum parameter value for which the function is defined
      *
      *  @return The minimum valid paramter value
      */
-    inline double maxX() const noexcept { return (*(--m_data.end())).first; }
+    inline double maxX() const noexcept 
+    {
+      return m_mainDistSpline->x[ m_mainDistSpline->size - 1 ];
+    }
 
     /** The function value for the minimum valid parameter
      *
      *  @return The function value at the minimum valid parameter
      */
-    inline double maxY() const noexcept { return (*(--m_data.end())).second; }
+    inline double maxY() const noexcept 
+    {
+      return m_mainDistSpline->y[ m_mainDistSpline->size - 1 ];
+    }
 
     /** The status of the interpolator.
      *
@@ -295,16 +334,12 @@ namespace Rich
      *
      *  @return The number of data (x,y) points
      */
-    inline Data::size_type nDataPoints() const noexcept
-    {
-      return m_data.size();
-    }
+    inline size_t nDataPoints() const noexcept { return m_mainDistSpline->size; }
 
     /// Return the interpolator name
     inline std::string interpName() const
     {
-      return ( m_mainDistSpline ?
-               std::string(gsl_interp_name(m_mainDistSpline->interp)) : "Undefined" );
+      return gsl_interp_name(m_mainDistSpline->interp);
     }
     
     /// Return the interpolator type
@@ -359,45 +394,30 @@ namespace Rich
     bool initInterpolator( const std::vector< std::pair<double,double> > & data,
                            const gsl_interp_type * interType = nullptr );
 
-    /** initialise the GSL interpolator using the given type
-     *
-     *  Initialisation will (re)use whatever data values the interpolator has been given
-     *
-     *  @param interType GSL Interpolator type
-     *
-     *  @return the status of the initialisation
-     *  @retval true  The interpolator initialised correctly and is ready for use
-     *  @retval false The interpolator failed to initialise correctly
-     */
-    bool initInterpolator( const gsl_interp_type * interType );
-
   protected: // methods
 
     /// clear the interpolator
     void clearInterpolator();
 
-  protected: // data
-
-    /// the data points
-    Data m_data;
-
+    /// Default initialise the interpolator
+    void initInterpolator();
+    
+  private: // data
+    
+    // GSL interpolator objects
+    gsl_interp_accel * m_mainDistAcc        = nullptr; ///< The accelerator for the main y(x) distribution
+    gsl_spline       * m_mainDistSpline     = nullptr; ///< The spline for the main y(x) distribution
+    gsl_interp_accel * m_weightedDistAcc    = nullptr; ///< The accelerator for the weighted x.y(x) distribution
+    gsl_spline       * m_weightedDistSpline = nullptr; ///< The spline for the weighted x.y(x) distribution
+    
+  protected:
+    
     /// Status flag
     bool m_OK = false;
-
-  private: // data
-
-    // GSL interpolator objects
-    gsl_interp_accel * m_mainDistAcc = nullptr;        ///< The accelerator for the main y(x) distribution
-    gsl_spline       * m_mainDistSpline = nullptr;     ///< The spline for the main y(x) distribution
-    gsl_interp_accel * m_weightedDistAcc = nullptr;    ///< The accelerator for the weighted x.y(x) distribution
-    gsl_spline       * m_weightedDistSpline = nullptr; ///< The spline for the weighted x.y(x) distribution
-
-
-  protected:
-
+    
     /// The interpolator type
     const gsl_interp_type * m_interType = nullptr;
-
+    
   };
 
 }

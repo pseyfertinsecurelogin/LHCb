@@ -227,16 +227,39 @@
     <method
         name="unbias"
         const="FALSE"
-        type="size_t"
-        desc="Remove this set of tracks from the vertex. Returns the number of tracks that was removed."
+        type="int"
+        desc="Remove this set of tracks from the vertex. Returns the
+ number of tracks that was removed. Remove -1 in case of fit failure."
         argList="const std::vector&lt;const LHCb::Track*&gt; tracksToRemove"/>
 
     <method
-        name="unbiasedPosition"
-        type="size_t"
-	const="TRUE"
-        desc="Remove this set of tracks from the vertex. Returns the number of tracks that was removed.">
+        name="unbias"
+        const="TRUE"
+        type="int"
+        desc="Remove this set of tracks from the vertex. Returns the
+ number of tracks that was removed. Returns -1 in case of fit failure.">
         <arg const="TRUE" name="tracksToRemove" type="std::vector&lt;const LHCb::Track*&gt;"/>
+        <arg const="FALSE" name="target" type ="LHCb::VertexBase" />
+    </method>
+
+    <method 
+        name="unbiasedPosition"
+        type="int"
+	const="TRUE"
+        desc="Remove this set of tracks from the vertex. Returns the 
+ number of tracks that was removed. Returns -1 in case of fit failure.">
+        <arg const="TRUE" name="tracksToRemove" type="std::vector&lt;const LHCb::Track*&gt;"/>
+        <arg const="FALSE" name="position" type="Gaudi::XYZPoint"/>
+        <arg const="FALSE" name="cov" type="Gaudi::SymMatrix3x3"/>
+    </method>
+
+    <method 
+        name="unbiasedPosition"
+        type="int"
+	const="TRUE"
+        desc="Remove set of tracks identified by VELO id from the vertex. Returns the 
+ number of tracks that was removed. Returns -1 in case of fit failure.">
+        <arg const="TRUE" name="tracksToRemove" type="std::vector&lt;VeloSegmentID&gt;"/>
         <arg const="FALSE" name="position" type="Gaudi::XYZPoint"/>
         <arg const="FALSE" name="cov" type="Gaudi::SymMatrix3x3"/>
     </method>
@@ -244,7 +267,14 @@
     <method
         name="fit"
         const="FALSE"
+        type="bool"
+        desc="Refit the vertex position. Returns true in case of success."/>
+
+   <method
+        name="updateTukeyWeights"
+        const="FALSE"
         type="void"
+	argList="double maxchi2"
         desc="Refit the vertex position"/>
 
    </class>

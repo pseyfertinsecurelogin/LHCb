@@ -7,6 +7,7 @@
 #include "Event/PackedMuonPID.h"
 #include "Event/PackedCaloHypo.h"
 #include "Event/PackedProtoParticle.h"
+#include "Event/PackedRecVertex.h"
 
 #include "PackedDataChecksum.h"
 #include "PackedDataBuffer.h"
@@ -22,34 +23,36 @@ DECLARE_ALGORITHM_FACTORY(HltPackedDataWriter)
 HltPackedDataWriter::HltPackedDataWriter(const std::string& name, ISvcLocator* pSvcLocator)
   : GaudiAlgorithm(name, pSvcLocator)
 {
-  declareProperty("Containers", m_containers);
+  declareProperty("PackedContainers", m_packedContainers);
+  declareProperty("ContainerMap", m_containerMap);
   declareProperty("OutputRawEventLocation",
                   m_outputRawEventLocation=LHCb::RawEventLocation::Default);
   declareProperty("Compression", m_compression = LZMA);
   declareProperty("CompressionLevel", m_compressionLevel = 6);
-
-  using namespace std::placeholders; 
-  m_savers[LHCb::CLID_PackedTracks] =
-    std::bind(&HltPackedDataWriter::saveObject<LHCb::PackedTracks>, this, _1);
-  m_savers[LHCb::CLID_PackedRichPIDs] = 
-    std::bind(&HltPackedDataWriter::saveObject<LHCb::PackedRichPIDs>, this, _1);
-  m_savers[LHCb::CLID_PackedMuonPIDs] = 
-    std::bind(&HltPackedDataWriter::saveObject<LHCb::PackedMuonPIDs>, this, _1);
-  m_savers[LHCb::CLID_PackedCaloHypos] = 
-    std::bind(&HltPackedDataWriter::saveObject<LHCb::PackedCaloHypos>, this, _1);
-  m_savers[LHCb::CLID_PackedProtoParticles] = 
-    std::bind(&HltPackedDataWriter::saveObject<LHCb::PackedProtoParticles>, this, _1);
-  m_savers[LHCb::CLID_PackedCaloClusters] = 
-    std::bind(&HltPackedDataWriter::saveObject<LHCb::PackedCaloClusters>, this, _1);
+  declareProperty("EnableChecksum", m_enableChecksum = false);
 }
 
+template<typename PackedData>
+void HltPackedDataWriter::register_object() {
+  using namespace std::placeholders;
+  m_savers[PackedData::classID()] =
+    std::bind(&HltPackedDataWriter::saveObject<PackedData>, this, _1);
+}
 
 StatusCode HltPackedDataWriter::initialize() {
   const StatusCode sc = GaudiAlgorithm::initialize();
   if (sc.isFailure()) return sc;
 
+  register_object<LHCb::PackedTracks>();
+  register_object<LHCb::PackedRichPIDs>();
+  register_object<LHCb::PackedMuonPIDs>();
+  register_object<LHCb::PackedCaloHypos>();
+  register_object<LHCb::PackedProtoParticles>();
+  register_object<LHCb::PackedCaloClusters>();
+  register_object<LHCb::PackedRecVertices>();
+
   info() << "Configured to persist containers ";
-  for (const auto& path: m_containers) {
+  for (const auto& path: m_packedContainers) {
     info() << " '" << path << "',";
   }
   info() << endmsg;
@@ -65,7 +68,7 @@ StatusCode HltPackedDataWriter::initialize() {
     }
   }
 
-  if (msgLevel(MSG::DEBUG)) {
+  if (UNLIKELY(m_enableChecksum)) {
     m_checksum = new PackedDataPersistence::PackedDataChecksum();
   }
 
@@ -78,13 +81,13 @@ size_t HltPackedDataWriter::saveObject(const DataObject& dataObject) {
   const auto& object = dynamic_cast<const T&>(dataObject);
   
   // Reserve bytes for the size of the object
-  auto posObjectSize = m_buffer.save<uint32_t>(0).first;
+  auto posObjectSize = m_buffer.saveSize(0).first;
   // Save the object actual object and see how many bytes were written
   auto objectSize = m_buffer.save(object).second;
   // Save the object's size in the correct position
   m_buffer.saveAt<uint32_t>(objectSize, posObjectSize);
 
-  if (msgLevel(MSG::DEBUG)) { m_checksum->processObject(object); }
+  if (UNLIKELY(m_enableChecksum)) { m_checksum->processObject(object); }
   return objectSize;
 }
 
@@ -100,7 +103,7 @@ StatusCode HltPackedDataWriter::execute() {
 
   m_buffer.clear();
 
-  for (const auto& containerPath: m_containers) {
+  for (const auto& containerPath: m_packedContainers) {
     const auto* dataObject = getIfExists<DataObject>(containerPath);
     if (!dataObject) {
       return Error("Container " + containerPath + " does not exist.");
@@ -109,6 +112,7 @@ StatusCode HltPackedDataWriter::execute() {
 
     // Obtain the integer ID to be saved instead of the location string
     auto locationID = m_hltANNSvc->value(PackedObjectLocations, containerPath);
+    // TODO fail if unknown location, even if HltANNSvc.allowUndefined=True
     if (!locationID) {
       error() << "Requested to persist " << containerPath
               << " but no ID is registered for it in the HltANNSvc, skipping!"
@@ -125,9 +129,42 @@ StatusCode HltPackedDataWriter::execute() {
     }
     const auto saveObjectFun = it->second;
 
-    // Save the CLID, location and object itself
+    // Save the CLID and location
     m_buffer.save<uint32_t>(classID);
     m_buffer.save<int32_t>(locationID->second);
+
+    // Save the links to other containers on the TES
+    StatusCode status{StatusCode::SUCCESS};
+    auto* linkMgr = dataObject->linkMgr();
+    unsigned int nlinks = linkMgr->size();
+    m_buffer.saveSize(nlinks);
+    for (unsigned int id = 0; id < nlinks; ++id) {
+      const auto& location = linkMgr->link(id)->path();
+
+      auto packedLocation = m_containerMap.find(location);
+      if (packedLocation == std::end(m_containerMap)) {
+        status = Error("Cannot persist link to " + location +
+                       ". Location is not in ContainerMap!");
+        continue;
+      }
+
+      auto linkID = m_hltANNSvc->value(PackedObjectLocations, packedLocation->second);
+      if (!linkID) {
+        status = Error("Requested to persist link to " + packedLocation->second +
+                       " but no ID is registered for it in the HltANNSvc!");
+        continue;
+      }
+
+      m_buffer.save<int32_t>(linkID->second);
+
+      if (msgLevel(MSG::DEBUG)) {
+        debug() << "Packed link " << id << "/" << nlinks << " to " << location
+                << " (" << packedLocation->second << ") with ID " << linkID->second << endmsg;
+      }
+    }
+    if (!status) return status;
+
+    // Save the packed object itself
     auto objectSize = saveObjectFun(*dataObject);
 
     if (msgLevel(MSG::DEBUG)) {
@@ -149,8 +186,9 @@ StatusCode HltPackedDataWriter::execute() {
     counter("Size of serialized data") += m_buffer.buffer().size();
     counter("Size of comppressed data") += output.size();
     debug() << "Total size of serialized data " << m_buffer.buffer().size() << endmsg;
-    debug() << "Wrote " << output.size() << " compressed bytes" << endmsg;    
-    debug() << "Packed data checksum = " << m_checksum->checksum() << endmsg;
+    debug() << "Wrote " << output.size() << " compressed bytes" << endmsg;
+    if (UNLIKELY(m_enableChecksum))
+      debug() << "Packed data checksum = " << m_checksum->checksum() << endmsg;
   }
 
   m_buffer.clear();
@@ -162,8 +200,8 @@ StatusCode HltPackedDataWriter::execute() {
 
 
 StatusCode HltPackedDataWriter::finalize() {
-  if (msgLevel(MSG::DEBUG)) {
-    debug() << "Global packed data checksum = " << m_checksum->checksum() << endmsg;
+  if (UNLIKELY(m_enableChecksum)) {
+    info() << "Global packed data checksum = " << m_checksum->checksum() << endmsg;
     delete m_checksum;
   }
   return GaudiAlgorithm::finalize();  // must be called after all other actions
