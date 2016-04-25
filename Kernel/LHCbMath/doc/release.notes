@@ -6,6 +6,10 @@
 !               All headers included in directory LHCbMath
 !-----------------------------------------------------------------------------
 
+! 2016-04-25 - Vanya Belyaev
+ - deriv.py: add Width/width  functions, 
+   allowing easy evaluation of full width as half maximum for functons  
+
 ! 2016-03-30 - Vanya Belyaev
  - add mean functions for *WithErrors obejcts 
 

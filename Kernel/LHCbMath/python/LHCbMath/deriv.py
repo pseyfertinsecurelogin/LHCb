@@ -59,6 +59,7 @@ __all__     = (
     "Mediane"       , ## calculate "mediane"  for functions/distribitions, etc (scipy)
     "Quantile"      , ## calculate "quantile" for functions/distribitions, etc (scipy)
     "Mode"          , ## calculate "mode"     for functions/distribitions, etc (scipy)
+    "Width"         , ## calculate "width"    for functions/distribitions, etc (scipy)
     "CL_symm"       , ## calcualte symmetrical confidence intervals            (scipy)
     "CL_asymm"      , ## calcualte asymmetrical confidence intervals           (scipy)
     ##
@@ -73,6 +74,7 @@ __all__     = (
     "mediane"       , ## calculate "mediane"  for functions/distribitions, etc (scipy)
     "quantile"      , ## calculate "quantile" for functions/distribitions, etc (scipy)
     "mode"          , ## calculate "mode"     for functions/distribitions, etc (scipy)
+    "width"         , ## calculate "width"    for functions/distribitions, etc (scipy)
     "cl_symm"       , ## calculate symmetrical confidence intervals            (scipy)
     "cl_asymm"      , ## calculate asymmetrical confidence intervals           (scipy)
     ##
@@ -1166,17 +1168,68 @@ class Mode(Mediane) :
         ## m0     = 0.5 * ( m1 + m2 )
 
         m0 = m1 
+        ifun = lambda x,*a : -1.0 * float( func ( x , *a ) )
+        
         from scipy import optimize
-        result = optimize.minimize ( 
-            lambda x : -1 * float (func ( x ) )   , 
-            x0     = float ( m0 )                 ,
-            bounds = [ (self._xmin , self._xmax)] ,
+        result = optimize.minimize (
+            ifun                                   , 
+            x0     = float ( m0 )                  ,
+            bounds = [ (self._xmin , self._xmax) ] ,
             args   = args )
         
         return result.x[0]
     
     def __str__ ( self ) :
         return "Mode(%s,%s)" % ( self._xmin , self._xmax )
+
+# =============================================================================
+## @class Width
+#  Calculate the full width at half heigh for the distribution or function  
+#  @code
+#  xmin,xmax = 0,math.pi 
+#  width     = Width ( xmin,xmax )  ## specify min/max
+#  x1,x2     = width ( math.sin  )
+#  fwhm      = x2-x1
+#  @endcode 
+#  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+#  @date   2015-07-12
+class Width(Mode) :
+    """
+    Calculate the mode for the distribution or function  
+    >>> xmin,xmax = 0,math.pi 
+    >>> width     = Width ( xmin,xmax )  ## specify min/max
+    >>> x1,x2     = width ( math.sin )
+    >>> fwhm      = x2-x1
+    """
+    def __init__ ( self , xmin , xmax , height_factor = 0.5 ) :
+        Mode.__init__ ( self , xmin , xmax )
+        self._hfactor = height_factor
+        
+    ## calculate the width
+    def __call__ ( self , func , *args ) :
+        ##
+
+        ## get the position of the mode
+        m0  = Mode.__call__ ( self , func , *args )
+
+        ## function  value at the maximum
+        v0      = func ( m0 , *args )
+
+        ## half height 
+        vheight = 1.0 * v0 * self._hfactor
+
+        
+        ## use scipy to find solution 
+        from scipy import optimize        
+        ifun = lambda x,*a : float(func (x,*a))-vheight
+        x1 = optimize.brentq ( ifun , self._xmin , m0         , args = args )
+        x2 = optimize.brentq ( ifun , m0         , self._xmax , args = args ) 
+        
+        return x1,x2
+
+    def __str__ ( self ) :
+        return "Width(%s,%s,%s)" % ( self._xmin , self._xmax , self._hfactor)
+    
 
 # =============================================================================
 ## @class CL_symm
@@ -1623,6 +1676,28 @@ def mode ( func , xmin = None , xmax = None ) :
     return sp_action ( func , actor , xmin , xmax )
 
 # =============================================================================
+## get the width, considering function to be PDF 
+#  @code 
+#  >>> fun   = ...
+#  >>> x1,x2 = width( fun ,  xmin = 10 , xmax = 50 )
+#  >>> fwhm  = x2-x1
+#  @endcode
+#  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+#  @date 2015-07-11
+def width ( func , xmin = None , xmax = None , height_factor = 0.5 ) :
+    """
+    Get the width for the distribution using scipy/numpy
+    >>> fun   = ...
+    >>> x1,x2 = width ( fun ,  xmin = 10 , xmax = 50 )
+    >>> fwhm  = x2-x1   
+    """
+    ## get the functions from LHCbMath.deriv 
+    ## use it! 
+    ## get the functions from LHCbMath.deriv
+    actor = lambda x1,x2 : Width  ( x1 , x2 , height_factor ) 
+    return sp_action ( func , actor , xmin , xmax )
+
+# =============================================================================
 ## get the symmetric confidence interval around x0 for (xmin,xmax) interval 
 #  @code 
 #  fun  = lambda x : exp( - 0.5 * x * x ) 
@@ -1752,6 +1827,12 @@ if '__main__' == __name__ :
 
     mode_ = Mode     (0, math.pi)
     print 'sin@[0,pi]                mode: %s ' % mode_ (math.sin) 
+
+    def fwhm ( fun ) :
+        _w    =   Width   (0, math.pi)
+        x1,x2 = _w ( fun )
+        return x2-x1
+    print 'sin@[0,pi]                fwhm: %s ' % fwhm (math.sin) 
 
     rms_ = RMS     (0, math.pi)
     print 'sin@[0,pi]                 rms: %s ' % rms_  (math.sin) 
