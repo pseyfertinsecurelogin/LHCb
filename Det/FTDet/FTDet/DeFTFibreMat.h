@@ -316,6 +316,14 @@ public:
   };
 
 
+  double getFibreMatHalfSizeX() const {return m_fibreMatHalfSizeX;}
+  double getFibreMatHalfSizeY() const {return m_fibreMatHalfSizeY;}
+  double getCellSizeX() const {return m_cellSizeX;}
+  double getDzDy() const {return m_dzDy;}
+  double getTanAngle() const {return m_tanAngle;}
+
+
+
   /// Make the Test algo a friend so that it can call private methods
   friend class DeFTTestAlg;
 
