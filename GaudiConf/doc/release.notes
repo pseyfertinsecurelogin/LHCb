@@ -3,6 +3,9 @@
 ! package manager: M.Cattaneo
 !------------------------------------------------------------------------------
 
+! 2016-04-27 - Rosen Matev
+ - Fix offline location for neutrals for persist reco
+
 !========================= GaudiConf v19r20 2016-04-21 =========================
 
 ! 2016-04-21 - Rosen Matev

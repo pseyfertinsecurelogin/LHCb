@@ -84,7 +84,7 @@ class TurboConf(LHCbConfigurableUser):
 
         linkNeutralProtos = DataLink('HltRecNeutralProtos',
                                      What=packing.outputs["Hlt2NeutralProtos"],
-                                     Target='/Event/Rec/ProtoP/Neutral')
+                                     Target='/Event/Rec/ProtoP/Neutrals')
         recNeutralProtos = GaudiSequencer("TurboNeutralProtosAsRec")
         recNeutralProtos.Members = [linkNeutralProtos]
         DataOnDemandSvc().AlgMap[linkNeutralProtos.Target] = recNeutralProtos
