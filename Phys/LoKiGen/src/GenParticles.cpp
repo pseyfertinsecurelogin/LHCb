@@ -32,6 +32,12 @@
 #include "LoKi/GenOscillated.h"
 #include "LoKi/IGenDecay.h"
 // ============================================================================
+#include "LoKi/CmpBarCode.h"
+// ============================================================================
+// Boost
+// ============================================================================
+#include "boost/format.hpp"
+// ============================================================================
 /** @file
  *
  *  Implementation of the functions form namespace LoKi::GenParticles
@@ -2015,6 +2021,19 @@ LoKi::GenParticles::IsNotAbsID::operator()
   return not_in_abs_list ( p->pdg_id() ) ;
 }
 // ============================================================================
+
+
+// ============================================================================
+// get unique string for HepMC::Particle 
+// ============================================================================
+std::string LoKi::GenParticles::hex_id ( const HepMC::GenParticle* particle ) 
+{
+  if ( 0 == particle ) { return "NULL" ; }
+  boost::format fmt ( "%p" ) ;
+  const void * p = particle ;
+  fmt % p ;
+  return fmt.str() ;
+}
 
 
 // ============================================================================
