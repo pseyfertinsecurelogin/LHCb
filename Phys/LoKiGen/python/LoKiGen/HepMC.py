@@ -612,7 +612,10 @@ def _print_ ( self                                     ,
 
 _print_ . __doc__ += "\n" + LoKi.GenDecayChain.print_ . __doc__ 
 
-HepMC.GenParticle.hex_id = lambda s : LoKi.GenParticles.hex_id ( s )
+HepMC.GenParticle.hex_id    = lambda s : LoKi.GenParticles.hex_id ( s )
+HepMC.GenParticle.__hash__  = lambda s : LoKi.GenParticles.hash   ( s )
+HepMC.GenVertex  .__hash__  = lambda s : LoKi.GenParticles.hash   ( s )
+
 
 for t in ( HepMC.GenParticle             ,
            HepMC.GenParticle.Range       , 

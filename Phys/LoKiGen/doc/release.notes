@@ -14,6 +14,9 @@
 ! -----------------------------------------------------------------------------
 
 ! 2016-04-27 - Vanya Belyaev
+ - fix the issue with hash 
+
+! 2016-04-27 - Vanya Belyaev
  - add missing hep_id function...
 
 

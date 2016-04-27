@@ -5,6 +5,7 @@
 // STD & STL
 // ============================================================================
 #include <cmath>
+#include <functional>
 // ============================================================================
 // GaudiKernel
 // ============================================================================
@@ -2034,6 +2035,26 @@ std::string LoKi::GenParticles::hex_id ( const HepMC::GenParticle* particle )
   fmt % p ;
   return fmt.str() ;
 }
+
+
+
+// ============================================================================
+namespace 
+{
+  // hashing function 
+  const std::hash<const void*> s_hash {} ;
+}
+// ============================================================================
+// get hash function for HepMC::GenParticle 
+// ============================================================================
+std::size_t LoKi::GenParticles::hash ( const HepMC::GenParticle* particle ) 
+{ return 0 == particle ? 0 : s_hash ( particle ) ; }
+// ============================================================================
+// get hash function for HepMC::GenVertex
+// ============================================================================
+std::size_t LoKi::GenParticles::hash ( const HepMC::GenVertex*   vertex ) 
+{ return 0 == vertex ? 0 : s_hash( vertex ) ; }
+
 
 
 // ============================================================================
