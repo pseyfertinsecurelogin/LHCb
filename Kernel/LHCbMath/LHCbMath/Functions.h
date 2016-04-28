@@ -1,4 +1,4 @@
-// $Id$
+// $Id: Functions.h 199418 2016-01-06 10:18:40Z ibelyaev $
 // ============================================================================
 #ifndef LHCBMATH_FUNCTIONS_H
 #define LHCBMATH_FUNCTIONS_H 1
@@ -28,8 +28,8 @@
  *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
  *  @date 2010-04-19
  *
- *                    $Revision$
- *  Last modification $Date$
+ *                    $Revision: 199418 $
+ *  Last modification $Date: 2016-01-06 11:18:40 +0100 (Wed, 06 Jan 2016) $
  *                 by $author$
  */
 // ============================================================================
@@ -4154,7 +4154,88 @@ namespace Gaudi
       /// workspace
       Gaudi::Math::WorkSpace m_workspace ;
       // ======================================================================
-     } ;
+    } ;
+    // ========================================================================
+    /** @class Sech
+     *  Hyperbolic secant distribution or "inverse-cosh" distribution
+     * 
+     *  The hyperbolic secant distribution shares many properties with the 
+     *  standard normal distribution: 
+     *  - it is symmetric with unit variance and zero mean, 
+     *    median and mode
+     *  -its pdf is proportional to its characteristic function. 
+     *
+     *  However, the hyperbolic secant distribution is leptokurtic; 
+     *  that is, it has a more acute peak near its mean, and heavier tails, 
+     *  compared with the standard normal distribution.
+     *
+     *  \f$ f(x,\mu,\sigma) \propto \frac{1}{2} \sech ( \frac{\pi}{2}\frac{x-\mu}{\sigma} )\f$ 
+     *  @see https://en.wikipedia.org/wiki/Hyperbolic_secant_distribution
+     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+     *  @date 2016-04-25
+     */
+    class GAUDI_API Sech : public std::unary_function<double,double>
+    {
+    public:
+      // ======================================================================
+      /** constructor with all parameters
+       *  @param mean  \f$\mu\f$-parameter 
+       *  @param sigma \f$\sigma\f$-parameter
+       */
+      Sech   ( const double mean   = 0  ,
+               const double sigma  = 1  ) ;
+      /// destructor
+      ~Sech () ;
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// evaluate sech function 
+      double pdf        ( const double x ) const ;
+      /// evaluate sech function 
+      double operator() ( const double x ) const { return pdf ( x ) ; }
+      // ======================================================================
+    public: // direct getters
+      // ======================================================================
+      double mean   () const { return m_mean   ; }
+      /// get parameters "sigma"
+      double sigma  () const { return m_sigma  ; }
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// get mode 
+      double mode     () const { return mean()            ; }
+      /// get variance
+      double variance () const { return m_sigma * m_sigma ; }
+      /// get rms
+      double rms      () const { return m_sigma           ; }
+      /// get skewness 
+      double skewness () const { return 0 ; }
+      /// get kurtosis
+      double kurtosis () const { return 2 ; }
+      // ======================================================================
+    public: // direct setters
+      // ======================================================================
+      bool   setMean  ( const double value ) ;
+      bool   setSigma ( const double value ) ;
+      // ======================================================================
+    public: // integrals
+      // ======================================================================      
+      /// get integral from low to high 
+      double integral ( const double low  ,
+                        const double high ) const ;
+      /// integral from -infinity to +infinity
+      double integral () const ;
+      /// evaluate atlas function 
+      double cdf      ( const double x ) const ;
+      // ======================================================================
+    private:
+      // ======================================================================
+      /// parameteter "mu", mean, mode 
+      double m_mean  ; // parameter mu,mean,mode 
+      /// parameter   "sigma" 
+      double m_sigma ; // parameter sigma 
+      // ======================================================================
+    } ;
     // ========================================================================
     /** @class Argus 
      *  http://en.wikipedia.org/wiki/ARGUS_distribution
@@ -4247,7 +4328,7 @@ namespace Gaudi
       // ======================================================================
       /// get exponential 
       double tau    () const { return m_tau ;}
-      /// get bnew valeu for the exponent  
+      /// set new value for the exponent  
       bool   setTau ( const  double value ) ;
       /// get number of polinomial parameters
       std::size_t npars () const { return 1 + m_positive.npars() ; }
