@@ -1,10 +1,11 @@
-// $Id$
+// $Id: MCParticles.cpp 205444 2016-04-27 11:39:41Z ibelyaev $
 // ============================================================================
 // Include files
 // ============================================================================
 // STD &STL
 // ============================================================================
 #include <algorithm>
+#include <functional>
 // ============================================================================
 // GaudiKernel
 // ============================================================================
@@ -2819,6 +2820,23 @@ std::string LoKi::MCParticles::hex_id ( const LHCb::MCParticle* particle )
   return fmt.str() ;
 }
 
+
+// ============================================================================
+namespace 
+{
+  // hashing function 
+  const std::hash<const void*> s_hash {} ;
+}
+// ============================================================================
+// get hash function for HepMC::GenParticle 
+// ============================================================================
+std::size_t LoKi::MCParticles::hash ( const LHCb::MCParticle* particle ) 
+{ return 0 == particle ? 0 : s_hash ( particle ) ; }
+// ============================================================================
+// get hash function for HepMC::GenVertex
+// ============================================================================
+std::size_t LoKi::MCParticles::hash ( const LHCb::MCVertex*   vertex ) 
+{ return 0 == vertex ? 0 : s_hash( vertex ) ; }
 
 
 

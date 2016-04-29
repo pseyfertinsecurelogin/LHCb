@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # =============================================================================
-# $Id$ 
+# $Id: MC.py 205444 2016-04-27 11:39:41Z ibelyaev $ 
 # =============================================================================
 ## @file LoKiMC/MC.py
 #  collection of utilities for useful 'decoration' of MC-objects
@@ -16,9 +16,9 @@
 #  @author Vanya BELYAEV ibelyaev@physics.syr.edu
 #  @date 2007-08-11
 #
-#                    $Revision$
-#  Last modification $Date$
-#                 by $Author$
+#                    $Revision: 205444 $
+#  Last modification $Date: 2016-04-27 13:39:41 +0200 (Wed, 27 Apr 2016) $
+#                 by $Author: ibelyaev $
 # =============================================================================
 """
 Collection of utilities for useful 'decoration' of MC-objects
@@ -35,7 +35,7 @@ A.Golutvin, P.Koppenburg have been used in the design.
 # =============================================================================
 __author__  = 'Vanya BELYAEV ibelyaev@physics.syr.edu'
 __date__    = "2007-08-11"
-__version__ = "$Revision$ "
+__version__ = "$Revision: 205444 $ "
 # =============================================================================
 
 from   LoKiMC.functions    import LoKi,LHCb,cpp
@@ -80,7 +80,9 @@ LHCb.MCParticle  . nDaughters     = nChildren
 LHCb.MCParticle  . __nChildren__  = nChildren
 LHCb.MCParticle  . __nDaughters__ = nChildren
 
-LHCb.MCParticle.hex_id  = lambda s : LoKi.MCParticles.hex_id ( s ) 
+LHCb.MCParticle.hex_id   = lambda s : LoKi.MCParticles.hex_id ( s ) 
+LHCb.MCParticle.__hash__ = lambda s : LoKi.MCParticles.hash   ( s ) 
+LHCb.MCVertex  .__hash__ = lambda s : LoKi.MCParticles.hash   ( s ) 
 
 # =============================================================================
 ## get the child 

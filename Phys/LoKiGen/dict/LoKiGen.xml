@@ -1,5 +1,5 @@
 <!-- 
-     * $Id$ 
+     * $Id: LoKiGen.xml 205445 2016-04-27 11:40:55Z ibelyaev $ 
      * ========================================================================
      * @file
      * The seleciton file to build Reflex dictionaries for Phys/LoKiGen package
@@ -48,6 +48,7 @@
   <function pattern = "LoKi::GenExtract::*"              />
   <function pattern = "LoKi::Dicts::GenAlgs::*"          />
   <function name    = "LoKi::GenParticles::hex_id"       />
+  <function name    = "LoKi::GenParticles::hash"         />
   
   <class name = "LoKi::GenChild::Selector"         />
   
