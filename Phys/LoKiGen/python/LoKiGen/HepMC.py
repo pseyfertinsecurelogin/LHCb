@@ -75,13 +75,13 @@ if not hasattr ( HepMC.GenParticle , '_orig_momentum_' ) :
                                      
 # =============================================================================
 ## Get number of child particles :
-def nChildren ( p ) :
+def nChildren ( p , *args ) :
     """
     Get number of child particles :
 
     >>> n = nChildren ( p )
     """
-    return LoKi.GenChild.nChildren ( p )
+    return LoKi.GenChild.nChildren ( p , *args )
 
 nChildren . __doc__  +=  "\n\n" + LoKi.GenChild.nChildren    . __doc__ 
 
