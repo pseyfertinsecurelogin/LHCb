@@ -13,6 +13,9 @@
 !   A.Golutvin, P.Koppenburg have been used in the design.
 ! -----------------------------------------------------------------------------
 
+! 2016-04-29 - Vanya Belyaev
+ - extend 'children'  funtion for better natch between C++ and python
+
 ! 2016-04-27 - Vanya Belyaev
  - fix the issue with hash 
 
