@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # =============================================================================
-# $Id$ 
+# $Id: HepMC.py 205445 2016-04-27 11:40:55Z ibelyaev $ 
 # =============================================================================
 ## @file
 #  collection of utilities for useful 'decoration' of HepMC-objects
@@ -16,9 +16,9 @@
 #  @author Vanya BELYAEV ibelyaev@physics.syr.edu
 #  @date 2007-08-11
 #
-#                    $Revision$
-#  Last modification $Date$
-#                 by $Author$
+#                    $Revision: 205445 $
+#  Last modification $Date: 2016-04-27 13:40:55 +0200 (Wed, 27 Apr 2016) $
+#                 by $Author: ibelyaev $
 # =============================================================================
 """
 Collection of utilities for useful 'decoration' of HepMC-objects
@@ -36,7 +36,7 @@ A.Golutvin, P.Koppenburg have been used in the design.
 # =============================================================================
 __author__  = 'Vanya BELYAEV ibelyaev@physics.syr.edu'
 __date__    = "2007-08-11"
-__version__ = "$Revision$ "
+__version__ = "$Revision: 205445 $ "
 # =============================================================================
 import LoKiCore.decorators as _LoKiCore
 from   LoKiGen.functions   import HepMC, LoKi, Gaudi, std, cpp 
@@ -75,13 +75,13 @@ if not hasattr ( HepMC.GenParticle , '_orig_momentum_' ) :
                                      
 # =============================================================================
 ## Get number of child particles :
-def nChildren ( p ) :
+def nChildren ( p , *args ) :
     """
     Get number of child particles :
 
     >>> n = nChildren ( p )
     """
-    return LoKi.GenChild.nChildren ( p )
+    return LoKi.GenChild.nChildren ( p , *args )
 
 nChildren . __doc__  +=  "\n\n" + LoKi.GenChild.nChildren    . __doc__ 
 
@@ -612,7 +612,10 @@ def _print_ ( self                                     ,
 
 _print_ . __doc__ += "\n" + LoKi.GenDecayChain.print_ . __doc__ 
 
-HepMC.GenParticle.hex_id = lambda s : LoKi.GenParticles.hex_id ( s )
+HepMC.GenParticle.hex_id    = lambda s : LoKi.GenParticles.hex_id ( s )
+HepMC.GenParticle.__hash__  = lambda s : LoKi.GenParticles.hash   ( s )
+HepMC.GenVertex  .__hash__  = lambda s : LoKi.GenParticles.hash   ( s )
+
 
 for t in ( HepMC.GenParticle             ,
            HepMC.GenParticle.Range       , 

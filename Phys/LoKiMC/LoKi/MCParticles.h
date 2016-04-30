@@ -1,4 +1,4 @@
-// $Id$
+// $Id: MCParticles.h 205444 2016-04-27 11:39:41Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_MCPARTICLES_H
 #define LOKI_MCPARTICLES_H 1
@@ -2365,6 +2365,10 @@ namespace LoKi
     // ========================================================================
     /// soem unique hex-id
     GAUDI_API std::string hex_id ( const LHCb::MCParticle* particle ) ;
+    /// soem unique hash
+    GAUDI_API std::size_t hash   ( const LHCb::MCParticle* particle ) ;
+    /// soem unique hash
+    GAUDI_API std::size_t hash   ( const LHCb::MCVertex*   vertex   ) ;
     // ========================================================================    
   } //                                       end of namespace LoKi::MCParticles
   // ==========================================================================

@@ -1,4 +1,4 @@
-// $Id$
+// $Id: CmpBarCode.h 205445 2016-04-27 11:40:55Z ibelyaev $
 // ============================================================================
 #ifndef LOKI_CMPBARCODE_H 
 #define LOKI_CMPBARCODE_H 1
@@ -28,9 +28,9 @@
  *
  *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
  *
- *                    $Revision$
- *  Last modification $Date$
- *                 by $Author$
+ *                    $Revision: 205445 $
+ *  Last modification $Date: 2016-04-27 13:40:55 +0200 (Wed, 27 Apr 2016) $
+ *                 by $Author: ibelyaev $
  */
 // ============================================================================
 namespace LoKi
@@ -65,6 +65,10 @@ namespace LoKi
      */
     GAUDI_API    
     std::string hex_id ( const HepMC::GenParticle* particle ) ;
+    /// get hash function for HepMC::Particle 
+    GAUDI_API std::size_t hash ( const HepMC::GenParticle* particle ) ;
+    /// get hash function for HepMC::Particle 
+    GAUDI_API std::size_t hash ( const HepMC::GenVertex*   particle ) ;
     // ========================================================================
   } //                                      end of namespace LoKi::GenParticles
   // ==========================================================================
