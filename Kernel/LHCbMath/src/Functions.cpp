@@ -1,4 +1,4 @@
-// $Id: Functions.cpp 202916 2016-03-12 15:17:56Z ibelyaev $
+// $Id: Functions.cpp 205652 2016-05-03 10:03:33Z ibelyaev $
 // ============================================================================
 // Include files
 // ============================================================================
@@ -54,8 +54,8 @@
  *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
  *  @date 2010-04-19
  *
- *                    $Revision: 202916 $
- *  Last modification $Date: 2016-03-12 16:17:56 +0100 (Sat, 12 Mar 2016) $
+ *                    $Revision: 205652 $
+ *  Last modification $Date: 2016-05-03 12:03:33 +0200 (Tue, 03 May 2016) $
  *                 by $author$
  */
 // ============================================================================
@@ -9064,8 +9064,12 @@ double Gaudi::Math::Expo2DPolSym::integral
     for  ( unsigned short iy = 0 ; iy <= ny ; ++iy ) 
     { result += b2d.par ( ix , iy ) * fx[ix] * fy[iy] ; }
   }
+  //  
+  const double scale = b2d.npars() ;
+  const double dx    = m_positive.xmax() - m_positive.xmin() ;
+  const double dy    = dx ;
   //
-  return result ;
+  return result * scale / ( dx * dy ) ;
 }
 // ============================================================================
 double Gaudi::Math::Expo2DPolSym::integrateY 
@@ -9105,7 +9109,11 @@ double Gaudi::Math::Expo2DPolSym::integrateY
     { result += b2d.par ( ix , iy ) * fx[ix] * fy[iy] ; }
   }
   //
-  return result ;
+  const double scale = b2d.npars() ;
+  const double dx    = m_positive.xmax() - m_positive.xmin() ;
+  const double dy    = dx ;
+  //
+  return result * scale / ( dx * dy ) ;
 }
 // ============================================================================
 double Gaudi::Math::Expo2DPolSym::integrateX

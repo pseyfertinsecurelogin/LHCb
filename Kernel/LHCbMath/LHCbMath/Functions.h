@@ -1,4 +1,4 @@
-// $Id: Functions.h 199418 2016-01-06 10:18:40Z ibelyaev $
+// $Id: Functions.h 205652 2016-05-03 10:03:33Z ibelyaev $
 // ============================================================================
 #ifndef LHCBMATH_FUNCTIONS_H
 #define LHCBMATH_FUNCTIONS_H 1
@@ -28,8 +28,8 @@
  *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
  *  @date 2010-04-19
  *
- *                    $Revision: 199418 $
- *  Last modification $Date: 2016-01-06 11:18:40 +0100 (Wed, 06 Jan 2016) $
+ *                    $Revision: 205652 $
+ *  Last modification $Date: 2016-05-03 12:03:33 +0200 (Tue, 03 May 2016) $
  *                 by $author$
  */
 // ============================================================================
