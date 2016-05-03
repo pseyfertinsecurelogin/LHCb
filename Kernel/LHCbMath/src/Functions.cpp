@@ -9064,8 +9064,12 @@ double Gaudi::Math::Expo2DPolSym::integral
     for  ( unsigned short iy = 0 ; iy <= ny ; ++iy ) 
     { result += b2d.par ( ix , iy ) * fx[ix] * fy[iy] ; }
   }
+  //  
+  const double scale = b2d.npars() ;
+  const double dx    = m_positive.xmax() - m_positive.xmin() ;
+  const double dy    = dx ;
   //
-  return result ;
+  return result * scale / ( dx * dy ) ;
 }
 // ============================================================================
 double Gaudi::Math::Expo2DPolSym::integrateY 
@@ -9105,7 +9109,11 @@ double Gaudi::Math::Expo2DPolSym::integrateY
     { result += b2d.par ( ix , iy ) * fx[ix] * fy[iy] ; }
   }
   //
-  return result ;
+  const double scale = b2d.npars() ;
+  const double dx    = m_positive.xmax() - m_positive.xmin() ;
+  const double dy    = dx ;
+  //
+  return result * scale / ( dx * dy ) ;
 }
 // ============================================================================
 double Gaudi::Math::Expo2DPolSym::integrateX

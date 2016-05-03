@@ -6,6 +6,9 @@
 !               All headers included in directory LHCbMath
 !-----------------------------------------------------------------------------
 
+! 2016-05-03 - Vanya Belyaev
+ - fix normalization of Expo2DPolSym funtion
+
 ! 2016-04-25 - Vanya Belyaev
  - deriv.py: add Width/width  functions, 
    allowing easy evaluation of full width at half maximum for functons  
