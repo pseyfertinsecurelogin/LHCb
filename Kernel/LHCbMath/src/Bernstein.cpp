@@ -1,4 +1,4 @@
-// $Id$ 
+// $Id: Bernstein.cpp 202916 2016-03-12 15:17:56Z ibelyaev $ 
 // ============================================================================
 // Include files 
 // ============================================================================
@@ -25,8 +25,8 @@
  *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
  *  @date 2010-04-19
  *
- *                    $Revision$
- *  Last modification $Date$
+ *                    $Revision: 202916 $
+ *  Last modification $Date: 2016-03-12 16:17:56 +0100 (Sat, 12 Mar 2016) $
  *                 by $author$
  */
 // ============================================================================
@@ -1968,7 +1968,7 @@ double Gaudi::Math::Bernstein2DSym::integrateY ( const double x ) const
     { 
       result += ( ix == iy ) ? 
         par ( ix , iy ) * fx[ix]       : 
-        par ( ix , iy ) * fx[ix] * 0.5 ;
+        par ( ix , iy ) * fx[ix] ; // * 0.5 ;
     }
   }
   //
