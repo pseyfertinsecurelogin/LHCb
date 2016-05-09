@@ -550,6 +550,14 @@ Gaudi::Math::HistoInterpolation::interpolate_1D
   //
   const double xc = ax->GetBinCenter ( ib ) ;
   //
+  // use Nearest, if we at the bin center 
+  if ( s_equal ( xc , x ) ) 
+  {
+    const double v  = h1.GetBinContent ( ib ) ;
+    const double ev = h1.GetBinError   ( ib ) ;
+    return ValueWithError ( v , ev * ev ) ;                       // RETURN
+  }
+  //
   // treat left of the first and right half of the last bin separately:
   //
   if ( edges && ( ( 1 == ib && x <= xc ) || ( nbins == ib && xc <= x ) ) )
@@ -691,6 +699,13 @@ Gaudi::Math::HistoInterpolation::interpolate_2D
   //
   const double xc = ax->GetBinCenter ( ibx ) ;
   const double yc = ay->GetBinCenter ( iby ) ;
+  //
+  // adjust the interpolation rules if needed 
+  if ( Nearest != itypex && s_equal ( xc , x ) ) { itypex = Nearest ; }
+  if ( Nearest != itypey && s_equal ( yc , y ) ) { itypey = Nearest ; }
+  //
+  if ( Nearest == itypex && Nearest == itypey ) 
+  { return _bin_ ( h2 , ibx , iby ) ; }                            // RETURN
   //
   // special "x-edge" case: 
   //
@@ -963,6 +978,14 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
   const double xc = ax->GetBinCenter ( ibx ) ;
   const double yc = ay->GetBinCenter ( iby ) ;
   const double zc = az->GetBinCenter ( ibz ) ;
+  //
+  // redefine the interpolaiton rules  if we at the bin centres 
+  if ( Nearest != itypex && s_equal ( xc , x ) ) { itypex = Nearest ; }
+  if ( Nearest != itypey && s_equal ( yc , y ) ) { itypey = Nearest ; }
+  if ( Nearest != itypez && s_equal ( zc , z ) ) { itypez = Nearest ; }
+  //
+  if ( Nearest == itypex && Nearest == itypey && Nearest == itypez ) 
+  { return _bin_ ( h3 , ibx , iby , ibz ) ; }                      // RETURN
   //
   const bool x_edge =  1 == nbx || ( 1 == ibx && x <= xc ) || ( nbx == ibx && x >= xc ) ;
   const bool y_edge =  1 == nby || ( 1 == iby && y <= yc ) || ( nby == iby && y >= yc ) ;
