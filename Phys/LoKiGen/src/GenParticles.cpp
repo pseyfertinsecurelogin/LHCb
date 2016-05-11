@@ -5,6 +5,7 @@
 // STD & STL
 // ============================================================================
 #include <cmath>
+#include <functional>
 // ============================================================================
 // GaudiKernel
 // ============================================================================
@@ -31,6 +32,12 @@
 #include "LoKi/GenAlgs.h"
 #include "LoKi/GenOscillated.h"
 #include "LoKi/IGenDecay.h"
+// ============================================================================
+#include "LoKi/CmpBarCode.h"
+// ============================================================================
+// Boost
+// ============================================================================
+#include "boost/format.hpp"
 // ============================================================================
 /** @file
  *
@@ -2015,6 +2022,39 @@ LoKi::GenParticles::IsNotAbsID::operator()
   return not_in_abs_list ( p->pdg_id() ) ;
 }
 // ============================================================================
+
+
+// ============================================================================
+// get unique string for HepMC::Particle 
+// ============================================================================
+std::string LoKi::GenParticles::hex_id ( const HepMC::GenParticle* particle ) 
+{
+  if ( 0 == particle ) { return "NULL" ; }
+  boost::format fmt ( "%p" ) ;
+  const void * p = particle ;
+  fmt % p ;
+  return fmt.str() ;
+}
+
+
+
+// ============================================================================
+namespace 
+{
+  // hashing function 
+  const std::hash<const void*> s_hash {} ;
+}
+// ============================================================================
+// get hash function for HepMC::GenParticle 
+// ============================================================================
+std::size_t LoKi::GenParticles::hash ( const HepMC::GenParticle* particle ) 
+{ return 0 == particle ? 0 : s_hash ( particle ) ; }
+// ============================================================================
+// get hash function for HepMC::GenVertex
+// ============================================================================
+std::size_t LoKi::GenParticles::hash ( const HepMC::GenVertex*   vertex ) 
+{ return 0 == vertex ? 0 : s_hash( vertex ) ; }
+
 
 
 // ============================================================================

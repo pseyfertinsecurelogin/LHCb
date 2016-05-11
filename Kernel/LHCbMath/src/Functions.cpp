@@ -8020,6 +8020,79 @@ double Gaudi::Math::Atlas::integral ( const double low  ,
 // ============================================================================
 double Gaudi::Math::Atlas::integral () const { return 1 ; }
 // ============================================================================
+
+// ============================================================================
+// Sech 
+// ============================================================================
+/*  constructor with all parameters
+ *  @param mean  \f$\mu\f$-parameter 
+ *  @param sigma \f$\sigma\f$-parameter
+ */
+// ============================================================================
+Gaudi::Math::Sech::Sech  
+( const double mean  ,
+  const double sigma ) 
+  : std::unary_function<double,double>() 
+  , m_mean  (             mean    ) 
+  , m_sigma (  std::abs ( sigma ) )
+{}
+// ============================================================================
+// destructor
+// ============================================================================
+Gaudi::Math::Sech::~Sech(){}
+// ============================================================================
+// evaluate sech function 
+// ============================================================================
+double Gaudi::Math::Sech::pdf ( const double x ) const 
+{
+  const long double y = ( x - m_mean ) * M_PI_2 / m_sigma ;
+  return 
+    GSL_LOG_DBL_MAX < std::abs ( y )  ? 0 : 
+    0.5 / ( m_sigma * std::cosh ( y ) ) ;
+}
+// ============================================================================
+bool Gaudi::Math::Sech::setMean ( const double value ) 
+{
+  if ( s_equal ( value , m_mean  ) ) { return false ; }
+  m_mean  = value ;
+  return true ;
+}
+// ============================================================================
+bool Gaudi::Math::Sech::setSigma ( const double value ) 
+{
+  const double value_ = std::abs ( value ) ;
+  if ( s_equal ( value_ , m_sigma  ) ) { return false ; }
+  m_sigma  = value_ ;
+  return true ;
+}
+// ============================================================================
+// get integral from low to high 
+// ============================================================================
+double Gaudi::Math::Sech::integral 
+( const double low  ,
+  const double high ) const 
+{ return s_equal ( low , high ) ? 0.0 : cdf ( high ) - cdf ( low ) ; }
+// ============================================================================
+// get integral from -infinity to + infinity 
+// ============================================================================
+double Gaudi::Math::Sech::integral () const { return 1 ; } 
+// ============================================================================
+// evaluate CDF function 
+// ============================================================================
+double Gaudi::Math::Sech::cdf ( const double x ) const 
+{
+  const long double y = ( x - m_mean ) * M_PI_2 / m_sigma ;
+  return
+    ( GSL_LOG_DBL_MAX < y ) ? 1 :
+    ( GSL_LOG_DBL_MIN > y ) ? 0 : 
+    std::atan (  std::exp ( y ) ) / M_PI_2 ;
+}
+// ============================================================================
+
+
+
+
+// ============================================================================
 // Argus
 // ============================================================================
 /*  constructor with all parameters 
@@ -8991,8 +9064,12 @@ double Gaudi::Math::Expo2DPolSym::integral
     for  ( unsigned short iy = 0 ; iy <= ny ; ++iy ) 
     { result += b2d.par ( ix , iy ) * fx[ix] * fy[iy] ; }
   }
+  //  
+  const double scale = b2d.npars() ;
+  const double dx    = m_positive.xmax() - m_positive.xmin() ;
+  const double dy    = dx ;
   //
-  return result ;
+  return result * scale / ( dx * dy ) ;
 }
 // ============================================================================
 double Gaudi::Math::Expo2DPolSym::integrateY 
@@ -9032,7 +9109,11 @@ double Gaudi::Math::Expo2DPolSym::integrateY
     { result += b2d.par ( ix , iy ) * fx[ix] * fy[iy] ; }
   }
   //
-  return result ;
+  const double scale = b2d.npars() ;
+  const double dx    = m_positive.xmax() - m_positive.xmin() ;
+  const double dy    = dx ;
+  //
+  return result * scale / ( dx * dy ) ;
 }
 // ============================================================================
 double Gaudi::Math::Expo2DPolSym::integrateX

@@ -1968,7 +1968,7 @@ double Gaudi::Math::Bernstein2DSym::integrateY ( const double x ) const
     { 
       result += ( ix == iy ) ? 
         par ( ix , iy ) * fx[ix]       : 
-        par ( ix , iy ) * fx[ix] * 0.5 ;
+        par ( ix , iy ) * fx[ix] ; // * 0.5 ;
     }
   }
   //
