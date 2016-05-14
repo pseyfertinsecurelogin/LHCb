@@ -9,7 +9,7 @@
 ! 2016-05-09 - Vanya Belyaev
 
  - HistoInterpolation
-   fix a minor incorrectess in histogram interpolation 
+   fix a minor incorrectness in histogram interpolation 
 
 ! 2016-05-03 - Vanya Belyaev
  - fix normalization of Expo2DPolSym funtion
