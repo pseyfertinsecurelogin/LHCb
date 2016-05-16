@@ -1,4 +1,4 @@
-// $Id$ 
+// $Id: Bernstein.h 195620 2015-10-07 17:14:19Z ibelyaev $ 
 // ============================================================================
 #ifndef LHCBMATH_BERNSTEIN_H 
 #define LHCBMATH_BERNSTEIN_H 1
@@ -27,8 +27,8 @@
  *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
  *  @date 2010-04-19
  *
- *                    $Revision$
- *  Last modification $Date$
+ *                    $Revision: 195620 $
+ *  Last modification $Date: 2015-10-07 19:14:19 +0200 (Wed, 07 Oct 2015) $
  *                 by $author$
  */
 // ============================================================================
@@ -1180,8 +1180,7 @@ namespace Gaudi
     public:
       // ======================================================================
       /// get the value
-      double operator () ( const double x , const double y ) const 
-      { return m_bernstein ( x , y ) ; }
+      double operator () ( const double x , const double y ) const ;
       // ======================================================================
     public:
       // ======================================================================
@@ -1233,8 +1232,7 @@ namespace Gaudi
        *  @param yhigh high edge in y 
        */
       double integrateX ( const double y    , 
-                          const double xlow , const double xhigh ) const 
-      { return m_bernstein.integrateX ( y , xlow , xhigh ) ; }
+                          const double xlow , const double xhigh ) const ;
       // ======================================================================
       /** integral over x-dimension 
        *  \f[ \int_{x_low}^{x_high} \mathcal{B}(x,y) \mathrm{d}x\f] 
@@ -1243,8 +1241,7 @@ namespace Gaudi
        *  @param xhigh high edge in x 
        */
       double integrateY ( const double x    , 
-                          const double ylow , const double yhigh ) const 
-      { return m_bernstein.integrateY ( x , ylow , yhigh ) ; }
+                          const double ylow , const double yhigh ) const ;
       // ======================================================================
     public: // specific 
       // ======================================================================
@@ -1257,14 +1254,12 @@ namespace Gaudi
        *  \f[ \int_{x_{min}}^{x_{max}} \mathcal{B}(x,y) \mathrm{d}x\f] 
        *  @param x     variable 
        */
-      double integrateX ( const double y ) const 
-      { return m_bernstein.integrateX ( y ) ; }
+      double integrateX ( const double y ) const ;
       /** integral over y-dimension 
        *  \f[ \int_{y_{min}}^{y_{max}} \mathcal{B}(x,y) \mathrm{d}y\f] 
        *  @param y     variable 
        */
-      double integrateY ( const double x ) const 
-      { return m_bernstein.integrateY ( x ) ; }
+      double integrateY ( const double x ) const ;
       // ======================================================================
     public:
       // ======================================================================
