@@ -210,7 +210,7 @@ LoKi::TES::HrcSumAdc::HrcSumAdc
 ( const std::string& location     ,
   const std::string& stationName       ,
   const bool         useRootInTes )
-  : LoKi::AuxFunBase ( std::tie ( location , useRootInTes ) )  
+  : LoKi::AuxFunBase ( std::tie ( location , stationName, useRootInTes ) )  
   , LoKi::Functor<void,double> ()
   , LoKi::TES::Get ( location , useRootInTes ) 
 {}
