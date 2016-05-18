@@ -113,8 +113,8 @@
       <field name = "m_algorithm" />
       <field name = "m_datasvc"   />
     </class>
-       
-    
+   
+
     <function name    = "LoKi::tokenize" />
     
     <class pattern="LoKi::Interface&lt;*&gt;">
