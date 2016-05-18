@@ -141,25 +141,24 @@ const LHCb::CaloCluster*  LHCb::CaloAlgUtils::ClusterFromHypo(const LHCb::CaloHy
   if( 1 == hypo->clusters().size() )return hypo->clusters().front(); // single hypo
 
   const SmartRefVector<LHCb::CaloCluster>& clusters = hypo->clusters();
-//FIXME disabled due to seg fault
-//  // split hypo
-//  if( NULL != hypo->parent() && NULL != hypo->parent()->registry() ){
-//    std::string hcont = hypo->parent()->registry()->identifier();
-//    std::string uHcont = toUpper( hcont );
-//    bool hsplit = ( std::string::npos != uHcont.find( "SPLIT" ) && 1 < hypo->clusters().size() ); // split hypo
-//    if( !hsplit )return hypo->clusters().front(); // SHOULD NEVER OCCUR
-//    SmartRef<LHCb::CaloCluster> cluster ;
-//    for(LHCb::CaloHypo::Clusters::const_iterator icl =  clusters.begin();icl!= clusters.end();++icl){
-//      if( 0 == *icl)continue;
-//      std::string ccont = (*icl)->parent()->registry()->identifier();
-//      std::string uCcont = toUpper( ccont );
-//      if( split  &&  std::string::npos != uCcont.find( "SPLIT" ) )cluster = *icl;   // return splitCluster
-//      else if( !split &&  std::string::npos == uCcont.find( "SPLIT" ) )cluster = *icl; // return mainCluster
-//    }
-//    return cluster;
-//    
-//  }else
-  { // unregistered caloHypo -> return the smallest/largest cluster according to getsplit
+  // split hypo
+  if( NULL != hypo->parent() && NULL != hypo->parent()->registry() ){
+    std::string hcont = hypo->parent()->registry()->identifier();
+    std::string uHcont = toUpper( hcont );
+    bool hsplit = ( std::string::npos != uHcont.find( "SPLIT" ) && 1 < hypo->clusters().size() ); // split hypo
+    if( !hsplit )return hypo->clusters().front(); // SHOULD NEVER OCCUR
+    SmartRef<LHCb::CaloCluster> cluster ;
+    for(LHCb::CaloHypo::Clusters::const_iterator icl =  clusters.begin();icl!= clusters.end();++icl){
+      if( 0 == *icl)continue;
+      //FIXME disabled due to seg fault
+      if( (*icl)->parent()==nullptr || (*icl)->parent()->registry() == nullptr) continue;
+      std::string ccont = (*icl)->parent()->registry()->identifier();
+      std::string uCcont = toUpper( ccont );
+      if( split  &&  std::string::npos != uCcont.find( "SPLIT" ) )cluster = *icl;   // return splitCluster
+      else if( !split &&  std::string::npos == uCcont.find( "SPLIT" ) )cluster = *icl; // return mainCluster
+    }
+    return cluster;
+  }else{ // unregistered caloHypo -> return the smallest/largest cluster according to getsplit
     SmartRef<LHCb::CaloCluster> minCl ;
     SmartRef<LHCb::CaloCluster> maxCl ;
     unsigned int min = 999999;
