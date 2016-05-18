@@ -1,4 +1,3 @@
-
 // local
 #include "Event/PackedCaloHypo.h"
 
@@ -102,6 +101,8 @@ void CaloHypoPacker::pack( const DataVector & hypos,
       {
 
         if(clu->parent() == nullptr || clu->parent()->registry() == nullptr){
+        
+          //IMPORTANT: when fixed also look at Calo/CaloUtils/src/CaloAlgUtils.cpp
           parent().Warning( "Hypu Cluster parent (registry) NULLPTR   FIXME!!!!" ).ignore();
           continue;
         }
