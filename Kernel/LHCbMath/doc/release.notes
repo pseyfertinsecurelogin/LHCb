@@ -6,6 +6,9 @@
 !               All headers included in directory LHCbMath
 !-----------------------------------------------------------------------------
 
+! 2016-05-16 - Vanya Belyaev
+ - fix the issue with normalization for some 2D-models 
+
 ! 2016-05-09 - Vanya Belyaev
 
  - HistoInterpolation
