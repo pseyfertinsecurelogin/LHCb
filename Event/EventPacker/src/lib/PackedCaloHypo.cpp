@@ -100,6 +100,12 @@ void CaloHypoPacker::pack( const DataVector & hypos,
       pH.firstCluster = phypos.refs().size();
       for ( const auto& clu : H->clusters() )
       {
+
+        if(clu->parent() == nullptr || clu->parent()->registry() == nullptr){
+          parent().Warning( "Hypu Cluster parent (registry) NULLPTR   FIXME!!!!" ).ignore();
+          continue;
+        }
+
         if ( clu.target() )
         {
           phypos.refs().push_back( UNLIKELY( 0==ver ) ?
