@@ -114,9 +114,6 @@
       <field name = "m_datasvc"   />
     </class>
     
-    <class    name = "LoKi::TES::HrcSumAdc" >
-      <field name = "m_stationName" />
-    </class> 
     <function name    = "LoKi::tokenize" />
     
     <class pattern="LoKi::Interface&lt;*&gt;">
