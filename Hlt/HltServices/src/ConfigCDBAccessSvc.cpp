@@ -3,6 +3,7 @@
 
 #include <map>
 #include <ctime>
+#include <limits>
 #include <cstdint>
 #include <iostream>
 #include <iomanip>
@@ -33,6 +34,7 @@ using boost::uint64_t;
 
 #include "GaudiKernel/System.h"
 #include "GaudiKernel/StringKey.h"
+#include "GaudiKernel/IIncidentSvc.h"
 
 using namespace std;
 namespace io = boost::iostreams;
@@ -101,6 +103,29 @@ std::time_t read_time( std::istream& s )
     // std::cout << endl;
     return tm;
 }
+
+class CloseListener : public implements<IIncidentListener> {
+public:
+   CloseListener(std::string incident, std::unique_ptr<ConfigCDBAccessSvc_details::CDB> &file)
+      : m_incident{std::move(incident)}, m_file(file) {
+         addRef(); // Initial count set to 1
+      }
+
+   ~CloseListener() override = default;
+
+   /// Inform that a new incident has occurred
+   void handle(const Incident& i) override {
+      if (i.type() == m_incident) {
+         m_file.reset();
+      }
+   }
+
+private:
+   /// incident to handle
+   const std::string m_incident;
+   /// file to reset (close)
+   std::unique_ptr<ConfigCDBAccessSvc_details::CDB> &m_file;
+};
 }
 
 namespace ConfigCDBAccessSvc_details
@@ -412,9 +437,8 @@ ConfigCDBAccessSvc::ConfigCDBAccessSvc( const string& name,
 {
     declareProperty( "File", m_name = "" );
     declareProperty( "Mode", m_mode = "ReadOnly" );
+    declareProperty( "CloseIncident", m_incident );
 }
-
-
 
 //=============================================================================
 // Initialization
@@ -425,6 +449,16 @@ StatusCode ConfigCDBAccessSvc::initialize()
     StatusCode status = Service::initialize();
     if ( !status.isSuccess() ) return status;
     status = setProperties();
+
+    // If requested, listen to an incident, such that the file we hold will be
+    // closed when it it fired. In that case, we should be handled first/always,
+    // so give maximum priority.
+    if (status.isSuccess() && !m_incident.empty()) {
+       m_initListener.reset(new CloseListener{m_incident, m_file});
+       auto incSvc = service("IncidentSvc").as<IIncidentSvc>();
+       incSvc->addListener(m_initListener.get(), m_incident, std::numeric_limits<long>::max());
+    }
+
     return status;
 }
 
@@ -460,6 +494,15 @@ ConfigCDBAccessSvc_details::CDB* ConfigCDBAccessSvc::file() const
         }
     }
     return m_file.get();
+}
+
+//=============================================================================
+// Stop
+//=============================================================================
+StatusCode ConfigCDBAccessSvc::stop()
+{
+    m_file.reset( ); // close file if still open
+    return Service::stop();
 }
 
 //=============================================================================
