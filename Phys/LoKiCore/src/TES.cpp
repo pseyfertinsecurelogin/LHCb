@@ -223,8 +223,8 @@ LoKi::TES::HrcSumAdc::HrcSumAdc
   : LoKi::AuxFunBase ( std::tie ( location , stationName, useRootInTes ) )  
   , LoKi::Functor<void,double> ()
   , LoKi::TES::Get ( location , useRootInTes ) 
-  , m_condName       ( "Conditions/ReadoutConf/HC/Mapping" ) // Do I need /dd/ at start?
   , m_stationName    ( stationName ) 
+  , m_condName       ( "Conditions/ReadoutConf/HC/Mapping" ) 
   , m_condition      (                       )
 {
   //
