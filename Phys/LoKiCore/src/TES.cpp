@@ -47,7 +47,7 @@
  *  Implementation file for classes from namespace LoKi::TES
  *
  *  This file is a part of LoKi project -
- *    "C++ ToolKit  for Smart and Friendly Physics Analysis"
+ *    "C++ ToolKit  for Smart and Fristd::endly Physics Analysis"
  *
  *  The package has been designed with the kind help from
  *  Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas,
@@ -223,7 +223,8 @@ LoKi::TES::HrcSumAdc::HrcSumAdc
   : LoKi::AuxFunBase ( std::tie ( location , stationName, useRootInTes ) )  
   , LoKi::Functor<void,double> ()
   , LoKi::TES::Get ( location , useRootInTes ) 
-  , m_condName       ( "/dd/Conditions/Online/Velo/MotionSystem" ) // TODO update location
+  , m_condName       ( "Conditions/ReadoutConf/HC/Mapping" ) // Do I need /dd/ at start?
+  , m_stationName    ( stationName ) 
   , m_condition      (                       )
 {
   //
@@ -246,12 +247,6 @@ LoKi::TES::HrcSumAdc::HrcSumAdc
   updateCondition   () ;
   registerCondition () ;
   //    
-  // Initialise m_channel
-  for ( int i_station = 0 ; i_station < 5 ; i_station++ ) {
-    for ( int i_counter = 0 ; i_counter < 4 ; i_counter++ ) {
-      m_channel[ i_station ][ i_counter ] = -1 ;
-    }
-  }
 }
 // ============================================================================
 // MANDATORY: virtual destructor
@@ -302,16 +297,12 @@ StatusCode LoKi::TES::HrcSumAdc::updateCondition ()
   //
   Assert ( !(!m_condition) , "Condition is invalid!" ) ;
   //
-  // Get the parameters
-  // Stations are indexed in the order B2, B1, B0, F1, F2
-  // Counters on each station are indexed trivially 0,1,2,3
-  std::string stationNames[5] = { "B2", "B1", "B0", "F1", "F2" } ;
-  // Loop over stations and counters and get channel number 
-  for ( int i_station = 0 ; i_station < 5 ; i_station++ ) {
-    for ( int i_counter = 0 ; i_counter < 4 ; i_counter++ ) {
-      m_channel[ i_station ][ i_counter ] = m_condition -> paramAsDouble ( stationNames [ i_station ] + "_" + std::to_string( i_counter ) ) ; // TODO does this work and match Heinrich?
-    }
-  } 
+  // Get the parameters in order B2 B1 B0 F1 F2
+  m_channels.push_back( m_condition->paramVect<int>("ChannelsB2") );
+  m_channels.push_back( m_condition->paramVect<int>("ChannelsB1") );
+  m_channels.push_back( m_condition->paramVect<int>("ChannelsB0") );
+  m_channels.push_back( m_condition->paramVect<int>("ChannelsF1") );
+  m_channels.push_back( m_condition->paramVect<int>("ChannelsF2") );
   //
   return StatusCode::SUCCESS  ;
 }
@@ -332,18 +323,20 @@ LoKi::TES::HrcSumAdc::operator() ( /* LoKi::TES::HrcSumAdc::argument */ ) const
   if ( NULL == digits ) { return -1 ; } // RETURN
   // Compute the station ID (internal index) // TODO is there a better way to do this?
   int stationId = -1 ;
-  if      ( stationName() == "B2" ) stationId = 0 ;
-  else if ( stationName() == "B1" ) stationId = 1 ;
-  else if ( stationName() == "B0" ) stationId = 2 ;
-  else if ( stationName() == "F1" ) stationId = 3 ;
-  else if ( stationName() == "F2" ) stationId = 4 ;
+  if      ( stationName().compare("B2")==0 ) stationId = 0 ;
+  else if ( stationName().compare("B1")==0 ) stationId = 1 ;
+  else if ( stationName().compare("B0")==0 ) stationId = 2 ;
+  else if ( stationName().compare("F1")==0 ) stationId = 3 ;
+  else if ( stationName().compare("F2")==0 ) stationId = 4 ;
   //
   // Compute ADC sum
+  const std::vector<std::string> stations = {"B2", "B1", "B0", "F1", "F2"};
+  
   double adcSum = 0 ; // TODO should this be double?
   for ( int i_counter = 0 ; i_counter < 4 ; i_counter++ ) {
-    if ( m_channel[ stationId ][ i_counter ] == -1 )
-    Assert( !(m_channel[ stationId ][ i_counter ]==-1) , "Invalid Herschel channel number obtained" ) ; ;
-    LHCb::HCCellID id( m_channel[ stationId ][ i_counter ] ); 
+    if ( m_channels[ stationId ][ i_counter ] == -1 )
+    Assert( !(m_channels[ stationId ][ i_counter ]==-1) , "Invalid Herschel channel number obtained" ) ; ;
+    LHCb::HCCellID id( m_channels[ stationId ][ i_counter ] ); 
     const LHCb::HCDigit* digit = digits->object(id);
     if ( NULL == digit ) { return -1 ; } // RETURN TODO: what is the correct return value? Assert here?
     adcSum += digit -> adc () ;

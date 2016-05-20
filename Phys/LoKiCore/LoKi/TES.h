@@ -217,7 +217,8 @@ namespace LoKi
       HrcSumAdc () ;                      // the default constructor is disabled
       /// the station name
       std::string m_stationName         ; // the Herschel station name
-      int m_channel[5][4]               ; // channels for 5 stations 4 counters
+      
+      std::vector< std::vector<int> > m_channels;
       /// Handle conditions
       StatusCode unregisterCondition () ;
       StatusCode   registerCondition () ;
