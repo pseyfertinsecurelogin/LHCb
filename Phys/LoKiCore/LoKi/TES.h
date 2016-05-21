@@ -207,9 +207,6 @@ namespace LoKi
       /// OPTIONAL: nice printout
       virtual std::ostream& fillStream ( std::ostream& s ) const ;
       const std::string& stationName     () const { return m_stationName    ; }
-      /// Update condition
-      virtual  StatusCode  updateCondition ();
-      const std::string& condName      () const { return m_condName      ; }
       // ======================================================================
     private:
       // ======================================================================
@@ -217,13 +214,6 @@ namespace LoKi
       HrcSumAdc () ;                      // the default constructor is disabled
       /// the station name
       std::string m_stationName         ; // the Herschel station name
-      
-      std::vector< std::vector<int> > m_channels;
-      /// Handle conditions
-      StatusCode unregisterCondition () ;
-      StatusCode   registerCondition () ;
-      std::string m_condName      ;               //             condition name
-      LoKi::Interface<Condition> m_condition ;    //       the condition itself
       // ======================================================================
     } ;
     // ========================================================================

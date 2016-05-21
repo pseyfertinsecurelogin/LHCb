@@ -7,8 +7,7 @@ gaudi_depends_on_subdirs(Event/RecEvent
                          GaudiAlg
                          Kernel/LHCbKernel
                          Kernel/LHCbMath
-                         Kernel/PartProp
-                         Det/DetDesc)
+                         Kernel/PartProp)
 
 find_package(AIDA)
 find_package(Boost)
@@ -20,7 +19,7 @@ gaudi_add_library(LoKiCoreLib
                   src/*.cpp
                   PUBLIC_HEADERS LoKi
                   INCLUDE_DIRS ROOT AIDA Boost RELAX ROOT PythonLibs
-                  LINK_LIBRARIES ROOT Boost RELAX ROOT PythonLibs GaudiAlgLib LHCbKernel LHCbMathLib PartPropLib RecEvent DetDescLib)
+                  LINK_LIBRARIES ROOT Boost RELAX ROOT PythonLibs GaudiAlgLib LHCbKernel LHCbMathLib PartPropLib RecEvent)
 
 gaudi_add_module(LoKiCore
                  src/Components/*.cpp

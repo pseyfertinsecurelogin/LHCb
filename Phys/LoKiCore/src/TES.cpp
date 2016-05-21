@@ -224,88 +224,11 @@ LoKi::TES::HrcSumAdc::HrcSumAdc
   , LoKi::Functor<void,double> ()
   , LoKi::TES::Get ( location , useRootInTes ) 
   , m_stationName    ( stationName ) 
-  , m_condName       ( "Conditions/ReadoutConf/HC/Mapping" ) 
-  , m_condition      (                       )
-{
-  //
-  LoKi::ILoKiSvc* svc = lokiSvc() ;  
-  //
-  Assert ( 0 != svc      , "Unable to reach LoKi Service!"  ) ;
-  SmartIF<ISvcLocator> loc ( svc ) ;
-  Assert ( loc.isValid() , "Unable to reach ServiceLocator" ) ;
-  //
-  SmartIF<IDataProviderSvc> det =  loc->service<IDataProviderSvc>( "DetectorDataSvc" , true ) ;
-  Assert ( det.isValid() , "Unable to reach Detector Service" ) ;
-  //
-  SmartDataPtr<Condition> cond (  det , condName() ) ;
-  Assert ( !(!cond) , "Unable to locate CONDITION='" + condName() + "'" ) ;
-  //
-  m_condition = cond ;
-  //
-  // update condition & register it
-  //
-  updateCondition   () ;
-  registerCondition () ;
-  //    
-}
+{}
 // ============================================================================
 // MANDATORY: virtual destructor
 // ============================================================================
-LoKi::TES::HrcSumAdc::~HrcSumAdc(){ unregisterCondition () ; }
-// ============================================================================
-// register the condition
-// ============================================================================
-StatusCode LoKi::TES::HrcSumAdc::registerCondition () 
-{
-  //
-  LoKi::ILoKiSvc* svc = lokiSvc() ;  
-  Assert ( 0 != svc , "Unable to reach LoKi Service!"  ) ;
-  //
-  SmartIF<IUpdateManagerSvc> upd  ( svc ) ;
-  Assert ( upd.isValid() , "Unable to reach Update Manager Service" ) ;
-  //
-  LoKi::TES::HrcSumAdc* this_ = this ;
-  upd -> registerCondition
-    ( this_                            , 
-      m_condName                       ,
-      &LoKi::TES::HrcSumAdc::updateCondition ) ;
-  //
-  return StatusCode::SUCCESS ;
-}
-// ============================================================================
-// unregister the condition
-// ============================================================================
-StatusCode LoKi::TES::HrcSumAdc::unregisterCondition () 
-{
-  //
-  LoKi::ILoKiSvc* svc = lokiSvc() ;  
-  if ( 0 == svc  ) return StatusCode::SUCCESS;
-  //
-  SmartIF<IUpdateManagerSvc> upd  ( svc ) ;
-  Assert ( upd.isValid() , "Unable to reach Update Manager Service" ) ;
-  //
-  LoKi::TES::HrcSumAdc* this_ = this ;
-  upd -> unregister ( this_ ) ;
-  //
-  return StatusCode::SUCCESS ;
-}
-// ============================================================================
-// update the condition
-// ============================================================================
-StatusCode LoKi::TES::HrcSumAdc::updateCondition () 
-{
-  //
-  Assert ( !(!m_condition) , "Condition is invalid!" ) ;
-  //
-  // Get the parameters in order B2 B1 B0 F1 F2
-  m_channels.push_back( m_condition->paramVect<int>("ChannelsB2") );
-  m_channels.push_back( m_condition->paramVect<int>("ChannelsB1") );
-  m_channels.push_back( m_condition->paramVect<int>("ChannelsB0") );
-  m_channels.push_back( m_condition->paramVect<int>("ChannelsF1") );
-  m_channels.push_back( m_condition->paramVect<int>("ChannelsF2") );
-  //
-  return StatusCode::SUCCESS  ;
-}
+LoKi::TES::HrcSumAdc::~HrcSumAdc(){}
 // ============================================================================
 // MANDATORY: clone method ("virtual constructor")
 // ============================================================================
@@ -323,24 +246,24 @@ LoKi::TES::HrcSumAdc::operator() ( /* LoKi::TES::HrcSumAdc::argument */ ) const
   if ( NULL == digits ) { return -1 ; } // RETURN
   // Compute the station ID (internal index) // TODO is there a better way to do this?
   int stationId = -1 ;
-  if      ( stationName().compare("B2")==0 ) stationId = 0 ;
+  if      ( stationName().compare("B0")==0 ) stationId = 0 ;
   else if ( stationName().compare("B1")==0 ) stationId = 1 ;
-  else if ( stationName().compare("B0")==0 ) stationId = 2 ;
+  else if ( stationName().compare("B2")==0 ) stationId = 2 ;
   else if ( stationName().compare("F1")==0 ) stationId = 3 ;
   else if ( stationName().compare("F2")==0 ) stationId = 4 ;
   //
   // Compute ADC sum
-  const std::vector<std::string> stations = {"B2", "B1", "B0", "F1", "F2"};
+  const std::vector<std::string> stations = {"B0", "B1", "B2", "F1", "F2"};
   
   double adcSum = 0 ; // TODO should this be double?
-  for ( int i_counter = 0 ; i_counter < 4 ; i_counter++ ) {
-    if ( m_channels[ stationId ][ i_counter ] == -1 )
-    Assert( !(m_channels[ stationId ][ i_counter ]==-1) , "Invalid Herschel channel number obtained" ) ; ;
-    LHCb::HCCellID id( m_channels[ stationId ][ i_counter ] ); 
-    const LHCb::HCDigit* digit = digits->object(id);
-    if ( NULL == digit ) { return -1 ; } // RETURN TODO: what is the correct return value? Assert here?
-    adcSum += digit -> adc () ;
-  }
+  
+  LHCb::HCCellID id( stationId ) ;
+  
+  const LHCb::HCDigit* digit = digits->object(id);
+  
+  if ( NULL == digit ) { return -1 ; } // RETURN TODO: what is the correct return value? Assert here?
+  
+  adcSum = digit -> adc () ;
   //
   // Return sum
   return adcSum ;
