@@ -17,7 +17,12 @@
 // ============================================================================
 // LoKi
 // ============================================================================
+#include "LoKi/Interface.h"
 #include "LoKi/BasicFunctors.h"
+// ============================================================================
+// Condition
+// ============================================================================
+#include "DetDesc/Condition.h"
 // ============================================================================
 /** @file
  *
@@ -170,6 +175,55 @@ namespace LoKi
       // ======================================================================
       /// the default constructor is disabled
       Contains () ;                      // the default constructor is disabled
+      // ======================================================================
+    } ;
+    // ========================================================================
+    /** @class HrcSumAdc
+     *  Simple query to sum contents of Herschel Digits for a station
+     *  @author Dan JOHNSON  daniel.johnson@cern.ch
+     *  @date 2016-05-17
+     */
+    class GAUDI_API HrcSumAdc
+      : public LoKi::Functor<void,double>
+      , public LoKi::TES::Get
+    {
+    public:
+      // ======================================================================
+      /** constructor from TES location & "rootInTes"-flag
+       *  @see GaudiCommon<TYPE>::exists
+       *  @see GaudiCommon<TYPE>::get
+       */
+      HrcSumAdc ( const std::string& location              ,
+                  const std::string& stationName           ,
+                  const bool         useRootInTes = true ) ;
+      /// MANDATORY: virtual destructor
+      virtual ~HrcSumAdc () ;
+      /// MANDATORY: clone method ("virtual constructor")
+      virtual  HrcSumAdc* clone() const ;
+      /** MANDATORY: the only one essential method
+       *  @return numebr of element in continer, -1 for non-existing container
+       */
+      virtual  result_type operator() ( /* argument v */ ) const ;
+      /// OPTIONAL: nice printout
+      virtual std::ostream& fillStream ( std::ostream& s ) const ;
+      const std::string& stationName     () const { return m_stationName    ; }
+      /// Update condition
+      virtual  StatusCode  updateCondition ();
+      const std::string& condName      () const { return m_condName      ; }
+      // ======================================================================
+    private:
+      // ======================================================================
+      /// the default constructor is disabled
+      HrcSumAdc () ;                      // the default constructor is disabled
+      /// the station name
+      std::string m_stationName         ; // the Herschel station name
+      
+      std::vector< std::vector<int> > m_channels;
+      /// Handle conditions
+      StatusCode unregisterCondition () ;
+      StatusCode   registerCondition () ;
+      std::string m_condName      ;               //             condition name
+      LoKi::Interface<Condition> m_condition ;    //       the condition itself
       // ======================================================================
     } ;
     // ========================================================================
@@ -340,6 +394,22 @@ namespace LoKi
      *  @date 2010-02-13
      */
     typedef LoKi::TES::Contains                                      CONTAINS ;
+    // ========================================================================
+    /** @typedef HRCSUMADC
+     *  Function to find Herschel digits and provide SUM of ADC counts
+     *
+     *  @code
+     *
+     *    400 > HRCSUMADC ( "/Raw/HC/Digits")
+     *
+     *  @endcode
+     *
+     *  @see LoKi::TES::HrcSumAdc
+     *  @author Dan JOHNSON  daniel.johnson@cern.ch
+     *  @date 2016-05-17
+     */
+    typedef LoKi::TES::HrcSumAdc                                    HRCSUMADC ;
+
     // ========================================================================
     /** @typedef EXISTS
      *  Trivial checker/predicate for existence of object in TES

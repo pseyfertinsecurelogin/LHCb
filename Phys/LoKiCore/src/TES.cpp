@@ -7,10 +7,20 @@
 #include "GaudiKernel/SmartIF.h"
 #include "GaudiKernel/ToStream.h"
 #include "GaudiKernel/ObjectContainerBase.h"
+#include "GaudiKernel/SmartDataPtr.h"
+#include "GaudiKernel/ISvcLocator.h"
+#include "GaudiKernel/IDataProviderSvc.h"
+#include "GaudiKernel/IUpdateManagerSvc.h"
+#include "GaudiKernel/DataObject.h"
+#include "GaudiKernel/IRegistry.h"
 // ============================================================================
 // GaudiAlg
 // ============================================================================
 #include "GaudiAlg/GetAlgs.h"
+// ============================================================================
+// Gaudi
+// ============================================================================
+#include "Event/HCDigit.h"
 // ============================================================================
 // LHCbKernel
 // ============================================================================
@@ -24,6 +34,10 @@
 #include "LoKi/Exception.h"
 #include "LoKi/Services.h"
 // ============================================================================
+// Condition
+// ============================================================================
+#include "DetDesc/Condition.h"
+// ============================================================================
 #ifdef __INTEL_COMPILER       // Disable ICC remark
 #pragma warning(disable:2259) // non-pointer conversion may lose significant bits
 #pragma warning(disable:1572) // floating-point equality and inequality comparisons are unreliable
@@ -33,7 +47,7 @@
  *  Implementation file for classes from namespace LoKi::TES
  *
  *  This file is a part of LoKi project -
- *    "C++ ToolKit  for Smart and Friendly Physics Analysis"
+ *    "C++ ToolKit  for Smart and Fristd::endly Physics Analysis"
  *
  *  The package has been designed with the kind help from
  *  Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas,
@@ -198,6 +212,153 @@ LoKi::TES::Contains::fillStream ( std::ostream& s ) const
 }
 // ============================================================================
 
+
+// ============================================================================
+// constructor from TES location
+// ============================================================================
+LoKi::TES::HrcSumAdc::HrcSumAdc
+( const std::string& location     ,
+  const std::string& stationName       ,
+  const bool         useRootInTes )
+  : LoKi::AuxFunBase ( std::tie ( location , stationName, useRootInTes ) )  
+  , LoKi::Functor<void,double> ()
+  , LoKi::TES::Get ( location , useRootInTes ) 
+  , m_stationName    ( stationName ) 
+  , m_condName       ( "Conditions/ReadoutConf/HC/Mapping" ) 
+  , m_condition      (                       )
+{
+  //
+  LoKi::ILoKiSvc* svc = lokiSvc() ;  
+  //
+  Assert ( 0 != svc      , "Unable to reach LoKi Service!"  ) ;
+  SmartIF<ISvcLocator> loc ( svc ) ;
+  Assert ( loc.isValid() , "Unable to reach ServiceLocator" ) ;
+  //
+  SmartIF<IDataProviderSvc> det =  loc->service<IDataProviderSvc>( "DetectorDataSvc" , true ) ;
+  Assert ( det.isValid() , "Unable to reach Detector Service" ) ;
+  //
+  SmartDataPtr<Condition> cond (  det , condName() ) ;
+  Assert ( !(!cond) , "Unable to locate CONDITION='" + condName() + "'" ) ;
+  //
+  m_condition = cond ;
+  //
+  // update condition & register it
+  //
+  updateCondition   () ;
+  registerCondition () ;
+  //    
+}
+// ============================================================================
+// MANDATORY: virtual destructor
+// ============================================================================
+LoKi::TES::HrcSumAdc::~HrcSumAdc(){ unregisterCondition () ; }
+// ============================================================================
+// register the condition
+// ============================================================================
+StatusCode LoKi::TES::HrcSumAdc::registerCondition () 
+{
+  //
+  LoKi::ILoKiSvc* svc = lokiSvc() ;  
+  Assert ( 0 != svc , "Unable to reach LoKi Service!"  ) ;
+  //
+  SmartIF<IUpdateManagerSvc> upd  ( svc ) ;
+  Assert ( upd.isValid() , "Unable to reach Update Manager Service" ) ;
+  //
+  LoKi::TES::HrcSumAdc* this_ = this ;
+  upd -> registerCondition
+    ( this_                            , 
+      m_condName                       ,
+      &LoKi::TES::HrcSumAdc::updateCondition ) ;
+  //
+  return StatusCode::SUCCESS ;
+}
+// ============================================================================
+// unregister the condition
+// ============================================================================
+StatusCode LoKi::TES::HrcSumAdc::unregisterCondition () 
+{
+  //
+  LoKi::ILoKiSvc* svc = lokiSvc() ;  
+  if ( 0 == svc  ) return StatusCode::SUCCESS;
+  //
+  SmartIF<IUpdateManagerSvc> upd  ( svc ) ;
+  Assert ( upd.isValid() , "Unable to reach Update Manager Service" ) ;
+  //
+  LoKi::TES::HrcSumAdc* this_ = this ;
+  upd -> unregister ( this_ ) ;
+  //
+  return StatusCode::SUCCESS ;
+}
+// ============================================================================
+// update the condition
+// ============================================================================
+StatusCode LoKi::TES::HrcSumAdc::updateCondition () 
+{
+  //
+  Assert ( !(!m_condition) , "Condition is invalid!" ) ;
+  //
+  // Get the parameters in order B2 B1 B0 F1 F2
+  m_channels.push_back( m_condition->paramVect<int>("ChannelsB2") );
+  m_channels.push_back( m_condition->paramVect<int>("ChannelsB1") );
+  m_channels.push_back( m_condition->paramVect<int>("ChannelsB0") );
+  m_channels.push_back( m_condition->paramVect<int>("ChannelsF1") );
+  m_channels.push_back( m_condition->paramVect<int>("ChannelsF2") );
+  //
+  return StatusCode::SUCCESS  ;
+}
+// ============================================================================
+// MANDATORY: clone method ("virtual constructor")
+// ============================================================================
+LoKi::TES::HrcSumAdc* LoKi::TES::HrcSumAdc::clone() const
+{ return new LoKi::TES::HrcSumAdc ( *this ) ; }
+// ============================================================================
+// MANDATORY: the only one essential method
+// ============================================================================
+LoKi::TES::HrcSumAdc::result_type
+LoKi::TES::HrcSumAdc::operator() ( /* LoKi::TES::HrcSumAdc::argument */ ) const
+{
+  //
+  const LHCb::HCDigits *digits = LoKi::TES::get_<LHCb::HCDigits> ( *this ) ;
+  //
+  if ( NULL == digits ) { return -1 ; } // RETURN
+  // Compute the station ID (internal index) // TODO is there a better way to do this?
+  int stationId = -1 ;
+  if      ( stationName().compare("B2")==0 ) stationId = 0 ;
+  else if ( stationName().compare("B1")==0 ) stationId = 1 ;
+  else if ( stationName().compare("B0")==0 ) stationId = 2 ;
+  else if ( stationName().compare("F1")==0 ) stationId = 3 ;
+  else if ( stationName().compare("F2")==0 ) stationId = 4 ;
+  //
+  // Compute ADC sum
+  const std::vector<std::string> stations = {"B2", "B1", "B0", "F1", "F2"};
+  
+  double adcSum = 0 ; // TODO should this be double?
+  for ( int i_counter = 0 ; i_counter < 4 ; i_counter++ ) {
+    if ( m_channels[ stationId ][ i_counter ] == -1 )
+    Assert( !(m_channels[ stationId ][ i_counter ]==-1) , "Invalid Herschel channel number obtained" ) ; ;
+    LHCb::HCCellID id( m_channels[ stationId ][ i_counter ] ); 
+    const LHCb::HCDigit* digit = digits->object(id);
+    if ( NULL == digit ) { return -1 ; } // RETURN TODO: what is the correct return value? Assert here?
+    adcSum += digit -> adc () ;
+  }
+  //
+  // Return sum
+  return adcSum ;
+}
+// ============================================================================
+// OPTIONAL: nice printout
+// ============================================================================
+std::ostream&
+LoKi::TES::HrcSumAdc::fillStream ( std::ostream& s ) const
+{
+  s << " HRCSUMADC( " ;
+  Gaudi::Utils::toStream ( location() , s ) ;
+  s << " , " ;
+  Gaudi::Utils::toStream ( stationName() , s ) ;
+  if ( !useRootInTES() ) { s << " , False" ; }
+  return s << " ) " ;
+}
+// ============================================================================
 
 // ============================================================================
 // constructor from TES location
