@@ -75,20 +75,20 @@ StatusCode HCRawBankDecoderHlt::execute() {
 
   const unsigned int nStations = 5;
   std::vector<int> sums(nStations, 0);
-  for (auto it = banks.begin(), end = banks.end(); it != end; ++it) {
+  for (const auto& bank: banks) {
     // Make sure the bank is not corrupted.
-    if (LHCb::RawBank::MagicPattern != (*it)->magic()) {
+    if (LHCb::RawBank::MagicPattern != bank->magic()) {
       error() << "Bad magic pattern" << endmsg;
       continue;
     }
-    const unsigned int source = (*it)->sourceID();
-    const unsigned int version = (*it)->version();
+    const unsigned int source = bank->sourceID();
+    const unsigned int version = bank->version();
     if (UNLIKELY(msgLevel(MSG::DEBUG))) {
       debug() << "Source: " << source << ", version: " << version << endmsg;
     }
     // Decode the raw bank.
     if (version == 2 || version == 3) {
-      decode(*it, sums);
+      decode(bank, sums);
     } else {
       return Error("Unknown raw bank version: " + std::to_string(version));
     }
