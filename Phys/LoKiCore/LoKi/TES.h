@@ -385,7 +385,7 @@ namespace LoKi
      *
      *  @code
      *
-     *    400 > HRCSUMADC ( "/Raw/HC/Sum" )
+     *    400 > HRCSUMADC ( "/Raw/HC/Sum", "B2" )
      *
      *  @endcode
      *
