@@ -20,9 +20,9 @@ HCRawBankDecoderHlt::HCRawBankDecoderHlt(const std::string& name,
                   m_digitLocation = "Raw/HC/Sums");
  
   // Initialize search path, and then call the base method.
-  m_rawEventLocations.push_back(LHCb::RawEventLocation::HC);
-  m_rawEventLocations.push_back(LHCb::RawEventLocation::Default);
-  m_rawEventLocations.push_back(LHCb::RawEventLocation::Other);
+  m_rawEventLocations = { LHCb::RawEventLocation::HC ,
+                          LHCb::RawEventLocation::Default ,
+                          LHCb::RawEventLocation::Other } ;
   initRawEventSearch();
 }
 
