@@ -7,12 +7,6 @@
 #include "GaudiKernel/SmartIF.h"
 #include "GaudiKernel/ToStream.h"
 #include "GaudiKernel/ObjectContainerBase.h"
-#include "GaudiKernel/SmartDataPtr.h"
-#include "GaudiKernel/ISvcLocator.h"
-#include "GaudiKernel/IDataProviderSvc.h"
-#include "GaudiKernel/IUpdateManagerSvc.h"
-#include "GaudiKernel/DataObject.h"
-#include "GaudiKernel/IRegistry.h"
 // ============================================================================
 // GaudiAlg
 // ============================================================================
@@ -34,10 +28,6 @@
 #include "LoKi/Exception.h"
 #include "LoKi/Services.h"
 // ============================================================================
-// Condition
-// ============================================================================
-#include "DetDesc/Condition.h"
-// ============================================================================
 #ifdef __INTEL_COMPILER       // Disable ICC remark
 #pragma warning(disable:2259) // non-pointer conversion may lose significant bits
 #pragma warning(disable:1572) // floating-point equality and inequality comparisons are unreliable
@@ -47,7 +37,7 @@
  *  Implementation file for classes from namespace LoKi::TES
  *
  *  This file is a part of LoKi project -
- *    "C++ ToolKit  for Smart and Fristd::endly Physics Analysis"
+ *    "C++ ToolKit  for Smart and Friendly Physics Analysis"
  *
  *  The package has been designed with the kind help from
  *  Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas,
