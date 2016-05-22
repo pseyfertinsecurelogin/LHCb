@@ -216,10 +216,6 @@ LoKi::TES::HrcSumAdc::HrcSumAdc
   , m_stationName    ( stationName ) 
 {}
 // ============================================================================
-// MANDATORY: virtual destructor
-// ============================================================================
-LoKi::TES::HrcSumAdc::~HrcSumAdc(){}
-// ============================================================================
 // MANDATORY: clone method ("virtual constructor")
 // ============================================================================
 LoKi::TES::HrcSumAdc* LoKi::TES::HrcSumAdc::clone() const

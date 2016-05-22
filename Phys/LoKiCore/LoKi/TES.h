@@ -191,8 +191,6 @@ namespace LoKi
       HrcSumAdc ( const std::string& location              ,
                   const std::string& stationName           ,
                   const bool         useRootInTes = true ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~HrcSumAdc () ;
       /// MANDATORY: clone method ("virtual constructor")
       HrcSumAdc* clone() const override ;
       /** MANDATORY: the only one essential method
