@@ -243,8 +243,6 @@ LoKi::TES::HrcSumAdc::operator() ( /* LoKi::TES::HrcSumAdc::argument */ ) const
   else if ( stationName().compare("F2")==0 ) stationId = 4 ;
   //
   // Compute ADC sum
-  const std::vector<std::string> stations = {"B0", "B1", "B2", "F1", "F2"};
- 
   LHCb::HCCellID id( stationId ) ;
   const auto digit = digits->object(id);
   return digit ? digit->adc() : -1; 
