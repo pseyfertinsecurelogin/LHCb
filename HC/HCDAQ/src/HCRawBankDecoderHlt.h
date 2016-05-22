@@ -38,7 +38,7 @@ class HCRawBankDecoderHlt : public Decoder::HistoAlgBase {
   enum { nChannels = 64 };
   std::bitset<2*nChannels> m_masked;
   /// Station number for each channel.
-  std::vector<unsigned int> m_station;
+  std::array<unsigned int,2*nChannels> m_station;
 
   /// Do the decoding.
   bool decode( const LHCb::RawBank& bank, std::vector<int>& sums) const ;

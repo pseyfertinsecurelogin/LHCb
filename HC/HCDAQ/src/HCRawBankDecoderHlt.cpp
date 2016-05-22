@@ -41,7 +41,7 @@ StatusCode HCRawBankDecoderHlt::initialize() {
 
   const unsigned int nChannels = 64;
   m_masked.set();
-  m_station.assign(2 * nChannels, 0);
+  m_station.fill(0);
   // Check if the mapping is available in the conditions database.
   const std::string location = "Conditions/ReadoutConf/HC/Mapping";
   if (!existDet<Condition>(location)) {
@@ -172,7 +172,7 @@ StatusCode HCRawBankDecoderHlt::cacheMapping() {
 
   const unsigned int nChannels = 64;
   m_masked.set();
-  m_station.assign(2 * nChannels, 0);
+  m_station.fill(0);
   // Reset the list of station numbers and mask flags.
   const std::vector<std::string> stations = {"B0", "B1", "B2", "F1", "F2"};
   const unsigned int nStations = stations.size();
