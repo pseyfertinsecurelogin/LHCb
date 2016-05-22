@@ -41,7 +41,7 @@ class HCRawBankDecoderHlt : public Decoder::HistoAlgBase {
   std::vector<unsigned int> m_station;
 
   /// Do the decoding.
-  bool decode(LHCb::RawBank* bank, std::vector<int>& sums);
+  bool decode( const LHCb::RawBank& bank, std::vector<int>& sums) const ;
   /// Retrieve the mapping from the conditions database.
   StatusCode cacheMapping();
 };
