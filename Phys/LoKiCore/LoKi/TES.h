@@ -381,11 +381,11 @@ namespace LoKi
     typedef LoKi::TES::Contains                                      CONTAINS ;
     // ========================================================================
     /** @typedef HRCSUMADC
-     *  Function to find Herschel digits and provide SUM of ADC counts
+     *  Function to find Herschel station sum digits 
      *
      *  @code
      *
-     *    400 > HRCSUMADC ( "/Raw/HC/Digits")
+     *    400 > HRCSUMADC ( "/Raw/HC/Sum" )
      *
      *  @endcode
      *
