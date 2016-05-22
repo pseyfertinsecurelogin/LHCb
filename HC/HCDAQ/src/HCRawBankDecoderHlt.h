@@ -34,7 +34,9 @@ class HCRawBankDecoderHlt : public Decoder::HistoAlgBase {
   unsigned int m_crateF = 1;
 
   /// Masking flag for each channel.
-  std::vector<bool> m_masked;
+  
+  enum { nChannels = 64 };
+  std::bitset<2*nChannels> m_masked;
   /// Station number for each channel.
   std::vector<unsigned int> m_station;
 
