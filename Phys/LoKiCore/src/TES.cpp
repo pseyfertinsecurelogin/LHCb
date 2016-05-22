@@ -245,13 +245,13 @@ LoKi::TES::HrcSumAdc::operator() ( /* LoKi::TES::HrcSumAdc::argument */ ) const
   // Compute ADC sum
   const std::vector<std::string> stations = {"B0", "B1", "B2", "F1", "F2"};
   
-  double adcSum = 0 ; // TODO should this be double?
+  double adcSum = 0 ; 
   
   LHCb::HCCellID id( stationId ) ;
   
   const LHCb::HCDigit* digit = digits->object(id);
   
-  if ( NULL == digit ) { return -1 ; } // RETURN TODO: what is the correct return value? Assert here?
+  if ( NULL == digit ) { return -1 ; } 
   
   adcSum = digit -> adc () ;
   //
