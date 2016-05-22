@@ -234,7 +234,7 @@ LoKi::TES::HrcSumAdc::operator() ( /* LoKi::TES::HrcSumAdc::argument */ ) const
   const LHCb::HCDigits *digits = LoKi::TES::get_<LHCb::HCDigits> ( *this ) ;
   //
   if ( NULL == digits ) { return -1 ; } // RETURN
-  // Compute the station ID (internal index) // TODO is there a better way to do this?
+  // Determine the station ID (internal index) 
   int stationId = -1 ;
   if      ( stationName().compare("B0")==0 ) stationId = 0 ;
   else if ( stationName().compare("B1")==0 ) stationId = 1 ;
