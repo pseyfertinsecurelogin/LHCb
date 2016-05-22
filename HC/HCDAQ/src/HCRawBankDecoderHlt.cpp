@@ -39,7 +39,6 @@ StatusCode HCRawBankDecoderHlt::initialize() {
   StatusCode sc = Decoder::HistoAlgBase::initialize();
   if (sc.isFailure()) return sc;
 
-  const unsigned int nChannels = 64;
   m_masked.set();
   m_station.fill(0);
   // Check if the mapping is available in the conditions database.
@@ -88,7 +87,7 @@ StatusCode HCRawBankDecoderHlt::execute() {
     }
     // Decode the raw bank.
     if (version == 2 || version == 3) {
-      decode(bank, sums);
+      decode(*bank, sums);
     } else {
       return Error("Unknown raw bank version: " + std::to_string(version));
     }
@@ -107,11 +106,11 @@ StatusCode HCRawBankDecoderHlt::execute() {
 //=============================================================================
 // Decoding of raw banks (compressed format, PS/SPD)
 //=============================================================================
-bool HCRawBankDecoderHlt::decode(LHCb::RawBank* bank,
-                                 std::vector<int>& sums) {
+bool HCRawBankDecoderHlt::decode(const LHCb::RawBank& bank ,
+                                 std::vector<int>& sums) const {
 
-  uint32_t* data = bank->data();
-  unsigned int nWords = bank->size() / sizeof(uint32_t);
+  const uint32_t* data = bank.data();
+  unsigned int nWords = bank.size() / sizeof(uint32_t);
   while (nWords > 0) {
     // Read the bank header.
     uint32_t word = *data++;
