@@ -194,13 +194,13 @@ namespace LoKi
       /// MANDATORY: virtual destructor
       virtual ~HrcSumAdc () ;
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  HrcSumAdc* clone() const ;
+      HrcSumAdc* clone() const override ;
       /** MANDATORY: the only one essential method
        *  @return numebr of element in continer, -1 for non-existing container
        */
-      virtual  result_type operator() ( /* argument v */ ) const ;
+      result_type operator() ( /* argument v */ ) const override ;
       /// OPTIONAL: nice printout
-      virtual std::ostream& fillStream ( std::ostream& s ) const ;
+      std::ostream& fillStream ( std::ostream& s ) const override ;
       const std::string& stationName     () const { return m_stationName    ; }
       // ======================================================================
     private:
