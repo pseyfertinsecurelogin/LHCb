@@ -4,6 +4,10 @@
 ! Purpose     : Interface package to Geometry and Conditions DB
 !-----------------------------------------------------------------------------
 
+! 2016-05-23 - Patrick Robbe
+ - Add "OnlineMode" option to the DDDBConf configurable to change message
+   output level when running online (monitoring, ...)
+
 ! 2016-04-20 - Marco Cattaneo
  - Update default database tags to the latest ones:
    . LHCBCOND, 2016: cond-20160420
