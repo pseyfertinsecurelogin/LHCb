@@ -100,6 +100,8 @@ void HltEvaluator::updatePreambulo(Property& /* p */)
 StatusCode HltEvaluator::initialize() {
    StatusCode sc = GaudiAlgorithm::initialize(); // must be executed first
    if (sc.isFailure()) return sc;  // error printed already by GaudiAlgorithm
+
+   auto incSvc = service<IIncidentSvc>("IncidentSvc");
    if (m_useCondDB) {
       m_updMgrSvc = service("UpdateManagerSvc");
       if(!m_updMgrSvc) {
@@ -112,10 +114,10 @@ StatusCode HltEvaluator::initialize() {
       if(!sc.isSuccess()) return sc;
    } else {
       // reset m_startOfRun to zero at start of run....
-      auto s = service<IIncidentSvc>("IncidentSvc");
-      s->addListener(this, IncidentType::BeginRun, 0, false, false);
-      s->addListener(this, "RunChange",0, false, false);
+      incSvc->addListener(this, IncidentType::BeginRun, 0, false, false);
+      incSvc->addListener(this, "RunChange",0, false, false);
    }
+   incSvc->addListener(this, IncidentType::BeginEvent, 0, false, false);
 
    // Hlt Monitoring Service
    m_hltMonSvc = service(m_monSvc, false, true); // createIf=false, quiet=true
@@ -129,8 +131,12 @@ StatusCode HltEvaluator::initialize() {
 }
 
 //=============================================================================
-void HltEvaluator::handle(const Incident&) {
-   m_startOfRun = 0;
+void HltEvaluator::handle(const Incident& incident) {
+   if (!m_useCondDB && (incident.type() == IncidentType::BeginRun
+                        || incident.type() == "RunChange")) {
+      m_startOfRun = 0;
+   }
+   m_data.clear();
 }
 
 //=============================================================================
