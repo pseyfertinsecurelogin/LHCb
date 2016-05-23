@@ -150,12 +150,6 @@ StatusCode HltRoutingBitsWriter::execute() {
       if (result) bits[word] |= (0x01UL << (bit - 32 * word));
    }
 
-   debug() << "RB words: " << std::hex;
-   for (auto word : bits) {
-      debug() << word << " ";
-   }
-   debug() << endmsg;
-
    // Get the raw event and update or add the routing bits bank.
    LHCb::RawEvent* rawEvent = get<LHCb::RawEvent>(m_raw_location);
 
