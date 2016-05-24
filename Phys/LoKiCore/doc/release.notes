@@ -16,6 +16,9 @@
 ! 2016-06-01 - Philip Ilten
  - removed debug print statements introduced in r201631 to _getattr_SR_
 
+! 2016-05-22 - Dan Johnson
+ - Add new LoKi functor to access Herschel station ADC sum from TES
+
 !========================= LoKiCore v11r30 2016-03-08 =========================
 
 ! 2016-03-08 - Marco Clemencic

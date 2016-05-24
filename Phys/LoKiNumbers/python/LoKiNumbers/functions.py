@@ -109,6 +109,8 @@ XVector   = std.vector(_d)
 EXISTS    = LoKi.TES.Exists
 ## @see LoKi::Cuts::CONTAINS
 CONTAINS  = LoKi.TES.Contains
+## @see LoKi::Cuts::HRCSUMADC
+HRCSUMADC  = LoKi.TES.HrcSumAdc
 ## @see LoKi::Cuts::COUNTER
 COUNTER   = LoKi.TES.Counter
 ## @see LoKi::Cuts::STAT
