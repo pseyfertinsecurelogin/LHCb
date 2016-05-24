@@ -179,7 +179,7 @@ class DDDBConf(ConfigurableUser):
         # Set the tags
         self.__set_tag__(["DDDB"],     "dddb-20150724" )
         if not self.getProp("Simulation"):
-            self.__set_tag__(["LHCBCOND"], "cond-20160420" )
+            self.__set_tag__(["LHCBCOND"], "cond-20160522" )
             self.__set_tag__(["DQFLAGS"],  "dq-20150717"   )
             self.__set_tag__(["CALIBOFF"], "head-2015604" )
             # set initialization time to a safe default
