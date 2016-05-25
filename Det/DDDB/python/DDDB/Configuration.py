@@ -21,14 +21,16 @@ class DDDBConf(ConfigurableUser):
                   "DataType"  : "2012",
                   "Simulation": False,
                   "AutoTags"  : False,
-                  "InitialTime" : "Safe"
+                  "InitialTime" : "Safe",
+                  "OnlineMode" : False
                    }
     _propertyDocDct = {
                        'DbRoot' : """ Root file of the detector description """,
                        'DataType' : """ Symbolic name for the data type. Allowed values: ["2016", "2015", "2013", "2012", "2011", "2010", "2009","2008","Upgrade"] """,
                        'Simulation' : """ Boolean flag to select the simulation or real-data configuration """,
                        'AutoTags'  : """ Perform automatic resolution of CondDB tags """,
-                       'InitialTime' : """ How to set the initial time. None/'Safe' uses a list of dummy times for each year and sets that time. 'Now' uses the current time. Sepcifying a number assumes that is a time in utc."""
+                       'InitialTime' : """ How to set the initial time. None/'Safe' uses a list of dummy times for each year and sets that time. 'Now' uses the current time. Sepcifying a number assumes that is a time in utc.""",
+                       'OnlineMode' : """ To use to run online jobs (Monitoring, ...) """
                        }
 
     __used_configurables__ = [ CondDB ]
@@ -135,13 +137,23 @@ class DDDBConf(ConfigurableUser):
 
     def __set_tag__(self, partitions, tag):
         cdb = CondDB()
+        online = False 
+        if self.isPropertySet( "OnlineMode" ):
+            if self.getProp( "OnlineMode" ):
+                online = True
         for p in partitions:
             if p not in cdb.Tags:
                 cdb.Tags[p] = tag
-                log.warning("Using default tag %s for partition %s", tag, p)
+                if online:
+                    log.info( "Using default tag %s for partition %s", tag, p)
+                else:
+                    log.warning("Using default tag %s for partition %s", tag, p)
             elif cdb.Tags[p].upper() == "DEFAULT" :
                 cdb.Tags[p] = tag
-                log.warning("Default tag requested for partition %s (using %s)", p, tag )
+                if online: 
+                    log.info("Default tag requested for partition %s (using %s)", p, tag )
+                else:
+                    log.warning("Default tag requested for partition %s (using %s)", p, tag )
 
     def __set_init_time__(self, utcDatetime):
         """
