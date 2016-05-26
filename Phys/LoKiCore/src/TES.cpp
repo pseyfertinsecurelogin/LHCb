@@ -12,6 +12,10 @@
 // ============================================================================
 #include "GaudiAlg/GetAlgs.h"
 // ============================================================================
+// Gaudi
+// ============================================================================
+#include "Event/HCDigit.h"
+// ============================================================================
 // LHCbKernel
 // ============================================================================
 #include "Kernel/Counters.h"
@@ -198,6 +202,61 @@ LoKi::TES::Contains::fillStream ( std::ostream& s ) const
 }
 // ============================================================================
 
+
+// ============================================================================
+// constructor from TES location
+// ============================================================================
+LoKi::TES::HrcSumAdc::HrcSumAdc
+( const std::string& location     ,
+  const std::string& stationName       ,
+  const bool         useRootInTes )
+  : LoKi::AuxFunBase ( std::tie ( location , stationName, useRootInTes ) )  
+  , LoKi::Functor<void,double> ()
+  , LoKi::TES::Get ( location , useRootInTes ) 
+  , m_stationName    ( stationName ) 
+{}
+// ============================================================================
+// MANDATORY: clone method ("virtual constructor")
+// ============================================================================
+LoKi::TES::HrcSumAdc* LoKi::TES::HrcSumAdc::clone() const
+{ return new LoKi::TES::HrcSumAdc ( *this ) ; }
+// ============================================================================
+// MANDATORY: the only one essential method
+// ============================================================================
+LoKi::TES::HrcSumAdc::result_type
+LoKi::TES::HrcSumAdc::operator() ( /* LoKi::TES::HrcSumAdc::argument */ ) const
+{
+  //
+  const LHCb::HCDigits *digits = LoKi::TES::get_<LHCb::HCDigits> ( *this ) ;
+  //
+  if ( NULL == digits ) { return -1 ; } // RETURN
+  // Determine the station ID (internal index) 
+  int stationId = -1 ;
+  if      ( stationName().compare("B0")==0 ) stationId = 0 ;
+  else if ( stationName().compare("B1")==0 ) stationId = 1 ;
+  else if ( stationName().compare("B2")==0 ) stationId = 2 ;
+  else if ( stationName().compare("F1")==0 ) stationId = 3 ;
+  else if ( stationName().compare("F2")==0 ) stationId = 4 ;
+  //
+  // Compute ADC sum
+  LHCb::HCCellID id( stationId ) ;
+  const auto digit = digits->object(id);
+  return digit ? digit->adc() : -1; 
+}
+// ============================================================================
+// OPTIONAL: nice printout
+// ============================================================================
+std::ostream&
+LoKi::TES::HrcSumAdc::fillStream ( std::ostream& s ) const
+{
+  s << " HRCSUMADC( " ;
+  Gaudi::Utils::toStream ( location() , s ) ;
+  s << " , " ;
+  Gaudi::Utils::toStream ( stationName() , s ) ;
+  if ( !useRootInTES() ) { s << " , False" ; }
+  return s << " ) " ;
+}
+// ============================================================================
 
 // ============================================================================
 // constructor from TES location
