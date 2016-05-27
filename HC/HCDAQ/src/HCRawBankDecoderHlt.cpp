@@ -20,9 +20,9 @@ HCRawBankDecoderHlt::HCRawBankDecoderHlt(const std::string& name,
                   m_digitLocation = "Raw/HC/Sums");
  
   // Initialize search path, and then call the base method.
-  m_rawEventLocations = { LHCb::RawEventLocation::HC ,
-                          LHCb::RawEventLocation::Default ,
-                          LHCb::RawEventLocation::Other } ;
+  m_rawEventLocations = {LHCb::RawEventLocation::HC,
+                         LHCb::RawEventLocation::Default,
+                         LHCb::RawEventLocation::Other};
   initRawEventSearch();
 }
 
@@ -44,12 +44,15 @@ StatusCode HCRawBankDecoderHlt::initialize() {
   // Check if the mapping is available in the conditions database.
   const std::string location = "Conditions/ReadoutConf/HC/Mapping";
   if (!existDet<Condition>(location)) {
-    return Error("Cannot find " + location + " in database");
+    return Error("Cannot find " + location + " in database", 
+                 StatusCode::SUCCESS);
   }
   registerCondition(location, m_cond, &HCRawBankDecoderHlt::cacheMapping);
   // First update.
   sc = updMgrSvc()->update(this);
-  if (sc.isFailure()) return Error("Cannot update mapping.");
+  if (sc.isFailure()) {
+    return Error("Cannot update mapping.", StatusCode::SUCCESS);
+  }
   return StatusCode::SUCCESS;
 }
 
@@ -89,7 +92,8 @@ StatusCode HCRawBankDecoderHlt::execute() {
     if (version == 2 || version == 3) {
       decode(*bank, sums);
     } else {
-      return Error("Unknown raw bank version: " + std::to_string(version));
+      return Error("Unknown raw bank version: " + std::to_string(version),
+                   StatusCode::SUCCESS);
     }
   }
 
