@@ -27,6 +27,7 @@ class LHCbApp(LHCbConfigurableUser):
        ,"XMLSummary"    : None
        ,"Persistency"   : None
        ,"IgnoreDQFlags" : True
+       ,"EnableHive"    : False
         }
 
     _propertyDocDct = {
@@ -45,6 +46,7 @@ class LHCbApp(LHCbConfigurableUser):
        ,'XMLSummary'  : """ Add an XML summary file, default None """
        ,'Persistency'  : """ Overwrite the default persistency with something else. """
        ,'IgnoreDQFlags': """ If False, process only events with good DQ. Default is True (process all events)"""
+       ,'EnableHive'   : """ If True, use HiveEventLoopMgr (deafult False) """
        }
     
     __used_configurables__ = [ DDDBConf, XMLSummary ]
@@ -218,8 +220,22 @@ class LHCbApp(LHCbConfigurableUser):
         # Set up TES and I/O services
         from GaudiConf.IOHelper import IOHelper
         IOHelper(persistency,persistency).setupServices()
-    
+
+    def setupHive(self):
+        '''Enable Hive event loop manager'''
+        from Configurables import HiveWhiteBoard, HiveEventLoopMgr
+        evtslots = 10
+        whiteboard   = HiveWhiteBoard("EventDataSvc",
+                                      EventSlots = evtslots)
+        eventloopmgr = HiveEventLoopMgr(MaxEventsParallel = evtslots,
+                                        MaxAlgosParallel  = 20,
+                                        NumThreads = 8,
+                                        AlgosDependencies = [])
+        ApplicationMgr().ExtSvc.insert(0,whiteboard)
+        ApplicationMgr().EventLoop = eventloopmgr
+
     def __apply_configuration__(self):
+        if self.getProp("EnableHive"): self.setupHive()
         self.defineDB()
         self.defineEvents()
         self.defineMonitors()
