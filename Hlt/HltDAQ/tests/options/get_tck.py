@@ -3,6 +3,8 @@ import argparse
 
 parser = argparse.ArgumentParser(usage = 'usage: %(prog)s file')
 
+parser.add_argument("--odin", action = 'store_true', dest = "odin", default = False,
+                    help = "Use ODIN to get the TCK")
 parser.add_argument("file", nargs = 1)
 
 args = parser.parse_args()
@@ -44,7 +46,11 @@ while True:
     if not TES['/Event']:
         break
     raw = TES['DAQ/RawEvent']
-    if not raw.banks(gbl.LHCb.RawBank.HltDecReports).size():
+    if args.odin:
+        odin = TES['DAQ/ODIN']
+        hlt1_tck = odin.triggerConfigurationKey()
+        break
+    elif not raw.banks(gbl.LHCb.RawBank.HltDecReports).size():
         # Nanofied event
         continue
     else:
