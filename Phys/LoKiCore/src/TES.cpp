@@ -229,7 +229,7 @@ LoKi::TES::HrcSumAdc::operator() ( /* LoKi::TES::HrcSumAdc::argument */ ) const
   //
   const LHCb::HCDigits *digits = LoKi::TES::get_<LHCb::HCDigits> ( *this ) ;
   //
-  if ( NULL == digits ) { return -1 ; } // RETURN
+  if ( NULL == digits ) { return 99999 ; } // RETURN
   // Determine the station ID (internal index) 
   int stationId = -1 ;
   if      ( stationName().compare("B0")==0 ) stationId = 0 ;
