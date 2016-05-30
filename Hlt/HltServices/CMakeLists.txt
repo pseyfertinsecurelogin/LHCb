@@ -23,3 +23,5 @@ gaudi_add_module(HltServices
 gaudi_add_executable(hlttck_cdb_listkeys  utilities/main.cpp src/cdb.cpp src/tar.cpp
                      INCLUDE_DIRS Boost
                      LINK_LIBRARIES GaudiKernel Boost HltInterfaces)
+
+gaudi_add_test(QMTest QMTEST)
