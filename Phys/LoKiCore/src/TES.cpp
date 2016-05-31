@@ -241,7 +241,7 @@ LoKi::TES::HrcSumAdc::operator() ( /* LoKi::TES::HrcSumAdc::argument */ ) const
   // Compute ADC sum
   LHCb::HCCellID id( stationId ) ;
   const auto digit = digits->object(id);
-  return digit ? digit->adc() : -1; 
+  return digit ? digit->adc() : 99999; 
 }
 // ============================================================================
 // OPTIONAL: nice printout
