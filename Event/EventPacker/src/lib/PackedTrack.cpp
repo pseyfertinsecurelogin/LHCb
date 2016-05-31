@@ -27,17 +27,21 @@ void TrackPacker::pack( const Data & track,
   ptrack.firstId    = ptracks.ids().size();
   for ( const auto& id : track.lhcbIDs() ) { ptracks.ids().push_back( id.lhcbID() ); }
   ptrack.lastId    = ptracks.ids().size();
-  if( UNLIKELY( parent().msgLevel(MSG::DEBUG) ) )
+  if ( UNLIKELY( parent().msgLevel(MSG::DEBUG) ) )
+  {
     parent().debug() << "Stored LHCbIDs from "
                      << ptrack.firstId << " to " << ptrack.lastId << endmsg;
+  }
 
   //== Handle the states in the track
   ptrack.firstState = ptracks.states().size();
   for ( const auto* S : track.states() ) { convertState( *S, ptracks ); }
   ptrack.lastState = ptracks.states().size();
-  if( UNLIKELY( parent().msgLevel(MSG::DEBUG) ) )
+  if ( UNLIKELY( parent().msgLevel(MSG::DEBUG) ) )
+  {
     parent().debug() << "Stored states from " << ptrack.firstState
                      << " to " << ptrack.lastState << endmsg;
+  }
 
   //== Handles the ExtraInfo
   ptrack.firstExtra = ptracks.extras().size();
@@ -141,11 +145,19 @@ void TrackPacker::unpack( const PackedData       & ptrack,
     }
   }
 
-  std::vector<LHCb::LHCbID> lhcbids( lastId - firstId ) ;
-  auto lhcbit = lhcbids.begin() ;
-  for ( int kId = firstId; lastId > kId; ++kId, ++lhcbit )
+  std::vector<LHCb::LHCbID> lhcbids;
+  lhcbids.reserve( lastId - firstId );
+  for ( int kId = firstId; lastId > kId; ++kId )
   {
-    *lhcbit = LHCb::LHCbID( *(ptracks.ids().begin()+kId) ) ;
+    if ( kId < (int)ptracks.ids().size() )
+    {
+      lhcbids.emplace_back( LHCb::LHCbID( *(ptracks.ids().begin()+kId) ) );
+    }
+    else
+    {
+      parent().Warning( "Attempted out-of-range access to packed LHCbIDs. " 
+                        "This is bad, do not ignore !" ).ignore();
+    }
   }
   // schema change: sorting no longer needed when we write DSTs with sorted lhcbids
   if ( ptracks.version() <= 1 )
@@ -171,8 +183,16 @@ void TrackPacker::unpack( const PackedData       & ptrack,
 
   for ( int kSt = firstState; lastState > kSt; ++kSt )
   {
-    const auto& pSta = *(ptracks.states().begin()+kSt);
-    convertState( pSta, track );
+    if ( kSt < (int)ptracks.states().size() )
+    {
+      const auto& pSta = *(ptracks.states().begin()+kSt);
+      convertState( pSta, track );
+    }
+    else
+    {
+      parent().Warning( "Attempted out-of-range access to packed States. "
+                        "This is bad, do not ignore !" ).ignore();
+    }
   }
 
   int firstExtra = ptrack.firstExtra;
@@ -194,8 +214,16 @@ void TrackPacker::unpack( const PackedData       & ptrack,
 
   for ( int kEx = firstExtra; lastExtra > kEx; ++kEx )
   {
-    const auto& info = *(ptracks.extras().begin()+kEx);
-    track.addInfo( info.first, m_pack.fltPacked( info.second ) );
+    if ( kEx < (int)ptracks.extras().size() )
+    {
+      const auto& info = *(ptracks.extras().begin()+kEx);
+      track.addInfo( info.first, m_pack.fltPacked( info.second ) );
+    }
+    else
+    {
+      parent().Warning( "Attempted out-of-range access to packed ExtraInfo. "
+                        "This is bad, do not ignore !" ).ignore();
+    }
   }
 
   //== Cleanup extraInfo and set likelihood/ghostProbability for old data
