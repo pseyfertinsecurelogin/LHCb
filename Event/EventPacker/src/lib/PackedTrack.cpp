@@ -137,8 +137,8 @@ void TrackPacker::unpack( const PackedData       & ptrack,
     lastId  = m_lastIdHigh  + ptrack.lastId;
     if ( lastId < firstId )
     { // we wrapped in the track
-      parent().info() << "** ID index wrapped, first/last Id = "
-                      << firstId << " " << lastId << endmsg;
+      parent().warning() << "** ID index wrapped, first/last Id = "
+                         << firstId << " " << lastId << endmsg;
       m_lastIdHigh  += 0x10000;
       m_firstIdHigh += 0x10000;
       lastId = m_lastIdHigh  + ptrack.lastId;
@@ -173,8 +173,8 @@ void TrackPacker::unpack( const PackedData       & ptrack,
     lastState  = m_lastStateHigh  + ptrack.lastState;
     if ( lastState < firstState )
     {  // we wrapped in the track
-      parent().info() << "** State index wrapped, first/last = "
-                      << firstState << " " << lastState << endmsg;
+      parent().warning() << "** State index wrapped, first/last = "
+                         << firstState << " " << lastState << endmsg;
       m_lastStateHigh  += 0x10000;
       m_firstStateHigh += 0x10000;
       lastState = m_lastStateHigh  + ptrack.lastState;
@@ -204,8 +204,8 @@ void TrackPacker::unpack( const PackedData       & ptrack,
     lastExtra  = m_lastExtraHigh  + ptrack.lastExtra;
     if ( lastExtra < firstExtra )
     { // we wrapped in the track
-      parent().info() << "** Extra index wrapped, first/last = "
-                      << firstExtra << " " << lastExtra << endmsg;
+      parent().warning() << "** Extra index wrapped, first/last = "
+                         << firstExtra << " " << lastExtra << endmsg;
       m_lastExtraHigh  += 0x10000;
       m_firstExtraHigh += 0x10000;
       lastExtra = m_lastExtraHigh  + ptrack.lastExtra;
