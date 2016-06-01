@@ -33,13 +33,13 @@ namespace LHCb
     long long key{0};
     int chi2PerDoF{0};
     int nDoF{0};
-    unsigned int flags{0};
-    unsigned short int firstId{0};
-    unsigned short int lastId{0};
-    unsigned short int firstState{0};
-    unsigned short int lastState{0};
-    unsigned short int firstExtra{0};
-    unsigned short int lastExtra{0};
+    int flags{0};
+    int firstId{0};
+    int lastId{0};
+    int firstState{0};
+    int lastState{0};
+    int firstExtra{0};
+    int lastExtra{0};
     //== Added for version 3, August 2009
     int likelihood{0};
     int ghostProba{0};
@@ -101,19 +101,21 @@ namespace LHCb
     short int cov_43{0};
 
     template<typename T>
-    inline void save(T& buf) const {
-      buf.io(
-        flags,
-        x, y, z, tx, ty, p,
-        cov_00, cov_11, cov_22, cov_33, cov_44,
-        cov_10, cov_20, cov_21, cov_30, cov_31, cov_32, cov_40, cov_41, cov_42, cov_43
-      );
+    inline void save(T& buf) const
+    {
+      buf.io( flags,
+              x, y, z, tx, ty, p,
+              cov_00, cov_11, cov_22, cov_33, cov_44,
+              cov_10, cov_20, cov_21, cov_30, cov_31, 
+              cov_32, cov_40, cov_41, cov_42, cov_43 );
     }
     
     template<typename T>
-    inline void load(T& buf, unsigned int /*version*/) {
+    inline void load(T& buf, unsigned int /*version*/)
+    {
       save(buf); // identical operation until version is incremented
     }
+
   };
 
   static const CLID CLID_PackedTracks = 1550;
@@ -169,8 +171,9 @@ namespace LHCb
 
     /// Describe serialization of object
     template<typename T> 
-    inline void save(T& buf) const {
-      buf.template save<uint8_t>(version());
+    inline void save(T& buf) const
+    {
+      buf.template save<uint8_t>( version() );
       buf.save(m_vect);
       buf.save(m_state);
       buf.save(m_ids);
@@ -179,9 +182,11 @@ namespace LHCb
     
     /// Describe de-serialization of object
     template<typename T> 
-    inline void load(T& buf) {
-      setVersion(buf.template load<uint8_t>());
-      if (version() != 4) {
+    inline void load(T& buf) 
+    {
+      setVersion( buf.template load<uint8_t>() );
+      if ( version() < 4 )
+      {
         throw std::runtime_error("PackedTracks packing version is not supported: "
                                  + std::to_string(version()));
       }

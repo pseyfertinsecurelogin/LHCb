@@ -4,6 +4,11 @@
 ! Purpose     : Pack and unpack events classes for smaller events
 !-----------------------------------------------------------------------------
 
+! 2016-06-01 - Chris Jones
+ - Improvements to the last commit, as suggested by Gerhard.
+ - Update the packed indices in PackedTrack from short int to int, to fix
+   the wrapping issue for future data.
+
 ! 2016-05-31 - Chris Jones
  - Add some protection to the track packer to prevent out of range access to
    the various packed containers in the packed track object.
