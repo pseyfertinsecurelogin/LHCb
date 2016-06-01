@@ -200,11 +200,11 @@ void TrackPacker::unpack( const PackedData       & ptrack,
 
   // convert the states
   for ( int kSt = firstState; lastState > kSt; ++kSt )
-   {
+  {
     const auto& pSta = *(ptracks.states().begin()+kSt);
     convertState( pSta, track );
-   }
-
+  }
+  
   // extract the first and last extra info indices
   int firstExtra = ptrack.firstExtra;
   int lastExtra  = ptrack.lastExtra;
@@ -235,11 +235,11 @@ void TrackPacker::unpack( const PackedData       & ptrack,
   }
 
   // fill the extras
-  for ( int kEx = firstExtra; lastExtra > kEx; ++kEx )
-  {
-    const auto& info = *(ptracks.extras().begin()+kEx);
-    track.addInfo( info.first, m_pack.fltPacked( info.second ) );
-  }
+  std::for_each( std::next( ptracks.extras().begin(), firstExtra ),
+                 std::next( ptracks.extras().begin(), lastExtra  ),
+                 [&]( const auto& info ) 
+                 { track.addInfo( info.first, m_pack.fltPacked(info.second) ); }
+                 );
   
   //== Cleanup extraInfo and set likelihood/ghostProbability for old data
   if ( UNLIKELY( ptracks.version() <= 2 ) )
