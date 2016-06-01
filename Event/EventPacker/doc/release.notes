@@ -8,6 +8,9 @@
  - Improvements to the last commit, as suggested by Gerhard.
  - Update the packed indices in PackedTrack from short int to int, to fix
    the wrapping issue for future data.
+ - Fix a bug introduced during a recent update to remove the need for 
+   dynamic casts during the event loop, that probably introduce the bug
+   leading to the wrapping issues with LHCbIDs.
 
 ! 2016-05-31 - Chris Jones
  - Add some protection to the track packer to prevent out of range access to

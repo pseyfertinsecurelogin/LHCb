@@ -279,15 +279,31 @@ namespace LHCb
     inline double safe_sqrt( const double x ) const
     { return ( x > 0 ? std::sqrt(x) : 0.0 ); }
 
+    /// Check if the given packing version is supported
+    bool isSupportedVer( const char& ver ) const
+    {
+      const bool OK = ( 0 <= ver && ver <= 5 );
+      if ( !OK )
+      {
+        std::ostringstream mess;
+        mess << "Unknown packed data version " << (int)ver;
+        throw GaudiException( mess.str(), "TrackPacker", StatusCode::FAILURE );
+      }
+      return OK;
+    }
+
+  public:
+
     /// Reset wraping bug counts
     inline void resetWrappingCounts() const
     {
-      m_firstIdHigh    = 0;
-      m_lastIdHigh     = 0;
-      m_firstStateHigh = 0;
-      m_lastStateHigh  = 0;
-      m_firstExtraHigh = 0;
-      m_lastExtraHigh  = 0;
+      m_firstIdHigh     = 0;
+      m_lastIdHigh      = 0;
+      m_firstStateHigh  = 0;
+      m_lastStateHigh   = 0;
+      m_firstExtraHigh  = 0;
+      m_lastExtraHigh   = 0;
+      m_lastPackedDataV = nullptr;
     }
 
   private:
@@ -304,6 +320,9 @@ namespace LHCb
     mutable int m_lastStateHigh{0};
     mutable int m_firstExtraHigh{0};
     mutable int m_lastExtraHigh{0};
+
+    // Cache the pointers to the last packed and unpacked containers
+    mutable const PackedDataVector * m_lastPackedDataV = nullptr;
 
   };
 
