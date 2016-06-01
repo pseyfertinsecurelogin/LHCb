@@ -33,7 +33,7 @@ namespace LHCb
     long long key{0};
     int chi2PerDoF{0};
     int nDoF{0};
-    int flags{0};
+    unsigned int flags{0};
     int firstId{0};
     int lastId{0};
     int firstState{0};
