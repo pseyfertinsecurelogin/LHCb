@@ -50,6 +50,7 @@
   <class name = "LHCb::Inspector" />
   <class name = "IAccept"                />
   <class name = "ICountContainedObjects" />
+  <class name = "IVeloCCEConfigTool" />
 
   <variable name="Rich::NRadiatorTypes"  />
   <enum name = "Rich::RadiatorType" />
