@@ -202,7 +202,7 @@ void TrackPacker::unpack( const PackedData       & ptrack,
   std::for_each( std::next( ptracks.states().begin(), firstState ),
                  std::next( ptracks.states().begin(),  lastState ),
                  [&]( const LHCb::PackedState& s ) // could be auto& with C++14
-                 { convertState( s, track ); } 
+                 { this->convertState( s, track ); } 
                  );
   
   // extract the first and last extra info indices
