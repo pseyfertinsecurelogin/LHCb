@@ -136,8 +136,11 @@ void TrackPacker::unpack( const PackedData       & ptrack,
   {
 
     // Try and detect changes that require the cached wrap IDs to be reset.
+    // trigger a reset if a new packed container is detected, or if the
+    // packed track object is the first in the packed container.
     // Not garanteed to be 100% perfect...
-    if ( &ptracks != m_lastPackedDataV )
+    if ( &ptracks != m_lastPackedDataV ||
+         ( !ptracks.tracks().empty() && &ptracks.tracks().front() == &ptrack ) )
     {
       m_lastPackedDataV = &ptracks;
       resetWrappingCounts();

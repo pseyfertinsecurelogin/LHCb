@@ -77,7 +77,8 @@ StatusCode UnpackParticlesAndVertices::execute()
         // Unpack the physics info
         m_trackPacker.unpack( ptrack, *track, *ptracks, *tracks );
 
-      }
+      } // loop over packed tracks
+
     }
     if ( msgLevel(MSG::DEBUG) )
     {
