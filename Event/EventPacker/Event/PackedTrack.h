@@ -1,9 +1,11 @@
-// $Id: PackedTrack.h,v 1.8 2009-11-07 12:20:26 jonrob Exp $
+
 #ifndef EVENT_PACKEDTRACK_H
 #define EVENT_PACKEDTRACK_H 1
 
 #include <string>
 #include <vector>
+#include <limits>
+#include <cstdint>
 
 // Kernel
 #include "Event/StandardPacker.h"
@@ -47,16 +49,15 @@ namespace LHCb
     //== Note that Nodes and Measurements on Track are transient only, an thus never stored.
 
     template<typename T>
-    inline void save(T& buf) const {
-      buf.io(
-        key,
-        chi2PerDoF, nDoF, flags,
-        firstId, lastId,
-        firstState, lastState,
-        firstExtra, lastExtra,
-        likelihood,
-        ghostProba
-      );
+    inline void save(T& buf) const 
+    {
+      buf.io( key,
+              chi2PerDoF, nDoF, flags,
+              firstId, lastId,
+              firstState, lastState,
+              firstExtra, lastExtra,
+              likelihood,
+              ghostProba );
     }
 
     template<typename T>
