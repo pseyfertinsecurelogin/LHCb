@@ -134,7 +134,7 @@ void TrackPacker::unpack( const PackedData       & ptrack,
 
   // Apply protection for short int wrapping
   if ( UNLIKELY( ptracks.version() < 5 && 
-                 ptracks.ids().size() > 65535 ) )
+                 ptracks.ids().size() > std::numeric_limits<uint8_t>::max() ) )
   {
     firstId = m_firstIdHigh + ptrack.firstId;
     lastId  = m_lastIdHigh  + ptrack.lastId;
@@ -144,7 +144,7 @@ void TrackPacker::unpack( const PackedData       & ptrack,
                          << firstId << " " << lastId << endmsg;
       m_lastIdHigh  += 0x10000;
       m_firstIdHigh += 0x10000;
-      lastId = m_lastIdHigh  + ptrack.lastId;
+      lastId = m_lastIdHigh + ptrack.lastId;
     }
   }
 
@@ -175,7 +175,7 @@ void TrackPacker::unpack( const PackedData       & ptrack,
 
   // protection for short int wrapping
   if ( UNLIKELY( ptracks.version() < 5 && 
-                 ptracks.states().size() > 65535 ) )
+                 ptracks.states().size() > std::numeric_limits<uint8_t>::max() ) )
   {
     firstState = m_firstStateHigh + ptrack.firstState;
     lastState  = m_lastStateHigh  + ptrack.lastState;
@@ -185,7 +185,7 @@ void TrackPacker::unpack( const PackedData       & ptrack,
                          << firstState << " " << lastState << endmsg;
       m_lastStateHigh  += 0x10000;
       m_firstStateHigh += 0x10000;
-      lastState = m_lastStateHigh  + ptrack.lastState;
+      lastState = m_lastStateHigh + ptrack.lastState;
     }
   }
 
@@ -199,11 +199,11 @@ void TrackPacker::unpack( const PackedData       & ptrack,
   }
 
   // convert the states
-  for ( int kSt = firstState; lastState > kSt; ++kSt )
-  {
-    const auto& pSta = *(ptracks.states().begin()+kSt);
-    convertState( pSta, track );
-  }
+  std::for_each( std::next( ptracks.states().begin(), firstState ),
+                 std::next( ptracks.states().begin(),  lastState ),
+                 [&]( const LHCb::PackedState& s ) // could be auto& with C++14
+                 { convertState( s, track ); } 
+                 );
   
   // extract the first and last extra info indices
   int firstExtra = ptrack.firstExtra;
@@ -211,7 +211,7 @@ void TrackPacker::unpack( const PackedData       & ptrack,
 
   // protect against short int wrapping
   if ( UNLIKELY( ptracks.version() < 5 && 
-                 ptracks.extras().size() > 65535 ) )
+                 ptracks.extras().size() > std::numeric_limits<uint8_t>::max() ) )
   {
     firstExtra = m_firstExtraHigh + ptrack.firstExtra;
     lastExtra  = m_lastExtraHigh  + ptrack.lastExtra;
@@ -221,7 +221,7 @@ void TrackPacker::unpack( const PackedData       & ptrack,
                          << firstExtra << " " << lastExtra << endmsg;
       m_lastExtraHigh  += 0x10000;
       m_firstExtraHigh += 0x10000;
-      lastExtra = m_lastExtraHigh  + ptrack.lastExtra;
+      lastExtra = m_lastExtraHigh + ptrack.lastExtra;
     }
   }
 
@@ -237,7 +237,7 @@ void TrackPacker::unpack( const PackedData       & ptrack,
   // fill the extras
   std::for_each( std::next( ptracks.extras().begin(), firstExtra ),
                  std::next( ptracks.extras().begin(), lastExtra  ),
-                 [&]( const auto& info ) 
+                 [&]( const std::pair<int,int>& info ) // could be auto& with C++14
                  { track.addInfo( info.first, m_pack.fltPacked(info.second) ); }
                  );
   
