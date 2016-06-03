@@ -16,6 +16,10 @@
 ! 2016-06-01 - Philip Ilten
  - removed debug print statements introduced in r201631 to _getattr_SR_
 
+! 2016-05-30 - Dan Johnson
+ - Change HRCSUMADC return value to be 99999 when no Herschel information is
+   present, rather than -1 which would require a further HLT test
+
 ! 2016-05-22 - Dan Johnson
  - Add new LoKi functor to access Herschel station ADC sum from TES
 
