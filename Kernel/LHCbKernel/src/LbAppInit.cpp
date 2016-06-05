@@ -200,7 +200,7 @@ void LbAppInit::printEventRun( long long event, int run,
 
 //=============================================================================
 
-StatusCode LbAppInit::initRndm( std::vector<long int>& seeds )
+StatusCode LbAppInit::initRndm( const std::vector<long int>& seeds )
 {
   // Get the random number engine if not already done
   if( 0 == m_randSvc ) m_randSvc = svc<IRndmGenSvc>( "RndmGenSvc", true );
@@ -209,9 +209,7 @@ StatusCode LbAppInit::initRndm( std::vector<long int>& seeds )
     m_engine  = m_randSvc->engine();
     if( 0 == m_engine ) {
       return Error( "Random number engine not found!" );
-    }
-  }
-
+    } }
   StatusCode sc = m_engine->setSeeds( seeds );
   if( sc.isFailure() ) return Error( "Unable to set random number seeds", sc );
 
