@@ -23,7 +23,7 @@ DumpTracks           INFO There are 142 tracks in Rec/Track/Best
 DumpTracks           INFO There are 52 tracks in Rec/Track/Best
 DumpTracks           INFO There are 418 tracks in Rec/Track/Best
 DumpTracks           INFO There are 315 tracks in Rec/Track/Best
-UnpackTrack          INFO ** ID index wrapped, first/last Id = 65526 0
+UnpackTrack       WARNING ** ID index wrapped, first/last Id = 65526 0
 DumpTracks           INFO There are 5161 tracks in Rec/Track/Best
 EventLoopMgr         INFO No more events in event selection
 ApplicationMgr       INFO Application Manager Stopped successfully
