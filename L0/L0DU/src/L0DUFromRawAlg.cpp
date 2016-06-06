@@ -67,6 +67,9 @@ StatusCode L0DUFromRawAlg::initialize() {
     // decode the bank
     if ( m_fromRaw->_setProperty("RawEventLocations",Gaudi::Utils::toString(rawEventLocations()) ).isFailure() )
       return Error("Unable to set RawEventLocations in L0DUFromRawTool",StatusCode::SUCCESS,50);
+    else
+      info() << "Propagate rawEventLocation to decoder tool" << Gaudi::Utils::toString(rawEventLocations())  << endmsg;
+
     if ( m_fromRaw->_setProperty("StatusOnTES",Gaudi::Utils::toString(m_statusOnTES)).isFailure() )
       return Error("Unable to set StatusOnTES in L0DUFromRawTool",StatusCode::SUCCESS,50);
     //if ( m_fromRaw->_setProperty("UseRootInTES",Gaudi::Utils::toString(m_useRootInTES)).isFailure() ) //no longer needed!
