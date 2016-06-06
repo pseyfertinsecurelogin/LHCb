@@ -3,6 +3,8 @@
 ! Package Manager : Olivier Deschamps
 !--------------------------------------------------------------------------
 
+! 2016-06-06 - Olivier Deschamps
+  - reduce verbosity
 ! 2016-06-05 - Olivier Deschamps
   - fix L0DUReportMonitoring in case a condition is not reported in the bank
 
