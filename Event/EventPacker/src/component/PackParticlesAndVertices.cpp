@@ -354,7 +354,7 @@ StatusCode PackParticlesAndVertices::execute()
     if ( !names.empty() )
     {
       LHCb::PackedTracks * ptracks = new LHCb::PackedTracks();
-      ptracks->setVersion( 4 );
+      ptracks->setVersion( 5 );
       put( ptracks, m_inputStream + LHCb::PackedTrackLocation::InStream );
       if ( msgLevel( MSG::DEBUG ) )
         debug() << "=== Process Track containers :" << endmsg;
