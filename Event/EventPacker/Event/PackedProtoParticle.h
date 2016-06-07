@@ -1,10 +1,13 @@
-// $Id: PackedProtoParticle.h,v 1.5 2009-11-10 10:24:09 jonrob Exp $
+
 #ifndef EVENT_PACKEDPROTOPARTICLE_H 
 #define EVENT_PACKEDPROTOPARTICLE_H 1
 
+// Gaudi
 #include "GaudiKernel/DataObject.h"
 #include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/GaudiException.h"
 
+// STL
 #include <string>
 #include <vector>
 
@@ -196,6 +199,19 @@ namespace LHCb
 
     /// Access the parent algorithm
     inline const GaudiAlgorithm& parent() const { return *(m_pack.parent()); }
+
+    /// Check if the given packing version is supported
+    bool isSupportedVer( const char& ver ) const
+    {
+      const bool OK = ( 1 == ver || 0 == ver );
+      if ( UNLIKELY(!OK) )
+      {
+        std::ostringstream mess;
+        mess << "Unknown packed data version " << (int)ver;
+        throw GaudiException( mess.str(), "ProtoParticlePacker", StatusCode::FAILURE );
+      }
+      return OK;
+    }
 
   private:
 

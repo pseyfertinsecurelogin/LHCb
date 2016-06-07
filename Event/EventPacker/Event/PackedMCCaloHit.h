@@ -1,7 +1,8 @@
-// $Id: PackedMCCaloHit.h,v 1.5 2009-11-07 12:20:26 jonrob Exp $
+
 #ifndef EVENT_PACKEDMCCALOHIT_H
 #define EVENT_PACKEDMCCALOHIT_H 1
 
+// STL
 #include <string>
 
 // Kernel
@@ -14,6 +15,7 @@
 #include "GaudiKernel/DataObject.h"
 #include "GaudiKernel/MsgStream.h"
 #include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/GaudiException.h"
 
 namespace LHCb
 {
@@ -146,6 +148,19 @@ namespace LHCb
 
     /// Access the parent algorithm
     const GaudiAlgorithm& parent() const { return *(m_pack.parent()); }
+
+    /// Check if the given packing version is supported
+    bool isSupportedVer( const char& ver ) const
+    {
+      const bool OK = ( 1 == ver || 0 == ver );
+      if ( UNLIKELY(!OK) )
+      {
+        std::ostringstream mess;
+        mess << "Unknown packed data version " << (int)ver;
+        throw GaudiException( mess.str(), "MCCaloHitPacker", StatusCode::FAILURE );
+      }
+      return OK;
+    }
 
   private:
 

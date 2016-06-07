@@ -14,6 +14,7 @@ void ParticlePacker::pack( const Data & part,
                            PackedData & ppart,
                            PackedDataVector & pparts ) const
 {
+  // Only support version 1 for packing, as 0 is buggy.
   if ( 1 == pparts.packingVersion() )
   {
 

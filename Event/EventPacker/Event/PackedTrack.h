@@ -2,6 +2,7 @@
 #ifndef EVENT_PACKEDTRACK_H
 #define EVENT_PACKEDTRACK_H 1
 
+// STL
 #include <string>
 #include <vector>
 #include <limits>
@@ -283,7 +284,7 @@ namespace LHCb
     bool isSupportedVer( const char& ver ) const
     {
       const bool OK = ( 0 <= ver && ver <= 5 );
-      if ( !OK )
+      if ( UNLIKELY(!OK) )
       {
         std::ostringstream mess;
         mess << "Unknown packed data version " << (int)ver;
