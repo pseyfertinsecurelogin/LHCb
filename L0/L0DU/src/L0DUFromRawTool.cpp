@@ -23,8 +23,9 @@ L0DUFromRawTool::L0DUFromRawTool( const std::string& type,
                                   const IInterface* parent )
 : base_class( type, name , parent ),
 // DO NOT TOUCH !! IF YOU MODIFY THIS VALUE THIS WILL BREAK THE DC06 BACKWARD COMPATIBILITY
-  m_tck(0xDC06) // default value for DC06 production (TCK was not implemented in Bank) 
-{
+  m_tck(0xDC06), // default value for DC06 production (TCK was not implemented in Bank) 
+  m_sumEtPrev1(-1),
+  m_sumEtPrev2(-1){
   declareInterface<IL0DUFromRawTool>(this);
   
   declareProperty( "EmulatorTool"            , m_emulatorType="L0DUEmulatorTool");
@@ -39,6 +40,7 @@ L0DUFromRawTool::L0DUFromRawTool( const std::string& type,
   declareProperty( "Emulate"                 , m_emu  = true);    // EXPERT USAGE
   declareProperty( "StatusOnTES"             , m_stat = true);    // EXPERT USAGE
   declareProperty( "DumpBank"                , m_dumping = -1);   // EXPERT USAGE
+  declareProperty( "FakeConsecutiveEvents"   , m_fakeSeq = false);// EXPERT USAGE : fake SumEt,Prev as for consecutive events
   //new for decoders, initialize search path, and then call the base method
   m_rawEventLocations = {LHCb::RawEventLocation::Trigger, LHCb::RawEventLocation::Default};
   initRawEventSearch();
@@ -54,6 +56,7 @@ StatusCode L0DUFromRawTool::initialize(){
   StatusCode sc = Decoder::ToolBase::initialize();
    if(sc.isFailure())return sc;
 
+   if(m_fakeSeq)Warning("L0DU IS FAKING CONSECUTIVE EVENTS : SumEtPrev IS OVERWRITTEN !!",StatusCode::SUCCESS).ignore();
 
    //
    //m_slot = ( rootInTES() == "" ) ? "T0" : rootInTES();
@@ -594,8 +597,9 @@ bool L0DUFromRawTool::decoding(int ibank){
     int sumEt0 = (*m_data & 0x00003FFF );             
     encode(Name[SumEt]        , sumEt0                         , L0DUBase::Sum::Et  );
     m_sumEt[0] = sumEt0;
-
     if ( msgLevel( MSG::VERBOSE) )verbose() << "   -> SumEt[BX=0] = "<< m_sumEt[0] << endmsg;
+    
+
 
     encode(Name[SpdMult],(*m_data & 0x0FFFC000 ) >> 14         , L0DUBase::Spd::Mult    );
     encode("PU(MoreInfo)",(*m_data & 0xF0000000 ) >> 28      , L0DUBase::PileUp::MoreInfo  );
@@ -653,13 +657,23 @@ bool L0DUFromRawTool::decoding(int ibank){
       m_sumEt[-im]= (*m_data >> 16*odd) & 0x3FFF ;
       if( msgLevel( MSG::VERBOSE) )verbose() << "   -> SumEt[Bx=" << -im << "] = " <<  m_sumEt[-im] << endmsg;
     }
+    // === FAKE CONSECUTIVE EVENTS FOR PRODUCING COHERENT SumEt,Prev PATTERN : overwrite the real SumEtPrev1/Prev2 
+    // === (!!Next1/Next2 are no longer coherent)
+    if(m_fakeSeq){
+      if( m_sumEtPrev1 != -1){ // do nothing for 1st event in the sequence
+        m_sumEt[-2]=m_sumEtPrev2;
+        m_sumEt[-1]=m_sumEtPrev1;  // use cached sumEt from previous event
+      }    
+      m_sumEtPrev2=m_sumEt[-1];
+      m_sumEtPrev1=m_sumEt[0];
+      //info() << "SumEt sequence : " << m_sumEt[0] << " | " << m_sumEt[-1] << " | " << m_sumEt[-2] << endmsg;
+    }
+    // ===
+
     encode( "Sum(Et,Prev2)",  m_sumEt[-2]  , L0DUBase::Sum::Et , -2      ); // new OD - 2016
     encode( "Sum(Et,Prev1)",  m_sumEt[-1]  , L0DUBase::Sum::Et , -1      ); // new OD - 2016
     //dataMap("Sum(Et,Prev2)",m_sumEt[-2],scale(L0DUBase::Sum::Et)); // new OD - 2015 (dataMap incl. in encode())
     //dataMap("Sum(Et,Prev1)",m_sumEt[-1],scale(L0DUBase::Sum::Et)); // new OD - 2015 (dataMap incl. in encode())
-
-
-
 
     if( msgLevel( MSG::VERBOSE) )verbose() << "   ... " << nm << " previous BX sumET decoded ... " << endmsg;
 

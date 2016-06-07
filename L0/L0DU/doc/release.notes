@@ -3,6 +3,12 @@
 ! Package Manager : Olivier Deschamps
 !--------------------------------------------------------------------------
 
+! 2016-06-06 - Olivier Deschamps
+  - L0DUFromRawTool : add an option to mimic a sequence of consecutive events 
+                      -> Overwrite SumEtPrev1/Prev2 with the t0/Prev1 data from the previous read event
+                      -> Only used for L0DU board pattern validation   
+! 2016-06-06 - Olivier Deschamps
+  - reduce verbosity
 ! 2016-06-05 - Olivier Deschamps
   - fix L0DUReportMonitoring in case a condition is not reported in the bank
 
