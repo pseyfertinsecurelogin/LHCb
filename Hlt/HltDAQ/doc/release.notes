@@ -4,6 +4,9 @@
 ! Purpose     : Hlt RawBanks writers/decoders/monitors
 !------------------------------------------------------------------------------
 
+! 2016-06-10 - Sascha Stahl
+ - Fix memory leak in HltPackedDataWriter.
+
 ! 2016-05-23 - Roel Aaij
  - Split code in to linker library and component library. All pre-exisiting
    algorithms are in the component library.
