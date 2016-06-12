@@ -1,4 +1,4 @@
-// $Id: Functions.cpp 205658 2016-05-03 11:55:54Z ibelyaev $
+// $Id: Functions.cpp 205885 2016-05-16 13:05:01Z ibelyaev $
 // ============================================================================
 // Include files
 // ============================================================================
@@ -46,7 +46,6 @@
 // Local
 // ============================================================================
 #include "GSL_sentry.h"
-#include "Faddeeva.hh"
 // ============================================================================
 /** @file
  *  Implementation file for functions from the file LHCbMath/Functions.h
@@ -54,23 +53,10 @@
  *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
  *  @date 2010-04-19
  *
- *                    $Revision: 205658 $
- *  Last modification $Date: 2016-05-03 13:55:54 +0200 (Tue, 03 May 2016) $
+ *                    $Revision: 205885 $
+ *  Last modification $Date: 2016-05-16 15:05:01 +0200 (Mon, 16 May 2016) $
  *                 by $author$
  */
-// ============================================================================
-/*  scaled complementary error function 
- *  \f$ 1 -  erf (x) = e^{-x^2} erfcx(x)  \f$ 
- *  @param x  the argument 
- *  @return the value of the scaled complementary error function 
- *  @attention  overflow happens for x<-26.6
- *  The actual implementation is copied from http://ab-initio.mit.edu/Faddeeva
- *  @see http://ab-initio.mit.edu/Faddeeva
- *  @see https://en.wikipedia.org/wiki/Error_function
- *  @see https://en.wikipedia.org/wiki/Faddeeva_function
- */
-// ============================================================================
-double Gaudi::Math::erfcx ( const double x ) { return Faddeeva::erfcx ( x ) ; }
 // ============================================================================
 // Rho-functions from Jackson
 // ============================================================================
@@ -289,6 +275,13 @@ namespace
    */
   const double s_SQRTPIHALF = std::sqrt( M_PI_2 ) ;
   // ==========================================================================
+  /** @var s_SQRTPI
+   *  helper constant \f$ \sqrt{\pi}\f$
+   *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+   *  @date 2016-06-11
+   */
+  const double s_SQRTPI = std::sqrt( M_PI ) ;
+  // ==========================================================================
   /** @var s_SQRT2PI
    *  helper constant \f$ \sqrt{2\pi}\f$
    *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
@@ -352,6 +345,20 @@ namespace
    *  @date 2010-04-19
    */
   const double s_HALFSQRTPI_log  = std::log ( 0.5 * std::sqrt(     M_PI )  ) ;
+  // ==========================================================================
+  /** @var s_SQRT2PISQUARED 
+   *  helper constant  \f$   \sqrt{2}\pi^2\f$
+   *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
+   *  @date 2016-06-11
+   */
+  const double s_SQRT2PISQUARED  = std::sqrt(2.0)*M_PI*M_PI ;
+  // ==========================================================================
+  /** @var s_SQRT2PISQUAREDi
+   *  helper constant  \f$   \frac{1}{\sqrt{2}\pi^2}\f$
+   *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
+   *  @date 2016-06-11
+   */
+  const double s_SQRT2PISQUAREDi = 1.0/(std::sqrt(2.0)*M_PI*M_PI) ;
   // ==========================================================================
   // Bukin & Co
   // ==========================================================================
@@ -763,8 +770,8 @@ namespace
         const double a1  = ( a - b2a ) * sqrt_alpha ;
         const double b1  = ( b - b2a ) * sqrt_alpha ;
         return s_HALFSQRTPI / sqrt_alpha * 
-          ( my_exp ( -alpha * a * a + beta * a ) * Faddeeva::erfcx ( a1 ) - 
-            my_exp ( -alpha * b * b + beta * b ) * Faddeeva::erfcx ( b1 ) ) ;  
+          ( my_exp ( -alpha * a * a + beta * a ) * Gaudi::Math::erfcx ( a1 ) - 
+            my_exp ( -alpha * b * b + beta * b ) * Gaudi::Math::erfcx ( b1 ) ) ;  
       }
       else if ( a <= b2a  && b<= b2a ) 
       { return gaussian_int ( alpha , beta , 2*b2a - b , 2*b2a - a ) ; }
@@ -803,7 +810,7 @@ namespace
     {
       const double a1  = ( a - b2a ) * sqrt_alpha ;
       return s_HALFSQRTPI / sqrt_alpha * 
-        my_exp ( -alpha * a * a + beta * a ) * Faddeeva::erfcx ( a1 ) ;
+        my_exp ( -alpha * a * a + beta * a ) * Gaudi::Math::erfcx ( a1 ) ;
     }
     //
     return 
@@ -899,6 +906,19 @@ namespace
       (Gaudi::Math::BreitWigner*) params ;
     //
     return (*bw)(x) ;
+  }
+  // ==========================================================================
+  /** helper function for integration of Swanson shape
+   *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+   *  @date 2016-06-11
+   */
+  double swanson_GSL ( double x , void* params )
+  {
+    //
+    const Gaudi::Math::Swanson* sw =
+      (Gaudi::Math::Swanson*) params ;
+    //
+    return (*sw)(x) ;
   }
   // ==========================================================================
   /** helper function for integration of Flatte shape
@@ -4929,7 +4949,8 @@ double Gaudi::Math::Voigt::operator() ( const double x ) const
   //
   const double s2 = 1 / ( m_sigma * s_SQRT2 ) ;
   //
-  return Faddeeva::w ( std::complex<double> ( x - m_m0 , m_gamma ) * s2 ).real() * s2 ;
+  return Gaudi::Math::faddeeva_w
+    ( std::complex<double> ( x - m_m0 , m_gamma ) * s2 ).real() * s2 ;
 }
 // ============================================================================
 // get the integral between low and high limits
@@ -5063,6 +5084,294 @@ double Gaudi::Math::Voigt::fwhm   () const
  
 
 
+
+
+
+
+// ============================================================================
+// SWANSON CUSP 
+// ============================================================================
+// constructor
+// ============================================================================
+Gaudi::Math::Swanson::Swanson
+( const double         m1     ,   // the first  real particle 
+  const double         m2     ,   // the second real particle                
+  const double         m1_0   ,   // the first  particle for cusp
+  const double         m2_0   ,   // the second particle for cusp 
+  const double         beta_0 ,   // beta_0 parameter
+  const unsigned short L      )   // orbital momentum for real particles 
+  : std::unary_function<double,double> ()
+    //
+  , m_bw ( ( std::abs ( m1 )  + std::abs ( m2 ) ) * 2.1 , // almost arbitrary 
+           ( std::abs ( m1 )  + std::abs ( m2 ) ) * 0.5 , // almost arbitrary  
+           std::abs ( m1 ) , 
+           std::abs ( m2 ) ,  
+           L               ) 
+  , m_m1         ( std::abs (   m1_0 ) )
+  , m_m2         ( std::abs (   m2_0 ) )
+  , m_beta0      ( std::abs ( beta_0 ) )
+    //
+  , m_workspace  ()
+    //
+{}
+// ============================================================================
+// constructor
+// ============================================================================
+Gaudi::Math::Swanson::Swanson
+( const double         m1             ,   // the first  real particle 
+  const double         m2             ,   // the second real particle                
+  const double         m1_0           ,   // the first  particle for cusp
+  const double         m2_0           ,   // the second particle for cusp 
+  const double         beta_0         ,   // beta_0 parameter
+  const unsigned short L              ,   // orbital momentum for real particles 
+  const Gaudi::Math::FormFactors::JacksonRho  r )  //  formfactor
+  : std::unary_function<double,double> ()
+  , m_bw ( ( std::abs ( m1 )  + std::abs ( m2 ) ) * 2.1 , // almost arbitrary 
+           ( std::abs ( m1 )  + std::abs ( m2 ) ) * 0.5 , // almost arbitrary  
+           std::abs ( m1 ) , 
+           std::abs ( m2 ) ,  
+           L  , r          )            
+  , m_m1         ( std::abs (   m1_0 ) )
+  , m_m2         ( std::abs (   m2_0 ) )
+  , m_beta0      ( std::abs ( beta_0 ) )
+    //
+  , m_workspace  ()
+    //
+{}
+
+// ============================================================================
+// constructor
+// ============================================================================
+Gaudi::Math::Swanson::Swanson
+( const double         m1             ,   // the first  real particle 
+  const double         m2             ,   // the second real particle                
+  const double         m1_0           ,   // the first  particle for cusp
+  const double         m2_0           ,   // the second particle for cusp 
+  const double         beta_0         ,   // beta_0 parameter
+  const unsigned short L              ,   // orbital momentum for real particles 
+  const Gaudi::Math::FormFactor&   f  )  //  formfactor
+  : std::unary_function<double,double> ()
+  , m_bw ( ( std::abs ( m1 )  + std::abs ( m2 ) ) * 2.1 , // almost arbitrary 
+           ( std::abs ( m1 )  + std::abs ( m2 ) ) * 0.5 , // almost arbitrary  
+           std::abs ( m1 ) , 
+           std::abs ( m2 ) ,  
+           L  , f          )            
+  , m_m1         ( std::abs (   m1_0 ) )
+  , m_m2         ( std::abs (   m2_0 ) )
+  , m_beta0      ( std::abs ( beta_0 ) )
+    //
+  , m_workspace  ()
+    //
+{}
+
+
+// ============================================================================
+// constructor
+// ============================================================================
+Gaudi::Math::Swanson::Swanson
+( const Gaudi::Math::BreitWigner&   bw             ,   // breit-wigner 
+  const double         m1_0   ,   // the first  particle for cusp
+  const double         m2_0   ,   // the second particle for cusp 
+  const double         beta_0 )   // beta_0 parameter
+  : std::unary_function<double,double> ()
+  , m_bw     ( bw ) 
+  , m_m1     ( std::abs (   m1_0 ) )
+  , m_m2     ( std::abs (   m2_0 ) )
+  , m_beta0  ( std::abs ( beta_0 ) )
+    //
+  , m_workspace  ()
+    //
+{}
+// ============================================================================
+// copy constructor 
+// ============================================================================
+Gaudi::Math::Swanson::Swanson
+( const Gaudi::Math::Swanson& sw ) 
+  : std::unary_function<double,double> ( sw )
+  , m_bw    ( sw.m_bw    )
+  , m_m1    ( sw.m_m1    )
+  , m_m2    ( sw.m_m2    )
+  , m_beta0 ( sw.m_beta0 )
+    //
+  , m_workspace  ()
+    //
+{}
+// ============================================================================
+// destructor
+// ============================================================================
+Gaudi::Math::Swanson::~Swanson (){}
+// ============================================================================
+// set the proper parameters
+// ============================================================================
+bool Gaudi::Math::Swanson::setM1_0 ( const double x )
+{
+  //
+  const double v = std::abs ( x ) ;
+  if ( s_equal ( v , m_m1 ) ) { return false ; }
+  //
+  m_m1 = v ;
+  //
+  return true ;
+}
+// ============================================================================
+bool Gaudi::Math::Swanson::setM2_0 ( const double x )
+{
+  //
+  const double v = std::abs ( x ) ;
+  if ( s_equal ( v , m_m2 ) ) { return false ; }
+  //
+  m_m2 = v ;
+  //
+  return true ;
+}
+// ============================================================================
+bool Gaudi::Math::Swanson::setBeta0( const double x )
+{
+  //
+  const double v = std::abs ( x ) ;
+  if ( s_equal ( v , m_beta0 ) ) { return false ; }
+  //
+  m_beta0 = v ;
+  //
+  return true ;
+}
+// ============================================================================
+//  calculate the Swanson amplitude
+// ============================================================================
+std::complex<double>
+Gaudi::Math::Swanson::amplitude ( const double x ) const
+{
+  //
+  const double  f = - s_SQRT2PISQUAREDi*m_beta0/(1/m_m1+1/m_m2) ;
+  //
+  const double zf = 4 * m_m1 * m_m2 / ( m_beta0 * m_beta0 * ( m_m1 + m_m2 ) ) ;
+  const double z  = zf * ( m_m1 + m_m2 - x ) ;
+  //
+  // above threshold, Z is negative 
+  std::complex<double> iZ = 
+    0 <= z ? 
+    std::complex<double>(     std::sqrt (            z   ) , 0 ) :
+    std::complex<double>( 0 , std::sqrt ( std::abs ( z ) )     ) ;
+  //
+  return f * 0.5 * s_SQRTPIHALF * ( 1.0 - s_SQRTPI * iZ * Gaudi::Math::erfcx ( iZ ) ) ;
+}
+// ============================================================================
+//  calculate the Swanson shape 
+// ============================================================================
+double Gaudi::Math::Swanson::swanson ( const double x ) const
+{
+  if ( m_bw.m1() + m_bw.m2() >= x ) { return 0 ; }
+  //
+  const double g  = m_bw.gamma ( x ) ;
+  if ( 0 >= g ) { return 0 ; }
+  //
+  const std::complex<double> a = amplitude ( x ) ;
+  //
+  return 2 * x * std::norm ( a ) * g / m_bw.gam0() / M_PI ;
+}
+// ============================================================================
+// get the integral between low and high limits
+// ============================================================================
+double  Gaudi::Math::Swanson::integral
+( const double low  ,
+  const double high ) const
+{
+  if ( s_equal ( low , high ) ) { return                 0.0 ; } // RETURN
+  if (           low > high   ) { return - integral ( high ,
+                                                      low  ) ; } // RETURN
+  //
+  const double x_min  = m_bw.m1() + m_bw.m2() ;
+  if ( x_min >= high ) { return                        0   ; }
+  if ( x_min >  low  ) { return integral  ( x_min , high ) ; }
+  //
+  // split into reasonable sub intervals
+  //
+  const double x1   = x_min +  1 * ( m_m1 + m_m2 ) ;
+  const double x2   = x_min +  2 * ( m_m1 + m_m2 ) ;
+  const double x5   = x_min +  5 * ( m_m1 + m_m2 ) ;
+  const double x10  = x_min + 10 * ( m_m1 + m_m2 ) ;
+  //
+  if ( low <  x1 &&  x1 < high ) { return integral ( low ,  x1 ) + integral (  x1 , high ) ; }
+  if ( low <  x2 &&  x2 < high ) { return integral ( low ,  x2 ) + integral (  x2 , high ) ; }
+  if ( low <  x5 &&  x5 < high ) { return integral ( low ,  x5 ) + integral (  x5 , high ) ; }
+  if ( low < x10 && x10 < high ) { return integral ( low , x10 ) + integral ( x10 , high ) ; }
+  //
+  // use GSL to evaluate the integral
+  //
+  Sentry sentry ;
+  //
+  gsl_function F                 ;
+  F.function = &swanson_GSL ;
+  const Swanson* _sw = this  ;
+  F.params   = const_cast<Swanson*> ( _sw ) ;
+  //
+  double result   = 1.0 ;
+  double error    = 1.0 ;
+  //
+  const int ierror = gsl_integration_qag
+    ( &F                ,            // the function
+      low   , high      ,            // low & high edges
+      s_PRECISION       ,            // absolute precision
+      ( x10  <= low  ) ? s_PRECISION_TAIL :
+      s_PRECISION       ,            // relative precision
+      s_SIZE            ,            // size of workspace
+      GSL_INTEG_GAUSS31 ,            // integration rule
+      workspace ( m_workspace ) ,    // workspace
+      &result           ,            // the result
+      &error            ) ;          // the error in result
+  //
+  if ( ierror )
+  {
+    gsl_error ( "Gaudi::Math::Swanson::QAG" ,
+                __FILE__ , __LINE__ , ierror ) ;
+  }
+  //
+  return result ;
+}
+// // ============================================================================
+// // get the integral b
+// // ============================================================================
+// double  Gaudi::Math::Swanson::integral () const
+// {
+//   //
+//   const double x_min = m_bw.m1() + m_bw.m2() ;
+//   //
+//   // split into reasonable sub intervals
+//   //
+//   const double x10  = x_min + 10 * ( m_m1 + m_m2 ) ;
+//   //
+//   // use GSL to evaluate the integral
+//   //
+//   Sentry sentry ;
+//   //
+//   gsl_function F                 ;
+//   F.function = &swanson_GSL ;
+//   const Swanson* _sw = this  ;
+//   F.params   = const_cast<Swanson*> ( _sw ) ;
+//   //
+//   double result   = 1.0 ;
+//   double error    = 1.0 ;
+//   //
+//   const double x_high = x10 ;
+//   const int ierror = gsl_integration_qagiu
+//     ( &F                ,         // the function
+//       x_high            ,         // "low" edge
+//       s_PRECISION       ,         // absolute precision
+//       s_PRECISION_TAIL  ,         // relative precision
+//       s_SIZE            ,         // size of workspace
+//       workspace ( m_workspace ) , // workspace
+//       &result           ,         // the result
+//       &error            ) ;       // the error in result
+//   //
+//   if ( ierror )
+//   {
+//     gsl_error ( "Gaudi::Math::Swanson::QAGIU" ,
+//                 __FILE__ , __LINE__ , ierror ) ;
+//     result = 0.0 ;
+//   }
+//   //
+//   return result + integral ( x_min , x_high );
+// }
 // ============================================================================
 // LASS: Kpi S-wave 
 // ============================================================================

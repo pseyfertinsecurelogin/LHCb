@@ -1,4 +1,4 @@
-// $Id$ 
+// $Id: MoreFunctions.cpp 202694 2016-03-07 09:11:54Z ibelyaev $ 
 // ============================================================================
 // Include files 
 // ============================================================================
@@ -21,15 +21,16 @@
 // Local
 // ============================================================================
 #include "GSL_sentry.h"
+#include "Faddeeva.hh"
 // ============================================================================
 /** @file
  *  implementation file for function from file LHCbMath/MoreFunctions.h
  *  @see LHCbMath/MoreFunctions.h
  *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
  *  @date 2015-03-26
- *                    $Revision$
- *  Last modification $Date$
- *                 by $Author$
+ *                    $Revision: 202694 $
+ *  Last modification $Date: 2016-03-07 10:11:54 +0100 (Mon, 07 Mar 2016) $
+ *                 by $Author: ibelyaev $
  */  
 // ============================================================================
 namespace 
@@ -622,6 +623,74 @@ double Gaudi::Math::kummer
   //
   return result.val ;
 }
+// ============================================================================
+/*  scaled complementary error function 
+ *  \f$ 1 -  erf (x) = e^{-x^2} erfcx(x)  \f$ 
+ *  @param x  the argument 
+ *  @return the value of the scaled complementary error function 
+ *  @attention  overflow happens for x<-26.6
+ *  The actual implementation is copied from http://ab-initio.mit.edu/Faddeeva
+ *  @see http://ab-initio.mit.edu/Faddeeva
+ *  @see https://en.wikipedia.org/wiki/Error_function
+ *  @see https://en.wikipedia.org/wiki/Faddeeva_function
+ */
+// ============================================================================
+double Gaudi::Math::erfcx ( const double x ) { return Faddeeva::erfcx ( x ) ; }
+// ============================================================================
+/*  scaled complementary error function 
+ *  \f$ 1 -  erf (x) = e^{-x^2} erfcx(x)  \f$ 
+ *  @param x  the argument 
+ *  @return the value of the scaled complementary error function 
+ *  @attention  overflow happens for x<-26.6
+ *  The actual implementation is copied from http://ab-initio.mit.edu/Faddeeva
+ *  @see http://ab-initio.mit.edu/Faddeeva
+ *  @see https://en.wikipedia.org/wiki/Error_function
+ *  @see https://en.wikipedia.org/wiki/Faddeeva_function
+ */
+// ============================================================================
+std::complex<double> 
+Gaudi::Math::erfcx ( const std::complex<double>& x )
+{ return Faddeeva::erfcx ( x ) ; }
+// ============================================================================
+/*  compute Faddeeva "w" function:
+ *  w(z) = exp(-z^2) erfc(-iz) [ Faddeeva / scaled complex error func ]
+ *  @return the value of the scaled complementary error function 
+ *  The actual implementation is copied from http://ab-initio.mit.edu/Faddeeva
+ *  @see http://ab-initio.mit.edu/Faddeeva
+ *  @see https://en.wikipedia.org/wiki/Error_function
+ *  @see https://en.wikipedia.org/wiki/Faddeeva_function
+ */
+// ============================================================================
+std::complex<double>
+Gaudi::Math::faddeeva_w ( const std::complex<double>& x ) 
+{ return Faddeeva::w( x ) ; }
+// ============================================================================
+/*  complex error function (the error function of complex arguments)
+ *  @param x  the argument 
+ *  @return the value of the coplmex error function 
+ *  The actual implementation is copied from http://ab-initio.mit.edu/Faddeeva
+ *  @see http://ab-initio.mit.edu/Faddeeva
+ *  @see https://en.wikipedia.org/wiki/Error_function
+ *  @see https://en.wikipedia.org/wiki/Faddeeva_function
+ */
+// ============================================================================
+std::complex<double>
+Gaudi::Math::erf   ( const std::complex<double>& x ) 
+{ return Faddeeva::erf ( x ) ; }
+// ============================================================================
+/*  complementary complex error function 
+ *  \f$ 1 -  erf (x) = erfc(x)  \f$         
+ *  @param x  the argument 
+ *  @return the value of the complementary complex error function 
+ *  The actual implementation is copied from http://ab-initio.mit.edu/Faddeeva
+ *  @see http://ab-initio.mit.edu/Faddeeva
+ *  @see https://en.wikipedia.org/wiki/Error_function
+ *  @see https://en.wikipedia.org/wiki/Faddeeva_function
+ */
+// ============================================================================
+std::complex<double>  
+Gaudi::Math::erfc  ( const std::complex<double>& x ) 
+{ return Faddeeva::erfc ( x ) ; }
 // ============================================================================
 // The END 
 // ============================================================================
