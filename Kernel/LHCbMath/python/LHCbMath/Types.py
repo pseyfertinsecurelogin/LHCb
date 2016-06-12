@@ -2046,6 +2046,160 @@ def _ve_ne_ ( self , other ) :
 VE . __eq__ = _ve_eq_
 VE . __ne__ = _ve_ne_
 
+
+# =============================================================================
+# Imporve operations with std.complex 
+# =============================================================================
+COMPLEX = cpp.std.complex('double')
+
+def _cmplx_to_complex_ ( s ) :
+    """convert to complex"""
+    return  complex    ( s.real() , s.imag() )
+def _cmplx_negate_     ( s ) :
+    """Negation:
+    >>> v  = ...
+    >>> v1 = -v
+    """
+    return -complex    ( s.real() , s.imag() )
+def _cmplx_abs_        ( s ) :
+    """Absolute value
+    >>> print abs(v) 
+    """
+    import math
+    sr = s.real()
+    si = s.imag()
+    return math.sqrt( sr * sr + si * si ) 
+def _cmplx_norm_       ( s ) :
+    """Norm (squared absolute value)
+    >>> print v.norm()
+    """
+    sr = s.real()
+    si = s.imag()
+    return sr * sr + si * si
+def _cmplx_conjugate_  ( s ) :
+    """Get complex conjugated
+    >>> vc = v.conjugate() 
+    """
+    return complex     ( s.real() , -s.imag() )
+    
+def _cmplx_add_        ( s , o ) :
+    """add complex values 
+    >>> r = v + other  
+    """
+    return o + complex ( s.real() , s.imag() )
+def _cmplx_mul_        ( s , o ) :
+    """multiply  complex values 
+    >>> r = v * other  
+    """
+    return o * complex ( s.real() , s.imag() )
+
+def _cmplx_div_        ( s , o ) :
+    return (1.0/o) * complex ( s.real() , s.imag() )
+    """divide complex values 
+    >>> r = v / other  
+    """
+def _cmplx_rdiv_       ( s , o ) :
+    """divide complex values 
+    >>> r = other / v 
+    """
+    return o       * ( 1.0 / complex ( s.real() , s.imag() ) )
+
+def _cmplx_sub_        ( s , o ) :
+    """subtract complex values 
+    >>> r = v - other 
+    """
+    return (-o   ) + complex ( s.real() , s.imag() )
+def _cmplx_rsub_       ( s , o ) :
+    """subtract complex values 
+    >>> r = other - v 
+    """
+    return   o     - complex ( s.real() , s.imag() )
+
+def _cmplx_pow_  ( s , o ) :
+    """power function 
+    >>> r = v ** other  
+    """
+    if isinstance ( o , COMPLEX ) :
+        o = complex ( o.real() , o.imag() ) 
+    return complex ( s.real() , s.imag() ) ** o
+
+def _cmplx_rpow_  ( s , o ) :
+    """power function 
+    >>> r = other **v  
+    """
+    return o ** complex ( s.real() , s.imag() )
+
+
+def _cmplx_eq_    ( s , o ) :
+    """equality:
+    >>> r = v == other  
+    """
+    if isinstance ( o, COMPLEX ) :
+        return s.real() == o.real() and s.imag() == o.imag()
+    return complex( s.real() , s.imag() ) == o
+
+def _cmplx_ne_    ( s , o ) :
+    """non-equality:
+    >>> r = v != other  
+    """
+    if isinstance ( o, COMPLEX ) :
+        return s.real() != o.real() or  s.imag() != o.imag()
+    return complex( s.real() , s.imag() ) != o 
+    
+COMPLEX.__complex__ = _cmplx_to_complex_
+
+COMPLEX.__add__     = _cmplx_add_
+COMPLEX.__mul__     = _cmplx_mul_
+COMPLEX.__div__     = _cmplx_div_
+COMPLEX.__sub__     = _cmplx_sub_
+
+COMPLEX.__radd__    = _cmplx_add_
+COMPLEX.__rmul__    = _cmplx_mul_
+COMPLEX.__rdiv__    = _cmplx_rdiv_
+COMPLEX.__rsub__    = _cmplx_rsub_
+
+def _cmplx_iadd_ ( s , o ) :
+    x = s + o
+    s.real(x.real)
+    s.imag(x.imag)
+    
+def _cmplx_isub_ ( s , o ) :
+    x = s - o
+    s.real(x.real)
+    s.imag(x.imag)
+
+def _cmplx_imul_ ( s , o ) :
+    x = s * o
+    s.real(x.real)
+    s.imag(x.imag)
+
+def _cmplx_idiv_ ( s , o ) :
+    x = s / o
+    s.real(x.real)
+    s.imag(x.imag)
+
+COMPLEX.__iadd__    = _cmplx_iadd_
+COMPLEX.__imul__    = _cmplx_imul_
+COMPLEX.__idiv__    = _cmplx_idiv_
+COMPLEX.__isub__    = _cmplx_isub_
+
+COMPLEX.__repr__    = lambda s : "%s" % complex ( s.real(), s.imag() )
+COMPLEX.__str__     = lambda s : "%s" % complex ( s.real(), s.imag() )
+COMPLEX.__abs__     = _cmplx_abs_
+COMPLEX.__pow__     = _cmplx_pow_
+COMPLEX.__rpow__    = _cmplx_rpow_
+COMPLEX.__neg__     =  _cmplx_negate_
+
+COMPLEX.__eq__      =  _cmplx_eq_
+COMPLEX.__ne__      =  _cmplx_ne_
+
+COMPLEX.norm        = _cmplx_norm_
+COMPLEX.conjugate   = _cmplx_conjugate_
+COMPLEX.conj        = _cmplx_conjugate_
+COMPLEX.to_complex  = _cmplx_to_complex_ 
+COMPLEX.as_complex  = _cmplx_to_complex_ 
+
+
 # =============================================================================
 if '__main__' == __name__ :
 

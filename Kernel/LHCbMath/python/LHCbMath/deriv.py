@@ -1158,10 +1158,10 @@ class Mode(Mediane) :
     def __call__ ( self , func , *args ) :
         ##
         
-        ## use mean    as intial aprpoximation for mode 
+        ## use mean    as intial approximation for mode 
         m1     = Mean   .__call__ ( self , func , *args )
         
-        ## use mediane as intial aprpoximation for mode 
+        ## use mediane as intial approximation for mode 
         ## m2     = Mediane.__call__ ( self , func , *args )
         
         ## use the point intermediate between mean and mediane as approximation 
