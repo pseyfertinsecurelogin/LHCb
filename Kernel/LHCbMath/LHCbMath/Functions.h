@@ -1812,7 +1812,7 @@ namespace Gaudi
       /// get the value of formfactor at given m 
       double            formfactor ( const double m ) const ;
       /// get the formfactor itself 
-      const FormFactor* 
+      const Gaudi::Math::FormFactor* 
         formfactor () const { return m_formfactor ; }
       // ======================================================================
     public:
@@ -1839,7 +1839,7 @@ namespace Gaudi
       /// the orbital momentum
       unsigned int      m_L          ; // the orbital momentum
       /// the formfactor 
-      const FormFactor* m_formfactor ; // the formfactor 
+      const Gaudi::Math::FormFactor* m_formfactor ; // the formfactor 
       // ======================================================================
     private:
       // ======================================================================
@@ -2374,6 +2374,115 @@ namespace Gaudi
       } ;
       // ======================================================================
     } // end of namespace Gaudi:Math::FormFactors
+    // ========================================================================
+    /** @class Swanson
+     *  Swanson's parameterization of S-wave cusp 
+     *  @see LHCb-PAPER-2016-019 appendix D 
+     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+     *  @date 2016-06-11
+     */
+    class GAUDI_API Swanson : public std::unary_function<double,double>
+    {
+    public:
+      // ======================================================================
+      /// constructor from all parameters (numbers are arbitrary...)
+      Swanson ( const double         m1     = 0.139 ,   // the first  real particle 
+                const double         m2     = 0.139 ,   // the second real particle                
+                const double         m1_0   = 0.135 ,   // the first  particle for cusp
+                const double         m2_0   = 0.135 ,   // the second particle for cusp 
+                const double         beta_0 = 0.300 ,   // beta_0 parameter
+                const unsigned short L      = 0     ) ; // orbital momentum for real particles    
+      /// constructor from all parameters 
+      Swanson ( const double         m1             ,   // the first  real particle 
+                const double         m2             ,   // the second real particle                
+                const double         m1_0           ,   // the first  particle for cusp
+                const double         m2_0           ,   // the second particle for cusp 
+                const double         beta_0         ,   // beta_0 parameter
+                const unsigned short L              ,   // orbital momentum for real particles 
+                const Gaudi::Math::FormFactors::JacksonRho  r ) ; //  formfactor
+      /// constructor from all parameters 
+      Swanson ( const double         m1             ,   // the first  real particle 
+                const double         m2             ,   // the second real particle                
+                const double         m1_0           ,   // the first particle for cusp
+                const double         m2_0           ,   // the second particle for cusp 
+                const double         beta_0         ,   // beta_0 parameter
+                const unsigned short L              ,   // orbital momentum for real particles 
+                const Gaudi::Math::FormFactor&    f ) ; // formfactor      
+      /// constructor from all parameters 
+      Swanson ( const BreitWigner&   bw             ,   // breit-wigner 
+                const double         m1_0           ,   // the first  particle for cusp
+                const double         m2_0           ,   // the second particle for cusp 
+                const double         beta_0         ) ; // beta_0 parameter
+      /// copy constructor 
+      Swanson ( const Swanson&  sw ) ;
+      /// destructor 
+      virtual ~Swanson() ;
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// calculate the Swanson shape 
+      double operator () ( const double x ) const { return swanson ( x ) ; }
+      /// calculate the Swanson shape 
+      double swanson     ( const double x ) const ;
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// calculate complex amplitude 
+      std::complex<double> amplitude ( const double x ) const ;
+      // ======================================================================
+    public: // getters
+      // ======================================================================
+      /// get beta_0 parameter 
+      double  beta0 () const { return m_beta0 ; }  // get beta_0 parameter 
+      /// mass of the first particle 
+      double  m1    () const { return m_m1    ; }  // mass of first particle 
+      /// mass of the second particle 
+      double  m2    () const { return m_m2    ; }  // mass of the second particle 
+      // ======================================================================
+    public: // derived getters 
+      // ======================================================================
+      double mmin () const { return m_bw.m1() + m_bw.m2() ; }
+      double cusp () const { return    m_m1   +    m_m2   ; }
+      // ======================================================================
+    public: // setters 
+      // ======================================================================
+      /// set new value for beta_0 
+      bool setBeta0  ( const double value ) ;
+      /// set new value for beta_0 
+      bool setBeta_0 ( const double value ) { return setBeta0 ( value ) ; }
+      /// set new valeu for m1  
+      bool setM1_0   ( const double value ) ;
+      /// set new valeu for m2  
+      bool setM2_0   ( const double value ) ;
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// get the integral between low and high limits
+      virtual double integral  ( const double low  ,
+                                 const double high ) const ;
+      // ======================================================================
+    private:
+      // ======================================================================
+      /// assignement operator is disabled 
+      Swanson& operator=( const Swanson& ) ; // no assignement 
+      // ======================================================================
+    private:
+      // ======================================================================
+      /// use Breit-Wigner to keep parameters of real particles 
+      Gaudi::Math::BreitWigner   m_bw ;
+      /// the mass of the first  particle
+      double            m_m1         ; // the mass of the first  particle
+      /// the mass of the second particle
+      double            m_m2         ; // the mass of the second particle
+      /// beta0 parameter 
+      double            m_beta0      ; // beta0 parameter 
+      // ======================================================================
+    private:
+      // ======================================================================
+      /// integration workspace
+      Gaudi::Math::WorkSpace m_workspace ;    // integration workspace
+      // ======================================================================
+    } ;
     // ========================================================================
     /** @class LASS
      *  The LASS parameterization (Nucl. Phys. B296, 493 (1988))

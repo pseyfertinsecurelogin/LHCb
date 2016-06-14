@@ -6,6 +6,12 @@
 !               All headers included in directory LHCbMath
 !-----------------------------------------------------------------------------
 
+! 2016-06-12 - Vanya Belyaev
+ - new function Gaudi::Math::Swanson S-wave cusp
+ - tiny reshuffling of code between Functions.cpp and MoreFunctions.cpp
+ - expose complex versions of erf, erfc, erfcx and faddeeva_w  
+ - LHCbMath.Types: provide operations for std.complex('double') 
+  
 ! 2016-05-16 - Vanya Belyaev
  - fix the issue with normalization for some 2D-models 
 
