@@ -1,4 +1,4 @@
-// $Id$
+// $Id: ValueWithError.cpp 202731 2016-03-07 14:13:50Z ibelyaev $
 // ============================================================================
 // Include files
 // ============================================================================
@@ -805,7 +805,7 @@ Gaudi::Math::ValueWithError::__lgamma__ () const { return lgamma ( *this ) ; }
 
 
 // ============================================================================
-/* Does this object represent natual number?
+/* Does this object represent natural number?
  *  - non-negative integer value 
  *  - cov2 == value  or cov2 == 0 
  */
@@ -819,7 +819,7 @@ bool Gaudi::Math::natural_number
     && ( _zero ( v.cov2 () ) || _equal ( v.value() , v.cov2() ) ) ;
 }
 // ============================================================================
-/** Does this object represent natual entry in histogram
+/** Does this object represent natural entry in histogram
  *  - non-negative integer value 
  *  - cov2 == value  or ( 0 == value && 1 == cov2 )
  */

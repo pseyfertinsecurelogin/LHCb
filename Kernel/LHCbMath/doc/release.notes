@@ -6,6 +6,23 @@
 !               All headers included in directory LHCbMath
 !-----------------------------------------------------------------------------
 
+! 2016-06-12 - Vanya Belyaev
+ - new function Gaudi::Math::Swanson S-wave cusp
+ - tiny reshuffling of code between Functions.cpp and MoreFunctions.cpp
+ - expose complex versions of erf, erfc, erfcx and faddeeva_w  
+ - LHCbMath.Types: provide operations for std.complex('double') 
+  
+! 2016-05-16 - Vanya Belyaev
+ - fix the issue with normalization for some 2D-models 
+
+! 2016-05-09 - Vanya Belyaev
+
+ - HistoInterpolation
+   fix a minor incorrectness in histogram interpolation 
+
+! 2016-05-03 - Vanya Belyaev
+ - fix normalization of Expo2DPolSym funtion
+
 ! 2016-04-25 - Vanya Belyaev
  - deriv.py: add Width/width  functions, 
    allowing easy evaluation of full width at half maximum for functons  
