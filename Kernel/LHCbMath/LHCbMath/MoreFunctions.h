@@ -1,4 +1,4 @@
-// $Id: MoreFunctions.h 196279 2015-10-14 17:03:08Z ibelyaev $ 
+// $Id: MoreFunctions.h 206873 2016-06-12 10:28:52Z ibelyaev $ 
 // ============================================================================
 #ifndef LHCBMATH_MOREFUNCTIONS_H 
 #define LHCBMATH_MOREFUNCTIONS_H 1
@@ -183,6 +183,30 @@ namespace Gaudi
      *  @see https://en.wikipedia.org/wiki/Faddeeva_function
      */
     GAUDI_API std::complex<double> faddeeva_w ( const std::complex<double>& x ) ;
+    // ========================================================================
+    /** compute sech function 
+     *  \$f f(x) = \frac{1}{\cosh x} = \frac{2}{ e^{x}+e^{-x} }\f$
+     *  @return the value of sech function 
+     */
+    GAUDI_API double sech ( const double x ) ;
+    // ========================================================================
+    /** compute sech function 
+     *  \$f f(x) = \frac{1}{\cosh x} = \frac{2}{ e^{x}+e^{-x} }\f$
+     *  @return the value of sech function 
+     */
+    GAUDI_API std::complex<double> sech ( const std::complex<double>& x ) ;
+    // ========================================================================
+    /** compute inverse Gamma function 
+     *  \$f f(x) = \frac{1}{\Gamma(x)}\f$
+     *  @return the value of inverse Gamma functions 
+     */
+    GAUDI_API double igamma ( const double x ) ;    
+    // ========================================================================
+    /** compute psi function 
+     *  \$f f(x) = \frac{d}{dx}\ln \Gamma(x)\f$
+     *  @return the value of psi function 
+     */
+    GAUDI_API double psi ( const double x ) ;    
     // ========================================================================
     /** get the gaussian integral
      *  \f[ f = \int_a^b \exp { -\alpha^2 x^2 + \beta x } \mathrm{d}x \f]

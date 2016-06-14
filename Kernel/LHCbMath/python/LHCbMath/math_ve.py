@@ -1,7 +1,7 @@
 #!/usr/bin/env python 
 # -*- coding: utf-8 -*-
 # =============================================================================
-# $Id$
+# $Id: math_ve.py 202731 2016-03-07 14:13:50Z ibelyaev $
 # =============================================================================
 ## @file
 #
@@ -11,26 +11,26 @@
 #  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
 #  @date 2014-06-02
 #
-#                    $Revision$
-#  Last modification $Date$
-#                 by $Author$
+#                    $Revision: 202731 $
+#  Last modification $Date: 2016-03-07 15:13:50 +0100 (Mon, 07 Mar 2016) $
+#                 by $Author: ibelyaev $
 #
 #
 # =============================================================================
 __author__  = "Vanya BELYAEV Ivan.Belyaev@itep.ru"
 __date__    = "2014-06-02"
-__version__ = "$Revision$"
+__version__ = "$Revision: 202731 $"
 # =============================================================================
 __all__     = (
     'exp'    , 'expm1'  ,
     'log'    , 'log10'  , 'log1p'  , 
     'sqrt'   , 'cbrt'   , 'pow'    ,   
     'sin'    , 'cos'    , 'tan'    , 
-    'sinh'   , 'cosh'   , 'tanh'   ,
+    'sinh'   , 'cosh'   , 'tanh'   , 'sech'   ,
     'asin'   , 'acos'   , 'atan'   , 
     'asinh'  , 'acosh'  , 'atanh'  ,
     'erf'    , 'erfc'   , 'erfcx'  , 'probit' , 
-    'gamma'  , 'tgamma' , 'lgamma' ,
+    'gamma'  , 'tgamma' , 'lgamma' , 'igamma' , 
     'exp2'   , 'log2'   ,
     'hypot'  , 'fma'  
     )
@@ -285,6 +285,20 @@ def lgamma ( x ) :
     if fun : return fun()
     return math.lgamma ( x )
 
+_igamma_ = cpp.Gaudi.Math.igamma 
+# =============================================================================
+## define ``igamma'' function
+#  \f$ f(x) = \frac{1}{\Gamma(x)}\f$
+#  @see https://en.wikipedia.org/wiki/Reciprocal_gamma_function
+def igamma ( x ) :
+    """'igamma' function taking into account the uncertainties
+    \f$ f(x) = \frac{1}{\Gamma(x)}\f$
+    - see https://en.wikipedia.org/wiki/Reciprocal_gamma_function
+    """
+    fun = getattr ( x , '__igamma__' , None )
+    if fun : return fun()
+    return _igamma_ ( x )
+
 
 _erfcx_ = cpp.Gaudi.Math.erfcx 
 # =============================================================================
@@ -297,6 +311,17 @@ def erfcx ( x ) :
     fun = getattr ( x , '__erfcx__' , None )
     if fun : return fun()
     return _erfcx_ ( x )
+
+_sech_ = cpp.Gaudi.Math.sech 
+# =============================================================================
+## define ``sech'' function 
+def sech ( x ) :
+    """ Sech-function:
+    sech(x)=1/cosh(x)
+    """
+    fun = getattr ( x , '__sech__' , None )
+    if fun : return fun()
+    return _sech_ ( x )
 
 _probit_ = cpp.Gaudi.Math.probit  
 # =============================================================================
@@ -363,11 +388,11 @@ if '__main__' == __name__ :
               log   , log10  , log1p  , 
               sqrt  , cbrt   ,
               sin   , cos    , tan    ,
-              sinh  , cosh   , tanh   ,
+              sinh  , cosh   , tanh   , sech , 
               asin  , acos   , atan   ,
               asinh , acosh  , atanh  ,
               erf   , erfc   , erfcx  , probit , 
-              gamma , tgamma , lgamma ]
+              gamma , tgamma , lgamma , igamma ]
 
     ## use helper object:
     from LHCbMath.deriv import EvalVE 

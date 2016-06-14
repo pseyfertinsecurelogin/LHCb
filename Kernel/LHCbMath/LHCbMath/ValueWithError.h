@@ -1,4 +1,4 @@
-// $Id$
+// $Id: ValueWithError.h 202731 2016-03-07 14:13:50Z ibelyaev $
 // ============================================================================
 #ifndef LHCBMATH_ERRORS_H 
 #define LHCBMATH_ERRORS_H 1
@@ -24,9 +24,9 @@
  *  @author Vanya BELYAEV Ivane.BElyaev@itep.ru
  *  @date 2009-06-03
  *
- *  Version           $Revision$
- *  Last modification $Date$
- *                 by $Author$
+ *  Version           $Revision: 202731 $
+ *  Last modification $Date: 2016-03-07 15:13:50 +0100 (Mon, 07 Mar 2016) $
+ *                 by $Author: ibelyaev $
  */
 namespace Gaudi
 {
@@ -728,6 +728,15 @@ namespace Gaudi
     ValueWithError tanh 
     ( const ValueWithError& b ) ;
     // ========================================================================    
+    /** evaluate sech(b)
+     *  @param b (INPUT) the parameter 
+     *  @return  sech(b)
+     *  @warning invalid and small covariances are ignored 
+     */
+    GAUDI_API
+    ValueWithError sech 
+    ( const ValueWithError& b ) ;
+    // ========================================================================    
     /** evaluate erf(b)
      *  @param b (INPUT) the parameter 
      *  @return  erf(b)
@@ -848,6 +857,15 @@ namespace Gaudi
      */
     GAUDI_API
     ValueWithError lgamma
+    ( const ValueWithError& b ) ;
+    // ========================================================================    
+    /** evaluate igamma(b)
+     *  @param b (INPUT) the parameter 
+     *  @return  1/Gamma(b)
+     *  @warning invalid and small covariances are ignored 
+     */
+    GAUDI_API
+    ValueWithError igamma
     ( const ValueWithError& b ) ;
     // ========================================================================    
     /** evaluate <code>hypot(x,y)</code>
