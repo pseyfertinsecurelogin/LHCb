@@ -101,6 +101,16 @@ boost::uintmax_t  File::size() const
          }
          command << " " << matches[1] << " \"stat " << matches.suffix() << "\" 2>&1";
          m_size = get_size( command.str(), size_line, 1);
+      } else if ( args[0] == "scp" ) {
+         stringstream command;
+         boost::regex re_ssh{"(^[a-zA-z0-9\\.-]+):"};
+         boost::smatch matches;
+         boost::match_flag_type flags = boost::match_default;
+         boost::regex_search( m_remote.begin(), m_remote.end(), matches, re_ssh, flags );
+         command << "ssh -oStrictHostKeyChecking=no";
+         size_t size_line = 0;
+         command << " " << matches[1] << " \"stat -c '%s' " << matches.suffix() << "\" 2>&1";
+         m_size = get_size( command.str(), size_line, 0);
       } else if ( args[0] == "cp" ) {
          struct stat buf;
          int r = ::stat(m_remote.c_str(), &buf);
@@ -147,7 +157,7 @@ boost::uintmax_t get_size( const string& command, const unsigned int lineno,
       if (lineno >= lines.size()) {
          string error = "Invalid output from " + command;
          stringstream s;
-         s << "Could not get size from command output line " 
+         s << "Could not get size from command output line "
            << lineno << ".\n";
          for (vector<string>::const_iterator it = lines.begin(), end = lines.end();
               it != end; ++ it) {
@@ -175,7 +185,7 @@ boost::uintmax_t get_size( const string& command, const unsigned int lineno,
          string error = "Invalid output from " + command;
          stringstream s;
          s << "Could not get size from command output line " << line
-           << " as the number at position " << matchno << ":" 
+           << " as the number at position " << matchno << ":"
            << numbers[matchno] << ".\n";
          throw GaudiException( error, s.str(), StatusCode::FAILURE );
       }
