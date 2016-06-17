@@ -72,7 +72,7 @@ bool createPFN( string& remote, string& command, bool stageLocal )
       command = "dccp -A";
       return true;
    } else if ( regex_search( begin(remote), end(remote), match, re_ssh, flags ) ) {
-      command = "scp -oStrictHostKeyChecking=no -q";
+      command = "scp -oStrictHostKeyChecking=no -oForwardX11=no -oForwardX11Trusted=no -oForwardAgent=no -q";
       if (match[3].length() > 0) {
          command += " -P " + match.str(3);
       }
