@@ -107,7 +107,7 @@ boost::uintmax_t  File::size() const
          boost::smatch matches;
          boost::match_flag_type flags = boost::match_default;
          boost::regex_search( m_remote.begin(), m_remote.end(), matches, re_ssh, flags );
-         command << "ssh -oStrictHostKeyChecking=no";
+         command << "ssh -oStrictHostKeyChecking=no -q";
          size_t size_line = 0;
          command << " " << matches[1] << " \"stat -c '%s' " << matches.suffix() << "\" 2>&1";
          m_size = get_size( command.str(), size_line, 0);
