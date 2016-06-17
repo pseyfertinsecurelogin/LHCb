@@ -73,7 +73,6 @@ FileStagerSvc::FileStagerSvc( const string& name, ISvcLocator* svcLoc )
    m_keepFiles.declareUpdateHandler( &FileStagerSvc::keepFilesHandler, this );
 }
 
-#ifndef WIN32
 //=============================================================================
 StatusCode FileStagerSvc::initialize()
 {
@@ -314,7 +313,9 @@ void FileStagerSvc::stage()
 
             if ( !stageFile->exists() ) {
                error() << stageFile->remote() << " does not exists" << endmsg;
-               error() << stageFile->errorMessage() << endmsg;
+               for (auto msg : stageFile->errorMessages()) {
+                  error() << msg << endmsg;
+               }
                err = true;
             }
 
@@ -641,12 +642,7 @@ File* FileStagerSvc::createFile( const string& filename )
    string command;
    bool success = false;
    boost::iterator_range< string::iterator > result;
-   if ( (result = ba::find_first( file, "LFN:" )) ) {
-      // convert LFN to lowercase
-      ba::erase_range( file, result );
-      remote = file;
-      success = FileStager::createLFN( remote, command );
-   } else if ( (result = ba::find_first( file, "PFN:" )) ) {
+   if ( (result = ba::find_first( file, "PFN:" )) ) {
       // strip PFN
       ba::erase_range( file, result );
       remote = file;
@@ -714,91 +710,3 @@ bool FileStagerSvc::checkJobID() const
    }
    return false;
 }
-
-#else
-// Dummy implementations for compilation on Windows
-//=============================================================================
-StatusCode FileStagerSvc::initialize()
-{
-   error() << "The FileStager does not work on Windows, please disable it." << endmsg;
-   return StatusCode::FAILURE;
-}
-
-//=============================================================================
-StatusCode FileStagerSvc::finalize()
-{
-   return Service::finalize();
-}
-
-//=============================================================================
-StatusCode FileStagerSvc::getLocal( const string&, string& )
-{
-   return StatusCode::SUCCESS;
-}
-
-//=============================================================================
-StatusCode FileStagerSvc::addFiles( const vector< string >& )
-{
-   return StatusCode::SUCCESS;
-}
-
-//=============================================================================
-StatusCode FileStagerSvc::clearFiles()
-{
-   return StatusCode::SUCCESS;
-}
-
-//=============================================================================
-void FileStagerSvc::stage()
-{
-
-}
-
-//=============================================================================
-boost::uintmax_t FileStagerSvc::diskspace() const
-{
-   return 0;
-}
-
-//=============================================================================
-void FileStagerSvc::restartStaging( const string& )
-{
-
-}
-
-//=============================================================================
-void FileStagerSvc::removeFile( const_original_iterator )
-{
-
-}
-
-//=============================================================================
-void FileStagerSvc::removeFiles()
-{
-
-}
-
-//=============================================================================
-void FileStagerSvc::removePrevious( const_original_iterator )
-{
-
-}
-
-//=============================================================================
-StatusCode FileStagerSvc::garbage()
-{
-   return StatusCode::SUCCESS;
-}
-
-//=============================================================================
-File* FileStagerSvc::createFile( const string& )
-{
-   return 0;
-}
-
-//=============================================================================
-bool FileStagerSvc::checkJobID() const
-{
-   return false;
-}
-#endif
