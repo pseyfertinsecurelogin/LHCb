@@ -29,14 +29,12 @@ DECLARE_ALGORITHM_FACTORY( TurboPrescaler )
   //=============================================================================
 TurboPrescaler::TurboPrescaler( const std::string& name,
     ISvcLocator* pSvcLocator)
-: GaudiAlgorithm ( name , pSvcLocator ),
-  m_propertyConfigSvc(0),
-  m_condTrigger(0),
-  m_lastTCK(0)
+: GaudiAlgorithm ( name , pSvcLocator )
 {
-  declareProperty("ChosenOutputTCK",m_outputTCK=0x9c0044);
+  declareProperty("ChosenOutputPrescales",m_outputPS=std::map<std::string,double>());
+  declareProperty("PrescaleVersion",m_outputTCK);
   declareProperty("FilterOutput",m_filter=false);
-  declareProperty("ReportsOutpuLoc",m_outRepLoc="Turbo/DecReports");
+  declareProperty("ReportsOutputLoc",m_outRepLoc="Turbo/DecReports");
   declareProperty("ConfigQualifier",m_scalerName="DeterministicPrescaler");
   declareProperty("PreScalerQualifier",m_preScalerName="PreScaler");
   declareProperty("PostScalerQualifier",m_postScalerName="PostScaler");
@@ -55,21 +53,12 @@ TurboPrescaler::~TurboPrescaler() {}
 StatusCode TurboPrescaler::initialize() {
   StatusCode sc = StatusCode::SUCCESS;
 
-  if (UNLIKELY( msgLevel(MSG::VERBOSE))) verbose() << "TurboPrescaler::initialize() input TCK: " << std::hex << m_tck << endmsg;
-
   // Get property config service
   if (!service( m_propertyConfigSvcName, m_propertyConfigSvc).isSuccess()) {
     fatal() << "Failed to get the IConfigAccessSvc." << endmsg;
     return StatusCode::FAILURE;
   }
 
-  // Prescales in new TCK
-  sc = getPrescalesFromTCK(m_outputTCK,m_prescalesOutput, m_postscalesOutput, m_scaleProductsOutput);
-  if ( sc.isFailure() ){ 
-    fatal() << "FAILED TO GET PRESCALES FROM OUTPUT TCK! " << endmsg; 
-    return sc;
-  }
-  
   return sc;
 }
 
@@ -81,23 +70,24 @@ StatusCode TurboPrescaler::execute() {
 
   // Get the input reports and if the TCK changes, refresh list of prescales
   auto decreports = getIfExists<HltDecReports>(m_hltDecReportsLocation);
-  auto tck = decreports->configuredTCK();
-  if(m_lastTCK==0) {
-    getPrescalesFromTCK(tck,m_prescalesInput, m_postscalesInput, m_scaleProductsInput);
-    setupPrescalers();
-  }
-  
-  if(tck!=m_lastTCK||m_lastTCK==0){
-    m_lastTCK=tck;
-    updatePrescalers();
-  }
-  
-  bool globalPass=false;
-
-  HltDecReports* reports = new HltDecReports();
-  put(reports,m_outRepLoc);
-
   if(decreports){
+
+    auto tck = decreports->configuredTCK();
+    if(m_lastTCK==0) {
+      getPrescalesFromTCK(tck,m_prescalesInput, m_postscalesInput, m_scaleProductsInput);
+      setupPrescalers();
+    }
+
+    if(tck!=m_lastTCK||m_lastTCK==0){
+      m_lastTCK=tck;
+      updatePrescalers();
+    }
+
+    bool globalPass=false;
+
+    HltDecReports* reports = new HltDecReports();
+    put(reports,m_outRepLoc);
+
 
     reports->setConfiguredTCK(m_outputTCK);
     reports->setTaskID( decreports->taskID() );
@@ -136,11 +126,15 @@ StatusCode TurboPrescaler::execute() {
             globalPass=true;
           }
         }
+        else{
+          if(lineName.find("Turbo")!=std::string::npos) {
+            // found another Turbo line that fired that was not prescaled
+            globalPass=true;
+          }
+        }
       }
       reports->insert(totName,report);
     }
-
-    //const_cast<HltDecReports*>(decreports)->setDecReports(reports->decReports());
 
     if(m_filter){
       setFilterPassed(globalPass);
@@ -155,7 +149,7 @@ StatusCode TurboPrescaler::execute() {
 //=============================================================================
 //Get map of line names and prescales from requested TCK 
 //=============================================================================
-StatusCode TurboPrescaler::getPrescalesFromTCK(unsigned int tck, std::map<std::string, double> &prescales, std::map<std::string, double> &postscales, std::map<std::string, double> &scaleProducts){
+void TurboPrescaler::getPrescalesFromTCK(unsigned int tck, std::map<std::string, double> &prescales, std::map<std::string, double> &postscales, std::map<std::string, double> &scaleProducts){
   prescales.clear();
   postscales.clear();
   scaleProducts.clear();
@@ -166,7 +160,7 @@ StatusCode TurboPrescaler::getPrescalesFromTCK(unsigned int tck, std::map<std::s
   const ConfigTreeNode* tree = m_propertyConfigSvc->resolveConfigTreeNode(alias); 
   if (!tree) {
     fatal() << "TCK " << std::hex << _tck << " could not be resolved! Cannot continue" << endmsg;
-    return StatusCode::FAILURE;
+    return ;
   }
 
   const std::vector<PropertyConfig::digest_type>& digests =  m_propertyConfigSvc->collectLeafRefs( tree->digest() );
@@ -230,13 +224,12 @@ StatusCode TurboPrescaler::getPrescalesFromTCK(unsigned int tck, std::map<std::s
     if(post<0.0){post=1.0;} //If postscale was never found it'll be -9999., and we assume it will always pass
     scaleProducts.insert(std::pair<std::string,double>((*i).first,pre*post));
   }
-  return StatusCode::SUCCESS;
 }
 
 //========================================================================
 // Create the DeterministicPrescaler instances
 //========================================================================
-StatusCode TurboPrescaler::setupPrescalers(){
+void TurboPrescaler::setupPrescalers(){
   if(UNLIKELY( msgLevel(MSG::DEBUG))){debug() << "Initialising prescalers	" << endmsg;}
 
   StatusCode final = StatusCode::SUCCESS;
@@ -247,7 +240,7 @@ StatusCode TurboPrescaler::setupPrescalers(){
 
   //= Get the Application manager, to see if algorithm exist
   IAlgManager* appMgr = svc<IAlgManager>("ApplicationMgr");
-  for( std::map<std::string,double>::iterator it=m_prescalesOutput.begin(); it!=m_prescalesOutput.end(); ++it){
+  for( std::map<std::string,double>::iterator it=m_outputPS.begin(); it!=m_outputPS.end(); ++it){
     std::string tn = "DeterministicPrescaler/";
     tn.append(it->first);
     tn.append("DPForPrescaleOffline");
@@ -294,40 +287,31 @@ StatusCode TurboPrescaler::setupPrescalers(){
       } else {
         warning() << theName << " is not an Algorithm - failed dynamic_cast"
           << endmsg;
-        final = StatusCode::FAILURE;
       }
     } else {
       warning() << "Unable to find or create " << theName << endmsg;
-      final = result;
     }
   }
 
   release(appMgr).ignore();
   release(jos).ignore();
 
-  return final;
-
 }
 
 //=============================================================================
 // Compare scale products between MC to run on and the TCK to emulate
 //=============================================================================
-StatusCode TurboPrescaler::updatePrescalers(){
-  if(UNLIKELY( msgLevel(MSG::DEBUG))){debug() << "Updating Prescalers" << endmsg;}
-  StatusCode sc = StatusCode::SUCCESS;
-  
+void TurboPrescaler::updatePrescalers(){
   for( auto i=m_prescalesInput.begin(); i!=m_prescalesInput.end(); ++i){
     DeterministicPrescaler* pre = dynamic_cast<DeterministicPrescaler*>(prescalers[(*i).first]);
-    auto j = m_prescalesOutput.find((*i).first);
-    if(j!=m_prescalesOutput.end()){
+    auto j = m_outputPS.find((*i).first);
+    if(j!=m_outputPS.end()){
       if((*j).second > 0.0){
         double ratio = (*j).second/(*i).second;
         if(ratio<=1.0){
           DoubleProperty acceptFractionProperty( "AcceptFraction", ratio);
           pre->setProperty(acceptFractionProperty);
         }else{
-          sc = StatusCode::FAILURE;
-
           warning() << "*********************************************************************************" << endmsg;
           warning() << "OUTPUT HAS LARGER PRESCALE THAN INPUT, CANNOT CREATE EVENTS. LEAVING AS UNITY" << endmsg;
           warning() << "*********************************************************************************" << endmsg;
@@ -337,8 +321,6 @@ StatusCode TurboPrescaler::updatePrescalers(){
       }
     }
   }
-
-  return sc;
 }
 
 //=========================================================================
