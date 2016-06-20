@@ -1,4 +1,4 @@
-// $Id: ValueWithError.cpp 202731 2016-03-07 14:13:50Z ibelyaev $
+// $Id: ValueWithError.cpp 206873 2016-06-12 10:28:52Z ibelyaev $
 // ============================================================================
 // Include files
 // ============================================================================
@@ -29,10 +29,6 @@
 // Boost
 // ============================================================================
 #include "boost/format.hpp"
-// ============================================================================
-// GSL 
-// ============================================================================
-#include "gsl/gsl_sf_psi.h"
 // ============================================================================
 /** @file
  *  Implementation file for class Gaudi::Math::ValueWithError
@@ -1233,7 +1229,7 @@ Gaudi::Math::ValueWithError Gaudi::Math::tgamma
   const double v  =      std::tgamma ( bv ) ;
   //
   // Gamma'/Gamma:
-  const double p  = gsl_sf_psi ( bv ) ;
+  const double p  = Gaudi::Math::psi ( bv ) ;
   const double e1 = v * p * b.error() ;
   //
   return Gaudi::Math::ValueWithError ( v , e1 * e1  ) ;
@@ -1254,7 +1250,29 @@ Gaudi::Math::ValueWithError Gaudi::Math::lgamma
   const double bv = b.value() ;
   const double v  = std::lgamma  ( bv ) ;
   //
-  const double d1 = gsl_sf_psi   ( bv ) ;
+  const double d1 = Gaudi::Math::psi ( bv ) ;
+  const double d2 = d1 * d1 ;
+  const double e2 = d2 * b.cov2() ;
+  //
+  return Gaudi::Math::ValueWithError ( v , e2 ) ;
+}
+// ============================================================================
+/*  evaluate igamma(b)
+ *  @param b (INPUT) the exponent
+ *  @return  1/Gamma(b)
+ *  @warning invalid and small covariances are ignored
+ */
+// ============================================================================
+Gaudi::Math::ValueWithError Gaudi::Math::igamma
+( const Gaudi::Math::ValueWithError& b )
+{
+  if ( 0 >= b.cov2 () || _zero ( b.cov2() ) )
+  { return Gaudi::Math::igamma ( b.value() ) ; }
+  //
+  const double bv = b.value() ;
+  const double v  = Gaudi::Math::igamma  ( bv ) ;
+  //
+  const double d1 = - Gaudi::Math::psi( bv ) / v ;
   const double d2 = d1 * d1 ;
   const double e2 = d2 * b.cov2() ;
   //
@@ -1872,6 +1890,24 @@ Gaudi::Math::ValueWithError Gaudi::Math::tanh
   //
   const double e2 = std::min ( d * d  * b.cov2() , 1.0 ) ;
   //
+  return Gaudi::Math::ValueWithError ( v , e2 ) ;
+}
+// ============================================================================
+/*  evaluate sech (b)
+ *  @param b (INPUT) the parameter
+ *  @warning invalid and small covariances are ignored
+ */
+// ============================================================================
+Gaudi::Math::ValueWithError Gaudi::Math::sech
+( const Gaudi::Math::ValueWithError& b )
+{
+  if ( 0 >= b.cov2 () || _zero ( b.cov2() ) )
+  { return Gaudi::Math::sech ( b.value() ) ; }
+  //
+  const double v  = Gaudi::Math::sech ( b.value() ) ;
+  const double d  = -v *    std::tanh ( b.value() ) ;
+  //
+  const double e2 = std::min ( d * d  * b.cov2() , 1.0 ) ;
   return Gaudi::Math::ValueWithError ( v , e2 ) ;
 }
 // ============================================================================

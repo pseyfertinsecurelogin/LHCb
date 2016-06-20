@@ -1,4 +1,4 @@
-// $Id: MoreFunctions.cpp 202694 2016-03-07 09:11:54Z ibelyaev $ 
+// $Id: MoreFunctions.cpp 206873 2016-06-12 10:28:52Z ibelyaev $ 
 // ============================================================================
 // Include files 
 // ============================================================================
@@ -6,6 +6,7 @@
 // ============================================================================
 #include <cmath>
 #include <climits>
+#include <complex>
 #include <cassert>
 // ============================================================================
 // LHCbMath
@@ -17,6 +18,8 @@
 // GSL 
 // ============================================================================
 #include "gsl/gsl_sf_hyperg.h"
+#include "gsl/gsl_sf_gamma.h"
+#include "gsl/gsl_sf_psi.h"
 // ============================================================================
 // Local
 // ============================================================================
@@ -28,8 +31,8 @@
  *  @see LHCbMath/MoreFunctions.h
  *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
  *  @date 2015-03-26
- *                    $Revision: 202694 $
- *  Last modification $Date: 2016-03-07 10:11:54 +0100 (Mon, 07 Mar 2016) $
+ *                    $Revision: 206873 $
+ *  Last modification $Date: 2016-06-12 12:28:52 +0200 (Sun, 12 Jun 2016) $
  *                 by $Author: ibelyaev $
  */  
 // ============================================================================
@@ -661,9 +664,9 @@ Gaudi::Math::erfcx ( const std::complex<double>& x )
  *  @see https://en.wikipedia.org/wiki/Faddeeva_function
  */
 // ============================================================================
-std::complex<double>
+std::complex<double> 
 Gaudi::Math::faddeeva_w ( const std::complex<double>& x ) 
-{ return Faddeeva::w( x ) ; }
+{ return Faddeeva::w ( x ) ; }
 // ============================================================================
 /*  complex error function (the error function of complex arguments)
  *  @param x  the argument 
@@ -691,6 +694,99 @@ Gaudi::Math::erf   ( const std::complex<double>& x )
 std::complex<double>  
 Gaudi::Math::erfc  ( const std::complex<double>& x ) 
 { return Faddeeva::erfc ( x ) ; }
+// ============================================================================
+/*  compute sech fuction 
+ *  \$f f(x) = \frac{1}{\cosh x} = \frac{2}{ e^{x}+e^{-x} }\f$
+ *  @return the value of sech function 
+ */
+// ============================================================================
+double Gaudi::Math::sech ( const double x ) 
+{ return 700 < std::abs ( x )  ? 0.0 : 2.0 / ( std::exp(x)+std::exp(-x) ) ; }
+// ============================================================================
+/*  compute sech function 
+ *  \$f f(x) = \frac{1}{\cosh x} = \frac{2}{ e^{x}+e^{-x} }\f$
+ *  @return the value of sech function 
+ */
+// ============================================================================
+std::complex<double> Gaudi::Math::sech 
+( const std::complex<double>& x )
+{ return 700 < std::abs ( x.real() ) ? 
+    std::complex<double>(0,0) : 2.0 / ( std::exp(x)+std::exp(-x) ) ; }
+// ============================================================================
+/*  compute inverse Gamma function 
+ *  \$f f(x) = \frac{1}{\Gamma(x)}\f$
+ *  @return the value of inverse Gamma functions 
+ */
+// ============================================================================
+double Gaudi::Math::igamma ( const double x ) 
+{
+  if ( x > 170 || ( x<=0 && LHCb::Math::isint ( x ) ) ) { return 0 ; }  // RETURN 
+  // use GSL: 
+  Gaudi::Math::GSL::GSL_Error_Handler sentry ;
+  //
+  gsl_sf_result result ;
+  const int ierror = gsl_sf_gammainv_e ( x , &result ) ;
+  if ( ierror ) 
+  {
+    //
+    if      ( ierror == GSL_EDOM     ) // input domain error, e.g sqrt(-1)
+    { return std::numeric_limits<double>::quiet_NaN(); }
+    //
+    if ( ierror == GSL_ERANGE   ||    // output range error, e.g. exp(1e100)
+         ierror == GSL_EINVAL   ||    // invalid argument supplied by user
+         ierror == GSL_EUNDRFLW ||    // underflow
+         ierror == GSL_EOVRFLW  ||    // overflow
+         ierror == GSL_ELOSS    ||    // loss of accuracy
+         ierror == GSL_EROUND    )    // failed because of roundoff error
+    {}
+    else
+    {
+      gsl_error ( "Error from gsl_sf_gammainv_e" ,
+                  __FILE__ , __LINE__ , ierror ) ;
+    } 
+  }
+  //
+  return result.val ;
+}
+// ============================================================================
+/*  compute psi function 
+ *  \$f f(x) = \frac{d}{dx}\ln \Gamma(x)\f$
+ *  @return the value of psi function 
+ */
+// ============================================================================G
+double Gaudi::Math::psi ( const double x ) 
+{
+  //
+  // use GSL: 
+  Gaudi::Math::GSL::GSL_Error_Handler sentry ;
+  //
+  gsl_sf_result result ;
+  const int ierror = gsl_sf_psi_e ( x , &result ) ;
+  if ( ierror ) 
+  {
+    //
+    if      ( ierror == GSL_EDOM     ) // input domain error, e.g sqrt(-1)
+    { return std::numeric_limits<double>::quiet_NaN(); }
+    //
+    if ( ierror == GSL_ERANGE   ||    // output range error, e.g. exp(1e100)
+         ierror == GSL_EINVAL   ||    // invalid argument supplied by user
+         ierror == GSL_EUNDRFLW ||    // underflow
+         ierror == GSL_EOVRFLW  ||    // overflow
+         ierror == GSL_ELOSS    ||    // loss of accuracy
+         ierror == GSL_EROUND    )    // failed because of roundoff error
+    {}
+    else
+    {
+      gsl_error ( "Error from gsl_sf_psi_e" ,
+                  __FILE__ , __LINE__ , ierror ) ;
+    } 
+  }
+  //
+  return result.val ;
+}
+
+
+
 // ============================================================================
 // The END 
 // ============================================================================
