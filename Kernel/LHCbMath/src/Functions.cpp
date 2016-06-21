@@ -46,7 +46,6 @@
 // Local
 // ============================================================================
 #include "GSL_sentry.h"
-#include "Faddeeva.hh"
 // ============================================================================
 /** @file
  *  Implementation file for functions from the file LHCbMath/Functions.h
@@ -58,19 +57,6 @@
  *  Last modification $Date$
  *                 by $author$
  */
-// ============================================================================
-/*  scaled complementary error function 
- *  \f$ 1 -  erf (x) = e^{-x^2} erfcx(x)  \f$ 
- *  @param x  the argument 
- *  @return the value of the scaled complementary error function 
- *  @attention  overflow happens for x<-26.6
- *  The actual implementation is copied from http://ab-initio.mit.edu/Faddeeva
- *  @see http://ab-initio.mit.edu/Faddeeva
- *  @see https://en.wikipedia.org/wiki/Error_function
- *  @see https://en.wikipedia.org/wiki/Faddeeva_function
- */
-// ============================================================================
-double Gaudi::Math::erfcx ( const double x ) { return Faddeeva::erfcx ( x ) ; }
 // ============================================================================
 // Rho-functions from Jackson
 // ============================================================================
@@ -289,6 +275,13 @@ namespace
    */
   const double s_SQRTPIHALF = std::sqrt( M_PI_2 ) ;
   // ==========================================================================
+  /** @var s_SQRTPI
+   *  helper constant \f$ \sqrt{\pi}\f$
+   *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+   *  @date 2016-06-11
+   */
+  const double s_SQRTPI = std::sqrt( M_PI ) ;
+  // ==========================================================================
   /** @var s_SQRT2PI
    *  helper constant \f$ \sqrt{2\pi}\f$
    *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
@@ -353,6 +346,20 @@ namespace
    */
   const double s_HALFSQRTPI_log  = std::log ( 0.5 * std::sqrt(     M_PI )  ) ;
   // ==========================================================================
+  /** @var s_SQRT2PISQUARED 
+   *  helper constant  \f$   \sqrt{2}\pi^2\f$
+   *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
+   *  @date 2016-06-11
+   */
+  const double s_SQRT2PISQUARED  = std::sqrt(2.0)*M_PI*M_PI ;
+  // ==========================================================================
+  /** @var s_SQRT2PISQUAREDi
+   *  helper constant  \f$   \frac{1}{\sqrt{2}\pi^2}\f$
+   *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
+   *  @date 2016-06-11
+   */
+  const double s_SQRT2PISQUAREDi = 1.0/(std::sqrt(2.0)*M_PI*M_PI) ;
+  // ==========================================================================
   // Bukin & Co
   // ==========================================================================
   /** @var s_Bukin
@@ -370,6 +377,13 @@ namespace
    *  @date 2010-04-19
    */
   const double s_ln2 = std::log ( 2.0 ) ;
+  // ==========================================================================
+  /** @var s_SQRT3overPI 
+   *  helper constant \f$ \frac{\sqrt{3}}{\pi} \f$
+   *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
+   *  @date 2016-06-14
+   */
+  const double s_SQRT3overPI = std::sqrt(3.0)/M_PI ;
   // ==========================================================================
   /** helper function for itegration of Bukin's function
    *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
@@ -763,8 +777,8 @@ namespace
         const double a1  = ( a - b2a ) * sqrt_alpha ;
         const double b1  = ( b - b2a ) * sqrt_alpha ;
         return s_HALFSQRTPI / sqrt_alpha * 
-          ( my_exp ( -alpha * a * a + beta * a ) * Faddeeva::erfcx ( a1 ) - 
-            my_exp ( -alpha * b * b + beta * b ) * Faddeeva::erfcx ( b1 ) ) ;  
+          ( my_exp ( -alpha * a * a + beta * a ) * Gaudi::Math::erfcx ( a1 ) - 
+            my_exp ( -alpha * b * b + beta * b ) * Gaudi::Math::erfcx ( b1 ) ) ;  
       }
       else if ( a <= b2a  && b<= b2a ) 
       { return gaussian_int ( alpha , beta , 2*b2a - b , 2*b2a - a ) ; }
@@ -803,7 +817,7 @@ namespace
     {
       const double a1  = ( a - b2a ) * sqrt_alpha ;
       return s_HALFSQRTPI / sqrt_alpha * 
-        my_exp ( -alpha * a * a + beta * a ) * Faddeeva::erfcx ( a1 ) ;
+        my_exp ( -alpha * a * a + beta * a ) * Gaudi::Math::erfcx ( a1 ) ;
     }
     //
     return 
@@ -899,6 +913,19 @@ namespace
       (Gaudi::Math::BreitWigner*) params ;
     //
     return (*bw)(x) ;
+  }
+  // ==========================================================================
+  /** helper function for integration of Swanson shape
+   *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+   *  @date 2016-06-11
+   */
+  double swanson_GSL ( double x , void* params )
+  {
+    //
+    const Gaudi::Math::Swanson* sw =
+      (Gaudi::Math::Swanson*) params ;
+    //
+    return (*sw)(x) ;
   }
   // ==========================================================================
   /** helper function for integration of Flatte shape
@@ -1083,6 +1110,18 @@ namespace
   {
     //
     const Gaudi::Math::Voigt* f = (Gaudi::Math::Voigt*) params ;
+    //
+    return (*f)(x) ;
+  }
+  // ==========================================================================
+  /** helper function for integration of PseudoVoigt shape
+   *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
+   *  @date 2016-06-13
+   */
+  double pseudovoigt_GSL ( double x , void* params )
+  {
+    //
+    const Gaudi::Math::PseudoVoigt* f = (Gaudi::Math::PseudoVoigt*) params ;
     //
     return (*f)(x) ;
   }
@@ -4927,9 +4966,11 @@ Gaudi::Math::Voigt::~Voigt(){}
 double Gaudi::Math::Voigt::operator() ( const double x ) const
 {
   //
-  const double s2 = 1 / ( m_sigma * s_SQRT2 ) ;
+  const double s1 = 1 / ( m_sigma * s_SQRT2   ) ;
+  const double s2 = 1 / ( m_sigma * s_SQRT2PI ) ;
   //
-  return Faddeeva::w ( std::complex<double> ( x - m_m0 , m_gamma ) * s2 ).real() * s2 ;
+  return Gaudi::Math::faddeeva_w
+    ( std::complex<double> ( x - m_m0 , m_gamma ) * s1 ).real() * s2 ;
 }
 // ============================================================================
 // get the integral between low and high limits
@@ -5060,9 +5101,608 @@ double Gaudi::Math::Voigt::fwhm   () const
   return 0.5346 * m_gamma + std::sqrt ( 0.2166 * m_gamma * m_gamma + fg * fg ) ;
 }
 // ============================================================================
+
+
+
+
+
+// ============================================================================
+// PseudoVoigtian
+// T. Ida, M. Ando and H. Toraya
+// "Extended pseudo-Voigt function for approximating the Voigt profile"
+// J. Appl. Cryst. (2000). 33, 1311-1316
+// doi:10.1107/S0021889800010219
+// http://dx.doi.org/10.1107/S0021889800010219
+// ============================================================================
+// constructor  from all parameters
+// ============================================================================
+Gaudi::Math::PseudoVoigt::PseudoVoigt
+( const double m0    ,
+  const double gamma ,
+  const double sigma )
+  : std::unary_function<double,double>()
+    //
+  , m_m0        ( m0 )
+  , m_gamma     ( std::abs ( gamma ) )
+  , m_sigma     ( std::abs ( sigma ) )
+//
+  , m_w         () 
+  , m_eta       ()
+  , m_workspace ()
+{
+  update() ;  
+}
+// ============================================================================
+// destructor
+// ============================================================================
+Gaudi::Math::PseudoVoigt::~PseudoVoigt(){}
+// ============================================================================
+namespace 
+{
+  // ==========================================================================
+  /// gaussian profile 
+  inline double f_gauss       ( const double dx , const double gamma ) 
+  { return my_exp ( - dx * dx / ( gamma * gamma) ) / ( gamma * s_SQRTPI ) ; }
+  // ==========================================================================
+  /// lorenzian profile 
+  inline double f_lorentzian  ( const double dx , const double gamma ) 
+  { return gamma / ( ( dx*dx + gamma * gamma)  * M_PI ) ; }
+  // ==========================================================================
+  /// irrational profile 
+  inline double f_irrational  ( const double dx , const double gamma ) 
+  { return std::pow ( 1.0 +  dx*dx/(gamma*gamma) , -1.5 ) / ( 2 * gamma ) ; }
+  // ==========================================================================
+  /// squared sech profile 
+  inline double f_sech2       ( const double dx , const double gamma ) 
+  { 
+    const double s = Gaudi::Math::sech ( dx / gamma ) ;
+    return s * s / ( 2 * gamma )  ; 
+  }
+  // ==========================================================================
+  // parametrization data
+  // ==========================================================================
+  const std::array<double,7> s_Ai = {{   0.66000 ,   0.15021 ,  -1.24984 , 
+                                         4.74052 ,  -9.48291 ,   8.48252 , -2.95553  }} ;
+  const std::array<double,7> s_Bi = {{ -0.42179  ,  -1.25693 ,  10.30003 , 
+                                       -23.45651 ,  29.14158 , -16.60453 ,  3.19974  }} ;
+  const std::array<double,7> s_Ci = {{  1.19913  ,   1.43021 , -15.36331 , 
+                                        47.06071 , -73.61822 ,  57.92559 , -17.80614 }} ;
+  const std::array<double,7> s_Di = {{   1.10186 ,  -0.47745 ,  -0.68688 , 
+                                         2.76622 ,  -4.55466 ,   4.05475 ,  -1.26571 }} ;
+  const std::array<double,7> s_Fi = {{ -0.30165  ,  -1.38927 ,   9.31550 , 
+                                       -24.10743 ,  34.96491 , -21.18862 ,   3.70290 }} ;
+  const std::array<double,7> s_Gi = {{ 0.25437   ,  -0.14107 ,   3.23653 ,
+                                       -11.09215 ,  22.10544 , -24.12407 ,   9.76947 }} ;
+  const std::array<double,7> s_Hi = {{ 1.01579   ,   1.50429 ,  -9.21815 ,
+                                       23.59717  , -39.71134 ,  32.83023 , -10.02142 }} ;
+  // ==========================================================================
+  inline double w_G ( const double rho ) 
+  { return 1 - rho    *Gaudi::Math::Clenshaw::monomial_sum ( s_Ai.rbegin() , 
+                                                             s_Ai.rend()   , rho ).first ; }
+  inline double w_L ( const double rho ) 
+  { return 1 - (1-rho)*Gaudi::Math::Clenshaw::monomial_sum ( s_Bi.rbegin() , 
+                                                             s_Bi.rend()   , rho ).first ; }
+  inline double w_I ( const double rho ) 
+  { return             Gaudi::Math::Clenshaw::monomial_sum ( s_Ci.rbegin() , 
+                                                             s_Ci.rend()   , rho ).first ; }
+  
+  inline double w_P ( const double rho ) 
+  { return             Gaudi::Math::Clenshaw::monomial_sum ( s_Di.rbegin() ,
+                                                             s_Di.rend()   , rho ).first ; }
+  
+  inline double eta_L ( const double rho ) 
+  { return rho * ( 1 + ( 1 - rho ) * Gaudi::Math::Clenshaw::monomial_sum ( s_Fi.rbegin() , 
+                                                                           s_Fi.rend()   , rho ).first ) ; } 
+  inline double eta_I ( const double rho ) 
+  { return rho * ( 1 - rho ) * Gaudi::Math::Clenshaw::monomial_sum ( s_Gi.rbegin() , 
+                                                                     s_Gi.rend()   , rho ).first  ; }
+  inline double eta_P ( const double rho ) 
+  { return rho * ( 1 - rho ) * Gaudi::Math::Clenshaw::monomial_sum ( s_Hi.rbegin() , 
+                                                                     s_Hi.rend()   , rho ).first  ; }  
+  // ==========================================================================
+  // constants 
+  // ==========================================================================
+  // W_G <--> gamma_G 
+  const double s_PV_cG = 1.0 / ( 2*std::sqrt ( std::log ( 2.0 ) ) ) ;
+  // W_L <--> gamma_L 
+  const double s_PV_cL = 0.5  ;
+  // W_I <--> gamma_I 
+  const double s_PV_cI = 1/(2.0*std::sqrt(std::pow(2.0,2.0/3)-1)) ;
+  // W_P <--> gamma_P 
+  const double s_PV_cP = 1/(2.0*std::acosh(std::sqrt(2.0))) ;
+  // ==========================================================================
+}
+// ============================================================================
+double Gaudi::Math::PseudoVoigt::fwhm_gauss()  const 
+{ return 2 * m_sigma * s_Bukin ; }
+// ============================================================================
+void Gaudi::Math::PseudoVoigt::update() 
+{
+  const double _rho = rho() ;
+  //
+  m_w  [0] =   w_G ( _rho ) * s_PV_cG ;
+  m_w  [1] =   w_L ( _rho ) * s_PV_cL ;
+  m_w  [2] =   w_I ( _rho ) * s_PV_cI ;
+  m_w  [3] =   w_P ( _rho ) * s_PV_cP ;
+  //
+  m_eta[1] = eta_L ( _rho )           ;
+  m_eta[2] = eta_I ( _rho )           ;
+  m_eta[3] = eta_P ( _rho )           ;
+  //
+  m_eta[0] = 1 - m_eta[1] - m_eta[2] - m_eta[3] ;
+}
+// ============================================================================
+// get the value of PseudoVoigt function
+// ============================================================================
+double Gaudi::Math::PseudoVoigt::operator() ( const double x ) const
+{
+  //
+  const double gamma_sum = fwhm_gauss() + fwhm_lorentzian() ;
+  //
+  const double dx =  ( x - m_m0 ) / gamma_sum ;
+  //
+  return 
+    ( f_gauss      ( dx , m_w[0] ) * m_eta[0] + 
+      f_lorentzian ( dx , m_w[1] ) * m_eta[1] +             
+      f_irrational ( dx , m_w[2] ) * m_eta[2] + 
+      f_sech2      ( dx , m_w[3] ) * m_eta[3]   ) / gamma_sum ;
+}
+// ============================================================================
+// get the Gaussian component 
+// ============================================================================
+double Gaudi::Math::PseudoVoigt::gaussian   ( const double x ) const 
+{
+  const double gamma_sum = fwhm_gauss() + fwhm_lorentzian() ;
+  const double dx =  ( x - m_m0 ) / gamma_sum ;
+  //
+  return f_gauss ( dx , m_w[0] ) * m_eta[0] / gamma_sum ;
+}
+// ============================================================================
+// get the Lorentzian component 
+// ============================================================================
+double Gaudi::Math::PseudoVoigt::lorentzian   ( const double x ) const 
+{
+  const double gamma_sum = fwhm_gauss() + fwhm_lorentzian() ;
+  const double dx =  ( x - m_m0 ) / gamma_sum ;
+  //
+  return f_lorentzian ( dx , m_w[1] ) * m_eta[1] / gamma_sum ;
+}
+// ============================================================================
+// get the Irrational component 
+// ============================================================================
+double Gaudi::Math::PseudoVoigt::irrational  ( const double x ) const 
+{
+  const double gamma_sum = fwhm_gauss() + fwhm_lorentzian() ;
+  const double dx =  ( x - m_m0 ) / gamma_sum ;
+  //
+  return f_irrational ( dx , m_w[2] ) * m_eta[2] / gamma_sum ;
+}
+// ============================================================================
+// get the Sech2 component 
+// ============================================================================
+double Gaudi::Math::PseudoVoigt::sech2  ( const double x ) const 
+{
+  const double gamma_sum = fwhm_gauss() + fwhm_lorentzian() ;
+  const double dx =  ( x - m_m0 ) / gamma_sum ;
+  //
+  return f_sech2 ( dx , m_w[3] ) * m_eta[3] / gamma_sum ;
+}
+// ============================================================================
+// get the integral between low and high limits
+// ============================================================================
+double  Gaudi::Math::PseudoVoigt::integral
+( const double low  ,
+  const double high ) const
+{
+  //
+  if ( s_equal ( low , high ) ) { return                 0.0 ; } // RETURN
+  if (           low > high   ) { return - integral ( high ,
+                                                      low  ) ; } // RETURN
+  //
+  const double width = std::max ( m_sigma , m_gamma ) ;
+  //
+  // split into reasonable sub intervals
+  //
+  const double x_low   = m_m0 - 4 * width ;
+  const double x_high  = m_m0 + 4 * width ;
+  //
+  if      ( low <  x_low  && x_low  < high )
+  {
+    return
+      integral (   low  , x_low   ) +
+      integral ( x_low  ,   high  ) ;
+  }
+  else if ( low <  x_high && x_high < high )
+  {
+    return
+      integral (   low  , x_high  ) +
+      integral ( x_high ,   high  ) ;
+  }
+  //
+  // split, if interval too large
+  //
+  if ( 0 < width && 10 * width < high - low  )
+  {
+    return
+      integral ( low                   , 0.5 *  ( high + low ) ) +
+      integral ( 0.5 *  ( high + low ) ,          high         ) ;
+  }
+  //
+  // use GSL to evaluate the integral
+  //
+  Sentry sentry ;
+  //
+  gsl_function F                 ;
+  F.function = &pseudovoigt_GSL ;
+  const PseudoVoigt* _f = this  ;
+  F.params   = const_cast<PseudoVoigt*> ( _f ) ;
+  //
+  //
+  double result   =  1.0 ;
+  double error    = -1.0 ;
+  //
+  const double in_tail = 
+    ( low  > m_m0 + 10 * width ) || ( high < m_m0 + 10 * width ) ;
+  //
+  const int ierror = gsl_integration_qag
+    ( &F                ,            // the function
+      low   , high      ,            // low & high edges
+      in_tail ? s_PRECISION_TAIL : s_PRECISION , // absolute precision
+      in_tail ? s_PRECISION_TAIL : s_PRECISION , // relative precision
+      s_SIZE            ,            // size of workspace
+      GSL_INTEG_GAUSS31 ,            // integration rule
+      workspace ( m_workspace ) ,    // workspace
+      &result           ,            // the result
+      &error            ) ;          // the error in result
+  //
+  if ( ierror )
+  {
+    gsl_error ( "Gaudi::Math::PseudoVoigt::QAG" ,
+                __FILE__ , __LINE__ , ierror ) ;
+  }
+  //
+  return result ;
+}
+// ============================================================================
+// get the integral between low and high limits
+// ============================================================================
+double  Gaudi::Math::PseudoVoigt::integral () const { return 1 ; }
+// ============================================================================
+// set the proper parameters
+// ============================================================================
+bool Gaudi::Math::PseudoVoigt::setM0 ( const double x )
+{
+  //
+  if ( s_equal ( x , m_m0 ) ) { return false ; }
+  //
+  m_m0 = x ;
+  //
+  return true ;
+}
+// ============================================================================
+// set the proper parameters
+// ============================================================================
+bool Gaudi::Math::PseudoVoigt::setGamma ( const double x )
+{
+  //
+  const double v = std::abs ( x ) ;
+  if ( s_equal ( v , m_gamma ) ) { return false ; }
+  //
+  m_gamma = v ;
+  //
+  // recalculate data 
+  update() ;
+  //
+  return true ;
+}
+// ============================================================================
+// set the proper parameters
+// ============================================================================
+bool Gaudi::Math::PseudoVoigt::setSigma ( const double x )
+{
+  //
+  const double v = std::abs ( x ) ;
+  if ( s_equal ( v , m_sigma ) ) { return false ; }
+  //
+  m_sigma = v ;
+  //
+  // recalculate data 
+  update() ;
+  //
+  return true ;
+}
+// ============================================================================
  
 
 
+
+
+
+
+// ============================================================================
+// SWANSON CUSP 
+// ============================================================================
+// constructor
+// ============================================================================
+Gaudi::Math::Swanson::Swanson
+( const double         m1     ,   // the first  real particle 
+  const double         m2     ,   // the second real particle                
+  const double         m1_0   ,   // the first  particle for cusp
+  const double         m2_0   ,   // the second particle for cusp 
+  const double         beta_0 ,   // beta_0 parameter
+  const unsigned short L      )   // orbital momentum for real particles 
+  : std::unary_function<double,double> ()
+    //
+  , m_bw ( ( std::abs ( m1 )  + std::abs ( m2 ) ) * 2.1 , // almost arbitrary 
+           ( std::abs ( m1 )  + std::abs ( m2 ) ) * 0.5 , // almost arbitrary  
+           std::abs ( m1 ) , 
+           std::abs ( m2 ) ,  
+           L               ) 
+  , m_m1         ( std::abs (   m1_0 ) )
+  , m_m2         ( std::abs (   m2_0 ) )
+  , m_beta0      ( std::abs ( beta_0 ) )
+    //
+  , m_workspace  ()
+    //
+{}
+// ============================================================================
+// constructor
+// ============================================================================
+Gaudi::Math::Swanson::Swanson
+( const double         m1             ,   // the first  real particle 
+  const double         m2             ,   // the second real particle                
+  const double         m1_0           ,   // the first  particle for cusp
+  const double         m2_0           ,   // the second particle for cusp 
+  const double         beta_0         ,   // beta_0 parameter
+  const unsigned short L              ,   // orbital momentum for real particles 
+  const Gaudi::Math::FormFactors::JacksonRho  r )  //  formfactor
+  : std::unary_function<double,double> ()
+  , m_bw ( ( std::abs ( m1 )  + std::abs ( m2 ) ) * 2.1 , // almost arbitrary 
+           ( std::abs ( m1 )  + std::abs ( m2 ) ) * 0.5 , // almost arbitrary  
+           std::abs ( m1 ) , 
+           std::abs ( m2 ) ,  
+           L  , r          )            
+  , m_m1         ( std::abs (   m1_0 ) )
+  , m_m2         ( std::abs (   m2_0 ) )
+  , m_beta0      ( std::abs ( beta_0 ) )
+    //
+  , m_workspace  ()
+    //
+{}
+
+// ============================================================================
+// constructor
+// ============================================================================
+Gaudi::Math::Swanson::Swanson
+( const double         m1             ,   // the first  real particle 
+  const double         m2             ,   // the second real particle                
+  const double         m1_0           ,   // the first  particle for cusp
+  const double         m2_0           ,   // the second particle for cusp 
+  const double         beta_0         ,   // beta_0 parameter
+  const unsigned short L              ,   // orbital momentum for real particles 
+  const Gaudi::Math::FormFactor&   f  )  //  formfactor
+  : std::unary_function<double,double> ()
+  , m_bw ( ( std::abs ( m1 )  + std::abs ( m2 ) ) * 2.1 , // almost arbitrary 
+           ( std::abs ( m1 )  + std::abs ( m2 ) ) * 0.5 , // almost arbitrary  
+           std::abs ( m1 ) , 
+           std::abs ( m2 ) ,  
+           L  , f          )            
+  , m_m1         ( std::abs (   m1_0 ) )
+  , m_m2         ( std::abs (   m2_0 ) )
+  , m_beta0      ( std::abs ( beta_0 ) )
+    //
+  , m_workspace  ()
+    //
+{}
+
+
+// ============================================================================
+// constructor
+// ============================================================================
+Gaudi::Math::Swanson::Swanson
+( const Gaudi::Math::BreitWigner&   bw             ,   // breit-wigner 
+  const double         m1_0   ,   // the first  particle for cusp
+  const double         m2_0   ,   // the second particle for cusp 
+  const double         beta_0 )   // beta_0 parameter
+  : std::unary_function<double,double> ()
+  , m_bw     ( bw ) 
+  , m_m1     ( std::abs (   m1_0 ) )
+  , m_m2     ( std::abs (   m2_0 ) )
+  , m_beta0  ( std::abs ( beta_0 ) )
+    //
+  , m_workspace  ()
+    //
+{}
+// ============================================================================
+// copy constructor 
+// ============================================================================
+Gaudi::Math::Swanson::Swanson
+( const Gaudi::Math::Swanson& sw ) 
+  : std::unary_function<double,double> ( sw )
+  , m_bw    ( sw.m_bw    )
+  , m_m1    ( sw.m_m1    )
+  , m_m2    ( sw.m_m2    )
+  , m_beta0 ( sw.m_beta0 )
+    //
+  , m_workspace  ()
+    //
+{}
+// ============================================================================
+// destructor
+// ============================================================================
+Gaudi::Math::Swanson::~Swanson (){}
+// ============================================================================
+// set the proper parameters
+// ============================================================================
+bool Gaudi::Math::Swanson::setM1_0 ( const double x )
+{
+  //
+  const double v = std::abs ( x ) ;
+  if ( s_equal ( v , m_m1 ) ) { return false ; }
+  //
+  m_m1 = v ;
+  //
+  return true ;
+}
+// ============================================================================
+bool Gaudi::Math::Swanson::setM2_0 ( const double x )
+{
+  //
+  const double v = std::abs ( x ) ;
+  if ( s_equal ( v , m_m2 ) ) { return false ; }
+  //
+  m_m2 = v ;
+  //
+  return true ;
+}
+// ============================================================================
+bool Gaudi::Math::Swanson::setBeta0( const double x )
+{
+  //
+  const double v = std::abs ( x ) ;
+  if ( s_equal ( v , m_beta0 ) ) { return false ; }
+  //
+  m_beta0 = v ;
+  //
+  return true ;
+}
+// ============================================================================
+//  calculate the Swanson amplitude
+// ============================================================================
+std::complex<double>
+Gaudi::Math::Swanson::amplitude ( const double x ) const
+{
+  //
+  const double  f = - s_SQRT2PISQUAREDi*m_beta0/(1/m_m1+1/m_m2) ;
+  //
+  const double zf = 4 * m_m1 * m_m2 / ( m_beta0 * m_beta0 * ( m_m1 + m_m2 ) ) ;
+  const double z  = zf * ( m_m1 + m_m2 - x ) ;
+  //
+  // above threshold, Z is negative 
+  std::complex<double> iZ = 
+    0 <= z ? 
+    std::complex<double>(     std::sqrt (            z   ) , 0 ) :
+    std::complex<double>( 0 , std::sqrt ( std::abs ( z ) )     ) ;
+  //
+  return f * 0.5 * s_SQRTPIHALF * ( 1.0 - s_SQRTPI * iZ * Gaudi::Math::erfcx ( iZ ) ) ;
+}
+// ============================================================================
+//  calculate the Swanson shape 
+// ============================================================================
+double Gaudi::Math::Swanson::swanson ( const double x ) const
+{
+  if ( m_bw.m1() + m_bw.m2() >= x ) { return 0 ; }
+  //
+  const double g  = m_bw.gamma ( x ) ;
+  if ( 0 >= g ) { return 0 ; }
+  //
+  const std::complex<double> a = amplitude ( x ) ;
+  //
+  return 2 * x * std::norm ( a ) * g / m_bw.gam0() / M_PI ;
+}
+// ============================================================================
+// get the integral between low and high limits
+// ============================================================================
+double  Gaudi::Math::Swanson::integral
+( const double low  ,
+  const double high ) const
+{
+  if ( s_equal ( low , high ) ) { return                 0.0 ; } // RETURN
+  if (           low > high   ) { return - integral ( high ,
+                                                      low  ) ; } // RETURN
+  //
+  const double x_min  = m_bw.m1() + m_bw.m2() ;
+  if ( x_min >= high ) { return                        0   ; }
+  if ( x_min >  low  ) { return integral  ( x_min , high ) ; }
+  //
+  // split into reasonable sub intervals
+  //
+  const double x1   = x_min +  1 * ( m_m1 + m_m2 ) ;
+  const double x2   = x_min +  2 * ( m_m1 + m_m2 ) ;
+  const double x5   = x_min +  5 * ( m_m1 + m_m2 ) ;
+  const double x10  = x_min + 10 * ( m_m1 + m_m2 ) ;
+  //
+  if ( low <  x1 &&  x1 < high ) { return integral ( low ,  x1 ) + integral (  x1 , high ) ; }
+  if ( low <  x2 &&  x2 < high ) { return integral ( low ,  x2 ) + integral (  x2 , high ) ; }
+  if ( low <  x5 &&  x5 < high ) { return integral ( low ,  x5 ) + integral (  x5 , high ) ; }
+  if ( low < x10 && x10 < high ) { return integral ( low , x10 ) + integral ( x10 , high ) ; }
+  //
+  // use GSL to evaluate the integral
+  //
+  Sentry sentry ;
+  //
+  gsl_function F                 ;
+  F.function = &swanson_GSL ;
+  const Swanson* _sw = this  ;
+  F.params   = const_cast<Swanson*> ( _sw ) ;
+  //
+  double result   = 1.0 ;
+  double error    = 1.0 ;
+  //
+  const int ierror = gsl_integration_qag
+    ( &F                ,            // the function
+      low   , high      ,            // low & high edges
+      s_PRECISION       ,            // absolute precision
+      ( x10  <= low  ) ? s_PRECISION_TAIL :
+      s_PRECISION       ,            // relative precision
+      s_SIZE            ,            // size of workspace
+      GSL_INTEG_GAUSS31 ,            // integration rule
+      workspace ( m_workspace ) ,    // workspace
+      &result           ,            // the result
+      &error            ) ;          // the error in result
+  //
+  if ( ierror )
+  {
+    gsl_error ( "Gaudi::Math::Swanson::QAG" ,
+                __FILE__ , __LINE__ , ierror ) ;
+  }
+  //
+  return result ;
+}
+// // ============================================================================
+// // get the integral b
+// // ============================================================================
+// double  Gaudi::Math::Swanson::integral () const
+// {
+//   //
+//   const double x_min = m_bw.m1() + m_bw.m2() ;
+//   //
+//   // split into reasonable sub intervals
+//   //
+//   const double x10  = x_min + 10 * ( m_m1 + m_m2 ) ;
+//   //
+//   // use GSL to evaluate the integral
+//   //
+//   Sentry sentry ;
+//   //
+//   gsl_function F                 ;
+//   F.function = &swanson_GSL ;
+//   const Swanson* _sw = this  ;
+//   F.params   = const_cast<Swanson*> ( _sw ) ;
+//   //
+//   double result   = 1.0 ;
+//   double error    = 1.0 ;
+//   //
+//   const double x_high = x10 ;
+//   const int ierror = gsl_integration_qagiu
+//     ( &F                ,         // the function
+//       x_high            ,         // "low" edge
+//       s_PRECISION       ,         // absolute precision
+//       s_PRECISION_TAIL  ,         // relative precision
+//       s_SIZE            ,         // size of workspace
+//       workspace ( m_workspace ) , // workspace
+//       &result           ,         // the result
+//       &error            ) ;       // the error in result
+//   //
+//   if ( ierror )
+//   {
+//     gsl_error ( "Gaudi::Math::Swanson::QAGIU" ,
+//                 __FILE__ , __LINE__ , ierror ) ;
+//     result = 0.0 ;
+//   }
+//   //
+//   return result + integral ( x_min , x_high );
+// }
 // ============================================================================
 // LASS: Kpi S-wave 
 // ============================================================================
@@ -8088,10 +8728,98 @@ double Gaudi::Math::Sech::cdf ( const double x ) const
     std::atan (  std::exp ( y ) ) / M_PI_2 ;
 }
 // ============================================================================
+// get quantile (0<p<1)
+// ============================================================================
+double Gaudi::Math::Sech::quantile ( const double p ) const 
+{ return 
+    0 >= p || s_zero  ( p     ) ? -s_INFINITY :
+    1 <= p || s_equal ( p , 1 ) ? +s_INFINITY : 
+    m_mean + m_sigma * 2 / M_PI * std::log( std::tan ( M_PI * p /  2 ) ) ; }
+// ============================================================================
+
+// ============================================================================
+// Logistic
+// ============================================================================
+/*  constructor with all parameters
+ *  @param mean  \f$\mu\f$-parameter 
+ *  @param sigma \f$\sigma\f$-parameter
+ */
+// ============================================================================
+Gaudi::Math::Logistic::Logistic
+( const double mean  ,
+  const double sigma ) 
+  : std::unary_function<double,double>() 
+  , m_mean  (             mean    ) 
+  , m_sigma (  std::abs ( sigma ) )
+{}
+// ============================================================================
+// destructor
+// ============================================================================
+Gaudi::Math::Logistic::~Logistic(){}
+// ============================================================================
+// evaluate sech function 
+// ============================================================================
+double Gaudi::Math::Logistic::pdf ( const double x ) const 
+{
+  const double s = m_sigma * s_SQRT3overPI ;
+  const long double y = ( x - m_mean ) / ( 2 * s ) ;
+  if  ( GSL_LOG_DBL_MAX < std::abs( y ) ) { return 0 ; }
+  const long double c = std::cosh ( y ) ;
+  return 0.25 / c / c / s  ;
+}
+// ============================================================================
+bool Gaudi::Math::Logistic::setMean ( const double value ) 
+{
+  if ( s_equal ( value , m_mean  ) ) { return false ; }
+  m_mean  = value ;
+  return true ;
+}
+// ============================================================================
+bool Gaudi::Math::Logistic::setSigma ( const double value ) 
+{
+  const double value_ = std::abs ( value ) ;
+  if ( s_equal ( value_ , m_sigma  ) ) { return false ; }
+  m_sigma  = value_ ;
+  return true ;
+}
+// ============================================================================
+// get integral from low to high 
+// ============================================================================
+double Gaudi::Math::Logistic::integral 
+( const double low  ,
+  const double high ) const 
+{ return s_equal ( low , high ) ? 0.0 : cdf ( high ) - cdf ( low ) ; }
+// ============================================================================
+// get integral from -infinity to + infinity 
+// ============================================================================
+double Gaudi::Math::Logistic::integral () const { return 1 ; } 
+// ============================================================================
+// evaluate CDF function 
+// ============================================================================
+double Gaudi::Math::Logistic::cdf ( const double x ) const 
+{
+  const double s = m_sigma * s_SQRT3overPI ;
+  const long double y = ( x - m_mean ) / ( 2 * s ) ;
+  return 0.5 * ( 1 + std::tanh ( y ) ) ;
+}
+// ============================================================================
+// get parameter s 
+// ============================================================================
+double Gaudi::Math::Logistic::s() const 
+{ return m_sigma * s_SQRT3overPI ; }
+// ============================================================================
+// quantile function  (0<p<1)
+// ============================================================================
+double Gaudi::Math::Logistic::quantile ( const double p ) const 
+{ return
+    0 >= p || s_zero  ( p     ) ? -s_INFINITY :
+    1 <= p || s_equal ( p , 1 ) ? +s_INFINITY : 
+    m_mean + m_sigma * s_SQRT3overPI * std::log ( p / ( 1 - p ) ) ; }
 
 
+  
 
-
+     
 // ============================================================================
 // Argus
 // ============================================================================

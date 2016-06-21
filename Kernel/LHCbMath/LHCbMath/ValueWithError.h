@@ -728,6 +728,15 @@ namespace Gaudi
     ValueWithError tanh 
     ( const ValueWithError& b ) ;
     // ========================================================================    
+    /** evaluate sech(b)
+     *  @param b (INPUT) the parameter 
+     *  @return  sech(b)
+     *  @warning invalid and small covariances are ignored 
+     */
+    GAUDI_API
+    ValueWithError sech 
+    ( const ValueWithError& b ) ;
+    // ========================================================================    
     /** evaluate erf(b)
      *  @param b (INPUT) the parameter 
      *  @return  erf(b)
@@ -848,6 +857,15 @@ namespace Gaudi
      */
     GAUDI_API
     ValueWithError lgamma
+    ( const ValueWithError& b ) ;
+    // ========================================================================    
+    /** evaluate igamma(b)
+     *  @param b (INPUT) the parameter 
+     *  @return  1/Gamma(b)
+     *  @warning invalid and small covariances are ignored 
+     */
+    GAUDI_API
+    ValueWithError igamma
     ( const ValueWithError& b ) ;
     // ========================================================================    
     /** evaluate <code>hypot(x,y)</code>
