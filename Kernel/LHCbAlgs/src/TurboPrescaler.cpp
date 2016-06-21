@@ -24,9 +24,6 @@ using namespace LHCb;
 DECLARE_ALGORITHM_FACTORY( TurboPrescaler )
 
 
-  //=============================================================================
-  // Standard constructor, initializes variables
-  //=============================================================================
 TurboPrescaler::TurboPrescaler( const std::string& name,
     ISvcLocator* pSvcLocator)
 : GaudiAlgorithm ( name , pSvcLocator )
@@ -42,14 +39,7 @@ TurboPrescaler::TurboPrescaler( const std::string& name,
   declareProperty("IPropertyConfigSvcInstance", m_propertyConfigSvcName = "PropertyConfigSvc");
 
 }
-//=============================================================================
-// Destructor
-//=============================================================================
-TurboPrescaler::~TurboPrescaler() {} 
 
-//=============================================================================
-// Initialization
-//=============================================================================
 StatusCode TurboPrescaler::initialize() {
   StatusCode sc = StatusCode::SUCCESS;
 
@@ -58,15 +48,11 @@ StatusCode TurboPrescaler::initialize() {
     fatal() << "Failed to get the IConfigAccessSvc." << endmsg;
     return StatusCode::FAILURE;
   }
-      
-  setupPrescalers();
+  setupPrescalers();    
 
   return sc;
 }
 
-//=============================================================================
-// Main execution
-//=============================================================================
 StatusCode TurboPrescaler::execute() {
   StatusCode sc = StatusCode::SUCCESS;
 
@@ -147,9 +133,6 @@ StatusCode TurboPrescaler::execute() {
   return sc;
 }
 
-//=============================================================================
-//Get map of line names and prescales from requested TCK 
-//=============================================================================
 void TurboPrescaler::getPrescalesFromTCK(unsigned int tck, std::map<std::string, double> &prescales, std::map<std::string, double> &postscales, std::map<std::string, double> &scaleProducts){
   prescales.clear();
   postscales.clear();
@@ -227,13 +210,7 @@ void TurboPrescaler::getPrescalesFromTCK(unsigned int tck, std::map<std::string,
   }
 }
 
-//========================================================================
-// Create the DeterministicPrescaler instances
-//========================================================================
 void TurboPrescaler::setupPrescalers(){
-  if(UNLIKELY( msgLevel(MSG::DEBUG))){debug() << "Initialising prescalers	" << endmsg;}
-
-  StatusCode final = StatusCode::SUCCESS;
   prescalers.clear();
 
   //== Get the "Context" option if in the file...
@@ -243,12 +220,7 @@ void TurboPrescaler::setupPrescalers(){
   //= Get the Application manager, to see if algorithm exist
   IAlgManager* appMgr = NULL;
   service("ApplicationMgr",appMgr);
-  if ( appMgr )  {
-    fatal() << "No ApplicationMgr service, stopping." << endmsg;
-    return;
-  }
-
-  assert(appMgr);
+  
   for( std::map<std::string,double>::iterator it=m_outputPS.begin(); it!=m_outputPS.end(); ++it){
     std::string tn = "DeterministicPrescaler/";
     tn.append(it->first);
@@ -304,12 +276,12 @@ void TurboPrescaler::setupPrescalers(){
 
 }
 
-//=============================================================================
-// Compare scale products between MC to run on and the TCK to emulate
-//=============================================================================
 void TurboPrescaler::updatePrescalers(){
   for( auto i=m_prescalesInput.begin(); i!=m_prescalesInput.end(); ++i){
     DeterministicPrescaler* pre = dynamic_cast<DeterministicPrescaler*>(prescalers[(*i).first]);
+    
+    if(!pre) continue;
+    
     auto j = m_outputPS.find((*i).first);
     if(j!=m_outputPS.end()){
       if((*j).second > 0.0){
@@ -329,9 +301,6 @@ void TurboPrescaler::updatePrescalers(){
   }
 }
 
-//=========================================================================
-// Find out if the lineName ends with a known string 
-//=========================================================================
 bool TurboPrescaler::endedWith(const std::string &lineName, const std::string &ending){
   return lineName.length()>ending.length() && 
     (0 == lineName.compare (lineName.length() - ending.length(), ending.length(), ending));

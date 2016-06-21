@@ -23,8 +23,6 @@ class TurboPrescaler : public GaudiAlgorithm {
     public: 
 	TurboPrescaler( const std::string& name, ISvcLocator* pSvcLocator );
 
-	virtual ~TurboPrescaler( ); 
-
 	virtual StatusCode initialize();    
 	virtual StatusCode execute   ();    
 
