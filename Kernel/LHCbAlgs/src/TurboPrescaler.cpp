@@ -58,6 +58,8 @@ StatusCode TurboPrescaler::initialize() {
     fatal() << "Failed to get the IConfigAccessSvc." << endmsg;
     return StatusCode::FAILURE;
   }
+      
+  setupPrescalers();
 
   return sc;
 }
@@ -75,7 +77,6 @@ StatusCode TurboPrescaler::execute() {
     auto tck = decreports->configuredTCK();
     if(m_lastTCK==0) {
       getPrescalesFromTCK(tck,m_prescalesInput, m_postscalesInput, m_scaleProductsInput);
-      setupPrescalers();
     }
 
     if(tck!=m_lastTCK||m_lastTCK==0){
@@ -236,10 +237,18 @@ void TurboPrescaler::setupPrescalers(){
   prescalers.clear();
 
   //== Get the "Context" option if in the file...
-  IJobOptionsSvc* jos = svc<IJobOptionsSvc>( "JobOptionsSvc" );
+  IJobOptionsSvc* jos = NULL;
+  service( "JobOptionsSvc" ,jos);
 
   //= Get the Application manager, to see if algorithm exist
-  IAlgManager* appMgr = svc<IAlgManager>("ApplicationMgr");
+  IAlgManager* appMgr = NULL;
+  service("ApplicationMgr",appMgr);
+  if ( appMgr )  {
+    fatal() << "No ApplicationMgr service, stopping." << endmsg;
+    return;
+  }
+
+  assert(appMgr);
   for( std::map<std::string,double>::iterator it=m_outputPS.begin(); it!=m_outputPS.end(); ++it){
     std::string tn = "DeterministicPrescaler/";
     tn.append(it->first);
@@ -292,9 +301,6 @@ void TurboPrescaler::setupPrescalers(){
       warning() << "Unable to find or create " << theName << endmsg;
     }
   }
-
-  release(appMgr).ignore();
-  release(jos).ignore();
 
 }
 
