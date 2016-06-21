@@ -109,11 +109,11 @@ boost::uintmax_t  File::size() const
          boost::match_flag_type flags = boost::match_default;
          boost::regex_search( m_remote.begin(), m_remote.end(), matches, re_ssh, flags );
          command << "ssh -oStrictHostKeyChecking=no -oForwardX11=no -oForwardX11Trusted=no -oForwardAgent=no -q";
-         if (args.size() > 3) {
+         if (args.size() > 6) {
             command << " -P " << args.back();
          }
          command << " " << matches[1] << " \"stat -c '%s' " << matches.suffix() << "\" 2>&1";
-         m_size = get_size( command.str(), -1, 0);
+         m_size = get_size( command.str(), 0, 0);
       } else if ( args[0] == "cp" ) {
          struct stat buf;
          int r = ::stat(m_remote.c_str(), &buf);
@@ -157,7 +157,7 @@ boost::uintmax_t get_size( const string& command, int lineno,
       boost::match_flag_type flags = boost::match_default;
       boost::smatch match;
       boost::regex re( "(\\d+)" );
-      if (lineno >=0 && boost::numeric_cast<unsigned int>(lineno) >= lines.size()) {
+      if (lineno >= 0 && boost::numeric_cast<unsigned int>(lineno) >= lines.size()) {
          string error = "Invalid output from " + command;
          stringstream s;
          s << "Could not get size from command output line "
