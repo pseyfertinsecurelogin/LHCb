@@ -4,6 +4,9 @@
 ! Purpose     : Pack and unpack events classes for smaller events
 !-----------------------------------------------------------------------------
 
+! 2016-06-21 - Rosen Matev
+ - Implement backward compatibility for reading v4 PackedTrack objects
+
 ! 2016-06-07 - Chris Jones
  - Improvements to the version checking. Make sure (almost) all packers
    carry out a min and max version check, to make sure the data they are
