@@ -10819,16 +10819,18 @@ Gaudi::Math::FourierSum::integral ( const double c0 ) const
   const bool           add = !s_zero ( a0 ) ;
   for ( unsigned short k   =  1 ; 2 * k < N ; ++k  ) 
   {
-    integ.m_pars[ 2 * k     ] = -m_pars[ 2 * k - 1 ] / ( k * m_scale ) ;
-    integ.m_pars[ 2 * k - 1 ] =  m_pars[ 2 * k     ] / ( k * m_scale ) ;
     //
-    // add a serie for f(x) = a0*x 
-    if ( add ) { integ.m_pars[ 2 * k - 1 ] += 
-        ( 0 == k % 2  ? 1 : -1 ) * 2.0L * a0 / ( k * m_scale ) ; }
-  }  
-  //
+    const double a_cos = -m_pars[ 2*k-1 ]  / ( k * m_scale  ) ;
+    const double a_sin =  m_pars[ 2*k   ]  / ( k * m_scale  ) ;
+    
+    integ.m_pars[ 2 * k     ] = a_cos ;
+    integ.m_pars[ 2 * k - 1 ] = a_sin ;
+    //
+    // add a serie for f(x) = 2*a0*x 
+    if ( add ) { integ.m_pars [ 2 * k - 1 ] -= ( 0 == k%2 ? 1 : -1 ) * a0 / ( k * m_scale ) ; }
+  }
   // add integration constant 
-  integ.setPar( 0 , 2*c0 );
+  integ.setPar( 0 , 2 * c0 );
   return integ ;
 }
 // ============================================================================
@@ -11314,20 +11316,20 @@ Gaudi::Math::CosineSum::integral ( const double c0 ) const
   //
   integ.setPar ( 0 , c0 ) ;
   const unsigned long  N   =  m_pars.size() ;
-  const double         a0  =  m_pars[0]     ;
+  const double         a0  =  0.5 *  m_pars[0]     ;
   const bool           add = !s_zero ( a0 ) ;
   for ( unsigned short k   =  1 ; k < N ; ++k  ) 
   {
-    integ.setPar ( 2 * k , 0 ) ;
-    if ( !add ) 
-    { integ.setPar ( 2 * k - 1  , m_pars[k] / k / m_scale  ) ; }
-    else 
-    { integ.setPar ( 2 * k - 1  , m_pars[k] / k / m_scale +
-                     ( 0 == k % 2  ? -1 : +1 ) * 1.0L * a0 / ( k * m_scale ) ) ; }
+    // integration of cosine 
+    integ.setPar ( 2 * k - 1  , m_pars[k] / ( k * m_scale )  ) ; 
+    //
+    // integration of cconstant term 
+    if ( add && 0 != k%2 ) 
+    { integ.setPar  ( 2 * k , -4 * a0  / ( k * k * m_scale  * M_PI ) ) ; }    
   }  
   //
   // add integration constant 
-  integ.setPar( 0 , 2*c0 );
+  integ.setPar( 0 , 2*c0  + a0 * M_PI / m_scale );
   return integ ;
 }
 // ============================================================================
