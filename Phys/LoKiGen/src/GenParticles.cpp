@@ -1227,7 +1227,7 @@ LoKi::GenParticles::DecNode::operator()
     LoKi::ILoKiSvc* ls = lokiSvc() ;
     SmartIF<LHCb::IParticlePropertySvc> ppSvc ( ls ) ;
     StatusCode sc = m_node.validate ( ppSvc ) ;
-    Assert ( sc.isSuccess() , "Unable to valiedate the node!" ) ;
+    Assert ( sc.isSuccess() , "Unable to validate the node!" ) ;
   }
   // use the node for evaluation
   return m_node.node ( LHCb::ParticleID ( p->pdg_id() ) ) ;
