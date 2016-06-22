@@ -1,4 +1,4 @@
-// $Id: Functions.cpp 206873 2016-06-12 10:28:52Z ibelyaev $
+// $Id$
 // ============================================================================
 // Include files
 // ============================================================================
@@ -53,8 +53,8 @@
  *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
  *  @date 2010-04-19
  *
- *                    $Revision: 206873 $
- *  Last modification $Date: 2016-06-12 12:28:52 +0200 (Sun, 12 Jun 2016) $
+ *                    $Revision$
+ *  Last modification $Date$
  *                 by $author$
  */
 // ============================================================================
@@ -7422,6 +7422,7 @@ double Gaudi::Math::BifurcatedStudentT::integral
 
 
 
+// ============================================================================
 /* constructor form scale & shape parameters
  *  param k      \f$k\f$ parameter (shape)
  *  param theta  \f$\theta\f$ parameter (scale)
@@ -7433,7 +7434,10 @@ Gaudi::Math::GammaDist::GammaDist
   : std::unary_function<double,double> () 
   , m_k     ( std::abs ( k     ) )
   , m_theta ( std::abs ( theta ) ) 
-{}
+{
+  // evaluate auxillary parameter 
+  m_aux = - m_k * std::log ( m_theta ) - std::lgamma ( m_k ) ;
+}
 // ============================================================================
 // destrructor
 // ============================================================================
@@ -7450,11 +7454,10 @@ bool Gaudi::Math::GammaDist::setK ( const double x )
   //
   m_k = v ;
   //
-  // evaluate auxillary parameter 
-  m_aux =  0 ;
   if ( s_equal ( 1 , m_k ) ) { m_k    = 1 ; }
-  else                       { m_aux += -gsl_sf_lngamma ( m_k ) ; }
-  m_aux += - m_k * my_log ( m_theta ) ;
+  //
+  // evaluate auxillary parameter 
+  m_aux = -m_k * std::log ( m_theta ) - std::lgamma ( m_k ) ;
   //
   return true ;
 }
@@ -7477,11 +7480,7 @@ bool Gaudi::Math::GammaDist::setTheta ( const double x )
   m_theta = v ;
   //
   // evaluate auxillary parameter 
-  m_aux =  0 ;
-  if ( s_equal ( 1 , m_k ) ) {}
-  else                       { m_aux += -gsl_sf_lngamma ( m_k ) ; }
-  m_aux += - m_k * my_log ( m_theta ) ;
-  //
+  m_aux = -m_k * std::log ( m_theta ) - std::lgamma ( m_k ) ;
   //
   return true ;
 }
@@ -7491,12 +7490,9 @@ bool Gaudi::Math::GammaDist::setTheta ( const double x )
 double Gaudi::Math::GammaDist::pdf ( const double x ) const
 {
   // simple cases 
-  if ( x < 0 ) { return 0 ; }
+  if ( x <= 0 ) { return 0 ; }
   // 
-  if ( s_equal ( x , 0 )    ) { return s_equal ( m_k , 1 ) ? 1/m_theta : 0.0 ; }
-  //
-  double result = m_aux - x / m_theta ;
-  if ( !s_equal ( m_k , 1 ) ) { result += ( m_k - 1 ) * my_log ( x ) ; }
+  double result = m_aux - x / m_theta  + ( m_k - 1 ) * my_log( x ) ;
   //
   return my_exp ( result ) ;
 }
@@ -7519,6 +7515,16 @@ double Gaudi::Math::GammaDist::integral ( const double low  ,
   return 
     gsl_sf_gamma_inc_P ( m_k , high / m_theta ) - 
     gsl_sf_gamma_inc_P ( m_k , low  / m_theta ) ;
+}
+// ============================================================================
+// calculatye the quantile   (0<p<1) 
+// ============================================================================
+double Gaudi::Math::GammaDist::quantile ( const double p ) const 
+{
+  if      ( p <= 0 ) { return          0 ; }
+  else if ( p >= 1 ) { return s_INFINITY ; }
+  //
+  return gsl_cdf_gamma_Pinv ( p , m_k , m_theta ) ;
 }
 // ============================================================================
 
@@ -7829,6 +7835,18 @@ double Gaudi::Math::LogGammaDist::integral ( const double low  ,
   return m_gamma.integral ( z_low , z_high ) ;
 }
 // ============================================================================
+// calculate the quantile   (0<p<1) 
+// ============================================================================
+double Gaudi::Math::LogGammaDist::quantile ( const double p ) const 
+{
+  if      ( p <= 0 ) { return -s_INFINITY ; }
+  else if ( p >= 1 ) { return  s_INFINITY ; }
+  //
+  return my_log ( gsl_cdf_gamma_Pinv ( p , k() , theta() ) ) ;
+}
+// ============================================================================
+
+// ============================================================================
 /* constructor form scale & shape parameters
  *  param k      \f$k\f$ parameter (shape)
  *  param theta  \f$\theta\f$ parameter (scale)
@@ -7858,6 +7876,15 @@ double Gaudi::Math::Log10GammaDist::integral () const { return 1 ; }
 double Gaudi::Math::Log10GammaDist::integral ( const double low  ,
                                                const double high ) const 
 { return LogGammaDist::integral ( low  * s_LN10 , high * s_LN10 ) ; }
+// ============================================================================
+// calculate the quantile   (0<p<1) 
+// ============================================================================
+double Gaudi::Math::Log10GammaDist::quantile ( const double p ) const 
+{
+  if      ( p <= 0 ) { return -s_INFINITY ; }
+  else if ( p >= 1 ) { return  s_INFINITY ; }
+  return LogGammaDist::quantile ( p ) / s_LN10 ;
+}
 // ============================================================================
 
 
