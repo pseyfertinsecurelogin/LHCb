@@ -14,7 +14,7 @@ void WeightsVectorPacker::pack( const DataVector & weightsV,
                                 PackedDataVector & pweightsV ) const
 {
   const auto pVer = pweightsV.packingVersion();
-  if ( 1 == pVer || 0 == pVer )
+  if ( isSupportedVer(pVer) )
   {
     pweightsV.data().reserve( weightsV.size() );
     for ( const Data * weights : weightsV )
@@ -36,13 +36,6 @@ void WeightsVectorPacker::pack( const DataVector & weightsV,
       pweights.lastWeight = pweightsV.weights().size();
 
     }
-
-  }
-  else
-  {
-    std::ostringstream mess;
-    mess << "Unknown packed data version " << (int)pVer;
-    throw GaudiException( mess.str(), "WeightsVectorPacker", StatusCode::FAILURE );
   }
 }
 
@@ -50,7 +43,7 @@ void WeightsVectorPacker::unpack( const PackedDataVector & pweightsV,
                                   DataVector       & weightsV ) const
 {
   const auto pVer = pweightsV.packingVersion();
-  if ( 1 == pVer || 0 == pVer )
+  if ( isSupportedVer(pVer) )
   {
     weightsV.reserve( pweightsV.data().size() );
     for ( const PackedData & pweights : pweightsV.data() )
@@ -72,12 +65,6 @@ void WeightsVectorPacker::unpack( const PackedDataVector & pweightsV,
       }
 
     }
-  }
-  else
-  {
-    std::ostringstream mess;
-    mess << "Unknown packed data version " << (int)pVer;
-    throw GaudiException( mess.str(), "WeightsVectorPacker", StatusCode::FAILURE );
   }
 }
 

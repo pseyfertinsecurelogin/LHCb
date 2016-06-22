@@ -1,4 +1,4 @@
-// $Id: PackedMCVertex.h,v 1.6 2009-10-30 17:20:13 jonrob Exp $
+
 #ifndef EVENT_PACKEDMCVERTEX_H
 #define EVENT_PACKEDMCVERTEX_H 1
 

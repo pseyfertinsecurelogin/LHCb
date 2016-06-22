@@ -14,7 +14,7 @@ void MCRichTrackPacker::pack( const DataVector & tracks,
                               PackedDataVector & ptracks ) const
 {
   const auto ver = ptracks.packingVersion();
-  if ( 1 == ver || 0 == ver )
+  if ( isSupportedVer(ver) )
   {
     ptracks.data().reserve( tracks.size() );
     for ( const auto * track : tracks )
@@ -48,19 +48,13 @@ void MCRichTrackPacker::pack( const DataVector & tracks,
 
     }
   }
-  else
-  {
-    std::ostringstream mess;
-    mess << "Unknown packed data version " << (int)ver;
-    throw GaudiException( mess.str(), "MCRichTrackPacker", StatusCode::FAILURE );
-  }
 }
 
 void MCRichTrackPacker::unpack( const PackedDataVector & ptracks,
                                 DataVector       & tracks ) const
 {
   const auto ver = ptracks.packingVersion();
-  if ( 1 == ver || 0 == ver )
+  if ( isSupportedVer(ver) )
   {
     tracks.reserve( ptracks.data().size() );
     for ( const auto & ptrack : ptracks.data() )
@@ -94,12 +88,6 @@ void MCRichTrackPacker::unpack( const PackedDataVector & ptracks,
       }
 
     }
-  }
-  else
-  {
-    std::ostringstream mess;
-    mess << "Unknown packed data version " << ver;
-    throw GaudiException( mess.str(), "MCRichTrackPacker", StatusCode::FAILURE );
   }
 }
 

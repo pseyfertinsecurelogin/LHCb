@@ -12,33 +12,38 @@ using namespace LHCb;
 void RelatedInfoRelationsPacker::pack( const DataVector & rels,
                                        PackedDataVector & prels ) const
 {
-  // loop over the relations
-  for ( const auto& rel : rels.relations() )
+  const auto ver = prels.packingVersion();
+  if ( isSupportedVer(ver) )
   {
-    if ( !rel.from() ) continue;
 
-    // make a new entry for this relation
-    prels.relations().emplace_back( LHCb::PackedRelatedInfoMap() );
-    auto & prel = prels.relations().back();
-
-    // reference to the particle
-    prel.reference = m_pack.reference64( &prels,
-                                         rel.from()->parent(),
-                                         rel.from()->key() );
-
-    // First entry in the info vector
-    prel.first = prels.info().size();
-
-    // Loop over the related info map and fill into info vector
-    const auto & rMap = rel.to();
-    prels.info().reserve( prels.info().size() + rMap.size() );
-    for ( const auto& data : rMap )
+    // loop over the relations
+    for ( const auto& rel : rels.relations() )
     {
-      prels.info().emplace_back( std::make_pair(data.first,data.second) );
-    }
+      if ( !rel.from() ) continue;
 
-    // Last entry in the info vector
-    prel.last = prels.info().size();
+      // make a new entry for this relation
+      prels.relations().emplace_back( LHCb::PackedRelatedInfoMap() );
+      auto & prel = prels.relations().back();
+
+      // reference to the particle
+      prel.reference = m_pack.reference64( &prels,
+                                           rel.from()->parent(),
+                                           rel.from()->key() );
+
+      // First entry in the info vector
+      prel.first = prels.info().size();
+
+      // Loop over the related info map and fill into info vector
+      const auto & rMap = rel.to();
+      prels.info().reserve( prels.info().size() + rMap.size() );
+      for ( const auto& data : rMap )
+      {
+        prels.info().emplace_back( std::make_pair(data.first,data.second) );
+      }
+
+      // Last entry in the info vector
+      prel.last = prels.info().size();
+    }
 
   }
 
@@ -48,27 +53,33 @@ void RelatedInfoRelationsPacker::unpack( const PackedDataVector & prels,
                                          DataVector             & rels,
                                          const std::string & location ) const
 {
-  // If location is empty, unpacked everything
-  if ( location.empty() )
+  const auto ver = prels.packingVersion();
+  if ( isSupportedVer(ver) )
   {
-    for ( const auto& rel : prels.relations() ) { unpack( rel, prels, rels ); }
-  }
-  else
-  {
-    // loop over containers
-    for ( const auto& cont : prels.containers() )
+
+    // If location is empty, unpacked everything
+    if ( location.empty() )
     {
-      // Reconstruct container name for this entry
-      const int indx = cont.reference >> 32;
-      const auto & containerName = prels.linkMgr()->link(indx)->path();
-      // if name matches, unpack
-      if ( containerName == location )
+      for ( const auto& rel : prels.relations() ) { unpack( rel, prels, rels ); }
+    }
+    else
+    {
+      // loop over containers
+      for ( const auto& cont : prels.containers() )
       {
-        // Loop over the relations saved at this container location and unpack
-        for ( auto kk = cont.first; cont.last > kk; ++kk )
-        { unpack( prels.relations()[kk], prels, rels ); }
+        // Reconstruct container name for this entry
+        const int indx = cont.reference >> 32;
+        const auto & containerName = prels.linkMgr()->link(indx)->path();
+        // if name matches, unpack
+        if ( containerName == location )
+        {
+          // Loop over the relations saved at this container location and unpack
+          for ( auto kk = cont.first; cont.last > kk; ++kk )
+          { unpack( prels.relations()[kk], prels, rels ); }
+        }
       }
     }
+
   }
 }
 
@@ -77,41 +88,47 @@ RelatedInfoRelationsPacker::unpack( const LHCb::PackedRelatedInfoMap & pmap,
                                     const PackedDataVector           & prels,
                                     DataVector                       & rels ) const
 {
-  // reconstruct the particle SmartRef and its container
-  int srcLink(0), srcKey(0);
-  m_pack.indexAndKey64( pmap.reference, srcLink, srcKey );
+  const auto ver = prels.packingVersion();
+  if ( isSupportedVer(ver) )
+  {
 
-  // Load the particles container
-  auto       * linkMgr = prels.linkMgr();
-  const auto * link    = ( linkMgr ? linkMgr->link(srcLink) : nullptr );
-  const auto & srcName = ( link ? link->path() : "" );
-  const auto * srcContainer = ( !srcName.empty() ? 
-                                parent().getIfExists<LHCb::Particles>(srcName) : nullptr );
-  if ( UNLIKELY(!srcContainer) )
-  {
-    parent().Error( "Failed to load container '" + srcName + "'" ).ignore();
-  }
-  else
-  {
-    // Get the source object
-    auto * from = srcContainer->object(srcKey);
-    if ( from )
+    // reconstruct the particle SmartRef and its container
+    int srcLink(0), srcKey(0);
+    m_pack.indexAndKey64( pmap.reference, srcLink, srcKey );
+
+    // Load the particles container
+    auto       * linkMgr = prels.linkMgr();
+    const auto * link    = ( linkMgr ? linkMgr->link(srcLink) : nullptr );
+    const auto & srcName = ( link ? link->path() : "" );
+    const auto * srcContainer = ( !srcName.empty() ?
+                                  parent().getIfExists<LHCb::Particles>(srcName) : nullptr );
+    if ( UNLIKELY(!srcContainer) )
     {
-      // Recreate the RelatedInfoMap
-      TO to;
-      to.reserve( pmap.last - pmap.first );
-      for ( auto jj = pmap.first; pmap.last > jj; ++jj )
-      {
-        to.insert( prels.info()[jj] );
-      }
-      // Save the relation
-      rels.relate( from, to );
+      parent().Error( "Failed to load container '" + srcName + "'" ).ignore();
     }
+    else
+    {
+      // Get the source object
+      auto * from = srcContainer->object(srcKey);
+      if ( from )
+      {
+        // Recreate the RelatedInfoMap
+        TO to;
+        to.reserve( pmap.last - pmap.first );
+        for ( auto jj = pmap.first; pmap.last > jj; ++jj )
+        {
+          to.insert( prels.info()[jj] );
+        }
+        // Save the relation
+        rels.relate( from, to );
+      }
+    }
+
   }
-  
+
 }
 
-StatusCode 
+StatusCode
 RelatedInfoRelationsPacker::check( const DataVector & dataA,
                                    const DataVector & dataB ) const
 {
@@ -125,14 +142,14 @@ RelatedInfoRelationsPacker::check( const DataVector & dataA,
   ok &= ch.compareInts( "#Relations", dataA.size(), dataB.size() );
 
   // Loop over the relations (only if same size...)
-  if ( ok ) 
+  if ( ok )
   {
     auto iA(dataA.relations().begin()), iB(dataB.relations().begin());
     for ( ; iA != dataA.relations().end() && iB != dataB.relations().end(); ++iA, ++iB )
     {
       // Check the relations
       ok &= ch.comparePointers( "Particle", (*iA).from(), (*iB).from() );
-      ok &= (*iA).to() == (*iB).to(); 
+      ok &= (*iA).to() == (*iB).to();
     }
   }
 
@@ -145,7 +162,7 @@ RelatedInfoRelationsPacker::check( const DataVector & dataA,
                               dataA.registry()->identifier() : "Not in TES" );
     parent().warning() << "Problem with RelatedInfo data packing :-" << endmsg
                        << " Location '" << loc << "'" << endmsg
-                       << " Size : Original=" << dataA.size() << " Unpacked=" << dataB.size() 
+                       << " Size : Original=" << dataA.size() << " Unpacked=" << dataB.size()
                        << endmsg;
     // if same size, print contents of relations
     if ( dataA.size() == dataB.size() )

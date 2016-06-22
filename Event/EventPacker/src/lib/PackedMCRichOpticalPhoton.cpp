@@ -14,7 +14,7 @@ void MCRichOpticalPhotonPacker::pack( const DataVector & phots,
                                       PackedDataVector & pphots ) const
 {
   const auto ver = pphots.packingVersion();
-  if ( 1 == ver || 0 == ver )
+  if ( isSupportedVer(ver) )
   {
     pphots.data().reserve( phots.size() );
     for ( const auto * phot : phots )
@@ -70,12 +70,6 @@ void MCRichOpticalPhotonPacker::pack( const DataVector & phots,
       }
     }
   }
-  else
-  {
-    std::ostringstream mess;
-    mess << "Unknown packed data version " << (int)ver;
-    throw GaudiException( mess.str(), "MCRichOpticalPhotonPacker", StatusCode::FAILURE );
-  }
 }
 
 void MCRichOpticalPhotonPacker::unpack( const PackedDataVector & pphots,
@@ -83,7 +77,7 @@ void MCRichOpticalPhotonPacker::unpack( const PackedDataVector & pphots,
 {
 
   const auto ver = pphots.packingVersion();
-  if ( 1 == ver || 0 == ver )
+  if ( isSupportedVer(ver) )
   {
     phots.reserve( pphots.data().size() );
     for ( const auto & pphot : pphots.data() )
@@ -137,12 +131,6 @@ void MCRichOpticalPhotonPacker::unpack( const PackedDataVector & pphots,
       }
 
     }
-  }
-  else
-  {
-    std::ostringstream mess;
-    mess << "Unknown packed data version " << (int)ver;
-    throw GaudiException( mess.str(), "MCRichOpticalPhotonPacker", StatusCode::FAILURE );
   }
 
 }

@@ -1,4 +1,4 @@
-// $Id: PackedTwoProngVertex.h,v 1.2 2009-11-07 12:20:26 jonrob Exp $
+
 #ifndef EVENT_PACKEDTWOPRONGVERTEX_H
 #define EVENT_PACKEDTWOPRONGVERTEX_H 1
 
