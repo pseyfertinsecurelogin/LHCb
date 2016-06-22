@@ -1,7 +1,7 @@
 #!/usr/bin/env python 
 # -*- coding: utf-8 -*-
 # =============================================================================
-# $Id: math_ve.py 202731 2016-03-07 14:13:50Z ibelyaev $
+# $Id$
 # =============================================================================
 ## @file
 #
@@ -11,15 +11,15 @@
 #  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
 #  @date 2014-06-02
 #
-#                    $Revision: 202731 $
-#  Last modification $Date: 2016-03-07 15:13:50 +0100 (Mon, 07 Mar 2016) $
-#                 by $Author: ibelyaev $
+#                    $Revision$
+#  Last modification $Date$
+#                 by $Author$
 #
 #
 # =============================================================================
 __author__  = "Vanya BELYAEV Ivan.Belyaev@itep.ru"
 __date__    = "2014-06-02"
-__version__ = "$Revision: 202731 $"
+__version__ = "$Revision$"
 # =============================================================================
 __all__     = (
     'exp'    , 'expm1'  ,

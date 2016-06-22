@@ -1,4 +1,4 @@
-// $Id: Functions.h 206873 2016-06-12 10:28:52Z ibelyaev $
+// $Id$
 // ============================================================================
 #ifndef LHCBMATH_FUNCTIONS_H
 #define LHCBMATH_FUNCTIONS_H 1
@@ -28,8 +28,8 @@
  *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
  *  @date 2010-04-19
  *
- *                    $Revision: 206873 $
- *  Last modification $Date: 2016-06-12 12:28:52 +0200 (Sun, 12 Jun 2016) $
+ *                    $Revision$
+ *  Last modification $Date$
  *                 by $author$
  */
 // ============================================================================
@@ -151,7 +151,7 @@ namespace Gaudi
     public: // derived getters
       // ======================================================================
       double mean        () const { return   mu    () ; }
-      double mediane     () const { return   mu    () ; }
+      double median      () const { return   mu    () ; }
       double mode        () const { return   mu    () ; }
       //
       double variance    () const ;
@@ -232,7 +232,7 @@ namespace Gaudi
     public: // derived getters
       // ======================================================================
       double mean        () const ;
-      double mediane     () const { return   xi    () ; }
+      double median      () const { return   xi    () ; }
       //
       double variance    () const ;
       double dispersion  () const { return variance () ; }
@@ -3639,6 +3639,11 @@ namespace Gaudi
       double integral ( const double low  ,
                         const double high ) const ;
       // ======================================================================
+    public: // quantiles 
+      // ======================================================================
+      /// calculate the quantile   (0<p<1) 
+      double quantile ( const double p ) const ;
+      // ======================================================================
     private:
       // ======================================================================
       /// shape
@@ -3719,6 +3724,11 @@ namespace Gaudi
       virtual double integral ( const double low  ,
                                 const double high ) const ;
       // ======================================================================
+    public: // quantiles 
+      // ======================================================================
+      /// calculate the quantile   (0<p<1) 
+      double quantile ( const double p ) const ;
+      // ======================================================================
     private:
       // ======================================================================
       /// helper gamma distribution
@@ -3757,6 +3767,11 @@ namespace Gaudi
       /// get the integral between low and high limits
       virtual double integral   ( const double low  ,
                                   const double high ) const ;
+      // ======================================================================
+    public: // quantiles 
+      // ======================================================================
+      /// calculate the quantile   (0<p<1) 
+      double quantile ( const double p ) const ;
       // ======================================================================
     } ;
     // ========================================================================
@@ -4493,8 +4508,8 @@ namespace Gaudi
       // ======================================================================
       /// get mode 
       double mode     () const { return mean () ; }
-      /// get mediate
-      double mediane  () const { return mean () ; }
+      /// get median
+      double median   () const { return mean () ; }
       /// get variance
       double variance () const { return m_sigma * m_sigma ; }
       /// get rms

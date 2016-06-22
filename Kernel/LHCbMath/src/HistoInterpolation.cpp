@@ -1,4 +1,4 @@
-// $Id: HistoInterpolation.cpp 202440 2016-03-02 12:05:52Z ibelyaev $ 
+// $Id$ 
 // ============================================================================
 // Include files 
 // ============================================================================
@@ -35,9 +35,9 @@
  *  @author Vanya Belyaev
  *  @date   2015-10-12
  *
- *  Version           $Revision: 202440 $
- *  Last mofidication $Date: 2016-03-02 13:05:52 +0100 (Wed, 02 Mar 2016) $
- *                 by $Author: ibelyaev $
+ *  Version           $Revision$
+ *  Last mofidication $Date$
+ *                 by $Author$
  */
 // ============================================================================
 namespace 

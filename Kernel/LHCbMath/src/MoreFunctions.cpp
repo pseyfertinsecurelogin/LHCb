@@ -1,4 +1,4 @@
-// $Id: MoreFunctions.cpp 206873 2016-06-12 10:28:52Z ibelyaev $ 
+// $Id$ 
 // ============================================================================
 // Include files 
 // ============================================================================
@@ -31,9 +31,9 @@
  *  @see LHCbMath/MoreFunctions.h
  *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
  *  @date 2015-03-26
- *                    $Revision: 206873 $
- *  Last modification $Date: 2016-06-12 12:28:52 +0200 (Sun, 12 Jun 2016) $
- *                 by $Author: ibelyaev $
+ *                    $Revision$
+ *  Last modification $Date$
+ *                 by $Author$
  */  
 // ============================================================================
 namespace 

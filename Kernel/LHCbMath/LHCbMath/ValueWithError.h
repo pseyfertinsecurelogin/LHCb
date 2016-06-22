@@ -1,4 +1,4 @@
-// $Id: ValueWithError.h 202731 2016-03-07 14:13:50Z ibelyaev $
+// $Id$
 // ============================================================================
 #ifndef LHCBMATH_ERRORS_H 
 #define LHCBMATH_ERRORS_H 1
@@ -24,9 +24,9 @@
  *  @author Vanya BELYAEV Ivane.BElyaev@itep.ru
  *  @date 2009-06-03
  *
- *  Version           $Revision: 202731 $
- *  Last modification $Date: 2016-03-07 15:13:50 +0100 (Mon, 07 Mar 2016) $
- *                 by $Author: ibelyaev $
+ *  Version           $Revision$
+ *  Last modification $Date$
+ *                 by $Author$
  */
 namespace Gaudi
 {

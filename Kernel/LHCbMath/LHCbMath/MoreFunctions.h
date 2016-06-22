@@ -1,4 +1,4 @@
-// $Id: MoreFunctions.h 206873 2016-06-12 10:28:52Z ibelyaev $ 
+// $Id$ 
 // ============================================================================
 #ifndef LHCBMATH_MOREFUNCTIONS_H 
 #define LHCBMATH_MOREFUNCTIONS_H 1

@@ -1,4 +1,4 @@
-// $Id: Bernstein.h 195620 2015-10-07 17:14:19Z ibelyaev $ 
+// $Id$ 
 // ============================================================================
 #ifndef LHCBMATH_BERNSTEIN_H 
 #define LHCBMATH_BERNSTEIN_H 1
@@ -27,8 +27,8 @@
  *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
  *  @date 2010-04-19
  *
- *                    $Revision: 195620 $
- *  Last modification $Date: 2015-10-07 19:14:19 +0200 (Wed, 07 Oct 2015) $
+ *                    $Revision$
+ *  Last modification $Date$
  *                 by $author$
  */
 // ============================================================================
