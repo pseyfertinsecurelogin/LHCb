@@ -15,6 +15,7 @@
 // PartProp
 // ============================================================================
 #include "Kernel/Nodes.h"
+#include "Kernel/IParticlePropertySvc.h"
 // ============================================================================
 // LoKi
 // ============================================================================
@@ -1220,6 +1221,14 @@ LoKi::GenParticles::DecNode::operator()
     Error ( "HepMC::GenParticle* point to NULL, return false") ;
     return false ;
   }
+  //
+  if ( !m_node.valid() ) 
+  {
+    LoKi::ILoKiSvc* ls = lokiSvc() ;
+    SmartIF<LHCb::IParticlePropertySvc> ppSvc ( ls ) ;
+    StatusCode sc = m_node.validate ( ppSvc ) ;
+    Assert ( sc.isSuccess() , "Unable to validate the node!" ) ;
+  }
   // use the node for evaluation
   return m_node.node ( LHCb::ParticleID ( p->pdg_id() ) ) ;
 }
@@ -1232,6 +1241,30 @@ std::ostream& LoKi::GenParticles::DecNode::fillStream( std::ostream& s ) const
   return s << "GDECNODE( " << m_node << ")";
 }
 // ============================================================================
+
+// ============================================================================
+// constructor from the actual node
+// ============================================================================
+LoKi::GenParticles::LongLived::LongLived()
+  : LoKi::GenParticles::DecNode ( Decays::Nodes::LongLived_() ) 
+{}
+// ============================================================================
+// desctructor 
+// ============================================================================
+LoKi::GenParticles::LongLived::~LongLived(){}
+// ============================================================================
+// MANDATORY: clone method ("virtual constructor")
+// ============================================================================
+LoKi::GenParticles::LongLived*
+LoKi::GenParticles::LongLived::clone() const 
+{ return new LoKi::GenParticles::LongLived(*this) ;}
+// ============================================================================
+// OPTIONAL: the nice printout
+// ============================================================================
+std::ostream& LoKi::GenParticles::LongLived::fillStream( std::ostream& s ) const
+{ return s << "GLONGLIVED" ; }
+// ============================================================================
+
 namespace
 {
   // ==========================================================================

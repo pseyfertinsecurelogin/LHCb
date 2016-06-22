@@ -117,7 +117,9 @@ GCHILDFUN = LoKi.GenParticles.ChildFun
 ## @see LoKi::Cuts::GCTAU
 GCTAU     = LoKi.GenParticles.ProperLifeTime ()
 ## @see LoKi::Cuts::GDECNODE
-GDECNODE  = LoKi.GenParticles.DecNode
+GDECNODE   = LoKi.GenParticles.DecNode
+## @see LoKi::Cuts::GLONGLIVED
+GLONGLIVED = LoKi.GenParticles.LongLived() 
 ## @see LoKi::Cuts::GDECTREE
 GDECTREE  = LoKi.GenParticles.DecTree
 ## @see LoKi::Cuts::GDELTAR2
