@@ -5699,8 +5699,8 @@ namespace Gaudi
     } ;  
     // ========================================================================
     // forward declarations 
-    class FourinerSum ;
-    class CosineSum   ;    
+    class FourierSum ;
+    class CosineSum  ;    
     // ========================================================================
     /** @class FourierSum
      *  Fourier sum 
