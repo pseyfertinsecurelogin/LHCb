@@ -4,6 +4,9 @@
 ! Purpose     : General purpose algorithms and tools for LHCb
 !-----------------------------------------------------------------------------
 
+! 2016-06-15 - Sean Benson
+ - Add TurboPrescaler algorithm.
+
 ! 2016-05-23 - Patrick Robbe
  - Add "OnlineMode" option to the LHCbApp configurable to be able to 
    suppress messages when running online (monitoring, ...)
