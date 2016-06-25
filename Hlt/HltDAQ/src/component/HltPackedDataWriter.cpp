@@ -34,9 +34,9 @@ HltPackedDataWriter::HltPackedDataWriter(const std::string& name, ISvcLocator* p
 
 template<typename PackedData>
 void HltPackedDataWriter::register_object() {
-  using namespace std::placeholders;
-  m_savers[PackedData::classID()] =
-    std::bind(&HltPackedDataWriter::saveObject<PackedData>, this, _1);
+  m_savers[PackedData::classID()] = [=](const DataObject& obj) {
+    return this->saveObject<PackedData>(obj);
+  };
 }
 
 StatusCode HltPackedDataWriter::initialize() {
@@ -79,7 +79,7 @@ StatusCode HltPackedDataWriter::initialize() {
 template<typename T>
 size_t HltPackedDataWriter::saveObject(const DataObject& dataObject) {
   const auto& object = dynamic_cast<const T&>(dataObject);
-  
+
   // Reserve bytes for the size of the object
   auto posObjectSize = m_buffer.saveSize(0).first;
   // Save the object actual object and see how many bytes were written
@@ -119,7 +119,7 @@ StatusCode HltPackedDataWriter::execute() {
               << endmsg;
       return StatusCode::FAILURE;
     }
-    
+
     // Obtain the function which saves the object with this CLID
     const auto it = m_savers.find(classID);
     if (it == m_savers.end()) {
@@ -220,7 +220,7 @@ void HltPackedDataWriter::addBanks(LHCb::RawEvent& rawEvent, const std::vector<u
     return;
   }
   debug() << "Writing " << nbanks << " banks" << endmsg;
-  
+
 
   for (unsigned int ibank = 0; ibank < nbanks; ++ibank) {
     uint16_t sourceID = sourceIDCommon | ((ibank << PartIDBits) & PartIDMask);
@@ -229,7 +229,7 @@ void HltPackedDataWriter::addBanks(LHCb::RawEvent& rawEvent, const std::vector<u
     debug() << "Adding raw bank with sourceID=" << sourceID << ", length=" << length << " from " << (void*)&(data[offset]) << endmsg;
     auto bank = rawEvent.createBank(sourceID, LHCb::RawBank::DstData,
                                     kVersionNumber, length, &(data[offset]));
-    rawEvent.adoptBank(bank, true);  
+    rawEvent.adoptBank(bank, true);
   }
 }
 
