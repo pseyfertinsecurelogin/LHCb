@@ -580,9 +580,7 @@ def _getattr_SR_ ( self , attribute ) :
     """Define __getattr__ function for smart references,
     actually delegate it to the object
     """
-    print 'I am getattr(%s) ' % attribute 
     _t = self.target()
-    print 'I am getattr(%s) ' % attribute , bool(_t) 
     if _t : return getattr ( _t , attribute ) 
     raise AttributeError, 'SmartRef(%s)(nullptr).%s'% (self.__class__.__name__[9:-1].replace('::','.'), attribute)
 

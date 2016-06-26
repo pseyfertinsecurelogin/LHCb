@@ -18,7 +18,7 @@ void MCHitPacker::pack( const DataVector & hits,
                         PackedDataVector & phits ) const
 {
   const auto ver = phits.packingVersion();
-  if ( 1 == ver || 0 == ver )
+  if ( isSupportedVer(ver) )
   {
     phits.data().reserve( hits.size() );
     for ( const auto * hit : hits )
@@ -47,19 +47,13 @@ void MCHitPacker::pack( const DataVector & hits,
       }
     }
   }
-  else
-  {
-    std::ostringstream mess;
-    mess << "Unknown packed data version " << (int)ver;
-    throw GaudiException( mess.str(), "MCHitPacker", StatusCode::FAILURE );
-  }
 }
 
 void MCHitPacker::unpack( const PackedDataVector & phits,
                           DataVector       & hits ) const
 {
   const auto ver = phits.packingVersion();
-  if ( 1 == ver || 0 == ver )
+  if ( isSupportedVer(ver) )
   {
     hits.reserve( phits.data().size() );
     for ( const auto & phit : phits.data() )
@@ -90,12 +84,6 @@ void MCHitPacker::unpack( const PackedDataVector & phits,
         else { parent().Error( "Corrupt MCHit MCParticle SmartRef detected." ).ignore(); }
       }
     }
-  }
-  else
-  {
-    std::ostringstream mess;
-    mess << "Unknown packed data version " << (int)ver;
-    throw GaudiException( mess.str(), "MCHitPacker", StatusCode::FAILURE );
   }
 }
 

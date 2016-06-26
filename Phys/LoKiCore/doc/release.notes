@@ -13,6 +13,9 @@
 !   A.Golutvin, P.Koppenburg have been used in the design.
 ! -----------------------------------------------------------------------------
 
+! 2016-06-01 - Philip Ilten
+ - removed debug print statements introduced in r201631 to _getattr_SR_
+
 !========================= LoKiCore v11r30 2016-03-08 =========================
 
 ! 2016-03-08 - Marco Clemencic

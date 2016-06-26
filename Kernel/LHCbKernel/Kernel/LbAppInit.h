@@ -76,7 +76,7 @@ protected:
    *  @param[in] seeds Vector of seeds
    *  @return    StatusCode
    */
-  StatusCode initRndm( std::vector<long int>& seeds );
+  StatusCode initRndm( const std::vector<long int>& seeds );
 
   /** Get a vector of seeds. First three seeds are built from seed1 and seed2
    *  Last seed is hash including seed1, seed2 and name()

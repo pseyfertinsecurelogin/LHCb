@@ -1,11 +1,14 @@
-// $Id: PackedRecVertex.h,v 1.4 2009-11-07 12:20:26 jonrob Exp $
+
 #ifndef EVENT_PACKEDRECVERTEX_H
 #define EVENT_PACKEDRECVERTEX_H 1
 
+// STL
 #include <string>
 #include <vector>
 
+// Gaudi
 #include "GaudiKernel/DataObject.h"
+#include "GaudiKernel/GaudiException.h"
 
 // Kernel
 #include "Event/StandardPacker.h"
@@ -234,6 +237,19 @@ namespace LHCb
     /// Safe sqrt ...
     inline double safe_sqrt( const double x ) const
     { return ( x > 0 ? std::sqrt(x) : 0.0 ); }
+
+    /// Check if the given packing version is supported
+    bool isSupportedVer( const char& ver ) const
+    {
+      const bool OK = ( 1 == ver || 0 == ver );
+      if ( UNLIKELY(!OK) )
+      {
+        std::ostringstream mess;
+        mess << "Unknown packed data version " << (int)ver;
+        throw GaudiException( mess.str(), "RecVertexPacker", StatusCode::FAILURE );
+      }
+      return OK;
+    }
 
   private:
 

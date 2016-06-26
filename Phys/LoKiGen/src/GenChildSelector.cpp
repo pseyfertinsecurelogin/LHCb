@@ -461,7 +461,73 @@ LoKi::GenChild::children
   return result ;
 }
 // ===========================================================================
-
+/** Trivial accessor to the daughter particles for the given particle.
+ *  @param  particle (const) pointer to mother particle 
+ *  @param  dscriptor
+ *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+ *  @date   2016-06-21
+ */
+// ===========================================================================
+const HepMC::GenParticle*  LoKi::GenChild::child 
+( const HepMC::GenParticle*       particle   , 
+  const std::string&              descriptor ) 
+{
+  return 
+    nullptr == particle ? nullptr : 
+    child (  particle , LoKi::GenChild::Selector( descriptor ) ) ;
+}
+// ===========================================================================
+/* Trivial accessor to the daughter particles for the given particle.
+ *  @param  particle (const) pointer to mother particle 
+ *  @param  cuts     (INPUT) cuts to be used 
+ *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+ *  @date   2016-06-21
+ */
+const HepMC::GenParticle* LoKi::GenChild::child 
+( const HepMC::GenParticle* particle   , 
+  const LoKi::Types::GCuts& cuts       )
+{
+  return 
+    nullptr == particle ? nullptr : 
+    child (  particle , LoKi::GenChild::Selector( cuts ) ) ;
+}
+// ========================================================================
+/* accessor to certain children particles for the given particle 
+ *  @param  particle   (INPUT) pointer to mother particle 
+ *  @param  descriptor (INPUT) the descriptor
+ *  @return the container of found particles
+ *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+ *  @date   2016-06-21
+ */
+// ========================================================================
+LoKi::GenTypes::ConstVector
+LoKi::GenChild::children 
+( const HepMC::GenParticle*       particle   , 
+  const std::string&              descriptor ) 
+{
+  return 
+    nullptr == particle ? LoKi::GenTypes::ConstVector() :
+    children (  particle , LoKi::GenChild::Selector( descriptor ) ) ;
+}
+// ========================================================================
+/* accessor to certain children particles for the given particle 
+ *  @param  particle (INPUT) pointer to mother particle 
+ *  @param  cuts     (INPUT) cuts to be used 
+ *  @return the container of found particles
+ *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+ *  @date   2016-06-21
+ */
+// ========================================================================
+LoKi::GenTypes::ConstVector
+LoKi::GenChild::children 
+( const HepMC::GenParticle* particle   , 
+  const LoKi::Types::GCuts& cuts       ) 
+{
+  return 
+    nullptr == particle ? LoKi::GenTypes::ConstVector() :
+    children (  particle , LoKi::GenChild::Selector ( cuts) ) ;
+}
+// ========================================================================
 
 
 // ============================================================================

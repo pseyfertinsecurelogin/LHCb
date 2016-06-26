@@ -548,6 +548,28 @@ namespace LoKi
      */
     typedef LoKi::GenParticles::InTree                                GINTREE ;
     // ========================================================================
+    /** @var GLNGLIVED
+     *  the trivial predicate taht check if th eparticle if "long-lived'
+     *
+     *  @code
+     *
+     *  const HepMC::GenParticle* p = .... ;
+     *
+     *  // use the predicate:
+     *  const ok = GLONGLIVED ( p ) ;
+     *
+     *  @endcode
+     *
+     *  @see LHCb::ParticleID
+     *  @see Decays::iNode
+     *  @see Decays::Node
+     *  @see Decays::Nodes
+     *  @see Decays::Nodes::LongLived_
+     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+     *  @date 2016-06-21
+     */
+    const LoKi::GenParticles::LongLived                            GLONGLIVED ;
+    // ========================================================================
     /** @var GLEPTON
      *  Check for particle type
      *

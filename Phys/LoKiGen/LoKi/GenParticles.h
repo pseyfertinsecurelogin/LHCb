@@ -1183,6 +1183,31 @@ namespace LoKi
       // ======================================================================
     };
     // ========================================================================
+    /** @class LongLived
+     *  simple predicate that select long-lived particles 
+     *  @see LoKi::Cuts::GLOONGLIVED 
+     *  @see LHCb::ParticleID
+     *  @see Decays::iNode
+     *  @see Decays::Nodes::LongLived_
+     *  @see LoKi::GenParticles::DecNode
+     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+     *  @date 2016-06-21
+     */
+    class GAUDI_API LongLived : public DecNode 
+    {
+    public:
+      // ======================================================================
+      /// constructor
+      LongLived () ;
+      /// MANDATORY: virtual destructor
+      virtual ~LongLived() ;
+      /// MANDATORY: clone method ("virtual constructor")
+      virtual LongLived* clone() const ;
+      /// OPTIONAL: the nice printout
+      virtual std::ostream& fillStream( std::ostream& s ) const ;
+      // ======================================================================
+    };
+    // ========================================================================
     /** @class DecTree
      *  simple predicate, which acts on the decay structuire/tree for the particle
      *  @see Decays::iTree

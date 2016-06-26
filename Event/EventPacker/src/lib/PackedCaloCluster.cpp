@@ -13,7 +13,7 @@ using namespace LHCb;
 void CaloClusterPacker::pack( const DataVector & clus,
                               PackedDataVector & pclus ) const
 {
-  if ( 0 == pclus.packingVersion()  )
+  if ( isSupportedVer(pclus.packingVersion()) )
   {
     pclus.data().reserve( clus.size() );
     for ( const auto * clu : clus )
@@ -74,18 +74,12 @@ void CaloClusterPacker::pack( const DataVector & clus,
 
     }
   }
-  else
-  {
-    std::ostringstream mess;
-    mess << "Unknown packed data version " << (int)pclus.packingVersion();
-    throw GaudiException( mess.str(), "CaloClusterPacker", StatusCode::FAILURE );
-  }
 }
 
 void CaloClusterPacker::unpack( const PackedDataVector & pclus,
                                 DataVector       & clus ) const
 {
-  if ( 0 == pclus.packingVersion()  )
+  if ( isSupportedVer(pclus.packingVersion()) )
   {
     clus.reserve( pclus.data().size() );
     for ( const auto & pclu : pclus.data() )
@@ -152,12 +146,6 @@ void CaloClusterPacker::unpack( const PackedDataVector & pclus,
       }
 
     }
-  }
-  else
-  {
-    std::ostringstream mess;
-    mess << "Unknown packed data version " << (int)pclus.packingVersion();
-    throw GaudiException( mess.str(), "CaloClusterPacker", StatusCode::FAILURE );
   }
 }
 

@@ -1,4 +1,4 @@
-// $Id: $
+
 #ifndef EVENT_PACKEDRELATIONS_H
 #define EVENT_PACKEDRELATIONS_H 1
 

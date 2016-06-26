@@ -4,6 +4,9 @@
 ! Purpose: LHCb specific Kernel classes
 !--------------------------------------------------------------------------------
 
+! 2016-05-20 - Jon Harrison
+ - Added new interface IVeloCCEConfigTool.h for VELO CCE scan configuration 
+
 !========================= LHCbKernel v16r1 2016-03-16 =========================
 ! 2016-03-01 - Chris Jones
  - Extend the HPD handling modes in RichTraceMode with a new fast mode that
