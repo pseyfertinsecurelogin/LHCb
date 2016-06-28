@@ -9,11 +9,7 @@
 #include <algorithm>
 #include <numeric>
 
-#include <boost/lambda/bind.hpp>
-#include <boost/lambda/lambda.hpp>
-
 using namespace LHCb;
-using namespace boost::lambda;
 
 /** @file DeUTLayer.cpp
  *
@@ -27,7 +23,7 @@ using namespace boost::lambda;
 DeUTLayer::DeUTLayer( const std::string& name ) :
   DeSTLayer( name ),
   m_parent(NULL)
-{ 
+{
   m_modules.clear();
 }
 
@@ -49,7 +45,7 @@ StatusCode DeUTLayer::initialize()
   MsgStream msg(msgSvc(), name() );
   StatusCode sc = DeSTLayer::initialize();
   if (sc.isFailure() ){
-    msg << MSG::ERROR << "Failed to initialize detector element" << endmsg; 
+    msg << MSG::ERROR << "Failed to initialize detector element" << endmsg;
   }
   else {
     m_parent = getParent<DeUTLayer>();
@@ -66,17 +62,17 @@ StatusCode DeUTLayer::initialize()
 
 DeUTModule* DeUTLayer::findModule(const STChannelID aChannel)
 {
-  Children::iterator iter = std::find_if(m_modules.begin() , m_modules.end(),
-                                         bind(&DeUTModule::contains, _1, aChannel));
-  return (iter != m_modules.end() ? *iter: 0);
+  auto iter = std::find_if(m_modules.begin() , m_modules.end(),
+                           [&](const DeUTModule* m) { return m->contains(aChannel);});
+  return iter != m_modules.end() ? *iter: nullptr;
 }
 
 
 DeUTModule* DeUTLayer::findModule(const Gaudi::XYZPoint& point)
 {
-  Children::iterator iter = std::find_if(m_modules.begin(), m_modules.end(), 
-                                         bind(&DeUTModule::isInside, _1, point)); 
-  return (iter != m_modules.end() ? *iter: 0);
+  auto iter = std::find_if(m_modules.begin(), m_modules.end(),
+                           [&](const DeUTModule* m) { return m->isInside(point);});
+  return iter != m_modules.end() ? *iter: nullptr;
 }
 
 
@@ -88,7 +84,7 @@ void DeUTLayer::flatten()
     DeUTModule::Children::const_iterator iterSector = tModule->sectors().begin();
     for ( ; iterSector !=  tModule->sectors().end() ; ++iterSector ){
       DeSTSector* tSector = *iterSector;
-      m_sectors.push_back(tSector);  
+      m_sectors.push_back(tSector);
     }
   }
 }
@@ -96,6 +92,7 @@ void DeUTLayer::flatten()
 
 double DeUTLayer::fractionActive() const
 {
-  return std::accumulate(m_modules.begin(), m_modules.end(), 0.0,  _1 + 
-                         bind(&DeUTModule::fractionActive,_2))/double(m_modules.size());   
+  return std::accumulate(m_modules.begin(), m_modules.end(), 0.0,
+                [](double f, const DeUTModule* m) { return f + m->fractionActive(); }
+         )/double(m_modules.size());
 }

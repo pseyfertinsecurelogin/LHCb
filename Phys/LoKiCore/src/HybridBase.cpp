@@ -601,7 +601,7 @@ void LoKi::Hybrid::Base::writeCpp () const
 #if defined(BOOST_VERSION) && BOOST_VERSION>105599
   //
   // for Boost >= 1.56
-  if ( !boost::conversion::try_lexical_cast ( split_, split ) ) { split = 0 ; }
+  if ( !boost::conversion::try_lexical_convert ( split_, split ) ) { split = 0 ; }
   //
 #else 
   //

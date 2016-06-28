@@ -3524,11 +3524,12 @@ Gaudi::Math::PhaseSpace3::PhaseSpace3
   const unsigned short l1 ,
   const unsigned short l2 )
   : std::unary_function<double,double> ()
-  , m_m1 ( std::abs ( m1 ) )
-  , m_m2 ( std::abs ( m2 ) )
-  , m_m3 ( std::abs ( m3 ) )
-  , m_l1 ( l1 )
-  , m_l2 ( l2 )
+  , m_m1  ( std::abs ( m1 ) )
+  , m_m2  ( std::abs ( m2 ) )
+  , m_m3  ( std::abs ( m3 ) )
+  , m_l1  ( l1 )
+  , m_l2  ( l2 )
+  , m_tmp ( 0  )   
 {}
 // ============================================================================
 // deststructor
@@ -7422,6 +7423,7 @@ double Gaudi::Math::BifurcatedStudentT::integral
 
 
 
+// ============================================================================
 /* constructor form scale & shape parameters
  *  param k      \f$k\f$ parameter (shape)
  *  param theta  \f$\theta\f$ parameter (scale)
@@ -7432,8 +7434,12 @@ Gaudi::Math::GammaDist::GammaDist
   const double theta )   // scale parameter
   : std::unary_function<double,double> () 
   , m_k     ( std::abs ( k     ) )
-  , m_theta ( std::abs ( theta ) ) 
-{}
+  , m_theta ( std::abs ( theta ) )
+  , m_aux   ( 0 ) 
+{
+  // evaluate auxillary parameter 
+  m_aux = - m_k * std::log ( m_theta ) - std::lgamma ( m_k ) ;
+}
 // ============================================================================
 // destrructor
 // ============================================================================
@@ -7450,11 +7456,10 @@ bool Gaudi::Math::GammaDist::setK ( const double x )
   //
   m_k = v ;
   //
-  // evaluate auxillary parameter 
-  m_aux =  0 ;
   if ( s_equal ( 1 , m_k ) ) { m_k    = 1 ; }
-  else                       { m_aux += -gsl_sf_lngamma ( m_k ) ; }
-  m_aux += - m_k * my_log ( m_theta ) ;
+  //
+  // evaluate auxillary parameter 
+  m_aux = -m_k * std::log ( m_theta ) - std::lgamma ( m_k ) ;
   //
   return true ;
 }
@@ -7477,11 +7482,7 @@ bool Gaudi::Math::GammaDist::setTheta ( const double x )
   m_theta = v ;
   //
   // evaluate auxillary parameter 
-  m_aux =  0 ;
-  if ( s_equal ( 1 , m_k ) ) {}
-  else                       { m_aux += -gsl_sf_lngamma ( m_k ) ; }
-  m_aux += - m_k * my_log ( m_theta ) ;
-  //
+  m_aux = -m_k * std::log ( m_theta ) - std::lgamma ( m_k ) ;
   //
   return true ;
 }
@@ -7491,12 +7492,9 @@ bool Gaudi::Math::GammaDist::setTheta ( const double x )
 double Gaudi::Math::GammaDist::pdf ( const double x ) const
 {
   // simple cases 
-  if ( x < 0 ) { return 0 ; }
+  if ( x <= 0 ) { return 0 ; }
   // 
-  if ( s_equal ( x , 0 )    ) { return s_equal ( m_k , 1 ) ? 1/m_theta : 0.0 ; }
-  //
-  double result = m_aux - x / m_theta ;
-  if ( !s_equal ( m_k , 1 ) ) { result += ( m_k - 1 ) * my_log ( x ) ; }
+  double result = m_aux - x / m_theta  + ( m_k - 1 ) * my_log( x ) ;
   //
   return my_exp ( result ) ;
 }
@@ -7519,6 +7517,16 @@ double Gaudi::Math::GammaDist::integral ( const double low  ,
   return 
     gsl_sf_gamma_inc_P ( m_k , high / m_theta ) - 
     gsl_sf_gamma_inc_P ( m_k , low  / m_theta ) ;
+}
+// ============================================================================
+// calculatye the quantile   (0<p<1) 
+// ============================================================================
+double Gaudi::Math::GammaDist::quantile ( const double p ) const 
+{
+  if      ( p <= 0 ) { return          0 ; }
+  else if ( p >= 1 ) { return s_INFINITY ; }
+  //
+  return gsl_cdf_gamma_Pinv ( p , m_k , m_theta ) ;
 }
 // ============================================================================
 
@@ -7829,6 +7837,18 @@ double Gaudi::Math::LogGammaDist::integral ( const double low  ,
   return m_gamma.integral ( z_low , z_high ) ;
 }
 // ============================================================================
+// calculate the quantile   (0<p<1) 
+// ============================================================================
+double Gaudi::Math::LogGammaDist::quantile ( const double p ) const 
+{
+  if      ( p <= 0 ) { return -s_INFINITY ; }
+  else if ( p >= 1 ) { return  s_INFINITY ; }
+  //
+  return my_log ( gsl_cdf_gamma_Pinv ( p , k() , theta() ) ) ;
+}
+// ============================================================================
+
+// ============================================================================
 /* constructor form scale & shape parameters
  *  param k      \f$k\f$ parameter (shape)
  *  param theta  \f$\theta\f$ parameter (scale)
@@ -7858,6 +7878,15 @@ double Gaudi::Math::Log10GammaDist::integral () const { return 1 ; }
 double Gaudi::Math::Log10GammaDist::integral ( const double low  ,
                                                const double high ) const 
 { return LogGammaDist::integral ( low  * s_LN10 , high * s_LN10 ) ; }
+// ============================================================================
+// calculate the quantile   (0<p<1) 
+// ============================================================================
+double Gaudi::Math::Log10GammaDist::quantile ( const double p ) const 
+{
+  if      ( p <= 0 ) { return -s_INFINITY ; }
+  else if ( p >= 1 ) { return  s_INFINITY ; }
+  return LogGammaDist::quantile ( p ) / s_LN10 ;
+}
 // ============================================================================
 
 
@@ -10105,7 +10134,7 @@ namespace
   {
     return 
       0 == N ?  1 : 
-      0 == N ?  1 : 
+      1 == N ?  1 : 
       2 == N ?  2 : 
       3 == N ?  6 : 
       4 == N ? 24 : N * _factorial_ ( N - 1 ) ;
@@ -10684,8 +10713,8 @@ double Gaudi::Math::FourierSum::derivative ( const double x ) const
   const unsigned long  N = m_pars.size() ;
   for ( unsigned short k = 1 ; 2 * k < N ; ++k  ) 
   {
-    deriv[ 2 * k     ] =  k * m_pars[ 2 * k - 1 ] / m_scale ;
-    deriv[ 2 * k - 1 ] = -k * m_pars[ 2 * k     ] / m_scale ;
+    deriv[ 2 * k     ] =  k * m_pars[ 2 * k - 1 ] * m_scale ;
+    deriv[ 2 * k - 1 ] = -k * m_pars[ 2 * k     ] * m_scale ;
     //
   }
   /// transform to "t"-representation 
@@ -10722,13 +10751,12 @@ Gaudi::Math::FourierSum::derivative_n ( const unsigned short n ) const
   //
   const short scos =   
     1 == n % 4 ? -1 : 
-    2 == n % 4 ? -1 : 
-    3 == n % 4 ?  1 : 1 ;
+    2 == n % 4 ? -1 : 1 ;
   //
   const bool           odd =  ( 1 == n % 2 ) ;
   for ( unsigned short k = 1 ; 2 * k < N ; ++k  ) 
   {
-    const double factor = Gaudi::Math::pow ( 1.0L * k / m_scale , n ) ;
+    const double factor = Gaudi::Math::pow ( 1.0L * k * m_scale , n ) ;
     if ( odd ) 
     {
       deriv.m_pars [ 2 * k     ] = m_pars [ 2 * k - 1 ] * factor * ssin ;
@@ -10760,8 +10788,8 @@ double Gaudi::Math::FourierSum::integral
   const unsigned long  N = m_pars.size() ;
   for ( unsigned short k = 1 ; 2 * k < N ; ++k  ) 
   {
-    integ[ 2 * k     ] = -m_pars[ 2 * k - 1 ] / k * m_scale ;
-    integ[ 2 * k - 1 ] =  m_pars[ 2 * k     ] / k * m_scale ;
+    integ[ 2 * k     ] = -m_pars[ 2 * k - 1 ] / ( k * m_scale ) ;
+    integ[ 2 * k - 1 ] =  m_pars[ 2 * k     ] / ( k * m_scale ) ;
   }
   /// transform to "t"-representation 
   const long double tl = t ( low  ) ;
@@ -10771,10 +10799,10 @@ double Gaudi::Math::FourierSum::integral
     m_fejer ? 
     Gaudi::Math::Clenshaw::fejer_sum   ( integ.begin() , integ.end() , th ) - 
     Gaudi::Math::Clenshaw::fejer_sum   ( integ.begin() , integ.end() , tl ) +
-    m_pars[0] * ( th - tl ) :
+    0.5 * m_pars[0] * ( th - tl ) :
     Gaudi::Math::Clenshaw::fourier_sum ( integ.begin() , integ.end() , th ) - 
     Gaudi::Math::Clenshaw::fourier_sum ( integ.begin() , integ.end() , tl ) +
-    m_pars[0] * ( th - tl ) ;
+    0.5 * m_pars[0] * ( th - tl ) ;
 }
 // ============================================================================
 // get integral as object 
@@ -10791,14 +10819,18 @@ Gaudi::Math::FourierSum::integral ( const double c0 ) const
   const bool           add = !s_zero ( a0 ) ;
   for ( unsigned short k   =  1 ; 2 * k < N ; ++k  ) 
   {
-    integ.m_pars[ 2 * k     ] = -m_pars[ 2 * k - 1 ] / k * m_scale ;
-    integ.m_pars[ 2 * k - 1 ] =  m_pars[ 2 * k     ] / k * m_scale ;
     //
-    // add a serie for f(x) = a0*x 
-    if ( add ) { integ.m_pars[ 2 * k - 1 ] += 
-        ( 0 == k % 2  ? 1 : -1 ) * 2.0L * a0 / k * m_scale ; }
-  }  
-  //
+    const double a_cos = -m_pars[ 2*k-1 ]  / ( k * m_scale  ) ;
+    const double a_sin =  m_pars[ 2*k   ]  / ( k * m_scale  ) ;
+    
+    integ.m_pars[ 2 * k     ] = a_cos ;
+    integ.m_pars[ 2 * k - 1 ] = a_sin ;
+    //
+    // add a serie for f(x) = 2*a0*x 
+    if ( add ) { integ.m_pars [ 2 * k - 1 ] -= ( 0 == k%2 ? 1 : -1 ) * a0 / ( k * m_scale ) ; }
+  }
+  // add integration constant 
+  integ.setPar( 0 , 2 * c0 );
   return integ ;
 }
 // ============================================================================
@@ -10846,24 +10878,32 @@ Gaudi::Math::FourierSum::deconvolve
   //
   const long double ss      =  sigma / m_scale ;
   const long double sigma2  =  ss*ss           ;
-  // create covolution obejct 
+  // create covolution object 
   FourierSum conv( m_pars , m_xmin , m_xmax , m_fejer ) ;
   /// fill it! 
   conv.m_pars [0] = m_pars[0]  ;
   const unsigned long  N = m_pars.size() ;
+  //
+  const bool use_delta = !s_zero ( delta ) && 0 < delta ;
   for ( unsigned short k = 1 ; 2 * k < N ; ++k  ) 
   {
     //  
-    long double f  = std::exp ( 0.5L * k * k * sigma2 ) ;
+    const double v_1  = m_pars[2*k] ;
+    const double v_2  = m_pars[2*k-1] ;
+    if ( s_zero ( v_1 )  && s_zero ( v_2 ) ) { continue ; }
     //
-    if ( !s_zero ( delta ) && 0 < delta ) 
+    long double f = my_exp ( 0.5L * k * k * sigma2 ) ;
+    //
+    if ( use_delta ) 
     { const long double fd = f * delta ; f /= ( 1 + fd * fd ) ; }
     //
-    const long double   v1 = f * m_pars [ 2 * k    ] ;
+    const long double   v1 = f * v_1 ;
     if ( !s_zero ( v1 ) ) { conv.m_pars [ 2 * k    ] = v1 ; }
+    else { conv.m_pars[2*k  ] = 0 ; }    
     //
-    const long double   v2 = f * m_pars [ 2 * k -1 ] ;
+    const long double   v2 = f * v_2 ;
     if ( !s_zero ( v2 ) ) { conv.m_pars [ 2 * k -1 ] = v2 ; }
+    else { conv.m_pars[2*k-1] = 0 ; }    
     //
   }
   //
@@ -11109,16 +11149,21 @@ Gaudi::Math::CosineSum::deconvolve
   /// fill it! 
   conv.m_pars [0] = m_pars[0]  ;
   const unsigned long  N = m_pars.size() ;
+  const bool use_delta = !s_zero ( delta ) && 0 < delta ;
   for ( unsigned short k = 1 ; k < N ; ++k  ) 
   {
     //  
-    long double f  = std::exp ( 0.5L * k * k * sigma2 ) ;
+    const double v = m_pars[k] ;
+    if ( s_zero ( v ) ) { continue ; }
     //
-    if ( !s_zero ( delta ) && 0 < delta ) 
+    long double f = my_exp ( 0.5L * k * k * sigma2 ) ;
+    //
+    if ( use_delta ) 
     { const long double fd = f * delta ; f /= ( 1 + fd * fd ) ; }
     //
-    const long double   v1 = f * m_pars [ k ] ;
+    const long double   v1 = f * v ;
     if ( !s_zero ( v1 ) ) { conv.m_pars [ k ] = v1 ; }
+    else { conv.m_pars[k] = 0 ; }    
     //
   }
   //
@@ -11192,9 +11237,7 @@ double Gaudi::Math::CosineSum::derivative ( const double x ) const
   //
   for ( unsigned short k = 0 ; k < deriv.size()  ; ++k  )
   { 
-    deriv[k]  =  -m_pars[k+1] * ( k + 1 ) / m_scale ; 
-    std::cout << " k:" << k 
-              << " d:" << deriv[k] << std::endl;
+    deriv[k]  =  -m_pars[k+1] * ( k + 1 ) * m_scale ; 
   }
   //
     
@@ -11227,13 +11270,12 @@ Gaudi::Math::CosineSum::derivative_n ( const unsigned short n ) const
   //
   const short scos =   
     1 == n % 4 ? -1 : 
-    2 == n % 4 ? -1 : 
-    3 == n % 4 ?  1 : 1 ;
+    2 == n % 4 ? -1 : 1 ;
   //
   const bool         odd =  ( 1 == n % 2 ) ;
   for ( unsigned short k = 1 ;  k < N ; ++k  ) 
   {
-    const long double factor = Gaudi::Math::pow ( 1.0L * k / m_scale , n ) ;
+    const long double factor = Gaudi::Math::pow ( 1.0L * k * m_scale , n ) ;
     if ( odd ) 
     {
       deriv.setPar (  2 * k - 1  , m_pars [ k ] * factor * scos ) ;
@@ -11262,7 +11304,7 @@ double Gaudi::Math::CosineSum::integral
   std::vector<double> integ ( m_pars.size() - 1 , 0.0 ) ; 
   //
   for ( unsigned short k = 0 ; k < integ.size() ; ++k  ) 
-  { integ[k] = -m_pars[k+1] / k * m_scale ; }
+  { integ[k] = m_pars[k+1] / ( k + 1 )  / m_scale ; }
   /// transform to "t"-representation 
   const long double tl = t ( low  ) ;
   const long double th = t ( high ) ;
@@ -11271,10 +11313,10 @@ double Gaudi::Math::CosineSum::integral
     m_fejer ? 
     Gaudi::Math::Clenshaw::fejer_sine_sum ( integ.begin() , integ.end() , th ) - 
     Gaudi::Math::Clenshaw::fejer_sine_sum ( integ.begin() , integ.end() , tl ) +
-    m_pars[0] * ( th - tl ) :
+    0.5 * m_pars[0] * ( th - tl ) / m_scale :
     Gaudi::Math::Clenshaw::sine_sum       ( integ.begin() , integ.end() , th ) - 
     Gaudi::Math::Clenshaw::sine_sum       ( integ.begin() , integ.end() , tl ) +
-    m_pars[0] * ( th - tl ) ;
+    0.5 * m_pars[0] * ( th - tl ) / m_scale ;
 }
 // ============================================================================
 // get integral as object 
@@ -11287,17 +11329,20 @@ Gaudi::Math::CosineSum::integral ( const double c0 ) const
   //
   integ.setPar ( 0 , c0 ) ;
   const unsigned long  N   =  m_pars.size() ;
-  const double         a0  =  m_pars[0]     ;
+  const double         a0  =  0.5 *  m_pars[0]     ;
   const bool           add = !s_zero ( a0 ) ;
   for ( unsigned short k   =  1 ; k < N ; ++k  ) 
   {
-    integ.setPar ( 2 * k , 0 ) ;
-    if ( !add ) { integ.setPar ( 2 * k - 1  , -m_pars[k] / k * m_scale  ) ; }
-    else 
-    { integ.setPar ( 2 * k - 1  , -m_pars[k] / k * m_scale +
-                     ( 0 == k % 2  ? 1 : -1 ) * 2.0L * a0 / k * m_scale ) ; }
+    // integration of cosine 
+    integ.setPar ( 2 * k - 1  , m_pars[k] / ( k * m_scale )  ) ; 
+    //
+    // integration of cconstant term 
+    if ( add && 0 != k%2 ) 
+    { integ.setPar  ( 2 * k , -4 * a0  / ( k * k * m_scale  * M_PI ) ) ; }    
   }  
   //
+  // add integration constant 
+  integ.setPar( 0 , 2*c0  + a0 * M_PI / m_scale );
   return integ ;
 }
 // ============================================================================

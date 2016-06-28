@@ -62,8 +62,23 @@ namespace LHCb
     }
 
     template<typename T>
-    inline void load(T& buf, unsigned int /*version*/) {
-      save(buf); // identical operation until version is incremented
+    inline void load(T& buf, unsigned int version)
+    {
+      if (version == 4)
+      {
+        buf.io( key, chi2PerDoF, nDoF, flags );
+        buf.template io<uint16_t>(firstId);
+        buf.template io<uint16_t>(lastId);
+        buf.template io<uint16_t>(firstState);
+        buf.template io<uint16_t>(lastState);
+        buf.template io<uint16_t>(firstExtra);
+        buf.template io<uint16_t>(lastExtra);
+        buf.io( likelihood, ghostProba );
+      }
+      else
+      {
+        save( buf ); // identical operation for the latest version
+      }
     }
   };
 
@@ -187,7 +202,7 @@ namespace LHCb
     inline void load(T& buf) 
     {
       setVersion( buf.template load<uint8_t>() );
-      if ( version() < 4 )
+      if ( version() < 4 || version() > 5 )
       {
         throw std::runtime_error("PackedTracks packing version is not supported: "
                                  + std::to_string(version()));

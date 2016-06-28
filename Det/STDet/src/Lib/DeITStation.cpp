@@ -19,17 +19,12 @@
 #include <numeric>
 
 
-// Boost
-#include <boost/lambda/bind.hpp>
-#include <boost/lambda/lambda.hpp>
-
-using namespace boost::lambda;
 using namespace LHCb;
 
 DeITStation::DeITStation( const std::string& name ) :
   DeSTStation( name ),
   m_parent(NULL)
-{ 
+{
   // constructor
 }
 
@@ -49,15 +44,15 @@ StatusCode DeITStation::initialize() {
   StatusCode sc = DeSTStation::initialize();
   if (sc.isFailure() ){
     MsgStream msg(msgSvc(), name() );
-    msg << MSG::ERROR << "Failed to initialize detector element" << endmsg; 
+    msg << MSG::ERROR << "Failed to initialize detector element" << endmsg;
   }
   else {
     // get the children
     m_parent = getParent<DeITStation>();
     STChannelID aChan(STChannelID::typeIT,this->id(),0,0,0,0);
-    setElementID(aChan); 
+    setElementID(aChan);
     m_nickname = ITNames().StationToString(aChan);
-    m_boxes = getChildren<DeITStation>(); 
+    m_boxes = getChildren<DeITStation>();
   }
   return sc;
 }
@@ -65,21 +60,24 @@ StatusCode DeITStation::initialize() {
 DeITBox* DeITStation::findBox(const STChannelID aChannel){
 
   // return pointer to the station from channel
-  Children::iterator iter = std::find_if(m_boxes.begin() , m_boxes.end(), bind(&DeITBox::contains, _1, aChannel));
-  return (iter != m_boxes.end() ? *iter: 0);
+  auto iter = std::find_if(m_boxes.begin() , m_boxes.end(),
+                           [&](const DeITBox* b) { return b->contains(aChannel);});
+  return iter != m_boxes.end() ? *iter: nullptr;
 }
 
 DeITBox* DeITStation::findBox(const Gaudi::XYZPoint& point) {
 
   // return pointer to the station from point in global system
-  Children::iterator iter = std::find_if(m_boxes.begin(), m_boxes.end(), 
-                                                        bind(&DeITBox::isInside, _1, point)); 
-  return (iter != m_boxes.end() ? *iter: 0);
+  auto iter = std::find_if(m_boxes.begin(), m_boxes.end(),
+                           [&](const DeITBox* b) { return b->isInside(point);});
+  return iter != m_boxes.end() ? *iter: nullptr;
 }
 
 double DeITStation::fractionActive() const {
 
-  return std::accumulate(m_boxes.begin(), m_boxes.end(), 0.0,  _1 + bind(&DeITBox::fractionActive,_2))/double(m_boxes.size());   
+  return std::accumulate(m_boxes.begin(), m_boxes.end(), 0.0,
+                         [](double f, const DeITBox* b) { return f + b->fractionActive(); }
+                        )/double(m_boxes.size());
 }
 
 

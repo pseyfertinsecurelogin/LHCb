@@ -56,7 +56,7 @@ __all__     = (
     "Variance"      , ## calculate "variance" for functions/distribitions, etc (scipy)
     "RMS"           , ## calculate "RMS"      for functions/distribitions, etc (scipy)
     "Skewness"      , ## calculate "skewness" for functions/distribitions, etc (scipy)
-    "Mediane"       , ## calculate "mediane"  for functions/distribitions, etc (scipy)
+    "Median"        , ## calculate "median"   for functions/distribitions, etc (scipy)
     "Quantile"      , ## calculate "quantile" for functions/distribitions, etc (scipy)
     "Mode"          , ## calculate "mode"     for functions/distribitions, etc (scipy)
     "Width"         , ## calculate "width"    for functions/distribitions, etc (scipy)
@@ -71,7 +71,7 @@ __all__     = (
     "rms"           , ## calculate "RMS"      for functions/distribitions, etc (scipy)
     "skewness"      , ## calculate "skeness"  for functions/distribitions, etc (scipy)
     "kurtosis"      , ## calculate "kurtosis" for functions/distribitions, etc (scipy)
-    "mediane"       , ## calculate "mediane"  for functions/distribitions, etc (scipy)
+    "median"        , ## calculate "median"   for functions/distribitions, etc (scipy)
     "quantile"      , ## calculate "quantile" for functions/distribitions, etc (scipy)
     "mode"          , ## calculate "mode"     for functions/distribitions, etc (scipy)
     "width"         , ## calculate "width"    for functions/distribitions, etc (scipy)
@@ -1010,28 +1010,28 @@ class Kurtosis(Skewness) :
 
 
 # =============================================================================
-## @class Mediane 
-#  Calculate the mediane for the distribution or function  
+## @class Median 
+#  Calculate the median for the distribution or function  
 #  @code
 #  xmin,xmax = 0,math.pi 
-#  mediane   = Mediane ( xmin,xmax )  ## specify min/max
-#  value     = mediane ( math.sin  )
+#  median    = Median ( xmin,xmax )  ## specify min/max
+#  value     = median ( math.sin  )
 #  @endcode 
 #  @see https://en.wikipedia.org/wiki/Median#Inequality_relating_means_and_medians
 #  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
 #  @date   2015-07-12
-class Mediane(RMS) :
+class Median(RMS) :
     """
-    Calculate mediane for the distribution or function  
+    Calculate median for the distribution or function  
     >>> xmin,xmax = 0,math.pi 
-    >>> mediane   = Mediane ( xmin,xmax )  ## specify min/max
-    >>> value     = mediane ( math.sin  )
+    >>> median    = Median ( xmin,xmax )  ## specify min/max
+    >>> value     = median ( math.sin  )
     """
     def __init__ ( self , xmin , xmax ) :
         RMS.__init__ ( self , xmin , xmax , err = False )
 
-    ## calculate he mediane
-    def _mediane_ ( self , func , xmin , xmax , *args ) :
+    ## calculate he median
+    def _median_ ( self , func , xmin , xmax , *args ) :
         ## need to know the integral
         iint   = IntegralCache ( func ,  xmin , False , *args )
         half   = 2.0 / iint    ( xmax ) 
@@ -1057,12 +1057,12 @@ class Mediane(RMS) :
         return result
 
         
-    ## calculate the mediane 
+    ## calculate the median 
     def __call__ ( self , func , *args ) :
-        return self._mediane_ ( func , self._xmin , self._xmax )
+        return self._median_ ( func , self._xmin , self._xmax )
 
     def __str__ ( self ) :
-        return "Mediane(%s,%s)" % ( self._xmin , self._xmax )
+        return "Median(%s,%s)" % ( self._xmin , self._xmax )
     
 # =============================================================================
 ## get the quantile
@@ -1074,15 +1074,15 @@ class Mediane(RMS) :
 #  @endcode 
 #  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
 #  @date   2015-07-12
-class Quantile(Mediane) :
+class Quantile(Median) :
     """
-    Calculate mediane for the distribution or function  
+    Calculate quantiles for the distribution or function  
     >>> xmin,xmax = 0,math.pi 
     >>> quantile  = Quantile ( 0.1 , xmin,xmax )  ## specify min/max
     >>> value     = quantile ( math.sin  )
     """
     def __init__ ( self , Q , xmin , xmax ) :
-        Mediane.__init__ ( self , xmin , xmax )
+        Median.__init__ ( self , xmin , xmax )
         #
         if Q < 0 : raise ArrtibuteError ( 'Quantile is invalid %s' % Q )
         if Q > 1 : raise ArrtibuteError ( 'Quantile is invalid %s' % Q )
@@ -1091,11 +1091,11 @@ class Quantile(Mediane) :
     def __str__ ( self ) :
         return "Quantile(%s,%s,%s)" % ( self._Q , self._xmin , self._xmax )
 
-    ## calculate the mediane 
+    ## calculate the median 
     def __call__ ( self , func , *args ) :
         ##
 
-        if    0.5 == self._Q : return Mediane.__call__ ( self , func , *args ) 
+        if    0.5 == self._Q : return Median.__call__ ( self , func , *args ) 
         elif  0.0 == self._Q : return self._xmin
         elif  1.0 == self._Q : return self._xmax
 
@@ -1116,7 +1116,7 @@ class Quantile(Mediane) :
         while ( not isinstance ( xmn , float ) ) or ( not isinstance ( xmx , float ) ) or l>0.1 :   
         
             l /= 2            
-            m = self._mediane_ ( func , xmn , xmx , *args ) 
+            m = self._median_ ( func , xmn , xmx , *args ) 
             
             if   self._Q < p :
                 xmn   = xmn 
@@ -1144,7 +1144,7 @@ class Quantile(Mediane) :
 #  @endcode 
 #  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
 #  @date   2015-07-12
-class Mode(Mediane) :
+class Mode(Median) :
     """
     Calculate the mode for the distribution or function  
     >>> xmin,xmax = 0,math.pi 
@@ -1152,7 +1152,7 @@ class Mode(Mediane) :
     >>> value     = mode ( math.sin  )
     """
     def __init__ ( self , xmin , xmax ) :
-        Mediane.__init__ ( self , xmin , xmax )
+        Median.__init__ ( self , xmin , xmax )
         
     ## calculate the mode 
     def __call__ ( self , func , *args ) :
@@ -1161,10 +1161,10 @@ class Mode(Mediane) :
         ## use mean    as intial approximation for mode 
         m1     = Mean   .__call__ ( self , func , *args )
         
-        ## use mediane as intial approximation for mode 
-        ## m2     = Mediane.__call__ ( self , func , *args )
+        ## use median as intial approximation for mode 
+        ## m2     = Median.__call__ ( self , func , *args )
         
-        ## use the point intermediate between mean and mediane as approximation 
+        ## use the point intermediate between mean and median as approximation 
         ## m0     = 0.5 * ( m1 + m2 )
 
         m0 = m1 
@@ -1490,8 +1490,7 @@ def sp_action ( func , actor , xmin = None , xmax = None ) :
 # @author Vanya BELYAEV Ivan.Belyaev@itep.ru
 # @date 2015-07-11
 def moment ( func , N , xmin = None , xmax = None , err = False , x0 = 0 ) :
-    """
-    Get the moment for the distribution using scipy/numpy
+    """ Get the moment for the distribution using scipy/numpy
     >>> fun  = ...
     >>> mom5 = moment ( fun , 5 , xmin = 10 , xmax = 50 )
     """
@@ -1508,8 +1507,7 @@ def moment ( func , N , xmin = None , xmax = None , err = False , x0 = 0 ) :
 # @author Vanya BELYAEV Ivan.Belyaev@itep.ru
 # @date 2015-07-11
 def central_moment ( func , N , xmin = None , xmax = None , err = False ) :
-    """
-    Get the central moment for the distribution using scipy/numpy
+    """Get the central moment for the distribution using scipy/numpy
     >>> fun  = ...
     >>> mom5 = central_moment ( fun , 5 , xmin = 10 , xmax = 50 )
     """
@@ -1526,8 +1524,7 @@ def central_moment ( func , N , xmin = None , xmax = None , err = False ) :
 #  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
 #  @date 2015-07-11
 def mean ( func , xmin = None , xmax = None , err = False ) :
-    """
-    Get the mean-value for the distribution using scipy/numpy
+    """Get the mean-value for the distribution using scipy/numpy
     >>> fun = ...
     >>> m   = mean( fun , xmin = 10 , xmax = 50 )
     """
@@ -1545,8 +1542,7 @@ def mean ( func , xmin = None , xmax = None , err = False ) :
 #  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
 #  @date 2015-07-11
 def variance ( func , xmin = None , xmax = None , err = False ) :
-    """
-    Get the variance for the distribution using scipy/numpy
+    """Get the variance for the distribution using scipy/numpy
     >>> fun = ...
     >>> v   = variance( fun , xmin = 10 , xmax = 50 )
     """
@@ -1565,8 +1561,7 @@ def variance ( func , xmin = None , xmax = None , err = False ) :
 #  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
 #  @date 2015-07-11
 def rms ( func , xmin = None , xmax = None , err = False ) :
-    """
-    Get RMS for the distribution using scipy/numpy
+    """Get RMS for the distribution using scipy/numpy
     >>> fun = ...
     >>> v   = rms( fun , xmin = 10 , xmax = 50 )
     """
@@ -1585,8 +1580,7 @@ def rms ( func , xmin = None , xmax = None , err = False ) :
 #  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
 #  @date 2015-07-11
 def skewness ( func , xmin = None , xmax = None , err = False ) :
-    """
-    Get the skewness for the distribution using scipy/numpy
+    """Get the skewness for the distribution using scipy/numpy
     >>> fun = ...
     >>> v   = skewness ( fun , xmin = -10 , xmax = 10 )
     """
@@ -1607,8 +1601,7 @@ def skewness ( func , xmin = None , xmax = None , err = False ) :
 #  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
 #  @date 2015-07-11
 def kurtosis ( func , xmin = None , xmax = None , err = False ) :
-    """
-    Get the (exessive) kurtosis for the distribution using scipy/numpy
+    """Get the (exessive) kurtosis for the distribution using scipy/numpy
     >>> fun  = ...
     >>> kurt = kurtosis ( fun , xmin = 10 , xmax = 50 )
     """
@@ -1619,21 +1612,20 @@ def kurtosis ( func , xmin = None , xmax = None , err = False ) :
     return sp_action ( func , actor  , xmin , xmax )
 
 # =============================================================================
-## get the mediane the variable, considering function to be PDF 
+## get the median the variable, considering function to be PDF 
 #  @code 
 #  >>> fun = ...
-#  >>> med = mediane( fun , xmin = 10 , xmax = 50 )
+#  >>> med = median ( fun , xmin = 10 , xmax = 50 )
 #  @endcode
 #  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
 #  @date 2015-07-11
-def mediane ( func , xmin = None , xmax = None ) :
-    """
-    Get the mediane for the distribution using scipy/numpy
+def median ( func , xmin = None , xmax = None ) :
+    """Get the median for the distribution using scipy/numpy
     >>> fun = ...
-    >>> v   = mediane( fun , xmin = 10 , xmax = 50 )
+    >>> v   = median( fun , xmin = 10 , xmax = 50 )
     """
     ## get the functions from LHCbMath.deriv 
-    actor = lambda x1,x2 : Mediane ( x1 , x2 ) 
+    actor = lambda x1,x2 : Median ( x1 , x2 ) 
     ##
     return sp_action ( func , actor , xmin , xmax )
 
@@ -1646,8 +1638,7 @@ def mediane ( func , xmin = None , xmax = None ) :
 #  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
 #  @date 2015-07-11
 def quantile ( func , Q , xmin = None , xmax = None , err = False , x0 = 0 ) :
-    """
-    Get quantile for the distribution using scipy/numpy
+    """Get quantile for the distribution using scipy/numpy
     >>> fun  = ...
     >>> quan = quantile ( fun , 0.1 , xmin = 10 , xmax = 50 )
     """
@@ -1664,8 +1655,7 @@ def quantile ( func , Q , xmin = None , xmax = None , err = False , x0 = 0 ) :
 #  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
 #  @date 2015-07-11
 def mode ( func , xmin = None , xmax = None ) :
-    """
-    Get the mode for the distribution using scipy/numpy
+    """Get the mode for the distribution using scipy/numpy
     >>> fun = ...
     >>> v   = mode( fun ,  xmin = 10 , xmax = 50 )
     """
@@ -1685,8 +1675,7 @@ def mode ( func , xmin = None , xmax = None ) :
 #  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
 #  @date 2015-07-11
 def width ( func , xmin = None , xmax = None , height_factor = 0.5 ) :
-    """
-    Get the width for the distribution using scipy/numpy
+    """ Get the width for the distribution using scipy/numpy
     >>> fun   = ...
     >>> x1,x2 = width ( fun ,  xmin = 10 , xmax = 50 )
     >>> fwhm  = x2-x1   
@@ -1709,7 +1698,7 @@ def width ( func , xmin = None , xmax = None , height_factor = 0.5 ) :
 #  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
 #  @date 2015-08-03
 def cl_symm ( func , prob , xmin = None , xmax = None , x0 = None ) :
-    """
+    """ Symmetric confidence interval around x0    
     >>> fun  = lambda x : exp( - 0.5 * x * x )
     >>> x_1  = cl_symm ( fun , 0.68 , -10 , 10 )
     >>> print x_1 
@@ -1722,7 +1711,7 @@ def cl_symm ( func , prob , xmin = None , xmax = None , x0 = None ) :
     return sp_action ( func , actor , xmin , xmax )
 
 # =============================================================================
-## get the symmetric confidence interval around x0 for (xmin,xmax) interval 
+## get the asymmetric confidence interval around x0 for (xmin,xmax) interval 
 #  @code 
 #  fun  = lambda x : exp( - 0.5 * x * x ) 
 #  x_1,x_2  = cl_asymm ( fun , 0.68 , -10 , 10 )
@@ -1731,7 +1720,7 @@ def cl_symm ( func , prob , xmin = None , xmax = None , x0 = None ) :
 #  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
 #  @date 2015-08-03
 def cl_asymm ( func , prob , xmin = None , xmax = None ) :
-    """
+    """Asymmetric confidence interval around x0    
     >>> fun  = lambda x : exp( - 0.5 * x * x )
     >>> x_1,x_2  = cl_asymm ( fun , 0.68 , -10 , 10 )
     >>> print x_1,x_2 
@@ -1822,8 +1811,8 @@ if '__main__' == __name__ :
     var2 = Variance (0, math.pi)
     print 'sin@[0,pi]            variance: %s ' % var2 (math.sin) 
 
-    med  = Mediane  (0, math.pi)
-    print 'sin@[0,pi]             mediane: %s ' % med  (math.sin) 
+    med  = Median   (0, math.pi)
+    print 'sin@[0,pi]              median: %s ' % med  (math.sin) 
 
     mode_ = Mode     (0, math.pi)
     print 'sin@[0,pi]                mode: %s ' % mode_ (math.sin) 
