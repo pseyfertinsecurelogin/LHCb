@@ -204,7 +204,7 @@ namespace LHCb
     bool isSupportedVer( const char& ver ) const
     {
       const bool OK = ( 2 == ver || 1 == ver || 0 == ver );
-      if ( !OK )
+      if ( UNLIKELY(!OK) )
       {
         std::ostringstream mess;
         mess << "Unknown packed data version " << (int)ver;

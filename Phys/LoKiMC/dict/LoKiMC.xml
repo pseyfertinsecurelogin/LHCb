@@ -53,6 +53,7 @@
   <function pattern = "LoKi::Dicts::MCFinderDicts::*"       />
   <function name    = "LoKi::MCExtract::mcParticles"        />
   <function name    = "LoKi::MCParticles::hex_id"           />
+  <function name    = "LoKi::MCParticles::hash"             />
 
   <class name       = "LoKi::MCChild::Selector" />
 

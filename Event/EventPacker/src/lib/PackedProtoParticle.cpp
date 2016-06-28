@@ -25,7 +25,7 @@ ProtoParticlePacker::pack( const Data & proto,
 {
   // packing version
   const auto ver = pprotos.packingVersion();
-  if ( 1 == ver || 0 == ver )
+  if ( isSupportedVer(ver) )
   {
 
     if ( parent().msgLevel(MSG::VERBOSE) )
@@ -115,13 +115,6 @@ ProtoParticlePacker::pack( const Data & proto,
     pproto.lastExtra = pprotos.extras().size();
 
   }
-  else
-  {
-    std::ostringstream mess;
-    mess << "Unknown packed data version " << (int)ver;
-    throw GaudiException( mess.str(), "ProtoParticlePacker", StatusCode::FAILURE );
-  }
-
 }
 
 void
@@ -149,7 +142,7 @@ ProtoParticlePacker::unpack( const PackedData       & pproto,
 {
   // packing version
   const auto ver = pprotos.packingVersion();
-  if ( 1 == ver || 0 == ver )
+  if ( isSupportedVer(ver) )
   {
 
     if ( parent().msgLevel(MSG::VERBOSE) )
@@ -257,13 +250,6 @@ ProtoParticlePacker::unpack( const PackedData       & pproto,
     }
 
   }
-  else
-  {
-    std::ostringstream mess;
-    mess << "Unknown packed data version " << (int)ver;
-    throw GaudiException( mess.str(), "ProtoParticlePacker", StatusCode::FAILURE );
-  }
-
 }
 
 void

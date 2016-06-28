@@ -14,15 +14,15 @@ void RecVertexPacker::pack( const Data & vert,
                             PackedDataVector & pverts ) const
 {
   const auto ver = pverts.packingVersion();
-  if ( 1 == ver || 0 == ver )
+  if ( isSupportedVer(ver) )
   {
 
-    pvert.technique  = vert.technique();
-    pvert.chi2       = m_pack.fltPacked( vert.chi2() );
-    pvert.nDoF       = vert.nDoF();
-    pvert.x          = m_pack.position( vert.position().x() );
-    pvert.y          = m_pack.position( vert.position().y() );
-    pvert.z          = m_pack.position( vert.position().z() );
+    pvert.technique = vert.technique();
+    pvert.chi2      = m_pack.fltPacked( vert.chi2() );
+    pvert.nDoF      = vert.nDoF();
+    pvert.x         = m_pack.position( vert.position().x() );
+    pvert.y         = m_pack.position( vert.position().y() );
+    pvert.z         = m_pack.position( vert.position().z() );
     
     // convariance Matrix
     const auto err0 = safe_sqrt( vert.covMatrix()(0,0) );
@@ -67,13 +67,6 @@ void RecVertexPacker::pack( const Data & vert,
     pvert.lastInfo = pverts.extras().size();
 
   }
-  else
-  {
-    std::ostringstream mess;
-    mess << "Unknown packed data version " << (int)ver;
-    throw GaudiException( mess.str(), "RecVertexPacker", StatusCode::FAILURE );
-  }
-
 }
 
 void RecVertexPacker::pack( const DataVector & verts,
@@ -101,8 +94,8 @@ void RecVertexPacker::unpack( const PackedData       & pvert,
                               const PackedDataVector & pverts,
                               DataVector             & verts ) const
 {
-  const char ver = pverts.packingVersion();
-  if ( 1 == ver || 0 == ver )
+  const auto ver = pverts.packingVersion();
+  if ( isSupportedVer(ver) )
   {
 
     vert.setTechnique( (LHCb::RecVertex::RecVertexType) pvert.technique );
@@ -150,13 +143,6 @@ void RecVertexPacker::unpack( const PackedData       & pvert,
     }
 
   }
-  else
-  {
-    std::ostringstream mess;
-    mess << "Unknown packed data version " << (int)ver;
-    throw GaudiException( mess.str(), "RecVertexPacker", StatusCode::FAILURE );
-  }
-
 }
 
 void RecVertexPacker::unpack( const PackedDataVector & pverts,

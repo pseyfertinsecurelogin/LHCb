@@ -241,7 +241,14 @@ StatusCode L0DUReportMonitor::execute() {
   // Condition counter 
   for(LHCb::L0DUElementaryCondition::Map::iterator it = conditions.begin();it!=conditions.end();it++){
     if( init ) m_condCnt[ (*it).first ]=0;//init    
-    if( report->conditionValue( ((*it).second)->id() ) ) m_condCnt[ (*it).first ] += 1.;
+
+
+    // OD 2016/06  fix in case of un-reported condition(s).
+    if((*it).second->reported()){
+      if( report->conditionValue( ((*it).second)->reportBit() ) ) m_condCnt[ (*it).first ] += 1.;
+    }else{
+      m_condCnt[ (*it).first ] -= 1.;
+    }
     m_condRate[(*it).first ] = 0.;
     m_condSeq[ (*it).first ] = 0;
     condNames[ (*it).second->id() ] =  (*it).first ;
@@ -913,9 +920,15 @@ StatusCode L0DUReportMonitor::finalize() {
       std::string _name = ( bx == 0 ) ? name : name +" [BX="+Gaudi::Utils::toString(bx)+"]";
       int err=m_condError[_name];
       std::string stamp  = ( err == 0 )? "" : " [#ERRORS :"+ Gaudi::Utils::toString(err)+"] ";
-      info() << "   *  Elementary Condition  " << stamp 
-             << format( "%20s :  %8.0f events : rate = %6.2f  %%   ", 
+      int cnt = m_condCnt[name];
+      if( cnt < 0)
+        info() << "   *  Elementary Condition  " << stamp 
+               << format( "%20s :   UNKNOWN (condition unreported)     ", 
                         _name.c_str(), m_condCnt[name], m_condRate[name]) << endmsg;
+      else
+        info() << "   *  Elementary Condition  " << stamp 
+               << format( "%20s :  %8.0f events : rate = %6.2f  %%   ", 
+                          _name.c_str(), m_condCnt[name], m_condRate[name]) << endmsg;
     }
     info() << "======================================================================== " <<endmsg;
   }

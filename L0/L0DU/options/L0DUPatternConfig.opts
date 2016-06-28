@@ -17,6 +17,9 @@ ToolSvc.L0DUConfig.OutputLevel = 3;
 // Dump L0DU bank (Nevents)
 //L0DUFromRaw.L0DUFromRawTool.DumpBank = 256 ;
 
+L0DUFromRaw.L0DUFromRawTool.FakeConsecutiveEvents=true ;  // OVERWRITE SumEtPrev to fake a consecutive events
+L0Pattern.L0DUFromRawTool.FakeConsecutiveEvents=true ;  // OVERWRITE SumEtPrev to fake a consecutive events
+
 // Pattern
 L0Pattern.L0DUConfigTool="L0DUConfig";
 L0Pattern.L0DUFromRawTool.L0DUConfigProviderName = "L0DUConfig";

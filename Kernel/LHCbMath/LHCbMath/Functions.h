@@ -151,7 +151,7 @@ namespace Gaudi
     public: // derived getters
       // ======================================================================
       double mean        () const { return   mu    () ; }
-      double mediane     () const { return   mu    () ; }
+      double median      () const { return   mu    () ; }
       double mode        () const { return   mu    () ; }
       //
       double variance    () const ;
@@ -232,7 +232,7 @@ namespace Gaudi
     public: // derived getters
       // ======================================================================
       double mean        () const ;
-      double mediane     () const { return   xi    () ; }
+      double median      () const { return   xi    () ; }
       //
       double variance    () const ;
       double dispersion  () const { return variance () ; }
@@ -1812,7 +1812,7 @@ namespace Gaudi
       /// get the value of formfactor at given m 
       double            formfactor ( const double m ) const ;
       /// get the formfactor itself 
-      const FormFactor* 
+      const Gaudi::Math::FormFactor* 
         formfactor () const { return m_formfactor ; }
       // ======================================================================
     public:
@@ -1839,7 +1839,7 @@ namespace Gaudi
       /// the orbital momentum
       unsigned int      m_L          ; // the orbital momentum
       /// the formfactor 
-      const FormFactor* m_formfactor ; // the formfactor 
+      const Gaudi::Math::FormFactor* m_formfactor ; // the formfactor 
       // ======================================================================
     private:
       // ======================================================================
@@ -2106,8 +2106,8 @@ namespace Gaudi
       // ======================================================================
     } ;
     // ========================================================================
-    /** @class Voight
-     *  simple Voightian function: 
+    /** @class Voigt
+     *  simple Voigtian function: 
      *  convolution of Lorenzian (non-relativistic Breit-Wigner function)
      *  with Gaussian resoltuion 
      *  @see http://en.wikipedia.org/wiki/Voigt_profile
@@ -2169,6 +2169,107 @@ namespace Gaudi
       double m_m0     ;
       double m_gamma  ;
       double m_sigma  ;
+      // ======================================================================
+    private:
+      // ======================================================================
+      /// integration workspace
+      Gaudi::Math::WorkSpace m_workspace ;    // integration workspace
+      // ======================================================================
+    } ;
+    // ========================================================================
+    /** @class PseudoVoigt
+     *  Simplified verison of Voigt profile 
+     *  @see T. Ida, M. Ando and H. Toraya, 
+     *       "Extended pseudo-Voigt function for approximating the Voigt profile"
+     *       J. Appl. Cryst. (2000). 33, 1311-1316
+     *  @see doi:10.1107/S0021889800010219
+     *  @see http://dx.doi.org/10.1107/S0021889800010219
+     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+     *  @date 2016-06-13
+     */
+    class GAUDI_API PseudoVoigt
+      : public std::unary_function<double,double>
+    {
+    public:
+      // ======================================================================
+      ///  constructor  from the three parameters
+      PseudoVoigt  ( const double m0     = 1      ,
+                     const double gamma  = 0.004  ,
+                     const double sigma  = 0.001  ) ;
+      /// destructor
+      virtual ~PseudoVoigt () ;
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// get the value of Voigt function
+      // ======================================================================
+      virtual double operator() ( const double x ) const ;
+      // ======================================================================
+    public:
+      // ======================================================================
+      double m0     () const { return m_m0      ; }
+      double mass   () const { return   m0   () ; }
+      double peak   () const { return   m0   () ; }
+      double gamma  () const { return m_gamma   ; }
+      double sigma  () const { return m_sigma   ; }
+      // ======================================================================
+    public:
+      // ======================================================================
+      bool setM0     ( const double x ) ;
+      bool setMass   ( const double x ) { return setM0 ( x ) ; }
+      bool setPeak   ( const double x ) { return setM0 ( x ) ; }
+      bool setGamma  ( const double x ) ;
+      bool setSigma  ( const double x ) ;
+      // ======================================================================
+    public: // helper constants 
+      // ======================================================================
+      double fwhm_gauss      () const ;
+      double fwhm_lorentzian () const { return 2 * m_gamma ; }
+      double rho             () const 
+      { return fwhm_lorentzian() / ( fwhm_lorentzian() + fwhm_gauss() ) ; }
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// get the integral
+      virtual double integral () const ;
+      /// get the integral between low and high limits
+      virtual double integral ( const double low  ,
+                                const double high ) const ;
+      // ======================================================================
+    public: // get parameters of the four components 
+      // ======================================================================
+      /// get widths of the components 
+      double w   ( const unsigned short i ) const { return i < 4 ? m_w  [i] : 0.0 ; }
+      /// get stength of the components 
+      double eta ( const unsigned short i ) const { return i < 4 ? m_eta[i] : 0.0 ; }
+      // ======================================================================
+    public: // get the separate components 
+      // ======================================================================
+      /// get the Gaussian component 
+      double gaussian   ( const double x ) const ;
+      /// get the Lorentzian component 
+      double lorentzian ( const double x ) const ;
+      /// get the Irrational  component 
+      double irrational ( const double x ) const ;
+      /// get the squared hyperbolic secant component 
+      double sech2      ( const double x ) const ;
+      // ======================================================================
+    private:  // calculate internal data 
+      // ======================================================================
+      void update () ;
+      // ======================================================================
+    private:
+      // ======================================================================
+      double m_m0     ;
+      double m_gamma  ;
+      double m_sigma  ;
+      // ======================================================================
+    private: // some data 
+      // ======================================================================
+      /// the widths/gammas of four components: Gaussian,Lorentzian,rIrational and Sech2 
+      std::array<double,4>  m_w   ;
+      //// the strengths of four components 
+      std::array<double,4>  m_eta ;
       // ======================================================================
     private:
       // ======================================================================
@@ -2374,6 +2475,115 @@ namespace Gaudi
       } ;
       // ======================================================================
     } // end of namespace Gaudi:Math::FormFactors
+    // ========================================================================
+    /** @class Swanson
+     *  Swanson's parameterization of S-wave cusp 
+     *  @see LHCb-PAPER-2016-019 appendix D 
+     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+     *  @date 2016-06-11
+     */
+    class GAUDI_API Swanson : public std::unary_function<double,double>
+    {
+    public:
+      // ======================================================================
+      /// constructor from all parameters (numbers are arbitrary...)
+      Swanson ( const double         m1     = 0.139 ,   // the first  real particle 
+                const double         m2     = 0.139 ,   // the second real particle
+                const double         m1_0   = 0.135 ,   // the first  particle for cusp
+                const double         m2_0   = 0.135 ,   // the second particle for cusp 
+                const double         beta_0 = 0.300 ,   // beta_0 parameter
+                const unsigned short L      = 0     ) ; // orbital momentum for real particles
+      /// constructor from all parameters 
+      Swanson ( const double         m1             ,   // the first  real particle 
+                const double         m2             ,   // the second real particle
+                const double         m1_0           ,   // the first  particle for cusp
+                const double         m2_0           ,   // the second particle for cusp 
+                const double         beta_0         ,   // beta_0 parameter
+                const unsigned short L              ,   // orbital momentum for real particles 
+                const Gaudi::Math::FormFactors::JacksonRho  r ) ; //  formfactor
+      /// constructor from all parameters 
+      Swanson ( const double         m1             ,   // the first  real particle 
+                const double         m2             ,   // the second real particle
+                const double         m1_0           ,   // the first particle for cusp
+                const double         m2_0           ,   // the second particle for cusp 
+                const double         beta_0         ,   // beta_0 parameter
+                const unsigned short L              ,   // orbital momentum for real particles 
+                const Gaudi::Math::FormFactor&    f ) ; // formfactor      
+      /// constructor from all parameters 
+      Swanson ( const BreitWigner&   bw             ,   // breit-wigner 
+                const double         m1_0           ,   // the first  particle for cusp
+                const double         m2_0           ,   // the second particle for cusp 
+                const double         beta_0         ) ; // beta_0 parameter
+      /// copy constructor 
+      Swanson ( const Swanson&  sw ) ;
+      /// destructor 
+      virtual ~Swanson() ;
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// calculate the Swanson shape 
+      double operator () ( const double x ) const { return swanson ( x ) ; }
+      /// calculate the Swanson shape 
+      double swanson     ( const double x ) const ;
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// calculate complex amplitude 
+      std::complex<double> amplitude ( const double x ) const ;
+      // ======================================================================
+    public: // getters
+      // ======================================================================
+      /// get beta_0 parameter 
+      double  beta0 () const { return m_beta0 ; }  // get beta_0 parameter 
+      /// mass of the first particle 
+      double  m1    () const { return m_m1    ; }  // mass of first particle 
+      /// mass of the second particle 
+      double  m2    () const { return m_m2    ; }  // mass of the second particle 
+      // ======================================================================
+    public: // derived getters 
+      // ======================================================================
+      double mmin () const { return m_bw.m1() + m_bw.m2() ; }
+      double cusp () const { return    m_m1   +    m_m2   ; }
+      // ======================================================================
+    public: // setters 
+      // ======================================================================
+      /// set new value for beta_0 
+      bool setBeta0  ( const double value ) ;
+      /// set new value for beta_0 
+      bool setBeta_0 ( const double value ) { return setBeta0 ( value ) ; }
+      /// set new valeu for m1  
+      bool setM1_0   ( const double value ) ;
+      /// set new valeu for m2  
+      bool setM2_0   ( const double value ) ;
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// get the integral between low and high limits
+      virtual double integral  ( const double low  ,
+                                 const double high ) const ;
+      // ======================================================================
+    private:
+      // ======================================================================
+      /// assignement operator is disabled 
+      Swanson& operator=( const Swanson& ) ; // no assignement 
+      // ======================================================================
+    private:
+      // ======================================================================
+      /// use Breit-Wigner to keep parameters of real particles 
+      Gaudi::Math::BreitWigner   m_bw ;
+      /// the mass of the first  particle
+      double            m_m1         ; // the mass of the first  particle
+      /// the mass of the second particle
+      double            m_m2         ; // the mass of the second particle
+      /// beta0 parameter 
+      double            m_beta0      ; // beta0 parameter 
+      // ======================================================================
+    private:
+      // ======================================================================
+      /// integration workspace
+      Gaudi::Math::WorkSpace m_workspace ;    // integration workspace
+      // ======================================================================
+    } ;
     // ========================================================================
     /** @class LASS
      *  The LASS parameterization (Nucl. Phys. B296, 493 (1988))
@@ -3429,6 +3639,11 @@ namespace Gaudi
       double integral ( const double low  ,
                         const double high ) const ;
       // ======================================================================
+    public: // quantiles 
+      // ======================================================================
+      /// calculate the quantile   (0<p<1) 
+      double quantile ( const double p ) const ;
+      // ======================================================================
     private:
       // ======================================================================
       /// shape
@@ -3509,6 +3724,11 @@ namespace Gaudi
       virtual double integral ( const double low  ,
                                 const double high ) const ;
       // ======================================================================
+    public: // quantiles 
+      // ======================================================================
+      /// calculate the quantile   (0<p<1) 
+      double quantile ( const double p ) const ;
+      // ======================================================================
     private:
       // ======================================================================
       /// helper gamma distribution
@@ -3547,6 +3767,11 @@ namespace Gaudi
       /// get the integral between low and high limits
       virtual double integral   ( const double low  ,
                                   const double high ) const ;
+      // ======================================================================
+    public: // quantiles 
+      // ======================================================================
+      /// calculate the quantile   (0<p<1) 
+      double quantile ( const double p ) const ;
       // ======================================================================
     } ;
     // ========================================================================
@@ -4154,7 +4379,174 @@ namespace Gaudi
       /// workspace
       Gaudi::Math::WorkSpace m_workspace ;
       // ======================================================================
-     } ;
+    } ;
+    // ========================================================================
+    /** @class Sech
+     *  Hyperbolic secant distribution or "inverse-cosh" distribution
+     * 
+     *  The hyperbolic secant distribution shares many properties with the 
+     *  standard normal distribution: 
+     *  - it is symmetric with unit variance and zero mean, 
+     *    median and mode
+     *  -its pdf is proportional to its characteristic function. 
+     *
+     *  However, the hyperbolic secant distribution is leptokurtic; 
+     *  that is, it has a more acute peak near its mean, and heavier tails, 
+     *  compared with the standard normal distribution.
+     *
+     *  \f$ f(x,\mu,\sigma) \propto \frac{1}{2} \sech ( \frac{\pi}{2}\frac{x-\mu}{\sigma} )\f$ 
+     *  @see https://en.wikipedia.org/wiki/Hyperbolic_secant_distribution
+     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+     *  @date 2016-04-25
+     */
+    class GAUDI_API Sech : public std::unary_function<double,double>
+    {
+    public:
+      // ======================================================================
+      /** constructor with all parameters
+       *  @param mean  \f$\mu\f$-parameter 
+       *  @param sigma \f$\sigma\f$-parameter
+       */
+      Sech   ( const double mean   = 0  ,
+               const double sigma  = 1  ) ;
+      /// destructor
+      ~Sech () ;
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// evaluate sech function 
+      double pdf        ( const double x ) const ;
+      /// evaluate sech function 
+      double operator() ( const double x ) const { return pdf ( x ) ; }
+      // ======================================================================
+    public: // direct getters
+      // ======================================================================
+      double mean   () const { return m_mean   ; }
+      /// get parameters "sigma"
+      double sigma  () const { return m_sigma  ; }
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// get mode 
+      double mode     () const { return mean()            ; }
+      /// get variance
+      double variance () const { return m_sigma * m_sigma ; }
+      /// get rms
+      double rms      () const { return m_sigma           ; }
+      /// get skewness 
+      double skewness () const { return 0 ; }
+      /// get kurtosis
+      double kurtosis () const { return 2 ; }
+      // ======================================================================
+    public: // direct setters
+      // ======================================================================
+      bool   setMean  ( const double value ) ;
+      bool   setSigma ( const double value ) ;
+      // ======================================================================
+    public: // quantile (0<p<1)
+      // ======================================================================      
+      /// get quantile (0<p<1)
+      double quantile ( const double p ) const ;
+      // ======================================================================
+    public: // integrals
+      // ======================================================================      
+      /// get integral from low to high 
+      double integral ( const double low  ,
+                        const double high ) const ;
+      /// integral from -infinity to +infinity
+      double integral () const ;
+      /// evaluate atlas function 
+      double cdf      ( const double x ) const ;
+      // ======================================================================
+    private:
+      // ======================================================================
+      /// parameteter "mu", mean, mode 
+      double m_mean  ; // parameter mu,mean,mode 
+      /// parameter   "sigma" 
+      double m_sigma ; // parameter sigma 
+      // ======================================================================
+    } ;
+    // ========================================================================
+    /** @class Logistic
+     *  aka "Sech-square"
+     *  \f$ f(x;\mu;s) = \frac{1}{4s}sech^2\left(\frac{x-\mu}{2s}\right)\f$, 
+     *  where
+     *  \f$  s = \sigma \frac{\sqrt{3}}{\pi}\f$
+     *  @see https://en.wikipedia.org/wiki/Logistic_distribution
+     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+     *  @date 2016-06-14
+     */
+    class GAUDI_API Logistic : public std::unary_function<double,double>
+    {
+    public:
+      // ======================================================================
+      /** constructor with all parameters
+       *  @param mean  \f$\mu  \f$-parameter 
+       *  @param sigma \f$sigma\f$-parameter
+       */
+      Logistic  ( const double mean  = 0  ,
+                  const double sigma = 1  ) ;
+      /// destructor
+      ~Logistic () ;
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// evaluate sech function 
+      double pdf        ( const double x ) const ;
+      /// evaluate sech function 
+      double operator() ( const double x ) const { return pdf ( x ) ; }
+      // ======================================================================
+    public: // direct getters
+      // ======================================================================
+      double mean   () const { return m_mean   ; }
+      /// get parameters "sigma"
+      double sigma  () const { return m_sigma  ; }
+      /// get "s" 
+      double s      () const ;
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// get mode 
+      double mode     () const { return mean () ; }
+      /// get median
+      double median   () const { return mean () ; }
+      /// get variance
+      double variance () const { return m_sigma * m_sigma ; }
+      /// get rms
+      double rms      () const { return m_sigma ; }
+      /// get skewness 
+      double skewness () const { return   0 ; }
+      /// get kurtosis
+      double kurtosis () const { return 1.2 ; }
+      // ======================================================================
+    public: // quanilies 
+      // ======================================================================  
+      /// quantile fnuiction  (0<p<1)
+      double quantile ( const double p ) const ;
+      // ======================================================================
+    public: // direct setters
+      // ======================================================================
+      bool   setMean  ( const double value ) ;
+      bool   setSigma ( const double value ) ;
+      // ======================================================================
+    public: // integrals
+      // ======================================================================      
+      /// get integral from low to high 
+      double integral ( const double low  ,
+                        const double high ) const ;
+      /// integral from -infinity to +infinity
+      double integral () const ;
+      /// evaluate Logistc CDF function 
+      double cdf      ( const double x ) const ;
+      // ======================================================================
+    private:
+      // ======================================================================
+      /// parameteter "mu", mean, mode 
+      double m_mean  ; // parameter mu,mean,mode 
+      /// parameter   "sigma"
+      double m_sigma ; // parameter sigma
+      // ======================================================================
+    } ;
     // ========================================================================
     /** @class Argus 
      *  http://en.wikipedia.org/wiki/ARGUS_distribution
@@ -4247,7 +4639,7 @@ namespace Gaudi
       // ======================================================================
       /// get exponential 
       double tau    () const { return m_tau ;}
-      /// get bnew valeu for the exponent  
+      /// set new value for the exponent  
       bool   setTau ( const  double value ) ;
       /// get number of polinomial parameters
       std::size_t npars () const { return 1 + m_positive.npars() ; }
@@ -5307,8 +5699,8 @@ namespace Gaudi
     } ;  
     // ========================================================================
     // forward declarations 
-    class FourinerSum ;
-    class CosineSum   ;    
+    class FourierSum ;
+    class CosineSum  ;    
     // ========================================================================
     /** @class FourierSum
      *  Fourier sum 

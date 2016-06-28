@@ -243,7 +243,7 @@ StatusCode DeCalorimeter::initialize()
 Gaudi::Plane3D DeCalorimeter::plane( const double dz) const{
   if ( fabs(dz-m_zOffset) > m_zSize/2. ) {
     MsgStream msg( msgSvc(), name() + "Plane " );
-    msg << MSG::WARNING
+    msg << MSG::DEBUG
         << " THE REQUESTED PLANE IS OUTSIDE THE ACTIVE VOLUME of : " << name()
         << " dz = " << dz
         << " z-enveloppe of the active area = ["<< m_zOffset-m_zSize/2. << " ; "

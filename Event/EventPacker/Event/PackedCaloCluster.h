@@ -1,6 +1,7 @@
 #ifndef EVENT_PackedCaloCluster_H
 #define EVENT_PackedCaloCluster_H 1
 
+// STL
 #include <string>
 
 // Kernel
@@ -12,6 +13,7 @@
 // Gaudi
 #include "GaudiKernel/DataObject.h"
 #include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/GaudiException.h"
 
 namespace LHCb
 {
@@ -212,7 +214,7 @@ namespace LHCb
   public:
 
     /// Default Constructor
-    CaloClusterPacker( const GaudiAlgorithm * p ) : m_pack(p) {}
+    CaloClusterPacker( const GaudiAlgorithm * p ) : m_pack(p) { }
 
   public:
 
@@ -240,6 +242,19 @@ namespace LHCb
     /// Safe sqrt ...
     inline double safe_sqrt( const double x ) const
     { return ( x > 0 ? std::sqrt(x) : 0.0 ); }
+
+    /// Check if the given packing version is supported
+    bool isSupportedVer( const char& ver ) const
+    {
+      const bool OK = ( 0 == ver );
+      if ( UNLIKELY(!OK) )
+      {
+        std::ostringstream mess;
+        mess << "Unknown packed data version " << (int)ver;
+        throw GaudiException( mess.str(), "RichPIDPacker", StatusCode::FAILURE );
+      }
+      return OK;
+    }
 
   private:
 

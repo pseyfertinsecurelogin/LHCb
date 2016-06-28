@@ -65,6 +65,10 @@ namespace LoKi
      */
     GAUDI_API    
     std::string hex_id ( const HepMC::GenParticle* particle ) ;
+    /// get hash function for HepMC::Particle 
+    GAUDI_API std::size_t hash ( const HepMC::GenParticle* particle ) ;
+    /// get hash function for HepMC::Particle 
+    GAUDI_API std::size_t hash ( const HepMC::GenVertex*   particle ) ;
     // ========================================================================
   } //                                      end of namespace LoKi::GenParticles
   // ==========================================================================

@@ -14,12 +14,13 @@ using namespace LHCb;
 void CaloHypoPacker::pack( const DataVector & hypos,
                            PackedDataVector & phypos ) const
 {
-  phypos.hypos().reserve(hypos.size());
 
   // packing version
   const auto ver = phypos.packingVersion();
   if ( isSupportedVer(ver) )
   {
+
+    phypos.hypos().reserve(hypos.size());
 
     for ( const auto* H : hypos )
     {
@@ -146,12 +147,13 @@ void CaloHypoPacker::pack( const DataVector & hypos,
 void CaloHypoPacker::unpack( const PackedDataVector & phypos,
                              DataVector             & hypos ) const
 {
-  hypos.reserve( phypos.hypos().size() );
 
   // packing version
   const auto ver = phypos.packingVersion();
   if ( isSupportedVer(ver) )
   {
+
+    hypos.reserve( phypos.hypos().size() );
 
     for ( const auto& src : phypos.hypos() )
     {

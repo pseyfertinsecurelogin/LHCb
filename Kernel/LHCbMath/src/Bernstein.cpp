@@ -1494,8 +1494,11 @@ double Gaudi::Math::Bernstein2D::operator () ( const double x ,
   if ( x < m_xmin || x > m_xmax ) { return 0.0        ; }
   if ( y < m_ymin || y > m_ymax ) { return 0.0        ; }
   //
+  const double scalex = ( m_nx + 1 ) / ( xmax() - xmin() ) ;
+  const double scaley = ( m_ny + 1 ) / ( ymax() - ymin() ) ;
+  //
   if      ( 0 == npars ()       ) { return 0.0        ; }
-  else if ( 1 == npars ()       ) { return m_pars [0] ; }
+  else if ( 1 == npars ()       ) { return m_pars [0] * scalex * scaley ; }
   ///
   std::vector<double> fy ( m_ny + 1 , 0 ) ;
   for ( unsigned short i = 0 ; i <= m_ny ; ++i )
@@ -1511,9 +1514,6 @@ double Gaudi::Math::Bernstein2D::operator () ( const double x ,
     for  ( unsigned short iy = 0 ; iy <= m_ny ; ++iy ) 
     { result += par ( ix , iy ) * fx[ix] * fy[iy] ; }
   }
-  //
-  const double scalex = ( m_nx + 1 ) / ( xmax() - xmin() ) ;
-  const double scaley = ( m_ny + 1 ) / ( ymax() - ymin() ) ;
   //
   return result * ( scalex * scaley ) ;
 }
@@ -1800,8 +1800,10 @@ double Gaudi::Math::Bernstein2DSym::operator ()
   if ( x < xmin () || x > xmax () ) { return 0.0        ; }
   if ( y < ymin () || y > ymax () ) { return 0.0        ; }
   //
-  if      ( 0 == npars ()       ) { return 0.0        ; }
-  else if ( 1 == npars ()       ) { return m_pars [0] ; }
+  const double scale = ( m_n + 1 ) / ( xmax() - xmin() ) ;
+  //
+  if      ( 0 == npars ()       ) { return 0.0 ; }
+  else if ( 1 == npars ()       ) { return m_pars [0] * ( scale * scale ) ; }
   ///
   std::vector<double> fy ( m_n + 1 , 0 ) ;
   for ( unsigned short i = 0 ; i <= m_n ; ++i ) 
@@ -1816,13 +1818,12 @@ double Gaudi::Math::Bernstein2DSym::operator ()
   {
     for  ( unsigned short iy = 0 ; iy <= m_n ; ++iy ) 
     { 
-      result += ( ix == iy ) ? 
-        par ( ix , iy ) * fx[ix] * fy[iy]       : 
-        par ( ix , iy ) * fx[ix] * fy[iy] * 0.5 ;
+      result += 
+        ix == iy  ? par ( ix , iy ) * fx[ix] * fy[iy] : 
+        0.5       * par ( ix , iy ) * fx[ix] * fy[iy] ;
     }
   }
   //
-  const double scale = ( m_n + 1 ) / ( xmax() - xmin() ) ;
   return result * ( scale * scale ) ;
 }
 // ============================================================================
@@ -1863,10 +1864,10 @@ double Gaudi::Math::Bernstein2DSym::integral
   for  ( unsigned short ix = 0 ; ix <= m_n ; ++ix ) 
   {
     for  ( unsigned short iy = 0 ; iy <= m_n ; ++iy ) 
-    { 
-      result += ( ix == iy ) ? 
-        par ( ix , iy ) * fx[ix] * fy[iy]       : 
-        par ( ix , iy ) * fx[ix] * fy[iy] * 0.5 ;
+    {
+      result += 
+        ix == iy  ? par ( ix , iy ) * fx[ix] * fy[iy] : 
+        0.5       * par ( ix , iy ) * fx[ix] * fy[iy] ;
     }
   }
   //
@@ -1921,11 +1922,11 @@ double Gaudi::Math::Bernstein2DSym::integrateY
   for  ( unsigned short ix = 0 ; ix <= m_n ; ++ix ) 
   {
     for  ( unsigned short iy = 0 ; iy <= m_n ; ++iy ) 
-    { 
-      result += ( ix == iy ) ? 
-        par ( ix , iy ) * fx[ix] * fy[iy]       : 
-        par ( ix , iy ) * fx[ix] * fy[iy] * 0.5 ;
-    }
+    {
+      result += 
+        ix == iy  ? par ( ix , iy ) * fx[ix] * fy[iy] : 
+        0.5       * par ( ix , iy ) * fx[ix] * fy[iy] ;
+    } 
   }
   //
   const double scale = ( m_n + 1 ) / ( xmax() - xmin() ) ;
@@ -1965,10 +1966,10 @@ double Gaudi::Math::Bernstein2DSym::integrateY ( const double x ) const
   for  ( unsigned short ix = 0 ; ix <= m_n ; ++ix ) 
   {
     for  ( unsigned short iy = 0 ; iy <= m_n ; ++iy ) 
-    { 
-      result += ( ix == iy ) ? 
-        par ( ix , iy ) * fx[ix]       : 
-        par ( ix , iy ) * fx[ix] * 0.5 ;
+    {
+      result += 
+        ix == iy  ? par ( ix , iy ) * fx[ix] : 
+        0.5       * par ( ix , iy ) * fx[ix] ;
     }
   }
   //
@@ -2149,6 +2150,12 @@ bool Gaudi::Math::Positive2DSym::updateBernstein ()
   return update ;
 }
 // ============================================================================
+// get the value
+// ============================================================================
+double  Gaudi::Math::Positive2DSym::operator () 
+  ( const double x , const double y ) const 
+{ return m_bernstein ( x , y ) ; }
+// ============================================================================
 // get the parameter value
 // ============================================================================
 double Gaudi::Math::Positive2DSym::par ( const unsigned int  k ) const 
@@ -2182,7 +2189,46 @@ double Gaudi::Math::Positive2DSym::integral
     m_bernstein.integral ( xlow , xhigh , ylow , yhigh ) ; 
 }
 // ============================================================================
-
+/* integral over x-dimension 
+ *  \f[ \int_{y_low}^{y_high} \mathcal{B}(x,y) \mathrm{d}y\f] 
+ *  @param x     variable 
+ *  @param ylow  low  edge in y 
+ *  @param yhigh high edge in y 
+ */
+// ======================================================================
+double  Gaudi::Math::Positive2DSym::integrateX 
+( const double y    , 
+  const double xlow , const double xhigh ) const 
+{ return m_bernstein.integrateX ( y , xlow , xhigh ) ; }
+// ======================================================================
+/*  integral over x-dimension 
+ *  \f[ \int_{x_low}^{x_high} \mathcal{B}(x,y) \mathrm{d}x\f] 
+ *  @param y     variable 
+ *  @param xlow  low  edge in x 
+ *  @param xhigh high edge in x 
+ */
+// ======================================================================
+double Gaudi::Math::Positive2DSym::integrateY 
+( const double x    , 
+  const double ylow , const double yhigh ) const 
+{ return m_bernstein.integrateY ( x , ylow , yhigh ) ; }
+// ======================================================================
+/*  integral over x-dimension 
+ *  \f[ \int_{x_{min}}^{x_{max}} \mathcal{B}(x,y) \mathrm{d}x\f] 
+ *  @param x     variable 
+ */
+// ======================================================================
+double Gaudi::Math::Positive2DSym::integrateX ( const double y ) const 
+{ return m_bernstein.integrateX ( y ) ; }
+// ======================================================================
+/*  integral over y-dimension 
+ *  \f[ \int_{y_{min}}^{y_{max}} \mathcal{B}(x,y) \mathrm{d}y\f] 
+ *  @param y     variable 
+ */
+// ======================================================================
+double Gaudi::Math::Positive2DSym::integrateY ( const double x ) const 
+{ return m_bernstein.integrateY ( x ) ; }
+// ======================================================================
 
 
 

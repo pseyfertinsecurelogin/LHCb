@@ -362,7 +362,7 @@ namespace LoKi
      */
     GAUDI_API 
     const HepMC::GenParticle* child 
-    ( const HepMC::GenParticle*        particle , 
+    ( const HepMC::GenParticle*       particle , 
       const LoKi::GenChild::Selector& selector ) ;
     // ========================================================================
     /** accessor to certain children particles for the given particle 
@@ -389,7 +389,7 @@ namespace LoKi
     GAUDI_API 
     LoKi::GenTypes::ConstVector
     children 
-    ( const HepMC::GenParticle*        particle , 
+    ( const HepMC::GenParticle*       particle , 
       const LoKi::GenChild::Selector& selector ) ;
     // ========================================================================
     /** get all independent decay trees from HepMC::GenEvent

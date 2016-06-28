@@ -3,6 +3,10 @@
 ! Responsible : Gerhard Raven
 !------------------------------------------------------------------------------
 
+! 2016-04-25 - Stefano Perazzini
+ - Removed mask of L0 bits for technical TCK as technical TCK should already have
+   L0 bits masked. Changes in Kernel/HltInterfaces/Kernel/TCK.h
+
 ! 2016-04-18 - Stefano Perazzini
  - Removed check on technical TCK from Kernel/HltInterfaces/src/ConfigTreeNodeAlias.cpp 
    into TCKsh functions.

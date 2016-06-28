@@ -150,6 +150,54 @@ namespace LoKi
       // ======================================================================
     };
     // ========================================================================
+    /** Trivial accessor to the daughter particles for the given particle.
+     *  @param  particle (const) pointer to mother particle 
+     *  @param  dscriptor
+     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+     *  @date   2016-06-21
+     */
+    GAUDI_API 
+    const HepMC::GenParticle* child 
+    ( const HepMC::GenParticle*       particle   , 
+      const std::string&              descriptor ) ;
+    // ========================================================================
+    /** Trivial accessor to the daughter particles for the given particle.
+     *  @param  particle (const) pointer to mother particle 
+     *  @param  cuts     (INPUT) cuts to be used 
+     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+     *  @date   2016-06-21
+     */
+    GAUDI_API 
+    const HepMC::GenParticle* child 
+    ( const HepMC::GenParticle* particle   , 
+      const LoKi::Types::GCuts& cuts       ) ;
+    // ========================================================================
+    /** accessor to certain children particles for the given particle 
+     *  @param  particle   (INPUT) pointer to mother particle 
+     *  @param  descriptor (INPUT) the descriptor
+     *  @return the container of found particles
+     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+     *  @date   2016-06-21
+     */
+    GAUDI_API 
+    LoKi::GenTypes::ConstVector
+    children 
+    ( const HepMC::GenParticle*       particle   , 
+      const std::string&              descriptor ) ;
+    // ========================================================================
+    /** accessor to certain children particles for the given particle 
+     *  @param  particle (INPUT) pointer to mother particle 
+     *  @param  cuts     (INPUT) cuts to be used 
+     *  @return the container of found particles
+     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+     *  @date   2016-06-21
+     */
+    GAUDI_API 
+    LoKi::GenTypes::ConstVector
+    children 
+    ( const HepMC::GenParticle* particle   , 
+      const LoKi::Types::GCuts& cuts       ) ;
+    // ========================================================================
   } //                                          end of namespace LoKi::GenChild
   // ==========================================================================
 } //                                                      end of namespace LoKi

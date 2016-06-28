@@ -229,7 +229,7 @@ void HltPackedDataWriter::addBanks(LHCb::RawEvent& rawEvent, const std::vector<u
     debug() << "Adding raw bank with sourceID=" << sourceID << ", length=" << length << " from " << (void*)&(data[offset]) << endmsg;
     auto bank = rawEvent.createBank(sourceID, LHCb::RawBank::DstData,
                                     kVersionNumber, length, &(data[offset]));
-    rawEvent.adoptBank(bank, false);  // TODO Everyone using true, but it seems that we want false
+    rawEvent.adoptBank(bank, true);  
   }
 }
 
