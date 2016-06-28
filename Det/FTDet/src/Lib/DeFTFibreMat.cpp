@@ -75,6 +75,7 @@ const CLID& DeFTFibreMat::clID () const {
 //=============================================================================
 StatusCode DeFTFibreMat::initialize(){
 
+
   StatusCode sc = DetectorElement::initialize(); // must be executed first
   if ( sc.isFailure() ) return sc;
 
@@ -96,7 +97,7 @@ StatusCode DeFTFibreMat::initialize(){
   else {
     m_FTGeomversion=FTversion;
   }
-
+  
   //---Set the FibreMat ID and stereo angle from the xml DDDB
   m_FibreMatID = this->params()->param<int>("FibreMatID");
   m_angle = this->params()->param<double>("stereoAngle");
@@ -232,6 +233,19 @@ StatusCode DeFTFibreMat::initialize(){
     m_RightHoleAxesXZInversion=false;   ///DBL, back to normal for this
 
     //FibreMat size and position
+    /**** DBL: temp hack for DDDB problem in v5 geometry
+    if(m_FTGeomversion<50) {   //---- geometry v4x
+      m_fibreMatHalfSizeX = 0.5*this->params()->param<double>("FTFibreMatSizeX");
+    }
+    else {       //---- geometry v5x and above (due to change of convention for "FTFibreMatSizeX")
+      IDetectorElement *parentDet = this->parentIDetectorElement();
+      if(!parentDet) {
+       throw GaudiException( "Can't acquire parent detector element of FibreMat", "DeFTFibreMat.cpp", StatusCode::FAILURE );
+      }
+      double ftModuleGapX = parentDet->params()->param<double>("FTModuleGapX");
+      m_fibreMatHalfSizeX = 0.5*this->params()->param<double>("FTFibreMatSizeX") + ftModuleGapX;
+    }
+    ****/
     m_fibreMatHalfSizeX = 0.5*this->params()->param<double>("FTFibreMatSizeX");
     m_fibreMatHalfSizeY = 0.5*this->params()->param<double>("FTFibreMatSizeY");
     m_fibreMatHalfSizeZ = 0.5*this->params()->param<double>("FTFibreMatSizeZ");
@@ -429,7 +443,7 @@ StatusCode DeFTFibreMat::initialize(){
     m_cellSizeX=0.25;
     m_sipmEdgeSizeX=0.625;  //1 dead cell (0.25) + 0.375
   }
-  else if(m_FTGeomversion<50) {   //----sipm geometry v4x,v5x
+  else if(m_FTGeomversion<50) {   //----sipm geometry v4x
     m_sipmSizeX=32.25;
     double deadXTot=2*m_fibreMatHalfSizeX-m_nSipmPerModule*m_sipmSizeX;
     m_cellSizeX=0.25;
@@ -440,6 +454,12 @@ StatusCode DeFTFibreMat::initialize(){
      m_sipmEdgeSizeX=this->params()->param<double>("FTSiPMGapX");        //dead egdge area (air+half fiber)
      m_sipmSizeX=this->params()->param<double>("FTSiPMSizeX")-2*m_sipmEdgeSizeX;      //active part
      m_cellSizeX=this->params()->param<double>("FTSiPMCellSizeX");
+     //*** DBL: hack to correct for different definition of "FTFibreMatSizeX" in v5 DDDDB
+     // sipmgap=0.175mm instead of 0.225, so that FTFibreMatSizeX = 16*32.25 + 16*2*0.175 (=521.6mm)
+     // and 2*FTModuleGapX + FTFibreMatSizeX = 523.2 (=16*(32.25+2*0.225), the normal situation (FTModuleGapX=0.8)
+     // so, same active/dead area ratio per fibremat when counting FTDet and DDDB effects:
+     // 16*2*0.175 + 2*0.8 = 7.2  (=16*2*0.225)
+     m_sipmEdgeSizeX=this->params()->param<double>("FTSiPMGapX") - 0.05; 
   }
 
   m_sipmPitchX = m_sipmSizeX + 2*m_sipmEdgeSizeX;
