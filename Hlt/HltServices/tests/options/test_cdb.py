@@ -3,20 +3,20 @@ import subprocess
 import argparse
 import inspect
 
-parser = argparse.ArgumentParser(usage = 'usage: %(prog)s stream file')
+parser = argparse.ArgumentParser(usage = 'usage: %(prog)s file')
 
-parser.add_argument("-s", "--stream", type = str, dest = "stream", default = "",
-                    help = "Which stream")
 parser.add_argument("--tck", type = str, dest = "tck", default = "",
                     help = "What TCK")
-parser.add_argument("files", nargs = 2)
 
 args = parser.parse_args()
+
+from PRConfig.TestFileDB import test_file_db
+files = test_file_db["HltServices-close_cdb_file"].filenames
 
 if not args.tck:
     # Use inspect's stack to get the file of the current frame: us
     script_dir = os.path.expandvars('$HLTDAQROOT/tests/options')
-    cmd = ['python', os.path.join(script_dir, 'get_tck.py'), '--odin', args.files[0]]
+    cmd = ['python', os.path.join(script_dir, 'get_tck.py'), '--odin', files[0]]
     p = subprocess.Popen(cmd, stdout = subprocess.PIPE, stderr = subprocess.STDOUT)
     o, e = p.communicate()
 
@@ -32,13 +32,13 @@ if not args.tck:
         hlt1_tck, hlt2_tck = (int(hlt1_tck, 16), int(hlt2_tck, 16))
     except ValueError:
         print o
-        print 'Could not determine TCK from {}'.format(args.files[0])
+        print 'Could not determine TCK from {}'.format(files[0])
         print 'FAILED'
         sys.exit(-1)
 
     if not hlt1_tck:
         print o
-        print "Could not determine TCK from {}, it's 0".format(args.files[0])
+        print "Could not determine TCK from {}, it's 0".format(files[0])
         print 'FAILED'
         sys.exit(-1)
 else:
@@ -49,6 +49,7 @@ else:
     else:
         hlt2_tck = tck
 
+        
 # General configuration
 from GaudiConf import IOHelper
 from Gaudi.Configuration import *
@@ -100,7 +101,7 @@ ApplicationMgr().TopAlg = [topSeq]
 from Configurables import LoKiSvc
 LoKiSvc().Welcome = False
 
-IOHelper("MDF").inputFiles(args.files)
+IOHelper("MDF").inputFiles(files)
 
 def open_files():
     pid = os.getpid()
@@ -122,7 +123,7 @@ def failed(lines):
 # Convenience
 incSvc = InterfaceCast(gbl.IIncidentSvc)(gaudi.service('IncidentSvc').getInterface())
 TES = gaudi.evtSvc()
-cdb_file = gaudi.service(accessSvc.getFullName()).File
+cdb_file = os.path.realpath(gaudi.service(accessSvc.getFullName()).File)
 
 if cdb_file not in open_files():
     failed(['CDB file not in open files after initialization'])
