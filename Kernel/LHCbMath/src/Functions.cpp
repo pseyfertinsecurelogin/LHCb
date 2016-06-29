@@ -10878,24 +10878,32 @@ Gaudi::Math::FourierSum::deconvolve
   //
   const long double ss      =  sigma / m_scale ;
   const long double sigma2  =  ss*ss           ;
-  // create covolution obejct 
+  // create covolution object 
   FourierSum conv( m_pars , m_xmin , m_xmax , m_fejer ) ;
   /// fill it! 
   conv.m_pars [0] = m_pars[0]  ;
   const unsigned long  N = m_pars.size() ;
+  //
+  const bool use_delta = !s_zero ( delta ) && 0 < delta ;
   for ( unsigned short k = 1 ; 2 * k < N ; ++k  ) 
   {
     //  
-    long double f  = std::exp ( 0.5L * k * k * sigma2 ) ;
+    const double v_1  = m_pars[2*k] ;
+    const double v_2  = m_pars[2*k-1] ;
+    if ( s_zero ( v_1 )  && s_zero ( v_2 ) ) { continue ; }
     //
-    if ( !s_zero ( delta ) && 0 < delta ) 
+    long double f = my_exp ( 0.5L * k * k * sigma2 ) ;
+    //
+    if ( use_delta ) 
     { const long double fd = f * delta ; f /= ( 1 + fd * fd ) ; }
     //
-    const long double   v1 = f * m_pars [ 2 * k    ] ;
+    const long double   v1 = f * v_1 ;
     if ( !s_zero ( v1 ) ) { conv.m_pars [ 2 * k    ] = v1 ; }
+    else { conv.m_pars[2*k  ] = 0 ; }    
     //
-    const long double   v2 = f * m_pars [ 2 * k -1 ] ;
+    const long double   v2 = f * v_2 ;
     if ( !s_zero ( v2 ) ) { conv.m_pars [ 2 * k -1 ] = v2 ; }
+    else { conv.m_pars[2*k-1] = 0 ; }    
     //
   }
   //
@@ -11141,16 +11149,21 @@ Gaudi::Math::CosineSum::deconvolve
   /// fill it! 
   conv.m_pars [0] = m_pars[0]  ;
   const unsigned long  N = m_pars.size() ;
+  const bool use_delta = !s_zero ( delta ) && 0 < delta ;
   for ( unsigned short k = 1 ; k < N ; ++k  ) 
   {
     //  
-    long double f  = std::exp ( 0.5L * k * k * sigma2 ) ;
+    const double v = m_pars[k] ;
+    if ( s_zero ( v ) ) { continue ; }
     //
-    if ( !s_zero ( delta ) && 0 < delta ) 
+    long double f = my_exp ( 0.5L * k * k * sigma2 ) ;
+    //
+    if ( use_delta ) 
     { const long double fd = f * delta ; f /= ( 1 + fd * fd ) ; }
     //
-    const long double   v1 = f * m_pars [ k ] ;
+    const long double   v1 = f * v ;
     if ( !s_zero ( v1 ) ) { conv.m_pars [ k ] = v1 ; }
+    else { conv.m_pars[k] = 0 ; }    
     //
   }
   //
