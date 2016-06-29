@@ -46,14 +46,8 @@ StatusCode HltRawBankDecoderBase::initialize()
 }
 
 std::vector<const LHCb::RawBank*>
-HltRawBankDecoderBase::selectRawBanks( LHCb::RawBank::BankType reqType ) const
+HltRawBankDecoderBase::selectRawBanks(const std::vector<LHCb::RawBank*>& rawbanks ) const
 {
-  LHCb::RawEvent* rawEvent = findFirstRawEvent();
-  if ( !rawEvent) return {};
-
-  const auto& rawbanks = rawEvent->banks( reqType );
-  if( rawbanks.empty() ) return {};
-
   auto has_sourceID = [](int id) {
       return [id](const LHCb::RawBank* bank) {
             return id == ( bank->sourceID() >> kSourceID_BitShift );
@@ -79,9 +73,9 @@ HltRawBankDecoderBase::selectRawBanks( LHCb::RawBank::BankType reqType ) const
 }
 
 unsigned int
-HltRawBankDecoderBase::tck() const {
+HltRawBankDecoderBase::tck(const LHCb::RawEvent& event) const {
 
-    auto banks = selectRawBanks( LHCb::RawBank::HltDecReports );
+    auto banks = selectRawBanks( event.banks(LHCb::RawBank::HltDecReports) );
     if ( banks.empty() ) {
         warning() << "could not locate valid HltDecReports raw bank with source id " << m_sourceID << endmsg;
         return 0u;

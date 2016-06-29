@@ -18,7 +18,7 @@ public:
     ~HltRawBankDecoderBase() override = default;
     StatusCode initialize() override;
 
-    std::vector<const LHCb::RawBank*> selectRawBanks( LHCb::RawBank::BankType ) const;
+    std::vector<const LHCb::RawBank*> selectRawBanks( const std::vector<LHCb::RawBank*>& banks ) const;
 
     class element_t {
         Gaudi::StringKey m_key;
@@ -51,7 +51,7 @@ public:
             itbl = fetch_info2string(tck, PackedObjectLocations, m_packedObjectLocationsTable);
         return itbl->second;
     }
-    unsigned int tck() const;
+    unsigned int tck(const LHCb::RawEvent& event) const;
 
 private:
     SmartIF<IANNSvc> m_hltANNSvc;
