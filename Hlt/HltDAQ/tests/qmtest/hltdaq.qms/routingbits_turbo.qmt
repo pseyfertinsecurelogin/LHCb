@@ -4,7 +4,7 @@
   <argument name="args"><set>
     <text>$HLTDAQROOT/tests/options/test_rb.py</text>
     <text>--stream=turbo</text>
-    <text>mdf:root://eoslhcb.cern.ch///eos/lhcb/user/r/raaij/test/174909_0000000760_turbo.raw</text>
+    <text>HltDAQ-routingbits_turbo</text>
   </set></argument>
   <argument name="validator"><text>
 
