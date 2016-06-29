@@ -69,7 +69,6 @@ double Gaudi::Math::probit ( const double alpha  )
  *  @date 2015-09-17
  */
 // ============================================================================
-#include <iostream>
 std::pair<double,double>
 Gaudi::Math::wald_interval
 ( const unsigned long accepted  ,
