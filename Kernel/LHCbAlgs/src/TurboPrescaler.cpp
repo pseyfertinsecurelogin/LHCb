@@ -214,19 +214,10 @@ void TurboPrescaler::setupPrescalers(){
   prescalers.clear();
 
   //== Get the "Context" option if in the file...
-<<<<<<< HEAD
   auto jos = service<IJobOptionsSvc>("JobOptionsSvc");
 
   //= Get the Application manager, to see if algorithm exist
   auto appMgr = service<IAlgManager>("ApplicationMgr");
-=======
-  IJobOptionsSvc* jos = NULL;
-  service( "JobOptionsSvc" ,jos);
-
-  //= Get the Application manager, to see if algorithm exist
-  IAlgManager* appMgr = NULL;
-  service("ApplicationMgr",appMgr);
->>>>>>> LHCb/2016-patches
   
   for( std::map<std::string,double>::iterator it=m_outputPS.begin(); it!=m_outputPS.end(); ++it){
     std::string tn = "DeterministicPrescaler/";
