@@ -3,8 +3,6 @@
   <argument name="program"><text>python</text></argument>
   <argument name="args"><set>
     <text>$HLTSERVICESROOT/tests/options/test_cdb.py</text>
-    <text>mdf:root://eoslhcb.cern.ch//eos/lhcb/user/r/raaij/test/StripHLT_0x11291600.raw</text>
-    <text>mdf:root://eoslhcb.cern.ch//eos/lhcb/user/r/raaij/test/StripHLT_0x11291603.raw</text>
   </set></argument>
   <argument name="validator"><text>
 
