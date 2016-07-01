@@ -54,7 +54,10 @@ StatusCode HltVertexReportsDecoder::execute() {
   // ----------------------------------------------------------
   // get the bank from RawEvent
   // ----------------------------------------------------------
-  std::vector<const RawBank*> hltvertexreportsRawBanks = selectRawBanks( RawBank::HltVertexReports );
+  LHCb::RawEvent* rawEvent = findFirstRawEvent();
+  if ( !rawEvent) return Warning( " No RawEvent. Quiting. ",StatusCode::SUCCESS, 20 );
+
+  auto hltvertexreportsRawBanks = selectRawBanks( rawEvent->banks(RawBank::HltVertexReports) );
 
   if( hltvertexreportsRawBanks.empty() ){
     return Warning( " No HltVertexReports RawBank for requested SourceID in RawEvent. Quiting. ",StatusCode::SUCCESS, 20 );
@@ -74,7 +77,7 @@ StatusCode HltVertexReportsDecoder::execute() {
              StatusCode::SUCCESS, 20 ).ignore();
   }
 
-  const auto& tbl = id2string( tck() );
+  const auto& tbl = id2string( tck(*rawEvent) );
 
   const unsigned int *i   = hltvertexreportsRawBank->begin<unsigned int>();
   const unsigned int *end = hltvertexreportsRawBank->end<unsigned int>();

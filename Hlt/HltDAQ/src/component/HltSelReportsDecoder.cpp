@@ -52,7 +52,6 @@ DECLARE_ALGORITHM_FACTORY( HltSelReportsDecoder )
 HltSelReportsDecoder::HltSelReportsDecoder( const std::string& name,
                                           ISvcLocator* pSvcLocator)
 : HltRawBankDecoderBase( name, pSvcLocator ) 
-,m_conv(nullptr)
 {
   declareProperty("OutputHltSelReportsLocation",
   m_outputHltSelReportsLocation= LHCb::HltSelReportsLocation::Default);  
@@ -72,7 +71,10 @@ StatusCode HltSelReportsDecoder::execute() {
   // ----------------------------------------------------------
   // get the bank(s) from RawEvent
   // ----------------------------------------------------------
-  std::vector<const RawBank*> hltselreportsRawBanks = selectRawBanks(RawBank::HltSelReports );
+ LHCb::RawEvent* rawEvent = findFirstRawEvent();
+ if ( !rawEvent) return Warning( " No RawEvent. Quiting. ",StatusCode::SUCCESS, 10 );
+
+  auto hltselreportsRawBanks = selectRawBanks(rawEvent->banks(RawBank::HltSelReports) );
   if( hltselreportsRawBanks.empty() ){
     return Warning( " No appropriate HltSelReports RawBank in RawEvent. Quiting. ",StatusCode::SUCCESS, 10 );
   }
@@ -97,7 +99,7 @@ StatusCode HltSelReportsDecoder::execute() {
     // Populate map with line name and number of candidates
     auto summary = new LHCb::HltObjectSummary();
     
-    auto tck_dummy = tck();
+    auto tck_dummy = tck(*rawEvent);
     bool settings=true;
     if(tck_dummy!=0) settings=false;
     GaudiUtils::VectorMap<int, HltRawBankDecoderBase::element_t> idmap_dummy;
@@ -285,7 +287,7 @@ StatusCode HltSelReportsDecoder::execute() {
   auto  objectSummaries = new HltObjectSummary::Container();
   put( objectSummaries, m_outputHltSelReportsLocation.value() + "/Candidates" );
 
-  auto mytck = tck();
+  auto mytck = tck(*rawEvent);
   const auto& idmap = id2string(mytck);
   const auto& infomap = info2string(mytck);
 

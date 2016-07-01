@@ -43,7 +43,7 @@ private:
   /// Buffer for de-serialization of the packed objects
   PackedDataPersistence::PackedDataInBuffer m_buffer; 
   /// Helper for computing checksums
-  PackedDataPersistence::PackedDataChecksum* m_checksum{nullptr};
+  std::unique_ptr<PackedDataPersistence::PackedDataChecksum> m_checksum;
 };
 
 #endif // PACKEDDATADECODER_H

@@ -47,7 +47,7 @@ StatusCode HltPackedDataDecoder::initialize() {
   register_object<LHCb::PackedRecVertices>();
 
   if (UNLIKELY(m_enableChecksum)) {
-    m_checksum = new PackedDataPersistence::PackedDataChecksum();
+    m_checksum.reset( new PackedDataPersistence::PackedDataChecksum());
   }
 
   return StatusCode::SUCCESS;
@@ -138,7 +138,7 @@ StatusCode HltPackedDataDecoder::execute() {
   }
 
   // Get the map of ids to locations (may differ between events)
-  const auto& locationsMap = packedObjectLocation2string(tck());
+  const auto& locationsMap = packedObjectLocation2string(tck(*rawEvent));
 
   std::vector<int32_t> linkLocationIDs;
 
@@ -222,7 +222,7 @@ StatusCode HltPackedDataDecoder::execute() {
 StatusCode HltPackedDataDecoder::finalize() {
   if (UNLIKELY(m_enableChecksum)) {
     info() << "Global packed data checksum = " << m_checksum->checksum() << endmsg;
-    delete m_checksum;
+    m_checksum.reset();
   }
   return HltRawBankDecoderBase::finalize();  // must be called after all other actions
 }

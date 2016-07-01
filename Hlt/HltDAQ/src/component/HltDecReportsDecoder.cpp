@@ -77,8 +77,12 @@ StatusCode HltDecReportsDecoder::execute() {
   // create output container and put it on TES
   auto  outputSummary = new HltDecReports();
   put( outputSummary, m_outputHltDecReportsLocation );
-  
-  std::vector<const RawBank*> hltdecreportsRawBanks = selectRawBanks( RawBank::HltDecReports );
+
+  LHCb::RawEvent* rawEvent = findFirstRawEvent();
+  if ( !rawEvent) {
+    return Warning(" Could not find RawEvent. Returning empty HltDecReports.", StatusCode::SUCCESS,20);
+  }
+  auto hltdecreportsRawBanks = selectRawBanks( rawEvent->banks(RawBank::HltDecReports) );
   if ( hltdecreportsRawBanks.empty() ) {
     return Warning(" Could not find HltDecReports raw bank. Returning empty HltDecReports.", StatusCode::SUCCESS,20);
   }
