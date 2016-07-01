@@ -4,7 +4,7 @@
   <argument name="args"><set>
     <text>$HLTDAQROOT/tests/options/test_rb.py</text>
     <text>--stream=nobias</text>
-    <text>mdf:root://eoslhcb.cern.ch///eos/lhcb/user/r/raaij/test/174909_0000000095_nobias.raw</text>
+    <text>HltDAQ-routingbits_nobias</text>
   </set></argument>
   <argument name="validator"><text>
 

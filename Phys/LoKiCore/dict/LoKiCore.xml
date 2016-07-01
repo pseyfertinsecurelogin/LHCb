@@ -91,6 +91,7 @@
 
   <class name = "LoKi::TES::Exists"        />
   <class name = "LoKi::TES::Contains"      />
+  <class name = "LoKi::TES::HrcSumAdc"     />
   <class name = "LoKi::TES::Counter"       />
   <class name = "LoKi::TES::Stat"          />
   <class name = "LoKi::TES::HasRecSummary" />
@@ -112,8 +113,8 @@
       <field name = "m_algorithm" />
       <field name = "m_datasvc"   />
     </class>
-    
-    
+
+
     <function name    = "LoKi::tokenize" />
     
     <class pattern="LoKi::Interface&lt;*&gt;">

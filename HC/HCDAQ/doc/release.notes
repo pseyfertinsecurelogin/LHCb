@@ -3,6 +3,8 @@
 ! Responsible : 
 ! Purpose     : Decoding of Herschel raw banks
 !-----------------------------------------------------------------------------
+! 2016-05-22 - Heinrich Schindler (via Dan Johnson's commit) 
+ - Added new decoder to put sum of Herschel ADCs on TES per station
 
 !========================= HCDAQ v1r5 2015-10-12 =========================
 ! 2015-10-05 - Heinrich Schindler
