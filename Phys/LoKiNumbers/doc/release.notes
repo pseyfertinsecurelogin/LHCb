@@ -12,6 +12,8 @@
 !   contributions and advices from G.Raven, J.van Tilburg,
 !   A.Golutvin, P.Koppenburg have been used in the design.
 ! -----------------------------------------------------------------------------
+! 2016-05-22 - Dan Johnson
+ - Add new functor for Herschel station-sum ADC count access 
 
 !========================= LoKiNumbers v10r9 2015-04-20 =========================
 ! 2015-03-12 - Vanya Belyaev
