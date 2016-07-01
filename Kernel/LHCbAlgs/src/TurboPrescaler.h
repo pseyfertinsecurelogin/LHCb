@@ -8,10 +8,8 @@
 #include "GaudiKernel/IDetDataSvc.h"
 #include "Kernel/IPropertyConfigSvc.h"
 #include "Kernel/TCK.h"
-#include "GaudiKernel/SmartDataPtr.h"
 #include "GaudiAlg/GaudiAlgorithm.h"
 #include "Event/HltDecReports.h"
-using namespace LHCb;
 
 /** @class TurboPrescaler TurboPrescaler.h
  *  
@@ -45,13 +43,11 @@ class TurboPrescaler : public GaudiAlgorithm {
 
 	std::map<std::string, Algorithm*> prescalers; 
 
-	mutable IPropertyConfigSvc * m_propertyConfigSvc=NULL;
-	bool m_filter;			      
+	mutable IPropertyConfigSvc * m_propertyConfigSvc=nullptr;
+	bool m_filter=false;			      
 	std::string m_propertyConfigSvcName;        
-	Condition *m_condTrigger=NULL;               
 	std::string m_hltDecReportsLocation;	      
 	unsigned int m_lastTCK=0;			      
-	unsigned int m_tck=0;			      
 	unsigned int m_outputTCK=0;			      
         std::map<std::string,double> m_outputPS;			      
 	std::string m_outRepLoc;
