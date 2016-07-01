@@ -4,6 +4,10 @@
 ! Purpose     : Hlt RawBanks writers/decoders/monitors
 !------------------------------------------------------------------------------
 
+! 2016-06-29 - Roel Aaij
+ - Update tests for routing bits to use new entries in TestFileDB to get input
+   files.
+
 ! 2016-06-21 - Rosen Matev
  - Implement conversion on de-serializing such that from the packed object
    load function one can do `buf.template io<uint16_t>(firstId);`, where
