@@ -4,7 +4,7 @@
   <argument name="args"><set>
     <text>$HLTDAQROOT/tests/options/test_rb.py</text>
     <text>--stream=full</text>
-    <text>mdf:root://eoslhcb.cern.ch///eos/lhcb/user/r/raaij/test/174375_0000000619_full.raw</text>
+    <text>HltDAQ-routingbits_full</text>
   </set></argument>
   <argument name="validator"><text>
 

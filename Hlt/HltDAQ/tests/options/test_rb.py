@@ -9,14 +9,17 @@ parser.add_argument("-s", "--stream", type = str, dest = "stream", default = "",
                     help = "Which stream")
 parser.add_argument("--tck", type = str, dest = "tck", default = "",
                     help = "What TCK")
-parser.add_argument("file", nargs = 1)
+parser.add_argument("db_entry", nargs = 1)
 
 args = parser.parse_args()
+
+from PRConfig.TestFileDB import test_file_db
+file = test_file_db[args.db_entry[0]].filenames[0]
 
 if not args.tck:
     # Use inspect's stack to get the file of the current frame: us
     script_dir = os.path.dirname(inspect.stack()[0][1])
-    cmd = ['python', os.path.join(script_dir, 'get_tck.py'), args.file[0]]
+    cmd = ['python', os.path.join(script_dir, 'get_tck.py'), file]
     p = subprocess.Popen(cmd, stdout = subprocess.PIPE, stderr = subprocess.STDOUT)
     o, e = p.communicate()
 
@@ -32,13 +35,13 @@ if not args.tck:
         hlt1_tck, hlt2_tck = (int(hlt1_tck, 16), int(hlt2_tck, 16))
     except ValueError:
         print o
-        print 'Could not determine TCK from {}'.format(args.file[0])
+        print 'Could not determine TCK from {}'.format(file)
         print 'FAILED'
         sys.exit(-1)
 
     if not (hlt1_tck and hlt2_tck):
         print o
-        print 'Could not determine TCK from {}, both are 0'.format(args.file[0])
+        print 'Could not determine TCK from {}, both are 0'.format(file)
         print 'FAILED'
         sys.exit(-1)
 else:
@@ -129,7 +132,7 @@ ApplicationMgr().TopAlg = [topSeq]
 from Configurables import LoKiSvc
 LoKiSvc().Welcome = False
 
-IOHelper("MDF").inputFiles(args.file)
+IOHelper("MDF").inputFiles([file])
 
 from GaudiPython.Bindings import AppMgr, gbl
 gaudi = AppMgr()
