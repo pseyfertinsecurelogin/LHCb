@@ -11028,8 +11028,8 @@ Gaudi::Math::FourierSum::shift ( const double a ) const
     const double ct  = m_pars[2*k]   ; // cosine term 
     const double st  = m_pars[2*k-1] ; // sine   term 
     //
-    const double ca  = std::cos ( k * a / m_scale ) ;
-    const double sa  = std::sin ( k * a / m_scale ) ;
+    const double ca  = std::cos ( k * a * m_scale ) ;
+    const double sa  = std::sin ( k * a * m_scale ) ;
     //
     result.m_pars [ 2*k    ] = ct * ca - st * sa ;
     result.m_pars [ 2*k -1 ] = st * ca + ct * sa ;
