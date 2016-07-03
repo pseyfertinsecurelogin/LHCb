@@ -13,6 +13,7 @@
 // GaudiKernel
 // ============================================================================
 #include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/GaudiException.h"
 // ============================================================================
 // LHCbMath
 // ============================================================================
@@ -776,7 +777,142 @@ Gaudi::Math::Polynomial::operator+= ( const double a )
 Gaudi::Math::Polynomial& 
 Gaudi::Math::Polynomial::operator-= ( const double a ) 
 { m_pars[0] -= a ; return *this ; }
+// ============================================================================ 
+// simple  manipulations with polynoms: scale it 
 // ============================================================================
+Gaudi::Math::Polynomial& 
+Gaudi::Math::Polynomial::operator*= ( const double a ) 
+{ 
+  LHCb::Math::scale ( m_pars , a ) ;
+  return *this ; 
+}
+// ============================================================================
+// simple  manipulations with polynoms: shift it! 
+// ============================================================================
+Gaudi::Math::Polynomial& 
+Gaudi::Math::Polynomial::operator/= ( const double a ) 
+{ 
+  LHCb::Math::scale ( m_pars , 1/a ) ;
+  return *this ; 
+}
+// ============================================================================
+// Add       polynomials (with the same domain!)
+// ============================================================================
+Gaudi::Math::Polynomial 
+Gaudi::Math::Polynomial::sum
+( const Gaudi::Math::Polynomial& other ) const 
+{
+  if ( this == &other ) 
+  {
+    Polynomial result(*this) ;
+    result *= 2 ;
+    return result ;
+  }
+  if ( !s_equal ( xmin() , other.xmin() ) || 
+       !s_equal ( xmax() , other.xmax() ) )
+  {
+    throw GaudiException ( "Can't sum Polynomials with different domains" , 
+                           "LHCb::Math::Polynomial", 
+                           StatusCode( StatusCode::FAILURE ) ) ;
+  }
+  const unsigned short idegree = std::max ( degree() , other.degree() ) ;
+  //
+  Polynomial result( idegree , xmin () , xmax () ) ;
+  for ( unsigned short i = 0 ; i < result.npars() ; ++i ) 
+  { result.m_pars[i] += par(i) +  other.par( i ) ; }
+  return result ;
+}
+// ============================================================================
+// Subtract      polynomials (with the same domain!)
+// ============================================================================
+Gaudi::Math::Polynomial 
+Gaudi::Math::Polynomial::subtract
+( const Gaudi::Math::Polynomial& other ) const 
+{
+  if ( this == &other ) 
+  { return Polynomial( degree() , xmin() , xmax() ) ; }
+  //
+  if ( !s_equal ( xmin() , other.xmin() ) || 
+       !s_equal ( xmax() , other.xmax() ) )
+  {
+    throw GaudiException ( "Can't subtract Polynomials with different domains" , 
+                           "LHCb::Math::Polynomial", 
+                           StatusCode( StatusCode::FAILURE ) ) ;
+  }
+  //
+  Polynomial a ( other ) ;
+  LHCb::Math::negate ( a.m_pars ) ;
+  return sum ( a ) ;  
+}
+// ============================================================================
+// unary minus 
+// ============================================================================
+Gaudi::Math::Polynomial
+Gaudi::Math::Polynomial::operator-() const 
+{
+  Polynomial a ( *this ) ;
+  LHCb::Math::negate ( a.m_pars ) ;
+  return a ;
+}
+// ============================================================================
+// Python
+// ============================================================================
+Gaudi::Math::Polynomial& 
+Gaudi::Math::Polynomial::__iadd__   ( const double a )  
+{ (*this) += a ; return *this ; } 
+// ============================================================================
+Gaudi::Math::Polynomial& 
+Gaudi::Math::Polynomial::__isub__   ( const double a ) 
+{ (*this) -= a ; return *this ; } 
+// ============================================================================
+Gaudi::Math::Polynomial& 
+Gaudi::Math::Polynomial::__imult__  ( const double a )
+{ (*this) *= a ; return *this ; } 
+// ============================================================================
+Gaudi::Math::Polynomial& 
+Gaudi::Math::Polynomial::__idiv__   ( const double a ) 
+{ (*this) /= a ; return *this ; } 
+// ============================================================================
+Gaudi::Math::Polynomial 
+Gaudi::Math::Polynomial::__add__    ( const double a ) const 
+{ return Polynomial(*this) += a ; } 
+// ============================================================================
+Gaudi::Math::Polynomial 
+Gaudi::Math::Polynomial::__sub__    ( const double a ) const 
+{ return Polynomial(*this) -= a ; } 
+// ============================================================================
+Gaudi::Math::Polynomial 
+Gaudi::Math::Polynomial::__mult__   ( const double a ) const 
+{ return Polynomial(*this) *= a ; } 
+// ============================================================================
+Gaudi::Math::Polynomial 
+Gaudi::Math::Polynomial::__div__    ( const double a ) const 
+{ return Polynomial(*this) /= a ; } 
+// ============================================================================
+Gaudi::Math::Polynomial 
+Gaudi::Math::Polynomial::__radd__   ( const double a ) const 
+{ return __add__ ( a ) ; } 
+// ============================================================================
+Gaudi::Math::Polynomial 
+Gaudi::Math::Polynomial::__rsub__   ( const double a ) const 
+{ return (-(*this))+a; } 
+// ============================================================================
+Gaudi::Math::Polynomial 
+Gaudi::Math::Polynomial::__rmult__  ( const double a ) const 
+{ return __mult__ ( a ) ; } 
+// ============================================================================
+Gaudi::Math::Polynomial 
+Gaudi::Math::Polynomial::__neg__   () const { return -(*this); } 
+// ============================================================================
+Gaudi::Math::Polynomial 
+Gaudi::Math::Polynomial::__add__   
+( const Gaudi::Math::Polynomial& a ) const { return sum      ( a ) ; } 
+// ============================================================================
+Gaudi::Math::Polynomial 
+Gaudi::Math::Polynomial::__sub__   
+( const Gaudi::Math::Polynomial& a ) const { return subtract ( a ) ; } 
+// ============================================================================
+
 
 // ============================================================================
 // Chebyshev sum 
@@ -975,8 +1111,141 @@ Gaudi::Math::ChebyshevSum&
 Gaudi::Math::ChebyshevSum::operator-= ( const double a ) 
 { m_pars[0] -= a ; return *this ; }
 // ============================================================================
+// simple  manipulations with polynoms: scale it  
+// ============================================================================
+Gaudi::Math::ChebyshevSum& 
+Gaudi::Math::ChebyshevSum::operator*= ( const double a ) 
+{
+  LHCb::Math::scale ( m_pars , a ) ;
+  return *this ; 
+}
+// ============================================================================
+// simple  manipulations with polynoms: scale it 
+// ============================================================================
+Gaudi::Math::ChebyshevSum& 
+Gaudi::Math::ChebyshevSum::operator/= ( const double a ) 
+{
+  LHCb::Math::scale ( m_pars , 1/a ) ;
+  return *this ; 
+}
+// ============================================================================
+// unary minus 
+// ============================================================================
+Gaudi::Math::ChebyshevSum
+Gaudi::Math::ChebyshevSum::operator-() const 
+{
+  ChebyshevSum a ( *this ) ;
+  LHCb::Math::negate ( a.m_pars ) ;
+  return a ;
+}
+// ============================================================================
+// Python
+// ============================================================================
+Gaudi::Math::ChebyshevSum& 
+Gaudi::Math::ChebyshevSum::__iadd__   ( const double a )  
+{ (*this) += a ; return *this ; } 
+// ============================================================================
+Gaudi::Math::ChebyshevSum& 
+Gaudi::Math::ChebyshevSum::__isub__   ( const double a ) 
+{ (*this) -= a ; return *this ; } 
+// ============================================================================
+Gaudi::Math::ChebyshevSum& 
+Gaudi::Math::ChebyshevSum::__imult__  ( const double a )
+{ (*this) *= a ; return *this ; } 
+// ============================================================================
+Gaudi::Math::ChebyshevSum& 
+Gaudi::Math::ChebyshevSum::__idiv__   ( const double a ) 
+{ (*this) /= a ; return *this ; } 
+// ============================================================================
+Gaudi::Math::ChebyshevSum 
+Gaudi::Math::ChebyshevSum::__add__    ( const double a ) const 
+{ return ChebyshevSum(*this) += a ; } 
+// ============================================================================
+Gaudi::Math::ChebyshevSum 
+Gaudi::Math::ChebyshevSum::__sub__    ( const double a ) const 
+{ return ChebyshevSum(*this) -= a ; } 
+// ============================================================================
+Gaudi::Math::ChebyshevSum 
+Gaudi::Math::ChebyshevSum::__mult__   ( const double a ) const 
+{ return ChebyshevSum(*this) *= a ; } 
+// ============================================================================
+Gaudi::Math::ChebyshevSum 
+Gaudi::Math::ChebyshevSum::__div__    ( const double a ) const 
+{ return ChebyshevSum(*this) /= a ; } 
+// ============================================================================
+Gaudi::Math::ChebyshevSum 
+Gaudi::Math::ChebyshevSum::__radd__   ( const double a ) const 
+{ return __add__ ( a ) ; } 
+// ============================================================================
+Gaudi::Math::ChebyshevSum 
+Gaudi::Math::ChebyshevSum::__rsub__   ( const double a ) const 
+{ return (-(*this))+a; } 
+// ============================================================================
+Gaudi::Math::ChebyshevSum 
+Gaudi::Math::ChebyshevSum::__rmult__  ( const double a ) const 
+{ return __mult__ ( a ) ; } 
+// ============================================================================
+Gaudi::Math::ChebyshevSum 
+Gaudi::Math::ChebyshevSum::__neg__   () const { return -(*this); } 
+// ============================================================================
+Gaudi::Math::ChebyshevSum 
+Gaudi::Math::ChebyshevSum::__add__   
+( const Gaudi::Math::ChebyshevSum& a ) const { return sum      ( a ) ; } 
+// ============================================================================
+Gaudi::Math::ChebyshevSum 
+Gaudi::Math::ChebyshevSum::__sub__   
+( const Gaudi::Math::ChebyshevSum& a ) const { return subtract ( a ) ; } 
+// ============================================================================
 
-
+// ============================================================================
+// Add       polynomials (with the same domain!)
+// ============================================================================
+Gaudi::Math::ChebyshevSum 
+Gaudi::Math::ChebyshevSum::sum
+( const Gaudi::Math::ChebyshevSum& other ) const 
+{
+  if ( this == &other ) 
+  {
+    ChebyshevSum result(*this) ;
+    result *= 2 ;
+    return result ;
+  }
+  if ( !s_equal ( xmin() , other.xmin() ) || 
+       !s_equal ( xmax() , other.xmax() ) )
+  {
+    throw GaudiException ( "Can't sum Chebyshev polynomials with different domains" , 
+                           "LHCb::Math::ChebyshevSum", 
+                           StatusCode( StatusCode::FAILURE ) ) ;
+  }
+  const unsigned short idegree = std::max ( degree() , other.degree() ) ;
+  //
+  ChebyshevSum result( idegree , xmin () , xmax () ) ;
+  for ( unsigned short i = 0 ; i < result.npars() ; ++i ) 
+  { result.m_pars[i] += par(i) +  other.par( i ) ; }
+  return result ;
+}
+// ============================================================================
+// Subtract      polynomials (with the same domain!)
+// ============================================================================
+Gaudi::Math::ChebyshevSum 
+Gaudi::Math::ChebyshevSum::subtract
+( const Gaudi::Math::ChebyshevSum& other ) const 
+{
+  if ( this == &other ) 
+  { return ChebyshevSum( degree() , xmin() , xmax() ) ; }
+  //
+  if ( !s_equal ( xmin() , other.xmin() ) || 
+       !s_equal ( xmax() , other.xmax() ) )
+  {
+    throw GaudiException ( "Can't subtract Chebyshev polynomials with different domains" , 
+                           "LHCb::Math::ChebyshevSum", 
+                           StatusCode( StatusCode::FAILURE ) ) ;
+  }
+  //
+  ChebyshevSum a ( other ) ;
+  LHCb::Math::negate ( a.m_pars ) ;
+  return sum ( a ) ;  
+}
 // ============================================================================
 // LegendreSum 
 // ============================================================================
@@ -1141,6 +1410,142 @@ Gaudi::Math::LegendreSum&
 Gaudi::Math::LegendreSum::operator-= ( const double a ) 
 { m_pars[0] -= a ; return *this ; }
 // ============================================================================
+// simple  manipulations with polynoms: scale it! 
+// ============================================================================
+Gaudi::Math::LegendreSum& 
+Gaudi::Math::LegendreSum::operator*= ( const double a ) 
+{ 
+  LHCb::Math::scale ( m_pars , a ) ;
+  return *this ; 
+}
+// ============================================================================
+// simple  manipulations with polynoms: scale it 
+// ============================================================================
+Gaudi::Math::LegendreSum& 
+Gaudi::Math::LegendreSum::operator/= ( const double a ) 
+{ 
+  LHCb::Math::scale ( m_pars , 1/a ) ;
+  return *this ; 
+}
+// ============================================================================
+// unary minus 
+// ============================================================================
+Gaudi::Math::LegendreSum
+Gaudi::Math::LegendreSum::operator-() const 
+{
+  LegendreSum a ( *this ) ;
+  LHCb::Math::negate ( a.m_pars ) ;
+  return a ;
+}
+// ============================================================================
+// Python
+// ============================================================================
+Gaudi::Math::LegendreSum& 
+Gaudi::Math::LegendreSum::__iadd__   ( const double a )  
+{ (*this) += a ; return *this ; } 
+// ============================================================================
+Gaudi::Math::LegendreSum& 
+Gaudi::Math::LegendreSum::__isub__   ( const double a ) 
+{ (*this) -= a ; return *this ; } 
+// ============================================================================
+Gaudi::Math::LegendreSum& 
+Gaudi::Math::LegendreSum::__imult__  ( const double a )
+{ (*this) *= a ; return *this ; } 
+// ============================================================================
+Gaudi::Math::LegendreSum& 
+Gaudi::Math::LegendreSum::__idiv__   ( const double a ) 
+{ (*this) /= a ; return *this ; } 
+// ============================================================================
+Gaudi::Math::LegendreSum 
+Gaudi::Math::LegendreSum::__add__    ( const double a ) const 
+{ return LegendreSum(*this) += a ; } 
+// ============================================================================
+Gaudi::Math::LegendreSum 
+Gaudi::Math::LegendreSum::__sub__    ( const double a ) const 
+{ return LegendreSum(*this) -= a ; } 
+// ============================================================================
+Gaudi::Math::LegendreSum 
+Gaudi::Math::LegendreSum::__mult__   ( const double a ) const 
+{ return LegendreSum(*this) *= a ; } 
+// ============================================================================
+Gaudi::Math::LegendreSum 
+Gaudi::Math::LegendreSum::__div__    ( const double a ) const 
+{ return LegendreSum(*this) /= a ; } 
+// ============================================================================
+Gaudi::Math::LegendreSum 
+Gaudi::Math::LegendreSum::__radd__   ( const double a ) const 
+{ return __add__ ( a ) ; } 
+// ============================================================================
+Gaudi::Math::LegendreSum 
+Gaudi::Math::LegendreSum::__rsub__   ( const double a ) const 
+{ return (-(*this))+a; } 
+// ============================================================================
+Gaudi::Math::LegendreSum 
+Gaudi::Math::LegendreSum::__rmult__  ( const double a ) const 
+{ return __mult__ ( a ) ; } 
+// ============================================================================
+Gaudi::Math::LegendreSum 
+Gaudi::Math::LegendreSum::__neg__   () const { return -(*this); } 
+// ============================================================================
+Gaudi::Math::LegendreSum 
+Gaudi::Math::LegendreSum::__add__   
+( const Gaudi::Math::LegendreSum& a ) const { return sum      ( a ) ; } 
+// ============================================================================
+Gaudi::Math::LegendreSum 
+Gaudi::Math::LegendreSum::__sub__   
+( const Gaudi::Math::LegendreSum& a ) const { return subtract ( a ) ; } 
+// ============================================================================
+
+// ============================================================================
+// Add       polynomials (with the same domain!)
+// ============================================================================
+Gaudi::Math::LegendreSum 
+Gaudi::Math::LegendreSum::sum
+( const Gaudi::Math::LegendreSum& other ) const 
+{
+  if ( this == &other ) 
+  {
+    LegendreSum result(*this) ;
+    result *= 2 ;
+    return result ;
+  }
+  if ( !s_equal ( xmin() , other.xmin() ) || 
+       !s_equal ( xmax() , other.xmax() ) )
+  {
+    throw GaudiException ( "Can't sum Legendre polynomials with different domains" , 
+                           "LHCb::Math::LegendreSum", 
+                           StatusCode( StatusCode::FAILURE ) ) ;
+  }
+  const unsigned short idegree = std::max ( degree() , other.degree() ) ;
+  //
+  LegendreSum result( idegree , xmin () , xmax () ) ;
+  for ( unsigned short i = 0 ; i < result.npars() ; ++i ) 
+  { result.m_pars[i] += par(i) +  other.par( i ) ; }
+  return result ;
+}
+// ============================================================================
+// Subtract      polynomials (with the same domain!)
+// ============================================================================
+Gaudi::Math::LegendreSum 
+Gaudi::Math::LegendreSum::subtract
+( const Gaudi::Math::LegendreSum& other ) const 
+{
+  if ( this == &other ) 
+  { return LegendreSum( degree() , xmin() , xmax() ) ; }
+  //
+  if ( !s_equal ( xmin() , other.xmin() ) || 
+       !s_equal ( xmax() , other.xmax() ) )
+  {
+    throw GaudiException ( "Can't subtract Legendre polynomials with different domains" , 
+                           "LHCb::Math::LegendreSum", 
+                           StatusCode( StatusCode::FAILURE ) ) ;
+  }
+  //
+  LegendreSum a ( other ) ;
+  LHCb::Math::negate ( a.m_pars ) ;
+  return sum ( a ) ;  
+}
+
 
 // ============================================================================
 // constructor from the degree 
@@ -1239,8 +1644,140 @@ Gaudi::Math::HermiteSum&
 Gaudi::Math::HermiteSum::operator-= ( const double a ) 
 { m_pars[0] -= a ; return *this ; }
 // ============================================================================
+// simple  manipulations with polynoms: scal eit 
+// ============================================================================
+Gaudi::Math::HermiteSum& 
+Gaudi::Math::HermiteSum::operator*= ( const double a ) 
+{ 
+  LHCb::Math::scale ( m_pars , a ) ;
+  return *this ; 
+}
+// ============================================================================
+// simple  manipulations with polynoms: scale it
+// ============================================================================
+Gaudi::Math::HermiteSum& 
+Gaudi::Math::HermiteSum::operator/= ( const double a ) 
+{ 
+  LHCb::Math::scale ( m_pars , 1/a ) ;
+  return *this ; 
+}
+// ============================================================================
+// unary minus 
+// ============================================================================
+Gaudi::Math::HermiteSum
+Gaudi::Math::HermiteSum::operator-() const 
+{
+  HermiteSum a ( *this ) ;
+  LHCb::Math::negate ( a.m_pars ) ;
+  return a ;
+}
+// ============================================================================
+// Python
+// ============================================================================
+Gaudi::Math::HermiteSum& 
+Gaudi::Math::HermiteSum::__iadd__   ( const double a )  
+{ (*this) += a ; return *this ; } 
+// ============================================================================
+Gaudi::Math::HermiteSum& 
+Gaudi::Math::HermiteSum::__isub__   ( const double a ) 
+{ (*this) -= a ; return *this ; } 
+// ============================================================================
+Gaudi::Math::HermiteSum& 
+Gaudi::Math::HermiteSum::__imult__  ( const double a )
+{ (*this) *= a ; return *this ; } 
+// ============================================================================
+Gaudi::Math::HermiteSum& 
+Gaudi::Math::HermiteSum::__idiv__   ( const double a ) 
+{ (*this) /= a ; return *this ; } 
+// ============================================================================
+Gaudi::Math::HermiteSum 
+Gaudi::Math::HermiteSum::__add__    ( const double a ) const 
+{ return HermiteSum(*this) += a ; } 
+// ============================================================================
+Gaudi::Math::HermiteSum 
+Gaudi::Math::HermiteSum::__sub__    ( const double a ) const 
+{ return HermiteSum(*this) -= a ; } 
+// ============================================================================
+Gaudi::Math::HermiteSum 
+Gaudi::Math::HermiteSum::__mult__   ( const double a ) const 
+{ return HermiteSum(*this) *= a ; } 
+// ============================================================================
+Gaudi::Math::HermiteSum 
+Gaudi::Math::HermiteSum::__div__    ( const double a ) const 
+{ return HermiteSum(*this) /= a ; } 
+// ============================================================================
+Gaudi::Math::HermiteSum 
+Gaudi::Math::HermiteSum::__radd__   ( const double a ) const 
+{ return __add__ ( a ) ; } 
+// ============================================================================
+Gaudi::Math::HermiteSum 
+Gaudi::Math::HermiteSum::__rsub__   ( const double a ) const 
+{ return (-(*this))+a; } 
+// ============================================================================
+Gaudi::Math::HermiteSum 
+Gaudi::Math::HermiteSum::__rmult__  ( const double a ) const 
+{ return __mult__ ( a ) ; } 
+// ============================================================================
+Gaudi::Math::HermiteSum 
+Gaudi::Math::HermiteSum::__neg__   () const { return -(*this); } 
+// ============================================================================
+Gaudi::Math::HermiteSum 
+Gaudi::Math::HermiteSum::__add__   
+( const Gaudi::Math::HermiteSum& a ) const { return sum      ( a ) ; } 
+// ============================================================================
+Gaudi::Math::HermiteSum 
+Gaudi::Math::HermiteSum::__sub__   
+( const Gaudi::Math::HermiteSum& a ) const { return subtract ( a ) ; } 
 
-
+// ============================================================================
+// Add       polynomials (with the same domain!)
+// ============================================================================
+Gaudi::Math::HermiteSum 
+Gaudi::Math::HermiteSum::sum
+( const Gaudi::Math::HermiteSum& other ) const 
+{
+  if ( this == &other ) 
+  {
+    HermiteSum result(*this) ;
+    result *= 2 ;
+    return result ;
+  }
+  if ( !s_equal ( xmin() , other.xmin() ) || 
+       !s_equal ( xmax() , other.xmax() ) )
+  {
+    throw GaudiException ( "Can't sum Hermite polynomials with different domains" , 
+                           "LHCb::Math::HermiteSum", 
+                           StatusCode( StatusCode::FAILURE ) ) ;
+  }
+  const unsigned short idegree = std::max ( degree() , other.degree() ) ;
+  //
+  HermiteSum result( idegree , xmin () , xmax () ) ;
+  for ( unsigned short i = 0 ; i < result.npars() ; ++i ) 
+  { result.m_pars[i] += par(i) +  other.par( i ) ; }
+  return result ;
+}
+// ============================================================================
+// Subtract      polynomials (with the same domain!)
+// ============================================================================
+Gaudi::Math::HermiteSum 
+Gaudi::Math::HermiteSum::subtract
+( const Gaudi::Math::HermiteSum& other ) const 
+{
+  if ( this == &other ) 
+  { return HermiteSum( degree() , xmin() , xmax() ) ; }
+  //
+  if ( !s_equal ( xmin() , other.xmin() ) || 
+       !s_equal ( xmax() , other.xmax() ) )
+  {
+    throw GaudiException ( "Can't subtract Hermite polynomials with different domains" , 
+                           "LHCb::Math::HermiteSum", 
+                           StatusCode( StatusCode::FAILURE ) ) ;
+  }
+  //
+  HermiteSum a ( other ) ;
+  LHCb::Math::negate ( a.m_pars ) ;
+  return sum ( a ) ;  
+}
 // ============================================================================
 /// legendre to bernstein transformation 
 namespace 
@@ -1307,7 +1844,8 @@ namespace
   {
     return 
       ( 1 == ( j + k ) % 2 ) ? 0. :
-      Gaudi::Math::choose ( k , ( k - j ) / 2 ) * ( j == 0 ? 1. : 2. ) / Gaudi::Math::pow ( 2 , k ) ;
+      Gaudi::Math::choose ( k , ( k - j ) / 2 ) * ( j == 0 ? 1. : 2. ) 
+      / Gaudi::Math::pow ( 2 , k ) ;
   }
   // ============================================================================
   /// transformation matrix from legendre basic to monomial basis 

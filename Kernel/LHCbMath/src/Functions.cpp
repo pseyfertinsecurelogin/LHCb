@@ -10686,7 +10686,7 @@ double Gaudi::Math::FourierSum::fejer_sum ( const double x ) const
 Gaudi::Math::FourierSum 
 Gaudi::Math::FourierSum::fejer_sum   () const                  // get Fejer sum 
 {
-  // create fejer sum e obejct 
+  // create fejer sum obejct 
   FourierSum fejer ( m_pars , m_xmin , m_xmax , false ) ;
   // fill it! 
   const unsigned long N  = m_pars.size() ;
@@ -10913,7 +10913,7 @@ Gaudi::Math::FourierSum::deconvolve
 /* get the effective cut-off (==number of effective harmonics) 
  * of Tikhonov's regularization 
  * \f$ n \equiv  \sqrt{2 \ln \delta} \frac{2\pi\sigma}{L} \f$
- * @param sigma  gaussian resoltuion 
+ * @param sigma  gaussian resolution 
  * @param delta  regularization parameter 
  * @return number of effective harmonic 
  */
@@ -10934,8 +10934,7 @@ double Gaudi::Math::FourierSum::regularization
 Gaudi::Math::FourierSum&
 Gaudi::Math::FourierSum::operator*=( const double a ) 
 {
-  for ( std::vector<double>::iterator it = m_pars.begin() ; 
-        m_pars.end() != it ; ++it ) {  (*it ) *= a ; }
+  LHCb::Math::scale ( m_pars , a ) ;
   return *this ;
 }
 // ============================================================================
@@ -10944,8 +10943,7 @@ Gaudi::Math::FourierSum::operator*=( const double a )
 Gaudi::Math::FourierSum&
 Gaudi::Math::FourierSum::operator/=( const double a ) 
 {
-  for ( std::vector<double>::iterator it = m_pars.begin() ; 
-        m_pars.end() != it ; ++it ) {  (*it ) /= a ; }
+  LHCb::Math::scale ( m_pars , 1/a ) ;
   return *this ;
 }
 // ============================================================================
@@ -10954,7 +10952,7 @@ Gaudi::Math::FourierSum::operator/=( const double a )
 Gaudi::Math::FourierSum&
 Gaudi::Math::FourierSum::operator+=( const double a ) 
 {
-  m_pars[0] += a ;
+  m_pars[0] += 2.0*a ;
   return *this ;
 }
 // ============================================================================
@@ -10963,10 +10961,82 @@ Gaudi::Math::FourierSum::operator+=( const double a )
 Gaudi::Math::FourierSum&
 Gaudi::Math::FourierSum::operator-=( const double a ) 
 {
-  m_pars[0] -= a ;
+  m_pars[0] -= 2.0*a ;
   return *this ;
 }
-
+// =============================================================================
+/*  sum of two Fourier series (with the same interval!) 
+ *  @param other the first fourier sum
+ *  @return the sum of two Fourier series 
+ */
+// =============================================================================
+Gaudi::Math::FourierSum 
+Gaudi::Math::FourierSum::sum( const Gaudi::Math::FourierSum& other ) const 
+{
+  //
+  if ( this == &other ) 
+  {
+    FourierSum result ( *this  ) ;
+    result  *= 2 ;
+    return result ;
+  }
+  //
+  if      ( other.zero() ) { return *this ; } // 
+  else if (       zero() ) { return other ; } // random choice 
+  //
+  if ( !s_equal ( xmin () , other.xmin() ) || 
+       !s_equal ( xmax () , other.xmax() ) ) 
+  {
+    throw GaudiException ( "Can't sum Fourier series with different domains" , 
+                           "LHCb::Math::FourierSum", 
+                           StatusCode( StatusCode::FAILURE ) ) ;
+  }
+  if ( fejer() != other.fejer () ) 
+  {
+    throw GaudiException ( "Can't sum Fourier series with different 'fejer' flag" , 
+                           "LHCb::Math::FourierSum", 
+                           StatusCode( StatusCode::FAILURE ) ) ;
+  }
+  //
+  const unsigned short idegree = std::max ( degree () , other.degree () ) ;
+  //
+  FourierSum result ( idegree , xmin() , xmax() , fejer() ) ;
+  const unsigned npars  = result.npars() ;
+  for ( unsigned short i = 0 ; i < npars ; ++i ) 
+  { result.m_pars [i] =  par(i)  + other.par(i) ; }
+  //
+  return result ;
+}
+// =============================================================================
+/*  get "shifted" fourier sum 
+ *  \f$ g(x) \equiv f ( x - a ) \f$
+ *  @param a the bias aprameter 
+ *  @return the shifted fourier sum 
+ */
+// =============================================================================
+Gaudi::Math::FourierSum 
+Gaudi::Math::FourierSum::shift ( const double a ) const
+{
+  if ( s_zero ( a ) ) { return *this ; }
+  //
+  FourierSum result ( *this ) ;
+  
+  const unsigned long  N = m_pars.size() ;
+  for ( unsigned short k = 1 ; 2 * k < N ; ++k  ) 
+  {
+    //  
+    const double ct  = m_pars[2*k]   ; // cosine term 
+    const double st  = m_pars[2*k-1] ; // sine   term 
+    //
+    const double ca  = std::cos ( k * a / m_scale ) ;
+    const double sa  = std::sin ( k * a / m_scale ) ;
+    //
+    result.m_pars [ 2*k    ] = ct * ca - st * sa ;
+    result.m_pars [ 2*k -1 ] = st * ca + ct * sa ;
+  }
+  //
+  return result ;
+}
 
 // ============================================================================
 // constructor from the degree 
@@ -11173,7 +11243,7 @@ Gaudi::Math::CosineSum::deconvolve
 /* Get the effective cut-off (==number of terms/harmonics) 
  * of Tikhonov's regularization 
  * \f$ n \equiv  \sqrt{2 \ln \delta} \frac{\pi\sigma}{L} \f$
- * @param sigma  gaussian resoltuion 
+ * @param sigma  gaussian resolution 
  * @param delta  regularization parameter 
  * @return number of effective harmonic 
  */
@@ -11193,8 +11263,7 @@ double Gaudi::Math::CosineSum::regularization
 Gaudi::Math::CosineSum&
 Gaudi::Math::CosineSum::operator*=( const double a ) 
 {
-  for ( std::vector<double>::iterator it = m_pars.begin() ; 
-        m_pars.end() != it ; ++it ) {  (*it ) *= a ; }
+  LHCb::Math::scale ( m_pars , a ) ;
   return *this ;
 }
 // ============================================================================
@@ -11203,8 +11272,7 @@ Gaudi::Math::CosineSum::operator*=( const double a )
 Gaudi::Math::CosineSum&
 Gaudi::Math::CosineSum::operator/=( const double a ) 
 {
-  for ( std::vector<double>::iterator it = m_pars.begin() ; 
-        m_pars.end() != it ; ++it ) {  (*it ) /= a ; }
+  LHCb::Math::scale ( m_pars , 1/a ) ;
   return *this ;
 }
 // ============================================================================
@@ -11213,19 +11281,18 @@ Gaudi::Math::CosineSum::operator/=( const double a )
 Gaudi::Math::CosineSum&
 Gaudi::Math::CosineSum::operator+=( const double a ) 
 {
-  m_pars[0] += a ;
+  m_pars[0] += 2.0*a ;
   return *this ;
 }
 // ============================================================================
 // simple  manipulations with polynoms: subtract constant 
 // ============================================================================
 Gaudi::Math::CosineSum&
-Gaudi::Math::CosineSum::operator-=( const double a ) 
-{
-  m_pars[0] -= a ;
+Gaudi::Math::CosineSum::operator-=( const double a )
+{  
+  m_pars[0] -= 2.0*a ;
   return *this ;
 }
-
 // ============================================================================
 // get the derivative at point x 
 // ============================================================================
@@ -11346,8 +11413,49 @@ Gaudi::Math::CosineSum::integral ( const double c0 ) const
   return integ ;
 }
 // ============================================================================
-
-
+/*  sum of two Fourier series (with the same interval!) 
+ *  @param other the first fourier sum
+ *  @return the sum of two Fourier series 
+ */
+// ============================================================================
+Gaudi::Math::CosineSum 
+Gaudi::Math::CosineSum::sum ( const Gaudi::Math::CosineSum& other ) const 
+{
+  //
+  if ( this == &other ) 
+  {
+    CosineSum result ( *this ) ;
+    result *= 2 ;
+    return result ;
+  }
+  //
+  if      ( other.zero() ) { return *this ; }
+  else if (       zero() ) { return other ; }
+  //
+  if ( !s_equal ( xmin () , other.xmin() ) ||
+       !s_equal ( xmax () , other.xmax() ) ) 
+  {
+    throw GaudiException ( "Can't sum Fourier cosine series with different domains" , 
+                           "LHCb::Math::CosineSum", 
+                           StatusCode( StatusCode::FAILURE ) ) ;
+  }
+  if ( fejer() != other.fejer () ) 
+  {
+    throw GaudiException ( "Can't sum Fourier cosine series with different 'fejer' flag" , 
+                           "LHCb::Math::CosineSum", 
+                           StatusCode( StatusCode::FAILURE ) ) ;
+  }
+  //
+  const unsigned short idegree = std::max ( degree () , other.degree () ) ;
+  //
+  CosineSum result ( idegree , xmin() , xmax() , fejer() ) ;
+  const unsigned npars  = result.npars() ;
+  for ( unsigned short i = 0 ; i < npars ; ++i ) 
+  { result.m_pars[i] =  par(i)  + other.par(i) ; }
+  //
+  return result ;
+}
+// ============================================================================
 
 
 
@@ -11389,7 +11497,7 @@ double Gaudi::Math::gaussian_integral_right
   // note the difference in the arguments! 
   return gaussian_int_R ( alpha * alpha , beta , low ) ;
 }
-// ========================================================================
+// ============================================================================
 /** get the gaussian integral
  *  \f[ f = \int_{-\inf}^b \exp { -\alpha^2 x^2 + \beta x } \mathrm{d}x \f]
  *  @param alpha the alpha parameter
@@ -11398,7 +11506,7 @@ double Gaudi::Math::gaussian_integral_right
  *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
  *  @date 2010-05-23
  */
-// ========================================================================
+// ============================================================================
 double Gaudi::Math::gaussian_integral_left
 ( const double alpha ,
   const double beta  ,
@@ -11409,6 +11517,33 @@ double Gaudi::Math::gaussian_integral_left
 }
 
 
+// ============================================================================
+/*  make a sum of two fourier series (with the same interval!) 
+ *  @param s1 the first fourier sum
+ *  @param s2 the first fourier sum 
+ *  @return s1+s2 
+ *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+ *  @date 2016-06-26
+ */
+// ============================================================================
+Gaudi::Math::FourierSum
+Gaudi::Math::sum 
+( const Gaudi::Math::FourierSum& s1 ,
+  const Gaudi::Math::FourierSum& s2 ) { return s1.sum ( s2 ) ; }
+// ============================================================================
+/*  make a sum of two fourier cosine series (with the same interval!) 
+ *  @param s1 the first fourier cosine sum
+ *  @param s2 the first fourier cosine sum 
+ *  @return s1+s2 
+ *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+ *  @date 2016-06-26
+ */
+// ============================================================================
+Gaudi::Math::CosineSum 
+Gaudi::Math::sum 
+( const Gaudi::Math::CosineSum& s1 , 
+  const Gaudi::Math::CosineSum& s2 ) { return s1.sum ( s2 ) ; }
+// ============================================================================
 
 
 // ============================================================================
