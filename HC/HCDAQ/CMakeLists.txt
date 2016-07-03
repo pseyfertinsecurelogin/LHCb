@@ -5,6 +5,7 @@ gaudi_subdir(HCDAQ v1r5)
 
 gaudi_depends_on_subdirs(DAQ/DAQUtils
 			 DAQ/DAQKernel	
+                         Det/DetDesc
                          Event/DAQEvent
                          Event/DigiEvent
                          GaudiAlg
@@ -15,5 +16,5 @@ find_package(AIDA)
 gaudi_add_module(HCDAQ
                  src/*.cpp
                  INCLUDE_DIRS AIDA Event/DigiEvent
-                 LINK_LIBRARIES DAQEventLib DAQKernelLib GaudiAlgLib LHCbKernel)
+                 LINK_LIBRARIES DAQEventLib DAQKernelLib DetDescLib GaudiAlgLib LHCbKernel)
 
