@@ -8,9 +8,6 @@
 // local
 #include "Event/ProtoParticle.h"
 
-// boost
-#include <boost/lambda/lambda.hpp>
-#include <boost/lambda/bind.hpp>
 
 //-----------------------------------------------------------------------------
 
@@ -34,7 +31,6 @@ std::ostream& LHCb::ProtoParticle::fillStream( std::ostream & s ) const
 LHCb::ProtoParticle::ExtraInfo::size_type
 LHCb::ProtoParticle::clearCalo( const LHCb::CaloHypo::Hypothesis & hypo )
 {
-  using namespace boost::lambda;
 
   // number of hypos removed
   LHCb::ProtoParticle::ExtraInfo::size_type removed = 0;
@@ -50,7 +46,7 @@ LHCb::ProtoParticle::clearCalo( const LHCb::CaloHypo::Hypothesis & hypo )
   // Find hypos to remove
   const auto iHypoRemove =
     std::remove_if ( m_calo.begin(), m_calo.end(),
-                     bind( &LHCb::CaloHypo::hypothesis, _1 ) == hypo );
+                     [&](const LHCb::CaloHypo* h) { return h->hypothesis() == hypo ; } );
   if ( m_calo.end() != iHypoRemove )
   {
     removed += m_calo.end() - iHypoRemove;
@@ -90,7 +86,7 @@ LHCb::ProtoParticle::removeRichInfo()
   erased += this->eraseInfo( LHCb::ProtoParticle::RichDLLd );
   erased += this->eraseInfo( LHCb::ProtoParticle::RichPIDStatus );
   // Set RichPID pointer to NULL
-  this->setRichPID(NULL);
+  this->setRichPID(nullptr);
   // Invalidate Combined DLL information since information has changed
   erased += this->removeCombinedInfo();
   return erased;
@@ -107,7 +103,7 @@ LHCb::ProtoParticle::removeMuonInfo()
   erased += this->eraseInfo( LHCb::ProtoParticle::MuonNShared );
   erased += this->eraseInfo( LHCb::ProtoParticle::MuonPIDStatus );
   // Set MuonPID pointer to NULL
-  this->setMuonPID(NULL);
+  this->setMuonPID(nullptr);
   // Invalidate Combined DLL information since information has changed
   erased += this->removeCombinedInfo();
   return erased;
