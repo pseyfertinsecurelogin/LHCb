@@ -5806,7 +5806,7 @@ namespace Gaudi
       /// get the phase for n-th harmonic 
       double phase  ( const unsigned short k ) const ;
       // ======================================================================
-    public: 
+    public:
       // ======================================================================
       /// get Fejer sum 
       FourierSum fejer_sum   () const ;                       // get Fejer sum 
@@ -5863,7 +5863,22 @@ namespace Gaudi
       /// simple  manipulations with polynoms: add constant
       FourierSum& operator += ( const double a ) ;     // add constant 
       /// simple  manipulations with polynoms: subtract constant 
-      FourierSum& operator -= ( const double a ) ;     // subtract constant 
+      FourierSum& operator -= ( const double a ) ;     // subtract constant
+      // ======================================================================
+    public:
+      // ======================================================================
+      /** sum of two Fourier series (with the same interval!) 
+       *  @param other the first fourier sum
+       *  @return the sum of two Fourier series 
+       */
+      FourierSum sum ( const FourierSum& other ) const ;
+      // ======================================================================
+      /** get "shifted" fourier sum 
+       *  \f$ g(x) \equiv f ( x - a ) \f$
+       *  @param a the bias aprameter 
+       *  @return the shifted fourier sum 
+       */
+      FourierSum shift ( const double a ) const ;      
       // ======================================================================
     private:
       // ======================================================================
@@ -5879,7 +5894,7 @@ namespace Gaudi
       double m_delta ;             // delta 
       /// summation algorithm
       bool m_fejer   ;             // summation algorithm
-      // ======================================================================
+       // ======================================================================
     } ;
     // ========================================================================
     /** @class CosineSum
@@ -6033,6 +6048,14 @@ namespace Gaudi
       /// simple  manipulations with polynoms: subtract constant 
       CosineSum& operator -= ( const double a ) ;     // subtract constant 
       // ======================================================================
+    public:
+      // ======================================================================
+      /** sum of two Fourier series (with the same interval!) 
+       *  @param other the first fourier sum
+       *  @return the sum of two Fourier series 
+       */
+      CosineSum sum ( const CosineSum& other ) const ;
+      // ======================================================================
     private:
       // ======================================================================
       /// actual vector of coefficients
@@ -6048,7 +6071,34 @@ namespace Gaudi
       // ======================================================================
     } ;
     // ========================================================================
-  } //                                             end of namespace Gaudi::Math
+    /** make a sum of two fourier series (with the same interval!) 
+     *  @param s1 the first fourier sum
+     *  @param s2 the first fourier sum 
+     *  @return s1+s2 
+     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+     *  @date 2016-06-26
+     */
+    GAUDI_API 
+    FourierSum sum ( const FourierSum& s1 , const FourierSum& s2 ) ;
+    // ========================================================================
+    /** make a sum of two fourier cosine series (with the same interval!) 
+     *  @param s1 the first fourier cosine sum
+     *  @param s2 the first fourier cosine sum 
+     *  @return s1+s2 
+     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+     *  @date 2016-06-26
+     */
+    GAUDI_API 
+    CosineSum sum ( const CosineSum& s1 , const CosineSum& s2 ) ;
+    // ========================================================================
+    /// sum of two fourier series 
+    inline FourierSum operator+( const FourierSum& a , 
+                                 const FourierSum& b ) { return a.sum ( b ) ; }
+    /// sum of two cosine series 
+    inline CosineSum  operator+( const CosineSum&  a , 
+                                 const CosineSum&  b ) { return a.sum ( b ) ; }
+    // ========================================================================
+  } //                                  end of namespace Gaudi::Math
   // ==========================================================================
 } //                                                     end of namespace Gaudi
 // ============================================================================

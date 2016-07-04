@@ -8,6 +8,10 @@
 #include <climits>
 #include <cassert>
 // ============================================================================
+// GaudiKernel
+// ============================================================================
+#include "GaudiKernel/GaudiException.h"
+// ============================================================================
 // LHCbMath 
 // ============================================================================
 #include "LHCbMath/LHCbMath.h"
@@ -386,6 +390,67 @@ Gaudi::Math::Bernstein
 Gaudi::Math::Bernstein::__neg__ ()  const 
 { return -(*this); }
 // ============================================================================
+// the sum two Bernstein polynomials (with the same domain!)
+// ============================================================================
+Gaudi::Math::Bernstein  
+Gaudi::Math::Bernstein::sum ( const Gaudi::Math::Bernstein& other ) const 
+{
+  if ( this == &other ) 
+  {
+    Bernstein result( *this );
+    result *=2 ;
+    return result ;
+  }
+  //
+  if ( !s_equal ( xmin () , other.xmin() ) || 
+       !s_equal ( xmax () , other.xmax() ) ) 
+  {
+    throw GaudiException ( "Can't sum Bernstein polynomials with different domains" , 
+                           "LHCb::Math::Bernstein", 
+                           StatusCode( StatusCode::FAILURE ) ) ;
+  }
+  //
+  if ( degree() < other.degree() ) { return other.sum ( this->elevate ( other.degree() ) ) ; }
+  if ( degree() > other.degree() ) { return       sum ( other.elevate (       degree() ) ) ; }
+  //
+  Bernstein result(*this) ;
+  for ( unsigned short i = 0 ; i < npars() ; ++i ) 
+  { result.m_pars[i] += other.par( i ) ; }
+  return result ; 
+}
+// =============================================================================
+// subtract Bernstein polynomials (with the same domain!)
+// =============================================================================
+Gaudi::Math::Bernstein  
+Gaudi::Math::Bernstein::subtract ( const Gaudi::Math::Bernstein& other ) const
+{
+  if ( this == &other ) { return Bernstein( degree() , xmin() , xmax() ) ; }
+  Bernstein b ( other ) ;
+  LHCb::Math::negate ( b.m_pars ) ;
+  return sum ( b ) ;  
+}
+// ============================================================================
+// Sum of Bernstein polynomials (the same domain)
+// ============================================================================
+Gaudi::Math::Bernstein
+Gaudi::Math::Bernstein::__add__   
+( const  Gaudi::Math::Bernstein& other ) const 
+{ return sum ( other ) ; }
+// ============================================================================
+// Subtraction of Bernstein polynomials (the same domain)
+// ============================================================================
+Gaudi::Math::Bernstein
+Gaudi::Math::Bernstein::__sub__   
+( const  Gaudi::Math::Bernstein& other ) const 
+{ return subtract ( other ) ; }
+// ============================================================================
+// Multipky twp Bernstein polynomials (the same domain)
+// ============================================================================
+Gaudi::Math::Bernstein
+Gaudi::Math::Bernstein::__mult__   
+( const  Gaudi::Math::Bernstein& other ) const 
+{ return multiply ( other ) ; }
+// ============================================================================
 namespace 
 {
   // ==========================================================================
@@ -465,6 +530,43 @@ Gaudi::Math::Bernstein::reduce ( const unsigned short r ) const
     }
   }
   return Bernstein ( nc.begin() , nc.end  () , xmin() , xmax() ) ;
+}
+// ============================================================================
+// multiply two Bernstein polynomials (with the same domain!)
+// ============================================================================
+Gaudi::Math::Bernstein  
+Gaudi::Math::Bernstein::multiply ( const Gaudi::Math::Bernstein& other ) const 
+{
+  //
+  if ( !s_equal ( xmin () , other.xmin() ) || 
+       !s_equal ( xmax () , other.xmax() ) ) 
+  {
+    throw GaudiException ( "Can't sum Bernstein polynomials with different domains" , 
+                           "LHCb::Math::Bernstein", 
+                           StatusCode( StatusCode::FAILURE ) ) ;
+  }
+  //
+  if ( zero() || other.zero() ) { return Bernstein( degree() , xmin() , xmax() ) ; }
+  //
+  const unsigned short m =       degree() ;
+  const unsigned short n = other.degree() ;
+  //
+  Bernstein result ( m + n , xmin() , xmax() ) ;
+  //
+  for ( unsigned short k = 0 ; k <= m + n ; ++k ) 
+  {
+    const unsigned jmax = std::min ( m , n ) ;
+    const unsigned jmin = k >= n ? k - n : 0 ;
+    for ( unsigned short j = jmin ; j <= jmax ; ++j ) 
+    { 
+      result.m_pars[k] += 
+        c_nk ( m ,     j ) * 
+        c_nk ( n , k - j ) * 
+        m_pars[j]          * 
+        other.m_pars[k-j]  / c_nk ( m + n , k ) ;
+    }
+  }
+  return result ; 
 }
 // ============================================================================
 /* de Casteljau algorithm for summation of Bernstein polynomials 
@@ -881,6 +983,66 @@ double Gaudi::Math::integrate
   //
   return result * _fac ; 
 }
+// ============================================================================
+
+
+// ============================================================================
+//  DUAL BASIC 
+// ============================================================================
+// destructor 
+// ============================================================================
+Gaudi::Math::BernsteinDualBasis::~BernsteinDualBasis() {}
+// ============================================================================
+// constructor from the order
+// ============================================================================
+Gaudi::Math::BernsteinDualBasis::BernsteinDualBasis
+( const unsigned short N ,
+  const unsigned short j ) 
+  : std::unary_function<double,double>()
+  , m_k         ( j ) 
+  , m_bernstein ( N ) 
+{
+  if ( j <= N ) 
+  {
+    const unsigned short n = N ;
+    for ( unsigned short k = 0 ; k <= N ; ++k ) 
+    {
+      double ck = 0.0 ;
+      const unsigned short imax = std::min ( j ,  k ) ;
+      for ( unsigned short i = 0 ; i <= imax ; ++i ) 
+      {
+        long double a = 2 * i + 1 ;
+        a *= c_nk (  n + i + 1 , n - j ) ;
+        a *= c_nk (  n - i     , n - j ) ;
+        a *= c_nk (  n + i + 1 , n - k ) ;
+        a *= c_nk (  n - i     , n - k ) ;
+        //
+        ck += a ;
+      }
+      ck /= ( c_nk ( n , j ) * c_nk ( n , k ) ) ;
+      if ( ( j + k )  % 2 ) { ck = -ck ; }
+      m_bernstein.setPar ( k , ck ) ;
+    }
+  } 
+}
+// ============================================================================
+// copy constructor 
+// ============================================================================
+Gaudi::Math::BernsteinDualBasis::BernsteinDualBasis
+( const Gaudi::Math::BernsteinDualBasis&  right ) 
+  : std::unary_function<double,double>( right )
+  , m_k         ( right.m_k         ) 
+  , m_bernstein ( right.m_bernstein ) 
+{}
+// ============================================================================
+// move constructor 
+// ============================================================================
+Gaudi::Math::BernsteinDualBasis::BernsteinDualBasis
+( Gaudi::Math::BernsteinDualBasis&& right ) 
+  : std::unary_function<double,double>( right )
+  , m_k         (             right.m_k           ) 
+  , m_bernstein ( std::move ( right.m_bernstein ) ) 
+{}
 // ============================================================================
 // POSITIVE 
 // ============================================================================
