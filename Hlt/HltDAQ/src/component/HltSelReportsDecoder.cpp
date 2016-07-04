@@ -52,22 +52,25 @@ DECLARE_ALGORITHM_FACTORY( HltSelReportsDecoder )
 HltSelReportsDecoder::HltSelReportsDecoder( const std::string& name,
                                           ISvcLocator* pSvcLocator)
 : HltRawBankDecoderBase( name, pSvcLocator ) 
-,m_conv(nullptr)
 {
   declareProperty("OutputHltSelReportsLocation",
   m_outputHltSelReportsLocation= LHCb::HltSelReportsLocation::Default);  
 }
 
 //=============================================================================
+// Initialize
+//=============================================================================
+StatusCode HltSelReportsDecoder::initialize() {
+  // Initialise the converter tool
+  m_conv = tool<IReportConvert>("ReportConvertTool", this );
+  return m_conv ? StatusCode::SUCCESS 
+                : Error("Unable to retrieve the Report converter tool");
+}
+//=============================================================================
 // Main execution
 //=============================================================================
 StatusCode HltSelReportsDecoder::execute() {
   if ( msgLevel(MSG::DEBUG) ) debug() << "==> Execute" << endmsg;
-  // Initialise the converter tool
-  m_conv = tool<IReportConvert>("ReportConvertTool", this );
-  if ( !m_conv ){
-    return Error("Unable to retrieve the Report converter tool");
-  }
   
   // ----------------------------------------------------------
   // get the bank(s) from RawEvent
@@ -77,7 +80,7 @@ StatusCode HltSelReportsDecoder::execute() {
     return Warning( " No appropriate HltSelReports RawBank in RawEvent. Quiting. ",StatusCode::SUCCESS, 10 );
   }
 
-  const RawBank* hltselreportsRawBank0 = *(hltselreportsRawBanks.begin());
+  const RawBank* hltselreportsRawBank0 = hltselreportsRawBanks.front();
 
   // Tell the converter the version from the raw bank
   m_conv->setReportVersion( hltselreportsRawBank0->version() );
@@ -98,8 +101,7 @@ StatusCode HltSelReportsDecoder::execute() {
     auto summary = new LHCb::HltObjectSummary();
     
     auto tck_dummy = tck();
-    bool settings=true;
-    if(tck_dummy!=0) settings=false;
+    bool settings= ( tck_dummy==0 );
     GaudiUtils::VectorMap<int, HltRawBankDecoderBase::element_t> idmap_dummy;
     if(!settings) idmap_dummy = id2string(tck_dummy);
     
@@ -117,8 +119,8 @@ StatusCode HltSelReportsDecoder::execute() {
 
     return Warning( "Version (99) indicates too many objects were requested to be saved. Returning debugging reports" ,StatusCode::SUCCESS, 20 );
   }
-  else if( hltselreportsRawBank0->version() > kVersionNumber ){
-    Warning( " HltSelReports RawBank version is higher than expected. Will try to decode it anyway." ,StatusCode::SUCCESS, 20 );
+  if( hltselreportsRawBank0->version() > kVersionNumber ){
+    Warning( " HltSelReports RawBank version is higher than expected. Will try to decode it anyway." ,StatusCode::SUCCESS, 20 ).ignore();
   }
   // put the banks into the right order (in case the data was split across multiple banks...
   std::sort( std::begin(hltselreportsRawBanks), std::end(hltselreportsRawBanks), 
@@ -187,7 +189,7 @@ StatusCode HltSelReportsDecoder::execute() {
   if( ic ){
     Error( " HltSelReportsRawBank fails integrity check with code "
          + std::to_string(ic) +  " " + HltSelRepRBEnums::IntegrityCodesToString(ic),
-           StatusCode::SUCCESS, 100 );
+           StatusCode::SUCCESS, 100 ).ignore();
     errors=true;
   }
 
@@ -195,7 +197,7 @@ StatusCode HltSelReportsDecoder::execute() {
   if( ic ){
     Error( " HltSelRepRBHits fails integrity check with code " 
          + std::to_string(ic) + " " + HltSelRepRBEnums::IntegrityCodesToString(ic),
-           StatusCode::SUCCESS, 100 );
+           StatusCode::SUCCESS, 100 ).ignore();
     errors=true;
   }
 
@@ -203,7 +205,7 @@ StatusCode HltSelReportsDecoder::execute() {
   if( ic ){
     Error( " HltSelRepRBObjTyp fails integrity check with code "
          + std::to_string(ic) + " " + HltSelRepRBEnums::IntegrityCodesToString(ic),
-           StatusCode::SUCCESS, 100 );
+           StatusCode::SUCCESS, 100 ).ignore();
     errors=true;
   }
 
@@ -211,7 +213,7 @@ StatusCode HltSelReportsDecoder::execute() {
   if( ic ){
     Error( " HltSelRepRBSubstr fails integrity check with code " 
          + std::to_string(ic) +  " " + HltSelRepRBEnums::IntegrityCodesToString(ic),
-           StatusCode::SUCCESS, 100 );
+           StatusCode::SUCCESS, 100 ).ignore();
     errors=true;
   }
   if( nObj != substrSubBank.numberOfObj() ){
@@ -219,7 +221,7 @@ StatusCode HltSelReportsDecoder::execute() {
          + std::to_string(substrSubBank.numberOfObj())
          + " which is different than HltSelRepRBObjTyp " 
          + std::to_string(nObj),
-           StatusCode::SUCCESS, 100 );
+           StatusCode::SUCCESS, 100 ).ignore();
     errors=true;
   }
 
@@ -227,7 +229,7 @@ StatusCode HltSelReportsDecoder::execute() {
   if( ic ){
     Error( " HltSelRepRBStdInfo fails integrity check with code "
          + std::to_string(ic ) +  " " + HltSelRepRBEnums::IntegrityCodesToString(ic),
-           StatusCode::SUCCESS, 100 );
+           StatusCode::SUCCESS, 100 ).ignore();
     errors=true;
   }
   if( nObj != stdInfoSubBank.numberOfObj() ){
@@ -235,7 +237,7 @@ StatusCode HltSelReportsDecoder::execute() {
          + std::to_string( stdInfoSubBank.numberOfObj() )
          + " which is different than HltSelRepRBObjTyp " 
          + std::to_string( nObj ),
-           StatusCode::SUCCESS, 100 );
+           StatusCode::SUCCESS, 100 ).ignore();
     errors=true;
   }
 
@@ -243,7 +245,7 @@ StatusCode HltSelReportsDecoder::execute() {
   if( ic ){
     Error( " HltSelRepRBExtraInfo fails integrity check with code " 
          + std::to_string(ic) + " " + HltSelRepRBEnums::IntegrityCodesToString(ic),
-           StatusCode::SUCCESS, 100 );
+           StatusCode::SUCCESS, 100 ).ignore();
     exInfOn=false; // the only non-fatal info corruption
   }
   if( nObj != extraInfoSubBank.numberOfObj() ){
@@ -251,7 +253,7 @@ StatusCode HltSelReportsDecoder::execute() {
          + std::to_string( extraInfoSubBank.numberOfObj() )
          + " which is different than HltSelRepRBObjTyp " 
          + std::to_string( nObj ),
-           StatusCode::SUCCESS, 100 );
+           StatusCode::SUCCESS, 100 ).ignore();
     exInfOn=false;
   }
 
@@ -304,68 +306,42 @@ StatusCode HltSelReportsDecoder::execute() {
 
     //           ============== standard 
     HltSelRepRBStdInfo::StdInfo stdInfo = stdInfoSubBank.next();
-    if( stdInfo.size() )
-    switch( hos->summarizedObjectCLID() )
-      {
+    if( stdInfo.size() ) switch( hos->summarizedObjectCLID() ) {
       case LHCb::CLID_Track:
-        {     
-            m_conv->SummaryFromRaw(&infoPersistent, &stdInfo, LHCb::CLID_Track);
-        }
+        m_conv->SummaryFromRaw(&infoPersistent, &stdInfo, LHCb::CLID_Track);
         break;
       case LHCb::CLID_RecVertex:
-        {  
-            m_conv->SummaryFromRaw(&infoPersistent, &stdInfo, LHCb::CLID_RecVertex);
-        }
-	break;
+        m_conv->SummaryFromRaw(&infoPersistent, &stdInfo, LHCb::CLID_RecVertex);
+	    break;
       case LHCb::CLID_Vertex:
-        {  
-            m_conv->SummaryFromRaw(&infoPersistent, &stdInfo, LHCb::CLID_Vertex);
-        }
-	break;
+        m_conv->SummaryFromRaw(&infoPersistent, &stdInfo, LHCb::CLID_Vertex);
+	    break;
       case LHCb::CLID_RichPID:
-        {  
-            m_conv->SummaryFromRaw(&infoPersistent, &stdInfo, LHCb::CLID_RichPID);
-        }
-	break;
+        m_conv->SummaryFromRaw(&infoPersistent, &stdInfo, LHCb::CLID_RichPID);
+	    break;
       case LHCb::CLID_MuonPID:
-        {  
-            m_conv->SummaryFromRaw(&infoPersistent, &stdInfo, LHCb::CLID_MuonPID);
-        }
-	break;
+        m_conv->SummaryFromRaw(&infoPersistent, &stdInfo, LHCb::CLID_MuonPID);
+        break;
       case LHCb::CLID_ProtoParticle:
-        {  
-            m_conv->SummaryFromRaw(&infoPersistent, &stdInfo, LHCb::CLID_ProtoParticle);
-        }
-	break;
+        m_conv->SummaryFromRaw(&infoPersistent, &stdInfo, LHCb::CLID_ProtoParticle);
+        break;
       case LHCb::CLID_Particle:
-        {      
-            m_conv->SummaryFromRaw(&infoPersistent, &stdInfo, LHCb::CLID_Particle);
-        }
+        m_conv->SummaryFromRaw(&infoPersistent, &stdInfo, LHCb::CLID_Particle);
         break;
       case LHCb::CLID_RecSummary:
-        {      
-            m_conv->SummaryFromRaw(&infoPersistent, &stdInfo, LHCb::CLID_RecSummary);
-        }
+        m_conv->SummaryFromRaw(&infoPersistent, &stdInfo, LHCb::CLID_RecSummary);
         break;
       case LHCb::CLID_CaloCluster:
-        {      
-            m_conv->SummaryFromRaw(&infoPersistent, &stdInfo, LHCb::CLID_CaloCluster);
-        }
+        m_conv->SummaryFromRaw(&infoPersistent, &stdInfo, LHCb::CLID_CaloCluster);
         break;
       case LHCb::CLID_CaloHypo:
-        {      
-            m_conv->SummaryFromRaw(&infoPersistent, &stdInfo, LHCb::CLID_CaloHypo);
-        }
+        m_conv->SummaryFromRaw(&infoPersistent, &stdInfo, LHCb::CLID_CaloHypo);
         break;
       case 40:
-        {      
-            m_conv->SummaryFromRaw(&infoPersistent, &stdInfo, 40);
-        }
+        m_conv->SummaryFromRaw(&infoPersistent, &stdInfo, 40);
         break;
       case 41:
-        {      
-            m_conv->SummaryFromRaw(&infoPersistent, &stdInfo, 41);
-        }
+        m_conv->SummaryFromRaw(&infoPersistent, &stdInfo, 41);
         break;
       case 1:
         {
@@ -409,12 +385,11 @@ StatusCode HltSelReportsDecoder::execute() {
           infoPersistent.insert( infos->second, i.second );
         } else {
           Warning( " String key for Extra Info item in storage not found id=" + std::to_string(i.first),
-                   StatusCode::SUCCESS, 20 );
+                   StatusCode::SUCCESS, 20 ).ignore();
         }
       }
     }
     hos->setNumericalInfo( infoPersistent );
-
     objects.push_back(hos);
   }
 
@@ -443,7 +418,7 @@ StatusCode HltSelReportsDecoder::execute() {
             hits.insert( std::end(hits), std::begin(hitseq), std::end(hitseq) );
           }          
         } else {
-          Error(  "Hit sequence index out of range", StatusCode::SUCCESS, 10 );
+          Error(  "Hit sequence index out of range", StatusCode::SUCCESS, 10 ).ignore();
         }
       }
       hos->setLhcbIDs( hits );
@@ -455,7 +430,7 @@ StatusCode HltSelReportsDecoder::execute() {
         if( jObj<nObj ){
           thisSubstructure.push_back( &(*(objects[jObj])) );
         } else {
-          Error(  " Substructure object index out of range ", StatusCode::SUCCESS, 10 );
+          Error(  " Substructure object index out of range ", StatusCode::SUCCESS, 10 ).ignore();
         }
       }
       hos->setSubstructureExtended( thisSubstructure );
@@ -487,23 +462,14 @@ StatusCode HltSelReportsDecoder::execute() {
       if( hos->summarizedObjectCLID()!=LHCb::CLID_Particle )
       {
         hos->setSubstructure( hos->substructureExtended() );
-      }
-      else 
-      {
+      } else {
         // for TisTos need to delete calo clusters from a particle that has a track in substructure
 
         const SmartRefVector< LHCb::HltObjectSummary > & sub = hos->substructureExtended();
         // look for a track among substracture
-        bool trackFound(false);
-        for(const auto & elem : sub)
-        {
-          if( !(elem.target()) )continue;
-          if( elem.target()->summarizedObjectCLID() != LHCb::CLID_Track )continue;
-          trackFound = true;
-          break;
-        }
-
-        if( trackFound )
+        auto e = std::find_if( sub.begin(), sub.end(),
+                               [&](const LHCb::HltObjectSummary* obj) { return obj && obj->summarizedObjectCLID() == LHCb::CLID_Track; } );
+        if( e != sub.end() ) // trackFound
         {
           for(const auto & elem : sub)
           {
@@ -512,15 +478,11 @@ StatusCode HltSelReportsDecoder::execute() {
             if( elem.target()->summarizedObjectCLID() == LHCb::CLID_CaloCluster )continue;
             hos->addToSubstructure( elem.target() );
           }
-        }
-        else
-        {
+        } else {
           // no track, no worry
           hos->setSubstructure( hos->substructureExtended() );
         }
-        
       }
-
     }
   }
   
@@ -558,11 +520,11 @@ StatusCode HltSelReportsDecoder::execute() {
       if( outputSummary->insert(selName->second,selSumOut) == StatusCode::FAILURE ){
         Error( "  Failed to add Hlt selection name " 
                + std::string{ selName->second }
-               + " to its container ", StatusCode::SUCCESS, 10 );
+               + " to its container ", StatusCode::SUCCESS, 10 ).ignore();
       }
     } else {    
       Error( " Did not find string key for trigger selection in storage",
-             StatusCode::SUCCESS, 50 ); 
+             StatusCode::SUCCESS, 50 ).ignore(); 
     }
 
   }

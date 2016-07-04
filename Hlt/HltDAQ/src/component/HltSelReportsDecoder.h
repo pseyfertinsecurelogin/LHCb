@@ -23,6 +23,7 @@ class HltSelReportsDecoder : public HltRawBankDecoderBase {
 public: 
   /// Standard constructor
   HltSelReportsDecoder( const std::string& name, ISvcLocator* pSvcLocator );
+  StatusCode initialize() override;
   StatusCode execute   () override;    ///< Algorithm execution
 
 private:
@@ -30,7 +31,7 @@ private:
   /// location of output
   StringProperty m_outputHltSelReportsLocation;
   /// for converting objects in to summaries
-  IReportConvert* m_conv;
+  IReportConvert* m_conv = nullptr;
 };
 
 #endif // HLTSELREPORTSDECODER_H
