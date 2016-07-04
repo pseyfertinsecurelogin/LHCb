@@ -1,0 +1,49 @@
+# backup files
+*~
+.*.swp
+
+# build products
+InstallArea/
+
+# CMake temporary files
+build.*/
+.build/
+build-dir/
+CMakeFiles/
+CTestTestfile.cmake
+CPackSourceConfig.cmake
+CPackConfig.cmake
+cmake_install.cmake
+
+# common byproducts
+*.pyc
+*.pyo
+DoxyWarnings.log
+.gdb_history
+*.new
+*.launch
+*.launch.py
+*.launch.opts
+
+# Eclipse data
+.project
+.cproject
+.settings
+.pydevproject
+.eclipse/
+
+# CMT tempoary files
+build.*.log
+Makefile
+NMake
+install.*.history
+setup.*
+cleanup.*
+version.cmt
+genConf/
+QMTest/
+test_results/
+*-slc[56]-*/
+i686-winxp-vc9-dbg/
+.*-slc[56]-*.d/
+.i686-winxp-vc9-dbg.d/
