@@ -84,12 +84,13 @@
   <class name    = "Gaudi::Math::WorkSpace"         >
     <field name  = "m_workspace" transient = "true"/>      
   </class>
-  <class name    = "Gaudi::Math::PolySum"          />
-  <class name    = "Gaudi::Math::ChebyshevSum"     />
-  <class name    = "Gaudi::Math::LegendreSum"      />
-  <class name    = "Gaudi::Math::HermiteSum"       />
-  <class name    = "Gaudi::Math::Polynomial"       />
-  <class name    = "Gaudi::Math::Bernstein"        />
+  <class name    = "Gaudi::Math::PolySum"            />
+  <class name    = "Gaudi::Math::ChebyshevSum"       />
+  <class name    = "Gaudi::Math::LegendreSum"        />
+  <class name    = "Gaudi::Math::HermiteSum"         />
+  <class name    = "Gaudi::Math::Polynomial"         />
+  <class name    = "Gaudi::Math::Bernstein"          />
+  <class name    = "Gaudi::Math::BernsteinDualBasis" />
   <class name    = "Gaudi::Math::Positive"         />
   <class name    = "Gaudi::Math::Monothonic"       />
   <class name    = "Gaudi::Math::Convex"           />
