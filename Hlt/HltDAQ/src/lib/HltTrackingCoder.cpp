@@ -57,7 +57,7 @@ void encodeTracks( const LHCb::Tracks& tracks, std::vector<unsigned int>& rawBan
         assert( nhits == Tr->lhcbIDs().size() );
         out = std::transform( std::begin( Tr->lhcbIDs() ), std::end( Tr->lhcbIDs() ),
                               out,
-                              std::mem_fn( &LHCb::LHCbID::lhcbID ) );
+                              [](const LHCb::LHCbID& id) { return id.lhcbID(); } );
         // write states
         // check number of states on track
         const std::vector<LHCb::State*>& states = Tr->states();
