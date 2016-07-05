@@ -4,6 +4,267 @@
 ! Responsible : Marco Cattaneo
 ! Purpose     : LHCb base classes and event model
 !-----------------------------------------------------------------------------
+</PRE>
+<P>
+<b>BEWARE: 
+<ul>
+<li>As from version v40r1, this project is maintained only in Git
+<li>The package release notes are no longer maintained, look at the Git Merge Request (MR) comments
+<li>The package versions are no longer maintained, use the Git commit IDs
+</ul>
+</b>
+
+<H1><A NAME=v41r0>2016-07-04 LHCbSys v41r0</A></H1>
+This version uses Gaudi v27r1 and LCG_84 with ROOT 6.06.02.
+<p>
+This version is released on master branch. 
+It contains a merge of the contents of v40r2 (from 2016-patches branch) plus the following changes 
+
+<h2>Geometry and Conditions</h2>
+<dl>
+<dt>[MR !104],[MR !42] FTDet: Add new get methods in DeFTFibreMat.h, fully backward compatible
+<dt>[MR !97] FTDet: Small hack to cope with change/inconsistency in the DDDB description of the SiPMs and modules gaps (see LHCBUCNDB-68)
+
+</dl>
+<h2>Event Model</h2>
+<dl>
+<dt>[MR !112] HltEvent: remove virtual destructor from HltDecReport
+<dd> HltDecReport has an unnecessary trivial virtual destructor -- which is its only virtual function. Removing this destructor altogether thus removes the need for a vtbl pointer, which reduces the size of an HltDecReport from 16 bytes to 4 bytes.
+
+
+</dl>
+<h2>Persistency</h2>
+<dl>
+<dt>[MR !114] Add LHCbAlgs/TurboPrescaler algorithm for use in Tesla
+<dd>See LHCBPS-1552. Same as MR !87 on 2016-patches branch
+<dt>[MR !77] EventPacker, HltDAQ: Prevent Wrapping in Track Packing
+<dd> Update the packed indices in PackedTrack from short int to int, to fix the wrapping issue for future data.
+<dd> Improvements to the version checking. Make sure (almost) all packers carry out a min and max version check, to make sure the data they are packing or unpacking is in the supported version range. Future proofsthe code against future changes.
+<dd> Implement backward compatibility for reading v4 PackedTrack objects.
+<dt>[MR !83] IOExample: Update reference for testUnpackTrack to follow Track Packer change.
+<dt>EventPacker
+<dd>Improved detection of when a reset to the Track Packer persistent state is required
+<dd>Fix a bug introduced during a recent update to remove the need for dynamic casts during the event loop, that probably introduced the bug leading to the wrapping issues with LHCbIDs.
+<dt>[MR !75] Track packer out of range protection
+<dd>Add some protection to the track packer to prevent out of range access to the various packed containers in the packed track object. Caused by very very large numbers of tracks, when the existing wrapping protection appears to no longer work.
+
+</dl>
+<h2>LHCbMath</h2>
+<dl>
+<dt>[MR !116]
+<dd>Fix tiny bug in Fourier&Cosine sums
+<dd>Add more operators for all polynomial series, making the interface uniform for all of them
+<dd>Add dual Bernstein basis functions
+<dt>[MR !105] Binomial.cpp: minor fix for Wald interval (confidence interval for Nacc=0 case was incorrect)
+<dt>[MR !101] Small improvement for convolution/deconvolution
+<dt>[MR !89] Set of  minor fixes and tiny improvement
+<dd> Minor fix in constructor of GammaDist: initial parameter setting is incorrect. It is autocorrected as soon as parameters are changed. but incorrect stuff can appear during e.g. vizualsation.
+<dd>Rename mediane -> median, Mediane -> Median
+<dd>Add quantile functions for GammaDist, LogGammaDist and Log10GammaDist
+<dd>Fix some typos in comments
+<dt>[MR !91] LoKiCore: fix LHCBPS-1568 - replace try_lexical_cast with try_lexical_convert  for Boost >= 1.56
+<dt>More fixes and updates to LHCbMath:
+<dd>Fix very sad and stupid bug in the normalization of Voigt function
+<dd>Provide fast approximation for Voigt fuction
+<dd>Reshuffle dependency between header files to minimize coupling with GSL headers
+<dd>Optmize/speedup seevral important functions
+<dd>Add more coherence between C++ and python in math functions
+<dd>Add 'mean' functions for *WithErrors obejcts
+<dd>Add several new functions
+<dd>deriv.py: improve a little bit current calculations (moderate gain)
+<dd>deriv.py: add methods of 12, 14 and 16th orders
+<dd>Add dot_fma algorithm
+
+</dl>
+<h2>LoKi</h2>
+<dl>
+<dt>[MR !92] Small additions to Phys/LoKiGen
+<dd>Add two new overloads for "child/children" methods
+<dd>Add new functor GLONGLIVED
+
+</dl>
+<h2>HLT and Online</h2>
+<dl>
+<dt>[MR !110] Update tests in HltDAQ and HltServices to use the TestFileDB to get their input files.
+<dt>[MR !85] Fix memory leak in HltPackedDataWriter. See LHCBPS-1548.
+
+</dl>
+<h2>L0</h2>
+<dl>
+<dt>L0DU
+<dd>L0DUFromRawTool: add an option to mimic consecutive events
+<dd>Fix L0DUReportMonitoring issue in case of an un-reported condition
+
+</dl>
+<h2>Herschel</h2>
+<dl>
+<dt>[MR !72] LoKiCore/TES/cpp: Update to HRCSUMADC return value.
+<dd>If no digits are found, return 99999 instead of -1 since this will automatically fail a cut "HRCSUMADC < [any reasonable value] " and won't require a second check that "HRCSUMADC > 0" as an HLT line requirement.
+
+</dl>
+<h2>ST</h2>
+<dl>
+<dt>STDAQ
+<dd>Update TAE decoding options files.
+
+
+</dl>
+<h2>Velo</h2>
+<dl>
+<dt>[MR !78] /Kernel/IVeloCCEConfigTool.h:  Changed function names to lowercase
+
+</dl>
+<h2>Code improvements and cleanups</h2>
+<dl>
+<dt>[MR !111] OTDet: Replace endreq by endmsg
+<dt>[MR !100] STDet, [MR !99] HltDAQ: replace std::bind with lambda
+<dd>std::bind has significant overhead (both at runtime as well as compile time) compared to a lambda (std::bind makes inlining completely impossible). As a result std::bind should be avoided.
+<dt>[MR !79] Improve const correctness of LbAppInit::initRndm
+
+<H1><A NAME=v40r2>2016-05-30 LHCbSys v40r2</A></H1>
+This version uses Gaudi v27r1 and LCG_84 with ROOT 6.06.02.
+<p>
+This version is released only on 2016-patches branch
+
+<h2>Geometry and Conditions</h2>
+<dl>
+<dt>[<a href="https://gitlab.cern.ch/lhcb/LHCb/merge_requests/58">MR 58</a>] Update default LHCBCOND tag for 2016 to cond-20160522
+<dd>(DDDB/Configuration.py)
+
+</dl>
+<h2>Event Model</h2>
+<dl>
+<dt>TrackEvent<dd>Fixed another bug in State::linearTransportTo
+<dt>RecEvent:
+<dd>Added methods to PrimaryVertex to update tukey weights and remove tracks by ID
+<dd>Added typedef for Range
+
+</dl>
+<h2>Persistency</h2>
+<dl>
+<dt>[<a href="https://gitlab.cern.ch/lhcb/LHCb/merge_requests/66">MR 66</a>] Make TurboConf work with 2015 Turbo++ (GaudiConf/TurboConf.py)
+
+<dt>[<a href="https://gitlab.cern.ch/lhcb/LHCb/merge_requests/48">MR 48</a>] Changes for PersistReco:
+<dd>Separate out Turbo configuration from DstConf into TurboConf.
+<dd>PersistReco = True enables unpacking of PR data and linking to the proper PVs
+<dd>Removed executable permissions from modules
+<dd>Fix offline location for neutrals for persist reco
+<dd>Export TurboConf configurable and add missing import
+<dd>(GaudiConf/{DigiConf.py, DstConf.py, TurboConf.py}, GaudiConf/CMakeLists.txt
+
+<dt>[<a href="https://gitlab.cern.ch/lhcb/LHCb/merge_requests/32">MR 32</a>] Improvements in persist reco
+<dd>Add support for persisting packed RecVertex containers in the raw event.
+<dd>Decouple links from locations of non-packed objects in the Hlt (needed for the next point).
+<dd>Add a central place (`GaudiConf.PersistRecoConf`) where persist reco packing (locations, (un)packers) is configured. `DAQSys.Decoder.py` and `HltConf.HltPersistReco.py` now use the latter rather than hard code locations, etc.
+<dd>(Changes in DAQSys, GaudiConf, HltDAQ, EventPacker)
+
+<dt>[<a href="https://gitlab.cern.ch/lhcb/LHCb/merge_requests/34">MR 34</a>] Add explicit dependency on EventPacker
+<dd>(GaudiConf/CMakeLists.txt)
+
+<dt>DAQSys
+<dd>Add decoder for packed objects (HltPackedDataDecoder)
+<dd>Update daqsys.decoder-compare qmtest by adding the packed object locations
+
+<dt>GaudiConf<dd>DstConf: Add persist reco unpackers
+<dt>HltDAQ:
+<dd>Important changes to packed object persistence in raw banks
+<dd>Improve failure error message in HltPackedDataWriter
+
+</dl>
+<h2>LHCbMath</h2>
+<dl>
+<dt>[<a href="https://gitlab.cern.ch/lhcb/LHCb/merge_requests/50">MR 50</a>]  Fix issue with normalization for several 2D-models
+<dd>(LHCbMath/Bernstein.h, LHCbMath/src/Bernstein.cpp, LHCbMath/src/Functions.cpp)
+   
+<dt>[<a href="https://gitlab.cern.ch/lhcb/LHCb/merge_requests/49">MR 49</a>] Fix interpolation
+<dd>(LHCbMath/src/HistoInterpolation.cpp)
+
+<dt>[<a href="https://gitlab.cern.ch/lhcb/LHCb/merge_requests/47">MR 47</a>] Fix normalization of Expo2DPolSym function
+<dd>(LHCbMath/Functions.h, LHCbMath/src/Bernstein.cpp, LHCbMath/src/Functions.cpp)
+
+<dt>[<a href="https://gitlab.cern.ch/lhcb/LHCb/merge_requests/40">MR 40</a>] Add Sech-function: hyperbolic secant  (inverse cosh) distribution
+<dd>(LHCbMath/Functions.h, LHCbMath/dict/LHCbMathDict.xml, LHCbMath/src/Functions.cpp)
+   
+<dt>[<a href="https://gitlab.cern.ch/lhcb/LHCb/merge_requests/38">MR 38</a>] Updates to deriv.py:
+<dd>add Width/width functions, allowing easy evaluation of full width at half maximum for functons (LHCbMath/deriv.py)
+
+</dl>
+<h2>LoKi</h2>
+<dl>
+<dt>[<a href="https://gitlab.cern.ch/lhcb/LHCb/merge_requests/46">MR 46</a>] LoKi fixes
+<dd>Fix hash issue
+<dd>Extend "children" function for better match between C++ and python
+<dd>(Multiple files in LoKiGen and LoKiMC)
+
+<dt>[<a href="https://gitlab.cern.ch/lhcb/LHCb/merge_requests/43">MR 43</a>] LoKiGen: add missing hex_id function
+<dd>(LoKiGen/src/GenParticles.cpp)
+
+</dl>
+<h2>HLT and Online</h2>
+<dl>
+<dt>[<a href="https://gitlab.cern.ch/lhcb/LHCb/merge_requests/52">MR 52</a>]
+<dd>Close CDB file at an incident and at process stop (HltServices/src/ConfigCDBAccessSvc.{cpp,h})
+<dd>Add a test for closing of the CDB file on an incident and on application stop (HltServices/tests/qmtest/close_cdb_file.qmt)
+<dd>Update get_tck script with an option to get the HLT1 TCK from ODIN instead of the DecReports (HltDAQ/tests/options/get_tck.py)
+
+<dt>[<a href="https://gitlab.cern.ch/lhcb/LHCb/merge_requests/53">MR 53</a>] Add HltEvaluator
+<dd>Split HltDAQ into linker and module library
+<dd>HltEvaluator as a base class
+<dd>HltRoutingBitsWriter now inherits from HltEvaluator
+<dd>Add tests for routing bit reproducibility with the new HltRoutingBitsWriter.
+<dd>(Multiple files in HltDAQ)
+
+<dt>[<a href="https://gitlab.cern.ch/lhcb/LHCb/merge_requests/33">MR 33</a>] Changes to allow PID-less TCK
+<dd>Check on technical bits of TCK removed from Kernel/HltInterfaces/src/ConfigTreeNodeAlias.cpp (moved to TCKsh function)
+
+<dt>[<a href="https://gitlab.cern.ch/lhcb/LHCb/merge_requests/59">MR 59</a>] Add OnlineMode option to LHCbApp and DDDBConf configurables for online use
+<dd> Used to switch off print outs from the configurables when used at the pit (DDDB/Configuration.py, LHCbAlgs/Configuration.py).
+
+<dt>[<a href="https://gitlab.cern.ch/lhcb/LHCb/merge_requests/31">MR 31</a>] Fix CondDB configuration in case of UseDBSnapshot=True.
+<dd>(DetCond/Configuration.py)
+
+<dt>HltServices<dd>Fix HltANNSvc when allowUndefined = false
+
+</dl>
+<h2>L0</h2>
+<dl>
+<dt>L0DU:
+<dd>Minor update in test pattern options
+<dd>Re-add L0Pattern algorithm
+<dd>Update pattern production for 2016 test
+<dd>Fix missing reset for emulated L0DU processor data
+
+</dl>
+<h2>Herschel</h2>
+<dl>
+<dt>[<a href="https://gitlab.cern.ch/lhcb/LHCb/merge_requests/67">MR 67</a>] HC decoder returns StatusCode::SUCCESS instead of FAILURE if CondDB location is not found
+<dd>Allows testing with MC (SIMCOND doesn't have Herschel Conditions yet) (HCDAQ/src/HCRawBankDecoderHlt.cpp)
+
+<dt>[<a href="https://gitlab.cern.ch/lhcb/LHCb/merge_requests/55">MR 55</a>] Access to Herschel sum-of-station-ADC information for use in HLT1
+<dd>Added new Herschel Raw Bank decoder class to produce ADC sums per station on TES and related functor
+<dd>Added LoKi functor HrcSumAdc to access Herschel digits.
+<dd>(HCDAQ/src/HCRawBankDecoderHlt.{cpp,h}, LoKiCore/LoKi/TES.h, LoKiCore/src/TES.cpp, LoKiNumbers/functions.py)
+
+</dl>
+<h2>Outer Tracker</h2>
+<dl>
+<dt>OTDAQ<dd>Adding LHCb::RawEventLocation::Tracker to comply with RawEvent format >4.0
+
+</dl>
+<h2>Rich</h2>
+<dl>
+<dd>Remove unneccesary data members from TabulatedFunction1D, which are replicated as part of the GSL interpolators. Reduces their memory footprint.
+<dd>Reduce memory footprint of TabulateProperty1D by making some data members static.
+<dd>Add range checking and subsequent error reporting to TabulatedFunction1D and TabuldateProperty1D.
+<dd>Add an anode radius check to DeRichHPD::magnifyToGlobalMagnetON to avoid out of range interpolator calls.
+
+</dl>
+<h2>Velo</h2>
+<dl>
+<dt>[<a href="https://gitlab.cern.ch/lhcb/LHCb/merge_requests/54">MR 54</a>], [<a href="https://gitlab.cern.ch/lhcb/LHCb/merge_requests/60">MR 60</a>] Added new interface IVeloCCEConfigTool.h for VELO CCE scan configuration
+<dd>(LHCbKernel/Kernel/IVeloCCEConfigTool.h, LHCbKernel/dict/LHCbKernelDict.h, LHCbKernel/xml/lcgdict/lcg_selection.xml)
+
+</dl>
 
 </PRE><H1><A NAME=v40r1>2016-03-23 LHCbSys v40r1</A></H1><PRE>
 This version uses Gaudi v27r1 and LCG_84 with ROOT 6.06.02.
