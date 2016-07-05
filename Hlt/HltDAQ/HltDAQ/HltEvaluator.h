@@ -91,7 +91,7 @@ protected:
          using BooleanConstant = typename LoKi::BasicFunctors<typename EVAL::Arg>::BooleanConstant;
          typename EVAL::Predicate cut(BooleanConstant(false));
          StatusCode sc = m_parent->factory().get(m_expr, cut, m_parent->preambulo());
-         if (sc.isFailure()) return std::move(sc);
+         if (sc.isFailure()) return sc;
 
          eval.predicate = cut.clone();
          eval.counter   = &(m_parent->counter(m_title));
