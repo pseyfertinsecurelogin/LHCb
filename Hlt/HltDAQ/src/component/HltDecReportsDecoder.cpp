@@ -138,7 +138,7 @@ template <typename HDRConverter, typename I, typename Table>
 int HltDecReportsDecoder::decodeHDR(I i, I end,  HltDecReports& output, const Table& table ) const 
 {
    int ret = 0;
-   const HDRConverter converter;
+   const HDRConverter converter{};
    while ( i != end ) {
     auto dec = converter.convert(*i++);
     auto isel = table.find( dec.intDecisionID() );
