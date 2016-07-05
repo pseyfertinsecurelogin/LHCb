@@ -4,6 +4,102 @@
 using LHCb::HltObjectSummary;
 using LHCb::HltSelRepRBStdInfo;
 
+namespace {
+  static const std::array<LHCb::RecSummary::DataTypes,23> s_rsum_map = {
+       LHCb::RecSummary::nLongTracks,
+       LHCb::RecSummary::nDownstreamTracks,
+       LHCb::RecSummary::nUpstreamTracks,
+       LHCb::RecSummary::nVeloTracks,
+       LHCb::RecSummary::nTTracks,
+       LHCb::RecSummary::nBackTracks,
+       LHCb::RecSummary::nTracks,
+       LHCb::RecSummary::nRich1Hits,
+       LHCb::RecSummary::nRich2Hits,
+       LHCb::RecSummary::nVeloClusters,
+       LHCb::RecSummary::nITClusters,
+       LHCb::RecSummary::nTTClusters,
+       LHCb::RecSummary::nUTClusters,
+       LHCb::RecSummary::nOTClusters,
+       LHCb::RecSummary::nFTClusters,
+       LHCb::RecSummary::nSPDhits,
+       LHCb::RecSummary::nMuonCoordsS0,
+       LHCb::RecSummary::nMuonCoordsS1,
+       LHCb::RecSummary::nMuonCoordsS2,
+       LHCb::RecSummary::nMuonCoordsS3,
+       LHCb::RecSummary::nMuonCoordsS4,
+       LHCb::RecSummary::nMuonTracks,
+       LHCb::RecSummary::nPVs
+  };
+  static const std::array<LHCb::ProtoParticle::additionalInfo,66> s_proto_map = {
+      LHCb::ProtoParticle::IsPhoton,//381
+      LHCb::ProtoParticle::IsNotE,//382
+      LHCb::ProtoParticle::IsNotH,//383
+      LHCb::ProtoParticle::EcalPIDe,//360
+      LHCb::ProtoParticle::PrsPIDe,//361
+      LHCb::ProtoParticle::BremPIDe,//362
+      LHCb::ProtoParticle::HcalPIDe,//363
+      LHCb::ProtoParticle::HcalPIDmu,//364
+      LHCb::ProtoParticle::EcalPIDmu,//365
+      LHCb::ProtoParticle::CaloTrMatch,//310
+      LHCb::ProtoParticle::CaloElectronMatch,//311
+      LHCb::ProtoParticle::CaloBremMatch,//312
+      LHCb::ProtoParticle::CaloNeutralSpd,//323
+      LHCb::ProtoParticle::CaloNeutralPrs,//324
+      LHCb::ProtoParticle::CaloNeutralEcal,//325
+      LHCb::ProtoParticle::CaloNeutralHcal2Ecal,//326
+      LHCb::ProtoParticle::CaloNeutralE49,//327
+      LHCb::ProtoParticle::CaloNeutralID,//328
+      LHCb::ProtoParticle::CaloDepositID,//320
+      LHCb::ProtoParticle::ShowerShape,//321
+      LHCb::ProtoParticle::ClusterMass,//322
+      LHCb::ProtoParticle::CaloSpdE,//330
+      LHCb::ProtoParticle::CaloPrsE,//331
+      LHCb::ProtoParticle::CaloEcalE,//332
+      LHCb::ProtoParticle::CaloHcalE,//333
+      LHCb::ProtoParticle::CaloEcalChi2,//334
+      LHCb::ProtoParticle::CaloBremChi2,//335
+      LHCb::ProtoParticle::CaloClusChi2,//336
+      LHCb::ProtoParticle::CaloNeutralPrsM,//343
+      LHCb::ProtoParticle::CaloShapeFr2r4,//344
+      LHCb::ProtoParticle::CaloShapeKappa,//345
+      LHCb::ProtoParticle::CaloShapeAsym,//346
+      LHCb::ProtoParticle::CaloShapeE1,//347
+      LHCb::ProtoParticle::CaloShapeE2,//348
+      LHCb::ProtoParticle::CaloPrsShapeE2,//349
+      LHCb::ProtoParticle::CaloPrsShapeEmax,//350
+      LHCb::ProtoParticle::CaloPrsShapeFr2,//351
+      LHCb::ProtoParticle::CaloPrsShapeAsym,//352
+      LHCb::ProtoParticle::CaloPrsM,//353
+      LHCb::ProtoParticle::CaloPrsM15,//354
+      LHCb::ProtoParticle::CaloPrsM30,//355
+      LHCb::ProtoParticle::CaloPrsM45,//356
+      LHCb::ProtoParticle::CaloClusterCode,//357
+      LHCb::ProtoParticle::CaloClusterFrac,//358
+      LHCb::ProtoParticle::CombDLLe,//600
+      LHCb::ProtoParticle::CombDLLmu,//601
+      LHCb::ProtoParticle::CombDLLpi,//602
+      LHCb::ProtoParticle::CombDLLk,//603
+      LHCb::ProtoParticle::CombDLLp,//604
+      LHCb::ProtoParticle::InAccBrem,// Extra for PID group
+      LHCb::ProtoParticle::InAccSpd,// ''
+      LHCb::ProtoParticle::InAccPrs,// ''
+      LHCb::ProtoParticle::InAccEcal,// ''
+      LHCb::ProtoParticle::InAccHcal,// ''
+      LHCb::ProtoParticle::VeloCharge,// ''
+      LHCb::ProtoParticle::RichPIDStatus,// ''
+      LHCb::ProtoParticle::CaloChargedID,//
+      LHCb::ProtoParticle::CaloChargedEcal,//
+      LHCb::ProtoParticle::CaloChargedPrs,//
+      LHCb::ProtoParticle::CaloChargedSpd,//
+      LHCb::ProtoParticle::ProbNNe,//
+      LHCb::ProtoParticle::ProbNNmu,//
+      LHCb::ProtoParticle::ProbNNpi,//
+      LHCb::ProtoParticle::ProbNNk,//
+      LHCb::ProtoParticle::ProbNNp,//
+      LHCb::ProtoParticle::ProbNNghost //
+  };
+}
+
 //-----------------------------------------------------------------------------
 // Implementation file for class : ReportConvertTool: ReportConvertTool.cpp
 // Author: Sean Benson
@@ -256,7 +352,7 @@ void ReportConvertTool::SummaryFromRaw(HltObjectSummary::Info* info, HltSelRepRB
 // Put the information in to the HltObjectSummary
 void ReportConvertTool::ParticleObject2Summary( HltObjectSummary::Info* info, const LHCb::Particle* object, bool turbo) {
   if( m_version == -999 ){
-    Warning( "I have not been told a verision number to use, assuming the latest", StatusCode::SUCCESS, 20 );
+    Warning( "I have not been told a version number to use, assuming the latest", StatusCode::SUCCESS, 20 );
     m_version = m_LatestVersion;
   }
 
@@ -315,89 +411,22 @@ void ReportConvertTool::ParticleObject2Summary( HltObjectSummary::Info* info, co
 
 void ReportConvertTool::ProtoParticleObject2Summary( HltObjectSummary::Info* info, const LHCb::ProtoParticle* object, bool turbo) {
   if( m_version == -999 ){
-    Warning( "I have not been told a verision number to use, assuming the latest", StatusCode::SUCCESS, 20 );
+    Warning( "I have not been told a version number to use, assuming the latest", StatusCode::SUCCESS, 20 );
     m_version = m_LatestVersion;
   }
 
   const auto& used_map = ( turbo ? m_proto_unordered_map2_Turbo : m_proto_unordered_map2 );
 
   for(const auto& proto : used_map.at( findBestPrevious( used_map, m_version ) ) ) {
-    switch( proto.second.second )
-    {
-      case 0:  info->insert( proto.first, float( object->info( LHCb::ProtoParticle::IsPhoton, -1000 ) ) ); break;
-      case 1:  info->insert( proto.first, float( object->info( LHCb::ProtoParticle::IsNotE, -1000 ) ) ); break;
-      case 2:  info->insert( proto.first, float( object->info( LHCb::ProtoParticle::IsNotH, -1000 ) ) ); break;
-      case 3:  info->insert( proto.first, float( object->info( LHCb::ProtoParticle::EcalPIDe, -1000 ) ) ); break;
-      case 4:  info->insert( proto.first, float( object->info( LHCb::ProtoParticle::PrsPIDe, -1000 ) ) ); break;
-      case 5:  info->insert( proto.first, float( object->info( LHCb::ProtoParticle::BremPIDe, -1000 ) ) ); break;
-      case 6:  info->insert( proto.first, float( object->info( LHCb::ProtoParticle::HcalPIDe, -1000 ) ) ); break;
-      case 7:  info->insert( proto.first, float( object->info( LHCb::ProtoParticle::HcalPIDmu, -1000 ) ) ); break;
-      case 8:  info->insert( proto.first, float( object->info( LHCb::ProtoParticle::EcalPIDmu, -1000 ) ) ); break;
-      case 9:  info->insert( proto.first, float( object->info( LHCb::ProtoParticle::CaloTrMatch, -1000 ) ) ); break;
-      case 10: info->insert( proto.first, float( object->info( LHCb::ProtoParticle::CaloElectronMatch, -1000 ) ) ); break;
-      case 11: info->insert( proto.first, float( object->info( LHCb::ProtoParticle::CaloBremMatch, -1000 ) ) ); break;
-      case 12: info->insert( proto.first, float( object->info( LHCb::ProtoParticle::CaloNeutralSpd, -1000 ) ) ); break;
-      case 13: info->insert( proto.first, float( object->info( LHCb::ProtoParticle::CaloNeutralPrs, -1000 ) ) ); break;
-      case 14: info->insert( proto.first, float( object->info( LHCb::ProtoParticle::CaloNeutralEcal, -1000 ) ) ); break;
-      case 15: info->insert( proto.first, float( object->info( LHCb::ProtoParticle::CaloNeutralHcal2Ecal, -1000 ) ) ); break;
-      case 16: info->insert( proto.first, float( object->info( LHCb::ProtoParticle::CaloNeutralE49, -1000 ) ) ); break;
-      case 17: info->insert( proto.first, float( object->info( LHCb::ProtoParticle::CaloNeutralID, -1000 ) ) ); break;
-      case 18: info->insert( proto.first, float( object->info( LHCb::ProtoParticle::CaloDepositID, -1000 ) ) ); break;
-      case 19: info->insert( proto.first, float( object->info( LHCb::ProtoParticle::ShowerShape, -1000 ) ) ); break;
-      case 20: info->insert( proto.first, float( object->info( LHCb::ProtoParticle::ClusterMass, -1000 ) ) ); break;
-      case 21: info->insert( proto.first, float( object->info( LHCb::ProtoParticle::CaloSpdE, -1000 ) ) ); break;
-      case 22: info->insert( proto.first, float( object->info( LHCb::ProtoParticle::CaloPrsE, -1000 ) ) ); break;
-      case 23: info->insert( proto.first, float( object->info( LHCb::ProtoParticle::CaloEcalE, -1000 ) ) ); break;
-      case 24: info->insert( proto.first, float( object->info( LHCb::ProtoParticle::CaloHcalE, -1000 ) ) ); break;
-      case 25: info->insert( proto.first, float( object->info( LHCb::ProtoParticle::CaloEcalChi2, -1000 ) ) ); break;
-      case 26: info->insert( proto.first, float( object->info( LHCb::ProtoParticle::CaloBremChi2, -1000 ) ) ); break;
-      case 27: info->insert( proto.first, float( object->info( LHCb::ProtoParticle::CaloClusChi2, -1000 ) ) ); break;
-      case 28: info->insert( proto.first, float( object->info( LHCb::ProtoParticle::CaloNeutralPrsM, -1000 ) ) ); break;
-      case 29: info->insert( proto.first, float( object->info( LHCb::ProtoParticle::CaloShapeFr2r4, -1000 ) ) ); break;
-      case 30: info->insert( proto.first, float( object->info( LHCb::ProtoParticle::CaloShapeKappa, -1000 ) ) ); break;
-      case 31: info->insert( proto.first, float( object->info( LHCb::ProtoParticle::CaloShapeAsym, -1000 ) ) ); break;
-      case 32: info->insert( proto.first, float( object->info( LHCb::ProtoParticle::CaloShapeE1, -1000 ) ) ); break;
-      case 33: info->insert( proto.first, float( object->info( LHCb::ProtoParticle::CaloShapeE2, -1000 ) ) ); break;
-      case 34: info->insert( proto.first, float( object->info( LHCb::ProtoParticle::CaloPrsShapeE2, -1000 ) ) ); break;
-      case 35: info->insert( proto.first, float( object->info( LHCb::ProtoParticle::CaloPrsShapeEmax, -1000 ) ) ); break;
-      case 36: info->insert( proto.first, float( object->info( LHCb::ProtoParticle::CaloPrsShapeFr2, -1000 ) ) ); break;
-      case 37: info->insert( proto.first, float( object->info( LHCb::ProtoParticle::CaloPrsShapeAsym, -1000 ) ) ); break;
-      case 38: info->insert( proto.first, float( object->info( LHCb::ProtoParticle::CaloPrsM, -1000 ) ) ); break;
-      case 39: info->insert( proto.first, float( object->info( LHCb::ProtoParticle::CaloPrsM15, -1000 ) ) ); break;
-      case 40: info->insert( proto.first, float( object->info( LHCb::ProtoParticle::CaloPrsM30, -1000 ) ) ); break;
-      case 41: info->insert( proto.first, float( object->info( LHCb::ProtoParticle::CaloPrsM45, -1000 ) ) ); break;
-      case 42: info->insert( proto.first, float( object->info( LHCb::ProtoParticle::CaloClusterCode, -1000 ) ) ); break;
-      case 43: info->insert( proto.first, float( object->info( LHCb::ProtoParticle::CaloClusterFrac, -1000 ) ) ); break;
-      case 44: info->insert( proto.first, float( object->info( LHCb::ProtoParticle::CombDLLe, -1000 ) ) ); break;
-      case 45: info->insert( proto.first, float( object->info( LHCb::ProtoParticle::CombDLLmu, -1000 ) ) ); break;
-      case 46: info->insert( proto.first, float( object->info( LHCb::ProtoParticle::CombDLLpi, -1000 ) ) ); break;
-      case 47: info->insert( proto.first, float( object->info( LHCb::ProtoParticle::CombDLLk, -1000 ) ) ); break;
-      case 48: info->insert( proto.first, float( object->info( LHCb::ProtoParticle::CombDLLp, -1000 ) ) ); break;
-      case 49: info->insert( proto.first, float( object->info( LHCb::ProtoParticle::InAccBrem, -1000 ) ) ); break;
-      case 50: info->insert( proto.first, float( object->info( LHCb::ProtoParticle::InAccSpd, -1000 ) ) ); break;
-      case 51: info->insert( proto.first, float( object->info( LHCb::ProtoParticle::InAccPrs, -1000 ) ) ); break;
-      case 52: info->insert( proto.first, float( object->info( LHCb::ProtoParticle::InAccEcal, -1000 ) ) ); break;
-      case 53: info->insert( proto.first, float( object->info( LHCb::ProtoParticle::InAccHcal, -1000 ) ) ); break;
-      case 54: info->insert( proto.first, float( object->info( LHCb::ProtoParticle::VeloCharge, -1000 ) ) ); break;
-      case 55: info->insert( proto.first, float( object->info( LHCb::ProtoParticle::RichPIDStatus, -1000 ) ) ); break;
-      case 56: info->insert( proto.first, float( object->info( LHCb::ProtoParticle::CaloChargedID, -1000 ) ) ); break;
-      case 57: info->insert( proto.first, float( object->info( LHCb::ProtoParticle::CaloChargedEcal, -1000 ) ) ); break;
-      case 58: info->insert( proto.first, float( object->info( LHCb::ProtoParticle::CaloChargedPrs, -1000 ) ) ); break;
-      case 59: info->insert( proto.first, float( object->info( LHCb::ProtoParticle::CaloChargedSpd, -1000 ) ) ); break;
-      case 60: info->insert( proto.first, float( object->info( LHCb::ProtoParticle::ProbNNe, -1000 ) ) ); break;
-      case 61: info->insert( proto.first, float( object->info( LHCb::ProtoParticle::ProbNNmu, -1000 ) ) ); break;
-      case 62: info->insert( proto.first, float( object->info( LHCb::ProtoParticle::ProbNNpi, -1000 ) ) ); break;
-      case 63: info->insert( proto.first, float( object->info( LHCb::ProtoParticle::ProbNNk, -1000 ) ) ); break;
-      case 64: info->insert( proto.first, float( object->info( LHCb::ProtoParticle::ProbNNp, -1000 ) ) ); break;
-      case 65: info->insert( proto.first, float( object->info( LHCb::ProtoParticle::ProbNNghost, -1000 ) ) ); break;
-    }
+    assert(proto.second.second < s_proto_map.size());
+    info->insert( proto.first, float( object->info( s_proto_map[proto.second.second], -1000 ) ) );
   }
 
 }
 
 void ReportConvertTool::TrackObject2Summary( HltObjectSummary::Info* info, const LHCb::Track* object, bool turbo) {
   if( m_version == -999 ){
-    Warning( "I have not been told a verision number to use, assuming the latest", StatusCode::SUCCESS, 20 );
+    Warning( "I have not been told a version number to use, assuming the latest", StatusCode::SUCCESS, 20 );
     m_version = m_LatestVersion;
   }
 
@@ -473,7 +502,7 @@ void ReportConvertTool::TrackObject2Summary( HltObjectSummary::Info* info, const
 
 void ReportConvertTool::RichPIDObject2Summary( HltObjectSummary::Info* info, const LHCb::RichPID* object, bool turbo) {
   if( m_version == -999 ){
-    Warning( "I have not been told a verision number to use, assuming the latest", StatusCode::SUCCESS, 20 );
+    Warning( "I have not been told a version number to use, assuming the latest", StatusCode::SUCCESS, 20 );
     m_version = m_LatestVersion;
   }
 
@@ -497,7 +526,7 @@ void ReportConvertTool::RichPIDObject2Summary( HltObjectSummary::Info* info, con
 
 void ReportConvertTool::MuonPIDObject2Summary( HltObjectSummary::Info* info , const LHCb::MuonPID* object, bool turbo) {
   if( m_version == -999 ){
-    Warning( "I have not been told a verision number to use, assuming the latest", StatusCode::SUCCESS, 20 );
+    Warning( "I have not been told a version number to use, assuming the latest", StatusCode::SUCCESS, 20 );
     m_version = m_LatestVersion;
   }
 
@@ -520,13 +549,12 @@ void ReportConvertTool::MuonPIDObject2Summary( HltObjectSummary::Info* info , co
 
 void ReportConvertTool::CaloClusterObject2Summary( HltObjectSummary::Info* info, const LHCb::CaloCluster* object, bool turbo) {
   if( m_version == -999 ){
-    Warning( "I have not been told a verision number to use, assuming the latest", StatusCode::SUCCESS, 20 );
+    Warning( "I have not been told a version number to use, assuming the latest", StatusCode::SUCCESS, 20 );
     m_version = m_LatestVersion;
   }
 
   const auto& used_map = (turbo ? m_calo_unordered_map2_Turbo
                                 : m_calo_unordered_map2 );
-
   for(const auto& calo : used_map.at( findBestPrevious( used_map, m_version ) )) {
     switch( calo.second.second )
     {
@@ -540,7 +568,7 @@ void ReportConvertTool::CaloClusterObject2Summary( HltObjectSummary::Info* info,
 
 void ReportConvertTool::CaloHypoObject2Summary( HltObjectSummary::Info* info, const LHCb::CaloHypo* object, bool turbo) {
   if( m_version == -999 ){
-    Warning( "I have not been told a verision number to use, assuming the latest", StatusCode::SUCCESS, 20 );
+    Warning( "I have not been told a version number to use, assuming the latest", StatusCode::SUCCESS, 20 );
     m_version = m_LatestVersion;
   }
 
@@ -561,7 +589,7 @@ void ReportConvertTool::CaloHypoObject2Summary( HltObjectSummary::Info* info, co
 
 void ReportConvertTool::RecVertexObject2Summary( HltObjectSummary::Info* info, const LHCb::RecVertex* object, bool turbo) {
   if( m_version == -999 ){
-    Warning( "I have not been told a verision number to use, assuming the latest", StatusCode::SUCCESS, 20 );
+    Warning( "I have not been told a version number to use, assuming the latest", StatusCode::SUCCESS, 20 );
     m_version = m_LatestVersion;
   }
 
@@ -589,7 +617,7 @@ void ReportConvertTool::RecVertexObject2Summary( HltObjectSummary::Info* info, c
 
 void ReportConvertTool::VertexObject2Summary( HltObjectSummary::Info* info, const LHCb::Vertex* object, bool turbo) {
   if( m_version == -999 ){
-    Warning( "I have not been told a verision number to use, assuming the latest", StatusCode::SUCCESS, 20 );
+    Warning( "I have not been told a version number to use, assuming the latest", StatusCode::SUCCESS, 20 );
     m_version = m_LatestVersion;
   }
 
@@ -617,38 +645,14 @@ void ReportConvertTool::VertexObject2Summary( HltObjectSummary::Info* info, cons
 
 void ReportConvertTool::RecSummaryObject2Summary( HltObjectSummary::Info* info, const LHCb::RecSummary* object ) {
   if( m_version == -999 ){
-    Warning( "I have not been told a verision number to use, assuming the latest", StatusCode::SUCCESS, 20 );
+    Warning( "I have not been told a version number to use, assuming the latest", StatusCode::SUCCESS, 20 );
     m_version = m_LatestVersion;
   }
 
   const auto& used_map = m_recsummary_unordered_map2;
   for(const auto& recsummary : used_map.at( findBestPrevious( used_map, m_version ) )) {
-    switch( recsummary.second.second )
-    {
-      case 0: info->insert( recsummary.first, float( object->info( LHCb::RecSummary::nLongTracks,0 ) ) ); break;
-      case 1: info->insert( recsummary.first, float( object->info( LHCb::RecSummary::nDownstreamTracks,0 ) ) ); break;
-      case 2: info->insert( recsummary.first, float( object->info( LHCb::RecSummary::nUpstreamTracks,0 ) ) ); break;
-      case 3: info->insert( recsummary.first, float( object->info( LHCb::RecSummary::nVeloTracks,0 ) ) ); break;
-      case 4: info->insert( recsummary.first, float( object->info( LHCb::RecSummary::nTTracks,0 ) ) ); break;
-      case 5: info->insert( recsummary.first, float( object->info( LHCb::RecSummary::nBackTracks,0 ) ) ); break;
-      case 6: info->insert( recsummary.first, float( object->info( LHCb::RecSummary::nTracks,0 ) ) ); break;
-      case 7: info->insert( recsummary.first, float( object->info( LHCb::RecSummary::nRich1Hits,0 ) ) ); break;
-      case 8: info->insert( recsummary.first, float( object->info( LHCb::RecSummary::nRich2Hits,0 ) ) ); break;
-      case 9: info->insert( recsummary.first, float( object->info( LHCb::RecSummary::nVeloClusters,0 ) ) ); break;
-      case 10: info->insert( recsummary.first, float( object->info( LHCb::RecSummary::nITClusters,0 ) ) ); break;
-      case 11: info->insert( recsummary.first, float( object->info( LHCb::RecSummary::nTTClusters,0 ) ) ); break;
-      case 12: info->insert( recsummary.first, float( object->info( LHCb::RecSummary::nUTClusters,0 ) ) ); break;
-      case 13: info->insert( recsummary.first, float( object->info( LHCb::RecSummary::nOTClusters,0 ) ) ); break;
-      case 14: info->insert( recsummary.first, float( object->info( LHCb::RecSummary::nFTClusters,0 ) ) ); break;
-      case 15: info->insert( recsummary.first, float( object->info( LHCb::RecSummary::nSPDhits,0 ) ) ); break;
-      case 16: info->insert( recsummary.first, float( object->info( LHCb::RecSummary::nMuonCoordsS0,0 ) ) ); break;
-      case 17: info->insert( recsummary.first, float( object->info( LHCb::RecSummary::nMuonCoordsS1,0 ) ) ); break;
-      case 18: info->insert( recsummary.first, float( object->info( LHCb::RecSummary::nMuonCoordsS2,0 ) ) ); break;
-      case 19: info->insert( recsummary.first, float( object->info( LHCb::RecSummary::nMuonCoordsS3,0 ) ) ); break;
-      case 20: info->insert( recsummary.first, float( object->info( LHCb::RecSummary::nMuonCoordsS4,0 ) ) ); break;
-      case 21: info->insert( recsummary.first, float( object->info( LHCb::RecSummary::nMuonTracks,0 ) ) ); break;
-      case 22: info->insert( recsummary.first, float( object->info( LHCb::RecSummary::nPVs,0 ) ) ); break;
-    }
+    assert( recsummary.second.second < s_rsum_map.size());
+    info->insert( recsummary.first, float( object->info( s_rsum_map[recsummary.second.second],0 ) ) );
   }
 
 }
@@ -680,7 +684,7 @@ void ReportConvertTool::GenericMapObject2Summary( HltObjectSummary::Info* info ,
 // Put the information in the summary back in the object
 void ReportConvertTool::ParticleObjectFromSummary( const HltObjectSummary::Info* info, LHCb::Particle* object, bool turbo) {
   if( m_version == -999 ){
-    Warning( "I have not been told a verision number to use, assuming the latest", StatusCode::SUCCESS, 20 );
+    Warning( "I have not been told a version number to use, assuming the latest", StatusCode::SUCCESS, 20 );
     m_version = m_LatestVersion;
   }
 
@@ -689,10 +693,10 @@ void ReportConvertTool::ParticleObjectFromSummary( const HltObjectSummary::Info*
   if( m_version < 3 ){
     int run1version=-999;
     // find size we care about (i.e. make sure extra info not counted)
-    unsigned int Isize = 0;
-    for(const auto & elem : *info){
-      if( (elem.first).find("#")!=std::string::npos ) Isize++;
-    }
+    unsigned int Isize = std::count_if( info->begin(), info->end(),
+                                        [](const &elem) {
+                         return elem.first.find("#")!=std::string::npos; 
+    });
     // Looking at Run 1 data, need to know which map to use
     if( Isize == (m_particle_unordered_map2.at(1)).size() ) run1version = 1;
     else if( Isize == (m_particle_unordered_map2.at(2)).size() ) run1version = 2;
@@ -782,89 +786,23 @@ void ReportConvertTool::ParticleObjectFromSummary( const HltObjectSummary::Info*
 
 void ReportConvertTool::ProtoParticleObjectFromSummary( const HltObjectSummary::Info* info, LHCb::ProtoParticle* object, bool turbo) {
   if( m_version == -999 ){
-    Warning( "I have not been told a verision number to use, assuming the latest", StatusCode::SUCCESS, 20 );
+    Warning( "I have not been told a version number to use, assuming the latest", StatusCode::SUCCESS, 20 );
     m_version = m_LatestVersion;
   }
 
   const auto& used_map = (turbo ? m_proto_unordered_map2_Turbo
                                 : m_proto_unordered_map2 );
   for(const auto& proto : used_map.at( findBestPrevious( used_map, m_version ) )) {
-    switch( proto.second.second )
-    {
-      case 0: if( (*info)[ proto.first ] != -1000 ) object->addInfo( LHCb::ProtoParticle::IsPhoton, ( (*info)[ proto.first ] ) ); break;//381
-      case 1: if( (*info)[ proto.first ] != -1000 ) object->addInfo( LHCb::ProtoParticle::IsNotE, ( (*info)[ proto.first ] ) ); break;//382
-      case 2: if( (*info)[ proto.first ] != -1000 ) object->addInfo( LHCb::ProtoParticle::IsNotH, ( (*info)[ proto.first ] ) ); break;//383
-      case 3: if( (*info)[ proto.first ] != -1000 ) object->addInfo( LHCb::ProtoParticle::EcalPIDe, ( (*info)[ proto.first ] ) ); break;//360
-      case 4: if( (*info)[ proto.first ] != -1000 ) object->addInfo( LHCb::ProtoParticle::PrsPIDe, ( (*info)[ proto.first ] ) ); break;//361
-      case 5: if( (*info)[ proto.first ] != -1000 ) object->addInfo( LHCb::ProtoParticle::BremPIDe, ( (*info)[ proto.first ] ) ); break;//362
-      case 6: if( (*info)[ proto.first ] != -1000 ) object->addInfo( LHCb::ProtoParticle::HcalPIDe, ( (*info)[ proto.first ] ) ); break;//363
-      case 7: if( (*info)[ proto.first ] != -1000 ) object->addInfo( LHCb::ProtoParticle::HcalPIDmu, ( (*info)[ proto.first ] ) ); break;//364
-      case 8: if( (*info)[ proto.first ] != -1000 ) object->addInfo( LHCb::ProtoParticle::EcalPIDmu, ( (*info)[ proto.first ] ) ); break;//365
-      case 9: if( (*info)[ proto.first ] != -1000 ) object->addInfo( LHCb::ProtoParticle::CaloTrMatch, ( (*info)[ proto.first ] ) ); break;//310
-      case 10: if( (*info)[ proto.first ] != -1000 ) object->addInfo( LHCb::ProtoParticle::CaloElectronMatch, ( (*info)[ proto.first ] ) ); break;//311
-      case 11: if( (*info)[ proto.first ] != -1000 ) object->addInfo( LHCb::ProtoParticle::CaloBremMatch, ( (*info)[ proto.first ] ) ); break;//312
-      case 12: if( (*info)[ proto.first ] != -1000 ) object->addInfo( LHCb::ProtoParticle::CaloNeutralSpd, ( (*info)[ proto.first ] ) ); break;//323
-      case 13: if( (*info)[ proto.first ] != -1000 ) object->addInfo( LHCb::ProtoParticle::CaloNeutralPrs, ( (*info)[ proto.first ] ) ); break;//324
-      case 14: if( (*info)[ proto.first ] != -1000 ) object->addInfo( LHCb::ProtoParticle::CaloNeutralEcal, ( (*info)[ proto.first ] ) ); break;//325
-      case 15: if( (*info)[ proto.first ] != -1000 ) object->addInfo( LHCb::ProtoParticle::CaloNeutralHcal2Ecal, ( (*info)[ proto.first ] ) ); break;//326
-      case 16: if( (*info)[ proto.first ] != -1000 ) object->addInfo( LHCb::ProtoParticle::CaloNeutralE49, ( (*info)[ proto.first ] ) ); break;//327
-      case 17: if( (*info)[ proto.first ] != -1000 ) object->addInfo( LHCb::ProtoParticle::CaloNeutralID, ( (*info)[ proto.first ] ) ); break;//328
-      case 18: if( (*info)[ proto.first ] != -1000 ) object->addInfo( LHCb::ProtoParticle::CaloDepositID, ( (*info)[ proto.first ] ) ); break;//320
-      case 19: if( (*info)[ proto.first ] != -1000 ) object->addInfo( LHCb::ProtoParticle::ShowerShape, ( (*info)[ proto.first ] ) ); break;//321
-      case 20: if( (*info)[ proto.first ] != -1000 ) object->addInfo( LHCb::ProtoParticle::ClusterMass, ( (*info)[ proto.first ] ) ); break;//322
-      case 21: if( (*info)[ proto.first ] != -1000 ) object->addInfo( LHCb::ProtoParticle::CaloSpdE, ( (*info)[ proto.first ] ) ); break;//330
-      case 22: if( (*info)[ proto.first ] != -1000 ) object->addInfo( LHCb::ProtoParticle::CaloPrsE, ( (*info)[ proto.first ] ) ); break;//331
-      case 23: if( (*info)[ proto.first ] != -1000 ) object->addInfo( LHCb::ProtoParticle::CaloEcalE, ( (*info)[ proto.first ] ) ); break;//332
-      case 24: if( (*info)[ proto.first ] != -1000 ) object->addInfo( LHCb::ProtoParticle::CaloHcalE, ( (*info)[ proto.first ] ) ); break;//333
-      case 25: if( (*info)[ proto.first ] != -1000 ) object->addInfo( LHCb::ProtoParticle::CaloEcalChi2, ( (*info)[ proto.first ] ) ); break;//334
-      case 26: if( (*info)[ proto.first ] != -1000 ) object->addInfo( LHCb::ProtoParticle::CaloBremChi2, ( (*info)[ proto.first ] ) ); break;//335
-      case 27: if( (*info)[ proto.first ] != -1000 ) object->addInfo( LHCb::ProtoParticle::CaloClusChi2, ( (*info)[ proto.first ] ) ); break;//336
-      case 28: if( (*info)[ proto.first ] != -1000 ) object->addInfo( LHCb::ProtoParticle::CaloNeutralPrsM, ( (*info)[ proto.first ] ) ); break;//343
-      case 29: if( (*info)[ proto.first ] != -1000 ) object->addInfo( LHCb::ProtoParticle::CaloShapeFr2r4, ( (*info)[ proto.first ] ) ); break;//344
-      case 30: if( (*info)[ proto.first ] != -1000 ) object->addInfo( LHCb::ProtoParticle::CaloShapeKappa, ( (*info)[ proto.first ] ) ); break;//345
-      case 31: if( (*info)[ proto.first ] != -1000 ) object->addInfo( LHCb::ProtoParticle::CaloShapeAsym, ( (*info)[ proto.first ] ) ); break;//346
-      case 32: if( (*info)[ proto.first ] != -1000 ) object->addInfo( LHCb::ProtoParticle::CaloShapeE1, ( (*info)[ proto.first ] ) ); break;//347
-      case 33: if( (*info)[ proto.first ] != -1000 ) object->addInfo( LHCb::ProtoParticle::CaloShapeE2, ( (*info)[ proto.first ] ) ); break;//348
-      case 34: if( (*info)[ proto.first ] != -1000 ) object->addInfo( LHCb::ProtoParticle::CaloPrsShapeE2, ( (*info)[ proto.first ] ) ); break;//349
-      case 35: if( (*info)[ proto.first ] != -1000 ) object->addInfo( LHCb::ProtoParticle::CaloPrsShapeEmax, ( (*info)[ proto.first ] ) ); break;//350
-      case 36: if( (*info)[ proto.first ] != -1000 ) object->addInfo( LHCb::ProtoParticle::CaloPrsShapeFr2, ( (*info)[ proto.first ] ) ); break;//351
-      case 37: if( (*info)[ proto.first ] != -1000 ) object->addInfo( LHCb::ProtoParticle::CaloPrsShapeAsym, ( (*info)[ proto.first ] ) ); break;//352
-      case 38: if( (*info)[ proto.first ] != -1000 ) object->addInfo( LHCb::ProtoParticle::CaloPrsM, ( (*info)[ proto.first ] ) ); break;//353
-      case 39: if( (*info)[ proto.first ] != -1000 ) object->addInfo( LHCb::ProtoParticle::CaloPrsM15, ( (*info)[ proto.first ] ) ); break;//354
-      case 40: if( (*info)[ proto.first ] != -1000 ) object->addInfo( LHCb::ProtoParticle::CaloPrsM30, ( (*info)[ proto.first ] ) ); break;//355
-      case 41: if( (*info)[ proto.first ] != -1000 ) object->addInfo( LHCb::ProtoParticle::CaloPrsM45, ( (*info)[ proto.first ] ) ); break;//356
-      case 42: if( (*info)[ proto.first ] != -1000 ) object->addInfo( LHCb::ProtoParticle::CaloClusterCode, ( (*info)[ proto.first ] ) ); break;//357
-      case 43: if( (*info)[ proto.first ] != -1000 ) object->addInfo( LHCb::ProtoParticle::CaloClusterFrac, ( (*info)[ proto.first ] ) ); break;//358
-      case 44: if( (*info)[ proto.first ] != -1000 ) object->addInfo( LHCb::ProtoParticle::CombDLLe, ( (*info)[ proto.first ] ) ); break;//600
-      case 45: if( (*info)[ proto.first ] != -1000 ) object->addInfo( LHCb::ProtoParticle::CombDLLmu, ( (*info)[ proto.first ] ) ); break;//601
-      case 46: if( (*info)[ proto.first ] != -1000 ) object->addInfo( LHCb::ProtoParticle::CombDLLpi, ( (*info)[ proto.first ] ) ); break;//602
-      case 47: if( (*info)[ proto.first ] != -1000 ) object->addInfo( LHCb::ProtoParticle::CombDLLk, ( (*info)[ proto.first ] ) ); break;//603
-      case 48: if( (*info)[ proto.first ] != -1000 ) object->addInfo( LHCb::ProtoParticle::CombDLLp, ( (*info)[ proto.first ] ) ); break;//604
-      case 49: if( (*info)[ proto.first ] != -1000 ) object->addInfo( LHCb::ProtoParticle::InAccBrem, ( (*info)[ proto.first ] ) ); break;// Extra for PID group
-      case 50: if( (*info)[ proto.first ] != -1000 ) object->addInfo( LHCb::ProtoParticle::InAccSpd, ( (*info)[ proto.first ] ) ); break;// ''
-      case 51: if( (*info)[ proto.first ] != -1000 ) object->addInfo( LHCb::ProtoParticle::InAccPrs, ( (*info)[ proto.first ] ) ); break;// ''
-      case 52: if( (*info)[ proto.first ] != -1000 ) object->addInfo( LHCb::ProtoParticle::InAccEcal, ( (*info)[ proto.first ] ) ); break;// ''
-      case 53: if( (*info)[ proto.first ] != -1000 ) object->addInfo( LHCb::ProtoParticle::InAccHcal, ( (*info)[ proto.first ] ) ); break;// ''
-      case 54: if( (*info)[ proto.first ] != -1000 ) object->addInfo( LHCb::ProtoParticle::VeloCharge, ( (*info)[ proto.first ] ) ); break;// ''
-      case 55: if( (*info)[ proto.first ] != -1000 ) object->addInfo( LHCb::ProtoParticle::RichPIDStatus, ( (*info)[ proto.first ] ) ); break;// ''
-      case 56: if( (*info)[ proto.first ] != -1000 ) object->addInfo( LHCb::ProtoParticle::CaloChargedID, ( (*info)[ proto.first ] ) ); break;//
-      case 57: if( (*info)[ proto.first ] != -1000 ) object->addInfo( LHCb::ProtoParticle::CaloChargedEcal, ( (*info)[ proto.first ] ) ); break;//
-      case 58: if( (*info)[ proto.first ] != -1000 ) object->addInfo( LHCb::ProtoParticle::CaloChargedPrs, ( (*info)[ proto.first ] ) ); break;//
-      case 59: if( (*info)[ proto.first ] != -1000 ) object->addInfo( LHCb::ProtoParticle::CaloChargedSpd, ( (*info)[ proto.first ] ) ); break;//
-      case 60: if( (*info)[ proto.first ] != -1000 ) object->addInfo( LHCb::ProtoParticle::ProbNNe, ( (*info)[ proto.first ] ) ); break;//
-      case 61: if( (*info)[ proto.first ] != -1000 ) object->addInfo( LHCb::ProtoParticle::ProbNNmu, ( (*info)[ proto.first ] ) ); break;//
-      case 62: if( (*info)[ proto.first ] != -1000 ) object->addInfo( LHCb::ProtoParticle::ProbNNpi, ( (*info)[ proto.first ] ) ); break;//
-      case 63: if( (*info)[ proto.first ] != -1000 ) object->addInfo( LHCb::ProtoParticle::ProbNNk, ( (*info)[ proto.first ] ) ); break;//
-      case 64: if( (*info)[ proto.first ] != -1000 ) object->addInfo( LHCb::ProtoParticle::ProbNNp, ( (*info)[ proto.first ] ) ); break;//
-      case 65: if( (*info)[ proto.first ] != -1000 ) object->addInfo( LHCb::ProtoParticle::ProbNNghost, ( (*info)[ proto.first ] ) ); break;//
-    }
+    assert(proto.second.second<s_proto_map.size());
+    auto i = (*info)[proto.first]; 
+    if (i != -1000 ) object->addInfo( s_proto_map[proto.second.second], i);
   }
 
 }
 
 void ReportConvertTool::TrackObjectFromSummary( const HltObjectSummary::Info* info, LHCb::Track* object, bool turbo) {
   if( m_version == -999 ){
-    Warning( "I have not been told a verision number to use, assuming the latest", StatusCode::SUCCESS, 20 );
+    Warning( "I have not been told a version number to use, assuming the latest", StatusCode::SUCCESS, 20 );
     m_version = m_LatestVersion;
   }
 
@@ -873,10 +811,10 @@ void ReportConvertTool::TrackObjectFromSummary( const HltObjectSummary::Info* in
   if( m_version < 3 ){
     int run1version=-999;
     // find size we care about (i.e. make sure extra info not counted)
-    unsigned int Isize = 0;
-    for(const auto & elem : *info){
-      if( (elem.first).find("#")!=std::string::npos ) Isize++;
-    }
+    unsigned int Isize = std::count_if( info->begin(), info->end(),
+                                        [](const &elem) {
+                         return elem.first.find("#")!=std::string::npos; 
+    });
     // Looking at Run 1 data, need to know which map to use
     if( Isize == (m_track_unordered_map2.at(1)).size() ) run1version = 1;
     else if( Isize == (m_track_unordered_map2.at(2)).size() ) run1version = 2;
@@ -884,38 +822,38 @@ void ReportConvertTool::TrackObjectFromSummary( const HltObjectSummary::Info* in
     m_version=run1version;
   }
 
-  auto  first = new LHCb::State();
-  auto  last = new LHCb::State();
+  LHCb::State first;
+  LHCb::State  last;
 
   Gaudi::TrackSymMatrix cov;
   for(const auto& track : used_map.at( findBestPrevious( used_map, m_version ) )) {
     switch( track.second.second )
     {
-      case 0: first->setZ( (*info)[ track.first ] ); break;
-      case 1: first->setX( (*info)[ track.first ] ); break;
-      case 2: first->setY( (*info)[ track.first ] ); break;
-      case 3: first->setTx( (*info)[ track.first ] ); break;
-      case 4: first->setTy( (*info)[ track.first ] ); break;
-      case 5: first->setQOverP( (*info)[ track.first ] ); break;
+      case 0: first.setZ( (*info)[ track.first ] ); break;
+      case 1: first.setX( (*info)[ track.first ] ); break;
+      case 2: first.setY( (*info)[ track.first ] ); break;
+      case 3: first.setTx( (*info)[ track.first ] ); break;
+      case 4: first.setTy( (*info)[ track.first ] ); break;
+      case 5: first.setQOverP( (*info)[ track.first ] ); break;
       case 6: object->setChi2PerDoF( (*info)[ track.first ] ); break;
       case 7: object->setNDoF( int( (*info)[ track.first ] ) ); break;
       case 8: object->setLikelihood( (*info)[ track.first ] ); break;
       case 9: object->setGhostProbability( (*info)[ track.first ] ); break;
       case 10: object->setFlags( (unsigned int)(*info)[ track.first ] ); break;
-      case 11: last->setZ( (*info)[ track.first ] ); break;
-      case 12: last->setX( (*info)[ track.first ] ); break;
-      case 13: last->setY( (*info)[ track.first ] ); break;
-      case 14: last->setTx( (*info)[ track.first ] ); break;
-      case 15: last->setTy( (*info)[ track.first ] ); break;
-      case 16: last->setQOverP( (*info)[ track.first ] ); break;
+      case 11: last.setZ( (*info)[ track.first ] ); break;
+      case 12: last.setX( (*info)[ track.first ] ); break;
+      case 13: last.setY( (*info)[ track.first ] ); break;
+      case 14: last.setTx( (*info)[ track.first ] ); break;
+      case 15: last.setTy( (*info)[ track.first ] ); break;
+      case 16: last.setQOverP( (*info)[ track.first ] ); break;
       case 17: if( (*info)[ track.first ] != -1000 ) object->addInfo( LHCb::Track::CloneDist, (*info)[ track.first ] ); break;
       case 18: if( (*info)[ track.first ] != -1000 ) object->addInfo( LHCb::Track::FitMatchChi2, (*info)[ track.first ] ); break;
       case 19: if( (*info)[ track.first ] != -1000 ) object->addInfo( LHCb::Track::FitVeloChi2, (*info)[ track.first ] ); break;
       case 20: if( (*info)[ track.first ] != -1000 ) object->addInfo( LHCb::Track::FitTChi2, (*info)[ track.first ] ); break;
       case 21: if( (*info)[ track.first ] != -1000 ) object->addInfo( LHCb::Track::FitVeloNDoF, (*info)[ track.first ] ); break;
       case 22: if( (*info)[ track.first ] != -1000 ) object->addInfo( LHCb::Track::FitTNDoF, (*info)[ track.first ] ); break;
-      case 23: first->setFlags( (*info)[ track.first ] ); break;
-      case 24: last->setFlags( (*info)[ track.first ] ); break;
+      case 23: first.setFlags( (*info)[ track.first ] ); break;
+      case 24: last.setFlags( (*info)[ track.first ] ); break;
       case 25: cov(0,0) = (*info)[ track.first ] ; break;
       case 26: cov(1,1) = (*info)[ track.first ] ; break;
       case 27: cov(2,2) = (*info)[ track.first ] ; break;
@@ -947,17 +885,15 @@ void ReportConvertTool::TrackObjectFromSummary( const HltObjectSummary::Info* in
     cov(4,2)=cov(2,4);
     cov(4,3)=cov(3,4);
   }
-  first->setCovariance(cov);
+  first.setCovariance(cov);
 
-  object->addToStates(*first);
-  // stop memory leak
-  if(turbo) object->addToStates(*last);
-  else      delete last;
+  object->addToStates(std::move(first));
+  if(turbo) object->addToStates(std::move(last));
 }
 
 void ReportConvertTool::RichPIDObjectFromSummary( const HltObjectSummary::Info*info, LHCb::RichPID* object, bool turbo) {
   if( m_version == -999 ){
-    Warning( "I have not been told a verision number to use, assuming the latest", StatusCode::SUCCESS, 20 );
+    Warning( "I have not been told a version number to use, assuming the latest", StatusCode::SUCCESS, 20 );
     m_version = m_LatestVersion;
   }
 
@@ -981,7 +917,7 @@ void ReportConvertTool::RichPIDObjectFromSummary( const HltObjectSummary::Info*i
 
 void ReportConvertTool::MuonPIDObjectFromSummary( const HltObjectSummary::Info* info, LHCb::MuonPID* object, bool turbo) {
   if( m_version == -999 ){
-    Warning( "I have not been told a verision number to use, assuming the latest", StatusCode::SUCCESS, 20 );
+    Warning( "I have not been told a version number to use, assuming the latest", StatusCode::SUCCESS, 20 );
     m_version = m_LatestVersion;
   }
 
@@ -1005,7 +941,7 @@ void ReportConvertTool::MuonPIDObjectFromSummary( const HltObjectSummary::Info* 
 
 void ReportConvertTool::CaloClusterObjectFromSummary( const HltObjectSummary::Info* info, LHCb::CaloCluster* object, bool turbo) {
   if( m_version == -999 ){
-    Warning( "I have not been told a verision number to use, assuming the latest", StatusCode::SUCCESS, 20 );
+    Warning( "I have not been told a version number to use, assuming the latest", StatusCode::SUCCESS, 20 );
     m_version = m_LatestVersion;
   }
 
@@ -1034,7 +970,7 @@ void ReportConvertTool::CaloClusterObjectFromSummary( const HltObjectSummary::In
 
 void ReportConvertTool::CaloHypoObjectFromSummary( const HltObjectSummary::Info* info, LHCb::CaloHypo* object, bool turbo) {
   if( m_version == -999 ){
-    Warning( "I have not been told a verision number to use, assuming the latest", StatusCode::SUCCESS, 20 );
+    Warning( "I have not been told a version number to use, assuming the latest", StatusCode::SUCCESS, 20 );
     m_version = m_LatestVersion;
   }
 
@@ -1071,7 +1007,7 @@ void ReportConvertTool::CaloHypoObjectFromSummary( const HltObjectSummary::Info*
 
 void ReportConvertTool::RecVertexObjectFromSummary( const HltObjectSummary::Info* info, LHCb::RecVertex* object, bool turbo) {
   if( m_version == -999 ){
-    Warning( "I have not been told a verision number to use, assuming the latest", StatusCode::SUCCESS, 20 );
+    Warning( "I have not been told a version number to use, assuming the latest", StatusCode::SUCCESS, 20 );
     m_version = m_LatestVersion;
   }
 
@@ -1116,7 +1052,7 @@ void ReportConvertTool::RecVertexObjectFromSummary( const HltObjectSummary::Info
 
 void ReportConvertTool::VertexObjectFromSummary( const HltObjectSummary::Info* info, LHCb::Vertex* object, bool turbo) {
   if( m_version == -999 ){
-    Warning( "I have not been told a verision number to use, assuming the latest", StatusCode::SUCCESS, 20 );
+    Warning( "I have not been told a version number to use, assuming the latest", StatusCode::SUCCESS, 20 );
     m_version = m_LatestVersion;
   }
 
@@ -1147,39 +1083,14 @@ void ReportConvertTool::VertexObjectFromSummary( const HltObjectSummary::Info* i
 
 void ReportConvertTool::RecSummaryObjectFromSummary( const HltObjectSummary::Info* info, LHCb::RecSummary* object) {
   if( m_version == -999 ){
-    Warning( "I have not been told a verision number to use, assuming the latest", StatusCode::SUCCESS, 20 );
+    Warning( "I have not been told a version number to use, assuming the latest", StatusCode::SUCCESS, 20 );
     m_version = m_LatestVersion;
   }
 
   const auto& used_map = m_recsummary_unordered_map2;
-
   for(const auto& recsummary : used_map.at( findBestPrevious( used_map, m_version ) ) ) {
-    switch( recsummary.second.second )
-    {
-      case 0: ( object->addInfo( LHCb::RecSummary::nLongTracks, (*info)[ recsummary.first ] ) ); break;
-      case 1: ( object->addInfo( LHCb::RecSummary::nDownstreamTracks, (*info)[ recsummary.first ] ) ); break;
-      case 2: ( object->addInfo( LHCb::RecSummary::nUpstreamTracks, (*info)[ recsummary.first ] ) ); break;
-      case 3: ( object->addInfo( LHCb::RecSummary::nVeloTracks, (*info)[ recsummary.first ] ) ); break;
-      case 4: ( object->addInfo( LHCb::RecSummary::nTTracks, (*info)[ recsummary.first ] ) ); break;
-      case 5: ( object->addInfo( LHCb::RecSummary::nBackTracks, (*info)[ recsummary.first ] ) ); break;
-      case 6: ( object->addInfo( LHCb::RecSummary::nTracks, (*info)[ recsummary.first ] ) ); break;
-      case 7: ( object->addInfo( LHCb::RecSummary::nRich1Hits, (*info)[ recsummary.first ] ) ); break;
-      case 8: ( object->addInfo( LHCb::RecSummary::nRich2Hits, (*info)[ recsummary.first ] ) ); break;
-      case 9: ( object->addInfo( LHCb::RecSummary::nVeloClusters, (*info)[ recsummary.first ] ) ); break;
-      case 10: ( object->addInfo( LHCb::RecSummary::nITClusters, (*info)[ recsummary.first ] ) ); break;
-      case 11: ( object->addInfo( LHCb::RecSummary::nTTClusters, (*info)[ recsummary.first ] ) ); break;
-      case 12: ( object->addInfo( LHCb::RecSummary::nUTClusters, (*info)[ recsummary.first ] ) ); break;
-      case 13: ( object->addInfo( LHCb::RecSummary::nOTClusters, (*info)[ recsummary.first ] ) ); break;
-      case 14: ( object->addInfo( LHCb::RecSummary::nFTClusters, (*info)[ recsummary.first ] ) ); break;
-      case 15: ( object->addInfo( LHCb::RecSummary::nSPDhits, (*info)[ recsummary.first ] ) ); break;
-      case 16: ( object->addInfo( LHCb::RecSummary::nMuonCoordsS0, (*info)[ recsummary.first ] ) ); break;
-      case 17: ( object->addInfo( LHCb::RecSummary::nMuonCoordsS1, (*info)[ recsummary.first ] ) ); break;
-      case 18: ( object->addInfo( LHCb::RecSummary::nMuonCoordsS2, (*info)[ recsummary.first ] ) ); break;
-      case 19: ( object->addInfo( LHCb::RecSummary::nMuonCoordsS3, (*info)[ recsummary.first ] ) ); break;
-      case 20: ( object->addInfo( LHCb::RecSummary::nMuonCoordsS4, (*info)[ recsummary.first ] ) ); break;
-      case 21: ( object->addInfo( LHCb::RecSummary::nMuonTracks, (*info)[ recsummary.first ] ) ); break;
-      case 22: ( object->addInfo( LHCb::RecSummary::nPVs, (*info)[ recsummary.first ] ) ); break;
-    }
+    assert(recsummary.second.second<s_rsum_map.size());
+    object->addInfo( s_rsum_map[recsummary.second.second], (*info)[ recsummary.first ] ); 
   }
 }
 
