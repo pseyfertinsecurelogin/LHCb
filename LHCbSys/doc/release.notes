@@ -23,7 +23,6 @@ It contains a merge of the contents of v40r2 (from 2016-patches branch) plus the
 <h2>Geometry and Conditions</h2>
 <dl>
 <dt>[MR !104],[MR !42] FTDet: Add new get methods in DeFTFibreMat.h, fully backward compatible
-<dt>[MR !97] FTDet: Small hack to cope with change/inconsistency in the DDDB description of the SiPMs and modules gaps (see LHCBUCNDB-68)
 
 </dl>
 <h2>Event Model</h2>
