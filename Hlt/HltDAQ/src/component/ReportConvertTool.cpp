@@ -694,7 +694,7 @@ void ReportConvertTool::ParticleObjectFromSummary( const HltObjectSummary::Info*
     int run1version=-999;
     // find size we care about (i.e. make sure extra info not counted)
     unsigned int Isize = std::count_if( info->begin(), info->end(),
-                                        [](const &elem) {
+                                        [](const std::pair<std::string,float> &elem) {
                          return elem.first.find("#")!=std::string::npos; 
     });
     // Looking at Run 1 data, need to know which map to use
@@ -812,7 +812,7 @@ void ReportConvertTool::TrackObjectFromSummary( const HltObjectSummary::Info* in
     int run1version=-999;
     // find size we care about (i.e. make sure extra info not counted)
     unsigned int Isize = std::count_if( info->begin(), info->end(),
-                                        [](const &elem) {
+                                        [](const std::pair<std::string,float> &elem) {
                          return elem.first.find("#")!=std::string::npos; 
     });
     // Looking at Run 1 data, need to know which map to use
