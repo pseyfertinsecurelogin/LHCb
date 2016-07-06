@@ -5,6 +5,14 @@ using LHCb::HltObjectSummary;
 using LHCb::HltSelRepRBStdInfo;
 
 namespace {
+
+  template <typename C>
+  unsigned int count_info(const C& c) {
+    return std::count_if( begin(c), end(c),
+                          [](typename C::const_reference elem) {
+                          return elem.first.find("#")!=std::string::npos;
+  } ); }
+
   static const std::array<LHCb::RecSummary::DataTypes,23> s_rsum_map = {
        LHCb::RecSummary::nLongTracks,
        LHCb::RecSummary::nDownstreamTracks,
@@ -158,14 +166,12 @@ int ReportConvertTool::getLatestVersion(){
 }
 
 int ReportConvertTool::getSizeSelRepParticleLatest(){
-  int sum=0;
-  sum+=m_particle_unordered_map2.at(findBestPrevious(m_particle_unordered_map2,m_LatestVersion)).size();
-  return sum;
+  return m_particle_unordered_map2.at(findBestPrevious(m_particle_unordered_map2,m_LatestVersion)).size();
 }
 
 int ReportConvertTool::findBestPrevious(const unordered_map<int, unordered_map<string,pair<int,int> > >& map,int in) const{
   int out=in;
-  for(int m=in;m>0;m--){
+  for(int m=in;m>0;--m){
     auto it = map.find(m);
     out = m;
     if (it != map.end()) break;
@@ -204,6 +210,10 @@ void ReportConvertTool::SummaryFromRaw(HltObjectSummary::Info* info, HltSelRepRB
   if((m_version<3 && m_version>0) && ( (classID!=LHCb::CLID_Track) && (classID!=LHCb::CLID_Particle) && (classID!=LHCb::CLID_RecVertex) && (classID!=LHCb::CLID_CaloCluster) ) )
       Error( std::string{ "Asked to decode Run 1 style reports with Turbo object (" } + std::to_string(classID) + std::string{ "). Please update your software" }, StatusCode::FAILURE, 100 );
 
+  auto pick_map = [&](const auto& map1, const auto& map2 ) {
+        return  subbank->size()< map1.at( findBestPrevious( map1, m_version ) ).size() ?
+                 &map2 : &map1;
+  };
   const unordered_map<int,unordered_map<string, pair<int,int> > > *used_map = nullptr;
   switch( classID )
   {
@@ -216,9 +226,9 @@ void ReportConvertTool::SummaryFromRaw(HltObjectSummary::Info* info, HltSelRepRB
           else Error( "Track requested in Run 1 reports, but reports are unknown" , StatusCode::FAILURE, 100 ).ignore();
           used_map = &m_track_unordered_map2;
           m_version=run1version;
+        } else {
+          used_map = pick_map( m_track_unordered_map2_Turbo, m_track_unordered_map2_Turbo );
         }
-        else if( subbank->size()<m_track_unordered_map2_Turbo.at( findBestPrevious( m_track_unordered_map2_Turbo, m_version ) ).size() ) used_map = &m_track_unordered_map2;
-        else used_map = &m_track_unordered_map2_Turbo;
       }
       break;
     case LHCb::CLID_RecVertex:
@@ -229,16 +239,13 @@ void ReportConvertTool::SummaryFromRaw(HltObjectSummary::Info* info, HltSelRepRB
           else if( subbank->size() == (m_recvertex_unordered_map2.at(2)).size() ) run1version = 2;
           used_map = &m_recvertex_unordered_map2;
           m_version=run1version;
+        } else {
+          used_map = pick_map( m_recvertex_unordered_map2_Turbo,m_recvertex_unordered_map2) ;
         }
-        else if( subbank->size()<m_recvertex_unordered_map2_Turbo.at( findBestPrevious( m_recvertex_unordered_map2_Turbo, m_version ) ).size() ) used_map = &m_recvertex_unordered_map2;
-        else used_map = &m_recvertex_unordered_map2_Turbo;
       }
       break;
     case LHCb::CLID_Vertex:
-      {
-        if( subbank->size()<m_vertex_unordered_map2_Turbo.at( findBestPrevious( m_vertex_unordered_map2_Turbo, m_version ) ).size() ) used_map = &m_vertex_unordered_map2;
-        else used_map = &m_vertex_unordered_map2_Turbo;
-      }
+      used_map = pick_map( m_vertex_unordered_map2_Turbo, m_vertex_unordered_map2);
       break;
     case LHCb::CLID_Particle:
       {
@@ -248,34 +255,22 @@ void ReportConvertTool::SummaryFromRaw(HltObjectSummary::Info* info, HltSelRepRB
           else if( subbank->size() == (m_particle_unordered_map2.at(2)).size() ) run1version = 2;
           used_map = &m_particle_unordered_map2;
           m_version=run1version;
+        } else {
+          used_map = pick_map( m_particle_unordered_map2_Turbo, m_particle_unordered_map2 );
         }
-        else if( subbank->size()<m_particle_unordered_map2_Turbo.at( findBestPrevious( m_particle_unordered_map2_Turbo, m_version ) ).size() ) used_map = &m_particle_unordered_map2;
-        else used_map = &m_particle_unordered_map2_Turbo;
       }
       break;
     case LHCb::CLID_ProtoParticle:
-      {
-        if( subbank->size()<m_proto_unordered_map2_Turbo.at( findBestPrevious( m_proto_unordered_map2_Turbo, m_version ) ).size() ) used_map = &m_proto_unordered_map2;
-        else used_map = &m_proto_unordered_map2_Turbo;
-      }
+      used_map = pick_map(m_proto_unordered_map2_Turbo, m_proto_unordered_map2);
       break;
     case LHCb::CLID_RichPID:
-      {
-        if( subbank->size()<m_rpid_unordered_map2_Turbo.at( findBestPrevious( m_rpid_unordered_map2_Turbo, m_version ) ).size() ) used_map = &m_rpid_unordered_map2;
-        else used_map = &m_rpid_unordered_map2_Turbo;
-      }
+      used_map = pick_map(m_rpid_unordered_map2_Turbo, m_rpid_unordered_map2);
       break;
     case LHCb::CLID_CaloHypo:
-      {
-        if( subbank->size()<m_calohypo_unordered_map2_Turbo.at( findBestPrevious( m_calohypo_unordered_map2_Turbo, m_version ) ).size() ) used_map = &m_calohypo_unordered_map2;
-        else used_map = &m_calohypo_unordered_map2_Turbo;
-      }
+      used_map = pick_map(m_calohypo_unordered_map2_Turbo, m_calohypo_unordered_map2);
       break;
     case LHCb::CLID_MuonPID:
-      {
-        if( subbank->size()<m_mpid_unordered_map2_Turbo.at( findBestPrevious( m_mpid_unordered_map2_Turbo, m_version ) ).size() ) used_map = &m_mpid_unordered_map2;
-        else used_map = &m_mpid_unordered_map2_Turbo;
-      }
+      used_map = pick_map(m_mpid_unordered_map2_Turbo,  m_mpid_unordered_map2);
       break;
     case LHCb::CLID_RecSummary:
       {
@@ -314,16 +309,14 @@ void ReportConvertTool::SummaryFromRaw(HltObjectSummary::Info* info, HltSelRepRB
       }
       break;
     case LHCb::CLID_CaloCluster:
-      {
-        if(m_version<3) {
-          // Looking at Run 1 data, need to know which map to use
-          if( subbank->size() == (m_calo_unordered_map2.at(1)).size() ) run1version = 1;
-          else if( subbank->size() == (m_calo_unordered_map2.at(2)).size() ) run1version = 2;
-          used_map = &m_calo_unordered_map2;
-          m_version=run1version;
-        }
-        else if( subbank->size()<m_calo_unordered_map2_Turbo.at( findBestPrevious( m_calo_unordered_map2_Turbo, m_version ) ).size() ) used_map = &m_calo_unordered_map2;
-        else used_map = &m_calo_unordered_map2_Turbo;
+      if(m_version<3) {
+        // Looking at Run 1 data, need to know which map to use
+        if( subbank->size() == (m_calo_unordered_map2.at(1)).size() ) run1version = 1;
+        else if( subbank->size() == (m_calo_unordered_map2.at(2)).size() ) run1version = 2;
+        used_map = &m_calo_unordered_map2;
+        m_version=run1version;
+      } else {
+        used_map = pick_map(m_calo_unordered_map2_Turbo, m_calo_unordered_map2);
       }
       break;
       // NOTE THE CASE OF 1 IS TAKEN CARE OF INSIDE THE DECODER
@@ -693,10 +686,7 @@ void ReportConvertTool::ParticleObjectFromSummary( const HltObjectSummary::Info*
   if( m_version < 3 ){
     int run1version=-999;
     // find size we care about (i.e. make sure extra info not counted)
-    unsigned int Isize = std::count_if( info->begin(), info->end(),
-                                        [](const std::pair<std::string,float> &elem) {
-                         return elem.first.find("#")!=std::string::npos; 
-    });
+    auto Isize = count_info(*info);
     // Looking at Run 1 data, need to know which map to use
     if( Isize == (m_particle_unordered_map2.at(1)).size() ) run1version = 1;
     else if( Isize == (m_particle_unordered_map2.at(2)).size() ) run1version = 2;
@@ -794,7 +784,7 @@ void ReportConvertTool::ProtoParticleObjectFromSummary( const HltObjectSummary::
                                 : m_proto_unordered_map2 );
   for(const auto& proto : used_map.at( findBestPrevious( used_map, m_version ) )) {
     assert(proto.second.second<s_proto_map.size());
-    auto i = (*info)[proto.first]; 
+    auto i = (*info)[proto.first];
     if (i != -1000 ) object->addInfo( s_proto_map[proto.second.second], i);
   }
 
@@ -811,10 +801,7 @@ void ReportConvertTool::TrackObjectFromSummary( const HltObjectSummary::Info* in
   if( m_version < 3 ){
     int run1version=-999;
     // find size we care about (i.e. make sure extra info not counted)
-    unsigned int Isize = std::count_if( info->begin(), info->end(),
-                                        [](const std::pair<std::string,float> &elem) {
-                         return elem.first.find("#")!=std::string::npos; 
-    });
+    auto Isize = count_info( *info );
     // Looking at Run 1 data, need to know which map to use
     if( Isize == (m_track_unordered_map2.at(1)).size() ) run1version = 1;
     else if( Isize == (m_track_unordered_map2.at(2)).size() ) run1version = 2;
@@ -949,23 +936,21 @@ void ReportConvertTool::CaloClusterObjectFromSummary( const HltObjectSummary::In
                                 : m_calo_unordered_map2 );
   Gaudi::Vector3 & xye = *(const_cast<Gaudi::Vector3*>(&object->position().parameters()));
   //
-  double e=0;
-  double x=0;
-  double y=0;
+  xye(0)=0;
+  xye(1)=0;
+  xye(2)=0;
 
   for(const auto& calo : used_map.at( findBestPrevious( used_map, m_version ) )) {
     switch( calo.second.second )
     {
-      case 0: e = (*info)[ calo.first ]; break;
-      case 1: x = (*info)[ calo.first ]; break;
-      case 2: y = (*info)[ calo.first ]; break;
-      case 3: object->position().setZ( (*info)[ calo.first ] ); break;
+      case 0:  // [[fallthrough]]
+      case 1:  // [[fallthrough]]
+      case 2:
+        xye(calo.second.second) = (*info)[ calo.first ]; break;
+      case 3:
+        object->position().setZ( (*info)[ calo.first ] ); break;
     }
   }
-  xye(0) = x;
-  xye(1) = y;
-  xye(2) = e;
-
 }
 
 void ReportConvertTool::CaloHypoObjectFromSummary( const HltObjectSummary::Info* info, LHCb::CaloHypo* object, bool turbo) {
@@ -1016,10 +1001,7 @@ void ReportConvertTool::RecVertexObjectFromSummary( const HltObjectSummary::Info
   if( m_version < 3 ){
     int run1version=-999;
     // find size we care about (i.e. make sure extra info not counted)
-    unsigned int Isize = 0;
-    for(const auto & elem : *info){
-      if( (elem.first).find("#")!=std::string::npos ) Isize++;
-    }
+    unsigned int Isize = count_info( *info );
     // Looking at Run 1 data, need to know which map to use
     if( Isize == (m_recvertex_unordered_map2.at(1)).size() ) run1version = 1;
     else if( Isize == (m_recvertex_unordered_map2.at(2)).size() ) run1version = 2;
@@ -1090,7 +1072,7 @@ void ReportConvertTool::RecSummaryObjectFromSummary( const HltObjectSummary::Inf
   const auto& used_map = m_recsummary_unordered_map2;
   for(const auto& recsummary : used_map.at( findBestPrevious( used_map, m_version ) ) ) {
     assert(recsummary.second.second<s_rsum_map.size());
-    object->addInfo( s_rsum_map[recsummary.second.second], (*info)[ recsummary.first ] ); 
+    object->addInfo( s_rsum_map[recsummary.second.second], (*info)[ recsummary.first ] );
   }
 }
 
