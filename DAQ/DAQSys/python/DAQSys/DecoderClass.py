@@ -5,7 +5,7 @@ and also simple manipulators of the database it creates:
 validate(db), decodersForBank(db,bank,ignoreActive=False), decoderToLocation(db,location,ignoreActive=False)
 """
 from GaudiConf.Manipulations import configurableInstanceFromString, addPrivateToolFromString
-
+from GaudiKernel.DataObjectHandleBase import DataObjectHandleBase
 
 class Decoder(object):
     """
@@ -207,6 +207,10 @@ class Decoder(object):
                     raise TypeError(self.FullName+" cannot set property of type list to this string, "+self.FullName+" "+input.__str__())
                 elif ensuretype is list and type(input) is str:
                     self.Inputs[k]=[input]
+                elif ensuretype is DataObjectHandleBase:
+                    path = input if type(input) is str else input[0]
+                    altPaths = [] if type(input) is str else input[1:]
+                    self.Inputs[k] = DataObjectHandleBase(path, DataObjectHandleBase.READ, 0, '&'.join(altPaths))
                 else:
                     raise TypeError(self.FullName+" cannot convert input from type "+ str(type(input)) +" to "+ str(ensuretype))
         #then cascade downwards
@@ -308,20 +312,18 @@ class Decoder(object):
                 if self.Inputs[key] is None:
                     #OK, find me then
                     ips=self.__getprop__(configurableInstanceFromString(self.FullName),key)
-                    #only add if not already in the list
-                    if ips is not None and type(ips) is str:
-                        ips=[ips]
-                    for ip in ips:
-                        if ip not in inputs:
-                            inputs.append(ip)
                 else:
                     #no? well add me to the list
                     ips=self.Inputs[key]
-                    if ips is not None and type(ips) is str:
-                        ips=[ips]
-                    for ip in ips:
-                        if ip not in inputs:
-                            inputs.append(ip)
+
+                #only add if not already in the list
+                if type(ips) is str:
+                    ips=[ips]
+                elif isinstance(ips, DataObjectHandleBase):
+                    ips = [ips.Path] + ips.AlternativePaths
+                for ip in ips:
+                    if ip not in inputs:
+                        inputs.append(ip)
         #cascade down the tools
         for tool in self.PrivateTools+self.PublicTools:
             if tool in self.__db__:
