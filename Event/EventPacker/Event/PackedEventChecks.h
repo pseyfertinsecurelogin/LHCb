@@ -148,7 +148,7 @@ namespace DataPacking
                              const TYPE& b ) const
     {
       const bool ok = ( a == b );
-      if ( UNLIKELY(!ok && parent) )
+      if ( UNLIKELY( !ok && parent ) )
       {
         parent->warning() << name << " comparison failed :-" << endmsg
                           << " Original = " << a << endmsg

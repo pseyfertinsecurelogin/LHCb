@@ -8,6 +8,7 @@
 // STD& STL 
 // ============================================================================
 #include <vector>
+#include <complex>
 // ============================================================================
 // GaudiKernel
 // ============================================================================
@@ -140,6 +141,72 @@ namespace Gaudi
      *  @see https://en.wikipedia.org/wiki/Faddeeva_function
      */
     GAUDI_API double  erfcx ( const double x ) ;
+    // ========================================================================
+    /** complex error function (the error function of complex arguments)
+     *  @param x  the argument 
+     *  @return the value of the coplmex error function 
+     *  The actual implementation is copied from http://ab-initio.mit.edu/Faddeeva
+     *  @see http://ab-initio.mit.edu/Faddeeva
+     *  @see https://en.wikipedia.org/wiki/Error_function
+     *  @see https://en.wikipedia.org/wiki/Faddeeva_function
+     */
+    GAUDI_API std::complex<double>  erf   ( const std::complex<double>& x ) ;
+    // ========================================================================
+    /** complementary complex error function 
+     *  \f$ 1 -  erf (x) = erfc(x)  \f$         
+     *  @param x  the argument 
+     *  @return the value of the complementary complex error function 
+     *  The actual implementation is copied from http://ab-initio.mit.edu/Faddeeva
+     *  @see http://ab-initio.mit.edu/Faddeeva
+     *  @see https://en.wikipedia.org/wiki/Error_function
+     *  @see https://en.wikipedia.org/wiki/Faddeeva_function
+     */
+    GAUDI_API std::complex<double>  erfc  ( const std::complex<double>& x ) ;
+    // ========================================================================
+    /** scaled complementary error function for complex argument 
+     *  \f$ 1 -  erf (x) = e^{-x^2} erfcx(x)  \f$ 
+     *  @param x  the argument 
+     *  @return the value of the scaled complementary error function 
+     *  The actual implementation is copied from http://ab-initio.mit.edu/Faddeeva
+     *  @see http://ab-initio.mit.edu/Faddeeva
+     *  @see https://en.wikipedia.org/wiki/Error_function
+     *  @see https://en.wikipedia.org/wiki/Faddeeva_function
+     */
+    GAUDI_API std::complex<double>  erfcx ( const std::complex<double>& x ) ;
+    // ========================================================================
+    /** compute Faddeeva "w" function:
+     *  w(z) = exp(-z^2) erfc(-iz) [ Faddeeva / scaled complex error func ]
+     *  @return the value of the scaled complementary error function 
+     *  The actual implementation is copied from http://ab-initio.mit.edu/Faddeeva
+     *  @see http://ab-initio.mit.edu/Faddeeva
+     *  @see https://en.wikipedia.org/wiki/Error_function
+     *  @see https://en.wikipedia.org/wiki/Faddeeva_function
+     */
+    GAUDI_API std::complex<double> faddeeva_w ( const std::complex<double>& x ) ;
+    // ========================================================================
+    /** compute sech function 
+     *  \$f f(x) = \frac{1}{\cosh x} = \frac{2}{ e^{x}+e^{-x} }\f$
+     *  @return the value of sech function 
+     */
+    GAUDI_API double sech ( const double x ) ;
+    // ========================================================================
+    /** compute sech function 
+     *  \$f f(x) = \frac{1}{\cosh x} = \frac{2}{ e^{x}+e^{-x} }\f$
+     *  @return the value of sech function 
+     */
+    GAUDI_API std::complex<double> sech ( const std::complex<double>& x ) ;
+    // ========================================================================
+    /** compute inverse Gamma function 
+     *  \$f f(x) = \frac{1}{\Gamma(x)}\f$
+     *  @return the value of inverse Gamma functions 
+     */
+    GAUDI_API double igamma ( const double x ) ;    
+    // ========================================================================
+    /** compute psi function 
+     *  \$f f(x) = \frac{d}{dx}\ln \Gamma(x)\f$
+     *  @return the value of psi function 
+     */
+    GAUDI_API double psi ( const double x ) ;    
     // ========================================================================
     /** get the gaussian integral
      *  \f[ f = \int_a^b \exp { -\alpha^2 x^2 + \beta x } \mathrm{d}x \f]

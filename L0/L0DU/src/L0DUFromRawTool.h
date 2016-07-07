@@ -106,7 +106,9 @@ private:
   std::vector<unsigned int> m_dump;
   int m_dumping = -1;
   int m_count = 0;
-  
+  bool m_fakeSeq=0;
+  int  m_sumEtPrev1=-1;
+  int  m_sumEtPrev2=-1;
 };
 #endif // L0DUFROMRAWTOOL_H
 

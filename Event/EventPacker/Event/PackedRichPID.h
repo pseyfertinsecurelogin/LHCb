@@ -1,7 +1,8 @@
-// $Id: PackedRichPID.h,v 1.5 2010-03-09 18:35:20 jonrob Exp $
+
 #ifndef EVENT_PACKEDRICHPID_H
 #define EVENT_PACKEDRICHPID_H 1
 
+// STL
 #include <string>
 #include <sstream>
 
@@ -229,7 +230,7 @@ namespace LHCb
     bool isSupportedVer( const char& ver ) const
     {
       const bool OK = ( 0 <= ver && ver <= 4 );
-      if ( !OK )
+      if ( UNLIKELY(!OK) )
       {
         std::ostringstream mess;
         mess << "Unknown packed data version " << (int)ver;

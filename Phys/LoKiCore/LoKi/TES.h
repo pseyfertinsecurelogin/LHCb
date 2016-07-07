@@ -4,7 +4,7 @@
 // ============================================================================
 // Include files
 // ============================================================================
-#include <boost/shared_ptr.hpp>
+#include <memory>
 // ============================================================================
 // GaudiKernel
 // ============================================================================
@@ -173,6 +173,43 @@ namespace LoKi
       // ======================================================================
     } ;
     // ========================================================================
+    /** @class HrcSumAdc
+     *  Simple query to sum contents of Herschel Digits for a station
+     *  @author Dan JOHNSON  daniel.johnson@cern.ch
+     *  @date 2016-05-17
+     */
+    class GAUDI_API HrcSumAdc
+      : public LoKi::Functor<void,double>
+      , public LoKi::TES::Get
+    {
+    public:
+      // ======================================================================
+      /** constructor from TES location & "rootInTes"-flag
+       *  @see GaudiCommon<TYPE>::exists
+       *  @see GaudiCommon<TYPE>::get
+       */
+      HrcSumAdc ( const std::string& location              ,
+                  const std::string& stationName           ,
+                  const bool         useRootInTes = true ) ;
+      /// MANDATORY: clone method ("virtual constructor")
+      HrcSumAdc* clone() const override ;
+      /** MANDATORY: the only one essential method
+       *  @return numebr of element in continer, -1 for non-existing container
+       */
+      result_type operator() ( /* argument v */ ) const override ;
+      /// OPTIONAL: nice printout
+      std::ostream& fillStream ( std::ostream& s ) const override ;
+      const std::string& stationName     () const { return m_stationName    ; }
+      // ======================================================================
+    private:
+      // ======================================================================
+      /// the default constructor is disabled
+      HrcSumAdc () ;                      // the default constructor is disabled
+      /// the station name
+      std::string m_stationName         ; // the Herschel station name
+      // ======================================================================
+    } ;
+    // ========================================================================
     /** @class Counter
      *  Simple accessor for counters in TES
      *  @see Gaudi::Numbers
@@ -279,7 +316,7 @@ namespace LoKi
     private:
       // ======================================================================
       /// Helper object used to extract information from the StatEntity object.
-      boost::shared_ptr<StatEntityGetter> m_getter;
+      std::shared_ptr<StatEntityGetter> m_getter;
       // ======================================================================
     } ;
     // ========================================================================
@@ -340,6 +377,22 @@ namespace LoKi
      *  @date 2010-02-13
      */
     typedef LoKi::TES::Contains                                      CONTAINS ;
+    // ========================================================================
+    /** @typedef HRCSUMADC
+     *  Function to find Herschel station sum digits 
+     *
+     *  @code
+     *
+     *    400 > HRCSUMADC ( "/Raw/HC/Sum", "B2" )
+     *
+     *  @endcode
+     *
+     *  @see LoKi::TES::HrcSumAdc
+     *  @author Dan JOHNSON  daniel.johnson@cern.ch
+     *  @date 2016-05-17
+     */
+    typedef LoKi::TES::HrcSumAdc                                    HRCSUMADC ;
+
     // ========================================================================
     /** @typedef EXISTS
      *  Trivial checker/predicate for existence of object in TES

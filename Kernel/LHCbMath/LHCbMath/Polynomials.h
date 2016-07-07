@@ -554,8 +554,53 @@ namespace Gaudi
       /// simple  manipulations with polynoms: shift it! 
       Polynomial& operator += ( const double a ) ; 
       /// simple  manipulations with polynoms: shift it! 
-      Polynomial& operator -= ( const double a ) ; 
+      Polynomial& operator -= ( const double a ) ;
+      /// simple  manipulations with polynoms: scale it 
+      Polynomial& operator *= ( const double a ) ; 
+      /// simple  manipulations with polynoms: scale it  
+      Polynomial& operator /= ( const double a ) ;
+      /// negate it! 
+      Polynomial  operator-() const ; // negate it! 
       // ======================================================================
+    public:
+      // ======================================================================
+      /// Add       polynomials (with the same domain!)
+      Polynomial sum      ( const Polynomial& other ) const ;
+      /// Subtract  polynomials (with the same domain!)
+      Polynomial subtract ( const Polynomial& other ) const ;
+      // ======================================================================      
+    public:
+      // ======================================================================      
+      /// Add       polynomials (with the same domain!)
+      Polynomial __add__   ( const Polynomial& other ) const ;
+      /// Subtract  polynomials (with the same domain!)
+      Polynomial __sub__   ( const Polynomial& other ) const ;
+      // ======================================================================      
+    public:
+      // ======================================================================      
+      Polynomial& __iadd__  ( const double a )       ;
+      Polynomial& __isub__  ( const double a )       ;
+      Polynomial& __imult__ ( const double a )       ;
+      Polynomial& __idiv__  ( const double a )       ;
+      // ======================================================================
+    public:
+      // ======================================================================
+      Polynomial  __add__   ( const double a ) const ;
+      Polynomial  __sub__   ( const double a ) const ;
+      Polynomial  __mult__  ( const double a ) const ;
+      Polynomial  __div__   ( const double a ) const ;
+      // ======================================================================
+    public:
+      // ======================================================================
+      Polynomial  __radd__  ( const double a ) const ;
+      Polynomial  __rsub__  ( const double a ) const ;
+      Polynomial  __rmult__ ( const double a ) const ;
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// Negate it! 
+      Polynomial  __neg__   () const ; // Negate it! 
+      // ======================================================================      
     private:
       // ======================================================================
       /// x-min 
@@ -563,7 +608,26 @@ namespace Gaudi
       /// x-max 
       double              m_xmax ; // x-max
       // ======================================================================      
-    } ;
+    } ;    
+    // ========================================================================
+    inline Polynomial operator+( const Polynomial& a , const Polynomial& b ) 
+    { return a.sum       ( b ) ; }    
+    inline Polynomial operator-( const Polynomial& a , const Polynomial& b ) 
+    { return a.subtract  ( b ) ; }
+    inline Polynomial operator+( const Polynomial& a , const double      b ) 
+    { return a.__add__   ( b ) ; }    
+    inline Polynomial operator+( const double      b , const Polynomial& a )
+    { return a.__add__   ( b ) ; }
+    inline Polynomial operator-( const Polynomial& a , const double      b ) 
+    { return a.__sub__   ( b ) ; }    
+    inline Polynomial operator-( const double      b , const Polynomial& a )
+    { return a.__rsub__  ( b ) ; }
+    inline Polynomial operator*( const Polynomial& a , const double      b ) 
+    { return a.__mult__  ( b ) ; }    
+    inline Polynomial operator*( const double      b , const Polynomial& a )
+    { return a.__mult__  ( b ) ; }
+    inline Polynomial operator/( const Polynomial& a , const double      b ) 
+    { return a.__div__   ( b ) ; }    
     // ========================================================================
     /** @class ChebyshevSum 
      *  Sum of chebychev polinomials 
@@ -648,6 +712,52 @@ namespace Gaudi
       ChebyshevSum& operator += ( const double a ) ; 
       /// simple  manipulations with polynoms: shift it! 
       ChebyshevSum& operator -= ( const double a ) ; 
+      /// simple  manipulations with polynoms: scale it!
+      ChebyshevSum& operator *= ( const double a ) ; 
+      /// simple  manipulations with polynoms: scale it! 
+      ChebyshevSum& operator /= ( const double a ) ; 
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// negate it! 
+      ChebyshevSum  operator-() const ; // negate it! 
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// add      chebyshev sum (with the same domain)
+      ChebyshevSum sum      ( const ChebyshevSum& other ) const ;
+      /// subtract chebyshev sum (with the same domain)
+      ChebyshevSum subtract ( const ChebyshevSum& other ) const ;
+      // ======================================================================
+    public:
+      // ======================================================================
+      ChebyshevSum& __iadd__  ( const double a ) ;
+      ChebyshevSum& __isub__  ( const double a ) ;
+      ChebyshevSum& __imult__ ( const double a ) ;
+      ChebyshevSum& __idiv__  ( const double a ) ;
+      // ======================================================================
+    public:
+      // ======================================================================
+      ChebyshevSum  __add__   ( const double a ) const ;
+      ChebyshevSum  __sub__   ( const double a ) const ;
+      ChebyshevSum  __mult__  ( const double a ) const ;
+      ChebyshevSum  __div__   ( const double a ) const ;
+      // ======================================================================
+    public:
+      // ======================================================================
+      ChebyshevSum  __radd__  ( const double a ) const ;
+      ChebyshevSum  __rsub__  ( const double a ) const ;
+      ChebyshevSum  __rmult__ ( const double a ) const ;
+      // ======================================================================
+    public:
+      // ======================================================================
+      ChebyshevSum  __add__   ( const ChebyshevSum& a ) const ;
+      ChebyshevSum  __sub__   ( const ChebyshevSum& a ) const ;
+      // ======================================================================
+    public:
+      // ======================================================================
+      // negate it! 
+      ChebyshevSum __neg__ () const ; // negate it!
       // ======================================================================
     private:
       // ======================================================================
@@ -657,6 +767,25 @@ namespace Gaudi
       double              m_xmax ; // x-max
       // ======================================================================      
     } ;
+    // ========================================================================
+    inline ChebyshevSum operator+( const ChebyshevSum& a , const ChebyshevSum& b ) 
+    { return a.sum       ( b ) ; }    
+    inline ChebyshevSum operator-( const ChebyshevSum& a , const ChebyshevSum& b ) 
+    { return a.subtract  ( b ) ; }
+    inline ChebyshevSum operator+( const ChebyshevSum& a , const double        b ) 
+    { return a.__add__   ( b ) ; }    
+    inline ChebyshevSum operator+( const double        b , const ChebyshevSum& a )
+    { return a.__add__   ( b ) ; }
+    inline ChebyshevSum operator-( const ChebyshevSum& a , const double        b ) 
+    { return a.__sub__   ( b ) ; }    
+    inline ChebyshevSum operator-( const double        b , const ChebyshevSum& a )
+    { return a.__rsub__  ( b ) ; }
+    inline ChebyshevSum operator*( const ChebyshevSum& a , const double        b ) 
+    { return a.__mult__  ( b ) ; }    
+    inline ChebyshevSum operator*( const double        b , const ChebyshevSum& a )
+    { return a.__mult__  ( b ) ; }
+    inline ChebyshevSum operator/( const ChebyshevSum& a , const double        b ) 
+    { return a.__div__   ( b ) ; }    
     // ========================================================================
     /** @class LegendreSum 
      *  Sum of Legendre polinomials 
@@ -743,8 +872,54 @@ namespace Gaudi
       LegendreSum& operator += ( const double a ) ;
       /// simple  manipulations with polynoms: shift it! 
       LegendreSum& operator -= ( const double a ) ;
+      /// simple  manipulations with polynoms: scale it  
+      LegendreSum& operator *= ( const double a ) ;
+      /// simple  manipulations with polynoms: scale it 
+      LegendreSum& operator /= ( const double a ) ;
       // ======================================================================
-    private:
+    public:
+      // ======================================================================
+      /// negate it! 
+      LegendreSum  operator-() const ; // negate it! 
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// add      legendre sum (with the same domain)
+      LegendreSum sum      ( const LegendreSum& other ) const ;
+      /// subtract legendre sum (with the same domain)
+      LegendreSum subtract ( const LegendreSum& other ) const ;
+      // ======================================================================
+    public:
+      // ======================================================================
+      LegendreSum& __iadd__  ( const double a ) ;
+      LegendreSum& __isub__  ( const double a ) ;
+      LegendreSum& __imult__ ( const double a ) ;
+      LegendreSum& __idiv__  ( const double a ) ;
+      // ======================================================================
+    public:
+      // ======================================================================
+      LegendreSum  __add__   ( const double a ) const ;
+      LegendreSum  __sub__   ( const double a ) const ;
+      LegendreSum  __mult__  ( const double a ) const ;
+      LegendreSum  __div__   ( const double a ) const ;
+      // ======================================================================
+    public:
+      // ======================================================================
+      LegendreSum  __radd__  ( const double a ) const ;
+      LegendreSum  __rsub__  ( const double a ) const ;
+      LegendreSum  __rmult__ ( const double a ) const ;
+      // ======================================================================
+    public:
+      // ======================================================================
+      LegendreSum  __add__   ( const LegendreSum& a ) const ;
+      LegendreSum  __sub__   ( const LegendreSum& a ) const ;
+      // ======================================================================
+    public:
+      // ======================================================================
+      // negate it! 
+      LegendreSum __neg__ () const ; // negate it!
+      // ======================================================================
+     private:
       // ======================================================================
       /// x-min 
       double              m_xmin ; // x-min
@@ -752,6 +927,25 @@ namespace Gaudi
       double              m_xmax ; // x-max
       // ======================================================================      
     } ;
+    // ========================================================================
+    inline LegendreSum operator+( const LegendreSum& a , const LegendreSum& b ) 
+    { return a.sum       ( b ) ; }    
+    inline LegendreSum operator-( const LegendreSum& a , const LegendreSum& b ) 
+    { return a.subtract  ( b ) ; }
+    inline LegendreSum operator+( const LegendreSum& a , const double       b ) 
+    { return a.__add__   ( b ) ; }    
+    inline LegendreSum operator+( const double       b , const LegendreSum& a )
+    { return a.__add__   ( b ) ; }
+    inline LegendreSum operator-( const LegendreSum& a , const double       b ) 
+    { return a.__sub__   ( b ) ; }    
+    inline LegendreSum operator-( const double       b , const LegendreSum& a )
+    { return a.__rsub__  ( b ) ; }
+    inline LegendreSum operator*( const LegendreSum& a , const double       b ) 
+    { return a.__mult__  ( b ) ; }    
+    inline LegendreSum operator*( const double       b , const LegendreSum& a )
+    { return a.__mult__  ( b ) ; }
+    inline LegendreSum operator/( const LegendreSum& a , const double       b ) 
+    { return a.__div__   ( b ) ; }    
     // ========================================================================
     /** @class HermiteSum 
      *  Sum of Hermitepolinomials 
@@ -807,6 +1001,52 @@ namespace Gaudi
       HermiteSum& operator += ( const double a ) ;
       /// simple  manipulations with polynoms: shift it! 
       HermiteSum& operator -= ( const double a ) ;
+      /// simple  manipulations with polynoms: scale it!
+      HermiteSum& operator *= ( const double a ) ;
+      /// simple  manipulations with polynoms: scale it! 
+      HermiteSum& operator /= ( const double a ) ;
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// negate it! 
+      HermiteSum  operator-() const ; // negate it! 
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// add      legendre sum (with the same domain)
+      HermiteSum sum      ( const HermiteSum& other ) const ;
+      /// subtract legendre sum (with the same domain)
+      HermiteSum subtract ( const HermiteSum& other ) const ;
+      // ======================================================================
+    public:
+      // ======================================================================
+      HermiteSum& __iadd__  ( const double a ) ;
+      HermiteSum& __isub__  ( const double a ) ;
+      HermiteSum& __imult__ ( const double a ) ;
+      HermiteSum& __idiv__  ( const double a ) ;
+      // ======================================================================
+    public:
+      // ======================================================================
+      HermiteSum  __add__   ( const double a ) const ; 
+      HermiteSum  __sub__   ( const double a ) const ;
+      HermiteSum  __mult__  ( const double a ) const ;
+      HermiteSum  __div__   ( const double a ) const ;
+      // ======================================================================
+    public:
+      // ======================================================================
+      HermiteSum  __radd__  ( const double a ) const ;
+      HermiteSum  __rsub__  ( const double a ) const ;
+      HermiteSum  __rmult__ ( const double a ) const ;
+      // ======================================================================
+    public:
+      // ======================================================================
+      HermiteSum  __add__   ( const HermiteSum& a ) const ;
+      HermiteSum  __sub__   ( const HermiteSum& a ) const ;
+      // ======================================================================
+    public:
+      // ======================================================================
+      // negate it! 
+      HermiteSum __neg__    () const ; // negate it!
       // ======================================================================
     private:
       // ======================================================================
@@ -818,6 +1058,26 @@ namespace Gaudi
       double m_scale ; // scale 
       // ======================================================================      
     } ;
+    // ========================================================================
+    inline HermiteSum operator+( const HermiteSum& a , const HermiteSum& b ) 
+    { return a.sum       ( b ) ; }    
+    inline HermiteSum operator-( const HermiteSum& a , const HermiteSum& b ) 
+    { return a.subtract  ( b ) ; }
+    inline HermiteSum operator+( const HermiteSum& a , const double      b ) 
+    { return a.__add__   ( b ) ; }    
+    inline HermiteSum operator+( const double      b , const HermiteSum& a )
+    { return a.__add__   ( b ) ; }
+    inline HermiteSum operator-( const HermiteSum& a , const double      b ) 
+    { return a.__sub__   ( b ) ; }    
+    inline HermiteSum operator-( const double      b , const HermiteSum& a )
+    { return a.__rsub__  ( b ) ; }
+    inline HermiteSum operator*( const HermiteSum& a , const double      b ) 
+    { return a.__mult__  ( b ) ; }    
+    inline HermiteSum operator*( const double      b , const HermiteSum& a )
+    { return a.__mult__  ( b ) ; }
+    inline HermiteSum operator/( const HermiteSum& a , const double      b ) 
+    { return a.__div__   ( b ) ; }    
+    // ========================================================================
   } //                                             end of namespace Gaudi::Math
   // ==========================================================================
 } //                                                     end of namespace Gaudi

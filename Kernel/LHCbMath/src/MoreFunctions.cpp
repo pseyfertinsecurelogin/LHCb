@@ -6,6 +6,7 @@
 // ============================================================================
 #include <cmath>
 #include <climits>
+#include <complex>
 #include <cassert>
 // ============================================================================
 // LHCbMath
@@ -17,10 +18,13 @@
 // GSL 
 // ============================================================================
 #include "gsl/gsl_sf_hyperg.h"
+#include "gsl/gsl_sf_gamma.h"
+#include "gsl/gsl_sf_psi.h"
 // ============================================================================
 // Local
 // ============================================================================
 #include "GSL_sentry.h"
+#include "Faddeeva.hh"
 // ============================================================================
 /** @file
  *  implementation file for function from file LHCbMath/MoreFunctions.h
@@ -622,6 +626,167 @@ double Gaudi::Math::kummer
   //
   return result.val ;
 }
+// ============================================================================
+/*  scaled complementary error function 
+ *  \f$ 1 -  erf (x) = e^{-x^2} erfcx(x)  \f$ 
+ *  @param x  the argument 
+ *  @return the value of the scaled complementary error function 
+ *  @attention  overflow happens for x<-26.6
+ *  The actual implementation is copied from http://ab-initio.mit.edu/Faddeeva
+ *  @see http://ab-initio.mit.edu/Faddeeva
+ *  @see https://en.wikipedia.org/wiki/Error_function
+ *  @see https://en.wikipedia.org/wiki/Faddeeva_function
+ */
+// ============================================================================
+double Gaudi::Math::erfcx ( const double x ) { return Faddeeva::erfcx ( x ) ; }
+// ============================================================================
+/*  scaled complementary error function 
+ *  \f$ 1 -  erf (x) = e^{-x^2} erfcx(x)  \f$ 
+ *  @param x  the argument 
+ *  @return the value of the scaled complementary error function 
+ *  @attention  overflow happens for x<-26.6
+ *  The actual implementation is copied from http://ab-initio.mit.edu/Faddeeva
+ *  @see http://ab-initio.mit.edu/Faddeeva
+ *  @see https://en.wikipedia.org/wiki/Error_function
+ *  @see https://en.wikipedia.org/wiki/Faddeeva_function
+ */
+// ============================================================================
+std::complex<double> 
+Gaudi::Math::erfcx ( const std::complex<double>& x )
+{ return Faddeeva::erfcx ( x ) ; }
+// ============================================================================
+/*  compute Faddeeva "w" function:
+ *  w(z) = exp(-z^2) erfc(-iz) [ Faddeeva / scaled complex error func ]
+ *  @return the value of the scaled complementary error function 
+ *  The actual implementation is copied from http://ab-initio.mit.edu/Faddeeva
+ *  @see http://ab-initio.mit.edu/Faddeeva
+ *  @see https://en.wikipedia.org/wiki/Error_function
+ *  @see https://en.wikipedia.org/wiki/Faddeeva_function
+ */
+// ============================================================================
+std::complex<double> 
+Gaudi::Math::faddeeva_w ( const std::complex<double>& x ) 
+{ return Faddeeva::w ( x ) ; }
+// ============================================================================
+/*  complex error function (the error function of complex arguments)
+ *  @param x  the argument 
+ *  @return the value of the coplmex error function 
+ *  The actual implementation is copied from http://ab-initio.mit.edu/Faddeeva
+ *  @see http://ab-initio.mit.edu/Faddeeva
+ *  @see https://en.wikipedia.org/wiki/Error_function
+ *  @see https://en.wikipedia.org/wiki/Faddeeva_function
+ */
+// ============================================================================
+std::complex<double>
+Gaudi::Math::erf   ( const std::complex<double>& x ) 
+{ return Faddeeva::erf ( x ) ; }
+// ============================================================================
+/*  complementary complex error function 
+ *  \f$ 1 -  erf (x) = erfc(x)  \f$         
+ *  @param x  the argument 
+ *  @return the value of the complementary complex error function 
+ *  The actual implementation is copied from http://ab-initio.mit.edu/Faddeeva
+ *  @see http://ab-initio.mit.edu/Faddeeva
+ *  @see https://en.wikipedia.org/wiki/Error_function
+ *  @see https://en.wikipedia.org/wiki/Faddeeva_function
+ */
+// ============================================================================
+std::complex<double>  
+Gaudi::Math::erfc  ( const std::complex<double>& x ) 
+{ return Faddeeva::erfc ( x ) ; }
+// ============================================================================
+/*  compute sech fuction 
+ *  \$f f(x) = \frac{1}{\cosh x} = \frac{2}{ e^{x}+e^{-x} }\f$
+ *  @return the value of sech function 
+ */
+// ============================================================================
+double Gaudi::Math::sech ( const double x ) 
+{ return 700 < std::abs ( x )  ? 0.0 : 2.0 / ( std::exp(x)+std::exp(-x) ) ; }
+// ============================================================================
+/*  compute sech function 
+ *  \$f f(x) = \frac{1}{\cosh x} = \frac{2}{ e^{x}+e^{-x} }\f$
+ *  @return the value of sech function 
+ */
+// ============================================================================
+std::complex<double> Gaudi::Math::sech 
+( const std::complex<double>& x )
+{ return 700 < std::abs ( x.real() ) ? 
+    std::complex<double>(0,0) : 2.0 / ( std::exp(x)+std::exp(-x) ) ; }
+// ============================================================================
+/*  compute inverse Gamma function 
+ *  \$f f(x) = \frac{1}{\Gamma(x)}\f$
+ *  @return the value of inverse Gamma functions 
+ */
+// ============================================================================
+double Gaudi::Math::igamma ( const double x ) 
+{
+  if ( x > 170 || ( x<=0 && LHCb::Math::isint ( x ) ) ) { return 0 ; }  // RETURN 
+  // use GSL: 
+  Gaudi::Math::GSL::GSL_Error_Handler sentry ;
+  //
+  gsl_sf_result result ;
+  const int ierror = gsl_sf_gammainv_e ( x , &result ) ;
+  if ( ierror ) 
+  {
+    //
+    if      ( ierror == GSL_EDOM     ) // input domain error, e.g sqrt(-1)
+    { return std::numeric_limits<double>::quiet_NaN(); }
+    //
+    if ( ierror == GSL_ERANGE   ||    // output range error, e.g. exp(1e100)
+         ierror == GSL_EINVAL   ||    // invalid argument supplied by user
+         ierror == GSL_EUNDRFLW ||    // underflow
+         ierror == GSL_EOVRFLW  ||    // overflow
+         ierror == GSL_ELOSS    ||    // loss of accuracy
+         ierror == GSL_EROUND    )    // failed because of roundoff error
+    {}
+    else
+    {
+      gsl_error ( "Error from gsl_sf_gammainv_e" ,
+                  __FILE__ , __LINE__ , ierror ) ;
+    } 
+  }
+  //
+  return result.val ;
+}
+// ============================================================================
+/*  compute psi function 
+ *  \$f f(x) = \frac{d}{dx}\ln \Gamma(x)\f$
+ *  @return the value of psi function 
+ */
+// ============================================================================G
+double Gaudi::Math::psi ( const double x ) 
+{
+  //
+  // use GSL: 
+  Gaudi::Math::GSL::GSL_Error_Handler sentry ;
+  //
+  gsl_sf_result result ;
+  const int ierror = gsl_sf_psi_e ( x , &result ) ;
+  if ( ierror ) 
+  {
+    //
+    if      ( ierror == GSL_EDOM     ) // input domain error, e.g sqrt(-1)
+    { return std::numeric_limits<double>::quiet_NaN(); }
+    //
+    if ( ierror == GSL_ERANGE   ||    // output range error, e.g. exp(1e100)
+         ierror == GSL_EINVAL   ||    // invalid argument supplied by user
+         ierror == GSL_EUNDRFLW ||    // underflow
+         ierror == GSL_EOVRFLW  ||    // overflow
+         ierror == GSL_ELOSS    ||    // loss of accuracy
+         ierror == GSL_EROUND    )    // failed because of roundoff error
+    {}
+    else
+    {
+      gsl_error ( "Error from gsl_sf_psi_e" ,
+                  __FILE__ , __LINE__ , ierror ) ;
+    } 
+  }
+  //
+  return result.val ;
+}
+
+
+
 // ============================================================================
 // The END 
 // ============================================================================

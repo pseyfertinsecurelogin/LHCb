@@ -17,7 +17,7 @@ void VertexPacker::pack( const Data & vert,
                          PackedData & pvert,
                          PackedDataVector & pverts ) const
 {
-  if ( 1 == pverts.packingVersion() )
+  if ( isSupportedVer(pverts.packingVersion()) )
   {
     // technique
     pvert.technique = static_cast<int>( vert.technique() );
@@ -60,12 +60,6 @@ void VertexPacker::pack( const Data & vert,
     pvert.lastInfo = pverts.extras().size();
 
   }
-  else
-  {
-    std::ostringstream mess;
-    mess << "Unknown packed data version " << (int)pverts.packingVersion();
-    throw GaudiException( mess.str(), "VertexPacker", StatusCode::FAILURE );
-  }
 }
 
 void VertexPacker::pack( const DataVector & verts,
@@ -93,7 +87,7 @@ void VertexPacker::unpack( const PackedData       & pvert,
                            const PackedDataVector & pverts,
                            DataVector             & verts ) const
 {
-  if ( 1 == pverts.packingVersion() )
+  if ( isSupportedVer(pverts.packingVersion()) )
   {
     // technique
     vert.setTechnique( static_cast<Vertex::CreationMethod>(pvert.technique) );
@@ -134,13 +128,6 @@ void VertexPacker::unpack( const PackedData       & pvert,
     }
 
   }
-  else
-  {
-    std::ostringstream mess;
-    mess << "Unknown packed data version " << (int)pverts.packingVersion();
-    throw GaudiException( mess.str(), "VertexPacker", StatusCode::FAILURE );
-  }
-
 }
 
 void VertexPacker::unpack( const PackedDataVector & pverts,

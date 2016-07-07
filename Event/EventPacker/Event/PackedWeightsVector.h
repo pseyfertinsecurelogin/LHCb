@@ -1,7 +1,8 @@
-// $Id: PackedWeightsVector.h,v 1.5 2010-03-09 18:35:20 jonrob Exp $
+
 #ifndef EVENT_PackedWeightsVector_H
 #define EVENT_PackedWeightsVector_H 1
 
+// STL
 #include <string>
 
 // Kernel
@@ -13,6 +14,7 @@
 // Gaudi
 #include "GaudiKernel/DataObject.h"
 #include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/GaudiException.h"
 
 namespace LHCb
 {
@@ -51,7 +53,7 @@ namespace LHCb
   {
     unsigned short int firstWeight{0};  ///< index to first weight
     unsigned short int lastWeight{0};   ///< index to last weight
-    unsigned int pvKey{0};              ///< The PV Key
+    unsigned       int pvKey{0};        ///< The PV Key
   };
 
   // -----------------------------------------------------------------------
@@ -177,6 +179,19 @@ namespace LHCb
 
     /// Access the parent algorithm
     const GaudiAlgorithm& parent() const { return *(m_pack.parent()); }
+
+    /// Check if the given packing version is supported
+    bool isSupportedVer( const char& ver ) const
+    {
+      const bool OK = ( 1 == ver || 0 == ver );
+      if ( UNLIKELY(!OK) )
+      {
+        std::ostringstream mess;
+        mess << "Unknown packed data version " << (int)ver;
+        throw GaudiException( mess.str(), "WeightsVectorPacker", StatusCode::FAILURE );
+      }
+      return OK;
+    }
 
   private:
 

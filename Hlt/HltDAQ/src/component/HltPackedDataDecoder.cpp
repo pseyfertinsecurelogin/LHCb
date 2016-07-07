@@ -29,9 +29,9 @@ HltPackedDataDecoder::HltPackedDataDecoder(const std::string& name,
 
 template<typename PackedData>
 void HltPackedDataDecoder::register_object() {
-  using namespace std::placeholders;
-  m_loaders[PackedData::classID()] =
-    std::bind(&HltPackedDataDecoder::loadObject<PackedData>, this, _1);
+  m_loaders[PackedData::classID()] = [=](const std::string& s) {
+    return this->loadObject<PackedData>(s);
+  };
 }
 
 StatusCode HltPackedDataDecoder::initialize() {
@@ -92,11 +92,11 @@ StatusCode HltPackedDataDecoder::execute() {
 
   // Put the banks into the right order
   std::sort(
-    std::begin(rawBanks), std::end(rawBanks), 
-    [](const LHCb::RawBank* lhs, const LHCb::RawBank* rhs) { 
+    std::begin(rawBanks), std::end(rawBanks),
+    [](const LHCb::RawBank* lhs, const LHCb::RawBank* rhs) {
       auto l = HltPackedDataWriter::partID(lhs->sourceID());
       auto r = HltPackedDataWriter::partID(rhs->sourceID());
-      return l < r; 
+      return l < r;
     });
 
   // Check that the banks have sequential part IDs
@@ -158,7 +158,7 @@ StatusCode HltPackedDataDecoder::execute() {
       continue;
     }
     std::string containerPath = locationIt->second;
-    
+
     if (msgLevel(MSG::DEBUG)) {
       debug() << "Reading " << storedObjectSize << " bytes "
               << "for object with CLID " << classID << " into TES location "

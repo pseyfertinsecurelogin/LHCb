@@ -214,7 +214,7 @@ namespace Gaudi
       Bernstein __rmult__ ( const double value ) const ;
       /// Subtract a constant from Benrstein polynomial
       Bernstein __sub__   ( const double value ) const ;
-      /// Constant minus Benrstein polynomial
+      /// Constant minus Bernstein polynomial
       Bernstein __rsub__  ( const double value ) const ;
       /// Divide Benrstein polynomial by a constant 
       Bernstein __div__   ( const double value ) const ;
@@ -222,10 +222,28 @@ namespace Gaudi
       Bernstein __neg__   () const ;
       // ======================================================================
     public:
+      // ======================================================================      
+      /// Sum of Bernstein polynomials (with the same domain!)
+      Bernstein __add__   ( const Bernstein& other ) const ;
+      /// Subtract Bernstein polynomials (with the same domain!)
+      Bernstein __sub__   ( const Bernstein& other ) const ;
+      /// Multiply Bernstein polynomials (with the same domain!)
+      Bernstein __mult__  ( const Bernstein& other ) const ;
+      // ======================================================================
+    public:
       // ======================================================================
       /// get the underlying Bernstein polynomial  (self here)
       const Gaudi::Math::Bernstein& bernstein () const { return *this ; }
       // ======================================================================      
+    public:
+      // ======================================================================
+      /// the sum two Bernstein polynomials (with the same domain!)
+      Bernstein  sum      ( const Bernstein& other ) const ;
+      /// subtract Bernstein polynomials (with the same domain!)
+      Bernstein  subtract ( const Bernstein& other ) const ;
+      /// multiply Bernstein polynomials (with the same domain!)
+      Bernstein  multiply ( const Bernstein& other ) const ;
+      // ======================================================================
     public:
       // ======================================================================
       /// copy assignement  
@@ -260,6 +278,16 @@ namespace Gaudi
     inline Bernstein operator*( const double v , const Bernstein& p ) { return p *   v  ; }
     ///  Constant minus Bernstein 
     inline Bernstein operator-( const double v , const Bernstein& p ) { return v + (-p) ; }
+    // ========================================================================
+    ///  Bernstein plus     Bernstein (the same domain!) 
+    inline Bernstein operator+( const Bernstein& a , const Bernstein& b  ) 
+    { return a.sum      ( b ) ; } //  Bernstein plus     Bernstein 
+    ///  Bernstein minus    Bernstein (the same domain!) 
+    inline Bernstein operator-( const Bernstein& a , const Bernstein& b  ) 
+    { return a.subtract ( b ) ; } //  Bernstein subtract Bernstein 
+    ///  Bernstein multiply Bernstein (the same domain!) 
+    inline Bernstein operator*( const Bernstein& a , const Bernstein& b  ) 
+    { return a.multiply ( b ) ; } //  Bernstein multiply  Bernstein 
     // ========================================================================
     /** get the integral between low and high for a product of Bernstein
      *  polynom and the exponential function with the exponent tau
@@ -344,6 +372,56 @@ namespace Gaudi
     GAUDI_API double casteljau
     ( const std::vector<double>& pars , 
       const double               x    ) ;
+    // ========================================================================
+    /** Dual basic Bernstein function
+     *  The dual basic functions \f$ d^n_j(x)\f$ are dedeined as 
+     *   \f$  \int_{x_{min}}^{x_{max}}   b^n_k(x) d^n_j(x) = \delta_{kj}\f$, 
+     *   where \f$b^n_k(x)\f$ is basic Bernstein polynomial     
+     *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
+     *  @date 2016-07-03
+     */
+    class GAUDI_API BernsteinDualBasis 
+      : public std::unary_function<double,double>
+    {
+      // ======================================================================
+    public :
+      // ======================================================================
+      unsigned short k () const { return m_k                  ; }
+      unsigned short N () const { return m_bernstein.degree() ; }
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// constructor from the order
+      BernsteinDualBasis ( const unsigned short N     = 0 ,
+                           const unsigned short k     = 0 ) ;
+      /// copy constructor 
+      BernsteinDualBasis  ( const BernsteinDualBasis&  right ) ;
+      /// cconstructor 
+      BernsteinDualBasis  (       BernsteinDualBasis&& right ) ;
+      /// destructor 
+      ~BernsteinDualBasis () ;
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// calculate the value of dual bernstein function 
+      double operator() ( const double x ) const 
+      { return m_k <= N() ? m_bernstein ( x ) : 0.0 ; }
+      // ======================================================================
+    public:
+      // ======================================================================
+      ///  get the parameters 
+      double par ( const unsigned short i ) const { return m_bernstein.par( i ) ; }
+      ///  get all parameters 
+      const std::vector<double>& pars()     const { return m_bernstein.pars() ; }
+      // ======================================================================      
+    private:
+      // ======================================================================
+      /// the index 
+      unsigned short   m_k         ; // the index 
+      /// the actual bernstein polynomial
+      Bernstein        m_bernstein ; // the actual bernstein polynomial
+      // ======================================================================      
+    };
     // ========================================================================
     /** @class Positive
      *  The "positive" polynomial of order N
@@ -1180,8 +1258,7 @@ namespace Gaudi
     public:
       // ======================================================================
       /// get the value
-      double operator () ( const double x , const double y ) const 
-      { return m_bernstein ( x , y ) ; }
+      double operator () ( const double x , const double y ) const ;
       // ======================================================================
     public:
       // ======================================================================
@@ -1233,8 +1310,7 @@ namespace Gaudi
        *  @param yhigh high edge in y 
        */
       double integrateX ( const double y    , 
-                          const double xlow , const double xhigh ) const 
-      { return m_bernstein.integrateX ( y , xlow , xhigh ) ; }
+                          const double xlow , const double xhigh ) const ;
       // ======================================================================
       /** integral over x-dimension 
        *  \f[ \int_{x_low}^{x_high} \mathcal{B}(x,y) \mathrm{d}x\f] 
@@ -1243,8 +1319,7 @@ namespace Gaudi
        *  @param xhigh high edge in x 
        */
       double integrateY ( const double x    , 
-                          const double ylow , const double yhigh ) const 
-      { return m_bernstein.integrateY ( x , ylow , yhigh ) ; }
+                          const double ylow , const double yhigh ) const ;
       // ======================================================================
     public: // specific 
       // ======================================================================
@@ -1257,14 +1332,12 @@ namespace Gaudi
        *  \f[ \int_{x_{min}}^{x_{max}} \mathcal{B}(x,y) \mathrm{d}x\f] 
        *  @param x     variable 
        */
-      double integrateX ( const double y ) const 
-      { return m_bernstein.integrateX ( y ) ; }
+      double integrateX ( const double y ) const ;
       /** integral over y-dimension 
        *  \f[ \int_{y_{min}}^{y_{max}} \mathcal{B}(x,y) \mathrm{d}y\f] 
        *  @param y     variable 
        */
-      double integrateY ( const double x ) const 
-      { return m_bernstein.integrateY ( x ) ; }
+      double integrateY ( const double x ) const ;
       // ======================================================================
     public:
       // ======================================================================

@@ -46,6 +46,7 @@ StatusCode UnpackParticlesAndVertices::execute()
       getIfExists<LHCb::PackedTracks>( m_inputStream + LHCb::PackedTrackLocation::InStream );
     if ( ptracks )
     {
+      m_trackPacker.resetWrappingCounts();
       LHCb::Tracks * tracks = nullptr;
       for ( const LHCb::PackedTrack& ptrack : ptracks->tracks() )
       {
@@ -76,7 +77,8 @@ StatusCode UnpackParticlesAndVertices::execute()
         // Unpack the physics info
         m_trackPacker.unpack( ptrack, *track, *ptracks, *tracks );
 
-      }
+      } // loop over packed tracks
+
     }
     if ( msgLevel(MSG::DEBUG) )
     {

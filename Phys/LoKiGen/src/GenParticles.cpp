@@ -5,6 +5,7 @@
 // STD & STL
 // ============================================================================
 #include <cmath>
+#include <functional>
 // ============================================================================
 // GaudiKernel
 // ============================================================================
@@ -14,6 +15,7 @@
 // PartProp
 // ============================================================================
 #include "Kernel/Nodes.h"
+#include "Kernel/IParticlePropertySvc.h"
 // ============================================================================
 // LoKi
 // ============================================================================
@@ -31,6 +33,12 @@
 #include "LoKi/GenAlgs.h"
 #include "LoKi/GenOscillated.h"
 #include "LoKi/IGenDecay.h"
+// ============================================================================
+#include "LoKi/CmpBarCode.h"
+// ============================================================================
+// Boost
+// ============================================================================
+#include "boost/format.hpp"
 // ============================================================================
 /** @file
  *
@@ -1213,6 +1221,14 @@ LoKi::GenParticles::DecNode::operator()
     Error ( "HepMC::GenParticle* point to NULL, return false") ;
     return false ;
   }
+  //
+  if ( !m_node.valid() ) 
+  {
+    LoKi::ILoKiSvc* ls = lokiSvc() ;
+    SmartIF<LHCb::IParticlePropertySvc> ppSvc ( ls ) ;
+    StatusCode sc = m_node.validate ( ppSvc ) ;
+    Assert ( sc.isSuccess() , "Unable to validate the node!" ) ;
+  }
   // use the node for evaluation
   return m_node.node ( LHCb::ParticleID ( p->pdg_id() ) ) ;
 }
@@ -1225,6 +1241,30 @@ std::ostream& LoKi::GenParticles::DecNode::fillStream( std::ostream& s ) const
   return s << "GDECNODE( " << m_node << ")";
 }
 // ============================================================================
+
+// ============================================================================
+// constructor from the actual node
+// ============================================================================
+LoKi::GenParticles::LongLived::LongLived()
+  : LoKi::GenParticles::DecNode ( Decays::Nodes::LongLived_() ) 
+{}
+// ============================================================================
+// desctructor 
+// ============================================================================
+LoKi::GenParticles::LongLived::~LongLived(){}
+// ============================================================================
+// MANDATORY: clone method ("virtual constructor")
+// ============================================================================
+LoKi::GenParticles::LongLived*
+LoKi::GenParticles::LongLived::clone() const 
+{ return new LoKi::GenParticles::LongLived(*this) ;}
+// ============================================================================
+// OPTIONAL: the nice printout
+// ============================================================================
+std::ostream& LoKi::GenParticles::LongLived::fillStream( std::ostream& s ) const
+{ return s << "GLONGLIVED" ; }
+// ============================================================================
+
 namespace
 {
   // ==========================================================================
@@ -2015,6 +2055,39 @@ LoKi::GenParticles::IsNotAbsID::operator()
   return not_in_abs_list ( p->pdg_id() ) ;
 }
 // ============================================================================
+
+
+// ============================================================================
+// get unique string for HepMC::Particle 
+// ============================================================================
+std::string LoKi::GenParticles::hex_id ( const HepMC::GenParticle* particle ) 
+{
+  if ( 0 == particle ) { return "NULL" ; }
+  boost::format fmt ( "%p" ) ;
+  const void * p = particle ;
+  fmt % p ;
+  return fmt.str() ;
+}
+
+
+
+// ============================================================================
+namespace 
+{
+  // hashing function 
+  const std::hash<const void*> s_hash {} ;
+}
+// ============================================================================
+// get hash function for HepMC::GenParticle 
+// ============================================================================
+std::size_t LoKi::GenParticles::hash ( const HepMC::GenParticle* particle ) 
+{ return 0 == particle ? 0 : s_hash ( particle ) ; }
+// ============================================================================
+// get hash function for HepMC::GenVertex
+// ============================================================================
+std::size_t LoKi::GenParticles::hash ( const HepMC::GenVertex*   vertex ) 
+{ return 0 == vertex ? 0 : s_hash( vertex ) ; }
+
 
 
 // ============================================================================

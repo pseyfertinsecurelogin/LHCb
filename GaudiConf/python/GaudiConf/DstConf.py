@@ -15,7 +15,7 @@ from Configurables   import LHCbConfigurableUser
 from Configurables   import RawEventFormatConf
 from SimConf  import SimConf
 from DigiConf import DigiConf
-from GaudiConf.PersistRecoConf import PersistRecoPacking
+from TurboConf import TurboConf
 
 
 class DummyWriter(LHCbConfigurableUser):
@@ -63,7 +63,8 @@ class DstConf(LHCbConfigurableUser):
         CaloDstPackConf    ,
         CaloDstUnPackConf  ,
         SimConf            ,
-        DigiConf
+        DigiConf,
+        TurboConf,
         ]
 
     KnownSimTypes       = ['None','Minimal','Full']
@@ -175,19 +176,7 @@ class DstConf(LHCbConfigurableUser):
                 SimConf().addMCVertices(writer,eventLocations)
 
                 if self.getProp('Turbo'):
-                    writer.OptItemList += [
-                            "/Event/Turbo/pPhys/Particles#99"
-                            ,"/Event/Turbo/pPhys/Vertices#99"
-                            ,"/Event/Turbo/pPhys/RecVertices#99"
-                            ,"/Event/Turbo/pPhys/Relations#99"
-                            ,"/Event/Turbo/pPhys/PP2MCPRelations#99"
-                            ,"/Event/Turbo/pRec/Track/Custom#99"
-                            ,"/Event/Turbo/pRec/Muon/CustomPIDs#99"
-                            ,"/Event/Turbo/pRec/Rich/CustomPIDs#99"
-                            ,"/Event/Turbo/pRec/neutrals/Clusters#99"
-                            ,"/Event/Turbo/pRec/neutrals/Hypos#99"
-                            ,"/Event/Turbo/pRec/ProtoP/Custom#99"
-                            ]
+                    writer.OptItemList += TurboConf.optItemList()
 
                 if sType == "Full":
 
@@ -414,53 +403,7 @@ class DstConf(LHCbConfigurableUser):
             DataOnDemandSvc().AlgMap[ "/Event/Rec/Track/FittedHLT1VeloTracks" ] = unpackFittedVeloTracks
 
         if self.getProp("Turbo"):
-            # Hlt persisted reconstruction
-            packing = PersistRecoPacking()
-            unpackers = packing.unpackers()
-
-            from Configurables import DataPacking__Unpack_LHCb__CaloClusterPacker_ as UnpackCaloClusters
-            clustersRep = UnpackCaloClusters(
-                name="UnpackCaloClustersRep",
-                InputName="/Event/Turbo/pRec/neutral/Clusters",
-                OutputName="Turbo/CaloClusters")
-            from Configurables import UnpackCaloHypo as UnpackCaloHypos
-            hyposRep = UnpackCaloHypos(
-                name="UnpackCaloHyposRep",
-                InputName="/Event/Turbo/pRec/neutral/Hypos",
-                OutputName="Turbo/CaloHypos")
-            unpackers += [clustersRep, hyposRep]
-
-            for alg in unpackers:
-                DataOnDemandSvc().AlgMap[alg.OutputName] = alg
-
-            # Make Turbo data look like Rec
-            from Configurables import TESMerger_LHCb__ProtoParticle_ as TESMergerProtoParticle
-            from Configurables import Gaudi__DataLink as DataLink
-            mergedProtos = TESMergerProtoParticle("MergeProtos")
-            mergedProtos.inputLocations = [
-                packing.outputs["Hlt2LongProtos"],
-                packing.outputs["Hlt2DownstreamProtos"],
-            ]
-            mergedProtos.outputLocation = '/Event/Hlt2/Protos/Charged'
-            gdl = DataLink('HltRecProtos',
-                           What='/Event/Hlt2/Protos/Charged',
-                           Target='/Event/Rec/ProtoP/Charged')
-            recProtos = GaudiSequencer("TurboProtosAsRec")
-            recProtos.Members = [mergedProtos, gdl]
-
-            gdl_neutral = DataLink('HltRecNeutralProtos',
-                                   What=packing.outputs["Hlt2NeutralProtos"],
-                                   Target='/Event/Rec/ProtoP/Neutral')
-            recNeutralProtos = GaudiSequencer("TurboNeutralProtosAsRec")
-            recNeutralProtos.Members = [gdl_neutral]
-
-            DataOnDemandSvc().AlgMap["Rec/ProtoP/Charged"] = recProtos
-            DataOnDemandSvc().AlgMap["Rec/ProtoP/Neutral"] = recNeutralProtos
-
-            gdl_pv = DataLink('HltRec_PV',
-                              What='/Event/Turbo/Primary',
-                              Target='/Event/Rec/Vertex/Primary')
-            DataOnDemandSvc().AlgMap["Rec/Vertex/Primary"] = gdl_pv
+            self.setOtherProps(TurboConf(), ["DataType"])
 
         if "Tracking" in self.getProp("EnableUnpack") : return # skip the rest
 

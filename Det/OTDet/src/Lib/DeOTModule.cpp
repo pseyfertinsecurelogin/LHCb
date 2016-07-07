@@ -431,7 +431,7 @@ StatusCode DeOTModule::cacheInfo()
     for(int i=0; i<6; ++i) monoDx.push_back( m_monoDx[parmap[i]] ) ;
   } else {
     MsgStream msg( msgSvc(), name() );
-    msg << MSG::ERROR << "Cannot handle monolayeralignment vector of size: " << m_monoDx.size() << endreq ;
+    msg << MSG::ERROR << "Cannot handle monolayeralignment vector of size: " << m_monoDx.size() << endmsg ;
     return StatusCode::FAILURE ;
   }
 

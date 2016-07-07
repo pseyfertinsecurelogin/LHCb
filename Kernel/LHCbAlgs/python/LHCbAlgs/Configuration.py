@@ -27,6 +27,7 @@ class LHCbApp(LHCbConfigurableUser):
        ,"XMLSummary"    : None
        ,"Persistency"   : None
        ,"IgnoreDQFlags" : True
+       ,"OnlineMode"    : False
         }
 
     _propertyDocDct = {
@@ -45,6 +46,7 @@ class LHCbApp(LHCbConfigurableUser):
        ,'XMLSummary'  : """ Add an XML summary file, default None """
        ,'Persistency'  : """ Overwrite the default persistency with something else. """
        ,'IgnoreDQFlags': """ If False, process only events with good DQ. Default is True (process all events)"""
+       ,'OnlineMode'  : """ Set to True for online jobs like monitoring. Default is False """
        }
     
     __used_configurables__ = [ DDDBConf, XMLSummary ]
@@ -119,7 +121,7 @@ class LHCbApp(LHCbConfigurableUser):
     
     def defineDB(self):
         # Delegate handling of properties to DDDBConf
-        self.setOtherProps( DDDBConf(), ["Simulation", "DataType" ] )
+        self.setOtherProps( DDDBConf(), ["Simulation", "DataType", "OnlineMode"] )
         # Set CondDB tags if given, otherwise use default defined in DDDBConf
         from Configurables import CondDB
         if hasattr( self, "DDDBtag" ):
@@ -215,6 +217,9 @@ class LHCbApp(LHCbConfigurableUser):
         persistency=None
         if hasattr( self, "Persistency" ):
             persistency=self.getProp("Persistency")
+        if self.isPropertySet("OnlineMode"):
+            if self.getProp("OnlineMode"):
+                persistency = "MDF"
         # Set up TES and I/O services
         from GaudiConf.IOHelper import IOHelper
         IOHelper(persistency,persistency).setupServices()

@@ -9,11 +9,6 @@
 *    @author Matthew Needham
 */
 
-// Boost
-#include <boost/lambda/bind.hpp>
-#include <boost/lambda/lambda.hpp>
-
-using namespace boost::lambda;
 using namespace LHCb;
 
 DeITLadder::DeITLadder( const std::string& name ) :

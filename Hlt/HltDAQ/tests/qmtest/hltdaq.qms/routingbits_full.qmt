@@ -1,0 +1,22 @@
+<?xml version="1.0" ?><!DOCTYPE extension  PUBLIC '-//QM/2.3/Extension//EN'  'http://www.codesourcery.com/qm/dtds/2.3/-//qm/2.3/extension//en.dtd'>
+<extension class="GaudiTest.GaudiExeTest" kind="test">
+  <argument name="program"><text>python</text></argument>
+  <argument name="args"><set>
+    <text>$HLTDAQROOT/tests/options/test_rb.py</text>
+    <text>--stream=full</text>
+    <text>HltDAQ-routingbits_full</text>
+  </set></argument>
+  <argument name="validator"><text>
+
+# Author: Roel Aaij
+# Purpose: Check if routing bits are reproduced
+
+countErrorLines({"FATAL" : 0, "ERROR" : 0, "WARNING" : 0})
+
+expected_string= &quot;PASSED&quot;
+if stdout.find(expected_string) == -1:
+    causes.append('missing string')
+    result['hltdaq.routingbits_full.expected_string'] = result.Quote(expected_string)
+
+</text></argument>
+</extension>

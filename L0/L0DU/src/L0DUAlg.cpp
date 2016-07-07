@@ -25,8 +25,8 @@ DECLARE_ALGORITHM_FACTORY( L0DUAlg )
 // Standard constructor, initializes variables
 //=============================================================================
 L0DUAlg::L0DUAlg( const std::string& name,
-            ISvcLocator* pSvcLocator)
-  : L0AlgBase ( name , pSvcLocator ) 
+                  ISvcLocator* pSvcLocator)
+: L0AlgBase ( name , pSvcLocator ) 
   , m_config(0)
   , m_confTool(0)
   , m_emulator(0)

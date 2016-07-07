@@ -158,11 +158,17 @@ public:
     (void)list;
   }
 
+  /// Function called by serializable object save/load methods.
+  template<typename Persisted, typename Transient>
+  void io(Transient&) {
+    m_offsets.push_back(m_offsets.back() + sizeof(Persisted));
+  }
+
 private:
   /// Implementation of the io() function for single argument.
   template<typename T>
-  void io_impl(T x) {
-    m_offsets.push_back(m_offsets.back() + sizeof(x));
+  void io_impl(T&) {
+    m_offsets.push_back(m_offsets.back() + sizeof(T));
   }
   /// Offsets in bytes of the class fields
   std::vector<unsigned int> m_offsets{0};
@@ -196,18 +202,35 @@ public:
     auto list = {(io_impl(args),1)...};
     (void)list;
   }
-  
+
+  /// Function called by serializable object save/load methods.
+  template<typename Persisted, typename Transient>
+  void io(Transient& x) {
+    io_impl<Persisted, Transient>(x);
+  }
+
 private:
+  /// Get the offset of the next member to be saved/loaded.
+  inline std::size_t offset(std::size_t size) const {
+    auto memberIndex = m_index % m_nmembers;
+    auto arrayIndex = m_index / m_nmembers;
+    return m_offsets[memberIndex] + size * arrayIndex;
+  }
+
   /// Implementation of the io() function for single argument.
   template<typename T>
   void io_impl(T& x) {
-    auto memberIndex = m_index % m_nmembers;
-    auto arrayIndex = m_index / m_nmembers;
-    auto offset = m_offsets[memberIndex] + sizeof(x) * arrayIndex;
-    m_buffer->ioAt(x, m_pos + offset);
+    m_buffer->ioAt(x, m_pos + offset(sizeof(T)));
     ++m_index;
   }
-  
+
+  /// Implementation of the io() function for single argument.
+  template<typename Persisted, typename Transient>
+  void io_impl(Transient& x) {
+    m_buffer->template ioAt<Persisted, Transient>(x, m_pos + offset(sizeof(Persisted)));
+    ++m_index;
+  }
+
   Buffer* m_buffer; ///< Main buffer
   std::size_t m_pos; ///< Position in main buffer where to save/load the SOA data
   std::size_t m_nmembers; ///< Number of fields in the structure
@@ -343,6 +366,18 @@ public:
   /// Load an object from a given position.
   template<typename T> void ioAt(T& x, std::size_t i) { loadAt(x, i); }
 
+  /// Function called by serializable objects' load method.
+  template<typename Persisted, typename Transient>
+  void io(Transient& x) {
+    x = load<Persisted>();  // conversion happens here!
+  }
+
+  /// Load an object from a given position and convert it.
+  template<typename Persisted, typename Transient>
+  void ioAt(Transient& x, std::size_t i) {
+    x = loadAt<Persisted>(i);  // conversion happens here!
+  }
+
   // ===========================================================================
   // Dealing with scalars
   // ===========================================================================
@@ -363,6 +398,13 @@ public:
   T load() {
     T x;
     m_buffer.read(x);
+    return x;
+  }
+  /// Load a scalar from a given position and return it.
+  template<typename T>
+  T loadAt(std::size_t i) {
+    T x;
+    m_buffer.read(x, i);
     return x;
   }
   /// Load a size integer and return it.
