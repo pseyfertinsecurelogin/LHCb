@@ -4,7 +4,7 @@
 
 // Include files
 // from Gaudi
-#include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiAlg/Transformer.h"
 #include "DAQKernel/DecoderAlgBase.h"
 
 
@@ -14,22 +14,15 @@
  *  @author Olivier Callot
  *  @date   2012-05-11
  */
-class FTRawBankDecoder : public Decoder::AlgBase {
-public: 
+struct FTRawBankDecoder : Gaudi::Functional::Transformer<
+   FastClusterContainer<LHCb::FTLiteCluster,int>( const LHCb::RawEvent& )
+>
+{
   /// Standard constructor
   FTRawBankDecoder( const std::string& name, ISvcLocator* pSvcLocator );
 
-  ~FTRawBankDecoder( ) override = default; ///< Destructor
-
-  StatusCode execute() override; ///< Algorithm execution
-
-
-private:
-  
-  std::string m_outputClusterLocation;
-
-  std::unique_ptr<FastClusterContainer<LHCb::FTLiteCluster,int>>
-  operator()(const std::vector<LHCb::RawBank*>& banks) const;
+  FastClusterContainer<LHCb::FTLiteCluster,int>
+  operator()(const LHCb::RawEvent& rawEvent) const override;
 
 };
 #endif // FTRAWBANKDECODER_H

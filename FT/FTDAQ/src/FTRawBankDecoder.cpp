@@ -3,8 +3,8 @@
 // from Gaudi
 #include "Event/FTLiteCluster.h"
 #include "Event/FTCluster.h"
-
 #include "Event/RawEvent.h"
+#include "GaudiAlg/FunctionalUtilities.h"
 
 // local
 #include "FTRawBankDecoder.h"
@@ -42,41 +42,25 @@ StatusCode retrieveModuleMat(int quartSipmNb, int quarter, unsigned &locmod, uns
 //=============================================================================
   FTRawBankDecoder::FTRawBankDecoder( const std::string& name,
                                       ISvcLocator* pSvcLocator)
-: Decoder::AlgBase ( name , pSvcLocator )
-{
-  //new for decoders, initialize search path, and then call the base method
-  m_rawEventLocations = {LHCb::RawEventLocation::Other, LHCb::RawEventLocation::Default};
-  initRawEventSearch();
-  declareProperty("OutputLocation",m_outputClusterLocation=LHCb::FTLiteClusterLocation::Default,"Output location for clusters");
-
-}
+: Transformer ( name ,
+                pSvcLocator,
+                { KeyValue{ "RawEventLocations",
+                            Gaudi::Functional::concat_alternatives( { LHCb::RawEventLocation::Other,
+                                                                      LHCb::RawEventLocation::Default } )
+                          } },
+                KeyValue{ "OutputLocation", LHCb::FTLiteClusterLocation::Default } )
+{ }
 
 //=============================================================================
 // Main execution
 //=============================================================================
-StatusCode FTRawBankDecoder::execute() {
 
-  if ( msgLevel(MSG::DEBUG) ) debug() << "==> Execute" << endmsg;
-
-  // Retrieve the RawEvent:
-  LHCb::RawEvent* rawEvent = findFirstRawEvent();
-
-  if ( !rawEvent ) {
-    if( msgLevel( MSG::DEBUG ) )
-      debug() << "Raw Event not found in " << m_rawEventLocations << endmsg;
-    return StatusCode::SUCCESS;
-  }
-
-  auto clus = (*this)( rawEvent->banks(LHCb::RawBank::FTCluster) );
-  if (!clus) return StatusCode::FAILURE;
-  put( clus.release(), m_outputClusterLocation);
-  return StatusCode::SUCCESS;
-}
-
-std::unique_ptr<FastClusterContainer<LHCb::FTLiteCluster,int>>
-FTRawBankDecoder::operator()(const std::vector<LHCb::RawBank*>& banks) const
+FastClusterContainer<LHCb::FTLiteCluster,int>
+FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
 {
-  std::unique_ptr<FastClusterContainer<LHCb::FTLiteCluster,int>> clus{ new FastClusterContainer<LHCb::FTLiteCluster,int>() };
+  const auto& banks = rawEvent.banks(LHCb::RawBank::FTCluster);
+
+  FastClusterContainer<LHCb::FTLiteCluster,int> clus {};
 
   if ( msgLevel(MSG::DEBUG) ) debug() << "Number of raw banks " << banks.size() << endmsg;
 
@@ -89,11 +73,14 @@ FTRawBankDecoder::operator()(const std::vector<LHCb::RawBank*>& banks) const
     if ( msgLevel(MSG::DEBUG) ) debug() << "source " << source << " layer "
                                         << layer << " quarter "
                                         << quarter << " size " << size << endmsg;
+                                        
     if ( 1 != bank->version()  ) {
       error() << "** Unsupported FT bank version " << bank->version()
               << " for source " << source << " size " << size << " bytes."
               << endmsg;
-      return nullptr;
+      throw GaudiException("Unsupported FT bank version",
+                           "FTRawBankDecoder",
+                           StatusCode::FAILURE);
     }
 
     auto first = bank->begin<short int>();
@@ -106,7 +93,9 @@ FTRawBankDecoder::operator()(const std::vector<LHCb::RawBank*>& banks) const
       unsigned mat = 9;
 
       StatusCode sc = retrieveModuleMat(QuarterSiPMNber,quarter,module,mat);
-      if(UNLIKELY(sc.isFailure())) return nullptr;
+      if(UNLIKELY(sc.isFailure())) throw GaudiException("TODO: Describe this failure mode",
+                                                        "FTRawBankDecoder",
+                                                        StatusCode::FAILURE);
 
       unsigned mySiPM = QuarterSiPMNber & 15;
       int nClus  = ( sipmHeader & FTRawBank::nbClusMaximum );
@@ -115,10 +104,12 @@ FTRawBankDecoder::operator()(const std::vector<LHCb::RawBank*>& banks) const
                 << " size " << std::distance(first,last) << endmsg;
       if (UNLIKELY(nClus>std::distance(first,last))) {
         warning() << " inconsistent size of rawbank " << endmsg;
-        return nullptr;
+        throw GaudiException("Inconsistent size of rawbank",
+                             "FTRawBankDecoder",
+                             StatusCode::FAILURE);
       }
       std::transform( first, first+nClus,
-                      std::back_inserter(*clus),
+                      std::back_inserter(clus),
                       [&](short int c) -> LHCb::FTLiteCluster {
         int fraction = ( c >> FTRawBank::fractionShift ) & FTRawBank::fractionMaximum;
         unsigned cell     = ( c >> FTRawBank::cellShift     ) & FTRawBank::cellMaximum;
@@ -135,5 +126,6 @@ FTRawBankDecoder::operator()(const std::vector<LHCb::RawBank*>& banks) const
       first += nClus;
     }
   }
+  
   return clus;
 }
