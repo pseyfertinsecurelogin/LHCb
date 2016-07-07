@@ -253,6 +253,9 @@ class RichTools(RichConfigurableUser):
         elif type == "Fast":
             from Configurables import Rich__Rec__FastTrSegMakerFromRecoTracks
             tool = self.__makeRichTool( Rich__Rec__FastTrSegMakerFromRecoTracks, nickname, private )
+        elif type == "FlippedDetailed":
+            from Configurables import Rich__Rec__FlippedDetailedTrSegMakerFromRecoTracks
+            tool = self.__makeRichTool( Rich__Rec__FlippedDetailedTrSegMakerFromRecoTracks, nickname, private )
         elif type == "MCRichTracks":
             from Configurables import Rich__Rec__MC__TrSegMakerFromMCRichTracks
             tool = self.__makeRichTool( Rich__Rec__MC__TrSegMakerFromMCRichTracks, nickname, private )
