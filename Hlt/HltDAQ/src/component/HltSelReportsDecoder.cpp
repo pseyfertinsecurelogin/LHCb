@@ -61,6 +61,8 @@ HltSelReportsDecoder::HltSelReportsDecoder( const std::string& name,
 // Initialize
 //=============================================================================
 StatusCode HltSelReportsDecoder::initialize() {
+  auto sc = HltRawBankDecoderBase::initialize();
+  if (!sc) return sc;
   // Initialise the converter tool
   m_conv = tool<IReportConvert>("ReportConvertTool", this );
   return m_conv ? StatusCode::SUCCESS 
