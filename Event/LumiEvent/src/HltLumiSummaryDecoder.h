@@ -4,7 +4,8 @@
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
-#include "DAQKernel/DecoderAlgBase.h"
+#include "GaudiAlg/TransformAlgorithm.h"
+#include "Event/HltLumiSummary.h"
 // std
 #include <string>
 
@@ -17,7 +18,9 @@
  *  @date   2008-08-01
  */
 
-class HltLumiSummaryDecoder : public Decoder::AlgBase {
+// HenryIII Changed to use Transform Algorithm
+
+class HltLumiSummaryDecoder : public TransformAlgorithm<LHCb::HltLumiSummary(const LHCb::RawEvent&)> {
 public: 
   /// Standard constructor
   HltLumiSummaryDecoder(  const std::string& name, ISvcLocator* pSvcLocator );
@@ -26,7 +29,7 @@ public:
   virtual ~HltLumiSummaryDecoder( ) ; ///< Destructor
   
   virtual StatusCode initialize();    ///< Algorithm initialization
-  virtual StatusCode execute   ();    ///< Algorithm execution
+  LHCb::HltLumiSummary operator() (const LHCb::RawEvent& event) const override;    ///< Algorithm execution
   virtual StatusCode finalize  ();    ///< Algorithm finalization
   
 protected:
@@ -36,8 +39,8 @@ private:
   std::string m_OutputContainerName;
 
   // Statistics  
-  double m_totDataSize;
-  int m_nbEvents;
+  mutable double m_totDataSize;
+  mutable int m_nbEvents;
 
 };
 
