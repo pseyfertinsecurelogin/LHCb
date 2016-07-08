@@ -57,7 +57,6 @@ StatusCode HltLumiSummaryDecoder::initialize()
 //=============================================================================
 HltLumiSummary HltLumiSummaryDecoder::operator() (const RawEvent& event) const {
 
-  std::cout << "Running HENRYIII" << std::endl;
   if ( msgLevel( MSG::DEBUG ) ) debug() << "==> Execute" << endmsg;
   
   // This should not exist already
