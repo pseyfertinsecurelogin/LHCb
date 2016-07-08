@@ -36,7 +36,7 @@ namespace {
          // stage:     0x        e                   xxx0
          // id:        0xffff 0000
     struct v0_v1 {
-        HltDecReport convert( unsigned int x )  {
+        HltDecReport convert( unsigned int x )  const {
          // ID & decision stay the same
          unsigned int temp = ( x &   0xffff0001 );
          // stage needs to be moved
@@ -51,7 +51,7 @@ namespace {
     };
 
     struct vx_vx {
-        HltDecReport convert( unsigned int x )  { return HltDecReport(x); }
+        HltDecReport convert( unsigned int x ) const { return HltDecReport(x); }
     };
 
 }
@@ -134,9 +134,9 @@ template <typename HDRConverter, typename I, typename Table>
 int HltDecReportsDecoder::decodeHDR(I i, I end,  HltDecReports& output, const Table& table ) const 
 {
    int ret = 0;
-   HDRConverter converter;
+   const HDRConverter converter{};
    while ( i != end ) {
-    HltDecReport dec(  converter.convert(*i++)  );
+    auto dec = converter.convert(*i++);
     auto isel = table.find( dec.intDecisionID() );
     if ( isel == std::end(table) ) { // oops missing.
       Error( std::string{ " No string key found for trigger decision in storage id = "} + std::to_string(dec.intDecisionID()),

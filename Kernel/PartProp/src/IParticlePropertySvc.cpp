@@ -1,4 +1,3 @@
-// $Id$
 // ============================================================================
 // Include files
 // ============================================================================
@@ -12,33 +11,24 @@
 #include "Kernel/ParticleProperty.h"
 #include "Kernel/IParticlePropertySvc.h"
 // ============================================================================
-// Boost
-// ============================================================================
-#include "boost/lambda/lambda.hpp"
-#include "boost/lambda/bind.hpp"
-// ============================================================================
 /** @file
  *  Implementation file for class LHCb::IParticlePropertySvc
  *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
- *  @date 2008-08-03 
+ *  @date 2008-08-03
  */
 // ============================================================================
-// virtual destructor
-// ============================================================================
-LHCb::IParticlePropertySvc::~IParticlePropertySvc() = default; // destructor
-// ============================================================================
-/* helper utility for mapping of LHCb::ParticleProperty object into 
- *  non-negative integral sequential identifier 
+/* helper utility for mapping of LHCb::ParticleProperty object into
+ *  non-negative integral sequential identifier
  *
- *  This appears to be useful operation, but since it is 
+ *  This appears to be useful operation, but since it is
  *  "pure technical" it does not appear as interface method.
  *
- *  For invalid/missing property and/or  service 
- *  <c>0</c> is returned. The valid result is always 
+ *  For invalid/missing property and/or  service
+ *  <c>0</c> is returned. The valid result is always
  *  satisfy the condition: <c> index <= service->size() </c>
- *  
- *  @param property the property to be mapped 
- *  @param service the service 
+ *
+ *  @param property the property to be mapped
+ *  @param service the service
  *  @return the sequential non-negative index
  *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
  *  @date   2008-08-03
@@ -53,25 +43,25 @@ size_t LHCb::ParticleProperties::index
   auto first = service -> begin () ;
   auto last  = service -> end   () ;
   // start the binary_search
-  static const LHCb::ParticleProperty::Compare cmp = LHCb::ParticleProperty::Compare() ;
+  static constexpr auto cmp = LHCb::ParticleProperty::Compare() ;
   auto ifind = std::lower_bound ( first , last , property , cmp ) ;
   return
     last != ifind && !cmp ( *ifind, property ) ?  (ifind-first+1) : 0 ;
 }
 // ============================================================================
-/* helper utility for mapping of LHCb::ParticleID object into 
- *  non-negative integral sequential identifier 
+/* helper utility for mapping of LHCb::ParticleID object into
+ *  non-negative integral sequential identifier
  *
- *  This appears to be useful operation, but since it is 
+ *  This appears to be useful operation, but since it is
  *  "pure technical" it does not appear as interface method.
  *
- *  For invalid/missing PID and/or  service 
- *  <c>0</c> is returned. The valid result is always 
+ *  For invalid/missing PID and/or  service
+ *  <c>0</c> is returned. The valid result is always
  *  satisfy the condition: <c> index <= service->size() </c>
- *  
- *  @param pid the object to be mapped 
- *  @param service the service 
- *  @return the sequential non-negative index 
+ *
+ *  @param pid the object to be mapped
+ *  @param service the service
+ *  @return the sequential non-negative index
  *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
  *  @date   2008-08-03
  */
@@ -80,24 +70,24 @@ size_t LHCb::ParticleProperties::index
 ( const LHCb::ParticleID&           pid      ,
   const LHCb::IParticlePropertySvc* service  )
 {
-  if ( 0 == service ) { return 0 ; }               // RETURN
+  if ( !service ) { return 0 ; }               // RETURN
   // ==========================================================================
   const LHCb::ParticleProperty* pp = service->find ( pid ) ;
-  return 0 == pp ? 0 : LHCb::ParticleProperties::index ( pp , service ) ;
+  return pp ? LHCb::ParticleProperties::index ( pp , service ) : 0 ;
 }
 // ============================================================================
-/* the inverse mapping of the integer sequential number onto 
+/* the inverse mapping of the integer sequential number onto
  *  LHCb::ParticleID object
  *
- *  This appears to be useful operation, but since it is 
+ *  This appears to be useful operation, but since it is
  *  "pure technical" it does not appear as interface method.
  *
- *  For invalid/missing PID and/or  service 
+ *  For invalid/missing PID and/or  service
  *  <c>NULL</c> is returned.
- *  
- *  @param pid the object to be mapped 
- *  @param service the service 
- *  @return the sequential non-negative index 
+ *
+ *  @param pid the object to be mapped
+ *  @param service the service
+ *  @return the sequential non-negative index
  *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
  *  @date   2008-08-03
  */
@@ -107,27 +97,27 @@ LHCb::ParticleProperties::particle
 ( const size_t                      index    ,
   const LHCb::IParticlePropertySvc* service  )
 {
-  if (  0 == index || 0 == service ) { return 0 ; }                 // RETURN
+  if (  0 == index || !service ) { return nullptr ; }                 // RETURN
   // get the iterators from the service
-  LHCb::IParticlePropertySvc::iterator first = service -> begin () ;
-  LHCb::IParticlePropertySvc::iterator last  = service -> end   () ;
+  auto first = service -> begin () ;
+  auto last  = service -> end   () ;
   if ( index > (size_t) std::distance ( first , last ) ) { return 0 ; } // RETURN
   std::advance ( first , index - 1 ) ;
   return *first ;                                                   // RETURN
 }
 // ============================================================================
-/*  the inverse mapping of the integer sequential number onto 
+/*  the inverse mapping of the integer sequential number onto
  *  LHCb::ParticleID object
  *
- *  This appears to be useful operation, but since it is 
+ *  This appears to be useful operation, but since it is
  *  "pure technical" it does not appear as interface method.
  *
- *  For invalid/missing index and/or  service 
- *  <c>LHCb::ParticleID()</c> is returned. 
- *  
+ *  For invalid/missing index and/or  service
+ *  <c>LHCb::ParticleID()</c> is returned.
+ *
  *  @param pid the object to be mapped
  *  @param service the service
- *  @return the sequential non-negative index 
+ *  @return the sequential non-negative index
  *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
  *  @date   2008-08-03
  */
@@ -136,19 +126,18 @@ const LHCb::ParticleID LHCb::ParticleProperties::particleID
 ( const size_t                      index    ,
   const LHCb::IParticlePropertySvc* service  )
 {
-  if ( 0 == index || 0 == service ) { return LHCb::ParticleID() ; }   // RETURN
+  if ( 0 == index || !service ) { return LHCb::ParticleID() ; }   // RETURN
   const LHCb::ParticleProperty* pp =
     LHCb::ParticleProperties::particle ( index , service ) ;
-  if ( 0 == pp ) { return LHCb::ParticleID() ; }
-  return pp->particleID () ;
+  return pp ? pp->particleID () : LHCb::ParticleID() ;
 }
 // ============================================================================
-/* mapping by pythiaID 
- *  
- *  @code 
- * 
+/* mapping by pythiaID
+ *
+ *  @code
+ *
  *   const int pythiaID = ... ;
- * 
+ *
  *   const LHCb::IParticlePropertySvc* svc = ... ;
  *
  *   const LHCb::ParticleProeprty* pp = byPythiaID( pythiaID , svc ) ;
@@ -169,40 +158,37 @@ LHCb::ParticleProperties::byPythiaID
 ( const int                         pythia ,
   const LHCb::IParticlePropertySvc* svc    )
 {
-  if ( 0 == svc ) { return 0 ; }
+  if ( !svc ) { return nullptr ; }
   // to be efficient
   // 1) try to use PDG-ID (fast, logarithmic search)
   const LHCb::ParticleProperty* pp =  svc->find ( LHCb::ParticleID ( pythia ) ) ;
   // 2) check the proper pythia ID
-  if ( 0 != pp && pythia == pp -> pythiaID () ) { return pp ; }       // RETURN
-  // 3) use thr resular (linear search)
-  const LHCb::IParticlePropertySvc::iterator begin = svc -> begin () ;
-  const LHCb::IParticlePropertySvc::iterator end   = svc -> end   () ;
-  LHCb::IParticlePropertySvc::iterator found =
-    std::find_if (  begin , end ,
-                    boost::lambda::bind ( &LHCb::ParticleProperty::pythiaID  ,
-                                          boost::lambda::_1 ) == pythia ) ;
+  if ( pp && pythia == pp -> pythiaID () ) { return pp ; }       // RETURN
+  // 3) use the resular (linear search)
+  auto begin = svc -> begin () ;
+  auto end   = svc -> end   () ;
+  auto found = std::find_if (  begin , end ,
+                    [&](const LHCb::ParticleProperty* pp) {
+                        return pp->pythiaID() == pythia; } );
   //
-  if ( end == found  ) { return 0 ; }
-  //
-  return *found ;
+  return found!=end ? *found : nullptr;
 }
 // ============================================================================
-/*  mapping by EvtGen-name 
- * 
+/*  mapping by EvtGen-name
+ *
  *  @code
  *
  *   const std::string& evtGen = ...
- * 
+ *
  *   const LHCb::IParticlePropertySvc* svc = ... ;
  *
  *   const LHCb::ParticleProperty* pp = byEvtGenName ( evtGen , svc ) ;
  *
- *  @endcode 
+ *  @endcode
  *
- *  @attention the method is not very efficient and should not be abused 
+ *  @attention the method is not very efficient and should not be abused
  *  @see LHCb::ParticleProperties::particle
- *  @param evtGen the particle naem in EvtGen-generator 
+ *  @param evtGen the particle naem in EvtGen-generator
  *  @param svc    pointer to particle property service
  *  @return the particle property for the given EvtGen-name
  *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
@@ -214,35 +200,33 @@ LHCb::ParticleProperties::byEvtGenName
 ( const std::string&                evtGen ,
   const LHCb::IParticlePropertySvc* svc    )
 {
-  if ( 0 == svc ) { return 0 ; }
+  if ( !svc ) { return nullptr ; }
   // to be more efficient:
   // 1) try to use the regualr name (fast, logarithmic search)
   const LHCb::ParticleProperty* pp =  svc->find ( evtGen ) ;
   // 2) check the proper evtgen name
-  if ( 0 != pp && evtGen == pp->evtGen() ) { return pp ; }       // RETURN
+  if ( pp && evtGen == pp->evtGen() ) { return pp ; }       // RETURN
   // 3) use the resular (linear search)
-  const LHCb::IParticlePropertySvc::iterator begin = svc -> begin () ;
-  const LHCb::IParticlePropertySvc::iterator end   = svc -> end   () ;
-  LHCb::IParticlePropertySvc::iterator found =
+  auto begin = svc -> begin () ;
+  auto end   = svc -> end   () ;
+  auto found =
     std::find_if (  begin , end ,
-                    boost::lambda::bind ( &LHCb::ParticleProperty::evtGen ,
-                                          boost::lambda::_1 ) == evtGen ) ;
+                    [&](const LHCb::ParticleProperty* pp) {
+                        return pp->evtGen() == evtGen; } );
   //
-  if ( end == found  ) { return 0 ; }
-  //
-  return *found ;
+  return found!=end ? *found : nullptr;
 }
 // ============================================================================
 /*  get all the properties at once
  *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
- *  @date   2008-08-03   
+ *  @date   2008-08-03
  */
 // ============================================================================
 LHCb::IParticlePropertySvc::ParticleProperties
 LHCb::ParticleProperties::allProperties
 ( const LHCb::IParticlePropertySvc* service )
 {
-  return ( 0 != service ) ?
+  return service ?
     LHCb::IParticlePropertySvc::ParticleProperties
     ( service->begin () , service->end() ) :
     LHCb::IParticlePropertySvc::ParticleProperties () ;
