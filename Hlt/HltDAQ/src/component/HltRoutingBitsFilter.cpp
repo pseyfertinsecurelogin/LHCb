@@ -1,13 +1,13 @@
 // Include files 
 #include <vector>
-#include "boost/algorithm/string/join.hpp"
 
 // from Gaudi
-#include "GaudiAlg/FilterAlgorithm.h"
+#include "GaudiAlg/FilterPredicate.h"
+#include "GaudiAlg/FunctionalUtilities.h"
 #include "Event/RawEvent.h" 
 #include "Event/RawBank.h" 
 
-class HltRoutingBitsFilter : public  FilterAlgorithm<bool(const LHCb::RawEvent&)>  {
+class HltRoutingBitsFilter : public Gaudi::Functional::FilterPredicate<bool(const LHCb::RawEvent&)>  {
 public: 
   HltRoutingBitsFilter( const std::string& name, ISvcLocator* pSvcLocator );
   StatusCode initialize() override;                      ///< Algorithm initialisation
@@ -16,12 +16,6 @@ private:
   std::vector<unsigned int> m_r,m_v;
   bool m_passOnError;
 };
-
-namespace {
-    std::string concat_alternatives(std::initializer_list<std::string> c) {
-       return boost::algorithm::join(c,"&");
-    }
-}
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : HltRoutingBitsFilter
@@ -37,10 +31,12 @@ DECLARE_ALGORITHM_FACTORY( HltRoutingBitsFilter )
 //=============================================================================
 HltRoutingBitsFilter::HltRoutingBitsFilter( const std::string& name,
                                         ISvcLocator* pSvcLocator)
-: FilterAlgorithm( name , pSvcLocator,
-                   { KeyValue{ "RawEventLocations",concat_alternatives( { LHCb::RawEventLocation::Trigger,
+: FilterPredicate( name , pSvcLocator,
+                   { KeyValue{ "RawEventLocations",
+                                Gaudi::Functional::concat_alternatives( { LHCb::RawEventLocation::Trigger,
                                                                           LHCb::RawEventLocation::Copied,
-                                                                          LHCb::RawEventLocation::Default } ) } }
+                                                                          LHCb::RawEventLocation::Default } )
+                             } }
                  )
 {
   declareProperty("VetoMask", m_v = std::vector<unsigned int>(3, 0x0));
@@ -52,7 +48,7 @@ HltRoutingBitsFilter::HltRoutingBitsFilter( const std::string& name,
 // Initialisation
 //=============================================================================
 StatusCode HltRoutingBitsFilter::initialize() {
-  StatusCode sc = FilterAlgorithm::initialize(); // must be executed first
+  StatusCode sc = FilterPredicate::initialize(); // must be executed first
   if (m_v.size()!=3) {
     return Error("Property VetoMask should contain exactly 3 unsigned integers");
   }
