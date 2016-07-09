@@ -1,7 +1,7 @@
 ################################################################################
 # Package: VectorClass
 ################################################################################
-gaudi_subdir(VectorClass v1r19)
+gaudi_subdir(VectorClass v1r22)
 
 gaudi_depends_on_subdirs(GaudiPolicy)
 
