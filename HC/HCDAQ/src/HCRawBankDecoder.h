@@ -23,9 +23,7 @@ class ODIN;
  */
 
 struct HCRawBankDecoderTraits {
-       using BaseClass = GaudiHistoAlg;
-       template <typename T> using InputHandle = DataObjectHandle<T>;
-       template <typename T> using OutputHandle = DataObjectHandle<T>;
+    using BaseClass = GaudiHistoAlg;
 };
 
 class HCRawBankDecoder : public Gaudi::Functional::MultiTransformer<std::tuple<LHCb::HCDigits,LHCb::HCDigits>(const LHCb::RawEvent&, const LHCb::ODIN&),
