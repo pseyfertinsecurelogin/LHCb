@@ -58,14 +58,13 @@ StatusCode HCRawBankDecoder::initialize() {
   for (unsigned int i = 0; i < 2; ++i) {
     const std::string name = "ErrorBanks/DiffBX/Crate" + std::to_string(i);
     const std::string title = "Crate " + std::to_string(i);
-    //@TODO:  m_hBxDiff.push_back(book1D(name, title, -20.5, 20.5, 41));
+    m_hBxDiff.push_back(book1D(name, title, -20.5, 20.5, 41));
     setAxisLabels(m_hBxDiff[i], "BX_{FE} - BX_{ODIN}", "Entries");
   }
-  //@TODO: fix me -- introduce book1D, book2D...
-  m_hLinkErrors = nullptr; //book2D("ErrorBanks/Links", "Errors",
-                         // -0.5, 1.5, 2, -0.5, 15.5, 16);
-  m_hTell1Errors = nullptr; // book2D("RawBanks/ErrorBitsTELL1", "Errors",
-                         // -0.5, 2.5, 3, -0.5, 1.5, 2);
+  m_hLinkErrors = book2D("ErrorBanks/Links", "Errors",
+                          -0.5, 1.5, 2, -0.5, 15.5, 16);
+  m_hTell1Errors = book2D("RawBanks/ErrorBitsTELL1", "Errors",
+                          -0.5, 2.5, 3, -0.5, 1.5, 2);
   TH2D* h = Gaudi::Utils::Aida2ROOT::aida2root(m_hLinkErrors);
   if (h) {
     TAxis* axis = h->GetYaxis();
@@ -109,10 +108,10 @@ std::tuple<LHCb::HCDigits,LHCb::HCDigits>
 HCRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent, const LHCb::ODIN& odin) const
 {
   // Create containers
-  std::tuple<LHCb::HCDigits,LHCb::HCDigits> d;
+  std::tuple<LHCb::HCDigits,LHCb::HCDigits> output;
 
-  auto& digits = std::get<0>(d);
-  auto& l0_digits = std::get<1>(d);
+  auto& digits = std::get<0>(output);
+  auto& l0_digits = std::get<1>(output);
 
   // Retrieve the HC raw banks.
   const auto& banks = rawEvent.banks(LHCb::RawBank::HC);
@@ -128,7 +127,7 @@ HCRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent, const LHCb::ODIN& o
     }
     const unsigned int source = bank->sourceID();
     const unsigned int version = bank->version();
-    if (UNLIKELY(msgLevel(MSG::DEBUG))) {
+    if (msgLevel(MSG::DEBUG)) {
       debug() << "Source: " << source << ", version: " << version << endmsg;
     }
     // Decode the raw bank.
@@ -140,15 +139,12 @@ HCRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent, const LHCb::ODIN& o
   }
 
   if (!m_skipErrorBanks) {
-
       // Get event information from ODIN.
-      const unsigned int bxid = odin.bunchId();
+      const auto bxid = odin.bunchId();
 
       auto errorBanks = rawEvent.banks(LHCb::RawBank::HCError);
-      if (errorBanks.empty()) {
-        if (UNLIKELY(msgLevel(MSG::DEBUG))) {
-          debug() << "No error banks in raw event." << endmsg;
-        }
+      if ( errorBanks.empty() && msgLevel(MSG::DEBUG) ) {
+        debug() << "No error banks in raw event." << endmsg;
       }
       for (const auto& bank : errorBanks) {
         // Make sure the bank is not corrupted.
@@ -159,7 +155,7 @@ HCRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent, const LHCb::ODIN& o
         decodeErrorBank(*bank, bxid);
       }
   }
-  return d;
+  return output;
 }
 
 //=============================================================================
@@ -284,11 +280,11 @@ void HCRawBankDecoder::decodeErrorBank(const LHCb::RawBank& bank,
   const uint32_t* data = bank.data();
   const unsigned int nPP = 4;
   for (unsigned int i = 0; i < nPP; ++i) {
-    const uint32_t evtrl = *data;
-    const uint32_t bcnt = evtrl & 0xFFF;
-    const uint32_t detid = (evtrl >> 12) & 0xF;
-    const uint32_t bankList = (evtrl >> 16) & 0xFF;
-    const uint32_t eventInfo = (evtrl >> 24) & 0xFF;
+    const auto evtrl = *data;
+    const auto bcnt = evtrl & 0xFFF;
+    const auto detid = (evtrl >> 12) & 0xF;
+    const auto bankList = (evtrl >> 16) & 0xFF;
+    const auto eventInfo = (evtrl >> 24) & 0xFF;
     if (msgLevel(MSG::VERBOSE)) {
       verbose() << std::string(60, '=') << endmsg;
       verbose() << "PP FPGA " << i << endmsg;
@@ -301,12 +297,12 @@ void HCRawBankDecoder::decodeErrorBank(const LHCb::RawBank& bank,
       }
     }
     ++data;
-    const uint32_t l0cnt = *data;
+    const auto l0cnt = *data;
     if (msgLevel(MSG::VERBOSE)) {
       verbose() << "L0 event counter: " << l0cnt << endmsg;
     }
     data += 3;
-    const unsigned int errorBankLength = (*data >> 16) & 0xFFFF;
+    const auto errorBankLength = (*data >> 16) & 0xFFFF;
     if (msgLevel(MSG::VERBOSE)) {
       verbose() << "Error bank length: " << errorBankLength << endmsg;
     }
@@ -319,13 +315,13 @@ void HCRawBankDecoder::decodeErrorBank(const LHCb::RawBank& bank,
     }
     for (unsigned int j = 0; j < 4; ++j) {
       ++data;
-      const uint32_t word = *data;
-      const unsigned int febx = word & 0x3FF;
-      const unsigned int fel0 = (word >> 10) & 0x3FF;
-      const unsigned int card = (word >> 20) & 0xF;
-      const unsigned int crate = (word >> 24) & 0x1F;
-      const unsigned int errLink = (word >> 29) & 0x1;
-      const unsigned int errSync = (word >> 30) & 0x1;
+      const auto word = *data;
+      const auto febx = word & 0x3FF;
+      const auto fel0 = (word >> 10) & 0x3FF;
+      const auto card = (word >> 20) & 0xF;
+      const auto crate = (word >> 24) & 0x1F;
+      const auto errLink = (word >> 29) & 0x1;
+      const auto errSync = (word >> 30) & 0x1;
       if (msgLevel(MSG::VERBOSE)) {
         verbose() << j
                   << "         " << errSync
