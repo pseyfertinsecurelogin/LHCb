@@ -63,16 +63,16 @@ public:
   virtual StatusCode initialize();
 
   // @brief Converts a RichSmartID to a point in global coordinates.
-  virtual StatusCode detectionPoint ( const LHCb::RichSmartID smartID,
-                                      Gaudi::XYZPoint& detectPoint,
-                                      bool photoCathodeSide = false ) const;
-
+  virtual bool detectionPoint ( const LHCb::RichSmartID smartID,
+                                Gaudi::XYZPoint& detectPoint,
+                                bool photoCathodeSide = false ) const override;
+  
   // Converts an x,y point from the anode to the photocathode in the
   // coordinate system of the PMT.
-  virtual StatusCode detectionPoint ( const double fracPixelCol,
-                                      const double fracPixelRow,
-                                      Gaudi::XYZPoint& detectPoint,
-                                      const bool photoCathodeSide = true ) const;
+  virtual bool detectionPoint ( const double fracPixelCol,
+                                const double fracPixelRow,
+                                Gaudi::XYZPoint& detectPoint,
+                                const bool photoCathodeSide = true ) const override;
 
   /** Converts a RichSmartID to a point on the anode in global coordinates.
    *  @param[in] smartID The RichSmartID for the PMT channel

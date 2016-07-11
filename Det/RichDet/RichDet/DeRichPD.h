@@ -67,12 +67,12 @@ public: // virtual methods to be implemented by derived classes
    *  @param[out] detectPoint The position in global coordinates
    *  @param[in]  photoCathodeSide Set to false to include refraction on HPD window
    *  @return StatusCode indicating if the conversion was successful or not
-   *  @retval StatusCoe::SUCCESS Conversion was successful
-   *  @retval StatusCode::FAILURE Conversion failed
+   *  @retval true  Conversion was successful
+   *  @retval false Conversion failed
    */
-  virtual StatusCode detectionPoint ( const LHCb::RichSmartID smartID,
-                                      Gaudi::XYZPoint& detectPoint,
-                                      bool photoCathodeSide = false ) const = 0;
+  virtual bool detectionPoint ( const LHCb::RichSmartID smartID,
+                                Gaudi::XYZPoint& detectPoint,
+                                bool photoCathodeSide = false ) const = 0;
 
   /** @brief Converts an x,y point from the anode to the photocathode in the
    *         coordinate system of the HPD.
@@ -85,13 +85,13 @@ public: // virtual methods to be implemented by derived classes
    *  @param[out] detectPoint The position in HPD coordinates
    *  @param[in]  photoCathodeSide Set to false to include refraction on HPD window
    *  @return StatusCode indicating if the conversion was successful or not
-   *  @retval StatusCoe::SUCCESS Conversion was successful
-   *  @retval StatusCode::FAILURE Conversion failed
+   *  @retval true  Conversion was successful
+   *  @retval false Conversion failed
    */
-  virtual StatusCode detectionPoint ( const double fracPixelCol,
-                                      const double fracPixelRow,
-                                      Gaudi::XYZPoint& detectPoint,
-                                      const bool photoCathodeSide = true ) const = 0;
+  virtual bool detectionPoint ( const double fracPixelCol,
+                                const double fracPixelRow,
+                                Gaudi::XYZPoint& detectPoint,
+                                const bool photoCathodeSide = true ) const = 0;
 
 protected: // to be initialised by derived classes
   

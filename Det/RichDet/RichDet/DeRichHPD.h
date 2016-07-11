@@ -113,17 +113,17 @@ public:
   }
 
   // @brief Converts a RichSmartID to a point in global coordinates.
-  virtual StatusCode detectionPoint ( const LHCb::RichSmartID smartID,
-                                      Gaudi::XYZPoint& detectPoint,
-                                      bool photoCathodeSide = false ) const;
-
+  virtual bool detectionPoint ( const LHCb::RichSmartID smartID,
+                                Gaudi::XYZPoint& detectPoint,
+                                bool photoCathodeSide = false ) const;
+  
 
   // Converts an x,y point from the anode to the photocathode in the
   // coordinate system of the HPD.
-  virtual StatusCode detectionPoint ( const double fracPixelCol,
-                                      const double fracPixelRow,
-                                      Gaudi::XYZPoint& detectPoint,
-                                      const bool photoCathodeSide = true ) const;
+  virtual bool detectionPoint ( const double fracPixelCol,
+                                const double fracPixelRow,
+                                Gaudi::XYZPoint& detectPoint,
+                                const bool photoCathodeSide = true ) const;
 
   /** Converts a RichSmartID to a point on the anode in global coordinates.
    *  @param[in] smartID The RichSmartID for the HPD channel
@@ -288,12 +288,12 @@ private: // functions
   StatusCode updateDemagProperties();
 
   /// go from a point on silicon to a point on the photo-cathode with magnet ON
-  StatusCode magnifyToGlobalMagnetON( Gaudi::XYZPoint& detectPoint, 
-                                      const bool photoCathodeSide ) const;
-
+  bool magnifyToGlobalMagnetON( Gaudi::XYZPoint& detectPoint, 
+                                const bool photoCathodeSide ) const;
+  
   /// go from a point on silicon to a point on the photo-cathode with magnet OFF
-  StatusCode magnifyToGlobalMagnetOFF( Gaudi::XYZPoint& detectPoint, 
-                                       const bool photoCathodeSide ) const;
+  bool magnifyToGlobalMagnetOFF( Gaudi::XYZPoint& detectPoint, 
+                                 const bool photoCathodeSide ) const;
 
   /// Initialise the interpolators for demagnification (cathode to anode)
   StatusCode fillHpdDemagTable( const unsigned int field );

@@ -81,8 +81,8 @@ public:
 public:
 
   // Converts a Gaudi::XYZPoint in global coordinates to a RichSmartID.
-  virtual StatusCode smartID( const Gaudi::XYZPoint& globalPoint,
-                              LHCb::RichSmartID& id ) const;
+  bool smartID( const Gaudi::XYZPoint& globalPoint,
+                LHCb::RichSmartID& id ) const override;
 
   /** Converts a RichSmartID to a point on the anode in global coordinates.
    *  @param[in] smartID      The HPD channel ID
@@ -96,7 +96,7 @@ public:
                  const Gaudi::XYZPoint& pGlobal,
                  Gaudi::XYZPoint& windowPointGlobal,
                  LHCb::RichSmartID& smartID,
-                 const LHCb::RichTraceMode mode ) const;
+                 const LHCb::RichTraceMode mode ) const override;
 
   // Returns the intersection point with the detector plane given a vector and a point.
   virtual LHCb::RichTraceMode::RayTraceResult
@@ -104,10 +104,10 @@ public:
                  const Gaudi::XYZVector& vGlobal,
                  Gaudi::XYZPoint& hitPosition,
                  LHCb::RichSmartID& smartID,
-                 const LHCb::RichTraceMode mode ) const;
+                 const LHCb::RichTraceMode mode ) const override;
 
   /// Returns the detector element for the given PD number
-  virtual const DeRichPD* dePD( const unsigned int PDNumber ) const;
+  virtual const DeRichPD* dePD( const unsigned int PDNumber ) const override;
 
   /// Returns the detector element for the given PD number
   inline const DeRichHPD* deHPD( const unsigned int HPDNumber ) const
@@ -126,10 +126,10 @@ public:
   }
 
   /// Adds to the given vector all the available readout channels in this HPD panel
-  virtual StatusCode readoutChannelList( LHCb::RichSmartID::Vector& readoutChannels ) const;
+  virtual bool readoutChannelList( LHCb::RichSmartID::Vector& readoutChannels ) const override;
 
   /// sensitive volume identifier
-  virtual int sensitiveVolumeID(const Gaudi::XYZPoint& globalPoint) const;
+  virtual int sensitiveVolumeID(const Gaudi::XYZPoint& globalPoint) const override;
 
 private: // methods
 
