@@ -411,7 +411,7 @@ void ReportConvertTool::ProtoParticleObject2Summary( HltObjectSummary::Info* inf
   const auto& used_map = ( turbo ? m_proto_unordered_map2_Turbo : m_proto_unordered_map2 );
 
   for(const auto& proto : used_map.at( findBestPrevious( used_map, m_version ) ) ) {
-    assert(proto.second.second < s_proto_map.size());
+    assert(proto.second.second < static_cast<int>(s_proto_map.size()));
     info->insert( proto.first, float( object->info( s_proto_map[proto.second.second], -1000 ) ) );
   }
 
@@ -644,7 +644,7 @@ void ReportConvertTool::RecSummaryObject2Summary( HltObjectSummary::Info* info, 
 
   const auto& used_map = m_recsummary_unordered_map2;
   for(const auto& recsummary : used_map.at( findBestPrevious( used_map, m_version ) )) {
-    assert( recsummary.second.second < s_rsum_map.size());
+    assert( recsummary.second.second < static_cast<int>(s_rsum_map.size()));
     info->insert( recsummary.first, float( object->info( s_rsum_map[recsummary.second.second],0 ) ) );
   }
 
@@ -783,7 +783,7 @@ void ReportConvertTool::ProtoParticleObjectFromSummary( const HltObjectSummary::
   const auto& used_map = (turbo ? m_proto_unordered_map2_Turbo
                                 : m_proto_unordered_map2 );
   for(const auto& proto : used_map.at( findBestPrevious( used_map, m_version ) )) {
-    assert(proto.second.second<s_proto_map.size());
+    assert(proto.second.second<static_cast<int>(s_proto_map.size()));
     auto i = (*info)[proto.first];
     if (i != -1000 ) object->addInfo( s_proto_map[proto.second.second], i);
   }
@@ -1071,7 +1071,7 @@ void ReportConvertTool::RecSummaryObjectFromSummary( const HltObjectSummary::Inf
 
   const auto& used_map = m_recsummary_unordered_map2;
   for(const auto& recsummary : used_map.at( findBestPrevious( used_map, m_version ) ) ) {
-    assert(recsummary.second.second<s_rsum_map.size());
+    assert(recsummary.second.second<static_cast<int>(s_rsum_map.size()));
     object->addInfo( s_rsum_map[recsummary.second.second], (*info)[ recsummary.first ] );
   }
 }
