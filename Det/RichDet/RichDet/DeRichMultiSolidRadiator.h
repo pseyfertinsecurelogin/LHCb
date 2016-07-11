@@ -46,10 +46,7 @@ public:
    * Retrieves reference to class identifier
    * @return the class identifier for this class
    */
-  const CLID& clID() const
-  {
-    return classID();
-  }
+  const CLID& clID() const { return classID(); }
 
   /**
    * Retrieves reference to class identifier
@@ -63,7 +60,7 @@ public:
    * @retval StatusCode::FAILURE Initialisation failed, program should
    * terminate
    */
-  virtual StatusCode initialize();
+  virtual StatusCode initialize() override;
 
   // Finds the next intersection point with radiator.
   StatusCode nextIntersectionPoint( const Gaudi::XYZPoint& pGlobal,

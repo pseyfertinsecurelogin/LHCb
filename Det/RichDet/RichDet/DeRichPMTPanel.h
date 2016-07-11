@@ -58,8 +58,8 @@ public:
   virtual const DeRichPD* dePD( const unsigned int PDNumber ) const;
 
   // Converts a Gaudi::XYZPoint in global coordinates to a RichSmartID.
-  virtual StatusCode smartID( const Gaudi::XYZPoint& globalPoint,
-                              LHCb::RichSmartID& id ) const;
+  virtual bool smartID( const Gaudi::XYZPoint& globalPoint,
+                        LHCb::RichSmartID& id ) const override;
 
   // Returns the intersection point with the detector plane given a vector and a point.
   virtual LHCb::RichTraceMode::RayTraceResult
@@ -67,7 +67,7 @@ public:
                  const Gaudi::XYZVector& vGlobal,
                  Gaudi::XYZPoint& hitPosition,
                  LHCb::RichSmartID& smartID,
-                 const LHCb::RichTraceMode mode ) const;
+                 const LHCb::RichTraceMode mode ) const override;
 
   // Returns the intersection point with an HPD window given a vector and a point.
   virtual LHCb::RichTraceMode::RayTraceResult
@@ -75,13 +75,13 @@ public:
                  const Gaudi::XYZPoint& pGlobal,
                  Gaudi::XYZPoint& windowPointGlobal,
                  LHCb::RichSmartID& smartID,
-                 const LHCb::RichTraceMode mode ) const;
+                 const LHCb::RichTraceMode mode ) const override;
 
   // Adds to the given vector all the available readout channels in this HPD panel
-  virtual StatusCode readoutChannelList( LHCb::RichSmartID::Vector& readoutChannels ) const;
+  virtual bool readoutChannelList( LHCb::RichSmartID::Vector& readoutChannels ) const override;
 
   /// Get tge sensitivevolumeID
-  virtual int sensitiveVolumeID(const Gaudi::XYZPoint& globalPoint) const;
+  virtual int sensitiveVolumeID(const Gaudi::XYZPoint& globalPoint) const override;
 
   /** Converts a RichSmartID to a point on the anode in global coordinates.
    *  @param[in] smartID The RichSmartID for the PMT channel

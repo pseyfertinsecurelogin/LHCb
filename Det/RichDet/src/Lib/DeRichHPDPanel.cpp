@@ -122,25 +122,25 @@ StatusCode DeRichHPDPanel::initialize()
 //=========================================================================
 // convert a point on the silicon sensor to a smartID
 //=========================================================================
-StatusCode DeRichHPDPanel::smartID ( const Gaudi::XYZPoint& globalPoint,
-                                     LHCb::RichSmartID& id ) const
+bool DeRichHPDPanel::smartID ( const Gaudi::XYZPoint& globalPoint,
+                               LHCb::RichSmartID& id ) const
 {
   const auto inPanel = geometry()->toLocal(globalPoint);
 
   // find the HPD row/col of this point if not set
   if ( !id.pdIsSet() )
   {
-    if ( !findHPDColAndPos(inPanel,id) ) return StatusCode::FAILURE;
+    if ( !findHPDColAndPos(inPanel,id) ) return false;
   }
 
   // check if the HPD is active or dead
-  if ( !deRichSys()->pdIsActive( id ) ) return StatusCode::FAILURE;
+  if ( !deRichSys()->pdIsActive( id ) ) return false;
 
   const auto HPDNumber = pdNumber(id);
   if ( HPDNumber > nPDs() )
   {
     error() << "Inappropriate HPDNumber : " << HPDNumber;
-    return StatusCode::FAILURE;
+    return false;
   }
 
   const auto inSilicon = m_DeSiSensors[HPDNumber]->geometry()->toLocalMatrix()*globalPoint;
@@ -167,7 +167,7 @@ StatusCode DeRichHPDPanel::smartID ( const Gaudi::XYZPoint& globalPoint,
   {
     error() << "Point " << inSilicon << " is outside the silicon box "
             << dePD(HPDNumber)->name() << endmsg;
-    return StatusCode::FAILURE;
+    return false;
   }
   
   // pixel 0,0 is at min x and max y (top left corner)
@@ -182,7 +182,7 @@ StatusCode DeRichHPDPanel::smartID ( const Gaudi::XYZPoint& globalPoint,
     ((m_siliconHalfLengthY-inSiliconY-pixelRow*m_pixelSize)/m_subPixelSize);
   id.setPixelSubRow ( subPixel );
 
-  return StatusCode::SUCCESS;
+  return true;
 }
 
 //=========================================================================
@@ -340,7 +340,7 @@ DeRichHPDPanel::PDWindowPoint( const Gaudi::XYZVector& vGlobal,
 //=========================================================================
 //  return a list with all the valid readout channels (smartIDs)
 //=========================================================================
-StatusCode
+bool
 DeRichHPDPanel::readoutChannelList ( LHCb::RichSmartID::Vector& readoutChannels ) const
 {
 
@@ -378,7 +378,7 @@ DeRichHPDPanel::readoutChannelList ( LHCb::RichSmartID::Vector& readoutChannels 
 
   } // loop over HPDs
 
-  return StatusCode::SUCCESS;
+  return true;
 }
 
 //=========================================================================
@@ -467,8 +467,7 @@ int DeRichHPDPanel::sensitiveVolumeID(const Gaudi::XYZPoint& globalPoint) const
   // Create a RichSmartID for this RICH and panel
   LHCb::RichSmartID id( rich(), side() );
   // set the remaining fields from the position
-  return ( smartID(globalPoint,id).isSuccess() ?
-           id : LHCb::RichSmartID(rich(),side()) );
+  return ( smartID(globalPoint,id) ? id : LHCb::RichSmartID(rich(),side()) );
 }
 
 //=========================================================================
