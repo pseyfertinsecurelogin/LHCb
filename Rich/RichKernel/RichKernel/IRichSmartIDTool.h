@@ -66,11 +66,11 @@ namespace Rich
      *  @param[out] detectPoint  The detection point in global coordinates
      *
      *  @return The status of the conversion
-     *  @retval StatusCode::SUCCESS The conversion to a global coordinate was successful
-     *  @retval StatusCode::FAILURE The conversion to a global coordinate failed
+     *  @retval true  The conversion to a global coordinate was successful
+     *  @retval false The conversion to a global coordinate failed
      */
-    virtual StatusCode globalPosition ( const LHCb::RichSmartID& smartid,
-                                        Gaudi::XYZPoint& detectPoint ) const = 0;
+    virtual bool globalPosition ( const LHCb::RichSmartID& smartid,
+                                  Gaudi::XYZPoint& detectPoint ) const = 0;
 
     /** Finds the average position of a cluster of RichSmartIDs, in global LHCb coordinates
      *  on the PD entrance window.
@@ -79,11 +79,11 @@ namespace Rich
      *  @param[out] detectPoint  The detection point in global coordinates
      *
      *  @return The status of the conversion
-     *  @retval StatusCode::SUCCESS The conversion to a global coordinate was successful
-     *  @retval StatusCode::FAILURE The conversion to a global coordinate failed
+     *  @retval true  The conversion to a global coordinate was successful
+     *  @retval false The conversion to a global coordinate failed
      */
-    virtual StatusCode globalPosition ( const Rich::HPDPixelCluster& cluster,
-                                        Gaudi::XYZPoint& detectPoint ) const = 0;
+    virtual bool globalPosition ( const Rich::HPDPixelCluster& cluster,
+                                  Gaudi::XYZPoint& detectPoint ) const = 0;
 
     /** Converts a RichSmartID channel identification into a position in
      *  global LHCb coordinates, on the pixel anode chip.
@@ -92,11 +92,11 @@ namespace Rich
      *  @param[out] detectPoint  The detection point in global coordinates
      *
      *  @return The status of the conversion
-     *  @retval StatusCode::SUCCESS The conversion to a global coordinate was successful
-     *  @retval StatusCode::FAILURE The conversion to a global coordinate failed
+     *  @retval true  The conversion to a global coordinate was successful
+     *  @retval false The conversion to a global coordinate failed
      */
-    //virtual StatusCode anodeGlobalPosition ( const LHCb::RichSmartID smartid,
-    //                                         Gaudi::XYZPoint& detectPoint ) const = 0;
+    //virtual bool anodeGlobalPosition ( const LHCb::RichSmartID smartid,
+    //                                   Gaudi::XYZPoint& detectPoint ) const = 0;
 
     /** Finds the average position of a cluster of RichSmartIDs, in global LHCb coordinates, 
      *  on the pixel anode chip.
@@ -105,11 +105,11 @@ namespace Rich
      *  @param[out] detectPoint  The detection point in global coordinates
      *
      *  @return The status of the conversion
-     *  @retval StatusCode::SUCCESS The conversion to a global coordinate was successful
-     *  @retval StatusCode::FAILURE The conversion to a global coordinate failed
+     *  @retval true  The conversion to a global coordinate was successful
+     *  @retval false The conversion to a global coordinate failed
      */
-    //virtual StatusCode anodeGlobalPosition ( const Rich::HPDPixelCluster& cluster,
-    //                                         Gaudi::XYZPoint& detectPoint ) const = 0;
+    //virtual bool anodeGlobalPosition ( const Rich::HPDPixelCluster& cluster,
+    //                                   Gaudi::XYZPoint& detectPoint ) const = 0;
 
     /** @brief Converts an PD RichSmartID identification into a position in
      *  global LHCb coordinates.
@@ -120,10 +120,10 @@ namespace Rich
      *  @param[out] pdPoint   The PD position in global coordinates
      *
      *  @return The status of the conversion
-     *  @retval StatusCode::SUCCESS The conversion to a global coordinate was successful
-     *  @retval StatusCode::FAILURE The conversion to a global coordinate failed
+     *  @retval true  The conversion to a global coordinate was successful
+     *  @retval false The conversion to a global coordinate failed
      */
-    virtual StatusCode pdPosition ( const LHCb::RichSmartID& pdid,
+    virtual bool pdPosition ( const LHCb::RichSmartID& pdid,
                                     Gaudi::XYZPoint& pdPoint ) const = 0;
 
     /** Computes the global position coordinate (on PD entrance window) for a given 
@@ -146,11 +146,11 @@ namespace Rich
      *  @param  smartid     The RichSmartID channel identifier to fill
      *
      *  @return The status of the conversion
-     *  @retval StatusCode::SUCCESS Conversion was successful (position in PD acceptance)
-     *  @retval StatusCode::FAILURE Conversion was not successful (position not in PD acceptance)
+     *  @retval true  Conversion was successful (position in PD acceptance)
+     *  @retval false Conversion was not successful (position not in PD acceptance)
      */
-    virtual StatusCode smartID ( const Gaudi::XYZPoint& globalPoint,
-                                 LHCb::RichSmartID& smartid ) const = 0;
+    virtual bool smartID ( const Gaudi::XYZPoint& globalPoint,
+                           LHCb::RichSmartID& smartid ) const = 0;
 
     /** Supplies a vector of all currently active and valid channels in the RICH detectors
      *
