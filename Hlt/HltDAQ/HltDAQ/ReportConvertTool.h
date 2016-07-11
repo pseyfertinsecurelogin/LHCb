@@ -94,13 +94,10 @@ class ReportConvertTool : public GaudiTool, virtual public IReportConvert
     void RecSummaryObjectFromSummary( const HltObjectSummary::Info*, LHCb::RecSummary*) ;
     void GenericMapObjectFromSummary( const HltObjectSummary::Info*, GaudiUtils::VectorMap<short,float>*) ;
 
-    int findBestPrevious(unordered_map<int, unordered_map<string,pair<int,int> > >,int) ;
+    int findBestPrevious(const unordered_map<int, unordered_map<string,pair<int,int> > >&,int) const;
     
-
-  protected:
-  
   private:
-    int m_version;
+    int m_version = -999;
     int m_LatestVersion;
 
     //===========================================================================
