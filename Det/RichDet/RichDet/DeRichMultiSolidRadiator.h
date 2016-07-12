@@ -46,7 +46,7 @@ public:
    * Retrieves reference to class identifier
    * @return the class identifier for this class
    */
-  const CLID& clID() const { return classID(); }
+  const CLID& clID() const final { return classID(); }
 
   /**
    * Retrieves reference to class identifier
@@ -60,32 +60,32 @@ public:
    * @retval StatusCode::FAILURE Initialisation failed, program should
    * terminate
    */
-  virtual StatusCode initialize() override;
+  virtual StatusCode initialize() final;
 
   // Finds the next intersection point with radiator.
-  StatusCode nextIntersectionPoint( const Gaudi::XYZPoint& pGlobal,
-                                    const Gaudi::XYZVector& vGlobal,
-                                    Gaudi::XYZPoint& returnPoint ) const;
-
+  virtual StatusCode nextIntersectionPoint( const Gaudi::XYZPoint& pGlobal,
+                                            const Gaudi::XYZVector& vGlobal,
+                                            Gaudi::XYZPoint& returnPoint ) const final;
+  
   // Finds the entry and exit points of the radiator after looking
   // at all the solids to find the first and last intersection point.
   virtual StatusCode intersectionPoints( const Gaudi::XYZPoint& position,
                                          const Gaudi::XYZVector& direction,
                                          Gaudi::XYZPoint& entryPoint,
-                                         Gaudi::XYZPoint& exitPoint ) const;
+                                         Gaudi::XYZPoint& exitPoint ) const final;
 
   // Finds the intersection points with radiator after looking at all the solids
   virtual unsigned int intersectionPoints( const Gaudi::XYZPoint& pGlobal,
                                            const Gaudi::XYZVector& vGlobal,
-                                           std::vector<Gaudi::XYZPoint>& points ) const;
+                                           std::vector<Gaudi::XYZPoint>& points ) const final;
 
   // Finds the intersections (entry/exit) with radiator. For boolean solids there
   virtual unsigned int intersections( const Gaudi::XYZPoint& pGlobal,
                                       const Gaudi::XYZVector& vGlobal,
-                                      Rich::RadIntersection::Vector& intersections ) const;
+                                      Rich::RadIntersection::Vector& intersections ) const final;
 
   // Returns the refractive index at the given photon energy for this radiator
-  virtual double refractiveIndex( const double energy, const bool hlt = false ) const;
+  virtual double refractiveIndex( const double energy, const bool hlt = false ) const final;
 
 public:
 

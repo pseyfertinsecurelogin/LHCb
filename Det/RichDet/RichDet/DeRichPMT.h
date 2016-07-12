@@ -46,7 +46,7 @@ public:
    * Retrieves reference to class identifier
    * @return the class identifier for this class
    */
-  const CLID& clID() const { return classID(); }
+  const CLID& clID() const final { return classID(); }
 
   /**
    * Retrieves reference to class identifier
@@ -60,19 +60,19 @@ public:
    * @retval StatusCode::FAILURE Initialisation failed, program should
    * terminate
    */
-  virtual StatusCode initialize();
+  virtual StatusCode initialize() final;
 
   // @brief Converts a RichSmartID to a point in global coordinates.
   virtual bool detectionPoint ( const LHCb::RichSmartID smartID,
                                 Gaudi::XYZPoint& detectPoint,
-                                bool photoCathodeSide = false ) const override;
+                                bool photoCathodeSide = false ) const final;
   
   // Converts an x,y point from the anode to the photocathode in the
   // coordinate system of the PMT.
   virtual bool detectionPoint ( const double fracPixelCol,
                                 const double fracPixelRow,
                                 Gaudi::XYZPoint& detectPoint,
-                                const bool photoCathodeSide = true ) const override;
+                                const bool photoCathodeSide = true ) const final;
 
   /** Converts a RichSmartID to a point on the anode in global coordinates.
    *  @param[in] smartID The RichSmartID for the PMT channel
