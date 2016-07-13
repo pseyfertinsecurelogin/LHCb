@@ -1,5 +1,3 @@
-// $Id: $
-// Include files
 
 // STL
 #include <sstream>
@@ -452,11 +450,10 @@ StatusCode DeRichPMTPanel::geometryUpdate ( )
   return sc;
 }
 
-StatusCode DeRichPMTPanel::smartID( const Gaudi::XYZPoint& globalPoint,
-                                    LHCb::RichSmartID& id ) const
+bool DeRichPMTPanel::smartID( const Gaudi::XYZPoint& globalPoint,
+                              LHCb::RichSmartID& id ) const
 {
-  const std::vector<int> aHitChannelVec = findPMTArraySetup(globalPoint);
-  return setRichPmtSmartID( aHitChannelVec, id ) ;
+  return setRichPmtSmartID( findPMTArraySetup(globalPoint), id ) ;
 }
 
 StatusCode DeRichPMTPanel::setRichPmtSmartID(const std::vector<int>& aPmtHitChannel,
@@ -712,8 +709,8 @@ void DeRichPMTPanel::Rich1SetupPMTModulesWithLens()
       m_RichPmtModuleLensFlag[m]=false;
       if( (int) (m_Rich1PmtLensModuleCol.size()) > 0) {
 
-        std::vector<int>::const_iterator location= find(m_Rich1PmtLensModuleCol.begin(),
-                                                        m_Rich1PmtLensModuleCol.end(), c);
+        const auto location= find(m_Rich1PmtLensModuleCol.begin(),
+                                  m_Rich1PmtLensModuleCol.end(), c);
         if(location != m_Rich1PmtLensModuleCol.end() ) m_RichPmtModuleLensFlag[m]=true;
       }
 
@@ -1648,11 +1645,9 @@ Gaudi::XYZPoint DeRichPMTPanel::detPointOnAnode( const LHCb::RichSmartID smartID
 
 //  return a list with all the valid readout channels (smartIDs)
 //=========================================================================
-StatusCode
+bool
 DeRichPMTPanel::readoutChannelList ( LHCb::RichSmartID::Vector& readoutChannels ) const
 {
-  StatusCode sc = StatusCode::SUCCESS;
-
   int CurPanelNum = 0 ;
   if ( rich() == Rich::Rich1 )
   {
@@ -1696,7 +1691,7 @@ DeRichPMTPanel::readoutChannelList ( LHCb::RichSmartID::Vector& readoutChannels 
     }
   }
 
-  return StatusCode::SUCCESS;
+  return true;
 }
 
 int DeRichPMTPanel::sensitiveVolumeID(const Gaudi::XYZPoint& globalPoint) const
@@ -1705,7 +1700,7 @@ int DeRichPMTPanel::sensitiveVolumeID(const Gaudi::XYZPoint& globalPoint) const
 
   LHCb::RichSmartID id(rich(), side(), 0, 0, 0, 0,LHCb::RichSmartID::MaPMTID );
   // set the remaining fields from the position
-  return ( smartID(globalPoint,id).isSuccess() ?
+  return ( smartID(globalPoint,id) ?
            id : LHCb::RichSmartID( rich(), side(), 0, 0, 0, 0,LHCb::RichSmartID::MaPMTID)   );
 }
 

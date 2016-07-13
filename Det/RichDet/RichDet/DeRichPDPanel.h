@@ -101,12 +101,12 @@ public:
    *                                for refraction. If true use the photocathode side
    *
    *  @return StatusCode indicating if the conversion was successful or not
-   *  @retval StatusCode::SUCCESS Conversion to photocathode was OK
-   *  @retval StatusCode::FAILURE Impossible conversion to photocathode
+   *  @retval true  Conversion to photocathode was OK
+   *  @retval false Impossible conversion to photocathode
    */
-  StatusCode detectionPoint( const LHCb::RichSmartID smartID,
-                             Gaudi::XYZPoint& detectPoint,
-                             bool photoCathodeSide = false ) const
+  bool detectionPoint( const LHCb::RichSmartID smartID,
+                       Gaudi::XYZPoint& detectPoint,
+                       bool photoCathodeSide = false ) const
   {
     return this->dePD(smartID)->detectionPoint(smartID,detectPoint,photoCathodeSide);
   }
@@ -190,11 +190,11 @@ public: // virtual methods. Derived classes must implement these
    *  @param[out] id          The RichSmartID for the given point
    *
    *  @return Status of conversion
-   *  @retval StatusCode::FAILURE Point outside silicon pixel sensor or in a position that
+   *  @retval false Point outside silicon pixel sensor or in a position that
    *          could not have originated from the photocathode.
    */
-  virtual StatusCode smartID( const Gaudi::XYZPoint& globalPoint,
-                              LHCb::RichSmartID& id ) const = 0;
+  virtual bool smartID( const Gaudi::XYZPoint& globalPoint,
+                        LHCb::RichSmartID& id ) const = 0;
 
   /// Returns the PD number for the given RichSmartID
   virtual unsigned int pdNumber( const LHCb::RichSmartID& smartID ) const = 0;
@@ -209,10 +209,10 @@ public: // virtual methods. Derived classes must implement these
    * @param readoutChannels Vector of valid pixel IDs
    *
    * @return Status code
-   * @retval StatusCode::SUCCESS Readout channel list was successfully determined
-   * @retval StatusCode::FAILURE An error occured whilst determining the readout channels
+   * @retval true  Readout channel list was successfully determined
+   * @retval false An error occured whilst determining the readout channels
    */
-  virtual StatusCode
+  virtual bool
   readoutChannelList( LHCb::RichSmartID::Vector& readoutChannels ) const = 0;
 
 protected: // Parameters that must be properly configured in the derived classes

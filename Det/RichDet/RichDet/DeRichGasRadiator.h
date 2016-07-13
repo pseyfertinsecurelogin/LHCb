@@ -39,7 +39,7 @@ public:
    * Retrieves reference to class identifier
    * @return the class identifier for this class
    */
-  inline const CLID& clID() const
+  inline const CLID& clID() const final
   {
     return classID();
   }
@@ -56,7 +56,7 @@ public:
    * @retval StatusCode::FAILURE Initialisation failed, program should
    * terminate
    */
-  virtual StatusCode initialize();
+  virtual StatusCode initialize() final;
 
 private:
 
