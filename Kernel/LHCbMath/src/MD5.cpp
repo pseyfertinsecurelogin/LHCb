@@ -1,5 +1,6 @@
 #include "LHCbMath/MD5.h"
 #include <cassert>
+#include <numeric>
 
 /*
     MD5 computation Modified from the original by Stanislav Baranov

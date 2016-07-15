@@ -1,5 +1,6 @@
 #include <cstdlib>
 #include <memory>
+#include <numeric>
 #include "Kernel/PropertyConfig.h"
 #include "GaudiKernel/Property.h"
 #include "GaudiKernel/IProperty.h"
