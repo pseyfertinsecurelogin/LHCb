@@ -3,6 +3,7 @@
 
 #include "Kernel/VeloChannelID.h"
 #include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/AnyDataHandle.h"
 #include <string>
 
 class DeVelo;
@@ -16,7 +17,7 @@ class DeVelo;
 ///<    "PU"  : retains only clusters in PU sensors
 
 class VeloClusterFilter : public GaudiAlgorithm {
-public: 
+public:
   VeloClusterFilter( const std::string& name, ISvcLocator* pSvcLocator );
   virtual ~VeloClusterFilter( );
 
@@ -32,6 +33,9 @@ protected:
   std::string m_inputClusterLocation;
   std::string m_outputClusterLocation;
   std::string m_filterCriterion;
+
+  AnyDataHandle<LHCb::VeloLiteCluster::FastContainer> m_outputLiteClusterDh;
+  AnyDataHandle<LHCb::VeloClusters> m_outputClusterDh;
 
   int m_minNRClustersCut;
   int m_minNPhiClustersCut;

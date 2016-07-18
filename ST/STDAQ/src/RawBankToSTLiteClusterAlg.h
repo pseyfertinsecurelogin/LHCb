@@ -4,6 +4,7 @@
 #include "STDecodingBaseAlg.h"
 #include "Event/RawBank.h"
 #include "Kernel/STDAQDefinitions.h"
+#include "GaudiKernel/AnyDataHandle.h"
 
 #include "Event/STLiteCluster.h"
 
@@ -46,7 +47,7 @@ public:
 private:
 
   // create Clusters from this type
-  StatusCode decodeBanks(LHCb::RawEvent* rawEvt, LHCb::STLiteCluster::STLiteClusters* fCont) const;
+  StatusCode decodeBanks(LHCb::RawEvent* rawEvt, LHCb::STLiteCluster::STLiteClusters& fCont) const;
 
   // add a single cluster to the output container
   void createCluster(const STTell1Board* aBoard,  const STDAQ::version& bankVersion, 
@@ -54,6 +55,7 @@ private:
 
 
   std::string m_clusterLocation;  
+  AnyDataHandle<LHCb::STLiteCluster::STLiteClusters> m_clusterDh;
   
   class Less_by_Channel : public std::binary_function<LHCb::STLiteCluster,LHCb::STLiteCluster ,bool>{
   public:

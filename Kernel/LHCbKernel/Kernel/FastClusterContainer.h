@@ -30,7 +30,7 @@
  *
  */
 template <typename VISIBLE, typename INTERNAL>
-class FastClusterContainer final : public ObjectContainerBase
+class FastClusterContainer final
 {
   // ==========================================================================
   /// static compile-time assertion
@@ -144,20 +144,6 @@ public:
     return it!=end() ? &(*it) : nullptr;
   }
 
-  // ==========================================================================
-public: // fake methods form ObjectContainerBase
-  // ==========================================================================
-  /// Distance of a given object from the beginning of its container
-  virtual long index( const ContainedObject* /* obj */ ) const { return -1 ; }
-  /// Pointer to an object of a given distance
-  virtual ContainedObject* containedObject( long /* dist */ ) const { return nullptr ; }
-  /// Number of objects in the container
-  virtual size_type numberOfObjects() const { return this->size() ; }
-  /// Add an object to the container
-  virtual long add    ( ContainedObject* /* obj */ ) { return -1 ; }
-  /// Release object from the container
-  virtual long remove ( ContainedObject* /* obj */ ) { return -1 ; }
-  // ==========================================================================
 };
 // ============================================================================
 // The END

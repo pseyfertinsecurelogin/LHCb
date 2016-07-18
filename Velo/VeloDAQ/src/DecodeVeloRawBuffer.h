@@ -5,6 +5,7 @@
 
 #include "GaudiAlg/GaudiAlgorithm.h"
 #include "DAQKernel/DecoderAlgBase.h"
+#include "GaudiKernel/AnyDataHandle.h"
 
 #include "SiDAQ/SiRawBufferWord.h"
 
@@ -49,34 +50,24 @@ public:
 private:
 
   /** Decode raw buffer to lite clusters
-   * This decodes the raw buffer to VeloLiteClusters and
-   * adds a VeloLiteCluster::FastContainer to the TES.
+   * This decodes the raw buffer to VeloLiteClusters
    *
    * @see VeloLiteCluster
    */
-  StatusCode decodeToVeloLiteClusters(const std::vector<LHCb::RawBank*>& banks) const;
+  LHCb::VeloLiteCluster::FastContainer decodeToVeloLiteClusters(const std::vector<LHCb::RawBank*>& banks) const;
 
   /** Decode raw buffer to clusters
-   * This decodes the raw buffer to VeloClusters and
-   * adds themn to the TES.
+   * This decodes the raw buffer to VeloClusters
    *
    * @see VeloCluster
    */
-  StatusCode decodeToVeloClusters(const std::vector<LHCb::RawBank*>& banks);
+  LHCb::VeloClusters decodeToVeloClusters(const std::vector<LHCb::RawBank*>& banks);
 
   /** Write VeloClusters to stdout
    *
    *  @see VeloCluster
    */
   void dumpVeloClusters(const LHCb::VeloClusters& clusters) const;
-
-  /** Create empty banks
-   *
-   * Creates empty cluster and lite cluster banks on the TES.
-   * This called as a failsafe option in case the raw event
-   * is missing.
-   * */
-  void createEmptyBanks() const;
 
   /** Add DecodeVeloRawBuffer to list of failed algorithms
    *  if procAbort = true set the ProcStatus to "aborted" to show
@@ -92,7 +83,7 @@ private:
    */
   StatusCode replaceFullFromLite(LHCb::VeloClusters& clusters,
                                  unsigned int nSensor,
-                                 const std::vector<LHCb::RawBank*>& banks) const;
+                                 const std::vector<LHCb::RawBank*>& banks);
 
   /// Add a fake lite cluster to the full cluster container
   void makeFakeCluster(LHCb::VeloLiteCluster const &liteCluster,
@@ -141,6 +132,12 @@ private:
 
   /// default raw event locations: not set in options to allow comparison
   std::vector<std::string> m_defaultRawEventLocations;
+
+  /// data handler for writing lite clusters to the transient event store
+  AnyDataHandle<LHCb::VeloLiteCluster::FastContainer> m_liteClustersDh;
+
+  /// data handler for writing clusters to the transient event store
+  AnyDataHandle<LHCb::VeloClusters> m_clustersDh;
 
 };
 #endif // DECODEVELORAWBUFFER_H
