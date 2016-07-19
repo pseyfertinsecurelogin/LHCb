@@ -58,14 +58,13 @@ StatusCode HCRawBankDecoder::initialize() {
   for (unsigned int i = 0; i < 2; ++i) {
     const std::string name = "ErrorBanks/DiffBX/Crate" + std::to_string(i);
     const std::string title = "Crate " + std::to_string(i);
-    //@TODO:  m_hBxDiff.push_back(book1D(name, title, -20.5, 20.5, 41));
+    m_hBxDiff.push_back(book1D(name, title, -20.5, 20.5, 41));
     setAxisLabels(m_hBxDiff[i], "BX_{FE} - BX_{ODIN}", "Entries");
   }
-  //@TODO: fix me -- introduce book1D, book2D...
-  m_hLinkErrors = nullptr; //book2D("ErrorBanks/Links", "Errors",
-                         // -0.5, 1.5, 2, -0.5, 15.5, 16);
-  m_hTell1Errors = nullptr; // book2D("RawBanks/ErrorBitsTELL1", "Errors",
-                         // -0.5, 2.5, 3, -0.5, 1.5, 2);
+  m_hLinkErrors = book2D("ErrorBanks/Links", "Errors",
+                          -0.5, 1.5, 2, -0.5, 15.5, 16);
+  m_hTell1Errors = book2D("RawBanks/ErrorBitsTELL1", "Errors",
+                          -0.5, 2.5, 3, -0.5, 1.5, 2);
   TH2D* h = Gaudi::Utils::Aida2ROOT::aida2root(m_hLinkErrors);
   if (h) {
     TAxis* axis = h->GetYaxis();

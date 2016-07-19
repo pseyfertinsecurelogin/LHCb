@@ -6,6 +6,7 @@
 #include "AIDA/IHistogram2D.h"
 
 // LHCb
+#include "GaudiAlg/GaudiHistoAlg.h"
 #include "GaudiAlg/Transformer.h"
 
 #include "Event/HCDigit.h"
@@ -21,13 +22,21 @@ class ODIN;
  *
  */
 
-class HCRawBankDecoder : public Gaudi::Functional::MultiTransformer<std::tuple<LHCb::HCDigits,LHCb::HCDigits>(const LHCb::RawEvent&, const LHCb::ODIN&)> {
+struct HCRawBankDecoderTraits { using BaseClass = GaudiHistoAlg; };
+
+class HCRawBankDecoder : public Gaudi::Functional::MultiTransformer<std::tuple<LHCb::HCDigits,LHCb::HCDigits>(const LHCb::RawEvent&, const LHCb::ODIN&),
+                                                                    HCRawBankDecoderTraits>
+{
  public:
   /// Standard constructor
   HCRawBankDecoder(const std::string& name, ISvcLocator* pSvcLocator);
 
-  StatusCode initialize() override;  ///< Algorithm initialization
-  std::tuple<LHCb::HCDigits,LHCb::HCDigits> operator()(const LHCb::RawEvent&,const LHCb::ODIN&) const override;
+  ///< Algorithm initialization
+  StatusCode initialize() override;
+
+  ///< The transform callable
+  std::tuple<LHCb::HCDigits,LHCb::HCDigits>
+  operator()(const LHCb::RawEvent&,const LHCb::ODIN&) const override;
 
  private:
 
@@ -41,7 +50,7 @@ class HCRawBankDecoder : public Gaudi::Functional::MultiTransformer<std::tuple<L
   IHistogram2D* m_hTell1Errors;
   std::vector<IHistogram1D*> m_hBxDiff;
 
-  void decode(const LHCb::RawBank& bank, 
+  void decode(const LHCb::RawBank& bank,
               LHCb::HCDigits& digits,
               LHCb::HCDigits& l0_digits) const;
   void decodeErrorBank(const LHCb::RawBank& bank, const int bxid) const;
