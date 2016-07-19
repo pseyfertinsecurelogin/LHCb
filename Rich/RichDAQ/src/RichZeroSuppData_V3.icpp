@@ -58,7 +58,7 @@ namespace Rich
         this->setHeader( head );
 
         // Loop over address / bitfield pairs and fill to data bank
-        DataMap::const_iterator iD = dataM.begin();
+        auto iD = dataM.begin();
         while ( iD != dataM.end() )
         {
           const ShortType address0( (*iD).first ), field0( (*iD).second );

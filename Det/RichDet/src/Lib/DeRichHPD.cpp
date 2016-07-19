@@ -651,8 +651,8 @@ StatusCode DeRichHPD::fillHpdMagTable( const unsigned int field )
 //  magnification to cathode and transformation to Global coordinates
 //  with the magnet ON
 //=========================================================================
-StatusCode DeRichHPD::magnifyToGlobalMagnetON( Gaudi::XYZPoint& detectPoint,
-                                               const bool photoCathodeSide ) const
+bool DeRichHPD::magnifyToGlobalMagnetON( Gaudi::XYZPoint& detectPoint,
+                                         const bool photoCathodeSide ) const
 {
   const auto field = ( magSvc()->isDown() ? 0 : 1 );
 
@@ -663,7 +663,7 @@ StatusCode DeRichHPD::magnifyToGlobalMagnetON( Gaudi::XYZPoint& detectPoint,
   detectPoint.SetZ(0.0);
   
   const auto rAnode = detectPoint.R();
-  if ( m_siAnodeRCheck < rAnode ) return StatusCode::FAILURE;
+  if ( m_siAnodeRCheck < rAnode ) return false;
   //const bool rAnodeOK = rAnode < m_siAnodeRCheck;
 
   double rCathode(0);
@@ -681,7 +681,7 @@ StatusCode DeRichHPD::magnifyToGlobalMagnetON( Gaudi::XYZPoint& detectPoint,
   }
 
   // check if this point could have come from the photoCathode
-  if ( m_winInR < rCathode ) return StatusCode::FAILURE;
+  if ( m_winInR < rCathode ) return false;
   //if ( !rAnodeOK ) 
   //{ info() << "rAnode check failed " << rAnode << " " << m_siAnodeRCheck << endmsg; }
 
@@ -714,14 +714,14 @@ StatusCode DeRichHPD::magnifyToGlobalMagnetON( Gaudi::XYZPoint& detectPoint,
   
   //std::cout << detectPoint << std::endl;
 
-  return StatusCode::SUCCESS;
+  return true;
 }
 //=========================================================================
 //  magnification to cathode and transformation to Global coordinates
 //  with the magnet OFF
 //=========================================================================
-StatusCode DeRichHPD::magnifyToGlobalMagnetOFF( Gaudi::XYZPoint& detectPoint,
-                                                const bool photoCathodeSide ) const
+bool DeRichHPD::magnifyToGlobalMagnetOFF( Gaudi::XYZPoint& detectPoint,
+                                          const bool photoCathodeSide ) const
 {
   detectPoint = m_SiSensorToHPDMatrix * detectPoint;
   detectPoint.SetZ(0.0);
@@ -739,7 +739,7 @@ StatusCode DeRichHPD::magnifyToGlobalMagnetOFF( Gaudi::XYZPoint& detectPoint,
       rAnode/m_deMagFactor[0] );
 
   // check if this point could have come from the photoCathode
-  if ( m_winInRsq < rCathode*rCathode ) return StatusCode::FAILURE;
+  if ( m_winInRsq < rCathode*rCathode ) return false;
 
   // add "extra" radius for the refraction on the HPD window,
   // assuming 90 degrees angle
@@ -753,12 +753,12 @@ StatusCode DeRichHPD::magnifyToGlobalMagnetOFF( Gaudi::XYZPoint& detectPoint,
   const double XsqPlusYsq = xWindow*xWindow+yWindow*yWindow;
 
   const double winRadiusSq = ( photoCathodeSide ? m_winInRsq : m_winOutRsq );
-  if ( winRadiusSq < XsqPlusYsq ) return StatusCode::FAILURE;
+  if ( winRadiusSq < XsqPlusYsq ) return false;
   const double zWindow = std::sqrt(winRadiusSq - XsqPlusYsq);
 
   detectPoint = m_fromWindowToGlobal * Gaudi::XYZPoint(xWindow,yWindow,zWindow);
 
-  return StatusCode::SUCCESS;
+  return true;
 }
 
 //***********************************************************************
@@ -840,35 +840,37 @@ bool DeRichHPD::testKaptonShadowing( const Gaudi::XYZPoint&  pInPanel,
 //=========================================================================
 // Converts a pair to a point in global coordinates
 //=========================================================================
-StatusCode DeRichHPD::detectionPoint ( const double fracPixelCol,
-                                       const double fracPixelRow,
-                                       Gaudi::XYZPoint& detectPoint,
-                                       const bool photoCathodeSide ) const
+bool DeRichHPD::detectionPoint ( const double fracPixelCol,
+                                 const double fracPixelRow,
+                                 Gaudi::XYZPoint& detectPoint,
+                                 const bool photoCathodeSide ) const
 {
   if ( fracPixelCol < 0.0 || fracPixelRow < 0.0 )
   {
     error() << "Negative pixel coordinate " << fracPixelCol << ","
             << fracPixelRow << endmsg;
-    return StatusCode::FAILURE;
+    return false;
   }
 
   detectPoint = Gaudi::XYZPoint( fracPixelCol*m_pixelSize - m_siliconHalfLengthX,
                                  m_siliconHalfLengthY - fracPixelRow*m_pixelSize,
                                  0.0 );
-  const StatusCode sc =
+  const auto sc =
     ( m_UseHpdMagDistortions || fabs(magSvc()->signedRelativeCurrent()) > 0.5 ) ?
     magnifyToGlobalMagnetON  ( detectPoint, photoCathodeSide ) :
     magnifyToGlobalMagnetOFF ( detectPoint, photoCathodeSide ) ;
+
   detectPoint = geometry()->toLocal(detectPoint);
+
   return sc;
 }
 
 //=========================================================================
 // Converts a RichSmartID to a point in global coordinates.
 //=========================================================================
-StatusCode DeRichHPD::detectionPoint ( const LHCb::RichSmartID smartID,
-                                       Gaudi::XYZPoint& detectPoint,
-                                       bool photoCathodeSide ) const
+bool DeRichHPD::detectionPoint ( const LHCb::RichSmartID smartID,
+                                 Gaudi::XYZPoint& detectPoint,
+                                 bool photoCathodeSide ) const
 {
   detectPoint = pointOnSilicon(smartID);
   return ( ( m_UseHpdMagDistortions || fabs(magSvc()->signedRelativeCurrent()) > 0.5 ) ?

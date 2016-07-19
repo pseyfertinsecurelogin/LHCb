@@ -64,7 +64,7 @@ StatusCode HltRoutingBitsWriter::decode() {
    for (const auto& i : m_bits) {
       if (i.first > nBits) return StatusCode::FAILURE;
       auto sc = build(i.first, i.second);
-      if (!sc.isSuccess()) return std::move(sc);
+      if (!sc.isSuccess()) return sc;
    }
 
    m_evals_updated      = false;
@@ -134,7 +134,7 @@ StatusCode HltRoutingBitsWriter::execute() {
    // Get the fill time, weight and event time
    double t = 0, weight = 0, evt_time = 0;
    sc = times(t, weight, evt_time);
-   if (!sc.isSuccess()) return std::move(sc);
+   if (!sc.isSuccess()) return sc;
 
    // Create the evaluator
    Evaluator evaluator{this, t, weight, evt_time};

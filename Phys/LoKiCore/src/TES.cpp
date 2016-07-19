@@ -397,7 +397,7 @@ namespace LoKi
       void setHelper(StatFunction fun);
       
       /// Pointer to the actual instance of the Helper class.
-      boost::shared_ptr<BaseHelper> m_helper;
+      std::shared_ptr<BaseHelper> m_helper;
       
     public:
       

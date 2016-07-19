@@ -1,8 +1,8 @@
 /****************************  ranvec1.cpp   **********************************
 * Author:        Agner Fog
 * Date created:  2014-09-09
-* Last modified: 2014-10-17
-* Version:       1.15
+* Last modified: 2016-04-26
+* Version:       1.22
 * Project:       vector classes
 * Description:
 * Header file defining pseudo random number generators with vector output.
@@ -74,14 +74,19 @@
 * The 512 bit vector functions are available only if MAX_VECTOR_SIZE >= 512.
 *
 * For detailed instructions, see VectorClass.pdf
-* For theoretical explanation, see the article: "Pseudo-Random Number Generators
-* for Vector Processors and Multicore processors". www.agner.org/random/theory
+* For theoretical explanation, see the article: 
+* Fog, Agner. “Pseudo-Random Number Generators for Vector Processors and Multicore Processors.”
+* Journal of Modern Applied Statistical Methods 14, no. 1 (2015): article 23.
+* http://digitalcommons.wayne.edu/jmasm/vol14/iss1/23/
 *
-* (c) Copyright 2014 GNU General Public License www.gnu.org/licenses
+* (c) Copyright 2014-2016 GNU General Public License www.gnu.org/licenses
 ******************************************************************************/
 
 #include "ranvec1.h"
 
+#ifdef VCL_NAMESPACE
+namespace VCL_NAMESPACE {
+#endif
 
 /******************************************************************************
                       Member functions for Ranvec1base
@@ -1116,5 +1121,9 @@ Vec8d Ranvec1::random8d() {
     Vec8uq ranbits = Vec8uq(random512b());                                     // Get random bits
     Vec8uq r = (ranbits >> 12) | one;                                          // bits 12 - 63 inserted as mantissa
     return Vec8d(reinterpret_d(r)) - Vec8d(reinterpret_d(one));                // Get into interval 0 <= x < 1
+}
+#endif
+
+#ifdef VCL_NAMESPACE
 }
 #endif

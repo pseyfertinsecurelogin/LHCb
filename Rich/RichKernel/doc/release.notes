@@ -4,6 +4,9 @@
 ! Purpose     : General purpose RICH classes
 !------------------------------------------------------------------------------
 
+! 2016-07-11 - Chris Jones
+ - Update RichSmartID interface to return booleans instead of StatusCodes.
+
 ! 2016-07-06 - Chris Jones
  - Add "FlippedDetailed" as a new option for the track segment creator.
    Runs the same tool as "Detailed" but at the end flips the track state

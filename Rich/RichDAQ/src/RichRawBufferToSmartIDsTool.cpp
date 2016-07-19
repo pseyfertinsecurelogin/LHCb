@@ -48,7 +48,7 @@ StatusCode RawBufferToSmartIDsTool::initialize()
   // cached variables
   m_taeKey = taeKey(m_rawEventLocs);
 
-  if ( msgLevel(MSG::DEBUG) ) debug() << "RawEvent TAEs : " << m_rawEventLocs << endmsg;
+  _ri_debug << "RawEvent TAEs : " << m_rawEventLocs << endmsg;
 
   return sc;
 }
@@ -69,7 +69,7 @@ RawBufferToSmartIDsTool::richSmartIDs( const IRawBufferToSmartIDsTool::RawEventL
                                        const bool createIfMissing ) const
 {
   // get the full data structure
-  const Rich::DAQ::L1Map & data = allRichSmartIDs(taeLocs);
+  const auto & data = allRichSmartIDs(taeLocs);
   // find the data vector
   return richSmartIDs( hpdID, data, createIfMissing );
 }
@@ -79,7 +79,7 @@ RawBufferToSmartIDsTool::richSmartIDs( const LHCb::RichSmartID hpdID,
                                        const bool createIfMissing ) const
 {
   // get the full data structure
-  const Rich::DAQ::L1Map & data = allRichSmartIDs();
+  const auto & data = allRichSmartIDs();
   // find the data vector
   return richSmartIDs( hpdID, data, createIfMissing );
 }
@@ -98,7 +98,7 @@ RawBufferToSmartIDsTool::richSmartIDs( const LHCb::RichSmartID hpdID,
 {
   // find the data for the requested HPD ...
 
-  const LHCb::RichSmartID::Vector * found_data = NULL;
+  const LHCb::RichSmartID::Vector * found_data = nullptr;
 
   // First seach in a read-only way
 
@@ -163,7 +163,7 @@ const Rich::DAQ::L1Map &
 RawBufferToSmartIDsTool::
 allRichSmartIDs( const IRawBufferToSmartIDsTool::RawEventLocations& taeLocs ) const
 {
-  Rich::DAQ::L1Map & data = m_richDataTAE[ taeKey(taeLocs) ];
+  auto & data = m_richDataTAE[ taeKey(taeLocs) ];
   if ( data.empty() )
   {
     // Use raw format tool to decode event
@@ -174,7 +174,7 @@ allRichSmartIDs( const IRawBufferToSmartIDsTool::RawEventLocations& taeLocs ) co
 
 const Rich::DAQ::L1Map & RawBufferToSmartIDsTool::allRichSmartIDs() const
 {
-  Rich::DAQ::L1Map & data = m_richDataTAE[ m_taeKey ];
+  auto & data = m_richDataTAE[ m_taeKey ];
   if ( data.empty() )
   {
     // Use raw format tool to decode event

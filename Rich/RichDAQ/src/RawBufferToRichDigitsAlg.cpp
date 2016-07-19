@@ -57,7 +57,7 @@ StatusCode RawBufferToRichDigitsAlg::execute()
   if ( !m_decodeOnly )
   {
     // Make new container for RichDigits and give to Gaudi
-    LHCb::RichDigits * digits = new LHCb::RichDigits();
+    auto * digits = new LHCb::RichDigits();
     put( digits, m_richDigitsLoc );
 
     // Loop over L1 boards
