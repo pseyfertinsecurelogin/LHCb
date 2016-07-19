@@ -7,10 +7,11 @@
 #include "GaudiAlg/Transformer.h"
 // std
 #include <string>
+#include <atomic>
 
 /** @class HltLumiSummaryDecoder HltLumiSummaryDecoder.h
  *
- *  Decodes the LumiSummary. 
+ *  Decodes the LumiSummary.
  *
  *  @author Jaap Panman
  *
@@ -22,24 +23,19 @@
 class HltLumiSummaryDecoder : public Gaudi::Functional::Transformer<
                                   LHCb::HltLumiSummary(const LHCb::RawEvent&)
                               > {
-public: 
+public:
   /// Standard constructor
   HltLumiSummaryDecoder(  const std::string& name, ISvcLocator* pSvcLocator );
-  
-  /// Destructor
-  virtual ~HltLumiSummaryDecoder( ) ; ///< Destructor
-  
-  virtual StatusCode initialize();    ///< Algorithm initialization
+
+  StatusCode initialize() override;    ///< Algorithm initialization
   LHCb::HltLumiSummary operator() (const LHCb::RawEvent& event) const override;    ///< Algorithm execution
-  virtual StatusCode finalize  ();    ///< Algorithm finalization
-  
-protected:
-  
+  StatusCode finalize  () override;    ///< Algorithm finalization
+
 private:
 
-  // Statistics, mutable to allow statistics to be kept (may corrupt in multithreaded runs)
-  mutable double m_totDataSize;
-  mutable int m_nbEvents;
+  // Statistics, mutable to allow statistics to be kept
+  mutable std::atomic<double> m_totDataSize = {0};
+  mutable std::atomic<int> m_nbEvents = {0};
 
 };
 
