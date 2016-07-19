@@ -5,16 +5,84 @@
 ! Purpose     : LHCb base classes and event model
 !-----------------------------------------------------------------------------
 </PRE>
-<H1><A NAME=v40r2>2016-05-30 LHCbSys v40r2</A></H1>
-This version uses Gaudi v27r1 and LCG_84 with ROOT 6.06.02.
 <P>
 <b>BEWARE: 
 <ul>
-<li>This version exists only in Git, on 2016-patches branch
+<li>As from version v40r1, this project is maintained only in Git
 <li>The package release notes are no longer maintained, look at the Git Merge Request (MR) comments
 <li>The package versions are no longer maintained, use the Git commit IDs
 </ul>
 </b>
+
+<H1><A NAME=v40r3>2016-07-19 LHCbSys v40r3</A></H1>
+This version uses Gaudi v27r1 and LCG_84 with ROOT 6.06.02.
+<p>
+This version is released on 2016-patches branch. 
+
+<h2>Persistency</h2>
+<dl>
+<dt>[MR !87] Add TurboPrescaler algorithm for use in Tesla
+<dd> See LHCBPS-1552. Same as MR !114 on master branch
+<dt>[MR !97 !80] EventPacker, HltDAQ: Prevent Wrapping in Track Packing
+<dd> Update the packed indices in PackedTrack from short int to int, to fix the wrapping issue for future data.
+<dd> Improvements to the version checking. Make sure (almost) all packers carry out a min and max version check, to make sure the data they are packing or unpacking is in the supported version range. Future proofsthe code against future changes.
+<dd> Implement backward compatibility for reading v4 PackedTrack objects.  
+<dd> Corresponds to  MR !77 on master branch
+ 
+</dl>
+<h2>LHCbMath</h2>
+<dl>
+<dt>[MR !96] Fix Coverity warnings in LHCbMath/Functions.cpp
+<dd> Same as MR !95 on master branch
+<dt>[MR !94] Set of minor fixes and tiny improvement for LHCbMath
+<dd> Minor fix in constructor of GammaDist: initial parameter setting is incorrect. It is autocorrected as soon as parameters are changed. but incorrect stuff can appear during e.g. visualisation. Now it is fixed.
+<dd> rename mediane -> median, Mediane -> Median
+<dd> add quantile functions for GammaDist, LogGammaDist and Log10GammaDist
+<dd> fix some typos in comments
+<dd> Same as MR !89 on master branch
+<dt>[MR !88] several fixes for LHCbMath
+<dd> Fix very sad and stupid bug in the normalization of Voigt function
+<dd> provide fast approximation for Voigt fuction
+<dd> reshuffle dependency between header files to minimize coupling with GSL headers
+<dd> optimise/speedup several important functions
+<dd> add more coherence between C++ and python in math functions
+<dd> add several new functions
+<dt>[MR !86] Some improvement and fixes for Kernel/LHCbMath
+<dd> new function Gaudi::Math::Swanson S-wave cusp
+<dd> tiny reshuffling of code between Functions.cpp and MoreFunctions.cpp
+<dd> expose complex versions of erf, erfc, erfcx and faddeeva_w
+<dd> LHCbMath.Types: provide operations for std.complex('double')
+
+</dl>
+<h2>HLT and Online</h2>
+<dl>
+<dt>[MR !84] Fix memory leak in HltPackedDataWriter
+<dd> The owner ship needs to be transferred to RawEvent otherwise the memory is not cleaned up.
+<dd> See LHCBPS-1548. Same as MR !85 on master branch
+<dt>[MR !109] Update tests in HltDAQ and HltServices to use the TestFileDB to get their input files.
+<dd> Same as MR !110 on master branch
+
+</dl>
+<h2>L0</h2>
+<dl>
+<dt>[MR !82] Fix L0DUReportMonitoring issue in case of an un-reported condition
+
+</dl>
+<h2>Herschel</h2>
+<dl>
+<dt>[MR !72] LoKiCore/TES/cpp: Update to HRCSUMADC return value.
+<dd>If no digits are found, return 99999 instead of -1 since this will automatically fail a cut "HRCSUMADC < [any reasonable value]" and won't require a second check that "HRCSUMADC > 0" as an HLT line requirement.
+
+</dl>
+<h2>Calo</h2>
+<dl>
+<dt>[MR !74] DeCalorimeter: reduce verbosity of plane() method when the requested position is outside the active volume
+</dl>
+
+<H1><A NAME=v40r2>2016-05-30 LHCbSys v40r2</A></H1>
+This version uses Gaudi v27r1 and LCG_84 with ROOT 6.06.02.
+<p>
+This version is released on 2016-patches branch. 
 
 <h2>Geometry and Conditions</h2>
 <dl>
