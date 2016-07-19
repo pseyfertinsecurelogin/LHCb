@@ -695,6 +695,30 @@ std::complex<double>
 Gaudi::Math::erfc  ( const std::complex<double>& x ) 
 { return Faddeeva::erfc ( x ) ; }
 // ============================================================================
+/* imaginary error function 
+ *  \f$ erfi(x) = -i \mathrm{erf}(ix) = \frac{2}{\sqrt{\pi}} \int_0^x e^{t^2}dt\f$ 
+ *  @param x the argument
+ *  @return the value of the imaginary error function 
+ *  The actual implementation is copied from http://ab-initio.mit.edu/Faddeeva
+ *  @see http://ab-initio.mit.edu/Faddeeva
+ *  @see https://en.wikipedia.org/wiki/Error_function
+ */
+// ============================================================================
+double Gaudi::Math::erfi ( const double x ) 
+{ return Faddeeva::erfi ( x ) ; }  
+// ============================================================================
+/* imaginary error function 
+ *  \f$ erfi(x) = -i \mathrm{erf}(ix) = \frac{2}{\sqrt{\pi}} \int_0^x e^{t^2}dt\f$ 
+ *  @param x the argument
+ *  @return the value of the imaginary error function 
+ *  The actual implementation is copied from http://ab-initio.mit.edu/Faddeeva
+ *  @see http://ab-initio.mit.edu/Faddeeva
+ *  @see https://en.wikipedia.org/wiki/Error_function
+ */
+// ============================================================================
+std::complex<double> Gaudi::Math::erfi ( const std::complex<double>& x ) 
+{ return Faddeeva::erfi ( x ) ; }  
+// ============================================================================
 /*  compute sech fuction 
  *  \$f f(x) = \frac{1}{\cosh x} = \frac{2}{ e^{x}+e^{-x} }\f$
  *  @return the value of sech function 

@@ -203,6 +203,7 @@
   <function name = "Gaudi::Math::atanh"           />
   <function name = "Gaudi::Math::erf"             />
   <function name = "Gaudi::Math::erfc"            />
+  <function name = "Gaudi::Math::erfi"            />
   <function name = "Gaudi::Math::tgamma"          />
   <function name = "Gaudi::Math::lgamma"          />
   <function name = "Gaudi::Math::igamma"          />
@@ -242,6 +243,7 @@
   <function name = "Gaudi::Math::probit"            />  
   <function name = "Gaudi::Math::erfcx"             />  
   <function name = "Gaudi::Math::faddeeva_w"        />  
+  <function name = "Gaudi::Math::dowson"            />  
   <function name = "Gaudi::Math::binomEff"          />
   <function name = "Gaudi::Math::binomEff2"         />
   <function name = "Gaudi::Math::wilsonEff"         />
@@ -304,7 +306,7 @@
   <class name = "Gaudi::Math::Chi2Solution<4,2,double>::CMTRX2" />
   <class name = "Gaudi::Math::Chi2Solution<6,2,double>"         />
   <class name = "Gaudi::Math::Chi2Solution<6,2,double>::CMTRX2" />
-  
+
   <enum name = "GaudiMath::Interpolation::Type" />
 
   <enum name = "std::pair<double,int>" />

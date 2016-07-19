@@ -18,10 +18,10 @@
 #include "GaudiKernel/StatusCode.h"
 // ============================================================================
 /** @file 
- *  Collection fo useful objects with associated "covarinaces".
+ *  Collection of useful objects with associated "covariances".
  *  The concept has been stollen from Wouter Hulsbergen's lines 
  *
- *  @author Vanya BELYAEV Ivane.BElyaev@itep.ru
+ *  @author Vanya BELYAEV Ivane.Belyaev@itep.ru
  *  @date 2009-06-03
  *
  *  Version           $Revision$
@@ -737,28 +737,41 @@ namespace Gaudi
     ValueWithError sech 
     ( const ValueWithError& b ) ;
     // ========================================================================    
-    /** evaluate erf(b)
+    /** evaluate erf(b) the error function 
      *  @param b (INPUT) the parameter 
      *  @return  erf(b)
      *  @warning invalid and small covariances are ignored 
+     *  @see https://en.wikipedia.org/wiki/Error_function
      */
     GAUDI_API
     ValueWithError erf
     ( const ValueWithError& b ) ;
     // ========================================================================    
-    /** evaluate erfc(b)
+    /** evaluate erfc(b) complementary error function 
      *  @param b (INPUT) the parameter 
      *  @return  erfc(b)
      *  @warning invalid and small covariances are ignored 
+     *  @see https://en.wikipedia.org/wiki/Error_function
      */
     GAUDI_API
     ValueWithError erfc
     ( const ValueWithError& b ) ;
     // ========================================================================    
-    /** evaluate erfcx(b)
+    /** evaluate erfi(b)  imaginary error function 
      *  @param b (INPUT) the parameter 
      *  @return  erfc(b)
      *  @warning invalid and small covariances are ignored 
+     *  @see https://en.wikipedia.org/wiki/Error_function
+     */
+    GAUDI_API
+    ValueWithError erfi
+    ( const ValueWithError& b ) ;
+    // ========================================================================    
+    /** evaluate erfcx(b) complementary scaled error function 
+     *  @param b (INPUT) the parameter 
+     *  @return  erfc(b)
+     *  @warning invalid and small covariances are ignored 
+     *  @see https://en.wikipedia.org/wiki/Error_function
      */
     GAUDI_API
     ValueWithError erfcx
