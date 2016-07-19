@@ -23,7 +23,7 @@ This version is released on 2016-patches branch.
 <dl>
 <dt>[MR !87] Add TurboPrescaler algorithm for use in Tesla
 <dd> See LHCBPS-1552. Same as MR !114 on master branch
-<dt>[MR !97 !80] EventPacker, HltDAQ: Prevent Wrapping in Track Packing
+<dt>[MR !93 !80] EventPacker, HltDAQ: Prevent Wrapping in Track Packing
 <dd> Update the packed indices in PackedTrack from short int to int, to fix the wrapping issue for future data.
 <dd> Improvements to the version checking. Make sure (almost) all packers carry out a min and max version check, to make sure the data they are packing or unpacking is in the supported version range. Future proofsthe code against future changes.
 <dd> Implement backward compatibility for reading v4 PackedTrack objects.  
