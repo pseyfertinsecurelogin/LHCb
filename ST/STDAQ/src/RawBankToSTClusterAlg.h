@@ -36,16 +36,14 @@ public:
   /// Standard constructor
   RawBankToSTClusterAlg( const std::string& name, ISvcLocator* pSvcLocator );
 
-  virtual ~RawBankToSTClusterAlg( ); ///< Destructor
-
-  virtual StatusCode initialize();    ///< Algorithm initialization
-  virtual StatusCode execute();    ///< Algorithm execution
-  virtual StatusCode finalize(); ///< finalize
+  StatusCode initialize() override;    ///< Algorithm initialization
+  StatusCode execute() override;    ///< Algorithm execution
+  StatusCode finalize() override; ///< finalize
 
 
 private:
 
-  StatusCode decodeBanks(LHCb::RawEvent* rawEvt, LHCb::STClusters* digitCont ) const;
+  StatusCode decodeBanks(const LHCb::RawEvent& rawEvt, LHCb::STClusters* digitCont ) const;
 
 
   void createCluster(const STClusterWord& aWord,

@@ -133,7 +133,7 @@ StatusCode STDecodingBaseAlg::initialize() {
 }
 
 
-void STDecodingBaseAlg::createSummaryBlock(RawEvent* rawEvt, const unsigned int& nclus, const unsigned int& pcn,
+void STDecodingBaseAlg::createSummaryBlock(const RawEvent& rawEvt, const unsigned int& nclus, const unsigned int& pcn,
                                            const bool pcnsync, const unsigned int bytes,
                                            const std::vector<unsigned int>& bankList,
                                            const std::vector<unsigned int>& missing,
@@ -141,15 +141,15 @@ void STDecodingBaseAlg::createSummaryBlock(RawEvent* rawEvt, const unsigned int&
   unsigned totalBytes = bytes;
 
   // get the error banks
-  const std::vector<LHCb::RawBank*>& errorBanks = rawEvt->banks(LHCb::RawBank::BankType(m_errorType));
+  const auto& errorBanks = rawEvt.banks(LHCb::RawBank::BankType(m_errorType));
   totalBytes += byteSize(errorBanks);
 
   // get the pedestal banks
-  const std::vector<LHCb::RawBank*>& pBanks = rawEvt->banks(LHCb::RawBank::BankType(m_pedestalType));
+  const auto& pBanks = rawEvt.banks(LHCb::RawBank::BankType(m_pedestalType));
   totalBytes += byteSize(pBanks);
 
   // get the full banks
-  const std::vector<LHCb::RawBank*>& fullBanks = rawEvt->banks(LHCb::RawBank::BankType(m_fullType));
+  const auto& fullBanks = rawEvt.banks(LHCb::RawBank::BankType(m_fullType));
   totalBytes += byteSize(fullBanks);
 
   STSummary* sum = new STSummary(nclus,pcn,pcnsync, totalBytes,
