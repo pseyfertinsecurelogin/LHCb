@@ -7,25 +7,17 @@
 
 namespace OTDAQ
 {
-
-  class Gol
-  {
+  class Gol final {
   public:
     typedef std::vector<RawHit> RawHitContainer ;
-    Gol() {}
-    Gol( const GolHeader& header ) : m_header(header) {}
+    template <typename Iter1, typename Iter2>
+    Gol( const GolHeader& header, Iter1&& begin, Iter2&& end ) : m_header(header), m_hits{ std::forward<Iter1>(begin), std::forward<Iter2>(end) } {}
     const GolHeader& header() const { return m_header ; }
     const RawHitContainer& hits() const { return m_hits ; }
-    RawHitContainer& hits() { return m_hits ; }
-    //   public:
-    //     void push_back( const RawHit& hit ) { m_hits.push_back ; }
-    //     template<class iterator> 
-    //     void insert( iterator begin, iterator end ) { m_hits.insert(begin,end) ; }
   private:
     GolHeader m_header ;
     RawHitContainer m_hits ;
-  } ;
-  
+  };
 }
 
 #endif
