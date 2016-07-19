@@ -216,7 +216,7 @@ StatusCode CaloZSupAlg::execute() {
         newAdcs->insert( adc ) ;
       }
       catch(GaudiException &exc) {
-        counter("Duplicate ADC") += 1;
+        //counter("Duplicate ADC") += 1;
         std::ostringstream os("");
         os << "Duplicate ADC for channel " << id << std::endl;
         Warning(os.str(),StatusCode::SUCCESS).ignore();
@@ -235,7 +235,7 @@ StatusCode CaloZSupAlg::execute() {
         newDigits->insert( digit ) ;
       }
       catch(GaudiException &exc) {
-        counter("Duplicate Digit") += 1;
+        //counter("Duplicate Digit") += 1;
         std::ostringstream os("");
         os << "Duplicate Digit for channel " << id << std::endl;
         Warning(os.str(),StatusCode::SUCCESS).ignore();

@@ -78,7 +78,7 @@ StatusCode CaloTriggerAdcsFromRawAlg::execute() {
       newL0Adcs->insert( adc ) ;
     }
     catch(GaudiException &exc) { 
-      counter("Duplicate L0ADC") += 1;
+      //counter("Duplicate L0ADC") += 1;
       std::ostringstream os("");
       os << "Duplicate l0ADC for channel " << il0Adc->cellID() << std::endl;
       Warning(os.str(),StatusCode::SUCCESS).ignore();
@@ -107,7 +107,7 @@ StatusCode CaloTriggerAdcsFromRawAlg::execute() {
       newL0PinAdcs->insert( pinAdc ) ;
     }
     catch(GaudiException &exc) { 
-      counter("Duplicate PIN L0ADC") += 1;
+      //counter("Duplicate PIN L0ADC") += 1;
       std::ostringstream os("");
       os << "Duplicate PIN l0ADC for channel " << il0Adc->cellID() << std::endl;
       Warning(os.str(),StatusCode::SUCCESS).ignore();

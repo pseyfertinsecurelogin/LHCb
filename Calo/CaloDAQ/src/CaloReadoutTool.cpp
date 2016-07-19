@@ -109,7 +109,7 @@ bool CaloReadoutTool::getCaloBanksFromRaw( ) {
     
     if ( 0 == m_banks || 0 == m_banks->size() ){
       if ( msgLevel( MSG::DEBUG) )debug() << "WARNING : None of short and packed banks have been found "<<endmsg;
-      counter("No " + m_detectorName + " bank found") += 1;
+      //counter("No " + m_detectorName + " bank found") += 1;
       return false;
     }else{
       if( !m_packedIsDefault){      

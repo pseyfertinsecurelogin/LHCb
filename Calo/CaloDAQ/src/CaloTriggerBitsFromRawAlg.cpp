@@ -85,7 +85,7 @@ StatusCode CaloTriggerBitsFromRawAlg::execute() {
     try{
       newL0Bits->insert( l0Bit ) ;
     }catch(GaudiException &exc) { 
-      counter("Duplicate l0Bit") += 1;
+      //counter("Duplicate l0Bit") += 1;
       std::ostringstream os("");
       os << "Duplicate l0Bit for channel " << *iCell << " " << std::endl;
       Warning(os.str(),StatusCode::SUCCESS).ignore();

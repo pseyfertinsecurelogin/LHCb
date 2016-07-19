@@ -159,7 +159,7 @@ void CaloDigitsFromRaw::convertSpd ( double energyScale ) {
       try{
         digits->insert( dig );
       }catch(GaudiException &exc){
-        counter("Duplicate Spd 'digit'") += 1;
+        //counter("Duplicate Spd 'digit'") += 1;
         std::ostringstream os("");
         os << "Duplicate digit for channel " << *itD;
         Warning(os.str(),StatusCode::SUCCESS).ignore();
@@ -187,7 +187,7 @@ void CaloDigitsFromRaw::convertSpd ( double energyScale ) {
       try{
         adcs->insert( adc );
       }catch(GaudiException &exc){
-        counter("Duplicate Spd 'ADC'") += 1;
+        //counter("Duplicate Spd 'ADC'") += 1;
         std::ostringstream os("");
         os << "Duplicate ADC for channel " << *itD;
         Warning(os.str(),StatusCode::SUCCESS).ignore();
@@ -227,7 +227,7 @@ void CaloDigitsFromRaw::convertCaloEnergies ( ) {
       try{
         digits->insert( dig );
       }catch(GaudiException &exc){
-        counter("Duplicate CaloDigit") += 1;
+        //counter("Duplicate CaloDigit") += 1;
         std::ostringstream os("");
         os << "Duplicate digit for channel " << itD->cellID();
         Warning(os.str(),StatusCode::SUCCESS).ignore();
@@ -262,7 +262,7 @@ void CaloDigitsFromRaw::convertCaloEnergies ( ) {
       try{
         adcs->insert(adc);
       }catch(GaudiException &exc){
-        counter("Duplicate CaloDigit") += 1;
+        //counter("Duplicate CaloDigit") += 1;
         std::ostringstream os("");
         os << "Duplicate digit for channel " << itA->cellID();
         Warning(os.str(),StatusCode::SUCCESS).ignore();
@@ -300,7 +300,7 @@ void CaloDigitsFromRaw::convertCaloEnergies ( ) {
         try{
           pinAdcs->insert(pinAdc);
         }catch(GaudiException &exc){
-          counter("Duplicate CaloDigit") += 1;
+          //counter("Duplicate CaloDigit") += 1;
           std::ostringstream os("");
           os << "Duplicate digit for channel " << itA->cellID();
           Warning(os.str(),StatusCode::SUCCESS).ignore();

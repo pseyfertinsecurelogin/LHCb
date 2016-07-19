@@ -118,7 +118,7 @@ StatusCode CaloDataProviderFromTES::initialize ( ) {
 bool CaloDataProviderFromTES::getBanks( ) {
   clear();
   m_getRaw = false;
-  counter("Call for ADC containers") += 1;
+  //counter("Call for ADC containers") += 1;
   if( fromDigit() ){
     m_digCont = getIfExists<LHCb::CaloDigits>(evtSvc(),m_loc);
     if( m_digCont ){
@@ -132,7 +132,7 @@ bool CaloDataProviderFromTES::getBanks( ) {
       if ( msgLevel( MSG::DEBUG) )debug() << "Found container " << m_loc << " Content size " << m_adcCont->size() << endmsg;
     }else m_ok = false;
   }
-  if(!m_ok)counter("No container found") += 1;
+  //if(!m_ok)counter("No container found") += 1;
   return m_ok;
 }
 

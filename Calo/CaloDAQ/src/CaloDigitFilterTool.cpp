@@ -217,7 +217,7 @@ bool CaloDigitFilterTool::cleanDigits(std::string det, bool substr, bool mask,bo
 
   //
   int scale = getScale();
-  counter("offset scale (" + m_scaling +")") += scale;
+  //counter("offset scale (" + m_scaling +")") += scale;
   m_nMask = 0;
   m_mOffs = 0.;
   int nOffs = 0;
@@ -227,10 +227,10 @@ bool CaloDigitFilterTool::cleanDigits(std::string det, bool substr, bool mask,bo
     nOffs++;
   }
 
-  counter("Masked " + m_caloName + " digits") += m_nMask;
-  double ave = (nOffs !=0) ? m_mOffs/double(nOffs) : 0;
-  if(m_scalingMethod < 10 && substr && m_offsets.size() != 0)
-    counter(m_caloName + " average offset in ADC (method = " + Gaudi::Utils::toString(m_scalingMethod)+")" ) -= ave;
+  //counter("Masked " + m_caloName + " digits") += m_nMask;
+  //double ave = (nOffs !=0) ? m_mOffs/double(nOffs) : 0;
+  //if(m_scalingMethod < 10 && substr && m_offsets.size() != 0)
+  //  counter(m_caloName + " average offset in ADC (method = " + Gaudi::Utils::toString(m_scalingMethod)+")" ) -= ave;
   return true;
 }
 
