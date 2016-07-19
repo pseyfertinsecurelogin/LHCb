@@ -71,8 +71,31 @@ void PackedDataChecksum::processVector(const std::vector<T>& v) {
     process(x);
 }
 
+// We need to make sure the checksum is properly implemented even after
+// structures evolve. The following is an ungly way to force us to make sure
+// that is the case. Not sure it catches all possible cases...
+#ifdef __GNUC__
+static_assert(sizeof(LHCb::PackedTrack) == 56, "PackedTrack has changed!");  // padded!
+static_assert(sizeof(LHCb::PackedState) == 68, "PackedState has changed!");
+static_assert(sizeof(LHCb::PackedRichPID) == 56, "PackedRichPID has changed!");  // padded!
+static_assert(sizeof(LHCb::PackedMuonPID) == 40, "PackedMuonPID has changed!");
+static_assert(sizeof(LHCb::PackedCaloCluster) == 72, "PackedCaloCluster has changed!");  // padded!
+static_assert(sizeof(LHCb::PackedCaloClusterEntry) == 16, "PackedCaloClusterEntry has changed!");  // padded!
+static_assert(sizeof(LHCb::PackedCaloHypo) == 76, "PackedCaloHypo has changed!");
+static_assert(sizeof(LHCb::PackedProtoParticle) == 40, "PackedProtoParticle has changed!");
+static_assert(sizeof(LHCb::PackedRecVertex) == 60, "PackedRecVertex has changed!");  // padded!
+#endif
+
 // We need to define custom functions for some structures. This is because
 // they have padding bytes, which are undefined and will spoil the checksum.
+template<>
+void PackedDataChecksum::process(const LHCb::PackedTrack& x) {
+  processMany(x.key, x.chi2PerDoF, x.nDoF, x.flags,
+              x.firstId, x.lastId,
+              x.firstState, x.lastState,
+              x.firstExtra, x.lastExtra,
+              x.likelihood, x.ghostProba);
+}
 template<>
 void PackedDataChecksum::process(const LHCb::PackedRichPID& x) {
   processMany(x.pidResultCode, x.dllEl, x.dllMu, x.dllPi, x.dllKa, x.dllPr,
@@ -93,5 +116,15 @@ void PackedDataChecksum::process(const LHCb::PackedCaloCluster& x) {
               x.pos_spread10,
               x.firstEntry, x.lastEntry);
 }
+template<>
+void PackedDataChecksum::process(const LHCb::PackedRecVertex& x) {
+  processMany(x.key, x.technique, x.chi2, x.nDoF,
+              x.x, x.y, x.z,
+              x.cov00, x.cov11, x.cov22, x.cov10, x.cov20, x.cov21,
+              x.firstTrack, x.lastTrack,
+              x.firstInfo, x.lastInfo,
+              x.container);
+}
+
 
 }

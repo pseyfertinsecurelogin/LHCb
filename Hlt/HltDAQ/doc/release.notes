@@ -4,6 +4,9 @@
 ! Purpose     : Hlt RawBanks writers/decoders/monitors
 !------------------------------------------------------------------------------
 
+! 2016-07-19 - Rosen Matev
+ - Fix calculation of checksums for some packed objects and add protection.
+
 ! 2016-06-29 - Roel Aaij
  - Update tests for routing bits to use new entries in TestFileDB to get input
    files.
