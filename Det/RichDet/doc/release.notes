@@ -4,6 +4,13 @@
 ! Purpose     : Interface to the xml description
 !-----------------------------------------------------------------------------
 
+! 2016-07-12 - Chris Jones
+ - Fix some warnings due to virtual override attributes.
+
+! 2016-07-11 - Chris Jones
+ - Update some methods used heavily in the reconstruction to return a boolean
+   instead of a StatusCode, when only needed for a yes / no decision.
+
 ! 2016-04-03 - Chris Jones
  - Remove some unneccesary data members from TabulatedFunction1D, which are 
    replicated as part of the GSL interpolators. Reduces their memory footprint.

@@ -41,14 +41,12 @@ namespace Rich
         // Loop over digits
         for ( const auto& hit : pdHits )
         {
-
           // Get bit and address
           const ShortType bit     = zsData.bitFromCol( hit.pixelCol() );
           const ShortType address = zsData.addressFromRowCol( hit.pixelRow(), hit.pixelCol() );
 
           // Set the correct bit on for this address
           this->setBit( dataM[address], bit );
-
         }
 
         // How many words ?
@@ -61,7 +59,7 @@ namespace Rich
         this->setHeader( head );
 
         // Loop over address / bitfield pairs and fill to data bank
-        DataMap::const_iterator iD = dataM.begin();
+        auto iD = dataM.begin();
         while ( iD != dataM.end() )
         {
           const ShortType address0( (*iD).first ), field0( (*iD).second );

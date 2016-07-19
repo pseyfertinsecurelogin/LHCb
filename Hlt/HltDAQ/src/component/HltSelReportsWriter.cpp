@@ -207,7 +207,7 @@ StatusCode HltSelReportsWriter::execute() {
     thisIDset.reserve( ids.size() );
     std::transform( std::begin(ids), std::end(ids),
                     std::inserter(thisIDset, std::end(thisIDset)),
-                    std::mem_fn(&LHCbID::lhcbID));
+                    [](const LHCb::LHCbID& id) { return id.lhcbID(); } );
     addToSequences( std::move(thisIDset), lhcbidSequences );
   }
 

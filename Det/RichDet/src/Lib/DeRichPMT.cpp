@@ -218,13 +218,11 @@ StatusCode DeRichPMT::updateGeometry()
 
 //=============================================================================
 
-StatusCode DeRichPMT::detectionPoint ( const double fracPixelCol,
-                                       const double fracPixelRow,
-                                       Gaudi::XYZPoint& detectPoint,
-                                       const bool photoCathodeSide ) const
+bool DeRichPMT::detectionPoint ( const double fracPixelCol,
+                                 const double fracPixelRow,
+                                 Gaudi::XYZPoint& detectPoint,
+                                 const bool photoCathodeSide ) const
 {
-  StatusCode  sc = StatusCode::SUCCESS;
-
   // First find which RichDetector this point is in
   const Gaudi::XYZPoint atestPoint = Gaudi::XYZPoint (0.0,0.0,0.0);
   const Gaudi::XYZPoint atestGlobalPoint = geometry()->toGlobalMatrix() *atestPoint ;
@@ -251,7 +249,7 @@ StatusCode DeRichPMT::detectionPoint ( const double fracPixelCol,
 
   detectPoint = photoCathodeSide ? aDetPlanePointFromPhCath : aDetPlanePointFromQW ;
 
-  return sc;
+  return true;
 }
 
 Gaudi::XYZPoint 
@@ -278,12 +276,10 @@ DeRichPMT::RichPmtLensReconFromPhCath(  const Gaudi::XYZPoint & aPhCathCoord  ) 
 
 //=============================================================================
 
-StatusCode DeRichPMT::detectionPoint( const LHCb::RichSmartID smartID,
-                                      Gaudi::XYZPoint& detectPoint,
-                                      bool photoCathodeSide ) const
+bool DeRichPMT::detectionPoint( const LHCb::RichSmartID smartID,
+                                Gaudi::XYZPoint& detectPoint,
+                                bool photoCathodeSide ) const
 {
-  StatusCode   sc = StatusCode::SUCCESS;
-
   const double aPixCol = (double) ( smartID.pixelCol())* 1.0;
   const double aPixRow  = (double) ( smartID.pixelRow())* 1.0;
   const Gaudi::XYZPoint aLocalHit= getAnodeHitCoordFromMultTypePixelNum( aPixCol,aPixRow,smartID );
@@ -303,7 +299,7 @@ StatusCode DeRichPMT::detectionPoint( const LHCb::RichSmartID smartID,
                   geometry()->toGlobalMatrix() * aDetPlanePointFromPhCath  :
                   geometry()->toGlobalMatrix() * aDetPlanePointFromQW  );
 
-  return sc;
+  return true;
 }
 
 //=============================================================================

@@ -4,6 +4,14 @@
 ! Purpose     : General purpose RICH classes
 !------------------------------------------------------------------------------
 
+! 2016-07-11 - Chris Jones
+ - Update RichSmartID interface to return booleans instead of StatusCodes.
+
+! 2016-07-06 - Chris Jones
+ - Add "FlippedDetailed" as a new option for the track segment creator.
+   Runs the same tool as "Detailed" but at the end flips the track state
+   information in X and Y. Useful for background studies.
+
 !========================= RichKernel v7r63 2016-03-23 =========================
 ! 2016-03-23 - Chris Jones
  - Update RichTrackSegment to set the default photon energy to the average

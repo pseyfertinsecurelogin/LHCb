@@ -28,7 +28,8 @@ namespace Rich {
 
       template< class Version, class Header, class Footer >
       void
-      RichNonZeroSuppALICEData<Version,Header,Footer>::buildData( const LHCb::RichSmartID::Vector & digits )
+      RichNonZeroSuppALICEData<Version,Header,Footer>::
+      buildData( const LHCb::RichSmartID::Vector & digits )
       {
         // Set data words
         for ( const auto& digit : digits )
@@ -51,7 +52,8 @@ namespace Rich {
 
       template< class Version, class Header, class Footer >
       Rich::DAQ::ShortType
-      RichNonZeroSuppALICEData<Version,Header,Footer>::calcEightBitword( const LHCb::RichSmartID::Vector & digits ) const
+      RichNonZeroSuppALICEData<Version,Header,Footer>::
+      calcEightBitword( const LHCb::RichSmartID::Vector & digits ) const
       {
         using namespace RichZSPacked_V2;
 
@@ -66,8 +68,8 @@ namespace Rich {
         for ( const auto& ID : digits )
         {
           // Get bit and address
-          const Rich::DAQ::ShortType bit     = zsData.bitFromCol( ID.pixelCol() );
-          const Rich::DAQ::ShortType address = zsData.addressFromRowCol( ID.pixelRow(), ID.pixelCol() );
+          const auto bit     = zsData.bitFromCol( ID.pixelCol() );
+          const auto address = zsData.addressFromRowCol( ID.pixelRow(), ID.pixelCol() );
 
           // Set the correct bit on for this address
           this->setBit( dataM[address], bit );
@@ -80,8 +82,9 @@ namespace Rich {
 
       template< class Version, class Header, class Footer >
       Rich::DAQ::ShortType
-      RichNonZeroSuppALICEData<Version,Header,Footer>::fillRichSmartIDs( LHCb::RichSmartID::Vector & ids,
-                                                                         const LHCb::RichSmartID hpdID ) const
+      RichNonZeroSuppALICEData<Version,Header,Footer>::
+      fillRichSmartIDs( LHCb::RichSmartID::Vector & ids,
+                        const LHCb::RichSmartID hpdID ) const
       {
         m_nHits = 0; // reset number of hits to zero
 

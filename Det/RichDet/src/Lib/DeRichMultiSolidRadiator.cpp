@@ -48,8 +48,8 @@ const CLID& DeRichMultiSolidRadiator::classID()
 
 StatusCode DeRichMultiSolidRadiator::initialize()
 {
-  StatusCode sc = DeRichRadiator::initialize();
-  if ( sc.isFailure() ) return sc;
+  auto sc = DeRichRadiator::initialize();
+  if ( !sc ) return sc;
 
   // Declare UMS dependencies
   updMgrSvc()->registerCondition( this, geometry(),

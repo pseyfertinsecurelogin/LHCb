@@ -144,9 +144,6 @@ namespace LHCb
      */  
     virtual std::string cc ( const std::string& decay ) const = 0 ;
     // ========================================================================
-    /// virtual destructor 
-    virtual ~IParticlePropertySvc() ;       // virtual and protected destructor 
-    // ========================================================================
   };
   // ==========================================================================
 } //                                                      end of namespace LHCb
