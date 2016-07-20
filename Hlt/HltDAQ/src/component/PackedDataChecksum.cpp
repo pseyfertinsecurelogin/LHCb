@@ -122,8 +122,8 @@ void PackedDataChecksum::process(const LHCb::PackedRecVertex& x) {
               x.x, x.y, x.z,
               x.cov00, x.cov11, x.cov22, x.cov10, x.cov20, x.cov21,
               x.firstTrack, x.lastTrack,
-              x.firstInfo, x.lastInfo,
-              x.container);
+              x.firstInfo, x.lastInfo);
+              // skip x.container since it is not serialized, see PackedRecVertex.h
 }
 
 
