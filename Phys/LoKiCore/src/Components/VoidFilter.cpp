@@ -1,4 +1,3 @@
-// $Id$
 // ============================================================================
 // Include files 
 // ============================================================================
@@ -17,9 +16,6 @@
  *  contributions and advices from G.Raven, J.van Tilburg, 
  *  A.Golutvin, P.Koppenburg have been used in the design.
  *
- *                    $Revision$
- *  Last modification $Date$
- *                 by $Author$
  */
 // ============================================================================
 namespace LoKi 
@@ -33,17 +29,13 @@ namespace LoKi
    */
   class VoidFilter : public LoKi::FilterAlg 
   {
-    // ========================================================================
-    /// friend factory for instantiation 
-    friend class AlgFactory<LoKi::VoidFilter> ;
-    // ========================================================================
   public:
     // ========================================================================
     /// the main method: execute 
-    virtual StatusCode execute  () ;
+    StatusCode execute  () override;
     // ========================================================================
     /// proper finalization 
-    virtual StatusCode finalize () ;
+    StatusCode finalize () override;
     // ========================================================================
   public:
     // ========================================================================
@@ -52,14 +44,12 @@ namespace LoKi
      *  @see LoKi::FilterAlg::decode
      *  @see LoKi::FilterAlg::i_decode
      */
-    virtual StatusCode decode () 
+    StatusCode decode () override
     {
       StatusCode sc = i_decode<LoKi::Hybrid::ICoreFactory> ( m_cut ) ;
       Assert ( sc.isSuccess() , "Unable to decode the functor!" ) ;
       return StatusCode::SUCCESS ;
     }
-    // ========================================================================
-  protected:
     // ========================================================================
     /** standard constructor 
      *  @see LoKi::FilterAlg 
@@ -91,17 +81,15 @@ namespace LoKi
       //
       Assert ( sc.isSuccess () , "Unable (re)set property 'Factory'" , sc ) ;
     } 
-    /// virtual and protected destructor 
-    virtual ~VoidFilter () {} ;
     // ========================================================================
   private:
     // ========================================================================
     /// the default constructor is disabled 
-    VoidFilter () ;                      // the default constructor is disabled 
+    VoidFilter () = delete;              // the default constructor is disabled
     /// the copy constructor is disabled 
-    VoidFilter ( const VoidFilter& ) ;      // the copy constructor is disabled 
+    VoidFilter ( const VoidFilter& ) = delete;// the copy constructor is disabled
     /// the assignement operator is disabled 
-    VoidFilter& operator=( const VoidFilter& ) ; // the assignement is disabled
+    VoidFilter& operator=( const VoidFilter& ) = delete; // the assignement is disabled
     // ========================================================================
   private:
     // ========================================================================
