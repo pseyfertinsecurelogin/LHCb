@@ -2,6 +2,7 @@
 // STD & STL
 #include <functional>
 #include <algorithm>
+#include <numeric>
 
 /** GaudiKernel package */
 #include   "GaudiKernel/StatusCode.h"

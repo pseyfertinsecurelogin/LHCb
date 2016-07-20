@@ -1,5 +1,6 @@
 #include <memory>
 #include <cctype>
+#include <numeric>
 
 #include "Event/HltSelReports.h"
 #include "Event/HltObjectSummary.h"
