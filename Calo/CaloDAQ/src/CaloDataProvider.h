@@ -56,7 +56,7 @@ private:
     if( 0 >  m_adcs.index(id)){
       m_adcs.addEntry( temp, id);
     }else{
-      counter("Duplicate ADC found")+=1;
+      //counter("Duplicate ADC found")+=1;
       m_status.addStatus( sourceID, LHCb::RawBankReadoutStatus::DuplicateEntry);
       return temp;
     }        

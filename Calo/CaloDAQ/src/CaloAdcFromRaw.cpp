@@ -132,7 +132,7 @@ StatusCode CaloAdcFromRaw::execute() {
         outs->insert(out);
       }
       catch(GaudiException &exc) { 
-        counter("Duplicate CaloADC") += 1;
+        //counter("Duplicate CaloADC") += 1;
         std::ostringstream os("");
         os << "Duplicate CaloADC for channel " << id << std::endl;
         Warning(os.str(),StatusCode::SUCCESS).ignore();
@@ -172,7 +172,7 @@ StatusCode CaloAdcFromRaw::execute() {
         outs->insert(out);
       }
       catch(GaudiException &exc) { 
-        counter("Duplicate L0ADC") += 1;
+        //counter("Duplicate L0ADC") += 1;
         std::ostringstream os("");
         os << "Duplicate L0ADC for channel " << id << std::endl;
         Warning(os.str(),StatusCode::SUCCESS).ignore();
@@ -207,7 +207,7 @@ StatusCode CaloAdcFromRaw::execute() {
           outs->insert(out);
         }
         catch(GaudiException &exc) { 
-          counter("Duplicate L0Bit") += 1;
+          //counter("Duplicate L0Bit") += 1;
           std::ostringstream os("");
           os << "Duplicate L0Bit for channel " << id << std::endl;
           Warning(os.str(),StatusCode::SUCCESS).ignore();
