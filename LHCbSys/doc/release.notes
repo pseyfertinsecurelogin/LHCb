@@ -14,7 +14,7 @@
 </ul>
 </b>
 
-<H1><A NAME=v40r3>2016-07-19 LHCbSys v40r3</A></H1>
+<H1><A NAME=v40r3>2016-07-20 LHCbSys v40r3</A></H1>
 This version uses Gaudi v27r1 and LCG_84 with ROOT 6.06.02.
 <p>
 This version is released on 2016-patches branch. 
@@ -23,7 +23,7 @@ This version is released on 2016-patches branch.
 <dl>
 <dt>[MR !87] Add TurboPrescaler algorithm for use in Tesla
 <dd> See LHCBPS-1552. Same as MR !114 on master branch
-<dt>[MR !97 !80] EventPacker, HltDAQ: Prevent Wrapping in Track Packing
+<dt>[MR !93 !80] EventPacker, HltDAQ: Prevent Wrapping in Track Packing
 <dd> Update the packed indices in PackedTrack from short int to int, to fix the wrapping issue for future data.
 <dd> Improvements to the version checking. Make sure (almost) all packers carry out a min and max version check, to make sure the data they are packing or unpacking is in the supported version range. Future proofsthe code against future changes.
 <dd> Implement backward compatibility for reading v4 PackedTrack objects.  
@@ -77,6 +77,9 @@ This version is released on 2016-patches branch.
 <h2>Calo</h2>
 <dl>
 <dt>[MR !74] DeCalorimeter: reduce verbosity of plane() method when the requested position is outside the active volume
+<dt>[MR !148] CaloDAQ: Turn off calo counters
+<dd> Temporarily comment out counters, to speed up production use in HLT. See LHCBPS-1620
+
 </dl>
 
 <H1><A NAME=v40r2>2016-05-30 LHCbSys v40r2</A></H1>
