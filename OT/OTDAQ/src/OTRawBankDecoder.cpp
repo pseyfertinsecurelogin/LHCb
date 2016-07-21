@@ -138,28 +138,18 @@ namespace OTRawBankDecoderHelpers {
     bool golHeadersLoaded() const { return m_event; }
 
     size_t totalNumberOfHits() const {
-        //size_t ntot = std::accumulate( begin(), end(), size_t(0),
-	//	[] (size_t acc, const Module& m)
-	//	{ return acc + m.size(); });
-      if (m_totalNumberOfHits==0){
-	m_totalNumberOfHits = totalNumberOfHitsInWindow();
-	return m_totalNumberOfHits; // ns...
-      }else{
-	return m_totalNumberOfHits;
-      }
+      return totalNumberOfHitsInWindow();
     }
 
     size_t totalNumberOfHitsInWindow() const
     {
-      if (m_totalNumberOfHits==0){
-	m_totalNumberOfHits = std::accumulate( begin(), end(), size_t(0),
-					       [] (size_t acc, const Module& m) {
-						 return acc + m.countHitsInWindow();
-					       });
-	return m_totalNumberOfHits;
-      }else{
-      	return m_totalNumberOfHits;
+      if (UNLIKELY(m_totalNumberOfHits==0)){
+        m_totalNumberOfHits = std::accumulate( begin(), end(), size_t(0),
+                                               [] (size_t acc, const Module& m) {
+                                               return acc + m.countHitsInWindow();
+                                               } );
       }
+      return m_totalNumberOfHits;
     }
 
     bool isTotalNumberOfHitsLessThen(size_t nmax) const
@@ -731,35 +721,27 @@ StatusCode OTRawBankDecoder::decode( OTDAQ::RawEvent& otrawevent ) const
     const unsigned int* end   = bank->end<unsigned int>();
     size_t numgols(0);
     for( idata = begin ; idata < end; ++idata) {
-      // decode the header
       OTDAQ::GolHeader golheader(*idata);
-      OTDAQ::Gol gol(golheader);
       const OTDAQ::RawHit* firsthit = reinterpret_cast<const OTDAQ::RawHit*>(idata+1);
-      gol.hits().insert(gol.hits().end(),firsthit,firsthit+golheader.numberOfHits());
-      otspecificbank.gols().push_back( gol );
-      // increase the pointer with the gol size
+      otspecificbank.gols().emplace_back( golheader, firsthit, firsthit+golheader.numberOfHits());
       idata += golheader.hitBufferSize();
       ++numgols;
     }
-
     // check that everything is well aligned
     if(idata != end) {
-      std::ostringstream mess;
-      mess << "GOL headers do not add up to buffer size. " << idata << " " << end;
-      Warning( mess.str(), StatusCode::FAILURE, 0 ).ignore();
+      Warning( "GOL headers do not add up to buffer size.",
+               StatusCode::FAILURE, 0 ).ignore();
       decodingerror = true;
     }
-
     // check that we have read the right number of GOLs
     if( numgols != otspecificbank.header().numberOfGOLs() ) {
       Warning( "Found " + std::to_string(otspecificbank.header().numberOfGOLs())
-               + " in bank header, but read only " + std::to_string(numgols)
+               + " in bank header, but read " + std::to_string(numgols)
                + " from bank.",
               StatusCode::FAILURE, 0 ).ignore();
       decodingerror = true;
     }
   }
-
   return decodingerror ? StatusCode::FAILURE : StatusCode::SUCCESS;
 }
 
