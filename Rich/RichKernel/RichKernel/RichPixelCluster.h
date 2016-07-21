@@ -114,6 +114,9 @@ namespace Rich
     /// Number of channels in this cluster
     inline SmartIDVector::size_type size() const noexcept { return smartIDs().size(); }
 
+    /// Is the cluster empty ?
+    inline bool empty() const noexcept { return smartIDs().empty(); }
+
   public:
 
     /// Add a channel to this cluster
