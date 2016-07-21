@@ -4,6 +4,10 @@
 ! Purpose     : General purpose RICH classes
 !------------------------------------------------------------------------------
 
+! 2016-07-20 - Chris Jones
+ - Pass the vector of SmartIDs to IRichPixelClusteringTool::findClusters 
+   by const reference.
+
 ! 2016-07-11 - Chris Jones
  - Update RichSmartID interface to return booleans instead of StatusCodes.
 

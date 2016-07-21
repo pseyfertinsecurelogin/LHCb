@@ -59,7 +59,7 @@ namespace Rich
        *  @attention The user takes ownership of the returned object. 
        */
       virtual std::unique_ptr<const Rich::HPDPixelClusters>
-      findClusters( LHCb::RichSmartID::Vector & smartIDs ) const = 0;
+      findClusters( const LHCb::RichSmartID::Vector & smartIDs ) const = 0;
       
     };
 
