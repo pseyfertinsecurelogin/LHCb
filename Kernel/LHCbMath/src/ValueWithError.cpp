@@ -1956,6 +1956,29 @@ Gaudi::Math::ValueWithError Gaudi::Math::erfc
   return Gaudi::Math::ValueWithError ( v , e2 ) ;
 }
 // ============================================================================
+/*  evaluate erfi(b)
+ *  @param b (INPUT) the parameter 
+ *  @return  erfc(b)
+ *  @warning invalid and small covariances are ignored 
+ */
+// ============================================================================
+Gaudi::Math::ValueWithError Gaudi::Math::erfi
+( const Gaudi::Math::ValueWithError& b )
+{
+  if ( 0 >= b.cov2 () || _zero ( b.cov2() ) )
+  { return Gaudi::Math::erfi( b.value() ) ; }
+  //
+  const double bv = b.value() ;
+  const double v  = Gaudi::Math::erfi ( bv ) ;
+  //
+  static const double factor  = 2.0 / std::sqrt ( M_PI ) ;
+  //
+  const double d2 = factor * std::exp ( bv * bv ) ;
+  const double e2 = d2     * b.cov2() ;
+  //
+  return Gaudi::Math::ValueWithError ( v , e2 ) ;
+}
+// ============================================================================
 /*  evaluate erfcx(b)
  *  @param b (INPUT) the parameter 
  *  @return  erfc(b)

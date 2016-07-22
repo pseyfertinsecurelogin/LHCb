@@ -2267,9 +2267,9 @@ namespace Gaudi
     private: // some data 
       // ======================================================================
       /// the widths/gammas of four components: Gaussian,Lorentzian,rIrational and Sech2 
-      std::array<double,4>  m_w   ;
+      std::vector<double> m_w   ;
       //// the strengths of four components 
-      std::array<double,4>  m_eta ;
+      std::vector<double>  m_eta ;
       // ======================================================================
     private:
       // ======================================================================
