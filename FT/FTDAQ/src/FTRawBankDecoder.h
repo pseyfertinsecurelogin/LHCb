@@ -16,7 +16,7 @@
  *  @date   2012-05-11
  */
 struct FTRawBankDecoder : Gaudi::Functional::Transformer<
-FastClusterContainer<LHCb::FTLiteCluster,int>( const LHCb::RawEvent& ), Gaudi::Functional::Traits::OutputHandle_t<AnyDataHandle> >
+FastClusterContainer<LHCb::FTLiteCluster,int>( const LHCb::RawEvent& ) >
 {
   /// Standard constructor
   FTRawBankDecoder( const std::string& name, ISvcLocator* pSvcLocator );
