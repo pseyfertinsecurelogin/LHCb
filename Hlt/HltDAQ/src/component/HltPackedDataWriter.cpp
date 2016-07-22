@@ -27,7 +27,18 @@ HltPackedDataWriter::HltPackedDataWriter(const std::string& name, ISvcLocator* p
   declareProperty("ContainerMap", m_containerMap);
   declareProperty("OutputRawEventLocation",
                   m_outputRawEventLocation=LHCb::RawEventLocation::Default);
-  declareProperty("Compression", m_compression = LZMA);
+  auto* p = declareProperty("Compression", m_compression = LZMA);
+  p->declareUpdateHandler(
+    [=](Property&) {
+      switch (this->m_compression) {
+        case NoCompression: { this->m_compressionAlg = ROOT::kUndefinedCompressionAlgorithm; break; }
+        case ZLIB: { this->m_compressionAlg = ROOT::kZLIB; break; }
+        case LZMA: { this->m_compressionAlg = ROOT::kLZMA; break; }
+        default: throw GaudiException( "Unrecognized compression algorithm.", this->name(), StatusCode::FAILURE );
+        }
+    }
+  );
+  p->useUpdateHandler(); // sync m_compressionAlg with m_compression
   declareProperty("CompressionLevel", m_compressionLevel = 6);
   declareProperty("EnableChecksum", m_enableChecksum = false);
 }
@@ -57,16 +68,7 @@ StatusCode HltPackedDataWriter::initialize() {
   }
   info() << endmsg;
 
-  m_hltANNSvc = svc<IANNSvc>("HltANNSvc");
-
-  switch (m_compression) {
-    case NoCompression: { m_compressionAlg = ROOT::kUndefinedCompressionAlgorithm; break; }
-    case ZLIB: { m_compressionAlg = ROOT::kZLIB; break; }
-    case LZMA: { m_compressionAlg = ROOT::kLZMA; break; }
-    default: {
-      return Error("Unrecognized compression algorithm.");
-    }
-  }
+  m_hltANNSvc = service("HltANNSvc");
 
   if (UNLIKELY(m_enableChecksum)) {
     m_checksum = new PackedDataPersistence::PackedDataChecksum();

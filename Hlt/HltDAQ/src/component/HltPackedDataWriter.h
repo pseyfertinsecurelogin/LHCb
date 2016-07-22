@@ -78,7 +78,7 @@ private:
   bool m_enableChecksum;
 
   /// HltANNSvc for making selection names to int selection ID
-  IANNSvc* m_hltANNSvc{nullptr};
+  SmartIF<IANNSvc> m_hltANNSvc;
   
   /// Map between CLIDs and save functions
   std::map<CLID, std::function<size_t(const DataObject&)> > m_savers;
