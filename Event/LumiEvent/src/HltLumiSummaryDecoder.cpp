@@ -10,11 +10,19 @@
 // local
 #include "HltLumiSummaryDecoder.h"
 
+namespace {
+
+void addToFirst(std::atomic<double>& d, double x) {
+   // add x to atomic double d using 'Compare and Swap'
+   auto current = d.load();
+   while (!d.compare_exchange_weak(current, current + x)) /* empty on purpose*/ ;
+}
+
+}
+
 using namespace LHCb;
 
-
 DECLARE_ALGORITHM_FACTORY( HltLumiSummaryDecoder )
-
 
 //=============================================================================
 // Standard constructor, initializes variables
@@ -27,13 +35,8 @@ HltLumiSummaryDecoder::HltLumiSummaryDecoder( const std::string& name,
                                       LHCb::RawEventLocation::Trigger,
                                       LHCb::RawEventLocation::Default})}},
                         KeyValue{"OutputContainterName", LHCb::HltLumiSummaryLocation::Default})
-  , m_totDataSize(0), m_nbEvents(0)
 {
 }
-//=============================================================================
-// Destructor
-//=============================================================================
-HltLumiSummaryDecoder::~HltLumiSummaryDecoder() {}
 
 //=============================================================================
 
@@ -48,7 +51,7 @@ StatusCode HltLumiSummaryDecoder::initialize()
 
   m_nbEvents    = 0;
   m_totDataSize = 0;
-  
+
   return StatusCode::SUCCESS;
 }
 
@@ -58,7 +61,7 @@ StatusCode HltLumiSummaryDecoder::initialize()
 HltLumiSummary HltLumiSummaryDecoder::operator() (const RawEvent& event) const {
 
   if ( msgLevel( MSG::DEBUG ) ) debug() << "==> Execute" << endmsg;
-  
+
   // This should not exist already
   LHCb::HltLumiSummary hltLumiSummary;
 
@@ -68,7 +71,7 @@ HltLumiSummary HltLumiSummaryDecoder::operator() (const RawEvent& event) const {
   for (const auto& ibank : banks ) {
     // get now the raw data
     const unsigned int* idata = ibank->data() ;
-    
+
     // The data part
     const unsigned int* begin = idata ;
     const unsigned int* end   = idata + ibank->size()/sizeof( unsigned int ) ;
@@ -77,22 +80,22 @@ HltLumiSummary HltLumiSummaryDecoder::operator() (const RawEvent& event) const {
       int iKey = (*itW >> 16);
       int iVal = (*itW & 0xFFFF);
       if ( MSG::VERBOSE >= msgLevel() ) {
-        verbose() << format ( " %8x %11d %11d %11d ", *itW, *itW, iKey, iVal ) 
+        verbose() << format ( " %8x %11d %11d %11d ", *itW, *itW, iKey, iVal )
                   << endmsg;
       }
       // add this counter
       hltLumiSummary.addInfo( iKey, iVal);
     }
-    
+
     // keep statistics
-    int totDataSize = 0;
-    totDataSize += ibank->size()/sizeof( unsigned int ) ;
-    m_totDataSize += totDataSize;
+    int totDataSize =  ibank->size()/sizeof( unsigned int );
+    addToFirst( m_totDataSize, totDataSize );
+
     m_nbEvents++;
-    
+
     if ( msgLevel( MSG::DEBUG ) ) {
       debug() << "Bank size: ";
-      debug() << format( "%4d ", ibank->size() ) 
+      debug() << format( "%4d ", ibank->size() )
 	      << "Total Data bank size " << totDataSize << endmsg;
     }
   }
@@ -106,8 +109,7 @@ HltLumiSummary HltLumiSummaryDecoder::operator() (const RawEvent& event) const {
 StatusCode HltLumiSummaryDecoder::finalize()
 {
   if ( 0 < m_nbEvents ) {
-    m_totDataSize /= m_nbEvents;
-    info() << "Average event size : " << format( "%7.1f words", m_totDataSize ) 
+    info() << "Average event size : " << format( "%7.1f words", m_totDataSize / m_nbEvents )
 	   << endmsg;
   }
   return Transformer::finalize(); // must be called after all other actions
