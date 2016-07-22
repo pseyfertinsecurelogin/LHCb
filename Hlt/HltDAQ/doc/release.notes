@@ -4,6 +4,10 @@
 ! Purpose     : Hlt RawBanks writers/decoders/monitors
 !------------------------------------------------------------------------------
 
+! 2016-07-22 - Rosen Matev
+ - Compute checksums per location in addition to the global checksum
+ - Improve the debugging printout in HltPackedDataWriter/Decoder
+
 ! 2016-07-19 - Rosen Matev
  - Fix calculation of checksums for some packed objects and add protection.
 
