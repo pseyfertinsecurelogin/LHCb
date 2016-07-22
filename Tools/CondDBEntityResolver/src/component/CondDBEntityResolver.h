@@ -3,7 +3,8 @@
 
 // Include files
 #include <type_traits>
-#include "boost/optional.hpp"
+#include <boost/optional.hpp>
+#include <boost/utility/string_ref.hpp>
 #include "GaudiKernel/AlgTool.h"
 #include "GaudiKernel/IFileAccess.h"
 #include "XmlTools/IXmlEntityResolver.h"
@@ -30,12 +31,8 @@ class CondDBEntityResolver: public extends<AlgTool, IXmlEntityResolver, IFileAcc
                             virtual public xercesc::EntityResolver {
 public:
 
-  /// Standard constructor
-  CondDBEntityResolver( const std::string& type,
-                            const std::string& name,
-                            const IInterface* parent );
-
-  ~CondDBEntityResolver( ) override; ///< Destructor
+  CondDBEntityResolver( const std::string& type, const std::string& name, const IInterface* parent );
+  ~CondDBEntityResolver() override = default;
 
   // ---- Overloaded from AlgTool ----
 
@@ -49,14 +46,14 @@ public:
   // ---- Implementation of IXmlEntityResolverSvc -------------
 
   /// Return a pointer to the actual implementation of a xercesc::EntityResolver.
-  xercesc::EntityResolver *resolver() override;
+  xercesc::EntityResolver *resolver() override { return this; }
 
 
   // ---- Implementation of xercesc::EntityResolver -------------
 
   /// Create a Xerces-C input source based on the given systemId (publicId is ignored).
   /// If the systemId does not begin with "conddb:", it returns NULL, so the parser go on with the default action.
-  xercesc::InputSource *resolveEntity(const XMLCh *const publicId, const XMLCh *const systemId) override;
+  xercesc::InputSource *resolveEntity( const XMLCh *const publicId, const XMLCh *const systemId ) override;
 
 
   // ---- Implementation of IFileAccess -------------
@@ -72,6 +69,12 @@ public:
 
 private:
 
+  /// Name of the CondDBCnvSvc instance.
+  StringProperty m_condDBReaderName{"CondDBReader", "CondDBCnvSvc"};
+  /// Name of the DetectorDataService instance (for the event time).
+  StringProperty m_detDataSvcName{"DetDataSvc", "DetDataSvc/DetectorDataSvc"};
+
+
   /// Return the pointer to the CondDBReader (loading it if not yet done).
   ICondDBReader *condDBReader();
 
@@ -79,19 +82,12 @@ private:
   IDetDataSvc *detDataSvc();
 
   /// Fill validity limits and data (str) with the content retrieved from the url
-  boost::optional<std::string>  i_getData(const std::string &url,
+  boost::optional<std::string>  i_getData(boost::string_ref url,
                                           Gaudi::Time &since, Gaudi::Time &until);
 
-  /// Name of the CondDBCnvSvc instance.
-  /// Set via the property "CondDBReader", default to "CondDBCnvSvc".
-  std::string m_condDBReaderName;
 
   /// Pointer to the CondDBCnvSvc instance.
   SmartIF<ICondDBReader> m_condDBReader;
-
-  /// Name of the DetectorDataService instance (for the event time).
-  /// Set via the property "DetDataSvc", default to "DetDataSvc/DetectorDataSvc".
-  std::string m_detDataSvcName;
 
   /// Pointer to the DetectorDataService instance (for the event time).
   SmartIF<IDetDataSvc> m_detDataSvc;
