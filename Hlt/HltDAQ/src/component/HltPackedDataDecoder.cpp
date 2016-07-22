@@ -20,11 +20,14 @@ HltPackedDataDecoder::HltPackedDataDecoder(const std::string& name,
                                            ISvcLocator* pSvcLocator)
   : HltRawBankDecoderBase(name, pSvcLocator)
 {
+  //new for decoders, initialize search path, and then call the base method
+  m_rawEventLocations = {LHCb::RawEventLocation::Trigger, LHCb::RawEventLocation::Copied, LHCb::RawEventLocation::Default};
+  initRawEventSearch();
   declareProperty("EnableChecksum", m_enableChecksum = false);
   declareProperty("ContainerMap", m_containerMap);
   // The default m_sourceID=0 triggers a warning in HltRawBankDecoderBase::initialize
   // Since we only care about HLT2 persistence, set it explicitly:
-  m_sourceID = kSourceID_Hlt2;
+  setProperty("SourceID", kSourceID_Hlt2);
 }
 
 template<typename PackedData>
@@ -61,7 +64,7 @@ std::pair<DataObject*, size_t> HltPackedDataDecoder::loadObject(const std::strin
   put(object, location);
   auto nBytesRead = m_buffer.load(*object);
   if (UNLIKELY(m_enableChecksum)) m_checksum->processObject(*object, location);
-  return std::make_pair(dynamic_cast<DataObject*>(object), nBytesRead);
+  return { object, nBytesRead };
 }
 
 
@@ -172,10 +175,8 @@ StatusCode HltPackedDataDecoder::execute() {
       m_buffer.skip(storedObjectSize);
       continue;
     }
-    const auto loadObjectFun = it->second;
-
     // Load the packed object
-    auto ret = loadObjectFun(containerPath);
+    auto ret = (it->second)(containerPath);
     auto dataObject = ret.first;
     auto readObjectSize = ret.second;
 
