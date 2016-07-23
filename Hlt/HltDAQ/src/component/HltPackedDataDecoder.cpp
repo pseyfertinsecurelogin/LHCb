@@ -31,7 +31,9 @@ template<typename PackedData>
 void HltPackedDataDecoder::register_object() {
   using namespace std::placeholders;
   m_loaders[PackedData::classID()] =
-    std::bind(&HltPackedDataDecoder::loadObject<PackedData>, this, _1);
+    [this](const std::string& location){
+      return this->loadObject<PackedData>(location);
+    };
 }
 
 StatusCode HltPackedDataDecoder::initialize() {

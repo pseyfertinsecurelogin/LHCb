@@ -81,7 +81,7 @@ private:
   IANNSvc* m_hltANNSvc{nullptr};
   
   /// Map between CLIDs and save functions
-  std::map<CLID, std::function<size_t(const DataObject&, const std::string& location)> > m_savers;
+  std::map<CLID, std::function<size_t(const DataObject&, const std::string&)> > m_savers;
   /// Buffer for serialization of the packed objects
   PackedDataPersistence::PackedDataOutBuffer m_buffer;
   /// Buffer for the compressed data

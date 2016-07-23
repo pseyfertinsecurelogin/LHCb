@@ -36,7 +36,9 @@ template<typename PackedData>
 void HltPackedDataWriter::register_object() {
   using namespace std::placeholders;
   m_savers[PackedData::classID()] =
-    std::bind(&HltPackedDataWriter::saveObject<PackedData>, this, _1, _2);
+    [this](const DataObject& dataObject, const std::string& location){
+      return this->saveObject<PackedData>(dataObject, location);
+    };
 }
 
 StatusCode HltPackedDataWriter::initialize() {
