@@ -517,7 +517,11 @@ namespace Gaudi
     public:
       // ======================================================================
       /// get the value
-      double operator () ( const double x ) const ;
+      double evaluate    ( const double x ) const ;
+      // ======================================================================
+      /// get the value
+      double operator () ( const double x ) const 
+      { return x < m_xmin ? 0 : x > m_xmax ? 0 : evaluate ( x ) ; }
       // ======================================================================
     public:
       // ======================================================================
@@ -674,7 +678,10 @@ namespace Gaudi
     public:
       // ======================================================================
       /// get the value
-      double operator () ( const double x ) const ;
+      double evaluate    ( const double x ) const ;
+      /// get the value
+      double operator () ( const double x ) const 
+      { return x < m_xmin ? 0 : x > m_xmax ? 0 : evaluate ( x ) ; }
       // ======================================================================
     public:
       // ======================================================================
@@ -834,7 +841,10 @@ namespace Gaudi
     public:
       // ======================================================================
       /// get the value
-      double operator () ( const double x ) const ;
+      double evaluate    ( const double x ) const ;
+      /// get the value
+      double operator () ( const double x ) const 
+      { return x < m_xmin ? 0 : x > m_xmax ? 0 : evaluate ( x ) ; }
       // ======================================================================
     public:
       // ======================================================================
@@ -964,6 +974,8 @@ namespace Gaudi
       // ======================================================================
     public:
       // ======================================================================
+      /// get the value
+      double evaluate    ( const double x ) const ;
       /// get the value
       double operator () ( const double x ) const ;
       // ======================================================================

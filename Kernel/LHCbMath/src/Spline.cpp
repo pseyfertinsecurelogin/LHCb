@@ -14,6 +14,7 @@
 // ===========================================================================
 #include "LHCbMath/LHCbMath.h"
 #include "LHCbMath/Spline.h"
+#include "LHCbMath/Interpolation.h"
 // ===========================================================================
 // Boost 
 // ===========================================================================
@@ -44,6 +45,7 @@
 // ============================================================================
 namespace 
 {
+  // ==========================================================================
   /// equality criteria for doubles
   LHCb::Math::Equal_To<double> s_equal ;       // equality criteria for doubles
   // ==========================================================================
@@ -60,16 +62,18 @@ namespace
 // get the values from the histogram 
 // ===========================================================================
 Gaudi::Math::Splines::DATA 
-Gaudi::Math::Splines::getValues ( const TH1& histo ) 
+Gaudi::Math::Splines::getValues ( const TH1&          histo , 
+                                  const unsigned int  begin , 
+                                  const unsigned int  end   ) 
 {
   //
   const TAxis* axis        = histo.GetXaxis() ;
-  const unsigned int nbins = axis->GetNbins() ;
+  const unsigned int nbins = std::min ( (unsigned int) axis->GetNbins() + 1 , end ) ;
   //
   DATA result ; 
   result.reserve ( nbins ) ;
   //
-  for ( unsigned int i = 1 ; i <= nbins ; ++i ) 
+  for ( unsigned int i = std::max( 1u , begin)  ; i < nbins ; ++i ) 
   {
     const double x  = axis->GetBinCenter  ( i ) ;
     const double y  = histo.GetBinContent ( i ) ;
@@ -82,16 +86,18 @@ Gaudi::Math::Splines::getValues ( const TH1& histo )
 // get the errors from the histogram 
 // ===========================================================================
 Gaudi::Math::Splines::DATA 
-Gaudi::Math::Splines::getErrors ( const TH1& histo ) 
+Gaudi::Math::Splines::getErrors ( const TH1&          histo , 
+                                  const unsigned int  begin , 
+                                  const unsigned int  end   ) 
 {
   //
   const TAxis* axis        = histo.GetXaxis() ;
-  const unsigned int nbins = axis->GetNbins() ;
+  const unsigned int nbins = std::min ( (unsigned int) axis->GetNbins() + 1 , end ) ;
   //
   DATA result ; 
   result.reserve ( nbins ) ;
   //
-  for ( unsigned int i = 1 ; i <= nbins ; ++i ) 
+  for ( unsigned int i = std::max( 1u , begin )  ; i <= nbins ; ++i ) 
   {
     const double x  = axis->GetBinCenter  ( i ) ;
     const double ey = histo.GetBinError   ( i ) ;
@@ -104,15 +110,17 @@ Gaudi::Math::Splines::getErrors ( const TH1& histo )
 // get the data   from the histogram 
 // ===========================================================================
 Gaudi::Math::Splines::DATAERR 
-Gaudi::Math::Splines::getData   ( const TH1& histo ) 
+Gaudi::Math::Splines::getData   ( const TH1&          histo , 
+                                  const unsigned int  begin , 
+                                  const unsigned int  end   ) 
 {
   const TAxis* axis        = histo.GetXaxis() ;
-  const unsigned int nbins = axis->GetNbins() ;
+  const unsigned int nbins = std::min ( (unsigned int) axis->GetNbins() + 1 , end ) ;
   //
   DATAERR result ; 
   result.reserve ( nbins ) ;
   //
-  for ( unsigned int i = 1 ; i <= nbins ; ++i ) 
+  for ( unsigned int i = std::max ( 1u , begin ) ; i <= nbins ; ++i ) 
   {
     const double x  = axis->GetBinCenter  ( i ) ;
     const double y  = histo.GetBinContent ( i ) ;
@@ -162,15 +170,17 @@ Gaudi::Math::Splines::getErrors ( const Gaudi::Math::Splines::DATAERR& data )
 // get the value from graph
 // ===========================================================================
 Gaudi::Math::Splines::DATA
-Gaudi::Math::Splines::getValues ( const TGraph& graph )
+Gaudi::Math::Splines::getValues ( const TGraph&       graph ,
+                                  const unsigned int  begin , 
+                                  const unsigned int  end   ) 
 {
   //
-  const unsigned int npoints = graph.GetN() ;
+  const unsigned int npoints = std::min ( (unsigned int) graph.GetN() , end ) ;
   //
   DATA result ; 
   result.reserve ( npoints ) ;
   //
-  for ( unsigned int i = 0 ; i < npoints ; ++i ) 
+  for ( unsigned int i = begin ; i < npoints ; ++i ) 
   {
     double x = 0 ;
     double y = 0 ;
@@ -185,15 +195,17 @@ Gaudi::Math::Splines::getValues ( const TGraph& graph )
 // get the errors from graph
 // ===========================================================================
 Gaudi::Math::Splines::DATA
-Gaudi::Math::Splines::getErrors ( const TGraphErrors& graph )
+Gaudi::Math::Splines::getErrors ( const TGraphErrors& graph ,
+                                  const unsigned int  begin , 
+                                  const unsigned int  end   ) 
 {
   //
-  const unsigned int npoints = graph.GetN() ;
+  const unsigned int npoints = std::min ( (unsigned int) graph.GetN() , end )  ;
   //
   DATA result ; 
   result.reserve ( npoints ) ;
   //
-  for ( unsigned int i = 0 ; i < npoints ; ++i ) 
+  for ( unsigned int i = begin ; i < npoints ; ++i ) 
   {
     double x = 0 ;
     double y = 0 ;
@@ -209,14 +221,16 @@ Gaudi::Math::Splines::getErrors ( const TGraphErrors& graph )
 // get the data from graph
 // ===========================================================================
 Gaudi::Math::Splines::DATAERR
-Gaudi::Math::Splines::getData   ( const TGraphErrors& graph )
+Gaudi::Math::Splines::getData   ( const TGraphErrors& graph ,
+                                  const unsigned int  begin , 
+                                  const unsigned int  end   ) 
 {
-  const unsigned int npoints = graph.GetN() ;
+  const unsigned int npoints = std::min ( (unsigned int) graph.GetN() , end ) ;
   //
   DATAERR result ; 
   result.reserve ( npoints ) ;
   //
-  for ( unsigned int i = 0 ; i < npoints ; ++i ) 
+  for ( unsigned int i = begin ; i < npoints ; ++i ) 
   {
     double x = 0 ;
     double y = 0 ;
@@ -240,29 +254,12 @@ double Gaudi::Math::Splines::interpolate
   const double                      x    ) 
 {
   //
-  double value = 0 ;
-  //
-  for ( DATA::const_iterator i = data.begin() ; data.end() != i ; ++i )
-  {
-    //
-    const double xi = i->first  ;
-    const double yi = i->second ;
-    //
-    double       L  = 1 ;
-    for ( DATA::const_iterator j = data.begin() ; data.end() != j ; ++j )
-    {
-      //
-      if ( i == j ) { continue ; }
-      //
-      const double xj = j->first ;
-      //
-      L *=  ( x - xj ) / ( xi - xj ) ;
-    }
-    //
-    value += yi * L ;
-  }
-  //
-  return value ;  
+  return Gaudi::Math::Interpolation::lagrange
+    ( data.begin() , data.end () , 
+      data.begin() , data.end () , 
+      x  , 0.0 , 
+      [] ( auto x ) { return x.first  ; } , 
+      [] ( auto y ) { return y.second ; } ) ;
 }
 // ===========================================================================
 /*  simple lagrange interpolation 
@@ -277,31 +274,12 @@ Gaudi::Math::Splines::interpolate
   const double                         x    ) 
 {
   //
-  double value = 0 ;
-  double error = 0 ;
-  //
-  for ( DATAERR::const_iterator i = data.begin() ; data.end() != i ; ++i )
-  {
-    //
-    const double                       xi = i->first  ;
-    const Gaudi::Math::ValueWithError& y  = i->second ;
-    //
-    double       L  = 1 ;
-    for ( DATAERR::const_iterator j = data.begin() ; data.end() != j ; ++j )
-    {
-      //
-      if ( i == j ) { continue ; }
-      //
-      const double xj = j->first ;
-      //
-      L *=  ( x - xj ) / ( xi - xj ) ;
-    }
-    //
-    value += y.value() * L ;
-    error += y.error() * L ;
-  }
-  //
-  return Gaudi::Math::ValueWithError( value , error * error ) ;
+  return Gaudi::Math::Interpolation::lagrange
+    ( data.begin() , data.end () , 
+      data.begin() , data.end () , 
+      x  , Gaudi::Math::ValueWithError() , 
+      [] ( auto x ) { return x.first  ; } , 
+      [] ( auto y ) { return y.second ; } ) ;
 }
 // ===========================================================================
 
@@ -326,6 +304,7 @@ double Gaudi::Math::Spline::operator()  ( const double x    ) const
   //
   return m_spline->eval ( y ) ;
 }
+
 // ===========================================================================
 // get the derivative  
 // ===========================================================================
@@ -462,7 +441,9 @@ Gaudi::Math::Spline::Spline
   const GaudiMath::Interpolation::Type& type   , 
   const bool                            null   , 
   const double                          scale  , 
-  const double                          shift  ) 
+  const double                          shift  , 
+  const unsigned int                    begin  , 
+  const unsigned int                    end    )
   : std::unary_function<double,double>() 
   , m_null   ( null  ) 
   , m_scale  ( scale ) 
@@ -472,7 +453,7 @@ Gaudi::Math::Spline::Spline
   , m_spline (   ) 
 {
   // 
-  SPLINE::Data2D data = Gaudi::Math::Splines::getValues ( histo )  ;
+  SPLINE::Data2D data = Gaudi::Math::Splines::getValues ( histo , begin , end )  ;
   //
   m_spline.reset ( new SPLINE ( data , type ) ) ;
   //
@@ -490,7 +471,9 @@ Gaudi::Math::Spline::Spline
   const GaudiMath::Interpolation::Type& type   , 
   const bool                            null   , 
   const double                          scale  , 
-  const double                          shift  ) 
+  const double                          shift  ,
+  const unsigned int                    begin  , 
+  const unsigned int                    end    )
   : std::unary_function<double,double>() 
   , m_null   ( null  ) 
   , m_scale  ( scale ) 
@@ -500,7 +483,7 @@ Gaudi::Math::Spline::Spline
   , m_spline (   ) 
 {
   // 
-  SPLINE::Data2D data = Gaudi::Math::Splines::getValues ( graph )  ;
+  SPLINE::Data2D data = Gaudi::Math::Splines::getValues ( graph , begin , end )  ;
   //
   m_spline.reset ( new SPLINE ( data , type ) ) ;
   //
@@ -533,11 +516,11 @@ Gaudi::Math::SplineErrors::~SplineErrors () {}
  */
 // ===========================================================================
 Gaudi::Math::SplineErrors::SplineErrors
-( const Gaudi::Math::SplineErrors::DATAERR& data , 
-  const GaudiMath::Interpolation::Type&     type   , 
-  const bool                                null   , 
-  const double                              scale  , 
-  const double                              shift  )
+( const Gaudi::Math::SplineErrors::DATAERR& data  , 
+  const GaudiMath::Interpolation::Type&     type  , 
+  const bool                                null  , 
+  const double                              scale , 
+  const double                              shift )
   : std::unary_function<double,Gaudi::Math::ValueWithError> ()
   , m_spline ( Gaudi::Math::Splines::getValues ( data ) , type , null , scale , shift ) 
   , m_errors ( Gaudi::Math::Splines::getErrors ( data ) , type , null , scale , shift ) 
@@ -556,10 +539,12 @@ Gaudi::Math::SplineErrors::SplineErrors
   const GaudiMath::Interpolation::Type& type   , 
   const bool                            null   , 
   const double                          scale  , 
-  const double                          shift  ) 
+  const double                          shift  , 
+  const unsigned int                    begin  , 
+  const unsigned int                    end    )
   : std::unary_function<double,Gaudi::Math::ValueWithError> ()
-  , m_spline (                                   histo   , type , null  , scale , shift ) 
-  , m_errors ( Gaudi::Math::Splines::getErrors ( histo ) , type , false , scale , shift ) 
+  , m_spline (                                   histo                 , type , null  , scale , shift , begin , end ) 
+  , m_errors ( Gaudi::Math::Splines::getErrors ( histo , begin , end ) , type , false , scale , shift ) 
 {}
 // ======================================================================
 /*  Standard constructor
@@ -575,10 +560,12 @@ Gaudi::Math::SplineErrors::SplineErrors
   const GaudiMath::Interpolation::Type& type   , 
   const bool                            null   , 
   const double                          scale  , 
-  const double                          shift  ) 
+  const double                          shift  ,
+  const unsigned int                    begin  , 
+  const unsigned int                    end    )
   : std::unary_function<double,Gaudi::Math::ValueWithError> ()
-  , m_spline (                                   graph   , type , null  , scale , shift ) 
-  , m_errors ( Gaudi::Math::Splines::getErrors ( graph ) , type , false , scale , shift ) 
+  , m_spline (                                   graph                 , type , null  , scale , shift , begin , end ) 
+  , m_errors ( Gaudi::Math::Splines::getErrors ( graph , begin , end ) , type , false , scale , shift ) 
 {}
 // ===========================================================================
 // get the value 
