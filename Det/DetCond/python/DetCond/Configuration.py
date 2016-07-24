@@ -620,6 +620,11 @@ class CondDB(ConfigurableUser):
         from Gaudi.Configuration import VFSSvc
         from Configurables       import CondDBEntityResolver
         VFSSvc().FileAccessTools.append(CondDBEntityResolver())
+        try:
+            from Configurables import GitEntityResolver
+            VFSSvc().FileAccessTools.append(GitEntityResolver())
+        except ImportError:  # GitEntityResolver may not be available
+            pass
 
 
 # Exported symbols

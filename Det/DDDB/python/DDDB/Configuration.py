@@ -7,6 +7,12 @@ from Gaudi.Configuration import *
 from Configurables import ( CondDBEntityResolver,
                             XmlCnvSvc,
                             XmlParserSvc )
+try:
+    from Configurables import EntityResolverDispatcher, GitEntityResolver
+except ImportError:  # GitEntityResolver may not be available
+    GitEntityResolver = None
+
+
 from DetCond.Configuration import CondDB
 from datetime import datetime, timedelta
 import xmlrpclib
@@ -63,6 +69,14 @@ class DDDBConf(ConfigurableUser):
         ##########################################################################
         xmlCnvSvc = XmlCnvSvc(AllowGenericConversion = True)
 
+        if GitEntityResolver:
+            resolver = EntityResolverDispatcher(EntityResolvers=[
+                GitEntityResolver(),
+                CondDBEntityResolver(),
+            ])
+        else:
+            resolver = CondDBEntityResolver()
+
         xmlParserSvc = XmlParserSvc(
                                     # Set the maximum number of files to be put in the
                                     # cache of the XmlCnvSvc
@@ -75,7 +89,7 @@ class DDDBConf(ConfigurableUser):
 
                                     # Tell to the XmlParserSvc how to resolve entities
                                     # in the CondDB
-                                    EntityResolver = CondDBEntityResolver()
+                                    EntityResolver = resolver
                                     )
 
         ##########################################################################
