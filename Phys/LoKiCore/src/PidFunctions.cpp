@@ -101,9 +101,9 @@ bool LoKi::Pids::GetPids::in_abs_list ( const long id ) const
   //
   if ( m_ints.empty() && !m_names.empty() ) { getData() ; }
   //
-  return m_ints.end() != std::find_if ( m_ints.begin(), m_ints.end(),
-                                        [absid=std::abs(id)] (const long i) 
-                                        { return std::abs(i) == absid; } );
+  return std::any_of ( m_ints.begin(), m_ints.end(),
+                       [absid=std::abs(id)] (const long i) 
+                       { return std::abs(i) == absid; } );
 }
 // ============================================================================
 // load data (if needed) 
