@@ -11,16 +11,6 @@ from optparse import OptionParser
 from xml.etree import ElementTree as ET
 from subprocess import check_output, STDOUT
 
-def get_tags_from_notes(notes):
-    '''
-    Return the list of DDDB global tags in a release_notes.xml file, from the oldest
-    to the newest.
-    '''
-    ns = {'lhcb': 'http://lhcb.cern.ch'}
-    notes = ET.parse(notes)
-    xpath = "./lhcb:global_tag/lhcb:partition/[lhcb:name='DDDB']/../lhcb:tag"
-    return [el.text for el in notes.findall(xpath, ns)][-1::-1]
-
 
 def fix_system_refs(path):
 
@@ -62,10 +52,29 @@ def main():
 
     cool_url = 'sqlite_file:{0}/DDDB'.format(dbfile)
 
-    tags_to_copy = get_tags_from_notes(notes)
+    # Analyze relese notes
+    ns = {'lhcb': 'http://lhcb.cern.ch'}
+    notes = ET.parse(notes)
+
+    committers = dict((el.find('lhcb:name', ns).text,
+                       '{0} <{1}>'.format(el.find('lhcb:name', ns).text,
+                                          el.find('lhcb:email', ns).text.replace('__AT__', '@'))
+                      )
+                      for el in notes.findall('./lhcb:maintainer', ns))
+
+    tags_xpath = "./lhcb:global_tag/lhcb:partition/[lhcb:name='DDDB']/.."
+    tags_to_copy = [(
+                      el.find('lhcb:tag', ns).text,
+                      el.find('lhcb:date', ns).text + 'T00:00:00',  # we use a dummy time
+                      committers.get(el.find('lhcb:contributor', ns).text),
+                    )
+                    for el in notes.findall(tags_xpath, ns)]
+    tags_to_copy.reverse()
+    #tags_to_copy = tags_to_copy[-3:]
 
     #print cool_url
-    #print '\n'.join(tags_to_copy)
+    #print committers
+    #print '\n'.join(map(str, tags_to_copy))
 
     timestamp = '%d' % (time.time() * 1E9)
 
@@ -76,7 +85,7 @@ def main():
     print 'Initialize repository'
     check_output(['git', 'init', repo_dir])
     print 'processing %d tags' % len(tags_to_copy)
-    for count, tag in enumerate(tags_to_copy, 1):
+    for count, (tag, date, author) in enumerate(tags_to_copy, 1):
         if len(os.listdir(repo_dir)) > 1:
             print 'cleaning up'
             check_output(['git', 'rm', '-r', '.'], cwd=repo_dir)
@@ -96,7 +105,8 @@ def main():
         print 'updating repository'
         check_output(['git', 'add', '.'], cwd=repo_dir)
         if check_output(['git', 'status', '--porcelain'], cwd=repo_dir).strip():
-            check_output(['git', 'commit', '-m', tag], cwd=repo_dir)
+            check_output(['git', 'commit', '-m', tag,
+                          '--author', author, '--date', date], cwd=repo_dir)
         else:
             print 'no changes in %s' % tag
         check_output(['git', 'tag', tag], cwd=repo_dir)
