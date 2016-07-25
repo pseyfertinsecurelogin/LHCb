@@ -54,6 +54,8 @@ class DDDBConf(ConfigurableUser):
         #     + 7 => XML
         #     + 9 => pure CondDB (remove "conddb:" from URL)
         ##########################################################################
+        if GitEntityResolver and not self.isPropertySet("DbRoot"):
+            self.DbRoot = 'git:/lhcb.xml'
         detDataSvc = DetectorDataSvc( UsePersistency = True,
                                       DetDbRootName = "dd",
                                       DetDbLocation = self.getProp("DbRoot"),
@@ -130,7 +132,10 @@ class DDDBConf(ConfigurableUser):
 
         # Get particle properties table from condDB
         from Configurables import LHCb__ParticlePropertySvc
-        LHCb__ParticlePropertySvc( ParticlePropertiesFile = 'conddb:///param/ParticleTable.txt' )
+        if GitEntityResolver:
+            LHCb__ParticlePropertySvc( ParticlePropertiesFile = 'git:///param/ParticleTable.txt' )
+        else:
+            LHCb__ParticlePropertySvc( ParticlePropertiesFile = 'conddb:///param/ParticleTable.txt' )
 
     def __auto_tags_conf__(self, question, criterion):
         """ Automatic configuration of CondDB tags through the Ariadne system """

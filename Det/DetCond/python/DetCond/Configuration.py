@@ -14,6 +14,11 @@ from Configurables import ( CondDBAccessSvc,
                             COOLConfSvc,
                             ApplicationMgr )
 
+try:
+    from Configurables import GitEntityResolver
+except ImportError:  # GitEntityResolver may not be available
+    GitEntityResolver = None
+
 import os, re
 from os.path import exists, join
 
@@ -467,7 +472,7 @@ class CondDB(ConfigurableUser):
         # Access to ConditionsDB
         ##########################################################################
         conns = self.getProp("PartitionConnectionString")
-        tags = self.getProp("Tags")
+        tags = dict(self.getProp("Tags"))
         # DB partitions
         partition = {}
         parttypes = [ ("DDDB",     CondDBAccessSvc),
@@ -622,7 +627,10 @@ class CondDB(ConfigurableUser):
         VFSSvc().FileAccessTools.append(CondDBEntityResolver())
         try:
             from Configurables import GitEntityResolver
-            VFSSvc().FileAccessTools.append(GitEntityResolver())
+            ger = GitEntityResolver(Commit=self.getProp("Tags").get('DDDB', 'HEAD'))
+            VFSSvc().FileAccessTools.append(ger)
+            if localTags['DDDB']:
+                log.warning('local tags in DDDB are ignored')
         except ImportError:  # GitEntityResolver may not be available
             pass
 
