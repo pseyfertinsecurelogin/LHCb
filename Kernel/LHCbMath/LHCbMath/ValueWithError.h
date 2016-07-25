@@ -1087,6 +1087,49 @@ namespace Gaudi
       const ValueWithError& v10 , 
       const ValueWithError& v11 ) ;
     // ========================================================================
+    /** simple interpolation 
+     *  - if vector of y is larger  than vector of x, extra values are ignored 
+     *  - if vector of y is shorter than vector of x, missing entries assumed to be zero 
+     *  @param values     INPUT  vector of yi 
+     *  @param abscissas  INPUT  vector of xi
+     *  @param x          INPUT  the point where the function to be evaluated 
+     *  @param correlated INPUT  correlated uncertaties in yi?
+     */
+    GAUDI_API 
+    ValueWithError interpolate 
+    ( const std::vector<ValueWithError>& y_i                , 
+      const std::vector<double>&         x_i                ,
+      const double                       x                  , 
+      const bool                         correlated = false ) ;
+    // ========================================================================
+    /** simple interpolation 
+     *  - if vector of y is larger  than vector of x, extra values are ignored 
+     *  - if vector of y is shorter than vector of x, missing entries assumed to be zero 
+     *  @param values     INPUT  vector of yi 
+     *  @param abscissas  INPUT  vector of xi
+     *  @param x          INPUT  the point where the function to be evaluated 
+     */
+    GAUDI_API 
+    ValueWithError interpolate 
+    ( const std::vector<double>&         y_i                , 
+      const std::vector<double>&         x_i                ,
+      const ValueWithError&              x                  ) ;
+    // ========================================================================
+    /** simple interpolation 
+     *  - if vector of y is larger  than vector of x, extra values are ignored 
+     *  - if vector of y is shorter than vector of x, missing entries assumed to be zero 
+     *  @param values     INPUT  vector of yi 
+     *  @param abscissas  INPUT  vector of xi
+     *  @param x          INPUT  the point where the function to be evaluated 
+     *  @param correlated INPUT  correlated uncertaties in yi?
+     */
+    GAUDI_API 
+    ValueWithError interpolate 
+    ( const std::vector<ValueWithError>& y_i                , 
+      const std::vector<double>&         x_i                ,
+      const ValueWithError&              x                  , 
+      const bool                         correlated = false ) ;
+    // ========================================================================
     /** get the sum of the vector 
      *  @param vct the vecor
      *  @param ini the intial value 

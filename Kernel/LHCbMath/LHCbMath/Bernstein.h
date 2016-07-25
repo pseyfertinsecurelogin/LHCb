@@ -108,6 +108,11 @@ namespace Gaudi
         , m_xmax ( std::max ( xmin, xmax ) )
       {}
       // ======================================================================
+      /// constructor  from Bernstein polynomial from *different* domain
+      Bernstein ( const Bernstein& poly , 
+                  const double     xmin , 
+                  const double     xmax ) ;
+      // ======================================================================
       /// copy
       Bernstein ( const Bernstein&  ) = default ;
       /// move
@@ -126,8 +131,12 @@ namespace Gaudi
       // ======================================================================
     public:
       // ======================================================================
+      /// get the value of polynomial
+      double evaluate ( const double x ) const ;
+      // ======================================================================
       /// get the value
-      double operator () ( const double x ) const ;
+      double operator () ( const double x ) const 
+      { return x < m_xmin ? 0 : x > m_xmax ? 0 : evaluate ( x ) ; }
       // ======================================================================
     public:
       // ======================================================================
@@ -223,11 +232,11 @@ namespace Gaudi
       // ======================================================================
     public:
       // ======================================================================      
-      /// Sum of Bernstein polynomials (with the same domain!)
+      /// Sum of   Bernstein polynomials
       Bernstein __add__   ( const Bernstein& other ) const ;
-      /// Subtract Bernstein polynomials (with the same domain!)
+      /// Subtract Bernstein polynomials
       Bernstein __sub__   ( const Bernstein& other ) const ;
-      /// Multiply Bernstein polynomials (with the same domain!)
+      /// Multiply Bernstein polynomials
       Bernstein __mult__  ( const Bernstein& other ) const ;
       // ======================================================================
     public:

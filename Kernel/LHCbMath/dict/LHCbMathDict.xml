@@ -148,8 +148,14 @@
   <class name    = "Gaudi::Math::LinearErr"    />
   <class name    = "Gaudi::Math::Parabola"     />
   <class name    = "Gaudi::Math::ParabolaErr"  />
-  <function pattern = "Gaudi::Math::Splines::*"  />
+  <function pattern = "Gaudi::Math::Splines::*"        />
   <class name    = "Gaudi::Math::NSphere"        />
+  
+  <function name = "Gaudi::Math::Interpolation::lagrange"  />
+  <function name = "Gaudi::Math::Interpolation::lagrange2" />
+  <function name = "Gaudi::Math::Interpolation::neville"   />
+  <function name = "Gaudi::Math::Interpolation::neville2"  />
+  <class    name = "Gaudi::Math::Interpolation::DATA"      />
   
   <class name    = "Gaudi::Math::Splines::DATA"    />
   <class name    = "Gaudi::Math::Splines::PAIR"    />
