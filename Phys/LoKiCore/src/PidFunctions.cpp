@@ -96,20 +96,14 @@ bool LoKi::Pids::GetPids::in_list ( const long id ) const
   return m_ints.end() != std::find ( m_ints.begin() , m_ints.end  () , id ) ;  
 }
 // ============================================================================
-namespace 
-{
-  constexpr auto AbsId_ = [](const long id) {
-      return [=](const long i) { return std::abs(i) == id; };
-  };
-}
-// ============================================================================
 bool LoKi::Pids::GetPids::in_abs_list ( const long id ) const 
 {
   //
   if ( m_ints.empty() && !m_names.empty() ) { getData() ; }
   //
-  return m_ints.end() != std::find_if ( m_ints.begin() , 
-                                        m_ints.end  () , AbsId_( id ) ) ;
+  return m_ints.end() != std::find_if ( m_ints.begin(), m_ints.end(),
+                                        [absid=std::abs(id)] (const long i) 
+                                        { return std::abs(i) == absid; } );
 }
 // ============================================================================
 // load data (if needed) 
