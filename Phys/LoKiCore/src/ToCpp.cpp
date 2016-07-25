@@ -38,10 +38,15 @@ std::string Gaudi::Utils::toCpp
 {
   std::ostringstream ss ; 
   //
+#if defined(__GNUC__)&&(__GNUC__<6)
   std::ios::fmtflags orig_flags = ss.flags();
-  ss.setf(std::ios_base::floatfield ) ;
-  ss << std::setprecision( p ) << o ;
+  ss.unsetf ( std::ios::floatfield );     
+  ss << std::setprecision ( p + 2 ) << o ;
   ss.flags(orig_flags);
+#else 
+  ss << std::defaultfloat 
+     << std::setprecision ( p + 2 ) << o ;
+#endif 
   //
   return ss.str() ;
 }    
