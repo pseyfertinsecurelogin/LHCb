@@ -46,11 +46,10 @@ StatusCode LoadDDDB::initialize() {
     debug() << "==> Initialize" << endmsg;
 
   std::vector<LHCb::CondDBNameTagPair> tmp;
-  svc<ICondDBInfo>("CondDBCnvSvc",true)->defaultTags(tmp);
+  svc<ICondDBInfo>( "XmlParserSvc", true )->defaultTags( tmp );
 
-  std::vector<LHCb::CondDBNameTagPair>::iterator db;
-  for ( db = tmp.begin(); db != tmp.end(); ++db ) {
-    info() << "Database " << db->first << " tag " << db->second << endmsg;
+  for ( auto& item: tmp ) {
+    info() << "Database " << item.first << " tag " << item.second << endmsg;
   }
 
   updMgrSvc(); // trigger the initialization of the Condition Update sub-system

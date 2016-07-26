@@ -126,7 +126,7 @@ StatusCode CondDBEntityResolver::finalize ( ) {
 //=========================================================================
 // Return the pointer to the CondDBReader (loading it if not yet done).
 //=========================================================================
-ICondDBReader *CondDBEntityResolver::condDBReader() {
+ICondDBReader *CondDBEntityResolver::condDBReader() const {
   if (!m_condDBReader) {
     m_condDBReader = service(m_condDBReaderName, true);
     if( !m_condDBReader) {
@@ -287,6 +287,9 @@ xercesc::InputSource *CondDBEntityResolver::resolveEntity(const XMLCh *const, co
 
   // Done!
   return inputSource;
+}
 
+void CondDBEntityResolver::defaultTags ( std::vector<LHCb::CondDBNameTagPair>& tags ) const {
+  condDBReader()->defaultTags( tags );
 }
 //=============================================================================

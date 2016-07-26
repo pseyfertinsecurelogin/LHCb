@@ -11,6 +11,7 @@
 #include "GaudiKernel/MsgStream.h"
 #include "GaudiKernel/Service.h"
 
+#include "Kernel/ICondDBInfo.h"
 #include "XmlTools/IXmlParserSvc.h"
 
 // Forward and external declarations
@@ -27,7 +28,7 @@ class IAlgTool;
  * @author Sebastien Ponce
  * @author Marco Clemencic
  */
-class XmlParserSvc : public extends<Service, IXmlParserSvc>, virtual public xercesc::ErrorHandler
+class XmlParserSvc : public extends<Service, IXmlParserSvc, ICondDBInfo>, virtual public xercesc::ErrorHandler
 {
 
 public:
@@ -124,6 +125,10 @@ public:
    */
   void resetErrors() override;
 
+  /** Get the current default database tags
+   *  @param  tags vector of DB name, tag pairs. Empty if DB not available
+   */
+  void defaultTags( std::vector<LHCb::CondDBNameTagPair>& tags ) const override;
 
 private:
   /**

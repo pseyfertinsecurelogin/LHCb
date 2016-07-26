@@ -1,8 +1,9 @@
 #include "GaudiKernel/AlgTool.h"
 #include "XmlTools/IXmlEntityResolver.h"
+#include "Kernel/ICondDBInfo.h"
 
 /// Simple xercesc::EntityResolver that can delegate to other resolvers
-class EntityResolverDispatcher: public extends<AlgTool, IXmlEntityResolver>,
+class EntityResolverDispatcher: public extends<AlgTool, IXmlEntityResolver, ICondDBInfo>,
                                 virtual public xercesc::EntityResolver {
 
   /// implementations of IXmlEntityResolver.
@@ -43,6 +44,21 @@ public:
       if ( out ) break;
     }
     return out;
+  }
+
+  void defaultTags( std::vector<LHCb::CondDBNameTagPair>& tags) const
+  {
+    for ( auto& res : m_resolvers ) {
+      SmartIF<ICondDBInfo> cdbInfo{ res };
+      if ( cdbInfo ) {
+        cdbInfo->defaultTags( tags );
+      }
+      else {
+        auto named = res.as<INamedInterface>();
+        const auto& resolver_name = named ? named->name() : std::string{"unknown"};
+        warning() << "cannot get CondDB tags from " << resolver_name << endmsg;
+      }
+    }
   }
 
 };

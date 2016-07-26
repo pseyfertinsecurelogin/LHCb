@@ -405,3 +405,12 @@ void XmlParserSvc::increaseCacheAge()
     for (auto& i : m_cache ) i.second.birthDate = 0;
   }
 }
+
+void XmlParserSvc::defaultTags( std::vector<LHCb::CondDBNameTagPair>& tags ) const
+{
+  auto cdbInfo = m_resolver.as<ICondDBInfo>();
+  if ( cdbInfo )
+    cdbInfo->defaultTags( tags );
+  else
+    Service::warning() << "cannot get CondDB tags from " << m_resolverName << endmsg;
+}

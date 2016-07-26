@@ -158,3 +158,7 @@ xercesc::InputSource* GitEntityResolver::resolveEntity(const XMLCh *const, const
   auto buff_size = data.size();  // must be done here because "adopt" set the size to 0
   return new xercesc::MemBufInputSource(data.adopt(), buff_size, systemId, true);
 }
+
+void GitEntityResolver::defaultTags ( std::vector<LHCb::CondDBNameTagPair>& tags ) const {
+  tags.emplace_back( m_pathToRepository, m_commit );
+}

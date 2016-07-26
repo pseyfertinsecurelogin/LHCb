@@ -8,6 +8,7 @@
 #include "GaudiKernel/AlgTool.h"
 #include "GaudiKernel/IFileAccess.h"
 #include "XmlTools/IXmlEntityResolver.h"
+#include "Kernel/ICondDBInfo.h"
 
 class ICondDBReader;
 
@@ -27,7 +28,7 @@ class ICondDBReader;
  *  @author Marco Clemencic
  *  @date   2005-10-18
  */
-class CondDBEntityResolver: public extends<AlgTool, IXmlEntityResolver, IFileAccess>,
+class CondDBEntityResolver: public extends<AlgTool, IXmlEntityResolver, IFileAccess, ICondDBInfo>,
                             virtual public xercesc::EntityResolver {
 public:
 
@@ -67,6 +68,11 @@ public:
   /// @see IFileAccess::protocols
   const std::vector<std::string> &protocols() const override;
 
+  /** Get the current default database tags
+   *  @param  tags vector of DB name, tag pairs. Empty if DB not available
+   */
+  void defaultTags( std::vector<LHCb::CondDBNameTagPair>& tags ) const override;
+
 private:
 
   /// Name of the CondDBCnvSvc instance.
@@ -76,7 +82,7 @@ private:
 
 
   /// Return the pointer to the CondDBReader (loading it if not yet done).
-  ICondDBReader *condDBReader();
+  ICondDBReader *condDBReader() const;
 
   /// Return the pointer to the detector data service (loading it if not yet done).
   IDetDataSvc *detDataSvc();
@@ -87,7 +93,7 @@ private:
 
 
   /// Pointer to the CondDBCnvSvc instance.
-  SmartIF<ICondDBReader> m_condDBReader;
+  mutable SmartIF<ICondDBReader> m_condDBReader;
 
   /// Pointer to the DetectorDataService instance (for the event time).
   SmartIF<IDetDataSvc> m_detDataSvc;

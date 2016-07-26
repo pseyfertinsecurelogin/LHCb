@@ -1,6 +1,7 @@
 gaudi_subdir(GitEntityResolver)
 
 gaudi_depends_on_subdirs(GaudiKernel
+                         Kernel/LHCbKernel
                          Det/DetCond
                          Tools/XmlTools)
 

@@ -7,6 +7,7 @@
 #include "GaudiKernel/AlgTool.h"
 #include "GaudiKernel/IFileAccess.h"
 #include "XmlTools/IXmlEntityResolver.h"
+#include "Kernel/ICondDBInfo.h"
 
 #include <git2.h>
 
@@ -44,7 +45,7 @@ using git_repository_ptr = std::unique_ptr<git_repository>;
  *  @author Marco Clemencic
  *  @date   2016-07-21
  */
-class GitEntityResolver: public extends<AlgTool, IXmlEntityResolver, IFileAccess>,
+class GitEntityResolver: public extends<AlgTool, IXmlEntityResolver, IFileAccess, ICondDBInfo>,
                          virtual public xercesc::EntityResolver {
 public:
 
@@ -75,6 +76,11 @@ public:
 
   /// @see IFileAccess::protocols
   const std::vector<std::string> &protocols() const override;
+
+  /** Get the current default database tags
+   *  @param  tags vector of DB name, tag pairs. Empty if DB not available
+   */
+  void defaultTags( std::vector<LHCb::CondDBNameTagPair>& tags ) const override;
 
 private:
 
