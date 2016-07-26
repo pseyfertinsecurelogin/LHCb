@@ -631,7 +631,7 @@ class CondDB(ConfigurableUser):
             if not ger.isPropertySet('Commit'):
                 ger.Commit = self.getProp("Tags").get('DDDB', 'HEAD')
             VFSSvc().FileAccessTools.append(ger)
-            if localTags['DDDB']:
+            if localTags.get('DDDB'):
                 log.warning('local tags in DDDB are ignored')
         except ImportError:  # GitEntityResolver may not be available
             pass
