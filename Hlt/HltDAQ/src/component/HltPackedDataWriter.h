@@ -60,7 +60,7 @@ private:
   /// Put the (compressed) data buffer into raw banks and register them.
   void addBanks(LHCb::RawEvent& rawEvent, const std::vector<uint8_t>& data, Compression compression);
   /// Save an object to the buffer.
-  template<typename T> size_t saveObject(const DataObject& dataObject);
+  template<typename T> size_t saveObject(const DataObject& dataObject, const std::string& location);
   /// register the packed objects that can be saved
   template<typename PackedData> void register_object();
 
@@ -81,7 +81,7 @@ private:
   IANNSvc* m_hltANNSvc{nullptr};
   
   /// Map between CLIDs and save functions
-  std::map<CLID, std::function<size_t(const DataObject&)> > m_savers;
+  std::map<CLID, std::function<size_t(const DataObject&, const std::string&)> > m_savers;
   /// Buffer for serialization of the packed objects
   PackedDataPersistence::PackedDataOutBuffer m_buffer;
   /// Buffer for the compressed data
