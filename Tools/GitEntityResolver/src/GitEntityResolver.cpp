@@ -51,7 +51,7 @@ GitEntityResolver::GitEntityResolver( const std::string& type, const std::string
 
   declareProperty( "PathToRepository", m_pathToRepository = "", "path to the git repository to get data from");
   m_pathToRepository.declareUpdateHandler([this](Property&) -> void {
-    DEBUG_MSG << "opening Git repository " << m_pathToRepository.value() << endmsg;
+    DEBUG_MSG << "opening Git repository '" << m_pathToRepository.value() << "'" << endmsg;
     m_repository = git_call<git_repository_ptr>( this->name(), "cannot open repository", m_pathToRepository.value(),
                                                  git_repository_open, m_pathToRepository.value().c_str() );
   });
@@ -69,6 +69,12 @@ StatusCode GitEntityResolver::initialize ( ) {
   if ( ! sc.isSuccess() ) return sc;
 
   DEBUG_MSG << "Initializing..." << endmsg;
+
+  if ( ! m_repository ) {
+    m_pathToRepository.useUpdateHandler();
+    if ( UNLIKELY( ! m_repository ) )
+      throw GaudiException( "invalid Git repository: '" + m_pathToRepository.value() + "'", name(), StatusCode::FAILURE );
+  }
 
   // Initialize the Xerces-C++ XML subsystem
   try {
