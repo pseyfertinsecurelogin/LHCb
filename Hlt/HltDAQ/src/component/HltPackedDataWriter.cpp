@@ -34,7 +34,6 @@ HltPackedDataWriter::HltPackedDataWriter(const std::string& name, ISvcLocator* p
 
 template<typename PackedData>
 void HltPackedDataWriter::register_object() {
-  using namespace std::placeholders;
   m_savers[PackedData::classID()] =
     [this](const DataObject& dataObject, const std::string& location){
       return this->saveObject<PackedData>(dataObject, location);
