@@ -6,6 +6,7 @@
   
   <class name = "LHCb::Particle::Selection" />
   <class name = "LHCb::Particle::Range" />
+  <class name = "Gaudi::Range_< std::vector<const LHCb::Particle*> >" />
 
   <class name = "LHCb::RelatedInfoMap"       />
   <class name = "LHCb::RelatedInfoMap::MAP"  />
