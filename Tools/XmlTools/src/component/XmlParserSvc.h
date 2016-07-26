@@ -19,9 +19,6 @@ class IDetDataSvc;
 class IToolSvc;
 class IAlgTool;
 
-template <class TYPE>
-class SvcFactory;
-
 /** @class XmlParserSvc XmlParserSvc.h DetDescCnv/XmlParserSvc.h
  *
  * A parsing service for Xml files. Besides pure parsing, it also sperforms
@@ -77,6 +74,11 @@ public:
   /// Method to remove the lock from a document in the cache or to delete the document
   /// generated from a string.
   void releaseDoc( IOVDOMDocument* doc ) override;
+
+  // avoid that base class methods get hidden
+  using extends::info;
+  using extends::warning;
+  using extends::error;
 
   //////////////////////////////////////////////////////
   // implementation of the SAX ErrorHandler interface //
@@ -141,8 +143,7 @@ private:
   void increaseCacheAge();
 
   /// Return the pointer to the detector data service (loading it if not yet done).
-  IDetDataSvc *detDataSvc();
-
+  IDetDataSvc* detDataSvc();
 
 private:
   /// the actual DOM parser

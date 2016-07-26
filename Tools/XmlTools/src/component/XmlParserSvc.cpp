@@ -15,15 +15,20 @@
 
 #include "XmlTools/IXmlEntityResolver.h"
 #include "XmlTools/ValidInputSource.h"
+#include "XmlTools/IOVDOMDocument.h"
 
 #include "XmlParserSvc.h"
-#include "XmlTools/IOVDOMDocument.h"
 
 // -----------------------------------------------------------------------
 // Instantiation of a static factory class used by clients to create
 // instances of this service
 // -----------------------------------------------------------------------
-DECLARE_SERVICE_FACTORY( XmlParserSvc )
+DECLARE_COMPONENT( XmlParserSvc )
+
+#define ON_DEBUG if ( UNLIKELY( msgLevel( MSG::DEBUG ) ) )
+#define DEBUG_MSG ON_DEBUG debug()
+#define ON_VERBOSE if ( UNLIKELY( msgLevel( MSG::VERBOSE ) ) )
+#define VERBOSE_MSG ON_VERBOSE verbose()
 
 //=========================================================================
 //  Initialization
@@ -87,11 +92,10 @@ StatusCode XmlParserSvc::initialize()
       return sc;
     }
     {
-      std::unique_lock<std::mutex> lck(m_parser_mtx);
-      m_parser->setEntityResolver(m_resolver->resolver());
+      std::unique_lock<std::mutex> lck( m_parser_mtx );
+      m_parser->setEntityResolver( m_resolver->resolver() );
     }
-    if ( msgLevel( MSG::DEBUG ) )
-      debug() << "using the xercesc::EntityResolver provided by " << m_resolverName << endmsg;
+    DEBUG_MSG << "using the xercesc::EntityResolver provided by " << m_resolverName << endmsg;
   }
   return StatusCode::SUCCESS;
 }
@@ -136,7 +140,7 @@ IDetDataSvc* XmlParserSvc::detDataSvc()
     if ( !m_detDataSvc ) {
       throw GaudiException( "Can't locate service " + m_detDataSvcName, name(), StatusCode::FAILURE );
     } else {
-      if ( msgLevel( MSG::DEBUG ) ) debug() << "Successfully located service " << m_detDataSvcName << endmsg;
+      DEBUG_MSG << "Successfully located service " << m_detDataSvcName << endmsg;
     }
   }
   return m_detDataSvc.get();
@@ -181,10 +185,10 @@ IOVDOMDocument* XmlParserSvc::parse( const char* fileName )
     m_parser->reset();
     // parses the file
     try {
-      if ( msgLevel( MSG::DEBUG ) ) debug() << "parsing file " << fileName << endmsg;
+      DEBUG_MSG << "parsing file " << fileName << endmsg;
       long long start1 = 0;
       long long start2 = 0;
-      if ( m_measureTime ) {
+      if ( UNLIKELY( m_measureTime ) ) {
         start1 = System::cpuTime( System::microSec );
         start2 = System::currentTime( System::microSec );
       }
@@ -215,7 +219,7 @@ IOVDOMDocument* XmlParserSvc::parse( const char* fileName )
       }
       auto myDoc = cacheItem( fileName, std::move( cache_doc ) );
       // returns the parsed document
-      if ( m_measureTime ) {
+      if ( UNLIKELY( m_measureTime ) ) {
         double cpu1 = .001 * double( System::cpuTime( System::microSec ) - start1 );
         double cpu2 = .001 * double( System::currentTime( System::microSec ) - start2 );
         m_sumCpu += cpu1;
