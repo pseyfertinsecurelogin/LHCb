@@ -8,8 +8,8 @@
 #include <xercesc/sax/ErrorHandler.hpp>
 #include <xercesc/sax/SAXParseException.hpp>
 
-#include <GaudiKernel/Service.h>
 #include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Service.h"
 
 #include "XmlTools/IXmlParserSvc.h"
 
@@ -19,8 +19,8 @@ class IDetDataSvc;
 class IToolSvc;
 class IAlgTool;
 
-template <class TYPE> class SvcFactory;
-
+template <class TYPE>
+class SvcFactory;
 
 /** @class XmlParserSvc XmlParserSvc.h DetDescCnv/XmlParserSvc.h
  *
@@ -30,11 +30,10 @@ template <class TYPE> class SvcFactory;
  * @author Sebastien Ponce
  * @author Marco Clemencic
  */
-class XmlParserSvc : public extends<Service, IXmlParserSvc>,
-                     virtual public xercesc::ErrorHandler {
+class XmlParserSvc : public extends<Service, IXmlParserSvc>, virtual public xercesc::ErrorHandler
+{
 
 public:
-
   /**
    * Standard Constructor
    * @param name   String with service name
@@ -59,7 +58,7 @@ public:
    * @param fileName the name of the file to parse
    * @return the document issued from the parsing
    */
-  IOVDOMDocument* parse (const char* fileName) override;
+  IOVDOMDocument* parse( const char* fileName ) override;
 
   /**
    * This method parses XML from a string and produces the corresponding DOM
@@ -68,7 +67,7 @@ public:
    * @param source the string to parse
    * @return the document issued from the parsing
    */
-  IOVDOMDocument* parseString (std::string source) override;
+  IOVDOMDocument* parseString( std::string source ) override;
 
   /**
    * This clears the cache of previously parsed xml files.
@@ -77,7 +76,7 @@ public:
 
   /// Method to remove the lock from a document in the cache or to delete the document
   /// generated from a string.
-  void releaseDoc(IOVDOMDocument* doc) override;
+  void releaseDoc( IOVDOMDocument* doc ) override;
 
   //////////////////////////////////////////////////////
   // implementation of the SAX ErrorHandler interface //
@@ -121,11 +120,10 @@ public:
    * defaults each time the Error handler is begun.
    * The default implementation does nothing
    */
-  void resetErrors () override;
+  void resetErrors() override;
 
 
 private:
-
   /**
    * Caches the new document, parsed from the given file
    * Since this adds an item into the cache, this may remove another
@@ -133,21 +131,20 @@ private:
    * @param fileName the name of the file that was just parsed
    * @param document the document that is the result of the parsing
    */
-  IOVDOMDocument* cacheItem (std::string fileName, std::unique_ptr<IOVDOMDocument> document);
+  IOVDOMDocument* cacheItem( std::string fileName, std::unique_ptr<IOVDOMDocument> document );
 
   /**
    * this only increases the age of the cache.
    * It also checks that the age don't go back to 0. If it is the case,
    * it puts back every item birthDate to 0 also
    */
-  void increaseCacheAge ();
+  void increaseCacheAge();
 
   /// Return the pointer to the detector data service (loading it if not yet done).
   IDetDataSvc *detDataSvc();
 
 
 private:
-
   /// the actual DOM parser
   //
   // from https://xerces.apache.org/xerces-c/faq-parse-3.html#faq-6:
@@ -209,7 +206,7 @@ private:
                                                 "Name of the tool providing the IXmlEntityResolver interface."};
 
   /// Pointer to the IXmlEntityResolver tool interface (for bookkeeping).
-  IAlgTool *m_resolverTool = nullptr;
+  IAlgTool* m_resolverTool = nullptr;
 
   /// Pointer to the IXmlEntityResolver.
   SmartIF<IXmlEntityResolver> m_resolver;
