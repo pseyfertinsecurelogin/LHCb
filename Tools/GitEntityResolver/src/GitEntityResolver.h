@@ -3,7 +3,7 @@
 
 // Include files
 #include <type_traits>
-#include "boost/optional.hpp"
+#include <boost/utility/string_ref.hpp>
 #include "GaudiKernel/AlgTool.h"
 #include "GaudiKernel/IFileAccess.h"
 #include "XmlTools/IXmlEntityResolver.h"
@@ -114,7 +114,7 @@ private:
   };
 
   /// Return a string containing the data at a given path in the repository.
-  git_object_ptr i_getData(const std::string &url) const;
+  git_object_ptr i_getData(boost::string_ref url) const;
 
   git_repository_ptr m_repository;
 

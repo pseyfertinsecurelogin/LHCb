@@ -7,8 +7,6 @@
 #include <xercesc/framework/MemoryManager.hpp>
 #include <xercesc/framework/MemBufInputSource.hpp>
 
-#include <boost/utility/string_ref.hpp>
-
 DECLARE_COMPONENT( GitEntityResolver )
 
 namespace {
@@ -20,6 +18,12 @@ namespace {
     if ( UNLIKELY( func(&tmp, std::forward<ARGS>(args)...) ) )
       throw GaudiException(std::string(err_msg) + " " + std::string(key) + ": " + giterr_last()->message, std::string(name), StatusCode::FAILURE);
     return RET{ tmp };
+  }
+
+  boost::string_ref strip_prefix(boost::string_ref url) {
+    if ( url.starts_with( "git:" ) ) url = url.substr(4);  // strip the "git:" prefix
+    while ( url[0] == '/' ) url = url.substr(1); // strip optional leading '/'s
+    return url;
   }
 
 }
@@ -76,14 +80,18 @@ StatusCode GitEntityResolver::initialize ( ) {
       throw GaudiException( "invalid Git repository: '" + m_pathToRepository.value() + "'", name(), StatusCode::FAILURE );
   }
 
-  auto obj = git_call<git_object_ptr>(name(), "cannot resolve commit", m_commit.value(),
-                                      git_revparse_single, m_repository.get(), m_commit.value().c_str());
-  ON_DEBUG {
-    char oid[GIT_OID_HEXSZ+1] = {0};
-    git_oid_fmt( oid, git_object_id( obj.get() ) );
+  if ( m_commit.value().empty() ) {
+    info() << "using checked out files in " << m_pathToRepository.value() << endmsg;
+  } else {
+    auto obj = git_call<git_object_ptr>(name(), "cannot resolve commit", m_commit.value(),
+                                        git_revparse_single, m_repository.get(), m_commit.value().c_str());
+    ON_DEBUG {
+      char oid[GIT_OID_HEXSZ+1] = {0};
+      git_oid_fmt( oid, git_object_id( obj.get() ) );
 
-    if ( m_commit.value().compare( oid ) != 0 )
-        debug() << "commit '" << m_commit.value() << "' corresponds to " << oid << endmsg;
+      if ( m_commit.value().compare( oid ) != 0 )
+          debug() << "commit '" << m_commit.value() << "' corresponds to " << oid << endmsg;
+    }
   }
 
   // Initialize the Xerces-C++ XML subsystem
@@ -123,23 +131,14 @@ const std::vector<std::string>& GitEntityResolver::protocols() const {
 }
 
 GitEntityResolver::open_result_t GitEntityResolver::open(const std::string &url) {
-  auto obj = i_getData(url);
+  auto obj = i_getData( strip_prefix( url ) );
   auto blob = reinterpret_cast<const git_blob*>( obj.get() );
   std::string str{ reinterpret_cast<const char*>( git_blob_rawcontent( blob ) ), static_cast<std::size_t>( git_blob_rawsize( blob ) ) };
   return open_result_t( new std::istringstream( str ) );
 }
 
-git_object_ptr GitEntityResolver::i_getData( const std::string &url ) const {
-  boost::string_ref path{url};
-  if ( url.compare( 0, 4, "git:") == 0 ) {
-    if ( url.compare( 4, 2, "//" ) == 0 )
-      path = path.substr(6);
-    else
-      path = path.substr(4);
-  }
-  while ( path[0] == '/' ) path = path.substr(1);
-
-  std::string rev = m_commit.value() + ":" + std::string(path);
+git_object_ptr GitEntityResolver::i_getData( boost::string_ref path ) const {
+  std::string rev = m_commit.value() + ":" + path.to_string();
   return git_call<git_object_ptr>(name(), "cannot resolve object", rev,
                                   git_revparse_single, m_repository.get(), rev.c_str());
 }
@@ -156,14 +155,21 @@ xercesc::InputSource* GitEntityResolver::resolveEntity(const XMLCh *const, const
 
   DEBUG_MSG << "systemId = \"" << systemIdString << "\"" << endmsg;
 
-  if ( systemIdString.compare( 0, 4, "git:" ) != 0 ) {
+  boost::string_ref url = systemIdString;
+
+  if ( ! url.starts_with( "git:" ) ) {
     // the string does not start with "git:", so I cannot handle it
     VERBOSE_MSG << "Not a Git URL" << endmsg;
     // tell XercesC to use the default action
     return nullptr;
   }
 
-  Blob data{ i_getData( systemIdString ) };
+
+  if ( m_commit.value().empty() ) {
+    throw GaudiException( "access to file not implemented yet", name(), StatusCode::FAILURE );
+  }
+
+  Blob data{ i_getData( strip_prefix( url ) ) };
 
   auto buff_size = data.size();  // must be done here because "adopt" set the size to 0
   return new xercesc::MemBufInputSource(data.adopt(), buff_size, systemId, true);
