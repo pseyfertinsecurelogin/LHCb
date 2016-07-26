@@ -76,6 +76,16 @@ StatusCode GitEntityResolver::initialize ( ) {
       throw GaudiException( "invalid Git repository: '" + m_pathToRepository.value() + "'", name(), StatusCode::FAILURE );
   }
 
+  auto obj = git_call<git_object_ptr>(name(), "cannot resolve commit", m_commit.value(),
+                                      git_revparse_single, m_repository.get(), m_commit.value().c_str());
+  ON_DEBUG {
+    char oid[GIT_OID_HEXSZ+1] = {0};
+    git_oid_fmt( oid, git_object_id( obj.get() ) );
+
+    if ( m_commit.value().compare( oid ) != 0 )
+        debug() << "commit '" << m_commit.value() << "' corresponds to " << oid << endmsg;
+  }
+
   // Initialize the Xerces-C++ XML subsystem
   try {
 
