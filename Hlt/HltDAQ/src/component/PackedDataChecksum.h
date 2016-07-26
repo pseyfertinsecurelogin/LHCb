@@ -1,6 +1,7 @@
 #ifndef PACKEDOBJECTCHECKSUM_H
 #define PACKEDOBJECTCHECKSUM_H 1
 
+#include <map>
 #include <boost/crc.hpp>
 
 #include "Event/PackedTrack.h"
@@ -22,32 +23,36 @@ namespace PackedDataPersistence {
 class PackedDataChecksum {
 public:
 
-  void processObject(const LHCb::PackedTracks& object);
-  void processObject(const LHCb::PackedCaloClusters& object);
-  void processObject(const LHCb::PackedRichPIDs& object);
-  void processObject(const LHCb::PackedMuonPIDs& object);
-  void processObject(const LHCb::PackedCaloHypos& object);
-  void processObject(const LHCb::PackedProtoParticles& object);
-  void processObject(const LHCb::PackedRecVertices& object);
+  template<typename T>
+  void processObject(const T& object, const std::string& key = "");
 
-  /// Obtain the current value of the checksum
-  int checksum() const { return m_result.checksum(); }
-  /// Reset the checksum
-  void reset() { m_result.reset(); }
+  /// Obtain the current value of a checksum
+  int checksum(const std::string& key = "") const {
+    return m_result.at(key).checksum();
+  }
+
+  /// Obtain the current value of all checksums
+  std::map<std::string, int> checksums() const {
+    std::map<std::string, int> result;
+    for (const auto& x: m_result) {
+      result.emplace(x.first, x.second.checksum());
+    }
+    return result;
+  }
 
 private:
 
   template<typename T>
-  void process(const T& x);
+  void process(const std::string& key, const T& x);
 
   template<typename T>
-  void processVector(const std::vector<T>& v);
+  void processVector(const std::string& key, const std::vector<T>& v);
 
   template <typename ...Args>
-  void processMany(Args&&... args);
+  void processMany(const std::string& key, Args&&... args);
 
 
-  boost::crc_32_type m_result; 
+  std::map<std::string, boost::crc_32_type> m_result;
 
 };
 

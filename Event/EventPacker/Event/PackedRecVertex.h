@@ -63,6 +63,8 @@ namespace LHCb
     template<typename T>
     inline void load(T& buf, unsigned int /*version*/) {
       save(buf); // identical operation until version is incremented
+      container = 0;  // initialize "container" with a well defined value
+                      // as it is not serialized
     }
   };
 
