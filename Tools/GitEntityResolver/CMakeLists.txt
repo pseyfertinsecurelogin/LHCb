@@ -14,7 +14,8 @@ if (git2_FOUND)
                    INCLUDE_DIRS git2
                    LINK_LIBRARIES DetCondLib XmlToolsLib git2)
 
-  #gaudi_add_test(QMTest QMTEST)
+  gaudi_add_test(QMTest QMTEST
+                 ENVIRONMENT GIT_TEST_REPOSITORY=${CMAKE_CURRENT_BINARY_DIR}/test_repo/DDDB)
 else()
   message(WARNING "libgit2 not found, cannot build GitEntityResolver")
 endif()
