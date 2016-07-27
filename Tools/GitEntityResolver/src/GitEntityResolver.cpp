@@ -88,7 +88,8 @@ StatusCode GitEntityResolver::initialize ( ) {
       throw GaudiException( "invalid Git repository: '" + m_pathToRepository.value() + "'", name(), StatusCode::FAILURE );
   }
 
-  if ( m_commit.value().empty() ) {
+  m_useFiles = m_commit.value().empty();
+  if ( m_useFiles ) {
     info() << "using checked out files in " << m_pathToRepository.value() << endmsg;
   } else {
     auto obj = git_call<git_object_ptr>(name(), "cannot resolve commit", m_commit.value(),
@@ -173,14 +174,14 @@ xercesc::InputSource* GitEntityResolver::resolveEntity(const XMLCh *const, const
   }
 
   url = strip_prefix( url );
-  auto data = m_commit.value().empty() ?
-    Blob{ std::ifstream{ m_pathToRepository.value() + "/" + url.to_string() } } :
-    Blob{ i_getData( url ) };
+  auto data =
+      m_useFiles ? Blob{std::ifstream{m_pathToRepository.value() + "/" + url.to_string()}} : Blob{i_getData( url )};
 
   auto buff_size = data.size();  // must be done here because "adopt" set the size to 0
   return new xercesc::MemBufInputSource( data.adopt(), buff_size, systemId, true );
 }
 
-void GitEntityResolver::defaultTags ( std::vector<LHCb::CondDBNameTagPair>& tags ) const {
-  tags.emplace_back( m_pathToRepository, m_commit.value().empty() ? std::string{"<files>"} : m_commit.value() );
+void GitEntityResolver::defaultTags( std::vector<LHCb::CondDBNameTagPair>& tags ) const
+{
+  tags.emplace_back( m_pathToRepository, m_useFiles ? std::string{"<files>"} : m_commit.value() );
 }

@@ -91,6 +91,9 @@ private:
   /// commit id (or tag, or branch) of the version to use
   StringProperty m_commit;
 
+  /// internal flag used to track if we are using the Git database or checked out files
+  bool m_useFiles = false;
+
   /// Helper class to manage Xerces-C++ buffers
   struct Blob {
     Blob( const git_object_ptr& obj );
