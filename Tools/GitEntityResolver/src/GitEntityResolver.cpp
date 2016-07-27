@@ -1,6 +1,7 @@
 #include "GitEntityResolver.h"
 
 #include <sstream>
+#include <fstream>
 
 #include <xercesc/util/XMLString.hpp>
 #include <xercesc/util/PlatformUtils.hpp>
@@ -33,6 +34,13 @@ GitEntityResolver::Blob::Blob( const git_object_ptr& obj ) {
   m_size = git_blob_rawsize( blob );
   auto buff = xercesc::XMLPlatformUtils::fgMemoryManager->allocate( m_size );
   std::memcpy(buff, git_blob_rawcontent( blob ), m_size );
+  m_buff = reinterpret_cast<const XMLByte*>( buff );
+}
+
+GitEntityResolver::Blob::Blob( std::ifstream&& f ) {
+  m_size = f.seekg( 0, std::ifstream::end ).tellg();
+  auto buff = xercesc::XMLPlatformUtils::fgMemoryManager->allocate( m_size );
+  f.seekg( 0 ).read( reinterpret_cast<std::ifstream::char_type*>( buff ), m_size );
   m_buff = reinterpret_cast<const XMLByte*>( buff );
 }
 
@@ -164,17 +172,15 @@ xercesc::InputSource* GitEntityResolver::resolveEntity(const XMLCh *const, const
     return nullptr;
   }
 
-
-  if ( m_commit.value().empty() ) {
-    throw GaudiException( "access to file not implemented yet", name(), StatusCode::FAILURE );
-  }
-
-  Blob data{ i_getData( strip_prefix( url ) ) };
+  url = strip_prefix( url );
+  auto data = m_commit.value().empty() ?
+    Blob{ std::ifstream{ m_pathToRepository.value() + "/" + url.to_string() } } :
+    Blob{ i_getData( url ) };
 
   auto buff_size = data.size();  // must be done here because "adopt" set the size to 0
-  return new xercesc::MemBufInputSource(data.adopt(), buff_size, systemId, true);
+  return new xercesc::MemBufInputSource( data.adopt(), buff_size, systemId, true );
 }
 
 void GitEntityResolver::defaultTags ( std::vector<LHCb::CondDBNameTagPair>& tags ) const {
-  tags.emplace_back( m_pathToRepository, m_commit );
+  tags.emplace_back( m_pathToRepository, m_commit.value().empty() ? std::string{"<files>"} : m_commit.value() );
 }

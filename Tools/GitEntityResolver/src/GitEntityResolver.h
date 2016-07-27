@@ -9,6 +9,8 @@
 #include "XmlTools/IXmlEntityResolver.h"
 #include "Kernel/ICondDBInfo.h"
 
+#include <iosfwd>
+
 #include <git2.h>
 
 namespace std {
@@ -92,6 +94,7 @@ private:
   /// Helper class to manage Xerces-C++ buffers
   struct Blob {
     Blob( const git_object_ptr& obj );
+    Blob( std::ifstream&& f );
     Blob( Blob&& other ) {
       m_size = other.m_size;
       m_buff = other.adopt();
