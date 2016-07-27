@@ -22,8 +22,6 @@
 
 #include "Kernel/FastClusterContainer.h"
 
-#include "boost/lexical_cast.hpp"
-
 using namespace LHCb;
 
 //-----------------------------------------------------------------------------
@@ -35,47 +33,43 @@ using namespace LHCb;
 DECLARE_ALGORITHM_FACTORY( RawBankToSTLiteClusterAlg )
 
 RawBankToSTLiteClusterAlg::RawBankToSTLiteClusterAlg( const std::string& name,
-                                           ISvcLocator* pSvcLocator ):
-STDecodingBaseAlg (name , pSvcLocator){
-
-
- // Standard constructor, initializes variables
-  declareSTConfigProperty( "clusterLocation", m_clusterLocation , STLiteClusterLocation::TTClusters);
+                                                      ISvcLocator* pSvcLocator )
+: STDecodingBaseAlg (name , pSvcLocator)
+{
+  // Standard constructor, initializes variables
+  auto p = declareSTConfigProperty( "clusterLocation", m_clusterLocation , STLiteClusterLocation::TTClusters);
+  p->declareUpdateHandler([=](Property&){  this->m_clusterDh.updateKey( this->m_clusterLocation ); } );
+  p->useUpdateHandler();
   declareSTConfigProperty("BankType", m_bankTypeString , detType() );
-  m_clusterDh = AnyDataHandle<LHCb::STLiteCluster::STLiteClusters>(m_clusterLocation, Gaudi::DataHandle::Writer, this);
   declareOutput(&m_clusterDh);
-}
-
-RawBankToSTLiteClusterAlg::~RawBankToSTLiteClusterAlg() {
-  // Destructor
 }
 
 StatusCode RawBankToSTLiteClusterAlg::initialize() {
 
   // Initialization
   StatusCode sc = STDecodingBaseAlg::initialize();
-  if (sc.isFailure()){
-    return Error("Failed to initialize", sc);
-  }
-
+  if (sc.isFailure()) return Error("Failed to initialize", sc);
+  
+  // FIXME: STDecodingBaseAlg::initialize uses DeclareSTConfigProperty declared properties
+  // to 'flip' their detector types by directly writing to eg. m_clusterLocation
+  // the callback doesn't get invoked, so m_clusterDh gets out of sync. So we need to explicilty fix
+  // the key at the end of initialize...
+  m_clusterDh.updateKey(m_clusterLocation);
   return StatusCode::SUCCESS;
 }
 
+
 StatusCode RawBankToSTLiteClusterAlg::execute() {
 
-  if (!validSpill()) {
-    return Warning("Not a valid spill",StatusCode::SUCCESS, 1);
-  }
+  if (!validSpill()) return Warning("Not a valid spill",StatusCode::SUCCESS, 1);
 
   // Retrieve the RawEvent:
-  LHCb::RawEvent* rawEvt = NULL;
-  for (std::vector<std::string>::const_iterator p = m_rawEventLocations.begin(); p != m_rawEventLocations.end(); ++p) {
-    if (exist<LHCb::RawEvent>(*p)){
-      rawEvt = get<LHCb::RawEvent>(*p);
-      break;
-    }
+  LHCb::RawEvent* rawEvt = nullptr;
+  for (const auto& p : m_rawEventLocations) {
+    rawEvt = getIfExists<LHCb::RawEvent>(p);
+    if (rawEvt) break;
   }
-  if( rawEvt == NULL ) return Error("Failed to find raw data");
+  if( !rawEvt ) return Error("Failed to find raw data");
 
   // decode banks
   STLiteCluster::STLiteClusters fCont;
@@ -96,14 +90,13 @@ StatusCode RawBankToSTLiteClusterAlg::decodeBanks(RawEvent* rawEvt,STLiteCluster
 
   const std::vector<RawBank* >&  tBanks = rawEvt->banks(bankType());
   std::vector<unsigned int> missing = missingInAction(tBanks);
-  if ( missing.empty() == false ){
+  if ( !missing.empty() ){
     counter("lost Banks") += missing.size() ;
     if (tBanks.size() == 0){
       ++counter("no banks found");
       return StatusCode::SUCCESS;
     }
   }
-
 
   const unsigned int pcn = pcnVote(tBanks);
   if ( msgLevel(MSG::DEBUG) ) debug() << "PCN was voted to be " << pcn << endmsg;
@@ -115,17 +108,16 @@ StatusCode RawBankToSTLiteClusterAlg::decodeBanks(RawEvent* rawEvt,STLiteCluster
   const bool isUT = (detType() == "UT");
 
   // loop over the banks of this type..
-  std::vector<RawBank* >::const_iterator iterBank =  tBanks.begin();
-  for (; iterBank != tBanks.end() ; ++iterBank){
+
+  for (auto iterBank =  tBanks.begin(); iterBank != tBanks.end() ; ++iterBank){
 
     ++counter("# valid banks");
 
     // get the board and data
     STTell1Board* aBoard = readoutTool()->findByBoardID(STTell1ID((*iterBank)->sourceID()));
     if (!aBoard && !m_skipErrors){
-      std::string invalidSource = "Invalid source ID --> skip bank"+
-        boost::lexical_cast<std::string>((*iterBank)->sourceID());
-      Warning(invalidSource,StatusCode::SUCCESS,2);
+      Warning( "Invalid source ID --> skip bank"+ std::to_string((*iterBank)->sourceID()),
+              StatusCode::SUCCESS,2);
       ++counter("skipped Banks");
       continue;
     }
@@ -133,9 +125,8 @@ StatusCode RawBankToSTLiteClusterAlg::decodeBanks(RawEvent* rawEvt,STLiteCluster
    ++counter("# valid source ID");
 
    if ((*iterBank)->magic() != RawBank::MagicPattern) {
-     std::string pattern = "wrong magic pattern "+
-       boost::lexical_cast<std::string>((*iterBank)->sourceID());
-      Warning(pattern, StatusCode::SUCCESS,2);
+      Warning( "wrong magic pattern "+ std::to_string((*iterBank)->sourceID()),
+               StatusCode::SUCCESS,2);
       counter("skipped Banks") += tBanks.size();
       continue;
     }
@@ -147,32 +138,27 @@ StatusCode RawBankToSTLiteClusterAlg::decodeBanks(RawEvent* rawEvt,STLiteCluster
     if (decoder.hasError() == true && !m_skipErrors){
 
       if (!recoverMode()){
-        std::string errorBankMsg = "bank has errors, skip sourceID " +
-          boost::lexical_cast<std::string>((*iterBank)->sourceID());
-        Warning(errorBankMsg, StatusCode::SUCCESS, 2).ignore();
+        Warning( "bank has errors, skip sourceID " + std::to_string((*iterBank)->sourceID()),
+                StatusCode::SUCCESS, 2).ignore();
         ++counter("skipped Banks");
         continue;
       }else{
         // flag that need to recover....
         recover = true;
-        ++counter("recovered banks" +  boost::lexical_cast<std::string>((*iterBank)->sourceID()));
+        ++counter("recovered banks" +  std::to_string((*iterBank)->sourceID()));
       }
     }
 
     // ok this is a bit ugly.....
-    STTELL1BoardErrorBank* errorBank = 0;
-    if (recover == true){
-      errorBank = findErrorBank((*iterBank)->sourceID());
-    }
+    STTELL1BoardErrorBank* errorBank = recover ? findErrorBank((*iterBank)->sourceID()) : nullptr;
 
-    if (errorBank == 0) {
+    if (errorBank) {
       const unsigned bankpcn = decoder.header().pcn();
       if (pcn != bankpcn && !m_skipErrors){
-        std::string errorBankMsg = "PCNs out of sync sourceID "+
-          boost::lexical_cast<std::string>((*iterBank)->sourceID());
-        if ( msgLevel(MSG::DEBUG) )
           debug() << "Expected " << pcn << " found " << bankpcn << endmsg;
-        Warning(errorBankMsg, StatusCode::SUCCESS,2).ignore();
+        if ( msgLevel(MSG::DEBUG) )
+        Warning("PCNs out of sync sourceID "+ std::to_string((*iterBank)->sourceID())
+                , StatusCode::SUCCESS,2).ignore();
         ++counter("skipped Banks");
         continue;
       }
@@ -187,16 +173,15 @@ StatusCode RawBankToSTLiteClusterAlg::decodeBanks(RawEvent* rawEvt,STLiteCluster
 
 
     // read in the first half of the bank
-    STDecoder::pos_iterator iterDecoder = decoder.posBegin();
-    for ( ;iterDecoder != decoder.posEnd(); ++iterDecoder){
+    
+    for (auto iterDecoder = decoder.posBegin();iterDecoder != decoder.posEnd(); ++iterDecoder){
 
-
-      if (recover == false){
+      if (!recover){
         createCluster(aBoard,bankVersion ,*iterDecoder, &fCont, isUT);
       }else{
-        if (errorBank != 0 && canBeRecovered(errorBank,*iterDecoder, pcn) == true){
+        if (errorBank && canBeRecovered(errorBank,*iterDecoder, pcn)){
           createCluster(aBoard, bankVersion, *iterDecoder, &fCont, isUT);
-        } // errorbanl
+        } // errorbank
       } // recover == false
 
     } //decoder
@@ -222,7 +207,7 @@ StatusCode RawBankToSTLiteClusterAlg::finalize() {
   const double failed = counter("skipped Banks").flag();
   const double processed = counter("# valid banks").flag();
   double eff = 0.0;
-  if (!LHCb::Math::Equal_To<double>()(processed, 0.0) == true){
+  if (!LHCb::Math::Equal_To<double>()(processed, 0.0)){
     eff = 1.0 - (failed/processed);
   }
   info() << "Successfully processed " << 100* eff << " %"  << endmsg;
