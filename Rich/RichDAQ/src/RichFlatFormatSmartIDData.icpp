@@ -54,13 +54,13 @@ namespace Rich
       m_nHits = 0; // reset number of hits to zero
 
       // Number of data words
-      const int nDataWords = this->dataSize();
+      const auto nDataWords = this->dataSize();
 
       // any data words
       if ( nDataWords>0 )
       {
         // Loop over data fields
-        for ( int iData = 0; iData < nDataWords; ++iData )
+        for ( unsigned int iData = 0; iData < nDataWords; ++iData )
         {
           const LHCb::RichSmartID id( this->data()[iData] );
           if ( id.pdID() != hpdID )

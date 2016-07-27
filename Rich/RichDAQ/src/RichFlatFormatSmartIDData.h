@@ -57,7 +57,7 @@ namespace Rich
       explicit RichFlatFormatSmartIDData( const Level0ID l0ID,
                                           const LHCb::RichSmartID::Vector & digits,
                                           const bool extendedFormat = false,
-                                          const LHCb::ODIN * odin = NULL )
+                                          const LHCb::ODIN * odin = nullptr )
         : HPDDataBankImp<Version,Header,Footer> ( Header( true,  // Not ZS
                                                           false, // Not ALICE mode
                                                           extendedFormat, // data format
@@ -91,14 +91,14 @@ namespace Rich
         }
 
       /// Destructor
-      virtual ~RichFlatFormatSmartIDData() { }
+      virtual ~RichFlatFormatSmartIDData() = default;
 
       // Returns the hit count for this HPD
-      virtual ShortType hitCount() const;
+      virtual ShortType hitCount() const final;
 
       // Fill a vector with RichSmartIDs for hit pixels
       virtual ShortType fillRichSmartIDs( LHCb::RichSmartID::Vector & ids,
-                                          const LHCb::RichSmartID hpdID ) const;
+                                          const LHCb::RichSmartID hpdID ) const final;
 
     private: // methods
 

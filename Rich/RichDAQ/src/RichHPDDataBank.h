@@ -56,7 +56,9 @@ namespace Rich
                                           const LHCb::RichSmartID hpdID ) const = 0;
 
       /// Destructor
-      virtual ~HPDDataBank() {};
+      virtual ~HPDDataBank() = default;
+
+    public:
 
       /** Fill a RAWBank with the data for this bank
        *
@@ -219,25 +221,25 @@ namespace Rich
     public:
 
       /// Read access to header
-      inline const Header & header() const
+      inline const Header & header() const noexcept
       {
         return m_header;
       }
 
       /// Set the header
-      inline void setHeader( const Header & head )
+      inline void setHeader( const Header & head ) noexcept
       {
         m_header = head;
       }
 
       /// Read access to footer
-      inline const Footer & footer() const
+      inline const Footer & footer() const noexcept
       {
         return m_footer;
       }
 
       /// Set the footer
-      inline void setFooter( const Footer & footer )
+      inline void setFooter( const Footer & footer ) noexcept
       {
         m_footer = footer;
       }
@@ -264,32 +266,32 @@ namespace Rich
       virtual ShortType hitCount() const = 0;
 
       /// Returns the number of header words for this HPD
-      virtual ShortType nHeaderWords() const;
+      virtual ShortType nHeaderWords() const override;
 
       /// Returns the number of footer words for this HPD
-      virtual ShortType nFooterWords() const;
+      virtual ShortType nFooterWords() const override;
 
       /// Returns the number of data words for this HPD
-      virtual ShortType nDataWords() const;
+      virtual ShortType nDataWords() const override;
 
       /// Returns the Event ID word
-      virtual EventID eventID() const;
+      virtual EventID eventID() const override;
 
       /// Checks for errors in the header word
-      virtual bool suppressed() const;
+      virtual bool suppressed() const override;
 
       /** Fill a RAWBank with the data for this bank
        *
        *  @param rawData The raw data bank to fill
        */
-      virtual void fillRAWBank( RAWBank & rawData ) const;
+      virtual void fillRAWBank( RAWBank & rawData ) const override;
 
       /// Creates the parity word from the list of hoit pixels
       LongType createParityWord( const LHCb::RichSmartID::Vector & ids ) const;
 
       /// perform any data quality checks that can be done (such as parity word etc.)
       virtual bool checkDataIntegrity( const LHCb::RichSmartID::Vector & ids,
-                                       MsgStream & os ) const;
+                                       MsgStream & os ) const override;
 
     private: // methods
 
@@ -317,32 +319,32 @@ namespace Rich
       }
 
       /// Read only access to data bank
-      inline const LongType * data() const
+      inline const LongType * data() const noexcept
       {
         return m_data;
       }
 
       /// Read/write only access to data bank
-      inline LongType * data()
+      inline LongType * data() noexcept
       {
         return m_data;
       }
 
       /// Access the number of words in the data block
-      inline ShortType dataSize() const
+      inline ShortType dataSize() const noexcept
       {
         return m_dataSize;
       }
 
       /// Returns the max possible data size for the data block
-      inline ShortType maxDataSize() const
+      inline ShortType maxDataSize() const noexcept
       {
         return m_maxDataSize;
       }
 
       /// Test if a given bit in a word is set on
       inline bool
-      isBitOn( const LongType& data, const ShortType pos ) const
+      isBitOn( const LongType& data, const ShortType pos ) const noexcept
       {
         return ( 0 != (data & (1<<pos)) );
       }
@@ -351,13 +353,13 @@ namespace Rich
       inline void
       setBit( ShortType & data,
               const ShortType pos,
-              const ShortType value = 1 ) const
+              const ShortType value = 1 ) const noexcept
       {
         data |= value<<pos;
       }
 
       /// Test if a LongType is even or odd
-      inline bool isEven( const LongType data ) const
+      inline bool isEven( const LongType data ) const noexcept
       {
         return ( (data & 0x1) == 0 );
       }

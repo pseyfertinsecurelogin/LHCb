@@ -72,7 +72,7 @@ namespace Rich
         explicit RichNonZeroSuppData( const Level0ID l0ID,
                                       const LHCb::RichSmartID::Vector & digits,
                                       const bool extendedFormat = false,
-                                      const LHCb::ODIN * odin = NULL )
+                                      const LHCb::ODIN * odin = nullptr )
           : HPDDataBankImp<Version,Header,Footer> ( Header( false, // Not ZS
                                                             false, // Not ALICE mode
                                                             extendedFormat, // data format
@@ -107,14 +107,14 @@ namespace Rich
         }
 
         /// Destructor
-        ~RichNonZeroSuppData() { }
+        ~RichNonZeroSuppData() = default;
 
         // Returns the hit count for this HPD
-        virtual ShortType hitCount() const;
+        virtual ShortType hitCount() const final;
 
         // Fill a vector with RichSmartIDs for hit pixels
         virtual ShortType fillRichSmartIDs( LHCb::RichSmartID::Vector & ids,
-                                            const LHCb::RichSmartID hpdID ) const;
+                                            const LHCb::RichSmartID hpdID ) const final;
 
       private: // methods
 
@@ -126,14 +126,14 @@ namespace Rich
 
         /// Set a pixel as active
         inline void setPixelActive( const ShortType row,
-                                    const ShortType col )
+                                    const ShortType col ) noexcept
         {
           this->setBit( this->data()[this->maxDataSize()-(row+1)], col );
         }
 
         /// Is a given pixel active ?
         inline bool isPixelActive( const ShortType row,
-                                   const ShortType col ) const
+                                   const ShortType col ) const noexcept
         {
           return this->isBitOn( this->data()[this->maxDataSize()-(row+1)], col );
         }
