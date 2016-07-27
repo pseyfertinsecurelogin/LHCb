@@ -4,6 +4,10 @@
 ! Purpose     : Place holder package for RawEvent decoding configurable
 !-----------------------------------------------------------------------------
 
+! 2016-07-27 - Marco Cattaneo
+ - In DecodersDB, disable HltSelReportsDecoder, HltDecReportsDecoder, HltVertexReportsDecoder
+   as they are superseded by the split HLT (Hlt{1,2}xxxReportsDecoder) versions
+
 !========================= DAQSys v8r12 2016-04-18 =========================
 
 ! 2016-04-18 - Rosen Matev
