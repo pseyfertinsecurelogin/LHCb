@@ -113,6 +113,25 @@ namespace Gaudi
                   const double     xmin , 
                   const double     xmax ) ;
       // ======================================================================
+      /** construct Bernstein interpolant
+       *  @param x    vector of abscissas 
+       *  @param y    vector of function values 
+       *  @param xmin low  edge for Bernstein polynomial
+       *  @param xmin high edge for Bernstein polynomial
+       *  - if vector of y is longer  than vector x, extra values are ignored 
+       *  - if vector of y is shorter than vector x, missing entries are assumed to be zero  
+       *  It relies on Newton-Bernstein algorithm
+       *  @see http://arxiv.org/abs/1510.09197
+       *  @see Mark Ainsworth and Manuel A. Sanches, 
+       *       "Computing of Bezier control points of Largangian interpolant 
+       *       in arbitrary dimension", arXiv:1510.09197 [math.NA]
+       *  @see http://adsabs.harvard.edu/abs/2015arXiv151009197A
+       */
+      Bernstein ( const std::vector<double>& x         , 
+                  const std::vector<double>& y         , 
+                  const double               xmin  = 0 ,
+                  const double               xmax  = 1 ) ;
+      // ======================================================================
       /// copy
       Bernstein ( const Bernstein&  ) = default ;
       /// move
