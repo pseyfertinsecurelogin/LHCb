@@ -100,8 +100,6 @@ private:
 
   unsigned int m_forcedBankVersion; ///< user forced bank version
 
-  std::string m_veloLiteClusterLocation;
-  std::string m_veloClusterLocation;
 
   /// do we assume chip channels instead of strips in the raw buffer?
   /// (useful for some testbeam TELL1 cinfigurations, defaults to false)
@@ -134,10 +132,10 @@ private:
   std::vector<std::string> m_defaultRawEventLocations;
 
   /// data handler for writing lite clusters to the transient event store
-  AnyDataHandle<LHCb::VeloLiteCluster::FastContainer> m_liteClustersDh;
+  AnyDataHandle<LHCb::VeloLiteCluster::FastContainer> m_liteClusters = { LHCb::VeloLiteClusterLocation::Default, Gaudi::DataHandle::Writer, this };
 
   /// data handler for writing clusters to the transient event store
-  AnyDataHandle<LHCb::VeloClusters> m_clustersDh;
+  DataObjectHandle<LHCb::VeloClusters> m_clusters = { LHCb::VeloClusterLocation::Default, Gaudi::DataHandle::Writer, this};
 
 };
 #endif // DECODEVELORAWBUFFER_H

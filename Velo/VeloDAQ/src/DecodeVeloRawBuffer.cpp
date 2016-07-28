@@ -38,8 +38,8 @@ DecodeVeloRawBuffer::DecodeVeloRawBuffer( const std::string& name,
   declareProperty("DecodeToVeloLiteClusters",m_decodeToVeloLiteClusters=true);
   declareProperty("DecodeToVeloClusters",m_decodeToVeloClusters=false);
   declareProperty("DumpVeloClusters",m_dumpVeloClusters=false);
-  declareProperty("VeloLiteClustersLocation",m_veloLiteClusterLocation=LHCb::VeloLiteClusterLocation::Default);
-  declareProperty("VeloClusterLocation",m_veloClusterLocation=LHCb::VeloClusterLocation::Default);
+  declareProperty("VeloLiteClustersLocation",m_liteClusters);
+  declareProperty("VeloClusterLocation",m_clusters);
   declareProperty("AssumeChipChannelsInRawBuffer",m_assumeChipChannelsInRawBuffer=false);
   declareProperty("ForceBankVersion",m_forcedBankVersion=0);// there is no version 0, so this means bank version is not enforced
   declareProperty("ErrorCount",m_errorCount=0);
@@ -58,10 +58,6 @@ DecodeVeloRawBuffer::DecodeVeloRawBuffer( const std::string& name,
   m_rawEventLocations.resize(m_defaultRawEventLocations.size(),"");
   std::copy(m_defaultRawEventLocations.begin(),
 	    m_defaultRawEventLocations.end(),m_rawEventLocations.begin());
-  m_liteClustersDh = AnyDataHandle<LHCb::VeloLiteCluster::FastContainer>(m_veloLiteClusterLocation, Gaudi::DataHandle::Writer, this);
-  m_clustersDh = AnyDataHandle<LHCb::VeloClusters>(m_veloClusterLocation, Gaudi::DataHandle::Writer, this);
-  declareOutput(&m_liteClustersDh);
-  declareOutput(&m_clustersDh);  
   initRawEventSearch();
 }
 
@@ -147,10 +143,10 @@ StatusCode DecodeVeloRawBuffer::execute() {
     if( msgLevel( MSG::DEBUG ) )
       debug() << "Raw Event not found in " << m_rawEventLocations << endmsg;
     if ( m_decodeToVeloLiteClusters ) {
-      m_liteClustersDh.put(LHCb::VeloLiteCluster::FastContainer());
+      m_liteClusters.put({});
     }
     if ( m_decodeToVeloClusters ) {
-      m_clustersDh.put(LHCb::VeloClusters());
+      m_clusters.put(new LHCb::VeloClusters());
     }
     return StatusCode::SUCCESS;
   }
@@ -161,17 +157,15 @@ StatusCode DecodeVeloRawBuffer::execute() {
 
   // decode to lite clusters, if requested, bail out if something goes wrong
   if (m_decodeToVeloLiteClusters) {
-    LHCb::VeloLiteCluster::FastContainer fc = decodeToVeloLiteClusters(banks);
     // put clusters into Event Store
-    m_liteClustersDh.put(std::move(fc));
+    m_liteClusters.put(decodeToVeloLiteClusters(banks));
   }
 
   // decode to clusters, if requested, bail out if something goes wrong
   if (m_decodeToVeloClusters) {
     try {
-      LHCb::VeloClusters fc = decodeToVeloClusters(banks);
       // put clusters into Event Store
-      m_clustersDh.put(std::move(fc));
+      m_clusters.put(new LHCb::VeloClusters{decodeToVeloClusters(banks)});
     } catch (StatusCode e) {
       return e;
     }
@@ -443,13 +437,11 @@ replaceFullFromLite(LHCb::VeloClusters& clusters,
   Error(format("Corrupt buffer sensor %i, matching lite clusters in full bank",
                nSensor), StatusCode::SUCCESS, msgCount).ignore();
 
-  const LHCb::VeloLiteCluster::FastContainer *veloLiteClusters = m_liteClustersDh.get();
+  const LHCb::VeloLiteCluster::FastContainer *veloLiteClusters = m_liteClusters.get();
   if(!veloLiteClusters){
     // not asked to decode in options and no DOD setup :(
     // But we are the decoder! We can make the container ourselves
-    LHCb::VeloLiteCluster::FastContainer fc = decodeToVeloLiteClusters(banks);
-    m_liteClustersDh.put(std::move(fc));
-    veloLiteClusters = m_liteClustersDh.get();
+    veloLiteClusters = m_liteClusters.put(decodeToVeloLiteClusters(banks));
   }
 
   std::vector<LHCb::VeloChannelID> killChannels;
