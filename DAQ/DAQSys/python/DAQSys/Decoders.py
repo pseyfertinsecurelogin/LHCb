@@ -373,14 +373,16 @@ for report in ["Dec","Sel","Vertex"]:
         hltname="Hlt"
         algtype="Hlt"+report+"ReportsDecoder"
         algname=algtype
+        active = False
         if hlt is not None:
             hltname=hltname+str(hlt)
             algname=algtype+"/"+hltname+report+"ReportsDecoder"
+            active = True
         #create the decoder
         dec=Decoder(
             #\/ e.g. HltSelReportsDecoder/Hlt1SelReportsDecoder
             algname,
-            active=True,
+            active,
             #\/ e.g. HltSelReports
             banks=["Hlt"+report+"Reports"],
             inputs={"RawEventLocations":None},

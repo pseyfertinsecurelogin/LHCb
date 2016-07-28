@@ -3,6 +3,10 @@
 ! package manager: M.Cattaneo
 !------------------------------------------------------------------------------
 
+! 2016-07-27 - Marco Cattaneo
+ - IOHelper: remove test on GaudiSvc version before v18r16 as it is obsolete and
+   relies on CMT support which will soon be removed
+
 ! 2016-04-27 - Rosen Matev
  - Fix offline location for neutrals for persist reco
 
