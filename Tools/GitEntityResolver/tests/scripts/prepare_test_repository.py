@@ -6,9 +6,20 @@ Prepare the Git repository to test GitEntityResolver.
 
 import sys
 import os
-from subprocess import check_call
+from subprocess import check_call, check_output, STDOUT
 from os.path import join, isdir, dirname, exists
 from shutil import copytree, rmtree
+
+
+def echo_cmd(func):
+    def wrap(*args, **kwargs):
+        print args, kwargs
+        return func(*args, **kwargs)
+    return wrap
+
+
+check_call = echo_cmd(check_call)
+check_output = echo_cmd(check_output)
 
 
 def makedirs(*args):
@@ -47,3 +58,7 @@ check_call(['git', 'commit', '-am', 'new data'], cwd=path)
 with open(join(src_data, 'values.xml')) as in_file:
     with open(join(path, 'values.xml'), 'w') as out_file:
         out_file.write(in_file.read().replace('42', '-123'))
+
+if exists(path + '-bare.git'):
+    rmtree(path + '-bare.git')
+print check_output(['git', 'clone', '--mirror', path, path + '-bare.git'], stderr=STDOUT)

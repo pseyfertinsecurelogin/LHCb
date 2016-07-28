@@ -1,0 +1,51 @@
+<?xml version="1.0" ?><!DOCTYPE extension  PUBLIC '-//QM/2.3/Extension//EN'  'http://www.codesourcery.com/qm/dtds/2.3/-//qm/2.3/extension/
+/en.dtd'>
+<extension class="GaudiTest.GaudiExeTest" kind="test">
+<argument name="program"><text>gaudirun.py</text></argument>
+<argument name="args"><set>
+  <text>-v</text>
+  <text>${DETDESCCHECKSROOT}/options/LoadDDDB.py</text>
+</set></argument>
+<argument name="options"><text>
+from Gaudi.Configuration import *
+from Configurables import GitEntityResolver, DDDBConf, CondDB
+from Configurables import DetCondTest__TestConditionAlg as TestAlg
+
+import os
+
+GitEntityResolver(PathToRepository=os.environ['GIT_TEST_REPOSITORY'] + '-bare.git',
+                  OutputLevel=VERBOSE,
+                  Commit='')
+
+DDDBConf(DataType = "2016")
+CondDB(EnableRunStampCheck = False,
+       Tags={'DDDB': 'v1'})
+
+ApplicationMgr().TopAlg.append(TestAlg(Conditions=['/dd/TestCondition']))
+</text></argument>
+<argument name="validator"><text>
+from subprocess import check_output
+import os
+import re
+
+tag = '&lt;files&gt;'
+repository = os.environ['GIT_TEST_REPOSITORY'] + '-bare.git'
+commit_id = None
+parameter = -123
+
+#countErrorLines()
+
+findReferenceBlock('''
+ToolSvc.GitEnti...  DEBUG opening Git repository '{repository}'
+ToolSvc.GitEnti...  DEBUG Initializing...
+ToolSvc.GitEnti...  ERROR cannot use files in a Git bare repository
+'''.format(repository=repository, commit_id=commit_id, tag=tag),
+id='GitEntityResolver.initialization')
+
+</text></argument>
+<argument name="exit_code"><integer>1</integer></argument>
+<argument name="prerequisites"><set>
+  <tuple><text>gitentityresolver.prepare</text><enumeral>PASS</enumeral></tuple>
+</set></argument>
+<argument name="use_temp_dir"><enumeral>true</enumeral></argument>
+</extension>
