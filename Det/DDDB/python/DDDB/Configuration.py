@@ -9,8 +9,9 @@ from Configurables import ( CondDBEntityResolver,
                             XmlParserSvc )
 try:
     from Configurables import EntityResolverDispatcher, GitEntityResolver
+    CAN_USE_GIT_DDDB = True
 except ImportError:  # GitEntityResolver may not be available
-    GitEntityResolver = None
+    CAN_USE_GIT_DDDB = False
 
 
 from DetCond.Configuration import CondDB
@@ -23,7 +24,7 @@ class DDDBConf(ConfigurableUser):
     """
     ConfigurableUser for the configuration of the detector description.
     """
-    __slots__ = { "DbRoot"    : "conddb:/lhcb.xml",
+    __slots__ = { "DbRoot"    : "git:/lhcb.xml" if CAN_USE_GIT_DDDB else "conddb:/lhcb.xml",
                   "DataType"  : "2012",
                   "Simulation": False,
                   "AutoTags"  : False,
@@ -54,13 +55,12 @@ class DDDBConf(ConfigurableUser):
         #     + 7 => XML
         #     + 9 => pure CondDB (remove "conddb:" from URL)
         ##########################################################################
-        if GitEntityResolver and not self.isPropertySet("DbRoot"):
-            self.DbRoot = 'git:/lhcb.xml'
         detDataSvc = DetectorDataSvc( UsePersistency = True,
                                       DetDbRootName = "dd",
                                       DetDbLocation = self.getProp("DbRoot"),
                                       DetStorageType = 7 )
 
+        using_git = self.getProp("DbRoot").startswith('git:')
         ##########################################################################
         # XML Conversion Service configuration
         ##########################################################################
@@ -71,7 +71,7 @@ class DDDBConf(ConfigurableUser):
         ##########################################################################
         xmlCnvSvc = XmlCnvSvc(AllowGenericConversion = True)
 
-        if GitEntityResolver:
+        if using_git:
             resolver = EntityResolverDispatcher(EntityResolvers=[
                 GitEntityResolver(),
                 CondDBEntityResolver(),
@@ -132,10 +132,11 @@ class DDDBConf(ConfigurableUser):
 
         # Get particle properties table from condDB
         from Configurables import LHCb__ParticlePropertySvc
-        if GitEntityResolver:
-            LHCb__ParticlePropertySvc( ParticlePropertiesFile = 'git:///param/ParticleTable.txt' )
-        else:
-            LHCb__ParticlePropertySvc( ParticlePropertiesFile = 'conddb:///param/ParticleTable.txt' )
+        LHCb__ParticlePropertySvc(
+           ParticlePropertiesFile = '{protocol}///param/ParticleTable.txt'.format(
+               protocol = 'git:' if using_git else 'conddb:'
+           )
+        )
 
     def __auto_tags_conf__(self, question, criterion):
         """ Automatic configuration of CondDB tags through the Ariadne system """
