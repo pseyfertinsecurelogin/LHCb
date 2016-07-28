@@ -245,59 +245,6 @@ class IOHelper(object):
         '''
         return ("DATAFILE='" in filename or " OPT='" in filename or "SVC=" in filename or "TYP='" in filename)
 
-    def _gaudiSvcVersion(self):
-        '''Determine the version of GaudiSvc,
-        return true if it is larger than v18r3'''
-        apath="${GAUDISVCROOT}/cmt/requirements"
-        import os
-        #Without the env variable, all new Gaudi versions are fine
-        if "GAUDISVCROOT" not in os.environ:
-            return True
-        apath=os.path.expandvars(apath)
-        try:
-            requirements=file(apath)
-        except:
-            return False
-
-        if not requirements:
-            requirements.close()
-            return False
-        version=None
-        for line in requirements.readlines():
-            if 'version' in line.strip()[:7]:
-                version=line.split('n')[-1].strip().split('v')[-1]
-                v=int(version.split('r')[0])
-                r=None
-                p=None
-                if 'r' in version:
-                    r=int(version.split('r')[-1].split('p')[0])
-                if 'p' in version:
-                    p=int(version.split('p')[-1])
-                version=(v,r,p)
-                break
-        requirements.close()
-        if version is None:
-            return False
-        #v17 or lower
-        if version[0]<18:
-            return False
-        #higher than v18
-        if version[0]>18:
-            return True
-        #v18rX
-        if version[0]==18:
-            #v18r<16
-            if version[1] is None or version[1]<16:
-                return False
-            #v18r>16
-            if version[1]>=16:
-                return True
-            #v18r16p>0
-            if version[2] is None or version[2]<1:
-                return False
-            return True
-
-        return False
 
     ###############################################################
     #              Information
@@ -381,12 +328,7 @@ class IOHelper(object):
     def isRootSupported(self):
         '''Services:  Check if the ROOT services exist in this version'''
         import Configurables
-        #check the RootCnv service exists and that the GaudiSvc version
-        #is greater than v18r16, only print a warning for the moment.
-        if not self._gaudiSvcVersion():
-            print "# WARNING: It looks like this version of GaudiSvc is from before v18r16, so will suffer from bugs"
-            print "# WARNING: To avoid segfaulting in finalize and writing out corrupted files you need to be using a patched version with at least revision r6649 of GaudiSvc"
-            print "# WARNING: If you've already patched the software, you can ignore this warning."
+        #check the RootCnv service exists
         return hasattr(Configurables,"Gaudi__RootCnvSvc")
 
     def isPoolSupported(self):
