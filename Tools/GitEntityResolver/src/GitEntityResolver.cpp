@@ -97,6 +97,11 @@ StatusCode GitEntityResolver::initialize()
 
   m_useFiles = m_commit.value().empty();
   if ( m_useFiles ) {
+    if ( git_repository_is_bare( m_repository.get() ) ) {
+      error() << "cannot use files in a Git bare repository" << endmsg;
+      sc = StatusCode::FAILURE;
+      return sc;
+    }
     info() << "using checked out files in " << m_pathToRepository.value() << endmsg;
   } else {
     auto obj = git_call<git_object_ptr>( name(), "cannot resolve commit", m_commit.value(), git_revparse_single,
