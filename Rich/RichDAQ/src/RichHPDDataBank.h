@@ -245,10 +245,10 @@ namespace Rich
       }
 
       /// Read access to header
-      virtual const HeaderPDBase::HeaderWords & headerWords() const;
+      virtual const HeaderPDBase::HeaderWords & headerWords() const final;
       
       /// Read access to footer
-      virtual const FooterPDBase::FooterWords & footerWords() const;
+      virtual const FooterPDBase::FooterWords & footerWords() const final;
 
       /** Decode the data bank to a RichSmartID vector
        *
@@ -256,29 +256,29 @@ namespace Rich
        *  @param hpdID   RichSmartID for the HPD
        */
       virtual ShortType fillRichSmartIDs( LHCb::RichSmartID::Vector & ids,
-                                          const LHCb::RichSmartID hpdID ) const = 0;
+                                          const LHCb::RichSmartID hpdID ) const override = 0;
 
       /// Returns the L0ID
-      virtual Level0ID level0ID() const;
+      virtual Level0ID level0ID() const final;
 
       /// Returns the hit count for this HPD
       /// To be removed once DC04/DC06 support no longer needed
-      virtual ShortType hitCount() const = 0;
+      virtual ShortType hitCount() const override = 0;
 
       /// Returns the number of header words for this HPD
-      virtual ShortType nHeaderWords() const override;
+      virtual ShortType nHeaderWords() const final;
 
       /// Returns the number of footer words for this HPD
-      virtual ShortType nFooterWords() const override;
+      virtual ShortType nFooterWords() const final;
 
       /// Returns the number of data words for this HPD
-      virtual ShortType nDataWords() const override;
+      virtual ShortType nDataWords() const final;
 
       /// Returns the Event ID word
-      virtual EventID eventID() const override;
+      virtual EventID eventID() const final;
 
       /// Checks for errors in the header word
-      virtual bool suppressed() const override;
+      virtual bool suppressed() const final;
 
       /** Fill a RAWBank with the data for this bank
        *
@@ -374,7 +374,7 @@ namespace Rich
        *
        *  @param os Stream to print to
        */
-      void fillMsgStream( MsgStream & os ) const;
+      void fillMsgStream( MsgStream & os ) const final;
 
     private:
 
