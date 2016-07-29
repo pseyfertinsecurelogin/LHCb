@@ -1,4 +1,3 @@
-// $Id$
 // ============================================================================
 // Include
 // ============================================================================
@@ -35,7 +34,7 @@ namespace LoKi
   {
     // ========================================================================
     /// the friend factory for instantiation
-    friend class ToolFactory<LoKi::GenDecay> ;                   // the factory
+    friend struct ToolFactory<LoKi::GenDecay> ;                   // the factory
     // ========================================================================
     typedef Decays::Trees::Types_<const HepMC::GenParticle*>::Invalid Invalid ;
     // ========================================================================
