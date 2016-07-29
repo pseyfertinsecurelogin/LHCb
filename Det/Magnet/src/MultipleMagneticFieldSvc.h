@@ -40,13 +40,13 @@ public:
    */
   ROOT::Math::XYZVector fieldVector( const Gaudi::XYZPoint&  xyz ) const override;
 
-  // These should be incorperated in a better way...
-  bool   useRealMap() const;            ///< True is using real map
+  // These should be incorporated in a better way...
+  bool   useRealMap()  const override;  ///< True is using real map
   double scaleFactor() const;           ///< accessor to m_scaleFactor
   int polarity() const;                 ///< Polarity (only if they are all the same!)
-  bool isDown() const;                  /// sign of the polarity
-  double signedRelativeCurrent() const; /// includes scale factor for polarity and current
-  const LHCb::MagneticFieldGrid* fieldGrid() const { return 0 ; }
+  bool isDown() const override;         ///< sign of the polarity
+  double signedRelativeCurrent() const override; ///< includes scale factor for polarity and current
+  const LHCb::MagneticFieldGrid* fieldGrid() const override { return 0 ; }
 
 
 private:
