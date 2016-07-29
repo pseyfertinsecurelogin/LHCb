@@ -102,13 +102,13 @@ namespace Rich
         }
 
         /// Destructor
-        ~RichZSPacked( ) { }
+        ~RichZSPacked( ) = default;
 
         /// Retrieve the full value
-        inline Rich::DAQ::LongType data() const { return m_data; }
+        inline Rich::DAQ::LongType data() const noexcept { return m_data; }
 
         /// operator to convert to Rich::DAQ::LongType
-        inline operator Rich::DAQ::LongType() const { return data(); }
+        inline operator Rich::DAQ::LongType() const noexcept { return data(); }
 
         /// Set the first address
         inline void setAddress0( const Rich::DAQ::ShortType address )
@@ -193,7 +193,7 @@ namespace Rich
       private: // methods
 
         /// Update the internal data
-        inline void setData( const Rich::DAQ::LongType data ) { m_data = data; }
+        inline void setData( const Rich::DAQ::LongType data ) noexcept { m_data = data; }
 
         /// Set the data value for a given mask and shift value
         inline void set( const Rich::DAQ::ShortType value,

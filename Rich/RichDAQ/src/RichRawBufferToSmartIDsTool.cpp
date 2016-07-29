@@ -132,14 +132,14 @@ RawBufferToSmartIDsTool::richSmartIDs( const LHCb::RichSmartID hpdID,
   if ( !found_data && createIfMissing )
   {
     // Get some L1 information for this HPD from the DB
-    const Rich::DAQ::Level1HardwareID l1HID   = m_richSys->level1HardwareID(hpdID);
-    const Rich::DAQ::Level1Input      l1Input = m_richSys->level1InputNum(hpdID);
+    const auto l1HID   = m_richSys->level1HardwareID(hpdID);
+    const auto l1Input = m_richSys->level1InputNum(hpdID);
 
     // require non-const access to L1 Map
-    Rich::DAQ::L1Map & l1Map = *(const_cast<Rich::DAQ::L1Map*>(&data));
-    Rich::DAQ::IngressMap & ingressMap   = l1Map[l1HID];
-    Rich::DAQ::IngressInfo & ingressInfo = ingressMap[l1Input.ingressID()];
-    Rich::DAQ::HPDInfo & hpdInfo = ingressInfo.hpdData()[l1Input];
+    auto & l1Map = *(const_cast<Rich::DAQ::L1Map*>(&data));
+    auto & ingressMap   = l1Map[l1HID];
+    auto & ingressInfo = ingressMap[l1Input.ingressID()];
+    auto & hpdInfo = ingressInfo.hpdData()[l1Input];
 
     // check HPDID is invalid (should be as not set so far ....)
     if ( hpdInfo.hpdID().isValid()   ) { Error( "HPDID already set ...." ).ignore();     }
