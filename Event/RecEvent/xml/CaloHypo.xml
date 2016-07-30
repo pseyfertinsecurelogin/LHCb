@@ -116,14 +116,14 @@
  argList  = "LHCb::CaloHypo right"
  initList = "Base() , m_hypothesis( right.hypothesis() ) , m_lh( right.lh() ) , m_position( 0 ) , m_digits( right.digits() ) , m_clusters( right.clusters() ) , m_hypos( right.hypos() )">
 <code> 
-      if( 0 != right.position() ){ m_position = right.position()->clone() ; }
+      m_position = ( right.position() ? new CaloPosition( *right.position() ): nullptr );
 </code> 
 </constructor>
 
 <destructor
  desc    = "Destructor">
 <code>
-   if( 0 != m_position ) { delete m_position ; m_position = 0 ; } 
+   delete m_position;
 </code>
 </destructor>
   
