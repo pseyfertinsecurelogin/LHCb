@@ -99,6 +99,12 @@ class genClasses(genSrcUtils.genSrcUtils):
                 s += '%s %s' % ( baseAtt['access'].lower(), baseAtt['name'] )
         return s
 #--------------------------------------------------------------------------------
+    def genFinal(self, godClass):
+        s = ''
+        if godClass['attrs'].get('final','FALSE') == 'TRUE' :
+            s += ' final'
+        return s
+#--------------------------------------------------------------------------------
     def genConstructor(self, godClass, const, scopeName=''):
         s = ''
         indent = 0
@@ -859,6 +865,7 @@ namespace {
             classDict['today']                        = time.ctime()
             classDict['classNamespace']               = namespace
             classDict['inheritance']                  = self.genInheritance(godClass)
+            classDict['final']                        = self.genFinal(godClass)
             classDict['classContainerTypedefs']       = self.genClassContainerTypedefs(godClass)
             classDict['classTypedefs']                = self.genClassTypedefs(godClass)
             classDict['globalTypedefs']               = self.genTypedefs('global',godClass)
