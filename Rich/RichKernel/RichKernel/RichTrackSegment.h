@@ -207,7 +207,7 @@ namespace LHCb
     /// Helper method for two point constructor
     inline void initTwoPoints()
     {
-       if     ( RichTrackSegment::UseAllStateVectors    == type() )
+      if     ( RichTrackSegment::UseAllStateVectors    == type() )
       {
         setMiddleState ( add_points(entryPoint(),exitPoint())/2, (entryMomentum()+exitMomentum())/2 );
       }
@@ -223,7 +223,7 @@ namespace LHCb
 
     /// Helper method for three point constructor
     inline void initThreePoints()
-    { 
+    {
       if      ( RichTrackSegment::UseAllStateVectors == type() )
       {
         // nothing to do yet
@@ -237,7 +237,7 @@ namespace LHCb
         throw Rich::Exception( "Unknown RichTrackSegment::SegmentType" );
       }
     }
-    
+
     // ------------------------------------------------------------------------------------------------------
 
   public:
@@ -366,6 +366,16 @@ namespace LHCb
 
     // ------------------------------------------------------------------------------------------------------
 
+  private:
+
+    /// atan2 for double
+    inline double myatan2( const double x, const double y ) const noexcept { return vdt::fast_atan2(x,y);  }
+
+    /// atan2 for float
+    inline float  myatan2( const float x,  const float y  ) const noexcept { return vdt::fast_atan2f(x,y); }
+
+    // ------------------------------------------------------------------------------------------------------
+
   public:
 
     /// Provides read-only access to the radiator intersections
@@ -389,9 +399,22 @@ namespace LHCb
      *  @param theta The angle between input direction and the segment
      *  @param phi   The azimuthal angle of the direction around the segment
      */
-    void angleToDirection ( const Gaudi::XYZVector& direction,
-                            double& theta,
-                            double& phi ) const;
+    template < typename TYPE >
+    inline void angleToDirection ( const Gaudi::XYZVector& direction,
+                                   TYPE & theta,
+                                   TYPE & phi ) const
+    {
+      // create vector in track reference frame
+      const Gaudi::XYZVector rotDir{ rotationMatrix() * direction };
+      // do it by hand, the same only faster ;)
+      // Skip checks against 0 as we know that never happens here.
+      phi   = myatan2( (TYPE)rotDir.y(), (TYPE)rotDir.x() );
+      theta = myatan2( (TYPE)std::sqrt( std::pow((TYPE)rotDir.x(),2) +
+                                        std::pow((TYPE)rotDir.y(),2) ),
+                       (TYPE)rotDir.z() );
+      // correct phi
+      if ( phi < 0 ) { phi += 2.0*M_PI; }
+    }
 
     /** Creates a vector at an given angle and azimuth to the track segment
      *
@@ -685,7 +708,7 @@ namespace LHCb
      *  Created on demand as required
      */
     mutable std::unique_ptr<Gaudi::Rotation3D> m_rotation2;
-    
+
     mutable bool m_cachedTrajOK{false};   ///< Flag to say if the cached information is up to date
     mutable Gaudi::XYZVector m_midEntryV; ///< Entry to middle point vector
     mutable Gaudi::XYZVector m_exitMidV;  ///< Middle to exit point vector
@@ -729,40 +752,11 @@ inline void LHCb::RichTrackSegment::reset() const
   m_cachedTrajOK = false;
 }
 
-inline void
-LHCb::RichTrackSegment::angleToDirection( const Gaudi::XYZVector & direction,
-                                          double & theta,
-                                          double & phi ) const
-{
-  // create vector in track reference frame
-  const Gaudi::XYZVector rotDir{ rotationMatrix() * direction };
-
-  // get the angles
-  // phi   = rotDir.phi();
-  // theta = rotDir.theta();
-
-  // the above methods are :-
-  // phi   : { return (fX==0 && fY==0) ? 0 : atan2(fY,fX);}
-  // theta : { return (fX==0 && fY==0 && fZ==0) ? 0 : atan2(Rho(),Z());}
-  // Rho   : { return std::sqrt( Perp2());}
-  // Perp2 : { return fX*fX + fY*fY ;}
-
-  // do it by hand, the same only faster ;)
-  // Skip checks against 0 as we know that never happens here.
-  phi   = vdt::fast_atan2( rotDir.y(), rotDir.x() );
-  theta = vdt::fast_atan2( std::sqrt( std::pow(rotDir.x(),2) + 
-                                      std::pow(rotDir.y(),2) ),
-                           rotDir.z() );
-
-  // correct phi
-  if ( phi < 0 ) { phi += 2.0*M_PI; }
-}
-
 inline Gaudi::XYZPoint
 LHCb::RichTrackSegment::bestPoint( const double fractDist ) const
 {
   // make sure cached variables are valid
-  if ( !m_cachedTrajOK ) { updateCachedBestInfo(); }
+  if ( UNLIKELY( !m_cachedTrajOK ) ) { updateCachedBestInfo(); }
   // return the best point
   return ( zCoordAt(fractDist) < middlePoint().z() ?
            entryPoint()  + (fractDist*m_invMidFrac1*m_midEntryV) :
