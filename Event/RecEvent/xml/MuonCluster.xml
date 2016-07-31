@@ -10,6 +10,7 @@
       author="Alessia Satta"
       desc="Reconstructed muon hit clusters"
       id="11041"
+      final = "TRUE"
       >
       <base
         name="KeyedObject&lt;int&gt;"/>

@@ -14,6 +14,8 @@
  name   = "CaloPosition"
  desc   = "@brief Position of calorimeter cluster"
  author = "Vanya Belyaev Ivan.Belyaev@itep.ru"
+ defaultdestructor = "FALSE"
+ final = "TRUE"
 >
 <desc> *
  *
@@ -130,14 +132,6 @@
  <code>  return parameters()( E ); </code>
  </method>
       
- <method
- desc    = "Cloning of the object ('virtual constructor') "
- name    = "clone"
- type    = "LHCb::CaloPosition*"
- const   = "TRUE"
- virtual = "TRUE"
- access  = "PUBLIC" >
-</method>
 
 <method
     name    = "fillStream"

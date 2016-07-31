@@ -5,6 +5,7 @@
     <class name="MuonCoord" 
       author="David Hutchcroft"
       desc="Reconstructed muon hit coordinates" 
+      final="TRUE"
       id="11040">
       <base 
 	name="KeyedObject&lt;LHCb::MuonTileID&gt;"/>
