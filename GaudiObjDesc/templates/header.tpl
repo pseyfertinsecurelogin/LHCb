@@ -38,7 +38,7 @@ namespace @@@classNamespace@@@
    *
    */
 
-  class @@@classname@@@@@@inheritance@@@
+  class @@@classname@@@@@@final@@@@@@inheritance@@@
   {
   public:
 
