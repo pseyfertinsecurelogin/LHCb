@@ -11,23 +11,22 @@
  *  @author Olivier Callot
  *  @date   2005-01-19
  */
-template <class SOURCE, class TARGET> class LinkerTable {
+template <class SOURCE, class TARGET> class LinkerTable final {
 public: 
 
   typedef          LinkerRange<SOURCE,TARGET>           Range;
   typedef typename LinkerRange<SOURCE,TARGET>::iterator iterator;
 
   /// Standard constructor
-  LinkerTable( ) : m_links(NULL) {}; 
+  LinkerTable( ) = default;
 
-  virtual ~LinkerTable( ) {}; ///< Destructor
 
   /** retrieve all relations in the table
    *  @return       Range with all relations
    */
   Range relations() const {
     Range range;
-    if ( NULL == m_links ) return range;
+    if ( !m_links ) return range;
     std::vector<std::pair<int,int> >::const_iterator iter;
     for ( iter = m_links->keyIndex().begin();
           m_links->keyIndex().end() != iter;
@@ -53,8 +52,8 @@ public:
    */
   Range relations( const SOURCE* reqSrc ) const {
     Range range;
-    if ( NULL == m_links ) return range;
-    if ( NULL == reqSrc ) return range;
+    if ( !m_links ) return range;
+    if ( !reqSrc ) return range;
     LHCb::LinkReference curReference;
     bool status = m_links->firstReference( reqSrc->index(), 
                                            reqSrc->parent(),
@@ -76,8 +75,8 @@ public:
    */
   Range relations( const SOURCE* reqSrc, double cut, bool order ) const {
     Range range;
-    if ( NULL == m_links ) return range;
-    if ( NULL == reqSrc ) return range;
+    if ( !m_links ) return range;
+    if ( !reqSrc ) return range;
     LHCb::LinkReference curReference;
     bool status = m_links->firstReference( reqSrc->index(), 
                                            reqSrc->parent(),
@@ -107,15 +106,11 @@ protected:
    *  @return pointer to the TARGET object
    */
   TARGET* currentTarget( LHCb::LinkReference& curReference ) const {
-    if ( NULL == m_links ) return NULL;
+    if ( !m_links ) return nullptr;
     int myLinkID = curReference.linkID();
     LinkManager::Link* link = m_links->linkMgr()->link( myLinkID );
     ObjectContainerBase* parent = dynamic_cast<ObjectContainerBase*>(link->object() );
-    if ( 0 != parent ) {
-      TARGET* myObj = (TARGET*)parent->containedObject( curReference.objectKey() );
-      return myObj;
-    }
-    return NULL;
+    return parent ? static_cast<TARGET*>(parent->containedObject( curReference.objectKey() )) : nullptr;
   }  
 
   /** return the pointer to the SOURCE object of the specified reference
@@ -124,18 +119,15 @@ protected:
    *  @return pointer to the SOURCE object
    */
  SOURCE* currentSource( int key, LHCb::LinkReference curReference ) const {
-    if ( NULL == m_links ) return NULL;
+    if ( !m_links ) return nullptr;
     int myLinkID = curReference.srcLinkID();
-    if ( 0 > myLinkID ) return NULL;
+    if ( 0 > myLinkID ) return nullptr;
     LinkManager::Link* link = m_links->linkMgr()->link( myLinkID );
     ObjectContainerBase* parent = dynamic_cast<ObjectContainerBase*>(link->object() );
-    if ( 0 != parent ) {
-      return (SOURCE*)parent->containedObject( key );
-    }
-    return NULL;
+    return parent ? static_cast<SOURCE*>(parent->containedObject( key )) : nullptr;
   }
 
 private:
-  const LHCb::LinksByKey*  m_links;
+  const LHCb::LinksByKey*  m_links = nullptr;
 };
 #endif // LINKER_LINKERTABLE_H

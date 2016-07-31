@@ -12,6 +12,7 @@
 #include "GaudiKernel/ObjectContainerBase.h"
 #include "GaudiKernel/SmartDataPtr.h"
 #include "GaudiKernel/GaudiException.h"
+#include "GaudiKernel/SmartIF.h"
 #include "Event/LinksByKey.h"
 
 /** @class LinkedFrom LinkedFrom.h Linker/LinkedFrom.h
@@ -22,9 +23,9 @@
  */
 
 template <class SOURCE, class TARGET=ContainedObject, class KEY=int>
-class LinkedFrom {
+class LinkedFrom final {
 public: 
-  //== Typedefs to please Matt
+
   typedef typename std::vector<SOURCE*>                  LRange;
   typedef typename std::vector<SOURCE*>::const_iterator  LRangeIt;
 
@@ -66,8 +67,6 @@ public:
     m_curReference.setWeight( 0. );
     m_wantedKey = -1;
   };  
-
-  virtual ~LinkedFrom( ) {}; ///< Destructor
 
   bool notFound() const { return (0 == m_links); }
 
@@ -140,22 +139,22 @@ public:
   LRangeIt beginRange()   { return m_vect.begin(); }
   LRangeIt endRange()     { return m_vect.end(); }
 
-protected:
+private:
   SOURCE* currentSource( int index ) {
     if ( !m_links ) return nullptr;
     int myLinkID = m_curReference.srcLinkID();
     LinkManager::Link* link = m_links->linkMgr()->link( myLinkID );
-    if ( 0 == link->object() ) {
-      SmartDataPtr<DataObject> tmp( m_eventSvc, link->path() );
+    if ( !link->object() ) {
+      SmartDataPtr<DataObject> tmp( m_eventSvc.get(), link->path() );
       link->setObject( tmp );
       if ( !tmp ) return nullptr;
     }
-    ObjectContainerBase* parent = dynamic_cast<ObjectContainerBase*>(link->object() );
+    auto* parent = dynamic_cast<ObjectContainerBase*>(link->object());
     return parent ? static_cast<SOURCE*>(parent->containedObject( index )) : nullptr;
   }  
 
-private:
-  IDataProviderSvc*                  m_eventSvc;
+
+  SmartIF<IDataProviderSvc>          m_eventSvc;
   LHCb::LinksByKey*                  m_links;
   LHCb::LinkReference                m_curReference;
   std::vector<std::pair<int,int> >::const_iterator m_srcIterator;

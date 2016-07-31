@@ -1,4 +1,3 @@
-// $Id: LinkerRange.h,v 1.3 2005-12-01 08:35:21 ocallot Exp $
 #ifndef LINKER_LINKERRANGE_H 
 #define LINKER_LINKERRANGE_H 1
 
@@ -12,15 +11,14 @@
  *  @date   2005-01-19
  */
 
-template <class SOURCE, class TARGET> class LinkerRange {
+template <class SOURCE, class TARGET> class LinkerRange final {
 public: 
 
   typedef typename std::vector<LinkerEntry<SOURCE,TARGET> >::const_iterator iterator;
   
   /// Standard constructor
-  LinkerRange( ) {}; 
+  LinkerRange( ) = default;
 
-  virtual ~LinkerRange( ) {}; ///< Destructor
 
   /** Add a LinkerEntry inside the range
    *  @param src    pointer to the SOURCE of the entry
@@ -58,13 +56,11 @@ public:
 
   /** returns a reference to the first element
    */
-  LinkerEntry<SOURCE,TARGET>& front() const { return m_entries.front(); }
+  const LinkerEntry<SOURCE,TARGET>& front() const { return m_entries.front(); }
 
   /** returns a reference to the last element
    */
-  LinkerEntry<SOURCE,TARGET>& back() const { return m_entries.back(); }
-
-protected:
+  const LinkerEntry<SOURCE,TARGET>& back() const { return m_entries.back(); }
 
 private:
   std::vector<LinkerEntry<SOURCE,TARGET> > m_entries;

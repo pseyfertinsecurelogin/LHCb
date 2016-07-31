@@ -1,4 +1,3 @@
-// $Id: LocalLinkerTool.h,v 1.1 2008-03-13 17:00:27 ocallot Exp $
 #ifndef LINKER_LOCALLINKERTOOL_H 
 #define LINKER_LOCALLINKERTOOL_H 1
 
@@ -19,7 +18,7 @@
  *  @author Olivier Callot
  *  @date   2008-03-11
  */
-template <class SOURCE, class TARGET> class LocalLinkerTool {
+template <class SOURCE, class TARGET> class LocalLinkerTool final {
 
 public: 
     typedef LinkerTable<SOURCE,TARGET>    DirectType;
@@ -32,8 +31,6 @@ public:
   LocalLinkerTool( ) {
     newEvent();
   };
-
-  ~LocalLinkerTool( ) {}; ///< Destructor
 
   void newEvent() {
     m_links.reset();
@@ -87,8 +84,6 @@ public:
     m_invTable.load( &m_invLink );
     return &m_invTable;
   }
-
-protected:
 
 private:
   LHCb::LinksByKey m_links;

@@ -1,4 +1,3 @@
-// $Id: LinkerTool.h,v 1.12 2008-12-04 13:41:44 ocallot Exp $
 #ifndef LINKER_LINKERTOOL_H 
 #define LINKER_LINKERTOOL_H 1
 
@@ -10,6 +9,7 @@
 #include "GaudiKernel/LinkManager.h"
 #include "GaudiKernel/ObjectContainerBase.h"
 #include "GaudiKernel/GaudiException.h"
+#include "GaudiKernel/SmartIF.h"
 
 #include "Event/LinksByKey.h"
 
@@ -22,7 +22,7 @@
  *  @author Olivier Callot
  *  @date   2005-01-19
  */
-template <class SOURCE, class TARGET> class LinkerTool {
+template <class SOURCE, class TARGET> class LinkerTool final {
 
 public: 
 
@@ -45,16 +45,14 @@ public:
     m_invLocation = name + "Inv";
   };
 
-  ~LinkerTool( ) {} ///< Destructor
-
   /** retrieve the direct relation
    *  @return     The direct table of relation.
    */
 
   DirectType* direct ( ) {
-    SmartDataPtr<LHCb::LinksByKey> links( m_evtSvc, m_location );
+    SmartDataPtr<LHCb::LinksByKey> links( m_evtSvc.get(), m_location );
     if ( links ) {
-      links->resolveLinks( m_evtSvc );
+      links->resolveLinks( m_evtSvc.get() );
 
       if ( links->sourceClassID() != SOURCE::classID() ) {
         std::ostringstream message;
@@ -80,47 +78,45 @@ public:
    */
 
   InverseType* inverse ( ) {
-    SmartDataPtr<LHCb::LinksByKey> links( m_evtSvc, m_invLocation );
+    SmartDataPtr<LHCb::LinksByKey> links( m_evtSvc.get(), m_invLocation );
     LHCb::LinksByKey* linkPtr = links;
     if ( 0 == linkPtr ) {
       //== Invert the table...
       const DirectType* tmp = direct();
       if ( 0 != tmp ) {
         // Create, with name shortened to remove the "Link/" prefix
-        LinkerWithKey<SOURCE,TARGET> makeLink( m_evtSvc, 0,
+        LinkerWithKey<SOURCE,TARGET> makeLink( m_evtSvc.get(), 0,
                                                m_invLocation.substr(5) );
         Range rd = tmp->relations();
         for ( iterator it = rd.begin(); rd.end() != it; ++it ) {
           makeLink.link( it->to(), it->from(), it->weight() );
         }
-        SmartDataPtr<LHCb::LinksByKey> newLinks( m_evtSvc, m_invLocation );
+        SmartDataPtr<LHCb::LinksByKey> newLinks( m_evtSvc.get(), m_invLocation );
         linkPtr = newLinks;
       }
     }
-    if ( 0 != linkPtr ) linkPtr->resolveLinks( m_evtSvc );
+    if ( linkPtr ) linkPtr->resolveLinks( m_evtSvc.get() );
     m_invTable.load( linkPtr );
-    if ( 0 == linkPtr ) return 0;
+    if ( !linkPtr ) return nullptr;
 
     //== TARGET and SOURCE are exchanged for the inverse table
     if ( linkPtr->targetClassID() != SOURCE::classID() ) {
-      std::ostringstream message;
-      message << "Incompatible SOURCE type for location " << m_location
-              << " : Template classID is " << SOURCE::classID() << " expected " << links->targetClassID();
-      throw GaudiException( message.str(), "LinkerTool", StatusCode::FAILURE );
+      throw GaudiException( "Incompatible SOURCE type for location " + m_location
+                          + " : Template classID is " + std::to_string( SOURCE::classID() ) 
+                          +  " expected " + std::to_string( links->targetClassID() ),
+                            "LinkerTool", StatusCode::FAILURE );
     }
     if ( linkPtr->sourceClassID() != TARGET::classID() ) {
-      std::ostringstream message;
-      message << "Incompatible TARGET type for location " << m_location
-              << " : Template classID is " << TARGET::classID() << " expected " << links->sourceClassID();
-      throw GaudiException( message.str(), "LinkerTool", StatusCode::FAILURE );
+      throw GaudiException( "Incompatible TARGET type for location " + m_location
+                          + " : Template classID is " + std::to_string( TARGET::classID())
+                          + " expected " + std::to_string( links->sourceClassID() ),
+                            "LinkerTool", StatusCode::FAILURE );
     }    
     return &m_invTable;
   }
 
-protected:
-
 private:
-  IDataProviderSvc* m_evtSvc;
+  SmartIF<IDataProviderSvc> m_evtSvc;
   std::string       m_location;
   std::string       m_invLocation;
   DirectType        m_table;
