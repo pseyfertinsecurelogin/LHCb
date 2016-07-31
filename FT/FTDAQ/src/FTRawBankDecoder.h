@@ -6,6 +6,7 @@
 // from Gaudi
 #include "GaudiAlg/Transformer.h"
 #include "DAQKernel/DecoderAlgBase.h"
+#include "GaudiAlg/FunctionalUtilities.h"
 
 
 /** @class FTRawBankDecoder FTRawBankDecoder.h
@@ -15,8 +16,7 @@
  *  @date   2012-05-11
  */
 struct FTRawBankDecoder : Gaudi::Functional::Transformer<
-   FastClusterContainer<LHCb::FTLiteCluster,int>( const LHCb::RawEvent& )
->
+FastClusterContainer<LHCb::FTLiteCluster,int>( const LHCb::RawEvent& ) >
 {
   /// Standard constructor
   FTRawBankDecoder( const std::string& name, ISvcLocator* pSvcLocator );

@@ -272,25 +272,29 @@ class Decoder(object):
         Cascade down the database and find all output locations
         """
         outputs=[]
+        #maybe I'm just a list
         if type(self.Outputs) is list:
             outputs=outputs+self.Outputs
+        #or I'm a dict
         elif type(self.Outputs) is dict:
             for key in self.Outputs:
+                #do I have to be found from the configurable?
                 if self.Outputs[key] is None:
+                    #OK, find me then
                     ops=self.__getprop__(configurableInstanceFromString(self.FullName),key)
-                    if ops is not None and type(ops) is str:
-                        ops=[ops]
-                    for op in ops:
-                        if op not in outputs:
-                            outputs.append(op)
                 else:
+                    #no? well add me to the list
                     ops=self.Outputs[key]
-                    if ops is not None and type(ops) is str:
-                        ops=[ops]
-                    for op in ops:
-                        if op not in outputs:
-                            outputs.append(op)
-        
+
+                #only add if not already in the list
+                if ops is not None and type(ops) is str:
+                    ops=[ops]
+                elif isinstance(ops, DataObjectHandleBase):
+                    ops = [ops.Path] + ops.AlternativePaths
+                for op in ops:
+                    if op not in outputs:
+                        outputs.append(op)
+        #cascade down the tools        
         for tool in self.PrivateTools+self.PublicTools:
             if tool in self.__db__:
                 thieroutputs=self.__db__[tool].listOutputs()

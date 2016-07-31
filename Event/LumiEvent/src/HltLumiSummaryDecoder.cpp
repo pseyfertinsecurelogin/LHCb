@@ -34,7 +34,7 @@ HltLumiSummaryDecoder::HltLumiSummaryDecoder( const std::string& name,
                              Gaudi::Functional::concat_alternatives({
                                       LHCb::RawEventLocation::Trigger,
                                       LHCb::RawEventLocation::Default})}},
-                        KeyValue{"OutputContainterName", LHCb::HltLumiSummaryLocation::Default})
+                        KeyValue{"OutputContainerName", LHCb::HltLumiSummaryLocation::Default})
 {
 }
 

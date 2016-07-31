@@ -32,6 +32,10 @@ VeloClusterFilter::VeloClusterFilter( const std::string& name,
   declareProperty("MaximumNumberOfPhiClusters",m_maxNPhiClustersCut=100000);
   declareProperty("MaximumNumberOfClusters",m_maxNClustersCut=100000);
   declareProperty("FilterOption",m_filterCriterion="All");
+  m_outputLiteClusterDh = AnyDataHandle<LHCb::VeloLiteCluster::FastContainer>(m_outputLiteClusterLocation, Gaudi::DataHandle::Writer, this);
+  m_outputClusterDh = AnyDataHandle<LHCb::VeloClusters>(m_outputClusterLocation, Gaudi::DataHandle::Writer, this);
+  declareOutput(&m_outputLiteClusterDh);
+  declareOutput(&m_outputClusterDh);
 }
 //=============================================================================
 // Destructor
@@ -77,33 +81,33 @@ StatusCode VeloClusterFilter::execute()
 
   if( NULL != clusters ){
 
-    LHCb::VeloClusters* filteredClusters = new LHCb::VeloClusters();
-    filteredClusters->reserve(clusters->size());
+    LHCb::VeloClusters filteredClusters;
+    filteredClusters.reserve(clusters->size());
     
     for (LHCb::VeloClusters::const_iterator ci =  clusters->begin(); ci != clusters->end(); ++ci) {
       LHCb::VeloCluster* cluster = *ci;
       if (passesFilter(cluster->channelID())) {
-          filteredClusters->insert(cluster);
+          filteredClusters.insert(cluster);
           incrementCounters(cluster->channelID(),countClusters,countRClusters,countPhiClusters);
       }
       ++totalClusters;
     }
-    put(filteredClusters,m_outputClusterLocation);
+    m_outputClusterDh.put(std::move(filteredClusters));
   }
   
   if( NULL != liteClusters ){
     
-    LHCb::VeloLiteCluster::FastContainer* filteredLiteClusters = new LHCb::VeloLiteCluster::FastContainer();
-    filteredLiteClusters->reserve(liteClusters->size());
+    LHCb::VeloLiteCluster::FastContainer filteredLiteClusters;
+    filteredLiteClusters.reserve(liteClusters->size());
     
     for (LHCb::VeloLiteCluster::FastContainer::const_iterator ci =  liteClusters->begin(); ci != liteClusters->end(); ++ci) {
       if (passesFilter(ci->channelID())){
-        filteredLiteClusters->push_back(*ci);
+        filteredLiteClusters.push_back(*ci);
         incrementCounters(ci->channelID(),countClusters,countRClusters,countPhiClusters);
       }
       ++totalClusters;
     }
-    put(filteredLiteClusters,m_outputLiteClusterLocation);
+    m_outputLiteClusterDh.put(std::move(filteredLiteClusters));
   }
 
   if(isDebug) debug() << "Number of \'" << m_filterCriterion << "\' clusters surviving = "<< countClusters
