@@ -45,7 +45,7 @@ namespace Rich
    *  @date   07/02/2007
    */
   //-----------------------------------------------------------------------------------------------
-  class HPDPixelCluster : public LHCb::MemPoolAlloc<Rich::HPDPixelCluster>
+  class HPDPixelCluster final : public LHCb::MemPoolAlloc<Rich::HPDPixelCluster>
   {
 
   public:
@@ -150,7 +150,7 @@ namespace Rich
    *  @date   21/03/2006
    */
   //-----------------------------------------------------------------------------
-  class HPDPixelClusters : public LHCb::MemPoolAlloc<Rich::HPDPixelClusters>
+  class HPDPixelClusters final : public LHCb::MemPoolAlloc<Rich::HPDPixelClusters>
   {
 
   public:
@@ -165,7 +165,7 @@ namespace Rich
      *  @date   21/03/2006
      */
     //-----------------------------------------------------------------------------
-    class Cluster : public LHCb::MemPoolAlloc<Rich::HPDPixelClusters::Cluster>
+    class Cluster final : public LHCb::MemPoolAlloc<Rich::HPDPixelClusters::Cluster>
     {
 
     public: // definitions
@@ -295,7 +295,7 @@ namespace Rich
    *  @date   21/03/2006
    */
   //-----------------------------------------------------------------------------
-  class HPDPixelClustersBuilder : public LHCb::MemPoolAlloc<Rich::HPDPixelClustersBuilder>
+  class HPDPixelClustersBuilder final : public LHCb::MemPoolAlloc<Rich::HPDPixelClustersBuilder>
   {
 
   public:

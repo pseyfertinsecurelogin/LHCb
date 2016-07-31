@@ -57,7 +57,7 @@ namespace Rich
   public: // constructors and destructors
 
     /// Default Constructor
-    HypoData() { resetData(); }
+    HypoData() = default;
 
     /** Constructor with explicit data initialisation value
      *
@@ -217,10 +217,10 @@ namespace Rich
   private: // data
 
     /// The internal representation of the data
-    DataArray      m_data;
+    DataArray      m_data = {{}};
 
     /// The validity flags
-    ValidityArray  m_valid;
+    ValidityArray  m_valid = {{}};
 
   };
 

@@ -36,7 +36,7 @@ namespace Rich
    */
   //--------------------------------------------------------------------------------
 
-  class PoissonEffFunctorResult : private std::pair<double,double>
+  class PoissonEffFunctorResult final : private std::pair<double,double>
   {
 
   public:
@@ -85,7 +85,7 @@ namespace Rich
    */
   //--------------------------------------------------------------------------------
 
-  class PoissonEffFunctor
+  class PoissonEffFunctor final
     : public std::binary_function< const double,
                                    const double,
                                    PoissonEffFunctorResult >

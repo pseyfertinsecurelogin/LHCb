@@ -16,6 +16,7 @@
 // std include
 #include <iostream>
 #include <memory>
+#include <cmath>
 
 // LHCbKernel
 #include "Kernel/RichRadiatorType.h"
@@ -33,6 +34,8 @@
 
 // VDT
 #include "vdt/sincos.h"
+#include "vdt/sqrt.h"
+#include "vdt/atan2.h"
 
 // General LHCb namespace
 namespace LHCb
@@ -195,13 +198,6 @@ namespace LHCb
 
   private:
 
-    /// Delete and reset the current rotations
-    inline void cleanUpRotations() const
-    {
-      m_rotation .reset( nullptr );
-      m_rotation2.reset( nullptr );
-    }
-
     /// Helper method to initialise the based chord constructor without a middle point
     void chordConstructorInit2();
 
@@ -211,7 +207,7 @@ namespace LHCb
     /// Helper method for two point constructor
     inline void initTwoPoints()
     {
-       if      ( RichTrackSegment::UseAllStateVectors    == type() )
+       if     ( RichTrackSegment::UseAllStateVectors    == type() )
       {
         setMiddleState ( add_points(entryPoint(),exitPoint())/2, (entryMomentum()+exitMomentum())/2 );
       }
@@ -512,6 +508,7 @@ namespace LHCb
     {
       radIntersections().front().setEntryPoint    ( point );
       radIntersections().front().setEntryMomentum ( dir   );
+      reset();
     }
 
     /// Set the entry state
@@ -520,6 +517,7 @@ namespace LHCb
     {
       radIntersections().front().setEntryPoint    ( std::move(point) );
       radIntersections().front().setEntryMomentum ( std::move(dir)   );
+      reset();
     }
 
     /// Set the Middle state
@@ -528,6 +526,7 @@ namespace LHCb
     {
       m_middlePoint    = point;
       m_middleMomentum = dir;
+      reset();
     }
 
     /// Set the Middle state
@@ -536,6 +535,7 @@ namespace LHCb
     {
       m_middlePoint    = std::move(point);
       m_middleMomentum = std::move(dir);
+      reset();
     }
 
     /// Set the exit state
@@ -544,6 +544,7 @@ namespace LHCb
     {
       radIntersections().back().setExitPoint    ( point );
       radIntersections().back().setExitMomentum ( dir   );
+      reset();
     }
 
     /// Set the exit state
@@ -552,6 +553,7 @@ namespace LHCb
     {
       radIntersections().back().setExitPoint    ( std::move(point) );
       radIntersections().back().setExitMomentum ( std::move(dir)   );
+      reset();
     }
 
     /// Set the radiator type
@@ -639,6 +641,9 @@ namespace LHCb
     /// Compute the rotation matrix
     void computeRotationMatrix2() const;
 
+    /// Update the cached tracjectory information for the 'best' methods
+    void updateCachedBestInfo() const;
+
   private:  // private data
 
     /// The segment type
@@ -667,7 +672,7 @@ namespace LHCb
      */
     double m_avPhotonEnergy = 4.325;
 
-    // Some variables for internal caching of information for speed
+  private: // Some variables for internal caching of information for speed
 
     /** Rotation matrix used to calculate the theta and phi angles between
      *  this track segment and a given direction.
@@ -680,6 +685,12 @@ namespace LHCb
      *  Created on demand as required
      */
     mutable std::unique_ptr<Gaudi::Rotation3D> m_rotation2;
+    
+    mutable bool m_cachedTrajOK{false};   ///< Flag to say if the cached information is up to date
+    mutable Gaudi::XYZVector m_midEntryV; ///< Entry to middle point vector
+    mutable Gaudi::XYZVector m_exitMidV;  ///< Middle to exit point vector
+    mutable double m_invMidFrac1{0};      ///< Cached fraction 1
+    mutable double m_midFrac2{0};         ///< cached fraction 2
 
   };
 
@@ -713,7 +724,49 @@ LHCb::RichTrackSegment::vectorAtThetaPhi( const double theta,
 
 inline void LHCb::RichTrackSegment::reset() const
 {
-  cleanUpRotations();
+  m_rotation .reset( nullptr );
+  m_rotation2.reset( nullptr );
+  m_cachedTrajOK = false;
+}
+
+inline void
+LHCb::RichTrackSegment::angleToDirection( const Gaudi::XYZVector & direction,
+                                          double & theta,
+                                          double & phi ) const
+{
+  // create vector in track reference frame
+  const Gaudi::XYZVector rotDir{ rotationMatrix() * direction };
+
+  // get the angles
+  // phi   = rotDir.phi();
+  // theta = rotDir.theta();
+
+  // the above methods are :-
+  // phi   : { return (fX==0 && fY==0) ? 0 : atan2(fY,fX);}
+  // theta : { return (fX==0 && fY==0 && fZ==0) ? 0 : atan2(Rho(),Z());}
+  // Rho   : { return std::sqrt( Perp2());}
+  // Perp2 : { return fX*fX + fY*fY ;}
+
+  // do it by hand, the same only faster ;)
+  // Skip checks against 0 as we know that never happens here.
+  phi   = vdt::fast_atan2( rotDir.y(), rotDir.x() );
+  theta = vdt::fast_atan2( std::sqrt( std::pow(rotDir.x(),2) + 
+                                      std::pow(rotDir.y(),2) ),
+                           rotDir.z() );
+
+  // correct phi
+  if ( phi < 0 ) { phi += 2.0*M_PI; }
+}
+
+inline Gaudi::XYZPoint
+LHCb::RichTrackSegment::bestPoint( const double fractDist ) const
+{
+  // make sure cached variables are valid
+  if ( !m_cachedTrajOK ) { updateCachedBestInfo(); }
+  // return the best point
+  return ( zCoordAt(fractDist) < middlePoint().z() ?
+           entryPoint()  + (fractDist*m_invMidFrac1*m_midEntryV) :
+           middlePoint() + (m_exitMidV*((fractDist-m_midFrac2)/m_midFrac2)) );
 }
 
 #endif // RICHKERNEL_RichTrackSegment_H

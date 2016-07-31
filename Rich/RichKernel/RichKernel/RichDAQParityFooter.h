@@ -31,8 +31,8 @@ namespace Rich
      */
     //=============================================================================================
 
-    class ParityFooter : public FooterPDBase,
-                         public LHCb::MemPoolAlloc<ParityFooter>
+    class ParityFooter final : public FooterPDBase,
+                               public LHCb::MemPoolAlloc<ParityFooter>
     {
 
     public:

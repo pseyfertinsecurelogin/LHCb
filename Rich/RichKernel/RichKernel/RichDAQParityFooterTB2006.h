@@ -29,7 +29,7 @@ namespace Rich
      */
     //=============================================================================================
 
-    class ParityFooterTB2006 : public FooterPDBase
+    class ParityFooterTB2006 final : public FooterPDBase
     {
 
     public:

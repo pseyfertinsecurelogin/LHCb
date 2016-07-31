@@ -46,7 +46,7 @@ namespace Rich
    *  @date   10/02/2010
    */
   //-----------------------------------------------------------------------------
-  class HistogramID
+  class HistogramID final
   {
 
   public:
@@ -110,30 +110,24 @@ namespace Rich
   public:
 
     /// Access the Detector type
-    inline Rich::DetectorType   det() const { return m_data.det(); }
+    inline Rich::DetectorType   det() const noexcept { return m_data.det(); }
 
     /// Access the radiator medium
-    inline Rich::RadiatorType   rad() const { return m_data.rad(); }
+    inline Rich::RadiatorType   rad() const noexcept { return m_data.rad(); }
 
     /// Access the side of the RICH
-    inline Rich::Side          side() const { return m_data.side(); }
+    inline Rich::Side          side() const noexcept { return m_data.side(); }
 
     /// Access the Particle ID hypothesis
-    inline Rich::ParticleIDType pid() const { return m_data.pid(); }
+    inline Rich::ParticleIDType pid() const noexcept { return m_data.pid(); }
 
   public:
 
     /// Returns the appropriate histogram ID
-    inline const std::string& id() const
-    {  
-      return m_id;
-    }
+    inline const std::string& id() const noexcept { return m_id; }
 
     /// Returns the packed Rich PID info
-    inline const Rich::PackedPIDInfo& packedData() const
-    {  
-      return m_data;
-    }
+    inline const Rich::PackedPIDInfo& packedData() const noexcept { return m_data; }
 
     /// Returns the appropriate histogram ID
     std::string fullid() const;
@@ -193,13 +187,13 @@ namespace Rich
    *  @date   05/04/2002
    */
   //-----------------------------------------------------------------------------
-  class HistoID
+  class HistoID final
   {
 
   public:
 
     /// Standard constructor
-    HistoID() { }
+    HistoID() = default;
 
     /** Create histo ID for given radiator type and histogram tag
      *
