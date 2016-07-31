@@ -1,4 +1,3 @@
-// $Id: STLayerSelector.h,v 1.0 2012-05-02 15:31:15 elsasser Exp $
 #ifndef STLAYERSELECTOR_H 
 #define STLAYERSELECTOR_H 1
 
@@ -28,7 +27,7 @@ class STLayerSelector :
   public virtual ISTChannelIDSelector, 
   public GaudiTool
 {
-  friend class ToolFactory<STLayerSelector>;
+  friend struct ToolFactory<STLayerSelector>;
 
 public:
 

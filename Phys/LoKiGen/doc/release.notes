@@ -13,12 +13,14 @@
 !   A.Golutvin, P.Koppenburg have been used in the design.
 ! -----------------------------------------------------------------------------
 
+! 2016-07-29 - Marco Cattaneo
+ - Fix clang warnings: ToolFactory is now a struct, no longer a class
+
 ! 2016-04-27 - Vanya Belyaev
  - fix the issue with hash 
 
 ! 2016-04-27 - Vanya Belyaev
  - add missing hep_id function...
-
 
 !========================= LoKiGen v10r24 2016-03-16 =========================
 ! 2016-03-12 - Vanya Belyaev
