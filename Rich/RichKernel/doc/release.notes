@@ -4,6 +4,10 @@
 ! Purpose     : General purpose RICH classes
 !------------------------------------------------------------------------------
 
+! 2016-07-29 - Chris Jones
+ - Remove custom overloading of MsgStream printout for std::array as this is
+   no longer required.
+
 ! 2016-07-20 - Chris Jones
  - Pass the vector of SmartIDs to IRichPixelClusteringTool::findClusters 
    by const reference.
