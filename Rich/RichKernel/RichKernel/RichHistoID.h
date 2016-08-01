@@ -193,7 +193,7 @@ namespace Rich
   public:
 
     /// Standard constructor
-    HistoID() = default;
+    HistoID() { }
 
     /** Create histo ID for given radiator type and histogram tag
      *
