@@ -665,11 +665,10 @@ Gaudi::Math::Polynomial::Polynomial
 // ============================================================================
 // get the value
 // ============================================================================
-double Gaudi::Math::Polynomial::operator () ( const double x ) const 
+double Gaudi::Math::Polynomial::evaluate ( const double x ) const 
 {
   // trivial cases 
-  if      ( x < m_xmin || x > m_xmax ) { return         0 ; }  // RETURN 
-  else if ( 1 == m_pars.size()       ) { return m_pars[0] ; }  // RETURN 
+  if      ( 1 == m_pars.size()       ) { return m_pars[0] ; }  // RETURN 
   else if ( zero ()                  ) { return 0         ; }
   // 1) transform argument:
   const double tx = t ( x ) ;  
@@ -941,11 +940,10 @@ Gaudi::Math::ChebyshevSum::ChebyshevSum
 // ============================================================================
 // get the value
 // ============================================================================
-double Gaudi::Math::ChebyshevSum::operator () ( const double x ) const 
+double Gaudi::Math::ChebyshevSum::evaluate ( const double x ) const 
 {
   // trivial cases 
-  if      ( x < m_xmin || x > m_xmax ) { return         0 ; }  // RETURN 
-  else if ( 1 == m_pars.size()       ) { return m_pars[0] ; }  // RETURN 
+  if      ( 1 == m_pars.size()       ) { return m_pars[0] ; }  // RETURN 
   else if ( zero ()                  ) { return 0         ; }
   // 1) transform argument:
   const double tx = t ( x ) ;  
@@ -1273,10 +1271,9 @@ Gaudi::Math::LegendreSum::LegendreSum
 // ============================================================================
 // get the value
 // ============================================================================
-double Gaudi::Math::LegendreSum::operator () ( const double x ) const 
+double Gaudi::Math::LegendreSum::evaluate ( const double x ) const 
 {
-  if      ( x < m_xmin || x > m_xmax ) { return         0 ; }
-  else if ( 1 == m_pars.size()       ) { return m_pars[0] ; }
+  if      ( 1 == m_pars.size()       ) { return m_pars[0] ; }
   else if ( zero ()                  ) { return         0 ; }
   // transform argument:
   const double tx = t ( x ) ;  
@@ -1564,7 +1561,9 @@ Gaudi::Math::HermiteSum::HermiteSum
 // ============================================================================
 // get the value
 // ============================================================================
-double Gaudi::Math::HermiteSum:: operator () ( const double x ) const 
+double Gaudi::Math::HermiteSum::operator() ( const double x ) const 
+{ return evaluate ( x ) ; }
+double Gaudi::Math::HermiteSum:: evaluate  ( const double x ) const 
 {
   const double tx = t ( x ) ;
   return Gaudi::Math::Clenshaw::hermite_sum ( m_pars.begin() , m_pars.end() , tx ) ;

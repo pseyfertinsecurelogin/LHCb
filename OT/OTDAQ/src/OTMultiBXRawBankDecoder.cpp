@@ -5,6 +5,7 @@
 #endif
 #include <cmath>
 #include <sstream>
+#include <numeric>
 
 // from Gaudi
 #include "GaudiAlg/GaudiTool.h"

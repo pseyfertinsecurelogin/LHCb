@@ -19,12 +19,11 @@ DECLARE_ALGORITHM_FACTORY( VeloClusterFilter )
 VeloClusterFilter::VeloClusterFilter( const std::string& name,
                                           ISvcLocator* pSvcLocator)
   : GaudiAlgorithm ( name , pSvcLocator )
-  , m_velo(NULL)
 {
-  declareProperty("InputClusterLocation", m_inputClusterLocation =  LHCb::VeloClusterLocation::Default);
-  declareProperty("InputLiteClusterLocation", m_inputLiteClusterLocation =  LHCb::VeloLiteClusterLocation::Default);
-  declareProperty("OutputClusterLocation",m_outputClusterLocation= "/Event/Raw/Velo/ClustersCopy");
-  declareProperty("OutputLiteClusterLocation",m_outputLiteClusterLocation= "/Event/Raw/Velo/LiteClustersCopy");
+  declareProperty("InputClusterLocation", m_inputClusterDh);
+  declareProperty("InputLiteClusterLocation", m_inputLiteClusterDh);
+  declareProperty("OutputClusterLocation",m_outputClusterDh );
+  declareProperty("OutputLiteClusterLocation",m_outputLiteClusterDh );
   declareProperty("MinimumNumberOfRClusters",m_minNRClustersCut=0);
   declareProperty("MinimumNumberOfPhiClusters",m_minNPhiClustersCut=0);
   declareProperty("MinimumNumberOfClusters",m_minNClustersCut=0);
@@ -32,16 +31,6 @@ VeloClusterFilter::VeloClusterFilter( const std::string& name,
   declareProperty("MaximumNumberOfPhiClusters",m_maxNPhiClustersCut=100000);
   declareProperty("MaximumNumberOfClusters",m_maxNClustersCut=100000);
   declareProperty("FilterOption",m_filterCriterion="All");
-  m_outputLiteClusterDh = AnyDataHandle<LHCb::VeloLiteCluster::FastContainer>(m_outputLiteClusterLocation, Gaudi::DataHandle::Writer, this);
-  m_outputClusterDh = AnyDataHandle<LHCb::VeloClusters>(m_outputClusterLocation, Gaudi::DataHandle::Writer, this);
-  declareOutput(&m_outputLiteClusterDh);
-  declareOutput(&m_outputClusterDh);
-}
-//=============================================================================
-// Destructor
-//=============================================================================
-VeloClusterFilter::~VeloClusterFilter()
-{
 }
 
 //=============================================================================
@@ -72,27 +61,25 @@ StatusCode VeloClusterFilter::execute()
   int countPhiClusters=0;
   int totalClusters=0;
 
-  const LHCb::VeloClusters* clusters = getIfExists<LHCb::VeloClusters>(m_inputClusterLocation);
-  const LHCb::VeloLiteCluster::FastContainer* liteClusters =
-    getIfExists<LHCb::VeloLiteCluster::FastContainer>(m_inputLiteClusterLocation);
-  if( (NULL==clusters) && (NULL==liteClusters) ) {
+  const LHCb::VeloClusters* clusters = m_inputClusterDh.get();
+  const LHCb::VeloLiteCluster::FastContainer* liteClusters = m_inputLiteClusterDh.get();
+  if( (!clusters) && (!liteClusters) ) {
     return Warning( "No velo clusters or liteClusters on the TES !!!" );
   }
 
-  if( NULL != clusters ){
+  if( clusters ){
 
-    LHCb::VeloClusters filteredClusters;
-    filteredClusters.reserve(clusters->size());
+    auto filteredClusters = std::make_unique< LHCb::VeloClusters> ();
+    filteredClusters->reserve(clusters->size());
     
-    for (LHCb::VeloClusters::const_iterator ci =  clusters->begin(); ci != clusters->end(); ++ci) {
-      LHCb::VeloCluster* cluster = *ci;
+    for (auto * cluster : *clusters ) {
       if (passesFilter(cluster->channelID())) {
-          filteredClusters.insert(cluster);
+          filteredClusters->insert(cluster);
           incrementCounters(cluster->channelID(),countClusters,countRClusters,countPhiClusters);
       }
       ++totalClusters;
     }
-    m_outputClusterDh.put(std::move(filteredClusters));
+    m_outputClusterDh.put(filteredClusters.release());
   }
   
   if( NULL != liteClusters ){

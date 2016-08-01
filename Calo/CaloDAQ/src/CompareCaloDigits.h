@@ -1,4 +1,3 @@
-// $Id: CompareCaloDigits.h,v 1.3 2005-12-20 13:35:28 ocallot Exp $
 #ifndef COMPONENT_COMPARECALODIGITS_H 
 #define COMPONENT_COMPARECALODIGITS_H 1
 
@@ -18,8 +17,6 @@ class CompareCaloDigits : public GaudiAlgorithm {
 public:
   /// Standard constructor
   CompareCaloDigits( const std::string& name, ISvcLocator* pSvcLocator );
-
-  virtual ~CompareCaloDigits( ); ///< Destructor
 
   virtual StatusCode execute   ();    ///< Algorithm execution
 

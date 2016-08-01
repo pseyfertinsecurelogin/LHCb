@@ -16,15 +16,6 @@
 #include <array>
 
 // Gaudi
-#include "GaudiKernel/MsgStream.h"
-
-/// Implement textual MsgStream << method for boost::array's
-template < class TYPE, std::size_t N >
-inline MsgStream& operator << ( MsgStream& s, 
-                                const std::array<TYPE,N>& data )
-{
-  for ( const auto& i : data ) { s << i << " "; }
-  return s;
-}
+#include "GaudiKernel/ToStream.h"
 
 #endif // RICHKERNEL_STLARRAY_H

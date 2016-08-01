@@ -108,6 +108,30 @@ namespace Gaudi
         , m_xmax ( std::max ( xmin, xmax ) )
       {}
       // ======================================================================
+      /// constructor  from Bernstein polynomial from *different* domain
+      Bernstein ( const Bernstein& poly , 
+                  const double     xmin , 
+                  const double     xmax ) ;
+      // ======================================================================
+      /** construct Bernstein interpolant
+       *  @param x    vector of abscissas 
+       *  @param y    vector of function values 
+       *  @param xmin low  edge for Bernstein polynomial
+       *  @param xmin high edge for Bernstein polynomial
+       *  - if vector of y is longer  than vector x, extra values are ignored 
+       *  - if vector of y is shorter than vector x, missing entries are assumed to be zero  
+       *  It relies on Newton-Bernstein algorithm
+       *  @see http://arxiv.org/abs/1510.09197
+       *  @see Mark Ainsworth and Manuel A. Sanches, 
+       *       "Computing of Bezier control points of Largangian interpolant 
+       *       in arbitrary dimension", arXiv:1510.09197 [math.NA]
+       *  @see http://adsabs.harvard.edu/abs/2015arXiv151009197A
+       */
+      Bernstein ( const std::vector<double>& x         , 
+                  const std::vector<double>& y         , 
+                  const double               xmin  = 0 ,
+                  const double               xmax  = 1 ) ;
+      // ======================================================================
       /// copy
       Bernstein ( const Bernstein&  ) = default ;
       /// move
@@ -126,8 +150,12 @@ namespace Gaudi
       // ======================================================================
     public:
       // ======================================================================
+      /// get the value of polynomial
+      double evaluate ( const double x ) const ;
+      // ======================================================================
       /// get the value
-      double operator () ( const double x ) const ;
+      double operator () ( const double x ) const 
+      { return x < m_xmin ? 0 : x > m_xmax ? 0 : evaluate ( x ) ; }
       // ======================================================================
     public:
       // ======================================================================
@@ -223,11 +251,11 @@ namespace Gaudi
       // ======================================================================
     public:
       // ======================================================================      
-      /// Sum of Bernstein polynomials (with the same domain!)
+      /// Sum of   Bernstein polynomials
       Bernstein __add__   ( const Bernstein& other ) const ;
-      /// Subtract Bernstein polynomials (with the same domain!)
+      /// Subtract Bernstein polynomials
       Bernstein __sub__   ( const Bernstein& other ) const ;
-      /// Multiply Bernstein polynomials (with the same domain!)
+      /// Multiply Bernstein polynomials
       Bernstein __mult__  ( const Bernstein& other ) const ;
       // ======================================================================
     public:

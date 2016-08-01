@@ -11,9 +11,6 @@
 #include <string>
 #include <iostream>
 #include "GaudiKernel/GaudiException.h"
-#if !(defined(__GXX_EXPERIMENTAL_CXX0X__) || __cplusplus >= 201103L)
-#include "boost/assign/list_of.hpp"
-#endif
 
 /** @namespace FPE
  *
@@ -49,22 +46,12 @@ namespace FPE {
     }
     inline const std::map<std::string,mask_type>& map() {
       static std::map<std::string,mask_type> m =
-#if defined(__GXX_EXPERIMENTAL_CXX0X__) || __cplusplus >= 201103L
         {{ "Inexact"   , mask_type(FE_INEXACT)   },
          { "DivByZero" , mask_type(FE_DIVBYZERO) },
          { "Underflow" , mask_type(FE_UNDERFLOW) },
          { "Overflow"  , mask_type(FE_OVERFLOW)  },
          { "Invalid"   , mask_type(FE_INVALID)   },
          { "AllExcept" , mask_type(FE_ALL_EXCEPT)}};
-#else
-        boost::assign::map_list_of
-        ( "Inexact"   , mask_type(FE_INEXACT)  )
-        ( "DivByZero" , mask_type(FE_DIVBYZERO))
-        ( "Underflow" , mask_type(FE_UNDERFLOW))
-        ( "Overflow"  , mask_type(FE_OVERFLOW) )
-        ( "Invalid"   , mask_type(FE_INVALID)  )
-        ( "AllExcept" , mask_type(FE_ALL_EXCEPT));
-#endif
       return m;
     }
     /// Default mask (for default FPE::Guard constructor)
@@ -173,10 +160,14 @@ namespace FPE {
    *  @author Gerhard Raven
    *  @date   09/06/2008
    */
-  class Guard {
+  class Guard
+  {
+  
   public:
+    
     /// export the type of the FPE mask
     typedef FPE::detail::mask_type mask_type;
+    
     /// Export whether a working implementation exists.
     /// In case it doesn't, the code (silently!) defaults
     /// to no-operation.
@@ -189,8 +180,8 @@ namespace FPE {
      *  @param mask    The mask of exceptions to activate/deactive
      *  @param disable Disable or enable the given FPE exceptions
      */
-    explicit Guard( mask_type mask,
-		    bool disable   = false )
+    explicit Guard( const mask_type mask,
+                    bool disable = false )
       : m_initial( disable ?
                    FPE::detail::disable(mask) :
                    FPE::detail::enable(mask)  )
@@ -208,14 +199,15 @@ namespace FPE {
     { }
 
     /// Destructor. Returns system to the same state as before the object was constructed
-    ~Guard()
+    ~Guard() noexcept(false)
     {
       //TODO: in disable mode, report which FPE happened between c'tor and d'tor.
       FPE::detail::disable( ~m_initial );
-      mask_type mask = FPE::detail::enable( m_initial );
+      const auto mask = FPE::detail::enable( m_initial );
       // retry once, in case the FPU is a bit behind... yes, that happens
-      if (mask!=m_initial && FPE::detail::get()!=m_initial) {
-          throw GaudiException("oops -- Guard failed to restore initial state","FPE::Guard",StatusCode::FAILURE);
+      if ( mask != m_initial && FPE::detail::get() != m_initial )
+      {
+        throw GaudiException("oops -- Guard failed to restore initial state","FPE::Guard",StatusCode::FAILURE);
       }
     }
 
@@ -259,12 +251,12 @@ namespace FPE {
       mask_type mask(0);
       if ( FPE::detail::has_working_implementation )
       {
-	auto j = FPE::detail::map().find(excpt);
-	if ( FPE::detail::map().end() == j )
-	{
-	  throw GaudiException("FPE::Guard::mask : Unknown mask "+excpt,excpt,StatusCode::FAILURE);
-	}
-	mask = j->second;
+        auto j = FPE::detail::map().find(excpt);
+        if ( FPE::detail::map().end() == j )
+        {
+          throw GaudiException("FPE::Guard::mask : Unknown mask "+excpt,excpt,StatusCode::FAILURE);
+        }
+        mask = j->second;
       }
       return mask;
     }

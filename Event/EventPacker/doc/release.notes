@@ -4,6 +4,10 @@
 ! Purpose     : Pack and unpack events classes for smaller events
 !-----------------------------------------------------------------------------
 
+! 2016-07-15 - Chris Jones
+ - Improve error messages from PackCluster.
+ - Make cluster locations in PackCluster configurable options.
+
 ! 2016-06-21 - Rosen Matev
  - Implement backward compatibility for reading v4 PackedTrack objects
 

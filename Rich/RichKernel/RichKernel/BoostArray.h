@@ -12,20 +12,24 @@
 #ifndef RICHKERNEL_BOOSTARRAY_H 
 #define RICHKERNEL_BOOSTARRAY_H 1
 
+// STL
+#include <iostream>
+
 // Boost
 //#define BOOST_DISABLE_ASSERTS
 #include "boost/array.hpp"
 
 // Gaudi
-#include "GaudiKernel/MsgStream.h"
+//#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/ToStream.h"
 
-/// Implement textual MsgStream << method for boost::array's
+/// Implement textual std::ostream << method for boost::array's
 template < class TYPE, std::size_t N >
-inline MsgStream& operator << ( MsgStream& s, 
-                                const boost::array<TYPE,N>& data )
+inline std::ostream& operator << ( std::ostream& s, 
+                                   const boost::array<TYPE,N>& data )
 {
-  for ( const auto& i : data ) { s << i << " "; }
-  return s;
+  return Gaudi::Utils::toStream ( data.begin() , data.end () , 
+                                  s , "[ " , " ]" , " , " ) ;
 }
 
 #endif // RICHKERNEL_BOOSTARRAY_H

@@ -4,6 +4,9 @@
 ! Purpose: LHCb specific Kernel classes
 !--------------------------------------------------------------------------------
 
+! 2016-07-29 - Chris Jones
+ - Add templated alias to STL arrays for Detectors (2D) and Radiators (3D).
+
 ! 2016-05-20 - Jon Harrison
  - Added new interface IVeloCCEConfigTool.h for VELO CCE scan configuration 
 

@@ -4,6 +4,7 @@
 #include "Kernel/VeloChannelID.h"
 #include "GaudiAlg/GaudiAlgorithm.h"
 #include "GaudiKernel/AnyDataHandle.h"
+#include "GaudiKernel/DataObjectHandle.h"
 #include <string>
 
 class DeVelo;
@@ -19,7 +20,6 @@ class DeVelo;
 class VeloClusterFilter : public GaudiAlgorithm {
 public:
   VeloClusterFilter( const std::string& name, ISvcLocator* pSvcLocator );
-  virtual ~VeloClusterFilter( );
 
   virtual StatusCode initialize();
   virtual StatusCode execute   ();
@@ -28,14 +28,12 @@ public:
   void incrementCounters(LHCb::VeloChannelID, int&, int&, int&);
 
 protected:
-  std::string m_inputLiteClusterLocation;
-  std::string m_outputLiteClusterLocation;
-  std::string m_inputClusterLocation;
-  std::string m_outputClusterLocation;
   std::string m_filterCriterion;
 
-  AnyDataHandle<LHCb::VeloLiteCluster::FastContainer> m_outputLiteClusterDh;
-  AnyDataHandle<LHCb::VeloClusters> m_outputClusterDh;
+  AnyDataHandle<LHCb::VeloLiteCluster::FastContainer> m_inputLiteClusterDh = {LHCb::VeloLiteClusterLocation::Default, Gaudi::DataHandle::Reader, this };
+  AnyDataHandle<LHCb::VeloLiteCluster::FastContainer> m_outputLiteClusterDh = {"/Event/Raw/Velo/LiteClustersCopy", Gaudi::DataHandle::Writer, this };
+  DataObjectHandle<LHCb::VeloClusters> m_inputClusterDh = { LHCb::VeloLiteClusterLocation::Default , Gaudi::DataHandle::Writer, this };
+  DataObjectHandle<LHCb::VeloClusters> m_outputClusterDh = {"/Event/Raw/Velo/ClustersCopy" , Gaudi::DataHandle::Writer, this };
 
   int m_minNRClustersCut;
   int m_minNPhiClustersCut;
@@ -44,6 +42,6 @@ protected:
   int m_maxNPhiClustersCut;
   int m_maxNClustersCut;
  private:
-  DeVelo* m_velo;                  ///< Detector element
+  DeVelo* m_velo = nullptr;                  ///< Detector element
 };
 #endif // VELOCLUSTERFILTER_H

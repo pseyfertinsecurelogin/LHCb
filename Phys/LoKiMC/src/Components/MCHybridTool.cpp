@@ -1,4 +1,3 @@
-// $Id$
 // ============================================================================
 // Include files 
 // ============================================================================
@@ -28,9 +27,6 @@
  *
  *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
  *  @date 2004-06-29
- *                    $Revision$
- *  Last modification $Date$
- *                 by $Author$
  */
 namespace LoKi 
 {
@@ -59,7 +55,7 @@ namespace LoKi
     {
       // ======================================================================
       // friend factory forn instantiation
-      friend class ToolFactory<LoKi::Hybrid::MCTool> ;
+      friend struct ToolFactory<LoKi::Hybrid::MCTool> ;
       // ======================================================================
     public:
       // ======================================================================

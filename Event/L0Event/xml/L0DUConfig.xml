@@ -39,6 +39,7 @@
       <import name="Event/L0DUTemplateConfig"/> 
       <import name="string" std="TRUE"/>
       <import name="algorithm" std="TRUE"/>
+      <import name="numeric" std="TRUE"/>
 
       <typedef
         def    = "Base"

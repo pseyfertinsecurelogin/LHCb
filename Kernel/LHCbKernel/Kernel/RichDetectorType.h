@@ -16,6 +16,7 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include <array>
 
 //  General namespace for RICH specific definitions documented in RichSide.h
 namespace Rich
@@ -60,6 +61,10 @@ namespace Rich
   {
     return s << Rich::text( detector );
   }
+
+  /// Type for fixed size arrays with RICH detector information
+  template < typename TYPE >
+  using DetectorArray = std::array< TYPE, NRiches >;
 
 }
 

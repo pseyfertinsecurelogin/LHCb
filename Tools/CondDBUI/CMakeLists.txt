@@ -5,6 +5,11 @@ gaudi_subdir(CondDBUI v3r36)
 
 gaudi_depends_on_subdirs(Det/DDDB)
 
+# Needed by LCG build of Qt with GCC 6
+foreach(_lib_dir ${std_library_path})
+  set(ENV{LD_LIBRARY_PATH} "${_lib_dir}:$ENV{LD_LIBRARY_PATH}")
+endforeach()
+
 find_package(Boost)
 find_package(COOL COMPONENTS CoolKernel CoolApplication)
 find_package(CORAL COMPONENTS CoralBase CoralKernel RelationalAccess)

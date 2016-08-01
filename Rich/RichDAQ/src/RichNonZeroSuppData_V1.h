@@ -91,27 +91,27 @@ namespace Rich
         }
 
         /// Destructor
-        ~RichNonZeroSuppData() { }
+        ~RichNonZeroSuppData() = default;
 
         // Returns the hit count for this HPD
-        virtual ShortType hitCount() const;
+        virtual ShortType hitCount() const final;
 
         // Fill a vector with RichSmartIDs for hit pixels
         virtual ShortType fillRichSmartIDs( LHCb::RichSmartID::Vector & ids,
-                                            const LHCb::RichSmartID hpdID ) const;
+                                            const LHCb::RichSmartID hpdID ) const final;
 
       private: // methods
 
         /// Set a pixel as active
         inline void setPixelActive( const ShortType row,
-                                    const ShortType col )
+                                    const ShortType col ) noexcept
         {
           HPDDataBankImp<Version,Header,Footer>::setBit( this->data()[row], col );
         }
 
         /// Is a given pixel active ?
         inline bool isPixelActive( const ShortType row,
-                                   const ShortType col ) const
+                                   const ShortType col ) const noexcept
         {
           return this->isBitOn( this->data()[row], col );
         }

@@ -7,6 +7,8 @@
 #include "DetDesc/ILVolume.h"
 #include "DetDesc/IPVolume.h"
 
+#include <numeric>
+
 // local
 #include "DetElemFinder.h"
 

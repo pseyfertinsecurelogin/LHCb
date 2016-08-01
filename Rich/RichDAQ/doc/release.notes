@@ -4,6 +4,9 @@
 ! Purpose     : Package simulating the RICH DAQ system and data format
 !-----------------------------------------------------------------------------
 
+! 2016-07-27 - Chris Jones
+ - Another round of C++11 improvements. 
+
 !========================= RichDAQ v3r44 2016-01-27 =========================
 ! 2016-01-21 - Chris Jones
  - A few more C++11 modernisations.

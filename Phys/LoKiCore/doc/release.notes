@@ -13,6 +13,9 @@
 !   A.Golutvin, P.Koppenburg have been used in the design.
 ! -----------------------------------------------------------------------------
 
+! 2016-07-29 - Marco Cattaneo
+ - Fix clang warnings: ToolFactory is now a struct, no longer a class
+
 ! 2016-06-01 - Philip Ilten
  - removed debug print statements introduced in r201631 to _getattr_SR_
 

@@ -4,6 +4,10 @@
 ! Purpose     : Interface package to Geometry and Conditions DB
 !-----------------------------------------------------------------------------
 
+! 2016-07-18 - Marco Cattaneo
+ - Update default database tags to the latest ones:
+   . DQFLAGS, 2016: dq-20160621-5
+
 ! 2016-05-23 - Patrick Robbe
  - Add "OnlineMode" option to the DDDBConf configurable to change message
    output level when running online (monitoring, ...)
