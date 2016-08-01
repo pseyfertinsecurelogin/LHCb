@@ -57,6 +57,8 @@ void LHCb::RichTrackSegment::updateCachedBestInfo() const
   // update factors
   m_invMidFrac1 = std::sqrt( entryExitVMag2    / m_midEntryV.mag2() );
   m_midFrac2    = std::sqrt( m_exitMidV.mag2() / entryExitVMag2     );
+  // update the path length
+  m_pathLength = std::sqrt(m_midEntryV.mag2()) + std::sqrt(m_exitMidV.mag2());
   // set the OK flag
   m_cachedTrajOK = true;
 }
@@ -64,7 +66,7 @@ void LHCb::RichTrackSegment::updateCachedBestInfo() const
 Gaudi::XYZVector LHCb::RichTrackSegment::bestMomentum( const double fractDist ) const
 {
   // make sure cached variables are valid
-  if ( !m_cachedTrajOK ) { updateCachedBestInfo(); }
+  if ( UNLIKELY(!m_cachedTrajOK) ) { updateCachedBestInfo(); }
   // return the best momentum vector
   if ( zCoordAt(fractDist) < middlePoint().z() )
   {
