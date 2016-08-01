@@ -939,17 +939,22 @@ Gaudi::Math::Bernstein::multiply ( const Gaudi::Math::Bernstein& other ) const
   //
   Bernstein result ( m + n , xmin() , xmax() ) ;
   //
+  long double c = 1 ;
   for ( unsigned short k = 0 ; k <= m + n ; ++k ) 
   {
+    if ( 0 != k ) {  c *= ( m + n - k + 1 ) ; c /= k; }
+    //
     const unsigned jmax = std::min ( m , k ) ;
-    const unsigned jmin = k >= n ? k - n : 0 ;
+    const unsigned jmin = k > n ? k - n : 0 ;
+    long double     cc  = 
+      0 == jmin ? 
+      c_nk ( n , k - jmin ) / c :
+      c_nk ( m ,     jmin ) / c ;  
+    // c_nk ( m , jmin ) * c_nk ( n , k - jmin ) / c ;
     for ( unsigned short j = jmin ; j <= jmax ; ++j ) 
     { 
-      result.m_pars[k] += 
-        c_nk ( m ,     j ) * 
-        c_nk ( n , k - j ) * 
-        m_pars[j]          * 
-        other.m_pars[k-j]  / c_nk ( m + n , k ) ;
+      if ( j != jmin ) { cc *= ( m - j + 1 ) * ( k - j + 1 ) ; cc /= j * ( n - k + j ) ; }
+      result.m_pars[k] += cc * m_pars [ j]  * other.m_pars[k-j]  ;
     }
   }
   return result ; 
