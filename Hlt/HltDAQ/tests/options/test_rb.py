@@ -88,11 +88,15 @@ HltConfigSvc().ConfigAccessSvc = accessSvc.getFullName()
 # Remove some modules that don't live in the LHCb project
 # Empty the Hlt sequence to disable the HLT.
 # Point the RoutingBitsWriter at a copy of the raw event
+#### GR/TODO: replace the HltDecReports  location with their decoderDB versions...
 HltConfigSvc().ApplyTransformation = {".*LoKi.*/.*Factory.*" : {"Modules" : {r",[ ]*'LoKiTrigger.[a-z]*'" : ""},
                                                                 "Lines"   : {r",[ ]*'import HltTracking.Hlt1StreamerConf'" : ""} },
                                       'GaudiSequencer/Hlt' : {"Members" : {"'.*'" : ""}},
                                       'HltRoutingBitsWriter/.*RoutingBitsWriter' : {'RawEventLocation' : {"DAQ/.*RawEvent" : "DAQ/CopyRawEvent"},
-                                                                                    'UpdateExistingRawBank' : {"True" : "False"}}}
+                                                                                    'UpdateExistingRawBank' : {"True" : "False"}},
+                                      'HltDecReportsDecoder/Hlt1.*' : { 'RawEventLocations' : { "^.*$": "('Trigger/RawEvent')|4|0|" },
+                                                                    'OutputHltDecReportsLocation' : { "^.*$": "('Hlt1/DecReports')|4|0|" } }
+                                     }
 # Write these DecReports somewhere else so the decoder can run
 HltConfigSvc().HltDecReportsLocations = ['Hlt1/EmptyDecReports']
 ApplicationMgr().ExtSvc.insert(0, HltConfigSvc().getFullName())
@@ -134,8 +138,10 @@ LoKiSvc().Welcome = False
 
 IOHelper("MDF").inputFiles([file])
 
+
 from GaudiPython.Bindings import AppMgr, gbl
 gaudi = AppMgr()
+
 gaudi.initialize()
 TES = gaudi.evtSvc()
 
