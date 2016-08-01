@@ -58,7 +58,7 @@ HltVertexReportsDecoder::HltVertexReportsDecoder( const std::string& name,
                             { KeyValue{ "RawEventLocations", Gaudi::Functional::concat_alternatives(LHCb::RawEventLocation::Trigger,
                                                                                                     LHCb::RawEventLocation::Copied,
                                                                                                     LHCb::RawEventLocation::Default )}},
-                            KeyValues{ "OutputHltVertexReportsLocation", prefix( LHCb::HltVertexReportsLocation::Default, DefaultLabels ) }
+                            KeyValues{ "OutputHltVertexLocations", prefix( LHCb::HltVertexReportsLocation::Default, DefaultLabels ) }
                             )
 {
   declareProperty("Decode", m_decode = DefaultLabels, "List of containers to decode" );

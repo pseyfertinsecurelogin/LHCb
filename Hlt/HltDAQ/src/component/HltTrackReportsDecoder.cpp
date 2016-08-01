@@ -63,7 +63,7 @@ HltTrackReportsDecoder::HltTrackReportsDecoder( const std::string& name,
                             { KeyValue{ "RawEventLocations", Gaudi::Functional::concat_alternatives(LHCb::RawEventLocation::Trigger,
                                                                                                     LHCb::RawEventLocation::Copied,
                                                                                                     LHCb::RawEventLocation::Default )}},
-                            KeyValues{ "OutputHltVertexReportsLocation", prefix( "Hlt/Track", DefaultLabels ) }
+                            KeyValues{ "OutputHltTrackReportsLocation", prefix( "Hlt/Track", DefaultLabels ) }
                             )
 {
     declareProperty( "OutputSourceId", m_map = { 1, 2, 4 } );

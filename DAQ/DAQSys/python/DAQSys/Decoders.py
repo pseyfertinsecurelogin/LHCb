@@ -367,7 +367,7 @@ Decoder("CaloTriggerAdcsFromRaw/HcalTriggerAdcToolExpert",
 #Decoders look like "Hlt(''/1/2)(Sel/Dec/Vertex)ReportsDecoder"
 
 #report, the type of report
-for report in ["Dec","Sel","Vertex"]:
+for report in ["Dec","Sel"]:
     #hlt, which HLT to decode? None=both, 1=Hlt1, 2=Hlt2
     for hlt in [None,1,2]:
         hltname="Hlt"
@@ -392,15 +392,20 @@ for report in ["Dec","Sel","Vertex"]:
             conf=DecoderDB
             )
 
+#Vertex Decoder
+Decoder("HltVertexReportsDecoder",
+        active=True, banks=["HltVertexReports"],
+        inputs = {"RawEventLocations":None},
+        outputs={"OutputHltVertexLocations": [ "Hlt/VertexReports/PV3D", "Hlt/VertexReports/ProtoPV3D" ]},
+        conf=DecoderDB
+        )
 #Also TrackingDecoder, but don't make it active, it's only used during HLT2 stand-alone!
 Decoder("HltTrackReportsDecoder",
         active=False, banks=["HltTrackReports"],
         inputs = {"RawEventLocations":None},
-        outputs={"Output2SourceId": { "Hlt/Track/Velo" : 1, "Hlt/Track/VeloTTHPT" : 2, "Hlt/Track/ForwardHPT" : 4 }},
+        outputs={"OutputHltTrackReportsLocation": [ "Hlt/Track/Velo", "Hlt/Track/VeloTTHPT", "Hlt/Track/ForwardHPT" ]},
         conf=DecoderDB
         )
-#outputs={"Output2SourceId": { "Hlt/Track/Velo" : 1, "Hlt1/Track/PestiForward" : 3 }}, set logically in the code, resetting may not work...
-
 
 #is a Routing bits filter really a decoder? it doesn't create output...
 Decoder("HltRoutingBitsFilter",
