@@ -1263,6 +1263,17 @@ namespace
                             Bernstein ( _f.begin() , _f.begin() + n , f.xmin() , f.xmax() ) ) ;
     
   }
+  inline Gaudi::Math::Bernstein
+  _gcd_ ( const Gaudi::Math::Bernstein& f , 
+          const Gaudi::Math::Bernstein& g )
+  {
+    if      ( 0 == g.degree() || g.zero() ) { return f ; } 
+    else if ( 0 == f.degree() || f.zero() ) { return g ; } 
+    return 
+      f.degree() > g.degree() ? 
+      _gcd_  ( g , _divmod_ ( f , g ).second ) :
+      _gcd_  ( f , _divmod_ ( g , f ).second ) ;
+  }
 }
 // ============================================================================
 /*  polynomial division 
@@ -1291,6 +1302,18 @@ Gaudi::Math::Bernstein::quotient ( const Gaudi::Math::Bernstein& g ) const
 Gaudi::Math::Bernstein
 Gaudi::Math::Bernstein::reminder ( const Gaudi::Math::Bernstein& g ) const
 { return _divmod_ ( *this , g ) . second ; }
+Gaudi::Math::Bernstein
+Gaudi::Math::Bernstein::gcd ( const Gaudi::Math::Bernstein& g ) const
+{ 
+  if ( !s_equal ( xmin () , g.xmin () ) || !s_equal ( xmax () , g.xmax () ) ) 
+  {
+    const double _xmin = std::min ( xmin() , g.xmin() ) ;
+    const double _xmax = std::max ( xmax() , g.xmax() ) ;
+    return _gcd_ ( Bernstein ( *this , _xmin , _xmax ) , 
+                   Bernstein (  g    , _xmin , _xmax ) ) ;               
+  }
+  return _gcd_ ( *this , g ) ;
+}
 // ============================================================================
 /* de Casteljau algorithm for summation of Bernstein polynomials 
  *  \f$ f(x) = \sum_i p_i B_ik(x) \f$

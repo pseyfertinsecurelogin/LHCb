@@ -293,6 +293,10 @@ namespace Gaudi
        */
       Bernstein                      reminder ( const Bernstein& g ) const ;
       // ======================================================================
+      /** get Greatest Common Divisor
+       */
+      Bernstein  gcd ( const Bernstein& b ) const ;
+      // ======================================================================
     public:
       // ======================================================================
       /** get the leading power coefficient 
