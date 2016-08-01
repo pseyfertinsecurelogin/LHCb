@@ -15,13 +15,22 @@ namespace Gaudi
   {    
     // ========================================================================
     /** calculate the binomial coefficient C(k,n) = n!/((n-k)!*k!)
-     *  the result is exact for n,k<63 
+     *  the result is exact for n<66  
      *  @author Vanya BELYAEV Ivan.Belyaev@irep.ru
      *  @date 2015-03-08
      */
     GAUDI_API 
     unsigned long long  choose ( const unsigned short n ,
                                  const unsigned short k ) ;
+    // ========================================================================
+    /** calculate the logarithm of binomial coefficient
+     *  \f$ \log C^n_k \f$
+     *  @author Vanya BELYAEV Ivan.Belyaev@irep.ru
+     *  @date 2015-03-08
+     */
+    GAUDI_API 
+    double log_choose ( const unsigned short n ,
+                        const unsigned short k ) ;
     // ========================================================================
     /** calculate the binomial coefficient C(k,n) = n!/((n-k)!*k!)
      *  @author Vanya BELYAEV Ivan.Belyaev@irep.ru

@@ -39,8 +39,15 @@ namespace
     unsigned long long r = 1  ;
     for ( unsigned short d = 1 ; d <= k  ; ++d ) 
     {
-      r *= n-- ;
-      r /= d   ; 
+      //
+      unsigned long long id  = r / d ;
+      unsigned long long ir  = r % d ;
+      //
+      unsigned short nn = n-- ;
+      r = id * nn ;
+      if ( ir ) { r += ir * d / nn ; }
+      // r *= n-- ;
+      // r /= d   ; 
     }
     return r ;
   }
@@ -142,10 +149,29 @@ double Gaudi::Math::choose_half
     r /= d ; 
     N -= 2 ;  // ATTENTION 
   }
-  return r / Gaudi::Math::pow ( 2 , k ) ;
+  return r / Gaudi::Math::pow ( 2L , k ) ;
 }
 // ============================================================================
- 
+/*  calculate the logarithm of binomial coefficient
+ *  \f$ \log C^n_k \f$
+ *  @author Vanya BELYAEV Ivan.Belyaev@irep.ru
+ *  @date 2015-03-08
+ */
+// ============================================================================
+double Gaudi::Math::log_choose 
+( const unsigned short n ,
+  const unsigned short k ) 
+{
+  if      ( k <= 1 || k >= n ) { return 0 ; } //
+  else if ( n < 64 ) { return std::log( (long double) _choose_ ( n , k ) ) ; }
+  //
+  return 
+    std::lgamma ( (long double) ( n     + 1 ) ) - 
+    std::lgamma ( (long double) ( k     + 1 ) ) - 
+    std::lgamma ( (long double) ( n - k + 1 ) ) ;
+}
+
+
 
 // ============================================================================
 // The END 
