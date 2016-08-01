@@ -39,15 +39,8 @@ namespace
     unsigned long long r = 1  ;
     for ( unsigned short d = 1 ; d <= k  ; ++d ) 
     {
-      //
-      unsigned long long id  = r / d ;
-      unsigned long long ir  = r % d ;
-      //
-      unsigned short nn = n-- ;
-      r = id * nn ;
-      if ( ir ) { r += ir * d / nn ; }
-      // r *= n-- ;
-      // r /= d   ; 
+      r *= n-- ;
+      r /= d   ; 
     }
     return r ;
   }
