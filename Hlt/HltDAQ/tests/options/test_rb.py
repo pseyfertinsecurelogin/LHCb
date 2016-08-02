@@ -88,14 +88,11 @@ HltConfigSvc().ConfigAccessSvc = accessSvc.getFullName()
 # Remove some modules that don't live in the LHCb project
 # Empty the Hlt sequence to disable the HLT.
 # Point the RoutingBitsWriter at a copy of the raw event
-#### GR/TODO: replace the HltDecReports  location with their decoderDB versions...
 HltConfigSvc().ApplyTransformation = {".*LoKi.*/.*Factory.*" : {"Modules" : {r",[ ]*'LoKiTrigger.[a-z]*'" : ""},
                                                                 "Lines"   : {r",[ ]*'import HltTracking.Hlt1StreamerConf'" : ""} },
                                       'GaudiSequencer/Hlt' : {"Members" : {"'.*'" : ""}},
                                       'HltRoutingBitsWriter/.*RoutingBitsWriter' : {'RawEventLocation' : {"DAQ/.*RawEvent" : "DAQ/CopyRawEvent"},
-                                                                                    'UpdateExistingRawBank' : {"True" : "False"}},
-                                      'HltDecReportsDecoder/Hlt1.*' : { 'RawEventLocations' : { "^.*$": "('Trigger/RawEvent')|4|0|" },
-                                                                    'OutputHltDecReportsLocation' : { "^.*$": "('Hlt1/DecReports')|4|0|" } }
+                                                                                    'UpdateExistingRawBank' : {"True" : "False"}}
                                      }
 # Write these DecReports somewhere else so the decoder can run
 HltConfigSvc().HltDecReportsLocations = ['Hlt1/EmptyDecReports']
@@ -116,9 +113,13 @@ from DAQSys.Decoders import DecoderDB
 for dec in ("L0DUFromRawAlg/L0DUFromRaw",
             "HltDecReportsDecoder/Hlt1DecReportsDecoder"):
     topSeq.Members.append(DecoderDB[dec].setup())
+    # tell HltConfigSvc to leave the just explicitly configured decoders alone..
+    HltConfigSvc().SkipComponent += [ dec.split('/')[-1] ]
+
 
 if hlt2_tck:
     topSeq.Members.append(DecoderDB["HltDecReportsDecoder/Hlt2DecReportsDecoder"].setup())
+    HltConfigSvc().SkipComponent += [ 'Hlt2DecReportsDecoder' ]
 
 from Configurables import HltRoutingBitsWriter
 from Configurables import bankKiller
