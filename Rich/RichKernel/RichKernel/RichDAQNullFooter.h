@@ -30,8 +30,8 @@ namespace Rich
      */
     //=============================================================================================
 
-    class NullFooter : public FooterPDBase,
-                       public LHCb::MemPoolAlloc<NullFooter>
+    class NullFooter final : public FooterPDBase,
+                             public LHCb::MemPoolAlloc<NullFooter>
     {
 
     public:

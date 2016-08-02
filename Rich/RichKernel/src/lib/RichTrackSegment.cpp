@@ -17,41 +17,6 @@
 // local
 #include "RichKernel/RichTrackSegment.h"
 
-// VDT
-#include "vdt/sqrt.h"
-#include "vdt/atan2.h"
-
-#include <cmath>
-
-void
-LHCb::RichTrackSegment::angleToDirection( const Gaudi::XYZVector & direction,
-                                          double & theta,
-                                          double & phi ) const
-{
-  // create vector in track reference frame
-  const Gaudi::XYZVector rotDir{ rotationMatrix() * direction };
-
-  // get the angles
-  // phi   = rotDir.phi();
-  // theta = rotDir.theta();
-
-  // the above methods are :-
-  // phi   : { return (fX==0 && fY==0) ? 0 : atan2(fY,fX);}
-  // theta : { return (fX==0 && fY==0 && fZ==0) ? 0 : atan2(Rho(),Z());}
-  // Rho   : { return std::sqrt( Perp2());}
-  // Perp2 : { return fX*fX + fY*fY ;}
-
-  // do it by hand, the same only faster ;)
-  // Skip checks against 0 as we know that never happens here.
-  phi   = vdt::fast_atan2( rotDir.y(), rotDir.x() );
-  theta = vdt::fast_atan2( std::sqrt( std::pow(rotDir.x(),2) + 
-                                      std::pow(rotDir.y(),2) ),
-                           rotDir.z() );
-
-  // correct phi
-  if ( phi < 0 ) phi += 2.0*M_PI;
-}
-
 void LHCb::RichTrackSegment::updateState( const Gaudi::XYZPoint & rotPnt,
                                           const Gaudi::Transform3D & trans )
 {
@@ -66,9 +31,6 @@ void LHCb::RichTrackSegment::updateState( const Gaudi::XYZPoint & rotPnt,
   // exit point
   auto toExit  = exitPoint() - rotPnt;
   setExitState( rotPnt + trans(toExit), trans(exitMomentum()) );
-
-  // reset
-  reset();
 }
 
 void LHCb::RichTrackSegment::computeRotationMatrix2() const
@@ -82,38 +44,39 @@ void LHCb::RichTrackSegment::computeRotationMatrix2() const
                                             x.Z(), y.Z(), z.Z() ) );
 }
 
-Gaudi::XYZPoint LHCb::RichTrackSegment::bestPoint( const double fractDist ) const
+void LHCb::RichTrackSegment::updateCachedBestInfo() const
 {
-  const auto entryExitV ( entryPoint() - exitPoint() );
-  if ( zCoordAt(fractDist) < middlePoint().z() )
-  {
-    const auto midEntryV ( middlePoint() - entryPoint());
-    const auto invMidFrac1 = std::sqrt( entryExitV.mag2() / midEntryV.mag2() );
-    return entryPoint() + (fractDist*invMidFrac1*midEntryV);
-  }
-  else
-  {
-    const auto exitMidV ( exitPoint() - middlePoint() );
-    const auto midFrac2 = std::sqrt( exitMidV.mag2() / entryExitV.mag2() );
-    return middlePoint() + (exitMidV*((fractDist-midFrac2)/midFrac2));
-  }
+  // Vector from entry to exit point
+  const auto entryExitV ( exitPoint() - entryPoint() );
+  // mag^2 for entry to exit vector
+  const auto entryExitVMag2 = entryExitV.mag2();
+  // update entry to middle point vector
+  m_midEntryV = ( middlePoint() - entryPoint()  );
+  // update middle to exit point vector
+  m_exitMidV  = ( exitPoint()   - middlePoint() );
+  // update factors
+  m_invMidFrac1 = std::sqrt( entryExitVMag2    / m_midEntryV.mag2() );
+  m_midFrac2    = std::sqrt( m_exitMidV.mag2() / entryExitVMag2     );
+  // update the path length
+  m_pathLength = std::sqrt(m_midEntryV.mag2()) + std::sqrt(m_exitMidV.mag2());
+  // set the OK flag
+  m_cachedTrajOK = true;
 }
 
 Gaudi::XYZVector LHCb::RichTrackSegment::bestMomentum( const double fractDist ) const
 {
+  // make sure cached variables are valid
+  if ( UNLIKELY(!m_cachedTrajOK) ) { updateCachedBestInfo(); }
+  // return the best momentum vector
   if ( zCoordAt(fractDist) < middlePoint().z() )
   {
-    const auto midFrac =
-      fractDist * std::sqrt( (entryPoint()-exitPoint()).mag2() /
-                             (entryPoint()-middlePoint()).mag2() );
-    return entryMomentum()*(1-midFrac) + middleMomentum()*midFrac;
+    const auto midFrac = fractDist * m_invMidFrac1;
+    return (entryMomentum()*(1-midFrac)) + (middleMomentum()*midFrac);
   }
   else
   {
-    const auto midFrac =
-      (fractDist * std::sqrt( (entryPoint()-exitPoint()).mag2() /
-                              (middlePoint()-exitPoint()).mag2() )) - 1;
-    return middleMomentum()*(1-midFrac) + exitMomentum()*midFrac;
+    const auto midFrac = ( fractDist / m_midFrac2 ) - 1.0;
+    return (middleMomentum()*(1-midFrac)) + (exitMomentum()*midFrac);
   }
 }
 
