@@ -865,7 +865,7 @@ Gaudi::Math::Polynomial::__isub__   ( const double a )
 { (*this) -= a ; return *this ; } 
 // ============================================================================
 Gaudi::Math::Polynomial& 
-Gaudi::Math::Polynomial::__imult__  ( const double a )
+Gaudi::Math::Polynomial::__imul__   ( const double a )
 { (*this) *= a ; return *this ; } 
 // ============================================================================
 Gaudi::Math::Polynomial& 
@@ -881,7 +881,7 @@ Gaudi::Math::Polynomial::__sub__    ( const double a ) const
 { return Polynomial(*this) -= a ; } 
 // ============================================================================
 Gaudi::Math::Polynomial 
-Gaudi::Math::Polynomial::__mult__   ( const double a ) const 
+Gaudi::Math::Polynomial::__mul__   ( const double a ) const 
 { return Polynomial(*this) *= a ; } 
 // ============================================================================
 Gaudi::Math::Polynomial 
@@ -897,8 +897,8 @@ Gaudi::Math::Polynomial::__rsub__   ( const double a ) const
 { return (-(*this))+a; } 
 // ============================================================================
 Gaudi::Math::Polynomial 
-Gaudi::Math::Polynomial::__rmult__  ( const double a ) const 
-{ return __mult__ ( a ) ; } 
+Gaudi::Math::Polynomial::__rmul__   ( const double a ) const 
+{ return __mul__ ( a ) ; } 
 // ============================================================================
 Gaudi::Math::Polynomial 
 Gaudi::Math::Polynomial::__neg__   () const { return -(*this); } 
@@ -1148,7 +1148,7 @@ Gaudi::Math::ChebyshevSum::__isub__   ( const double a )
 { (*this) -= a ; return *this ; } 
 // ============================================================================
 Gaudi::Math::ChebyshevSum& 
-Gaudi::Math::ChebyshevSum::__imult__  ( const double a )
+Gaudi::Math::ChebyshevSum::__imul__   ( const double a )
 { (*this) *= a ; return *this ; } 
 // ============================================================================
 Gaudi::Math::ChebyshevSum& 
@@ -1164,7 +1164,7 @@ Gaudi::Math::ChebyshevSum::__sub__    ( const double a ) const
 { return ChebyshevSum(*this) -= a ; } 
 // ============================================================================
 Gaudi::Math::ChebyshevSum 
-Gaudi::Math::ChebyshevSum::__mult__   ( const double a ) const 
+Gaudi::Math::ChebyshevSum::__mul__    ( const double a ) const 
 { return ChebyshevSum(*this) *= a ; } 
 // ============================================================================
 Gaudi::Math::ChebyshevSum 
@@ -1180,8 +1180,8 @@ Gaudi::Math::ChebyshevSum::__rsub__   ( const double a ) const
 { return (-(*this))+a; } 
 // ============================================================================
 Gaudi::Math::ChebyshevSum 
-Gaudi::Math::ChebyshevSum::__rmult__  ( const double a ) const 
-{ return __mult__ ( a ) ; } 
+Gaudi::Math::ChebyshevSum::__rmul__   ( const double a ) const 
+{ return __mul__  ( a ) ; } 
 // ============================================================================
 Gaudi::Math::ChebyshevSum 
 Gaudi::Math::ChebyshevSum::__neg__   () const { return -(*this); } 
@@ -1446,7 +1446,7 @@ Gaudi::Math::LegendreSum::__isub__   ( const double a )
 { (*this) -= a ; return *this ; } 
 // ============================================================================
 Gaudi::Math::LegendreSum& 
-Gaudi::Math::LegendreSum::__imult__  ( const double a )
+Gaudi::Math::LegendreSum::__imul__   ( const double a )
 { (*this) *= a ; return *this ; } 
 // ============================================================================
 Gaudi::Math::LegendreSum& 
@@ -1462,7 +1462,7 @@ Gaudi::Math::LegendreSum::__sub__    ( const double a ) const
 { return LegendreSum(*this) -= a ; } 
 // ============================================================================
 Gaudi::Math::LegendreSum 
-Gaudi::Math::LegendreSum::__mult__   ( const double a ) const 
+Gaudi::Math::LegendreSum::__mul__    ( const double a ) const 
 { return LegendreSum(*this) *= a ; } 
 // ============================================================================
 Gaudi::Math::LegendreSum 
@@ -1478,8 +1478,8 @@ Gaudi::Math::LegendreSum::__rsub__   ( const double a ) const
 { return (-(*this))+a; } 
 // ============================================================================
 Gaudi::Math::LegendreSum 
-Gaudi::Math::LegendreSum::__rmult__  ( const double a ) const 
-{ return __mult__ ( a ) ; } 
+Gaudi::Math::LegendreSum::__rmul__   ( const double a ) const 
+{ return __mul__ ( a ) ; } 
 // ============================================================================
 Gaudi::Math::LegendreSum 
 Gaudi::Math::LegendreSum::__neg__   () const { return -(*this); } 
@@ -1682,7 +1682,7 @@ Gaudi::Math::HermiteSum::__isub__   ( const double a )
 { (*this) -= a ; return *this ; } 
 // ============================================================================
 Gaudi::Math::HermiteSum& 
-Gaudi::Math::HermiteSum::__imult__  ( const double a )
+Gaudi::Math::HermiteSum::__imul__   ( const double a )
 { (*this) *= a ; return *this ; } 
 // ============================================================================
 Gaudi::Math::HermiteSum& 
@@ -1698,7 +1698,7 @@ Gaudi::Math::HermiteSum::__sub__    ( const double a ) const
 { return HermiteSum(*this) -= a ; } 
 // ============================================================================
 Gaudi::Math::HermiteSum 
-Gaudi::Math::HermiteSum::__mult__   ( const double a ) const 
+Gaudi::Math::HermiteSum::__mul__    ( const double a ) const 
 { return HermiteSum(*this) *= a ; } 
 // ============================================================================
 Gaudi::Math::HermiteSum 
@@ -1714,8 +1714,8 @@ Gaudi::Math::HermiteSum::__rsub__   ( const double a ) const
 { return (-(*this))+a; } 
 // ============================================================================
 Gaudi::Math::HermiteSum 
-Gaudi::Math::HermiteSum::__rmult__  ( const double a ) const 
-{ return __mult__ ( a ) ; } 
+Gaudi::Math::HermiteSum::__rmul__   ( const double a ) const 
+{ return __mul__ ( a ) ; } 
 // ============================================================================
 Gaudi::Math::HermiteSum 
 Gaudi::Math::HermiteSum::__neg__   () const { return -(*this); } 

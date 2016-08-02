@@ -205,7 +205,7 @@ namespace Gaudi
        *  @param r  INPUT increase of degree 
        *  @return new polynomial of order N+r 
        */
-      Bernstein elevate ( const unsigned short r ) const ;
+      Bernstein elevate  ( const unsigned short r ) const ;
       // ======================================================================
       /** reduce it:
        *  represent as Bernstein polynomial of order N-r 
@@ -213,6 +213,97 @@ namespace Gaudi
        *  @return new polynomial of order N-r 
        */
       Bernstein reduce  ( const unsigned short r ) const ;
+      // ======================================================================
+    public:
+      // ======================================================================
+      /** calculate ``nearest'' polynomial (in the sense of q-norm) of lower degree, 
+       *  where q-norm is defined as:
+       *  \f$ \left| f \right|_{q} = \left( \sum_i \left|c_i\right|^q\right)^{\frac{1}{q}} \f$
+       *  
+       *  - q_inv = 0.0 ->  \f$ max_k    \left|c_k\right|  \f$ 
+       *  - q_inv = 0.5 ->  \f$ \sqrt{ \sum_k  c_k^2 }     \f$
+       *  - q_inv = 1.0 ->  \f$ \sum_k \left| c_k \right|  \f$ 
+       *  @see  N.Rezvani and R.M. Corless, 
+       *       "The Nearest Polynomial With A Given Zero, Revisited"
+       *        ACM SIGSAM Bulletin, Vol. 39, No. 3, September 2005
+       *  @see http://dl.acm.org/citation.cfm?doid=1113439.1113442
+       */
+      Bernstein nearest ( const double q_inv = 0 ) const ;
+      // ======================================================================
+      /** calculate q-norm of the polynomial 
+       *  where q-norm is defined as:
+       *  \f$ \left| f \right|_{q} = \left( \sum_i \left|c_i\right|^q\right)^{\frac{1}{q}} \f$
+       *  
+       *  - q_inv = 0.0 ->  \f$ max_k    \left|c_k\right|  \f$ 
+       *  - q_inv = 0.5 ->  \f$ \sqrt{ \sum_k  c_k^2 }     \f$
+       *  - q_inv = 1.0 ->  \f$ \sum_k \left| c_k \right|  \f$ 
+       *
+       *  q-norm for Bernstein polynomials is "equivalent" to common
+       *  \f$L^2\f$-norm for generic functions, 
+       *  in the sense that 
+       *  \f$   \gamma_n \left| f \right|_{\inf} 
+       *             \le \left| f \right|_{\int} 
+       *             \le \left| f \right|_{\inf} \f$, 
+       *  where \f$  \left| f \right|_{\int}^2 = \int  \left| f \right|^2 dx \f$ and 
+       *  \f$ \gamma_n = \min_{j} \int \left|  B^n_j(x) \right|^2 dx 
+       *            \sim  (\pi n)^{-\frac{3}{4}} \f$
+       *  similarly \f$ \left| f \right|_I \le \left| f \right|_1 \f$, 
+       */
+      double    norm   ( const double q_inv = 0 ) const ;
+      // ======================================================================
+      /** filter out very small terms
+       *  the term is considered to be very small if 
+       *   - it is numerically zero
+       *   - or if epsilon > 0,    
+       *          abs ( c(k) * C(n,k) * k^k(n-k)^(n-k)/n^n ) < epsilon
+       *  Since the maximum value for each term of 
+       *  \f$ c_k C^n_k \frac{ k^k (n-k)^{n-k}{ n^n}}\f$
+       *  @param epsilon  parameter to define "smalness" of terms 
+       *  @returm number of nullified terms 
+       */
+      unsigned short remove_noise ( const double epsilon = 0 ) ;
+      // ======================================================================
+      /** how close are two polynomials in q-norm?
+       *  where q-norm is defined as:
+       *  \f$ \left| f \right|_{q} = \left( \sum_i \left|c_i\right|^q\right)^{\frac{1}{q}} \f$
+       *  
+       *  - q_inv = 0.0 -> \f$ max_k    \left|c_k\right|  \f$ 
+       *  - q_inv = 0.5 -> \f$ \sqrt{ \sum_k  c_k^2 }     \f$
+       *  - q_inv = 1.0 -> \f$ \sum_k \left| c_k \right|  \f$        
+       */
+      double distance ( const Bernstein& other , const double q_inv = 0 ) const ;
+      // ======================================================================
+    public:  // polynomial division 
+      // ======================================================================
+      /** polynomial division 
+       *  \f$  f(x) = q(z)*g(x) + r(x) \f$ 
+       *  @return the pair q(x),r(x)
+       */
+      std::pair<Bernstein,Bernstein> divmod   ( const Bernstein& g ) const ;
+      // ======================================================================
+      /** polynomial division 
+       *  \f$  f(x) = q(z)*g(x) + r(x) \f$ 
+       *  @return the quotient q(x)  
+       */
+      // ======================================================================
+      Bernstein                      quotient ( const Bernstein& g ) const ;
+      /** polynomial division 
+       *  \f$  f(x) = q(z)*g(x) + r(x) \f$ 
+       *  @return the reminder r(x)
+       */
+      Bernstein                      reminder ( const Bernstein& g ) const ;
+      // ======================================================================
+      /** get Greatest Common Divisor
+       */
+      Bernstein  gcd ( const Bernstein& b ) const ;
+      // ======================================================================
+    public:
+      // ======================================================================
+      /** get the leading power coefficient 
+       *  \f$ f(x) = hx^n + ....\f$ 
+       *  @return the coefficient at x^n
+       */
+      double    head  () const ;
       // ======================================================================
     public:
       // ======================================================================
@@ -237,9 +328,9 @@ namespace Gaudi
       /// Sum of Bernstein polynomial and a constant 
       Bernstein __radd__  ( const double value ) const ;
       /// Product of Bernstein polynomial and a constant
-      Bernstein __mult__  ( const double value ) const ;
+      Bernstein __mul__   ( const double value ) const ;
       /// Product of Bernstein polynomial and a constant
-      Bernstein __rmult__ ( const double value ) const ;
+      Bernstein __rmul__  ( const double value ) const ;
       /// Subtract a constant from Benrstein polynomial
       Bernstein __sub__   ( const double value ) const ;
       /// Constant minus Bernstein polynomial
@@ -256,7 +347,7 @@ namespace Gaudi
       /// Subtract Bernstein polynomials
       Bernstein __sub__   ( const Bernstein& other ) const ;
       /// Multiply Bernstein polynomials
-      Bernstein __mult__  ( const Bernstein& other ) const ;
+      Bernstein __mul__   ( const Bernstein& other ) const ;
       // ======================================================================
     public:
       // ======================================================================
@@ -265,21 +356,32 @@ namespace Gaudi
       // ======================================================================      
     public:
       // ======================================================================
-      /// the sum two Bernstein polynomials (with the same domain!)
-      Bernstein  sum      ( const Bernstein& other ) const ;
-      /// subtract Bernstein polynomials (with the same domain!)
-      Bernstein  subtract ( const Bernstein& other ) const ;
-      /// multiply Bernstein polynomials (with the same domain!)
-      Bernstein  multiply ( const Bernstein& other ) const ;
+      /// the sum two Bernstein polynomials
+      Bernstein  sum      ( const Bernstein&        other ) const ;
+      /// subtract Bernstein polynomials 
+      Bernstein  subtract ( const Bernstein&        other ) const ;
+      /// multiply Bernstein polynomials 
+      Bernstein  multiply ( const Bernstein&        other ) const ;
+      /// multiply Bernstein polynomials with the basic bernstein polynomial 
+      Bernstein  multiply ( const Bernstein::Basic& other ) const ;
+      /** multiply Bernstein polynomial with 
+       *  \f$ (x-x_{min})^i(x_{max}-x)^j \f$ 
+       */
+      Bernstein  multiply ( const unsigned short i , 
+                            const unsigned short j ) const ;
+      /// power function
+      Bernstein  pow      ( const unsigned short i ) const ;
       // ======================================================================
-    public:
+    public:  // various assignements 
       // ======================================================================
       /// copy assignement  
       Bernstein& operator=( const Bernstein&  right ) ;
       /// move assignement 
       Bernstein& operator=(       Bernstein&& right ) ;
+      /// assignement from the constant 
+      Bernstein& operator=( const double      right ) ;
       // ======================================================================
-    private:
+    private:  // internal data 
       // ======================================================================
       /// the left edge of interval
       double m_xmin  ;                             // the left edge of interval
@@ -307,15 +409,32 @@ namespace Gaudi
     ///  Constant minus Bernstein 
     inline Bernstein operator-( const double v , const Bernstein& p ) { return v + (-p) ; }
     // ========================================================================
-    ///  Bernstein plus     Bernstein (the same domain!) 
+    ///  Bernstein plus     Bernstein
     inline Bernstein operator+( const Bernstein& a , const Bernstein& b  ) 
     { return a.sum      ( b ) ; } //  Bernstein plus     Bernstein 
-    ///  Bernstein minus    Bernstein (the same domain!) 
+    ///  Bernstein minus    Bernstein
     inline Bernstein operator-( const Bernstein& a , const Bernstein& b  ) 
     { return a.subtract ( b ) ; } //  Bernstein subtract Bernstein 
-    ///  Bernstein multiply Bernstein (the same domain!) 
+    ///  Bernstein multiply Bernstein
     inline Bernstein operator*( const Bernstein& a , const Bernstein& b  ) 
     { return a.multiply ( b ) ; } //  Bernstein multiply  Bernstein 
+    ///  polynomial division: quotient 
+    inline Bernstein operator/( const Bernstein& a , const Bernstein& b  ) 
+    { return a.quotient ( b ) ; } // polynomial division: quotient 
+    ///  polynomial division: reminder  
+    inline Bernstein operator%( const Bernstein& a , const Bernstein& b  ) 
+    { return a.reminder ( b ) ; } // polynomial division: reminder  
+    // ========================================================================
+    /** polynomial division 
+     *  Return pair of polynomials q and r, such as 
+     *  \f$ a = qb + r \f$
+     *  @param a  
+     *  @param b  
+     */
+    inline 
+    std::pair<Bernstein,Bernstein> divmod 
+    ( const Bernstein& a ,
+      const Bernstein& b ) { return a.divmod ( b ) ; }
     // ========================================================================
     /** get the integral between low and high for a product of Bernstein
      *  polynom and the exponential function with the exponent tau
@@ -569,9 +688,9 @@ namespace Gaudi
       /// Sum of Bernstein polynomial and a constant 
       Bernstein __radd__  ( const double value ) const { return m_bernstein + value ; }
       /// Product of Bernstein polynomial and a constant
-      Bernstein __mult__  ( const double value ) const { return m_bernstein * value ; }
+      Bernstein __mul__   ( const double value ) const { return m_bernstein * value ; }
       /// Product of Bernstein polynomial and a constant
-      Bernstein __rmult__ ( const double value ) const { return m_bernstein * value ; }
+      Bernstein __rmul__  ( const double value ) const { return m_bernstein * value ; }
       /// Subtract a constant from Benrstein polynomial
       Bernstein __sub__   ( const double value ) const { return m_bernstein - value ; }
       /// Constant minus Bernstein polynomial
@@ -894,7 +1013,8 @@ namespace Gaudi
     public: // general integration 
       // ======================================================================
       /** get the integral over 2D-region 
-       *  \f[ \int_{x_low}^{x_high}\int_{y_low}^{y_high} \mathcal{B}(x,y) \mathrm{d}x\mathrm{d}y\f] 
+       *  \f[ \int_{x_{low}}^{x_{high}}\int_{y_{low}}^{y_{high}}
+       *      \mathcal{B}(x,y) \mathrm{d}x\mathrm{d}y \f] 
        *  @param xlow  low  edge in x 
        *  @param xhigh high edge in x 
        *  @param ylow  low  edge in y 

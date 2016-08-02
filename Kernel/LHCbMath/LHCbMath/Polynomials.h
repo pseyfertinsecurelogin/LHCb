@@ -584,21 +584,21 @@ namespace Gaudi
       // ======================================================================      
       Polynomial& __iadd__  ( const double a )       ;
       Polynomial& __isub__  ( const double a )       ;
-      Polynomial& __imult__ ( const double a )       ;
+      Polynomial& __imul__  ( const double a )       ;
       Polynomial& __idiv__  ( const double a )       ;
       // ======================================================================
     public:
       // ======================================================================
       Polynomial  __add__   ( const double a ) const ;
       Polynomial  __sub__   ( const double a ) const ;
-      Polynomial  __mult__  ( const double a ) const ;
+      Polynomial  __mul__   ( const double a ) const ;
       Polynomial  __div__   ( const double a ) const ;
       // ======================================================================
     public:
       // ======================================================================
       Polynomial  __radd__  ( const double a ) const ;
       Polynomial  __rsub__  ( const double a ) const ;
-      Polynomial  __rmult__ ( const double a ) const ;
+      Polynomial  __rmul__  ( const double a ) const ;
       // ======================================================================
     public:
       // ======================================================================
@@ -627,9 +627,9 @@ namespace Gaudi
     inline Polynomial operator-( const double      b , const Polynomial& a )
     { return a.__rsub__  ( b ) ; }
     inline Polynomial operator*( const Polynomial& a , const double      b ) 
-    { return a.__mult__  ( b ) ; }    
+    { return a.__mul__   ( b ) ; }    
     inline Polynomial operator*( const double      b , const Polynomial& a )
-    { return a.__mult__  ( b ) ; }
+    { return a.__mul__   ( b ) ; }
     inline Polynomial operator/( const Polynomial& a , const double      b ) 
     { return a.__div__   ( b ) ; }    
     // ========================================================================
@@ -740,21 +740,21 @@ namespace Gaudi
       // ======================================================================
       ChebyshevSum& __iadd__  ( const double a ) ;
       ChebyshevSum& __isub__  ( const double a ) ;
-      ChebyshevSum& __imult__ ( const double a ) ;
+      ChebyshevSum& __imul__  ( const double a ) ;
       ChebyshevSum& __idiv__  ( const double a ) ;
       // ======================================================================
     public:
       // ======================================================================
       ChebyshevSum  __add__   ( const double a ) const ;
       ChebyshevSum  __sub__   ( const double a ) const ;
-      ChebyshevSum  __mult__  ( const double a ) const ;
+      ChebyshevSum  __mul__   ( const double a ) const ;
       ChebyshevSum  __div__   ( const double a ) const ;
       // ======================================================================
     public:
       // ======================================================================
       ChebyshevSum  __radd__  ( const double a ) const ;
       ChebyshevSum  __rsub__  ( const double a ) const ;
-      ChebyshevSum  __rmult__ ( const double a ) const ;
+      ChebyshevSum  __rmul__  ( const double a ) const ;
       // ======================================================================
     public:
       // ======================================================================
@@ -788,9 +788,9 @@ namespace Gaudi
     inline ChebyshevSum operator-( const double        b , const ChebyshevSum& a )
     { return a.__rsub__  ( b ) ; }
     inline ChebyshevSum operator*( const ChebyshevSum& a , const double        b ) 
-    { return a.__mult__  ( b ) ; }    
+    { return a.__mul__   ( b ) ; }    
     inline ChebyshevSum operator*( const double        b , const ChebyshevSum& a )
-    { return a.__mult__  ( b ) ; }
+    { return a.__mul__   ( b ) ; }
     inline ChebyshevSum operator/( const ChebyshevSum& a , const double        b ) 
     { return a.__div__   ( b ) ; }    
     // ========================================================================
@@ -903,21 +903,21 @@ namespace Gaudi
       // ======================================================================
       LegendreSum& __iadd__  ( const double a ) ;
       LegendreSum& __isub__  ( const double a ) ;
-      LegendreSum& __imult__ ( const double a ) ;
+      LegendreSum& __imul__  ( const double a ) ;
       LegendreSum& __idiv__  ( const double a ) ;
       // ======================================================================
     public:
       // ======================================================================
       LegendreSum  __add__   ( const double a ) const ;
       LegendreSum  __sub__   ( const double a ) const ;
-      LegendreSum  __mult__  ( const double a ) const ;
+      LegendreSum  __mul__   ( const double a ) const ;
       LegendreSum  __div__   ( const double a ) const ;
       // ======================================================================
     public:
       // ======================================================================
       LegendreSum  __radd__  ( const double a ) const ;
       LegendreSum  __rsub__  ( const double a ) const ;
-      LegendreSum  __rmult__ ( const double a ) const ;
+      LegendreSum  __rmul__  ( const double a ) const ;
       // ======================================================================
     public:
       // ======================================================================
@@ -951,9 +951,9 @@ namespace Gaudi
     inline LegendreSum operator-( const double       b , const LegendreSum& a )
     { return a.__rsub__  ( b ) ; }
     inline LegendreSum operator*( const LegendreSum& a , const double       b ) 
-    { return a.__mult__  ( b ) ; }    
+    { return a.__mul__   ( b ) ; }    
     inline LegendreSum operator*( const double       b , const LegendreSum& a )
-    { return a.__mult__  ( b ) ; }
+    { return a.__mul__   ( b ) ; }
     inline LegendreSum operator/( const LegendreSum& a , const double       b ) 
     { return a.__div__   ( b ) ; }    
     // ========================================================================
@@ -1034,21 +1034,21 @@ namespace Gaudi
       // ======================================================================
       HermiteSum& __iadd__  ( const double a ) ;
       HermiteSum& __isub__  ( const double a ) ;
-      HermiteSum& __imult__ ( const double a ) ;
+      HermiteSum& __imul__  ( const double a ) ;
       HermiteSum& __idiv__  ( const double a ) ;
       // ======================================================================
     public:
       // ======================================================================
       HermiteSum  __add__   ( const double a ) const ; 
       HermiteSum  __sub__   ( const double a ) const ;
-      HermiteSum  __mult__  ( const double a ) const ;
+      HermiteSum  __mul__   ( const double a ) const ;
       HermiteSum  __div__   ( const double a ) const ;
       // ======================================================================
     public:
       // ======================================================================
       HermiteSum  __radd__  ( const double a ) const ;
       HermiteSum  __rsub__  ( const double a ) const ;
-      HermiteSum  __rmult__ ( const double a ) const ;
+      HermiteSum  __rmul__  ( const double a ) const ;
       // ======================================================================
     public:
       // ======================================================================
@@ -1084,9 +1084,9 @@ namespace Gaudi
     inline HermiteSum operator-( const double      b , const HermiteSum& a )
     { return a.__rsub__  ( b ) ; }
     inline HermiteSum operator*( const HermiteSum& a , const double      b ) 
-    { return a.__mult__  ( b ) ; }    
+    { return a.__mul__   ( b ) ; }    
     inline HermiteSum operator*( const double      b , const HermiteSum& a )
-    { return a.__mult__  ( b ) ; }
+    { return a.__mul__   ( b ) ; }
     inline HermiteSum operator/( const HermiteSum& a , const double      b ) 
     { return a.__div__   ( b ) ; }    
     // ========================================================================
