@@ -1,4 +1,3 @@
-// $Id$ 
 // ============================================================================
 // Include files 
 // ============================================================================
@@ -7,6 +6,7 @@
 #include <array>
 #include <climits>
 #include <cassert>
+#include <numeric>
 // ============================================================================
 // GaudiKernel
 // ============================================================================
@@ -106,6 +106,74 @@ Gaudi::Math::Bernstein::Bernstein
   , m_xmax ( std::max ( xmin , xmax ) )
 {}
 // ============================================================================
+// constructor  from Bernstein polynomial from *different* domai
+// ============================================================================
+namespace 
+{
+  //
+  inline double _mjk_ ( const unsigned short    j    , 
+                        const unsigned short    k    ,
+                        const unsigned short    n    , 
+                        Gaudi::Math::Bernstein& ba   , 
+                        Gaudi::Math::Bernstein& bb   , 
+                        const double            abar , 
+                        const double            bbar ) 
+  {
+    if ( j > n || k > n ) { return 0 ; }
+    //
+    const unsigned short imin =  j + k <= n ? 0 : ( j + k - n )  ;
+    const unsigned short imax =  std::min ( j , k ) ;
+    //
+    double m = 0 ;
+    for ( unsigned short i = imin ; i <= imax ; ++i ) 
+    {
+      ba.setPar ( k - i , 1 ) ;      
+      bb.setPar (     i , 1 ) ;      
+      m += ba.evaluate ( abar ) * bb.evaluate ( bbar ) ;
+      ba.setPar ( k - i , 0 ) ;      
+      bb.setPar (     i , 0 ) ;      
+    }
+    return m ;
+  }                         
+}
+// ============================================================================
+Gaudi::Math::Bernstein::Bernstein
+( const Gaudi::Math::Bernstein& poly , 
+  const double                  xmin , 
+  const double                  xmax ) 
+  : Gaudi::Math::PolySum ( poly       ) 
+  , m_xmin ( std::min ( xmin , xmax ) )
+  , m_xmax ( std::max ( xmin , xmax ) )    
+{
+  // recalculate domain ?
+  if ( !s_equal ( this->xmin() , poly.xmin() ) ||
+       !s_equal ( this->xmax() , poly.xmax() ) ) 
+  {
+    //
+    std::vector<double> new_pars ( npars   () , 0 ) ;
+    //
+    const double a    = poly .xmin()  ;
+    const double b    = poly .xmax()  ;
+    const double abar = this->xmin()  ;
+    const double bbar = this->xmax()  ;
+    //
+    const unsigned short N     = degree () ;
+    for ( unsigned short j = 0 ; j <= N ; ++j ) 
+    {
+      //
+      Gaudi::Math::Bernstein ba ( N - j  , a , b ) ;
+      Gaudi::Math::Bernstein bb (     j  , a , b ) ;
+      //
+      for ( unsigned short k = 0 ; k <= N ; ++k ) 
+      { new_pars[j] += _mjk_ ( j  , k  , N , 
+                               ba , bb , abar , bbar ) * par ( k ) ; }   
+    }
+    //
+    for ( unsigned short k = 0 ; k <= N ; ++k ) 
+    { setPar ( k , new_pars[k] ) ; }
+  }  
+}
+// ============================================================================
 // construct the basic bernstein polinomial
 // ============================================================================
 Gaudi::Math::Bernstein::Bernstein 
@@ -119,6 +187,72 @@ Gaudi::Math::Bernstein::Bernstein
 {
   if ( bb.k() <= bb.N() ) { m_pars[ bb.k() ] = 1 ; } 
 }
+// ============================================================================
+/*  construct Bernstein interpolant
+ *  @param x    vector of abscissas 
+ *  @param y    vector of function values 
+ *  @param xmin low  edge for Bernstein polynomial
+ *  @param xmin high edge for Bernstein polynomial
+ *  - if vector of y is longer  than vector x, extra values are ignored 
+ *  - if vector of y is shorter than vector x, missing entries are assumed to be zero  
+ *  It relies on Newton-Bernstein algorithm
+ *  @see http://arxiv.org/abs/1510.09197
+ *  @see Mark Ainsworth and Manuel A. Sanches, 
+ *       "Computing of Bezier control points of Largangian interpolant 
+ *       in arbitrary dimension", arXiv:1510.09197 [math.NA]
+ *  @see http://adsabs.harvard.edu/abs/2015arXiv151009197A
+ */
+// ============================================================================
+Gaudi::Math::Bernstein::Bernstein 
+( const std::vector<double>& x     , 
+  const std::vector<double>& y     , 
+  const double               xmin  ,
+  const double               xmax  )
+  : Gaudi::Math::PolySum ( x.empty() ? 0 : x.size() - 1 ) 
+  , m_xmin ( std::min ( xmin , xmax ) )
+  , m_xmax ( std::max ( xmin , xmax ) )
+    //
+{
+  //
+  std::vector<double> _x ( x.empty() ? 1 : x.size()  ) ;
+  const long unsigned int N = _x.size() ;
+  //
+  std::transform ( x.begin() , x.end() , _x.begin() , [this]( const double v ) { return this->t(v) ; } ) ;
+  std::vector<double> _f ( N ) ;
+  std::copy      ( y.begin() , y.begin() + std::min ( y.size() , N ) , _f.begin() ) ;
+  //
+  std::vector<double>  w ( N , 0.0 ) ;
+  std::vector<double>  c ( N , 0.0 ) ;
+  //
+  w[0] =  1.0  ;
+  c[0] = _f[0] ;
+  //
+  for ( unsigned int s = 1 ; s < N ; ++s ) 
+  {
+    /// calculate the divided differences 
+    for ( unsigned int k = N - 1 ; s <= k ; --k )
+    {
+      const double fk  = _f[k  ] ;
+      const double fk1 = _f[k-1] ;
+      const double xk  = _x[k  ] ;
+      const double xks = _x[k-s] ;
+      _f[k] = ( fk - fk1 ) / ( xk - xks ) ;
+    }
+    //
+    const double xs1 = _x[s-1] ;
+    for ( unsigned int j = s ; 1 <= j ; --j ) 
+    {
+      w[j] =  j * w[j-1] * ( 1 - xs1 ) / s  - ( s - j ) * xs1 * w[j] / s ;
+      c[j] =  j * c[j-1]               / s  + ( s - j )       * c[j] / s  + w[j] * _f[s] ; 
+    }
+    w[0]  = -w[0] *   xs1 ;
+    c[0] +=  w[0] * _f[s] ;
+  }
+  ///  finally set parameters 
+  for ( unsigned short i = 0 ; i < N ; ++i ) { setPar ( i , c[i] ) ; }
+} 
+// ============================================================================
+
 // ============================================================================
 // copy assignement 
 // ============================================================================
@@ -274,7 +408,7 @@ double Gaudi::Math::Bernstein::derivative ( const double x   ) const
 // ============================================================================
 // get the value
 // ============================================================================
-double Gaudi::Math::Bernstein::operator () ( const double x ) const
+double Gaudi::Math::Bernstein::evaluate ( const double x ) const
 {
   //
   // treat the trivial cases
@@ -283,7 +417,6 @@ double Gaudi::Math::Bernstein::operator () ( const double x ) const
   //  needed for the proper integration with an exponential 
   else if ( s_equal ( x , m_xmin )                     ) { return m_pars [0]    ; }
   else if ( s_equal ( x , m_xmax )                     ) { return m_pars.back() ; }
-  else if ( x < m_xmin || x > m_xmax                   ) { return 0 ; }
   else if ( 1 == npars ()                              ) { return m_pars [0]    ; }
   else if ( s_vzero ( m_pars )                         ) { return 0 ; }
   //
@@ -390,7 +523,7 @@ Gaudi::Math::Bernstein
 Gaudi::Math::Bernstein::__neg__ ()  const 
 { return -(*this); }
 // ============================================================================
-// the sum two Bernstein polynomials (with the same domain!)
+// the sum two Bernstein polynomials
 // ============================================================================
 Gaudi::Math::Bernstein  
 Gaudi::Math::Bernstein::sum ( const Gaudi::Math::Bernstein& other ) const 
@@ -405,13 +538,17 @@ Gaudi::Math::Bernstein::sum ( const Gaudi::Math::Bernstein& other ) const
   if ( !s_equal ( xmin () , other.xmin() ) || 
        !s_equal ( xmax () , other.xmax() ) ) 
   {
-    throw GaudiException ( "Can't sum Bernstein polynomials with different domains" , 
-                           "LHCb::Math::Bernstein", 
-                           StatusCode( StatusCode::FAILURE ) ) ;
+    const double x_min = std::min ( xmin() , other.xmin() ) ;
+    const double x_max = std::max ( xmax() , other.xmax() ) ;
+    Bernstein b1 ( *this , x_min , x_max ) ;
+    Bernstein b2 ( other , x_min , x_max ) ;
+    return b1.sum ( b2 ) ;
   }
   //
-  if ( degree() < other.degree() ) { return other.sum ( this->elevate ( other.degree() ) ) ; }
-  if ( degree() > other.degree() ) { return       sum ( other.elevate (       degree() ) ) ; }
+  if ( degree() < other.degree() )
+  { return other.sum ( this->elevate ( other.degree() - degree       () ) ) ; }
+  if ( degree() > other.degree() ) 
+  { return       sum ( other.elevate (       degree() - other.degree () ) ) ; }
   //
   Bernstein result(*this) ;
   for ( unsigned short i = 0 ; i < npars() ; ++i ) 
@@ -541,9 +678,11 @@ Gaudi::Math::Bernstein::multiply ( const Gaudi::Math::Bernstein& other ) const
   if ( !s_equal ( xmin () , other.xmin() ) || 
        !s_equal ( xmax () , other.xmax() ) ) 
   {
-    throw GaudiException ( "Can't sum Bernstein polynomials with different domains" , 
-                           "LHCb::Math::Bernstein", 
-                           StatusCode( StatusCode::FAILURE ) ) ;
+    const double x_min = std::min ( xmin() , other.xmin() ) ;
+    const double x_max = std::max ( xmax() , other.xmax() ) ;
+    Bernstein b1 ( *this , x_min , x_max ) ;
+    Bernstein b2 ( other , x_min , x_max ) ;
+    return b1.multiply ( b2 ) ;
   }
   //
   if ( zero() || other.zero() ) { return Bernstein( degree() , xmin() , xmax() ) ; }

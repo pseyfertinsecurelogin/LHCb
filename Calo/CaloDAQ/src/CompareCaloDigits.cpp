@@ -29,10 +29,6 @@ CompareCaloDigits::CompareCaloDigits( const std::string& name,
   declareProperty( "PackedRawBuffer", m_packedRawBuffer = false );
 }
 
-//=============================================================================
-// Destructor
-//=============================================================================
-CompareCaloDigits::~CompareCaloDigits() {}
 
 //=============================================================================
 // Main execution

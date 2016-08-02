@@ -1,6 +1,7 @@
 // Include files
 #include "boost/format.hpp"
 #include <algorithm>
+#include <numeric>
 
 #include "Event/RawEvent.h"
 

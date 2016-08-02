@@ -16,7 +16,7 @@
  *  @date   2004-01-06
  */
 template <class TARGET, class SOURCE=ContainedObject > 
-class LinkerWithKey {
+class LinkerWithKey final {
 public: 
   /// Standard constructor
   LinkerWithKey( IDataProviderSvc* evtSvc,
@@ -48,8 +48,6 @@ public:
     }
   }; 
 
-  virtual ~LinkerWithKey( ) = default; ///< Destructor
-
   void reset() { m_links->reset(); } 
 
   void link( const SOURCE* source,
@@ -76,8 +74,6 @@ public:
   
   void setIncreasingWeight() { if ( m_links ) m_links->setIncreasing(); }
   void setDecreasingWeight() { if ( m_links ) m_links->setDecreasing(); }
-  
-protected:
   
 private:
   LHCb::LinksByKey*  m_links;

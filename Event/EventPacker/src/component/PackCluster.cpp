@@ -21,8 +21,12 @@ DECLARE_ALGORITHM_FACTORY( PackCluster )
                             ISvcLocator* pSvcLocator)
     : GaudiAlgorithm ( name , pSvcLocator )
 {
-  declareProperty( "InputName" , m_inputName  = LHCb::TrackLocation::Default );
-  declareProperty( "OutputName", m_outputName = LHCb::PackedClusterLocation::Default );
+  declareProperty( "InputName" ,    m_inputName  = LHCb::TrackLocation::Default );
+  declareProperty( "OutputName",    m_outputName = LHCb::PackedClusterLocation::Default );
+  declareProperty( "VeloClusters", m_veloClusLoc = LHCb::VeloClusterLocation::Default );
+  declareProperty( "TTClusters",     m_ttClusLoc = LHCb::STClusterLocation::TTClusters );
+  declareProperty( "UTClusters",     m_utClusLoc = LHCb::STClusterLocation::UTClusters );
+  declareProperty( "ITClusters",     m_itClusLoc = LHCb::STClusterLocation::ITClusters );
   declareProperty( "AlwaysCreateOutput", m_alwaysOutput = false );
   //setProperty( "OutputLevel", 1 );
 }
@@ -88,57 +92,68 @@ StatusCode PackCluster::execute()
     // Pack by type
     if ( id.isVelo() )
     {
-      if ( !vClus ) { vClus = getIfExists<LHCb::VeloClusters>(LHCb::VeloClusterLocation::Default); }
-      const LHCb::VeloCluster* cl = ( vClus ? vClus->object(id.veloID()) : nullptr );
+      if ( UNLIKELY(!vClus) ) 
+      { 
+        vClus = getIfExists<LHCb::VeloClusters>(m_veloClusLoc); 
+        if ( !vClus ) { Warning("Failed to load '"+m_veloClusLoc+"'"); }
+      }
+      const auto * cl = ( vClus ? vClus->object(id.veloID()) : nullptr );
       if ( cl ) { out->addVeloCluster( cl ); }
       else 
       {
-        std::ostringstream mess;
-        mess << "Unknown Velo cluster : " << id;
-        Warning( mess.str() ).ignore();
+        Warning( "Failed to locate a Velo cluster. Activate debug for details" ).ignore();
+        if ( msgLevel(MSG::DEBUG) ) debug() << "Unknown Velo cluster : " << id << endmsg;
       }
-    } 
+    }
     else if ( id.isTT() )
     {
-      if ( !ttClus ) { ttClus = getIfExists<LHCb::STClusters>(LHCb::STClusterLocation::TTClusters); }
-      const LHCb::STCluster* cl = ( ttClus ? ttClus->object(id.stID()) : nullptr );
+      if ( UNLIKELY(!ttClus) ) 
+      {
+        ttClus = getIfExists<LHCb::STClusters>(m_ttClusLoc);
+        if ( !ttClus ) { Warning("Failed to load '"+m_ttClusLoc+"'"); }
+      }
+      const auto * cl = ( ttClus ? ttClus->object(id.stID()) : nullptr );
       if ( cl ) { out->addTTCluster( cl ); }
       else 
       {
-        std::ostringstream mess;
-        mess << "Unknown TT cluster : " << id;
-        Warning( mess.str() ).ignore();
+        Warning( "Failed to locate a TT cluster. Activate debug for details" ).ignore();
+        if ( msgLevel(MSG::DEBUG) ) debug() << "Unknown TT cluster : " << id << endmsg;
       }
     } 
     else if ( id.isUT() )
     {
-      if ( !utClus ) { utClus = getIfExists<LHCb::STClusters>(LHCb::STClusterLocation::UTClusters); }
-      const LHCb::STCluster* cl = ( utClus ? utClus->object(id.stID()) : nullptr );
+      if ( UNLIKELY(!utClus) ) 
+      {
+        utClus = getIfExists<LHCb::STClusters>(m_utClusLoc);
+        if ( !utClus ) { Warning("Failed to load '"+m_utClusLoc+"'"); }
+      }
+      const auto * cl = ( utClus ? utClus->object(id.stID()) : nullptr );
       if ( cl ) { out->addUTCluster( cl ); }
       else 
       {
-        std::ostringstream mess;
-        mess << "Unknown UT cluster : " << id;
-        Warning( mess.str() ).ignore();
+        Warning( "Failed to locate a UT cluster. Activate debug for details" ).ignore();
+        if ( msgLevel(MSG::DEBUG) ) debug() << "Unknown UT cluster : " << id << endmsg;
       }
     } 
     else if ( id.isIT() ) 
     {
-      if ( !itClus ) { itClus = getIfExists<LHCb::STClusters>(LHCb::STClusterLocation::ITClusters); }
-      const LHCb::STCluster* cl = ( itClus ? itClus->object(id.stID()) : nullptr );
+      if ( UNLIKELY(!itClus) ) 
+      {
+        itClus = getIfExists<LHCb::STClusters>(m_itClusLoc);
+        if ( !itClus ) { Warning("Failed to load '"+m_itClusLoc+"'"); }
+      }
+      const auto * cl = ( itClus ? itClus->object(id.stID()) : nullptr );
       if ( cl ) { out->addITCluster( cl ); }
       else
       {
-        std::ostringstream mess;
-        mess << "Unknown IT cluster : " << id;
-        Warning( mess.str() ).ignore();
+        Warning( "Failed to locate a IT cluster. Activate debug for details" ).ignore();
+        if ( msgLevel(MSG::DEBUG) ) debug() << "Unknown IT cluster : " << id << endmsg;
       }
     } 
     else 
     {
-      std::ostringstream mess;
-      mess << "Unknown LHCbID type : " << id;
-      Warning( mess.str() ).ignore();
+      Warning( "Unknown LHCbID. Activate debug for details" ).ignore();
+      if ( msgLevel(MSG::DEBUG) ) debug() << "Unknown LHCbID type : " << id << endmsg;
     }
   }
 

@@ -6,6 +6,11 @@
 !               All headers included in directory LHCbMath
 !-----------------------------------------------------------------------------
 
+! 2016-07-19 - Vanya Belyaev
+ - add erfi function 
+ - replace std::array with std::vector for PseudoVoigt 
+   (error message during serialization)  
+
 ! 2016-06-14 - Vanya Belyaev
 
  - Fix very sad and stupid bug in the normalization of Voigt function

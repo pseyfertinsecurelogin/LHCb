@@ -3,6 +3,7 @@
 #include "DetDesc/MaterialException.h"
 #include "DetDesc/Mixture.h"
 #include <cmath>
+#include <numeric>
 // Gaudi Math (for floating point comparison)
 #include "GaudiKernel/Lomont.h"
 //

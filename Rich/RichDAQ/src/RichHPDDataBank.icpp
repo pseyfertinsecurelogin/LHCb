@@ -119,13 +119,12 @@ namespace Rich
       os << endmsg << lines << endmsg;
 
       // Header
-      for ( HeaderPDBase::HeaderWords::const_iterator iH = header().headerWords().begin();
-            iH != header().headerWords().end(); ++iH )
+      for ( const auto & H : header().headerWords() )
       {
-        os << " h    | " << asHex(*iH) << "  |";
+        os << " h    | " << asHex(H) << "  |";
         for ( int iCol = 31; iCol >= 0; --iCol )
         {
-          os << "  " << isBitOn( *iH, iCol );
+          os << "  " << isBitOn( H, iCol );
         }
         os << endmsg;
       }
@@ -147,13 +146,12 @@ namespace Rich
       // Footer
       if ( !footer().footerWords().empty() )
       {
-        for ( FooterPDBase::FooterWords::const_iterator iF = footer().footerWords().begin();
-              iF != footer().footerWords().end(); ++iF )
+        for ( const auto & F : footer().footerWords() )
         {
-          os << " f    | " << asHex(*iF) << "  |";
+          os << " f    | " << asHex(F) << "  |";
           for ( int iCol = 31; iCol >= 0; --iCol )
           {
-            os << "  " << isBitOn( *iF, iCol );
+            os << "  " << isBitOn( F, iCol );
           }
           os << endmsg;
         }

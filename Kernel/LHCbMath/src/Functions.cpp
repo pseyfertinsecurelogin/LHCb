@@ -5126,9 +5126,9 @@ Gaudi::Math::PseudoVoigt::PseudoVoigt
   , m_m0        ( m0 )
   , m_gamma     ( std::abs ( gamma ) )
   , m_sigma     ( std::abs ( sigma ) )
-//
-  , m_w         () 
-  , m_eta       ()
+    //
+  , m_w         ( 4 , 0 ) 
+  , m_eta       ( 4 , 0 )
   , m_workspace ()
 {
   update() ;  

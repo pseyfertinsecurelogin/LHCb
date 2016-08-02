@@ -8,6 +8,7 @@
 
 //STL
 #include <algorithm>
+#include <numeric>
 
 #include "GaudiKernel/GaudiException.h"
 

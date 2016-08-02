@@ -1,5 +1,6 @@
 // Include files 
 #include "boost/format.hpp"
+#include <numeric>
 
 #include "Event/HltSelReports.h"
 #include "Event/HltDecReports.h"

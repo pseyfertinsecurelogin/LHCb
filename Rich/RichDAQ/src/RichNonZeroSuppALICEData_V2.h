@@ -98,14 +98,14 @@ namespace Rich
         }
 
         /// Destructor
-        ~RichNonZeroSuppALICEData() { }
+        ~RichNonZeroSuppALICEData() = default;
 
         // Returns the hit count for this HPD
-        virtual ShortType hitCount() const;
+        virtual ShortType hitCount() const final;
 
         // Fill a vector with RichSmartIDs for hit pixels
         virtual ShortType fillRichSmartIDs( LHCb::RichSmartID::Vector & ids,
-                                            const LHCb::RichSmartID hpdID ) const;
+                                            const LHCb::RichSmartID hpdID ) const final;
 
       private: // methods
 
@@ -117,14 +117,14 @@ namespace Rich
 
         /// Set a pixel as active
         inline void setPixelActive( const ShortType row,
-                                    const ShortType col )
+                                    const ShortType col ) noexcept
         {
           this->setBit( this->data()[this->maxDataSize()-(row+1)], col );
         }
 
         /// Is a given pixel active ?
         inline bool isPixelActive( const ShortType row,
-                                   const ShortType col ) const
+                                   const ShortType col ) const noexcept
         {
           return this->isBitOn( this->data()[this->maxDataSize()-(row+1)], col );
         }

@@ -45,8 +45,8 @@ namespace Rich
 
       virtual ~RawBufferToRichDigitsAlg( ); ///< Destructor
 
-      virtual StatusCode initialize();    // Algorithm initialization
-      virtual StatusCode execute   ();    // Algorithm execution
+      virtual StatusCode initialize() final;    // Algorithm initialization
+      virtual StatusCode execute   () final;    // Algorithm execution
 
     private: // data
 

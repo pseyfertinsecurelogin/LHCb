@@ -27,16 +27,28 @@ HltPackedDataWriter::HltPackedDataWriter(const std::string& name, ISvcLocator* p
   declareProperty("ContainerMap", m_containerMap);
   declareProperty("OutputRawEventLocation",
                   m_outputRawEventLocation=LHCb::RawEventLocation::Default);
-  declareProperty("Compression", m_compression = LZMA);
+  auto* p = declareProperty("Compression", m_compression = LZMA);
+  p->declareUpdateHandler(
+    [=](Property&) {
+      switch (this->m_compression) {
+        case NoCompression: { this->m_compressionAlg = ROOT::kUndefinedCompressionAlgorithm; break; }
+        case ZLIB: { this->m_compressionAlg = ROOT::kZLIB; break; }
+        case LZMA: { this->m_compressionAlg = ROOT::kLZMA; break; }
+        default: throw GaudiException( "Unrecognized compression algorithm.", this->name(), StatusCode::FAILURE );
+        }
+    }
+  );
+  p->useUpdateHandler(); // sync m_compressionAlg with m_compression
   declareProperty("CompressionLevel", m_compressionLevel = 6);
   declareProperty("EnableChecksum", m_enableChecksum = false);
 }
 
 template<typename PackedData>
 void HltPackedDataWriter::register_object() {
-  m_savers[PackedData::classID()] = [=](const DataObject& obj) {
-    return this->saveObject<PackedData>(obj);
-  };
+  m_savers[PackedData::classID()] =
+    [this](const DataObject& dataObject, const std::string& location){
+      return this->saveObject<PackedData>(dataObject, location);
+    };
 }
 
 StatusCode HltPackedDataWriter::initialize() {
@@ -57,16 +69,7 @@ StatusCode HltPackedDataWriter::initialize() {
   }
   info() << endmsg;
 
-  m_hltANNSvc = svc<IANNSvc>("HltANNSvc");
-
-  switch (m_compression) {
-    case NoCompression: { m_compressionAlg = ROOT::kUndefinedCompressionAlgorithm; break; }
-    case ZLIB: { m_compressionAlg = ROOT::kZLIB; break; }
-    case LZMA: { m_compressionAlg = ROOT::kLZMA; break; }
-    default: {
-      return Error("Unrecognized compression algorithm.");
-    }
-  }
+  m_hltANNSvc = service("HltANNSvc");
 
   if (UNLIKELY(m_enableChecksum)) {
     m_checksum = new PackedDataPersistence::PackedDataChecksum();
@@ -77,7 +80,7 @@ StatusCode HltPackedDataWriter::initialize() {
 
 
 template<typename T>
-size_t HltPackedDataWriter::saveObject(const DataObject& dataObject) {
+size_t HltPackedDataWriter::saveObject(const DataObject& dataObject, const std::string& location) {
   const auto& object = dynamic_cast<const T&>(dataObject);
 
   // Reserve bytes for the size of the object
@@ -87,13 +90,13 @@ size_t HltPackedDataWriter::saveObject(const DataObject& dataObject) {
   // Save the object's size in the correct position
   m_buffer.saveAt<uint32_t>(objectSize, posObjectSize);
 
-  if (UNLIKELY(m_enableChecksum)) { m_checksum->processObject(object); }
+  if (UNLIKELY(m_enableChecksum)) { m_checksum->processObject(object, location); }
   return objectSize;
 }
 
 
 StatusCode HltPackedDataWriter::execute() {
-  if (msgLevel(MSG::DEBUG)) debug() << "==> Execute" << endmsg;
+  if (UNLIKELY(msgLevel(MSG::DEBUG))) debug() << "==> Execute" << endmsg;
 
   // Get the raw event
   auto* rawEvent = getIfExists<LHCb::RawEvent>(m_outputRawEventLocation);
@@ -157,7 +160,7 @@ StatusCode HltPackedDataWriter::execute() {
 
       m_buffer.save<int32_t>(linkID->second);
 
-      if (msgLevel(MSG::DEBUG)) {
+      if (UNLIKELY(msgLevel(MSG::DEBUG))) {
         debug() << "Packed link " << id << "/" << nlinks << " to " << location
                 << " (" << packedLocation->second << ") with ID " << linkID->second << endmsg;
       }
@@ -165,9 +168,9 @@ StatusCode HltPackedDataWriter::execute() {
     if (!status) return status;
 
     // Save the packed object itself
-    auto objectSize = saveObjectFun(*dataObject);
+    auto objectSize = saveObjectFun(*dataObject, containerPath);
 
-    if (msgLevel(MSG::DEBUG)) {
+    if (UNLIKELY(msgLevel(MSG::DEBUG))) {
       debug() << "Packed " << containerPath << " with ID " << locationID->second
               << " and CLID " << classID << " into " << objectSize << " bytes" << endmsg;
       counter(containerPath) += objectSize;
@@ -182,13 +185,15 @@ StatusCode HltPackedDataWriter::execute() {
   // Write the data to the raw event
   addBanks(*rawEvent, output, compressed?static_cast<Compression>(m_compression):NoCompression);
 
-  if (msgLevel(MSG::DEBUG)) {
+  if (UNLIKELY(msgLevel(MSG::DEBUG))) {
     counter("Size of serialized data") += m_buffer.buffer().size();
     counter("Size of comppressed data") += output.size();
     debug() << "Total size of serialized data " << m_buffer.buffer().size() << endmsg;
     debug() << "Wrote " << output.size() << " compressed bytes" << endmsg;
-    if (UNLIKELY(m_enableChecksum))
-      debug() << "Packed data checksum = " << m_checksum->checksum() << endmsg;
+    if (m_enableChecksum) {
+      for (const auto& x: m_checksum->checksums())
+        debug() << "Packed data checksum for '" << x.first << "' = " << x.second << endmsg;
+    }
   }
 
   m_buffer.clear();
@@ -201,7 +206,8 @@ StatusCode HltPackedDataWriter::execute() {
 
 StatusCode HltPackedDataWriter::finalize() {
   if (UNLIKELY(m_enableChecksum)) {
-    info() << "Global packed data checksum = " << m_checksum->checksum() << endmsg;
+    for (const auto& x: m_checksum->checksums())
+      info() << "Packed data checksum for '" << x.first << "' = " << x.second << endmsg;
     delete m_checksum;
   }
   return GaudiAlgorithm::finalize();  // must be called after all other actions
@@ -219,14 +225,18 @@ void HltPackedDataWriter::addBanks(LHCb::RawEvent& rawEvent, const std::vector<u
     Error("Packed objects too long to save", StatusCode::SUCCESS, 50);
     return;
   }
-  debug() << "Writing " << nbanks << " banks" << endmsg;
-
+  if (UNLIKELY(msgLevel(MSG::DEBUG))) {
+    debug() << "Writing " << nbanks << " banks" << endmsg;
+  }
+  
 
   for (unsigned int ibank = 0; ibank < nbanks; ++ibank) {
     uint16_t sourceID = sourceIDCommon | ((ibank << PartIDBits) & PartIDMask);
     const int offset = ibank * MAX_PAYLOAD_SIZE;
     const size_t length = std::min(MAX_PAYLOAD_SIZE, data.size() - offset);
-    debug() << "Adding raw bank with sourceID=" << sourceID << ", length=" << length << " from " << (void*)&(data[offset]) << endmsg;
+    if (UNLIKELY(msgLevel(MSG::DEBUG))) {
+      debug() << "Adding raw bank with sourceID=" << sourceID << ", length=" << length << ", offset=" << offset << endmsg;
+    }
     auto bank = rawEvent.createBank(sourceID, LHCb::RawBank::DstData,
                                     kVersionNumber, length, &(data[offset]));
     rawEvent.adoptBank(bank, true);

@@ -8,7 +8,7 @@
  *  @author Olivier Callot
  *  @date   2005-01-19
  */
-template <class SOURCE, class TARGET > class LinkerEntry {
+template <class SOURCE, class TARGET > class LinkerEntry final {
 public: 
   /** constructor, with the needed information
    *  @param src     source of the relation
@@ -20,8 +20,6 @@ public:
     m_target = tgt;
     m_weight = weight;
   }; 
-
-  virtual ~LinkerEntry( ) {}; ///< Destructor
 
   /** accessor to the source
    *  @return   the source information
@@ -37,8 +35,6 @@ public:
    *  @return   the weight information
    */
   double  weight() const { return m_weight; }
-
-protected:
 
 private:
   const SOURCE* m_src;

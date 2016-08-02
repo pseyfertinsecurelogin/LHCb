@@ -42,10 +42,6 @@ CheckCaloBank::CheckCaloBank( const std::string& name, ISvcLocator* pSvcLocator)
 
 }
 
-//=============================================================================
-// Standard destructor
-//=============================================================================
-CheckCaloBank::~CheckCaloBank() {}
 
 //=============================================================================
 // Initialisation. Check parameters

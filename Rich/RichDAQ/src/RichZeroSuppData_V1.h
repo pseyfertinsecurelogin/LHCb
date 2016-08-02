@@ -92,14 +92,14 @@ namespace Rich
         }
 
         /// Destructor
-        virtual ~RichZeroSuppData() { }
+        virtual ~RichZeroSuppData() = default;
 
         // Returns the hit count for this HPD
-        virtual ShortType hitCount() const;
+        virtual ShortType hitCount() const final;
 
         // Fill a vector with RichSmartIDs for hit pixels
         virtual ShortType fillRichSmartIDs( LHCb::RichSmartID::Vector & ids,
-                                            const LHCb::RichSmartID hpdID ) const;
+                                            const LHCb::RichSmartID hpdID ) const final;
 
       private: // methods
 

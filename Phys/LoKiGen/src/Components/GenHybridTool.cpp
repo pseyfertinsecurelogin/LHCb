@@ -1,4 +1,3 @@
-// $Id$
 // ============================================================================
 // Include files 
 // ============================================================================
@@ -58,7 +57,7 @@ namespace LoKi
       , public virtual IGenHybridFactory 
     {
       // friend factory forn instantiation
-      friend class ToolFactory<LoKi::Hybrid::GenTool> ;
+      friend struct ToolFactory<LoKi::Hybrid::GenTool> ;
     public:
       // ======================================================================
       /// initialization of the tool 

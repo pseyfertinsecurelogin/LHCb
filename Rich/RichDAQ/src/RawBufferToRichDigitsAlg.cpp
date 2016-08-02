@@ -84,12 +84,9 @@ StatusCode RawBufferToRichDigitsAlg::execute()
     }
 
     // Final printout
-    if ( msgLevel(MSG::DEBUG) )
-    {
-      debug() << "Successfully registered " << digits->size()
+    _ri_debug << "Successfully registered " << digits->size()
               << " RichDigits at " << m_richDigitsLoc << endmsg;
-    }
-
+    
   } // make digits
 
   return StatusCode::SUCCESS;

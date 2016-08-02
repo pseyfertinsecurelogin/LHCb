@@ -98,8 +98,7 @@ private:
   /// counter of invalid energy 
   mutable StatEntity m_energy ;                   // counter for invaild energy 
   // ==========================================================================  
-  typedef LHCb::CaloDataFunctor::EnergyTransverse<const LHCb::CaloCluster*,
-                                                  const DeCalorimeter*> ET ;
+  typedef LHCb::CaloDataFunctor::EnergyTransverse<const DeCalorimeter*> ET ;
   /// transverse energy estimator 
   ET m_et ; // transverse energy estimator
   // ==========================================================================  

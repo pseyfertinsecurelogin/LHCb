@@ -28,9 +28,14 @@ public:
 
 private:
 
-  std::string m_inputName;
-  std::string m_outputName; ///< Output location for packed clusters
-  bool m_alwaysOutput;      ///< Flag to turn on the creation of output, even when input is missing
+  std::string m_inputName;   ///< Input Track location 
+  std::string m_outputName;  ///< Output location for packed clusters
+  std::string m_veloClusLoc; ///< Velo clusters location
+  std::string m_ttClusLoc;   ///< TT clusters location
+  std::string m_utClusLoc;   ///< UT clusters location
+  std::string m_itClusLoc;   ///< IT clusters location
+
+  bool m_alwaysOutput;       ///< Flag to turn on the creation of output, even when input is missing
 
 };
 
