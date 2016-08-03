@@ -58,7 +58,7 @@ def parse(stdout):
         dest=lines[0]
         algname=lines[1]
         #print lines[2]
-        exec("algprops="+lines[2].replace("PublicToolHandle","'PublicToolHandle'+"))
+        exec("algprops="+lines[2].replace("PublicToolHandle","'PublicToolHandle'+").replace("DataObjectHandleBase","'DataObjectHandleBase'+"))
         #algprops=dict(lines[2])
         result[dest]={algname: algprops}
     return result

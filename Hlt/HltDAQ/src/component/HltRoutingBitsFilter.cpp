@@ -1,14 +1,14 @@
-// Include files 
+// Include files
 #include <vector>
 
 // from Gaudi
 #include "GaudiAlg/FilterPredicate.h"
 #include "GaudiAlg/FunctionalUtilities.h"
-#include "Event/RawEvent.h" 
-#include "Event/RawBank.h" 
+#include "Event/RawEvent.h"
+#include "Event/RawBank.h"
 
 class HltRoutingBitsFilter : public Gaudi::Functional::FilterPredicate<bool(const LHCb::RawEvent&)>  {
-public: 
+public:
   HltRoutingBitsFilter( const std::string& name, ISvcLocator* pSvcLocator );
   StatusCode initialize() override;                      ///< Algorithm initialisation
   bool operator()(const LHCb::RawEvent&) const override; ///< Algorithm execution
@@ -33,10 +33,10 @@ HltRoutingBitsFilter::HltRoutingBitsFilter( const std::string& name,
                                         ISvcLocator* pSvcLocator)
 : FilterPredicate( name , pSvcLocator,
                    { KeyValue{ "RawEventLocations",
-                                Gaudi::Functional::concat_alternatives( { LHCb::RawEventLocation::Trigger,
-                                                                          LHCb::RawEventLocation::Copied,
-                                                                          LHCb::RawEventLocation::Default } )
-                             } }
+                                Gaudi::Functional::concat_alternatives( LHCb::RawEventLocation::Trigger,
+                                                                        LHCb::RawEventLocation::Copied,
+                                                                        LHCb::RawEventLocation::Default )
+                             }}
                  )
 {
   declareProperty("VetoMask", m_v = std::vector<unsigned int>(3, 0x0));
@@ -77,7 +77,7 @@ bool HltRoutingBitsFilter::operator()(const LHCb::RawEvent& rawEvent) const {
     return m_passOnError;
   }
   const unsigned int *data = banks.front()->data();
-  
+
   bool veto = false;
   bool req  = false;
   for (unsigned i=0;i<3 && !veto; ++i) {
