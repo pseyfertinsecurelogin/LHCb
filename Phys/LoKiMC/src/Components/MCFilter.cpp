@@ -108,7 +108,7 @@ LoKi::MCFilter::MCFilter
 ( const std::string& name , // the algorithm instance name 
   ISvcLocator*       pSvc ) // pointer to the service locator
   : FilterPredicate ( name , pSvc ,
-                      { KeyValue{ "Location", LHCb::MCParticleLocation::Default } } )
+                      KeyValue{ "Location", LHCb::MCParticleLocation::Default } )
 {
   StatusCode sc = setProperty ( "Code" , "~MCEMPTY" ) ;
   Assert ( sc.isSuccess () , "Unable (re)set property 'Code'"    , sc ) ;

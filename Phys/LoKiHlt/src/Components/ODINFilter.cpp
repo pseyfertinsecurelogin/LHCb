@@ -55,7 +55,7 @@ namespace LoKi
     ( const std::string& name , // the algorithm instance name 
       ISvcLocator*       pSvc ) // pointer to the service locator
       : FilterPredicate( name , pSvc ,
-                         { KeyValue{"Location", LHCb::ODINLocation::Default } } )
+                         KeyValue{"Location", LHCb::ODINLocation::Default } )
     {
       StatusCode sc = setProperty ( "Code" , "ODIN_NONE" ) ;
       Assert ( sc.isSuccess () , "Unable (re)set property 'Code'"    , sc ) ;
