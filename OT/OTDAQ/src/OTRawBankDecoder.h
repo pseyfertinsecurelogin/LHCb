@@ -63,24 +63,24 @@ public:
   StatusCode decodeGolHeaders() const override;
 
   /// Decode all gol headers in a particular RawEvent
-  virtual StatusCode decodeGolHeaders(const LHCb::RawEvent& rawevent) const ;
+  virtual StatusCode decodeGolHeaders(const LHCb::RawEvent& rawevent) const override;
 
   /// Decode all modules
-  StatusCode decode( LHCb::OTLiteTimeContainer& ottimes ) const ;
+  StatusCode decode( LHCb::OTLiteTimeContainer& ottimes ) const override;
 
   /// Translate the raw bank in an ot-specific raw bank.
-  StatusCode decode( OTDAQ::RawEvent& otevent ) const ;
+  StatusCode decode( OTDAQ::RawEvent& otevent ) const override;
 
   /// Retrieve the total number of hits in the OT without actually
   /// decoding the modules. Useful in pattern reco to remove full
   /// events.
-  size_t totalNumberOfHits() const ;
+  size_t totalNumberOfHits() const override;
 
   /// Get the conversion factor
-  double nsPerTdcCount() const { return m_nsPerTdcCount ; }
+  double nsPerTdcCount() const override { return m_nsPerTdcCount ; }
 
   /// Get an OTLiteTime from a channel
-  LHCb::OTLiteTime time( LHCb::OTChannelID channel ) const ;
+  LHCb::OTLiteTime time( LHCb::OTChannelID channel ) const override;
 
 protected:
   void handle ( const Incident& incident ) override;
