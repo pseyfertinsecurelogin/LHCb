@@ -1,4 +1,3 @@
-// $Id: L0DUFromRawTool.h,v 1.16 2010-01-29 07:54:33 graven Exp $
 #ifndef L0DUFROMRAWTOOL_H 
 #define L0DUFROMRAWTOOL_H 1
 
@@ -30,27 +29,27 @@ public:
                    const IInterface* parent);
 
   StatusCode initialize() override;
-  bool decodeBank(int ibank=0 );
+  bool decodeBank(int ibank=0 ) override;
 
-  unsigned int data(const std::string& name) const;
+  unsigned int data(const std::string& name) const override;
   double dataScaled(const std::string& name) const;
-  unsigned int version() const {return m_vsn;};
-  unsigned int tck() const {  return m_tck; }
-  unsigned int firmware() const {  return m_pgaVsn; }
-  const std::pair<unsigned int,unsigned int> bcid() const {  return {m_bcid2,m_bcid3}; }
-  unsigned int rsda() const {  return m_rsda; }
-  unsigned int muonCleaningPattern() const {  return m_muCleanPattern; }
-  unsigned int status() const {  return m_status; }
-  unsigned int size() const {return m_size;  }
-  unsigned long roStatus() const {return m_roStatus.status();  }
-  void fillDataMap(bool fill = true){m_fill = fill;}
-  std::string dump() const ;
+  unsigned int version() const override {return m_vsn;};
+  unsigned int tck() const override {  return m_tck; }
+  unsigned int firmware() const override {  return m_pgaVsn; }
+  const std::pair<unsigned int,unsigned int> bcid() const override {  return {m_bcid2,m_bcid3}; }
+  unsigned int rsda() const override {  return m_rsda; }
+  unsigned int muonCleaningPattern() const override {  return m_muCleanPattern; }
+  unsigned int status() const override {  return m_status; }
+  unsigned int size() const override {return m_size;  }
+  unsigned long roStatus() const  override{return m_roStatus.status();  }
+  void fillDataMap(bool fill = true) override {m_fill = fill;}
+  std::string dump() const override;
 
-  LHCb::L0DUReport report() const {return m_report;}
-  LHCb::L0ProcessorDatas* L0ProcessorDatas(){return m_processorDatas.get();}
-  const std::map<std::string, std::pair<unsigned int,double> >& datas() const {return m_dataMap;}
+  LHCb::L0DUReport report() const override {return m_report;}
+  LHCb::L0ProcessorDatas* L0ProcessorDatas() override {return m_processorDatas.get();}
+  const std::map<std::string, std::pair<unsigned int,double> >& datas() const override {return m_dataMap;}
   
-  virtual StatusCode  _setProperty(const std::string& p,const std::string& v){return  setProperty(p,v);};
+  virtual StatusCode  _setProperty(const std::string& p,const std::string& v) override {return  setProperty(p,v);};
   
 private:
   bool decoding(int ibank);
