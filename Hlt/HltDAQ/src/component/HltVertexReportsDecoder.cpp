@@ -55,9 +55,9 @@ DECLARE_ALGORITHM_FACTORY( HltVertexReportsDecoder )
 HltVertexReportsDecoder::HltVertexReportsDecoder( const std::string& name,
                                                   ISvcLocator* pSvcLocator )
 : HltRawBankSplittingDecoder<LHCb::VertexBase::Container>( name , pSvcLocator,
-                            { KeyValue{ "RawEventLocations", Gaudi::Functional::concat_alternatives(LHCb::RawEventLocation::Trigger,
+                            KeyValue{ "RawEventLocations", Gaudi::Functional::concat_alternatives(LHCb::RawEventLocation::Trigger,
                                                                                                     LHCb::RawEventLocation::Copied,
-                                                                                                    LHCb::RawEventLocation::Default )}},
+                                                                                                    LHCb::RawEventLocation::Default )},
                             KeyValues{ "OutputHltVertexLocations", prefix( LHCb::HltVertexReportsLocation::Default, DefaultLabels ) }
                             )
 {

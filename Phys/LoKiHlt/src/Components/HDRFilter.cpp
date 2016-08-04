@@ -172,7 +172,7 @@ namespace
 LoKi::HDRFilter::HDRFilter
 ( const std::string& name , // the algorithm instance name 
   ISvcLocator*       pSvc ) // pointer to the service locator
-  : FilterPredicate( name , pSvc, { KeyValue{ "Location", location(name) } })
+  : FilterPredicate( name , pSvc, KeyValue{ "Location", location(name) } )
 {
   // DAMN: this isn't going to (always) work: what if Location is set first - and the test fails,
   //       and then afterwards code() is updated by the property mgr?

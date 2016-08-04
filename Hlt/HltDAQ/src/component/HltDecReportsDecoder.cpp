@@ -63,10 +63,10 @@ namespace {
 HltDecReportsDecoder::HltDecReportsDecoder( const std::string& name,
                                             ISvcLocator* pSvcLocator)
   : HltRawBankDecoder<LHCb::HltDecReports>(  name, pSvcLocator,
-                   { KeyValue{ "RawEventLocations",
-                                Gaudi::Functional::concat_alternatives( LHCb::RawEventLocation::Trigger,
-                                                                        LHCb::RawEventLocation::Copied,
-                                                                        LHCb::RawEventLocation::Default ) }},
+                    KeyValue{ "RawEventLocations",
+                              Gaudi::Functional::concat_alternatives( LHCb::RawEventLocation::Trigger,
+                                                                      LHCb::RawEventLocation::Copied,
+                                                                      LHCb::RawEventLocation::Default ) },
                     KeyValue{ "OutputHltDecReportsLocation", LHCb::HltDecReportsLocation::Default } )
 {
 }

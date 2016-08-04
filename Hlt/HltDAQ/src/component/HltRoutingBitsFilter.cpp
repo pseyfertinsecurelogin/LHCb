@@ -32,12 +32,11 @@ DECLARE_ALGORITHM_FACTORY( HltRoutingBitsFilter )
 HltRoutingBitsFilter::HltRoutingBitsFilter( const std::string& name,
                                         ISvcLocator* pSvcLocator)
 : FilterPredicate( name , pSvcLocator,
-                   { KeyValue{ "RawEventLocations",
-                                Gaudi::Functional::concat_alternatives( LHCb::RawEventLocation::Trigger,
-                                                                        LHCb::RawEventLocation::Copied,
-                                                                        LHCb::RawEventLocation::Default )
-                             }}
-                 )
+                   KeyValue{ "RawEventLocations",
+                              Gaudi::Functional::concat_alternatives( LHCb::RawEventLocation::Trigger,
+                                                                      LHCb::RawEventLocation::Copied,
+                                                                      LHCb::RawEventLocation::Default )
+                           } )
 {
   declareProperty("VetoMask", m_v = std::vector<unsigned int>(3, 0x0));
   declareProperty("RequireMask", m_r = std::vector<unsigned int>(3, 0xFFFF));

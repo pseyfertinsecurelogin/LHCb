@@ -42,12 +42,11 @@ StatusCode retrieveModuleMat(int quartSipmNb, int quarter, unsigned &locmod, uns
 //=============================================================================
   FTRawBankDecoder::FTRawBankDecoder( const std::string& name,
                                       ISvcLocator* pSvcLocator)
-: Transformer ( name ,
-                pSvcLocator,
-                { KeyValue{ "RawEventLocations",
-                            Gaudi::Functional::concat_alternatives( { LHCb::RawEventLocation::Other,
-                                                                      LHCb::RawEventLocation::Default } )
-                          } },
+: Transformer ( name , pSvcLocator,
+                KeyValue{ "RawEventLocations",
+                          Gaudi::Functional::concat_alternatives( LHCb::RawEventLocation::Other,
+                                                                  LHCb::RawEventLocation::Default )
+                        },
                 KeyValue{ "OutputLocation", LHCb::FTLiteClusterLocation::Default } )
 { }
 

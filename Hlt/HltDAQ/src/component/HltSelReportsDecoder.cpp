@@ -53,10 +53,10 @@ DECLARE_ALGORITHM_FACTORY( HltSelReportsDecoder )
 HltSelReportsDecoder::HltSelReportsDecoder( const std::string& name,
                                           ISvcLocator* pSvcLocator)
 : HltRawBankMultiDecoder<LHCb::HltSelReports,LHCb::HltObjectSummary::Container >( name, pSvcLocator,
-                         { KeyValue{ "RawEventLocations",
+                         KeyValue{ "RawEventLocations",
                                 Gaudi::Functional::concat_alternatives( LHCb::RawEventLocation::Trigger,
                                                                         LHCb::RawEventLocation::Copied,
-                                                                        LHCb::RawEventLocation::Default ) }},
+                                                                        LHCb::RawEventLocation::Default ) },
                          { KeyValue{"OutputHltSelReportsLocation", LHCb::HltSelReportsLocation::Default },
                            KeyValue{"OutputHltObjectSummariesLocation", LHCb::HltSelReportsLocation::Default+"/Candidates" } }
                        )

@@ -12,10 +12,11 @@
 
 namespace {
 
-void addToFirst(std::atomic<double>& d, double x) {
-   // add x to atomic double d using 'Compare and Swap'
-   auto current = d.load();
-   while (!d.compare_exchange_weak(current, current + x)) /* empty on purpose*/ ;
+template <typename T>
+std::atomic<T>& operator+=( std::atomic<T>& x, T inc ) {
+   auto current = x.load();
+   while (!x.compare_exchange_weak(current, current + inc)) /* empty on purpose*/ ;
+   return x;
 }
 
 }
@@ -28,13 +29,12 @@ DECLARE_ALGORITHM_FACTORY( HltLumiSummaryDecoder )
 // Standard constructor, initializes variables
 //=============================================================================
 HltLumiSummaryDecoder::HltLumiSummaryDecoder( const std::string& name,
-					      ISvcLocator* pSvcLocator)
-  : Transformer( name , pSvcLocator,
-                        {KeyValue{"RawEventLocations",
-                             Gaudi::Functional::concat_alternatives({
-                                      LHCb::RawEventLocation::Trigger,
-                                      LHCb::RawEventLocation::Default})}},
-                        KeyValue{"OutputContainerName", LHCb::HltLumiSummaryLocation::Default})
+                                              ISvcLocator* pSvcLocator)
+: Transformer( name , pSvcLocator,
+               KeyValue{"RawEventLocations",
+                    Gaudi::Functional::concat_alternatives( LHCb::RawEventLocation::Trigger,
+                                                            LHCb::RawEventLocation::Default)},
+               KeyValue{"OutputContainerName", LHCb::HltLumiSummaryLocation::Default})
 {
 }
 
@@ -89,7 +89,7 @@ HltLumiSummary HltLumiSummaryDecoder::operator() (const RawEvent& event) const {
 
     // keep statistics
     int totDataSize =  ibank->size()/sizeof( unsigned int );
-    addToFirst( m_totDataSize, totDataSize );
+    m_totDataSize += double(totDataSize);
 
     m_nbEvents++;
 

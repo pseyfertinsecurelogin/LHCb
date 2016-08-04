@@ -60,9 +60,9 @@ DECLARE_ALGORITHM_FACTORY( HltTrackReportsDecoder )
 HltTrackReportsDecoder::HltTrackReportsDecoder( const std::string& name,
                                                 ISvcLocator* pSvcLocator )
 : HltRawBankSplittingDecoder<LHCb::Tracks>( name , pSvcLocator,
-                            { KeyValue{ "RawEventLocations", Gaudi::Functional::concat_alternatives(LHCb::RawEventLocation::Trigger,
-                                                                                                    LHCb::RawEventLocation::Copied,
-                                                                                                    LHCb::RawEventLocation::Default )}},
+                            KeyValue{ "RawEventLocations", Gaudi::Functional::concat_alternatives(LHCb::RawEventLocation::Trigger,
+                                                                                                  LHCb::RawEventLocation::Copied,
+                                                                                                  LHCb::RawEventLocation::Default )},
                             KeyValues{ "OutputHltTrackReportsLocation", prefix( "Hlt/Track", DefaultLabels ) }
                             )
 {
