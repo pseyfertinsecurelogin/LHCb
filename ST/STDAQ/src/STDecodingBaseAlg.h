@@ -47,7 +47,7 @@ protected:
 
  bool forceVersion() const;  
 
- void createSummaryBlock(LHCb::RawEvent* rawEvt, const unsigned int& nclus, const unsigned int& pcn, 
+ void createSummaryBlock(const LHCb::RawEvent& rawEvt, const unsigned int& nclus, const unsigned int& pcn, 
                          const bool pcnsync, const unsigned int bytes,  const std::vector<unsigned int>& bankList,
                          const std::vector<unsigned int>& missing, 
                          const LHCb::STSummary::RecoveredInfo& recoveredBanks ) const;
