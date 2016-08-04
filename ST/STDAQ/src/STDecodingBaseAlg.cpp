@@ -61,6 +61,8 @@ STDecodingBaseAlg::STDecodingBaseAlg( const std::string& name,
  declareProperty("forcedVersion", m_forcedVersion = STDAQ::inValidVersion);
  declareProperty("checkValidity", m_checkValidSpill = true);
 
+ declareProperty("ODINLocation", m_odin);
+
  setForcedInit();
 }
 
@@ -399,8 +401,8 @@ StatusCode STDecodingBaseAlg::decodeErrors() const{
 std::string STDecodingBaseAlg::toSpill(const std::string& location) const{
 
   std::string theSpill;
-  for (const auto& name : {std::string{"Prev"}, std::string{"Next"}} ) {
-    std::string::size_type iPos = location.find(name);
+  for (const auto* name : {"Prev", "Next"} ) {
+    auto iPos = location.find(name);
     if (iPos != std::string::npos){
       std::string startSpill = location.substr(iPos,location.size() - iPos);
       std::string::size_type iPos2 = startSpill.find("/");
@@ -422,7 +424,7 @@ bool STDecodingBaseAlg::validSpill() const{
   if (!m_checkValidSpill) return true;
 
   // check spill is actually read out using the ODIN
-  const ODIN* odin = get<ODIN>(ODINLocation::Default);
+  const ODIN* odin = m_odin.get();
   const unsigned int numberOfSpills = odin->timeAlignmentEventWindow();
   return (unsigned int)abs(m_spillOffset) <= numberOfSpills ;
 }
