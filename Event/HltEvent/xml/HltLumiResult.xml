@@ -9,6 +9,8 @@
       name        = 'HltLumiResult'
       author      = 'Jaap Panman'
       desc        = 'Result class for Lumi in Hlt'
+      defaultdestructor = "FALSE"
+      final       = "TRUE"
       id = '7515'
       serializers = 'TRUE'>
 
