@@ -1,12 +1,14 @@
 #ifndef STDECODINGBASEALG_H 
 #define STDECODINGBASEALG_H 1
 
+#include "GaudiKernel/DataObjectHandle.h"
 #include "Kernel/STAlgBase.h"
 #include "Event/RawBank.h"
 #include "Kernel/STDAQDefinitions.h"
 
 #include "Event/STSummary.h"
 #include "Event/STCluster.h"
+#include "Event/ODIN.h"
 
 #include <vector>
 #include <string>
@@ -117,9 +119,10 @@ private:
 
   std::string m_summaryLocation;
   LHCb::RawBank::BankType m_bankType;
-
  
   bool m_recoverMode;
+
+  DataObjectHandle<LHCb::ODIN>  m_odin = { LHCb::ODINLocation::Default, Gaudi::DataHandle::Reader, this };
 
 };
 
