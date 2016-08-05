@@ -50,6 +50,7 @@ class HltGenConfig : public GaudiAlgorithm, public IToolSvc::Observer
     std::map<std::string, std::vector<std::string>> m_overrule;
     std::vector<std::string> m_envVars; ///< Which environment variables do we put back in.
     std::unordered_map<std::string, std::string> m_envVarValues;
+    mutable std::unordered_set<std::string> m_overruled;
 
     StatusCode generateConfig() const;
 
