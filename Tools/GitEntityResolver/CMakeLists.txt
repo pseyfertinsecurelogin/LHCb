@@ -2,7 +2,6 @@ gaudi_subdir(GitEntityResolver)
 
 gaudi_depends_on_subdirs(GaudiKernel
                          Kernel/LHCbKernel
-                         Det/DetCond
                          Tools/XmlTools)
 
 include(FindPkgConfig)
@@ -12,7 +11,7 @@ if (git2_FOUND)
   gaudi_add_module(GitEntityResolver
                    src/GitEntityResolver.cpp
                    INCLUDE_DIRS git2
-                   LINK_LIBRARIES DetCondLib XmlToolsLib git2)
+                   LINK_LIBRARIES XmlToolsLib git2)
 
   gaudi_add_test(QMTest QMTEST
                  ENVIRONMENT GIT_TEST_REPOSITORY=${CMAKE_CURRENT_BINARY_DIR}/test_repo/DDDB)
