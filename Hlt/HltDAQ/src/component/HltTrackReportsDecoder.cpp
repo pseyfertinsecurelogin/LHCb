@@ -174,7 +174,7 @@ Gaudi::Functional::vector_of_optional_<Tracks> HltTrackReportsDecoder::operator(
                              []( unsigned int* p, const RawBank* bank ) {
                 return std::copy( bank->begin<unsigned int>(), bank->end<unsigned int>(), p );
             } );
-            assert( std::distance( completeBank.get(), p ) == bankSize ); 
+            assert( std::distance( completeBank.data(), p ) == bankSize ); 
             // do the actual decoding: see HltTrackingCoder.cpp
             decodeTracks( completeBank.data(), bankSize, *outputTracks );
         }
