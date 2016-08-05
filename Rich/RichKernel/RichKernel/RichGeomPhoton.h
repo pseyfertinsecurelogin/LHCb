@@ -40,7 +40,7 @@ namespace LHCb
    *  @date   2002-05-30
    */
 
-  class RichGeomPhoton : public LHCb::MemPoolAlloc<RichGeomPhoton>
+  class RichGeomPhoton final : public LHCb::MemPoolAlloc<RichGeomPhoton>
   {
 
   public:

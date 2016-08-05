@@ -161,8 +161,11 @@ HltGenConfig::generateConfig(const INamedInterface &obj) const {
 
   // If some overrules were found, apply them
   if (!overrule.empty()) {
-    warning() << " applying overrule to " << obj.name() << " : " << overrule
-              << endmsg;
+    if (!m_overruled.count(obj.name())) {
+      warning() << " applying overrule to " << obj.name() << " : " << overrule
+                << endmsg;
+      m_overruled.emplace(obj.name());
+    }
     currentConfig = currentConfig.copyAndModify(std::begin(overrule), std::end(overrule));
     if (!currentConfig.digest().valid()) {
       error() << " overruling of " << obj.name() << " : " << overrule

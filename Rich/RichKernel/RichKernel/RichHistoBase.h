@@ -65,7 +65,7 @@ namespace Rich
                ISvcLocator *svc = nullptr );
 
     /// Destructor
-    virtual ~HistoBase( );
+    virtual ~HistoBase( ) = default;
 
   private:
 
@@ -78,13 +78,13 @@ namespace Rich
   public:
 
     /// System initialize
-    virtual StatusCode sysInitialize();
+    virtual StatusCode sysInitialize() override;
 
     // Initialization of the algorithm after creation
-    virtual StatusCode initialize();
+    virtual StatusCode initialize() override;
 
     // Finalization of the algorithm before deletion
-    virtual StatusCode finalize();
+    virtual StatusCode finalize() override;
 
   protected:
 

@@ -37,7 +37,7 @@ namespace Rich
    */
   //--------------------------------------------------------------------------------------
 
-  class StatDivFunctorResult : private std::pair<double,double>
+  class StatDivFunctorResult final : private std::pair<double,double>
   {
 
   public:
@@ -86,7 +86,7 @@ namespace Rich
    */
   //------------------------------------------------------------------------------------
 
-  class StatDivFunctor
+  class StatDivFunctor final
     : public std::binary_function< const double,
                                    const double,
                                    StatDivFunctorResult >

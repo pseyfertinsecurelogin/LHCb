@@ -37,17 +37,17 @@ namespace Rich
    */
   //-----------------------------------------------------------------------------
 
-  class ToolRegistry : public GaudiTool,
-                       virtual public IToolRegistry
+  class ToolRegistry final : public GaudiTool,
+                             virtual public IToolRegistry
   {
 
   private: // definitions
 
     /// typedef of container of strings for job options
-    typedef std::vector<std::string> ToolList;
+    using ToolList = std::vector<std::string>;
 
     /// typedef for the mapping between nicknames and class names
-    typedef Rich::HashMap< std::string, std::string > RichToolMap;
+    using RichToolMap = Rich::HashMap< std::string, std::string >;
 
   public: // for Gaudi framework
 
@@ -57,18 +57,18 @@ namespace Rich
                   const IInterface* parent );
 
     /// Destructor
-    virtual ~ToolRegistry() {}
+    virtual ~ToolRegistry() = default;
 
     // Initialization of the tool after creation
-    StatusCode initialize();
+    StatusCode initialize() final;
 
   public: // methods (and doxygen comments) inherited from interface
 
     // Converts a tool nickname into a particular class name
-    const std::string & toolType( const std::string & nickname ) const;
+    const std::string & toolType( const std::string & nickname ) const final;
 
     // Converts a tool "nickname" into a particular instance name
-    const std::string toolName( const std::string & nickname ) const;
+    const std::string toolName( const std::string & nickname ) const final;
 
   private: // methods
 

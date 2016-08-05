@@ -16,6 +16,7 @@
 // std include
 #include <iostream>
 #include <memory>
+#include <cmath>
 
 // LHCbKernel
 #include "Kernel/RichRadiatorType.h"
@@ -33,6 +34,8 @@
 
 // VDT
 #include "vdt/sincos.h"
+#include "vdt/sqrt.h"
+#include "vdt/atan2.h"
 
 // General LHCb namespace
 namespace LHCb
@@ -195,13 +198,6 @@ namespace LHCb
 
   private:
 
-    /// Delete and reset the current rotations
-    inline void cleanUpRotations() const
-    {
-      m_rotation .reset( nullptr );
-      m_rotation2.reset( nullptr );
-    }
-
     /// Helper method to initialise the based chord constructor without a middle point
     void chordConstructorInit2();
 
@@ -211,7 +207,7 @@ namespace LHCb
     /// Helper method for two point constructor
     inline void initTwoPoints()
     {
-       if      ( RichTrackSegment::UseAllStateVectors    == type() )
+      if     ( RichTrackSegment::UseAllStateVectors    == type() )
       {
         setMiddleState ( add_points(entryPoint(),exitPoint())/2, (entryMomentum()+exitMomentum())/2 );
       }
@@ -227,7 +223,7 @@ namespace LHCb
 
     /// Helper method for three point constructor
     inline void initThreePoints()
-    { 
+    {
       if      ( RichTrackSegment::UseAllStateVectors == type() )
       {
         // nothing to do yet
@@ -241,7 +237,7 @@ namespace LHCb
         throw Rich::Exception( "Unknown RichTrackSegment::SegmentType" );
       }
     }
-    
+
     // ------------------------------------------------------------------------------------------------------
 
   public:
@@ -370,6 +366,22 @@ namespace LHCb
 
     // ------------------------------------------------------------------------------------------------------
 
+  private:
+
+    /// atan2 for double
+    inline double myatan2( const double x, const double y ) const noexcept { return vdt::fast_atan2(x,y);  }
+
+    /// atan2 for float
+    inline float  myatan2( const float x,  const float y  ) const noexcept { return vdt::fast_atan2f(x,y); }
+
+    /// sincos for double
+    inline void mysincos( const double x, double & s, double & c ) const noexcept { vdt::fast_sincos(x,s,c); }
+
+    /// sincos for float
+    inline void mysincos( const float  x, float  & s, float  & c ) const noexcept { vdt::fast_sincosf(x,s,c); }
+
+    // ------------------------------------------------------------------------------------------------------
+
   public:
 
     /// Provides read-only access to the radiator intersections
@@ -393,9 +405,22 @@ namespace LHCb
      *  @param theta The angle between input direction and the segment
      *  @param phi   The azimuthal angle of the direction around the segment
      */
-    void angleToDirection ( const Gaudi::XYZVector& direction,
-                            double& theta,
-                            double& phi ) const;
+    template < typename TYPE >
+    inline void angleToDirection ( const Gaudi::XYZVector & direction,
+                                   TYPE & theta,
+                                   TYPE & phi ) const
+    {
+      // create vector in track reference frame
+      const Gaudi::XYZVector rotDir{ rotationMatrix() * direction };
+      // compute theta and phi directly from the vector components
+      phi   = myatan2( (TYPE)rotDir.y(), (TYPE)rotDir.x() );
+      theta = myatan2( (TYPE)std::sqrt( std::pow((TYPE)rotDir.x(),2) +
+                                        std::pow((TYPE)rotDir.y(),2) ),
+                       (TYPE)rotDir.z() );
+      // correct phi to range 0 - 2PI
+      constexpr TYPE twopi = (TYPE)(2.0*M_PI);
+      if ( phi < 0 ) { phi += twopi; }
+    }
 
     /** Creates a vector at an given angle and azimuth to the track segment
      *
@@ -404,8 +429,15 @@ namespace LHCb
      *
      *  @return The vector at the given theta and phi angles to this track segment
      */
-    Gaudi::XYZVector vectorAtThetaPhi ( const double theta,
-                                        const double phi ) const;
+    template < typename TYPE >
+    inline Gaudi::XYZVector vectorAtThetaPhi ( const TYPE theta,
+                                               const TYPE phi ) const
+    {
+      TYPE sinTheta(0), cosTheta(0), sinPhi(0), cosPhi(0);
+      mysincos( theta, sinTheta, cosTheta );
+      mysincos( phi,   sinPhi,   cosPhi   );
+      return vectorAtCosSinThetaPhi( cosTheta, sinTheta, cosPhi, sinPhi );
+    }
 
     /** Creates a vector at an given angle and azimuth to the track segment
      *
@@ -416,18 +448,25 @@ namespace LHCb
      *
      *  @return The vector at the given theta and phi angles to this track segment
      */
-    Gaudi::XYZVector vectorAtCosSinThetaPhi ( const double cosTheta,
-                                              const double sinTheta,
-                                              const double cosPhi,
-                                              const double sinPhi ) const;
+    inline Gaudi::XYZVector vectorAtCosSinThetaPhi ( const double cosTheta,
+                                                     const double sinTheta,
+                                                     const double cosPhi,
+                                                     const double sinPhi ) const
+    {
+      return rotationMatrix2() * Gaudi::XYZVector( sinTheta*cosPhi,
+                                                   sinTheta*sinPhi,
+                                                   cosTheta );
+    }
 
     /** Calculates the path lenth of a track segment.
      *  @returns The total length of the track inside the radiator
      */
     inline double pathLength() const
-    {
-      return ( std::sqrt((entryPoint()-middlePoint()).mag2()) +
-               std::sqrt((middlePoint()-exitPoint()).mag2())  );
+    { 
+      // make sure cached variables are valid
+      if ( UNLIKELY(!m_cachedTrajOK) ) { updateCachedBestInfo(); }
+      // return the cached value
+      return m_pathLength;
     }
 
     /// Returns the segment entry point to the radiator
@@ -457,8 +496,16 @@ namespace LHCb
 
     /// Returns the best space point for segment at a given fractional distance along segment.
     /// Zero gives the entry point, one gives the exit point
-    Gaudi::XYZPoint bestPoint( const double fractDist ) const;
-
+    inline Gaudi::XYZPoint bestPoint( const double fractDist ) const
+    {
+      // make sure cached variables are valid
+      if ( UNLIKELY( !m_cachedTrajOK ) ) { updateCachedBestInfo(); }
+      // return the best point
+      return ( zCoordAt(fractDist) < middlePoint().z() ?
+               entryPoint()  + (fractDist*m_invMidFrac1*m_midEntryV) :
+               middlePoint() + (m_exitMidV*((fractDist-m_midFrac2)/m_midFrac2)) );
+    }
+    
     /// Returns the best estimate of the average point in the radiator
     /// Equivalent to RichTrackSegment::bestPoint(0.5), but more efficient
     inline const Gaudi::XYZPoint& bestPoint() const noexcept
@@ -512,6 +559,7 @@ namespace LHCb
     {
       radIntersections().front().setEntryPoint    ( point );
       radIntersections().front().setEntryMomentum ( dir   );
+      reset();
     }
 
     /// Set the entry state
@@ -520,6 +568,7 @@ namespace LHCb
     {
       radIntersections().front().setEntryPoint    ( std::move(point) );
       radIntersections().front().setEntryMomentum ( std::move(dir)   );
+      reset();
     }
 
     /// Set the Middle state
@@ -528,6 +577,7 @@ namespace LHCb
     {
       m_middlePoint    = point;
       m_middleMomentum = dir;
+      reset();
     }
 
     /// Set the Middle state
@@ -536,6 +586,7 @@ namespace LHCb
     {
       m_middlePoint    = std::move(point);
       m_middleMomentum = std::move(dir);
+      reset();
     }
 
     /// Set the exit state
@@ -544,6 +595,7 @@ namespace LHCb
     {
       radIntersections().back().setExitPoint    ( point );
       radIntersections().back().setExitMomentum ( dir   );
+      reset();
     }
 
     /// Set the exit state
@@ -552,6 +604,7 @@ namespace LHCb
     {
       radIntersections().back().setExitPoint    ( std::move(point) );
       radIntersections().back().setExitMomentum ( std::move(dir)   );
+      reset();
     }
 
     /// Set the radiator type
@@ -597,7 +650,12 @@ namespace LHCb
     }
 
     /// Reset segment after information update
-    void reset() const;
+    inline void reset() const
+    {
+      m_rotation .reset( nullptr );
+      m_rotation2.reset( nullptr );
+      m_cachedTrajOK = false;
+    }
 
   public:
 
@@ -622,22 +680,28 @@ namespace LHCb
     /// Access the rotation matrix 1
     inline const Gaudi::Rotation3D & rotationMatrix() const
     {
-      if ( !m_rotation ) computeRotationMatrix();
+      if ( !m_rotation ) { computeRotationMatrix(); }
       return *m_rotation;
     }
 
     /// Access the rotation matrix 2
     inline const Gaudi::Rotation3D & rotationMatrix2() const
     {
-      if ( !m_rotation2 ) computeRotationMatrix2();
+      if ( !m_rotation2 ) { computeRotationMatrix2(); }
       return *m_rotation2;
     }
 
     /// Compute the rotation matrix
-    void computeRotationMatrix() const;
+    inline void computeRotationMatrix() const
+    {
+      m_rotation.reset( new Gaudi::Rotation3D( rotationMatrix2().Inverse() ) );
+    }
 
     /// Compute the rotation matrix
     void computeRotationMatrix2() const;
+
+    /// Update the cached tracjectory information for the 'best' methods
+    void updateCachedBestInfo() const;
 
   private:  // private data
 
@@ -667,7 +731,7 @@ namespace LHCb
      */
     double m_avPhotonEnergy = 4.325;
 
-    // Some variables for internal caching of information for speed
+  private: // Some variables for internal caching of information for speed
 
     /** Rotation matrix used to calculate the theta and phi angles between
      *  this track segment and a given direction.
@@ -681,39 +745,15 @@ namespace LHCb
      */
     mutable std::unique_ptr<Gaudi::Rotation3D> m_rotation2;
 
+    mutable bool m_cachedTrajOK{false};   ///< Flag to say if the cached information is up to date
+    mutable Gaudi::XYZVector m_midEntryV; ///< Entry to middle point vector
+    mutable Gaudi::XYZVector m_exitMidV;  ///< Middle to exit point vector
+    mutable double m_invMidFrac1{0};      ///< Cached fraction 1
+    mutable double m_midFrac2{0};         ///< cached fraction 2
+    mutable double m_pathLength{0};       ///< Segment path length
+
   };
 
 } // end LHCb namespace
-
-inline void LHCb::RichTrackSegment::computeRotationMatrix() const
-{
-  m_rotation.reset( new Gaudi::Rotation3D( rotationMatrix2().Inverse() ) );
-}
-
-inline Gaudi::XYZVector
-LHCb::RichTrackSegment::vectorAtCosSinThetaPhi ( const double cosTheta,
-                                                 const double sinTheta,
-                                                 const double cosPhi,
-                                                 const double sinPhi ) const
-{
-  return rotationMatrix2() * Gaudi::XYZVector( sinTheta*cosPhi,
-                                               sinTheta*sinPhi,
-                                               cosTheta );
-}
-
-inline Gaudi::XYZVector
-LHCb::RichTrackSegment::vectorAtThetaPhi( const double theta,
-                                          const double phi ) const
-{
-  double sinTheta(0), cosTheta(0), sinPhi(0), cosPhi(0);
-  vdt::fast_sincos( theta, sinTheta, cosTheta );
-  vdt::fast_sincos( phi,   sinPhi,   cosPhi   );
-  return vectorAtCosSinThetaPhi( cosTheta, sinTheta, cosPhi, sinPhi );
-}
-
-inline void LHCb::RichTrackSegment::reset() const
-{
-  cleanUpRotations();
-}
 
 #endif // RICHKERNEL_RichTrackSegment_H

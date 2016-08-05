@@ -208,9 +208,9 @@ namespace Gaudi
       /// Sum of B-spline and a constant 
       BSpline __radd__  ( const double value ) const ;
       /// Product B-spline and a constant
-      BSpline __mult__  ( const double value ) const ;
+      BSpline __mul__   ( const double value ) const ;
       /// Product B-spline and a constant
-      BSpline __rmult__ ( const double value ) const ;
+      BSpline __rmul__  ( const double value ) const ;
       /// Subtract a constant from Benrstein polynomial
       BSpline __sub__   ( const double value ) const ;
       /// Constant minus B-spline 
@@ -385,9 +385,9 @@ namespace Gaudi
       /// Sum of spline and a constant 
       BSpline __radd__  ( const double value ) const { return m_bspline + value ; }
       /// Product of spline and a constant
-      BSpline __mult__  ( const double value ) const { return m_bspline * value ; }
+      BSpline __mul__   ( const double value ) const { return m_bspline * value ; }
       /// Product of spline and a constant
-      BSpline __rmult__ ( const double value ) const { return m_bspline * value ; }
+      BSpline __rmul__  ( const double value ) const { return m_bspline * value ; }
       /// Subtract a constant from spline 
       BSpline __sub__   ( const double value ) const { return m_bspline - value ; }
       /// Constant minus spline 

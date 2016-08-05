@@ -41,7 +41,7 @@ namespace Rich
      */
     //=============================================================================================
 
-    class L1IngressHeader
+    class L1IngressHeader final
     {
 
     public: // Bit packing information

@@ -57,7 +57,7 @@ namespace Rich
        *  @author Chris Jones    Christopher.Rob.Jones@cern.ch
        *  @date   2003-11-06
        */
-      class RichDAQHeaderPD : public HeaderPDBase
+      class RichDAQHeaderPD final : public HeaderPDBase
       {
 
         // primary header word packing info
@@ -144,7 +144,7 @@ namespace Rich
         }
 
         /// Destructor
-        virtual ~RichDAQHeaderPD( ) { }
+        virtual ~RichDAQHeaderPD( ) = default;
 
       public:
         

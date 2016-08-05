@@ -28,7 +28,7 @@ namespace Rich
      *  @author Chris Jones   Christopher.Rob.Jones@cern.ch
      *  @date   27/04/2007
      */
-    class HPDIdentifier
+    class HPDIdentifier final
     {
 
     public:
