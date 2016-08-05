@@ -13,6 +13,8 @@ if (git2_FOUND)
                    INCLUDE_DIRS git2
                    LINK_LIBRARIES XmlToolsLib git2)
 
+  gaudi_install_headers(GitEntityResolver)
+
   gaudi_add_test(QMTest QMTEST
                  ENVIRONMENT GIT_TEST_REPOSITORY=${CMAKE_CURRENT_BINARY_DIR}/test_repo/DDDB)
 else()

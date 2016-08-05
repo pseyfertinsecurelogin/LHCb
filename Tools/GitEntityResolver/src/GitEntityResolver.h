@@ -6,27 +6,12 @@
 #include "GaudiKernel/IFileAccess.h"
 #include "Kernel/ICondDBInfo.h"
 #include "XmlTools/IXmlEntityResolver.h"
+#include "GitEntityResolver/helpers.h"
 #include <boost/utility/string_ref.hpp>
 #include <type_traits>
 
 #include <iosfwd>
 
-#include <git2.h>
-
-namespace std
-{
-  template <>
-  struct default_delete<git_object> {
-    void operator()( git_object* ptr ) const { git_object_free( ptr ); }
-  };
-  template <>
-  struct default_delete<git_repository> {
-    void operator()( git_repository* ptr ) const { git_repository_free( ptr ); }
-  };
-}
-
-using git_object_ptr     = std::unique_ptr<git_object>;
-using git_repository_ptr = std::unique_ptr<git_repository>;
 
 /** Allow use of a Git repository as a source of XML files for XercesC.
  *
