@@ -103,6 +103,9 @@ private:
   /// Return a string containing the data at a given path in the repository.
   git_object_ptr i_getData( boost::string_ref url ) const;
 
+  /// helper to make a Xerces-C++ input source
+  xercesc::InputSource* mkInputSource( GitEntityResolver::Blob data, const XMLCh* const systemId );
+
   git_repository_ptr m_repository;
 };
 

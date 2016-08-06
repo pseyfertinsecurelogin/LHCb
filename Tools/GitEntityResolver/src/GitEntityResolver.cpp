@@ -169,6 +169,12 @@ git_object_ptr GitEntityResolver::i_getData( boost::string_ref path ) const
                                    rev.c_str() );
 }
 
+xercesc::InputSource* GitEntityResolver::mkInputSource( GitEntityResolver::Blob data, const XMLCh* const systemId )
+{
+  auto buff_size = data.size(); // must be done here because "adopt" set the size to 0
+  return new xercesc::MemBufInputSource( data.adopt(), buff_size, systemId, true );
+}
+
 xercesc::InputSource* GitEntityResolver::resolveEntity( const XMLCh* const, const XMLCh* const systemId )
 {
 
@@ -192,11 +198,10 @@ xercesc::InputSource* GitEntityResolver::resolveEntity( const XMLCh* const, cons
   }
 
   url = strip_prefix( url );
-  auto data =
-      m_useFiles ? Blob{std::ifstream{m_pathToRepository.value() + "/" + url.to_string()}} : Blob{i_getData( url )};
 
-  auto buff_size = data.size(); // must be done here because "adopt" set the size to 0
-  return new xercesc::MemBufInputSource( data.adopt(), buff_size, systemId, true );
+  return mkInputSource(
+      m_useFiles ? Blob{std::ifstream{m_pathToRepository.value() + "/" + url.to_string()}} : Blob{i_getData( url )},
+      systemId );
 }
 
 void GitEntityResolver::defaultTags( std::vector<LHCb::CondDBNameTagPair>& tags ) const
