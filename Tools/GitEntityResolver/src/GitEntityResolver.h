@@ -73,10 +73,28 @@ private:
   /// internal flag used to track if we are using the Git database or checked out files
   bool m_useFiles = false;
 
+  /// actual implementation of open method, depending on the use of git objects or files
+  template<class T>
+  open_result_t i_open( const T& obj, const std::string& url ) {
+    using Git::Helpers::is_dir;
+    if ( is_dir( obj ) ) {
+      return open( url + "/" + i_getPayloadKey( url ) );
+    } else {
+      return i_makeIStream( obj );
+    }
+  }
+
+  /// helper to convert to std::istream.
+  template<class T>
+  open_result_t i_makeIStream( const T& obj ) const;
+
+  /// for a given URL, retrieve the payload key to use for the current event time.
+  std::string i_getPayloadKey( const std::string& url );
+
   /// Helper class to manage Xerces-C++ buffers
   struct Blob {
     Blob( const git_object_ptr& obj );
-    Blob( std::ifstream&& f );
+    Blob( open_result_t&& f );
     Blob( Blob&& other )
     {
       m_size = other.m_size;

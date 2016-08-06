@@ -40,11 +40,11 @@ GitEntityResolver::Blob::Blob( const git_object_ptr& obj )
   m_buff = reinterpret_cast<const XMLByte*>( buff );
 }
 
-GitEntityResolver::Blob::Blob( std::ifstream&& f )
+GitEntityResolver::Blob::Blob( open_result_t&& f )
 {
-  m_size    = f.seekg( 0, std::ifstream::end ).tellg();
+  m_size    = f->seekg( 0, std::ifstream::end ).tellg();
   auto buff = xercesc::XMLPlatformUtils::fgMemoryManager->allocate( m_size );
-  f.seekg( 0 ).read( reinterpret_cast<std::ifstream::char_type*>( buff ), m_size );
+  f->seekg( 0 ).read( reinterpret_cast<std::ifstream::char_type*>( buff ), m_size );
   m_buff = reinterpret_cast<const XMLByte*>( buff );
 }
 
@@ -153,15 +153,6 @@ const std::vector<std::string>& GitEntityResolver::protocols() const
   return s_protocols;
 }
 
-GitEntityResolver::open_result_t GitEntityResolver::open( const std::string& url )
-{
-  auto obj  = i_getData( strip_prefix( url ) );
-  auto blob = reinterpret_cast<const git_blob*>( obj.get() );
-  std::string str{reinterpret_cast<const char*>( git_blob_rawcontent( blob ) ),
-                  static_cast<std::size_t>( git_blob_rawsize( blob ) )};
-  return open_result_t( new std::istringstream( str ) );
-}
-
 git_object_ptr GitEntityResolver::i_getData( boost::string_ref path ) const
 {
   std::string rev = m_commit.value() + ":" + path.to_string();
@@ -169,22 +160,41 @@ git_object_ptr GitEntityResolver::i_getData( boost::string_ref path ) const
                                    rev.c_str() );
 }
 
-namespace
-{
-  std::string getKey( std::istream& data, long long time ) {
-    std::string line;
-    long long since{0};
-    std::string key;
-    while ( std::getline( data, line ) ) {
-      std::istringstream is{line};
-      is >> since;
-      if ( since > time )
-        break; // we use previous key
-      is >> key;
-    }
-    return key;
+std::string GitEntityResolver::i_getPayloadKey( const std::string& url ) {
+  auto data = open( url + "/IOVs" );
+  std::int_fast64_t time = 0; // FIXME: I'll get it
+
+  std::string line;
+  std::int_fast64_t since = 0;
+  std::string key;
+  while ( std::getline( *data, line ) ) {
+    std::istringstream is{line};
+    is >> since;
+    if ( since > time )
+      break; // we use previous key
+    is >> key;
   }
+  return key;
 }
+
+template<>
+GitEntityResolver::open_result_t GitEntityResolver::i_makeIStream<std::string>( const std::string& url ) const {
+  return open_result_t( new std::ifstream{m_pathToRepository.value() + "/" + url} );
+}
+
+template<>
+GitEntityResolver::open_result_t GitEntityResolver::i_makeIStream<git_object_ptr>( const git_object_ptr& obj ) const {
+  auto blob = reinterpret_cast<const git_blob*>( obj.get() );
+  std::string str{reinterpret_cast<const char*>( git_blob_rawcontent( blob ) ),
+                  static_cast<std::size_t>( git_blob_rawsize( blob ) )};
+  return open_result_t( new std::istringstream( str ) );
+}
+
+GitEntityResolver::open_result_t GitEntityResolver::open( const std::string& url )
+{
+  return UNLIKELY( m_useFiles ) ? i_open( url, url ) : i_open( i_getData( strip_prefix( url ) ), url );
+}
+
 
 xercesc::InputSource* GitEntityResolver::mkInputSource( GitEntityResolver::Blob data, const XMLCh* const systemId )
 {
@@ -216,20 +226,7 @@ xercesc::InputSource* GitEntityResolver::resolveEntity( const XMLCh* const, cons
 
   url = strip_prefix( url );
 
-  if ( UNLIKELY( m_useFiles ) ) {
-    return mkInputSource( Blob{std::ifstream{m_pathToRepository.value() + "/" + url.to_string()}}, systemId );
-  } else {
-    auto obj = i_getData( url );
-    if ( git_object_type( obj.get() ) == GIT_OBJ_TREE ) {
-      auto prefix = url.to_string() + "/";
-      auto currentTime = 0; // FIXME: I'll get it
-      auto iovs = open(prefix + "IOVs");
-      auto payload = getKey( *iovs, currentTime );
-      return mkInputSource( Blob{i_getData( prefix + payload )}, systemId );
-    } else { // git_object_type should be GIT_OBJ_BLOB
-      return mkInputSource( Blob{obj}, systemId );
-    }
-  }
+  return mkInputSource( Blob{ open( url.to_string() ) }, systemId );
 }
 
 void GitEntityResolver::defaultTags( std::vector<LHCb::CondDBNameTagPair>& tags ) const

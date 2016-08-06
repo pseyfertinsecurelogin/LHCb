@@ -7,11 +7,15 @@ gaudi_depends_on_subdirs(GaudiKernel
 include(FindPkgConfig)
 pkg_search_module(git2 libgit2)
 
+find_package(Boost COMPONENTS filesystem)
+# avoid warnings from Boost headers
+include_directories(SYSTEM ${Boost_INCLUDE_DIRS})
+
 if (git2_FOUND)
   gaudi_add_module(GitEntityResolver
                    src/GitEntityResolver.cpp
-                   INCLUDE_DIRS git2
-                   LINK_LIBRARIES XmlToolsLib git2)
+                   INCLUDE_DIRS git2 Boost
+                   LINK_LIBRARIES XmlToolsLib git2 Boost)
 
   gaudi_install_headers(GitEntityResolver)
 
