@@ -153,9 +153,9 @@ const LHCb::CaloCluster*  LHCb::CaloAlgUtils::ClusterFromHypo(const LHCb::CaloHy
     return cluster;
   }
   // unregistered caloHypo -> return the smallest/largest cluster according to getsplit
-  constexpr auto smallest = [](const LHCb::CaloCluster* lhs, const LHCb::CaloCluster* rhs)
+  auto smallest = [](const LHCb::CaloCluster* lhs, const LHCb::CaloCluster* rhs)
              { return lhs->entries().size() < rhs->entries().size(); };
-  constexpr auto largest  = [](const LHCb::CaloCluster* lhs, const LHCb::CaloCluster* rhs)
+  auto largest  = [](const LHCb::CaloCluster* lhs, const LHCb::CaloCluster* rhs)
              { return lhs->entries().size() > rhs->entries().size(); };
   auto i = std::min_element( clusters.begin(), clusters.end(),
                              split ? smallest : largest ); // only works because non-capturing lambda can be converted to pointer to function
