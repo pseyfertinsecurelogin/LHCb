@@ -160,8 +160,10 @@ git_object_ptr GitEntityResolver::i_getData( boost::string_ref path ) const
                                    rev.c_str() );
 }
 
-std::string GitEntityResolver::i_getPayloadKey( const std::string& url ) {
-  auto data = open( url + "/IOVs" );
+std::string GitEntityResolver::i_getPayloadKey( const std::string& url )
+{
+  DEBUG_MSG << "getting payload key for " << url << endmsg;
+  auto data              = open( url + "/IOVs" );
   std::int_fast64_t time = 0; // FIXME: I'll get it
 
   std::string line;
@@ -170,20 +172,22 @@ std::string GitEntityResolver::i_getPayloadKey( const std::string& url ) {
   while ( std::getline( *data, line ) ) {
     std::istringstream is{line};
     is >> since;
-    if ( since > time )
-      break; // we use previous key
+    if ( since > time ) break; // we use previous key
     is >> key;
   }
+  DEBUG_MSG << "got " << key << endmsg;
   return key;
 }
 
-template<>
-GitEntityResolver::open_result_t GitEntityResolver::i_makeIStream<std::string>( const std::string& url ) const {
-  return open_result_t( new std::ifstream{m_pathToRepository.value() + "/" + url} );
+template <>
+GitEntityResolver::open_result_t GitEntityResolver::i_makeIStream<std::string>( const std::string& path ) const
+{
+  return open_result_t( new std::ifstream{path} );
 }
 
-template<>
-GitEntityResolver::open_result_t GitEntityResolver::i_makeIStream<git_object_ptr>( const git_object_ptr& obj ) const {
+template <>
+GitEntityResolver::open_result_t GitEntityResolver::i_makeIStream<git_object_ptr>( const git_object_ptr& obj ) const
+{
   auto blob = reinterpret_cast<const git_blob*>( obj.get() );
   std::string str{reinterpret_cast<const char*>( git_blob_rawcontent( blob ) ),
                   static_cast<std::size_t>( git_blob_rawsize( blob ) )};
@@ -192,9 +196,11 @@ GitEntityResolver::open_result_t GitEntityResolver::i_makeIStream<git_object_ptr
 
 GitEntityResolver::open_result_t GitEntityResolver::open( const std::string& url )
 {
-  return UNLIKELY( m_useFiles ) ? i_open( url, url ) : i_open( i_getData( strip_prefix( url ) ), url );
+  DEBUG_MSG << "open(\"" << url << "\")" << ( m_useFiles ? " [files]" : "" ) << endmsg;
+  auto path = strip_prefix( url );
+  return UNLIKELY( m_useFiles ) ? i_open( m_pathToRepository.value() + "/" + path.to_string(), url )
+                                : i_open( i_getData( path ), url );
 }
-
 
 xercesc::InputSource* GitEntityResolver::mkInputSource( GitEntityResolver::Blob data, const XMLCh* const systemId )
 {
@@ -213,7 +219,7 @@ xercesc::InputSource* GitEntityResolver::resolveEntity( const XMLCh* const, cons
     xercesc::XMLString::release( &cString );
   }
 
-  DEBUG_MSG << "systemId = \"" << systemIdString << "\"" << endmsg;
+  DEBUG_MSG << "resolveEntity(systemId = \"" << systemIdString << "\")" << endmsg;
 
   boost::string_ref url = systemIdString;
 
@@ -226,7 +232,7 @@ xercesc::InputSource* GitEntityResolver::resolveEntity( const XMLCh* const, cons
 
   url = strip_prefix( url );
 
-  return mkInputSource( Blob{ open( url.to_string() ) }, systemId );
+  return mkInputSource( Blob{open( url.to_string() )}, systemId );
 }
 
 void GitEntityResolver::defaultTags( std::vector<LHCb::CondDBNameTagPair>& tags ) const
