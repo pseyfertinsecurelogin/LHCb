@@ -3,5 +3,6 @@
 <DDDB>
   <catalog name="dd">
     <conditionref href="values.xml#TestCondition"/>
+    <conditionref href="changing.xml#Changing"/>
   </catalog>
 </DDDB>
