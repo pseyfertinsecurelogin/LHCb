@@ -3,15 +3,16 @@
 
 // Include files
 #include "GaudiKernel/AlgTool.h"
+#include "GaudiKernel/IDetDataSvc.h"
 #include "GaudiKernel/IFileAccess.h"
+#include "GaudiKernel/Time.h"
+#include "GitEntityResolver/helpers.h"
 #include "Kernel/ICondDBInfo.h"
 #include "XmlTools/IXmlEntityResolver.h"
-#include "GitEntityResolver/helpers.h"
 #include <boost/utility/string_ref.hpp>
 #include <type_traits>
 
 #include <iosfwd>
-
 
 /** Allow use of a Git repository as a source of XML files for XercesC.
  *
@@ -69,13 +70,16 @@ private:
   StringProperty m_pathToRepository;
   /// commit id (or tag, or branch) of the version to use
   StringProperty m_commit;
+  /// name of the IDetDataSvc, used to get the current event time
+  StringProperty m_detDataSvcName;
 
   /// internal flag used to track if we are using the Git database or checked out files
   bool m_useFiles = false;
 
   /// actual implementation of open method, depending on the use of git objects or files
-  template<class T>
-  open_result_t i_open( const T& obj, const std::string& url ) {
+  template <class T>
+  open_result_t i_open( const T& obj, const std::string& url )
+  {
     using Git::Helpers::is_dir;
     if ( is_dir( obj ) ) {
       return open( url + "/" + i_getPayloadKey( url ) );
@@ -85,7 +89,7 @@ private:
   }
 
   /// helper to convert to std::istream.
-  template<class T>
+  template <class T>
   open_result_t i_makeIStream( const T& obj ) const;
 
   /// for a given URL, retrieve the payload key to use for the current event time.
@@ -125,6 +129,9 @@ private:
   xercesc::InputSource* mkInputSource( GitEntityResolver::Blob data, const XMLCh* const systemId );
 
   git_repository_ptr m_repository;
+
+  /// used to get the current event time
+  SmartIF<IDetDataSvc> m_detDataSvc;
 };
 
 #endif // GITENTITYRESOLVER_H

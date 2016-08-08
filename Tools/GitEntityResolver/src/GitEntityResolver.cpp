@@ -73,6 +73,9 @@ GitEntityResolver::GitEntityResolver( const std::string& type, const std::string
   } );
 
   declareProperty( "Commit", m_commit = "HEAD", "commit id (or tag, or branch) of the version to use" );
+
+  declareProperty( "DetDataSvc", m_detDataSvcName = "DetectorDataSvc",
+                   "name of the IDetDataSvc, used to get the current event time" );
 }
 
 GitEntityResolver::~GitEntityResolver()
@@ -139,6 +142,7 @@ StatusCode GitEntityResolver::finalize()
 {
 
   m_repository.reset();
+  m_detDataSvc.reset();
 
   // Finalize the Xerces-C++ XML subsystem
   xercesc::XMLPlatformUtils::Terminate();
@@ -162,9 +166,12 @@ git_object_ptr GitEntityResolver::i_getData( boost::string_ref path ) const
 
 std::string GitEntityResolver::i_getPayloadKey( const std::string& url )
 {
-  DEBUG_MSG << "getting payload key for " << url << endmsg;
+  if ( UNLIKELY( !m_detDataSvc ) ) {
+    m_detDataSvc = service<IDetDataSvc>( m_detDataSvcName );
+  }
   auto data              = open( url + "/IOVs" );
-  std::int_fast64_t time = 0; // FIXME: I'll get it
+  std::int_fast64_t time = m_detDataSvc->eventTime().ns();
+  DEBUG_MSG << "getting payload key for " << url << " at " << time << endmsg;
 
   std::string line;
   std::int_fast64_t since = 0;
