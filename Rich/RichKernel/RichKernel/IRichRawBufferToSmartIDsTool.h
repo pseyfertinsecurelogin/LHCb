@@ -12,6 +12,9 @@
 #ifndef RICHKERNEL_IRICHRAWBUFFERTOSMARTIDSTOOL_H
 #define RICHKERNEL_IRICHRAWBUFFERTOSMARTIDSTOOL_H 1
 
+// STL
+#include <vector>
+
 // from Gaudi
 #include "GaudiKernel/IAlgTool.h"
 

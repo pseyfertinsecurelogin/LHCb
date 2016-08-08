@@ -83,8 +83,8 @@ namespace Rich
        *  @author Chris Jones    Christopher.Rob.Jones@cern.ch
        *  @date   2003-11-06
        */
-      class RichDAQHeaderPD : public HeaderPDBase,
-                              public LHCb::MemPoolAlloc<RichDAQHeaderPD>
+      class RichDAQHeaderPD final : public HeaderPDBase,
+                                    public LHCb::MemPoolAlloc<RichDAQHeaderPD>
       {
 
       public: // methods

@@ -174,7 +174,7 @@ namespace Rich
      *  @author Chris Jones   Christopher.Rob.Jones@cern.ch
      *  @date   11/11/2005
      */
-    class Level0ID : public NumericType<ShortType>
+    class Level0ID final : public NumericType<ShortType>
     {
     public :
       // Define the number of bits for each field
@@ -254,7 +254,7 @@ namespace Rich
      *  @author Chris Jones   Christopher.Rob.Jones@cern.ch
      *  @date   24/01/2007
      */
-    class EventID : public NumericType<unsigned long long>
+    class EventID final : public NumericType<unsigned long long>
     {
     public:
       /// Default constructor
@@ -317,7 +317,7 @@ namespace Rich
      *  @author Chris Jones   Christopher.Rob.Jones@cern.ch
      *  @date   24/01/2007
      */
-    class BXID : public NumericType<LongType>
+    class BXID final : public NumericType<LongType>
     {
     public:
       /// Default constructor
@@ -380,7 +380,7 @@ namespace Rich
      *  @author Chris Jones   Christopher.Rob.Jones@cern.ch
      *  @date   11/11/2005
      */
-    class Level1LogicalID : public NumericType<ShortType>
+    class Level1LogicalID final : public NumericType<ShortType>
     {
     public :
       /// Default Constructor
@@ -397,7 +397,7 @@ namespace Rich
      *  @author Chris Jones   Christopher.Rob.Jones@cern.ch
      *  @date   11/11/2005
      */
-    class Level1HardwareID : public NumericType<ShortType>
+    class Level1HardwareID final : public NumericType<ShortType>
     {
     public :
       /// Default Constructor
@@ -414,7 +414,7 @@ namespace Rich
      *  @author Chris Jones   Christopher.Rob.Jones@cern.ch
      *  @date   17/01/2007
      */
-    class L1IngressID : public NumericType<ShortType>
+    class L1IngressID final : public NumericType<ShortType>
     {
     public :
       /// Default Constructor
@@ -431,7 +431,7 @@ namespace Rich
      *  @author Chris Jones   Christopher.Rob.Jones@cern.ch
      *  @date   17/01/2007
      */
-    class L1InputWithinIngress : public NumericType<ShortType>
+    class L1InputWithinIngress final : public NumericType<ShortType>
     {
     public :
       /// Default Constructor
@@ -448,7 +448,7 @@ namespace Rich
      *  @author Chris Jones   Christopher.Rob.Jones@cern.ch
      *  @date   11/11/2005
      */
-    class Level1Input : public NumericType<ShortType>
+    class Level1Input final : public NumericType<ShortType>
     {
     public :
       /// Default Constructor
@@ -482,7 +482,7 @@ namespace Rich
      *  @author Chris Jones   Christopher.Rob.Jones@cern.ch
      *  @date   11/11/2005
      */
-    class HPDHardwareID : public NumericType<ShortType>
+    class HPDHardwareID final : public NumericType<ShortType>
     {
     public :
       /// Default Constructor
@@ -503,7 +503,7 @@ namespace Rich
      *  @author Chris Jones   Christopher.Rob.Jones@cern.ch
      *  @date   11/11/2005
      */
-    class HPDL1InputID : public NumericType<LongType>
+    class HPDL1InputID final : public NumericType<LongType>
     {
     public :
       // Define the number of bits for each field
@@ -597,7 +597,7 @@ namespace Rich
      *  @author Chris Jones   Christopher.Rob.Jones@cern.ch
      *  @date   11/11/2010
      */
-    class Level1CopyNumber : public NumericType<ShortType>
+    class Level1CopyNumber final : public NumericType<ShortType>
     {
     public :
       /// Default Constructor

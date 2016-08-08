@@ -31,7 +31,7 @@ namespace Rich
    */
   //-----------------------------------------------------------------------------
 
-  class Exception : public GaudiException
+  class Exception final : public GaudiException
   {
 
   public:
@@ -58,7 +58,7 @@ namespace Rich
 
     /** destructor
      */
-    virtual ~Exception() throw() {};
+    virtual ~Exception() throw() {}
 
     /** clone (virtual constructor)
      */

@@ -1,4 +1,3 @@
-// $Id: $
 #ifndef L0DUFROMRAWHLT1TOOL_H 
 #define L0DUFROMRAWHLT1TOOL_H 1
 
@@ -33,21 +32,21 @@ public:
   std::string dump() const override { return "== not implemented =="; }
   
 
-  virtual unsigned int data(const std::string& name) const { return m_dataMap.at(name).first; } 
-  virtual unsigned int version() const              { return m_vsn;};
-  virtual unsigned int tck() const                  { return m_tck; }
-  virtual unsigned int firmware() const             { return m_pgaVsn; }
-  virtual unsigned int rsda() const                 { return m_rsda; }
-  virtual unsigned int muonCleaningPattern() const  { return m_muCleanPattern; }
-  virtual unsigned int status() const               { return m_status; }
-  virtual unsigned int size() const                 { return m_size;  }
-  virtual unsigned long roStatus() const            { return m_roStatus.status();  }
-  virtual void fillDataMap(bool fill = true)  { m_fill = fill;}
-  virtual LHCb::L0DUReport report( ) const          { return m_report;}
-  virtual LHCb::L0ProcessorDatas* L0ProcessorDatas()         { return m_processorDatas;}
-  virtual const std::pair<unsigned int,unsigned int> bcid()  const { return {m_bcid2,m_bcid3}; }
-  virtual const std::map<std::string, std::pair<unsigned int,double> >& datas() const { return m_dataMap;}
-  virtual StatusCode  _setProperty(const std::string& p,const std::string& v)   { return  setProperty(p,v);};
+  virtual unsigned int data(const std::string& name) const override { return m_dataMap.at(name).first; } 
+  virtual unsigned int version() const  override             { return m_vsn;};
+  virtual unsigned int tck() const      override             { return m_tck; }
+  virtual unsigned int firmware() const override             { return m_pgaVsn; }
+  virtual unsigned int rsda() const     override             { return m_rsda; }
+  virtual unsigned int muonCleaningPattern() const override  { return m_muCleanPattern; }
+  virtual unsigned int status() const   override             { return m_status; }
+  virtual unsigned int size() const     override             { return m_size;  }
+  virtual unsigned long roStatus() const override            { return m_roStatus.status();  }
+  virtual void fillDataMap(bool fill = true) override { m_fill = fill;}
+  virtual LHCb::L0DUReport report( ) const  override         { return m_report;}
+  virtual LHCb::L0ProcessorDatas* L0ProcessorDatas() override { return m_processorDatas;}
+  virtual const std::pair<unsigned int,unsigned int> bcid() const override { return {m_bcid2,m_bcid3}; }
+  virtual const std::map<std::string, std::pair<unsigned int,double> >& datas() const override { return m_dataMap;}
+  virtual StatusCode  _setProperty(const std::string& p,const std::string& v) override   { return  setProperty(p,v);};
 
 protected:
   void encode(std::string name, unsigned int data , unsigned int scale = 1 ) {

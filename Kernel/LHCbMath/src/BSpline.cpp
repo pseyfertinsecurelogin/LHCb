@@ -497,13 +497,13 @@ Gaudi::Math::BSpline::__radd__  ( const double value ) const
 // Product of B-spline and a constant
 // ============================================================================
 Gaudi::Math::BSpline
-Gaudi::Math::BSpline::__mult__  ( const double value ) const 
+Gaudi::Math::BSpline::__mul__   ( const double value ) const 
 { return (*this) * value ; }
 // ============================================================================
 // Product of B-spline and a constant
 // ============================================================================
 Gaudi::Math::BSpline
-Gaudi::Math::BSpline::__rmult__ ( const double value ) const 
+Gaudi::Math::BSpline::__rmul__  ( const double value ) const 
 { return value * (*this) ; }
 // ============================================================================
 // Subtract a constant from B-spline 

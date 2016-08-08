@@ -65,7 +65,7 @@ namespace Rich
                 ISvcLocator *svc = NULL );
 
     /// Destructor
-    virtual ~CommonBase( );
+    virtual ~CommonBase( ) = default;
 
   public:
 
@@ -75,7 +75,7 @@ namespace Rich
      * @retval StatusCode::SUCCESS Initialization was successful
      * @retval StatusCode::FAILURE Initialization failed
      */
-    virtual StatusCode initialize();
+    virtual StatusCode initialize() override;
 
     /** Finalization of the algorithm before deletion
      *
@@ -83,7 +83,7 @@ namespace Rich
      * @retval StatusCode::SUCCESS Finalization was successful
      * @retval StatusCode::FAILURE Finalization failed
      */
-    virtual StatusCode finalize();
+    virtual StatusCode finalize() override;
 
   public:
 

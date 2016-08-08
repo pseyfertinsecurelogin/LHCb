@@ -32,7 +32,7 @@ namespace Rich
    *  @author Chris Jones   Christopher.Rob.Jones@cern.ch
    *  @date   12/02/2010
    */
-  class PackedPIDInfo
+  class PackedPIDInfo final
   {
 
   public:

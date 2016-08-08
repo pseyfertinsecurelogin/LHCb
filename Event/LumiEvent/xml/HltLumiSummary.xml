@@ -9,6 +9,8 @@
       name        = 'HltLumiSummary'
       author      = 'Jaap Panman'
       desc        = 'Summary class for Lumi in Hlt'
+      defaultdestructor = "FALSE"
+      final       = "TRUE"
       id = '7520'
       serializers = 'TRUE'>
 

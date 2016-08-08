@@ -32,7 +32,7 @@ namespace Rich
      *  @author Chris Jones   Christopher.Rob.Jones@cern.ch
      *  @date   20/04/2007
      */
-    class HPDInfo // : public LHCb::MemPoolAlloc<HPDInfo>
+    class HPDInfo final // : public LHCb::MemPoolAlloc<HPDInfo>
     {
 
     public:
@@ -132,7 +132,7 @@ namespace Rich
      *  @author Chris Jones   Christopher.Rob.Jones@cern.ch
      *  @date   20/04/2007
      */
-    class IngressInfo // : public LHCb::MemPoolAlloc<IngressInfo>
+    class IngressInfo final // : public LHCb::MemPoolAlloc<IngressInfo>
     {
 
     public:

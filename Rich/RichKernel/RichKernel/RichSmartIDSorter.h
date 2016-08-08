@@ -69,7 +69,7 @@ namespace Rich
     SmartIDSorter() { }
 
     /// Destructor
-    ~SmartIDSorter() { }
+    ~SmartIDSorter() = default;
 
     /// Sort the list by detector region
     inline static void sortByRegion( LHCb::RichSmartID::Vector& smartIDs )
