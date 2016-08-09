@@ -170,7 +170,7 @@ GitEntityResolver::IOVInfo GitEntityResolver::i_getIOVInfo( const std::string& u
   DEBUG_MSG << "getting payload key for " << url << " at " << time << endmsg;
 
   std::string line;
-  std::int_fast64_t current = 0, since = 0, until = 0x7fffffffffffffffLL; // cool::ValidityKeyMax
+  std::int_fast64_t current = 0, since = 0, until = IOVInfo::MAX_TIME;
   std::string key;
   while ( std::getline( *data, line ) ) {
     std::istringstream is{line};
@@ -206,8 +206,9 @@ GitEntityResolver::open_result_t GitEntityResolver::open( const std::string& url
 {
   DEBUG_MSG << "open(\"" << url << "\")" << ( m_useFiles ? " [files]" : "" ) << endmsg;
   auto path = strip_prefix( url );
-  return UNLIKELY( m_useFiles ) ? i_open( m_pathToRepository.value() + "/" + path.to_string(), url )
-                                : i_open( i_getData( path ), url );
+  return ( UNLIKELY( m_useFiles ) ? i_open( m_pathToRepository.value() + "/" + path.to_string(), url )
+                                  : i_open( i_getData( path ), url ) )
+      .first;
 }
 
 xercesc::InputSource* GitEntityResolver::resolveEntity( const XMLCh* const, const XMLCh* const systemId )

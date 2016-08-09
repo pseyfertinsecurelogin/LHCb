@@ -78,21 +78,23 @@ private:
 
   /// Helper class to propagate info about needed IOV.
   struct IOVInfo {
-    std::string key;
-    Gaudi::Time since;
-    Gaudi::Time until;
+    constexpr static const Gaudi::Time::ValueType MAX_TIME{0x7fffffffffffffffLL}; // cool::ValidityKeyMax
+    std::string key   = "";
+    Gaudi::Time since = 0;
+    Gaudi::Time until = MAX_TIME;
   };
   friend std::ostream& operator<<( std::ostream& s, const IOVInfo& info );
 
   /// actual implementation of open method, depending on the use of git objects or files
   template <class T>
-  open_result_t i_open( const T& obj, const std::string& url )
+  std::pair<open_result_t, IOVInfo> i_open( const T& obj, const std::string& url )
   {
     using Git::Helpers::is_dir;
     if ( is_dir( obj ) ) {
-      return open( url + "/" + i_getIOVInfo( url ).key );
+      auto info = i_getIOVInfo( url );
+      return std::make_pair( open( url + "/" + info.key ), info );
     } else {
-      return i_makeIStream( obj );
+      return std::make_pair( i_makeIStream( obj ), IOVInfo{} );
     }
   }
 
