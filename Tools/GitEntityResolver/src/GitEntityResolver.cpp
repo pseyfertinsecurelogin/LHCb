@@ -29,25 +29,43 @@ namespace
     while ( url[0] == '/' ) url          = url.substr( 1 ); // strip optional leading '/'s
     return url;
   }
+
+  /// Helper class to manage Xerces-C++ buffers
+  struct Blob {
+    Blob( GitEntityResolver::open_result_t&& f )
+    {
+      m_size    = f->seekg( 0, std::ifstream::end ).tellg();
+      auto buff = xercesc::XMLPlatformUtils::fgMemoryManager->allocate( m_size );
+      f->seekg( 0 ).read( reinterpret_cast<std::ifstream::char_type*>( buff ), m_size );
+      m_buff = reinterpret_cast<const XMLByte*>( buff );
+    }
+    Blob( const Blob& ) = delete;
+
+    ~Blob()
+    {
+      auto tmp = static_cast<const void*>( adopt() );
+      if ( tmp ) xercesc::XMLPlatformUtils::fgMemoryManager->deallocate( const_cast<void*>( tmp ) );
+    }
+
+    const XMLByte* get() { return m_buff; }
+    XMLSize_t size() { return m_size; }
+    const XMLByte* adopt()
+    {
+      const XMLByte* tmp = m_buff;
+      m_buff             = nullptr;
+      m_size             = 0;
+      return tmp;
+    }
+
+  private:
+    const XMLByte* m_buff = nullptr;
+    XMLSize_t m_size      = 0;
+  };
 }
 
 std::ostream& operator<<( std::ostream& s, const GitEntityResolver::IOVInfo& info )
 {
   return s << info.key << " [" << info.since << ", " << info.until << ")";
-}
-
-GitEntityResolver::Blob::Blob( open_result_t&& f )
-{
-  m_size    = f->seekg( 0, std::ifstream::end ).tellg();
-  auto buff = xercesc::XMLPlatformUtils::fgMemoryManager->allocate( m_size );
-  f->seekg( 0 ).read( reinterpret_cast<std::ifstream::char_type*>( buff ), m_size );
-  m_buff = reinterpret_cast<const XMLByte*>( buff );
-}
-
-GitEntityResolver::Blob::~Blob()
-{
-  auto tmp = static_cast<const void*>( adopt() );
-  if ( tmp ) xercesc::XMLPlatformUtils::fgMemoryManager->deallocate( const_cast<void*>( tmp ) );
 }
 
 #define ON_DEBUG if ( UNLIKELY( msgLevel( MSG::DEBUG ) ) )
@@ -202,13 +220,13 @@ GitEntityResolver::open_result_t GitEntityResolver::i_makeIStream<git_object_ptr
   return open_result_t( new std::istringstream( str ) );
 }
 
-GitEntityResolver::open_result_t GitEntityResolver::open( const std::string& url )
+std::pair<GitEntityResolver::open_result_t, GitEntityResolver::IOVInfo>
+GitEntityResolver::i_open( const std::string& url )
 {
   DEBUG_MSG << "open(\"" << url << "\")" << ( m_useFiles ? " [files]" : "" ) << endmsg;
   auto path = strip_prefix( url );
-  return ( UNLIKELY( m_useFiles ) ? i_open( m_pathToRepository.value() + "/" + path.to_string(), url )
-                                  : i_open( i_getData( path ), url ) )
-      .first;
+  return UNLIKELY( m_useFiles ) ? i_open( m_pathToRepository.value() + "/" + path.to_string(), url )
+                                : i_open( i_getData( path ), url );
 }
 
 xercesc::InputSource* GitEntityResolver::resolveEntity( const XMLCh* const, const XMLCh* const systemId )
@@ -233,9 +251,11 @@ xercesc::InputSource* GitEntityResolver::resolveEntity( const XMLCh* const, cons
     return nullptr;
   }
 
-  Blob data{open( url.to_string() )};
-  auto buff_size = data.size(); // must be done here because "adopt" set the size to 0
-  return new xercesc::MemBufInputSource( data.adopt(), buff_size, systemId, true );
+  auto data = i_open( url.to_string() );
+
+  Blob blob{std::move( data.first )};
+  auto buff_size = blob.size(); // must be done here because "adopt" set the size to 0
+  return new xercesc::MemBufInputSource( blob.adopt(), buff_size, systemId, true );
 }
 
 void GitEntityResolver::defaultTags( std::vector<LHCb::CondDBNameTagPair>& tags ) const

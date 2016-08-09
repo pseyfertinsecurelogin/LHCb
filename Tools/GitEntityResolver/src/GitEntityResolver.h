@@ -55,7 +55,7 @@ public:
   /// object that can be used to read from the file the URL is pointing to.
   /// Returns an empty pointer if the URL cannot be resolved.
   using open_result_t = typename std::result_of<decltype ( &IFileAccess::open )( IFileAccess&, std::string )>::type;
-  open_result_t open( const std::string& url ) override;
+  open_result_t open( const std::string& url ) override { return i_open( url ).first; }
 
   /// @see IFileAccess::protocols
   const std::vector<std::string>& protocols() const override;
@@ -82,6 +82,10 @@ private:
     std::string key   = "";
     Gaudi::Time since = 0;
     Gaudi::Time until = MAX_TIME;
+    bool operator==( const IOVInfo& other ) const
+    {
+      return since == other.since && until == other.until && key == other.key;
+    }
   };
   friend std::ostream& operator<<( std::ostream& s, const IOVInfo& info );
 
@@ -98,33 +102,15 @@ private:
     }
   }
 
+  /// entry opint to the implementation of the open method.
+  std::pair<open_result_t, IOVInfo> i_open( const std::string& url );
+
   /// helper to convert to std::istream.
   template <class T>
   open_result_t i_makeIStream( const T& obj ) const;
 
   /// for a given URL, retrieve the payload key to use for the current event time.
   IOVInfo i_getIOVInfo( const std::string& url );
-
-  /// Helper class to manage Xerces-C++ buffers
-  struct Blob {
-    Blob( open_result_t&& f );
-    Blob( const Blob& ) = delete;
-
-    ~Blob();
-    const XMLByte* get() { return m_buff; }
-    XMLSize_t size() { return m_size; }
-    const XMLByte* adopt()
-    {
-      const XMLByte* tmp = m_buff;
-      m_buff             = nullptr;
-      m_size             = 0;
-      return tmp;
-    }
-
-  private:
-    const XMLByte* m_buff = nullptr;
-    XMLSize_t m_size      = 0;
-  };
 
   /// Return a string containing the data at a given path in the repository.
   git_object_ptr i_getData( boost::string_ref url ) const;
