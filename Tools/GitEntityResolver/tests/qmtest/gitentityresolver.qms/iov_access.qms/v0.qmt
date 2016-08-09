@@ -53,7 +53,7 @@ stripped_output = '\n'.join(l for l in stdout.splitlines()
 
 findReferenceBlock('''
 --- /dd/Changing
-Validity: 0.0 -> 9223372036.854775807
+Validity: 1470002400.0 -> 9223372036.854775807
 (int) parameter = {parameter}
 '''.format(parameter=parameter),
 stdout=stripped_output,

@@ -8,6 +8,8 @@
 #include <xercesc/util/PlatformUtils.hpp>
 #include <xercesc/util/XMLString.hpp>
 
+#include "XmlTools/ValidInputSource.h"
+
 DECLARE_COMPONENT( GitEntityResolver )
 
 namespace
@@ -188,7 +190,7 @@ GitEntityResolver::IOVInfo GitEntityResolver::i_getIOVInfo( const std::string& u
   DEBUG_MSG << "getting payload key for " << url << " at " << time << endmsg;
 
   std::string line;
-  std::int_fast64_t current = 0, since = 0, until = IOVInfo::MAX_TIME;
+  std::int_fast64_t current = 0, since = 0, until = Gaudi::Time::max().ns();
   std::string key;
   while ( std::getline( *data, line ) ) {
     std::istringstream is{line};
@@ -255,7 +257,10 @@ xercesc::InputSource* GitEntityResolver::resolveEntity( const XMLCh* const, cons
 
   Blob blob{std::move( data.first )};
   auto buff_size = blob.size(); // must be done here because "adopt" set the size to 0
-  return new xercesc::MemBufInputSource( blob.adopt(), buff_size, systemId, true );
+
+  std::unique_ptr<ValidInputSource> src{new ValidInputSource{blob.adopt(), buff_size, systemId, true}};
+  src->setValidity( data.second.since, data.second.until );
+  return src.release();
 }
 
 void GitEntityResolver::defaultTags( std::vector<LHCb::CondDBNameTagPair>& tags ) const

@@ -78,14 +78,9 @@ private:
 
   /// Helper class to propagate info about needed IOV.
   struct IOVInfo {
-    constexpr static const Gaudi::Time::ValueType MAX_TIME{0x7fffffffffffffffLL}; // cool::ValidityKeyMax
     std::string key   = "";
-    Gaudi::Time since = 0;
-    Gaudi::Time until = MAX_TIME;
-    bool operator==( const IOVInfo& other ) const
-    {
-      return since == other.since && until == other.until && key == other.key;
-    }
+    Gaudi::Time since = Gaudi::Time::epoch();
+    Gaudi::Time until = Gaudi::Time::max();
   };
   friend std::ostream& operator<<( std::ostream& s, const IOVInfo& info );
 
