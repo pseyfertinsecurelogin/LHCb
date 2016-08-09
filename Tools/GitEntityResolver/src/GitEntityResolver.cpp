@@ -36,15 +36,6 @@ std::ostream& operator<<( std::ostream& s, const GitEntityResolver::IOVInfo& inf
   return s << info.key << " [" << info.since << ", " << info.until << ")";
 }
 
-GitEntityResolver::Blob::Blob( const git_object_ptr& obj )
-{
-  auto blob = reinterpret_cast<const git_blob*>( obj.get() );
-  m_size    = git_blob_rawsize( blob );
-  auto buff = xercesc::XMLPlatformUtils::fgMemoryManager->allocate( m_size );
-  std::memcpy( buff, git_blob_rawcontent( blob ), m_size );
-  m_buff = reinterpret_cast<const XMLByte*>( buff );
-}
-
 GitEntityResolver::Blob::Blob( open_result_t&& f )
 {
   m_size    = f->seekg( 0, std::ifstream::end ).tellg();
@@ -219,12 +210,6 @@ GitEntityResolver::open_result_t GitEntityResolver::open( const std::string& url
                                 : i_open( i_getData( path ), url );
 }
 
-xercesc::InputSource* GitEntityResolver::mkInputSource( GitEntityResolver::Blob data, const XMLCh* const systemId )
-{
-  auto buff_size = data.size(); // must be done here because "adopt" set the size to 0
-  return new xercesc::MemBufInputSource( data.adopt(), buff_size, systemId, true );
-}
-
 xercesc::InputSource* GitEntityResolver::resolveEntity( const XMLCh* const, const XMLCh* const systemId )
 {
 
@@ -247,9 +232,9 @@ xercesc::InputSource* GitEntityResolver::resolveEntity( const XMLCh* const, cons
     return nullptr;
   }
 
-  url = strip_prefix( url );
-
-  return mkInputSource( Blob{open( url.to_string() )}, systemId );
+  Blob data{open( url.to_string() )};
+  auto buff_size = data.size(); // must be done here because "adopt" set the size to 0
+  return new xercesc::MemBufInputSource( data.adopt(), buff_size, systemId, true );
 }
 
 void GitEntityResolver::defaultTags( std::vector<LHCb::CondDBNameTagPair>& tags ) const

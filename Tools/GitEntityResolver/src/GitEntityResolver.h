@@ -105,13 +105,7 @@ private:
 
   /// Helper class to manage Xerces-C++ buffers
   struct Blob {
-    Blob( const git_object_ptr& obj );
     Blob( open_result_t&& f );
-    Blob( Blob&& other )
-    {
-      m_size = other.m_size;
-      m_buff = other.adopt();
-    }
     Blob( const Blob& ) = delete;
 
     ~Blob();
@@ -132,9 +126,6 @@ private:
 
   /// Return a string containing the data at a given path in the repository.
   git_object_ptr i_getData( boost::string_ref url ) const;
-
-  /// helper to make a Xerces-C++ input source
-  xercesc::InputSource* mkInputSource( GitEntityResolver::Blob data, const XMLCh* const systemId );
 
   git_repository_ptr m_repository;
 
