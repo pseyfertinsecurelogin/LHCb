@@ -76,13 +76,21 @@ private:
   /// internal flag used to track if we are using the Git database or checked out files
   bool m_useFiles = false;
 
+  /// Helper class to propagate info about needed IOV.
+  struct IOVInfo {
+    std::string key;
+    Gaudi::Time since;
+    Gaudi::Time until;
+  };
+  friend std::ostream& operator<<( std::ostream& s, const IOVInfo& info );
+
   /// actual implementation of open method, depending on the use of git objects or files
   template <class T>
   open_result_t i_open( const T& obj, const std::string& url )
   {
     using Git::Helpers::is_dir;
     if ( is_dir( obj ) ) {
-      return open( url + "/" + i_getPayloadKey( url ) );
+      return open( url + "/" + i_getIOVInfo( url ).key );
     } else {
       return i_makeIStream( obj );
     }
@@ -93,7 +101,7 @@ private:
   open_result_t i_makeIStream( const T& obj ) const;
 
   /// for a given URL, retrieve the payload key to use for the current event time.
-  std::string i_getPayloadKey( const std::string& url );
+  IOVInfo i_getIOVInfo( const std::string& url );
 
   /// Helper class to manage Xerces-C++ buffers
   struct Blob {

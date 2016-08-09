@@ -31,6 +31,11 @@ namespace
   }
 }
 
+std::ostream& operator<<( std::ostream& s, const GitEntityResolver::IOVInfo& info )
+{
+  return s << info.key << " [" << info.since << ", " << info.until << ")";
+}
+
 GitEntityResolver::Blob::Blob( const git_object_ptr& obj )
 {
   auto blob = reinterpret_cast<const git_blob*>( obj.get() );
@@ -164,7 +169,7 @@ git_object_ptr GitEntityResolver::i_getData( boost::string_ref path ) const
                                    rev.c_str() );
 }
 
-std::string GitEntityResolver::i_getPayloadKey( const std::string& url )
+GitEntityResolver::IOVInfo GitEntityResolver::i_getIOVInfo( const std::string& url )
 {
   if ( UNLIKELY( !m_detDataSvc ) ) {
     m_detDataSvc = service<IDetDataSvc>( m_detDataSvcName );
@@ -174,16 +179,21 @@ std::string GitEntityResolver::i_getPayloadKey( const std::string& url )
   DEBUG_MSG << "getting payload key for " << url << " at " << time << endmsg;
 
   std::string line;
-  std::int_fast64_t since = 0;
+  std::int_fast64_t current = 0, since = 0, until = 0x7fffffffffffffffLL; // cool::ValidityKeyMax
   std::string key;
   while ( std::getline( *data, line ) ) {
     std::istringstream is{line};
-    is >> since;
-    if ( since > time ) break; // we use previous key
+    is >> current;
+    if ( current > time ) {
+      until = current; // what we read is the "until" for the previous key
+      break;           // and we need to use the previous key
+    }
     is >> key;
+    since = current; // the time we read is the "since" for the read key
   }
-  DEBUG_MSG << "got " << key << endmsg;
-  return key;
+  IOVInfo info{key, since, until};
+  DEBUG_MSG << "got " << info << endmsg;
+  return info;
 }
 
 template <>
