@@ -8,7 +8,8 @@
 </set></argument>
 <argument name="options"><text>
 from Gaudi.Configuration import *
-from Configurables import GitEntityResolver, DDDBConf, CondDB
+from Configurables import (GitEntityResolver, DDDBConf, CondDB,
+                           EventClockSvc, FakeEventTime)
 from Configurables import DetCondTest__TestConditionAlg as TestAlg
 
 import os
@@ -20,7 +21,14 @@ DDDBConf(DataType = "2016")
 CondDB(EnableRunStampCheck = False,
        Tags={'DDDB': 'v0'})
 
-ApplicationMgr().TopAlg.append(TestAlg(Conditions=['/dd/Changing']))
+ecs = EventClockSvc()
+ecs.addTool(FakeEventTime, 'EventTimeDecoder')
+# tuned from the content of /dd/Changing for tag v0
+ecs.EventTimeDecoder.StartTime = 1442403000000000000
+ecs.EventTimeDecoder.TimeStep = 18399600000000000
+
+ApplicationMgr(EvtMax=3).TopAlg.append(TestAlg(Conditions=['/dd/Changing']))
+
 </text></argument>
 <argument name="validator"><text>
 from subprocess import check_output
@@ -53,9 +61,15 @@ stripped_output = '\n'.join(l for l in stdout.splitlines()
 
 findReferenceBlock('''
 --- /dd/Changing
+Validity: 0.0 -> 1451602800.0
+(int) parameter = 0
+--- /dd/Changing
+Validity: 1451602800.0 -> 1470002400.0
+(int) parameter = 1
+--- /dd/Changing
 Validity: 1470002400.0 -> 9223372036.854775807
-(int) parameter = {parameter}
-'''.format(parameter=parameter),
+(int) parameter = 0
+''',
 stdout=stripped_output,
 id='condition_value')
 
