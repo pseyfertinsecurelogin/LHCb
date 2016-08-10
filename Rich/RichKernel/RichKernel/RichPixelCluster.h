@@ -86,15 +86,13 @@ namespace Rich
     /// Copy Constructor from a vector of RichSmartIDs
     explicit HPDPixelCluster( const SmartIDVector & ids ) : m_ids(ids)
     {
-      m_side = primaryID().panel();
-      m_rich = primaryID().rich();
+      updateCachedEnums();
     }
 
     /// Move Constructor from a vector of RichSmartIDs
     explicit HPDPixelCluster( SmartIDVector && ids ) : m_ids(std::move(ids))
     {
-      m_side = primaryID().panel();
-      m_rich = primaryID().rich();
+      updateCachedEnums();
     }
 
   public:
@@ -132,10 +130,18 @@ namespace Rich
   public:
 
     /// Add a channel to this cluster
-    inline void addChannel( const LHCb::RichSmartID& id ) { m_ids.emplace_back(id); }
+    inline void addChannel( const LHCb::RichSmartID& id ) 
+    {
+      m_ids.emplace_back(id);
+      updateCachedEnums();
+    }
 
     /// Add a channel to this cluster
-    inline void addChannel( LHCb::RichSmartID&& id ) { m_ids.emplace_back(std::move(id)); }
+    inline void addChannel( LHCb::RichSmartID&& id ) 
+    {
+      m_ids.emplace_back(std::move(id));
+      updateCachedEnums();
+    }
 
   public:
 
@@ -144,6 +150,15 @@ namespace Rich
                                               const HPDPixelCluster & cluster )
     {
       return s << "[ " << cluster.smartIDs() << " ]";
+    }
+
+  private:
+
+    /// Update the cached RICH and panel enums
+    inline void updateCachedEnums() 
+    {
+      m_side = primaryID().panel();
+      m_rich = primaryID().rich();
     }
 
   private:
