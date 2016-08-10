@@ -17,6 +17,7 @@
 #include <vector>
 #include <iostream>
 #include <array>
+#include <stdint.h>
 
 // General namespace for RICH specific definitions documented in RichSide.h
 namespace Rich 
@@ -33,7 +34,7 @@ namespace Rich
    *  @date   08/07/2004
    */
   //--------------------------------------------------------------------------
-  enum ParticleIDType
+  enum ParticleIDType : int8_t
     {
       Unknown = -1,   ///< Unknown particle type
       Electron,       ///< Represents e+ or e-

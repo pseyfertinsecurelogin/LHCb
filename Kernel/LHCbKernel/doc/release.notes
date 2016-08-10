@@ -5,6 +5,9 @@
 !--------------------------------------------------------------------------------
 
 ! 2016-08-10 - Chris Jones
+ - Use 8-bit ints as enum underlying types for various RICH enums.
+
+! 2016-08-10 - Chris Jones
  - Add templated alias to STL arrays for RICH particle types
 
 ! 2016-07-29 - Chris Jones

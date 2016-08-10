@@ -93,7 +93,7 @@ namespace LHCb
      *  @author Chris Jones  Christopher.Rob.Jones@cern.ch
      *  @date   25/02/2011
      */
-    enum IDType
+    enum IDType : int8_t
       {
         Undefined = -1, ///< Undefined
         MaPMTID = 0,    ///< Represents an MaPMT channel
