@@ -16,6 +16,7 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include <array>
 
 // General namespace for RICH specific definitions documented in RichSide.h
 namespace Rich 
@@ -60,6 +61,10 @@ namespace Rich
   {
     return s << Rich::text(particle) ;
   }
+
+  /// Type for fixed size arrays with mass hypothesis information
+  template < typename TYPE >
+  using ParticleArray = std::array< TYPE, NParticleTypes >;
   
 }
 
