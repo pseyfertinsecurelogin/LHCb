@@ -9,10 +9,19 @@
 #include "GitEntityResolver/helpers.h"
 #include "Kernel/ICondDBInfo.h"
 #include "XmlTools/IXmlEntityResolver.h"
-#include <boost/utility/string_ref.hpp>
+
+#include <algorithm>
+#include <iosfwd>
 #include <type_traits>
 
-#include <iosfwd>
+#include <boost/utility/string_ref.hpp>
+
+// this should be defined in GaudiKernel/Time.h, but the version there is not
+// found by ADL
+namespace Gaudi
+{
+  inline bool operator<( const Time& t1, const Time& t2 ) { return t1.ns() < t2.ns(); }
+}
 
 /** Allow use of a Git repository as a source of XML files for XercesC.
  *
@@ -81,6 +90,11 @@ private:
     std::string key   = "";
     Gaudi::Time since = Gaudi::Time::epoch();
     Gaudi::Time until = Gaudi::Time::max();
+    void cut( const IOVInfo& boundary )
+    {
+      since = std::max( since, boundary.since );
+      until = std::min( until, boundary.until );
+    }
   };
   friend std::ostream& operator<<( std::ostream& s, const IOVInfo& info );
 
@@ -90,8 +104,10 @@ private:
   {
     using Git::Helpers::is_dir;
     if ( is_dir( obj ) ) {
-      auto info = i_getIOVInfo( url );
-      return std::make_pair( open( url + "/" + info.key ), info );
+      auto info   = i_getIOVInfo( url );
+      auto result = i_open( url + "/" + info.key );
+      result.second.cut( info );
+      return result;
     } else {
       return std::make_pair( i_makeIStream( obj ), IOVInfo{} );
     }
