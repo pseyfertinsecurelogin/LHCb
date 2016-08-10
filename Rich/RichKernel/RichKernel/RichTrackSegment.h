@@ -541,6 +541,12 @@ namespace LHCb
       return m_middleMomentum;
     }
 
+    /// Returns the magnitude of the best momentum vector
+    inline double bestMomentumMag() const
+    {
+      return std::sqrt( m_middleMomentum.Mag2() );
+    }
+
     /// Returns the radiator type
     inline Rich::RadiatorType radiator() const noexcept
     {

@@ -4,6 +4,10 @@
 ! Purpose     : General purpose RICH classes
 !------------------------------------------------------------------------------
 
+! 2016-08-10 - Chris Jones
+ - Add shortcut method to RichTrackSegment to access the magnitude of the
+   'best' (middle point) momentum vector.
+
 ! 2016-07-31 - Chris Jones
  - Cache some variables in RichTrackSegment to allow for faster bestPoint and
    bestMomentum calculations
