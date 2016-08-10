@@ -179,7 +179,7 @@ namespace LHCb
     };
 
     /// Enum to flag to determine how to create the RichTrackSegment
-    enum SegmentType
+    enum SegmentType : int8_t
       {
         UnDefined             = 0,  ///< Undefined segment type
         UseChordBetweenStates,      ///< Uses full state information to define the segment direction
