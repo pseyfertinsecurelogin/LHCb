@@ -81,16 +81,12 @@ copy(join(path, 'changing.xml', 'v0.xml'),
      join(dirInit, 'v0'))
 write_IOVs([(EPOCH, 'v0')], dirInit)
 
-copy(join(path, 'changing.xml', 'v0.xml'),
-     join(dir2016, 'v0'))
 copy(join(path, 'changing.xml', 'v1.xml'),
      join(dir2016, 'v1'))
-write_IOVs([(datetime(2016, 1, 1), 'v0'),
+write_IOVs([(EPOCH, '../initial/v0'),
             (datetime(2016, 7, 1), 'v1')], dir2016)
 
-copy(join(path, 'changing.xml', 'v1.xml'),
-     join(dir2017, 'v1'))
-write_IOVs([(datetime(2017, 1, 1), 'v1')], dir2017)
+write_IOVs([(EPOCH, '../2016/v1')], dir2017)
 
 os.remove(join(path, 'changing.xml', 'v0.xml'))
 os.remove(join(path, 'changing.xml', 'v1.xml'))

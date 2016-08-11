@@ -12,6 +12,31 @@
 
 DECLARE_COMPONENT( GitEntityResolver )
 
+#include <boost/version.hpp>
+#if BOOST_VERSION >= 106100
+#include <boost/filesystem/path.hpp>
+namespace {
+  std::string normalize( boost::filesystem::path path ) {
+    return path.lexically_normal().generic_string();
+  }
+}
+#else
+#include <regex>
+namespace {
+  /// helper to normalize relative paths
+  std::string normalize( std::string path ) {
+    // regex for entries to be removed, i.e. "/parent/../" and "/./"
+    static const std::regex ignored_re{"(/[^/]+/\\.\\./)|(/\\./)"};
+    std::string old_path;
+    while ( old_path.length() != path.length() ) {
+      old_path.swap(path);
+      path = std::regex_replace(old_path, ignored_re, "/");
+    }
+    return path;
+  }
+}
+#endif
+
 namespace
 {
 
@@ -175,7 +200,7 @@ const std::vector<std::string>& GitEntityResolver::protocols() const
 
 git_object_ptr GitEntityResolver::i_getData( boost::string_ref path ) const
 {
-  std::string rev = m_commit.value() + ":" + path.to_string();
+  std::string rev = m_commit.value() + ":" + normalize( path.to_string() );
   return git_call<git_object_ptr>( name(), "cannot resolve object", rev, git_revparse_single, m_repository.get(),
                                    rev.c_str() );
 }
