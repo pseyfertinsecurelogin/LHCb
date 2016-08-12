@@ -60,8 +60,6 @@ namespace LoKi
     {
       declareInterface<Decays::IDecayNode> ( this ) ;
     }
-    /// virtual & protected destructor 
-    virtual ~DecayNode() {}
     // ========================================================================
   private:
     // ========================================================================

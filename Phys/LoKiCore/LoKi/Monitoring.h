@@ -102,8 +102,7 @@ namespace LoKi
       virtual typename LoKi::Functor<TYPE,TYPE2>::result_type operator() 
         ( typename LoKi::Functor<TYPE,TYPE2>::argument a ) const 
       {
-        const typename LoKi::Functor<TYPE,TYPE2>::result_type result = 
-          m_cut.fun ( a ) ;
+        const auto result = m_cut.fun ( a ) ;
         /// get counter if needed 
         if ( 0 == m_stat &&  m_cntdef.valid() ) 
         { m_stat = LoKi::Monitoring::getCounter ( m_cntdef ) ; }
@@ -165,8 +164,7 @@ namespace LoKi
       virtual typename LoKi::Functor<void,TYPE2>::result_type operator() 
         ( /* argument a */ ) const 
       {
-        const typename LoKi::Functor<void,TYPE2>::result_type result = 
-          m_cut.fun ( /* a */ ) ;
+        const auto result = m_cut.fun ( /* a */ ) ;
         /// get counter if needed 
         if ( 0 == m_stat &&  m_cntdef.valid() ) 
         { m_stat = LoKi::Monitoring::getCounter ( m_cntdef ) ; }
@@ -276,8 +274,7 @@ namespace LoKi
         ( typename LoKi::Functor<TYPE,TYPE2>::argument a ) const 
       {
         // evaluate the functor 
-        const typename LoKi::Functor<TYPE,TYPE2>::result_type result = 
-          m_fun.fun ( a ) ;
+        const auto result = m_fun.fun ( a ) ;
         // try to load the histo 
         if ( 0 == m_histo && m_hdef.valid() ) 
         { m_histo = LoKi::HistoBook::book ( m_hdef ) ; }
@@ -350,8 +347,7 @@ namespace LoKi
       virtual typename LoKi::Functor<void,TYPE2>::result_type operator() 
         ( /* argument a */ ) const 
       {
-        const typename LoKi::Functor<void,TYPE2>::result_type result = 
-          m_fun.fun ( /* a */ ) ;
+        const auto result = m_fun.fun ( /* a */ ) ;
         // try to load the histo 
         if ( 0 == m_histo () && m_hdef.valid() ) 
         { m_histo = LoKi::HistoBook::book ( m_hdef ) ; }
@@ -450,8 +446,7 @@ namespace LoKi
         ( typename LoKi::Functor<TYPE,TYPE2>::argument a ) const 
       {
         // evaluat ethe underlying functor: 
-        const typename LoKi::Functor<TYPE,TYPE2>::result_type result = 
-          m_fun.fun ( a )        ;
+        const auto result = m_fun.fun ( a )        ;
         // perform the actual printout 
         m_stream << m_prefix << m_fun << "=" ;
         Gaudi::Utils::toStream ( result , m_stream ) ; // print the result 
@@ -532,8 +527,7 @@ namespace LoKi
         ( /* argument a */ ) const 
       {
         // evaluate the underlying functor: 
-        const typename LoKi::Functor<void,TYPE2>::result_type result = 
-          m_fun.fun ( /* a */ )        ;
+        const auto result = m_fun.fun ( /* a */ )        ;
         // perform the actual printout 
         m_stream << m_prefix << m_fun << "=" ;
         Gaudi::Utils::toStream ( result , m_stream ) ; // print the result 

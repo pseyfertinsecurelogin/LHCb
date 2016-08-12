@@ -57,11 +57,18 @@ namespace LoKi
     AuxFunBase  () ; 
     /// constructor with arguments : 
     template <typename ... ARGS>
-      AuxFunBase ( const std::tuple<ARGS...>& tup ) : AuxFunBase ()
-    { m_cargs = Gaudi::Utils::toCpp_lst ( tup ) ; }
+    AuxFunBase ( const std::tuple<ARGS...>& tup ) 
+    : m_cargs{ Gaudi::Utils::toCpp_lst(tup) }
+    { }
     // ========================================================================
-    /// copy consructor
+    /// copy constructor
     AuxFunBase  ( const AuxFunBase&  right      ) ;          // copy consructor
+    // assignment
+    AuxFunBase& operator=( const AuxFunBase&  right ) = default ;          // copy consructor
+    // move constructor
+    AuxFunBase  ( AuxFunBase&& rhs ) = default;
+    // move assignment 
+    AuxFunBase& operator=( AuxFunBase&& rhs ) = default;
     /// destructor
     virtual ~AuxFunBase ();                                   // destructor
     // ========================================================================

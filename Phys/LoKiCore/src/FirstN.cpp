@@ -18,9 +18,6 @@
  *  @author Vanya Belyaev Ivan.Belyaev@cern.ch
  *  @date   2011-10-30
  *
- *                    $Revision$
- *  Last modification $Date$
- *                 by $Author$
  */
 // ============================================================================
 // constructor

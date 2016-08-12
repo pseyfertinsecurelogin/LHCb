@@ -1,4 +1,3 @@
-// $Id$ 
 // ============================================================================
 #ifndef DICT_LOKINUMBER_DCT_H 
 #define DICT_LOKINUMBER_DCT_H 1

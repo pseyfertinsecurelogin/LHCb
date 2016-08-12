@@ -1,4 +1,3 @@
-// $Id$ 
 // ============================================================================
 #ifndef LOKI_PRIMITIVES_H 
 #define LOKI_PRIMITIVES_H 1
@@ -55,9 +54,6 @@
  *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
  *  @date 2001-01-23 
  *  
- *                    $Revision$
- *  Last modification $Date$
- *                 by $Author$
  */
 // ============================================================================
 namespace LoKi 
@@ -70,10 +66,10 @@ namespace LoKi
    */ 
 #ifdef _GEN_LOKI_VOIDPRIMITIVES
   template <class TYPE2>
-  class TwoFunctors<void,TYPE2>
+  class TwoFunctors<void,TYPE2> final
 #else
   template <class TYPE,class TYPE2>
-  class TwoFunctors
+  class TwoFunctors final
 #endif
   {
   private:
@@ -91,18 +87,6 @@ namespace LoKi
       : m_fun1  ( f1 ) 
       , m_fun2  ( f2 ) 
     {}
-    /// copy constructor 
-    TwoFunctors ( const TwoFunctors&  right ) 
-      : m_fun1  ( right.m_fun1 ) 
-      , m_fun2  ( right.m_fun2 ) 
-    {}    
-    /// move  constructor 
-    TwoFunctors (       TwoFunctors&& right ) 
-      : m_fun1  ( std::move ( right.m_fun1 ) ) 
-      , m_fun2  ( std::move ( right.m_fun2 ) )  
-    {}
-    /// destructor 
-    virtual ~TwoFunctors() {}
     // ========================================================================
   public:
     // ========================================================================
@@ -112,25 +96,6 @@ namespace LoKi
     /// evaluate the first functor 
     typename functor::result_type fun2 
     ( argument_a_unless_void ) const { return m_fun2.fun ( a_unless_void ) ; }
-    // ========================================================================
-  public:
-    // ========================================================================
-    /// assignement operator 
-    TwoFunctors& operator=( const TwoFunctors&  right ) 
-    {
-      if ( &right == this ) { return *this ; }
-      m_fun1 = right.m_fun1 ;
-      m_fun2 = right.m_fun2 ;
-      return *this ;
-    }
-    /// move assignement operator 
-    TwoFunctors& operator=(       TwoFunctors&& right ) 
-    {
-      if ( &right == this ) { return *this ; }
-      m_fun1 = std::move ( right.m_fun1 ) ;
-      m_fun2 = std::move ( right.m_fun2 ) ;
-      return *this ;
-    }
     // ========================================================================
   public:
     // ========================================================================
@@ -203,7 +168,6 @@ namespace LoKi
     And ( const functor& f1 , 
           const functor& f2 ) 
       : LoKi::AuxFunBase ( std::tie ( f1 , f2 ) ) 
-      , LoKi::Functor<TYPE,bool>()
       , m_two ( f1 , f2 ) 
     {}
     /// copy constructor
@@ -214,12 +178,10 @@ namespace LoKi
     {}    
     /// move constructor 
     And (       And&& right ) 
-      : LoKi::AuxFunBase         ( right ) 
-      , LoKi::Functor<TYPE,bool> ( right )
+      : LoKi::AuxFunBase         ( std::move(right) ) 
+      , LoKi::Functor<TYPE,bool> ( std::move(right) )
       , m_two ( std::move ( right.m_two ) )
     {}
-    /// virtual constructor
-    virtual ~And(){}
     // ========================================================================
   public:
     // ========================================================================
@@ -227,7 +189,7 @@ namespace LoKi
     virtual And* clone() const { return new And(*this) ; }
     /// MANDATORY: the only one essential method ("function")      
     virtual result_type operator() ( argument_a_unless_void ) const 
-    { return fun1( a_unless_void ) ? fun2 ( a_unless_void )  : false ; }  
+    { return fun1( a_unless_void ) &&  fun2( a_unless_void )  ; }  
     /// OPTIONAL: the nice printout 
     virtual std::ostream& fillStream( std::ostream& s ) const 
     { return s << " (" << func1() << " & " << func2() << ") " ; }
@@ -315,8 +277,6 @@ namespace LoKi
       : LoKi::AuxFunBase ( std::tie ( f1 , f2 ) ) 
       , LoKi::And<TYPE,bool>( f1 , f2 ) 
     {}
-    /// MANDATORY: virtual constructor
-    virtual ~Or(){}
     // ========================================================================
   public:
     // ========================================================================
@@ -324,7 +284,7 @@ namespace LoKi
     virtual Or* clone() const { return new Or(*this) ; }
     /// MANDATORY: the only one essential method ("function")      
     virtual result_type operator() ( argument_a_unless_void ) const 
-    { return this->fun1 ( a_unless_void ) ? true : this->fun2 ( a_unless_void ) ; }  
+    { return this->fun1 ( a_unless_void ) || this->fun2 ( a_unless_void ) ; }  
     /// OPTIONAL: the nice printout 
     virtual std::ostream& fillStream( std::ostream& s ) const 
     { return s << " (" << this->func1() << " | " << this->func2() << ") " ; }
@@ -651,8 +611,6 @@ namespace LoKi
       : LoKi::AuxFunBase ( std::tie ( f1 , f2 ) ) 
       , LoKi::Less<TYPE,TYPE2> ( f1 , f2 )
     {}
-    /// virtual destructor 
-    virtual ~Equal() {}
     /// clone method (mandatory)
     virtual  Equal* clone() const { return new Equal ( *this ) ; }
     /// the only one essential method ("function")      
@@ -893,11 +851,8 @@ namespace LoKi
     Plus ( const LoKi::Functor<TYPE,TYPE2>& f1 , 
            const LoKi::Functor<TYPE,TYPE2>& f2 ) 
       : LoKi::AuxFunBase ( std::tie ( f1 , f2 ) ) 
-      , LoKi::Functor<TYPE,TYPE2>()
       , m_two ( f1 , f2 ) 
     {}
-    /// virtual destructor 
-    virtual ~Plus() {}
     /// clone method (mandatory)
     virtual  Plus* clone() const { return new Plus ( *this ) ; }
     /// the only one essential method ("function")      
@@ -996,8 +951,6 @@ namespace LoKi
       : LoKi::AuxFunBase ( std::tie ( f1 , f2 ) ) 
       , LoKi::Plus<TYPE,TYPE2>( f1 , f2 ) 
     {}
-    /// virtual destructor 
-    virtual ~Minus() {}
     /// clone method (mandatory)
     virtual  Minus* clone() const { return new Minus ( *this ) ; }
     /// the only one essential method ("function")      
@@ -1074,8 +1027,6 @@ namespace LoKi
       : LoKi::AuxFunBase ( std::tie ( f1 , f2 ) ) 
       , LoKi::Minus<TYPE,TYPE2>( f1 , f2 ) 
     {}
-    /// virtual destructor 
-    virtual ~Divide() {}
     /// clone method (mandatory)
     virtual  Divide* clone() const { return new Divide ( *this ) ; }
     /// the only one essential method ("function")      
@@ -1152,8 +1103,6 @@ namespace LoKi
       : LoKi::AuxFunBase ( std::tie ( f1 , f2 ) ) 
       , LoKi::Divide<TYPE,TYPE2>( f1 , f2 ) 
     {}
-    /// virtual destructor 
-    virtual ~Multiply() {}
     /// clone method (mandatory)
     virtual  Multiply* clone() const { return new Multiply ( *this ) ; }
     /// the only one essential method ("function")      
@@ -1269,8 +1218,6 @@ namespace LoKi
       , LoKi::Functor<TYPE,TYPE2>()
       , m_two ( Min ( Min ( fun1 , fun2 ) , fun3 ) , fun4 ) 
     {}
-    /// virtual destructor 
-    virtual ~Min() {}
     /// clone method (mandatory)
     virtual  Min* clone() const { return new Min ( *this ) ; }
     /// the only one essential method ("function")      
@@ -1402,8 +1349,6 @@ namespace LoKi
       : LoKi::AuxFunBase ( std::tie ( fun1 , fun2 , fun3 , fun4 ) )
       , LoKi::Min<TYPE,TYPE2> ( Max ( Max( fun1 , fun2 ) , fun3 ) , fun4 ) 
     {}
-    /// virtual destructor 
-    virtual ~Max() {}
     /// MANDATORY: clone method ("virtual constructor")
     virtual  Max* clone() const { return new Max ( *this ) ; }
     /// MANDATORY: the only one essential method ("function")      
@@ -1480,8 +1425,6 @@ namespace LoKi
       , m_val1 ( val1 )
       , m_val2 ( val2 )
     {}
-    /// destructor 
-    virtual ~SimpleSwitch() {}
     /// MANDATORY: clone method ("virtual constructor")
     virtual  SimpleSwitch* clone() const { return new SimpleSwitch ( *this ) ; }
     /// MANDATORY: the only one essential method:
@@ -1632,8 +1575,6 @@ namespace LoKi
       , m_two  ( LoKi::Constant<TYPE,TYPE2>( fun1 ) ,
                  LoKi::Constant<TYPE,TYPE2>( fun2 ) )
     {}
-    /// destructor 
-    virtual ~Switch() {}
     /// MANDATORY: clone method ("virtual constructor")
     virtual  Switch* clone() const { return new Switch ( *this ) ; }
     /// MANDATORY: the only one essential method:
@@ -1726,8 +1667,6 @@ namespace LoKi
       , m_func                    ( right.m_func ) 
       , m_desc                    ( right.m_desc ) 
     {}
-    /// virtual destructor 
-    virtual ~ComposeFunction(){}
     /// clone method (mandatory!)
     virtual ComposeFunction*  clone () const 
     { return new ComposeFunction ( *this ) ; }
@@ -1856,8 +1795,6 @@ namespace LoKi
       , m_two  ( right.m_two  ) 
       , m_desc ( right.m_desc ) 
     {}
-    /// virtual destructor 
-    virtual ~ComposeFunction2() {}
     /// clone method (mandatory!)
     virtual ComposeFunction2*  clone   () const 
     { return new ComposeFunction2( *this ); }
@@ -1924,8 +1861,6 @@ namespace LoKi
       , m_fun1 ( right.m_fun1 ) 
       , m_fun2 ( right.m_fun2 )
     {}
-    /// MANDATORY: virtual destructor
-    virtual ~Compose() {}
     /// MANDATORY: clone method ("virtual constructor")
     virtual  Compose* clone() const { return new Compose ( *this ) ; }    
     /// the only one essential method ("function")      
@@ -1977,8 +1912,6 @@ namespace LoKi
       : LoKi::AuxFunBase   ( right ) 
       , Functor<TYPE,bool> ( right ) 
     {}
-    /// virtual destructor 
-    virtual ~Valid() {}
     /// MANDATORY: clone method ("virtual constructor")
     virtual  Valid* clone() const { return new Valid( *this ) ; }
     /// MANDATORY: the only one essential method 
@@ -2022,8 +1955,6 @@ namespace LoKi
       , LoKi::Functor<TYPE,bool> ( right )
       , m_value                  ( right.m_value )
     {}
-    /// virtual destructor 
-    virtual ~TheSame() {}
     /// MANDATORY: clone method ("virtual constructor")
     virtual  TheSame* clone() const { return new TheSame( *this ) ; }
     /// MANDATORY: the only one essential method 
@@ -2112,8 +2043,6 @@ namespace LoKi
       , m_val ( std::move ( right.m_val ) )
     {}
     // ========================================================================
-    /// MANDATORY: virtual destructor 
-    virtual ~EqualToValue(){} ;
     // ========================================================================
     /// MANDATORY: clone method ("virtual construcor")
     virtual  EqualToValue* clone() const { return new EqualToValue(*this); }
@@ -2237,8 +2166,6 @@ namespace LoKi
       : LoKi::AuxFunBase ( std::tie ( fun , val ) )
       , LoKi::EqualToValue<TYPE,TYPE2>( val , fun ) 
     {}
-    /// MANDATORY: virtual destructor 
-    virtual ~NotEqualToValue(){} ;
     /// MANDATORY: clone method ("virtual constructor")
     virtual  NotEqualToValue* clone() const { return new NotEqualToValue(*this); }
     /// MANDATORY: the only one essential method :
@@ -2304,8 +2231,6 @@ namespace LoKi
       , LoKi::EqualToValue<TYPE,TYPE2>  ( right )
     {}
     // ========================================================================
-    /// MANDATORY: virtual destructor 
-    virtual ~LessThanValue(){} ;
     // ========================================================================
     /// MANDATORY: clone method ("virtual construcor")
     virtual  LessThanValue* clone() const { return new LessThanValue(*this); }
@@ -2372,9 +2297,6 @@ namespace LoKi
       , LoKi::EqualToValue<TYPE,TYPE2>  ( right )
     {}
     // ========================================================================
-    /// MANDATORY: virtual destructor 
-    virtual ~LessOrEqualValue(){} ;
-    // ========================================================================
     /// MANDATORY: clone method ("virtual construcor")
     virtual  LessOrEqualValue* clone() const { return new LessOrEqualValue(*this); }
     /// MANDATORY: the only one essential method :
@@ -2440,9 +2362,6 @@ namespace LoKi
       , LoKi::EqualToValue<TYPE,TYPE2>  ( right )
     {}
     // ========================================================================
-    /// MANDATORY: virtual destructor 
-    virtual ~GreaterThanValue(){} ;
-    // ========================================================================
     /// MANDATORY: clone method ("virtual construcor")
     virtual  GreaterThanValue* clone() const { return new GreaterThanValue(*this); }
     /// MANDATORY: the only one essential method :
@@ -2507,9 +2426,6 @@ namespace LoKi
       : LoKi::AuxFunBase                ( right ) 
       , LoKi::EqualToValue<TYPE,TYPE2>  ( right )
     {}
-    // ========================================================================
-    /// MANDATORY: virtual destructor 
-    virtual ~GreaterOrEqualValue(){} ;
     // ========================================================================
     /// MANDATORY: clone method ("virtual construcor")
     virtual  GreaterOrEqualValue* clone() const { return new GreaterOrEqualValue(*this); }
@@ -2593,9 +2509,6 @@ namespace LoKi
       , m_fun ( right.m_fun ) 
       , m_val ( right.m_val )
     {}
-    // ========================================================================
-    /// MANDATORY: virtual destructor 
-    virtual ~MultiplyByValue(){} ;
     // ========================================================================
     /// MANDATORY: clone method ("virtual construcor")
     virtual  MultiplyByValue* clone() const { return new MultiplyByValue(*this); }
@@ -2706,9 +2619,6 @@ namespace LoKi
       , LoKi::MultiplyByValue<TYPE,TYPE2> ( right )
     {}
     // ========================================================================
-    /// MANDATORY: virtual destructor 
-    virtual ~SumByValue(){} ;
-    // ========================================================================
     /// MANDATORY: clone method ("virtual construcor")
     virtual  SumByValue* clone() const { return new SumByValue(*this); }
     /// MANDATORY: the only one essential method :
@@ -2773,9 +2683,6 @@ namespace LoKi
       : LoKi::AuxFunBase                  ( right ) 
       , LoKi::MultiplyByValue<TYPE,TYPE2> ( right )
     {}
-    // ========================================================================
-    /// MANDATORY: virtual destructor 
-    virtual ~Minus1(){} ;
     // ========================================================================
     /// MANDATORY: clone method ("virtual construcor")
     virtual  Minus1* clone() const { return new Minus1(*this); }
@@ -2842,9 +2749,6 @@ namespace LoKi
       , LoKi::MultiplyByValue<TYPE,TYPE2> ( right )
     {}
     // ========================================================================
-    /// MANDATORY: virtual destructor 
-    virtual ~Minus2(){} ;
-    // ========================================================================
     /// MANDATORY: clone method ("virtual construcor")
     virtual  Minus2* clone() const { return new Minus2(*this); }
     /// MANDATORY: the only one essential method :
@@ -2910,9 +2814,6 @@ namespace LoKi
       , LoKi::MultiplyByValue<TYPE,TYPE2> ( right )
     {}
     // ========================================================================
-    /// MANDATORY: virtual destructor 
-    virtual ~Divide1(){} ;
-    // ========================================================================
     /// MANDATORY: clone method ("virtual construcor")
     virtual  Divide1* clone() const { return new Divide1(*this); }
     /// MANDATORY: the only one essential method :
@@ -2977,9 +2878,6 @@ namespace LoKi
       : LoKi::AuxFunBase                  ( right ) 
       , LoKi::MultiplyByValue<TYPE,TYPE2> ( right )
     {}
-    // ========================================================================
-    /// MANDATORY: virtual destructor 
-    virtual ~Divide2(){} ;
     // ========================================================================
     /// MANDATORY: clone method ("virtual construcor")
     virtual  Divide2* clone() const { return new Divide2(*this); }
@@ -3053,7 +2951,7 @@ namespace LoKi
       , m_cmp ( right.m_cmp ) 
     {}
     /// destructor 
-    virtual ~Compare() {}
+    virtual ~Compare() = default;
     /// the only one essential method 
     bool operator() ( argument a1 , argument a2 ) const
     { return m_cmp ( m_two.fun1 ( a1 ) , m_two.fun2 ( a2 ) ) ; }
@@ -3108,8 +3006,6 @@ namespace LoKi
     typedef typename LoKi::Functor<TYPE,TYPE2>::result_type result_type ; 
   public :
     // ========================================================================
-    /// MANDATORY: virtual destructor 
-    virtual ~Identity(){}
     /// MANDATORY: clone method ("virtual constructor")
     virtual  Identity* clone () const { return new Identity(*this) ; }
     /// MANDATORY": the only one essential method 
@@ -3136,8 +3032,6 @@ namespace LoKi
     typedef typename LoKi::Functor<TYPE,std::string>::result_type result_type ; 
   public:
     // ========================================================================
-    /// MANDATORY: virtual destructor 
-    virtual ~PrintOut(){}
     /// MANDATORY: clone method ("virtual constructor")
     virtual  PrintOut* clone () const { return new PrintOut ( *this ) ; }
     /// MANDATORY": the only one essential method 
@@ -3181,13 +3075,10 @@ namespace LoKi
       const LoKi::Functor<TYPE,double>& fun  , 
       const double                      high )
       : LoKi::AuxFunBase ( std::tie ( low , fun , high ) ) 
-      , LoKi::Functor<TYPE,bool> () 
       , m_low  ( low  ) 
       , m_fun  ( fun  ) 
       , m_high ( high ) 
     {}
-    /// MANDATORY: virtual destructor 
-    virtual ~InRange() {}
     /// MANDATORY: clone method ("virtual constructor")
     virtual  InRange* clone() const { return new InRange ( *this ) ; }
     /// MANDATORY: the only one essential method 
@@ -3270,7 +3161,6 @@ namespace LoKi
       const LoKi::Functor<TYPE,double>& fun  , 
       const LoKi::Functor<TYPE,double>& high ) 
       : LoKi::AuxFunBase ( std::tie ( low , fun , high ) )  
-      , LoKi::Functor<TYPE,bool> () 
       , m_low  ( LoKi::Constant<TYPE,double> ( low ) ) 
       , m_fun  ( fun  ) 
       , m_high ( high ) 
@@ -3285,13 +3175,10 @@ namespace LoKi
       const LoKi::Functor<TYPE,double>& fun  , 
       const double                      high ) 
       : LoKi::AuxFunBase ( std::tie ( low , fun , high ) ) 
-      , LoKi::Functor<TYPE,bool> () 
       , m_low  ( low  ) 
       , m_fun  ( fun  ) 
       , m_high ( LoKi::Constant<TYPE,double> ( high ) ) 
     {}
-    /// MANDATORY: virtual destructor 
-    virtual ~InRange2() {}
     /// MANDATORY: clone method ("virtual constructor")
     virtual  InRange2* clone() const { return new InRange2 ( *this ) ; }
     /// MANDATORY: the only one essential method 
@@ -3779,8 +3666,6 @@ namespace LoKi
                        "Invalid bit index" ) ;
       //
     }
-    /// virtual destructor 
-    virtual ~JBit () {}
     /// clone method (mandatory)
     virtual  JBit* clone() const { return new JBit ( *this ) ; }
     /// the only one essential method ("function")      
@@ -3859,8 +3744,6 @@ namespace LoKi
       this -> Assert ( j1 < j2 , "Invalid bit indices" ) ;
       //
     }
-    /// virtual destructor 
-    virtual ~JBits () {}
     /// clone method (mandatory)
     virtual  JBits* clone() const { return new JBits ( *this ) ; }
     /// the only one essential method ("function")      
@@ -3906,7 +3789,6 @@ namespace LoKi
 // ============================================================================
 //                                           specializations for void-arguments
 // ============================================================================
-//#include "LoKi/VoidPrimitives.h"
 #ifndef _GEN_LOKI_VOIDPRIMITIVES
 #define _GEN_LOKI_VOIDPRIMITIVES 1
 #undef typedef_void_TYPE

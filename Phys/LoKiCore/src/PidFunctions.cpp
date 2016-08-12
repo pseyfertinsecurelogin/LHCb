@@ -21,57 +21,48 @@
 LoKi::Pids::GetPids::GetPids ( const long id )
   : LoKi::AuxFunBase ( std::tie ( id ) )
   , m_ints  ( 1 , id ) 
-  , m_names ()
 {}
 // ============================================================================
 LoKi::Pids::GetPids::GetPids ( const unsigned long id )
   : LoKi::AuxFunBase ( std::tie ( id ) )
   , m_ints  ( 1 , id ) 
-  , m_names ()
 {}
 // ============================================================================
 LoKi::Pids::GetPids::GetPids ( const LHCb::ParticleID& id )
   : LoKi::AuxFunBase ( std::tie ( id ) )
   , m_ints  ( 1 , id.pid()  ) 
-  , m_names ()
 {}
 // ============================================================================
 LoKi::Pids::GetPids::GetPids ( const std::string& id )
   : LoKi::AuxFunBase ( std::tie ( id ) )
-  , m_ints  () 
   , m_names ( 1 , id )
 {}
 // ============================================================================
 LoKi::Pids::GetPids::GetPids ( const std::vector<int>& id )
   : LoKi::AuxFunBase ( std::tie ( id ) )
   , m_ints  ( id.begin() , id.end() ) 
-  , m_names ()
 {}
 // ============================================================================
 LoKi::Pids::GetPids::GetPids ( const std::vector<unsigned int>& id )
   : LoKi::AuxFunBase ( std::tie ( id ) )
   , m_ints  ( id.begin() , id.end() ) 
-  , m_names ()
 {}
 // ============================================================================
 LoKi::Pids::GetPids::GetPids ( const std::vector<long>& id )
   : LoKi::AuxFunBase ( std::tie ( id ) )
   , m_ints  ( id.begin() , id.end() ) 
-  , m_names ()
 {}
 // ============================================================================
 LoKi::Pids::GetPids::GetPids ( const std::vector<unsigned long>& id )
   : LoKi::AuxFunBase ( std::tie ( id ) )
   , m_ints  ( id.begin() , id.end() ) 
-  , m_names ()
 {}
 // ============================================================================
 LoKi::Pids::GetPids::GetPids ( const std::vector<LHCb::ParticleID>& id )
   : LoKi::AuxFunBase ( std::tie ( id ) )
 {
   m_ints.resize  ( id.size  () ) ;
-  std::transform ( id.begin () , 
-                   id.end   () , 
+  std::transform ( id.begin () , id.end   () , 
                    m_ints.begin () , 
                    [](const LHCb::ParticleID& id) { return id.pid(); } );
 }
@@ -84,8 +75,7 @@ LoKi::Pids::GetPids::GetPids ( const std::vector<std::string>& id )
   if ( gaudi() && !id.empty() ) 
   { pids = LoKi::Particles::pidsFromNames ( m_names ) ; }
   m_ints.resize  ( pids.size  () ) ;
-  std::transform ( pids.begin () , 
-                   pids.end   () , 
+  std::transform ( pids.begin () , pids.end   () , 
                    m_ints.begin () , 
                    [](const LHCb::ParticleID& id) { return id.pid(); } );
 }
@@ -117,8 +107,7 @@ StatusCode LoKi::Pids::GetPids::getData()  const
   std::vector<LHCb::ParticleID> pids ( LoKi::Particles::pidsFromNames ( m_names ) ) ;
   //
   m_ints.resize  ( pids.size  () ) ;
-  std::transform ( pids.begin () , 
-                   pids.end   () , 
+  std::transform ( pids.begin () , pids.end   () , 
                    m_ints .begin () , 
                    [](const LHCb::ParticleID& id) { return id.pid(); } );
   //

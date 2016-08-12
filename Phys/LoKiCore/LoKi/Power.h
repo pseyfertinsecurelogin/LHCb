@@ -78,7 +78,7 @@ namespace LoKi
     {
       if ( 0 == m_val ) { return TYPE2(1) ; }
       // evaluate the function
-      result_type value = m_fun.fun ( p ) ;
+      auto value = m_fun.fun ( p ) ;
       // evaluate the result
       if ( 0 <  m_val ) { return Gaudi::Math::pow( value, (unsigned long)m_val ); }
       if ( 0 == value ) 
@@ -144,7 +144,7 @@ namespace LoKi
     {
       if ( 0 == m_val ) { return TYPE2(1) ; }
       // evaluate the function
-      result_type value = m_fun.fun ( /* a */ ) ;
+      auto value = m_fun.fun ( /* a */ ) ;
       // evaluate the result
       if ( 0 <  m_val ) { return Gaudi::Math::pow( value, (unsigned long)m_val ); }
       if ( 0 == value ) 
