@@ -93,11 +93,11 @@ namespace LoKi
     {
       // ITER::reference , std::iterator_traits<ITER>::reference doesn't work here ;-(
       using value_type = typename std::iterator_traits<ITER>::value_type;
-      using arg        = typename std::conditional< std::is_pointer<value_type>::value,
+      using arg_t      = typename std::conditional< std::is_pointer<value_type>::value,
                                                     value_type,
                                                     typename std::iterator_traits<ITER>::reference>::type;
       return std::accumulate( first, last, result,
-                              [&](RESULT r, arg o)
+                              [&](RESULT r, arg_t o)
                               { return predicate(o) ? binop(r,functor(o)) : r; } );
     }
     // ========================================================================
@@ -394,9 +394,10 @@ namespace LoKi
       const FUNCTION&  fun    ,
       RESULT           result )
     {
-      for ( ; first != last ; ++first )
-      { result = std::min ( result , fun (*first) ) ; }
-      return result ;
+      using arg_t = decltype(*first);
+      return std::accumulate( first, last, result,
+                              [&](RESULT r, arg_t v)
+                              { return std::min( r, fun(v) ); } );
     }
     // ========================================================================
     /** very simple algorithm for maximum value of the function over the
@@ -412,12 +413,10 @@ namespace LoKi
       const PREDICATE& cut    ,
       RESULT           result )
     {
-      for ( ; first != last ; ++first )
-      {
-        if ( cut ( *first ) )
-        {  result = std::min ( result , fun ( *first ) ) ; }
-      }
-      return result ;
+      using arg_t = decltype(*first);
+      return std::accumulate( first, last, result,
+                              [&](RESULT r, arg_t v)
+                              { return cut(v) ? std::min( r, fun(v) ) : r ; } );
     }
     // ========================================================================
     /** very simple algorithm for maximum value of the function over the
@@ -432,9 +431,10 @@ namespace LoKi
       const FUNCTION&  fun    ,
       RESULT           result )
     {
-      for ( ; first != last ; ++first )
-      { result = std::max ( result , fun ( *first ) ) ; }
-      return result ;
+      using arg_t = decltype(*first);
+      return std::accumulate( first, last, result,
+                              [&](RESULT r, arg_t v)
+                              { return std::max( r, fun(v) ); } );
     }
     // ========================================================================
     /** very simple algorithm for maximum value of the function over the
@@ -450,12 +450,10 @@ namespace LoKi
       const PREDICATE& cut    ,
       RESULT           result )
     {
-      for ( ; first != last ; ++first )
-      {
-        if ( cut ( *first ) )
-        {  result = std::max ( result , fun (*first) ) ; }
-      }
-      return result ;
+      using arg_t = decltype(*first);
+      return std::accumulate( first, last, result,
+                              [&](RESULT r, arg_t v)
+                              { return cut(v) ? std::max(r,fun(v)) : r; } );
     }
     // ========================================================================
     template <class OBJECT,class PREDICATE1,class PREDICATE2>
@@ -664,13 +662,10 @@ namespace LoKi
       const std::vector<PREDICATE>& cuts    ,
       const std::set<size_t>&       indices )
     {
-      for ( OBJECT f = first ; last != f ; ++f )
-      {
+      for ( OBJECT f = first ; last != f ; ++f ) {
         const size_t index = f - first ;
         if ( indices.end() != indices.find ( index ) ) { continue ; }
-        for ( typename std::vector<PREDICATE>::const_iterator icut = cuts.begin() ;
-              cuts.end() != icut ; ++icut )
-        {
+        for ( auto icut = cuts.begin() ; cuts.end() != icut ; ++icut ) {
           const PREDICATE& cut = *icut ;
           if ( !cut ( *f ) )       { continue    ; }              // CONTINUE
           if ( 1 == cuts.size()  ) { return true ; }              // TRUE
@@ -684,7 +679,7 @@ namespace LoKi
       return false ;
     }
     // ========================================================================
-    /** find "N" different elements in the sequence whcih satisfy to N
+    /** find "N" different elements in the sequence which satisfy to N
      *  various predicates
      *  @param first 'begin'-iterator of the sequence
      *  @param last  'end'-iterator for the sequence

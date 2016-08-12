@@ -254,10 +254,10 @@ namespace LoKi
   // ==========================================================================
 #ifdef _GEN_LOKI_VOIDPRIMITIVES
   template<class TYPE2>
-  class Or<void,TYPE2> : public LoKi::And<void,TYPE2>
+  class Or<void,TYPE2> final : public LoKi::And<void,TYPE2>
 #else
   template<class TYPE, class TYPE2=bool> 
-  class Or : public LoKi::And<TYPE,TYPE2> 
+  class Or final : public LoKi::And<TYPE,TYPE2> 
 #endif
   {
   private:
@@ -348,8 +348,6 @@ namespace LoKi
       , LoKi::Functor<TYPE,bool>() 
       , m_fun ( fun ) 
     {} 
-    /// virtual destructor 
-    virtual ~Not() {}
     /// clone method (mandatory)
     virtual  Not* clone() const { return new Not( *this ); }
     /// the only one essential method ("function")      
@@ -400,10 +398,10 @@ namespace LoKi
    */
 #ifdef _GEN_LOKI_VOIDPRIMITIVES
   template<class TYPE2>
-  class Negate<void,TYPE2> : public LoKi::Functor<void,TYPE2>
+  class Negate<void,TYPE2> final : public LoKi::Functor<void,TYPE2>
 #else
   template<class TYPE,class TYPE2=double> 
-  class Negate : public LoKi::Functor<TYPE,TYPE2>
+  class Negate final : public LoKi::Functor<TYPE,TYPE2>
 #endif
   {
   private:
@@ -422,8 +420,6 @@ namespace LoKi
       , LoKi::Functor<TYPE,TYPE2>() 
       , m_fun ( fun ) 
     {} 
-    /// virtual destructor 
-    virtual ~Negate() {}
     /// clone method (mandatory)
     virtual  Negate* clone() const { return new Negate ( *this ) ; }
     /// the only one essential method ("function")      
@@ -513,8 +509,6 @@ namespace LoKi
       , LoKi::Functor<TYPE,bool>( right ) 
       , m_two ( std::move ( right.m_two ) ) 
     {}
-    /// virtual destructor 
-    virtual ~Less() {}
     /// clone method (mandatory)
     virtual  Less* clone() const { return new Less( *this ); }
     /// the only one essential method ("function")      
@@ -698,8 +692,6 @@ namespace LoKi
       : LoKi::AuxFunBase ( std::tie ( f1 , f2 ) ) 
       , LoKi::Equal<TYPE,TYPE2>( f1 , f2 ) 
     {}
-    /// virtual destructor 
-    virtual ~LessOrEqual() {}
     /// clone method (mandatory)
     virtual  LessOrEqual* clone() const { return new LessOrEqual ( *this ) ; }
     /// the only one essential method ("function")      
@@ -775,8 +767,6 @@ namespace LoKi
       : LoKi::AuxFunBase ( std::tie ( f1 , f2 ) ) 
       , LoKi::Equal<TYPE,TYPE2>( f1 , f2 ) 
     {}
-    /// virtual destructor 
-    virtual ~NotEqual() {}
     /// clone method (mandatory)
     virtual  NotEqual* clone() const { return new NotEqual ( *this ) ; }
     /// the only one essential method ("function")      
@@ -1465,10 +1455,10 @@ namespace LoKi
    */
 #ifdef _GEN_LOKI_VOIDPRIMITIVES
   template<class TYPE2>
-  class Switch<void,TYPE2> : public LoKi::Functor<void,TYPE2>
+  class Switch<void,TYPE2> final : public LoKi::Functor<void,TYPE2>
 #else
   template<class TYPE, class TYPE2=double>
-  class Switch : public LoKi::Functor<TYPE,TYPE2>
+  class Switch final : public LoKi::Functor<TYPE,TYPE2>
 #endif
   {
   private:
@@ -2950,8 +2940,6 @@ namespace LoKi
       : m_two ( right.m_two ) 
       , m_cmp ( right.m_cmp ) 
     {}
-    /// destructor 
-    virtual ~Compare() = default;
     /// the only one essential method 
     bool operator() ( argument a1 , argument a2 ) const
     { return m_cmp ( m_two.fun1 ( a1 ) , m_two.fun2 ( a2 ) ) ; }
@@ -3021,7 +3009,7 @@ namespace LoKi
    *  @date 2006-04-07
    */
   template <class TYPE>
-  class PrintOut : public LoKi::Functor<TYPE,std::string>
+  class PrintOut final : public LoKi::Functor<TYPE,std::string>
   {
   private:
     // ========================================================================
@@ -3120,10 +3108,10 @@ namespace LoKi
    */
 #ifdef _GEN_LOKI_VOIDPRIMITIVES
   template<>
-  class InRange2<void>: public LoKi::Functor<void,bool>
+  class InRange2<void> final : public LoKi::Functor<void,bool>
 #else
   template<class TYPE> 
-  class InRange2: public LoKi::Functor<TYPE,bool> 
+  class InRange2 final : public LoKi::Functor<TYPE,bool> 
 #endif
   {
   private:
@@ -3245,7 +3233,6 @@ namespace LoKi
     ( const LoKi::Functor<TYPE,double>&  fun , 
       const std::vector<double>&         vct ) 
       : LoKi::AuxFunBase ( std::tie ( fun , vct ) ) 
-      , LoKi::Functor<TYPE,bool>() 
       , m_fun ( fun ) 
       , m_vct ( vct ) 
     { 
@@ -3259,7 +3246,6 @@ namespace LoKi
     ( const LoKi::Functor<TYPE,double>&  fun , 
       const std::vector<int>&            vct ) 
       : LoKi::AuxFunBase ( std::tie ( fun , vct ) ) 
-      , LoKi::Functor<TYPE,bool>() 
       , m_fun ( fun ) 
       , m_vct ( vct.begin() , vct.end() ) 
     { 
@@ -3273,7 +3259,6 @@ namespace LoKi
     ( const LoKi::Functor<TYPE,double>&  fun , 
       const std::vector<unsigned int>&   vct ) 
       : LoKi::AuxFunBase ( std::tie ( fun , vct ) ) 
-      , LoKi::Functor<TYPE,bool>() 
       , m_fun ( fun ) 
       , m_vct ( vct.begin() , vct.end() ) 
     { 
@@ -3288,10 +3273,9 @@ namespace LoKi
     ( const LoKi::Functor<TYPE,double>&  fun    , 
       ITERATOR                           first  , 
       ITERATOR                           last   ) 
-      : LoKi::Functor<TYPE,bool>() 
-      , m_fun ( fun ) 
+      : m_fun ( fun ) 
       , m_vct ( first , last ) 
-    { 
+    {
       adjust () ;
     }
     // ========================================================================
@@ -3364,10 +3348,10 @@ namespace LoKi
    */
 #ifdef _GEN_LOKI_VOIDPRIMITIVES
   template <>
-  class NotEqualToList<void> : public LoKi::EqualToList<void>
+  class NotEqualToList<void> final : public LoKi::EqualToList<void>
 #else
   template <class TYPE>
-  class NotEqualToList       : public LoKi::EqualToList<TYPE>
+  class NotEqualToList       final : public LoKi::EqualToList<TYPE>
 #endif
   {
   private:
@@ -3450,10 +3434,10 @@ namespace LoKi
    */
 #ifdef _GEN_LOKI_VOIDPRIMITIVES
   template <>
-  class XScaler<void> : public LoKi::Functor<void,bool>
+  class XScaler<void> final : public LoKi::Functor<void,bool>
 #else
   template <class TYPE>
-  class XScaler : public LoKi::Functor<TYPE,bool>
+  class XScaler final : public LoKi::Functor<TYPE,bool>
 #endif
   {
   private:
@@ -3517,10 +3501,10 @@ namespace LoKi
    */
 #ifdef _GEN_LOKI_VOIDPRIMITIVES
   template<>
-  class Modulo<void> : public LoKi::Functor<void,double>
+  class Modulo<void> final : public LoKi::Functor<void,double>
 #else
   template<class TYPE> 
-  class Modulo : public LoKi::Functor<TYPE,double>
+  class Modulo final : public LoKi::Functor<TYPE,double>
 #endif
   {
   private:
@@ -3575,10 +3559,10 @@ namespace LoKi
    */
 #ifdef _GEN_LOKI_VOIDPRIMITIVES
   template <>
-  class Round<void> : public LoKi::Functor<void,double>
+  class Round<void> final : public LoKi::Functor<void,double>
 #else
   template <class TYPE>
-  class Round : public LoKi::Functor<TYPE,double>
+  class Round final : public LoKi::Functor<TYPE,double>
 #endif
   {
   private:
@@ -3633,10 +3617,10 @@ namespace LoKi
    */
 #ifdef _GEN_LOKI_VOIDPRIMITIVES
   template <>
-  class JBit<void> : public LoKi::Functor<void,bool>
+  class JBit<void> final : public LoKi::Functor<void,bool>
 #else
   template <class TYPE>
-  class JBit : public LoKi::Functor<TYPE,bool>
+  class JBit final : public LoKi::Functor<TYPE,bool>
 #endif
   {
   private:
@@ -3706,10 +3690,10 @@ namespace LoKi
    */
 #ifdef _GEN_LOKI_VOIDPRIMITIVES
   template <>
-  class JBits<void> : public LoKi::Functor<void,double>
+  class JBits<void> final : public LoKi::Functor<void,double>
 #else
   template <class TYPE>
-  class JBits : public LoKi::Functor<TYPE,double>
+  class JBits final : public LoKi::Functor<TYPE,double>
 #endif
   {
   private:

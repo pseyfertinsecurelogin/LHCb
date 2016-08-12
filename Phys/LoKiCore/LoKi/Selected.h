@@ -1,4 +1,3 @@
-// $Id$
 // ============================================================================
 #ifndef LOKI_SELECTED_H 
 #define LOKI_SELECTED_H 1
@@ -60,9 +59,9 @@ namespace LoKi
   public:
     // ========================================================================
     /// Standard constructor
-    Selected_() : m_map() {}
+    Selected_() = default;
     /// destructor 
-    virtual ~Selected_() { m_map.clear() ; } 
+    virtual ~Selected_() = default;
     /** get all particled tagged objects
      *  @param name  tag to be selected
      *  @return selected range of objects 

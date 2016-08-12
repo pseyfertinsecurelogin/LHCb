@@ -636,7 +636,7 @@ namespace LoKi
 
     // ========================================================================
     template <class TYPE,class TYPE1=TYPE, class TYPE2=bool>
-    class Count : public LoKi::Functor<std::vector<TYPE>,double>
+    class Count final : public LoKi::Functor<std::vector<TYPE>,double>
     {
     public:
       // ======================================================================
@@ -675,6 +675,8 @@ namespace LoKi
       LoKi::FunctorFromFunctor<TYPE1,TYPE2> m_cut ;            // the predicate
       // ======================================================================
     };
+
+    // TODO: combine Sum and Product (into Accumulate< ... >)
     // ========================================================================
     /** @class Sum
      *  sum of the function over the stream
@@ -835,7 +837,7 @@ namespace LoKi
      *  @date 2011-03-27
      */
     template <class TYPE,class TYPE2>
-    class Fetch : public LoKi::Functor<std::vector<TYPE>,TYPE2>
+    class Fetch final : public LoKi::Functor<std::vector<TYPE>,TYPE2>
     {
     public:
       // ======================================================================
@@ -885,7 +887,7 @@ namespace LoKi
      *  check the presence of good elemements in stream
      */
     template <class TYPE,class TYPE1=TYPE, class TYPE2=bool>
-    class Has : public LoKi::Functor<std::vector<TYPE>,bool>
+    class Has final : public LoKi::Functor<std::vector<TYPE>,bool>
     {
     private:
       // ======================================================================
