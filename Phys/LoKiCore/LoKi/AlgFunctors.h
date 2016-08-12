@@ -109,14 +109,12 @@ namespace LoKi
      *  @date 2008-10-14
      */
     // =========================================================================
-    class GAUDI_API Enabled : public Passed
+    class GAUDI_API Enabled final : public Passed
     {
     public:
       // ======================================================================
       /// constructor from the algorithm name
       Enabled ( const std::string& name ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~Enabled () {}
       /// MANDATORY: clone method ("virtual constructor")
       virtual  Enabled* clone() const { return new Enabled ( *this ) ; }
       /// MANDATORY: the only one essential method
@@ -458,8 +456,6 @@ namespace LoKi
       /// constructor from the algorithm name
       NumPassed ( const std::vector<std::string>& name ) ;
       // ======================================================================
-      /// MANDATORY: virtual destructor
-      virtual ~NumPassed () {}
       /// MANDATORY: clone method ("virtual constructor")
       virtual  NumPassed* clone() const { return new NumPassed ( *this ) ; }
       /// MANDATORY: the only one essential method

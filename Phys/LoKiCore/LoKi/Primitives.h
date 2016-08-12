@@ -3279,9 +3279,6 @@ namespace LoKi
       adjust () ;
     }
     // ========================================================================
-    /// MANDATORY: virtual destructor 
-    virtual ~EqualToList(){} ;
-    // ========================================================================
     /// MANDATORY: clone method ("virtual construcor")
     virtual  EqualToList* clone() const { return new EqualToList(*this); }
     /// MANDATORY: the only one essential method :
@@ -3406,9 +3403,6 @@ namespace LoKi
       : LoKi::EqualToList<TYPE>( fun , first , last  ) 
     {}
     // ========================================================================
-    /// MANDATORY: virtual destructor 
-    virtual ~NotEqualToList(){} ;
-    // ========================================================================
     /// MANDATORY: clone method ("virtual construcor")
     virtual  NotEqualToList* clone() const 
     { return new NotEqualToList(*this); }
@@ -3462,8 +3456,6 @@ namespace LoKi
       , m_cut    ( cut   ) 
       , m_scaler ( scale ) 
     {}
-    /// MANDATORY: virtual destructor 
-    virtual ~XScaler() {}
     /// MANDATORY: clone method ("virtual constructor") 
     virtual  XScaler* clone() const { return new XScaler ( *this ) ; }
     /// MANDATORY: the only one essential method 
@@ -3525,8 +3517,6 @@ namespace LoKi
       , m_divident ( divident  ) 
       , m_divisor  ( divisor   ) 
     {} 
-    /// virtual destructor 
-    virtual ~Modulo () {}
     /// clone method (mandatory)
     virtual  Modulo* clone() const { return new Modulo ( *this ) ; }
     /// the only one essential method ("function")      
@@ -3582,8 +3572,6 @@ namespace LoKi
       , LoKi::Functor<TYPE,double>() 
       , m_fun  ( fun ) 
     {} 
-    /// virtual destructor 
-    virtual ~Round () {}
     /// clone method (mandatory)
     virtual  Round* clone() const { return new Round ( *this ) ; }
     /// the only one essential method ("function")      

@@ -59,8 +59,6 @@ namespace Decays
       Marked_ ( const Marked_&  right ) ;
       /// move  constructor (ignore the marked particle)
       Marked_ (       Marked_&& right ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~Marked_ () {}
       /// MANDATORY: clone method ("virtual constructor")
       virtual  Marked_* clone() const { return new Marked_(*this) ; }
       /// MANDATORY: the only one essential method:
@@ -113,8 +111,6 @@ namespace Decays
       // ======================================================================
     public:
       // ======================================================================
-      /// MANDATORY: virtual destructor
-      virtual ~Any_() {}
       /// MANDATORY: clone method ("virtual constructor")
       virtual  Any_* clone() const { return new Any_(*this) ; }
       /// MANDATORY: the only one essential method:
@@ -152,8 +148,6 @@ namespace Decays
       // ======================================================================
     public:
       // ======================================================================
-      /// MANDATORY: virtual destructor
-      virtual ~None_() {}
       /// MANDATORY: clone method ("virtual constructor")
       virtual  None_* clone() const { return new None_(*this) ; }
       /// MANDATORY: the only one essential method:
@@ -182,9 +176,7 @@ namespace Decays
     public:
       // ======================================================================
       /// MANDATORY: default constructor
-      Invalid_() {}
-      /// MANDATORY: virtual destructor
-      virtual ~Invalid_() {}
+      Invalid_() = default;
       /// MANDATORY: clone method ("virtual constructor")
       virtual  Invalid_* clone() const { return new Invalid_(*this) ; }
       /// MANDATORY: the only one essential method:
@@ -231,8 +223,6 @@ namespace Decays
       /// constructor from the decay head
       Stable_ ( const LHCb::ParticleID& head ) ;
       // ======================================================================
-      /// MANDATORY: virtual destructor
-      virtual ~Stable_() {}
       /// MANDATORY: clone method ("virtual constructor")
       virtual  Stable_* clone() const { return new Stable_( *this ) ; }
       /// MANDATORY: the only one essential method:
@@ -592,8 +582,6 @@ namespace Decays
       Op_ ( const Op_&  right ) ;
       /// move constructor
       Op_ (       Op_&& right ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~Op_() {}
       // ======================================================================
     public:
       // ======================================================================
@@ -671,8 +659,6 @@ namespace Decays
       And_ ( const And_&  right ) ;
       /// move constructor
       And_ (       And_&& right ) ;
-      /// MANDATORY: virtual destrcutor
-      virtual ~And_ () {}
       // ======================================================================
     public:
       // ======================================================================
@@ -746,8 +732,6 @@ namespace Decays
       Or_ ( const Or_&  right ) ;
       /// move constructor
       Or_ (       Or_&& right ) ;
-      /// MANDATORY: virtual destrcutor
-      virtual ~Or_() {}
       // ======================================================================
     public:
       // ======================================================================
@@ -827,8 +811,6 @@ namespace Decays
       /// move constructor
       List_ (       List_&& right )
         : Decays::Trees::Or_<PARTICLE>  ( std::move ( right ) ) {}
-      /// MANDATORY: virtual destrcutor
-      virtual ~List_() {}
       // ======================================================================
     public:
       // ======================================================================
@@ -899,8 +881,6 @@ namespace Decays
         : Decays::iTree_<PARTICLE> ()
         , m_tree ( std::move ( tree ) )
       {}
-      /// MANDATORY: virtual destrcutor
-      virtual ~Not_ () {}
       // ======================================================================
     public:
       // ======================================================================
