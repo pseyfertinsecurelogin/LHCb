@@ -35,7 +35,7 @@ namespace Gaudi
     class Point3DWithError  ;
     class Vector3DWithError ;
     // ========================================================================
-    class GAUDI_API Point3DWithError : public Gaudi::XYZPoint 
+    class GAUDI_API Point3DWithError final : public Gaudi::XYZPoint 
     {
     public:
       // ======================================================================
@@ -78,15 +78,15 @@ namespace Gaudi
       // ======================================================================
     public: // trivial accessors 
       // ======================================================================
-      const  Point3D&    point      ( ) const { return *this    ; }
-      const  Point3D&    point3d    ( ) const { return point () ; }
-      const  Point3D&    point3D    ( ) const { return point () ; }
-      const  Covariance& covariance ( ) const { return cov2  () ; }      
+      const  Point3D&    point      ( ) const noexcept { return *this    ; }
+      const  Point3D&    point3d    ( ) const noexcept { return point () ; }
+      const  Point3D&    point3D    ( ) const noexcept { return point () ; }
+      const  Covariance& covariance ( ) const noexcept { return cov2  () ; }      
       // ======================================================================      
-      const  Point3D&    value      ( ) const { return point () ; }
-      const  Covariance& cov2       ( ) const { return m_cov2   ; }      
+      const  Point3D&    value      ( ) const noexcept { return point () ; }
+      const  Covariance& cov2       ( ) const noexcept { return m_cov2   ; }      
       // ======================================================================
-      inline Point3D&    point      ( )       { return *this    ; }
+      inline Point3D&    point      ( )       noexcept { return *this    ; }
       // ======================================================================      
     public: // setters 
       // ======================================================================

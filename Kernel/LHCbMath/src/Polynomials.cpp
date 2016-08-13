@@ -54,7 +54,7 @@ namespace
   {
     return 
       0 == N ?  1 : 
-      0 == N ?  1 : 
+      1 == N ?  1 : 
       2 == N ?  2 : 
       3 == N ?  6 : 
       4 == N ? 24 : N * _factorial_d_ ( N - 1 ) ;
@@ -122,11 +122,11 @@ namespace
     else if ( high < low ) 
     { return -_chebyshev_int_ ( N ,  high , low )  ; }
     //
-    const double ihigh = 
+    const auto ihigh = 
       _chebyshev_ ( N + 1 , high ) / ( N + 1 ) -
       _chebyshev_ ( N - 1 , high ) / ( N - 1 ) ;
     //
-    const double ilow = 
+    const auto ilow = 
       _chebyshev_ ( N + 1 , low  ) / ( N + 1 ) -
       _chebyshev_ ( N - 1 , low  ) / ( N - 1 ) ;
     //
@@ -164,8 +164,8 @@ namespace
     else if ( high < low ) 
     { return -_chebyshevU_int_ ( N ,  high , low )  ; }
     //
-    const double ihigh = _chebyshev_ ( N + 1 , high ) / ( N + 1 ) ;
-    const double ilow  = _chebyshev_ ( N + 1 , low  ) / ( N + 1 ) ;
+    const auto ihigh = _chebyshev_ ( N + 1 , high ) / ( N + 1 ) ;
+    const auto ilow  = _chebyshev_ ( N + 1 , low  ) / ( N + 1 ) ;
     //
     return ihigh - ilow ;
   }
@@ -188,9 +188,9 @@ namespace
     else if ( s_equal ( x , -1 ) ) { return  
         n * ( n * n - 1 ) / 3.0 * ( 0 == N % 2 ? 1 : -1 ) ; }
     //
-    const double v1 = ( N + 1 ) * _chebyshev_  ( N + 1 , x ) ;
-    const double v2 =       x   * _chebyshevU_ ( N     , x ) ;
-    const double d2 = v1 - v2 ;
+    const auto v1 = ( N + 1 ) * _chebyshev_  ( N + 1 , x ) ;
+    const auto v2 =       x   * _chebyshevU_ ( N     , x ) ;
+    const auto d2 = v1 - v2 ;
     //
     return d2 / ( x * x - 1 ) ;  // ATTENTION HERE!!! it should be safe...
   }
@@ -271,8 +271,8 @@ namespace
     else if ( high < low ) 
     { return -_legendre_int_ ( N ,  high , low )  ; }
     //
-    const long double ihigh = _legendre_ ( N + 1 , high ) - _legendre_ ( N - 1 , high ) ;
-    const long double ilow  = _legendre_ ( N + 1 , low  ) - _legendre_ ( N - 1 , low  ) ;
+    const auto ihigh = _legendre_ ( N + 1 , high ) - _legendre_ ( N - 1 , high ) ;
+    const auto ilow  = _legendre_ ( N + 1 , low  ) - _legendre_ ( N - 1 , low  ) ;
     //
     return ( ihigh - ilow ) / ( 2 * N + 1 ) ;
   }
@@ -293,7 +293,7 @@ namespace
     else if ( s_equal ( x , -1 ) ) 
     { return 1 == N % 2 ?  0.5 * N * ( N + 1 ) : -0.5 * N * ( N + 1 ) ; }
     //
-    const long double t1 = x * _legendre_ ( N , x ) - _legendre_ ( N - 1 , x  ) ;
+    const auto t1 = x * _legendre_ ( N , x ) - _legendre_ ( N - 1 , x  ) ;
     //
     return N * t1 / ( x * x - 1 ) ;  // ATTENTION HERE!!! it should be safe...
   }
@@ -582,7 +582,7 @@ bool Gaudi::Math::affine_transform
   { 
     for ( unsigned short k = i ; k < input.size () ; ++k ) // ATTENTNION!!! 
     { 
-      const double p = input[  k ] ;
+      const auto p = input[  k ] ;
       if ( s_zero ( p ) ) { continue ; }  // SKIP nulls... 
       result[i] += _affine_ ( i , k , alpha , beta ) * p ; 
     } 
@@ -611,8 +611,8 @@ namespace
     else if ( high < low ) 
     { return -_monomial_int_ ( N ,  high , low )  ; }
     //
-    const long double ihigh = Gaudi::Math::pow ( high , N + 1 ) ;
-    const long double ilow  = Gaudi::Math::pow ( low  , N + 1 ) ;
+    const auto ihigh = Gaudi::Math::pow ( high , N + 1 ) ;
+    const auto ilow  = Gaudi::Math::pow ( low  , N + 1 ) ;
     //
     return ( ihigh - ilow ) / ( N + 1 ) ;
   }
@@ -690,8 +690,8 @@ double Gaudi::Math::Polynomial::integral
   if      ( low  <  m_xmin         ) { return integral ( m_xmin , high   ) ; }
   else if ( high >  m_xmax         ) { return integral ( low    , m_xmax ) ; }
   //
-  const double xl = t ( low  ) ;
-  const double xh = t ( high ) ;
+  const auto xl = t ( low  ) ;
+  const auto xh = t ( high ) ;
   //
   std::vector<double> npars ( m_pars.size() + 1 , 0 ) ;
   for ( unsigned int i = 0 ; i < m_pars.size() ; ++i ) 
@@ -700,7 +700,7 @@ double Gaudi::Math::Polynomial::integral
     npars [i+1] = m_pars[i] / ( i + 1 ) ; 
   }
   //
-  const double result = 
+  const auto result = 
     clenshaw_polynom ( npars , xh ) -
     clenshaw_polynom ( npars , xl ) ;     
   //
@@ -712,7 +712,7 @@ double Gaudi::Math::Polynomial::integral
 Gaudi::Math::Polynomial 
 Gaudi::Math::Polynomial::indefinite_integral ( const double C ) const 
 {
-  const double dx = 0.5 * ( m_xmax - m_xmin ) ;
+  const auto dx = 0.5 * ( m_xmax - m_xmin ) ;
   std::vector<double> npars ( m_pars.size() + 1 , 0 ) ;
   for ( unsigned int i = 0 ; i < m_pars.size() ; ++i ) 
   { 
@@ -731,13 +731,13 @@ double Gaudi::Math::Polynomial::derivative ( const double x     ) const
 {
   if ( x < m_xmin || x > m_xmax ) { return 0 ; }
   //
-  const double tx = t ( x  ) ;
+  const auto tx = t ( x  ) ;
   //
-  const double dx = 2 / ( m_xmax - m_xmin ) ;
+  const auto dx = 2 / ( m_xmax - m_xmin ) ;
   std::vector<double> npars ( m_pars.size() - 1 , 0 ) ;
   for ( unsigned int i = 0 ; i < npars.size() ; ++i ) 
   {
-    const double p = m_pars[i+1] ;
+    const auto p = m_pars[i+1] ;
     if ( s_zero ( p ) ) { continue ; }      // CONTINUE 
     npars [i] = ( i + 1 ) * p * dx ; 
   }
@@ -753,11 +753,11 @@ Gaudi::Math::Polynomial::derivative          () const
   if ( 1 == m_pars.size() ) 
   { return Gaudi::Math::Polynomial( 0 , m_xmin , m_xmax ) ; }
   //
-  const double dx = 2 / ( m_xmax - m_xmin ) ;
+  const auto dx = 2 / ( m_xmax - m_xmin ) ;
   std::vector<double> npars ( m_pars.size() - 1 , 0 ) ;
   for ( unsigned int i = 0 ; i < npars.size() ; ++i ) 
   {    
-    const double p = m_pars[i+1] ;
+    const auto p = m_pars[i+1] ;
     if ( s_zero ( p ) ) { continue ; }       // CONTINUE
     npars [i] = ( i + 1 ) * p * dx ; 
   }
@@ -814,7 +814,7 @@ Gaudi::Math::Polynomial::sum
                            "LHCb::Math::Polynomial", 
                            StatusCode( StatusCode::FAILURE ) ) ;
   }
-  const unsigned short idegree = std::max ( degree() , other.degree() ) ;
+  const auto idegree = std::max ( degree() , other.degree() ) ;
   //
   Polynomial result( idegree , xmin () , xmax () ) ;
   for ( unsigned short i = 0 ; i < result.npars() ; ++i ) 
@@ -970,10 +970,10 @@ double Gaudi::Math::ChebyshevSum::integral
   if      ( low  <  m_xmin         ) { return integral ( m_xmin , high   ) ; }
   else if ( high >  m_xmax         ) { return integral ( low    , m_xmax ) ; }
   //
-  const double xl = t ( low  ) ;
-  const double xh = t ( high ) ;
+  const auto xl = t ( low  ) ;
+  const auto xh = t ( high ) ;
   //
-  const double dx = 0.5 * ( m_xmax - m_xmin ) ;
+  const auto dx = 0.5 * ( m_xmax - m_xmin ) ;
   std::vector<double> npars ( m_pars.size() + 1 , 0 ) ;
   for ( unsigned short i = 0 ; i < m_pars.size() ; ++i ) 
   {
@@ -988,7 +988,7 @@ double Gaudi::Math::ChebyshevSum::integral
     }
   }
   //
-  const double result = 
+  const auto result = 
     Gaudi::Math::Clenshaw::chebyshev_sum   ( npars.begin() , npars.end()  , xh ) - 
     Gaudi::Math::Clenshaw::chebyshev_sum   ( npars.begin() , npars.end()  , xl ) ;
   //
@@ -1001,7 +1001,7 @@ Gaudi::Math::ChebyshevSum
 Gaudi::Math::ChebyshevSum::indefinite_integral ( const double C ) const 
 {
   // 
-  const double dx = 0.5 * ( m_xmax - m_xmin ) ;
+  const auto dx = 0.5 * ( m_xmax - m_xmin ) ;
   std::vector<double> npars ( m_pars.size() + 1 , 0 ) ;
   for ( unsigned short i = 0 ; i < m_pars.size() ; ++i ) 
   {
@@ -1026,7 +1026,7 @@ double Gaudi::Math::ChebyshevSum::derivative ( const double x     ) const
 {
   if ( x < m_xmin || x > m_xmax ) { return 0 ; }
   //
-  const double tx = t ( x  ) ;
+  const auto tx = t ( x  ) ;
   //
   // // Trvial sum to be replaced with Clenshaw 
   // double result = 0 ;
@@ -1057,7 +1057,7 @@ double Gaudi::Math::ChebyshevSum::derivative ( const double x     ) const
     }
   }
   //
-  const long double result = 
+  const auto result = 
     Gaudi::Math::Clenshaw::chebyshev_sum  ( npars.begin() , npars.end()  , tx ) ;
   //
   const long double dx = 2.0L / ( m_xmax - m_xmin ) ;
@@ -1073,7 +1073,7 @@ Gaudi::Math::ChebyshevSum::derivative () const
   if ( 1 == m_pars.size() ) 
   { return Gaudi::Math::ChebyshevSum ( 0 , m_xmin , m_xmax ) ; }
   //
-  const double dx = 2 / ( m_xmax - m_xmin ) ;
+  const auto dx = 2 / ( m_xmax - m_xmin ) ;
   std::vector<double> npars ( m_pars.size() - 1 , 0 ) ;
   for ( unsigned short i = 1 ; i < m_pars.size() ; ++i ) 
   { 
@@ -1276,7 +1276,7 @@ double Gaudi::Math::LegendreSum::evaluate ( const double x ) const
   if      ( 1 == m_pars.size()       ) { return m_pars[0] ; }
   else if ( zero ()                  ) { return         0 ; }
   // transform argument:
-  const double tx = t ( x ) ;  
+  const auto tx = t ( x ) ;  
   // use Clenshaw's algorithm 
   return Gaudi::Math::Clenshaw::legendre_sum ( m_pars.begin() , m_pars.end()  , tx ) ;
 }
@@ -1304,8 +1304,8 @@ double Gaudi::Math::LegendreSum::integral
   if      ( low  <  m_xmin         ) { return integral ( m_xmin , high   ) ; }
   else if ( high >  m_xmax         ) { return integral ( low    , m_xmax ) ; }
   //
-  const double xl = t ( low  ) ;
-  const double xh = t ( high ) ;
+  const auto xl = t ( low  ) ;
+  const auto xh = t ( high ) ;
   //
   // // Trvial sum to be replaced with Clenshaw 
   // double result = 0 ;
@@ -1325,11 +1325,11 @@ double Gaudi::Math::LegendreSum::integral
     if ( 0 < i ) { npars [i-1] -= m_pars[i] / ( 2*i + 1 ) ; }
   }
   //
-  const double result = 
+  const auto result = 
     Gaudi::Math::Clenshaw::legendre_sum ( npars.begin() , npars.end() , xh ) -
     Gaudi::Math::Clenshaw::legendre_sum ( npars.begin() , npars.end() , xl ) ;
   //
-  const double dx = 0.5 *  ( m_xmax - m_xmin ) ;
+  const auto dx = 0.5 *  ( m_xmax - m_xmin ) ;
   return result * dx ;
 }
 // ============================================================================
@@ -1339,7 +1339,7 @@ Gaudi::Math::LegendreSum
 Gaudi::Math::LegendreSum::indefinite_integral ( const double C ) const
 {
   //
-  const double dx = 0.5 * ( m_xmax - m_xmin ) ;
+  const auto dx = 0.5 * ( m_xmax - m_xmin ) ;
   std::vector<double> npars ( m_pars.size() + 1 , 0 ) ;
   for ( unsigned int i = 0 ; i < m_pars.size() ; ++i ) 
   { 
@@ -1359,7 +1359,7 @@ double Gaudi::Math::LegendreSum::derivative ( const double x     ) const
 {
   if ( x < m_xmin || x > m_xmax || 1 == m_pars.size() ) { return 0 ; }
   //
-  const double tx = t ( x  ) ;
+  const auto tx = t ( x  ) ;
   //
   std::vector<double> npars ( m_pars.size() - 1 , 0 ) ;
   for ( unsigned short i = 1 ; i < m_pars.size() ; ++i )
@@ -1382,7 +1382,7 @@ Gaudi::Math::LegendreSum::derivative () const
   if ( 1 == m_pars.size() ) 
   { return Gaudi::Math::LegendreSum ( 0 , m_xmin , m_xmax ) ; }
   //
-  const double dx = 2 / ( m_xmax - m_xmin ) ;
+  const auto dx = 2 / ( m_xmax - m_xmin ) ;
   std::vector<double> npars ( m_pars.size() - 1 , 0 ) ;
   for ( unsigned short i = 1 ; i < m_pars.size() ; ++i )
   { 
@@ -1554,9 +1554,8 @@ Gaudi::Math::HermiteSum::HermiteSum
   : Gaudi::Math::PolySum ( degree )
   , m_xmin  ( std::min ( xmin , xmax ) )
   , m_xmax  ( std::max ( xmin , xmax ) )
-  , m_scale ( 1) 
 {
-  m_scale /= ( m_xmax - m_xmin );
+  m_scale = 1.0 / ( m_xmax - m_xmin );
 }
 // ============================================================================
 // get the value
@@ -1565,7 +1564,7 @@ double Gaudi::Math::HermiteSum::operator() ( const double x ) const
 { return evaluate ( x ) ; }
 double Gaudi::Math::HermiteSum:: evaluate  ( const double x ) const 
 {
-  const double tx = t ( x ) ;
+  const auto tx = t ( x ) ;
   return Gaudi::Math::Clenshaw::hermite_sum ( m_pars.begin() , m_pars.end() , tx ) ;
 }
 // ============================================================================
@@ -1573,14 +1572,14 @@ double Gaudi::Math::HermiteSum:: evaluate  ( const double x ) const
 // ============================================================================
 double  Gaudi::Math::HermiteSum::derivative ( const double x     ) const 
 {
-  const unsigned int d = degree() ;
+  const auto d = degree() ;
   if ( 0 == d ) { return 0 ; }
   ///
   std::vector<double> deriv ( d , 0.0 ) ;
   for ( unsigned int k = 0 ; k < d ; ++k ) 
   { deriv[k] = ( k + 1 ) * m_pars[k+1] * 2 * m_scale ; }
   ///
-  const double tx = t ( x ) ;
+  const auto tx = t ( x ) ;
   return Gaudi::Math::Clenshaw::hermite_sum ( deriv.begin() , deriv.end() , tx ) ;  
 }
 // ============================================================================
@@ -1589,7 +1588,7 @@ double  Gaudi::Math::HermiteSum::derivative ( const double x     ) const
 Gaudi::Math::HermiteSum
 Gaudi::Math::HermiteSum::derivative () const 
 {
-  const unsigned int d = degree() ;
+  const auto d = degree() ;
   if ( 0 == d ) { return HermiteSum ( 0 , m_xmin , m_xmax ) ; }
   ///
   HermiteSum deriv( d - 1 , m_xmin , m_xmax ) ;
@@ -1608,8 +1607,8 @@ double Gaudi::Math::HermiteSum::integral
   for ( unsigned int k = 0 ; k < m_pars.size() ; ++k ) 
   { integr[ k + 1 ] = m_pars[k] / ( k + 1 ) * 0.5 / m_scale ; }
   //
-  const double th = t ( high ) ;
-  const double tl = t ( low  ) ;
+  const auto th = t ( high ) ;
+  const auto tl = t ( low  ) ;
   //
   return 
     Gaudi::Math::Clenshaw::hermite_sum ( integr.begin() , integr.end() , th ) -   
@@ -1621,7 +1620,7 @@ double Gaudi::Math::HermiteSum::integral
 Gaudi::Math::HermiteSum
 Gaudi::Math::HermiteSum::indefinite_integral ( const double c0 ) const 
 {
-  const unsigned int d = degree() ;
+  const auto d = degree() ;
   ///
   HermiteSum integr ( d + 1 , m_xmin , m_xmax )  ;
   integr.m_pars[0] = c0 ;
@@ -1748,7 +1747,7 @@ Gaudi::Math::HermiteSum::sum
                            "LHCb::Math::HermiteSum", 
                            StatusCode( StatusCode::FAILURE ) ) ;
   }
-  const unsigned short idegree = std::max ( degree() , other.degree() ) ;
+  const auto idegree = std::max ( degree() , other.degree() ) ;
   //
   HermiteSum result( idegree , xmin () , xmax () ) ;
   for ( unsigned short i = 0 ; i < result.npars() ; ++i ) 
@@ -1870,13 +1869,13 @@ Gaudi::Math::LegendreSum::LegendreSum
   , m_xmin ( poly.xmin() ) 
   , m_xmax ( poly.xmax() ) 
 {
-  const unsigned short np = npars  () ;
-  const unsigned short d  = degree () ;
+  const auto np = npars  () ;
+  const auto d  = degree () ;
   for ( unsigned short i  = 0 ; i < np ; ++i ) 
   { 
     for ( unsigned short k = 0 ; k < np ; ++k ) 
     { 
-      const double p = poly.par ( k ) ;
+      const auto p = poly.par ( k ) ;
       if ( s_zero ( p ) ) { continue ; }
       m_pars[i] += b2l_mtrx ( i , k , d ) * p ; 
     } 
@@ -1892,8 +1891,8 @@ Gaudi::Math::Polynomial::Polynomial
   , m_xmax ( poly.xmax() ) 
 {
   //
-  const unsigned short np = npars  () ;
-  const unsigned short d  = degree () ;
+  const auto np = npars  () ;
+  const auto d  = degree () ;
   //
   // 2-step tranfromation
   //
@@ -1903,7 +1902,7 @@ Gaudi::Math::Polynomial::Polynomial
   { 
     for ( unsigned short k = 0 ; k <= i ; ++k )  // ATTENTION!!! 
     { 
-      const double p = poly.par ( k ) ;
+      const auto p = poly.par ( k ) ;
       if ( s_zero ( p ) ) { continue ; }
       _pars[i] += b2m_mtrx ( i , k , d ) * p ; 
     } 
@@ -1914,7 +1913,7 @@ Gaudi::Math::Polynomial::Polynomial
   { 
     for ( unsigned short k = i ; k < np ; ++k )  // ATTENTION!!!
     { 
-      const double p = _pars[  k ] ;
+      const auto p = _pars[  k ] ;
       if ( s_zero ( p ) ) { continue ; }
       m_pars[i] += m2m_mtrx_1 ( i , k ) * p ; 
     } 
@@ -1951,12 +1950,12 @@ Gaudi::Math::ChebyshevSum::ChebyshevSum
   , m_xmin ( poly.xmin() ) 
   , m_xmax ( poly.xmax() ) 
 {
-  const unsigned short np = npars  () ;
+  const auto np = npars  () ;
   for ( unsigned short i = 0 ; i < np ; ++i ) 
   { 
     for ( unsigned short k = i ; k < np  ; k+=2 ) // ATTENTION !!! 2!
     { 
-      const double p = poly.par ( k ) ;
+      const auto p = poly.par ( k ) ;
       if ( s_zero ( p ) ) { continue ; }
       m_pars[i] += m2c_mtrx ( i , k ) * p ; 
     } 
@@ -2021,15 +2020,15 @@ namespace
     const long double low  , 
     const long double high ) 
   {
-    const long double xlow  = std::max ( low  , (long double) poly.xmin() ) ;
-    const long double xhigh = std::min ( high , (long double) poly.xmax() ) ;
+    const auto xlow  = std::max ( low  , (long double) poly.xmin() ) ;
+    const auto xhigh = std::min ( high , (long double) poly.xmax() ) ;
     //
     // a bit esoteric way to get numerically correct resuls...
     //
-    const long double eH = std::expm1 ( tau * xhigh ) ;
-    const long double eL = std::expm1 ( tau * xlow  ) ;
-    const long double pH = poly       (       xhigh ) ;
-    const long double pL = poly       (       xlow  ) ;
+    const auto eH = std::expm1 ( tau * xhigh ) ;
+    const auto eL = std::expm1 ( tau * xlow  ) ;
+    const auto pH = poly       (       xhigh ) ;
+    const auto pL = poly       (       xlow  ) ;
     //
     const long double p1 = ( eH * pH - eL * pL ) + ( pH - pL ) ;
     //

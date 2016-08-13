@@ -110,7 +110,6 @@ Gaudi::Math::ValueWithError::ValueWithError
 Gaudi::Math::ValueWithError::ValueWithError
 ( const std::pair<double,double>& value )
   : m_value ( value.first )
-  , m_cov2  ( 0 )
 {
   setError ( value.second ) ;
 }
@@ -119,8 +118,6 @@ Gaudi::Math::ValueWithError::ValueWithError
 // ============================================================================
 Gaudi::Math::ValueWithError::ValueWithError
 ( const std::string& value )
-  : m_value ( 0 )
-  , m_cov2  ( 0 )
 {
   StatusCode sc = Gaudi::Parsers::parse ( *this , value ) ;
   if ( sc.isFailure() )
@@ -204,7 +201,7 @@ Gaudi::Math::ValueWithError::operator*=
 {
   if ( &right == this ) 
   {
-    const double a = value() ;
+    const auto a = value() ;
     m_value  =     a * a ;
     m_cov2  *= 4 * a * a ;
     //
@@ -213,8 +210,8 @@ Gaudi::Math::ValueWithError::operator*=
     return  *this ;
   }
   //
-  const double _a2 =       m_value *       m_value ;
-  const double _b2 = right.m_value * right.m_value ;
+  const auto _a2 =       m_value *       m_value ;
+  const auto _b2 = right.m_value * right.m_value ;
   m_cov2  *= _b2                 ;
   if ( 0 < right.m_cov2 ) { m_cov2  += _a2 * right.m_cov2  ; }
   m_value *=      right.m_value ;
@@ -237,9 +234,9 @@ Gaudi::Math::ValueWithError::operator/=
     return  *this ;
   }
   //
-  const double _a2 =       m_value *       m_value ;
-  const double _b2 = right.m_value * right.m_value ;
-  const double _b4 = _b2 * _b2 ;
+  const auto _a2 =       m_value *       m_value ;
+  const auto _b2 = right.m_value * right.m_value ;
+  const auto _b4 = _b2 * _b2 ;
   //
   m_cov2  /= _b2 ;
   if ( 0 < right.m_cov2 ) { m_cov2  += ( _a2 / _b4 ) * right.m_cov2 ; }
@@ -355,7 +352,7 @@ Gaudi::Math::ValueWithError::mean
   else if ( 0 >=   cov2 ()                   ) { return *this ; }
   else if ( 0 >= b.cov2 ()                   ) { return b     ; }
   //
-  double _cov2 = 1.0/( 1.0/cov2() + 1.0/b.cov2() ) ;
+  auto _cov2 = 1.0/( 1.0/cov2() + 1.0/b.cov2() ) ;
   if ( _zero ( _cov2 ) ) { _cov2 = 0 ; }
   //
   return Gaudi::Math::ValueWithError
@@ -368,12 +365,12 @@ double Gaudi::Math::ValueWithError::chi2
 ( const Gaudi::Math::ValueWithError& b ) const
 {
   //
-  if ( _equal ( value () , b.value() ) ) { return 0 ; } // RETURN
+  if ( _equal ( value () , b.value() ) ) { return 0  ; } // RETURN
   //
-  const double s_cov2 = cov2() + b.cov2() ;
+  const auto s_cov2 = cov2() + b.cov2() ;
   if ( 0 >= s_cov2 )                     { return -1 ; } // RETURN
   //
-  const double diff = value() - b.value() ;
+  const auto diff = value() - b.value() ;
   return diff*diff/s_cov2 ;
 }
 // =============================================================================
@@ -385,7 +382,7 @@ double Gaudi::Math::ValueWithError::chi2 ( const double b ) const
   if ( _equal ( value() , b ) ) { return  0 ; } // RETURN
   //
   if ( 0 >= cov2 ()           ) { return -1 ; } // RETURN
-  const double diff = value() - b ;
+  const auto diff = value() - b ;
   return diff*diff/cov2() ;
 }
 // =============================================================================
@@ -399,8 +396,8 @@ double Gaudi::Math::ValueWithError::kullback
   //
   if ( 0 >= cov2() || 0 >= b.cov2 () ) { return -1 ; }
   //
-  const double c1 =   cov2 () ;
-  const double c2 = b.cov2 () ;
+  const auto c1 =   cov2 () ;
+  const auto c2 = b.cov2 () ;
   //
   return ( c1 - c2 ) * ( 1.0 / c2 - 1.0 / c1 ) + chi2 ( b ) ;  
 }
@@ -413,10 +410,10 @@ double Gaudi::Math::ValueWithError::residual
   //
   if ( _equal ( value () , b.value() ) ) { return     0 ; } // RETURN
   //
-  const double s_cov2 = cov2() + b.cov2() ;
+  const auto s_cov2 = cov2() + b.cov2() ;
   if ( 0 >= s_cov2 )                     { return -1000 ; } // RETURN
   //
-  const double diff = value() - b.value() ;
+  const auto diff = value() - b.value() ;
   //
   return diff / std::sqrt ( s_cov2 ) ;
 }
@@ -431,7 +428,7 @@ double Gaudi::Math::ValueWithError::residual
   //
   if ( 0 >= cov2 () )           { return -1000 ; } // RETURN
   //
-  const double diff = value() - b ;
+  const auto diff = value() - b ;
   //
   return diff / error () ;
 }
@@ -448,12 +445,12 @@ Gaudi::Math::ValueWithError::frac
   //
   if ( &b == this ) { return fraction ( *this , b , 1 ) ; }
   //
-  const double r  = value() / ( value() + b.value() ) ;
+  const auto r  = value() / ( value() + b.value() ) ;
   //
-  const double s  = value() + b.value() ;
-  const double s2 = s  * s  ;
-  const double s4 = s2 * s2 ;
-  const double c2 =
+  const auto s  = value() + b.value() ;
+  const auto s2 = s  * s  ;
+  const auto s4 = s2 * s2 ;
+  const auto c2 =
     std::fabs (   cov2 () ) * b.value () * b.value () +
     std::fabs ( b.cov2 () ) *   value () *   value () ;
   //
@@ -483,13 +480,13 @@ Gaudi::Math::ValueWithError::asym
   //
   if ( &b == this ) { return asymmetry ( *this , b , 1 ) ; }
   //
-  const double r  = ( value() - b.value() ) / ( value() + b.value() ) ;
+  const auto r  = ( value() - b.value() ) / ( value() + b.value() ) ;
   //
-  const double s  = value() + b.value() ;
-  const double s2 = s  * s  ;
-  const double s4 = s2 * s2 ;
+  const auto s  = value() + b.value() ;
+  const auto s2 = s  * s  ;
+  const auto s4 = s2 * s2 ;
   //
-  const double c2 =
+  const auto c2 =
     4 * std::fabs (   cov2 () ) * b.value () * b.value () +
     4 * std::fabs ( b.cov2 () ) *   value () *   value () ;
   //
@@ -864,8 +861,8 @@ Gaudi::Math::ValueWithError Gaudi::Math::binomEff
   const long n1 = 0 == n ? 1 :     n ;
   const long n2 = n == N ? 1 : N - n ;
   //
-  const double eff = double ( n       ) / N         ;
-  const double c2  = double ( n1 * n2 ) / N / N / N ;
+  const auto eff = double ( n       ) / N         ;
+  const auto c2  = double ( n1 * n2 ) / N / N / N ;
   //
   return Gaudi::Math::ValueWithError  ( eff , c2 ) ;
 }
@@ -887,17 +884,17 @@ Gaudi::Math::ValueWithError Gaudi::Math::wilsonEff
   const long n1       = 0 == n ? 1 :     n ;
   const long n2       = n == N ? 1 : N - n ;
   //
-  const double p      = double ( n1 ) / N ;
-  const double q      = double ( n2 ) / N ;
+  const auto p      = double ( n1 ) / N ;
+  const auto q      = double ( n2 ) / N ;
   //
-  const double kappa  =             1 ; // "1*sigma"
-  const double kappa2 = kappa * kappa ;
+  const auto kappa  =           1.0 ; // "1*sigma"
+  const auto kappa2 = kappa * kappa ;
   //
-  const double nK     = N + kappa2 ;
-  const double eff    = ( n + 0.5 * kappa2 ) / nK ;
+  const auto nK     = N + kappa2 ;
+  const auto eff    = ( n + 0.5 * kappa2 ) / nK ;
   //
-  const double prefix = kappa2 * N / ( nK * nK ) ;
-  const double c2     = prefix * ( q * p + 0.25 * kappa2 / N ) ;
+  const auto prefix = kappa2 * N / ( nK * nK ) ;
+  const auto c2     = prefix * ( q * p + 0.25 * kappa2 / N ) ;
   //
   return Gaudi::Math::ValueWithError  ( eff , c2 ) ;
 }
@@ -916,17 +913,17 @@ Gaudi::Math::ValueWithError Gaudi::Math::agrestiCoullEff
   if      ( n >  N ) { return wilsonEff      ( N , n ) ; }
   else if ( 0 == N ) { return ValueWithError ( 1 , 1 ) ; }
   //
-  const double kappa  =             1 ; // "1*sigma"
-  const double kappa2 = kappa * kappa ;
+  const auto kappa  =           1.0 ; // "1*sigma"
+  const auto kappa2 = kappa * kappa ;
   //
-  const double n1 = n + 0.5 * kappa2 ;
-  const double n2 = N +       kappa2 ;
+  const auto n1 = n + 0.5 * kappa2 ;
+  const auto n2 = N +       kappa2 ;
   //
-  const double p  = n1/n2 ;
-  const double q  = 1 - p ;
+  const auto p  = n1/n2 ;
+  const auto q  = 1 - p ;
   //
-  const double eff = p ;
-  const double c2  = kappa2 * p * q / n2 ;
+  const auto eff = p ;
+  const auto c2  = kappa2 * p * q / n2 ;
   //
   return Gaudi::Math::ValueWithError  ( eff , c2 ) ;
 }
@@ -955,20 +952,20 @@ Gaudi::Math::binomEff2
 ( const ValueWithError& nAccepted , 
   const ValueWithError& nRejected ) 
 {
-  const double vA = nAccepted.value() ;
-  const double vR = nRejected.value() ;
+  const auto vA = nAccepted.value() ;
+  const auto vR = nRejected.value() ;
   //
   const bool zeroA = _zero ( vA      ) ;
   const bool zeroR = _zero ( vR      ) ;
   //
   if ( zeroA && zeroR ) { return ValueWithError ( 1 , -1 ) ; }
   //
-  const double vB  = vA + vR ;
+  const auto vB  = vA + vR ;
   const bool zeroB = _zero ( vB ) ;
   //
   if ( zeroB          ) { return ValueWithError ( 0 , -1 ) ; }
   //
-  double cov2   =  vA * vA * nRejected.cov2() ;
+  auto cov2   =  vA * vA * nRejected.cov2() ;
   cov2         +=  vR * vR * nAccepted.cov2() ;
   cov2         /=  vB * vB   ;
   //
@@ -1000,9 +997,9 @@ Gaudi::Math::effJackknife
   //
   const unsigned long n1 = n - 1 ;
   //
-  const double r  = nWeighted.value() / n ;
+  const auto r  = nWeighted.value() / n ;
   //
-  double c2 = nWeighted.cov2 () - r*r*n ;
+  auto c2 = nWeighted.cov2 () - r*r*n ;
   //
   c2 /= n1 ;
   c2 /= n1 ;
@@ -1021,12 +1018,12 @@ Gaudi::Math::zechEff
   const Gaudi::Math::ValueWithError& total    ) 
 {
   //
-  const double e   =        accepted.value () / total.value () ;
-  const double v2  = total.value() * total.value() ;
-  const double t1  =           total.cov2  () / v2 ;
-  const double t2  =        accepted.cov2  () / v2 ;
+  const auto e   =        accepted.value () / total.value () ;
+  const auto v2  = total.value() * total.value() ;
+  const auto t1  =           total.cov2  () / v2 ;
+  const auto t2  =        accepted.cov2  () / v2 ;
   //
-  const double c2  = e * e * t1  + ( 1 - 2 * e ) * t2 ;
+  const auto c2  = e * e * t1  + ( 1 - 2 * e ) * t2 ;
   //
   return Gaudi::Math::ValueWithError ( e , c2 ) ;
 }
@@ -1048,8 +1045,8 @@ Gaudi::Math::ValueWithError Gaudi::Math::pow
   else if ( 0 >= a.cov2 () || _zero ( a.cov2() ) )
   { return _pow ( a.value() , b ) ;  }               // RETURN
   //
-  const double v  =     _pow ( a.value () , b     ) ;
-  const double e1 = b * _pow ( a.value () , b - 1 ) ;
+  const auto v  =     _pow ( a.value () , b     ) ;
+  const auto e1 = b * _pow ( a.value () , b - 1 ) ;
   //
   return Gaudi::Math::ValueWithError ( v , e1 * e1 * a.cov2 () ) ;
   //
@@ -1071,8 +1068,8 @@ Gaudi::Math::ValueWithError Gaudi::Math::pow
   else if ( 0 >= a.cov2 () || _zero ( a.cov2() ) )
   { return std::pow ( a.value() , b ) ; }           // RETURN
   //
-  const double v  =     std::pow ( a.value () , b     ) ;
-  const double e1 = b * std::pow ( a.value () , b - 1 ) ;
+  const auto v  =     std::pow ( a.value () , b     ) ;
+  const auto e1 = b * std::pow ( a.value () , b - 1 ) ;
   //
   return Gaudi::Math::ValueWithError ( v , e1 * e1 * a.cov2 () ) ;
 }
@@ -1092,8 +1089,8 @@ Gaudi::Math::ValueWithError Gaudi::Math::pow
   else if ( 0 >= b.cov2() || _zero ( b.cov2() ) )
   { return std::pow ( double ( a ) , b.value() ) ; }    // RETURN
   //
-  const double v  =     std::pow ( double ( a ) , b.value() ) ;
-  const double e2 = v * std::log ( double ( a ) ) ;
+  const auto v  =     std::pow ( double ( a ) , b.value() ) ;
+  const auto e2 = v * std::log ( double ( a ) ) ;
   //
   return Gaudi::Math::ValueWithError ( v , e2 * e2 * b.cov2 () ) ;
 }
@@ -1112,8 +1109,8 @@ Gaudi::Math::ValueWithError Gaudi::Math::pow
   else if ( 0 >= b.cov2() || _zero ( b.cov2() ) )
   { return std::pow ( a , b.value() ) ; }    // RETURN
   //
-  const double v  =     std::pow ( a , b.value() ) ;
-  const double e2 = v * std::log ( a ) ;
+  const auto v  =     std::pow ( a , b.value() ) ;
+  const auto e2 = v * std::log ( a ) ;
   //
   return Gaudi::Math::ValueWithError ( v , e2 * e2 * b.cov2 () ) ;
   //
@@ -1135,8 +1132,8 @@ Gaudi::Math::ValueWithError Gaudi::Math::pow
     if      ( 0 >= a.cov2 () || _zero ( a.cov2() ) )
     { return std::pow ( a.value() , a.value() ) ; }
     //
-    const double v2 = std::pow ( a.value() , a.value() ) ;
-    const double v3 = std::log ( a.value() ) + 1 ;
+    const auto v2 = std::pow ( a.value() , a.value() ) ;
+    const auto v3 = std::log ( a.value() ) + 1 ;
     //
     return Gaudi::Math::ValueWithError
       ( v2 , v2 * v2 * v3 * v3 * a.cov2 () ) ;
@@ -1147,11 +1144,11 @@ Gaudi::Math::ValueWithError Gaudi::Math::pow
   else if ( 0 >= b.cov2 () || _zero ( b.cov2() ) )
   { return pow ( a         , b.value() ) ; }
   //
-  const double v  = std::pow ( a.value () , b.value ()     ) ;
-  const double v1 = std::pow ( a.value () , b.value () - 1 ) ;
+  const auto v  = std::pow ( a.value () , b.value ()     ) ;
+  const auto v1 = std::pow ( a.value () , b.value () - 1 ) ;
   //
-  const double e1 = v1 *            b.value ()   ;
-  const double e2 = v  * std::log ( a.value () ) ;
+  const auto e1 = v1 *            b.value ()   ;
+  const auto e2 = v  * std::log ( a.value () ) ;
   //
   return Gaudi::Math::ValueWithError
     ( v , e1 * e1 * a.cov2 () + e2 * e2 * b.cov2 () ) ;
@@ -1169,7 +1166,7 @@ Gaudi::Math::ValueWithError Gaudi::Math::exp
   if ( 0 >= b.cov2 () || _zero ( b.cov2() ) )
   { return std::exp ( b.value() ) ; }
   //
-  const double v = std::exp ( b.value() ) ;
+  const auto v = std::exp ( b.value() ) ;
   return Gaudi::Math::ValueWithError ( v , v * v * b.cov2 () ) ;
 }
 // ============================================================================
@@ -1185,7 +1182,7 @@ Gaudi::Math::ValueWithError Gaudi::Math::exp2
   if ( 0 >= b.cov2 () || _zero ( b.cov2() ) )
   { return std::exp2 ( b.value() ) ; }
   //
-  const double v = std::exp2 ( b.value() ) ;
+  const auto v = std::exp2 ( b.value() ) ;
   return Gaudi::Math::ValueWithError ( v , v * v * b.cov2 () * s_ln2_sq ) ;
 }
 // ============================================================================
@@ -1201,10 +1198,10 @@ Gaudi::Math::ValueWithError Gaudi::Math::expm1
   if ( 0 >= b.cov2 () || _zero ( b.cov2() ) )
   { return std::expm1 ( b.value() ) ; }
   //
-  const double v  = std::expm1 ( b.value() ) ;
-  const double d1 = ( v + 1 )  ;
-  const double d2 = d1 * d1    ;
-  const double e2 = d2 * b.cov2() ;
+  const auto v  = std::expm1 ( b.value() ) ;
+  const auto d1 = ( v + 1 )  ;
+  const auto d2 = d1 * d1    ;
+  const auto e2 = d2 * b.cov2() ;
   //
   return Gaudi::Math::ValueWithError ( v , e2 ) ;
 }
@@ -1221,12 +1218,12 @@ Gaudi::Math::ValueWithError Gaudi::Math::tgamma
   if ( 0 >= b.cov2 () || _zero ( b.cov2() ) )
   { return std::tgamma ( b.value() ) ; }
   //
-  const double bv = b.value() ;
-  const double v  =      std::tgamma ( bv ) ;
+  const auto bv = b.value() ;
+  const auto v  =      std::tgamma ( bv ) ;
   //
   // Gamma'/Gamma:
-  const double p  = Gaudi::Math::psi ( bv ) ;
-  const double e1 = v * p * b.error() ;
+  const auto p  = Gaudi::Math::psi ( bv ) ;
+  const auto e1 = v * p * b.error() ;
   //
   return Gaudi::Math::ValueWithError ( v , e1 * e1  ) ;
 }
@@ -1243,12 +1240,12 @@ Gaudi::Math::ValueWithError Gaudi::Math::lgamma
   if ( 0 >= b.cov2 () || _zero ( b.cov2() ) )
   { return std::lgamma ( b.value() ) ; }
   //
-  const double bv = b.value() ;
-  const double v  = std::lgamma  ( bv ) ;
+  const auto bv = b.value() ;
+  const auto v  = std::lgamma  ( bv ) ;
   //
-  const double d1 = Gaudi::Math::psi ( bv ) ;
-  const double d2 = d1 * d1 ;
-  const double e2 = d2 * b.cov2() ;
+  const auto d1 = Gaudi::Math::psi ( bv ) ;
+  const auto d2 = d1 * d1 ;
+  const auto e2 = d2 * b.cov2() ;
   //
   return Gaudi::Math::ValueWithError ( v , e2 ) ;
 }
@@ -1265,12 +1262,12 @@ Gaudi::Math::ValueWithError Gaudi::Math::igamma
   if ( 0 >= b.cov2 () || _zero ( b.cov2() ) )
   { return Gaudi::Math::igamma ( b.value() ) ; }
   //
-  const double bv = b.value() ;
-  const double v  = Gaudi::Math::igamma  ( bv ) ;
+  const auto bv = b.value() ;
+  const auto v  = Gaudi::Math::igamma  ( bv ) ;
   //
-  const double d1 = - Gaudi::Math::psi( bv ) / v ;
-  const double d2 = d1 * d1 ;
-  const double e2 = d2 * b.cov2() ;
+  const auto d1 = - Gaudi::Math::psi( bv ) / v ;
+  const auto d2 = d1 * d1 ;
+  const auto e2 = d2 * b.cov2() ;
   //
   return Gaudi::Math::ValueWithError ( v , e2 ) ;
 }
@@ -1291,10 +1288,10 @@ Gaudi::Math::ValueWithError  Gaudi::Math::hypot
   const bool x0 = 0 >= x.cov2() || _zero ( x.cov2() ) ;
   const bool y0 = 0 >= y.cov2() || _zero ( y.cov2() ) ;
   //
-  const double r  = std::hypot ( x.value() , y.value() ) ;
+  const auto r  = std::hypot ( x.value() , y.value() ) ;
   if ( x0 && y0 ) { return r ; }             // RETURN
   //
-  double e2 = 0 ;
+  auto e2 = 0.0 ;
   if ( !_zero ( r ) ) 
   {
     e2 += x0 ? 0.0 : x.cov2() * x.value() * x.value() ;
@@ -1345,15 +1342,15 @@ Gaudi::Math::fma
   const bool y0 = 0 >= y.cov2() || _zero ( y.cov2() ) ;
   const bool z0 = 0 >= z.cov2() || _zero ( z.cov2() ) ;
   //
-  const double xv = x.value() ;
-  const double yv = y.value() ;
-  const double zv = z.value() ;
+  const auto xv = x.value() ;
+  const auto yv = y.value() ;
+  const auto zv = z.value() ;
   //
-  const double r = std::fma ( xv , yv , zv ) ;
+  const auto r = std::fma ( xv , yv , zv ) ;
   if ( x0 && y0 && z0 ) { return r ; }                              // RETURN 
   //
   
-  double e2 = 0.0 ;
+  auto e2 = 0.0 ;
   e2 +=  x0 ? 0.0 : yv * yv * x.cov2 () ;
   e2 +=  y0 ? 0.0 : xv * xv * y.cov2 () ;
   e2 +=  z0 ? 0.0 :           z.cov2 () ;
@@ -1385,8 +1382,8 @@ Gaudi::Math::ValueWithError Gaudi::Math::log
 {
   if ( 0 >= b.cov2 () || _zero ( b.cov2() ) ) { return std::log ( b.value() ) ; }
   //
-  const double v  = std::log ( b.value () ) ;
-  const double e1 = 1.0 /      b.value ()   ;
+  const auto v  = std::log ( b.value () ) ;
+  const auto e1 = 1.0 /      b.value ()   ;
   //
   return Gaudi::Math::ValueWithError ( v , e1 * e1 * b.cov2 () ) ;
 }
@@ -1421,13 +1418,13 @@ Gaudi::Math::ValueWithError Gaudi::Math::sum
   if      ( 0 > a.cov2() ) { return sum ( a.value() , b         , c ) ; }
   else if ( 0 > b.cov2() ) { return sum ( a         , b.value() , c ) ; }
   //
-  const double v = a.value() + b.value();
+  const auto v = a.value() + b.value();
   //
   // adjust the correlation coefficient 
-  const double r   = std::max ( -1.0 , std::min ( 1.0 , c ) ) ;
+  const auto r   = std::max ( -1.0 , std::min ( 1.0 , c ) ) ;
   //
-  const double ac2 = std::max ( a.cov2 () , 0.0 ) ;
-  const double bc2 = std::max ( b.cov2 () , 0.0 ) ;
+  const auto ac2 = std::max ( a.cov2 () , 0.0 ) ;
+  const auto bc2 = std::max ( b.cov2 () , 0.0 ) ;
   //
   if ( _zero ( ac2 ) ) { return ValueWithError ( v , bc2 ) ; }  // RETURN
   if ( _zero ( bc2 ) ) { return ValueWithError ( v , ac2 ) ; }  // RETURN 
@@ -1475,7 +1472,7 @@ Gaudi::Math::ValueWithError Gaudi::Math::subtract
   if      ( _zero ( a ) ) { return -b ; }
   else if ( _zero ( b ) ) { return  a ; }
   //
-  const double v = a.value() - b.value();
+  const auto v = a.value() - b.value();
   //
   if      ( 0 > a.cov2() ) { return subtract ( a.value() , b         , c ) ; }
   else if ( 0 > b.cov2() ) { return subtract ( a         , b.value() , c ) ; }
@@ -1484,10 +1481,10 @@ Gaudi::Math::ValueWithError Gaudi::Math::subtract
   if ( _zero ( c ) ) { return a - b ; } 
   //
   // adjust the correlation coefficient 
-  const double r   = std::max ( -1.0 , std::min ( 1.0 , c ) ) ;
+  const auto r   = std::max ( -1.0 , std::min ( 1.0 , c ) ) ;
   //
-  const double ac2 = std::max ( a.cov2 () , 0.0 ) ;
-  const double bc2 = std::max ( b.cov2 () , 0.0 ) ;
+  const auto ac2 = std::max ( a.cov2 () , 0.0 ) ;
+  const auto bc2 = std::max ( b.cov2 () , 0.0 ) ;
   //
   if ( _zero ( ac2 ) ) { return ValueWithError ( v , bc2 ) ; }  // RETURN
   if ( _zero ( bc2 ) ) { return ValueWithError ( v , ac2 ) ; }  // RETURN 
@@ -1515,7 +1512,7 @@ Gaudi::Math::ValueWithError Gaudi::Math::multiply
   //
   if ( &a == &b ) 
   {
-    const  double v = a.value() * a.value() ;
+    const  auto v = a.value() * a.value() ;
     return ValueWithError ( v , 4 * v * a.cov2()  ) ;   // RETURN
   }
   //
@@ -1535,15 +1532,15 @@ Gaudi::Math::ValueWithError Gaudi::Math::multiply
   //
   if ( _zero ( c ) ) { return a * b ; }                         // RETURN
   //
-  const double  v   = a.value () * b.value () ;
-  const double av2  = a.value () * a.value () ;
-  const double bv2  = b.value () * b.value () ;
+  const auto  v   = a.value () * b.value () ;
+  const auto av2  = a.value () * a.value () ;
+  const auto bv2  = b.value () * b.value () ;
   //
   // adjust the correlation coefficient 
-  const double r   = std::max ( -1.0 , std::min ( 1.0 , c ) ) ;
+  const auto r   = std::max ( -1.0 , std::min ( 1.0 , c ) ) ;
   //
-  const double ac2 = std::max ( a.cov2 () , 0.0 ) ;
-  const double bc2 = std::max ( b.cov2 () , 0.0 ) ;
+  const auto ac2 = std::max ( a.cov2 () , 0.0 ) ;
+  const auto bc2 = std::max ( b.cov2 () , 0.0 ) ;
   //
   if ( _zero ( ac2 ) ) { return ValueWithError ( v , av2 * bc2 ) ; }  // RETURN
   if ( _zero ( bc2 ) ) { return ValueWithError ( v , bv2 * ac2 ) ; }  // RETURN 
@@ -1589,19 +1586,19 @@ Gaudi::Math::ValueWithError Gaudi::Math::divide
   //
   if ( _zero ( c ) ) { return a / b ; }                         // RETURN
   //
-  const double  v   = a.value () / b.value () ;
-  const double av2  = a.value () * a.value () ;
-  const double bv2  = b.value () * b.value () ;  
+  const auto  v   = a.value () / b.value () ;
+  const auto av2  = a.value () * a.value () ;
+  const auto bv2  = b.value () * b.value () ;  
   //
   // adjust the correlation coefficient 
-  const double r   = std::max ( -1.0 , std::min ( 1.0 , c ) ) ;
+  const auto r   = std::max ( -1.0 , std::min ( 1.0 , c ) ) ;
   //
-  const double ac2 = std::max ( a.cov2 () , 0.0 ) ;
-  const double bc2 = std::max ( b.cov2 () , 0.0 ) ;
+  const auto ac2 = std::max ( a.cov2 () , 0.0 ) ;
+  const auto bc2 = std::max ( b.cov2 () , 0.0 ) ;
   //
-  const double ac2_n = ac2 / bv2 ;
-  const double bc2_n = bc2 / bv2 ;
-  const double av2_n = av2 / bv2 ;
+  const auto ac2_n = ac2 / bv2 ;
+  const auto bc2_n = bc2 / bv2 ;
+  const auto av2_n = av2 / bv2 ;
   //
   if ( _zero ( ac2 ) ) { return ValueWithError ( v ,  av2_n * bc2_n ) ; }  // RETURN
   if ( _zero ( bc2 ) ) { return ValueWithError ( v ,          ac2_n ) ; }  // RETURN 
@@ -1629,8 +1626,8 @@ Gaudi::Math::fraction
   const double                       c ) 
 {
   //
-  const double av = std::abs ( a.value() ) ;
-  const double bv = std::abs ( b.value() ) ;
+  const auto av = std::abs ( a.value() ) ;
+  const auto bv = std::abs ( b.value() ) ;
   return 
     av > bv ? 
     1.0       / ( 1.0 + divide ( b , a , c ) ) : 
@@ -1653,8 +1650,8 @@ Gaudi::Math::ValueWithError Gaudi::Math::asymmetry
   const double                       c ) 
 {
   //
-  const double av = std::abs ( a.value() ) ;
-  const double bv = std::abs ( b.value() ) ;
+  const auto av = std::abs ( a.value() ) ;
+  const auto bv = std::abs ( b.value() ) ;
   if ( av > bv ) 
   {
     const ValueWithError d = divide ( b , a , c )  ;
@@ -1676,9 +1673,9 @@ Gaudi::Math::ValueWithError Gaudi::Math::log2
   if ( 0 >= b.cov2 () || _zero ( b.cov2() ) )
   { return std::log2 ( b.value() ) ; }
   //
-  const double v  = std::log2 ( b.value() ) ;
+  const auto v  = std::log2 ( b.value() ) ;
   ///
-  const double e1 = s_ln2_i / b.value() ;
+  const auto e1 = s_ln2_i / b.value() ;
   //
   return Gaudi::Math::ValueWithError ( v , e1 * e1 * b.cov2 () ) ;
 }
@@ -1695,9 +1692,9 @@ Gaudi::Math::ValueWithError Gaudi::Math::log10
   if ( 0 >= b.cov2 () || _zero ( b.cov2() ) )
   { return std::log10 ( b.value() ) ; }
   //
-  const double v  = std::log10 ( b.value() ) ;
+  const auto v  = std::log10 ( b.value() ) ;
   ///
-  const double e1 = s_ln10_i / b.value() ;
+  const auto e1 = s_ln10_i / b.value() ;
   //
   return Gaudi::Math::ValueWithError ( v , e1 * e1 * b.cov2 () ) ;
 }
@@ -1714,11 +1711,11 @@ Gaudi::Math::ValueWithError Gaudi::Math::log1p
   if ( 0 >= b.cov2 () || _zero ( b.cov2() ) )
   { return std::log1p ( b.value() ) ; }
   //
-  const double bv = b.value() ;
-  const double v  = std::log1p ( bv ) ;
+  const auto bv = b.value() ;
+  const auto v  = std::log1p ( bv ) ;
   //
-  const double d1 = 1 / ( 1 + bv ) ;
-  const double e2 = d1 * d1 * b.cov2() ;
+  const auto d1 = 1 / ( 1 + bv ) ;
+  const auto e2 = d1 * d1 * b.cov2() ;
   //
   return Gaudi::Math::ValueWithError ( v , e2 ) ;
 }
@@ -1734,9 +1731,9 @@ Gaudi::Math::ValueWithError Gaudi::Math::sqrt
   if ( 0 >= b.cov2 () || _zero ( b.cov2() ) )
   { return std::sqrt ( b.value() ) ; }
   //
-  const double v  = std::sqrt ( b.value() ) ;
+  const auto v  = std::sqrt ( b.value() ) ;
   ///
-  const double e2 = 0.25 * b.cov2() / b.value() ;
+  const auto e2 = 0.25 * b.cov2() / b.value() ;
   //
   return Gaudi::Math::ValueWithError ( v , e2 ) ;
 }
@@ -1768,9 +1765,9 @@ Gaudi::Math::ValueWithError Gaudi::Math::cbrt
   if ( 0 >= b.cov2 () || _zero ( b.cov2() ) )
   { return std::cbrt ( b.value() ) ; }
   //
-  const double v  = std::cbrt ( b.value() ) ;
+  const auto v  = std::cbrt ( b.value() ) ;
   //
-  const double e2 = b.cov2() / ( v * b.value() ) ;
+  const auto e2 = b.cov2() / ( v * b.value() ) ;
   //
   return Gaudi::Math::ValueWithError ( v , e2 / 9.0 ) ;
 }
@@ -1786,10 +1783,10 @@ Gaudi::Math::ValueWithError Gaudi::Math::sin
   if ( 0 >= b.cov2 () || _zero ( b.cov2() ) )
   { return std::sin ( b.value() ) ; }
   //
-  const double v  = std::sin ( b.value() ) ;
-  const double d2 = std::max ( 1 - v*v , 0.0 ) ;
+  const auto v  = std::sin ( b.value() ) ;
+  const auto d2 = std::max ( 1 - v*v , 0.0 ) ;
   //
-  const double e2 = std::min ( d2 * b.cov2() , 1.0 ) ;
+  const auto e2 = std::min ( d2 * b.cov2() , 1.0 ) ;
   //
   return Gaudi::Math::ValueWithError ( v , e2 ) ;
 }
@@ -1805,10 +1802,10 @@ Gaudi::Math::ValueWithError Gaudi::Math::cos
   if ( 0 >= b.cov2 () || _zero ( b.cov2() ) )
   { return std::cos ( b.value() ) ; }
   //
-  const double v  = std::cos ( b.value() ) ;
-  const double d2 = std::max ( 1 - v*v , 0.0 ) ;
+  const auto v  = std::cos ( b.value() ) ;
+  const auto d2 = std::max ( 1 - v*v , 0.0 ) ;
   //
-  const double e2 = std::min ( d2 * b.cov2() , 1.0 ) ;
+  const auto e2 = std::min ( d2 * b.cov2() , 1.0 ) ;
   //
   return Gaudi::Math::ValueWithError ( v , e2 ) ;
 }
@@ -1824,10 +1821,10 @@ Gaudi::Math::ValueWithError Gaudi::Math::tan
   if ( 0 >= b.cov2 () || _zero ( b.cov2() ) )
   { return std::tan ( b.value() ) ; }
   //
-  const double v  = std::tan ( b.value() ) ;
-  const double d  = 1 + v * v ;
+  const auto v  = std::tan ( b.value() ) ;
+  const auto d  = 1 + v * v ;
   //
-  const double e2 = d * d  * b.cov2() ;
+  const auto e2 = d * d  * b.cov2() ;
   //
   return Gaudi::Math::ValueWithError ( v , e2 ) ;
 }
@@ -1843,10 +1840,10 @@ Gaudi::Math::ValueWithError Gaudi::Math::sinh
   if ( 0 >= b.cov2 () || _zero ( b.cov2() ) )
   { return std::sinh ( b.value() ) ; }
   //
-  const double v  = std::sinh ( b.value() ) ;
-  const double d2 =  1 + v * v ;
+  const auto v  = std::sinh ( b.value() ) ;
+  const auto d2 =  1 + v * v ;
   //
-  const double e2 = d2 * b.cov2() ;
+  const auto e2 = d2 * b.cov2() ;
   //
   return Gaudi::Math::ValueWithError ( v , e2 ) ;
 }
@@ -1862,10 +1859,10 @@ Gaudi::Math::ValueWithError Gaudi::Math::cosh
   if ( 0 >= b.cov2 () || _zero ( b.cov2() ) )
   { return std::cosh ( b.value() ) ; }
   //
-  const double v  = std::cosh ( b.value() ) ;
-  const double d2 = v * v - 1 ;
+  const auto v  = std::cosh ( b.value() ) ;
+  const auto d2 = v * v - 1 ;
   //
-  const double e2 = std::max ( d2 * b.cov2() , 0.0 ) ;
+  const auto e2 = std::max ( d2 * b.cov2() , 0.0 ) ;
   //
   return Gaudi::Math::ValueWithError ( v , e2 ) ;
 }
@@ -1881,10 +1878,10 @@ Gaudi::Math::ValueWithError Gaudi::Math::tanh
   if ( 0 >= b.cov2 () || _zero ( b.cov2() ) )
   { return std::tanh ( b.value() ) ; }
   //
-  const double v  = std::tanh ( b.value() ) ;
-  const double d  = 1 - v * v ;
+  const auto v  = std::tanh ( b.value() ) ;
+  const auto d  = 1 - v * v ;
   //
-  const double e2 = std::min ( d * d  * b.cov2() , 1.0 ) ;
+  const auto e2 = std::min ( d * d  * b.cov2() , 1.0 ) ;
   //
   return Gaudi::Math::ValueWithError ( v , e2 ) ;
 }
@@ -1900,10 +1897,10 @@ Gaudi::Math::ValueWithError Gaudi::Math::sech
   if ( 0 >= b.cov2 () || _zero ( b.cov2() ) )
   { return Gaudi::Math::sech ( b.value() ) ; }
   //
-  const double v  = Gaudi::Math::sech ( b.value() ) ;
-  const double d  = -v *    std::tanh ( b.value() ) ;
+  const auto v  = Gaudi::Math::sech ( b.value() ) ;
+  const auto d  = -v *    std::tanh ( b.value() ) ;
   //
-  const double e2 = std::min ( d * d  * b.cov2() , 1.0 ) ;
+  const auto e2 = std::min ( d * d  * b.cov2() , 1.0 ) ;
   return Gaudi::Math::ValueWithError ( v , e2 ) ;
 }
 // ============================================================================
@@ -1919,13 +1916,13 @@ Gaudi::Math::ValueWithError Gaudi::Math::erf
   if ( 0 >= b.cov2 () || _zero ( b.cov2() ) )
   { return std::erf( b.value() ) ; }
   //
-  const double bv = b.value() ;
-  const double v  = std::erf ( bv ) ;
+  const auto bv = b.value() ;
+  const auto v  = std::erf ( bv ) ;
   //
-  static const double factor  = 4.0 / M_PI ;
+  static const auto factor  = 4.0 / M_PI ;
   //
-  const double d2 = factor * std::exp ( - bv * bv ) ;
-  const double e2 = d2     * b.cov2() ;
+  const auto d2 = factor * std::exp ( - bv * bv ) ;
+  const auto e2 = d2     * b.cov2() ;
   //
   return Gaudi::Math::ValueWithError ( v , e2 ) ;
 }
@@ -1942,13 +1939,13 @@ Gaudi::Math::ValueWithError Gaudi::Math::erfc
   if ( 0 >= b.cov2 () || _zero ( b.cov2() ) )
   { return std::erfc( b.value() ) ; }
   //
-  const double bv = b.value() ;
-  const double v  = std::erfc ( bv ) ;
+  const auto bv = b.value() ;
+  const auto v  = std::erfc ( bv ) ;
   //
-  static const double factor  = 4.0 / M_PI ;
+  static const auto factor  = 4.0 / M_PI ;
   //
-  const double d2 = factor * std::exp ( - bv * bv ) ;
-  const double e2 = d2     * b.cov2() ;
+  const auto d2 = factor * std::exp ( - bv * bv ) ;
+  const auto e2 = d2     * b.cov2() ;
   //
   return Gaudi::Math::ValueWithError ( v , e2 ) ;
 }
@@ -1965,13 +1962,13 @@ Gaudi::Math::ValueWithError Gaudi::Math::erfi
   if ( 0 >= b.cov2 () || _zero ( b.cov2() ) )
   { return Gaudi::Math::erfi( b.value() ) ; }
   //
-  const double bv = b.value() ;
-  const double v  = Gaudi::Math::erfi ( bv ) ;
+  const auto bv = b.value() ;
+  const auto v  = Gaudi::Math::erfi ( bv ) ;
   //
-  static const double factor  = 2.0 / std::sqrt ( M_PI ) ;
+  static const auto factor  = 2.0 / std::sqrt ( M_PI ) ;
   //
-  const double d2 = factor * std::exp ( bv * bv ) ;
-  const double e2 = d2     * b.cov2() ;
+  const auto d2 = factor * std::exp ( bv * bv ) ;
+  const auto e2 = d2     * b.cov2() ;
   //
   return Gaudi::Math::ValueWithError ( v , e2 ) ;
 }
@@ -1988,14 +1985,14 @@ Gaudi::Math::ValueWithError Gaudi::Math::erfcx
   if ( 0 >= b.cov2 () || _zero ( b.cov2() ) )
   { return Gaudi::Math::erfcx ( b.value() ) ; }
   //
-  const double bv = b.value() ;
-  const double v  = Gaudi::Math::erfcx ( bv ) ;
+  const auto bv = b.value() ;
+  const auto v  = Gaudi::Math::erfcx ( bv ) ;
   //
-  static const double factor  = 2.0 / std::sqrt ( M_PI ) ;
+  static const auto factor  = 2.0 / std::sqrt ( M_PI ) ;
   //
   // derivative 
-  const double d  = 2 * bv * v - factor ; //  
-  const double e2 = d * d  * b.cov2()   ;
+  const auto d  = 2 * bv * v - factor ; //  
+  const auto e2 = d * d  * b.cov2()   ;
   //
   return Gaudi::Math::ValueWithError ( v , e2 ) ;
 }
@@ -2012,14 +2009,14 @@ Gaudi::Math::ValueWithError Gaudi::Math::probit
   if ( 0 >= b.cov2 () || _zero ( b.cov2() ) )
   { return Gaudi::Math::probit ( b.value() ) ; }
   //
-  const double bv = b.value() ;
-  const double v  = Gaudi::Math::probit ( bv ) ;
+  const auto bv = b.value() ;
+  const auto v  = Gaudi::Math::probit ( bv ) ;
   //
-  static const double factor  = std::sqrt ( 2 * M_PI ) ;
+  static const auto factor  = std::sqrt ( 2 * M_PI ) ;
   //
   // derivative 
-  const double d  = factor * std::exp ( 0.5 * v * v );
-  const double e2 = d * d  * b.cov2()   ;
+  const auto d  = factor * std::exp ( 0.5 * v * v );
+  const auto e2 = d * d  * b.cov2()   ;
   //
   return Gaudi::Math::ValueWithError ( v , e2 ) ;
 }
@@ -2036,14 +2033,14 @@ Gaudi::Math::ValueWithError Gaudi::Math::asin
   if ( 0 >= b.cov2 () || _zero ( b.cov2() ) )
   { return std::asin( b.value() ) ; }
   //
-  const double bv = b.value() ;
-  const double v  = std::asin ( bv ) ;
+  const auto bv = b.value() ;
+  const auto v  = std::asin ( bv ) ;
   //
-  const double b2 = bv * bv ;
+  const auto b2 = bv * bv ;
   if ( _one  ( b2 ) ) { return Gaudi::Math::ValueWithError ( v , -1 ) ; }
   //
-  const double d2 = 1.0 / ( 1 - b2 ) ;
-  const double e2 = d2     * b.cov2() ;
+  const auto d2 = 1.0 / ( 1 - b2 ) ;
+  const auto e2 = d2     * b.cov2() ;
   //
   return Gaudi::Math::ValueWithError ( v , e2 ) ;
 }
@@ -2060,14 +2057,14 @@ Gaudi::Math::ValueWithError Gaudi::Math::acos
   if ( 0 >= b.cov2 () || _zero ( b.cov2() ) )
   { return std::acos ( b.value() ) ; }
   //
-  const double bv = b.value() ;
-  const double v  = std::acos( bv ) ;
+  const auto bv = b.value() ;
+  const auto v  = std::acos( bv ) ;
   //
-  const double b2 = bv * bv ;
+  const auto b2 = bv * bv ;
   if ( _one  ( b2 ) ) { return Gaudi::Math::ValueWithError ( v , -1 ) ; }
   //
-  const double d2 = 1.0 / ( 1 - b2 ) ;
-  const double e2 = d2     * b.cov2() ;
+  const auto d2 = 1.0 / ( 1 - b2 ) ;
+  const auto e2 = d2     * b.cov2() ;
   //
   return Gaudi::Math::ValueWithError ( v , e2 ) ;
 }
@@ -2084,13 +2081,13 @@ Gaudi::Math::ValueWithError Gaudi::Math::atan
   if ( 0 >= b.cov2 () || _zero ( b.cov2() ) )
   { return std::atan ( b.value() ) ; }
   //
-  const double bv = b.value() ;
-  const double v  = std::atan( bv ) ;
+  const auto bv = b.value() ;
+  const auto v  = std::atan( bv ) ;
   //
-  const double b2 = bv * bv ;
-  const double d1 = 1.0 / ( 1 + b2 ) ;
-  const double d2 = d1 * d1 ;
-  const double e2 = d2      * b.cov2() ;
+  const auto b2 = bv * bv ;
+  const auto d1 = 1.0 / ( 1 + b2 ) ;
+  const auto d2 = d1 * d1 ;
+  const auto e2 = d2      * b.cov2() ;
   //
   return Gaudi::Math::ValueWithError ( v , e2 ) ;
 }
@@ -2109,14 +2106,14 @@ Gaudi::Math::ValueWithError Gaudi::Math::atan2
   const double                       corr ) 
 {
   //
-  const double yv = y.value () ;
-  const double xv = x.value () ;
+  const auto yv = y.value () ;
+  const auto xv = x.value () ;
   //
-  const double v  = std::atan2 ( yv , xv ) ;
+  const auto v  = std::atan2 ( yv , xv ) ;
   //  
-  const double y2 = yv * yv ;
-  const double x2 = xv * xv ;
-  const double r2 = x2 + y2 ;
+  const auto y2 = yv * yv ;
+  const auto x2 = xv * xv ;
+  const auto r2 = x2 + y2 ;
   //
   const bool x_err =  0 < x.cov2() && !s_zero ( x.cov2() ) ;
   const bool y_err =  0 < y.cov2() && !s_zero ( y.cov2() ) ;
@@ -2130,13 +2127,13 @@ Gaudi::Math::ValueWithError Gaudi::Math::atan2
     { return  Gaudi::Math::ValueWithError ( v               ) ; }
   }  
   //
-  const double      r4 = r2 * r2 ;
-  const double dphidx2 = y2 / r4  ;
-  const double dphidy2 = x2 / r4  ;
+  const auto      r4 = r2 * r2 ;
+  const auto dphidx2 = y2 / r4  ;
+  const auto dphidy2 = x2 / r4  ;
   //
-  const double cor = std::max ( std::min ( corr , 1.0 ) , -1.0 ) ; 
+  const auto cor = std::max ( std::min ( corr , 1.0 ) , -1.0 ) ; 
   //
-  const double e2 = 
+  const auto e2 = 
     ( x_err ? dphidx2 * x.cov2() : 0.0 ) + 
     ( y_err ? dphidy2 * y.cov2() : 0.0 ) + 
     ( x_err && y_err && !s_zero ( cor ) ? 
@@ -2157,12 +2154,12 @@ Gaudi::Math::ValueWithError Gaudi::Math::asinh
   if ( 0 >= b.cov2 () || _zero ( b.cov2() ) )
   { return std::asinh( b.value() ) ; }
   //
-  const double bv = b.value() ;
-  const double v  = std::asinh ( bv ) ;
+  const auto bv = b.value() ;
+  const auto v  = std::asinh ( bv ) ;
   //
-  const double b2 = bv * bv ;
-  const double d2 = 1.0 / ( 1 + b2 ) ;
-  const double e2 = d2     * b.cov2() ;
+  const auto b2 = bv * bv ;
+  const auto d2 = 1.0 / ( 1 + b2 ) ;
+  const auto e2 = d2     * b.cov2() ;
   //
   return Gaudi::Math::ValueWithError ( v , e2 ) ;
 }
@@ -2179,12 +2176,12 @@ Gaudi::Math::ValueWithError Gaudi::Math::acosh
   if ( 0 >= b.cov2 () || _zero ( b.cov2() ) )
   { return std::acosh( b.value() ) ; }
   //
-  const double bv = b.value() ;
-  const double v  = std::acosh ( bv ) ;
+  const auto bv = b.value() ;
+  const auto v  = std::acosh ( bv ) ;
   //
-  const double b2 = bv * bv ;
-  const double d2 = 1.0 / ( b2 - 1 ) ;
-  const double e2 = d2     * b.cov2() ;
+  const auto b2 = bv * bv ;
+  const auto d2 = 1.0 / ( b2 - 1 ) ;
+  const auto e2 = d2     * b.cov2() ;
   //
   return Gaudi::Math::ValueWithError ( v , e2 ) ;
 }
@@ -2201,13 +2198,13 @@ Gaudi::Math::ValueWithError Gaudi::Math::atanh
   if ( 0 >= b.cov2 () || _zero ( b.cov2() ) )
   { return std::atanh( b.value() ) ; }
   //
-  const double bv = b.value() ;
-  const double v  = std::atanh( bv ) ;
+  const auto bv = b.value() ;
+  const auto v  = std::atanh( bv ) ;
   //
-  const double b2 = bv * bv ;
-  const double d1 = 1.0 / ( 1 - b2 ) ;
-  const double d2 = d1 * d1 ;
-  const double e2 = d2      * b.cov2() ;
+  const auto b2 = bv * bv ;
+  const auto d1 = 1.0 / ( 1 - b2 ) ;
+  const auto d2 = d1 * d1 ;
+  const auto e2 = d2      * b.cov2() ;
   //
   return Gaudi::Math::ValueWithError ( v , e2 ) ;
 }
@@ -2229,8 +2226,8 @@ Gaudi::Math::ValueWithError Gaudi::Math::interpolate_1D
   const Gaudi::Math::ValueWithError& y1 ) 
 {
   //
-  const double c0 = ( x - x1 ) / ( x0 - x1 ) ;
-  const double c1 = ( x - x0 ) / ( x1 - x0 ) ;
+  const auto c0 = ( x - x1 ) / ( x0 - x1 ) ;
+  const auto c1 = ( x - x0 ) / ( x1 - x0 ) ;
   //
   return c0 * y0 + c1 * y1 ;
 }
@@ -2262,10 +2259,10 @@ Gaudi::Math::ValueWithError Gaudi::Math::interpolate_2D
   const Gaudi::Math::ValueWithError& v11 ) 
 {
   //
-  const double c00 =  ( x - x1 ) * ( y - y1 ) / ( x0 - x1 ) / ( y0 - y1 ) ;
-  const double c01 =  ( x - x1 ) * ( y - y0 ) / ( x0 - x1 ) / ( y1 - y0 ) ;
-  const double c10 =  ( x - x0 ) * ( y - y1 ) / ( x1 - x0 ) / ( y0 - y1 ) ;
-  const double c11 =  ( x - x0 ) * ( y - y0 ) / ( x1 - x0 ) / ( y1 - y0 ) ;
+  const auto c00 =  ( x - x1 ) * ( y - y1 ) / ( x0 - x1 ) / ( y0 - y1 ) ;
+  const auto c01 =  ( x - x1 ) * ( y - y0 ) / ( x0 - x1 ) / ( y1 - y0 ) ;
+  const auto c10 =  ( x - x0 ) * ( y - y1 ) / ( x1 - x0 ) / ( y0 - y1 ) ;
+  const auto c11 =  ( x - x0 ) * ( y - y0 ) / ( x1 - x0 ) / ( y1 - y0 ) ;
   //
   return c00 * v00 + c01 * v01 + c10 * v10 + c11 * v11  ;
 } 
@@ -2337,7 +2334,7 @@ Gaudi::Math::horner_a0
 {
   if ( poly.empty() ) { return Gaudi::Math::ValueWithError(0,0) ; }
   //
-  const std::pair<long double,long double> r = 
+  const auto r = 
     Gaudi::Math::Clenshaw::monomial_sum 
     ( poly.rbegin() , poly.rend() , x.value() ) ;
   //
@@ -2363,7 +2360,7 @@ Gaudi::Math::horner_aN
 {
   if ( poly.empty() ) { return Gaudi::Math::ValueWithError(0,0) ; }
   //
-  const std::pair<double,double> r = 
+  const auto r = 
     Gaudi::Math::Clenshaw::monomial_sum 
     ( poly.begin() , poly.end() , x.value() ) ;
   //
@@ -2430,7 +2427,7 @@ Gaudi::Math::interpolate
   std::transform ( y_i.begin () , 
                    y_i.begin () +  std::min ( x_i.size() , y_i.size() )  , 
                    _y .begin () , [] ( auto y ) { return y.value() ; } ) ;                 
-  const double r_0 = 
+  const auto r_0 = 
     Gaudi::Math::Interpolation::neville 
     ( x_i.begin() ,  
       x_i.end  () , 
@@ -2443,7 +2440,7 @@ Gaudi::Math::interpolate
                    y_i.begin () +  std::min ( x_i.size() , y_i.size() )  , 
                    _y .begin () , [] ( auto y ) { return y.value() + y.error() ; } );                 
   std::fill ( _y.begin() + y_i.size() , _y.end ( ) , 0.0 )  ;
-  const double r_plus = 
+  const auto r_plus = 
     Gaudi::Math::Interpolation::neville 
     ( x_i.begin() ,  
       x_i.end  () , 
@@ -2456,7 +2453,7 @@ Gaudi::Math::interpolate
                    y_i.begin () +  std::min ( x_i.size() , y_i.size() )  , 
                    _y .begin () , [] ( auto y ) { return y.value() - y.error() ; } );                 
   std::fill ( _y.begin() + y_i.size() , _y.end ( ) , 0.0 )  ;
-  const double r_minus = 
+  const auto r_minus = 
     Gaudi::Math::Interpolation::neville 
     ( x_i.begin() ,  
       x_i.end  () , 
@@ -2465,8 +2462,8 @@ Gaudi::Math::interpolate
       [] ( double x ) { return x         ; } ) ;
   //
   // get an estimate for the error 
-  const double e = std::max ( std::abs ( r_plus  - r_0     ) ,
-                              std::abs ( r_0     - r_minus ) ) ;
+  const auto e = std::max ( std::abs ( r_plus  - r_0     ) ,
+                            std::abs ( r_0     - r_minus ) ) ;
   return Gaudi::Math::ValueWithError ( r_0 , e * e ) ;
 }
 // ============================================================================
@@ -2495,7 +2492,7 @@ Gaudi::Math::interpolate
   std::copy ( y_i.begin () , 
               y_i.begin () + std::min ( x_i.size() , y_i.size() ) , _y .begin () ) ;
   //
-  std::pair<double,double> r = 
+  const auto r = 
     Gaudi::Math::Interpolation::neville
     ( x_i.begin() ,  
       x_i.end  () , 
@@ -2529,7 +2526,7 @@ Gaudi::Math::interpolate
   if ( 0 >= x.cov2() || _zero ( x.cov2() ) ){ return rl ; } // RETURN 
   //
   // calculate the uncertainty with respect to x 
-  std::pair<double,double> rn = 
+  const auto rn = 
     Gaudi::Math::Interpolation::neville2 
     ( x_i.begin() , x_i.end() , 
       y_i.begin() , y_i.end() , 
@@ -2537,12 +2534,10 @@ Gaudi::Math::interpolate
       [] ( double x ) { return x  ; } , 
       [] ( double x ) { return x  ; } ) ;
   //
-  const double d = rn.second ;
+  const auto d = rn.second ;
   rl.setCov2 ( std::max( rl.cov2() , 0.0 ) + x.cov2() * d * d  ) ;
   return rl ;  
 }
-
-
 
 
 
@@ -2646,5 +2641,3 @@ StatusCode Gaudi::Parsers::parse(
 // =============================================================================
 // The END
 // =============================================================================
-
-

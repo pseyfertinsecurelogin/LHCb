@@ -34,7 +34,7 @@ namespace Gaudi
      *  @author Vanya Belyaev Ivan.Belyaev@nikhef.nl
      *  @date   2010-05-20
      */
-    class GAUDI_API ParticleParams 
+    class GAUDI_API ParticleParams final
     {
     public: 
       // ======================================================================
@@ -75,9 +75,9 @@ namespace Gaudi
       ParticleParams ( const Gaudi::Vector8&                          params , 
                        const Gaudi::SymMatrix8x8&                     cov8   ) ;
       /// default constructor 
-      ParticleParams () ;
-      /// virtual destructor 
-      virtual ~ParticleParams () ; 
+      ParticleParams () = default;
+      /// destructor 
+      ~ParticleParams () = default; 
       // ======================================================================
     public: // basic accessors  / diagonals 
       // ======================================================================
@@ -147,7 +147,7 @@ namespace Gaudi
      *  @author Vanya Belyaev Ivan.Belyaev@nikhef.nl
      *  @date   2010-05-20
      */
-    class GAUDI_API FitMass 
+    class GAUDI_API FitMass final
     {
     public:
       // ======================================================================

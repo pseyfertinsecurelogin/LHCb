@@ -216,21 +216,6 @@ Gaudi::Math::ParticleParams::ParticleParams
   { m_lenMomCovMatrix ( i ) = cov ( i + 3 , 7 ) ; }
 }
 // ============================================================================
-// constructor from a full parameter set
-// ============================================================================
-Gaudi::Math::ParticleParams::ParticleParams()
-  : m_length          () 
-  , m_position        ()  
-  , m_momentum        () 
-  , m_momPosCovMatrix ()
-  , m_lenPosCovMatrix ()
-  , m_lenMomCovMatrix ()
-{}
-// ============================================================================
-// virtual destructor 
-// ============================================================================
-Gaudi::Math::ParticleParams::~ParticleParams() {}
-// ============================================================================
 //  get all parameters 
 // ============================================================================
 Gaudi::Math::SVectorWithError<8,double> Gaudi::Math::ParticleParams::all() const 
@@ -302,17 +287,17 @@ Gaudi::Math::ValueWithError Gaudi::Math::ParticleParams::ctau() const
   //
   // because we meaure mass and momentum in units of energy, the result is really ctau
   
-  const Gaudi::LorentzVector& p4 = m_momentum;
-  double px  = p4.Px() ;
-  double py  = p4.Py() ;
-  double pz  = p4.Pz() ;
-  double E   = p4.E() ;
-  double p2  = px*px+py*py+pz*pz ;
-  double m2  = E*E - p2 ;
-  double m   = std::sqrt( m2 ) ;
-  double p   = std::sqrt(p2) ;
-  double len = m_length ;
-  double tau = len * m / p ;
+  const auto & p4 = m_momentum;
+  auto px  = p4.Px() ;
+  auto py  = p4.Py() ;
+  auto pz  = p4.Pz() ;
+  auto E   = p4.E() ;
+  auto p2  = px*px+py*py+pz*pz ;
+  auto m2  = E*E - p2 ;
+  auto m   = std::sqrt( m2 ) ;
+  auto p   = std::sqrt(p2) ;
+  auto len = m_length ;
+  auto tau = len * m / p ;
   
   Gaudi::Vector5 jacobian ;
   jacobian(0) = -px * tau * (1/m2 + 1/p2) ;
@@ -352,19 +337,19 @@ double Gaudi::Math::FitMass::fit
   // small, because then the mass constrained was already applied.
   double chisq = 0 ;
   
-  const Gaudi::LorentzVector& p4 = input.momentum() ;
+  const auto & p4 = input.momentum() ;
   
-  const double px = p4 . Px () ;
-  const double py = p4 . Py () ;
-  const double pz = p4 . Pz () ;
-  const double E  = p4 . E  () ;
-  const double m2 = p4 . M2 () ;
-  const double m  = p4.  M  () ;
+  const auto px = p4 . Px () ;
+  const auto py = p4 . Py () ;
+  const auto pz = p4 . Pz () ;
+  const auto E  = p4 . E  () ;
+  const auto m2 = p4 . M2 () ;
+  const auto m  = p4.  M  () ;
   
   // jacobian for (p4->m) transformation 
   const Gaudi::Vector4 mjacobian ( -px/m , -py/m , -pz/m , E/m ) ;
   
-  const double mcov = ROOT::Math::Similarity (  mjacobian , input.momentum().cov2() ) ;
+  const auto mcov = ROOT::Math::Similarity (  mjacobian , input.momentum().cov2() ) ;
   
   if ( mcov < 0.001 ) 
   { 
@@ -402,10 +387,10 @@ double Gaudi::Math::FitMass::fit
   par8(6) = m2 ;
   
   // apply the constraint, which is trivial now
-  const double residual    = mass*mass - m2;
-  const double residualV   = cov8 ( 6 , 6 ) ;
-  const double residualV_i = 1.0/residualV ;
-  const double residual_   = residual*residualV_i ;
+  const auto residual    = mass*mass - m2;
+  const auto residualV   = cov8 ( 6 , 6 ) ;
+  const auto residualV_i = 1.0/residualV ;
+  const auto residual_   = residual*residualV_i ;
   
   chisq = residual* residual/residualV ;
   Gaudi::Vector8  row6 ;
@@ -418,16 +403,16 @@ double Gaudi::Math::FitMass::fit
   Gaudi::Math::update ( cov8 , row6 , -residualV_i ) ;
   
   // extract result, rotate back
-  const double new_x   = par8(0) ;
-  const double new_y   = par8(1) ;
-  const double new_z   = par8(2) ;
-  const double new_px  = par8(3) ;
-  const double new_py  = par8(4) ;
-  const double new_pz  = par8(5) ;
-  const double new_m2  = par8(6) ;
-  const double new_len = par8(7) ;
+  const auto new_x   = par8(0) ;
+  const auto new_y   = par8(1) ;
+  const auto new_z   = par8(2) ;
+  const auto new_px  = par8(3) ;
+  const auto new_py  = par8(4) ;
+  const auto new_pz  = par8(5) ;
+  const auto new_m2  = par8(6) ;
+  const auto new_len = par8(7) ;
   
-  const double new_E  = std::sqrt ( std::fabs ( new_px*new_px + 
+  const auto new_E  = std::sqrt ( std::fabs ( new_px*new_px + 
                                                 new_py*new_py + 
                                                 new_pz*new_pz + new_m2 ) ) ;
   

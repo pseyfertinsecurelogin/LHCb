@@ -166,7 +166,7 @@ namespace Gaudi
      *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
      *  @date   2013-03-14
      */
-    class GAUDI_API Spline
+    class GAUDI_API Spline final
       : public std::unary_function<double,double>
     {
       // ======================================================================
@@ -250,13 +250,13 @@ namespace Gaudi
       // ======================================================================
     public:
       // ======================================================================
-      bool    nullify () const { return   m_null  ; }
-      double  scale   () const { return   m_scale ; }
-      double  shift   () const { return   m_shift ; }
-      double  xmin    () const { return   m_xmin  ; }
-      double  xmax    () const { return   m_xmax  ; }  
-      double  vmin    () const { return ( m_xmin - m_shift ) / m_scale ; }
-      double  vmax    () const { return ( m_xmax - m_shift ) / m_scale ; }
+      bool    nullify () const noexcept { return   m_null  ; }
+      double  scale   () const noexcept { return   m_scale ; }
+      double  shift   () const noexcept { return   m_shift ; }
+      double  xmin    () const noexcept { return   m_xmin  ; }
+      double  xmax    () const noexcept { return   m_xmax  ; }  
+      double  vmin    () const noexcept { return ( m_xmin - m_shift ) / m_scale ; }
+      double  vmax    () const noexcept { return ( m_xmax - m_shift ) / m_scale ; }
       // ======================================================================
     public:
       // ======================================================================
@@ -275,15 +275,15 @@ namespace Gaudi
     private:
       // ======================================================================
       /// nullify the content outside limits ?
-      bool    m_null  ; // nullify the content outside limits ? 
+      bool    m_null{false}  ; // nullify the content outside limits ? 
       /// scale factor for the variable 
-      double  m_scale ; // scale factor for the variable 
+      double  m_scale{1} ; // scale factor for the variable 
       /// shift for the variable 
-      double  m_shift ; // shift for the variable 
+      double  m_shift{0} ; // shift for the variable 
       /// low  value (for nullification)
-      double  m_xmin  ; // low value (for nullification)
+      double  m_xmin{0}  ; // low value (for nullification)
       /// high value (for nullification)
-      double  m_xmax  ; // high value (for nullification)
+      double  m_xmax{0}  ; // high value (for nullification)
       // ======================================================================
       /// the actual type of spline object 
       typedef Genfun::GaudiMathImplementation::SplineBase  SPLINE ;      
@@ -305,7 +305,7 @@ namespace Gaudi
      *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
      *  @date   2013-03-14
      */
-    class GAUDI_API SplineErrors
+    class GAUDI_API SplineErrors final
       : public std::unary_function<double,Gaudi::Math::ValueWithError>
     {
       // ======================================================================
@@ -361,7 +361,7 @@ namespace Gaudi
         const unsigned int                    begin  = 1  , 
         const unsigned int                    end    = std::numeric_limits<unsigned int>::max() ) ;
       /// destructor 
-      ~SplineErrors() ;
+      ~SplineErrors() = default;
       // ======================================================================
     private:
       // ======================================================================
@@ -400,7 +400,7 @@ namespace Gaudi
      *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
      *  @date   2013-03-14
      */
-    class GAUDI_API Interp2D 
+    class GAUDI_API Interp2D final
       : public std::binary_function<double,double,Gaudi::Math::ValueWithError>
     {
       // ========================================================================
@@ -436,7 +436,7 @@ namespace Gaudi
         const double  shiftx = 0          ,
         const double  shifty = 0          ) ;
       /// destructor 
-      ~Interp2D () ; // destructor
+      ~Interp2D () = default; // destructor
       // ======================================================================
     public:
       // ======================================================================
@@ -447,21 +447,21 @@ namespace Gaudi
     private:
       // ======================================================================
       /// the historgam itself 
-      const TH2* m_histo  ;  // the histogram itself 
+      const TH2* m_histo = nullptr ;  // the histogram itself 
       /// nullify outside the histogram range ? 
-      bool       m_null   ;  // nullify outside the histogram range ? 
+      bool       m_null{true}   ;  // nullify outside the histogram range ? 
       /// interpolation type for X 
-      Type       m_typex  ;  //  interpolation type for X 
+      Type       m_typex{Cubic}  ;  //  interpolation type for X 
       /// interpolation type for Y 
-      Type       m_typey  ;  //  interpolation type for Y
+      Type       m_typey{Cubic}  ;  //  interpolation type for Y
       /// the scale parameter for X 
-      double     m_scalex ;  // the scale parameter for X 
+      double     m_scalex{1} ;  // the scale parameter for X 
       /// the scale parameter for Y 
-      double     m_scaley ;  // the scale parameter for Y
+      double     m_scaley{1} ;  // the scale parameter for Y
       /// the shift parameter for X 
-      double     m_shiftx ;  // the shift parameter for X 
+      double     m_shiftx{0} ;  // the shift parameter for X 
       /// the shift parameter for Y 
-      double     m_shifty ;  // the shift parameter for Y
+      double     m_shifty{0} ;  // the shift parameter for Y
       // ======================================================================
     } ;
     // ========================================================================  
@@ -470,7 +470,7 @@ namespace Gaudi
      *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
      *  @date   2013-03-14
      */
-    class GAUDI_API Linear : public std::unary_function<double,double>
+    class GAUDI_API Linear final : public std::unary_function<double,double>
     {
     public:
       // ======================================================================
@@ -485,24 +485,24 @@ namespace Gaudi
                const double x2 = 1 , 
                const double y2 = 0 ) ;
       /// destructor 
-      ~Linear() ; // destructor
+      ~Linear() = default; // destructor
       // ======================================================================      
     public:
       // ======================================================================
       /// get the value: y = a*x + b 
-      double operator() ( const double x ) const  { return m_a * x + m_b ; }
+      double operator() ( const double x ) const noexcept { return m_a * x + m_b ; }
       // ======================================================================      
     public:
       // ======================================================================      
       ///  y = a*x + b 
-      double a () const { return m_a ; }
+      double a () const noexcept { return m_a ; }
       ///  y = a*x + b 
-      double b () const { return m_b ; }    
+      double b () const noexcept { return m_b ; }    
       // ======================================================================      
     private :
       // ======================================================================
-      double  m_a ;
-      double  m_b ;
+      double  m_a{0} ;
+      double  m_b{0} ;
       // ======================================================================      
     } ;
     // ========================================================================
@@ -511,7 +511,7 @@ namespace Gaudi
      *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
      *  @date   2013-03-14
      */
-    class GAUDI_API LinearErr
+    class GAUDI_API LinearErr final
       : public std::unary_function<double,Gaudi::Math::ValueWithError>
     {
     public:
@@ -528,7 +528,7 @@ namespace Gaudi
         const double                       x2 = 1                             ,  
         const Gaudi::Math::ValueWithError& y2 = Gaudi::Math::ValueWithError() ) ;
       /// destructor 
-      ~LinearErr () ; // destructor
+      ~LinearErr () = default; // destructor
       // ======================================================================      
     public:
       // ======================================================================
@@ -544,10 +544,10 @@ namespace Gaudi
       // ======================================================================      
     private :
       // ======================================================================
-      double                      m_x1 ;
-      double                      m_x2 ;
-      Gaudi::Math::ValueWithError m_y1 ;
-      Gaudi::Math::ValueWithError m_y2 ;
+      double                      m_x1{0} ;
+      double                      m_x2{0} ;
+      Gaudi::Math::ValueWithError m_y1{}  ;
+      Gaudi::Math::ValueWithError m_y2{}  ;
       // ======================================================================      
     } ;
     // ========================================================================  
@@ -556,7 +556,7 @@ namespace Gaudi
      *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
      *  @date   2013-03-14
      */
-    class GAUDI_API Parabola : public std::unary_function<double,double>
+    class GAUDI_API Parabola final : public std::unary_function<double,double>
     {
     public:
       // ======================================================================
@@ -575,7 +575,7 @@ namespace Gaudi
                  const double x3 =  1 , 
                  const double y3 =  0 ) ;
       /// destructor 
-      ~Parabola () ; // destructor
+      ~Parabola () = default; // destructor
       // ======================================================================      
     public:
       // ======================================================================
@@ -586,17 +586,17 @@ namespace Gaudi
     public:
       // ======================================================================      
       /// y = a*x^2 + b*x + c  
-      double a () const { return m_a ; }
+      double a () const noexcept { return m_a ; }
       /// y = a*x^2 + b*x + c  
-      double b () const { return m_b ; }    
+      double b () const noexcept { return m_b ; }    
       /// y = a*x^2 + b*x + c  
-      double c () const { return m_c ; }    
+      double c () const noexcept { return m_c ; }    
       // ======================================================================      
     private :
       // ======================================================================
-      double  m_a ;
-      double  m_b ;
-      double  m_c ;
+      double  m_a{0} ;
+      double  m_b{0} ;
+      double  m_c{0} ;
       // ======================================================================      
     } ;
     // ========================================================================  
@@ -605,7 +605,7 @@ namespace Gaudi
      *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
      *  @date   2013-03-14
      */
-    class GAUDI_API ParabolaErr 
+    class GAUDI_API ParabolaErr final
       : public std::unary_function<double,Gaudi::Math::ValueWithError>
     {
     public:
@@ -626,7 +626,7 @@ namespace Gaudi
         const double                       x3 = 1                             , 
         const Gaudi::Math::ValueWithError& y3 = Gaudi::Math::ValueWithError() ) ;
       /// destructor 
-      ~ParabolaErr () ; // destructor
+      ~ParabolaErr () = default; // destructor
       // ======================================================================      
     public:
       // ======================================================================
@@ -644,19 +644,19 @@ namespace Gaudi
       // ======================================================================      
     private : // input data 
       // ======================================================================
-      double                      m_x1 ;
-      double                      m_x2 ;
-      double                      m_x3 ;
+      double                      m_x1{0} ;
+      double                      m_x2{0} ;
+      double                      m_x3{0} ;
       //
-      Gaudi::Math::ValueWithError m_y1 ;
-      Gaudi::Math::ValueWithError m_y2 ;
-      Gaudi::Math::ValueWithError m_y3 ;
+      Gaudi::Math::ValueWithError m_y1{} ;
+      Gaudi::Math::ValueWithError m_y2{} ;
+      Gaudi::Math::ValueWithError m_y3{} ;
       // ======================================================================      
     private : // helper data 
       // ======================================================================
-      double                      m_d1 ;
-      double                      m_d2 ;
-      double                      m_d3 ;
+      double                      m_d1{0} ;
+      double                      m_d2{0} ;
+      double                      m_d3{0} ;
       // ======================================================================      
     } ;
   } //                                             end of namespace Gaudi::Math

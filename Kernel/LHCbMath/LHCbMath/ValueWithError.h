@@ -74,11 +74,11 @@ namespace Gaudi
     public: // trivial accessors 
       // ======================================================================
       /// get the value 
-      double value      () const { return m_value ; }
+      double value      () const noexcept { return m_value ; }
       /// get the covariance 
-      double cov2       () const { return m_cov2  ; }
+      double cov2       () const noexcept { return m_cov2  ; }
       /// get the covariance 
-      double covariance () const { return m_cov2  ; }
+      double covariance () const noexcept { return m_cov2  ; }
       /** get the error 
        *  @attention negative erorr is returned for invalid covariance 
        *  @return the error estimate 
@@ -87,8 +87,8 @@ namespace Gaudi
       // ======================================================================
     public: // setters 
       // ======================================================================
-      void setValue      ( const double v ) {  m_value = v   ; }
-      void setCov2       ( const double c ) {  m_cov2  = c   ; }
+      void setValue      ( const double v ) noexcept {  m_value = v   ; }
+      void setCov2       ( const double c ) noexcept {  m_cov2  = c   ; }
       void setCovariance ( const double c ) { setCov2  ( c ) ; }
       /** set the error 
        *  @attention invalid covariance is set for negative error 
@@ -98,7 +98,7 @@ namespace Gaudi
     public: // finally it is just a value 
       // ======================================================================
       /// cast 
-      operator double () const { return value () ; }                    // cast 
+      operator double () const noexcept { return value () ; }           // cast 
       // ======================================================================
     public:  // operators
       // ======================================================================      
@@ -294,7 +294,7 @@ namespace Gaudi
     public:
       // ======================================================================
       /// printout 
-      std::ostream& fillStream ( std::ostream& s  ) const ;          // printout 
+      std::ostream& fillStream ( std::ostream& s  ) const ;         // printout 
       /// printout using format 
       std::ostream& fillStream 
       ( std::ostream&      s    , 
@@ -312,9 +312,9 @@ namespace Gaudi
     private:
       // ======================================================================
       /// the actual value 
-      double m_value ;                             //          the actual value 
+      double m_value{0} ;                          //          the actual value 
       /// the associated covariance
-      double m_cov2 ;                              // the associated covariance
+      double m_cov2{0} ;                           // the associated covariance
       // ======================================================================
     } ;
     // ========================================================================

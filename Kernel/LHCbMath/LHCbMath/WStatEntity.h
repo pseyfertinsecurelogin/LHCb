@@ -27,7 +27,7 @@ namespace Gaudi
     public:
       // ======================================================================
       /// empty constructor 
-      WStatEntity () ;
+      WStatEntity () = default;
       /// constructor from StatEntity of values 
       WStatEntity ( const StatEntity& values ) ;
       // ======================================================================
@@ -60,9 +60,9 @@ namespace Gaudi
       unsigned long nEntries   () const { return m_weights.nEntries() ; }
       // ======================================================================
       /// sum_i weight_i*value_i
-      double        sum  () const { return m_sum  ; } // sum_i weight_i*value_i
+      double        sum  () const noexcept { return m_sum  ; } // sum_i weight_i*value_i
       /// sum_i weight_i*value_i**2
-      double        sum2 () const { return m_sum2 ; } // sum_i weight_i*value_i**2
+      double        sum2 () const noexcept { return m_sum2 ; } // sum_i weight_i*value_i**2
       // ======================================================================
     public:
       // ======================================================================
@@ -80,9 +80,9 @@ namespace Gaudi
     private: /// the basic statistic 
       // ======================================================================
       /// sum_i weight_i*value_i
-      long double m_sum    ;  // sum_i weight_i*value_i
+      long double m_sum{0}    ;  // sum_i weight_i*value_i
       /// sum_i weight_i*value_i**2 
-      long double m_sum2   ;  // sum_i weight_i*value_i**2 
+      long double m_sum2{0}   ;  // sum_i weight_i*value_i**2 
       // ======================================================================     
     private: /// helper statistics 
       // ======================================================================

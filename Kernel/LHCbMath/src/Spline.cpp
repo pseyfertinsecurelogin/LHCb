@@ -67,17 +67,17 @@ Gaudi::Math::Splines::getValues ( const TH1&          histo ,
                                   const unsigned int  end   ) 
 {
   //
-  const TAxis* axis        = histo.GetXaxis() ;
-  const unsigned int nbins = std::min ( (unsigned int) axis->GetNbins() + 1 , end ) ;
+  const TAxis* axis = histo.GetXaxis() ;
+  const auto nbins  = std::min ( (unsigned int) axis->GetNbins() + 1 , end ) ;
   //
   DATA result ; 
   result.reserve ( nbins ) ;
   //
   for ( unsigned int i = std::max( 1u , begin)  ; i < nbins ; ++i ) 
   {
-    const double x  = axis->GetBinCenter  ( i ) ;
-    const double y  = histo.GetBinContent ( i ) ;
-    result.push_back ( std::make_pair ( x , y ) ) ;
+    const auto x  = axis->GetBinCenter  ( i ) ;
+    const auto y  = histo.GetBinContent ( i ) ;
+    result.emplace_back ( std::make_pair ( x , y ) ) ;
   }
   //
   return result ;
@@ -91,17 +91,17 @@ Gaudi::Math::Splines::getErrors ( const TH1&          histo ,
                                   const unsigned int  end   ) 
 {
   //
-  const TAxis* axis        = histo.GetXaxis() ;
-  const unsigned int nbins = std::min ( (unsigned int) axis->GetNbins() + 1 , end ) ;
+  const TAxis* axis = histo.GetXaxis() ;
+  const auto nbins  = std::min ( (unsigned int) axis->GetNbins() + 1 , end ) ;
   //
   DATA result ; 
   result.reserve ( nbins ) ;
   //
   for ( unsigned int i = std::max( 1u , begin )  ; i <= nbins ; ++i ) 
   {
-    const double x  = axis->GetBinCenter  ( i ) ;
-    const double ey = histo.GetBinError   ( i ) ;
-    result.push_back ( std::make_pair ( x , ey ) ) ;
+    const auto x  = axis->GetBinCenter  ( i ) ;
+    const auto ey = histo.GetBinError   ( i ) ;
+    result.emplace_back ( std::make_pair ( x , ey ) ) ;
   }
   //
   return result ;
@@ -114,18 +114,18 @@ Gaudi::Math::Splines::getData   ( const TH1&          histo ,
                                   const unsigned int  begin , 
                                   const unsigned int  end   ) 
 {
-  const TAxis* axis        = histo.GetXaxis() ;
-  const unsigned int nbins = std::min ( (unsigned int) axis->GetNbins() + 1 , end ) ;
+  const TAxis* axis = histo.GetXaxis() ;
+  const auto nbins  = std::min ( (unsigned int) axis->GetNbins() + 1 , end ) ;
   //
   DATAERR result ; 
   result.reserve ( nbins ) ;
   //
   for ( unsigned int i = std::max ( 1u , begin ) ; i <= nbins ; ++i ) 
   {
-    const double x  = axis->GetBinCenter  ( i ) ;
-    const double y  = histo.GetBinContent ( i ) ;
-    const double ey = histo.GetBinError   ( i ) ;
-    result.push_back ( std::make_pair ( x , Gaudi::Math::ValueWithError ( y , ey * ey)  ) ) ;
+    const auto x  = axis->GetBinCenter  ( i ) ;
+    const auto y  = histo.GetBinContent ( i ) ;
+    const auto ey = histo.GetBinError   ( i ) ;
+    result.emplace_back ( std::make_pair ( x , Gaudi::Math::ValueWithError ( y , ey * ey)  ) ) ;
   }
   //
   return result ;
@@ -139,11 +139,11 @@ Gaudi::Math::Splines::getValues ( const Gaudi::Math::Splines::DATAERR& data )
   DATA result ; 
   result.reserve ( data.size() ) ;
   //
-  for ( DATAERR::const_iterator i = data.begin() ; data.end() != i ; ++i ) 
+  for ( const auto & i : data )
   {
-    const double x  = i->first ;
-    const double y  = i->second.value() ;
-    result.push_back ( std::make_pair ( x , y ) ) ;
+    const auto x  = i.first ;
+    const auto y  = i.second.value() ;
+    result.emplace_back ( std::make_pair ( x , y ) ) ;
   }
   //
   return result ;
@@ -157,11 +157,11 @@ Gaudi::Math::Splines::getErrors ( const Gaudi::Math::Splines::DATAERR& data )
   DATA result ; 
   result.reserve ( data.size() ) ;
   //
-  for ( DATAERR::const_iterator i = data.begin() ; data.end() != i ; ++i ) 
+  for ( const auto & i : data )
   {
-    const double x  = i->first ;
-    const double ey = i->second.error() ;
-    result.push_back ( std::make_pair ( x , ey ) ) ;
+    const auto x  = i.first ;
+    const auto ey = i.second.error() ;
+    result.emplace_back ( std::make_pair ( x , ey ) ) ;
   }
   //
   return result ;
@@ -186,7 +186,7 @@ Gaudi::Math::Splines::getValues ( const TGraph&       graph ,
     double y = 0 ;
     graph.GetPoint ( i , x , y ) ;
     //
-    result.push_back ( std::make_pair ( x , y ) ) ;
+    result.emplace_back ( std::make_pair ( x , y ) ) ;
   }
   //
   return result ;
@@ -210,9 +210,9 @@ Gaudi::Math::Splines::getErrors ( const TGraphErrors& graph ,
     double x = 0 ;
     double y = 0 ;
     graph.GetPoint ( i , x , y ) ;
-    const double ey = graph.GetErrorY ( i ) ;          
+    const auto ey = graph.GetErrorY ( i ) ;          
     //
-    result.push_back ( std::make_pair ( x , ey ) ) ;
+    result.emplace_back ( std::make_pair ( x , ey ) ) ;
   }
   //
   return result ;
@@ -235,9 +235,9 @@ Gaudi::Math::Splines::getData   ( const TGraphErrors& graph ,
     double x = 0 ;
     double y = 0 ;
     graph.GetPoint ( i , x , y ) ;
-    const double ey = graph.GetErrorY ( i ) ;          
+    const auto ey = graph.GetErrorY ( i ) ;          
     //
-    result.push_back ( std::make_pair ( x , Gaudi::Math::ValueWithError ( y , ey * ey)  ) ) ;
+    result.emplace_back ( std::make_pair ( x , Gaudi::Math::ValueWithError ( y , ey * ey)  ) ) ;
   }
   //
   return result ;
@@ -298,7 +298,7 @@ Gaudi::Math::Spline::~Spline(){}
 double Gaudi::Math::Spline::operator()  ( const double x    ) const 
 {
   // scale and shift the variable 
-  const double y = x * m_scale + m_shift ;
+  const auto y = x * m_scale + m_shift ;
   // check the limits 
   if ( m_null &&  ( y < m_xmin ||  y > m_xmax ) ) { return 0 ; }
   //
@@ -311,7 +311,7 @@ double Gaudi::Math::Spline::operator()  ( const double x    ) const
 double Gaudi::Math::Spline::derivative   ( const double x    ) const 
 {
   // scale and shift the variable 
-  const double y = x * m_scale + m_shift ;
+  const auto y = x * m_scale + m_shift ;
   // check the limits 
   if ( m_null &&  ( y < m_xmin ||  y > m_xmax ) ) { return 0 ; }
   //
@@ -323,7 +323,7 @@ double Gaudi::Math::Spline::derivative   ( const double x    ) const
 double Gaudi::Math::Spline::derivative2   ( const double x    ) const 
 {
   // scale and shift the variable 
-  const double y = x * m_scale + m_shift ;
+  const auto y = x * m_scale + m_shift ;
   // check the limits 
   if ( m_null &&  ( y < m_xmin ||  y > m_xmax ) ) { return 0 ; }
   //
@@ -341,8 +341,8 @@ double Gaudi::Math::Spline::integral
   else if ( s_equal ( xmin , xmax ) ) { return 0 ; }
   //
   // scale and shift the variable 
-  double ymin = xmin * m_scale + m_shift ;
-  double ymax = xmax * m_scale + m_shift ;
+  auto ymin = xmin * m_scale + m_shift ;
+  auto ymax = xmax * m_scale + m_shift ;
   //
   if ( s_equal ( ymin , ymax ) ) { return 0 ; } // RETURN 
   //
@@ -417,7 +417,7 @@ Gaudi::Math::Spline::Spline
   , m_spline (   ) 
 {
   // 
-  Gaudi::Math::Splines::DATA _data ( Gaudi::Math::Splines::getValues ( data ) ) ;
+  auto _data ( Gaudi::Math::Splines::getValues ( data ) ) ;
   //
   std::sort ( _data.begin() , _data.end() ) ;
   //
@@ -453,7 +453,7 @@ Gaudi::Math::Spline::Spline
   , m_spline (   ) 
 {
   // 
-  SPLINE::Data2D data = Gaudi::Math::Splines::getValues ( histo , begin , end )  ;
+  auto data = Gaudi::Math::Splines::getValues ( histo , begin , end )  ;
   //
   m_spline.reset ( new SPLINE ( data , type ) ) ;
   //
@@ -483,11 +483,11 @@ Gaudi::Math::Spline::Spline
   , m_spline (   ) 
 {
   // 
-  SPLINE::Data2D data = Gaudi::Math::Splines::getValues ( graph , begin , end )  ;
+  auto data = Gaudi::Math::Splines::getValues ( graph , begin , end )  ;
   //
   m_spline.reset ( new SPLINE ( data , type ) ) ;
   //
-  const unsigned int np = graph.GetN() ;
+  const auto np = graph.GetN() ;
   //
   double x = 0 ;
   double y = 0 ;
@@ -502,10 +502,6 @@ Gaudi::Math::Spline::Spline
 // Spline with errors 
 // ===========================================================================
 
-// ===========================================================================
-// destructor 
-// ===========================================================================
-Gaudi::Math::SplineErrors::~SplineErrors () {}
 // ===========================================================================
 /*  Standard constructor
  *  @param data  data to be interpolated 
@@ -671,7 +667,7 @@ namespace
 // ======================================================================
 // destructor 
 // ======================================================================
-Gaudi::Math::Interp2D::~Interp2D () {}
+//Gaudi::Math::Interp2D::~Interp2D () {}
 // ============================================================================
 /* Standard constructor
  *  @param data  data to be interpolated 
@@ -702,11 +698,11 @@ Gaudi::Math::Interp2D::Interp2D
   , m_shiftx ( shiftx ) 
   , m_shifty ( shifty )
 {
-  const TAxis* xaxis = histo.GetXaxis() ;
-  const TAxis* yaxis = histo.GetYaxis() ;
+  const auto* xaxis = histo.GetXaxis() ;
+  const auto* yaxis = histo.GetYaxis() ;
   //
-  const int    xbins = xaxis->GetNbins() ;
-  const int    ybins = yaxis->GetNbins() ;
+  const auto    xbins = xaxis->GetNbins() ;
+  const auto    ybins = yaxis->GetNbins() ;
   //
   if ( m_typex >  Last    ) { m_typex =        Last        ; }
   if ( m_typey >  Last    ) { m_typey =        Last        ; }
@@ -726,17 +722,17 @@ Gaudi::Math::Interp2D::Interp2D::operator()  ( const double x ,
                                                const double y ) const 
 {
   //
-  const double zx    = x * m_scalex + m_shiftx ;
-  const double zy    = y * m_scaley + m_shifty ;  
+  const auto zx    = x * m_scalex + m_shiftx ;
+  const auto zy    = y * m_scaley + m_shifty ;  
   //
-  const TAxis* xaxis = m_histo -> GetXaxis () ;
-  const TAxis* yaxis = m_histo -> GetYaxis() ;
+  const auto* xaxis = m_histo -> GetXaxis () ;
+  const auto* yaxis = m_histo -> GetYaxis() ;
   //
-  const int    xbins = xaxis -> GetNbins () ;
-  const int    ybins = yaxis -> GetNbins () ;
+  const auto    xbins = xaxis -> GetNbins () ;
+  const auto    ybins = yaxis -> GetNbins () ;
   //
-  const int    xbin  = xaxis -> FindFixBin ( zx ) ;
-  const int    ybin  = yaxis -> FindFixBin ( zy ) ;
+  const auto    xbin  = xaxis -> FindFixBin ( zx ) ;
+  const auto    ybin  = yaxis -> FindFixBin ( zy ) ;
   //
   if ( m_null ) 
   {
@@ -749,11 +745,11 @@ Gaudi::Math::Interp2D::Interp2D::operator()  ( const double x ,
   //
   // find the proper data range & fill the store 
   //
-  const double xc = xaxis -> GetBinCenter ( xbin ) ;
-  const double yc = yaxis -> GetBinCenter ( ybin ) ;
+  const auto xc = xaxis -> GetBinCenter ( xbin ) ;
+  const auto yc = yaxis -> GetBinCenter ( ybin ) ;
   // 
-  int iStartX = xbin ;
-  int iStartY = ybin ;
+  auto iStartX = xbin ;
+  auto iStartY = ybin ;
   if ( 1 == m_typex % 2 ) { 
     const int leftx = zx < xc ? 1 : -1 ;
     iStartX -= ( m_typex + leftx ) / 2 ; 
@@ -789,7 +785,7 @@ Gaudi::Math::Interp2D::Interp2D::operator()  ( const double x ,
   for ( int ix = 0 ; ix <= m_typex ; ++ix ) 
   {
     //
-    const double xi = xaxis->GetBinCenter ( ix + iStartX  ) ; 
+    const auto xi = xaxis->GetBinCenter ( ix + iStartX  ) ; 
     // 
     // for each column find the interpolated value of "y"
     const VE   ya = lagrange_y ( *m_histo     , 
@@ -828,10 +824,6 @@ Gaudi::Math::Linear::Linear
   , m_b ( ( y1 * x2 - y2 * x1 ) / ( x2 - x1 ) ) 
 {}
 // ===========================================================================
-/// destructor 
-// ===========================================================================
-Gaudi::Math::Linear::~Linear(){}
-// ===========================================================================
 
 // ===========================================================================
 /*  constructor from two points
@@ -853,10 +845,6 @@ Gaudi::Math::LinearErr::LinearErr
   , m_y2 ( y2 ) 
 {}
 // ===========================================================================
-/// destructor 
-// ===========================================================================
-Gaudi::Math::LinearErr::~LinearErr(){}
-// ============================================================================
 //  y = a*x + b 
 // ============================================================================
 double Gaudi::Math::LinearErr::a () const 
@@ -899,13 +887,13 @@ Gaudi::Math::Parabola::Parabola
   , m_c ( 0 ) 
 {
   //
-  const double d12  = x1 - x2 ;
-  const double d23  = x2 - x3 ;
-  const double d13  = x1 - x3 ;
+  const auto d12  = x1 - x2 ;
+  const auto d23  = x2 - x3 ;
+  const auto d13  = x1 - x3 ;
   //
-  const double d1 = 1.0 / ( d12 * d13 ) ;
-  const double d2 = 1.0 / ( d12 * d23 ) ;
-  const double d3 = 1.0 / ( d13 * d23 ) ;
+  const auto d1 = 1.0 / ( d12 * d13 ) ;
+  const auto d2 = 1.0 / ( d12 * d23 ) ;
+  const auto d3 = 1.0 / ( d13 * d23 ) ;
 
   m_a  =   y1               * d1 ;
   m_a -=   y2               * d2 ;
@@ -921,11 +909,6 @@ Gaudi::Math::Parabola::Parabola
   //
 }
 // ============================================================================
-// destructor 
-// ============================================================================
-Gaudi::Math::Parabola::~Parabola(){}
-// ============================================================================
-
  
 // ============================================================================
 /*  constructor from three points
@@ -955,9 +938,9 @@ Gaudi::Math::ParabolaErr::ParabolaErr
   , m_d2 () 
   , m_d3 () 
 {
-  const double d12  = x1 - x2 ;
-  const double d23  = x2 - x3 ;
-  const double d13  = x1 - x3 ;
+  const auto d12  = x1 - x2 ;
+  const auto d23  = x2 - x3 ;
+  const auto d13  = x1 - x3 ;
   //
   m_d1 = 1.0 / ( d12 * d13 ) ;
   m_d2 = 1.0 / ( d12 * d23 ) ;
@@ -965,17 +948,15 @@ Gaudi::Math::ParabolaErr::ParabolaErr
   //
 }
 // ============================================================================
-// destructor 
-// ============================================================================
-Gaudi::Math::ParabolaErr::~ParabolaErr(){}
+
 // ============================================================================
 // y = a*x^2 + b*x + c  
 // ============================================================================
 double Gaudi::Math::ParabolaErr::a () const 
 {
-  double _a = m_y1.value () * m_d1   ;
-  _a       -= m_y2.value () * m_d2   ;
-  _a       += m_y3.value () * m_d3   ;
+  auto _a = m_y1.value () * m_d1   ;
+  _a     -= m_y2.value () * m_d2   ;
+  _a     += m_y3.value () * m_d3   ;
   return _a ;
 }
 // ============================================================================
@@ -983,9 +964,9 @@ double Gaudi::Math::ParabolaErr::a () const
 // ============================================================================
 double Gaudi::Math::ParabolaErr::b () const 
 {
-  double _b = - m_y1.value () * ( ( m_x2 + m_x3 ) * m_d1 ) ;
-  _b       -= - m_y2.value () * ( ( m_x1 + m_x3 ) * m_d2 ) ;
-  _b       += - m_y3.value () * ( ( m_x1 + m_x2 ) * m_d3 ) ;
+  auto _b = - m_y1.value () * ( ( m_x2 + m_x3 ) * m_d1 ) ;
+  _b     -= - m_y2.value () * ( ( m_x1 + m_x3 ) * m_d2 ) ;
+  _b     += - m_y3.value () * ( ( m_x1 + m_x2 ) * m_d3 ) ;
   return _b ;
 }
 // ============================================================================
@@ -993,9 +974,9 @@ double Gaudi::Math::ParabolaErr::b () const
 // ============================================================================
 double Gaudi::Math::ParabolaErr::c () const 
 {
-  double _c = m_y1.value () * ( m_x2 * m_x3 * m_d1 ) ;
-  _c       -= m_y2.value () * ( m_x1 * m_x3 * m_d2 ) ;
-  _c       += m_y3.value () * ( m_x1 * m_x2 * m_d3 ) ;
+  auto _c = m_y1.value () * ( m_x2 * m_x3 * m_d1 ) ;
+  _c     -= m_y2.value () * ( m_x1 * m_x3 * m_d2 ) ;
+  _c     += m_y3.value () * ( m_x1 * m_x2 * m_d3 ) ;
   return _c ;
 }
 // ============================================================================
@@ -1005,9 +986,9 @@ Gaudi::Math::ValueWithError
 Gaudi::Math::ParabolaErr::operator() ( const double x ) const  
 { 
   //
-  const double d1   = x - m_x1 ;
-  const double d2   = x - m_x2 ;
-  const double d3   = x - m_x3 ;
+  const auto d1   = x - m_x1 ;
+  const auto d2   = x - m_x2 ;
+  const auto d3   = x - m_x3 ;
   //
   Gaudi::Math::ValueWithError result ;
   result  = m_y1 * ( d2 * d3 * m_d1 ) ;

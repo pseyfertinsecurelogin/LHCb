@@ -34,7 +34,7 @@ namespace Gaudi
     class Point3DWithError  ;
     class Vector3DWithError ;
     // ========================================================================
-    class GAUDI_API Vector3DWithError : public Gaudi::XYZVector 
+    class GAUDI_API Vector3DWithError final : public Gaudi::XYZVector 
     {
     public:
       // ======================================================================
@@ -79,13 +79,13 @@ namespace Gaudi
       // ======================================================================
     public: // trivial accessors 
       // ======================================================================
-      const  Vector3D&   vector3d   ( ) const { return *this       ; }
-      const  Vector3D&   vector3D   ( ) const { return vector3d () ; }
-      const  Covariance& covariance ( ) const { return cov2  ()    ; }      
-      inline Vector3D&   vector3d   ( )       { return *this       ; }
+      const  Vector3D&   vector3d   ( ) const noexcept { return *this       ; }
+      const  Vector3D&   vector3D   ( ) const noexcept { return vector3d () ; }
+      const  Covariance& covariance ( ) const noexcept { return cov2  ()    ; }      
+      inline Vector3D&   vector3d   ( )       noexcept { return *this       ; }
       // ======================================================================      
-      const  Vector3D&   value      ( ) const { return vector3d () ; }
-      const  Covariance& cov2       ( ) const { return m_cov2      ; }
+      const  Vector3D&   value      ( ) const noexcept { return vector3d () ; }
+      const  Covariance& cov2       ( ) const noexcept { return m_cov2      ; }
       // ======================================================================      
     public: // setters 
       // ======================================================================
@@ -107,7 +107,7 @@ namespace Gaudi
     public: // useful accessors to covarinace matrix 
       // ======================================================================
       /// access to elemens of covariance matrix 
-      double cov2 ( unsigned int i , unsigned int j ) const 
+      double cov2 ( unsigned int i , unsigned int j ) const noexcept
       { return m_cov2 ( i , j ) ; }
       // ======================================================================
     public: // operators 

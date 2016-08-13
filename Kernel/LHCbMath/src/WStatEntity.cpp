@@ -38,15 +38,6 @@ namespace
   // ==========================================================================
 }
 // ============================================================================
-// empty constructor 
-// ============================================================================
-Gaudi::Math::WStatEntity::WStatEntity()
-  : m_sum     ( 0 ) 
-  , m_sum2    ( 0 )
-  , m_values  (   )
-  , m_weights (   )
-{}
-// ============================================================================
 // constructor from StatEntity of values 
 // ============================================================================
 Gaudi::Math::WStatEntity::WStatEntity ( const StatEntity& values ) 
@@ -89,10 +80,10 @@ double Gaudi::Math::WStatEntity::mean () const
 // ============================================================================
 double Gaudi::Math::WStatEntity::meanErr () const
 {
-  const double neff = nEff() ;
+  const auto neff = nEff() ;
   if ( s_zero ( neff ) ) { return 0 ; }
   //
-  const double v = dispersion() / neff ;
+  const auto v = dispersion() / neff ;
   //
   return v <= 0 ? 0.0 : std::sqrt ( v ) ;
 }
@@ -101,30 +92,24 @@ double Gaudi::Math::WStatEntity::meanErr () const
 // ============================================================================
 double Gaudi::Math::WStatEntity::dispersion () const
 { 
-  //
-  if ( 1 >= nEntries() || s_zero ( m_weights.sum() ) ) { return 0 ; }
-  //
-  return m_sum2 / m_weights.sum () - Gaudi::Math::pow ( mean() , 2 ) ;
+  return ( ( 1 >= nEntries() || s_zero ( m_weights.sum() ) ) ? 0 :
+           m_sum2 / m_weights.sum () - Gaudi::Math::pow ( mean() , 2 ) );
 }
 // ============================================================================
 // calculate rms 
 // ============================================================================
 double Gaudi::Math::WStatEntity::rms () const
 {
-  const double d = dispersion () ;
-  //
-  if ( 0 >= d || s_zero ( d ) ) { return 0 ; }
-  return std::sqrt ( d ) ;
+  const auto d = dispersion () ;
+  return ( ( 0 >= d || s_zero ( d ) ) ? 0 : std::sqrt ( d ) );
 }
 // ============================================================================
 // calculate effectiev number of entries 
 // ============================================================================
 double Gaudi::Math::WStatEntity::nEff () const
 {
-  //
-  if ( 0 == nEntries() || s_zero ( m_weights.sum2 () ) ) { return 0 ; }
-  //
-  return Gaudi::Math::pow ( m_weights.sum() , 2 ) /  m_weights.sum2 () ;
+  return ( ( 0 == nEntries() || s_zero ( m_weights.sum2 () ) ) ? 0 : 
+           Gaudi::Math::pow ( m_weights.sum() , 2 ) /  m_weights.sum2 () );
 }
 // ============================================================================
 // reset statistic 

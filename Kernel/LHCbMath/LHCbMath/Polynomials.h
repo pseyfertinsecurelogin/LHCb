@@ -42,12 +42,12 @@ namespace Gaudi
      *  @date 2011-04-19
      */
     template <unsigned int N>
-    class  Chebyshev_ : public std::unary_function<double,double>
+    class  Chebyshev_ final : public std::unary_function<double,double>
     {
     public:
       // ======================================================================
       /// the only one important method
-      inline double operator() ( const double    x    ) const
+      inline double operator() ( const double    x    ) const noexcept
       { return 2 * x * m_N1 ( x ) - m_N2 ( x ) ; }
       // ======================================================================      
     private:
@@ -65,7 +65,7 @@ namespace Gaudi
     {
     public:
       // ======================================================================
-      inline double operator() ( const double /* x */ ) const { return    1 ; }
+      inline double operator() ( const double /* x */ ) const noexcept { return 1 ; }
       // ======================================================================
     } ;
     // ========================================================================
@@ -76,7 +76,7 @@ namespace Gaudi
     public:
       // ======================================================================
       /// the only one important method
-      inline double operator() ( const double    x    ) const { return   x ; }
+      inline double operator() ( const double x ) const noexcept { return   x ; }
       // ======================================================================
     } ;
     // ========================================================================
@@ -90,7 +90,7 @@ namespace Gaudi
      *  @date 2011-04-19
      */
     template <unsigned int N>
-    class  ChebyshevU_ : public std::unary_function<double,double>
+    class  ChebyshevU_ final : public std::unary_function<double,double>
     {
     public:
       // ======================================================================
@@ -139,7 +139,7 @@ namespace Gaudi
      *  @date 2011-04-19
      */
     template <unsigned int N>
-    class  Legendre_ : public std::unary_function<double,double>
+    class  Legendre_ final : public std::unary_function<double,double>
     {
     public:
       // ======================================================================
@@ -191,7 +191,7 @@ namespace Gaudi
      *  @date 2011-04-19
      */
     template <unsigned int N>
-    class  Hermite_ : public std::unary_function<double,double>
+    class  Hermite_ final : public std::unary_function<double,double>
     {
     public:
       // ======================================================================
@@ -236,7 +236,7 @@ namespace Gaudi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2011-04-19
      */
-    class GAUDI_API Chebyshev : public std::unary_function<double,double>
+    class GAUDI_API Chebyshev final : public std::unary_function<double,double>
     {
     public :
       // ======================================================================
@@ -250,7 +250,7 @@ namespace Gaudi
       // ======================================================================
     public:
       // ======================================================================
-      unsigned int degree () const { return m_N ; }
+      unsigned int degree () const noexcept { return m_N ; }
       // ======================================================================
     public:
       // ======================================================================
@@ -263,7 +263,7 @@ namespace Gaudi
       // ======================================================================
     private:
       // ======================================================================
-      unsigned int m_N ;
+      unsigned int m_N{0} ;
       // ======================================================================
     } ;
     // ========================================================================
@@ -272,7 +272,7 @@ namespace Gaudi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2011-04-19
      */
-    class GAUDI_API ChebyshevU : public std::unary_function<double,double>
+    class GAUDI_API ChebyshevU final : public std::unary_function<double,double>
     {
     public :
       // ======================================================================
@@ -286,7 +286,7 @@ namespace Gaudi
       // ======================================================================
     public:
       // ======================================================================
-      unsigned int degree () const { return m_N ; }
+      unsigned int degree () const noexcept { return m_N ; }
       // ======================================================================
     public:
       // ======================================================================
@@ -299,7 +299,7 @@ namespace Gaudi
       // ======================================================================
     private:
       // ======================================================================
-      unsigned int m_N ;
+      unsigned int m_N{0} ;
       // ======================================================================
     } ;
     // ========================================================================
@@ -308,7 +308,7 @@ namespace Gaudi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2011-04-19
      */
-    class GAUDI_API Legendre : public std::unary_function<double,double>
+    class GAUDI_API Legendre final : public std::unary_function<double,double>
     {
     public :
       // ======================================================================
@@ -322,7 +322,7 @@ namespace Gaudi
       // ======================================================================
     public:
       // ======================================================================
-      unsigned int degree () const { return m_N ; }
+      unsigned int degree () const noexcept { return m_N ; }
       // ======================================================================
     public:
       // ======================================================================
@@ -335,7 +335,7 @@ namespace Gaudi
       // ======================================================================
     private:
       // ======================================================================
-      unsigned int m_N ;
+      unsigned int m_N{0} ;
       // ======================================================================
     } ;
     // ========================================================================
@@ -344,7 +344,7 @@ namespace Gaudi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2011-04-19
      */
-    class GAUDI_API Hermite : public std::unary_function<double,double>
+    class GAUDI_API Hermite final : public std::unary_function<double,double>
     {
     public :
       // ======================================================================
@@ -358,11 +358,11 @@ namespace Gaudi
       // ======================================================================
     public:
       // ======================================================================
-      unsigned int degree () const { return m_N ; }
+      unsigned int degree () const noexcept { return m_N ; }
       // ======================================================================
     private:
       // ======================================================================
-      unsigned int m_N ;
+      unsigned int m_N{0} ;
       // ======================================================================
     } ;
     // ========================================================================
@@ -416,9 +416,9 @@ namespace Gaudi
     public:
       // ======================================================================
       /// degree  of polynomial 
-      unsigned short degree () const { return m_pars.size() - 1 ; }
+      unsigned short degree () const noexcept { return m_pars.size() - 1 ; }
       /// number of parameters 
-      unsigned short npars  () const { return m_pars.size()     ; }
+      unsigned short npars  () const noexcept { return m_pars.size()     ; }
       /// all zero ?
       bool           zero   () const ;
       /** set k-parameter
@@ -438,7 +438,7 @@ namespace Gaudi
       double  par          ( const unsigned short k ) const
       { return ( k < m_pars.size() ) ? m_pars[k] : 0.0 ; }
       /// get the parameter value
-      double  parameter    ( const unsigned short k ) const { return par ( k ) ; }
+      double  parameter    ( const unsigned short k ) const noexcept { return par ( k ) ; }
       /// get all parameters:
       const std::vector<double>& pars () const { return m_pars ; }
       // ======================================================================
@@ -478,7 +478,7 @@ namespace Gaudi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2015-02-22
      */
-    class GAUDI_API Polynomial : public PolySum 
+    class GAUDI_API Polynomial final : public PolySum 
     {
     public:
       // =====================================================================
@@ -526,9 +526,9 @@ namespace Gaudi
     public:
       // ======================================================================
       /// get lower edge
-      double xmin  () const { return m_xmin ; }
+      double xmin  () const noexcept { return m_xmin ; }
       /// get upper edge
-      double xmax  () const { return m_xmax ; }
+      double xmax  () const noexcept { return m_xmax ; }
       // ======================================================================
     public:
       // ======================================================================
@@ -608,9 +608,9 @@ namespace Gaudi
     private:
       // ======================================================================
       /// x-min 
-      double              m_xmin ; // x-min
+      double              m_xmin{-1} ; // x-min
       /// x-max 
-      double              m_xmax ; // x-max
+      double              m_xmax{1}  ; // x-max
       // ======================================================================      
     } ;    
     // ========================================================================
@@ -639,7 +639,7 @@ namespace Gaudi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2015-02-22
      */
-    class GAUDI_API ChebyshevSum : public PolySum 
+    class GAUDI_API ChebyshevSum final : public PolySum 
     {
     public:
       // =====================================================================
@@ -686,15 +686,15 @@ namespace Gaudi
     public:
       // ======================================================================
       /// get lower edge
-      double xmin () const { return m_xmin ; }
+      double xmin () const noexcept { return m_xmin ; }
       /// get upper edge
-      double xmax () const { return m_xmax ; }
+      double xmax () const noexcept { return m_xmax ; }
       // ======================================================================
     public:
       // ======================================================================
-      double x ( const double t ) const
+      double x ( const double t ) const noexcept
       { return  0.5 * ( t * ( m_xmax - m_xmin ) +   m_xmax + m_xmin ) ; }
-      double t ( const double x ) const
+      double t ( const double x ) const noexcept
       { return (  2 *   x   - m_xmax - m_xmin ) / ( m_xmax - m_xmin ) ; }
       // ======================================================================
     public:
@@ -769,9 +769,9 @@ namespace Gaudi
     private:
       // ======================================================================
       /// x-min 
-      double              m_xmin ; // x-min
+      double              m_xmin{-1} ; // x-min
       /// x-max 
-      double              m_xmax ; // x-max
+      double              m_xmax{1}  ; // x-max
       // ======================================================================      
     } ;
     // ========================================================================
@@ -800,7 +800,7 @@ namespace Gaudi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2015-02-22
      */
-    class GAUDI_API LegendreSum : public PolySum
+    class GAUDI_API LegendreSum final : public PolySum
     {
     public:
       // =====================================================================
@@ -849,9 +849,9 @@ namespace Gaudi
     public:
       // ======================================================================
       /// get lower edge
-      double xmin () const { return m_xmin ; }
+      double xmin () const noexcept { return m_xmin ; }
       /// get upper edge
-      double xmax () const { return m_xmax ; }
+      double xmax () const noexcept { return m_xmax ; }
       // ======================================================================
     public:
       // ======================================================================
@@ -932,9 +932,9 @@ namespace Gaudi
      private:
       // ======================================================================
       /// x-min 
-      double              m_xmin ; // x-min
+      double              m_xmin{-1} ; // x-min
       /// x-max 
-      double              m_xmax ; // x-max
+      double              m_xmax{1}  ; // x-max
       // ======================================================================      
     } ;
     // ========================================================================
@@ -963,7 +963,7 @@ namespace Gaudi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2015-08-08
      */
-    class GAUDI_API HermiteSum : public PolySum
+    class GAUDI_API HermiteSum final : public PolySum
     {
     public:
       // =====================================================================
@@ -982,9 +982,9 @@ namespace Gaudi
     public:
       // ======================================================================
       /// get lower edge
-      double xmin () const { return m_xmin ; }
+      double xmin () const noexcept { return m_xmin ; }
       /// get upper edge
-      double xmax () const { return m_xmax ; }
+      double xmax () const noexcept { return m_xmax ; }
       // ======================================================================
     public:
       // ======================================================================
@@ -1063,11 +1063,11 @@ namespace Gaudi
     private:
       // ======================================================================
       /// low  edge 
-      double m_xmin  ; // low  edge 
+      double m_xmin{-1} ; // low  edge 
       /// high edge 
-      double m_xmax  ; // high edge 
+      double m_xmax{1}  ; // high edge 
       /// scale 
-      double m_scale ; // scale 
+      double m_scale{0.5} ; // scale 
       // ======================================================================      
     } ;
     // ========================================================================
