@@ -48,25 +48,12 @@ namespace LoKi
     /// the type of the argument
     typedef LoKi::Holder<TYPE1,TYPE2>                    Type                 ;
     // ========================================================================
-  private : // fake STL bases
-    // ========================================================================
-    /// STD signature (fake base)
-    typedef typename std::unary_function<Type,TYPE3>                   Base_1 ;
-    /// STD signature (fake base)
-    typedef typename std::binary_function<TYPE1,TYPE2,TYPE3>           Base_2 ;
-    // ========================================================================
-  public:  // STD (fake) signature
+    //     // STD (fake) signature
     // ========================================================================
     /// STL: the result value
-    typedef typename Base_1::result_type                 result_type          ;
-    /// STL: the argument type
-    typedef typename Base_1::argument_type               argument_type        ;
-    /// STL : the first  argument
-    typedef typename Base_2::first_argument_type         first_argument_type  ;
-    /// STL : the second argument
-    typedef typename Base_2::second_argument_type        second_argument_type ;
+    typedef TYPE3                                        result_type          ;
     // ========================================================================
-  public:  // the actual signature
+    //     // the actual signature
     // ========================================================================
     /// the actual type for the argument
     typedef typename boost::call_traits<Type>::param_type     argument        ;
@@ -86,35 +73,32 @@ namespace LoKi
     virtual result_type  eval        ( argument a ) const
     { return (*this)( a ) ; }
     /// the only one essential method ("function")
-    virtual result_type operator ()
-      ( first_argument  a1 ,
-        second_argument a2 ) const { return (*this)( Type ( a1 , a2 ) ) ; }
+    virtual result_type operator()( first_argument  a1, second_argument a2 ) const
+    { return (*this)( Type ( a1 , a2 ) ) ; }
     /// the only one essential method ("function")
-    virtual result_type evaluate
-    ( first_argument  a1 ,
-      second_argument a2 )   const { return (*this)( a1 , a2 ) ; }
+    virtual result_type evaluate( first_argument  a1, second_argument a2 ) const
+    { return (*this)( a1 , a2 ) ; }
     /// the only one essential method ("function")
-    virtual result_type eval
-    ( first_argument  a1 ,
-      second_argument a2 )   const { return (*this)( a1 , a2 ) ; }
+    virtual result_type eval( first_argument  a1 , second_argument a2 ) const
+    { return (*this)( a1 , a2 ) ; }
     /// MANDATORY: clone method
-    virtual  Functor* clone    ()              const = 0 ;
+    virtual  Functor* clone()              const = 0 ;
     /// virtual destructor
     virtual ~Functor() = default;
     // ========================================================================
   public:
     // ========================================================================
     /// protected default constructor
-    Functor () : AuxFunBase ( ) {}
+    Functor () = default;
     /// protected copy constructor
-    Functor ( const Functor& fun ) : AuxFunBase ( fun ) {}
+    Functor ( const Functor& fun ) = default;
     // ========================================================================
     /// assignement is disallowed
     Functor& operator=( const Functor& ) = delete;
     // ========================================================================
   } ;
   // ==========================================================================
-  /// pecialization for 2-argumetn function
+  /// Specialization for 2-argument function
   template <class TYPE1,class TYPE2, class TYPE3>
   class FunctorFromFunctor<LoKi::Holder<TYPE1,TYPE2>,TYPE3>
     : public LoKi::Functor<LoKi::Holder<TYPE1,TYPE2>,TYPE3>

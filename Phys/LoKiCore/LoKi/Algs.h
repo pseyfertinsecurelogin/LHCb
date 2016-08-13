@@ -662,19 +662,19 @@ namespace LoKi
       const std::vector<PREDICATE>& cuts    ,
       const std::set<size_t>&       indices )
     {
-      for ( OBJECT f = first ; last != f ; ++f ) {
+      for ( auto f = first ; last != f ; ++f ) {
         const size_t index = f - first ;
         if ( indices.end() != indices.find ( index ) ) { continue ; }
-        for ( auto icut = cuts.begin() ; cuts.end() != icut ; ++icut ) {
-          const PREDICATE& cut = *icut ;
-          if ( !cut ( *f ) )       { continue    ; }              // CONTINUE
-          if ( 1 == cuts.size()  ) { return true ; }              // TRUE
-          std::set<size_t>    _indices    ( indices ) ;
-          _indices.insert ( index ) ;
-          std::vector<PREDICATE> _cuts    ( cuts    ) ;
-          _cuts.erase ( _cuts.begin() + ( icut - cuts.begin() ) ) ;
-          return _found_N ( first , last , _cuts , _indices ) ;
-        }
+        auto icut = std::find_if( cuts.begin(), cuts.end(),
+                                  [&](const PREDICATE& cut) { return cut(*f); } );
+        if (icut==cuts.end()) continue;
+
+        if ( 1 == cuts.size()  ) { return true ; }              // TRUE
+        std::set<size_t>    _indices    ( indices ) ;
+        _indices.insert ( index ) ;
+        auto _cuts =  cuts;
+        _cuts.erase ( _cuts.begin() + ( icut - cuts.begin() ) ) ;
+        return _found_N ( first , last , _cuts , _indices ) ;
       }
       return false ;
     }

@@ -1,4 +1,3 @@
-// $Id$
 // ============================================================================
 // Include files
 // ============================================================================
@@ -30,6 +29,7 @@
 // ============================================================================
 #include "boost/algorithm/string/trim.hpp"
 #include "boost/algorithm/string/replace.hpp"
+#include "boost/algorithm/string/predicate.hpp"
 #include "boost/format.hpp"
 #include "boost/lexical_cast.hpp"
 // ============================================================================
@@ -71,8 +71,8 @@ namespace
     boost::trim ( code ) ;
     if ( code.empty() )                { return code ; }
     // check for paired quotes:
-    std::string::const_iterator ifront = code.begin () + 1 ;
-    std::string::const_iterator iback  = code.end   () - 1 ;
+    auto ifront = code.begin () + 1 ;
+    auto iback  = code.end   () - 1 ;
     //
     if ( *ifront != *iback ) { return code ; }
     //
@@ -99,7 +99,6 @@ LoKi::Hybrid::Base::Base
                      "#include \"LoKi/Functors.h\""                 , 
                      "#include \"LoKi/CacheFactory.h\""             ,
                      "#include \"LoKi/FunctorCache.h\""             , } )
-  , m_allfuncs   () 
 {
   declareProperty ( "ShowCode" , 
                     m_showCode = false, 
@@ -122,7 +121,7 @@ LoKi::Hybrid::Base::Base
   // make reasonable default name
   //
   m_cppname = this->name() ;
-  if ( 0 == m_cppname.find ( "ToolSvc." ) ) { m_cppname.erase ( 0 , 8 ) ; }
+  if ( boost::algorithm::starts_with(  m_cppname,  "ToolSvc." ) ) { m_cppname.erase ( 0 , 8 ) ; }
   while ( std::string::npos != m_cppname.find ( '.' ) ) 
   { m_cppname.replace ( m_cppname.find ( '.' )  , 1 , "_"  ) ; }
   while ( std::string::npos != m_cppname.find ( ' ' ) ) 
@@ -139,10 +138,6 @@ LoKi::Hybrid::Base::Base
                     m_cpplines , 
                     "C++ (header) lines to be included") ;
 }
-// ============================================================================
-// Destructor (virtual and protected)
-// ============================================================================
-LoKi::Hybrid::Base::~Base() {}
 // ============================================================================
 // initialization of the tool
 // ============================================================================
@@ -207,10 +202,10 @@ namespace
   // ==========================================================================
   std::string toString ( PyObject* o )
   {
-    if ( 0 == o ) { return "NULL"; }
+    if ( !o ) { return "NULL"; }
     PyObject* str = PyObject_Str ( o ) ;
     std::string tmp ;
-    if ( 0 != str ) { tmp = PyString_AS_STRING (str ) ; }
+    if ( str ) { tmp = PyString_AS_STRING (str ) ; }
     Py_XDECREF ( str ) ;
     return tmp ;
   }
@@ -234,7 +229,7 @@ StatusCode LoKi::Hybrid::Base::executeCode ( const std::string& pycode ) const
 
   // local scope
   PyObject* locals  = PyEval_GetLocals  () ;
-  if ( 0 == locals )
+  if ( !locals )
   {
     debug() << "PyEval_GetLocals:  'locals'  points to NULL" << endmsg ;
     if ( PyErr_Occurred() ) { PyErr_Print() ; }
@@ -242,7 +237,7 @@ StatusCode LoKi::Hybrid::Base::executeCode ( const std::string& pycode ) const
   // global scope
   PyObject* globals = PyEval_GetGlobals () ;
   bool globnew = false ;
-  if ( 0 == globals )
+  if ( !globals )
   {
     debug() << "PyEval_GetGlobals: 'globals' points to NULL" << endmsg ;
     if ( PyErr_Occurred() ) { PyErr_Print() ; }
@@ -265,18 +260,15 @@ StatusCode LoKi::Hybrid::Base::executeCode ( const std::string& pycode ) const
   {
     ok = false ;
 
-    PyObject* o1 = 0 ;
-    PyObject* o2 = 0 ;
-    PyObject* o3 = 0 ;
+    PyObject* o1 = nullptr ;
+    PyObject* o2 = nullptr ;
+    PyObject* o3 = nullptr ;
     PyErr_Fetch              ( &o1 , &o2 , &o3 ) ;
     PyErr_NormalizeException ( &o1 , &o2 , &o3 ) ;
 
-    if ( 0 != o1 )
-    { error () << " PyError Type      : " << toString ( o1 ) << endmsg ; }
-    if ( 0 != o2 )
-    { error () << " PyError Value     : " << toString ( o2 ) << endmsg ; }
-    if ( 0 != o3 )
-    { error () << " PyError Traceback : " << toString ( o3 ) << endmsg ; }
+    if ( o1 ) { error () << " PyError Type      : " << toString(o1) << endmsg; }
+    if ( o2 ) { error () << " PyError Value     : " << toString(o2) << endmsg; }
+    if ( o3 ) { error () << " PyError Traceback : " << toString(o3) << endmsg; }
 
     PyObject* pyErr = o2 ;
 

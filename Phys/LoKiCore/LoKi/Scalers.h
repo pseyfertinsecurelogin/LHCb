@@ -1,4 +1,3 @@
-// $Id$
 // ============================================================================
 #ifndef LOKI_SCALERS_H 
 #define LOKI_SCALERS_H 1
@@ -41,11 +40,9 @@ namespace LoKi
        *  @param prop accep probability 
        *  @param service the random number servce 
        */
-      RandomScaleV ( const double prob         , 
-                     IRndmGenSvc* service = 0  ) ;
+      RandomScaleV ( const double prob              , 
+                     IRndmGenSvc* service = nullptr ) ;
       // ======================================================================
-      /// MANDATORY: virtual destructor 
-      virtual ~RandomScaleV () ;
       /// MANDATORY: clone method ("virtual constructor")
       virtual  RandomScaleV*  clone() const ;
       /// MANDATORY: the only one essential method 
@@ -88,8 +85,6 @@ namespace LoKi
        */
       SkipperV ( const size_t skip ) ;
       // ======================================================================
-      /// MANDATORY: virtual destructor 
-      virtual ~SkipperV () ;
       /// MANDATORY: clone method ("virtual constructor")
       virtual  SkipperV* clone() const ;
       /// MANDATORY: the only one essential method 
@@ -113,7 +108,7 @@ namespace LoKi
       // ======================================================================
       /// skip
       size_t          m_skip ;                                          // skip 
-      mutable size_t  m_curr ;                                       // current 
+      mutable size_t  m_curr = 0;                                       // current 
       // ======================================================================
     } ;
     // ========================================================================
@@ -260,11 +255,9 @@ namespace LoKi
        *  @param prop accep probability 
        *  @param service the random number servce 
        */
-      RandomScale ( const double prob         , 
-                    IRndmGenSvc* service = 0  ) ;
+      RandomScale ( const double prob              , 
+                    IRndmGenSvc* service = nullptr ) ;
       // ======================================================================
-      /// MANDATORY: virtual destructor 
-      virtual ~RandomScale () ;
       /// MANDATORY: clone method ("virtual constructor")
       virtual  RandomScale*  clone() const ;
       /// MANDATORY: the only one essential method 
@@ -303,8 +296,6 @@ namespace LoKi
        */
       Skipper ( const size_t skip ) ;
       // ======================================================================
-      /// MANDATORY: virtual destructor 
-      virtual ~Skipper () ;
       /// MANDATORY: clone method ("virtual constructor")
       virtual  Skipper* clone() const ;
       /// MANDATORY: the only one essential method 
@@ -365,8 +356,6 @@ namespace LoKi
                   const double          maxRate                 , 
                   const RateLimitType   flag    = RandomLimiter ) ;
       // ======================================================================
-      /// MANDATORY: virtual destructor 
-      virtual ~RateLimit () ;
       /// MANDATORY: clone method ("virtual constructor")
       virtual  RateLimit*  clone() const ;
       /// MANDATORY: the only one essential method 

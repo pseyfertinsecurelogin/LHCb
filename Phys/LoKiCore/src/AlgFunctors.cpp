@@ -654,29 +654,20 @@ LoKi::Algorithms::RunAll::operator() () const
   IsExecuted   fun2 ;
   FilterPassed fun3 ;
   //
-  const Algorithms& algs = algorithms() ;
-  for ( Algorithms::const_iterator ialg = algs.begin() ;
-        algs.end() != ialg ; ++ialg )
-  {
-    //
-    IAlgorithm* alg = *ialg ;
-    if ( 0 == alg )
-    {
+  for ( IAlgorithm* alg : algorithms() ){
+    if ( !alg ) {
       Warning("Invaild algotithm!, return false " );
       return false ;                                                  // RETURN
     }
     //
-    if ( !fun1 ( alg ) )
-    {
+    if ( !fun1 ( alg ) ) {
       Warning("Algorithm '" + alg->name() + "' is disabled, return false " );
       return false ;                                                  // RETURN
     }
     //
-    if ( !fun2 ( alg ) )
-    {
+    if ( !fun2 ( alg ) ) {
       StatusCode sc = alg->sysExecute() ;  // EXECUTE IT!!!
-      if ( sc.isFailure() )
-      {
+      if ( sc.isFailure() ) {
         Error("Error from algorithm '" + alg->name() + "' sysExecute", sc );
         return false ;                                                // RETURN
       }
