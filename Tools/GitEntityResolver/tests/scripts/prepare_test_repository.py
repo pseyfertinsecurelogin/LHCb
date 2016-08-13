@@ -13,6 +13,7 @@ from shutil import copytree, rmtree, copy
 
 EPOCH = datetime(1970, 1, 1)
 
+
 def echo_cmd(func):
     def wrap(*args, **kwargs):
         print args, kwargs
@@ -95,11 +96,13 @@ check_call(['git', 'add', 'changing.xml'], cwd=path)
 check_call(['git', 'commit', '-am', 'v1 data'], cwd=path)
 check_call(['git', 'tag', 'v1'], cwd=path)
 
+# changes for HEAD version (no tag)
 with open(join(src_data, 'values.xml')) as in_file:
     with open(join(path, 'values.xml'), 'w') as out_file:
         out_file.write(in_file.read().replace('42', '0'))
 check_call(['git', 'commit', '-am', 'new data'], cwd=path)
 
+# changes for local files
 with open(join(src_data, 'values.xml')) as in_file:
     with open(join(path, 'values.xml'), 'w') as out_file:
         out_file.write(in_file.read().replace('42', '-123'))
