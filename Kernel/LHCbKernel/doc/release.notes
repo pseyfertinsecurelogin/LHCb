@@ -4,8 +4,14 @@
 ! Purpose: LHCb specific Kernel classes
 !--------------------------------------------------------------------------------
 
+! 2016-08-10 - Chris Jones
+ - Use 8-bit ints as enum underlying types for various RICH enums.
+
+! 2016-08-10 - Chris Jones
+ - Add templated alias to STL arrays for RICH particle types
+
 ! 2016-07-29 - Chris Jones
- - Add templated alias to STL arrays for Detectors (2D) and Radiators (3D).
+ - Add templated alias to STL arrays for RICH Detectors and Radiators.
 
 ! 2016-05-20 - Jon Harrison
  - Added new interface IVeloCCEConfigTool.h for VELO CCE scan configuration 
