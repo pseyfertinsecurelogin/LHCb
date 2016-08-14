@@ -8,6 +8,8 @@
 // ============================================================================
 #include <functional>
 #include <algorithm>
+#include <type_traits>
+#include <iterator>
 // ============================================================================
 // LHCb
 // ============================================================================
@@ -2829,12 +2831,14 @@ namespace LoKi
      */
     EqualToList
     ( const LoKi::Functor<TYPE,double>&  fun ,
-      const std::vector<double>&         vct )
+      std::vector<double>                vct )
       : LoKi::AuxFunBase ( std::tie ( fun , vct ) )
       , m_fun ( fun )
-      , m_vct ( vct )
+      , m_vct ( std::move(vct) )
     {
-      adjust () ;
+      std::sort ( m_vct.begin() , m_vct.end() ) ;
+      auto ilast = std::unique ( m_vct.begin() , m_vct.end() ) ;
+      m_vct.erase  ( ilast , m_vct.end() ) ;
     }
     /** constructor from the function and the value
      *  @param fun the function
@@ -2843,12 +2847,8 @@ namespace LoKi
     EqualToList
     ( const LoKi::Functor<TYPE,double>&  fun ,
       const std::vector<int>&            vct )
-      : LoKi::AuxFunBase ( std::tie ( fun , vct ) )
-      , m_fun ( fun )
-      , m_vct ( vct.begin() , vct.end() )
-    {
-      adjust () ;
-    }
+      : EqualToList( fun,  vct.begin(), vct.end() )
+    {}
     /** constructor from the function and the value
      *  @param fun the function
      *  @param vct the vector of values
@@ -2856,26 +2856,23 @@ namespace LoKi
     EqualToList
     ( const LoKi::Functor<TYPE,double>&  fun ,
       const std::vector<unsigned int>&   vct )
-      : LoKi::AuxFunBase ( std::tie ( fun , vct ) )
-      , m_fun ( fun )
-      , m_vct ( vct.begin() , vct.end() )
-    {
-      adjust () ;
-    }
-    /** constructor from the function and the value
+      : EqualToList( fun, vct.begin(), vct.end() )
+    {}
+    /** constructor from the function and range of values
      *  @param fun the function
-     *  @param vct the vector of values
+     *  @param first start of range
+     *  @param last end of range
      */
-    template <class ITERATOR>
+    template <typename ITERATOR,
+              typename = typename std::enable_if< std::is_base_of< std::input_iterator_tag,
+                                                                   typename std::iterator_traits<ITERATOR>::iterator_category
+                                                                 >::value >::type >
     EqualToList
     ( const LoKi::Functor<TYPE,double>&  fun    ,
       ITERATOR                           first  ,
       ITERATOR                           last   )
-      : m_fun ( fun )
-      , m_vct ( first , last )
-    {
-      adjust () ;
-    }
+      : EqualToList( fun, std::vector<double>{ first, last } )
+    {}
     // ========================================================================
     /// MANDATORY: clone method ("virtual construcor")
     virtual  EqualToList* clone() const { return new EqualToList(*this); }
@@ -2908,17 +2905,6 @@ namespace LoKi
     const LoKi::Functor<TYPE,double>& func () const { return m_fun.func() ; }
     /// get the vector
     const std::vector<double>&        vect () const { return m_vct ; }
-    // ========================================================================
-  private:
-    // ========================================================================
-    size_t  adjust ()
-    {
-      std::sort ( m_vct.begin() , m_vct.end() ) ;
-      std::vector<double>::iterator ilast =
-        std::unique ( m_vct.begin() , m_vct.end() ) ;
-      if ( m_vct.end() != ilast ) { m_vct.erase  ( ilast , m_vct.end() ) ; }
-      return m_vct.size() ;
-    }
     // ========================================================================
   private:
     // ========================================================================
@@ -2988,9 +2974,13 @@ namespace LoKi
     {}
     /** constructor from the function and the value
      *  @param fun the function
-     *  @param vct the vector of values
+     *  @param first start of range
+     *  @param last end of range
      */
-    template <class ITERATOR>
+    template <typename ITERATOR,
+              typename = typename std::enable_if< std::is_base_of< std::input_iterator_tag,
+                                                                   typename std::iterator_traits<ITERATOR>::iterator_category
+                                                                   >::value >::type >
     NotEqualToList
     ( const LoKi::Functor<TYPE,double>&  fun    ,
       ITERATOR                           first  ,
@@ -3047,7 +3037,6 @@ namespace LoKi
     ( const LoKi::Functor<TYPE,bool>& cut   ,
       const LoKi::Functor<void,bool>& scale )
       : LoKi::AuxFunBase ( std::tie ( cut , scale ) )
-      , LoKi::Functor<TYPE,bool>()
       , m_cut    ( cut   )
       , m_scaler ( scale )
     {}
@@ -3108,7 +3097,6 @@ namespace LoKi
     Modulo ( const LoKi::Functor<TYPE,double>& divident  ,
              const unsigned int                divisor   )
       : LoKi::AuxFunBase ( std::tie ( divident , divisor ) )
-      , LoKi::Functor<TYPE,double>()
       , m_divident ( divident  )
       , m_divisor  ( divisor   )
     {}
@@ -3164,7 +3152,6 @@ namespace LoKi
     Round ( const LoKi::Functor<TYPE,double>&    fun      ,
             const unsigned int                   fake     )
       : LoKi::AuxFunBase ( std::tie ( fun , fake ) )
-      , LoKi::Functor<TYPE,double>()
       , m_fun  ( fun )
     {}
     /// clone method (mandatory)

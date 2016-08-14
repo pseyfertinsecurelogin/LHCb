@@ -7,6 +7,8 @@
 // STD & STL
 // ============================================================================
 #include <algorithm>
+#include <type_traits>
+#include <iterator>
 // ============================================================================
 // PartProp
 // ============================================================================
@@ -440,7 +442,7 @@ namespace Decays
    *  @date 2009-05-23
    */
   template <class PARTICLE>
-  class TreeList_
+  class TreeList_ final
   {
   public:
     // =======================================================================
@@ -459,18 +461,19 @@ namespace Decays
     // constructor from the trees
     TreeList_ ( const Trees_& trees ) : m_trees ( trees ) {}
     /// default constructor
-    TreeList_ () : m_trees () {}
+    TreeList_ () = default;
     /// copy constructor
-    TreeList_ ( const TreeList_&  right )
-      : m_trees (             right.m_trees   ) {}
+    TreeList_ ( const TreeList_&  right ) = default;
     /// move constructor
-    TreeList_ (       TreeList_&& right )
-      : m_trees ( std::move ( right.m_trees ) ) {}
+    TreeList_ (       TreeList_&& right ) = default;
     // ========================================================================
   public:
     // ========================================================================
     // constructor from iterators
-    template <class ITERATOR>
+    template <typename  ITERATOR,
+              typename = typename std::enable_if< std::is_base_of< std::input_iterator_tag,
+                                                                   typename std::iterator_traits<ITERATOR>::iterator_category
+                                                                 >::value >::type >
     TreeList_ ( ITERATOR first ,
                 ITERATOR last  )
       : m_trees ( first, last ) {}
@@ -478,19 +481,9 @@ namespace Decays
   public:
     // ========================================================================
     /// assignement operator
-    TreeList_& operator=( const TreeList_&  right )
-    {
-      if ( &right == this ){ return *this ; }
-      m_trees = right.m_trees ;
-      return *this ;
-    }
+    TreeList_& operator=( const TreeList_&  right ) = default;
     /// move assignement operator
-    TreeList_& operator=(       TreeList_&& right )
-    {
-      if ( &right == this ){ return *this ; }
-      m_trees = std::move ( right.m_trees ) ;
-      return *this ;
-    }
+    TreeList_& operator=(       TreeList_&& right ) = default;
     // ========================================================================
   public:
     // ========================================================================
@@ -796,21 +789,12 @@ namespace Decays
       // ======================================================================
     public:
       // ======================================================================
-      /// constructor from two sub-trees
-      List_ ( const Decays::iTree_<PARTICLE>& n1 ,
-              const Decays::iTree_<PARTICLE>& n2 )
-        : Decays::Trees::Or_<PARTICLE>  ( n1 , n2 )
-      {}
-      /// constructor from list of sub-trees
-      List_ ( const TreeList& trees )
-        : Decays::Trees::Or_<PARTICLE>  ( trees )
-      {}
+      /// forward to base class constructor
+      using Decays::Trees::Or_<PARTICLE>::Or_;
       /// copy constructor
-      List_ ( const List_&  right )
-        : Decays::Trees::Or_<PARTICLE>  (             right   ) {}
+      List_ ( const List_&  right ) = default;
       /// move constructor
-      List_ (       List_&& right )
-        : Decays::Trees::Or_<PARTICLE>  ( std::move ( right ) ) {}
+      List_ (       List_&& right ) = default;
       // ======================================================================
     public:
       // ======================================================================
@@ -868,18 +852,15 @@ namespace Decays
       // ======================================================================
       /// constructor from the tree
       Not_ ( const Decays::iTree_<PARTICLE>& tree )
-        : Decays::iTree_<PARTICLE> ()
-        , m_tree ( tree )
+        : m_tree ( tree )
       {}
       /// constructor from the tree
       Not_ ( const Decays::Tree_<PARTICLE>&  tree )
-        : Decays::iTree_<PARTICLE> ()
-        , m_tree ( tree )
+        : m_tree ( tree )
       {}
       /// constructor from the tree
       Not_ (       Decays::Tree_<PARTICLE>&& tree )
-        : Decays::iTree_<PARTICLE> ()
-        , m_tree ( std::move ( tree ) )
+        : m_tree ( std::move ( tree ) )
       {}
       // ======================================================================
     public:
