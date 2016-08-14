@@ -354,7 +354,7 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual constructor")
       Extremum* clone() const override { return new Extremum ( *this ) ; }
       /// MANDATORY: the only one essential method
-      typename uBase::result_type 
+      typename uBase::result_type
       operator()( typename uBase::argument a ) const override
       {
         // return the value
@@ -631,7 +631,91 @@ namespace LoKi
       // ======================================================================
     };
 
-    // TODO: combine Sum and Product (into Accumulate< ... >)
+    namespace details {
+        // ========================================================================
+        /** @class Accumulate
+         *  accumulate afunction over the stream
+         *  @see LoKi::Algs::accumulate
+         *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
+         *  @date 2011-02-27
+         */
+        template <typename TYPE, typename Traits_>
+        class Accumulate final : public LoKi::Functor<std::vector<TYPE>,double>
+        {
+        public:
+          // ======================================================================
+          /// the base
+          typedef LoKi::Functor<std::vector<TYPE>,double>  uBase    ; // the base
+          // ======================================================================
+        public:
+          // ======================================================================
+          /** constructor from the function
+           *  @param fun the function
+           *  @param init the initial value for summation
+           */
+          Accumulate ( const LoKi::Functor<TYPE,double>& fun      ,
+                       const double                      init = Traits_::unit() )
+            : LoKi::AuxFunBase ( std::tie ( fun , init ) )
+            , m_fun      ( fun  )
+            , m_cut      ( LoKi::Constant<TYPE,bool>( true ) )
+            , m_trivCut  ( true )
+            , m_init     ( init )
+          {}
+          /** constructor from the function
+           *  @param fun the function
+           *  @param init the initial value for summation
+           */
+          Accumulate ( const LoKi::Functor<TYPE,double>& fun      ,
+                const LoKi::Functor<TYPE,bool>&   cut      ,
+                const double                      init = Traits_::unit() )
+            : LoKi::AuxFunBase ( std::tie ( fun , cut , init ) )
+            , m_fun      ( fun   )
+            , m_cut      ( cut   )
+            , m_trivCut  ( false )
+            , m_init     ( init  )
+          {}
+          /// MANDATORY: clone method ("virtual constructor")
+          Accumulate* clone() const override { return new Accumulate ( *this ) ; }
+          /// MANDATORY: the only one essential method:
+          typename uBase::result_type
+          operator()( typename uBase::argument a ) const override
+          {
+            typename Traits_::BinaryOperation operation{};
+            const LoKi::Apply<TYPE,double> appFun ( &m_fun.func() ) ;
+            //
+            return m_trivCut ?
+              LoKi::Algs::accumulate ( a.begin ()   , a.end   ()   ,
+                                       appFun       ,
+                                       this->m_init , operation    ) :
+              LoKi::Algs::accumulate ( a.begin ()   , a.end   ()   ,
+                                       appFun       ,
+                                       LoKi::Apply<TYPE,bool>{ &m_cut.func() },
+                                       this->m_init , operation    ) ;
+          }
+          /// OPTIONAL: the basic printout method
+          std::ostream& fillStream( std::ostream& s ) const override
+          {
+            s << Traits_::name() << "(" << this->m_fun ;
+            if ( !this->m_trivCut  ) { s << "." << this -> m_cut  ; }
+            if ( this->m_init != Traits_::unit()) { s << "," << this -> m_init ; }
+            return s << ")" ;
+          }
+          // ======================================================================
+        private:
+          // ======================================================================
+          /// the default constructor is disabled
+          Accumulate () ;                              // default constructor is disabled
+          // ======================================================================
+          /// the function
+          LoKi::FunctorFromFunctor<TYPE,double> m_fun     ; // the function
+          //TODO: replace (m_cut,m_trivCut) with boost;:optional
+          LoKi::FunctorFromFunctor<TYPE,bool>   m_cut     ; // the cut
+          /// trivial cut ?
+          bool                                  m_trivCut ; // trivial cut ?
+          double                                m_init    ; // init-value
+          // ======================================================================
+        };
+    }
     // ========================================================================
     /** @class Sum
      *  sum of the function over the stream
@@ -639,96 +723,16 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.BElyaev@cern.ch
      *  @date 2011-02-27
      */
+    namespace Traits {
+        struct Sum {
+            using BinaryOperation = std::plus<double>;
+            static constexpr double unit() { return  0; }
+            static constexpr const char* name() { return "sum"; }
+        };
+    }
     template <typename TYPE>
-    class Sum : public LoKi::Functor<std::vector<TYPE>,double>
-    {
-    public:
-      // ======================================================================
-      /// the base
-      typedef LoKi::Functor<std::vector<TYPE>,double>  uBase    ; // the base
-      // ======================================================================
-    public:
-      // ======================================================================
-      /** constructor from the function
-       *  @param fun the function
-       *  @param init the initial value for summation
-       */
-      Sum ( const LoKi::Functor<TYPE,double>& fun      ,
-            const double                      init = 0 )
-        : LoKi::AuxFunBase ( std::tie ( fun , init ) )
-        , m_fun      ( fun  )
-        , m_cut      ( LoKi::Constant<TYPE,bool>( true ) )
-        , m_trivCut  ( true )
-        , m_init     ( init )
-      {}
-      /** constructor from the function
-       *  @param fun the function
-       *  @param init the initial value for summation
-       */
-      Sum ( const LoKi::Functor<TYPE,double>& fun      ,
-            const LoKi::Functor<TYPE,bool>&   cut      ,
-            const double                      init = 0 )
-        : LoKi::AuxFunBase ( std::tie ( fun , cut , init ) )
-        , m_fun      ( fun   )
-        , m_cut      ( cut   )
-        , m_trivCut  ( false )
-        , m_init     ( init  )
-      {}
-      /// MANDATORY: clone method ("virtual constructor")
-      Sum* clone() const override { return new Sum ( *this ) ; }
-      /// MANDATORY: the only one essential method:
-      typename uBase::result_type operator()
-        ( typename uBase::argument a ) const override
-      { return this -> _accumulate_ ( a , std::plus<double>() ) ; }
-      /// OPTIONAL: the basic printout method
-      std::ostream& fillStream( std::ostream& s ) const override
-      { return this -> _print_      ( s , "sum" , 0 ) ; }
-      // ======================================================================
-    protected :
-      // ======================================================================
-      ///
-      template <class OPERATION>
-      typename uBase::result_type _accumulate_
-      ( typename uBase::argument a , OPERATION operation ) const
-      {
-        const LoKi::Apply<TYPE,double> appFun ( &m_fun.func() ) ;
-        const LoKi::Apply<TYPE,bool>   appCut ( &m_cut.func() ) ;
-        //
-        return m_trivCut ?
-          LoKi::Algs::accumulate ( a.begin ()   , a.end   ()   ,
-                                   appFun       , this->m_init ,
-                                   operation    ) :
-          LoKi::Algs::accumulate ( a.begin ()   , a.end   ()   ,
-                                   appFun       , appCut       ,
-                                   this->m_init , operation    ) ;
-      }
-      // ======================================================================
-      /// OPTIONAL: the basic printout method
-      std::ostream& _print_ ( std::ostream&      s ,
-                              const std::string& n ,
-                              const double       d ) const
-      {
-        s << n << "(" << this->m_fun ;
-        if ( !this->m_trivCut  ) { s << "." << this -> m_cut  ; }
-        if ( d != this->m_init ) { s << "," << this -> m_init ; }
-        return s << ")" ;
-      }
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      Sum () ;                              // default constructor is disabled
-      // ======================================================================
-    protected:
-      // ======================================================================
-      /// the function
-      LoKi::FunctorFromFunctor<TYPE,double> m_fun     ; // the function
-      LoKi::FunctorFromFunctor<TYPE,bool>   m_cut     ; // the cut
-      /// trivial cut ?
-      bool                                  m_trivCut ; // trivial cut ?
-      double                                m_init    ; // init-value
-      // ======================================================================
-    };
+    using Sum = details::Accumulate<TYPE,Traits::Sum>;
+
     // ========================================================================
     /** @class Product
      *  product of the function over the stream
@@ -737,45 +741,17 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.BElyaev@cern.ch
      *  @date 2011-02-27
      */
+
+    namespace Traits {
+        struct Product {
+            using BinaryOperation = std::multiplies<double>;
+            static constexpr double unit() { return  1; }
+            static constexpr const char* name() { return "product"; }
+        };
+    }
     template <typename TYPE>
-    class Product final : public LoKi::Functors::Sum<TYPE>
-    {
-    public:
-      // ======================================================================
-      /// the base
-      typedef LoKi::Functor<std::vector<TYPE>,double>  uBase    ; // the base
-      // ======================================================================
-    public:
-      // ======================================================================
-      /// constructor from the function
-      Product ( const LoKi::Functor<TYPE,double>& fun      ,
-                const double                      init = 1 )
-        : LoKi::AuxFunBase ( std::tie ( fun , init ) )
-        , LoKi::Functors::Sum <TYPE> ( fun , init )
-      {}
-      /// constructor from the function and  predicate
-      Product ( const LoKi::Functor<TYPE,double>& fun      ,
-                const LoKi::Functor<TYPE,bool>&   cut      ,
-                const double                      init = 1 )
-        : LoKi::AuxFunBase ( std::tie ( fun , cut , init ) )
-        , LoKi::Functors::Sum <TYPE> ( fun , cut , init )
-      {}
-      /// MANDATORY: clone method ("virtual constructor")
-      virtual  Product* clone() const { return new Product ( *this ) ; }
-      /// MANDATORY: the only one essential method:
-      virtual typename uBase::result_type operator()
-        ( typename uBase::argument a ) const
-      { return this -> _accumulate_ ( a, std::multiplies<double>() ) ; }
-      /// OPTIONAL: the basic printout method
-      virtual std::ostream& fillStream( std::ostream& s ) const
-      { return this -> _print_      ( s , "product" , 1 ) ; }
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      Product () ;                           // default constructor is disabled
-      // ======================================================================
-    };
+    using Product = details::Accumulate<TYPE,Traits::Product>;
+
     // ========================================================================
     /** @class Fetch
      *  Fetch & evaluate the certain element of the stream
@@ -925,7 +901,7 @@ namespace LoKi
     namespace details {
         // ========================================================================
         /** @class ComposeFunctions
-         *  Facade to adapt the composition of the functions 
+         *  Facade to adapt the composition of the functions
          *  @author Gerhard Raven gerhard.raven@nikhef.nl
          *  @date 2016-08-13
          */
