@@ -103,7 +103,10 @@ def main():
 
         print 'dumping tag %s (%d/%d)' % (tag, count, len(tags_to_copy))
         # FIXME: are single version nodes considered?
-        nodes = db.findNodesWithTag(tag) + list(single_version_nodes)
+        if tag != 'HEAD':
+            nodes = db.findNodesWithTag(tag) + list(single_version_nodes)
+        else:
+            nodes = db.getAllNodes()
         for node in nodes:
             # print node
             data = db.getPayloadList(node, IOV_MIN, IOV_MAX, None,
@@ -160,7 +163,8 @@ def main():
             check_output(['git', 'commit', '-m', tag], cwd=repo_dir)
         else:
             print 'no changes in %s' % tag
-        check_output(['git', 'tag', tag], cwd=repo_dir)
+        if tag != 'HEAD':
+            check_output(['git', 'tag', tag], cwd=repo_dir)
 
     print 'compacting repository'
     check_output(['git', 'gc'], cwd=repo_dir)
