@@ -7,6 +7,7 @@
 // STD & STL
 // ============================================================================
 #include <functional>
+#include <memory>
 // ============================================================================
 // GaudiKernel
 // ============================================================================
@@ -52,11 +53,6 @@ namespace LoKi
     /// parameters: return value
     typedef TYPE2 Type2 ;                           // parameters: return value
     /// =======================================================================
-  private : // fake STL bases
-    // ========================================================================
-    /// STD signature (fake base)
-    typedef typename std::unary_function<TYPE,TYPE2>                   Base_1 ;
-    // ========================================================================
   public:
     // ========================================================================
     /// the type of the argument
@@ -65,9 +61,9 @@ namespace LoKi
   public:  // STD (fake) signature
     // ========================================================================
     /// STL: the result value
-    typedef typename Base_1::result_type                        result_type   ;
+    typedef TYPE2                                               result_type   ;
     /// STL: the basic argument type
-    typedef typename Base_1::argument_type                      argument_type ;
+    typedef TYPE                                                argument_type ;
     // ========================================================================
   public:  // the actual signature
     // ========================================================================
@@ -141,64 +137,45 @@ namespace LoKi
     {}
     // ========================================================================
     /// move constructor (avoid cloning)
-    FunctorFromFunctor ( FunctorFromFunctor&& right )
-      : LoKi::AuxFunBase( std::move(right) )
-      , LoKi::Functor<TYPE,TYPE2> ( std::move(right) )
-      , m_fun ( std::move(right.m_fun) )
-    {}
+    FunctorFromFunctor ( FunctorFromFunctor&& right ) = default;
     // ========================================================================
   public:
     // ========================================================================
     /// MANDATORY: clone method ("virtual constructor")
-    virtual  FunctorFromFunctor* clone() const
+    FunctorFromFunctor* clone() const override
     { return new FunctorFromFunctor ( *this ) ; }
     /// MANDATORY: the only one essential method
-    virtual typename functor::result_type operator()
-      ( typename functor::argument a ) const
+    typename functor::result_type
+    operator()( typename functor::argument a ) const override
     { return fun ( a ) ; }
     /// OPTIONAL: the basic printout method, delegate to the underlying object
-    virtual std::ostream& fillStream( std::ostream& s ) const
+    std::ostream& fillStream( std::ostream& s ) const override
     { return  m_fun->fillStream( s ) ; };
     /// OPTIONAL: unique function ID, delegate to the underlying objects
-    virtual std::size_t   id () const { return m_fun->id() ; }
+    std::size_t   id () const override { return m_fun->id() ; }
     /// OPTIONAL: delegate the object type
-    virtual std::string   objType () const { return m_fun -> objType() ; }
+    std::string   objType () const override { return m_fun -> objType() ; }
     /// C++ printout: delegate
-    virtual std::string   toCpp   () const { return m_fun -> toCpp  () ; }
+    std::string   toCpp   () const override { return m_fun -> toCpp  () ; }
     // ========================================================================
   public:
     // ========================================================================
     /// the assignement operator is enabled
-    FunctorFromFunctor& operator= ( const FunctorFromFunctor& right )
+    FunctorFromFunctor& operator=( const FunctorFromFunctor& right ) 
     {
-      if ( this == &right ) { return *this ; }                        // RETURN
-      // set new pointer
-      LoKi::Functor<TYPE,TYPE2>* newf = right.m_fun -> clone() ;      // CLONE!
-      // delete own pointer
-      delete m_fun ;
-      // assign the new pointer
-      m_fun = newf ;
-      return *this ;                                                  // RETURN
+      AuxFunBase::operator=(right);
+      m_fun.reset( right.m_fun->clone() );
+      return *this;
     }
     /// move  assignement operator is enabled
-    FunctorFromFunctor& operator= ( FunctorFromFunctor&& right )
-    {
-      if ( this == &right ) { return *this ; }                        // RETURN
-      delete m_fun ;
-      m_fun       = right.m_fun ;
-      right.m_fun = nullptr     ;
-      return *this ;                                                  // RETURN
-    }
+    FunctorFromFunctor& operator= ( FunctorFromFunctor&& right ) = default;
     /// the assignement operator is enabled
     FunctorFromFunctor& operator= ( const Functor<TYPE,TYPE2>& right )
     {
-      if ( this == &right ) { return *this ; }                        // RETURN
-      // set new pointer
-      LoKi::Functor<TYPE,TYPE2>* newf = right.clone() ;
-      // delete own pointer
-      delete m_fun ;
-      // assign the new pointer
-      m_fun = newf ;
+      if ( this != &right ) {
+          AuxFunBase::operator=(right);
+          m_fun.reset( right.clone() );
+      }
       return *this ;                                                  // RETURN
     }
     // ========================================================================
@@ -223,9 +200,9 @@ namespace LoKi
   private:
     // ========================================================================
     /// the actual underlaying function
-    const functor* m_fun ;                           // the underlaying functor
+    std::unique_ptr<const functor> m_fun ;                           // the underlaying functor
     // ========================================================================
-  } ;
+  };
   // ==========================================================================
   /** @class Constant
    *  The helper concrete implementation of the simplest
@@ -374,7 +351,7 @@ namespace LoKi
     FunctorFromFunctor* clone() const override
     { return new FunctorFromFunctor ( *this ) ; }
     /// MANDATORY: the only one essential method
-    typename functor::result_type operator()() const override 
+    typename functor::result_type operator()() const override
     { return fun ( ) ; }
     /// OPTIONAL: the basic printout method, delegate to the underlying object
     std::ostream& fillStream( std::ostream& s ) const override
