@@ -1,8 +1,8 @@
 // ============================================================================
-#ifndef LOKI_FUNCADAPTERS_H 
+#ifndef LOKI_FUNCADAPTERS_H
 #define LOKI_FUNCADAPTERS_H 1
 // ============================================================================
-//  include files 
+//  include files
 // ============================================================================
 // LoKi
 // ============================================================================
@@ -10,49 +10,49 @@
 // ============================================================================
 /** @file
  *
- *  This file is a part of LoKi project - 
+ *  This file is a part of LoKi project -
  *    "C++ ToolKit  for Smart and Friendly Physics Analysis"
  *
  *  The package has been designed with the kind help from
- *  Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas, 
- *  contributions and advices from G.Raven, J.van Tilburg, 
+ *  Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas,
+ *  contributions and advices from G.Raven, J.van Tilburg,
  *  A.Golutvin, P.Koppenburg have been used in the design.
  *
  *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
- *  @date 2001-01-23 
+ *  @date 2001-01-23
  */
 // ============================================================================
-namespace LoKi 
+namespace LoKi
 {
   // ===========================================================================
-  /** @namespace LoKi::Adapters LoKi/FuncAdapters.h 
+  /** @namespace LoKi::Adapters LoKi/FuncAdapters.h
    *  Simple namespace with "function adapters"
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date 2006-11-25
-   */ 
+   */
   namespace Adapters
   {
     // ========================================================================
-    /** @class FunAdapter 
-     *  The generic templated adapter for the functions 
-     * 
-     *  @code 
+    /** @class FunAdapter
+     *  The generic templated adapter for the functions
+     *
+     *  @code
      *
      *  // FUNCTION
      *  double myFun ( const Particle* p ) ;
-     *  ... 
-     *  
+     *  ...
+     *
      *  typedef LoKi::Adapters::FunAdapter<const Particle*> AFun ;
      *
-     *  // create the function itself 
-     *  Fun fun = AFun( &myFun ) 
-     * 
+     *  // create the function itself
+     *  Fun fun = AFun( &myFun )
+     *
      *  const Particle* p = ... ;
-     *  // use the function/functor 
+     *  // use the function/functor
      *  const double result = fun( p ) ;
-     * 
-     *  @endcode 
-     *  
+     *
+     *  @endcode
+     *
      *  @author Vanya BELYAEV belyaev@lapp.in2p3.fr
      *  @date 2005-03-27
      */
@@ -62,7 +62,7 @@ namespace LoKi
       // ======================================================================
     protected:
       // ======================================================================
-      // base type 
+      // base type
       typedef LoKi::Functor<TYPE,TYPE2> MyBase  ;
       // ======================================================================
     public:
@@ -73,97 +73,90 @@ namespace LoKi
       // ======================================================================
     public:
       // ======================================================================
-      /// contructor from the function 
-      FunAdapter ( function fun ) 
-        : MyBase () 
-        , m_fun  ( fun ) 
+      /// contructor from the function
+      FunAdapter ( function fun )
+        : m_fun  ( fun )
       {}
-      /// copy constructor 
-      FunAdapter ( const FunAdapter& right ) 
-        : LoKi::AuxFunBase ( right ) 
-        , MyBase ( right       ) 
-        , m_fun  ( right.m_fun )
-      {}
-      /// virtual destructor 
-      virtual ~FunAdapter(){};
+      /// copy constructor
+      FunAdapter ( const FunAdapter& right )  = default;
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  FunAdapter* clone() const { return new FunAdapter( *this ) ; }
-      /// MANDATORY: the only one essential method 
-      virtual typename MyBase::result_type operator() 
-        ( typename MyBase::argument arg ) const 
+      FunAdapter* clone() const override { return new FunAdapter( *this ) ; }
+      /// MANDATORY: the only one essential method
+      typename MyBase::result_type operator()
+        ( typename MyBase::argument arg ) const override
       { return m_fun ( arg ) ; }
     private:
       // ======================================================================
-      // default constructor is private 
+      // default constructor is private
       FunAdapter();
-      // assignement operator is disabled 
-      FunAdapter& operator=( const FunAdapter& right ) ;
+      // assignement operator is disabled
+      FunAdapter& operator=( const FunAdapter& right ) = delete;
       // ======================================================================
     private:
       // ======================================================================
       function m_fun ;
       // ======================================================================
     };
-    // ========================================================================    
+    // ========================================================================
   } // end of namespace Adapters
   // ==========================================================================
-  /** helper templated function to make easier the 
+  /** helper templated function to make easier the
    *  creation of adapter-functors:
    *
-   *  @code 
+   *  @code
    *
    *  // FUNCTION
    *  double myCun ( const Particle* p ) ;
-   *  ... 
+   *  ...
    *
-   *  // create the function itself 
-   *  Fun fun = aFun( &myFun ) 
-   * 
+   *  // create the function itself
+   *  Fun fun = aFun( &myFun )
+   *
    *  const Particle* p = ... ;
-   *  // use the function/functor 
+   *  // use the function/functor
    *  const double result = fun( p ) ;
-   * 
-   *  @endcode 
    *
-   *  @see LoKi::Adapters::FunAdapter 
+   *  @endcode
    *
-   *  @author Vanya BELYAEV belyaev@lapp.in2p3.fr 
+   *  @see LoKi::Adapters::FunAdapter
+   *
+   *  @author Vanya BELYAEV belyaev@lapp.in2p3.fr
    *  @date 2005-03-27
    */
   template <class TYPE>
-  inline LoKi::Adapters::FunAdapter<TYPE,double> aFun ( double (*fun) ( TYPE ) ) 
-  { return LoKi::Adapters::FunAdapter<TYPE,double> ( fun ) ; } 
-  // ==========================================================================  
-  /** helper templated function to make easier the 
+  inline LoKi::Adapters::FunAdapter<TYPE,double> aFun ( double (*fun) ( TYPE ) )
+  { return LoKi::Adapters::FunAdapter<TYPE,double> ( fun ) ; }
+  // ==========================================================================
+  /** helper templated function to make easier the
    *  creation of adapter-functors:
    *
-   *  @code 
+   *  @code
    *
    *  // PREDICATE
    *  double myCut ( const Particle* p ) ;
-   *  ... 
+   *  ...
    *
-   *  // create the function itself 
-   *  Cut cut = aCut( &myCut ) 
-   * 
+   *  // create the function itself
+   *  Cut cut = aCut( &myCut )
+   *
    *  const Particle* p = ... ;
-   *  // use the predicate/functor 
+   *  // use the predicate/functor
    *  const bool result = cut( p ) ;
-   * 
-   *  @endcode 
    *
-   *  @see LoKi::Adapters::CutAdapter 
-   * 
-   *  @author Vanya BELYAEV belyaev@lapp.in2p3.fr 
+   *  @endcode
+   *
+   *  @see LoKi::Adapters::CutAdapter
+   *
+   *  @author Vanya BELYAEV belyaev@lapp.in2p3.fr
    *  @date 2005-03-27
    */
   template <class TYPE>
-  inline LoKi::Adapters::FunAdapter<TYPE,bool> aCut ( bool (*cut) ( TYPE ) ) 
-  { return LoKi::Adapters::FunAdapter<TYPE,bool> ( cut ) ; } 
-  // ==========================================================================  
+  inline LoKi::Adapters::FunAdapter<TYPE,bool> aCut ( bool (*cut) ( TYPE ) )
+  { return LoKi::Adapters::FunAdapter<TYPE,bool> ( cut ) ; }
+  // ==========================================================================
 } // end of namespace LoKi
 // ============================================================================
-// The END 
+// The END
 // ============================================================================
 #endif // LOKI_FUNCADAPTERS_H
 // ============================================================================

@@ -1170,7 +1170,7 @@ namespace LoKi
      *  @author Vanya BELYAEV belyaev@physics.syr.edu
      *  @date 2007-07-22
      */
-    const LoKi::Valid<const HepMC::GenParticle*>                       GVALID ;
+    const LoKi::Valid<const HepMC::GenParticle*>                       GVALID{} ;
     // ========================================================================
     /** @var GVEV
      *  primitive predicate to check the validity of "end_vertex"
@@ -1191,7 +1191,7 @@ namespace LoKi
      *  @author Vanya BELYAEV belyaev@lapp.in2p3.fr
      *  @date 2005-03-26
      */
-    const   LoKi::GenParticles::ValidEndVertex                           GVEV ;
+    const   LoKi::GenParticles::ValidEndVertex                           GVEV{} ;
     // ========================================================================
     /** @var GZERO
      *  primitive function, "always 0"
