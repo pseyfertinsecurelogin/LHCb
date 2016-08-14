@@ -119,7 +119,7 @@ def main():
                                 '{0}/{1}@{2}'.format(os.path.dirname(node),
                                                      key,
                                                      os.path.basename(node)))
-                    if channel:
+                    if channel or path.endswith('MagnetScale.xml'):
                         path = path + ':{0}'.format(channel)
                     if since == IOV_MIN and until == IOV_MAX:
                         if not os.path.exists(os.path.dirname(path)):
