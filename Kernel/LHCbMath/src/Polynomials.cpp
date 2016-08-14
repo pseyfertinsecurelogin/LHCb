@@ -704,7 +704,7 @@ double Gaudi::Math::Polynomial::integral
     clenshaw_polynom ( npars , xh ) -
     clenshaw_polynom ( npars , xl ) ;     
   //
-  return result  * 0.5 * ( m_xmax - m_xmin ) ;
+  return result * 0.5 * ( m_xmax - m_xmin ) ;
 }
 // ============================================================================
 // get indefinte integral 
@@ -733,7 +733,7 @@ double Gaudi::Math::Polynomial::derivative ( const double x     ) const
   //
   const auto tx = t ( x  ) ;
   //
-  const auto dx = 2 / ( m_xmax - m_xmin ) ;
+  const auto dx = 2.0 / ( m_xmax - m_xmin ) ;
   std::vector<double> npars ( m_pars.size() - 1 , 0 ) ;
   for ( unsigned int i = 0 ; i < npars.size() ; ++i ) 
   {
@@ -753,7 +753,7 @@ Gaudi::Math::Polynomial::derivative          () const
   if ( 1 == m_pars.size() ) 
   { return Gaudi::Math::Polynomial( 0 , m_xmin , m_xmax ) ; }
   //
-  const auto dx = 2 / ( m_xmax - m_xmin ) ;
+  const auto dx = 2.0 / ( m_xmax - m_xmin ) ;
   std::vector<double> npars ( m_pars.size() - 1 , 0 ) ;
   for ( unsigned int i = 0 ; i < npars.size() ; ++i ) 
   {    
@@ -989,8 +989,8 @@ double Gaudi::Math::ChebyshevSum::integral
   }
   //
   const auto result = 
-    Gaudi::Math::Clenshaw::chebyshev_sum   ( npars.begin() , npars.end()  , xh ) - 
-    Gaudi::Math::Clenshaw::chebyshev_sum   ( npars.begin() , npars.end()  , xl ) ;
+    Gaudi::Math::Clenshaw::chebyshev_sum ( npars.begin() , npars.end()  , xh ) - 
+    Gaudi::Math::Clenshaw::chebyshev_sum ( npars.begin() , npars.end()  , xl ) ;
   //
   return result ;
 }
@@ -1073,14 +1073,14 @@ Gaudi::Math::ChebyshevSum::derivative () const
   if ( 1 == m_pars.size() ) 
   { return Gaudi::Math::ChebyshevSum ( 0 , m_xmin , m_xmax ) ; }
   //
-  const auto dx = 2 / ( m_xmax - m_xmin ) ;
+  const auto dx = 2.0 / ( m_xmax - m_xmin ) ;
   std::vector<double> npars ( m_pars.size() - 1 , 0 ) ;
   for ( unsigned short i = 1 ; i < m_pars.size() ; ++i ) 
   { 
     //
     if ( s_zero ( m_pars[i] ) ) { continue ; }           // CONTINUE 
     //
-    const unsigned short id = i - 1 ;
+    const auto id = i - 1 ;
     if ( 0 == id % 2 ) 
     {
       for ( unsigned short j = 0 ; j <= id ; j+=2 ) 
@@ -1382,7 +1382,7 @@ Gaudi::Math::LegendreSum::derivative () const
   if ( 1 == m_pars.size() ) 
   { return Gaudi::Math::LegendreSum ( 0 , m_xmin , m_xmax ) ; }
   //
-  const auto dx = 2 / ( m_xmax - m_xmin ) ;
+  const auto dx = 2.0 / ( m_xmax - m_xmin ) ;
   std::vector<double> npars ( m_pars.size() - 1 , 0 ) ;
   for ( unsigned short i = 1 ; i < m_pars.size() ; ++i )
   { 
@@ -2030,7 +2030,7 @@ namespace
     const auto pH = poly       (       xhigh ) ;
     const auto pL = poly       (       xlow  ) ;
     //
-    const long double p1 = ( eH * pH - eL * pL ) + ( pH - pL ) ;
+    const auto p1 = ( eH * pH - eL * pL ) + ( pH - pL ) ;
     //
     if ( 1 >= poly.npars  () ) { return p1 / tau ; } // RETURN 
     //
