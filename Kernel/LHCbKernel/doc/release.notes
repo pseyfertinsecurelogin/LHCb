@@ -4,6 +4,10 @@
 ! Purpose: LHCb specific Kernel classes
 !--------------------------------------------------------------------------------
 
+! 2016-08-15 - Chris Jones
+ - Add a flag to RichSmartID::fillStream to control if the underlying bits
+   are included in the printout. By default enabled only for DEBUG builds.
+
 ! 2016-08-10 - Chris Jones
  - Use 8-bit ints as enum underlying types for various RICH enums.
 

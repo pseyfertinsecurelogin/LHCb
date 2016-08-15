@@ -854,7 +854,13 @@ namespace LHCb
   public:
 
     /// Print this RichSmartID in a human readable way
-    std::ostream& fillStream( std::ostream& s ) const;
+    std::ostream& fillStream( std::ostream& s, 
+#ifdef NDEBUG
+                              const bool dumpSmartIDBits = false
+#else
+                              const bool dumpSmartIDBits = true
+#endif
+                              ) const;
 
     /** Return the output of the ostream printing of this object as a string.
      *  Mainly for use in GaudiPython. */
