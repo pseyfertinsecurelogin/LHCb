@@ -640,7 +640,7 @@ namespace LoKi
          *  @date 2011-02-27
          */
         template <typename TYPE, typename Traits_>
-        class Accumulate final : public LoKi::Functor<std::vector<TYPE>,double>
+        class Accumulate : public LoKi::Functor<std::vector<TYPE>,double>
         {
         public:
           // ======================================================================
@@ -705,6 +705,19 @@ namespace LoKi
           // ======================================================================
           /// the default constructor is disabled
           Accumulate () ;                              // default constructor is disabled
+          // ======================================================================
+        protected:
+          // ======================================================================
+          /// OPTIONAL: the basic printout method
+          std::ostream& _print_ ( std::ostream&      s ,
+                                  const std::string& n ,
+                                  const double       d ) const
+          {
+            s << n << "(" << this->m_fun ;
+            if ( !this->m_trivCut  ) { s << "." << this -> m_cut  ; }
+            if ( d != this->m_init ) { s << "," << this -> m_init ; }
+            return s << ")" ;
+          }
           // ======================================================================
           /// the function
           LoKi::FunctorFromFunctor<TYPE,double> m_fun     ; // the function
