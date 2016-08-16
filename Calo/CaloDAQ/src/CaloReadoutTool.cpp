@@ -27,6 +27,7 @@ CaloReadoutTool::CaloReadoutTool( const std::string& type,
   , m_packed(false)
   , m_ok(false)
   , m_first(true)
+  , m_count(0)
 {
   declareInterface<ICaloReadoutTool>(this);
 
@@ -62,11 +63,9 @@ StatusCode CaloReadoutTool::initialize(){
 StatusCode CaloReadoutTool::finalize(){
   IIncidentSvc* inc = incSvc() ;
   if ( 0 != inc ) { inc -> removeListener  ( this ) ; }
+  if(m_count!=0)info() << "# getBanks access "<<m_count<<endmsg;
   return GaudiTool::finalize();
 }
-
-  
-
 
 bool CaloReadoutTool::getCaloBanksFromRaw( ) {
 
