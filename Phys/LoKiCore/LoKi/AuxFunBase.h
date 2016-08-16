@@ -17,6 +17,8 @@
 #include "GaudiKernel/StatusCode.h"
 #include "GaudiKernel/SmartIF.h"
 // ============================================================================
+#include "boost/optional.hpp"
+// ============================================================================
 // LoKi
 // ============================================================================
 #include "LoKi/Interface.h"
@@ -53,11 +55,11 @@ namespace LoKi
   {
   protected:
     // ========================================================================
-    /// default constructor 
-    AuxFunBase  () ; 
-    /// constructor with arguments : 
+    /// default constructor
+    AuxFunBase  ();
+    /// constructor with arguments :
     template <typename ... ARGS>
-    AuxFunBase ( const std::tuple<ARGS...>& tup ) 
+    AuxFunBase ( const std::tuple<ARGS...>& tup )
     : m_cargs{ Gaudi::Utils::toCpp_lst(tup) }
     { }
     // ========================================================================
@@ -67,12 +69,12 @@ namespace LoKi
     AuxFunBase& operator=( const AuxFunBase&  right ) = default ;          // copy consructor
     // move constructor
     AuxFunBase  ( AuxFunBase&& rhs ) = default;
-    // move assignment 
+    // move assignment
     AuxFunBase& operator=( AuxFunBase&& rhs ) = default;
     /// destructor
     virtual ~AuxFunBase ();                                   // destructor
     // ========================================================================
-  public:  
+  public:
     // ========================================================================
     /** print error message
      *  @param msg  error message
@@ -136,7 +138,7 @@ namespace LoKi
     virtual std::size_t   id        () const ;
     /** (virtual) printout in form of std::string
      *  @return string representation (must be valid C++)
-     */ 
+     */
     virtual std::string   toCpp     () const ;
     // ========================================================================
   public:
@@ -152,8 +154,11 @@ namespace LoKi
     // ========================================================================
     /// check the data for the same event
     bool sameEvent() const ;
-    /// get constructor arguments 
-    const std::string& cargs() const { return m_cargs ; }
+    /// get constructor arguments
+    const std::string& cargs() const {
+        static const std::string unknown{ ":::UNKNOWN:::" };
+        return m_cargs ? *m_cargs : unknown ;
+    }
     // ========================================================================
   public:
     // ========================================================================
@@ -172,9 +177,9 @@ namespace LoKi
   private:
     // ========================================================================
     /// the event ID
-    mutable unsigned long long m_event ;                        // the event ID
-    /// constructor arguments 
-    std::string                m_cargs ;   // constructor arguments 
+    mutable unsigned long long m_event = 0;                     // the event ID
+    /// constructor arguments
+    boost::optional<std::string>           m_cargs ;   // constructor arguments
     /// =======================================================================
   };
   // ==========================================================================
@@ -223,8 +228,8 @@ namespace Gaudi
     GAUDI_API
     std::ostream&
     toStream ( const LoKi::AuxFunBase& o , std::ostream& s ) ;
-    // ========================================================================    
-    /** string representation of the object (valid C++ code) 
+    // ========================================================================
+    /** string representation of the object (valid C++ code)
      */
     GAUDI_API
     std::string toCpp    ( const LoKi::AuxFunBase& o ) ;

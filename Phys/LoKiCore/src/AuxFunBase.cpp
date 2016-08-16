@@ -87,8 +87,6 @@ bool LoKi::AuxFunBase::setLoKiSvc
 // constructor from arguments string
 // ============================================================================
 LoKi::AuxFunBase::AuxFunBase ( )
-  : m_event   ( 0     )
-  , m_cargs   (       )  
 {
 #ifdef LOKI_DEBUG
   // increment the instance counter
@@ -218,7 +216,7 @@ void LoKi::AuxFunBase::setEvent (          ) const
   LoKi::ILoKiSvc* svc = lokiSvc() ;
   setEvent ( 0 ) ;
   //
-  if ( 0 != svc ) { m_event = svc->event() ; }
+  if ( svc ) { m_event = svc->event() ; }
   else { Error ( "setEvent(): invalid pointer to LoKi::ILoKiSvc, set 0") ; }
 }
 // ============================================================================
@@ -239,10 +237,13 @@ bool LoKi::AuxFunBase::sameEvent () const
 // ============================================================================
 /* (virtual) printout in form of std::string
  *  @return string representation (must be valid C++)
- */ 
+ */
 // ============================================================================
-std::string LoKi::AuxFunBase::toCpp() const 
-{ return objType() +  ( m_cargs.empty() ? "() " : "( " + m_cargs + " ) " ) ; }
+std::string LoKi::AuxFunBase::toCpp() const
+{
+    return objType() +  ( m_cargs ? "( " + *m_cargs + " ) "
+                                  : "( :::UNKNOWN+PLEASE+FIX+CODE::: ) " );
+}
 // ============================================================================
 /*  output operator of function objects to std::ostream
  *  @param stream reference to the stream
