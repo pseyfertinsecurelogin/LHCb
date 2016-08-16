@@ -1,9 +1,5 @@
 #!/usr/bin/env python
 # =============================================================================
-# $Id$
-# =============================================================================
-# $URL$
-# =============================================================================
 ## @file   LoKiCore/tests.py
 #
 #        This file is a part of LoKi project - 
@@ -17,10 +13,6 @@
 #  @author Vanya BELYAEV ibelyaev@physics.syr.edu
 #  @date 2007-05-29
 #
-#  $Revision$
-#  Last modification $Date$
-#                 by $Author$
-#
 # =============================================================================
 """
 The basic tests for LoKiCore package
@@ -32,11 +24,6 @@ The package has been designed with the kind help from
 Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas, 
 contributions and advices from G.Raven, J.van Tilburg, 
 A.Golutvin, P.Koppenburg have been used in the design.
-
-  $Revision$
-  Last modification $Date$
-                 by $Author$
-
 """
 # =============================================================================
 __author__   = "Vanya BELYAEV  Ivan.Belyaev@nikhef.nl"

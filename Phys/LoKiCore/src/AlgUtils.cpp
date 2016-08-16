@@ -42,11 +42,11 @@ LoKi::AlgUtils::getGaudiAlg ( const LoKi::AuxFunBase& base  ,
 {
   LoKi::ILoKiSvc* svc = base.lokiSvc() ;
   if ( force  ) { base.Assert( !(!svc) , "LoKi Service is not available!"   ) ; }
-  else if ( 0 == svc ) { return 0 ; }
+  else if ( !svc ) { return nullptr ; }
   //
   SmartIF<IAlgContextSvc> cntx ( svc ) ;
   if ( force  ) { base.Assert( !(!cntx) , "IAlgContextSvc* points to NULL!" ) ; }
-  else if ( !cntx     ) { return 0 ; }
+  else if ( !cntx     ) { return nullptr ; }
   //
   return Gaudi::Utils::getGaudiAlg ( cntx ) ;
 }
@@ -60,13 +60,13 @@ IAlgorithm*   LoKi::AlgUtils::getAlg
   //
   LoKi::ILoKiSvc* svc = base.lokiSvc() ;
   if ( force ) { base.Assert( !(!svc)   , "LoKi Service is not available!" ) ; }
-  else if ( 0 == svc ) { return 0 ; }
+  else if ( !svc ) { return nullptr ; }
   //
   SmartIF<IAlgContextSvc> cntx ( svc ) ;
   if ( force ) { base.Assert( !(!cntx)  , "IAlgContextSvc* points to NULL!") ; }
-  else if ( !cntx    ) { return 0 ; }
+  else if ( !cntx    ) { return nullptr ; }
   IAlgorithm* ialg = cntx->currentAlg() ;
-  if ( force ) { base.Assert( 0 != ialg , "IAlgorithm* points to NULL!"    ) ; }
+  if ( force ) { base.Assert( nullptr != ialg , "IAlgorithm* points to NULL!"    ) ; }
   //
   return ialg ;
 }

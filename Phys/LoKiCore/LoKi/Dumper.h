@@ -126,7 +126,7 @@ namespace LoKi
         return this->m_fun.fun ( a ) ;
       }
       //
-      typename LoKi::Functor<TYPE1,TYPE2>::result_type res = this->m_fun.fun ( a ) ;
+      auto res = this->m_fun.fun ( a ) ;
       //
       this -> m_stream << this -> m_dump.open  () ;
       Gaudi::Utils::toStream ( a , this->m_stream ) ;

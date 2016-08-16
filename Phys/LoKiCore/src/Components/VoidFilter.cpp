@@ -1,4 +1,3 @@
-// $Id$
 // ============================================================================
 // Include files 
 // ============================================================================
@@ -17,9 +16,6 @@
  *  contributions and advices from G.Raven, J.van Tilburg, 
  *  A.Golutvin, P.Koppenburg have been used in the design.
  *
- *                    $Revision$
- *  Last modification $Date$
- *                 by $Author$
  */
 // ============================================================================
 namespace LoKi 
@@ -91,8 +87,6 @@ namespace LoKi
       //
       Assert ( sc.isSuccess () , "Unable (re)set property 'Factory'" , sc ) ;
     } 
-    /// virtual and protected destructor 
-    virtual ~VoidFilter () {} ;
     // ========================================================================
   private:
     // ========================================================================

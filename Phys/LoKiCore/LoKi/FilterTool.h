@@ -47,8 +47,6 @@ namespace LoKi
     ( const std::string& type   ,   // tool type (?)
       const std::string& name   ,   // toolinstance name
       const IInterface*  parent ) ; // tool's parent 
-    /// virtual and protected destructor 
-    virtual ~FilterTool () ;                // virtual and protected destructor 
     // ========================================================================
   private:
     // ========================================================================

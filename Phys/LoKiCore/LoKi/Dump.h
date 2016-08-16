@@ -49,7 +49,7 @@ namespace LoKi
     Dump  ( const std::string&  open          ,
             const std::size_t   nmax          ,
             const std::string&  close  = "\n" ) ;
-    virtual ~Dump() ;
+    virtual ~Dump() = default;
     // ========================================================================
   public:
     // ========================================================================

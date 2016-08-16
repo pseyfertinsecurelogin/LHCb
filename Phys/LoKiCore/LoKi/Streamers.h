@@ -179,8 +179,7 @@ inline typename LoKi::Functor<std::vector<TYPE>,double>::result_type
 operator >> ( const std::vector<TYPEI>&                      input ,  
               const LoKi::Functor<std::vector<TYPE>,double>& funct )
 {
-  typedef std::vector<TYPE> INPUT ;
-  return LoKi::apply ( funct , INPUT( input.begin() , input.end() ) ) ;
+  return LoKi::apply ( funct , { input.begin() , input.end() } ) ;
 }
 // ============================================================================
 /** evaluate/filter the vector function/predicate 
@@ -210,10 +209,8 @@ operator >>
 ( const std::vector<TYPEI>&       input ,  
   const LoKi::Functor<TYPE,bool>& pred  )
 {
-  typedef std::vector<TYPEI> OUTPUT ;
   //
-  OUTPUT out ;
-  out.reserve ( input.size() ) ;
+  std::vector<TYPEI> out ; out.reserve ( input.size() ) ;
   //
   LoKi::apply_filter 
     ( input.begin() , input.end() , pred , std::back_inserter ( out ) ) ;

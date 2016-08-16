@@ -125,8 +125,6 @@ namespace LoKi
         , m_pmf ( pmf ) 
         , m_nam ( nam ) 
       {}
-      /// MANDATORY: virtual destructor 
-      virtual ~Stat () {}
       /// MANDATORY: clone method ("virtual constructor")
       virtual  Stat* clone() const { return new Stat ( *this ) ; }
       /// MANDATORY: the only one essential method:

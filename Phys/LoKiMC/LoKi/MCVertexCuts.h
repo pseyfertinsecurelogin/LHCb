@@ -100,7 +100,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2004-07-07
      */
-    const LoKi::MCVertices::TypeOfMCVertex                            MCVTYPE ;
+    const LoKi::MCVertices::TypeOfMCVertex                            MCVTYPE{} ;
     // ========================================================================
     /** @var MCVVALID
      *
@@ -118,7 +118,7 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2007-01-21
      */
-    const LoKi::Valid<const LHCb::MCVertex*>                         MCVVALID ;
+    const LoKi::Valid<const LHCb::MCVertex*>                         MCVVALID{} ;
     // ========================================================================
     /** @var MCVTOF
      *  the time of flight for  MC vertex ( MCVertex::timeOfFlight )
@@ -135,7 +135,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2004-07-07
      */
-    const LoKi::MCVertices::TimeOfFlight                               MCVTOF ;
+    const LoKi::MCVertices::TimeOfFlight                               MCVTOF{} ;
     // ========================================================================
     /** @var MCVX
      *  the x-position of       MC vertex
@@ -152,7 +152,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2004-07-07
      */
-    const LoKi::MCVertices::VertexPositionX                              MCVX ;
+    const LoKi::MCVertices::VertexPositionX                              MCVX{} ;
     // ========================================================================
     /** @var MCVY
      *  the y-position of       MC vertex
@@ -169,7 +169,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2004-07-07
      */
-    const LoKi::MCVertices::VertexPositionY                              MCVY ;
+    const LoKi::MCVertices::VertexPositionY                              MCVY{} ;
     // ========================================================================
     /** @var MCVZ
      *  the z-position of       MC vertex
@@ -186,7 +186,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2004-07-07
      */
-    const LoKi::MCVertices::VertexPositionZ                              MCVZ ;
+    const LoKi::MCVertices::VertexPositionZ                              MCVZ{} ;
     // ========================================================================
     /** @var MCVTIME
      *  the "time" of MC vertex
@@ -204,7 +204,7 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-02-06
      */
-    const LoKi::MCVertices::VertexTime                                MCVTIME ;
+    const LoKi::MCVertices::VertexTime                                MCVTIME{} ;
     // ========================================================================
     /** @var MCPRIMARY
      *  evaluates to "true" for  primary vertices
@@ -222,7 +222,7 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-02-06
      */
-    const LoKi::MCVertices::Primary                                 MCPRIMARY ;
+    const LoKi::MCVertices::Primary                                 MCPRIMARY{} ;
     // ========================================================================
     /** @var MCISPRIMARY
      *  evaluates to "true" for  primary vertices
@@ -240,7 +240,7 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-02-06
      */
-    const LoKi::MCVertices::Primary                               MCISPRIMARY ;
+    const LoKi::MCVertices::Primary                               MCISPRIMARY{} ;
     // ========================================================================
     /** @var MCISDECAY
      *  evaluates to "true" for 'decay' vertices
@@ -258,7 +258,7 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2006-02-06
      */
-    const LoKi::MCVertices::Decay                                   MCISDECAY ;
+    const LoKi::MCVertices::Decay                                   MCISDECAY{} ;
     // ========================================================================
     /** the distance for MC vertex from given point,
      *  given (MC)Vertex or collision

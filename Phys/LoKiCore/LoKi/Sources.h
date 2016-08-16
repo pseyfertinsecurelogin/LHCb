@@ -47,7 +47,7 @@ namespace LoKi
     template <class TYPE                            , 
               class TYPE2=std::vector<TYPE*>        , 
               class TYPE3= typename TYPE::Container >
-    class Source: public LoKi::Functor<void,TYPE2>
+    class Source final : public LoKi::Functor<void,TYPE2>
     {
     private:
       // ======================================================================

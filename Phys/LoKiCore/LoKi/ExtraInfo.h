@@ -58,7 +58,6 @@ namespace LoKi
       /// constructor from the index and the default value 
       GetInfo ( const int index , T2 value = defaultValue ) 
         : LoKi::AuxFunBase ( std::tie ( index , value ) ) 
-        , LoKi::Functor<TYPE,TYPE2>() 
         , m_index   ( index )  
         , m_default ( value ) 
       {} 
@@ -69,8 +68,6 @@ namespace LoKi
         , m_index              ( right.m_index   )  
         , m_default            ( right.m_default ) 
       {} 
-      /// MANDATORY: virtual destructor 
-      virtual ~GetInfo() {}
       /// MANDATORY: clone method ("virtual constructor")
       virtual  GetInfo* clone() const { return new GetInfo(*this); }
       /// MANDATORY: the only one essential method
@@ -85,7 +82,7 @@ namespace LoKi
       // ======================================================================
     private:
       // ======================================================================
-      /// the default contructot is disabled 
+      /// the default constructor is disabled 
       GetInfo() ;                         // the default contructor is disabled
       /// no assignement 
       GetInfo& operator= (const GetInfo& ) ;                  // no assignement 
@@ -119,7 +116,6 @@ namespace LoKi
       /// constructor fomr the index and default value 
       CheckInfo ( const int    index ) 
         : LoKi::AuxFunBase ( std::tie ( index ) ) 
-        , LoKi::Functor<TYPE,bool>() 
         , m_index   ( index )  
       {} 
       /// copy constructor 
@@ -128,8 +124,6 @@ namespace LoKi
         , LoKi::Functor<TYPE,bool> ( right         ) 
         , m_index                  ( right.m_index )  
       {} 
-      /// MANDATORY: virtual destructor 
-      virtual ~CheckInfo () {} ;
       /// MANDATORY: clone method ("virtual constructor")
       virtual  CheckInfo* clone() const { return new CheckInfo (*this); }
       /// MANDATORY: the only one essential method
@@ -183,7 +177,6 @@ namespace LoKi
         const LoKi::Functor<TYPE,TYPE2>& fun            , 
         const bool                       update = false ) 
         : LoKi::AuxFunBase ( std::tie ( index , fun , update ) ) 
-        , LoKi::Functor<TYPE,TYPE2> () 
         , m_fun    ( fun    ) 
         , m_index  ( index  )
         , m_update ( update ) 
@@ -196,8 +189,6 @@ namespace LoKi
         , m_index  ( right.m_index  )
         , m_update ( right.m_update ) 
       {} 
-      /// MANDATORY: virtual destructor
-      virtual ~GetSmartInfo() {}
       /// MANDATORY: clone method ("virtual constructor")
       virtual  GetSmartInfo* clone() const { return new GetSmartInfo (*this); }
       /// MANDATORY: the only one essential method
@@ -268,7 +259,7 @@ namespace LoKi
      *  @date 2010-12-09
      */
     template <class TYPE,class TYPE2=double>
-    class LogInfo : public LoKi::Functor<TYPE,TYPE2>
+    class LogInfo final : public LoKi::Functor<TYPE,TYPE2>
     {
     public:
       // ======================================================================
@@ -277,12 +268,9 @@ namespace LoKi
       ( const LoKi::Functor<TYPE,TYPE2>& fun   , 
         const int                        index ) 
         : LoKi::AuxFunBase ( std::tie ( fun , index ) ) 
-        , LoKi::Functor<TYPE,TYPE2>() 
         , m_fun     ( fun   ) 
         , m_index   ( index )  
       {} 
-      /// MANDATORY: virtual destructor 
-      virtual ~LogInfo () {} ;
       /// MANDATORY: clone method ("virtual constructor")
       virtual  LogInfo* clone() const { return new LogInfo (*this); }
       /// MANDATORY: the only one essential method
@@ -340,4 +328,3 @@ namespace LoKi
 // ============================================================================
 #endif // LOKI_EXTRAINFO_H
 // ============================================================================
-

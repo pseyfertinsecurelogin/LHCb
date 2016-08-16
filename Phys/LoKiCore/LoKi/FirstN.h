@@ -1,4 +1,3 @@
-// $Id$
 // ============================================================================
 #ifndef LOKI_FIRSTN_H
 #define LOKI_FIRSTN_H 1
@@ -35,7 +34,7 @@ namespace LoKi
    *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
    *  @date 2011-10-20
    */
-  class GAUDI_API FirstN
+  class GAUDI_API FirstN final
   {
     // ========================================================================
   public:
@@ -43,7 +42,6 @@ namespace LoKi
     /// constructor
     FirstN ( const unsigned int N ) ;                            // constructor
     /// virtual destructor
-    virtual ~FirstN() ;                                   // virtual destructor
   public:
     // ========================================================================
     /// get N
@@ -70,18 +68,15 @@ namespace LoKi
    *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
    *  @date 2011-10-20
    */
-  class GAUDI_API Reverse
+  class GAUDI_API Reverse final
   {
   public:
     // ========================================================================
     /// constructor
-    Reverse() ;                                                  // constructor
-    // ========================================================================
-    /// virtual destructor
-    virtual ~Reverse () ;                                 // virtual destructor
+    Reverse() = default;                                         // constructor
     // ========================================================================
     /// printout
-    virtual std::ostream& fillStream ( std::ostream& s ) const ;
+    std::ostream& fillStream ( std::ostream& s ) const ;
     // ========================================================================
   } ;
   // ==========================================================================
@@ -91,7 +86,7 @@ namespace LoKi
    *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
    *  @date 2011-10-20
    */
-  class GAUDI_API Sort
+  class GAUDI_API Sort final
   {
   public:
     // ========================================================================
@@ -99,11 +94,8 @@ namespace LoKi
     Sort ( const int  N         = -1   , // ALL
            const bool ascending = true ) ;
     // ========================================================================
-    /// virtual destructor
-    virtual ~Sort () ;                                 // virtual destructor
-    // ========================================================================
     /// printout
-    virtual std::ostream& fillStream ( std::ostream& s ) const ;
+    std::ostream& fillStream ( std::ostream& s ) const ;
     // ========================================================================
   public:
     // ========================================================================
@@ -153,4 +145,3 @@ namespace Gaudi
 // ============================================================================
 #endif // LOKI_FIRSTN_H
 // ============================================================================
-

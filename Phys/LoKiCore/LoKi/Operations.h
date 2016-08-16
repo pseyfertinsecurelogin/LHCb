@@ -1,9 +1,8 @@
-// $Id$
 // ============================================================================
-#ifndef LOKI_OPERATIONS_H 
+#ifndef LOKI_OPERATIONS_H
 #define LOKI_OPERATIONS_H 1
 // ============================================================================
-// STD & STL 
+// STD & STL
 // ============================================================================
 #include <functional>
 #include <algorithm>
@@ -11,7 +10,7 @@
 // Include files
 // ============================================================================
 /** @file LoKi/Operations.h
- *  Collection of basic operations with containters 
+ *  Collection of basic operations with containters
  *
  *  This file is a part of LoKi project -
  *    "C++ ToolKit  for Smart and Friendly Physics Analysis"
@@ -24,81 +23,78 @@
  *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
  *  @date 2010-06-03
  */
-namespace LoKi 
+namespace LoKi
 {
   // ==========================================================================
-  namespace Operations 
+  namespace Operations
   {
     // ========================================================================
     /** @struct Unique
-     *  Helper structure to define "unique" for container 
+     *  Helper structure to define "unique" for container
      *  @see LoKi::BasicFunctors::Pipe
      *  @author Vanya Belyaev Ivan.BElyaev@nikhef.nl
      *  @date 2010-06-05
      */
-    template <class TYPE> 
-    struct Unique : public std::unary_function < std::vector<TYPE> , 
-                                                 std::vector<TYPE> >
+    template <class TYPE>
+    struct Unique 
     {
       // ======================================================================
       typedef std::vector<TYPE> _Type ;
       // ======================================================================
-      /// the main method 
+      /// the main method
       _Type operator() ( const _Type& a )  const
       {
         //
-        if  ( a.empty() ) { return a ; } // RETURN 
+        if  ( a.empty() ) { return a ; } // RETURN
         //
         _Type _a ( a ) ;
         //
         std::stable_sort ( _a.begin() , _a.end () ) ;
-        typename _Type::iterator _ia = std::unique ( _a.begin () , _a.end() ) ;
+        auto _ia = std::unique ( _a.begin () , _a.end() ) ;
         //
         return _Type ( _a.begin() , _ia ) ;
-      } 
+      }
       // ======================================================================
     } ;
     // ========================================================================
-    /** @struct Union 
-     *  Helper structure to represent the union of two containters 
-     *  @see std::set_union      
-     *  @see LoKi::Operations::Union            
+    /** @struct Union
+     *  Helper structure to represent the union of two containters
+     *  @see std::set_union
+     *  @see LoKi::Operations::Union
      *  @see LoKi::BasicFunctors::Pipe
      *  @see LoKi::BasicFunctors::Source
      *  @author Vanya Belyaev Ivan.BElyaev@nikhef.nl
      *  @date 2010-06-05
      */
-    template <class TYPE> 
-    struct Union : public std::binary_function < std::vector<TYPE> , 
-                                                 std::vector<TYPE> , 
-                                                 std::vector<TYPE> >
+    template <class TYPE>
+    struct Union
     {
       // ======================================================================
       typedef std::vector<TYPE> _Type ;
       // ======================================================================
-      /// the main method 
+      /// the main method
       _Type operator() ( const _Type& a , const _Type& b )  const
       {
-        // 
+        //
         if ( &a == &b    ) { return a ; }                               // RETURN
         //
         LoKi::Operations::Unique<TYPE> _unique ;
         if      (  a.empty () ) { return _unique ( b ) ; }
         else if (  b.empty () ) { return _unique ( a ) ; }
         //
-        _Type _r ;
-        _Type _a ( a ) ;
-        _Type _b ( b ) ;
+        auto _a ( a ) ;
+        auto _b ( b ) ;
         //
         std::stable_sort ( _a.begin() , _a.end () ) ;
-        typename _Type::iterator _ia = std::unique ( _a.begin () , _a.end() ) ;
+        auto _ia = std::unique ( _a.begin () , _a.end() ) ;
         //
         std::stable_sort ( _b.begin() , _b.end () ) ;
-        typename _Type::iterator _ib = std::unique ( _b.begin () , _b.end() ) ;
+        auto _ib = std::unique ( _b.begin () , _b.end() ) ;
         //
+        _Type _r ;
         _r.reserve  ( ( _ia - _a.begin() ) + ( _ib - _b.begin() ) ) ;
         //
-        std::set_union ( _a.begin () , _ia , 
+        std::set_union ( _a.begin () , _ia ,
                          _b.begin () , _ib , std::back_inserter( _r ) ) ;
         //
         return _r ;
@@ -106,7 +102,7 @@ namespace LoKi
       // ======================================================================
     } ;
     // ========================================================================
-    /** @struct Difference 
+    /** @struct Difference
      *  Helper structure to define "difference" for two containers
      *  @see LoKi::BasicFunctors::Map
      *  @see LoKi::BasicFunctors::Pipe
@@ -114,45 +110,43 @@ namespace LoKi
      *  @author Vanya Belyaev Ivan.BElyaev@nikhef.nl
      *  @date 2010-06-05
      */
-    template <class TYPE> 
-    struct Difference : public std::binary_function < std::vector<TYPE> , 
-                                                      std::vector<TYPE> , 
-                                                      std::vector<TYPE> >
+    template <class TYPE>
+    struct Difference
     {
       // ======================================================================
       typedef std::vector<TYPE> _Type ;
       // ======================================================================
-      /// the main method 
+      /// the main method
       _Type operator() ( const _Type& a , const _Type& b )  const
       {
-        // 
-        if ( &a == &b   ) { return _Type() ; }                         // RETURN 
+        //
+        if ( &a == &b   ) { return _Type() ; }                         // RETURN
         //
         LoKi::Operations::Unique<TYPE> _unique ;
         if      (  a.empty () ) { return           a   ; }
         else if (  b.empty () ) { return _unique ( a ) ; }
         //
-        _Type _r ;
-        _Type _a ( a ) ;
-        _Type _b ( b ) ;
+        auto _a ( a ) ;
+        auto _b ( b ) ;
         //
         std::stable_sort ( _a.begin() , _a.end () ) ;
-        typename _Type::iterator _ia = std::unique ( _a.begin () , _a.end() ) ;
+        auto _ia = std::unique ( _a.begin () , _a.end() ) ;
         //
         std::stable_sort ( _b.begin() , _b.end () ) ;
-        typename _Type::iterator _ib = std::unique ( _b.begin () , _b.end() ) ;
+        auto _ib = std::unique ( _b.begin () , _b.end() ) ;
         //
+        _Type _r ;
         _r.reserve  ( _ia - _a.begin() );
         //
-        std::set_difference ( _a.begin () , _ia , 
+        std::set_difference ( _a.begin () , _ia ,
                               _b.begin () , _ib , std::back_inserter( _r ) ) ;
         //
         return _r ;
-      } 
+      }
       // ======================================================================
     } ;
     // ========================================================================
-    /** @struct SymDifference 
+    /** @struct SymDifference
      *  Helper structure to define "symmetric-difference" for two containers
      *  @see LoKi::BasicFunctors::Map
      *  @see LoKi::BasicFunctors::Pipe
@@ -160,19 +154,17 @@ namespace LoKi
      *  @author Vanya Belyaev Ivan.BElyaev@nikhef.nl
      *  @date 2010-06-05
      */
-    template <class TYPE> 
-    struct SymDifference : public std::binary_function < std::vector<TYPE> , 
-                                                         std::vector<TYPE> , 
-                                                         std::vector<TYPE> >
+    template <class TYPE>
+    struct SymDifference 
     {
       // ======================================================================
       typedef std::vector<TYPE> _Type ;
       // ======================================================================
-      /// the main method 
+      /// the main method
       _Type operator() ( const _Type& a , const _Type& b )  const
       {
-        // 
-        if ( &a == &b ) { return _Type() ; }                         // RETURN 
+        //
+        if ( &a == &b ) { return _Type() ; }                         // RETURN
         //
         _Type _r ;
         _Type _a ( a ) ;
@@ -186,12 +178,12 @@ namespace LoKi
         //
         _r.reserve  ( ( _ia - _a.begin() ) + ( _ib - _b.begin() ) ) ;
         //
-        std::set_symmetric_difference 
-          ( _a.begin () , _ia , 
+        std::set_symmetric_difference
+          ( _a.begin () , _ia ,
             _b.begin () , _ib , std::back_inserter( _r ) ) ;
         //
         return _r ;
-      } 
+      }
       // ======================================================================
     } ;
     // ========================================================================
@@ -203,40 +195,38 @@ namespace LoKi
      *  @author Vanya Belyaev Ivan.BElyaev@nikhef.nl
      *  @date 2010-06-05
      */
-    template <class TYPE> 
-    struct Intersection : public std::binary_function < std::vector<TYPE> , 
-                                                        std::vector<TYPE> , 
-                                                        std::vector<TYPE> >
+    template <class TYPE>
+    struct Intersection 
     {
       // ======================================================================
       typedef std::vector<TYPE> _Type ;
       // ======================================================================
-      /// the main method 
+      /// the main method
       _Type operator() ( const _Type& a , const _Type& b )  const
       {
-        // 
-        if ( &a == &b ) { return a ; }                                // RETURN 
-        // 
+        //
+        if ( &a == &b ) { return a ; }                                // RETURN
+        //
         if ( a.empty() || b.empty() ) { return _Type() ; } // RETURN
         //
-        _Type _r ;
-        _Type _a ( a ) ;
-        _Type _b ( b ) ;
+        auto _a ( a ) ;
+        auto _b ( b ) ;
         //
         std::stable_sort ( _a.begin() , _a.end () ) ;
-        typename _Type::iterator _ia = std::unique ( _a.begin () , _a.end() ) ;
+        auto _ia = std::unique ( _a.begin () , _a.end() ) ;
         //
         std::stable_sort ( _b.begin() , _b.end () ) ;
-        typename _Type::iterator _ib = std::unique ( _b.begin () , _b.end() ) ;
+        auto _ib = std::unique ( _b.begin () , _b.end() ) ;
         //
+        _Type _r ;
         _r.reserve  ( std::min ( _ia - _a.begin() , _ib - _b.begin() ) ) ;
         //
         std::set_intersection
-          ( _a.begin () , _ia , 
+          ( _a.begin () , _ia ,
             _b.begin () , _ib , std::back_inserter( _r ) ) ;
         //
         return _r ;
-      } 
+      }
       // ======================================================================
     } ;
     // ========================================================================
@@ -248,62 +238,57 @@ namespace LoKi
      *  @author Vanya Belyaev Ivan.BElyaev@nikhef.nl
      *  @date 2010-06-05
      */
-    template <class TYPE> 
-    struct Includes : public std::binary_function < std::vector<TYPE> , 
-                                                    std::vector<TYPE> , 
-                                                    bool              >
+    template <class TYPE>
+    struct Includes
     {
       // ======================================================================
       typedef std::vector<TYPE> _Type ;
       // ======================================================================
-      /// the main method 
+      /// the main method
       bool operator() ( const _Type& a , const _Type& b )  const
       {
-        // 
-        if ( &a == &b ) { return true ; }                         // RETURN 
         //
-        _Type _a ( a ) ;
-        _Type _b ( b ) ;
+        if ( &a == &b ) { return true ; }                         // RETURN
+        //
+        auto _a ( a ) ;
+        auto _b ( b ) ;
         //
         std::stable_sort ( _a.begin() , _a.end () ) ;
-        typename _Type::iterator _ia = std::unique ( _a.begin () , _a.end() ) ;
+        auto _ia = std::unique ( _a.begin () , _a.end() ) ;
         //
         std::stable_sort ( _b.begin() , _b.end () ) ;
-        typename _Type::iterator _ib = std::unique ( _b.begin () , _b.end() ) ;
+        auto _ib = std::unique ( _b.begin () , _b.end() ) ;
         //
-        return std::includes 
-          ( _a.begin () , _ia , 
-            _b.begin () , _ib ) ;
+        return std::includes ( _a.begin () , _ia ,
+                               _b.begin () , _ib ) ;
         //
-      } 
+      }
       // ======================================================================
     } ;
     // ========================================================================
-    /** @struct NonEmptyUnion 
-     *  Helper structure to represent the non-empty union of two containters 
-     *  It is empty if some of the container is empty 
-     *  @see LoKi::Operations::Union            
+    /** @struct NonEmptyUnion
+     *  Helper structure to represent the non-empty union of two containters
+     *  It is empty if some of the container is empty
+     *  @see LoKi::Operations::Union
      *  @see LoKi::BasicFunctors::Pipe
      *  @see LoKi::BasicFunctors::Source
      *  @author Vanya Belyaev Ivan.BElyaev@nikhef.nl
      *  @date 2010-06-05
      */
-    template <class TYPE> 
-    struct NoEmptyUnion : public std::binary_function < std::vector<TYPE> , 
-                                                        std::vector<TYPE> , 
-                                                        std::vector<TYPE> >
+    template <class TYPE>
+    struct NoEmptyUnion 
     {
       // ======================================================================
       typedef std::vector<TYPE> _Type ;
       // ======================================================================
-      /// the main method 
+      /// the main method
       _Type operator() ( const _Type& a , const _Type& b )  const
       {
-        // 
+        //
         if ( &a == &b         ) { return a ; } // RETURN
         //
-        if      (  a.empty () ) { return a ; } // RETURN EMPTY  
-        else if (  b.empty () ) { return b ; } // RETURN EMPTY 
+        if      (  a.empty () ) { return a ; } // RETURN EMPTY
+        else if (  b.empty () ) { return b ; } // RETURN EMPTY
         //
         return m_union ( a , b ) ;
       }
@@ -314,11 +299,11 @@ namespace LoKi
       // = ====================================================================
     } ;
     // ========================================================================
-  } //                                    the end of namespace LoKi::Operations 
+  } //                                    the end of namespace LoKi::Operations
   // ==========================================================================
-} //                                                  the end of namespace LoKi 
+} //                                                  the end of namespace LoKi
 // ============================================================================
-//                                                                      The END 
+//                                                                      The END
 // ============================================================================
 #endif // LOKI_OPERATIONS_H
 // ============================================================================

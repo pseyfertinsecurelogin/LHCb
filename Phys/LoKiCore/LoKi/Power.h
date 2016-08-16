@@ -1,4 +1,3 @@
-// $Id$
 // ============================================================================
 #ifndef LOKI_POWER_H 
 #define LOKI_POWER_H 1
@@ -40,7 +39,7 @@ namespace LoKi
    */
   // ==========================================================================
   template <class TYPE, class TYPE2=double>
-  class Power : public LoKi::Functor<TYPE,TYPE2>
+  class Power final : public LoKi::Functor<TYPE,TYPE2>
   {
   private:
     // ========================================================================
@@ -58,7 +57,6 @@ namespace LoKi
     Power ( const LoKi::Functor<TYPE,TYPE2>& fun , 
             const int                        val ) 
       : LoKi::AuxFunBase ( std::tie ( fun , val ) ) 
-      , LoKi::Functor<TYPE,TYPE2>() 
       , m_fun ( fun ) 
       , m_val ( val ) 
     {}
@@ -69,8 +67,6 @@ namespace LoKi
       , m_fun ( right.m_fun ) 
       , m_val ( right.m_val ) 
     {}
-    /// MANDATORY: virtual destructor 
-    virtual ~Power( ) {} ;
     /// MANDATORY: clone method ("virtual constructor")
     virtual  Power* clone() const { return new Power ( *this ) ; }
     /// MANDATORY: the only one essential method 
@@ -78,7 +74,7 @@ namespace LoKi
     {
       if ( 0 == m_val ) { return TYPE2(1) ; }
       // evaluate the function
-      result_type value = m_fun.fun ( p ) ;
+      auto value = m_fun.fun ( p ) ;
       // evaluate the result
       if ( 0 <  m_val ) { return Gaudi::Math::pow( value, (unsigned long)m_val ); }
       if ( 0 == value ) 
@@ -105,7 +101,7 @@ namespace LoKi
   };
   // ==========================================================================
   template <class TYPE2>
-  class Power<void,TYPE2> : public LoKi::Functor<void,TYPE2>
+  class Power<void,TYPE2> final : public LoKi::Functor<void,TYPE2>
   {
   private:
     // ========================================================================
@@ -124,7 +120,6 @@ namespace LoKi
     Power ( const LoKi::Functor<TYPE,TYPE2>& fun , 
             const int                        val ) 
       : LoKi::AuxFunBase ( std::tie ( fun , val ) ) 
-      , LoKi::Functor<TYPE,TYPE2>()
       , m_fun ( fun ) 
       , m_val ( val ) 
     {}
@@ -135,8 +130,6 @@ namespace LoKi
       , m_fun ( right.m_fun ) 
       , m_val ( right.m_val ) 
     {}
-    /// MANDATORY: virtual destructor 
-    virtual ~Power( ) {} ;
     /// MANDATORY: clone method ("virtual constructor")
     virtual  Power* clone() const { return new Power ( *this ) ; }
     /// MANDATORY: the only one essential method 
@@ -144,7 +137,7 @@ namespace LoKi
     {
       if ( 0 == m_val ) { return TYPE2(1) ; }
       // evaluate the function
-      result_type value = m_fun.fun ( /* a */ ) ;
+      auto value = m_fun.fun ( /* a */ ) ;
       // evaluate the result
       if ( 0 <  m_val ) { return Gaudi::Math::pow( value, (unsigned long)m_val ); }
       if ( 0 == value ) 
