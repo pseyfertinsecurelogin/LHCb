@@ -11,47 +11,29 @@ from optparse import OptionParser
 from xml.etree import ElementTree as ET
 from subprocess import check_output, STDOUT
 from hashlib import sha1
-
-from CondDBUI import CondDB
-from PyCool import cool
+from datetime import datetime
 
 IOV_MIN = 0
 IOV_MAX = 0x7fffffffffffffff
 
 
-def fix_system_refs(path):
+SYSTEM_RE = re.compile(r'(SYSTEM\s+)(?:"|\')([^"\']+)(:?"|\')')
 
-    patt = re.compile(r'(SYSTEM\s+)(?:"|\')([^"\']+)(:?"|\')')
 
-    def make_repl(curr_dir):
-        def _repl(match):
-            if match.group(2).startswith('conddb:/'):
-                newpath = match.group(2)[8:]
-            else:
-                fullpath = os.path.normpath(os.path.join(curr_dir, match.group(2)))
-                newpath = os.path.relpath(fullpath, path)
-            return '{0}"git:/{1}"'.format(match.group(1), newpath)
-        return _repl
+def fix_system_refs(data, fullpath, path):
+    curr_dir = os.path.dirname(path)
 
-    for root, dirs, files in os.walk(path):
-        if '.git' in dirs:
-            dirs.remove('.git')
-
-        repl = make_repl(root)
-        for name in files:
-            with open(os.path.join(root, name)) as f:
-                data = f.read()
-            newdata = patt.sub(repl, data)
-            if newdata != data:
-                with open(os.path.join(root, name), 'w') as f:
-                    f.write(newdata)
-
-    top = os.path.join(path, 'lhcb.xml')
-    if os.path.exists(top):
-        with open(top) as f:
-            data = f.read()
-        with open(top, 'w') as f:
-            f.write(data)
+    def repl(match):
+        if match.group(2).startswith('conddb:/'):
+            newpath = match.group(2)[8:]
+        else:
+            fullpath = os.path.normpath(os.path.join(curr_dir,
+                                                     match.group(2)))
+            newpath = os.path.relpath(fullpath, path)
+        return '{0}"git:/{1}"'.format(match.group(1), newpath)
+    return (SYSTEM_RE.sub(repl, data)
+            .replace('"Conditions/MainCatalog.xml',
+                     '"conddb:/Conditions/MainCatalog.xml'))
 
 
 def checksum(data):
@@ -60,31 +42,63 @@ def checksum(data):
     return s.hexdigest()
 
 
+def extract_tags_infos(notes, partition):
+    # Analyze relese notes
+    ns = {'lhcb': 'http://lhcb.cern.ch'}
+    notes = ET.parse(notes)
+
+    committers = dict((el.find('lhcb:name', ns).text,
+                       '{0} <{1}>'.format(el.find('lhcb:name', ns).text,
+                                          el.find('lhcb:email', ns).text
+                                            .replace('__AT__', '@')))
+                      for el in notes.findall('./lhcb:maintainer', ns))
+
+    tags_xpath = ("./lhcb:global_tag/lhcb:partition/"
+                  "[lhcb:name='{0}']/..").format(partition)
+    return dict((el.find('lhcb:tag', ns).text,
+                 (
+                    # we use a dummy time
+                    el.find('lhcb:date', ns).text + 'T00:00:00',
+                    committers.get(el.find('lhcb:contributor', ns).text)
+                 ))
+                for el in notes.findall(tags_xpath, ns))
+
+
 def main():
 
-    parser = OptionParser(usage='%prog [options] dbfile repo_dir')
+    parser = OptionParser(usage='%prog [options] dbfile notes-xml repo_dir')
 
-    opts, (dbfile, repo_dir) = parser.parse_args()
+    opts, (dbfile, notes, repo_dir) = parser.parse_args()
 
     name = os.path.splitext(os.path.basename(dbfile))[0]
     if 'ONLINE' in name:
         name = 'ONLINE'
     cool_url = 'sqlite_file:{0}/{1}'.format(dbfile, name)
 
+    print 'parsing release notes...'
+    tags_infos = extract_tags_infos(notes, name)
+
+    print 'loading CondDBUI...'
+    from CondDBUI import CondDB
     db = CondDB(cool_url)
     root_node = db.getCOOLNode('/')
 
+    def tag_time(t):
+        t = int(root_node.tagInsertionTime(t)
+                .coralTimeStamp().total_nanoseconds() * 1.e-9)
+        return str(datetime.fromtimestamp(t))
+
     # collect all tags
+    print 'retrieving tags list...'
     tags_to_copy = db.getTagList('/')
+    print 'found', len(tags_to_copy), 'tags'
     head_tag = [t for t in tags_to_copy if t.name == 'HEAD'][0]
-    tags_to_copy = [t for t in tags_to_copy if t.name != 'HEAD']
+    tags_to_copy = [t for t in tags_to_copy if t.name in tags_infos]
     tags_to_copy.sort(key=lambda t:
                       root_node.tagInsertionTime(t.name)
                                .coralTimeStamp().total_nanoseconds())
     # tags_to_copy = tags_to_copy[-5:]
     tags_to_copy.append(head_tag)
-
-    # FIXME: extract tag metadata from release notes
 
     if os.path.exists(repo_dir):
         print 'ERROR: directory %s already exist, please, remove it' % repo_dir
@@ -92,17 +106,17 @@ def main():
 
     single_version_nodes = set(n for n in db.getAllNodes()
                                if db.isSingleVersionFolder(n))
-    print 'Initialize repository'
+    print 'initialize repository'
     check_output(['git', 'init', repo_dir])
     print 'processing %d tags' % len(tags_to_copy)
     for count, tag in enumerate(tags_to_copy, 1):
+        # print datetime.now()
         tag = tag.name
         if len(os.listdir(repo_dir)) > 1:
             print 'cleaning up'
             check_output(['git', 'rm', '-r', '.'], cwd=repo_dir)
 
         print 'dumping tag %s (%d/%d)' % (tag, count, len(tags_to_copy))
-        # FIXME: are single version nodes considered?
         if tag != 'HEAD':
             nodes = db.findNodesWithTag(tag) + list(single_version_nodes)
         else:
@@ -110,7 +124,8 @@ def main():
         for node in nodes:
             # print node
             data = db.getPayloadList(node, IOV_MIN, IOV_MAX, None,
-                                     tag if node not in single_version_nodes else 'HEAD')
+                                     tag if node not in
+                                     single_version_nodes else 'HEAD')
             for payload, since, until, channel, insertion_time in data:
                 for key in payload:
                     if not payload[key]:  # skip empty entries
@@ -124,43 +139,35 @@ def main():
                                                      os.path.basename(node)))
                     if channel or path.endswith('MagnetScale.xml'):
                         path = path + ':{0}'.format(channel)
+                    value = fix_system_refs(payload[key], path, node)
                     if since == IOV_MIN and until == IOV_MAX:
                         if not os.path.exists(os.path.dirname(path)):
                             os.makedirs(os.path.dirname(path))
                         with open(path, 'w') as f:
-                            f.write(payload[key])
+                            f.write(value)
                     else:
                         if not os.path.exists(path):
                             os.makedirs(path)
-                        value_id = checksum(payload[key])[:10]
+                        value_id = checksum(value)[:10]
                         if not os.path.exists(os.path.join(path, value_id)):
                             with open(os.path.join(path, value_id), 'w') as f:
-                                f.write(payload[key])
+                                f.write(value)
                         with open(os.path.join(path, 'IOVs'), 'a') as iovs:
                             iovs.write('%d %s\n' % (since, value_id))
-
-            # cn = db.getCOOLNode(node)
-            # channel_names = dict(cn.listChannelsWithNames())
-            # data =
-            # local_tag = cn.resolveTag(tag)
-            # for obj in cn.browseObjects(0, 0x7fffffffffffffff,
-            #                             ALL_CHANNELS, local_tag):
-            #     ch = channel_names.get(obj.channelId(), obj.channelId())
-            #     if ch not in channels:
-            #         channels[ch] = {'IOVs': {},
-            #                         'values': {}}
-            #     data = channels[ch]
-            #     key = checksum()
-            #     data['IOVs'][ibj]
-
-        print 'fixing paths'
-        fix_system_refs(repo_dir)
 
         print 'updating repository'
         check_output(['git', 'add', '.'], cwd=repo_dir)
         if check_output(['git', 'status', '--porcelain'],
                         cwd=repo_dir).strip():
-            check_output(['git', 'commit', '-m', tag], cwd=repo_dir)
+            if tag in tags_infos:
+                date, author = tags_infos[tag]
+            else:
+                # default author
+                author = 'Marco Clemencic <marco.clemencic@cern.ch>'
+                date = tag_time(tag)
+            check_output(['git', 'commit', '-m', tag,
+                          '--author', author, '--date', date],
+                         cwd=repo_dir)
         else:
             print 'no changes in %s' % tag
         if tag != 'HEAD':
