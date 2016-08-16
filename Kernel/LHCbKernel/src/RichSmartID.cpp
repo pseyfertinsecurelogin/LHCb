@@ -25,14 +25,13 @@ std::ostream& LHCb::RichSmartID::dumpBits(std::ostream& s) const
   return s;
 }
 
-std::ostream& LHCb::RichSmartID::fillStream(std::ostream& s) const
+std::ostream& LHCb::RichSmartID::fillStream( std::ostream& s, 
+                                             const bool dumpSmartIDBits ) const
 {
   s << "{";
 
-  // Dump the bits in DEBUG mode
-#ifndef NDEBUG
-  s << " "; dumpBits(s);
-#endif
+  // Dump the bits if requested
+  if ( dumpSmartIDBits ) { s << " "; dumpBits(s); }
 
   // Type
   s << ( idType() == HPDID   ? " HPD"   : 
