@@ -237,10 +237,13 @@ bool LoKi::AuxFunBase::sameEvent () const
 // ============================================================================
 /* (virtual) printout in form of std::string
  *  @return string representation (must be valid C++)
- */ 
+ */
 // ============================================================================
-std::string LoKi::AuxFunBase::toCpp() const 
-{ return objType() +  ( m_cargs.empty() ? "() " : "( " + m_cargs + " ) " ) ; }
+std::string LoKi::AuxFunBase::toCpp() const
+{
+    return objType() +  ( m_cargs ? "( " + *m_cargs + " ) "
+                                  : "( :::UNKNOWN+PLEASE+FIX+CODE::: ) " );
+}
 // ============================================================================
 /*  output operator of function objects to std::ostream
  *  @param stream reference to the stream

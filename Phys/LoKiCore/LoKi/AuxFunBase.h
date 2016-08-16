@@ -16,6 +16,8 @@
 #include "GaudiKernel/StatusCode.h"
 #include "GaudiKernel/SmartIF.h"
 // ============================================================================
+#include "boost/optional.hpp"
+// ============================================================================
 // LoKi
 // ============================================================================
 #include "LoKi/Interface.h"
@@ -53,7 +55,7 @@ namespace LoKi
   protected:
     // ========================================================================
     /// default constructor
-    AuxFunBase  () ;
+    AuxFunBase  ();
     /// constructor with arguments :
     template <typename ... ARGS>
     AuxFunBase ( const std::tuple<ARGS...>& tup )
@@ -152,7 +154,10 @@ namespace LoKi
     /// check the data for the same event
     bool sameEvent() const ;
     /// get constructor arguments
-    const std::string& cargs() const { return m_cargs ; }
+    const std::string& cargs() const {
+        static const std::string unknown{ ":::UNKNOWN:::" };
+        return m_cargs ? *m_cargs : unknown ;
+    }
     // ========================================================================
   public:
     // ========================================================================
@@ -181,7 +186,7 @@ namespace LoKi
     /// the event ID
     mutable unsigned long long m_event = 0;                     // the event ID
     /// constructor arguments
-    std::string                m_cargs ;   // constructor arguments
+    boost::optional<std::string>           m_cargs ;   // constructor arguments
     /// =======================================================================
   };
   // ==========================================================================
