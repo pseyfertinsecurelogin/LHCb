@@ -11,12 +11,14 @@
 // ============================================================================
 namespace Gaudi
 {
+  // ==========================================================================
   namespace Math 
   {    
     // ========================================================================
-    /** calculate the binomial coefficient C(k,n) = n!/((n-k)!*k!)
-     *  the result is exact for n<66  
-     *  @author Vanya BELYAEV Ivan.Belyaev@irep.ru
+    /** calculate the binomial coefficient C(n,k) = n!/((n-k)!*k!)
+     *  the result is exact for all n,k<=67
+     *  @warning In case of overflow std::numeric_limits<unsigned long long>::max is returned 
+     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2015-03-08
      */
     GAUDI_API 
@@ -25,7 +27,7 @@ namespace Gaudi
     // ========================================================================
     /** calculate the logarithm of binomial coefficient
      *  \f$ \log C^n_k \f$
-     *  @author Vanya BELYAEV Ivan.Belyaev@irep.ru
+     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2015-03-08
      */
     GAUDI_API 
@@ -42,7 +44,7 @@ namespace Gaudi
     // ========================================================================
     /** calculate the generalized binomial coefficient C(a,k) 
      *  \f$C(\alpha,k) = \frac{\alpha}{k}\frac{\alpha-1}{k-1}...\f$
-     *  @author Vanya BELYAEV Ivan.Belyaev@irep.ru
+     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2015-03-08
      */
     GAUDI_API 
@@ -51,7 +53,7 @@ namespace Gaudi
     // ========================================================================
     /** calculate the generalized binomial coefficient C(n/2,k) 
      *  \f$C(n,k) = \frac{n/2}{k}\frac{n/2-1}{k-1}...\f$
-     *  @author Vanya BELYAEV Ivan.Belyaev@irep.ru
+     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2015-03-08
      */
     GAUDI_API 
