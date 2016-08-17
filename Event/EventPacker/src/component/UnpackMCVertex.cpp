@@ -1,6 +1,8 @@
 // $Id: UnpackMCVertex.cpp,v 1.5 2009-11-07 12:20:39 jonrob Exp $
 // Include files 
 
+#include <algorithm>
+
 #include "Event/MCVertex.h"
 #include "Event/StandardPacker.h"
 #include "Event/PackedMCVertex.h"
@@ -80,14 +82,23 @@ StatusCode UnpackMCVertex::execute()
       }
       else { Error( "Corrupt MCVertex Mother MCParticle SmartRef detected" ).ignore(); }
     }
-    
+
+    // Check for duplicates ...
     for ( const auto& I : src.products )
     {
       if ( ( 0==pVer && pack.hintAndKey32( I, dst, newMCVertices, hintID, key ) ) ||
            ( 0!=pVer && pack.hintAndKey64( I, dst, newMCVertices, hintID, key ) ) )
       {
+        // Construct the smart ref
         SmartRef<LHCb::MCParticle> ref( newMCVertices, hintID, key );
-        vert->addToProducts( ref );
+        // Do we already have a reference to this particle ?
+        const bool found = std::any_of( vert->products().begin(),
+                                        vert->products().end(),
+                                        [&ref]( const auto& sref )
+                                        { return sref.target() == ref.target(); } );
+        if ( !found ) { vert->addToProducts( ref ); }
+        else { Warning( "Found duplication in packed MCVertex products.",
+                        StatusCode::SUCCESS ).ignore(); }
       }
       else { Error( "Corrupt MCVertex Daughter MCParticle SmartRef detected" ).ignore(); }
     }

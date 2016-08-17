@@ -1,6 +1,7 @@
 
 // STL
 //#include <random> // For flags tests. To be removed.
+#include <algorithm>
 
 // Event model
 #include "Event/MCParticle.h"
@@ -99,8 +100,16 @@ StatusCode UnpackMCParticle::execute()
       if ( ( 0==pVer && pack.hintAndKey32( I, dst, newMCParticles, hintID, key ) ) ||
            ( 0!=pVer && pack.hintAndKey64( I, dst, newMCParticles, hintID, key ) ) )
       {
-        SmartRef<LHCb::MCVertex> refV( newMCParticles, hintID, key );
-        part->addToEndVertices( refV );
+        // Construct the smart ref
+        SmartRef<LHCb::MCVertex> ref( newMCParticles, hintID, key );
+        // Do we already have a reference to this vertex ?
+        const bool found = std::any_of( part->endVertices().begin(),
+                                        part->endVertices().end(),
+                                        [&ref]( const auto& sref )
+                                        { return sref.target() == ref.target(); } );
+        if ( !found ) { part->addToEndVertices( ref ); }
+        else { Warning( "Found duplicate in packed MCParticle end vertices", 
+                        StatusCode::SUCCESS ).ignore(); }
       }
       else { Error( "Corrupt MCParticle End MCVertex SmartRef detected" ).ignore(); }
     }
