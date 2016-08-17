@@ -41,7 +41,6 @@ RawBankToSTLiteClusterAlg::RawBankToSTLiteClusterAlg( const std::string& name,
   p->declareUpdateHandler([=](Property&){  this->m_clusterDh.updateKey( this->m_clusterLocation ); } );
   p->useUpdateHandler();
   declareSTConfigProperty("BankType", m_bankTypeString , detType() );
-  declareOutput(&m_clusterDh);
 }
 
 StatusCode RawBankToSTLiteClusterAlg::initialize() {
