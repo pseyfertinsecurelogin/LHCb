@@ -88,7 +88,7 @@ namespace LoKi
   protected:
     // ========================================================================
     /// protected default constructor
-    Functor() = default;
+    Functor() : AuxFunBase( std::tie() ) {}
     /// protected copy constructor
     Functor ( const Functor& fun ) = default;
     /// protected move constructor
@@ -302,7 +302,7 @@ namespace LoKi
   protected:
     // ========================================================================
     /// protected default constructor
-    Functor() = default;                       // protected default constructor
+    Functor() : AuxFunBase( std::tie() ) {}    // protected default constructor
     /// protected copy constructor
     Functor ( const Functor& fun ) = default;                 // protected copy
     // ========================================================================

@@ -93,7 +93,7 @@ namespace Decays
     virtual bool operator!() const { return ! ( this -> valid() ) ; }
     // ======================================================================
     /// virtual destructor
-    virtual ~iTree () ;
+    virtual ~iTree () = default;
     // ======================================================================
   } ;
   // ========================================================================
@@ -147,8 +147,6 @@ namespace Decays
      */
     virtual size_t collect ( Collection& ) const = 0 ;
     // ======================================================================
-    /// virtual destructor
-    virtual ~iTree_ () {} ;
     // ======================================================================
   } ;
   // ========================================================================
@@ -168,32 +166,30 @@ namespace Decays
     /// copy constructor
     Tree_ ( const Tree_&  tree ) ;
     /// move constructor
-    Tree_ (       Tree_&& tree ) ;
-    /// MANDATORY: virtual destructor
-    virtual ~Tree_ () ;
+    Tree_ (       Tree_&& tree ) = default;
     /// MANDATORY: clone method ("virtual constructor")
-    virtual  Tree_* clone () const { return new Tree_(*this) ; }
+    Tree_* clone () const override { return new Tree_(*this) ; }
     /// MANDATORY: the only one essential method
-    virtual  bool operator()
-    ( typename  Decays::iTree_<PARTICLE>:: argument p ) const
+    bool operator()
+    ( typename  Decays::iTree_<PARTICLE>:: argument p ) const override
     { return tree ( p ) ; }
     /// MANDATORY: the specific printout
-    virtual  std::ostream& fillStream( std::ostream& s ) const
+    std::ostream& fillStream( std::ostream& s ) const override
     { return m_tree -> fillStream ( s ) ; }
     /// MANDATORY: check the validity of the node
-    virtual bool valid() const { return m_tree->valid() ; }
+    bool valid() const override { return m_tree->valid() ; }
     /// MANDATORY: the proper validation of the tree
-    virtual  StatusCode validate
-    ( const LHCb::IParticlePropertySvc* svc ) const
+    StatusCode validate
+    ( const LHCb::IParticlePropertySvc* svc ) const override
     { return m_tree->validate ( svc ) ; }
     /// collect the marked elements
-    virtual size_t collect
-    ( typename Decays::iTree_<PARTICLE>::Collection& output ) const
+    size_t collect
+    ( typename Decays::iTree_<PARTICLE>::Collection& output ) const override
     { return m_tree->collect ( output ) ; }
     /// reset the collection cache
-    virtual void reset() const { m_tree->reset () ; }
+    void reset() const override { m_tree->reset () ; }
     /// has marked elements in the tree?
-    virtual bool marked () const { return m_tree->marked() ; }
+    bool marked () const override { return m_tree->marked() ; }
     // ======================================================================
   public:
     // ======================================================================
@@ -225,7 +221,7 @@ namespace Decays
     /// assignment operator
     Tree_& operator=( const  Tree_&           right ) ; // assignment
     /// move assignment oerator 
-    Tree_& operator=(        Tree_&&          right ) ; // assignment
+    Tree_& operator=(        Tree_&&          right ) = default; // assignment
     /// pseudo-assignment operator
     Tree_& operator=( const iTree_<PARTICLE>& right ) ; // assignment
     // ======================================================================
@@ -237,7 +233,7 @@ namespace Decays
   private:
     // ======================================================================
     /// the tree itself
-    Decays::iTree_<PARTICLE>* m_tree ; // the tree itself
+    std::unique_ptr<Decays::iTree_<PARTICLE>> m_tree ; // the tree itself
     // ======================================================================
   } ;
   // ==========================================================================
@@ -263,13 +259,11 @@ namespace Decays
 template <class PARTICLE>
 Decays::Tree_<PARTICLE>::Tree_
 ( const Decays::iTree_<PARTICLE>& tree )
-  : Decays::iTree_<PARTICLE> ()
-  , m_tree (0)
 {
   typedef Decays::Tree_<PARTICLE> Self ;
   const Self* self = dynamic_cast<const Self*>( &tree ) ;
-  if ( 0 !=   self ) { m_tree = self  -> m_tree-> clone () ; }
-  if ( 0 == m_tree ) { m_tree = tree.             clone () ; }
+  if ( self ) { m_tree.reset( self -> m_tree-> clone () ); }
+  if ( !m_tree ) { m_tree.reset( tree.clone () ) ; }
 }
 // ============================================================================
 // copy constructor
@@ -281,23 +275,6 @@ Decays::Tree_<PARTICLE>::Tree_
   , m_tree ( tree.m_tree -> clone() )
 {}
 // ============================================================================
-// move constructor
-// ============================================================================
-template <class PARTICLE>
-Decays::Tree_<PARTICLE>::Tree_
-(       Decays::Tree_<PARTICLE>&& tree )
-  : Decays::iTree_<PARTICLE> ( tree  )
-  , m_tree ( tree.m_tree )
-{
-  tree.m_tree = nullptr ;
-}
-// ============================================================================
-// MANDATORY: virtual destructor
-// ============================================================================
-template <class PARTICLE>
-Decays::Tree_<PARTICLE>::~Tree_ () 
-{ if ( 0 != m_tree ) { delete m_tree ; m_tree = 0 ; } }
-// ============================================================================
 // assignment operator
 // ============================================================================
 template <class PARTICLE>
@@ -305,25 +282,8 @@ Decays::Tree_<PARTICLE>&
 Decays::Tree_<PARTICLE>::operator=
 ( const Decays::Tree_<PARTICLE>& right )                         // assignment
 {
-  if ( &right == this ) { return *this ; }
-  Decays::iTree_<PARTICLE>* tree = right.m_tree->clone() ;
-  delete m_tree ; 
-  m_tree = tree ;
+  m_tree.reset( right.m_tree->clone() );
   return  *this ;
-}
-// ============================================================================
-// move assignment operator  (avoid cloning)
-// ============================================================================
-template <class PARTICLE>
-Decays::Tree_<PARTICLE>&
-Decays::Tree_<PARTICLE>::operator=
-(       Decays::Tree_<PARTICLE>&& right )                         // assignment
-{
-  if ( &right == this   ) { return *this  ; }
-  if ( 0      != m_tree ) { delete m_tree ; m_tree = 0 ; }
-  m_tree = right.m_tree ;
-  right.m_tree = 0 ;
-  return *this ;
 }
 // ============================================================================
 // assignment operator
@@ -335,13 +295,12 @@ Decays::Tree_<PARTICLE>::operator=
 {
   if ( &right == this ) { return *this ; }
   typedef Decays::Tree_<PARTICLE> Self ;
-  Decays::iTree_<PARTICLE>* tree = 0 ;
   const Self* self = dynamic_cast<const Self*>( &right ) ;
-  if ( 0 != self ) { tree = self->m_tree-> clone () ; }
-  if ( 0 == tree ) { tree = right.         clone () ; }
   //
-  delete m_tree ;
-  m_tree = tree ;
+  Decays::iTree_<PARTICLE>* tree = nullptr ;
+  if ( self )  { tree = self->m_tree-> clone () ; }
+  if ( !tree ) { tree = right.         clone () ; }
+  m_tree.reset( tree );
   //
   return *this ;
 }

@@ -256,7 +256,7 @@ StatusCode LoKi::Hybrid::Base::executeCode ( const std::string& pycode ) const
       Py_file_input  , globals  , locals ) ;
 
   bool ok = true ;
-  if ( 0 == result )
+  if ( !result )
   {
     ok = false ;
 

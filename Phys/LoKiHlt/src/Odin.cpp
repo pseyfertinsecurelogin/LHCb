@@ -1,4 +1,3 @@
-// $Id: Odin.cpp,v 1.4 2010-05-17 16:01:39 ibelyaev Exp $
 // ============================================================================
 // Include files 
 // ============================================================================
@@ -33,9 +32,6 @@
  *  @date 2008-09-17 
  *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
  * 
- *                    $Revision$
- *  Last modification $Date$
- *                 by $Author$
  */
 // ============================================================================
 // the constructor from the start/stop times
@@ -44,7 +40,6 @@ LoKi::Odin::InTime::InTime
 ( const Gaudi::Time& start , 
   const Gaudi::Time& stop  ) 
   : LoKi::AuxFunBase ( std::tie ( start , stop ) ) 
-  , LoKi::BasicFunctors<const LHCb::ODIN*>::Predicate() 
   , m_start ( start ) 
   , m_stop  ( stop  ) 
 {}
@@ -55,7 +50,6 @@ LoKi::Odin::InTime::InTime
 ( const Gaudi::Time&     start , 
   const Gaudi::TimeSpan& span  ) 
   : LoKi::AuxFunBase ( std::tie ( start , span ) ) 
-  , LoKi::BasicFunctors<const LHCb::ODIN*>::Predicate() 
   , m_start ( start        ) 
   , m_stop  ( start + span ) 
 {}
@@ -88,11 +82,9 @@ std::ostream& LoKi::Odin::InTime::fillStream ( std::ostream& s ) const
 LoKi::Odin::RunNumber::RunNumber
 ( const LoKi::Odin::RunNumber::run_type run ) 
   : LoKi::AuxFunBase ( std::tie ( run ) ) 
-  , LoKi::BasicFunctors<const LHCb::ODIN*>::Predicate() 
   , m_flag  ( One     ) 
   , m_begin ( run     ) 
   , m_end   ( run + 1 ) 
-  , m_runs  (         ) 
 {}
 // ============================================================================
 // constructor from the run range 
@@ -101,7 +93,6 @@ LoKi::Odin::RunNumber::RunNumber
 ( const LoKi::Odin::RunNumber::run_type begin ,
   const LoKi::Odin::RunNumber::run_type end   ) 
   : LoKi::AuxFunBase ( std::tie ( begin , end  ) ) 
-  , LoKi::BasicFunctors<const LHCb::ODIN*>::Predicate() 
   , m_flag  ( Range ) 
   , m_begin ( begin ) 
   , m_end   ( end   ) 
@@ -113,7 +104,6 @@ LoKi::Odin::RunNumber::RunNumber
 LoKi::Odin::RunNumber::RunNumber
 ( const LoKi::Odin::RunNumber::run_list& runs )
   : LoKi::AuxFunBase ( std::tie ( runs ) ) 
-  , LoKi::BasicFunctors<const LHCb::ODIN*>::Predicate() 
   , m_flag  ( List ) 
   , m_begin ( 0    ) 
   , m_end   ( 0    ) 
@@ -121,10 +111,6 @@ LoKi::Odin::RunNumber::RunNumber
 {
   std::sort ( m_runs.begin() , m_runs.end() ) ;  
 }
-// ============================================================================
-// MANDATORY: virtual destructor 
-// ============================================================================
-LoKi::Odin::RunNumber::~RunNumber(){}
 // ============================================================================
 // MANDATORY: clone method ("virtual constructor")
 // ============================================================================
@@ -179,7 +165,6 @@ std::ostream& LoKi::Odin::RunNumber::fillStream ( std::ostream& s ) const
 LoKi::Odin::BXId::BXId
 ( const unsigned int bx   ) 
   : LoKi::AuxFunBase ( std::tie ( bx ) ) 
-  , LoKi::BasicFunctors<const LHCb::ODIN*>::Predicate() 
   , m_flag  ( One ) 
   , m_bx    ( bx ) 
   , m_begin ( 0   ) 
@@ -193,7 +178,6 @@ LoKi::Odin::BXId::BXId
 ( const unsigned int begin , 
   const unsigned int end   ) 
   : LoKi::AuxFunBase ( std::tie ( begin , end ) ) 
-  , LoKi::BasicFunctors<const LHCb::ODIN*>::Predicate() 
   , m_flag  ( Range ) 
   , m_bx    ( 0     ) 
   , m_begin ( begin ) 
@@ -206,7 +190,6 @@ LoKi::Odin::BXId::BXId
 LoKi::Odin::BXId::BXId
 ( const std::vector<unsigned int>& bxs ) 
   : LoKi::AuxFunBase ( std::tie ( bxs ) ) 
-  , LoKi::BasicFunctors<const LHCb::ODIN*>::Predicate() 
   , m_flag  ( List ) 
   , m_bx    ( 0    ) 
   , m_begin ( 0    ) 
@@ -265,7 +248,6 @@ std::ostream& LoKi::Odin::BXId::fillStream ( std::ostream& s ) const
 LoKi::Odin::Tck::Tck
 ( const unsigned int bx   ) 
   : LoKi::AuxFunBase ( std::tie ( bx ) ) 
-  , LoKi::BasicFunctors<const LHCb::ODIN*>::Predicate() 
   , m_flag  ( One ) 
   , m_bx    ( bx ) 
   , m_bxs   (     ) 
@@ -276,7 +258,6 @@ LoKi::Odin::Tck::Tck
 LoKi::Odin::Tck::Tck
 ( const std::vector<unsigned int>& bxs ) 
   : LoKi::AuxFunBase ( std::tie ( bxs ) ) 
-  , LoKi::BasicFunctors<const LHCb::ODIN*>::Predicate() 
   , m_flag  ( List ) 
   , m_bx    ( 0    ) 
   , m_bxs   ( bxs  ) 
@@ -332,7 +313,6 @@ std::ostream& LoKi::Odin::Tck::fillStream ( std::ostream& s ) const
 LoKi::Odin::EvtNumber::EvtNumber
 ( const LoKi::Odin::EvtNumber::event_type evt ) 
   : LoKi::AuxFunBase ( std::tie ( evt ) ) 
-  , LoKi::BasicFunctors<const LHCb::ODIN*>::Predicate() 
   , m_flag  ( One     ) 
   , m_begin ( evt     ) 
   , m_end   ( evt + 1 ) 
@@ -345,7 +325,6 @@ LoKi::Odin::EvtNumber::EvtNumber
 ( const LoKi::Odin::EvtNumber::event_type begin ,  
   const LoKi::Odin::EvtNumber::event_type end   ) 
   : LoKi::AuxFunBase ( std::tie ( begin , end ) ) 
-  , LoKi::BasicFunctors<const LHCb::ODIN*>::Predicate() 
   , m_flag  ( Range ) 
   , m_begin ( begin ) 
   , m_end   ( end   ) 
@@ -357,16 +336,11 @@ LoKi::Odin::EvtNumber::EvtNumber
 LoKi::Odin::EvtNumber::EvtNumber
 ( const LoKi::Odin::EvtNumber::event_list& evts )
   : LoKi::AuxFunBase ( std::tie ( evts ) ) 
-  , LoKi::BasicFunctors<const LHCb::ODIN*>::Predicate() 
   , m_flag  ( List ) 
   , m_begin ( 0    ) 
   , m_end   ( 0    ) 
   , m_evts  ( evts ) 
 {}
-// ============================================================================
-// MANDATORY: virtual destructor 
-// ============================================================================
-LoKi::Odin::EvtNumber::~EvtNumber(){}
 // ============================================================================
 // MANDATORY: clone method ("virtual constructor")
 // ============================================================================
@@ -431,7 +405,6 @@ LoKi::Odin::RunEvtNumber::RunEvtNumber
 ( const LoKi::Odin::RunEvtNumber::run_type run , 
   const LoKi::Odin::RunEvtNumber::evt_type evt ) 
   : LoKi::AuxFunBase ( std::tie ( run , evt  ) ) 
-  , LoKi::BasicFunctors<const LHCb::ODIN*>::Predicate() 
   , m_flag    ( One ) 
   , m_begin   ( run , evt           ) 
   , m_end     ( run , evt.evt() + 1 ) 
@@ -443,7 +416,6 @@ LoKi::Odin::RunEvtNumber::RunEvtNumber
 LoKi::Odin::RunEvtNumber::RunEvtNumber 
 ( const LoKi::Odin::RunEvtNumber::runevt_type& runevt )  
   : LoKi::AuxFunBase ( std::tie ( runevt  ) ) 
-  , LoKi::BasicFunctors<const LHCb::ODIN*>::Predicate() 
   , m_flag    ( One    ) 
   , m_begin   ( runevt ) 
   , m_end     ( runevt.run() , runevt.evt() + 1 ) 
@@ -456,7 +428,6 @@ LoKi::Odin::RunEvtNumber::RunEvtNumber
 ( const LoKi::Odin::RunEvtNumber::runevt_type& begin, 
   const LoKi::Odin::RunEvtNumber::runevt_type& end  ) 
   : LoKi::AuxFunBase ( std::tie ( begin , end   ) ) 
-  , LoKi::BasicFunctors<const LHCb::ODIN*>::Predicate() 
   , m_flag    ( Range ) 
   , m_begin   ( begin ) 
   , m_end     ( end   ) 
@@ -468,16 +439,11 @@ LoKi::Odin::RunEvtNumber::RunEvtNumber
 LoKi::Odin::RunEvtNumber::RunEvtNumber 
 ( const LoKi::Odin::RunEvtNumber::runevt_list&  runevts ) 
   : LoKi::AuxFunBase ( std::tie ( runevts ) ) 
-  , LoKi::BasicFunctors<const LHCb::ODIN*>::Predicate() 
   , m_flag    ( List ) 
   , m_begin   () 
   , m_end     () 
   , m_runevts ( runevts )  
 {}
-// ============================================================================
-// MANDATORY: virtual destructor 
-// ============================================================================
-LoKi::Odin::RunEvtNumber::~RunEvtNumber(){}
 // ============================================================================
 // MANDATORY: clone method ("virtual constructor")
 // ============================================================================
@@ -547,13 +513,8 @@ std::ostream& LoKi::Odin::RunEvtNumber::fillStream ( std::ostream& s ) const
 LoKi::Odin::RoutingBits::RoutingBits
 ( const LoKi::HLT::RoutingBits& bits ) 
   : LoKi::AuxFunBase ( std::tie ( bits ) ) 
-  , LoKi::BasicFunctors<const LHCb::ODIN*>::Predicate() 
   , m_bits ( bits ) 
 {}
-// ============================================================================
-// MANDATORY: virtual destructor 
-// ============================================================================
-LoKi::Odin::RoutingBits::~RoutingBits () {}
 // ============================================================================
 // MANDATORY: clone method ("virtual constructor")
 // ============================================================================
@@ -587,10 +548,6 @@ LoKi::Odin::Evt1::Evt1
   , m_modulo ( modulo ) 
 {}
 // ============================================================================
-// MANDATORY: virtual destructor
-// ============================================================================
-LoKi::Odin::Evt1::~Evt1 (){}
-// ============================================================================
 // MANDATORY: clone method ("virtual constructor")
 // ============================================================================
 LoKi::Odin::Evt1*
@@ -619,10 +576,6 @@ LoKi::Odin::Evt2::Evt2
   : LoKi::AuxFunBase ( std::tie ( modulo ) ) 
   , LoKi::Odin::Evt1 ( modulo ) 
 {}
-// ============================================================================
-// MANDATORY: virtual destructor
-// ============================================================================
-LoKi::Odin::Evt2::~Evt2 (){}
 // ============================================================================
 // MANDATORY: clone method ("virtual constructor")
 // ============================================================================
