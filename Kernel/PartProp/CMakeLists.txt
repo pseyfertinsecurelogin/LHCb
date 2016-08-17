@@ -23,6 +23,7 @@ gaudi_add_dictionary(PartProp
 
 gaudi_install_python_modules()
 gaudi_install_scripts()
-
+gaudi_alias (dump_particle_properties
+             dump_ParticleProperties) 
 
 gaudi_add_test(QMTest QMTEST)
