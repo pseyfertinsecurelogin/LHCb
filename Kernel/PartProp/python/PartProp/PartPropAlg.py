@@ -23,13 +23,6 @@ DDDBConf       ()  # use the default Configuration of DDDB
 ApplicationMgr ( TopAlg = [ PPA() ] ,
                  EvtSel = "NONE"    ,
                  EvtMax = 1         )
-
-# theApp.ExtSvc += [
-#     PPS ( ParticlePropertiesFile =
-#          "$PARAM_HOME/ParamFiles/v7r3/data/ParticleTable.txt"
-#          ) ]
-
-
 # =============================================================================
 # The END 
 # =============================================================================
