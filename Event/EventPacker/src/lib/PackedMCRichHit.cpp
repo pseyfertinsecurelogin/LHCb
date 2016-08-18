@@ -1,4 +1,3 @@
-// $Id: PackedMCRichHit.cpp,v 1.5 2010-04-11 14:27:14 jonrob Exp $
 
 // local
 #include "Event/PackedMCRichHit.h"

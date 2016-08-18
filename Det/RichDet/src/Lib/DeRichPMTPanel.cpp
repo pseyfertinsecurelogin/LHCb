@@ -1694,20 +1694,18 @@ DeRichPMTPanel::readoutChannelList ( LHCb::RichSmartID::Vector& readoutChannels 
 int DeRichPMTPanel::sensitiveVolumeID(const Gaudi::XYZPoint& globalPoint) const
 {
   // Create a RichSmartID for this RICH and panel
-
-  LHCb::RichSmartID id(rich(), side(), 0, 0, 0, 0,LHCb::RichSmartID::MaPMTID );
+  const LHCb::RichSmartID def_id( rich(), side(), 0, 0, 0, 0, LHCb::RichSmartID::MaPMTID );
+  auto id = def_id;
   // set the remaining fields from the position
-  return ( smartID(globalPoint,id) ?
-           id : LHCb::RichSmartID( rich(), side(), 0, 0, 0, 0,LHCb::RichSmartID::MaPMTID)   );
+  return pdNumber( smartID(globalPoint,id) ? id : def_id ).data();
 }
-
 
 //=========================================================================
 //  setRichPanelAndSide
 //=========================================================================
 StatusCode DeRichPMTPanel::setRichPanelAndSide ( )
 {
-  const Gaudi::XYZPoint zero(0.0, 0.0, 0.0);
+  const Gaudi::XYZPoint zero( 0.0, 0.0, 0.0 );
   const Gaudi::XYZPoint centreGlobal(geometry()->toGlobal(zero));
 
   // Work out what Rich/panel I am

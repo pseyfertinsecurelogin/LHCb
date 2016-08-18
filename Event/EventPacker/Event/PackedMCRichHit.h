@@ -4,6 +4,7 @@
 
 // STL
 #include <string>
+#include <cstdint>
 
 // Kernel
 #include "Event/StandardPacker.h"
@@ -32,7 +33,7 @@ namespace LHCb
     int   x{0},y{0},z{0};
     int   energy{0};
     int   tof{0};
-    int   sensDetID{0};
+    uint64_t sensDetID{0};
     int   history{0};
     long long mcParticle{-1};
   };

@@ -4,6 +4,7 @@
 
 // STL
 #include <string>
+#include <cstdint>
 
 // Kernel
 #include "Event/StandardPacker.h"
@@ -30,7 +31,7 @@ namespace LHCb
   struct PackedMCRichDigitSummary
   {
     int history{0};
-    int richSmartID{0};
+    uint64_t richSmartID{0};
     long long mcParticle{-1};
   };
 

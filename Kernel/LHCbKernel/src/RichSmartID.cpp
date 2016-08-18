@@ -21,7 +21,7 @@
 
 std::ostream& LHCb::RichSmartID::dumpBits(std::ostream& s) const
 {
-  for ( int iCol = 0; iCol < 64; ++iCol ) { s << isBitOn( iCol ); }
+  for ( auto iCol = 0u; iCol < NBits; ++iCol ) { s << isBitOn( iCol ); }
   return s;
 }
 
@@ -83,8 +83,8 @@ std::ostream& LHCb::RichSmartID::fillStream( std::ostream& s,
   return s;
 }
 
-void LHCb::RichSmartID::rangeError(const int value,
-                                   const int maxValue,
+void LHCb::RichSmartID::rangeError(const DataType value,
+                                   const DataType maxValue,
                                    const std::string& message) const
 {
   std::ostringstream mess;
@@ -99,7 +99,7 @@ std::string LHCb::RichSmartID::toString() const
   return text.str();
 }
 
-void LHCb::RichSmartID::setPixelSubRow( const int pixelSubRow )
+void LHCb::RichSmartID::setPixelSubRow( const DataType pixelSubRow )
 {
   if ( HPDID == idType() )
   {

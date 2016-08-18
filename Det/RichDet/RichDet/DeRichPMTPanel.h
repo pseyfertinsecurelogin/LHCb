@@ -77,7 +77,7 @@ public:
   // Adds to the given vector all the available readout channels in this HPD panel
   virtual bool readoutChannelList( LHCb::RichSmartID::Vector& readoutChannels ) const final;
 
-  /// Get tge sensitivevolumeID
+  /// Get the sensitivevolumeID
   virtual int sensitiveVolumeID(const Gaudi::XYZPoint& globalPoint) const final;
 
   /** Converts a RichSmartID to a point on the anode in global coordinates.

@@ -467,7 +467,7 @@ int DeRichHPDPanel::sensitiveVolumeID(const Gaudi::XYZPoint& globalPoint) const
   // Create a RichSmartID for this RICH and panel
   LHCb::RichSmartID id( rich(), side() );
   // set the remaining fields from the position
-  return ( smartID(globalPoint,id) ? id : LHCb::RichSmartID(rich(),side()) );
+  return pdNumber( smartID(globalPoint,id) ? id : LHCb::RichSmartID(rich(),side()) ).data();
 }
 
 //=========================================================================

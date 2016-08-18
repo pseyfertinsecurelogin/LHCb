@@ -278,7 +278,7 @@ StatusCode DeRichSystem::fillMaps( const Rich::DetectorType rich )
   }
 
   // local typedefs for vector from Conditions
-  typedef std::vector<int> CondData;
+  typedef std::vector<LHCb::RichSmartID::KeyType> CondData;
   typedef std::vector<std::string> L1Mapping;
 
   // number of PDs
@@ -339,7 +339,8 @@ StatusCode DeRichSystem::fillMaps( const Rich::DetectorType rich )
       if ( ID.isValid() )
       {
         inacts.push_back( ID );
-        if ( std::find( softIDs.begin(), softIDs.end(), (int)ID ) == softIDs.end() )
+        if ( std::find( softIDs.begin(), softIDs.end(),
+                        (LHCb::RichSmartID::KeyType)ID ) == softIDs.end() )
           warning() << "Invalid smartID in list of inactive PDs: " << inpd << endmsg;
       }
       else
@@ -354,7 +355,8 @@ StatusCode DeRichSystem::fillMaps( const Rich::DetectorType rich )
     // hardware IDs
     if ( msgLevel(MSG::DEBUG) )
       debug() << "Inactive PDs are taken from the hardware list" << endmsg;
-    inacts = numbers->paramVect<int>(str_InactivePDs);
+    inacts.clear();
+    for ( const auto & i : numbers->paramVect<int>(str_InactivePDs) ) { inacts.push_back(i); }
   }
   if ( msgLevel(MSG::VERBOSE) )
     verbose() << "Condition InactiveHPDs = " << inacts << endmsg;
@@ -392,7 +394,7 @@ StatusCode DeRichSystem::fillMaps( const Rich::DetectorType rich )
   {
 
     // get data
-    const LHCb::RichSmartID           pdID   ( *iSoft  );
+    const LHCb::RichSmartID           pdID   ( (LHCb::RichSmartID::KeyType)(*iSoft) );
     const Rich::DAQ::HPDHardwareID    hardID ( *iHard  );
     const Rich::DAQ::Level1HardwareID L1ID   ( *iL1    );
     const Rich::DAQ::Level0ID         L0ID   ( *iL0    );
@@ -401,7 +403,7 @@ StatusCode DeRichSystem::fillMaps( const Rich::DetectorType rich )
 
     // debug printout
     if ( msgLevel(MSG::VERBOSE) )
-      verbose() << "PD     " << (int)pdID << " " << pdID
+      verbose() << "PD     " << (LHCb::RichSmartID::KeyType)pdID << " " << pdID
                 << " PDhardID " << hardID << " L0 " << L0ID << " L1 HardID " << L1ID
                 << " L1 input " << L1IN << endmsg;
 
@@ -561,7 +563,7 @@ DeRichSystem::hardwareID( const LHCb::RichSmartID& smartID ) const
   {
     std::ostringstream mess;
     mess << "Unknown PD RichSmartID "
-         << (int)smartID.pdID() << " " << smartID.pdID();
+         << (LHCb::RichSmartID::KeyType)smartID.pdID() << " " << smartID.pdID();
     throw GaudiException( mess.str(),
                           "DeRichSystem::hardwareID",
                           StatusCode::FAILURE );
@@ -621,7 +623,7 @@ DeRichSystem::level0ID( const LHCb::RichSmartID& smartID ) const
   {
     std::ostringstream mess;
     mess << "Unknown PD RichSmartID "
-         << (int)smartID.pdID() << " " << smartID.pdID();
+         << smartID.pdID().key() << " " << smartID.pdID();
     throw GaudiException( mess.str(),
                           "DeRichSystem::level0ID",
                           StatusCode::FAILURE );
@@ -643,7 +645,7 @@ DeRichSystem::level1HardwareID( const LHCb::RichSmartID& smartID ) const
   {
     std::ostringstream mess;
     mess << "Unknown PD RichSmartID "
-         << (int)smartID.pdID() << " " << smartID.pdID();
+         << smartID.pdID().key() << " " << smartID.pdID();
     throw GaudiException( mess.str(),
                           "DeRichSystem::level1HardwareID",
                           StatusCode::FAILURE );
@@ -665,7 +667,7 @@ DeRichSystem::level1InputNum( const LHCb::RichSmartID& smartID ) const
   {
     std::ostringstream mess;
     mess << "Unknown PD RichSmartID "
-         << (int)smartID.pdID() << " " << smartID.pdID();
+         << smartID.pdID().key() << " " << smartID.pdID();
     throw GaudiException( mess.str(),
                           "DeRichSystem::level1InputNum",
                           StatusCode::FAILURE );
@@ -764,7 +766,7 @@ DeRichSystem::copyNumber( const LHCb::RichSmartID& smartID ) const
   {
     std::ostringstream mess;
     mess << "Unknown PD RichSmartID "
-         << (int)smartID.pdID() << " " << smartID.pdID();
+         << smartID.pdID().key() << " " << smartID.pdID();
     throw GaudiException( mess.str(),
                           "DeRichSystem::copyNumber",
                           StatusCode::FAILURE );
