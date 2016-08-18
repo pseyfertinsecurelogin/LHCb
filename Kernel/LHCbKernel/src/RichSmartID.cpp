@@ -21,7 +21,7 @@
 
 std::ostream& LHCb::RichSmartID::dumpBits(std::ostream& s) const
 {
-  for ( int iCol = 0; iCol < 32; ++iCol ) { s << isBitOn( iCol ); }
+  for ( int iCol = 0; iCol < 64; ++iCol ) { s << isBitOn( iCol ); }
   return s;
 }
 

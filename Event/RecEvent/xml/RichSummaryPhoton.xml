@@ -41,7 +41,6 @@
                 desc = "RichSmartID for the RICH hit associated to this reconstructed photon" 
                 name = "smartID" 
                 type = "LHCb::RichSmartID"
-                init = "0" 
         />
        
 </class>

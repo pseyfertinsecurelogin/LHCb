@@ -5,6 +5,7 @@
 // STL
 #include <vector>
 #include <ostream>
+#include <cstdint>
 
 // Local
 #include "Kernel/RichDetectorType.h"
@@ -29,47 +30,38 @@ namespace LHCb
   public:
 
     /// Type for internal key
-    typedef unsigned int KeyType;
-    //using KeyType = unsigned int;
+    typedef uint64_t KeyType;
 
     /// Vector of RichSmartIDs
     typedef std::vector<LHCb::RichSmartID> Vector;
-    //using Vector = std::vector<LHCb::RichSmartID>;
 
     /// Numerical type for bit packing
-    typedef unsigned int BitPackType;
-    //using BitPackType = unsigned int;
+    typedef uint64_t BitPackType;
 
   private:
 
     /// Get the initialisation value from a value, shift and mask
-    inline static constexpr KeyType initData( const int value,
-                                              const int shift,
-                                              const long mask ) noexcept
+    inline static constexpr KeyType initData( const KeyType value,
+                                              const KeyType shift,
+                                              const BitPackType mask ) noexcept
     {
       return ( (value << shift) & mask );
     }
 
     /** The bit-packed internal data word.
      *  Default initialisation is as an HPD ID */
-    unsigned int m_key { initData(HPDID,ShiftIDType,MaskIDType) };
+    uint64_t m_key { initData(HPDID,ShiftIDType,MaskIDType) };
 
   public:
 
     /// Retrieve the bit-packed internal data word
     inline constexpr KeyType key()             const noexcept { return m_key; }
 
-    /// implicit conversion to unsigned int
-    inline constexpr operator unsigned int()   const noexcept { return key(); }
-
-    /// implicit conversion to unsigned long
-    inline constexpr operator unsigned long()  const noexcept { return static_cast<unsigned long>(key()); }
+    /// implicit conversion to uint64_t
+    inline constexpr operator uint64_t()       const noexcept { return key(); }
 
     /// implicit conversion to signed int
-    inline           operator int()            const noexcept { return as_int(); }
-
-    /// implicit conversion to signed long
-    inline           operator long()           const noexcept { return static_cast<long>(as_int()); }
+    inline           operator int64_t()        const noexcept { return as_int(); }
 
     /// Set the bit-packed internal data word
     inline void setKey( const LHCb::RichSmartID::KeyType value ) noexcept { m_key = value; }
@@ -78,7 +70,7 @@ namespace LHCb
 
     // Setup up the type bit field
     static constexpr const BitPackType BitsIDType  = 1;  ///< Number of bits to use for the PD type 
-    static constexpr const BitPackType ShiftIDType = 31; ///< Use the last bit of the word
+    static constexpr const BitPackType ShiftIDType = 63; ///< Use the last bit of the word
     /// Mask for the PD type
     static constexpr const BitPackType MaskIDType  = (BitPackType) ((1 << BitsIDType)-1) << ShiftIDType;
     /// Max possible value that can be stored in the PD type field
@@ -264,12 +256,12 @@ namespace LHCb
   private:
     
     /// Reinterpret the internal unsigned representation as a signed int
-    inline int as_int( ) const noexcept { return reinterpret_cast<const int&>(m_key); }
+    inline int64_t as_int( ) const noexcept { return reinterpret_cast<const int64_t&>(m_key); }
 
     /// Set the given data into the given field, without validity bit
     inline void setData( const int value,
                          const int shift,
-                         const long mask ) noexcept
+                         const BitPackType mask ) noexcept
     {
       setKey( ((value << shift) & mask) | (m_key & ~mask) );
     }
@@ -277,8 +269,8 @@ namespace LHCb
     /// Set the given data into the given field, with validity bit
     inline void setData( const int value,
                          const int shift,
-                         const long mask,
-                         const long okMask ) noexcept
+                         const BitPackType mask,
+                         const BitPackType okMask ) noexcept
     {
       setKey( ((value << shift) & mask) | (m_key & ~mask) | okMask );
     }
@@ -321,18 +313,10 @@ namespace LHCb
     /// Constructor from internal type (unsigned int)
     explicit constexpr RichSmartID( const LHCb::RichSmartID::KeyType key ) noexcept
       : m_key( key ) { }
-    
-    /// Constructor from unsigned long int
-    explicit constexpr RichSmartID( const unsigned long int key ) noexcept
-      : m_key( static_cast<LHCb::RichSmartID::KeyType>( key & 0x00000000FFFFFFFF ) ) { }
 
     /// Constructor from signed int type
-    explicit           RichSmartID( const int key ) noexcept
+    explicit           RichSmartID( const int64_t key ) noexcept
       : m_key( reinterpret_cast<const LHCb::RichSmartID::KeyType&>(key) ) { }
-
-    /// Constructor from signed long type 
-    explicit constexpr RichSmartID( const long int key ) noexcept
-      : m_key( static_cast<LHCb::RichSmartID::KeyType>( key & 0x00000000FFFFFFFF ) ) { }
     
     /// Pixel level constructor including sub-pixel information
     RichSmartID( const Rich::DetectorType rich,

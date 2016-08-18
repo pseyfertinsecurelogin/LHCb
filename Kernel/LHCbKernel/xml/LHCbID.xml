@@ -12,7 +12,7 @@
        <import name="Kernel/VeloChannelID"/>
        <import name="Kernel/STChannelID"/>
        <import name="Kernel/OTChannelID"/>
-       <import name="Kernel/RichSmartID"/>
+       <!--import name="Kernel/RichSmartID"/-->
        <import name="Kernel/CaloCellID"/>
        <import name="Kernel/MuonTileID"/>
        <import name="Kernel/VPChannelID"/>
@@ -269,7 +269,7 @@
          </code>
        </method>
 
-       <constructor
+       <!--constructor
          desc     = "Constructor from RichSmartID"
          initList = "m_lhcbID(0)" >
          <arg const="TRUE" name="chanID" type="RichSmartID" />
@@ -283,9 +283,9 @@
   // Set the validity bits
   setBit( 26, chanID.pixelDataAreValid() );
          </code>
-       </constructor>
+       </constructor-->
 
-       <method
+       <!--method
          type  = 'bool'
          name  = 'isRich'
          const = 'TRUE'
@@ -293,9 +293,9 @@
          <code>
   return (Rich == detectorType());
          </code>
-       </method>
+       </method-->
 
-       <method
+       <!--method
          type  = "LHCb::RichSmartID"
          name  = "richID"
          const = 'TRUE'
@@ -324,7 +324,7 @@
   // return
   return id;
          </code>
-       </method>
+       </method-->
 
        <constructor
           desc     = "Constructor from CaloCellID"
@@ -463,7 +463,7 @@
   if (isVelo())    return veloID().channelID();
   if (isST())      return stID().channelID();
   if (isOT())      return otID().channelID();
-  if (isRich())    return richID().key();
+  //if (isRich())    return richID().key();
   if (isCalo())    return m_lhcbID &amp; IDMask;
   if (isMuon())    return m_lhcbID &amp; IDMask;
   if (isFT())      return ftID().channelID();
