@@ -82,7 +82,7 @@ namespace LHCb
 
     // Setup up the type bit field
     static constexpr const BitPackType BitsIDType  = 1;              ///< Number of bits to use for the PD type
-    static constexpr const BitPackType ShiftIDType = (BitPackType) (NBits-1); ///< Use the last bit of the word
+    static constexpr const BitPackType ShiftIDType = (BitPackType) (NBits-BitsIDType); ///< Use the last bit of the word
     /// Mask for the PD type
     static constexpr const BitPackType MaskIDType  = (BitPackType) ((1 << BitsIDType)-1) << ShiftIDType;
     /// Max possible value that can be stored in the PD type field
