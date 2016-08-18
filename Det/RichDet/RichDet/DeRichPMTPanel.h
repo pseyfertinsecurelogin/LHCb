@@ -52,7 +52,7 @@ public:
   virtual StatusCode initialize() final;
 
   // Returns the detector element for the given PD number
-  virtual const DeRichPD* dePD( const unsigned int PDNumber ) const final;
+  virtual const DeRichPD* dePD( const Rich::DAQ::HPDCopyNumber PDNumber ) const final;
 
   // Converts a Gaudi::XYZPoint in global coordinates to a RichSmartID.
   virtual bool smartID( const Gaudi::XYZPoint& globalPoint,
@@ -89,12 +89,12 @@ public:
 private:
 
   /// Returns the PD number for the given RichSmartID
-  unsigned int pdNumber( const LHCb::RichSmartID& smartID ) const;
+  Rich::DAQ::HPDCopyNumber pdNumber( const LHCb::RichSmartID& smartID ) const;
 
   /// Size of something ...
   bool pdGrandSize( const LHCb::RichSmartID& smartID ) const ;
   
-  const DeRichPMT* dePMT( const unsigned int PmtCopyNumber ) const;
+  const DeRichPMT* dePMT( const Rich::DAQ::HPDCopyNumber PmtCopyNumber ) const;
 
   std::vector<int> getPmtRowColFromPmtNum( const int aPmtNum );
   std::vector<int> getGrandPmtRowColFromPmtNum( const int aPmtNum );
