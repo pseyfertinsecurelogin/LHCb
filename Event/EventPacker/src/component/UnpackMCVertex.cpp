@@ -90,8 +90,8 @@ StatusCode UnpackMCVertex::execute()
     for ( const auto& I : src.products )
     {
       // Check for duplicates ...
-      if ( std::find( processedRefs.begin(), 
-                      processedRefs.end(), I ) == processedRefs.end() )
+      if ( !std::any_of( processedRefs.begin(), processedRefs.end(),
+                         [&I]( const auto J ) { return I == J; } ) )
       {
         // save this packed ref to the list of those already processed.
         processedRefs.push_back(I);
