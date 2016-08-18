@@ -139,7 +139,7 @@ StatusCode LHCb::Example::PartPropAlg::execute()
     PPs invalid ;
     svc->get
       (
-       // functor : lepton
+       // functor : invalid
        [](const LHCb::ParticleProperty* pp) { return !pp->pid().isValid(); } ,
        // output
        std::back_inserter( invalid ) ) ;
