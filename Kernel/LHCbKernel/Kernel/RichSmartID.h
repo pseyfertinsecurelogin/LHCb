@@ -24,7 +24,7 @@ namespace LHCb
    *  @author Chris Jones   Christopher.Rob.Jones@cern.ch
    *  @date  24/02/2011
    */
-  class RichSmartID
+  class RichSmartID final
   {
 
   public:
