@@ -12,6 +12,7 @@
 
 #include <algorithm>
 #include <iosfwd>
+#include <regex>
 #include <type_traits>
 
 #include <boost/utility/string_ref.hpp>
@@ -81,6 +82,8 @@ private:
   StringProperty m_commit;
   /// name of the IDetDataSvc, used to get the current event time
   StringProperty m_detDataSvcName;
+  /// regular expression matching paths that should be ignored
+  StringProperty m_ignoreRegex;
 
   /// internal flag used to track if we are using the Git database or checked out files
   bool m_useFiles = false;
@@ -130,6 +133,8 @@ private:
 
   /// used to get the current event time
   SmartIF<IDetDataSvc> m_detDataSvc;
+
+  std::regex m_ignore;
 };
 
 #endif // GITENTITYRESOLVER_H

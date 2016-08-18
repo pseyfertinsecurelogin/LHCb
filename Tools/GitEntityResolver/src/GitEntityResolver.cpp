@@ -15,22 +15,23 @@ DECLARE_COMPONENT( GitEntityResolver )
 #include <boost/version.hpp>
 #if BOOST_VERSION >= 106100
 #include <boost/filesystem/path.hpp>
-namespace {
-  std::string normalize( boost::filesystem::path path ) {
-    return path.lexically_normal().generic_string();
-  }
+namespace
+{
+  std::string normalize( boost::filesystem::path path ) { return path.lexically_normal().generic_string(); }
 }
 #else
 #include <regex>
-namespace {
+namespace
+{
   /// helper to normalize relative paths
-  std::string normalize( std::string path ) {
+  std::string normalize( std::string path )
+  {
     // regex for entries to be removed, i.e. "/parent/../" and "/./"
     static const std::regex ignored_re{"(/[^/]+/\\.\\./)|(/\\./)"};
     std::string old_path;
     while ( old_path.length() != path.length() ) {
-      old_path.swap(path);
-      path = std::regex_replace(old_path, ignored_re, "/");
+      old_path.swap( path );
+      path = std::regex_replace( old_path, ignored_re, "/" );
     }
     return path;
   }
@@ -117,6 +118,14 @@ GitEntityResolver::GitEntityResolver( const std::string& type, const std::string
 
   declareProperty( "DetDataSvc", m_detDataSvcName = "DetectorDataSvc",
                    "name of the IDetDataSvc, used to get the current event time" );
+
+  declareProperty( "Ignore", m_ignoreRegex = "", "regular expression matching paths that should be ignored" );
+  m_ignoreRegex.declareUpdateHandler( [this]( Property& ) -> void {
+    if ( !m_ignoreRegex.value().empty() ) {
+      DEBUG_MSG << "ignoring paths matching '" << m_ignoreRegex.value() << "'" << endmsg;
+    };
+    m_ignore.assign( m_ignoreRegex.value() );
+  } );
 }
 
 GitEntityResolver::~GitEntityResolver()
@@ -252,6 +261,10 @@ GitEntityResolver::i_open( const std::string& url )
 {
   DEBUG_MSG << "open(\"" << url << "\")" << ( m_useFiles ? " [files]" : "" ) << endmsg;
   auto path = strip_prefix( url );
+  if ( UNLIKELY( std::regex_match( path.begin(), path.end(), m_ignore ) ) ) {
+    VERBOSE_MSG << "path ignored" << endmsg;
+    return {};
+  }
   return UNLIKELY( m_useFiles ) ? i_open( m_pathToRepository.value() + "/" + path.to_string(), url )
                                 : i_open( i_getData( path ), url );
 }
@@ -273,12 +286,13 @@ xercesc::InputSource* GitEntityResolver::resolveEntity( const XMLCh* const, cons
 
   if ( !url.starts_with( "git:" ) ) {
     // the string does not start with "git:", so I cannot handle it
-    VERBOSE_MSG << "Not a Git URL" << endmsg;
+    VERBOSE_MSG << "not a Git URL" << endmsg;
     // tell XercesC to use the default action
     return nullptr;
   }
 
   auto data = i_open( url.to_string() );
+  if ( UNLIKELY( !data.first ) ) return nullptr;
 
   Blob blob{std::move( data.first )};
   auto buff_size = blob.size(); // must be done here because "adopt" set the size to 0
