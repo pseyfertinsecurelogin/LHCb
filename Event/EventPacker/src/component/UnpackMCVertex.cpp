@@ -59,7 +59,7 @@ StatusCode UnpackMCVertex::execute()
   const char pVer = dst->packingVersion();
 
   newMCVertices->reserve( dst->mcVerts().size() );
-  for ( auto & src : dst->mcVerts() )
+  for ( const auto & src : dst->mcVerts() )
   {
 
     auto* vert = new LHCb::MCVertex( );

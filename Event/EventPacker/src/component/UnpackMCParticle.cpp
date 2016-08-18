@@ -67,7 +67,7 @@ StatusCode UnpackMCParticle::execute()
   //static std::uniform_real_distribution<float> uniform(0,1);
 
   newMCParticles->reserve( dst->mcParts().size() );
-  for ( auto & src : dst->mcParts() )
+  for ( const auto & src : dst->mcParts() )
   {
 
     LHCb::MCParticle * part = new LHCb::MCParticle( );
