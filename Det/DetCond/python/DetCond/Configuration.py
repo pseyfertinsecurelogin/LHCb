@@ -620,13 +620,14 @@ class CondDB(ConfigurableUser):
         from Gaudi.Configuration import VFSSvc
         from Configurables       import CondDBEntityResolver
         VFSSvc().FileAccessTools.append(CondDBEntityResolver())
-        ger = allConfigurables.get('ToolSvc.GitEntityResolver')
-        if ger:
-            if not ger.isPropertySet('Commit'):
-                ger.Commit = self.getProp("Tags").get('DDDB', 'HEAD')
-            VFSSvc().FileAccessTools.append(ger)
-            if localTags.get('DDDB'):
-                log.warning('local tags in DDDB are ignored')
+        for partition in ['DDDB', 'LHCBCOND', 'SIMCOND', 'ONLINE', 'CALIBOFF']:
+            ger = allConfigurables.get('ToolSvc.Git{0}'.format(partition))
+            if ger:
+                if not ger.isPropertySet('Commit'):
+                    ger.Commit = self.getProp("Tags").get(partition, 'HEAD')
+                VFSSvc().FileAccessTools.append(ger)
+                if localTags.get(partition):
+                    log.warning('local tags in %s are ignored', partition)
 
 
 # Exported symbols

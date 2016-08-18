@@ -73,9 +73,11 @@ class DDDBConf(ConfigurableUser):
 
         if using_git:
             resolver = EntityResolverDispatcher(EntityResolvers=[
-                GitEntityResolver(),
+                GitEntityResolver('GitDDDB', Ignore="Conditions/.*"),
+                GitEntityResolver('GitLHCBCOND'),
                 CondDBEntityResolver(),
-            ])
+            ], Mappings=[(r'^conddb:', 'git:'),
+                         (r'^git:/Conditions/(Online|DQ)', 'conddb:/Conditions/$1')])
         else:
             resolver = CondDBEntityResolver()
 
