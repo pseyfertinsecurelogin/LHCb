@@ -1,4 +1,3 @@
-
 #ifndef LHCbKernel_RichSmartID_H
 #define LHCbKernel_RichSmartID_H 1
 
@@ -42,7 +41,7 @@ namespace LHCb
     typedef uint32_t DataType;
 
     /// Number of bits
-    static constexpr const int32_t NBits = 32;
+    static constexpr const BitPackType NBits = 32;
 
   private:
 
