@@ -855,7 +855,7 @@ namespace LHCb
     /// Print this RichSmartID in a human readable way
     std::ostream& fillStream( std::ostream& s,
 #ifdef NDEBUG
-                              const bool dumpSmartIDBits = true
+                              const bool dumpSmartIDBits = false
 #else
                               const bool dumpSmartIDBits = true
 #endif
