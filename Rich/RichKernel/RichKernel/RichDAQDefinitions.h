@@ -580,7 +580,7 @@ namespace Rich
      *  @author Chris Jones   Christopher.Rob.Jones@cern.ch
      *  @date   24/07/2008
      */
-    class HPDCopyNumber : public NumericType<ShortType>
+    class HPDCopyNumber final : public NumericType<ShortType>
     {
     public :
       /// Default Constructor

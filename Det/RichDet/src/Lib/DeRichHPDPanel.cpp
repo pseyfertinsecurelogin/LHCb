@@ -137,13 +137,13 @@ bool DeRichHPDPanel::smartID ( const Gaudi::XYZPoint& globalPoint,
   if ( !deRichSys()->pdIsActive( id ) ) return false;
 
   const auto HPDNumber = pdNumber(id);
-  if ( HPDNumber > nPDs() )
+  if ( HPDNumber.data() > nPDs() )
   {
     error() << "Inappropriate HPDNumber : " << HPDNumber;
     return false;
   }
 
-  const auto inSilicon = m_DeSiSensors[HPDNumber]->geometry()->toLocalMatrix()*globalPoint;
+  const auto inSilicon = m_DeSiSensors[HPDNumber.data()]->geometry()->toLocalMatrix()*globalPoint;
 
   auto inSiliconX = inSilicon.x();
   auto inSiliconY = inSilicon.y();
@@ -473,7 +473,7 @@ int DeRichHPDPanel::sensitiveVolumeID(const Gaudi::XYZPoint& globalPoint) const
 //=========================================================================
 // Returns the detector element for the given HPD number
 //=========================================================================
-const DeRichPD* DeRichHPDPanel::dePD( const unsigned int PDNumber ) const
+const DeRichPD* DeRichHPDPanel::dePD( const Rich::DAQ::HPDCopyNumber PDNumber ) const
 {
   return deHPD( PDNumber );
 }
@@ -664,21 +664,21 @@ StatusCode DeRichHPDPanel::geometryUpdate()
   if ( msgLevel(MSG::VERBOSE,msg) )
   {
     msg << MSG::VERBOSE << "Ideal local centre of HPD#0 "
-        << geometry()->toLocal(deHPD(0)->windowCentreInIdeal()) << endmsg;
+        << geometry()->toLocal(deHPD(Rich::DAQ::HPDCopyNumber(0))->windowCentreInIdeal()) << endmsg;
     msg << MSG::VERBOSE << "Ideal local centre of HPD#" << nPDsPerCol()-1 << " "
-        << geometry()->toLocal(deHPD(nPDsPerCol()-1)->windowCentreInIdeal()) << endmsg;
+        << geometry()->toLocal(deHPD(Rich::DAQ::HPDCopyNumber(nPDsPerCol()-1))->windowCentreInIdeal()) << endmsg;
     msg << MSG::VERBOSE << "Ideal local centre of HPD#" << nPDsPerCol() << " "
-        << geometry()->toLocal(deHPD(nPDsPerCol())->windowCentreInIdeal()) << endmsg;
+        << geometry()->toLocal(deHPD(Rich::DAQ::HPDCopyNumber(nPDsPerCol()))->windowCentreInIdeal()) << endmsg;
     msg << MSG::VERBOSE << "Ideal local centre of HPD#" << 2*nPDsPerCol()-1 << " "
-        << geometry()->toLocal(deHPD(2*nPDsPerCol()-1)->windowCentreInIdeal()) << endmsg;
+        << geometry()->toLocal(deHPD(Rich::DAQ::HPDCopyNumber(2*nPDsPerCol()-1))->windowCentreInIdeal()) << endmsg;
   }
 
   // find the top of 3 HPDs to create a detection plane.
-  const auto pointA( deHPD(0)->windowCentreInIdeal() );
+  const auto pointA( deHPD(Rich::DAQ::HPDCopyNumber(0))->windowCentreInIdeal() );
   // for second point go to HPD at the end of the column.
-  const auto pointB( deHPD(nPDsPerCol()-1)->windowCentreInIdeal() );
+  const auto pointB( deHPD(Rich::DAQ::HPDCopyNumber(nPDsPerCol()-1))->windowCentreInIdeal() );
   // now point C at the other end.
-  const auto pointC( deHPD(nPDs()-nPDsPerCol()/2)->windowCentreInIdeal() );
+  const auto pointC( deHPD(Rich::DAQ::HPDCopyNumber(nPDs()-nPDsPerCol()/2))->windowCentreInIdeal() );
 
   m_detectionPlane   = Gaudi::Plane3D(pointA,pointB,pointC);
   m_localPlane       = geometry()->toLocalMatrix() * m_detectionPlane;
@@ -729,11 +729,11 @@ StatusCode DeRichHPDPanel::geometryUpdate()
 
 //=========================================================================
 
-unsigned int DeRichHPDPanel::pdNumber( const LHCb::RichSmartID& smartID ) const
+Rich::DAQ::HPDCopyNumber DeRichHPDPanel::pdNumber( const LHCb::RichSmartID& smartID ) const
 {
-  return ( smartID.rich() == rich() && smartID.panel() == side() ?
-           smartID.pdCol() * nPDsPerCol() + smartID.pdNumInCol() :
-           nPDs() + 1 );
+  return Rich::DAQ::HPDCopyNumber( smartID.rich() == rich() && smartID.panel() == side() ?
+                                   smartID.pdCol() * nPDsPerCol() + smartID.pdNumInCol() :
+                                   nPDs() + 1 );
 }
 
 //=========================================================================
