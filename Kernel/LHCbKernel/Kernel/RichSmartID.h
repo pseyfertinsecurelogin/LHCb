@@ -64,7 +64,7 @@ namespace LHCb
     inline constexpr KeyType key()       const noexcept { return m_key; }
 
     /// implicit conversion to unsigned long
-    inline constexpr operator uint64_t() const noexcept { return static_cast<uint64_t>(key()); }
+    inline constexpr operator uint64_t() const noexcept { return key(); }
 
     /// implicit conversion to signed long
     inline           operator int64_t()  const noexcept { return static_cast<int64_t>(as_int()); }
