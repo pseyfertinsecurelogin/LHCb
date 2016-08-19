@@ -8,6 +8,9 @@
 // Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
 
+// LHCbKernel
+#include "Kernel/RichSmartID32.h"
+
 using namespace LHCb;
 
 void MCRichDigitSummaryPacker::pack( const DataVector & sums,
@@ -53,7 +56,9 @@ void MCRichDigitSummaryPacker::unpack( const PackedDataVector & psums,
       sums.add( sum );
       // Fill data from packed object
       sum->setHistory( LHCb::MCRichDigitHistoryCode(psum.history) );
-      sum->setRichSmartID( LHCb::RichSmartID(psum.richSmartID) );
+      sum->setRichSmartID( ver>1 ? 
+                           LHCb::RichSmartID(psum.richSmartID) :
+                           LHCb::RichSmartID(LHCb::RichSmartID32(psum.richSmartID)) );
       if ( -1 != psum.mcParticle )
       {
         int hintID(0), key(0);

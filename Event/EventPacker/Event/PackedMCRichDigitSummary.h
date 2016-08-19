@@ -63,7 +63,7 @@ namespace LHCb
   public:
     
     /// Default Packing Version
-    static char defaultPackingVersion() { return 1; }
+    static char defaultPackingVersion() { return 2; }
 
   public:
 
@@ -150,7 +150,7 @@ namespace LHCb
     /// Check if the given packing version is supported
     bool isSupportedVer( const char& ver ) const
     {
-      const bool OK = ( 1 == ver || 0 == ver );
+      const bool OK = ( 2 == ver || 1 == ver || 0 == ver );
       if ( UNLIKELY(!OK) )
       {
         std::ostringstream mess;

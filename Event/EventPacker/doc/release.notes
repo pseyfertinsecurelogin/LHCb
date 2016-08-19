@@ -4,6 +4,10 @@
 ! Purpose     : Pack and unpack events classes for smaller events
 !-----------------------------------------------------------------------------
 
+! 2016-08-19 - Chris Jones
+ - Add support for 64 bit RichSmartIDs, with proper conversion from persisted
+   32 bit RichSmartIDs.
+
 ! 2016-07-15 - Chris Jones
  - Improve error messages from PackCluster.
  - Make cluster locations in PackCluster configurable options.
