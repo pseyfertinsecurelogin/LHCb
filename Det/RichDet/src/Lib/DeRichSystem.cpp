@@ -17,6 +17,9 @@
 // RichKernel
 #include "RichKernel/RichHPDIdentifier.h"
 
+// LHCbKernel
+#include "Kernel/RichSmartID32.h"
+
 // DetDesc
 #include "DetDesc/Condition.h"
 
@@ -336,16 +339,17 @@ StatusCode DeRichSystem::fillMaps( const Rich::DetectorType rich )
     for ( const auto inpd : inactsHuman )
     {
       const LHCb::RichSmartID ID( Rich::DAQ::HPDIdentifier(inpd).smartID() );
+      debug() << "Inactive SmartID " << ID << endmsg;
       if ( ID.isValid() )
       {
         inacts.push_back( ID );
         if ( std::find( softIDs.begin(), softIDs.end(),
                         (LHCb::RichSmartID::KeyType)ID ) == softIDs.end() )
-          warning() << "Invalid smartID in list of inactive PDs: " << inpd << endmsg;
+          warning() << "Inactive SmartID in list of Active IDs : " << inpd << endmsg;
       }
       else
       {
-        error() << "Invalid smartID in the list of inactive PDs " << inpd << endmsg;
+        error() << "Invalid SmartID in the list of inactive PDs : " << inpd << endmsg;
       }
     }
   }
@@ -394,7 +398,8 @@ StatusCode DeRichSystem::fillMaps( const Rich::DetectorType rich )
   {
 
     // get data
-    const LHCb::RichSmartID           pdID   ( (LHCb::RichSmartID::KeyType)(*iSoft) );
+    const LHCb::RichSmartID32         pdID32 ( *iSoft  );
+    const LHCb::RichSmartID           pdID   ( pdID32  );
     const Rich::DAQ::HPDHardwareID    hardID ( *iHard  );
     const Rich::DAQ::Level1HardwareID L1ID   ( *iL1    );
     const Rich::DAQ::Level0ID         L0ID   ( *iL0    );
@@ -403,7 +408,7 @@ StatusCode DeRichSystem::fillMaps( const Rich::DetectorType rich )
 
     // debug printout
     if ( msgLevel(MSG::VERBOSE) )
-      verbose() << "PD     " << (LHCb::RichSmartID::KeyType)pdID << " " << pdID
+      verbose() << "PD     " << pdID.key() << " " << pdID
                 << " PDhardID " << hardID << " L0 " << L0ID << " L1 HardID " << L1ID
                 << " L1 input " << L1IN << endmsg;
 

@@ -1,6 +1,7 @@
 
 #include <iostream>
 #include "Kernel/RichSmartID.h"
+#include "Kernel/RichSmartID32.h"
 #include "Kernel/LHCbID.h"
 
 using namespace std;
@@ -9,6 +10,60 @@ int main ( int /*argc*/, char** /*argv*/ )
 {
 
   bool OK = true;
+
+  //const LHCb::RichSmartID nullID64;
+  //std::cout << "Null64 : " << nullID64 << std::endl;
+
+  //const LHCb::RichSmartID32 nullID32;
+  //std::cout << "Null32 : " << nullID32 << std::endl;
+
+  // test 32 -> 64 bit compatibility
+  for ( unsigned int irich = 0; irich <= LHCb::RichSmartID32::HPD::MaxRich; ++irich )
+  {
+    const Rich::DetectorType rich = (Rich::DetectorType)irich;
+    for ( unsigned int ipanel = 0; ipanel <= LHCb::RichSmartID32::HPD::MaxPanel; ++ipanel )
+    {
+      const Rich::Side panel = (Rich::Side)ipanel;
+      for ( unsigned int pdrow = 0; pdrow <= LHCb::RichSmartID32::HPD::MaxPDNumInCol; ++pdrow )
+      {
+        for ( unsigned int pdcol = 0; pdcol <= LHCb::RichSmartID32::HPD::MaxPDCol; ++pdcol )
+        {
+          for ( unsigned int pixrow = 0; pixrow <= LHCb::RichSmartID32::HPD::MaxPixelRow; ++pixrow )
+          {
+            for ( unsigned int pixcol = 0; pixcol <= LHCb::RichSmartID32::HPD::MaxPixelCol; ++pixcol )
+            {
+              for ( unsigned int subpix = 0; subpix <= LHCb::RichSmartID32::HPD::MaxPixelSubRow; ++subpix )
+              {
+
+                // Make a 32 bit ID
+                const LHCb::RichSmartID32 id32( rich,panel,
+                                                pdrow,pdcol,
+                                                pixrow,pixcol,subpix,
+                                                LHCb::RichSmartID32::HPDID );
+                // make a 64 bit version from the 32 bit version
+                const LHCb::RichSmartID id64( id32 );
+                // Check values
+                if ( id32.rich()        != id64.rich()        ||
+                     id32.panel()       != id64.panel()       ||
+                     id32.pdNumInCol()  != id64.pdNumInCol()  ||
+                     id32.pdCol()       != id64.pdCol()       ||
+                     id32.pixelRow()    != id64.pixelRow()    ||
+                     id32.pixelCol()    != id64.pixelCol()    ||
+                     id32.pixelSubRow() != id64.pixelSubRow() )
+                {
+                  cerr << "Problem with RichSmartID 32<->64 bit comparison :" << std::endl;
+                  cerr << "  32 bit : " << id32 << endl;
+                  cerr << "  64 bit : " << id64 << endl;
+                  OK = false;
+                }
+
+              }
+            }
+          }
+        }
+      }
+    }
+  }
 
   for ( unsigned int irich = 0; irich <= LHCb::RichSmartID::HPD::MaxRich; ++irich )
   {

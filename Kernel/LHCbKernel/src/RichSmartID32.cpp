@@ -1,8 +1,8 @@
 
 //-----------------------------------------------------------------------------
-/** @file RichSmartID.cpp
+/** @file RichSmartID32.cpp
  *
- *  Implementation file for RICH Channel ID class : RichSmartID
+ *  Implementation file for RICH Channel ID class : RichSmartID32
  *
  *  @author  Chris Jones  Christopher.Rob.Jones@cern.ch
  *  @date    2005-01-06
@@ -20,14 +20,19 @@
 // Gaudi
 #include "GaudiKernel/GaudiException.h"
 
-LHCb::RichSmartID::RichSmartID( const RichSmartID32& id ) : m_key(0) 
+LHCb::RichSmartID32::RichSmartID32( const RichSmartID& id ) : m_key(0) 
 {
-  if      ( id.idType() == RichSmartID32::HPDID   ) 
+  if      ( id.idType() == RichSmartID::HPDID   ) 
   {
     setIDType(HPDID);  
     if ( id.pixelSubRowIsSet() ) { setPixelSubRow( id.pixelSubRow() ); }
   }
-  else if ( id.idType() == RichSmartID32::MaPMTID ) { setIDType(MaPMTID); }
+  else if ( id.idType() == RichSmartID::MaPMTID ) { setIDType(MaPMTID); }
+  else
+  {
+    throw GaudiException ( "Only HPDs or MaPMTs supported by 32bit version",
+                           "*RichSmartID32*", StatusCode::FAILURE );
+  }
   if ( id.richIsSet()        ) { setRich ( id.rich()  ); }
   if ( id.panelIsSet()       ) { setPanel( id.panel() ); }
   if ( id.pdIsSet()          ) { setPD( id.pdCol(), id.pdNumInCol() ); }
@@ -35,14 +40,14 @@ LHCb::RichSmartID::RichSmartID( const RichSmartID32& id ) : m_key(0)
   if ( id.pixelColIsSet()    ) { setPixelCol( id.pixelCol() ); }
 }
 
-std::ostream& LHCb::RichSmartID::dumpBits(std::ostream& s) const
+std::ostream& LHCb::RichSmartID32::dumpBits(std::ostream& s) const
 {
   for ( auto iCol = 0u; iCol < NBits; ++iCol ) { s << isBitOn( iCol ); }
   return s;
 }
 
-std::ostream& LHCb::RichSmartID::fillStream( std::ostream& s, 
-                                             const bool dumpSmartIDBits ) const
+std::ostream& LHCb::RichSmartID32::fillStream( std::ostream& s,
+                                               const bool dumpSmartIDBits ) const
 {
   s << "{";
 
@@ -50,8 +55,8 @@ std::ostream& LHCb::RichSmartID::fillStream( std::ostream& s,
   if ( dumpSmartIDBits ) { s << " "; dumpBits(s); }
 
   // Type
-  s << ( idType() == HPDID   ? " HPD"   : 
-         idType() == MaPMTID ? " MaPMT" : 
+  s << ( idType() == HPDID   ? " HPD"   :
+         idType() == MaPMTID ? " MaPMT" :
          "UndefinedPD" );
 
   // Is this smart ID valid
@@ -90,7 +95,7 @@ std::ostream& LHCb::RichSmartID::fillStream( std::ostream& s,
   else
   {
     // This SmartID has no valid bits set. This is bad ...
-    s << " WARNING Invalid RichSmartID";
+    s << " WARNING Invalid RichSmartID32";
   }
 
   // end
@@ -99,23 +104,23 @@ std::ostream& LHCb::RichSmartID::fillStream( std::ostream& s,
   return s;
 }
 
-void LHCb::RichSmartID::rangeError(const DataType value,
-                                   const DataType maxValue,
-                                   const std::string& message) const
+void LHCb::RichSmartID32::rangeError(const DataType value,
+                                     const DataType maxValue,
+                                     const std::string& message) const
 {
   std::ostringstream mess;
   mess << message << " value " << value << " exceeds field maximum " << maxValue;
-  throw GaudiException ( mess.str(), "*RichSmartID*", StatusCode::FAILURE );
+  throw GaudiException ( mess.str(), "*RichSmartID32*", StatusCode::FAILURE );
 }
 
-std::string LHCb::RichSmartID::toString() const
+std::string LHCb::RichSmartID32::toString() const
 {
   std::ostringstream text;
   text << *this;
   return text.str();
 }
 
-void LHCb::RichSmartID::setPixelSubRow( const DataType pixelSubRow )
+void LHCb::RichSmartID32::setPixelSubRow( const DataType pixelSubRow )
 {
   if ( HPDID == idType() )
   {
@@ -128,6 +133,7 @@ void LHCb::RichSmartID::setPixelSubRow( const DataType pixelSubRow )
   {
     // MaPMTs do not have sub-pixel field...
     throw GaudiException ( "MaPMTs cannot have their sub-pixel field set",
-                           "*RichSmartID*", StatusCode::FAILURE );
+                           "*RichSmartID32*", StatusCode::FAILURE );
   }
 }
+

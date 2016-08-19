@@ -85,6 +85,12 @@
   <class name="LHCb::RichSmartID::MaPMT"/>
   <enum  name="LHCb::RichSmartID::IDType"/>
 
+  <class name="LHCb::RichSmartID32"/>
+  <class name="LHCb::RichSmartID32::Vector"/>
+  <class name="LHCb::RichSmartID32::HPD"/>
+  <class name="LHCb::RichSmartID32::MaPMT"/>
+  <enum  name="LHCb::RichSmartID32::IDType"/>
+
 <!-- Counters in TES -->
 
   <class name = "Gaudi::Counter"  id = "00000096-0000-0000-0000-000000000000" />

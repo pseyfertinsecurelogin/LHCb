@@ -23,6 +23,7 @@
 #include "Kernel/SiPositionInfo.h"
 #include "Kernel/PixelPositionInfo.h"
 #include "Kernel/RichSmartID.h"
+#include "Kernel/RichSmartID32.h"
 #include "Kernel/HCCellID.h"
 
 #include "Kernel/IAlgorithmCorrelations.h"
@@ -98,6 +99,7 @@ namespace {
     //Rich::RichSideVector                                m_RICH_Side_V;
     Rich::Sides                                         m_RICH_Sides;
     LHCb::RichSmartID::Vector                           m_RICH_SmartID_V;
+    LHCb::RichSmartID32::Vector                         m_RICH_SmartID32_V;
     std::pair<std::string,double>                       m_pair_1 ;
     std::pair<std::string,StatEntity>                   m_pair_2 ;
     // end instantiations
