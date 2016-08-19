@@ -31,6 +31,9 @@
 #include "boost/format.hpp"
 #include "boost/lexical_cast.hpp"
 
+// 32 bit RichSmartID
+#include "Kernel/RichSmartID32.h"
+
 //=============================================================================
 
 const CLID CLID_DERichSystem = 12005;  // User defined
