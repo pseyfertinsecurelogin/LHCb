@@ -9,6 +9,9 @@
  */
 //=============================================================================
 
+// STL
+#include <algorithm>
+
 // Gaudi
 #include "GaudiKernel/SmartDataPtr.h"
 #include "GaudiKernel/GaudiException.h"
@@ -339,12 +342,13 @@ StatusCode DeRichSystem::fillMaps( const Rich::DetectorType rich )
     for ( const auto inpd : inactsHuman )
     {
       const LHCb::RichSmartID ID( Rich::DAQ::HPDIdentifier(inpd).smartID() );
-      debug() << "Inactive SmartID " << ID << endmsg;
+      debug() << "Inactive SmartID " << inpd << " : " << ID << endmsg;
       if ( ID.isValid() )
       {
         inacts.push_back( ID );
-        if ( std::find( softIDs.begin(), softIDs.end(),
-                        (LHCb::RichSmartID::KeyType)ID ) == softIDs.end() )
+        if ( !std::any_of( softIDs.begin(), softIDs.end(),
+                           [&ID]( const auto & sID )
+                           { return ID == LHCb::RichSmartID(LHCb::RichSmartID32(sID)); } ) )
           warning() << "Inactive SmartID in list of Active IDs : " << inpd << endmsg;
       }
       else
