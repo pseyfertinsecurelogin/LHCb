@@ -572,7 +572,7 @@ DeRichSystem::hardwareID( const LHCb::RichSmartID& smartID ) const
   {
     std::ostringstream mess;
     mess << "Unknown PD RichSmartID "
-         << (LHCb::RichSmartID::KeyType)smartID.pdID() << " " << smartID.pdID();
+         << smartID.pdID().key() << " " << smartID.pdID();
     throw GaudiException( mess.str(),
                           "DeRichSystem::hardwareID",
                           StatusCode::FAILURE );
