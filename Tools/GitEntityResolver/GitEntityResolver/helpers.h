@@ -1,8 +1,11 @@
 #ifndef GIT_ENTITY_RESOLVER_HELPERS_H
 #define GIT_ENTITY_RESOLVER_HELPERS_H
 
+#include <algorithm>
 #include <boost/filesystem.hpp>
 #include <git2.h>
+#include <string>
+#include <vector>
 
 namespace std
 {
@@ -25,6 +28,7 @@ namespace Git
   {
     bool is_dir( const std::string& path ) { return boost::filesystem::is_directory( path ); }
     bool is_dir( const git_object_ptr& obj ) { return git_object_type( obj.get() ) == GIT_OBJ_TREE; }
+    bool is_dir( const git_tree_entry* te ) { return git_tree_entry_type( te ) == GIT_OBJ_TREE; }
   }
 }
 #endif // GIT_ENTITY_RESOLVER_HELPERS_H

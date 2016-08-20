@@ -4,5 +4,6 @@
   <catalog name="dd">
     <conditionref href="values.xml#TestCondition"/>
     <conditionref href="changing.xml#Changing"/>
+    <catalogref href="Direct"/>
   </catalog>
 </DDDB>

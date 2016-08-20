@@ -107,10 +107,14 @@ private:
   {
     using Git::Helpers::is_dir;
     if ( is_dir( obj ) ) {
-      auto info   = i_getIOVInfo( url );
-      auto result = i_open( url + "/" + info.key );
-      result.second.cut( info );
-      return result;
+      auto info = i_getIOVInfo( url );
+      if ( !info.key.empty() ) {
+        auto result = i_open( url + "/" + info.key );
+        result.second.cut( info );
+        return result;
+      } else {
+        return std::make_pair( i_makeIStream( i_listdir( obj, url ) ), IOVInfo{} );
+      }
     } else {
       return std::make_pair( i_makeIStream( obj ), IOVInfo{} );
     }
@@ -126,8 +130,21 @@ private:
   /// for a given URL, retrieve the payload key to use for the current event time.
   IOVInfo i_getIOVInfo( const std::string& url );
 
-  /// Return a string containing the data at a given path in the repository.
+  /// Return the object containing the data at a given path in the repository.
   git_object_ptr i_getData( boost::string_ref url ) const;
+
+  struct dir_content {
+    std::string root;
+    std::vector<std::string> dirs;
+    std::vector<std::string> files;
+  };
+  /// helper to get the list of entries in a directory divided in directories and files
+  dir_content i_listdir( const std::string& path, const std::string& url ) const;
+  /// helper to get the list of entries in a directory divided in directories and files
+  dir_content i_listdir( const git_object_ptr& obj, const std::string& url ) const;
+
+  /// check if a url exists in the current repository
+  bool i_exists( const std::string& url ) const;
 
   git_repository_ptr m_repository;
 

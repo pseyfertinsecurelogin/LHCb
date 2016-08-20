@@ -89,6 +89,46 @@ namespace
     const XMLByte* m_buff = nullptr;
     XMLSize_t m_size      = 0;
   };
+
+  /// helper to extract the file name from a full path
+  boost::string_ref basename( boost::string_ref path )
+  {
+    // note: if '/' is not found, we get npos and npos + 1 is 0
+    return path.substr( path.rfind( '/' ) + 1 );
+  }
+
+  // note: copied from DetCond/src/component/CondDBCommon.cpp
+  std::string generateXMLCatalog( const std::string& root, const std::vector<std::string>& dirs,
+                                  const std::vector<std::string>& files )
+  {
+    std::ostringstream xml; // buffer for the XML
+
+    auto name = basename( root );
+    // XML header, root element and catalog initial tag
+    xml << "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>"
+        << "<!DOCTYPE DDDB SYSTEM \"git:/DTD/structure.dtd\">"
+        << "<DDDB><catalog name=\"" << name << "\">";
+
+    // sub-folders are considered as container of conditions
+    for ( boost::string_ref f : files ) {
+      f = basename( f );
+      // Ignore folders with the .xml extension.
+      // We never used .xml for Online conditions and after the Hlt1/Hlt2 split
+      // we need to avoid automatic mapping for the .xml files.
+      if ( !boost::string_ref{f}.ends_with( ".xml" ) ) {
+        xml << "<conditionref href=\"" << name << '/' << f << "\"/>";
+      }
+    }
+    // sub-foldersets are considered as catalogs
+    for ( boost::string_ref f : dirs ) {
+      f = basename( f );
+      xml << "<catalogref href=\"" << name << '/' << f << "\"/>";
+    }
+    // catalog and root element final tag
+    xml << "</catalog></DDDB>";
+
+    return xml.str();
+  }
 }
 
 std::ostream& operator<<( std::ostream& s, const GitEntityResolver::IOVInfo& info )
@@ -219,26 +259,31 @@ GitEntityResolver::IOVInfo GitEntityResolver::i_getIOVInfo( const std::string& u
   if ( UNLIKELY( !m_detDataSvc ) ) {
     m_detDataSvc = service<IDetDataSvc>( m_detDataSvcName );
   }
-  auto data              = open( url + "/IOVs" );
-  std::int_fast64_t time = m_detDataSvc->eventTime().ns();
-  DEBUG_MSG << "getting payload key for " << url << " at " << time << endmsg;
+  const std::string iovs_url = url + "/IOVs";
+  if ( i_exists( iovs_url ) ) {
+    auto data              = i_open( iovs_url ).first;
+    std::int_fast64_t time = m_detDataSvc->eventTime().ns();
+    DEBUG_MSG << "getting payload key for " << url << " at " << time << endmsg;
 
-  std::string line;
-  std::int_fast64_t current = 0, since = 0, until = Gaudi::Time::max().ns();
-  std::string key;
-  while ( std::getline( *data, line ) ) {
-    std::istringstream is{line};
-    is >> current;
-    if ( current > time ) {
-      until = current; // what we read is the "until" for the previous key
-      break;           // and we need to use the previous key
+    std::string line;
+    std::int_fast64_t current = 0, since = 0, until = Gaudi::Time::max().ns();
+    std::string key;
+    while ( std::getline( *data, line ) ) {
+      std::istringstream is{line};
+      is >> current;
+      if ( current > time ) {
+        until = current; // what we read is the "until" for the previous key
+        break;           // and we need to use the previous key
+      }
+      is >> key;
+      since = current; // the time we read is the "since" for the read key
     }
-    is >> key;
-    since = current; // the time we read is the "since" for the read key
+    IOVInfo info{key, since, until};
+    DEBUG_MSG << "got " << info << endmsg;
+    return info;
+  } else {
+    return {};
   }
-  IOVInfo info{key, since, until};
-  DEBUG_MSG << "got " << info << endmsg;
-  return info;
 }
 
 template <>
@@ -256,6 +301,13 @@ GitEntityResolver::open_result_t GitEntityResolver::i_makeIStream<git_object_ptr
   return open_result_t( new std::istringstream( str ) );
 }
 
+template <>
+GitEntityResolver::open_result_t
+GitEntityResolver::i_makeIStream<GitEntityResolver::dir_content>( const GitEntityResolver::dir_content& dirlist ) const
+{
+  return open_result_t( new std::istringstream( generateXMLCatalog( dirlist.root, dirlist.dirs, dirlist.files ) ) );
+}
+
 std::pair<GitEntityResolver::open_result_t, GitEntityResolver::IOVInfo>
 GitEntityResolver::i_open( const std::string& url )
 {
@@ -267,6 +319,21 @@ GitEntityResolver::i_open( const std::string& url )
   }
   return UNLIKELY( m_useFiles ) ? i_open( m_pathToRepository.value() + "/" + path.to_string(), url )
                                 : i_open( i_getData( path ), url );
+}
+
+bool GitEntityResolver::i_exists( const std::string& url ) const
+{
+  bool result = true;
+  auto path   = strip_prefix( url );
+  if ( UNLIKELY( m_useFiles ) )
+    result = boost::filesystem::exists( m_pathToRepository.value() + "/" + path.to_string() );
+  else {
+    git_object* tmp = nullptr;
+    git_revparse_single( &tmp, m_repository.get(), ( m_commit.value() + ":" + normalize( path.to_string() ) ).c_str() );
+    result = tmp;
+    git_object_free( tmp );
+  };
+  return result;
 }
 
 xercesc::InputSource* GitEntityResolver::resolveEntity( const XMLCh* const, const XMLCh* const systemId )
@@ -305,4 +372,38 @@ xercesc::InputSource* GitEntityResolver::resolveEntity( const XMLCh* const, cons
 void GitEntityResolver::defaultTags( std::vector<LHCb::CondDBNameTagPair>& tags ) const
 {
   tags.emplace_back( m_pathToRepository, m_useFiles ? std::string{"<files>"} : m_commit.value() );
+}
+
+GitEntityResolver::dir_content GitEntityResolver::i_listdir( const std::string& path, const std::string& url ) const
+{
+  using boost::filesystem::directory_iterator;
+  using boost::filesystem::directory_entry;
+  using boost::filesystem::is_directory;
+  using boost::filesystem::exists;
+  dir_content entries;
+  entries.root = url;
+  std::for_each( directory_iterator( path ), directory_iterator(), [&entries]( const directory_entry& d ) {
+    ( ( is_directory( d.status() ) && !exists( d.path() / "IOVs" ) ) ? entries.dirs : entries.files )
+        .emplace_back( d.path().generic_string() );
+  } );
+  return entries;
+}
+
+GitEntityResolver::dir_content GitEntityResolver::i_listdir( const git_object_ptr& obj, const std::string& url ) const
+{
+  dir_content entries;
+  entries.root             = url;
+  const git_tree* tree     = reinterpret_cast<const git_tree*>( obj.get() );
+  std::size_t max_i        = git_tree_entrycount( tree );
+  const git_tree_entry* te = nullptr;
+  std::string te_url;
+
+  for ( std::size_t i = 0; i < max_i; ++i ) {
+    te     = git_tree_entry_byindex( tree, i );
+    te_url = url + "/" + git_tree_entry_name( te );
+    //
+    ( ( Git::Helpers::is_dir( te ) && !i_exists( te_url + "/IOVs" ) ) ? entries.dirs : entries.files )
+        .emplace_back( std::move( te_url ) );
+  }
+  return entries;
 }
