@@ -455,9 +455,7 @@ inline const Rich::DAQ::HPDHardwareIDs& DeRichSystem::allPDHardwareIDs() const
 inline bool DeRichSystem::pdIsActive( const LHCb::RichSmartID& id ) const
 {
   const auto & c = m_inactivePDSmartIDs;
-  const bool a = ( c.empty() || std::find(c.begin(),c.end(),id.pdID()) == c.end() );
-  info() << id << " Active = " << a << endmsg;
-  return a;
+  return ( c.empty() || std::find(c.begin(),c.end(),id.pdID()) == c.end() );
 }
 
 //=========================================================================
@@ -466,9 +464,7 @@ inline bool DeRichSystem::pdIsActive( const LHCb::RichSmartID& id ) const
 inline bool DeRichSystem::pdIsActive( const Rich::DAQ::HPDHardwareID& id ) const
 {
   const auto & c = m_inactivePDHardIDs;
-  const bool a = ( c.empty() || std::find(c.begin(),c.end(),id) == c.end() );
-  info() << id << " Active = " << a << endmsg;
-  return a;
+  return ( c.empty() || std::find(c.begin(),c.end(),id) == c.end() );
 }
 
 //=========================================================================
