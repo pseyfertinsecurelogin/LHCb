@@ -69,14 +69,8 @@ namespace LHCb
     /// implicit conversion to unsigned int
     inline constexpr operator uint32_t() const noexcept { return key(); }
 
-    /// implicit conversion to unsigned long
-    //inline constexpr operator uint64_t() const noexcept { return static_cast<uint64_t>(key()); }
-
     /// implicit conversion to signed int
     inline           operator int32_t()  const noexcept { return as_int(); }
-
-    /// implicit conversion to signed long
-    //inline           operator int64_t()  const noexcept { return static_cast<int64_t>(as_int()); }
 
     /// Set the bit-packed internal data word
     inline void setKey( const LHCb::RichSmartID32::KeyType value ) noexcept { m_key = value; }
@@ -329,27 +323,21 @@ namespace LHCb
     explicit constexpr RichSmartID32( const LHCb::RichSmartID32::KeyType key ) noexcept
       : m_key( key ) { }
 
-    /// Constructor from unsigned 64 bit int
-    //explicit constexpr RichSmartID32( const uint64_t key ) noexcept
-    //  : m_key( static_cast<LHCb::RichSmartID32::KeyType>( key & 0x00000000FFFFFFFF ) ) { }
-
     /// Constructor from signed 32 bit int type
     explicit           RichSmartID32( const int32_t key ) noexcept
-      : m_key( reinterpret_cast<const LHCb::RichSmartID32::KeyType&>(key) ) { }
-
-    /// Constructor from signed 64 bit int
-    //explicit constexpr RichSmartID32( const int64_t key ) noexcept
-    //  : m_key( static_cast<LHCb::RichSmartID32::KeyType>( key & 0x00000000FFFFFFFF ) ) { }
+      : m_key( reinterpret_cast<const RichSmartID32::KeyType&>(key) ) { }
 
     /// Constructor from a 64 bit RichSmartID, for backwards compatibility.
     explicit           RichSmartID32( const RichSmartID& id );
 
     /// Constructor from an unsigned 64 bit int.
-    explicit           RichSmartID32( const uint64_t id );
-
+    explicit           RichSmartID32( const uint64_t key )
+      : m_key( static_cast<RichSmartID32::KeyType>( key & 0x00000000FFFFFFFF ) ) { }
+    
     /// Constructor from a signed 64 bit int.
-    explicit           RichSmartID32( const int64_t id );
-
+    explicit           RichSmartID32( const int64_t key )
+      : m_key( static_cast<RichSmartID32::KeyType>( key & 0x00000000FFFFFFFF ) ) { }
+    
     /// Pixel level constructor including sub-pixel information
     RichSmartID32( const Rich::DetectorType rich,
                  const Rich::Side panel,

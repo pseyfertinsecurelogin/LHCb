@@ -22,7 +22,7 @@
 
 LHCb::RichSmartID32::RichSmartID32( const RichSmartID& id ) : m_key(0) 
 {
-  if      ( id.idType() == RichSmartID::HPDID   ) 
+  if ( id.idType() == RichSmartID::HPDID ) 
   {
     setIDType(HPDID);  
     if ( id.pixelSubRowIsSet() ) { setPixelSubRow( id.pixelSubRow() ); }
@@ -33,18 +33,12 @@ LHCb::RichSmartID32::RichSmartID32( const RichSmartID& id ) : m_key(0)
     throw GaudiException ( "Only HPDs or MaPMTs supported by 32bit version",
                            "*RichSmartID32*", StatusCode::FAILURE );
   }
-  if ( id.richIsSet()        ) { setRich ( id.rich()  ); }
-  if ( id.panelIsSet()       ) { setPanel( id.panel() ); }
-  if ( id.pdIsSet()          ) { setPD( id.pdCol(), id.pdNumInCol() ); }
-  if ( id.pixelRowIsSet()    ) { setPixelRow( id.pixelRow() ); }
-  if ( id.pixelColIsSet()    ) { setPixelCol( id.pixelCol() ); }
+  if ( id.richIsSet()     ) { setRich ( id.rich()  ); }
+  if ( id.panelIsSet()    ) { setPanel( id.panel() ); }
+  if ( id.pdIsSet()       ) { setPD( id.pdCol(), id.pdNumInCol() ); }
+  if ( id.pixelRowIsSet() ) { setPixelRow( id.pixelRow() ); }
+  if ( id.pixelColIsSet() ) { setPixelCol( id.pixelCol() ); }
 }
-
-LHCb::RichSmartID32::RichSmartID32( const uint64_t id )
-  : LHCb::RichSmartID32( LHCb::RichSmartID(id) ) { }
-
-LHCb::RichSmartID32::RichSmartID32( const int64_t id )
-  : LHCb::RichSmartID32( LHCb::RichSmartID(id) ) { }
 
 std::ostream& LHCb::RichSmartID32::dumpBits(std::ostream& s) const
 {

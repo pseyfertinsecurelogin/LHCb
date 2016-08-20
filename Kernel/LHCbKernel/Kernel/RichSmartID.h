@@ -328,16 +328,16 @@ namespace LHCb
 
     /// Constructor from signed 64 bit int
     explicit           RichSmartID( const int64_t key ) noexcept
-      : m_key( reinterpret_cast<const LHCb::RichSmartID::KeyType&>(key) ) { }
+      : m_key( reinterpret_cast<const RichSmartID::KeyType&>(key) ) { }
 
     /// Constructor from a 32 bit RichSmartID, for backwards compatibility.
     explicit           RichSmartID( const RichSmartID32& id );
 
     /// Constructor from an unsigned 32 bit int.
-    explicit           RichSmartID( const uint32_t id );
+    explicit           RichSmartID( const uint32_t key );
 
     /// Constructor from a signed 32 bit int.
-    explicit           RichSmartID( const int32_t id );
+    explicit           RichSmartID( const int32_t key );
     
     /// Pixel level constructor including sub-pixel information
     RichSmartID( const Rich::DetectorType rich,

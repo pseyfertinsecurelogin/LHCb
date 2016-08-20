@@ -22,25 +22,33 @@
 
 LHCb::RichSmartID::RichSmartID( const RichSmartID32& id ) : m_key(0) 
 {
-  if      ( id.idType() == RichSmartID32::HPDID   ) 
+  if ( id.idType() == RichSmartID32::HPDID ) 
   {
     setIDType(HPDID);  
     if ( id.pixelSubRowIsSet() ) { setPixelSubRow( id.pixelSubRow() ); }
   }
   else if ( id.idType() == RichSmartID32::MaPMTID ) { setIDType(MaPMTID); }
-  if ( id.richIsSet()        ) { setRich ( id.rich()  ); }
-  if ( id.panelIsSet()       ) { setPanel( id.panel() ); }
-  if ( id.pdIsSet()          ) { setPD( id.pdCol(), id.pdNumInCol() ); }
-  if ( id.pixelRowIsSet()    ) { setPixelRow( id.pixelRow() ); }
-  if ( id.pixelColIsSet()    ) { setPixelCol( id.pixelCol() ); }
+  if ( id.richIsSet()     ) { setRich ( id.rich()  ); }
+  if ( id.panelIsSet()    ) { setPanel( id.panel() ); }
+  if ( id.pdIsSet()       ) { setPD( id.pdCol(), id.pdNumInCol() ); }
+  if ( id.pixelRowIsSet() ) { setPixelRow( id.pixelRow() ); }
+  if ( id.pixelColIsSet() ) { setPixelCol( id.pixelCol() ); }
 }
 
 
-LHCb::RichSmartID::RichSmartID( const uint32_t id )
-  : LHCb::RichSmartID( LHCb::RichSmartID32(id) ) { }
+LHCb::RichSmartID::RichSmartID( const uint32_t key )
+  : LHCb::RichSmartID( LHCb::RichSmartID32(key) ) 
+{
+  throw GaudiException ( "unsigned 32 bit constructor called",
+                         "*RichSmartID*", StatusCode::FAILURE );
+}
 
-LHCb::RichSmartID::RichSmartID( const int32_t id )
-  : LHCb::RichSmartID( LHCb::RichSmartID32(id) ) { }
+LHCb::RichSmartID::RichSmartID( const int32_t key )
+  : LHCb::RichSmartID( LHCb::RichSmartID32(key) ) 
+{
+  throw GaudiException ( "signed 32 bit constructor called",
+                         "*RichSmartID*", StatusCode::FAILURE );
+}
 
 std::ostream& LHCb::RichSmartID::dumpBits(std::ostream& s) const
 {
