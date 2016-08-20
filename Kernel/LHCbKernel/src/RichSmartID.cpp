@@ -35,20 +35,11 @@ LHCb::RichSmartID::RichSmartID( const RichSmartID32& id ) : m_key(0)
   if ( id.pixelColIsSet() ) { setPixelCol( id.pixelCol() ); }
 }
 
-
 LHCb::RichSmartID::RichSmartID( const uint32_t key )
-  : LHCb::RichSmartID( LHCb::RichSmartID32(key) ) 
-{
-  throw GaudiException ( "unsigned 32 bit constructor called",
-                         "*RichSmartID*", StatusCode::FAILURE );
-}
+  : LHCb::RichSmartID( LHCb::RichSmartID32(key) ) { }
 
 LHCb::RichSmartID::RichSmartID( const int32_t key )
-  : LHCb::RichSmartID( LHCb::RichSmartID32(key) ) 
-{
-  throw GaudiException ( "signed 32 bit constructor called",
-                         "*RichSmartID*", StatusCode::FAILURE );
-}
+  : LHCb::RichSmartID( LHCb::RichSmartID32(key) ) { }
 
 std::ostream& LHCb::RichSmartID::dumpBits(std::ostream& s) const
 {
