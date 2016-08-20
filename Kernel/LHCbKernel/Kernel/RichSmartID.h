@@ -70,7 +70,7 @@ namespace LHCb
     inline constexpr operator uint64_t() const noexcept { return key(); }
 
     /// implicit conversion to signed long
-    inline           operator int64_t()  const noexcept { return static_cast<int64_t>(as_int()); }
+    inline           operator int64_t()  const noexcept { return as_int(); }
 
     /// Set the bit-packed internal data word
     inline void setKey( const LHCb::RichSmartID::KeyType value ) noexcept { m_key = value; }
@@ -332,6 +332,12 @@ namespace LHCb
 
     /// Constructor from a 32 bit RichSmartID, for backwards compatibility.
     explicit           RichSmartID( const RichSmartID32& id );
+
+    /// Constructor from an unsigned 32 bit int.
+    explicit           RichSmartID( const uint32_t id );
+
+    /// Constructor from a signed 32 bit int.
+    explicit           RichSmartID( const int32_t id );
     
     /// Pixel level constructor including sub-pixel information
     RichSmartID( const Rich::DetectorType rich,

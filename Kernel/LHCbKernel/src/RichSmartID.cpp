@@ -35,6 +35,13 @@ LHCb::RichSmartID::RichSmartID( const RichSmartID32& id ) : m_key(0)
   if ( id.pixelColIsSet()    ) { setPixelCol( id.pixelCol() ); }
 }
 
+
+LHCb::RichSmartID::RichSmartID( const uint32_t id )
+  : LHCb::RichSmartID( LHCb::RichSmartID32(id) ) { }
+
+LHCb::RichSmartID::RichSmartID( const int32_t id )
+  : LHCb::RichSmartID( LHCb::RichSmartID32(id) ) { }
+
 std::ostream& LHCb::RichSmartID::dumpBits(std::ostream& s) const
 {
   for ( auto iCol = 0u; iCol < NBits; ++iCol ) { s << isBitOn( iCol ); }
