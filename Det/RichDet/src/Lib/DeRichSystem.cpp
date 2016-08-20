@@ -349,7 +349,7 @@ StatusCode DeRichSystem::fillMaps( const Rich::DetectorType rich )
         if ( !std::any_of( softIDs.begin(), softIDs.end(),
                            [&ID]( const auto & sID )
                            { return ID == LHCb::RichSmartID(sID); } ) )
-          warning() << "Inactive SmartID in list of Active IDs : " << inpd << endmsg;
+        { warning() << "Inactive SmartID in list of Active IDs : " << inpd << endmsg; }
       }
       else
       {
@@ -445,8 +445,9 @@ StatusCode DeRichSystem::fillMaps( const Rich::DetectorType rich )
 
     // set up mappings etc.
 
-    auto & myID = ( inactivePDListInSmartIDs ? iSoft : iHard );
-    if ( std::find( inacts.begin(), inacts.end(), *myID ) == inacts.end() )
+    const auto myID = ( inactivePDListInSmartIDs ? 
+                        pdID.key() : LHCb::RichSmartID::KeyType(*iHard) );
+    if ( std::find( inacts.begin(), inacts.end(), myID ) == inacts.end() )
     {
       m_activePDSmartIDs.push_back ( pdID   );
       m_activePDHardIDs.push_back  ( hardID );
@@ -462,8 +463,8 @@ StatusCode DeRichSystem::fillMaps( const Rich::DetectorType rich )
       }
       else
       {
-        m_inactivePDHardIDs.push_back  ( hardID );
         m_inactivePDSmartIDs.push_back ( pdID   );
+        m_inactivePDHardIDs.push_back  ( hardID );
         if ( msgLevel(MSG::DEBUG) )
           debug() << "PD " << pdID << " hardID " << hardID << " is INACTIVE" << endmsg;
       }
@@ -489,7 +490,6 @@ StatusCode DeRichSystem::fillMaps( const Rich::DetectorType rich )
     m_l12smartids[L1ID].push_back( pdID );
     m_l12hardids[L1ID].push_back( hardID );
     const L1HardIDAndInput idAndInput(L1ID,L1IN);
-
     OK &= safeMapFill(idAndInput,hardID,m_L1HardIDAndInputToPDHardID);
     if ( std::find( m_l1IDs.rbegin(), m_l1IDs.rend(), L1ID ) == m_l1IDs.rend() )
     {
