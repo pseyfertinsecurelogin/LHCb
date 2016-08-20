@@ -46,7 +46,6 @@ void MCRichDigitSummaryPacker::unpack( const PackedDataVector & psums,
                                        DataVector       & sums ) const
 {
   const auto ver = psums.packingVersion();
-  parent().info() << "Packing version = " << (int)ver << endmsg;
   if ( isSupportedVer(ver) )
   {
     sums.reserve( psums.data().size() );
