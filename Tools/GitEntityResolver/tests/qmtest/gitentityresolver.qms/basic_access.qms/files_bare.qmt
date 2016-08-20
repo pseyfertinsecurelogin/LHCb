@@ -8,20 +8,8 @@
 </set></argument>
 <argument name="options"><text>
 from Gaudi.Configuration import *
-from Configurables import GitEntityResolver, DDDBConf, CondDB
-from Configurables import DetCondTest__TestConditionAlg as TestAlg
-
-import os
-
-GitEntityResolver(PathToRepository=os.environ['GIT_TEST_REPOSITORY'] + '-bare.git',
-                  OutputLevel=VERBOSE,
-                  Commit='')
-
-DDDBConf(DataType = "2016")
-CondDB(EnableRunStampCheck = False,
-       Tags={'DDDB': 'v1'})
-
-ApplicationMgr().TopAlg.append(TestAlg(Conditions=['/dd/TestCondition']))
+from GitTestOptions import setup
+setup(tag='v1', use_files=True, bare=True)
 </text></argument>
 <argument name="validator"><text>
 from subprocess import check_output
@@ -36,9 +24,9 @@ parameter = -123
 #countErrorLines()
 
 findReferenceBlock('''
-ToolSvc.GitEnti...  DEBUG opening Git repository '{repository}'
-ToolSvc.GitEnti...  DEBUG Initializing...
-ToolSvc.GitEnti...  ERROR cannot use files in a Git bare repository
+ToolSvc.GitDDDB     DEBUG opening Git repository '{repository}'
+ToolSvc.GitDDDB     DEBUG Initializing...
+ToolSvc.GitDDDB     ERROR cannot use files in a Git bare repository
 '''.format(repository=repository, commit_id=commit_id, tag=tag),
 id='GitEntityResolver.initialization')
 

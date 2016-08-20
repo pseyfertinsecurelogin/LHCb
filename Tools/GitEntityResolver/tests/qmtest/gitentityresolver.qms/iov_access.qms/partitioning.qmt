@@ -8,18 +8,10 @@
 </set></argument>
 <argument name="options"><text>
 from Gaudi.Configuration import *
-from Configurables import (GitEntityResolver, DDDBConf, CondDB,
-                           EventClockSvc, FakeEventTime)
-from Configurables import DetCondTest__TestConditionAlg as TestAlg
+from GitTestOptions import setup
+setup(tag='v1', conditions=['/dd/Changing'])
 
-import os
-
-GitEntityResolver(PathToRepository=os.environ['GIT_TEST_REPOSITORY'],
-                  OutputLevel=VERBOSE)
-
-DDDBConf(DataType = "2016")
-CondDB(EnableRunStampCheck = False,
-       Tags={'DDDB': 'v1'})
+from Configurables import EventClockSvc, FakeEventTime
 
 ecs = EventClockSvc()
 ecs.addTool(FakeEventTime, 'EventTimeDecoder')
@@ -27,7 +19,7 @@ ecs.addTool(FakeEventTime, 'EventTimeDecoder')
 ecs.EventTimeDecoder.StartTime = 1443744000000000000
 ecs.EventTimeDecoder.TimeStep = 15724800000000000
 
-ApplicationMgr(EvtMax=4).TopAlg.append(TestAlg(Conditions=['/dd/Changing']))
+ApplicationMgr(EvtMax=4)
 
 </text></argument>
 <argument name="validator"><text>
@@ -43,10 +35,10 @@ parameter = 0
 countErrorLines()
 
 findReferenceBlock('''
-ToolSvc.GitEnti...  DEBUG opening Git repository '{repository}'
-ToolSvc.GitEnti...  DEBUG Initializing...
-ToolSvc.GitEnti...  DEBUG commit '{tag}' corresponds to {commit_id}
-ToolSvc.GitEnti...  DEBUG Successfully initialized.
+ToolSvc.GitDDDB     DEBUG opening Git repository '{repository}'
+ToolSvc.GitDDDB     DEBUG Initializing...
+ToolSvc.GitDDDB     DEBUG commit '{tag}' corresponds to {commit_id}
+ToolSvc.GitDDDB     DEBUG Successfully initialized.
 '''.format(repository=repository, commit_id=commit_id, tag=tag),
 id='GitEntityResolver.initialization')
 
