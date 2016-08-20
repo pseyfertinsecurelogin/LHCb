@@ -46,6 +46,7 @@ void MCRichDigitSummaryPacker::unpack( const PackedDataVector & psums,
                                        DataVector       & sums ) const
 {
   const auto ver = psums.packingVersion();
+  parent().info() << "Packing version = " << (int)ver << endmsg;
   if ( isSupportedVer(ver) )
   {
     sums.reserve( psums.data().size() );
@@ -56,9 +57,9 @@ void MCRichDigitSummaryPacker::unpack( const PackedDataVector & psums,
       sums.add( sum );
       // Fill data from packed object
       sum->setHistory( LHCb::MCRichDigitHistoryCode(psum.history) );
-      sum->setRichSmartID( ver>1 ? 
-                           LHCb::RichSmartID(psum.richSmartID) :
-                           LHCb::RichSmartID(LHCb::RichSmartID32(psum.richSmartID)) );
+      sum->setRichSmartID( ver>1 ?
+                           LHCb::RichSmartID((int64_t)psum.richSmartID) :
+                           LHCb::RichSmartID((int32_t)psum.richSmartID) );
       if ( -1 != psum.mcParticle )
       {
         int hintID(0), key(0);

@@ -64,8 +64,8 @@ void MCRichHitPacker::unpack( const PackedDataVector & phits,
       hit->setEnergy       ( m_pack.energy(phit.energy)        );
       hit->setTimeOfFlight ( m_pack.time(phit.tof)             );
       hit->setSensDetID    ( ver>1 ? 
-                             LHCb::RichSmartID(phit.sensDetID) :
-                             LHCb::RichSmartID(LHCb::RichSmartID32(phit.sensDetID)) );
+                             LHCb::RichSmartID((int64_t)phit.sensDetID) :
+                             LHCb::RichSmartID((int32_t)phit.sensDetID) );
       hit->setHistoryCode  ( phit.history                      );
       if ( -1 != phit.mcParticle )
       {
