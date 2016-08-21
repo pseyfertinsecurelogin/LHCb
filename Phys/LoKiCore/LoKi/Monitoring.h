@@ -277,7 +277,7 @@ namespace LoKi
       /// the "main" function:
       LoKi::FunctorFromFunctor<TYPE,TYPE2> m_fun ; // the "main" function
       /// the histogram for monitoring
-      mutable AIDA::IHistogram1D*      m_histo ; // the histogram for monitoring
+      mutable AIDA::IHistogram1D*      m_histo = nullptr ; // the histogram for monitoring
       /// histogram description for lazy instantiation
       LoKi::Histo                      m_hdef  ; // histogram description
       // ======================================================================
@@ -291,18 +291,14 @@ namespace LoKi
       /// constructor from the function and the histogram
       Plot ( const LoKi::Functor<void,TYPE2>& fun   ,
              AIDA::IHistogram1D*              histo )
-        : LoKi::Functor<void,TYPE2>()
-        , m_fun     ( fun   )
+        : m_fun     ( fun   )
         , m_histo   ( histo )
-        , m_hdef    ()
       {}
       /// constructor from the function and the histogram
       Plot ( const LoKi::Functor<void,TYPE2>& fun   ,
              const LoKi::Histo&               hdef  )
         : LoKi::AuxFunBase ( std::tie ( fun , hdef ) )
-        , LoKi::Functor<void,TYPE2>()
         , m_fun     ( fun   )
-        , m_histo   ( 0     )
         , m_hdef    ( hdef  )
       {
         // try to load the histo
@@ -312,13 +308,9 @@ namespace LoKi
       /// constructor from the function and the histogram
       Plot ( AIDA::IHistogram1D*              histo ,
              const LoKi::Functor<void,TYPE2>& fun   )
-        : LoKi::Functor<void,TYPE2>()
-        , m_fun     ( fun   )
+        : m_fun     ( fun   )
         , m_histo   ( histo )
-        , m_hdef    ()
       {}
-      /// MANDATORY: virtual constructor
-      virtual ~Plot () { m_histo = 0 ; }
       /// MANDATORY: clone method ("virtual constructor")
       virtual  Plot* clone() const { return new Plot(*this); }
       /// MANDATORY: the only one essential method:

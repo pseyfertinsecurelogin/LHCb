@@ -60,26 +60,19 @@ namespace LoKi
       ( IDataProviderSvc*  svc   , 
         const std::string& path  )
         : LoKi::AuxFunBase ( std::tie ( path ) ) 
-        , Self   () 
         , m_svc  ( svc   ) 
         , m_path ( path  )
       {}
       /// constructor from the service and path in TES 
       Source 
       ( const std::string& path     , 
-        IDataProviderSvc*  svc  = 0 )
+        IDataProviderSvc*  svc  = nullptr )
         : LoKi::AuxFunBase ( std::tie ( path ) ) 
-        , Self() 
         , m_svc  ( svc   ) 
         , m_path ( path  )
       {}
       /// copy constructor
-      Source ( const Source& right ) 
-        : LoKi::AuxFunBase ( right ) 
-        , Self   ( right         ) 
-        , m_svc  ( right.m_svc   ) 
-        , m_path ( right.m_path  )
-      {}
+      Source ( const Source& right )  = default;
       /// MANDATORY: virtual desctrutor
       virtual ~Source() 
       { if ( this->m_svc() && !this->gaudi() ) { this->m_svc.reset() ; } }
@@ -90,8 +83,7 @@ namespace LoKi
         ( /* typename Self::argument */ ) const 
       {
         /// locate the service if needed:
-        if ( !m_svc ) 
-        {
+        if ( !m_svc ) {
           const LoKi::Services& svcs = LoKi::Services::instance() ;
           IDataProviderSvc* evtSvc = svcs.evtSvc() ;
           Assert ( 0 != evtSvc , "Could not extract EventDataService!" ) ;
