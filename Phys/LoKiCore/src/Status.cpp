@@ -30,9 +30,7 @@
 LoKi::Status::Check::Check
 ( const std::string& nickname ) 
   : LoKi::AuxFunBase ( std::tie ( nickname ) )
-  , LoKi::Functor<void,bool>()
   , m_nickname ( nickname ) 
-  , m_tool     () 
 {
   if ( gaudi() ) { getTool() ; }
 }

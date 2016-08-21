@@ -60,23 +60,18 @@
 // ============================================================================
 namespace LoKi
 {
+#ifndef _GEN_LOKI_VOIDPRIMITIVES
   // ==========================================================================
   /** @class TwoFunctors
    *  helper class to keep two functors of the same type
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date 2007-11-01
    */
-#ifdef _GEN_LOKI_VOIDPRIMITIVES
-  template <class TYPE2>
-  class TwoFunctors<void,TYPE2> final
-#else
   template <class TYPE,class TYPE2>
   class TwoFunctors final
-#endif
   {
   private:
     // ========================================================================
-    typedef_void_TYPE
     /// the actual type of underlying functor
     typedef LoKi::Functor<TYPE,TYPE2> functor ;
     /// argument type
@@ -93,11 +88,13 @@ namespace LoKi
   public:
     // ========================================================================
     /// evaluate the first functor
-    typename functor::result_type fun1
-    ( argument_a_unless_void ) const { return m_fun1.fun ( a_unless_void ) ; }
+    template <typename... Args>
+    typename functor::result_type fun1( Args&&... args ) const
+    { return m_fun1.fun ( std::forward<Args>(args)... ) ; }
     /// evaluate the first functor
-    typename functor::result_type fun2
-    ( argument_a_unless_void ) const { return m_fun2.fun ( a_unless_void ) ; }
+    template <typename... Args>
+    typename functor::result_type fun2( Args&&... args ) const
+    { return m_fun2.fun ( std::forward<Args>(args)... ) ; }
     // ========================================================================
   public:
     // ========================================================================
@@ -119,6 +116,7 @@ namespace LoKi
     LoKi::FunctorFromFunctor<TYPE,TYPE2> m_fun2 ;         // the second functor
     // ========================================================================
   } ;
+#endif
 
   // ==========================================================================
   /** @class Not
@@ -165,19 +163,18 @@ namespace LoKi
     /// constructor from the functor
     Not ( const Functor<TYPE,TYPE2>& fun )
       : LoKi::AuxFunBase ( std::tie ( fun ) )
-      , LoKi::Functor<TYPE,bool>()
       , m_fun ( fun )
     {}
     /// clone method (mandatory)
-    virtual  Not* clone() const { return new Not( *this ); }
+    Not* clone() const override { return new Not( *this ); }
     /// the only one essential method ("function")
-    virtual  result_type operator() ( argument_a_unless_void ) const
+    result_type operator() ( argument_a_unless_void ) const override
     {
       std::logical_not<TYPE2> lnot ;
       return lnot ( this->m_fun.fun ( a_unless_void ) ) ;
     }
     /// the basic printout method
-    virtual std::ostream& fillStream ( std::ostream& s ) const
+    std::ostream& fillStream ( std::ostream& s ) const override
     { return s << " (~"  << this->m_fun << ") " ; };
     // ========================================================================
   private:
@@ -237,7 +234,6 @@ namespace LoKi
     /// constructor from the functor
     Negate ( const LoKi::Functor<TYPE,TYPE2>& fun )
       : LoKi::AuxFunBase ( std::tie ( fun ) )
-      , LoKi::Functor<TYPE,TYPE2>()
       , m_fun ( fun )
     {}
     /// clone method (mandatory)
@@ -594,9 +590,7 @@ namespace LoKi
          {
          private:
             // ========================================================================
-#ifdef _GEN_LOKI_VOIDPRIMITIVES
-            typedef void TYPE;
-#endif
+            typedef_void_TYPE
             /// the constant type
             typedef typename LoKi::Constant<TYPE,TYPE2>::T2 T2 ;
             /// argument type
@@ -731,7 +725,7 @@ namespace LoKi
    }
 
   template<class TYPE, class TYPE2=double>
-  using Minus =  details::Combination<TYPE,TYPE2,Traits::Minus<TYPE2>>;
+  using Minus = details::Combination<TYPE,TYPE2,Traits::Minus<TYPE2>>;
 
   // ==========================================================================
   /** @class Divide
@@ -3212,9 +3206,10 @@ namespace LoKi
       , m_j    ( j   )
     {
       //
-      BOOST_STATIC_ASSERT( boost::integer_traits<unsigned long>::is_specialized
-                           && boost::integer_traits<unsigned long>::is_integral
-                           &&!boost::integer_traits<unsigned long>::is_signed ) ;
+      static_assert( boost::integer_traits<unsigned long>::is_specialized
+                  && boost::integer_traits<unsigned long>::is_integral
+                  &&!boost::integer_traits<unsigned long>::is_signed,
+                     "must have a unsigned integral type" );
       //
       this -> Assert ( j < (unsigned long) boost::integer_traits<unsigned long>::digits ,
                        "Invalid bit index" ) ;
@@ -3287,9 +3282,10 @@ namespace LoKi
       , m_j2  ( j2  )
     {
       //
-      BOOST_STATIC_ASSERT( boost::integer_traits<unsigned long>::is_specialized
-                           && boost::integer_traits<unsigned long>::is_integral
-                           &&!boost::integer_traits<unsigned long>::is_signed ) ;
+      static_assert( boost::integer_traits<unsigned long>::is_specialized
+                     && boost::integer_traits<unsigned long>::is_integral
+                     &&!boost::integer_traits<unsigned long>::is_signed,
+                     "must have a unsigned integral type" );
       //
       this -> Assert ( j1 <  (unsigned long) boost::integer_traits<unsigned long>::digits ,
                        "Invalid bit index-1" ) ;

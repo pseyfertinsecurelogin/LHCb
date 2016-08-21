@@ -1,4 +1,7 @@
 
+// STL
+#include <algorithm>
+
 #include "Event/MCParticle.h"
 #include "Event/StandardPacker.h"
 #include "Event/PackedMCParticle.h"
@@ -69,7 +72,7 @@ StatusCode PackMCParticle::execute() {
   for ( const LHCb::MCParticle * part : *parts )
   {
     out->mcParts().emplace_back( LHCb::PackedMCParticle() );
-    LHCb::PackedMCParticle& newPart = out->mcParts().back();
+    auto & newPart = out->mcParts().back();
 
     newPart.key   = part->key();
     newPart.px    = pack.energy( part->momentum().px() );
@@ -85,12 +88,11 @@ StatusCode PackMCParticle::execute() {
                              pack.reference64( out,
                                                part->originVertex()->parent(),
                                                part->originVertex()->key() ) );
-    for ( SmartRefVector<LHCb::MCVertex>::const_iterator itV = part->endVertices().begin();
-          part->endVertices().end() != itV; ++itV ) 
+    for ( const auto & V : part->endVertices() )
     {
       newPart.endVertices.push_back( 0==pVer ? 
-                                     pack.reference32( out, (*itV)->parent(), (*itV)->key() ) :
-                                     pack.reference64( out, (*itV)->parent(), (*itV)->key() ) );
+                                     pack.reference32( out, V->parent(), V->key() ) :
+                                     pack.reference64( out, V->parent(), V->key() ) );
     }
 
   }

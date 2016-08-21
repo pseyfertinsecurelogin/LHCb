@@ -1,4 +1,3 @@
-
 #ifndef LHCbKernel_RichSmartID_H
 #define LHCbKernel_RichSmartID_H 1
 

@@ -7,6 +7,8 @@
 ! 2016-08-19 - Chris Jones
  - Add support for 64 bit RichSmartIDs, with proper conversion from persisted
    32 bit RichSmartIDs.
+! 2016-08-17 - Chris Jones
+ - Add checks to MCParticle and MCVertex unpackers to filter out duplicates.
 
 ! 2016-07-15 - Chris Jones
  - Improve error messages from PackCluster.

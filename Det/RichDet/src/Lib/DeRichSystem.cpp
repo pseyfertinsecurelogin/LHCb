@@ -107,7 +107,7 @@ StatusCode DeRichSystem::initialize()
     if ( msgLevel(MSG::DEBUG) )
       debug() << "Registered:" << condition(detCondNames[i]).path() << endmsg;
 
-    if ( systemVersion() == 1)
+    if ( systemVersion() == 1 )
     {
       m_inactivePDConds[(Rich::DetectorType)i] = inactiveCondNames[i];
       updMgrSvc()->registerCondition( this,
