@@ -5,6 +5,9 @@
 !-----------------------------------------------------------------------------
 
 
+! 2016-08-22 - O. Deschamps
+  - reduce verbosity
+
 ! 2016-08-16 - O. Deschamps
   - improve counter switch
 

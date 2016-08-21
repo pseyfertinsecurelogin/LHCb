@@ -27,7 +27,7 @@ CaloReadoutTool::CaloReadoutTool( const std::string& type,
   , m_packed(false)
   , m_ok(false)
   , m_first(true)
-  , m_count(0)
+  , m_stat(false)
 {
   declareInterface<ICaloReadoutTool>(this);
 
@@ -35,6 +35,7 @@ CaloReadoutTool::CaloReadoutTool( const std::string& type,
   declareProperty( "PackedIsDefault", m_packedIsDefault = false);
   declareProperty( "DetectorSpecificHeader", m_extraHeader = false);
   declareProperty( "CleanWhenCorruption", m_cleanCorrupted = false);
+  declareProperty( "PrintStat", m_stat = false);
   m_getRaw = true;
   //new for decoders, initialize search path, and then call the base method
   m_rawEventLocations = {LHCb::RawEventLocation::Calo, LHCb::RawEventLocation::Default};
@@ -63,7 +64,6 @@ StatusCode CaloReadoutTool::initialize(){
 StatusCode CaloReadoutTool::finalize(){
   IIncidentSvc* inc = incSvc() ;
   if ( 0 != inc ) { inc -> removeListener  ( this ) ; }
-  if(m_count!=0)info() << "# getBanks access "<<m_count<<endmsg;
   return GaudiTool::finalize();
 }
 
