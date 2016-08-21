@@ -426,36 +426,9 @@ void LoKi::Algorithms::AnyPassed::getAlgorithms () const  // get the algorithm
 // constructor from the algorithm name
 // ============================================================================
 LoKi::Algorithms::AnyPassed::AnyPassed
-( const std::string& name1 ,
-  const std::string& name2 )
-  : AnyPassed( std::vector<std::string>{ name1, name2 } )
-{}
-// ============================================================================
-// constructor from the algorithm name
-// ============================================================================
-LoKi::Algorithms::AnyPassed::AnyPassed
-( const std::string& name1 ,
-  const std::string& name2 ,
-  const std::string& name3 )
-  : AnyPassed( std::vector<std::string>{ name1, name2, name3 } )
-{}
-// ============================================================================
-// constructor from the algorithm name
-// ============================================================================
-LoKi::Algorithms::AnyPassed::AnyPassed
-( const std::string& name1 ,
-  const std::string& name2 ,
-  const std::string& name3 ,
-  const std::string& name4 )
-  : AnyPassed( std::vector<std::string>{ name1, name2, name3, name4 } )
-{}
-// ============================================================================
-// constructor from the algorithm name
-// ============================================================================
-LoKi::Algorithms::AnyPassed::AnyPassed
-( const std::vector<std::string>& names )
+( std::vector<std::string> names )
   : LoKi::AuxFunBase ( std::tie ( names ) )
-  , m_names     ( names )
+  , m_names     ( std::move(names) )
 {
   if ( gaudi() ) { getAlgorithms() ; }
 }
@@ -572,41 +545,6 @@ LoKi::Algorithms::AllExecuted::operator() () const
 }
 // ============================================================================
 
-
-// ============================================================================
-// constructor from the algorithm name
-// ============================================================================
-LoKi::Algorithms::NumPassed::NumPassed
-( const std::string& name1 ,
-  const std::string& name2 )
-  : NumPassed( std::vector<std::string>{ name1, name2 } )
-{}
-// ============================================================================
-// constructor from the algorithm name
-// ============================================================================
-LoKi::Algorithms::NumPassed::NumPassed
-( const std::string& name1 ,
-  const std::string& name2 ,
-  const std::string& name3 )
-  : NumPassed( std::vector<std::string>{ name1, name2, name3 } )
-{}
-// ============================================================================
-// constructor from the algorithm name
-// ============================================================================
-LoKi::Algorithms::NumPassed::NumPassed
-( const std::string& name1 ,
-  const std::string& name2 ,
-  const std::string& name3 ,
-  const std::string& name4 )
-  : NumPassed( std::vector<std::string>{ name1 , name2 , name3 , name4 } )
-{}
-// ============================================================================
-// constructor from the algorithm name
-// ============================================================================
-LoKi::Algorithms::NumPassed::NumPassed
-( const std::vector<std::string>& name )
-  : LoKi::AuxFunBase ( std::tie ( name ) )
-  , m_fun  ( name ) {}
 // ============================================================================
 // MANDATORY: the only one essential method
 // ============================================================================
@@ -616,7 +554,7 @@ LoKi::Algorithms::NumPassed::operator() () const
   //
   if ( algNames().size() != algorithms().size() ) { getAlgorithms() ; }
   //
-  return std::count_if ( begin () , end() , FilterPassed() ) ;
+  return std::count_if( begin () , end() , FilterPassed() ) ;
 }
 // ============================================================================
 // MANDATORY: the only one essential method
