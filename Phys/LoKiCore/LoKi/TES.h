@@ -116,8 +116,6 @@ namespace LoKi
        */
       Exists ( const std::string& location            ,
                const bool         useRootInTes = true ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~Exists() ;
       /// MANDATORY: clone method ("virtual constructor")
       virtual  Exists* clone() const ;
       /// MANDATORY: the only one essential method
@@ -155,8 +153,6 @@ namespace LoKi
        */
       Contains ( const std::string& location            ,
                  const bool         useRootInTes = true ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~Contains () ;
       /// MANDATORY: clone method ("virtual constructor")
       virtual  Contains* clone() const ;
       /** MANDATORY: the only one essential method
@@ -233,8 +229,6 @@ namespace LoKi
        */
       Counter ( const std::string& location              ,
                 const std::string& counter               ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~Counter () ;
       /// MANDATORY: clone method ("virtual constructor")
       virtual  Counter* clone() const ;
       /** MANDATORY: the only one essential method

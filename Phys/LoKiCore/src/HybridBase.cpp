@@ -30,6 +30,7 @@
 #include "boost/algorithm/string/trim.hpp"
 #include "boost/algorithm/string/replace.hpp"
 #include "boost/algorithm/string/predicate.hpp"
+#include "boost/algorithm/string/erase.hpp"
 #include "boost/format.hpp"
 #include "boost/lexical_cast.hpp"
 // ============================================================================
@@ -256,7 +257,7 @@ StatusCode LoKi::Hybrid::Base::executeCode ( const std::string& pycode ) const
       Py_file_input  , globals  , locals ) ;
 
   bool ok = true ;
-  if ( 0 == result )
+  if ( !result )
   {
     ok = false ;
 
@@ -495,17 +496,14 @@ namespace
     // 
     // construct the file name 
     //  1) remove trailing .cpp
-    std::string::size_type p = namebase.find(".cpp") ;
-    if ( std::string::npos != p ) { namebase.erase ( p ) ; }
-    //  2) remove blanks 
-    p = namebase.find (' ' ) ;
-    while ( std::string::npos != p ) 
-    { namebase.replace ( p , 1 , "_") ; p = namebase.find ( ' ' ) ; }
+    if ( boost::algorithm::ends_with( namebase, ".cpp" ) ) boost::algorithm::erase_tail( namebase, 4 );
+    //  2) replace blanks  by underscore
+    std::replace( namebase.begin(), namebase.end(), ' ','_' );
     //  3) construct the name 
     boost::format fname ( "%s_%04d.cpp" ) ;
     fname % namebase % findex ; 
     //
-    std::unique_ptr<std::ostream> file ( new std::ofstream ( fname.str() ) ) ;
+    auto file = std::make_unique<std::ofstream>( fname.str() );
     //
     *file 
       << "/** The file is generated on : " << System::hostName()   << std::endl 
@@ -569,7 +567,7 @@ namespace
           morelines.end() != iline ; ++iline ) { *file << *iline << std::endl ; }
     *file << std::endl ;
     //
-    return file ;
+    return std::move(file) ; // must std::move to convert from std::fstream to std::ostream...
   }
   // ==========================================================================
 }

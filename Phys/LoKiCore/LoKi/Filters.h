@@ -875,6 +875,7 @@ namespace LoKi
       // ======================================================================
     public:
       // ======================================================================
+      Empty() : AuxFunBase{ std::tie() } { }
       /// MANDATORY: clone method ("virtual constructor")
       Empty* clone() const override { return new Empty(*this) ; }
       /// MANDATORY: the only one essential method

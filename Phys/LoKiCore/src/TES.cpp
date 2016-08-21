@@ -130,10 +130,6 @@ LoKi::TES::Exists::Exists
   , LoKi::TES::Get ( location , rootInTes ) 
 {}
 // ============================================================================
-// MANDATORY: virtual destructor
-// ============================================================================
-LoKi::TES::Exists::~Exists(){}
-// ============================================================================
 // MANDATORY: clone method ("virtual constructor")
 // ============================================================================
 LoKi::TES::Exists* LoKi::TES::Exists::clone() const
@@ -167,10 +163,6 @@ LoKi::TES::Contains::Contains
   , LoKi::Functor<void,double> ()
   , LoKi::TES::Get ( location , useRootInTes ) 
 {}
-// ============================================================================
-// MANDATORY: virtual destructor
-// ============================================================================
-LoKi::TES::Contains::~Contains(){}
 // ============================================================================
 // MANDATORY: clone method ("virtual constructor")
 // ============================================================================
@@ -283,10 +275,6 @@ LoKi::TES::Counter::Counter
   , m_bad     ( LoKi::Constants::NegativeInfinity )
 {}
 // ============================================================================
-// MANDATORY: virtual destructor
-// ============================================================================
-LoKi::TES::Counter::~Counter(){}
-// ============================================================================
 // MANDATORY: clone method ("virtual constructor")
 // ============================================================================
 LoKi::TES::Counter* LoKi::TES::Counter::clone() const
@@ -365,7 +353,7 @@ namespace LoKi
       struct BaseHelper 
       {
         /// Virtual destructor.
-        virtual ~BaseHelper() {}
+        virtual ~BaseHelper() = default;
         /// Accessor method.
         /// Extract some data from a \c StatEntity object.
         virtual double operator() (const StatEntity &ent) const = 0;
@@ -375,14 +363,12 @@ namespace LoKi
       
       /// Helper used to actually access the content of \c StatEntity.
       template <StatFunction Fun>
-      struct Helper: public BaseHelper {
-        /// Virtual Destructor.
-        virtual ~Helper() {}
+      struct Helper final : public BaseHelper {
         /// Extract the data member specified with the template argument from a
         /// \c StatEntity object.
-        virtual double operator()(const StatEntity &ent) const;
+        double operator()(const StatEntity &ent) const override;
         /// Return a string representing, essentially, the template argument.
-        virtual std::string name() const;
+        std::string name() const override;
       };
       
       /// Commodity function to create a new specialized \c Helper instance.
@@ -466,7 +452,7 @@ namespace LoKi
   } \
   template <> \
   inline void StatEntityGetter::setHelper<StatEntityGetter::Fun>() { \
-    m_helper.reset(new Helper<Fun>); \
+    m_helper = std::make_shared<Helper<Fun>>(); \
   }
 
 SpecializedHelper(nEntries)
@@ -510,7 +496,7 @@ LoKi::TES::Stat::Stat
   const double                  bad          ,
   const bool                    useRootInTes )
   : LoKi::TES::Counter ( location , counter , bad , useRootInTes )
-  , m_getter  ( new StatEntityGetter(function) )
+  , m_getter  ( std::make_shared<StatEntityGetter>(function) )
 {}
 // ============================================================================
 // constructor from TES location
@@ -520,7 +506,7 @@ LoKi::TES::Stat::Stat
   const std::string&            counter      ,
   const StatEntityGetter&       function     )
   : LoKi::TES::Counter ( location , counter )
-  , m_getter  ( new StatEntityGetter(function) )
+  , m_getter  ( std::make_shared< StatEntityGetter>(function) )
 {}
 // ============================================================================
 // constructor from TES location
@@ -533,7 +519,7 @@ LoKi::TES::Stat::Stat
   const bool                    useRootInTes )
   : LoKi::AuxFunBase (  std::tie ( location , counter , function , bad , useRootInTes ) ) 
   , LoKi::TES::Counter ( location , counter , bad , useRootInTes )
-  , m_getter  ( new StatEntityGetter(function) )
+  , m_getter  ( std::make_shared<StatEntityGetter>(function) )
 {}
 // ============================================================================
 // constructor from TES location
@@ -544,7 +530,7 @@ LoKi::TES::Stat::Stat
   const std::string&            function          )
   : LoKi::AuxFunBase (  std::tie ( location , counter , function ) ) 
   , LoKi::TES::Counter ( location , counter )
-  , m_getter  ( new StatEntityGetter(function) )
+  , m_getter  ( std::make_shared< StatEntityGetter>(function) )
 {}
 
 // ============================================================================

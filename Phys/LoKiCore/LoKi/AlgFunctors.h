@@ -198,15 +198,18 @@ namespace LoKi
       // ======================================================================
       /// constructor from the algorithm name
       AnyPassed ( const std::string& name1 ,
-                  const std::string& name2 ) ;
+                  const std::string& name2 )
+          : AnyPassed( std::vector<std::string>{ name1, name2 } ) {}
       AnyPassed ( const std::string& name1 ,
                   const std::string& name2 ,
-                  const std::string& name3 ) ;
+                  const std::string& name3 )
+          : AnyPassed( std::vector<std::string>{ name1, name2, name3 } ) {}
       AnyPassed ( const std::string& name1 ,
                   const std::string& name2 ,
                   const std::string& name3 ,
-                  const std::string& name4 ) ;
-      AnyPassed ( const std::vector<std::string>& name ) ;
+                  const std::string& name4 )
+          : AnyPassed( std::vector<std::string>{ name1, name2, name3, name4 } ) {}
+      AnyPassed ( std::vector<std::string> name ) ;
       ~AnyPassed() override;
       /// MANDATORY: clone method ("virtual constructor")
       AnyPassed* clone() const override { return new AnyPassed ( *this ) ; }
@@ -272,8 +275,22 @@ namespace LoKi
     {
     public:
       // ======================================================================
-      /// constructor from the algorithm name
-      using AnyPassed::AnyPassed;
+      // constructor from the algorithm name
+      AllPassed ( const std::string& name1 ,
+                  const std::string& name2 )
+          : AllPassed( std::vector<std::string>{ name1, name2 } ) {}
+      AllPassed ( const std::string& name1 ,
+                  const std::string& name2 ,
+                  const std::string& name3 )
+          : AllPassed( std::vector<std::string>{ name1, name2, name3 } ) {}
+      AllPassed ( const std::string& name1 ,
+                  const std::string& name2 ,
+                  const std::string& name3 ,
+                  const std::string& name4 )
+          : AllPassed( std::vector<std::string>{ name1, name2, name3, name4 } ) {}
+      AllPassed ( std::vector<std::string> names )
+          : AuxFunBase{ std::tie( names ) }
+          , AnyPassed( std::move(names) ) { }
       /// MANDATORY: clone method ("virtual constructor")
       AllPassed* clone() const override { return new AllPassed ( *this ) ; }
       /// MANDATORY: the only one essential method
@@ -301,7 +318,21 @@ namespace LoKi
     public:
       // ======================================================================
       /// constructor from the algorithm name
-      using AnyPassed::AnyPassed;
+      AnyEnabled ( const std::string& name1 ,
+                   const std::string& name2 )
+          : AnyEnabled( std::vector<std::string>{ name1, name2 } ) {}
+      AnyEnabled ( const std::string& name1 ,
+                   const std::string& name2 ,
+                   const std::string& name3 )
+          : AnyEnabled( std::vector<std::string>{ name1, name2, name3 } ) {}
+      AnyEnabled ( const std::string& name1 ,
+                   const std::string& name2 ,
+                   const std::string& name3 ,
+                   const std::string& name4 )
+          : AnyEnabled( std::vector<std::string>{ name1, name2, name3, name4 } ) {}
+      AnyEnabled ( std::vector<std::string> names )
+          : AuxFunBase{ std::tie(names) }
+          , AnyPassed( std::move(names) ) { }
       // ======================================================================
       /// MANDATORY: clone method ("virtual constructor")
       AnyEnabled* clone() const override { return new AnyEnabled ( *this ) ; }
@@ -330,7 +361,21 @@ namespace LoKi
     public:
       // ======================================================================
       /// constructor from the algorithm name
-      using AnyPassed::AnyPassed;
+      AllEnabled ( const std::string& name1 ,
+                   const std::string& name2 )
+          : AllEnabled( std::vector<std::string>{ name1, name2 } ) {}
+      AllEnabled ( const std::string& name1 ,
+                   const std::string& name2 ,
+                   const std::string& name3 )
+          : AllEnabled( std::vector<std::string>{ name1, name2, name3 } ) {}
+      AllEnabled ( const std::string& name1 ,
+                   const std::string& name2 ,
+                   const std::string& name3 ,
+                   const std::string& name4 )
+          : AllEnabled( std::vector<std::string>{ name1, name2, name3, name4 } ) {}
+      AllEnabled ( std::vector<std::string> names )
+          : AuxFunBase{ std::tie(names) }
+          , AnyPassed( std::move(names) ) { }
       // ======================================================================
       /// MANDATORY: clone method ("virtual constructor")
       virtual  AllEnabled* clone() const { return new AllEnabled ( *this ) ; }
@@ -359,7 +404,21 @@ namespace LoKi
     public:
       // ======================================================================
       /// constructor from the algorithm name
-      using AnyPassed::AnyPassed;
+      AnyExecuted ( const std::string& name1 ,
+                    const std::string& name2 )
+          : AnyExecuted( std::vector<std::string>{ name1, name2 } ) {}
+      AnyExecuted ( const std::string& name1 ,
+                    const std::string& name2 ,
+                    const std::string& name3 )
+          : AnyExecuted( std::vector<std::string>{ name1, name2, name3 } ) {}
+      AnyExecuted ( const std::string& name1 ,
+                    const std::string& name2 ,
+                    const std::string& name3 ,
+                    const std::string& name4 )
+          : AnyExecuted( std::vector<std::string>{ name1, name2, name3, name4 } ) {}
+      AnyExecuted ( std::vector<std::string> names )
+          : AuxFunBase{ std::tie(names) }
+          , AnyPassed( std::move(names) ) { }
       // ======================================================================
       /// MANDATORY: clone method ("virtual constructor")
       virtual  AnyExecuted* clone() const { return new AnyExecuted ( *this ) ; }
@@ -388,7 +447,21 @@ namespace LoKi
     public:
       // ======================================================================
       /// forward to base class constructor
-      using AnyPassed::AnyPassed;
+      AllExecuted ( const std::string& name1 ,
+                    const std::string& name2 )
+          : AllExecuted( std::vector<std::string>{ name1, name2 } ) {}
+      AllExecuted ( const std::string& name1 ,
+                    const std::string& name2 ,
+                    const std::string& name3 )
+          : AllExecuted( std::vector<std::string>{ name1, name2, name3 } ) {}
+      AllExecuted ( const std::string& name1 ,
+                    const std::string& name2 ,
+                    const std::string& name3 ,
+                    const std::string& name4 )
+          : AllExecuted( std::vector<std::string>{ name1, name2, name3, name4 } ) {}
+      AllExecuted ( std::vector<std::string> names )
+          : AuxFunBase{ std::tie(names) }
+          , AnyPassed( std::move(names) ) { }
       /// MANDATORY: clone method ("virtual constructor")
       virtual  AllExecuted* clone() const { return new AllExecuted ( *this ) ; }
       /// MANDATORY: the only one essential method
@@ -414,8 +487,21 @@ namespace LoKi
     {
     public:
       // ======================================================================
-      /// forward to base class constructor
-      using AllExecuted::AllExecuted;
+      RunAll ( const std::string& name1 ,
+               const std::string& name2 )
+          : RunAll( std::vector<std::string>{ name1, name2 } ) {}
+      RunAll ( const std::string& name1 ,
+               const std::string& name2 ,
+               const std::string& name3 )
+          : RunAll( std::vector<std::string>{ name1, name2, name3 } ) {}
+      RunAll ( const std::string& name1 ,
+               const std::string& name2 ,
+               const std::string& name3 ,
+               const std::string& name4 )
+          : RunAll( std::vector<std::string>{ name1, name2, name3, name4 } ) {}
+      RunAll ( std::vector<std::string> names )
+          : AuxFunBase{ std::tie(names) }
+          , AllExecuted( std::move(names) ) { }
       /// MANDATORY: clone method ("virtual constructor")
       virtual  RunAll* clone() const { return new RunAll ( *this ) ; }
       /// MANDATORY: the only one essential method
@@ -443,18 +529,23 @@ namespace LoKi
       // ======================================================================
       /// constructor from the algorithm name
       NumPassed ( const std::string& name1 ,
-                  const std::string& name2 ) ;
+                  const std::string& name2 )
+        : NumPassed( std::vector<std::string>{ name1, name2 } ) {}
       /// constructor from the algorithm name
       NumPassed ( const std::string& name1 ,
                   const std::string& name2 ,
-                  const std::string& name3 ) ;
+                  const std::string& name3 )
+        : NumPassed( std::vector<std::string>{ name1, name2, name3 } ) {}
       /// constructor from the algorithm name
       NumPassed ( const std::string& name1 ,
                   const std::string& name2 ,
                   const std::string& name3 ,
-                  const std::string& name4 ) ;
-      /// constructor from the algorithm name
-      NumPassed ( const std::vector<std::string>& name ) ;
+                  const std::string& name4 )
+        : NumPassed( std::vector<std::string>{ name1, name2, name3, name4 } ) {}
+      /// constructor from the algorithm names
+      NumPassed ( std::vector<std::string> names )
+        : AuxFunBase{ std::tie(names) }
+        , m_fun{ std::move(names) } { }
       // ======================================================================
       /// MANDATORY: clone method ("virtual constructor")
       virtual  NumPassed* clone() const { return new NumPassed ( *this ) ; }
@@ -507,8 +598,25 @@ namespace LoKi
     {
     public:
       // ======================================================================
-      /// forward to base constructor
-      using NumPassed::NumPassed;
+      /// constructor from the algorithm name
+      NumEnabled ( const std::string& name1 ,
+                   const std::string& name2 )
+          : NumEnabled( std::vector<std::string>{ name1, name2 } ) { }
+      /// constructor from the algorithm name
+      NumEnabled ( const std::string& name1 ,
+                   const std::string& name2 ,
+                   const std::string& name3 )
+          : NumEnabled( std::vector<std::string>{ name1, name2, name3 } ) { }
+      /// constructor from the algorithm name
+      NumEnabled ( const std::string& name1 ,
+                   const std::string& name2 ,
+                   const std::string& name3 ,
+                   const std::string& name4 )
+          : NumEnabled( std::vector<std::string>{ name1, name2, name3, name4 } ) { }
+      /// constructor from the algorithm name
+      NumEnabled ( std::vector<std::string> names )
+          : AuxFunBase{ std::tie(names) }
+          , NumPassed( std::move(names) ) { }
       // ======================================================================
       /// MANDATORY: clone method ("virtual constructor")
       virtual  NumEnabled* clone() const { return new NumEnabled ( *this ) ; }
@@ -535,8 +643,25 @@ namespace LoKi
     {
     public:
       // ======================================================================
-      /// forward to base class constructor
-      using NumPassed::NumPassed;
+      /// constructor from the algorithm name
+      NumExecuted ( const std::string& name1 ,
+                   const std::string& name2 )
+          : NumExecuted( std::vector<std::string>{ name1, name2 } ) { }
+      /// constructor from the algorithm name
+      NumExecuted ( const std::string& name1 ,
+                   const std::string& name2 ,
+                   const std::string& name3 )
+          : NumExecuted( std::vector<std::string>{ name1, name2, name3 } ) { }
+      /// constructor from the algorithm name
+      NumExecuted ( const std::string& name1 ,
+                   const std::string& name2 ,
+                   const std::string& name3 ,
+                   const std::string& name4 )
+          : NumExecuted( std::vector<std::string>{ name1, name2, name3, name4 } ) { }
+      /// constructor from the algorithm name
+      NumExecuted ( std::vector<std::string> names )
+          : AuxFunBase{ std::tie(names) }
+          , NumPassed( std::move(names) ) { }
       // ======================================================================
       /// MANDATORY: clone method ("virtual constructor")
       virtual  NumExecuted* clone() const { return new NumExecuted ( *this ) ; }
