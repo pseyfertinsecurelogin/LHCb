@@ -1,4 +1,3 @@
-// $Id: HLT.h,v 1.6 2010-05-17 16:01:38 ibelyaev Exp $
 // ============================================================================
 #ifndef LOKI_HLT_H
 #define LOKI_HLT_H 1
@@ -54,23 +53,25 @@ namespace LoKi
     public:
       // ======================================================================
       /// constructor from the decision name
-      HasDecision ( const std::string& name  ) ;
+      HasDecision ( const std::string& name  ) 
+          : HasDecision( Names{ name } ) { }
       /// constructor from the decision names ("OR")
       HasDecision ( const std::string& name1 ,
-                    const std::string& name2 ) ;
+                    const std::string& name2 ) 
+          : HasDecision( Names{ name1, name2 } ) { }
       /// constructor from the decision names ("OR")
       HasDecision ( const std::string& name1 ,
                     const std::string& name2 ,
-                    const std::string& name3 ) ;
+                    const std::string& name3 )
+          : HasDecision( Names{ name1, name2, name3 } ) {}
       /// constructor from the decision names ("OR")
       HasDecision ( const std::string& name1 ,
                     const std::string& name2 ,
                     const std::string& name3 ,
-                    const std::string& name4 ) ;
+                    const std::string& name4 ) 
+          : HasDecision( Names{ name1, name2, name3, name4 } ) { }
       /// constructor form the decision names ("OR")
-      HasDecision ( const Names&       names ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~HasDecision () {}
+      HasDecision ( Names       names ) ;
       /// MANDATORY: clone method ("virtual constructor")
       virtual  HasDecision* clone() const
       { return new HasDecision ( *this ) ; }
@@ -118,23 +119,25 @@ namespace LoKi
     public:
       // ======================================================================
       /// constructor from the decision name
-      PassDecision ( const std::string& name  ) ;
+      PassDecision ( const std::string& name  ) 
+          : PassDecision( Names{ name } ) { }
       /// constructor from the decision names ("OR")
       PassDecision ( const std::string& name1 ,
-                     const std::string& name2 );
+                     const std::string& name2 )
+          : PassDecision( Names{ name1, name2 } ) { }
       /// constructor from the decision names ("OR")
       PassDecision ( const std::string& name1 ,
                      const std::string& name2 ,
-                     const std::string& name3 ) ;
+                     const std::string& name3 ) 
+          : PassDecision( Names{ name1, name2, name3 } ) { }
       /// constructor from the decision names ("OR")
       PassDecision ( const std::string& name1 ,
                      const std::string& name2 ,
                      const std::string& name3 ,
-                     const std::string& name4 ) ;
+                     const std::string& name4 ) 
+          : PassDecision( Names{ name1, name2, name3, name4 } ) { }
       /// constructor form the decision names ("OR")
-      PassDecision ( const Names& names ) ; 
-      /// MANDATORY: virtual destructor
-      virtual ~PassDecision () {}
+      PassDecision ( Names names ) ; 
       /// MANDATORY: clone method ("virtual constructor")
       virtual  PassDecision* clone() const
       { return new PassDecision ( *this ) ; }
@@ -165,9 +168,7 @@ namespace LoKi
     public:
       // ======================================================================
       /// MANDATORY: default constructor
-      Size() {}
-      /// MANDATORY: virtual destructor
-      virtual ~Size () {}
+      Size() : AuxFunBase{ std::tie() } { }
       /// MANDATORY: clone method ("virtual consructor")
       virtual  Size* clone() const { return new Size ( *this ) ; }
       /// MANDATORY: the only one essential method
@@ -194,9 +195,7 @@ namespace LoKi
     public:
       // ======================================================================
       /// MANDATORY: default constructor
-      NPass() {}
-      /// MANDATORY: virtual destructor
-      virtual ~NPass () {}
+      NPass() : AuxFunBase{ std::tie() } { }
       /// MANDATORY: clone method ("virtual consructor")
       virtual  NPass* clone() const { return new NPass ( *this ) ; }
       /// MANDATORY: the only one essential method
@@ -224,9 +223,7 @@ namespace LoKi
     public:
       // ======================================================================
       /// MANDATORY: default constructor
-      Decision() {}
-      /// MANDATORY: virtual destructor
-      virtual ~Decision () {}
+      Decision() : AuxFunBase{ std::tie() } { }
       /// MANDATORY: clone method ("virtual consructor")
       virtual  Decision* clone() const { return new Decision ( *this ) ; }
       /// MANDATORY: the only one essential method
@@ -255,25 +252,28 @@ namespace LoKi
     public:
       // ======================================================================
       /// constructor from one "special" decicion
-      DecisionBut ( const std::string& name ) ;
+      DecisionBut ( const std::string& name )
+          : DecisionBut( Names{ name } ) { }
       /// constructor from two "special" decicions
       DecisionBut ( const std::string& name1 ,
-                    const std::string& name2 ) ;
+                    const std::string& name2 )
+          : DecisionBut( Names{ name1, name2 } ) { }
       /// constructor from three "special" decicions
       DecisionBut ( const std::string& name1 ,
                     const std::string& name2 ,
-                    const std::string& name3 ) ;
+                    const std::string& name3 )
+          : DecisionBut( Names{ name1, name2, name3 } ) { }
       /// constructor from four "special" decicions
       DecisionBut ( const std::string& name1 ,
                     const std::string& name2 ,
                     const std::string& name3 ,
-                    const std::string& name4 ) ;
-      /// constructor from vector of "special" decicions
-      DecisionBut ( const Names&       names ) ;
-      /// constructor from vector of "special" decicions
-      DecisionBut ( const std::vector<std::string>& names ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~DecisionBut() {} ;
+                    const std::string& name4 )
+          : DecisionBut( Names{ name1, name2, name3, name4 } ) { }
+      /// constructor from vector of "special" decisions
+      DecisionBut ( const std::vector<std::string>& names ) 
+          : DecisionBut( Names( names.begin(), names.end() ) ) { }
+      /// constructor from vector of "special" decisions
+      DecisionBut ( Names       names ) ;
       /// MANDATORY: clone method ("virtual constructor")
       virtual  DecisionBut* clone () const { return new DecisionBut ( *this ) ; }
       /// MANDATORY: the only one essential method
@@ -303,8 +303,6 @@ namespace LoKi
       // ======================================================================
       /// constructor from substring
       HasDecisionSubString ( const std::string& substr ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~HasDecisionSubString () ;
       /// MANDATORY: clone method ("virtual constructor")
       virtual  HasDecisionSubString* clone () const ;
       /// MANDATORY: the only one essential method
@@ -343,8 +341,6 @@ namespace LoKi
       // ======================================================================
       /// constructor from substring
       PassDecisionSubString ( const std::string& substr ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~PassDecisionSubString () ;
       /// MANDATORY: clone method ("virtual constructor")
       virtual PassDecisionSubString* clone () const ;
       /// MANDATORY: the only one essential method
@@ -373,8 +369,6 @@ namespace LoKi
       // ======================================================================
       /// constructor from substring
       DecisionButSubString ( const std::string& substr ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~DecisionButSubString () ;
       /// MANDATORY: clone method ("virtual constructor")
       virtual DecisionButSubString* clone () const ;
       /// MANDATORY: the only one essential method
@@ -403,8 +397,6 @@ namespace LoKi
       // ======================================================================
       /// constructor from substring
       HasDecisionRegex ( const std::string& substr ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~HasDecisionRegex () ;
       /// MANDATORY: clone method ("virtual constructor")
       virtual  HasDecisionRegex* clone () const ;
       /// MANDATORY: the only one essential method
@@ -443,8 +435,6 @@ namespace LoKi
       // ======================================================================
       /// constructor from substring
       PassDecisionRegex ( const std::string& substr ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~PassDecisionRegex () ;
       /// MANDATORY: clone method ("virtual constructor")
       virtual  PassDecisionRegex* clone () const ;
       /// MANDATORY: the only one essential method
@@ -473,8 +463,6 @@ namespace LoKi
       // ======================================================================
       /// constructor from substring
       DecisionButRegex ( const std::string& substr ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~DecisionButRegex () ;
       /// MANDATORY: clone method ("virtual constructor")
       virtual DecisionButRegex* clone () const ;
       /// MANDATORY: the only one essential method
@@ -503,8 +491,6 @@ namespace LoKi
       // ======================================================================
       /// constructor from the channel name
       ErrorBits ( const std::string&      name ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~ErrorBits() ;
       /// MANDATORY: clone method ( "virtual constructor")
       virtual  ErrorBits* clone () const ;
       /// MANDATORY: the only one essential methor
@@ -540,8 +526,6 @@ namespace LoKi
       // ======================================================================
       /// constructor from the channel name
       NonTurboPass ( const std::string&      name ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~NonTurboPass() ;
       /// MANDATORY: clone method ( "virtual constructor")
       virtual  NonTurboPass* clone () const ;
       /// MANDATORY: the only one essential methor
@@ -566,8 +550,6 @@ namespace LoKi
       // ======================================================================
       /// constructor from the channel name
       TurboPass ( const std::string&      name ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~TurboPass() ;
       /// MANDATORY: clone method ( "virtual constructor")
       virtual  TurboPass* clone () const ;
       /// MANDATORY: the only one essential methor
@@ -593,8 +575,6 @@ namespace LoKi
       // ======================================================================
       /// constructor from the channel name
       ExecutionStage ( const std::string&      name ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~ExecutionStage() ;
       /// MANDATORY: clone method ( "virtual constructor")
       virtual  ExecutionStage* clone () const ;
       /// MANDATORY: the only one essential methor
@@ -622,8 +602,6 @@ namespace LoKi
       // ======================================================================
       /// constructor from the channel name
       NumberOfCandidates ( const std::string&      name ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~NumberOfCandidates() ;
       /// MANDATORY: clone method ( "virtual constructor")
       virtual  NumberOfCandidates* clone () const ;
       /// MANDATORY: the only one essential methor
@@ -653,8 +631,6 @@ namespace LoKi
       // ======================================================================
       /// constructor from the channel name
       Saturated ( const std::string&      name ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~Saturated() ;
       /// MANDATORY: clone method ( "virtual constructor")
       virtual  Saturated* clone () const ;
       /// MANDATORY: the only one essential methor
@@ -720,8 +696,6 @@ namespace LoKi
         const std::string& line4 ,
         const unsigned int mask  ) ;
       // =====================================================================
-      /// MANDATORY: virtual desctructor
-      virtual ~CountErrorBits() ;
       /// MANDATORY: clone method ( "virtual constructor")
       virtual  CountErrorBits* clone () const ;
       /// MANDATORY: the only one essential methor
@@ -758,8 +732,6 @@ namespace LoKi
       CountErrorBitsRegex
       ( const std::string&  expression ,
         const unsigned int  mask       ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~CountErrorBitsRegex() ;
       /// MANDATORY: clone method ( "virtual constructor")
       virtual  CountErrorBitsRegex* clone () const ;
       /// MANDATORY: the only one essential method
@@ -799,8 +771,6 @@ namespace LoKi
       // ======================================================================
       /// constructor from routing bits
       HltRoutingBits ( const LoKi::HLT::RoutingBits& bits ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~HltRoutingBits () ;
       /// MANDATORY: clone method ("virtual constructor")
       virtual  HltRoutingBits* clone() const ;
       /// MANDATORY: the only one essential method
@@ -838,9 +808,7 @@ namespace LoKi
     public:
       // ======================================================================
       /// MANDATORY: default constructor
-      TrgConfKey() {}
-      /// MANDATORY: virtual destructor
-      virtual ~TrgConfKey () {}
+      TrgConfKey() : AuxFunBase{ std::tie() } { }
       /// MANDATORY: clone method ("virtual consructor")
       virtual  TrgConfKey* clone() const { return new TrgConfKey ( *this ) ; }
       /// MANDATORY: the only one essential method

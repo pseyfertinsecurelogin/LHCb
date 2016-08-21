@@ -42,8 +42,7 @@
 // ============================================================================
 LoKi::Random::Numbers::Numbers
 ( const  Rndm::Numbers&  numbers )
-  : LoKi::BasicFunctors<double>::Function ()
-  , m_service ( nullptr )
+  : m_service ( nullptr )
   , m_numbers ( numbers )
 {}
 // ============================================================================

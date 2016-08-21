@@ -88,7 +88,7 @@ namespace LoKi
   protected:
     // ========================================================================
     /// protected default constructor
-    Functor() = default;
+    Functor() : AuxFunBase( std::tie() ) {}
     /// protected copy constructor
     Functor ( const Functor& fun ) = default;
     /// protected move constructor
@@ -181,7 +181,7 @@ namespace LoKi
     // ========================================================================
   public:
     // ========================================================================
-    /// swap two functors
+    /// swap two functors //TODO: what about AuxFunBase contents?
     void swap ( FunctorFromFunctor& right ) { std::swap ( m_fun , right.m_fun ) ; }
     // ========================================================================
   public:
@@ -199,8 +199,8 @@ namespace LoKi
     // ========================================================================
   private:
     // ========================================================================
-    /// the actual underlaying function
-    std::unique_ptr<const functor> m_fun ;                           // the underlaying functor
+    /// the actual underlaying function // TODO: consider std::shared_ptr...
+    std::unique_ptr<const functor> m_fun ;           // the underlaying functor
     // ========================================================================
   };
   // ==========================================================================
@@ -302,7 +302,7 @@ namespace LoKi
   protected:
     // ========================================================================
     /// protected default constructor
-    Functor() = default;                       // protected default constructor
+    Functor() : AuxFunBase( std::tie() ) {}    // protected default constructor
     /// protected copy constructor
     Functor ( const Functor& fun ) = default;                 // protected copy
     // ========================================================================
