@@ -5,7 +5,7 @@
 
 LHCb::MC::MCTrackGeomCriteria::MCTrackGeomCriteria(const std::vector<std::string>& criteria)
 {
-  for ( auto & S : criteria )
+  for ( const auto & S : criteria )
   {
     m_criteria.push_back( theMap().toType(S) );
   }
