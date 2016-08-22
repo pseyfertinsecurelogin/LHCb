@@ -32,11 +32,11 @@ void* accessMCTruth( void* (*cast)(DataObject*), const DataObject* from)
       }
     }
   }
-  return 0;
+  return nullptr;
 }
 
 void* accessMCTruth( void* (*cast)(ContainedObject*), const ContainedObject* from)  {
-  void* result = 0;
+  void* result = nullptr;
   if ( 0 != from )  {
     long  idx = from->index();
     if ( idx != StreamBuffer::INVALID )  {
@@ -53,5 +53,5 @@ void* accessMCTruth( void* (*cast)(ContainedObject*), const ContainedObject* fro
       }
     }
   }
-  return 0;
+  return nullptr;
 }
