@@ -4,6 +4,11 @@
 ! Purpose: LHCb specific Kernel classes
 !--------------------------------------------------------------------------------
 
+! 2016-08-23 - Mark Williams and Manuel Jahn (Summer student)
+ - Edited VPChannelID.xml to assign one extra bit each to col and row
+ - Edited VPConstants.h to move to 512x512 pixels
+ - Also added extra constants to replace magic numbers in code 
+ 
 ! 2016-05-20 - Jon Harrison
  - Added new interface IVeloCCEConfigTool.h for VELO CCE scan configuration 
 
