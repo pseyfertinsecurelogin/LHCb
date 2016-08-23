@@ -611,11 +611,11 @@ namespace Gaudi
       ROOT::Math::LorentzVector<C>&    dest   ) 
     {
       // first calculate momentum in carthesian coordinates:
-      const double p = 1/fabs(source(2)) ;
-      const double n = sqrt( 1 + source(0)*source(0)+source(1)*source(1)) ;
-      const double pz = p/n          ;
-      const double px = pz*source(0) ;
-      const double py = pz*source(1) ;
+      const auto p = 1.0/fabs(source(2)) ;
+      const auto n = std::sqrt( 1.0 + std::pow(source(0),2) + std::pow(source(1),2) );
+      const auto pz = p/n          ;
+      const auto px = pz*source(0) ;
+      const auto py = pz*source(1) ;
       dest.SetPx ( px ) ;
       dest.SetPy ( py ) ;
       dest.SetPz ( pz ) ;
@@ -653,19 +653,19 @@ namespace Gaudi
       const M                         mass , 
       ROOT::Math::SMatrix<R,4,3>&     J    )
     {
-      double tx = mom(0) ;
-      double ty = mom(1) ;
-      double qop = mom(2) ;
-      double p  = 1/std::abs(qop) ;
-      double n2 = 1 + tx*tx + ty*ty ;
-      double n  = std::sqrt(n2) ;
-      double n3 = n2*n ;
-      double px = p*tx/n ;
-      double py = p*ty/n ;
-      double pz = p/n ;
-      double E = std::hypot(p,mass) ;
+      const auto tx = mom(0) ;
+      const auto ty = mom(1) ;
+      const auto qop = mom(2) ;
+      const auto p  = 1.0/std::abs(qop) ;
+      const auto n2 = 1.0 + tx*tx + ty*ty ;
+      const auto n  = std::sqrt(n2) ;
+      const auto n3 = n2*n ;
+      const auto px = p*tx/n ;
+      const auto py = p*ty/n ;
+      const auto pz = p/n ;
+      const auto E = std::hypot(p,mass) ;
       
-      J(0,0) = p * (1+ty*ty)/n3 ; // dpx/dtx
+      J(0,0) = p * (1.0+ty*ty)/n3 ; // dpx/dtx
       J(0,1) = p * tx * -ty/n3  ; // dpx/dty
       J(0,2) = -px/qop ;          // dpx/dqop
 

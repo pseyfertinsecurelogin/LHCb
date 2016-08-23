@@ -65,6 +65,7 @@ namespace Gaudi
         const Vector4D&   value  = Vector4D   () ) ;
       /// constructor from generic vector and covariance
       LorentzVectorWithError 
+
       ( const Vector&     value                  , 
         const Covariance& cov2   = Covariance () ) ;  
       /// constructor from generic vector and covariance
@@ -73,10 +74,10 @@ namespace Gaudi
       // ======================================================================
     public: // trivial accessors 
       // ======================================================================
-      const  Vector4D&   vector4d   ( ) const { return *this       ; }
-      const  Vector4D&   vector4D   ( ) const { return vector4d () ; }
-      const  Covariance& covariance ( ) const { return cov2  ()    ; }      
-      inline Vector4D&   vector4d   ( )       { return *this       ; }
+      const  Vector4D&   vector4d   ( ) const noexcept { return *this       ; }
+      const  Vector4D&   vector4D   ( ) const noexcept { return vector4d () ; }
+      const  Covariance& covariance ( ) const noexcept { return cov2  ()    ; }      
+      inline Vector4D&   vector4d   ( )       noexcept { return *this       ; }
       // ======================================================================      
       const  Vector4D&   value      ( ) const { return vector4d () ; }
       const  Covariance& cov2       ( ) const { return m_cov2      ; }
@@ -95,8 +96,8 @@ namespace Gaudi
       // ======================================================================
     public: // finally it is just a point + covariance 
       // ======================================================================
-      operator const Covariance& () const { return cov2  () ; }        
-      operator       Covariance& ()       { return m_cov2   ; }        
+      operator const Covariance& () const noexcept { return cov2  () ; }        
+      operator       Covariance& ()       noexcept { return m_cov2   ; }        
       // ======================================================================
     public: // useful accessors to covarinace matrix 
       // ======================================================================

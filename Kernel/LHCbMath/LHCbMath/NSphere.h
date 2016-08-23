@@ -152,7 +152,7 @@ namespace Gaudi
     private:
       // ======================================================================
       /// bias to equalize the x_i 
-      unsigned short      m_rotated ; // rotated sphere ?
+      unsigned short      m_rotated{0} ; // rotated sphere ?
       /// the phase biases for rotated sphere 
       std::vector<double> m_delta   ; // the phase biases for rotated sphere 
       /// the phases  

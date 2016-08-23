@@ -29,7 +29,7 @@ namespace Gaudi {
                             const double c,
                             OUTPUTTYPE   out ) 
     {
-      if( 0 == a ) // it is indeed  a linear equation:  b*x + c = 0 
+      if ( 0 == a ) // it is indeed  a linear equation:  b*x + c = 0 
       {
         // no solution!
         if( b == 0 ) { return 0 ; }   // RETURN !!! 
@@ -38,11 +38,11 @@ namespace Gaudi {
         *out++ = -1.0 * c / b ;       // double the solutions 
         return 1;                     // RETURN !!!   
       }
-      double d = b * b - 4.0 * a * c ; 
+      const auto dd = b * b - 4.0 * a * c ; 
       // no solutions 
-      if(  d < 0  )   { return 0; }     // RETURN !!!
+      if (  dd < 0  )   { return 0; }     // RETURN !!!
       // 1 or 2 solution
-      d = sqrt( d )                  ;   
+      const auto d = std::sqrt( dd )                  ;   
       *out++ = 0.5 * ( -b - d ) / a  ; 
       *out++ = 0.5 * ( -b + d ) / a  ; 
       // return number of solutions;

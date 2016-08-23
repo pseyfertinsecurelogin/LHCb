@@ -48,7 +48,7 @@ namespace Gaudi
       typedef aVector Vector;
     public:
       /// the default constructor
-      Line() {}
+      Line() = default;
       /// the constructor from the point and direction vector
       Line ( const aPoint& p0 , const aVector& v0 ) : m_p0 ( p0 ) , m_v0 ( v0      ) {}
       /// the constructor from two points:
@@ -83,9 +83,9 @@ namespace Gaudi
       }
     private:
       /// the start point on the line
-      aPoint  m_p0; // the start point on the line
+      aPoint  m_p0{}; // the start point on the line
       /// the direction vector of the line
-      aVector m_v0; // the direction vector of the line
+      aVector m_v0{}; // the direction vector of the line
     };
 
     // =========================================================================

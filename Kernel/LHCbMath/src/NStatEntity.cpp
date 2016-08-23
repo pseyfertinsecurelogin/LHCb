@@ -43,9 +43,7 @@ namespace
 // constructor with N-parameter  
 // ===========================================================================
 Gaudi::Math::NStatEntity::NStatEntity ( const unsigned long N ) 
-  : m_cnt1 () 
-  , m_cnt2 () 
-  , m_N    ( std::min ( std::max ( 1UL , N ) , s_max ) )
+  : m_N    ( std::min ( std::max ( 1UL , N ) , s_max ) )
 {}
 // ===========================================================================
 // The END 

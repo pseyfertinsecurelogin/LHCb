@@ -30,10 +30,10 @@ namespace LHCb
     {
 
       /// The floating point type in use
-      typedef float FloatType;
+      using FloatType = float;
       
       /// The internal type to use for 3D vectors and points
-      typedef Vec3f VCVec;
+      using VCVec = Vec3f;
       
       /** @class XYZVector VectorClassTypes.h LHCbMath/VectorClassTypes.h
        *
@@ -71,7 +71,7 @@ namespace LHCb
         }
 
         ///< Destructor
-        ~XYZVector( ) { }
+        ~XYZVector( ) = default;
 
         /// Implement dot method
         inline FloatType dot( const XYZVector& v ) const { return dot_product(*this,v); }
@@ -171,7 +171,7 @@ namespace LHCb
         }
 
         ///< Destructor
-        ~XYZPoint( ) { }
+        ~XYZPoint( ) = default;
 
       public:
         

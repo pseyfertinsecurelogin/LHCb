@@ -40,7 +40,7 @@ namespace Gaudi
     public:
       // ======================================================================
       /// get N, such that statistic is calculated for n-events  N<= n < 2*N 
-      unsigned long N () const { return m_N ; }
+      unsigned long N () const noexcept { return m_N ; }
       // ======================================================================
     public: // conversion to the counter with longer history: N<= n < 2*N 
       // ======================================================================
@@ -128,7 +128,7 @@ namespace Gaudi
       /// the second counter 
       StatEntity    m_cnt2 ;                            // the second counter 
       /// the sliding window 
-      unsigned long m_N    ;                            // the sliding window 
+      unsigned long m_N{0} ;                            // the sliding window 
       // ======================================================================
     };
     // ========================================================================

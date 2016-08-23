@@ -167,8 +167,7 @@ namespace Gaudi
     scale 
     ( ROOT::Math::SMatrix<T,D1,D2,R>& m , const T& value ) 
     { 
-      typedef typename ROOT::Math::SMatrix<T,D1,D2,R>::iterator iterator ;
-      for ( iterator it = m.begin() ;  m.end() != it ; ++it ) { (*it) *= value ; }
+      for ( auto & it : m ) { it *= value ; }
       return m.end() - m.begin() ;
     } 
     // ========================================================================
@@ -194,8 +193,7 @@ namespace Gaudi
     scale 
     ( ROOT::Math::SVector<T,D>& m , const T& value ) 
     { 
-      typedef typename ROOT::Math::SVector<T,D>::iterator iterator ;
-      for ( iterator it = m.begin() ;  m.end() != it ; ++it ) { (*it) *= value ; }
+      for ( auto & it : m ) { it *= value ; }
       return D ;
     } 
     // ========================================================================
@@ -977,9 +975,10 @@ namespace Gaudi
     check_diagonal 
     ( const ROOT::Math::SMatrix<T,D,D,R>& m , P pred )
     { 
+      bool ok = false;
       for ( unsigned int i = 0 ; i < D ; ++i ) 
-      { if ( pred ( m ( i , i ) ) ) { return true ; } }
-      return false ;
+      { if ( pred ( m ( i , i ) ) ) { ok = true ; break ; } }
+      return ok ;
     } 
     // ========================================================================
     /** check the "equality" of the two matrices by checking 

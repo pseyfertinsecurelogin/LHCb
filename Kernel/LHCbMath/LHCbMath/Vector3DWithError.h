@@ -34,7 +34,7 @@ namespace Gaudi
     class Point3DWithError  ;
     class Vector3DWithError ;
     // ========================================================================
-    class GAUDI_API Vector3DWithError final : public Gaudi::XYZVector 
+    class GAUDI_API Vector3DWithError : public Gaudi::XYZVector 
     {
     public:
       // ======================================================================

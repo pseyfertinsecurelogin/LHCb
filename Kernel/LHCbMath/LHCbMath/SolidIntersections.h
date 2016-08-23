@@ -11,7 +11,8 @@
  *  @todo   Decide whether to keep in this package. If needed migrate implementations.
  *  @date   2006-05-02
  */
-namespace Gaudi {
+namespace Gaudi 
+{
 
   namespace Math 
   {
@@ -121,8 +122,8 @@ namespace Gaudi {
 
 
     
-  }; // Math namespace
+  } // Math namespace
 
-}; // Gaudi namespace
+} // Gaudi namespace
 
 #endif // KERNEL_SOLIDINTERSECTIONS_H
