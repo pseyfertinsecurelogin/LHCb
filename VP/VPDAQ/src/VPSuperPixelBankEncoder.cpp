@@ -77,10 +77,10 @@ StatusCode VPSuperPixelBankEncoder::execute() {
     const unsigned int row = seed->channelID().row();
     const unsigned int col = seed->channelID().col();
     const unsigned int sensor = seed->channelID().sensor();
-    const unsigned int sensorCol = col + 256 * chip;
+    const unsigned int sensorCol = col + VP::NColumns * chip;
     const unsigned int spCol = sensorCol / 2;
     const unsigned int spRow = row / 4;
-    const unsigned int spAddr = ((spCol << 6) | spRow);
+    const unsigned int spAddr = ((spCol << (VP::NRowBits - 2)) | spRow);
     const unsigned int spix = 1 << (((col % 2) * 4) + row % 4);
 
     auto j = std::find_if( m_spBySensor[sensor].begin(), m_spBySensor[sensor].end(),
@@ -109,7 +109,7 @@ StatusCode VPSuperPixelBankEncoder::execute() {
     std::sort(m_spBySensor[sens].begin() + 1, m_spBySensor[sens].end(),
               SPLowerThan());
 
-    memset(m_buffer, 0, 24576 * sizeof(unsigned char));
+    memset(m_buffer, 0, VP::NSensorColumns / 2 * VP::NRows / 4 * sizeof(unsigned char));
     m_idx.clear();
     unsigned int nsp = m_spBySensor[sens].size();
     for (unsigned int j = 1; j < nsp; ++j) {
@@ -118,18 +118,23 @@ StatusCode VPSuperPixelBankEncoder::execute() {
       m_buffer[idx] = spw & 0xFFU;
       m_idx.push_back(j);
     }
+    
+    const unsigned int sprowmask = VP::NRows / 4 - 1;
+    const int nrowlimit = VP::NRows / 4 - 1;
+    const int ncollimit = VP::NSensorColumns / 2 - 1;
+    
     for (unsigned int ik = 0; ik < m_idx.size(); ++ik) {
       const unsigned int spw = m_spBySensor[sens][m_idx[ik]];
       const unsigned int idx = (spw >> 8);
-      const unsigned int row = idx & 0x3FU;
-      const unsigned int col = (idx >> 6);
+      const unsigned int row = idx & sprowmask;
+      const unsigned int col = (idx >> (VP::NRowBits - 2));
       unsigned int no_neighbour = 1;
       for (unsigned int ni = 0; ni < 8; ++ni) {
         const int nrow = row + dy[ni];
-        if (nrow < 0 || nrow > 63) continue;
+        if (nrow < 0 || nrow > nrowlimit) continue;
         const int ncol = col + dx[ni];
-        if (ncol < 0 || ncol > 383) continue;
-        const unsigned int nidx = (ncol << 6) | nrow;
+        if (ncol < 0 || ncol > ncollimit) continue;
+        const unsigned int nidx = (ncol << (VP::NRowBits - 2)) | nrow;
         if (m_buffer[nidx]) {
           no_neighbour = 0;
           break;

@@ -4,6 +4,10 @@
 ! Purpose     : Prepare VP RawBank and decode it
 !-----------------------------------------------------------------------------
 
+! 2016-08-22 - Mark Williams and Manuel Jahn (Summer student)
+ - Edited VPSuperPixelBankEncoder.cpp to replace magic number with
+   references to VPConstants.h. Bitmasks are created with elegant bitshift.
+
 !========================= VPDAQ v2r8 2016-03-16 =========================
 ! 2016-02-02 - Gerhard Raven
  - modernize code

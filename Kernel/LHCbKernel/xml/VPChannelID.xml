@@ -52,8 +52,8 @@
       </method> 
 
       <attribute type = 'bitfield' name = 'channelID' desc = 'VP Channel ID'>
-        <bitfield name = 'row'    length =  '8' desc = 'pixel row'/>
-        <bitfield name = 'col'    length =  '8' desc = 'pixel column'/>
+        <bitfield name = 'row'    length =  '9' desc = 'pixel row'/>
+        <bitfield name = 'col'    length =  '9' desc = 'pixel column'/>
         <bitfield name = 'chip'   length =  '2' desc = 'chip number'/>
         <bitfield name = 'sensor' length = '10' desc = 'sensor number'/>
       </attribute>
