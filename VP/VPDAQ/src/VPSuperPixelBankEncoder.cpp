@@ -41,6 +41,7 @@ StatusCode VPSuperPixelBankEncoder::initialize() {
   m_isDebug = msgLevel(MSG::DEBUG);
   m_isVerbose = msgLevel(MSG::VERBOSE);
   if (m_isDebug) debug() << "==> Initialise" << endmsg;
+  info() << "Number of pixel rows in VP:  " << VP::NRows << endmsg;
   return StatusCode::SUCCESS;
 }
 

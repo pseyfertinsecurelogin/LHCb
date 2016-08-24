@@ -4,6 +4,9 @@
 ! Purpose     : Prepare VP RawBank and decode it
 !-----------------------------------------------------------------------------
 
+! 2016-08-24 - Mark Williams and Manuel Jahn (Summer student)
+ - Edited VPSuperPixelBankEncoder.cpp to insert INFO statement about the number of pixels.
+
 ! 2016-08-22 - Mark Williams and Manuel Jahn (Summer student)
  - Edited VPSuperPixelBankEncoder.cpp to replace magic number with
    references to VPConstants.h. Bitmasks are created with elegant bitshift.
