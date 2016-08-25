@@ -5,8 +5,7 @@
 !-----------------------------------------------------------------------------
 
 ! 2016-08-25 - Marco Cattaneo
- - ICondDBReader.h: add boost/shared_ptr.hpp include in case COOL_HAS_CPP11 is
-   not defined, needed to follow MR Gaudi!189
+ - ICondDBReader.h: remove obsolete COOL_HAS_CPP11 typedef
 
 ! 2016-03-31 - Roel Aaij
  - Fix CondDB configuration. The online snapshots were configured even if
