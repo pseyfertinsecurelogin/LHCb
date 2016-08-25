@@ -29,6 +29,7 @@
         location          CDATA                            #IMPLIED
         namespace         CDATA                            #IMPLIED
         stdVectorTypeDef  (TRUE | FALSE)                   "FALSE"
+        stdBitsetTypeDef  (TRUE | FALSE)                   "FALSE"
         keyedContTypeDef  (TRUE | FALSE)                   "FALSE"
         contObjectTypeDef (TRUE | FALSE)                   "FALSE"
         serializers       (TRUE | FALSE)                   "TRUE"

@@ -510,6 +510,11 @@ class genClasses(genSrcUtils.genSrcUtils):
             self.addInclude('GaudiKernel/ObjectVector')
             s += '/// typedef for ObjectVector of %s\n' % classname
             s += 'typedef ObjectVector<%s> Container;\n' % (classname)
+        if godClass['attrs']['stdBitsetTypeDef'] == 'TRUE':
+            self.addInclude('bitset',1)
+            # s += '  /// typedef for std::bitset of %s\n' % classname
+            # s += '  typedef std::bitset<%s*> Bitset;\n' % (classname)
+            # s += '  typedef std::bitset<const %s*> ConstBitset;\n\n' % ( classname )
         return s
 #--------------------------------------------------------------------------------
     def genStreamer(self, godClass, className=''):
