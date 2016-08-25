@@ -115,14 +115,14 @@ namespace LHCb
        */
       template <class TYPE>
       inline bool operator() ( const TYPE& obj  ) const
-      { return  obj && obj->e() > m_threshold ; }
+      { return obj && obj->e() > m_threshold ; }
 
       inline bool operator() ( const LHCb::CaloClusterEntry& obj  ) const
       {
-        return obj.digit()  && ( obj.digit()->e() * obj.fraction() > m_threshold );
+        return obj.digit() && ( obj.digit()->e() * obj.fraction() > m_threshold );
       };
     private:
-      double m_threshold; ///< the actual threshold value for the energy
+      double m_threshold{0}; ///< the actual threshold value for the energy
     };
     // ==========================================================================
 
@@ -160,7 +160,7 @@ namespace LHCb
       ( DETECTOR detector     ,
         double   deltaZ   = 0 )
         : m_det ( detector )
-        , m_dz  ( deltaZ   ) {};
+        , m_dz  ( deltaZ   ) {}
 
       /** calculate the transverse energy of the object
        *  @param  obj   object
@@ -169,15 +169,13 @@ namespace LHCb
       template <typename TYPE>
       inline double operator () ( const TYPE& obj ) const
       {
-        if ( !obj ) { return 0; }
-        // cell theta
-        const auto theta = m_det->cellCenter( CellID( obj ) ).Theta() ;
-        //
-        return obj->e() * std::sin( theta );
+        return ( obj ? 
+                 obj->e() * std::sin( m_det->cellCenter(CellID(obj)).Theta() ) :
+                 0.0 );
       }
     private:
       mutable DETECTOR m_det  ;  ///< detector element
-      double  m_dz            ;  ///< dz correction
+      double  m_dz{0}         ;  ///< dz correction
     };
     // ==========================================================================
 
@@ -209,21 +207,21 @@ namespace LHCb
        *  @param Threshold        transverse energy threshold
        *  @param DeltaZ           z-correction to position of shower maximum
        */
-      Over_Et_Threshold ( DETECTOR Detector            ,
+      Over_Et_Threshold ( DETECTOR Detector,
                           double   Threshold = 0 ,
-                          double   DeltaZ = 0         )
+                          double   DeltaZ = 0    )
         : m_et       ( Detector  , DeltaZ )
-        , m_threshold( Threshold          ) {};
+        , m_threshold( Threshold          ) {}
       /** compare the threshold energy of the object with threshold value
        *  @param  obj  object
        *  @return result of comparison with threshold
        */
       template <typename TYPE>
       inline bool operator() ( const TYPE& obj  ) const
-      {  return obj && ( m_et( obj ) > m_threshold ) ; }
+      { return obj && ( m_et( obj ) > m_threshold ) ; }
     private:
-      ET        m_et         ;      ///< e_t estimator
-      double    m_threshold  ;      ///< threshold value for energy
+      ET        m_et            ;      ///< e_t estimator
+      double    m_threshold{0}  ;      ///< threshold value for energy
     };
     // ==========================================================================
 
@@ -422,7 +420,7 @@ namespace LHCb
        */
       Accumulate_TransverseEnergy ( DETECTOR Detector     ,
                                     double   DeltaZ   = 0 )
-        : m_et      ( Detector , DeltaZ  ) {};
+        : m_et ( Detector , DeltaZ  ) { }
       /** accumulate the transverse energy of the objects
        *  @param   Energy  accumulated transverce energy
        *  @param   obj     object
@@ -453,7 +451,7 @@ namespace LHCb
        *  @param CellID  cell identifier to be compared with
        */
       explicit IsCaloCellID ( const LHCb::CaloCellID& CellID )
-        : m_cellID ( CellID ) {};
+        : m_cellID ( CellID ) { }
       /** compare cell identifier of the object with given value
        *  @param obj  object
        *  @return  result of comparison (equality test)
@@ -462,7 +460,7 @@ namespace LHCb
       inline bool operator() ( const TYPE& obj ) const
       { return obj &&  CellID( obj )  == m_cellID ; }
     private:
-      LHCb::CaloCellID   m_cellID  ; ///< reference CaloCellID
+      LHCb::CaloCellID  m_cellID ; ///< reference CaloCellID
     };
     // ==========================================================================
 
@@ -486,14 +484,14 @@ namespace LHCb
       for ( ; begin != end ; ++begin )
       {
         // get the digit
-        const LHCb::CaloDigit*       digit  = begin->digit()  ;
+        const LHCb::CaloDigit * digit = begin->digit()  ;
         /// skip nulls
-        if( 0 == digit                         ) { continue ; }
+        if( ! digit ) { continue ; }
         /// check the status and skip useless digits
         if( !( begin->status() & LHCb::CaloDigitStatus::UseForEnergy ) )
         { continue ; }
         // accumulate the energy
-        energy +=  digit->e() * begin->fraction() ;
+        energy += digit->e() * begin->fraction() ;
       }
       return energy ;
     }
@@ -733,12 +731,12 @@ namespace LHCb
        *  @param calo  calorimeter name
        */
       explicit DigitFromCalo( const std::string& calo )
-        : m_calo( CaloCellCode::CaloNumFromName( calo ) ) {} ;
+        : m_calo( CaloCellCode::CaloNumFromName( calo ) ) {}
       /** constructor
        *  @param calo  calorimeter index
        */
       explicit DigitFromCalo( const int  calo )
-        : m_calo(                                calo   ) {} ;
+        : m_calo(                                calo   ) {}
       /** the only essential method
        *  @param digit pointer to CaloDigit object
        *  @return true if digit belongs to the predefined calorimeter
@@ -757,7 +755,7 @@ namespace LHCb
        */
       inline void setCalo( const int  calo ) { m_calo = calo ; };
     private:
-      int m_calo ;
+      int m_calo{0} ;
 
     };
     // ==========================================================================
@@ -797,7 +795,7 @@ namespace LHCb
       bool operator() ( const TYPE& obj ) const
       { return Calo( obj ) == m_index ; }
     private:
-      int        m_index ;
+      int        m_index{0} ;
     };
     // ==========================================================================
 
@@ -832,7 +830,7 @@ namespace LHCb
       bool operator() ( const TYPE& obj ) const
       { return CaloArea( obj ) == m_index ; }
     private:
-      int            m_index ;
+      int            m_index{0} ;
     };
     // ==========================================================================
 
@@ -868,7 +866,7 @@ namespace LHCb
       template <class TYPE> bool operator() ( const TYPE& obj ) const
       { return CaloRow( obj ) == m_index ; }
     private:
-      int            m_index ;
+      int            m_index{0} ;
     };
     // ==========================================================================
 
@@ -902,7 +900,7 @@ namespace LHCb
       template <class TYPE> bool operator() ( const TYPE& obj ) const
       { return CaloClumn( obj ) == m_index ; }
     private:
-      int              m_index ;
+      int              m_index{0} ;
     };
     // ==========================================================================
 
