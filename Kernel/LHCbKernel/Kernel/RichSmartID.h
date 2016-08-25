@@ -50,7 +50,7 @@ namespace LHCb
                                               const BitPackType shift,
                                               const BitPackType mask ) noexcept
     {
-      return ( (value << shift) & mask );
+      return ( ( value << shift ) & mask );
     }
 
     /** The bit-packed internal data word.
@@ -108,7 +108,7 @@ namespace LHCb
     /// Access the ID type
     inline constexpr RichSmartID::IDType idType() const noexcept
     {
-      return (RichSmartID::IDType) ( (key() & MaskIDType) >> ShiftIDType );
+      return (RichSmartID::IDType) ( ( key() & MaskIDType ) >> ShiftIDType );
     }
 
   public:
@@ -274,7 +274,7 @@ namespace LHCb
                          const BitPackType shift,
                          const BitPackType mask ) noexcept
     {
-      setKey( ((value << shift) & mask) | (m_key & ~mask) );
+      setKey( ( ( value << shift ) & mask) | ( m_key & ~mask ) );
     }
 
     /// Set the given data into the given field, with validity bit
@@ -283,7 +283,7 @@ namespace LHCb
                          const BitPackType mask,
                          const BitPackType okMask ) noexcept
     {
-      setKey( ((value << shift) & mask) | (m_key & ~mask) | okMask );
+      setKey( ( ( value << shift ) & mask ) | ( m_key & ~mask ) | okMask );
     }
 
     /// Checks if a data value is within range for a given field
@@ -291,7 +291,7 @@ namespace LHCb
                             const DataType maxValue,
                             const std::string& message) const
     {
-      if ( value > maxValue ) rangeError( value, maxValue, message );
+      if ( value > maxValue ) { rangeError( value, maxValue, message ); }
     }
 
     /// Issue an exception in the case of a range error
@@ -328,11 +328,11 @@ namespace LHCb
     /// Constructor from unsigned 64 bit int
     explicit constexpr RichSmartID( const uint64_t key ) noexcept
       : m_key( static_cast<LHCb::RichSmartID::KeyType>( key & 0x00000000FFFFFFFF ) ) { }
-
+    
     /// Constructor from signed 32 bit int type
     explicit           RichSmartID( const int32_t key ) noexcept
       : m_key( reinterpret_cast<const LHCb::RichSmartID::KeyType&>(key) ) { }
-
+    
     /// Constructor from signed 64 bit int
     explicit constexpr RichSmartID( const int64_t key ) noexcept
       : m_key( static_cast<LHCb::RichSmartID::KeyType>( key & 0x00000000FFFFFFFF ) ) { }
@@ -874,7 +874,7 @@ namespace LHCb
     /// Test if a given bit in the ID is on
     inline constexpr bool isBitOn( const int32_t pos ) const noexcept
     {
-      return ( 0 != (key() & (1<<pos)) );
+      return ( 0 != ( key() & ( 1 << pos ) ) );
     }
     
     /// Print the ID as a series of bits (0/1)
