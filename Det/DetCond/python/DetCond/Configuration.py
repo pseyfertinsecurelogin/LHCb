@@ -620,7 +620,7 @@ class CondDB(ConfigurableUser):
         from Gaudi.Configuration import VFSSvc
         from Configurables       import CondDBEntityResolver
         VFSSvc().FileAccessTools.append(CondDBEntityResolver())
-        for partition in ['DDDB', 'LHCBCOND', 'SIMCOND', 'ONLINE', 'CALIBOFF']:
+        for partition in ['DDDB', 'LHCBCOND', 'SIMCOND', 'ONLINE', 'CALIBOFF', 'DQFLAGS']:
             ger = allConfigurables.get('ToolSvc.Git{0}'.format(partition))
             if ger:
                 if not ger.isPropertySet('Commit'):
