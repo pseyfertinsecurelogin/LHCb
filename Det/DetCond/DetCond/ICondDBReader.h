@@ -17,6 +17,10 @@
 #include "CoolKernel/pointers.h"
 #include "CoolKernel/ChannelId.h"
 
+#ifndef COOL_HAS_CPP11
+#include "boost/shared_ptr.hpp"
+#endif
+
 // Forward declarations
 namespace cool {
   class IRecord;
