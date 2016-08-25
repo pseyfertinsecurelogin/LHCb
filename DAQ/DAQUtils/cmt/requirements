@@ -6,6 +6,7 @@ branches cmt doc Event src tests
 use GaudiKernel v*
 use GaudiAlg    v*
 use DAQEvent    v* Event
+use HltEvent    v* Event
 use RecEvent    v* Event
 use DAQKernel   v* DAQ
 
