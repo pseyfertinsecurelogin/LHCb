@@ -48,7 +48,7 @@ namespace LHCb
     public:
       /// the only one essential method 
       inline bool operator () ( const LHCb::MCCaloHit* hit )  const 
-      { return ( 0 == hit ) ? false : m_time == hit->time() ; }
+      { return ( ! hit ) ? false : m_time == hit->time() ; }
     private:
       // index of the time slot 
       LHCb::MCCaloHit::Time m_time ; ///< index of the time slot
@@ -89,7 +89,7 @@ namespace LHCb
       inline double operator() ( double& energy , const TYPE* hit ) const 
       {
         // use the evaluator 
-        if ( m_eval( hit ) ){ energy += hit->activeE() ; }        
+        if ( m_eval( hit ) ) { energy += hit->activeE() ; }        
         return energy ;
       } ;
     private:
@@ -149,8 +149,7 @@ namespace LHCb
       /// the only one essential method 
       inline double operator() ( const LHCb::MCCaloHit* hit ) const
       {
-        if ( 0 != hit && m_eval ( hit ) ){ return hit->activeE() ; }
-        return 0.0 ;
+        return ( ! hit && m_eval ( hit ) ? hit->activeE() : 0.0 );
       } ;
     private:
       // predicate, which select the proper time-bin
@@ -192,8 +191,8 @@ namespace LHCb
       /// the only one essential method 
       inline double operator() ( const LHCb::MCCaloDigit* digit ) const
       {
-        if ( 0 == digit ) { return 0 ;}
-        const SmartRefVector<LHCb::MCCaloHit>& hits = digit->hits();
+        if ( ! digit ) { return 0 ;}
+        const auto & hits = digit->hits();
         return std::accumulate ( hits.begin() , hits.end() , 0.0 , m_eval ) ;
       } ;
     private:
@@ -236,8 +235,8 @@ namespace LHCb
       /// the only one essential method 
       inline double operator() ( const LHCb::MCCaloHit::Container* hits ) const
       {
-        if ( 0 == hits ) { return 0 ; }
-        return std::accumulate ( hits->begin() , hits->end() , 0.0 , m_eval ) ;        
+        return ( !hits ? return 0 :
+                 std::accumulate ( hits->begin() , hits->end() , 0.0 , m_eval ) );        
       } ;
     private:
       // the actual evaluator
@@ -278,10 +277,11 @@ namespace LHCb
       /// the only on eessential method 
       inline double operator() ( const LHCb::MCCaloDigit::Container* digits ) const
       {
-        if ( 0 == digits ) { return 0 ; }
         double energy = 0.0 ;
-        for ( LHCb::MCCaloDigit::Container::const_iterator idigit = digits->begin() ;
-              digits->end() != idigit ; ++idigit ) { energy += m_eval ( *idigit ) ; }
+        if ( digits )
+        {
+          for ( const auto * dig : *digits ) { energy += m_eval ( dig ) ; }
+        }
         return energy ;
       } ;
     private:
@@ -329,7 +329,7 @@ namespace LHCb
     ( const TYPE*                 object , 
       const LHCb::MCCaloHit::Time time   )
     {
-      if ( 0 == object ) { return 0.0 ; }
+      if ( ! object ) { return 0.0 ; }
       ActiveEnergyInTime<TYPE> evaluator ( time )  ;
       return evaluator ( object ) ;
     } ;

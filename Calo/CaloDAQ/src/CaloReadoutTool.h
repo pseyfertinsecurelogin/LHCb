@@ -43,7 +43,7 @@ public:
   // Useful methods  to set/get m_banks externally 
   // e.g. : avoid the call to getCaloBanksFromRaw() at each call of adc(bank)
   virtual bool getBanks(){
-    counter("getCaloBanks") += 1;
+    if(m_stat)counter("getCaloBanks") += 1;
     m_getRaw = false;
     clear();
     m_ok = getCaloBanksFromRaw();    
@@ -103,5 +103,6 @@ protected:
   bool m_ok;
 private:
   bool m_first;
+  bool m_stat;
 };
 #endif // CALODAQ_CALOREADOUTTOOL_H

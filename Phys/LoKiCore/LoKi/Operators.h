@@ -1,4 +1,3 @@
-// $Id$
 // ============================================================================
 #ifndef LOKI_OPERATORS_H
 #define LOKI_OPERATORS_H 1
@@ -27,8 +26,55 @@
  *  @date 2001-01-23
  */
 // ============================================================================
-namespace LoKi 
+namespace LoKi
 {
+
+  namespace details {
+
+      template <typename T, typename U>
+      using decays_to = std::is_convertible<typename std::decay<T>::type*, U*>;
+
+      // is Derived derived from Base<Args...>?
+      template <template <typename ...> class Base, typename Derived>
+      struct is_derived_from_template_helper {
+          template <typename ... Args>
+          static std::true_type  test(Base<Args...>*);
+          static std::false_type test(void*);
+
+          using type = decltype(test(std::declval<typename std::decay<Derived>::type*>()));
+      };
+
+      template <typename T>
+      using is_functor = typename is_derived_from_template_helper<LoKi::Functor,T>::type;
+
+      // If T derives from LoKi::Functor<TYPE,TYPE2> what is TYPE?
+      // If T derives from LoKi::Functor<TYPE,TYPE2> what is TYPE2?
+      template <typename T,
+                typename = typename std::enable_if<is_functor<T>::value>::type>
+      struct LF {
+          using U = typename std::decay<T>::type;
+          template <typename T1, typename T2> static T1 test1( LoKi::Functor<T1,T2>* );
+          template <typename T1, typename T2> static T2 test2( LoKi::Functor<T1,T2>* );
+          using type1 = decltype( test1(std::declval<U*>()) );
+          using type2 = decltype( test2(std::declval<U*>()) );
+      };
+
+      // ( F1 = LoKi::Functor<TYPE,TYPE2> , F2 = LoKi::Functor<TYPE,TYPE2> ) -> TYPE
+      // ( F1 = LoKi::Functor<TYPE,TYPE2> , F2 = LoKi::Functor<TYPE,TYPE2> ) -> TYPE2
+      template <typename F1, typename F2,
+                typename = typename std::enable_if<is_functor<F1>::value
+                                               &&  is_functor<F2>::value
+                                               // the following is not strictly neccessary anymore...
+                                               &&  std::is_same< typename LF<F1>::type1, typename LF<F2>::type1 >::value
+                                               &&  std::is_same< typename LF<F1>::type2, typename LF<F2>::type2 >::value
+                                               >::type>
+      struct LF2 {
+          using type1 = typename std::common_type< typename LF<F1>::type1,
+                                                   typename LF<F2>::type1 >::type;
+          using type2 = typename std::common_type< typename LF<F1>::type2,
+                                                   typename LF<F2>::type2 >::type;
+      };
+  }
   // ============================================================================
   /** inline construction of logical 'AND'
    *
@@ -50,11 +96,14 @@ namespace LoKi
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date 2001-01-23
    */
-  template <class TYPE,class TYPE2>
+  template <typename F1, typename F2,
+            typename TYPE  = typename details::LF2<F1,F2>::type1,
+            typename TYPE2 = typename details::LF2<F1,F2>::type2>
   inline   LoKi::And<TYPE,TYPE2>
-  operator&&  ( const  LoKi::Functor<TYPE,TYPE2>& fun1 ,
-                const  LoKi::Functor<TYPE,TYPE2>& fun2 )
-  { return LoKi::And<TYPE,TYPE2>  ( fun1   , fun2   ) ; }
+  operator&&  ( F1&& fun1 , F2&& fun2 )
+  {
+      return { std::forward<F1>(fun1), std::forward<F2>(fun2) };
+  }
   // ============================================================================
   /** inline construction of logical 'OR'
    *
@@ -76,11 +125,14 @@ namespace LoKi
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date 2001-01-23
    */
-  template <class TYPE, class TYPE2>
+  template <typename F1, typename F2,
+            typename TYPE  = typename details::LF2<F1,F2>::type1,
+            typename TYPE2 = typename details::LF2<F1,F2>::type2>
   inline   LoKi::Or<TYPE,TYPE2>
-  operator|| ( const  LoKi::Functor<TYPE,TYPE2>& fun1 ,
-               const  LoKi::Functor<TYPE,TYPE2>& fun2 )
-  { return LoKi::Or<TYPE,TYPE2> ( fun1   , fun2 ) ; }
+  operator|| ( F1&& fun1 , F2&& fun2 )
+  {
+      return { std::forward<F1>(fun1), std::forward<F2>(fun2) };
+  }
   // ============================================================================
   /** inline construction for logical negate
    *
@@ -104,10 +156,12 @@ namespace LoKi
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date 2001-01-23
    */
-  template <class TYPE, class TYPE2>
+  template <typename F,
+            typename TYPE  = typename details::LF<F>::type1,
+            typename TYPE2 = typename details::LF<F>::type2>
   inline LoKi::Not<TYPE,TYPE2>
-  operator!  ( const  LoKi::Functor<TYPE,TYPE2>& fun  )
-  { return LoKi::Not<TYPE,TYPE2> ( fun )  ; }
+  operator!  ( F&& fun  )
+  { return { std::forward<F>( fun ) }  ; }
   // ============================================================================
   /** inline construction for unary negate
    *
@@ -131,10 +185,12 @@ namespace LoKi
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date 2001-01-23
    */
-  template <class TYPE, class TYPE2>
+  template <typename F,
+            typename TYPE  = typename details::LF<F>::type1,
+            typename TYPE2 = typename details::LF<F>::type2>
   inline LoKi::Negate<TYPE,TYPE2>
-  operator-( const  LoKi::Functor<TYPE,TYPE2>& fun  )
-  { return LoKi::Negate<TYPE,TYPE2> ( fun )  ; }
+  operator-( F&& fun  )
+  { return { std::forward<F>( fun ) }; }
   // ============================================================================
   /** inline construction of operator "<"
    *
@@ -156,11 +212,12 @@ namespace LoKi
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date 2001-01-23
    */
-  template <class TYPE, class TYPE2>
+  template <typename F1, typename F2,
+            typename TYPE  = typename details::LF2<F1,F2>::type1,
+            typename TYPE2 = typename details::LF2<F1,F2>::type2>
   inline   LoKi::Less<TYPE,TYPE2>
-  operator<  ( const  LoKi::Functor<TYPE,TYPE2>&  fun1 ,
-               const  LoKi::Functor<TYPE,TYPE2>&  fun2 )
-  { return LoKi::Less<TYPE,TYPE2> ( fun1   , fun2   ) ; }
+  operator<  ( F1&& fun1 , F2&& fun2 )
+  { return { std::forward<F1>(fun1), std::forward<F2>(fun2) } ; }
   // ============================================================================
   /** inline construction of operator "<"
    *
@@ -183,11 +240,13 @@ namespace LoKi
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date 2001-01-23
    */
-  template <class TYPE,class TYPE2>
+  template <typename F,
+            typename TYPE  = typename details::LF<F>::type1,
+            typename TYPE2 = typename details::LF<F>::type2>
   inline   LoKi::LessThanValue<TYPE,TYPE2>
-  operator< ( const  LoKi::Functor<TYPE,TYPE2>&       fun ,
+  operator< ( F&&       fun ,
               typename LoKi::Constant<TYPE,TYPE2>::T2 val )
-  { return LoKi::LessThanValue<TYPE,TYPE2>( fun , val ) ; }
+  { return { std::forward<F>(fun) , val } ; }
   // ============================================================================
   /** inline construction for operator "<"
    *
@@ -210,18 +269,20 @@ namespace LoKi
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date 2001-01-23
    */
-  template <class TYPE, class TYPE2>
+  template <typename F,
+            typename TYPE  = typename details::LF<F>::type1,
+            typename TYPE2 = typename details::LF<F>::type2>
   inline   LoKi::GreaterThanValue<TYPE,TYPE2>
   operator< ( typename LoKi::Constant<TYPE,TYPE2>::T2 val ,
-              const  LoKi::Functor<TYPE,TYPE2>&       fun )
-  { return LoKi::GreaterThanValue<TYPE,TYPE2>( fun , val ) ; }
+              F&&       fun )
+  { return { std::forward<F>(fun) , val } ; }
   // ============================================================================
   /** inline construction for operator ">"
    *
    *  @code
    *
    *  typedef Functor<SomeType,double>          Func ;
-   *  typedef FunctorFrinFunctor<SomeType,bool> PfP  ;
+   *  typedef FunctorFromFunctor<SomeType,bool> PfP  ;
    *
    *  void func( const Func& A , const Func& B )
    *  {
@@ -236,11 +297,12 @@ namespace LoKi
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date 2001-01-23
    */
-  template <class TYPE, class TYPE2>
+  template <typename F1, typename F2,
+            typename TYPE  = typename details::LF2<F1,F2>::type1,
+            typename TYPE2 = typename details::LF2<F1,F2>::type2>
   inline   LoKi::Less<TYPE, TYPE2>
-  operator>  ( const  LoKi::Functor<TYPE,TYPE2>&  fun1 ,
-               const  LoKi::Functor<TYPE,TYPE2>&  fun2 )
-  { return LoKi::Less<TYPE,TYPE2> ( fun2 , fun1 ) ; }
+  operator>  ( F1&& fun1 , F2&& fun2 )
+  { return { std::forward<F2>(fun2), std::forward<F1>(fun1) } ; }
   // ============================================================================
   /** inline construction for operator ">"
    *
@@ -262,11 +324,13 @@ namespace LoKi
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date 2001-01-23
    */
-  template <class TYPE, class TYPE2>
+  template <typename F,
+            typename TYPE  = typename details::LF<F>::type1,
+            typename TYPE2 = typename details::LF<F>::type2>
   inline   LoKi::GreaterThanValue<TYPE,TYPE2>
-  operator>  ( const  LoKi::Functor<TYPE,TYPE2>&       fun  ,
+  operator>  ( F&&       fun  ,
                typename LoKi::Constant<TYPE,TYPE2>::T2 val )
-  { return LoKi::GreaterThanValue<TYPE,TYPE2>( fun , val ) ; }
+  { return { std::forward<F>(fun) , val } ; }
   // ============================================================================
   /** inline construction of operator ">"
    *
@@ -288,11 +352,13 @@ namespace LoKi
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date 2001-01-23
    */
-  template <class TYPE, class TYPE2>
+  template <typename F,
+            typename TYPE  = typename details::LF<F>::type1,
+            typename TYPE2 = typename details::LF<F>::type2>
   inline   LoKi::LessThanValue<TYPE,TYPE2>
   operator> ( typename LoKi::Constant<TYPE,TYPE2>::T2 val ,
-              const  LoKi::Functor<TYPE,TYPE2>&       fun  )
-  { return LoKi::LessThanValue<TYPE,TYPE2>( fun , val ) ; }
+              F&& fun  )
+  { return { std::forward<F>(fun) , val } ; }
   // ============================================================================
   /** inline construction of operator "=="
    *
@@ -314,37 +380,13 @@ namespace LoKi
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date 2001-01-23
    */
-  template <class TYPE, class TYPE2>
+  template <typename F1, typename F2,
+            typename TYPE  = typename details::LF2<F1,F2>::type1,
+            typename TYPE2 = typename details::LF2<F1,F2>::type2>
   inline   LoKi::Equal<TYPE,TYPE2>
-  operator== ( const LoKi::Functor<TYPE,TYPE2>&  fun1 ,
-               const LoKi::Functor<TYPE,TYPE2>&  fun2 )
-  { return LoKi::Equal<TYPE,TYPE2>  ( fun1   , fun2   ) ; }
-  // ============================================================================
-  /** inline construction of operator "=="
-   *
-   *  @code
-   *
-   *  typedef Functor<SomeType,double>          Func ;
-   *  typedef FunctorFromFunctor<SomeType,bool> PfP  ;
-   *
-   *  void func( const Func& A , const double B )
-   *  {
-   *    PfP f = A == B             ; // operator form
-   *  }
-   *
-   *  @endcode
-   *
-   *  @see LoKi::EqualToValue
-   *  @return functor
-   *
-   *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
-   *  @date 2001-01-23
-   */
-  template <class TYPE, class TYPE2>
-  inline   LoKi::EqualToValue<TYPE,TYPE2>
-  operator== ( const LoKi::Functor<TYPE,TYPE2>&        fun  ,
-               typename LoKi::Constant<TYPE,TYPE2>::T2 val  )
-  { return LoKi::EqualToValue<TYPE,TYPE2> ( fun   , val  ) ; }
+  operator== ( F1&& fun1 ,
+               F2&& fun2 )
+  { return  { std::forward<F1>(fun1) , std::forward<F2>(fun2) } ; }
   // ============================================================================
   /** inline construction of operator "=="
    *
@@ -366,59 +408,33 @@ namespace LoKi
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date 2001-01-23
    */
-  template <class TYPE, class TYPE2>
+  template <typename F,
+            typename TYPE  = typename details::LF<F>::type1,
+            typename TYPE2 = typename details::LF<F>::type2>
   inline   LoKi::EqualToValue<TYPE,TYPE2>
-  operator== ( typename LoKi::Constant<TYPE,TYPE2>::T2 val  ,
-               const LoKi::Functor<TYPE,TYPE2>&        fun  )
-  { return LoKi::EqualToValue<TYPE,TYPE2> ( val , fun  ) ; }
+  operator== ( typename LoKi::Constant<TYPE,TYPE2>::T2 val  , F&& fun  )
+  { return { std::move(val) , std::forward<F>(fun) } ; }
   // ============================================================================
-  template <class TYPE, class TYPE2>
+  template <typename F,
+            typename TYPE  = typename details::LF<F>::type1,
+            typename TYPE2 = typename details::LF<F>::type2>
   inline LoKi::EqualToValue<TYPE,TYPE2>
-  operator== ( const int                        val  ,
-               const LoKi::Functor<TYPE,TYPE2>& fun  )
-  { return LoKi::EqualToValue<TYPE,TYPE2> ( val , fun  ) ; }
+  operator== ( F&& fun , typename LoKi::Constant<TYPE,TYPE2>::T2 val )
+  { return { std::move(val) , std::forward<F>(fun) } ; }
   // ============================================================================
-  template <class TYPE, class TYPE2>
-  inline LoKi::EqualToValue<TYPE,TYPE2>
-  operator== ( const unsigned int               val ,
-               const LoKi::Functor<TYPE,TYPE2>& fun  )
-  { return LoKi::EqualToValue<TYPE,TYPE2> ( val , fun  ) ; }
-  // ============================================================================
-  template <class TYPE, class TYPE2>
-  inline LoKi::EqualToValue<TYPE,TYPE2>
-  operator== ( const LoKi::Functor<TYPE,TYPE2>& fun ,
-               const int                        val )
-  { return LoKi::EqualToValue<TYPE,TYPE2> ( val , fun  ) ; }
-  // ============================================================================
-  template <class TYPE, class TYPE2>
-  inline LoKi::EqualToValue<TYPE,TYPE2>
-  operator== ( const LoKi::Functor<TYPE,TYPE2>& fun ,
-               const unsigned int               val )
-  { return LoKi::EqualToValue<TYPE,TYPE2> ( val , fun  ) ; }
-  // ============================================================================
-  template <class TYPE, class TYPE2>
+  template <typename F,
+            typename TYPE  = typename details::LF<F>::type1,
+            typename TYPE2 = typename details::LF<F>::type2>
   inline LoKi::NotEqualToValue<TYPE,TYPE2>
-  operator!= ( const int                        val ,
-               const LoKi::Functor<TYPE,TYPE2>& fun  )
-  { return LoKi::NotEqualToValue<TYPE,TYPE2> ( val , fun  ) ; }
+  operator!= ( typename  LoKi::Constant<TYPE,TYPE2>::T2 val , F&& fun  )
+  { return { std::move(val) , std::forward<F>(fun) } ; }
   // ============================================================================
-  template <class TYPE, class TYPE2>
+  template <typename F,
+            typename TYPE  = typename details::LF<F>::type1,
+            typename TYPE2 = typename details::LF<F>::type2>
   inline LoKi::NotEqualToValue<TYPE,TYPE2>
-  operator!= ( const unsigned int               val ,
-               const LoKi::Functor<TYPE,TYPE2>& fun  )
-  { return LoKi::NotEqualToValue<TYPE,TYPE2> ( val , fun  ) ; }
-  // ============================================================================
-  template <class TYPE, class TYPE2>
-  inline LoKi::NotEqualToValue<TYPE,TYPE2>
-  operator!= ( const LoKi::Functor<TYPE,TYPE2>& fun ,
-               const int                        val )
-  { return LoKi::NotEqualToValue<TYPE,TYPE2> ( val , fun  ) ; }
-  // ============================================================================
-  template <class TYPE, class TYPE2>
-  inline LoKi::NotEqualToValue<TYPE,TYPE2>
-  operator!= ( const LoKi::Functor<TYPE,TYPE2>& fun ,
-               const unsigned int               val )
-  { return LoKi::NotEqualToValue<TYPE,TYPE2> ( val , fun  ) ; }
+  operator!= ( F&& fun , typename LoKi::Constant<TYPE,TYPE2>::T2 val )
+  { return { std::move(val) , std::forward<F>(fun) } ; }
   // ============================================================================
   /** inline construction of operator "<="
    *
@@ -440,11 +456,12 @@ namespace LoKi
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date 2001-01-23
    */
-  template <class TYPE, class TYPE2>
+  template <typename F1, typename F2,
+            typename TYPE  = typename details::LF2<F1,F2>::type1,
+            typename TYPE2 = typename details::LF2<F1,F2>::type2>
   inline   LoKi::LessOrEqual<TYPE,TYPE2>
-  operator<= ( const  LoKi::Functor<TYPE,TYPE2>&  fun1 ,
-               const  LoKi::Functor<TYPE,TYPE2>&  fun2 )
-  { return LoKi::LessOrEqual<TYPE,TYPE2> ( fun1 , fun2 ) ; }
+  operator<= ( F1&&  fun1 , F2&&  fun2 )
+  { return { std::forward<F1>(fun1) , std::forward<F2>(fun2) } ; }
   // ============================================================================
   /** inline construction of operator "<="
    *
@@ -467,11 +484,13 @@ namespace LoKi
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date 2001-01-23
    */
-  template <class TYPE, class TYPE2>
+  template <typename F,
+            typename TYPE  = typename details::LF<F>::type1,
+            typename TYPE2 = typename details::LF<F>::type2>
   inline   LoKi::LessOrEqualValue<TYPE,TYPE2>
-  operator<= ( const  LoKi::Functor<TYPE,TYPE2>&       fun ,
+  operator<= ( F&&       fun ,
                typename LoKi::Constant<TYPE,TYPE2>::T2 val )
-  { return LoKi::LessOrEqualValue<TYPE,TYPE2>( fun , val ) ; }
+  { return { std::forward<F>(fun) , std::move(val) } ; }
   // ============================================================================
   /** inline construction of operator "<="
    *
@@ -494,11 +513,12 @@ namespace LoKi
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date 2001-01-23
    */
-  template <class TYPE,class TYPE2>
+  template <typename F,
+            typename TYPE  = typename details::LF<F>::type1,
+            typename TYPE2 = typename details::LF<F>::type2>
   inline   LoKi::GreaterOrEqualValue<TYPE,TYPE2>
-  operator<= ( typename LoKi::Constant<TYPE,TYPE2>::T2 val ,
-               const  LoKi::Functor<TYPE,TYPE2>&       fun )
-  { return LoKi::GreaterOrEqualValue<TYPE,TYPE2>( fun , val ) ; }
+  operator<= ( typename LoKi::Constant<TYPE,TYPE2>::T2 val , F&& fun )
+  { return { std::forward<F>(fun) , std::move(val) } ; }
   // ============================================================================
   /** inline construction of operator ">="
    *
@@ -520,11 +540,12 @@ namespace LoKi
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date 2001-01-23
    */
-  template <class TYPE, class TYPE2>
+  template <typename F1, typename F2,
+            typename TYPE  = typename details::LF2<F1,F2>::type1,
+            typename TYPE2 = typename details::LF2<F1,F2>::type2>
   inline   LoKi::LessOrEqual<TYPE,TYPE2>
-  operator>= ( const  LoKi::Functor<TYPE,TYPE2>& fun1 ,
-               const  LoKi::Functor<TYPE,TYPE2>& fun2 )
-  { return LoKi::LessOrEqual<TYPE,TYPE2> ( fun2 , fun1 ) ; }
+  operator>= ( F1&& fun1 , F2&& fun2 )
+  { return { std::forward<F2>(fun2) , std::forward<F1>(fun1) } ; }
   // ============================================================================
   /** inline construction of operator ">="
    *
@@ -546,11 +567,13 @@ namespace LoKi
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date 2001-01-23
    */
-  template <class TYPE, class TYPE2>
+  template <typename F,
+            typename TYPE  = typename details::LF<F>::type1,
+            typename TYPE2 = typename details::LF<F>::type2>
   inline   LoKi::GreaterOrEqualValue<TYPE,TYPE2>
-  operator>= ( const  LoKi::Functor<TYPE,TYPE2>&       fun ,
+  operator>= ( F&&       fun ,
                typename LoKi::Constant<TYPE,TYPE2>::T2 val )
-  { return LoKi::GreaterOrEqualValue<TYPE,TYPE2> ( fun , val ) ; }
+  { return { std::forward<F>(fun) , val } ; }
   // ============================================================================
   /** inline construction of operator ">="
    *
@@ -572,11 +595,13 @@ namespace LoKi
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date 2001-01-23
    */
-  template <class TYPE, class TYPE2>
+  template <typename F,
+            typename TYPE  = typename details::LF<F>::type1,
+            typename TYPE2 = typename details::LF<F>::type2>
   inline   LoKi::LessOrEqualValue<TYPE,TYPE2>
   operator>= ( typename LoKi::Constant<TYPE,TYPE2>::T2 val ,
-               const    LoKi::Functor<TYPE,TYPE2>&     fun )
-  { return LoKi::LessOrEqualValue<TYPE,TYPE2> ( fun , val ) ; }
+               F&&     fun )
+  { return { std::forward<F>(fun) , std::move(val) } ; }
   // ============================================================================
   /** inline construction of operator "!="
    *
@@ -598,63 +623,12 @@ namespace LoKi
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date 2001-01-23
    */
-  template <class TYPE, class TYPE2>
+  template <typename F1, typename F2,
+            typename TYPE  = typename details::LF2<F1,F2>::type1,
+            typename TYPE2 = typename details::LF2<F1,F2>::type2>
   inline LoKi::NotEqual<TYPE,TYPE2>
-  operator!= ( const LoKi::Functor<TYPE,TYPE2>&  fun1 ,
-               const LoKi::Functor<TYPE,TYPE2>&  fun2 )
-  { return LoKi::NotEqual<TYPE,TYPE2> ( fun1 , fun2 ) ; }
-  // ============================================================================
-  /** inline construction of operator "!="
-   *
-   *  @code
-   *
-   *  typedef Functor<SomeType,double>          Func ;
-   *  typedef FunctorFromFunctor<SomeType,bool> PfP  ;
-   *
-   *  void func( const Func& A , const double B )
-   *  {
-   *    PfP f = A != B             ; // operator form
-   *  }
-   *
-   *  @endcode
-   *
-   *  @see LoKi::NotEqual
-   *  @return functor
-   *
-   *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
-   *  @date 2001-01-23
-   */
-  template <class TYPE, class TYPE2>
-  inline LoKi::NotEqualToValue<TYPE,TYPE2>
-  operator!= ( const LoKi::Functor<TYPE,TYPE2>&        fun ,
-               typename LoKi::Constant<TYPE,TYPE2>::T2 val )
-  { return LoKi::NotEqualToValue<TYPE,TYPE2> ( fun , val ) ; }
-  // ============================================================================
-  /** inline construction of operator "!="
-   *
-   *  @code
-   *
-   *  typedef Functor<SomeType,double>          Func ;
-   *  typedef FunctorFromFunctor<SomeType,bool> PfP  ;
-   *
-   *  void func( const Func& A , const double B )
-   *  {
-   *    PfP f = B != A             ; // operator form
-   *  }
-   *
-   *  @endcode
-   *
-   *  @see LoKi::NotEqual
-   *  @return functor
-   *
-   *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
-   *  @date 2001-01-23
-   */
-  template <class TYPE, class TYPE2>
-  inline LoKi::NotEqualToValue<TYPE,TYPE2>
-  operator!= ( typename LoKi::Constant<TYPE,TYPE2>::T2 val ,
-               const LoKi::Functor<TYPE,TYPE2>&        fun )
-  { return LoKi::NotEqualToValue<TYPE,TYPE2> ( val , fun ) ; }
+  operator!= ( F1&&  fun1 , F2&&  fun2 )
+  { return { std::forward<F1>(fun1) , std::forward<F2>(fun2) } ; }
   // ============================================================================
   /** inline construction of operator "+"
  *
@@ -676,11 +650,13 @@ namespace LoKi
  *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
  *  @date 2001-01-23
  */
-template <class TYPE, class TYPE2>
+template <typename F1, typename F2,
+          typename TYPE  = typename details::LF2<F1,F2>::type1,
+          typename TYPE2 = typename details::LF2<F1,F2>::type2>
 inline   LoKi::Plus<TYPE,TYPE2>
-operator+ ( const LoKi::Functor<TYPE,TYPE2>&  fun1 ,
-            const LoKi::Functor<TYPE,TYPE2>&  fun2 )
-{ return LoKi::Plus<TYPE,TYPE2> ( fun1  , fun2 ) ; }
+operator+ ( F1&&  fun1 ,
+            F2&&  fun2 )
+{ return { std::forward<F1>(fun1) , std::forward<F2>(fun2) } ; }
 // ============================================================================
 /** inline construction of operator "+"
  *
@@ -704,11 +680,13 @@ operator+ ( const LoKi::Functor<TYPE,TYPE2>&  fun1 ,
  *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
  *  @date 2001-01-23
  */
-template <class TYPE, class TYPE2>
+template <typename F,
+          typename TYPE  = typename details::LF<F>::type1,
+          typename TYPE2 = typename details::LF<F>::type2>
 inline   LoKi::SumByValue<TYPE,TYPE2>
-operator+ ( const LoKi::Functor<TYPE,TYPE2>&        fun ,
+operator+ ( F&&        fun ,
             typename LoKi::Constant<TYPE,TYPE2>::T2 val )
-{ return LoKi::SumByValue<TYPE,TYPE2>( fun , val ) ; }
+{ return { std::forward<F>(fun) , std::move(val) } ; }
 // ============================================================================
 /** inline construction of operator "+"
  *
@@ -730,11 +708,13 @@ operator+ ( const LoKi::Functor<TYPE,TYPE2>&        fun ,
  *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
  *  @date 2001-01-23
  */
-template <class TYPE, class TYPE2>
+template <typename F,
+          typename TYPE  = typename details::LF<F>::type1,
+          typename TYPE2 = typename details::LF<F>::type2>
 inline   LoKi::SumByValue<TYPE,TYPE2>
 operator+ ( typename LoKi::Constant<TYPE,TYPE2>::T2 val ,
-            const LoKi::Functor<TYPE,TYPE2>&        fun )
-{ return LoKi::SumByValue<TYPE,TYPE2>( val , fun ) ; }
+            F&&        fun )
+{ return { std::move(val) , std::forward<F>(fun) } ; }
 // ============================================================================
 /** inline construction of operator "-"
  *
@@ -756,11 +736,13 @@ operator+ ( typename LoKi::Constant<TYPE,TYPE2>::T2 val ,
  *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
  *  @date 2001-01-23
  */
-template <class TYPE,class TYPE2>
+template <typename F1, typename F2,
+          typename TYPE  = typename details::LF2<F1,F2>::type1,
+          typename TYPE2 = typename details::LF2<F1,F2>::type2>
 inline   LoKi::Minus<TYPE,TYPE2>
-operator- ( const LoKi::Functor<TYPE,TYPE2>&  fun1 ,
-            const LoKi::Functor<TYPE,TYPE2>&  fun2 )
-{ return LoKi::Minus<TYPE,TYPE2> ( fun1  , fun2 ) ; }
+operator- ( F1&&  fun1 ,
+            F2&&  fun2 )
+{ return { std::forward<F1>(fun1) , std::forward<F2>(fun2) } ; }
 // ============================================================================
 /** inline construction of operator "-"
  *
@@ -782,11 +764,13 @@ operator- ( const LoKi::Functor<TYPE,TYPE2>&  fun1 ,
  *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
  *  @date 2001-01-23
  */
-template <class TYPE, class TYPE2>
+template <typename F,
+          typename TYPE  = typename details::LF<F>::type1,
+          typename TYPE2 = typename details::LF<F>::type2>
 inline   LoKi::Minus1<TYPE,TYPE2>
-operator- ( const LoKi::Functor<TYPE,TYPE2>&        fun ,
+operator- ( F&&        fun ,
             typename LoKi::Constant<TYPE,TYPE2>::T2 val )
-{ return LoKi::Minus1<TYPE,TYPE2> ( fun  , val ) ; }
+{ return { std::forward<F>(fun) , std::move(val) } ; }
 // ============================================================================
 /** inline construction of operator "-"
  *
@@ -809,11 +793,13 @@ operator- ( const LoKi::Functor<TYPE,TYPE2>&        fun ,
  *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
  *  @date 2001-01-23
  */
-template <class TYPE, class TYPE2>
+template <typename F,
+          typename TYPE  = typename details::LF<F>::type1,
+          typename TYPE2 = typename details::LF<F>::type2>
 inline   LoKi::Minus2<TYPE,TYPE2>
 operator- ( typename LoKi::Constant<TYPE,TYPE2>::T2 val ,
-            const LoKi::Functor<TYPE,TYPE2>&        fun )
-{ return LoKi::Minus2<TYPE,TYPE2> ( val , fun ) ; }
+            F&&        fun )
+{ return { std::move(val) , std::forward<F>(fun) } ; }
 // ============================================================================
 /** inline construction of operator "/"
  *
@@ -835,11 +821,13 @@ operator- ( typename LoKi::Constant<TYPE,TYPE2>::T2 val ,
  *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
  *  @date 2001-01-23
  */
-template <class TYPE, class TYPE2>
+template <typename F1, typename F2,
+          typename TYPE  = typename details::LF2<F1,F2>::type1,
+          typename TYPE2 = typename details::LF2<F1,F2>::type2>
 inline   LoKi::Divide<TYPE,TYPE2>
-operator/ ( const LoKi::Functor<TYPE,TYPE2>&  fun1 ,
-            const LoKi::Functor<TYPE,TYPE2>&  fun2 )
-{ return LoKi::Divide<TYPE,TYPE2>  ( fun1  , fun2 ) ; }
+operator/ ( F1&&  fun1 ,
+            F2&&  fun2 )
+{ return { std::forward<F1>(fun1) , std::forward<F2>(fun2) } ; }
 // ============================================================================
 /** inline construction of operator "/"
  *
@@ -862,11 +850,13 @@ operator/ ( const LoKi::Functor<TYPE,TYPE2>&  fun1 ,
  *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
  *  @date 2001-01-23
  */
-template <class TYPE,class TYPE2>
+template <typename F,
+          typename TYPE  = typename details::LF<F>::type1,
+          typename TYPE2 = typename details::LF<F>::type2>
 inline   LoKi::Divide1<TYPE,TYPE2>
-operator/ ( const LoKi::Functor<TYPE,TYPE2>&        fun ,
+operator/ ( F&&        fun ,
             typename LoKi::Constant<TYPE,TYPE2>::T2 val )
-{ return LoKi::Divide1<TYPE,TYPE2>  ( fun  , val ) ; }
+{ return { std::forward<F>(fun) , std::move(val) } ; }
 // ============================================================================
 /** inline construction of operator "/"
  *
@@ -890,11 +880,13 @@ operator/ ( const LoKi::Functor<TYPE,TYPE2>&        fun ,
  *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
  *  @date 2001-01-23
  */
-template <class TYPE,class TYPE2>
+template <typename F,
+          typename TYPE  = typename details::LF<F>::type1,
+          typename TYPE2 = typename details::LF<F>::type2>
 inline   LoKi::Divide2<TYPE,TYPE2>
 operator/ ( typename LoKi::Constant<TYPE,TYPE2>::T2 val ,
-            const LoKi::Functor<TYPE,TYPE2>&        fun )
-{ return LoKi::Divide2<TYPE,TYPE2>  ( val , fun ) ; }
+            F&&        fun )
+{ return { std::move(val) , std::forward<F>(fun) } ; }
 // ============================================================================
 /** inline construction of operator "*"
  *
@@ -916,11 +908,13 @@ operator/ ( typename LoKi::Constant<TYPE,TYPE2>::T2 val ,
  *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
  *  @date 2001-01-23
  */
-template <class TYPE, class TYPE2>
+template <typename F1, typename F2,
+          typename TYPE  = typename details::LF2<F1,F2>::type1,
+          typename TYPE2 = typename details::LF2<F1,F2>::type2>
 inline   LoKi::Multiply<TYPE,TYPE2>
-operator* ( const LoKi::Functor<TYPE,TYPE2>&  fun1 ,
-            const LoKi::Functor<TYPE,TYPE2>&  fun2 )
-{ return LoKi::Multiply<TYPE,TYPE2>  ( fun1  , fun2 ) ; }
+operator* ( F1&&  fun1 ,
+            F2&&  fun2 )
+{ return { std::forward<F1>(fun1) , std::forward<F2>(fun2) } ; }
 // ============================================================================
 /** inline construction of operator "*"
  *
@@ -943,11 +937,13 @@ operator* ( const LoKi::Functor<TYPE,TYPE2>&  fun1 ,
  *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
  *  @date 2001-01-23
  */
-template <class TYPE,class TYPE2>
+template <typename F,
+          typename TYPE  = typename details::LF<F>::type1,
+          typename TYPE2 = typename details::LF<F>::type2>
 inline   LoKi::MultiplyByValue<TYPE,TYPE2>
-operator* ( const LoKi::Functor<TYPE,TYPE2>&        fun ,
+operator* ( F&&        fun ,
             typename LoKi::Constant<TYPE,TYPE2>::T2 val )
-{ return LoKi::MultiplyByValue<TYPE,TYPE2> ( fun , val ) ; }
+{ return { std::forward<F>(fun) , std::move(val) } ; }
 // ============================================================================
 /** inline construction of operator "*"
  *
@@ -969,46 +965,48 @@ operator* ( const LoKi::Functor<TYPE,TYPE2>&        fun ,
  *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
  *  @date 2001-01-23
  */
-template <class TYPE,class TYPE2>
+template <typename F,
+          typename TYPE  = typename details::LF<F>::type1,
+          typename TYPE2 = typename details::LF<F>::type2>
 inline   LoKi::MultiplyByValue<TYPE,TYPE2>
 operator* ( typename LoKi::Constant<TYPE,TYPE2>::T2 val ,
-            const LoKi::Functor<TYPE,TYPE2>&        fun )
-{ return LoKi::MultiplyByValue<TYPE,TYPE2> ( val , fun ) ; }
+            F&&        fun )
+{ return { std::move(val) , std::forward<F>(fun) } ; }
 // ============================================================================
 template <class TYPE>
 inline LoKi::EqualToList<TYPE>
 operator == ( const LoKi::Functor<TYPE,double>& fun ,
               const std::vector<double>&        vct )
-{ return LoKi::EqualToList<TYPE>( fun , vct ) ; }
+{ return { fun , vct } ; }
 // ============================================================================
 template <class TYPE>
 inline LoKi::EqualToList<TYPE>
 operator == ( const LoKi::Functor<TYPE,double>& fun ,
               const std::vector<int>&           vct )
-{ return LoKi::EqualToList<TYPE>( fun , vct ) ; }
+{ return { fun , vct } ; }
 // ============================================================================
 template <class TYPE>
 inline LoKi::EqualToList<TYPE>
 operator == ( const LoKi::Functor<TYPE,double>& fun ,
               const std::vector<unsigned int>&  vct )
-{ return LoKi::EqualToList<TYPE>( fun , vct ) ; }
+{ return { fun , vct } ; }
 // ============================================================================
 template <class TYPE>
 inline LoKi::NotEqualToList<TYPE>
 operator != ( const LoKi::Functor<TYPE,double>& fun ,
               const std::vector<double>&        vct )
-{ return LoKi::NotEqualToList<TYPE>( fun , vct ) ; }
+{ return { fun , vct } ; }
 // ============================================================================
 template <class TYPE>
 inline LoKi::NotEqualToList<TYPE>
 operator != ( const LoKi::Functor<TYPE,double>& fun ,
               const std::vector<int>&           vct )
-{ return LoKi::NotEqualToList<TYPE>( fun , vct ) ; }
+{ return { fun , vct } ; }
 template <class TYPE>
 inline LoKi::NotEqualToList<TYPE>
 operator != ( const LoKi::Functor<TYPE,double>& fun ,
               const std::vector<unsigned int>&  vct )
-{ return LoKi::NotEqualToList<TYPE>( fun , vct ) ; }
+{ return { fun , vct } ; }
 
 
 // ============================================================================
@@ -1016,37 +1014,37 @@ template <class TYPE>
 inline LoKi::EqualToList<TYPE>
 operator == ( const std::vector<double>&        vct ,
               const LoKi::Functor<TYPE,double>& fun )
-{ return LoKi::EqualToList<TYPE>( fun , vct ) ; }
+{ return { fun , vct } ; }
 // ============================================================================
 template <class TYPE>
 inline LoKi::EqualToList<TYPE>
 operator == ( const std::vector<int>&           vct ,
               const LoKi::Functor<TYPE,double>& fun )
-{ return LoKi::EqualToList<TYPE>( fun , vct ) ; }
+{ return { fun , vct } ; }
 // ============================================================================
 template <class TYPE>
 inline LoKi::EqualToList<TYPE>
 operator == ( const std::vector<unsigned int>&  vct ,
               const LoKi::Functor<TYPE,double>& fun )
-{ return LoKi::EqualToList<TYPE>( fun , vct ) ; }
+{ return { fun , vct } ; }
 // ============================================================================
 template <class TYPE>
 inline LoKi::NotEqualToList<TYPE>
 operator != ( const std::vector<double>&        vct ,
               const LoKi::Functor<TYPE,double>& fun )
-{ return LoKi::NotEqualToList<TYPE>( fun , vct ) ; }
+{ return { fun , vct } ; }
 // ============================================================================
 template <class TYPE>
 inline LoKi::NotEqualToList<TYPE>
 operator != ( const std::vector<int>&           vct ,
               const LoKi::Functor<TYPE,double>& fun )
-{ return LoKi::NotEqualToList<TYPE>( fun , vct ) ; }
+{ return { fun , vct } ; }
 // ============================================================================
 template <class TYPE>
 inline LoKi::NotEqualToList<TYPE>
 operator != ( const std::vector<unsigned int>&  vct ,
               const LoKi::Functor<TYPE,double>& fun )
-{ return LoKi::NotEqualToList<TYPE>( fun , vct ) ; }
+{ return { fun , vct } ; }
 // ============================================================================
 
 // ============================================================================
@@ -1060,8 +1058,8 @@ operator != ( const std::vector<unsigned int>&  vct ,
 template <class TYPE>
 inline   LoKi::Modulo<TYPE>
 operator% ( const LoKi::Functor<TYPE,double>& divident ,
-            const unsigned int                divisor  )
-{ return LoKi::Modulo<TYPE> ( divident , divisor ) ; }
+            unsigned int                divisor  )
+{ return { divident , divisor } ; }
 // ============================================================================
 } // namespace LoKi
 
@@ -1073,118 +1071,78 @@ operator% ( const LoKi::Functor<TYPE,double>& divident ,
 // ============================================================================
 namespace LoKi {
 // less
-template <class TYPE, class TYPE2>
+template <class TYPE, class TYPE2, typename = typename std::enable_if< !std::is_void<TYPE>::value>::type>
 inline   LoKi::Less<TYPE,TYPE2>
 operator<  ( const  LoKi::Functor<TYPE,TYPE2>&  fun1 ,
              const  LoKi::Functor<void,TYPE2>&  fun2 )
-{ return LoKi::Less<TYPE,TYPE2> ( fun1   , LoKi::Value<TYPE,TYPE2> ( fun2 ) ) ; }
+{ return { fun1   , LoKi::Value<TYPE,TYPE2> ( fun2 ) } ; }
 //
-template <class TYPE, class TYPE2>
+template <class TYPE, class TYPE2, typename = typename std::enable_if< !std::is_void<TYPE>::value>::type>
 inline   LoKi::Less<TYPE,TYPE2>
 operator<  ( const  LoKi::Functor<void,TYPE2>&  fun1 ,
              const  LoKi::Functor<TYPE,TYPE2>&  fun2 )
-{ return LoKi::Less<TYPE,TYPE2> ( LoKi::Value<TYPE,TYPE2> ( fun1 ) , fun2 ) ; }
+{ return { LoKi::Value<TYPE,TYPE2> ( fun1 ) , fun2 } ; }
 // less or equal
-template <class TYPE, class TYPE2>
+template <class TYPE, class TYPE2, typename = typename std::enable_if< !std::is_void<TYPE>::value>::type>
 inline   LoKi::LessOrEqual<TYPE,TYPE2>
 operator<= ( const  LoKi::Functor<TYPE,TYPE2>&  fun1 ,
              const  LoKi::Functor<void,TYPE2>&  fun2 )
-{ return LoKi::LessOrEqual<TYPE,TYPE2> ( fun1   , LoKi::Value<TYPE,TYPE2> ( fun2 ) ) ; }
-template <class TYPE, class TYPE2>
+{ return { fun1   , LoKi::Value<TYPE,TYPE2> ( fun2 ) } ; }
 //
+template <class TYPE, class TYPE2, typename = typename std::enable_if< !std::is_void<TYPE>::value>::type>
 inline   LoKi::LessOrEqual<TYPE,TYPE2>
 operator<= ( const  LoKi::Functor<void,TYPE2>&  fun1 ,
              const  LoKi::Functor<TYPE,TYPE2>&  fun2 )
-{ return LoKi::LessOrEqual<TYPE,TYPE2> ( LoKi::Value<TYPE,TYPE2> ( fun1 ) , fun2 ) ; }
+{ return { LoKi::Value<TYPE,TYPE2> ( fun1 ) , fun2 } ; }
 // greater
-template <class TYPE, class TYPE2>
+template <class TYPE, class TYPE2, typename = typename std::enable_if< !std::is_void<TYPE>::value>::type>
 inline   LoKi::Less<TYPE,TYPE2>
 operator>  ( const  LoKi::Functor<TYPE,TYPE2>&  fun1 ,
              const  LoKi::Functor<void,TYPE2>&  fun2 )
-{ return LoKi::Less<TYPE,TYPE2> ( LoKi::Value<TYPE,TYPE2> ( fun2 ) , fun1 ) ; }
+{ return { LoKi::Value<TYPE,TYPE2> ( fun2 ) , fun1 } ; }
 //
-template <class TYPE, class TYPE2>
+template <class TYPE, class TYPE2, typename = typename std::enable_if< !std::is_void<TYPE>::value>::type>
 inline   LoKi::Less<TYPE,TYPE2>
 operator>  ( const  LoKi::Functor<void,TYPE2>&  fun1 ,
              const  LoKi::Functor<TYPE,TYPE2>&  fun2 )
-{ return LoKi::Less<TYPE,TYPE2> ( fun2 , LoKi::Value<TYPE,TYPE2> ( fun1 ) ) ; }
+{ return { fun2 , LoKi::Value<TYPE,TYPE2> ( fun1 ) } ; }
 // greater or equal
-template <class TYPE, class TYPE2>
+template <class TYPE, class TYPE2, typename = typename std::enable_if< !std::is_void<TYPE>::value>::type>
 inline   LoKi::LessOrEqual<TYPE,TYPE2>
 operator>= ( const  LoKi::Functor<TYPE,TYPE2>&  fun1 ,
              const  LoKi::Functor<void,TYPE2>&  fun2 )
-{ return LoKi::LessOrEqual<TYPE,TYPE2> ( LoKi::Value<TYPE,TYPE2> ( fun2 ) , fun1 ) ; }
+{ return { LoKi::Value<TYPE,TYPE2> ( fun2 ) , fun1 } ; }
 //
-template <class TYPE, class TYPE2>
+template <class TYPE, class TYPE2, typename = typename std::enable_if< !std::is_void<TYPE>::value>::type>
 inline   LoKi::LessOrEqual<TYPE,TYPE2>
 operator>= ( const  LoKi::Functor<void,TYPE2>&  fun1 ,
              const  LoKi::Functor<TYPE,TYPE2>&  fun2 )
-{ return LoKi::LessOrEqual<TYPE,TYPE2> ( fun2 , LoKi::Value<TYPE,TYPE2> ( fun1 ) ) ; }
+{ return { fun2 , LoKi::Value<TYPE,TYPE2> ( fun1 ) } ; }
 // equality
-template <class TYPE, class TYPE2>
+template <class TYPE, class TYPE2, typename = typename std::enable_if< !std::is_void<TYPE>::value>::type>
 inline   LoKi::Equal<TYPE,TYPE2>
 operator== ( const LoKi::Functor<TYPE,TYPE2>&  fun1 ,
              const LoKi::Functor<void,TYPE2>&  fun2 )
-{ return LoKi::Equal<TYPE,TYPE2>  ( fun1   , LoKi::Value<TYPE,TYPE2> ( fun2 )  ) ; }
+{ return { fun1 , LoKi::Value<TYPE,TYPE2> ( fun2 ) } ; }
 //
-template <class TYPE, class TYPE2>
+template <class TYPE, class TYPE2, typename = typename std::enable_if< !std::is_void<TYPE>::value>::type>
 inline   LoKi::Equal<TYPE,TYPE2>
 operator== ( const LoKi::Functor<void,TYPE2>&  fun1 ,
              const LoKi::Functor<TYPE,TYPE2>&  fun2 )
-{ return LoKi::Equal<TYPE,TYPE2>  ( LoKi::Value<TYPE,TYPE2> ( fun1 ) , fun2  ) ; }
+{ return { LoKi::Value<TYPE,TYPE2> ( fun1 ) , fun2 } ; }
 // non-equality
-template <class TYPE, class TYPE2>
+template <class TYPE, class TYPE2, typename = typename std::enable_if< !std::is_void<TYPE>::value>::type>
 inline LoKi::NotEqual<TYPE,TYPE2>
 operator!= ( const LoKi::Functor<TYPE,TYPE2>&  fun1 ,
              const LoKi::Functor<void,TYPE2>&  fun2 )
-{ return LoKi::NotEqual<TYPE,TYPE2> ( fun1 , LoKi::Value<TYPE,TYPE2> ( fun2 ) )  ; }
+{ return { fun1 , LoKi::Value<TYPE,TYPE2> ( fun2 ) } ; }
 //
-template <class TYPE, class TYPE2>
+template <class TYPE, class TYPE2, typename = typename std::enable_if< !std::is_void<TYPE>::value>::type>
 inline LoKi::NotEqual<TYPE,TYPE2>
 operator!= ( const LoKi::Functor<void,TYPE2>&  fun1 ,
              const LoKi::Functor<TYPE,TYPE2>&  fun2 )
-{ return LoKi::NotEqual<TYPE,TYPE2> ( LoKi::Value<TYPE,TYPE2> ( fun1 ) , fun2 )  ; }
+{ return { LoKi::Value<TYPE,TYPE2> ( fun1 ) , fun2 } ; }
 
-// ============================================================================
-// and repeate everything again for 2*void  :-(
-// ============================================================================
-
-// less
-template <class TYPE2>
-inline   LoKi::Less<void,TYPE2>
-operator<  ( const  LoKi::Functor<void,TYPE2>&  fun1 ,
-             const  LoKi::Functor<void,TYPE2>&  fun2 )
-{ return LoKi::Less<void,TYPE2> ( fun1   , fun2   ) ; }
-// less or equal
-template <class TYPE2>
-inline   LoKi::LessOrEqual<void,TYPE2>
-operator<= ( const  LoKi::Functor<void,TYPE2>&  fun1 ,
-             const  LoKi::Functor<void,TYPE2>&  fun2 )
-{ return LoKi::LessOrEqual<void,TYPE2> ( fun1   , fun2   ) ; }
-// greater
-template <class TYPE2>
-inline   LoKi::Less<void,TYPE2>
-operator>  ( const  LoKi::Functor<void,TYPE2>&  fun1 ,
-             const  LoKi::Functor<void,TYPE2>&  fun2 )
-{ return LoKi::Less<void,TYPE2> ( fun2   , fun1   ) ; }
-// greater or equal
-template <class TYPE2>
-inline   LoKi::LessOrEqual<void,TYPE2>
-operator>= ( const  LoKi::Functor<void,TYPE2>&  fun1 ,
-             const  LoKi::Functor<void,TYPE2>&  fun2 )
-{ return LoKi::LessOrEqual<void,TYPE2> ( fun2   , fun1   ) ; }
-// equality
-template <class TYPE2>
-inline   LoKi::Equal<void,TYPE2>
-operator== ( const LoKi::Functor<void,TYPE2>&  fun1 ,
-             const LoKi::Functor<void,TYPE2>&  fun2 )
-{ return LoKi::Equal<void,TYPE2>  ( fun1 , fun2  ) ; }
-// non-equality
-template <class TYPE2>
-inline LoKi::NotEqual<void,TYPE2>
-operator!= ( const LoKi::Functor<void,TYPE2>&  fun1 ,
-             const LoKi::Functor<void,TYPE2>&  fun2 )
-{ return LoKi::NotEqual<void,TYPE2> ( fun1 , fun2 )  ; }
 
 // ============================================================================
 } // namespace LoKi

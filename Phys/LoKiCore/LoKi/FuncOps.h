@@ -69,7 +69,7 @@ namespace LoKi
       static Cut __lt__     ( const Func&  fun1 ,
                               const Func&  fun2 ) { return fun1 <  fun2 ; }
       static Cut __lt__     ( const Func&  fun1 ,
-                              const double fun2 ) { return fun1 <  fun2 ; }
+                              double fun2 ) { return fun1 <  fun2 ; }
       static Cut __lt__     ( const Func&  fun1 ,
                               const VOID&  fun2 ) { return fun1 <  fun2 ; }
       static Cut __lt__     ( const Func&  fun1 ,
@@ -78,7 +78,7 @@ namespace LoKi
       static Cut __le__     ( const Func&  fun1 ,
                               const Func&  fun2 ) { return fun1 <= fun2 ; }
       static Cut __le__     ( const Func&  fun1 ,
-                              const double fun2 ) { return fun1 <= fun2 ; }
+                              double fun2 ) { return fun1 <= fun2 ; }
       static Cut __le__     ( const Func&  fun1 ,
                               const VOID&  fun2 ) { return fun1 <= fun2 ; }
       static Cut __le__     ( const Func&  fun1 ,
@@ -87,7 +87,7 @@ namespace LoKi
       static Cut __gt__     ( const Func&  fun1 ,
                               const Func&  fun2 ) { return fun1 >  fun2 ; }
       static Cut __gt__     ( const Func&  fun1 ,
-                              const double fun2 ) { return fun1 >  fun2 ; }
+                              double fun2 ) { return fun1 >  fun2 ; }
       static Cut __gt__     ( const Func&  fun1 ,
                               const VOID&  fun2 ) { return fun1 >  fun2 ; }
       static Cut __gt__     ( const Func&  fun1 ,
@@ -96,7 +96,7 @@ namespace LoKi
       static Cut __ge__     ( const Func&  fun1 ,
                               const Func&  fun2 ) { return fun1 >= fun2 ; }
       static Cut __ge__     ( const Func&  fun1 ,
-                              const double fun2 ) { return fun1 >= fun2 ; }
+                              double fun2 ) { return fun1 >= fun2 ; }
       static Cut __ge__     ( const Func&  fun1 ,
                               const VOID&  fun2 ) { return fun1 >= fun2 ; }
       static Cut __ge__     ( const Func&  fun1 ,
@@ -105,11 +105,11 @@ namespace LoKi
       static Cut __eq__     ( const Func&  fun1 ,
                               const Func&  fun2 ) { return fun1 == fun2 ; }
       static Cut __eq__     ( const Func&  fun1 ,
-                              const double fun2 ) { return fun1 == fun2 ; }
+                              double fun2 ) { return fun1 == fun2 ; }
       static Cut __eq__     ( const Func&  fun1 ,
-                              const int    fun2 ) { return fun1 == fun2 ; }
+                              int    fun2 ) { return fun1 == fun2 ; }
       static Cut __eq__     ( const Func&  fun1 ,
-                              const unsigned int fun2 ) { return fun1 == fun2 ; }
+                              unsigned int fun2 ) { return fun1 == fun2 ; }
       //
       static Cut __eq__     ( const Func&                      fun1 ,
                               const std::vector<double>&       fun2 ) { return fun1 == fun2 ; }
@@ -125,11 +125,11 @@ namespace LoKi
       static Cut __ne__     ( const Func&  fun1 ,
                               const Func&  fun2 ) { return fun1 != fun2 ; }
       static Cut __ne__     ( const Func&  fun1 ,
-                              const double fun2 ) { return fun1 != fun2 ; }
+                              double fun2 ) { return fun1 != fun2 ; }
       static Cut __ne__     ( const Func&  fun1 ,
-                              const int    fun2 ) { return fun1 != fun2 ; }
+                              int    fun2 ) { return fun1 != fun2 ; }
       static Cut __ne__     ( const Func&  fun1 ,
-                              const unsigned int fun2 ) { return fun1 != fun2 ; }
+                              unsigned int fun2 ) { return fun1 != fun2 ; }
       //
       static Cut __ne__     ( const Func&                      fun1 ,
                               const std::vector<double>&       fun2 )
@@ -157,13 +157,13 @@ namespace LoKi
                               const Func&  fun2 ) { return fun1 / fun2  ; }
       //
       static Fun __add__    ( const Func&  fun1 ,
-                              const double fun2 ) { return fun1 + fun2  ; }
+                              double fun2 ) { return fun1 + fun2  ; }
       static Fun __sub__    ( const Func&  fun1 ,
-                              const double fun2 ) { return fun1 - fun2  ; }
+                              double fun2 ) { return fun1 - fun2  ; }
       static Fun __mul__    ( const Func&  fun1 ,
-                              const double fun2 ) { return fun1 * fun2  ; }
+                              double fun2 ) { return fun1 * fun2  ; }
       static Fun __div__    ( const Func&  fun1 ,
-                              const double fun2 ) { return fun1 / fun2  ; }
+                              double fun2 ) { return fun1 / fun2  ; }
       //
       static Fun __add__    ( const Func&  fun1 ,
                               const VOID&  fun2 ) { return fun1 + VAL ( fun2 ) ; }
@@ -186,9 +186,9 @@ namespace LoKi
       static Fun __pow__    ( const Func&  fun1 ,
                               const Func&  fun2 ) { return LoKi::pow ( fun1 ,            fun2      ) ; }
       static Fun __pow__    ( const Func&  fun1 ,
-                              const double fun2 ) { return LoKi::pow ( fun1 ,            fun2      ) ; }
+                              double fun2 ) { return LoKi::pow ( fun1 ,            fun2      ) ; }
       static Fun __pow__    ( const Func&  fun1 ,
-                              const int    fun2 ) { return LoKi::pow ( fun1 ,             fun2     ) ; }
+                              int    fun2 ) { return LoKi::pow ( fun1 ,             fun2     ) ; }
       static Fun __pow__    ( const Func&  fun1 ,
                               const VOID&  fun2 ) { return LoKi::pow ( fun1 , VAL       ( fun2 )   ) ; }
       static Fun __pow__    ( const Func&  fun1 ,
@@ -198,17 +198,17 @@ namespace LoKi
       // "right" side math.
       //
       static Fun __radd__   ( const Func&  fun1 ,
-                              const double fun2 ) { return fun2 + fun1  ; }
+                              double fun2 ) { return fun2 + fun1  ; }
       static Fun __rsub__   ( const Func&  fun1 ,
-                              const double fun2 ) { return fun2 - fun1  ; }
+                              double fun2 ) { return fun2 - fun1  ; }
       static Fun __rmul__   ( const Func&  fun1 ,
-                              const double fun2 ) { return fun2 * fun1  ; }
+                              double fun2 ) { return fun2 * fun1  ; }
       static Fun __rdiv__   ( const Func&  fun1 ,
-                              const double fun2 ) { return fun2 / fun1  ; }
+                              double fun2 ) { return fun2 / fun1  ; }
       static Fun __rpow__   ( const Func&  fun1 ,
-                              const double fun2 ) { return LoKi::pow ( fun2 , fun1 ) ; }
+                              double fun2 ) { return LoKi::pow ( fun2 , fun1 ) ; }
       static Fun __rpow__   ( const Func&  fun1 ,
-                              const int    fun2 ) { return LoKi::pow ( fun2 , fun1 ) ; }
+                              int    fun2 ) { return LoKi::pow ( fun2 , fun1 ) ; }
       //
       static Fun __radd__   ( const Func&  fun1 ,
                               const Para&  fun2 ) { return VAL ( PAR ( fun2 ) ) + fun1  ; }
@@ -230,7 +230,7 @@ namespace LoKi
       { return    LoKi::min ( f1 , f2 ) ; }
       // min
       static Fun __min__    ( const Func&  f1   ,
-                              const double f2   )
+                              double f2   )
       { return    LoKi::min ( f1 , f2 ) ; }
       // min
       static Fun __min__    ( const Func&  f1   ,
@@ -258,7 +258,7 @@ namespace LoKi
                               const Func&  f2   )
       { return    LoKi::max ( f1 , f2 ) ; }
       static Fun __max__    ( const Func&  f1   ,
-                              const double f2   )
+                              double f2   )
       { return    LoKi::max ( f1 , f2 ) ; }
       static Fun __max__    ( const Func&  f1   ,
                               const VOID&  f2   )
@@ -297,40 +297,40 @@ namespace LoKi
       static Cut __lt__     ( const Func&  fun1 ,
                               const Func&  fun2 ) { return fun1 <  fun2 ; }
       static Cut __lt__     ( const Func&  fun1 ,
-                              const double fun2 ) { return fun1 <  fun2 ; }
+                              double fun2 ) { return fun1 <  fun2 ; }
       static Cut __lt__     ( const Func&  fun1 ,
-                              const Para&  fun2 ) { return fun1 <  PAR ( fun2 ) ; }
+                              Para  fun2 ) { return fun1 <  PAR ( std::move(fun2) ) ; }
       //
       static Cut __le__     ( const Func&  fun1 ,
                               const Func&  fun2 ) { return fun1 <= fun2 ; }
       static Cut __le__     ( const Func&  fun1 ,
-                              const double fun2 ) { return fun1 <= fun2 ; }
+                              double fun2 ) { return fun1 <= fun2 ; }
       static Cut __le__     ( const Func&  fun1 ,
                               const Para&  fun2 ) { return fun1 <= PAR ( fun2 ) ; }
       //
       static Cut __gt__     ( const Func&  fun1 ,
                               const Func&  fun2 ) { return fun1 >  fun2 ; }
       static Cut __gt__     ( const Func&  fun1 ,
-                              const double fun2 ) { return fun1 >  fun2 ; }
+                              double fun2 ) { return fun1 >  fun2 ; }
       static Cut __gt__     ( const Func&  fun1 ,
                               const Para&  fun2 ) { return fun1 >  PAR ( fun2 ) ; }
       //
       static Cut __ge__     ( const Func&  fun1 ,
                               const Func&  fun2 ) { return fun1 >= fun2 ; }
       static Cut __ge__     ( const Func&  fun1 ,
-                              const double fun2 ) { return fun1 >= fun2 ; }
+                              double fun2 ) { return fun1 >= fun2 ; }
       static Cut __ge__     ( const Func&  fun1 ,
                               const Para&  fun2 ) { return fun1 >= PAR ( fun2 ) ; }
       //
       static Cut __eq__     ( const Func&  fun1 ,
                               const Func&  fun2 ) { return fun1 == fun2 ; }
       static Cut __eq__     ( const Func&  fun1 ,
-                              const double fun2 ) { return fun1 == fun2 ; }
+                              double fun2 ) { return fun1 == fun2 ; }
       //
       static Cut __eq__     ( const Func&  fun1 ,
-                              const int    fun2 ) { return fun1 == fun2 ; }
+                              int    fun2 ) { return fun1 == fun2 ; }
       static Cut __eq__     ( const Func&  fun1 ,
-                              const unsigned int fun2 ) { return fun1 == fun2 ; }
+                              unsigned int fun2 ) { return fun1 == fun2 ; }
       //
       static Cut __eq__     ( const Func&                     fun1 ,
                               const std::vector<double>&      fun2 )
@@ -347,11 +347,11 @@ namespace LoKi
       static Cut __ne__     ( const Func&  fun1 ,
                               const Func&  fun2 ) { return fun1 != fun2 ; }
       static Cut __ne__     ( const Func&  fun1 ,
-                              const double fun2 ) { return fun1 != fun2 ; }
+                              double fun2 ) { return fun1 != fun2 ; }
       static Cut __ne__     ( const Func&  fun1 ,
-                              const int    fun2 ) { return fun1 != fun2 ; }
+                              int    fun2 ) { return fun1 != fun2 ; }
       static Cut __ne__     ( const Func&  fun1 ,
-                              const unsigned int fun2 ) { return fun1 != fun2 ; }
+                              unsigned int fun2 ) { return fun1 != fun2 ; }
       //
       static Cut __ne__     ( const Func&                      fun1 ,
                               const std::vector<double>&       fun2 ) { return fun1 != fun2 ; }
@@ -372,13 +372,13 @@ namespace LoKi
                               const Func&  fun2 ) { return fun1 / fun2  ; }
       //
       static Fun __add__    ( const Func&  fun1 ,
-                              const double fun2 ) { return fun1 + fun2  ; }
+                              double fun2 ) { return fun1 + fun2  ; }
       static Fun __sub__    ( const Func&  fun1 ,
-                              const double fun2 ) { return fun1 - fun2  ; }
+                              double fun2 ) { return fun1 - fun2  ; }
       static Fun __mul__    ( const Func&  fun1 ,
-                              const double fun2 ) { return fun1 * fun2  ; }
+                              double fun2 ) { return fun1 * fun2  ; }
       static Fun __div__    ( const Func&  fun1 ,
-                              const double fun2 ) { return fun1 / fun2  ; }
+                              double fun2 ) { return fun1 / fun2  ; }
       //
       static Fun __add__    ( const Func&  fun1 ,
                               const Para&  fun2 ) { return fun1 + PAR ( fun2 ) ; }
@@ -392,26 +392,26 @@ namespace LoKi
       static Fun __pow__    ( const Func&  fun1 ,
                               const Func&  fun2 ) { return LoKi::pow ( fun1 , fun2 ) ; }
       static Fun __pow__    ( const Func&  fun1 ,
-                              const double fun2 ) { return LoKi::pow ( fun1 , fun2 ) ; }
+                              double fun2 ) { return LoKi::pow ( fun1 , fun2 ) ; }
       static Fun __pow__    ( const Func&  fun1 ,
-                              const int    fun2 ) { return LoKi::pow ( fun1 , fun2 ) ; }
+                              int    fun2 ) { return LoKi::pow ( fun1 , fun2 ) ; }
       static Fun __pow__    ( const Func&  fun1 ,
                               const Para&  fun2 ) { return LoKi::pow ( fun1 , PAR ( fun2 ) ) ; }
       //
       // "right" side math.
       //
       static Fun __radd__   ( const Func&  fun1 ,
-                              const double fun2 ) { return fun2 + fun1  ; }
+                              double fun2 ) { return fun2 + fun1  ; }
       static Fun __rsub__   ( const Func&  fun1 ,
-                              const double fun2 ) { return fun2 - fun1  ; }
+                              double fun2 ) { return fun2 - fun1  ; }
       static Fun __rmul__   ( const Func&  fun1 ,
-                              const double fun2 ) { return fun2 * fun1  ; }
+                              double fun2 ) { return fun2 * fun1  ; }
       static Fun __rdiv__   ( const Func&  fun1 ,
-                              const double fun2 ) { return fun2 / fun1  ; }
+                              double fun2 ) { return fun2 / fun1  ; }
       static Fun __rpow__   ( const Func&  fun1 ,
-                              const double fun2 ) { return LoKi::pow ( fun2 , fun1 ) ; }
+                              double fun2 ) { return LoKi::pow ( fun2 , fun1 ) ; }
       static Fun __rpow__   ( const Func&  fun1 ,
-                              const int    fun2 ) { return LoKi::pow ( fun2 , fun1 ) ; }
+                              int    fun2 ) { return LoKi::pow ( fun2 , fun1 ) ; }
       //
       static Fun __radd__   ( const Func&  fun1 ,
                               const Para&  fun2 ) { return PAR ( fun2 ) + fun1  ; }
@@ -431,7 +431,7 @@ namespace LoKi
       { return    LoKi::min ( f1 , f2 ) ; }
       // min
       static Fun __min__    ( const Func&  f1   ,
-                              const double f2   )
+                              double f2   )
       { return    LoKi::min ( f1 , f2 ) ; }
       // min
       static Fun __min__    ( const Func&  f1   ,
@@ -455,7 +455,7 @@ namespace LoKi
                               const Func&  f2   )
       { return    LoKi::max ( f1 , f2 ) ; }
       static Fun __max__    ( const Func&  f1   ,
-                              const double f2   )
+                              double f2   )
       { return    LoKi::max ( f1 , f2 ) ; }
       // max
       static Fun __max__    ( const Func&  f1   ,
@@ -493,17 +493,17 @@ namespace LoKi
       // ======================================================================
 //       // "right" side math. It can't be redefined in base class :-(
 //       static Fun __radd__   ( const Func&  fun1 ,
-//                               const double fun2 ) { return fun2 + fun1  ; }
+//                               double fun2 ) { return fun2 + fun1  ; }
 //       static Fun __rsub__   ( const Func&  fun1 ,
-//                               const double fun2 ) { return fun2 - fun1  ; }
+//                               double fun2 ) { return fun2 - fun1  ; }
 //       static Fun __rmul__   ( const Func&  fun1 ,
-//                               const double fun2 ) { return fun2 * fun1  ; }
+//                               double fun2 ) { return fun2 * fun1  ; }
 //       static Fun __rdiv__   ( const Func&  fun1 ,
-//                               const double fun2 ) { return fun2 / fun1  ; }
+//                               double fun2 ) { return fun2 / fun1  ; }
 //       static Fun __rpow__   ( const Func&  fun1 ,
-//                               const double fun2 ) { return LoKi::pow ( fun2 , fun1 ) ; }
+//                               double fun2 ) { return LoKi::pow ( fun2 , fun1 ) ; }
 //       static Fun __rpow__   ( const Func&  fun1 ,
-//                               const int    fun2 ) { return LoKi::pow ( fun2 , fun1 ) ; }
+//                               int    fun2 ) { return LoKi::pow ( fun2 , fun1 ) ; }
       // ======================================================================
       static Fun __neg__    ( const Func&  fun  ) { return -1 * fun         ; }
       static Fun __abs__    ( const Func&  fun  ) { return LoKi::abs( fun ) ; }
@@ -529,16 +529,16 @@ namespace LoKi
       static Fun __atan__   ( const Func&  f1   ,
                               const Func&  f2   ) { return LoKi::atan2 ( f1 , f2 ) ; }
       static Fun __atan__   ( const Func&  f1   ,
-                              const double f2   ) { return LoKi::atan2 ( f1 , f2 ) ; }
+                              double f2   ) { return LoKi::atan2 ( f1 , f2 ) ; }
       static Fun __atan2__  ( const Func&  f1   ,
                               const Func&  f2   ) { return LoKi::atan2 ( f1 , f2 ) ; }
       static Fun __atan2__  ( const Func&  f1   ,
-                              const double f2   ) { return LoKi::atan2 ( f1 , f2 ) ; }
+                              double f2   ) { return LoKi::atan2 ( f1 , f2 ) ; }
       // ======================================================================
       // modulo
       // ======================================================================
       static Fun __mod__    ( const Func&        f ,
-                              const unsigned int d )
+                              unsigned int d )
       { return LoKi::Modulo<TYPE> ( f , d ) ; }
       // ======================================================================
       // round, jbit, etc..
@@ -546,11 +546,11 @@ namespace LoKi
       static Fun __round__ ( const Func&        f  )
       { return LoKi::round ( f ) ; }
       static Cut __jbit__  ( const Func&        f  ,
-                             const unsigned int j  )
+                             unsigned int j  )
       { return LoKi::jbit  ( f , j ) ; }
       static Fun __jbits__ ( const Func&        f  ,
-                             const unsigned int j1 ,
-                             const unsigned int j2 )
+                             unsigned int j1 ,
+                             unsigned int j2 )
       { return LoKi::jbits ( f , j1 , j2 ) ; }
       // ======================================================================
       // monitoring
@@ -617,7 +617,7 @@ namespace LoKi
       { return LoKi::plot    ( c , LoKi::Histo ( d , i , h ) ) ; }
       static Fun __monitor__ ( const Func&              c ,
                                const std::string&       d ,
-                               const int                i ,
+                               int                i ,
                                const Gaudi::Histo1DDef& h )
       { return LoKi::plot    ( c , LoKi::Histo ( d , i , h ) ) ; }
       static Fun __monitor__ ( const Func&              c ,
@@ -636,7 +636,7 @@ namespace LoKi
       { return LoKi::plot    ( c , LoKi::Histo ( h , i ) ) ; }
       static Fun __monitor__ ( const Func&              c ,
                                const Gaudi::Histo1DDef& h ,
-                               const int                i )
+                               int                i )
       { return LoKi::plot    ( c , LoKi::Histo ( h , i ) )  ; }
       // ======================================================================
       // timing
@@ -661,7 +661,7 @@ namespace LoKi
       // EqualTo
       // ======================================================================
       static Cut __equal_to__ ( const Func&   fun  ,
-                                const double  val  )
+                                double  val  )
       { return LoKi::EqualToValue<TYPE> ( fun , val ) ; }
       static Cut __equal_to__ ( const Func&   fun  ,
                                 const Func&   fun1 ) { return fun == fun1 ; }
@@ -678,8 +678,8 @@ namespace LoKi
       // ======================================================================
       // InRange
       static Cut __in_range__ ( const Func&  fun  ,
-                                const double low  ,
-                                const double high )
+                                double low  ,
+                                double high )
       {
         return LoKi::inRange ( low , fun , high ) ;
       }
@@ -687,14 +687,14 @@ namespace LoKi
       // InRange
       static Cut __in_range__ ( const Func&  fun  ,
                                 const Func&  low  ,
-                                const double high )
+                                double high )
       {
         return LoKi::inRange ( low , fun , high ) ;
       }
       // ======================================================================
       // InRange
       static Cut __in_range__ ( const Func&  fun  ,
-                                const double low  ,
+                                double low  ,
                                 const Func&  high )
       {
         return LoKi::inRange ( low , fun , high ) ;
@@ -762,7 +762,7 @@ namespace LoKi
       { return LoKi::min_value<TYPE2>     ( fun ) ; }
       // min value
       static LoKi::FunctorFromFunctor<std::vector<TYPE2>,double>
-      __min_value__       ( const Func& fun , const double val )
+      __min_value__       ( const Func& fun , double val )
       { return LoKi::min_value<TYPE2>     ( fun , val ) ; }
       // abs min value
       static LoKi::FunctorFromFunctor<std::vector<TYPE2>,double>
@@ -770,7 +770,7 @@ namespace LoKi
       { return LoKi::min_abs_value<TYPE2>  ( fun ) ; }
       // abs min value
       static LoKi::FunctorFromFunctor<std::vector<TYPE2>,double>
-      __min_abs_value__   ( const Func& fun , const double val )
+      __min_abs_value__   ( const Func& fun , double val )
       { return LoKi::min_abs_value<TYPE2>  ( fun , val ) ; }
       // maximal value
       static LoKi::FunctorFromFunctor<std::vector<TYPE2>,double>
@@ -778,7 +778,7 @@ namespace LoKi
       { return LoKi::max_value<TYPE2>     ( fun ) ; }
       // maximal value
       static LoKi::FunctorFromFunctor<std::vector<TYPE2>,double>
-      __max_value__       ( const Func& fun , const double val )
+      __max_value__       ( const Func& fun , double val )
       { return LoKi::max_value<TYPE2>     ( fun , val ) ; }
       // abs max value
       static LoKi::FunctorFromFunctor<std::vector<TYPE2>,double>
@@ -786,7 +786,7 @@ namespace LoKi
       { return LoKi::max_abs_value<TYPE2>  ( fun ) ; }
       // abs max value
       static LoKi::FunctorFromFunctor<std::vector<TYPE2>,double>
-      __max_abs_value__   ( const Func& fun , const double val )
+      __max_abs_value__   ( const Func& fun , double val )
       { return LoKi::max_abs_value<TYPE2>  ( fun , val ) ; }
       // min element
       static LoKi::FunctorFromFunctor<std::vector<TYPE2>,std::vector<TYPE2> >
@@ -807,40 +807,40 @@ namespace LoKi
       // ======================================================================
       // sum over the stream
       static LoKi::FunctorFromFunctor<std::vector<TYPE2>,double>
-      __sum__ ( const Func&  fun , const double init = 0 )
+      __sum__ ( const Func&  fun , double init = 0 )
       { return LoKi::sum ( fun , init ) ; }
       // sum over the stream
       static LoKi::FunctorFromFunctor<std::vector<TYPE2>,double>
       __sum__ ( const Func&  fun ,
-                const Cuts&  cut , const double init = 0 )
+                const Cuts&  cut , double init = 0 )
       { return LoKi::sum ( fun , cut , init ) ; }
       // ======================================================================
     public: // product over the stream
       // ======================================================================
       static LoKi::FunctorFromFunctor<std::vector<TYPE2>,double>
-      __product__ ( const Func&  fun , const double init = 1 )
+      __product__ ( const Func&  fun , double init = 1 )
       { return LoKi::product ( fun , init ) ; }
       // ======================================================================
     public : // sum over the stream
       // ======================================================================
       static LoKi::FunctorFromFunctor<std::vector<TYPE2>,double>
       __product__ ( const Func&  fun ,
-                    const Cuts&  cut , const double init = 1 )
+                    const Cuts&  cut , double init = 1 )
       { return LoKi::product ( fun , cut , init ) ; }
       // ======================================================================
     public : // fetch from the stream
       // ======================================================================
       static LoKi::FunctorFromFunctor<std::vector<TYPE2>,double>
       __fetch__ ( const Func&        fun   ,
-                  const unsigned int index ,
-                  const double       bad   )
+                  unsigned int index ,
+                  double       bad   )
       { return LoKi::fetch ( fun , index , bad ) ; }
       // ======================================================================
     public: // sort the stream
       // ======================================================================
       static LoKi::FunctorFromFunctor<std::vector<TYPE2>,std::vector<TYPE2> >
       __sort__ ( const Func&        fun              ,
-                 const int          N         = -1   ,
+                 int          N         = -1   ,
                  const bool         ascending = true )
       {
         if ( ascending )
@@ -978,16 +978,16 @@ namespace LoKi
       { return LoKi::Switch<TYPE>       ( cut , fun1 , fun2 ) ; }
       static Fun __switch__   ( const Cuts&  cut  ,
                                 const Func&  fun1 ,
-                                const double fun2 )
+                                double fun2 )
       { return LoKi::Switch<TYPE>       ( cut , fun1 , fun2 ) ; }
       static Fun __switch__   ( const Cuts&  cut  ,
-                                const double fun1 ,
+                                double fun1 ,
                                 const Func&  fun2 )
       { return Switch<TYPE>             ( cut , fun1 , fun2 ) ; }
       // switch
       static Fun __switch__   ( const Cuts&  cut  ,
-                                const double fun1 ,
-                                const double fun2 )
+                                double fun1 ,
+                                double fun2 )
       { return LoKi::SimpleSwitch<TYPE> ( cut , fun1 , fun2 ) ; }
       // switch
       static Cut __switch__   ( const Cuts&  cut  ,
@@ -1049,7 +1049,7 @@ namespace LoKi
       // fetch from the stream
       static LoKi::FunctorFromFunctor<std::vector<TYPE2>,bool>
       __fetch__ ( const Cuts&        fun   ,
-                  const unsigned int index ,
+                  unsigned int index ,
                   const bool         bad   = false )
       { return LoKi::fetch ( fun , index , bad ) ; }
       // ======================================================================
@@ -1822,13 +1822,13 @@ namespace LoKi
       // __info__
       static LoKi::FunctorFromFunctor<TYPE,double>
       __info__ ( const LoKi::Functor<TYPE,double>& fun ,
-                 const int  index                      ,
+                 int  index                      ,
                  const bool update                     )
       { return LoKi::info ( index , fun , update ) ; }
       // __info__
       static LoKi::FunctorFromFunctor<TYPE,double>
       __info__ ( const LoKi::Functor<TYPE,double>& fun ,
-                 const int  index                      )
+                 int  index                      )
       { return LoKi::info ( index , fun          ) ; }
       // ======================================================================
     public: // logging
@@ -1836,13 +1836,13 @@ namespace LoKi
       // __info__
       static LoKi::FunctorFromFunctor<TYPE,double>
       __logging__ ( const LoKi::Functor<TYPE,double>& fun ,
-                    const int  index                      )
+                    int  index                      )
       { return LoKi::ExtraInfo2::LogInfo<TYPE,double> ( fun , index ) ; }
       // ======================================================================
       // __info__
       static LoKi::FunctorFromFunctor<TYPE,bool>
       __logging__ ( const LoKi::Functor<TYPE,bool>& fun ,
-                    const int  index                      )
+                    int  index                      )
       { return LoKi::ExtraInfo2::LogInfo<TYPE,bool>  ( fun , index ) ; }
       // ======================================================================
     } ;

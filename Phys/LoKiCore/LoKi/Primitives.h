@@ -63,7 +63,7 @@ namespace LoKi
 #ifndef _GEN_LOKI_VOIDPRIMITIVES
   // ==========================================================================
   /** @class TwoFunctors
-   *  helper class to keep two functors of the same type
+   *  helper class to keep two functors of the same signature
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date 2007-11-01
    */
@@ -267,11 +267,11 @@ namespace LoKi
        *  The helper function to implement Less of 2 functions
        */
 #ifndef _GEN_LOKI_VOIDPRIMITIVES
-      template<typename TYPE, typename TYPE2, typename Traits_>
-      class BinaryOp final : public LoKi::Functor<TYPE,bool>
+      template<typename TYPE, typename TYPE2, typename Result, typename Traits_>
+      class BinaryOp final : public LoKi::Functor<TYPE,Result>
 #else
-      template<typename TYPE2, typename Traits_>
-      class BinaryOp<void,TYPE2,Traits_> final : public LoKi::Functor<void,bool>
+      template<typename TYPE2, typename Result, typename Traits_>
+      class BinaryOp<void,TYPE2,Result,Traits_> final : public LoKi::Functor<void,Result>
 #endif
       {
       private:
@@ -283,27 +283,22 @@ namespace LoKi
         typedef typename LoKi::Functor<TYPE,bool>::argument argument  ;
         /// result type
         typedef typename LoKi::Functor<TYPE,bool>::result_type result_type ;
-        /// the functor type
-        typedef LoKi::Functor<TYPE,TYPE2>                                 functor ;
         // ========================================================================
       public:
         // ========================================================================
         /// constructor from two functors
+        /// TODO: add forwarding!
         BinaryOp ( const LoKi::Functor<TYPE,TYPE2>& f1 ,
-                        const LoKi::Functor<TYPE,TYPE2>& f2 )
+                   const LoKi::Functor<TYPE,TYPE2>& f2 )
           : LoKi::AuxFunBase ( std::tie ( f1 , f2 ) )
           , m_two ( f1 , f2 )
         {}
-        /// copy constructor
-        BinaryOp ( const BinaryOp&  right )  = default;
-        /// move constructor
-        BinaryOp (       BinaryOp&& right )  = default;
         /// clone method (mandatory)
         BinaryOp* clone() const override { return new BinaryOp( *this ); }
         /// the only one essential method ("function")
         result_type operator() ( argument_a_unless_void ) const override
         {
-          typename Traits_::BinOp binOp{};
+          typename Traits_::BinaryOp binOp{};
           return binOp( this->func1()( a_unless_void ) , this->func2()( a_unless_void ) ) ;
         }
         /// the basic printout method
@@ -320,6 +315,10 @@ namespace LoKi
         /// the default constructor is disabled
         BinaryOp() ; // the default constrictor is disabled
         // ========================================================================
+      private:
+        // ========================================================================
+        /// the functor type
+        typedef LoKi::Functor<TYPE,TYPE2>                                 functor ;
         /// get the first functor
         const functor& func1 ()           const { return m_two.func1 () ; }
         /// get the second functor
@@ -364,13 +363,13 @@ namespace LoKi
    namespace Traits {
        template <typename TYPE2>
        struct And {
-           using BinOp = std::logical_and<TYPE2>;
+           using BinaryOp = std::logical_and<TYPE2>;
            static constexpr const char* name() { return "&&"; }
        };
    }
 
    template<class TYPE, class TYPE2=bool>
-   using And = details::BinaryOp<TYPE,TYPE2,Traits::And<TYPE2>>;
+   using And = details::BinaryOp<TYPE,TYPE2,bool,Traits::And<TYPE2>>;
 
   // ==========================================================================
   /** @struct Or
@@ -404,12 +403,12 @@ namespace LoKi
    namespace Traits {
        template <typename TYPE2>
        struct Or {
-            using BinOp = std::logical_or<TYPE2>;
+            using BinaryOp = std::logical_or<TYPE2>;
             static constexpr const char* name() { return "||"; }
        };
    }
    template<class TYPE, class TYPE2=double>
-   using Or = details::BinaryOp<TYPE,TYPE2,Traits::Or<TYPE2>>;
+   using Or = details::BinaryOp<TYPE,TYPE2,bool,Traits::Or<TYPE2>>;
 
   // ==========================================================================
   /** @class Less
@@ -441,12 +440,12 @@ namespace LoKi
    namespace Traits {
        template <typename TYPE2>
        struct Less {
-            using BinOp = std::less<TYPE2>;
+            using BinaryOp = std::less<TYPE2>;
             static constexpr const char* name() { return "<"; }
        };
    }
    template<class TYPE, class TYPE2=double>
-   using Less = details::BinaryOp<TYPE,TYPE2,Traits::Less<TYPE2>>;
+   using Less = details::BinaryOp<TYPE,TYPE2,bool,Traits::Less<TYPE2>>;
 
   // ==========================================================================
   /** @class Equal
@@ -478,12 +477,12 @@ namespace LoKi
    namespace Traits {
        template <typename TYPE2>
        struct Equal {
-            using BinOp = LHCb::Math::Equal_To<TYPE2>;
+            using BinaryOp = LHCb::Math::Equal_To<TYPE2>;
             static constexpr const char* name() { return "=="; }
        };
    }
    template<class TYPE, class TYPE2=double>
-   using Equal = details::BinaryOp<TYPE,TYPE2,Traits::Equal<TYPE2>>;
+   using Equal = details::BinaryOp<TYPE,TYPE2,bool,Traits::Equal<TYPE2>>;
 
   // ==========================================================================
   /** @struct LessOrEqual
@@ -516,12 +515,12 @@ namespace LoKi
    namespace Traits {
        template <typename TYPE2>
        struct LessOrEqual {
-            using BinOp = std::less_equal<TYPE2>;
+            using BinaryOp = std::less_equal<TYPE2>;
             static constexpr const char* name() { return "<="; }
        };
    }
    template<class TYPE, class TYPE2=double>
-   using LessOrEqual = details::BinaryOp<TYPE,TYPE2,Traits::LessOrEqual<TYPE2>>;
+   using LessOrEqual = details::BinaryOp<TYPE,TYPE2,bool,Traits::LessOrEqual<TYPE2>>;
 
   // ==========================================================================
   /** @class NotEqual
@@ -564,13 +563,13 @@ namespace LoKi
 
        template <typename TYPE2>
        struct NotEqual {
-            using BinOp = not_fun<LHCb::Math::Equal_To<TYPE2>>;
+            using BinaryOp = not_fun<LHCb::Math::Equal_To<TYPE2>>;
             static constexpr const char* name() { return "!="; }
        };
    }
 
    template<class TYPE, class TYPE2=double>
-   using NotEqual = details::BinaryOp<TYPE,TYPE2,Traits::NotEqual<TYPE2>>;
+   using NotEqual = details::BinaryOp<TYPE,TYPE2,bool,Traits::NotEqual<TYPE2>>;
 
 #endif
 
@@ -585,7 +584,7 @@ namespace LoKi
           class Combination final : public LoKi::Functor<TYPE,TYPE2>
 #else
           template<class TYPE2,typename Traits_>
-          class Combination<void,TYPE2,Traits_> final : public LoKi::Functor<void,double>
+          class Combination<void,TYPE2,Traits_> final : public LoKi::Functor<void,TYPE2>
 #endif
          {
          private:
@@ -602,7 +601,7 @@ namespace LoKi
             // ========================================================================
             /// constructor from two functors
             Combination ( const LoKi::Functor<TYPE,TYPE2>& f1 ,
-                   const LoKi::Functor<TYPE,TYPE2>& f2 )
+                          const LoKi::Functor<TYPE,TYPE2>& f2 )
               : LoKi::AuxFunBase ( std::tie ( f1 , f2 ) )
               , m_two ( f1 , f2 )
             {}
@@ -611,7 +610,7 @@ namespace LoKi
             /// the only one essential method ("function")
             result_type operator() ( argument_a_unless_void ) const override
             {
-              typename Traits_::BinaryOp binOp ;
+              typename Traits_::BinaryOp binOp{} ;
               return binOp ( this->func1()( a_unless_void ) , this->func2()( a_unless_void ) ) ;
             }
             /// the basic printout method
@@ -628,7 +627,7 @@ namespace LoKi
             /// the default constrictor is disabled
             Combination() ;                             // the default constrictor is disabled
             // ========================================================================
-          protected:
+          private:
             // ========================================================================
             /// the functor type
             typedef typename LoKi::Functor<TYPE,TYPE2>                        functor ;
@@ -637,8 +636,6 @@ namespace LoKi
             const functor& func1 ()           const { return m_two.func1 () ; }
             /// get the second functor
             const functor& func2 ()           const { return m_two.func2 () ; }
-            // ========================================================================
-          private:
             // ========================================================================
             /// the storage of two functors
             LoKi::TwoFunctors<TYPE,TYPE2> m_two ;        // the storage of two functors
@@ -1664,12 +1661,6 @@ namespace LoKi
       , m_fun ( fun )
       , m_val ( val )
     {}
-    // ========================================================================
-    /// copy constructor
-    EqualToValue ( const EqualToValue&  right ) = default;
-    /// move constructor
-    EqualToValue (       EqualToValue&& right ) = default;
-    // ========================================================================
     // ========================================================================
     /// MANDATORY: clone method ("virtual construcor")
     virtual  EqualToValue* clone() const { return new EqualToValue(*this); }

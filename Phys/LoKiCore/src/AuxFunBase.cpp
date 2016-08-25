@@ -218,7 +218,7 @@ void LoKi::AuxFunBase::setEvent (          ) const
   LoKi::ILoKiSvc* svc = lokiSvc() ;
   setEvent ( 0 ) ;
   //
-  if ( 0 != svc ) { m_event = svc->event() ; }
+  if ( svc ) { m_event = svc->event() ; }
   else { Error ( "setEvent(): invalid pointer to LoKi::ILoKiSvc, set 0") ; }
 }
 // ============================================================================
@@ -229,7 +229,7 @@ bool LoKi::AuxFunBase::sameEvent () const
   if ( 0 == m_event ) { return  false ; }                    // RETURN
   // get the service
   LoKi::ILoKiSvc* svc = lokiSvc() ;
-  if ( 0 == svc )
+  if ( !svc )
   {
     Warning ( "sameEvent(): could not check the event, return false ") ;
     return false ;                                          // RETURN

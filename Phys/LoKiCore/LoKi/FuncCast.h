@@ -43,14 +43,6 @@ namespace LoKi
         , LoKi::Functor<TYPE1,TYPE3>()
         , m_fun ( fun ) 
       {} 
-      /// copy constructor 
-      FuncCast ( const FuncCast& right ) 
-        : LoKi::AuxFunBase            ( right )
-        , LoKi::Functor<TYPE1,TYPE3>  ( right ) 
-        , m_fun ( right.m_fun ) 
-      {} 
-      /// MANDATORY: virtual destructor 
-      virtual ~FuncCast() {}
       /// MANDATORY: clone method ("virtual constructor")
       virtual  FuncCast* clone() const { return new FuncCast(*this); }
       /// MANDATORY: the only one essential method 
@@ -94,14 +86,6 @@ namespace LoKi
         , LoKi::Functor<TYPE1,TYPE3>()
         , m_fun ( fun ) 
       {} 
-      /// copy constructor 
-      FuncStaticCast ( const FuncStaticCast& right ) 
-        : LoKi::AuxFunBase           ( right )
-        , LoKi::Functor<TYPE1,TYPE3> ( right ) 
-        , m_fun ( right.m_fun ) 
-      {} 
-      /// MANDATORY: virtual destructor 
-      virtual ~FuncStaticCast() {}
       /// MANDATORY: clone method ("virtual constructor")
       virtual  FuncStaticCast* clone() const 
       { return new FuncStaticCast(*this); }
