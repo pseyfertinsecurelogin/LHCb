@@ -171,9 +171,9 @@ namespace LHCb
       {
         if ( !obj ) { return 0; }
         // cell theta
-        auto theta = m_det->cellCenter( CellID( obj ) ).Theta() ;
+        const auto theta = m_det->cellCenter( CellID( obj ) ).Theta() ;
         //
-        return obj->e() * sin( theta );
+        return obj->e() * std::sin( theta );
       }
     private:
       mutable DETECTOR m_det  ;  ///< detector element
