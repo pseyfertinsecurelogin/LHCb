@@ -4,9 +4,6 @@
  *
  *  Implementation file for class : MCRichDigitHistoryCode
  *
- *  CVS Log :-
- *  $Id: MCRichDigitHistoryCode.cpp,v 1.3 2008-01-30 10:58:35 jonrob Exp $
- *
  *  @author  Chris Jones  Christopher.Rob.Jones@cern.ch
  *  @date    01/09/2006
  */
