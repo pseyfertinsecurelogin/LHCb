@@ -10,4 +10,13 @@ if(EXISTS ${CMAKE_SOURCE_DIR}/Online/RootCnv)
 endif()
 
 # Declare project name and version
-gaudi_project(LHCb turboslim USE Gaudi v27r1 DATA Gen/DecFiles Det/SQLDDDB VERSION v7r* FieldMap ParamFiles PRConfig RawEventFormat TCK/HltTCK TCK/L0TCK VERSION v5r*)
+gaudi_project(LHCb v40r3
+              USE Gaudi v27r1
+              DATA Gen/DecFiles
+                   Det/SQLDDDB VERSION v7r*
+                   FieldMap
+                   ParamFiles
+                   PRConfig
+                   RawEventFormat
+                   TCK/HltTCK
+		   TCK/L0TCK VERSION v5r*)
