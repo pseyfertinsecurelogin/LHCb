@@ -23,6 +23,7 @@
  *    - InputHltDecReportsLocation : Decision Reports location
  *    - KillFromAll : Main behaviour switch. If false (default), kill only banks in the first location found in the search string. If true, kill *all* banks found in the search string.
  *    - DecisionFilter : Regular expression to filter input. Lines that do not match this filter are ignored. By default it accepts all lines.
+ *    - AlwaysKeepBanks: Set of Banks to always keep regardless of line conditions.
  *
  *    @author: Konstantin Gizdov
  *    @date:   25 August 2016

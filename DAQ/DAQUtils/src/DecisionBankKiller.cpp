@@ -33,12 +33,13 @@ DecisionBankKiller::DecisionBankKiller(const std::string& name, ISvcLocator* pSv
     m_decisionFilterRegex.assign(m_decisionFilter);
   });
   flt->useUpdateHandler();  // sync filter regex to decision filter
-  auto *banks = declareProperty("alwaysKeepBanks",
-                  m_alwaysKeepBanks = {},
+  auto *banks = declareProperty("AlwaysKeepBanks",
+                  m_alwaysKeepBanks = {"ODIN","HltRoutingBits","DAQ"},
                   "Set of Banks to always keep regardless of line conditions.");
   banks->declareUpdateHandler([=](Property&) {
     for (unsigned i = 0; i < LHCb::RawBank::LastType; ++i) {
-      if (std::find(m_alwaysKeepBanks.begin(), m_alwaysKeepBanks.end(), LHCb::RawBank::typeName(static_cast<LHCb::RawBank::BankType>(i))) != m_alwaysKeepBanks.end()){
+      if (std::find(m_alwaysKeepBanks.begin(), m_alwaysKeepBanks.end(),
+                    LHCb::RawBank::typeName(static_cast<LHCb::RawBank::BankType>(i))) != m_alwaysKeepBanks.end()) {
         m_alwaysKeepBanksSet[i] = 1;
       }
     }
