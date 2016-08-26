@@ -26,7 +26,7 @@ DecisionBankKiller::DecisionBankKiller(const std::string& name, ISvcLocator* pSv
                   "Main behaviour switch. If false (default), kill only banks in the first location found in the search string."
                   " If true, kill *all* banks found in the search string.");
   auto *flt = declareProperty("DecisionFilter",
-                  m_decisionFilter = "$.*^",
+                  m_decisionFilter = "^.*$",
                   "Regular expression to filter input. Lines that do not match this filter are ignored."
                   " By default it accepts all lines.");
   flt->declareUpdateHandler([=](Property&) {
