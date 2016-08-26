@@ -65,10 +65,11 @@
 
 	
       <constructor
-        desc = 'Sets minimal data content for useable vertex. The rest we do with setters.'>
+        desc = 'Sets minimal data content for useable vertex. The rest we do with setters.'
+        initList = "LHCb::RecVertex(position)">
         <arg type='Gaudi::XYZPoint' name='position' const='TRUE' />
+        <code/>
       </constructor>
-
 
 
       <method
