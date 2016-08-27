@@ -15,6 +15,9 @@
 #include "Event/RawEvent.h"
 #include "Event/HltDecReports.h"
 
+// from Loki
+#include "LoKi/HDRFilterTool.h"
+
 /** @class DecisionBankKiller DecisionBankKiller.h
  *
  *   Decision Bank Killer class to keep only banks requested by lines
@@ -58,6 +61,8 @@ class DecisionBankKiller : public Decoder::AlgBase {
   ReqBanksBitset m_alwaysKeepBanksSet{};
   /// Override always keep these banks
   std::vector<std::string> m_alwaysKeepBanks{};
+  /// LoKi Tool to execute line filter
+  LoKi::HDRFilterTool *m_LoKiFilterTool{nullptr};
   /// kill from all raw event locations, or just from the first one
   bool m_killFromAll;
 };

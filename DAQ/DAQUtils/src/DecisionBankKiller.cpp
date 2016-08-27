@@ -1,12 +1,10 @@
 #include "DecisionBankKiller.h"
 
-// ============================================================================
 /** @file DecisionBankKiller.cpp
  *
  *    @author: Konstantin Gizdov
  *    @date:   25 August 2016
  */
-// ============================================================================
 
 DECLARE_ALGORITHM_FACTORY(DecisionBankKiller)
 
@@ -26,7 +24,7 @@ DecisionBankKiller::DecisionBankKiller(const std::string& name, ISvcLocator* pSv
                   "Main behaviour switch. If false (default), kill only banks in the first location found in the search string."
                   " If true, kill *all* banks found in the search string.");
   auto *flt = declareProperty("DecisionFilter",
-                  m_decisionFilter = "^.*$",
+                  m_decisionFilter = "\\w*",
                   "Regular expression to filter input. Lines that do not match this filter are ignored."
                   " By default it accepts all lines.");
   flt->declareUpdateHandler([=](Property&) {
@@ -65,6 +63,12 @@ StatusCode DecisionBankKiller::initialize() {
     info() << "Killing banks from everything in '" << m_rawEventLocations << "'" << endmsg;
   } else if (m_rawEventLocations.size() != 1 || m_rawEventLocations[0] != LHCb::RawEventLocation::Default) {
     info() << "Killing banks from first raw event in '" << m_rawEventLocations << "'" << endmsg;
+  }
+  // Access LoKi Filter Tool
+  m_LoKiFilterTool = tool<LoKi::HDRFilterTool>("LineFilter", this);
+  if (!m_LoKiFilterTool) {
+    error() << "Unable to acquire LoKi FilterTool for LineFilter" << endmsg;
+    return StatusCode::FAILURE;
   }
   return StatusCode::SUCCESS;
 }

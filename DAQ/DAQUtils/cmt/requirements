@@ -9,6 +9,7 @@ use DAQEvent    v* Event
 use HltEvent    v* Event
 use RecEvent    v* Event
 use DAQKernel   v* DAQ
+use LoKiHlt     v* Phys
 
 apply_pattern install_more_includes more=Event
 
