@@ -79,13 +79,13 @@ namespace LoKi
     // ========================================================================
   public:
     // ========================================================================
-    TwoFunctors ( const functor& f1 ,
-                  const functor& f2 )
-      : m_fun1  ( f1 )
-      , m_fun2  ( f2 )
+    template <typename F1, typename F2,
+              typename = typename details::decays_to<typename details::LF2<F1,F2>::type1,TYPE >,
+              typename = typename details::decays_to<typename details::LF2<F1,F2>::type2,TYPE2>>
+    TwoFunctors ( F1&& f1 , F2&& f2 )
+      : m_fun1( std::forward<F1>(f1) )
+      , m_fun2( std::forward<F2>(f2) )
     {}
-    // ========================================================================
-  public:
     // ========================================================================
     /// evaluate the first functor
     template <typename... Args>
@@ -96,17 +96,13 @@ namespace LoKi
     typename functor::result_type fun2( Args&&... args ) const
     { return m_fun2.fun ( std::forward<Args>(args)... ) ; }
     // ========================================================================
-  public:
-    // ========================================================================
     /// get the first functor
     const functor& func1 ()           const { return m_fun1.func () ; }
     /// get the second functor
     const functor& func2 ()           const { return m_fun2.func () ; }
     // ========================================================================
-  private:
-    // ========================================================================
     /// no default constructor
-    TwoFunctors () ;                                  // no default constructor
+    TwoFunctors () = delete;
     // ========================================================================
   private:
     // ========================================================================
@@ -287,19 +283,24 @@ namespace LoKi
       public:
         // ========================================================================
         /// constructor from two functors
-        /// TODO: add forwarding!
-        BinaryOp ( const LoKi::Functor<TYPE,TYPE2>& f1 ,
-                   const LoKi::Functor<TYPE,TYPE2>& f2 )
+        template <typename F1, typename F2,
+                  typename = typename details::decays_to<typename details::LF2<F1,F2>::type1,TYPE >,
+                  typename = typename details::decays_to<typename details::LF2<F1,F2>::type2,TYPE2>
+                  >
+        BinaryOp ( F1&& f1 , F2&& f2 )
           : LoKi::AuxFunBase ( std::tie ( f1 , f2 ) )
-          , m_two ( f1 , f2 )
-        {}
+          , m_two ( std::forward<F1>(f1) , std::forward<F2>(f2) )
+        { }
         /// clone method (mandatory)
         BinaryOp* clone() const override { return new BinaryOp( *this ); }
         /// the only one essential method ("function")
         result_type operator() ( argument_a_unless_void ) const override
         {
-          typename Traits_::BinaryOp binOp{};
-          return binOp( this->func1()( a_unless_void ) , this->func2()( a_unless_void ) ) ;
+#ifndef _GEN_LOKI_VOIDPRIMITIVES
+          return Traits_::binaryOp( this->func1(), this->func2(),  a_unless_void );
+#else
+          return Traits_::binaryOp( this->func1(), this->func2() );
+#endif
         }
         /// the basic printout method
         std::ostream& fillStream( std::ostream& s ) const override
@@ -328,6 +329,16 @@ namespace LoKi
         LoKi::TwoFunctors<TYPE,TYPE2> m_two ;       // the storage of two functors
         // ========================================================================
       };
+
+#ifndef _GEN_LOKI_VOIDPRIMITIVES
+      template <typename Op>
+      struct SimpleBinary {
+           template <typename F1, typename F2, typename... Args>
+           static auto binaryOp(const F1& f1, const F2& f2, const Args&... args)
+           -> decltype( Op{}(f1(args...), f2(args...)))
+           { return Op{}( f1(args...) , f2(args...)); }
+      };
+#endif
   }
 
 // 2nd pass only -- after specialization of BinaryOp is defined
@@ -363,8 +374,11 @@ namespace LoKi
    namespace Traits {
        template <typename TYPE2>
        struct And {
-           using BinaryOp = std::logical_and<TYPE2>;
            static constexpr const char* name() { return "&&"; }
+           template <typename F1, typename F2, typename... Args>
+           static auto binaryOp(const F1& f1, const F2& f2, const Args&... args)
+           -> decltype( f1(args...) && f2(args...))
+           { return f1(args...) && f2(args...); }
        };
    }
 
@@ -403,8 +417,11 @@ namespace LoKi
    namespace Traits {
        template <typename TYPE2>
        struct Or {
-            using BinaryOp = std::logical_or<TYPE2>;
-            static constexpr const char* name() { return "||"; }
+           static constexpr const char* name() { return "||"; }
+           template <typename F1, typename F2, typename... Args>
+           static auto binaryOp(const F1& f1, const F2& f2, const Args&... args)
+           -> decltype( f1(args...) || f2(args...))
+           { return f1(args...) || f2(args...); }
        };
    }
    template<class TYPE, class TYPE2=double>
@@ -439,9 +456,8 @@ namespace LoKi
    */
    namespace Traits {
        template <typename TYPE2>
-       struct Less {
-            using BinaryOp = std::less<TYPE2>;
-            static constexpr const char* name() { return "<"; }
+       struct Less : details::SimpleBinary< std::less<TYPE2> >{
+           static constexpr const char* name() { return "<"; }
        };
    }
    template<class TYPE, class TYPE2=double>
@@ -476,8 +492,7 @@ namespace LoKi
    */
    namespace Traits {
        template <typename TYPE2>
-       struct Equal {
-            using BinaryOp = LHCb::Math::Equal_To<TYPE2>;
+       struct Equal : details::SimpleBinary< LHCb::Math::Equal_To<TYPE2> > {
             static constexpr const char* name() { return "=="; }
        };
    }
@@ -514,8 +529,7 @@ namespace LoKi
    */
    namespace Traits {
        template <typename TYPE2>
-       struct LessOrEqual {
-            using BinaryOp = std::less_equal<TYPE2>;
+       struct LessOrEqual : details::SimpleBinary< std::less_equal<TYPE2> > {
             static constexpr const char* name() { return "<="; }
        };
    }
@@ -562,8 +576,7 @@ namespace LoKi
        };
 
        template <typename TYPE2>
-       struct NotEqual {
-            using BinaryOp = not_fun<LHCb::Math::Equal_To<TYPE2>>;
+       struct NotEqual : details::SimpleBinary<not_fun<LHCb::Math::Equal_To<TYPE2>>> {
             static constexpr const char* name() { return "!="; }
        };
    }
