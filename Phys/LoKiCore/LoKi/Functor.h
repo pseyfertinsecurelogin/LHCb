@@ -480,6 +480,56 @@ namespace LoKi
   ( LoKi::FunctorFromFunctor<TYPE1,TYPE2>& a ,
     LoKi::FunctorFromFunctor<TYPE1,TYPE2>& b ) { a.swap ( b ) ; }
   // ==========================================================================
+
+  namespace details {
+
+      template <typename T, typename U>
+      using decays_to = std::is_convertible<typename std::decay<T>::type*, U*>;
+
+      // is Derived derived from Base<Args...>?
+      template <template <typename ...> class Base, typename Derived>
+      struct is_derived_from_template_helper {
+          template <typename ... Args>
+          static std::true_type  test(Base<Args...>*);
+          static std::false_type test(void*);
+
+          using type = decltype(test(std::declval<typename std::decay<Derived>::type*>()));
+      };
+
+      template <typename T>
+      using is_functor = typename is_derived_from_template_helper<LoKi::Functor,T>::type;
+
+      // If T derives from LoKi::Functor<TYPE,TYPE2> what is TYPE?
+      // If T derives from LoKi::Functor<TYPE,TYPE2> what is TYPE2?
+      template <typename T,
+                typename = typename std::enable_if<is_functor<T>::value>::type>
+      struct LF {
+          using U = typename std::decay<T>::type;
+          template <typename T1, typename T2> static T1 test1( LoKi::Functor<T1,T2>* );
+          template <typename T1, typename T2> static T2 test2( LoKi::Functor<T1,T2>* );
+          using type1 = decltype( test1(std::declval<U*>()) );
+          using type2 = decltype( test2(std::declval<U*>()) );
+      };
+
+      // ( F1 = LoKi::Functor<TYPE,TYPE2> , F2 = LoKi::Functor<TYPE,TYPE2> ) -> TYPE
+      // ( F1 = LoKi::Functor<TYPE,TYPE2> , F2 = LoKi::Functor<TYPE,TYPE2> ) -> TYPE2
+      template <typename F1, typename F2,
+                typename = typename std::enable_if<is_functor<F1>::value
+                                               &&  is_functor<F2>::value
+                                               // the following is not strictly neccessary anymore...
+                                               &&  std::is_same< typename LF<F1>::type1, typename LF<F2>::type1 >::value
+                                               &&  std::is_same< typename LF<F1>::type2, typename LF<F2>::type2 >::value
+                                               >::type>
+      struct LF2 {
+          using type1 = typename std::common_type< typename LF<F1>::type1,
+                                                   typename LF<F2>::type1 >::type;
+          using type2 = typename std::common_type< typename LF<F1>::type2,
+                                                   typename LF<F2>::type2 >::type;
+      };
+  }
+
+
+  // ==========================================================================
 } //                                                      end of namespace LoKi
 // ============================================================================
 //                                                                      The END
