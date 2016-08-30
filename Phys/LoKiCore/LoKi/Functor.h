@@ -143,6 +143,14 @@ namespace LoKi
     }
     /// move  assignement operator is enabled
     FunctorFromFunctor& operator= ( FunctorFromFunctor&& ) = default;
+
+    // ========================================================================
+    friend void swap(FunctorFromFunctor& lhs, FunctorFromFunctor& rhs) noexcept
+    {
+        using std::swap;
+        swap(static_cast<AuxFunBase&>(lhs),static_cast<AuxFunBase&>(rhs));
+        swap(lhs.m_fun,rhs.m_fun);
+    }
     // ========================================================================
   public:
     // ========================================================================
@@ -162,13 +170,6 @@ namespace LoKi
     std::string   objType () const override { return m_fun -> objType() ; }
     /// C++ printout: delegate
     std::string   toCpp   () const override { return m_fun -> toCpp  () ; }
-    // ========================================================================
-    friend void swap(FunctorFromFunctor& lhs, FunctorFromFunctor& rhs) noexcept
-    { 
-        using std::swap;
-        swap(static_cast<AuxFunBase&>(lhs),static_cast<AuxFunBase&>(rhs));
-        swap(lhs.m_fun,rhs.m_fun);
-    }
     // ========================================================================
     /// evaluate the function
     inline typename functor::result_type fun
@@ -311,9 +312,25 @@ namespace LoKi
       , LoKi::Functor<void,TYPE2> ( right )
       , m_fun ( right.m_fun->clone()  )
     {}
-    // ========================================================================
     /// move constructor (avoid cloning)
     FunctorFromFunctor ( FunctorFromFunctor&& right ) = default;
+    // ========================================================================
+    /// the assignement operator is enabled
+    FunctorFromFunctor& operator= ( FunctorFromFunctor rhs ) noexcept
+    {
+      swap(rhs,*this);
+      return *this;
+    }
+    /// move  assignement operator is enabled
+    FunctorFromFunctor& operator= ( FunctorFromFunctor&& right ) = default;
+
+    // ========================================================================
+    friend void swap(FunctorFromFunctor& lhs, FunctorFromFunctor& rhs) noexcept
+    {
+        using std::swap;
+        swap(static_cast<AuxFunBase&>(lhs),static_cast<AuxFunBase&>(rhs));
+        swap(lhs.m_fun,rhs.m_fun);
+    }
     // ========================================================================
   public:
     // ========================================================================
@@ -334,23 +351,6 @@ namespace LoKi
     std::string   toCpp   () const override { return m_fun -> toCpp  () ; }
     // ========================================================================
   public:
-    // ========================================================================
-    /// the assignement operator is enabled
-    FunctorFromFunctor& operator= ( FunctorFromFunctor rhs ) noexcept
-    {
-      swap(rhs,*this);
-      return *this;
-    }
-    /// move  assignement operator is enabled
-    FunctorFromFunctor& operator= ( FunctorFromFunctor&& right ) = default;
-
-    // ========================================================================
-    friend void swap(FunctorFromFunctor& lhs, FunctorFromFunctor& rhs) noexcept
-    { 
-        using std::swap;
-        swap(static_cast<AuxFunBase&>(lhs),static_cast<AuxFunBase&>(rhs));
-        swap(lhs.m_fun,rhs.m_fun);
-    }
     // ========================================================================
     /// evaluate the function
     inline typename functor::result_type fun( ) const { return (*m_fun)( ) ; }

@@ -153,9 +153,12 @@ namespace LoKi
   public:
     // ========================================================================
     /// constructor from the functor
-    Not ( const Functor<TYPE,TYPE2>& fun )
+    template <typename F1,
+              typename = typename details::decays_to<typename details::LF<F1>::type1,TYPE >,
+              typename = typename details::decays_to<typename details::LF<F1>::type2,TYPE2>>
+    Not ( F1&& fun )
       : LoKi::AuxFunBase ( std::tie ( fun ) )
-      , m_fun ( fun )
+      , m_fun ( std::forward<F1>(fun) )
     {}
     /// clone method (mandatory)
     Not* clone() const override { return new Not( *this ); }
@@ -219,20 +222,23 @@ namespace LoKi
   public:
     // ========================================================================
     /// constructor from the functor
-    Negate ( const LoKi::Functor<TYPE,TYPE2>& fun )
+    template <typename F1,
+              typename = typename details::decays_to<typename details::LF<F1>::type1,TYPE >,
+              typename = typename details::decays_to<typename details::LF<F1>::type2,TYPE2>>
+    Negate( F1&& fun )
       : LoKi::AuxFunBase ( std::tie ( fun ) )
-      , m_fun ( fun )
+      , m_fun ( std::forward<F1>(fun) )
     {}
     /// clone method (mandatory)
-    virtual  Negate* clone() const { return new Negate ( *this ) ; }
+    Negate* clone() const override { return new Negate ( *this ) ; }
     /// the only one essential method ("function")
-    virtual  result_type operator() ( argument_a_unless_void ) const
+    result_type operator() ( argument_a_unless_void ) const override
     {
       std::negate<TYPE2> negator ;
       return negator ( m_fun.fun ( a_unless_void ) ) ;
     }
     /// the basic printout method
-    virtual std::ostream& fillStream( std::ostream& s ) const
+    std::ostream& fillStream( std::ostream& s ) const override
     { return s << " (-"  << this->m_fun << ") " ; };
     // ========================================================================
   private:
@@ -587,10 +593,12 @@ namespace LoKi
           public:
             // ========================================================================
             /// constructor from two functors
-            Combination ( const LoKi::Functor<TYPE,TYPE2>& f1 ,
-                          const LoKi::Functor<TYPE,TYPE2>& f2 )
+            template <typename F1, typename F2,
+                      typename = typename details::decays_to<typename details::LF2<F1,F2>::type1,TYPE >,
+                      typename = typename details::decays_to<typename details::LF2<F1,F2>::type2,TYPE2>>
+            Combination ( F1&& f1 , F2&& f2 )
               : LoKi::AuxFunBase ( std::tie ( f1 , f2 ) )
-              , m_two ( f1 , f2 )
+              , m_two ( std::forward<F1>(f1) , std::forward<F2>(f2) )
             {}
             /// clone method (mandatory)
             Combination* clone() const override { return new Combination ( *this ) ; }
@@ -833,20 +841,29 @@ namespace LoKi
      *  @param fun1 the first  function
      *  @param fun2 the second function
      */
-    Min ( const LoKi::Functor<TYPE,TYPE2>& fun1 ,
-          const LoKi::Functor<TYPE,TYPE2>& fun2 )
+    template <typename F1, typename F2,
+              typename = typename details::decays_to<typename details::LF2<F1,F2>::type1,TYPE >,
+              typename = typename details::decays_to<typename details::LF2<F1,F2>::type2,TYPE2>>
+    Min ( F1&& fun1 ,
+          F2&& fun2 )
       : LoKi::AuxFunBase ( std::tie ( fun1 , fun2 ) )
-      , m_two ( fun1 , fun2 )
+      , m_two ( std::forward<F1>(fun1) , std::forward<F2>(fun2) )
     {}
     /// constructor from the function and constant
-    Min ( const LoKi::Functor<TYPE,TYPE2>& fun1 , T2 fun2 )
+    template <typename F1,
+              typename = typename details::decays_to<typename details::LF<F1>::type1,TYPE >,
+              typename = typename details::decays_to<typename details::LF<F1>::type2,TYPE2>>
+    Min ( F1&& fun1 , T2 fun2 )
       : LoKi::AuxFunBase ( std::tie ( fun1 , fun2 ) )
-      , m_two ( fun1 , LoKi::Constant<TYPE,TYPE2> ( fun2 )  )
+      , m_two ( std::forward<F1>(fun1) , LoKi::Constant<TYPE,TYPE2> ( fun2 )  )
     {}
     /// constructor from the function and constant
-    Min ( T2 fun1 , const LoKi::Functor<TYPE,TYPE2>& fun2 )
+    template <typename F2,
+              typename = typename details::decays_to<typename details::LF<F2>::type1,TYPE >,
+              typename = typename details::decays_to<typename details::LF<F2>::type2,TYPE2>>
+    Min ( T2 fun1 , F2&& fun2 )
       : LoKi::AuxFunBase ( std::tie ( fun1 , fun2 ) )
-      , m_two ( LoKi::Constant<TYPE,TYPE2> ( fun1 ) , fun2 )
+      , m_two ( LoKi::Constant<TYPE,TYPE2> ( fun1 ) , std::forward<F2>(fun2) )
     {}
     /** constructor from 3 functions
      *  @param fun1 the first  function
@@ -959,20 +976,29 @@ namespace LoKi
      *  @param fun1 the first  function
      *  @param fun2 the second function
      */
-    Max ( const LoKi::Functor<TYPE,TYPE2>& fun1 ,
-          const LoKi::Functor<TYPE,TYPE2>& fun2 )
+    template <typename F1, typename F2,
+              typename = typename details::decays_to<typename details::LF2<F1,F2>::type1,TYPE >,
+              typename = typename details::decays_to<typename details::LF2<F1,F2>::type2,TYPE2>>
+    Max ( F1&& fun1 ,
+          F2&& fun2 )
       : LoKi::AuxFunBase ( std::tie ( fun1 , fun2 ) )
-      , LoKi::Min<TYPE,TYPE2>( fun1 , fun2 )
+      , LoKi::Min<TYPE,TYPE2>( std::forward<F1>(fun1) , std::forward<F2>(fun2) )
     {}
     /// constructor from the function and constant
-    Max ( const LoKi::Functor<TYPE,TYPE2>& fun1 , T2 fun2 )
+    template <typename F1,
+              typename = typename details::decays_to<typename details::LF<F1>::type1,TYPE >,
+              typename = typename details::decays_to<typename details::LF<F1>::type2,TYPE2>>
+    Max ( F1&& fun1 , T2 fun2 )
       : LoKi::AuxFunBase ( std::tie ( fun1 , fun2 ) )
-      , LoKi::Min<TYPE,TYPE2>( fun1 , fun2 )
+      , LoKi::Min<TYPE,TYPE2>( std::forward<F1>(fun1) , fun2 )
     {}
     /// constructor from the function and constant
-    Max ( T2 fun1 , const LoKi::Functor<TYPE,TYPE2>& fun2 )
+    template <typename F2,
+              typename = typename details::decays_to<typename details::LF<F2>::type1,TYPE >,
+              typename = typename details::decays_to<typename details::LF<F2>::type2,TYPE2>>
+    Max ( T2 fun1 , F2&& fun2 )
       : LoKi::AuxFunBase ( std::tie ( fun1 , fun2 ) )
-      , LoKi::Min<TYPE,TYPE2>( fun1 , fun2 )
+      , LoKi::Min<TYPE,TYPE2>( fun1 , std::forward<F2>(fun2) )
     {}
     /** constructor from 3 functions
      *  @param fun1 the first  function
@@ -1280,10 +1306,13 @@ namespace LoKi
   public:
     // ========================================================================
     /// constructor
-    ComposeFunction ( Func                             func           ,
-                      const LoKi::Functor<TYPE,TYPE2>& fun            ,
-                      const std::string&               desc = "'fun'" )
-      : m_fun  ( fun  )
+    template <typename F1,
+              typename = typename details::decays_to<typename details::LF<F1>::type1,TYPE >,
+              typename = typename details::decays_to<typename details::LF<F1>::type2,TYPE2>>
+    ComposeFunction ( Func                  func           ,
+                      F1&&                  fun            ,
+                      const std::string&    desc = "'fun'" )
+      : m_fun  ( std::forward<F1>(fun) )
       , m_func ( func )
       , m_desc ( desc )
     {}
@@ -1358,13 +1387,16 @@ namespace LoKi
   public:
     // ========================================================================
     /// constructor
+    template <typename F1, typename F2,
+              typename = typename details::decays_to<typename details::LF2<F1,F2>::type1,TYPE >,
+              typename = typename details::decays_to<typename details::LF2<F1,F2>::type2,TYPE2>>
     ComposeFunction2
-    ( Func                             func           ,
-      const LoKi::Functor<TYPE,TYPE2>& fun1           ,
-      const LoKi::Functor<TYPE,TYPE2>& fun2           ,
-      const std::string&               desc = "'fun'" )
+    ( Func                   func           ,
+      F1&&                   fun1           ,
+      F2&&                   fun2           ,
+      const std::string&     desc = "'fun'" )
       : m_func ( func )
-      , m_two  ( fun1 ,fun2 )
+      , m_two  ( std::forward<F1>(fun1) ,std::forward<F2>(fun2) )
       , m_desc ( desc )
     {}
     /// constructor
