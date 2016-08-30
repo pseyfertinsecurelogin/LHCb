@@ -2,6 +2,9 @@
 // local
 #include "Event/ProcStatus.h"
 
+// STL
+#include <algorithm>
+
 //-----------------------------------------------------------------------------
 // Implementation file for class : ProcStatus
 //
@@ -11,18 +14,19 @@
 void LHCb::ProcStatus::addAlgorithmStatus(const std::string& name,
                                           int status)
 {
-  bool found = false;
-  for ( LHCb::ProcStatus::AlgStatusVector::iterator iS = m_algs.begin();
-        iS != m_algs.end(); ++iS )
-  {
-    if ( iS->first == name )
-    {
-      iS->second = status;
-      found = true;
-      break;
-    }
+  // Do we already have an entry for this alg ?
+  auto ialg = std::find_if( m_algs.begin(), m_algs.end(),
+                            [&name]( const auto & S )
+                            { return S.first == name; } );
+  // If so, just set status, otherwise create an entry
+  if ( ialg != m_algs.end() ) 
+  { 
+    ialg->second = status; 
   }
-  if ( !found ) { m_algs.push_back( AlgStatus(name,status) ); }
+  else
+  { 
+    m_algs.emplace_back( AlgStatus(name,status) ); 
+  }
 }
 
 void LHCb::ProcStatus::addAlgorithmStatus(const std::string& algName,
@@ -57,15 +61,14 @@ bool LHCb::ProcStatus::subSystemAbort(const std::string& subsystem) const
   if ( aborted() ) 
   {
     // Loop over reports
-    for ( LHCb::ProcStatus::AlgStatusVector::const_iterator iS = m_algs.begin();
-          iS != m_algs.end(); ++iS )
+    for ( const auto & S : m_algs )
     {
       // Is this report an ABORT or OK ?
-      int colon = (*iS).first.find_first_of(":");
-      if ( colon > 0 && (*iS).first.substr(0,colon) == "ABORTED" )
+      auto colon = S.first.find_first_of(":");
+      if ( colon > 0 && S.first.substr(0,colon) == "ABORTED" )
       {
         // This is an abort, but is it the correct subsystem ?
-        const std::string tmpS = (*iS).first.substr(colon+1);
+        const std::string tmpS = S.first.substr(colon+1);
         colon = tmpS.find_first_of(":");
         if ( colon > 0 && tmpS.substr(0,colon) == subsystem )
         {
@@ -82,10 +85,9 @@ std::ostream& LHCb::ProcStatus::fillStream(std::ostream& s) const
 {
   const char l_aborted = aborted() ? 'T' : 'F';
   s << "{ " << "aborted :	" << l_aborted << " Algorithm Status Reports : ";
-  for ( LHCb::ProcStatus::AlgStatusVector::const_iterator iS = m_algs.begin();
-          iS != m_algs.end(); ++iS )
+  for ( const auto & S : m_algs )
   {
-    s << "[" << iS->first << ":" << iS->second << "] "; 
+    s << "[" << S.first << ":" << S.second << "] "; 
   }
   return s << " }";
 }

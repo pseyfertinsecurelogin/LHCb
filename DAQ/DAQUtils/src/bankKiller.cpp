@@ -27,6 +27,7 @@ bankKiller::bankKiller( const std::string& name, ISvcLocator* pSvcLocator)
                   "Main behaviour switch. If false (default), kill only banks in the first location found in the search string. If false, kill *all* banks found in the search string." ) ;
   declareProperty("DefaultIsKill" , m_defaultIsKill = false, 
                   "Main behaviour switch. If false (default), kill only given banks. If true, kill all BUT given banks." ) ;
+  declareProperty("KillSourceID"     , m_sourceKill=0, "Kill bank type with specific source ID"    ) ;
   
 
 }
@@ -162,7 +163,8 @@ void  bankKiller::killBankType( LHCb::RawBank::BankType bankType,
   
   
   for(std::vector<LHCb::RawBank*>::const_iterator itB = banks.begin() ; itB !=  banks.end() ; ++itB ) {
-    
+   
+    if(m_sourceKill!=0 && m_sourceKill!=(*itB)->sourceID()) continue;
     bool success = m_rawEvt -> removeBank ( *itB );
     if( !success && warningmsg){
       if (msgLevel(MSG::DEBUG)) debug() << "The bank " << * itB << " of type '" << bankTypeName 

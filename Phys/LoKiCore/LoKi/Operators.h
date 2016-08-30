@@ -29,52 +29,6 @@
 namespace LoKi
 {
 
-  namespace details {
-
-      template <typename T, typename U>
-      using decays_to = std::is_convertible<typename std::decay<T>::type*, U*>;
-
-      // is Derived derived from Base<Args...>?
-      template <template <typename ...> class Base, typename Derived>
-      struct is_derived_from_template_helper {
-          template <typename ... Args>
-          static std::true_type  test(Base<Args...>*);
-          static std::false_type test(void*);
-
-          using type = decltype(test(std::declval<typename std::decay<Derived>::type*>()));
-      };
-
-      template <typename T>
-      using is_functor = typename is_derived_from_template_helper<LoKi::Functor,T>::type;
-
-      // If T derives from LoKi::Functor<TYPE,TYPE2> what is TYPE?
-      // If T derives from LoKi::Functor<TYPE,TYPE2> what is TYPE2?
-      template <typename T,
-                typename = typename std::enable_if<is_functor<T>::value>::type>
-      struct LF {
-          using U = typename std::decay<T>::type;
-          template <typename T1, typename T2> static T1 test1( LoKi::Functor<T1,T2>* );
-          template <typename T1, typename T2> static T2 test2( LoKi::Functor<T1,T2>* );
-          using type1 = decltype( test1(std::declval<U*>()) );
-          using type2 = decltype( test2(std::declval<U*>()) );
-      };
-
-      // ( F1 = LoKi::Functor<TYPE,TYPE2> , F2 = LoKi::Functor<TYPE,TYPE2> ) -> TYPE
-      // ( F1 = LoKi::Functor<TYPE,TYPE2> , F2 = LoKi::Functor<TYPE,TYPE2> ) -> TYPE2
-      template <typename F1, typename F2,
-                typename = typename std::enable_if<is_functor<F1>::value
-                                               &&  is_functor<F2>::value
-                                               // the following is not strictly neccessary anymore...
-                                               &&  std::is_same< typename LF<F1>::type1, typename LF<F2>::type1 >::value
-                                               &&  std::is_same< typename LF<F1>::type2, typename LF<F2>::type2 >::value
-                                               >::type>
-      struct LF2 {
-          using type1 = typename std::common_type< typename LF<F1>::type1,
-                                                   typename LF<F2>::type1 >::type;
-          using type2 = typename std::common_type< typename LF<F1>::type2,
-                                                   typename LF<F2>::type2 >::type;
-      };
-  }
   // ============================================================================
   /** inline construction of logical 'AND'
    *
@@ -384,8 +338,7 @@ namespace LoKi
             typename TYPE  = typename details::LF2<F1,F2>::type1,
             typename TYPE2 = typename details::LF2<F1,F2>::type2>
   inline   LoKi::Equal<TYPE,TYPE2>
-  operator== ( F1&& fun1 ,
-               F2&& fun2 )
+  operator== ( F1&& fun1 , F2&& fun2 )
   { return  { std::forward<F1>(fun1) , std::forward<F2>(fun2) } ; }
   // ============================================================================
   /** inline construction of operator "=="
@@ -654,8 +607,7 @@ template <typename F1, typename F2,
           typename TYPE  = typename details::LF2<F1,F2>::type1,
           typename TYPE2 = typename details::LF2<F1,F2>::type2>
 inline   LoKi::Plus<TYPE,TYPE2>
-operator+ ( F1&&  fun1 ,
-            F2&&  fun2 )
+operator+ ( F1&&  fun1 , F2&&  fun2 )
 { return { std::forward<F1>(fun1) , std::forward<F2>(fun2) } ; }
 // ============================================================================
 /** inline construction of operator "+"
@@ -740,8 +692,7 @@ template <typename F1, typename F2,
           typename TYPE  = typename details::LF2<F1,F2>::type1,
           typename TYPE2 = typename details::LF2<F1,F2>::type2>
 inline   LoKi::Minus<TYPE,TYPE2>
-operator- ( F1&&  fun1 ,
-            F2&&  fun2 )
+operator- ( F1&&  fun1 , F2&&  fun2 )
 { return { std::forward<F1>(fun1) , std::forward<F2>(fun2) } ; }
 // ============================================================================
 /** inline construction of operator "-"
@@ -825,8 +776,7 @@ template <typename F1, typename F2,
           typename TYPE  = typename details::LF2<F1,F2>::type1,
           typename TYPE2 = typename details::LF2<F1,F2>::type2>
 inline   LoKi::Divide<TYPE,TYPE2>
-operator/ ( F1&&  fun1 ,
-            F2&&  fun2 )
+operator/ ( F1&&  fun1 , F2&&  fun2 )
 { return { std::forward<F1>(fun1) , std::forward<F2>(fun2) } ; }
 // ============================================================================
 /** inline construction of operator "/"
@@ -912,8 +862,7 @@ template <typename F1, typename F2,
           typename TYPE  = typename details::LF2<F1,F2>::type1,
           typename TYPE2 = typename details::LF2<F1,F2>::type2>
 inline   LoKi::Multiply<TYPE,TYPE2>
-operator* ( F1&&  fun1 ,
-            F2&&  fun2 )
+operator* ( F1&&  fun1 , F2&&  fun2 )
 { return { std::forward<F1>(fun1) , std::forward<F2>(fun2) } ; }
 // ============================================================================
 /** inline construction of operator "*"
@@ -976,75 +925,75 @@ operator* ( typename LoKi::Constant<TYPE,TYPE2>::T2 val ,
 template <class TYPE>
 inline LoKi::EqualToList<TYPE>
 operator == ( const LoKi::Functor<TYPE,double>& fun ,
-              const std::vector<double>&        vct )
-{ return { fun , vct } ; }
+              std::vector<double>        vct )
+{ return { fun , std::move(vct) } ; }
 // ============================================================================
 template <class TYPE>
 inline LoKi::EqualToList<TYPE>
 operator == ( const LoKi::Functor<TYPE,double>& fun ,
-              const std::vector<int>&           vct )
-{ return { fun , vct } ; }
+              std::vector<int>           vct )
+{ return { fun , std::move(vct) } ; }
 // ============================================================================
 template <class TYPE>
 inline LoKi::EqualToList<TYPE>
 operator == ( const LoKi::Functor<TYPE,double>& fun ,
-              const std::vector<unsigned int>&  vct )
-{ return { fun , vct } ; }
+              std::vector<unsigned int>  vct )
+{ return { fun , std::move(vct) } ; }
 // ============================================================================
 template <class TYPE>
 inline LoKi::NotEqualToList<TYPE>
 operator != ( const LoKi::Functor<TYPE,double>& fun ,
-              const std::vector<double>&        vct )
-{ return { fun , vct } ; }
+              std::vector<double>        vct )
+{ return { fun , std::move(vct) } ; }
 // ============================================================================
 template <class TYPE>
 inline LoKi::NotEqualToList<TYPE>
 operator != ( const LoKi::Functor<TYPE,double>& fun ,
-              const std::vector<int>&           vct )
-{ return { fun , vct } ; }
+              std::vector<int>           vct )
+{ return { fun , std::move(vct) } ; }
 template <class TYPE>
 inline LoKi::NotEqualToList<TYPE>
 operator != ( const LoKi::Functor<TYPE,double>& fun ,
-              const std::vector<unsigned int>&  vct )
-{ return { fun , vct } ; }
+              std::vector<unsigned int>  vct )
+{ return { fun , std::move(vct) } ; }
 
 
 // ============================================================================
 template <class TYPE>
 inline LoKi::EqualToList<TYPE>
-operator == ( const std::vector<double>&        vct ,
+operator == ( std::vector<double>        vct ,
               const LoKi::Functor<TYPE,double>& fun )
-{ return { fun , vct } ; }
+{ return { fun , std::move(vct) } ; }
 // ============================================================================
 template <class TYPE>
 inline LoKi::EqualToList<TYPE>
-operator == ( const std::vector<int>&           vct ,
+operator == ( std::vector<int>           vct ,
               const LoKi::Functor<TYPE,double>& fun )
-{ return { fun , vct } ; }
+{ return { fun , std::move(vct) } ; }
 // ============================================================================
 template <class TYPE>
 inline LoKi::EqualToList<TYPE>
-operator == ( const std::vector<unsigned int>&  vct ,
+operator == ( std::vector<unsigned int>  vct ,
               const LoKi::Functor<TYPE,double>& fun )
-{ return { fun , vct } ; }
+{ return { fun , std::move(vct) } ; }
 // ============================================================================
 template <class TYPE>
 inline LoKi::NotEqualToList<TYPE>
-operator != ( const std::vector<double>&        vct ,
+operator != ( std::vector<double>        vct ,
               const LoKi::Functor<TYPE,double>& fun )
-{ return { fun , vct } ; }
+{ return { fun , std::move(vct) } ; }
 // ============================================================================
 template <class TYPE>
 inline LoKi::NotEqualToList<TYPE>
-operator != ( const std::vector<int>&           vct ,
+operator != ( std::vector<int>&          vct ,
               const LoKi::Functor<TYPE,double>& fun )
-{ return { fun , vct } ; }
+{ return { fun , std::move(vct) } ; }
 // ============================================================================
 template <class TYPE>
 inline LoKi::NotEqualToList<TYPE>
-operator != ( const std::vector<unsigned int>&  vct ,
+operator != ( std::vector<unsigned int>  vct ,
               const LoKi::Functor<TYPE,double>& fun )
-{ return { fun , vct } ; }
+{ return { fun , std::move(vct) } ; }
 // ============================================================================
 
 // ============================================================================
