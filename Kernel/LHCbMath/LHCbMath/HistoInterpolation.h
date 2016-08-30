@@ -186,52 +186,77 @@ namespace Gaudi
       // ======================================================================
     public:
       // ======================================================================
-      /** interpolate 1D historgam 
-       *  @param h1    (INPUT) input histogram 
-       *  @param x     (INPUT) the x-value 
-       *  @param type  (INPUT) interpolation type 
-       *  @param edges (INPUT) use the special treatment of edges ? 
-       *  @return value of interpolated function
+      /** interpolate 1D histogram 
+       *  @param h1          (INPUT) input histogram 
+       *  @param x           (INPUT) the x-value 
+       *  @param type        (INPUT) interpolation type 
+       *  @param edges       (INPUT) use the special treatment of edges ? 
+       *  @param extrapolate (INPUT) use extrapolation ? 
+       *  @param density     (INPUT) rescale to density? 
+       *  If "density" flag is activated, actually   the value of 
+       *  density function, defined as a ratio of bin content over bin volume 
+       *  is interpolated 
+       *  @return value of interpolated function/density
        */
       static Gaudi::Math::ValueWithError interpolate_1D
-        ( const TH1&   h1             , 
-          const double x              ,
-          const Type   t     = Linear , 
-          const bool   edges = true   ) ;
+        ( const TH1&   h1                   , 
+          const double x                    ,
+          const Type   t           = Linear , 
+          const bool   edges       = true   , 
+          const bool   extrapolate = false  , 
+          const bool   density     = false  ) ;
       // ======================================================================
-      /** interpolate 2D historgam 
-       *  @param h2   (INPUT) input histogram 
-       *  @param x    (INPUT) the x-value 
-       *  @param y    (INPUT) the y-value 
-       *  @para  tx   (INPUT) interpolation type in x-direction
-       *  @para  ty   (INPUT) interpolation type in y-direction
-       *  @return valeu of interpolated function
+      /** interpolate 2D histogram 
+       *  @param h2          (INPUT) input histogram 
+       *  @param x           (INPUT) the x-value 
+       *  @param y           (INPUT) the y-value 
+       *  @param tx          (INPUT) interpolation type in x-direction
+       *  @param ty          (INPUT) interpolation type in y-direction
+       *  @param edges       (INPUT) use the special treatment of edges ? 
+       *  @param extrapolate (INPUT) use extrapolation ? 
+       *  @param density     (INPUT) rescale to density? 
+       *  If "density" flag is activated, actually   the value of 
+       *  density function, defined as a ratio of bin content over bin volume 
+       *  is interpolated 
+       *  @return value of interpolated function/density
        */
       static Gaudi::Math::ValueWithError interpolate_2D 
-        ( const TH2&   h1          , 
-          const double x           ,
-          const double y           ,
-          const Type   tx = Linear , 
-          const Type   ty = Linear ) ;
+        ( const TH2&   h1                   , 
+          const double x                    ,
+          const double y                    ,
+          const Type   tx          = Linear , 
+          const Type   ty          = Linear ,
+          const bool   edges       = true   , 
+          const bool   extrapolate = false  , 
+          const bool   density     = false  ) ;
       // ======================================================================
-      /** interpolate 3D historgam 
-       *  @param h3   (INPUT) input histogram 
-       *  @param x    (INPUT) the x-value 
-       *  @param y    (INPUT) the y-value 
-       *  @param z    (INPUT) the z-value 
-       *  @para  tx   (INPUT) interpolation type in x-direction
-       *  @para  ty   (INPUT) interpolation type in y-direction
-       *  @para  tz   (INPUT) interpolation type in z-direction
-       *  @return valeu of interpolated function
+      /** interpolate 3D histogram 
+       *  @param h3          (INPUT) input histogram 
+       *  @param x           (INPUT) the x-value 
+       *  @param y           (INPUT) the y-value 
+       *  @param z           (INPUT) the z-value 
+       *  @param tx          (INPUT) interpolation type in x-direction
+       *  @param ty          (INPUT) interpolation type in y-direction
+       *  @param tz          (INPUT) interpolation type in z-direction
+       *  @param edges       (INPUT) use the special treatment of edges ? 
+       *  @param extrapolate (INPUT) use extrapolation ? 
+       *  @param density     (INPUT) rescale to density? 
+       *  If "density" flag is activated, actually   the value of 
+       *  density function, defined as a ratio of bin content over bin volume 
+       *  is interpolated 
+       *  @return value of interpolated function/density
        */
       static Gaudi::Math::ValueWithError interpolate_3D 
-        ( const TH3&   h3          , 
-          const double x           ,
-          const double y           ,
-          const double z           ,
-          Type         tx = Linear , 
-          Type         ty = Linear ,
-          Type         tz = Linear ) ;
+        ( const TH3&   h3                   , 
+          const double x                    ,
+          const double y                    ,
+          const double z                    ,
+          Type         tx          = Linear , 
+          Type         ty          = Linear ,
+          Type         tz          = Linear ,
+          const bool   edges       = true   , 
+          const bool   extrapolate = false  , 
+          const bool   density     = false  ) ;
       // ======================================================================
     } ;  
     // ========================================================================
