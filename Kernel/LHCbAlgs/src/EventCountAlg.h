@@ -24,28 +24,33 @@
  *  @author Robert Lambert
  *  @date   2007-01-08
  */
-class EventCountAlg : public GaudiAlgorithm ,
-                      virtual public IIncidentListener{
+class EventCountAlg final : public GaudiAlgorithm ,
+                            virtual public IIncidentListener
+{
+
 public: 
+
   /// Standard constructor
   EventCountAlg( const std::string& name, ISvcLocator* pSvcLocator );
 
-  ~EventCountAlg( ) override = default; ///< Destructor
+  ~EventCountAlg( ) = default; ///< Destructor
 
-  StatusCode initialize() override;    ///< Algorithm initialization
-  StatusCode execute   () override;    ///< Algorithm execution
-  StatusCode finalize  () override;    ///< Algorithm finalization
+  StatusCode initialize();    ///< Algorithm initialization
+  StatusCode execute   ();    ///< Algorithm execution
+  StatusCode finalize  ();    ///< Algorithm finalization
 
   /// IListener interface to be triggered at begin of event
-  void handle(const Incident&) override { m_nHandled++; }
+  void handle(const Incident&) { ++m_nHandled; }
  
 private:
+
   ///two integers are used, and a StatEntity isn't defined 
   ///until the last moment.
-  unsigned long int m_nHandled = 0; ///<total events
-  unsigned long int m_nExecuted = 0; ///<number of events reaching this point
+  unsigned long long m_nHandled = 0; ///<total events
+  unsigned long long m_nExecuted = 0; ///<number of events reaching this point
   std::string m_counterName; ///<name of counter, set by option CounterName
   SmartIF<IIncidentSvc> m_incSvc; ///<the incident service
 
 };
+
 #endif // EVENTCOUNTHISTO_H

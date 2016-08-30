@@ -27,17 +27,18 @@
  *  @author Patrick KOPPENBURG
  *  @date   2005-04-19
  */
-typedef std::vector<std::string> strings;
 class AlgorithmCorrelations : public GaudiTool, virtual public IAlgorithmCorrelations {
   class AlgoMatrix ;
   class AlgoResult ;
+public:
+  typedef std::vector<std::string> strings;
 public: 
   /// Standard constructor
   AlgorithmCorrelations( const std::string& type, 
                          const std::string& name,
                          const IInterface* parent);
 
-  virtual ~AlgorithmCorrelations( ); ///< Destructor
+  virtual ~AlgorithmCorrelations( ) = default; ///< Destructor
   StatusCode initialize() ;
   StatusCode algorithms(const strings&)  ;
   StatusCode algorithmsRow(const strings&);
@@ -49,6 +50,7 @@ public:
   StatusCode endEvent() ;
 
 private:
+
   StatusCode reset(void);                     ///< reset everything
   bool isEffective(const std::string& ) const ; ///< Algo did something
   double algoRate(const std::string& ) const ; ///< Algo did something
@@ -60,76 +62,97 @@ private:
   StatusCode testAlgos(const strings&) const ;
   
 private:
+
   strings m_conditionAlgorithms ;    ///< Algorithms to check against
   strings m_algorithmsToTest ; ///< Algorithms to check
   std::vector<AlgoMatrix> m_AlgoMatrices ;     ///< Pairs of correlations
   std::vector<AlgoResult> m_conditionResults ; ///< results of algorithms in this event
   std::vector<AlgoResult> m_testResults;       ///< results of algorithms in this event
   
-  unsigned int m_longestName ; ///< Longest algorithm name
+  unsigned int m_longestName{10} ; ///< Longest algorithm name
   bool m_minimize ; ///< Use mimimal table width
   int m_decimals ; ///< Number of decimals 
-  bool m_square ; ///< it is a squere matrix
+  bool m_square{false} ; ///< it is a square matrix
   bool m_useNumbers ; ///< use numbers as column labels
-  unsigned int m_nEvents ; ///< number of events
+  unsigned long long m_nEvents{0}; ///< number of events
 
   // container of results for one algorithm
-  class AlgoResult{
+  class AlgoResult
+  {
+  
   public:
-    AlgoResult(){m_algo = "UNDEFINED";reset(); return;};
-    AlgoResult(std::string& algo){m_algo = algo;reset(); return;};
-    ~AlgoResult(){};
+    
+    AlgoResult() = default;
+    AlgoResult(const std::string& algo) : m_algo(algo) { }
+    ~AlgoResult() = default;
    
-    std::string algo()const{return m_algo;};
+    const std::string& algo()const{return m_algo;};
     bool result()const{return m_result;};
     StatusCode setResult(const bool& b){
       if (m_updated) return StatusCode::FAILURE ;
       m_result = b;
       return StatusCode::SUCCESS;};
-    void setAlgo(const std::string& a){m_algo = a;return;};
-    void reset(){m_result = false ; m_updated = false ; return ;} ///< Reset for next event
+    void setAlgo(const std::string& a){ m_algo = a; }
+    void reset(){ m_result = false ; m_updated = false ; } ///< Reset for next event
 
   private:
-    std::string m_algo; ///< Algo name
-    bool m_result; ///< Result in this event
-    bool m_updated; ///< Already in this event?
-  };
+
+    std::string m_algo{"UNDEFINED"}; ///< Algo name
+    bool m_result{false}; ///< Result in this event
+    bool m_updated{false}; ///< Already in this event?
+ 
+ };
   
   // container of Algos matrix for two algorithms
-  class AlgoMatrix{
+  class AlgoMatrix
+  {
   public:
+  
     /// Standard constructor
-    AlgoMatrix();
+    AlgoMatrix() = default;
     
     /// Useful constructor
-    AlgoMatrix( const std::string, const std::string );
+    AlgoMatrix( const std::string& a1, const std::string& a2 )
+      : m_algorithm1 ( a1 ),
+        m_algorithm2 ( a2 ) { }
     
     /// Standard destructor
-    ~AlgoMatrix(){};
+    ~AlgoMatrix() = default;
 
     /// Add Algo
-    void addConditionalResult(const bool&, const bool&);
-
+    inline void addConditionalResult(const bool& r1, const bool& r2)
+    {   
+      if ( r2       ) { ++m_alg2passed; }
+      if ( r1 && r2 ) { ++m_bothpassed; }
+    }
+    
     /// Return full statistics
-    int getConditionalStatistics() const{return m_bothpassed;};
-    int getFullStatistics() const{return m_alg2passed;};
+    inline unsigned long long getConditionalStatistics() const{return m_bothpassed;};
+
+    inline unsigned long long getFullStatistics() const{return m_alg2passed;};
   
     /// Return full statistics
-    double getConditionalFraction() const{
-      if ( m_alg2passed>0) return double(m_bothpassed)/m_alg2passed;
-      else return -1. ; };
-    double getConditionalPercent() const{return 100.*getConditionalFraction();};
+    inline double getConditionalFraction() const
+    {
+      return ( m_alg2passed>0 ? double(m_bothpassed)/double(m_alg2passed) : -1. ); 
+    }
+
+    inline double getConditionalPercent() const { return 100.*getConditionalFraction(); }
 
     /// Return algorithm names
-    void getAlgorithms( std::string&, std::string& ) const;
+    inline void getAlgorithms( std::string& a1, std::string& a2 ) const
+    {
+      a1 = m_algorithm1 ;
+      a2 = m_algorithm2 ;
+    }
 
   private:
 
     std::string m_algorithm1 ; ///< Algorithm in row
     std::string m_algorithm2 ; ///< Algorithm in column
     /// statistics
-    int m_bothpassed ; ///< both passed
-    int m_alg2passed ;  ///< alg 2 passed
+    unsigned long long m_bothpassed{0} ; ///< both passed
+    unsigned long long m_alg2passed{0} ;  ///< alg 2 passed
   };
 
 };

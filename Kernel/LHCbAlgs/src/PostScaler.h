@@ -18,25 +18,30 @@
  *  @author P. Koppenburg
  *  @date   2004-06-15
  */
-class PostScaler : public GaudiAlgorithm {
+
+class PostScaler final : public GaudiAlgorithm 
+{
+
 public:
+
   /// Standard constructor
   PostScaler( const std::string& name, ISvcLocator* pSvcLocator );
 
-  virtual ~PostScaler( ); ///< Destructor
+  virtual ~PostScaler( ) = default; ///< Destructor
 
   virtual StatusCode initialize();    ///< Algorithm initialization
   virtual StatusCode execute   ();    ///< Algorithm execution
   virtual StatusCode finalize  ();    ///< Algorithm finalization
 
-protected:
-
 private:
-  long        m_nEvents;             ///< Counter of events accepted
-  long        m_nEventsAll;          ///< Counter of events entering
-  DoubleProperty m_percentPass;      ///< Minimal reduction rate to achieve (statistics mode)
-  double      m_forcedReduction;     ///< Percentage of events that should be passed (random number mode)
-  double      m_margin;              ///< Safety margin (accept if acc events < m_event/m_forcedReduction + m_margin)
-  IEventCounter* m_eventCounter ;
+
+  unsigned long long m_nEvents{0};    ///< Counter of events accepted
+  unsigned long long m_nEventsAll{0}; ///< Counter of events entering
+  DoubleProperty m_percentPass;       ///< Minimal reduction rate to achieve (statistics mode)
+  double      m_forcedReduction;      ///< Percentage of events that should be passed (random number mode)
+  double      m_margin;               ///< Safety margin (accept if acc events < m_event/m_forcedReduction + m_margin)
+  IEventCounter* m_eventCounter = nullptr;
+
 };
+
 #endif // CMT_POSTSCALER_H

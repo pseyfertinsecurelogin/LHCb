@@ -27,8 +27,11 @@ class IIncidentSvc;
  *  @author Marco Clemencic
  *  @date   Jan 31, 2012
  */
-class DQFilter: public extends1<GaudiAlgorithm, IIncidentListener> {
+class DQFilter final : public extends1<GaudiAlgorithm, IIncidentListener>
+{
+
 public:
+
   /// Standard constructor
   DQFilter( const std::string& name, ISvcLocator* pSvcLocator );
 
@@ -45,6 +48,7 @@ public:
   virtual void handle(const Incident&);
 
 private:
+
   /// Flag to state if we have to filter at the level of the Begin Event
   /// incident or during the execute.
   bool m_beginEvent;
@@ -54,7 +58,7 @@ private:
   std::string m_acceptToolName;
 
   /// Pointer to the IAccept tool.
-  IAccept *m_acceptTool;
+  IAccept *m_acceptTool = nullptr;
 
   /// Pointer to the IncidentSvc.
   SmartIF<IIncidentSvc> m_incSvc;

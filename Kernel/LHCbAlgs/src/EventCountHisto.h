@@ -12,22 +12,23 @@
  *  @author Robert Lambert
  *  @date   2007-01-08
  */
-class EventCountHisto : public GaudiHistoAlg {
+class EventCountHisto final : public GaudiHistoAlg 
+{
+
 public: 
+
   /// Standard constructor
   EventCountHisto( const std::string& name, ISvcLocator* pSvcLocator );
 
-  virtual ~EventCountHisto( ); ///< Destructor
+  virtual ~EventCountHisto( ) = default; ///< Destructor
 
-  virtual StatusCode initialize();    ///< Algorithm initialization
   virtual StatusCode execute   ();    ///< Algorithm execution
   virtual StatusCode finalize  ();    ///< Algorithm finalization
 
-protected:
-
 private:
 
-  int m_nEvents; //number of events processed
+  unsigned long long m_nEvents{0}; // number of events processed
 
 };
+
 #endif // EVENTCOUNTHISTO_H

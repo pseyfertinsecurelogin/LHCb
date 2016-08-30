@@ -24,19 +24,14 @@ DECLARE_COMPONENT(LHCbSequencerTimerTool)
 //=============================================================================
 // Standard constructor, initializes variables
 //=============================================================================
-  LHCbSequencerTimerTool::LHCbSequencerTimerTool( const std::string& type,
-                                          const std::string& name,
-                                          const IInterface* parent )
-    : GaudiHistoTool ( type, name , parent )
-    , m_indent( 0 )
-    , m_normFactor( 0.001 )
-    , m_speedRatio(0)
-    , m_sep("")
+LHCbSequencerTimerTool::LHCbSequencerTimerTool( const std::string& type,
+                                                const std::string& name,
+                                                const IInterface* parent )
+: GaudiHistoTool ( type, name , parent )
 {
   declareInterface<ISequencerTimerTool>(this);
 
-  m_shots = 3500000 ; // 1s on 2.8GHz Xeon, gcc 3.2, -o2
-  declareProperty( "shots"        , m_shots );
+  declareProperty( "shots"        , m_shots = 3500000 );  // 1s on 2.8GHz Xeon, gcc 3.2, -o2
   declareProperty( "Normalised"   , m_normalised = false );
   declareProperty( "GlobalTiming" , m_globalTiming = false );
   declareProperty( "NameSize"     , m_headerSize = 30,
@@ -45,11 +40,6 @@ DECLARE_COMPONENT(LHCbSequencerTimerTool)
   setProperty("HistoProduce", false).ignore();
   declareProperty( "SummaryFile" , m_summaryFile = "" );
 }
-//=============================================================================
-// Destructor
-//=============================================================================
-LHCbSequencerTimerTool::~LHCbSequencerTimerTool() {}
-
 
 //=========================================================================
 //
@@ -58,18 +48,18 @@ StatusCode LHCbSequencerTimerTool::initialize ( )
 {
   const StatusCode sc = GaudiHistoTool::initialize();
   if ( sc.isFailure() ) return sc;
-  double sum = 0;
   LHCbTimerForSequencer norm( "normalize", m_headerSize, m_normFactor );
   norm.start();
   IRndmGenSvc* rsvc = svc<IRndmGenSvc>( "RndmGenSvc", true );
   { // Use dummy loop suggested by Vanya Belyaev:
+    double sum = 0;
     Rndm::Numbers gauss;
     gauss.initialize( rsvc , Rndm::Gauss(0.,1.0) ).ignore();
     unsigned int shots = m_shots;
     while( 0 < --shots ) { sum += gauss() * sum ; }
   }
   norm.stop();
-  double time = norm.lastCpu();
+  const double time = norm.lastCpu();
   m_speedRatio = 1./time;
   info() << "This machine has a speed about "
          << format( "%6.2f", 1000.*m_speedRatio)
@@ -82,10 +72,11 @@ StatusCode LHCbSequencerTimerTool::initialize ( )
     auto ext=m_summaryFile.substr(m_summaryFile.find_last_of('.'));
     if (ext==".csv") m_sep=", ";
     else if (ext == ".dat") m_sep="\t";
-    else return Error("Unknown file type "+ext+" please use .csv (comma separated) or .dat (tab separated)",StatusCode::FAILURE);
-    
+    else return Error("Unknown file type "+ext+" please use .csv (comma separated) or .dat (tab separated)",
+                      StatusCode::FAILURE);
+
   }
-  
+
   return sc;
 }
 
@@ -113,11 +104,11 @@ StatusCode LHCbSequencerTimerTool::finalize ( )
   }
   info() << line << endmsg;
   StatusCode sc=StatusCode::SUCCESS;
-  
+
   //new, do fileIO if requested
   if ( m_summaryFile.size() ) sc=fileIO();
   if ( sc.isFailure() ) Error("Could not write to output file "+m_summaryFile, StatusCode::FAILURE).ignore();
-  
+
   return GaudiHistoTool::finalize();
 }
 
@@ -126,14 +117,14 @@ StatusCode LHCbSequencerTimerTool::fileIO()
   //try open file
   std::ofstream thefile;
   thefile.open(m_summaryFile);
-  
+
   if (!thefile or !thefile.is_open()) return StatusCode::FAILURE;
-  
+
   //header line
-  thefile << "Depth" << m_sep << "Algorithm" << m_sep << "<user> / ms" << m_sep 
-          << "<clock> / ms" << m_sep << "min / ms" << m_sep << "max / ms" << m_sep 
+  thefile << "Depth" << m_sep << "Algorithm" << m_sep << "<user> / ms" << m_sep
+          << "<clock> / ms" << m_sep << "min / ms" << m_sep << "max / ms" << m_sep
           << "entries" << m_sep << "total (s)" ;
-  
+
   for (auto i: m_timerList)
   {
     thefile << std::endl ;
@@ -148,21 +139,21 @@ StatusCode LHCbSequencerTimerTool::fileIO()
     thefile << depth << '+' << m_sep << s << m_sep;
     double ave = 0.;
     double cpu = 0.;
-    
+
     if ( 0 != i.count() )
     {
       ave = i.elapsedTotal()    / i.count();
       cpu = i.cpuTotal() / i.count();
     }
-    thefile << cpu << m_sep << ave << m_sep 
+    thefile << cpu << m_sep << ave << m_sep
             << i.min() << m_sep << i.max() << m_sep
             << i.count() << m_sep << i.cpuTotal() * 0.001;
-    
+
   }
   thefile << std::endl ;
   thefile.close();
   return StatusCode::SUCCESS;
-  
+
 }
 
 //=========================================================================
@@ -226,9 +217,9 @@ int LHCbSequencerTimerTool::addTimer( const std::string& name )
 
   //myName = myName.substr( 0, m_headerSize );
 
-  m_timerList.push_back( LHCbTimerForSequencer( myName,
-                                            m_headerSize,
-                                            m_normFactor ) );
+  m_timerList.emplace_back( LHCbTimerForSequencer( myName,
+                                                   m_headerSize,
+                                                   m_normFactor ) );
 
   return m_timerList.size() - 1;
 }

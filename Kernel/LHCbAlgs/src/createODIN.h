@@ -14,19 +14,22 @@ class IEventTimeDecoder;
  *  @author Marco Cattaneo
  *  @date   2008-01-15
  */
-class createODIN : public GaudiAlgorithm {
+class createODIN final : public GaudiAlgorithm
+{
+
 public: 
+
   /// Standard constructor
   createODIN( const std::string& name, ISvcLocator* pSvcLocator );
 
-  virtual ~createODIN( ); ///< Destructor
+  virtual ~createODIN( ) = default; ///< Destructor
 
   virtual StatusCode initialize();    ///< Algorithm initialization
   virtual StatusCode execute   ();    ///< Algorithm execution
 
-protected:
-
 private:
-  IEventTimeDecoder* m_decoder; ///< Pointer to tool to decode ODIN bank
+
+  IEventTimeDecoder* m_decoder = nullptr; ///< Pointer to tool to decode ODIN bank
+
 };
 #endif // CREATEODIN_H

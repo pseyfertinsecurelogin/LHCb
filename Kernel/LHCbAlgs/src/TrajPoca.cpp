@@ -1,5 +1,5 @@
 // $Id: TrajPoca.cpp,v 1.11 2009-12-28 21:27:49 wouter Exp $
-// Include files 
+// Include files
 
 #include "Math/CholeskyDecomp.h"
 
@@ -19,7 +19,7 @@ DECLARE_TOOL_FACTORY( TrajPoca )
 TrajPoca::TrajPoca( const std::string& type,
                     const std::string& name,
                     const IInterface* parent )
-  : base_class ( type, name , parent )
+: base_class ( type, name , parent )
 {
   declareInterface<ITrajPoca>(this);
 
@@ -35,11 +35,11 @@ TrajPoca::TrajPoca( const std::string& type,
 // Find mus along trajectories having a distance smaller than tolerance
 //=============================================================================
 StatusCode TrajPoca::minimize( const LHCb::Trajectory& traj1,
-                               double& mu1, 
+                               double& mu1,
                                bool restrictRange1,
                                const LHCb::Trajectory& traj2,
-                               double& mu2, 
-                               bool restrictRange2, 
+                               double& mu2,
+                               bool restrictRange2,
                                Gaudi::XYZVector& distance,
                                double precision ) const
 {
@@ -60,9 +60,8 @@ StatusCode TrajPoca::minimize( const LHCb::Trajectory& traj1,
     double prevflt2      = mu2;
     double prevprevdelta = prevdelta;
     prevdelta = delta ;
-    if (UNLIKELY(!stepTowardPoca(
-	    traj1, mu1, restrictRange1,
-	    traj2, mu2, restrictRange2, precision))) {
+    if (UNLIKELY(!stepTowardPoca(traj1, mu1, restrictRange1,
+                                 traj2, mu2, restrictRange2, precision))) {
       status = StatusCode::FAILURE;
       break; // Parallel Trajectories in stepTowardPoca
     }
@@ -80,7 +79,7 @@ StatusCode TrajPoca::minimize( const LHCb::Trajectory& traj1,
     double distToErr2 = traj2.distTo1stError( prevflt2, precision, pathDir2 );
     // converged if very small steps
     finished = std::abs(step1) < distToErr1 && std::abs(step2) < distToErr2;
-    
+
     // we have to catch some problematic cases
     if (UNLIKELY(!finished && istep > 2 && delta > prevdelta)) {
       // we can get stuck if a flt range is restricted
@@ -88,9 +87,9 @@ StatusCode TrajPoca::minimize( const LHCb::Trajectory& traj1,
         if (UNLIKELY(++nStuck > m_maxnStuck)) {
           // downgrade to a point poca
           Gaudi::XYZVector dist(0., 0., 0.);
-          restrictRange2 ? 
-	    minimize(traj1, mu1, restrictRange1, newPos2, dist, precision) :
-	    minimize(traj2, mu2, restrictRange2, newPos1, dist, precision);
+          restrictRange2 ?
+            minimize(traj1, mu1, restrictRange1, newPos2, dist, precision) :
+            minimize(traj2, mu2, restrictRange2, newPos1, dist, precision);
           if (UNLIKELY(msgLevel(MSG::DEBUG))) {
             debug() << "Minimization got stuck." << endmsg;
           }
@@ -116,9 +115,9 @@ StatusCode TrajPoca::minimize( const LHCb::Trajectory& traj1,
             debug() << "Minimization bailed out of oscillation." << endmsg;
           }
           status = StatusCode::SUCCESS; // "Oscillating poca"
-	  Warning( "Minimization bailed out of oscillation.", status, maxWarnings ).ignore();
+          Warning( "Minimization bailed out of oscillation.", status, maxWarnings ).ignore();
           finished = true;
-	} else {
+        } else {
           // we might be oscillating, but we could also just have
           // stepped over the minimum. choose a solution `in
           // between'.
@@ -128,7 +127,7 @@ StatusCode TrajPoca::minimize( const LHCb::Trajectory& traj1,
           if( restrictRange2 ) restrictToRange(mu2,traj2) ;
           newPos1    = traj1.position( mu1 );
           newPos2    = traj2.position( mu2 );
-          distance   = ( newPos1 - newPos2 ); 
+          distance   = ( newPos1 - newPos2 );
           delta      = distance.R();
         }
       }
@@ -139,12 +138,12 @@ StatusCode TrajPoca::minimize( const LHCb::Trajectory& traj1,
     status = StatusCode::FAILURE;
     Warning( "Minimization did not converge", status, maxWarnings ).ignore();
   }
-  
+
   return status;
 }
 
 //=============================================================================
-// 
+//
 //=============================================================================
 StatusCode TrajPoca::minimize( const LHCb::Trajectory& traj,
                                double& mu,
@@ -161,17 +160,17 @@ StatusCode TrajPoca::minimize( const LHCb::Trajectory& traj,
 }
 
 //=============================================================================
-// 
+//
 //=============================================================================
 bool TrajPoca::stepTowardPoca( const LHCb::Trajectory& traj1,
-                                     double& mu1,
-                                     bool restrictRange1,
-                                     const LHCb::Trajectory& traj2,
-                                     double& mu2,
-                                     bool restrictRange2,
-                                     double tolerance ) const
+                               double& mu1,
+                               bool restrictRange1,
+                               const LHCb::Trajectory& traj2,
+                               double& mu2,
+                               bool restrictRange2,
+                               double tolerance ) const
 {
-  // a bunch of ugly, unitialized member variables 
+  // a bunch of ugly, unitialized member variables
   // -- but, believe me, it really is faster this way...
   // (assignment is faster than c'tor...)
   traj1.expansion(mu1, m_p1, m_dp1dmu1, m_d2p1dmu12);
@@ -191,12 +190,12 @@ bool TrajPoca::stepTowardPoca( const LHCb::Trajectory& traj1,
   if (UNLIKELY(!decomp)) {
     // singular, or not pos. def; try again neglecting curvature
     mat[0] = m_dp1dmu1.mag2(),
-    mat[2] = m_dp2dmu2.mag2();
+      mat[2] = m_dp2dmu2.mag2();
     decomp = ROOT::Math::CholeskyDecomp<double, 2>(&mat[0]);
     if (UNLIKELY(!decomp)) {
       // singular, or not pos. def; give up
       if (UNLIKELY(msgLevel(MSG::DEBUG))) {
-	debug() << "The Trajectories are parallel." << endmsg;
+        debug() << "The Trajectories are parallel." << endmsg;
       }
       return false;
     }
@@ -208,7 +207,7 @@ bool TrajPoca::stepTowardPoca( const LHCb::Trajectory& traj1,
     decomp.getL(&lmat[0]);
     if (UNLIKELY(lmat[0] * lmat[2] < 1e-8)) {
       if (UNLIKELY(msgLevel(MSG::DEBUG))) {
-	debug() << "The Trajectories are very nearly parallel." << endmsg;
+        debug() << "The Trajectories are very nearly parallel." << endmsg;
       }
       return false;
     }
@@ -255,7 +254,7 @@ bool TrajPoca::stepTowardPoca( const LHCb::Trajectory& traj1,
   // expansion, or we need to move them out of here entirely.
   if (UNLIKELY(restrictRange1)) restrictToRange(mu1, traj1);
   if (UNLIKELY(restrictRange2)) restrictToRange(mu2, traj2);
- 
+
   // another check for parallel trajectories
   if (UNLIKELY(std::min(std::abs(mu1), std::abs(mu2)) > m_maxDist)) {
     if (UNLIKELY(msgLevel(MSG::DEBUG))) {

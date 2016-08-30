@@ -12,14 +12,18 @@
  *  @author Marco Clemencic
  *  @date   2010-09-23
  */
-class TimeDecoderList : public extends1<GaudiTool, IEventTimeDecoder> {
+
+class TimeDecoderList final : public extends1<GaudiTool, IEventTimeDecoder> 
+{
+
 public:
+
   /// Standard constructor
   TimeDecoderList(const std::string& type,
                   const std::string& name,
                   const IInterface* parent);
 
-  virtual ~TimeDecoderList(); ///< Destructor
+  virtual ~TimeDecoderList() = default; ///< Destructor
 
   /// Initialize the tool
   StatusCode initialize();
@@ -30,8 +34,10 @@ public:
   Gaudi::Time getTime() const;
 
 private:
+
   /// Type of the list of decoder names.
   typedef std::vector<std::string> DecoderNamesType;
+
   /// Type of the list of decoders.
   typedef std::list<IEventTimeDecoder*> DecodersType;
 
@@ -40,6 +46,7 @@ private:
 
   /// List of IEventTimeDecoder instances
   DecodersType m_decoders;
+
 };
 
 #endif /* TIMEDECODERLIST_H */

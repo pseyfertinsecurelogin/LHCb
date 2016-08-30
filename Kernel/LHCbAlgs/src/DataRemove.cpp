@@ -19,7 +19,7 @@ namespace Gaudi
    *  @date 2012-11-08
    */
   // ==========================================================================
-  class DataRemove : public GaudiAlgorithm
+  class DataRemove final : public GaudiAlgorithm
   {
     // ========================================================================
     friend class AlgFactory<Gaudi::DataRemove> ;
@@ -35,7 +35,7 @@ namespace Gaudi
     DataRemove ( const std::string& name ,
                  ISvcLocator*       pSvc ) ;
     /// virtual destructor 
-    virtual ~DataRemove() ;              
+    virtual ~DataRemove() = default ;              
     // ========================================================================
   private:
     std::string m_dataLocation;
@@ -50,10 +50,6 @@ Gaudi::DataRemove::DataRemove( const std::string& name ,
 {
   declareProperty( "DataLocation", m_dataLocation = "" );
 }
-// ============================================================================
-// virtual & protected desctructor 
-// ============================================================================
-Gaudi::DataRemove::~DataRemove() { }
 // ========================================================================
 // the main method 
 // ========================================================================
@@ -68,7 +64,7 @@ StatusCode Gaudi::DataRemove::execute()
       if ( sc.isSuccess() )
       {
         delete data;
-        data = NULL;
+        data = nullptr;
       }
       else
       {
