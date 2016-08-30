@@ -7,57 +7,42 @@
 // HltEvent
 #include "Event/HltDecReports.h"
 // LoKi
-#include "LoKi/FilterAlg.h"
+#include "LoKi/FilterTool.h"
 #include "LoKi/HLTTypes.h"
 #include "LoKi/IHltFactory.h"
 
 namespace LoKi {
 /** @class HDRFilterTool HDRFilterTool.h
  *
- *   HDR Filter Tool class to filter efficiently execute filters on lines
+ *  Simple filtering tool based on LoKi/Bender "hybrid" approach for filtering according to LHCb::HltDecReports.
  *
- *   Input:
- *    - InputHltDecReportsLocation : Decision Reports location
- *    - KillFromAll : Main behaviour switch. If false (default), kill only banks in the first location found in the search string. If true, kill *all* banks found in the search string.
- *    - DecisionFilter : Regular expression to filter input. Lines that do not match this filter are ignored. By default it accepts all lines.
- *    - AlwaysKeepBanks: Set of Banks to always keep regardless of line conditions.
- *
- *    @author: Konstantin Gizdov
- *    @date:   26 August 2016
+ *  @author: Konstantin Gizdov
+ *  @date:   26 August 2016
  */
-class HDRFilterTool : public LoKi::FilterAlg {
-  /// friend factory for instantiation
-  friend class AlgFactory<LoKi::HDRFilterTool>;
+class HDRFilterTool : public LoKi::FilterTool {
+public:
+  /// InterfaceID
+  DeclareInterfaceID(HDRFilterTool, 1, 0);
 
- public:
-  /// initialization
-  virtual StatusCode initialize();
   /// the main method: pass
-  bool pass(const LHCb::HltDecReports * hdr);
+  bool pass(const LHCb::HltDecReports * hdr) const;
 
   /** Decode the functor (use the factory)
-   *  @see LoKi::FilterAlg
-   *  @see LoKi::FilterAlg::decode
-   *  @see LoKi::FilterAlg::i_decode
+   *  @see LoKi::FilterTool
+   *  @see LoKi::FilterTool::decode
+   *  @see LoKi::FilterTool::i_decode
    */
   StatusCode decode();
 
- protected:
-  /** standard constructor
-   *  @see LoKi::FilterAlg
-   *  @see GaudiAlgorithm
-   *  @see      Algorithm
-   *  @see      AlgFactory
-   *  @see     IAlgFactory
-   *  @param name the algorithm instance name
-   *  @param pSvc pointer to Service Locator
-   */
-  HDRFilterTool(const std::string &name,   // the algorithm instance name
-                ISvcLocator       *pSvc);  // pointer to the service locator
+protected:
+  /// standard constructor
+  HDRFilterTool(const std::string& type,   // tool type (?)
+                const std::string& name,   // toolinstance name
+                const IInterface* parent); // tool's parent
   /// virtual and protected destructor
   virtual ~HDRFilterTool() {}
 
- private:
+private:
   /// the default constructor is disabled
   HDRFilterTool();
   /// the copy constructor is disabled
@@ -67,6 +52,10 @@ class HDRFilterTool : public LoKi::FilterAlg {
 
   /// the functor itself
   LoKi::Types::HLT_Cut  m_cut;
+
+  /// friend factory for instantiation
+  friend class ToolFactory<LoKi::HDRFilterTool>;
+
 };
 }  // namespace LoKi
 
