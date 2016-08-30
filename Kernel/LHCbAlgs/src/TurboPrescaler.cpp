@@ -30,7 +30,7 @@ TurboPrescaler::TurboPrescaler( const std::string& name,
 {
   declareProperty("ChosenOutputPrescales",m_outputPS=std::map<std::string,double>());
   declareProperty("PrescaleVersion",m_outputTCK);
-  declareProperty("FilterOutput",m_filter=false);
+  declareProperty("FilterOutput",m_filter=true);
   declareProperty("ReportsOutputLoc",m_outRepLoc="Turbo/DecReports");
   declareProperty("ConfigQualifier",m_scalerName="DeterministicPrescaler");
   declareProperty("PreScalerQualifier",m_preScalerName="PreScaler");
@@ -110,12 +110,6 @@ StatusCode TurboPrescaler::execute() {
             report.setDecision(false);
           }
           else {
-            globalPass=true;
-          }
-        }
-        else{
-          if(lineName.find("Turbo")!=std::string::npos) {
-            // found another Turbo line that fired that was not prescaled
             globalPass=true;
           }
         }
