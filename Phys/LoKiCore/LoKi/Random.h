@@ -58,7 +58,7 @@ namespace LoKi
                 const IRndmGen::Param& param       ) ;
       /// copy constructor
       Numbers ( const Numbers& right ) ;
-      /// MANDATORY: virtual destructor
+      // destructor
       virtual ~Numbers() ;
       /// MANDATORY: clone method ("virtual constructor")
       virtual  Numbers* clone() const ;
@@ -138,8 +138,6 @@ namespace LoKi
       ( IRndmGenSvc*      svc       ,
         const double      low   = 0 ,
         const double      high  = 1 ) ;
-      /// MANDATORY: virtual desctructor
-      virtual ~Uniform () {} ;
       /// MANDATORY: clone method ("virtual constructor")
       virtual  Uniform* clone() const ;
       /// OPTIONAL: nice a nice printout
@@ -206,8 +204,6 @@ namespace LoKi
       ( IRndmGenSvc*      svc       ,
         const double      mean  = 0 ,
         const double      sigma = 1 ) ;
-      /// MANDATORY: virtual desctructor
-      virtual ~Gaussian() {} ;
       /// MANDATORY: clone method ("virtual constructor")
       virtual  Gaussian* clone() const ;
       /// OPTIONAL: nice a nice printout
@@ -248,8 +244,6 @@ namespace LoKi
        *  @param seed thje seed (if not zero)
        */
       Rand ( const unsigned int seed = 0 ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~Rand() ;
       /// MANDATORY: clone method ("virtual constructor")
       virtual  Rand* clone() const ;
       /// MANDATORY: the only one essential method
@@ -273,20 +267,13 @@ namespace LoKi
               const double       minv ,
               const double       maxv ) ;
       /// constructor from the seed , min & max values
-      Blind ( const std::string& seed ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~Blind () ;
+      explicit Blind ( const std::string& seed ) ;
       /// MANDATORY: clone method ( "virtual construtor")
       virtual  Blind* clone () const ;
       /// MANDATORY: the only one essential method
       virtual  result_type   operator() ( /* argument a */ ) const ;
       /// OPTIONAL: just a nice printout
       virtual  std::ostream& fillStream ( std::ostream& s  ) const ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// default contructor is disabled
-      Blind () ;                              // default contructor is disabled
       // ======================================================================
     public:
       // ======================================================================
@@ -324,20 +311,13 @@ namespace LoKi
               const double       minv ,
               const double       maxv ) ;
       /// constructor from the seed , min & max values
-      XBlind ( const std::string& seed ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~XBlind () ;
+      explicit XBlind ( const std::string& seed ) ;
       /// MANDATORY: clone method ( "virtual construtor")
       virtual  XBlind* clone () const ;
       /// MANDATORY: the only one essential method
       virtual  result_type   operator() ( argument      a ) const ;
       /// OPTIONAL: just a nice printout
       virtual  std::ostream& fillStream ( std::ostream& s ) const ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// default contructor is disabled
-      XBlind () ;                             // default contructor is disabled
       // ======================================================================
     public:
       // ======================================================================

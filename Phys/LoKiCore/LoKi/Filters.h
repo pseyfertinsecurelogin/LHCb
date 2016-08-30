@@ -8,6 +8,7 @@
 // ============================================================================
 #include <algorithm>
 #include <climits>
+#include "boost/optional.hpp"
 // ============================================================================
 // GaudiKernel
 // ============================================================================
@@ -91,7 +92,7 @@ namespace LoKi
     public:
       // ======================================================================
       /// constructor form the basic predicate:
-      Select ( const LoKi::Functor<TYPE2,bool>& fun )
+      explicit Select ( const LoKi::Functor<TYPE2,bool>& fun )
         : LoKi::AuxFunBase ( std::tie ( fun ) )
         , m_predicate ( fun )
       {}
@@ -116,11 +117,6 @@ namespace LoKi
       /// OPTIONAL: the basic printout method
       std::ostream& fillStream( std::ostream& s ) const override
       { return  s << "select(" << m_predicate << ")" ; }
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default construct is private:
-      Select () ;                                      // no default contructor
       // ======================================================================
     private:
       // ======================================================================
@@ -159,12 +155,10 @@ namespace LoKi
     public:
       // ======================================================================
       /// contructor from the basic functor
-      Yields ( const LoKi::Functor<TYPE2,TYPE1>& fun )
+      explicit Yields ( const LoKi::Functor<TYPE2,TYPE1>& fun )
         : LoKi::AuxFunBase ( std::tie ( fun ) )
         , m_functor   ( fun )
       {}
-      /// copy constructor
-      Yields ( const Yields& right  ) = default;
       // ======================================================================
     public:
       // ======================================================================
@@ -184,11 +178,6 @@ namespace LoKi
       /// OPTIONAL: the basic printout method
       std::ostream& fillStream( std::ostream& s ) const override
       { return  s << "yields(" << m_functor << ")"; };
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default construct is private:
-      Yields() ;                                       // no default contructor
       // ======================================================================
     private:
       // ======================================================================
@@ -228,12 +217,10 @@ namespace LoKi
     public:
       // ======================================================================
       /// constructor form the basic predicate:
-      Process ( const LoKi::Functor<TYPE2,TYPE1>& fun )
+      explicit Process ( const LoKi::Functor<TYPE2,TYPE1>& fun )
         : LoKi::AuxFunBase ( std::tie ( fun ) )
         , m_functor ( fun )
       {}
-      /// copy constructor
-      Process ( const Process& right  ) = default;
       /// MANDATORY: clone method ("virtual constructor")
       Process* clone() const override { return new Process ( *this ) ; }
       /// MANDATORY: the only one essential method
@@ -246,11 +233,6 @@ namespace LoKi
       /// OPTIONAL: the basic printout method
       std::ostream& fillStream( std::ostream& s ) const override
       { return  s << "process(" << m_functor << ")"; };
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      Process() ;                                      // no default contructor
       // ======================================================================
     private:
       // ======================================================================
@@ -293,12 +275,10 @@ namespace LoKi
     public:
       // ======================================================================
       /// constructor form the basic predicate:
-      Tee ( const uFunctor& fun )
+      explicit Tee ( const uFunctor& fun )
         : LoKi::AuxFunBase ( std::tie ( fun ) )
         , m_functor ( fun )
       {}
-      /// copy constriuctor
-      Tee ( const Tee& right  ) = default;
       /// MANDATORY: clone method ("virtual constructor")
       Tee* clone() const override { return new Tee ( *this ) ; }
       /// MANDATORY: the only one essential method
@@ -312,11 +292,6 @@ namespace LoKi
       /// OPTIONAL: the basic printout method
       std::ostream& fillStream( std::ostream& s ) const override
       { return  s << "tee(" << m_functor << ")"; };
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is private:
-      Tee () ;                                         // no default contructor
       // ======================================================================
     private:
       // ======================================================================
@@ -376,9 +351,6 @@ namespace LoKi
       }
       // ======================================================================
     private:
-      // ======================================================================
-      /// the default construct is private:
-      Extremum () ;                                   // no default contructor
       // ======================================================================
       /// get the functor
       const LoKi::Functor<TYPE2,TYPE1>& func() const { return m_functor.func() ; }
@@ -483,7 +455,7 @@ namespace LoKi
     public:
       // ======================================================================
       /// constructor
-      ExtremeElement ( const LoKi::Functor<TYPE2,TYPE1>& fun )
+      explicit ExtremeElement ( const LoKi::Functor<TYPE2,TYPE1>& fun )
         : LoKi::AuxFunBase ( std::tie ( fun ) )
         , m_functor ( fun )
       {}
@@ -506,11 +478,6 @@ namespace LoKi
       /// OPTIONAL: the basic printout method
       std::ostream& fillStream( std::ostream& s ) const override
       { return  s << Traits_::name() << "(" << m_functor << ")"; } ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is private:
-      ExtremeElement() ;                                   // no default contructor
       // ======================================================================
     protected:
       // ======================================================================
@@ -601,9 +568,8 @@ namespace LoKi
     public:
       // ======================================================================
       /// constructor from the predicate
-      Count ( const LoKi::Functor<TYPE1,TYPE2>& cut )
+      explicit Count ( const LoKi::Functor<TYPE1,TYPE2>& cut )
         : LoKi::AuxFunBase ( std::tie ( cut ) )
-        , LoKi::Functor<std::vector<TYPE>,double> ()
         , m_cut ( cut )
       {}
       /// MANDATORY: clone method ("virtual constructor")
@@ -618,11 +584,6 @@ namespace LoKi
       /// OPTIONAL: the basic printout method
       std::ostream& fillStream( std::ostream& s ) const override
       { return  s << "count(" << m_cut << ")" ; }
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      Count() ; /// default constructor is disabled
       // ======================================================================
     private:
       // ======================================================================
@@ -657,8 +618,6 @@ namespace LoKi
                        const double                      init = Traits_::unit() )
             : LoKi::AuxFunBase ( std::tie ( fun , init ) )
             , m_fun      ( fun  )
-            , m_cut      ( LoKi::Constant<TYPE,bool>( true ) )
-            , m_trivCut  ( true )
             , m_init     ( init )
           {}
           /** constructor from the function
@@ -671,7 +630,6 @@ namespace LoKi
             : LoKi::AuxFunBase ( std::tie ( fun , cut , init ) )
             , m_fun      ( fun   )
             , m_cut      ( cut   )
-            , m_trivCut  ( false )
             , m_init     ( init  )
           {}
           /// MANDATORY: clone method ("virtual constructor")
@@ -683,28 +641,23 @@ namespace LoKi
             typename Traits_::BinaryOperation operation{};
             const LoKi::Apply<TYPE,double> appFun ( &m_fun.func() ) ;
             //
-            return m_trivCut ?
+            return m_cut ?
               LoKi::Algs::accumulate ( a.begin ()   , a.end   ()   ,
                                        appFun       ,
+                                       LoKi::Apply<TYPE,bool>{ &m_cut->func() },
                                        this->m_init , operation    ) :
               LoKi::Algs::accumulate ( a.begin ()   , a.end   ()   ,
                                        appFun       ,
-                                       LoKi::Apply<TYPE,bool>{ &m_cut.func() },
                                        this->m_init , operation    ) ;
           }
           /// OPTIONAL: the basic printout method
           std::ostream& fillStream( std::ostream& s ) const override
           {
             s << Traits_::name() << "(" << this->m_fun ;
-            if ( !this->m_trivCut  ) { s << "." << this -> m_cut  ; }
+            if ( this->m_cut  ) { s << "." << *(this -> m_cut)  ; }
             if ( this->m_init != Traits_::unit()) { s << "," << this -> m_init ; }
             return s << ")" ;
           }
-          // ======================================================================
-        private:
-          // ======================================================================
-          /// the default constructor is disabled
-          Accumulate () ;                              // default constructor is disabled
           // ======================================================================
         protected:
           // ======================================================================
@@ -714,17 +667,14 @@ namespace LoKi
                                   const double       d ) const
           {
             s << n << "(" << this->m_fun ;
-            if ( !this->m_trivCut  ) { s << "." << this -> m_cut  ; }
+            if ( this->m_cut  ) { s << "." << *(this -> m_cut)  ; }
             if ( d != this->m_init ) { s << "," << this -> m_init ; }
             return s << ")" ;
           }
           // ======================================================================
           /// the function
           LoKi::FunctorFromFunctor<TYPE,double> m_fun     ; // the function
-          //TODO: replace (m_cut,m_trivCut) with boost;:optional
-          LoKi::FunctorFromFunctor<TYPE,bool>   m_cut     ; // the cut
-          /// trivial cut ?
-          bool                                  m_trivCut ; // trivial cut ?
+          boost::optional<LoKi::FunctorFromFunctor<TYPE,bool>>   m_cut     ; // the cut
           double                                m_init    ; // init-value
           // ======================================================================
         };
@@ -803,11 +753,6 @@ namespace LoKi
       // ======================================================================
     private:
       // ======================================================================
-      /// the default constructor is disabled
-      Fetch () ;                         // the default constructor is disabled
-      // ======================================================================
-    private:
-      // ======================================================================
       /// the functor itself
       typename LoKi::Assignable<LoKi::Functor<TYPE,TYPE2> >::Type m_fun ;
       /// the index
@@ -831,7 +776,7 @@ namespace LoKi
     public:
       // ======================================================================
       /// constructor from the predicate
-      Has ( const LoKi::Functor<TYPE1,TYPE2>& cut )
+      explicit Has ( const LoKi::Functor<TYPE1,TYPE2>& cut )
         : LoKi::AuxFunBase ( std::tie ( cut ) )
         , m_cut ( cut )
       {}
@@ -847,11 +792,6 @@ namespace LoKi
       /// OPTIONAL: the basic printout method
       std::ostream& fillStream( std::ostream& s ) const override
       { return  s << "has(" << m_cut << ")" ; }
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      Has() ; /// default constructor is disabled
       // ======================================================================
     private:
       // ======================================================================
@@ -943,11 +883,6 @@ namespace LoKi
           // ======================================================================
         private:
           // ======================================================================
-          /// the default constructor is disabled
-          ComposeFunctions () ;                         // the default constructor is disabled
-          // ======================================================================
-        private:
-          // ======================================================================
           /// the holder for two functors
           LoKi::TwoFunctors <TYPE,std::vector<TYPE2> > m_two ;      // two functors
           // ======================================================================
@@ -975,11 +910,6 @@ namespace LoKi
           std::ostream& fillStream ( std::ostream& s ) const override
           { return s << " " << COMPOSE::name() << "(" << m_two.func1()
                      << ","       << m_two.func2() << ") " ; }
-          // ======================================================================
-        private:
-          // ======================================================================
-          /// the default constructor is disabled
-          ComposeFunctions () ;                         // the default constructor is disabled
           // ======================================================================
         protected:
           // ======================================================================
@@ -1149,11 +1079,6 @@ namespace LoKi
       // ======================================================================
     private:
       // ======================================================================
-      /// the default constructor is disabled
-      Includes () ;                      // the default constructor is disabled
-      // ======================================================================
-    private:
-      // ======================================================================
       /// storage of two functors
       LoKi::TwoFunctors <TYPE,std::vector<TYPE2> > m_two ;      // two functors
       // ======================================================================
@@ -1183,11 +1108,6 @@ namespace LoKi
       std::ostream& fillStream ( std::ostream& s ) const override
       { return s << " includes(" << m_two.func1()
                  << ","          << m_two.func2() << ") " ; }
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      Includes () ;                      // the default constructor is disabled
       // ======================================================================
     private:
       // ======================================================================
@@ -1243,7 +1163,7 @@ namespace LoKi
     public:
       // =====================================================================
       /// the constructor from the stopper
-      Gate ( const LoKi::Functor<void,bool>& gate )
+      explicit Gate ( const LoKi::Functor<void,bool>& gate )
         : LoKi::AuxFunBase ( std::tie ( gate ) )
         , m_gate ( gate )
       {}
@@ -1259,11 +1179,6 @@ namespace LoKi
       /// OPTIONAL: the basic printout method
       std::ostream& fillStream( std::ostream& s ) const override
       { return  s << "gate(" << m_gate << ")"; }
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      Gate () ;                         // the default constructor is disabled
       // ======================================================================
     private:
       // ======================================================================
@@ -1321,11 +1236,6 @@ namespace LoKi
       // ======================================================================
     private:
       // ======================================================================
-      /// the default constructor is disabled
-      Cause () ;                         // the default constructor is disabled
-      // ======================================================================
-    private:
-      // ======================================================================
       /// the actual starter
       LoKi::FunctorFromFunctor<void,bool>               m_start ; // the start
       /// the actual source
@@ -1345,12 +1255,12 @@ namespace LoKi
     public:
       // =====================================================================
       /// the constructor
-      FirstN_ ( const unsigned int N )
+      explicit FirstN_ ( const unsigned int N )
         : LoKi::AuxFunBase ( std::tie ( N ) )
         , m_N ( N )
       {}
       /// the constructor
-      FirstN_ ( const LoKi::FirstN& N  )
+      explicit FirstN_ ( const LoKi::FirstN& N  )
         : LoKi::AuxFunBase ( std::tie ( N ) )
         , m_N ( N )
       {}
@@ -1367,11 +1277,6 @@ namespace LoKi
       }
       /// OPTIONAL: the basic printout method
       std::ostream& fillStream ( std::ostream& s ) const override;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      FirstN_ () ;                        // the default constructor is disabled
       // ======================================================================
     private:
       // ======================================================================
@@ -1392,7 +1297,7 @@ namespace LoKi
     public:
       // =========================================================================
       /// the constructor
-      Reverse_ () : LoKi::Functor<std::vector<TYPE>,std::vector<TYPE> > () {}
+      Reverse_ () : AuxFunBase{ std::tie() } { }
       // ======================================================================
       /// MANDATORY: clone method("virtual constructor")
       Reverse_* clone() const override { return new Reverse_ ( *this ) ; }
@@ -1472,11 +1377,6 @@ namespace LoKi
       // ======================================================================
       int  N   ( ) const { return this->m_sort.N   () ; }
       bool all ( ) const { return this->m_sort.all () ; }
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      Sort_ () ;                             // default constructor is disabled
       // ======================================================================
     protected:
       // ======================================================================
@@ -1599,7 +1499,7 @@ namespace LoKi
     public:
       // =====================================================================
       /// the constructor
-      FakeSource ( const unsigned short n = 0      )
+      explicit FakeSource ( const unsigned short n = 0      )
         : LoKi::AuxFunBase ( std::tie ( n ) )
         , m_n     ( n )
       {}

@@ -1,8 +1,8 @@
 // ============================================================================
-#ifndef LOKI_FIELD_H 
+#ifndef LOKI_FIELD_H
 #define LOKI_FIELD_H 1
 // ============================================================================
-// Incldue files 
+// Incldue files
 // ============================================================================
 // LoKi
 // ============================================================================
@@ -21,11 +21,11 @@
  *
  *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
  */
-namespace LoKi 
+namespace LoKi
 {
   // ==========================================================================
   /** @struct Field
-   *  Helper structure to define a proper data member type 
+   *  Helper structure to define a proper data member type
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date   2007-06-08
    */
@@ -42,8 +42,8 @@ namespace LoKi
   struct Field<const TYPE>
   {
     // ========================================================================
-    /// for const-type it is a const-reference 
-    typedef LoKi::ConstReference<TYPE> Type ; //                const-reference 
+    /// for const-type it is a const-reference
+    typedef LoKi::ConstReference<TYPE> Type ; //                const-reference
     // ========================================================================
   };
   // ==========================================================================
@@ -51,8 +51,8 @@ namespace LoKi
   struct Field<TYPE*>
   {
     // ========================================================================
-    /// in case of pointers it is a bare pointer 
-    typedef TYPE* Type ;            // in case of pointers it is a bare pointer 
+    /// in case of pointers it is a bare pointer
+    typedef TYPE* Type ;            // in case of pointers it is a bare pointer
     // ========================================================================
   };
   // ==========================================================================
@@ -60,7 +60,7 @@ namespace LoKi
   struct Field<TYPE* const>
   {
     // ========================================================================
-    /// skip the constness of pointer 
+    /// skip the constness of pointer
     typedef typename LoKi::Field<TYPE*>::Type Type ;
     // ========================================================================
   };
@@ -69,7 +69,7 @@ namespace LoKi
   struct Field<TYPE&>
   {
     // ========================================================================
-    /// skip the reference 
+    /// skip the reference
     typedef typename Field<TYPE>::Type Type ;             // skip the reference
     // ========================================================================
   };
@@ -78,7 +78,7 @@ namespace LoKi
   struct Field<const TYPE&>
   {
     // ========================================================================
-    /// skip the reference 
+    /// skip the reference
     typedef typename Field<const TYPE>::Type Type ;       // skip the reference
     // ========================================================================
   };

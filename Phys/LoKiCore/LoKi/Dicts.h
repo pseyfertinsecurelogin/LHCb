@@ -1,14 +1,14 @@
 // ============================================================================
-#ifndef LOKI_DICTS_H 
+#ifndef LOKI_DICTS_H
 #define LOKI_DICTS_H 1
 // ============================================================================
-// Pragmas 
+// Pragmas
 // ============================================================================
 #ifdef _WIN32
 // Disable the warnings from distionaries:
-//  warning c4345: behavior change: an object of POD type constructed with 
+//  warning c4345: behavior change: an object of POD type constructed with
 //                 an initializer of the form () will be default-initialized
-#pragma warning ( disable : 4345 )  
+#pragma warning ( disable : 4345 )
 #endif
 // ============================================================================
 // Include files
@@ -29,11 +29,11 @@
  *  Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas,
  *  contributions and advices from G.Raven, J.van Tilburg,
  *  A.Golutvin, P.Koppenburg have been used in the design.
- * 
+ *
  *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
  */
 // ============================================================================
-// The END 
+// The END
 // ============================================================================
 #endif // LOKI_DICTS_H
 // ============================================================================

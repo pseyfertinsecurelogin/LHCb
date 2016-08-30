@@ -331,7 +331,7 @@ namespace LoKi
   public:
     // ========================================================================
     /// the constructor 
-    Apply ( const LoKi::Functor<TYPE,TYPE2>* fun ) : m_functor ( fun ) {}
+    explicit Apply ( const LoKi::Functor<TYPE,TYPE2>* fun ) : m_functor ( fun ) {}
     // ========================================================================
   public:
     // ========================================================================
@@ -356,11 +356,6 @@ namespace LoKi
     // ========================================================================
   private:
     // ========================================================================
-    /// the default constructor is disabled 
-    Apply() ;                             // the default constructor is disabled
-    // ========================================================================
-  private:
-    // ========================================================================
     /// the functor itself 
     const LoKi::Functor<TYPE,TYPE2>* m_functor ; // the functor itself 
     // ========================================================================
@@ -381,7 +376,7 @@ namespace LoKi
   public:
     // ========================================================================
     /// the constructor 
-    Apply ( const LoKi::Functor<TYPE,TYPE2>* fun ) : m_functor ( fun ) {}
+    explicit Apply ( const LoKi::Functor<TYPE,TYPE2>* fun ) : m_functor ( fun ) {}
     // ========================================================================
   public:
     // ========================================================================
@@ -391,11 +386,6 @@ namespace LoKi
     /// the only one essential method 
     inline typename LoKi::Functor<TYPE,TYPE2>::result_type 
     eval       () const { return (*m_functor) () ; }
-    // ========================================================================
-  private:
-    // ========================================================================
-    /// the default constructor is disabled 
-    Apply() ;                           // the default constructor is disabled
     // ========================================================================
   private:
     // ========================================================================

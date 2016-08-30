@@ -56,10 +56,8 @@ namespace LoKi
     /// Standard constructor
     Welcome ();
     // ========================================================================
-  private:
-    // ========================================================================
     /// copy constructor is disabled 
-    Welcome ( const Welcome& );                // copy constructor is disabled 
+    Welcome ( const Welcome& ) = delete;  // copy constructor is disabled 
     // ========================================================================
   private:
     // ========================================================================

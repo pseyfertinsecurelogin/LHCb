@@ -74,11 +74,9 @@ namespace LoKi
     public:
       // ======================================================================
       /// contructor from the function
-      FunAdapter ( function fun )
+      explicit FunAdapter ( function fun )
         : m_fun  ( fun )
       {}
-      /// copy constructor
-      FunAdapter ( const FunAdapter& right )  = default;
       /// MANDATORY: clone method ("virtual constructor")
       FunAdapter* clone() const override { return new FunAdapter( *this ) ; }
       /// MANDATORY: the only one essential method
@@ -86,9 +84,6 @@ namespace LoKi
         ( typename MyBase::argument arg ) const override
       { return m_fun ( arg ) ; }
     private:
-      // ======================================================================
-      // default constructor is private
-      FunAdapter();
       // assignement operator is disabled
       FunAdapter& operator=( const FunAdapter& right ) = delete;
       // ======================================================================

@@ -101,14 +101,10 @@ namespace LoKi
     /// get the second functor
     const functor& func2 ()           const { return m_fun2.func () ; }
     // ========================================================================
-    /// no default constructor
-    TwoFunctors () = delete;
-    // ========================================================================
   private:
     // ========================================================================
-    /// the first functor
+    /// the two functors
     LoKi::FunctorFromFunctor<TYPE,TYPE2> m_fun1 ;          // the first functor
-    /// the second functor
     LoKi::FunctorFromFunctor<TYPE,TYPE2> m_fun2 ;         // the second functor
     // ========================================================================
   } ;
@@ -172,11 +168,6 @@ namespace LoKi
     /// the basic printout method
     std::ostream& fillStream ( std::ostream& s ) const override
     { return s << " (~"  << this->m_fun << ") " ; };
-    // ========================================================================
-  private:
-    // ========================================================================
-    /// the default constructor is disabled
-    Not() ; // the default constrictor is disabled
     // ========================================================================
   private:
     // ========================================================================
@@ -246,11 +237,6 @@ namespace LoKi
     // ========================================================================
   private:
     // ========================================================================
-    /// the default constructor is disabled
-    Negate() ; // the default constrictor is disabled
-    // ========================================================================
-  private:
-    // ========================================================================
     /// the functor to be negated
     LoKi::FunctorFromFunctor<TYPE,TYPE2> m_fun ; // the functor to be negated
     // ========================================================================
@@ -258,9 +244,9 @@ namespace LoKi
 
 
   namespace details {
-      // ==========================================================================
+      // =======================================================================
       /** @class BinaryOp
-       *  The helper function to implement Less of 2 functions
+       *  The helper function to implement Binary operation of two functions
        */
 #ifndef _GEN_LOKI_VOIDPRIMITIVES
       template<typename TYPE, typename TYPE2, typename Result, typename Traits_>
@@ -271,7 +257,7 @@ namespace LoKi
 #endif
       {
       private:
-        // ========================================================================
+        // =====================================================================
         typedef_void_TYPE
         /// the constant type
         typedef typename LoKi::Constant<TYPE,TYPE2>::T2 T2 ;
@@ -279,17 +265,17 @@ namespace LoKi
         typedef typename LoKi::Functor<TYPE,bool>::argument argument  ;
         /// result type
         typedef typename LoKi::Functor<TYPE,bool>::result_type result_type ;
-        // ========================================================================
+        // =====================================================================
       public:
-        // ========================================================================
+        // =====================================================================
         /// constructor from two functors
         template <typename F1, typename F2,
                   typename = typename details::decays_to<typename details::LF2<F1,F2>::type1,TYPE >,
                   typename = typename details::decays_to<typename details::LF2<F1,F2>::type2,TYPE2>
                   >
         BinaryOp ( F1&& f1 , F2&& f2 )
-          : LoKi::AuxFunBase ( std::tie ( f1 , f2 ) )
-          , m_two ( std::forward<F1>(f1) , std::forward<F2>(f2) )
+          : LoKi::AuxFunBase{ std::tie ( f1 , f2 ) }
+          , m_two { std::forward<F1>(f1) , std::forward<F2>(f2) }
         { }
         /// clone method (mandatory)
         BinaryOp* clone() const override { return new BinaryOp( *this ); }
@@ -310,24 +296,19 @@ namespace LoKi
         { return " ("
             + Gaudi::Utils::toCpp ( this->func1() ) + " " + Traits_::name() + " "
             + Gaudi::Utils::toCpp ( this->func2() ) +  ") " ; }
-        // ========================================================================
+        // =====================================================================
       private:
-        // ========================================================================
-        /// the default constructor is disabled
-        BinaryOp() ; // the default constrictor is disabled
-        // ========================================================================
-      private:
-        // ========================================================================
+        // =====================================================================
         /// the functor type
-        typedef LoKi::Functor<TYPE,TYPE2>                                 functor ;
+        typedef LoKi::Functor<TYPE,TYPE2>                              functor ;
         /// get the first functor
-        const functor& func1 ()           const { return m_two.func1 () ; }
+        const functor& func1() const { return m_two.func1 () ; }
         /// get the second functor
-        const functor& func2 ()           const { return m_two.func2 () ; }
-        // ========================================================================
+        const functor& func2() const { return m_two.func2 () ; }
+        // =====================================================================
         /// the storage of two functors
-        LoKi::TwoFunctors<TYPE,TYPE2> m_two ;       // the storage of two functors
-        // ========================================================================
+        LoKi::TwoFunctors<TYPE,TYPE2> m_two ;    // the storage of two functors
+        // =====================================================================
       };
 
 #ifndef _GEN_LOKI_VOIDPRIMITIVES
@@ -565,19 +546,12 @@ namespace LoKi
    */
 
    namespace Traits {
-
-       template <typename Fun>
-       struct not_fun {
-            template <typename... Args>
-            bool operator()(Args&&... args) const {
-                Fun fun{};
-                return !fun(std::forward<Args>(args)...);
-            }
-       };
-
        template <typename TYPE2>
-       struct NotEqual : details::SimpleBinary<not_fun<LHCb::Math::Equal_To<TYPE2>>> {
-            static constexpr const char* name() { return "!="; }
+       struct NotEqual {
+           static constexpr const char* name() { return "!="; }
+           template <typename F1, typename F2, typename... Args>
+           static bool binaryOp(const F1& f1, const F2& f2, const Args&... args)
+           { LHCb::Math::Equal_To<TYPE2> op{}; return !op(f1(args...),f2(args...)); }
        };
    }
 
@@ -634,11 +608,6 @@ namespace LoKi
             { return " ("
                 + Gaudi::Utils::toCpp ( this->func1() ) + " " + Traits_::name() + " "
                 + Gaudi::Utils::toCpp ( this->func2() ) + ") " ; }
-            // ========================================================================
-          private:
-            // ========================================================================
-            /// the default constrictor is disabled
-            Combination() ;                             // the default constrictor is disabled
             // ========================================================================
           private:
             // ========================================================================
@@ -920,11 +889,6 @@ namespace LoKi
         + Gaudi::Utils::toCpp ( this->func1() ) + ","
         + Gaudi::Utils::toCpp ( this->func2() ) + ") " ; }
     // ========================================================================
-  private:
-    // ========================================================================
-    /// the default constructor is disabled
-    Min () ;                             // the default constructor is disabled
-    // ========================================================================
   protected:
     // ========================================================================
     /// the functor type
@@ -1051,11 +1015,6 @@ namespace LoKi
         + Gaudi::Utils::toCpp ( this->func1() ) + ","
         + Gaudi::Utils::toCpp ( this->func2() ) + ") " ; }
     // ========================================================================
-  private:
-    // ========================================================================
-    /// the default constructor is disabled
-    Max () ;                             // the default constructor is disabled
-    // ========================================================================
   };
   // ==========================================================================
   /** @class SimpleSwitch
@@ -1120,11 +1079,6 @@ namespace LoKi
                << this->m_cut  << ","
                << this->m_val1 << ","
                << this->m_val2 << ") " ; }
-    // ========================================================================
-  private:
-    // ========================================================================
-    /// the default constructor is disabled
-    SimpleSwitch() ;                     // the default constructor is disabled
     // ========================================================================
   private:
     // ========================================================================
@@ -1272,11 +1226,6 @@ namespace LoKi
     // ========================================================================
   private:
     // ========================================================================
-    /// the default contructor is disabled
-    Switch () ;                           // the defautl contructor is disabled
-    // ========================================================================
-  private:
-    // ========================================================================
     /// the condition
     LoKi::FunctorFromFunctor<TYPE,bool> m_cut  ;               // the condition
     /// the actual storage of two functors
@@ -1338,9 +1287,6 @@ namespace LoKi
       , m_func ( func )
       , m_desc ( desc )
     {}
-    /// copy contructor
-    ComposeFunction ( const ComposeFunction& right ) = default;
-
     /// clone method (mandatory!)
     virtual ComposeFunction*  clone () const
     { return new ComposeFunction ( *this ) ; }
@@ -1353,11 +1299,6 @@ namespace LoKi
     // to C++
     virtual std::string   toCpp() const
     { return "LoKi::" + this->m_desc + "("  + Gaudi::Utils::toCpp ( this->m_fun ) + ") " ; }
-    // ========================================================================
-  private:
-    // ========================================================================
-    /// the default constructor is disabled
-    ComposeFunction() ; // the default constructor is disabled
     // ========================================================================
   private:
     // ========================================================================
@@ -1599,7 +1540,7 @@ namespace LoKi
   public:
     // ========================================================================
     /// constructor form the value
-    TheSame ( argument value )
+    explicit TheSame ( argument value )
       : m_value ( value )
     {}
     /// copy constructor
@@ -1612,11 +1553,6 @@ namespace LoKi
     /// the basic printout method
     virtual std::ostream& fillStream( std::ostream& s ) const
     { return s << " (SAME?) "; }
-    // ========================================================================
-  private :
-    // ========================================================================
-    // the default contructor is disabled
-    TheSame();
     // ========================================================================
   private:
     // ========================================================================
@@ -1741,11 +1677,6 @@ namespace LoKi
     // ========================================================================
   private:
     // ========================================================================
-    /// The default constructor is disabled
-    EqualToValue();
-    // ========================================================================
-  private:
-    // ========================================================================
     /// the functor
     LoKi::FunctorFromFunctor<TYPE,TYPE2> m_fun ;                 // the functor
     /// the value
@@ -1812,11 +1743,6 @@ namespace LoKi
         + Gaudi::Utils::toCpp ( this->func () ) + " != "
         + Gaudi::Utils::toCpp ( this->val  () ) + ") " ; }
     // ========================================================================
-  private:
-    // ========================================================================
-    /// The default constructor is disabled
-    NotEqualToValue();
-    // ========================================================================
   };
   // ==========================================================================
   /** @class LessThanValue
@@ -1855,14 +1781,6 @@ namespace LoKi
       , LoKi::EqualToValue<TYPE,TYPE2>( fun , val )
     {}
     // ========================================================================
-    /// copy constructor
-    LessThanValue
-    ( const LessThanValue& right )
-      : LoKi::AuxFunBase                ( right )
-      , LoKi::EqualToValue<TYPE,TYPE2>  ( right )
-    {}
-    // ========================================================================
-    // ========================================================================
     /// MANDATORY: clone method ("virtual construcor")
     virtual  LessThanValue* clone() const { return new LessThanValue(*this); }
     /// MANDATORY: the only one essential method :
@@ -1877,11 +1795,6 @@ namespace LoKi
     { return " ("
         + Gaudi::Utils::toCpp ( this->func () ) + " < "
         + Gaudi::Utils::toCpp ( this->val  () ) + ") " ; }
-    // ========================================================================
-  private:
-    // ========================================================================
-    /// The default constructor is disabled
-    LessThanValue();
     // ========================================================================
   };
   // ==========================================================================
@@ -1921,9 +1834,6 @@ namespace LoKi
       , LoKi::EqualToValue<TYPE,TYPE2> ( fun , val )
     {}
     // ========================================================================
-    /// copy constructor
-    LessOrEqualValue( const LessOrEqualValue& right ) = default;
-    // ========================================================================
     /// MANDATORY: clone method ("virtual construcor")
     virtual  LessOrEqualValue* clone() const { return new LessOrEqualValue(*this); }
     /// MANDATORY: the only one essential method :
@@ -1938,11 +1848,6 @@ namespace LoKi
     { return " ("
         + Gaudi::Utils::toCpp ( this->func () ) + " <= "
         + Gaudi::Utils::toCpp ( this->val  () ) + ") " ; }
-    // ========================================================================
-  private:
-    // ========================================================================
-    /// The default constructor is disabled
-    LessOrEqualValue();
     // ========================================================================
   };
   // ==========================================================================
@@ -1982,9 +1887,6 @@ namespace LoKi
       , LoKi::EqualToValue<TYPE,TYPE2>( fun , val )
     {}
     // ========================================================================
-    /// copy constructor
-    GreaterThanValue( const GreaterThanValue& right ) = default;
-    // ========================================================================
     /// MANDATORY: clone method ("virtual construcor")
     virtual  GreaterThanValue* clone() const { return new GreaterThanValue(*this); }
     /// MANDATORY: the only one essential method :
@@ -1999,11 +1901,6 @@ namespace LoKi
     { return " ("
         + Gaudi::Utils::toCpp ( this->func () ) + " > "
         + Gaudi::Utils::toCpp ( this->val  () ) + ") " ; }
-    // ========================================================================
-  private:
-    // ========================================================================
-    /// The default constructor is disabled
-    GreaterThanValue();
     // ========================================================================
   };
   // ==========================================================================
@@ -2043,9 +1940,6 @@ namespace LoKi
       , LoKi::EqualToValue<TYPE,TYPE2>( fun , val )
     {}
     // ========================================================================
-    /// copy constructor
-    GreaterOrEqualValue( const GreaterOrEqualValue& right ) = default;
-    // ========================================================================
     /// MANDATORY: clone method ("virtual construcor")
     virtual  GreaterOrEqualValue* clone() const { return new GreaterOrEqualValue(*this); }
     /// MANDATORY: the only one essential method :
@@ -2060,11 +1954,6 @@ namespace LoKi
     { return " ("
         + Gaudi::Utils::toCpp ( this->func () ) + " >= "
         + Gaudi::Utils::toCpp ( this->val  () ) + ") " ; }
-    // ========================================================================
-  private:
-    // ========================================================================
-    /// The default constructor is disabled
-    GreaterOrEqualValue();
     // ========================================================================
   };
   // ==========================================================================
@@ -2118,9 +2007,6 @@ namespace LoKi
       , m_val ( val )
     {}
     // ========================================================================
-    /// copy constructor
-    MultiplyByValue( const MultiplyByValue& right ) = default;
-    // ========================================================================
     /// MANDATORY: clone method ("virtual construcor")
     virtual  MultiplyByValue* clone() const { return new MultiplyByValue(*this); }
     /// MANDATORY: the only one essential method :
@@ -2160,11 +2046,6 @@ namespace LoKi
     // ========================================================================
     inline result_type minus2  ( argument_a_unless_void ) const
     { return ( this->m_val ) - ( this->m_fun.fun ( a_unless_void ) ) ; }
-    // ========================================================================
-  private:
-    // ========================================================================
-    /// The default constructor is disabled
-    MultiplyByValue();
     // ========================================================================
   private:
     // ========================================================================
@@ -2223,9 +2104,6 @@ namespace LoKi
       , LoKi::MultiplyByValue<TYPE,TYPE2>( val , fun )
     {}
     // ========================================================================
-    /// copy constructor
-    SumByValue( const SumByValue& right ) = default;
-    // ========================================================================
     /// MANDATORY: clone method ("virtual construcor")
     virtual  SumByValue* clone() const { return new SumByValue(*this); }
     /// MANDATORY: the only one essential method :
@@ -2240,11 +2118,6 @@ namespace LoKi
     { return " ("
         + Gaudi::Utils::toCpp ( this->func () ) + " + "
         + Gaudi::Utils::toCpp ( this->val  () ) + ") " ; }
-    // ========================================================================
-  private:
-    // ========================================================================
-    /// The default constructor is disabled
-    SumByValue();
     // ========================================================================
   };
   // ==========================================================================
@@ -2284,9 +2157,6 @@ namespace LoKi
       , LoKi::MultiplyByValue<TYPE,TYPE2>( fun , val )
     {}
     // ========================================================================
-    /// copy constructor
-    Minus1( const Minus1& right ) = default;
-    // ========================================================================
     /// MANDATORY: clone method ("virtual construcor")
     virtual  Minus1* clone() const { return new Minus1(*this); }
     /// MANDATORY: the only one essential method :
@@ -2301,11 +2171,6 @@ namespace LoKi
     { return " ("
         + Gaudi::Utils::toCpp ( this->func () ) + " - "
         + Gaudi::Utils::toCpp ( this->val  () ) + ") " ; }
-    // ========================================================================
-  private:
-    // ========================================================================
-    /// The default constructor is disabled
-    Minus1();
     // ========================================================================
   };
   // ==========================================================================
@@ -2345,9 +2210,6 @@ namespace LoKi
       , LoKi::MultiplyByValue<TYPE,TYPE2>( val , fun )
     {}
     // ========================================================================
-    /// copy constructor
-    Minus2 ( const Minus2& right ) = default;
-    // ========================================================================
     /// MANDATORY: clone method ("virtual construcor")
     virtual  Minus2* clone() const { return new Minus2(*this); }
     /// MANDATORY: the only one essential method :
@@ -2362,11 +2224,6 @@ namespace LoKi
     { return " ("
         + Gaudi::Utils::toCpp ( this->val  () ) + " - "
         + Gaudi::Utils::toCpp ( this->func () ) + ") " ; }
-    // ========================================================================
-  private:
-    // ========================================================================
-    /// The default constructor is disabled
-    Minus2();
     // ========================================================================
   };
   // ==========================================================================
@@ -2406,9 +2263,6 @@ namespace LoKi
       , LoKi::MultiplyByValue<TYPE,TYPE2>( fun , val )
     {}
     // ========================================================================
-    /// copy constructor
-    Divide1 ( const Divide1& right ) = default;
-    // ========================================================================
     /// MANDATORY: clone method ("virtual construcor")
     virtual  Divide1* clone() const { return new Divide1(*this); }
     /// MANDATORY: the only one essential method :
@@ -2423,11 +2277,6 @@ namespace LoKi
     { return " ("
         + Gaudi::Utils::toCpp ( this->func () ) + " / "
         + Gaudi::Utils::toCpp ( this->val  () ) + ") " ; }
-    // ========================================================================
-  private:
-    // ========================================================================
-    /// The default constructor is disabled
-    Divide1();
     // ========================================================================
   };
   // ==========================================================================
@@ -2467,9 +2316,6 @@ namespace LoKi
       , LoKi::MultiplyByValue<TYPE,TYPE2>( val , fun )
     {}
     // ========================================================================
-    /// copy constructor
-    Divide2 ( const Divide2& right ) = default;
-    // ========================================================================
     /// MANDATORY: clone method ("virtual construcor")
     virtual  Divide2* clone() const { return new Divide2(*this); }
     /// MANDATORY: the only one essential method :
@@ -2484,11 +2330,6 @@ namespace LoKi
     { return " ("
         + Gaudi::Utils::toCpp ( this->val  () ) + " / "
         + Gaudi::Utils::toCpp ( this->func () ) + ") " ; }
-    // ========================================================================
-  private:
-    // ========================================================================
-    /// The default constructor is disabled
-    Divide2();
     // ========================================================================
   };
   // ==========================================================================
@@ -2519,11 +2360,15 @@ namespace LoKi
      *  @param fun2 the second functor
      *  @param cmp the comparison criteria
      */
-    Compare ( const LoKi::Functor<TYPE,TYPE2>& fun1 ,
-              const LoKi::Functor<TYPE,TYPE2>& fun2 ,
-              const compare&  cmp  = compare() )
-      : m_two ( fun1 , fun2 )
-      , m_cmp ( cmp )
+    template <typename F1, typename F2,
+              typename = typename details::decays_to<typename details::LF2<F1,F2>::type1,TYPE >,
+              typename = typename details::decays_to<typename details::LF2<F1,F2>::type2,TYPE2>
+              >
+    Compare ( F1&& fun1 ,
+              F2&& fun2 ,
+              CMP  cmp = {}  )
+      : m_two ( std::forward<F1>(fun1) , std::forward<F2>(fun2) )
+      , m_cmp ( std::move(cmp) )
     {}
     // ========================================================================
     /** constructor
@@ -2536,8 +2381,6 @@ namespace LoKi
       : m_two ( fun1 , fun1 )
       , m_cmp ( cmp )
     {}
-    /// copy constructor
-    Compare ( const Compare& right )  = default;
     /// the only one essential method
     bool operator() ( argument a1 , argument a2 ) const
     { return m_cmp ( m_two.fun1 ( a1 ) , m_two.fun2 ( a2 ) ) ; }
@@ -2548,11 +2391,6 @@ namespace LoKi
     const function& func1 () const { return m_two.func1 () ; }
     /// get the second functor
     const function& func2 () const { return m_two.func2 () ; }
-    // ========================================================================
-  private:
-    // ========================================================================
-    /// no default constructor
-    Compare(){}                                       // no default constructor
     // ========================================================================
   private:
     // ========================================================================
@@ -2684,11 +2522,6 @@ namespace LoKi
     // ========================================================================
   private:
     // ========================================================================
-    /// the default contructor is disabled
-    InRange() ;                           // the default contructor is disabled
-    // ========================================================================
-  private:
-    // ========================================================================
     /// the low edge
     double                                m_low  ;        //       the low edge
     /// the functor itself
@@ -2784,11 +2617,6 @@ namespace LoKi
                << ","          << m_high << ") " ;
 
     }
-    // ========================================================================
-  private:
-    // ========================================================================
-    /// the default contructor is disabled
-    InRange2() ;                          // the default contructor is disabled
     // ========================================================================
   private:
     // ========================================================================
@@ -2906,11 +2734,6 @@ namespace LoKi
     // ========================================================================
   private:
     // ========================================================================
-    /// The default constructor is disabled
-    EqualToList ();
-    // ========================================================================
-  private:
-    // ========================================================================
     /// the functor
     LoKi::FunctorFromFunctor<TYPE,double> m_fun ;                // the functor
     /// the list
@@ -2997,11 +2820,6 @@ namespace LoKi
     { return s << " (" << this->func() << "!="
                << Gaudi::Utils::toString ( this->vect() ) << ") " ; }
     // ========================================================================
-  private:
-    // ========================================================================
-    /// The default constructor is disabled
-    NotEqualToList ();
-    // ========================================================================
   };
   // ==========================================================================
   /** @class XScaler
@@ -3048,11 +2866,6 @@ namespace LoKi
     /// OPTIONAL: nice printout
     virtual std::ostream& fillStream ( std::ostream& s ) const
     { return s << " scale(" << m_cut << "," << m_scaler << ") " ; }
-    // ========================================================================
-  private:
-    // ========================================================================
-    /// the default constructor is disabled
-    XScaler() ;                          // the default constructor is disabled
     // ========================================================================
   private:
     // ========================================================================
@@ -3109,11 +2922,6 @@ namespace LoKi
     // ========================================================================
   private:
     // ========================================================================
-    /// the default constructor is disabled
-    Modulo () ;                          // the default constrictor is disabled
-    // ========================================================================
-  private:
-    // ========================================================================
     /// the divident
     LoKi::FunctorFromFunctor<TYPE,double> m_divident ; // the divident
     /// the divisor
@@ -3160,11 +2968,6 @@ namespace LoKi
     /// the basic printout method
     virtual std::ostream& fillStream( std::ostream& s ) const
     { return s << " round("  << this->m_fun<< ") "; }
-    // ========================================================================
-  private:
-    // ========================================================================
-    /// the default constructor is disabled
-    Round () ;                           // the default constrictor is disabled
     // ========================================================================
   private:
     // ========================================================================
@@ -3232,11 +3035,6 @@ namespace LoKi
     /// the basic printout method
     virtual std::ostream& fillStream( std::ostream& s ) const
     { return s << " jbit("  << this->m_fun << "," << this->m_j << ") "; }
-    // ========================================================================
-  private:
-    // ========================================================================
-    /// the default constructor is disabled
-    JBit () ;                           // the default constrictor is disabled
     // ========================================================================
   private:
     // ========================================================================
@@ -3314,11 +3112,6 @@ namespace LoKi
                << "," << this->m_j1
                << "," << this->m_j2
                << ") "               ; }
-    // ========================================================================
-  private:
-    // ========================================================================
-    /// the default constructor is disabled
-    JBits () ;                           // the default constrictor is disabled
     // ========================================================================
   private:
     // ========================================================================
