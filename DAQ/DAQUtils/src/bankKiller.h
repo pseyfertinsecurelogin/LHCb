@@ -51,5 +51,6 @@ class bankKiller : public Decoder::AlgBase {
   LHCb::RawEvent* m_rawEvt;
   //kill from all raw event locations, or just from the first one?
   bool m_killFromAll ;   
+  int m_sourceKill ;   
 };
 #endif //    BANKKILLER_H
