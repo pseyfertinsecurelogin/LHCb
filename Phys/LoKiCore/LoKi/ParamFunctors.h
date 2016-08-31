@@ -1,4 +1,3 @@
-// $Id$ 
 // ============================================================================
 #ifndef LOKI_PARAMFUNCTORS_H 
 #define LOKI_PARAMFUNCTORS_H 1
@@ -27,16 +26,9 @@ class Property ;
  * contributions and advices from G.Raven, J.van Tilburg,
  * A.Golutvin, P.Koppenburg have been used in the design.
  *
- * By usage of this code one clearly states the disagreement 
- * with the smear campaign of Dr.O.Callot et al.: 
- * ``No Vanya's lines are allowed in LHCb/Gaudi software''
- *
  * @date 2014-02-02 
  * @author Vanya BELYAEV Ivan.Belyaev@itep.ru
  *  
- *                    $Revision$
- *  Last modification $Date$
- *                 by $Author$ 
  */
 namespace LoKi 
 {
@@ -63,7 +55,7 @@ namespace LoKi
        */
       ParamBase ( const LoKi::Param& property ) ;
       /// virtual destructor 
-      virtual ~ParamBase () ; // virtual destructor 
+      virtual ~ParamBase () = default; // virtual destructor 
       // ======================================================================
     protected:
       // ======================================================================
@@ -92,22 +84,15 @@ namespace LoKi
     public: 
       // ======================================================================
       /// constructor from parameter 
-      Parameter  ( const LoKi::Param& param ) ;
+      explicit Parameter  ( const LoKi::Param& param ) ;
       /// constructor from parameter 
-      Parameter  ( const std::string& param ) ;
-      /// virtual destructor 
-      virtual ~Parameter () ;
+      explicit Parameter  ( const std::string& param ) ;
       /// clone-method: "virtual constructor"
       virtual Parameter* clone() const ;
       /// the major method 
       virtual result_type operator()( /* argument */ ) const ;
       /// optional: nice printout 
       virtual std::ostream& fillStream ( std::ostream& s ) const ;
-      // ======================================================================
-    private: 
-      // ======================================================================
-      /// default constructor is disabled  
-      Parameter () ; // default constructor is disabled  
       // ======================================================================
     protected:
       // ======================================================================
@@ -116,13 +101,13 @@ namespace LoKi
     private: 
       // ======================================================================
       /// map-like property ? 
-      mutable bool            m_map_d    ;  // map-like property? 
-      mutable bool            m_map_f    ;  // map-like property? 
-      mutable bool            m_map_i    ;  // map-like property? 
+      mutable bool            m_map_d = false   ;  // map-like property? 
+      mutable bool            m_map_f = false   ;  // map-like property? 
+      mutable bool            m_map_i = false   ;  // map-like property? 
       /// scalar   property ?
-      mutable bool            m_scalar_d ;  // scalar   property? 
-      mutable bool            m_scalar_f ;  // scalar   property? 
-      mutable bool            m_scalar_i ;  // scalar   property? 
+      mutable bool            m_scalar_d = false ;  // scalar   property? 
+      mutable bool            m_scalar_f = false ;  // scalar   property? 
+      mutable bool            m_scalar_i = false ;  // scalar   property? 
       // ======================================================================
     };
     // ========================================================================
@@ -134,4 +119,3 @@ namespace LoKi
 // ============================================================================
 #endif // LOKI_PARAMFUNCTORS_H
 // ============================================================================
-

@@ -60,13 +60,6 @@ namespace LoKi
       , m_fun ( fun ) 
       , m_val ( val ) 
     {}
-    /// copy constructor 
-    Power ( const Power & right ) 
-      : LoKi::AuxFunBase ( right ) 
-      , LoKi::Functor<TYPE,TYPE2> ( right ) 
-      , m_fun ( right.m_fun ) 
-      , m_val ( right.m_val ) 
-    {}
     /// MANDATORY: clone method ("virtual constructor")
     virtual  Power* clone() const { return new Power ( *this ) ; }
     /// MANDATORY: the only one essential method 
@@ -85,11 +78,6 @@ namespace LoKi
     /// the basic printout method 
     virtual std::ostream& fillStream( std::ostream& s ) const 
     { return s << "pow("  << m_fun << "," << m_val << ")" ; };
-    // ========================================================================
-  private:
-    // ========================================================================
-    /// default constructor is disabled 
-    Power() ;                                // default constructor is disabled
     // ========================================================================
   private:
     // ========================================================================
@@ -123,13 +111,6 @@ namespace LoKi
       , m_fun ( fun ) 
       , m_val ( val ) 
     {}
-    /// copy constructor 
-    Power ( const Power & right ) 
-      : LoKi::AuxFunBase ( right ) 
-      , LoKi::Functor<TYPE,TYPE2> ( right ) 
-      , m_fun ( right.m_fun ) 
-      , m_val ( right.m_val ) 
-    {}
     /// MANDATORY: clone method ("virtual constructor")
     virtual  Power* clone() const { return new Power ( *this ) ; }
     /// MANDATORY: the only one essential method 
@@ -148,11 +129,6 @@ namespace LoKi
     /// the basic printout method 
     virtual std::ostream& fillStream( std::ostream& s ) const 
     { return s << "pow("  << m_fun << "," << m_val << ")" ; };
-    // ========================================================================
-  private:
-    // ========================================================================
-    /// default constructor is disabled 
-    Power() ;                                // default constructor is disabled 
     // ========================================================================
   private:
     // ========================================================================

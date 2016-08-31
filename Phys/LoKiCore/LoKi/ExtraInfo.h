@@ -75,8 +75,6 @@ namespace LoKi
       // ======================================================================
     private:
       // ======================================================================
-      /// the default constructor is disabled
-      GetInfo() ;                         // the default contructor is disabled
       /// no assignement
       GetInfo& operator= (const GetInfo& ) ;                  // no assignement
       // ======================================================================
@@ -107,7 +105,7 @@ namespace LoKi
     public:
       // ======================================================================
       /// constructor fomr the index and default value
-      CheckInfo ( const int    index )
+      explicit CheckInfo ( const int    index )
         : LoKi::AuxFunBase ( std::tie ( index ) )
         , m_index   ( index )
       { }
@@ -123,12 +121,8 @@ namespace LoKi
       virtual std::ostream& fillStream ( std::ostream& s ) const
       { return s <<  this->objType() << "(" << m_index << ")" ; }
       // ======================================================================
-    private:
-      // ======================================================================
-      /// the default contructor is disabled
-      CheckInfo() ;                       // the default contructor is disabled
       /// no assigenement
-      CheckInfo& operator= ( CheckInfo& ) ;                  // no assigenement
+      CheckInfo& operator= ( CheckInfo& ) = delete;          // no assigenement
       // ======================================================================
     public:
       // ======================================================================
@@ -208,12 +202,8 @@ namespace LoKi
       /// get the flag
       bool                        update () const { return m_update ; }
       // ======================================================================
-    private:
-      // ======================================================================
-      /// no default constructor
-      GetSmartInfo() ;                                // no default constructor
       /// no assignement
-      GetSmartInfo& operator=( const GetSmartInfo& ) ;         // no assignment
+      GetSmartInfo& operator=( const GetSmartInfo& ) = delete; // no assignment
       // ======================================================================
     private:
       // ======================================================================
@@ -266,11 +256,6 @@ namespace LoKi
       /// OPTIONAL: the nice printout
       virtual std::ostream& fillStream ( std::ostream& s ) const
       { return s << "logging (" << m_fun << ","  << m_index << ")" ; }
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default contructor is disabled
-      LogInfo () ;                        // the default contructor is disabled
       // ======================================================================
     private:
       // ======================================================================

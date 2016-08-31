@@ -40,7 +40,7 @@ namespace LoKi
   public:
     // ========================================================================
     /// constructor
-    FirstN ( const unsigned int N ) ;                            // constructor
+    explicit FirstN ( const unsigned int N ) ;                            // constructor
     /// virtual destructor
   public:
     // ========================================================================
@@ -50,11 +50,6 @@ namespace LoKi
     unsigned int n() const { return m_N ; }                            // get N
     /// printout
     virtual std::ostream& fillStream ( std::ostream& s ) const ;
-    // ========================================================================
-  private:
-    // ========================================================================
-    /// the default constructor is disabled
-    FirstN () ;                          // the default constructor is disabled
     // ========================================================================
   private:
     // ========================================================================
@@ -131,7 +126,7 @@ namespace LoKi
 namespace Gaudi
 {
   // ==========================================================================
-  namespace Utils 
+  namespace Utils
   {
     // ========================================================================
     // Dump as C++ objects
@@ -139,7 +134,7 @@ namespace Gaudi
     GAUDI_API std::string toCpp ( const LoKi::Sort&    s ) ;
     GAUDI_API std::string toCpp ( const LoKi::Reverse& r ) ;
     // ========================================================================
-  } 
+  }
   // ==========================================================================
 }
 // ============================================================================

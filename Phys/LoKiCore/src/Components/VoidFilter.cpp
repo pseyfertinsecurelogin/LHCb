@@ -88,14 +88,10 @@ namespace LoKi
       Assert ( sc.isSuccess () , "Unable (re)set property 'Factory'" , sc ) ;
     } 
     // ========================================================================
-  private:
-    // ========================================================================
-    /// the default constructor is disabled 
-    VoidFilter () ;                      // the default constructor is disabled 
     /// the copy constructor is disabled 
-    VoidFilter ( const VoidFilter& ) ;      // the copy constructor is disabled 
+    VoidFilter ( const VoidFilter& ) = delete ;      // the copy constructor is disabled 
     /// the assignement operator is disabled 
-    VoidFilter& operator=( const VoidFilter& ) ; // the assignement is disabled
+    VoidFilter& operator=( const VoidFilter& ) = delete ; // the assignement is disabled
     // ========================================================================
   private:
     // ========================================================================

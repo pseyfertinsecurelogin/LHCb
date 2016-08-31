@@ -104,8 +104,6 @@ namespace LoKi
     // ========================================================================
   private:
     // ========================================================================
-    /// the default constructor is disabled
-    FilterAlg () ;                       // the default constructor is disabled
     /// the copy constructor is disabled
     FilterAlg ( const FilterAlg& ) ;        // the copy constructor is disabled
     /// the assignement operator is disabled

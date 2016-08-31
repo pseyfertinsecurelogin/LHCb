@@ -65,7 +65,7 @@ namespace LoKi
     public:
       // ======================================================================
       /// constructor from the algorithm name
-      Passed ( const std::string& name ) ;
+      explicit Passed ( const std::string& name ) ;
       ~Passed() override;
       /// MANDATORY: clone method ("virtual constructor")
       Passed* clone() const override { return new Passed ( *this ) ; }
@@ -90,11 +90,6 @@ namespace LoKi
       // ======================================================================
     private:
       // ======================================================================
-      /// the default constructor is disabled
-      Passed () ;                        // the default constructor is disabled
-      // ======================================================================
-    private:
-      // ======================================================================
       /// the algorithm name
       std::string                         m_name      ;
       /// the algorithm itself
@@ -114,18 +109,13 @@ namespace LoKi
     public:
       // ======================================================================
       /// constructor from the algorithm name
-      Enabled ( const std::string& name ) ;
+      explicit Enabled ( const std::string& name ) ;
       /// MANDATORY: clone method ("virtual constructor")
       virtual  Enabled* clone() const { return new Enabled ( *this ) ; }
       /// MANDATORY: the only one essential method
       virtual result_type operator() () const ;
       /// OPTIONAL: nice printout
       virtual std::ostream& fillStream ( std::ostream& s ) const ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      Enabled () ;                       // the default constructor is disabled
       // ======================================================================
     } ;
     // =========================================================================
@@ -141,18 +131,13 @@ namespace LoKi
     public:
       // ======================================================================
       /// constructor from the algorithm name
-      Executed ( const std::string& name ) ;
+      explicit Executed ( const std::string& name ) ;
       /// MANDATORY: clone method ("virtual constructor")
       virtual  Executed* clone() const { return new Executed ( *this ) ; }
       /// MANDATORY: the only one essential method
       virtual result_type operator() () const ;
       /// OPTIONAL: nice printout
       virtual std::ostream& fillStream ( std::ostream& s ) const ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      Executed () ;                       // the default constructor is disabled
       // ======================================================================
     } ;
     // =========================================================================
@@ -170,18 +155,13 @@ namespace LoKi
     public:
       // ======================================================================
       /// constructor from the algorithm name
-      Run ( const std::string& name ) ;
+      explicit Run ( const std::string& name ) ;
       /// MANDATORY: clone method ("virtual constructor")
       virtual  Run* clone() const { return new Run ( *this ) ; }
       /// MANDATORY: the only one essential method
       virtual result_type operator() () const ;
       /// OPTIONAL: nice printout
       virtual std::ostream& fillStream ( std::ostream& s ) const ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      Run () ;                          // the default constructor is disabled
       // ======================================================================
     } ;
     // ========================================================================
@@ -254,11 +234,6 @@ namespace LoKi
       // ======================================================================
     private:
       // ======================================================================
-      /// the default constructor is disabled
-      AnyPassed () ;                     // the default constructor is disabled
-      // ======================================================================
-    private:
-      // ======================================================================
       /// the algorithm names
       std::vector<std::string> m_names ;               // the algorithm names
       /// the algorithms themself
@@ -301,11 +276,6 @@ namespace LoKi
       std::ostream& fillStream ( std::ostream& s ) const override
       { return print ( "ALG_ANYPASSED" , s ) ; }
       // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      AllPassed () ;                        // the default constructor is disabled
-      // ======================================================================
     } ;
     // ========================================================================
     /** @class AnyEnabled
@@ -343,11 +313,6 @@ namespace LoKi
       /// OPTIONAL: nice printout
       std::ostream& fillStream ( std::ostream& s ) const override
       { return print ( "ALG_ANYENABLED" , s ) ; }
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      AnyEnabled () ;                        // the default constructor is disabled
       // ======================================================================
     } ;
     // ========================================================================
@@ -387,11 +352,6 @@ namespace LoKi
       virtual std::ostream& fillStream ( std::ostream& s ) const
       { return print ( "ALG_ALLENABLED" , s ) ; }
       // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      AllEnabled () ;                        // the default constructor is disabled
-      // ======================================================================
     } ;
     // ========================================================================
     /** @class AnyExecuted
@@ -430,11 +390,6 @@ namespace LoKi
       virtual std::ostream& fillStream ( std::ostream& s ) const
       { return print ( "ALG_ANYEXECUTED" , s ) ; }
       // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      AnyExecuted () ;                        // the default constructor is disabled
-      // ======================================================================
     } ;
     // ========================================================================
     /** @class AllExecuted
@@ -472,11 +427,6 @@ namespace LoKi
       std::ostream& fillStream ( std::ostream& s ) const override
       { return print ( "ALG_ALLEXECUTED" , s ) ; }
       // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      AllExecuted () ;                        // the default constructor is disabled
-      // ======================================================================
     } ;
     // ========================================================================
     /** @class RunAll
@@ -511,11 +461,6 @@ namespace LoKi
       /// OPTIONAL: nice printout
       virtual std::ostream& fillStream ( std::ostream& s ) const
       { return print ( "ALG_RUNALL" , s ) ; }
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      RunAll () ;                        // the default constructor is disabled
       // ======================================================================
     } ;
     // =========================================================================
@@ -580,11 +525,6 @@ namespace LoKi
       // =======================================================================
     private:
       // =======================================================================
-      /// the default constructor is disabled
-      NumPassed () ;                      // the default constructor is disabled
-      // =======================================================================
-    private:
-      // =======================================================================
       /// the actual functor
       LoKi::Algorithms::AnyPassed m_fun ;                  // the actual functor
       // =======================================================================
@@ -628,11 +568,6 @@ namespace LoKi
       virtual std::ostream& fillStream ( std::ostream& s ) const
       { return print ( "ALG_NUMENABLED" , s ) ; }
       // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      NumEnabled () ;                   // the default constructor is disabled
-      // ======================================================================
     } ;
     // ========================================================================
     /** @class NumExecuted
@@ -672,11 +607,6 @@ namespace LoKi
       /// OPTIONAL: nice printout
       virtual std::ostream& fillStream ( std::ostream& s ) const
       { return print ( "ALG_NUMEXECUTED" , s ) ; }
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      NumExecuted () ;                   // the default constructor is disabled
       // ======================================================================
     } ;
     // ========================================================================

@@ -180,9 +180,6 @@ namespace LoKi
     /// accessor to the function itself
     inline const functor& func () const { return *m_fun ; }
     // ========================================================================
-    /// default constructor is disallowed
-    FunctorFromFunctor() = delete;        // the default constructor is private
-    // ========================================================================
   private:
     // ========================================================================
     /// the underlaying function
