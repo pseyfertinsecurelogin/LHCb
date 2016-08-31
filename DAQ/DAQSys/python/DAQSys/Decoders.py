@@ -391,6 +391,8 @@ for report in ["Dec","Sel"]:
             properties={"SourceID" : hlt}, #None=default(0)
             conf=DecoderDB
             )
+        if report is "Sel":
+            dec.Outputs["OutputHltObjectSummariesLocation"] =  hltname+"/SelReports/Candidates"
 
 #Vertex Decoder
 Decoder("HltVertexReportsDecoder",
