@@ -1226,7 +1226,7 @@ namespace LoKi
       // __tee__
       static LoKi::FunctorFromFunctor<std::vector<TYPE>,std::vector<TYPE> >
       __tee__     ( const Map& fun )
-      { return LoKi::tee<TYPE>( fun ) ; }
+      { return LoKi::tee( fun ) ; }
       // ======================================================================
     public:
       // ======================================================================
@@ -1424,7 +1424,7 @@ namespace LoKi
       // __tee__
       static LoKi::FunctorFromFunctor<std::vector<TYPE>,std::vector<TYPE> >
       __tee__     ( const Pipe& fun )
-      { return LoKi::tee<TYPE>( fun ) ; }
+      { return LoKi::tee( fun ) ; }
       // ======================================================================
     public:
       // ======================================================================
@@ -1572,7 +1572,7 @@ namespace LoKi
       // __tee__
       static LoKi::FunctorFromFunctor<std::vector<TYPE>,std::vector<TYPE> >
       __tee__     ( const FunVal& fun )
-      { return LoKi::tee<TYPE>( fun ) ; }
+      { return LoKi::tee( fun ) ; }
       // ======================================================================
     };
     // ========================================================================
@@ -1809,7 +1809,7 @@ namespace LoKi
       // __tee__
       static LoKi::FunctorFromFunctor<std::vector<TYPE>,std::vector<TYPE> >
       __tee__     ( const CutVal& fun )
-      { return LoKi::tee<TYPE>( fun ) ; }
+      { return LoKi::tee( fun ) ; }
       // ======================================================================
     } ;
     // ========================================================================

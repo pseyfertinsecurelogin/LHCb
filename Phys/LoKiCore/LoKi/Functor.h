@@ -463,6 +463,11 @@ namespace LoKi
           using type2 = typename std::common_type< typename LF<F1>::type2,
                                                    typename LF<F2>::type2 >::type;
       };
+
+      template <typename F, typename TYPE1, typename TYPE2>
+      using require_signature = typename
+          std::enable_if<   decays_to<typename LF<F>::type1, TYPE1>::value
+                         && decays_to<typename LF<F>::type2, TYPE2>::value >::type;
   }
 
 
