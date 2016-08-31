@@ -1339,7 +1339,6 @@ double Gaudi::Math::casteljau
 // ============================================================================
 namespace 
 {
-  inline short signm1 ( const long i ) { return 0 == i%2 ? 1 : -1 ; }
   // ==========================================================================
   /** transformation matrix from legendre to bernstein basis 
    *  @see http://www.sciencedirect.com/science/article/pii/S0377042700003769 eq.20 

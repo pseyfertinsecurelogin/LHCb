@@ -166,7 +166,7 @@ namespace
   // ==========================================================================
   // qubic interpolation 
   inline 
-  Gaudi::Math::ValueWithError _qubic_ 
+  Gaudi::Math::ValueWithError _cubic_ 
   ( const double                       x  , 
     const double                       x0 , 
     const double                       x1 , 
@@ -263,294 +263,6 @@ namespace
         _quadratic_ ( y , y0 , y1 , y2 , v20 , v21 , v22 ) ) ;
   }
   // ==========================================================================
-  // biqubic interpolation 
-  inline 
-  Gaudi::Math::ValueWithError _biqubic_ 
-  ( const double                       x   , 
-    const double                       y   , 
-    //
-    const double                       x0  , 
-    const double                       x1  , 
-    const double                       x2  , 
-    const double                       x3  , 
-    //
-    const double                       y0  , 
-    const double                       y1  , 
-    const double                       y2  , 
-    const double                       y3  , 
-    //
-    const Gaudi::Math::ValueWithError& v00 , 
-    const Gaudi::Math::ValueWithError& v10 , 
-    const Gaudi::Math::ValueWithError& v20 , 
-    const Gaudi::Math::ValueWithError& v30 , 
-    //
-    const Gaudi::Math::ValueWithError& v01 , 
-    const Gaudi::Math::ValueWithError& v11 , 
-    const Gaudi::Math::ValueWithError& v21 , 
-    const Gaudi::Math::ValueWithError& v31 , 
-    //
-    const Gaudi::Math::ValueWithError& v02 , 
-    const Gaudi::Math::ValueWithError& v12 , 
-    const Gaudi::Math::ValueWithError& v22 ,
-    const Gaudi::Math::ValueWithError& v32 , 
-    //
-    const Gaudi::Math::ValueWithError& v03 , 
-    const Gaudi::Math::ValueWithError& v13 , 
-    const Gaudi::Math::ValueWithError& v23 ,
-    const Gaudi::Math::ValueWithError& v33 )
-  {
-    return _qubic_ 
-      ( x , x0 , x1 , x2 , x3 , 
-        _qubic_ ( y , y0 , y1 , y2 , y3 , v00 , v01 , v02 , v03 ) , 
-        _qubic_ ( y , y0 , y1 , y2 , y3 , v10 , v11 , v12 , v13 ) , 
-        _qubic_ ( y , y0 , y1 , y2 , y3 , v20 , v21 , v22 , v23 ) ,
-        _qubic_ ( y , y0 , y1 , y2 , y3 , v30 , v31 , v32 , v33 ) ) ;
-  }
-  // ==========================================================================
-  // trilinear interpolation 
-  inline Gaudi::Math::ValueWithError _trilinear_ 
-  ( const double                       x    , 
-    const double                       y    , 
-    const double                       z    , 
-    const double                       x0   , 
-    const double                       x1   , 
-    const double                       y0   , 
-    const double                       y1   , 
-    const double                       z0   , 
-    const double                       z1   , 
-    //
-    const Gaudi::Math::ValueWithError& v000 , 
-    const Gaudi::Math::ValueWithError& v100 , 
-    //
-    const Gaudi::Math::ValueWithError& v010 ,
-    const Gaudi::Math::ValueWithError& v110 ,
-    //
-    const Gaudi::Math::ValueWithError& v001 , 
-    const Gaudi::Math::ValueWithError& v101 , 
-    //
-    const Gaudi::Math::ValueWithError& v011 ,
-    const Gaudi::Math::ValueWithError& v111 )
-  {
-    return _bilinear_ ( x  , y  , 
-                        x0 , x1 , 
-                        y0 , y1 ,
-                        _linear_ ( z , z0 , z1 , v000 , v001 ) , 
-                        _linear_ ( z , z0 , z1 , v100 , v101 ) , 
-                        _linear_ ( z , z0 , z1 , v010 , v011 ) , 
-                        _linear_ ( z , z0 , z1 , v110 , v111 ) ) ;
-  }
-  // ==========================================================================
-  // triquadratic interpolation 
-  inline Gaudi::Math::ValueWithError _triquadratic_ 
-  ( const double                       x    , 
-    const double                       y    , 
-    const double                       z    , 
-    const double                       x0   , 
-    const double                       x1   , 
-    const double                       x2   , 
-    const double                       y0   , 
-    const double                       y1   , 
-    const double                       y2   , 
-    const double                       z0   , 
-    const double                       z1   , 
-    const double                       z2   , 
-    const Gaudi::Math::ValueWithError& v000 , 
-    const Gaudi::Math::ValueWithError& v100 , 
-    const Gaudi::Math::ValueWithError& v200 , 
-    const Gaudi::Math::ValueWithError& v010 , 
-    const Gaudi::Math::ValueWithError& v110 , 
-    const Gaudi::Math::ValueWithError& v210 , 
-    const Gaudi::Math::ValueWithError& v020 , 
-    const Gaudi::Math::ValueWithError& v120 , 
-    const Gaudi::Math::ValueWithError& v220 , 
-    //
-    const Gaudi::Math::ValueWithError& v001 , 
-    const Gaudi::Math::ValueWithError& v101 , 
-    const Gaudi::Math::ValueWithError& v201 , 
-    const Gaudi::Math::ValueWithError& v011 , 
-    const Gaudi::Math::ValueWithError& v111 , 
-    const Gaudi::Math::ValueWithError& v211 , 
-    const Gaudi::Math::ValueWithError& v021 , 
-    const Gaudi::Math::ValueWithError& v121 , 
-    const Gaudi::Math::ValueWithError& v221 ,
-    //
-    const Gaudi::Math::ValueWithError& v002 , 
-    const Gaudi::Math::ValueWithError& v102 , 
-    const Gaudi::Math::ValueWithError& v202 , 
-    const Gaudi::Math::ValueWithError& v012 , 
-    const Gaudi::Math::ValueWithError& v112 , 
-    const Gaudi::Math::ValueWithError& v212 , 
-    const Gaudi::Math::ValueWithError& v022 , 
-    const Gaudi::Math::ValueWithError& v122 , 
-    const Gaudi::Math::ValueWithError& v222 ) 
-  {
-    return _quadratic_ 
-      ( z , z0 , z1 , z2 , 
-        _biquadratic_ ( x    , y           ,  
-                        x0   , x1   , x2   , 
-                        y0   , y1   , y2   , 
-                        v000 , v100 , v200 , 
-                        v010 , v110 , v210 , 
-                        v020 , v120 , v220 ) ,
-        _biquadratic_ ( x    , y           ,  
-                        x0   , x1   , x2   , 
-                        y0   , y1   , y2   , 
-                        v001 , v101 , v201 , 
-                        v011 , v111 , v211 , 
-                        v021 , v121 , v221 ) ,
-        _biquadratic_ ( x    , y           ,  
-                        x0   , x1   , x2   , 
-                        y0   , y1   , y2   , 
-                        v002 , v102 , v202 , 
-                        v012 , v112 , v212 , 
-                        v022 , v122 , v222 ) ) ;  
-  }
-  // ==========================================================================
-  // triqubic interpolation 
-  inline Gaudi::Math::ValueWithError _triqubic_ 
-  ( const double                       x    , 
-    const double                       y    , 
-    const double                       z    , 
-    //
-    const double                       x0   , 
-    const double                       x1   , 
-    const double                       x2   , 
-    const double                       x3   , 
-    //
-    const double                       y0   , 
-    const double                       y1   , 
-    const double                       y2   , 
-    const double                       y3   , 
-    //
-    const double                       z0   , 
-    const double                       z1   , 
-    const double                       z2   , 
-    const double                       z3   , 
-    //
-    const Gaudi::Math::ValueWithError& v000 , 
-    const Gaudi::Math::ValueWithError& v100 , 
-    const Gaudi::Math::ValueWithError& v200 , 
-    const Gaudi::Math::ValueWithError& v300 , 
-    //
-    const Gaudi::Math::ValueWithError& v010 , 
-    const Gaudi::Math::ValueWithError& v110 , 
-    const Gaudi::Math::ValueWithError& v210 , 
-    const Gaudi::Math::ValueWithError& v310 , 
-    //
-    const Gaudi::Math::ValueWithError& v020 , 
-    const Gaudi::Math::ValueWithError& v120 , 
-    const Gaudi::Math::ValueWithError& v220 , 
-    const Gaudi::Math::ValueWithError& v320 , 
-    //
-    const Gaudi::Math::ValueWithError& v030 , 
-    const Gaudi::Math::ValueWithError& v130 , 
-    const Gaudi::Math::ValueWithError& v230 , 
-    const Gaudi::Math::ValueWithError& v330 , 
-    //
-    const Gaudi::Math::ValueWithError& v001 , 
-    const Gaudi::Math::ValueWithError& v101 , 
-    const Gaudi::Math::ValueWithError& v201 , 
-    const Gaudi::Math::ValueWithError& v301 , 
-    //
-    const Gaudi::Math::ValueWithError& v011 , 
-    const Gaudi::Math::ValueWithError& v111 , 
-    const Gaudi::Math::ValueWithError& v211 , 
-    const Gaudi::Math::ValueWithError& v311 , 
-    //
-    const Gaudi::Math::ValueWithError& v021 , 
-    const Gaudi::Math::ValueWithError& v121 , 
-    const Gaudi::Math::ValueWithError& v221 ,
-    const Gaudi::Math::ValueWithError& v321 ,
-    //
-    const Gaudi::Math::ValueWithError& v031 , 
-    const Gaudi::Math::ValueWithError& v131 , 
-    const Gaudi::Math::ValueWithError& v231 ,
-    const Gaudi::Math::ValueWithError& v331 ,
-    //
-    const Gaudi::Math::ValueWithError& v002 , 
-    const Gaudi::Math::ValueWithError& v102 , 
-    const Gaudi::Math::ValueWithError& v202 , 
-    const Gaudi::Math::ValueWithError& v302 , 
-    //
-    const Gaudi::Math::ValueWithError& v012 , 
-    const Gaudi::Math::ValueWithError& v112 , 
-    const Gaudi::Math::ValueWithError& v212 , 
-    const Gaudi::Math::ValueWithError& v312 , 
-    //
-    const Gaudi::Math::ValueWithError& v022 , 
-    const Gaudi::Math::ValueWithError& v122 , 
-    const Gaudi::Math::ValueWithError& v222 ,
-    const Gaudi::Math::ValueWithError& v322 ,
-    //
-    const Gaudi::Math::ValueWithError& v032 , 
-    const Gaudi::Math::ValueWithError& v132 , 
-    const Gaudi::Math::ValueWithError& v232 ,
-    const Gaudi::Math::ValueWithError& v332 ,
-    //
-    const Gaudi::Math::ValueWithError& v003 , 
-    const Gaudi::Math::ValueWithError& v103 , 
-    const Gaudi::Math::ValueWithError& v203 , 
-    const Gaudi::Math::ValueWithError& v303 , 
-    //
-    const Gaudi::Math::ValueWithError& v013 , 
-    const Gaudi::Math::ValueWithError& v113 , 
-    const Gaudi::Math::ValueWithError& v213 , 
-    const Gaudi::Math::ValueWithError& v313 , 
-    //
-    const Gaudi::Math::ValueWithError& v023 , 
-    const Gaudi::Math::ValueWithError& v123 , 
-    const Gaudi::Math::ValueWithError& v223 ,
-    const Gaudi::Math::ValueWithError& v323 ,
-    //
-    const Gaudi::Math::ValueWithError& v033 , 
-    const Gaudi::Math::ValueWithError& v133 , 
-    const Gaudi::Math::ValueWithError& v233 ,
-    const Gaudi::Math::ValueWithError& v333 ) 
-  {
-    return _qubic_ 
-      ( z , z0 , z1 , z2 , z3 , 
-        _biqubic_ ( x    , y           ,  
-                    x0   , x1   , x2   , x3   , 
-                    y0   , y1   , y2   , y3   , 
-                    v000 , v100 , v200 , v300 ,
-                    v010 , v110 , v210 , v310 , 
-                    v020 , v120 , v220 , v320 , 
-                    v030 , v130 , v230 , v330 ) ,
-        _biqubic_ ( x    , y           ,  
-                    x0   , x1   , x2   , x3   , 
-                    y0   , y1   , y2   , y3   , 
-                    v001 , v101 , v201 , v301 , 
-                    v011 , v111 , v211 , v311 , 
-                    v021 , v121 , v221 , v321 , 
-                    v031 , v131 , v231 , v331 ) ,
-        _biqubic_ ( x    , y           ,  
-                    x0   , x1   , x2   , x3   , 
-                    y0   , y1   , y2   , y3   , 
-                    v002 , v102 , v202 , v302 , 
-                    v012 , v112 , v212 , v312 , 
-                    v022 , v122 , v222 , v322 , 
-                    v032 , v132 , v232 , v332 ) , 
-        _biqubic_ ( x    , y           ,  
-                    x0   , x1   , x2   , x3   , 
-                    y0   , y1   , y2   , y3   , 
-                    v003 , v103 , v203 , v303 , 
-                    v013 , v113 , v213 , v313 , 
-                    v023 , v123 , v223 , v323 , 
-                    v033 , v133 , v233 , v333 ) ) ;
-  }
-  // ==========================================================================
-  inline std::array<unsigned int,1> _nearest_indices_ 
-  ( const unsigned int    ib , 
-    const unsigned int    nb , 
-    const double       /* x  */ , 
-    const double       /* xc */ ) 
-  {
-    const unsigned int ix0 = 
-      1  >= ib ? 1  : 
-      nb <= ib ? nb : ib ;
-    return { ix0 } ;
-  }
-  //
   inline std::array<unsigned int,2> _linear_indices_ 
   ( const unsigned int ib , 
     const unsigned int nb , 
@@ -576,7 +288,7 @@ namespace
     return { ix0 , ix0 + 1 , ix0 + 2 } ;
   }
   //
-  inline std::array<unsigned int,4> _qubic_indices_   
+  inline std::array<unsigned int,4> _cubic_indices_   
   ( const unsigned int    ib    , 
     const unsigned int    nb    , 
     const double          x     , 
@@ -657,7 +369,7 @@ Gaudi::Math::HistoInterpolation::interpolate
   const Gaudi::Math::ValueWithError& y1 , 
   const Gaudi::Math::ValueWithError& y2 ,
   const Gaudi::Math::ValueWithError& y3 ) 
-{ return _qubic_( x , x0, x1 , x2 , x3 , y0 , y1 , y2 , y3 ) ; }
+{ return _cubic_( x , x0, x1 , x2 , x3 , y0 , y1 , y2 , y3 ) ; }
 // ============================================================================
 // 2D-interpolation 
 // ============================================================================
@@ -793,8 +505,8 @@ Gaudi::Math::HistoInterpolation::interpolate_1D
     ( 1 >= nbins                    ) ? Nearest    : 
     ( 2 == nbins  && t >= Linear    ) ? Linear     :
     ( 3 == nbins  && t >= Quadratic ) ? Quadratic  :
-    ( 4 == nbins  && t >= Qubic     ) ? Qubic      :
-    (                t >= Qubic     ) ? Qubic      : t ;
+    ( 4 == nbins  && t >= Cubic     ) ? Cubic      :
+    (                t >= Cubic     ) ? Cubic      : t ;
   //
   // the regular case 
   //
@@ -851,14 +563,14 @@ Gaudi::Math::HistoInterpolation::interpolate_1D
   }
   //
   // CORRECT QUBIC INTERPOLATION IN X 
-  const std::array<unsigned int,4> ix = _qubic_indices_ ( ib , nbins , x , xc ) ;
+  const std::array<unsigned int,4> ix = _cubic_indices_ ( ib , nbins , x , xc ) ;
   //
   const double x0 = ax->GetBinCenter ( ix[0] ) ;
   const double x1 = ax->GetBinCenter ( ix[1] ) ;
   const double x2 = ax->GetBinCenter ( ix[2] ) ;
   const double x3 = ax->GetBinCenter ( ix[3] ) ;
   //
-  return _qubic_ 
+  return _cubic_ 
     ( x , x0 , x1 , x2 , x3 , 
       _bin_ ( h1 , ix[0] , density ) , 
       _bin_ ( h1 , ix[1] , density ) , 
@@ -921,16 +633,16 @@ Gaudi::Math::HistoInterpolation::interpolate_2D
     ( 1  >= nbx                    ) ? Nearest    : 
     ( 2  == nbx && tx >= Linear    ) ? Linear     :
     ( 3  == nbx && tx >= Quadratic ) ? Quadratic  :
-    ( 4  == nbx && tx >= Qubic     ) ? Qubic      :
-    (              tx >= Qubic     ) ? Qubic      : tx ;  
+    ( 4  == nbx && tx >= Cubic     ) ? Cubic      :
+    (              tx >= Cubic     ) ? Cubic      : tx ;  
   //
   Type itypey = 
     ( ty <= Nearest                ) ? Nearest    : 
     ( 1  >= nby                    ) ? Nearest    : 
     ( 2  == nby && ty >= Linear    ) ? Linear     :
     ( 3  == nby && ty >= Quadratic ) ? Quadratic  :
-    ( 4  == nby && ty >= Qubic     ) ? Qubic      :
-    (              ty >= Qubic     ) ? Qubic      : ty ;
+    ( 4  == nby && ty >= Cubic     ) ? Cubic      :
+    (              ty >= Cubic     ) ? Cubic      : ty ;
   //
   // find the bin 
   //
@@ -1003,17 +715,17 @@ Gaudi::Math::HistoInterpolation::interpolate_2D
         _bin_ ( h2 , ibx , iy[2] , density ) ) ;
   }
   //
-  else if ( Nearest == itypex && Qubic == itypey )   //  (4) 
+  else if ( Nearest == itypex && Cubic == itypey )   //  (4) 
   {
     // CORRECT QUBIC INTERPOLATION IN Y 
-    const std::array<unsigned int,4> iy = _qubic_indices_ ( iby , nby , y , yc ) ;
+    const std::array<unsigned int,4> iy = _cubic_indices_ ( iby , nby , y , yc ) ;
     //
     const double y0 = ay->GetBinCenter ( iy[0] ) ;
     const double y1 = ay->GetBinCenter ( iy[1] ) ;
     const double y2 = ay->GetBinCenter ( iy[2] ) ;
     const double y3 = ay->GetBinCenter ( iy[3] ) ;
     //
-    return _qubic_ 
+    return _cubic_ 
       ( y , y0 , y1 , y2 , y3 , 
         _bin_ ( h2 , ibx , iy[0] , density ) , 
         _bin_ ( h2 , ibx , iy[1] , density ) , 
@@ -1086,7 +798,7 @@ Gaudi::Math::HistoInterpolation::interpolate_2D
                        _bin_ ( h2 , ix[1] , iy[2] , density ) ) ) ;
   }
   //
-  else if ( Linear == itypex && Qubic == itypey )   // (8)  
+  else if ( Linear == itypex && Cubic == itypey )   // (8)  
   {
     // CORRECT LINEAR INTERPOLATION IN X 
     const std::array<unsigned int,2> ix = _linear_indices_ ( ibx , nbx , x , xc ) ;
@@ -1095,7 +807,7 @@ Gaudi::Math::HistoInterpolation::interpolate_2D
     const double x1 = ax->GetBinCenter ( ix[1] ) ;
     //
     // CORRECT QUBIC INTERPOLATION IN Y 
-    const std::array<unsigned int,4> iy = _qubic_indices_ ( iby , nby , y , yc ) ;
+    const std::array<unsigned int,4> iy = _cubic_indices_ ( iby , nby , y , yc ) ;
     //
     const double y0 = ay->GetBinCenter ( iy[0] ) ;
     const double y1 = ay->GetBinCenter ( iy[1] ) ;
@@ -1104,12 +816,12 @@ Gaudi::Math::HistoInterpolation::interpolate_2D
     //
     return _linear_ 
       ( x , x0 , x1 , 
-        _qubic_ ( y , y0 , y1 , y2 , y3 , 
+        _cubic_ ( y , y0 , y1 , y2 , y3 , 
                   _bin_ ( h2 , ix[0] , iy[0] , density ) , 
                   _bin_ ( h2 , ix[0] , iy[1] , density ) , 
                   _bin_ ( h2 , ix[0] , iy[2] , density ) ,
                   _bin_ ( h2 , ix[0] , iy[3] , density ) ) , 
-        _qubic_ ( y , y0 , y1 , y2 , y3 , 
+        _cubic_ ( y , y0 , y1 , y2 , y3 , 
                   _bin_ ( h2 , ix[1] , iy[0] , density ) , 
                   _bin_ ( h2 , ix[1] , iy[1] , density ) , 
                   _bin_ ( h2 , ix[1] , iy[2] , density ) ,
@@ -1189,7 +901,7 @@ Gaudi::Math::HistoInterpolation::interpolate_2D
         _bin_ ( h2 , ix[1] , iy[2] , density ) , 
         _bin_ ( h2 , ix[2] , iy[2] , density ) ) ;
   }
-  else if ( Quadratic == itypex && Qubic == itypey )  // (12) 
+  else if ( Quadratic == itypex && Cubic == itypey )  // (12) 
   {
     // CORRECT QUADRATIC INTERPOLATION IN X 
     const std::array<unsigned int,3> ix = _quadratic_indices_ ( ibx , nbx , x , xc ) ;
@@ -1199,7 +911,7 @@ Gaudi::Math::HistoInterpolation::interpolate_2D
     const double x2 = ax->GetBinCenter ( ix[2] ) ;
     //
     // CORRECT QUBIC INTERPOLATION IN Y 
-    const std::array<unsigned int,4> iy = _qubic_indices_ ( iby , nby , y , yc ) ;
+    const std::array<unsigned int,4> iy = _cubic_indices_ ( iby , nby , y , yc ) ;
     //
     const double y0 = ay->GetBinCenter ( iy[0] ) ;
     const double y1 = ay->GetBinCenter ( iy[1] ) ;
@@ -1208,33 +920,33 @@ Gaudi::Math::HistoInterpolation::interpolate_2D
     //
     return _quadratic_ 
       ( x  , x0 , x1 , x2 , 
-        _qubic_ ( y , y0 , y1 , y2 , y3 , 
+        _cubic_ ( y , y0 , y1 , y2 , y3 , 
                   _bin_ ( h2 , ix[0] , iy[0] , density ) , 
                   _bin_ ( h2 , ix[0] , iy[1] , density ) , 
                   _bin_ ( h2 , ix[0] , iy[2] , density ) ,
                   _bin_ ( h2 , ix[0] , iy[3] , density ) ) , 
-        _qubic_ ( y , y0 , y1 , y2 , y3 , 
+        _cubic_ ( y , y0 , y1 , y2 , y3 , 
                   _bin_ ( h2 , ix[1] , iy[0] , density ) , 
                   _bin_ ( h2 , ix[1] , iy[1] , density ) , 
                   _bin_ ( h2 , ix[1] , iy[2] , density ) ,
                   _bin_ ( h2 , ix[1] , iy[3] , density ) ) , 
-        _qubic_ ( y , y0 , y1 , y2 , y3 , 
+        _cubic_ ( y , y0 , y1 , y2 , y3 , 
                   _bin_ ( h2 , ix[2] , iy[0] , density ) , 
                   _bin_ ( h2 , ix[2] , iy[1] , density ) , 
                   _bin_ ( h2 , ix[2] , iy[2] , density ) ,
                   _bin_ ( h2 , ix[2] , iy[3] , density ) ) ) ;
   }
-  else if ( Qubic == itypex && Nearest == itypey )  // (13) 
+  else if ( Cubic == itypex && Nearest == itypey )  // (13) 
   {
     // CORRECT QUBIC INTERPOLATION IN X 
-    const std::array<unsigned int,4> ix = _qubic_indices_ ( ibx , nbx , x , xc ) ;
+    const std::array<unsigned int,4> ix = _cubic_indices_ ( ibx , nbx , x , xc ) ;
     //
     const double x0 = ax->GetBinCenter ( ix[0] ) ;
     const double x1 = ax->GetBinCenter ( ix[1] ) ;
     const double x2 = ax->GetBinCenter ( ix[2] ) ;
     const double x3 = ax->GetBinCenter ( ix[3] ) ;
     //
-    return _qubic_ 
+    return _cubic_ 
       ( x , x0 , x1 , x2 , x3 , 
         _bin_ ( h2 , ix[0] , iby , density ) , 
         _bin_ ( h2 , ix[1] , iby , density ) , 
@@ -1242,10 +954,10 @@ Gaudi::Math::HistoInterpolation::interpolate_2D
         _bin_ ( h2 , ix[3] , iby , density ) ) ;
   }
   //
-  else if ( Qubic == itypex && Linear == itypey )  // (14) 
+  else if ( Cubic == itypex && Linear == itypey )  // (14) 
   {
     // CORRECT QUBIC INTERPOLATION IN X
-    const std::array<unsigned int,4> ix = _qubic_indices_ ( ibx , nbx , x , xc ) ;
+    const std::array<unsigned int,4> ix = _cubic_indices_ ( ibx , nbx , x , xc ) ;
     //
     const double x0 = ax->GetBinCenter ( ix[0] ) ;
     const double x1 = ax->GetBinCenter ( ix[1] ) ;
@@ -1258,7 +970,7 @@ Gaudi::Math::HistoInterpolation::interpolate_2D
     const double y0 = ay->GetBinCenter ( iy[0] ) ;
     const double y1 = ay->GetBinCenter ( iy[1] ) ;
     //
-    return _qubic_ 
+    return _cubic_ 
       ( x , x0 , x1 , x2 , x3 ,
         _linear_ ( y, y0 , y1 , 
                    _bin_ ( h2 , ix[0] , iy[0] , density ) , 
@@ -1273,10 +985,10 @@ Gaudi::Math::HistoInterpolation::interpolate_2D
                    _bin_ ( h2 , ix[3] , iy[0] , density ) , 
                    _bin_ ( h2 , ix[3] , iy[1] , density ) ) ) ;
   }
-  else if ( Qubic == itypex && Quadratic == itypey )  // (15) 
+  else if ( Cubic == itypex && Quadratic == itypey )  // (15) 
   {
     // CORRECT QUBIC INTERPOLATION IN X
-    const std::array<unsigned int,4> ix = _qubic_indices_ ( ibx , nbx , x , xc ) ;
+    const std::array<unsigned int,4> ix = _cubic_indices_ ( ibx , nbx , x , xc ) ;
     //
     const double x0 = ax->GetBinCenter ( ix[0] ) ;
     const double x1 = ax->GetBinCenter ( ix[1] ) ;
@@ -1290,7 +1002,7 @@ Gaudi::Math::HistoInterpolation::interpolate_2D
     const double y1 = ay->GetBinCenter ( iy[1] ) ;
     const double y2 = ay->GetBinCenter ( iy[2] ) ;
     //
-    return _qubic_ 
+    return _cubic_ 
       ( x , x0 , x1 , x2 , x3 ,
         _quadratic_ ( y, y0 , y1 , y2 , 
                       _bin_ ( h2 , ix[0] , iy[0] , density ) , 
@@ -1309,10 +1021,10 @@ Gaudi::Math::HistoInterpolation::interpolate_2D
                       _bin_ ( h2 , ix[3] , iy[1] , density ) , 
                       _bin_ ( h2 , ix[3] , iy[2] , density ) ) ) ;
   }
-  else if ( Qubic == itypex && Qubic == itypey )  // (16) 
+  else if ( Cubic == itypex && Cubic == itypey )  // (16) 
   {
     // CORRECT QUBIC INTERPOLATION IN X
-    const std::array<unsigned int,4> ix = _qubic_indices_ ( ibx , nbx , x , xc ) ;
+    const std::array<unsigned int,4> ix = _cubic_indices_ ( ibx , nbx , x , xc ) ;
     //
     const double x0 = ax->GetBinCenter ( ix[0] ) ;
     const double x1 = ax->GetBinCenter ( ix[1] ) ;
@@ -1320,31 +1032,31 @@ Gaudi::Math::HistoInterpolation::interpolate_2D
     const double x3 = ax->GetBinCenter ( ix[3] ) ;
     //
     // CORRECT QUBIC INTERPOLATION IN Y 
-    const std::array<unsigned int,4> iy = _qubic_indices_ ( iby , nby , y , yc ) ;
+    const std::array<unsigned int,4> iy = _cubic_indices_ ( iby , nby , y , yc ) ;
     //
     const double y0 = ay->GetBinCenter ( iy[0] ) ;
     const double y1 = ay->GetBinCenter ( iy[1] ) ;
     const double y2 = ay->GetBinCenter ( iy[2] ) ;
     const double y3 = ay->GetBinCenter ( iy[3] ) ;
     //
-    return _qubic_ 
+    return _cubic_ 
       ( x , x0 , x1 , x2 , x3 ,
-        _qubic_ ( y , y0 , y1 , y2 , y3 ,  
+        _cubic_ ( y , y0 , y1 , y2 , y3 ,  
                   _bin_ ( h2 , ix[0] , iy[0] , density ) , 
                   _bin_ ( h2 , ix[0] , iy[1] , density ) , 
                   _bin_ ( h2 , ix[0] , iy[2] , density ) , 
                   _bin_ ( h2 , ix[0] , iy[3] , density ) ) , 
-        _qubic_ ( y , y0 , y1 , y2 , y3 ,  
+        _cubic_ ( y , y0 , y1 , y2 , y3 ,  
                   _bin_ ( h2 , ix[1] , iy[0] , density ) , 
                   _bin_ ( h2 , ix[1] , iy[1] , density ) , 
                   _bin_ ( h2 , ix[1] , iy[2] , density ) , 
                   _bin_ ( h2 , ix[1] , iy[3] , density ) ) , 
-        _qubic_ ( y , y0 , y1 , y2 , y3 ,  
+        _cubic_ ( y , y0 , y1 , y2 , y3 ,  
                   _bin_ ( h2 , ix[2] , iy[0] , density ) , 
                   _bin_ ( h2 , ix[2] , iy[1] , density ) , 
                   _bin_ ( h2 , ix[2] , iy[2] , density ) , 
                   _bin_ ( h2 , ix[2] , iy[3] , density ) ) , 
-        _qubic_ ( y , y0 , y1 , y2 , y3 ,  
+        _cubic_ ( y , y0 , y1 , y2 , y3 ,  
                   _bin_ ( h2 , ix[3] , iy[0] , density ) , 
                   _bin_ ( h2 , ix[3] , iy[1] , density ) , 
                   _bin_ ( h2 , ix[3] , iy[2] , density ) , 
@@ -1419,24 +1131,24 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
     ( 1  >= nbx                    ) ? Nearest    : 
     ( 2  == nbx && tx >= Linear    ) ? Linear     :
     ( 3  == nbx && tx >= Quadratic ) ? Quadratic  :
-    ( 4  == nbx && tx >= Qubic     ) ? Qubic      :
-    (              tx >= Qubic     ) ? Qubic      : tx ;  
+    ( 4  == nbx && tx >= Cubic     ) ? Cubic      :
+    (              tx >= Cubic     ) ? Cubic      : tx ;  
   //
   Type itypey = 
     ( ty <= Nearest                ) ? Nearest    : 
     ( 1  >= nby                    ) ? Nearest    : 
     ( 2  == nby && ty >= Linear    ) ? Linear     :
     ( 3  == nby && ty >= Quadratic ) ? Quadratic  :
-    ( 4  == nby && ty >= Qubic     ) ? Qubic      :
-    (              ty >= Qubic     ) ? Qubic      : ty ;
+    ( 4  == nby && ty >= Cubic     ) ? Cubic      :
+    (              ty >= Cubic     ) ? Cubic      : ty ;
   //
   Type itypez = 
     ( tz <= Nearest                ) ? Nearest    : 
     ( 1  >= nbz                    ) ? Nearest    : 
     ( 2  == nbz && tz >= Linear    ) ? Linear     :
     ( 3  == nbz && tz >= Quadratic ) ? Quadratic  :
-    ( 4  == nbz && tz >= Qubic     ) ? Qubic      :
-    (              tz >= Qubic     ) ? Qubic      : tz ;
+    ( 4  == nbz && tz >= Cubic     ) ? Cubic      :
+    (              tz >= Cubic     ) ? Cubic      : tz ;
   //
   // find the bin 
   //
@@ -1511,17 +1223,17 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
         _bin_ ( h3 , ix[1] , iby , ibz , density ) ,
         _bin_ ( h3 , ix[2] , iby , ibz , density ) ) ;  
   }
-  else if ( Qubic    == itypex && Nearest == itypey && Nearest == itypez )  // (4) 
+  else if ( Cubic    == itypex && Nearest == itypey && Nearest == itypez )  // (4) 
   {
      // CORRECT QUBIC INTERPOLATION IN X 
-    const std::array<unsigned int,4> ix = _qubic_indices_ ( ibx , nbx , x , xc ) ;
+    const std::array<unsigned int,4> ix = _cubic_indices_ ( ibx , nbx , x , xc ) ;
     //
     const double x0 = ax->GetBinCenter ( ix[0] ) ;
     const double x1 = ax->GetBinCenter ( ix[1] ) ;
     const double x2 = ax->GetBinCenter ( ix[2] ) ;
     const double x3 = ax->GetBinCenter ( ix[3] ) ;
     //
-    return _qubic_ 
+    return _cubic_ 
       ( x , x0 , x1 , x2 , x3 , 
         _bin_ ( h3 , ix[0] , iby , ibz , density ) , 
         _bin_ ( h3 , ix[1] , iby , ibz , density ) ,
@@ -1591,10 +1303,10 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
                    _bin_ ( h3 , ix[2] , iy[0] , ibz , density ) , 
                    _bin_ ( h3 , ix[2] , iy[1] , ibz , density ) ) ) ;
   }
-  else if ( Qubic == itypex && Linear == itypey && Nearest == itypez )   // (8)
+  else if ( Cubic == itypex && Linear == itypey && Nearest == itypez )   // (8)
   {
     // CORRECT QUBIC INTERPOLATION IN X 
-    const std::array<unsigned int,4> ix = _qubic_indices_ ( ibx , nbx , x , xc ) ;
+    const std::array<unsigned int,4> ix = _cubic_indices_ ( ibx , nbx , x , xc ) ;
     //
     const double x0 = ax->GetBinCenter ( ix[0] ) ;
     const double x1 = ax->GetBinCenter ( ix[1] ) ;
@@ -1607,7 +1319,7 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
     const double y0 = ay->GetBinCenter ( iy[0] ) ;
     const double y1 = ay->GetBinCenter ( iy[1] ) ;
     //
-    return _qubic_ 
+    return _cubic_ 
       ( x , x0 , x1 , x2 , x3 , 
         _linear_ ( y , y0 , y1 , 
                    _bin_ ( h3 , ix[0] , iy[0] , ibz , density ) , 
@@ -1694,10 +1406,10 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
                       _bin_ ( h3 , ix[2] , iy[1] , ibz , density ) , 
                       _bin_ ( h3 , ix[2] , iy[2] , ibz , density ) ) ) ; 
   }
-  else if ( Qubic == itypex && Quadratic == itypey && Nearest == itypez )   // (12)
+  else if ( Cubic == itypex && Quadratic == itypey && Nearest == itypez )   // (12)
   {
     // CORRECT QUBIC INTERPOLATION IN X 
-    const std::array<unsigned int,4> ix = _qubic_indices_ ( ibx , nbx , x , xc ) ;
+    const std::array<unsigned int,4> ix = _cubic_indices_ ( ibx , nbx , x , xc ) ;
     //
     const double x0 = ax->GetBinCenter ( ix[0] ) ;
     const double x1 = ax->GetBinCenter ( ix[1] ) ;
@@ -1711,7 +1423,7 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
     const double y1 = ay->GetBinCenter ( iy[1] ) ;
     const double y2 = ay->GetBinCenter ( iy[2] ) ;
     //
-    return _qubic_
+    return _cubic_
       ( x , x0 , x1 , x2 , x3 , 
         _quadratic_ ( y , y0 , y1 , y2 ,  
                       _bin_ ( h3 , ix[0] , iy[0] , ibz , density ) , 
@@ -1730,24 +1442,24 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
                       _bin_ ( h3 , ix[3] , iy[1] , ibz , density ) , 
                       _bin_ ( h3 , ix[3] , iy[2] , ibz , density ) ) ) ; 
   }
-  else if ( Nearest == itypex && Qubic == itypey && Nearest == itypez )   // (13)
+  else if ( Nearest == itypex && Cubic == itypey && Nearest == itypez )   // (13)
   {
     // CORRECT QUBIC INTERPOLATION IN Y 
-    const std::array<unsigned int,4> iy = _qubic_indices_ ( iby , nby , y , yc ) ;
+    const std::array<unsigned int,4> iy = _cubic_indices_ ( iby , nby , y , yc ) ;
     //
     const double y0 = ay->GetBinCenter ( iy[0] ) ;
     const double y1 = ay->GetBinCenter ( iy[1] ) ;
     const double y2 = ay->GetBinCenter ( iy[2] ) ;
     const double y3 = ay->GetBinCenter ( iy[3] ) ;
     //
-    return _qubic_ 
+    return _cubic_ 
       ( y , y0 , y1 , y2 , y3 ,  
         _bin_ ( h3 , ibx , iy[0] , ibz , density ) , 
         _bin_ ( h3 , ibx , iy[1] , ibz , density ) , 
         _bin_ ( h3 , ibx , iy[2] , ibz , density ) ,
         _bin_ ( h3 , ibx , iy[3] , ibz , density ) ) ;
   }
-  else if ( Linear == itypex && Qubic == itypey && Nearest == itypez )   // (14)
+  else if ( Linear == itypex && Cubic == itypey && Nearest == itypez )   // (14)
   {
     // CORRECT LINEAR INTERPOLATION IN X
     const std::array<unsigned int,2> ix = _linear_indices_ ( ibx , nbx , x , xc ) ;
@@ -1756,7 +1468,7 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
     const double x1 = ax->GetBinCenter ( ix[1] ) ;
     //    
     // CORRECT QUBIC INTERPOLATION IN Y 
-    const std::array<unsigned int,4> iy = _qubic_indices_ ( iby , nby , y , yc ) ;
+    const std::array<unsigned int,4> iy = _cubic_indices_ ( iby , nby , y , yc ) ;
     //
     const double y0 = ay->GetBinCenter ( iy[0] ) ;
     const double y1 = ay->GetBinCenter ( iy[1] ) ;
@@ -1765,20 +1477,20 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
     //
     return _linear_ 
       ( x , x0 , x1 ,
-        _qubic_ 
+        _cubic_ 
         ( y , y0 , y1 , y2 , y3 ,  
           _bin_ ( h3 , ix[0] , iy[0] , ibz , density ) , 
           _bin_ ( h3 , ix[0] , iy[1] , ibz , density ) , 
           _bin_ ( h3 , ix[0] , iy[2] , ibz , density ) ,
           _bin_ ( h3 , ix[0] , iy[3] , ibz , density ) ) ,   
-        _qubic_ 
+        _cubic_ 
         ( y , y0 , y1 , y2 , y3 ,  
           _bin_ ( h3 , ix[1] , iy[0] , ibz , density ) , 
           _bin_ ( h3 , ix[1] , iy[1] , ibz , density ) , 
           _bin_ ( h3 , ix[1] , iy[2] , ibz , density ) ,
           _bin_ ( h3 , ix[1] , iy[3] , ibz , density ) ) ) ;  
   }  
-  else if ( Quadratic == itypex && Qubic == itypey && Nearest == itypez )   // (15)
+  else if ( Quadratic == itypex && Cubic == itypey && Nearest == itypez )   // (15)
   {
     // CORRECT QUADRATIC INTERPOLATION IN X 
     const std::array<unsigned int,3> ix = _quadratic_indices_ ( ibx , nbx , x , xc ) ;
@@ -1788,7 +1500,7 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
     const double x2 = ax->GetBinCenter ( ix[2] ) ;
     //
     // CORRECT QUBIC INTERPOLATION IN Y 
-    const std::array<unsigned int,4> iy = _qubic_indices_ ( iby , nby , y , yc ) ;
+    const std::array<unsigned int,4> iy = _cubic_indices_ ( iby , nby , y , yc ) ;
     //
     const double y0 = ay->GetBinCenter ( iy[0] ) ;
     const double y1 = ay->GetBinCenter ( iy[1] ) ;
@@ -1797,29 +1509,29 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
     //
     return _quadratic_ 
       ( x , x0 , x1 , x2 , 
-        _qubic_ 
+        _cubic_ 
         ( y , y0 , y1 , y2 , y3 ,  
           _bin_ ( h3 , ix[0] , iy[0] , ibz , density ) , 
           _bin_ ( h3 , ix[0] , iy[1] , ibz , density ) , 
           _bin_ ( h3 , ix[0] , iy[2] , ibz , density ) ,
           _bin_ ( h3 , ix[0] , iy[3] , ibz , density ) ) , 
-        _qubic_ 
+        _cubic_ 
         ( y , y0 , y1 , y2 , y3 ,  
           _bin_ ( h3 , ix[1] , iy[0] , ibz , density ) , 
           _bin_ ( h3 , ix[1] , iy[1] , ibz , density ) , 
           _bin_ ( h3 , ix[1] , iy[2] , ibz , density ) ,
           _bin_ ( h3 , ix[1] , iy[3] , ibz , density ) ) ,
-        _qubic_ 
+        _cubic_ 
         ( y , y0 , y1 , y2 , y3 ,  
           _bin_ ( h3 , ix[2] , iy[0] , ibz , density ) , 
           _bin_ ( h3 , ix[2] , iy[1] , ibz , density ) , 
           _bin_ ( h3 , ix[2] , iy[2] , ibz , density ) ,
           _bin_ ( h3 , ix[2] , iy[3] , ibz , density ) ) ) ;  
   }  
-  else if ( Qubic == itypex && Qubic == itypey && Nearest == itypez )   // (16)
+  else if ( Cubic == itypex && Cubic == itypey && Nearest == itypez )   // (16)
   {
     // CORRECT QUBIC INTERPOLATION IN X 
-    const std::array<unsigned int,4> ix = _qubic_indices_ ( ibx , nbx , x , xc ) ;
+    const std::array<unsigned int,4> ix = _cubic_indices_ ( ibx , nbx , x , xc ) ;
     //
     const double x0 = ax->GetBinCenter ( ix[0] ) ;
     const double x1 = ax->GetBinCenter ( ix[1] ) ;
@@ -1827,34 +1539,34 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
     const double x3 = ax->GetBinCenter ( ix[3] ) ;
     //
     // CORRECT QUBIC INTERPOLATION IN Y 
-    const std::array<unsigned int,4> iy = _qubic_indices_ ( iby , nby , y , yc ) ;
+    const std::array<unsigned int,4> iy = _cubic_indices_ ( iby , nby , y , yc ) ;
     //
     const double y0 = ay->GetBinCenter ( iy[0] ) ;
     const double y1 = ay->GetBinCenter ( iy[1] ) ;
     const double y2 = ay->GetBinCenter ( iy[2] ) ;
     const double y3 = ay->GetBinCenter ( iy[3] ) ;
     //
-    return _qubic_ 
+    return _cubic_ 
       ( x , x0 , x1 , x2 , x3 , 
-        _qubic_ 
+        _cubic_ 
         ( y , y0 , y1 , y2 , y3 ,  
           _bin_ ( h3 , ix[0] , iy[0] , ibz , density ) , 
           _bin_ ( h3 , ix[0] , iy[1] , ibz , density ) , 
           _bin_ ( h3 , ix[0] , iy[2] , ibz , density ) ,
           _bin_ ( h3 , ix[0] , iy[3] , ibz , density ) ) , 
-        _qubic_ 
+        _cubic_ 
         ( y , y0 , y1 , y2 , y3 ,  
           _bin_ ( h3 , ix[1] , iy[0] , ibz , density ) , 
           _bin_ ( h3 , ix[1] , iy[1] , ibz , density ) , 
           _bin_ ( h3 , ix[1] , iy[2] , ibz , density ) ,
           _bin_ ( h3 , ix[1] , iy[3] , ibz , density ) ) ,
-        _qubic_ 
+        _cubic_ 
         ( y , y0 , y1 , y2 , y3 ,  
           _bin_ ( h3 , ix[2] , iy[0] , ibz , density ) , 
           _bin_ ( h3 , ix[2] , iy[1] , ibz , density ) , 
           _bin_ ( h3 , ix[2] , iy[2] , ibz , density ) ,
           _bin_ ( h3 , ix[2] , iy[3] , ibz , density ) ) , 
-        _qubic_ 
+        _cubic_ 
         ( y , y0 , y1 , y2 , y3 ,  
           _bin_ ( h3 , ix[3] , iy[0] , ibz , density ) , 
           _bin_ ( h3 , ix[3] , iy[1] , ibz , density ) , 
@@ -1929,10 +1641,10 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
           _bin_ ( h3 , ix[2] , iby , iz[0] , density ) , 
           _bin_ ( h3 , ix[2] , iby , iz[1] , density ) ) ) ;
   }
-  else if ( Qubic  == itypex && Nearest == itypey && Linear == itypez )  // (20) 
+  else if ( Cubic  == itypex && Nearest == itypey && Linear == itypez )  // (20) 
   {
     // CORRECT QUBIC INTERPOLATION IN X 
-    const std::array<unsigned int,4> ix = _qubic_indices_ ( ibx , nbx , x , xc ) ;
+    const std::array<unsigned int,4> ix = _cubic_indices_ ( ibx , nbx , x , xc ) ;
     //
     const double x0 = ax->GetBinCenter ( ix[0] ) ;
     const double x1 = ax->GetBinCenter ( ix[1] ) ;
@@ -1945,7 +1657,7 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
     const double z0 = az->GetBinCenter ( iz[0] ) ;
     const double z1 = az->GetBinCenter ( iz[1] ) ;
     //
-    return _qubic_
+    return _cubic_
       ( x , x0 , x1 , x2 , x3 , 
         _linear_ 
         ( z , z0 , z1 , 
@@ -2087,10 +1799,10 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
             _bin_ ( h3 , ix[2] , iy[1] , iz[0] , density ) , 
             _bin_ ( h3 , ix[2] , iy[1] , iz[1] , density ) ) ) ) ; 
   }
-  else if ( Qubic  == itypex && Linear == itypey && Linear == itypez )  // (24) 
+  else if ( Cubic  == itypex && Linear == itypey && Linear == itypez )  // (24) 
   {
     // CORRECT QUBIC INTERPOLATION IN X 
-    const std::array<unsigned int,4> ix = _qubic_indices_ ( ibx , nbx , x , xc ) ;
+    const std::array<unsigned int,4> ix = _cubic_indices_ ( ibx , nbx , x , xc ) ;
     //
     const double x0 = ax->GetBinCenter ( ix[0] ) ;
     const double x1 = ax->GetBinCenter ( ix[1] ) ;
@@ -2109,7 +1821,7 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
     const double z0 = az->GetBinCenter ( iz[0] ) ;
     const double z1 = az->GetBinCenter ( iz[1] ) ;
     //
-    return _qubic_ 
+    return _cubic_ 
       ( x , x0 , x1 , x2 , x3 ,
         _linear_
         ( y , y0 , y1 ,  
@@ -2301,10 +2013,10 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
             _bin_ ( h3 , ix[2] , iy[2] , iz[0] , density ) , 
             _bin_ ( h3 , ix[2] , iy[2] , iz[1] , density ) ) ) ) ;
   }
-  else if ( Qubic == itypex && Quadratic == itypey && Linear == itypez )  // (28) 
+  else if ( Cubic == itypex && Quadratic == itypey && Linear == itypez )  // (28) 
   {
     // CORRECT QUBIC INTERPOLATION IN X 
-    const std::array<unsigned int,4> ix = _qubic_indices_ ( ibx , nbx , x , xc ) ;
+    const std::array<unsigned int,4> ix = _cubic_indices_ ( ibx , nbx , x , xc ) ;
     //
     const double x0 = ax->GetBinCenter ( ix[0] ) ;
     const double x1 = ax->GetBinCenter ( ix[1] ) ;
@@ -2324,7 +2036,7 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
     const double z0 = az->GetBinCenter ( iz[0] ) ;
     const double z1 = az->GetBinCenter ( iz[1] ) ;
     //
-    return _qubic_ 
+    return _cubic_ 
       ( x , x0 , x1 , x2 , x3 , 
         _quadratic_
         ( y , y0 , y1 , y2 , 
@@ -2383,10 +2095,10 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
             _bin_ ( h3 , ix[3] , iy[2] , iz[0] , density ) , 
             _bin_ ( h3 , ix[3] , iy[2] , iz[1] , density ) ) ) ) ;
   }
-  else if ( Nearest  == itypex && Qubic == itypey && Linear == itypez )  // (29) 
+  else if ( Nearest  == itypex && Cubic == itypey && Linear == itypez )  // (29) 
   {
     // CORRECT QUBIC INTERPOLATION IN Y 
-    const std::array<unsigned int,4> iy = _qubic_indices_ ( iby , nby , y , yc ) ;
+    const std::array<unsigned int,4> iy = _cubic_indices_ ( iby , nby , y , yc ) ;
     //
     const double y0 = ay->GetBinCenter ( iy[0] ) ;
     const double y1 = ay->GetBinCenter ( iy[1] ) ;
@@ -2399,7 +2111,7 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
     const double z0 = az->GetBinCenter ( iz[0] ) ;
     const double z1 = az->GetBinCenter ( iz[1] ) ;
     //
-    return _qubic_
+    return _cubic_
       ( y , y0 , y1 , y2 , y3 , 
         _linear_ 
         ( z , z0 , z1 , 
@@ -2418,7 +2130,7 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
           _bin_ ( h3 , ibx , iy[3] , iz[0] , density ) , 
           _bin_ ( h3 , ibx , iy[3] , iz[1] , density ) ) ) ;
   }
-  else if ( Linear  == itypex && Qubic == itypey && Linear == itypez )  // (30) 
+  else if ( Linear  == itypex && Cubic == itypey && Linear == itypez )  // (30) 
   {
     // CORRECT LINEAR INTERPOLATION IN X
     const std::array<unsigned int,2> ix = _linear_indices_ ( ibx , nbx , x , xc ) ;
@@ -2427,7 +2139,7 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
     const double x1 = ax->GetBinCenter ( ix[1] ) ;
     //
     // CORRECT QUBIC INTERPOLATION IN Y 
-    const std::array<unsigned int,4> iy = _qubic_indices_ ( iby , nby , y , yc ) ;
+    const std::array<unsigned int,4> iy = _cubic_indices_ ( iby , nby , y , yc ) ;
     //
     const double y0 = ay->GetBinCenter ( iy[0] ) ;
     const double y1 = ay->GetBinCenter ( iy[1] ) ;
@@ -2442,7 +2154,7 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
     //
     return _linear_ 
       ( x , x0 , x1 , 
-      _qubic_
+      _cubic_
       ( y , y0 , y1 , y2 , y3 , 
         _linear_ 
         ( z , z0 , z1 , 
@@ -2460,7 +2172,7 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
         ( z , z0 , z1 , 
           _bin_ ( h3 , ix[0] , iy[3] , iz[0] , density ) , 
           _bin_ ( h3 , ix[0] , iy[3] , iz[1] , density ) ) ) , 
-      _qubic_
+      _cubic_
       ( y , y0 , y1 , y2 , y3 , 
         _linear_ 
         ( z , z0 , z1 , 
@@ -2479,7 +2191,7 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
           _bin_ ( h3 , ix[1] , iy[3] , iz[0] , density ) , 
           _bin_ ( h3 , ix[1] , iy[3] , iz[1] , density ) ) ) ) ;
   }
-  else if ( Quadratic == itypex && Qubic == itypey && Linear == itypez )  // (31) 
+  else if ( Quadratic == itypex && Cubic == itypey && Linear == itypez )  // (31) 
   {
     // CORRECT QUADRATIC INTERPOLATION IN X 
     const std::array<unsigned int,3> ix = _quadratic_indices_ ( ibx , nbx , x , xc ) ;
@@ -2489,7 +2201,7 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
     const double x2 = ax->GetBinCenter ( ix[2] ) ;
     //
     // CORRECT QUBIC INTERPOLATION IN Y 
-    const std::array<unsigned int,4> iy = _qubic_indices_ ( iby , nby , y , yc ) ;
+    const std::array<unsigned int,4> iy = _cubic_indices_ ( iby , nby , y , yc ) ;
     //
     const double y0 = ay->GetBinCenter ( iy[0] ) ;
     const double y1 = ay->GetBinCenter ( iy[1] ) ;
@@ -2504,7 +2216,7 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
     //
     return _quadratic_ 
       ( x , x0 , x1 , x2 ,  
-      _qubic_
+      _cubic_
       ( y , y0 , y1 , y2 , y3 , 
         _linear_ 
         ( z , z0 , z1 , 
@@ -2522,7 +2234,7 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
         ( z , z0 , z1 , 
           _bin_ ( h3 , ix[0] , iy[3] , iz[0] , density ) , 
           _bin_ ( h3 , ix[0] , iy[3] , iz[1] , density ) ) ) , 
-      _qubic_
+      _cubic_
       ( y , y0 , y1 , y2 , y3 , 
         _linear_ 
         ( z , z0 , z1 , 
@@ -2540,7 +2252,7 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
         ( z , z0 , z1 , 
           _bin_ ( h3 , ix[1] , iy[3] , iz[0] , density ) , 
           _bin_ ( h3 , ix[1] , iy[3] , iz[1] , density ) ) ) , 
-      _qubic_
+      _cubic_
       ( y , y0 , y1 , y2 , y3 , 
         _linear_ 
         ( z , z0 , z1 , 
@@ -2559,10 +2271,10 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
           _bin_ ( h3 , ix[2] , iy[3] , iz[0] , density ) , 
           _bin_ ( h3 , ix[2] , iy[3] , iz[1] , density ) ) ) ) ;
   }
-  else if ( Qubic == itypex && Qubic == itypey && Linear == itypez )  // (32) 
+  else if ( Cubic == itypex && Cubic == itypey && Linear == itypez )  // (32) 
   {
     // CORRECT QUBIC INTERPOLATION IN X 
-    const std::array<unsigned int,4> ix = _qubic_indices_ ( ibx , nbx , x , xc ) ;
+    const std::array<unsigned int,4> ix = _cubic_indices_ ( ibx , nbx , x , xc ) ;
     //
     const double x0 = ax->GetBinCenter ( ix[0] ) ;
     const double x1 = ax->GetBinCenter ( ix[1] ) ;
@@ -2570,7 +2282,7 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
     const double x3 = ax->GetBinCenter ( ix[3] ) ;
     //
     // CORRECT QUBIC INTERPOLATION IN Y 
-    const std::array<unsigned int,4> iy = _qubic_indices_ ( iby , nby , y , yc ) ;
+    const std::array<unsigned int,4> iy = _cubic_indices_ ( iby , nby , y , yc ) ;
     //
     const double y0 = ay->GetBinCenter ( iy[0] ) ;
     const double y1 = ay->GetBinCenter ( iy[1] ) ;
@@ -2583,9 +2295,9 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
     const double z0 = az->GetBinCenter ( iz[0] ) ;
     const double z1 = az->GetBinCenter ( iz[1] ) ;
     //
-    return _qubic_ 
+    return _cubic_ 
       ( x , x0 , x1 , x2 , x3 ,  
-      _qubic_
+      _cubic_
       ( y , y0 , y1 , y2 , y3 , 
         _linear_ 
         ( z , z0 , z1 , 
@@ -2603,7 +2315,7 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
         ( z , z0 , z1 , 
           _bin_ ( h3 , ix[0] , iy[3] , iz[0] , density ) , 
           _bin_ ( h3 , ix[0] , iy[3] , iz[1] , density ) ) ) , 
-      _qubic_
+      _cubic_
       ( y , y0 , y1 , y2 , y3 , 
         _linear_ 
         ( z , z0 , z1 , 
@@ -2621,7 +2333,7 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
         ( z , z0 , z1 , 
           _bin_ ( h3 , ix[1] , iy[3] , iz[0] , density ) , 
           _bin_ ( h3 , ix[1] , iy[3] , iz[1] , density ) ) ) , 
-      _qubic_
+      _cubic_
       ( y , y0 , y1 , y2 , y3 , 
         _linear_ 
         ( z , z0 , z1 , 
@@ -2639,7 +2351,7 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
         ( z , z0 , z1 , 
           _bin_ ( h3 , ix[2] , iy[3] , iz[0] , density ) , 
           _bin_ ( h3 , ix[2] , iy[3] , iz[1] , density ) ) ) ,
-      _qubic_
+      _cubic_
       ( y , y0 , y1 , y2 , y3 , 
         _linear_ 
         ( z , z0 , z1 , 
@@ -2735,10 +2447,10 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
           _bin_ ( h3 , ix[2] , iby , iz[1] , density ) , 
           _bin_ ( h3 , ix[2] , iby , iz[2] , density ) ) ) ;    
   }  
-  else if ( Qubic == itypex && Nearest == itypey && Quadratic == itypez )  // (36) 
+  else if ( Cubic == itypex && Nearest == itypey && Quadratic == itypez )  // (36) 
   {
     // CORRECT QUBIC INTERPOLATION IN X 
-    const std::array<unsigned int,4> ix = _qubic_indices_ ( ibx , nbx , x , xc ) ;
+    const std::array<unsigned int,4> ix = _cubic_indices_ ( ibx , nbx , x , xc ) ;
     //
     const double x0 = ax->GetBinCenter ( ix[0] ) ;
     const double x1 = ax->GetBinCenter ( ix[1] ) ;
@@ -2752,7 +2464,7 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
     const double z1 = az->GetBinCenter ( iz[1] ) ;
     const double z2 = az->GetBinCenter ( iz[2] ) ;
     //
-    return _qubic_ 
+    return _cubic_ 
       ( x , x0 , x1 , x2 ,  x3 , 
         _quadratic_ 
         ( z , z0 , z1 , z2 ,  
@@ -2912,10 +2624,10 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
             _bin_ ( h3 , ix[2] , iy[1] , iz[1] , density ) , 
             _bin_ ( h3 , ix[2] , iy[1] , iz[2] , density ) ) ) ) ;
   }
-  else if ( Qubic == itypex && Linear == itypey && Quadratic == itypez )  // (40) 
+  else if ( Cubic == itypex && Linear == itypey && Quadratic == itypez )  // (40) 
   {
     // CORRECT QUBIC INTERPOLATION IN X 
-    const std::array<unsigned int,4> ix = _qubic_indices_ ( ibx , nbx , x , xc ) ;
+    const std::array<unsigned int,4> ix = _cubic_indices_ ( ibx , nbx , x , xc ) ;
     //
     const double x0 = ax->GetBinCenter ( ix[0] ) ;
     const double x1 = ax->GetBinCenter ( ix[1] ) ;
@@ -2935,7 +2647,7 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
     const double z1 = az->GetBinCenter ( iz[1] ) ;
     const double z2 = az->GetBinCenter ( iz[2] ) ;
     //
-    return _qubic_ 
+    return _cubic_ 
       ( x , x0 , x1 , x2 , x3 ,  
         _linear_
         ( y , y0 , y1 , 
@@ -3156,10 +2868,10 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
             _bin_ ( h3 , ix[2] , iy[2] , iz[1] , density ) , 
             _bin_ ( h3 , ix[2] , iy[2] , iz[2] , density ) ) ) ) ;  
   }
-  else if ( Qubic == itypex && Quadratic == itypey && Quadratic == itypez )  // (44) 
+  else if ( Cubic == itypex && Quadratic == itypey && Quadratic == itypez )  // (44) 
   {
     // CORRECT QUBIC INTERPOLATION IN X 
-    const std::array<unsigned int,4> ix = _qubic_indices_ ( ibx , nbx , x , xc ) ;
+    const std::array<unsigned int,4> ix = _cubic_indices_ ( ibx , nbx , x , xc ) ;
     //
     const double x0 = ax->GetBinCenter ( ix[0] ) ;
     const double x1 = ax->GetBinCenter ( ix[1] ) ;
@@ -3180,7 +2892,7 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
     const double z1 = az->GetBinCenter ( iz[1] ) ;
     const double z2 = az->GetBinCenter ( iz[2] ) ;
     //
-    return _qubic_ 
+    return _cubic_ 
       ( x , x0 , x1 , x2 ,  x3 , 
         _quadratic_
         ( y , y0 , y1 , y2 ,  
@@ -3251,10 +2963,10 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
             _bin_ ( h3 , ix[3] , iy[2] , iz[1] , density ) , 
             _bin_ ( h3 , ix[3] , iy[2] , iz[2] , density ) ) ) ) ;  
   }
-  else if ( Nearest == itypex && Qubic == itypey && Quadratic == itypez )  // (45) 
+  else if ( Nearest == itypex && Cubic == itypey && Quadratic == itypez )  // (45) 
   {
     // CORRECT QUBIC INTERPOLATION IN Y 
-    const std::array<unsigned int,4> iy = _qubic_indices_ ( iby , nby , y , yc ) ;
+    const std::array<unsigned int,4> iy = _cubic_indices_ ( iby , nby , y , yc ) ;
     //
     const double y0 = ay->GetBinCenter ( iy[0] ) ;
     const double y1 = ay->GetBinCenter ( iy[1] ) ;
@@ -3268,7 +2980,7 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
     const double z1 = az->GetBinCenter ( iz[1] ) ;
     const double z2 = az->GetBinCenter ( iz[2] ) ;
     //
-    return _qubic_
+    return _cubic_
       ( y , y0 , y1 , y2 , y3 ,  
         _quadratic_ 
         ( z , z0 , z1 , z2 ,  
@@ -3291,7 +3003,7 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
           _bin_ ( h3 , ibx , iy[3] , iz[1] , density ) , 
           _bin_ ( h3 , ibx , iy[3] , iz[2] , density ) ) ) ;
   }
-  else if ( Linear == itypex && Qubic == itypey && Quadratic == itypez )  // (46) 
+  else if ( Linear == itypex && Cubic == itypey && Quadratic == itypez )  // (46) 
   {
     // CORRECT LINEAR INTERPOLATION IN X
     const std::array<unsigned int,2> ix = _linear_indices_ ( ibx , nbx , x , xc ) ;
@@ -3300,7 +3012,7 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
     const double x1 = ax->GetBinCenter ( ix[1] ) ;
     //
     // CORRECT QUBIC INTERPOLATION IN Y 
-    const std::array<unsigned int,4> iy = _qubic_indices_ ( iby , nby , y , yc ) ;
+    const std::array<unsigned int,4> iy = _cubic_indices_ ( iby , nby , y , yc ) ;
     //
     const double y0 = ay->GetBinCenter ( iy[0] ) ;
     const double y1 = ay->GetBinCenter ( iy[1] ) ;
@@ -3316,7 +3028,7 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
     //
     return _linear_ 
       ( x , x0 , x1 , 
-        _qubic_
+        _cubic_
         ( y , y0 , y1 , y2 , y3 ,  
           _quadratic_ 
           ( z , z0 , z1 , z2 ,  
@@ -3338,7 +3050,7 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
             _bin_ ( h3 , ix[0] , iy[3] , iz[0] , density ) , 
             _bin_ ( h3 , ix[0] , iy[3] , iz[1] , density ) , 
             _bin_ ( h3 , ix[0] , iy[3] , iz[2] , density ) ) ) ,
-        _qubic_
+        _cubic_
         ( y , y0 , y1 , y2 , y3 ,  
           _quadratic_ 
           ( z , z0 , z1 , z2 ,  
@@ -3361,7 +3073,7 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
             _bin_ ( h3 , ix[1] , iy[3] , iz[1] , density ) , 
             _bin_ ( h3 , ix[1] , iy[3] , iz[2] , density ) ) ) ) ;  
   }
-  else if ( Quadratic == itypex && Qubic == itypey && Quadratic == itypez )  // (47) 
+  else if ( Quadratic == itypex && Cubic == itypey && Quadratic == itypez )  // (47) 
   {
     // CORRECT QUADRATIC INTERPOLATION IN X 
     const std::array<unsigned int,3> ix = _quadratic_indices_ ( ibx , nbx , x , xc ) ;
@@ -3371,7 +3083,7 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
     const double x2 = ax->GetBinCenter ( ix[2] ) ;
    //
     // CORRECT QUBIC INTERPOLATION IN Y 
-    const std::array<unsigned int,4> iy = _qubic_indices_ ( iby , nby , y , yc ) ;
+    const std::array<unsigned int,4> iy = _cubic_indices_ ( iby , nby , y , yc ) ;
     //
     const double y0 = ay->GetBinCenter ( iy[0] ) ;
     const double y1 = ay->GetBinCenter ( iy[1] ) ;
@@ -3387,7 +3099,7 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
     //
     return _quadratic_ 
       ( x , x0 , x1 , x2 , 
-        _qubic_
+        _cubic_
         ( y , y0 , y1 , y2 , y3 ,  
           _quadratic_ 
           ( z , z0 , z1 , z2 ,  
@@ -3409,7 +3121,7 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
             _bin_ ( h3 , ix[0] , iy[3] , iz[0] , density ) , 
             _bin_ ( h3 , ix[0] , iy[3] , iz[1] , density ) , 
             _bin_ ( h3 , ix[0] , iy[3] , iz[2] , density ) ) ) ,
-        _qubic_
+        _cubic_
         ( y , y0 , y1 , y2 , y3 ,  
           _quadratic_ 
           ( z , z0 , z1 , z2 ,  
@@ -3431,7 +3143,7 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
             _bin_ ( h3 , ix[1] , iy[3] , iz[0] , density ) , 
             _bin_ ( h3 , ix[1] , iy[3] , iz[1] , density ) , 
             _bin_ ( h3 , ix[1] , iy[3] , iz[2] , density ) ) ) , 
-        _qubic_
+        _cubic_
         ( y , y0 , y1 , y2 , y3 ,  
           _quadratic_ 
           ( z , z0 , z1 , z2 ,  
@@ -3454,10 +3166,10 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
             _bin_ ( h3 , ix[2] , iy[3] , iz[1] , density ) , 
             _bin_ ( h3 , ix[2] , iy[3] , iz[2] , density ) ) ) ) ;  
   }
-  else if ( Qubic == itypex && Qubic == itypey && Quadratic == itypez )  // (48) 
+  else if ( Cubic == itypex && Cubic == itypey && Quadratic == itypez )  // (48) 
   {
     // CORRECT QUBIC INTERPOLATION IN X 
-    const std::array<unsigned int,4> ix = _qubic_indices_ ( ibx , nbx , x , xc ) ;
+    const std::array<unsigned int,4> ix = _cubic_indices_ ( ibx , nbx , x , xc ) ;
     //
     const double x0 = ax->GetBinCenter ( ix[0] ) ;
     const double x1 = ax->GetBinCenter ( ix[1] ) ;
@@ -3465,7 +3177,7 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
     const double x3 = ax->GetBinCenter ( ix[3] ) ;
     //
     // CORRECT QUBIC INTERPOLATION IN Y 
-    const std::array<unsigned int,4> iy = _qubic_indices_ ( iby , nby , y , yc ) ;
+    const std::array<unsigned int,4> iy = _cubic_indices_ ( iby , nby , y , yc ) ;
     //
     const double y0 = ay->GetBinCenter ( iy[0] ) ;
     const double y1 = ay->GetBinCenter ( iy[1] ) ;
@@ -3479,9 +3191,9 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
     const double z1 = az->GetBinCenter ( iz[1] ) ;
     const double z2 = az->GetBinCenter ( iz[2] ) ;
     //
-    return _qubic_ 
+    return _cubic_ 
       ( x , x0 , x1 , x2 , x3 , 
-        _qubic_
+        _cubic_
         ( y , y0 , y1 , y2 , y3 ,  
           _quadratic_ 
           ( z , z0 , z1 , z2 ,  
@@ -3503,7 +3215,7 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
             _bin_ ( h3 , ix[0] , iy[3] , iz[0] , density ) , 
             _bin_ ( h3 , ix[0] , iy[3] , iz[1] , density ) , 
             _bin_ ( h3 , ix[0] , iy[3] , iz[2] , density ) ) ) ,
-        _qubic_
+        _cubic_
         ( y , y0 , y1 , y2 , y3 ,  
           _quadratic_ 
           ( z , z0 , z1 , z2 ,  
@@ -3525,7 +3237,7 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
             _bin_ ( h3 , ix[1] , iy[3] , iz[0] , density ) , 
             _bin_ ( h3 , ix[1] , iy[3] , iz[1] , density ) , 
             _bin_ ( h3 , ix[1] , iy[3] , iz[2] , density ) ) ) , 
-        _qubic_
+        _cubic_
         ( y , y0 , y1 , y2 , y3 ,  
           _quadratic_ 
           ( z , z0 , z1 , z2 ,  
@@ -3547,7 +3259,7 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
             _bin_ ( h3 , ix[2] , iy[3] , iz[0] , density ) , 
             _bin_ ( h3 , ix[2] , iy[3] , iz[1] , density ) , 
             _bin_ ( h3 , ix[2] , iy[3] , iz[2] , density ) ) ) ,
-        _qubic_
+        _cubic_
         ( y , y0 , y1 , y2 , y3 ,  
           _quadratic_ 
           ( z , z0 , z1 , z2 ,  
@@ -3571,17 +3283,17 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
             _bin_ ( h3 , ix[3] , iy[3] , iz[2] , density ) ) ) ) ;  
   }
   //
-  else if ( Nearest  == itypex && Nearest == itypey && Qubic == itypez )  // (49) 
+  else if ( Nearest  == itypex && Nearest == itypey && Cubic == itypez )  // (49) 
   {
     // CORRECT QUBIC INTERPOLATION IN Z
-    const std::array<unsigned int,4> iz = _qubic_indices_ ( ibz , nbz , z , zc ) ;
+    const std::array<unsigned int,4> iz = _cubic_indices_ ( ibz , nbz , z , zc ) ;
     //
     const double z0 = az->GetBinCenter ( iz[0] ) ;
     const double z1 = az->GetBinCenter ( iz[1] ) ;
     const double z2 = az->GetBinCenter ( iz[2] ) ;
     const double z3 = az->GetBinCenter ( iz[3] ) ;
     //
-    return _qubic_ 
+    return _cubic_ 
       ( z , z0 , z1 , z2 , z3 ,  
         _bin_ ( h3 , ibx , iby , iz[0] , density ) , 
         _bin_ ( h3 , ibx , iby , iz[1] , density ) , 
@@ -3589,7 +3301,7 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
         _bin_ ( h3 , ibx , iby , iz[3] , density ) ) ;
   }
   //
-  else if ( Linear  == itypex && Nearest == itypey && Qubic == itypez )  // (50) 
+  else if ( Linear  == itypex && Nearest == itypey && Cubic == itypez )  // (50) 
   {
     // CORRECT LINEAR INTERPOLATION IN X
     const std::array<unsigned int,2> ix = _linear_indices_ ( ibx , nbx , x , xc ) ;
@@ -3598,7 +3310,7 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
     const double x1 = ax->GetBinCenter ( ix[1] ) ;
     //   
     // CORRECT QUBIC INTERPOLATION IN Z
-    const std::array<unsigned int,4> iz = _qubic_indices_ ( ibz , nbz , z , zc ) ;
+    const std::array<unsigned int,4> iz = _cubic_indices_ ( ibz , nbz , z , zc ) ;
     //
     const double z0 = az->GetBinCenter ( iz[0] ) ;
     const double z1 = az->GetBinCenter ( iz[1] ) ;
@@ -3607,20 +3319,20 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
     //
     return _linear_ 
       ( x , x0 , x1 , 
-        _qubic_ 
+        _cubic_ 
         ( z , z0 , z1 , z2 , z3 ,  
           _bin_ ( h3 , ix[0] , iby , iz[0] , density ) , 
           _bin_ ( h3 , ix[0] , iby , iz[1] , density ) , 
           _bin_ ( h3 , ix[0] , iby , iz[2] , density ) ,
           _bin_ ( h3 , ix[0] , iby , iz[3] , density ) ) , 
-        _qubic_ 
+        _cubic_ 
         ( z , z0 , z1 , z2 , z3 ,  
           _bin_ ( h3 , ix[1] , iby , iz[0] , density ) , 
           _bin_ ( h3 , ix[1] , iby , iz[1] , density ) , 
           _bin_ ( h3 , ix[1] , iby , iz[2] , density ) ,
           _bin_ ( h3 , ix[1] , iby , iz[3] , density ) ) ) ;    
   }
-  else if ( Quadratic  == itypex && Nearest == itypey && Qubic == itypez )  // (51) 
+  else if ( Quadratic  == itypex && Nearest == itypey && Cubic == itypez )  // (51) 
   {
     // CORRECT QUADRATIC INTERPOLATION IN X 
     const std::array<unsigned int,3> ix = _quadratic_indices_ ( ibx , nbx , x , xc ) ;
@@ -3630,7 +3342,7 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
     const double x2 = ax->GetBinCenter ( ix[2] ) ;
     //   
     // CORRECT QUBIC INTERPOLATION IN Z
-    const std::array<unsigned int,4> iz = _qubic_indices_ ( ibz , nbz , z , zc ) ;
+    const std::array<unsigned int,4> iz = _cubic_indices_ ( ibz , nbz , z , zc ) ;
     //
     const double z0 = az->GetBinCenter ( iz[0] ) ;
     const double z1 = az->GetBinCenter ( iz[1] ) ;
@@ -3639,29 +3351,29 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
     //
     return _quadratic_ 
       ( x , x0 , x1 , x2 , 
-        _qubic_ 
+        _cubic_ 
         ( z , z0 , z1 , z2 , z3 ,  
           _bin_ ( h3 , ix[0] , iby , iz[0] , density ) , 
           _bin_ ( h3 , ix[0] , iby , iz[1] , density ) , 
           _bin_ ( h3 , ix[0] , iby , iz[2] , density ) ,
           _bin_ ( h3 , ix[0] , iby , iz[3] , density ) ) , 
-        _qubic_ 
+        _cubic_ 
         ( z , z0 , z1 , z2 , z3 ,  
           _bin_ ( h3 , ix[1] , iby , iz[0] , density ) , 
           _bin_ ( h3 , ix[1] , iby , iz[1] , density ) , 
           _bin_ ( h3 , ix[1] , iby , iz[2] , density ) ,
           _bin_ ( h3 , ix[1] , iby , iz[3] , density ) ) , 
-        _qubic_ 
+        _cubic_ 
         ( z , z0 , z1 , z2 , z3 ,  
           _bin_ ( h3 , ix[2] , iby , iz[0] , density ) , 
           _bin_ ( h3 , ix[2] , iby , iz[1] , density ) , 
           _bin_ ( h3 , ix[2] , iby , iz[2] , density ) ,
           _bin_ ( h3 , ix[2] , iby , iz[3] , density ) ) ) ;
   }
-  else if ( Qubic  == itypex && Nearest == itypey && Qubic == itypez )  // (52) 
+  else if ( Cubic  == itypex && Nearest == itypey && Cubic == itypez )  // (52) 
   {
     // CORRECT QUBIC INTERPOLATION IN X 
-    const std::array<unsigned int,4> ix = _qubic_indices_ ( ibx , nbx , x , xc ) ;
+    const std::array<unsigned int,4> ix = _cubic_indices_ ( ibx , nbx , x , xc ) ;
     //
     const double x0 = ax->GetBinCenter ( ix[0] ) ;
     const double x1 = ax->GetBinCenter ( ix[1] ) ;
@@ -3669,41 +3381,41 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
     const double x3 = ax->GetBinCenter ( ix[3] ) ;
     //   
     // CORRECT QUBIC INTERPOLATION IN Z
-    const std::array<unsigned int,4> iz = _qubic_indices_ ( ibz , nbz , z , zc ) ;
+    const std::array<unsigned int,4> iz = _cubic_indices_ ( ibz , nbz , z , zc ) ;
     //
     const double z0 = az->GetBinCenter ( iz[0] ) ;
     const double z1 = az->GetBinCenter ( iz[1] ) ;
     const double z2 = az->GetBinCenter ( iz[2] ) ;
     const double z3 = az->GetBinCenter ( iz[3] ) ;
     //
-    return _qubic_ 
+    return _cubic_ 
       ( x , x0 , x1 , x2 , x3 , 
-        _qubic_ 
+        _cubic_ 
         ( z , z0 , z1 , z2 , z3 ,  
           _bin_ ( h3 , ix[0] , iby , iz[0] , density ) , 
           _bin_ ( h3 , ix[0] , iby , iz[1] , density ) , 
           _bin_ ( h3 , ix[0] , iby , iz[2] , density ) ,
           _bin_ ( h3 , ix[0] , iby , iz[3] , density ) ) , 
-        _qubic_ 
+        _cubic_ 
         ( z , z0 , z1 , z2 , z3 ,  
           _bin_ ( h3 , ix[1] , iby , iz[0] , density ) , 
           _bin_ ( h3 , ix[1] , iby , iz[1] , density ) , 
           _bin_ ( h3 , ix[1] , iby , iz[2] , density ) ,
           _bin_ ( h3 , ix[1] , iby , iz[3] , density ) ) , 
-        _qubic_ 
+        _cubic_ 
         ( z , z0 , z1 , z2 , z3 ,  
           _bin_ ( h3 , ix[2] , iby , iz[0] , density ) , 
           _bin_ ( h3 , ix[2] , iby , iz[1] , density ) , 
           _bin_ ( h3 , ix[2] , iby , iz[2] , density ) ,
           _bin_ ( h3 , ix[2] , iby , iz[3] , density ) ) ,
-        _qubic_ 
+        _cubic_ 
         ( z , z0 , z1 , z2 , z3 ,  
           _bin_ ( h3 , ix[3] , iby , iz[0] , density ) , 
           _bin_ ( h3 , ix[3] , iby , iz[1] , density ) , 
           _bin_ ( h3 , ix[3] , iby , iz[2] , density ) ,
           _bin_ ( h3 , ix[3] , iby , iz[3] , density ) ) ) ;
   }
-  else if ( Nearest  == itypex && Linear == itypey && Qubic == itypez )  // (53) 
+  else if ( Nearest  == itypex && Linear == itypey && Cubic == itypez )  // (53) 
   {
     // CORRECT LINEAR INTERPOLATION IN Y
     const std::array<unsigned int,2> iy = _linear_indices_ ( iby , nby , y , yc ) ;
@@ -3712,7 +3424,7 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
     const double y1 = ay->GetBinCenter ( iy[1] ) ;
     //
     // CORRECT QUBIC INTERPOLATION IN Z
-    const std::array<unsigned int,4> iz = _qubic_indices_ ( ibz , nbz , z , zc ) ;
+    const std::array<unsigned int,4> iz = _cubic_indices_ ( ibz , nbz , z , zc ) ;
     //
     const double z0 = az->GetBinCenter ( iz[0] ) ;
     const double z1 = az->GetBinCenter ( iz[1] ) ;
@@ -3721,13 +3433,13 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
     //
     return _linear_ 
       ( y , y0, y1 , 
-        _qubic_ 
+        _cubic_ 
         ( z , z0 , z1 , z2 , z3 ,  
           _bin_ ( h3 , ibx , iy[0] , iz[0] , density ) , 
           _bin_ ( h3 , ibx , iy[0] , iz[1] , density ) , 
           _bin_ ( h3 , ibx , iy[0] , iz[2] , density ) ,
           _bin_ ( h3 , ibx , iy[0] , iz[3] , density ) ) ,
-        _qubic_ 
+        _cubic_ 
         ( z , z0 , z1 , z2 , z3 ,  
           _bin_ ( h3 , ibx , iy[1] , iz[0] , density ) , 
           _bin_ ( h3 , ibx , iy[1] , iz[1] , density ) , 
@@ -3735,7 +3447,7 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
           _bin_ ( h3 , ibx , iy[1] , iz[3] , density ) ) ) ;    
   }
   //
-  else if ( Linear == itypex && Linear == itypey && Qubic == itypez )  // (54) 
+  else if ( Linear == itypex && Linear == itypey && Cubic == itypez )  // (54) 
   {
     // CORRECT LINEAR INTERPOLATION IN X
     const std::array<unsigned int,2> ix = _linear_indices_ ( ibx , nbx , x , xc ) ;
@@ -3750,7 +3462,7 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
     const double y1 = ay->GetBinCenter ( iy[1] ) ;
     //
     // CORRECT QUBIC INTERPOLATION IN Z
-    const std::array<unsigned int,4> iz = _qubic_indices_ ( ibz , nbz , z , zc ) ;
+    const std::array<unsigned int,4> iz = _cubic_indices_ ( ibz , nbz , z , zc ) ;
     //
     const double z0 = az->GetBinCenter ( iz[0] ) ;
     const double z1 = az->GetBinCenter ( iz[1] ) ;
@@ -3761,13 +3473,13 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
       ( x , x0 , x1 , 
         _linear_ 
         ( y , y0, y1 , 
-          _qubic_ 
+          _cubic_ 
           ( z , z0 , z1 , z2 , z3 ,  
             _bin_ ( h3 , ix[0] , iy[0] , iz[0] , density ) , 
             _bin_ ( h3 , ix[0] , iy[0] , iz[1] , density ) , 
             _bin_ ( h3 , ix[0] , iy[0] , iz[2] , density ) ,
             _bin_ ( h3 , ix[0] , iy[0] , iz[3] , density ) ) ,
-          _qubic_ 
+          _cubic_ 
           ( z , z0 , z1 , z2 , z3 ,  
             _bin_ ( h3 , ix[0] , iy[1] , iz[0] , density ) , 
             _bin_ ( h3 , ix[0] , iy[1] , iz[1] , density ) , 
@@ -3775,13 +3487,13 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
             _bin_ ( h3 , ix[0] , iy[1] , iz[3] , density ) ) ) ,
         _linear_ 
         ( y , y0, y1 , 
-          _qubic_ 
+          _cubic_ 
           ( z , z0 , z1 , z2 , z3 ,  
             _bin_ ( h3 , ix[1] , iy[0] , iz[0] , density ) , 
             _bin_ ( h3 , ix[1] , iy[0] , iz[1] , density ) , 
             _bin_ ( h3 , ix[1] , iy[0] , iz[2] , density ) ,
             _bin_ ( h3 , ix[1] , iy[0] , iz[3] , density ) ) ,
-          _qubic_ 
+          _cubic_ 
           ( z , z0 , z1 , z2 , z3 ,  
             _bin_ ( h3 , ix[1] , iy[1] , iz[0] , density ) , 
             _bin_ ( h3 , ix[1] , iy[1] , iz[1] , density ) , 
@@ -3789,7 +3501,7 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
             _bin_ ( h3 , ix[1] , iy[1] , iz[3] , density ) ) ) ) ;    
   }
   //
-  else if ( Quadratic == itypex && Linear == itypey && Qubic == itypez )  // (55) 
+  else if ( Quadratic == itypex && Linear == itypey && Cubic == itypez )  // (55) 
   {
     // CORRECT QUADRATIC INTERPOLATION IN X 
     const std::array<unsigned int,3> ix = _quadratic_indices_ ( ibx , nbx , x , xc ) ;
@@ -3805,7 +3517,7 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
     const double y1 = ay->GetBinCenter ( iy[1] ) ;
     //
     // CORRECT QUBIC INTERPOLATION IN Z
-    const std::array<unsigned int,4> iz = _qubic_indices_ ( ibz , nbz , z , zc ) ;
+    const std::array<unsigned int,4> iz = _cubic_indices_ ( ibz , nbz , z , zc ) ;
     //
     const double z0 = az->GetBinCenter ( iz[0] ) ;
     const double z1 = az->GetBinCenter ( iz[1] ) ;
@@ -3816,13 +3528,13 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
       ( x , x0 , x1 , x2 ,  
         _linear_ 
         ( y , y0, y1 , 
-          _qubic_ 
+          _cubic_ 
           ( z , z0 , z1 , z2 , z3 ,  
             _bin_ ( h3 , ix[0] , iy[0] , iz[0] , density ) , 
             _bin_ ( h3 , ix[0] , iy[0] , iz[1] , density ) , 
             _bin_ ( h3 , ix[0] , iy[0] , iz[2] , density ) ,
             _bin_ ( h3 , ix[0] , iy[0] , iz[3] , density ) ) ,
-          _qubic_ 
+          _cubic_ 
           ( z , z0 , z1 , z2 , z3 ,  
             _bin_ ( h3 , ix[0] , iy[1] , iz[0] , density ) , 
             _bin_ ( h3 , ix[0] , iy[1] , iz[1] , density ) , 
@@ -3830,13 +3542,13 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
             _bin_ ( h3 , ix[0] , iy[1] , iz[3] , density ) ) ) ,
         _linear_ 
         ( y , y0, y1 , 
-          _qubic_ 
+          _cubic_ 
           ( z , z0 , z1 , z2 , z3 ,  
             _bin_ ( h3 , ix[1] , iy[0] , iz[0] , density ) , 
             _bin_ ( h3 , ix[1] , iy[0] , iz[1] , density ) , 
             _bin_ ( h3 , ix[1] , iy[0] , iz[2] , density ) ,
             _bin_ ( h3 , ix[1] , iy[0] , iz[3] , density ) ) ,
-          _qubic_ 
+          _cubic_ 
           ( z , z0 , z1 , z2 , z3 ,  
             _bin_ ( h3 , ix[1] , iy[1] , iz[0] , density ) , 
             _bin_ ( h3 , ix[1] , iy[1] , iz[1] , density ) , 
@@ -3844,13 +3556,13 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
             _bin_ ( h3 , ix[1] , iy[1] , iz[3] , density ) ) ) , 
         _linear_ 
         ( y , y0, y1 , 
-          _qubic_ 
+          _cubic_ 
           ( z , z0 , z1 , z2 , z3 ,  
             _bin_ ( h3 , ix[2] , iy[0] , iz[0] , density ) , 
             _bin_ ( h3 , ix[2] , iy[0] , iz[1] , density ) , 
             _bin_ ( h3 , ix[2] , iy[0] , iz[2] , density ) ,
             _bin_ ( h3 , ix[2] , iy[0] , iz[3] , density ) ) ,
-          _qubic_ 
+          _cubic_ 
           ( z , z0 , z1 , z2 , z3 ,  
             _bin_ ( h3 , ix[2] , iy[1] , iz[0] , density ) , 
             _bin_ ( h3 , ix[2] , iy[1] , iz[1] , density ) , 
@@ -3858,10 +3570,10 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
             _bin_ ( h3 , ix[2] , iy[1] , iz[3] , density ) ) ) ) ;
   }
   //
-  else if ( Qubic == itypex && Linear == itypey && Qubic == itypez )  // (56) 
+  else if ( Cubic == itypex && Linear == itypey && Cubic == itypez )  // (56) 
   {
     // CORRECT QUBIC INTERPOLATION IN X 
-    const std::array<unsigned int,4> ix = _qubic_indices_ ( ibx , nbx , x , xc ) ;
+    const std::array<unsigned int,4> ix = _cubic_indices_ ( ibx , nbx , x , xc ) ;
     //
     const double x0 = ax->GetBinCenter ( ix[0] ) ;
     const double x1 = ax->GetBinCenter ( ix[1] ) ;
@@ -3875,24 +3587,24 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
     const double y1 = ay->GetBinCenter ( iy[1] ) ;
     //
     // CORRECT QUBIC INTERPOLATION IN Z
-    const std::array<unsigned int,4> iz = _qubic_indices_ ( ibz , nbz , z , zc ) ;
+    const std::array<unsigned int,4> iz = _cubic_indices_ ( ibz , nbz , z , zc ) ;
     //
     const double z0 = az->GetBinCenter ( iz[0] ) ;
     const double z1 = az->GetBinCenter ( iz[1] ) ;
     const double z2 = az->GetBinCenter ( iz[2] ) ;
     const double z3 = az->GetBinCenter ( iz[3] ) ;
     //
-    return _qubic_ 
+    return _cubic_ 
       ( x , x0 , x1 , x2 , x3 ,  
         _linear_ 
         ( y , y0, y1 , 
-          _qubic_ 
+          _cubic_ 
           ( z , z0 , z1 , z2 , z3 ,  
             _bin_ ( h3 , ix[0] , iy[0] , iz[0] , density ) , 
             _bin_ ( h3 , ix[0] , iy[0] , iz[1] , density ) , 
             _bin_ ( h3 , ix[0] , iy[0] , iz[2] , density ) ,
             _bin_ ( h3 , ix[0] , iy[0] , iz[3] , density ) ) ,
-          _qubic_ 
+          _cubic_ 
           ( z , z0 , z1 , z2 , z3 ,  
             _bin_ ( h3 , ix[0] , iy[1] , iz[0] , density ) , 
             _bin_ ( h3 , ix[0] , iy[1] , iz[1] , density ) , 
@@ -3900,13 +3612,13 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
             _bin_ ( h3 , ix[0] , iy[1] , iz[3] , density ) ) ) ,
         _linear_ 
         ( y , y0, y1 , 
-          _qubic_ 
+          _cubic_ 
           ( z , z0 , z1 , z2 , z3 ,  
             _bin_ ( h3 , ix[1] , iy[0] , iz[0] , density ) , 
             _bin_ ( h3 , ix[1] , iy[0] , iz[1] , density ) , 
             _bin_ ( h3 , ix[1] , iy[0] , iz[2] , density ) ,
             _bin_ ( h3 , ix[1] , iy[0] , iz[3] , density ) ) ,
-          _qubic_ 
+          _cubic_ 
           ( z , z0 , z1 , z2 , z3 ,  
             _bin_ ( h3 , ix[1] , iy[1] , iz[0] , density ) , 
             _bin_ ( h3 , ix[1] , iy[1] , iz[1] , density ) , 
@@ -3914,13 +3626,13 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
             _bin_ ( h3 , ix[1] , iy[1] , iz[3] , density ) ) ) , 
         _linear_ 
         ( y , y0, y1 , 
-          _qubic_ 
+          _cubic_ 
           ( z , z0 , z1 , z2 , z3 ,  
             _bin_ ( h3 , ix[2] , iy[0] , iz[0] , density ) , 
             _bin_ ( h3 , ix[2] , iy[0] , iz[1] , density ) , 
             _bin_ ( h3 , ix[2] , iy[0] , iz[2] , density ) ,
             _bin_ ( h3 , ix[2] , iy[0] , iz[3] , density ) ) ,
-          _qubic_ 
+          _cubic_ 
           ( z , z0 , z1 , z2 , z3 ,  
             _bin_ ( h3 , ix[2] , iy[1] , iz[0] , density ) , 
             _bin_ ( h3 , ix[2] , iy[1] , iz[1] , density ) , 
@@ -3928,13 +3640,13 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
             _bin_ ( h3 , ix[2] , iy[1] , iz[3] , density ) ) ) , 
         _linear_ 
         ( y , y0, y1 , 
-          _qubic_ 
+          _cubic_ 
           ( z , z0 , z1 , z2 , z3 ,  
             _bin_ ( h3 , ix[3] , iy[0] , iz[0] , density ) , 
             _bin_ ( h3 , ix[3] , iy[0] , iz[1] , density ) , 
             _bin_ ( h3 , ix[3] , iy[0] , iz[2] , density ) ,
             _bin_ ( h3 , ix[3] , iy[0] , iz[3] , density ) ) ,
-          _qubic_ 
+          _cubic_ 
           ( z , z0 , z1 , z2 , z3 ,  
             _bin_ ( h3 , ix[3] , iy[1] , iz[0] , density ) , 
             _bin_ ( h3 , ix[3] , iy[1] , iz[1] , density ) , 
@@ -3942,7 +3654,7 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
             _bin_ ( h3 , ix[3] , iy[1] , iz[3] , density ) ) ) ) ;
   }
   //
-  else if ( Nearest  == itypex && Quadratic == itypey && Qubic == itypez )  // (57) 
+  else if ( Nearest  == itypex && Quadratic == itypey && Cubic == itypez )  // (57) 
   {
     // CORRECT QUADRATIC INTERPOLATION IN Y 
     const std::array<unsigned int,3> iy = _quadratic_indices_ ( iby , nby , y , yc ) ;
@@ -3952,7 +3664,7 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
     const double y2 = ay->GetBinCenter ( iy[2] ) ;
     //
     // CORRECT QUBIC INTERPOLATION IN Z
-    const std::array<unsigned int,4> iz = _qubic_indices_ ( ibz , nbz , z , zc ) ;
+    const std::array<unsigned int,4> iz = _cubic_indices_ ( ibz , nbz , z , zc ) ;
     //
     const double z0 = az->GetBinCenter ( iz[0] ) ;
     const double z1 = az->GetBinCenter ( iz[1] ) ;
@@ -3961,19 +3673,19 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
     //
     return _quadratic_ 
       ( y , y0, y1 , y2 , 
-        _qubic_ 
+        _cubic_ 
         ( z , z0 , z1 , z2 , z3 ,  
           _bin_ ( h3 , ibx , iy[0] , iz[0] , density ) , 
           _bin_ ( h3 , ibx , iy[0] , iz[1] , density ) , 
           _bin_ ( h3 , ibx , iy[0] , iz[2] , density ) ,
           _bin_ ( h3 , ibx , iy[0] , iz[3] , density ) ) ,
-        _qubic_ 
+        _cubic_ 
         ( z , z0 , z1 , z2 , z3 ,  
           _bin_ ( h3 , ibx , iy[1] , iz[0] , density ) , 
           _bin_ ( h3 , ibx , iy[1] , iz[1] , density ) , 
           _bin_ ( h3 , ibx , iy[1] , iz[2] , density ) ,
           _bin_ ( h3 , ibx , iy[1] , iz[3] , density ) ) , 
-        _qubic_ 
+        _cubic_ 
         ( z , z0 , z1 , z2 , z3 ,  
           _bin_ ( h3 , ibx , iy[2] , iz[0] , density ) , 
           _bin_ ( h3 , ibx , iy[2] , iz[1] , density ) , 
@@ -3981,7 +3693,7 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
           _bin_ ( h3 , ibx , iy[2] , iz[3] , density ) ) ) ;
   }
   //
-  else if ( Linear  == itypex && Quadratic == itypey && Qubic == itypez )  // (58) 
+  else if ( Linear  == itypex && Quadratic == itypey && Cubic == itypez )  // (58) 
   {
     // CORRECT LINEAR INTERPOLATION IN X
     const std::array<unsigned int,2> ix = _linear_indices_ ( ibx , nbx , x , xc ) ;
@@ -3997,7 +3709,7 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
     const double y2 = ay->GetBinCenter ( iy[2] ) ;
     //
     // CORRECT QUBIC INTERPOLATION IN Z
-    const std::array<unsigned int,4> iz = _qubic_indices_ ( ibz , nbz , z , zc ) ;
+    const std::array<unsigned int,4> iz = _cubic_indices_ ( ibz , nbz , z , zc ) ;
     //
     const double z0 = az->GetBinCenter ( iz[0] ) ;
     const double z1 = az->GetBinCenter ( iz[1] ) ;
@@ -4008,19 +3720,19 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
       ( x , x0 , x1 , 
         _quadratic_ 
         ( y , y0, y1 , y2 , 
-          _qubic_ 
+          _cubic_ 
           ( z , z0 , z1 , z2 , z3 ,  
             _bin_ ( h3 , ix[0] , iy[0] , iz[0] , density ) , 
             _bin_ ( h3 , ix[0] , iy[0] , iz[1] , density ) , 
             _bin_ ( h3 , ix[0] , iy[0] , iz[2] , density ) ,
             _bin_ ( h3 , ix[0] , iy[0] , iz[3] , density ) ) ,
-          _qubic_ 
+          _cubic_ 
           ( z , z0 , z1 , z2 , z3 ,  
             _bin_ ( h3 , ix[0] , iy[1] , iz[0] , density ) , 
             _bin_ ( h3 , ix[0] , iy[1] , iz[1] , density ) , 
             _bin_ ( h3 , ix[0] , iy[1] , iz[2] , density ) ,
             _bin_ ( h3 , ix[0] , iy[1] , iz[3] , density ) ) , 
-          _qubic_ 
+          _cubic_ 
           ( z , z0 , z1 , z2 , z3 ,  
             _bin_ ( h3 , ix[0] , iy[2] , iz[0] , density ) , 
             _bin_ ( h3 , ix[0] , iy[2] , iz[1] , density ) , 
@@ -4028,19 +3740,19 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
             _bin_ ( h3 , ix[0] , iy[2] , iz[3] , density ) ) ) , 
         _quadratic_ 
         ( y , y0, y1 , y2 , 
-          _qubic_ 
+          _cubic_ 
           ( z , z0 , z1 , z2 , z3 ,  
             _bin_ ( h3 , ix[1] , iy[0] , iz[0] , density ) , 
             _bin_ ( h3 , ix[1] , iy[0] , iz[1] , density ) , 
             _bin_ ( h3 , ix[1] , iy[0] , iz[2] , density ) ,
             _bin_ ( h3 , ix[1] , iy[0] , iz[3] , density ) ) ,
-          _qubic_ 
+          _cubic_ 
           ( z , z0 , z1 , z2 , z3 ,  
             _bin_ ( h3 , ix[1] , iy[1] , iz[0] , density ) , 
             _bin_ ( h3 , ix[1] , iy[1] , iz[1] , density ) , 
             _bin_ ( h3 , ix[1] , iy[1] , iz[2] , density ) ,
             _bin_ ( h3 , ix[1] , iy[1] , iz[3] , density ) ) , 
-          _qubic_ 
+          _cubic_ 
           ( z , z0 , z1 , z2 , z3 ,  
             _bin_ ( h3 , ix[1] , iy[2] , iz[0] , density ) , 
             _bin_ ( h3 , ix[1] , iy[2] , iz[1] , density ) , 
@@ -4048,7 +3760,7 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
             _bin_ ( h3 , ix[1] , iy[2] , iz[3] , density ) ) ) ) ;
   }
   //
-  else if ( Quadratic  == itypex && Quadratic == itypey && Qubic == itypez )  // (59) 
+  else if ( Quadratic  == itypex && Quadratic == itypey && Cubic == itypez )  // (59) 
   {
     // CORRECT QUADRATIC INTERPOLATION IN X 
     const std::array<unsigned int,3> ix = _quadratic_indices_ ( ibx , nbx , x , xc ) ;
@@ -4065,7 +3777,7 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
     const double y2 = ay->GetBinCenter ( iy[2] ) ;
     //
     // CORRECT QUBIC INTERPOLATION IN Z
-    const std::array<unsigned int,4> iz = _qubic_indices_ ( ibz , nbz , z , zc ) ;
+    const std::array<unsigned int,4> iz = _cubic_indices_ ( ibz , nbz , z , zc ) ;
     //
     const double z0 = az->GetBinCenter ( iz[0] ) ;
     const double z1 = az->GetBinCenter ( iz[1] ) ;
@@ -4076,19 +3788,19 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
       ( x , x0 , x1 , x2 ,  
         _quadratic_ 
         ( y , y0, y1 , y2 , 
-          _qubic_ 
+          _cubic_ 
           ( z , z0 , z1 , z2 , z3 ,  
             _bin_ ( h3 , ix[0] , iy[0] , iz[0] , density ) , 
             _bin_ ( h3 , ix[0] , iy[0] , iz[1] , density ) , 
             _bin_ ( h3 , ix[0] , iy[0] , iz[2] , density ) ,
             _bin_ ( h3 , ix[0] , iy[0] , iz[3] , density ) ) ,
-          _qubic_ 
+          _cubic_ 
           ( z , z0 , z1 , z2 , z3 ,  
             _bin_ ( h3 , ix[0] , iy[1] , iz[0] , density ) , 
             _bin_ ( h3 , ix[0] , iy[1] , iz[1] , density ) , 
             _bin_ ( h3 , ix[0] , iy[1] , iz[2] , density ) ,
             _bin_ ( h3 , ix[0] , iy[1] , iz[3] , density ) ) , 
-          _qubic_ 
+          _cubic_ 
           ( z , z0 , z1 , z2 , z3 ,  
             _bin_ ( h3 , ix[0] , iy[2] , iz[0] , density ) , 
             _bin_ ( h3 , ix[0] , iy[2] , iz[1] , density ) , 
@@ -4096,19 +3808,19 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
             _bin_ ( h3 , ix[0] , iy[2] , iz[3] , density ) ) ) , 
         _quadratic_ 
         ( y , y0, y1 , y2 , 
-          _qubic_ 
+          _cubic_ 
           ( z , z0 , z1 , z2 , z3 ,  
             _bin_ ( h3 , ix[1] , iy[0] , iz[0] , density ) , 
             _bin_ ( h3 , ix[1] , iy[0] , iz[1] , density ) , 
             _bin_ ( h3 , ix[1] , iy[0] , iz[2] , density ) ,
             _bin_ ( h3 , ix[1] , iy[0] , iz[3] , density ) ) ,
-          _qubic_ 
+          _cubic_ 
           ( z , z0 , z1 , z2 , z3 ,  
             _bin_ ( h3 , ix[1] , iy[1] , iz[0] , density ) , 
             _bin_ ( h3 , ix[1] , iy[1] , iz[1] , density ) , 
             _bin_ ( h3 , ix[1] , iy[1] , iz[2] , density ) ,
             _bin_ ( h3 , ix[1] , iy[1] , iz[3] , density ) ) , 
-          _qubic_ 
+          _cubic_ 
           ( z , z0 , z1 , z2 , z3 ,  
             _bin_ ( h3 , ix[1] , iy[2] , iz[0] , density ) , 
             _bin_ ( h3 , ix[1] , iy[2] , iz[1] , density ) , 
@@ -4116,19 +3828,19 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
             _bin_ ( h3 , ix[1] , iy[2] , iz[3] , density ) ) ) , 
         _quadratic_ 
         ( y , y0, y1 , y2 , 
-          _qubic_ 
+          _cubic_ 
           ( z , z0 , z1 , z2 , z3 ,  
             _bin_ ( h3 , ix[2] , iy[0] , iz[0] , density ) , 
             _bin_ ( h3 , ix[2] , iy[0] , iz[1] , density ) , 
             _bin_ ( h3 , ix[2] , iy[0] , iz[2] , density ) ,
             _bin_ ( h3 , ix[2] , iy[0] , iz[3] , density ) ) ,
-          _qubic_ 
+          _cubic_ 
           ( z , z0 , z1 , z2 , z3 ,  
             _bin_ ( h3 , ix[2] , iy[1] , iz[0] , density ) , 
             _bin_ ( h3 , ix[2] , iy[1] , iz[1] , density ) , 
             _bin_ ( h3 , ix[2] , iy[1] , iz[2] , density ) ,
             _bin_ ( h3 , ix[2] , iy[1] , iz[3] , density ) ) , 
-          _qubic_ 
+          _cubic_ 
           ( z , z0 , z1 , z2 , z3 ,  
             _bin_ ( h3 , ix[2] , iy[2] , iz[0] , density ) , 
             _bin_ ( h3 , ix[2] , iy[2] , iz[1] , density ) , 
@@ -4136,10 +3848,10 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
             _bin_ ( h3 , ix[2] , iy[2] , iz[3] , density ) ) ) ) ;
   }
   //
-  else if ( Qubic  == itypex && Quadratic == itypey && Qubic == itypez )  // (60) 
+  else if ( Cubic  == itypex && Quadratic == itypey && Cubic == itypez )  // (60) 
   {
     // CORRECT QUBIC INTERPOLATION IN X 
-    const std::array<unsigned int,4> ix = _qubic_indices_ ( ibx , nbx , x , xc ) ;
+    const std::array<unsigned int,4> ix = _cubic_indices_ ( ibx , nbx , x , xc ) ;
     //
     const double x0 = ax->GetBinCenter ( ix[0] ) ;
     const double x1 = ax->GetBinCenter ( ix[1] ) ;
@@ -4154,30 +3866,30 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
     const double y2 = ay->GetBinCenter ( iy[2] ) ;
     //
     // CORRECT QUBIC INTERPOLATION IN Z
-    const std::array<unsigned int,4> iz = _qubic_indices_ ( ibz , nbz , z , zc ) ;
+    const std::array<unsigned int,4> iz = _cubic_indices_ ( ibz , nbz , z , zc ) ;
     //
     const double z0 = az->GetBinCenter ( iz[0] ) ;
     const double z1 = az->GetBinCenter ( iz[1] ) ;
     const double z2 = az->GetBinCenter ( iz[2] ) ;
     const double z3 = az->GetBinCenter ( iz[3] ) ;
     //
-    return _qubic_ 
+    return _cubic_ 
       ( x , x0 , x1 , x2 ,  x3 , 
         _quadratic_ 
         ( y , y0, y1 , y2 , 
-          _qubic_ 
+          _cubic_ 
           ( z , z0 , z1 , z2 , z3 ,  
             _bin_ ( h3 , ix[0] , iy[0] , iz[0] , density ) , 
             _bin_ ( h3 , ix[0] , iy[0] , iz[1] , density ) , 
             _bin_ ( h3 , ix[0] , iy[0] , iz[2] , density ) ,
             _bin_ ( h3 , ix[0] , iy[0] , iz[3] , density ) ) ,
-          _qubic_ 
+          _cubic_ 
           ( z , z0 , z1 , z2 , z3 ,  
             _bin_ ( h3 , ix[0] , iy[1] , iz[0] , density ) , 
             _bin_ ( h3 , ix[0] , iy[1] , iz[1] , density ) , 
             _bin_ ( h3 , ix[0] , iy[1] , iz[2] , density ) ,
             _bin_ ( h3 , ix[0] , iy[1] , iz[3] , density ) ) , 
-          _qubic_ 
+          _cubic_ 
           ( z , z0 , z1 , z2 , z3 ,  
             _bin_ ( h3 , ix[0] , iy[2] , iz[0] , density ) , 
             _bin_ ( h3 , ix[0] , iy[2] , iz[1] , density ) , 
@@ -4185,19 +3897,19 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
             _bin_ ( h3 , ix[0] , iy[2] , iz[3] , density ) ) ) , 
         _quadratic_ 
         ( y , y0, y1 , y2 , 
-          _qubic_ 
+          _cubic_ 
           ( z , z0 , z1 , z2 , z3 ,  
             _bin_ ( h3 , ix[1] , iy[0] , iz[0] , density ) , 
             _bin_ ( h3 , ix[1] , iy[0] , iz[1] , density ) , 
             _bin_ ( h3 , ix[1] , iy[0] , iz[2] , density ) ,
             _bin_ ( h3 , ix[1] , iy[0] , iz[3] , density ) ) ,
-          _qubic_ 
+          _cubic_ 
           ( z , z0 , z1 , z2 , z3 ,  
             _bin_ ( h3 , ix[1] , iy[1] , iz[0] , density ) , 
             _bin_ ( h3 , ix[1] , iy[1] , iz[1] , density ) , 
             _bin_ ( h3 , ix[1] , iy[1] , iz[2] , density ) ,
             _bin_ ( h3 , ix[1] , iy[1] , iz[3] , density ) ) , 
-          _qubic_ 
+          _cubic_ 
           ( z , z0 , z1 , z2 , z3 ,  
             _bin_ ( h3 , ix[1] , iy[2] , iz[0] , density ) , 
             _bin_ ( h3 , ix[1] , iy[2] , iz[1] , density ) , 
@@ -4205,19 +3917,19 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
             _bin_ ( h3 , ix[1] , iy[2] , iz[3] , density ) ) ) , 
         _quadratic_ 
         ( y , y0, y1 , y2 , 
-          _qubic_ 
+          _cubic_ 
           ( z , z0 , z1 , z2 , z3 ,  
             _bin_ ( h3 , ix[2] , iy[0] , iz[0] , density ) , 
             _bin_ ( h3 , ix[2] , iy[0] , iz[1] , density ) , 
             _bin_ ( h3 , ix[2] , iy[0] , iz[2] , density ) ,
             _bin_ ( h3 , ix[2] , iy[0] , iz[3] , density ) ) ,
-          _qubic_ 
+          _cubic_ 
           ( z , z0 , z1 , z2 , z3 ,  
             _bin_ ( h3 , ix[2] , iy[1] , iz[0] , density ) , 
             _bin_ ( h3 , ix[2] , iy[1] , iz[1] , density ) , 
             _bin_ ( h3 , ix[2] , iy[1] , iz[2] , density ) ,
             _bin_ ( h3 , ix[2] , iy[1] , iz[3] , density ) ) , 
-          _qubic_ 
+          _cubic_ 
           ( z , z0 , z1 , z2 , z3 ,  
             _bin_ ( h3 , ix[2] , iy[2] , iz[0] , density ) , 
             _bin_ ( h3 , ix[2] , iy[2] , iz[1] , density ) , 
@@ -4225,19 +3937,19 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
             _bin_ ( h3 , ix[2] , iy[2] , iz[3] , density ) ) ) ,
         _quadratic_ 
         ( y , y0, y1 , y2 , 
-          _qubic_ 
+          _cubic_ 
           ( z , z0 , z1 , z2 , z3 ,  
             _bin_ ( h3 , ix[3] , iy[0] , iz[0] , density ) , 
             _bin_ ( h3 , ix[3] , iy[0] , iz[1] , density ) , 
             _bin_ ( h3 , ix[3] , iy[0] , iz[2] , density ) ,
             _bin_ ( h3 , ix[3] , iy[0] , iz[3] , density ) ) ,
-          _qubic_ 
+          _cubic_ 
           ( z , z0 , z1 , z2 , z3 ,  
             _bin_ ( h3 , ix[3] , iy[1] , iz[0] , density ) , 
             _bin_ ( h3 , ix[3] , iy[1] , iz[1] , density ) , 
             _bin_ ( h3 , ix[3] , iy[1] , iz[2] , density ) ,
             _bin_ ( h3 , ix[3] , iy[1] , iz[3] , density ) ) , 
-          _qubic_ 
+          _cubic_ 
           ( z , z0 , z1 , z2 , z3 ,  
             _bin_ ( h3 , ix[3] , iy[2] , iz[0] , density ) , 
             _bin_ ( h3 , ix[3] , iy[2] , iz[1] , density ) , 
@@ -4245,10 +3957,10 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
             _bin_ ( h3 , ix[3] , iy[2] , iz[3] , density ) ) ) ) ;
   }
   //
-  else if ( Nearest  == itypex && Qubic == itypey && Qubic == itypez )  // (61) 
+  else if ( Nearest  == itypex && Cubic == itypey && Cubic == itypez )  // (61) 
   {
     // CORRECT QUBIC INTERPOLATION IN Y 
-    const std::array<unsigned int,4> iy = _qubic_indices_ ( iby , nby , y , yc ) ;
+    const std::array<unsigned int,4> iy = _cubic_indices_ ( iby , nby , y , yc ) ;
     //
     const double y0 = ay->GetBinCenter ( iy[0] ) ;
     const double y1 = ay->GetBinCenter ( iy[1] ) ;
@@ -4256,34 +3968,34 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
     const double y3 = ay->GetBinCenter ( iy[3] ) ;
     //
     // CORRECT QUBIC INTERPOLATION IN Z
-    const std::array<unsigned int,4> iz = _qubic_indices_ ( ibz , nbz , z , zc ) ;
+    const std::array<unsigned int,4> iz = _cubic_indices_ ( ibz , nbz , z , zc ) ;
     //
     const double z0 = az->GetBinCenter ( iz[0] ) ;
     const double z1 = az->GetBinCenter ( iz[1] ) ;
     const double z2 = az->GetBinCenter ( iz[2] ) ;
     const double z3 = az->GetBinCenter ( iz[3] ) ;
     //
-    return _qubic_ 
+    return _cubic_ 
       ( y , y0, y1 , y2 , y3 , 
-        _qubic_ 
+        _cubic_ 
         ( z , z0 , z1 , z2 , z3 ,  
           _bin_ ( h3 , ibx , iy[0] , iz[0] , density ) , 
           _bin_ ( h3 , ibx , iy[0] , iz[1] , density ) , 
           _bin_ ( h3 , ibx , iy[0] , iz[2] , density ) ,
           _bin_ ( h3 , ibx , iy[0] , iz[3] , density ) ) ,
-        _qubic_ 
+        _cubic_ 
         ( z , z0 , z1 , z2 , z3 ,  
           _bin_ ( h3 , ibx , iy[1] , iz[0] , density ) , 
           _bin_ ( h3 , ibx , iy[1] , iz[1] , density ) , 
           _bin_ ( h3 , ibx , iy[1] , iz[2] , density ) ,
           _bin_ ( h3 , ibx , iy[1] , iz[3] , density ) ) , 
-        _qubic_ 
+        _cubic_ 
         ( z , z0 , z1 , z2 , z3 ,  
           _bin_ ( h3 , ibx , iy[2] , iz[0] , density ) , 
           _bin_ ( h3 , ibx , iy[2] , iz[1] , density ) , 
           _bin_ ( h3 , ibx , iy[2] , iz[2] , density ) ,
           _bin_ ( h3 , ibx , iy[2] , iz[3] , density ) ) , 
-        _qubic_ 
+        _cubic_ 
         ( z , z0 , z1 , z2 , z3 ,  
           _bin_ ( h3 , ibx , iy[3] , iz[0] , density ) , 
           _bin_ ( h3 , ibx , iy[3] , iz[1] , density ) , 
@@ -4291,7 +4003,7 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
           _bin_ ( h3 , ibx , iy[3] , iz[3] , density ) ) ) ;
   }
   //
-  else if ( Linear == itypex && Qubic == itypey && Qubic == itypez )  // (62) 
+  else if ( Linear == itypex && Cubic == itypey && Cubic == itypez )  // (62) 
   {
     // CORRECT LINEAR INTERPOLATION IN X
     const std::array<unsigned int,2> ix = _linear_indices_ ( ibx , nbx , x , xc ) ;
@@ -4300,7 +4012,7 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
     const double x1 = ax->GetBinCenter ( ix[1] ) ;
     //
     // CORRECT QUBIC INTERPOLATION IN Y 
-    const std::array<unsigned int,4> iy = _qubic_indices_ ( iby , nby , y , yc ) ;
+    const std::array<unsigned int,4> iy = _cubic_indices_ ( iby , nby , y , yc ) ;
     //
     const double y0 = ay->GetBinCenter ( iy[0] ) ;
     const double y1 = ay->GetBinCenter ( iy[1] ) ;
@@ -4308,7 +4020,7 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
     const double y3 = ay->GetBinCenter ( iy[3] ) ;
     //
     // CORRECT QUBIC INTERPOLATION IN Z
-    const std::array<unsigned int,4> iz = _qubic_indices_ ( ibz , nbz , z , zc ) ;
+    const std::array<unsigned int,4> iz = _cubic_indices_ ( ibz , nbz , z , zc ) ;
     //
     const double z0 = az->GetBinCenter ( iz[0] ) ;
     const double z1 = az->GetBinCenter ( iz[1] ) ;
@@ -4317,53 +4029,53 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
     //
     return _linear_
       ( x , x0 , x1 ,        
-      _qubic_ 
+      _cubic_ 
       ( y , y0, y1 , y2 , y3 , 
-        _qubic_ 
+        _cubic_ 
         ( z , z0 , z1 , z2 , z3 ,  
           _bin_ ( h3 , ix[0] , iy[0] , iz[0] , density ) , 
           _bin_ ( h3 , ix[0] , iy[0] , iz[1] , density ) , 
           _bin_ ( h3 , ix[0] , iy[0] , iz[2] , density ) ,
           _bin_ ( h3 , ix[0] , iy[0] , iz[3] , density ) ) ,
-        _qubic_ 
+        _cubic_ 
         ( z , z0 , z1 , z2 , z3 ,  
           _bin_ ( h3 , ix[0] , iy[1] , iz[0] , density ) , 
           _bin_ ( h3 , ix[0] , iy[1] , iz[1] , density ) , 
           _bin_ ( h3 , ix[0] , iy[1] , iz[2] , density ) ,
           _bin_ ( h3 , ix[0] , iy[1] , iz[3] , density ) ) , 
-        _qubic_ 
+        _cubic_ 
         ( z , z0 , z1 , z2 , z3 ,  
           _bin_ ( h3 , ix[0] , iy[2] , iz[0] , density ) , 
           _bin_ ( h3 , ix[0] , iy[2] , iz[1] , density ) , 
           _bin_ ( h3 , ix[0] , iy[2] , iz[2] , density ) ,
           _bin_ ( h3 , ix[0] , iy[2] , iz[3] , density ) ) , 
-        _qubic_ 
+        _cubic_ 
         ( z , z0 , z1 , z2 , z3 ,  
           _bin_ ( h3 , ix[0] , iy[3] , iz[0] , density ) , 
           _bin_ ( h3 , ix[0] , iy[3] , iz[1] , density ) , 
           _bin_ ( h3 , ix[0] , iy[3] , iz[2] , density ) ,
           _bin_ ( h3 , ix[0] , iy[3] , iz[3] , density ) ) ) , 
-      _qubic_ 
+      _cubic_ 
       ( y , y0, y1 , y2 , y3 , 
-        _qubic_ 
+        _cubic_ 
         ( z , z0 , z1 , z2 , z3 ,  
           _bin_ ( h3 , ix[1] , iy[0] , iz[0] , density ) , 
           _bin_ ( h3 , ix[1] , iy[0] , iz[1] , density ) , 
           _bin_ ( h3 , ix[1] , iy[0] , iz[2] , density ) ,
           _bin_ ( h3 , ix[1] , iy[0] , iz[3] , density ) ) ,
-        _qubic_ 
+        _cubic_ 
         ( z , z0 , z1 , z2 , z3 ,  
           _bin_ ( h3 , ix[1] , iy[1] , iz[0] , density ) , 
           _bin_ ( h3 , ix[1] , iy[1] , iz[1] , density ) , 
           _bin_ ( h3 , ix[1] , iy[1] , iz[2] , density ) ,
           _bin_ ( h3 , ix[1] , iy[1] , iz[3] , density ) ) , 
-        _qubic_ 
+        _cubic_ 
         ( z , z0 , z1 , z2 , z3 ,  
           _bin_ ( h3 , ix[1] , iy[2] , iz[0] , density ) , 
           _bin_ ( h3 , ix[1] , iy[2] , iz[1] , density ) , 
           _bin_ ( h3 , ix[1] , iy[2] , iz[2] , density ) ,
           _bin_ ( h3 , ix[1] , iy[2] , iz[3] , density ) ) , 
-        _qubic_ 
+        _cubic_ 
         ( z , z0 , z1 , z2 , z3 ,  
           _bin_ ( h3 , ix[1] , iy[3] , iz[0] , density ) , 
           _bin_ ( h3 , ix[1] , iy[3] , iz[1] , density ) , 
@@ -4371,7 +4083,7 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
           _bin_ ( h3 , ix[1] , iy[3] , iz[3] , density ) ) ) ) ;
   }
   //
-  else if ( Quadratic == itypex && Qubic == itypey && Qubic == itypez )  // (63) 
+  else if ( Quadratic == itypex && Cubic == itypey && Cubic == itypez )  // (63) 
   {
     // CORRECT QUADRATIC INTERPOLATION IN X 
     const std::array<unsigned int,3> ix = _quadratic_indices_ ( ibx , nbx , x , xc ) ;
@@ -4381,7 +4093,7 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
     const double x2 = ax->GetBinCenter ( ix[2] ) ;
     //
     // CORRECT QUBIC INTERPOLATION IN Y 
-    const std::array<unsigned int,4> iy = _qubic_indices_ ( iby , nby , y , yc ) ;
+    const std::array<unsigned int,4> iy = _cubic_indices_ ( iby , nby , y , yc ) ;
     //
     const double y0 = ay->GetBinCenter ( iy[0] ) ;
     const double y1 = ay->GetBinCenter ( iy[1] ) ;
@@ -4389,7 +4101,7 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
     const double y3 = ay->GetBinCenter ( iy[3] ) ;
     //
     // CORRECT QUBIC INTERPOLATION IN Z
-    const std::array<unsigned int,4> iz = _qubic_indices_ ( ibz , nbz , z , zc ) ;
+    const std::array<unsigned int,4> iz = _cubic_indices_ ( ibz , nbz , z , zc ) ;
     //
     const double z0 = az->GetBinCenter ( iz[0] ) ;
     const double z1 = az->GetBinCenter ( iz[1] ) ;
@@ -4398,79 +4110,79 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
     //
     return _quadratic_
       ( x , x0 , x1 , x2 ,         
-        _qubic_ 
+        _cubic_ 
         ( y , y0, y1 , y2 , y3 , 
-          _qubic_ 
+          _cubic_ 
           ( z , z0 , z1 , z2 , z3 ,  
             _bin_ ( h3 , ix[0] , iy[0] , iz[0] , density ) , 
             _bin_ ( h3 , ix[0] , iy[0] , iz[1] , density ) , 
             _bin_ ( h3 , ix[0] , iy[0] , iz[2] , density ) ,
             _bin_ ( h3 , ix[0] , iy[0] , iz[3] , density ) ) ,
-          _qubic_ 
+          _cubic_ 
           ( z , z0 , z1 , z2 , z3 ,  
             _bin_ ( h3 , ix[0] , iy[1] , iz[0] , density ) , 
             _bin_ ( h3 , ix[0] , iy[1] , iz[1] , density ) , 
             _bin_ ( h3 , ix[0] , iy[1] , iz[2] , density ) ,
             _bin_ ( h3 , ix[0] , iy[1] , iz[3] , density ) ) , 
-          _qubic_ 
+          _cubic_ 
           ( z , z0 , z1 , z2 , z3 ,  
             _bin_ ( h3 , ix[0] , iy[2] , iz[0] , density ) , 
             _bin_ ( h3 , ix[0] , iy[2] , iz[1] , density ) , 
             _bin_ ( h3 , ix[0] , iy[2] , iz[2] , density ) ,
             _bin_ ( h3 , ix[0] , iy[2] , iz[3] , density ) ) , 
-          _qubic_ 
+          _cubic_ 
           ( z , z0 , z1 , z2 , z3 ,  
             _bin_ ( h3 , ix[0] , iy[3] , iz[0] , density ) , 
             _bin_ ( h3 , ix[0] , iy[3] , iz[1] , density ) , 
             _bin_ ( h3 , ix[0] , iy[3] , iz[2] , density ) ,
             _bin_ ( h3 , ix[0] , iy[3] , iz[3] , density ) ) ) , 
-        _qubic_ 
+        _cubic_ 
         ( y , y0, y1 , y2 , y3 , 
-          _qubic_ 
+          _cubic_ 
           ( z , z0 , z1 , z2 , z3 ,  
             _bin_ ( h3 , ix[1] , iy[0] , iz[0] , density ) , 
             _bin_ ( h3 , ix[1] , iy[0] , iz[1] , density ) , 
             _bin_ ( h3 , ix[1] , iy[0] , iz[2] , density ) ,
             _bin_ ( h3 , ix[1] , iy[0] , iz[3] , density ) ) ,
-          _qubic_ 
+          _cubic_ 
           ( z , z0 , z1 , z2 , z3 ,  
             _bin_ ( h3 , ix[1] , iy[1] , iz[0] , density ) , 
             _bin_ ( h3 , ix[1] , iy[1] , iz[1] , density ) , 
             _bin_ ( h3 , ix[1] , iy[1] , iz[2] , density ) ,
             _bin_ ( h3 , ix[1] , iy[1] , iz[3] , density ) ) , 
-          _qubic_ 
+          _cubic_ 
           ( z , z0 , z1 , z2 , z3 ,  
             _bin_ ( h3 , ix[1] , iy[2] , iz[0] , density ) , 
             _bin_ ( h3 , ix[1] , iy[2] , iz[1] , density ) , 
             _bin_ ( h3 , ix[1] , iy[2] , iz[2] , density ) ,
             _bin_ ( h3 , ix[1] , iy[2] , iz[3] , density ) ) , 
-          _qubic_ 
+          _cubic_ 
           ( z , z0 , z1 , z2 , z3 ,  
             _bin_ ( h3 , ix[1] , iy[3] , iz[0] , density ) , 
             _bin_ ( h3 , ix[1] , iy[3] , iz[1] , density ) , 
             _bin_ ( h3 , ix[1] , iy[3] , iz[2] , density ) ,
             _bin_ ( h3 , ix[1] , iy[3] , iz[3] , density ) ) ) , 
-        _qubic_ 
+        _cubic_ 
         ( y , y0, y1 , y2 , y3 , 
-          _qubic_ 
+          _cubic_ 
           ( z , z0 , z1 , z2 , z3 ,  
             _bin_ ( h3 , ix[2] , iy[0] , iz[0] , density ) , 
             _bin_ ( h3 , ix[2] , iy[0] , iz[1] , density ) , 
             _bin_ ( h3 , ix[2] , iy[0] , iz[2] , density ) ,
             _bin_ ( h3 , ix[2] , iy[0] , iz[3] , density ) ) ,
-          _qubic_ 
+          _cubic_ 
           ( z , z0 , z1 , z2 , z3 ,  
             _bin_ ( h3 , ix[2] , iy[1] , iz[0] , density ) , 
             _bin_ ( h3 , ix[2] , iy[1] , iz[1] , density ) , 
             _bin_ ( h3 , ix[2] , iy[1] , iz[2] , density ) ,
             _bin_ ( h3 , ix[2] , iy[1] , iz[3] , density ) ) , 
-          _qubic_ 
+          _cubic_ 
           ( z , z0 , z1 , z2 , z3 ,  
             _bin_ ( h3 , ix[2] , iy[2] , iz[0] , density ) , 
             _bin_ ( h3 , ix[2] , iy[2] , iz[1] , density ) , 
             _bin_ ( h3 , ix[2] , iy[2] , iz[2] , density ) ,
             _bin_ ( h3 , ix[2] , iy[2] , iz[3] , density ) ) , 
-          _qubic_ 
+          _cubic_ 
           ( z , z0 , z1 , z2 , z3 ,  
             _bin_ ( h3 , ix[2] , iy[3] , iz[0] , density ) , 
             _bin_ ( h3 , ix[2] , iy[3] , iz[1] , density ) , 
@@ -4478,10 +4190,10 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
             _bin_ ( h3 , ix[2] , iy[3] , iz[3] , density ) ) ) ) ;
   }
   //
-  else if ( Qubic == itypex && Qubic == itypey && Qubic == itypez )  // (64) 
+  else if ( Cubic == itypex && Cubic == itypey && Cubic == itypez )  // (64) 
   {
     // CORRECT QUBIC INTERPOLATION IN X 
-    const std::array<unsigned int,4> ix = _qubic_indices_ ( ibx , nbx , x , xc ) ;
+    const std::array<unsigned int,4> ix = _cubic_indices_ ( ibx , nbx , x , xc ) ;
     //
     const double x0 = ax->GetBinCenter ( ix[0] ) ;
     const double x1 = ax->GetBinCenter ( ix[1] ) ;
@@ -4489,7 +4201,7 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
     const double x3 = ax->GetBinCenter ( ix[3] ) ;
     //
     // CORRECT QUBIC INTERPOLATION IN Y 
-    const std::array<unsigned int,4> iy = _qubic_indices_ ( iby , nby , y , yc ) ;
+    const std::array<unsigned int,4> iy = _cubic_indices_ ( iby , nby , y , yc ) ;
     //
     const double y0 = ay->GetBinCenter ( iy[0] ) ;
     const double y1 = ay->GetBinCenter ( iy[1] ) ;
@@ -4497,114 +4209,114 @@ Gaudi::Math::HistoInterpolation::interpolate_3D
     const double y3 = ay->GetBinCenter ( iy[3] ) ;
     //
     // CORRECT QUBIC INTERPOLATION IN Z
-    const std::array<unsigned int,4> iz = _qubic_indices_ ( ibz , nbz , z , zc ) ;
+    const std::array<unsigned int,4> iz = _cubic_indices_ ( ibz , nbz , z , zc ) ;
     //
     const double z0 = az->GetBinCenter ( iz[0] ) ;
     const double z1 = az->GetBinCenter ( iz[1] ) ;
     const double z2 = az->GetBinCenter ( iz[2] ) ;
     const double z3 = az->GetBinCenter ( iz[3] ) ;
     //
-    return _qubic_
+    return _cubic_
       ( x , x0 , x1 , x2 , x3 ,         
-        _qubic_ 
+        _cubic_ 
         ( y , y0, y1 , y2 , y3 , 
-          _qubic_ 
+          _cubic_ 
           ( z , z0 , z1 , z2 , z3 ,  
             _bin_ ( h3 , ix[0] , iy[0] , iz[0] , density ) , 
             _bin_ ( h3 , ix[0] , iy[0] , iz[1] , density ) , 
             _bin_ ( h3 , ix[0] , iy[0] , iz[2] , density ) ,
             _bin_ ( h3 , ix[0] , iy[0] , iz[3] , density ) ) ,
-          _qubic_ 
+          _cubic_ 
           ( z , z0 , z1 , z2 , z3 ,  
             _bin_ ( h3 , ix[0] , iy[1] , iz[0] , density ) , 
             _bin_ ( h3 , ix[0] , iy[1] , iz[1] , density ) , 
             _bin_ ( h3 , ix[0] , iy[1] , iz[2] , density ) ,
             _bin_ ( h3 , ix[0] , iy[1] , iz[3] , density ) ) , 
-          _qubic_ 
+          _cubic_ 
           ( z , z0 , z1 , z2 , z3 ,  
             _bin_ ( h3 , ix[0] , iy[2] , iz[0] , density ) , 
             _bin_ ( h3 , ix[0] , iy[2] , iz[1] , density ) , 
             _bin_ ( h3 , ix[0] , iy[2] , iz[2] , density ) ,
             _bin_ ( h3 , ix[0] , iy[2] , iz[3] , density ) ) , 
-          _qubic_ 
+          _cubic_ 
           ( z , z0 , z1 , z2 , z3 ,  
             _bin_ ( h3 , ix[0] , iy[3] , iz[0] , density ) , 
             _bin_ ( h3 , ix[0] , iy[3] , iz[1] , density ) , 
             _bin_ ( h3 , ix[0] , iy[3] , iz[2] , density ) ,
             _bin_ ( h3 , ix[0] , iy[3] , iz[3] , density ) ) ) , 
-        _qubic_ 
+        _cubic_ 
         ( y , y0, y1 , y2 , y3 , 
-          _qubic_ 
+          _cubic_ 
           ( z , z0 , z1 , z2 , z3 ,  
             _bin_ ( h3 , ix[1] , iy[0] , iz[0] , density ) , 
             _bin_ ( h3 , ix[1] , iy[0] , iz[1] , density ) , 
             _bin_ ( h3 , ix[1] , iy[0] , iz[2] , density ) ,
             _bin_ ( h3 , ix[1] , iy[0] , iz[3] , density ) ) ,
-          _qubic_ 
+          _cubic_ 
           ( z , z0 , z1 , z2 , z3 ,  
             _bin_ ( h3 , ix[1] , iy[1] , iz[0] , density ) , 
             _bin_ ( h3 , ix[1] , iy[1] , iz[1] , density ) , 
             _bin_ ( h3 , ix[1] , iy[1] , iz[2] , density ) ,
             _bin_ ( h3 , ix[1] , iy[1] , iz[3] , density ) ) , 
-          _qubic_ 
+          _cubic_ 
           ( z , z0 , z1 , z2 , z3 ,  
             _bin_ ( h3 , ix[1] , iy[2] , iz[0] , density ) , 
             _bin_ ( h3 , ix[1] , iy[2] , iz[1] , density ) , 
             _bin_ ( h3 , ix[1] , iy[2] , iz[2] , density ) ,
             _bin_ ( h3 , ix[1] , iy[2] , iz[3] , density ) ) , 
-          _qubic_ 
+          _cubic_ 
           ( z , z0 , z1 , z2 , z3 ,  
             _bin_ ( h3 , ix[1] , iy[3] , iz[0] , density ) , 
             _bin_ ( h3 , ix[1] , iy[3] , iz[1] , density ) , 
             _bin_ ( h3 , ix[1] , iy[3] , iz[2] , density ) ,
             _bin_ ( h3 , ix[1] , iy[3] , iz[3] , density ) ) ) , 
-        _qubic_ 
+        _cubic_ 
         ( y , y0, y1 , y2 , y3 , 
-          _qubic_ 
+          _cubic_ 
           ( z , z0 , z1 , z2 , z3 ,  
             _bin_ ( h3 , ix[2] , iy[0] , iz[0] , density ) , 
             _bin_ ( h3 , ix[2] , iy[0] , iz[1] , density ) , 
             _bin_ ( h3 , ix[2] , iy[0] , iz[2] , density ) ,
             _bin_ ( h3 , ix[2] , iy[0] , iz[3] , density ) ) ,
-          _qubic_ 
+          _cubic_ 
           ( z , z0 , z1 , z2 , z3 ,  
             _bin_ ( h3 , ix[2] , iy[1] , iz[0] , density ) , 
             _bin_ ( h3 , ix[2] , iy[1] , iz[1] , density ) , 
             _bin_ ( h3 , ix[2] , iy[1] , iz[2] , density ) ,
             _bin_ ( h3 , ix[2] , iy[1] , iz[3] , density ) ) , 
-          _qubic_ 
+          _cubic_ 
           ( z , z0 , z1 , z2 , z3 ,  
             _bin_ ( h3 , ix[2] , iy[2] , iz[0] , density ) , 
             _bin_ ( h3 , ix[2] , iy[2] , iz[1] , density ) , 
             _bin_ ( h3 , ix[2] , iy[2] , iz[2] , density ) ,
             _bin_ ( h3 , ix[2] , iy[2] , iz[3] , density ) ) , 
-          _qubic_ 
+          _cubic_ 
           ( z , z0 , z1 , z2 , z3 ,  
             _bin_ ( h3 , ix[2] , iy[3] , iz[0] , density ) , 
             _bin_ ( h3 , ix[2] , iy[3] , iz[1] , density ) , 
             _bin_ ( h3 , ix[2] , iy[3] , iz[2] , density ) ,
             _bin_ ( h3 , ix[2] , iy[3] , iz[3] , density ) ) ) , 
-        _qubic_ 
+        _cubic_ 
         ( y , y0, y1 , y2 , y3 , 
-          _qubic_ 
+          _cubic_ 
           ( z , z0 , z1 , z2 , z3 ,  
             _bin_ ( h3 , ix[3] , iy[0] , iz[0] , density ) , 
             _bin_ ( h3 , ix[3] , iy[0] , iz[1] , density ) , 
             _bin_ ( h3 , ix[3] , iy[0] , iz[2] , density ) ,
             _bin_ ( h3 , ix[3] , iy[0] , iz[3] , density ) ) ,
-          _qubic_ 
+          _cubic_ 
           ( z , z0 , z1 , z2 , z3 ,  
             _bin_ ( h3 , ix[3] , iy[1] , iz[0] , density ) , 
             _bin_ ( h3 , ix[3] , iy[1] , iz[1] , density ) , 
             _bin_ ( h3 , ix[3] , iy[1] , iz[2] , density ) ,
             _bin_ ( h3 , ix[3] , iy[1] , iz[3] , density ) ) , 
-          _qubic_ 
+          _cubic_ 
           ( z , z0 , z1 , z2 , z3 ,  
             _bin_ ( h3 , ix[3] , iy[2] , iz[0] , density ) , 
             _bin_ ( h3 , ix[3] , iy[2] , iz[1] , density ) , 
             _bin_ ( h3 , ix[3] , iy[2] , iz[2] , density ) ,
             _bin_ ( h3 , ix[3] , iy[2] , iz[3] , density ) ) , 
-          _qubic_ 
+          _cubic_ 
           ( z , z0 , z1 , z2 , z3 ,  
             _bin_ ( h3 , ix[3] , iy[3] , iz[0] , density ) , 
             _bin_ ( h3 , ix[3] , iy[3] , iz[1] , density ) , 

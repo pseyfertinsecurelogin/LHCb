@@ -590,51 +590,12 @@ bool Gaudi::Math::affine_transform
   return true ;
 }
 // ============================================================================
-namespace 
-{
-  // ==========================================================================
-  /** evaluate the integral for monomial 
-   *  @param N    the polynomial degree 
-   *  @param low  low edge of integration 
-   *  @param high high edge of integration 
-   */  
-  inline long double _monomial_int_ 
-  ( const unsigned int N    ,
-    const long double  low  , 
-    const long double  high ) 
-  {
-    // trivial cases 
-    if      ( s_equal ( low , high ) ) { return 0          ; }
-    else if ( 0 == N                 ) { return high - low ; }
-    else if ( 1 == N                 )
-    { return 0.5 * ( high * high - low * low ) ; }
-    else if ( high < low ) 
-    { return -_monomial_int_ ( N ,  high , low )  ; }
-    //
-    const long double ihigh = Gaudi::Math::pow ( high , N + 1 ) ;
-    const long double ilow  = Gaudi::Math::pow ( low  , N + 1 ) ;
-    //
-    return ( ihigh - ilow ) / ( N + 1 ) ;
-  }
-  // ========================================================================== 
-  /** evaluate the derivative for monomial 
-   *  @param N the polynomial degree
-   *  @param x the point 
-   */
-  inline long double _monomial_der_
-  ( const unsigned int N ,
-    const long double  x )  
-  {
-    //
-    if      ( 0 == N       ) { return 0   ; }
-    else if ( 1 == N       ) { return 1   ; }
-    //
-    return N * Gaudi::Math::pow ( x , N - 1 ) ;
-  }
-  // ==========================================================================
-}
+
+
+
+
 // ============================================================================
-/* class Polynomial
+/*  class Polynomial
  *  Trivial polynomial
  *  \f$ f(x) = \sum_i \p_i x^i\f$
  *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
