@@ -220,15 +220,10 @@ namespace Decays
     // ======================================================================
     /// assignment operator
     Tree_& operator=( const  Tree_&           right ) ; // assignment
-    /// move assignment oerator 
+    /// move assignment operator 
     Tree_& operator=(        Tree_&&          right ) = default; // assignment
     /// pseudo-assignment operator
     Tree_& operator=( const iTree_<PARTICLE>& right ) ; // assignment
-    // ======================================================================
-  private:
-    // ======================================================================
-    /// the default constructor is private one
-    Tree_ () ; // no  default constructor
     // ======================================================================
   private:
     // ======================================================================

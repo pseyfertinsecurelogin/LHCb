@@ -42,7 +42,7 @@ namespace LoKi
     /** Standard constructor from "void"-functor
      *  @param fun  void-functor 
      */
-    Value ( const LoKi::Functor<void,TYPE2>& fun ) 
+    explicit Value ( const LoKi::Functor<void,TYPE2>& fun ) 
       : LoKi::AuxFunBase         ( std::tie( fun ) )  
       , m_void ( fun )
     {}
@@ -56,11 +56,6 @@ namespace LoKi
     virtual std::ostream& fillStream( std::ostream& s ) const 
     { return m_void.fillStream ( s ) ; }
     // ========================================================================   
-  private:
-    // ========================================================================
-    /// default constructor is disabled 
-    Value () ; // default constructor is disabled 
-    // ========================================================================
   private:
     // ========================================================================
     /// the actual storage of void-functor 
@@ -79,7 +74,6 @@ namespace LoKi
      */
     Value ( const LoKi::Functor<void,TYPE2>& fun ) 
       : LoKi::AuxFunBase         ( std::tie ( fun ) )  
-      , LoKi::Functor<void,TYPE2>() 
       , m_void ( fun )
     {}
     /// clone method (mandatory) 
@@ -92,11 +86,6 @@ namespace LoKi
     virtual std::ostream& fillStream( std::ostream& s ) const 
     { return m_void.fillStream ( s ) ; }
     // ========================================================================   
-  private:
-    // ========================================================================
-    /// default constructor is disabled 
-    Value () ; // default constructor is disabled 
-    // ========================================================================
   private:
     // ========================================================================
     /// the actual storage of void-functor 

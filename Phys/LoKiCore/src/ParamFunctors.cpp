@@ -1,4 +1,3 @@
-// $Id$ 
 // ============================================================================
 // Include files 
 // ============================================================================
@@ -40,13 +39,6 @@
  *  contributions and advices from G.Raven, J.van Tilburg,
  *  A.Golutvin, P.Koppenburg have been used in the design.
  *
- * By usage of this code one clearly states the disagreement 
- * with the smear campaign of Dr.O.Callot et al.: 
- * ``No Vanya's lines are allowed in LHCb/Gaudi software''
- *
- *                    $Revision$
- *  Last modification $Date$
- *                 by $Author$
  */
 // ============================================================================
 namespace 
@@ -181,12 +173,10 @@ LoKi::Parameters::ParamBase::ParamBase
 ( const LoKi::Param& property )
   : LoKi::AuxFunBase (   )
   , m_param          ( property )
-  , m_property       ( 0 )
+  , m_property       ( nullptr )
 {
   if ( gaudi() ) { getProp() ; }
 }
-// ============================================================================
-LoKi::Parameters::ParamBase::~ParamBase() { m_property = 0 ; }
 // ============================================================================
 void LoKi::Parameters::ParamBase::getProp() const
 { 
@@ -200,14 +190,7 @@ void LoKi::Parameters::ParamBase::getProp() const
 LoKi::Parameters::Parameter::Parameter  
 ( const LoKi::Param& param ) 
   : LoKi::AuxFunBase ( std::tie ( param ) )  
-  , LoKi::Functor<void,double> () 
   , LoKi::Parameters::ParamBase ( param ) 
-  , m_map_d     ( false ) 
-  , m_map_f     ( false ) 
-  , m_map_i     ( false ) 
-  , m_scalar_d  ( false ) 
-  , m_scalar_f  ( false ) 
-  , m_scalar_i  ( false ) 
 {
   if ( gaudi() ) { getProp() ; }
 }
@@ -217,21 +200,10 @@ LoKi::Parameters::Parameter::Parameter
 LoKi::Parameters::Parameter::Parameter  
 ( const std::string& param ) 
   : LoKi::AuxFunBase ( std::tie ( param ) )  
-  , LoKi::Functor<void,double> () 
   , LoKi::Parameters::ParamBase ( param ) 
-  , m_map_d     ( false ) 
-  , m_map_f     ( false ) 
-  , m_map_i     ( false ) 
-  , m_scalar_d  ( false ) 
-  , m_scalar_f  ( false ) 
-  , m_scalar_i  ( false ) 
 {
   if ( gaudi() ) { getProp() ; }
 }
-// ============================================================================
-// virtual destructor 
-// ============================================================================
-LoKi::Parameters::Parameter::~Parameter () {}
 // ============================================================================
 // clone-method: "virtual constructor"
 // ============================================================================
@@ -242,7 +214,7 @@ LoKi::Parameters::Parameter::clone() const
 void LoKi::Parameters::Parameter::getParams() const 
 {
   const Property* p = property() ;
-  if ( 0 == p ) { getProp() ; }
+  if ( !p ) { getProp() ; }
   //
   m_map_d     = dynamic_cast<const PropertyWithValue<MAP_D>*>   ( p ) ;
   m_map_f     = dynamic_cast<const PropertyWithValue<MAP_F>*>   ( p ) ;
@@ -291,8 +263,8 @@ LoKi::Parameters::Parameter::operator ()( /* argument */ ) const
   {
     const PropertyWithValue<MAP_D>* p = 
       static_cast<const PropertyWithValue<MAP_D>*>( property() ) ;
-    const MAP_D& m = p->value() ;
-    MAP_D::const_iterator it = m.find ( param().key() ) ;
+    const auto& m = p->value() ;
+    auto it = m.find ( param().key() ) ;
     Assert ( m.end() != it , "No proper key is found" ) ;
     return it->second ;
   }
@@ -300,8 +272,8 @@ LoKi::Parameters::Parameter::operator ()( /* argument */ ) const
   {
     const PropertyWithValue<MAP_F>* p = 
       static_cast<const PropertyWithValue<MAP_F>*>( property() ) ;
-    const MAP_F& m = p->value() ;
-    MAP_F::const_iterator it = m.find ( param().key() ) ;
+    const auto& m = p->value() ;
+    auto it = m.find ( param().key() ) ;
     Assert ( m.end() != it , "No proper key is found" ) ;
     return it->second ;
   }
@@ -309,8 +281,8 @@ LoKi::Parameters::Parameter::operator ()( /* argument */ ) const
   {
     const PropertyWithValue<MAP_I>* p = 
       static_cast<const PropertyWithValue<MAP_I>*>( property() ) ;
-    const MAP_I& m = p->value() ;
-    MAP_I::const_iterator it = m.find ( param().key() ) ;
+    const auto& m = p->value() ;
+    auto it = m.find ( param().key() ) ;
     Assert ( m.end() != it , "No proper key is found" ) ;
     return it->second ;
   }
@@ -322,6 +294,3 @@ LoKi::Parameters::Parameter::operator ()( /* argument */ ) const
 // ============================================================================
 // The END 
 // ============================================================================
-
-
-

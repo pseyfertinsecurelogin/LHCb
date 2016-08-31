@@ -89,11 +89,6 @@ namespace LoKi
       { return s << "Bind1st(" << m_fun << ")" ; }
     private:
       // ======================================================================
-      // the default constructor is disabled
-      Binder1st() ; ///< the default constructor is disabled
-      // ======================================================================
-    private:
-      // ======================================================================
       // the fixed argument
       typename Holder_::First m_first ;  ///< the fixed argument
       /// the actual function
@@ -154,11 +149,6 @@ namespace LoKi
       /// OPTIONAL :: nice printout
       virtual std::ostream& fillStream ( std::ostream& s ) const
       { return s << "Bind2nd(" << m_fun << ")" ; }
-      // ======================================================================
-    private:
-      // ======================================================================
-      // the default constructor is disabled
-      Binder2nd() ; ///< the default constructor is disabled
       // ======================================================================
     private:
       // ======================================================================

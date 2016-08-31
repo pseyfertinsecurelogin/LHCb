@@ -1,14 +1,14 @@
 // ============================================================================
-#ifndef LOKI_CONSTVIEW_H 
+#ifndef LOKI_CONSTVIEW_H
 #define LOKI_CONSTVIEW_H 1
 // ============================================================================
 // Include files
 // ============================================================================
-// STD & STL 
+// STD & STL
 // ============================================================================
 #include <utility>
 // ============================================================================
-// LoKiCore 
+// LoKiCore
 // ============================================================================
 #include "LoKi/ConstIterator.h"
 // ============================================================================
@@ -26,13 +26,13 @@
  *  @date 2006-03-29
  */
 // ============================================================================
-namespace LoKi 
+namespace LoKi
 {
   // ==========================================================================
   /** @class ConstView ConstView.h LoKi/ConstView.h
-   *  
    *
-   *  @author Vanya BELYAEV ibelyaev@physics.syr.edu 
+   *
+   *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date   2006-03-29
    */
   template <class CONTAINER>
@@ -52,48 +52,48 @@ namespace LoKi
     typedef typename CONTAINER::size_type                          size_type ;
   protected:
     typedef std::pair<iterator,iterator> _Base ;
-  public: 
+  public:
     /// default constructor constructor
-    ConstView () : _Base(){} ; 
-    /// constructor form iterators 
+    ConstView ()  = default;
+    /// constructor form iterators
     template <class IT>
     ConstView ( IT first , IT last ) : _Base( first , last ) {}
     /// constructor from the "base"
     template <class IT>
     ConstView ( const std::pair<IT,IT>& base ) : _Base  ( base ) {}
-    /// constructor form the container 
+    /// constructor form the container
     ConstView ( const CONTAINER& c ) : _Base( c.begin() , c.end() ) {}
-    /// compiler generated copy , assigmenet and destructor are OK
+    /// compiler generated copy , assignment and destructor are OK
   public:
-    /// begin-iterator for the sequence 
+    /// begin-iterator for the sequence
     const iterator& begin () const { return _Base::first  ; }
-    /// end-iterator for the sequence 
+    /// end-iterator for the sequence
     const iterator& end   () const { return _Base::second ; }
-    /// the first eqlement : undefined for empty ranges 
-    const_reference front () const { return  *begin() ; } 
-    /// the last element : undefined for empty ranges 
+    /// the first eqlement : undefined for empty ranges
+    const_reference front () const { return  *begin() ; }
+    /// the last element : undefined for empty ranges
     const_reference back  () const { return  *(begin()+(size()-1)) ; }
-    /// empty sequence ? 
+    /// empty sequence ?
     bool empty () const { return _Base::first == _Base::second  ; }
-    /// number of elements in the sequence 
+    /// number of elements in the sequence
     size_type size  () const { return _Base::second - _Base::first   ; }
-    /// get the element at the given index 
-    const_reference operator() ( const size_type index ) const 
+    /// get the element at the given index
+    const_reference operator() ( const size_type index ) const
     { return *(begin() + index); }
-    /// get the element at the given index 
+    /// get the element at the given index
     const_reference operator[] ( const size_type index ) const
     { return (*this)( index ) ; }
-    /// get the element at the given index 
+    /// get the element at the given index
     const_reference at         ( const size_type index ) const
     { return (*this)( index ) ; }
-    /// get the slice : undefined for invalid indices 
-    ConstView slice ( size_type i1 , size_type i2 ) const 
+    /// get the slice : undefined for invalid indices
+    ConstView slice ( size_type i1 , size_type i2 ) const
     { return ConstView( begin() + i1 , begin() + i2 ) ; }
   };
-  // ==========================================================================  
+  // ==========================================================================
 } // end of namespace LoKi
 // ============================================================================
-// The END 
+// The END
 // ============================================================================
 #endif // LOKI_CONSTVIEW_H
 // ============================================================================

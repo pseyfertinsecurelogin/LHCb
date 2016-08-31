@@ -112,11 +112,6 @@ namespace LoKi
       // ======================================================================
     private:
       // ======================================================================
-      /// no default constructor
-      Counter () ; //  no default constructor
-      // ======================================================================
-    private:
-      // ======================================================================
       /// the "main" predicate:
       LoKi::FunctorFromFunctor<TYPE,TYPE2> m_cut ;      // the "main" predicate
       /// generic counter used for monitoring:
@@ -165,11 +160,6 @@ namespace LoKi
       { return m_cut.fillStream ( s ) ; }
       /// OPTIONAL: delegate ID:
       virtual std::size_t id() const { return m_cut.id() ; }
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// no default constructor
-      Counter () ; //  no default constructor
       // ======================================================================
     private:
       // ======================================================================
@@ -269,11 +259,6 @@ namespace LoKi
       // ======================================================================
     private:
       // ======================================================================
-      /// no default constructor
-      Plot() ;                                       // no default constructor
-      // ======================================================================
-    private:
-      // ======================================================================
       /// the "main" function:
       LoKi::FunctorFromFunctor<TYPE,TYPE2> m_fun ; // the "main" function
       /// the histogram for monitoring
@@ -331,11 +316,6 @@ namespace LoKi
       /// delegate ID:
       virtual std::size_t id() const { return m_fun.id() ; }
       // ======================================================================
-    private:
-      // ======================================================================
-      /// no default constructor
-      Plot() ; // no default constructor
-     // ======================================================================
     private:
       // ======================================================================
       /// the "main" function:
@@ -427,11 +407,6 @@ namespace LoKi
       // ======================================================================
     private:
       // ======================================================================
-      /// the default constructor is disabled
-      Printer() ; // the default constructor is disabled
-      // ======================================================================
-    private:
-      // ======================================================================
       /// the "main" functor
       LoKi::FunctorFromFunctor<TYPE,TYPE2> m_fun ; // the "main" functor
       /// the reference for the stream
@@ -501,11 +476,6 @@ namespace LoKi
       { return m_fun.fillStream ( s ) ; }
       /// OPTIONAL: delegate ID:
       virtual std::size_t id() const { return m_fun.id() ; }
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      Printer() ; // the default constructor is disabled
       // ======================================================================
     private:
       // ======================================================================

@@ -1,5 +1,5 @@
 // ============================================================================
-#ifndef LOKI_HOLDER_H 
+#ifndef LOKI_HOLDER_H
 #define LOKI_HOLDER_H 1
 // ============================================================================
 // Include files
@@ -19,16 +19,16 @@
  *
  *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
  */
-namespace LoKi 
+namespace LoKi
 {
   // ==========================================================================
   /** @class Holder Holder.h LoKi/Holder.h
-   *  Helper class to treat 2-argument functions 
+   *  Helper class to treat 2-argument functions
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date   2007-06-08
    */
   template <class TYPE1,class TYPE2>
-  struct Holder 
+  struct Holder
     : public std::pair <typename LoKi::Field<const TYPE1>::Type,
                         typename LoKi::Field<const TYPE2>::Type>
   {
@@ -40,14 +40,14 @@ namespace LoKi
     // ========================================================================
   public:
     // ========================================================================
-    /// constructor from data fields (including the default) 
-    Holder ( const TYPE1& f , const TYPE2& s  ) 
+    /// constructor from data fields (including the default)
+    Holder ( const TYPE1& f , const TYPE2& s  )
       : Pair ( First ( f ) , Second ( s ) ) {}
-    /// constructor from the base 
+    /// constructor from the base
     Holder ( const Pair & base   ) : Pair ( base ) {}
-    /// default constructor 
+    /// default constructor
     Holder ( )                     : Pair ( )      {}
-    /// copy constuctor 
+    /// copy constuctor
     Holder ( const Holder& copy  ) : Pair ( copy ) {}
     // ========================================================================
   };

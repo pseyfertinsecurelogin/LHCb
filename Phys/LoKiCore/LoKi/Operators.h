@@ -54,7 +54,7 @@ namespace LoKi
             typename TYPE  = typename details::LF2<F1,F2>::type1,
             typename TYPE2 = typename details::LF2<F1,F2>::type2>
   inline   LoKi::And<TYPE,TYPE2>
-  operator&&  ( F1&& fun1 , F2&& fun2 )
+  operator&&( F1&& fun1 , F2&& fun2 )
   {
       return { std::forward<F1>(fun1), std::forward<F2>(fun2) };
   }

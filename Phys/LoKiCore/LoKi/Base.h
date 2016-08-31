@@ -1,64 +1,64 @@
 // ============================================================================
-#ifndef LOKI_BASE_H 
+#ifndef LOKI_BASE_H
 #define LOKI_BASE_H 1
 // ============================================================================
 // Include files
 // ============================================================================
-// LoKiCore 
+// LoKiCore
 // ============================================================================
 #include "LoKi/IReporter.h"
 #include "LoKi/Interface.h"
 // ============================================================================
 /** @file LoKi/Base.h
  *
- *  This file is a part of LoKi project - 
+ *  This file is a part of LoKi project -
  *    "C++ ToolKit  for Smart and Friendly Physics Analysis"
  *
  *  The package has been designed with the kind help from
- *  Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas, 
- *  contributions and advices from G.Raven, J.van Tilburg, 
+ *  Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas,
+ *  contributions and advices from G.Raven, J.van Tilburg,
  *  A.Golutvin, P.Koppenburg have been used in the design.
  *
  *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
  *  @date 2006-03-10
  */
 // ============================================================================
-namespace LoKi 
-{ 
+namespace LoKi
+{
   // ===========================================================================
-  /** @class Base 
-   *  
-   *  the base class for complex LoKi objects 
+  /** @class Base
+   *
+   *  the base class for complex LoKi objects
    *
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date   2006-03-09
    */
-  class Base 
+  class Base
   {
-  public: 
+  public:
     // ========================================================================
-    /// get the name of base object 
+    /// get the name of base object
     inline  const std::string& name     () const { return m_name ; }
-    /// get the type of the base object 
+    /// get the type of the base object
     virtual const std::string& type     () const ;
-    /// get the pair "type/name" of the object 
-    inline  const std::string& typeName () const 
+    /// get the pair "type/name" of the object
+    inline  const std::string& typeName () const
     {
-      if ( m_typeName.empty() ) { m_typeName = type() + "/" + name() ; } 
+      if ( m_typeName.empty() ) { m_typeName = type() + "/" + name() ; }
       return m_typeName ;
-    } 
+    }
     // ========================================================================
   protected:
     // ========================================================================
     /// Standard constructor
-    Base 
-    ( const std::string& name     = "<Anonymous>" , 
+    Base
+    ( const std::string& name     = "<Anonymous>" ,
       const IReporter*   reporter = 0             ) ;
-    /// copy constructor 
-    Base ( const Base& right ) ;    
+    /// copy constructor
+    Base ( const Base& right ) ;
     /// destructor: virtual and protected:
     virtual ~Base() ; ///< Destructor
-    /// assignement 
+    /// assignement
     Base& operator=( const Base& ) ;
     // ========================================================================
   protected:
@@ -89,7 +89,7 @@ namespace LoKi
     StatusCode Error
     ( const std::string& msg ,
       const StatusCode   st  = StatusCode::FAILURE ,
-      const size_t       mx  = 10                  ) const ;    
+      const size_t       mx  = 10                  ) const ;
     /** Print the warning message and return with the given StatusCode.
      *
      *  Also performs statistical analysis of the error messages and
@@ -117,106 +117,106 @@ namespace LoKi
     ( const std::string& msg ,
       const StatusCode   st  = StatusCode::FAILURE ,
       const size_t       mx  = 10                  ) const ;
-    /** Print the message and return status code 
+    /** Print the message and return status code
      *  @see MsgStream
-     *  @see IMessageSvc 
-     *  @see StatusCode 
-     *  @param msg    warning message 
-     *  @param st     status code 
-     *  @param lev    print level 
+     *  @see IMessageSvc
+     *  @see StatusCode
+     *  @param msg    warning message
+     *  @param st     status code
+     *  @param lev    print level
      */
-    void Print     
-    ( const std::string& msg , 
+    void Print
+    ( const std::string& msg ,
       const StatusCode   st  = StatusCode::SUCCESS ,
-      const MSG::Level   lev = MSG::INFO           ) const ;    
-    /** Assertion - throw exception, if condition is not fulfilled 
+      const MSG::Level   lev = MSG::INFO           ) const ;
+    /** Assertion - throw exception, if condition is not fulfilled
      *  @see CaloException
      *  @see GaudiException
-     *  @exception CaloException for invalid condifition 
+     *  @exception CaloException for invalid condifition
      *  @param ok           condition which should be "true"
-     *  @param message      message to be associated with the exception 
-     *  @param sc           status code to be returned (artificial) 
-     *  @return             status code        
-     */ 
-    inline void Assert 
-    ( const bool         ok                            , 
-      const std::string& message = ""                  , 
-      const StatusCode   sc      = StatusCode::FAILURE ) const 
+     *  @param message      message to be associated with the exception
+     *  @param sc           status code to be returned (artificial)
+     *  @return             status code
+     */
+    inline void Assert
+    ( const bool         ok                            ,
+      const std::string& message = ""                  ,
+      const StatusCode   sc      = StatusCode::FAILURE ) const
     {
       if ( !ok ) { Exception ( message , sc ) ; } ; sc.ignore() ;
-    } 
-    /** Assertion - throw exception, if condition is not fulfilled 
+    }
+    /** Assertion - throw exception, if condition is not fulfilled
      *  @see CaloException
      *  @see GaudiException
-     *  @exception CaloException for invalid condifition 
+     *  @exception CaloException for invalid condifition
      *  @param ok           condition which should be "true"
-     *  @param message      message to be associated with the exception 
-     *  @param sc           status code to be returned (artificial) 
-     *  @return             status code        
-     */ 
-    inline void Assert 
-    ( const bool         ok                            , 
-      const char*        message                       , 
-      const StatusCode   sc      = StatusCode::FAILURE ) const 
+     *  @param message      message to be associated with the exception
+     *  @param sc           status code to be returned (artificial)
+     *  @return             status code
+     */
+    inline void Assert
+    ( const bool         ok                            ,
+      const char*        message                       ,
+      const StatusCode   sc      = StatusCode::FAILURE ) const
     {
       if ( !ok ) { Exception ( message , sc ) ; } ; sc.ignore() ;
-    } 
-    /** Create and (re)-throw the exception  
+    }
+    /** Create and (re)-throw the exception
      *  @see GaudiException
      *  @exception CaudiException always!
-     *  @param msg    exception message 
+     *  @param msg    exception message
      *  @param exc    (previous) exception of type GaudiException
-     *  @param sc     status code  
+     *  @param sc     status code
      */
-    void Exception 
-    ( const std::string    & msg                        ,  
-      const GaudiException & exc                        , 
+    void Exception
+    ( const std::string    & msg                        ,
+      const GaudiException & exc                        ,
       const StatusCode       sc  = StatusCode::FAILURE  ) const ;
-    /** Create and (re)-throw the exception  
+    /** Create and (re)-throw the exception
      *  @see GaudiException
      *  @exception GaudiException always!
-     *  @param msg    exception message 
+     *  @param msg    exception message
      *  @param exc    (previous) exception of type std::exception
-     *  @param sc     status code  
+     *  @param sc     status code
      */
-    void Exception 
-    ( const std::string    & msg                        ,  
-      const std::exception & exc                        , 
+    void Exception
+    ( const std::string    & msg                        ,
+      const std::exception & exc                        ,
       const StatusCode       sc  = StatusCode::FAILURE  ) const ;
-    /** Create and throw the exception  
+    /** Create and throw the exception
      *  @see GaudiException
      *  @exception GaudiException always!
-     *  @param msg    exception message 
-     *  @param sc     status code  
+     *  @param msg    exception message
+     *  @param sc     status code
      */
-    void Exception 
-    ( const std::string& msg = "no message"        ,  
+    void Exception
+    ( const std::string& msg = "no message"        ,
       const StatusCode   sc  = StatusCode::FAILURE ) const ;
     // ========================================================================
   public:
-    /// get the currect reference counter 
+    /// get the currect reference counter
     long refCount   () const { return   m_refCount ; }
-    /// increment the reference counter 
+    /// increment the reference counter
     long addRef     ()       { return ++m_refCount ; }
-    /// decreemnt the reference counter 
+    /// decreemnt the reference counter
     long release    ()   ; // ATTENTION! object is deleted if refCount==0
     // ========================================================================
   private:
     // ========================================================================
-    // object name 
-    std::string                      m_name     ; //  object name 
-    // "type/name" pair 
-    mutable std::string              m_typeName ; // "type/name" pair 
-    // own problem reported 
-    LoKi::Interface<LoKi::IReporter> m_reporter ; // own problem reported 
-    // reference counter 
-    long                             m_refCount ; // reference counter 
+    // object name
+    std::string                      m_name     ; //  object name
+    // "type/name" pair
+    mutable std::string              m_typeName ; // "type/name" pair
+    // own problem reported
+    LoKi::Interface<LoKi::IReporter> m_reporter ; // own problem reported
+    // reference counter
+    long                             m_refCount ; // reference counter
     // ========================================================================
   } ;
   // ==========================================================================
 } // end of namespace LoKi
 // ============================================================================
-// The END 
+// The END
 // ============================================================================
 #endif // LOKI_BASE_H
 // ============================================================================

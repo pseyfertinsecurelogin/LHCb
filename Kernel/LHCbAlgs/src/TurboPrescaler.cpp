@@ -30,7 +30,7 @@ TurboPrescaler::TurboPrescaler( const std::string& name,
 {
   declareProperty("ChosenOutputPrescales",m_outputPS=std::map<std::string,double>());
   declareProperty("PrescaleVersion",m_outputTCK);
-  declareProperty("FilterOutput",m_filter=false);
+  declareProperty("FilterOutput",m_filter=true);
   declareProperty("ReportsOutputLoc",m_outRepLoc="Turbo/DecReports");
   declareProperty("ConfigQualifier",m_scalerName="DeterministicPrescaler");
   declareProperty("PreScalerQualifier",m_preScalerName="PreScaler");

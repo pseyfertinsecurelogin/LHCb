@@ -1,17 +1,17 @@
-// $Id$ 
+// $Id$
 // ============================================================================
 #ifndef LOKI_FUNCTOR_CACHE_H
 #define LOKI_FUNCTOR_CACHE_H
 // ============================================================================
-// Include files 
+// Include files
 // ============================================================================
 #include "Gaudi/PluginService.h"
 // ============================================================================
-namespace LoKi 
+namespace LoKi
 {
   // ==========================================================================
   template <class T>
-  struct CacheFactory 
+  struct CacheFactory
   {
     typedef T CutType;
     typedef ::Gaudi::PluginService::Factory<CutType*> Factory;
@@ -21,36 +21,36 @@ namespace LoKi
     }
   };
   // ==========================================================================
-  namespace Details 
+  namespace Details
   {
     // ========================================================================
     template <class T, unsigned int HASH>
-    struct CacheFactory: public ::LoKi::CacheFactory<T> 
+    struct CacheFactory: public ::LoKi::CacheFactory<T>
     {
       typedef T CutType;
       typedef ::Gaudi::PluginService::Factory<CutType*> Factory;
       static typename Factory::ReturnType create();
     };
     // ========================================================================
-  } //                                           end of namespace LoKi::Details 
+  } //                                           end of namespace LoKi::Details
   // ==========================================================================
 } //                                                      end of namespace LoKi
 // ============================================================================
-namespace Gaudi 
+namespace Gaudi
 {
   // ==========================================================================
-  namespace PluginService 
+  namespace PluginService
   {
     // ========================================================================
-    namespace Details 
+    namespace Details
     {
       // ======================================================================
       template <class CutType, unsigned int HASH>
-      class Factory<LoKi::Details::CacheFactory<CutType, HASH> > 
+      class Factory<LoKi::Details::CacheFactory<CutType, HASH> >
       {
       public:
         template <typename S>
-        static typename S::ReturnType create() 
+        static typename S::ReturnType create()
         {
           return LoKi::Details::CacheFactory<CutType, HASH>::create();
         }
@@ -60,7 +60,7 @@ namespace Gaudi
     // ========================================================================
   } //                                    end of namespace Gaudi::PluginService
   // ==========================================================================
-} //                                                     end of namespace Gaudi 
+} //                                                     end of namespace Gaudi
 // ============================================================================
 #define DECLARE_LOKI_FUNCTOR(CutType, Hash) \
   namespace { \
@@ -69,7 +69,7 @@ namespace Gaudi
   }
 
 // ============================================================================
-// The END 
+// The END
 // ============================================================================
 #endif
 // ============================================================================
