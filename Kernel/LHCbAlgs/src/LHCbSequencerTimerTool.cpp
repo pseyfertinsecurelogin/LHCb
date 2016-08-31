@@ -217,9 +217,7 @@ int LHCbSequencerTimerTool::addTimer( const std::string& name )
 
   //myName = myName.substr( 0, m_headerSize );
 
-  m_timerList.emplace_back( LHCbTimerForSequencer( myName,
-                                                   m_headerSize,
-                                                   m_normFactor ) );
+  m_timerList.emplace_back( myName, m_headerSize, m_normFactor );
 
   return m_timerList.size() - 1;
 }

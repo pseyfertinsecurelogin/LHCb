@@ -72,8 +72,8 @@ StatusCode AlgorithmCorrelations::reset(){
   // minimize?
   if ( m_minimize ) warning() << "Will only print non-zero efficient algorithms in table" << endmsg ;
   
-  if ( m_decimals>=0) info() << "Will print efficiencies with " << m_decimals 
-                             << " decimals (percent)" << endmsg ;
+  if ( m_decimals >= 0 ) info() << "Will print efficiencies with " << m_decimals 
+                                << " decimals (percent)" << endmsg ;
   else info() << "Will print efficiencies with automatic precision" << endmsg ;
 
   //  int i1 = 0 ;
@@ -81,7 +81,7 @@ StatusCode AlgorithmCorrelations::reset(){
   m_conditionResults.reserve( m_conditionAlgorithms.size() );
   for ( const auto & alg : m_conditionAlgorithms )
   {
-    m_conditionResults.emplace_back( AlgoResult(alg) );
+    m_conditionResults.emplace_back( alg );
   }
   
   m_testResults.reserve( m_algorithmsToTest.size() );
@@ -89,12 +89,12 @@ StatusCode AlgorithmCorrelations::reset(){
                           m_conditionAlgorithms.size() );
   for ( const auto & alg1 : m_algorithmsToTest )
   {
-    m_testResults.emplace_back( AlgoResult(alg1) );
+    m_testResults.emplace_back( alg1 );
     const auto l = alg1.length();
     if ( l > m_longestName ) { m_longestName = l ; }
     for ( const auto & alg2 : m_conditionAlgorithms )
     {
-      m_AlgoMatrices.emplace_back( AlgoMatrix( alg1, alg2 ) ) ;
+      m_AlgoMatrices.emplace_back( alg1, alg2 ) ;
       if (msgLevel(MSG::DEBUG)) 
         debug() << "Pushed back pair " << alg1 << ", " << alg2 << endmsg ;
     }
@@ -171,8 +171,8 @@ StatusCode AlgorithmCorrelations::addResults()
 StatusCode AlgorithmCorrelations::fillResult(const std::string& algo, 
                                              const bool& result)
 {
-  const auto sc = fillResult(algo,result,m_conditionResults);
-  return ( sc ? fillResult(algo,result,m_testResults) : sc );
+  return ( fillResult(algo,result,m_conditionResults) &&
+           fillResult(algo,result,m_testResults) );
 }
 //=============================================================================
 // Fill a result

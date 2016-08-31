@@ -25,8 +25,6 @@ public:
       m_factor   ( factor )
   { }
 
-  ~LHCbTimerForSequencer() = default;
-
   /** Start a time measurement */
   inline void start ()
   {
