@@ -2139,7 +2139,7 @@ namespace LoKi
    *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
    */
   template <typename F1, typename F2,
-            typename TYPE = typename details::LF2<F1,F2>::type1,
+            typename TYPE = typename details::LF<F1>::type1,
             typename = details::require_signature<F1,TYPE,double>,
             typename = details::require_signature<F2,TYPE,bool> >
   LoKi::Functors::Sum<TYPE>
@@ -2164,7 +2164,7 @@ namespace LoKi
    *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
    */
   template <typename F1, typename F2,
-            typename TYPE  = typename details::LF2<F1,F2>::type1,
+            typename TYPE  = typename details::LF<F1>::type1,
             typename = details::require_signature<F1,TYPE,double>,
             typename = details::require_signature<F2,TYPE,bool> >
   LoKi::Functors::Product<TYPE>
