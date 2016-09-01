@@ -204,7 +204,7 @@ namespace LoKi
     /// constructor
     Constant ( T2 value )
       : LoKi::AuxFunBase ( std::tie( value ) )
-      , m_value ( value )
+      , m_value ( std::move(value) )
     {}
     // ========================================================================
   public:

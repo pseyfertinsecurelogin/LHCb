@@ -788,7 +788,7 @@ namespace LoKi
   // ==========================================================================
   /** @class Min
    *
-   *  Simple functor to find the inimum for the functors
+   *  Simple functor to find the minimum for the functors
    *
    *  @code
    *
@@ -1068,10 +1068,10 @@ namespace LoKi
      *  @author Vanya BELYAEV belyaev@lapp.in2p3.fr
      *  @date 2005-02-11
      */
-    SimpleSwitch
-    ( const LoKi::Functor<TYPE,bool>& cut  , T2 val1 , T2 val2 )
+    template <typename F, typename = details::require_signature<F,TYPE,bool>>
+    SimpleSwitch( F&& cut  , T2 val1 , T2 val2 )
       : LoKi::AuxFunBase ( std::tie ( cut , val1 , val2 ) )
-      , m_cut  ( cut  )
+      , m_cut  ( std::forward<F>(cut)  )
       , m_val1 ( val1 )
       , m_val2 ( val2 )
     {}
@@ -1141,13 +1141,13 @@ namespace LoKi
      *  @author Vanya BELYAEV belyaev@lapp.in2p3.fr
      *  @date 2005-02-11
      */
-    Switch
-    ( const LoKi::Functor<TYPE,bool>&   cut  ,
-      const LoKi::Functor<TYPE,TYPE2>&  fun1 ,
-      const LoKi::Functor<TYPE,TYPE2>&  fun2 )
+    template <typename Cut, typename = details::require_signature<Cut,TYPE,bool>,
+              typename F1, typename = details::require_signature<F1,TYPE,TYPE2>,
+              typename F2, typename = details::require_signature<F2,TYPE,TYPE2>>
+    Switch( Cut&&   cut  , F1&&  fun1 , F2&&  fun2 )
       : LoKi::AuxFunBase ( std::tie ( cut , fun1 , fun2 ) )
-      , m_cut  ( cut  )
-      , m_two  ( fun1 , fun2 )
+      , m_cut  ( std::forward<Cut>(cut)  )
+      , m_two  ( std::forward<F1>(fun1) , std::forward<F2>(fun2) )
     {}
     /** constructor from predicate ,function and constant
      *
@@ -1162,12 +1162,12 @@ namespace LoKi
      *  @author Vanya BELYAEV belyaev@lapp.in2p3.fr
      *  @date 2005-02-11
      */
-    Switch
-    ( const LoKi::Functor<TYPE,bool>&   cut  ,
-      const LoKi::Functor<TYPE,TYPE2>&  fun1 , T2 fun2 )
+    template <typename Cut, typename = details::require_signature<Cut,TYPE,bool>,
+              typename F, typename = details::require_signature<F,TYPE,TYPE2>>
+    Switch( Cut&&   cut  , F&& fun1 , T2 fun2 )
       : LoKi::AuxFunBase ( std::tie ( cut , fun1 , fun2 ) )
-      , m_cut  ( cut  )
-      , m_two  ( fun1 , LoKi::Constant<TYPE,TYPE2>( fun2 ) )
+      , m_cut  ( std::forward<Cut>(cut)  )
+      , m_two  ( std::forward<F>(fun1) , LoKi::Constant<TYPE,TYPE2>( std::move(fun2) ) )
     {}
     /** constructor from predicate ,function and constant
      *
@@ -1182,13 +1182,12 @@ namespace LoKi
      *  @author Vanya BELYAEV belyaev@lapp.in2p3.fr
      *  @date 2005-02-11
      */
-    Switch
-    ( const LoKi::Functor<TYPE,bool>& cut  ,
-      T2                              fun1 ,
-      const Functor<TYPE,TYPE2>&      fun2 )
+    template <typename Cut, typename = details::require_signature<Cut,TYPE,bool>,
+              typename F, typename = details::require_signature<F,TYPE,TYPE2>>
+    Switch( Cut&& cut, T2 fun1, F&& fun2)
       : LoKi::AuxFunBase ( std::tie ( cut , fun1 , fun2 ) )
-      , m_cut  ( cut  )
-      , m_two  ( LoKi::Constant<TYPE,TYPE2>( fun1 ) , fun2 )
+      , m_cut  ( std::forward<Cut>(cut)  )
+      , m_two  ( LoKi::Constant<TYPE,TYPE2>( fun1 ) , std::forward<F>(fun2) )
     {}
     /** constructor from predicate and 2 constants
      *
@@ -1209,12 +1208,12 @@ namespace LoKi
      *  @author Vanya BELYAEV belyaev@lapp.in2p3.fr
      *  @date 2005-02-11
      */
-    Switch
-    ( const LoKi::Functor<TYPE,bool>&   cut  , T2 fun1 , T2 fun2 )
+    template <typename Cut, typename = details::require_signature<Cut,TYPE,bool>>
+    Switch( Cut&& cut, T2 fun1, T2 fun2 )
       : LoKi::AuxFunBase ( std::tie ( cut , fun1 , fun2 ) )
-      , m_cut  ( cut  )
-      , m_two  ( LoKi::Constant<TYPE,TYPE2>( fun1 ) ,
-                 LoKi::Constant<TYPE,TYPE2>( fun2 ) )
+      , m_cut  ( std::forward<Cut>(cut)  )
+      , m_two  ( LoKi::Constant<TYPE,TYPE2>( std::move(fun1) ) ,
+                 LoKi::Constant<TYPE,TYPE2>( std::move(fun2) ) )
     {}
     /// MANDATORY: clone method ("virtual constructor")
     virtual  Switch* clone() const { return new Switch ( *this ) ; }
@@ -1368,48 +1367,28 @@ namespace LoKi
     /// constructor
     template <typename F1, typename = typename details::require_signature<F1,TYPE,TYPE2>,
               typename F2, typename = typename details::require_signature<F2,TYPE,TYPE2> >
-    ComposeFunction2
-    ( Func                   func           ,
-      F1&&                   fun1           ,
-      F2&&                   fun2           ,
-      const std::string&     desc = "'fun'" )
+    ComposeFunction2( Func func, F1&& fun1, F2&& fun2, const std::string& desc = "'fun'" )
       : m_func ( func )
       , m_two  ( std::forward<F1>(fun1) ,std::forward<F2>(fun2) )
       , m_desc ( desc )
     {}
     /// constructor
-    ComposeFunction2
-    ( Func                             func            ,
-      const LoKi::Functor<TYPE,TYPE2>& fun1            ,
-      T2                               val2            ,
-      const std::string&               desc  = "'fun'" )
-      : m_func ( func )
-      , m_two  ( fun1 , LoKi::Constant<TYPE,TYPE2> ( val2 ) )
-      , m_desc ( desc )
+    template <typename F1, typename = typename details::require_signature<F1,TYPE,TYPE2>>
+    ComposeFunction2( Func func, F1&& fun1, T2 val2, const std::string& desc  = "'fun'" )
+      : ComposeFunction2( func, std::forward<F1>(fun1),
+                          LoKi::Constant<TYPE,TYPE2>{std::move(val2)}, desc )
     {}
     /// constructor
-    ComposeFunction2
-    ( Func                             func            ,
-      T2                               val1            ,
-      const LoKi::Functor<TYPE,TYPE2>& fun2            ,
-      const std::string&               desc  = "'fun'" )
-      : m_func ( func )
-      , m_two  ( LoKi::Constant<TYPE,TYPE2> ( val1 ) , fun2 )
-      , m_desc ( desc )
+    template <typename F2, typename = typename details::require_signature<F2,TYPE,TYPE2>>
+    ComposeFunction2( Func func, T2 val1, F2&& fun2, const std::string& desc  = "'fun'" )
+      : ComposeFunction2( func, LoKi::Constant<TYPE,TYPE2>{std::move(val1)},
+                          std::forward<F2>(fun2), desc )
     {}
     /// constructor
-    ComposeFunction2
-    ( Func                             func            ,
-      T2                               val1            ,
-      T2                               val2            ,
-      const std::string&               desc  = "'fun'" )
-      : m_func ( func )
-      , m_two  ( LoKi::Constant<TYPE,TYPE2> ( val1 ) ,
-                 LoKi::Constant<TYPE,TYPE2> ( val2 ) )
-      , m_desc ( desc )
+    ComposeFunction2( Func func, T2 val1, T2 val2, const std::string& desc  = "'fun'" )
+      : ComposeFunction2( func, LoKi::Constant<TYPE,TYPE2>{std::move(val1)},
+                          LoKi::Constant<TYPE,TYPE2>{std::move(val2)}, desc )
     {}
-    /// copy constructor
-    ComposeFunction2 ( const ComposeFunction2& right ) = default;
     /// clone method (mandatory!)
     virtual ComposeFunction2*  clone   () const
     { return new ComposeFunction2( *this ); }
@@ -1461,15 +1440,13 @@ namespace LoKi
   public:
     // ========================================================================
     /// contructor
-    Compose
-    ( const LoKi::Functor<TYPE,TYPE1>&  fun1 ,
-      const LoKi::Functor<TYPE3,TYPE2>& fun2 )
+    template <typename F1, typename = details::require_signature<F1,TYPE,TYPE1>,
+              typename F2, typename = details::require_signature<F2,TYPE3,TYPE2>>
+    Compose ( F1&&  fun1 , F2&& fun2 )
       : LoKi::AuxFunBase ( std::tie ( fun1 , fun2 ) )
-      , m_fun1 ( fun1 )
-      , m_fun2 ( fun2 )
+      , m_fun1 ( std::forward<F1>(fun1) )
+      , m_fun2 ( std::forward<F2>(fun2) )
     {}
-    /// copy constructor
-    Compose ( const Compose& right ) = default;
     /// MANDATORY: clone method ("virtual constructor")
     virtual  Compose* clone() const { return new Compose ( *this ) ; }
     /// the only one essential method ("function")
@@ -1516,8 +1493,6 @@ namespace LoKi
     // ========================================================================
     /// constructor
     Valid() = default;
-    /// copy constructor
-    Valid( const Valid& right ) = default;
     /// MANDATORY: clone method ("virtual constructor")
     virtual  Valid* clone() const { return new Valid( *this ) ; }
     /// MANDATORY: the only one essential method
@@ -1553,8 +1528,6 @@ namespace LoKi
     explicit TheSame ( argument value )
       : m_value ( value )
     {}
-    /// copy constructor
-    TheSame( const TheSame& right ) = default;
     /// MANDATORY: clone method ("virtual constructor")
     virtual  TheSame* clone() const { return new TheSame( *this ) ; }
     /// MANDATORY: the only one essential method
@@ -1601,12 +1574,11 @@ namespace LoKi
      *  @param val the reference value
      *  @param eps the relative precision
      */
-    EqualToValue
-    ( const LoKi::Functor<TYPE,TYPE2>&  fun ,
-      T2                                val )
+    template <typename F, typename = details::require_signature<F,TYPE,TYPE2>>
+    EqualToValue( F&&  fun , T2 val )
       : LoKi::AuxFunBase ( std::tie ( fun , val ) )
-      , m_fun ( fun )
-      , m_val ( val )
+      , m_fun ( std::forward<F>(fun) )
+      , m_val ( std::move(val) )
     {}
     // ========================================================================
     /** constructor from the function and the value
@@ -1614,10 +1586,10 @@ namespace LoKi
      *  @param val the reference value
      *  @param eps the relative precision
      */
-    EqualToValue
-    ( T2 val , const LoKi::Functor<TYPE,TYPE2>&  fun )
+    template <typename F, typename = details::require_signature<F,TYPE,TYPE2>>
+    EqualToValue( T2 val , F&& fun )
       : LoKi::AuxFunBase ( std::tie ( fun , val ) )
-      , m_fun ( fun )
+      , m_fun ( std::forward<F>(fun) )
       , m_val ( val )
     {}
     // ========================================================================
