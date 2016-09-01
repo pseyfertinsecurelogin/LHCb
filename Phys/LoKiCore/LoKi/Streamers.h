@@ -1,5 +1,5 @@
 // ============================================================================
-#ifndef LOKI_STREAMERS_H 
+#ifndef LOKI_STREAMERS_H
 #define LOKI_STREAMERS_H 1
 // ============================================================================
 // Include files
@@ -15,19 +15,19 @@
 // ============================================================================
 /** @file
  *
- *  This file is a part of LoKi project - 
+ *  This file is a part of LoKi project -
  *    "C++ ToolKit  for Smart and Friendly Physics Analysis"
  *
  *  The package has been designed with the kind help from
- *  Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas, 
- *  contributions and advices from G.Raven, J.van Tilburg, 
+ *  Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas,
+ *  contributions and advices from G.Raven, J.van Tilburg,
  *  A.Golutvin, P.Koppenburg have been used in the design.
  *
  */
 // ============================================================================
-/** compose/chain the function 
+/** compose/chain the function
  *
- *  @code 
+ *  @code
  *
  *  typedef Functor<Type1,Type2>             Func1 ;
  *  typedef Functor<Type2,Type3>             Func2 ;
@@ -36,37 +36,41 @@
  *
  *  typedef FunctorFromFunctor<Type1,Type5>  Fun   ;
  *
- *  void func ( const Func1& A , 
- *              const Func2& B , 
- *              const Func3& C , 
+ *  void func ( const Func1& A ,
+ *              const Func2& B ,
+ *              const Func3& C ,
  *              const Func4& D )
  *  {
  *
- *    Fun  fun = A >> B >> C >> D  ; 
+ *    Fun  fun = A >> B >> C >> D  ;
  *
  *  }
  *
- *  @endcode  
+ *  @endcode
  *
  *  @see LoKi::Compose
  *
- *  @param fun1 the first functor to be chained 
- *  @param fun2 the second functor to be chained 
+ *  @param fun1 the first functor to be chained
+ *  @param fun2 the second functor to be chained
  *  @return the chained functor
  *
  *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
- *  @date 2001-01-23  
+ *  @date 2001-01-23
  */
-template <class TYPE,class TYPE1,class TYPE2>
+template <typename F1, typename F2,
+          typename TYPE  = typename LoKi::details::LF<F1>::type1,
+          typename TYPE1 = typename LoKi::details::LF<F1>::type2,
+          typename TYPE2 = typename LoKi::details::LF<F2>::type2,
+          typename = LoKi::details::require_signature<F1,TYPE,TYPE1>,
+          typename = LoKi::details::require_signature<F2,TYPE1,TYPE2>>
 inline LoKi::Compose<TYPE,TYPE1,TYPE2>
-operator >> ( const LoKi::Functor<TYPE,TYPE1>&  fun1 ,
-              const LoKi::Functor<TYPE1,TYPE2>& fun2 ) 
-{ return LoKi::compose ( fun1 , fun2 ) ; }
+operator >> ( F1&&  fun1 , F2&& fun2 )
+{ return { std::forward<F1>(fun1) , std::forward<F2>(fun2) } ; }
 // ============================================================================
-/** the streamer for two predicates is "logical AND" for the predicates 
+/** the streamer for two predicates is "logical AND" for the predicates
  *
  *  @code
- * 
+ *
  *   const Functor<TYPE,bool>& pred1 ;
  *   const Functor<TYPE,bool>& pred2 ;
  *
@@ -77,21 +81,22 @@ operator >> ( const LoKi::Functor<TYPE,TYPE1>&  fun1 ,
  *   /// the same, but a bit "old-fashined":
  *   SEQUENCE output2 = input >> ( pred1 && pred2 ) ;
  *
- *  @endcode  
- *  
+ *  @endcode
+ *
  *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
- *  @date 2001-01-23   
- */    
-template <class TYPE> 
+ *  @date 2001-01-23
+ */
+template <typename F1, typename F2,
+          typename TYPE = typename LoKi::details::LF2<F1,F2>::type1,
+          typename = LoKi::details::require_signature<F1,TYPE,bool>,
+          typename = LoKi::details::require_signature<F2,TYPE,bool>>
 inline LoKi::And<TYPE,bool>
-operator >> 
-( const LoKi::Functor<TYPE,bool>& cut1 , 
-  const LoKi::Functor<TYPE,bool>& cut2 ) 
-{ return LoKi::And<TYPE> ( cut1 , cut2 ) ; }
+operator >> ( F1&& cut1 , F2&& cut2 )
+{ return { std::forward<F1>(cut1) , std::forward<F2>(cut2) } ; }
 // ============================================================================
 /** evaluate the function through stremer operation:
- *  
- *  @code 
+ *
+ *  @code
  *
  *  typedef Functor<Type1,Type2>             Func ;
  *
@@ -100,26 +105,26 @@ operator >>
  *
  *  Type2 output = input >> fun ;
  *
- *  @endcode  
+ *  @endcode
  *
- *  @see LoKi::apply 
+ *  @see LoKi::apply
  *
- *  @param a argument 
- *  @param o the functor 
- *  @return the result of the functor evaluation 
+ *  @param a argument
+ *  @param o the functor
+ *  @return the result of the functor evaluation
  *
  *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
- *  @date 2001-01-23   
+ *  @date 2001-01-23
  */
 template <class TYPE,class TYPE2>
-inline typename LoKi::Functor<TYPE,TYPE2>::result_type 
+inline typename LoKi::Functor<TYPE,TYPE2>::result_type
 operator >> ( typename LoKi::Functor<TYPE,TYPE2>::argument a ,
               const LoKi::Functor<TYPE,TYPE2>&             o )
 { return LoKi::apply ( o , a ) ; }
 // ============================================================================
 /** evaluate the vector function  ("map")
  *
- *  @code 
+ *  @code
  *
  *  typedef Functor<Type1,double>             Func ;
  *
@@ -127,35 +132,34 @@ operator >> ( typename LoKi::Functor<TYPE,TYPE2>::argument a ,
  *
  *  std::vector<double> output = input >> fun ;
  *
- *  @endcode  
+ *  @endcode
  *
- *  @see LoKi::apply 
+ *  @see LoKi::apply
  *
- *  @param input vector in input arguments 
+ *  @param input vector in input arguments
  *  @param funct the functor
- *  @return the vector of results 
+ *  @return the vector of results
  *
  *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
- *  @date 2001-01-23   
- */  
+ *  @date 2001-01-23
+ */
 template <class TYPEI, class TYPE>
 inline std::vector<double>
-operator >> ( const std::vector<TYPEI>&         input ,  
+operator >> ( const std::vector<TYPEI>&         input ,
               const LoKi::Functor<TYPE,double>& funct )
 {
-  typedef std::vector<double> OUTPUT ;
-  OUTPUT out ;
+  std::vector<double> out ;
   out.reserve ( input.size() ) ;
   //
-  LoKi::apply 
+  LoKi::apply
     ( input.begin () , input.end () , funct , std::back_inserter ( out ) ) ;
-  // 
+  //
   return out ;
 }
 // ============================================================================
-/** evaluate the vector function with vector argument 
+/** evaluate the vector function with vector argument
  *
- *  @code 
+ *  @code
  *
  *  typedef Functor<std::vector<Type1>,Type2>             Func ;
  *
@@ -163,28 +167,28 @@ operator >> ( const std::vector<TYPEI>&         input ,
  *
  *  Type2 output = input >> fun ;
  *
- *  @endcode  
+ *  @endcode
  *
- *  @see LoKi::apply 
+ *  @see LoKi::apply
  *
- *  @param input vector in input arguments 
+ *  @param input vector in input arguments
  *  @param funct the functor
- *  @return the vector of results 
+ *  @return the vector of results
  *
  *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
- *  @date 2001-01-23   
- */  
+ *  @date 2001-01-23
+ */
 template <class TYPEI, class TYPE>
 inline typename LoKi::Functor<std::vector<TYPE>,double>::result_type
-operator >> ( const std::vector<TYPEI>&                      input ,  
+operator >> ( const std::vector<TYPEI>&                      input ,
               const LoKi::Functor<std::vector<TYPE>,double>& funct )
 {
   return LoKi::apply ( funct , { input.begin() , input.end() } ) ;
 }
 // ============================================================================
-/** evaluate/filter the vector function/predicate 
+/** evaluate/filter the vector function/predicate
  *
- *  @code 
+ *  @code
  *
  *  typedef Functor<Type1,bool>            Func ;
  *
@@ -192,87 +196,88 @@ operator >> ( const std::vector<TYPEI>&                      input ,
  *
  *  std::vector<Type1> output = input >> fun ;
  *
- *  @endcode  
+ *  @endcode
  *
- *  @see LoKi::apply 
+ *  @see LoKi::apply
  *
- *  @param input vector in input arguments 
- *  @param pred the predicate to be evaluated 
- *  @return the filtered inputs 
+ *  @param input vector in input arguments
+ *  @param pred the predicate to be evaluated
+ *  @return the filtered inputs
  *
  *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
- *  @date 2001-01-23   
- */  
+ *  @date 2001-01-23
+ */
+//TODO: add a version where input is an rvalue...
 template <class TYPEI, class TYPE>
 inline std::vector<TYPEI>
-operator >> 
-( const std::vector<TYPEI>&       input ,  
+operator >>
+( const std::vector<TYPEI>&       input ,
   const LoKi::Functor<TYPE,bool>& pred  )
 {
   //
   std::vector<TYPEI> out ; out.reserve ( input.size() ) ;
   //
-  LoKi::apply_filter 
+  LoKi::apply_filter
     ( input.begin() , input.end() , pred , std::back_inserter ( out ) ) ;
-  // 
+  //
   return out ;
 }
 // ============================================================================
-/** evaluate the vector fucntion with scalar argument through 
+/** evaluate the vector fucntion with scalar argument through
  *  the construction of the intermediate vector of length 1
- *  
- *  @code 
+ *
+ *  @code
  *
  *  const Functor<std::vector<TYPE>, TYPE2> & functor = ... ;
  *
  *  const TYPE& object = ... ;
- * 
+ *
  *  TYPE2 result = object >> functor ;
  *
- *  @endcode  
+ *  @endcode
  *
- *  @see LoKi::apply 
+ *  @see LoKi::apply
  *
- *  @param a vector in input arguments 
- *  @param f the predicate to be evaluated 
- *  @return the filtered inputs 
+ *  @param a vector in input arguments
+ *  @param f the predicate to be evaluated
+ *  @return the filtered inputs
  *
  *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
- *  @date 2001-01-23   
- */  
-template <class TYPE,class TYPE2> 
-inline 
-typename LoKi::Functor<std::vector<TYPE>,TYPE2>::result_type 
-operator>>  ( typename LoKi::Functor<TYPE,TYPE2>::argument  a , 
+ *  @date 2001-01-23
+ */
+template <class TYPE,class TYPE2>
+inline
+typename LoKi::Functor<std::vector<TYPE>,TYPE2>::result_type
+operator>>  ( typename LoKi::Functor<TYPE,TYPE2>::argument  a ,
               const LoKi::Functor<std::vector<TYPE>,TYPE2>& f )
 {
   return LoKi::apply ( f , a ) ;
 }
 // ============================================================================
-/// use "light" range as input vector 
-template <class CONTAINER, class OUTPUT> 
-inline 
-typename LoKi::Functor<CONTAINER,OUTPUT>::result_type 
-operator>> ( const Gaudi::Range_<CONTAINER>&        a , 
+/// use "light" range as input vector
+template <class CONTAINER, class OUTPUT>
+inline
+typename LoKi::Functor<CONTAINER,OUTPUT>::result_type
+operator>> ( const Gaudi::Range_<CONTAINER>&        a ,
              const LoKi::Functor<CONTAINER,OUTPUT>& o )
 {
-  return LoKi::apply ( o , a ) ; 
-}  
+  return LoKi::apply ( o , a ) ;
+}
 // ============================================================================
-/// use "light" range as input vector 
-template <class CONTAINER, class OUTPUT> 
-inline 
-typename LoKi::Functor<CONTAINER,OUTPUT>::result_type 
-operator>> ( const Gaudi::NamedRange_<CONTAINER>&   a , 
+/// use "light" range as input vector
+template <class CONTAINER, class OUTPUT>
+inline
+typename LoKi::Functor<CONTAINER,OUTPUT>::result_type
+operator>> ( const Gaudi::NamedRange_<CONTAINER>&   a ,
              const LoKi::Functor<CONTAINER,OUTPUT>& o )
 {
-  return LoKi::apply ( o , a ) ; 
-}  
+  return LoKi::apply ( o , a ) ;
+}
 // ============================================================================
-/** "source" : produce the sequence from nothing 
+/** "source" : produce the sequence from nothing
  *
  *   @code
- *  
+ *
  *    const LoKi::Functor<void, std::vector<TYPE> > source ;
  *
  *    std::vector<TYPE> dest ;
@@ -283,27 +288,27 @@ operator>> ( const Gaudi::NamedRange_<CONTAINER>&   a ,
  *
  *  The concept belongs to the Gerhard "The Great" Raven.
  *
- *   @param  source the source 
- *   @param  dest   the destination 
- *   @return the destination 
+ *   @param  source the source
+ *   @param  dest   the destination
+ *   @return the destination
  *
  *   @author Vanya BELYAEV ibelyaev@physics.syr.edu
- *   @date 2001-01-23   
- */  
+ *   @date 2001-01-23
+ */
 template <class TYPE>
-inline std::vector<TYPE>& 
-operator >> 
-( const LoKi::Functor<void,std::vector<TYPE> >& source , 
-  std::vector<TYPE>&                            dest   ) 
+inline std::vector<TYPE>&
+operator >>
+( const LoKi::Functor<void,std::vector<TYPE> >& source ,
+  std::vector<TYPE>&                            dest   )
 {
   dest = source.evaluate() ;
   return dest ;
 }
 // ============================================================================
-/** "source": produce the sequence from nothing 
+/** "source": produce the sequence from nothing
  *
  *   @code
- *  
+ *
  *    const LoKi::Functor<void, std::vector<TYPE*> > source ;
  *
  *    std::vector<const TYPE*> dest ;
@@ -314,34 +319,34 @@ operator >>
  *
  *  The concept belongs to the Gerhard "The Great" Raven.
  *
- *   @param  source the source 
- *   @param  dest   the destination 
- *   @return the destination 
+ *   @param  source the source
+ *   @param  dest   the destination
+ *   @return the destination
  *
  *   @author Vanya BELYAEV ibelyaev@physics.syr.edu
- *   @date 2001-01-23   
- */  
+ *   @date 2001-01-23
+ */
 template <class TYPE>
-inline const std::vector<const TYPE*>& 
-operator >> 
-( const LoKi::Functor<void,std::vector<TYPE*> >& source , 
-  std::vector<const TYPE*>&                      dest   ) 
+inline const std::vector<const TYPE*>&
+operator >>
+( const LoKi::Functor<void,std::vector<TYPE*> >& source ,
+  std::vector<const TYPE*>&                      dest   )
 {
   typedef std::vector<const TYPE*> _CVector ;
   typedef std::vector<      TYPE*> _NVector ;
   //
-  const _NVector&  aux  = source.evaluate() ;
-  const _CVector* _out_ = reinterpret_cast<const _CVector*>( &aux ) ;
+  const _NVector& aux = source.evaluate() ;
+  const _CVector* out = reinterpret_cast<const _CVector*>( &aux ) ;
   //
-  dest = *_out_ ;
+  dest = *out ;
   //
   return dest ;
 }
 // ============================================================================
-/** "source" : produce the sequence from nothing 
+/** "source" : produce the sequence from nothing
  *
  *   @code
- *  
+ *
  *    const LoKi::Functor<void, std::vector<const TYPE*> > source ;
  *
  *    std::vector<TYPE*> dest ;
@@ -352,123 +357,131 @@ operator >>
  *
  *  The concept belongs to the Gerhard "The Great" Raven.
  *
- *   @param  source the source 
- *   @param  dest   the destination 
- *   @return the destination 
+ *   @param  source the source
+ *   @param  dest   the destination
+ *   @return the destination
  *
  *   @author Vanya BELYAEV ibelyaev@physics.syr.edu
- *   @date 2001-01-23   
- */  
+ *   @date 2001-01-23
+ */
 template <class TYPE>
-inline std::vector<TYPE*>& 
-operator >> 
-( const LoKi::Functor<void,std::vector<const TYPE*> >& source , 
-  std::vector<TYPE*>&                                  dest   ) 
+inline std::vector<TYPE*>&
+operator >>
+( const LoKi::Functor<void,std::vector<const TYPE*> >& source ,
+  std::vector<TYPE*>&                                  dest   )
 {
   typedef std::vector<const TYPE*> _CVector ;
   typedef std::vector<      TYPE*> _NVector ;
   //
-  const _CVector&  aux  = source.evaluate() ;
-  const _NVector* _out_ = reinterpret_cast<const _NVector*>( &aux ) ;
+  const _CVector& aux = source.evaluate() ;
+  const auto* out = reinterpret_cast<const _NVector*>( &aux ) ;
   //
-  dest = *_out_ ;
+  dest = *out ;
   //
   return dest ;
 }
 // ============================================================================
-// pipe with const-away cast 
+// pipe with const-away cast
 // ============================================================================
 template <class TYPE>
-inline std::vector<TYPE*> 
-operator>> 
+inline std::vector<TYPE*>
+operator>>
 ( const std::vector<TYPE*>&                                                 input ,
-  const LoKi::Functor<std::vector<const TYPE*>, std::vector<const TYPE*> >& pipe  )  
+  const LoKi::Functor<std::vector<const TYPE*>, std::vector<const TYPE*> >& pipe  )
 {
-  return LoKi::apply ( pipe , input ) ;  
+  return LoKi::apply ( pipe , input ) ;
 }
 // ============================================================================
-/** chaining/composition of the vector-function and the scalar one 
- * 
+/** chaining/composition of the vector-function and the scalar one
+ *
  *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
  *  @date 2007-11-29
  */
 //template <class TYPE,class TYPE1, class TYPE2>
 //inline
 //inline LoKi::Compose<TYPE,std::vector<TYPE1>,std::vector<TYPE2> >
-//operator>> ( const LoKi::Functor<TYPE,std::vector<TYPE1> >& fun1 , 
-//             const LoKi::Functor<TYPE1,TYPE2>&              fun2 ) 
-//{ 
-//  return LoKi::Compose<TYPE,std::vector<TYPE1>,std::vector<TYPE2> > 
+//operator>> ( const LoKi::Functor<TYPE,std::vector<TYPE1> >& fun1 ,
+//             const LoKi::Functor<TYPE1,TYPE2>&              fun2 )
+//{
+//  return LoKi::Compose<TYPE,std::vector<TYPE1>,std::vector<TYPE2> >
 //    ( fun1 , LoKi::Yields<TYPE1,TYPE2,TYPE1> ( fun2 ) ) ;
 //}
 
 
 
 // ============================================================================
-// pipe with the gate 
+// pipe with the gate
 // ============================================================================
-template <class TYPE>
+template <typename F1, typename F2,
+          typename TYPE = typename LoKi::details::LF<F1>::type1::value_type,
+          typename = LoKi::details::require_signature<F1,std::vector<TYPE>,std::vector<TYPE>>,
+          typename = LoKi::details::require_signature<F2,void,bool>>
 inline  LoKi::FunctorFromFunctor< std::vector<TYPE> , std::vector<TYPE> >
-operator>> ( const LoKi::Functor< std::vector<TYPE> , std::vector<TYPE> >& pipe , 
-             const LoKi::Functor< void              , bool>&               gate ) 
+operator>> ( F1&& pipe , F2&& gate )
 {
-  return pipe >> LoKi::gate<TYPE>( gate ) ;
+  return std::forward<F1>(pipe) >> LoKi::gate<TYPE>( std::forward<F2>(gate) ) ;
 }
 // ============================================================================
-// source with the gate 
+// source with the gate
 // ============================================================================
-template <class TYPE>
+template <typename F1, typename F2,
+          typename TYPE = typename LoKi::details::LF<F1>::type2::value_type,
+          typename = LoKi::details::require_signature<F1,void,std::vector<TYPE>>,
+          typename = LoKi::details::require_signature<F2,void,bool>>
 inline  LoKi::FunctorFromFunctor< void , std::vector<TYPE> >
-operator>> ( const LoKi::Functor< void , std::vector<TYPE> >& source , 
-             const LoKi::Functor< void , bool>&               gate   ) 
+operator>> ( F1&& source , F2&& gate   )
 {
-  return source >> LoKi::gate<TYPE>( gate ) ;
+  return std::forward<F1>(source) >> LoKi::gate<TYPE>( std::forward<F2>(gate) ) ;
 }
 
 
 // ============================================================================
-// dumping to the stream 
+// dumping to the stream
 // ============================================================================
-template <class TYPE>
+template <typename F1,
+          typename TYPE = typename LoKi::details::LF<F1>::type2::value_type,
+          typename = LoKi::details::require_signature<F1,std::vector<TYPE>,std::vector<TYPE>>>
 inline  LoKi::FunctorFromFunctor< std::vector<TYPE> , std::vector<TYPE> >
-operator>> ( const LoKi::Functor< std::vector<TYPE> , std::vector<TYPE> >& pipe , 
-             std::ostream& stream ) 
+operator>> ( F1&& pipe , std::ostream& stream )
 {
-  return pipe >> LoKi::Functors::Dump_<TYPE>( stream ) ;
+  return std::forward<F1>(pipe) >> LoKi::Functors::Dump_<TYPE>( stream ) ;
 }
 // ============================================================================
-// dumping to the stream 
+// dumping to the stream
 // ============================================================================
-template <class TYPE>
+template <typename F,
+          typename TYPE = typename LoKi::details::LF<F>::type2::value_type,
+          typename = LoKi::details::require_signature<F,void,std::vector<TYPE>>>
 inline  LoKi::FunctorFromFunctor< void, std::vector<TYPE> >
-operator>> ( const LoKi::Functor< void, std::vector<TYPE> >& pipe , 
-             std::ostream& stream ) 
+operator>> ( F&& pipe, std::ostream& stream )
 {
-  return pipe >> LoKi::Functors::Dump_<TYPE>( stream ) ;
+  return std::forward<F>(pipe) >> LoKi::Functors::Dump_<TYPE>( stream ) ;
 }
 // ============================================================================
-// dumping to the stream 
+// dumping to the stream
 // ============================================================================
-template <class TYPE>
+template <typename F,
+          typename TYPE = typename LoKi::details::LF<F>::type2::value_type,
+          typename = LoKi::details::require_signature<F,std::vector<TYPE>,std::vector<TYPE>>>
 inline  LoKi::FunctorFromFunctor< std::vector<TYPE> , std::vector<TYPE> >
-operator>> ( const LoKi::Functor< std::vector<TYPE> , std::vector<TYPE> >& pipe , 
-             const LoKi::Dump&                                             dump  ) 
+operator>> ( F&& pipe , const LoKi::Dump& dump  )
 {
-  return pipe >> LoKi::Functors::Dump_<TYPE>( dump ) ;
+  return std::forward<F>(pipe) >> LoKi::Functors::Dump_<TYPE>( dump ) ;
 }
 // ============================================================================
-// dumping to the stream 
+// dumping to the stream
 // ============================================================================
-template <class TYPE>
+template <typename F,
+          typename TYPE = typename LoKi::details::LF<F>::type2::value_type,
+          typename = LoKi::details::require_signature<F,void,std::vector<TYPE>>>
 inline  LoKi::FunctorFromFunctor< void, std::vector<TYPE> >
-operator>> ( const LoKi::Functor< void, std::vector<TYPE> >& pipe , 
-             const LoKi::Dump&                               dump ) 
+operator>> ( F&& pipe, const LoKi::Dump& dump )
 {
-  return pipe >> LoKi::Functors::Dump_<TYPE>( dump ) ;
+  return std::forward<F>(pipe) >> LoKi::Functors::Dump_<TYPE>( dump ) ;
 }
 
 // ============================================================================
-// The END 
+// The END
 // ============================================================================
 #endif // LOKI_STREAMERS_H
 // ============================================================================

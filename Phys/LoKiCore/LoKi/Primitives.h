@@ -79,9 +79,8 @@ namespace LoKi
     // ========================================================================
   public:
     // ========================================================================
-    template <typename F1, typename F2,
-              typename = typename details::decays_to<typename details::LF2<F1,F2>::type1,TYPE >,
-              typename = typename details::decays_to<typename details::LF2<F1,F2>::type2,TYPE2>>
+    template <typename F1, typename = typename details::require_signature<F1,TYPE,TYPE2>,
+              typename F2, typename = typename details::require_signature<F2,TYPE,TYPE2> >
     TwoFunctors ( F1&& f1 , F2&& f2 )
       : m_fun1( std::forward<F1>(f1) )
       , m_fun2( std::forward<F2>(f2) )
@@ -153,12 +152,10 @@ namespace LoKi
   public:
     // ========================================================================
     /// constructor from the functor
-    template <typename F1,
-              typename = typename details::decays_to<typename details::LF<F1>::type1,TYPE >,
-              typename = typename details::decays_to<typename details::LF<F1>::type2,TYPE2>>
-    Not ( F1&& fun )
+    template <typename F, typename = typename details::require_signature<F,TYPE,TYPE2>>
+    Not ( F&& fun )
       : LoKi::AuxFunBase ( std::tie ( fun ) )
-      , m_fun ( std::forward<F1>(fun) )
+      , m_fun ( std::forward<F>(fun) )
     {}
     /// clone method (mandatory)
     Not* clone() const override { return new Not( *this ); }
@@ -222,12 +219,10 @@ namespace LoKi
   public:
     // ========================================================================
     /// constructor from the functor
-    template <typename F1,
-              typename = typename details::decays_to<typename details::LF<F1>::type1,TYPE >,
-              typename = typename details::decays_to<typename details::LF<F1>::type2,TYPE2>>
-    Negate( F1&& fun )
+    template <typename F, typename = details::require_signature<F,TYPE,TYPE2>>
+    Negate( F&& fun )
       : LoKi::AuxFunBase ( std::tie ( fun ) )
-      , m_fun ( std::forward<F1>(fun) )
+      , m_fun ( std::forward<F>(fun) )
     {}
     /// clone method (mandatory)
     Negate* clone() const override { return new Negate ( *this ) ; }
@@ -275,10 +270,8 @@ namespace LoKi
       public:
         // =====================================================================
         /// constructor from two functors
-        template <typename F1, typename F2,
-                  typename = typename details::decays_to<typename details::LF2<F1,F2>::type1,TYPE >,
-                  typename = typename details::decays_to<typename details::LF2<F1,F2>::type2,TYPE2>
-                  >
+        template <typename F1, typename = details::require_signature<F1,TYPE,TYPE2>,
+                  typename F2, typename = details::require_signature<F2,TYPE,TYPE2>>
         BinaryOp ( F1&& f1 , F2&& f2 )
           : LoKi::AuxFunBase{ std::tie ( f1 , f2 ) }
           , m_two { std::forward<F1>(f1) , std::forward<F2>(f2) }
@@ -593,9 +586,8 @@ namespace LoKi
           public:
             // ========================================================================
             /// constructor from two functors
-            template <typename F1, typename F2,
-                      typename = typename details::decays_to<typename details::LF2<F1,F2>::type1,TYPE >,
-                      typename = typename details::decays_to<typename details::LF2<F1,F2>::type2,TYPE2>>
+            template <typename F1, typename = details::require_signature<F1,TYPE,TYPE2>,
+                      typename F2, typename = details::require_signature<F2,TYPE,TYPE2>>
             Combination ( F1&& f1 , F2&& f2 )
               : LoKi::AuxFunBase ( std::tie ( f1 , f2 ) )
               , m_two ( std::forward<F1>(f1) , std::forward<F2>(f2) )
@@ -841,26 +833,20 @@ namespace LoKi
      *  @param fun1 the first  function
      *  @param fun2 the second function
      */
-    template <typename F1, typename F2,
-              typename = typename details::decays_to<typename details::LF2<F1,F2>::type1,TYPE >,
-              typename = typename details::decays_to<typename details::LF2<F1,F2>::type2,TYPE2>>
-    Min ( F1&& fun1 ,
-          F2&& fun2 )
+    template <typename F1, typename = details::require_signature<F1,TYPE,TYPE2>,
+              typename F2, typename = details::require_signature<F2,TYPE,TYPE2>>
+    Min ( F1&& fun1 , F2&& fun2 )
       : LoKi::AuxFunBase ( std::tie ( fun1 , fun2 ) )
-      , m_two ( std::forward<F1>(fun1) , std::forward<F2>(fun2) )
+      , m_two { std::forward<F1>(fun1) , std::forward<F2>(fun2) }
     {}
     /// constructor from the function and constant
-    template <typename F1,
-              typename = typename details::decays_to<typename details::LF<F1>::type1,TYPE >,
-              typename = typename details::decays_to<typename details::LF<F1>::type2,TYPE2>>
+    template <typename F1, typename = details::require_signature<F1,TYPE,TYPE2>>
     Min ( F1&& fun1 , T2 fun2 )
       : LoKi::AuxFunBase ( std::tie ( fun1 , fun2 ) )
       , m_two ( std::forward<F1>(fun1) , LoKi::Constant<TYPE,TYPE2> ( fun2 )  )
     {}
     /// constructor from the function and constant
-    template <typename F2,
-              typename = typename details::decays_to<typename details::LF<F2>::type1,TYPE >,
-              typename = typename details::decays_to<typename details::LF<F2>::type2,TYPE2>>
+    template <typename F2, typename = details::require_signature<F2,TYPE,TYPE2>>
     Min ( T2 fun1 , F2&& fun2 )
       : LoKi::AuxFunBase ( std::tie ( fun1 , fun2 ) )
       , m_two ( LoKi::Constant<TYPE,TYPE2> ( fun1 ) , std::forward<F2>(fun2) )
@@ -976,26 +962,21 @@ namespace LoKi
      *  @param fun1 the first  function
      *  @param fun2 the second function
      */
-    template <typename F1, typename F2,
-              typename = typename details::decays_to<typename details::LF2<F1,F2>::type1,TYPE >,
-              typename = typename details::decays_to<typename details::LF2<F1,F2>::type2,TYPE2>>
+    template <typename F1, typename = typename details::require_signature<F1,TYPE,TYPE2>,
+              typename F2, typename = typename details::require_signature<F2,TYPE,TYPE2> >
     Max ( F1&& fun1 ,
           F2&& fun2 )
       : LoKi::AuxFunBase ( std::tie ( fun1 , fun2 ) )
       , LoKi::Min<TYPE,TYPE2>( std::forward<F1>(fun1) , std::forward<F2>(fun2) )
     {}
     /// constructor from the function and constant
-    template <typename F1,
-              typename = typename details::decays_to<typename details::LF<F1>::type1,TYPE >,
-              typename = typename details::decays_to<typename details::LF<F1>::type2,TYPE2>>
+    template <typename F1, typename = typename details::require_signature<F1,TYPE,TYPE2>>
     Max ( F1&& fun1 , T2 fun2 )
       : LoKi::AuxFunBase ( std::tie ( fun1 , fun2 ) )
       , LoKi::Min<TYPE,TYPE2>( std::forward<F1>(fun1) , fun2 )
     {}
     /// constructor from the function and constant
-    template <typename F2,
-              typename = typename details::decays_to<typename details::LF<F2>::type1,TYPE >,
-              typename = typename details::decays_to<typename details::LF<F2>::type2,TYPE2>>
+    template <typename F2, typename = typename details::require_signature<F2,TYPE,TYPE2>>
     Max ( T2 fun1 , F2&& fun2 )
       : LoKi::AuxFunBase ( std::tie ( fun1 , fun2 ) )
       , LoKi::Min<TYPE,TYPE2>( fun1 , std::forward<F2>(fun2) )
@@ -1306,9 +1287,7 @@ namespace LoKi
   public:
     // ========================================================================
     /// constructor
-    template <typename F1,
-              typename = typename details::decays_to<typename details::LF<F1>::type1,TYPE >,
-              typename = typename details::decays_to<typename details::LF<F1>::type2,TYPE2>>
+    template <typename F1, typename = typename details::require_signature<F1,TYPE,TYPE2>>
     ComposeFunction ( Func                  func           ,
                       F1&&                  fun            ,
                       const std::string&    desc = "'fun'" )
@@ -1387,9 +1366,8 @@ namespace LoKi
   public:
     // ========================================================================
     /// constructor
-    template <typename F1, typename F2,
-              typename = typename details::decays_to<typename details::LF2<F1,F2>::type1,TYPE >,
-              typename = typename details::decays_to<typename details::LF2<F1,F2>::type2,TYPE2>>
+    template <typename F1, typename = typename details::require_signature<F1,TYPE,TYPE2>,
+              typename F2, typename = typename details::require_signature<F2,TYPE,TYPE2> >
     ComposeFunction2
     ( Func                   func           ,
       F1&&                   fun1           ,
@@ -2392,10 +2370,8 @@ namespace LoKi
      *  @param fun2 the second functor
      *  @param cmp the comparison criteria
      */
-    template <typename F1, typename F2,
-              typename = typename details::decays_to<typename details::LF2<F1,F2>::type1,TYPE >,
-              typename = typename details::decays_to<typename details::LF2<F1,F2>::type2,TYPE2>
-              >
+    template <typename F1, typename = typename details::require_signature<F1,TYPE,TYPE2>,
+              typename F2, typename = typename details::require_signature<F2,TYPE,TYPE2> >
     Compare ( F1&& fun1 ,
               F2&& fun2 ,
               CMP  cmp = {}  )

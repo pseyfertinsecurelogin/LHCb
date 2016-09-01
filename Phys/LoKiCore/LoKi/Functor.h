@@ -421,7 +421,9 @@ namespace LoKi
   namespace details {
 
       template <typename T, typename U>
-      using decays_to = std::is_convertible<typename std::decay<T>::type*, U*>;
+      using decays_to = typename std::conditional< std::is_void<U>::value,
+                                          typename std::is_void<T>::type,
+                                          typename std::is_convertible<typename std::decay<T>::type*, U*>::type >::type;
 
       // is Derived derived from Base<Args...>?
       template <template <typename ...> class Base, typename Derived>
