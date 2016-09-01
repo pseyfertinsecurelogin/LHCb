@@ -218,7 +218,7 @@ namespace LoKi
       // ======================================================================
       /// constructor form the basic predicate:
       template <typename F, typename = details::require_signature<F,TYPE2,TYPE1> >
-      explicit Process ( F&& fun )
+      Process ( F&& fun )
         : LoKi::AuxFunBase ( std::tie ( fun ) )
         , m_functor ( std::forward<F>(fun) )
       {}
