@@ -459,7 +459,7 @@ namespace LoKi
       // ======================================================================
       /// constructor
       template <typename F, typename = details::require_signature<F,TYPE2,TYPE1> >
-      explicit ExtremeElement ( F&& fun )
+      ExtremeElement ( F&& fun )
         : LoKi::AuxFunBase ( std::tie ( fun ) )
         , m_functor ( std::forward<F>(fun) )
       {}
@@ -2130,7 +2130,7 @@ namespace LoKi
   template <typename F, typename TYPE = typename details::LF<F>::type1,
             typename = details::require_signature<F,TYPE,double> >
   LoKi::Functors::Sum<TYPE>
-  sum   ( F&& fun, double init = 0 )
+  sum( F&& fun, double init = 0 )
   {
     return { std::forward<F>(fun) , init } ;
   }
@@ -2143,7 +2143,7 @@ namespace LoKi
             typename = details::require_signature<F1,TYPE,double>,
             typename = details::require_signature<F2,TYPE,bool> >
   LoKi::Functors::Sum<TYPE>
-  sum   ( F1&& fun, F2&& cut, double init = 0 )
+  sum( F1&& fun, F2&& cut, double init = 0 )
   {
     return { std::forward<F1>(fun) , std::forward<F2>(cut) , init } ;
   }
@@ -2155,7 +2155,7 @@ namespace LoKi
             typename TYPE = typename details::LF<F>::type1,
             typename = details::require_signature<F,TYPE,double>>
   LoKi::Functors::Product<TYPE>
-  product ( F&& fun, double init = 1 )
+  product( F&& fun, double init = 1 )
   {
     return { std::forward<F>(fun) , init } ;
   }
@@ -2168,7 +2168,7 @@ namespace LoKi
             typename = details::require_signature<F1,TYPE,double>,
             typename = details::require_signature<F2,TYPE,bool> >
   LoKi::Functors::Product<TYPE>
-  product ( F1&& fun, F2&& cut, double init = 1 )
+  product( F1&& fun, F2&& cut, double init = 1 )
   {
     return { std::forward<F1>(fun) , std::forward<F2>(cut) , init } ;
   }
@@ -2180,7 +2180,7 @@ namespace LoKi
             typename TYPE  = typename details::LF<F>::type1,
             typename TYPE2 = typename details::LF<F>::type2 >
   LoKi::Functors::Fetch<TYPE,TYPE2>
-  fetch ( F&& fun, unsigned int index, TYPE2 bad)
+  fetch( F&& fun, unsigned int index, TYPE2 bad)
   {
     return { std::forward<F>(fun) , index , std::move(bad) } ;
   }
@@ -2194,7 +2194,7 @@ namespace LoKi
             typename TYPE  = typename details::LF<F>::type1,
             typename TYPE2 = typename details::LF<F>::type2>
   LoKi::Functors::Sort_<TYPE,TYPE2>
-  sort ( F&& fun )
+  sort( F&& fun )
   { return { std::forward<F>(fun) } ; }
   // ==========================================================================
   /** sort the sequence and get the first N-elements
@@ -2206,7 +2206,7 @@ namespace LoKi
             typename TYPE  = typename details::LF<F>::type1,
             typename TYPE2 = typename details::LF<F>::type2>
   LoKi::Functors::Sort_<TYPE,TYPE2>
-  sort ( F&& fun , int N )
+  sort( F&& fun , int N )
   { return { std::forward<F>(fun) , N } ; }
   // ==========================================================================
   /** sort the sequence and get the first N-elements
@@ -2218,7 +2218,7 @@ namespace LoKi
             typename TYPE  = typename details::LF<F>::type1,
             typename TYPE2 = typename details::LF<F>::type2>
   LoKi::Functors::Sort_<TYPE,TYPE2>
-  sort ( int N , F&& fun )
+  sort( int N , F&& fun )
   { return { std::forward<F>(fun) , N } ; }
   // ==========================================================================
 } //                                                      end of namespace LoKi
