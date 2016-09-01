@@ -15,7 +15,7 @@
  *  @author Rob Lambert
  *  @date   2012-08-01
  */
-class FSRCleaner : public EmptyEventNodeCleaner
+class FSRCleaner final : public EmptyEventNodeCleaner
 {
 
 public: 
@@ -23,7 +23,7 @@ public:
   /// Standard constructor
   FSRCleaner( const std::string& name, ISvcLocator* pSvcLocator );
 
-  virtual ~FSRCleaner( ); ///< Destructor
+  virtual ~FSRCleaner( ) = default; ///< Destructor
 
   virtual StatusCode execute() { return StatusCode::SUCCESS; } ///< Algorithm execution, do nothing
   virtual StatusCode finalize();    ///< Real algorithm execution in finalize

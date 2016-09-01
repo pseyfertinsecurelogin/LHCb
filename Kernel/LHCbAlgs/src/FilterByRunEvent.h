@@ -2,11 +2,13 @@
 #ifndef FILTERBYRUNEVENT_H 
 #define FILTERBYRUNEVENT_H 1
 
-// Include files
 // from Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
+
+// STL
 #include <vector>
 #include <utility>
+#include <algorithm>
 
 /** @class FilterByRunEvent FilterByRunEvent.h
  *   
@@ -49,20 +51,23 @@ MyFilterByRunEvent.PassSelectedEvents = 0
 MyFilterByRunEvent.RunEventNumList = [ (86456, 421), (48621, 3) ]
 .... @endverbatim
  */
-class FilterByRunEvent : public GaudiAlgorithm {
+class FilterByRunEvent final : public GaudiAlgorithm 
+{
+
 public: 
+
   /// Standard constructor
   FilterByRunEvent( const std::string& name, ISvcLocator* pSvcLocator );
 
-  virtual ~FilterByRunEvent( ); ///< Destructor
+  virtual ~FilterByRunEvent( ) = default; ///< Destructor
 
-  virtual StatusCode execute   ();    ///< Algorithm execution
+  virtual StatusCode execute();    ///< Algorithm execution
 
-protected:
+  virtual StatusCode initialize();    ///< Algorithm initialize
 
 private:
 
-  std::vector<std::pair<int,int> > m_events; ///< Run/event number pairs
+  std::vector< std::pair<int,int> > m_events; ///< Run/event number pairs
   //FIXME: needs to be: std::vector<std::pair<unsigned int,unsigned long long> > m_events; ///< Run/event number pairs
   bool m_passSelect;		///< If true, will pass list events; false, fail
 

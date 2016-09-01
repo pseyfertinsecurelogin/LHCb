@@ -17,8 +17,8 @@
 // Standard constructor, initializes variables
 //=============================================================================
 ODINCodecBaseTool::ODINCodecBaseTool( const std::string& type,
-                                const std::string& name,
-                                const IInterface* parent )
+                                      const std::string& name,
+                                      const IInterface* parent )
   : Decoder::ToolBase ( type, name , parent )
 {
   declareInterface<IGenericTool>(this);
@@ -30,11 +30,6 @@ ODINCodecBaseTool::ODINCodecBaseTool( const std::string& type,
                   " it is binary compatible with the latest known version.");
 }
 //=============================================================================
-// Destructor
-//=============================================================================
-ODINCodecBaseTool::~ODINCodecBaseTool() {
-}
-//=============================================================================
 // ODIN Bank constants
 //=============================================================================
 namespace {
@@ -44,30 +39,32 @@ namespace {
 
   namespace PreV6 {
     enum TriggerType {
-        Reserve            = 0,
-        PhysicsTrigger     = 1,
-        AuxilliaryTrigger  = 2,
-        RandomTrigger      = 3,
-        PeriodicTrigger    = 4,
-        NonZSupTrigger     = 5,
-        TimingTrigger      = 6,
-        CalibrationTrigger = 7
+      Reserve            = 0,
+      PhysicsTrigger     = 1,
+      AuxilliaryTrigger  = 2,
+      RandomTrigger      = 3,
+      PeriodicTrigger    = 4,
+      NonZSupTrigger     = 5,
+      TimingTrigger      = 6,
+      CalibrationTrigger = 7
     };
   }
 }
 //=============================================================================
 // Decode
 //=============================================================================
-LHCb::ODIN* ODINCodecBaseTool::i_decode(const LHCb::RawBank* bank, LHCb::ODIN* odin) {
-  unsigned long long temp64;
-  unsigned int temp32;
+LHCb::ODIN* ODINCodecBaseTool::i_decode(const LHCb::RawBank* bank, LHCb::ODIN* odin)
+{
+  unsigned long long temp64{0};
+  unsigned int       temp32{0};
 
   // Check the passed pointers
-  Assert((bank!=NULL), "Called without a RawBank object (pointer NULL)");
+  Assert( bank != nullptr, "Called without a RawBank object (pointer NULL)");
 
   // ensure that the new object is deleted in case of failure
   std::unique_ptr<LHCb::ODIN> ptr;
-  if (!odin) {
+  if ( !odin )
+  {
     odin = new LHCb::ODIN();
     ptr.reset(odin);
   }
@@ -111,7 +108,7 @@ LHCb::ODIN* ODINCodecBaseTool::i_decode(const LHCb::RawBank* bank, LHCb::ODIN* o
 
   temp64 = odinData[LHCb::ODIN::GPSTimeHi];
   odin->setGpsTime ((temp64 << 32) + odinData[LHCb::ODIN::GPSTimeLo]);
-  
+
   temp32 = odinData[LHCb::ODIN::Word7];
   odin->setDetectorStatus( (temp32 & LHCb::ODIN::DetectorStatusMask) >> LHCb::ODIN::DetectorStatusBits );
   odin->setErrorBits( (temp32 & LHCb::ODIN::ErrorMask) >> LHCb::ODIN::ErrorBits );
@@ -146,15 +143,15 @@ LHCb::ODIN* ODINCodecBaseTool::i_decode(const LHCb::RawBank* bank, LHCb::ODIN* o
 
   if (version >= 5) {
     switch ( (temp32 & LHCb::ODIN::CalibrationTypeMask) >> LHCb::ODIN::CalibrationTypeBits ) {
-      case 0  : odin->setCalibrationType(LHCb::ODIN::A); break;
-      case 1  : odin->setCalibrationType(LHCb::ODIN::B); break;
-      case 2  : odin->setCalibrationType(LHCb::ODIN::C); break;
-      case 3  : odin->setCalibrationType(LHCb::ODIN::D); break;
-      default : odin->setCalibrationType(LHCb::ODIN::A); break;
+    case 0  : odin->setCalibrationType(LHCb::ODIN::A); break;
+    case 1  : odin->setCalibrationType(LHCb::ODIN::B); break;
+    case 2  : odin->setCalibrationType(LHCb::ODIN::C); break;
+    case 3  : odin->setCalibrationType(LHCb::ODIN::D); break;
+    default : odin->setCalibrationType(LHCb::ODIN::A); break;
     }
   } else {
     odin->setReadoutType( ((temp32 & LHCb::ODIN::CalibrationTypeMask) >> LHCb::ODIN::CalibrationTypeBits ) == 0 ?
-        LHCb::ODIN::ZeroSuppressed : LHCb::ODIN::NonZeroSuppressed );
+                          LHCb::ODIN::ZeroSuppressed : LHCb::ODIN::NonZeroSuppressed );
   }
 
   if (version >= 4) {
@@ -164,11 +161,11 @@ LHCb::ODIN* ODINCodecBaseTool::i_decode(const LHCb::RawBank* bank, LHCb::ODIN* o
   odin->setForceBit( ((temp32 & LHCb::ODIN::ForceMask) >> LHCb::ODIN::ForceBits ) != 0 );
 
   switch ( (temp32 & LHCb::ODIN::BXTypeMask) >> LHCb::ODIN::BXTypeBits ) {
-    case 0  : odin->setBunchCrossingType(LHCb::ODIN::NoBeam); break;
-    case 1  : odin->setBunchCrossingType(LHCb::ODIN::Beam1); break;
-    case 2  : odin->setBunchCrossingType(LHCb::ODIN::Beam2); break;
-    case 3  : odin->setBunchCrossingType(LHCb::ODIN::BeamCrossing); break;
-    default : odin->setBunchCrossingType(LHCb::ODIN::NoBeam); break;
+  case 0  : odin->setBunchCrossingType(LHCb::ODIN::NoBeam); break;
+  case 1  : odin->setBunchCrossingType(LHCb::ODIN::Beam1); break;
+  case 2  : odin->setBunchCrossingType(LHCb::ODIN::Beam2); break;
+  case 3  : odin->setBunchCrossingType(LHCb::ODIN::BeamCrossing); break;
+  default : odin->setBunchCrossingType(LHCb::ODIN::NoBeam); break;
   }
 
   odin->setBunchCurrent( (temp32 & LHCb::ODIN::BunchCurrentMask) >> LHCb::ODIN::BunchCurrentBits );
@@ -213,7 +210,7 @@ LHCb::RawBank* ODINCodecBaseTool::i_encode(const LHCb::ODIN *odin) {
   data[LHCb::ODIN::RunNumber] = odin->runNumber();
 
   data[LHCb::ODIN::EventType] = ((odin->eventType() << LHCb::ODIN::EventTypeBits) & LHCb::ODIN::EventTypeMask) |
-                                ((odin->calibrationStep() << LHCb::ODIN::CalibrationStepBits) & LHCb::ODIN::CalibrationStepMask);
+    ((odin->calibrationStep() << LHCb::ODIN::CalibrationStepBits) & LHCb::ODIN::CalibrationStepMask);
 
   data[LHCb::ODIN::OrbitNumber] = odin->orbitNumber();
   data[LHCb::ODIN::L0EventIDHi] = (unsigned int) ((odin->eventNumber() >> 32) & 0xFFFFFFFF );
@@ -239,12 +236,12 @@ LHCb::RawBank* ODINCodecBaseTool::i_encode(const LHCb::ODIN *odin) {
   }
 
   data[LHCb::ODIN::Word8] = ((odin->bunchId() << LHCb::ODIN::BunchIDBits) & LHCb::ODIN::BunchIDMask) |
-                            ((odin->timeAlignmentEventWindow() << LHCb::ODIN::TAEWindowBits) & LHCb::ODIN::TAEWindowMask) |
-                            ((triggerType << LHCb::ODIN::TriggerTypeBits) & LHCb::ODIN::TriggerTypeMask) |
-                            ((odin->calibrationType() << LHCb::ODIN::CalibrationTypeBits) & LHCb::ODIN::CalibrationTypeMask) |
-                            ((odin->forceBit() << LHCb::ODIN::ForceBits) & LHCb::ODIN::ForceMask) |
-                            ((odin->bunchCrossingType() << LHCb::ODIN::BXTypeBits) & LHCb::ODIN::BXTypeMask) |
-                            ((odin->bunchCurrent() << LHCb::ODIN::BunchCurrentBits) & LHCb::ODIN::BunchCurrentMask);
+    ((odin->timeAlignmentEventWindow() << LHCb::ODIN::TAEWindowBits) & LHCb::ODIN::TAEWindowMask) |
+    ((triggerType << LHCb::ODIN::TriggerTypeBits) & LHCb::ODIN::TriggerTypeMask) |
+    ((odin->calibrationType() << LHCb::ODIN::CalibrationTypeBits) & LHCb::ODIN::CalibrationTypeMask) |
+    ((odin->forceBit() << LHCb::ODIN::ForceBits) & LHCb::ODIN::ForceMask) |
+    ((odin->bunchCrossingType() << LHCb::ODIN::BXTypeBits) & LHCb::ODIN::BXTypeMask) |
+    ((odin->bunchCurrent() << LHCb::ODIN::BunchCurrentBits) & LHCb::ODIN::BunchCurrentMask);
 
   data[LHCb::ODIN::TriggerConfigurationKey] = odin->triggerConfigurationKey();
 

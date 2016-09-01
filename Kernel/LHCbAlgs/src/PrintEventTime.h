@@ -6,27 +6,31 @@
 
 namespace LHCbAlgsTest {
 
-/** @class PrintEventTime PrintEventTime.h src/PrintEventTime.h
-  *
-  * Simple algorithm that prints the current event time.
-  *
-  * @author Marco Clemencic
-  * @date 03/10/2011
-  */
-class PrintEventTime: public GaudiAlgorithm {
-public:
-  /// Standard constructor
-  PrintEventTime(const std::string& name, ISvcLocator* pSvcLocator);
-  virtual ~PrintEventTime(); ///< Destructor
+  /** @class PrintEventTime PrintEventTime.h src/PrintEventTime.h
+   *
+   * Simple algorithm that prints the current event time.
+   *
+   * @author Marco Clemencic
+   * @date 03/10/2011
+   */
+  class PrintEventTime: public GaudiAlgorithm
+  {
 
-  virtual StatusCode initialize();    ///< Algorithm initialization
-  virtual StatusCode execute   ();    ///< Algorithm execution
-  virtual StatusCode finalize  ();    ///< Algorithm finalization
-protected:
-private:
+  public:
 
-  SmartIF<IDetDataSvc> m_detDataSvc;
-};
+    /// Standard constructor
+    PrintEventTime(const std::string& name, ISvcLocator* pSvcLocator);
+    virtual ~PrintEventTime() = default; ///< Destructor
+
+    virtual StatusCode initialize();    ///< Algorithm initialization
+    virtual StatusCode execute   ();    ///< Algorithm execution
+    virtual StatusCode finalize  ();    ///< Algorithm finalization
+
+  private:
+
+    SmartIF<IDetDataSvc> m_detDataSvc;
+
+  };
 
 }
 #endif // SRC_PRINTEVENTTIME_H

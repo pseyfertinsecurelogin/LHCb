@@ -1,5 +1,5 @@
-#ifndef RATEFROMTCK_H 
-#define RATEFROMTCK_H 1
+#ifndef RateFromCondDB_H 
+#define RateFromCondDB_H 1
 
 // CondDB
 #include "DetDesc/Condition.h"
@@ -11,8 +11,9 @@
 #include "Kernel/TCK.h"
 #include "Kernel/IRateFromTCK.h"
 static const InterfaceID IID_RateFromCondDB ( "RateFromCondDB", 1, 0 ); // needed as there's no interface
+
 /** @class RateFromCondDB RateFromCondDB.h
- *  
+ *
  *  Get rate of a given rate limiter for the Condition Database
  *
  *  @sa OfflineRateLimiter
@@ -22,36 +23,39 @@ static const InterfaceID IID_RateFromCondDB ( "RateFromCondDB", 1, 0 ); // neede
  *  @author Patrick Koppenburg
  *  @date   2012-05-09
  */
-class RateFromCondDB : public GaudiTool
-                       //, virtual public IRateFromCondDB 
+class RateFromCondDB final : public GaudiTool
+//, virtual public IRateFromCondDB
 {
 
-public: 
+ public:
+
   // Return the interface ID
   static const InterfaceID& interfaceID() { return IID_RateFromCondDB; }; // needed as there's no interface
+
   /// Standard constructor
-  RateFromCondDB( const std::string& type, 
-               const std::string& name,
-               const IInterface* parent);
+  RateFromCondDB( const std::string& type,
+                  const std::string& name,
+                  const IInterface* parent);
 
-  virtual ~RateFromCondDB( ){}; ///< Destructor
+  virtual ~RateFromCondDB( ) = default; ///< Destructor
 
-  bool initializeCondDB(); 
+  bool initializeCondDB();
 
   /// Get rate from Conditions Database
   double getRate() const ;
 
-protected:
+ private:
 
-private:
   StatusCode i_updateConditions();              ///< Function extracting data from Condition
 
-  //  mutable IPropertyConfigSvc * m_propertyConfigSvc;
-  //  std::string m_propertyConfigSvcName;      ///< Name of PropertyConfigSvc
-  Condition *m_condTrigger;                     ///< Condition for sampling coefficients
+ private:
+
+  Condition *m_condTrigger = nullptr;           ///< Condition for sampling coefficients
   double m_rate;                                ///< rate in condDB
   std::string m_condition ;                     ///< ConditionName
   std::string m_lineRate ;                      ///< Line Rate name in CondDB
   double m_unit ;                               ///< Unit for rate
+
 };
-#endif // RATEFROMTCK_H
+
+#endif // RateFromCondDB

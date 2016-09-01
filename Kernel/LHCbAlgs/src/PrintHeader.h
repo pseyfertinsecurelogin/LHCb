@@ -17,21 +17,24 @@
  *  @author Gloria Corti
  *  @date   2003-03-16
  */
-class PrintHeader : public GaudiAlgorithm {
+
+class PrintHeader final : public GaudiAlgorithm 
+{
+
 public:
+
   /// Standard constructor
   PrintHeader( const std::string& name, ISvcLocator* pSvcLocator );
 
-  virtual ~PrintHeader( ); ///< Destructor
+  virtual ~PrintHeader( ) = default; ///< Destructor
 
   virtual StatusCode execute   ();    ///< Algorithm execution
   virtual StatusCode finalize  ();    ///< Algorithm finalization
 
-protected:
-
 private:
+
   bool        m_printFile;           ///< Flag to control printing of file name
-  long        m_nEvents;             ///< Counter of events processed
+  unsigned long long  m_nEvents{0};  ///< Counter of events processed
 
 };
 #endif // CMT_PRINTHEADER_H

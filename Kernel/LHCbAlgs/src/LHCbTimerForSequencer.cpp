@@ -22,7 +22,7 @@ double LHCbTimerForSequencer::stop()
   m_sum    += lastTime;
   m_sumCpu += cpuTime;
 
-  if ( 1 == m_num )
+  if ( UNLIKELY( 1 == m_num ) )
   {
     m_min = lastTime;
     m_max = lastTime;

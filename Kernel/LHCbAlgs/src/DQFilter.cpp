@@ -5,8 +5,8 @@
 #include "GaudiKernel/IUpdateManagerSvc.h"
 #include "DetDesc/Condition.h"
 
-DQFilter::DQFilter(const std::string & name, ISvcLocator *pSvcLocator):
-  base_class(name, pSvcLocator), m_acceptTool(0)
+DQFilter::DQFilter(const std::string & name, ISvcLocator *pSvcLocator)
+  : base_class(name, pSvcLocator)
 {
   declareProperty("UseBeginEvent",
                   m_beginEvent = true,
@@ -70,7 +70,7 @@ StatusCode DQFilter::finalize()
   }
   if (m_acceptTool) {
     releaseTool(m_acceptTool).ignore();
-    m_acceptTool = 0;
+    m_acceptTool = nullptr;
   }
 
   return GaudiAlgorithm::finalize();

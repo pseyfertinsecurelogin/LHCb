@@ -22,20 +22,21 @@ ProcessPhase::ProcessPhase( const std::string& name, ISvcLocator* pSvcLocator )
 	declareProperty( "DetectorList", m_detList );
 }
 
-ProcessPhase::~ProcessPhase() { 
-}
-
-StatusCode ProcessPhase::initialize() {
-
+StatusCode ProcessPhase::initialize() 
+{
   std::string myMeasureProp;
-  getProperty( "MeasureTime", myMeasureProp ).ignore();
-  IJobOptionsSvc* jobSvc = svc<IJobOptionsSvc>("JobOptionsSvc");
 
+  auto sc = getProperty( "MeasureTime", myMeasureProp );
+  if ( !sc ) return sc;
+
+  IJobOptionsSvc* jobSvc = svc<IJobOptionsSvc>("JobOptionsSvc");
+  
 	// Declare sequences to the phase
   std::string myMembers = "{";
-	for ( VectorName::iterator it=m_detList.begin(); it != m_detList.end(); it++){
-    if( m_detList.begin() != it ) myMembers += ",";
-    std::string algName = name() + (*it) + "Seq";
+	for ( auto it = m_detList.begin(); it != m_detList.end(); ++it )
+  {
+    if ( m_detList.begin() != it ) myMembers += ",";
+    const auto algName = name() + (*it) + "Seq";
     myMembers +=  "\"GaudiSequencer/" + algName + "\"";
     // Sequences are not yet instantiated, so set MeasureTime property directly 
     // in the catalogue. Uses same value as the parent ProcessPhase

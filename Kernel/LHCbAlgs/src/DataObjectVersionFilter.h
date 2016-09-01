@@ -16,7 +16,7 @@
  *  @author Chris Jones
  *  @date   2009-11-06
  */
-class DataObjectVersionFilter : public GaudiAlgorithm 
+class DataObjectVersionFilter final : public GaudiAlgorithm 
 {
 
 public: 
@@ -24,7 +24,7 @@ public:
   /// Standard constructor
   DataObjectVersionFilter( const std::string& name, ISvcLocator* pSvcLocator );
 
-  virtual ~DataObjectVersionFilter( ); ///< Destructor
+  virtual ~DataObjectVersionFilter( ) = default; ///< Destructor
 
   virtual StatusCode execute();    ///< Algorithm execution
 
