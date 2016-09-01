@@ -882,13 +882,6 @@ namespace
    */
   const double s_sqrt2  = std::sqrt ( 2.0 ) ;
   // ==========================================================================
-  /** @var x_sqrt2_i
-   *  \f$\frac{1}{\sqrt{2}}\f$
-   *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
-   *  @date 2010-05-23
-   */
-  const double s_sqrt2_i = 1 / s_sqrt2 ;
-  // ==========================================================================
   /** helper function for integration of Gram-Charlier A function
    *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
    *  @date 2010-05-23
@@ -4455,8 +4448,8 @@ namespace
   // ==========================================================================
   // Coefficients for Blatt-Weisskopf formfactors 
   // ==========================================================================
-  const std::array<int,1> s_BW_0 { {                               1 } } ;
-  const std::array<int,2> s_BW_1 { {                            1, 1 } } ;
+  // const std::array<int,1> s_BW_0 { {                               1 } } ;
+  // const std::array<int,2> s_BW_1 { {                            1, 1 } } ;
   const std::array<int,3> s_BW_2 { {                        9,  3, 1 } } ;
   const std::array<int,4> s_BW_3 { {                 225,  45,  6, 1 } } ;
   const std::array<int,5> s_BW_4 { {         11025, 1575, 135, 10, 1 } } ;
