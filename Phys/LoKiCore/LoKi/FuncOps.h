@@ -843,9 +843,8 @@ namespace LoKi
                  int          N         = -1   ,
                  const bool         ascending = true )
       {
-        if ( ascending )
-        { return LoKi::Functors::Sort_<TYPE2,double,true>  ( fun , N ) ; }
-        return   LoKi::Functors::Sort_<TYPE2,double,false> ( fun , N ) ;
+        return ascending ? LoKi::Functors::Sort_<TYPE2,double,true>  ( fun , N )
+                         : LoKi::Functors::Sort_<TYPE2,double,false> ( fun , N ) ;
       }
       // ======================================================================
       static LoKi::FunctorFromFunctor<std::vector<TYPE2>,std::vector<TYPE2> >
@@ -1040,11 +1039,11 @@ namespace LoKi
       // count
       static LoKi::FunctorFromFunctor<std::vector<TYPE2>,double >
       __count__ ( const Cuts& cut )
-      { return LoKi::count<TYPE2,TYPE,bool> ( cut ) ; }
+      { return LoKi::count<TYPE2> ( cut ) ; }
       // has
       static LoKi::FunctorFromFunctor<std::vector<TYPE2>,bool>
       __has__ ( const Cuts& cut )
-      { return LoKi::has<TYPE2,TYPE,bool> ( cut ) ; }
+      { return LoKi::has<TYPE2> ( cut ) ; }
       // ======================================================================
       // fetch from the stream
       static LoKi::FunctorFromFunctor<std::vector<TYPE2>,bool>

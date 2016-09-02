@@ -569,7 +569,7 @@ namespace LoKi
       // ======================================================================
       /// constructor from the predicate
       template <typename F, typename = details::require_signature<F,TYPE1,TYPE2>>
-      explicit Count ( F&& cut )
+      Count( F&& cut )
         : LoKi::AuxFunBase ( std::tie ( cut ) )
         , m_cut ( std::forward<F>(cut) )
       {}
@@ -780,7 +780,7 @@ namespace LoKi
       // ======================================================================
       /// constructor from the predicate
       template <typename F, typename = ::LoKi::details::require_signature<F,TYPE1,TYPE2>>
-      explicit Has ( F&& cut )
+      Has ( F&& cut )
         : LoKi::AuxFunBase ( std::tie ( cut ) )
         , m_cut ( std::forward<F>(cut) )
       {}
