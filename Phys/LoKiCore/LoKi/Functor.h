@@ -204,7 +204,7 @@ namespace LoKi
     /// constructor
     Constant ( T2 value )
       : LoKi::AuxFunBase ( std::tie( value ) )
-      , m_value ( value )
+      , m_value ( std::move(value) )
     {}
     // ========================================================================
   public:
@@ -421,7 +421,9 @@ namespace LoKi
   namespace details {
 
       template <typename T, typename U>
-      using decays_to = std::is_convertible<typename std::decay<T>::type*, U*>;
+      using decays_to = typename std::conditional< std::is_void<U>::value,
+                                          typename std::is_void<T>::type,
+                                          typename std::is_convertible<typename std::decay<T>::type*, U*>::type >::type;
 
       // is Derived derived from Base<Args...>?
       template <template <typename ...> class Base, typename Derived>
@@ -463,6 +465,11 @@ namespace LoKi
           using type2 = typename std::common_type< typename LF<F1>::type2,
                                                    typename LF<F2>::type2 >::type;
       };
+
+      template <typename F, typename TYPE1, typename TYPE2>
+      using require_signature = typename
+          std::enable_if<   decays_to<typename LF<F>::type1, TYPE1>::value
+                         && decays_to<typename LF<F>::type2, TYPE2>::value >::type;
   }
 
 
