@@ -131,12 +131,12 @@ namespace LoKi
       virtual typename uBase::result_type operator()
         ( typename uBase::argument a ) const
       {
-        const LoKi::Apply<TYPE,double> appFun ( &this->m_fun.func() ) ;
+        const LoKi::Apply<TYPE,double> appFun { &this->m_fun.func() } ;
         //
         StatEntity _stat = ( this->m_cut ?
           LoKi::Algs::stat ( a.begin(), a.end(),
                              appFun       ,
-                             LoKi::Apply<TYPE,bool>( this->m_cut->func() ) ) :
+                             LoKi::Apply<TYPE,bool>{ &this->m_cut->func() } ) :
           LoKi::Algs::stat ( a.begin(), a.end(),
                              appFun ) ) ;
         return (_stat.*m_pmf)() ;
@@ -147,11 +147,10 @@ namespace LoKi
       /// print as C++
       virtual std::string   toCpp () const
       {
-        return
-          "LoKi::"
-          + this->m_nam          + "( "
-          + this->m_fun.toCpp () + ", "
-          + this->m_cut.toCpp () + ") " ;
+          std::string s = "LoKi::" + this->m_nam          + "( "
+                                   + this->m_fun.toCpp () ;
+          if (this->m_cut) s += ", " + this->m_cut->toCpp () ;
+          return s += ") " ;
       }
       // ======================================================================
     private:
