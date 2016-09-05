@@ -3,6 +3,9 @@
 ! Responsible : Olivier Deschamps odescham@in2p3.fr
 ! =====================================================================
 
+! 2016-09-05 - Olivier Deschamps
+  - Propagate saturation info
+
 ! 2016-08-16 - Olivier Deschamps
   - new interface : ICounterLevel
 
