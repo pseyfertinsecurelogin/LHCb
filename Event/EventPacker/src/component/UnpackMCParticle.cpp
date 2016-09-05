@@ -1,6 +1,5 @@
 
 // STL
-//#include <random> // For flags tests. To be removed.
 #include <algorithm>
 
 // Event model
@@ -103,8 +102,8 @@ StatusCode UnpackMCParticle::execute()
     for ( const auto& I : src.endVertices )
     {
       // Check for duplicates ...
-      if ( !std::any_of( processedRefs.begin(), processedRefs.end(),
-                         [&I]( const auto J ) { return I == J; } ) )
+      if ( std::none_of( processedRefs.begin(), processedRefs.end(),
+                         [&I]( const auto& J ) { return I == J; } ) )
       {
         // save this packed ref to the list of those already processed.
         processedRefs.push_back(I);
