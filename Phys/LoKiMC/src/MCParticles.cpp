@@ -756,20 +756,38 @@ LoKi::MCParticles::ProperLifeTime::operator()
     return LoKi::Constants::InvalidTime;                     // RETURN 
   }
   // 
-  if ( p->endVertices().empty() ) 
-  { return LoKi::Constants::InfiniteTime ; }                // RETURN}
-  //
-  const LHCb::MCVertex* endVertex = p->endVertices()[0] ;
-  if ( 0 == endVertex ) 
-  {
-    Error (" Invalid 'endVertex' , return 'InfiniteTime'");
-    return LoKi::Constants::InfiniteTime ;                  // RETURN 
-  };
   const LHCb::MCVertex* originVertex = p->originVertex() ;
   if ( 0 == originVertex ) 
   {
     Error(" Invalid 'originVertex' , return 'InvalidTime'");
     return LoKi::Constants::InvalidTime;                     // RETURN 
+  }
+  //
+  if ( p->endVertices().empty() ) 
+  { return LoKi::Constants::InfiniteTime ; }                // RETURN}
+  //
+  // get the first vertex as "endVertex"
+  const LHCb::MCVertex* endVertex = p->endVertices()[0] ;
+  // try to find the decay vertex 
+  if ( 0 == endVertex || ( LHCb::MCVertex::DecayVertex        != endVertex->type() && 
+                           LHCb::MCVertex::OscillatedAndDecay != endVertex->type() ) ) 
+  {
+    typedef SmartRefVector<LHCb::MCVertex> VERTICES ;
+    const VERTICES& endVertices =  p->endVertices() ;
+    for ( VERTICES::const_iterator iv = endVertices.begin() ; endVertices.end() != iv ; ++iv ) 
+    {
+      const LHCb::MCVertex* ev = *iv ;
+      if      ( 0 == ev ) { continue ; } // CONTINUE 
+      else if ( LHCb::MCVertex::DecayVertex         == ev->type() ) { endVertex = ev ; break ; } // BREAK 
+      else if ( LHCb::MCVertex::OscillatedAndDecay  == ev->type() ) { endVertex = ev ; break ; } // BREAK 
+      else if ( LHCb::MCVertex::HadronicInteraction == ev->type() ) { endVertex = ev ; }         // ??? 
+    }
+  }
+  //
+  if ( 0 == endVertex ) 
+  {
+    Error (" Invalid 'endVertex' , return 'InfiniteTime'");
+    return LoKi::Constants::InfiniteTime ;                  // RETURN 
   }
   // evaluate the distance 
   const double dist = ( endVertex     -> position() - 
