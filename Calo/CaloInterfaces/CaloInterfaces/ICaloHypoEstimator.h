@@ -79,7 +79,9 @@ namespace CaloDataType{
                     ClusterCode,
                     ClusterFrac,
                     Saturation,
-                    Last // dummy end (57)
+                    ClusterAsX,
+                    ClusterAsY,
+                    Last // dummy end (59)
   };                
 
   static const  int TypeMask[Last] ={  // 0x1 : neutral ; 0x2 : charged ; 0x3 : both
@@ -89,7 +91,7 @@ namespace CaloDataType{
     0x1,0x1,0x1,0x1,0x1,0x1,0x1,0x1,  // 8  Gamma/Pi0 input (Ecal-based)
     0x1,0x1,0x1,0x1,0x1,0x1,0x1,0x1,  // 8  Gamma/Pi0 input (Prs-based)  
     0x1,0x1,0x3,0x3, //4
-    0x1 //1
+    0x1,0x1,0x1 //3
   };
   static const  std::string Name[Last] = {
     "HypoE"     , // 0
@@ -149,7 +151,9 @@ namespace CaloDataType{
     "isNotE",
     "ClusterCode",
     "ClusterFrac",
-    "Saturation"
+    "Saturation",
+    "ClusterAsX",
+    "ClusterAsY"
   };
 }
 
