@@ -4,6 +4,11 @@
 ! Purpose     : General purpose RICH classes
 !------------------------------------------------------------------------------
 
+! 2016-09-05 - Chris Jones
+ - Update various classes to avoid designs where mutbale data members (caches)
+   are changed in const methods, as this will not play well with the upgrade
+   framework with parallel processing.
+
 ! 2016-08-10 - Chris Jones
  - Cache the panel and RICH enums in HPDPixelCluster for speed.
  - Use 8 bit int as underlying type in RichTrackSegment type enum.

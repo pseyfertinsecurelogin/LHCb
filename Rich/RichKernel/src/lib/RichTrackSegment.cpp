@@ -22,51 +22,50 @@ void LHCb::RichTrackSegment::updateState( const Gaudi::XYZPoint & rotPnt,
 {
   // Entry point
   auto toEntry = entryPoint() - rotPnt;
-  setEntryState( rotPnt + trans(toEntry), trans(entryMomentum()) );
-
   // Middle point
   auto toMid   = middlePoint() - rotPnt;
-  setMiddleState( rotPnt + trans(toMid), trans(middleMomentum()) );
-
   // exit point
   auto toExit  = exitPoint() - rotPnt;
-  setExitState( rotPnt + trans(toExit), trans(exitMomentum()) );
+  // set the states
+  setStates( rotPnt + trans(toEntry), trans(entryMomentum()),
+             rotPnt + trans(toMid),   trans(middleMomentum()),
+             rotPnt + trans(toExit),  trans(exitMomentum())  );
 }
 
-void LHCb::RichTrackSegment::computeRotationMatrix2() const
+void LHCb::RichTrackSegment::updateCachedInfo()
 {
+  // compute the cached rotation matrices for the angle calculations
   const auto z = bestMomentum().Unit();
   auto y = z.Cross( Gaudi::XYZVector(1,0,0) );
   y *= vdt::fast_isqrtf( y.Mag2() ); // maybe not needed ?
   const auto x = y.Cross(z);
-  m_rotation2.reset( new Gaudi::Rotation3D( x.X(), y.X(), z.X(),
-                                            x.Y(), y.Y(), z.Y(),
-                                            x.Z(), y.Z(), z.Z() ) );
-}
+  m_rotation2 = Gaudi::Rotation3D( x.X(), y.X(), z.X(),
+                                   x.Y(), y.Y(), z.Y(),
+                                   x.Z(), y.Z(), z.Z() );
+  m_rotation = Gaudi::Rotation3D( m_rotation2.Inverse() );
 
-void LHCb::RichTrackSegment::updateCachedBestInfo() const
-{
   // Vector from entry to exit point
   const auto entryExitV ( exitPoint() - entryPoint() );
+
   // mag^2 for entry to exit vector
   const auto entryExitVMag2 = entryExitV.mag2();
+
   // update entry to middle point vector
   m_midEntryV = ( middlePoint() - entryPoint()  );
+
   // update middle to exit point vector
   m_exitMidV  = ( exitPoint()   - middlePoint() );
+
   // update factors
   m_invMidFrac1 = std::sqrt( entryExitVMag2    / m_midEntryV.mag2() );
   m_midFrac2    = std::sqrt( m_exitMidV.mag2() / entryExitVMag2     );
+
   // update the path length
   m_pathLength = std::sqrt(m_midEntryV.mag2()) + std::sqrt(m_exitMidV.mag2());
-  // set the OK flag
-  m_cachedTrajOK = true;
 }
 
 Gaudi::XYZVector LHCb::RichTrackSegment::bestMomentum( const double fractDist ) const
 {
-  // make sure cached variables are valid
-  if ( UNLIKELY(!m_cachedTrajOK) ) { updateCachedBestInfo(); }
   // return the best momentum vector
   if ( zCoordAt(fractDist) < middlePoint().z() )
   {
@@ -101,7 +100,7 @@ void LHCb::RichTrackSegment::chordConstructorInit2()
 void LHCb::RichTrackSegment::chordConstructorInit3()
 {
   // the direction to use
-  auto v = exitPoint()-entryPoint();
+  auto v = exitPoint() - entryPoint();
   if ( v.Mag2() > 0 )
   {
     // Update direction of entry state to chord direction

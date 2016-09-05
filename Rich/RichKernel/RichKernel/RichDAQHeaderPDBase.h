@@ -58,21 +58,6 @@ namespace Rich
       /// Default constructor
       HeaderPDBase( ) : m_headerWords(1,0) { }
 
-      /// Destructor
-      virtual ~HeaderPDBase ( ) = default;
-
-      /// Default Copy Constructor
-      HeaderPDBase( const HeaderPDBase& ) = default;
-
-      /// Default Copy operator
-      HeaderPDBase& operator=( const HeaderPDBase& ) = default;
-
-      /// Default Move Constructor
-      HeaderPDBase( HeaderPDBase&& ) = default;
-
-      /// Default Move operator
-      HeaderPDBase& operator=( HeaderPDBase&& ) = default;
-
     public: // methods
 
       /// Read only access to header words

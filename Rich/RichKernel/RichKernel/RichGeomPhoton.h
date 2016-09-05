@@ -48,21 +48,6 @@ namespace LHCb
     /// Default Constructor
     RichGeomPhoton() { }
 
-    /// Default Destructor
-    ~RichGeomPhoton() = default;
-
-    /// Default Copy Constructor
-    RichGeomPhoton( const RichGeomPhoton& ) = default;
-    
-    /// Default Copy operator
-    RichGeomPhoton& operator=( const RichGeomPhoton& ) = default;
-    
-    /// Default Move Constructor
-    RichGeomPhoton( RichGeomPhoton&& ) = default;
-    
-    /// Default Move operator
-    RichGeomPhoton& operator=( RichGeomPhoton&& ) = default;
-
   public:
 
     /** Constructor with parameters

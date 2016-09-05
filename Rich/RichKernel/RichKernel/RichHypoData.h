@@ -65,21 +65,6 @@ namespace Rich
      */
     explicit HypoData( const TYPE value ) { resetData(value); }
 
-    /// Default Destructor
-    ~HypoData() = default;
-
-    /// Default Copy Constructor
-    HypoData( const HypoData& ) = default;
-
-    /// Default Copy Operator
-    HypoData& operator=( const HypoData& ) = default;
-
-    /// Default Move Constructor
-    HypoData( HypoData&& ) = default;
-
-    /// Default Move Operator
-    HypoData& operator=( HypoData&& ) = default;
-
   public: // methods
 
     /** Read access operator

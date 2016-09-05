@@ -47,7 +47,7 @@ namespace LHCb
    *  RichTrackSegment represents the trajectory of a Track through a radiator volume.
    *
    *  Implements the functionaility needed by the RICH reconstruction to interact with
-   *  this trajectory in order to calculate the Cherenjkov angles etc.
+   *  this trajectory in order to calculate the Cherenkov angles etc.
    *
    *  @author Antonis Papanestis   Antonis.Papanestis@cern.ch
    *  @author Chris Jones          Christopher.Rob.Jones@cern.ch
@@ -78,10 +78,9 @@ namespace LHCb
      *  @return The average photon energy */
     inline double avPhotEn( const Rich::RadiatorType rad ) const
     {
-      return ( Rich::Aerogel  == rad ? 3.00 :   // Aerogel
-               Rich::Rich1Gas == rad ? 4.25 :   // C4F10
-               4.4                              // CF4
-               );
+      return ( Rich::Rich1Gas == rad ? 4.25 :  // C4F10
+               Rich::Rich2Gas == rad ? 4.40 :  // CF4
+               3.00                        );  // Aerogel 
     }
 
   public: // helper classes
@@ -101,22 +100,7 @@ namespace LHCb
     public:
 
       /// Default Constructor
-      StateErrors() {}
-
-      /// Default Destructor
-      ~StateErrors() = default;
-
-      /// Default Copy Constructor
-      StateErrors( const StateErrors& ) = default;
-
-      /// Default Copy operator
-      StateErrors& operator=( const StateErrors& ) = default;
-
-      /// Default Move Constructor
-      StateErrors( StateErrors&& ) = default;
-
-      /// Default Move operator
-      StateErrors& operator=( StateErrors&& ) = default;
+      StateErrors() { }
 
     public:
 
@@ -181,15 +165,15 @@ namespace LHCb
     /// Enum to flag to determine how to create the RichTrackSegment
     enum SegmentType : int8_t
       {
-        UnDefined             = 0,  ///< Undefined segment type
-        UseChordBetweenStates,      ///< Uses full state information to define the segment direction
-        UseAllStateVectors          ///< Uses chord between the entry and exit points. NB : Under development - Do not use yet
+        UnDefined         = 0, ///< Undefined segment type
+        UseChordBetweenStates, ///< Uses full state information to define the segment direction
+        UseAllStateVectors     ///< Uses chord between the entry and exit points. NB : Under development - Do not use yet
       };
 
   public:
 
     /// The segment type
-    inline LHCb::RichTrackSegment::SegmentType type() const
+    inline LHCb::RichTrackSegment::SegmentType type() const noexcept
     {
       return m_type;
     }
@@ -207,7 +191,7 @@ namespace LHCb
     /// Helper method for two point constructor
     inline void initTwoPoints()
     {
-      if     ( RichTrackSegment::UseAllStateVectors    == type() )
+      if      ( RichTrackSegment::UseAllStateVectors    == type() )
       {
         setMiddleState ( add_points(entryPoint(),exitPoint())/2, (entryMomentum()+exitMomentum())/2 );
       }
@@ -219,12 +203,14 @@ namespace LHCb
       {
         throw Rich::Exception( "Unknown RichTrackSegment::SegmentType" );
       }
+      // fill the cached information.
+      updateCachedInfo();
     }
 
     /// Helper method for three point constructor
     inline void initThreePoints()
     {
-      if      ( RichTrackSegment::UseAllStateVectors == type() )
+      if      ( RichTrackSegment::UseAllStateVectors    == type() )
       {
         // nothing to do yet
       }
@@ -236,6 +222,8 @@ namespace LHCb
       {
         throw Rich::Exception( "Unknown RichTrackSegment::SegmentType" );
       }
+      // fill the cached information.
+      updateCachedInfo();
     }
 
     // ------------------------------------------------------------------------------------------------------
@@ -361,9 +349,6 @@ namespace LHCb
     /// Standard constructor
     RichTrackSegment() = default;
 
-    /// Destructor
-    ~RichTrackSegment() = default;
-
     // ------------------------------------------------------------------------------------------------------
 
   private:
@@ -385,7 +370,7 @@ namespace LHCb
   public:
 
     /// Provides read-only access to the radiator intersections
-    inline const Rich::RadIntersection::Vector & radIntersections() const
+    inline const Rich::RadIntersection::Vector & radIntersections() const noexcept
     {
       return m_radIntersections;
     }
@@ -461,13 +446,7 @@ namespace LHCb
     /** Calculates the path lenth of a track segment.
      *  @returns The total length of the track inside the radiator
      */
-    inline double pathLength() const
-    { 
-      // make sure cached variables are valid
-      if ( UNLIKELY(!m_cachedTrajOK) ) { updateCachedBestInfo(); }
-      // return the cached value
-      return m_pathLength;
-    }
+    inline double pathLength() const noexcept { return m_pathLength; }
 
     /// Returns the segment entry point to the radiator
     inline const Gaudi::XYZPoint& entryPoint() const noexcept
@@ -498,8 +477,6 @@ namespace LHCb
     /// Zero gives the entry point, one gives the exit point
     inline Gaudi::XYZPoint bestPoint( const double fractDist ) const
     {
-      // make sure cached variables are valid
-      if ( UNLIKELY( !m_cachedTrajOK ) ) { updateCachedBestInfo(); }
       // return the best point
       return ( zCoordAt(fractDist) < middlePoint().z() ?
                entryPoint()  + (fractDist*m_invMidFrac1*m_midEntryV) :
@@ -565,16 +542,7 @@ namespace LHCb
     {
       radIntersections().front().setEntryPoint    ( point );
       radIntersections().front().setEntryMomentum ( dir   );
-      reset();
-    }
-
-    /// Set the entry state
-    inline void setEntryState( Gaudi::XYZPoint&& point,
-                               Gaudi::XYZVector&& dir )
-    {
-      radIntersections().front().setEntryPoint    ( std::move(point) );
-      radIntersections().front().setEntryMomentum ( std::move(dir)   );
-      reset();
+      updateCachedInfo();
     }
 
     /// Set the Middle state
@@ -583,16 +551,7 @@ namespace LHCb
     {
       m_middlePoint    = point;
       m_middleMomentum = dir;
-      reset();
-    }
-
-    /// Set the Middle state
-    inline void setMiddleState( Gaudi::XYZPoint&& point,
-                                Gaudi::XYZVector&& dir )
-    {
-      m_middlePoint    = std::move(point);
-      m_middleMomentum = std::move(dir);
-      reset();
+      updateCachedInfo();
     }
 
     /// Set the exit state
@@ -601,16 +560,24 @@ namespace LHCb
     {
       radIntersections().back().setExitPoint    ( point );
       radIntersections().back().setExitMomentum ( dir   );
-      reset();
+      updateCachedInfo();
     }
 
-    /// Set the exit state
-    inline void setExitState( Gaudi::XYZPoint&& point,
-                              Gaudi::XYZVector&& dir )
+    /// Set all states
+    inline void setStates( const Gaudi::XYZPoint&  entry_point,
+                           const Gaudi::XYZVector& entry_dir,
+                           const Gaudi::XYZPoint&  mid_point,
+                           const Gaudi::XYZVector& mid_dir,
+                           const Gaudi::XYZPoint&  exit_point,
+                           const Gaudi::XYZVector& exit_dir )
     {
-      radIntersections().back().setExitPoint    ( std::move(point) );
-      radIntersections().back().setExitMomentum ( std::move(dir)   );
-      reset();
+      radIntersections().front().setEntryPoint    ( entry_point );
+      radIntersections().front().setEntryMomentum ( entry_dir   );
+      m_middlePoint    = mid_point;
+      m_middleMomentum = mid_dir;
+      radIntersections().back().setExitPoint    ( exit_point );
+      radIntersections().back().setExitMomentum ( exit_dir   );
+      updateCachedInfo();
     }
 
     /// Set the radiator type
@@ -655,13 +622,8 @@ namespace LHCb
       m_avPhotonEnergy = energy;
     }
 
-    /// Reset segment after information update
-    inline void reset() const
-    {
-      m_rotation .reset( nullptr );
-      m_rotation2.reset( nullptr );
-      m_cachedTrajOK = false;
-    }
+    /// Reset the segment
+    inline void reset() { updateCachedInfo(); }
 
   public:
 
@@ -684,30 +646,19 @@ namespace LHCb
     }
 
     /// Access the rotation matrix 1
-    inline const Gaudi::Rotation3D & rotationMatrix() const
+    inline const Gaudi::Rotation3D & rotationMatrix() const noexcept
     {
-      if ( !m_rotation ) { computeRotationMatrix(); }
-      return *m_rotation;
+      return m_rotation;
     }
 
     /// Access the rotation matrix 2
-    inline const Gaudi::Rotation3D & rotationMatrix2() const
+    inline const Gaudi::Rotation3D & rotationMatrix2() const noexcept
     {
-      if ( !m_rotation2 ) { computeRotationMatrix2(); }
-      return *m_rotation2;
+      return m_rotation2;
     }
 
-    /// Compute the rotation matrix
-    inline void computeRotationMatrix() const
-    {
-      m_rotation.reset( new Gaudi::Rotation3D( rotationMatrix2().Inverse() ) );
-    }
-
-    /// Compute the rotation matrix
-    void computeRotationMatrix2() const;
-
-    /// Update the cached tracjectory information for the 'best' methods
-    void updateCachedBestInfo() const;
+    /// Updates the cached information
+    void updateCachedInfo();
 
   private:  // private data
 
@@ -741,22 +692,18 @@ namespace LHCb
 
     /** Rotation matrix used to calculate the theta and phi angles between
      *  this track segment and a given direction.
-     *  Created on demand as required.
-     */
-    mutable std::unique_ptr<Gaudi::Rotation3D> m_rotation;
+     *  Created on demand as required. */
+    Gaudi::Rotation3D m_rotation;
 
     /** Rotation matrix used to create vectors at a given theta and phi angle
-     *  to this track segment.
-     *  Created on demand as required
-     */
-    mutable std::unique_ptr<Gaudi::Rotation3D> m_rotation2;
+     *  to this track segment. Created on demand as required */
+    Gaudi::Rotation3D m_rotation2;
 
-    mutable bool m_cachedTrajOK{false};   ///< Flag to say if the cached information is up to date
-    mutable Gaudi::XYZVector m_midEntryV; ///< Entry to middle point vector
-    mutable Gaudi::XYZVector m_exitMidV;  ///< Middle to exit point vector
-    mutable double m_invMidFrac1{0};      ///< Cached fraction 1
-    mutable double m_midFrac2{0};         ///< cached fraction 2
-    mutable double m_pathLength{0};       ///< Segment path length
+    Gaudi::XYZVector m_midEntryV; ///< Entry to middle point vector
+    Gaudi::XYZVector m_exitMidV;  ///< Middle to exit point vector
+    double m_invMidFrac1{0};      ///< Cached fraction 1
+    double m_midFrac2{0};         ///< Cached fraction 2
+    double m_pathLength{0};       ///< Segment path length
 
   };
 

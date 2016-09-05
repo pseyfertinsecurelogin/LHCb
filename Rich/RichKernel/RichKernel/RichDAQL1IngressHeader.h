@@ -84,9 +84,6 @@ namespace Rich
       /// Constructor from raw LongType
       explicit L1IngressHeader( const LongType data  ) : m_data(data) { }
 
-      /// Destructor
-      ~L1IngressHeader( ) = default;
-
       /// Retrieve the full value
       inline LongType data() const noexcept { return m_data; }
 

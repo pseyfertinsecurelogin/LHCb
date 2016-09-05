@@ -115,21 +115,6 @@ namespace Rich
     /// Standard constructor
     PackedPIDInfo( ) = default;
 
-    /// Default destructor
-    ~PackedPIDInfo() = default;
-
-    /// Default Copy Constructor
-    PackedPIDInfo( const PackedPIDInfo& ) = default;
-
-    /// Default Copy operator
-    PackedPIDInfo& operator=( const PackedPIDInfo& ) = default;
-
-    /// Default Move Constructor
-    PackedPIDInfo( PackedPIDInfo&& ) = default;
-
-    /// Default Move operator
-    PackedPIDInfo& operator=( PackedPIDInfo&& ) = default;
-
     /** Constructor from Rich data
      *  @param det  The RICH detector
      *  @param side The RICH detector side

@@ -143,9 +143,6 @@ namespace Rich
           }
         }
 
-        /// Destructor
-        virtual ~RichDAQHeaderPD( ) = default;
-
       public:
         
         /// reset

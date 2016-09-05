@@ -40,9 +40,6 @@ namespace Rich
       /// Default Constructor
       ParityFooter( ) = default;
 
-      /// Destructor
-      ~ParityFooter( ) = default;
-
     public:
 
       /// Constructor with given size

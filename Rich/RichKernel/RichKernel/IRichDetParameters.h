@@ -69,14 +69,16 @@ namespace Rich
                  const double minY, const double maxY )
         : m_maxX(maxX), m_minX(minX), m_maxY(maxY), m_minY(minY) { }
 
+    public:
+
       /// Access the minimum x limit
-      inline double minX() const { return m_minX; }
+      inline double minX() const noexcept { return m_minX; }
       /// Access the maximum x limit
-      inline double maxX() const { return m_maxX; }
+      inline double maxX() const noexcept { return m_maxX; }
       /// Access the minimum y limit
-      inline double minY() const { return m_minY; }
+      inline double minY() const noexcept { return m_minY; }
       /// Access the maximum y limit
-      inline double maxY() const { return m_maxY; }
+      inline double maxY() const noexcept { return m_maxY; }
 
     private:
 

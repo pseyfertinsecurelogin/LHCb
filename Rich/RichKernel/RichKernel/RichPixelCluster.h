@@ -58,21 +58,6 @@ namespace Rich
     /// Default Constructor
     HPDPixelCluster() = default;
 
-    /// Default destructor
-    ~HPDPixelCluster() = default;
-
-    /// Default Copy Constructor
-    HPDPixelCluster( const HPDPixelCluster& ) = default;
-
-    /// Default Copy operator
-    HPDPixelCluster& operator=( const HPDPixelCluster& ) = default;
-
-    /// Default Move Constructor
-    HPDPixelCluster( HPDPixelCluster&& ) = default;
-
-    /// Default Move operator
-    HPDPixelCluster& operator=( HPDPixelCluster&& ) = default;
-
   public:
 
     /// Constructor with reserved size

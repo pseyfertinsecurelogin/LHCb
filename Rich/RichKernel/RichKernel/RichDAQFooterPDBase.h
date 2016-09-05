@@ -60,21 +60,6 @@ namespace Rich
       /// Default constructor ( 0 words in footer )
       FooterPDBase( ) = default;
 
-      /// Destructor
-      ~FooterPDBase ( ) = default;
-
-      /// Default Copy Constructor
-      FooterPDBase( const FooterPDBase& ) = default;
-
-      /// Default Copy operator
-      FooterPDBase& operator=( const FooterPDBase& ) = default;
-
-      /// Default Move Constructor
-      FooterPDBase( FooterPDBase&& ) = default;
-
-      /// Default Move operator
-      FooterPDBase& operator=( FooterPDBase&& ) = default;
-
     public: // methods
 
       /// Read only access to footer words

@@ -54,13 +54,13 @@ namespace Rich
         m_parent ( parent ) { }
 
     /// Access the result of the calculation
-    inline double result() const { return this->first; }
+    inline double result() const noexcept { return this->first; }
 
     /// Access the error on the result of the calculation
-    inline double error() const { return this->second; }
+    inline double error() const noexcept { return this->second; }
 
     /// Access the parent calculator
-    inline const PoissonEffFunctor * parent() const { return m_parent; }
+    inline const PoissonEffFunctor * parent() const noexcept { return m_parent; }
 
   private:
 

@@ -47,21 +47,6 @@ namespace Rich
       /// Default Constructor
       HPDInfo() = default;
 
-      /// Destructor
-      ~HPDInfo() = default;
-
-      /// Default Copy Constructor
-      HPDInfo( const HPDInfo& ) = default;
-
-      /// Default Copy operator
-      HPDInfo& operator=( const HPDInfo& ) = default;
-
-      /// Default Move Constructor
-      HPDInfo( HPDInfo&& ) = default;
-
-      /// Default Move operator
-      HPDInfo& operator=( HPDInfo&& ) = default;
-
       /// Constructor from HPD data bank information
       HPDInfo( const LHCb::RichSmartID& input,
                const Header&            header,
@@ -139,21 +124,6 @@ namespace Rich
 
       /// Default Constructor
       IngressInfo() = default;
-
-      /// Destructor
-      ~IngressInfo() = default;
-
-      /// Default Copy Constructor
-      IngressInfo( const IngressInfo& ) = default;
-
-      /// Default Copy operator
-      IngressInfo& operator=( const IngressInfo& ) = default;
-
-      /// Default Move Constructor
-      IngressInfo( IngressInfo&& ) = default;
-
-      /// Default Move operator
-      IngressInfo& operator=( IngressInfo&& ) = default;
 
       /// Constructor with ingress header
       explicit IngressInfo( const L1IngressHeader& head ) : m_ingressHeader(head) { }
