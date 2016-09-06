@@ -124,13 +124,6 @@ StatusCode TurboPrescaler::execute()
             globalPass = true;
           }
         }
-        else{
-          if ( lineName.find("Turbo") != std::string::npos )
-          {
-            // found another Turbo line that fired that was not prescaled
-            globalPass=true;
-          }
-        }
       }
       reports->insert(totName,report);
     }
