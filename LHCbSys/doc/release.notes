@@ -21,6 +21,9 @@ This version is released on master branch.
 
 <h2>New or changed functionalities</h2>
 <dl>
+
+<dt>[MR !235] LHCBGAUSS-791: In L0Conf, use LUT version V8 also for 2016 L0 emulation
+
 <dt>[MR !227] (LHCbMath): Rewrite 2D/3D histo interpolation
 <dd> 2D & 3D case: implement all possible interpolation rules, up to biqubic and triqubic
 <dd> add possibility to interpolate for "density" ( "bin-content"/"bin-volume")
