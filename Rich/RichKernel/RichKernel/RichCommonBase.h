@@ -13,8 +13,8 @@
 #define RICHKERNEL_RICHCOMMONBASE_H 1
 
 // Interfaces
-#include "RichKernel/IRichToolRegistry.h"
-#include "RichKernel/IRichDetectorTool.h"
+#include "RichInterfaces/IRichToolRegistry.h"
+#include "RichInterfaces/IRichDetectorTool.h"
 
 // Gaudi
 #include "GaudiKernel/ISvcLocator.h"
@@ -62,7 +62,7 @@ namespace Rich
     /// Standard Converter-like Constructor
     CommonBase( long storage_type, 
                 const CLID &class_type, 
-                ISvcLocator *svc = NULL );
+                ISvcLocator *svc = nullptr );
 
   public:
 

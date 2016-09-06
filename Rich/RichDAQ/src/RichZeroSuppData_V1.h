@@ -16,7 +16,7 @@
 #include "RichHPDDataBank.h"
 #include "RichZSHitTriplet.h"
 
-// RichKernel
+// Kernel
 #include "Kernel/MemPoolAlloc.h"
 
 // =================================================================================

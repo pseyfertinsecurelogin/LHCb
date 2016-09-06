@@ -17,7 +17,7 @@
 #include "GaudiKernel/GaudiException.h"
 
 // numberings
-#include "RichKernel/RichDAQDefinitions.h"
+#include "RichUtils/RichDAQDefinitions.h"
 
 namespace Rich
 {

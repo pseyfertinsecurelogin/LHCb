@@ -128,6 +128,8 @@ use LoKiNumbers           v*   Phys    # Ivan Belyaev
 
 use RichDAQ               v*   Rich    # Chris Jones
 use RichKernel            v*   Rich    # Chris Jones
+use RichUtils             v*   Rich    # Chris Jones
+use RichInterfaces        v*   Rich    # Chris Jones
 
 use SiDAQ                 v*   Si      # Matt Needham
 

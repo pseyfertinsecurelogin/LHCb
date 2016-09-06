@@ -4,10 +4,10 @@
 #=====================================================================
 
 package           RichKernel
-version           v7r63
+version           v8r0
 
 # ================ structure ==============================================
-branches RichKernel cmt dict doc src python
+branches RichKernel cmt doc src python
 
 # ================ dependencies ===========================================
 use DAQEvent           v*   Event
@@ -31,22 +31,6 @@ apply_pattern linker_library library=RichKernelLib
 # ================ component library=========================================
 library RichKernel ../src/component/*.cpp
 apply_pattern component_library library=RichKernel
-
-# =============== LCG Dictionaries ==========================================
-apply_pattern reflex_dictionary                                       \
-              dictionary=RichKernel                                   \
-              headerfiles=$(RICHKERNELROOT)/dict/RichKernelDict.h     \
-              selectionfile=$(RICHKERNELROOT)/dict/RichKernelDict.xml \
-              options="-U__MINGW32__"
-# Disable some compiler warnings in the automatically generated dict code
-macro_append RichKernelDict_cppflags "" \
-                          target-icc " -wd177 -wd873"
-
-# Test applications
-#application  RichTestSigFunc   ../src/tests/TestSigFunc.cpp
-#macro_append RichTestSigFunc_dependencies   " RichKernelLib "
-#macro_append RichTestSigFunc_cppflags " -O3 -mavx -fabi-version=0 " 
-#macro_append RichTestSigFunc_cppflags " -O3 -msse4 "
 
 private
 # RichKernel Configurable uses the generated configurables 

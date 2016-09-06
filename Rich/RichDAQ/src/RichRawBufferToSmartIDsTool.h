@@ -22,12 +22,12 @@
 // Rich::DAQ utility classes
 #include "RichHPDDataBank.h"
 
-// Kernel
-#include "RichKernel/RichHashMap.h"
+// Utils
+#include "RichUtils/RichHashMap.h"
 
 // Interfaces
-#include "RichKernel/IRichRawBufferToSmartIDsTool.h"
-#include "RichKernel/IRichRawDataFormatTool.h"
+#include "RichInterfaces/IRichRawBufferToSmartIDsTool.h"
+#include "RichInterfaces/IRichRawDataFormatTool.h"
 
 // RichDet
 #include "RichDet/DeRichSystem.h"

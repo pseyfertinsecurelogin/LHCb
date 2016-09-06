@@ -17,9 +17,11 @@
 
 // Local
 #include "RichKernel/RichCommonBase.h"
-#include "RichKernel/RichHistoID.h"
-#include "RichKernel/RichMap.h"
-#include "RichKernel/RichHashMap.h"
+
+// RichUtils
+#include "RichUtils/RichHistoID.h"
+#include "RichUtils/RichMap.h"
+#include "RichUtils/RichHashMap.h"
 
 // boost
 #include "boost/array.hpp"

@@ -12,12 +12,12 @@
 #ifndef RICHDAQ_RICHDAQVERSIONS_H
 #define RICHDAQ_RICHDAQVERSIONS_H 1
 
-// From RichKernel
-#include "RichKernel/RichDAQHeaderPD.h"
-#include "RichKernel/RichDAQNullFooter.h"
-#include "RichKernel/RichDAQParityFooter.h"
-#include "RichKernel/RichDAQParityFooterTB2006.h"
-#include "RichKernel/RichDAQL1IngressHeader.h"
+// From RichUtils
+#include "RichUtils/RichDAQHeaderPD.h"
+#include "RichUtils/RichDAQNullFooter.h"
+#include "RichUtils/RichDAQParityFooter.h"
+#include "RichUtils/RichDAQParityFooterTB2006.h"
+#include "RichUtils/RichDAQL1IngressHeader.h"
 
 // data blocks
 #include "RichNonZeroSuppData.h"

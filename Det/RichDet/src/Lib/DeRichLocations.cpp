@@ -15,8 +15,8 @@
 // Local
 #include "RichDet/DeRichLocations.h"
 
-// RichKernel
-#include "RichKernel/RichException.h"
+// RichUtils
+#include "RichUtils/RichException.h"
 
 const std::string& DeRichLocations::location( const Rich::RadiatorType rad )
 {
