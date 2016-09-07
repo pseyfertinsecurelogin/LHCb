@@ -21,6 +21,7 @@
 
 // VDT
 #include "vdt/asin.h"
+#include "vdt/sqrt.h"
 
 namespace Rich
 {
@@ -46,9 +47,8 @@ namespace Rich
     inline double AngleBetween( const Gaudi::XYZVector & a,
                                 const Gaudi::XYZVector & b )
     {
-      const auto demon   = std::sqrt( a.Mag2() * b.Mag2() );
-      const auto dotprod = a.Dot(b);
-      const auto arg = ( demon > 0 ? dotprod/demon : 999.9 );
+      const auto dd  = a.Mag2() * b.Mag2();
+      const auto arg = ( dd > 0 ? a.Dot(b) * vdt::fast_isqrt(dd) : 999.9 );
       return ( fabs(arg) < 1 ? vdt::fast_acos(arg) : 0.0 );
     }
 
