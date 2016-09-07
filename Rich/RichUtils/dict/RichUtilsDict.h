@@ -16,12 +16,16 @@
 #include "RichUtils/RichHPDIdentifier.h"
 #include "RichUtils/RichDAQL0Header.h"
 #include "RichUtils/RichRayTracingUtils.h"
+#include "RichUtils/RichHypoData.h"
+#include "RichUtils/RichObjPtn.h"
 
 // instanciate templated classes
 namespace 
 {
   struct _Instantiations 
   {
+    Rich::HypoData<float>                        obj_2;
+    Rich::HypoData<double>                       obj_3;
     Rich::DAQ::Level0ID                          obj_4;
     Rich::DAQ::EventID                           obj_5;
     Rich::DAQ::BXID                              obj_6;

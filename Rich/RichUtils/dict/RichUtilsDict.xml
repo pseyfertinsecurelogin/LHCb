@@ -1,5 +1,8 @@
 <lcgdict>
 
+  <!--class name = "Rich::HypoData&lt;float&gt;" /-->
+  <class name = "Rich::HypoData&lt;double&gt;" />
+
   <class name  = "Rich::HPDPixelCluster"               />
   <class name  = "Rich::HPDPixelClusters"              />
 
