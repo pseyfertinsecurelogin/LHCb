@@ -13,4 +13,4 @@ gaudi_add_dictionary(RichInterfaces
                      LINK_LIBRARIES LHCbKernel
                      OPTIONS "-U__MINGW32__")
 
-gaudi_install_headers(RecInterfaces)
+gaudi_install_headers(RichInterfaces)
