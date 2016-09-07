@@ -12,6 +12,7 @@
 #ifndef RICHUTILS_RICHGEOMFUNCTIONS_H
 #define RICHUTILS_RICHGEOMFUNCTIONS_H 1
 
+// STL
 #include <cmath>
 
 // Gaudi
@@ -40,15 +41,15 @@ namespace Rich
      *  @param a First vector
      *  @param b Second vector
      *
-     *  @return Angle between vectors (in rad)
+     *  @return Angle between vectors (in radians)
      */
     inline double AngleBetween( const Gaudi::XYZVector & a,
                                 const Gaudi::XYZVector & b )
     {
       const auto demon   = std::sqrt( a.Mag2() * b.Mag2() );
       const auto dotprod = a.Dot(b);
-      //return ( demon>0 && (dotprod/demon)<1 ? std::acos(dotprod/demon) : 0.0 );
-      return ( demon>0 && (dotprod/demon)<1 ? vdt::fast_acos(dotprod/demon) : 0.0 );
+      const auto arg = ( demon > 0 ? dotprod/demon : 999.9 );
+      return ( fabs(arg) < 1 ? vdt::fast_acos(arg) : 0.0 );
     }
 
   }
