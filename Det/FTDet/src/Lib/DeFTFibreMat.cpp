@@ -41,9 +41,9 @@ namespace {
      // temparary utility until Gaudi defines an operator<< for std::array...
      template <typename Container>
      std::vector<std::reference_wrapper<const typename Container::value_type>> to_vector(const Container& c) {
-         return { std::begin(c), std::end(c) };
-     }
-
+       return { std::begin(c), std::end(c) };
+  }
+ 
 }
 
 //=============================================================================
@@ -130,7 +130,7 @@ StatusCode DeFTFibreMat::initialize(){
     // T station (1-3), L layer (0-3), Q quarter (0-3),
     // M module in quarter (1-6, full Left:1->5, 5->1 full right, holes: 6)
     //things could be faster here: change DDDB fibrematID   ////DBL
-      
+
     //get FibreMatID in "TTLLQQMMM" integer binary form from DB (yes: integer binary "110111001" = (int)110111001 and not 441)...)
     std::string strbinFibreMatID = std::to_string(this->params()->param<int>("FibreMatID"));
     std::bitset<fmID_nbits_all> bsetfmID(strbinFibreMatID);
@@ -246,13 +246,13 @@ StatusCode DeFTFibreMat::initialize(){
       m_fibreMatGlobalRB = this->geometry()->toGlobal( Gaudi::XYZPoint(m_fibreMatHalfSizeX,-m_fibreMatHalfSizeY,0) );
       m_fibreMatGlobalLB = this->geometry()->toGlobal( Gaudi::XYZPoint(-m_fibreMatHalfSizeX,-m_fibreMatHalfSizeY,0) );
     }
+
     else {
       m_fibreMatGlobalRT = this->geometry()->toGlobal( Gaudi::XYZPoint(-m_fibreMatHalfSizeX,m_fibreMatHalfSizeY,0) );
       m_fibreMatGlobalLT = this->geometry()->toGlobal( Gaudi::XYZPoint(m_fibreMatHalfSizeX,m_fibreMatHalfSizeY,0) );
       m_fibreMatGlobalRB = this->geometry()->toGlobal( Gaudi::XYZPoint(-m_fibreMatHalfSizeX,-m_fibreMatHalfSizeY,0) );
       m_fibreMatGlobalLB = this->geometry()->toGlobal( Gaudi::XYZPoint(m_fibreMatHalfSizeX,-m_fibreMatHalfSizeY,0) );
-    }
-
+    }   
     //sipm or fibre end y position (local frame)
     if(m_mat) m_fibreMatSipmY = -m_fibreMatHalfSizeY;   //bottom
     else m_fibreMatSipmY = m_fibreMatHalfSizeY;
@@ -284,7 +284,7 @@ StatusCode DeFTFibreMat::initialize(){
   double FTFibreModuleSizeX(0),FTFibreModuleSizeY(0),FTDeadHSizeZ(0),FTFibreModuleSizeZ(0),FTFibreSizeZ(0);
   IDetectorElement *parentDet = this->parentIDetectorElement();
   if(!parentDet) {
-   throw GaudiException( "Can't acquire parent detector element of FibreMat", "DeFTFibreMat.cpp", StatusCode::FAILURE );
+    throw GaudiException( "Can't acquire parent detector element of FibreMat", "DeFTFibreMat.cpp", StatusCode::FAILURE );
   }
 
   //-------------layer geometry before v4x and v5x
@@ -292,10 +292,10 @@ StatusCode DeFTFibreMat::initialize(){
     //Left/right vertical dead zone
     const SolidBase *sbDeadV(0);
     if( ((sc=findSolidBase(parentDet,"pvDeadVLeft",sbDeadV)) == StatusCode::SUCCESS) ||
-        ((sc=findSolidBase(parentDet,"pvDeadVRight",sbDeadV)) == StatusCode::SUCCESS) )
-    {
-      m_moduleEdgeSizeX=sbDeadV->xMax()-sbDeadV->xMin();
-    }
+	((sc=findSolidBase(parentDet,"pvDeadVRight",sbDeadV)) == StatusCode::SUCCESS) )
+      {
+	m_moduleEdgeSizeX=sbDeadV->xMax()-sbDeadV->xMin();
+      }
     else {
       fatal() << "Can't find PVolume: "<<"DeadV"<< endmsg;
       return sc;
@@ -303,11 +303,11 @@ StatusCode DeFTFibreMat::initialize(){
     //Horizontal dead zone
     const SolidBase *sbDeadH(0);
     if( ((sc=findSolidBase(parentDet,"pvDeadH",sbDeadH)) == StatusCode::SUCCESS) ||
-        ((sc=findSolidBase(parentDet,"pvDeadHHoleL",sbDeadH)) == StatusCode::SUCCESS) ||
-        ((sc=findSolidBase(parentDet,"pvDeadHHoleR",sbDeadH)) == StatusCode::SUCCESS) )
-    {
-      m_moduleGapH=sbDeadH->yMax()-sbDeadH->yMin();
-    }
+	((sc=findSolidBase(parentDet,"pvDeadHHoleL",sbDeadH)) == StatusCode::SUCCESS) ||
+	((sc=findSolidBase(parentDet,"pvDeadHHoleR",sbDeadH)) == StatusCode::SUCCESS) )
+      {
+	m_moduleGapH=sbDeadH->yMax()-sbDeadH->yMin();
+      }
     else {
       fatal() << "Can't find PVolume (DeadH)"<< endmsg;
       return sc;
@@ -315,54 +315,54 @@ StatusCode DeFTFibreMat::initialize(){
     //Fibre zone
     const SolidBase *sbFibreTop(0);
     if( ((sc=findSolidBase(parentDet,"pvFibreTop",sbFibreTop)) == StatusCode::SUCCESS) ||
-        ((sc=findSolidBase(parentDet,"pvFibreMatHoleLTop",sbFibreTop)) == StatusCode::SUCCESS) ||
-        ((sc=findSolidBase(parentDet,"pvFibreMatHoleRTop",sbFibreTop)) == StatusCode::SUCCESS) )
-    {
-      FTFibreSizeZ = sbFibreTop->zMax()-sbFibreTop->zMin();
-    }
+	((sc=findSolidBase(parentDet,"pvFibreMatHoleLTop",sbFibreTop)) == StatusCode::SUCCESS) ||
+	((sc=findSolidBase(parentDet,"pvFibreMatHoleRTop",sbFibreTop)) == StatusCode::SUCCESS) )
+      {
+	FTFibreSizeZ = sbFibreTop->zMax()-sbFibreTop->zMin();
+      }
     else {
       fatal() << "Can't find PVolume (FibreTop)"<< endmsg;
       return sc;
     }
-
+ 
     //get parent to access other useful dimensions
     double FTCarbonSizeZ(0),FTHoneycombSizeZ(0),FTKaptonSizeZ(0);
     IDetectorElement *parent2Det = parentDet->parentIDetectorElement();
     if(0 != parent2Det) {
-     //Carbon
+      //Carbon
       const SolidBase *sbCarbonFullA(0);
       if( ((sc=findSolidBase(parent2Det,"pvCarbonFullA",sbCarbonFullA)) == StatusCode::SUCCESS) ||
-          ((sc=findSolidBase(parent2Det,"pvCarbonHoleLA",sbCarbonFullA)) == StatusCode::SUCCESS) ||
-          ((sc=findSolidBase(parent2Det,"pvCarbonHoleRA",sbCarbonFullA)) == StatusCode::SUCCESS) )
-      {
-        FTCarbonSizeZ = sbCarbonFullA->zMax()-sbCarbonFullA->zMin();
-      }
+	  ((sc=findSolidBase(parent2Det,"pvCarbonHoleLA",sbCarbonFullA)) == StatusCode::SUCCESS) ||
+	  ((sc=findSolidBase(parent2Det,"pvCarbonHoleRA",sbCarbonFullA)) == StatusCode::SUCCESS) )
+	{
+	  FTCarbonSizeZ = sbCarbonFullA->zMax()-sbCarbonFullA->zMin();
+	}
       else {
-        fatal() << "Can't find PVolume (CarbonFullA)"<< endmsg;
+	fatal() << "Can't find PVolume (CarbonFullA)"<< endmsg;
         return sc;
       }
       //Honeycomb
       const SolidBase *sbHoneycombFullA(0);
       if( ((sc=findSolidBase(parent2Det,"pvHoneycombFullA",sbHoneycombFullA)) == StatusCode::SUCCESS)  ||
-          ((sc=findSolidBase(parent2Det,"pvHoneycombHoleLA",sbHoneycombFullA)) == StatusCode::SUCCESS) ||
-          ((sc=findSolidBase(parent2Det,"pvHoneycombHoleRA",sbHoneycombFullA)) == StatusCode::SUCCESS) )
-      {
-        FTHoneycombSizeZ = sbHoneycombFullA->zMax()-sbHoneycombFullA->zMin();
-      }
+	  ((sc=findSolidBase(parent2Det,"pvHoneycombHoleLA",sbHoneycombFullA)) == StatusCode::SUCCESS) ||
+	  ((sc=findSolidBase(parent2Det,"pvHoneycombHoleRA",sbHoneycombFullA)) == StatusCode::SUCCESS) )
+	{
+	  FTHoneycombSizeZ = sbHoneycombFullA->zMax()-sbHoneycombFullA->zMin();
+	}
       else {
-        fatal() << "Can't find PVolume (HoneycombFullA)"<< endmsg;
+	fatal() << "Can't find PVolume (HoneycombFullA)"<< endmsg;
         return sc;
       }
-     //Kapton
+      //Kapton
       const SolidBase *sbKaptonFullA(0);
       if( ((sc=findSolidBase(parent2Det,"pvKaptonFullA",sbKaptonFullA)) == StatusCode::SUCCESS) ||
-          ((sc=findSolidBase(parent2Det,"pvKaptonHoleLA",sbKaptonFullA)) == StatusCode::SUCCESS) ||
-          ((sc=findSolidBase(parent2Det,"pvKaptonHoleRA",sbKaptonFullA)) == StatusCode::SUCCESS) )
-      {
-        FTKaptonSizeZ = sbKaptonFullA->zMax()-sbKaptonFullA->zMin();
-      }
+	  ((sc=findSolidBase(parent2Det,"pvKaptonHoleLA",sbKaptonFullA)) == StatusCode::SUCCESS) ||
+	  ((sc=findSolidBase(parent2Det,"pvKaptonHoleRA",sbKaptonFullA)) == StatusCode::SUCCESS) )
+	{
+	  FTKaptonSizeZ = sbKaptonFullA->zMax()-sbKaptonFullA->zMin();
+	}
       else {
-        fatal() << "Can't find PVolume (KaptonFullA)"<< endmsg;
+	fatal() << "Can't find PVolume (KaptonFullA)"<< endmsg;
         return sc;
       }
       FTFibreModuleSizeX = 2*(m_fibreMatHalfSizeX + m_moduleEdgeSizeX);
@@ -372,11 +372,12 @@ StatusCode DeFTFibreMat::initialize(){
     }
     else {
       throw GaudiException( "Can't find 2nd level parent detector element of Fibremat (geometry v2)",
-                            "DeFTFibreMat.cpp", StatusCode::FAILURE );
+			    "DeFTFibreMat.cpp", StatusCode::FAILURE );
     }
   }
 
 
+ 
   //-------------layer geometry v4x and v5x
   if(m_FTGeomversion > m_FTGeomVersion_reference) {
     //Left vertical dead zone
@@ -390,7 +391,7 @@ StatusCode DeFTFibreMat::initialize(){
     IDetectorElement *parent2Det = parentDet->parentIDetectorElement();
     if(!parent2Det) {
       throw GaudiException( "Can't find 2nd level parent detector element of Fibremat (geometry v4/v5)",
-                            "DeFTFibreMat.cpp", StatusCode::FAILURE );
+			    "DeFTFibreMat.cpp", StatusCode::FAILURE );
     }
     FTFibreModuleSizeX = parent2Det->params()->param<double>("FTFullModuleSizeX");
     FTFibreModuleSizeY = parent2Det->params()->param<double>("FTFullModuleSizeY");
@@ -525,8 +526,7 @@ StatusCode DeFTFibreMat::calculateListOfFiredChannels(const LHCb::MCHit&  fthit,
   // Finally, to return the energy deposited in each channel by the hit, each energy fraction
   // is multiplied by the energy
   std::for_each(vectChanAndEnergy.begin(),vectChanAndEnergy.end(),
-                [&](FTPair& p) { p.second *=fthit.energy(); } );
-
+		[&](FTPair& p) { p.second *=fthit.energy(); } );
   return StatusCode::SUCCESS;
 }
 
@@ -555,12 +555,12 @@ StatusCode DeFTFibreMat::calculateMeanChannel(const LHCb::MCHit&  fthit,
 
   for (auto itPair = vectChanAndFracPos.begin(); itPair != vectChanAndFracPos.end(); ++itPair) {
     if( m_msg->level() <= MSG::DEBUG) debug() << "==calculateMeanChannel==  channelID="<<itPair->first <<" + " << itPair->second
-                                      << "\t diff="<< itPair->first - (vectChanAndFracPos.begin())->first
-                                      << "\t End-Start="<<vectChanAndFracPosEdgeEnd->first - vectChanAndFracPosEdgeStart->first
-                                      << "\t Start-End="<< vectChanAndFracPosEdgeStart->first - vectChanAndFracPosEdgeEnd->first
-                                      << "\t size="<< vectChanAndFracPos.size()
-                                      <<endmsg;
-    if((itPair->first.layer()<  12) && (vectChanAndFracPosEdgeStart == vectChanAndFracPos.end()))
+					      << "\t diff="<< itPair->first - (vectChanAndFracPos.begin())->first
+					      << "\t End-Start="<<vectChanAndFracPosEdgeEnd->first - vectChanAndFracPosEdgeStart->first
+					      << "\t Start-End="<< vectChanAndFracPosEdgeStart->first - vectChanAndFracPosEdgeEnd->first
+					      << "\t size="<< vectChanAndFracPos.size()
+					      <<endmsg;  
+    if((itPair->first.layer()<  12) && (vectChanAndFracPosEdgeStart == vectChanAndFracPos.end())) 
       vectChanAndFracPosEdgeStart = itPair;
 
     if(itPair->first.layer() < 12) vectChanAndFracPosEdgeEnd = itPair;
@@ -578,16 +578,14 @@ StatusCode DeFTFibreMat::calculateMeanChannel(const LHCb::MCHit&  fthit,
                                     << std::min(vectChanAndFracPosEdgeStart->first-vectChanAndFracPosEdgeEnd->first,
                                                 vectChanAndFracPosEdgeEnd->first-vectChanAndFracPosEdgeStart->first)
                                     << std::endl;
-
   if((vectChanAndFracPosEdgeStart != vectChanAndFracPos.begin())||(vectChanAndFracPosEdgeEnd !=(vectChanAndFracPos.end()-1)))
-  {
-    fractional = fractional - vectChanAndFracPos.size() + 1 +
+  { 
+    fractional = fractional - vectChanAndFracPos.size() + 1 + 
       std::min(vectChanAndFracPosEdgeStart->first-vectChanAndFracPosEdgeEnd->first,
                vectChanAndFracPosEdgeEnd->first-vectChanAndFracPosEdgeStart->first);
   }
-
-
-  if( m_msg->level() <= MSG::DEBUG) debug() << "==calculateMeanChannel==  Starting channelID="<<meanChannel
+  
+  if( m_msg->level() <= MSG::DEBUG) debug() << "==calculateMeanChannel==  Starting channelID="<<meanChannel 
                                     << "\t fractional=" << fractional
                                     <<endmsg;
   while(fractional > 0.5)
@@ -595,29 +593,21 @@ StatusCode DeFTFibreMat::calculateMeanChannel(const LHCb::MCHit&  fthit,
     meanChannel = meanChannel+ 1;
     fractional -=1;
   }
-
-  if( m_msg->level() <= MSG::DEBUG) debug() << "==calculateMeanChannel==  Final channelID="<<meanChannel
+  
+  if( m_msg->level() <= MSG::DEBUG) debug() << "==calculateMeanChannel==  Final channelID="<<meanChannel 
                                     << "\t fractional=" << fractional
                                     <<endmsg;
-
   ChanAndFrac = std::make_pair(meanChannel,fractional);
-
   return StatusCode::SUCCESS;
 }
 
 
-//======================================================================================
-// Function to determine the mean SiPM channel (ChannelID + fraction) associated
-// to the track between entry and exit point.
-// @param fthit : hit from Geant4
-// @param ChanAndFrac : std::pair (ChannelID + fraction) associated to the mean channel
-// November 2014: return Status modified to add a severity code (in the line string...)
-// to get some info on rejection reason
-//======================================================================================
-StatusCode DeFTFibreMat::calculateHits(const LHCb::MCHit&  fthit,
-                                       VectFTPairs&        vectChanAndFracPos) const
+StatusCode DeFTFibreMat::calculateHits(const LHCb::MCHit  &fthit,
+                                       std::vector<LHCb::FTChannelID>& channelIDs,
+				       std::vector<double>& channelLeftEdges, 
+				       std::vector<double>& channelRightEdges, 
+				       unsigned int numOfAdditionalChannels) const 
 {
-
   // get hit position in global and local coordinate systems and perform checks.
   Gaudi::XYZPoint enPLocal  = geometry() -> toLocal( fthit.entry() );
   Gaudi::XYZPoint exPLocal  = geometry() -> toLocal( fthit.exit()  );
@@ -638,28 +628,26 @@ StatusCode DeFTFibreMat::calculateHits(const LHCb::MCHit&  fthit,
                                     enPSipmID, enPCellID, enPFraction, ensipmREdgeX,
                                     exPSipmID, exPCellID, exPFraction, exsipmREdgeX);
   if (sc.isFailure()) return sc;
+  
 
-
-  ///////////////////////////////////////////////////////
-  /// Create pairs of FT channels and fractional position
-  ///////////////////////////////////////////////////////
+  ///////////////////////
+  /// Create FT channels 
+  ///////////////////////
   FTChannelID channel;
 
   /// Case where entry and exit points are in the same cell
   if ( (enPSipmID==exPSipmID) && (enPCellID==exPCellID) ) {
     if( m_msg->level() <= MSG::DEBUG) debug() << "Entry and Exit points are in the same cell!" << endmsg;
-
-    double frac = (enPFraction + exPFraction)/2;
-    if( m_msg->level() <= MSG::DEBUG) debug() << "Average fract dist to cell center: " << frac << endmsg;
-
+    
     /// Create and push-back the pair (FTChannelID, fraction)
     channel = createChannel( layer(), m_module, m_mat, enPSipmID, enPCellID );
-    vectChanAndFracPos.push_back( std::make_pair(channel, frac) );
+    channelIDs.push_back( channel );
+    channelRightEdges.push_back (cellLocalX(channel) - m_cellSizeX/2 );
+    channelLeftEdges.push_back (cellLocalX(channel) + m_cellSizeX/2);
+
   } //end single cell
-
-  /// Case where entry and exit points are in different cells
   else {
-
+    
     if( m_msg->level() <= MSG::DEBUG) debug() << "Entry and Exit points are in different cells!" << endmsg;
     /// The procedure is to determine the crossing point between the particle
     /// trajectory and the planes separating the adjacent cells. First we determine
@@ -681,7 +669,7 @@ StatusCode DeFTFibreMat::calculateHits(const LHCb::MCHit&  fthit,
     enPDistToSeparEdge = enPLocal.X() - enPCellSeparEdge;
     if( m_msg->level() <= MSG::DEBUG) debug() << "Entry point: uDir / cellSeparEdge / distToSeparEdge: "
                                       << uDir << ", " << enPCellSeparEdge << ", " << enPDistToSeparEdge << endmsg;
-
+    
     /// Hit Cell edge next to the exit point
     double exPCellSeparEdge, exPDistToSeparEdge;
     if(exPCellID==0) exPCellSeparEdge = exsipmREdgeX - (uDir-1)/2*m_sipmEdgeSizeX;
@@ -690,7 +678,179 @@ StatusCode DeFTFibreMat::calculateHits(const LHCb::MCHit&  fthit,
     exPDistToSeparEdge = exPLocal.X() - exPCellSeparEdge;
     if( m_msg->level() <= MSG::DEBUG) debug() << "Exit point: uDir / cellSeparEdge / distToSeparEdge: "
                                       << uDir << ", " << exPCellSeparEdge << ", " << exPDistToSeparEdge << endmsg;
+    
+    ///--------The cell of the entry point
+   
+    /// Create and push-back the FTChannelID
+    channel = createChannel( layer(), m_module, m_mat, enPSipmID, enPCellID );
+    channelIDs.push_back( channel );
+    channelRightEdges.push_back (cellLocalX(channel) - m_cellSizeX/2 );
+    channelLeftEdges.push_back (cellLocalX(channel) + m_cellSizeX/2);
 
+    
+    ///--------The middle cells
+    unsigned int midCellSipmID, midCellID;
+    double midCellFraction, midsipmREdgeX;
+    //DBL
+    double midX = enPCellSeparEdge;
+    while (std::abs(midX - exPCellSeparEdge) > m_ARtolerance) {
+      double midCellCenterX = midX + uDir*m_cellSizeX*0.5;
+      if( m_msg->level() <= MSG::DEBUG) debug() << "\tMid Cell " << " midCellCenterX = " << midCellCenterX << endmsg;
+      cellIDCoordinates( midCellCenterX, m_quarter, midCellSipmID, midCellID, midCellFraction, midsipmREdgeX);
+
+
+      /// Create and push-back the FTChannelID
+      channel = createChannel( layer(), m_module, m_mat, midCellSipmID, midCellID );
+      channelIDs.push_back( channel );
+      channelRightEdges.push_back (cellLocalX(channel) - m_cellSizeX/2 );
+      channelLeftEdges.push_back (cellLocalX(channel) + m_cellSizeX/2);
+
+
+      if(midCellID==0 || midCellID==130) midX+=uDir*m_sipmEdgeSizeX;
+      else midX+=uDir*m_cellSizeX;
+    }// end loop over mid cells
+      
+    ///-------The cell of the exit point   
+    /// Create and push-back the FTChannelID
+    channel = createChannel( layer(), m_module, m_mat, exPSipmID, exPCellID );
+    channelIDs.push_back( channel );
+    channelRightEdges.push_back ( cellLocalX(channel) - m_cellSizeX/2 );
+    channelLeftEdges.push_back ( cellLocalX(channel) + m_cellSizeX/2);
+
+  }//end more than 1 hit cells
+
+  //double dUExEn = exPLocal.X() - enPLocal.X();
+  // int uDir = (dUExEn>0) ? 1 : -1;
+  //info()<< "Is uDir positive?: " << (uDir>0) << endmsg; 
+  
+  unsigned int vector_size = channelIDs.size();
+
+  //---Add neighbours
+
+  if (cellLocalX(channelIDs[0])<cellLocalX(channelIDs[vector_size -1]))
+    {
+      for (unsigned int i = 0; i < numOfAdditionalChannels; ++i)
+	{ channel = nextChannelLeft(channelIDs[vector_size -1 +i].channelID());
+	  channelIDs.push_back(channel);
+	  channelRightEdges.push_back ( cellLocalX(channel) - m_cellSizeX/2 );
+	  channelLeftEdges.push_back ( cellLocalX(channel) + m_cellSizeX/2);
+	} 
+      for (unsigned int i = 0; i < numOfAdditionalChannels; ++i)                                                                                           
+	{                  
+	  auto it = channelIDs.begin();
+	  channel = nextChannelRight(channelIDs[0].channelID());
+	  it = channelIDs.insert(it, channel);
+	  auto itRight = channelRightEdges.begin();
+	  itRight = channelRightEdges.insert(itRight, cellLocalX(channel) - m_cellSizeX/2 );
+	  auto itLeft = channelLeftEdges.begin();
+	  itLeft = channelLeftEdges.insert(itLeft, cellLocalX(channel) + m_cellSizeX/2 );
+	}
+      
+    }
+  else
+    {
+      for (unsigned int i = 0; i < numOfAdditionalChannels; ++i)
+	{ channel = nextChannelRight(channelIDs[vector_size -1 +i].channelID());
+	  channelIDs.push_back(channel);
+	  channelRightEdges.push_back ( cellLocalX(channel) - m_cellSizeX/2 );
+	  channelLeftEdges.push_back ( cellLocalX(channel) + m_cellSizeX/2);
+	} 
+      for (unsigned int i = 0; i < numOfAdditionalChannels; ++i)                                                                                           
+	{                  
+	  auto it = channelIDs.begin();
+	  channel = nextChannelLeft(channelIDs[0].channelID());
+	  it = channelIDs.insert(it, channel);
+	  auto itRight = channelRightEdges.begin();
+	  itRight = channelRightEdges.insert(itRight, cellLocalX(channel) - m_cellSizeX/2 );
+	  auto itLeft = channelLeftEdges.begin();
+	  itLeft = channelLeftEdges.insert(itLeft, cellLocalX(channel) + m_cellSizeX/2 );
+	}
+    }
+
+  return StatusCode(StatusCode::SUCCESS, IssueSeverity(IssueSeverity::NIL, 1, "") );
+}
+
+//======================================================================================
+// Function to determine the mean SiPM channel (ChannelID + fraction) associated
+// to the track between entry and exit point.
+// @param fthit : hit from Geant4
+// @param ChanAndFrac : std::pair (ChannelID + fraction) associated to the mean channel
+// November 2014: return Status modified to add a severity code (in the line string...)
+// to get some info on rejection reason
+//======================================================================================
+StatusCode DeFTFibreMat::calculateHits(const LHCb::MCHit&  fthit,
+                                       VectFTPairs&        vectChanAndFracPos) const
+{
+  // get hit position in global and local coordinate systems and perform checks.
+  Gaudi::XYZPoint enPLocal  = geometry() -> toLocal( fthit.entry() );
+  Gaudi::XYZPoint exPLocal  = geometry() -> toLocal( fthit.exit()  );
+  //temporary workaround for Right Hole (module 11, v4 geometry) axes inversion
+  if(m_RightHoleAxesXZInversion) {
+    doRHAxesInversion(enPLocal);
+    doRHAxesInversion(exPLocal);
+  }
+  if( m_msg->level() <= MSG::DEBUG){
+    debug() << "Entry Point in Local frame: " << enPLocal << endmsg;
+    debug() << "Exit  Point in Local frame: " << exPLocal << endmsg;
+  }
+
+  //test hit validity and get sipm info
+  unsigned int enPSipmID, enPCellID; double enPFraction, ensipmREdgeX;
+  unsigned int exPSipmID, exPCellID; double exPFraction, exsipmREdgeX;
+  StatusCode sc = CalculateSipmInfo(enPLocal, exPLocal,
+                                    enPSipmID, enPCellID, enPFraction, ensipmREdgeX,
+                                    exPSipmID, exPCellID, exPFraction, exsipmREdgeX);
+  if (sc.isFailure()) return sc;
+
+  ///////////////////////////////////////////////////////
+  /// Create pairs of FT channels and fractional position
+  ///////////////////////////////////////////////////////
+  FTChannelID channel;
+
+  /// Case where entry and exit points are in the same cell
+  if ( (enPSipmID==exPSipmID) && (enPCellID==exPCellID) ) {
+    if( m_msg->level() <= MSG::DEBUG) debug() << "Entry and Exit points are in the same cell!" << endmsg;
+    
+    double frac = (enPFraction + exPFraction)/2;     
+    if( m_msg->level() <= MSG::DEBUG) debug() << "Average fract dist to cell center: " << frac << endmsg;
+
+    /// Create and push-back the pair (FTChannelID, fraction)
+    channel = createChannel( layer(), m_module, m_mat, enPSipmID, enPCellID );
+    vectChanAndFracPos.push_back( std::make_pair(channel, frac) );
+  } //end single cell
+
+  /// Case where entry and exit points are in different cells
+  else {
+    if( m_msg->level() <= MSG::DEBUG) debug() << "Entry and Exit points are in different cells!" << endmsg;
+    /// The procedure is to determine the crossing point between the particle
+    /// trajectory and the planes separating the adjacent cells. First we determine
+    /// the u-coordinate of the cell border between the first and second cells
+    /// and between the last and last-but-once cells. Then we determine the crossing
+    /// points. The hits in the middle cells will have fractional position equal
+    /// to 0 (i.e. at the cell center).
+
+    /// local X coordinate decreases or increases with z?
+    double dUExEn = exPLocal.X() - enPLocal.X();
+    int uDir = (dUExEn>0) ? 1 : -1;
+
+    ///Hit Cell edge next to the entry point (can be on the left or on the right)
+    double enPCellSeparEdge, enPDistToSeparEdge;
+    //DBL
+    if(enPCellID==0) enPCellSeparEdge = ensipmREdgeX + (uDir+1)/2*m_sipmEdgeSizeX;
+    else if(enPCellID==130) enPCellSeparEdge = ensipmREdgeX + m_sipmPitchX + (uDir-1)/2*m_sipmEdgeSizeX;
+    else enPCellSeparEdge = enPLocal.X() - (enPFraction - 0.5*uDir) * m_cellSizeX;
+    enPDistToSeparEdge = enPLocal.X() - enPCellSeparEdge;
+    if( m_msg->level() <= MSG::DEBUG) debug() << "Entry point: uDir / cellSeparEdge / distToSeparEdge: "
+                                      << uDir << ", " << enPCellSeparEdge << ", " << enPDistToSeparEdge << endmsg;
+    
+    /// Hit Cell edge next to the exit point
+    double exPCellSeparEdge, exPDistToSeparEdge;
+    if(exPCellID==0) exPCellSeparEdge = exsipmREdgeX - (uDir-1)/2*m_sipmEdgeSizeX;
+    else if(exPCellID==130) exPCellSeparEdge = exsipmREdgeX + m_sipmPitchX - (uDir+1)/2*m_sipmEdgeSizeX;
+    else exPCellSeparEdge = exPLocal.X() - (exPFraction + 0.5*uDir) * m_cellSizeX;
+    exPDistToSeparEdge = exPLocal.X() - exPCellSeparEdge;
+    if( m_msg->level() <= MSG::DEBUG) debug() << "Exit point: uDir / cellSeparEdge / distToSeparEdge: "
+                                      << uDir << ", " << exPCellSeparEdge << ", " << exPDistToSeparEdge << endmsg;
     //////////////////////////////////////////////////////////////////
     /// Calculate the fractional position of the particle path center inside
     /// each traversed cell. Create and push_back the relevant FT pairs
@@ -707,7 +867,6 @@ StatusCode DeFTFibreMat::calculateHits(const LHCb::MCHit&  fthit,
                                         << "call to cellCrossingPointLocal" << endmsg;
       return StatusCode(sc, IssueSeverity(IssueSeverity::NIL, -6, "") );
     }
-
     fracP1 = enPFraction;
     fracP2 = (dUExEn>0) ? 0.5 : -0.5;
     //DBL
@@ -721,13 +880,10 @@ StatusCode DeFTFibreMat::calculateHits(const LHCb::MCHit&  fthit,
 
     /// Create and push-back the pair (FTChannelID, fraction)
     channel = createChannel( layer(), m_module, m_mat, enPSipmID, enPCellID );
-    vectChanAndFracPos.emplace_back( channel, fracPosFirstCell );
-
-
+    vectChanAndFracPos.emplace_back( channel, fracPosFirstCell );    
     ///--------The middle cells
     unsigned int midCellSipmID, midCellID;
     double midCellFraction, midsipmREdgeX;
-
     //DBL
     double midX = enPCellSeparEdge;
     while (std::abs(midX - exPCellSeparEdge) > m_ARtolerance) {
@@ -738,12 +894,9 @@ StatusCode DeFTFibreMat::calculateHits(const LHCb::MCHit&  fthit,
       /// Create and push-back the pair (FTChannelID, fraction)
       channel = createChannel( layer(), m_module, m_mat, midCellSipmID, midCellID );
       vectChanAndFracPos.push_back( std::make_pair(channel, midCellFraction) );
-
       if(midCellID==0 || midCellID==130) midX+=uDir*m_sipmEdgeSizeX;
       else midX+=uDir*m_cellSizeX;
     }// end loop over mid cells
-
-
     ///-------The cell of the exit point
     double fracPosLastCell = 999.;
     sc = cellCrossingPointLocal( exPCellSeparEdge, enPLocal, exPLocal, pIntersect );
@@ -764,7 +917,6 @@ StatusCode DeFTFibreMat::calculateHits(const LHCb::MCHit&  fthit,
       debug() << "Exit Point, SC = " << sc << " Intersection point: " << pIntersect << endmsg;
       debug() << "Exit Point, Frac = " << fracPosLastCell << endmsg;
     }
-
     /// Create and push-back the pair (FTChannelID, fraction)
     channel = createChannel( layer(), m_module, m_mat, exPSipmID, exPCellID );
     vectChanAndFracPos.push_back( std::make_pair(channel, fracPosLastCell) );
@@ -773,7 +925,7 @@ StatusCode DeFTFibreMat::calculateHits(const LHCb::MCHit&  fthit,
 
 
   if( m_msg->level() <= MSG::DEBUG) debug() << "Finished creating FTPairs\n" << endmsg;
-
+  
   /// Printout the vector of FT pairs
   if( m_msg->level() <= MSG::DEBUG) debug() << "Size of vector of FT pairs: " << vectChanAndFracPos.size() << endmsg;
   DetectorSegment tmpDetSeg;
@@ -796,7 +948,6 @@ StatusCode DeFTFibreMat::calculateHits(const LHCb::MCHit&  fthit,
 }
 
 
-
 //=============================================================================
 // This function determines the fibre lengh and relative position of the hit
 // in the fibre according to the Hit position.
@@ -817,7 +968,6 @@ StatusCode DeFTFibreMat::hitPositionInFibre(const LHCb::MCHit&  fthit,
     doRHAxesInversion(enPLocal);
     doRHAxesInversion(exPLocal);
   }
-
   double enfibrefullLength,exfibrefullLength;
   inBeamHole(enPLocal, enfibrefullLength);
   inBeamHole(exPLocal, exfibrefullLength);
@@ -846,17 +996,17 @@ VectFTPairs DeFTFibreMat::createLightSharingChannels(VectFTPairs& inputVectPairs
   //Nota: hits with weight 0.5 or -0.5 are not taken into account in the weights
   //(see also computation of hit cell geometrical fraction)
   double sumPathWeights = std::accumulate( inputVectPairs.begin(), inputVectPairs.end(),
-                                           0., [](double spw, const FTPair& ivp) {
-                                               return spw + (1 - 2.*std::abs(ivp.second));
-                                           });
-
+					   0., [](double spw, const FTPair& ivp) {
+					     return spw + (1 - 2.*std::abs(ivp.second));
+					   });
+  
   std::vector<double> vectPathWeights;
   if(std::abs(sumPathWeights)>1.e-6) {
     std::transform( inputVectPairs.begin(),inputVectPairs.end(),
-                    std::back_inserter(vectPathWeights) ,
-                    [&](const FTPair& p) {
-                        return (1 - 2.*std::abs(p.second)) / sumPathWeights;
-    });
+		    std::back_inserter(vectPathWeights) ,
+		    [&](const FTPair& p) {
+		      return (1 - 2.*std::abs(p.second)) / sumPathWeights;
+		    });
   } else {
     vectPathWeights.resize( inputVectPairs.size(), 0. );
   }
@@ -889,7 +1039,7 @@ VectFTPairs DeFTFibreMat::createLightSharingChannels(VectFTPairs& inputVectPairs
   if ( inputVectPairs.size() > 1 && sequenceRightToLeft ) {
     vectChannels.push_back( nextChannelLeft(inputVectPairs.back().first) );
   }
-  else { vectChannels.push_back( nextChannelRight(inputVectPairs.back().first) ); }
+  else { vectChannels.push_back( nextChannelRight(inputVectPairs.back().first) ); }  
   // calculate the overall fractions for each channel
   std::vector<double> finalFractions( inputVectPairs.size()+2, 0. );
 
@@ -921,7 +1071,7 @@ VectFTPairs DeFTFibreMat::createLightSharingChannels(VectFTPairs& inputVectPairs
 
   VectFTPairs outputVectPairs; outputVectPairs.reserve(vectChannels.size());
   for (ind=0; ind<vectChannels.size(); ++ind) {
-    outputVectPairs.emplace_back( vectChannels.at(ind), finalFractions.at(ind) );
+    outputVectPairs.emplace_back( vectChannels.at(ind), finalFractions.at(ind) ); 
   }
   if( m_msg->level() <= MSG::DEBUG) debug() << "Created vector of light-sharing FT pairs with size: " << outputVectPairs.size() << endmsg;
 
@@ -1017,7 +1167,7 @@ double DeFTFibreMat::cellUCoordinate(const FTChannelID& channel) const {
   double qLR = (m_quarter%2) ? 1 : -1;   //left or right quarter
   double moduleSizeX = 2*m_FibreModuleHalfSizeX;
   int sipm = channel.sipmId();
-
+ 
   //right or left sipm edge (closest to global origin)
   double sipmREdge = qLR*(m_relativemodule*moduleSizeX) +
                      qLR*(m_moduleEdgeSizeX+(sipm + !(m_quarter%2))*m_sipmPitchX);
@@ -1050,16 +1200,16 @@ double DeFTFibreMat::cellLocalX(const FTChannelID& channel) const {
   }
   int sipm = channel.sipmId();
   double qLR = (m_quarter%2) ? 1 : -1;   //right or left quarter
-
+ 
   //right or left sipm edge (closest to global origin)
   double sipmREdgeX = qLR*(-m_fibreMatHalfSizeX + (sipm + !(m_quarter%2))*m_sipmPitchX);
-
+ 
   // Determine gross cellID
   unsigned int grossID = grossCellID(channel.sipmCell());
   // offset of the cell center wrt SiPM right edge (cellID always increases from right to left)
   // correction for the SiPM edge counted as 1 cell width...
   double cellOffset = (grossID + 0.5 - 1) * m_cellSizeX + m_sipmEdgeSizeX;
-
+ 
   return sipmREdgeX+cellOffset;
 }
 
@@ -1084,7 +1234,7 @@ void DeFTFibreMat::cellIDCoordinates( const double  Xlocal,
   unsigned int lsipm = 0;
   for( unsigned int i = 0; i < m_nSipmPerModule; ++i ){
     if( std::abs(Xlocal - m_sipmOriginX) > (double)i*m_sipmPitchX ) lsipm = i;
-    else break;								
+    else break;
   }
   if( lsipm >= m_nSipmPerModule ) {
     fatal() << "In function cellIDCoordinates: SipmID must be between 0 and " << m_nSipmPerModule-1 << endmsg;
@@ -1106,7 +1256,6 @@ void DeFTFibreMat::cellIDCoordinates( const double  Xlocal,
     fatal() << Xlocal << " " << sipmREdgeX << endmsg;
   }
   else if ((distSipmREdge > -m_ARtolerance) && (distSipmREdge<0)) distSipmREdge=0;
-
 
   //cell edge, extreme (dead) channels 0 and 130, fractionnal distance
   //wrto cell center (same axis orientation as mats)
@@ -1134,7 +1283,7 @@ void DeFTFibreMat::cellIDCoordinates( const double  Xlocal,
     cellREdgeX = (sipmREdgeX + m_sipmEdgeSizeX) + (cellID-1)*m_cellSizeX;
     fracDistCellCenter = (Xlocal - (cellREdgeX + m_cellSizeX/2)) / m_cellSizeX;
   }
-
+  
   if( m_msg->level() <= MSG::DEBUG) debug() << " In cellIDCoordinates: "
                          << "\n\tXlocal: " << Xlocal
                          << "\n\tsipmREdgeX: " << sipmREdgeX << "\tdistSipmREdge: " << distSipmREdge
@@ -1230,6 +1379,8 @@ DetectorSegment DeFTFibreMat::createDetSegment(const FTChannelID& channel,
 }
 
 
+
+
 //=============================================================================
 // Function to determine the x coordinate at the top/bottom of the layer
 // by extrapolating the initial (x0,y0) along the fibres
@@ -1239,8 +1390,6 @@ double DeFTFibreMat::xAtVerticalBorder(double x0, double y0) const {
   double yAtBorder = (y0>0) ? m_layerMaxY : m_layerMinY;
   return x0 + (yAtBorder-y0)*m_tanAngle;
 }
-
-
 //=============================================================================
 // Function to determine the y coordinate of the crossing point between
 // the beam-pipe hole (circle) and the fibres. The procedure is to express
@@ -1302,6 +1451,8 @@ FTChannelID DeFTFibreMat::nextChannelRight(const FTChannelID& channel) const {
   return createChannel( channel.layer(), channel.module(), channel.mat(), channel.sipmId(), grossIDRightCell );
 }
 
+
+
 //=============================================================================
 //Find solidbase in a named pvolume
 //=============================================================================
@@ -1333,7 +1484,7 @@ bool DeFTFibreMat::inBeamHole(const Gaudi::XYZPoint hitLocal,
     bool inHole(false);
     if(m_holey) {
       if (m_FTGeomversion <= m_FTGeomVersion_reference) { //geom v20
-        auto YFibreHole = beamPipeYCoord(hitLocal.X(), hitLocal.Y());   //may be bugged: local or global ?
+	auto YFibreHole = beamPipeYCoord(hitLocal.X(), hitLocal.Y());   //may be bugged: local or global ?
         //get (maximum) fibre length
         fibrelengthMax=2.*m_fibreMatHalfSizeY - std::abs(YFibreHole)/m_cosAngle;   //Y=0 when no intersection
         //test hit y position
@@ -1400,10 +1551,9 @@ void DeFTFibreMat::doRHAxesInversion(Gaudi::XYZPoint& xyzLocal) const {
 bool DeFTFibreMat::inActiveArea(const Gaudi::XYZPoint& xyzLocal, double ztolerance) const {
 
   return std::abs(xyzLocal.X()) <= m_fibreMatHalfSizeX+m_ARtolerance &&
-         std::abs(xyzLocal.Y()) <= m_fibreMatHalfSizeY+m_ARtolerance &&
-         std::abs(xyzLocal.Z()) <= (m_fibreMatHalfSizeZ+m_ARtolerance)*(1+ztolerance);
+    std::abs(xyzLocal.Y()) <= m_fibreMatHalfSizeY+m_ARtolerance &&
+    std::abs(xyzLocal.Z()) <= (m_fibreMatHalfSizeZ+m_ARtolerance)*(1+ztolerance);
 }
-
 
 //=============================================================================
 // test if MC passes some validity and acceptance tests
@@ -1430,7 +1580,7 @@ StatusCode DeFTFibreMat::CalculateSipmInfo(const Gaudi::XYZPoint enPLocal, const
        << "between entry and exit points is less than 10 microns." << endmsg;
     return StatusCode(StatusCode::FAILURE, IssueSeverity(IssueSeverity::NIL, -3, "") );
   }
-
+    
   //hole treatment and fibrelength
   double fibrelengthMax(2*m_fibreMatHalfSizeY);
   if( m_holey ){
