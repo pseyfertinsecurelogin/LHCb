@@ -36,10 +36,13 @@ fraction = ftpair.second
 
 print "Hit position = ",point.x(), point.y(),point.z()
 print "Hit channel: layer=",channel.layer(),
-print " module =",channel.module(), 
-print " mat =",channel.mat(), 
-print " sipm =",channel.sipmId(), 
+print " module =",channel.module(),
+print " mat =",channel.mat(),
+print " sipm =",channel.sipmId(),
 print " cell =",channel.sipmCell()
 print "   fraction=",fraction
 
-
+# Get the local point
+localP = mat.geometry().toLocal(point)
+print
+print "In the local frame the position is ", localP.x(), localP.y(), localP.z()
