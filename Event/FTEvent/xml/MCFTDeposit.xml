@@ -27,9 +27,7 @@
 	  m_energyRefVec.push_back(energyRef);
 	  m_timeVec.push_back(time);
 	  m_timeRefVec.push_back(timeRef);
-    m_thNoiseCont = 0;
-    m_afterplCont = 0;
-    m_xtalkCont = 0;
+    m_noiseCont = 0;
 	</code>
       </constructor>
 
@@ -62,12 +60,10 @@
       <method    name    = "addNoise"
                  desc    = "keep track of added Noise"
                  type    = "void"
-                 argList = "int noiseType, int noiseValue"
+                 argList = "int noiseValue"
                  access  = "PUBLIC">
           <code>
-            if(noiseType==0) { m_thNoiseCont += noiseValue; }
-            if(noiseType==1) { m_afterplCont += noiseValue; }
-            if(noiseType==2) { m_xtalkCont   += noiseValue; }
+            m_noiseCont += noiseValue;
           </code>
       </method>
 
@@ -101,18 +97,8 @@
 		 setMeth = "FALSE"
                  access = "PRIVATE"/>
 
-      <attribute name   = "thNoiseCont"
-                 desc   = "Counter for thermal noise PEs"
-                 type   = "int"
-                setMeth = "FALSE"
-                 access = "PRIVATE" />
-      <attribute name   = "afterplCont"
-                 desc   = "Counter for afterpulse PEs"
-                 type   = "int"
-                setMeth = "FALSE"
-                 access = "PRIVATE" />
-      <attribute name   = "xtalkCont"
-                 desc   = "Counter for xtalk PEs"
+      <attribute name   = "noiseCont"
+                 desc   = "Counter for added noise PEs"
                  type   = "int"
                 setMeth = "FALSE"
                  access = "PRIVATE" />
