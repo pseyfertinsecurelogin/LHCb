@@ -145,6 +145,20 @@ public:
    *  Fills a vector of 'FT pairs' (channel ID and fraction of the crossed length).
    *  @return Status of the execution
    */
+  StatusCode calculateHits(const LHCb::MCHit&              fthit,
+			   const unsigned int numOfAdditionalChannels,
+                           std::vector<LHCb::FTChannelID>& channelIDs,
+			   std::vector<double>& channelLeftEdges,
+			   std::vector<double>& channelRightEdges) const;
+
+
+  /** Get the list of SiPM channels traversed by the hit.
+   *  The particle trajectory is a straight line defined by:
+   *  @param MChit providing globalPointEntry Global entry and exit point
+   *  Fills a vector of 'FT pairs' (channel ID and fraction of the crossed length).
+   *  @return Status of the execution
+   */
+
   StatusCode calculateHits(const LHCb::MCHit&  fthit,
                            VectFTPairs&        vectChanAndFracPos) const;
 
@@ -385,7 +399,6 @@ private: //-----private member functions
                                     const Gaudi::XYZPoint&  lpExit,
                                     Gaudi::XYZPoint&        pIntersect) const;
                                
-
 
   /** Function to determine the y coordinate of the crossing point between
    *  the beam-pipe hole (circle) and the fibres. Purely geometrical function.

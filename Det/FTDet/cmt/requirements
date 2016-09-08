@@ -27,7 +27,7 @@ use   FTEvent      v*    Event
 apply_pattern      install_more_includes more=FTDet
 
 #=====================================================================
-# =============== Build linker and component libraries ====================
+#=============== Build linker and component libraries ================
 #=====================================================================
 library            FTDetLib        ../src/Lib/*.cpp
 library            FTDet           ../src/component/*.cpp
