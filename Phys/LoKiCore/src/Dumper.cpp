@@ -38,7 +38,7 @@ LoKi::Functors::Dump1_<double,bool>::operator()
     return m_fun.fun ( a ) ;
   }
   //
-  result_type result = m_fun.fun ( a ) ;
+  auto result = m_fun.fun ( a ) ;
   //
   m_stream << m_dump.open  () ;
   m_stream << a ;
@@ -60,7 +60,7 @@ LoKi::Functors::Dump1_<double,double>::operator()
     return m_fun.fun ( a ) ;
   }
   //
-  result_type result = m_fun.fun ( a ) ;
+  auto result = m_fun.fun ( a ) ;
   //
   m_stream << m_dump.open  () ;
   m_stream << a ;

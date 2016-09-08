@@ -85,8 +85,7 @@ inline void ST::CommonBase<PBASE>::commonInit(){
   m_readoutTool = 0;
   this->declareProperty("DetType", m_detType = "TT");
   this->declareProperty("ForcedInit", m_forcedInit = false); 
-  m_readoutToolName = m_detType+"ReadoutTool";
-  addToFlipList(&m_readoutToolName);
+  declareSTConfigProperty("ReadoutTool",m_readoutToolName, m_detType+"ReadoutTool" );
 }
 
 template <class PBASE>
@@ -196,17 +195,19 @@ inline std::string ST::CommonBase<PBASE>::detectorType(const LHCb::STChannelID& 
 
 #include "Kernel/STDetSwitch.h"
 template <class PBASE>
-inline void ST::CommonBase<PBASE>::addToFlipList(std::string* aString) const{
-  m_toBeFlipped.push_back(aString);
+inline Property* ST::CommonBase<PBASE>::addToFlipList(Property* aProperty) const{
+  m_toBeFlipped.push_back(aProperty);
+  return aProperty;
 }
 
 template <class PBASE>
 inline void ST::CommonBase<PBASE>::flip() const {
  // turn IT into TT or TT into IT
- for (std::vector<std::string*>::const_iterator iterS = m_toBeFlipped.begin();
-      iterS != m_toBeFlipped.end(); ++iterS){
-   STDetSwitch::flip(m_detType,**iterS);
-  } // iterS   
+ for (Property* p : m_toBeFlipped ) {
+     auto value = p->toString();
+     STDetSwitch::flip(m_detType,value);
+     p->fromString(value).ignore();
+ }
 }
 
 template <class PBASE> 
@@ -215,7 +216,7 @@ void ST::CommonBase<PBASE>::flip(std::string& aString) const{
 }
 
 template <class PBASE>
-inline const std::vector<std::string*>& ST::CommonBase<PBASE>::flipList() const{
+inline const std::vector<Property*>& ST::CommonBase<PBASE>::flipList() const{
  return m_toBeFlipped;
 }
 

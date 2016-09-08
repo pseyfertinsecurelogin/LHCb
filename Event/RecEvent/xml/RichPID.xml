@@ -59,7 +59,7 @@
 		desc  = "Returns the raw gaussian probability value for a given particle species">
                 <arg const="TRUE" inout="BYVALUE" name="type" type="Rich::ParticleIDType"/>  
                 <code>
-                   const float dll = particleDeltaLL(type);
+                   const auto dll = particleDeltaLL(type);
                    return (float)( dll &gt; 0 ? 1.0 - (float)gsl_sf_erf(std::sqrt(dll)) : 1.0 );
                 </code>
         </method>
@@ -72,8 +72,7 @@
                 <arg const="TRUE" inout="BYVALUE" name="type" type="Rich::ParticleIDType"/>
                 <code>
                    float norm = 0;
-                   for ( int iPID = 0; iPID &lt; Rich::NParticleTypes; ++iPID ) 
-                       { norm += particleRawProb( static_cast&lt;Rich::ParticleIDType&gt;(iPID) ); }
+                   for ( const auto pid : Rich::Particles() ) { norm += particleRawProb(pid); }
                    return ( norm &gt; 0 ? particleRawProb(type)/norm : 0 );
                 </code>
         </method>
@@ -132,8 +131,8 @@
                 <arg const="TRUE" inout="BYVALUE" name="firstPart" type="Rich::ParticleIDType"/>
                 <arg const="TRUE" inout="BYVALUE" name="lastPart" type="Rich::ParticleIDType"/>
                 <code>
-                   const float dLL = m_particleLLValues[lastPart]-m_particleLLValues[firstPart]; 
-                   return (float) ( std::sqrt( fabs(2.0*dLL) ) * (dLL&gt;0 ? 1.0 : -1.0 ) );
+                   const auto dLL = m_particleLLValues[lastPart]-m_particleLLValues[firstPart]; 
+                   return (float) ( std::sqrt( fabs(2.0f*dLL) ) * (dLL&gt;0 ? 1.0f : -1.0f ) );
                 </code>
         </method>
 
@@ -173,7 +172,7 @@
                 <arg const="TRUE" inout="BYVALUE" name="type" type="Rich::ParticleIDType"/>
                 <code>
                     // Shift bit-packed representation by +1 to start numbering from 0 
-                    const unsigned int val = (unsigned int)type + 1;
+                    const auto val = (unsigned int)type + 1;
                     m_pidResultCode &amp;= ~packedBestParticleIDMask;
                     m_pidResultCode |= ((((unsigned int)val) &lt;&lt; packedBestParticleIDBits) &amp; packedBestParticleIDMask);
                 </code>

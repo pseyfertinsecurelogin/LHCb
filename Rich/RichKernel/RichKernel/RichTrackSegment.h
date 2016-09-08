@@ -179,7 +179,7 @@ namespace LHCb
     };
 
     /// Enum to flag to determine how to create the RichTrackSegment
-    enum SegmentType
+    enum SegmentType : int8_t
       {
         UnDefined             = 0,  ///< Undefined segment type
         UseChordBetweenStates,      ///< Uses full state information to define the segment direction
@@ -539,6 +539,12 @@ namespace LHCb
     inline const Gaudi::XYZVector& bestMomentum() const noexcept
     {
       return m_middleMomentum;
+    }
+
+    /// Returns the magnitude of the best momentum vector
+    inline double bestMomentumMag() const
+    {
+      return std::sqrt( m_middleMomentum.Mag2() );
     }
 
     /// Returns the radiator type

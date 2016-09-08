@@ -4,6 +4,9 @@
 ! Purpose     : Interface between LHCb and LGC/COOL project
 !-----------------------------------------------------------------------------
 
+! 2016-08-25 - Marco Cattaneo
+ - ICondDBReader.h: remove obsolete COOL_HAS_CPP11 typedef
+
 ! 2016-03-31 - Roel Aaij
  - Fix CondDB configuration. The online snapshots were configured even if
    UseDBSnapshot was set to True.

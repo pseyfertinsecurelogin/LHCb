@@ -49,9 +49,7 @@ namespace
 // default constructor (empty)
 // ============================================================================
 LoKi::Listener::Listener() 
-  : LoKi::AuxFunBase() 
-  , m_incSvc    ()
-  , m_incidents () 
+  : LoKi::AuxFunBase(std::tie()) 
 {}
 // ============================================================================
 // copy constructor 

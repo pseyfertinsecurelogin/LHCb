@@ -24,26 +24,14 @@ MemoryTool::MemoryTool( const std::string& type,
                         const std::string& name,
                         const IInterface* parent )
   : GaudiHistoTool ( type, name , parent )
-  , m_counter ( 0 )
-  , m_bins    ( 0 )
-                      // 
-  , m_skip   ( 10     )
-  , m_prev   ( -1.e+6 )
   , m_histo1 ( "Total Memory [MB]" ,   0 , 2000 ) 
   , m_histo2 ( "Delta Memory [MB]" , -25 ,   25 )
-  , m_check     ( 20 )
-  , m_maxPrint  (  0 )
-                      //
-  , m_totMem ( 0      )
-  , m_delMem ( 0      )
-  , m_plot1  ( 0      )
-  , m_plot2  ( 0      )
 {
   declareProperty( "HistoSize"  , m_bins = 500 );
   //
   declareProperty 
     ( "SkipEvents" , 
-      m_skip       , 
+      m_skip = 10  , 
       "Skip the first N events from delta memory counter " );
   declareProperty 
     ( "TotalMemoryHisto" , 
@@ -56,27 +44,23 @@ MemoryTool::MemoryTool( const std::string& type,
   //
   declareProperty 
     ( "Check"  , 
-      m_check  , 
+      m_check = 20 , 
       "Frequency for checks for suspision memory leak" ) ;
   //
   declareProperty 
     ( "MaxPrints" , 
-      m_maxPrint  , 
+      m_maxPrint = 0 , 
       "Maximal number of print-out" ) ;
   //
   setProperty ( "HistoPrint", false );
   declareInterface<IGenericTool>(this);
 }
-//=============================================================================
-// Destructor
-//=============================================================================
-MemoryTool::~MemoryTool() {}
 // ============================================================================
 // finalize the tool 
 // ============================================================================
 StatusCode MemoryTool::finalize () 
 {
-  if ( 0 != m_delMem                && 
+  if ( m_delMem                     && 
        1 < m_delMem->nEntries    () && 
        0 < m_delMem->flagMean    () && 
        0 < m_delMem->flagMeanErr () && 
@@ -84,30 +68,29 @@ StatusCode MemoryTool::finalize ()
   {
     Warning( "Mean 'delta-memory' exceeds 3*sigma", StatusCode::SUCCESS).ignore();
   }
-  
-  m_totMem = 0 ;
-  m_delMem = 0 ;
-  m_plot1  = 0 ;
-  m_plot2  = 0 ;
+  m_totMem = nullptr ;
+  m_delMem = nullptr ;
+  m_plot1  = nullptr ;
+  m_plot2  = nullptr ;
   return GaudiHistoTool::finalize (); 
 }
 //=============================================================================
 // Plot the memory usage
 //=============================================================================
-void MemoryTool::execute() {
-
-  double mem = (double)System::virtualMemory();
+void MemoryTool::execute() 
+{
+  const auto mem = (double)System::virtualMemory();
   
   static const std::string s_TotalMemory = "Total Memory/MB" ;
   static const std::string s_DeltaMemory = "Delta Memory/MB" ;
   
-  if ( 0 == m_totMem                   ) { m_totMem = &counter( s_TotalMemory ) ; }
-  if ( 0 == m_delMem                   ) { m_delMem = &counter( s_DeltaMemory ) ; }
-  if ( 0 == m_plot1 && produceHistos() ) { m_plot1  = book    ( m_histo1      ) ; }
-  if ( 0 == m_plot2 && produceHistos() ) { m_plot2  = book    ( m_histo2      ) ; }
+  if ( !m_totMem                   ) { m_totMem = &counter( s_TotalMemory ) ; }
+  if ( !m_delMem                   ) { m_delMem = &counter( s_DeltaMemory ) ; }
+  if ( !m_plot1 && produceHistos() ) { m_plot1  = book    ( m_histo1      ) ; }
+  if ( !m_plot2 && produceHistos() ) { m_plot2  = book    ( m_histo2      ) ; }
   
   // memory in megabytes 
-  const double memMB = mem / 1000 ;
+  const auto memMB = mem / 1000. ;
   // reset the counter (if required ) 
   if      ( 0 < m_skip && (unsigned long) m_skip == m_counter && 0 != m_delMem ) 
   {
@@ -117,28 +100,29 @@ void MemoryTool::execute() {
       debug()  << "Reset Delta Virtual Memory counter" << endmsg ;
   } 
   // Fill the counter for "valid" previous measurements
-  if   ( 0 != m_totMem ) { *m_totMem += memMB ; }
+  if   ( !m_totMem ) { *m_totMem += memMB ; }
   // Fill the plot
-  if   ( 0 != m_plot1  ) { fill ( m_plot1 , memMB , 1 , m_histo1.title() ) ; }
+  if   ( !m_plot1  ) { fill ( m_plot1 , memMB , 1 , m_histo1.title() ) ; }
   // Fill the counter for "valid" previous measurements
-  const double deltaMem = memMB - m_prev ;
+  const auto deltaMem = memMB - m_prev ;
   if   ( 0 <= m_prev   )
   { 
     // fill the counter 
-    if ( 0 != m_delMem ) { *m_delMem += deltaMem ; }
+    if ( !m_delMem ) { *m_delMem += deltaMem ; }
     // fill the counter
-    if ( 0 != m_plot2  ) { fill ( m_plot2 , deltaMem , 1 , m_histo2.title() ) ; }
+    if ( !m_plot2  ) { fill ( m_plot2 , deltaMem , 1 , m_histo2.title() ) ; }
   } 
   
   // set "previous" measurement 
   m_prev = memMB    ;                                        // memory in MB
   
-  if( m_bins > m_counter ) {
+  if ( m_bins > m_counter ) 
+  {
     plot( m_counter+1, "Virtual mem, all entries", "Virtual memory (kB), first 'HistoSize' entries",
           0.5, m_bins+0.5, m_bins, mem );
   }
   if( 0 == m_counter%m_bins ) {
-    unsigned int bin = 1 + ( m_counter/m_bins );
+    const unsigned int bin = 1 + ( m_counter/m_bins );
     plot( bin, "Virtual mem, downscaled", "Virtual memory (kB), downscaled entries",
           0.5, m_bins+0.5, m_bins, mem );
   }
@@ -147,7 +131,7 @@ void MemoryTool::execute() {
   ++m_counter;                                         // increment event counter
   
   // check Total Memory for the particular event
-  if ( 0  != m_totMem                    && 
+  if ( m_totMem                          && 
        16 <  m_totMem->nEntries       () && 
        0  <  m_totMem->flagMean       () && 
        0  <  m_totMem->flagRMS        () && 
@@ -163,7 +147,7 @@ void MemoryTool::execute() {
   }
   // check the particular event
   if ( 0  <= m_prev                      && 
-       0  != m_delMem                    && 
+       m_delMem                          && 
        16 <  m_delMem->nEntries       () && 
        0  <  m_delMem->flagRMS        () && 
        0  <  deltaMem                    && 
@@ -178,7 +162,7 @@ void MemoryTool::execute() {
   }
   /// check the tendency: 
   if ( ( ( 0 < m_check && 0 == m_counter % m_check ) || 1 == m_check  ) && 
-       0  != m_delMem                && 
+       m_delMem                      && 
        16 < m_delMem->nEntries    () && 
        0  < m_delMem->flagMean    () && 
        0  < m_delMem->flagMeanErr () && 

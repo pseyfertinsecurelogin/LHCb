@@ -1,8 +1,6 @@
 #ifndef CALODIGITFILTERTOOL_H 
 #define CALODIGITFILTERTOOL_H 1
 
-// Include files
-// from Gaudi
 class StatusCode;
 #include "Kernel/CaloCellID.h"
 #include "CaloUtils/CaloCellIDAsProperty.h"
@@ -15,6 +13,9 @@ class StatusCode;
 #include "CaloDAQ/ICaloDigitFilterTool.h"            // Interface
 #include "CaloUtils/CaloAlgUtils.h"
 #include "Event/RecVertex.h"
+
+#include <memory>
+#include <unordered_map>
 
 /** @class CaloDigitFilterTool CaloDigitFilterTool.h
  *  
@@ -34,69 +35,81 @@ public:
   virtual StatusCode finalize  ();    ///< Algorithm finalization
 
   //
-  bool setDet(std::string det);
-  void getOffsetMap(std::string det);
-  int getMask(std::string det);
+  bool setDet(const std::string& det);
+  void getOffsetMap(const std::string& det);
+  int getMask(const std::string & det);
   double getOffset(LHCb::CaloCellID id, int scale,bool spd=false);
-  void setMaskMap(std::map<std::string,int> maskMap);
+  void setMaskMap(const std::map<std::string,int> & maskMap);
   int getScale();
-  bool cleanDigits(std::string det, bool substr=true, bool mask = true,bool spd=false);
-  int method(std::string det){
-    if( det != m_caloName)setDet( det );
+  bool cleanDigits(const std::string & det, bool substr=true, bool mask = true,bool spd=false);
+  int method(const std::string & det){
+    if ( det != m_caloName ) { setDet( det ); }
     return m_scalingMethod;
   }
   unsigned int nVertices();
   unsigned int nSpd();
   double offset(LHCb::CaloCellID id,bool spd=false);    
-  double offsetRMS(LHCb::CaloCellID id,bool spd=false);    
-    
+  double offsetRMS(LHCb::CaloCellID id,bool spd=false);
   virtual void handle(const Incident& /* inc */ ) { 
     if( UNLIKELY( msgLevel(MSG::DEBUG) ) ) 
       debug() << "IIncident Svc reset" << endmsg;
     m_reset = true ;  
   } 
+  /// Triggered by calo updates
+  StatusCode caloUpdate();
+
+private:
+
+  using Offsets = std::map<LHCb::CaloCellID,double>;
+  inline const Offsets & offsets()       const noexcept { return *m_offsets; }
+  inline const Offsets & offsetsRMS()    const noexcept { return *m_offsetsRMS; }
+  inline const Offsets & offsetsSPD()    const noexcept { return *m_offsetsSPD; }
+  inline const Offsets & offsetsSPDRMS() const noexcept { return *m_offsetsSPDRMS; }
+  struct CondMaps{Offsets offsets, offsetsRMS, offsetsSPD, offsetsSPDRMS;};
+  const CondMaps & createMaps( DeCalorimeter* calo, const bool regUpdate = true );
+  inline void setMaps( const CondMaps & maps ) const{
+    m_offsets       = &maps.offsets;
+    m_offsetsRMS    = &maps.offsetsRMS;
+    m_offsetsSPD    = &maps.offsetsSPD;
+    m_offsetsSPDRMS = &maps.offsetsSPDRMS;
+  }
 
 protected:
   void cleanDigit(LHCb::CaloDigit* digit, bool substr=true,int scale = -1, bool mask=true,bool spd=false);
 
 private:
   std::map<std::string,int> m_maskMap;
-  int m_mask;
-  std::map<LHCb::CaloCellID,double> m_offsets;
-  std::map<LHCb::CaloCellID,double> m_offsetsRMS;
-  std::map<LHCb::CaloCellID,double> m_offsetsSPD;
-  std::map<LHCb::CaloCellID,double> m_offsetsSPDRMS;
-  LHCb::CaloDigits* m_digits;
-  DeCalorimeter* m_calo;
-  std::string m_caloName;
-  int m_scalingMethod;
-  bool m_useCondDB;
-  
-  std::map<LHCb::CaloCellID,double> m_ecalOffset;
-  std::map<LHCb::CaloCellID,double> m_hcalOffset;
-  std::map<LHCb::CaloCellID,double> m_prsOffset;
+  int m_mask{0};
+  std::map< DeCalorimeter*, std::unique_ptr<CondMaps> > m_offsetMap;
+  mutable const Offsets * m_offsets       = nullptr;
+  mutable const Offsets * m_offsetsRMS    = nullptr;
+  mutable const Offsets * m_offsetsSPD    = nullptr;
+  mutable const Offsets * m_offsetsSPDRMS = nullptr;
 
-  std::map<LHCb::CaloCellID,double> m_ecalOffsetRMS;
-  std::map<LHCb::CaloCellID,double> m_hcalOffsetRMS;
-  std::map<LHCb::CaloCellID,double> m_prsOffsetRMS;
+  LHCb::CaloDigits* m_digits = nullptr;
+  DeCalorimeter* m_calo = nullptr;
+  std::string m_caloName{"None"};
+  int m_scalingMethod{0};
+  bool m_useCondDB{true};
 
-  std::map<LHCb::CaloCellID,double> m_ecalOffsetSPD;
-  std::map<LHCb::CaloCellID,double> m_hcalOffsetSPD;
-  std::map<LHCb::CaloCellID,double> m_prsOffsetSPD;
-
-  std::map<LHCb::CaloCellID,double> m_ecalOffsetSPDRMS;
-  std::map<LHCb::CaloCellID,double> m_hcalOffsetSPDRMS;
-  std::map<LHCb::CaloCellID,double> m_prsOffsetSPDRMS;
+  CondMaps m_ecalMaps;
+  CondMaps m_hcalMaps;
+  CondMaps m_prsMaps;
+  CondMaps m_nullMaps;
 
   int    m_scalingBin;
   double m_scalingMin;
-  double m_mOffs;
-  int m_nMask;
+  double m_mOffs{0.0};
+  int m_nMask{0};
   std::string m_vertLoc;
   bool m_usePV3D;
-  std::string m_scaling;
-  double m_offsetRMS;
-  bool m_reset;
-  int m_scale;
+  std::string m_scaling{"None"};
+  double m_offsetRMS{0.0};
+  bool m_reset{true};
+  int m_scale{0};
+
+  int m_setCounters;
+
 };
+
 #endif // CALODIGITFILTERTOOL_H

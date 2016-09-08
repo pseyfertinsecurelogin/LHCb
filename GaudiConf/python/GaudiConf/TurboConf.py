@@ -1,7 +1,6 @@
 """High level configuration for Turbo."""
 from Configurables import LHCbConfigurableUser
 from Configurables import DataOnDemandSvc
-from Configurables import Gaudi__DataLink as DataLink
 from PersistRecoConf import PersistRecoPacking
 
 __author__ = "Sean Benson, Rosen Matev"
@@ -68,6 +67,7 @@ class TurboConf(LHCbConfigurableUser):
         """Set up DataOnDemandSvc to create links to standard rec locations."""
         from Configurables import TESMerger_LHCb__ProtoParticle_ as TESMergerProtoParticle
         from Configurables import GaudiSequencer
+        from Configurables import Gaudi__DataLink as DataLink
 
         mergeProtos = TESMergerProtoParticle("MergeProtos")
         mergeProtos.inputLocations = [
@@ -95,6 +95,7 @@ class TurboConf(LHCbConfigurableUser):
         DataOnDemandSvc().AlgMap[linkPVs.Target] = linkPVs
 
     def _register_pv_links(self, pv_source):
+        from Configurables import Gaudi__DataLink as DataLink
         linkPVs = DataLink('LinkHltVertexReportsPVs',
                            What=pv_source,
                            Target='/Event/Rec/Vertex/Primary')

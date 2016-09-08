@@ -4279,7 +4279,7 @@ namespace Gaudi
       // ======================================================================      
       double xi       () const { return m_xi       ; }
       double lam      () const { return m_lambda   ; }
-      double lambda   () const { return lambda  () ; }
+      double lambda   () const { return m_lambda   ; }
       double delta    () const { return m_delta    ; }
       double gamma    () const { return m_gamma    ; }
       // ======================================================================      

@@ -1,5 +1,6 @@
 <lcgdict>
 
+  <class name    = "ICounterLevel"            />
   <class name    = "ICalo2Calo"               />
   <class name    = "ICalo2MCTool"             />
   <class name    = "ICaloClusterization"      />

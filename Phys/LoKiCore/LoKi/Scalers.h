@@ -1,4 +1,3 @@
-// $Id$
 // ============================================================================
 #ifndef LOKI_SCALERS_H 
 #define LOKI_SCALERS_H 1
@@ -41,11 +40,9 @@ namespace LoKi
        *  @param prop accep probability 
        *  @param service the random number servce 
        */
-      RandomScaleV ( const double prob         , 
-                     IRndmGenSvc* service = 0  ) ;
+      explicit RandomScaleV ( const double prob              , 
+                              IRndmGenSvc* service = nullptr ) ;
       // ======================================================================
-      /// MANDATORY: virtual destructor 
-      virtual ~RandomScaleV () ;
       /// MANDATORY: clone method ("virtual constructor")
       virtual  RandomScaleV*  clone() const ;
       /// MANDATORY: the only one essential method 
@@ -59,11 +56,6 @@ namespace LoKi
       bool eval ( /* argument v = 0 */ ) const ;         //      get the result
       /// get the probability 
       double prob() const { return m_prob ; }            // get the probability 
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// Default constructor is disabled 
-      RandomScaleV () ;                     // Default constructor is disabled 
       // ======================================================================
     private:
       // ======================================================================
@@ -86,10 +78,8 @@ namespace LoKi
       /** constructor from skip rate 
        *  @param skip the skip rate  
        */
-      SkipperV ( const size_t skip ) ;
+      explicit SkipperV ( const size_t skip ) ;
       // ======================================================================
-      /// MANDATORY: virtual destructor 
-      virtual ~SkipperV () ;
       /// MANDATORY: clone method ("virtual constructor")
       virtual  SkipperV* clone() const ;
       /// MANDATORY: the only one essential method 
@@ -106,14 +96,9 @@ namespace LoKi
       // ======================================================================
     private:
       // ======================================================================
-      /// Default constructor is disabled 
-      SkipperV () ;                           // Default constructor is disabled 
-      // ======================================================================
-    private:
-      // ======================================================================
       /// skip
       size_t          m_skip ;                                          // skip 
-      mutable size_t  m_curr ;                                       // current 
+      mutable size_t  m_curr = 0;                                       // current 
       // ======================================================================
     } ;
     // ========================================================================
@@ -152,7 +137,7 @@ namespace LoKi
        *  @param maxRate the maximal rate 
        *  @param flag    the limiter type 
        */
-      RateLimitV
+      explicit RateLimitV
       ( const double maxRate                      , 
         const RateLimitType  flag = RandomLimiter ) ;
       // ======================================================================
@@ -177,7 +162,7 @@ namespace LoKi
         const RateLimitType   flag    = RandomLimiter ) ;
       // ======================================================================
       /** copy construcor 
-       *  take care abotu rundomization of initial phase 
+       *  take care about randomization of initial phase 
        */
       RateLimitV ( const RateLimitV& right ) ;
       // ======================================================================
@@ -198,11 +183,6 @@ namespace LoKi
       double rate() const { return m_rate ; }                   // get the rate 
       /// get the actual limiter type 
       RateLimitType limitType () const { return m_limitType; } // get the type
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// Default constructor is disabled 
-      RateLimitV () ;                        // Default constructor is disabled 
       // ======================================================================
     protected:
       // ======================================================================
@@ -260,11 +240,9 @@ namespace LoKi
        *  @param prop accep probability 
        *  @param service the random number servce 
        */
-      RandomScale ( const double prob         , 
-                    IRndmGenSvc* service = 0  ) ;
+      explicit RandomScale ( const double prob              , 
+                             IRndmGenSvc* service = nullptr ) ;
       // ======================================================================
-      /// MANDATORY: virtual destructor 
-      virtual ~RandomScale () ;
       /// MANDATORY: clone method ("virtual constructor")
       virtual  RandomScale*  clone() const ;
       /// MANDATORY: the only one essential method 
@@ -276,11 +254,6 @@ namespace LoKi
       // ======================================================================
       /// get the result ;
       bool eval ( argument v = 0 ) const ;                  // get the result ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// Default constructor is disabled 
-      RandomScale () ;                       // Default constructor is disabled 
       // ======================================================================
     private:
       // ======================================================================
@@ -301,10 +274,8 @@ namespace LoKi
       /** constructor from skip rate 
        *  @param skip the skip rate  
        */
-      Skipper ( const size_t skip ) ;
+      explicit Skipper ( const size_t skip ) ;
       // ======================================================================
-      /// MANDATORY: virtual destructor 
-      virtual ~Skipper () ;
       /// MANDATORY: clone method ("virtual constructor")
       virtual  Skipper* clone() const ;
       /// MANDATORY: the only one essential method 
@@ -316,11 +287,6 @@ namespace LoKi
       // ======================================================================
       /// get the result ;
       bool eval ( argument v = 0 ) const ;                  // get the result ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// Default constructor is disabled 
-      Skipper () ;                           // Default constructor is disabled 
       // ======================================================================
     private:
       // ======================================================================
@@ -345,8 +311,8 @@ namespace LoKi
        *  @param maxRate the maximal rate 
        *  @param random the random flag 
        */
-      RateLimit ( const double        maxRate                 , 
-                  const RateLimitType flag    = RandomLimiter ) ;
+      explicit RateLimit ( const double        maxRate                 , 
+                           const RateLimitType flag    = RandomLimiter ) ;
       // ======================================================================
       /** constructor from the service , rate and "random" flag 
        *  @param svc     the rate service 
@@ -365,8 +331,6 @@ namespace LoKi
                   const double          maxRate                 , 
                   const RateLimitType   flag    = RandomLimiter ) ;
       // ======================================================================
-      /// MANDATORY: virtual destructor 
-      virtual ~RateLimit () ;
       /// MANDATORY: clone method ("virtual constructor")
       virtual  RateLimit*  clone() const ;
       /// MANDATORY: the only one essential method 
@@ -388,11 +352,6 @@ namespace LoKi
       // ======================================================================
       /// get the underlying basic  rate limiter 
       LoKi::Scalers::RateLimitV& rateLimiter () { return m_rateLimit ;}
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// Default constructor is disabled 
-      RateLimit () ;                         // Default constructor is disabled 
       // ======================================================================
     private:
       // ======================================================================
@@ -547,4 +506,3 @@ namespace LoKi
 // ============================================================================
 #endif // LOKI_SCALERS_H
 // ============================================================================
-

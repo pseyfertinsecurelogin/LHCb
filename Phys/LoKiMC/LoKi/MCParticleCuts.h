@@ -1467,7 +1467,7 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2007-01-21
      */
-    const LoKi::Valid<const LHCb::MCParticle*>                        MCVALID ;
+    const LoKi::Valid<const LHCb::MCParticle*>                        MCVALID{} ;
     // ========================================================================
     /** @typedef MCVFASPF
      *  simple adapter, which evaluated the actual function

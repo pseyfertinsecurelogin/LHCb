@@ -21,18 +21,17 @@
 
 std::ostream& LHCb::RichSmartID::dumpBits(std::ostream& s) const
 {
-  for ( int iCol = 0; iCol < 32; ++iCol ) { s << isBitOn( iCol ); }
+  for ( auto iCol = 0u; iCol < NBits; ++iCol ) { s << isBitOn( iCol ); }
   return s;
 }
 
-std::ostream& LHCb::RichSmartID::fillStream(std::ostream& s) const
+std::ostream& LHCb::RichSmartID::fillStream( std::ostream& s, 
+                                             const bool dumpSmartIDBits ) const
 {
   s << "{";
 
-  // Dump the bits in DEBUG mode
-#ifndef NDEBUG
-  s << " "; dumpBits(s);
-#endif
+  // Dump the bits if requested
+  if ( dumpSmartIDBits ) { s << " "; dumpBits(s); }
 
   // Type
   s << ( idType() == HPDID   ? " HPD"   : 
@@ -84,8 +83,8 @@ std::ostream& LHCb::RichSmartID::fillStream(std::ostream& s) const
   return s;
 }
 
-void LHCb::RichSmartID::rangeError(const int value,
-                                   const int maxValue,
+void LHCb::RichSmartID::rangeError(const DataType value,
+                                   const DataType maxValue,
                                    const std::string& message) const
 {
   std::ostringstream mess;
@@ -100,7 +99,7 @@ std::string LHCb::RichSmartID::toString() const
   return text.str();
 }
 
-void LHCb::RichSmartID::setPixelSubRow( const int pixelSubRow )
+void LHCb::RichSmartID::setPixelSubRow( const DataType pixelSubRow )
 {
   if ( HPDID == idType() )
   {

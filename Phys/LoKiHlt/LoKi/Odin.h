@@ -1,4 +1,3 @@
-// $Id: Odin.h,v 1.4 2010-05-17 16:01:39 ibelyaev Exp $
 // ============================================================================
 #ifndef LOKI_ODIN_H 
 #define LOKI_ODIN_H 1
@@ -40,9 +39,6 @@ namespace LoKi
    *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
    *  @date 2008-09-16
    * 
-   *                    $Revision$
-   *  Last modification $Date$
-   *                 by $Author$
    */
   namespace Odin
   {
@@ -62,9 +58,7 @@ namespace LoKi
     public:
       // ======================================================================
       /// Default Constructor
-      Run() { }
-      /// MANDATORY: virtual destructor 
-      virtual ~Run(){}
+      Run() : AuxFunBase{ std::tie() } { }
       /// MANDATORY: clone method ("virtual constructor")
       virtual  Run* clone() const { return new Run(*this); }
       /// MANDATORY: the only essential method 
@@ -89,8 +83,6 @@ namespace LoKi
       // ======================================================================
       /// constructor from the modulo 
       Evt1 ( const unsigned long long modulo ) ;
-      /// MANDATORY: virtual destructor 
-      virtual ~Evt1() ;
       /// MANDATORY: clone method ("virtual constructor")
       virtual  Evt1* clone() const ; 
       /// MANDATORY: the only essential method 
@@ -127,8 +119,6 @@ namespace LoKi
       // ======================================================================
       /// constructor from the modulo 
       Evt2 ( const unsigned long long modulo ) ;
-      /// MANDATORY: virtual destructor 
-      virtual ~Evt2() ;
       /// MANDATORY: clone method ("virtual constructor")
       virtual  Evt2* clone() const ; 
       /// MANDATORY: the only essential method 
@@ -155,9 +145,7 @@ namespace LoKi
     public:
       // ======================================================================
       /// Default Constructor
-      Orbit() { }
-      /// MANDATORY: virtual destructor 
-      virtual ~Orbit(){}
+      Orbit() : AuxFunBase{ std::tie() } { }
       /// MANDATORY: clone method ("virtual constructor")
       virtual  Orbit* clone() const { return new Orbit(*this); }
       /// MANDATORY: the only essential method 
@@ -181,9 +169,7 @@ namespace LoKi
     public:
       // ======================================================================
       /// Default Constructor
-      EventType() { }
-      /// MANDATORY: virtual destructor 
-      virtual ~EventType(){}
+      EventType() : AuxFunBase{ std::tie() } { }
       /// MANDATORY: clone method ("virtual constructor")
       virtual  EventType* clone() const { return new EventType(*this); }
       /// MANDATORY: the only essential method 
@@ -207,9 +193,7 @@ namespace LoKi
     public:
       // ======================================================================
       /// Default Constructor
-      BunchId() { }
-      /// MANDATORY: virtual destructor 
-      virtual ~BunchId(){}
+      BunchId() : AuxFunBase{ std::tie() } { }
       /// MANDATORY: clone method ("virtual constructor")
       virtual  BunchId* clone() const { return new BunchId(*this); }
       /// MANDATORY: the only essential method 
@@ -233,9 +217,7 @@ namespace LoKi
     public:
       // ======================================================================
       /// Default Constructor
-      ErrorBits() { }
-      /// MANDATORY: virtual destructor 
-      virtual ~ErrorBits(){}
+      ErrorBits() : AuxFunBase{ std::tie() } { }
       /// MANDATORY: clone method ("virtual constructor")
       virtual  ErrorBits* clone() const { return new ErrorBits(*this); }
       /// MANDATORY: the only essential method 
@@ -259,9 +241,7 @@ namespace LoKi
     public:
       // ======================================================================
       /// Default Constructor
-      TriggerType() { }
-      /// MANDATORY: virtual destructor 
-      virtual ~TriggerType(){}
+      TriggerType() : AuxFunBase{ std::tie() } { }
       /// MANDATORY: clone method ("virtual constructor")
       virtual  TriggerType* clone() const { return new TriggerType(*this); }
       /// MANDATORY: the only essential method 
@@ -285,9 +265,7 @@ namespace LoKi
     public:
       // ======================================================================
       /// Default Constructor
-      ReadOutType() { }
-      /// MANDATORY: virtual destructor 
-      virtual ~ReadOutType(){}
+      ReadOutType() : AuxFunBase{ std::tie() } { }
       /// MANDATORY: clone method ("virtual constructor")
       virtual  ReadOutType* clone() const { return new ReadOutType(*this); }
       /// MANDATORY: the only essential method 
@@ -312,9 +290,7 @@ namespace LoKi
     public:
       // ======================================================================
       /// Default Constructor
-      ForceBit() { }
-      // MANDATORY:  virtual desctrutor
-      virtual ~ForceBit () {} ;
+      ForceBit() : AuxFunBase{ std::tie() } { }
       // MANDATORY: clone method ("virtual constructor") 
       virtual ForceBit* clone() const { return new ForceBit ( *this ) ; }
       // MANDATORY: the only one essential method 
@@ -338,9 +314,7 @@ namespace LoKi
     public:
       // ======================================================================
       /// Default Constructor
-      BXType() { }
-      /// MANDATORY: virtual destructor 
-      virtual ~BXType(){}
+      BXType() : AuxFunBase{ std::tie() } { }
       /// MANDATORY: clone method ("virtual constructor")
       virtual  BXType* clone() const { return new BXType(*this); }
       /// MANDATORY: the only essential method 
@@ -364,9 +338,7 @@ namespace LoKi
     public:
       // ======================================================================
       /// Default Constructor
-      BunchCurrent() { }
-      /// MANDATORY: virtual destructor 
-      virtual ~BunchCurrent(){}
+      BunchCurrent() : AuxFunBase{ std::tie() } { }
       /// MANDATORY: clone method ("virtual constructor")
       virtual  BunchCurrent* clone() const { return new BunchCurrent(*this); }
       /// MANDATORY: the only essential method 
@@ -390,9 +362,7 @@ namespace LoKi
     public:
       // ======================================================================
       /// Default Constructor
-      CalibrationStep() { }
-      /// MANDATORY: virtual destructor 
-      virtual ~CalibrationStep(){}
+      CalibrationStep() : AuxFunBase{ std::tie() } { }
       /// MANDATORY: clone method ("virtual constructor")
       virtual  CalibrationStep* clone() const { return new CalibrationStep(*this); }
       /// MANDATORY: the only essential method 
@@ -416,9 +386,7 @@ namespace LoKi
     public:
       // ======================================================================
       /// Default Constructor
-      TrgConfKey() { }
-      /// MANDATORY: virtual destructor 
-      virtual ~TrgConfKey(){}
+      TrgConfKey() : AuxFunBase{ std::tie() } { }
       /// MANDATORY: clone method ("virtual constructor")
       virtual  TrgConfKey* clone() const { return new TrgConfKey(*this); }
       /// MANDATORY: the only essential method 
@@ -449,8 +417,6 @@ namespace LoKi
       /// the constructor form the start & span 
       InTime ( const Gaudi::Time&     start , 
                const Gaudi::TimeSpan& span  ) ;
-      /// MANDATORY: virtual destructor 
-      virtual ~InTime() {}
       /// MANDATORY: clone method ("virtual constructor")
       virtual InTime* clone() const { return new InTime(*this) ; }
       /// MANDATORY: The only one essential method:
@@ -499,8 +465,6 @@ namespace LoKi
       EvtNumber ( const event_list& events ) ;
       /// constructor from the event number 
       EvtNumber ( const event_type  evt    ) ;
-      /// MANDATORY: virtual destructor 
-      virtual ~EvtNumber() ;
       /// MANDATORY: clone method ("virtual constructor")
       virtual EvtNumber* clone() const ;
       /// MANDATORY: The only one essential method:
@@ -549,8 +513,6 @@ namespace LoKi
                   const run_type  end   ) ;
       /// constructor from the run list
       RunNumber ( const run_list& runs  ) ;
-      /// MANDATORY: virtual destructor 
-      virtual ~RunNumber() ;
       /// MANDATORY: clone method ("virtual constructor")
       virtual RunNumber* clone() const ;
       /// MANDATORY: The only one essential method:
@@ -603,8 +565,6 @@ namespace LoKi
                      const runevt_type&  end     ) ;
       /// constructor from the run-event  list
       RunEvtNumber ( const runevt_list& runevts ) ;
-      /// MANDATORY: virtual destructor 
-      virtual ~RunEvtNumber() ;
       /// MANDATORY: clone method ("virtual constructor")
       virtual RunEvtNumber* clone() const ;
       /// MANDATORY: The only one essential method:
@@ -647,8 +607,6 @@ namespace LoKi
              const unsigned int end   ) ;
       /// constructor from the run list
       BXId ( const std::vector<unsigned int>& bxs ) ;
-      /// MANDATORY: virtual destructor 
-      virtual ~BXId() {}
       /// MANDATORY: clone method ("virtual constructor")
       virtual  BXId* clone() const { return new BXId(*this) ; }
       /// MANDATORY: The only one essential method:
@@ -686,8 +644,6 @@ namespace LoKi
       Tck ( const unsigned int bx    ) ;
       /// constructor from the tck-list
       Tck ( const std::vector<unsigned int>& bxs ) ;
-      /// MANDATORY: virtual destructor 
-      virtual ~Tck() {}
       /// MANDATORY: clone method ("virtual constructor")
       virtual  Tck* clone() const { return new Tck(*this) ; }
       /// MANDATORY: The only one essential method:
@@ -721,8 +677,6 @@ namespace LoKi
       // ======================================================================
       /// constructor from routing bits 
       RoutingBits ( const LoKi::HLT::RoutingBits& bits ) ;
-      /// MANDATORY: virtual destructor 
-      virtual ~RoutingBits () ;
       /// MANDATORY: clone method ("virtual constructor")
       virtual  RoutingBits* clone() const ;
       /// MANDATORY: the only one essential method 

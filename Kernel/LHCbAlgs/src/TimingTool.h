@@ -20,15 +20,18 @@
  *  @author Marco Cattaneo
  *  @date   2003-11-04
  */
-class TimingTool : public GaudiTool, 
-                   virtual public INormalizeTool {
+class TimingTool final : public GaudiTool, 
+                         virtual public INormalizeTool 
+{
+
 public:
+
   /// Standard constructor
   TimingTool( const std::string& type, 
               const std::string& name,
               const IInterface* parent);
 
-  virtual ~TimingTool( ) {}; ///< Destructor
+  virtual ~TimingTool( ) = default; ///< Destructor
 
   virtual StatusCode finalize();
   
@@ -37,8 +40,11 @@ public:
   IRndmGenSvc*    randSvc();   ///< Returns pointer to random number service
 
 private:
+
   unsigned int  m_shots; ///< Number of random number shots for normalisation
-  IChronoStatSvc* m_CSS; ///< Pointer to Chrono service
-  IRndmGenSvc*    m_RGS; ///< Pointer to Random numbers service
+  IChronoStatSvc* m_CSS = nullptr; ///< Pointer to Chrono service
+  IRndmGenSvc*    m_RGS = nullptr; ///< Pointer to Random numbers service
+
 };
+
 #endif // TIMINGTOOL_H

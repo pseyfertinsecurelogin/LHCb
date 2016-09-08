@@ -20,7 +20,7 @@
 #include <map>
 
 class ISTReadoutTool;
-class DeSTDetector; 
+class DeSTDetector;
 class DeSTSector;
 
 namespace LHCb{
@@ -35,7 +35,7 @@ namespace ST
    *
    *  Base class providing common functionality for all ST tools and algorithms
    *
-   *  @author Matthew Needham   
+   *  @author Matthew Needham
    *  @date   2008-10-11
    */
   //-----------------------------------------------------------------------------
@@ -73,25 +73,25 @@ namespace ST
      * @retval StatusCode::FAILURE Finalization failed
      */
    virtual StatusCode finalize();
-  
+
    /** get the top level detector element */
    DeSTDetector* tracker() const;
 
    /** get the readout tool */
    ISTReadoutTool* readoutTool() const;
- 
+
    /** force init of base class tool */
    void setForcedInit();
 
    /** set the detType */
    void setDetType(const std::string& aString);
-  
+
    /** detector type (IT or TT) */
-   const std::string& detType() const; 
+   const std::string& detType() const;
 
    /** station as a string */
    std::string station(const LHCb::STChannelID& chan) const;
-  
+
    /** region as string */
    std::string uniqueDetRegion(const LHCb::STChannelID& chan) const;
 
@@ -100,36 +100,34 @@ namespace ST
 
    /** sector as a string */
    std::string uniqueSector(const LHCb::STChannelID& chan) const;
-   
+
    /** beetle as a string */
    std::string uniqueBeetle(const LHCb::STChannelID& chan) const;
-  
+
    /** port */
-   std::string uniquePort(const LHCb::STChannelID& chan) const; 
+   std::string uniquePort(const LHCb::STChannelID& chan) const;
 
    /** detector type as a string */
    std::string detectorType(const LHCb::STChannelID& chan) const;
-  
+
    /** flip all flippables **/
    void flip() const;
 
    /** flip the given string */
    void flip(std::string& aString) const;
 
-   /** add to flipable list **/
-   void addToFlipList(std::string* aString) const; 
 
    /** declarePropery the ST way **/
-   Property* declareSTConfigProperty(const std::string& name, 
+   Property* declareSTConfigProperty(const std::string& name,
                                std::string& value,
                                const std::string& def,
-                               const std::string& doc="none") const{ 
-    addToFlipList(&value);  // add to list of flippable
-    return this->declareProperty(name, value = def , doc);  // normal property declaration
+                               const std::string& doc="none") const{
+    // add to the property to the list of flippable after the normal property declaration
+    return addToFlipList(this->declareProperty(name, value = def , doc));
    }
 
    /** accessor to the list of things to be flipped */
-   const std::vector<std::string*>& flipList() const;
+   const std::vector<Property*>& flipList() const;
 
    /** safe finding of the sector - exception thrown if not valid */
    DeSTSector* findSector(const LHCb::STChannelID& aChannel) const;
@@ -138,6 +136,8 @@ namespace ST
    StatusCode procFailure(const std::string& reason, const bool aborted = false) const;
 
   private:
+   /** add to flipable list **/
+   Property* addToFlipList(Property* aProperty) const;
 
    void commonInit();
 
@@ -150,7 +150,7 @@ namespace ST
    std::string m_readoutToolName;
    std::string m_detType;
    bool m_forcedInit;
-   mutable std::vector<std::string*> m_toBeFlipped;
+   mutable std::vector<Property*> m_toBeFlipped;
 
   };
 }

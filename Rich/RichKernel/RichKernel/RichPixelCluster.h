@@ -76,17 +76,24 @@ namespace Rich
   public:
 
     /// Constructor with reserved size
-    explicit HPDPixelCluster( const SmartIDVector::size_type resSize ) 
+    explicit HPDPixelCluster( const SmartIDVector::size_type resSize )
     { m_ids.reserve(resSize); }
 
     /// Constructor from a single channel (one pixel cluster)
-    explicit HPDPixelCluster( const LHCb::RichSmartID & id ) : m_ids(1,id) { }
-
+    explicit HPDPixelCluster( const LHCb::RichSmartID & id )
+      : m_side(id.panel()), m_rich(id.rich()), m_ids(1,id) { }
+    
     /// Copy Constructor from a vector of RichSmartIDs
-    explicit HPDPixelCluster( const SmartIDVector & ids ) : m_ids(ids) { }
+    explicit HPDPixelCluster( const SmartIDVector & ids ) : m_ids(ids)
+    {
+      updateCachedEnums();
+    }
 
     /// Move Constructor from a vector of RichSmartIDs
-    explicit HPDPixelCluster( SmartIDVector && ids ) : m_ids(std::move(ids)) { }
+    explicit HPDPixelCluster( SmartIDVector && ids ) : m_ids(std::move(ids))
+    {
+      updateCachedEnums();
+    }
 
   public:
 
@@ -103,13 +110,16 @@ namespace Rich
     }
 
     /// The RICH detector for this cluster
-    inline Rich::DetectorType rich() const noexcept { return primaryID().rich(); }
+    inline Rich::DetectorType rich() const noexcept { return m_rich; }
 
     /// The RICH panel for this cluster
-    inline LHCb::RichSmartID panel() const noexcept { return primaryID().panelID(); }
+    inline Rich::Side        panel() const noexcept { return m_side; }
 
-    /// The RICH HPD for this cluster
-    inline LHCb::RichSmartID hpd()   const noexcept { return primaryID().pdID(); }
+    /// The RICH panel SmartID for this cluster
+    inline LHCb::RichSmartID panelID() const noexcept { return primaryID().panelID(); }
+
+    /// The RICH PD SmartID for this cluster
+    inline LHCb::RichSmartID    pdID() const noexcept { return primaryID().pdID(); }
 
     /// Number of channels in this cluster
     inline SmartIDVector::size_type size() const noexcept { return smartIDs().size(); }
@@ -120,10 +130,18 @@ namespace Rich
   public:
 
     /// Add a channel to this cluster
-    inline void addChannel( const LHCb::RichSmartID& id ) { m_ids.emplace_back(id); }
+    inline void addChannel( const LHCb::RichSmartID& id ) 
+    {
+      m_ids.emplace_back(id);
+      updateCachedEnums();
+    }
 
     /// Add a channel to this cluster
-    inline void addChannel( LHCb::RichSmartID&& id ) { m_ids.emplace_back(std::move(id)); }
+    inline void addChannel( LHCb::RichSmartID&& id ) 
+    {
+      m_ids.emplace_back(std::move(id));
+      updateCachedEnums();
+    }
 
   public:
 
@@ -135,6 +153,21 @@ namespace Rich
     }
 
   private:
+
+    /// Update the cached RICH and panel enums
+    inline void updateCachedEnums() 
+    {
+      m_side = primaryID().panel();
+      m_rich = primaryID().rich();
+    }
+
+  private:
+
+    /// Cache the RICH Side enum
+    Rich::Side m_side = Rich::InvalidSide;
+
+    /// Cache the detector enum
+    Rich::DetectorType m_rich = Rich::InvalidDetector;
 
     /// The vector of RichSmartIDs for this cluster
     SmartIDVector m_ids;
@@ -184,13 +217,13 @@ namespace Rich
 
       /// Default destructor
       ~Cluster() = default;
-      
+
       /// Default Copy Constructor
       Cluster( const Cluster& ) = default;
-      
+
       /// Default Copy operator
       Cluster& operator=( const Cluster& ) = default;
-      
+
       /// Default Move Constructor
       Cluster( Cluster&& ) = default;
 
@@ -229,10 +262,10 @@ namespace Rich
     private:
 
       /// Cluster ID
-      int m_clusterID{-1};  
+      int m_clusterID{-1};
 
       /// list of pixels in this cluster. Initialize with reserved size 3 (rough guess).
-      HPDPixelCluster m_cluster{3}; 
+      HPDPixelCluster m_cluster{3};
 
     };
 
@@ -240,7 +273,7 @@ namespace Rich
 
     /// Constructor
     HPDPixelClusters() = default;
-    
+
     /// Destructor
     ~HPDPixelClusters() = default;
 
@@ -302,7 +335,7 @@ namespace Rich
 
     /// Default Constructor
     HPDPixelClustersBuilder( )
-    { 
+    {
       memset ( m_data,     0, sizeof(m_data)     );
       memset ( m_clusters, 0, sizeof(m_clusters) );
     }
@@ -348,10 +381,10 @@ namespace Rich
     {
       return ( isOn(row,col) ? (m_clusters[row])[col] : nullptr );
     }
-    
+
     /// Set cluster for given pixel
     inline void setCluster( const LHCb::RichSmartID & id,
-                            const int row, const int col, 
+                            const int row, const int col,
                             HPDPixelClusters::Cluster * clus ) noexcept
     {
       // Set the pointer to the cluster for this (row,col)
@@ -359,7 +392,7 @@ namespace Rich
       // save this hit to the list of pixels for this cluster
       clus->addPixel(id);
     }
-    
+
     /// Create a new cluster with given ID
     inline HPDPixelClusters::Cluster * createNewCluster()
     {
@@ -371,8 +404,8 @@ namespace Rich
      *  @param clus2 Second cluster to merge
      *  @attention clus1 and clus2 should both be considered invalid after the merger.
      *  @return A pointer to the merged cluster object.
-     */ 
-    HPDPixelClusters::Cluster * mergeClusters( HPDPixelClusters::Cluster *& clus1, 
+     */
+    HPDPixelClusters::Cluster * mergeClusters( HPDPixelClusters::Cluster *& clus1,
                                                HPDPixelClusters::Cluster *& clus2 );
 
     /** Are we in LHCb or ALICE mode ?
@@ -407,10 +440,10 @@ namespace Rich
 
     /// Check if given row and col is on
     inline bool isOn( const int row, const int col ) const noexcept
-      
+
     {
       return ( row>=0 && row<nPixelRows() &&
-               col>=0 && col<nPixelCols() && 
+               col>=0 && col<nPixelCols() &&
                (m_data[row])[col] );
     }
 
@@ -435,7 +468,7 @@ namespace Rich
     bool m_data[Rich::DAQ::MaxDataSizeALICE][Rich::DAQ::NumPixelColumns];
 
     /** Assigned cluster for each pixel (row,col)
-     *  @attention Hardcoding number of rows here to ALICE mode. 
+     *  @attention Hardcoding number of rows here to ALICE mode.
      *             In LHCb mode only the first Rich::DAQ::MaxDataSize are then used.
      */
     HPDPixelClusters::Cluster * m_clusters[Rich::DAQ::MaxDataSizeALICE][Rich::DAQ::NumPixelColumns];
