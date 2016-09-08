@@ -106,7 +106,7 @@ public:
   /** Finalization method - delete objects created with new
    *  @return Status of finalization
    */ 
-  StatusCode finalize();//@TODO: note: no override!!! (so who calls this?)
+  StatusCode finalize(); //@TODO: note: no override!!! (so who calls this?)
 
   /** Retrieves reference to class identifier
    *  @return The class identifier for this class
@@ -161,7 +161,6 @@ public:
 
   StatusCode calculateHits(const LHCb::MCHit&  fthit,
                            VectFTPairs&        vectChanAndFracPos) const;
-
 
 
   /** This function returns the fibre lengh and relative position of the hit 
@@ -310,6 +309,7 @@ public:
                                   unsigned int sipmID,
                                   unsigned int grossCellID) const;
 
+
   /// Public local types
   //description of fibremat ID binary encoding in geom >= V5 (LSB to MSB)
   static const unsigned int fmID_nbits_module  = 3;
@@ -328,8 +328,8 @@ public:
     unsigned int ui;
     bfmID_V5 bf;
   };
- 
- 
+
+
   double getFibreMatHalfSizeX() const {return m_fibreMatHalfSizeX;}
   double getFibreMatHalfSizeY() const {return m_fibreMatHalfSizeY;}
   double getCellSizeX() const {return m_cellSizeX;}
@@ -407,7 +407,7 @@ private: //-----private member functions
    *  @param yIntersect y-coordinate of the crossing point (set by the function)
    *  @return StatusCode: does the fibre trajectory cross the beam-pipe circle
    */
-  double beamPipeYCoord(const double xcoord, const double ycoord) const;
+  double  beamPipeYCoord(double xcoord, double ycoord) const;
 
   /** Function for light sharing between neighbouring SiPM cells.
    *  This model uses straight lines for describing the fibre fractions
@@ -443,7 +443,6 @@ private: // private data members
   std::string  m_DeFTLocation = {"/dd/Structure/LHCb/AfterMagnetRegion/T/FT"};
   unsigned int m_FTGeomversion;   ///Geometry version
   unsigned int m_FTGeomVersion_reference = 20;
-  //  unsigned int m_numlayers;
   unsigned int m_BadChannelLayerFlag = 15;  ///used for flagging problematich channels (layer=15)
   
   ///general geometry info 
