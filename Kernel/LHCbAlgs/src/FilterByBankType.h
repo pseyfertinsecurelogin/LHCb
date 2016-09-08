@@ -43,9 +43,11 @@
  *  @date   2009-03-06
  *
  */
-class FilterByBankType : public GaudiAlgorithm {
+class FilterByBankType final : public GaudiAlgorithm
+{
 
 public: 
+
   /// Standard constructor
   FilterByBankType( const std::string& name, ISvcLocator* pSvcLocator );
 
@@ -63,4 +65,5 @@ private:
   bool m_passSelect;                    ///< Flag to determine selection logic.
 
 };
+
 #endif // FILTERBYRUNEVENT_H

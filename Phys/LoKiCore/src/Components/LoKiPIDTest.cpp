@@ -1,4 +1,3 @@
-// $Id$
 // ============================================================================
 // Include files 
 // ============================================================================
@@ -69,28 +68,19 @@ namespace LoKi
   protected:
     // ========================================================================
     /// standard constructor 
-    PIDTest 
-    ( const std::string& name ,
-      ISvcLocator*       pSvc )
+    PIDTest ( const std::string& name , ISvcLocator*       pSvc )
       : GaudiAlgorithm ( name , pSvc )
-      , m_svc ( 0 ) 
     {}
-    /// virtual protected constructor 
-    virtual ~PIDTest() {}
     // ========================================================================
-  private:
-    // ========================================================================
-    /// default constructror is disabled 
-    PIDTest() ;                                      //  no default constructor 
     /// copy constructror is disabled 
-    PIDTest( const PIDTest& ) ;                      //     no copy constructor 
+    PIDTest( const PIDTest& ) = delete;                      //     no copy constructor 
     /// assignement is disabled 
-    PIDTest& operator=( const PIDTest& ) ;           // no assignement operator
+    PIDTest& operator=( const PIDTest& ) = delete;           // no assignement operator
     // ========================================================================
   private:
     // ========================================================================
     /// The pointer to particle property sevice
-    LHCb::IParticlePropertySvc* m_svc ; // pointer to particle property sevice
+    LHCb::IParticlePropertySvc* m_svc = nullptr ; // pointer to particle property sevice
     // ========================================================================
   } ;
   // ==========================================================================

@@ -162,14 +162,10 @@ namespace LoKi
     /// virtual destructor 
     virtual ~Reporter() { } 
     // ========================================================================
-  private:
-    // ========================================================================
-    /// the default contructor is disabled 
-    Reporter () ;                         // the default contructor is disabled 
     /// copy  constructor is disabled 
-    Reporter ( const Reporter& ) ;             // copy  constructor is disabled 
+    Reporter ( const Reporter& ) = delete;             // copy  constructor is disabled 
     /// assignement operator is disabled 
-    Reporter& operator= ( const Reporter& ) ;        // no assignement operator
+    Reporter& operator= ( const Reporter& ) = delete;        // no assignement operator
     // ========================================================================
   private:
     // ========================================================================

@@ -1,4 +1,3 @@
-// $Id$
 // ============================================================================
 #ifndef LOKI_REFERENCE_H 
 #define LOKI_REFERENCE_H 1 
@@ -28,7 +27,7 @@ namespace LoKi
     /// destructor
     ~Reference(){}
     /// just to please the compiler: NO USE IS ALLOWED 
-    Reference() : m_data ( 0 ) {}
+    Reference() : m_data ( nullptr ) {}
     // ========================================================================
   public:
     // ========================================================================

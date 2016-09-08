@@ -843,7 +843,7 @@ RawDataFormatTool::decodeToSmartIDs_MaPMT0( const LHCb::RawBank & bank,
     while ( lineC < bankSize )
     {
       // Read the smartID direct from the banks
-      const LHCb::RichSmartID id( bank.data()[lineC++] );
+      const LHCb::RichSmartID id( LHCb::RichSmartID32( bank.data()[lineC++] ) );
       if ( !id.isValid() )
       {
         Warning( "Invalid RichSmartID read from FlatList data format" ).ignore();

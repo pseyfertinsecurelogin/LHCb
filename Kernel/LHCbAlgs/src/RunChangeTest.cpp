@@ -27,38 +27,30 @@ using namespace LHCbAlgsTests;
 //=============================================================================
 RunChangeTest::RunChangeTest( const std::string& name,
                               ISvcLocator* pSvcLocator)
-  : GaudiAlgorithm ( name , pSvcLocator ),
-  m_counter(0),
-  m_eventTimeDecoder(NULL),
-  m_incSvc(NULL)
-{
-
-}
-//=============================================================================
-// Destructor
-//=============================================================================
-RunChangeTest::~RunChangeTest() {}
+  : GaudiAlgorithm ( name , pSvcLocator ) { }
 
 //=============================================================================
 // Initialization
 //=============================================================================
-StatusCode RunChangeTest::initialize() {
+StatusCode RunChangeTest::initialize() 
+{
   StatusCode sc = GaudiAlgorithm::initialize(); // must be executed first
   if ( sc.isFailure() ) return sc;  // error printed already by GaudiAlgorithm
-
+  
   if ( msgLevel(MSG::DEBUG) ) debug() << "==> Initialize" << endmsg;
   m_eventTimeDecoder = tool<IEventTimeDecoder>("OdinTimeDecoder",this,true);
-
+  
   m_incSvc = svc<IIncidentSvc>("IncidentSvc", true);
   m_incSvc->addListener(this, "RunChange");
-
-  return StatusCode::SUCCESS;
+  
+  return sc;
 }
 
 //=============================================================================
 // Main execution
 //=============================================================================
-StatusCode RunChangeTest::execute() {
+StatusCode RunChangeTest::execute()
+{
 
   if ( msgLevel(MSG::DEBUG) ) debug() << "==> Execute" << endmsg;
 
@@ -125,7 +117,7 @@ StatusCode RunChangeTest::finalize() {
 
   if ( msgLevel(MSG::DEBUG) ) debug() << "==> Finalize" << endmsg;
 
-  m_eventTimeDecoder = 0; // released in the base class
+  m_eventTimeDecoder = nullptr; // released in the base class
   if (m_incSvc){
     m_incSvc->removeListener(this, "RunChange");
   }

@@ -17,6 +17,7 @@
 #include <vector>
 #include <iostream>
 #include <array>
+#include <stdint.h>
 
 // General namespace for RICH specific definitions documented in RichSide.h
 namespace Rich
@@ -32,7 +33,7 @@ namespace Rich
    *  @author Chris Jones  Christopher.Rob.Jones@cern.ch
    *  @date   08/07/2004
    */
-  enum RadiatorType
+  enum RadiatorType : int8_t
     {
       InvalidRadiator = -1, ///< Unspecified radiator type
       Aerogel         = 0,  ///< Aerogel in RICH1

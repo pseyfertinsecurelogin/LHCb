@@ -452,7 +452,7 @@ class L0Conf(LHCbConfigurableUser) :
                     emulateL0Muon().LUTVersion = "V1"
                 elif datatype == "2012":
                     emulateL0Muon().LUTVersion = "V3"
-                elif datatype == "2015":
+                elif datatype == "2015" or datatype == "2016":
                     emulateL0Muon().LUTVersion = "V8"
 
     def _dataOnDemand(self,rootintes):

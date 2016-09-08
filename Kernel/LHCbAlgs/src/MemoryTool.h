@@ -26,30 +26,30 @@
  *  @author Marco Cattaneo
  *  @date   2005-12-14
  */
-class MemoryTool : public GaudiHistoTool, virtual public IGenericTool {
-public: 
+class MemoryTool final : public GaudiHistoTool, virtual public IGenericTool 
+{
+
+ public: 
   /// Standard constructor
   MemoryTool( const std::string& type, 
               const std::string& name,
               const IInterface* parent);
 
-  virtual ~MemoryTool( ); ///< Destructor
+  virtual ~MemoryTool( ) = default; ///< Destructor
 
   void execute(); ///< Plot the current memory usage
 
   virtual StatusCode finalize () ;
 
-protected:
-
 private:
   // ==========================================================================
-  unsigned long m_counter; ///< Counter of calls to the tool
-  unsigned int  m_bins;    ///< Number of bins of histogram (Property HistoSize)  
+  unsigned long long m_counter{0}; ///< Counter of calls to the tool
+  unsigned int  m_bins{0};  ///< Number of bins of histogram (Property HistoSize)  
   // ==========================================================================
   /// flag to skip/reset events for memory measurements  
   unsigned int  m_skip   ;   // flag to skip/reset events for memory measurements
-  /// the previosu measurement of virtual memory 
-  double        m_prev   ;          // the previosu measurement of virtual memory
+  /// the previous measurement of virtual memory 
+  double        m_prev{-1.e+6};  
   // ==========================================================================
   /// the histogram definition (as property) 
   Gaudi::Histo1DDef m_histo1 ;         // the histogram definition (as property) 
@@ -63,14 +63,14 @@ private:
   // ==========================================================================
 private:
   // ==========================================================================
-  /// the counetr for total memory 
-  StatEntity* m_totMem ;                       // the counter for total memory 
-  /// the counetr for delta memory 
-  StatEntity* m_delMem ;                       // the counter for delta memory
+  /// the counter for total memory 
+  StatEntity* m_totMem = nullptr;   
+  /// the counter for delta memory 
+  StatEntity* m_delMem = nullptr;      
   /// the histogram of total memory 
-  AIDA::IHistogram1D* m_plot1 ;                // the histogram of total memory 
+  AIDA::IHistogram1D* m_plot1 = nullptr;  
   /// the histogram of delta memory 
-  AIDA::IHistogram1D* m_plot2 ;                // the histogram of delta memory 
+  AIDA::IHistogram1D* m_plot2 = nullptr;   
   // ==========================================================================
 };
 // ============================================================================

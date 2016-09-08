@@ -1,18 +1,14 @@
 #!/usr/bin/env python
 # =============================================================================
-# $Id$ 
-# =============================================================================
-## @file PartProp/PartPropSvc.py
+## @file PartPropSvc.py
 #  Demo-file for interactive work with new Particle Property Service
 #  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
 #  @date 2008-12-02
 # =============================================================================
-"""
-Demo-file for interactive work with new Particle Property Service
+""" Demo-file for interactive work with new Particle Property Service
 """
 # =============================================================================
 __author__  = "Vanya BELYAEV Ivan.Belyaev@nikhef.nl"
-__version__ = "CVS tag $Name: not supported by cvs2svn $, version $Revision$" 
 # =============================================================================
 import PartProp.PartPropAlg
 import PartProp.decorators 
@@ -22,20 +18,18 @@ from GaudiPython.Bindings import AppMgr
 ## test the nodes 
 from PartProp.Nodes import *
 
+from Configurables   import LHCbApp
+LHCbApp()  
+
 gaudi = AppMgr()
-
 gaudi.initialize()
-
 
 ## simple test-function 
 def test () :
-    """
-    
-    simple function for the test
-    
+    """Simple function for the test
     """
     pps = gaudi.ppSvc()
-
+    
     
     for l in range(1,6) :
         

@@ -1,10 +1,10 @@
 // ============================================================================
-#ifndef LOKI_DECAYFINDERBASE_H 
+#ifndef LOKI_DECAYFINDERBASE_H
 #define LOKI_DECAYFINDERBASE_H 1
 // ============================================================================
 // Include files
 // ============================================================================
-// GaudiAlg 
+// GaudiAlg
 // ============================================================================
 #include "GaudiAlg/GaudiTool.h"
 // ============================================================================
@@ -15,7 +15,7 @@
 // ============================================================================
 // local
 // ============================================================================
-// forward decalrations 
+// forward decalrations
 // ============================================================================
 /** @file LoKi/DecayBase.h
  *
@@ -29,102 +29,99 @@
  *
  *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
  */
-namespace Decays 
+namespace Decays
 {
   class Node ;
   namespace Parsers { class Tree ; }
-} 
+}
 // ============================================================================
-namespace LoKi 
+namespace LoKi
 {
   // ==========================================================================
-  /** @class DecayBase 
-   *  Base class forimplementation of various decay finders 
+  /** @class DecayBase
+   *  Base class forimplementation of various decay finders
    *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
    *  @date 2009-05-22
    */
-  class DecayBase : public GaudiTool 
+  class DecayBase : public GaudiTool
   {
     // ========================================================================
   public:
     // ========================================================================
-    /// the specific finalization 
+    /// the specific finalization
     virtual StatusCode finalize () ;
     // ========================================================================
   protected:
     // ========================================================================
-    /// constructor 
-    DecayBase 
+    /// constructor
+    DecayBase
     ( const std::string& type   ,                   // the actual tool type (?)
-      const std::string& name   ,                   //     the actual tool name 
+      const std::string& name   ,                   //     the actual tool name
       const IInterface*  parent ) ;                 //               the parent
-    /// virtual protected destructor 
+    /// virtual protected destructor
     virtual ~DecayBase () ;
     // ========================================================================
   protected:
     // ========================================================================
-    /** parse the node 
-     *  @param node  (OUTPUT) parsed node 
+    /** parse the node
+     *  @param node  (OUTPUT) parsed node
      *  @param input (INPUT) input string
      *  @return status code
      */
-    StatusCode _parse 
+    StatusCode _parse
     ( Decays::Node& node , std::string input ) const ;
     // ========================================================================
     /** parse the tree
-     *  @param tree  (OUTPUT) parsed node 
+     *  @param tree  (OUTPUT) parsed node
      *  @param input (INPUT) input string
      *  @return status code
      */
-    StatusCode _parse 
+    StatusCode _parse
     ( Decays::Parsers::Tree& tree , std::string input ) const ;
     // ========================================================================
-    /** convert the substring ' [ a ]cc ' into ' [ a , aCC ] '  
+    /** convert the substring ' [ a ]cc ' into ' [ a , aCC ] '
      *  The lines are coded by Sascha Mazurov
      */
     std::string _makeCC ( std::string input ) const ;
     // ========================================================================
   protected:
     // ========================================================================
-    Decays::Node node ( const std::string& descriptor ) const ;  
+    Decays::Node node ( const std::string& descriptor ) const ;
     // ========================================================================
   protected:
     // ========================================================================
-    const LHCb::IParticlePropertySvc* ppSvc () const 
+    const LHCb::IParticlePropertySvc* ppSvc () const
     {
-      if ( 0 != m_ppSvc ) { return m_ppSvc ; }                        // RETURN 
-      m_ppSvc = svc<LHCb::IParticlePropertySvc>
-        ( "LHCb::ParticlePropertySvc" , true ) ;
-      return m_ppSvc ;                                                // RETURN 
+      if ( UNLIKELY( !m_ppSvc ) ) {
+            m_ppSvc = svc<LHCb::IParticlePropertySvc>
+                          ( "LHCb::ParticlePropertySvc" , true ) ;
+      }
+      return m_ppSvc ;                                                // RETURN
     }
     // ========================================================================
     const std::string& defaultNode () const { return m_default_node ; }
-    const std::string& defaultTree () const { return m_default_tree ; }      
+    const std::string& defaultTree () const { return m_default_tree ; }
     // ========================================================================
-  private:
-    // ========================================================================  
-    /// the default constructor is disabled 
-    DecayBase () ;                       // the default constructor is disabled 
-    /// copy constructor is disabled 
-    DecayBase ( const DecayBase& ) ;                      // no copy consructor 
-    /// assignement operator is disabled 
-    DecayBase& operator=( const DecayBase& ) ;                // no assignement
+    /// copy constructor is disabled
+    DecayBase ( const DecayBase& ) = delete;             // no copy constructor
+    /// assignement operator is disabled
+    DecayBase& operator=( const DecayBase& ) = delete;        // no assignement
     // ========================================================================
   private:
     // ========================================================================
-    /// the particle proeprty service 
+    /// the particle proeprty service
     mutable const LHCb::IParticlePropertySvc* m_ppSvc ; //  particle properties
-    // ========================================================================    
-    /// the default node  
-    std::string m_default_node ;                            // the default node  
-    /// the default tree 
+    // ========================================================================
+    /// the default node
+    std::string m_default_node ;                            // the default node
+    /// the default tree
     std::string m_default_tree ;                            // the default tree
-    // ========================================================================    
+    // ========================================================================
   };
   // ==========================================================================
 } //                                                      end of namespace LoKi
 // ============================================================================
-// The END 
+// The END
 // ============================================================================
 #endif // LOKI_DECAYFINDERBASE_H
 // ============================================================================

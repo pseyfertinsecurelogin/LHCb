@@ -196,14 +196,10 @@ namespace LoKi
       /// destructor
       virtual ~CoreFactory(); // destrcutor
       // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      CoreFactory () ;                   // the default constructor is disabled
       // the copy constructor is disabled
-      CoreFactory ( const CoreFactory& ) ;  // the copy constructor is disabled
+      CoreFactory ( const CoreFactory& ) = delete;  // the copy constructor is disabled
       // the assignement operator  is disabled
-      CoreFactory& operator=( const CoreFactory& )  ;         // no assignement
+      CoreFactory& operator=( const CoreFactory& ) = delete;         // no assignement
       // ======================================================================
     private:
       // ======================================================================

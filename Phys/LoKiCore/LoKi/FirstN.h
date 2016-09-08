@@ -1,4 +1,3 @@
-// $Id$
 // ============================================================================
 #ifndef LOKI_FIRSTN_H
 #define LOKI_FIRSTN_H 1
@@ -35,15 +34,14 @@ namespace LoKi
    *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
    *  @date 2011-10-20
    */
-  class GAUDI_API FirstN
+  class GAUDI_API FirstN final
   {
     // ========================================================================
   public:
     // ========================================================================
     /// constructor
-    FirstN ( const unsigned int N ) ;                            // constructor
+    explicit FirstN ( const unsigned int N ) ;                            // constructor
     /// virtual destructor
-    virtual ~FirstN() ;                                   // virtual destructor
   public:
     // ========================================================================
     /// get N
@@ -52,11 +50,6 @@ namespace LoKi
     unsigned int n() const { return m_N ; }                            // get N
     /// printout
     virtual std::ostream& fillStream ( std::ostream& s ) const ;
-    // ========================================================================
-  private:
-    // ========================================================================
-    /// the default constructor is disabled
-    FirstN () ;                          // the default constructor is disabled
     // ========================================================================
   private:
     // ========================================================================
@@ -70,18 +63,15 @@ namespace LoKi
    *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
    *  @date 2011-10-20
    */
-  class GAUDI_API Reverse
+  class GAUDI_API Reverse final
   {
   public:
     // ========================================================================
     /// constructor
-    Reverse() ;                                                  // constructor
-    // ========================================================================
-    /// virtual destructor
-    virtual ~Reverse () ;                                 // virtual destructor
+    Reverse() = default;                                         // constructor
     // ========================================================================
     /// printout
-    virtual std::ostream& fillStream ( std::ostream& s ) const ;
+    std::ostream& fillStream ( std::ostream& s ) const ;
     // ========================================================================
   } ;
   // ==========================================================================
@@ -91,7 +81,7 @@ namespace LoKi
    *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
    *  @date 2011-10-20
    */
-  class GAUDI_API Sort
+  class GAUDI_API Sort final
   {
   public:
     // ========================================================================
@@ -99,11 +89,8 @@ namespace LoKi
     Sort ( const int  N         = -1   , // ALL
            const bool ascending = true ) ;
     // ========================================================================
-    /// virtual destructor
-    virtual ~Sort () ;                                 // virtual destructor
-    // ========================================================================
     /// printout
-    virtual std::ostream& fillStream ( std::ostream& s ) const ;
+    std::ostream& fillStream ( std::ostream& s ) const ;
     // ========================================================================
   public:
     // ========================================================================
@@ -139,7 +126,7 @@ namespace LoKi
 namespace Gaudi
 {
   // ==========================================================================
-  namespace Utils 
+  namespace Utils
   {
     // ========================================================================
     // Dump as C++ objects
@@ -147,10 +134,9 @@ namespace Gaudi
     GAUDI_API std::string toCpp ( const LoKi::Sort&    s ) ;
     GAUDI_API std::string toCpp ( const LoKi::Reverse& r ) ;
     // ========================================================================
-  } 
+  }
   // ==========================================================================
 }
 // ============================================================================
 #endif // LOKI_FIRSTN_H
 // ============================================================================
-

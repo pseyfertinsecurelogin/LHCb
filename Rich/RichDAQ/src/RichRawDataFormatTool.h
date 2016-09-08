@@ -52,6 +52,9 @@
 #include "Event/RawEvent.h"
 #include "Event/ODIN.h"
 
+// Old 32 bit SmartID
+#include "Kernel/RichSmartID32.h"
+
 namespace Rich
 {
   namespace DAQ

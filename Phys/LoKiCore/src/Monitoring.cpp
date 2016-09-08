@@ -236,9 +236,9 @@ StatEntity* LoKi::Monitoring::getCounter
   const std::string& group ,
   const std::string& name  ) 
 { 
-  ICounterSvc *   const counter = 0 ;
-  IStatSvc*       const stat    = 0 ;
-  IAlgContextSvc* const context = 0 ;
+  ICounterSvc *   const counter = nullptr ;
+  IStatSvc*       const stat    = nullptr ;
+  IAlgContextSvc* const context = nullptr ;
   //
   switch ( flag ) 
   {

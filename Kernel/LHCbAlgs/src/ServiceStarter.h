@@ -4,39 +4,47 @@
 // from Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
 
-namespace LHCbAlgsTest {
+namespace LHCbAlgsTest
+{
 
-/** @class ServiceStarter ServiceStarter.h src/ServiceStarter.h
- *
- * Simple test algorithm to trigger the instantiation of a service in
- * a specific phase (initialize, start or execute).
- *
- * @author Marco Clemencic
- * @date 09/01/2012
- */
-class ServiceStarter: public GaudiAlgorithm {
-public:
-  /// Standard constructor
-  ServiceStarter(const std::string& name, ISvcLocator* pSvcLocator);
-  virtual ~ServiceStarter(); ///< Destructor
+  /** @class ServiceStarter ServiceStarter.h src/ServiceStarter.h
+   *
+   * Simple test algorithm to trigger the instantiation of a service in
+   * a specific phase (initialize, start or execute).
+   *
+   * @author Marco Clemencic
+   * @date 09/01/2012
+   */
+  class ServiceStarter final : public GaudiAlgorithm
+  {
 
-  virtual StatusCode initialize();    ///< Algorithm initialization
-  virtual StatusCode start     ();    ///< Algorithm start
-  virtual StatusCode execute   ();    ///< Algorithm execution
-  virtual StatusCode finalize  ();    ///< Algorithm finalization
-protected:
-private:
-  /// Service to get.
-  std::string m_serviceName;
+  public:
 
-  /// When to get the service;
-  std::string m_phase;
+    /// Standard constructor
+    ServiceStarter(const std::string& name, ISvcLocator* pSvcLocator);
+    virtual ~ServiceStarter() = default; ///< Destructor
 
-  /// Internal reference to the retrieved service.
-  SmartIF<IService> m_service;
+    virtual StatusCode initialize();    ///< Algorithm initialization
+    virtual StatusCode start     ();    ///< Algorithm start
+    virtual StatusCode execute   ();    ///< Algorithm execution
+    virtual StatusCode finalize  ();    ///< Algorithm finalization
 
-  StatusCode i_retrieveService(const std::string &currentPhase);
-};
+  private:
+
+    StatusCode i_retrieveService(const std::string &currentPhase);
+
+  private:
+
+    /// Service to get.
+    std::string m_serviceName;
+
+    /// When to get the service;
+    std::string m_phase;
+
+    /// Internal reference to the retrieved service.
+    SmartIF<IService> m_service;
+
+  };
 
 }
 #endif // SRC_SERVICESTARTER_H

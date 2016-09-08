@@ -29,13 +29,17 @@ namespace LoKi
    */
   class VoidFilter : public LoKi::FilterAlg 
   {
+    // ========================================================================
+    /// friend factory for instantiation 
+    friend class AlgFactory<LoKi::VoidFilter> ;
+    // ========================================================================
   public:
     // ========================================================================
     /// the main method: execute 
-    StatusCode execute  () override;
+    virtual StatusCode execute  () ;
     // ========================================================================
     /// proper finalization 
-    StatusCode finalize () override;
+    virtual StatusCode finalize () ;
     // ========================================================================
   public:
     // ========================================================================
@@ -44,12 +48,14 @@ namespace LoKi
      *  @see LoKi::FilterAlg::decode
      *  @see LoKi::FilterAlg::i_decode
      */
-    StatusCode decode () override
+    virtual StatusCode decode () 
     {
       StatusCode sc = i_decode<LoKi::Hybrid::ICoreFactory> ( m_cut ) ;
       Assert ( sc.isSuccess() , "Unable to decode the functor!" ) ;
       return StatusCode::SUCCESS ;
     }
+    // ========================================================================
+  protected:
     // ========================================================================
     /** standard constructor 
      *  @see LoKi::FilterAlg 
@@ -82,14 +88,10 @@ namespace LoKi
       Assert ( sc.isSuccess () , "Unable (re)set property 'Factory'" , sc ) ;
     } 
     // ========================================================================
-  private:
-    // ========================================================================
-    /// the default constructor is disabled 
-    VoidFilter () = delete;              // the default constructor is disabled
     /// the copy constructor is disabled 
-    VoidFilter ( const VoidFilter& ) = delete;// the copy constructor is disabled
+    VoidFilter ( const VoidFilter& ) = delete ;      // the copy constructor is disabled 
     /// the assignement operator is disabled 
-    VoidFilter& operator=( const VoidFilter& ) = delete; // the assignement is disabled
+    VoidFilter& operator=( const VoidFilter& ) = delete ; // the assignement is disabled
     // ========================================================================
   private:
     // ========================================================================

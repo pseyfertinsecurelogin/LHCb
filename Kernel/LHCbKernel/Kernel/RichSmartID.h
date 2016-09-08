@@ -1,10 +1,10 @@
-
 #ifndef LHCbKernel_RichSmartID_H
 #define LHCbKernel_RichSmartID_H 1
 
 // STL
 #include <vector>
 #include <ostream>
+#include <cstdint>
 
 // Local
 #include "Kernel/RichDetectorType.h"
@@ -23,53 +23,56 @@ namespace LHCb
    *  @author Chris Jones   Christopher.Rob.Jones@cern.ch
    *  @date  24/02/2011
    */
-  class RichSmartID
+  class RichSmartID final
   {
 
   public:
 
     /// Type for internal key
-    typedef unsigned int KeyType;
-    //using KeyType = unsigned int;
+    typedef uint32_t KeyType;
 
     /// Vector of RichSmartIDs
     typedef std::vector<LHCb::RichSmartID> Vector;
-    //using Vector = std::vector<LHCb::RichSmartID>;
 
     /// Numerical type for bit packing
-    typedef unsigned int BitPackType;
-    //using BitPackType = unsigned int;
+    typedef uint32_t BitPackType;
+
+    /// Type for values in data fields
+    typedef uint32_t DataType;
+
+    /// Number of bits
+    static constexpr const BitPackType NBits = 32;
 
   private:
 
     /// Get the initialisation value from a value, shift and mask
-    inline static constexpr KeyType initData( const int value,
-                                              const int shift,
-                                              const long mask ) noexcept
+    inline static constexpr KeyType initData( const BitPackType value,
+                                              const BitPackType shift,
+                                              const BitPackType mask ) noexcept
     {
-      return ( (value << shift) & mask );
+      return ( ( value << shift ) & mask );
     }
 
     /** The bit-packed internal data word.
      *  Default initialisation is as an HPD ID */
-    unsigned int m_key { initData(HPDID,ShiftIDType,MaskIDType) };
+    KeyType m_key { initData(HPDID,ShiftIDType,MaskIDType) };
 
   public:
 
     /// Retrieve the bit-packed internal data word
-    inline constexpr KeyType key()             const noexcept { return m_key; }
+    inline constexpr KeyType key()       const noexcept { return m_key; }
 
     /// implicit conversion to unsigned int
-    inline constexpr operator unsigned int()   const noexcept { return key(); }
+    inline constexpr operator uint32_t() const noexcept { return key(); }
 
     /// implicit conversion to unsigned long
-    inline constexpr operator unsigned long()  const noexcept { return static_cast<unsigned long>(key()); }
+    inline constexpr operator uint64_t() const noexcept { return static_cast<uint64_t>(key()); }
 
     /// implicit conversion to signed int
-    inline           operator int()            const noexcept { return as_int(); }
+    inline           operator int32_t()  const noexcept { return as_int(); }
 
     /// implicit conversion to signed long
-    inline           operator long()           const noexcept { return static_cast<long>(as_int()); }
+    inline           operator int64_t()  const noexcept { return static_cast<int64_t>(as_int()); }
 
     /// Set the bit-packed internal data word
     inline void setKey( const LHCb::RichSmartID::KeyType value ) noexcept { m_key = value; }
@@ -77,8 +80,8 @@ namespace LHCb
   private:
 
     // Setup up the type bit field
-    static constexpr const BitPackType BitsIDType  = 1;  ///< Number of bits to use for the PD type 
-    static constexpr const BitPackType ShiftIDType = 31; ///< Use the last bit of the word
+    static constexpr const BitPackType BitsIDType  = 1;              ///< Number of bits to use for the PD type
+    static constexpr const BitPackType ShiftIDType = (BitPackType) (NBits-BitsIDType); ///< Use the last bit of the word
     /// Mask for the PD type
     static constexpr const BitPackType MaskIDType  = (BitPackType) ((1 << BitsIDType)-1) << ShiftIDType;
     /// Max possible value that can be stored in the PD type field
@@ -93,19 +96,19 @@ namespace LHCb
      *  @author Chris Jones  Christopher.Rob.Jones@cern.ch
      *  @date   25/02/2011
      */
-    enum IDType
-      {
-        Undefined = -1, ///< Undefined
+    enum IDType : int8_t
+    {
+      Undefined = -1, ///< Undefined
         MaPMTID = 0,    ///< Represents an MaPMT channel
         HPDID   = 1     ///< Represents an HPD channel
-      };
+        };
 
   public:
 
     /// Access the ID type
     inline constexpr RichSmartID::IDType idType() const noexcept
     {
-      return (RichSmartID::IDType) ( (key() & MaskIDType) >> ShiftIDType );
+      return (RichSmartID::IDType) ( ( key() & MaskIDType ) >> ShiftIDType );
     }
 
   public:
@@ -113,7 +116,7 @@ namespace LHCb
     /// Set the ID type
     inline void setIDType( const LHCb:: RichSmartID::IDType type )
 #ifdef NDEBUG
-       noexcept
+      noexcept
 #endif
     {
 #ifndef NDEBUG
@@ -182,13 +185,13 @@ namespace LHCb
       static constexpr const BitPackType MaskRichIsSet         = (BitPackType) ((1 << BitsRichIsSet)-1)        << ShiftRichIsSet;
 
       // Max Values
-      static constexpr const BitPackType MaxPixelSubRow        = (BitPackType) ( 1 << BitsPixelSubRow  ) - 1;
-      static constexpr const BitPackType MaxPixelCol           = (BitPackType) ( 1 << BitsPixelCol     ) - 1;
-      static constexpr const BitPackType MaxPixelRow           = (BitPackType) ( 1 << BitsPixelRow     ) - 1;
-      static constexpr const BitPackType MaxPDNumInCol         = (BitPackType) ( 1 << BitsPDNumInCol   ) - 1;
-      static constexpr const BitPackType MaxPDCol              = (BitPackType) ( 1 << BitsPDCol        ) - 1;
-      static constexpr const BitPackType MaxPanel              = (BitPackType) ( 1 << BitsPanel        ) - 1;
-      static constexpr const BitPackType MaxRich               = (BitPackType) ( 1 << BitsRich         ) - 1;
+      static constexpr const DataType MaxPixelSubRow           = (DataType) ( 1 << BitsPixelSubRow  ) - 1;
+      static constexpr const DataType MaxPixelCol              = (DataType) ( 1 << BitsPixelCol     ) - 1;
+      static constexpr const DataType MaxPixelRow              = (DataType) ( 1 << BitsPixelRow     ) - 1;
+      static constexpr const DataType MaxPDNumInCol            = (DataType) ( 1 << BitsPDNumInCol   ) - 1;
+      static constexpr const DataType MaxPDCol                 = (DataType) ( 1 << BitsPDCol        ) - 1;
+      static constexpr const DataType MaxPanel                 = (DataType) ( 1 << BitsPanel        ) - 1;
+      static constexpr const DataType MaxRich                  = (DataType) ( 1 << BitsRich         ) - 1;
 
     };
 
@@ -252,48 +255,48 @@ namespace LHCb
       static constexpr const BitPackType MaskLargePixel        = (BitPackType) ((1 << BitsLargePixel)-1)       << ShiftLargePixel;
 
       // Max Values
-      static constexpr const BitPackType MaxPixelCol           = (BitPackType) ( 1 << BitsPixelCol     ) - 1;
-      static constexpr const BitPackType MaxPixelRow           = (BitPackType) ( 1 << BitsPixelRow     ) - 1;
-      static constexpr const BitPackType MaxPDNumInCol         = (BitPackType) ( 1 << BitsPDNumInCol   ) - 1;
-      static constexpr const BitPackType MaxPDCol              = (BitPackType) ( 1 << BitsPDCol        ) - 1;
-      static constexpr const BitPackType MaxPanel              = (BitPackType) ( 1 << BitsPanel        ) - 1;
-      static constexpr const BitPackType MaxRich               = (BitPackType) ( 1 << BitsRich         ) - 1;
+      static constexpr const DataType MaxPixelCol              = (DataType) ( 1 << BitsPixelCol     ) - 1;
+      static constexpr const DataType MaxPixelRow              = (DataType) ( 1 << BitsPixelRow     ) - 1;
+      static constexpr const DataType MaxPDNumInCol            = (DataType) ( 1 << BitsPDNumInCol   ) - 1;
+      static constexpr const DataType MaxPDCol                 = (DataType) ( 1 << BitsPDCol        ) - 1;
+      static constexpr const DataType MaxPanel                 = (DataType) ( 1 << BitsPanel        ) - 1;
+      static constexpr const DataType MaxRich                  = (DataType) ( 1 << BitsRich         ) - 1;
 
     };
 
   private:
-    
-    /// Reinterpret the internal unsigned representation as a signed int
-    inline int as_int( ) const noexcept { return reinterpret_cast<const int&>(m_key); }
+
+    /// Reinterpret the internal unsigned representation as a signed 32 bit int
+    inline int32_t as_int( ) const noexcept { return reinterpret_cast<const int32_t&>(m_key); }
 
     /// Set the given data into the given field, without validity bit
-    inline void setData( const int value,
-                         const int shift,
-                         const long mask ) noexcept
+    inline void setData( const DataType value,
+                         const BitPackType shift,
+                         const BitPackType mask ) noexcept
     {
-      setKey( ((value << shift) & mask) | (m_key & ~mask) );
+      setKey( ( ( value << shift ) & mask) | ( m_key & ~mask ) );
     }
 
     /// Set the given data into the given field, with validity bit
-    inline void setData( const int value,
-                         const int shift,
-                         const long mask,
-                         const long okMask ) noexcept
+    inline void setData( const DataType value,
+                         const BitPackType shift,
+                         const BitPackType mask,
+                         const BitPackType okMask ) noexcept
     {
-      setKey( ((value << shift) & mask) | (m_key & ~mask) | okMask );
+      setKey( ( ( value << shift ) & mask ) | ( m_key & ~mask ) | okMask );
     }
 
     /// Checks if a data value is within range for a given field
-    inline void checkRange(const int value,
-                           const int maxValue,
-                           const std::string& message) const
+    inline void checkRange( const DataType value,
+                            const DataType maxValue,
+                            const std::string& message) const
     {
-      if ( value > maxValue ) rangeError( value, maxValue, message );
+      if ( value > maxValue ) { rangeError( value, maxValue, message ); }
     }
 
     /// Issue an exception in the case of a range error
-    void rangeError( const int value,
-                     const int maxValue,
+    void rangeError( const DataType value,
+                     const DataType maxValue,
                      const std::string& message ) const;
 
   public:
@@ -321,30 +324,30 @@ namespace LHCb
     /// Constructor from internal type (unsigned int)
     explicit constexpr RichSmartID( const LHCb::RichSmartID::KeyType key ) noexcept
       : m_key( key ) { }
-    
-    /// Constructor from unsigned long int
-    explicit constexpr RichSmartID( const unsigned long int key ) noexcept
-      : m_key( static_cast<LHCb::RichSmartID::KeyType>( key & 0x00000000FFFFFFFF ) ) { }
 
-    /// Constructor from signed int type
-    explicit           RichSmartID( const int key ) noexcept
+    /// Constructor from unsigned 64 bit int
+    explicit constexpr RichSmartID( const uint64_t key ) noexcept
+      : m_key( static_cast<LHCb::RichSmartID::KeyType>( key & 0x00000000FFFFFFFF ) ) { }
+    
+    /// Constructor from signed 32 bit int type
+    explicit           RichSmartID( const int32_t key ) noexcept
       : m_key( reinterpret_cast<const LHCb::RichSmartID::KeyType&>(key) ) { }
-
-    /// Constructor from signed long type 
-    explicit constexpr RichSmartID( const long int key ) noexcept
-      : m_key( static_cast<LHCb::RichSmartID::KeyType>( key & 0x00000000FFFFFFFF ) ) { }
     
+    /// Constructor from signed 64 bit int
+    explicit constexpr RichSmartID( const int64_t key ) noexcept
+      : m_key( static_cast<LHCb::RichSmartID::KeyType>( key & 0x00000000FFFFFFFF ) ) { }
+
     /// Pixel level constructor including sub-pixel information
     RichSmartID( const Rich::DetectorType rich,
                  const Rich::Side panel,
-                 const int pdNumInCol,
-                 const int pdCol,
-                 const int pixelRow,
-                 const int pixelCol,
-                 const int pixelSubRow,
+                 const DataType pdNumInCol,
+                 const DataType pdCol,
+                 const DataType pixelRow,
+                 const DataType pixelCol,
+                 const DataType pixelSubRow,
                  const IDType type = HPDID )
 #ifdef NDEBUG
-       noexcept
+    noexcept
 #endif
     {
       setIDType        ( type              );
@@ -359,13 +362,13 @@ namespace LHCb
     /// Pixel level constructor
     RichSmartID( const Rich::DetectorType rich,
                  const Rich::Side panel,
-                 const int pdNumInCol,
-                 const int pdCol,
-                 const int pixelRow,
-                 const int pixelCol,
-                 const IDType type = HPDID ) 
+                 const DataType pdNumInCol,
+                 const DataType pdCol,
+                 const DataType pixelRow,
+                 const DataType pixelCol,
+                 const IDType type = HPDID )
 #ifdef NDEBUG
-       noexcept
+    noexcept
 #endif
     {
       setIDType        ( type              );
@@ -379,11 +382,11 @@ namespace LHCb
     /// PD level constructor
     RichSmartID( const Rich::DetectorType rich,
                  const Rich::Side panel,
-                 const int pdNumInCol,
-                 const int pdCol,
+                 const DataType pdNumInCol,
+                 const DataType pdCol,
                  const IDType type = HPDID )
 #ifdef NDEBUG
-       noexcept
+    noexcept
 #endif
     {
       setIDType        ( type              );
@@ -397,7 +400,7 @@ namespace LHCb
                  const Rich::Side panel,
                  const IDType type = HPDID )
 #ifdef NDEBUG
-       noexcept
+    noexcept
 #endif
     {
       setIDType        ( type  );
@@ -448,7 +451,7 @@ namespace LHCb
     /// Set the RICH detector identifier
     inline void setRich( const Rich::DetectorType rich )
 #ifdef NDEBUG
-       noexcept
+      noexcept
 #endif
     {
       if ( HPDID == idType() )
@@ -470,7 +473,7 @@ namespace LHCb
     /// Set the RICH PD panel identifier
     inline void setPanel( const Rich::Side panel )
 #ifdef NDEBUG
-       noexcept
+      noexcept
 #endif
     {
       if ( HPDID == idType() )
@@ -490,9 +493,9 @@ namespace LHCb
     }
 
     /// Set the RICH PD column and number in column identifier
-    inline void setPD( const int col, const int nInCol )
+    inline void setPD( const DataType col, const DataType nInCol )
 #ifdef NDEBUG
-       noexcept
+      noexcept
 #endif
     {
       if ( HPDID == idType() )
@@ -516,9 +519,9 @@ namespace LHCb
     }
 
     /// Set the RICH PD pixel row identifier
-    inline void setPixelRow( const int row )
+    inline void setPixelRow( const DataType row )
 #ifdef NDEBUG
-       noexcept
+      noexcept
 #endif
     {
       if ( HPDID == idType() )
@@ -538,9 +541,9 @@ namespace LHCb
     }
 
     /// Set the RICH PD pixel column identifier
-    inline void setPixelCol( const int col )
+    inline void setPixelCol( const DataType col )
 #ifdef NDEBUG
-       noexcept
+      noexcept
 #endif
     {
       if ( HPDID == idType() )
@@ -560,7 +563,7 @@ namespace LHCb
     }
 
     /// Set the RICH photon detector pixel sub-row identifier (Alice mode only)
-    void setPixelSubRow( const int pixelSubRow );
+    void setPixelSubRow( const DataType pixelSubRow );
 
   public:
 
@@ -621,44 +624,44 @@ namespace LHCb
   public:
 
     /// Retrieve The pixel sub-row (Alice mode) number
-    inline constexpr unsigned int pixelSubRow() const noexcept
+    inline constexpr DataType pixelSubRow() const noexcept
     {
       // Note MaPMTs have no sub-pixel ...
-      return (unsigned int) ( HPDID == idType() ?
-                              ((key() & HPD::MaskPixelSubRow) >> HPD::ShiftPixelSubRow) :
-                              0 );
+      return (DataType) ( HPDID == idType() ?
+                          ((key() & HPD::MaskPixelSubRow) >> HPD::ShiftPixelSubRow) :
+                          0 );
     }
 
     /// Retrieve The pixel column number
-    inline constexpr unsigned int pixelCol() const noexcept
+    inline constexpr DataType pixelCol() const noexcept
     {
-      return (unsigned int) ( HPDID == idType()                                        ?
-                              ((key() & HPD::MaskPixelCol)   >> HPD::ShiftPixelCol)    :
-                              ((key() & MaPMT::MaskPixelCol) >> MaPMT::ShiftPixelCol)  );
+      return (DataType) ( HPDID == idType()                                        ?
+                          ((key() & HPD::MaskPixelCol)   >> HPD::ShiftPixelCol)    :
+                          ((key() & MaPMT::MaskPixelCol) >> MaPMT::ShiftPixelCol)  );
     }
 
     /// Retrieve The pixel row number
-    inline constexpr unsigned int pixelRow() const noexcept
+    inline constexpr DataType pixelRow() const noexcept
     {
-      return (unsigned int) ( HPDID == idType()                                       ?
-                              ((key() & HPD::MaskPixelRow)   >> HPD::ShiftPixelRow)   :
-                              ((key() & MaPMT::MaskPixelRow) >> MaPMT::ShiftPixelRow) );
+      return (DataType) ( HPDID == idType()                                       ?
+                          ((key() & HPD::MaskPixelRow)   >> HPD::ShiftPixelRow)   :
+                          ((key() & MaPMT::MaskPixelRow) >> MaPMT::ShiftPixelRow) );
     }
 
     /// Retrieve The PD number in column
-    inline constexpr unsigned int pdNumInCol() const noexcept
+    inline constexpr DataType pdNumInCol() const noexcept
     {
-      return (unsigned int) ( HPDID == idType()                                           ?
-                              ((key() & HPD::MaskPDNumInCol)   >> HPD::ShiftPDNumInCol)   :
-                              ((key() & MaPMT::MaskPDNumInCol) >> MaPMT::ShiftPDNumInCol) );
+      return (DataType) ( HPDID == idType()                                           ?
+                          ((key() & HPD::MaskPDNumInCol)   >> HPD::ShiftPDNumInCol)   :
+                          ((key() & MaPMT::MaskPDNumInCol) >> MaPMT::ShiftPDNumInCol) );
     }
 
     /// Retrieve The PD column number
-    inline constexpr unsigned int pdCol() const noexcept
+    inline constexpr DataType pdCol() const noexcept
     {
-      return (unsigned int) ( HPDID == idType()                                 ?
-                              ((key() & HPD::MaskPDCol)   >> HPD::ShiftPDCol)   :
-                              ((key() & MaPMT::MaskPDCol) >> MaPMT::ShiftPDCol) );
+      return (DataType) ( HPDID == idType()                                 ?
+                          ((key() & HPD::MaskPDCol)   >> HPD::ShiftPDCol)   :
+                          ((key() & MaPMT::MaskPDCol) >> MaPMT::ShiftPDCol) );
     }
 
     /// Retrieve The RICH panel
@@ -770,7 +773,7 @@ namespace LHCb
       return ( HPDID == idType() ? false :
                0 != ((key() & MaPMT::MaskLargePixel) >> MaPMT::ShiftLargePixel ) );
     }
-    
+
     /** Set the large PMT flag.
      *  @attention Does nothing for HPDs */
     inline void setLargePMT( const bool flag ) noexcept
@@ -780,41 +783,41 @@ namespace LHCb
         setData( flag, MaPMT::ShiftLargePixel, MaPMT::MaskLargePixel );
       }
     }
-    
+
   public:
 
-//     // Implementation using a mutex for thread support
-// #ifndef GOD_NOALLOC
+    //     // Implementation using a mutex for thread support
+    // #ifndef GOD_NOALLOC
 
-//     /// operator new
-//     static void* operator new ( size_t size )
-//     {
-//       return ( sizeof(RichSmartID) == size ?
-//                boost::singleton_pool<RichSmartID, sizeof(RichSmartID)>::malloc() :
-//                ::operator new(size) );
-//     }
+    //     /// operator new
+    //     static void* operator new ( size_t size )
+    //     {
+    //       return ( sizeof(RichSmartID) == size ?
+    //                boost::singleton_pool<RichSmartID, sizeof(RichSmartID)>::malloc() :
+    //                ::operator new(size) );
+    //     }
 
-//     /// placement operator new
-//     static void* operator new ( size_t size, void* pObj )
-//     {
-//       return ::operator new (size,pObj);
-//     }
+    //     /// placement operator new
+    //     static void* operator new ( size_t size, void* pObj )
+    //     {
+    //       return ::operator new (size,pObj);
+    //     }
 
-//     /// operator delete
-//     static void operator delete ( void* p )
-//     {
-//       boost::singleton_pool<RichSmartID, sizeof(RichSmartID)>::is_from(p) ?
-//         boost::singleton_pool<RichSmartID, sizeof(RichSmartID)>::free(p) :
-//         ::operator delete(p);
-//     }
+    //     /// operator delete
+    //     static void operator delete ( void* p )
+    //     {
+    //       boost::singleton_pool<RichSmartID, sizeof(RichSmartID)>::is_from(p) ?
+    //         boost::singleton_pool<RichSmartID, sizeof(RichSmartID)>::free(p) :
+    //         ::operator delete(p);
+    //     }
 
-//     /// placement operator delete
-//     static void operator delete ( void* p, void* pObj )
-//     {
-//       ::operator delete (p, pObj);
-//     }
+    //     /// placement operator delete
+    //     static void operator delete ( void* p, void* pObj )
+    //     {
+    //       ::operator delete (p, pObj);
+    //     }
 
-// #endif
+    // #endif
 
     // Implementation without thread support
 #ifndef GOD_NOALLOC
@@ -823,8 +826,8 @@ namespace LHCb
     static void* operator new ( size_t size )
     {
       using pool = boost::singleton_pool< RichSmartID, sizeof(RichSmartID),
-                                          boost::default_user_allocator_new_delete,
-                                          boost::details::pool::null_mutex, 128 >;
+        boost::default_user_allocator_new_delete,
+        boost::details::pool::null_mutex, 128 >;
       return ( sizeof(RichSmartID) == size ? pool::malloc() : ::operator new(size) );
     }
 
@@ -838,47 +841,53 @@ namespace LHCb
     static void operator delete ( void* p )
     {
       using pool = boost::singleton_pool< RichSmartID, sizeof(RichSmartID),
-                                          boost::default_user_allocator_new_delete,
-                                          boost::details::pool::null_mutex, 128 >;
+        boost::default_user_allocator_new_delete,
+        boost::details::pool::null_mutex, 128 >;
       pool::is_from(p) ? pool::free(p) : ::operator delete(p);
     }
-
+    
     /// placement operator delete
     static void operator delete ( void* p, void* pObj )
     {
       ::operator delete ( p, pObj );
     }
-
+    
 #endif
-
+    
   public:
-
+    
     /// Print this RichSmartID in a human readable way
-    std::ostream& fillStream( std::ostream& s ) const;
-
+    std::ostream& fillStream( std::ostream& s,
+#ifdef NDEBUG
+                              const bool dumpSmartIDBits = false
+#else
+                              const bool dumpSmartIDBits = true
+#endif
+                              ) const;
+    
     /** Return the output of the ostream printing of this object as a string.
      *  Mainly for use in GaudiPython. */
     std::string toString() const;
-
+    
   public:
-
+    
     /// Test if a given bit in the ID is on
-    inline constexpr bool isBitOn( const int pos ) const noexcept
+    inline constexpr bool isBitOn( const int32_t pos ) const noexcept
     {
-      return ( 0 != (key() & (1<<pos)) );
+      return ( 0 != ( key() & ( 1 << pos ) ) );
     }
-
+    
     /// Print the ID as a series of bits (0/1)
     std::ostream& dumpBits( std::ostream& s ) const;
-
+    
   };
-
+  
   /// ostream operator
   inline std::ostream& operator<< (std::ostream& str, const RichSmartID& obj)
   {
     return obj.fillStream(str);
   }
-
+  
 }
 
 #endif

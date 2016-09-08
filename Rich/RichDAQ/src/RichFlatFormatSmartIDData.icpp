@@ -15,6 +15,9 @@
 // local
 #include "RichFlatFormatSmartIDData.h"
 
+// Old 32 bit SmartID
+#include "Kernel/RichSmartID32.h"
+
 // =================================================================================================
 
 namespace Rich
@@ -49,7 +52,7 @@ namespace Rich
     template< class Version, class Header, class Footer >
     ShortType
     RichFlatFormatSmartIDData<Version,Header,Footer>::fillRichSmartIDs( LHCb::RichSmartID::Vector & ids,
-                                                                  const LHCb::RichSmartID hpdID ) const
+                                                                        const LHCb::RichSmartID hpdID ) const
     {
       m_nHits = 0; // reset number of hits to zero
 
@@ -62,7 +65,7 @@ namespace Rich
         // Loop over data fields
         for ( unsigned int iData = 0; iData < nDataWords; ++iData )
         {
-          const LHCb::RichSmartID id( this->data()[iData] );
+          const LHCb::RichSmartID id( LHCb::RichSmartID32( this->data()[iData] ) );
           if ( id.pdID() != hpdID )
           {
             std::cout << "PD ID Error. Should never see this" << std::endl;
@@ -70,7 +73,7 @@ namespace Rich
           ids.push_back( id );
         }
       }
-      
+
       return m_nHits;
     }
     // ------------------------------------------------------------------------------------------------

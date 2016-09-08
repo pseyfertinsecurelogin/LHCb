@@ -26,13 +26,7 @@
 Calo2Dview::Calo2Dview( const std::string& name,
                         ISvcLocator* pSvcLocator)
   : GaudiHistoAlg ( name , pSvcLocator ),
-    m_calo(),
     m_caloType(-1),
-    m_reg(),
-    m_centre(),
-    m_xsize(),
-    m_ysize(),
-    m_refCell(),
     m_fCard(0),
     m_lCard(0),
     m_nChan(0),
@@ -64,11 +58,6 @@ Calo2Dview::Calo2Dview( const std::string& name,
   declareProperty( "ProfileError"   ,  m_prof = "");
   setHistoDir( name );
 }
-//=============================================================================
-// Destructor
-//=============================================================================
-Calo2Dview::~Calo2Dview() {} 
-
 
 
 //=============================================================================

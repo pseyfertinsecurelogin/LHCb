@@ -17,15 +17,15 @@
  *  The width of the timing table column printing the algorithm name
  *  is 30 by default. That can be changed via
  *  \verbatim
-TimingAuditor().addTool(LHCbSequencerTimerTool, name = "TIMER")
-TimingAuditor().TIMER.NameSize = 50 \endverbatim
+ TimingAuditor().addTool(LHCbSequencerTimerTool, name = "TIMER")
+ TimingAuditor().TIMER.NameSize = 50 \endverbatim
  *
  *  @author Olivier Callot
  *  @date   2004-05-19
  */
 
-class LHCbSequencerTimerTool : public GaudiHistoTool, 
-                           virtual public ISequencerTimerTool
+class LHCbSequencerTimerTool final : public GaudiHistoTool,
+                                     virtual public ISequencerTimerTool
 {
 
 public:
@@ -36,12 +36,12 @@ public:
 
 public:
 
- /// Standard constructor
+  /// Standard constructor
   LHCbSequencerTimerTool( const std::string& type,
-                      const std::string& name,
-                      const IInterface* parent);
+                          const std::string& name,
+                          const IInterface* parent);
 
-  virtual ~LHCbSequencerTimerTool( ); ///< Destructor
+  virtual ~LHCbSequencerTimerTool( ) = default; ///< Destructor
 
   /** initialize method, to compute the normalization factor **/
   virtual StatusCode initialize();
@@ -56,7 +56,7 @@ public:
   virtual void increaseIndent() { m_indent += 2; }
 
   /** Decrease the indentation of the name **/
-  virtual void decreaseIndent() 
+  virtual void decreaseIndent()
   {
     m_indent -= 2;
     if ( 0 > m_indent ) m_indent = 0;
@@ -82,23 +82,23 @@ public:
 
   /** prepares and saves the timing histograms **/
   virtual void saveHistograms();
-  
+
   /** saves the output to a file **/
   StatusCode fileIO();
-  
+
 private:
 
   int m_shots;       ///< Number of shots for CPU normalization
   bool m_normalised; ///< Is the time scaled to a nominal PIII ?
-  int m_indent;      ///< Amount of indentation
+  int m_indent{0};   ///< Amount of indentation
   std::vector<LHCbTimerForSequencer> m_timerList;
-  double m_normFactor; ///< Factor to convert to standard CPU (1 GHz PIII)
-  double m_speedRatio;
+  double m_normFactor{0.001}; ///< Factor to convert to standard CPU (1 GHz PIII)
+  double m_speedRatio{0};
   bool   m_globalTiming;
   std::string::size_type m_headerSize;   ///< Size of the name field
   std::string m_summaryFile; ///< Whether to output also to a file
   std::string m_sep; ///< Separator to use in fileIO, defined by extension of the file
-  
 
 };
+
 #endif // LHCbSEQUENCERTIMERTOOL_H

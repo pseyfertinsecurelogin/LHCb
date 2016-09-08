@@ -23,14 +23,17 @@ namespace LHCb
  *  @author Marco Clemencic
  *  @date   2006-09-21
  */
-class OdinTimeDecoder : public GaudiTool, virtual public IEventTimeDecoder {
-public:
+class OdinTimeDecoder final : public GaudiTool, virtual public IEventTimeDecoder
+{
+
+ public:
+
   /// Standard constructor
   OdinTimeDecoder( const std::string& type,
                    const std::string& name,
                    const IInterface* parent);
 
-  virtual ~OdinTimeDecoder( ); ///< Destructor
+  virtual ~OdinTimeDecoder( ) = default; ///< Destructor
 
   /// Initialize the tool
   StatusCode initialize();
@@ -40,21 +43,26 @@ public:
   /// @return The time of current event.
   Gaudi::Time getTime() const;
 
-private:
+ private:
+
   // --- local methods ---
   /// Get the ODIN object from the T.E.S. or create it.
   /// @return Pointer to the ODIN object or NULL if it cannot be found.
   LHCb::ODIN *getODIN() const;
+
+ private:
 
   /// Tool to decode the ODIN bank
   ToolHandle<IGenericTool> m_odinDecoder;
 
   // --- local data ---
   /// Used to remember the run number and spot a change of run number.
-  mutable unsigned int m_currentRun;
+  mutable unsigned int m_currentRun{0};
+
   /// Used to detect if we switch from flagging to filtering mode (which implies
   /// a "run change" without actually changing the run number).
-  mutable bool m_flaggingMode;
+  mutable bool m_flaggingMode{true};
 
 };
+
 #endif // ODINTIMEDECODER_H

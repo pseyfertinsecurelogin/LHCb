@@ -1,4 +1,3 @@
-// $Id 
 // ============================================================================
 #ifndef LOKI_VALUE_H 
 #define LOKI_VALUE_H 1
@@ -24,13 +23,6 @@
  *  contributions and advices from G.Raven, J.van Tilburg, 
  *  A.Golutvin, P.Koppenburg have been used in the design 
  *  
- *  By usage of this code one clearly states the disagreement 
- *  with the smear campaign of Dr.O.Callot et al.: 
- *  ``No Vanya's lines are allowed in LHCb/Gaudi software''
- * 
- *                    $Revision$
- *  Last modification $Date$
- *                 by $Author$
  */
 // ============================================================================
 namespace LoKi
@@ -50,19 +42,10 @@ namespace LoKi
     /** Standard constructor from "void"-functor
      *  @param fun  void-functor 
      */
-    Value ( const LoKi::Functor<void,TYPE2>& fun ) 
+    explicit Value ( const LoKi::Functor<void,TYPE2>& fun ) 
       : LoKi::AuxFunBase         ( std::tie( fun ) )  
-      , LoKi::Functor<TYPE,TYPE2>() 
       , m_void ( fun )
     {}
-    /// copy constructor 
-    Value ( const Value& right ) 
-      : LoKi::AuxFunBase         ( right        )  
-      , LoKi::Functor<TYPE,TYPE2>( right        ) 
-      , m_void                   ( right.m_void )
-    {}
-    /// virtual destructor 
-    virtual ~Value (){} // virtual destructor 
     /// clone method (mandatory) 
     virtual Value* clone   () const { return new Value( *this ) ; }
     /// the only one essential method ("function")      
@@ -73,11 +56,6 @@ namespace LoKi
     virtual std::ostream& fillStream( std::ostream& s ) const 
     { return m_void.fillStream ( s ) ; }
     // ========================================================================   
-  private:
-    // ========================================================================
-    /// default constructor is disabled 
-    Value () ; // default constructor is disabled 
-    // ========================================================================
   private:
     // ========================================================================
     /// the actual storage of void-functor 
@@ -96,17 +74,8 @@ namespace LoKi
      */
     Value ( const LoKi::Functor<void,TYPE2>& fun ) 
       : LoKi::AuxFunBase         ( std::tie ( fun ) )  
-      , LoKi::Functor<void,TYPE2>() 
       , m_void ( fun )
     {}
-    /// copy constructor 
-    Value ( const Value& right ) 
-      : LoKi::AuxFunBase         ( right        )  
-      , LoKi::Functor<void,TYPE2>( right        ) 
-      , m_void                   ( right.m_void )
-    {}
-    /// virtual destructor 
-    virtual ~Value (){} // virtual destructor 
     /// clone method (mandatory) 
     virtual Value* clone   () const { return new Value( *this ) ; }
     /// the only one essential method ("function")      
@@ -117,11 +86,6 @@ namespace LoKi
     virtual std::ostream& fillStream( std::ostream& s ) const 
     { return m_void.fillStream ( s ) ; }
     // ========================================================================   
-  private:
-    // ========================================================================
-    /// default constructor is disabled 
-    Value () ; // default constructor is disabled 
-    // ========================================================================
   private:
     // ========================================================================
     /// the actual storage of void-functor 

@@ -1,4 +1,3 @@
-// $Id$
 // ============================================================================
 // Include files 
 // ============================================================================
@@ -78,7 +77,7 @@ public:
    */
   virtual LoKi::IReporter*  reporter() const 
   {
-    if ( 0 != m_reporter ) { return m_reporter ; }    // RETURN
+    if ( m_reporter ) { return m_reporter ; }    // RETURN
     
     IToolSvc* svc = toolSvc()   ;
     if ( 0 == svc        ) { return 0 ; }             // RETURN 
@@ -114,7 +113,7 @@ public:
    */
   LHCb::IParticlePropertySvc* ppSvc() const 
   {
-    if ( 0 != m_ppSvc ) { return m_ppSvc ; }
+    if ( m_ppSvc ) { return m_ppSvc ; }
     // locate the service 
     StatusCode sc = service ( "LHCb::ParticlePropertySvc" , m_ppSvc , true ) ;
     if       ( sc.isFailure() ) 
@@ -137,7 +136,7 @@ public:
    */
   IToolSvc*             toolSvc () const 
   {
-    if ( 0 != m_toolSvc ) { return m_toolSvc ; }
+    if ( m_toolSvc ) { return m_toolSvc ; }
     // locate the service 
     StatusCode sc = service ( "ToolSvc" , m_toolSvc , true ) ;
     if ( sc.isFailure() ) 
@@ -168,7 +167,7 @@ public:
    */
   IAlgContextSvc* contextSvc () const 
   {
-    if ( 0 != m_contextSvc ) { return m_contextSvc ; }
+    if ( m_contextSvc ) { return m_contextSvc ; }
     // locate the service 
     StatusCode sc = service ( "AlgContextSvc" , m_contextSvc , true ) ;
     if ( sc.isFailure() ) 
@@ -190,7 +189,7 @@ public:
    */
   IIncidentSvc* incidentSvc () const 
   {
-    if ( 0 != m_incidentSvc ) { return m_incidentSvc ; }
+    if ( m_incidentSvc ) { return m_incidentSvc ; }
     // locate the service 
     StatusCode sc = service ( "IncidentSvc" , m_incidentSvc , true ) ;
     if ( sc.isFailure() ) 
@@ -212,7 +211,7 @@ public:
    */
   IHistogramSvc* histoSvc () const 
   {
-    if ( 0 != m_histoSvc ) { return m_histoSvc ; }
+    if ( m_histoSvc ) { return m_histoSvc ; }
     // locate the service 
     StatusCode sc = service ( "HistogramDataSvc" , m_histoSvc , true ) ;
     if ( sc.isFailure() ) 
@@ -234,7 +233,7 @@ public:
    */
   IDataProviderSvc* evtSvc () const 
   {
-    if ( 0 != m_evtSvc ) { return m_evtSvc ; }
+    if ( m_evtSvc ) { return m_evtSvc ; }
     // locate the service 
     StatusCode sc = service ( "EventDataSvc" , m_evtSvc , true ) ;
     if ( sc.isFailure() ) 
@@ -256,7 +255,7 @@ public:
    */
   IRndmGenSvc* rndmSvc () const 
   {
-    if ( 0 != m_rndmSvc ) { return m_rndmSvc ; }
+    if ( m_rndmSvc ) { return m_rndmSvc ; }
     // locate the service 
     StatusCode sc = service ( "RndmGenSvc" , m_rndmSvc , true ) ;
     if ( sc.isFailure() ) 
@@ -278,7 +277,7 @@ public:
    */
   IStatSvc* statSvc () const 
   {
-    if ( 0 != m_statSvc ) { return m_statSvc ; }
+    if ( m_statSvc ) { return m_statSvc ; }
     // locate the service 
     StatusCode sc = service ( "ChronoStatSvc" , m_statSvc , true ) ;
     if ( sc.isFailure() ) 
@@ -300,7 +299,7 @@ public:
    */
   ICounterSvc* cntSvc () const 
   {
-    if ( 0 != m_cntSvc ) { return m_cntSvc ; }
+    if ( m_cntSvc ) { return m_cntSvc ; }
     // locate the service 
     StatusCode sc = service ( "CounterSvc" , m_cntSvc , true ) ;
     if ( sc.isFailure() ) 
@@ -322,7 +321,7 @@ public:
    */
   IChronoSvc* chronoSvc () const 
   {
-    if ( 0 != m_chronoSvc ) { return m_chronoSvc ; }
+    if ( m_chronoSvc ) { return m_chronoSvc ; }
     // locate the service 
     StatusCode sc = service ( "ChronoStatSvc" , m_chronoSvc , true ) ;
     if ( sc.isFailure() ) 
@@ -344,7 +343,7 @@ public:
    */
   IUpdateManagerSvc* updateSvc () const 
   {
-    if ( 0 != m_updateSvc ) { return m_updateSvc ; }
+    if ( m_updateSvc ) { return m_updateSvc ; }
     // locate the service 
     StatusCode sc = service ( "UpdateManagerSvc", m_updateSvc , true ) ;
     if ( sc.isFailure() ) 
@@ -418,7 +417,7 @@ public:
     { LoKi::AuxFunBase::setLoKiSvc ( this ) ; }
     //
     LoKi::ErrorReport& rep = LoKi::ErrorReport::instance() ;
-    if ( 0 == rep.reporter() && 0 != m_reporter ) 
+    if ( 0 == rep.reporter() && m_reporter ) 
     { rep.setReporter ( m_reporter ) ; }
     // 
     return StatusCode::SUCCESS ;
@@ -436,7 +435,7 @@ public:
       svc.releaseAll().ignore()  ;
     }
     //
-    if ( 0 != m_reporter && 0 != m_toolSvc ) 
+    if ( m_reporter && m_toolSvc ) 
     { m_toolSvc -> releaseTool ( m_reporter ).ignore() ; }
     //
     m_reporter = 0 ;
@@ -451,20 +450,20 @@ public:
     if ( LoKi::AuxFunBase::lokiSvc().same( this ) ) 
     { LoKi::AuxFunBase::setLoKiSvc ( 0 ) ; }
     //
-    if ( 0 != m_toolSvc     ) { m_toolSvc     -> release() ; m_toolSvc     = 0 ; }    
-    if ( 0 != m_ppSvc       ) { m_ppSvc       -> release() ; m_ppSvc       = 0 ; } 
-    if ( 0 != m_contextSvc  ) { m_contextSvc  -> release() ; m_contextSvc  = 0 ; } 
-    if ( 0 != m_incidentSvc ) { m_incidentSvc -> release() ; m_incidentSvc = 0 ; } 
-    if ( 0 != m_histoSvc    ) { m_histoSvc    -> release() ; m_histoSvc    = 0 ; } 
-    if ( 0 != m_evtSvc      ) { m_evtSvc      -> release() ; m_evtSvc      = 0 ; } 
-    if ( 0 != m_rndmSvc     ) { m_rndmSvc     -> release() ; m_rndmSvc     = 0 ; } 
-    if ( 0 != m_statSvc     ) { m_statSvc     -> release() ; m_statSvc     = 0 ; } 
-    if ( 0 != m_cntSvc      ) { m_cntSvc      -> release() ; m_cntSvc      = 0 ; } 
-    if ( 0 != m_chronoSvc   ) { m_chronoSvc   -> release() ; m_chronoSvc   = 0 ; } 
-    if ( 0 != m_updateSvc   ) { m_updateSvc   -> release() ; m_updateSvc   = 0 ; } 
+    if ( m_toolSvc     ) { m_toolSvc     -> release() ; m_toolSvc     = 0 ; }    
+    if ( m_ppSvc       ) { m_ppSvc       -> release() ; m_ppSvc       = 0 ; } 
+    if ( m_contextSvc  ) { m_contextSvc  -> release() ; m_contextSvc  = 0 ; } 
+    if ( m_incidentSvc ) { m_incidentSvc -> release() ; m_incidentSvc = 0 ; } 
+    if ( m_histoSvc    ) { m_histoSvc    -> release() ; m_histoSvc    = 0 ; } 
+    if ( m_evtSvc      ) { m_evtSvc      -> release() ; m_evtSvc      = 0 ; } 
+    if ( m_rndmSvc     ) { m_rndmSvc     -> release() ; m_rndmSvc     = 0 ; } 
+    if ( m_statSvc     ) { m_statSvc     -> release() ; m_statSvc     = 0 ; } 
+    if ( m_cntSvc      ) { m_cntSvc      -> release() ; m_cntSvc      = 0 ; } 
+    if ( m_chronoSvc   ) { m_chronoSvc   -> release() ; m_chronoSvc   = 0 ; } 
+    if ( m_updateSvc   ) { m_updateSvc   -> release() ; m_updateSvc   = 0 ; } 
     //
     LoKi::ErrorReport& rep = LoKi::ErrorReport::instance() ;
-    if ( 0 != rep.reporter() ) { rep.setReporter( 0 ).ignore() ; }
+    if ( rep.reporter() ) { rep.setReporter( 0 ).ignore() ; }
     //
     if (m_welcome) { // goodbye message 
       MsgStream log ( msgSvc() , name() ) ;
@@ -496,17 +495,17 @@ public:
     if ( LoKi::AuxFunBase::lokiSvc().same( this ) ) 
     { LoKi::AuxFunBase::setLoKiSvc ( 0 ) ; }
     //
-    if ( 0 != m_toolSvc     ) { m_toolSvc     -> release() ; m_toolSvc     = 0 ; }    
-    if ( 0 != m_ppSvc       ) { m_ppSvc       -> release() ; m_ppSvc       = 0 ; } 
-    if ( 0 != m_contextSvc  ) { m_contextSvc  -> release() ; m_contextSvc  = 0 ; } 
-    if ( 0 != m_incidentSvc ) { m_incidentSvc -> release() ; m_incidentSvc = 0 ; } 
-    if ( 0 != m_histoSvc    ) { m_histoSvc    -> release() ; m_histoSvc    = 0 ; } 
-    if ( 0 != m_evtSvc      ) { m_evtSvc      -> release() ; m_evtSvc      = 0 ; } 
-    if ( 0 != m_rndmSvc     ) { m_rndmSvc     -> release() ; m_rndmSvc     = 0 ; } 
-    if ( 0 != m_statSvc     ) { m_statSvc     -> release() ; m_statSvc     = 0 ; } 
-    if ( 0 != m_cntSvc      ) { m_cntSvc      -> release() ; m_cntSvc      = 0 ; } 
-    if ( 0 != m_chronoSvc   ) { m_chronoSvc   -> release() ; m_chronoSvc   = 0 ; } 
-    if ( 0 != m_updateSvc   ) { m_updateSvc   -> release() ; m_updateSvc   = 0 ; } 
+    if ( m_toolSvc     ) { m_toolSvc     -> release() ; m_toolSvc     = 0 ; }    
+    if ( m_ppSvc       ) { m_ppSvc       -> release() ; m_ppSvc       = 0 ; } 
+    if ( m_contextSvc  ) { m_contextSvc  -> release() ; m_contextSvc  = 0 ; } 
+    if ( m_incidentSvc ) { m_incidentSvc -> release() ; m_incidentSvc = 0 ; } 
+    if ( m_histoSvc    ) { m_histoSvc    -> release() ; m_histoSvc    = 0 ; } 
+    if ( m_evtSvc      ) { m_evtSvc      -> release() ; m_evtSvc      = 0 ; } 
+    if ( m_rndmSvc     ) { m_rndmSvc     -> release() ; m_rndmSvc     = 0 ; } 
+    if ( m_statSvc     ) { m_statSvc     -> release() ; m_statSvc     = 0 ; } 
+    if ( m_cntSvc      ) { m_cntSvc      -> release() ; m_cntSvc      = 0 ; } 
+    if ( m_chronoSvc   ) { m_chronoSvc   -> release() ; m_chronoSvc   = 0 ; } 
+    if ( m_updateSvc   ) { m_updateSvc   -> release() ; m_updateSvc   = 0 ; } 
     //
     {
       /// subscribe the incident:
@@ -545,9 +544,9 @@ public:
   virtual StatusCode queryInterface 
   ( const InterfaceID& iid, void** ppI ) 
   {
-    if      ( 0 == ppI ) { return StatusCode::FAILURE ; }
+    if      ( !ppI ) { return StatusCode::FAILURE ; }
     //
-    *ppI = 0 ;
+    *ppI = nullptr ;
     if      ( LoKi::ILoKiSvc::interfaceID    () == iid  ) 
     { *ppI = static_cast<LoKi::ILoKiSvc*>    ( this ) ; }
     else if ( IIncidentListener::interfaceID () == iid  ) 
@@ -556,49 +555,49 @@ public:
     // dispatch to the concrete service: 
     //
     // Tool Service 
-    else if ( IToolSvc::interfaceID             () == iid && 0 != toolSvc     () )
+    else if ( IToolSvc::interfaceID             () == iid && toolSvc     () )
     { return toolSvc     ()     -> queryInterface ( iid , ppI ) ;}
     // Particle Property Service 
-    else if ( LHCb::IParticlePropertySvc::interfaceID () == iid && 0 != ppSvc () ) 
+    else if ( LHCb::IParticlePropertySvc::interfaceID () == iid && ppSvc () ) 
     { return ppSvc       ()     -> queryInterface ( iid , ppI ) ; }
     // Algorithm  Context Service 
-    else if ( IAlgContextSvc::interfaceID       () == iid && 0 != contextSvc  () ) 
+    else if ( IAlgContextSvc::interfaceID       () == iid && contextSvc  () ) 
     { return contextSvc  ()     -> queryInterface ( iid , ppI ) ; }
     // Incident Service 
-    else if ( IIncidentSvc::interfaceID         () == iid && 0 != incidentSvc () ) 
+    else if ( IIncidentSvc::interfaceID         () == iid && incidentSvc () ) 
     { return incidentSvc ()     -> queryInterface ( iid , ppI ) ; }
     // ServiceLocator  
-    else if ( ISvcLocator::interfaceID          () == iid && 0 != svcLoc      () ) 
+    else if ( ISvcLocator::interfaceID          () == iid && svcLoc      () ) 
     { return svcLoc      ()     -> queryInterface ( iid , ppI ) ; }
     // IAlgManager 
-    else if ( IAlgManager::interfaceID          () == iid && 0 != svcLoc      () ) 
+    else if ( IAlgManager::interfaceID          () == iid && svcLoc      () ) 
     { return svcLoc      ()     -> queryInterface ( iid , ppI ) ; }
     // IHistogramSvc 
-    else if ( IHistogramSvc::interfaceID        () == iid && 0 != histoSvc    () ) 
+    else if ( IHistogramSvc::interfaceID        () == iid && histoSvc    () ) 
     { return histoSvc    ()     -> queryInterface ( iid , ppI ) ; }
     // IDataProviderSvc 
-    else if ( IDataProviderSvc::interfaceID     () == iid && 0 != evtSvc      () ) 
+    else if ( IDataProviderSvc::interfaceID     () == iid && evtSvc      () ) 
     { return evtSvc      ()     -> queryInterface ( iid , ppI ) ; }
     // IRndmGenSvc 
-    else if ( IRndmGenSvc::interfaceID          () == iid && 0 != rndmSvc     () ) 
+    else if ( IRndmGenSvc::interfaceID          () == iid && rndmSvc     () ) 
     { return rndmSvc     ()     -> queryInterface ( iid , ppI ) ; }
     // IStatSvc 
-    else if ( IStatSvc::interfaceID             () == iid && 0 != statSvc     () ) 
+    else if ( IStatSvc::interfaceID             () == iid && statSvc     () ) 
     { return statSvc     ()     -> queryInterface ( iid , ppI ) ; }
     // ICounterSvc 
-    else if ( ICounterSvc::interfaceID          () == iid && 0 != cntSvc      () ) 
+    else if ( ICounterSvc::interfaceID          () == iid && cntSvc      () ) 
     { return cntSvc      ()     -> queryInterface ( iid , ppI ) ; }
     // IChronoSvc 
-    else if ( IChronoSvc::interfaceID           () == iid && 0 != chronoSvc   () ) 
+    else if ( IChronoSvc::interfaceID           () == iid && chronoSvc   () ) 
     { return chronoSvc   ()     -> queryInterface ( iid , ppI ) ; }
     // IUpdateManagerSvc 
-    else if ( IUpdateManagerSvc::interfaceID    () == iid && 0 != updateSvc   () ) 
+    else if ( IUpdateManagerSvc::interfaceID    () == iid && updateSvc   () ) 
     { return updateSvc   ()     -> queryInterface ( iid , ppI ) ; }
     // a bit more fun with the reporter 
-    else if ( LoKi::IReporter::interfaceID      () == iid && 0 != reporter    () ) 
+    else if ( LoKi::IReporter::interfaceID      () == iid && reporter    () ) 
     { return reporter    ()     -> queryInterface ( iid , ppI ) ; }
     // message service ? 
-    else if ( IMessageSvc::interfaceID          () == iid && 0 != msgSvc      () ) 
+    else if ( IMessageSvc::interfaceID          () == iid && msgSvc      () ) 
     { return msgSvc      ()     -> queryInterface ( iid , ppI ) ; }
     // message service ?
     else 
@@ -615,29 +614,8 @@ protected:
    *  @param name service instance name 
    *  @param pSvc pointer to the service locator 
    */
-  LoKiSvc 
-  ( const std::string& name , 
-    ISvcLocator*       pSvc ) 
+  LoKiSvc( const std::string& name , ISvcLocator*       pSvc ) 
     : Service ( name , pSvc )
-    //
-    , m_ppSvc        (  0 ) 
-    , m_toolSvc      (  0 ) 
-    , m_contextSvc   (  0 ) 
-    , m_incidentSvc  (  0 ) 
-    , m_histoSvc     (  0 ) 
-    , m_evtSvc       (  0 ) 
-    , m_rndmSvc      (  0 ) 
-    , m_statSvc      (  0 )
-    , m_cntSvc       (  0 ) 
-    , m_chronoSvc    (  0 ) 
-    , m_updateSvc    (  0 ) 
-    //
-    //
-    , m_reporter     (  0 )
-    , m_reporterName ( "LoKi::Reporter/REPORT")
-    , m_event        (  0 )
-    , m_welcome      ( true )
-    //
   {
     declareProperty 
       ( "Reporter" , m_reporterName , "The type/name of default Reporter tool") ;
@@ -648,64 +626,59 @@ protected:
   /// virtual and protected destructor
   virtual ~LoKiSvc () 
   { 
-    if ( 0 != m_reporter && 0 != m_toolSvc ) 
+    if ( m_reporter && m_toolSvc ) 
     { m_toolSvc -> releaseTool ( m_reporter ) ; }
-    m_reporter = 0 ;
     //
-    if ( 0 != m_toolSvc     ) { m_toolSvc     -> release() ; m_toolSvc     = 0 ; }    
-    if ( 0 != m_ppSvc       ) { m_ppSvc       -> release() ; m_ppSvc       = 0 ; } 
-    if ( 0 != m_contextSvc  ) { m_contextSvc  -> release() ; m_contextSvc  = 0 ; } 
-    if ( 0 != m_incidentSvc ) { m_incidentSvc -> release() ; m_incidentSvc = 0 ; } 
-    if ( 0 != m_histoSvc    ) { m_histoSvc    -> release() ; m_histoSvc    = 0 ; } 
-    if ( 0 != m_evtSvc      ) { m_evtSvc      -> release() ; m_evtSvc      = 0 ; } 
-    if ( 0 != m_rndmSvc     ) { m_rndmSvc     -> release() ; m_rndmSvc     = 0 ; } 
-    if ( 0 != m_statSvc     ) { m_statSvc     -> release() ; m_statSvc     = 0 ; } 
-    if ( 0 != m_cntSvc      ) { m_cntSvc      -> release() ; m_cntSvc      = 0 ; } 
-    if ( 0 != m_chronoSvc   ) { m_chronoSvc   -> release() ; m_chronoSvc   = 0 ; } 
-    if ( 0 != m_updateSvc   ) { m_updateSvc   -> release() ; m_updateSvc   = 0 ; } 
+    if ( m_toolSvc     ) { m_toolSvc     -> release() ; }    
+    if ( m_ppSvc       ) { m_ppSvc       -> release() ; } 
+    if ( m_contextSvc  ) { m_contextSvc  -> release() ; } 
+    if ( m_incidentSvc ) { m_incidentSvc -> release() ; } 
+    if ( m_histoSvc    ) { m_histoSvc    -> release() ; } 
+    if ( m_evtSvc      ) { m_evtSvc      -> release() ; } 
+    if ( m_rndmSvc     ) { m_rndmSvc     -> release() ; } 
+    if ( m_statSvc     ) { m_statSvc     -> release() ; } 
+    if ( m_cntSvc      ) { m_cntSvc      -> release() ; } 
+    if ( m_chronoSvc   ) { m_chronoSvc   -> release() ; } 
+    if ( m_updateSvc   ) { m_updateSvc   -> release() ; } 
   }   
   // ==========================================================================
-private:
-  // ==========================================================================
-  /// default constructor is disabled
-  LoKiSvc () ;                                        // no default constructor 
   /// copy constructor is disabled 
-  LoKiSvc           ( const  LoKiSvc& ) ;                            // no copy 
+  LoKiSvc           ( const  LoKiSvc& ) = delete;                    // no copy 
   /// assignement operator is disabled 
-  LoKiSvc& operator=( const  LoKiSvc& ) ;            // no assignement operator 
+  LoKiSvc& operator=( const  LoKiSvc& ) = delete;    // no assignement operator 
   // ==========================================================================
 private:
   // ==========================================================================
   /// the particle property service 
-  mutable LHCb::IParticlePropertySvc* m_ppSvc  ; // the particle property service 
+  mutable LHCb::IParticlePropertySvc* m_ppSvc = nullptr ; // the particle property service 
   /// the tool service 
-  mutable IToolSvc*             m_toolSvc      ;            // the tool service 
+  mutable IToolSvc*             m_toolSvc = nullptr     ;            // the tool service 
   /// the context service 
-  mutable IAlgContextSvc*       m_contextSvc   ;         // the context service 
+  mutable IAlgContextSvc*       m_contextSvc = nullptr  ;         // the context service 
   /// the incident service 
-  mutable IIncidentSvc*         m_incidentSvc  ;        // the incident service 
+  mutable IIncidentSvc*         m_incidentSvc = nullptr ;        // the incident service 
   /// the histogram service 
-  mutable IHistogramSvc*        m_histoSvc     ;        //    histogram service 
+  mutable IHistogramSvc*        m_histoSvc = nullptr    ;        //    histogram service 
   /// the event data service 
-  mutable IDataProviderSvc*     m_evtSvc       ;        //   event data service 
+  mutable IDataProviderSvc*     m_evtSvc = nullptr      ;        //   event data service 
   /// random numbers service 
-  mutable IRndmGenSvc*          m_rndmSvc      ;        //       random numbers 
+  mutable IRndmGenSvc*          m_rndmSvc = nullptr     ;        //       random numbers 
   /// statistics service 
-  mutable IStatSvc*             m_statSvc      ;        //           statistics 
+  mutable IStatSvc*             m_statSvc = nullptr     ;        //           statistics 
   /// counters  
-  mutable ICounterSvc*          m_cntSvc       ;        //             counters
+  mutable ICounterSvc*          m_cntSvc = nullptr      ;        //             counters
   /// chrono
-  mutable IChronoSvc*           m_chronoSvc    ;        //               chrono
+  mutable IChronoSvc*           m_chronoSvc = nullptr   ;        //               chrono
   /// update
-  mutable IUpdateManagerSvc*    m_updateSvc    ;        //               update
+  mutable IUpdateManagerSvc*    m_updateSvc = nullptr   ;        //               update
   /// the default reporter 
-  mutable LoKi::IReporter*      m_reporter     ;        // the default reporter 
+  mutable LoKi::IReporter*      m_reporter = nullptr    ;        // the default reporter 
   /// the name of the default reporter 
-  std::string                   m_reporterName ;        // the name of reporter 
+  std::string                   m_reporterName = "LoKi::Reporter/REPORT";        // the name of reporter 
   /// the event marker 
-  unsigned long long            m_event        ;            // the event marker
+  unsigned long long            m_event = 0    ;            // the event marker
   /// print welcome message
-  bool                          m_welcome      ;       // print welcome message 
+  bool                          m_welcome = true   ;       // print welcome message 
   // ==========================================================================
 };
 // ============================================================================

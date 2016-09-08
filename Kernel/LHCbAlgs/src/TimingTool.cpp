@@ -22,14 +22,11 @@ DECLARE_TOOL_FACTORY( TimingTool )
 TimingTool::TimingTool( const std::string& type,
                         const std::string& name,
                         const IInterface* parent )
-  : GaudiTool ( type, name , parent ),
-    m_CSS(0),
-    m_RGS(0)
+  : GaudiTool ( type, name , parent )
 {
   declareInterface<INormalizeTool>(this);
 
-  m_shots = 2100000 ; // 1s on 1GHz PIII, gcc 3.2, -o2
-  declareProperty( "shots", m_shots );
+  declareProperty( "shots", m_shots = 2100000 ); // 1s on 1GHz PIII, gcc 3.2, -o2
 }
 
 //=============================================================================
@@ -60,22 +57,22 @@ double TimingTool::normalize() {
 StatusCode TimingTool::finalize() 
 //=============================================================================
 {
-  m_CSS = 0;
-  m_RGS = 0;
+  m_CSS = nullptr;
+  m_RGS = nullptr;
   return GaudiTool::finalize();
 }
 
 //=============================================================================
 IRndmGenSvc* TimingTool::randSvc() {
 //=============================================================================
-  if( 0 == m_RGS ) m_RGS = svc<IRndmGenSvc>( "RndmGenSvc", true );
+  if ( !m_RGS ) m_RGS = svc<IRndmGenSvc>( "RndmGenSvc", true );
   return m_RGS;
 }
 
 //=============================================================================
 IChronoStatSvc* TimingTool::chronoSvc() {
 //=============================================================================
-  if( 0 == m_CSS ) m_CSS = svc<IChronoStatSvc>( "ChronoStatSvc", true );
+  if ( !m_CSS ) m_CSS = svc<IChronoStatSvc>( "ChronoStatSvc", true );
   return m_CSS;
 }
 

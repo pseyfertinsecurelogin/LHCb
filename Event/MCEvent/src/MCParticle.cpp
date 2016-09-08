@@ -2,6 +2,9 @@
 // Event
 #include "Event/MCParticle.h"
 
+// STL
+#include <algorithm>
+
 //-----------------------------------------------------------------------------
 // Implementation file for class : MCParticle
 //
@@ -14,23 +17,14 @@ std::ostream& LHCb::MCParticle::fillStream(std::ostream& s) const
     << " ParticleID = "    << particleID()
     << " OriginVertex = "  << originVertex()
     << " EndVertices : #=" << endVertices().size() << " [";
-  for ( SmartRefVector<LHCb::MCVertex>::const_iterator iter = endVertices().begin();
-        iter != endVertices().end(); ++iter )
-  { s << " " << *iter; }
+  for ( const auto & v : endVertices() ) { s << " " << v.target(); }
   s << " ] }";
   return s;
 }
 
 bool LHCb::MCParticle::hasOscillated() const
 {
-  bool hasOsc = false;
-  for ( SmartRefVector<LHCb::MCVertex>::const_iterator v = endVertices().begin();
-        v != endVertices().end(); ++v )
-  {
-    if ( (*v)->type() == LHCb::MCVertex::OscillatedAndDecay )
-    {
-      hasOsc = true; break;
-    }
-  }
-  return hasOsc;
+  return std::any_of( endVertices().begin(), endVertices().end(),
+                      []( const auto & v )
+                      { return v->type() == LHCb::MCVertex::OscillatedAndDecay; } );
 }

@@ -31,7 +31,6 @@ class Calo2Dview : public GaudiHistoAlg {
 public: 
   /// Standard constructor
   Calo2Dview( const std::string& name, ISvcLocator* pSvcLocator );
-  virtual ~Calo2Dview( ); ///< Destructor
 
   virtual StatusCode initialize();    ///< Algorithm initialization
 
@@ -65,7 +64,7 @@ public:
   
 protected:
   // attributes
-  DeCalorimeter* m_calo;
+  DeCalorimeter* m_calo = nullptr;
   int m_caloType;
   unsigned int m_reg;
   unsigned int m_centre;

@@ -19,7 +19,7 @@
  *  @author Chris Jones
  *  @date   18-04-2013
  */
-class ApplicationVersionFilter : public GaudiAlgorithm 
+class ApplicationVersionFilter final : public GaudiAlgorithm 
 {
 
 public: 
@@ -28,7 +28,7 @@ public:
   ApplicationVersionFilter( const std::string& name, 
                             ISvcLocator* pSvcLocator );
 
-  virtual ~ApplicationVersionFilter( ); ///< Destructor
+  virtual ~ApplicationVersionFilter( ) = default; ///< Destructor
 
   virtual StatusCode execute();    ///< Algorithm execution
 

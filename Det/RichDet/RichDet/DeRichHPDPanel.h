@@ -107,13 +107,14 @@ public:
                  const LHCb::RichTraceMode mode ) const final;
 
   /// Returns the detector element for the given PD number
-  virtual const DeRichPD* dePD( const unsigned int PDNumber ) const override;
+  virtual const DeRichPD* dePD( const Rich::DAQ::HPDCopyNumber PDNumber ) const override;
 
   /// Returns the detector element for the given PD number
-  inline const DeRichHPD* deHPD( const unsigned int HPDNumber ) const
+  inline const DeRichHPD* deHPD( const Rich::DAQ::HPDCopyNumber HPDNumber ) const
   {
     // CRJ : should this just be < ??
-    const DeRichHPD * deHPD = ( HPDNumber <= nPDs() ? m_DeHPDs[HPDNumber] : nullptr );
+    const DeRichHPD * deHPD = ( HPDNumber.data() <= nPDs() ?
+                                m_DeHPDs[HPDNumber.data()] : nullptr );
 #ifndef NDEBUG
     if ( !deHPD )
     {
@@ -129,7 +130,7 @@ public:
   virtual bool readoutChannelList( LHCb::RichSmartID::Vector& readoutChannels ) const final;
 
   /// sensitive volume identifier
-  virtual int sensitiveVolumeID(const Gaudi::XYZPoint& globalPoint) const final;
+  virtual int sensitiveVolumeID( const Gaudi::XYZPoint& globalPoint ) const final;
 
 private: // methods
 
@@ -143,7 +144,7 @@ private: // methods
   bool findHPDColAndPos( const Gaudi::XYZPoint& inPanel, LHCb::RichSmartID& id ) const;
 
   /// Returns the PD number for the given RichSmartID
-  unsigned int pdNumber( const LHCb::RichSmartID& smartID ) const final;
+  Rich::DAQ::HPDCopyNumber pdNumber( const LHCb::RichSmartID& smartID ) const final;
 
   /// Need to ask Sajan about this
   bool pdGrandSize( const LHCb::RichSmartID& /** smartID **/ ) const final { return false; }
@@ -199,7 +200,7 @@ private: // data
 inline Gaudi::XYZPoint 
 DeRichHPDPanel::detPointOnAnode( const LHCb::RichSmartID& smartID ) const
 {
-  return deHPD(smartID)->detPointOnAnode(smartID);
+  return deHPD( pdNumber(smartID) ) -> detPointOnAnode( smartID );
 }
 
 //=========================================================================

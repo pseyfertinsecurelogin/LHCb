@@ -20,40 +20,34 @@ namespace LHCbAlgsTests {
 // ============================================================================
 // Standard constructor, initializes variables
 // ============================================================================
-ODINBadTimeTest::ODINBadTimeTest(const std::string& name, ISvcLocator* pSvcLocator)
-  : GaudiAlgorithm(name, pSvcLocator)
-  , m_evtTimeTool(0)
-{
-}
-
-// ============================================================================
-// Destructor
-// ============================================================================
-ODINBadTimeTest::~ODINBadTimeTest() {}
+ODINBadTimeTest::ODINBadTimeTest(const std::string& name,
+                                 ISvcLocator* pSvcLocator)
+  : GaudiAlgorithm(name, pSvcLocator) { }
 
 // ============================================================================
 // Initialization
 // ============================================================================
-StatusCode ODINBadTimeTest::initialize() {
+StatusCode ODINBadTimeTest::initialize()
+{
   StatusCode sc = GaudiAlgorithm::initialize(); // must be executed first
   if ( sc.isFailure() ) return sc; // error printed already by GaudiAlgorithm
-
+  
   if ( msgLevel(MSG::DEBUG) ) debug() << "==> Initialize" << endmsg;
-
+  
   m_evtTimeTool = tool<IEventTimeDecoder>("OdinTimeDecoder", this, true);
-
-  return StatusCode::SUCCESS;
+  
+  return sc;
 }
 
 // ============================================================================
 // Main execution
 // ============================================================================
-StatusCode ODINBadTimeTest::execute() {
+StatusCode ODINBadTimeTest::execute()
+{
   if ( msgLevel(MSG::DEBUG) ) debug() << "==> Execute" << endmsg;
-
-  static bool called = false;
+  
   LHCb::ODIN* odin = new LHCb::ODIN();
-  if (!called) {
+  if (!m_called) {
     // valid GPS time on the first call
     odin->setGpsTime(1318944600000000ULL); // 18/10/2011 15:30
   } else {
@@ -63,11 +57,11 @@ StatusCode ODINBadTimeTest::execute() {
   put(evtSvc(), odin, LHCb::ODINLocation::Default);
 
   info() << "Set ODIN time to " << odin->gpsTime() / 1000000
-         << " (" << (called ? "invalid" : "valid") << ")" << endmsg;
+         << " (" << (m_called ? "invalid" : "valid") << ")" << endmsg;
   // will not try to decode the ODIN bank
   info() << "ODIN time -> " << m_evtTimeTool->getTime() << endmsg;
 
-  called = true;
+  m_called = true;
 
   return StatusCode::SUCCESS;
 }
@@ -75,11 +69,12 @@ StatusCode ODINBadTimeTest::execute() {
 // ============================================================================
 // Finalize
 // ============================================================================
-StatusCode ODINBadTimeTest::finalize() {
+StatusCode ODINBadTimeTest::finalize()
+{
   if ( msgLevel(MSG::DEBUG) ) debug() << "==> Finalize" << endmsg;
 
   releaseTool(m_evtTimeTool);
-  m_evtTimeTool = 0;
+  m_evtTimeTool = nullptr;
 
   return GaudiAlgorithm::finalize(); // must be called after all other actions
 }

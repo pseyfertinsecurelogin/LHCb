@@ -82,20 +82,22 @@ template <class TYPE>
 class MCTruth   {
 private:
   /// Reference to originating DataObject pointer
-  const ContainedObject*  m_cnt;
-  const DataObject*       m_dobj;
+  const ContainedObject*  m_cnt  = nullptr;
+  const DataObject*       m_dobj = nullptr;
 private:
-  void setup(const ContainedObject* p)  {
+  void setup(const ContainedObject* p)
+  {
     m_dobj = object(p);
-    m_cnt = p;
+    m_cnt  = p;
   }
-  void setup(const DataObject* p)  {
+  void setup(const DataObject* p) 
+  { 
     m_dobj = p;
-    m_cnt = 0;
+    m_cnt  = nullptr;
   }
   /// Determine object type
   const DataObject* object(const ContainedObject* p)  const
-  { return (p==0) ? 0 : p->parent();                                       }
+  { return (!p) ? nullptr : p->parent();                                   }
   const DataObject* object(const DataObject* p) const { return p;          }
   /// Formalized cast of type DataObject
   static void* cast(DataObject* p)      { return dynamic_cast<TYPE*>(p);   }
@@ -110,7 +112,7 @@ public:
   /// Standard templated constructor taking any object pointer as source address
   template<class T> MCTruth(SmartDataPtr<T>& t) {   setup(t.ptr());        }
   /// Automatic conversion to the target MC truth address
-  operator TYPE*()  const  {  return (0==m_cnt) ? get(m_dobj) : get(m_cnt);}
+  operator TYPE*()  const  {  return (!m_cnt) ? get(m_dobj) : get(m_cnt);}
   /// Set Monte Carlo truth link to specified object
   template<class T> StatusCode 
   set(const T* t)              { return makeMCTruthLink(m_dobj,object(t)); } 

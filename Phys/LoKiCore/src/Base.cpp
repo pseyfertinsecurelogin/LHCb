@@ -1,4 +1,3 @@
-// $Id$
 // ============================================================================
 // Include files 
 // ============================================================================
@@ -51,7 +50,6 @@ LoKi::Base::Base
 ( const std::string& name     , 
   const IReporter*   reporter ) 
   : m_name       ( name     ) 
-  , m_typeName   ()
   , m_reporter   ( reporter ) 
   , m_refCount   ( 0        ) 
 {
@@ -63,7 +61,6 @@ LoKi::Base::Base
 LoKi::Base::Base
 ( const LoKi::Base& right ) 
   : m_name       ( right.m_name     ) 
-  , m_typeName   ()
   , m_reporter   ( right.m_reporter ) 
   , m_refCount   ( 0 )
 {
@@ -243,8 +240,7 @@ void LoKi::Base::Exception
 // ============================================================================
 const std::string& LoKi::Base::type() const
 {
-  static std::string s_type = "" ;
-  if ( s_type.empty() ) { s_type = System::typeinfoName( typeid( *this ) ); }
+  static const std::string s_type = System::typeinfoName( typeid( *this ) );
   return s_type ;
 } 
 // ============================================================================
@@ -260,5 +256,3 @@ long LoKi::Base::release    ()
 // ============================================================================
 // The END 
 // ============================================================================
-
-

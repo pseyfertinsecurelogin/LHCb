@@ -1,4 +1,3 @@
-// $Id$
 // ============================================================================
 #ifndef DECAYS_TREES_H
 #define DECAYS_TREES_H 1
@@ -8,6 +7,8 @@
 // STD & STL
 // ============================================================================
 #include <algorithm>
+#include <type_traits>
+#include <iterator>
 // ============================================================================
 // PartProp
 // ============================================================================
@@ -60,8 +61,6 @@ namespace Decays
       Marked_ ( const Marked_&  right ) ;
       /// move  constructor (ignore the marked particle)
       Marked_ (       Marked_&& right ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~Marked_ () {}
       /// MANDATORY: clone method ("virtual constructor")
       virtual  Marked_* clone() const { return new Marked_(*this) ; }
       /// MANDATORY: the only one essential method:
@@ -114,8 +113,6 @@ namespace Decays
       // ======================================================================
     public:
       // ======================================================================
-      /// MANDATORY: virtual destructor
-      virtual ~Any_() {}
       /// MANDATORY: clone method ("virtual constructor")
       virtual  Any_* clone() const { return new Any_(*this) ; }
       /// MANDATORY: the only one essential method:
@@ -153,8 +150,6 @@ namespace Decays
       // ======================================================================
     public:
       // ======================================================================
-      /// MANDATORY: virtual destructor
-      virtual ~None_() {}
       /// MANDATORY: clone method ("virtual constructor")
       virtual  None_* clone() const { return new None_(*this) ; }
       /// MANDATORY: the only one essential method:
@@ -183,9 +178,7 @@ namespace Decays
     public:
       // ======================================================================
       /// MANDATORY: default constructor
-      Invalid_() {}
-      /// MANDATORY: virtual destructor
-      virtual ~Invalid_() {}
+      Invalid_() = default;
       /// MANDATORY: clone method ("virtual constructor")
       virtual  Invalid_* clone() const { return new Invalid_(*this) ; }
       /// MANDATORY: the only one essential method:
@@ -232,8 +225,6 @@ namespace Decays
       /// constructor from the decay head
       Stable_ ( const LHCb::ParticleID& head ) ;
       // ======================================================================
-      /// MANDATORY: virtual destructor
-      virtual ~Stable_() {}
       /// MANDATORY: clone method ("virtual constructor")
       virtual  Stable_* clone() const { return new Stable_( *this ) ; }
       /// MANDATORY: the only one essential method:
@@ -381,11 +372,11 @@ namespace Decays
       // ======================================================================
     public:
       // ======================================================================
-      /// swapping: makes container operations (e.g. sorting) much faster 
-      void swap ( _Tree_& another ) 
+      /// swapping: makes container operations (e.g. sorting) much faster
+      void swap ( _Tree_& another )
       {
         Decays::swap ( m_tree , another.m_tree ) ;
-        std::swap    ( m_id   , another.m_id   ) ;        
+        std::swap    ( m_id   , another.m_id   ) ;
       }
       // ======================================================================
     public:
@@ -409,14 +400,14 @@ namespace Decays
       // ======================================================================
     } ;
     // ========================================================================
-    /** swap two elements to speed-up sorting and other manipulations 
-     *  with arrays of trees 
+    /** swap two elements to speed-up sorting and other manipulations
+     *  with arrays of trees
      *  @author Vanya BELYAEV Ivan.Belyave@nikhef.nl
      *  @date 2015-03-25
      */
     template <class PARTICLE>
-    inline void swap 
-    ( _Tree_<PARTICLE>& a , 
+    inline void swap
+    ( _Tree_<PARTICLE>& a ,
       _Tree_<PARTICLE>& b ) { a.swap ( b ) ; }
     // ========================================================================
     /** @struct CheckTree
@@ -451,7 +442,7 @@ namespace Decays
    *  @date 2009-05-23
    */
   template <class PARTICLE>
-  class TreeList_
+  class TreeList_ final
   {
   public:
     // =======================================================================
@@ -470,18 +461,19 @@ namespace Decays
     // constructor from the trees
     TreeList_ ( const Trees_& trees ) : m_trees ( trees ) {}
     /// default constructor
-    TreeList_ () : m_trees () {}
+    TreeList_ () = default;
     /// copy constructor
-    TreeList_ ( const TreeList_&  right ) 
-      : m_trees (             right.m_trees   ) {}
+    TreeList_ ( const TreeList_&  right ) = default;
     /// move constructor
-    TreeList_ (       TreeList_&& right ) 
-      : m_trees ( std::move ( right.m_trees ) ) {}
+    TreeList_ (       TreeList_&& right ) = default;
     // ========================================================================
   public:
     // ========================================================================
     // constructor from iterators
-    template <class ITERATOR>
+    template <typename  ITERATOR,
+              typename = typename std::enable_if< std::is_base_of< std::input_iterator_tag,
+                                                                   typename std::iterator_traits<ITERATOR>::iterator_category
+                                                                 >::value >::type >
     TreeList_ ( ITERATOR first ,
                 ITERATOR last  )
       : m_trees ( first, last ) {}
@@ -489,19 +481,9 @@ namespace Decays
   public:
     // ========================================================================
     /// assignement operator
-    TreeList_& operator=( const TreeList_&  right ) 
-    {
-      if ( &right == this ){ return *this ; }
-      m_trees = right.m_trees ;
-      return *this ;
-    }
+    TreeList_& operator=( const TreeList_&  right ) = default;
     /// move assignement operator
-    TreeList_& operator=(       TreeList_&& right ) 
-    {
-      if ( &right == this ){ return *this ; }
-      m_trees = std::move ( right.m_trees ) ;
-      return *this ;
-    }    
+    TreeList_& operator=(       TreeList_&& right ) = default;
     // ========================================================================
   public:
     // ========================================================================
@@ -512,11 +494,11 @@ namespace Decays
     // ========================================================================
     TreeList_& operator+= ( const _Tree_&  tree )
     { m_trees.push_back ( tree  ) ;  return *this ; }
-    TreeList_& operator+= (       _Tree_&& tree )        // movable 
+    TreeList_& operator+= (       _Tree_&& tree )        // movable
     { m_trees.push_back ( tree  ) ;  return *this ; }
     TreeList_& operator+= ( const  Tree&   tree )
     { m_trees.push_back ( tree  ) ;  return *this ; }
-    TreeList_& operator+= (        Tree&&  tree )        // movable ? 
+    TreeList_& operator+= (        Tree&&  tree )        // movable ?
     { m_trees.push_back ( tree  ) ;  return *this ; }
     TreeList_& operator+= ( const iTree&   tree )
     { m_trees.push_back ( tree  ) ;  return *this ; }
@@ -556,12 +538,12 @@ namespace Decays
     ///  the actual container of trees
     Trees_    m_trees ;                       //  the actual container of trees
     // ========================================================================
-  } ;  
+  } ;
   // ==========================================================================
-  /// swap two lists 
+  /// swap two lists
   template <class PARTICLE>
-  inline void swap 
-  ( TreeList_<PARTICLE>& a , 
+  inline void swap
+  ( TreeList_<PARTICLE>& a ,
     TreeList_<PARTICLE>& b ) { a.swap ( b ) ; }
   // ==========================================================================
   namespace Trees
@@ -589,12 +571,10 @@ namespace Decays
       // ======================================================================
       /// constructor from two sub-trees
       Op_ () ;
-      /// copy constructor  
+      /// copy constructor
       Op_ ( const Op_&  right ) ;
-      /// move constructor  
+      /// move constructor
       Op_ (       Op_&& right ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~Op_() {}
       // ======================================================================
     public:
       // ======================================================================
@@ -631,7 +611,7 @@ namespace Decays
       /// inline form of reset
       inline void i_reset() const ;
       // ======================================================================
-    protected: 
+    protected:
       // ======================================================================
       /// the actual list of trees
       mutable TreeList m_trees ;                    // the actual list of trees
@@ -668,12 +648,10 @@ namespace Decays
              const Decays::iTree_<PARTICLE>& n2 ) ;
       /// constructor from list of sub-trees
       And_ ( const TreeList& trees ) ;
-      /// copy constructor 
+      /// copy constructor
       And_ ( const And_&  right ) ;
-      /// move constructor 
+      /// move constructor
       And_ (       And_&& right ) ;
-      /// MANDATORY: virtual destrcutor
-      virtual ~And_ () {}
       // ======================================================================
     public:
       // ======================================================================
@@ -743,12 +721,10 @@ namespace Decays
             const Decays::iTree_<PARTICLE>& n2 ) ;
       /// constructor from list of sub-trees
       Or_ ( const TreeList&  trees ) ;
-      /// copy constructor 
+      /// copy constructor
       Or_ ( const Or_&  right ) ;
-      /// move constructor 
-      Or_ (       Or_&& right ) ;      
-      /// MANDATORY: virtual destrcutor
-      virtual ~Or_() {}
+      /// move constructor
+      Or_ (       Or_&& right ) ;
       // ======================================================================
     public:
       // ======================================================================
@@ -813,23 +789,12 @@ namespace Decays
       // ======================================================================
     public:
       // ======================================================================
-      /// constructor from two sub-trees
-      List_ ( const Decays::iTree_<PARTICLE>& n1 ,
-              const Decays::iTree_<PARTICLE>& n2 )
-        : Decays::Trees::Or_<PARTICLE>  ( n1 , n2 )
-      {}
-      /// constructor from list of sub-trees
-      List_ ( const TreeList& trees )
-        : Decays::Trees::Or_<PARTICLE>  ( trees )
-      {}
-      /// copy constructor 
-      List_ ( const List_&  right ) 
-        : Decays::Trees::Or_<PARTICLE>  (             right   ) {}
-      /// move constructor 
-      List_ (       List_&& right ) 
-        : Decays::Trees::Or_<PARTICLE>  ( std::move ( right ) ) {}
-      /// MANDATORY: virtual destrcutor
-      virtual ~List_() {}
+      /// forward to base class constructor
+      using Decays::Trees::Or_<PARTICLE>::Or_;
+      /// copy constructor
+      List_ ( const List_&  right ) = default;
+      /// move constructor
+      List_ (       List_&& right ) = default;
       // ======================================================================
     public:
       // ======================================================================
@@ -840,8 +805,8 @@ namespace Decays
       // ======================================================================
     public:
       // ======================================================================
-      /// swap two lists 
-      void swap ( List_& right ) { swap ( this->m_trees , right->m_trees ) ; }    
+      /// swap two lists
+      void swap ( List_& right ) { swap ( this->m_trees , right->m_trees ) ; }
       // ======================================================================
     public:
       // ======================================================================
@@ -866,10 +831,10 @@ namespace Decays
       // ======================================================================
     } ;
     // ========================================================================
-    /// swap two lists 
+    /// swap two lists
     template <class PARTICLE>
-    inline void swap 
-    ( List_<PARTICLE>& a , 
+    inline void swap
+    ( List_<PARTICLE>& a ,
       List_<PARTICLE>& b ) { a.swap ( b ) ; }
     // ========================================================================
     /** @class  Not_
@@ -887,21 +852,16 @@ namespace Decays
       // ======================================================================
       /// constructor from the tree
       Not_ ( const Decays::iTree_<PARTICLE>& tree )
-        : Decays::iTree_<PARTICLE> ()
-        , m_tree ( tree )
+        : m_tree ( tree )
       {}
       /// constructor from the tree
       Not_ ( const Decays::Tree_<PARTICLE>&  tree )
-        : Decays::iTree_<PARTICLE> ()
-        , m_tree ( tree )
+        : m_tree ( tree )
       {}
       /// constructor from the tree
       Not_ (       Decays::Tree_<PARTICLE>&& tree )
-        : Decays::iTree_<PARTICLE> ()
-        , m_tree ( std::move ( tree ) )
+        : m_tree ( std::move ( tree ) )
       {}
-      /// MANDATORY: virtual destrcutor
-      virtual ~Not_ () {}
       // ======================================================================
     public:
       // ======================================================================
