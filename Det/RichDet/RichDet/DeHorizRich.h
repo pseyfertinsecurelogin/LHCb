@@ -16,7 +16,6 @@
 // External declarations
 extern const CLID CLID_DEHorizRich;
 
-
 /** @class DeHorizRich RichDet/DeHorizRich.h
  *
  * This is the DeRich detector element for HorizRich

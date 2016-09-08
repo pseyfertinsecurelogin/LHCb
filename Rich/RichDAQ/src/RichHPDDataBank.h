@@ -20,10 +20,10 @@
 #include "GaudiKernel/MsgStream.h"
 #include "GaudiKernel/GaudiException.h"
 
-// Kernel
-#include "RichKernel/RichDAQDefinitions.h"
-#include "RichKernel/RichDAQHeaderPDBase.h"
-#include "RichKernel/RichDAQFooterPDBase.h"
+// Utils
+#include "RichUtils/RichDAQDefinitions.h"
+#include "RichUtils/RichDAQHeaderPDBase.h"
+#include "RichUtils/RichDAQFooterPDBase.h"
 
 namespace Rich
 {

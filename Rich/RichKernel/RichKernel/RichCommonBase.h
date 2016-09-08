@@ -13,8 +13,8 @@
 #define RICHKERNEL_RICHCOMMONBASE_H 1
 
 // Interfaces
-#include "RichKernel/IRichToolRegistry.h"
-#include "RichKernel/IRichDetectorTool.h"
+#include "RichInterfaces/IRichToolRegistry.h"
+#include "RichInterfaces/IRichDetectorTool.h"
 
 // Gaudi
 #include "GaudiKernel/ISvcLocator.h"
@@ -62,10 +62,7 @@ namespace Rich
     /// Standard Converter-like Constructor
     CommonBase( long storage_type, 
                 const CLID &class_type, 
-                ISvcLocator *svc = NULL );
-
-    /// Destructor
-    virtual ~CommonBase( ) = default;
+                ISvcLocator *svc = nullptr );
 
   public:
 
@@ -225,13 +222,8 @@ namespace Rich
      *
      *  @return Pointer to the IRichToolRegistry interface
      */
-    inline const Rich::IToolRegistry * toolRegistry() const
+    inline const Rich::IToolRegistry * toolRegistry() const noexcept
     {
-      if ( !m_toolReg )
-      {
-        m_toolReg =
-          this -> template tool < IToolRegistry > ( "Rich::ToolRegistry", m_regName );
-      }
       return m_toolReg;
     }
 
@@ -240,18 +232,13 @@ namespace Rich
      *
      *  @return Pointer to the IRichDetectorTool interface
      */
-    inline const Rich::IDetectorTool * richDetectorTool() const
+    inline const Rich::IDetectorTool * richDetectorTool() const noexcept
     {
-      if ( !m_deRichTool )
-      {
-        m_deRichTool =
-          this -> template tool < IDetectorTool > ( "Rich::DetectorTool", "RichDetectorTool" );
-      }
       return m_deRichTool;
     }
 
     /// Pointer to Job Options Service
-    IJobOptionsSvc* joSvc() const;
+    inline IJobOptionsSvc * joSvc() const noexcept { return m_jos; }
 
     /// String matching on context()
     bool contextContains( const std::string & str ) const;
@@ -327,16 +314,16 @@ namespace Rich
   private: // data
 
     /// Pointer to tool registry
-    mutable const IToolRegistry * m_toolReg = nullptr;
+    const IToolRegistry * m_toolReg = nullptr;
 
     /// Pointer to job options service
-    mutable IJobOptionsSvc * m_jos = nullptr;
+    IJobOptionsSvc * m_jos = nullptr;
+
+    /// Pointer to detector tool for DeRich objects
+    const IDetectorTool * m_deRichTool = nullptr;
 
     /// Runtime name for RichToolRegistry
     std::string m_regName;
-
-    /// Pointer to detector too for DeRich objects
-    mutable const IDetectorTool * m_deRichTool = nullptr;
     
   };
 

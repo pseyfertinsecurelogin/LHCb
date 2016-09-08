@@ -19,10 +19,10 @@
 
 // base class and interface
 #include "GaudiAlg/GaudiTool.h"
-#include "RichKernel/IRichToolRegistry.h"
+#include "RichInterfaces/IRichToolRegistry.h"
 
-// Kernel
-#include "RichKernel/RichHashMap.h"
+// Utils
+#include "RichUtils/RichHashMap.h"
 
 namespace Rich
 {
@@ -55,9 +55,6 @@ namespace Rich
     ToolRegistry( const std::string& type,
                   const std::string& name,
                   const IInterface* parent );
-
-    /// Destructor
-    virtual ~ToolRegistry() = default;
 
     // Initialization of the tool after creation
     StatusCode initialize() final;
