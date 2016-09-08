@@ -146,10 +146,10 @@ public:
    *  @return Status of the execution
    */
   StatusCode calculateHits(const LHCb::MCHit&              fthit,
+			   const unsigned int numOfAdditionalChannels,
                            std::vector<LHCb::FTChannelID>& channelIDs,
 			   std::vector<double>& channelLeftEdges,
-			   std::vector<double>& channelRightEdges,
-			   unsigned int numOfAdditionalChannels) const;
+			   std::vector<double>& channelRightEdges) const;
 
 
   /** Get the list of SiPM channels traversed by the hit.

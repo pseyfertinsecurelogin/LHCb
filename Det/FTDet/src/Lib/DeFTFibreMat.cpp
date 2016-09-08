@@ -603,10 +603,10 @@ StatusCode DeFTFibreMat::calculateMeanChannel(const LHCb::MCHit&  fthit,
 
 
 StatusCode DeFTFibreMat::calculateHits(const LHCb::MCHit  &fthit,
+				       const unsigned int numOfAdditionalChannels,
                                        std::vector<LHCb::FTChannelID>& channelIDs,
 				       std::vector<double>& channelLeftEdges, 
-				       std::vector<double>& channelRightEdges, 
-				       unsigned int numOfAdditionalChannels) const 
+				       std::vector<double>& channelRightEdges) const 
 {
   // get hit position in global and local coordinate systems and perform checks.
   Gaudi::XYZPoint enPLocal  = geometry() -> toLocal( fthit.entry() );
