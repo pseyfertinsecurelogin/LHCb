@@ -132,15 +132,21 @@ namespace Rich
         // the tool registry
         const auto * reg = this->toolRegistry();
 
+        // tool name
+        const auto & name = reg->toolName(iName);
+
+        // tool type
+        const auto & type = reg->toolType(nickName);
+
         // Construct name
-        const auto fname = ( commonTool || parent ? iName : reg->toolName(iName) );
+        const auto & fname = ( commonTool || parent ? iName : name );
 
         // If not private tool - Check Context and OutputLevel option
-        if ( parent || this->setProperties( reg->toolName(iName) ) )
+        if ( parent || this->setProperties(name) )
         {
           
           // get tool
-          pTool = this -> template tool<TOOL>( reg->toolType(nickName), fname, parent );
+          pTool = this -> template tool<TOOL>( type, fname, parent );
           if ( UNLIKELY( !pTool ) )
           {
             this->Exception( "Null Pointer returned by ToolSvc for "+fname );
@@ -148,8 +154,7 @@ namespace Rich
           if ( UNLIKELY( this -> msgLevel(MSG::DEBUG) ) )
           {
             this -> debug() << " Acquired tool '" << pTool->name()
-                            << "' of type '" << reg->toolType(nickName) << "'" 
-                            << endmsg;
+                            << "' of type '" << type << "'" << endmsg;
           }
           
         }
