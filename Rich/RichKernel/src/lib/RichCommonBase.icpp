@@ -36,7 +36,6 @@ void Rich::CommonBase<PBASE>::initRichCommonConstructor()
 {
   m_regName = ( this->context().empty() ?
                 "RichToolRegistry" : this->context()+"_RichToolRegistry" );
-  m_deRichTool = nullptr;
   this->declareProperty( "ToolRegistryName", m_regName, "Tool Registry Name" );
 }
 
@@ -55,9 +54,6 @@ StatusCode Rich::CommonBase<PBASE>::initialize()
   m_toolReg =
     this -> template tool < IToolRegistry > ( "Rich::ToolRegistry",
                                               m_regName );
-  m_deRichTool =
-    this -> template tool < IDetectorTool > ( "Rich::DetectorTool", 
-                                              "RichDetectorTool" );
   m_jos = this -> template svc<IJobOptionsSvc>( "JobOptionsSvc" ); 
 
   // Printout from initialize

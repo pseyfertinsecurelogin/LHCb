@@ -14,7 +14,6 @@
 
 // Interfaces
 #include "RichInterfaces/IRichToolRegistry.h"
-#include "RichInterfaces/IRichDetectorTool.h"
 
 // Gaudi
 #include "GaudiKernel/ISvcLocator.h"
@@ -94,17 +93,6 @@ namespace Rich
     {
       return ( !pObj ? "Null DataObject !" :
                (pObj->registry() ? pObj->registry()->identifier() : "UnRegistered") );
-    }
-
-    /** Returns a vector with available Rich detectors
-     *
-     *  @param pObj Data object
-     *
-     *  @return std::vector<DeRich> with Rich detectors
-     */
-    inline const std::vector<DeRich*>& deRichDetectors( ) const
-    {
-      return ( this->richDetectorTool()->deRichDetectors() );
     }
 
     /** @brief Returns a pointer to the tool associated to a given nickname.
@@ -227,16 +215,6 @@ namespace Rich
       return m_toolReg;
     }
 
-    /** Returns pointer to RICH detector tool
-     *  
-     *
-     *  @return Pointer to the IRichDetectorTool interface
-     */
-    inline const Rich::IDetectorTool * richDetectorTool() const noexcept
-    {
-      return m_deRichTool;
-    }
-
     /// Pointer to Job Options Service
     inline IJobOptionsSvc * joSvc() const noexcept { return m_jos; }
 
@@ -318,9 +296,6 @@ namespace Rich
 
     /// Pointer to job options service
     IJobOptionsSvc * m_jos = nullptr;
-
-    /// Pointer to detector tool for DeRich objects
-    const IDetectorTool * m_deRichTool = nullptr;
 
     /// Runtime name for RichToolRegistry
     std::string m_regName;
