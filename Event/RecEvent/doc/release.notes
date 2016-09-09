@@ -4,6 +4,9 @@
 ! Purpose     : LHCb Event model. Reconstruction classes (Brunel output)
 !-----------------------------------------------------------------------------
 
+! 2016-09-05 - Olivier Deschamps
+  - ProtoParticle : add Ecal staturation & barycenter info for neutral protoP
+
 ! 2016-04-11 - Wouter Hulsbergen
  - Added methods to PrimaryVertex to update tukey weights and remove tracks by ID
 
