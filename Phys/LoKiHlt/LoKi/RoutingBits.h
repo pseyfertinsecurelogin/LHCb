@@ -1,4 +1,3 @@
-// $Id: RoutingBits.h,v 1.1 2010-05-17 16:01:39 ibelyaev Exp $
 // ============================================================================
 #ifndef LOKI_ROUTINGBITS_H 
 #define LOKI_ROUTINGBITS_H 1
@@ -59,21 +58,12 @@ namespace LoKi
                     const unsigned short bit4 ) ;
       /// constructor from the bits 
       RoutingBits ( const std::vector<unsigned int>& bits ) ;
-      /// MANDATORY: virtual destructor 
-      virtual ~RoutingBits () ;
       /// MANDATORY: clones method ("virtual contructor")
       virtual  RoutingBits* clone() const ;
       /// MANDATORY: the only one essential method 
       virtual result_type operator() ( /* argument */ ) const ;
       /// OPTIONAL : the nice printout 
       virtual std::ostream& fillStream ( std::ostream& s ) const ;
-      // ======================================================================
-    private: 
-      // ======================================================================
-      /// the default constructor is disabled 
-      RoutingBits () ;                    // the default consructor is disabled 
-      // ======================================================================
-    public:
       // ======================================================================
       const Bits& bits() const { return m_bits ; }      
       // ======================================================================

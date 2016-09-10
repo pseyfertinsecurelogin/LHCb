@@ -1,4 +1,3 @@
-// $Id: RoutingBits.cpp,v 1.1 2010-05-17 16:01:39 ibelyaev Exp $
 // ============================================================================
 // Include files 
 // ============================================================================
@@ -37,8 +36,6 @@
 LoKi::HLT::RoutingBits::RoutingBits 
 ( const unsigned short bit ) 
   : LoKi::AuxFunBase ( std::tie ( bit ) ) 
-  , LoKi::Functor<void,bool>() 
-  , m_fired   () 
   , m_bits    ( bit ) 
 {}
 // ============================================================================
@@ -48,8 +45,6 @@ LoKi::HLT::RoutingBits::RoutingBits
 ( const unsigned short bit1 , 
   const unsigned short bit2 ) 
   : LoKi::AuxFunBase ( std::tie ( bit1 , bit2 ) ) 
-  , LoKi::Functor<void,bool>() 
-  , m_fired   () 
   , m_bits    { bit1, bit2 }
 {
   std::sort ( m_fired.begin() , m_fired.end() ) ;  
@@ -62,8 +57,6 @@ LoKi::HLT::RoutingBits::RoutingBits
   const unsigned short bit2 , 
   const unsigned short bit3 ) 
   : LoKi::AuxFunBase ( std::tie ( bit1 , bit2 , bit3 ) ) 
-  , LoKi::Functor<void,bool>() 
-  , m_fired   () 
   , m_bits    { bit1, bit2, bit3 }
 {
   std::sort ( m_fired.begin() , m_fired.end() ) ;  
@@ -77,8 +70,6 @@ LoKi::HLT::RoutingBits::RoutingBits
   const unsigned short bit3 , 
   const unsigned short bit4 ) 
   : LoKi::AuxFunBase ( std::tie ( bit1 , bit2 , bit3 , bit4 ) ) 
-  , LoKi::Functor<void,bool>() 
-  , m_fired   () 
   , m_bits    { bit1, bit2, bit3, bit4 }
 {
   std::sort ( m_fired.begin() , m_fired.end() ) ;  
@@ -89,16 +80,10 @@ LoKi::HLT::RoutingBits::RoutingBits
 LoKi::HLT::RoutingBits::RoutingBits 
 ( const std::vector<unsigned int>&  bits ) 
   : LoKi::AuxFunBase ( std::tie ( bits ) ) 
-  , LoKi::Functor<void,bool>() 
-  , m_fired   () 
   , m_bits    ( bits ) 
 {
   std::sort ( m_fired.begin() , m_fired.end() ) ;  
 }
-// ============================================================================
-// MANDATORY: virtual destructor 
-// ============================================================================
-LoKi::HLT::RoutingBits::~RoutingBits() {}
 // ============================================================================
 // MANDATORY: clone method ("virtual contructor")
 // ============================================================================

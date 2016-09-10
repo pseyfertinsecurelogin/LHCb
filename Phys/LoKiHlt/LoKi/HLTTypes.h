@@ -1,4 +1,3 @@
-// $Id: HLTTypes.h,v 1.1.1.1 2008-09-21 14:41:20 ibelyaev Exp $
 // ============================================================================
 #ifndef LOKI_HLTTYPES_H 
 #define LOKI_HLTTYPES_H 1
