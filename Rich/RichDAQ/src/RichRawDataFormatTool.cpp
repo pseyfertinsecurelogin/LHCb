@@ -59,9 +59,6 @@ RawDataFormatTool::RawDataFormatTool( const std::string& type,
                    " LHCb::RawEventLocation::Default." );
 }
 
-// Destructor
-RawDataFormatTool::~RawDataFormatTool() { }
-
 StatusCode RawDataFormatTool::initialize()
 {
   // Initialise base class

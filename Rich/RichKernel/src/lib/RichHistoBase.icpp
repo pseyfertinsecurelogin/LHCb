@@ -14,7 +14,9 @@
 
 // local
 #include "RichKernel/RichHistoBase.h"
-#include "RichKernel/RichException.h"
+
+// Utils
+#include "RichUtils/RichException.h"
 
 // Disable warning on windows
 #ifdef _WIN32

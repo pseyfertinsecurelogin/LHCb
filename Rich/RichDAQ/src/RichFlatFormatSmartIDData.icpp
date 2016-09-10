@@ -15,7 +15,7 @@
 // local
 #include "RichFlatFormatSmartIDData.h"
 
-// Old 32 bit SmartID
+// 32 bit SmartID
 #include "Kernel/RichSmartID32.h"
 
 // =================================================================================================

@@ -17,9 +17,11 @@
 
 // Local
 #include "RichKernel/RichCommonBase.h"
-#include "RichKernel/RichHistoID.h"
-#include "RichKernel/RichMap.h"
-#include "RichKernel/RichHashMap.h"
+
+// RichUtils
+#include "RichUtils/RichHistoID.h"
+#include "RichUtils/RichMap.h"
+#include "RichUtils/RichHashMap.h"
 
 // boost
 #include "boost/array.hpp"
@@ -64,9 +66,6 @@ namespace Rich
                const CLID &class_type,
                ISvcLocator *svc = nullptr );
 
-    /// Destructor
-    virtual ~HistoBase( ) = default;
-
   private:
 
     /// Histogram Constructor initisalisations
@@ -89,10 +88,10 @@ namespace Rich
   protected:
 
     /// Number of bins for 1D histograms
-    inline unsigned int nBins1D() const { return m_nBins1D; }
+    inline unsigned int nBins1D() const noexcept { return m_nBins1D; }
 
     /// Number of bins for 2D histograms
-    inline unsigned int nBins2D() const { return m_nBins2D; }
+    inline unsigned int nBins2D() const noexcept { return m_nBins2D; }
 
   private:
 

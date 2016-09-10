@@ -4,6 +4,9 @@
 ! Purpose     : Interface to the xml description
 !-----------------------------------------------------------------------------
 
+! 2016-09-06 - Chris Jones
+ - Adapt to the split up of RichKernel.
+
 ! 2016-08-18 - Chris Jones
  - Use Rich::DAQ::HPDCopyNumber instead of plain unsigned int as copy number
    passed to dePD, deHPD and dePMT methods in the HPD and PMT Panel objects.

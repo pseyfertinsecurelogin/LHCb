@@ -12,8 +12,8 @@
 // local
 #include "RichZeroSuppData_V2.h"
 
-// RichKernel
-#include "RichKernel/RichMap.h"
+// Rich Utils
+#include "RichUtils/RichMap.h"
 
 //-----------------------------------------------------------------------------
 

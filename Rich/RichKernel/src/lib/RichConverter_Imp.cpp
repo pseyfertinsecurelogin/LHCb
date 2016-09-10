@@ -21,7 +21,7 @@
 StatusCode Rich::Converter_Imp::Error( const std::string& Message ,
                                        const StatusCode   Status ) const
 {
-  return this->Print( Message , MSG::ERROR  , Status  ) ;
+  return this->Print( Message , MSG::ERROR , Status  ) ;
 }
 
 // print and count the warning
@@ -131,14 +131,13 @@ StatusCode Rich::Converter_Imp::releaseTool ( const IAlgTool* algTool ) const
   if( this->toolSvc() == nullptr )
   { return Error ( "releaseTool(IAlgTool):: IToolSvc* points to NULL!" ) ; }
   // find a tool in the list of active tools
-  AlgTools::reverse_iterator it =
-    std::find( m_tools.rbegin() , m_tools.rend() , algTool ) ;
+  auto it = std::find( m_tools.rbegin() , m_tools.rend() , algTool ) ;
   if(  m_tools.rend() == it )
   { return Warning("releaseTool(IAlgTool):: IAlgTool* is not active"   ) ; }
   // get the tool
   IAlgTool* t = *it ;
   // cache name
-  const std::string name = t->name();
+  const auto & name = t->name();
   if ( msgLevel(MSG::DEBUG) )
   { debug() << "Releasing tool '" << name << "'" << endmsg; }
   // remove the tool from the lists
