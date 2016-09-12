@@ -1,5 +1,6 @@
-// $Id: UnpackMCVertex.cpp,v 1.5 2009-11-07 12:20:39 jonrob Exp $
-// Include files 
+
+// STL
+#include <algorithm>
 
 #include "Event/MCVertex.h"
 #include "Event/StandardPacker.h"
@@ -57,7 +58,7 @@ StatusCode UnpackMCVertex::execute()
   const char pVer = dst->packingVersion();
 
   newMCVertices->reserve( dst->mcVerts().size() );
-  for ( const LHCb::PackedMCVertex& src : dst->mcVerts() )
+  for ( const auto & src : dst->mcVerts() )
   {
 
     auto* vert = new LHCb::MCVertex( );
@@ -68,8 +69,7 @@ StatusCode UnpackMCVertex::execute()
     vert->setTime( src.tof );
     vert->setType( (LHCb::MCVertex::MCVertexType) src.type );
 
-    int hintID;
-    int key;
+    int hintID(0), key(0);
     if ( -1 != src.mother )
     {
       if ( ( 0==pVer && pack.hintAndKey32( src.mother, dst, newMCVertices, hintID, key ) ) ||
@@ -80,16 +80,37 @@ StatusCode UnpackMCVertex::execute()
       }
       else { Error( "Corrupt MCVertex Mother MCParticle SmartRef detected" ).ignore(); }
     }
-    
+
+    // List of processed refs, to check for duplicates
+    std::vector<long long> processedRefs;
+    processedRefs.reserve( src.products.size() );
+
+    // loop over refs and process
     for ( const auto& I : src.products )
     {
-      if ( ( 0==pVer && pack.hintAndKey32( I, dst, newMCVertices, hintID, key ) ) ||
-           ( 0!=pVer && pack.hintAndKey64( I, dst, newMCVertices, hintID, key ) ) )
+      // Check for duplicates ...
+      if ( std::none_of( processedRefs.begin(), processedRefs.end(),
+                         [&I]( const auto& J ) { return I == J; } ) )
       {
-        SmartRef<LHCb::MCParticle> ref( newMCVertices, hintID, key );
-        vert->addToProducts( ref );
+        // save this packed ref to the list of those already processed.
+        processedRefs.push_back(I);
+        // Unpack the ref and save to the vertex
+        hintID = key = 0;
+        if ( ( 0==pVer && pack.hintAndKey32( I, dst, newMCVertices, hintID, key ) ) ||
+             ( 0!=pVer && pack.hintAndKey64( I, dst, newMCVertices, hintID, key ) ) )
+        {
+          // Construct the smart ref
+          SmartRef<LHCb::MCParticle> ref( newMCVertices, hintID, key );
+          // save
+          vert->addToProducts( ref );
+        }
+        else { Error( "Corrupt MCVertex Daughter MCParticle SmartRef detected" ).ignore(); }
       }
-      else { Error( "Corrupt MCVertex Daughter MCParticle SmartRef detected" ).ignore(); }
+      else
+      {
+        Warning( "Found duplicate in packed MCVertex products", 
+                 StatusCode::SUCCESS ).ignore();
+      }
     }
   }
   

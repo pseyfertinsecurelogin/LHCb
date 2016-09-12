@@ -3,6 +3,9 @@
 ! Purpose     : LHCb Event model. MC truth classes (Gauss and Boole output)
 !-----------------------------------------------------------------------------
 
+! 2016-08-22 - Chris Jones
+ - Modernise a bit the various cpp implementation files.
+
 !========================= MCEvent v3r4 2016-01-27 =========================
 ! 2015-11-26 - Marco Clemencic
  - Removed (u)longlong typedef (see GAUDI-1125).

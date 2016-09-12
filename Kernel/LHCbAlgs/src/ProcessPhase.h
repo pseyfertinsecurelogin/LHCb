@@ -19,16 +19,20 @@ typedef std::vector<std::string> VectorName;
  * @date:   17th December 1999
  */
 
+class ProcessPhase final : public GaudiSequencer 
+{
 
-class ProcessPhase : public GaudiSequencer {
 public:
+
 	ProcessPhase( const std::string& name, ISvcLocator *svcloc ); ///> Constructor
-	virtual ~ProcessPhase();                                      ///> Destructor
+	virtual ~ProcessPhase() = default;                            ///> Destructor
 
 	StatusCode initialize(); ///> Create and initialise sequences of this phase
 
 private:
-  VectorName m_detList;    ///> List of subdetectors to be processed
+ 
+ VectorName m_detList;    ///> List of subdetectors to be processed
+
 };
 
 #endif    // PROCESSPHASE_H

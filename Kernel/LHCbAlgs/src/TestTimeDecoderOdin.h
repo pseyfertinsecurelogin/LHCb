@@ -15,39 +15,48 @@ namespace LHCb
   class ODIN;
 }
 
-namespace LHCbAlgsTests {
-/** @class TestTimeDecoderOdin TestTimeDecoderOdin.h
- *
- *  Fake EventTimeDecoder that generates an ODIN object with incremented run
- *  number at each call of getTime().
- *
- *  Used in the test "lhcbalgs.runchangehandler".
- *
- *  @author Marco Clemencic
- *  @date   2006-09-21
- */
-class TestTimeDecoderOdin : public GaudiTool, virtual public IEventTimeDecoder {
-public:
-  /// Standard constructor
-  TestTimeDecoderOdin( const std::string& type,
-                   const std::string& name,
-                   const IInterface* parent);
+namespace LHCbAlgsTests
+{
 
-  virtual ~TestTimeDecoderOdin(); ///< Destructor
+  /** @class TestTimeDecoderOdin TestTimeDecoderOdin.h
+   *
+   *  Fake EventTimeDecoder that generates an ODIN object with incremented run
+   *  number at each call of getTime().
+   *
+   *  Used in the test "lhcbalgs.runchangehandler".
+   *
+   *  @author Marco Clemencic
+   *  @date   2006-09-21
+   */
+  class TestTimeDecoderOdin final : public GaudiTool, 
+                                    virtual public IEventTimeDecoder
+  {
 
-  // --- implementation of IEventTimeDecoder ---
-  /// Get the time of the current event from the ODIN object.
-  /// @return The time of current event.
-  Gaudi::Time getTime() const;
+  public:
 
-private:
+    /// Standard constructor
+    TestTimeDecoderOdin( const std::string& type,
+                         const std::string& name,
+                         const IInterface* parent);
 
-  // --- local data ---
-  /// Used to remember the run number and spot a change of run number.
-  mutable unsigned int m_currentRun;
+    virtual ~TestTimeDecoderOdin() = default; ///< Destructor
 
-  /// How much to increase the run number at every call (default 1).
-  bool m_runNumberStep;
-};
+    // --- implementation of IEventTimeDecoder ---
+    /// Get the time of the current event from the ODIN object.
+    /// @return The time of current event.
+    Gaudi::Time getTime() const;
+
+  private:
+
+    // --- local data ---
+    /// Used to remember the run number and spot a change of run number.
+    mutable unsigned int m_currentRun;
+
+    /// How much to increase the run number at every call (default 1).
+    bool m_runNumberStep;
+
+  };
+
 }
+
 #endif // ODINTIMEDECODER_H

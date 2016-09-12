@@ -52,18 +52,13 @@ namespace LoKi
        *  @param location     TES-location
        *  @param useRootInTES RootInTES-flag
        */
-      Get ( const std::string& location            ,
-            const bool         useRootInTES = true ) ;
+      explicit Get ( const std::string& location            ,
+                     const bool         useRootInTES = true ) ;
       /// virtual destructor
       virtual ~Get() ;
       // ======================================================================
       /// OPTIONAL: nice printout
       virtual std::ostream& fillStream ( std::ostream& s ) const ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// default constructor is disabled
-      Get () ;                                // defalt constructor is disabled
       // ======================================================================
     public:
       // ======================================================================
@@ -114,21 +109,14 @@ namespace LoKi
       /** constructor from TES location & "rootInTes"-flag
        *  @see GaudiCommon<TYPE>::exists
        */
-      Exists ( const std::string& location            ,
-               const bool         useRootInTes = true ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~Exists() ;
+      explicit Exists ( const std::string& location            ,
+                        const bool         useRootInTes = true ) ;
       /// MANDATORY: clone method ("virtual constructor")
       virtual  Exists* clone() const ;
       /// MANDATORY: the only one essential method
       virtual  result_type operator() ( /* argument v */ ) const ;
       /// OPTIONAL: nice printout
       virtual std::ostream& fillStream ( std::ostream& s ) const ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      Exists() ;                        // the default constructor is disabled
       // ======================================================================
     } ;
     // ========================================================================
@@ -153,10 +141,8 @@ namespace LoKi
        *  @see GaudiCommon<TYPE>::exists
        *  @see GaudiCommon<TYPE>::get
        */
-      Contains ( const std::string& location            ,
-                 const bool         useRootInTes = true ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~Contains () ;
+      explicit Contains ( const std::string& location            ,
+                          const bool         useRootInTes = true ) ;
       /// MANDATORY: clone method ("virtual constructor")
       virtual  Contains* clone() const ;
       /** MANDATORY: the only one essential method
@@ -165,11 +151,6 @@ namespace LoKi
       virtual  result_type operator() ( /* argument v */ ) const ;
       /// OPTIONAL: nice printout
       virtual std::ostream& fillStream ( std::ostream& s ) const ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      Contains () ;                      // the default constructor is disabled
       // ======================================================================
     } ;
     // ========================================================================
@@ -203,8 +184,6 @@ namespace LoKi
       // ======================================================================
     private:
       // ======================================================================
-      /// the default constructor is disabled
-      HrcSumAdc () ;                      // the default constructor is disabled
       /// the station name
       std::string m_stationName         ; // the Herschel station name
       // ======================================================================
@@ -233,8 +212,6 @@ namespace LoKi
        */
       Counter ( const std::string& location              ,
                 const std::string& counter               ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~Counter () ;
       /// MANDATORY: clone method ("virtual constructor")
       virtual  Counter* clone() const ;
       /** MANDATORY: the only one essential method
@@ -249,11 +226,6 @@ namespace LoKi
       /// get the counter name
       const std::string& counter () const { return m_counter ; }
       double             bad     () const { return m_bad     ; }
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      Counter () ;                       // the default constructor is disabled
       // ======================================================================
     private:
       // ======================================================================
@@ -307,11 +279,6 @@ namespace LoKi
       virtual  result_type operator() ( /* argument v */ ) const ;
       /// OPTIONAL: nice printout
       virtual std::ostream& fillStream ( std::ostream& s ) const ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      Stat () ;                          // the default constructor is disabled
       // ======================================================================
     private:
       // ======================================================================

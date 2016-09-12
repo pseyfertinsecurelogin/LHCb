@@ -1,5 +1,3 @@
-// $Id: EvtCounter.cpp,v 1.1 2007-10-11 08:47:29 cattanem Exp $
-// Include files
 
 // from Gaudi
 #include "GaudiKernel/IIncidentSvc.h"
@@ -24,17 +22,19 @@ DECLARE_TOOL_FACTORY( EvtCounter )
 EvtCounter::EvtCounter( const std::string& type,
                         const std::string& name,
                         const IInterface* parent )
-  : base_class ( type, name , parent ),
-  m_eventCounter(0){
+: base_class ( type, name , parent )
+{
   declareProperty("InitialCount", m_initialCount = 1,
                   "Value to be used for the first event.");
   declareProperty("UseIncident", m_useIncident = true,
                   "Whether to increment the counter at every BeginEvent incident.");
 }
+
 //=============================================================================
 // Initialize method, retrieve necessary services
 //=============================================================================
-StatusCode EvtCounter::initialize() {
+StatusCode EvtCounter::initialize() 
+{
 
   // Mandatory initialization of GaudiTool
   StatusCode sc = GaudiTool::initialize();

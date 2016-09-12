@@ -63,11 +63,6 @@ namespace LoKi
       // ======================================================================
     private:
       // ======================================================================
-      /// default constructor is disabled
-      HasRecSummary () ;                    // default constructor is disabled
-      // ======================================================================
-    private:
-      // ======================================================================
       /// the key to be used for LHCb::RecSummary::hasInfo method 
       int m_key ; // the key to be used for LHCb::RecSummary::hasInfo method
       // ======================================================================
@@ -104,11 +99,6 @@ namespace LoKi
       virtual  result_type operator() ( /* argument v */ ) const ;
       /// OPTIONAL: nice printout 
       virtual std::ostream& fillStream ( std::ostream& s ) const ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// default constructor is disabled
-      RecSummary () ;                       // default constructor is disabled
       // ======================================================================
     private:
       // ======================================================================

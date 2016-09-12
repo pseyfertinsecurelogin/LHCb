@@ -61,24 +61,12 @@ namespace
                10000       * std::numeric_limits<long double>::epsilon () ) ;
   // ==========================================================================
   /// get a factorial 
-  inline unsigned long long 
-  _factorial_i_ ( const unsigned short N ) 
-  {
-    return 
-      0 == N ?  1 : 
-      0 == N ?  1 : 
-      2 == N ?  2 : 
-      3 == N ?  6 : 
-      4 == N ? 24 : N * _factorial_i_ ( N - 1 ) ;
-  }
-  // ==========================================================================
-  /// get a factorial 
   inline long double 
   _factorial_d_ ( const unsigned short N ) 
   {
     return 
       0 == N ?  1 : 
-      0 == N ?  1 : 
+      1 == N ?  1 : 
       2 == N ?  2 : 
       3 == N ?  6 : 
       4 == N ? 24 : N * _factorial_d_ ( N - 1 ) ;

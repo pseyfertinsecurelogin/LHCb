@@ -88,8 +88,7 @@ namespace LoKi
       // ====================================================================
       // the default constructor 
       Item () 
-        : m_name (  ) 
-        , m_fun  ( LoKi::BasicFunctors<void>::Constant ( -1.e+10 ) )
+        : m_fun  ( LoKi::BasicFunctors<void>::Constant ( -1.e+10 ) )
         , m_cnt  ( 0 ) 
       {}
       // ====================================================================
@@ -124,12 +123,9 @@ namespace LoKi
       ISvcLocator*       pSvc ) // pointer to the service locator
       : GaudiAlgorithm ( name , pSvc ) 
     //
-      , m_map       () 
-      , m_preambulo () 
       , m_factory   ( "LoKi::Hybrid::CoreFactory/CoreFactory:PUBLIC" ) 
     //
       , m_location  ( "Counters/" + name  ) 
-      , m_items     () 
     {    
       declareProperty 
         ( "Preambulo"  , 
@@ -154,17 +150,13 @@ namespace LoKi
           m_location  , 
           "TES-location of counters" ) ;
     } 
-    /// virtual and protected destructor 
-    virtual ~CounterAlg() {} ;
     // ========================================================================
   private:
     // ========================================================================
-    /// the default constructor is disabled 
-    CounterAlg () ;                      // the default constructor is disabled 
     /// the copy constructor is disabled 
-    CounterAlg ( const CounterAlg& ) ;      // the copy constructor is disabled 
+    CounterAlg ( const CounterAlg& ) = delete ;      // the copy constructor is disabled 
     /// the assignement operator is disabled 
-    CounterAlg& operator=( const CounterAlg& ) ; // the assignement is disabled
+    CounterAlg& operator=( const CounterAlg& ) = delete ; // the assignement is disabled
     // ========================================================================
   protected:
     // ========================================================================
@@ -181,8 +173,7 @@ namespace LoKi
       const std::vector<std::string>& lines  = m_preambulo ;
       //
       std::string result ;
-      for ( std::vector<std::string>::const_iterator iline = 
-              lines.begin() ; lines.end() != iline ; ++iline ) 
+      for ( auto iline = lines.begin() ; lines.end() != iline ; ++iline ) 
       {
         if ( lines.begin() != iline ) { result += "\n" ; }
         result += (*iline) ;
@@ -252,7 +243,7 @@ StatusCode LoKi::CounterAlg::updateItems ()                 // update variables
   //
   m_items.clear() ;
   m_items.reserve ( m_map.size() ) ;
-  for ( Map::const_iterator ivar = m_map.begin() ; m_map.end() != ivar ; ++ivar ) 
+  for ( auto ivar = m_map.begin() ; m_map.end() != ivar ; ++ivar ) 
   {
     Item item ;
     StatusCode sc = factory->get ( ivar->second , item.m_fun , preambulo() ) ;
@@ -307,24 +298,21 @@ StatusCode LoKi::CounterAlg::finalize   ()
 // ============================================================================ 
 StatusCode LoKi::CounterAlg::execute () 
 {
-
   setFilterPassed(true);
-
   //
-  Gaudi::Numbers* numbers = 0 ;
+  Gaudi::Numbers* numbers = nullptr ;
   //
   // get(create) counters in TES (if needed) 
   if ( !m_location.empty() ) 
   { numbers = getOrCreate<Gaudi::Numbers,Gaudi::Numbers> 
       ( evtSvc() , m_location ) ; }
   //
-  for ( Items::const_iterator item = m_items.begin() ; 
-        m_items.end() != item ; ++item )
+  for ( auto item = m_items.cbegin() ; m_items.cend() != item ; ++item )
   {
     // evaluate the variable 
     const double value = (item->m_fun)() ;
     // update TES object
-    if ( 0 != numbers ) { numbers->counters().update ( item->m_name , value ) ; }
+    if ( numbers ) { numbers->counters().update ( item->m_name , value ) ; }
     // update local counters 
     item->m_cnt->add ( value ) ;
   }
@@ -341,4 +329,3 @@ DECLARE_NAMESPACE_ALGORITHM_FACTORY(LoKi,CounterAlg)
 // ============================================================================
 // The END 
 // ============================================================================
-  

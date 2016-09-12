@@ -42,7 +42,7 @@ namespace Gaudi
    *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
    *  @date 2011-10-05
    */
-  class IncidentFilter 
+  class IncidentFilter
     : public            GaudiAlgorithm 
     , public virtual IIncidentListener 
   {
@@ -70,7 +70,7 @@ namespace Gaudi
     ( const std::string& name ,
       ISvcLocator*       pSvc ) ;                       // standard constructor 
     /// virtual destructor 
-    virtual ~IncidentFilter ()  ;                       //   virtual destructor 
+    virtual ~IncidentFilter () = default ;              //   virtual destructor 
     // ========================================================================
   private: 
     // ========================================================================
@@ -134,7 +134,7 @@ namespace Gaudi
     ( const std::string& name ,
       ISvcLocator*       pSvc ) ;                       // standard constructor 
     /// virtual destructor 
-    virtual ~IncidentVeto ()  ;                         //   virtual destructor 
+    virtual ~IncidentVeto () = default ;                //   virtual destructor 
     // ========================================================================
   private: 
     // ========================================================================
@@ -173,10 +173,6 @@ Gaudi::IncidentFilter::IncidentFilter
   // ==========================================================================
 }
 // ============================================================================
-// virtual destructor 
-// ============================================================================
-Gaudi::IncidentFilter::~IncidentFilter(){}
-// ============================================================================
 // standard initialization 
 // ============================================================================
 StatusCode Gaudi::IncidentFilter::initialize () 
@@ -212,9 +208,7 @@ void Gaudi::IncidentFilter::subscribe ()
   //                  
   IIncidentSvc* isvc = svc<IIncidentSvc>( "IncidentSvc" ) ;
   //
-  const LIST& tmp = m_incidents ;
-  for ( LIST::const_iterator item = tmp.begin() ; tmp.end() != item ; ++item )
-  { isvc->addListener ( this , *item ) ; } 
+  for ( const auto & item : m_incidents ) { isvc->addListener ( this , item ) ; } 
   //
   if ( m_incidents.end() == std::find ( m_incidents.begin       () , 
                                         m_incidents.end         () , 
@@ -234,9 +228,8 @@ void Gaudi::IncidentFilter::unsubscribe ()
   //
   IIncidentSvc* isvc = svc<IIncidentSvc>( "IncidentSvc" ) ;
   //
-  const LIST& tmp = m_old_incidents ;
-  for ( LIST::const_iterator item = tmp.begin() ; tmp.end() != item ; ++item )
-  { isvc->removeListener ( this , *item ) ; } 
+  for ( const auto & item : m_old_incidents ) 
+  { isvc->removeListener ( this , item ) ; } 
   //
   m_old_incidents = m_incidents ;
   //
@@ -253,9 +246,8 @@ void Gaudi::IncidentFilter::handler_1 ( Property&  /* p */ )
   // unsibscribe old incidents 
   IIncidentSvc* isvc = svc<IIncidentSvc>( "IncidentSvc" ) ;
   //
-  const LIST& tmp = m_old_incidents ;
-  for ( LIST::const_iterator item = tmp.begin() ; tmp.end() != item ; ++item )
-  { isvc->removeListener ( this , *item ) ; } 
+  for ( const auto & item :  m_old_incidents ) 
+  { isvc->removeListener ( this , item ) ; } 
   //
   // subscribe new incidents 
   subscribe() ;
@@ -302,10 +294,6 @@ Gaudi::IncidentVeto::IncidentVeto
 {
   setVeto ( true ) ;
 }
-// ============================================================================
-// virtual destructor 
-// ============================================================================
-Gaudi::IncidentVeto::~IncidentVeto(){}
 // ============================================================================
 
 

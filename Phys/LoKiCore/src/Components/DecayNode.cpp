@@ -60,17 +60,13 @@ namespace LoKi
     {
       declareInterface<Decays::IDecayNode> ( this ) ;
     }
-    /// virtual & protected destructor 
-    virtual ~DecayNode() {}
     // ========================================================================
   private:
     // ========================================================================
-    /// the default constructor is disabled 
-    DecayNode ( ) ;                      // the default constructor is disabled 
     /// the copy constructor is disabled 
-    DecayNode ( const DecayNode& ) ;        // the copy constructor is disabled 
+    DecayNode ( const DecayNode& ) = delete;        // the copy constructor is disabled 
     /// the assignement operator is disabled 
-    DecayNode& operator=( const DecayNode& ) ;       // no assignement operator
+    DecayNode& operator=( const DecayNode& ) = delete ;       // no assignement operator
     // ========================================================================
   } ; //                                                 end of class DecayNode
   // ==========================================================================
@@ -85,5 +81,3 @@ DECLARE_NAMESPACE_TOOL_FACTORY(LoKi,DecayNode)
 // ============================================================================
 // The END 
 // ============================================================================
-
-

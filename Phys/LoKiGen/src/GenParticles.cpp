@@ -1269,9 +1269,9 @@ namespace
 {
   // ==========================================================================
   /// invalid Node
-  const Decays::Nodes::Invalid                                      s_NODE ;
+  const Decays::Nodes::Invalid                                      s_NODE{} ;
   /// invalid decay
-  const Decays::Trees::Types_<const HepMC::GenParticle*>::Invalid   s_TREE ;
+  const Decays::Trees::Types_<const HepMC::GenParticle*>::Invalid   s_TREE{} ;
   /// "Factory"
   const std::string  s_FACTORY = "LoKi::GenDecay" ;
   // ==========================================================================

@@ -1,54 +1,54 @@
 // ============================================================================
-#ifndef LOKI_FILTERALG_H 
+#ifndef LOKI_FILTERALG_H
 #define LOKI_FILTERALG_H 1
 // ============================================================================
 // Include files
 // ============================================================================
-// GaudiAlg 
+// GaudiAlg
 // ============================================================================
 #include "GaudiAlg/GaudiAlgorithm.h"
 // ============================================================================
 /** @file LoKi/FilterAlg.h
  *
- *  This file is a part of LoKi project - 
+ *  This file is a part of LoKi project -
  *    "C++ ToolKit  for Smart and Friendly Physics Analysis"
  *
  *  The package has been designed with the kind help from
- *  Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas, 
- *  contributions and advices from G.Raven, J.van Tilburg, 
+ *  Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas,
+ *  contributions and advices from G.Raven, J.van Tilburg,
  *  A.Golutvin, P.Koppenburg have been used in the design.
  */
 // ============================================================================
-namespace LoKi 
+namespace LoKi
 {
   // ===========================================================================
   /** @class FilterAlg LoKi/FilterAlg.h
-   *  The base class for implementation of various 
+   *  The base class for implementation of various
    *  "hybrid" filter algorithms
    *
-   *  The basic algorithm properties properties  
+   *  The basic algorithm properties properties
    *   (in additon to properties form GaudiAlgortuhm base class) are:
    *   - "Factory"   : the type/name of LoKi/Bender "hybrid" factory
-   *   - "Code"      : the string represenattion of the functor 
+   *   - "Code"      : the string represenattion of the functor
    *   - "Preambulo" : the list of strings for "preambulo"-code
-   * 
+   *
    *  The methods, convinient for defined class are:
-   *     - <c>factory()</c> : gets the access to LoKi/Bende "hybrid" 
-   *                          factory type/name 
+   *     - <c>factory()</c> : gets the access to LoKi/Bende "hybrid"
+   *                          factory type/name
    *     - <c>code()</c> : get the access to the code string itself
-   *     - <c>updateRequired()</c> : simple function which indicated that 
+   *     - <c>updateRequired()</c> : simple function which indicated that
    *                      the properties has been modified and the recreation
-   *                      of functor is required 
-   *     - <c>i_decode()</c> : helper function for implementation 
+   *                      of functor is required
+   *     - <c>i_decode()</c> : helper function for implementation
    *                           of the actual functor decoding.
    *
-   *  The clients are requires to implement pure abstract 
+   *  The clients are requires to implement pure abstract
    *   method "decode()".
    *  The "typical" implementation of <c>decode()</c> is:
    *
-   *  @code 
+   *  @code
    *
-   *  StatusCode MyAlg::decode() 
+   *  StatusCode MyAlg::decode()
    *  {
    *
    *     typedef XXXXXX FACTORY ;
@@ -56,29 +56,29 @@ namespace LoKi
    *     return i_decode<FACTORY>( m_functor ) ;
    *  }
    *
-   *  @endcode 
-   *  where <c>m_functor</c> is a data member (placeholder) 
+   *  @endcode
+   *  where <c>m_functor</c> is a data member (placeholder)
    *  of the type, known to the factory.
    *
    *  The "typical" implementation of <c>execute()</c> is:
-   *  
-   *  @code 
    *
-   *  StatusCode MyAlg::execute() 
+   *  @code
+   *
+   *  StatusCode MyAlg::execute()
    *   {
-   *     if ( updateRequired() ) 
+   *     if ( updateRequired() )
    *       { Assert( decode().isSuccess() , "Unable to decode" + code() ) ; }
-   *   
+   *
    *     ...
    *     return StatusCode::SUCCESS ;
    *   }
    *
-   *  @endcode 
-   * 
+   *  @endcode
+   *
    *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
    *  @date   2008-09-23
    */
-  class FilterAlg : public GaudiAlgorithm 
+  class FilterAlg : public GaudiAlgorithm
   {
   public:
     // ========================================================================
@@ -87,10 +87,10 @@ namespace LoKi
      *  @see      Algorithm 
      *  @see      AlgFactory
      *  @see     IAlgFactory
-     *  @param name the algorithm instance name 
-     *  @param pSvc pointer to Service Locator 
+     *  @param name the algorithm instance name
+     *  @param pSvc pointer to Service Locator
      */
-    FilterAlg ( const std::string& name ,   // the algorithm instance name 
+    FilterAlg ( const std::string& name ,   // the algorithm instance name
                 ISvcLocator*       pSvc ) ; // pointer to the service locator
     // ========================================================================
     /// the initialization of the algorithm
@@ -103,29 +103,29 @@ namespace LoKi
     /// the assignement operator is disabled 
     FilterAlg& operator=( const FilterAlg& ) = delete;   // the assignement is disabled
     // ========================================================================
-  public: // property update handlers 
+  public: // property update handlers
     // ========================================================================
-    /// update the factory 
-    void updateFactory   ( Property& /* p */ ) ;          // update the factory 
-    /// update the code  
-    void updateCode      ( Property& /* p */ ) ;             // update the code 
-    /// update the preambulo 
-    void updatePreambulo ( Property& /* p */ ) ;        // update the preambulo 
+    /// update the factory
+    void updateFactory   ( Property& /* p */ ) ;          // update the factory
+    /// update the code
+    void updateCode      ( Property& /* p */ ) ;             // update the code
+    /// update the preambulo
+    void updatePreambulo ( Property& /* p */ ) ;        // update the preambulo
     // ========================================================================
   protected:
     // ========================================================================
-    /// get the type/name of the factory 
+    /// get the type/name of the factory
     const std::string& factory   () const { return m_factory ; }
-    /// get the code itself 
+    /// get the code itself
     const std::string& code      () const { return m_code    ; }
     /// get the preambulo
     const std::vector<std::string>& preambulo_() const { return m_preambulo_ ; }
     /// get the preambulo
-    const std::string& preambulo() const { return m_preambulo ; }    
-    // check the nesessity of updated 
-    inline bool updateRequired () const 
+    const std::string& preambulo() const { return m_preambulo ; }
+    // check the nesessity of updated
+    inline bool updateRequired () const
     { return m_factory_updated || m_code_updated || m_preambulo_updated ; }
-    // add to preambulo 
+    // add to preambulo
     void addToPreambulo ( const std::string&              item ) ;
     // set the preambulo
     void setPreambulo   ( const std::vector<std::string>& items ) ;
@@ -134,16 +134,16 @@ namespace LoKi
     /// =======================================================================
     /** decode the functor
      *  it is assumed that this method is implemented as
-     *  
-     *  StatusCode MyAlg::decode() 
+     *
+     *  StatusCode MyAlg::decode()
      *  {
      *     typedef XXXXXX FACTORY ;
      *     tydedef LoKi::BasicFunctor<XXXX>::PredicateFromPredicate  FUNCTOR ;
      *     // or...
      *     // tydedef LoKi::BasicFunctor<XXXX>::FunctionFromFunction FUNCTOR ;
      *
-     *     FUNCTOR& functor = ... ; 
-     *   
+     *     FUNCTOR& functor = ... ;
+     *
      *     return i_decode<FACTORY>( functor ) ;
      *  }
      */
@@ -151,8 +151,8 @@ namespace LoKi
     /// =======================================================================
   protected:
     // ========================================================================
-    /** perform the actual decoding 
-     *  @param functor placeholder where to decode the fucntor 
+    /** perform the actual decoding
+     *  @param functor placeholder where to decode the fucntor
      */
     template <class FACTORY, class FUNCTOR>
     StatusCode i_decode ( FUNCTOR& functor )
@@ -163,12 +163,12 @@ namespace LoKi
       StatusCode sc = _factory-> get ( code() , functor , preambulo () ) ;
       // release the factory (not needed anymore)
       this->releaseTool ( _factory ).ignore() ;
-      if ( sc.isFailure() ) 
+      if ( sc.isFailure() )
       { return Error("Unable to decode functor '" + code() + "'" , sc ) ; }
       //
-      if( msgLevel(MSG::DEBUG) ) debug() << "Requested code: \n'" 
-                                         << code () 
-                                         << "'\n -> Decoded functor :\n'" 
+      if( msgLevel(MSG::DEBUG) ) debug() << "Requested code: \n'"
+                                         << code ()
+                                         << "'\n -> Decoded functor :\n'"
                                          << functor << "'" << endmsg ;
       //
       m_factory_updated   = false ;
@@ -180,7 +180,7 @@ namespace LoKi
     /// =======================================================================
   protected:
     // ========================================================================
-    void set_code_updated      ( const bool value ) 
+    void set_code_updated      ( const bool value )
     { m_code_updated      = value ; }
     void set_factory_updated   ( const bool value )
     { m_factory_updated   = value ; }
@@ -195,7 +195,7 @@ namespace LoKi
     std::string m_code = { "<unspecified>" };                // the filter/code criteria itself
     /// the preambulo itself 
     std::vector<std::string> m_preambulo_ ;             // the preambulo itself
-    /// the preambulo itself 
+    /// the preambulo itself
     std::string m_preambulo ;                           // the preambulo itself
     // ========================================================================
   private:
@@ -209,7 +209,7 @@ namespace LoKi
     // ========================================================================
   };
   // ==========================================================================
-} //                                                      end of namespace LoKi 
+} //                                                      end of namespace LoKi
 // ============================================================================
 //                                                                      The END
 // ============================================================================

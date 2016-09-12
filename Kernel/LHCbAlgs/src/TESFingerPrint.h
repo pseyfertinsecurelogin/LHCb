@@ -17,22 +17,24 @@ class IDataStoreLeaves;
  *  @author Illya Shapoval
  *  @date   2011-05-11
  */
-class TESFingerPrint : public GaudiAlgorithm {
+class TESFingerPrint final : public GaudiAlgorithm 
+{
+
 public:
+
   /// Standard constructor
   TESFingerPrint( const std::string& name, ISvcLocator* pSvcLocator );
 
-  virtual ~TESFingerPrint( ); ///< Destructor
+  virtual ~TESFingerPrint( ) = default; ///< Destructor
 
   virtual StatusCode initialize();    ///< Algorithm initialization
   virtual StatusCode execute   ();    ///< Algorithm execution
   virtual StatusCode finalize  ();    ///< Algorithm finalization
 
-protected:
-
 private:
+
   /// Pointer to the (public) tool used to retrieve the objects in a file.
-  IDataStoreLeaves *m_leavesTool;
+  IDataStoreLeaves *m_leavesTool = nullptr;
 
   /// Collection of objects being selected
   IDataSelector m_objects;
@@ -48,4 +50,5 @@ private:
   std::string m_output_file_name;
 
 };
+
 #endif // TESFINGERPRINT_H

@@ -4,8 +4,6 @@
  *
  *  Header file for RICH reconstruction tool interface : Rich::Rec::MC::IMCTruthTool
  *
- *  $Id: IRichRecMCTruthTool.h,v 1.4 2009-06-08 18:21:10 jonrob Exp $
- *
  *  @author Chris Jones   Christopher.Rob.Jones@cern.ch
  *  @date   15/03/2002
  */
@@ -23,6 +21,7 @@
 // Kernel
 #include "Kernel/RichParticleIDType.h"
 #include "Kernel/RichRadiatorType.h"
+#include "Kernel/RichSmartID.h"
 
 // Event Model
 namespace LHCb

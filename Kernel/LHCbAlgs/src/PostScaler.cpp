@@ -23,11 +23,7 @@ DECLARE_ALGORITHM_FACTORY( PostScaler )
 PostScaler::PostScaler( const std::string& name,
                           ISvcLocator* pSvcLocator)
   : GaudiAlgorithm ( name , pSvcLocator )
-  , m_nEvents(0)
-  , m_nEventsAll(0)
-  , m_eventCounter(0)
 {
-  
   declareProperty("PercentPass", m_percentPass=100.0 );
   declareProperty("ForcedReduction", m_forcedReduction=1. );
   declareProperty("SafetyMargin", m_margin=0.5 );
@@ -35,14 +31,10 @@ PostScaler::PostScaler( const std::string& name,
 }
 
 //=============================================================================
-// Destructor
-//=============================================================================
-PostScaler::~PostScaler() {}
-
-//=============================================================================
 // Initialization
 //=============================================================================
-StatusCode PostScaler::initialize() {
+StatusCode PostScaler::initialize()
+{
   StatusCode sc = GaudiAlgorithm::initialize(); // must be executed first
   if ( sc.isFailure() ) return sc;  // error printed already by GaudiAlgorithm
   if ( UNLIKELY(msgLevel(MSG::DEBUG)) ) debug() << "==> Initialize" << endmsg;
@@ -50,25 +42,29 @@ StatusCode PostScaler::initialize() {
   if (m_forcedReduction > 1.)
     m_eventCounter = tool<IEventCounter>( "EvtCounter" );
 
-  return StatusCode::SUCCESS;
+  return sc;
 }
 
 //=============================================================================
 // Main execution
 //=============================================================================
-StatusCode PostScaler::execute() {
+StatusCode PostScaler::execute()
+{
 
   bool accepted = true ;
-  m_nEventsAll++ ;
+  ++m_nEventsAll;
   
   // random number method
-  if (m_percentPass < 100.){    
+  if ( m_percentPass < 100. ) 
+  {    
     Rndm::Numbers random(randSvc(), Rndm::Flat(0.0,100.));
-    if ( random ){
-      double r = random() ;
+    if ( random )
+    {
+      const auto r = random() ;
       if( UNLIKELY( msgLevel(MSG::VERBOSE) ) )
         verbose() << "Random number thrown: " << r << endmsg;
-      if ( r > m_percentPass ) {
+      if ( r > m_percentPass )
+      {
         if( UNLIKELY( msgLevel(MSG::VERBOSE) ) )
           verbose() << "Random filter failed" << endmsg;
         accepted = false ;
@@ -80,14 +76,16 @@ StatusCode PostScaler::execute() {
   }
   
   // Event number fraction method
-  if (m_forcedReduction > 1.){
-    long m_event = m_eventCounter->getEventCounter() ;
+  if ( m_forcedReduction > 1. ) 
+  {
+    const auto event = m_eventCounter->getEventCounter() ;
     if( UNLIKELY( msgLevel(MSG::VERBOSE) ) )
-      verbose() << "event number is now " << m_event << endmsg;
+      verbose() << "event number is now " << event << endmsg;
   
-    double max_evts = (double)m_event/m_forcedReduction + m_margin ;
+    const auto max_evts = (double)event/m_forcedReduction + m_margin ;
     //  max_evts = max_evts + 3*sqrt(max_evts);  /// 3 sigma security
-    if ( m_nEvents > max_evts ) {
+    if ( m_nEvents > max_evts ) 
+    {
       if( UNLIKELY( msgLevel(MSG::VERBOSE) ) )
         verbose() << "Filter not passed as " << m_nEvents
                   << " > " << max_evts << " (reduction 1/" << m_forcedReduction  
@@ -101,7 +99,7 @@ StatusCode PostScaler::execute() {
   }
   
   // event passed
-  if ( accepted ) m_nEvents++;
+  if ( accepted ) ++m_nEvents;
   
   setFilterPassed( accepted ) ;
   return StatusCode::SUCCESS;
@@ -110,11 +108,10 @@ StatusCode PostScaler::execute() {
 //=============================================================================
 //  Finalize
 //=============================================================================
-StatusCode PostScaler::finalize() {
-
+StatusCode PostScaler::finalize() 
+{
   info() << "Event Filtered " << m_nEventsAll << endmsg;
   info() << "Event Accepted " << m_nEvents << endmsg;
-
   return GaudiAlgorithm::finalize() ;
 }
 

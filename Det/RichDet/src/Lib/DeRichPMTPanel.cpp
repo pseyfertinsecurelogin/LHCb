@@ -1537,13 +1537,13 @@ bool DeRichPMTPanel::isInPmtAnodeLateralAcc(const Gaudi::XYZPoint& aPointInPmtAn
 }
 
 
-unsigned int DeRichPMTPanel::pdNumber( const LHCb::RichSmartID& smartID ) const
+Rich::DAQ::HPDCopyNumber DeRichPMTPanel::pdNumber( const LHCb::RichSmartID& smartID ) const
 {
   //  info()<<"derich pmt panel smartid "<<smartID <<endmsg;
 
-  return ( smartID.rich() == rich() && smartID.panel() == side() ?
-           smartID.pdCol() * m_NumPmtInRichModule  + smartID.pdNumInCol() :
-           nPDs() + 1 );
+  return Rich::DAQ::HPDCopyNumber( smartID.rich() == rich() && smartID.panel() == side() ?
+                                   smartID.pdCol() * m_NumPmtInRichModule  + smartID.pdNumInCol() :
+                                   nPDs() + 1 );
 }
 bool DeRichPMTPanel::pdGrandSize( const LHCb::RichSmartID& smartID ) const 
 {
@@ -1582,30 +1582,27 @@ bool DeRichPMTPanel::pdGrandSize( const LHCb::RichSmartID& smartID ) const
 //  return dePmt;
 //}
 
-const DeRichPD* DeRichPMTPanel::dePD( const unsigned int PmtCopyNumber ) const
+const DeRichPD* DeRichPMTPanel::dePD( const Rich::DAQ::HPDCopyNumber PmtCopyNumber ) const
 {
-
-  const DeRichPD* aPD =  dePMT(  PmtCopyNumber );
-
-  return aPD;
+  return dePMT(  PmtCopyNumber );
 }
 
 
-const DeRichPMT* DeRichPMTPanel::dePMT( const unsigned int PmtCopyNumber ) const
+const DeRichPMT* DeRichPMTPanel::dePMT( const Rich::DAQ::HPDCopyNumber PmtCopyNumber ) const
 {
   const DeRichPMT * dePmt = nullptr;
 
-  int aTotNumPmt= m_Rich1TotNumPmts + m_Rich2TotNumPmts;
+  unsigned int aTotNumPmt= m_Rich1TotNumPmts + m_Rich2TotNumPmts;
   //  if(rich() == Rich::Rich2 && m_Rich2UseGrandModule ) {
   //    aTotNumPmt= m_Rich1TotNumPmts + m_Rich2TotNumPmts;
   // }
   
 
-  if ( ((int) PmtCopyNumber) < ( aTotNumPmt  ) )
+  if ( PmtCopyNumber.data() < aTotNumPmt )
   {
-    const unsigned int Mnum = (int) (PmtCopyNumber/m_NumPmtInRichModule);
+    const unsigned int Mnum = (unsigned int) (PmtCopyNumber.data()/m_NumPmtInRichModule);
     const unsigned int MNumInCurPanel = PmtModuleNumInPanelFromModuleNumAlone(Mnum);
-    const unsigned int Pnum =  PmtCopyNumber - ( Mnum * m_NumPmtInRichModule);
+    const unsigned int Pnum =  PmtCopyNumber.data() - ( Mnum * m_NumPmtInRichModule);
     // info()<<"DeRichPMTPanel  current rich side pmtcopynum "<<rich()<<"  "<<side()<<"  "<<PmtCopyNumber<<  endmsg;
 
     //        info()<<"dePmtpanel depmt mNum "<<Mnum << endmsg;

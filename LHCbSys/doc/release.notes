@@ -14,6 +14,275 @@
 </ul>
 </b>
 
+<H1><A NAME=v41r1>2016-09-06 LHCbSys v41r1</A></H1>
+This version uses Gaudi v27r1 and LCG_84 with ROOT 6.06.02.
+<p>
+This version is released on master branch. 
+
+<h2>New or changed functionalities</h2>
+<dl>
+
+<dt>[MR !235] LHCBGAUSS-791: In L0Conf, use LUT version V8 also for 2016 L0 emulation
+
+<dt>[MR !227] (LHCbMath): Rewrite 2D/3D histo interpolation
+<dd> 2D & 3D case: implement all possible interpolation rules, up to biqubic and triqubic
+<dd> add possibility to interpolate for "density" ( "bin-content"/"bin-volume")
+<dd> add possibility for extrapolation
+<dd> better/uniform treatment of edge case
+
+<dt>[MR !202] (LHCbMath): Choose.h/.cpp
+<dd> extend a bit the range for precise answer
+<dd> return well-defined value for overflow
+<dd> more tiny improvements
+
+<dt>[MR !180, !166] (LHCbMath): Add more functions to Bernstein
+<dd> Nearest polynomial of lower degree,
+<dd> Power function
+<dd> (long) Polynomial division
+<dd> Filter noise
+<dd> q-norm
+<dd> More CPU efficient implementation of "elevate/reduce" pair
+<dd> Constructor with automatic creation of polynomial interpolant (in Bernstein form) using Newton-Bernstein algorithm
+<dd> Allow change/extend/shrink domain for Bernstein polynomials
+<dd> Allow math-ooperations for (Bernstein) polynomials with different domains
+ 
+<dt>[MR !160, !142] (LHCbMath): Few more new features
+<dd> Extend operations with polynomials
+<dd> Allow change/extend/shrink domain for Bernstein polynomials
+<dd> Allow math-ooperations for (Bernstein) polynomials with different domains
+<dd> Collect interpolation functions into separate header file
+<dd> Add Neville interpolation algorithm
+<dd> Add few more signatures for interpolation functions
+<dd> Add optional range for splines/interpolations
+<dd> Reduce code duplication
+<dd> Add more protection for invalid covariances in math-operations for ValueWithError objects
+<dd> Add erfi function
+<dd> Replace std::array with std::vector for PseudoVoigt
+
+<dt> [MR !207] (PartProp): Update a bit DumpParticleProperties
+<dd> Allow to define the explicit DDDB and CONDDB tags, DataType and Simulation flag
+<dd> Make use of ArgumentParser
+<dd> Define better alias
+
+<dt>[MR !169] (DAQSys): disable hlt decoders in DecodersDB
+<dd> Disable HltSelReportsDecoder, HltDecReportsDecoder, HltVertexReportsDecoder as they are superseded by the split HLT (Hlt{1,2}xx
+xReportsDecoder) versions
+
+<dt>[MR !165] (DDDB): Update default database tags to the latest ones
+<dd> DQFLAGS, 2016: dq-20160621-5
+
+<dt>[MR !147] (HltDAQ) HltPackedDataWriter: keep m_compression and m_compressionAlg in sync through updateHandler
+    
+<dt>[MR !157, !123] (RichKernel)
+<dd> Add an empty() method to RichPixelCluster
+<dd> Add rich flipped track state creator
+
+<dt>[MR !229] (GaudiConf): Adapt TurboPrescaler for streaming
+<dd> The TurboPrescaler was not working together with streaming as it was setting its filter to true if any non-prescaled Turbo line
+ fired. Removed this. Fixes LBHLT-39
+
+<dt>[MR !225] (DAQUtils): Give bank killer the option KillSourceID
+<dd> Allows us to kill the Hlt2 SelReports in Tesla while leaving the reports of Hlt1 intact.
+<dd> Also on 2016-patches branch, see MR !70
+
+<dt>[MR !216] (LHCbKernel, RichDet, RichDAQ): 64bit RichSmartID support
+<dd> Backports some of the changes in the RichTTFUStudies branch to master. SmartID stays 32bit, but lays the ground for an easier m
+igration later on if required.
+<dd> In particular adds a RichSmartID32 class (in master just an alias to RichSmartID) which allows some of the 32 -> 64 conversion 
+work around to be trivially applied to master. 
+<dd> Useful in keeping master and RichTTFUStudies as close as possible.
+
+<dt>[MR !215, !212, 198, 173] Several Rich updates:
+<dd> (RecEvent, LHCbKernel, RichKerne): Update RichSmartID with some additional typedefs to better specify the various data types
+<dd> (RichDet): Use HPD copy number type in RichDet
+<dd> (LHCbKernel): Update type used to store # bits in RichSmartID
+<dd> (LHCbKernel): Add templated alias to STL arrays for RICH particle types
+<dd> (LHCbKernel): Use 8-bit ints as enum underlying types for various RICH enums.
+<dd> (LHCbKernel): Add templated alias to STL arrays for Rich Detectors (2D) and Radiators (3D).
+
+<dt>[MR !138] (EventPacker): Cluster packing messaging improvements
+<dd> Improve error messages from PackCluster.
+<dd> Make cluster locations in PackCluster configurable options.
+
+ 
+<dt> [MR !131] (VectorClass): Update VectorClass to 1.22 release
+
+
+</dl>
+
+<h2>Performance improvements</h2>
+<dl>
+<dt>[MR !205] (CaloDAQ, CaloInterfaces): Implement counter() switch in Calorimeter sequence
+<dt>[MR !201, !197, !179, 154] (RichKernel):
+<dd> Add a flag to RichSmartID::fillStream to control if the underlying bits are included in the printout. By default enabled only f
+or DEBUG builds.
+<dd> Add shortcut method to RichTrackSegment to access the magnitude of the 'best' (middle point) momentum vector.
+<dd> Cache the panel and RICH enums in HPDPixelCluster for speed.
+<dd> Adds some additional caching to RichTrackSegment to improve the CPU time taken by the bestPoint and bestMomentum methods.
+<dd> Some C++11 modernisations.
+<dd> Pass the vector of SmartIDs to IRichPixelClusteringTool::findClusters by const reference.
+
+<dt>[MR !186] (HltServices): HltGenConfig.cpp: Only print overrule warning the first time.
+<dt>[MR !146] (OTDAQ): Add (and use) move semantics for Gol data
+
+<dt>[MR !132] (RichDet, RichDAQ, RichKernel): Replace status code with boolean
+<dd> Updates various methods that returned a StatusCode to indicate a yes/no decision, to use a boolean instead. 
+<dd> Avoids the cost of the StatusCode destructor, which can be significant if the method in question is heavily called.
+
+</dl>
+<h2>Bug fixes</h2>
+<dl>
+
+<dt>[MR !233] (LoKiMC) MCCTAU: Fix the choice of end-vertex for calculation of lifetime
+<dd> Previously the first vertex in endVertex list was used, now it looks for "decay" vertex, if no "decay" vertex found, "hadronic 
+interaction" vertex is used and the first vertex is picked up otherwise.
+
+<dt>[MR !232] (GaudiConf): Change scope of import to avoid build time dependency on DataLink from LHCbAlgs package
+<dd> Fixes a build time circular dependency between GaudiConf and Kernel/LHCbAlgs,  which occasionally gives rise to the build warni
+ng ```WARNING: Configurable class Gaudi__DataLink not in database```
+
+<dt>[MR !213] (MCInterfaces): Add missing RichSmartID include
+
+<dt>[MR !208] (EventPacker) Add checks to MCParticle and MCVertex unpackers to filter out duplicates.
+
+<dt>[MR !187, !176] Fix Clang compilation warnings
+<dd> OTRawBankDecoder.h, L0DUFromRawHlt1Tool.h, L0DUFromRawTool.h, MultipleMagneticFieldSvc.h: fix [-Winconsistent-missing-override]
+ warnings from clang
+<dd> class ```ToolFactory``` was previously declared as a struct
+<dd> Remove some unnecessary includes
+
+<dt>[MR !162] (LoKiCore): Fix issue with hex-printout of doubles in functor cache for gcc6.1.
+
+<dt>[MR !164] (PhysEvent): Fix for LCG dictionary warning due to Particle range.
+
+<dt>[MR !163] (EventPacker, HltDAQ): Fix calculation of checksums for some packed objects
+<dd> Some of the packed object structs had padding so checksums were undefined.
+<dd> Added custom functions for these (going over all members)
+<dd> Added a simple compile-time protection to fail compilation next time packed objects are modified.
+<dd> Compute checksums per location and improve debug printout
+<dd> Same as 2016-patches MR !150
+
+<dt>[MR !139] (LHCBPS-1622) Fix compilation with ROOT 6.08 and GCC 6.1
+
+<dt>[MR !133] (HltDAQ): fix unsigned - signed int comparisons in dbg mode
+
+<dt>[MR !227, !207 !202] Fix doxygen comments
+<dt>[MR !180] (LHCbMath): Fix typo in names for python methods
+
+</dl>
+<h2>Code modernisations</h2>
+<dl>
+
+<dt>[MR !231, !226, !224, !217 !161, !125] LoKiCore:
+<dd> Add SFINAE-constrained perfect forwarding to LoKi/{Filters,Streamers}
+<dd> Use SFINAE-constrained perfect forwarding in Operators
+<dd> Do not explicitly disable default constructors which would not be generated implicitly anyway
+<dd> Make single-argument constructors 'explicit' (with a few exceptions!)
+<dd> (re-)implement FunctorFromFunctor assignment in terms of copy-and-swap, update swap implementation
+<dd> Prefer STL algorithms over raw loops
+<dd> Add move constructor to AnyPassed
+<dd> Move type traits from Operators.h to Functor.h so they can be used in e.g. Primitives.h
+<dd> Remove redundant virtual destructor implementations (and prefer implicitly generated copy c'tor)
+<dd> Remove redundant copy constructor implementations
+<dd> Replace some 'virtual' qualifiers with 'override' qualifiers
+<dd> Add 'final' qualifiers
+<dd> If possible replace constructors with inheriting  base class constructors
+<dd> Use forwarding constructors to reduce the number of code paths
+<dd> Prefer =default for copy/move c'tor over explicit equivalent implementation
+<dd> Tweak move assignment / move construction
+<dd> Do not explicitly invoke default c'tor of base classes
+<dd> Add {} to explicitly call c'tor when instantiating (const) objects
+<dd> Prefer std::unique_ptr over raw pointer + explicit delete
+<dd> Use 'auto' where appropriate
+<dd> Implement Min,Max,AbsMin,AbsMax as special cases of Extremum
+<dd> Implement {Min,Max,AbsMin,AbsMax}Element as special case of ExtremeElement
+<dd> Implement And,Or,Less,Equal,LessOrEqual,NotEqual as special cases of BinaryOp
+<dd> Implement Plus,Minus,Divide,Multiply as special cases of Combination
+<dd> Implement Union,NoEmptyUnion,Difference,Intersection,SymDifference as special cases of ComposeFunctions
+<dd> Prefer emplace_back
+<dd> Add constexpr when appropriate
+<dd> Remove deprecated std::{unary,binary}_function
+<dd> Replace boost shared ptr with std shared ptr
+
+
+<dt>[MR !209] (LoKiCore, LoKiHLT): Modernise
+<dd> Remove redundant expl. destructor implementations
+<dd> Remove redundant expl. copy c'tor implementations
+<dd> Explicitly invoke AuxFunBase c'tor
+<dd> Prefer std::unique_ptr over raw pointer + explicit delete
+<dd> Use forwarding c'tor to reduce amount of code
+
+<dt>[MR !234] (EventPacker): Use std::none_of instead of !std::any_of
+<dt>[MR !230] (LHCbAlgs): C++11 clean up
+<dt>[MR !223] (RecEvent): Various C+=11 cleanups
+<dt>[MR !222] (DetCond): Follow CORALCOOL-2943
+<dd> ICondDBReader.h: remove obsolete ifdef COOL_HAS_CPP11, no longer defined in COOL
+
+<dt>[MR !218] (MCEvent): Modernise a bit
+
+<dt>[MR !189] (STKernel): Make sure that 'flipList' does not bypass Property callbacks
+<dd> Instead of directly changing the (string) value referenced by the property, use Property::{from,to}String to update the value.
+<dd> This ensures that any callbacks registered for the property get invoked, and doesn't limit the system to string properties.
+<dd> This becomes very much necessary once string properties which represent TES locations are migrated to handles.
+
+<dt>[MR !195] (CaloUtils): Modernize / streamline
+<dd> avoid redundant string construction
+<dd> prefer STL algorithms
+<dd> factor out common code,
+
+<dt>[MR !190] (HltInterfaces): PropertyConfig.cpp: make static const, prefer switch over if-elseif-else
+    
+<dt>[MR !191] (HltEvent): Make HltDecReport 'final', remove unused HltLumiResult::clone
+
+<dt>[MR !192] (LumiEvent): Qualify HltLumiSummary and EventCountFSR as final
+
+<dt>[MR !145] (STDAQ): C++11 modernization
+<dd> Prefer range-based for loops
+<dd> Add a few 'const' and 'override' qualifications
+<dd> Prefer std::to_string over boost::lexical_cast<string>
+<dd> Remove redundant cast, destructor
+
+<dt>[MR !152] (DAQEvent): Improve RawEvent const-correctness
+
+<dt>[MR !172] (LinkerEvent): Modernize
+<dd> Declare where possible classes as 'final' and remove their virtual d'tor.
+<dd> Refer C++ style casts over C style casts
+<dd> Use SmartIF when refering to services
+<dd> Add const where possible
+   
+<dt>[MR !174] (CaloUtils, RecEvent) Modernize CaloDataFunctor
+<dd>prefer constexpr objects with overloaded operator() and SFINAE constrained templated operator() over templated functors with spe
+cializations
+<dd>prefer STL algorithms over raw loops
+
+<dt>[MR !175] (RichKernel): Remove custom overloading of MsgStream printout for std::array
+<dd> std::array ostream overloading is no longer required.
+<dd. Update boost:array overloading to use Gaudi method for consistent formatting.
+
+<dt>[MR !178] (RecEvent): Add `final` qualifier to a few event model classes
+<dd> Use 'final' in CaloClusterEntry, CaloPosition, MuonCluster, MuonCoords, MuonPID
+<dd> Remove CaloHypo::clone, CaloPosition::clone, CaloClusterEntry::clone as they are no longer needed.
+
+<dt>[MR !177, !181] (GaudiObjDesc): Allow the addition the `final` qualifier to GOD-generated classes
+<dd> Extend the schema and parsing by GOD to allow the addition (default: FALSE) of the `final` qualifier on classes
+<dd> Update test to follow this
+
+<dt>[MR !168] (RichDAQ): Another round of C++11 improvements.
+<dd>Mostly adding virtual override/final qualifiers and noexcept where appropriate.
+
+<dt>[MR !121] (HltDAQ): Streamline HltSelReportsDecoder, ReportConvertTool, ParticleProp
+<dd> Grab tool in initialize instead of execute,
+<dd> Improve const-correctness
+<dd> Avoid copies of complex types
+<dd> Ignore statuscodes when appropriate
+<dd> Replace boost::bind with lambda
+
+<dt>[MR !120] Replace bind and mem fn with lambda
+<dd> bind and mem_fn make it impossible to inline -- so replace with lambdas
+
+</dl>
+
+
 <H1><A NAME=v41r0>2016-07-04 LHCbSys v41r0</A></H1>
 This version uses Gaudi v27r1 and LCG_84 with ROOT 6.06.02.
 <p>
