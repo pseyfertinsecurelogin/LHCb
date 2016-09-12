@@ -130,7 +130,6 @@ LoKi::HLT::NPass::operator()
   ( LoKi::HLT::NPass::argument a ) const 
 {
   Assert ( a , "const LHCb::HltDecReports* points to NULL!" ) ;
-  //
   return std::count_if( std::begin(*a), std::end(*a),
                       [](LHCb::HltDecReports::Container::const_reference i) {
                             return i.second.decision();
@@ -144,7 +143,6 @@ LoKi::HLT::Decision::operator()
   ( LoKi::HLT::Decision::argument a ) const 
 {
   Assert ( a , "const LHCb::HltDecReports* points to NULL!" ) ;
-  //
   return std::any_of( std::begin(*a), std::end(*a),
                       [](LHCb::HltDecReports::Container::const_reference i) {
                             return  i.second.decision() ;
@@ -445,7 +443,6 @@ LoKi::HLT::DecisionButRegex::fillStream ( std::ostream& s ) const
 // ============================================================================
 LoKi::HLT::ErrorBits::ErrorBits ( const std::string& name ) 
   : LoKi::AuxFunBase ( std::tie ( name ) ) 
-  , LoKi::BasicFunctors<const LHCb::HltDecReports*>::Function () 
   , m_key ( name ) 
 {}
 // ============================================================================
@@ -651,7 +648,6 @@ LoKi::HLT::CountErrorBits::CountErrorBits
 ( const std::vector<std::string>&      lines , 
   const unsigned int                   mask  ) 
   : LoKi::AuxFunBase ( std::tie ( lines , mask ) ) 
-  , LoKi::BasicFunctors<const LHCb::HltDecReports*>::Function () 
   , m_lines ( lines.begin() , lines.end() ) 
   , m_mask  ( mask )
 {}
@@ -662,7 +658,6 @@ LoKi::HLT::CountErrorBits::CountErrorBits
 ( const std::vector<Gaudi::StringKey>&  lines , 
   const unsigned int                    mask  ) 
   : LoKi::AuxFunBase ( std::tie ( lines , mask ) ) 
-  , LoKi::BasicFunctors<const LHCb::HltDecReports*>::Function () 
   , m_lines ( lines ) 
   , m_mask  ( mask  )
 {}
@@ -674,7 +669,6 @@ LoKi::HLT::CountErrorBits::CountErrorBits
   const std::string& line2 , 
   const unsigned int mask  ) 
   : LoKi::AuxFunBase ( std::tie ( line1 , line2 , mask ) ) 
-  , LoKi::BasicFunctors<const LHCb::HltDecReports*>::Function () 
   , m_lines { line1, line2 }
   , m_mask  ( mask  )
 {
@@ -688,7 +682,6 @@ LoKi::HLT::CountErrorBits::CountErrorBits
   const std::string& line3 , 
   const unsigned int mask  ) 
   : LoKi::AuxFunBase ( std::tie ( line1 , line2 , line3 , mask ) ) 
-  , LoKi::BasicFunctors<const LHCb::HltDecReports*>::Function () 
   , m_lines { line1, line2, line3 }
   , m_mask  ( mask  )
 {
@@ -703,7 +696,6 @@ LoKi::HLT::CountErrorBits::CountErrorBits
   const std::string& line4 , 
   const unsigned int mask  ) 
   : LoKi::AuxFunBase ( std::tie ( line1 , line2 , line3 , line4 ,  mask ) ) 
-  , LoKi::BasicFunctors<const LHCb::HltDecReports*>::Function () 
   , m_lines { line1, line2, line3, line4 }
   , m_mask  ( mask  )
 {
@@ -779,7 +771,6 @@ LoKi::HLT::CountErrorBitsRegex::CountErrorBitsRegex
 ( const std::string&  expression , 
   const unsigned int  mask       )
   : LoKi::AuxFunBase ( std::tie ( expression  ,  mask ) ) 
-  , LoKi::BasicFunctors<const LHCb::HltDecReports*>::Function () 
   , m_pattern    ( expression ) 
   , m_expression ( expression ) 
   , m_mask       ( mask ) 

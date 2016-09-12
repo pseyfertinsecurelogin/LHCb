@@ -1,4 +1,3 @@
-// $Id: IHltFactory.h,v 1.2 2008-09-23 13:13:35 ibelyaev Exp $
 // ============================================================================
 #ifndef LOKI_IHltFACTORY_H 
 #define LOKI_IHltFACTORY_H 1
@@ -116,11 +115,6 @@ namespace LoKi
         LoKi::Types::HLT_Fun& cuts         , 
         const std::string&    context = "" )  = 0 ;
       // ======================================================================      
-    protected:
-      // ======================================================================
-      /// virtual & protected destructor 
-      virtual ~IHltFactory () ;               // virtual & protected destructor 
-      // ======================================================================
     } ; 
     // ========================================================================
   } // end of namespace LoKi::Hybrid  

@@ -90,14 +90,7 @@ namespace LoKi
       /// OPTIONAL: the nice printout 
       virtual std::ostream& fillStream ( std::ostream& s ) const ;
       // ======================================================================
-    public:
-      // ======================================================================
       unsigned long long modulo () const { return m_modulo ; }
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// no default constructor 
-      Evt1 () ;                                       // no default constructor 
       // ======================================================================
     private:
       // ======================================================================
@@ -125,11 +118,6 @@ namespace LoKi
       virtual result_type operator() ( argument o ) const ;
       /// OPTIONAL: the nice printout 
       virtual std::ostream& fillStream ( std::ostream& s ) const ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// no default constructor 
-      Evt2 () ;                                       // no default constructor 
       // ======================================================================
     } ;
     // ========================================================================
@@ -431,11 +419,6 @@ namespace LoKi
       // ======================================================================
     private:
       // ======================================================================
-      /// the default constructor is disabled 
-      InTime();                          // the default constructor is disabled 
-      // ======================================================================
-    private:
-      // ======================================================================
       /// the start time 
       Gaudi::Time m_start ; // the start time 
       Gaudi::Time m_stop  ; // the stop time 
@@ -471,11 +454,6 @@ namespace LoKi
       virtual result_type operator() ( argument o ) const ;
       /// OPTIONAL: the nice printout 
       virtual std::ostream& fillStream ( std::ostream& s ) const ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled 
-      EvtNumber() ;                      // the default constructor is disabled 
       // ======================================================================
     private:
       // ======================================================================
@@ -519,11 +497,6 @@ namespace LoKi
       virtual result_type operator() ( argument o ) const ;
       /// OPTIONAL: the nice printout 
       virtual std::ostream& fillStream ( std::ostream& s ) const ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled 
-      RunNumber() ;                      // the default constructor is disabled 
       // ======================================================================
     private:
       // ======================================================================
@@ -574,11 +547,6 @@ namespace LoKi
       // ======================================================================
     private:
       // ======================================================================
-      /// the default constructor is disabled 
-      RunEvtNumber() ;                   // the default constructor is disabled 
-      // ======================================================================
-    private:
-      // ======================================================================
       Flag                      m_flag      ;
       /// the range: begin 
       runevt_type               m_begin     ;           //     the range: begin 
@@ -616,11 +584,6 @@ namespace LoKi
       // ======================================================================
     private:
       // ======================================================================
-      /// the default constructor is disabled 
-      BXId()      ;                      // the default constructor is disabled 
-      // ======================================================================
-    private:
-      // ======================================================================
       Flag                      m_flag  ;
       unsigned int              m_bx    ;
       unsigned int              m_begin ;
@@ -653,11 +616,6 @@ namespace LoKi
       // ======================================================================
     private:
       // ======================================================================
-      /// the default constructor is disabled 
-      Tck()      ;                      // the default constructor is disabled 
-      // ======================================================================
-    private:
-      // ======================================================================
       Flag                      m_flag  ;
       unsigned int              m_bx    ;
       std::vector<unsigned int> m_bxs   ;
@@ -684,15 +642,8 @@ namespace LoKi
       /// OPTIONAL: nice printout 
       virtual std::ostream& fillStream ( std::ostream& ) const ;
       // ======================================================================
-    public:
-      // ======================================================================
       operator const LoKi::HLT::RoutingBits&() const { return m_bits ; }
       // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled 
-      RoutingBits () ;                   // the default constructor is disabled 
-      // ====================================================================== 
     private:
       // ====================================================================== 
       /// the bits 

@@ -1,4 +1,3 @@
-// $Id: IHltAntiFactory.h,v 1.2 2008-09-23 13:13:35 ibelyaev Exp $
 // ============================================================================
 #ifndef LOKI_IHltANTIFACTORY_H 
 #define LOKI_IHltANTIFACTORY_H 1
@@ -64,11 +63,6 @@ namespace LoKi
       virtual void set ( const LoKi::Types::HLT_Cuts& cut ) = 0 ;
       /// set the C++ function for LHCb::HltDecREports 
       virtual void set ( const LoKi::Types::HLT_Func& cut ) = 0 ;
-      // ======================================================================
-    protected:
-      // ======================================================================
-      /// destructor : virtual and protected 
-      virtual ~IHltAntiFactory() ; // destructor : virtual and protected 
       // ======================================================================
     } ;
     // ========================================================================
