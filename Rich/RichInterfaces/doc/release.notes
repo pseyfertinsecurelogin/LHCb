@@ -1,0 +1,10 @@
+!-----------------------------------------------------------------------------
+! Package     : Rich/RichInterfaces
+! Responsible : Chris Jones
+! Purpose     : Rich Tool Interfaces
+!-----------------------------------------------------------------------------
+
+! 2016-09-06 - Chris Jones
+ - First version. 
+ - Interfaces split off from RichKernel to allow for independent development.
+   

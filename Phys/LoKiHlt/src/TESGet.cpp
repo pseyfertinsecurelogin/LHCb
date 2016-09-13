@@ -1,4 +1,3 @@
-// $Id:$ 
 // ============================================================================
 // Include files 
 // ============================================================================
@@ -26,10 +25,8 @@ namespace
       : LoKi::Functor<void,bool> () 
       , m_get ( obj ) 
       , m_cut ( cut ) 
-      , m_t   ( 0   ) 
     {}
     // ========================================================================     
-    virtual ~_C () {}
     virtual  _C* clone() const { return new _C(*this) ; }
     // ========================================================================
     virtual std::ostream& fillStream ( std::ostream& s ) const 
@@ -46,13 +43,13 @@ namespace
     virtual result_type operator() ( /* argument */ ) const 
     {
       //
-      if ( 0 == m_t || !sameEvent() ) 
+      if ( !m_t || !sameEvent() ) 
       { 
         m_t = LoKi::TES::get_<TYPE> ( m_get ) ; 
         setEvent () ;
       }
       //
-      if ( 0 == m_t ) 
+      if ( !m_t ) 
       {
         Error ( "No valid object is found at '" + m_get.location() + "', return False") ;
         return false ;
@@ -63,14 +60,9 @@ namespace
     // ========================================================================
   private:
     // ========================================================================
-    /// default constructor is disabled 
-    _C() ;                                // default constructor is disabled 
-    // ========================================================================
-  private:
-    // ========================================================================
     LoKi::TES::Get                             m_get ;
     LoKi::FunctorFromFunctor<const TYPE*,bool> m_cut ;
-    mutable const TYPE*                        m_t   ;
+    mutable const TYPE*                        m_t   = nullptr;
     // ========================================================================    
   };
   // ==========================================================================
@@ -84,10 +76,8 @@ namespace
       : LoKi::Functor<void,double> () 
       , m_get ( obj ) 
       , m_fun ( fun ) 
-      , m_t   ( 0   ) 
     {}
     // ========================================================================     
-    virtual ~_F () {}
     virtual  _F* clone() const { return new _F(*this) ; }
     // ========================================================================
     virtual std::ostream& fillStream ( std::ostream& s ) const 
@@ -104,13 +94,13 @@ namespace
     virtual result_type operator() ( /* argument */ ) const 
     {
       //
-      if ( 0 == m_t || !sameEvent() ) 
+      if ( !m_t || !sameEvent() ) 
       { 
         m_t = LoKi::TES::get_<TYPE> ( m_get ) ; 
         setEvent () ;
       }
       //
-      if ( 0 == m_t ) 
+      if ( !m_t ) 
       {
         Error ( "No valid object is found at '" + m_get.location() + "', return -inf") ;
         return false ;
@@ -121,14 +111,9 @@ namespace
     // ========================================================================
   private:
     // ========================================================================
-    /// default constructor is disabled 
-    _F() ;                                 // default constructor is disabled 
-    // ========================================================================
-  private:
-    // ========================================================================
     LoKi::TES::Get                               m_get ;
     LoKi::FunctorFromFunctor<const TYPE*,double> m_fun ;
-    mutable const TYPE*                          m_t  ;
+    mutable const TYPE*                          m_t  = nullptr;
     // ========================================================================    
   };
   // ==========================================================================
@@ -170,7 +155,6 @@ LoKi::TES::TESGet::get
   const LoKi::Functor<const LHCb::HltDecReports*,double>&   fun )
 { return _F<LHCb::HltDecReports> ( obj , fun ) ; }
 // ============================================================================
-
 
 // ============================================================================
 // The END 

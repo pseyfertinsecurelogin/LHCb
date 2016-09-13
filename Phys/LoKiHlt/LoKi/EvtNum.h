@@ -1,4 +1,3 @@
-// $Id: $
 // ============================================================================
 #ifndef LOKI_EVTNUM_H 
 #define LOKI_EVTNUM_H 1
@@ -22,9 +21,6 @@
  *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
  *  @date   2012-02-13
  * 
- *                    $Revision$
- *  Last modification $Date$
- *                 by $Author$
  */ 
  namespace LoKi 
 {

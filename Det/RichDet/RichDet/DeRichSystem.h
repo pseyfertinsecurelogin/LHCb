@@ -18,9 +18,9 @@
 #include "Kernel/RichDetectorType.h"
 #include "Kernel/RichSmartID.h"
 
-// RichKernel
-#include "RichKernel/RichDAQDefinitions.h"
-#include "RichKernel/RichMap.h"
+// RichUtils
+#include "RichUtils/RichDAQDefinitions.h"
+#include "RichUtils/RichMap.h"
 
 // local
 #include "RichDet/RichDetConfigType.h"

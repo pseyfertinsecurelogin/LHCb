@@ -1,4 +1,3 @@
-// $Id: Prescale.h,v 1.1 2010-02-12 14:17:27 ibelyaev Exp $
 // ============================================================================
 #ifndef LOKI_PRESCALE_H 
 #define LOKI_PRESCALE_H 1
@@ -34,19 +33,12 @@ namespace LoKi
       /// constructor from the accept fraction and the seed 
       Prescale ( const double       accept      , 
                  const std::string& seed   = "" ) ;
-      /// MANDATORY: virtual destructor 
-      virtual ~Prescale() ;
       /// MANDATORY: clone method ("virtual constructor")
       virtual  Prescale* clone() const ;
       /// MANDATORY: the only essential method 
       virtual result_type operator() ( argument o ) const ;
       /// OPTIONAL: the nice printout 
       virtual std::ostream& fillStream ( std::ostream& s ) const ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the defautl constructor is disabled 
-      Prescale() ;                       // the default constructor is disabled 
       // ======================================================================
     private:
       // ======================================================================

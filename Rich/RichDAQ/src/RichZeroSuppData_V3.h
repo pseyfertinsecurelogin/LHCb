@@ -16,7 +16,7 @@
 #include "RichHPDDataBank.h"
 #include "RichZSPacked_V2.h"
 
-// RichKernel
+// Kernel
 #include "Kernel/MemPoolAlloc.h"
 
 namespace Rich
