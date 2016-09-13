@@ -408,6 +408,7 @@ void ReportConvertTool::ProtoParticleObject2Summary( HltObjectSummary::Info* inf
       case 63: info->insert( proto_it->first, float( object->info( LHCb::ProtoParticle::ProbNNk, -1000 ) ) ); break;
       case 64: info->insert( proto_it->first, float( object->info( LHCb::ProtoParticle::ProbNNp, -1000 ) ) ); break;
       case 65: info->insert( proto_it->first, float( object->info( LHCb::ProtoParticle::ProbNNghost, -1000 ) ) ); break;
+      case 66: info->insert( proto_it->first, float( object->info( LHCb::ProtoParticle::CombDLLd, -1000 ) ) ); break;
     }
   }
 
@@ -510,6 +511,7 @@ void ReportConvertTool::RichPIDObject2Summary( HltObjectSummary::Info* info, con
       case 4: info->insert( rpid_it->first, float( object->particleDeltaLL( Rich::ParticleIDType::Kaon ) ) ); break;
       case 5: info->insert( rpid_it->first, float( object->particleDeltaLL( Rich::ParticleIDType::Proton ) ) ); break;
       case 6: info->insert( rpid_it->first, float( object->particleDeltaLL( Rich::ParticleIDType::BelowThreshold ) ) ); break;
+      case 7: info->insert( rpid_it->first, float( object->particleDeltaLL( Rich::ParticleIDType::Deuteron ) ) ); break;
     }
   }
 
@@ -891,6 +893,7 @@ void ReportConvertTool::ProtoParticleObjectFromSummary( const HltObjectSummary::
       case 63: if( (*info)[ proto_it->first ] != -1000 ) object->addInfo( LHCb::ProtoParticle::ProbNNk, ( (*info)[ proto_it->first ] ) ); break;// 
       case 64: if( (*info)[ proto_it->first ] != -1000 ) object->addInfo( LHCb::ProtoParticle::ProbNNp, ( (*info)[ proto_it->first ] ) ); break;// 
       case 65: if( (*info)[ proto_it->first ] != -1000 ) object->addInfo( LHCb::ProtoParticle::ProbNNghost, ( (*info)[ proto_it->first ] ) ); break;// 
+      case 66: if( (*info)[ proto_it->first ] != -1000 ) object->addInfo( LHCb::ProtoParticle::CombDLLd, ( (*info)[ proto_it->first ] ) ); break;// 
     }
   }
 
@@ -1011,6 +1014,7 @@ void ReportConvertTool::RichPIDObjectFromSummary( const HltObjectSummary::Info*i
       case 4: object->setParticleDeltaLL( Rich::ParticleIDType::Kaon, (*info)[ rpid_it->first ] ); break;
       case 5: object->setParticleDeltaLL( Rich::ParticleIDType::Proton, (*info)[ rpid_it->first ] ); break;
       case 6: object->setParticleDeltaLL( Rich::ParticleIDType::BelowThreshold, (*info)[ rpid_it->first ] ); break;
+      case 7: object->setParticleDeltaLL( Rich::ParticleIDType::Deuteron, (*info)[ rpid_it->first ] ); break;
     }
   }
 
