@@ -18,7 +18,7 @@
 #include "Event/RichDigit.h"
 
 // Interfaces
-#include "RichKernel/IRichRawBufferToSmartIDsTool.h"
+#include "RichInterfaces/IRichRawBufferToSmartIDsTool.h"
 
 namespace Rich
 {

@@ -1,0 +1,66 @@
+<lcgdict>
+
+  <!--class name = "Rich::HypoData&lt;float&gt;" /-->
+  <class name = "Rich::HypoData&lt;double&gt;" />
+
+  <class name  = "Rich::HPDPixelCluster"               />
+  <class name  = "Rich::HPDPixelClusters"              />
+
+  <class name  = "Rich::DAQ::HPDIdentifier"            />
+
+  <class name  = "Rich::SmartIDGlobalOrdering"         />
+
+  <class name  = "LHCb::RichGeomPhoton"                />
+
+  <class name  = "LHCb::RichTrackSegment"              />
+
+  <class name  = "Rich::DAQ::NumericType<unsigned int>"       />
+  <class name  = "Rich::DAQ::NumericType<unsigned long long>" />
+
+  <class name  = "Rich::DAQ::Level0ID"                 />
+  <class name  = "Rich::DAQ::Level1HardwareID"         />
+  <class name  = "Rich::DAQ::Level1LogicalID"          />
+  <class name  = "Rich::DAQ::Level1CopyNumber"         />
+  <class name  = "Rich::DAQ::EventID"                  />
+  <class name  = "Rich::DAQ::BXID"                     />
+  <class name  = "Rich::DAQ::L1IngressID"              />
+  <class name  = "Rich::DAQ::L1IngressHeader"          />
+  <class name  = "Rich::DAQ::L1InputWithinIngress"     />
+  <class name  = "Rich::DAQ::Level1Input"              />
+  <class name  = "Rich::DAQ::HPDHardwareID"            />
+  <class name  = "Rich::DAQ::HPDCopyNumber"            />
+  <class name  = "Rich::DAQ::HPDL1InputID"             />
+  <class name  = "Rich::DAQ::HPDHardwareIDs"           />
+  <class name  = "Rich::DAQ::Level0IDs"                />
+  <class name  = "Rich::DAQ::Level1HardwareIDs"        />
+  <class name  = "Rich::DAQ::Level1LogicalIDs"         />
+  <class name  = "Rich::DAQ::L1IngressInputs"          />
+  <class name  = "Rich::DAQ::HPDInfo"                  />
+  <class name  = "Rich::DAQ::HPDInfo::Header"          />
+  <class name  = "Rich::DAQ::HPDInfo::Footer"          />
+  <class name  = "Rich::DAQ::L0Header"                 />
+  <class name  = "Rich::DAQ::L0Header::Word0"          />
+  <class name  = "Rich::DAQ::L0Header::Word1"          />
+  <class name  = "Rich::DAQ::HPDMap"                   />
+  <class name  = "Rich::DAQ::IngressInfo"              />
+  <class name  = "Rich::DAQ::IngressMap"               />
+  <class name  = "Rich::DAQ::L1Map"                    />
+
+  <variable name = "Rich::DAQ::MaxDataSize" />
+  <variable name = "Rich::DAQ::NumAlicePixelsPerLHCbPixel" />
+  <variable name = "Rich::DAQ::MaxDataSizeALICE" />
+  <variable name = "Rich::DAQ::BitsPerDataWord" />
+  <variable name = "Rich::DAQ::NumIngressPerL1" />
+  <variable name = "Rich::DAQ::NumL1InputsPerIngress" />
+  <variable name = "Rich::DAQ::MaxL1Inputs" />
+  <variable name = "Rich::DAQ::MaxZSAddress" />
+  <variable name = "Rich::DAQ::NumPixelColumns" />
+  <variable name = "Rich::DAQ::NumPixelRows" />
+  <variable name = "Rich::DAQ::PixelSize" />
+
+  <function name  = "Rich::RayTracingUtils::intersectPlane" />
+  <function name  = "Rich::RayTracingUtils::intersectSpherical" />
+  <function name  = "Rich::RayTracingUtils::reflectSpherical" />
+  <function name  = "Rich::RayTracingUtils::reflectFlatPlane" />
+
+</lcgdict>

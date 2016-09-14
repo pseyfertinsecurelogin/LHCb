@@ -15,7 +15,7 @@
 // local
 #include "RichHPDDataBank.h"
 
-// RichKernel
+// Kernel
 #include "Kernel/MemPoolAlloc.h"
 
 //===================================================================================

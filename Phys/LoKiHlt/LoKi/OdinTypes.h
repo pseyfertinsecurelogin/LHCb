@@ -1,4 +1,3 @@
-// $Id: OdinTypes.h,v 1.1 2008-09-23 13:13:35 ibelyaev Exp $
 // ============================================================================
 #ifndef LOKI_ODINTYPES_H 
 #define LOKI_ODINTYPES_H 1

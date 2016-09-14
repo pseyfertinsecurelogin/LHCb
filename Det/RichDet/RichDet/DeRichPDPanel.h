@@ -24,8 +24,8 @@
 #include "Kernel/RichSmartID.h"
 #include "Kernel/RichTraceMode.h"
 
-// RichKernel
-#include "RichKernel/RichDAQDefinitions.h"
+// RichUtils
+#include "RichUtils/RichDAQDefinitions.h"
 
 //=============================================================================
 /** @class DeRichPDPanel DeRichPDPanel.h RichDet/DeRichPDPanel.h

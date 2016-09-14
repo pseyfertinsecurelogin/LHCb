@@ -36,7 +36,6 @@ void Rich::CommonBase<PBASE>::initRichCommonConstructor()
 {
   m_regName = ( this->context().empty() ?
                 "RichToolRegistry" : this->context()+"_RichToolRegistry" );
-  m_deRichTool = nullptr;
   this->declareProperty( "ToolRegistryName", m_regName, "Tool Registry Name" );
 }
 
@@ -50,6 +49,12 @@ StatusCode Rich::CommonBase<PBASE>::initialize()
   const StatusCode sc = PBASE::initialize();
   if ( sc.isFailure() )
   { return this -> Error( "Failed to initialise Gaudi Base class", sc ); }
+
+  // Load some common tools by default
+  m_toolReg =
+    this -> template tool < IToolRegistry > ( "Rich::ToolRegistry",
+                                              m_regName );
+  m_jos = this -> template svc<IJobOptionsSvc>( "JobOptionsSvc" ); 
 
   // Printout from initialize
   if ( this -> msgLevel(MSG::DEBUG) )
@@ -71,18 +76,6 @@ StatusCode Rich::CommonBase<PBASE>::finalize()
 
   // Finalise base class and return
   return PBASE::finalize();
-}
-//=============================================================================
-
-//=============================================================================
-// Access job options service
-//=============================================================================
-template <class PBASE>
-IJobOptionsSvc* Rich::CommonBase<PBASE>::joSvc() const
-{
-  if ( !m_jos )
-  { m_jos = this -> template svc<IJobOptionsSvc>( "JobOptionsSvc" ); }
-  return m_jos;
 }
 //=============================================================================
 

@@ -13,8 +13,7 @@
 #define RICHKERNEL_RICHCOMMONBASE_H 1
 
 // Interfaces
-#include "RichKernel/IRichToolRegistry.h"
-#include "RichKernel/IRichDetectorTool.h"
+#include "RichInterfaces/IRichToolRegistry.h"
 
 // Gaudi
 #include "GaudiKernel/ISvcLocator.h"
@@ -60,12 +59,9 @@ namespace Rich
                 const IInterface* parent );
 
     /// Standard Converter-like Constructor
-    CommonBase( long storage_type, 
-                const CLID &class_type, 
-                ISvcLocator *svc = NULL );
-
-    /// Destructor
-    virtual ~CommonBase( ) = default;
+    CommonBase( long storage_type,
+                const CLID &class_type,
+                ISvcLocator *svc = nullptr );
 
   public:
 
@@ -99,17 +95,6 @@ namespace Rich
                (pObj->registry() ? pObj->registry()->identifier() : "UnRegistered") );
     }
 
-    /** Returns a vector with available Rich detectors
-     *
-     *  @param pObj Data object
-     *
-     *  @return std::vector<DeRich> with Rich detectors
-     */
-    inline const std::vector<DeRich*>& deRichDetectors( ) const
-    {
-      return ( this->richDetectorTool()->deRichDetectors() );
-    }
-
     /** @brief Returns a pointer to the tool associated to a given nickname.
      *
      *  Optionally also allows a particular instance name to be given.
@@ -133,37 +118,47 @@ namespace Rich
                                     const IInterface * parent = nullptr,
                                     const bool commonTool = false ) const
     {
+      // Start by setting tool pointer to null
+      pTool = nullptr;
+
       // Check consistency
-      if ( parent && commonTool )
+      if ( UNLIKELY( parent && commonTool ) )
       {
         this -> Error( "Tool " + nickName + " cannot be common and private !" ).ignore();
-        return nullptr;
       }
-
-      // Construct name
-      const std::string fullname =
-        ( commonTool || parent ? iName : this->toolRegistry()->toolName(iName) );
-
-      // If not private tool - Check Context and OutputLevel option
-      if ( !parent )
+      else
       {
-        if ( ! this -> setProperties(this->toolRegistry()->toolName(iName)) ) { return nullptr; }
-      }
 
-      // get tool
-      pTool =
-        this -> template tool<TOOL>( this->toolRegistry()->toolType(nickName),
-                                     fullname,
-                                     parent );
-      if ( !pTool )
-      {
-        this->Exception( "Null Pointer returned by ToolSvc for "+fullname );
-      }
-      else if ( this -> msgLevel(MSG::DEBUG) )
-      {
-        this -> debug() << " Acquired tool '" << pTool->name()
-                        << "' of type '" 
-                        << this->toolRegistry()->toolType(nickName) << "'" << endmsg;
+        // the tool registry
+        const auto * reg = this->toolRegistry();
+
+        // tool name
+        const auto & name = reg->toolName(iName);
+
+        // tool type
+        const auto & type = reg->toolType(nickName);
+
+        // Construct name
+        const auto & fname = ( commonTool || parent ? iName : name );
+
+        // If not private tool - Check Context and OutputLevel option
+        if ( parent || this->setProperties(name) )
+        {
+          
+          // get tool
+          pTool = this -> template tool<TOOL>( type, fname, parent );
+          if ( UNLIKELY( !pTool ) )
+          {
+            this->Exception( "Null Pointer returned by ToolSvc for "+fname );
+          }
+          if ( UNLIKELY( this -> msgLevel(MSG::DEBUG) ) )
+          {
+            this -> debug() << " Acquired tool '" << pTool->name()
+                            << "' of type '" << type << "'" << endmsg;
+          }
+          
+        }
+
       }
 
       // return the tool pointer
@@ -204,9 +199,10 @@ namespace Rich
     {
       if ( pTool )
       {
-        if ( this -> msgLevel(MSG::DEBUG) )
+        if ( UNLIKELY( this -> msgLevel(MSG::DEBUG) ) )
         {
-          this -> debug() << " Forced release for tool '" << pTool->name() << "'" << endmsg;
+          this -> debug() << " Forced release for tool '" << pTool->name() << "'" 
+                          << endmsg;
         }
         this -> release( pTool );
         pTool = nullptr;
@@ -225,33 +221,13 @@ namespace Rich
      *
      *  @return Pointer to the IRichToolRegistry interface
      */
-    inline const Rich::IToolRegistry * toolRegistry() const
+    inline const Rich::IToolRegistry * toolRegistry() const noexcept
     {
-      if ( !m_toolReg )
-      {
-        m_toolReg =
-          this -> template tool < IToolRegistry > ( "Rich::ToolRegistry", m_regName );
-      }
       return m_toolReg;
     }
 
-    /** Returns pointer to RICH detector tool
-     *  
-     *
-     *  @return Pointer to the IRichDetectorTool interface
-     */
-    inline const Rich::IDetectorTool * richDetectorTool() const
-    {
-      if ( !m_deRichTool )
-      {
-        m_deRichTool =
-          this -> template tool < IDetectorTool > ( "Rich::DetectorTool", "RichDetectorTool" );
-      }
-      return m_deRichTool;
-    }
-
     /// Pointer to Job Options Service
-    IJobOptionsSvc* joSvc() const;
+    inline IJobOptionsSvc * joSvc() const noexcept { return m_jos; }
 
     /// String matching on context()
     bool contextContains( const std::string & str ) const;
@@ -266,16 +242,16 @@ namespace Rich
      *  @param from_name The name of the object to get the options from
      *  @param to_name   The name of the oject to copy the options to
      *  @param options   List of options to copy. If empty, all options are copied.
-     *  @param overwrite If true, options will be over-written in the target object 
+     *  @param overwrite If true, options will be over-written in the target object
      *                   if they are already set
      *  @return StatusCode indicating if the options where correctly copied
      */
-    StatusCode 
+    StatusCode
     propagateJobOptions( const std::string & from_name,
                          const std::string & to_name,
                          const std::vector<std::string> & options = std::vector<std::string>(),
                          const bool overwrite = false ) const;
-    
+
   private: // private methods
 
     /** Finds the propert object of a given name, for the given component name
@@ -291,7 +267,7 @@ namespace Rich
 
     /** @brief Set the given Property for given public tool
      *
-     *  Set the Property for public tools that do not explicitly 
+     *  Set the Property for public tools that do not explicitly
      *  have it set. Uses the same settings as for the tool registry.
      *
      *  @param name     Tool name
@@ -304,11 +280,11 @@ namespace Rich
     template < class PROPERTYTYPE >
     bool my_setToolProperty( const std::string & name,
                              const std::string & property ) const;
-    
+
     /** @brief Set the properties for given public tool
      *
-     *  Private solution to the problem that properties like "Context" 
-     *  are not set for public tools. This solution uses the properties as 
+     *  Private solution to the problem that properties like "Context"
+     *  are not set for public tools. This solution uses the properties as
      *  defined by the Tool registry to set them for all public tools.
      *
      *  @param name Tool name
@@ -323,21 +299,18 @@ namespace Rich
 
     /// Common Constructor initisalisations
     void initRichCommonConstructor();
-    
+
   private: // data
 
     /// Pointer to tool registry
-    mutable const IToolRegistry * m_toolReg = nullptr;
+    const IToolRegistry * m_toolReg = nullptr;
 
     /// Pointer to job options service
-    mutable IJobOptionsSvc * m_jos = nullptr;
+    IJobOptionsSvc * m_jos = nullptr;
 
     /// Runtime name for RichToolRegistry
     std::string m_regName;
 
-    /// Pointer to detector too for DeRich objects
-    mutable const IDetectorTool * m_deRichTool = nullptr;
-    
   };
 
 }

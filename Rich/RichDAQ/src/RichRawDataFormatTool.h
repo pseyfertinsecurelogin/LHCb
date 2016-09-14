@@ -30,23 +30,21 @@
 // Base class
 #include "RichKernel/RichToolBase.h"
 
-// Kernel
-#include "RichKernel/RichStatDivFunctor.h"
-#include "RichKernel/RichHashMap.h"
+// Utils
+#include "RichUtils/RichStatDivFunctor.h"
+#include "RichUtils/RichHashMap.h"
+#include "RichUtils/RichMap.h"
+#include "RichUtils/RichPoolMap.h"
+#include "RichUtils/RichHashMap.h"
 
 // Interfaces
-#include "RichKernel/IRichRawDataFormatTool.h"
+#include "RichInterfaces/IRichRawDataFormatTool.h"
 
 // local
 #include "RichDAQVersions.h"
 
 // RichDet
 #include "RichDet/DeRichSystem.h"
-
-// RichKernel
-#include "RichKernel/RichMap.h"
-#include "RichKernel/RichPoolMap.h"
-#include "RichKernel/RichHashMap.h"
 
 // Event model
 #include "Event/RawEvent.h"
@@ -86,9 +84,6 @@ namespace Rich
       RawDataFormatTool( const std::string& type,
                          const std::string& name,
                          const IInterface* parent );
-
-      /// Destructor
-      virtual ~RawDataFormatTool( );
 
       // Initialization of the tool after creation
       StatusCode initialize() final;
