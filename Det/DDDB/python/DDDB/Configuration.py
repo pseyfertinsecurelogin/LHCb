@@ -103,6 +103,9 @@ class DDDBConf(ConfigurableUser):
         if not self.getProp('AutoTags'):
             # calls the specific configuration function for the requested data type
             self.__data_types_handlers__[dataType](self)
+            # by default, use the latest DQFLAGS tag for the requested data type
+            # (unless already set by a data type handler)
+            self.__set_tag__(["DQFLAGS"], "<latest:{0}>".format(dataType))
         else:
             log.info("Ariadne driven configuration requested for CondDB")
             datatype = self.getProp("DataType")
@@ -137,7 +140,7 @@ class DDDBConf(ConfigurableUser):
 
     def __set_tag__(self, partitions, tag):
         cdb = CondDB()
-        online = False 
+        online = False
         if self.isPropertySet( "OnlineMode" ):
             if self.getProp( "OnlineMode" ):
                 online = True
@@ -150,7 +153,7 @@ class DDDBConf(ConfigurableUser):
                     log.warning("Using default tag %s for partition %s", tag, p)
             elif cdb.Tags[p].upper() == "DEFAULT" :
                 cdb.Tags[p] = tag
-                if online: 
+                if online:
                     log.info("Default tag requested for partition %s (using %s)", p, tag )
                 else:
                     log.warning("Default tag requested for partition %s (using %s)", p, tag )
@@ -192,7 +195,6 @@ class DDDBConf(ConfigurableUser):
         self.__set_tag__(["DDDB"],     "dddb-20150724" )
         if not self.getProp("Simulation"):
             self.__set_tag__(["LHCBCOND"], "cond-20160522" )
-            self.__set_tag__(["DQFLAGS"],  "dq-20160621-5"   )
             self.__set_tag__(["CALIBOFF"], "head-2015604" )
             # set initialization time to a safe default
             self.__set_init_time__(datetime(2016, 12, 31, 23, 59))
@@ -265,7 +267,7 @@ class DDDBConf(ConfigurableUser):
             self.__set_init_time__(datetime(2009, 12, 31, 21, 0)) # 31/12/2009 21:00
         else:
             self.__set_tag__(["SIMCOND"], "MC-20101026-vc15mm-md100")
-        
+
     def __2008_conf__(self):
         """
         Default configuration for 2008 data and corresponding MonteCarlo
@@ -278,7 +280,7 @@ class DDDBConf(ConfigurableUser):
             self.__set_init_time__(datetime(2008, 12, 31, 21, 0)) # 31/12/2008 21:00
         else:
             self.__set_tag__(["SIMCOND"], "sim-20090212")
-                
+
     def __Upgrade_conf__(self):
         """
         Default database for Upgrade MonteCarlo production and analysis
