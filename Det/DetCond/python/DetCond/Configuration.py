@@ -17,6 +17,15 @@ from Configurables import ( CondDBAccessSvc,
 import os, re
 from os.path import exists, join
 
+
+class NoTagError(RuntimeError):
+    def __init__(self, partition, datatype):
+        RuntimeError.__init__(self, "Cannot find tags for partition '%s' and"
+                                    " data type '%s'" % (partition, datatype)))
+        self.partition = partition
+        self.datatype = datatype
+
+
 class CondDB(ConfigurableUser):
     """
     Configurable user to allow high-level configuration of the access to the
@@ -57,7 +66,8 @@ class CondDB(ConfigurableUser):
                   'LoadCALIBDB' : "OFFLINE"
                   }
     _propertyDocDct = {
-                       'Tags' : """ Dictionary of tags (partition:tag) to use for the COOL databases """,
+                       'Tags' : """ Dictionary of tags (partition:tag) to use for the COOL databases. """
+                                """The special tag value '<latest:DataType>' can be used to select the latest global tag for the specified DataType """,
                        'Simulation' : """ Boolean flag to select the simulation or real-data configuration """,
                        'Upgrade' : """ Boolean flag to select the Upgrade simulation configuration """,
                        'UseOracle' : """ Boolean flag to enable the usage of the CondDB from Oracle servers. NB: Obsolete as Oracle support is now dropped""",
@@ -193,6 +203,16 @@ class CondDB(ConfigurableUser):
     def useLatestTags(self, DataType, OnlyGlobalTags = False):
         self.UseLatestTags = [DataType, OnlyGlobalTags]
 
+    def _getLatestTags(self, partition, datatype):
+        from CondDBUI.Admin.TagsFilter import last_gt_lts
+        rel_notes = None
+        if self.getProp('Upgrade'):
+            rel_notes = os.path.join(os.environ['SQLITEUPGRADEDBPATH'], '..', 'doc', 'release_notes.xml')
+        tags = last_gt_lts(partition, datatype, rel_notes)
+        if not tags:
+            raise NoTagError(partition, datatype)
+        return tags
+
     def _useLatestTags(self, DataTypes, OnlyGlobalTags = False, OnlyLocalTags = False):
         """
         Configure the conditions database to use the latest local tags on top of the latest global tag for a given data type.
@@ -210,26 +230,21 @@ class CondDB(ConfigurableUser):
             partitions = ["DDDB", "SIMCOND"]
 
         # Set the latest tags
-        from CondDBUI.Admin.TagsFilter import last_gt_lts
-        rel_notes = None
-        if self.getProp('Upgrade'):
-            rel_notes = os.path.join(os.environ['SQLITEUPGRADEDBPATH'], '..', 'doc', 'release_notes.xml')
-
         for partition in partitions:
             gt, lts = None, []
             for dt in DataTypes:
-                tags = last_gt_lts(partition, dt, rel_notes)
-                if not tags:
-                    # Allowing absence of valid tags for DQFLAGS
-                    if partition == 'DQFLAGS': continue
-                    # Allowing absence of valid tags for CALIBOFF before 2015 
-                    elif partition == 'CALIBOFF' and dt.isdigit() and int(dt)<2015: continue
+                try:
+                    tags = self._getLatestTags(partition, dt)
+                    if not gt:
+                        gt = tags[0]
+                    lts += tags[1]
+                except NoTagError:
+                    # DQFLAGS and CALIBOFF (before 2015) may not have valid tags
+                    if ((partition == 'DQFLAGS') or
+                        (partition == 'CALIBOFF' and dt.isdigit() and int(dt)<2015)):
+                        pass
                     else:
-                        raise RuntimeError("Cannot find tags for partition '%s',"
-                                       " data type '%s'" % (partition, dt))
-                if not gt:
-                    gt = tags[0]
-                lts += tags[1]
+                        raise
 
             if not OnlyLocalTags and gt: # Only for partitions with available global tags
                 self.Tags[partition] = gt
@@ -430,6 +445,12 @@ class CondDB(ConfigurableUser):
             self._useAllLocalTags(datatypes)
             log.warning("ALL local tags of %s data type(s) are added: %s"
                         %(datatypes, self.getProp("LocalTags")))
+
+        requested_tags = self.getProp("Tags")
+        for partition in requested_tags:
+            m = re.match(r'<latest:(.*)>', requested_tags[partition])
+            if m:  # the latest tag was explicitly requested for the partition
+                requested_tags[partition] = self._getLatestTags(partition, m.group(1))[0]
 
         # Import SQLDDDB specific info
         if self.getProp("UseOracle"):
