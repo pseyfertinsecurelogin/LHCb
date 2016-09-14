@@ -41,8 +41,7 @@
 #
 #
 # =============================================================================
-"""
-Simple file to provide 'easy' access in python for the basic ROOT::Math classes
+"""Simple file to provide 'easy' access in python for the basic ROOT::Math classes
 
   see $GAUDIKERNELROOT/GaudiKernel/Point3DTypes.h
   see $GAUDIKERNELROOT/GaudiKernel/Vector3DTypes.h
@@ -102,7 +101,7 @@ Gaudi = cpp.Gaudi
 ## ROOT::Math namespace
 _RM = ROOT.ROOT.Math
 
-## Geomemtry vectors 
+## Geometry vectors 
 cpp.Gaudi.XYZPoint            = _RM.PositionVector3D     ('ROOT::Math::Cartesian3D<double>,ROOT::Math::DefaultCoordinateSystemTag')
 cpp.Gaudi.XYZVector           = _RM.DisplacementVector3D ('ROOT::Math::Cartesian3D<double>,ROOT::Math::DefaultCoordinateSystemTag')
 cpp.Gaudi.LorentzVector       = _RM.LorentzVector        ('ROOT::Math::PxPyPzE4D<double>')
@@ -119,16 +118,14 @@ cpp.Gaudi.Math.Point3D        = cpp.Gaudi.XYZPoint
 cpp.Gaudi.Vector3D            = cpp.Gaudi.XYZVector
 cpp.Gaudi.Math.Vector3D       = cpp.Gaudi.XYZVector
 
+
 # =============================================================================
 ## try to pickup the vector
 @staticmethod
 def _vector_ ( i , typ = 'double' ) :
-    """
-    Pick up the vector of correspoding size
-
-    >>>  V3   = Gaudi.Math.Vector(3)
-    >>>  vct  = V3 ()
-
+    """Pick up the vector of corresponding size
+    >>> V3   = Gaudi.Math.Vector(3)
+    >>> vct  = V3 ()
     """
     v = _RM.SVector ( typ , i )
     return deco_vector ( v ) 
@@ -137,27 +134,20 @@ def _vector_ ( i , typ = 'double' ) :
 ## try to pickup the matrix
 @staticmethod
 def _matrix_ ( i , j , typ = 'double' ) :
-    """
-    Pick up the matrix of correspoding size
-
-    >>>  M3x4   = Gaudi.Math.Matrix(3,4)
-    >>>  matrix = M3x4 ()
-    
+    """Pick up the matrix of corresponding size
+    >>> M3x4   = Gaudi.Math.Matrix(3,4)
+    >>> matrix = M3x4 ()    
     """
     m = _RM.SMatrix ( "%s,%d,%d" % ( typ , i , j ) )
     return deco_matrix( m )  
-
 
 # =============================================================================
 ## try to pickup the symmeric matrix
 @staticmethod
 def _sym_matrix_ ( i , typ = 'double' ) :
-    """
-    Pick up the symmetric matrix of correspoding size
-
-    >>>  SymM3  = Gaudi.Math.SymMatrix(3)
-    >>>  matrix = SymM3 ()
-
+    """Pick up the symmetric matrix of corresponding size
+    >>> SymM3  = Gaudi.Math.SymMatrix(3)
+    >>> matrix = SymM3 ()
     """
     m = _RM.SMatrix('%s,%d,%d,ROOT::Math::MatRepSym<%s,%d>' %  ( typ , i , i , typ , i ) )
     return deco_symmatrix  ( m ) 
@@ -200,27 +190,20 @@ cpp.Gaudi.Math.ValueWithError.Vector .__str__   = lambda s : str( [ i for i in s
 cpp.Gaudi.Math.ValueWithError.Vector .__repr__  = lambda s : str( [ i for i in s ])
 
 
-
-
-
 ## Sum the contents of the vector
 def _ve_sum_ ( s ) :
-    """
-
+    """Sum the contents of the vector
     >>> v = ...
     >>> s = v.sum()
-
     """
     return Gaudi.Math.sum ( s )
 
 
 ## Sum the contents of the vector
 def _ve_asum_ ( s ) :
-    """
-
+    """Sum the contents of the vector
     >>> v = ...
     >>> s = v.abssum()
-
     """
     return Gaudi.Math.abssum ( s )
 
@@ -251,12 +234,9 @@ _C2F . __str__  = lambda s : s.toString ()
 _C2F . __repr__ = lambda s : s.toString ()
 ## chi2-probabilty
 def _c2_prob_  ( s ) :
-    """
-    Chi2 probabiilty
-
+    """Chi2 probabiilty
     >>> r = h.hfit ( ... )
     >>> r.Prob()
-
     """
     dofs = s.points() - s.size()
     return ROOT.TMath.Prob ( s.chi2() , dofs )
@@ -268,176 +248,98 @@ _C2F . probability = _c2_prob_
 _C2F . __len__     = lambda s     : s.size  (   )
 _C2F . __getitem__ = lambda s , i : s.param ( i )
 
+# =============================================================================
+## self-printout of S-vectors
+#  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
+#  @date 2009-09-12
+def _v_str_ ( self , fmt = ' %g' ) :
+    """Self-printout of SVectors: (...)
+    """
+    index  = 0
+    result = ''
+    while index < self.kSize :
+        if 0 != index : result += ', '
+        result += fmt % self.At( index )
+        index  += 1
+    return "( " + result + ' )'
 
 # =============================================================================
-# Operations  
-# =============================================================================
-
-def _lav_iadd_ ( self , other ) :
-    _typ = type ( self )
-
-    if   isinstance ( other , _typ ) :
-        l = len ( self )
-        for i in range ( 0 , l ) : self[i] += other[i]
-        return self
-    
-    elif isinstance ( other , (float,int,long) ) :
-        l = len ( self )
-        for i in range ( 0 , l ) : self[i] += other
-        return self
-    #
-    ## print 'NOT-implemented! '
-    ## print 'I am SADD', type(other), type(self)
-    ## print 'I am len' , len(self)     
-    #
-    return NotImplemented 
-
-def _lav_isub_ ( self , other ) :
-    _typ = type ( self )
-    if   isinstance ( other , _typ ) :
-        l = len ( self )
-        for i in range ( 0 , l ) : self[i] -= other[i]
-        return self
-    elif isinstance ( other , (float,int,long) ) :
-        l = len ( self )
-        for i in range ( 0 , l ) : self[i] -= other
-        return self
-    #
-    return NotImplemented 
-
-def _lav_imul_ ( self , other ) :
-    
-    if isinstance ( other , (float,int,long) ) :
-        l = len ( self )
-        for i in range ( 0 , l ) : self[i] *= other
-        return self
-    
-def _lav_idiv_ ( self , other ) :
+## iterator for SVector
+#  @code
+#  vct = ...
+#  for i in vct : print i 
+#  @endcode
+def _v_iter_ ( self ) :
+    """Iterator for SVector
+    >>> vct = ...
+    >>> for i in vct : print i 
+    """
+    for i in range(self.kSize) :
+        yield self(i)
         
-    if isinstance ( other , (float,int,long) ) :
-        l = len ( self )
-        for i in range ( 0 , l ) : self[i] /= other
-        return self
-    #
-    return NotImplemented 
-
-    
-def _lav_add_ ( self , other ) :
-    """
-    Addition of LA-vectors
-    
-    >>> vct1 = ...
-    >>> vct2 = ...
-    >>> a1   = vct1 + 2
-    >>> a2   = vct1 + vct2
-    """
-    _typ = type( self )
-    tmp  = _typ( self )
-    tmp += other
-    return tmp
-
-def _lav_sub_ ( self , other ) :
-    """
-    Subtract LA-vectors
-    
-    >>> vct1 = ...
-    >>> vct2 = ...
-    >>> a1   = vct1 - 2
-    >>> a2   = vct1 - vct2 
-    """
-    _typ = type( self )
-    tmp  = _typ( self )
-    tmp -= other
-    return tmp
-
-def _lav_rsub_ ( self , other ) :
-    """
-    Right subtraction:
-    
+# =============================================================================
+## iterator for SVector
+#  @code
+#  vct = ...
+#  for i,v in vct.iteritems() : print i,v 
+#  @endcode
+def _v_iteritems_ ( self ) :
+    """Iterator for SVector
     >>> vct = ...
-    >>> a1  = 2 - vct  
+    >>> for i,v in vct.iteritems() : print i,v 
     """
-    self *= -1
-    self += other
-    return self 
+    for i in range(self.kSize) :
+        yield i,self(i)
 
-def _lav_mul_ ( self , other ) :
-    """
-    Multiply/scale LA-vector
-    
-    >>> vct = ...
-    >>> a1  = vct * 2 
-    >>> a2  = 2   * vct
-    >>> a3  = vct * vct  ## ``norm''
-    
-    """
-    _typ = type ( self )
-    if   isinstance ( other , _typ ) :
-        res = 0.0
-        l   = len ( self )
-        for i in range( 0 , l ) : res += self[i]*other[i]
-        return res
-    elif isinstance ( other , (float,int,long) )  :
-        tmp  = _typ ( self )
-        tmp *= other
-        return tmp
-    #
-    return NotImplemented 
+_vector_add_  = cpp.Gaudi.Math._vector_add_
+_vector_radd_ = cpp.Gaudi.Math._vector_radd_
+_vector_sub_  = cpp.Gaudi.Math._vector_sub_
+_vector_rsub_ = cpp.Gaudi.Math._vector_rsub_
+_vector_mul_  = cpp.Gaudi.Math._vector_mul_
+_vector_rmul_ = cpp.Gaudi.Math._vector_rmul_
+_vector_div_  = cpp.Gaudi.Math._vector_div_
 
-def _lav_div_ ( self , other ) :
-    """
-    Divide/scale LA-vector
-    
-    >>> vct = ...
-    >>> a   = vct / 2 
-    
-    """
-    _typ = type( self )
-    tmp  = _typ( self )
-    tmp /= other
-    return tmp
-
-def _lav_pow_ ( self , e ) :
-    """
-    Vector norm
-    
-    >>> vct   = ...
-    >>> norm  = vct ** 2 
-    
-    """
-    if 2 != e : return NotImplemented
-    return self*self
-
-
+# =============================================================================
 ## decorate vector 
 def deco_vector ( t ) :
 
-    if not hasattr ( t , '__iadd__' ) : t. __iadd__ = _lad_iadd_
-    if not hasattr ( t , '__isub__' ) : t. __isub__ = _lad_isub_
-    if not hasattr ( t , '__imul__' ) : t. __iadd__ = _lad_idiv_
-    if not hasattr ( t , '__idiv__' ) : t. __isub__ = _lad_imul_
-    #
-    t. __add__  = _lav_add_
-    t. __mul__  = _lav_mul_
-    t. __sub__  = _lav_sub_
-    t. __div__  = _lav_div_
-    t. __pow__  = _lav_pow_
-    
-    t. __radd__ = lambda s,o : s+o
-    t. __rmul__ = lambda s,o : s+o
-    t. __rsub__ = _lav_rsub_ 
+    if not hasattr ( t , '_decorated' ) :
 
+        t ._old_str_    = t.__str__
+        t ._old_repr_   = t.__repr__
+        
+        t ._old_add_    = t.__add__
+        t ._old_radd_   = t.__radd__
+        t ._old_mul_    = t.__mul__
+        t ._old_rmul_   = t.__rmul__
+        t ._old_sub_    = t.__sub__
+        t ._old_rsub_   = t.__rsub__
+        t ._old_div_    = t.__div__
+
+        t . __add__     = lambda a,b : _vector_add_  (a,b)
+        t . __radd__    = lambda a,b : _vector_radd_ (a,b)
+        t . __sub__     = lambda a,b : _vector_sub_  (a,b)
+        t . __rsub__    = lambda a,b : _vector_rsub_ (a,b)
+        t . __mul__     = lambda a,b : _vector_mul_  (a,b)
+        t . __rmul__    = lambda a,b : _vector_rmul_ (a,b)
+        t . __div__     = lambda a,b : _vector_div_  (a,b) 
+
+        t . __rdiv__    = lambda s,*a :  NotImplemented 
+
+
+        t. _new_str_    = _v_str_
+        t. __str__      = _v_str_
+        t. __repr__     = _v_str_
+
+        t. __len__      = lambda s : s.kSize 
+        t. __contains__ = lambda s, i : 0<=i<s.kSize
+
+        t. __iter__     = _v_iter_        
+        t. iteritems    = _v_iteritems_
+        
+        t. _decorated = True
+        
     return t
-
-    
-for t in ( cpp.Gaudi.Vector2 ,
-           cpp.Gaudi.Vector3 ,
-           cpp.Gaudi.Vector4 ,
-           cpp.Gaudi.Vector5 ,
-           cpp.Gaudi.Vector6 ,
-           cpp.Gaudi.Vector8 ) : deco_vector ( t ) 
-    #
-           
 
 cpp.Gaudi.Vector2             = cpp.Gaudi.Vector(2)
 cpp.Gaudi.Vector3             = cpp.Gaudi.Vector(3)
@@ -486,9 +388,7 @@ if not hasattr ( _V4D , '__isub__' ) : _V4D. __isub__ = _v4_isub_
 if not hasattr ( _V4D , 'Dot'      ) : _V4D.Dot       = _v4_dot_
 
 def _v4_mul_ ( self , other ) :
-    """
-    Multiplication/scaling of Lorentz Vectors 
-    
+    """Multiplication/scaling of Lorentz Vectors 
     >>> vct = ...
     >>> a   = vct * 2
     
@@ -502,9 +402,7 @@ def _v4_mul_ ( self , other ) :
     return tmp
 
 def _v4_add_ ( self , other ) :
-    """
-    Addition of Lorentz Vectors 
-    
+    """ Addition of Lorentz Vectors 
     >>> vct1 = ...
     >>> vct2 = ...
     >>> a    = vct1 + vct2
@@ -514,9 +412,7 @@ def _v4_add_ ( self , other ) :
     return tmp
 
 def _v4_sub_ ( self , other ) :
-    """
-    Subtraction of Lorentz Vectors 
-    
+    """Subtraction of Lorentz Vectors 
     >>> vct1 = ...
     >>> vct2 = ...
     >>> a    = vct1 - vct2
@@ -526,9 +422,7 @@ def _v4_sub_ ( self , other ) :
     return tmp
 
 def _v4_div_ ( self , other ) :
-    """
-    Division/scaling of Lorentz Vectors 
-    
+    """Division/scaling of Lorentz Vectors     
     >>> vct = ...
     >>> a   = vct / 2 
     """
@@ -541,8 +435,31 @@ _V4D . __add__  = _v4_add_
 _V4D . __sub__  = _v4_sub_
 _V4D . __div__  = _v4_div_
 
+
 _V4D . __radd__ = lambda s,o : s+o 
 _V4D . __rmul__ = lambda s,o : s*o 
+
+_V4 = cpp.Gaudi.Math.Vector4
+# =============================================================================
+## convert LorentzVector into SVector
+#  @code
+#  lv = ...
+#  v4 = lv.asSVector()
+#  @endcode 
+def _v4_as_v4_ ( self ) :
+    """Convert LorentzVector into SVector
+    >>> lv = ...
+    >>> v4 = lv.asSVector()
+    """
+    v4 = _V4()
+    v4[0] = self.X()
+    v4[1] = self.Y()
+    v4[2] = self.Z()
+    v4[3] = self.T()
+    return _v4 
+
+_V4D.asSVector = _v4_as_v4_ 
+
 
 ## 3-vectors 
 _P3D = cpp.Gaudi.XYZPoint
@@ -591,11 +508,30 @@ def _v3_as_p3_ ( self ) :
 _P3D. asV3 = _p3_as_v3_
 _V3D. asP3 = _v3_as_p3_
 
-
-def _p3_add_ ( self , other ) :
+_V3 = cpp.Gaudi.Math.Vector3
+# =============================================================================
+## convert 3D-Vector/3D-point into SVector
+#  @code
+#  lv = ...
+#  v4 = lv.asSVector()
+#  @endcode 
+def _v3_as_v3_ ( self ) :
+    """Convert 3D-Vector/3D into SVector
+    >>> lv = ...
+    >>> v3 = lv.asSVector()
     """
-    Addition of 3D-point and 3D-vector
-    
+    _v3 = _V3()
+    _v3[0] = self.X()
+    _v3[1] = self.Y()
+    _v3[2] = self.Z()
+    return _v3
+
+_V3D.asSVector = _v3_as_v3_ 
+_P3D.asSVector = _v3_as_v3_ 
+
+# =============================================================================
+def _p3_add_ ( self , other ) :
+    """Addition of 3D-point and 3D-vector    
     >>> point  = ...
     >>> vector = ...
     >>> result = point + vector 
@@ -609,9 +545,9 @@ def _p3_add_ ( self , other ) :
     return NotImplemented
 
 
+# =============================================================================
 def _p3_sub_ ( self , other ) :
-    """
-    Substraction of 3D-points 
+    """Substraction of 3D-points 
     
     >>> point1 = ...
     >>> point2 = ...
@@ -633,9 +569,9 @@ def _p3_sub_ ( self , other ) :
     #
     return NotImplemented 
 
+# =============================================================================
 def _p3_mul_ ( self , other ) :
-    """
-    Scaling of 3D-points 
+    """Scaling of 3D-points 
     
     >>> point  = ...
     >>> result = point1 * 2 
@@ -644,9 +580,9 @@ def _p3_mul_ ( self , other ) :
     tmp *= other
     return tmp
 
+# =============================================================================
 def _p3_div_ ( self , other ) :
-    """
-    Scaling of 3D-points 
+    """Scaling of 3D-points 
     
     >>> point  = ...
     >>> result = point1 / 2 
@@ -655,9 +591,9 @@ def _p3_div_ ( self , other ) :
     tmp /= other
     return tmp
     
+# =============================================================================
 def _v3_add_ ( self , other ) :
-    """
-    Addition  of 3D-vectors
+    """Addition  of 3D-vectors
     
     >>> vector1 = ...
     >>> vector2 = ...
@@ -675,9 +611,9 @@ def _v3_add_ ( self , other ) :
     #
     return NotImplemented 
 
+# =============================================================================
 def _v3_sub_ ( self , other ) :
-    """
-    Subtraction  of 3D-vectors
+    """Subtraction  of 3D-vectors
     
     >>> vector1 = ...
     >>> vector2 = ...
@@ -691,9 +627,9 @@ def _v3_sub_ ( self , other ) :
     #
     return NotImplemented 
 
+# =============================================================================
 def _v3_mul_ ( self , other ) :
-    """
-    Multiplication  of 3D-vectors
+    """Multiplication  of 3D-vectors
     
     >>> vector1 = ...
     >>> result  = vector1 * 2 
@@ -710,9 +646,9 @@ def _v3_mul_ ( self , other ) :
     #
     return NotImplemented
 
+# =============================================================================
 def _v3_div_ ( self , other ) :
-    """
-    Scaling of 3D-vectors
+    """Scaling of 3D-vectors
     
     >>> vector = ...
     >>> result = vector1 / 2 
@@ -738,17 +674,17 @@ _V3D . __rmul__ = lambda s,o : s*o
 
 
 
+# =============================================================================
 def _v4_pow_ ( self , e ) :
-    """
-    Squared length of the 3D-vector 
+    """Squared length of the 3D-vector 
     """
     if 2 != e : return NotImplemented
     return self.M2   ()
 
 
+# =============================================================================
 def _v3_pow_ ( self , e ) :
-    """
-    Squared length of the 3D-vector 
+    """Squared length of the 3D-vector 
     """
     if 2 != e : return NotImplemented
     return self.Mag2 ()
@@ -758,33 +694,34 @@ _V3D.__pow__ = _v3_pow_
 _P3D.__pow__ = _v3_pow_
 
 
+# =============================================================================
 ## Self-printout of 3D-points and 3D-vectors
-def _v3_str_ ( self , fmt = "( %g, %g, %g) ") :
-    """
-    Self-printout of 3D-points and 3D-vectors
-
+def _v3_str_ ( self , fmt = "(%g,%g,%g) ") :
+    """Self-printout of 3D-points and 3D-vectors
     """
     return fmt % ( self.X() , self.Y( ), self.Z() )
 
+# =============================================================================
 ## Self-printout of 4D-vectors
-def _v4_str_ ( self , fmt = "[( %g, %g, %g), %g]" ) :
-    """
-    Self-printout of 4D-vectors
-
+def _v4_str_ ( self , fmt = "[(%g,%g,%g),%g]" ) :
+    """Self-printout of 4D-vectors
     """
     return fmt % ( self.X() , self.Y( ), self.Z() , self.E() )
 
 
+# =============================================================================
 if not hasattr ( _P3D , '_new_str_' ) :
     _P3D . _new_str_ = _v3_str_
     _P3D . __str__   = _v3_str_
     _P3D . __repr__  = _v3_str_
 
+# =============================================================================
 if not hasattr ( _V3D , '_new_str_' ) :
     _V3D . _new_str_ = _v3_str_
     _V3D . __str__   = _v3_str_
     _V3D . __repr__  = _v3_str_
 
+# =============================================================================
 if not hasattr ( _V4D , '_new_str_' ) :
     _V4D . _new_str_ = _v4_str_
     _V4D . __str__   = _v4_str_
@@ -795,9 +732,7 @@ if not hasattr ( _V4D , '_new_str_' ) :
 #  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
 #  @date 2009-09-12
 def _l_str_ ( self ) :
-    """
-    Self-printout of line: (point, direction)
-    
+    """Self-printout of line: (point, direction)
     >>> line = ... 
     >>> print line 
     """
@@ -811,8 +746,9 @@ if not hasattr ( cpp.Gaudi.Math.XYZLine , '_new_str_' ) :
 # ============================================================================
 ## self-printout of matrices
 def _mg_str_ ( self , fmt = ' %+11.4g') :
-    """
-    Self-printout of matrices
+    """Self-printout of matrices
+    >>> matrix = ...
+    >>> print matrix 
     """
     _rows = self.kRows
     _cols = self.kCols
@@ -827,8 +763,9 @@ def _mg_str_ ( self , fmt = ' %+11.4g') :
 #
 ## self-printout of symmetrical matrices
 def _ms_str_ ( self , fmt = ' %+11.4g' , width = 12 ) :
-    """
-    Self-printout of symetrical matrices
+    """Self-printout of symmetrical matrices
+    >>> matrix = ...
+    >>> print matrix 
     """
     _rows = self.kRows
     _cols = self.kCols
@@ -842,14 +779,12 @@ def _ms_str_ ( self , fmt = ' %+11.4g' , width = 12 ) :
         if ( _rows - 1 )  != _irow : _line += '\n'
     return _line
 
+# =============================================================================
 ## get the correlation matrix
 def _m_corr_ ( self ) :
-    """
-    Get the correlation matrix
-
+    """Get the correlation matrix
     >>> mtrx = ...
     >>> corr = mtrx.correlations()
-
     """
     from math import sqrt
 
@@ -865,7 +800,8 @@ def _m_corr_ ( self ) :
 
     return _c
 
-
+# =============================================================================
+## "getter"
 def _m_get_ ( o , i , j ) :
 
     try :
@@ -879,8 +815,7 @@ def _m_get_ ( o , i , j ) :
         pass
 
     return o [ i ][ j ]
-    
-    
+        
 # =============================================================================
 ## add some matrix-like object to the matrix
 #  @code
@@ -920,13 +855,44 @@ def _ms_increment_ ( m , o ) :
     return m
 
 # =============================================================================
+## iterator for SMatrix
+#  @code
+#  matrix = ...
+#  for i in matrix : print i 
+#  @endcode
+def _m_iter_ ( self ) :
+    """Iterator for SMatrix
+    >>> matrix = ...
+    >>> for i in matrix : print i 
+    """
+    for i in range(self.kRows) :
+        for j in range(self.kCols) :
+            yield self(i,j)
+
+# =============================================================================
+## iterator for SMatrix
+#  @code
+#  matrix = ...
+#  for i,j,v in matrix.iteritems() : print i,j,v 
+#  @endcode
+def _m_iteritems_ ( self ) :
+    """Iterator for SMatrix
+    >>> matrix = ...
+    >>> for i,j,v in matrix.iteritems() : print i,j,v
+    """
+    for i in range(self.kRows) :
+        for j in range(self.kCols) :
+            yield i,j,self(i,j)
+
+        
+# =============================================================================
 ## construct ``similarity'' with ``vector-like'' object
 #  @code
 #  m = ...
 #  v = ...
 #  m.sim ( v )
 def  _ms_sim_ ( m , v ) :
-    """ construct ``similaroty'' with ``vector-like'' object
+    """ construct ``similarity'' with ``vector-like'' object
     >>> m = ...
     >>> v = ...
     >>> m.sim ( v )
@@ -937,40 +903,103 @@ def  _ms_sim_ ( m , v ) :
             sim += v[i]*m(i,j)*v[j] 
     return sim 
             
+_matrix_add_  = cpp.Gaudi.Math._matrix_add_
+## _matrix_radd_ = cpp.Gaudi.Math._matrix_add_ ## ditto 
+_matrix_sub_  = cpp.Gaudi.Math._matrix_sub_
+## _matrix_rsub_ = cpp.Gaudi.Math._matrix_rsub_
+_matrix_mul_  = cpp.Gaudi.Math._matrix_mul_
+_matrix_rmul_ = cpp.Gaudi.Math._matrix_rmul_
+_matrix_div_  = cpp.Gaudi.Math._matrix_div_
+
         
 ##  decorate the matrix  type 
 def deco_matrix ( m  ) :
-    if not hasattr ( m , '_new_str_' ) :
-        m. _new_str_ = _mg_str_
-        m. __repr__  = _mg_str_
-        m. __str__   = _mg_str_
-    if not hasattr ( m , '_increment_' ) :
-        m._increment_   = _mg_increment_
-        m.increment     = _mg_increment_
+    
+    if not hasattr ( m , '_decorated' ) :
+
+        ##  save 'old method'
+        m. _old_str_   = m . __str__
+        m. _old_repr_  = m . __repr__
+
+        m. _new_str_   = _mg_str_
+        m. __repr__    = _mg_str_
+        m. __str__     = _mg_str_
+        
+        m ._old_add_    = m.__add__
+        m ._old_radd_   = m.__radd__
+        m ._old_mul_    = m.__mul__
+        m ._old_rmul_   = m.__rmul__
+        m ._old_sub_    = m.__sub__
+        m ._old_rsub_   = m.__rsub__
+        m ._old_div_    = m.__div__
+
+        m . __add__     = lambda a,b : _matrix_add_  (a,b)
+        ## m . __radd__    = lambda a,b : _matrix_radd_ (a,b)
+        m . __sub__     = lambda a,b : _matrix_sub_  (a,b)
+        ## m . __rsub__    = lambda a,b : _matrix_rsub_ (a,b)
+        m . __mul__     = lambda a,b : _matrix_mul_  (a,b)
+        m . __rmul__    = lambda a,b : _matrix_rmul_ (a,b)
+        m . __div__     = lambda a,b : _matrix_div_  (a,b) 
+
+        m . __rdiv__    = lambda s,*a :  NotImplemented 
+
+        
+        m._increment_  = _mg_increment_
+        m. increment   = _mg_increment_
+
+        m.__iter__     = _m_iter_
+        m.iteritems    = _m_iteritems_
+        m.__contains__ = lambda s,ij : 0<=ij[0]<s.kRows and 0<=ij[1]<s.kCols
+        
+        m._decorated   = True
         
     return m
 
 ##  decorate the symmetrix matrix  type 
 def deco_symmatrix ( m ) :
-    
-    if not hasattr ( m , 'correlations' ) :
+
+    if not hasattr ( m , '_decorated' ) :
+
+        ##  save 'old method'
+        m. _old_str_   = m . __str__
+        m. _old_repr_  = m . __repr__
+
         m.correlations = _m_corr_
+        m. _new_str_   = _ms_str_
+        m. __repr__    = _ms_str_
+        m. __str__     = _ms_str_
 
-    if not hasattr ( m , '_new_str_' ) :
-        m. _new_str_ = _ms_str_
-        m. __repr__  = _ms_str_
-        m. __str__   = _ms_str_
+        m ._old_add_    = m.__add__
+        m ._old_radd_   = m.__radd__
+        m ._old_mul_    = m.__mul__
+        m ._old_rmul_   = m.__rmul__
+        m ._old_sub_    = m.__sub__
+        m ._old_rsub_   = m.__rsub__
+        m ._old_div_    = m.__div__
 
-    if not hasattr ( m , '_increment_' ) :
-        m._increment_   = _ms_increment_
-        m.increment     = _ms_increment_
+        m . __add__     = lambda a,b : _matrix_add_  (a,b)
+        ## m . __radd__    = lambda a,b : _matrix_radd_ (a,b)
+        m . __sub__     = lambda a,b : _matrix_sub_  (a,b)
+        ## m . __rsub__    = lambda a,b : _matrix_rsub_ (a,b)
+        m . __mul__     = lambda a,b : _matrix_mul_  (a,b)
+        m . __rmul__    = lambda a,b : _matrix_rmul_ (a,b)
+        m . __div__     = lambda a,b : _matrix_div_  (a,b) 
 
-    if not hasattr ( m , '_sim_' ) :
-        m._sim_   = _ms_sim_
-        m.sim     = _ms_sim_
+        m . __rdiv__    = lambda s,*a :  NotImplemented 
 
+        m._increment_  = _ms_increment_
+        m.increment    = _ms_increment_
+
+        m.__iter__     = _m_iter_
+        m.iteritems    = _m_iteritems_
+        m.__contains__ = lambda s,ij : 0<=ij[0]<s.kRows and 0<=ij[1]<s.kCols
+        
+        m._sim_        = _ms_sim_
+        m.sim          = _ms_sim_
+
+        m._decorated   = True
+        
     return m
-
 
 cpp.Gaudi.SymMatrix2x2        = cpp.Gaudi.SymMatrix(2)
 cpp.Gaudi.SymMatrix3x3        = cpp.Gaudi.SymMatrix(3)
@@ -1016,28 +1045,24 @@ cpp.Gaudi.Matrix4x3             = cpp.Gaudi.Matrix(4,3)
 cpp.Gaudi.Math.Matrix4x3        = cpp.Gaudi.Matrix4x3
 
 
-
-for m in ( cpp.Gaudi.Matrix5x5      ,
-           cpp.Gaudi.TrackMatrix    ,
-           cpp.Gaudi.Matrix4x3      ) : deco_matrix ( m )
-
-for m in ( cpp.Gaudi.SymMatrix2x2   ,
-           cpp.Gaudi.SymMatrix3x3   ,
-           cpp.Gaudi.SymMatrix4x4   ,
-           cpp.Gaudi.SymMatrix5x5   ,
-           cpp.Gaudi.SymMatrix6x6   ,
-           cpp.Gaudi.SymMatrix7x7   ,
-           cpp.Gaudi.SymMatrix8x8   ,
-           cpp.Gaudi.SymMatrix9x9   ,
-           cpp.Gaudi.TrackSymMatrix ) : deco_symmatrix ( m ) 
+for i in range(11) :
+    
+    t0 = cpp.Gaudi.Vector ( i )
+    deco_vector    ( t0 )
+    
+    t1 = cpp.Gaudi.SymMatrix(i)
+    deco_symmatrix ( t1 )
+    
+    for j in range(11) : 
+        t2 = cpp.Gaudi.Matrix(i,j)
+        deco_matrix ( t2 ) 
 
 # =============================================================================
 ## Self-printout of 3D-plane
 #  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
 #  @date 2009-09-12
 def _p_str_ ( self ) :
-    """
-    Self-printout of 3D-plane: (point, normal)
+    """Self-printout of 3D-plane: (point, normal)
     >>> plane = ...
     >>> print plance 
     """
@@ -1047,36 +1072,6 @@ if not hasattr ( cpp.Gaudi.Plane3D , '_new_str_' ) :
     cpp.Gaudi.Plane3D._new_str_ = _p_str_
     cpp.Gaudi.Plane3D.__str__   = _p_str_
     cpp.Gaudi.Plane3D.__repr__  = _p_str_
-
-# =============================================================================
-## self-printout of S-vectors
-#  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
-#  @date 2009-09-12
-def _v_str_ ( self , fmt = ' %g' ) :
-    """
-    Self-printout of SVectors: (...)
-    """
-    index  = 0
-    result = ''
-    while index < self.kSize :
-        if 0 != index : result += ', '
-        result += fmt % self.At( index )
-        index  += 1
-    return "( " + result + ' )'
-
-for t in  ( cpp.Gaudi.Vector2 ,
-            cpp.Gaudi.Vector3 ,
-            cpp.Gaudi.Vector4 ,
-            cpp.Gaudi.Vector5 ,
-            cpp.Gaudi.Vector6 ) :
-
-    ## add len of vectors 
-    t . __len__ = lambda s : s.Dim()
-    
-    if not hasattr ( t , '_new_str_' ) :
-        t._new_str_ = _v_str_
-        t.__str__   = _v_str_
-        t.__repr__  = _v_str_
 
 for t in ( cpp.Gaudi.Math.ValueWithError         ,
            cpp.Gaudi.Math.Point3DWithError       ,
@@ -1101,24 +1096,21 @@ cpp.Gaudi.Math.SVector5WithError  . __len__ = lambda s : 5
 cpp.Gaudi.Math.SVector6WithError  . __len__ = lambda s : 6 
 cpp.Gaudi.Math.SVector8WithError  . __len__ = lambda s : 8 
 
+# =============================================================================
 ## get the eigenvalues for symmetric matrices :
 def _eigen_1_ ( self , sorted = True ) :
-    """
-
+    """Get the eigenvalues for symmetric matrices :
     >>> mtrx = ...
     >>> values = mtrx.eigenValues ( sorted = True )
-
     """
     return cpp.Gaudi.Math.EigenSystems.eigenValues ( self , sorted )
 
-
+# =============================================================================
 ## get the eigevectors for symmetric matrices :
 def _eigen_2_ ( self , sorted = True ) :
-    """
-
+    """Get the eigevectors for symmetric matrices :
     >>> mtrx = ...
     >>> values, vectors = mtrx.eigenVectors( sorted = True )
-
     """
     if   2 == self.kCols :
         _values  = cpp.Gaudi.Vector2  ()
@@ -1154,8 +1146,7 @@ for m in ( cpp.Gaudi.SymMatrix2x2   ,
 #  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
 #  @date 2010-05-26
 def _pp_str_ ( self ) :
-    """
-    Self-printout of ParticleParams
+    """Self-printout of ParticleParams
     """
     pos = self.position    ()
     mom = self.momentum    ()
@@ -1187,8 +1178,7 @@ _GeomFun = cpp.Gaudi.Math.XYZGeomFun
 #  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
 #  @date 2009-10-22
 def _intersect_line_and_plane_ ( line , plane ) :
-    """
-    Find the intersection of line and plane
+    """Find the intersection of line and plane
 
     >>> line  = ...
     >>> plane = ...
@@ -1221,8 +1211,7 @@ if not hasattr ( cpp.Gaudi.XYZLine , 'intersect' ) :
 #  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
 #  @date 2009-10-22
 def _intersect_two_planes_ ( plane , plane1 ) :
-    """
-    Find the intersection line for two planes:
+    """Find the intersection line for two planes:
 
     >>> plane  = ...
     >>> plane1 = ...
@@ -1283,8 +1272,7 @@ if not hasattr ( cpp.Gaudi.Plane3D , 'point' ) :
 #  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
 #  @date 2009-10-22
 def _intersect_the_planes_ ( plane , plane1 , plane2 = None ) :
-    """
-    Find the intersection line/point for two or three planes:
+    """Find the intersection line/point for two or three planes:
 
     >>> plane  = ...
     >>> plane1 = ...
@@ -1315,13 +1303,10 @@ if not hasattr ( cpp.Gaudi.Plane3D , 'intersect' ) :
 #  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
 #  @date 2009-10-22
 def _imp_par_1_ ( line , point ) :
-    """
-    Calculate the impact parameter of the line and the point
-
+    """Calculate the impact parameter of the line and the point
     >>> line  = ...
     >>> point = ...
     >>> ip = line.impactParameter ( point )
-
     """
     return _GeomFun.impactParameter ( point , line )
 
@@ -1337,13 +1322,10 @@ if not hasattr ( cpp.Gaudi.XYZLine , 'ip'              ) :
 #  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
 #  @date 2009-10-22
 def _imp_par_2_ ( point , line ) :
-    """
-    Calculate the impact parameter of the line and the point
-
+    """Calculate the impact parameter of the line and the point
     >>> point = ...
     >>> line  = ...
     >>> ip = point.impactParameter ( line )
-
     """
     return _GeomFun.impactParameter ( point , line )
 
@@ -1360,13 +1342,10 @@ if not hasattr ( cpp.Gaudi.XYZPoint , 'ip'              ) :
 #  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
 #  @date 2009-10-22
 def _distance_between_two_lines_ ( line , line1 ) :
-    """
-    Find the distance netween two lines :
-
+    """Find the distance between two lines :
     >>> line  = ...
     >>> line1 = ...
     >>> dist = line.distance ( line1 )
-
     """
     return _GeomFun.distance ( line , line1 )
 
@@ -1381,8 +1360,7 @@ if not hasattr ( cpp.Gaudi.XYZLine , 'distance' ) :
 #  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
 #  @date 2009-10-22
 def _closest_points_ ( line , line1 ) :
-    """
-    Calculate the two closest points between two lines
+    """Calculate the two closest points between two lines
 
     >>> line1 = ...
     >>> line2 = ...
@@ -1392,7 +1370,6 @@ def _closest_points_ ( line , line1 ) :
     - the point onthe fist line
     - the point on the second line
     - the flag (true is everything OK)
-
     """
     _point1 = cpp.Gaudi.XYZPoint(0,0,-1.e+10)
     _point2 = cpp.Gaudi.XYZPoint(0,0,-1.e+11)
@@ -1413,8 +1390,7 @@ if not hasattr ( cpp.Gaudi.XYZLine , 'closestPoints' ) :
 #  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
 #  @date 2009-10-22
 def _closest_point_params_ ( line , line1 ) :
-    """
-    Calculate the parameters for two closest points between two lines
+    """Calculate the parameters for two closest points between two lines
 
     >>> line1 = ...
     >>> line2 = ...
@@ -1424,7 +1400,6 @@ def _closest_point_params_ ( line , line1 ) :
     - the 'mu-parameter of closest point along the first  line
     - the 'mu-parameter of closest point along the second line
     - the flag (true is everything OK)
-
     """
     _mu1    = ROOT.Double(-1.e+10)
     _mu2    = ROOT.Double(-1.e+11)
@@ -1444,13 +1419,10 @@ if not hasattr ( cpp.Gaudi.XYZLine , 'closestPointParams' ) :
 #  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
 #  @date 2009-10-22
 def _closest_point_1_ ( line , point ) :
-    """
-    Find the point on line closest to the given point
-
+    """Find the point on line closest to the given point
     >>> line  = ...
     >>> point = ...
     >>> ClosestPoint  = line.closestPoint ( point )
-
     """
     return _GeomFun.closestPoint ( point , line )
 
@@ -1464,13 +1436,10 @@ if not hasattr ( cpp.Gaudi.XYZLine , 'closestPoint' ) :
 #  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
 #  @date 2009-10-22
 def _closest_point_2_ ( point , line ) :
-    """
-    Find the point on line closest to the given point
-
+    """Find the point on line closest to the given point
     >>> point = ...
     >>> line  = ...
     >>> ClosestPoint  = point.closestPoint ( line )
-
     """
     return _GeomFun.closestPoint ( point , line )
 
@@ -1485,9 +1454,7 @@ if not hasattr ( cpp.Gaudi.XYZPoint , 'closestPoint' ) :
 #  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
 #  @date 2009-10-22
 def __closest_point_param_1__ ( line , point ) :
-    """
-    Find the parameter along the line to the closest point
-
+    """Find the parameter along the line to the closest point
     >>> line  = ...
     >>> point = ...
     >>> mu = line.closestPointParam ( point )
@@ -1507,13 +1474,10 @@ if not hasattr ( cpp.Gaudi.XYZLine , 'closestPointParam' ) :
 #  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
 #  @date 2009-10-22
 def _closest_point_param_2_ ( point , line ) :
-    """
-    Find the parameter along the line to the closest point
-
+    """Find the parameter along the line to the closest point
     >>> point = ...
     >>> line  = ...
     >>> mu = point.closestPointParam ( line )
-
     """
     return _GeomFun.closestPointParam ( point , line )
 
@@ -1528,9 +1492,7 @@ if not hasattr ( cpp.Gaudi.XYZPoint , 'closestPointParam' ) :
 #  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
 #  @date 2009-10-22
 def _parallel_lines_ ( line , line1 ) :
-    """
-    Check if two lines are parallel:
-
+    """Check if two lines are parallel:
     >>> line  = ...
     >>> line1 = ...
     >>> par   = line.parallel ( line1 )
@@ -1555,14 +1517,11 @@ if not hasattr ( cpp.Gaudi.XYZLine , 'parallel' ) :
 #  @return the tuple (fitter,chi2)
 #  @date 2009-10-22
 def _fit_mass_ ( particle , mass )  :
-    """
-    Helper function/wrapper for Gaudi::Math::MassFit
-
+    """Helper function/wrapper for Gaudi::Math::MassFit
     >>> particle  =  ...   ## get Gaudi::Math::ParticleParams object
     >>> mass = 5.279 * GeV ## get the mass
     >>> result, chi2 = particle.fitMass ( particle , mass )
     >>> print 'result/chi2:', result, chi2
-
     """
     _fitted = cpp.Gaudi.Math.ParticleParams()
     _chi2   = cpp.Gaudi.Math.FitMass.fit ( particle  ,
@@ -1619,14 +1578,10 @@ if not hasattr ( cpp.Gaudi.Math.Splines , 'DATA'    ) or \
 #  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
 #  @date 2013-03-17
 def _v_interp_ ( self , x ) :
-    """
-    Simple interpolation for set of data points.
+    """Simple interpolation for set of data points.
     The vector of pairs is interpreted as vector of (x,y) pairs
-
     >>> vct_of_pairs = ...
-
-    >>> result = vct_of_pairs.interpolate ( x )
-
+    >>> result       = vct_of_pairs.interpolate ( x )
     """
     if hasattr ( x , 'value' ) : x = x.value()
     #
@@ -1652,13 +1607,10 @@ def _v_spline_ ( self                                      ,
                  null  = False                             ,
                  scale = 1                                 ,
                  shift = 0                                 ) :
-    """
-    Create spline object for the data vector
-
+    """Create spline object for the data vector
     >>> vdata  = ...
     >>> spline = vdata.spline ()
-
-    >>> value = spline ( 10 )
+    >>> value  = spline ( 10 )
     """
     return cpp.Gaudi.Math.Spline ( self , type , null , scale , shift )
 
@@ -1675,13 +1627,10 @@ def _v_spline_err_ ( self                                      ,
                      null  = False                             ,
                      scale = 1                                 ,
                      shift = 0                                 ) :
-    """
-    Create spline object for the data vector
-
+    """Create spline object for the data vector
     >>> vdata  = ...
     >>> spline = vdata.splineErr()
-
-    >>> value = spline ( 10 )
+    >>> value  = spline ( 10 )
     """
     return cpp.Gaudi.Math.SplineErrors ( self , type , null , scale , shift )
 
@@ -1695,24 +1644,17 @@ cpp.Gaudi.Math.Splines.DATAERR .splineErr  = _v_spline_err_
 # =============================================================================
 ## get values from the DATAERR
 def _v_get_values_ ( self ) :
-    """
-    Get values from vector
-
+    """Get values from vector
     >>> vdataerr = ...
-    >>> vvalues   = vdataerr.getValues()
-
+    >>> vvalues  = vdataerr.getValues()
     """
     return cpp.Gaudi.Math.Spline.getValues ( self )
 
-
 ## get values from the DATAERR
 def _v_get_errors_ ( self ) :
-    """
-    Get errors from vector
-
+    """Get errors from vector
     >>> vdataerr = ...
-    >>> verrors   = vdataerr.getErrors()
-
+    >>> verrors  = vdataerr.getErrors()
     """
     return cpp.Gaudi.Math.Spline.getErrors ( self )
 
@@ -1737,8 +1679,7 @@ if not hasattr ( cpp.Gaudi.Math.SplineErrors , 'DATAERR' ) :
 
 ## self-printout of TMaxtrix 
 def _tmg_str_ ( self , fmt = ' %+11.4g') :
-    """
-    Self-printout of TMatrix
+    """Self-printout of TMatrix
     """
     _rows = self.GetNrows()
     _cols = self.GetNcols()
@@ -1805,14 +1746,10 @@ WSE.__str__  = lambda s : 'WStat: '+ s.toString()
 #  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
 #  @date   2012-10-15
 def _b2s_ ( s )  :
-    """
-    Get B/S estimate from the equation:
-    
-       error(S) = 1/sqrt(S) * sqrt ( 1 + B/S)
-
+    """Get B/S estimate from the equation:
+    error(S) = 1/sqrt(S) * sqrt ( 1 + B/S)
     >>> v = ...
     >>> b2s = v.b2s() ## get B/S estimate
-    
     """
     #
     c2 = s.cov2  ()
@@ -1826,12 +1763,9 @@ def _b2s_ ( s )  :
 #  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
 #  @date   2012-10-15
 def _prec2_ ( s )  :
-    """
-    Get precision with ``some'' error estimate 
-
+    """Get precision with ``some'' error estimate 
     >>> v = ...
-    >>> p = v.prec () 
-    
+    >>> p = v.prec ()     
     """
     if not hasattr ( s , 'value' ) :
         return _prec_ ( VE ( s , 0 ) )
@@ -1861,13 +1795,10 @@ def _add_to ( vct , arg1 , *args ) :
 # =============================================================================
 ## construct std::vector<double> from the arguments
 def doubles ( arg1 , *args ) :
-    """
-    Construct the std::vector<double> from the arguments
-    
+    """Construct the std::vector<double> from the arguments
     >>> v1 = doubles ( 1.01 )
     >>> v2 = doubles ( 1.01 , 1.02 , 1.03  )
-    >>> v3 = doubles ( [ 1.01 , 1.02 , 1.03 ] )
-    
+    >>> v3 = doubles ( [ 1.01 , 1.02 , 1.03 ] )    
     """
     ## create new vector 
     VT  = std.vector('double')
@@ -1880,13 +1811,10 @@ def doubles ( arg1 , *args ) :
 # =============================================================================
 ## construct std::vector<ints> from the arguments
 def ints ( arg1 , *args ) :
-    """
-    Construct the std::vector<int> from the arguments
-    
+    """Construct the std::vector<int> from the arguments    
     >>> v1 = ints ( 1 )
     >>> v2 = ints ( 1 , 1 , 1  )
-    >>> v3 = ints ( [ 1 , 2 , 3 ] )
-    
+    >>> v3 = ints ( [ 1 , 2 , 3 ] )    
     """
     ## create new vector 
     VT  = std.vector('int')
@@ -1899,13 +1827,10 @@ def ints ( arg1 , *args ) :
 # =============================================================================
 ## construct std::vector<unsigned int> from the arguments
 def uints ( arg1 , *args ) :
-    """
-    Construct the std::vector<unsigned int> from the arguments
-    
+    """Construct the std::vector<unsigned int> from the arguments    
     >>> v1 = uints ( 1 )
     >>> v2 = uints ( 1 , 1 , 1  )
-    >>> v3 = uints ( [ 1 , 2 , 3 ] )
-    
+    >>> v3 = uints ( [ 1 , 2 , 3 ] )    
     """
     ## create new vector 
     VT  = std.vector('unsigned int')
@@ -1918,13 +1843,10 @@ def uints ( arg1 , *args ) :
 # =============================================================================
 ## construct std::vector<long> from the arguments
 def longs ( arg1 , *args ) :
-    """
-    Construct the std::vector<long> from the arguments
-    
+    """Construct the std::vector<long> from the arguments    
     >>> v1 = longs ( 1 )
     >>> v2 = longs ( 1 , 1 , 1  )
-    >>> v3 = longs ( [ 1 , 2 , 3 ] )
-    
+    >>> v3 = longs ( [ 1 , 2 , 3 ] )    
     """
     ## create new vector 
     VT  = std.vector('long')
@@ -1937,13 +1859,10 @@ def longs ( arg1 , *args ) :
 # =============================================================================
 ## construct std::vector<unsigned long> from the arguments
 def ulongs ( arg1 , *args ) :
-    """
-    Construct the std::vector<unsigned long> from the arguments
-    
+    """Construct the std::vector<unsigned long> from the arguments    
     >>> v1 = ulongs ( 1 )
     >>> v2 = ulongs ( 1 , 1 , 1  )
-    >>> v3 = ulongs ( [ 1 , 2 , 3 ] )
-    
+    >>> v3 = ulongs ( [ 1 , 2 , 3 ] )    
     """
     ## create new vector 
     VT  = std.vector('unsigned long')
