@@ -9,6 +9,8 @@ parser.add_argument("-s", "--stream", type = str, dest = "stream", default = "",
                     help = "Which stream")
 parser.add_argument("--tck", type = str, dest = "tck", default = "",
                     help = "What TCK")
+parser.add_argument("-n", "--nevents", type = int, dest = "nevt", default = -1,
+                    help = "Maximum number of events")
 parser.add_argument("db_entry", nargs = 1)
 
 args = parser.parse_args()
@@ -144,11 +146,14 @@ getattr(gbl, "IANNSvc")
 firedRoutingBits = gbl.Hlt.firedRoutingBits
 
 error = False
+nEvt = 0
 
-while True:
+while (args.nevt == -1) or (nEvt < args.nevt):
     gaudi.run(1)
     if not TES['/Event']:
         break
+
+    nEvt += 1
 
     # Check for bit 95 (non-nanofied event) in case of Hlt2
     rb_orig = set([b for b in firedRoutingBits(TES['DAQ/RawEvent'])])
