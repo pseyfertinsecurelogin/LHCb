@@ -10,6 +10,10 @@
 //
 // 2010-12-21 : Olivier Deschamps
 //-----------------------------------------------------------------------------
+namespace {
+  bool mask(int& val){return (val&0x1) != 0;}
+  bool offset(int& val){return (val&0x2) !=0;}
+}
 
 // Declaration of the Algorithm Factory
 DECLARE_ALGORITHM_FACTORY( CaloDigitFilterAlg )
@@ -20,18 +24,13 @@ DECLARE_ALGORITHM_FACTORY( CaloDigitFilterAlg )
 //=============================================================================
 CaloDigitFilterAlg::CaloDigitFilterAlg( const std::string& name,
                                         ISvcLocator* pSvcLocator)
-  : GaudiAlgorithm ( name , pSvcLocator ), m_filter(0)
+  : GaudiAlgorithm ( name , pSvcLocator )
 {
   declareProperty("EcalFilter" ,m_ecal = 0x3); // 1 = Mask , 2=Offset , 3 = both, 0 = none
   declareProperty("HcalFilter" ,m_hcal = 0x3); // 1 = Mask , 2=Offset , 3 = both, 0 = none
   declareProperty("PrsFilter"  ,m_prs  = 0x3); // 1 = Mask , 2=Offset , 3 = both, 0 = none
   declareProperty("SpdFilter"  ,m_spd  = 0x1); // 1 = Mask , 2=Offset , 3 = both, 0 = none
 }
-//=============================================================================
-// Destructor
-//=============================================================================
-CaloDigitFilterAlg::~CaloDigitFilterAlg() {} 
-
 //=============================================================================
 // Initialization
 //=============================================================================
@@ -41,9 +40,7 @@ StatusCode CaloDigitFilterAlg::initialize() {
 
   if ( msgLevel(MSG::DEBUG) ) debug() << "==> Initialize" << endmsg;
 
-
   m_filter = tool<ICaloDigitFilterTool>("CaloDigitFilterTool","FilterTool");
-  
 
   return StatusCode::SUCCESS;
 }
@@ -54,8 +51,6 @@ StatusCode CaloDigitFilterAlg::initialize() {
 StatusCode CaloDigitFilterAlg::execute() {
 
   if ( msgLevel(MSG::DEBUG) ) debug() << "==> Execute" << endmsg;
-
-
 
   if( mask(m_ecal) || offset(m_ecal) )
     if( !m_filter->cleanDigits("Ecal",offset(m_ecal),mask(m_ecal)))
@@ -72,7 +67,6 @@ StatusCode CaloDigitFilterAlg::execute() {
   if( mask(m_spd) || offset(m_spd) )
     if( !m_filter->cleanDigits("Spd",offset(m_spd),mask(m_spd)))
       Warning("Spd digit filtering failed",StatusCode::SUCCESS).ignore();
-
 
   return StatusCode::SUCCESS;
 }
