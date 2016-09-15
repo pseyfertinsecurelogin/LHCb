@@ -21,7 +21,7 @@ from os.path import exists, join
 class NoTagError(RuntimeError):
     def __init__(self, partition, datatype):
         RuntimeError.__init__(self, "Cannot find tags for partition '%s' and"
-                                    " data type '%s'" % (partition, datatype)))
+                                    " data type '%s'" % (partition, datatype))
         self.partition = partition
         self.datatype = datatype
 
