@@ -31,7 +31,7 @@ namespace Decays
    *  @author  Vanya BELYAEV Ivan.Belyaev@nikhef.nl
    *  @date   2008-03-31
    */
-  class GAUDI_API Decay 
+  class GAUDI_API Decay  final
   {
   public: 
     // ========================================================================
@@ -40,7 +40,7 @@ namespace Decays
      *  @author  Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date   2008-03-31
      */
-    class Item 
+    class Item  final
     {
     public:
       // ======================================================================
@@ -50,8 +50,6 @@ namespace Decays
       Item ( const std::string&            name   ) ;
       /// the constructor from the particle PID
       Item ( const LHCb::ParticleID&       pid    ) ;
-      /// the destructor 
-      ~Item() {} // the destructor 
       // ======================================================================
     public:
       // ======================================================================    
@@ -81,7 +79,7 @@ namespace Decays
       /// the particle PID 
       mutable LHCb::ParticleID               m_pid  ;   //     the particle PID 
       /// the source of properties 
-      mutable const LHCb::ParticleProperty*  m_pp   ;   //         the property
+      mutable const LHCb::ParticleProperty*  m_pp = nullptr; //    the property
       // ======================================================================    
     } ;
     // ========================================================================
@@ -91,7 +89,7 @@ namespace Decays
   public:
     // ========================================================================
     /// the default constructor 
-    Decay () ;
+    Decay () = default;
     // ========================================================================    
     /** the constructor from mother and daughters 
      *  @param mother the mother 
@@ -121,11 +119,6 @@ namespace Decays
     Decay 
     ( const Item&              mother    ,                     //    the mother 
       const std::vector<Item>& daughters ) ;                   // the daughters 
-    // ========================================================================
-  public:
-    // ========================================================================
-    /// destructor 
-    ~Decay () ;                                           // virtual destructor
     // ========================================================================
   public:
     // ========================================================================
