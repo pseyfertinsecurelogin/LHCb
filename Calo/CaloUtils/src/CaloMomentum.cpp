@@ -1,6 +1,3 @@
-// $Id: CaloMomentum.cpp,v 1.8 2009-08-05 17:33:00 ibelyaev Exp $ 
-// ============================================================================
-// CVS tag $Name: not supported by cvs2svn $, version $Revision: 1.8 $
 // ============================================================================
 // Include files 
 // ============================================================================
@@ -27,35 +24,14 @@
  *  @author Olivier Deschamps
  */
 // ============================================================================
-// Destructor 
-// ============================================================================
-LHCb::CaloMomentum::~CaloMomentum() {}
-// ============================================================================
 // Default Constructor
 // ============================================================================
-LHCb::CaloMomentum::CaloMomentum() 
-  : m_caloPositions     ()
-  , m_point             ()
-  , m_pointCovMatrix    ()
-  , m_momentum          () 
-  , m_momCovMatrix      ()
-  , m_momPointCovMatrix ()
-  , m_status            ( LHCb::CaloMomentum::OK    ) 
-  , m_flag              ( LHCb::CaloMomentum::Empty )
-{}
+LHCb::CaloMomentum::CaloMomentum()  = default;
 // ============================================================================
 // From CaloPosition assume origin is (0,0,0)
 // ============================================================================
 LHCb::CaloMomentum::CaloMomentum 
 ( const LHCb::CaloPosition* calo )
-  : m_caloPositions     ()
-  , m_point             ()
-  , m_pointCovMatrix    ()
-  , m_momentum          ()
-  , m_momCovMatrix      ()
-  , m_momPointCovMatrix ()
-  , m_status  ( LHCb::CaloMomentum::OK    )
-  , m_flag    ( LHCb::CaloMomentum::Empty )
 {
   addCaloPosition ( calo ) ;
 }
@@ -65,12 +41,7 @@ LHCb::CaloMomentum::CaloMomentum
 LHCb::CaloMomentum::CaloMomentum
 ( const LHCb::CaloPosition*        calo  ,
   const LHCb::CaloMomentum::Point& point )
-  : m_caloPositions     ()
-  , m_point             ( point )
-  , m_pointCovMatrix    ()
-  , m_momentum          ()
-  , m_momCovMatrix      ()
-  , m_momPointCovMatrix ()
+  : m_point             ( point )
   , m_status(LHCb::CaloMomentum::OK)
   , m_flag(LHCb::CaloMomentum::Empty)
 {
@@ -84,14 +55,8 @@ LHCb::CaloMomentum::CaloMomentum
 ( const LHCb::CaloPosition*                  calo  ,
   const LHCb::CaloMomentum::Point&           point , 
   const LHCb::CaloMomentum::PointCovariance& cov   )
-  : m_caloPositions     ()
-  , m_point             ( point )
+  : m_point             ( point )
   , m_pointCovMatrix    ( cov   )
-  , m_momentum          ()
-  , m_momCovMatrix      ()
-  , m_momPointCovMatrix ()
-  , m_status ( LHCb::CaloMomentum::OK    )
-  , m_flag   ( LHCb::CaloMomentum::Empty )
 {
   addCaloPosition ( calo ) ;
   addToFlag ( LHCb::CaloMomentum::NewReferencePoint  ) ;
@@ -102,14 +67,6 @@ LHCb::CaloMomentum::CaloMomentum
 // ============================================================================
 LHCb::CaloMomentum::CaloMomentum
 ( const LHCb::ProtoParticle* proto )
-  : m_caloPositions       ()
-  , m_point               ()
-  , m_pointCovMatrix      ()
-  , m_momentum            ()
-  , m_momCovMatrix        ()
-  , m_momPointCovMatrix   ()
-  , m_status(LHCb::CaloMomentum::OK)
-  , m_flag(LHCb::CaloMomentum::Empty)
 {
   addCaloPosition ( proto );
 }
@@ -119,14 +76,7 @@ LHCb::CaloMomentum::CaloMomentum
 LHCb::CaloMomentum::CaloMomentum
 ( const LHCb::ProtoParticle*       proto ,
   const LHCb::CaloMomentum::Point& point )
-  : m_caloPositions     ()
-  , m_point             ( point )
-  , m_pointCovMatrix    ()
-  , m_momentum          ()
-  , m_momCovMatrix      ()
-  , m_momPointCovMatrix ()
-  , m_status ( LHCb::CaloMomentum::OK    )
-  , m_flag   ( LHCb::CaloMomentum::Empty )
+  : m_point             ( point )
 {
   addCaloPosition ( proto ) ;
   addToFlag ( LHCb::CaloMomentum::NewReferencePoint ) ; 
@@ -138,14 +88,8 @@ LHCb::CaloMomentum::CaloMomentum
 ( const LHCb::ProtoParticle*                 proto ,
   const LHCb::CaloMomentum::Point&           point , 
   const LHCb::CaloMomentum::PointCovariance& cov   )
-  : m_caloPositions     ()
-  , m_point             ( point )
+  : m_point             ( point )
   , m_pointCovMatrix    ( cov   )
-  , m_momentum          ()
-  , m_momCovMatrix      ()
-  , m_momPointCovMatrix ()
-  , m_status ( LHCb::CaloMomentum::OK    )
-  , m_flag   ( LHCb::CaloMomentum::Empty )
 {
   addCaloPosition ( proto ) ;
   addToFlag ( LHCb::CaloMomentum::NewReferencePoint  ) ;
@@ -156,32 +100,15 @@ LHCb::CaloMomentum::CaloMomentum
 // ============================================================================
 LHCb::CaloMomentum::CaloMomentum 
 ( const LHCb::CaloHypo* hypo)
-  : m_caloPositions      ()
-  , m_point              ()
-  , m_pointCovMatrix     ()
-  , m_momentum           ()
-  , m_momCovMatrix       ()
-  , m_momPointCovMatrix  ()
-  , m_status ( LHCb::CaloMomentum::OK    )
-  , m_flag   ( LHCb::CaloMomentum::Empty )
 {
   addCaloPosition ( hypo ) ;
 }
 
 // vector of CaloHypos (useful to manage bremList from BremAdder tool)
 LHCb::CaloMomentum::CaloMomentum(  const std::vector<const LHCb::CaloHypo*> hypos )
-  : m_caloPositions      ()
-  , m_point              ()
-  , m_pointCovMatrix     ()
-  , m_momentum           ()
-  , m_momCovMatrix       ()
-  , m_momPointCovMatrix  ()
-  , m_status ( LHCb::CaloMomentum::OK    )
-  , m_flag   ( LHCb::CaloMomentum::Empty )
 {  
-  for(std::vector<const LHCb::CaloHypo*>::const_iterator i= hypos.begin();hypos.end()!=i;++i){
-    addCaloPosition ( *i ) ;
-  } 
+  std::for_each( hypos.begin(), hypos.end(),
+                 [&](const CaloHypo* h) { addCaloPosition(h); } );
 }
 
 
@@ -192,14 +119,7 @@ LHCb::CaloMomentum::CaloMomentum(  const std::vector<const LHCb::CaloHypo*> hypo
 LHCb::CaloMomentum::CaloMomentum
 ( const LHCb::CaloHypo*            hypo  ,
   const LHCb::CaloMomentum::Point& point )
-  : m_caloPositions     ()
-  , m_point             ( point )
-  , m_pointCovMatrix    ()
-  , m_momentum          ()
-  , m_momCovMatrix      ()
-  , m_momPointCovMatrix ()
-  , m_status ( LHCb::CaloMomentum::OK    )
-  , m_flag   ( LHCb::CaloMomentum::Empty )
+  : m_point             ( point )
 {
   addCaloPosition ( hypo ) ;
   addToFlag ( LHCb::CaloMomentum::NewReferencePoint);
@@ -211,14 +131,8 @@ LHCb::CaloMomentum::CaloMomentum
 ( const LHCb::CaloHypo*                      hypo  ,
   const LHCb::CaloMomentum::Point&           point , 
   const LHCb::CaloMomentum::PointCovariance& cov   )
-  : m_caloPositions     ()
-  , m_point             ( point )
+  : m_point             ( point )
   , m_pointCovMatrix    ( cov   )
-  , m_momentum          ()
-  , m_momCovMatrix      ()
-  , m_momPointCovMatrix ()
-  , m_status ( LHCb::CaloMomentum::OK    )
-  , m_flag   ( LHCb::CaloMomentum::Empty )
 {
   addCaloPosition(hypo);
   addToFlag ( LHCb::CaloMomentum::NewReferencePoint  ) ;
@@ -229,14 +143,6 @@ LHCb::CaloMomentum::CaloMomentum
 // ============================================================================
 LHCb::CaloMomentum::CaloMomentum
 ( const LHCb::CaloCluster* cluster )
-  : m_caloPositions     ()
-  , m_point             ()
-  , m_pointCovMatrix    ()
-  , m_momentum          ()
-  , m_momCovMatrix      ()
-  , m_momPointCovMatrix ()
-  , m_status ( LHCb::CaloMomentum::OK    )
-  , m_flag   ( LHCb::CaloMomentum::Empty )
 {
   addCaloPosition ( cluster ) ;  
 }
@@ -246,12 +152,11 @@ LHCb::CaloMomentum::CaloMomentum
 void LHCb::CaloMomentum::addCaloPosition( const LHCb::CaloPosition* calopos )
 {
   m_flag |= LHCb::CaloMomentum::FromCaloPos;
-  if ( 0 == calopos)
-  {
+  if (calopos) {
+    m_caloPositions.push_back ( *calopos ) ;
+  } else {
     m_status |= LHCb::CaloMomentum::NullCaloPos;
-    return;
   }
-  m_caloPositions.push_back ( *calopos ) ;
 }
 // ============================================================================
 // CaloCluster
@@ -259,12 +164,11 @@ void LHCb::CaloMomentum::addCaloPosition( const LHCb::CaloPosition* calopos )
 void LHCb::CaloMomentum::addCaloPosition( const LHCb::CaloCluster* cluster)
 {
   m_flag |= LHCb::CaloMomentum::FromCaloCluster;
-  if( 0 == cluster)
-  {
+  if( cluster) {
+    m_caloPositions.push_back ( cluster -> position () );
+  } else {
     m_status |= LHCb::CaloMomentum::NullCaloCluster;
-    return;
   }
-  m_caloPositions.push_back ( cluster -> position () );
 }
 // ============================================================================
 // CaloHypo
@@ -286,17 +190,14 @@ void LHCb::CaloMomentum::addCaloPosition( const LHCb::CaloHypo* hypo )
     const LHCb::CaloPosition* calopos = hypo->position();
     this->addCaloPosition(calopos);
     m_caloHypos.push_back( hypo );
-  }
-  else
-  {
+  } else {
     // if yes : mergedPi0
-    for ( SmartRefVector<LHCb::CaloHypo>::const_iterator ihypo = hypos.begin() ;
-          ihypo != hypos.end(); ++ihypo )
+    for ( const auto& hypo : hypos ) 
     {
       m_flag |= LHCb::CaloMomentum::FromCaloHypo;
-      const LHCb::CaloPosition* calopos = (*ihypo)->position();
+      const LHCb::CaloPosition* calopos = hypo->position();
       this->addCaloPosition(calopos);
-      m_caloHypos.push_back( *ihypo );
+      m_caloHypos.push_back( hypo );
      }
   }
 }
@@ -328,7 +229,7 @@ void LHCb::CaloMomentum::addCaloPosition
   else if( 1 == hypos.size())
   {
     // Each ProtoPart derive from a single CaloHypo so far
-    SmartRefVector<LHCb::CaloHypo>::const_iterator ihypo = hypos.begin() ;
+    auto ihypo = hypos.begin() ;
     this->addCaloPosition( *ihypo );
   }
   else
@@ -352,11 +253,7 @@ bool LHCb::CaloMomentum::evaluate(int param)
   LHCb::CaloMomentum::PointCovariance    C22  = m_pointCovMatrix; // 3-point  3x3 covariance matrix
   LHCb::CaloMomentum::MomPointCovariance C12      ;   // momentum-point 4x3 off-diagonal block
   
-  for ( LHCb::CaloMomentum::CaloPositions::const_iterator 
-          icalo = m_caloPositions.begin() ;
-        icalo != m_caloPositions.end() ; ++icalo ){
-    
-    LHCb::CaloPosition calo = *icalo;
+  for ( LHCb::CaloPosition calo : m_caloPositions ) {
     
     // Evaluate the 4-momentum
     if ( 0 != ( LHCb::CaloMomentum::Momentum & param ) ){ 

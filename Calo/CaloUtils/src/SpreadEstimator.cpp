@@ -53,15 +53,8 @@ namespace
 // ============================================================================
 SpreadEstimator::SpreadEstimator( const DeCalorimeter* Det )
   : m_detector ( Det ) 
-  , m_cells    ()
-  , m_ratio    ()
-  , m_energy   ()
   , m_et       ( Det )
 {}
-// ============================================================================
-// destructor 
-// ============================================================================
-SpreadEstimator::~SpreadEstimator() { m_detector = 0 ; } 
 // ============================================================================
 /*  set new value for calorimeter 
  *  @param Det pointer to calorimeter detector 

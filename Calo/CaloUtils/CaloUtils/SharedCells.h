@@ -1,4 +1,3 @@
-// $Id: SharedCells.h,v 1.8 2009-10-01 11:42:40 ibelyaev Exp $ 
 // ============================================================================
 #ifndef CALOUTILS_SHAREDCELLS_H 
 #define CALOUTILS_SHAREDCELLS_H 1
