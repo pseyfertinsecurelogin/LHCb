@@ -1,4 +1,3 @@
-// $Id$
 // ============================================================================
 // Include files 
 // ============================================================================
@@ -370,9 +369,7 @@ std::string LHCb::ParticleID::toString() const
 // ============================================================================
 // print the nice representation of enum
 // ============================================================================
-std::ostream& LHCb::ParticleID::printLocation 
-( const long    l ,
-  std::ostream& s ) 
+std::ostream& LHCb::ParticleID::printLocation( const long l, std::ostream& s )
 {
   switch (l) 
   {
@@ -402,9 +399,7 @@ std::string LHCb::ParticleID::printLocation ( const long l )
 // ============================================================================
 // the nice representation of 'Quark' enum
 // ============================================================================
-std::ostream& LHCb::ParticleID::printQuark
-( const long    q , 
-  std::ostream& s ) 
+std::ostream& LHCb::ParticleID::printQuark( const long q, std::ostream& s ) 
 {
   switch ( q ) 
   {

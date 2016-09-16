@@ -1,4 +1,3 @@
-// $Id$
 // ============================================================================
 #ifndef PARTPROP_NODESPID_H
 #define PARTPROP_NODESPID_H 1
@@ -7,6 +6,7 @@
 // ============================================================================
 // PartProp
 // ============================================================================
+#include "Kernel/IParticlePropertySvc.h"
 #include "Kernel/Nodes.h"
 // ============================================================================
 /** @file  Kernel/NodePIDs.h
@@ -32,8 +32,6 @@ namespace Decays
     {
     public:
       // ======================================================================
-      /// MANDATORY: virtual destructor
-      virtual ~Any() ;
       /// MANDATORY: clone method ("virtual constructor")
       virtual  Any* clone () const  ;
       /// MANDATORY: the only one essential method
@@ -66,8 +64,6 @@ namespace Decays
       Pid ( const LHCb::ParticleID&        item ) ;
       /// constructor from Particle name
       Pid ( const std::string&             item ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~Pid () ;
       /// MANDATORY: clone method ("virtual constructor")
       virtual  Pid* clone () const  ;
       /// MANDATORY: the only one essential method
@@ -120,8 +116,6 @@ namespace Decays
       CC ( const std::string&                item ) ;
       /// constructor from node
       CC ( const Decays::Nodes::Pid& pid  ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~CC () ;
       /// MANDATORY: clone method ("virtual constructor")
       virtual  CC* clone () const ;
       /// MANDATORY: the only one essential method
@@ -141,8 +135,6 @@ namespace Decays
     {
     public:
       // ======================================================================
-      /// MANDATORY: virtual destructor
-      virtual ~Lepton() ;
       /// MANDATORY: clone method ("virtual constructor")
       virtual  Lepton* clone () const ;
       /// MANDATORY: the only one essential method
@@ -162,8 +154,6 @@ namespace Decays
     {
     public:
       // ======================================================================
-      /// MANDATORY: virtual destructor
-      virtual ~Nu() ;
       /// MANDATORY: clone method ("virtual constructor")
       virtual  Nu* clone () const ;
       /// MANDATORY: the only one essential method
@@ -183,8 +173,6 @@ namespace Decays
     {
     public:
       // ======================================================================
-      /// MANDATORY: virtual destructor
-      virtual ~Ell() ;
       /// MANDATORY: clone method ("virtual constructor")
       virtual  Ell* clone () const ;
       /// MANDATORY: the only one essential method
@@ -204,8 +192,6 @@ namespace Decays
     {
     public:
       // ======================================================================
-      /// MANDATORY: virtual destructor
-      virtual ~EllPlus() ;
       /// MANDATORY: clone method ("virtual constructor")
       virtual  EllPlus* clone () const ;
       /// MANDATORY: the only one essential method
@@ -225,8 +211,6 @@ namespace Decays
     {
     public:
       // ======================================================================
-      /// MANDATORY: virtual destructor
-      virtual ~EllMinus() ;
       /// MANDATORY: clone method ("virtual constructor")
       virtual  EllMinus* clone () const ;
       /// MANDATORY: the only one essential method
@@ -246,8 +230,6 @@ namespace Decays
     {
     public:
       // ======================================================================
-      /// MANDATORY: virtual destructor
-      virtual ~Hadron() ;
       /// MANDATORY: clone method ("virtual constructor")
       virtual  Hadron* clone () const ;
       /// MANDATORY: the only one essential method
@@ -267,8 +249,6 @@ namespace Decays
     {
     public:
       // ======================================================================
-      /// MANDATORY: virtual destructor
-      virtual ~Meson() ;
       /// MANDATORY: clone method ("virtual constructor")
       virtual  Meson* clone () const ;
       /// MANDATORY: the only one essential method
@@ -288,8 +268,6 @@ namespace Decays
     {
     public:
       // ======================================================================
-      /// MANDATORY: virtual destructor
-      virtual ~Baryon() ;
       /// MANDATORY: clone method ("virtual constructor")
       virtual  Baryon* clone () const ;
       /// MANDATORY: the only one essential method
@@ -309,8 +287,6 @@ namespace Decays
     {
     public:
       // ======================================================================
-      /// MANDATORY: virtual destructor
-      virtual ~Charged () ;
       /// MANDATORY: clone method ("virtual constructor")
       virtual  Charged* clone () const ;
       /// MANDATORY: the only one essential method
@@ -330,8 +306,6 @@ namespace Decays
     {
     public:
       // ======================================================================
-      /// MANDATORY: virtual destructor
-      virtual ~Positive () ;
       /// MANDATORY: clone method ("virtual constructor")
       virtual  Positive* clone () const ;
       /// MANDATORY: the only one essential method
@@ -351,8 +325,6 @@ namespace Decays
     {
     public:
       // ======================================================================
-      /// MANDATORY: virtual destructor
-      virtual ~Negative () ;
       /// MANDATORY: clone method ("virtual constructor")
       virtual  Negative* clone () const  ;
       /// MANDATORY: the only one essential method
@@ -372,8 +344,6 @@ namespace Decays
     {
     public:
       // ======================================================================
-      /// MANDATORY: virtual destructor
-      virtual ~Neutral() ;
       /// MANDATORY: clone method ("virtual constructor")
       virtual  Neutral* clone () const ;
       /// MANDATORY: the only one essential method
@@ -393,8 +363,6 @@ namespace Decays
     {
     public:
       // ======================================================================
-      /// MANDATORY: virtual destructor
-      virtual ~Nucleus()  ;
       /// MANDATORY: clone method ("virtual constructor")
       virtual  Nucleus* clone () const ;
       /// MANDATORY: the only one essential method
@@ -416,8 +384,6 @@ namespace Decays
       // ======================================================================
       /// constructor from the quark
       HasQuark ( LHCb::ParticleID::Quark quark ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~HasQuark() ;
       /// MANDATORY: clone method ("virtual constructor")
       virtual  HasQuark* clone () const  ;
       /// MANDATORY: the only one essential method
@@ -453,8 +419,6 @@ namespace Decays
       // ======================================================================
       /// constructor from the 2J+1
       JSpin ( const int spin )  ;
-      /// MANDATORY: virtual destructor
-      virtual ~JSpin() ;
       /// MANDATORY: clone method ("virtual constructor")
       virtual  JSpin* clone () const ;
       /// MANDATORY: the only one essential method
@@ -477,11 +441,6 @@ namespace Decays
       // ======================================================================
     private:
       // ======================================================================
-      /// the default constructor is disabled
-      JSpin() ;                          // the default constructor is disabled
-      // ======================================================================
-    private:
-      // ======================================================================
       /// the j-spin to be tested
       int m_spin ;                                     // the spin to be tested
       // ======================================================================
@@ -498,8 +457,6 @@ namespace Decays
       // ======================================================================
       /// constructor from the 2S+1
       SSpin ( const int spin )  ;
-      /// MANDATORY: virtual destructor
-      virtual ~SSpin() ;
       /// MANDATORY: clone method ("virtual constructor")
       virtual  SSpin* clone () const ;
       /// MANDATORY: the only one essential method
@@ -507,11 +464,6 @@ namespace Decays
       { return spin() == pid.sSpin () ; }
       /// MANDATORY: the specific printout
       virtual std::ostream& fillStream ( std::ostream& s ) const ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      SSpin() ;                          // the default constructor is disabled
       // ======================================================================
     } ;
     // ========================================================================
@@ -526,8 +478,6 @@ namespace Decays
       // ======================================================================
       /// constructor from the 2L+1
       LSpin ( const int spin )  ;
-      /// MANDATORY: virtual destructor
-      virtual ~LSpin() ;
       /// MANDATORY: clone method ("virtual constructor")
       virtual  LSpin* clone () const ;
       /// MANDATORY: the only one essential method
@@ -535,11 +485,6 @@ namespace Decays
       { return spin() == pid.lSpin () ; }
       /// MANDATORY: the specific printout
       virtual std::ostream& fillStream ( std::ostream& s ) const ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      LSpin() ;                          // the default constructor is disabled
       // ======================================================================
     } ;
     // ========================================================================
@@ -556,8 +501,6 @@ namespace Decays
       CTau ( const double                      low      ,
              const double                      high     ,
              const LHCb::IParticlePropertySvc* svc  = 0 ) ;
-      /// MANDATORY : virtual destructor
-      virtual ~CTau() ;
       /// MANDATORY: clone method ("virtual constructor")
       virtual  CTau* clone() const ;
       // ======================================================================
@@ -583,11 +526,6 @@ namespace Decays
       double high () const { return m_high ; }
       // ======================================================================
       StatusCode setService ( const LHCb::IParticlePropertySvc* svc ) const ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      CTau() ;                           // the default constructor is disabled
       // ======================================================================
     public:
       // ======================================================================
@@ -632,8 +570,6 @@ namespace Decays
                     const LHCb::IParticlePropertySvc* svc  = 0 ) ;
       /// constructor service
       ShortLived_ ( const LHCb::IParticlePropertySvc* svc  = 0 ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~ShortLived_() ;
       /// MANDATORY: clone method ("virtual constructor")
       virtual  ShortLived_* clone() const ;
       /// MANDATORY: the specific printout
@@ -646,17 +582,14 @@ namespace Decays
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2009-05-11
      */
-    class GAUDI_API LongLived_ : public CTau
+    struct GAUDI_API LongLived_ : CTau
     {
-    public:
       // ======================================================================
       /// constructor with high edge and service
       LongLived_ ( const double                      high     ,
                    const LHCb::IParticlePropertySvc* svc  = 0 ) ;
       /// constructor service
       LongLived_ ( const LHCb::IParticlePropertySvc* svc  = 0 ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~LongLived_() ;
       /// MANDATORY: clone method ("virtual constructor")
       virtual  LongLived_* clone() const ;
       /// MANDATORY: the specific printout
@@ -675,8 +608,6 @@ namespace Decays
       // ======================================================================
       /// constructor service
       Stable ( const LHCb::IParticlePropertySvc* svc  = 0 ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~Stable() ;
       /// MANDATORY: clone method ("virtual constructor")
       virtual  Stable* clone() const ;
       /// MANDATORY: the specific printout
@@ -695,8 +626,6 @@ namespace Decays
       // ======================================================================
       /// constructor service
       StableCharged ( const LHCb::IParticlePropertySvc* svc  = 0 ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~StableCharged () ;
       /// MANDATORY: clone method ("virtual constructor")
       virtual  StableCharged* clone() const ;
       /// MANDATORY: the only one essential method
@@ -719,8 +648,6 @@ namespace Decays
       Mass ( const double                      low      ,
              const double                      high     ,
              const LHCb::IParticlePropertySvc* svc  = 0 ) ;
-      /// MANDATORY : virtual destructor
-      virtual ~Mass() ;
       /// MANDATORY: clone method ("virtual constructor")
       virtual  Mass* clone() const ;
       // ======================================================================
@@ -749,8 +676,6 @@ namespace Decays
       /// constructor from mass-range
       Light ( const double                      high     ,
               const LHCb::IParticlePropertySvc* svc  = 0 ) ;
-      /// MANDATORY : virtual destructor
-      virtual ~Light() ;
       /// MANDATORY: clone method ("virtual constructor")
       virtual  Light* clone() const ;
       // ======================================================================
@@ -777,8 +702,6 @@ namespace Decays
       /// constructor from mass-range
       Heavy ( const double                      low      ,
               const LHCb::IParticlePropertySvc* svc  = 0 ) ;
-      /// MANDATORY : virtual destructor
-      virtual ~Heavy() ;
       /// MANDATORY: clone method ("virtual constructor")
       virtual  Heavy* clone() const ;
       // ======================================================================
@@ -800,8 +723,6 @@ namespace Decays
       /// the constructor from the symbol
       Symbol ( const std::string& sym ) ;
       // =======================================================================
-      /// MANDATORY : virtual destructor
-      virtual ~Symbol() ;
       /// MANDATORY: clone method ("virtual constructor")
       virtual  Symbol* clone() const ;
       // ======================================================================

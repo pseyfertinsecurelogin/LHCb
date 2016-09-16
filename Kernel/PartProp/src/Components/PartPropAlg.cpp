@@ -1,4 +1,3 @@
-// $Id$
 // ============================================================================
 // Include files
 // ============================================================================
@@ -49,7 +48,7 @@ namespace LHCb
       virtual StatusCode  finalize   ()
       {
         // release the aquired service
-        if ( 0 != m_ppSvc ) { m_ppSvc->release() ; m_ppSvc = 0 ; }
+        m_ppSvc.reset();
         return Algorithm::finalize () ;            //        finalize the base
       }
       /// algorithm execution
@@ -65,29 +64,20 @@ namespace LHCb
       ( const std::string& name ,      //               algorithm instance name
         ISvcLocator*       pSvc )      //        pointer to the service locator
         : Algorithm ( name , pSvc )
-        , m_ppSvc ( 0 )
       {}
-      /// virtual destructor
-      virtual ~PartPropAlg() {}        //                    virtual destructor
-      // ======================================================================
-    protected:
       // ======================================================================
       /// locate the new particle property service
       const LHCb::IParticlePropertySvc* ppSvc() const ;
       // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      PartPropAlg () ;                 //   the default constructor is disabled
       /// the copy constructor is disabled
-      PartPropAlg ( const PartPropAlg& ) ; //      copy constructor is disabled
+      PartPropAlg ( const PartPropAlg& ) = delete;// copy constructor is disabled
       /// assignement operator is disbaled
-      PartPropAlg& operator=( const PartPropAlg& ) ; //          no assignement
+      PartPropAlg& operator=( const PartPropAlg& ) = delete; // no assignement
       // ======================================================================
     private:
       // ======================================================================
       /// the pointer to new particle property service
-      mutable LHCb::IParticlePropertySvc* m_ppSvc ;    // new part.property.svc
+      mutable SmartIF<LHCb::IParticlePropertySvc> m_ppSvc ;    // new part.property.svc
       // ======================================================================
     } ;
     // ========================================================================
@@ -99,25 +89,18 @@ namespace LHCb
 // ============================================================================
 const LHCb::IParticlePropertySvc* LHCb::Example::PartPropAlg::ppSvc() const
 {
-  if ( 0 == m_ppSvc )
+  if ( UNLIKELY(!m_ppSvc) )
   {
-    StatusCode sc = service ( "LHCb::ParticlePropertySvc", m_ppSvc , true );
-    if ( sc.isFailure() )
+    m_ppSvc = service ( "LHCb::ParticlePropertySvc", true );
+    if ( !m_ppSvc )
     {
       throw GaudiException
         ("Service [LHCb::ParticlePropertySvc] not found",
-         name(), sc ) ;
+         name(), StatusCode::FAILURE ) ;
     }
   }
   // ==========================================================================
-  if ( 0 == m_ppSvc )
-  {
-    throw GaudiException
-      ("Service [LHCb::ParticlePropertySvc] is invalid " ,
-       name() , StatusCode::FAILURE ) ;
-  }
-  // ==========================================================================
-  return m_ppSvc ;
+  return m_ppSvc.get() ;
 }
 // ============================================================================
 // execute the algorithm
