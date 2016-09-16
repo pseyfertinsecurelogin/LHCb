@@ -105,7 +105,8 @@ class DDDBConf(ConfigurableUser):
             self.__data_types_handlers__[dataType](self)
             # by default, use the latest DQFLAGS tag for the requested data type
             # (unless already set by a data type handler)
-            self.__set_tag__(["DQFLAGS"], "<latest:{0}>".format(dataType))
+            if not self.getProp("Simulation") and dataType not in ("Upgrade"):
+                self.__set_tag__(["DQFLAGS"], "<latest:{0}>".format(dataType))
         else:
             log.info("Ariadne driven configuration requested for CondDB")
             datatype = self.getProp("DataType")
