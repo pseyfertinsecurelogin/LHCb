@@ -792,7 +792,8 @@ std::string LHCb::ParticlePropertySvc::cc ( const std::string& decay ) const
       m_ccMap [ ic.second ] = ic.first  ;
     }
     if( msgLevel(MSG::DEBUG) ) {
-      Gaudi::Utils::toStream ( m_ccMap , (debug() << " CC-map is \n").stream() ) <<endmsg;
+      Gaudi::Utils::toStream ( m_ccMap , (debug() << " CC-map is \n").stream() );
+      debug() <<endmsg;
     }
   }
   // use the map
