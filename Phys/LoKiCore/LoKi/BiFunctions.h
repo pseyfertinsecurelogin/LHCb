@@ -48,11 +48,6 @@ namespace LoKi
     /// the type of the argument
     typedef LoKi::Holder<TYPE1,TYPE2>                    Type                 ;
     // ========================================================================
-    //     // STD (fake) signature
-    // ========================================================================
-    /// STL: the result value
-    typedef TYPE3                                        result_type          ;
-    // ========================================================================
     //     // the actual signature
     // ========================================================================
     /// the actual type for the argument
@@ -65,21 +60,21 @@ namespace LoKi
   public:
     // ========================================================================
     /// the native interface with 1 argument:
-    virtual result_type  operator () ( argument a ) const = 0 ;
+    virtual TYPE3  operator () ( argument a ) const = 0 ;
     /// the only one essential method ("function")
-    virtual result_type  evaluate    ( argument a ) const
+    virtual TYPE3  evaluate    ( argument a ) const
     { return (*this)( a ) ; }
     /// the only one essential method ("function")
-    virtual result_type  eval        ( argument a ) const
+    virtual TYPE3  eval        ( argument a ) const
     { return (*this)( a ) ; }
     /// the only one essential method ("function")
-    virtual result_type operator()( first_argument  a1, second_argument a2 ) const
+    virtual TYPE3 operator()( first_argument  a1, second_argument a2 ) const
     { return (*this)( Type ( a1 , a2 ) ) ; }
     /// the only one essential method ("function")
-    virtual result_type evaluate( first_argument  a1, second_argument a2 ) const
+    virtual TYPE3 evaluate( first_argument  a1, second_argument a2 ) const
     { return (*this)( a1 , a2 ) ; }
     /// the only one essential method ("function")
-    virtual result_type eval( first_argument  a1 , second_argument a2 ) const
+    virtual TYPE3 eval( first_argument  a1 , second_argument a2 ) const
     { return (*this)( a1 , a2 ) ; }
     /// MANDATORY: clone method
     virtual  Functor* clone()              const = 0 ;
@@ -109,11 +104,6 @@ namespace LoKi
     typedef LoKi::Functor<LoKi::Holder<TYPE1,TYPE2>,TYPE3>            functor ;
     typedef LoKi::Functor<LoKi::Holder<TYPE1,TYPE2>,TYPE3>            Base    ;
     // ========================================================================
-  protected:
-    // ========================================================================
-    /// own type
-    typedef FunctorFromFunctor<LoKi::Holder<TYPE1,TYPE2>,TYPE3>          Self ;
-    // ========================================================================
   public:
     // ========================================================================
     /// constructor
@@ -121,12 +111,13 @@ namespace LoKi
       : m_fun ( right.clone() )
     {}
     /// copy constructor (deep copy)
-    FunctorFromFunctor ( const Self& right )
+    FunctorFromFunctor ( const FunctorFromFunctor& right )
       : LoKi::AuxFunBase ( right )
       , Base             ( right )
-      , m_fun( typeid( Self ) == typeid( right ) ? right.m_fun->clone ()
-                                                 : right.clone() )
+      , m_fun( right.m_fun->clone () )
     {}
+    /// move constructor (avoid cloning)
+    FunctorFromFunctor ( FunctorFromFunctor&& right ) = default;
     // ========================================================================
   public:
     // ========================================================================
@@ -134,12 +125,12 @@ namespace LoKi
     virtual  FunctorFromFunctor* clone() const
     { return new FunctorFromFunctor ( *this ) ; }
     /// MANDATORY: the only one essential method
-    virtual typename functor::result_type operator()
-      ( typename functor::argument a ) const { return fun ( a ) ; }
+    virtual TYPE3 operator()( typename functor::argument a ) const
+    { return fun ( a ) ; }
     /// the only one essential method ("function")
-    virtual typename functor::result_type operator ()
-      ( typename functor::first_argument  a ,
-        typename functor::second_argument b ) const { return fun ( a , b ) ; }
+    virtual TYPE3 operator ()( typename functor::first_argument  a ,
+                               typename functor::second_argument b ) const
+    { return fun ( a , b ) ; }
     /// OPTIONAL: the basic printout method, delegate to the underlying object
     virtual std::ostream& fillStream( std::ostream& s ) const
     { return  m_fun->fillStream( s ) ; };
@@ -152,28 +143,25 @@ namespace LoKi
   public:
     // ========================================================================
     /// the assignement operator is enabled
-    FunctorFromFunctor& operator= ( const FunctorFromFunctor& right )
+    FunctorFromFunctor& operator= ( FunctorFromFunctor rhs )
     {
-      if ( this == &right ) { return *this ; }                        // RETURN
-      m_fun.reset( ( typeid( Self ) != typeid( right ) ? right.clone()
-                                                       : right.m_fun->clone() ) );
+      swap(rhs,*this);
       return *this ;                                                  // RETURN
     }
-    /// the assignement operator is enabled
-    FunctorFromFunctor& operator= ( const Base& right )
+    // ========================================================================
+    friend void swap(FunctorFromFunctor& lhs, FunctorFromFunctor& rhs) noexcept
     {
-      if ( this == &right ) { return *this ; }                        // RETURN
-      m_fun.reset( right.clone() );                                   // CLONE!
-      return *this ;                                                  // RETURN
+      using std::swap;
+      swap(static_cast<AuxFunBase&>(lhs),static_cast<AuxFunBase&>(rhs));
+      swap(lhs.m_fun,rhs.m_fun);
     }
     // ========================================================================
   public:
     // ========================================================================
     /// evaluate unary  function
-    inline typename functor::result_type fun
-    ( typename functor::argument a ) const { return (*m_fun) ( a ) ; }
+    inline TYPE3 fun ( typename functor::argument a ) const { return (*m_fun) ( a ) ; }
     /// evaluate binary function
-    inline typename functor::result_type fun
+    inline TYPE3 fun
     ( typename functor::first_argument  a ,
       typename functor::second_argument b ) const
     { return (*m_fun) ( a , b ) ; }

@@ -63,9 +63,6 @@ namespace LoKi
       const std::string&     file       = "" ,
       const unsigned long&   line       = 0  ) ;
     // ========================================================================
-    /// virtual destructor
-    virtual ~Exception() throw() {} ;
-    // ========================================================================
     /** clone operation
      *  @see GaudiException
      *  @return the clone

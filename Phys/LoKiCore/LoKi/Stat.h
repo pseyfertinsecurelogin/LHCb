@@ -131,14 +131,12 @@ namespace LoKi
       virtual typename uBase::result_type operator()
         ( typename uBase::argument a ) const
       {
-        const LoKi::Apply<TYPE,double> appFun { &this->m_fun.func() } ;
-        //
         StatEntity _stat = ( this->m_cut ?
           LoKi::Algs::stat ( a.begin(), a.end(),
-                             appFun       ,
-                             LoKi::Apply<TYPE,bool>{ &this->m_cut->func() } ) :
+                             LoKi::Apply( this->m_fun.func() ),
+                             LoKi::Apply( this->m_cut->func() ) ) :
           LoKi::Algs::stat ( a.begin(), a.end(),
-                             appFun ) ) ;
+                             LoKi::Apply( this->m_fun.func() ) ) ) ;
         return (_stat.*m_pmf)() ;
       }
       /// OPTIONAL: the basic printout method

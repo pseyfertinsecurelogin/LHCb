@@ -10,6 +10,7 @@
 #include <algorithm>
 #include <type_traits>
 #include <iterator>
+#include "GaudiKernel/SerializeSTL.h"
 // ============================================================================
 // LHCb
 // ============================================================================
@@ -40,7 +41,6 @@
 #define a_unless_void a
 #define class_TYPE_unless_void class TYPE,
 #endif
-// ============================================================================
 #ifdef _GEN_LOKI_PRIMITIVES
 // ============================================================================
 /** @file
@@ -87,12 +87,10 @@ namespace LoKi
     {}
     // ========================================================================
     /// evaluate the first functor
-    template <typename... Args>
-    typename functor::result_type fun1( Args&&... args ) const
+    template <typename... Args> TYPE2 fun1( Args&&... args ) const
     { return m_fun1.fun ( std::forward<Args>(args)... ) ; }
     /// evaluate the first functor
-    template <typename... Args>
-    typename functor::result_type fun2( Args&&... args ) const
+    template <typename... Args> TYPE2 fun2( Args&&... args ) const
     { return m_fun2.fun ( std::forward<Args>(args)... ) ; }
     // ========================================================================
     /// get the first functor
@@ -108,7 +106,75 @@ namespace LoKi
     // ========================================================================
   } ;
 #endif
+  namespace details {
+      // =======================================================================
+      /** @class UnaryOp
+       *  The helper function to implement Unary operation of one function
+       */
+#ifndef _GEN_LOKI_VOIDPRIMITIVES
+      template<typename TYPE, typename TYPE2, typename Result, typename Traits_>
+      class UnaryOp final : public LoKi::Functor<TYPE,Result>
+#else
+      template<typename TYPE2, typename Result, typename Traits_>
+      class UnaryOp<void,TYPE2,Result,Traits_> final : public LoKi::Functor<void,Result>
+#endif
+      {
+        // ========================================================================
+        typedef_void_TYPE
+        /// argument type
+        typedef typename LoKi::Functor<TYPE,TYPE2>::argument argument  ;
+      public:
+        // =====================================================================
+        /// constructor from two functors
+        template <typename F1, typename = details::require_signature<F1,TYPE,TYPE2>>
+        UnaryOp ( F1&& f1 )
+          : LoKi::AuxFunBase{ std::tie ( f1  ) }
+          , m_fun { std::forward<F1>(f1) }
+        { }
+        /// clone method (mandatory)
+        UnaryOp* clone() const override { return new UnaryOp( *this ); }
+        /// the only one essential method ("function")
+        Result operator()( argument_a_unless_void ) const override
+        {
+#ifndef _GEN_LOKI_VOIDPRIMITIVES
+          return Traits_::unaryOp( this->fun(),  a_unless_void );
+#else
+          return Traits_::unaryOp( this->fun() );
+#endif
+        }
+        /// the basic printout method
+        std::ostream& fillStream( std::ostream& s ) const override
+        { return s << " (" <<  Traits_::name() << this->fun() << ") " ; }
+        /// OPTIONAL: C++ print
+        std::string   toCpp () const override
+        { return std::string{" ("} + Traits_::name() + " "
+            + Gaudi::Utils::toCpp ( this->fun() ) +  ") " ; }
+        // =====================================================================
+      private:
+        // =====================================================================
+        /// the functor type
+        typedef LoKi::FunctorFromFunctor<TYPE,TYPE2>                   functor ;
+        /// get the first functor
+        const functor& fun() const { return m_fun; }
+        // =====================================================================
+        /// the storage of the functor
+        functor m_fun ; // the storage of the functor
+        // =====================================================================
+      };
 
+#ifndef _GEN_LOKI_VOIDPRIMITIVES
+      template <typename Op>
+      struct SimpleUnary {
+           template <typename F,typename... Args>
+           static auto unaryOp(const F& f, const Args&... args)
+           -> decltype( Op{}(f(args...)))
+           { return Op{}( f(args...)); }
+      };
+#endif
+  }
+
+// 2nd pass only -- after specialization of UnaryOp is defined
+#ifdef _GEN_LOKI_VOIDPRIMITIVES
   // ==========================================================================
   /** @class Not
    *
@@ -133,48 +199,15 @@ namespace LoKi
    *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
    *  @date   2002-07-15
    */
-#ifdef _GEN_LOKI_VOIDPRIMITIVES
-  template<class TYPE2>
-  class Not<void,TYPE2> : public LoKi::Functor<void,bool>
-#else
-  template<class TYPE, class TYPE2=bool>
-  class Not : public LoKi::Functor<TYPE,bool>
-#endif
-  {
-  private:
-    // ========================================================================
-    typedef_void_TYPE
-    /// argument type
-    typedef typename LoKi::Functor<TYPE,bool>::argument argument  ;
-    /// result type
-    typedef typename LoKi::Functor<TYPE,bool>::result_type result_type ;
-    // ========================================================================
-  public:
-    // ========================================================================
-    /// constructor from the functor
-    template <typename F, typename = typename details::require_signature<F,TYPE,TYPE2>>
-    Not ( F&& fun )
-      : LoKi::AuxFunBase ( std::tie ( fun ) )
-      , m_fun ( std::forward<F>(fun) )
-    {}
-    /// clone method (mandatory)
-    Not* clone() const override { return new Not( *this ); }
-    /// the only one essential method ("function")
-    result_type operator() ( argument_a_unless_void ) const override
-    {
-      std::logical_not<TYPE2> lnot ;
-      return lnot ( this->m_fun.fun ( a_unless_void ) ) ;
-    }
-    /// the basic printout method
-    std::ostream& fillStream ( std::ostream& s ) const override
-    { return s << " (~"  << this->m_fun << ") " ; };
-    // ========================================================================
-  private:
-    // ========================================================================
-    /// the functor to be negated
-    LoKi::FunctorFromFunctor<TYPE,TYPE2> m_fun ; // the functor to be negated
-    // ========================================================================
-  };
+   namespace Traits {
+       template <typename TYPE2>
+       struct Not : details::SimpleUnary<std::logical_not<TYPE2>> {
+           static constexpr const char* name() { return "~"; }
+       };
+   }
+   template<class TYPE, class TYPE2=bool>
+   using Not = details::UnaryOp<TYPE,TYPE2,bool,Traits::Not<TYPE2>>;
+
   // ==========================================================================
   /** @class Negate
    *
@@ -200,51 +233,17 @@ namespace LoKi
    *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
    *  @date   2002-07-15
    */
-#ifdef _GEN_LOKI_VOIDPRIMITIVES
-  template<class TYPE2>
-  class Negate<void,TYPE2> final : public LoKi::Functor<void,TYPE2>
-#else
-  template<class TYPE,class TYPE2=double>
-  class Negate final : public LoKi::Functor<TYPE,TYPE2>
+   namespace Traits {
+       template <typename TYPE2>
+       struct Negate : details::SimpleUnary<std::negate<TYPE2>> {
+           static constexpr const char* name() { return "-"; }
+       };
+   }
+   template<class TYPE, class TYPE2=double>
+   using Negate = details::UnaryOp<TYPE,TYPE2,TYPE2,Traits::Negate<TYPE2>>;
 #endif
-  {
-  private:
-    // ========================================================================
-    typedef_void_TYPE
-    /// argument type
-    typedef typename LoKi::Functor<TYPE,TYPE2>::argument argument  ;
-    /// result type
-    typedef typename LoKi::Functor<TYPE,TYPE2>::result_type result_type ;
-    // ========================================================================
-  public:
-    // ========================================================================
-    /// constructor from the functor
-    template <typename F, typename = details::require_signature<F,TYPE,TYPE2>>
-    Negate( F&& fun )
-      : LoKi::AuxFunBase ( std::tie ( fun ) )
-      , m_fun ( std::forward<F>(fun) )
-    {}
-    /// clone method (mandatory)
-    Negate* clone() const override { return new Negate ( *this ) ; }
-    /// the only one essential method ("function")
-    result_type operator() ( argument_a_unless_void ) const override
-    {
-      std::negate<TYPE2> negator ;
-      return negator ( m_fun.fun ( a_unless_void ) ) ;
-    }
-    /// the basic printout method
-    std::ostream& fillStream( std::ostream& s ) const override
-    { return s << " (-"  << this->m_fun << ") " ; };
-    // ========================================================================
-  private:
-    // ========================================================================
-    /// the functor to be negated
-    LoKi::FunctorFromFunctor<TYPE,TYPE2> m_fun ; // the functor to be negated
-    // ========================================================================
-  };
 
-
-  namespace details {
+   namespace details {
       // =======================================================================
       /** @class BinaryOp
        *  The helper function to implement Binary operation of two functions
@@ -264,8 +263,6 @@ namespace LoKi
         typedef typename LoKi::Constant<TYPE,TYPE2>::T2 T2 ;
         /// argument type
         typedef typename LoKi::Functor<TYPE,bool>::argument argument  ;
-        /// result type
-        typedef typename LoKi::Functor<TYPE,bool>::result_type result_type ;
         // =====================================================================
       public:
         // =====================================================================
@@ -279,7 +276,7 @@ namespace LoKi
         /// clone method (mandatory)
         BinaryOp* clone() const override { return new BinaryOp( *this ); }
         /// the only one essential method ("function")
-        result_type operator() ( argument_a_unless_void ) const override
+        Result operator() ( argument_a_unless_void ) const override
         {
 #ifndef _GEN_LOKI_VOIDPRIMITIVES
           return Traits_::binaryOp( this->func1(), this->func2(),  a_unless_void );
@@ -319,7 +316,7 @@ namespace LoKi
            { return Op{}( f1(args...) , f2(args...)); }
       };
 #endif
-  }
+   }
 
 // 2nd pass only -- after specialization of BinaryOp is defined
 #ifdef _GEN_LOKI_VOIDPRIMITIVES
@@ -576,12 +573,8 @@ namespace LoKi
          private:
             // ========================================================================
             typedef_void_TYPE
-            /// the constant type
-            typedef typename LoKi::Constant<TYPE,TYPE2>::T2 T2 ;
             /// argument type
             typedef typename LoKi::Functor<TYPE,TYPE2>::argument argument  ;
-            /// result type
-            typedef typename LoKi::Functor<TYPE,TYPE2>::result_type result_type ;
             // ========================================================================
           public:
             // ========================================================================
@@ -595,10 +588,10 @@ namespace LoKi
             /// clone method (mandatory)
             Combination* clone() const override { return new Combination ( *this ) ; }
             /// the only one essential method ("function")
-            result_type operator() ( argument_a_unless_void ) const override
+            TYPE2 operator() ( argument_a_unless_void ) const override
             {
               typename Traits_::BinaryOp binOp{} ;
-              return binOp ( this->func1()( a_unless_void ) , this->func2()( a_unless_void ) ) ;
+              return binOp( this->func1()( a_unless_void ) , this->func2()( a_unless_void ) ) ;
             }
             /// the basic printout method
             std::ostream& fillStream( std::ostream& s ) const override
@@ -824,8 +817,6 @@ namespace LoKi
     typedef typename LoKi::Constant<TYPE,TYPE2>::T2 T2 ;
     /// argument type
     typedef typename LoKi::Functor<TYPE,TYPE2>::argument argument  ;
-    /// result type
-    typedef typename LoKi::Functor<TYPE,TYPE2>::result_type result_type ;
     // ========================================================================
   public:
     // ========================================================================
@@ -876,18 +867,18 @@ namespace LoKi
       , m_two ( Min ( Min ( fun1 , fun2 ) , fun3 ) , fun4 )
     {}
     /// clone method (mandatory)
-    virtual  Min* clone() const { return new Min ( *this ) ; }
+    Min* clone() const override { return new Min ( *this ) ; }
     /// the only one essential method ("function")
-    virtual result_type operator() ( argument_a_unless_void ) const
+    TYPE2 operator() ( argument_a_unless_void ) const override
     {
       return  std::min ( this->fun1 ( a_unless_void ) ,
                          this->fun2 ( a_unless_void ) , std::less<TYPE2>() ) ;
     }
     /// the basic printout method
-    virtual std::ostream& fillStream( std::ostream& s ) const
+    std::ostream& fillStream( std::ostream& s ) const override
     { return s << " min(" << this->func1() << "," << this->func2() << ") " ; }
     /// OPTIONAL: C++ print
-    virtual std::string   toCpp () const
+    std::string   toCpp () const override
     { return " LoKi::min("
         + Gaudi::Utils::toCpp ( this->func1() ) + ","
         + Gaudi::Utils::toCpp ( this->func2() ) + ") " ; }
@@ -896,11 +887,9 @@ namespace LoKi
     // ========================================================================
     /// the functor type
     typedef typename LoKi::Functor<TYPE,TYPE2>                        functor ;
-    typename functor::result_type fun1
-    ( argument_a_unless_void ) const { return m_two.fun1 ( a_unless_void ) ; }
+    TYPE2 fun1( argument_a_unless_void ) const { return m_two.fun1 ( a_unless_void ) ; }
     /// evaluate the first functor
-    typename functor::result_type fun2
-    ( argument_a_unless_void ) const { return m_two.fun2 ( a_unless_void ) ; }
+    TYPE2 fun2( argument_a_unless_void ) const { return m_two.fun2 ( a_unless_void ) ; }
     // ========================================================================
     /// get the first functor
     const functor& func1 ()           const { return m_two.func1 () ; }
@@ -953,8 +942,6 @@ namespace LoKi
     typedef typename LoKi::Constant<TYPE,TYPE2>::T2 T2 ;
     /// argument type
     typedef typename LoKi::Functor<TYPE,TYPE2>::argument argument  ;
-    /// result type
-    typedef typename LoKi::Functor<TYPE,TYPE2>::result_type result_type ;
     // ========================================================================
   public:
     // ========================================================================
@@ -1006,18 +993,18 @@ namespace LoKi
       , LoKi::Min<TYPE,TYPE2> ( Max ( Max( fun1 , fun2 ) , fun3 ) , fun4 )
     {}
     /// MANDATORY: clone method ("virtual constructor")
-    virtual  Max* clone() const { return new Max ( *this ) ; }
+    Max* clone() const override { return new Max ( *this ) ; }
     /// MANDATORY: the only one essential method ("function")
-    virtual  result_type operator() ( argument_a_unless_void ) const
+    TYPE2 operator() ( argument_a_unless_void ) const override
     {
       return std::max ( this -> fun1 ( a_unless_void ) ,
                         this -> fun2 ( a_unless_void ) , std::less<TYPE2>() ) ;
     }
     /// OPTIONAL: the basic printout method
-    virtual std::ostream& fillStream( std::ostream& s ) const
+    std::ostream& fillStream( std::ostream& s ) const override
     { return s << " max(" << this->func1() << "," << this->func2() << ") " ; }
     /// OPTIONAL: C++ print
-    virtual std::string   toCpp () const
+    std::string   toCpp () const override
     { return " LoKi::max("
         + Gaudi::Utils::toCpp ( this->func1() ) + ","
         + Gaudi::Utils::toCpp ( this->func2() ) + ") " ; }
@@ -1050,8 +1037,6 @@ namespace LoKi
     typedef typename LoKi::Constant<TYPE,TYPE2>::T2 T2 ;
     /// argument type
     typedef typename LoKi::Functor<TYPE,TYPE2>::argument argument  ;
-    /// result type
-    typedef typename LoKi::Functor<TYPE,TYPE2>::result_type result_type ;
     // ========================================================================
   public:
     // ========================================================================
@@ -1076,12 +1061,12 @@ namespace LoKi
       , m_val2 ( val2 )
     {}
     /// MANDATORY: clone method ("virtual constructor")
-    virtual  SimpleSwitch* clone() const { return new SimpleSwitch ( *this ) ; }
+    SimpleSwitch* clone() const override { return new SimpleSwitch ( *this ) ; }
     /// MANDATORY: the only one essential method:
-    virtual result_type operator() ( argument_a_unless_void ) const
+    TYPE2 operator() ( argument_a_unless_void ) const override
     { return m_cut( a_unless_void ) ? m_val1 : m_val2 ; }
     /// the basic printout method
-    virtual std::ostream& fillStream( std::ostream& s ) const
+    std::ostream& fillStream( std::ostream& s ) const override
     { return s << " switch("
                << this->m_cut  << ","
                << this->m_val1 << ","
@@ -1123,8 +1108,6 @@ namespace LoKi
     typedef typename LoKi::Constant<TYPE,TYPE2>::T2 T2 ;
     /// argument type
     typedef typename LoKi::Functor<TYPE,TYPE2>::argument argument  ;
-    /// result type
-    typedef typename LoKi::Functor<TYPE,TYPE2>::result_type result_type ;
     // ========================================================================
   public:
     // ========================================================================
@@ -1216,15 +1199,15 @@ namespace LoKi
                  LoKi::Constant<TYPE,TYPE2>( std::move(fun2) ) )
     {}
     /// MANDATORY: clone method ("virtual constructor")
-    virtual  Switch* clone() const { return new Switch ( *this ) ; }
+    Switch* clone() const override { return new Switch ( *this ) ; }
     /// MANDATORY: the only one essential method:
-    virtual  result_type operator() ( argument_a_unless_void ) const
+    TYPE2 operator() ( argument_a_unless_void ) const override
     { return
         m_cut.fun  ( a_unless_void ) ?
         m_two.fun1 ( a_unless_void ) :
         m_two.fun2 ( a_unless_void ) ; }
     /// the basic printout method
-    virtual std::ostream& fillStream( std::ostream& s ) const
+    std::ostream& fillStream( std::ostream& s ) const override
     { return s << " switch("
                << this->m_cut          << ","
                << this->m_two.func1()  << ","
@@ -1275,8 +1258,6 @@ namespace LoKi
     typedef_void_TYPE
     /// argument type
     typedef typename LoKi::Functor<TYPE,TYPE2>::argument argument  ;
-    /// result type
-    typedef typename LoKi::Functor<TYPE,TYPE2>::result_type result_type ;
     // ========================================================================
   protected:
     // ========================================================================
@@ -1295,16 +1276,16 @@ namespace LoKi
       , m_desc ( desc )
     {}
     /// clone method (mandatory!)
-    virtual ComposeFunction*  clone () const
+    ComposeFunction*  clone () const override
     { return new ComposeFunction ( *this ) ; }
     /// the only one essential method ("function")
-    virtual result_type operator() ( argument_a_unless_void ) const
+    TYPE2 operator() ( argument_a_unless_void ) const override
     { return (*m_func) ( m_fun . fun ( a_unless_void ) ) ; }
     /// the basic printout method
-    virtual std::ostream& fillStream( std::ostream& s ) const
+    std::ostream& fillStream( std::ostream& s ) const override
     { return s << " " << this->m_desc << "("  << this->m_fun << ") " ; };
     // to C++
-    virtual std::string   toCpp() const
+    std::string   toCpp() const override
     { return "LoKi::" + this->m_desc + "("  + Gaudi::Utils::toCpp ( this->m_fun ) + ") " ; }
     // ========================================================================
   private:
@@ -1355,8 +1336,6 @@ namespace LoKi
     typedef_void_TYPE
     /// argument type
     typedef typename LoKi::Functor<TYPE,TYPE2>::argument argument  ;
-    /// result type
-    typedef typename LoKi::Functor<TYPE,TYPE2>::result_type result_type ;
     /// the actual type of the function
     typedef double (*Func) ( double , double )      ;
     /// constant type
@@ -1390,19 +1369,19 @@ namespace LoKi
                           LoKi::Constant<TYPE,TYPE2>{std::move(val2)}, desc )
     {}
     /// clone method (mandatory!)
-    virtual ComposeFunction2*  clone   () const
+    ComposeFunction2*  clone() const override
     { return new ComposeFunction2( *this ); }
     /// the only one essential method ("function")
-    virtual result_type operator() ( argument_a_unless_void ) const
+    TYPE2 operator() ( argument_a_unless_void ) const override
     { return (*m_func) ( m_two. fun1 ( a_unless_void ) , m_two.fun2( a_unless_void ) ) ; }
     /// the basic printout method
-    virtual std::ostream& fillStream( std::ostream& s ) const
+    std::ostream& fillStream( std::ostream& s ) const override
     { return s << " "
                << m_desc         << "("
                << m_two.func1 () << ","
                << m_two.func2 () << ") " ; }
     /// to C++
-    virtual std::string toCpp() const
+    std::string toCpp() const override
     { return "LoKi::" + this->m_desc + "("
         + Gaudi::Utils::toCpp ( this->m_two.func1 () ) + ", "
         + Gaudi::Utils::toCpp ( this->m_two.func2 () ) + ") " ; }
@@ -1434,8 +1413,6 @@ namespace LoKi
     typedef_void_TYPE
     /// argument type
     typedef typename LoKi::Functor<TYPE,TYPE2>::argument argument  ;
-    /// result type
-    typedef typename LoKi::Functor<TYPE,TYPE2>::result_type result_type ;
     // ========================================================================
   public:
     // ========================================================================
@@ -1448,16 +1425,12 @@ namespace LoKi
       , m_fun2 ( std::forward<F2>(fun2) )
     {}
     /// MANDATORY: clone method ("virtual constructor")
-    virtual  Compose* clone() const { return new Compose ( *this ) ; }
+    Compose* clone() const override { return new Compose ( *this ) ; }
     /// the only one essential method ("function")
-    virtual  result_type operator() ( argument_a_unless_void ) const
-    {
-      const LoKi::Apply<TYPE,TYPE1>  f1 ( &m_fun1.func() ) ;
-      const LoKi::Apply<TYPE3,TYPE2> f2 ( &m_fun2.func() ) ;
-      return f2.eval ( f1.eval ( a_unless_void ) ) ;
-    }
+    TYPE2 operator() ( argument_a_unless_void ) const override
+    { return m_fun2(  m_fun1( a_unless_void ) ) ; }
     /// the basic printout method
-    virtual std::ostream& fillStream( std::ostream& s ) const
+    std::ostream& fillStream( std::ostream& s ) const override
     { return s << " (" << this->m_fun1 << ">>" << this->m_fun2  << ") " ; }
     // ========================================================================
   private:
@@ -1486,20 +1459,18 @@ namespace LoKi
     typedef_void_TYPE
     /// argument type
     typedef typename LoKi::Functor<TYPE,bool>::argument argument  ;
-    /// result type
-    typedef typename LoKi::Functor<TYPE,bool>::result_type result_type ;
     // ========================================================================
   public:
     // ========================================================================
     /// constructor
     Valid() = default;
     /// MANDATORY: clone method ("virtual constructor")
-    virtual  Valid* clone() const { return new Valid( *this ) ; }
+    Valid* clone() const override { return new Valid( *this ) ; }
     /// MANDATORY: the only one essential method
-    virtual result_type operator() ( argument_a_unless_void ) const
+    bool operator() ( argument_a_unless_void ) const override
     { return LoKi::valid ( a_unless_void ) ? true : false  ; }
     /// the basic printout method
-    virtual std::ostream& fillStream( std::ostream& s ) const
+    std::ostream& fillStream( std::ostream& s ) const override
     { return s << " (Valid?)" ; }
     // ========================================================================
   };
@@ -1519,8 +1490,6 @@ namespace LoKi
     typedef_void_TYPE
     /// argument type
     typedef typename LoKi::Functor<TYPE,bool>::argument argument  ;
-    /// result type
-    typedef typename LoKi::Functor<TYPE,bool>::result_type result_type ;
     // ========================================================================
   public:
     // ========================================================================
@@ -1529,12 +1498,12 @@ namespace LoKi
       : m_value ( value )
     {}
     /// MANDATORY: clone method ("virtual constructor")
-    virtual  TheSame* clone() const { return new TheSame( *this ) ; }
+    TheSame* clone() const override { return new TheSame( *this ) ; }
     /// MANDATORY: the only one essential method
-    virtual result_type operator() ( argument object ) const
+    bool operator() ( argument object ) const override
     { return LoKi::same ( m_value , object ) ; }
     /// the basic printout method
-    virtual std::ostream& fillStream( std::ostream& s ) const
+    std::ostream& fillStream( std::ostream& s ) const override
     { return s << " (SAME?) "; }
     // ========================================================================
   private:
@@ -1562,8 +1531,6 @@ namespace LoKi
     typedef_void_TYPE
     /// argument type
     typedef typename LoKi::Functor<TYPE,bool>::argument argument  ;
-    /// result type
-    typedef typename LoKi::Functor<TYPE,bool>::result_type result_type ;
     // constant type
     typedef typename LoKi::Constant<TYPE,TYPE2>::T2 T2 ;
     // ========================================================================
@@ -1594,47 +1561,47 @@ namespace LoKi
     {}
     // ========================================================================
     /// MANDATORY: clone method ("virtual construcor")
-    virtual  EqualToValue* clone() const { return new EqualToValue(*this); }
+    EqualToValue* clone() const override { return new EqualToValue(*this); }
     /// MANDATORY: the only one essential method :
-    virtual  result_type operator() ( argument_a_unless_void ) const
+    bool operator() ( argument_a_unless_void ) const override
     { return equal_to ( a_unless_void ) ; }
     /// OPTIONAL: the specific printout
-    virtual std::ostream& fillStream ( std::ostream& s ) const
+    std::ostream& fillStream ( std::ostream& s ) const override
     { return s << " (" << this->func ()
                << "==" << this->val  () << ") " ; }
     /// OPTIONAL: C++ print
-    virtual std::string   toCpp () const
+    std::string   toCpp () const override
     { return " ("
         + Gaudi::Utils::toCpp ( this->func () ) + " == "
         + Gaudi::Utils::toCpp ( this->val  () ) + ") " ; }
     // ========================================================================
   public:
     // ========================================================================
-    inline result_type equal_to ( argument_a_unless_void ) const
+    inline bool equal_to ( argument_a_unless_void ) const
     {
       // the comparator
       LHCb::Math::Equal_To<TYPE2> _cmp ;
       return _cmp ( this->m_fun.fun ( a_unless_void ) , this->m_val ) ;
     }
     // ========================================================================
-    inline result_type not_equal_to ( argument_a_unless_void ) const
+    inline bool not_equal_to ( argument_a_unless_void ) const
     { return ! this->equal_to ( a_unless_void ) ; }
     // ========================================================================
-    inline result_type less    ( argument_a_unless_void ) const
+    inline bool less    ( argument_a_unless_void ) const
     {
       // the comparator
       std::less<TYPE2> _cmp ;
       return _cmp ( this->m_fun.fun ( a_unless_void ) , this->m_val ) ;
     }
     // ========================================================================
-    inline result_type greater ( argument_a_unless_void ) const
+    inline bool greater ( argument_a_unless_void ) const
     {
       // the comparator
       std::less<TYPE2> _cmp ;
       return _cmp ( this->m_val , this->m_fun.fun ( a_unless_void ) ) ;
     }
     // ========================================================================
-    inline result_type less_or_equal ( argument_a_unless_void ) const
+    inline bool less_or_equal ( argument_a_unless_void ) const
     {
       // the comparator
       std::less<TYPE2>            _cmp1 ;
@@ -1643,7 +1610,7 @@ namespace LoKi
       return _cmp1 ( _r , this->m_val ) || _cmp2 ( _r , this->m_val ) ;
     }
     // ========================================================================
-    inline result_type greater_or_equal ( argument_a_unless_void ) const
+    inline bool greater_or_equal ( argument_a_unless_void ) const
     {
       // the comparator
       std::less<TYPE2>            _cmp1 ;
@@ -1683,8 +1650,6 @@ namespace LoKi
     typedef_void_TYPE
     /// argument type
     typedef typename LoKi::Functor<TYPE,bool>::argument argument  ;
-    /// result type
-    typedef typename LoKi::Functor<TYPE,bool>::result_type result_type ;
     /// the constant type
     typedef typename LoKi::Constant<TYPE,TYPE2>::T2 T2 ;
     // ========================================================================
@@ -1711,16 +1676,16 @@ namespace LoKi
       , LoKi::EqualToValue<TYPE,TYPE2>( val , fun )
     {}
     /// MANDATORY: clone method ("virtual constructor")
-    virtual  NotEqualToValue* clone() const { return new NotEqualToValue(*this); }
+    NotEqualToValue* clone() const override { return new NotEqualToValue(*this); }
     /// MANDATORY: the only one essential method :
-    virtual  result_type operator() ( argument_a_unless_void ) const
+    bool operator() ( argument_a_unless_void ) const override
     { return this->not_equal_to ( a_unless_void ) ; }
     /// OPTIONAL: the specific printout
-    virtual std::ostream& fillStream ( std::ostream& s ) const
+    std::ostream& fillStream ( std::ostream& s ) const override
     { return s << " (" << this -> func ()
                << "!=" << this -> val  () << ") " ; }
     /// OPTIONAL: C++ print
-    virtual std::string   toCpp () const
+    std::string   toCpp () const override
     { return " ("
         + Gaudi::Utils::toCpp ( this->func () ) + " != "
         + Gaudi::Utils::toCpp ( this->val  () ) + ") " ; }
@@ -1744,8 +1709,6 @@ namespace LoKi
     typedef_void_TYPE
     /// argument type
     typedef typename LoKi::Functor<TYPE,bool>::argument argument  ;
-    /// result type
-    typedef typename LoKi::Functor<TYPE,bool>::result_type result_type ;
     // constant type
     typedef typename LoKi::Constant<TYPE,TYPE2>::T2 T2 ;
     // ========================================================================
@@ -1764,16 +1727,16 @@ namespace LoKi
     {}
     // ========================================================================
     /// MANDATORY: clone method ("virtual construcor")
-    virtual  LessThanValue* clone() const { return new LessThanValue(*this); }
+    LessThanValue* clone() const override { return new LessThanValue(*this); }
     /// MANDATORY: the only one essential method :
-    virtual  result_type operator() ( argument_a_unless_void ) const
+    bool operator() ( argument_a_unless_void ) const override
     { return this->less ( a_unless_void ) ; }
     /// OPTIONAL: the specific printout
-    virtual std::ostream& fillStream ( std::ostream& s ) const
+    std::ostream& fillStream ( std::ostream& s ) const override
     { return s << " (" << this->func ()
                << "<"  << this->val  () << ") " ; }
     /// OPTIONAL: C++ print
-    virtual std::string   toCpp () const
+    std::string   toCpp () const override
     { return " ("
         + Gaudi::Utils::toCpp ( this->func () ) + " < "
         + Gaudi::Utils::toCpp ( this->val  () ) + ") " ; }
@@ -1797,8 +1760,6 @@ namespace LoKi
     typedef_void_TYPE
     /// argument type
     typedef typename LoKi::Functor<TYPE,bool>::argument argument  ;
-    /// result type
-    typedef typename LoKi::Functor<TYPE,bool>::result_type result_type ;
     // constant type
     typedef typename LoKi::Constant<TYPE,TYPE2>::T2 T2 ;
     // ========================================================================
@@ -1817,16 +1778,16 @@ namespace LoKi
     {}
     // ========================================================================
     /// MANDATORY: clone method ("virtual construcor")
-    virtual  LessOrEqualValue* clone() const { return new LessOrEqualValue(*this); }
+    LessOrEqualValue* clone() const override { return new LessOrEqualValue(*this); }
     /// MANDATORY: the only one essential method :
-    virtual  result_type operator() ( argument_a_unless_void ) const
+    bool operator() ( argument_a_unless_void ) const override
     { return this->less_or_equal ( a_unless_void ) ; }
     /// OPTIONAL: the specific printout
-    virtual std::ostream& fillStream ( std::ostream& s ) const
+    std::ostream& fillStream ( std::ostream& s ) const override
     { return s << " ("  << this->func ()
                << "<="  << this->val  () << ") " ; }
     /// OPTIONAL: C++ print
-    virtual std::string   toCpp () const
+    std::string   toCpp () const override
     { return " ("
         + Gaudi::Utils::toCpp ( this->func () ) + " <= "
         + Gaudi::Utils::toCpp ( this->val  () ) + ") " ; }
@@ -1850,8 +1811,6 @@ namespace LoKi
     typedef_void_TYPE
     /// argument type
     typedef typename LoKi::Functor<TYPE,bool>::argument argument  ;
-    /// result type
-    typedef typename LoKi::Functor<TYPE,bool>::result_type result_type ;
     // constant type
     typedef typename LoKi::Constant<TYPE,TYPE2>::T2 T2 ;
     // ========================================================================
@@ -1870,16 +1829,16 @@ namespace LoKi
     {}
     // ========================================================================
     /// MANDATORY: clone method ("virtual construcor")
-    virtual  GreaterThanValue* clone() const { return new GreaterThanValue(*this); }
+    GreaterThanValue* clone() const override { return new GreaterThanValue(*this); }
     /// MANDATORY: the only one essential method :
-    virtual  result_type operator() ( argument_a_unless_void ) const
+    bool operator() ( argument_a_unless_void ) const override
     { return this->greater ( a_unless_void ) ; }
     /// OPTIONAL: the specific printout
-    virtual std::ostream& fillStream ( std::ostream& s ) const
+    std::ostream& fillStream ( std::ostream& s ) const override
     { return s << " (" << this->func ()
                << ">"  << this->val  () << ") " ; }
     /// OPTIONAL: C++ print
-    virtual std::string   toCpp () const
+    std::string   toCpp () const override
     { return " ("
         + Gaudi::Utils::toCpp ( this->func () ) + " > "
         + Gaudi::Utils::toCpp ( this->val  () ) + ") " ; }
@@ -1903,8 +1862,6 @@ namespace LoKi
     typedef_void_TYPE
     /// argument type
     typedef typename LoKi::Functor<TYPE,bool>::argument argument  ;
-    /// result type
-    typedef typename LoKi::Functor<TYPE,bool>::result_type result_type ;
     // constant type
     typedef typename LoKi::Constant<TYPE,TYPE2>::T2 T2 ;
     // ========================================================================
@@ -1923,16 +1880,16 @@ namespace LoKi
     {}
     // ========================================================================
     /// MANDATORY: clone method ("virtual construcor")
-    virtual  GreaterOrEqualValue* clone() const { return new GreaterOrEqualValue(*this); }
+    GreaterOrEqualValue* clone() const override { return new GreaterOrEqualValue(*this); }
     /// MANDATORY: the only one essential method :
-    virtual  result_type operator() ( argument_a_unless_void ) const
+    bool operator() ( argument_a_unless_void ) const override
     { return this->greater_or_equal ( a_unless_void ) ; }
     /// OPTIONAL: the specific printout
-    virtual std::ostream& fillStream ( std::ostream& s ) const
+    std::ostream& fillStream ( std::ostream& s ) const override
     { return s << " ("  << this->func ()
                << ">="  << this->val  () << ") " ; }
     /// OPTIONAL: C++ print
-    virtual std::string   toCpp () const
+    std::string   toCpp () const override
     { return " ("
         + Gaudi::Utils::toCpp ( this->func () ) + " >= "
         + Gaudi::Utils::toCpp ( this->val  () ) + ") " ; }
@@ -1956,8 +1913,6 @@ namespace LoKi
     typedef_void_TYPE
     /// argument type
     typedef typename LoKi::Functor<TYPE,TYPE2>::argument    argument    ;
-    /// result type
-    typedef typename LoKi::Functor<TYPE,TYPE2>::result_type result_type ;
     // constant type
     typedef typename LoKi::Constant<TYPE,TYPE2>::T2 T2 ;
     // ========================================================================
@@ -1990,16 +1945,16 @@ namespace LoKi
     {}
     // ========================================================================
     /// MANDATORY: clone method ("virtual construcor")
-    virtual  MultiplyByValue* clone() const { return new MultiplyByValue(*this); }
+    MultiplyByValue* clone() const override { return new MultiplyByValue(*this); }
     /// MANDATORY: the only one essential method :
-    virtual  result_type operator() ( argument_a_unless_void ) const
+    TYPE2 operator() ( argument_a_unless_void ) const override
     { return this->mult ( a_unless_void ) ; }
     /// OPTIONAL: the specific printout
-    virtual std::ostream& fillStream ( std::ostream& s ) const
+    std::ostream& fillStream ( std::ostream& s ) const override
     { return s << " ("   << this->func ()
                << "*"    << this->val  () << ") " ; }
     /// OPTIONAL: C++ print
-    virtual std::string   toCpp () const
+    std::string   toCpp () const override
     { return " ("
         + Gaudi::Utils::toCpp ( this->func () ) + " * "
         + Gaudi::Utils::toCpp ( this->val  () ) + ") " ; }
@@ -2011,22 +1966,22 @@ namespace LoKi
     // ========================================================================
   protected :
     // ========================================================================
-    inline result_type mult    ( argument_a_unless_void ) const
+    inline TYPE2 mult    ( argument_a_unless_void ) const
     { return ( this->m_fun.fun ( a_unless_void ) ) * ( this->m_val ) ; }
     // ========================================================================
-    inline result_type sum     ( argument_a_unless_void ) const
+    inline TYPE2 sum     ( argument_a_unless_void ) const
     { return ( this->m_fun.fun ( a_unless_void ) ) + ( this->m_val ) ; }
     // ========================================================================
-    inline result_type divide1 ( argument_a_unless_void ) const
+    inline TYPE2 divide1 ( argument_a_unless_void ) const
     { return ( this->m_fun.fun ( a_unless_void ) ) / ( this->m_val ) ; }
     // ========================================================================
-    inline result_type divide2 ( argument_a_unless_void ) const
+    inline TYPE2 divide2 ( argument_a_unless_void ) const
     { return ( this->m_val ) / ( this->m_fun.fun ( a_unless_void ) ) ; }
     // ========================================================================
-    inline result_type minus1  ( argument_a_unless_void ) const
+    inline TYPE2 minus1  ( argument_a_unless_void ) const
     { return ( this->m_fun.fun ( a_unless_void ) ) - ( this->m_val ) ; }
     // ========================================================================
-    inline result_type minus2  ( argument_a_unless_void ) const
+    inline TYPE2 minus2  ( argument_a_unless_void ) const
     { return ( this->m_val ) - ( this->m_fun.fun ( a_unless_void ) ) ; }
     // ========================================================================
   private:
@@ -2055,8 +2010,6 @@ namespace LoKi
     typedef_void_TYPE
     /// argument type
     typedef typename LoKi::Functor<TYPE,TYPE2>::argument    argument    ;
-    /// result type
-    typedef typename LoKi::Functor<TYPE,TYPE2>::result_type result_type ;
     // constant type
     typedef typename LoKi::Constant<TYPE,TYPE2>::T2 T2 ;
     // ========================================================================
@@ -2087,16 +2040,16 @@ namespace LoKi
     {}
     // ========================================================================
     /// MANDATORY: clone method ("virtual construcor")
-    virtual  SumByValue* clone() const { return new SumByValue(*this); }
+    SumByValue* clone() const override { return new SumByValue(*this); }
     /// MANDATORY: the only one essential method :
-    virtual  result_type operator() ( argument_a_unless_void ) const
+    TYPE2 operator() ( argument_a_unless_void ) const override
     { return this->sum ( a_unless_void ) ; }
     /// OPTIONAL: the specific printout
-    virtual std::ostream& fillStream ( std::ostream& s ) const
+    std::ostream& fillStream ( std::ostream& s ) const override
     { return s << " ("   << this->func ()
                << "+"    << this->val  () << ") " ; }
     /// OPTIONAL: C++ print
-    virtual std::string   toCpp () const
+    std::string   toCpp () const override
     { return " ("
         + Gaudi::Utils::toCpp ( this->func () ) + " + "
         + Gaudi::Utils::toCpp ( this->val  () ) + ") " ; }
@@ -2120,8 +2073,6 @@ namespace LoKi
     typedef_void_TYPE
     /// argument type
     typedef typename LoKi::Functor<TYPE,TYPE2>::argument    argument    ;
-    /// result type
-    typedef typename LoKi::Functor<TYPE,TYPE2>::result_type result_type ;
     // constant type
     typedef typename LoKi::Constant<TYPE,TYPE2>::T2 T2 ;
     // ========================================================================
@@ -2140,16 +2091,16 @@ namespace LoKi
     {}
     // ========================================================================
     /// MANDATORY: clone method ("virtual construcor")
-    virtual  Minus1* clone() const { return new Minus1(*this); }
+    Minus1* clone() const override { return new Minus1(*this); }
     /// MANDATORY: the only one essential method :
-    virtual  result_type operator() ( argument_a_unless_void ) const
+    TYPE2 operator() ( argument_a_unless_void ) const override
     { return this->minus1 ( a_unless_void ) ; }
     /// OPTIONAL: the specific printout
-    virtual std::ostream& fillStream ( std::ostream& s ) const
+    std::ostream& fillStream ( std::ostream& s ) const override
     { return s << " ("   << this->func ()
                << "-"    << this->val  () << ") " ; }
     /// OPTIONAL: C++ print
-    virtual std::string   toCpp () const
+    std::string   toCpp () const override
     { return " ("
         + Gaudi::Utils::toCpp ( this->func () ) + " - "
         + Gaudi::Utils::toCpp ( this->val  () ) + ") " ; }
@@ -2173,8 +2124,6 @@ namespace LoKi
     typedef_void_TYPE
     /// argument type
     typedef typename LoKi::Functor<TYPE,TYPE2>::argument    argument    ;
-    /// result type
-    typedef typename LoKi::Functor<TYPE,TYPE2>::result_type result_type ;
     // constant type
     typedef typename LoKi::Constant<TYPE,TYPE2>::T2 T2 ;
     // ========================================================================
@@ -2193,16 +2142,16 @@ namespace LoKi
     {}
     // ========================================================================
     /// MANDATORY: clone method ("virtual construcor")
-    virtual  Minus2* clone() const { return new Minus2(*this); }
+    Minus2* clone() const override { return new Minus2(*this); }
     /// MANDATORY: the only one essential method :
-    virtual  result_type operator() ( argument_a_unless_void ) const
+    TYPE2 operator() ( argument_a_unless_void ) const override
     { return this->minus2 ( a_unless_void ) ; }
     /// OPTIONAL: the specific printout
-    virtual std::ostream& fillStream ( std::ostream& s ) const
+    std::ostream& fillStream ( std::ostream& s ) const override
     { return s << " ("   << this->val  ()
                << "-"    << this->func () << ") " ; }
     /// OPTIONAL: C++ print
-    virtual std::string   toCpp () const
+    std::string   toCpp () const override
     { return " ("
         + Gaudi::Utils::toCpp ( this->val  () ) + " - "
         + Gaudi::Utils::toCpp ( this->func () ) + ") " ; }
@@ -2226,8 +2175,6 @@ namespace LoKi
     typedef_void_TYPE
     /// argument type
     typedef typename LoKi::Functor<TYPE,TYPE2>::argument    argument    ;
-    /// result type
-    typedef typename LoKi::Functor<TYPE,TYPE2>::result_type result_type ;
     // constant type
     typedef typename LoKi::Constant<TYPE,TYPE2>::T2 T2 ;
     // ========================================================================
@@ -2246,16 +2193,16 @@ namespace LoKi
     {}
     // ========================================================================
     /// MANDATORY: clone method ("virtual construcor")
-    virtual  Divide1* clone() const { return new Divide1(*this); }
+    Divide1* clone() const override { return new Divide1(*this); }
     /// MANDATORY: the only one essential method :
-    virtual  result_type operator() ( argument_a_unless_void ) const
+    TYPE2 operator() ( argument_a_unless_void ) const override
     { return this->divide1 ( a_unless_void ) ; }
     /// OPTIONAL: the specific printout
-    virtual std::ostream& fillStream ( std::ostream& s ) const
+    std::ostream& fillStream ( std::ostream& s ) const override
     { return s << " ("   << this->func ()
                << "/"    << this->val  () << ") " ; }
     /// OPTIONAL: C++ print
-    virtual std::string   toCpp () const
+    std::string   toCpp () const override
     { return " ("
         + Gaudi::Utils::toCpp ( this->func () ) + " / "
         + Gaudi::Utils::toCpp ( this->val  () ) + ") " ; }
@@ -2279,8 +2226,6 @@ namespace LoKi
     typedef_void_TYPE
     /// argument type
     typedef typename LoKi::Functor<TYPE,TYPE2>::argument    argument    ;
-    /// result type
-    typedef typename LoKi::Functor<TYPE,TYPE2>::result_type result_type ;
     // constant type
     typedef typename LoKi::Constant<TYPE,TYPE2>::T2 T2 ;
     // ========================================================================
@@ -2299,16 +2244,16 @@ namespace LoKi
     {}
     // ========================================================================
     /// MANDATORY: clone method ("virtual construcor")
-    virtual  Divide2* clone() const { return new Divide2(*this); }
+    Divide2* clone() const override { return new Divide2(*this); }
     /// MANDATORY: the only one essential method :
-    virtual  result_type operator() ( argument_a_unless_void ) const
+    TYPE2 operator() ( argument_a_unless_void ) const override
     { return this->divide2 ( a_unless_void ) ; }
     /// OPTIONAL: the specific printout
-    virtual std::ostream& fillStream ( std::ostream& s ) const
+    std::ostream& fillStream ( std::ostream& s ) const override
     { return s << " ("   << this->val  ()
                << "/"    << this->func () << ") " ; }
     /// OPTIONAL: C++ print
-    virtual std::string   toCpp () const
+    std::string   toCpp () const override
     { return " ("
         + Gaudi::Utils::toCpp ( this->val  () ) + " / "
         + Gaudi::Utils::toCpp ( this->func () ) + ") " ; }
@@ -2406,16 +2351,14 @@ namespace LoKi
     typedef_void_TYPE
     /// argument type
     typedef typename LoKi::Functor<TYPE,TYPE2>::argument argument  ;
-    /// result type
-    typedef typename LoKi::Functor<TYPE,TYPE2>::result_type result_type ;
   public :
     // ========================================================================
     /// MANDATORY: clone method ("virtual constructor")
-    virtual  Identity* clone () const { return new Identity(*this) ; }
+    Identity* clone () const override { return new Identity(*this) ; }
     /// MANDATORY": the only one essential method
-    virtual  result_type operator () ( argument_a_unless_void ) const { return a_unless_void ; }
+    TYPE2 operator () ( argument_a_unless_void ) const override { return a_unless_void ; }
     /// OPTIONAL: the nice printout
-    virtual std::ostream& fillStream ( std::ostream& s ) const ;
+    std::ostream& fillStream ( std::ostream& s ) const override;
     // ========================================================================
   } ;
   // ==========================================================================
@@ -2432,14 +2375,12 @@ namespace LoKi
     typedef_void_TYPE
     /// argument type
     typedef typename LoKi::Functor<TYPE,std::string>::argument argument  ;
-    /// result type
-    typedef typename LoKi::Functor<TYPE,std::string>::result_type result_type ;
   public:
     // ========================================================================
     /// MANDATORY: clone method ("virtual constructor")
-    virtual  PrintOut* clone () const { return new PrintOut ( *this ) ; }
+    PrintOut* clone () const override { return new PrintOut ( *this ) ; }
     /// MANDATORY": the only one essential method
-    virtual result_type operator () ( argument_a_unless_void ) const
+    std::string operator () ( argument_a_unless_void ) const override
     { return Gaudi::Utils::toString ( a_unless_void  ) ; }
     // ========================================================================
   };
@@ -2464,8 +2405,6 @@ namespace LoKi
     typedef_void_TYPE
     /// argument type
     typedef typename_v LoKi::Functor<TYPE,bool>::argument              argument ;
-    /// result type
-    typedef typename_v LoKi::Functor<TYPE,bool>::result_type        result_type ;
     // ========================================================================
   public:
     // ========================================================================
@@ -2484,15 +2423,15 @@ namespace LoKi
       , m_high ( high )
     {}
     /// MANDATORY: clone method ("virtual constructor")
-    virtual  InRange* clone() const { return new InRange ( *this ) ; }
+    InRange* clone() const override { return new InRange ( *this ) ; }
     /// MANDATORY: the only one essential method
-    virtual result_type operator() ( argument_a_unless_void ) const
+    bool operator() ( argument_a_unless_void ) const override
     {
       const double r = m_fun.fun ( a_unless_void ) ;
       return m_low <= r && r <= m_high ;
     }
     /// OPTIONAL: the nice printout
-    virtual std::ostream& fillStream ( std::ostream& s ) const
+    std::ostream& fillStream ( std::ostream& s ) const override
     {
       return s << " in_range(" << m_low
                << ","          << m_fun
@@ -2530,8 +2469,6 @@ namespace LoKi
     typedef_void_TYPE
     /// argument type
     typedef typename_v LoKi::Functor<TYPE,bool>::argument              argument ;
-    /// result type
-    typedef typename_v LoKi::Functor<TYPE,bool>::result_type        result_type ;
     // ========================================================================
   public:
     // ========================================================================
@@ -2579,18 +2516,16 @@ namespace LoKi
       , m_high ( LoKi::Constant<TYPE,double> ( high ) )
     {}
     /// MANDATORY: clone method ("virtual constructor")
-    virtual  InRange2* clone() const { return new InRange2 ( *this ) ; }
+    InRange2* clone() const override { return new InRange2 ( *this ) ; }
     /// MANDATORY: the only one essential method
-    virtual result_type operator() ( argument_a_unless_void ) const
+    bool operator() ( argument_a_unless_void ) const override
     {
       const double low  = m_low .fun ( a_unless_void ) ;
       const double res  = m_fun .fun ( a_unless_void ) ;
-      return
-        low <= res              ?
-        res <= m_high.fun ( a_unless_void ) : false ;
+      return low <= res && res <= m_high.fun ( a_unless_void );
     }
     /// OPTIONAL: the nice printout
-    virtual std::ostream& fillStream ( std::ostream& s ) const
+    std::ostream& fillStream ( std::ostream& s ) const override
     {
       return s << " in_range(" << m_low
                << ","          << m_fun
@@ -2626,8 +2561,6 @@ namespace LoKi
     typedef_void_TYPE
     /// argument type
     typedef typename_v LoKi::Functor<TYPE,bool>::argument argument  ;
-    /// result type
-    typedef typename_v LoKi::Functor<TYPE,bool>::result_type result_type ;
     // ========================================================================
   public:
     // ========================================================================
@@ -2681,18 +2614,18 @@ namespace LoKi
     {}
     // ========================================================================
     /// MANDATORY: clone method ("virtual construcor")
-    virtual  EqualToList* clone() const { return new EqualToList(*this); }
+    EqualToList* clone() const override { return new EqualToList(*this); }
     /// MANDATORY: the only one essential method :
-    virtual  result_type operator() ( argument_a_unless_void ) const
+    bool operator() ( argument_a_unless_void ) const override
     { return equal_to ( a_unless_void ) ; }
     /// OPTIONAL: the specific printout
-    virtual std::ostream& fillStream ( std::ostream& s ) const
+    std::ostream& fillStream ( std::ostream& s ) const override
     { return s << " (" << this->func() << "=="
                << Gaudi::Utils::toString ( m_vct ) << ") " ; }
     // ========================================================================
   public:
     // ========================================================================
-    inline result_type equal_to ( argument_a_unless_void ) const
+    inline bool equal_to ( argument_a_unless_void ) const
     {
       if ( m_vct.empty() ) { return  false ; }
       //
@@ -2703,7 +2636,7 @@ namespace LoKi
                           [&](double item) { return cmp(item,r); } );
     }
     // ========================================================================
-    inline result_type not_equal_to ( argument_a_unless_void ) const
+    inline bool not_equal_to ( argument_a_unless_void ) const
     { return !this->equal_to ( a_unless_void ) ; }
     // ========================================================================
   public:
@@ -2738,8 +2671,6 @@ namespace LoKi
     typedef_void_TYPE
     /// argument type
     typedef typename_v LoKi::Functor<TYPE,bool>::argument argument  ;
-    /// result type
-    typedef typename_v LoKi::Functor<TYPE,bool>::result_type result_type ;
     // ========================================================================
   public:
     // ========================================================================
@@ -2790,13 +2721,12 @@ namespace LoKi
     {}
     // ========================================================================
     /// MANDATORY: clone method ("virtual construcor")
-    virtual  NotEqualToList* clone() const
-    { return new NotEqualToList(*this); }
+    NotEqualToList* clone() const override { return new NotEqualToList(*this); }
     /// MANDATORY: the only one essential method :
-    virtual  result_type operator() ( argument_a_unless_void ) const
+    bool operator() ( argument_a_unless_void ) const override
     { return this -> not_equal_to ( a_unless_void ) ; }
     /// OPTIONAL: the specific printout
-    virtual std::ostream& fillStream ( std::ostream& s ) const
+    std::ostream& fillStream ( std::ostream& s ) const override
     { return s << " (" << this->func() << "!="
                << Gaudi::Utils::toString ( this->vect() ) << ") " ; }
     // ========================================================================
@@ -2820,8 +2750,6 @@ namespace LoKi
     typedef_void_TYPE
     /// argument type
     typedef typename_v LoKi::Functor<TYPE,bool>::argument argument  ;
-    /// result type
-    typedef typename_v LoKi::Functor<TYPE,bool>::result_type result_type ;
     // ========================================================================
   public:
     // ========================================================================
@@ -2837,14 +2765,14 @@ namespace LoKi
       , m_scaler ( scale )
     {}
     /// MANDATORY: clone method ("virtual constructor")
-    virtual  XScaler* clone() const { return new XScaler ( *this ) ; }
+    XScaler* clone() const override { return new XScaler ( *this ) ; }
     /// MANDATORY: the only one essential method
-    virtual result_type operator() ( argument_a_unless_void ) const
+    bool operator() ( argument_a_unless_void ) const override
     {
       return m_cut.fun ( a_unless_void ) && m_scaler.fun( /* void */ ) ;
     }
     /// OPTIONAL: nice printout
-    virtual std::ostream& fillStream ( std::ostream& s ) const
+    std::ostream& fillStream ( std::ostream& s ) const override
     { return s << " scale(" << m_cut << "," << m_scaler << ") " ; }
     // ========================================================================
   private:
@@ -2879,8 +2807,6 @@ namespace LoKi
     typedef_void_TYPE
     /// argument type
     typedef typename_v LoKi::Functor<TYPE,double>::argument argument  ;
-    /// result type
-    typedef typename_v LoKi::Functor<TYPE,double>::result_type result_type ;
     // ========================================================================
   public:
     // ========================================================================
@@ -2892,12 +2818,12 @@ namespace LoKi
       , m_divisor  ( divisor   )
     {}
     /// clone method (mandatory)
-    virtual  Modulo* clone() const { return new Modulo ( *this ) ; }
+    Modulo* clone() const override { return new Modulo ( *this ) ; }
     /// the only one essential method ("function")
-    virtual  result_type operator() ( argument_a_unless_void ) const
+    double operator() ( argument_a_unless_void ) const override
     { return LHCb::Math::round ( m_divident.fun ( a_unless_void ) ) % m_divisor ; }
     /// the basic printout method
-    virtual std::ostream& fillStream( std::ostream& s ) const
+    std::ostream& fillStream( std::ostream& s ) const override
     { return s << " ("  << m_divident << " % "  << m_divisor << ") "; }
     // ========================================================================
   private:
@@ -2929,8 +2855,6 @@ namespace LoKi
     typedef_void_TYPE
     /// argument type
     typedef typename_v LoKi::Functor<TYPE,double>::argument argument  ;
-    /// result type
-    typedef typename_v LoKi::Functor<TYPE,double>::result_type result_type ;
     // ========================================================================
   public:
     // ========================================================================
@@ -2941,12 +2865,12 @@ namespace LoKi
       , m_fun  ( fun )
     {}
     /// clone method (mandatory)
-    virtual  Round* clone() const { return new Round ( *this ) ; }
+    Round* clone() const override { return new Round ( *this ) ; }
     /// the only one essential method ("function")
-    virtual  result_type operator() ( argument_a_unless_void ) const
+    double operator() ( argument_a_unless_void ) const override
     { return LHCb::Math::round ( this->m_fun.fun ( a_unless_void ) ) ; }
     /// the basic printout method
-    virtual std::ostream& fillStream( std::ostream& s ) const
+    std::ostream& fillStream( std::ostream& s ) const override
     { return s << " round("  << this->m_fun<< ") "; }
     // ========================================================================
   private:
@@ -2979,8 +2903,6 @@ namespace LoKi
     typedef_void_TYPE
     /// argument type
     typedef typename_v LoKi::Functor<TYPE,bool>::argument argument  ;
-    /// result type
-    typedef typename_v LoKi::Functor<TYPE,bool>::result_type result_type ;
     // ========================================================================
   public:
     // ========================================================================
@@ -3003,9 +2925,9 @@ namespace LoKi
       //
     }
     /// clone method (mandatory)
-    virtual  JBit* clone() const { return new JBit ( *this ) ; }
+    JBit* clone() const override { return new JBit ( *this ) ; }
     /// the only one essential method ("function")
-    virtual  result_type operator() ( argument_a_unless_void ) const
+    bool operator() ( argument_a_unless_void ) const override
     {
       const unsigned long _ulv =
         ::labs ( LHCb::Math::round ( this->m_fun.fun ( a_unless_void ) ) ) ;
@@ -3013,7 +2935,7 @@ namespace LoKi
       return Gaudi::Math::bit ( _ulv , this->m_j ) ;
     }
     /// the basic printout method
-    virtual std::ostream& fillStream( std::ostream& s ) const
+    std::ostream& fillStream( std::ostream& s ) const override
     { return s << " jbit("  << this->m_fun << "," << this->m_j << ") "; }
     // ========================================================================
   private:
@@ -3048,8 +2970,6 @@ namespace LoKi
     typedef_void_TYPE
     /// argument type
     typedef typename_v LoKi::Functor<TYPE,double>::argument argument  ;
-    /// result type
-    typedef typename_v LoKi::Functor<TYPE,double>::result_type result_type ;
     // ========================================================================
   public:
     // ========================================================================
@@ -3077,9 +2997,9 @@ namespace LoKi
       //
     }
     /// clone method (mandatory)
-    virtual  JBits* clone() const { return new JBits ( *this ) ; }
+    JBits* clone() const override { return new JBits ( *this ) ; }
     /// the only one essential method ("function")
-    virtual  result_type operator() ( argument_a_unless_void ) const
+    double operator() ( argument_a_unless_void ) const override
     {
       const unsigned long _ulv =
         ::labs ( LHCb::Math::round ( this->m_fun.fun ( a_unless_void ) ) ) ;
@@ -3087,7 +3007,7 @@ namespace LoKi
       return Gaudi::Math::bits ( _ulv , this->m_j1 , this -> m_j2 ) ;
     }
     /// the basic printout method
-    virtual std::ostream& fillStream( std::ostream& s ) const
+    std::ostream& fillStream( std::ostream& s ) const override
     { return s << " jbits("  << this->m_fun
                << "," << this->m_j1
                << "," << this->m_j2
