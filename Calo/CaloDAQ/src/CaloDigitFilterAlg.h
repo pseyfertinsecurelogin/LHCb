@@ -9,7 +9,6 @@
 
 /** @class CaloDigitFilterAlg CaloDigitFilterAlg.h
  *  
- *
  *  @author Olivier Deschamps
  *  @date   2010-12-21
  */
@@ -18,20 +17,14 @@ public:
   /// Standard constructor
   CaloDigitFilterAlg( const std::string& name, ISvcLocator* pSvcLocator );
 
-  virtual ~CaloDigitFilterAlg( ); ///< Destructor
-
-  virtual StatusCode initialize();    ///< Algorithm initialization
-  virtual StatusCode execute   ();    ///< Algorithm execution
-
-protected:
-  bool mask(int& val){return (val&0x1) != 0;}
-  bool offset(int& val){return (val&0x2) !=0;}
+  StatusCode initialize() override;    ///< Algorithm initialization
+  StatusCode execute   () override;    ///< Algorithm execution
 
 private:
   int m_ecal;
   int m_hcal;
   int m_prs;
   int m_spd;
-  ICaloDigitFilterTool* m_filter;
+  ICaloDigitFilterTool* m_filter = nullptr;
 };
 #endif // CALODIGITFILTERALG_H
