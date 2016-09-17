@@ -145,10 +145,6 @@ namespace LoKi
         /// the basic printout method
         std::ostream& fillStream( std::ostream& s ) const override
         { return s << " (" <<  Traits_::name() << this->fun() << ") " ; }
-        /// OPTIONAL: C++ print
-        std::string   toCpp () const override
-        { return std::string{" ("} + Traits_::name() + " "
-            + Gaudi::Utils::toCpp ( this->fun() ) +  ") " ; }
         // =====================================================================
       private:
         // =====================================================================
@@ -287,11 +283,6 @@ namespace LoKi
         /// the basic printout method
         std::ostream& fillStream( std::ostream& s ) const override
         { return s << " (" << this->func1() << Traits_::name() << this->func2() << ") " ; }
-        /// OPTIONAL: C++ print
-        std::string   toCpp () const override
-        { return " ("
-            + Gaudi::Utils::toCpp ( this->func1() ) + " " + Traits_::name() + " "
-            + Gaudi::Utils::toCpp ( this->func2() ) +  ") " ; }
         // =====================================================================
       private:
         // =====================================================================
@@ -596,11 +587,6 @@ namespace LoKi
             /// the basic printout method
             std::ostream& fillStream( std::ostream& s ) const override
             { return s << " (" << this->func1() << Traits_::name() << this->func2() << ") " ; }
-            /// OPTIONAL: C++ print
-            std::string   toCpp () const override
-            { return " ("
-                + Gaudi::Utils::toCpp ( this->func1() ) + " " + Traits_::name() + " "
-                + Gaudi::Utils::toCpp ( this->func2() ) + ") " ; }
             // ========================================================================
           private:
             // ========================================================================
@@ -877,11 +863,6 @@ namespace LoKi
     /// the basic printout method
     std::ostream& fillStream( std::ostream& s ) const override
     { return s << " min(" << this->func1() << "," << this->func2() << ") " ; }
-    /// OPTIONAL: C++ print
-    std::string   toCpp () const override
-    { return " LoKi::min("
-        + Gaudi::Utils::toCpp ( this->func1() ) + ","
-        + Gaudi::Utils::toCpp ( this->func2() ) + ") " ; }
     // ========================================================================
   protected:
     // ========================================================================
@@ -1003,11 +984,6 @@ namespace LoKi
     /// OPTIONAL: the basic printout method
     std::ostream& fillStream( std::ostream& s ) const override
     { return s << " max(" << this->func1() << "," << this->func2() << ") " ; }
-    /// OPTIONAL: C++ print
-    std::string   toCpp () const override
-    { return " LoKi::max("
-        + Gaudi::Utils::toCpp ( this->func1() ) + ","
-        + Gaudi::Utils::toCpp ( this->func2() ) + ") " ; }
     // ========================================================================
   };
   // ==========================================================================
@@ -1569,11 +1545,6 @@ namespace LoKi
     std::ostream& fillStream ( std::ostream& s ) const override
     { return s << " (" << this->func ()
                << "==" << this->val  () << ") " ; }
-    /// OPTIONAL: C++ print
-    std::string   toCpp () const override
-    { return " ("
-        + Gaudi::Utils::toCpp ( this->func () ) + " == "
-        + Gaudi::Utils::toCpp ( this->val  () ) + ") " ; }
     // ========================================================================
   public:
     // ========================================================================
@@ -1684,11 +1655,6 @@ namespace LoKi
     std::ostream& fillStream ( std::ostream& s ) const override
     { return s << " (" << this -> func ()
                << "!=" << this -> val  () << ") " ; }
-    /// OPTIONAL: C++ print
-    std::string   toCpp () const override
-    { return " ("
-        + Gaudi::Utils::toCpp ( this->func () ) + " != "
-        + Gaudi::Utils::toCpp ( this->val  () ) + ") " ; }
     // ========================================================================
   };
   // ==========================================================================
@@ -1735,11 +1701,6 @@ namespace LoKi
     std::ostream& fillStream ( std::ostream& s ) const override
     { return s << " (" << this->func ()
                << "<"  << this->val  () << ") " ; }
-    /// OPTIONAL: C++ print
-    std::string   toCpp () const override
-    { return " ("
-        + Gaudi::Utils::toCpp ( this->func () ) + " < "
-        + Gaudi::Utils::toCpp ( this->val  () ) + ") " ; }
     // ========================================================================
   };
   // ==========================================================================
@@ -1786,11 +1747,6 @@ namespace LoKi
     std::ostream& fillStream ( std::ostream& s ) const override
     { return s << " ("  << this->func ()
                << "<="  << this->val  () << ") " ; }
-    /// OPTIONAL: C++ print
-    std::string   toCpp () const override
-    { return " ("
-        + Gaudi::Utils::toCpp ( this->func () ) + " <= "
-        + Gaudi::Utils::toCpp ( this->val  () ) + ") " ; }
     // ========================================================================
   };
   // ==========================================================================
@@ -1837,11 +1793,6 @@ namespace LoKi
     std::ostream& fillStream ( std::ostream& s ) const override
     { return s << " (" << this->func ()
                << ">"  << this->val  () << ") " ; }
-    /// OPTIONAL: C++ print
-    std::string   toCpp () const override
-    { return " ("
-        + Gaudi::Utils::toCpp ( this->func () ) + " > "
-        + Gaudi::Utils::toCpp ( this->val  () ) + ") " ; }
     // ========================================================================
   };
   // ==========================================================================
@@ -1888,11 +1839,6 @@ namespace LoKi
     std::ostream& fillStream ( std::ostream& s ) const override
     { return s << " ("  << this->func ()
                << ">="  << this->val  () << ") " ; }
-    /// OPTIONAL: C++ print
-    std::string   toCpp () const override
-    { return " ("
-        + Gaudi::Utils::toCpp ( this->func () ) + " >= "
-        + Gaudi::Utils::toCpp ( this->val  () ) + ") " ; }
     // ========================================================================
   };
   // ==========================================================================
@@ -1953,11 +1899,6 @@ namespace LoKi
     std::ostream& fillStream ( std::ostream& s ) const override
     { return s << " ("   << this->func ()
                << "*"    << this->val  () << ") " ; }
-    /// OPTIONAL: C++ print
-    std::string   toCpp () const override
-    { return " ("
-        + Gaudi::Utils::toCpp ( this->func () ) + " * "
-        + Gaudi::Utils::toCpp ( this->val  () ) + ") " ; }
     // ========================================================================
   public:
     // ========================================================================
@@ -2048,11 +1989,6 @@ namespace LoKi
     std::ostream& fillStream ( std::ostream& s ) const override
     { return s << " ("   << this->func ()
                << "+"    << this->val  () << ") " ; }
-    /// OPTIONAL: C++ print
-    std::string   toCpp () const override
-    { return " ("
-        + Gaudi::Utils::toCpp ( this->func () ) + " + "
-        + Gaudi::Utils::toCpp ( this->val  () ) + ") " ; }
     // ========================================================================
   };
   // ==========================================================================
@@ -2099,11 +2035,6 @@ namespace LoKi
     std::ostream& fillStream ( std::ostream& s ) const override
     { return s << " ("   << this->func ()
                << "-"    << this->val  () << ") " ; }
-    /// OPTIONAL: C++ print
-    std::string   toCpp () const override
-    { return " ("
-        + Gaudi::Utils::toCpp ( this->func () ) + " - "
-        + Gaudi::Utils::toCpp ( this->val  () ) + ") " ; }
     // ========================================================================
   };
   // ==========================================================================
@@ -2150,11 +2081,6 @@ namespace LoKi
     std::ostream& fillStream ( std::ostream& s ) const override
     { return s << " ("   << this->val  ()
                << "-"    << this->func () << ") " ; }
-    /// OPTIONAL: C++ print
-    std::string   toCpp () const override
-    { return " ("
-        + Gaudi::Utils::toCpp ( this->val  () ) + " - "
-        + Gaudi::Utils::toCpp ( this->func () ) + ") " ; }
     // ========================================================================
   };
   // ==========================================================================
@@ -2201,11 +2127,6 @@ namespace LoKi
     std::ostream& fillStream ( std::ostream& s ) const override
     { return s << " ("   << this->func ()
                << "/"    << this->val  () << ") " ; }
-    /// OPTIONAL: C++ print
-    std::string   toCpp () const override
-    { return " ("
-        + Gaudi::Utils::toCpp ( this->func () ) + " / "
-        + Gaudi::Utils::toCpp ( this->val  () ) + ") " ; }
     // ========================================================================
   };
   // ==========================================================================
@@ -2252,11 +2173,6 @@ namespace LoKi
     std::ostream& fillStream ( std::ostream& s ) const override
     { return s << " ("   << this->val  ()
                << "/"    << this->func () << ") " ; }
-    /// OPTIONAL: C++ print
-    std::string   toCpp () const override
-    { return " ("
-        + Gaudi::Utils::toCpp ( this->val  () ) + " / "
-        + Gaudi::Utils::toCpp ( this->func () ) + ") " ; }
     // ========================================================================
   };
   // ==========================================================================
