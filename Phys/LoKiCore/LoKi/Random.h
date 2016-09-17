@@ -59,11 +59,11 @@ namespace LoKi
       /// copy constructor
       Numbers ( const Numbers& right ) ;
       // destructor
-      virtual ~Numbers() ;
+      ~Numbers() override;
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  Numbers* clone() const ;
+      Numbers* clone() const override;
       /// MANDATORY: the only one essential method
-      virtual  result_type operator() ( argument /* a */ ) const ;
+      result_type operator() ( argument /* a */ ) const override;
       // ======================================================================
     public:
       // ======================================================================

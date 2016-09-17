@@ -41,7 +41,6 @@ namespace LoKi
     // ========================================================================
     /// constructor
     explicit FirstN ( const unsigned int N ) ;                            // constructor
-    /// virtual destructor
   public:
     // ========================================================================
     /// get N
