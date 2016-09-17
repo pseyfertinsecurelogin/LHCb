@@ -197,7 +197,7 @@ bool LHCb::ParticleID::hasQuarks() const
 // ============================================================================
 bool LHCb::ParticleID::hasQuark ( const Quark& q ) const 
 {
-  if ( abspid() == (unsigned int)::abs(q) ) { return true ; } // Special case for quarks
+  if ( abspid() == static_cast<unsigned int>(q) ) { return true ; } // Special case for quarks
   //
   return   hasQuarks() && 
     ( q == digit_<nq3> () ||
