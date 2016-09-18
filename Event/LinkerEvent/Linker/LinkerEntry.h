@@ -1,4 +1,3 @@
-// $Id: LinkerEntry.h,v 1.1 2005-01-27 14:52:21 cattanem Exp $
 #ifndef LINKER_LINKERENTRY_H 
 #define LINKER_LINKERENTRY_H 1
 
@@ -8,7 +7,8 @@
  *  @author Olivier Callot
  *  @date   2005-01-19
  */
-template <class SOURCE, class TARGET > class LinkerEntry final {
+template <class SOURCE, class TARGET >
+class LinkerEntry final {
 public: 
   /** constructor, with the needed information
    *  @param src     source of the relation
