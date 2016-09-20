@@ -13,8 +13,8 @@
 #define RICHDAQ_RichFlatFormatSmartIDData_H 1
 
 // local
-#include "RichHPDDataBank.h"
-#include "RichZSPacked_V2.h"
+#include "RichDAQKernel/RichHPDDataBank.h"
+#include "RichDAQKernel/RichZSPacked_V2.h"
 
 // Kernel
 #include "Kernel/MemPoolAlloc.h"

@@ -9,7 +9,7 @@
  */
 //-----------------------------------------------------------------------------
 
-#include "RichDAQVersions.h"
+#include "RichDAQKernel/RichDAQVersions.h"
 
 #include "RichHPDDataBank.icpp"
 

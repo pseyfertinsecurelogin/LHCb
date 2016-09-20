@@ -12,7 +12,7 @@
 #ifndef RICHDAQ_RICHNONZEROSUPPALICEDATA_H
 #define RICHDAQ_RICHNONZEROSUPPALICEDATA_H 1
 
-#include "RichNonZeroSuppALICEData_V1.h"
-#include "RichNonZeroSuppALICEData_V2.h"
+#include "RichDAQKernel/RichNonZeroSuppALICEData_V1.h"
+#include "RichDAQKernel/RichNonZeroSuppALICEData_V2.h"
 
 #endif // RICHDAQ_RICHNONZEROSUPPALICEDATA_H

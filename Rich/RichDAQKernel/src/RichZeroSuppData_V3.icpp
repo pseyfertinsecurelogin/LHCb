@@ -10,7 +10,7 @@
 //-----------------------------------------------------------------------------
 
 // local
-#include "RichZeroSuppData_V3.h"
+#include "RichDAQKernel/RichZeroSuppData_V3.h"
 
 // Rich Utils
 #include "RichUtils/RichMap.h"

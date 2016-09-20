@@ -1,6 +1,6 @@
 
 //-----------------------------------------------------------------------------
-/** @file RichNonZeroSuppALICEData_V2.h
+/** @file RichNonZeroSuppALICEData_V1.h
  *
  *  Header file for RICH DAQ utility class : RichNonZeroSuppALICEData
  *
@@ -9,12 +9,12 @@
  */
 //-----------------------------------------------------------------------------
 
-#ifndef RICHDAQ_RichNonZeroSuppALICEDataV2_H
-#define RICHDAQ_RichNonZeroSuppALICEDataV2_H 1
+#ifndef RICHDAQ_RichNonZeroSuppALICEDataV1_H
+#define RICHDAQ_RichNonZeroSuppALICEDataV1_H 1
 
 // local
-#include "RichHPDDataBank.h"
-#include "RichZSPacked_V2.h"
+#include "RichDAQKernel/RichHPDDataBank.h"
+#include "RichDAQKernel/RichZSPacked_V2.h"
 
 // Kernel
 #include "Kernel/MemPoolAlloc.h"
@@ -26,17 +26,17 @@ namespace Rich
   namespace DAQ
   {
 
-    /** @namespace Rich::DAQ::RichNonZeroSuppALICEDataV2
+    /** @namespace Rich::DAQ::RichNonZeroSuppALICEDataV1
      *
-     *  Namespace for version 2 of the RichNonZeroSuppALICEData object.
+     *  Namespace for version 1 of the RichNonZeroSuppALICEData object.
      *
      *  @author Chris Jones  Christopher.Rob.Jones@cern.ch
      *  @date   2004-12-17
      */
-    namespace RichNonZeroSuppALICEDataV2
+    namespace RichNonZeroSuppALICEDataV1
     {
 
-      /** @class RichNonZeroSuppALICEData RichNonZeroSuppALICEData_V2.h
+      /** @class RichNonZeroSuppALICEData RichNonZeroSuppALICEData_V1.h
        *
        *  The RICH HPD non zero suppressed data format for ALICE mode.
        *
@@ -45,7 +45,7 @@ namespace Rich
        */
       template< class Version, class Header, class Footer >
       class RichNonZeroSuppALICEData : public HPDDataBankImp<Version,Header,Footer>,
-                                       public LHCb::MemPoolAlloc< RichNonZeroSuppALICEDataV2::RichNonZeroSuppALICEData<Version,Header,Footer> >
+                                       public LHCb::MemPoolAlloc< RichNonZeroSuppALICEDataV1::RichNonZeroSuppALICEData<Version,Header,Footer> >
       {
 
       public:
@@ -61,15 +61,10 @@ namespace Rich
          *  @param digits Vector of RichSmartIDs listing the active channels in this HPD
          */
         explicit RichNonZeroSuppALICEData( const Level0ID l0ID,
-                                           const LHCb::RichSmartID::Vector & digits,
-                                           const bool extendedFormat = false,
-                                           const LHCb::ODIN * odin = NULL )
+                                           const LHCb::RichSmartID::Vector & digits )
           : HPDDataBankImp<Version,Header,Footer> ( Header ( false, // Non-ZS
                                                              true,  // Is ALICE mode
-                                                             extendedFormat, // data format
-                                                             false, // No GT inhibit
-                                                             l0ID,  // The L0 ID
-                                                             EventID( odin ? odin->eventNumber() : 0 ), // Event ID
+                                                             l0ID,
                                                              0 // filled by buildData call
                                                              ),
                                                     Footer(),
@@ -93,7 +88,7 @@ namespace Rich
          */
         inline void reset( const LongType * data )
         {
-          m_nHits  = -1;
+          m_nHits = -1;
           HPDDataBankImp<Version,Header,Footer>::reset( data, MaxDataSizeALICE );
         }
 
@@ -119,14 +114,14 @@ namespace Rich
         inline void setPixelActive( const ShortType row,
                                     const ShortType col ) noexcept
         {
-          this->setBit( this->data()[this->maxDataSize()-(row+1)], col );
+          this -> setBit( this->data()[this->maxDataSize()-(row+1)], col );
         }
 
         /// Is a given pixel active ?
         inline bool isPixelActive( const ShortType row,
                                    const ShortType col ) const noexcept
         {
-          return this->isBitOn( this->data()[this->maxDataSize()-(row+1)], col );
+          return this -> isBitOn( this->data()[this->maxDataSize()-(row+1)], col );
         }
 
       private: // data
@@ -136,9 +131,9 @@ namespace Rich
 
       };
 
-    } // RichNonZeroSuppALICEDataV2 namespace
+    } // RichNonZeroSuppALICEDataV1 namespace
 
   }
 }
 
-#endif // RICHDAQ_RichNonZeroSuppALICEDataV2_H
+#endif // RICHDAQ_RichNonZeroSuppALICEDataV1_H

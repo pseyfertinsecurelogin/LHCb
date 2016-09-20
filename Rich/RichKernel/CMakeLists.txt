@@ -17,12 +17,12 @@ find_package(VDT)
 gaudi_add_library(RichKernelLib
                   src/lib/*.cpp
                   PUBLIC_HEADERS RichKernel
-                  INCLUDE_DIRS AIDA Boost VDT
+                  INCLUDE_DIRS AIDA Boost VDT RichUtils LHCbKernel
                   LINK_LIBRARIES Boost VDT GaudiAlgLib GaudiUtilsLib RichUtils LHCbKernel)
 
 gaudi_add_module(RichKernel
                  src/component/*.cpp
-                 INCLUDE_DIRS AIDA Boost
+                 INCLUDE_DIRS AIDA Boost RichUtils LHCbKernel
                  LINK_LIBRARIES Boost GaudiAlgLib GaudiUtilsLib LHCbKernel RichUtils RichKernelLib)
 
 gaudi_install_python_modules()

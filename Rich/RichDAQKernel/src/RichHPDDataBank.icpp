@@ -10,7 +10,7 @@
 //-----------------------------------------------------------------------------
 
 // local
-#include "RichHPDDataBank.h"
+#include "RichDAQKernel/RichHPDDataBank.h"
 
 // boost
 #include "boost/format.hpp"

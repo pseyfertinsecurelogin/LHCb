@@ -13,7 +13,7 @@
 #include <fstream>
 
 // local
-#include "RichZeroSuppALICEData_V1.h"
+#include "RichDAQKernel/RichZeroSuppALICEData_V1.h"
 
 // RichUtils
 #include "RichUtils/RichMap.h"

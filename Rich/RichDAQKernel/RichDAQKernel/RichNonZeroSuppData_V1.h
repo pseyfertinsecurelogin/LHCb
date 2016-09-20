@@ -13,7 +13,7 @@
 #define RICHDAQ_RICHNONZEROSUPPDATA_V1_H 1
 
 // local
-#include "RichHPDDataBank.h"
+#include "RichDAQKernel/RichHPDDataBank.h"
 
 // Kernel
 #include "Kernel/MemPoolAlloc.h"

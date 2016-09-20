@@ -20,11 +20,11 @@
 #include "RichUtils/RichDAQL1IngressHeader.h"
 
 // data blocks
-#include "RichNonZeroSuppData.h"
-#include "RichNonZeroSuppALICEData.h"
-#include "RichZeroSuppData.h"
-#include "RichZeroSuppALICEData.h"
-#include "RichFlatFormatSmartIDData.h"
+#include "RichDAQKernel/RichNonZeroSuppData.h"
+#include "RichDAQKernel/RichNonZeroSuppALICEData.h"
+#include "RichDAQKernel/RichZeroSuppData.h"
+#include "RichDAQKernel/RichZeroSuppALICEData.h"
+#include "RichDAQKernel/RichFlatFormatSmartIDData.h"
 
 namespace Rich
 {

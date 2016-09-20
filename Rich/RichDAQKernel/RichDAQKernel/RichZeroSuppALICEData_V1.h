@@ -1,20 +1,20 @@
 
 //-----------------------------------------------------------------------------
-/** @file RichZeroSuppData_V4.h
+/** @file RichZeroSuppALICEData_V1.h
  *
- *  Header file for RICH DAQ utility class : RichZeroSuppData
+ *  Header file for RICH DAQ utility class : RichZeroSuppALICEData
  *
  *  @author Chris Jones   Christopher.Rob.Jones@cern.ch
  *  @date   2004-12-17
  */
 //-----------------------------------------------------------------------------
 
-#ifndef RICHDAQ_RICHZEROSUPPDATA_V4_H
-#define RICHDAQ_RICHZEROSUPPDATA_V4_H 1
+#ifndef RICHDAQ_RICHZEROSUPPALICEDATA_V1_H
+#define RICHDAQ_RICHZEROSUPPALICEDATA_V1_H 1
 
 // local
-#include "RichHPDDataBank.h"
-#include "RichZSPacked_V2.h"
+#include "RichDAQKernel/RichHPDDataBank.h"
+#include "RichDAQKernel/RichZSPacked_V2.h"
 
 // Kernel
 #include "Kernel/MemPoolAlloc.h"
@@ -27,17 +27,17 @@ namespace Rich
   namespace DAQ
   {
 
-    /** @namespace Rich::DAQ::RichZeroSuppDataV4
+    /** @namespace Rich::DAQ::RichZeroSuppALICEDataV1
      *
-     *  Namespace for version 4 of the RichZeroSuppData object.
+     *  Namespace for version 4 of the RichZeroSuppALICEData object.
      *
      *  @author Chris Jones  Christopher.Rob.Jones@cern.ch
      *  @date   2004-12-17
      */
-    namespace RichZeroSuppDataV4
+    namespace RichZeroSuppALICEDataV1
     {
 
-      /** @class RichZeroSuppData RichZeroSuppData.h
+      /** @class RichZeroSuppALICEData RichZeroSuppALICEData.h
        *
        *  The RICH HPD zero suppressed data format.
        *  Third iteration of the format using a new packing scheme.
@@ -46,28 +46,28 @@ namespace Rich
        *  @date   2003-11-07
        */
       template< class Version, class Header, class Footer >
-      class RichZeroSuppData : public HPDDataBankImp<Version,Header,Footer>,
-                               public LHCb::MemPoolAlloc<RichZeroSuppDataV4::RichZeroSuppData<Version,Header,Footer> >
+      class RichZeroSuppALICEData : public HPDDataBankImp<Version,Header,Footer>,
+                                    public LHCb::MemPoolAlloc<RichZeroSuppALICEDataV1::RichZeroSuppALICEData<Version,Header,Footer> >
       {
 
       public:
 
         /// Default constructor
-        RichZeroSuppData()
+        RichZeroSuppALICEData()
           : HPDDataBankImp<Version,Header,Footer>( MaxDataSize )
         { }
 
         /** Constructor from a RichSmartID HPD identifier and a vector of RichSmartIDs
          *
-         *  @param l0ID   Level0  board hardware identifier
+         *  @param l0ID   Level0 board hardware identifier
          *  @param digits Vector of RichSmartIDs listing the active channels in this HPD
          */
-        explicit RichZeroSuppData( const Level0ID l0ID,
-                                   const LHCb::RichSmartID::Vector & digits,
-                                   const bool extendedFormat = false,
-                                   const LHCb::ODIN * odin = nullptr )
+        explicit RichZeroSuppALICEData( const Level0ID l0ID,
+                                        const LHCb::RichSmartID::Vector & digits,
+                                        const bool extendedFormat = false,
+                                        const LHCb::ODIN * odin = nullptr )
           : HPDDataBankImp<Version,Header,Footer> ( Header ( true,  // Is ZS
-                                                             false, // Not ALICE mode
+                                                             true,  // ALICE mode
                                                              extendedFormat, // data format
                                                              false, // No GT inhibit
                                                              l0ID,  // L0 ID
@@ -82,9 +82,9 @@ namespace Rich
 
         /** Constructor from a block of raw data
          *
-         *  @param data     Pointer to the start of the data block
+         *  @param data Pointer to the start of the data block
          */
-        explicit RichZeroSuppData( const LongType * data )
+        explicit RichZeroSuppALICEData( const LongType * data )
           : HPDDataBankImp<Version,Header,Footer> ( data,        // start of data
                                                     MaxDataSize  // max data block size
                                                     )
@@ -101,7 +101,7 @@ namespace Rich
         }
 
         /// Destructor
-        virtual ~RichZeroSuppData() = default;
+        virtual ~RichZeroSuppALICEData() = default;
 
         // Returns the hit count for this HPD
         virtual ShortType hitCount() const final;
@@ -118,6 +118,24 @@ namespace Rich
         /// Build data array from vector of RichSmartIDs
         void buildData( const LHCb::RichSmartID::Vector & pdHits );
 
+        /// update the address offset
+        inline void updateOffset( const int address,
+                                  const bool firstWord,
+                                  int& last_address,
+                                  int& last_offset ) const
+        {
+          if ( !firstWord )
+          {
+            if      ( 0 == address ) { ++last_offset; }
+            else if ( 1 == address )
+            {
+              if ( 0 == last_address%2 ) { last_offset = 0; }
+              else                       { ++last_offset;   }
+            }
+          }
+          last_address = address;
+        }
+
       private: // data
 
         /// Too big flag
@@ -128,9 +146,9 @@ namespace Rich
 
       };
 
-    } // end V4 namespace
+    } // end V1 namespace
 
   }
 }
 
-#endif // RICHDAQ_RICHZEROSUPPDATA_V4_H
+#endif // RICHDAQ_RICHZEROSUPPALICEDATA_V1_H

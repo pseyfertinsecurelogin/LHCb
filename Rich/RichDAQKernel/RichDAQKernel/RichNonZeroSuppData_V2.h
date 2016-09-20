@@ -1,6 +1,6 @@
 
 //-----------------------------------------------------------------------------
-/** @file RichNonZeroSuppData_V3.h
+/** @file RichNonZeroSuppData_V2.h
  *
  *  Header file for RICH DAQ utility class : RichNonZeroSuppData
  *
@@ -9,18 +9,15 @@
  */
 //-----------------------------------------------------------------------------
 
-#ifndef RICHDAQ_RICHNONZEROSUPPDATA_V3_H
-#define RICHDAQ_RICHNONZEROSUPPDATA_V3_H 1
+#ifndef RICHDAQ_RICHNONZEROSUPPDATA_V2_H
+#define RICHDAQ_RICHNONZEROSUPPDATA_V2_H 1
 
 // local
-#include "RichHPDDataBank.h"
-#include "RichZSPacked_V2.h"
+#include "RichDAQKernel/RichHPDDataBank.h"
+#include "RichDAQKernel/RichZSPacked_V2.h"
 
 // Kernel
 #include "Kernel/MemPoolAlloc.h"
-
-// Event Model
-#include "Event/ODIN.h"
 
 //===================================================================================
 
@@ -29,17 +26,17 @@ namespace Rich
   namespace DAQ
   {
 
-    /** @namespace Rich::DAQ::RichNonZeroSuppDataV3
+    /** @namespace Rich::DAQ::RichNonZeroSuppDataV2
      *
-     *  Namespace for version 3 of the RichNonZeroSuppData object.
+     *  Namespace for version 2 of the RichNonZeroSuppData object.
      *
      *  @author Chris Jones  Christopher.Rob.Jones@cern.ch
      *  @date   2004-12-17
      */
-    namespace RichNonZeroSuppDataV3
+    namespace RichNonZeroSuppDataV2
     {
 
-      /** @class RichNonZeroSuppData RichNonZeroSuppData_V3.h
+      /** @class RichNonZeroSuppData RichNonZeroSuppData_V2.h
        *
        *  The RICH HPD non zero suppressed data format.
        *  Second iteration of the format. Identical to version 1
@@ -52,7 +49,7 @@ namespace Rich
        */
       template< class Version, class Header, class Footer >
       class RichNonZeroSuppData : public HPDDataBankImp<Version,Header,Footer>,
-                                  public LHCb::MemPoolAlloc<RichNonZeroSuppDataV3::RichNonZeroSuppData<Version,Header,Footer> >
+                                  public LHCb::MemPoolAlloc<RichNonZeroSuppDataV2::RichNonZeroSuppData<Version,Header,Footer> >
       {
 
       public:
@@ -66,20 +63,13 @@ namespace Rich
          *
          *  @param l0ID   L0 board hardware identifier
          *  @param digits Vector of RichSmartIDs listing the active channels in this HPD
-         *  @param extendedFormat 
-         *  @param odin   Pointer to the ODIN data object
          */
         explicit RichNonZeroSuppData( const Level0ID l0ID,
-                                      const LHCb::RichSmartID::Vector & digits,
-                                      const bool extendedFormat = false,
-                                      const LHCb::ODIN * odin = nullptr )
+                                      const LHCb::RichSmartID::Vector & digits )
           : HPDDataBankImp<Version,Header,Footer> ( Header( false, // Not ZS
                                                             false, // Not ALICE mode
-                                                            extendedFormat, // data format
-                                                            false, // No GT inhibit
-                                                            l0ID,  // The L0 ID 
-                                                            EventID( odin ? odin->eventNumber() : 0 ), // Event ID
-                                                            0 // filled by buildData call below in main body
+                                                            l0ID,
+                                                            0 // filled by buildData call
                                                             ),
                                                     Footer(),
                                                     0, MaxDataSize, MaxDataSize )
@@ -102,7 +92,7 @@ namespace Rich
          */
         inline void reset( const LongType * data )
         {
-          m_nHits  = -1;
+          m_nHits = -1;
           HPDDataBankImp<Version,Header,Footer>::reset( data );
         }
 
@@ -128,14 +118,14 @@ namespace Rich
         inline void setPixelActive( const ShortType row,
                                     const ShortType col ) noexcept
         {
-          this->setBit( this->data()[this->maxDataSize()-(row+1)], col );
+          this -> setBit( this->data()[this->maxDataSize()-(row+1)], col );
         }
 
         /// Is a given pixel active ?
         inline bool isPixelActive( const ShortType row,
                                    const ShortType col ) const noexcept
         {
-          return this->isBitOn( this->data()[this->maxDataSize()-(row+1)], col );
+          return this -> isBitOn( this->data()[this->maxDataSize()-(row+1)], col );
         }
 
       private: // data
@@ -145,9 +135,9 @@ namespace Rich
 
       };
 
-    } // RichNonZeroSuppDataV3 namespace
+    } // RichNonZeroSuppDataV2 namespace
 
   }
 }
 
-#endif // RICHDAQ_RICHNONZEROSUPPDATA_V3_H
+#endif // RICHDAQ_RICHNONZEROSUPPDATA_V2_H

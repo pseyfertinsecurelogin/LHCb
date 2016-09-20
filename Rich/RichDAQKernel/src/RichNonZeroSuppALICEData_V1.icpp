@@ -13,7 +13,7 @@
 #include "GaudiKernel/MsgStream.h"
 
 // local
-#include "RichNonZeroSuppALICEData_V1.h"
+#include "RichDAQKernel/RichNonZeroSuppALICEData_V1.h"
 
 // RichUtils
 #include "RichUtils/RichMap.h"

@@ -13,12 +13,12 @@
 #define RICHDAQ_RICHNONZEROSUPPDATA_H 1
 
 // version one
-#include "RichNonZeroSuppData_V1.h"
+#include "RichDAQKernel/RichNonZeroSuppData_V1.h"
 
 // version two
-#include "RichNonZeroSuppData_V2.h"
+#include "RichDAQKernel/RichNonZeroSuppData_V2.h"
 
 // version three
-#include "RichNonZeroSuppData_V3.h"
+#include "RichDAQKernel/RichNonZeroSuppData_V3.h"
 
 #endif // RICHDAQ_RICHNONZEROSUPPDATA_H

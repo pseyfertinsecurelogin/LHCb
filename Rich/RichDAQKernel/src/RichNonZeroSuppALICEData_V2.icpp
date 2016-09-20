@@ -1,8 +1,8 @@
 
 //-----------------------------------------------------------------------------
-/** @file RichNonZeroSuppData_V3.icpp
+/** @file RichNonZeroSuppALICEData_V2.icpp
  *
- *  Implementation file for RICH DAQ helper class : RichNonZeroSuppData
+ *  Implementation file for RICH DAQ helper class : RichNonZeroSuppALICEData
  *
  *  @author Chris Jones  Christopher.Rob.Jones@cern.ch
  *  @date   2004-12-17
@@ -13,7 +13,7 @@
 #include "GaudiKernel/MsgStream.h"
 
 // local
-#include "RichNonZeroSuppData_V3.h"
+#include "RichDAQKernel/RichNonZeroSuppALICEData_V2.h"
 
 // RichUtils
 #include "RichUtils/RichMap.h"
@@ -25,22 +25,23 @@ namespace Rich
   namespace DAQ
   {
 
-    namespace RichNonZeroSuppDataV3
+    namespace RichNonZeroSuppALICEDataV2
     {
 
       // ------------------------------------------------------------------------------------------------
       template< class Version, class Header, class Footer >
       void
-      RichNonZeroSuppData<Version,Header,Footer>::buildData( const LHCb::RichSmartID::Vector & digits )
+      RichNonZeroSuppALICEData<Version,Header,Footer>::buildData( const LHCb::RichSmartID::Vector & digits )
       {
-
         // Set data words
-        for ( const auto& dig : digits )
+        for ( const auto& digit : digits )
         {
-          setPixelActive( dig.pixelRow(), dig.pixelCol() );
+          const Rich::DAQ::ShortType row =
+            ( Rich::DAQ::NumAlicePixelsPerLHCbPixel * digit.pixelRow() ) + digit.pixelSubRow();
+          setPixelActive( row, digit.pixelCol() );
         }
 
-        // In extended format mode set footer parity
+        // set footer parity
         // basically, we don't simulate bit errors, so parity word here is just zero
         if ( this->header().extendedFormat() )
         {
@@ -56,23 +57,24 @@ namespace Rich
 
       // ------------------------------------------------------------------------------------------------
       template< class Version, class Header, class Footer >
-      ShortType
-      RichNonZeroSuppData<Version,Header,Footer>::calcEightBitword( const LHCb::RichSmartID::Vector & digits )
-        const
+      Rich::DAQ::ShortType
+      RichNonZeroSuppALICEData<Version,Header,Footer>::calcEightBitword( const LHCb::RichSmartID::Vector & digits ) const
       {
+        using namespace RichZSPacked_V2;
+
         // temporary data map
-        typedef Rich::Map< ShortType, ShortType > DataMap;
+        typedef Rich::Map< Rich::DAQ::ShortType, Rich::DAQ::ShortType > DataMap;
         DataMap dataM;
 
         // Get dummy packed data
-        const RichZSPacked_V2::RichZSPacked zsData;
+        const RichZSPacked zsData;
 
         // Loop over digits
-        for ( const auto& id : digits )
+        for ( const auto& ID : digits )
         {
           // Get bit and address
-          const ShortType bit     = zsData.bitFromCol( id.pixelCol() );
-          const ShortType address = zsData.addressFromRowCol( id.pixelRow(), id.pixelCol() );
+          const Rich::DAQ::ShortType bit     = zsData.bitFromCol( ID.pixelCol() );
+          const Rich::DAQ::ShortType address = zsData.addressFromRowCol( ID.pixelRow(), ID.pixelCol() );
 
           // Set the correct bit on for this address
           this->setBit( dataM[address], bit );
@@ -85,26 +87,30 @@ namespace Rich
 
       // ------------------------------------------------------------------------------------------------
       template< class Version, class Header, class Footer >
-      ShortType
-      RichNonZeroSuppData<Version,Header,Footer>::fillRichSmartIDs( LHCb::RichSmartID::Vector & ids,
-                                                                    const LHCb::RichSmartID hpdID ) const
+      Rich::DAQ::ShortType
+      RichNonZeroSuppALICEData<Version,Header,Footer>::fillRichSmartIDs( LHCb::RichSmartID::Vector & ids,
+                                                                         const LHCb::RichSmartID hpdID ) const
       {
         m_nHits = 0; // reset number of hits to zero
 
-        // reserve size in hit vector ( guess )
+        // reserve size in hit vector
         ids.reserve( 96 );
 
         // Fill with active channels
-        for ( ShortType iRow = 0; iRow < MaxDataSize; ++iRow )
+        for ( Rich::DAQ::ShortType iRow = 0; iRow < Rich::DAQ::MaxDataSizeALICE; ++iRow )
         {
-          for ( ShortType iCol = 0; iCol < MaxDataSize; ++iCol )
+          for ( Rich::DAQ::ShortType iCol = 0; iCol < Rich::DAQ::MaxDataSize; ++iCol )
           {
             if ( isPixelActive(iRow,iCol) )
             {
-              ids.push_back(hpdID);
-              auto & id = ids.back();
-              id.setPixelRow(iRow);
-              id.setPixelCol(iCol);
+              ids.emplace_back( LHCb::RichSmartID( hpdID.rich(),
+                                                   hpdID.panel(),
+                                                   hpdID.pdNumInCol(),
+                                                   hpdID.pdCol(),
+                                                   iRow/8,  // pixel row
+                                                   iCol,    // pixel col
+                                                   iRow%8 ) // pixel subrow
+                                );
               ++m_nHits; // count hits
             }
           }
@@ -116,15 +122,15 @@ namespace Rich
 
       // ------------------------------------------------------------------------------------------------
       template< class Version, class Header, class Footer >
-      ShortType RichNonZeroSuppData<Version,Header,Footer>::hitCount() const
+      Rich::DAQ::ShortType RichNonZeroSuppALICEData<Version,Header,Footer>::hitCount() const
       {
         if ( m_nHits < 0 )
         {
           // not yet calculated, so need to do it here
           m_nHits = 0;
-          for ( ShortType iRow = 0; iRow < MaxDataSize; ++iRow )
+          for ( Rich::DAQ::ShortType iRow = 0; iRow < Rich::DAQ::MaxDataSizeALICE; ++iRow )
           {
-            for ( ShortType iCol = 0; iCol < MaxDataSize; ++iCol )
+            for ( Rich::DAQ::ShortType iCol = 0; iCol < Rich::DAQ::MaxDataSize; ++iCol )
             {
               if ( isPixelActive(iRow,iCol) )
               {
@@ -133,11 +139,11 @@ namespace Rich
             }
           }
         }
-        return static_cast<ShortType>(m_nHits);
+        return static_cast<Rich::DAQ::ShortType>(m_nHits);
       }
       // ------------------------------------------------------------------------------------------------
 
-    } // end V3 namespace
+    } // end V2 namespace
 
   }
 }

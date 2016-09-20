@@ -1,6 +1,6 @@
 
 //-----------------------------------------------------------------------------
-/** @file RichZeroSuppData_V3.h
+/** @file RichZeroSuppData_V4.h
  *
  *  Header file for RICH DAQ utility class : RichZeroSuppData
  *
@@ -9,29 +9,32 @@
  */
 //-----------------------------------------------------------------------------
 
-#ifndef RICHDAQ_RICHZEROSUPPDATA_V3_H
-#define RICHDAQ_RICHZEROSUPPDATA_V3_H 1
+#ifndef RICHDAQ_RICHZEROSUPPDATA_V4_H
+#define RICHDAQ_RICHZEROSUPPDATA_V4_H 1
 
 // local
-#include "RichHPDDataBank.h"
-#include "RichZSPacked_V2.h"
+#include "RichDAQKernel/RichHPDDataBank.h"
+#include "RichDAQKernel/RichZSPacked_V2.h"
 
 // Kernel
 #include "Kernel/MemPoolAlloc.h"
+
+// Event Model
+#include "Event/ODIN.h"
 
 namespace Rich
 {
   namespace DAQ
   {
 
-    /** @namespace Rich::DAQ::RichZeroSuppDataV3
+    /** @namespace Rich::DAQ::RichZeroSuppDataV4
      *
-     *  Namespace for version 3 of the RichZeroSuppData object.
+     *  Namespace for version 4 of the RichZeroSuppData object.
      *
      *  @author Chris Jones  Christopher.Rob.Jones@cern.ch
      *  @date   2004-12-17
      */
-    namespace RichZeroSuppDataV3
+    namespace RichZeroSuppDataV4
     {
 
       /** @class RichZeroSuppData RichZeroSuppData.h
@@ -44,7 +47,7 @@ namespace Rich
        */
       template< class Version, class Header, class Footer >
       class RichZeroSuppData : public HPDDataBankImp<Version,Header,Footer>,
-                               public LHCb::MemPoolAlloc<RichZeroSuppDataV3::RichZeroSuppData<Version,Header,Footer> >
+                               public LHCb::MemPoolAlloc<RichZeroSuppDataV4::RichZeroSuppData<Version,Header,Footer> >
       {
 
       public:
@@ -56,14 +59,19 @@ namespace Rich
 
         /** Constructor from a RichSmartID HPD identifier and a vector of RichSmartIDs
          *
-         *  @param l0ID   Level0 board hardware identifier
+         *  @param l0ID   Level0  board hardware identifier
          *  @param digits Vector of RichSmartIDs listing the active channels in this HPD
          */
         explicit RichZeroSuppData( const Level0ID l0ID,
-                                   const LHCb::RichSmartID::Vector & digits )
+                                   const LHCb::RichSmartID::Vector & digits,
+                                   const bool extendedFormat = false,
+                                   const LHCb::ODIN * odin = nullptr )
           : HPDDataBankImp<Version,Header,Footer> ( Header ( true,  // Is ZS
                                                              false, // Not ALICE mode
+                                                             extendedFormat, // data format
+                                                             false, // No GT inhibit
                                                              l0ID,  // L0 ID
+                                                             EventID( odin ? odin->eventNumber() : 0 ), // Event ID
                                                              0      // Filled by buildData call below in main body
                                                              ),
                                                     Footer ( ),
@@ -77,7 +85,7 @@ namespace Rich
          *  @param data     Pointer to the start of the data block
          */
         explicit RichZeroSuppData( const LongType * data )
-          : HPDDataBankImp<Version,Header,Footer> ( data,          // start of data
+          : HPDDataBankImp<Version,Header,Footer> ( data,        // start of data
                                                     MaxDataSize  // max data block size
                                                     )
         { }
@@ -120,9 +128,9 @@ namespace Rich
 
       };
 
-    } // end V3 namespace
+    } // end V4 namespace
 
   }
 }
 
-#endif // RICHDAQ_RICHZEROSUPPDATA_V3_H
+#endif // RICHDAQ_RICHZEROSUPPDATA_V4_H
