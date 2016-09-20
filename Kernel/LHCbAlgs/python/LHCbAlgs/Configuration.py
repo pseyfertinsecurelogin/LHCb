@@ -228,22 +228,21 @@ class LHCbApp(LHCbConfigurableUser):
 
     def setupHive(self):
         '''Enable Hive event loop manager'''
-        from Configurables import HiveWhiteBoard, HiveEventLoopMgr
+        from Configurables import (HiveWhiteBoard, HiveSlimEventLoopMgr,
+                                   ForwardSchedulerSvc)
+        scheduler    = ForwardSchedulerSvc()
         whiteboard   = HiveWhiteBoard("EventDataSvc")
-        eventloopmgr = HiveEventLoopMgr()
+        eventloopmgr = HiveSlimEventLoopMgr(SchedulerName=scheduler)
         # make sure number of event slots are consistent
-        evtslots = 10
-        if whiteboard.isPropertySet('EventSlots'):
-            evtslots = whiteboard.EventSlots
-        if eventloopmgr.isPropertySet('MaxEventsParallel'):
-            evtslots = eventloopmgr.MaxEventsParallel
-        whiteboard.EventSlots = eventloopmgr.MaxEventsParallel = evtslots
+        if not whiteboard.isPropertySet('EventSlots'):
+            whiteboard.EventSlots = 10
+
         # initialize hive settings if not already set
         from processing import cpuCount
-        for k, v in (('MaxAlgosParallel', 20),
-                     ('NumThreads', cpuCount())):
-            if not eventloopmgr.isPropertySet(k):
-                setattr(eventloopmgr, k, v)
+        for k, v in (('MaxAlgosInFlight', 20),
+                     ('ThreadPoolSize', cpuCount())):
+            if not scheduler.isPropertySet(k):
+                setattr(scheduler, k, v)
 
         ApplicationMgr().ExtSvc.insert(0, whiteboard)
         ApplicationMgr().EventLoop = eventloopmgr
