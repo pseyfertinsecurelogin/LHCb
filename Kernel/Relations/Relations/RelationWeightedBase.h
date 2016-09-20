@@ -1,4 +1,3 @@
-// $Id: RelationWeightedBase.h,v 1.16 2009-09-14 14:02:09 ibelyaev Exp $
 // ============================================================================
 #ifndef RELATIONS_RELATIONWeightedBASE_H
 #define RELATIONS_RELATIONWeightedBASE_H 1
@@ -8,7 +7,6 @@
 // STD & STL
 // ============================================================================
 #include <vector>
-#include <functional>
 #include <algorithm>
 // ============================================================================
 // Relations
@@ -88,7 +86,7 @@ namespace Relations
      *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
      *  @date   27/01/2002
      */
-    struct Comp1: public std::binary_function<Entry,Entry,bool>
+    struct Comp1
     {
       /** comparison/ordering criteria
        *  @param  entry1 the first entry
@@ -105,7 +103,7 @@ namespace Relations
      *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
      *  @date   27/01/2002
      */
-    struct Comp2: public std::binary_function<Entry,Entry,bool>
+    struct Comp2
     {
       /** comparison/ordering criteria
        *  @param  entry1 the first entry
@@ -171,8 +169,8 @@ namespace Relations
       // get all existing relations from object1
       IP ip = i_relations( entry.from() ) ;
       // does the given relation between object1 and object2 exist ?
-      iterator it = std::find_if 
-        ( ip.first , ip.second , std::bind2nd( Equal() , entry ) );
+      iterator it = std::find_if( ip.first , ip.second , 
+                                  [&](const Entry& lhs) { return Equal()(lhs,entry); } );
       if ( ip.second != it   ) 
       { return StatusCode ( StatusCode::FAILURE , true ) ; }     // RETURN !!!
       // find the place where to insert the relation and insert it!
@@ -188,7 +186,8 @@ namespace Relations
       // does the given relation between object1 and object1 exist ?
       iterator it = 
         std::find_if ( ip.first , ip.second , 
-                       std::bind2nd( Equal() , Entry( object1 , object2 ) ) );
+                       [rhs=Entry(object1,object2)](const Entry& entry)
+                       { return Equal()(entry,rhs); } );
       if ( ip.second == it   ) 
       { return StatusCode  ( StatusCode::FAILURE , true ) ; }    // RETURN !!!
       // remove the relation
@@ -213,8 +212,8 @@ namespace Relations
       // create the artificial entry 
       Entry entry ;
       entry.m_to = object ;
-      iterator it = std::remove_if ( m_entries.begin() , m_entries.end  () ,
-                                     std::bind2nd( Equal() , entry ) ) ;
+      auto  it = std::remove_if ( m_entries.begin() , m_entries.end  () ,
+                                  [&](const Entry& lhs) { return Equal()(lhs, entry); } );
       // no relations are found!
       if ( m_entries.end() == it ) 
       { return StatusCode ( StatusCode::FAILURE ,true ) ; } // RETURN !!
@@ -247,11 +246,11 @@ namespace Relations
       entry.m_to     = object    ;
       entry.m_weight = threshold ;      
       // remove using predicates
-      iterator it = flag ?
+      auto it = flag ?
         std::remove_if ( m_entries.begin () , m_entries.end () ,
-                         std::bind2nd ( Comp1() , entry ) ) :
+                         [&](const Entry& lhs) { return Comp1()(lhs,entry); } ):
         std::remove_if ( m_entries.begin () , m_entries.end () ,
-                         std::bind2nd ( Comp2() , entry ) ) ;
+                         [&](const Entry& lhs) { return Comp2()(lhs,entry); } );
       // nothing to be removed
       if ( m_entries.end() == it ) 
       { return StatusCode ( StatusCode::FAILURE , true ) ; } // RETURN !!!
@@ -267,11 +266,11 @@ namespace Relations
       Entry entry ;
       entry.m_weight = threshold ;
       // remove using the predicates
-      iterator it = flag ?
+      auto it = flag ?
         std::remove_if ( m_entries.begin () , m_entries.end () ,
-                         std::bind2nd ( Less2() , entry  ) ) :
+                         [&](const Entry& lhs) { return Less2()(lhs,entry); } ):
         std::remove_if ( m_entries.begin () , m_entries.end   () ,
-                         std::bind1st ( Less2() , entry  ) ) ;
+                         [&](const Entry& rhs) { return Less2()(entry,rhs); } );
       // nothing to be removed
       if ( m_entries.end() == it ) 
       { return StatusCode ( StatusCode::FAILURE , true ) ; } // RETURN 
@@ -347,11 +346,7 @@ namespace Relations
       i_sort() ;      
     }
     /// copy constructor 
-    RelationWeightedBase
-    ( const OwnType& copy )
-      : BaseWeightedTable ( copy ) 
-      , m_entries         ( copy.m_entries ) 
-    {}
+    RelationWeightedBase( const OwnType& copy ) = default;
     // ========================================================================
   public:
     // ========================================================================
