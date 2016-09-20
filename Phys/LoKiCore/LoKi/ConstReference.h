@@ -29,7 +29,7 @@ namespace LoKi
    *  @date   2009-06-26
    */
   template <class TYPE>
-  class ConstReference
+  class ConstReference final
   {
   public:
     // ========================================================================
@@ -37,10 +37,6 @@ namespace LoKi
     ConstReference( const TYPE& data ) : m_data( &data ) {} ;
     /// constructor from reference
     ConstReference( const Reference<TYPE>& data ) ;
-    /// destructor
-    ~ConstReference(){};
-    /// just to please the compiler: NO USE IS ALLOWED
-    ConstReference() : m_data ( 0 ) {}
     // ========================================================================
   public:
     // ========================================================================

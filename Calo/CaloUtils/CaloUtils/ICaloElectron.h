@@ -1,4 +1,3 @@
-// $Id: ICaloElectron.h,v 1.3 2008-02-07 12:25:54 cattanem Exp $
 #ifndef ICALOELECTRON_H 
 #define ICALOELECTRON_H 1
 

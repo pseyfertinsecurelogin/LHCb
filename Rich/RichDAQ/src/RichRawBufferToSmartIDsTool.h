@@ -20,7 +20,7 @@
 #include "RichKernel/RichToolBase.h"
 
 // Rich::DAQ utility classes
-#include "RichHPDDataBank.h"
+#include "RichDAQKernel/RichHPDDataBank.h"
 
 // Utils
 #include "RichUtils/RichHashMap.h"

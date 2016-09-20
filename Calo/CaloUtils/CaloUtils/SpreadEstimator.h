@@ -1,7 +1,3 @@
-// $Id: SpreadEstimator.h,v 1.6 2009-05-10 15:17:00 ibelyaev Exp $
-// ============================================================================
-// CVS tag $Name: not supported by cvs2svn $ 
-// ============================================================================
 #ifndef CALOUTILS_SPREADESTIMATOR_H 
 #define CALOUTILS_SPREADESTIMATOR_H 1
 // ============================================================================
@@ -19,7 +15,6 @@
 // RecEvent
 // ============================================================================
 #include "Event/CaloDataFunctor.h"
-#include "Event/CellID.h"
 // ============================================================================
 /// forward declarations 
 // ============================================================================
@@ -34,8 +29,7 @@ class DeCalorimeter;    // from CaloDet package
  *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
  *  @date   22/11/2001
  */
-class SpreadEstimator :
-  public std::unary_function<LHCb::CaloCluster*,StatusCode>
+class SpreadEstimator
 {
   // ==========================================================================
  public:
@@ -43,10 +37,7 @@ class SpreadEstimator :
   /** standard/default constructor 
    *  @param Det pointer to calorimeter detector
    */ 
-  SpreadEstimator( const DeCalorimeter* Det = 0 );
-  // ==========================================================================  
-  /// destructor 
-  ~SpreadEstimator();
+  SpreadEstimator( const DeCalorimeter* Det = nullptr );
   // ==========================================================================  
   /** calculation of cluster spread  
    *

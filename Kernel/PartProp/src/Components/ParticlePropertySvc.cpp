@@ -162,8 +162,6 @@ namespace LHCb
     // =========================================================================
     /// Initialize the service.
     virtual StatusCode initialize () ;
-    /// Finalise the service.
-    virtual StatusCode finalize   () ;
     // ========================================================================
              // technical methods
     // ========================================================================
@@ -297,12 +295,10 @@ namespace LHCb
     // ========================================================================
   private: // disabled creators
     // ========================================================================
-    /// the default constructor is disabled
-    ParticlePropertySvc () ;             // the default constructor is disabled
     /// the copy constructor is disabled
-    ParticlePropertySvc ( const ParticlePropertySvc& ) ; // no copy
+    ParticlePropertySvc ( const ParticlePropertySvc& ) = delete; // no copy
     /// the assignement operator is disabled
-    ParticlePropertySvc& operator=( const ParticlePropertySvc& ) ; // no =
+    ParticlePropertySvc& operator=( const ParticlePropertySvc& ) = delete; // no =
     // ========================================================================
   private: // "vizible" particle data
     // ========================================================================
@@ -419,23 +415,20 @@ StatusCode LHCb::ParticlePropertySvc::rebuild ()
   StatusCode sc = parse ( m_filename ) ;
   if ( sc.isFailure() ) { return sc ; }                              // RETURN
   // parse the additional files
-  for ( Files::const_iterator ifile = m_other.begin () ;
-        m_other.end() != ifile ; ++ifile )
+  for ( auto ifile = m_other.begin () ; m_other.end() != ifile ; ++ifile )
   {
     sc = parse ( *ifile ) ;
     if ( sc.isFailure() ) { return sc ; }                            // RETURN
   }
   // parse the options/lines
-  for ( Particles::const_iterator iline = m_particles.begin() ;
-        m_particles.end() != iline ; ++iline )
+  for ( auto iline = m_particles.begin() ; m_particles.end() != iline ; ++iline )
   {
     sc = parseLine ( *iline ) ;
     if ( sc.isFailure() ) { return sc ; }                            // RETURN
   }
   // sort the vector
-  std::stable_sort
-    ( m_vector.begin() , m_vector.end  () ,
-      LHCb::ParticleProperty::Compare () ) ;
+  std::stable_sort ( m_vector.begin() , m_vector.end() ,
+                     LHCb::ParticleProperty::Compare() ) ;
   // set particle<-->antiparticle links
   sc = setAntiParticles () ;
   if ( sc.isFailure() ) { return sc ; }                             // RETURN
@@ -450,68 +443,51 @@ StatusCode LHCb::ParticlePropertySvc::rebuild ()
   //
   if ( !m_by_charge.empty()  )
   {
-    log << MSG::INFO
-        << " Charge   has beed redefined for "
-        << Gaudi::Utils::toString ( m_by_charge ) << endmsg ;
+    info() << " Charge   has beed redefined for "
+           << Gaudi::Utils::toString ( m_by_charge ) << endmsg ;
   }
   if ( !m_by_mass.empty()  )
   {
-    log << MSG::INFO
-        << " Mass     has beed redefined for "
-        << Gaudi::Utils::toString ( m_by_mass ) << endmsg ;
+    info() << " Mass     has beed redefined for "
+           << Gaudi::Utils::toString ( m_by_mass ) << endmsg ;
   }
   if ( !m_by_tlife.empty()  )
   {
-    log << MSG::INFO
-        << " Lifetime has beed redefined for "
-        << Gaudi::Utils::toString ( m_by_tlife ) << endmsg ;
+    info() << " Lifetime has beed redefined for "
+           << Gaudi::Utils::toString ( m_by_tlife ) << endmsg ;
   }
   if ( !m_by_width.empty()  )
   {
-    log << MSG::INFO
-        << " MaxWidth has beed redefined for "
-        << Gaudi::Utils::toString ( m_by_width ) << endmsg ;
+    info() << " MaxWidth has beed redefined for "
+           << Gaudi::Utils::toString ( m_by_width ) << endmsg ;
   }
   if ( !m_by_evtgen.empty()  )
   {
-    log << MSG::INFO
-        << " EvtGenID has beed redefined for "
-        << Gaudi::Utils::toString ( m_by_evtgen ) << endmsg ;
+    info() << " EvtGenID has beed redefined for "
+           << Gaudi::Utils::toString ( m_by_evtgen ) << endmsg ;
   }
   if ( !m_by_pythia.empty()  )
   {
-    log << MSG::INFO
-        << " PythiaID has beed redefined for "
-        << Gaudi::Utils::toString ( m_by_pythia ) << endmsg ;
+    info() << " PythiaID has beed redefined for "
+           << Gaudi::Utils::toString ( m_by_pythia ) << endmsg ;
   }
   if ( !m_replaced_names.empty()  )
   {
-    log << MSG::INFO
-        << " Replaced names : "
-        << Gaudi::Utils::toString ( m_replaced_names ) << endmsg ;
+    info() << " Replaced names : "
+           << Gaudi::Utils::toString ( m_replaced_names ) << endmsg ;
   }
   if ( !m_replaced_pids.empty()  )
   {
-    log << MSG::INFO
-        << " Replaced PIDs  : "
-        << Gaudi::Utils::toString ( m_replaced_pids ) << endmsg ;
+    info() << " Replaced PIDs  : "
+           << Gaudi::Utils::toString ( m_replaced_pids ) << endmsg ;
   }
   if ( !m_no_anti.empty()  )
   {
-    log << MSG::INFO
-        << " No anti particle : "
-        << Gaudi::Utils::toString ( m_no_anti ) << endmsg ;
+    info() << " No anti particle : "
+           << Gaudi::Utils::toString ( m_no_anti ) << endmsg ;
   }
   //
   return StatusCode::SUCCESS ;
-}
-// =============================================================================
-// finalize
-// =============================================================================
-StatusCode LHCb::ParticlePropertySvc::finalize()
-{
-  /// finalize the base class
-  return Service::finalize () ;
 }
 // ============================================================================
 /*  the action  in the case of interactive manipulation with properties:
@@ -525,10 +501,8 @@ void LHCb::ParticlePropertySvc::updateHandler ( Property& p  )
 {
   if ( FSMState() < Gaudi::StateMachine::INITIALIZED ) { return ; }      // RETURN
   //
-  MsgStream log ( msgSvc() , name() ) ;
-  log << MSG::INFO
-      << "Property triggers the update of internal Particle Property Data : "
-      << p << endmsg ;
+  info() << "Property triggers the update of internal Particle Property Data : "
+         << p << endmsg ;
   // rebuild the internal data
   StatusCode sc = rebuild () ;
   if ( sc.isFailure() )
@@ -560,26 +534,17 @@ void LHCb::ParticlePropertySvc::updateDump ( Property& /* p */ )
 // ============================================================================
 StatusCode LHCb::ParticlePropertySvc::parse( const std::string& file )
 {
-  MsgStream log ( msgSvc() , name() ) ;
-  //
-  IFileAccess* fileAccess = 0 ;
-  StatusCode sc = service ( "VFSSvc" , fileAccess ) ;
-  if ( sc.isFailure() )
+  auto fileAccess = service<IFileAccess>( "VFSSvc" );
+  if ( !fileAccess )
   {
-    log << MSG::ERROR << "Unable to locate IFileAccess('VFSSvc') service" << endmsg ;
-    return sc ;                                                     // RETURN
-  }
-  // check once more:
-  if ( 0 == fileAccess )
-  {
-    log << MSG::ERROR << "IFileAccess* points to NULL" << endmsg ;
+    error() << "Unable to locate IFileAccess('VFSSvc') service" << endmsg ;
     return StatusCode::FAILURE ;                                      // RETURN
   }
   // "open" the file
   auto infile = fileAccess->open ( file ) ;
-  if (  nullptr == infile.get()  )
+  if (  !infile.get()  )
   {
-    log << MSG::ERROR << "Unable to open file '" << file << "'" << endmsg ;
+    error() << "Unable to open file '" << file << "'" << endmsg ;
     return StatusCode::FAILURE ;                                      // RETURN
   }
   bool active = false ;
@@ -593,18 +558,13 @@ StatusCode LHCb::ParticlePropertySvc::parse( const std::string& file )
     // skip empty lines:
     if ( line.empty ()  ) { continue ; }                            // CONTINUE
     //
-    if ( !active )
-    {
-      if ( "PARTICLE" == boost::to_upper_copy ( boost::trim_copy ( line ) ) )
-      {
+    if ( !active ) {
+      if ( "PARTICLE" == boost::to_upper_copy ( boost::trim_copy ( line ) ) ) {
         active = true ; // ACTIVATE!
         continue      ;
       }
-    }
-    else
-    {
-      if ( "END PARTICLE" == boost::to_upper_copy ( boost::trim_copy ( line ) ) )
-      {
+    } else {
+      if ( "END PARTICLE" == boost::to_upper_copy ( boost::trim_copy ( line ) ) ) {
         active = false ;  // DEACTIVATE!
         continue ;
       }
@@ -612,15 +572,12 @@ StatusCode LHCb::ParticlePropertySvc::parse( const std::string& file )
     //
     if ( !active ) { continue ; } // skip the lines if not active
     // parse the line
-    sc = parseLine ( line ) ;
-    if ( sc.isFailure() )
-    {
-      log << MSG::ERROR << "Unable to parse the file '" << file << "'" << endmsg ;
+    auto sc = parseLine ( line ) ;
+    if ( sc.isFailure() ) {
+      error() << "Unable to parse the file '" << file << "'" << endmsg ;
       return sc ;                                                     // RETURN
     }
   }
-  // release the service
-  fileAccess -> release () ;
   //
   return StatusCode::SUCCESS ;                                        // RETURN
 }
@@ -830,17 +787,13 @@ std::string LHCb::ParticlePropertySvc::cc ( const std::string& decay ) const
       m_ccMap [ pp   -> particle() ] = anti->particle() ;
     }
     // get the particles from the options
-    for ( const auto& ic : m_ccmap_)
-    {
+    for ( const auto& ic : m_ccmap_) {
       m_ccMap [ ic.first  ] = ic.second ;
       m_ccMap [ ic.second ] = ic.first  ;
     }
-    MsgStream log ( msgSvc() , name() ) ;
-    if( UNLIKELY( log.level() <= MSG::DEBUG ) )
-    {
-      log << MSG::DEBUG << " CC-map is " << std::endl ;
-      Gaudi::Utils::toStream ( m_ccMap , log.stream() ) ;
-      log << endmsg ;
+    if( msgLevel(MSG::DEBUG) ) {
+      Gaudi::Utils::toStream ( m_ccMap , (debug() << " CC-map is \n").stream() );
+      debug() <<endmsg;
     }
   }
   // use the map
@@ -852,5 +805,3 @@ DECLARE_NAMESPACE_SERVICE_FACTORY(LHCb,ParticlePropertySvc)
 // ============================================================================
 // The END
 // ============================================================================
-
-

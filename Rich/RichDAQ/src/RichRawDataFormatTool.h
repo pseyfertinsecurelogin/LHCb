@@ -40,8 +40,8 @@
 // Interfaces
 #include "RichInterfaces/IRichRawDataFormatTool.h"
 
-// local
-#include "RichDAQVersions.h"
+// RICH DAQ Kernel
+#include "RichDAQKernel/RichDAQVersions.h"
 
 // RichDet
 #include "RichDet/DeRichSystem.h"

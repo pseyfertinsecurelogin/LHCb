@@ -116,8 +116,8 @@ operator >> ( F1&& cut1 , F2&& cut2 )
  *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
  *  @date 2001-01-23
  */
-template <class TYPE,class TYPE2>
-inline typename LoKi::Functor<TYPE,TYPE2>::result_type
+template <typename TYPE,typename TYPE2>
+inline TYPE2
 operator >> ( typename LoKi::Functor<TYPE,TYPE2>::argument a ,
               const LoKi::Functor<TYPE,TYPE2>&             o )
 { return LoKi::apply ( o , a ) ; }
@@ -156,6 +156,7 @@ operator >> ( const std::vector<TYPEI>&         input ,
   //
   return out ;
 }
+
 // ============================================================================
 /** evaluate the vector function with vector argument
  *
@@ -179,11 +180,11 @@ operator >> ( const std::vector<TYPEI>&         input ,
  *  @date 2001-01-23
  */
 template <class TYPEI, class TYPE>
-inline typename LoKi::Functor<std::vector<TYPE>,double>::result_type
+inline double
 operator >> ( const std::vector<TYPEI>&                      input ,
               const LoKi::Functor<std::vector<TYPE>,double>& funct )
 {
-  return LoKi::apply ( funct , { input.begin() , input.end() } ) ;
+  return LoKi::apply ( funct , input );
 }
 // ============================================================================
 /** evaluate/filter the vector function/predicate
@@ -222,8 +223,20 @@ operator >>
   //
   return out ;
 }
+
+template <class TYPEI, class TYPE>
+inline std::vector<TYPEI>
+operator >>
+( std::vector<TYPEI>&&       input ,
+  const LoKi::Functor<TYPE,bool>& pred  )
+{
+  input.erase(std::remove_if( input.begin(), input.end(),
+                              [&](const TYPEI& i) { return !LoKi::apply(pred,i); } ),
+              input.end());
+  return input;
+}
 // ============================================================================
-/** evaluate the vector fucntion with scalar argument through
+/** evaluate the vector function with scalar argument through
  *  the construction of the intermediate vector of length 1
  *
  *  @code
@@ -247,9 +260,8 @@ operator >>
  */
 template <class TYPE,class TYPE2>
 inline
-typename LoKi::Functor<std::vector<TYPE>,TYPE2>::result_type
-operator>>  ( typename LoKi::Functor<TYPE,TYPE2>::argument  a ,
-              const LoKi::Functor<std::vector<TYPE>,TYPE2>& f )
+TYPE2 operator>> ( typename LoKi::Functor<TYPE,TYPE2>::argument  a ,
+                   const LoKi::Functor<std::vector<TYPE>,TYPE2>& f )
 {
   return LoKi::apply ( f , a ) ;
 }
@@ -257,9 +269,8 @@ operator>>  ( typename LoKi::Functor<TYPE,TYPE2>::argument  a ,
 /// use "light" range as input vector
 template <class CONTAINER, class OUTPUT>
 inline
-typename LoKi::Functor<CONTAINER,OUTPUT>::result_type
-operator>> ( const Gaudi::Range_<CONTAINER>&        a ,
-             const LoKi::Functor<CONTAINER,OUTPUT>& o )
+OUTPUT operator>> ( const Gaudi::Range_<CONTAINER>&        a ,
+                    const LoKi::Functor<CONTAINER,OUTPUT>& o )
 {
   return LoKi::apply ( o , a ) ;
 }
@@ -267,9 +278,8 @@ operator>> ( const Gaudi::Range_<CONTAINER>&        a ,
 /// use "light" range as input vector
 template <class CONTAINER, class OUTPUT>
 inline
-typename LoKi::Functor<CONTAINER,OUTPUT>::result_type
-operator>> ( const Gaudi::NamedRange_<CONTAINER>&   a ,
-             const LoKi::Functor<CONTAINER,OUTPUT>& o )
+OUTPUT operator>> ( const Gaudi::NamedRange_<CONTAINER>&   a ,
+                    const LoKi::Functor<CONTAINER,OUTPUT>& o )
 {
   return LoKi::apply ( o , a ) ;
 }

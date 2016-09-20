@@ -46,10 +46,6 @@ LoKi::TES::HasRecSummary::HasRecSummary
   { setLocation( LHCb::RecSummaryLocation::Default ) ; }
 }
 // ============================================================================
-// MANDATORY: virtual destructor 
-// ============================================================================
-LoKi::TES::HasRecSummary::~HasRecSummary () {}
-// ============================================================================
 // MANDATORY: clone method ("virtual constructor")
 // ============================================================================
 LoKi::TES::HasRecSummary*
@@ -109,10 +105,6 @@ LoKi::TES::RecSummary::RecSummary
   if  ( location.empty () ) 
   { setLocation( LHCb::RecSummaryLocation::Default ) ; }
 }
-// ============================================================================
-// MANDATORY: virtual destructor 
-// ============================================================================
-LoKi::TES::RecSummary::~RecSummary () {}
 // ============================================================================
 // MANDATORY: clone method ("virtual constructor")
 // ============================================================================

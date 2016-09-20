@@ -1,4 +1,3 @@
-// $Id$
 // ============================================================================
 // Include files
 // ============================================================================
@@ -100,10 +99,6 @@ LHCb::ParticleProperty::ParticleProperty
   , m_anti     ( 0          )
 {}
 // ============================================================================
-// destructor
-// ============================================================================
-LHCb::ParticleProperty::~ParticleProperty() {}
-// ============================================================================
 /*  the standard (a'la Gaudi) printout of the object 
  *  @param s reference to the output stream 
  *  @return reference to the output stream 
@@ -204,8 +199,6 @@ std::ostream& LHCb::ParticleProperties::printAsTable_
   std::ostream&                                     stream    ,
   const LHCb::IParticlePropertySvc*                 service   )
 {
-  typedef std::vector<const LHCb::ParticleProperty*>::const_iterator IT ;
-  
   std::string fmt, hdr ;
   //
   if ( 0 != service )
@@ -243,7 +236,7 @@ std::ostream& LHCb::ParticleProperties::printAsTable_
                       ( boost::io::too_many_args_bit |
                         boost::io::too_few_args_bit ) ) ;
   
-  if  ( 0 != service ) { header % "#" ; }
+  if  ( service ) { header % "#" ; }
   header
     % "Name"
     % "PdgID"
@@ -257,12 +250,11 @@ std::ostream& LHCb::ParticleProperties::printAsTable_
   
   const std::string hdrLine = header.str() ;
   const std::string dashes = " " + std::string( hdrLine.size() - 1 , '-' ) ;
-  stream
-    << dashes  << std::endl
-    << hdrLine << std::endl
-    << dashes  << std::endl ;
+  stream << dashes  << std::endl
+         << hdrLine << std::endl
+         << dashes  << std::endl ;
   
-  for ( IT ip = particles.begin() ; particles.end() != ip ; ++ip )
+  for ( auto ip = particles.begin() ; particles.end() != ip ; ++ip )
   {
     const LHCb::ParticleProperty* pp = *ip ;
     if ( 0 == pp ) { continue ; }
