@@ -1,4 +1,3 @@
-// $Id: L0.cpp,v 1.6 2010-03-12 12:23:55 ibelyaev Exp $
 // ============================================================================
 // Include files
 // ============================================================================
@@ -17,10 +16,6 @@
  *  @author Vanya BELYAEV Ivan.Belyaev@niklhef.nl 
  */
 // ============================================================================
-// MANDATOY: vitual destructor 
-// ============================================================================
-LoKi::L0::Valid::~Valid() {}
-// ============================================================================
 // MANDATORY: clone method ("virtual constructor")
 // ============================================================================
 LoKi::L0::Valid* LoKi::L0::Valid::clone() const 
@@ -30,7 +25,7 @@ LoKi::L0::Valid* LoKi::L0::Valid::clone() const
 // ============================================================================
 LoKi::L0::Valid::result_type 
 LoKi::L0::Valid::operator() 
-  ( LoKi::L0::Valid::argument a ) const { return 0 != a && a->valid() ; }
+  ( LoKi::L0::Valid::argument a ) const { return a && a->valid() ; }
 // ============================================================================ 
 // OPTIONAL: the nice printout 
 // ============================================================================ 
@@ -44,7 +39,6 @@ std::ostream& LoKi::L0::Valid::fillStream ( std::ostream& s ) const
 LoKi::L0::SumEt::SumEt
 ( const int bx )
   : LoKi::AuxFunBase ( std::tie ( bx ) ) 
-  , LoKi::BasicFunctors<const LHCb::L0DUReport*>::Function () 
   , m_bx ( bx ) 
 {}
 // ============================================================================
@@ -72,7 +66,6 @@ LoKi::L0::SumEt::operator()
 LoKi::L0::DataValue::DataValue
 ( const std::string& name  )
   : LoKi::AuxFunBase ( std::tie ( name ) ) 
-  , LoKi::BasicFunctors<const LHCb::L0DUReport*>::Function () 
   , m_name ( name ) 
 {}
 // ============================================================================
@@ -121,14 +114,9 @@ LoKi::L0::DataDigit::operator()
 // ============================================================================
 LoKi::L0::Decision::Decision ( const int mask ) 
   : LoKi::AuxFunBase ( std::tie ( mask ) )
-  , LoKi::BasicFunctors<const LHCb::L0DUReport*>::Predicate () 
   , m_mask ( mask ) 
 {
 }
-// ============================================================================
-// MANDATORY: virtual destructor 
-// ============================================================================
-LoKi::L0::Decision::~Decision(){}
 // ============================================================================
 // MANDATORY: clone method ('virtual constructor') 
 // ============================================================================
@@ -174,7 +162,6 @@ std::ostream& LoKi::L0::Decision::fillStream ( std::ostream& s ) const
 LoKi::L0::SumDecision::SumDecision ( const int mask , 
                                      const int bx   ) 
   : LoKi::AuxFunBase ( std::tie ( mask , bx ) )
-  , LoKi::BasicFunctors<const LHCb::L0DUReport*>::Predicate () 
   , m_mask ( mask ) 
   , m_bx   ( bx   ) 
 {}
@@ -346,9 +333,7 @@ LoKi::L0::ChannelDecision::ChannelDecision
 ( const std::string& channel , 
   const int          bx      ) 
   : LoKi::AuxFunBase ( std::tie ( channel , bx ) ) 
-  , LoKi::BasicFunctors<const LHCb::L0DUReport*>::Predicate () 
   , m_names    ( 1 ,channel ) 
-  , m_channels () 
   , m_bx       ( bx         ) 
   , m_tckPrev  ( 0          ) 
 {}
@@ -359,9 +344,7 @@ LoKi::L0::ChannelDecision::ChannelDecision
 ( const std::vector<std::string>& channels ,
   const int                       bx       ) 
   : LoKi::AuxFunBase ( std::tie ( channels , bx ) ) 
-  , LoKi::BasicFunctors<const LHCb::L0DUReport*>::Predicate () 
   , m_names    ( channels ) 
-  , m_channels () 
   , m_bx       ( bx       ) 
   , m_tckPrev  ( 0        ) 
 {}

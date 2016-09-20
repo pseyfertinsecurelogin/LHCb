@@ -1,4 +1,3 @@
-// $Id: L0.h,v 1.6 2010-03-12 12:23:55 ibelyaev Exp $
 // ============================================================================
 #ifndef LOKI_L0_H
 #define LOKI_L0_H 1
@@ -48,22 +47,18 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2010-01-08
      */
-    class GAUDI_API Valid
+    class GAUDI_API Valid final
       : public LoKi::BasicFunctors<const LHCb::L0DUReport*>::Predicate
     {
     public:
       // ======================================================================
-      /// MANDATORY: default constructor
-      Valid() {}
-      /// MANDATORY: virtual destructor
-      virtual ~Valid() ;
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  Valid* clone () const ;
+      Valid* clone () const override;
       // ======================================================================
       /// MANDATORY: the only one essential method
-      virtual result_type operator() ( argument a ) const ;
+      result_type operator() ( argument a ) const override;
       /// OPTIONAL: the nice printout
-      virtual std::ostream& fillStream ( std::ostream& s ) const ;
+      std::ostream& fillStream ( std::ostream& s ) const override;
       // ======================================================================
     };
     // ========================================================================
@@ -75,22 +70,20 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-09-19
      */
-    class GAUDI_API SumEt
+    class GAUDI_API SumEt final
       : public LoKi::BasicFunctors<const LHCb::L0DUReport*>::Function
     {
     public:
       // ======================================================================
       /// constructor from bx-id
       SumEt ( const int bx = 0  ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~SumEt () {}
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  SumEt* clone () const { return new SumEt ( *this ) ; }
+      SumEt* clone () const override { return new SumEt ( *this ) ; }
       // ======================================================================
       /// MANDATORY: the only one essential method
-      virtual result_type operator() ( argument a ) const ;
+      result_type operator() ( argument a ) const override;
       /// OPTIONAL: the nice printout
-      virtual std::ostream& fillStream ( std::ostream& s ) const ;
+      std::ostream& fillStream ( std::ostream& s ) const override;
       // ======================================================================
     private:
       // ======================================================================
@@ -114,23 +107,14 @@ namespace LoKi
       // ======================================================================
       /// constructor form the data name
       DataValue ( const std::string& name ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~DataValue() {}
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  DataValue* clone() const { return new DataValue ( *this ) ; }
+      DataValue* clone() const override { return new DataValue ( *this ) ; }
       /// MANDATORY: the only one essential method
-      virtual result_type operator() ( argument a ) const  ;
+      result_type operator() ( argument a ) const  override;
       /// OPTIONAL: the nice printout
-      virtual std::ostream& fillStream ( std::ostream& s ) const ;
-      // ======================================================================
-    public:
+      std::ostream& fillStream ( std::ostream& s ) const override;
       // ======================================================================
       const std::string& name() const { return m_name ; }
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      DataValue() ;                      // the default constructor is disabled
       // ======================================================================
     private:
       // ======================================================================
@@ -147,25 +131,18 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-09-19
      */
-    class GAUDI_API DataDigit : public DataValue
+    class GAUDI_API DataDigit final : public DataValue
     {
     public:
       // ======================================================================
       /// constructor form the data name
       DataDigit ( const std::string& name ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~DataDigit () {}
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  DataDigit* clone() const { return new DataDigit ( *this ) ; }
+      DataDigit* clone() const override { return new DataDigit ( *this ) ; }
       /// MANDATORY: the only one essential method
-      virtual result_type operator() ( argument a ) const ;
+      result_type operator() ( argument a ) const override ;
       /// OPTIONAL: the nice printout
-      virtual std::ostream& fillStream ( std::ostream& s ) const ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      DataDigit () ;                     // the default constructor is disabled
+      std::ostream& fillStream ( std::ostream& s ) const override ;
       // ======================================================================
     };
     // ========================================================================
@@ -179,27 +156,20 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-09-19
      */
-    class GAUDI_API SumDecision
+    class GAUDI_API SumDecision final
       : public LoKi::BasicFunctors<const LHCb::L0DUReport*>::Predicate
     {
     public:
       // ======================================================================
       /// constructor from decision mask
       SumDecision ( const int mask , const int bx = 0 ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~SumDecision () {}
       /// MANDATORY: clone method ('virtual constructor')
-      virtual  SumDecision* clone () const
+      SumDecision* clone () const override
       { return new SumDecision ( *this ) ; }
       /// MANDATORY: the only one essential method
-      virtual result_type operator() ( argument a ) const ;
+      result_type operator() ( argument a ) const override;
       /// OPTIONAL: the nice printout
-      virtual std::ostream& fillStream ( std::ostream& s ) const ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      SumDecision () ;                  // the default constructor is disabled
+      std::ostream& fillStream ( std::ostream& s ) const override;
       // ======================================================================
     private:
       // ======================================================================
@@ -220,26 +190,19 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-09-19
      */
-    class GAUDI_API Decision
+    class GAUDI_API Decision final
       : public LoKi::BasicFunctors<const LHCb::L0DUReport*>::Predicate
     {
     public:
       // ======================================================================
       /// constructor from decision mask
       Decision ( const int mask ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~Decision () ;
       /// MANDATORY: clone method ('virtual constructor')
-      virtual  Decision* clone () const ;
+      Decision* clone () const override;
       /// MANDATORY: the only one essential method
-      virtual result_type operator() ( argument a ) const ;
+      result_type operator() ( argument a ) const override;
       /// OPTIONAL: the nice printout
-      virtual std::ostream& fillStream ( std::ostream& s ) const ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disbaled
-      Decision() ;                      // the default constructor is disabled
+      std::ostream& fillStream ( std::ostream& s ) const override;
       // ======================================================================
     private:
       // ======================================================================
@@ -255,22 +218,18 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-09-19
      */
-    class GAUDI_API ForceBit
+    class GAUDI_API ForceBit final
       : public LoKi::BasicFunctors<const LHCb::L0DUReport*>::Predicate
     {
     public:
       // ======================================================================
-      /// MANDATORY: default constructor
-      ForceBit() {}
-      /// MANDATORY: virtual destructor
-      virtual ~ForceBit () {}
       /// MANDATORY: clone method ('virtual constructor')
-      virtual  ForceBit* clone () const
+      ForceBit* clone () const override
       { return new ForceBit ( *this ) ; }
       /// MANDATORY: the only one essential method
-      virtual result_type operator() ( argument a ) const ;
+      result_type operator() ( argument a ) const override;
       /// OPTIONAL: the nice printout
-      virtual std::ostream& fillStream ( std::ostream& s ) const ;
+      std::ostream& fillStream ( std::ostream& s ) const override;
       // ======================================================================
     };
     // ========================================================================
@@ -281,21 +240,17 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-09-19
      */
-    class GAUDI_API Tck
+    class GAUDI_API Tck final
       : public LoKi::BasicFunctors<const LHCb::L0DUReport*>::Function
     {
     public:
       // ======================================================================
-      /// MANDATORY: default constructor
-      Tck() {}
-      /// MANDATORY: virtual destructor
-      virtual ~Tck () {}
       /// MANDATORY: clone method ('virtual constructor')
-      virtual  Tck* clone () const { return new Tck ( *this ) ; }
+      Tck* clone () const override { return new Tck ( *this ) ; }
       /// MANDATORY: the only one essential method
-      virtual result_type operator() ( argument a ) const ;
+      result_type operator() ( argument a ) const override ;
       /// OPTIONAL: the nice printout
-      virtual std::ostream& fillStream ( std::ostream& s ) const ;
+      std::ostream& fillStream ( std::ostream& s ) const override ;
       // ======================================================================
     };
     // ========================================================================
@@ -306,22 +261,18 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-09-19
      */
-    class GAUDI_API TimingBit
+    class GAUDI_API TimingBit final
       : public LoKi::BasicFunctors<const LHCb::L0DUReport*>::Predicate
     {
     public:
       // ======================================================================
-      /// MANDATORY: default constructor
-      TimingBit() {}
-      /// MANDATORY: virtual destructor
-      virtual ~TimingBit () {}
       /// MANDATORY: clone method ('virtual constructor')
-      virtual  TimingBit* clone () const
+      TimingBit* clone () const override
       { return new TimingBit ( *this ) ; }
       /// MANDATORY: the only one essential method
-      virtual result_type operator() ( argument a ) const ;
+      result_type operator() ( argument a ) const override;
       /// OPTIONAL: the nice printout
-      virtual std::ostream& fillStream ( std::ostream& s ) const ;
+      std::ostream& fillStream ( std::ostream& s ) const override;
       // ======================================================================
     };
     // ========================================================================
@@ -349,8 +300,6 @@ namespace LoKi
       /// channel decision by channel names  ("OR")
       ChannelDecision ( const std::vector<std::string>& channels ,
                         const int bx = 0 ) ;
-      /// virtual destructor
-      virtual ~ChannelDecision () {}
       /// MANDATORY: clone method ('virtual constructor')
       virtual  ChannelDecision* clone() const
       { return new ChannelDecision ( *this ) ; }
@@ -376,11 +325,6 @@ namespace LoKi
       void     clearNames    ()                 const { m_names.clear() ; }
       void     addName       ( const std::string& c ) const
       { m_names.push_back ( c ) ; }
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      ChannelDecision() ;                // the default constructor is disabled
       // ======================================================================
     private:
       // ======================================================================
@@ -412,8 +356,6 @@ namespace LoKi
       /// channel decision by channel names  ("OR")
       ChannelPreDecision ( const std::vector<std::string>& channels ,
                            const int bx = 0 ) ;
-      /// virtual destructor
-      virtual ~ChannelPreDecision () {}
       /// MANDATORY: clone method ('virtual constructor')
       virtual  ChannelPreDecision* clone() const
       { return new ChannelPreDecision ( *this ) ; }
@@ -421,11 +363,6 @@ namespace LoKi
       virtual result_type operator() ( argument a ) const ;
       /// OPTIONAL: the nice printout
       virtual std::ostream& fillStream ( std::ostream& s ) const ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      ChannelPreDecision() ;             // the default constructor is disabled
       // ======================================================================
     } ;
     // ========================================================================
@@ -446,8 +383,6 @@ namespace LoKi
       /// channel decision by channel names  ("OR")
       TriggerDecision ( const std::vector<std::string>& channels ,
                        const int bx = 0 ) ;
-      /// virtual destructor
-      virtual ~TriggerDecision () {}
       /// MANDATORY: clone method ('virtual constructor')
       virtual  TriggerDecision* clone() const
       { return new TriggerDecision ( *this ) ; }
@@ -455,11 +390,6 @@ namespace LoKi
       virtual result_type operator() ( argument a ) const ;
       /// OPTIONAL: the nice printout
       virtual std::ostream& fillStream ( std::ostream& s ) const ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      TriggerDecision () ;               // the default constructor is disabled
       // ======================================================================
     } ;
     // ========================================================================
@@ -480,8 +410,6 @@ namespace LoKi
       /// channel decision by channel names  ("OR")
       ConditionValue ( const std::vector<std::string>& channels ,
                        const int bx = 0 ) ;
-      /// virtual destructor
-      virtual ~ConditionValue () {}
       /// MANDATORY: clone method ('virtual constructor')
       virtual  ConditionValue* clone() const
       { return new ConditionValue ( *this ) ; }
@@ -489,11 +417,6 @@ namespace LoKi
       virtual result_type operator() ( argument a ) const ;
       /// OPTIONAL: the nice printout
       virtual std::ostream& fillStream ( std::ostream& s ) const ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      ConditionValue () ;               // the default constructor is disabled
       // ======================================================================
     } ;
     // ========================================================================
@@ -505,8 +428,6 @@ namespace LoKi
       ChannelDecisionSubString
       ( const std::string& substr     ,
         const int          bx     = 0 ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~ChannelDecisionSubString() {}
       /// MANDATORY: clone method ("virtual constructor")
       virtual  ChannelDecisionSubString* clone() const
       { return new ChannelDecisionSubString ( *this ) ; }
@@ -515,14 +436,7 @@ namespace LoKi
       /// OPTIONAL: nice printout
       virtual std::ostream& fillStream ( std::ostream& s ) const ;
       // ======================================================================
-    public:
-      // ======================================================================
       const std::string& substr() const { return m_substr ; }
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      ChannelDecisionSubString () ;      // the default constructor is disabled
       // ======================================================================
     private:
       // ======================================================================
@@ -539,8 +453,6 @@ namespace LoKi
       ChannelDecisionRegex
       ( const std::string& substr     ,
         const int          bx     = 0 ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~ChannelDecisionRegex() {}
       /// MANDATORY: clone method ("virtual constructor")
       virtual  ChannelDecisionRegex* clone() const
       { return new ChannelDecisionRegex ( *this ) ; }
@@ -549,14 +461,7 @@ namespace LoKi
       /// OPTIONAL: nice printout
       virtual std::ostream& fillStream ( std::ostream& s ) const ;
       // ======================================================================
-    public:
-      // ======================================================================
       const boost::regex& expression() const { return m_expression ; }
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      ChannelDecisionRegex () ;      // the default constructor is disabled
       // ======================================================================
     private:
       // ======================================================================
@@ -573,8 +478,6 @@ namespace LoKi
       ChannelPreDecisionSubString
       ( const std::string& substr     ,
         const int          bx     = 0 ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~ChannelPreDecisionSubString() {}
       /// MANDATORY: clone method ("virtual constructor")
       virtual  ChannelPreDecisionSubString* clone() const
       { return new ChannelPreDecisionSubString ( *this ) ; }
@@ -582,11 +485,6 @@ namespace LoKi
       virtual result_type operator() ( argument a ) const ;
       /// OPTIONAL: nice printout
       virtual std::ostream& fillStream ( std::ostream& s ) const ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      ChannelPreDecisionSubString () ;   // the default constructor is disabled
       // ======================================================================
     } ;
     // ========================================================================
@@ -598,8 +496,6 @@ namespace LoKi
       ChannelPreDecisionRegex
       ( const std::string& substr     ,
         const int          bx     = 0 ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~ChannelPreDecisionRegex() {}
       /// MANDATORY: clone method ("virtual constructor")
       virtual  ChannelPreDecisionRegex* clone() const
       { return new ChannelPreDecisionRegex ( *this ) ; }
@@ -607,11 +503,6 @@ namespace LoKi
       virtual result_type operator() ( argument a ) const ;
       /// OPTIONAL: nice printout
       virtual std::ostream& fillStream ( std::ostream& s ) const ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      ChannelPreDecisionRegex () ;       // the default constructor is disabled
       // ======================================================================
     } ;
     // ========================================================================
@@ -629,8 +520,6 @@ namespace LoKi
       // ======================================================================
       /// trigger decision by name
       TriggerDecisionSubString ( const std::string& channel , const int bx = 0 ) ;
-      /// virtual destructor
-      virtual ~TriggerDecisionSubString () {}
       /// MANDATORY: clone method ('virtual constructor')
       virtual  TriggerDecisionSubString* clone() const
       { return new TriggerDecisionSubString ( *this ) ; }
@@ -638,11 +527,6 @@ namespace LoKi
       virtual result_type operator() ( argument a ) const ;
       /// OPTIONAL: the nice printout
       virtual std::ostream& fillStream ( std::ostream& s ) const ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      TriggerDecisionSubString () ;      // the default constructor is disabled
       // ======================================================================
     } ;
     // ========================================================================
@@ -660,8 +544,6 @@ namespace LoKi
       // ======================================================================
       /// trigger decision by name
       TriggerDecisionRegex ( const std::string& channel , const int bx = 0 ) ;
-      /// virtual destructor
-      virtual ~TriggerDecisionRegex () {}
       /// MANDATORY: clone method ('virtual constructor')
       virtual  TriggerDecisionRegex* clone() const
       { return new TriggerDecisionRegex ( *this ) ; }
@@ -669,11 +551,6 @@ namespace LoKi
       virtual result_type operator() ( argument a ) const ;
       /// OPTIONAL: the nice printout
       virtual std::ostream& fillStream ( std::ostream& s ) const ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      TriggerDecisionRegex () ;          // the default constructor is disabled
       // ======================================================================
     } ;
     // ========================================================================
