@@ -208,7 +208,6 @@ class DDDBConf(ConfigurableUser):
         self.__set_tag__(["DDDB"],     "dddb-20150724" )
         if not self.getProp("Simulation"):
             self.__set_tag__(["LHCBCOND"], "cond-20151016" )
-            self.__set_tag__(["DQFLAGS"],  "dq-20150717"   )
             self.__set_tag__(["CALIBOFF"], "head-2015604" )
             self.__set_init_time__(datetime(2015, 12, 13, 12, 8)) # End of fill 4720
 
@@ -220,7 +219,6 @@ class DDDBConf(ConfigurableUser):
         self.__set_tag__(["DDDB"],     "dddb-20130929-1" )
         if not self.getProp("Simulation"):
             self.__set_tag__(["LHCBCOND"], "cond-20150409-1"   )
-            self.__set_tag__(["DQFLAGS"],  "dq-20140822"   )
             self.__set_init_time__(datetime(2013, 2, 14, 6, 25)) # End of fill 3564
 
     def __2012_conf__(self):
@@ -231,7 +229,6 @@ class DDDBConf(ConfigurableUser):
         self.__set_tag__(["DDDB"],     "dddb-20150928" )
         if not self.getProp("Simulation"):
             self.__set_tag__(["LHCBCOND"], "cond-20150409-1"   )
-            self.__set_tag__(["DQFLAGS"],  "dq-20140822"   )
             self.__set_init_time__(datetime.utcfromtimestamp(1355694590)) # End of fill 3453
 
     def __2011_conf__(self):
@@ -242,7 +239,6 @@ class DDDBConf(ConfigurableUser):
         self.__set_tag__(["DDDB"],     "dddb-20150522-1" )
         if not self.getProp("Simulation"):
             self.__set_tag__(["LHCBCOND"], "cond-20150409"   )
-            self.__set_tag__(["DQFLAGS"], "dq-20140822")
             self.__set_init_time__(datetime.utcfromtimestamp(1319991087)) # End of fill 2267
 
     def __2010_conf__(self):
