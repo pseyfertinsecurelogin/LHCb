@@ -238,9 +238,9 @@ class LHCbApp(LHCbConfigurableUser):
             whiteboard.EventSlots = 10
 
         # initialize hive settings if not already set
-        from processing import cpuCount
+        from multiprocessing import cpu_count
         for k, v in (('MaxAlgosInFlight', 20),
-                     ('ThreadPoolSize', cpuCount())):
+                     ('ThreadPoolSize', cpu_count())):
             if not scheduler.isPropertySet(k):
                 setattr(scheduler, k, v)
 
