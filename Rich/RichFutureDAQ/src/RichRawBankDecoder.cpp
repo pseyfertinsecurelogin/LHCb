@@ -238,49 +238,40 @@ void RawBankDecoder::decodeToSmartIDs( const LHCb::RawBank & bank,
 
 //=============================================================================
 
-const HPDDataBank *
+std::unique_ptr<const Rich::DAQ::HPDDataBank> 
 RawBankDecoder::createDataBank( const LongType * dataStart,
                                 const unsigned int dataSize,
                                 const BankVersion version ) const
 {
-  HPDDataBank * dataBank = nullptr;
+  std::unique_ptr<const Rich::DAQ::HPDDataBank> dataBank;
 
   if ( LHCb5 == version )
   {
 
     // Header
-    static RichDAQ_LHCb5::Header header;
-    header.reset( dataStart );
+    RichDAQ_LHCb5::Header header( dataStart );
 
     // Decide to zero suppress or not depending on number of hits
     if ( header.zeroSuppressed() )
     {
       if ( UNLIKELY(header.aliceMode()) )
       {
-        static RichDAQ_LHCb5::ZeroSuppAlice b;
-        b.reset( dataStart );
-        dataBank = &b;
+        dataBank.reset( new RichDAQ_LHCb5::ZeroSuppAlice( dataStart ) );
       }
       else
       {
-        static RichDAQ_LHCb5::ZeroSuppLHCb b;
-        b.reset( dataStart );
-        dataBank = &b;
+        dataBank.reset( new RichDAQ_LHCb5::ZeroSuppLHCb( dataStart ) );
       }
     }
     else
     {
       if ( UNLIKELY(header.aliceMode()) )
       {
-        static RichDAQ_LHCb5::NonZeroSuppAlice b;
-        b.reset( dataStart );
-        dataBank = &b;
+        dataBank.reset( new RichDAQ_LHCb5::NonZeroSuppAlice( dataStart ) );
       }
       else
       {
-        static RichDAQ_LHCb5::NonZeroSuppLHCb b;
-        b.reset( dataStart );
-        dataBank = &b;
+        dataBank.reset( new RichDAQ_LHCb5::NonZeroSuppLHCb( dataStart ) );
       }
     }
 
@@ -289,8 +280,7 @@ RawBankDecoder::createDataBank( const LongType * dataStart,
   {
 
     // Header
-    static RichDAQ_LHCb4::Header header;
-    header.reset( dataStart );
+    RichDAQ_LHCb4::Header header( dataStart );
 
     // Decide to zero suppress or not depending on number of hits
     if ( header.zeroSuppressed() )
@@ -301,24 +291,18 @@ RawBankDecoder::createDataBank( const LongType * dataStart,
       }
       else
       {
-        static RichDAQ_LHCb4::ZeroSuppLHCb b;
-        b.reset( dataStart );
-        dataBank = &b;
+        dataBank.reset( new RichDAQ_LHCb4::ZeroSuppLHCb( dataStart ) );
       }
     }
     else
     {
       if ( UNLIKELY(header.aliceMode()) )
       {
-        static RichDAQ_LHCb4::NonZeroSuppAlice b;
-        b.reset( dataStart );
-        dataBank = &b;
+        dataBank.reset( new RichDAQ_LHCb4::NonZeroSuppAlice( dataStart ) );
       }
       else
       {
-        static RichDAQ_LHCb4::NonZeroSuppLHCb b;
-        b.reset( dataStart );
-        dataBank = &b;
+        dataBank.reset( new RichDAQ_LHCb4::NonZeroSuppLHCb( dataStart ) );
       }
     }
 
@@ -327,8 +311,7 @@ RawBankDecoder::createDataBank( const LongType * dataStart,
   {
 
     // Header
-    static RichDAQ_LHCb3::Header header;
-    header.reset( dataStart );
+    RichDAQ_LHCb3::Header header( dataStart );
 
     // Decide to zero suppress or not depending on number of hits
     if ( header.zeroSuppressed() )
@@ -339,24 +322,18 @@ RawBankDecoder::createDataBank( const LongType * dataStart,
       }
       else
       {
-        static RichDAQ_LHCb3::ZeroSuppLHCb b;
-        b.reset( dataStart );
-        dataBank = &b;
+        dataBank.reset( new RichDAQ_LHCb3::ZeroSuppLHCb( dataStart ) );
       }
     }
     else
     {
       if ( UNLIKELY(header.aliceMode()) )
       {
-        static RichDAQ_LHCb3::NonZeroSuppAlice b;
-        b.reset( dataStart );
-        dataBank = &b;
+        dataBank.reset( new RichDAQ_LHCb3::NonZeroSuppAlice( dataStart ) );
       }
       else
       {
-        static RichDAQ_LHCb3::NonZeroSuppLHCb b;
-        b.reset( dataStart );
-        dataBank = &b;
+        dataBank.reset( new RichDAQ_LHCb3::NonZeroSuppLHCb( dataStart ) );
       }
     }
 
@@ -365,21 +342,16 @@ RawBankDecoder::createDataBank( const LongType * dataStart,
   {
 
     // Header
-    static RichDAQ_LHCb2::Header header;
-    header.reset( dataStart );
+    RichDAQ_LHCb2::Header header( dataStart );
 
     // Decide to zero suppress or not depending on number of hits
     if ( header.zeroSuppressed() )
     {
-      static RichDAQ_LHCb2::ZeroSuppLHCb b;
-      b.reset( dataStart, dataSize );
-      dataBank = &b;
+      dataBank.reset( new RichDAQ_LHCb2::ZeroSuppLHCb( dataStart, dataSize ) );
     }
     else
     {
-      static RichDAQ_LHCb2::NonZeroSuppLHCb b;
-      b.reset( dataStart );
-      dataBank = &b;
+      dataBank.reset( new RichDAQ_LHCb2::NonZeroSuppLHCb( dataStart ) );
     }
 
   }
@@ -387,30 +359,23 @@ RawBankDecoder::createDataBank( const LongType * dataStart,
   {
 
     // Header
-    static RichDAQ_LHCb1::Header header;
-    header.reset( dataStart );
-
+    RichDAQ_LHCb1::Header header( dataStart );
+    
     // Decide to zero suppress or not depending on number of hits
     if ( header.zeroSuppressed() )
     {
-      static RichDAQ_LHCb1::ZeroSuppLHCb b;
-      b.reset( dataStart, dataSize );
-      dataBank = &b;
+      dataBank.reset( new RichDAQ_LHCb1::ZeroSuppLHCb( dataStart, dataSize ) );
     }
     else
     {
-      static RichDAQ_LHCb1::NonZeroSuppLHCb b;
-      b.reset( dataStart );
-      dataBank = &b;
+      dataBank.reset( new RichDAQ_LHCb1::NonZeroSuppLHCb( dataStart ) );
     }
 
   }
   else if ( FlatList == version )
   {
 
-    static RichDAQ_FlatList::Data b;
-    b.reset( dataStart );
-    dataBank = &b;
+    dataBank.reset( new RichDAQ_FlatList::Data( dataStart ) );
 
   }
   else
@@ -495,7 +460,7 @@ void RawBankDecoder::decodeToSmartIDs_2007( const LHCb::RawBank & bank,
       }
 
       // get list of active ingress inputs
-      static L1IngressInputs inputs;
+      L1IngressInputs inputs;
       ingressWord.activeHPDInputs(inputs);
       _ri_debug << "  Found " << inputs.size() << " PDs with data blocks : " << inputs
                 << endmsg;
@@ -518,10 +483,10 @@ void RawBankDecoder::decodeToSmartIDs_2007( const LHCb::RawBank & bank,
         {
 
           // Create data bank and decode into RichSmartIDs
-          const auto *
-            hpdBank ( createDataBank( &bank.data()[lineC], // pointer to start of data
-                                      0, // Not needed here (to be removed). Must be 0 though
-                                      version ) );
+          const auto hpdBank 
+            ( createDataBank( &bank.data()[lineC], // pointer to start of data
+                              0, // Not needed here (to be removed). Must be 0 though
+                              version ) );
 
           // is this HPD suppressed ?
           const bool hpdIsSuppressed = hpdBank->suppressed();
@@ -765,9 +730,9 @@ void RawBankDecoder::decodeToSmartIDs_2006TB( const LHCb::RawBank & bank,
     {
 
       // Create data bank and decode into RichSmartIDs
-      const auto * hpdBank ( createDataBank( &bank.data()[lineC], // pointer to start of data
-                                             0, // Not needed here (to be removed). Must be 0 though
-                                             version ) );
+      const auto hpdBank ( createDataBank( &bank.data()[lineC], // pointer to start of data
+                                           0, // Not needed here (to be removed). Must be 0 though
+                                           version ) );
 
       // get HPD RichSmartID
       const LHCb::RichSmartID hpdID = ( m_useFakeHPDID ? s_fakeHPDID :
@@ -934,9 +899,9 @@ void RawBankDecoder::decodeToSmartIDs_DC0406( const LHCb::RawBank & bank,
         }
 
         // Create data bank and decode into RichSmartIDs
-        const auto * hpdBank ( createDataBank( &bank.data()[lineHeader],
-                                               dataSize,
-                                               version ) );
+        const auto hpdBank ( createDataBank( &bank.data()[lineHeader],
+                                             dataSize,
+                                             version ) );
 
         // get HPD RichSmartID
         const LHCb::RichSmartID hpdID = ( m_useFakeHPDID ? s_fakeHPDID :

@@ -5,6 +5,7 @@
 #include <sstream>
 #include <string>
 #include <set>
+#include <memory>
 
 // Gaudi Array properties ( must be first ...)
 #include "GaudiKernel/ParsersFactory.h"
@@ -86,7 +87,7 @@ namespace Rich
        *  @param dataSize  The length of the data block (excluding header HPD word)
        *  @param version   The RICH DAQ data bank version
        */
-      const Rich::DAQ::HPDDataBank * 
+      std::unique_ptr<const Rich::DAQ::HPDDataBank> 
       createDataBank( const Rich::DAQ::LongType * dataStart,
                       const unsigned int dataSize,
                       const Rich::DAQ::BankVersion version ) const;
