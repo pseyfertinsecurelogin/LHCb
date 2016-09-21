@@ -158,6 +158,13 @@ namespace Rich
     /// Map for RICH HPD data, sorted by Level1 board number
     using L1Map      = Rich::PoolMap< Level1HardwareID, IngressMap >;
 
+    /// L1Map data locations
+    namespace L1MapLocation
+    {
+      /// Default Location in TES for the decoded data map
+      static const std::string Default = "Raw/Rich/L1DataMap";
+    }
+
   }
 }
 
