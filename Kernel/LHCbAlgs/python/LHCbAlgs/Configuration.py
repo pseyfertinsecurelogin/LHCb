@@ -50,7 +50,7 @@ class LHCbApp(LHCbConfigurableUser):
        ,'EnableHive'   : """ If True, use HiveEventLoopMgr (deafult False) """
        ,'OnlineMode'  : """ Set to True for online jobs like monitoring. Default is False """
        }
-    
+
     __used_configurables__ = [ DDDBConf, XMLSummary ]
 
     __nominalDetectors = [
@@ -71,29 +71,29 @@ class LHCbApp(LHCbConfigurableUser):
         'tr'      # Added "Tr" -> "tr" to remove extra warnings when running Boole, Brunel, etc.
         ]
 
-    __dtMapping = { 
-        "velo"       : "Velo", 
-        "puveto"     : "PuVeto", 
-        "muon"       : "Muon", 
-        "muonnom1"   : "MuonNoM1", 
-        "it"         : "IT", 
-        "ot"         : "OT", 
-        "tt"         : "TT", 
-        "ut"         : "UT", 
-        "ft"         : "FT", 
-        "vp"         : "VP", 
-        "rich"       : "Rich", 
-        "richpmt"    : "RichPmt", 
-        "rich1"      : "Rich1", 
-        "rich2"      : "Rich2", 
-        "rich1pmt"   : "Rich1Pmt", 
-        "rich2pmt"   : "Rich2Pmt", 
-        "rich1horiz" : "Rich1Horiz", 
-        "magnet"     : "Magnet", 
-        "compact"    : "Compact", 
-        "sl"         : "SL", 
-        "ot"         : "OT" 
-        } 
+    __dtMapping = {
+        "velo"       : "Velo",
+        "puveto"     : "PuVeto",
+        "muon"       : "Muon",
+        "muonnom1"   : "MuonNoM1",
+        "it"         : "IT",
+        "ot"         : "OT",
+        "tt"         : "TT",
+        "ut"         : "UT",
+        "ft"         : "FT",
+        "vp"         : "VP",
+        "rich"       : "Rich",
+        "richpmt"    : "RichPmt",
+        "rich1"      : "Rich1",
+        "rich2"      : "Rich2",
+        "rich1pmt"   : "Rich1Pmt",
+        "rich2pmt"   : "Rich2Pmt",
+        "rich1horiz" : "Rich1Horiz",
+        "magnet"     : "Magnet",
+        "compact"    : "Compact",
+        "sl"         : "SL",
+        "ot"         : "OT"
+        }
 
     def createDetList(self):
         detList = []
@@ -117,10 +117,10 @@ class LHCbApp(LHCbConfigurableUser):
 
     def knownMonitors(self):
         return ["SC", "FPE"]
-    
+
     def knownAuditors(self):
         return ["NameAuditor","MemoryAuditor","ChronoAuditor"]
-    
+
     def defineDB(self):
         # Delegate handling of properties to DDDBConf
         self.setOtherProps( DDDBConf(), ["Simulation", "DataType", "OnlineMode"] )
@@ -147,7 +147,7 @@ class LHCbApp(LHCbConfigurableUser):
             if hasattr(EventSelector(),"FirstEvent"):
                 log.warning( "EventSelector().FirstEvent and LHCBApp().SkipEvents both defined, using LHCbApp().SkipEvents")
             EventSelector().FirstEvent = SkipEvents + 1
-        
+
         # Delegate handling to ApplicationMgr configurable
         self.setOtherProps(ApplicationMgr(),["EvtMax"])
 
@@ -157,19 +157,19 @@ class LHCbApp(LHCbConfigurableUser):
             if not ignoreDQ:
                 from Configurables import DQFilterSvc
                 ApplicationMgr().ExtSvc.append(DQFilterSvc())
-    
+
     def evtMax(self):
         if hasattr(ApplicationMgr(),"EvtMax") and not hasattr(self,"EvtMax"):
             return ApplicationMgr().getProp("EvtMax")
         else:
             return self.getProp("EvtMax")
-    
+
     def skipEvents(self):
         if hasattr(EventSelector(),"FirstEvent") and not hasattr(self,"SkipEvents"):
             return EventSelector().getProp("FirstEvent") - 1
         else:
             return self.getProp("SkipEvents")
-    
+
     def defineMonitors(self):
         for prop in self.getProp("Monitors"):
             if prop not in self.knownMonitors():
@@ -189,15 +189,15 @@ class LHCbApp(LHCbConfigurableUser):
             from Configurables import AuditorSvc
             ApplicationMgr().ExtSvc += [ 'AuditorSvc' ]
             AuditorSvc().Auditors   += [ "FPEAuditor" ]
-    
+
     def defineXMLSum(self):
         if hasattr( self, "XMLSummary" ):
             self.setOtherProps( XMLSummary(), ["XMLSummary" ] )
-    
+
     def defineOutput(self):
         # Message service
         msgSvc = getConfigurable("MessageSvc")
-        
+
         # Modify printout defaults
         if self.isPropertySet("OutputLevel"):
             level = self.getProp("OutputLevel")
@@ -208,12 +208,12 @@ class LHCbApp(LHCbConfigurableUser):
             getConfigurable("EventSelector").OutputLevel = INFO
             getConfigurable("TimingAuditor").OutputLevel = INFO
             getConfigurable("EventLoopMgr").OutputLevel  = INFO
-        
+
         if self.getProp( "TimeStamp" ):
             # add a time stamp to remaining messages
             msgSvc.Format = "%u % F%18W%S%7W%R%T %0W%M"
             msgSvc.timeFormat = "%Y-%m-%d %H:%M:%S UTC"
-    
+
     def definePersistency(self):
         '''Use IOHelper to set up the tes and IO services etc.'''
         persistency=None
@@ -228,15 +228,23 @@ class LHCbApp(LHCbConfigurableUser):
 
     def setupHive(self):
         '''Enable Hive event loop manager'''
-        from Configurables import HiveWhiteBoard, HiveEventLoopMgr
-        evtslots = 10
-        whiteboard   = HiveWhiteBoard("EventDataSvc",
-                                      EventSlots = evtslots)
-        eventloopmgr = HiveEventLoopMgr(MaxEventsParallel = evtslots,
-                                        MaxAlgosParallel  = 20,
-                                        NumThreads = 8,
-                                        AlgosDependencies = [])
-        ApplicationMgr().ExtSvc.insert(0,whiteboard)
+        from Configurables import (HiveWhiteBoard, HiveSlimEventLoopMgr,
+                                   ForwardSchedulerSvc)
+        scheduler    = ForwardSchedulerSvc()
+        whiteboard   = HiveWhiteBoard("EventDataSvc")
+        eventloopmgr = HiveSlimEventLoopMgr(SchedulerName=scheduler)
+        # make sure number of event slots are consistent
+        if not whiteboard.isPropertySet('EventSlots'):
+            whiteboard.EventSlots = 10
+
+        # initialize hive settings if not already set
+        from multiprocessing import cpu_count
+        for k, v in (('MaxAlgosInFlight', 20),
+                     ('ThreadPoolSize', cpu_count())):
+            if not scheduler.isPropertySet(k):
+                setattr(scheduler, k, v)
+
+        ApplicationMgr().ExtSvc.insert(0, whiteboard)
         ApplicationMgr().EventLoop = eventloopmgr
 
     def __apply_configuration__(self):
@@ -247,4 +255,3 @@ class LHCbApp(LHCbConfigurableUser):
         self.defineXMLSum()
         self.defineOutput()
         self.definePersistency()
-        
