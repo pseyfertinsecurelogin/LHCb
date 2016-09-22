@@ -21,7 +21,7 @@ namespace FTRawBank {
 
   enum BankProperties {
     NbBanks = 48,
-    NbSiPMPerTELL40 = 128
+    NbSiPMPerTELL40 = 128 // should be max 6*16=96 (modules*sipms)
   };
 
 }

@@ -9,22 +9,9 @@
 #include "FTRawBankEncoder.h"
 #include "FTRawBankParams.h"
 
-//== These parameters should eventually come from the Detector Element
 constexpr static int s_nbBanks = FTRawBank::NbBanks;
 constexpr static int s_nbSipmPerTELL40 = FTRawBank::NbSiPMPerTELL40;
-namespace {
-unsigned int QuarterModule(unsigned int module)
-{
-  unsigned int quarterModuleNber = 9;
-  if(module < 5) quarterModuleNber = module;
-  else {
-    quarterModuleNber = module - 4;
-    if(module == 10) quarterModuleNber = 5;
-    if(module == 11) quarterModuleNber = 0;
-  }
-  return quarterModuleNber;
-}
-}
+
 //-----------------------------------------------------------------------------
 // Implementation file for class : FTRawBankEncoder
 //
@@ -34,7 +21,6 @@ unsigned int QuarterModule(unsigned int module)
 // Declaration of the Algorithm Factory
 DECLARE_ALGORITHM_FACTORY( FTRawBankEncoder )
 
-
 //=============================================================================
 // Standard constructor, initializes variables
 //=============================================================================
@@ -42,9 +28,7 @@ FTRawBankEncoder::FTRawBankEncoder( const std::string& name,
                                     ISvcLocator* pSvcLocator)
   : GaudiAlgorithm ( name , pSvcLocator )
 {
-
-  declareProperty("OutputLocation", m_outputLocation = LHCb::RawEventLocation::Default, "RawBank output location");
-
+  declareProperty("OutputLocation", m_outputLocation = LHCb::RawEventLocation::Default);
 }
 
 //=============================================================================
@@ -53,8 +37,6 @@ FTRawBankEncoder::FTRawBankEncoder( const std::string& name,
 StatusCode FTRawBankEncoder::initialize() {
   StatusCode sc = GaudiAlgorithm::initialize(); // must be executed first
   if ( sc.isFailure() ) return sc;  // error printed already by GaudiAlgorithm
-
-  if ( msgLevel(MSG::DEBUG) ) debug() << "==> Initialize" << endmsg;
 
   //== create the vector of vectors of vectors with the proper size...
   m_sipmData.resize( s_nbBanks, std::vector<std::vector<uint16_t> >{s_nbSipmPerTELL40});
@@ -72,47 +54,49 @@ StatusCode FTRawBankEncoder::execute() {
   LHCb::FTClusters* clusters = get<LHCb::FTClusters>(LHCb::FTClusterLocation::Default );
   LHCb::RawEvent* event = getOrCreate<LHCb::RawEvent,LHCb::RawEvent>( m_outputLocation );
 
-  int codingVersion = 1;
+  // Incremented to deal with new numbering scheme
+  int codingVersion = 2;
 
   for (auto &b : m_sipmData ) for (auto &pm : b ) pm.clear();
 
   for ( const auto&  cluster : *clusters ) {
     LHCb::FTChannelID id = cluster->channelID();
-    unsigned int bankNumber = id.quarter() + 4 * id.layer();   //== Temp, assumes 1 TELL40 per quarter. Should come from Det.Elem.
+    unsigned int bankNumber = id.quarter() + 4*id.layer() + 16*(id.station()-1u);   //== Temp, assumes 1 TELL40 per quarter.
+
     if ( m_sipmData.size() <= bankNumber ) {
       info() << "*** Invalid bank number " << bankNumber << " channelID " << id << endmsg;
       return StatusCode::FAILURE;
     }
-    unsigned int sipmNumber = id.sipmId() + 16 * QuarterModule(id.module());//== changes to be done here to include module + mat
+    unsigned int sipmNumber = id.sipm() + 16 * id.module();//== changes to be done here to include module + mat
     if ( m_sipmData[bankNumber].size() <= sipmNumber ) {
       info() << "Invalid SiPM number " << sipmNumber << " in bank " << bankNumber << " channelID " << id << endmsg;
       return StatusCode::FAILURE;
     }
 
     auto& data = m_sipmData[bankNumber][sipmNumber];
-    if (data.size() > FTRawBank::nbClusMaximum ) continue;
+    if (data.size() > FTRawBank::nbClusMaximum+1u ) continue; // JvT: should be 9 (only for non-central)
     // one extra word for sipm number + nbClus
     if ( data.empty() ) data.push_back( sipmNumber << FTRawBank::sipmShift );
     auto frac =   std::min(uint16_t(cluster->fraction() * (FTRawBank::fractionMaximum+1)),
-                           FTRawBank::fractionMaximum);
-    auto cell =   std::min(uint16_t(id.sipmCell()),
+                           FTRawBank::fractionMaximum); // JvT: Should be done by FTLiteCluster
+    auto channel = std::min(uint16_t(id.channel()),
                            FTRawBank::cellMaximum);
-    auto sipmId = std::min(uint16_t(0),
+    auto sipmId = std::min(uint16_t(0),               // Dummy (remove)
                            FTRawBank::sipmIdMaximum);
     auto cSize =  std::min(uint16_t(cluster->size() -1),
                            FTRawBank::sizeMaximum); //remove 1 to make sure to keep clusters with size 1,2,3 and 4 using 2 bits to encode the cluster size in the data format
     auto charg =  std::min(uint16_t(cluster->charge() / 16),
                            FTRawBank::chargeMaximum); // one MIP should be around 32 (6 bits ADC) -> coded as 2.
-    data.push_back(( frac  << FTRawBank::fractionShift ) |
-                   ( cell  << FTRawBank::cellShift ) |
-                   ( sipmId<< FTRawBank::sipmIdShift ) |
-                   ( cSize << FTRawBank::sizeShift ) |
-                   ( charg << FTRawBank::chargeShift ) );
-    ++data[0];
+    data.push_back(( frac    << FTRawBank::fractionShift ) |
+                   ( channel << FTRawBank::cellShift ) |
+                   ( sipmId  << FTRawBank::sipmIdShift ) |
+                   ( cSize   << FTRawBank::sizeShift ) |
+                   ( charg   << FTRawBank::chargeShift ) );
+    ++data[0]; // counts the number of clusters (in the header)
     if ( msgLevel( MSG::VERBOSE ) ) {
-      verbose() << format( "Bank%3d sipm%4d cell %4d frac %6.4f sipmId %5d charge %5d size %3d code %4.4x",
-                           bankNumber, sipmNumber, id.sipmCell(), cluster->fraction(),
-                           sipmId, cluster->charge(), cluster->size(), data.back() ) << endmsg;
+      verbose() << format( "Bank%3d sipm%4d channel %4d frac %6.4f charge%4d size%3d code %4.4x",
+                           bankNumber, sipmNumber, id.channel(), cluster->fraction(),
+                           cluster->charge(), cluster->size(), data.back() ) << endmsg;
     }
 
   }

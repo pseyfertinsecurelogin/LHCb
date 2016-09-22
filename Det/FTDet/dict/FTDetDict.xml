@@ -3,15 +3,11 @@
   <class name="DeFTDetector"     />
   <class name="DeFTStation"      />
   <class name="std::vector<DeFTStation*>" />    
-  <class name="DeFTBiLayer"      />
-  <class name="std::vector<DeFTBiLayer*>" />    
   <class name="DeFTLayer"        />
   <class name="std::vector<DeFTLayer*>"   />    
+  <class name="DeFTQuarter"        />
+  <class name="std::vector<DeFTQuarter*>"   />    
   <class name="DeFTModule"        />
   <class name="std::vector<DeFTModule*>"   />    
-  <class name="DeFTFibreModule"        />
-  <class name="std::vector<DeFTFibreModule*>"   />    
-  <class name="DeFTFibreMat"        />
-  <class name="std::vector<DeFTFibreMat*>"   />    
 
 </lcgdict>
