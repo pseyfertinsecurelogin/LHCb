@@ -19,7 +19,7 @@
       &KeyedObject;
 
       <constructor desc     = "Constructor"
-                   argList  = "LHCb::FTChannelID&amp; id , double fraction, int size, int charge"
+                   argList  = "LHCb::FTChannelID&amp; id , double fraction, int size, float charge"
                    initList = "m_fraction(fraction), m_size(size), m_charge(charge)">
         <code> this->setKey(id); </code>
       </constructor>
@@ -48,7 +48,7 @@
 
       <attribute name   = "charge"
                  desc   = "Total charge in ADC count"
-                 type   = "int"
+                 type   = "float"
                  access = "PUBLIC"/>
 
     </class>
