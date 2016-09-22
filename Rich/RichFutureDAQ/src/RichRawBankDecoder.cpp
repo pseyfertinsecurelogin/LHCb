@@ -26,7 +26,7 @@ RawBankDecoder::RawBankDecoder( const std::string& name,
   : Transformer ( name, pSvcLocator,
                   { KeyValue{ "RawEventLocations",
                         concat_alternatives( { LHCb::RawEventLocation::Rich,
-                              LHCb::RawEventLocation::Default } ) },
+                                               LHCb::RawEventLocation::Default } ) },
                       KeyValue{ "OdinLocation", LHCb::ODINLocation::Default } },
                   { KeyValue{ "DecodedDataLocation", L1MapLocation::Default } }
                   )
@@ -157,7 +157,7 @@ void RawBankDecoder::decodeToSmartIDs( const LHCb::RawBank & bank,
 {
 
   // Check magic code for general data couurption
-  if ( LHCb::RawBank::MagicPattern != bank.magic() )
+  if ( UNLIKELY( LHCb::RawBank::MagicPattern != bank.magic() ) )
   {
     std::ostringstream mess;
     mess << "Magic Pattern mis-match : Expected " << LHCb::RawBank::MagicPattern
@@ -181,12 +181,9 @@ void RawBankDecoder::decodeToSmartIDs( const LHCb::RawBank & bank,
     // Get bank version
     const auto version = bankVersion( bank );
 
-    /// Map of the number of time each L1 board ID is found per event (debugging variable)
-    Rich::Map<Rich::DAQ::Level1HardwareID,unsigned int> l1IdsDecoded;
-
     // Is the RICH this L1 ID is for active ?
     const auto rich = m_richSys->richDetector(L1ID);
-    if ( rich == Rich::InvalidDetector )
+    if ( UNLIKELY( rich == Rich::InvalidDetector ) )
     {
       std::ostringstream mess;
       mess << "L1 bank " << L1ID << " has an invalid RICH detector mapping -> Bank skipped";
@@ -198,9 +195,6 @@ void RawBankDecoder::decodeToSmartIDs( const LHCb::RawBank & bank,
       // if configured, dump raw event before decoding
       if      ( msgLevel(MSG::VERBOSE) ) { dumpRawBank( bank, verbose() ); }
       else if ( m_dumpBanks            ) { dumpRawBank( bank, info()    ); }
-
-      // Count decoded L1IDs
-      ++l1IdsDecoded[ L1ID ];
 
       // Now, delegate the work to a version of the decoding appropriate to the version
       if      ( version == LHCb5    ||
@@ -386,7 +380,7 @@ RawBankDecoder::createDataBank( const LongType * dataStart,
   }
 
   // Printout this bank
-  if ( dataBank && msgLevel(MSG::VERBOSE) )
+  if ( UNLIKELY( dataBank && msgLevel(MSG::VERBOSE) ) )
   {
     verbose() << endmsg
               << "Created HPD Data Bank for Decoding :-" << endmsg;
