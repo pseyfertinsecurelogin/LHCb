@@ -136,9 +136,6 @@ public:
     return m_keys;
   };
 
-  LRangeIt beginRange()   { return m_vect.begin(); }
-  LRangeIt endRange()     { return m_vect.end(); }
-
 private:
   SOURCE* currentSource( int index ) {
     if ( !m_links ) return nullptr;

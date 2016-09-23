@@ -1,4 +1,3 @@
-// $Id$
 // ============================================================================
 #ifndef DECAYS_NODE_H
 #define DECAYS_NODE_H 1
@@ -72,7 +71,7 @@ namespace Decays
     virtual std::string toString () const ;
     // ========================================================================
     /// virtual desctructor
-    virtual ~iNode() ;
+    virtual ~iNode() = default ;
     // ========================================================================
   };
   // ==========================================================================
@@ -89,8 +88,6 @@ namespace Decays
     Node ( const Decays::iNode& node  ) ;
     /// copy constructor
     Node ( const Decays::Node&  right ) ;
-    /// MANDATORY: virtual destructor
-    virtual ~Node () ;
     /// MANDATORY: clone method ("virtual constructor")
     virtual  Node* clone () const ;
     /// MANDATORY: the only one essential method
@@ -137,7 +134,7 @@ namespace Decays
   private:
     // ========================================================================
     /// the node itself:
-    iNode* m_node  ; // the node itself:
+    std::unique_ptr<iNode> m_node ; // the node itself:
     // ========================================================================
   } ;
   // ==========================================================================

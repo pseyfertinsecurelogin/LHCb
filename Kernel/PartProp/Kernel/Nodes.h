@@ -65,9 +65,7 @@ namespace Decays
     public:
       // ======================================================================
       /// MANDATORY: default constructor
-      Invalid() {}
-      /// MANDATORY: virtual destructor
-      virtual ~Invalid() ;
+      Invalid() = default;
       /// MANDATORY: clone method ("virtual constructor")
       virtual  Invalid* clone () const  ;
       /// MANDATORY: the only one essential method
@@ -266,8 +264,6 @@ namespace Decays
            const Decays::iNode& n4 ) ;
       /// constructor from list of nodes
       Or ( const Decays::NodeList& nodes ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~Or () ;
       /// MANDATORY: clone method ("virtual constructor")
       virtual  Or* clone () const ;
       /// MANDATORY: the only one essential method
@@ -326,8 +322,6 @@ namespace Decays
             const Decays::iNode& n4 ) ;
       /// constructor from list of nodes
       And ( const Decays::NodeList& nodes ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~And () ;
       /// MANDATORY: clone method ("virtual constructor")
       virtual  And* clone () const ;
       /// MANDATORY: the only one essential method
@@ -373,8 +367,6 @@ namespace Decays
       // ======================================================================
       /// constructor from the node
       Not ( const Decays::iNode& node )  ;
-      /// MANDATORY: virtual destrctor
-      virtual ~Not() ;
       /// MANDATORY: clone method ("virtual constructor")
       virtual  Not* clone () const ;
       /// MANDATORY: the only one essential method

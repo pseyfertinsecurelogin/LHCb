@@ -100,17 +100,17 @@ void MemoryTool::execute()
       debug()  << "Reset Delta Virtual Memory counter" << endmsg ;
   } 
   // Fill the counter for "valid" previous measurements
-  if   ( !m_totMem ) { *m_totMem += memMB ; }
+  if   ( m_totMem ) { *m_totMem += memMB ; }
   // Fill the plot
-  if   ( !m_plot1  ) { fill ( m_plot1 , memMB , 1 , m_histo1.title() ) ; }
+  if   ( m_plot1  ) { fill ( m_plot1 , memMB , 1 , m_histo1.title() ) ; }
   // Fill the counter for "valid" previous measurements
   const auto deltaMem = memMB - m_prev ;
   if   ( 0 <= m_prev   )
   { 
     // fill the counter 
-    if ( !m_delMem ) { *m_delMem += deltaMem ; }
+    if ( m_delMem ) { *m_delMem += deltaMem ; }
     // fill the counter
-    if ( !m_plot2  ) { fill ( m_plot2 , deltaMem , 1 , m_histo2.title() ) ; }
+    if ( m_plot2  ) { fill ( m_plot2 , deltaMem , 1 , m_histo2.title() ) ; }
   } 
   
   // set "previous" measurement 

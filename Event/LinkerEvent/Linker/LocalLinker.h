@@ -97,7 +97,7 @@ public:
     return currentSource( index );
   };
 
-protected:
+private:
 
   TARGET* currentTarget() {
     int myLinkID = m_curReference.linkID();
@@ -130,7 +130,6 @@ protected:
     return NULL;
   }
 
-private:
   SmartIF<IDataProviderSvc>   m_eventSvc;
   LHCb::LinksByKey    m_links;
   LHCb::LinkReference m_curReference;

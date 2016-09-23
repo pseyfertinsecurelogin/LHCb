@@ -1,4 +1,3 @@
-// $Id$
 // ============================================================================
 // Include files 
 // ============================================================================
@@ -24,10 +23,6 @@
 // ===========================================================================
 // iNode 
 // ===========================================================================
-// destructor
-// ===========================================================================
-Decays::iNode::~iNode(){}
-// ===========================================================================
 /*  conversion to the string
  *  @return the string representation of the node 
  */
@@ -48,15 +43,13 @@ bool Decays::iNode::operator!() const { return  !  (this->valid() ) ; }
 // constructor from the node
 // ===========================================================================
 Decays::Node::Node ( const Decays::iNode& node ) 
-  : Decays::iNode ()
-  , m_node ( 0 ) 
 {
-  if ( typeid ( Decays::Node ) == typeid ( node ) ) 
-  {
+  if ( typeid ( Decays::Node ) == typeid ( node ) ) {
     const Node& _node = dynamic_cast<const Node&>( node ) ;
-    m_node = _node.m_node->clone() ;
-  }
-  else { m_node = node.clone() ; }
+    m_node.reset( _node.m_node->clone() );
+  } else { 
+    m_node.reset( node.clone() );
+ }
 }
 // ===========================================================================
 // copy constructor 
@@ -66,10 +59,6 @@ Decays::Node::Node
   : Decays::iNode ( right )
   , m_node ( right.m_node -> clone() ) 
 {}
-// ===========================================================================
-// MANDATORY: virtual destructor
-// ===========================================================================
-Decays::Node::~Node() { delete m_node ; m_node = 0 ; }
 // ===========================================================================
 // MANDATORY: the only one essential method
 // ===========================================================================
@@ -96,11 +85,7 @@ StatusCode Decays::Node::validate
 Decays::Node& Decays::Node::operator=( const Decays::Node& right )
 {
   if ( &right == this ) { return *this ; }
-  //
-  Decays::iNode* node = right.m_node->clone() ;
-  delete m_node ; 
-  m_node = node ;
-  //
+  m_node.reset( right.m_node->clone() );
   return *this ;
 }
 // ===========================================================================
@@ -109,9 +94,7 @@ Decays::Node& Decays::Node::operator=( const Decays::Node& right )
 Decays::Node& Decays::Node::operator=( const Decays::iNode& right )
 {
   if ( &right == this ) { return *this ; }
-  //
-  Decays::iNode* node = 0 ;
-  //
+  Decays::iNode* node = nullptr ;
   if ( typeid ( Decays::Node ) == typeid ( right ) ) 
   {
     const Node& _node = dynamic_cast<const Node&>( right ) ;
@@ -119,8 +102,7 @@ Decays::Node& Decays::Node::operator=( const Decays::iNode& right )
   }
   else { node = right.clone() ; }
   //
-  delete m_node ; 
-  m_node = node ;
+  m_node.reset(node);
   //
   return *this ;
 }
@@ -141,8 +123,6 @@ Decays::Node& Decays::Node::op_or ( const Decays::iNode& right )
 { return  ( *this = ( *m_node  || right ) ) ; }
 // ============================================================================
 
-
 // ============================================================================
 // The END 
 // ============================================================================
-

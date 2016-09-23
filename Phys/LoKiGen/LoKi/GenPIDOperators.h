@@ -1,4 +1,3 @@
-// $Id$
 // ============================================================================
 #ifndef LOKI_GENPIDOPERATORS_H
 #define LOKI_GENPIDOPERATORS_H 1
@@ -34,8 +33,8 @@ namespace LoKi
   namespace GenParticles
   {
     // ========================================================================
-    class    Identifier ;
-    class AbsIdentifier ;
+    struct    Identifier ;
+    struct AbsIdentifier ;
     // ========================================================================
 
     // ========================================================================
