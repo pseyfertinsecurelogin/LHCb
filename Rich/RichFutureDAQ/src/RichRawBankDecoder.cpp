@@ -42,7 +42,7 @@ RawBankDecoder::RawBankDecoder( const std::string& name,
   declareProperty( "VerboseErrors",      m_verboseErrors      = false  );
   declareProperty( "MaxHPDOccupancy",    m_maxHPDOc           = 999999 );
   declareProperty( "PurgeHPDsFailIntegrityTest", m_purgeHPDsFailIntegrity = true );
-  declareProperty( "ActiveRICHes", m_richIsActive = { true, true } );
+  declareProperty( "ActiveRICHes",     m_richIsActive = { true, true } );
   declareProperty( "HotPixelsToMask",    m_hotChannels                 );
 }
 
@@ -125,7 +125,8 @@ L1Map RawBankDecoder::operator()( const LHCb::RawEvent& rawEvent,
       {
         // Print error message
         std::ostringstream mess;
-        mess << "Error decoding bank ID=" << bank->sourceID() << " version=" << bankVersion(*bank)
+        mess << "Error decoding bank ID=" << bank->sourceID() 
+             << " version=" << bankVersion(*bank)
              << " '" << expt.message() << "' '" << expt.tag() << "'";
         Error( mess.str() ).ignore();
         // dump the full bank
@@ -156,7 +157,7 @@ void RawBankDecoder::decodeToSmartIDs( const LHCb::RawBank & bank,
                                        L1Map & decodedData ) const
 {
 
-  // Check magic code for general data couurption
+  // Check magic code for general data corruption
   if ( UNLIKELY( LHCb::RawBank::MagicPattern != bank.magic() ) )
   {
     std::ostringstream mess;
@@ -401,7 +402,8 @@ void RawBankDecoder::decodeToSmartIDs_2007( const LHCb::RawBank & bank,
   _ri_debug << "Decoding L1 bank " << L1ID << endmsg;
 
   // various counts
-  unsigned int nHPDbanks(0), decodedHits(0);
+  unsigned int nHPDbanks(0);
+  //unsigned int decodedHits(0);
 
   // Data bank size in 32 bit words
   const int bankSize = bank.size() / 4;
@@ -615,7 +617,7 @@ void RawBankDecoder::decodeToSmartIDs_2007( const LHCb::RawBank & bank,
                 if ( hpdHitCount < m_maxHPDOc )
                 {
                   ++nHPDbanks;
-                  decodedHits += hpdHitCount;
+                  //decodedHits += hpdHitCount;
 
                   // suppress hot pixels
                   suppressHotPixels(hpdID,newids);
@@ -688,7 +690,8 @@ void RawBankDecoder::decodeToSmartIDs_2006TB( const LHCb::RawBank & bank,
   const Level1HardwareID L1ID ( bank.sourceID() );
 
   // HPD count
-  unsigned int nHPDbanks(0), decodedHits(0);
+  unsigned int nHPDbanks(0);
+  //unsigned int decodedHits(0);
 
   // Data bank size in words
   const int bankSize = bank.size() / 4;
@@ -757,7 +760,7 @@ void RawBankDecoder::decodeToSmartIDs_2006TB( const LHCb::RawBank & bank,
         if ( hpdHitCount < m_maxHPDOc )
         {
           ++nHPDbanks;
-          decodedHits += hpdHitCount;
+          //decodedHits += hpdHitCount;
         }
         else
         {
@@ -809,7 +812,8 @@ void RawBankDecoder::decodeToSmartIDs_DC0406( const LHCb::RawBank & bank,
   const ShortType maxDataSize = MaxDataSize;
 
   // HPD count
-  unsigned int nHPDbanks(0), decodedHits(0);
+  unsigned int nHPDbanks(0);
+  //unsigned int decodedHits(0);
 
   // Data bank size in words
   const int bankSize = bank.size() / 4;
@@ -934,7 +938,7 @@ void RawBankDecoder::decodeToSmartIDs_DC0406( const LHCb::RawBank & bank,
         if ( hpdHitCount < m_maxHPDOc )
         {
           ++nHPDbanks;
-          decodedHits += hpdHitCount;
+          //decodedHits += hpdHitCount;
         }
         else
         {
@@ -977,7 +981,7 @@ RawBankDecoder::decodeToSmartIDs_MaPMT0( const LHCb::RawBank & bank,
   const int bankSize = bank.size() / 4;
 
   // various counts
-  unsigned int decodedHits(0);
+  //unsigned int decodedHits(0);
   std::set<LHCb::RichSmartID> pdSet;
 
   // If we have some words to process, start the decoding
@@ -1039,7 +1043,7 @@ RawBankDecoder::decodeToSmartIDs_MaPMT0( const LHCb::RawBank & bank,
         hpdInfo.smartIDs().push_back( id );
 
         // count the hits and hpds
-        ++decodedHits;
+        //++decodedHits;
         pdSet.insert( id.pdID() );
 
       }
