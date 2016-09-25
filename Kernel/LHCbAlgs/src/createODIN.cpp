@@ -19,7 +19,14 @@ struct createODIN final : Gaudi::Functional::Transformer<LHCb::ODIN(const LHCb::
                             Gaudi::Functional::concat_alternatives( LHCb::RawEventLocation::Trigger, LHCb::RawEventLocation::Default ) ),
                  KeyValue("ODIN", LHCb::ODINLocation::Default)
                )
-  {}
+  {
+    // set the 'VetoObjects' property to our output location so
+    // we will never be forced to write if the output already exists
+    auto& out = const_cast<Property&>(getProperty("ODIN"));
+    out.declareUpdateHandler( [=](Property& p) {
+          this->setProperty("VetoObjects", std::vector<std::string>{ p.toString() }).ignore();
+    }).useUpdateHandler();
+  }
 
   LHCb::ODIN operator()(const LHCb::RawEvent& rawEvent) const override {
     const auto & odinBanks = rawEvent.banks(LHCb::RawBank::ODIN);
