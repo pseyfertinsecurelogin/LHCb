@@ -35,7 +35,6 @@
 #include "RichUtils/RichHashMap.h"
 #include "RichUtils/RichMap.h"
 #include "RichUtils/RichPoolMap.h"
-#include "RichUtils/RichHashMap.h"
 
 // Interfaces
 #include "RichInterfaces/IRichRawDataFormatTool.h"
