@@ -208,9 +208,8 @@ class Decoder(object):
                 elif ensuretype is list and type(input) is str:
                     self.Inputs[k]=[input]
                 elif ensuretype is DataObjectHandleBase:
-                    path = input if type(input) is str else input[0]
-                    altPaths = [] if type(input) is str else input[1:]
-                    self.Inputs[k] = DataObjectHandleBase(path, DataObjectHandleBase.READ, 0, '&'.join(altPaths))
+                    path = input if type(input) is str else ':'.join(input)
+                    self.Inputs[k] = DataObjectHandleBase(path)
                 else:
                     raise TypeError(self.FullName+" cannot convert input from type "+ str(type(input)) +" to "+ str(ensuretype))
         #then cascade downwards
@@ -290,7 +289,7 @@ class Decoder(object):
                 if ops is not None and type(ops) is str:
                     ops=[ops]
                 elif isinstance(ops, DataObjectHandleBase):
-                    ops = [ops.Path] + ops.AlternativePaths
+                    ops = ops.Path.split(":")
                 for op in ops:
                     if op not in outputs:
                         outputs.append(op)
@@ -324,7 +323,7 @@ class Decoder(object):
                 if type(ips) is str:
                     ips=[ips]
                 elif isinstance(ips, DataObjectHandleBase):
-                    ips = [ips.Path] + ips.AlternativePaths
+                    ips = ips.Path.split(":")
                 for ip in ips:
                     if ip not in inputs:
                         inputs.append(ip)
