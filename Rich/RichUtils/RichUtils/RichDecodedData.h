@@ -172,13 +172,6 @@ namespace Rich
       static const std::string Default = "Raw/Rich/L1DataMap";
     }
 
-    /// L1Map data locations
-    namespace L1MapLocation
-    {
-      /// Default Location in TES for the decoded data map
-      static const std::string Default = "Raw/Rich/L1DataMap";
-    }
-
   }
 }
 
