@@ -9,8 +9,8 @@
  */
 //-----------------------------------------------------------------------------
 
-#ifndef RICHKERNEL_IRICHREFRACTIVEINDEX_H
-#define RICHKERNEL_IRICHREFRACTIVEINDEX_H 1
+#ifndef RICHINTERFACES_IRICHREFRACTIVEINDEX_H
+#define RICHINTERFACES_IRICHREFRACTIVEINDEX_H 1
 
 // Gaudi
 #include "GaudiKernel/IAlgTool.h"
@@ -119,4 +119,4 @@ namespace Rich
 
 }
 
-#endif // RICHKERNEL_IRICHREFRACTIVEINDEX_H
+#endif // RICHINTERFACES_IRICHREFRACTIVEINDEX_H

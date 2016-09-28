@@ -9,8 +9,8 @@
  */
 //---------------------------------------------------------------------------------
 
-#ifndef RICHKERNEL_IRICHRADIATORTOOL_H
-#define RICHKERNEL_IRICHRADIATORTOOL_H 1
+#ifndef RICHINTERFACES_IRICHRADIATORTOOL_H
+#define RICHINTERFACES_IRICHRADIATORTOOL_H 1
 
 // from STL
 #include <string>
@@ -69,4 +69,4 @@ namespace Rich
 
 }
 
-#endif // RICHKERNEL_IRICHRADIATORTOOL_H
+#endif // RICHINTERFACES_IRICHRADIATORTOOL_H

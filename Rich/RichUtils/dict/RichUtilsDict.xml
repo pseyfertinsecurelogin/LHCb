@@ -3,8 +3,8 @@
   <!--class name = "Rich::HypoData&lt;float&gt;" /-->
   <class name = "Rich::HypoData&lt;double&gt;" />
 
-  <class name  = "Rich::HPDPixelCluster"               />
-  <class name  = "Rich::HPDPixelClusters"              />
+  <class name  = "Rich::PDPixelCluster"                />
+  <class name  = "Rich::PDPixelClusters"               />
 
   <class name  = "Rich::DAQ::HPDIdentifier"            />
 
@@ -35,13 +35,13 @@
   <class name  = "Rich::DAQ::Level1HardwareIDs"        />
   <class name  = "Rich::DAQ::Level1LogicalIDs"         />
   <class name  = "Rich::DAQ::L1IngressInputs"          />
-  <class name  = "Rich::DAQ::HPDInfo"                  />
-  <class name  = "Rich::DAQ::HPDInfo::Header"          />
-  <class name  = "Rich::DAQ::HPDInfo::Footer"          />
+  <class name  = "Rich::DAQ::PDInfo"                   />
+  <class name  = "Rich::DAQ::PDInfo::Header"           />
+  <class name  = "Rich::DAQ::PDInfo::Footer"           />
   <class name  = "Rich::DAQ::L0Header"                 />
   <class name  = "Rich::DAQ::L0Header::Word0"          />
   <class name  = "Rich::DAQ::L0Header::Word1"          />
-  <class name  = "Rich::DAQ::HPDMap"                   />
+  <class name  = "Rich::DAQ::L1InToPDMap"              />
   <class name  = "Rich::DAQ::IngressInfo"              />
   <class name  = "Rich::DAQ::IngressMap"               />
   <class name  = "Rich::DAQ::L1Map"                    />
