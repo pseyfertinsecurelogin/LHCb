@@ -1,4 +1,3 @@
-// $Id: ICaloGetterTool.h,v 1.2 2009-08-10 11:52:35 ibelyaev Exp $
 #ifndef ICALOGETTERTOOL_H 
 #define ICALOGETTERTOOL_H 1
 
@@ -13,7 +12,6 @@
 #include "Event/CaloHypo.h"
 class ICaloDataProvider;
 
-static const InterfaceID IID_ICaloGetterTool ( "ICaloGetterTool", 3, 0 );
 
 /** @class ICaloGetterTool ICaloGetterTool.h
  *  
@@ -21,13 +19,10 @@ static const InterfaceID IID_ICaloGetterTool ( "ICaloGetterTool", 3, 0 );
  *  @author Olivier Deschamps
  *  @date   2009-04-17
  */
-class ICaloGetterTool : virtual public IAlgTool 
+struct ICaloGetterTool : extend_interfaces<IAlgTool>
 {
-public: 
-  
   // Return the interface ID
-  static const InterfaceID& interfaceID() { return IID_ICaloGetterTool; }
-  virtual StatusCode initialize()=0;
+  DeclareInterfaceID( ICaloGetterTool, 4, 0 );
   virtual void update()=0;
   
   virtual void addToDigits  ( const std::string& loc , bool clear )=0;
@@ -41,9 +36,6 @@ public:
   
   virtual bool hasData ( const std::string& det )=0;
   virtual ICaloDataProvider* provider ( const std::string& det)=0;
-protected:
-
-private:
 
 };
 #endif // ICALOGETTERTOOL_H

@@ -17,8 +17,7 @@ class DeCalorimeter ;
  *  @author Vanya Belyaev Ivan.Belyaev@itep.ru 
  *  @date   07/11/2001
  */
-class CellMatrix : 
-  public std::binary_function<LHCb::CaloCellID,LHCb::CaloCellID,double>
+class CellMatrix 
 {
   
  public:
@@ -29,16 +28,15 @@ class CellMatrix :
   inline void setDet( const DeCalorimeter* Det ) 
     { m_det = Det; }
   
+  virtual ~CellMatrix() = default;
  protected:
   
   /** Standard constructor
    *  @param Det pointer to calorimeter detector 
    */
-  CellMatrix( const DeCalorimeter* Det = 0 )
+  CellMatrix( const DeCalorimeter* Det = nullptr )
     : m_det ( Det )
     {};
-  
-  virtual ~CellMatrix(); ///< Destructor
   
  protected:
   
@@ -98,19 +96,17 @@ class CellMatrix :
   void Exception
     ( const std::string& message ) const ;
   
- private:
-  
-  /** copy constructor is private!
+  /** copy constructor is disabled!
    */
-  CellMatrix( const CellMatrix& );
+  CellMatrix( const CellMatrix& ) = delete;
   
-  /** assignement operator is private!
+  /** assignement operator is disabled!
    */
-  CellMatrix& operator=( const CellMatrix& );
+  CellMatrix& operator=( const CellMatrix& ) = delete;
   
  private:
 
-  const DeCalorimeter* m_det ;
+  const DeCalorimeter* m_det = nullptr;
   
 };
 

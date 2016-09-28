@@ -30,13 +30,9 @@ public:
   
   CaloZSupAlg( const std::string& name, ISvcLocator* pSvcLocator);
   
-  virtual ~CaloZSupAlg();
+  StatusCode initialize() override;
+  StatusCode execute   () override;
   
-  virtual StatusCode initialize();
-  virtual StatusCode execute   ();
-  
-protected:
-
 private:   
   std::string m_detectorName;       ///< Detector element name
   std::string m_inputToolName;

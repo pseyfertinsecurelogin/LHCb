@@ -1,4 +1,3 @@
-// $Id: ICalo2Calo.h,v 1.5 2009-08-05 17:29:52 ibelyaev Exp $
 // ============================================================================
 #ifndef ICALO2CALO_H 
 #define ICALO2CALO_H 1
@@ -19,7 +18,6 @@
 // ============================================================================
 // forward declaration
 // ============================================================================
-static const InterfaceID IID_ICalo2Calo ( "ICalo2Calo", 3, 0 );
 // ============================================================================
 /** @class ICalo2Calo ICalo2Calo.h
  *  
@@ -27,13 +25,11 @@ static const InterfaceID IID_ICalo2Calo ( "ICalo2Calo", 3, 0 );
  *  @author Olivier Deschamps
  *  @date   2007-05-29
  */
-class ICalo2Calo : virtual public IAlgTool {
-public: 
+struct ICalo2Calo : public extend_interfaces<IAlgTool> {
 
   // Return the interface ID
-  static const InterfaceID& interfaceID() { return IID_ICalo2Calo; }
+  DeclareInterfaceID( ICalo2Calo, 4, 0 );
 
-  virtual StatusCode initialize()=0;
   virtual void setCalos( const std::string& from , 
                          const std::string& to   ) = 0 ;
   
@@ -61,10 +57,6 @@ public:
 
 
   virtual bool isLocalMax( const LHCb::CaloDigit& digit)=0;
-
-protected:
-
-private:
 
 };
 #endif // ICALO2CALO_H

@@ -18,12 +18,8 @@ class CheckCaloBank : public GaudiAlgorithm {
   
   CheckCaloBank( const std::string& name, ISvcLocator* pSvcLocator);
   
-  virtual ~CheckCaloBank();
-  
   virtual StatusCode initialize();
   virtual StatusCode execute   ();
-  
- protected:
   
  private:   
   LHCb::RawBank::BankType m_trig;

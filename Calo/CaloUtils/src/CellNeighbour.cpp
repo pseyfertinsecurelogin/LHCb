@@ -23,11 +23,6 @@
 CellNeighbour::CellNeighbour( const DeCalorimeter* Det )
   : CellMatrix( Det ){}
 
-// ============================================================================
-/** Destructor 
- */
-// ============================================================================
-CellNeighbour::~CellNeighbour(){}
 
 // ============================================================================
 /** the major method. It returns "true" if the cell 
