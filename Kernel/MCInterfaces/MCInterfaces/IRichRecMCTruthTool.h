@@ -42,7 +42,7 @@ namespace LHCb
 }
 namespace Rich
 {
-  class HPDPixelCluster;
+  class PDPixelCluster;
 }
 
 /// Static Interface Identification
@@ -305,7 +305,7 @@ namespace Rich
          */
         virtual const LHCb::MCParticle *
         trueRecPhoton( const LHCb::MCParticle * mcPart,
-                       const Rich::HPDPixelCluster& cluster ) const = 0;
+                       const Rich::PDPixelCluster& cluster ) const = 0;
 
         /** Is this a true Cherenkov photon candidate ?
          *  Do the associated segment and pixel have the same MC parent AND was the pixel
@@ -394,7 +394,7 @@ namespace Rich
          *  @retval !NULL Monte Carlo association was successful
          */
         virtual const LHCb::MCParticle *
-        trueCherenkovRadiation( const Rich::HPDPixelCluster& cluster,
+        trueCherenkovRadiation( const Rich::PDPixelCluster& cluster,
                                 const Rich::RadiatorType rad ) const = 0;
 
         /** Access the MCRichSegment associated to a given RichRecSegment

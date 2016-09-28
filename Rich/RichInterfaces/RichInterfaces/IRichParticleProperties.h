@@ -9,8 +9,8 @@
  */
 //-----------------------------------------------------------------------------
 
-#ifndef RICHKERNEL_IRICHPARTICLEPROPERTIES_H
-#define RICHKERNEL_IRICHPARTICLEPROPERTIES_H 1
+#ifndef RICHINTERFACES_IRICHPARTICLEPROPERTIES_H
+#define RICHINTERFACES_IRICHPARTICLEPROPERTIES_H 1
 
 // Kernel
 #include "Kernel/RichParticleIDType.h"
@@ -104,4 +104,4 @@ namespace Rich
 
 }
 
-#endif // RICHKERNEL_IRICHPARTICLEPROPERTIES_H
+#endif // RICHINTERFACES_IRICHPARTICLEPROPERTIES_H
