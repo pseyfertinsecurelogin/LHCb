@@ -74,14 +74,6 @@ public:
    */
   LHCb::FTChannelID calculateChannelAndFrac(double localX, double& frac) const;
 
-  /** Main method to determine which channel was hit, adding an offset to the channel
-   *  @param localX is the input x coordinate in the local frame.
-   *  @param offset is the number of channels that should be added to the channel.
-   *  @return channel returns the corresponding readout channel
-   */
-  //LHCb::FTChannelID calculateChannel(double localX,
-  //    int offset) const ;
-
   /** Get the list of SiPM channels traversed by the hit.
    *  The particle trajectory is a straight line defined by:
    *  @param provide local entry and exit point
@@ -101,13 +93,22 @@ public:
   };
 
   /** Get the pseudoChannel for a given FTChannelID
-   *  The pseudoChannel is defined for a full zone and runs
-   *  in increasing global x. It has negative numbers for negative x.
+   *  The pseudoChannel is defined for a full quarter and runs
+   *  in increasing global |x|.
    *  This function is useful for occupancy plots.
    *  @param the FTChannelID
-   *  @return the pseudoChannel, between +- 6*16*128
+   *  @return the pseudoChannel, between 0 and 6*16*128
    */
   int pseudoChannel( LHCb::FTChannelID channelID ) const;
+
+  /** Get the FTChannelID corresponding to a given pseudoChannel
+   *  The pseudoChannel is defined for a full quarter and runs
+   *  in increasing global |x|.
+   *  This function is useful to generate noise form afterpulses.
+   *  @param pseudoChannel, between 0 and 16*128
+   *  @return the corresponding FTChannelID
+   */
+  LHCb::FTChannelID channelFromPseudo( const int pseudoChannel ) const ;
 
   /** Get the local x from a channelID and its fraction */
   double localXfromChannel(const LHCb::FTChannelID channelID, const double frac) const;

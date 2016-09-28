@@ -168,13 +168,23 @@ void DeFTModule::getPositions(const LHCb::FTChannelID channelID, const double fr
 
 // Get the pseudo-channel for a FTChannelID (useful in the monitoring)
 int DeFTModule::pseudoChannel( const LHCb::FTChannelID channelID ) const {
-  int channelInModule = channelID.channelID() & (m_nChannelsInModule-1);
+  int channelInModule = channelID.channelID() & (m_nChannelsInModule-1u);
   if( m_reversed ) {
     channelInModule = m_nChannelsInModule - 1 - channelInModule;
   }
   int pseudoChannel = channelInModule + m_moduleID * m_nChannelsInModule;
-  if( channelID.quarter() % 2 == 0) {
-    pseudoChannel = -pseudoChannel - 1;
-  }
   return pseudoChannel;
 }
+
+LHCb::FTChannelID DeFTModule::channelFromPseudo( const int pseudoChannel ) const {
+  int channelInModule = pseudoChannel & (m_nChannelsInModule - 1u);
+  if( m_reversed ) {
+    channelInModule = m_nChannelsInModule - 1 - channelInModule;
+  }
+  unsigned int channel = channelInModule & (m_nChannelsInSiPM - 1u);
+  unsigned int sipm    = channelInModule / m_nChannelsInSiPM;
+  return LHCb::FTChannelID(m_stationID, m_layerID, m_quarterID,
+      m_moduleID, sipm, channel);
+}
+
+

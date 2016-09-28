@@ -98,17 +98,17 @@ FTRawBankDecoder::operator()(const std::vector<LHCb::RawBank*>& banks) const
       std::transform( first, first+nClus,
                       std::back_inserter(*clus),
                       [&](short int c) -> LHCb::FTLiteCluster {
-        int fraction = ( c >> FTRawBank::fractionShift ) & FTRawBank::fractionMaximum;
         unsigned channel= ( c >> FTRawBank::cellShift     ) & FTRawBank::cellMaximum;
-        int sipmId   = ( c >> FTRawBank::sipmIdShift   ) & FTRawBank::sipmIdMaximum; //dummy (-> remove)
-        int cSize    = 1+(( c >> FTRawBank::sizeShift     ) & FTRawBank::sizeMaximum); // add 1 to make sure to keep clusters with size 1,2,3 and 4 using 2 bits to encode the cluster size in the data format
-        int charge   = ( c >> FTRawBank::chargeShift   ) & FTRawBank::chargeMaximum;
+        int fraction = ( c >> FTRawBank::fractionShift ) & FTRawBank::fractionMaximum;
+        //int sipmId   = ( c >> FTRawBank::sipmIdShift   ) & FTRawBank::sipmIdMaximum; //dummy (-> remove)
+        int cSize    = ( c >> FTRawBank::sizeShift     ) & FTRawBank::sizeMaximum;
+        //int charge   = ( c >> FTRawBank::chargeShift   ) & FTRawBank::chargeMaximum;
         if ( msgLevel( MSG::VERBOSE ) ) {
-          verbose() << format(  "  channel %4d sipmId %3d frac %3d charge %5d size %3d code %4.4x",
-                                channel, sipmId,fraction, charge, cSize, c ) << endmsg;
+          verbose() << format(  "  channel %4d frac %3d size %3d code %4.4x",
+                                channel,fraction, cSize, c ) << endmsg;
         }
         return  { LHCb::FTChannelID{ station, layer, quarter, module, sipm, channel },
-                  fraction, cSize, charge };
+                  fraction, cSize };
       } );
       first += nClus;
     }

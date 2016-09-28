@@ -143,14 +143,21 @@ public:
   const DeFTModule* findModule( const LHCb::FTChannelID id ) const;
 
   /** Get a random channelID using a seed between 0 and 1 */
-  const LHCb::FTChannelID getRandomChannelFromSeed(const double seed) const;
+  LHCb::FTChannelID getRandomChannelFromSeed(const double seed) const;
+
+  /// Get a random FTChannelID from a pseudoChannel and a seed (useful for the AP noise)
+  LHCb::FTChannelID getRandomChannelFromPseudo(const int pseudoChannel,
+      const double seed) const;
+
+  /// Get the total number of channels in the FT detector
+  int nChannels() const { return m_nTotChannels; };
 
 private: // private data members
 
   unsigned int m_FTversion = 0;
   Stations m_stations;           ///< vector of pointers to stations
+  unsigned int m_nStations;
 
-  unsigned int m_nTotChannels;
   unsigned int m_nModulesT1;
   unsigned int m_nModulesT2;
   unsigned int m_nModulesT3;
@@ -158,6 +165,9 @@ private: // private data members
   unsigned int m_nQuarters;
   unsigned int m_nSiPMs;
   unsigned int m_nChannels;
+  unsigned int m_nTotQuarters;
+  unsigned int m_nChannelsInModule;
+  unsigned int m_nTotChannels;
 
   /// Use a single MsgStream instance (created in initialize)
   std::unique_ptr<MsgStream> m_msg;

@@ -50,6 +50,7 @@ StatusCode DeFTDetector::initialize(){
     auto* station = dynamic_cast<DeFTStation*>(*iS);
     if (station) m_stations.push_back(station);
   }
+  m_nStations  = m_stations.size();
 
   m_nModulesT1 = (unsigned int)param<int>("nModulesT1");
   m_nModulesT2 = (unsigned int)param<int>("nModulesT2");
@@ -58,8 +59,10 @@ StatusCode DeFTDetector::initialize(){
   m_nQuarters  = (unsigned int)param<int>("nQuarters");
   m_nSiPMs     = (unsigned int)param<int>("nSiPMs");
   m_nChannels  = (unsigned int)param<int>("nChannels");
-  m_nTotChannels = (m_nModulesT1 + m_nModulesT2 + m_nModulesT3) * m_nLayers *
-      m_nQuarters * m_nSiPMs * m_nChannels;
+  m_nChannelsInModule = m_nSiPMs * m_nChannels;
+  m_nTotQuarters = m_nStations * m_nLayers * m_nQuarters;
+  m_nTotChannels = (m_nModulesT1 + m_nModulesT2 + m_nModulesT3) *
+      m_nLayers * m_nQuarters * m_nChannelsInModule;
 
   return StatusCode::SUCCESS;// && update) ;
 }
@@ -99,7 +102,7 @@ const DeFTModule* DeFTDetector::findModule(const Gaudi::XYZPoint& aPoint) const 
 }
 
 /// Get a random FTChannelID (useful for the thermal noise, which is ~flat)
-const LHCb::FTChannelID DeFTDetector::getRandomChannelFromSeed(const double seed) const {
+LHCb::FTChannelID DeFTDetector::getRandomChannelFromSeed(const double seed) const {
   if(seed < 0.0 || seed > 1.0 )
     return LHCb::FTChannelID(0u);
   unsigned int flatChannel = int(seed*m_nTotChannels);
@@ -120,3 +123,26 @@ const LHCb::FTChannelID DeFTDetector::getRandomChannelFromSeed(const double seed
   }
   return LHCb::FTChannelID(station, layer, quarter, module, sipm, channel);
 }
+
+/// Get a random FTChannelID from a pseudoChannel (useful for the AP noise)
+LHCb::FTChannelID DeFTDetector::getRandomChannelFromPseudo(const int pseudoChannel,
+    const double seed) const {
+  if(seed < 0.0 || seed > 1.0 )
+    return LHCb::FTChannelID(0u);
+  unsigned int flatQuarter = int(seed*m_nTotQuarters);
+  unsigned int quarter = flatQuarter & (m_nQuarters - 1u);
+  flatQuarter /= m_nQuarters;
+  unsigned int layer   = flatQuarter & (m_nLayers - 1u);
+  flatQuarter /= m_nLayers;
+  unsigned int station = (flatQuarter & m_nStations) + 1u;
+
+  unsigned int module = pseudoChannel / m_nChannelsInModule ;
+  const DeFTModule* moduleDet =
+      findModule( LHCb::FTChannelID(station, layer, quarter, module, 0u, 0u) );
+  if( moduleDet == nullptr ) {
+    return LHCb::FTChannelID(0u);
+  } else {
+    return moduleDet->channelFromPseudo( pseudoChannel & (m_nChannelsInModule -1u));
+  }
+}
+

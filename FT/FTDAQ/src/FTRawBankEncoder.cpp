@@ -77,21 +77,21 @@ StatusCode FTRawBankEncoder::execute() {
     if (data.size() > FTRawBank::nbClusMaximum+1u ) continue; // JvT: should be 9 (only for non-central)
     // one extra word for sipm number + nbClus
     if ( data.empty() ) data.push_back( sipmNumber << FTRawBank::sipmShift );
-    auto frac =   std::min(uint16_t(cluster->fraction() * (FTRawBank::fractionMaximum+1)),
+    auto frac =   std::min(uint16_t(0.5 + cluster->fraction() * (FTRawBank::fractionMaximum+1)),
                            FTRawBank::fractionMaximum); // JvT: Should be done by FTLiteCluster
     auto channel = std::min(uint16_t(id.channel()),
                            FTRawBank::cellMaximum);
-    auto sipmId = std::min(uint16_t(0),               // Dummy (remove)
-                           FTRawBank::sipmIdMaximum);
-    auto cSize =  std::min(uint16_t(cluster->size() -1),
-                           FTRawBank::sizeMaximum); //remove 1 to make sure to keep clusters with size 1,2,3 and 4 using 2 bits to encode the cluster size in the data format
-    auto charg =  std::min(uint16_t(cluster->charge() / 16),
-                           FTRawBank::chargeMaximum); // one MIP should be around 32 (6 bits ADC) -> coded as 2.
-    data.push_back(( frac    << FTRawBank::fractionShift ) |
-                   ( channel << FTRawBank::cellShift ) |
-                   ( sipmId  << FTRawBank::sipmIdShift ) |
-                   ( cSize   << FTRawBank::sizeShift ) |
-                   ( charg   << FTRawBank::chargeShift ) );
+    //auto sipmId = std::min(uint16_t(0),               // Dummy (remove)
+    //                       FTRawBank::sipmIdMaximum);
+    auto cSize = (cluster->size() < FTRawBank::largeClusterSize) ? uint16_t(0) : FTRawBank::sizeMaximum ;
+    //auto charg =  std::min(uint16_t(cluster->charge() / 16),
+    //                       FTRawBank::chargeMaximum); // one MIP should be around 32 (6 bits ADC) -> coded as 2.
+    data.push_back( ( channel << FTRawBank::cellShift ) |
+                    ( frac    << FTRawBank::fractionShift ) |
+                   //( sipmId  << FTRawBank::sipmIdShift ) |
+                    ( cSize   << FTRawBank::sizeShift ) //|
+                   //( charg   << FTRawBank::chargeShift )
+                   );
     ++data[0]; // counts the number of clusters (in the header)
     if ( msgLevel( MSG::VERBOSE ) ) {
       verbose() << format( "Bank%3d sipm%4d channel %4d frac %6.4f charge%4d size%3d code %4.4x",

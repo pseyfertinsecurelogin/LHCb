@@ -37,7 +37,7 @@
       </method>
 
       <attribute name   = "fraction"
-                 desc   = "Fractional part of the channel ID, when barycentre si computed. between 0 and 1"
+                 desc   = "Fractional part of the channel ID, when barycentre si computed. between -0.25 and 0.75"
                  type   = "double"
                  access = "PUBLIC"/>
 
