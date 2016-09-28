@@ -10,8 +10,8 @@
  */
 //---------------------------------------------------------------------------------
 
-#ifndef RICHKERNEL_IRICHSMARTIDTOOL_H
-#define RICHKERNEL_IRICHSMARTIDTOOL_H 1
+#ifndef RICHINTERFACES_IRICHSMARTIDTOOL_H
+#define RICHINTERFACES_IRICHSMARTIDTOOL_H 1
 
 // from Gaudi
 #include "GaudiKernel/IAlgTool.h"
@@ -29,7 +29,7 @@
 // forward decs
 namespace Rich
 {
-  class HPDPixelCluster;
+  class PDPixelCluster;
 }
 
 /// Static Interface Identification
@@ -82,7 +82,7 @@ namespace Rich
      *  @retval true  The conversion to a global coordinate was successful
      *  @retval false The conversion to a global coordinate failed
      */
-    virtual bool globalPosition ( const Rich::HPDPixelCluster& cluster,
+    virtual bool globalPosition ( const Rich::PDPixelCluster& cluster,
                                   Gaudi::XYZPoint& detectPoint ) const = 0;
 
     /** Converts a RichSmartID channel identification into a position in
@@ -108,7 +108,7 @@ namespace Rich
      *  @retval true  The conversion to a global coordinate was successful
      *  @retval false The conversion to a global coordinate failed
      */
-    //virtual bool anodeGlobalPosition ( const Rich::HPDPixelCluster& cluster,
+    //virtual bool anodeGlobalPosition ( const Rich::PDPixelCluster& cluster,
     //                                   Gaudi::XYZPoint& detectPoint ) const = 0;
 
     /** @brief Converts an PD RichSmartID identification into a position in
@@ -177,4 +177,4 @@ namespace Rich
 
 }
 
-#endif // RICHKERNEL_IRICHSMARTIDTOOL_H
+#endif // RICHINTERFACES_IRICHSMARTIDTOOL_H

@@ -37,15 +37,15 @@ namespace Rich
   using GaudiUtils::operator<<;
 
   //-----------------------------------------------------------------------------------------------
-  /** @class HPDPixelCluster RichPixelCluster.h RichUtils/RichPixelCluster.h
+  /** @class PDPixelCluster RichPixelCluster.h RichUtils/RichPixelCluster.h
    *
-   *  Utility class used to represent a single cluster of HPD pixels.
+   *  Utility class used to represent a single cluster of PD pixels.
    *
    *  @author Chris Jones
    *  @date   07/02/2007
    */
   //-----------------------------------------------------------------------------------------------
-  class HPDPixelCluster final : public LHCb::MemPoolAlloc<Rich::HPDPixelCluster>
+  class PDPixelCluster final : public LHCb::MemPoolAlloc<Rich::PDPixelCluster>
   {
 
   public:
@@ -56,36 +56,36 @@ namespace Rich
   public:
 
     /// Default Constructor
-    HPDPixelCluster() = default;
+    PDPixelCluster() = default;
 
   public:
 
     /// Constructor with reserved size
-    explicit HPDPixelCluster( const SmartIDVector::size_type resSize )
+    explicit PDPixelCluster( const SmartIDVector::size_type resSize )
     { m_ids.reserve(resSize); }
 
     /// Constructor from a single channel (one pixel cluster)
-    explicit HPDPixelCluster( const LHCb::RichSmartID & id )
+    explicit PDPixelCluster( const LHCb::RichSmartID & id )
       : m_side(id.panel()), m_rich(id.rich()), m_ids(1,id) { }
-    
+
     /// Copy Constructor from a vector of RichSmartIDs
-    explicit HPDPixelCluster( const SmartIDVector & ids ) : m_ids(ids)
+    explicit PDPixelCluster( const SmartIDVector & ids ) : m_ids(ids)
     {
       updateCachedEnums();
     }
 
     /// Move Constructor from a vector of RichSmartIDs
-    explicit HPDPixelCluster( SmartIDVector && ids ) : m_ids(std::move(ids))
+    explicit PDPixelCluster( SmartIDVector && ids ) : m_ids(std::move(ids))
     {
       updateCachedEnums();
     }
 
   public:
 
-    /// const access to the list of HPD pixels
+    /// const access to the list of PD pixels
     inline const SmartIDVector & smartIDs() const  & noexcept { return m_ids; }
 
-    /// move access to the list of HPD pixels
+    /// move access to the list of PD pixels
     inline       SmartIDVector&& smartIDs()       && noexcept { return std::move(m_ids); }
 
     /// The primary (seed) channel ID
@@ -115,14 +115,14 @@ namespace Rich
   public:
 
     /// Add a channel to this cluster
-    inline void addChannel( const LHCb::RichSmartID& id ) 
+    inline void addChannel( const LHCb::RichSmartID& id )
     {
       m_ids.emplace_back(id);
       updateCachedEnums();
     }
 
     /// Add a channel to this cluster
-    inline void addChannel( LHCb::RichSmartID&& id ) 
+    inline void addChannel( LHCb::RichSmartID&& id )
     {
       m_ids.emplace_back(std::move(id));
       updateCachedEnums();
@@ -132,7 +132,7 @@ namespace Rich
 
     /// overload printout to ostream operator <<
     friend inline std::ostream& operator << ( std::ostream& s,
-                                              const HPDPixelCluster & cluster )
+                                              const PDPixelCluster & cluster )
     {
       return s << "[ " << cluster.smartIDs() << " ]";
     }
@@ -140,7 +140,7 @@ namespace Rich
   private:
 
     /// Update the cached RICH and panel enums
-    inline void updateCachedEnums() 
+    inline void updateCachedEnums()
     {
       m_side = primaryID().panel();
       m_rich = primaryID().rich();
@@ -160,15 +160,15 @@ namespace Rich
   };
 
   //-----------------------------------------------------------------------------
-  /** @class HPDPixelClusters RichPixelCluster.h
+  /** @class PDPixelClusters RichPixelCluster.h
    *
-   *  Utility class representing a set of clusters for a single HPD
+   *  Utility class representing a set of clusters for a single PD
    *
    *  @author Chris Jones   Christopher.Rob.Jones@cern.ch
    *  @date   21/03/2006
    */
   //-----------------------------------------------------------------------------
-  class HPDPixelClusters final : public LHCb::MemPoolAlloc<Rich::HPDPixelClusters>
+  class PDPixelClusters final : public LHCb::MemPoolAlloc<Rich::PDPixelClusters>
   {
 
   public:
@@ -176,14 +176,14 @@ namespace Rich
     //-----------------------------------------------------------------------------
     /** @class Cluster RichPixelCluster.h
      *
-     *  Utility class representing a cluster of HPD pixels together with a unique
-     *  (within an HPD) cluster ID
+     *  Utility class representing a cluster of PD pixels together with a unique
+     *  (within an PD) cluster ID
      *
      *  @author Chris Jones   Christopher.Rob.Jones@cern.ch
      *  @date   21/03/2006
      */
     //-----------------------------------------------------------------------------
-    class Cluster final : public LHCb::MemPoolAlloc<Rich::HPDPixelClusters::Cluster>
+    class Cluster final : public LHCb::MemPoolAlloc<Rich::PDPixelClusters::Cluster>
     {
 
     public: // definitions
@@ -233,7 +233,7 @@ namespace Rich
       }
 
       /// Get read access to cluster data
-      inline const Rich::HPDPixelCluster & pixels() const noexcept
+      inline const Rich::PDPixelCluster & pixels() const noexcept
       {
         return m_cluster;
       }
@@ -250,17 +250,17 @@ namespace Rich
       int m_clusterID{-1};
 
       /// list of pixels in this cluster. Initialize with reserved size 3 (rough guess).
-      HPDPixelCluster m_cluster{3};
+      PDPixelCluster m_cluster{3};
 
     };
 
   public: // methods
 
     /// Constructor
-    HPDPixelClusters() = default;
+    PDPixelClusters() = default;
 
     /// Destructor
-    ~HPDPixelClusters() = default;
+    ~PDPixelClusters() = default;
 
   public:
 
@@ -271,18 +271,18 @@ namespace Rich
     inline       Cluster::SmartPtnVector & clusters()       noexcept { return m_allclus; }
 
     /// Create a new vector of suppressed RichSmartIDs
-    void suppressIDs( HPDPixelCluster::SmartIDVector & smartIDs,
+    void suppressIDs( PDPixelCluster::SmartIDVector & smartIDs,
                       const unsigned int maxSize ) const;
 
   public:
 
-    /// Get the cluster for a given HPD ID
+    /// Get the cluster for a given PD ID
     const Cluster * getCluster( const LHCb::RichSmartID & id ) const;
 
     /// Create and return a new cluster with the given ID
     inline Cluster * createNewCluster( const int id )
     {
-      auto * clus = new HPDPixelClusters::Cluster(id);
+      auto * clus = new PDPixelClusters::Cluster(id);
       m_allclus.emplace_back( clus );
       return clus;
     }
@@ -294,7 +294,7 @@ namespace Rich
 
     /// Overload output to MsgStream
     friend inline MsgStream& operator << ( MsgStream& os,
-                                           const HPDPixelClusters & clus )
+                                           const PDPixelClusters & clus )
     { return clus.fillStream(os); }
 
   private: // data
@@ -305,7 +305,7 @@ namespace Rich
   };
 
   //-----------------------------------------------------------------------------
-  /** @class HPDPixelClustersBuilder RichPixelCluster.h
+  /** @class PDPixelClustersBuilder RichPixelCluster.h
    *
    *  Utility class used to build a set of clusters
    *
@@ -313,13 +313,13 @@ namespace Rich
    *  @date   21/03/2006
    */
   //-----------------------------------------------------------------------------
-  class HPDPixelClustersBuilder final : public LHCb::MemPoolAlloc<Rich::HPDPixelClustersBuilder>
+  class PDPixelClustersBuilder final : public LHCb::MemPoolAlloc<Rich::PDPixelClustersBuilder>
   {
 
   public:
 
     /// Default Constructor
-    HPDPixelClustersBuilder( )
+    PDPixelClustersBuilder( )
     {
       memset ( m_data,     0, sizeof(m_data)     );
       memset ( m_clusters, 0, sizeof(m_clusters) );
@@ -327,9 +327,9 @@ namespace Rich
 
   public:
 
-    /// Initialise for a new HPD
-    void initialise( HPDPixelClusters * clus,
-                     const HPDPixelCluster::SmartIDVector & smartIDs );
+    /// Initialise for a new PD
+    void initialise( PDPixelClusters * clus,
+                     const PDPixelCluster::SmartIDVector & smartIDs );
 
   public:
 
@@ -358,11 +358,11 @@ namespace Rich
   public:
 
     /// Split the given clusters up into single channel clusters
-    void splitClusters( const HPDPixelClusters::Cluster::PtnVector & clusters );
+    void splitClusters( const PDPixelClusters::Cluster::PtnVector & clusters );
 
     /// Get cluster for given pixel
-    inline HPDPixelClusters::Cluster * getCluster( const int row,
-                                                   const int col ) const noexcept
+    inline PDPixelClusters::Cluster * getCluster( const int row,
+                                                  const int col ) const noexcept
     {
       return ( isOn(row,col) ? (m_clusters[row])[col] : nullptr );
     }
@@ -370,7 +370,7 @@ namespace Rich
     /// Set cluster for given pixel
     inline void setCluster( const LHCb::RichSmartID & id,
                             const int row, const int col,
-                            HPDPixelClusters::Cluster * clus ) noexcept
+                            PDPixelClusters::Cluster * clus ) noexcept
     {
       // Set the pointer to the cluster for this (row,col)
       (m_clusters[row])[col] = clus;
@@ -379,7 +379,7 @@ namespace Rich
     }
 
     /// Create a new cluster with given ID
-    inline HPDPixelClusters::Cluster * createNewCluster()
+    inline PDPixelClusters::Cluster * createNewCluster()
     {
       return m_hpdClus->createNewCluster( ++m_lastID );
     }
@@ -390,8 +390,8 @@ namespace Rich
      *  @attention clus1 and clus2 should both be considered invalid after the merger.
      *  @return A pointer to the merged cluster object.
      */
-    HPDPixelClusters::Cluster * mergeClusters( HPDPixelClusters::Cluster *& clus1,
-                                               HPDPixelClusters::Cluster *& clus2 );
+    PDPixelClusters::Cluster * mergeClusters( PDPixelClusters::Cluster *& clus1,
+                                              PDPixelClusters::Cluster *& clus2 );
 
     /** Are we in LHCb or ALICE mode ?
      *  @return Boolean indicating data mode
@@ -412,7 +412,7 @@ namespace Rich
 
     /// Overload output to MsgStream
     friend inline MsgStream& operator << ( MsgStream& os,
-                                           const HPDPixelClustersBuilder & b )
+                                           const PDPixelClustersBuilder & b )
     { return b.fillStream(os); }
 
   private: // methods
@@ -433,12 +433,12 @@ namespace Rich
     }
 
     /// Remove a cluster
-    void removeCluster( HPDPixelClusters::Cluster * clus );
+    void removeCluster( PDPixelClusters::Cluster * clus );
 
   private:
 
     /// The list of clusters to fill
-    HPDPixelClusters * m_hpdClus{nullptr};
+    PDPixelClusters * m_hpdClus{nullptr};
 
     /// working variable, storing the last used cluster ID
     int m_lastID{0};
@@ -456,7 +456,7 @@ namespace Rich
      *  @attention Hardcoding number of rows here to ALICE mode.
      *             In LHCb mode only the first Rich::DAQ::MaxDataSize are then used.
      */
-    HPDPixelClusters::Cluster * m_clusters[Rich::DAQ::MaxDataSizeALICE][Rich::DAQ::NumPixelColumns];
+    PDPixelClusters::Cluster * m_clusters[Rich::DAQ::MaxDataSizeALICE][Rich::DAQ::NumPixelColumns];
 
   };
 

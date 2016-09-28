@@ -9,8 +9,8 @@
  */
 //-----------------------------------------------------------------------------
 
-#ifndef RICHKERNEL_IGenericHPDAnalysisTool_H
-#define RICHKERNEL_IGenericHPDAnalysisTool_H 1
+#ifndef RICHINTERFACES_IGenericHPDAnalysisTool_H
+#define RICHINTERFACES_IGenericHPDAnalysisTool_H 1
 
 // STL
 #include <vector>
@@ -83,4 +83,4 @@ namespace Rich
 
 }
 
-#endif // RICHKERNEL_IGenericHPDAnalysisTool_H
+#endif // RICHINTERFACES_IGenericHPDAnalysisTool_H

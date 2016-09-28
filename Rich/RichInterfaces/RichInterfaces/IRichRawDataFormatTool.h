@@ -9,8 +9,8 @@
  */
 //-----------------------------------------------------------------------------
 
-#ifndef RICHKERNEL_IRICHHPDDATABANKTOOL_H
-#define RICHKERNEL_IRICHHPDDATABANKTOOL_H 1
+#ifndef RICHINTERFACES_IRICHHPDDATABANKTOOL_H
+#define RICHINTERFACES_IRICHHPDDATABANKTOOL_H 1
 
 // from Gaudi
 #include "GaudiKernel/IAlgTool.h"
@@ -89,4 +89,4 @@ namespace Rich
   }
 }
 
-#endif // RICHKERNEL_IRICHHPDDATABANKTOOL_H
+#endif // RICHINTERFACES_IRICHHPDDATABANKTOOL_H

@@ -78,7 +78,7 @@ namespace Rich
       const Rich::DAQ::L1Map & allRichSmartIDs() const;
       
       // Access the vector of RichSmartIDs for the given HPD identifier
-      const LHCb::RichSmartID::Vector& richSmartIDs( const LHCb::RichSmartID hpdID,
+      const LHCb::RichSmartID::Vector& richSmartIDs( const LHCb::RichSmartID pdID,
                                                      const bool createIfMissing = true ) const final;
 
       // Access all RichSmartIDs for the current Event
@@ -86,7 +86,7 @@ namespace Rich
 
       // Access the vector of RichSmartIDs for the given HPD identifier
       const LHCb::RichSmartID::Vector& richSmartIDs( const IRawBufferToSmartIDsTool::RawEventLocations& taeLocs,
-                                                     const LHCb::RichSmartID hpdID,
+                                                     const LHCb::RichSmartID pdID,
                                                      const bool createIfMissing = true ) const final;
 
       // Access the number of RICH hits in the given detector, in the current event, 
@@ -110,7 +110,7 @@ namespace Rich
       }
 
       /// Find the given HPD data from the given L1Map
-      const LHCb::RichSmartID::Vector& richSmartIDs( const LHCb::RichSmartID hpdID,
+      const LHCb::RichSmartID::Vector& richSmartIDs( const LHCb::RichSmartID pdID,
                                                      const Rich::DAQ::L1Map & data,
                                                      const bool createIfMissing ) const;
 

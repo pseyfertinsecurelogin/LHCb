@@ -9,8 +9,8 @@
  */
 //---------------------------------------------------------------------------------
 
-#ifndef RICHKERNEL_IRICHDETECTORTOOL_H
-#define RICHKERNEL_IRICHDETECTORTOOL_H 1
+#ifndef RICHINTERFACES_IRICHDETECTORTOOL_H
+#define RICHINTERFACES_IRICHDETECTORTOOL_H 1
 
 // from Gaudi
 #include "GaudiKernel/IAlgTool.h"
@@ -50,4 +50,4 @@ namespace Rich
 
 }
 
-#endif // RICHKERNEL_IRICHDETECTORTOOL_H
+#endif // RICHINTERFACES_IRICHDETECTORTOOL_H
