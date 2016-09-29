@@ -15,12 +15,12 @@
 #include "GaudiKernel/StatusCode.h"
 #include "GaudiKernel/SmartIF.h"
 #include "GaudiKernel/IAlgManager.h"
+#include "GaudiKernel/Property.h"
 // ============================================================================
 // forward decalrations
 // ============================================================================
 class IInterface      ;
 class IProperty  ;
-class Property   ;
 // ============================================================================
 namespace Gaudi
 {
