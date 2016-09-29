@@ -26,8 +26,12 @@ class IJobOptionsSvc;
 class DeRich;
 
 // Some defines for debug/verbose messages...
-#define _ri_debug if( msgLevel(MSG::DEBUG)   ) debug()
-#define _ri_verbo if( msgLevel(MSG::VERBOSE) ) verbose()
+#ifndef _ri_debug
+#define _ri_debug if ( msgLevel(MSG::DEBUG)   ) debug()
+#endif
+#ifndef _ri_verbo
+#define _ri_verbo if ( msgLevel(MSG::VERBOSE) ) verbose()
+#endif
 
 namespace Rich
 {
