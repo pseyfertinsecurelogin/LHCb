@@ -28,7 +28,7 @@ namespace Gaudi
   {
     // ========================================================================
     /// the actual type for the vector of properties
-    typedef std::vector<const Property*> Properties ;
+    typedef std::vector<const ::Property*> Properties ;
     /// the actual type for the vector of property names
     typedef std::vector<std::string>     Names      ;
     // ========================================================================
