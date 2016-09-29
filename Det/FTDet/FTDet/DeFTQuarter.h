@@ -1,0 +1,78 @@
+#ifndef FTDET_DEFTQUARTER_H
+#define FTDET_DEFTQUARTER_H 1
+
+// DetDesc
+#include "DetDesc/DetectorElement.h"
+
+// Kernel
+#include "Kernel/FTChannelID.h"
+
+// Local
+#include "FTDet/DeFTModule.h"
+
+/** @class DeFTQuarter DeFTQuarter.h "FTDet/DeFTQuarter.h"
+ *
+ *  This is the detector element class for a Fibre Tracker Quarter.
+ *
+ *  @author Jeroen van Tilburg
+ *  @date   2016-07-18
+ *
+ */
+
+static const CLID CLID_DeFTQuarter = 8603;
+
+class DeFTQuarter : public DetectorElement {
+
+public:
+  /** Some typedefs */
+  typedef std::vector<DeFTModule*> Modules;
+
+  /** Constructor */
+  DeFTQuarter( const std::string& name = "");
+
+  /** Retrieves reference to class identifier
+   * @return the class identifier for this class
+   */
+  const CLID& clID() const override;
+
+  /** Another reference to class identifier
+   * @return the class identifier for this class
+   */
+  static const CLID& classID() { return CLID_DeFTQuarter; };
+
+  /** Initialization method */
+  StatusCode initialize() override;
+
+  /** Const method to return the module for a given channel id
+   * @param  aChannel  an FT channel id
+   * @return pointer to detector element
+   */
+  const DeFTModule* findModule(const LHCb::FTChannelID aChannel) const;
+
+  /** Const method to return the module for a given XYZ point
+   * @param  aPoint the given point
+   * @return const pointer to detector element
+   */
+  const DeFTModule* findModule(const Gaudi::XYZPoint& aPoint) const;
+
+  /** Flat vector of all FT modules
+   * @return vector of modules
+   */
+  const Modules& modules() const;
+
+private:
+
+  Modules m_modules;             ///< vector of modules
+
+};  //end of class
+
+/// Find module methods
+inline const DeFTModule* DeFTQuarter::findModule(const LHCb::FTChannelID aChannel) const {
+  return aChannel.module() < m_modules.size() ? m_modules[aChannel.module()] : nullptr;
+}
+
+inline const DeFTQuarter::Modules& DeFTQuarter::modules() const {
+  return m_modules;
+}
+
+#endif  // FTDET_DEFTQUARTER_H
