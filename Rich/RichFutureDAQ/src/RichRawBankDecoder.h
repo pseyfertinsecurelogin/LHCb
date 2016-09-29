@@ -60,7 +60,7 @@ namespace Rich
                                             const LHCb::ODIN& ),
                           Traits::BaseClass_t<AlgBase> >
     {
-      
+
     public:
 
       /// Standard constructor
