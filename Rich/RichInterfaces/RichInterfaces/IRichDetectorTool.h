@@ -44,7 +44,8 @@ namespace Rich
      */
     static const InterfaceID& interfaceID() { return IID_IRichDetectorTool; }
 
-    virtual const std::vector<DeRich*>& deRichDetectors() const = 0;
+    /// Vector of pointers to the Rich Detectors
+    virtual std::vector<DeRich*> deRichDetectors() const = 0;
 
   };
 
