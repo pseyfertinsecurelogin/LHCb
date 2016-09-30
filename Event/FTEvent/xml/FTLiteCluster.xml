@@ -34,18 +34,16 @@
 
       <attribute type='bitfield' name='liteCluster' desc='Lite Cluster'             setMeth="FALSE" getMeth="FALSE">
         <bitfield name='channelID' length='20' desc='channelID'                     setMeth="FALSE" getMeth="FALSE"/>
-        <bitfield name='fraction'  length='2' desc='Interpolation as 1/8th'         setMeth="FALSE" getMeth="FALSE"/>
-        <bitfield name='size'      length='4' desc='number of cells in the cluster' setMeth="FALSE" getMeth="TRUE"/>
-        <bitfield name='charge'    length='6' desc='scaled ADC sum'                 setMeth="FALSE" getMeth="TRUE"/>
+        <bitfield name='fraction'  length='1' desc='Fractional position'            setMeth="FALSE" getMeth="FALSE"/>
+        <bitfield name='size'      length='1' desc='number of cells in the cluster' setMeth="FALSE" getMeth="TRUE"/>
       </attribute>
 
       <constructor desc    = "Constructor" 
-                   argList = 'LHCb::FTChannelID chan, int fractionInEighth, int size, int charge'>
+                   argList = 'LHCb::FTChannelID chan, int fraction, int size'>
         <code>
           m_liteCluster = (chan &lt;&lt; channelIDBits) +
-          (fractionInEighth &lt;&lt; fractionBits) +
-          (size &lt;&lt; sizeBits)+
-          (charge &lt;&lt; chargeBits);
+          (fraction &lt;&lt; fractionBits) +
+          (size &lt;&lt; sizeBits);
         </code>
       </constructor>
 
@@ -66,7 +64,7 @@
               access = "PUBLIC"
               desc   = "returns the fraction of channel"
               const  = "TRUE">
-        <code> return 0.25 * ( ( m_liteCluster &amp; fractionMask ) &gt;&gt; fractionBits ); </code>
+        <code> return 0.5 * ( ( m_liteCluster &amp; fractionMask ) &gt;&gt; fractionBits ); </code>
       </method>
 
     </class>

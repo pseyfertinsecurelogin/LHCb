@@ -1,5 +1,3 @@
-// $Id: $
-
 // FTDet
 #include "FTDet/DeFTLayer.h"
 
@@ -7,19 +5,18 @@
  *
  *  Implementation of class : DeFTLayer
  *
- *  @author Plamen Hopchev
- *  @author Eric Cogneras
- *  @date   2012-04-25
+ *  @author Jeroen van Tilburg
+ *  @date   2016-07-18
  */
 
 
 //=============================================================================
 // Standard constructor, initializes variables
 //=============================================================================
-DeFTLayer::DeFTLayer( std::string name ) :
-  DetectorElement ( std::move(name) )
+DeFTLayer::DeFTLayer( const std::string& name ) :
+DetectorElement ( std::move(name) )
 {
-  
+  m_quarters.reserve(4);
 }
 
 //=============================================================================
@@ -32,13 +29,18 @@ const CLID& DeFTLayer::clID () const {
 //=============================================================================
 // Initialization
 //=============================================================================
-StatusCode DeFTLayer::initialize(){
-
-  StatusCode sc = DetectorElement::initialize(); // must be executed first
-  if ( sc.isFailure() ) return sc;
-
-  MsgStream msg( msgSvc(), name());
-  if(msg.level() <= MSG::DEBUG) msg << MSG::DEBUG << "==> Initialize DeFTLayer" << endmsg;
-  
+StatusCode DeFTLayer::initialize() {
+  /// Loop over quarters and add to vector of quarters
+  for (auto iQ = this->childBegin(); iQ != this->childEnd(); ++iQ) {
+    DeFTQuarter* quarter = dynamic_cast<DeFTQuarter*>(*iQ);
+    if (quarter) m_quarters.push_back(quarter);
+  }
   return StatusCode::SUCCESS;
+}
+
+/// Find the quarter for a given XYZ point
+const DeFTQuarter* DeFTLayer::findQuarter(const Gaudi::XYZPoint& aPoint) const {
+  auto  iQ = std::find_if(m_quarters.begin(), m_quarters.end(),
+      [&aPoint](const DeFTQuarter* q){return q->isInside(aPoint); } );
+  return iQ != m_quarters.end() ? *iQ : nullptr ;
 }

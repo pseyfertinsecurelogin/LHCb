@@ -3,12 +3,11 @@
 #define DEFTTESTALG_H 1
 
 // Gaudi
-//#include "GaudiAlg/GaudiAlgorithm.h" 
 #include "GaudiAlg/GaudiTupleAlg.h" 
-#include "GaudiAlg/Tuples.h"  
 
 // FTDet
-class DeFTDetector;
+#include "FTDet/DeFTDetector.h"
+
 
 /** @class DeFTTestAlg DeFTTestAlg.h "FTDet/DeFTTestAlg.h"
  *   
@@ -19,7 +18,6 @@ class DeFTDetector;
  *  @date   2012-04-25
  */
 
-//class DeFTTestAlg : public GaudiAlgorithm { 
 class DeFTTestAlg : public GaudiTupleAlg { 
 
 public: 
