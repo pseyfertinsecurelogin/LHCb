@@ -13,7 +13,7 @@ LHCbApp().Simulation = True
 CondDB().Upgrade = True
 
 # use local xml files
-DDDBConf().DbRoot = "../DDDB/lhcb.xml"
+# DDDBConf().DbRoot = "../DDDB/lhcb.xml"
 
 appMgr = AppMgr(outputlevel=4)
 det = appMgr.detSvc()
