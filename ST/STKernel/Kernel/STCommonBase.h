@@ -120,7 +120,7 @@ namespace ST
    ::Property* declareSTConfigProperty(const std::string& name,
                                std::string& value,
                                const std::string& def,
-                               const std::string& doc="none") const{
+                               const std::string& doc="none") {
     // add to the property to the list of flippable after the normal property declaration
     return addToFlipList(this->declareProperty(name, value = def , doc));
    }
