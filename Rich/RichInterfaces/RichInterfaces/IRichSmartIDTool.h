@@ -158,7 +158,7 @@ namespace Rich
      *  @retval Vector size > 0 : Request was successful, RichSmartID vector is valid
      *  @retval Vector size = 0 : Request was UNsuccessful, RichSmartID vector is not valid
      */
-    virtual const LHCb::RichSmartID::Vector& readoutChannelList( ) const = 0;
+    virtual LHCb::RichSmartID::Vector readoutChannelList( ) const = 0;
 
     /** Converts a position in global coordinates to the local coordinate system
      *  of the appropriate PD panel
