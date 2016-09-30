@@ -1,4 +1,3 @@
-
 //-----------------------------------------------------------------------------
 /** @file STCommonBase.h
  *
@@ -118,7 +117,7 @@ namespace ST
 
 
    /** declarePropery the ST way **/
-   Property* declareSTConfigProperty(const std::string& name,
+   ::Property* declareSTConfigProperty(const std::string& name,
                                std::string& value,
                                const std::string& def,
                                const std::string& doc="none") const{
@@ -127,7 +126,7 @@ namespace ST
    }
 
    /** accessor to the list of things to be flipped */
-   const std::vector<Property*>& flipList() const;
+   const std::vector<::Property*>& flipList() const;
 
    /** safe finding of the sector - exception thrown if not valid */
    DeSTSector* findSector(const LHCb::STChannelID& aChannel) const;
@@ -137,7 +136,7 @@ namespace ST
 
   private:
    /** add to flipable list **/
-   Property* addToFlipList(Property* aProperty) const;
+   ::Property* addToFlipList(::Property* aProperty) const;
 
    void commonInit();
 
@@ -150,7 +149,7 @@ namespace ST
    std::string m_readoutToolName;
    std::string m_detType;
    bool m_forcedInit;
-   mutable std::vector<Property*> m_toBeFlipped;
+   mutable std::vector<::Property*> m_toBeFlipped;
 
   };
 }
