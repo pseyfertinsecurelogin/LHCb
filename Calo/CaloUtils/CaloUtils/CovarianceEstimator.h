@@ -193,8 +193,8 @@ public:
   /** set new resolution parameter
    *  @param A calorimeter resolution 
    */
-  inline void setStochastic ( const std::vector<double> A ){ 
-    m_A = A ;
+  inline void setStochastic ( std::vector<double> A ){ 
+    m_A = std::move(A) ;
   }
 
 

@@ -69,11 +69,6 @@ namespace LHCb{
     // ========================================================================
   private:
     // ========================================================================
-    /// the default constructor is disabled 
-    CaloParticle() ;                     // the default constructor is disabled 
-    // ========================================================================
-  private:
-    // ========================================================================
     LHCb::Particle::Vector      m_parts       ;
     LHCb::Vertex*               m_vert        = nullptr;
     bool                        m_isCalo      = true;

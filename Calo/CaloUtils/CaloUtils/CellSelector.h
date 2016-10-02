@@ -27,7 +27,7 @@ public:
     else return 1.;
   };
   
-protected:
+private:
   
   std::string m_selector;
   CellMatrix3x3 m_cell3x3 ;

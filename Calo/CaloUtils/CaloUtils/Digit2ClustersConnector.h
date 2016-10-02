@@ -78,7 +78,7 @@ public:
   inline       Map& map()       { return m_map ; } ;
   inline const Map& map() const { return m_map ; } ;
   
-protected:
+private:
   
   /**  Add cluster to the map 
    *   @param    clu  pointer to CaloCluster 
