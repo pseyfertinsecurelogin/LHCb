@@ -11,7 +11,7 @@
 #include "GaudiKernel/Vector3DTypes.h"
 
 // forward declarations
-class ICaloCosmicsTool;
+struct ICaloCosmicsTool;
 namespace LHCb {
   class Track;
 }
