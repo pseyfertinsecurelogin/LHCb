@@ -23,9 +23,9 @@ CaloDataProvider::CaloDataProvider( const std::string& type,
 
   // set default detectorName
   int index = name.find_last_of(".") +1 ; // return 0 if '.' not found --> OK !!
-  m_detectorName = name.substr( index, 4 );
-  if ( name.compare(index,3,"Prs") == 0 ) m_detectorName = "Prs";
-  else if ( name.compare(index,3,"Spd") == 0 ) m_detectorName = "Spd";
+  m_detectorName = ( name.compare(index,3,"Prs") == 0 ? "Prs"
+                   : name.compare(index,3,"Spd") == 0 ? "Spd"
+                   : name.substr( index,4 ) );
 }
 
 

@@ -150,7 +150,7 @@ const std::vector<LHCb::L0CaloAdc>& CaloTriggerAdcsFromRaw::adcs ( LHCb::RawBank
 bool CaloTriggerAdcsFromRaw::getData ( const LHCb::RawBank& bank ){
   if( LHCb::RawBank::MagicPattern != bank.magic() )return false;// do not decode when MagicPattern is bad
   const unsigned int* data = bank.begin<unsigned int>();
-  const unsigned int* end  = bank.end<unsigned int>();
+  const unsigned int* const end  = bank.end<unsigned int>();
   int version        = bank.version();
   int sourceID       = bank.sourceID();
   int lastData = 0;
