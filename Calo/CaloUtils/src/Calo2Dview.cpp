@@ -10,7 +10,26 @@
 #include "Kernel/CaloCellCode.h"
 // local
 #include "CaloUtils/Calo2Dview.h"
+namespace {
 
+  static const std::array<int,4> s_centreMap = {  32, 32, 32, 16 };
+  static const std::array<int,4> s_regMap   = { 6, 6, 6, 2 };
+  static const std::array<int,4> s_nChanMap = { 64, 64, 32, 32};
+  static const std::array<int,4> s_lCardMap = { 127, 127, 351, 415};
+  static const std::array<int,4> s_fCardMap = { 0, 0, 128, 352 };
+  static const std::array<std::vector<LHCb::CaloCellID>,4> s_refCellMap =
+    {  std::vector<LHCb::CaloCellID>{ {0, 0,  6, 0 }, // outer
+                                      {0, 1, 12, 0 }, // middle
+                                      {0, 2, 14, 8 } },  // inner
+       std::vector<LHCb::CaloCellID>{ {1, 0,  6, 0 }, // outer
+                                      {1, 1, 12, 0 }, //middle
+                                      {1, 2, 14, 8 } },  // inner
+       std::vector<LHCb::CaloCellID>{ {2, 0,  6 ,0 }, // outer
+                                      {2, 1, 12, 0 }, //middle
+                                      {2, 2, 14, 8 } }, // inner
+       std::vector<LHCb::CaloCellID>{ {3, 0,  3 ,0 },  // Outer corner cell
+                                      {3, 1,  2 ,0 } } }; // Middle corner cell
+}
 //-----------------------------------------------------------------------------
 // Implementation file for class : Calo2Dview
 //
@@ -76,52 +95,21 @@ StatusCode Calo2Dview::initialize() {
   // Hcal
   m_caloMap[3]=getDet<DeCalorimeter>( DeCalorimeterLocation::Hcal );
   // geometrical view
-  m_centreMap[3] = 16;
-  m_regMap[3]    = 2;
-  m_refCellMap[3].push_back(LHCb::CaloCellID(3, 0, 3 ,0)) ; // Outer corner cell
-  m_refCellMap[3].push_back(LHCb::CaloCellID(3, 1, 2 ,0)) ; // Middle corner cell
   // readout view
-  m_fCardMap[3] = 352;
-  m_lCardMap[3] = 415;
-  m_nChanMap[3] = 32;
   // Ecal
   m_caloMap[2]=getDet<DeCalorimeter>( DeCalorimeterLocation::Ecal );
-  m_centreMap[2] = 32;
-  m_regMap[2]    = 6;
-  m_refCellMap[2].push_back(LHCb::CaloCellID(2, 0, 6 ,0) ) ; // outer
-  m_refCellMap[2].push_back(LHCb::CaloCellID(2, 1, 12 ,0)) ; //middle
-  m_refCellMap[2].push_back(LHCb::CaloCellID(2, 2, 14  ,8)); // inner
-  m_fCardMap[2] = 128;
-  m_lCardMap[2] = 351;
-  m_nChanMap[2] = 32;
   // Prs
   m_caloMap[1]=getDetIfExists<DeCalorimeter>( DeCalorimeterLocation::Prs );
   if(NULL == m_caloMap[1])Warning("Prs Element does not exists !",StatusCode::SUCCESS).ignore();
-  m_centreMap[1] = 32;
-  m_regMap[1]    = 6;
-  m_refCellMap[1].push_back(LHCb::CaloCellID(1, 0, 6 ,0) ) ; // outer
-  m_refCellMap[1].push_back(LHCb::CaloCellID(1, 1, 12 ,0) ); //middle
-  m_refCellMap[1].push_back(LHCb::CaloCellID(1, 2, 14  ,8)); // inner
-  m_fCardMap[1] = 0;
-  m_lCardMap[1] = 127;
-  m_nChanMap[1] = 64;
   // Spd
   m_caloMap[0]=getDetIfExists<DeCalorimeter>( DeCalorimeterLocation::Spd );
   if(NULL == m_caloMap[0])Warning("Spd Element does not exists !",StatusCode::SUCCESS).ignore();
-  m_centreMap[0] = 32;
-  m_regMap[0]    = 6;
-  m_refCellMap[0].push_back(LHCb::CaloCellID(0, 0, 6 ,0)  ); // outer
-  m_refCellMap[0].push_back(LHCb::CaloCellID(0, 1, 12 ,0) ); // middle
-  m_refCellMap[0].push_back(LHCb::CaloCellID(0, 2, 14  ,8)); // inner
-  m_fCardMap[0] = 0;
-  m_lCardMap[0] = 127;
-  m_nChanMap[0] = 64;
 
   // store 
-  m_storeH1 = NULL;
-  m_storeH2 = NULL;
-  m_storeP1 = NULL;
-  m_storeP2 = NULL;
+  m_storeH1 = nullptr;
+  m_storeH2 = nullptr;
+  m_storeP1 = nullptr;
+  m_storeP2 = nullptr;
   m_storeLun = "";
   return StatusCode::SUCCESS;
 }
@@ -137,9 +125,9 @@ void Calo2Dview::getCaloParam(unsigned int calo){
     Warning("Cannot access calorimeter parameters ",StatusCode::SUCCESS).ignore();
     return;
   }
-  m_centre=m_centreMap[calo];
-  m_reg=m_regMap[calo];
-  m_refCell = m_refCellMap[calo];
+  m_centre=s_centreMap[calo];
+  m_reg=s_regMap[calo];
+  m_refCell = s_refCellMap[calo];
 
   int nArea = (6+m_reg)/4;
   m_xsize.clear();
@@ -149,9 +137,9 @@ void Calo2Dview::getCaloParam(unsigned int calo){
     m_ysize.push_back( m_xsize[i] )  ;// * m_calo->YtoXratio()
   }
   m_caloType = calo;
-  m_fCard = m_fCardMap[calo];
-  m_lCard = m_lCardMap[calo];
-  m_nChan = m_nChanMap[calo];
+  m_fCard = s_fCardMap[calo];
+  m_lCard = s_lCardMap[calo];
+  m_nChan = s_nChanMap[calo];
 }
 
   
@@ -250,8 +238,9 @@ void Calo2Dview::bookCalo2D(const HistoID& unit,const std::string title,  unsign
 }
 
 int Calo2Dview::centre(int x , int area){
-  int theArea = m_split ? area : 0;
-  return (x==0) ?   m_centre - m_refCell[theArea].col() : m_centre - m_refCell[theArea].row();
+  int theArea = ( m_split ? area : 0 );
+  return (x==0) ? m_centre - m_refCell[theArea].col()
+                : m_centre - m_refCell[theArea].row();
 }
 //--------------------------------------------------
 const GaudiHistoAlg::HistoID Calo2Dview::getUnit(const HistoID& unit, int calo, int area)const{
@@ -280,7 +269,7 @@ void Calo2Dview::resetTitle(const HistoID& unit , std::string title){
   int calo = (*it).second;
   int lArea = 1;
   if(m_split){
-    lArea = (6+m_regMap[calo])/4;
+    lArea = (6+s_regMap[calo])/4;
   }
   for(int i=0;i<lArea;++i){
     HistoID  lun = (HistoID) getUnit( unit, calo , i);
@@ -306,7 +295,7 @@ void Calo2Dview::reset(const HistoID& unit , std::string title){
   int calo = (*it).second;
   int lArea = 1;
   if(m_split){
-    lArea = (6+m_regMap[calo])/4;
+    lArea = (6+s_regMap[calo])/4;
   }
   for(int i=0;i<lArea;++i){
     HistoID lun = (HistoID) getUnit( unit, calo , i);
@@ -376,10 +365,10 @@ void  Calo2Dview::fillCalo2D(const HistoID& unit, const LHCb::CaloCellID& id , d
   if( lun != m_storeLun ){ // reset stored info when filling another histo 
     if( !histoExists( lun ) )bookCalo2D(unit, title, calo, area);
     m_storeLun = lun;
-    m_storeH1=NULL;
-    m_storeH2=NULL;
-    m_storeP1=NULL;
-    m_storeP2=NULL;
+    m_storeH1=nullptr;
+    m_storeH2=nullptr;
+    m_storeP1=nullptr;
+    m_storeP2=nullptr;
     if(m_1d && !m_profile)m_storeH1 = histo1D( lun );
     else if(m_1d && m_profile)m_storeP1 = profile1D( lun);
     else if(!m_1d && !m_profile)m_storeH2 = histo2D( lun );

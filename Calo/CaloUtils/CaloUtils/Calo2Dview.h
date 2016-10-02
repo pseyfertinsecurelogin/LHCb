@@ -32,7 +32,7 @@ public:
   /// Standard constructor
   Calo2Dview( const std::string& name, ISvcLocator* pSvcLocator );
 
-  virtual StatusCode initialize();    ///< Algorithm initialization
+  StatusCode initialize() override;    ///< Algorithm initialization
 
   void bookCalo2D(const HistoID& unit,const std::string title, std::string name ,int area =-1);
   void bookCalo2D(const HistoID& unit,const std::string title, unsigned  int calo , int area = -1);
@@ -93,14 +93,6 @@ private:
   std::string getTitle(std::string title, int calo, int area);
 
   std::map<int,DeCalorimeter*> m_caloMap;
-  std::map<int,std::vector<LHCb::CaloCellID> > m_refCellMap;
-  std::map<int,int> m_centreMap;
-  std::map<int,int> m_regMap;
-  std::map<int,int> m_nChanMap;
-  std::map<int,int> m_fCardMap;
-  std::map<int,int> m_lCardMap;
-  //
-  //
   std::map<HistoID,unsigned int> caloViewMap;
 
   // 
