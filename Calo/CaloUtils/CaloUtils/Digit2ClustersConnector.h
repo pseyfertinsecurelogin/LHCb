@@ -24,7 +24,7 @@
  *  @date   01/07/2001
  */
 
-class Digit2ClustersConnector
+class Digit2ClustersConnector final
 {
 public:  
   
@@ -45,8 +45,13 @@ public:
    *  @param   CutOff for "shared" digits 
    */
   Digit2ClustersConnector
-  ( Clusters*    Clus   = 0 , 
+  ( Clusters*    Clus   = nullptr , 
     const unsigned int CutOff = 0 );
+
+  /// no copy  constructor!
+  Digit2ClustersConnector( const Digit2ClustersConnector& )  = delete;
+  /// no assignment!
+  Digit2ClustersConnector& operator=( const Digit2ClustersConnector& ) = delete;
   
   /** Load data and build the inverse table 
    *  TYPE - is any type which behaves like iterator, pointing 
@@ -70,9 +75,6 @@ public:
 	  return sc;  
   }
   
-  /// destructor
-  virtual ~Digit2ClustersConnector( );
-
   inline       Map& map()       { return m_map ; } ;
   inline const Map& map() const { return m_map ; } ;
   
@@ -91,13 +93,6 @@ protected:
    *   @result   status code 
    */
   StatusCode  applyCutOff ( const unsigned int cut );
-  
-private:
-  
-  /// no copy  constructor!
-  Digit2ClustersConnector( const Digit2ClustersConnector& ) ;
-  /// no assignment!
-  Digit2ClustersConnector& operator=( const Digit2ClustersConnector& );
   
 private:
   

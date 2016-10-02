@@ -21,9 +21,7 @@ public:
                           const std::string& name,
                           const IInterface* parent);
 
-  virtual ~CaloTriggerBitsFromRaw( ); ///< Destructor
-
-  virtual StatusCode initialize();
+  StatusCode initialize() override;
 
   const LHCb::Calo::FiredCells& prsCells( ); // get prs FiredCells
   const LHCb::Calo::FiredCells& spdCells( ); // get spd FiredCells
@@ -33,9 +31,9 @@ public:
   void clear();
   void cleanData(int feb);
   
-protected:
-  bool getData( LHCb::RawBank* bank );
 private:
+  bool getData( LHCb::RawBank* bank );
+
   LHCb::Calo::PrsSpdFiredCells m_data;  
 };
 #endif // CALOTRIGGERBITSFROMRAW_H

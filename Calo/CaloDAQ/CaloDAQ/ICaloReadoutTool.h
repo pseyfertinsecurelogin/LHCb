@@ -11,7 +11,6 @@
 #include "Event/RawBankReadoutStatus.h"
 #include "CaloDet/DeCalorimeter.h"
 
-static const InterfaceID IID_ICaloReadoutTool ( "ICaloReadoutTool", 4, 0 );
 
 /** @class ICaloReadoutTool ICaloReadoutTool.h CaloDAQ/ICaloReadoutTool.h
  *  
@@ -19,11 +18,9 @@ static const InterfaceID IID_ICaloReadoutTool ( "ICaloReadoutTool", 4, 0 );
  *  @author Olivier Deschamps
  *  @date   2007-07-30
  */
-class ICaloReadoutTool : virtual public IAlgTool {
-public: 
+struct ICaloReadoutTool : virtual IAlgTool {
 
-  // Return the interface ID
-  static const InterfaceID& interfaceID() { return IID_ICaloReadoutTool; }
+  DeclareInterfaceID( ICaloReadoutTool, 5, 0 );
 
   virtual std::string _rootInTES()=0;
   virtual StatusCode  _setProperty(const std::string& p,const std::string& v)=0;
@@ -35,13 +32,6 @@ public:
   virtual void putStatusOnTES()=0;
   virtual bool ok()=0;
   virtual DeCalorimeter* deCalo()=0;
-
-  /// virtual destructor
-  virtual ~ICaloReadoutTool() {}
-  
-protected:
-
-private:
 
 };
 #endif // CALODAQ_ICALOREADOUTTOOL_H

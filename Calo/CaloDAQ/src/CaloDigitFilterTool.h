@@ -23,16 +23,15 @@ class StatusCode;
  *  @author Olivier Deschamps
  *  @date   2010-12-13
  */
-class CaloDigitFilterTool : public GaudiTool, virtual public ICaloDigitFilterTool, virtual public IIncidentListener {
+class CaloDigitFilterTool final : public extends<GaudiTool, ICaloDigitFilterTool, IIncidentListener>{
 public: 
   /// Standard constructor
   CaloDigitFilterTool( const std::string& type,  
                        const std::string& name,
                        const IInterface* parent);
 
-  virtual ~CaloDigitFilterTool( ); ///< Destructor
-  virtual StatusCode initialize();    ///< Algorithm initialization
-  virtual StatusCode finalize  ();    ///< Algorithm finalization
+  StatusCode initialize() override;    ///< Algorithm initialization
+  StatusCode finalize  () override;    ///< Algorithm finalization
 
   //
   bool setDet(const std::string& det);
@@ -50,15 +49,15 @@ public:
   unsigned int nSpd();
   double offset(LHCb::CaloCellID id,bool spd=false);    
   double offsetRMS(LHCb::CaloCellID id,bool spd=false);
-  virtual void handle(const Incident& /* inc */ ) { 
-    if( UNLIKELY( msgLevel(MSG::DEBUG) ) ) 
-      debug() << "IIncident Svc reset" << endmsg;
-    m_reset = true ;  
-  } 
   /// Triggered by calo updates
   StatusCode caloUpdate();
 
 private:
+  void handle(const Incident& /* inc */ ) override {
+    if( UNLIKELY( msgLevel(MSG::DEBUG) ) ) 
+      debug() << "IIncident Svc reset" << endmsg;
+    m_reset = true ;  
+  } 
 
   using Offsets = std::map<LHCb::CaloCellID,double>;
   inline const Offsets & offsets()       const noexcept { return *m_offsets; }

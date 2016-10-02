@@ -20,8 +20,7 @@ DECLARE_ALGORITHM_FACTORY( CaloTriggerBitsFromRawAlg )
 //=============================================================================
 CaloTriggerBitsFromRawAlg::CaloTriggerBitsFromRawAlg( const std::string& name,
                                                       ISvcLocator* pSvcLocator)
-  : GaudiAlgorithm ( name , pSvcLocator )
-  , m_l0BitTool(NULL)
+: GaudiAlgorithm ( name , pSvcLocator )
 {
   declareProperty("OutputData"  , m_outputData  );  
   declareProperty( "Extension"  ,  m_extension = "" );
@@ -30,20 +29,14 @@ CaloTriggerBitsFromRawAlg::CaloTriggerBitsFromRawAlg( const std::string& name,
 
   m_toolType  = "CaloTriggerBitsFromRaw";
   m_toolName = name + "Tool";
-  m_isPrs = false;
-  if ( "Prs" == name.substr( 0 , 3 ) ) {
+  if ( name.compare( 0 , 3, "Prs" ) == 0 ) {
     m_outputData = LHCb::L0PrsSpdHitLocation::Prs + m_extension;
     m_isPrs = true;
-  } else if ( "Spd" == name.substr( 0 , 3 ) ) {
+  } else if ( name.compare( 0 , 3, "Spd" ) == 0 ) {
     m_outputData = LHCb::L0PrsSpdHitLocation::Spd + m_extension;
   }
 
 }
-//=============================================================================
-// Destructor
-//==============h===============================================================
-CaloTriggerBitsFromRawAlg::~CaloTriggerBitsFromRawAlg() {} 
-
 //=============================================================================
 // Initialization
 //=============================================================================
@@ -72,10 +65,9 @@ StatusCode CaloTriggerBitsFromRawAlg::execute() {
                                              : m_l0BitTool->spdCells() );
 
   for( const auto& iCell : l0Cells ) {
-    auto l0Bit = std::make_unique<LHCb::L0PrsSpdHit>( iCell );
-
     // protect against SEU
     try{
+      auto l0Bit = std::make_unique<LHCb::L0PrsSpdHit>( iCell );
       newL0Bits->insert( l0Bit.get() ) ;
       l0Bit.release();
     }catch(GaudiException &exc) { 
@@ -90,8 +82,8 @@ StatusCode CaloTriggerBitsFromRawAlg::execute() {
     }
   }
   
-  if(m_statusOnTES)m_l0BitTool->putStatusOnTES();
-  if( UNLIKELY( msgLevel(MSG::DEBUG) ) ) 
+  if (m_statusOnTES) m_l0BitTool->putStatusOnTES();
+  if (UNLIKELY( msgLevel(MSG::DEBUG) ) ) 
     debug() << " L0PrsSpdHits container size " << newL0Bits->size() << endmsg;
   return StatusCode::SUCCESS;
 }

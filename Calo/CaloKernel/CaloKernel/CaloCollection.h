@@ -46,10 +46,9 @@ template
 <
   class CONTENT                          ,  ///< type of content 
   class RETTYPE   = CONTENT              ,  ///< return type     
-  class CONTAINER = std::vector<CONTENT> ,  ///< container type  
-  class FUNCTOR   = std::unary_function<const LHCb::CaloCellID&,RETTYPE&>  ///< functor
+  class CONTAINER = std::vector<CONTENT>    ///< container type  
 >
-class CaloCollection :  public CONTAINER ,  public FUNCTOR 
+class CaloCollection final :  public CONTAINER 
 {
   //
   public: 
@@ -74,8 +73,6 @@ public:
     , m_cc_def              ( def            )
     , m_cc_messageService   ( messageService ) 
   { };
-  /// (virtual) destructor 
-  virtual ~CaloCollection() { CONTAINER::clear(); };
   //
   public: 
   
@@ -129,7 +126,7 @@ public:
   inline  StatusCode addEntry ( const Content& content , Index id ) 
   {
     size_type indx = id.index(); 
-    while ( CONTAINER::size() <= indx ) { CONTAINER::push_back( def() ); }
+    if ( CONTAINER::size() <= indx ) CONTAINER::resize( indx+1, def() );
     *(CONTAINER::begin()+indx) = content; 
     return StatusCode::SUCCESS;
   };
@@ -168,8 +165,3 @@ operator <<( std::ostream& os , const CaloCollection<T1,T2,T3,T4>* cc )
 // ============================================================================
 #endif  //  CALOKERNEL_CALOCOLLECTION_H
 // ============================================================================
-
-
-
-
-

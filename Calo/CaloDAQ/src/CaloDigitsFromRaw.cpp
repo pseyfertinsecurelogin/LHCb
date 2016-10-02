@@ -6,6 +6,16 @@
 // local
 #include "CaloDigitsFromRaw.h"
 
+namespace {
+
+  static const auto IncreasingByCellID =
+      []( const LHCb::CaloDigit* dig1 , 
+          const LHCb::CaloDigit* dig2 ) {
+      return  !dig1 || ( dig2 && ( dig1->cellID().all() < dig2->cellID().all() ));
+  };
+
+}
+
 //-----------------------------------------------------------------------------
 // Implementation file for class : CaloDigitsFromRaw
 //
@@ -20,7 +30,6 @@ DECLARE_ALGORITHM_FACTORY( CaloDigitsFromRaw )
 CaloDigitsFromRaw::CaloDigitsFromRaw( const std::string& name,
                                       ISvcLocator* pSvcLocator)
   : GaudiAlgorithm ( name , pSvcLocator )
-  , m_spdTool(0), m_energyTool(0), m_calo(0)
 {
   m_detectorNum = CaloCellCode::CaloNumFromName( name ) ;
   if ( m_detectorNum < 0 || m_detectorNum >= (int) CaloCellCode::CaloNums )
@@ -32,11 +41,6 @@ CaloDigitsFromRaw::CaloDigitsFromRaw( const std::string& name,
   declareProperty( "DigitsContainer"         ,  m_outputDigits );
   declareProperty( "AdcsContainer"           ,  m_outputADCs);
   declareProperty( "StatusOnTES"             ,  m_statusOnTES = true);
-
-
-  m_digitOnTES =false  ;
-  m_adcOnTES =false  ;
-
 
   if( 2 == m_detectorNum ) {
     m_outputDigits     = LHCb::CaloDigitLocation::Ecal  ;
@@ -60,12 +64,6 @@ CaloDigitsFromRaw::CaloDigitsFromRaw( const std::string& name,
   }
 
 }
-
-//=============================================================================
-// Destructor
-//=============================================================================
-CaloDigitsFromRaw::~CaloDigitsFromRaw() {}
-
 
 //=========================================================================
 //  Initialization
@@ -168,7 +166,7 @@ void CaloDigitsFromRaw::convertSpd ( double energyScale ) {
       }
     }
     std::stable_sort ( digits->begin(), digits->end(),
-                       CaloDigitsFromRaw::IncreasingByCellID() );
+                       IncreasingByCellID );
     if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
       debug() << m_outputDigits + m_extension << " CaloDigit container size " << digits->size() << endmsg;
   }
@@ -231,7 +229,7 @@ void CaloDigitsFromRaw::convertCaloEnergies ( ) {
         verbose() << "ID " << itD.cellID() << " energy " << itD.e() << endmsg;
     }
     std::stable_sort ( digits->begin(), digits->end(),
-                       CaloDigitsFromRaw::IncreasingByCellID() );
+                       IncreasingByCellID );
     if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
       debug() << m_outputDigits+ m_extension << " CaloDigit container size " << digits->size() << endmsg;
     if(m_statusOnTES)m_energyTool->putStatusOnTES();

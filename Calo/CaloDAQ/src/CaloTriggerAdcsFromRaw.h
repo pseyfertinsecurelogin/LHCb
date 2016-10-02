@@ -13,16 +13,15 @@
  *  @author Olivier Callot
  *  @date   2005-01-05
  */
-class CaloTriggerAdcsFromRaw : public CaloReadoutTool, virtual public ICaloTriggerAdcsFromRaw {
+class CaloTriggerAdcsFromRaw final 
+: public extends<CaloReadoutTool, ICaloTriggerAdcsFromRaw> {
 public: 
   /// Standard constructor
   CaloTriggerAdcsFromRaw( const std::string& type, 
                       const std::string& name,
                       const IInterface* parent);
 
-  virtual ~CaloTriggerAdcsFromRaw( ); ///< Destructor
-
-  virtual StatusCode initialize();
+  StatusCode initialize() override;
 
 
   const std::vector<LHCb::L0CaloAdc>& adcs( );
@@ -33,7 +32,7 @@ public:
   void cleanData(int feb);
 
 protected:
-  bool getData ( LHCb::RawBank* bank );
+  bool getData ( const LHCb::RawBank& bank );
 private:
   std::vector<LHCb::L0CaloAdc> m_data;
   std::vector<LHCb::L0CaloAdc> m_pinData;

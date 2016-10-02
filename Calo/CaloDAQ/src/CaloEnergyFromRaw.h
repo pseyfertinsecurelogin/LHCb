@@ -13,16 +13,14 @@
  *  @author Olivier Callot
  *  @date   2005-01-10
  */
-class CaloEnergyFromRaw : public CaloReadoutTool , public virtual ICaloEnergyFromRaw {
+class CaloEnergyFromRaw : public extends<CaloReadoutTool, ICaloEnergyFromRaw>  {
 public: 
   /// Standard constructor
   CaloEnergyFromRaw( const std::string& type, 
                      const std::string& name,
                      const IInterface* parent);
 
-  virtual ~CaloEnergyFromRaw( ); ///< Destructor
-
-  virtual StatusCode initialize();
+  StatusCode initialize() override;
 
   const std::vector<LHCb::CaloAdc>& adcs( );// decode all banks
   const std::vector<LHCb::CaloAdc>& adcs( LHCb::RawBank* bank ); // decode a single bank
@@ -36,11 +34,10 @@ public:
   void cleanData(int feb);
   
   
-protected:
-  bool getData ( LHCb::RawBank* bank );
+private:
+  bool getData ( const LHCb::RawBank& bank );
   bool getDigits ();
 
-private:
   std::vector<LHCb::CaloAdc>    m_pinData;
   std::vector<LHCb::CaloAdc>    m_data;
   std::vector<LHCb::CaloDigit>  m_digits;

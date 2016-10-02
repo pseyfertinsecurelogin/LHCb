@@ -22,12 +22,12 @@ DECLARE_ALGORITHM_FACTORY( CaloAdcFromRaw )
 //=============================================================================
 CaloAdcFromRaw::CaloAdcFromRaw( const std::string& name,
                                 ISvcLocator* pSvcLocator)
-  : GaudiAlgorithm ( name , pSvcLocator ), m_calo(0), m_data(0), m_l0data(0)
+  : GaudiAlgorithm ( name , pSvcLocator )
 {
-  declareProperty("AdcLocation"        , m_location = "");
-  declareProperty("L0AdcLocation"      , m_l0Location = "");
-  declareProperty("L0BitLocation"      , m_l0BitLocation = "");
-  declareProperty("DeCalibration"      , m_calib = false); // Expert usage
+  declareProperty("AdcLocation"        , m_location );
+  declareProperty("L0AdcLocation"      , m_l0Location );
+  declareProperty("L0BitLocation"      , m_l0BitLocation );
+  declareProperty("DeCalibration"      , m_calib ); // Expert usage
 
   // set default detectorName
   int index = name.find_last_of(".") +1 ; // return 0 if '.' not found --> OK !!
@@ -66,15 +66,7 @@ CaloAdcFromRaw::CaloAdcFromRaw( const std::string& name,
    m_caloName = "";
    m_offset = 0;
  }
- 
-
-
 }
-//=============================================================================
-// Destructor
-//=============================================================================
-CaloAdcFromRaw::~CaloAdcFromRaw() {} 
-
 //=============================================================================
 // Initialization
 //=============================================================================
@@ -109,7 +101,7 @@ StatusCode CaloAdcFromRaw::execute() {
 
     if( UNLIKELY( msgLevel(MSG::DEBUG) ) ) 
       debug() << " #ADCS " << adcs.size() << endmsg;
-    for(CaloVector<LHCb::CaloAdc>::const_iterator iadc = adcs.begin();adcs.end()!=iadc;++iadc){
+    for(auto iadc = adcs.begin();adcs.end()!=iadc;++iadc){
       LHCb::CaloAdc adc = *iadc;
       LHCb::CaloCellID id = adc.cellID();
       int value = adc.adc();
@@ -124,11 +116,11 @@ StatusCode CaloAdcFromRaw::execute() {
       int satur = max - m_offset;
       if( value > satur      )value = satur;
       if( value < -m_offset  )value = -m_offset;
-      auto out = std::make_unique<LHCb::CaloAdc>( id, value);
-      if( UNLIKELY( msgLevel(MSG::DEBUG) ) ) 
-        debug() << "Inserting : " << id << " adc = " << value << "  =  " << adc.adc() << " / " << calib 
-                << "  (dead channel ? " << m_calo->isDead( id ) << ")" << endmsg;
       try{
+        auto out = std::make_unique<LHCb::CaloAdc>( id, value);
+        if( UNLIKELY( msgLevel(MSG::DEBUG) ) ) 
+          debug() << "Inserting : " << id << " adc = " << value << "  =  " << adc.adc() << " / " << calib 
+                  << "  (dead channel ? " << m_calo->isDead( id ) << ")" << endmsg;
         outs->insert(out.get());
         out.release();
       }
@@ -163,12 +155,12 @@ StatusCode CaloAdcFromRaw::execute() {
       int satur = 255; // 8 bit L0ADC
       if( value > satur)value = satur;
       if( value < 0  )value = 0;
-      auto out = std::make_unique<LHCb::L0CaloAdc>( id, value);
       if( UNLIKELY( msgLevel(MSG::DEBUG) ) ) 
         debug() << "Inserting : " << id << " l0adc = " << value << "  =  " << adc.adc() << " / " << calib 
                 << "  (dead channel ? " << m_calo->isDead( id ) << ")" << endmsg;
 
       try{
+        auto out = std::make_unique<LHCb::L0CaloAdc>( id, value);
         outs->insert(out.get());
         out.release();
       }
@@ -198,12 +190,12 @@ StatusCode CaloAdcFromRaw::execute() {
       if(value > satur)value = satur;
       if(value < 0)value = 0;
       if( 1 == value){
-        auto out = std::make_unique<LHCb::L0PrsSpdHit>( id );
         if( UNLIKELY( msgLevel(MSG::DEBUG) ) ) 
           debug() << "Inserting : " << id << " bit = " << value 
                   << "  (dead channel ? " << m_calo->isDead( id ) << ")" << endmsg;
 
         try{
+          auto out = std::make_unique<LHCb::L0PrsSpdHit>( id );
           outs->insert(out.get());
           out.release();
         }

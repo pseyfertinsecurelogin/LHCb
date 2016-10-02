@@ -15,10 +15,8 @@
  *  @author Olivier Deschamps
  *  @date   2008-08-22
  */
-class CaloDataProviderFromTES 
-  : public GaudiTool
-    , virtual public ICaloDataProvider 
-    , virtual public IIncidentListener{
+class CaloDataProviderFromTES : public extends< GaudiTool, ICaloDataProvider, IIncidentListener>
+{
 
 public: 
   /// Standard constructor
@@ -26,13 +24,12 @@ public:
                    const std::string& name,
                    const IInterface* parent);
 
-  virtual ~CaloDataProviderFromTES( ); ///< Destructor
 
-  virtual StatusCode initialize();
-  virtual StatusCode finalize();
+  StatusCode initialize() override;
+  StatusCode finalize() override;
   // =========================================================================
   /// Inform that a new incident has occurred
-  virtual void handle(const Incident& /* inc */ ) { 
+  virtual void handle(const Incident& /* inc */ ) override { 
     m_getRaw = true;
   }
   // =========================================================================
@@ -92,7 +89,7 @@ private:
 
   CaloVector<LHCb::CaloAdc>    m_adcs;
   CaloVector<LHCb::CaloDigit> m_digits;
-  DeCalorimeter*   m_calo;
+  DeCalorimeter*   m_calo = nullptr;
   //
   std::string  m_detectorName;
   std::string m_raw;
@@ -101,14 +98,14 @@ private:
   std::string m_digLoc;
   std::string m_loc;
   std::vector<int> m_readSources;  
-  LHCb::CaloDigits* m_digCont;
-  LHCb::CaloAdcs* m_adcCont;
-  bool m_ok;
+  LHCb::CaloDigits* m_digCont = nullptr;
+  LHCb::CaloAdcs* m_adcCont = nullptr;
+  bool m_ok = false;
   LHCb::CaloAdc m_minADC;
   LHCb::CaloAdc m_minPinADC;
   LHCb::CaloAdc m_maxADC;
   LHCb::CaloAdc m_maxPinADC;
-  bool m_getRaw;
+  bool m_getRaw = false;
   LHCb::RawBankReadoutStatus m_status;
 };
 #endif // CALODATAPROVIDERFROMTES_H

@@ -30,19 +30,15 @@ CaloTriggerAdcsFromRawAlg::CaloTriggerAdcsFromRawAlg( const std::string& name,
 
   m_toolType = "CaloTriggerAdcsFromRaw";  
   m_toolName  = name + "Tool";  
-  if ( "Ecal" == name.substr( 0 , 4 ) ) {
+  if ( name.compare( 0 , 4,  "Ecal" ) == 0 ) {
     m_outputData   = LHCb::L0CaloAdcLocation::Ecal    + m_extension;    
     m_pinContainer = LHCb::L0CaloAdcLocation::EcalPin + m_extension; 
-  } else if ( "Hcal" == name.substr( 0 , 4 ) ) {
+  } else if ( name.compare( 0 , 4, "Hcal")  == 0 ) {
     m_outputData   = LHCb::L0CaloAdcLocation::Hcal    + m_extension;
     m_pinContainer = LHCb::L0CaloAdcLocation::HcalPin + m_extension; 
   }
 
 }
-//=============================================================================
-// Destructor
-//==============h===============================================================
-CaloTriggerAdcsFromRawAlg::~CaloTriggerAdcsFromRawAlg() {} 
 
 //=============================================================================
 // Initialization
@@ -76,8 +72,7 @@ StatusCode CaloTriggerAdcsFromRawAlg::execute() {
       auto adc = std::make_unique<LHCb::L0CaloAdc>( il0Adc.cellID(), il0Adc.adc() );    
       newL0Adcs->insert( adc.get() ) ;
       adc.release();
-    }
-    catch(GaudiException &exc) { 
+    } catch(GaudiException &exc) { 
       counter("Duplicate L0ADC") += 1;
       std::ostringstream os;
       os << "Duplicate l0ADC for channel " << il0Adc.cellID() << std::endl;
@@ -103,8 +98,7 @@ StatusCode CaloTriggerAdcsFromRawAlg::execute() {
       auto pinAdc = std::make_unique<LHCb::L0CaloAdc>( il0PinAdc.cellID(), il0PinAdc.adc() );
       newL0PinAdcs->insert( pinAdc.get() ) ;
       pinAdc.release();
-    }
-    catch(GaudiException &exc) { 
+    } catch(GaudiException &exc) { 
       counter("Duplicate PIN L0ADC") += 1;
       std::ostringstream os("");
       os << "Duplicate PIN l0ADC for channel " << il0PinAdc.cellID() << std::endl;

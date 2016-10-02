@@ -20,16 +20,8 @@ DECLARE_ALGORITHM_FACTORY( CaloFillRawBuffer )
 CaloFillRawBuffer::CaloFillRawBuffer( const std::string& name,
                                       ISvcLocator* pSvcLocator)
   : GaudiAlgorithm ( name , pSvcLocator )
-  , m_bankType(LHCb::RawBank::LastType)
-  , m_triggerBankType(LHCb::RawBank::LastType)
-  , m_numberOfBanks(0)
-  , m_calo(NULL)
-  , m_totDataSize(0)
-  , m_totTrigSize(0)
-  , m_nbEvents(0)
 {
   //=== Default values according to the name of the algorithm !
-  m_detectorName = "None";  
   if ( "Ecal" == name.substr( 0, 4 ) ) {
     m_detectorName     = "Ecal";
     m_detectorLocation = DeCalorimeterLocation::Ecal;
@@ -52,10 +44,6 @@ CaloFillRawBuffer::CaloFillRawBuffer( const std::string& name,
   declareProperty( "InputBank",        m_inputBank          );
   declareProperty( "FillWithPin",        m_pin   =false     );
 }
-//=============================================================================
-// Destructor
-//=============================================================================
-CaloFillRawBuffer::~CaloFillRawBuffer() {}
 
 //=============================================================================
 // Initialization

@@ -17,30 +17,23 @@ DECLARE_TOOL_FACTORY( CaloDataProvider )
 CaloDataProvider::CaloDataProvider( const std::string& type,
                                       const std::string& name,
                                       const IInterface* parent )
-  : CaloReadoutTool ( type, name , parent )
-    ,m_adcs()
-    ,m_digits()
-    ,m_tell1s(0)
+  : base_class ( type, name , parent )
 {
   declareInterface<ICaloDataProvider>(this);
 
   // set default detectorName
   int index = name.find_last_of(".") +1 ; // return 0 if '.' not found --> OK !!
   m_detectorName = name.substr( index, 4 );
-  if ( name.substr(index,3) == "Prs" ) m_detectorName = "Prs";
-  if ( name.substr(index,3) == "Spd" ) m_detectorName = "Spd";
+  if ( name.compare(index,3,"Prs") == 0 ) m_detectorName = "Prs";
+  else if ( name.compare(index,3,"Spd") == 0 ) m_detectorName = "Spd";
 }
-//=============================================================================
-// Destructor
-//=============================================================================
-CaloDataProvider::~CaloDataProvider() {}
 
 
 //=========================================================================
 //  Initialisation, according to the name -> detector
 //=========================================================================
 StatusCode CaloDataProvider::initialize ( ) {
-  StatusCode sc = CaloReadoutTool::initialize(); // must be executed first
+  StatusCode sc = base_class::initialize(); // must be executed first
   if ( sc.isFailure() ) return sc;  // error printed already by GaudiAlgorithm
   if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
     debug() << "==> Initialize " << name() << endmsg;
@@ -102,24 +95,20 @@ void CaloDataProvider::clear( ) {
 //-------------------------------------
 void CaloDataProvider::cleanData(int feb ) {
   if(feb<0)return;
+
   CaloVector<LHCb::CaloAdc> temp;
-  CaloVector<LHCb::CaloDigit> tempD;
-  for(CaloVector<LHCb::CaloAdc>::iterator iadc = m_adcs.begin();iadc!=m_adcs.end();++iadc){
+  for(auto iadc = m_adcs.begin();iadc!=m_adcs.end();++iadc){
     if( m_calo->cellParam( (*iadc).cellID() ).cardNumber() == feb)continue;
     temp.addEntry( *iadc, (*iadc).cellID() );
   }
-  for(CaloVector<LHCb::CaloDigit>::iterator idig = m_digits.begin();idig!=m_digits.end();++idig){
+  m_adcs = std::move(temp);
+
+  CaloVector<LHCb::CaloDigit> tempD;
+  for(auto idig = m_digits.begin();idig!=m_digits.end();++idig){
     if( m_calo->cellParam( (*idig).cellID() ).cardNumber() == feb)continue;
     tempD.addEntry( *idig, (*idig).cellID() );
   }
-  m_adcs.clear();
-  m_digits.clear();
-  for(CaloVector<LHCb::CaloAdc>::iterator iadc = temp.begin();iadc!=temp.end();++iadc){
-    m_adcs.addEntry(*iadc, (*iadc).cellID() );
-  }
-  for(CaloVector<LHCb::CaloDigit>::iterator idig = tempD.begin();idig!=tempD.end();++idig){
-    m_digits.addEntry(*idig, (*idig).cellID() );
-  }
+  m_digits = std::move(tempD);
 }
 
 //===================
