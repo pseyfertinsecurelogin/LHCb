@@ -1792,6 +1792,113 @@ Gaudi::Math::BernsteinDualBasis::BernsteinDualBasis
   , m_k         (             right.m_k           ) 
   , m_bernstein ( std::move ( right.m_bernstein ) ) 
 {}
+
+// ============================================================================
+// EVEN 
+// ============================================================================
+/*  constructor
+ *  the actual degree of polynomial will be 2*N
+ *  @param N  parameter that defiend the order of polynomial (2*N)
+ *  @param xmin low edge 
+ *  @param xmax high edge 
+ */
+// ============================================================================
+Gaudi::Math::BernsteinEven::BernsteinEven 
+( const unsigned short N    , 
+  const double         xmin ,
+  const double         xmax ) 
+  : std::unary_function<double,double> ()
+  , m_N         (   N                   )   
+  , m_bernstein ( 2*N + 1 , xmin , xmax )
+{}
+// ============================================================================
+/*  constructor from list of coefficients 
+ *  @param xmin low edge 
+ *  @param xmax high edge 
+ */
+// ============================================================================
+Gaudi::Math::BernsteinEven::BernsteinEven 
+( const std::vector<double>& pars , 
+  const double               xmin ,
+  const double               xmax ) 
+  : std::unary_function<double,double> ()
+  , m_N         (   pars.size()                   )   
+  , m_bernstein ( 2*pars.size() + 1 , xmin , xmax )
+{
+  for ( unsigned short i = 0 ; i < pars.size() ; ++i ) { setPar ( i , pars[i] ) ; }
+}
+// ============================================================================
+/* set k-parameter
+ *  @param k index
+ *  @param value new value 
+ *  @return true if parameter is actually changed 
+ */
+// ============================================================================
+bool Gaudi::Math::BernsteinEven::setPar
+( const unsigned short k , const double value ) 
+{
+  if ( npars() <= k ) { return false ; }
+  const bool b1 = m_bernstein.setPar (             k , value ) ;
+  const bool b2 = m_bernstein.setPar ( 2*m_N + 1 - k , value ) ;
+  return b1 || b2 ;
+}
+// ============================================================================
+// get all parameters (by value!!! COPY!!)
+// ============================================================================
+std::vector<double>
+Gaudi::Math::BernsteinEven::pars () const 
+{
+  return std::vector<double>( m_bernstein.pars().begin()           , 
+                              m_bernstein.pars().begin() + m_N + 1 ) ;                            
+}
+// ============================================================================
+//  Sum of Bernstein polynomial and a constant 
+// ============================================================================
+Gaudi::Math::BernsteinEven
+Gaudi::Math::BernsteinEven::__add__   ( const double value ) const 
+{ BernsteinEven tmp(*this) ; tmp += value ; return tmp ; }
+// ============================================================================
+//  Sum of Bernstein polynomial and a constant 
+// ============================================================================
+Gaudi::Math::BernsteinEven
+Gaudi::Math::BernsteinEven::__radd__  ( const double value ) const 
+{ BernsteinEven tmp(*this) ; tmp += value ; return tmp ; }
+// ============================================================================
+//  Product of Bernstein polynomial and a constant 
+// ============================================================================
+Gaudi::Math::BernsteinEven
+Gaudi::Math::BernsteinEven::__mul__   ( const double value ) const 
+{ BernsteinEven tmp(*this) ; tmp *= value ; return tmp ; }
+// ============================================================================
+//  Product of Bernstein polynomial and a constant 
+// ============================================================================
+Gaudi::Math::BernsteinEven
+Gaudi::Math::BernsteinEven::__rmul__  ( const double value ) const 
+{ BernsteinEven tmp(*this) ; tmp *= value ; return tmp ; }
+// ============================================================================
+//  Subtract a constant from Bernstein polynomial
+// ============================================================================
+Gaudi::Math::BernsteinEven
+Gaudi::Math::BernsteinEven::__sub__   ( const double value ) const 
+{ BernsteinEven tmp(*this) ; tmp -= value ; return tmp ; }
+// ============================================================================
+//  Subtract (right) a constant and Bernstein polynomial
+// ============================================================================
+Gaudi::Math::BernsteinEven
+Gaudi::Math::BernsteinEven::__rsub__  ( const double value ) const 
+{ BernsteinEven tmp(*this) ; tmp *= -1 ; tmp += value ; return tmp ; }
+// ============================================================================
+//  Division of Bernstein polynomial and constant 
+// ============================================================================
+Gaudi::Math::BernsteinEven
+Gaudi::Math::BernsteinEven::__div__   ( const double value ) const 
+{ BernsteinEven tmp(*this) ; tmp /= value ; return tmp ; }
+// ============================================================================
+
+
+    
+
+
 // ============================================================================
 // POSITIVE 
 // ============================================================================
@@ -1989,6 +2096,151 @@ double Gaudi::Math::Positive::integral
     s_equal ( low  , xmin() ) && s_equal ( high , xmax() ) ? 1 :
     m_bernstein.integral ( low , high )  ; 
 }
+
+
+
+
+
+
+// ============================================================================
+// POSITIVE EVEN
+// ============================================================================
+
+
+// ============================================================================
+// constructor from the order
+// ============================================================================
+Gaudi::Math::PositiveEven::PositiveEven
+( const unsigned short      N    ,
+  const double              xmin ,
+  const double              xmax )
+  : std::unary_function<double,double> ()
+  , m_even   ( N , xmin , xmax )
+  , m_sphere ( N , 3 ) 
+{
+  updateBernstein () ;
+}
+// ============================================================================
+// constructor from the list of phases 
+// ============================================================================
+Gaudi::Math::PositiveEven::PositiveEven
+( const std::vector<double>& pars ,
+  const double               xmin ,
+  const double               xmax )
+  : std::unary_function<double,double> ()
+  , m_even      ( pars.size() , xmin , xmax )
+  , m_sphere    ( pars , 3 ) 
+{
+  updateBernstein () ;
+}
+// ============================================================================
+// constructor from the sphere with coefficients  
+// ============================================================================
+Gaudi::Math::PositiveEven::PositiveEven
+( const Gaudi::Math::NSphere& sphere , 
+  const double                xmin   , 
+  const double                xmax   )
+  : std::unary_function<double,double> ()
+  , m_even    ( sphere.dim() , xmin , xmax )
+  , m_sphere  ( sphere ) 
+{
+  updateBernstein () ;
+}
+// ============================================================================
+// set k-parameter
+// ============================================================================
+bool Gaudi::Math::PositiveEven::setPar 
+( const unsigned short k , const double value )
+{
+  //
+  const bool update = m_sphere.setPhase ( k , value ) ;
+  if ( !update ) { return false ; }   // no actual change 
+  //
+  return updateBernstein () ;
+}
+// =============================================================================
+// update bernstein coefficients
+// =============================================================================
+bool Gaudi::Math::PositiveEven::updateBernstein ()
+{
+  ///
+  bool         update = false ;
+  /// degree 
+  const unsigned short o = m_even.degree() ;
+  //
+  const double   norm    = m_even.npars() / 
+    ( m_even.xmax() -  m_even.xmin () ) ;
+  //
+  // few simple cases 
+  //
+  if       ( 0 == o ) { return m_even.setPar( 0 , norm ) ; }
+  //
+  // get the parameters of "global" non-negative symmetric parabola 
+  //
+  const double a0 = m_sphere.x2(0)      ;
+  const double a1 = m_sphere.x2(1) - a0 ;
+  const double a2 = a0                  ;
+  //
+  // "elevate to degree of bernstein"
+  const unsigned short N =  m_even.bernstein().degree()  ;
+  std::vector<long double> v ( N + 1 ) ;
+  v[0] = a0 ;
+  v[1] = a1 ;
+  v[2] = a2 ;
+  std::fill ( v.begin() + 3 , v.end() , a2 ) ;
+  // repeate the elevation cycles: 
+  for ( unsigned short   n = 2  ; n < N ; ++n ) 
+  {
+    // "current" degree 
+    for ( unsigned short k = n ;  1<= k ; --k ) 
+    {
+      v[k]  = ( n + 1 - k ) * v[k] + k * v[k-1] ;
+      v[k] /=   n + 1  ;
+    } 
+  }
+  //
+  // now  we have a non-negative symmetric parabola coded.
+  //   - add a proper positive polynomial to it.
+  const unsigned short nV = v.size() ;
+  const unsigned short nX = m_sphere.nX() ;
+  for ( unsigned short ix = 2 ; ix < nX ; ++ix ) 
+  {
+    const double x = m_sphere.x2 ( ix ) ;
+    v[      ix - 2 ] += x ; 
+    v[ nV - ix + 1 ] += x ; // keep symmetry 
+  }
+  //
+  const double isum = norm / std::accumulate ( v.begin() , v.end() , 0.0L ) ;
+  //
+  const unsigned short nE = m_even.npars() ;
+  //
+  for ( unsigned short ix = 0 ; ix < nE ; ++ix ) 
+  {
+    const bool updated = m_even.setPar ( ix , v[ix] * isum ) ;
+    update = updated || update ;
+  }
+  //
+  return update ;
+}
+// =============================================================================
+// get the integral between xmin and xmax
+// =============================================================================
+double Gaudi::Math::PositiveEven::integral () const { return 1 ; } 
+// =============================================================================
+// get the integral between low and high 
+// =============================================================================
+double Gaudi::Math::PositiveEven::integral
+( const double low , const double high ) const 
+{ 
+  return 
+    s_equal ( low  , xmin() ) && s_equal ( high , xmax() ) ? 1 :
+    m_even.integral ( low , high )  ; 
+}
+
+
+
+
+
 // ============================================================================
 // constructor from the order
 // ============================================================================
