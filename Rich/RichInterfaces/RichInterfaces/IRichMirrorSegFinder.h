@@ -9,8 +9,8 @@
  */
 //-----------------------------------------------------------------------------
 
-#ifndef RICHKERNEL_IRICHMIRRORSEGFINDER_H
-#define RICHKERNEL_IRICHMIRRORSEGFINDER_H 1
+#ifndef RICHINTERFACES_IRICHMIRRORSEGFINDER_H
+#define RICHINTERFACES_IRICHMIRRORSEGFINDER_H 1
 
 // from Gaudi
 #include "GaudiKernel/IAlgTool.h"
@@ -84,4 +84,4 @@ namespace Rich
 
 }
 
-#endif // RICHKERNEL_IRICHMIRRORSEGFINDER_H
+#endif // RICHINTERFACES_IRICHMIRRORSEGFINDER_H

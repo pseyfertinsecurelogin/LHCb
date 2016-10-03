@@ -9,8 +9,8 @@
  */
 //---------------------------------------------------------------------------------
 
-#ifndef RICHKERNEL_IRICHDETECTORTOOL_H
-#define RICHKERNEL_IRICHDETECTORTOOL_H 1
+#ifndef RICHINTERFACES_IRICHDETECTORTOOL_H
+#define RICHINTERFACES_IRICHDETECTORTOOL_H 1
 
 // from Gaudi
 #include "GaudiKernel/IAlgTool.h"
@@ -44,10 +44,11 @@ namespace Rich
      */
     static const InterfaceID& interfaceID() { return IID_IRichDetectorTool; }
 
-    virtual const std::vector<DeRich*>& deRichDetectors() const = 0;
+    /// Vector of pointers to the Rich Detectors
+    virtual std::vector<DeRich*> deRichDetectors() const = 0;
 
   };
 
 }
 
-#endif // RICHKERNEL_IRICHDETECTORTOOL_H
+#endif // RICHINTERFACES_IRICHDETECTORTOOL_H

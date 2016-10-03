@@ -25,9 +25,9 @@ using namespace Rich;
 //=========================================================================================
 
 void
-HPDPixelClustersBuilder::
-initialise( HPDPixelClusters * clus,
-            const HPDPixelCluster::SmartIDVector & smartIDs )
+PDPixelClustersBuilder::
+initialise( PDPixelClusters * clus,
+            const PDPixelCluster::SmartIDVector & smartIDs )
 {
   // Update the pixel cluster object to work on
   m_hpdClus = clus;
@@ -36,7 +36,7 @@ initialise( HPDPixelClusters * clus,
 
   // Must pass a valid cluster object to fill
   if ( UNLIKELY( !clus ) )
-  { throw Rich::Exception( "Must pass a pointer to a HPDPixelClusters" ); }
+  { throw Rich::Exception( "Must pass a pointer to a PDPixelClusters" ); }
 
   // use the smartIDs to set the active pixels
   if ( !smartIDs.empty() )
@@ -47,13 +47,13 @@ initialise( HPDPixelClusters * clus,
     // as this does not make sense (and likely not even technically possible from L1)
     setAliceMode( smartIDs.front().pixelSubRowDataIsValid() );
 
-    // Initialise the 'is set' array as required. If in LHCb mode, only reset the 
+    // Initialise the 'is set' array as required. If in LHCb mode, only reset the
     // first 1/8 of the array, as this is all that is used.
     // Note, do not reset m_clusters as this is only accesed for set clusters, so
-    // those that have m_data set on by the loop below, and thus m_clusters is 
+    // those that have m_data set on by the loop below, and thus m_clusters is
     // implicitly reset as required.
-    memset ( m_data, 0, 
-             aliceMode() ? sizeof(m_data) : 
+    memset ( m_data, 0,
+             aliceMode() ? sizeof(m_data) :
              (sizeof(m_data)/Rich::DAQ::NumAlicePixelsPerLHCbPixel) );
 
     // set the hit pixels as "on"
@@ -66,7 +66,7 @@ initialise( HPDPixelClusters * clus,
       }
       setOn( rowNumber(S), colNumber(S) );
     }
-    
+
   }
   else  // empty hit list... just reset.
   {
@@ -75,9 +75,9 @@ initialise( HPDPixelClusters * clus,
 
 }
 
-HPDPixelClusters::Cluster *
-HPDPixelClustersBuilder::mergeClusters( HPDPixelClusters::Cluster *& clus1, 
-                                        HPDPixelClusters::Cluster *& clus2 )
+PDPixelClusters::Cluster *
+PDPixelClustersBuilder::mergeClusters( PDPixelClusters::Cluster *& clus1,
+                                       PDPixelClusters::Cluster *& clus2 )
 {
   // add pixels in clus2 to clus1
   for ( const auto id : clus2->pixels().smartIDs() )
@@ -92,7 +92,7 @@ HPDPixelClustersBuilder::mergeClusters( HPDPixelClusters::Cluster *& clus1,
   return clus1;
 }
 
-MsgStream& HPDPixelClustersBuilder::fillStream ( MsgStream & os ) const
+MsgStream& PDPixelClustersBuilder::fillStream ( MsgStream & os ) const
 {
 
   // column numbers
@@ -119,9 +119,9 @@ MsgStream& HPDPixelClustersBuilder::fillStream ( MsgStream & os ) const
   return os;
 }
 
-void 
-HPDPixelClustersBuilder::
-splitClusters( const HPDPixelClusters::Cluster::PtnVector & clusters )
+void
+PDPixelClustersBuilder::
+splitClusters( const PDPixelClusters::Cluster::PtnVector & clusters )
 {
   // loop over the clusters to break up
   for ( auto C : clusters )
@@ -137,14 +137,13 @@ splitClusters( const HPDPixelClusters::Cluster::PtnVector & clusters )
   }
 }
 
-void 
-HPDPixelClustersBuilder::removeCluster( HPDPixelClusters::Cluster * clus )
+void
+PDPixelClustersBuilder::removeCluster( PDPixelClusters::Cluster * clus )
 {
-  const auto iF = 
-    std::find_if( m_hpdClus->clusters().begin(), 
-                  m_hpdClus->clusters().end(), 
-                  [clus]( const HPDPixelClusters::Cluster::SmartPtnVector::value_type & c ) 
-                  { return c.get() == clus; } );
+  const auto iF = std::find_if( m_hpdClus->clusters().begin(),
+                                m_hpdClus->clusters().end(),
+                                [clus]( const auto & c )
+                                { return c.get() == clus; } );
   if ( iF != m_hpdClus->clusters().end() )
   {
     m_hpdClus->clusters().erase( iF );
@@ -155,9 +154,9 @@ HPDPixelClustersBuilder::removeCluster( HPDPixelClusters::Cluster * clus )
 //   Methods for the cluster class
 //=========================================================================================
 
-void 
-HPDPixelClusters::suppressIDs( HPDPixelCluster::SmartIDVector & smartIDs,
-                               const unsigned int maxSize ) const
+void
+PDPixelClusters::suppressIDs( PDPixelCluster::SmartIDVector & smartIDs,
+                              const unsigned int maxSize ) const
 {
   // make a local copy of the orginal IDs
   const auto cache_ids(smartIDs);
@@ -171,8 +170,8 @@ HPDPixelClusters::suppressIDs( HPDPixelCluster::SmartIDVector & smartIDs,
   }
 }
 
-const HPDPixelClusters::Cluster * 
-HPDPixelClusters::getCluster( const LHCb::RichSmartID & id ) const
+const PDPixelClusters::Cluster *
+PDPixelClusters::getCluster( const LHCb::RichSmartID & id ) const
 {
   // should look to implement this better sometime...
 
@@ -199,7 +198,7 @@ HPDPixelClusters::getCluster( const LHCb::RichSmartID & id ) const
   return clus;
 }
 
-MsgStream& HPDPixelClusters::fillStream( MsgStream& os ) const
+MsgStream& PDPixelClusters::fillStream( MsgStream& os ) const
 {
   for ( const auto& clus : clusters() )
   {

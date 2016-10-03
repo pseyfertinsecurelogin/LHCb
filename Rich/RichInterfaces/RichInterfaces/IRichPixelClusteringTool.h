@@ -9,8 +9,8 @@
  */
 //-----------------------------------------------------------------------------
 
-#ifndef RICHKERNEL_IRichPixelClusteringTool_H
-#define RICHKERNEL_IRichPixelClusteringTool_H 1
+#ifndef RICHINTERFACES_IRichPixelClusteringTool_H
+#define RICHINTERFACES_IRichPixelClusteringTool_H 1
 
 // STL
 #include <memory>
@@ -35,7 +35,7 @@ namespace Rich
     //-----------------------------------------------------------------------------
     /** @class IPixelClusteringTool IRichPixelClusteringTool.h RichKernel/IRichPixelClusteringTool.h
      *
-     *  Interface to tools that perform RICH HPD pixel clustering
+     *  Interface to tools that perform RICH PD pixel clustering
      *
      *  @author Chris Jones   Christopher.Rob.Jones@cern.ch
      *  @date   15/03/2002
@@ -52,15 +52,15 @@ namespace Rich
        */
       static const InterfaceID& interfaceID() { return IID_IRichPixelClusteringTool; }
 
-      /** Applies pixel clustering to the given HPD RichSmartIDs
+      /** Applies pixel clustering to the given PD RichSmartIDs
        *
        *  @param smartIDs Reference to vector of pixel RichSmartIDs to cluster
        *
-       *  @return A smart unique pointer to the set of clusters for this HPD
+       *  @return A smart unique pointer to the set of clusters for this PD
        *
        *  @attention The user takes ownership of the returned object. 
        */
-      virtual std::unique_ptr<const Rich::HPDPixelClusters>
+      virtual std::unique_ptr<const Rich::PDPixelClusters>
       findClusters( const LHCb::RichSmartID::Vector & smartIDs ) const = 0;
       
     };
@@ -68,4 +68,4 @@ namespace Rich
   }
 }
 
-#endif // RICHKERNEL_IRichHighOccHPDSuppressionTool_H
+#endif // RICHINTERFACES_IRichPixelClusteringTool_H
