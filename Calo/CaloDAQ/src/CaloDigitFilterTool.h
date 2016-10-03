@@ -1,4 +1,4 @@
-#ifndef CALODIGITFILTERTOOL_H 
+#ifndef CALODIGITFILTERTOOL_H
 #define CALODIGITFILTERTOOL_H 1
 
 class StatusCode;
@@ -6,8 +6,8 @@ class StatusCode;
 #include "CaloUtils/CaloCellIDAsProperty.h"
 #include "GaudiAlg/GaudiTool.h"
 #include "GaudiKernel/IIncidentListener.h"
-#include "GaudiKernel/IIncidentSvc.h" 
-#include "GaudiKernel/Incident.h" 
+#include "GaudiKernel/IIncidentSvc.h"
+#include "GaudiKernel/Incident.h"
 #include "CaloDet/DeCalorimeter.h"
 #include "Event/CaloDigit.h"
 #include "CaloDAQ/ICaloDigitFilterTool.h"            // Interface
@@ -18,15 +18,15 @@ class StatusCode;
 #include <unordered_map>
 
 /** @class CaloDigitFilterTool CaloDigitFilterTool.h
- *  
+ *
  *
  *  @author Olivier Deschamps
  *  @date   2010-12-13
  */
 class CaloDigitFilterTool final : public extends<GaudiTool, ICaloDigitFilterTool, IIncidentListener>{
-public: 
+public:
   /// Standard constructor
-  CaloDigitFilterTool( const std::string& type,  
+  CaloDigitFilterTool( const std::string& type,
                        const std::string& name,
                        const IInterface* parent);
 
@@ -39,25 +39,25 @@ public:
   int getMask(const std::string & det);
   double getOffset(LHCb::CaloCellID id, int scale,bool spd=false);
   void setMaskMap(const std::map<std::string,int> & maskMap);
-  int getScale();
-  bool cleanDigits(const std::string & det, bool substr=true, bool mask = true,bool spd=false);
-  int method(const std::string & det){
+  int getScale() override;
+  bool cleanDigits(const std::string & det, bool substr=true, bool mask = true,bool spd=false) override;
+  int method(const std::string & det) override{
     if ( det != m_caloName ) { setDet( det ); }
     return m_scalingMethod;
   }
   unsigned int nVertices();
   unsigned int nSpd();
-  double offset(LHCb::CaloCellID id,bool spd=false);    
-  double offsetRMS(LHCb::CaloCellID id,bool spd=false);
+  double offset(LHCb::CaloCellID id,bool spd=false) override;
+  double offsetRMS(LHCb::CaloCellID id,bool spd=false) override;
   /// Triggered by calo updates
   StatusCode caloUpdate();
 
 private:
   void handle(const Incident& /* inc */ ) override {
-    if( UNLIKELY( msgLevel(MSG::DEBUG) ) ) 
+    if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
       debug() << "IIncident Svc reset" << endmsg;
-    m_reset = true ;  
-  } 
+    m_reset = true ;
+  }
 
   using Offsets = std::map<LHCb::CaloCellID,double>;
   inline const Offsets & offsets()       const noexcept { return *m_offsets; }

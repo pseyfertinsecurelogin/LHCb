@@ -191,10 +191,10 @@ int CaloDataProviderFromTES::adc (LHCb::CaloCellID id,int def){
 
 
 const CaloVector<LHCb::CaloAdc>& CaloDataProviderFromTES::adcs(int source,bool clean){
-  return adcs({source},clean);
+  return adcs(std::vector<int>(1,source),clean);
 }
 const CaloVector<LHCb::CaloDigit>& CaloDataProviderFromTES::digits(int source,bool clean){
-  return digits({source},clean);
+  return digits(std::vector<int>(1,source),clean);
 }
 
 
