@@ -2,6 +2,7 @@
 #ifndef EVENT_CALOMCTOOLS_H 
 #define EVENT_CALOMCTOOLS_H 1
 // Include files
+#include <numeric>
 // Event 
 #include "Event/MCParticle.h"
 // Kernel 

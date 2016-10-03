@@ -2,6 +2,7 @@
 #ifndef EVENT_CALOMCTOOLS1_H 
 #define EVENT_CALOMCTOOLS1_H 1
 // include 
+#include <numeric>
 // from CaloEvent 
 #include "GaudiKernel/HashMap.h"
 #include "GaudiKernel/Hash.h"
