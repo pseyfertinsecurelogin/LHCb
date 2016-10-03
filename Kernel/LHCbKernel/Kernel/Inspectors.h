@@ -15,12 +15,12 @@
 #include "GaudiKernel/StatusCode.h"
 #include "GaudiKernel/SmartIF.h"
 #include "GaudiKernel/IAlgManager.h"
+#include "GaudiKernel/Property.h"
 // ============================================================================
 // forward decalrations
 // ============================================================================
 class IInterface      ;
 class IProperty  ;
-class Property   ;
 // ============================================================================
 namespace Gaudi
 {
@@ -28,7 +28,7 @@ namespace Gaudi
   {
     // ========================================================================
     /// the actual type for the vector of properties
-    typedef std::vector<const Property*> Properties ;
+    typedef std::vector<const ::Property*> Properties ;
     /// the actual type for the vector of property names
     typedef std::vector<std::string>     Names      ;
     // ========================================================================
