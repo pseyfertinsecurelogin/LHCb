@@ -2216,7 +2216,7 @@ bool Gaudi::Math::PositiveEven::updateBernstein ()
   //
   for ( unsigned short ix = 0 ; ix < nE ; ++ix ) 
   {
-    const bool updated = m_even.setPar ( ix , v[ix] * isum ) ;
+    const bool updated = m_even.setPar ( ix , 2 * v[ix] * isum ) ;
     update = updated || update ;
   }
   //
