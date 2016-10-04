@@ -1,4 +1,3 @@
-// $Id: IMuonRawBuffer.h,v 1.10 2008-10-23 13:42:16 asatta Exp $
 #ifndef MUONDAQ_IMUONRAWBUFFER_H
 #define MUONDAQ_IMUONRAWBUFFER_H 1
 
@@ -49,7 +48,7 @@ public:
   virtual void putStatusOnTES()=0;
 
   virtual std::vector<std::pair<MuonTell1Header, unsigned int> > getHeaders(LHCb::RawEvent* raw)=0;
-  virtual  std::vector<std::pair<MuonTell1Header, unsigned int> > getHeaders()=0;
+  virtual std::vector<std::pair<MuonTell1Header, unsigned int> > getHeaders()=0;
 
   virtual StatusCode getNZSupp(const LHCb::RawBank* r,std::vector<std::pair<LHCb::MuonTileID,unsigned int> > & tileAndTDC)=0;
   virtual StatusCode dumpNZSupp(const LHCb::RawBank* r,unsigned int ode_num)=0;

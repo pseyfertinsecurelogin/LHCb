@@ -1,4 +1,3 @@
-// $Id: MuonRawBuffer.h,v 1.12 2008-10-23 13:42:17 asatta Exp $
 #ifndef MUONRAWBUFFER_H 
 #define MUONRAWBUFFER_H 1
 
@@ -16,12 +15,11 @@
 #include <string>
 
 /** @class MuonRawBuffer MuonRawBuffer.h
- *  
  *
  *  @author Alessia Satta
  *  @date   2005-10-18
  */
-class MuonRawBuffer :  public Decoder::ToolBase, virtual public IMuonRawBuffer, virtual public IIncidentListener
+class MuonRawBuffer :  public extends<Decoder::ToolBase, IMuonRawBuffer, IIncidentListener>
 {
 public: 
   /// Standard constructor
@@ -29,14 +27,16 @@ public:
                  const std::string& name,
                  const IInterface* parent);
   
-  virtual ~MuonRawBuffer( ); ///< Destructor
   StatusCode initialize();
   StatusCode finalize();
+
   StatusCode getTile(std::vector<LHCb::MuonTileID>& tile);
   StatusCode getTileAndTDC(std::vector<std::pair<LHCb::MuonTileID,unsigned int> > & tileAndTDC);
   StatusCode getPads(std::vector<LHCb::MuonTileID>& pads);
 
   StatusCode getNZSupp(std::vector<std::pair<LHCb::MuonTileID,unsigned int> > & tileAndTDC);
+
+
   // to get muon data belonging to one particular raw bank
 private:
   StatusCode getTile(const LHCb::RawBank* r,std::vector<LHCb::MuonTileID>& tile);
@@ -75,9 +75,6 @@ public:
   std::vector<std::pair<MuonTell1Header, unsigned int> > getHeaders(LHCb::RawEvent* raw);
   std::vector<std::pair<MuonTell1Header, unsigned int> > getHeaders();
   
-  
-protected:
-
 private:
 
   StatusCode  decodeTileAndTDCDC06(const LHCb::RawBank* r);
@@ -99,18 +96,18 @@ private:
   void initStatus();	  
   void initStatusNZS();	  
 
-  unsigned int m_NLink;
-  unsigned int m_ODEWord;
-  unsigned int m_M1Tell1;
-  DeMuonDetector* m_muonDet;
+  unsigned int m_NLink = 24;
+  unsigned int m_ODEWord = 35;
+  unsigned int m_M1Tell1 = 0;
+  DeMuonDetector* m_muonDet = nullptr;
   mutable std::vector<std::pair<LHCb::MuonTileID, unsigned int> > m_storage[MuonDAQHelper_maxTell1Number];
   bool m_alreadyDecoded[MuonDAQHelper_maxTell1Number];
   mutable std::vector<LHCb::MuonTileID> m_padStorage[MuonDAQHelper_maxTell1Number];
   bool m_padAlreadyDecoded[MuonDAQHelper_maxTell1Number];
   bool m_ODEAlreadyDecoded[MuonDAQHelper_maxTell1Number];
   bool m_already_decoded_headerTell1[MuonDAQHelper_maxTell1Number];
-  bool m_checkTell1HeaderPerformed;
-  bool m_checkTell1HeaderResult;
+  bool m_checkTell1HeaderPerformed = false;
+  bool m_checkTell1HeaderResult = false;
   
   //mutable MuonTell1Header m_Tell1Header[[MuonDAQHelper_maxTell1Number];
   mutable MuonODEData m_ODEData[MuonDAQHelper_maxTell1Number*24];
@@ -131,12 +128,12 @@ private:
   unsigned int m_tell1_header_SYNCH_BC_error[  MuonDAQHelper_maxTell1Number];
   unsigned int m_tell1_header_SYNCH_Evt_error[  MuonDAQHelper_maxTell1Number];
   std::string m_offsetForTES;
-  bool m_TESChanged;
+  bool m_TESChanged = false;
   std::string m_storeOriginalValue;
   
   LHCb::RawBankReadoutStatus m_status;
   LHCb::RawBankReadoutStatus m_statusFull;
-  bool m_statusCreated;
+  bool m_statusCreated = false;
   
   
 };

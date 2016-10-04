@@ -35,7 +35,7 @@ StatusCode MuonRec::initialize() {
 
   if( UNLIKELY( msgLevel(MSG::DEBUG) ) ) debug() << "==> Initialise" << endmsg;
   m_muonDetector=getDet<DeMuonDetector>(DeMuonLocation::Default);
-  if(m_muonDetector==NULL)
+  if(!m_muonDetector)
     return Error("Could not read /dd/Structure/LHCb/DownstreamRegion/Muon from TDS");
 
   m_NStation = 0;
@@ -61,10 +61,6 @@ StatusCode MuonRec::initialize() {
   sc = prop->setProperty( "RootInTES", rootInTES() );
   if( sc.isFailure() )
     return Error( "Unable to set RootInTES property of MuonRawBuffer", sc );
-  //    sc = prop->setProperty( "GlobalTimeOffset", globalTimeOffset() );
-  // if( sc.isFailure() )
-  // return Error("Unable to set GlobalTimeOffset property of MuonRawBuffer",
-  //                 sc );
 
   if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
     debug()<<" station number "<<m_NStation<<" "<<m_NRegion <<endmsg;
@@ -89,11 +85,9 @@ StatusCode MuonRec::execute() {
   if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
     debug()<<decoding.size()<<" digits in input "<<endmsg;
 
-  int station;
   MuonCoords *coords = new MuonCoords;
-  for( station = 0 ; station < m_NStation ; station++ ){
-    int region;
-    for( region = 0 ; region < m_NRegion ; region++ ){
+  for( int station = 0 ; station < m_NStation ; station++ ){
+    for( int region = 0 ; region < m_NRegion ; region++ ){
 
       // get mapping of input to output from region
       // in fact we are reversing the conversion done in the digitisation
