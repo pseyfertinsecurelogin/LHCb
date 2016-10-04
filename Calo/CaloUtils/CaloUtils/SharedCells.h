@@ -71,8 +71,7 @@ namespace SharedCells
     /// prepare the container of weights 
     std::vector<double>  weight( List.size() , 1.0 );
     /// loop over all clusters and calculate the weight for each cluster  
-    for( typename L::const_iterator iC = List.begin() ; 
-         List.end() != iC ; ++iC )
+    for( auto iC = List.begin() ; List.end() != iC ; ++iC )
       {
         const LHCb::CaloCluster* cluster = iC->first ;
         /// ignore artificial zeros 
@@ -113,14 +112,13 @@ namespace SharedCells
     /// prepare container of weights 
     std::vector<double> weight( List.size() , 1.0 );
     ///< collect the information
-    for( typename L::const_iterator iC = List.begin() ; 
-         List.end() != iC ; ++iC )
+    for( auto iC = List.begin() ; List.end() != iC ; ++iC )
       {
         const LHCb::CaloCluster* cluster = iC->first ;
         /// ignore artificial zeroes
         if( 0 == cluster ) { continue ; }  
         /// locate (first) seed cell 
-        LHCb::CaloCluster::Entries::const_iterator iSeed =
+        auto iSeed =
           LHCb::ClusterFunctors::locateDigit( cluster->entries().begin() ,
                                         cluster->entries().end  () ,
                                         type                      );
@@ -172,14 +170,13 @@ namespace SharedCells
     std::vector<double> weight( List.size() , 1.0 );
     const Gaudi::XYZPoint position( Det->cellCenter( ID ) );
     /// collect the information
-    for( typename L::const_iterator iC = List.begin() ; 
-         List.end() != iC ; ++iC )
+    for( auto iC = List.begin() ; List.end() != iC ; ++iC )
       {
         const LHCb::CaloCluster* cluster = iC->first ;
         /// ignore artificial zeroes
         if( 0 == cluster ) { continue ; }  
         /// locate (first) seed cell 
-        LHCb::CaloCluster::Entries::const_iterator iSeed =
+        auto iSeed =
           LHCb::ClusterFunctors::locateDigit( cluster->entries().begin() ,
                                         cluster->entries().end  () ,
                                         type                      );
@@ -238,8 +235,7 @@ namespace SharedCells
     std::vector<double> weight( List.size() , 1.0 );
     const Gaudi::XYZPoint  pos( Det->cellCenter( ID ) );
     /// collect the information
-    for( typename L::const_iterator iC = List.begin() ; 
-         List.end() != iC ; ++iC )
+    for( auto iC = List.begin() ; List.end() != iC ; ++iC )
       {
         const LHCb::CaloCluster* cluster = iC->first ;
         /// ignore artificial zeroes

@@ -28,8 +28,7 @@ namespace
     if ( cells.empty() ) { return true  ; }                           // RETURN 
     // local copy:
     std::set<LHCb::CaloCellID> local ( cells ) ;
-    for ( std::set<LHCb::CaloCellID>::const_iterator iloc = 
-            local.begin() ; local.end() != iloc ; ++iloc ) 
+    for ( auto iloc = local.begin() ; local.end() != iloc ; ++iloc ) 
     {
       const LHCb::CaloCellID::Vector& nei 
         = detector->neighborCells ( *iloc ) ;

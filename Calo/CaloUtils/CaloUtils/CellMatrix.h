@@ -17,7 +17,7 @@ class DeCalorimeter ;
  *  @author Vanya Belyaev Ivan.Belyaev@itep.ru 
  *  @date   07/11/2001
  */
-class CellMatrix 
+class CellMatrix
 {
   
  public:
@@ -45,24 +45,6 @@ class CellMatrix
    */
   const DeCalorimeter* det() const { return m_det ;}
   
-  /** select minimum from 2 values 
-   *  @param a the first parameter 
-   *  @param b the second parameter
-   *  @return minnimum value 
-   */
-  template<class TYPE>
-    inline TYPE mini ( const TYPE& a , const TYPE& b ) const 
-    { return a < b ? a : b ; }
-  
-  /** select maximum from  2 values 
-   *  @param a the first parameter 
-   *  @param b the second parameter
-   *  @return maximum value 
-   */
-  template <class TYPE>
-    inline TYPE maxi ( const TYPE& a , const TYPE& b ) const 
-    { return a < b ? b : a ; }
-  
   /** calculate the intersection area for 2 squares on the plane
    *  @param   center1   center point of the first  square
    *  @param   halfsize1 half   size  of the first  square 
@@ -78,12 +60,12 @@ class CellMatrix
       /// check the sizes 
       if( halfsize1 <= 0 || halfsize2 <= 0 ) { return 0 ; } ///< RETURN 
       const double xSize = 
-        mini( center1.x() + halfsize1 , center2.x() + halfsize2 ) - 
-        maxi( center1.x() - halfsize1 , center2.x() - halfsize2 ) ;
+        std::min( center1.x() + halfsize1 , center2.x() + halfsize2 ) - 
+        std::max( center1.x() - halfsize1 , center2.x() - halfsize2 ) ;
       if( xSize <= 0        )  { return 0 ; } ///< RETURN 
       const double ySize = 
-        mini( center1.y() + halfsize1 , center2.y() + halfsize2 ) - 
-        maxi( center1.y() - halfsize1 , center2.y() - halfsize2 ) ;
+        std::min( center1.y() + halfsize1 , center2.y() + halfsize2 ) - 
+        std::max( center1.y() - halfsize1 , center2.y() - halfsize2 ) ;
       if( ySize <= 0        )  { return 0 ; } ///< RETURN 
       ///
       return xSize * ySize ;

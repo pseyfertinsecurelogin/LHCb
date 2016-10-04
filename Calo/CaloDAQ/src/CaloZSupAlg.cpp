@@ -17,13 +17,7 @@ DECLARE_ALGORITHM_FACTORY( CaloZSupAlg )
 // Standard creator, initializes variables
 //=============================================================================
 CaloZSupAlg::CaloZSupAlg( const std::string& name, ISvcLocator* pSvcLocator)
-  : GaudiAlgorithm       ( name , pSvcLocator            )
-  , m_zsup2D(false)
-  , m_adcOnTES(false)
-  , m_digitOnTES(false)
-  , m_calo(NULL)
-  , m_adcTool(NULL)
-  , m_numberOfCells(0)
+: GaudiAlgorithm( name , pSvcLocator )
 {
   //** Declare the algorithm's properties which can be set at run time and
   //** their default values
@@ -40,7 +34,7 @@ CaloZSupAlg::CaloZSupAlg( const std::string& name, ISvcLocator* pSvcLocator)
   //=== Default values according to the name of the algorithm !
   m_inputToolType = "CaloEnergyFromRaw";
   m_inputToolName = name + "Tool";
-  if ( "Ecal" == name.substr( 0 , 4 ) ) {
+  if ( name.compare( 0 , 4, "Ecal" ) == 0 ) {
     m_detectorName     = DeCalorimeterLocation::Ecal;
     m_outputADCData    = LHCb::CaloAdcLocation::Ecal;
     m_outputDigitData  = LHCb::CaloDigitLocation::Ecal;
@@ -48,7 +42,7 @@ CaloZSupAlg::CaloZSupAlg( const std::string& name, ISvcLocator* pSvcLocator)
     m_zsup2D           = true;
     m_zsupThreshold    = 20;
     m_zsupNeighbor     = -5; // reject large negative noise
-  } else if ( "Hcal" == name.substr( 0 , 4 ) ) {
+  } else if ( name.compare( 0 , 4, "Hcal" ) == 0 ) {
     m_detectorName     = DeCalorimeterLocation::Hcal;
     m_outputADCData    = LHCb::CaloAdcLocation::Hcal;
     m_outputDigitData  = LHCb::CaloDigitLocation::Hcal;
@@ -144,8 +138,8 @@ StatusCode CaloZSupAlg::execute() {
   const std::vector<LHCb::CaloAdc>& adcs = m_adcTool->adcs( );
 
   //***  prepare the output containers
-  LHCb::CaloAdcs* newAdcs=0;
-  LHCb::CaloDigits* newDigits=0;
+  LHCb::CaloAdcs* newAdcs=nullptr;
+  LHCb::CaloDigits* newDigits=nullptr;
   if(m_adcOnTES){
     newAdcs = new LHCb::CaloAdcs();
     put( newAdcs, m_outputADCData + m_extension );
@@ -163,18 +157,17 @@ StatusCode CaloZSupAlg::execute() {
     NeighborFlag  ,
     SeedFlag       };
 
-  std::vector<LHCb::CaloAdc>::const_iterator anAdc;
   std::vector<int> caloFlags    ( m_numberOfCells, DefaultFlag ) ;
 
   int index;
 
   // == Apply the threshold. If 2DZsup, tag also the neighbours
-  for( anAdc = adcs.begin(); adcs.end() != anAdc ; ++anAdc ) {
+  for( const auto& anAdc : adcs ) {
 
-    LHCb::CaloCellID id = (*anAdc).cellID();
+    LHCb::CaloCellID id = anAdc.cellID();
 
     index         = m_calo->cellIndex( id );
-    int    digAdc = (*anAdc).adc();
+    int    digAdc = anAdc.adc();
     if( m_zsupThreshold <= digAdc ) {
       if( isVerbose ) {
         verbose() << id
@@ -185,13 +178,9 @@ StatusCode CaloZSupAlg::execute() {
 
       caloFlags[index] = SeedFlag ;
       if( m_zsup2D ) {
-        CaloNeighbors::const_iterator neighbor =  m_calo->neighborCells( id ).begin() ;
-        while ( neighbor != m_calo->neighborCells( id ).end() ) {
-          int neigh = m_calo->cellIndex(*neighbor);
-          if( SeedFlag != caloFlags[neigh] ) {
-            caloFlags[neigh] = NeighborFlag ;
-          }
-          neighbor++;
+        for ( const auto& neighbor :  m_calo->neighborCells( id ) ) {
+          int& neighFlag = caloFlags[m_calo->cellIndex(neighbor)];
+          if( neighFlag != SeedFlag ) neighFlag = NeighborFlag ;
         }
       }
     }
@@ -200,15 +189,15 @@ StatusCode CaloZSupAlg::execute() {
   //** write tagged data as CaloAdc or CaloDigits according to m_digitsOutput
 
   double pedShift = m_calo->pedestalShift();
-  for( anAdc = adcs.begin(); adcs.end() != anAdc ; ++anAdc ) {
-    LHCb::CaloCellID id = (*anAdc).cellID();
+  for( const auto& anAdc : adcs ) {
+    LHCb::CaloCellID id = anAdc.cellID();
     index         = m_calo->cellIndex( id );
     if( DefaultFlag == caloFlags[index] ) { continue; }
-    if( NeighborFlag == caloFlags[index] && (*anAdc).adc() < m_zsupNeighbor)continue;
+    if( NeighborFlag == caloFlags[index] && anAdc.adc() < m_zsupNeighbor)continue;
 
     if(m_adcOnTES){
       try{
-        auto adc = std::make_unique<LHCb::CaloAdc>( id, (*anAdc).adc() );
+        auto adc = std::make_unique<LHCb::CaloAdc>( id, anAdc.adc() );
         newAdcs->insert( adc.get() ) ;
         adc.release();
       } catch(GaudiException &exc) {
@@ -224,7 +213,7 @@ StatusCode CaloZSupAlg::execute() {
     }
 
     if(m_digitOnTES){
-      double e = ( double( (*anAdc).adc() ) - pedShift ) * m_calo->cellGain( id );
+      double e = ( double( anAdc.adc() ) - pedShift ) * m_calo->cellGain( id );
       try{
         auto digit = std::make_unique<LHCb::CaloDigit>(id,e);
         newDigits->insert( digit.get() ) ;

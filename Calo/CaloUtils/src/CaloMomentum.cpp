@@ -177,7 +177,7 @@ void LHCb::CaloMomentum::addCaloPosition( const LHCb::CaloHypo* hypo )
 {
   m_flag |= LHCb::CaloMomentum::FromCaloHypo;
   
-  if( 0 == hypo){
+  if( !hypo){
     m_status |= LHCb::CaloMomentum::NullCaloHypo;
     return;
   }
