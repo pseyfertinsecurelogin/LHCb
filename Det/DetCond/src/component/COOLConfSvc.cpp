@@ -206,25 +206,24 @@ StatusCode COOLConfSvc::initialize(){
   StatusCode sc = base_class::initialize();
   if (sc.isFailure()) return sc;
 
-  MsgStream log(msgSvc(), name() );
 
-  if( UNLIKELY( log.level() <= MSG::DEBUG ) )
-    log << MSG::DEBUG << "Initialize" << endmsg;
+  if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
+    debug() << "Initialize" << endmsg;
 
   if ( ! m_coolApplication.get() ) {
 
-    if( UNLIKELY( log.level() <= MSG::DEBUG ) )
-      log << MSG::DEBUG << "Initializing COOL Application" << endmsg;
+    if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
+      debug() << "Initializing COOL Application" << endmsg;
     m_coolApplication.reset(new cool::Application);
 
-    if( UNLIKELY( log.level() <= MSG::DEBUG ) )
-      log << MSG::DEBUG << "Getting CORAL Connection Service configurator" << endmsg;
+    if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
+      debug() << "Getting CORAL Connection Service configurator" << endmsg;
     coral::IConnectionServiceConfiguration &connSvcConf =
       m_coolApplication->connectionSvc().configuration();
 
     if ( m_useLFCReplicaSvc ) {
 
-      log << MSG::INFO << "Using CORAL LFCReplicaService" << endmsg;
+      info() << "Using CORAL LFCReplicaService" << endmsg;
       connSvcConf.setLookupService( "CORAL/Services/LFCReplicaService" );
       connSvcConf.setAuthenticationService( "CORAL/Services/LFCReplicaService" );
 
@@ -240,7 +239,7 @@ StatusCode COOLConfSvc::initialize(){
           }
         }
       }
-      log << MSG::INFO << "Using '" << m_localSite << "' as preferred site" << endmsg;
+      info() << "Using '" << m_localSite << "' as preferred site" << endmsg;
 
       m_replicaSortAlg.reset(new ReplicaSortAlg(m_localSite,msgSvc()));
       connSvcConf.setReplicaSortingAlgorithm(*m_replicaSortAlg);
@@ -248,19 +247,19 @@ StatusCode COOLConfSvc::initialize(){
 
     if ( ! m_coralConnCleanUp ) {
 
-      if( UNLIKELY( log.level() <= MSG::DEBUG ) )
-        log << MSG::DEBUG << "Disabling CORAL connection automatic clean up" << endmsg;
+      if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
+        debug() << "Disabling CORAL connection automatic clean up" << endmsg;
       connSvcConf.disablePoolAutomaticCleanUp();
       connSvcConf.setConnectionTimeOut( 0 );
 
     }
 
     connSvcConf.setConnectionRetrialPeriod(m_retrialPeriod);
-    log << MSG::INFO << "CORAL Connection Retrial Period set to "
+    info() << "CORAL Connection Retrial Period set to "
         << connSvcConf.connectionRetrialPeriod() << "s" << endmsg;
 
     connSvcConf.setConnectionRetrialTimeOut(m_retrialTimeOut);
-    log << MSG::INFO << "CORAL Connection Retrial Time-Out set to "
+    info() << "CORAL Connection Retrial Time-Out set to "
         << connSvcConf.connectionRetrialTimeOut() << "s" << endmsg;
 
   }
@@ -272,9 +271,8 @@ StatusCode COOLConfSvc::initialize(){
 // finalize
 //=============================================================================
 StatusCode COOLConfSvc::finalize(){
-  MsgStream log(msgSvc(), name() );
-  if( UNLIKELY( log.level() <= MSG::DEBUG ) )
-    log << MSG::DEBUG << "Finalize" << endmsg;
+  if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
+    debug() << "Finalize" << endmsg;
   m_coolApplication.reset();
   m_replicaSortAlg.reset();
   return base_class::finalize();
