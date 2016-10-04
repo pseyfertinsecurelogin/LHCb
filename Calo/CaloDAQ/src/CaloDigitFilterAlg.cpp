@@ -11,13 +11,12 @@
 // 2010-12-21 : Olivier Deschamps
 //-----------------------------------------------------------------------------
 namespace {
-  bool mask(int& val){return (val&0x1) != 0;}
-  bool offset(int& val){return (val&0x2) !=0;}
+  constexpr bool mask(int val)   {return (val&0x1) != 0;}
+  constexpr bool offset(int val) {return (val&0x2) != 0;}
 }
 
 // Declaration of the Algorithm Factory
 DECLARE_ALGORITHM_FACTORY( CaloDigitFilterAlg )
-
 
 //=============================================================================
 // Standard constructor, initializes variables

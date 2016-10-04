@@ -1,4 +1,3 @@
-// $Id: CaloVector.h,v 1.9 2010-03-18 13:52:39 ibelyaev Exp $ 
 // ============================================================================
 #ifndef     CALOKERNEL_CALOVECTOR_H
 #define     CALOKERNEL_CALOVECTOR_H 1 
@@ -176,12 +175,10 @@ protected:
   /// get default value (const version)
   inline const Content& def() const { return m_cc_def; } 
   
-private:
-  
   /// copying is not allowed!
-  CaloVector( const CaloVector& ); 
+  CaloVector( const CaloVector& ) = delete; 
   /// assignment  is not allowed!
-  CaloVector& operator =( const CaloVector& ); 
+  CaloVector& operator =( const CaloVector& ) = delete;
   
 private: 
   

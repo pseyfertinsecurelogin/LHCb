@@ -1,8 +1,5 @@
-// $Id: CaloParticle.cpp,v 1.6 2009-11-20 15:46:17 odescham Exp $ 
 // ============================================================================
-// CVS Tag $Name: not supported by cvs2svn $, version $Revision: 1.6 $
-// ============================================================================
-// Incldue files 
+// Include files 
 // ============================================================================
 // Event 
 // ============================================================================
@@ -18,19 +15,10 @@
  *  @author Olivier Deschamps
  */
 // ============================================================================
-// Default Destructor
-// ============================================================================
-LHCb::CaloParticle::~CaloParticle() {}
-// ============================================================================
 // constructor from the particle 
 // ============================================================================
 LHCb::CaloParticle::CaloParticle( LHCb::Particle* part ) 
-  : LHCb::CaloMomentum  ( ) ,
-    m_parts       ( ) ,
-    m_vert        ( NULL ) ,
-    m_isCalo      ( true ) ,
-    m_neutral     ( true ) ,
-    m_caloEndTree ( ){
+{
   if( NULL == part)m_isCalo = false;
   this -> addCaloPosition( part );
 }
@@ -39,13 +27,8 @@ LHCb::CaloParticle::CaloParticle( LHCb::Particle* part )
 // ============================================================================
 LHCb::CaloParticle::CaloParticle( LHCb::Particle*                  part  , 
                                   const LHCb::CaloMomentum::Point& point )
-  : LHCb::CaloMomentum ()
-  , m_parts      () 
-  , m_vert       ( NULL )
-  , m_isCalo     ( true )
-  , m_neutral     ( true ) 
-  ,  m_caloEndTree(){
-  if( NULL == part)m_isCalo = false;
+  : m_isCalo     ( bool(part) )
+{
   setReferencePoint  ( point ) ;
   this -> addCaloPosition ( part );
   addToFlag       ( LHCb::CaloMomentum::NewReferencePoint);
@@ -56,13 +39,8 @@ LHCb::CaloParticle::CaloParticle( LHCb::Particle*                  part  ,
 LHCb::CaloParticle::CaloParticle( LHCb::Particle*                            part  ,
                                   const LHCb::CaloMomentum::Point&           point , 
                                   const LHCb::CaloMomentum::PointCovariance& cov   )
-  : LHCb::CaloMomentum  ()
-  , m_parts       ()
-  , m_vert        ( NULL )
-  , m_isCalo      ( true )
-  , m_neutral     ( true ) 
-  , m_caloEndTree (){
-  if( NULL == part)m_isCalo = false;
+  : m_isCalo     ( bool(part) )
+{
   setReferencePoint ( point , cov ) ;
   this->addCaloPosition( part );
   addToFlag( LHCb::CaloMomentum::NewReferencePoint);

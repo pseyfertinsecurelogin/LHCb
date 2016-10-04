@@ -124,12 +124,13 @@ StatusCode CaloAdcFromRaw::execute() {
       int satur = max - m_offset;
       if( value > satur      )value = satur;
       if( value < -m_offset  )value = -m_offset;
-      LHCb::CaloAdc* out = new LHCb::CaloAdc( id, value);
+      auto out = std::make_unique<LHCb::CaloAdc>( id, value);
       if( UNLIKELY( msgLevel(MSG::DEBUG) ) ) 
         debug() << "Inserting : " << id << " adc = " << value << "  =  " << adc.adc() << " / " << calib 
                 << "  (dead channel ? " << m_calo->isDead( id ) << ")" << endmsg;
       try{
-        outs->insert(out);
+        outs->insert(out.get());
+        out.release();
       }
       catch(GaudiException &exc) { 
         counter("Duplicate CaloADC") += 1;
@@ -140,7 +141,6 @@ StatusCode CaloAdcFromRaw::execute() {
         int tell1=  m_data->deCalo()->cardToTell1( card);
         LHCb::RawBankReadoutStatus& status = m_data->status();
         status.addStatus( tell1 ,LHCb::RawBankReadoutStatus::DuplicateEntry);
-        delete out;
       }
     }    
   }
@@ -163,13 +163,14 @@ StatusCode CaloAdcFromRaw::execute() {
       int satur = 255; // 8 bit L0ADC
       if( value > satur)value = satur;
       if( value < 0  )value = 0;
-      LHCb::L0CaloAdc* out = new LHCb::L0CaloAdc( id, value);
+      auto out = std::make_unique<LHCb::L0CaloAdc>( id, value);
       if( UNLIKELY( msgLevel(MSG::DEBUG) ) ) 
         debug() << "Inserting : " << id << " l0adc = " << value << "  =  " << adc.adc() << " / " << calib 
                 << "  (dead channel ? " << m_calo->isDead( id ) << ")" << endmsg;
 
       try{
-        outs->insert(out);
+        outs->insert(out.get());
+        out.release();
       }
       catch(GaudiException &exc) { 
         counter("Duplicate L0ADC") += 1;
@@ -180,7 +181,6 @@ StatusCode CaloAdcFromRaw::execute() {
         int tell1=  m_data->deCalo()->cardToTell1( card);
         LHCb::RawBankReadoutStatus& status = m_data->status();
         status.addStatus( tell1 ,LHCb::RawBankReadoutStatus::DuplicateEntry);
-        delete out;
       }
     }
   }
@@ -198,13 +198,14 @@ StatusCode CaloAdcFromRaw::execute() {
       if(value > satur)value = satur;
       if(value < 0)value = 0;
       if( 1 == value){
-        LHCb::L0PrsSpdHit* out = new LHCb::L0PrsSpdHit( id );
+        auto out = std::make_unique<LHCb::L0PrsSpdHit>( id );
         if( UNLIKELY( msgLevel(MSG::DEBUG) ) ) 
           debug() << "Inserting : " << id << " bit = " << value 
                   << "  (dead channel ? " << m_calo->isDead( id ) << ")" << endmsg;
 
         try{
-          outs->insert(out);
+          outs->insert(out.get());
+          out.release();
         }
         catch(GaudiException &exc) { 
           counter("Duplicate L0Bit") += 1;
@@ -215,8 +216,7 @@ StatusCode CaloAdcFromRaw::execute() {
           int tell1=  m_data->deCalo()->cardToTell1( card);
           LHCb::RawBankReadoutStatus& status = m_data->status();
           status.addStatus( tell1 ,LHCb::RawBankReadoutStatus::DuplicateEntry);
-          delete out;
-      }
+        }
       }
     }
   }

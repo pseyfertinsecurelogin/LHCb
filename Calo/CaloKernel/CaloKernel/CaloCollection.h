@@ -1,8 +1,3 @@
-// $Id: CaloCollection.h,v 1.5 2006-06-14 15:54:50 ibelyaev Exp $
-// ============================================================================ 
-// CVS tag $Name: not supported by cvs2svn $ 
-// ============================================================================ 
-// $Log: not supported by cvs2svn $
 // ============================================================================ 
 #ifndef     CALOKERNEL_CALOCOLLECTION_H
 #define     CALOKERNEL_CALOCOLLECTION_H 1  
@@ -145,11 +140,10 @@ protected:
   inline const Content&     def    () const { return m_cc_def            ; };
   inline       IMessageSvc* msgSvc () const { return m_cc_messageService ; };
   ///
-private:
   /// copy constructor! copying is not allowed! 
-  CaloCollection            ( const CaloCollection& );
+  CaloCollection            ( const CaloCollection& ) = delete;
   /// assignment!       assignment is not allowed! 
-  CaloCollection& operator =( const CaloCollection& ); 
+  CaloCollection& operator =( const CaloCollection& ) = delete; 
   ///
 private: 
   ///  
