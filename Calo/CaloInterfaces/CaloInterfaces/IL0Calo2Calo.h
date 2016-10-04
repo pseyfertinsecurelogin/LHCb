@@ -12,7 +12,6 @@
 #include "Event/CaloCluster.h"
 #include "Event/L0CaloCandidate.h"
 
-static const InterfaceID IID_IL0Calo2Calo ( "IL0Calo2Calo", 1, 1 );
 
 /** @class IL0Calo2Calo IL0Calo2Calo.h CaloInterfaces/IL0Calo2Calo.h
  *  
@@ -22,9 +21,8 @@ static const InterfaceID IID_IL0Calo2Calo ( "IL0Calo2Calo", 1, 1 );
  *  @author Dmitry Golubkov
  *  @date   2009-07-27
  */
-class IL0Calo2Calo : virtual public IAlgTool 
+struct IL0Calo2Calo : extend_interfaces<IAlgTool>
 {
-public:
   // ==========================================================================
   /** obtain CaloClusters corresponding to one L0CaloCandidate
    *
@@ -111,6 +109,6 @@ public:
    *
    * \return the interface ID
    */
-  static const InterfaceID& interfaceID() { return IID_IL0Calo2Calo; }
+  DeclareInterfaceID(IL0Calo2Calo, 1, 1 );
 };
 #endif // CALOINTERFACES_IL0CALO2CALO_H

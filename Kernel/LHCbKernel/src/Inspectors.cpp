@@ -55,7 +55,7 @@ void Gaudi::Utils::properties
         names.end() != item ; ++item )
   {
     // get the property
-    const Property* p = Gaudi::Utils::getProperty ( cmp , *item ) ;
+    const ::Property* p = Gaudi::Utils::getProperty ( cmp , *item ) ;
     if ( 0 == p ) { continue ; }                                    // CONTINUE
     // put the proeprty into the output container
     output.push_back ( p ) ;

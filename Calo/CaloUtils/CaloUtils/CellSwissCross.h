@@ -32,7 +32,7 @@
  *  @date   07/11/2001
  */
 
-class CellSwissCross : public CellMatrix
+class CellSwissCross final : public CellMatrix
 {
 
 public:
@@ -43,8 +43,6 @@ public:
   CellSwissCross( const DeCalorimeter* Det = 0 )
     : CellMatrix( Det )
   {};
-  
-  virtual ~CellSwissCross(); ///< Destructor
   
   /** the major method. It returns "true" if the cell 
    *  belongs to "swiss-cross" sub-matrix around the seed 

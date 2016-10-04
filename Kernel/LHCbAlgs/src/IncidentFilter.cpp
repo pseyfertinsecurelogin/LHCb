@@ -1,7 +1,7 @@
 // ============================================================================
-// Include files 
+// Include files
 // ============================================================================
-// STD & STL 
+// STD & STL
 // ============================================================================
 #include <set>
 // ============================================================================
@@ -16,9 +16,9 @@
 #include "GaudiAlg/GaudiAlgorithm.h"
 // ============================================================================
 /** file
- *  Simple algorithm to filter events according occurance of 
+ *  Simple algorithm to filter events according occurance of
  *  the certains incidents
- * 
+ *
  *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
  *  @date 2011-12-16
  */
@@ -26,16 +26,16 @@
 namespace Gaudi
 {
   // ==========================================================================
-  /** @class IncidentFilter 
+  /** @class IncidentFilter
    *
-   *  Trivial algorithm to filter events according to occurance 
-   *  of some incidents 
+   *  Trivial algorithm to filter events according to occurance
+   *  of some incidents
    *
    *  @code
    *
-   *  from Configurables import Gaudi__IncidentFilter and IncFltr 
+   *  from Configurables import Gaudi__IncidentFilter and IncFltr
    *
-   *  fltr = IncFltr ( Incidents = [ 'GoodEvent' ] ) 
+   *  fltr = IncFltr ( Incidents = [ 'GoodEvent' ] )
    *
    *  @endcode
    *
@@ -43,40 +43,40 @@ namespace Gaudi
    *  @date 2011-10-05
    */
   class IncidentFilter
-    : public            GaudiAlgorithm 
-    , public virtual IIncidentListener 
+    : public            GaudiAlgorithm
+    , public virtual IIncidentListener
   {
     // ========================================================================
     friend class AlgFactory<Gaudi::IncidentFilter> ;
     // ========================================================================
   public:
     // ========================================================================
-    /// standard initialization 
+    /// standard initialization
     virtual StatusCode initialize () ;
-    /// standard finalization  
+    /// standard finalization
     virtual StatusCode finalize   () ;
-    /// the only one essential method 
-    virtual StatusCode execute () ; // the only one essential method 
+    /// the only one essential method
+    virtual StatusCode execute () ; // the only one essential method
     // ========================================================================
   public:
     // ========================================================================
-    // handle the incident 
+    // handle the incident
     void handle ( const Incident& inc ) ;
     // ========================================================================
   protected:
     // ========================================================================
-    /// standard constructor 
+    /// standard constructor
     IncidentFilter
     ( const std::string& name ,
-      ISvcLocator*       pSvc ) ;                       // standard constructor 
-    /// virtual destructor 
-    virtual ~IncidentFilter () = default ;              //   virtual destructor 
+      ISvcLocator*       pSvc ) ;                       // standard constructor
+    /// virtual destructor
+    virtual ~IncidentFilter () = default ;              //   virtual destructor
     // ========================================================================
-  private: 
+  private:
     // ========================================================================
-    /// the default constructor is disabled 
+    /// the default constructor is disabled
     IncidentFilter  () ;                              // no default constructor
-    /// the copy constructor is disabled 
+    /// the copy constructor is disabled
     IncidentFilter  ( const IncidentFilter& ) ;         //  no copy constructor
     /// the assignement operator is disabled
     IncidentFilter& operator=( const IncidentFilter& ); //       no assignement
@@ -88,7 +88,7 @@ namespace Gaudi
   private:
     // ========================================================================
     /// update handler for "What"
-    void handler_1 ( Property&  p ) ;            // update handler for "What"
+    void handler_1 ( ::Property&  p ) ;            // update handler for "What"
     // ========================================================================
   private:
     // ========================================================================
@@ -104,78 +104,78 @@ namespace Gaudi
     LIST m_incidents     ;
     LIST m_old_incidents ;
     // ========================================================================
-  } ; //                                            end of class IncidentFilter 
+  } ; //                                            end of class IncidentFilter
   // ==========================================================================
   /** @class IncidentVeto
    *
-   *  Trivial algorithm to veto events according to occurance 
-   *  of some incidents 
+   *  Trivial algorithm to veto events according to occurance
+   *  of some incidents
    *
    *  @code
    *
    *  from Configurables import Gaudi__IncidentVeto and IncVeto
    *
-   *  fltr = IncVeto ( Incidents = [ 'BadEvent' ] ) 
+   *  fltr = IncVeto ( Incidents = [ 'BadEvent' ] )
    *
    *  @endcode
    *
    *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
    *  @date 2011-10-05
    */
-  class IncidentVeto : public IncidentFilter 
+  class IncidentVeto : public IncidentFilter
   {
     // ========================================================================
     friend class AlgFactory<Gaudi::IncidentVeto> ;
     // ========================================================================
   public:
     // ========================================================================
-    /// standard constructor 
+    /// standard constructor
     IncidentVeto
     ( const std::string& name ,
-      ISvcLocator*       pSvc ) ;                       // standard constructor 
-    /// virtual destructor 
-    virtual ~IncidentVeto () = default ;                //   virtual destructor 
+      ISvcLocator*       pSvc ) ;                       // standard constructor
+    /// virtual destructor
+    virtual ~IncidentVeto () = default ;                //   virtual destructor
     // ========================================================================
-  private: 
+  private:
     // ========================================================================
-    /// the default constructor is disabled 
+    /// the default constructor is disabled
     IncidentVeto  () ;                              // no default constructor
-    /// the copy constructor is disabled 
+    /// the copy constructor is disabled
     IncidentVeto  ( const IncidentVeto& ) ;         //  no copy constructor
     /// the assignement operator is disabled
     IncidentVeto& operator=( const IncidentVeto& ); //       no assignement
     // ========================================================================
-  } ; //                                            end of class IncidentFilter 
+  } ; //                                            end of class IncidentFilter
   // ==========================================================================
-} //                                                     end of namespace Gaudi 
+} //                                                     end of namespace Gaudi
 // ============================================================================
-// Filter 
+// Filter
 // ============================================================================
-// standard constructor 
+// standard constructor
 // ============================================================================
 Gaudi::IncidentFilter::IncidentFilter
 ( const std::string& name ,
-  ISvcLocator*       pSvc )                        // standard constructor 
-  : GaudiAlgorithm  ( name , pSvc ) 
+  ISvcLocator*       pSvc )                        // standard constructor
+  : GaudiAlgorithm  ( name , pSvc )
 //
   , m_veto          ( false )
   , m_decision      ( false )
-  , m_incidents     ( ) 
-  , m_old_incidents ( ) 
+  , m_incidents     ( )
+  , m_old_incidents ( )
 //
 {
   // ==========================================================================
-  declareProperty 
-    ( "Incidents" , 
-      m_incidents , 
-      "Incidents to be handled" ) -> 
+  declareProperty
+    ( "Incidents" ,
+      m_incidents ,
+      "Incidents to be handled" ) ->
     declareUpdateHandler ( &Gaudi::IncidentFilter::handler_1 , this ) ;
   // ==========================================================================
 }
 // ============================================================================
-// standard initialization 
+// standard initialization
 // ============================================================================
-StatusCode Gaudi::IncidentFilter::initialize () 
+StatusCode Gaudi::IncidentFilter::initialize ()
 {
   //
   StatusCode sc = GaudiAlgorithm::initialize() ;
@@ -186,9 +186,9 @@ StatusCode Gaudi::IncidentFilter::initialize ()
   return StatusCode::SUCCESS ;
 }
 // ============================================================================
-// finalize 
+// finalize
 // ============================================================================
-StatusCode Gaudi::IncidentFilter::finalize () 
+StatusCode Gaudi::IncidentFilter::finalize ()
 {
   //
   unsubscribe () ;
@@ -196,40 +196,40 @@ StatusCode Gaudi::IncidentFilter::finalize ()
   return GaudiAlgorithm::finalize () ;
 }
 // ============================================================================
-// subscribe incidents 
+// subscribe incidents
 // ============================================================================
-void Gaudi::IncidentFilter::subscribe () 
+void Gaudi::IncidentFilter::subscribe ()
 {
   //
   m_old_incidents.clear () ;
   //
-  if ( m_incidents.empty() ) 
+  if ( m_incidents.empty() )
   { Warning ( "Empty list of incidents", StatusCode::SUCCESS ).ignore() ; return ; }
-  //                  
+  //
   IIncidentSvc* isvc = svc<IIncidentSvc>( "IncidentSvc" ) ;
   //
-  for ( const auto & item : m_incidents ) { isvc->addListener ( this , item ) ; } 
+  for ( const auto & item : m_incidents ) { isvc->addListener ( this , item ) ; }
   //
-  if ( m_incidents.end() == std::find ( m_incidents.begin       () , 
-                                        m_incidents.end         () , 
-                                        IncidentType::BeginEvent   ) ) 
+  if ( m_incidents.end() == std::find ( m_incidents.begin       () ,
+                                        m_incidents.end         () ,
+                                        IncidentType::BeginEvent   ) )
   { isvc->addListener ( this ,  IncidentType::BeginEvent  ) ; }
   //
   m_old_incidents = m_incidents ;
   //
 }
 // ============================================================================
-// subscribe incidents 
+// subscribe incidents
 // ============================================================================
-void Gaudi::IncidentFilter::unsubscribe () 
+void Gaudi::IncidentFilter::unsubscribe ()
 {
   //
   m_old_incidents.clear () ;
   //
   IIncidentSvc* isvc = svc<IIncidentSvc>( "IncidentSvc" ) ;
   //
-  for ( const auto & item : m_old_incidents ) 
-  { isvc->removeListener ( this , item ) ; } 
+  for ( const auto & item : m_old_incidents )
+  { isvc->removeListener ( this , item ) ; }
   //
   m_old_incidents = m_incidents ;
   //
@@ -237,36 +237,36 @@ void Gaudi::IncidentFilter::unsubscribe ()
 // ============================================================================
 // update handler for property "What"
 // ============================================================================
-void Gaudi::IncidentFilter::handler_1 ( Property&  /* p */ ) 
+void Gaudi::IncidentFilter::handler_1 ( ::Property&  /* p */ )
 {
   if ( Gaudi::StateMachine::INITIALIZED > FSMState() ) { return ; }
   //
   if ( m_old_incidents == m_incidents                ) { return ; }
   //
-  // unsibscribe old incidents 
+  // unsibscribe old incidents
   IIncidentSvc* isvc = svc<IIncidentSvc>( "IncidentSvc" ) ;
   //
-  for ( const auto & item :  m_old_incidents ) 
-  { isvc->removeListener ( this , item ) ; } 
+  for ( const auto & item :  m_old_incidents )
+  { isvc->removeListener ( this , item ) ; }
   //
-  // subscribe new incidents 
+  // subscribe new incidents
   subscribe() ;
 }
 // ============================================================================
 // handle the incident
 // ============================================================================
-void Gaudi::IncidentFilter::handle ( const Incident& inc ) 
+void Gaudi::IncidentFilter::handle ( const Incident& inc )
 {
   //
   // reset at the begin-event
   if ( IncidentType::BeginEvent == inc.type() ) { m_decision = m_veto ; }
   //
   // look in the list of incidents:
-  if ( m_incidents.end() != std::find ( m_incidents.begin () , 
-                                        m_incidents.end   () , 
-                                        inc.type          () ) ) 
+  if ( m_incidents.end() != std::find ( m_incidents.begin () ,
+                                        m_incidents.end   () ,
+                                        inc.type          () ) )
   { m_decision = !m_veto ; }
-  //    
+  //
 }
 // ============================================================================
 // execute
@@ -274,8 +274,8 @@ void Gaudi::IncidentFilter::handle ( const Incident& inc )
 StatusCode Gaudi::IncidentFilter::execute ()
 {
   //
-  setFilterPassed ( m_decision ) ; 
-  // 
+  setFilterPassed ( m_decision ) ;
+  //
   return StatusCode::SUCCESS ;
 }
 // ============================================================================
@@ -285,12 +285,12 @@ StatusCode Gaudi::IncidentFilter::execute ()
 // ============================================================================
 // Veto
 // ============================================================================
-// standard constructor 
+// standard constructor
 // ============================================================================
 Gaudi::IncidentVeto::IncidentVeto
 ( const std::string& name ,
-  ISvcLocator*       pSvc )                        // standard constructor 
-  : Gaudi::IncidentFilter ( name , pSvc ) 
+  ISvcLocator*       pSvc )                        // standard constructor
+  : Gaudi::IncidentFilter ( name , pSvc )
 {
   setVeto ( true ) ;
 }
@@ -298,11 +298,11 @@ Gaudi::IncidentVeto::IncidentVeto
 
 
 // ============================================================================
-// Factories 
+// Factories
 // ============================================================================
 DECLARE_NAMESPACE_ALGORITHM_FACTORY(Gaudi,IncidentFilter)
 DECLARE_NAMESPACE_ALGORITHM_FACTORY(Gaudi,IncidentVeto)
 
 // ============================================================================
-//                                                                      The END 
+//                                                                      The END
 // ============================================================================

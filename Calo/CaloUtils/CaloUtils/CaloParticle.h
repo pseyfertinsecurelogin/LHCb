@@ -1,9 +1,6 @@
-// $Id: CaloParticle.h,v 1.6 2009-11-20 15:46:17 odescham Exp $ 
 // ============================================================================
 #ifndef RecEvent_CaloParticle_H
 #define RecEvent_CaloParticle_H 1
-// ============================================================================
-// CVS tag $Name: not supported by cvs2svn $, version $Revision: 1.6 $ 
 // ============================================================================
 // Include files
 // ============================================================================
@@ -25,7 +22,7 @@ namespace LHCb{
    *  Helepr class to evalauet the parameters of "Calo"-particles 
    *  @author Olivier Deschamps
    */
-  class CaloParticle : public LHCb::CaloMomentum{
+  class CaloParticle final : public LHCb::CaloMomentum{
     // ========================================================================
   public:
     // ========================================================================
@@ -38,8 +35,6 @@ namespace LHCb{
     CaloParticle( LHCb::Particle*                            part  , 
                   const LHCb::CaloMomentum::Point&           point ,
                   const LHCb::CaloMomentum::PointCovariance& cov   ) ;
-    /// Default Destructor
-    virtual ~CaloParticle() ;
     // ========================================================================
   public:
     // ========================================================================
@@ -80,9 +75,9 @@ namespace LHCb{
   private:
     // ========================================================================
     LHCb::Particle::Vector      m_parts       ;
-    LHCb::Vertex*               m_vert        ;
-    bool                        m_isCalo      ;
-    bool                        m_neutral     ;
+    LHCb::Vertex*               m_vert        = nullptr;
+    bool                        m_isCalo      = true;
+    bool                        m_neutral     = true;
     LHCb::Particle::ConstVector m_caloEndTree ;
     // ========================================================================
   }; // class CaloParticle

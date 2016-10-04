@@ -1,4 +1,3 @@
-// $Id: ICaloTrackIdEval.h,v 1.10 2009-10-25 14:40:11 ibelyaev Exp $
 // ============================================================================
 #ifndef CALOINTERFACES_ICALOTRACKIDEVAL_H 
 #define CALOINTERFACES_ICALOTRACKIDEVAL_H 1
@@ -30,9 +29,8 @@ namespace LHCb
  *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
  *  @date   2002-11-10
  */
-class ICaloTrackIdEval : public virtual IAlgTool 
+struct ICaloTrackIdEval : extend_interfaces<IAlgTool>
 {
-public:
   // ==========================================================================
   /** The main processing method 
    *  It evaluated the Track ID estimators using the calorimeter information  
@@ -51,18 +49,11 @@ public:
   virtual double     operator() 
     ( const LHCb::Track* track ) const = 0 ;
   // ==========================================================================  
-public:
-  // ==========================================================================
   /** static interface identification
    *  @see IInterface
    *  @return unique interface identifier
    */
-  static const InterfaceID& interfaceID() ;
-  // ==========================================================================
-protected:
-  // ==========================================================================
-  /// virtual & protected destructor 
-  virtual ~ICaloTrackIdEval() ;               // virtual & protected destructor 
+  DeclareInterfaceID( ICaloTrackIdEval , 4 , 0 );
   // ==========================================================================
 };
 // ============================================================================

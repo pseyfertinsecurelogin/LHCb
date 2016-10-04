@@ -24,10 +24,6 @@ apply_pattern  reflex_dictionary                                               \
                selectionfile=$(CALOINTERFACESROOT)/dict/CaloInterfacesDict.xml \
                options="-U__MINGW32__"
 
-# =============== Constituents =============================================
-library        CaloInterfaces  *.cpp 
-apply_pattern  linker_library library=CaloInterfaces 
-
 # =============== Interdependencies =========================================
 macro_append   CaloInterfacesDict_dependency " CaloInterfaces " 
 

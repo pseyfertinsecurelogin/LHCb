@@ -57,10 +57,6 @@ CaloZSupAlg::CaloZSupAlg( const std::string& name, ISvcLocator* pSvcLocator)
   }
 }
 
-//=============================================================================
-// Standard destructor
-//=============================================================================
-CaloZSupAlg::~CaloZSupAlg() {}
 
 //=============================================================================
 // Initialisation. Check parameters
@@ -211,11 +207,11 @@ StatusCode CaloZSupAlg::execute() {
     if( NeighborFlag == caloFlags[index] && (*anAdc).adc() < m_zsupNeighbor)continue;
 
     if(m_adcOnTES){
-      LHCb::CaloAdc* adc = new LHCb::CaloAdc( id, (*anAdc).adc() );
       try{
-        newAdcs->insert( adc ) ;
-      }
-      catch(GaudiException &exc) {
+        auto adc = std::make_unique<LHCb::CaloAdc>( id, (*anAdc).adc() );
+        newAdcs->insert( adc.get() ) ;
+        adc.release();
+      } catch(GaudiException &exc) {
         counter("Duplicate ADC") += 1;
         std::ostringstream os("");
         os << "Duplicate ADC for channel " << id << std::endl;
@@ -224,26 +220,25 @@ StatusCode CaloZSupAlg::execute() {
         int tell1=  m_adcTool->deCalo()->cardToTell1( card);
         LHCb::RawBankReadoutStatus& status = m_adcTool->status();
         status.addStatus( tell1 ,LHCb::RawBankReadoutStatus::DuplicateEntry);
-        delete adc;
       }
     }
 
     if(m_digitOnTES){
       double e = ( double( (*anAdc).adc() ) - pedShift ) * m_calo->cellGain( id );
-      LHCb::CaloDigit* digit = new LHCb::CaloDigit(id,e);
       try{
-        newDigits->insert( digit ) ;
+        auto digit = std::make_unique<LHCb::CaloDigit>(id,e);
+        newDigits->insert( digit.get() ) ;
+        digit.release();
       }
       catch(GaudiException &exc) {
         counter("Duplicate Digit") += 1;
-        std::ostringstream os("");
+        std::ostringstream os;
         os << "Duplicate Digit for channel " << id << std::endl;
         Warning(os.str(),StatusCode::SUCCESS).ignore();
         int card =  m_adcTool->deCalo()->cardNumber( id );
         int tell1=  m_adcTool->deCalo()->cardToTell1( card);
         LHCb::RawBankReadoutStatus& status = m_adcTool->status();
         status.addStatus( tell1 ,LHCb::RawBankReadoutStatus::DuplicateEntry);
-        delete digit;
       }
 
     }

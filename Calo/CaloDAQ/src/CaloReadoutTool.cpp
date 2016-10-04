@@ -42,10 +42,6 @@ CaloReadoutTool::CaloReadoutTool( const std::string& type,
   initRawEventSearch();
   
 }
-//=============================================================================
-// Destructor
-//=============================================================================
-CaloReadoutTool::~CaloReadoutTool() {}
 
 //=========================================================================
 //  Get required CaloBanks (short or packed format) - Fill m_banks
@@ -63,7 +59,7 @@ StatusCode CaloReadoutTool::initialize(){
 }
 StatusCode CaloReadoutTool::finalize(){
   IIncidentSvc* inc = incSvc() ;
-  if ( 0 != inc ) { inc -> removeListener  ( this ) ; }
+  if ( inc ) { inc -> removeListener  ( this ) ; }
   return GaudiTool::finalize();
 }
 
@@ -172,7 +168,8 @@ bool CaloReadoutTool::getCaloBanksFromRaw( ) {
 //========================
 //  Check FE-Cards is PIN
 //========================
-bool CaloReadoutTool::checkCards(int nCards, std::vector<int> feCards ){
+bool CaloReadoutTool::checkCards(int nCards, std::vector<int> feCards ) const 
+{
   bool check = true;
   if ( msgLevel( MSG::DEBUG) )debug() << nCards-feCards.size() 
                                       << "FE-Cards have been read among the " << nCards << " expected"<< endmsg; 
@@ -197,7 +194,7 @@ bool CaloReadoutTool::checkCards(int nCards, std::vector<int> feCards ){
 //===========================
 //  Find Card number by code
 //===========================
-int CaloReadoutTool::findCardbyCode(std::vector<int> feCards , int code){
+int CaloReadoutTool::findCardbyCode(std::vector<int> feCards , int code) const {
   for(unsigned int iFe = 0 ; iFe <  feCards.size();++iFe){ 
     if( code == m_calo->cardCode( feCards[iFe] ) ){
       int crate  = m_calo->cardParam( feCards[ iFe ] ).crate();
@@ -222,7 +219,7 @@ void CaloReadoutTool::putStatusOnTES(){
                                     << LHCb::RawBankReadoutStatusLocation::Default << endmsg;
   Statuss* statuss = getOrCreate<Statuss,Statuss>( LHCb::RawBankReadoutStatusLocation::Default );
   Status* nstatus = statuss->object ( m_status.key() );
-  if( NULL == nstatus ){
+  if( !nstatus ){
     if( msgLevel( MSG::DEBUG))debug() << "Inserting new status for bankType " 
                                    <<Gaudi::Utils::toString( m_status.key())
                                    <<endmsg;
@@ -236,8 +233,8 @@ void CaloReadoutTool::putStatusOnTES(){
               + " already exists  with different status value -> merge both"
               , StatusCode::SUCCESS).ignore();
       std::map< int, long > smap = m_status.statusMap();
-      for( std::map< int, long >::iterator it = smap.begin() ; it != smap.end() ; ++it){
-        nstatus->addStatus((*it).first , (*it).second);
+      for( const auto& it : smap ){
+        nstatus->addStatus(it.first , it.second);
       }
     }
   }
@@ -257,21 +254,12 @@ void CaloReadoutTool::checkCtrl(int ctrl,int sourceID){
 }
 
 bool CaloReadoutTool::checkSrc(int source){
-
-  
-  bool read = false;
-
-  for(std::vector<int>::iterator it = m_readSources.begin() ; it != m_readSources.end() ; ++it){
-    if( source == *it){
-      read = true;
-      break;
-    }    
-  }
-  if(read){
+  auto it = std::find( m_readSources.begin(), m_readSources.end(), source );
+  bool read = ( it != m_readSources.end() );
+  if ( read ) {
     Warning("Another bank with same sourceID " + Gaudi::Utils::toString( source ) + " has already been read").ignore();
     m_status.addStatus(source, LHCb::RawBankReadoutStatus::NonUnique );
-  }
-  else{
+  } else{
     m_readSources.push_back(source);
   }
   return read;
