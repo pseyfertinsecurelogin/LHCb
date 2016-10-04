@@ -9,8 +9,8 @@
  */
 //---------------------------------------------------------------------------------
 
-#ifndef RICHKERNEL_IRICHADDBACKGROUND_H
-#define RICHKERNEL_IRICHADDBACKGROUND_H 1
+#ifndef RICHINTERFACES_IRICHADDBACKGROUND_H
+#define RICHINTERFACES_IRICHADDBACKGROUND_H 1
 
 // from STL
 #include <string>
@@ -58,4 +58,4 @@ namespace Rich
 
 }
 
-#endif // RICHKERNEL_IRICHADDBACKGROUND_H
+#endif // RICHINTERFACES_IRICHADDBACKGROUND_H

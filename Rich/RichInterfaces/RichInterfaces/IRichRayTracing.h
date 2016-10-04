@@ -9,8 +9,8 @@
  */
 //-----------------------------------------------------------------------------
 
-#ifndef RICHKERNEL_IRICHRAYTRACING_H
-#define RICHKERNEL_IRICHRAYTRACING_H 1
+#ifndef RICHINTERFACES_IRICHRAYTRACING_H
+#define RICHINTERFACES_IRICHRAYTRACING_H 1
 
 // from Gaudi
 #include "GaudiKernel/IAlgTool.h"
@@ -174,4 +174,4 @@ namespace Rich
 
 }
 
-#endif // RICHKERNEL_IRICHRAYTRACING_H
+#endif // RICHINTERFACES_IRICHRAYTRACING_H

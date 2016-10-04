@@ -68,10 +68,10 @@ StatusCode RawBufferToRichDigitsAlg::execute()
       for ( const auto& In : L1.second )
       {
         // Loop over HPDs in this ingress
-        for ( const auto& HPD : In.second.hpdData() )
+        for ( const auto& HPD : In.second.pdData() )
         {
           // Valid HPD ID
-          if ( !HPD.second.hpdID().isValid() ) { continue; }
+          if ( !HPD.second.pdID().isValid() ) { continue; }
           // inhibited HPD ?
           if ( HPD.second.header().inhibit() ) { continue; }
           // Loop over RichSmartIDs in this HPD

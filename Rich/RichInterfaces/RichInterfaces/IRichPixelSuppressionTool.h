@@ -9,8 +9,8 @@
  */
 //-----------------------------------------------------------------------------
 
-#ifndef RICHKERNEL_IRichPixelSuppressionTool_H
-#define RICHKERNEL_IRichPixelSuppressionTool_H 1
+#ifndef RICHINTERFACES_IRichPixelSuppressionTool_H
+#define RICHINTERFACES_IRichPixelSuppressionTool_H 1
 
 // STL
 #include <vector>
@@ -67,4 +67,4 @@ namespace Rich
   }
 }
 
-#endif // RICHKERNEL_IRichHighOccHPDSuppressionTool_H
+#endif // RICHINTERFACES_IRichHighOccHPDSuppressionTool_H
