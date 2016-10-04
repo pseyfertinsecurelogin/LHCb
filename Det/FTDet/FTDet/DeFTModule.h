@@ -6,7 +6,7 @@
 
 /// Kernel
 #include "Kernel/FTChannelID.h"
-
+#include "Kernel/LineTraj.h"
 
 /** @class DeFTModule DeFTModule.h "FTDet/DeFTModule.h"
  *
@@ -67,6 +67,12 @@ public:
   /** Returns the pitch between two channels (250 micron) */
   double channelPitch() const { return m_channelPitch; };
 
+  /** Returns the thickness of the fibre mat (1.3 mm) */
+  double fibreMatThickness() const { return m_fibreSizeZ; };
+
+  /** Returns the global z position of the module */
+  double globalZ() const { return m_globalZ; };
+
   /** Main method to determine which channel was hit
    *  @param localX is the input x coordinate in the local frame.
    *  @param frac returns the corresponding fraction in the range 0-1.
@@ -121,14 +127,13 @@ public:
   double distancePointToChannel(const Gaudi::XYZPoint& globalPoint,
       const LHCb::FTChannelID channelID, const double frac ) const;
 
-  /** Get the begin and end positions of a hit (channelID + fraction)
+  /** Get the trajectory defined by the begin and end positions of a hit
+   *   (channelID + fraction)
    *  @param channelID input FTChannelID
    *  @param frac input fraction
-   *  @param beginPoint returns the 3D point closest to y=0
-   *  @param endPoint returns the 3D point closest to the SiPM
    */
-  void getPositions(const LHCb::FTChannelID channelID, const double frac,
-      Gaudi::XYZPoint& beginPoint, Gaudi::XYZPoint& endPoint) const;
+  std::unique_ptr<LHCb::Trajectory> trajectory(const LHCb::FTChannelID channelID,
+      const double frac) const;
 
   /** Flag if the local x is in or above the beam pipe hole */
   bool inHole( double localX ) const {
@@ -170,6 +175,7 @@ private :
   int m_nSiPMsInModule;   ///< number of SiPM arrays per module
   int m_nChannelsInModule;///< number of channels per module
 
+  double m_globalZ;                ///< Global z position of module closest to y-axis
   double m_uBegin;                 ///< start in local u-coordinate of sensitive SiPM
   double m_airGap;                 ///< air gap
   double m_deadRegion;             ///< dead region
@@ -180,9 +186,10 @@ private :
   double m_matPitch;               ///< pitch between mats
   double m_fibreSizeX;             ///< Length in x of all fibres in the module
   double m_fibreSizeY;             ///< Length in y of the fibre in the module
+  double m_fibreSizeZ;             ///< Thickness of the fibre mat (nominal: 1.3 mm)
   double m_holeSizeX;              ///< Size in x of the hole in the module
   double m_holeSizeY;              ///< Size in y of the hole in the module
-  bool m_reversed;                 ///< Flag set when the pseudochannel-ordering is reversed
+  bool   m_reversed;               ///< Flag set when the pseudochannel-ordering is reversed
 
 }; // end of class
 
