@@ -166,9 +166,9 @@ std::unique_ptr<LHCb::Trajectory> DeFTModule::trajectory(const LHCb::FTChannelID
     const double frac) const {
   double localX = localXfromChannel( channelID, frac );
   double localY1 = (inHole(localX)) ? -0.5*m_fibreSizeY + m_holeSizeY : -0.5*m_fibreSizeY;
-  Gaudi::XYZPoint beginPoint = geometry()->toGlobal(Gaudi::XYZPoint(localX,           localY1, 0.0));
-  Gaudi::XYZPoint endPoint   = geometry()->toGlobal(Gaudi::XYZPoint(localX, +0.5*m_fibreSizeY, 0.0));
-  return std::unique_ptr<LHCb::Trajectory>(new LHCb::LineTraj(beginPoint,endPoint));
+  auto to_global = [&](double x, double y, double z){ return geometry()->toGlobal(Gaudi::XYZPoint(x,y,z));};
+  return std::make_unique<LHCb::LineTraj>( to_global(localX,           localY1, 0.),
+                                           to_global(localX, +0.5*m_fibreSizeY, 0.) );
 }
 
 // Get the pseudo-channel for a FTChannelID (useful in the monitoring)
