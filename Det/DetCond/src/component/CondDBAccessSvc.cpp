@@ -1269,7 +1269,7 @@ void CondDBAccessSvc::defaultTags ( std::vector<LHCb::CondDBNameTagPair>& tags )
     }
   }
   // If the tag is a "HEAD" tag, I want to show "HEAD"
-  std::string tagName = (cool::IHvsNode::isHeadTag(tagName) ? "HEAD" : tag() );
+  std::string tagName = (cool::IHvsNode::isHeadTag(tag()) ? "HEAD" : tag() );
 
   tags.emplace_back(dbName,tagName);
 
