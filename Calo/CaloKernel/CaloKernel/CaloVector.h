@@ -32,7 +32,7 @@ namespace LHCb {
  */
 
 template <class CONTENT, class INDEX_ = LHCb::CaloCellID>
-class CaloVector : private std::vector<CONTENT> 
+class CaloVector final : private std::vector<CONTENT> 
 {
 public:
   /// type fo content 
@@ -58,13 +58,18 @@ public:
    */
   CaloVector ( Content  def = Content() )  ///< default value
     : ContVector (   0 )
-    , m_cc_def   ( def )
+    , m_cc_def   ( std::move(def) )
     , m_index    (   0 )
   { }
   
-  /// (virtual) destructor
-  virtual ~CaloVector() { this -> clear(); }
-  
+  /// copying is not allowed!
+  CaloVector( const CaloVector& ) = delete; 
+  /// assignment  is not allowed!
+  CaloVector& operator =( const CaloVector& ) = delete;
+
+  CaloVector( CaloVector&& ) = default;
+  CaloVector& operator =( CaloVector&& ) = default;
+
   /// following lines from std::vector interface 
   
   /// sequential access to content container (const version!)
@@ -96,7 +101,7 @@ public:
   inline       Content& operator[]  ( INDEX id )       
   { 
     const int indx = index( id );
-    return ( ( 0 > indx ) ? def() : *(begin()+indx) ) ; 
+    return ( 0 > indx ) ? def() : *(begin()+indx);  //FIXME: indx<0 returns dangling reference
   }
   
   /** Access to the content itself using LHCb::CaloCellID as index.
@@ -107,7 +112,7 @@ public:
   inline const Content& operator[]  ( INDEX id ) const 
   { 
     const int indx = index( id );
-    return ( ( 0 > indx ) ? def() : *(begin()+indx) ) ; 
+    return ( ( 0 > indx ) ? def() : *(begin()+indx) ) ;  //FIXME: indx<0 returns dangling reference
   }
   
   /** Access to the content itself using LHCb::CaloCellID as index. 
@@ -175,10 +180,6 @@ protected:
   /// get default value (const version)
   inline const Content& def() const { return m_cc_def; } 
   
-  /// copying is not allowed!
-  CaloVector( const CaloVector& ) = delete; 
-  /// assignment  is not allowed!
-  CaloVector& operator =( const CaloVector& ) = delete;
   
 private: 
   
@@ -192,10 +193,3 @@ private:
 // ============================================================================
 #endif  ///<  CALOKERNEL_CALOVECTOR_H 
 // ============================================================================
-
-
-
-
-
-
-

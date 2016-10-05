@@ -18,8 +18,8 @@
 // constructor from the particle 
 // ============================================================================
 LHCb::CaloParticle::CaloParticle( LHCb::Particle* part ) 
+  : m_isCalo( bool(part) )
 {
-  if( NULL == part)m_isCalo = false;
   this -> addCaloPosition( part );
 }
 // ============================================================================
@@ -60,7 +60,7 @@ void LHCb::CaloParticle::addCaloPosition ( LHCb::Particle* part )
   
   // Some checks
   this->addToFlag( LHCb::CaloMomentum::FromPart);  
-  if( 0 == part){
+  if( !part){
     this->addToStatus( LHCb::CaloMomentum::NullPart);
     m_neutral = false;
     return;
@@ -93,10 +93,9 @@ void LHCb::CaloParticle::addCaloPosition ( LHCb::Particle* part )
     if( m_isCalo ){
       m_parts.push_back(part);
       // the end-tree particles are pure calo objects
-      for(LHCb::Particle::ConstVector::const_iterator icalo = m_caloEndTree.begin();
-          icalo != m_caloEndTree.end(); ++icalo){
-        if( (*icalo)->charge() != 0 )m_neutral = false;
-        LHCb::CaloMomentum::addCaloPosition( (* icalo)->proto() );
+      for(const auto & icalo : m_caloEndTree ) {
+        if( icalo->charge() != 0 )m_neutral = false;
+        LHCb::CaloMomentum::addCaloPosition( icalo->proto() );
       }
     }else{
       //      m_caloEndTree.clear();
@@ -129,17 +128,14 @@ void LHCb::CaloParticle::CaloParticleTree ( const LHCb::Particle* part )
       this -> CaloParticleTree( *idau);
     }
   }
-  return;
 }
 // ============================================================================
 // update particle 
 // ============================================================================
 void LHCb::CaloParticle::updateParticle ()
 {
-  if( LHCb::CaloMomentum::OK == this->status() )
-  {
-    for ( LHCb::Particle::Vector::iterator ipart = m_parts.begin();ipart!=m_parts.end();++ipart){
-      LHCb::Particle* part = *ipart;
+  if( LHCb::CaloMomentum::OK == this->status() ) {
+    for ( LHCb::Particle* part : m_parts ) {
       part->setReferencePoint( this->referencePoint() );
       part->setPosCovMatrix( this->pointCovMatrix() );
       part->setMomentum( this->momentum() );
@@ -156,13 +152,10 @@ void LHCb::CaloParticle::updateTree()
 {
   this->updateParticle();
   
-  for( LHCb::Particle::Vector::iterator ipart = m_parts.begin() ;ipart!=m_parts.end();++ipart){
-    LHCb::Particle* part = *ipart;
+  for( LHCb::Particle* part : m_parts ) {
     if( !part->isBasicParticle() && LHCb::CaloMomentum::OK == this->status() ){ 
-      const SmartRefVector<LHCb::Particle>& daughters = part->daughters() ;
-      for ( SmartRefVector<LHCb::Particle>::const_iterator idau = daughters.begin();
-            idau != daughters.end(); ++idau ){
-        const LHCb::Particle* daughter = *idau;
+      const auto& daughters = part->daughters() ;
+      for ( const LHCb::Particle* daughter : daughters ) {
         LHCb::CaloParticle caloDau 
           ( const_cast<LHCb::Particle*> ( daughter ) , // convert to non-const
             this -> referencePoint () ,
@@ -172,20 +165,14 @@ void LHCb::CaloParticle::updateTree()
       this->addToFlag( LHCb::CaloMomentum::ParticleTreeUpdated);  
     }
   }
-  return;
 }
 // ============================================================================
 // add vertex 
 // ============================================================================
-void LHCb::CaloParticle::addToVertex 
-( LHCb::Vertex* vertex )
+void LHCb::CaloParticle::addToVertex( LHCb::Vertex* vertex )
 {
   m_vert = vertex;
-  for( LHCb::Particle::Vector::iterator ipart = m_parts.begin() ;
-       ipart!=m_parts.end();++ipart)
-  {
-    vertex->addToOutgoingParticles( *ipart ); 
-  }  
+  for( const auto& part : m_parts ) vertex->addToOutgoingParticles( part ); 
   setReferencePoint ( vertex ) ;
   addToFlag ( LHCb::CaloMomentum::NewReferencePoint);
   addToFlag ( LHCb::CaloMomentum::NewPointCovariance);
@@ -195,7 +182,6 @@ void LHCb::CaloParticle::addToVertex
 // ============================================================================
 LHCb::Particle* LHCb::CaloParticle::particle() const 
 { 
-  if ( m_parts.empty() ) { return 0 ; }
-  return m_parts.front() ;
+  return !m_parts.empty() ? m_parts.front() : nullptr;
 } 
 

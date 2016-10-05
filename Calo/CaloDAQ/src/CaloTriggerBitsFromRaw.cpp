@@ -24,12 +24,6 @@ CaloTriggerBitsFromRaw::CaloTriggerBitsFromRaw( const std::string& type,
   clear();
 }
 
-
-//=============================================================================
-// Destructor
-//=============================================================================
-CaloTriggerBitsFromRaw::~CaloTriggerBitsFromRaw() {}
-
 //=========================================================================
 //  Initialisation
 //=========================================================================
@@ -53,8 +47,8 @@ StatusCode CaloTriggerBitsFromRaw::initialize ( ) {
 
 //-------------------------------------
 void CaloTriggerBitsFromRaw::clear( ) {
-  (m_data.first).clear();
-  (m_data.second).clear();
+  m_data.first.clear();
+  m_data.second.clear();
   m_readSources.clear();
 }
 
@@ -62,18 +56,18 @@ void CaloTriggerBitsFromRaw::cleanData(int feb ) {
   if(feb<0)return;
   LHCb::Calo::FiredCells& prs = m_data.first;
   LHCb::Calo::FiredCells& spd = m_data.second;
-  LHCb::Calo::FiredCells tempPrs ;
   LHCb::Calo::FiredCells tempSpd ;
-  for(LHCb::Calo::FiredCells::iterator ispd = spd.begin();ispd != spd.end();++ispd){
+  for(auto ispd = spd.begin();ispd != spd.end();++ispd){
     if( m_calo->cellParam( *ispd ).cardNumber() == feb)continue;
     tempSpd.push_back( *ispd );
   }
-  for(LHCb::Calo::FiredCells::iterator iprs = prs.begin();iprs!=prs.end();++iprs){
+  LHCb::Calo::FiredCells tempPrs ;
+  for(auto iprs = prs.begin();iprs!=prs.end();++iprs){
     if( m_calo->cellParam( *iprs ).cardNumber() == feb)continue;
     tempPrs.push_back( *iprs );
   }
   clear();
-  m_data = std::make_pair(tempPrs,tempSpd);
+  m_data = std::make_pair( std::move(tempPrs), std::move(tempSpd) );
 }
 
 

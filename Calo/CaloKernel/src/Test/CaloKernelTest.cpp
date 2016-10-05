@@ -5,7 +5,6 @@
 // local 
 #include "CaloKernel/CaloCellCode.h"
 #include "CaloKernel/CaloCellID.h"
-#include "CaloKernel/CaloCollection.h"
 #include "CaloKernel/CaloException.h"
 #include "CaloKernel/CaloVector.h"
 #include "CaloKernel/InputStreamIterator.h"

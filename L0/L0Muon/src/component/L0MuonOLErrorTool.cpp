@@ -8,6 +8,23 @@
 // local
 #include "L0MuonOLErrorTool.h"
 
+namespace {
+  // Misc
+  // Layout of the optical links
+  // Set the optical link layout
+  static const auto s_opt_link_layout =
+                      MuonSystemLayout(MuonStationLayout(MuonLayout(2,4)),
+                                       MuonStationLayout(MuonLayout(4,1),
+                                                         MuonLayout(4,2),
+                                                         MuonLayout(2,2),
+                                                         MuonLayout(2,2)),
+                                       MuonStationLayout(MuonLayout(4,1),
+                                                         MuonLayout(4,2),
+                                                         MuonLayout(2,2),
+                                                         MuonLayout(2,2)),
+                                       MuonStationLayout(MuonLayout(2,2)),
+                                       MuonStationLayout(MuonLayout(2,2)));
+}
 //-----------------------------------------------------------------------------
 // Implementation file for class : L0MuonOLErrorTool
 //
@@ -24,28 +41,12 @@ DECLARE_TOOL_FACTORY( L0MuonOLErrorTool )
 L0MuonOLErrorTool::L0MuonOLErrorTool( const std::string& type,
                                       const std::string& name,
                                       const IInterface* parent )
-  : GaudiTool ( type, name , parent )
+  : base_class ( type, name , parent )
 {
   declareInterface<IL0MuonOLErrorTool>(this);
   declareProperty( "L0Context" , m_l0Context = ""  );
 
-  // Set the optical link layout
-  m_opt_link_layout = MuonSystemLayout(MuonStationLayout(MuonLayout(2,4)),
-                                       MuonStationLayout(MuonLayout(4,1),
-                                                         MuonLayout(4,2),
-                                                         MuonLayout(2,2),
-                                                         MuonLayout(2,2)),
-                                       MuonStationLayout(MuonLayout(4,1),
-                                                         MuonLayout(4,2),
-                                                         MuonLayout(2,2),
-                                                         MuonLayout(2,2)),
-                                       MuonStationLayout(MuonLayout(2,2)),
-                                       MuonStationLayout(MuonLayout(2,2)));
 }
-//=============================================================================
-// Destructor
-//=============================================================================
-L0MuonOLErrorTool::~L0MuonOLErrorTool() {} 
 
 //=============================================================================
 
@@ -92,7 +93,7 @@ StatusCode L0MuonOLErrorTool::getTiles(std::vector<LHCb::MuonTileID> & ols, std:
         LHCb::MuonTileID olid;
         int sta=ib/2;
         if (ib==7) sta=4;
-        MuonLayout layOL = m_opt_link_layout.stationLayout(sta).regionLayout(reg);
+        MuonLayout layOL = s_opt_link_layout.stationLayout(sta).regionLayout(reg);
         pu.setStation(sta);
         std::vector<LHCb::MuonTileID> ols_in_pu=layOL.tiles(pu);
         if (ols_in_pu.size()==1) 

@@ -39,7 +39,7 @@ double CellMatrix2x2::treatDifferentAreas( const LHCb::CaloCellID& seed ,
   /// cell area 
   const double      cellArea   = sizeCell * sizeCell * 4.0 ;
   /// effective halfsize
-  const double      sizeMin    =  0.01 * mini ( sizeMtrx , sizeCell ) ;
+  const double      sizeMin    =  0.01 * std::min ( sizeMtrx , sizeCell ) ;
   /// dispatch
   double Area = 0 ;
   switch( type() )

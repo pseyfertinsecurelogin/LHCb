@@ -39,7 +39,7 @@ double CellMatrix3x3::treatDifferentAreas ( const LHCb::CaloCellID& seed ,
   const Gaudi::XYZPoint& centerMtrx =             det()->cellCenter ( seed ) ;
   const Gaudi::XYZPoint& centerCell =             det()->cellCenter ( cell ) ;
   /// effective halfsize 
-  const double      sizeMin    =  0.01 * mini ( sizeMtrx , sizeCell ) ;
+  const double      sizeMin    =  0.01 * std::min ( sizeMtrx , sizeCell ) ;
   /// 
   const double      Area       = area ( centerMtrx , sizeMtrx ,
                                         centerCell , sizeCell ) ;

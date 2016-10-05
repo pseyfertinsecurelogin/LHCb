@@ -40,7 +40,7 @@ double CellSwissCross::treatDifferentAreas ( const LHCb::CaloCellID& seed ,
   const Gaudi::XYZPoint& centerMtrx =         det()->cellCenter ( seed ) ;
   const Gaudi::XYZPoint& centerCell =         det()->cellCenter ( cell ) ;
   /// effective halfsize 
-  const double      sizeMin    =  0.01 * mini ( sizeMtrx , sizeCell ) ;
+  const double      sizeMin    =  0.01 * std::min ( sizeMtrx , sizeCell ) ;
   /// 
   /// check the intersection with larger 3x3 matrix  
   const double AreaAux = 
