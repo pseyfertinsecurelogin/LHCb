@@ -1,4 +1,3 @@
-//$Id: IConditionInfo.h,v 1.4 2009-02-02 12:20:22 marcocle Exp $
 #ifndef DETDESC_ICONDITIONINFO_H
 #define DETDESC_ICONDITIONINFO_H 1
 
@@ -22,11 +21,8 @@ static const InterfaceID IID_IConditionInfo( "IConditionInfo" , 2 , 0 );
     @date December 2001
 *///--------------------------------------------------------------------------
 
-class IConditionInfo : virtual public  IInterface
+struct IConditionInfo : virtual IInterface
 {
-
- public:
-  virtual ~IConditionInfo() { }
   
   /** retrieve the uniqie interface identifier 
    *  @return the unique interface identifier 

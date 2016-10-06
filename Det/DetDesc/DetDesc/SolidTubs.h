@@ -50,9 +50,6 @@ public:
              const double       DeltaPhiAngle = 360.0 * Gaudi::Units::degree,
              const int          CoverModel    =   0              );     
 
-  /// destructor 
-  virtual ~SolidTubs();
-
   /** - retrieve the tubs type 
    *  - implementation of ISolid abstract interface 
    *  @see ISolid 

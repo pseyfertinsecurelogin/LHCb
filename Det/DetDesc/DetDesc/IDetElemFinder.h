@@ -10,7 +10,6 @@
 
 class IDetectorElement;
 
-
 /** @class IDetElemFinder IDetElemFinder.h Kernel/IDetElemFinder.h
  *  
  *  Interface for a service that provides associations from the path inside the 
@@ -19,8 +18,7 @@ class IDetectorElement;
  *  @author Marco Clemencic
  *  @date   2006-09-01
  */
-class IDetElemFinder : public extend_interfaces<IInterface> {
-public: 
+struct IDetElemFinder : extend_interfaces<IInterface> {
 
   /// Return the interface ID
   DeclareInterfaceID( IDetElemFinder, 2, 0 );

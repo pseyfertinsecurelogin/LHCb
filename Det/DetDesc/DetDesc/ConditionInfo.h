@@ -1,4 +1,3 @@
-//$Id: ConditionInfo.h,v 1.2 2009-02-02 12:20:22 marcocle Exp $
 #ifndef DETDESC_CONDITIONINFO_H
 #define DETDESC_CONDITIONINFO_H 1
 
@@ -27,12 +26,8 @@ class ConditionInfo : virtual public IConditionInfo
  public: 
   
   /// Constructor
-  ConditionInfo( IDetectorElement* de,
-		 const std::string& condition );
+  ConditionInfo( IDetectorElement* de, const std::string& condition );
 
-  /// Destructor 
-  virtual ~ConditionInfo();
-  
  private:
   
   /// Get a pointer to the data service responsible for condition data
@@ -76,7 +71,7 @@ class ConditionInfo : virtual public IConditionInfo
   unsigned long m_count;
 
   /// reference to dataSvc
-  DetDesc::Services* m_services;
+  DetDesc::ServicesPtr m_services;
 
 };
 

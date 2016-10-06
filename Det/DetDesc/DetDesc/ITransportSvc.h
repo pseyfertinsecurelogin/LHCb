@@ -15,9 +15,8 @@ class IGeometryInfo;
  *
  *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
  */
-class ITransportSvc : public extend_interfaces<IService>
+struct ITransportSvc : extend_interfaces<IService>
 {
-public:
   /** Declaration of the unique interface identifier
    *  ( interface id, major version, minor version)
    */
@@ -67,9 +66,6 @@ public:
     IGeometryInfo*           alternativeGeometry = nullptr,
     IGeometryInfo*           geometryGuess       = nullptr ) const = 0  ;
 
-
-  /// virtual destructor
-  ~ITransportSvc() override = default;
 
 };
 

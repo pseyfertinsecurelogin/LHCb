@@ -36,9 +36,6 @@ public:
    */
   SolidSubtraction( const std::string& name , ISolid* first );
   
-  /// destructor   
-  virtual ~SolidSubtraction();
-  
 public:
   
   /** - retrieve the specific type of the solid

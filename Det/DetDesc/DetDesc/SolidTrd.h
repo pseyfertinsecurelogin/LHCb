@@ -45,9 +45,6 @@ class SolidTrd: public    virtual SolidBase             ,
             const double       XHalfLength2 , 
             const double       YHalfLength2 );
   
-  /// destructor 
-  virtual ~SolidTrd();
-
   /** - retrieve the TRD type 
    *  - implementation of ISolid abstract interface 
    *  @see ISolid 

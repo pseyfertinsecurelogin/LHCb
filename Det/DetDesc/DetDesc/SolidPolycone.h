@@ -54,9 +54,6 @@ public:
                  const double        StartPhiAngle = 0          ,
                  const double        DeltaPhiAngle = 360*Gaudi::Units::degree );
 
-  /// destructor 
-  virtual ~SolidPolycone();
-  
   /** - retrieve the polycone  type 
    *  - implementation of ISolid abstract interface 
    *  @see ISolid 

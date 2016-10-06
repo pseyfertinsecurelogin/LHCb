@@ -47,33 +47,15 @@ unsigned long PVolume::s_volumeCounter = 0;
 PVolume::PVolume 
 ( const std::string& PhysVol_name  ,
   const std::string& LogVol_name   ,
-  //  const size_t       copy_number   ,
   const Gaudi::XYZPoint&   Position      ,
   const Gaudi::Rotation3D& Rotation      )
   : m_name      ( PhysVol_name   ) 
   , m_lvname    ( LogVol_name    ) 
-  , m_nominal   (                )
-  , m_matrix    (                )
-  , m_lvolume   ( 0              )
-  , m_services  ( 0              )
-  //, m_copy      ( copy_number    ) 
 {
   // NB!!! transformaion is given by Translation and then Rotation!!!
-//   m_nominal = Gaudi::Transform3D(Rotation ) *
-//     Gaudi::Transform3D(Gaudi::XYZVector(Position) ) ; // MathCore syntax
-//  m_nominal =  Gaudi::Transform3D(Gaudi::XYZVector(Position), Rotation);
   m_nominal =  Gaudi::Transform3D( Rotation, 
                                    Rotation(Gaudi::XYZVector(Position)));
-  
-  //  m_nominal = Rotation*Gaudi::TranslationXYZ(Position) ; // CLHEP syntax
   m_matrix  = m_nominal ;
-  /// 
-  //  { /// ensure the agreement between name and copy number
-  //    std::string::iterator sep = 
-  //      std::find( m_name.begin() , m_name.end() , ':' ) ;
-  //    m_name.erase( sep , m_name.end() ) ;
-  //    m_name += ":" + ITOA( copy_number ) ;
-  //  }
   ///
   m_services = DetDesc::services();
   ++s_volumeCounter ;
@@ -89,23 +71,12 @@ PVolume::PVolume
 PVolume::PVolume 
 ( const std::string&    PhysVol_name ,
   const std::string&    LogVol_name  ,
-  //  const size_t          copy_number  ,
   const Gaudi::Transform3D& Transform    )
   : m_name      ( PhysVol_name   ) 
   , m_lvname    ( LogVol_name    ) 
   , m_nominal   ( Transform      )
   , m_matrix    ( Transform      )
-  , m_lvolume   ( 0              )
-  , m_services  ( 0              )
-  //, m_copy      ( copy_number    ) 
 { 
-  //  { /// ensure the agreement between name and copy number 
-  //    std::string::iterator sep = 
-  //      std::find( m_name.begin() , m_name.end() , ':' ) ;
-  //    m_name.erase( sep , m_name.end() ) ;
-  //    m_name += ":" + ITOA( copy_number ) ;
-  //  }
-  ///
   m_services = DetDesc::services();
   ++s_volumeCounter ;
 }
@@ -115,7 +86,6 @@ PVolume::PVolume
 // ============================================================================
 PVolume::~PVolume() 
 {
-  m_services->release();
   --s_volumeCounter;
 }
 

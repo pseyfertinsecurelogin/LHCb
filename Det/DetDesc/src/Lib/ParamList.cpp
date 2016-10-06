@@ -12,11 +12,6 @@
 //-----------------------------------------------------------------------------
 
 //=============================================================================
-// Standard constructor, initializes variables
-//=============================================================================
-ParamList::ParamList():base_type(){}
-
-//=============================================================================
 // Copy constructor
 //=============================================================================
 ParamList::ParamList(const  ParamList&pl):base_type(){*this = pl;}
@@ -32,8 +27,7 @@ ParamList::~ParamList(){deleteItems();}
 ParamList& ParamList::operator= (const ParamList &pl){
   clear();
   for (auto  i = pl.begin(); i != pl.end() ; ++i ){
-  	insert(make_pair(i->first,i->second->new_copy()));
-    //(*this)[i->first] = i->second->new_copy();
+  	insert(std::make_pair(i->first,i->second->new_copy()));
   }
   return *this;
 }

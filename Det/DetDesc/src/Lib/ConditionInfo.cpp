@@ -13,28 +13,19 @@
 /// Constructor
 ConditionInfo::ConditionInfo( IDetectorElement* de,
 			      const std::string& condition ) 
+: m_detElem(de)
+, m_conditionName(condition)
 {
-  m_detElem = de;
-  m_conditionName = condition;
   m_condition = 0;
   m_count = 0;
   m_services = DetDesc::services();
-}
-
-//---------------------------------------------------------------------------
-
-/// Destructor
-ConditionInfo::~ConditionInfo() 
-{
-  m_services->release();
 }
 
 //----------------------------------------------------------------------------
 
 /// Get a pointer to the data service responsible for condition data
 IDataProviderSvc* ConditionInfo::dataSvc() const { 
-  return m_services->detSvc();
-}
+  return m_services->detSvc(); }
 
 //----------------------------------------------------------------------------
 

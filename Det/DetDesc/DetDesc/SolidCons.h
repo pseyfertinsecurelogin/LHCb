@@ -54,9 +54,6 @@ public:
              const double       DeltaPhiAngle = 360.0 * Gaudi::Units::degree,
              const int          CoverModel           =   0            );
 
-  /// destructor 
-  virtual ~SolidCons();
-  
   /** - retrieve the conical tube segment  type 
    *  - implementation of ISolid abstract interface 
    *  @see ISolid 

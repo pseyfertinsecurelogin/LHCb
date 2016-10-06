@@ -38,9 +38,6 @@ public:
            const std::string& sensitivity = "" ,
            const std::string& magnetic    = "" );
 
-  /// destructor
-  virtual ~LVolume();
-
 public:
 
   /** object/class  identification (virtual)

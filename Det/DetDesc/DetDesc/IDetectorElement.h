@@ -37,14 +37,11 @@ static const InterfaceID IID_IDetectorElement( 156 , 2 , 2 );
  *  @author Marco Clemencic <marco.clemencic@cern.ch>
  */
 
-class IDetectorElement : virtual public IInterface
+struct IDetectorElement : virtual IInterface
 {
-  ///
- public:
   ///
   typedef std::vector<IDetectorElement*>   IDEContainer;
   ///
- public:
 
   /** retrieve the unique interface identifier
    *  @return the unique interface identifier
@@ -179,8 +176,6 @@ class IDetectorElement : virtual public IInterface
    */
   virtual StatusCode initialize() = 0;
 
-  /// destructor
-  virtual ~IDetectorElement() ;
 
 };
 ///

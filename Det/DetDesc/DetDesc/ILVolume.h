@@ -1,5 +1,3 @@
-// $Id: ILVolume.h,v 1.12 2007-01-17 12:10:10 cattanem Exp $ 
-// ===========================================================================
 #ifndef  DETDESC_ILVOLUME_H
 #define  DETDESC_ILVOLUME_H 1 
 /// STD & STL includes  
@@ -38,10 +36,8 @@ static const InterfaceID IID_ILVolume( 153 , 3 , 1 );
  *  @date xx/xx/xxxx 
  */
 
-class ILVolume : virtual public IInterface
+struct ILVolume : virtual IInterface
 {
-  ///
-public:
   
   /**  general typedefs  */ 
   typedef  std::vector<IPVolume*>                        PVolumes;
@@ -59,15 +55,11 @@ public:
   /// typedef for surfaces 
   typedef SmartRefVector<Surface>                         Surfaces;
   
-public:
-  
   /** retrieve the unique interface identifier 
    *  @see Interface::interfaceID()
    *  @return uniqie interface identifier 
    */
   static const InterfaceID& interfaceID() { return IID_ILVolume; }
-  
-public: 
   
   /** retrieve  the name(identification)  of Logical Volume  
    *  @return    the name(identification)  of Logical Volume  
@@ -318,11 +310,6 @@ belongsTo
    */
   virtual ILVolume*  reset() = 0; 
   
-protected: 
-
-  /** (virtual) destructor
-   */ 
-  virtual ~ILVolume() ;
 };
 
 // ============================================================================
@@ -363,7 +350,7 @@ inline MsgStream& operator<<( MsgStream& os , const ILVolume& lv )
  */
 // ============================================================================
 inline MsgStream& operator<<( MsgStream& os , const ILVolume*  lv )
-{ return ((0==lv)?( os<<" ILVolume* points to NULL "):(os<<(*lv)));}
+{ return lv?( os<<" ILVolume* points to NULL "):(os<<(*lv));}
 
 // ============================================================================
 // The End 

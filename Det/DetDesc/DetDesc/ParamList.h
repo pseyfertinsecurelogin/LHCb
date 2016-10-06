@@ -21,7 +21,7 @@ private:
 
 public: 
   /// Standard constructor
-  ParamList();
+  ParamList() = default;
 
   /// Copy constructor
   ParamList(const ParamList &pl);
@@ -36,8 +36,7 @@ public:
     if ( i != end() ) { // key already used
       i->second->set(val);
     } else {
-      //(*this)[key] = new Param<T>(val);
-      insert(std::pair<std::string,Param<T>*>(key,new Param<T>(val)));
+      insert(std::make_pair(key,new Param<T>(val)));
     }
   }
 
@@ -48,8 +47,7 @@ public:
       delete i->second;
       i->second = p->new_copy();
     } else {
-      //(*this)[key] = p->new_copy();
-      insert(std::pair<std::string,BasicParam*>(key,p->new_copy()));
+      insert(std::make_pair(key,p->new_copy()));
     }
   }
 
