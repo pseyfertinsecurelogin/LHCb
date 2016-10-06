@@ -148,6 +148,9 @@ StatusCode DeRichHPD::initialize ( )
   // Update HPD QE values whenever DeRichSystem updates
   updMgrSvc()->registerCondition( this, deRichSys(), &DeRichHPD::initHpdQuantumEff );
 
+  // Force loading the magnetic field service during initialise
+  loadMagSvc();
+
   // Trigger first update
   sc = updMgrSvc()->update(this);
   if ( sc.isFailure() ) { fatal() << "UMS updates failed" << endmsg; }
