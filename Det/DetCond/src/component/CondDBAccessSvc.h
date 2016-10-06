@@ -223,7 +223,7 @@ private:
   int m_checkTagTimeOut;
 
   /// Pointer to the service initializing COOL/CORAL.
-  ICOOLConfSvc *m_coolConfSvc;
+  SmartIF<ICOOLConfSvc> m_coolConfSvc;
 
   /// Shared pointer to the COOL database instance
   cool::IDatabasePtr m_db;
@@ -232,10 +232,10 @@ private:
   cool::IFolderSetPtr   m_rootFolderSet;
 
   /// Pointer to the cache manager
-  CondDBCache *m_cache;
+  std::unique_ptr<CondDBCache> m_cache;
 
   /// Pointer to the random generator service
-  IRndmGenSvc *m_rndmSvc;
+  SmartIF<IRndmGenSvc> m_rndmSvc;
 
   /// Lazy connection flag.
   /// If true (the default), the connection to  (lazy = connect only when needed).

@@ -6,7 +6,6 @@
 #include "GaudiKernel/GenericAddress.h"
 #include "GaudiKernel/IDetDataSvc.h"
 #include "GaudiKernel/IDataProviderSvc.h"
-#include "GaudiKernel/MsgStream.h"
 
 /// Instantiation of a static factory to create instances of this service
 DECLARE_SERVICE_FACTORY(CondDBCnvSvc)
@@ -15,18 +14,12 @@ DECLARE_SERVICE_FACTORY(CondDBCnvSvc)
 
 /// Constructor
 CondDBCnvSvc::CondDBCnvSvc( const std::string& name, ISvcLocator* svc)
-  : base_class ( name, svc, CONDDB_StorageType ),
-    m_dbReader(0)
+  : base_class ( name, svc, CONDDB_StorageType )
 {
   declareProperty( "CondDBReader", m_dbReaderName = "CondDBAccessSvc" );
 }
-
 //----------------------------------------------------------------------------
 
-/// Destructor
-CondDBCnvSvc::~CondDBCnvSvc() {}
-
-//----------------------------------------------------------------------------
 
 /// Initialize the service.
 StatusCode CondDBCnvSvc::initialize()
@@ -37,21 +30,20 @@ StatusCode CondDBCnvSvc::initialize()
   if ( !sc.isSuccess() ) return sc;
 
   // Now we can get a handle to the MessageSvc
-  MsgStream log(msgSvc(), name() );
-  if( UNLIKELY( log.level() <= MSG::DEBUG ) )
-    log << MSG::DEBUG << "Specific initialization starting" << endmsg;
+  if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
+    debug() << "Specific initialization starting" << endmsg;
 
   // Locate the Database Access Service
-  sc = service(m_dbReaderName,m_dbReader,true);
-  if (  !sc.isSuccess() ) {
-    log << MSG::ERROR << "Could not locate " << m_dbReaderName << endmsg;
-    return sc;
+  m_dbReader = service(m_dbReaderName,true);
+  if (  !m_dbReader ) {
+    error() << "Could not locate " << m_dbReaderName << endmsg;
+    return StatusCode::FAILURE;
   }
-  if( UNLIKELY( log.level() <= MSG::DEBUG ) )
-    log << MSG::DEBUG << "Retrieved " << m_dbReaderName << endmsg;
+  if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
+    debug() << "Retrieved " << m_dbReaderName << endmsg;
 
-  if( UNLIKELY( log.level() <= MSG::DEBUG ) )
-    log << MSG::DEBUG << "Specific initialization completed" << endmsg;
+  if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
+    debug() << "Specific initialization completed" << endmsg;
   return sc;
 }
 
@@ -60,10 +52,9 @@ StatusCode CondDBCnvSvc::initialize()
 /// Finalize the service.
 StatusCode CondDBCnvSvc::finalize()
 {
-  MsgStream log(msgSvc(), name() );
-  if( UNLIKELY( log.level() <= MSG::DEBUG ) )
-    log << MSG::DEBUG << "Finalizing" << endmsg;
-  if (m_dbReader) m_dbReader->release();
+  if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
+    debug() << "Finalizing" << endmsg;
+  m_dbReader.reset();
   return base_class::finalize();
 }
 
@@ -80,14 +71,12 @@ StatusCode CondDBCnvSvc::createAddress( long svc_type,
                                         IOpaqueAddress*& refpAddress ) {
 
   // First check that requested address is of type CONDDB_StorageType
-  MsgStream log(msgSvc(), name() );
-  if( UNLIKELY( log.level() <= MSG::DEBUG ) )
-    log << MSG::DEBUG << "entering createAddress" << endmsg;
+  if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
+    debug() << "entering createAddress" << endmsg;
   if ( svc_type!= CONDDB_StorageType ) {
-    log << MSG::ERROR
-        << "Cannot create addresses of type " << (int)svc_type
-        << " which is different from " << (int)CONDDB_StorageType
-        << endmsg;
+    error() << "Cannot create addresses of type " << (int)svc_type
+            << " which is different from " << (int)CONDDB_StorageType
+            << endmsg;
     return StatusCode::FAILURE;
   }
 
