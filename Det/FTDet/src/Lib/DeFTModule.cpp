@@ -59,6 +59,7 @@ StatusCode DeFTModule::initialize(){
 
   m_fibreSizeX = (double)param<double>("fibreSizeX");
   m_fibreSizeY = (double)param<double>("fibreSizeY");
+  m_fibreSizeZ = (double)param<double>("fibreSizeZ");
   m_holeSizeX  = (double)param<double>("holeSizeX");   ///< Only sensible for special modules
   m_holeSizeY  = (double)param<double>("holeSizeY");   ///< Only sensible for special modules
 
@@ -67,6 +68,22 @@ StatusCode DeFTModule::initialize(){
   Gaudi::XYZPoint firstPoint = geometry()->toGlobal( Gaudi::XYZPoint( m_uBegin,0,0) );
   Gaudi::XYZPoint lastPoint  = geometry()->toGlobal( Gaudi::XYZPoint(-m_uBegin,0,0) );
   m_reversed = std::abs(firstPoint.x()) > fabs(lastPoint.x());
+
+  // Get the global z position of the module at the point closest to the mirror
+  Gaudi::XYZPoint mirrorPoint = geometry()->toGlobal( Gaudi::XYZPoint( 0,-0.5*m_fibreSizeY,0) );
+  m_globalZ = mirrorPoint.z();
+
+  // Make the plane for the module
+  const Gaudi::XYZPoint g1 = geometry() -> toGlobal( Gaudi::XYZPoint(0.,0.,0.) );
+  const Gaudi::XYZPoint g2 = geometry() -> toGlobal( Gaudi::XYZPoint(1.,0.,0.) );
+  const Gaudi::XYZPoint g3 = geometry() -> toGlobal( Gaudi::XYZPoint(0.,1.,0.) );
+  m_plane = Gaudi::Plane3D(g1,g2,g3 );
+
+  // Find the sensitive daughter volume
+  // Ugly for now, remove when we have detector elements for the mats
+  for( auto pv : geometry()->lvolume()->pvolumes() ) {
+    if( pv->lvolume()->sdName() != "" ) m_sensitiveGeometry = pv;
+  }
 
   return StatusCode::SUCCESS;
 }
@@ -157,13 +174,13 @@ double DeFTModule::distancePointToChannel(const Gaudi::XYZPoint& globalPoint,
 }
 
 // Get the begin and end positions of a fibre
-void DeFTModule::getPositions(const LHCb::FTChannelID channelID, const double frac,
-    Gaudi::XYZPoint& beginPoint, Gaudi::XYZPoint& endPoint) const {
+std::unique_ptr<LHCb::Trajectory> DeFTModule::trajectory(const LHCb::FTChannelID channelID,
+    const double frac) const {
   double localX = localXfromChannel( channelID, frac );
   double localY1 = (inHole(localX)) ? -0.5*m_fibreSizeY + m_holeSizeY : -0.5*m_fibreSizeY;
-  beginPoint = geometry()->toGlobal(Gaudi::XYZPoint(localX,           localY1, 0.0));
-  endPoint   = geometry()->toGlobal(Gaudi::XYZPoint(localX, +0.5*m_fibreSizeY, 0.0));
-  return;
+  auto to_global = [g=geometry()](double x, double y, double z) { return g->toGlobal(Gaudi::XYZPoint(x,y,z));};
+  return std::make_unique<LHCb::LineTraj>( to_global(localX,           localY1, 0.),
+                                           to_global(localX, +0.5*m_fibreSizeY, 0.) );
 }
 
 // Get the pseudo-channel for a FTChannelID (useful in the monitoring)
@@ -186,5 +203,3 @@ LHCb::FTChannelID DeFTModule::channelFromPseudo( const int pseudoChannel ) const
   return LHCb::FTChannelID(m_stationID, m_layerID, m_quarterID,
       m_moduleID, sipm, channel);
 }
-
-
