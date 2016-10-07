@@ -125,22 +125,22 @@ public:
   /** Find the FT Station corresponding to the channel id
    *  @return Pointer to the relevant station
    */
-  const DeFTStation* findStation( const LHCb::FTChannelID id ) const;
+  const DeFTStation* findStation( const LHCb::FTChannelID& id ) const;
 
   /** Find the FT Layer corresponding to the channel id
    *  @return Pointer to the relevant layer
    */
-  const DeFTLayer* findLayer( const LHCb::FTChannelID id ) const;
+  const DeFTLayer* findLayer( const LHCb::FTChannelID& id ) const;
 
   /** Find the FT Quarter corresponding to the channel id
    *  @return Pointer to the relevant quarter
    */
-  const DeFTQuarter* findQuarter( const LHCb::FTChannelID id ) const;
+  const DeFTQuarter* findQuarter( const LHCb::FTChannelID& id ) const;
 
   /** Find the FT Module corresponding to the channel id
    *  @return Pointer to the relevant module
    */
-  const DeFTModule* findModule( const LHCb::FTChannelID id ) const;
+  const DeFTModule* findModule( const LHCb::FTChannelID& id ) const;
 
   /** Get a random channelID using a seed between 0 and 1 */
   LHCb::FTChannelID getRandomChannelFromSeed(const double seed) const;
@@ -150,7 +150,7 @@ public:
       const double seed) const;
 
   /// Get the total number of channels in the FT detector
-  int nChannels() const { return m_nTotChannels; };
+  int nChannels() const { return m_nTotChannels; }
 
 private: // private data members
 
@@ -175,24 +175,24 @@ private: // private data members
 }; //end of class
 
 /// Find station methods
-inline const DeFTStation* DeFTDetector::findStation(const LHCb::FTChannelID aChannel) const {
+inline const DeFTStation* DeFTDetector::findStation(const LHCb::FTChannelID& aChannel) const {
   return m_stations[aChannel.station()-1u];
 }
 
 /// Find layer methods
-inline const DeFTLayer* DeFTDetector::findLayer(const LHCb::FTChannelID aChannel) const {
+inline const DeFTLayer* DeFTDetector::findLayer(const LHCb::FTChannelID& aChannel) const {
   const DeFTStation* s = findStation(aChannel);
   return s ? s->findLayer(aChannel) : 0;
 }
 
 /// Find quarter methods
-inline const DeFTQuarter* DeFTDetector::findQuarter(const LHCb::FTChannelID aChannel) const {
+inline const DeFTQuarter* DeFTDetector::findQuarter(const LHCb::FTChannelID& aChannel) const {
   const DeFTLayer* l = findLayer(aChannel);
   return l ? l->findQuarter(aChannel) : 0;
 }
 
 /// Find module methods
-inline const DeFTModule* DeFTDetector::findModule(const LHCb::FTChannelID aChannel) const {
+inline const DeFTModule* DeFTDetector::findModule(const LHCb::FTChannelID& aChannel) const {
   const DeFTQuarter* q = findQuarter(aChannel);
   return q ? q->findModule(aChannel) : 0;
 }

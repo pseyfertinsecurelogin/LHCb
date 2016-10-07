@@ -24,7 +24,7 @@ det = appMgr.detSvc()
 FT = det['/dd/Structure/LHCb/AfterMagnetRegion/T/FT']
 
 # set an arbitrary point in global coordinates
-point = gbl.Gaudi.XYZPoint(-2413.17,-1746.5,7848.61)
+point = gbl.Gaudi.XYZPoint(-2495.27, -1207.75, 7848.65)
 
 # get the corresponding module
 module = FT.findModule(point)

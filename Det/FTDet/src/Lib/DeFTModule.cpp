@@ -73,6 +73,18 @@ StatusCode DeFTModule::initialize(){
   Gaudi::XYZPoint mirrorPoint = geometry()->toGlobal( Gaudi::XYZPoint( 0,-0.5*m_fibreSizeY,0) );
   m_globalZ = mirrorPoint.z();
 
+  // Make the plane for the module
+  const Gaudi::XYZPoint g1 = geometry() -> toGlobal( Gaudi::XYZPoint(0.,0.,0.) );
+  const Gaudi::XYZPoint g2 = geometry() -> toGlobal( Gaudi::XYZPoint(1.,0.,0.) );
+  const Gaudi::XYZPoint g3 = geometry() -> toGlobal( Gaudi::XYZPoint(0.,1.,0.) );
+  m_plane = Gaudi::Plane3D(g1,g2,g3 );
+
+  // Find the sensitive daughter volume
+  // Ugly for now, remove when we have detector elements for the mats
+  for( auto pv : geometry()->lvolume()->pvolumes() ) {
+    if( lvolume().sdName() != "" ) m_sensitiveGeometry = pv;
+  }
+
   return StatusCode::SUCCESS;
 }
 
@@ -166,7 +178,7 @@ std::unique_ptr<LHCb::Trajectory> DeFTModule::trajectory(const LHCb::FTChannelID
     const double frac) const {
   double localX = localXfromChannel( channelID, frac );
   double localY1 = (inHole(localX)) ? -0.5*m_fibreSizeY + m_holeSizeY : -0.5*m_fibreSizeY;
-  auto to_global = [&](double x, double y, double z){ return geometry()->toGlobal(Gaudi::XYZPoint(x,y,z));};
+  auto to_global = [g=geometry()](double x, double y, double z) { return g->toGlobal(Gaudi::XYZPoint(x,y,z));};
   return std::make_unique<LHCb::LineTraj>( to_global(localX,           localY1, 0.),
                                            to_global(localX, +0.5*m_fibreSizeY, 0.) );
 }
@@ -191,5 +203,3 @@ LHCb::FTChannelID DeFTModule::channelFromPseudo( const int pseudoChannel ) const
   return LHCb::FTChannelID(m_stationID, m_layerID, m_quarterID,
       m_moduleID, sipm, channel);
 }
-
-

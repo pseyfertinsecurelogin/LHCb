@@ -8,6 +8,10 @@
 #include "Kernel/FTChannelID.h"
 #include "Kernel/LineTraj.h"
 
+#include "GaudiKernel/Plane3DTypes.h"
+
+#include "DetDesc/IPVolume.h"
+
 /** @class DeFTModule DeFTModule.h "FTDet/DeFTModule.h"
  *
  *  This is the detector element class of the Fibre Tracker (FT) station.
@@ -62,16 +66,19 @@ public:
    */
   int sensitiveVolumeID(const Gaudi::XYZPoint&) const override {
     return m_elementID;
-  };
+  }
 
   /** Returns the pitch between two channels (250 micron) */
-  double channelPitch() const { return m_channelPitch; };
+  double channelPitch() const { return m_channelPitch; }
 
   /** Returns the thickness of the fibre mat (1.3 mm) */
-  double fibreMatThickness() const { return m_fibreSizeZ; };
+  double fibreMatThickness() const { return m_fibreSizeZ; }
 
   /** Returns the global z position of the module */
-  double globalZ() const { return m_globalZ; };
+  double globalZ() const { return m_globalZ; }
+
+  /** Returns the xy-plane at z-middle the layer */
+  const Gaudi::Plane3D plane() const { return m_plane; }
 
   /** Main method to determine which channel was hit
    *  @param localX is the input x coordinate in the local frame.
@@ -151,14 +158,19 @@ public:
   bool hasGapLeft( const LHCb::FTChannelID thisChannel ) const {
     return ( thisChannel.channel() == 0u ||
         int(thisChannel.channel()) == m_nChannelsInDie ) ;
-  };
+  }
 
   /** Flag if there is a gap on the right of this channel */
   bool hasGapRight( const LHCb::FTChannelID thisChannel ) const {
     return ( int(thisChannel.channel()) == m_nChannelsInSiPM - 1 ||
         int(thisChannel.channel()) == m_nChannelsInDie - 1) ;
-  };
+  }
 
+  // Flag if the global point is inside the fibre mats
+  //  (remove this function when we have mats as detector elements)
+  bool isInsideSensitive( const Gaudi::XYZPoint& globalPoint ) const {
+    return m_sensitiveGeometry->isInside( geometry()->toLocal( globalPoint ) );
+  }
 
 private :
   unsigned int m_stationID;        ///< station ID number
@@ -175,6 +187,7 @@ private :
   int m_nSiPMsInModule;   ///< number of SiPM arrays per module
   int m_nChannelsInModule;///< number of channels per module
 
+  Gaudi::Plane3D m_plane;          ///< xy-plane in the z-middle of the module
   double m_globalZ;                ///< Global z position of module closest to y-axis
   double m_uBegin;                 ///< start in local u-coordinate of sensitive SiPM
   double m_airGap;                 ///< air gap
@@ -190,6 +203,8 @@ private :
   double m_holeSizeX;              ///< Size in x of the hole in the module
   double m_holeSizeY;              ///< Size in y of the hole in the module
   bool   m_reversed;               ///< Flag set when the pseudochannel-ordering is reversed
+
+  IPVolume* m_sensitiveGeometry;///< Sensitive geometry. I.e. the fibre mats
 
 }; // end of class
 
