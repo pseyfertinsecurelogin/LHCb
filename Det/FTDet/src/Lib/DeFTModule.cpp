@@ -82,7 +82,7 @@ StatusCode DeFTModule::initialize(){
   // Find the sensitive daughter volume
   // Ugly for now, remove when we have detector elements for the mats
   for( auto pv : geometry()->lvolume()->pvolumes() ) {
-    if( lvolume().sdName() != "" ) m_sensitiveGeometry = pv;
+    if( pv->lvolume()->sdName() != "" ) m_sensitiveGeometry = pv;
   }
 
   return StatusCode::SUCCESS;
