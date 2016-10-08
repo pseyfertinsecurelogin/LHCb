@@ -67,16 +67,12 @@ StatusCode CaloTriggerAdcsFromCaloRaw::initialize() {
 const std::vector< LHCb::L0CaloAdc > & CaloTriggerAdcsFromCaloRaw::adcs( ) 
 {
   m_data.clear() ;
-
   const CaloVector< LHCb::CaloAdc >& adcs = m_adcs -> adcs( -1 ) ;
-  for ( CaloVector< LHCb::CaloAdc >::const_iterator itAdc = adcs.begin() ; 
-        adcs.end() != itAdc ; ++itAdc ) {
-    LHCb::CaloCellID id = (*itAdc).cellID() ;
-    int adc = l0adcFromAdc( (*itAdc).adc() , id ) ;
-    LHCb::L0CaloAdc tAdc( id , adc ) ;
-    m_data.push_back( tAdc ) ;
-  }
-  
+  std::transform( adcs.begin(), adcs.end(), std::back_inserter(m_data),
+                  [&](const LHCb::CaloAdc& adc) -> LHCb::L0CaloAdc {
+    LHCb::CaloCellID id = adc.cellID() ;
+    return { id , l0adcFromAdc( adc.adc() , id )  };
+  });
   return m_data ;
 }
 

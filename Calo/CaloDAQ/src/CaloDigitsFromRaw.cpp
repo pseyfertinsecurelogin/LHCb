@@ -6,6 +6,16 @@
 // local
 #include "CaloDigitsFromRaw.h"
 
+namespace {
+
+  static const auto IncreasingByCellID =
+      []( const LHCb::CaloDigit* dig1 , 
+          const LHCb::CaloDigit* dig2 ) {
+      return  !dig1 || ( dig2 && ( dig1->cellID().all() < dig2->cellID().all() ));
+  };
+
+}
+
 //-----------------------------------------------------------------------------
 // Implementation file for class : CaloDigitsFromRaw
 //
@@ -20,7 +30,6 @@ DECLARE_ALGORITHM_FACTORY( CaloDigitsFromRaw )
 CaloDigitsFromRaw::CaloDigitsFromRaw( const std::string& name,
                                       ISvcLocator* pSvcLocator)
   : GaudiAlgorithm ( name , pSvcLocator )
-  , m_spdTool(0), m_energyTool(0), m_calo(0)
 {
   m_detectorNum = CaloCellCode::CaloNumFromName( name ) ;
   if ( m_detectorNum < 0 || m_detectorNum >= (int) CaloCellCode::CaloNums )
@@ -32,11 +41,6 @@ CaloDigitsFromRaw::CaloDigitsFromRaw( const std::string& name,
   declareProperty( "DigitsContainer"         ,  m_outputDigits );
   declareProperty( "AdcsContainer"           ,  m_outputADCs);
   declareProperty( "StatusOnTES"             ,  m_statusOnTES = true);
-
-
-  m_digitOnTES =false  ;
-  m_adcOnTES =false  ;
-
 
   if( 2 == m_detectorNum ) {
     m_outputDigits     = LHCb::CaloDigitLocation::Ecal  ;
@@ -60,12 +64,6 @@ CaloDigitsFromRaw::CaloDigitsFromRaw( const std::string& name,
   }
 
 }
-
-//=============================================================================
-// Destructor
-//=============================================================================
-CaloDigitsFromRaw::~CaloDigitsFromRaw() {}
-
 
 //=========================================================================
 //  Initialization
@@ -152,27 +150,23 @@ void CaloDigitsFromRaw::convertSpd ( double energyScale ) {
   if(m_digitOnTES){
     LHCb::CaloDigits* digits = new LHCb::CaloDigits();
     put( digits, m_outputDigits + m_extension );
-    for ( std::vector<LHCb::CaloCellID>::const_iterator itD = spdCells.begin();
-          spdCells.end() != itD; ++itD ) {
-      LHCb::CaloDigit* dig = new LHCb::CaloDigit( *itD, energyScale );
-
+    for ( const auto& cells : spdCells ) {
       try{
-        digits->insert( dig );
-      }catch(GaudiException &exc){
+        auto dig = std::make_unique<LHCb::CaloDigit>( cells, energyScale );
+        digits->insert( dig.get() );
+        dig.release();
+      }catch(GaudiException &exc) {
         counter("Duplicate Spd 'digit'") += 1;
-        std::ostringstream os("");
-        os << "Duplicate digit for channel " << *itD;
+        std::ostringstream os; os << "Duplicate digit for channel " << cells; 
         Warning(os.str(),StatusCode::SUCCESS).ignore();
-        int card =  m_spdTool->deCalo()->cardNumber( *itD );
+        int card =  m_spdTool->deCalo()->cardNumber( cells );
         int tell1=  m_spdTool->deCalo()->cardToTell1( card);
         LHCb::RawBankReadoutStatus& status = m_spdTool->status();
         status.addStatus( tell1 ,LHCb::RawBankReadoutStatus::DuplicateEntry);
-        delete dig;
       }
-
     }
     std::stable_sort ( digits->begin(), digits->end(),
-                       CaloDigitsFromRaw::IncreasingByCellID() );
+                       IncreasingByCellID );
     if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
       debug() << m_outputDigits + m_extension << " CaloDigit container size " << digits->size() << endmsg;
   }
@@ -180,22 +174,19 @@ void CaloDigitsFromRaw::convertSpd ( double energyScale ) {
   if(m_adcOnTES){
     LHCb::CaloAdcs* adcs = new LHCb::CaloAdcs();
     put( adcs ,  m_outputADCs + m_extension );
-    for ( std::vector<LHCb::CaloCellID>::const_iterator itD = spdCells.begin();
-          spdCells.end() != itD; ++itD ) {
-      LHCb::CaloAdc* adc = new LHCb::CaloAdc( *itD, 1 );
-
+    for ( const auto& cells : spdCells ) {
       try{
-        adcs->insert( adc );
+        auto adc = std::make_unique<LHCb::CaloAdc>( cells, 1 );
+        adcs->insert( adc.get() );
+        adc.release();
       }catch(GaudiException &exc){
         counter("Duplicate Spd 'ADC'") += 1;
-        std::ostringstream os("");
-        os << "Duplicate ADC for channel " << *itD;
+        std::ostringstream os; os << "Duplicate ADC for channel " << cells;
         Warning(os.str(),StatusCode::SUCCESS).ignore();
-        int card =  m_spdTool->deCalo()->cardNumber( *itD );
+        int card =  m_spdTool->deCalo()->cardNumber( cells );
         int tell1=  m_spdTool->deCalo()->cardToTell1( card);
         LHCb::RawBankReadoutStatus& status = m_spdTool->status();
         status.addStatus( tell1 ,LHCb::RawBankReadoutStatus::DuplicateEntry);
-        delete adc;
       }
 
     }
@@ -218,31 +209,27 @@ void CaloDigitsFromRaw::convertCaloEnergies ( ) {
 
     LHCb::CaloDigits* digits = new LHCb::CaloDigits();
     put( digits, m_outputDigits+ m_extension );
-    const std::vector<LHCb::CaloDigit>& allDigits = m_energyTool->digits( );
-
-    for ( std::vector<LHCb::CaloDigit>::const_iterator itD = allDigits.begin();
-          allDigits.end() != itD; ++itD ) {
-      LHCb::CaloDigit* dig = (*itD).clone();
-
+    for ( const auto& itD : m_energyTool->digits( ) ) {
       try{
-        digits->insert( dig );
+        std::unique_ptr<LHCb::CaloDigit> dig{ itD.clone() };
+        digits->insert( dig.get() );
+        dig.release();
       }catch(GaudiException &exc){
         counter("Duplicate CaloDigit") += 1;
-        std::ostringstream os("");
-        os << "Duplicate digit for channel " << itD->cellID();
+        std::ostringstream os;
+        os << "Duplicate digit for channel " << itD.cellID();
         Warning(os.str(),StatusCode::SUCCESS).ignore();
-        int card =  m_energyTool->deCalo()->cardNumber( itD->cellID() );
+        int card =  m_energyTool->deCalo()->cardNumber( itD.cellID() );
         int tell1=  m_energyTool->deCalo()->cardToTell1( card);
         LHCb::RawBankReadoutStatus& status = m_energyTool->status();
         status.addStatus( tell1 ,LHCb::RawBankReadoutStatus::DuplicateEntry);
-        delete dig;
       }
 
       if( UNLIKELY( msgLevel(MSG::VERBOSE) ) )
-        verbose() << "ID " << dig->cellID() << " energy " << dig->e() << endmsg;
+        verbose() << "ID " << itD.cellID() << " energy " << itD.e() << endmsg;
     }
     std::stable_sort ( digits->begin(), digits->end(),
-                       CaloDigitsFromRaw::IncreasingByCellID() );
+                       IncreasingByCellID );
     if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
       debug() << m_outputDigits+ m_extension << " CaloDigit container size " << digits->size() << endmsg;
     if(m_statusOnTES)m_energyTool->putStatusOnTES();
@@ -255,27 +242,22 @@ void CaloDigitsFromRaw::convertCaloEnergies ( ) {
     put( adcs ,  m_outputADCs+ m_extension );
     const std::vector<LHCb::CaloAdc>& allAdcs = m_energyTool->adcs( );
     if(m_statusOnTES)m_energyTool->putStatusOnTES();
-    for ( std::vector<LHCb::CaloAdc>::const_iterator itA = allAdcs.begin();
-          allAdcs.end() != itA; ++itA ) {
-      LHCb::CaloAdc* adc = new LHCb::CaloAdc( (*itA).cellID(), (*itA).adc() ); // 'clone'
-
+    for ( const auto& itA : allAdcs ) {
       try{
-        adcs->insert(adc);
+        auto adc = std::make_unique<LHCb::CaloAdc>( itA.cellID(), itA.adc() ); // 'clone'
+        adcs->insert(adc.get());
+        adc.release();
       }catch(GaudiException &exc){
         counter("Duplicate CaloDigit") += 1;
-        std::ostringstream os("");
-        os << "Duplicate digit for channel " << itA->cellID();
+        std::ostringstream os; os << "Duplicate digit for channel " << itA.cellID();
         Warning(os.str(),StatusCode::SUCCESS).ignore();
-        int card =  m_energyTool->deCalo()->cardNumber( itA->cellID() );
+        int card =  m_energyTool->deCalo()->cardNumber( itA.cellID() );
         int tell1=  m_energyTool->deCalo()->cardToTell1( card);
         LHCb::RawBankReadoutStatus& status = m_energyTool->status();
         status.addStatus( tell1 ,LHCb::RawBankReadoutStatus::DuplicateEntry);
-        delete adc;
       }
-
-
       if( UNLIKELY( msgLevel(MSG::VERBOSE) ) )
-        verbose() << "ID " << adc->cellID() << " ADC value " << adc->adc() << endmsg;
+        verbose() << "ID " << itA.cellID() << " ADC value " << itA.adc() << endmsg;
     }
     if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
       debug() << " CaloAdc container '"  << m_outputADCs+ m_extension  << "' -> size = " << adcs->size() << endmsg;
@@ -292,27 +274,24 @@ void CaloDigitsFromRaw::convertCaloEnergies ( ) {
         pinAdcs = new LHCb::CaloAdcs();
         put(pinAdcs , m_pinContainerName + m_extension );
       }
-      for ( std::vector<LHCb::CaloAdc>::const_iterator itA = allPinAdcs.begin();
-            allPinAdcs.end() != itA; ++itA ) {
-        LHCb::CaloAdc* pinAdc = new LHCb::CaloAdc( (*itA).cellID(), (*itA).adc() ); // 'clone'
-        pinAdcs->insert( pinAdc );
-
+      for ( const auto& itA : allPinAdcs ) {
         try{
-          pinAdcs->insert(pinAdc);
+          auto pinAdc = std::make_unique<LHCb::CaloAdc>( itA.cellID(), itA.adc() ); // 'clone'
+          pinAdcs->insert(pinAdc.get());
+          pinAdc.release();
         }catch(GaudiException &exc){
           counter("Duplicate CaloDigit") += 1;
           std::ostringstream os("");
-          os << "Duplicate digit for channel " << itA->cellID();
+          os << "Duplicate digit for channel " << itA.cellID();
           Warning(os.str(),StatusCode::SUCCESS).ignore();
-          int card =  m_energyTool->deCalo()->cardNumber( itA->cellID() );
+          int card =  m_energyTool->deCalo()->cardNumber( itA.cellID() );
           int tell1=  m_energyTool->deCalo()->cardToTell1( card);
           LHCb::RawBankReadoutStatus& status = m_energyTool->status();
           status.addStatus( tell1 ,LHCb::RawBankReadoutStatus::DuplicateEntry);
-          delete pinAdc;
         }
 
         if( UNLIKELY( msgLevel(MSG::VERBOSE) ) )
-          verbose() << "Pin-diode : ID " << pinAdc->cellID() << " ADC value " << pinAdc->adc() << endmsg;
+          verbose() << "Pin-diode : ID " << itA.cellID() << " ADC value " << itA.adc() << endmsg;
       }
       if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
         debug() << " Adding PIN-Diode CaloAdc to container '" << m_pinContainerName + m_extension
@@ -320,8 +299,6 @@ void CaloDigitsFromRaw::convertCaloEnergies ( ) {
     }
     if(m_statusOnTES)m_energyTool->putStatusOnTES();
   }
-
-
 
 }
 //=============================================================================

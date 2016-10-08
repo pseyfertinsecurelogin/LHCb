@@ -34,7 +34,6 @@ public:
                const std::string& name,
                const IInterface* parent);
 
-  virtual ~CaloReadoutTool( ); ///< Destructor
   virtual StatusCode initialize();
   virtual StatusCode finalize();
   virtual std::string _rootInTES(){ return rootInTES(); };
@@ -80,8 +79,8 @@ public:
 protected:  
   
   bool getCaloBanksFromRaw();
-  int findCardbyCode(std::vector<int> feCards, int code );
-  bool checkCards(int nCards, std::vector<int> feCards );
+  int findCardbyCode(std::vector<int> feCards, int code ) const;
+  bool checkCards(int nCards, std::vector<int> feCards ) const;
   void checkCtrl(int word, int sourceID);
   bool checkSrc(int source);
 

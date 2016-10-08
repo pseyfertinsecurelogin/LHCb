@@ -19,29 +19,20 @@ namespace LHCb{
   class Track;
 }
 
-static const InterfaceID IID_ICaloRelationsGetter ( "ICaloRelationsGetter", 1, 0 );
-
 /** @class ICaloRelationsGetter ICaloRelationsGetter.h
  *  
  *
  *  @author Olivier Deschamps
  *  @date   2013-10-04
  */
-class ICaloRelationsGetter : virtual public IAlgTool {
-public: 
+struct ICaloRelationsGetter : extend_interfaces<IAlgTool>{
 
   // Return the interface ID
-  static const InterfaceID& interfaceID() { return IID_ICaloRelationsGetter; }
-
+  DeclareInterfaceID(ICaloRelationsGetter, 2, 0 );
 
   virtual IRelationWeighted2D< LHCb::Track , LHCb::CaloHypo , float >* getTrHypoTable2D(std::string location)=0;
   virtual IRelation< LHCb::CaloHypo , float >*  getHypoEvalTable(std::string location)=0;
   virtual IRelationWeighted< LHCb::CaloCluster , LHCb::Track , float >* getClusTrTable  (std::string location)=0;
-
-
-protected:
-
-private:
 
 };
 #endif // ICALORELATIONSGETTER_H

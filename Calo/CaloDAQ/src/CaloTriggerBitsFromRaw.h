@@ -21,21 +21,19 @@ public:
                           const std::string& name,
                           const IInterface* parent);
 
-  virtual ~CaloTriggerBitsFromRaw( ); ///< Destructor
+  StatusCode initialize() override;
 
-  virtual StatusCode initialize();
-
-  const LHCb::Calo::FiredCells& prsCells( ); // get prs FiredCells
-  const LHCb::Calo::FiredCells& spdCells( ); // get spd FiredCells
-  const  LHCb::Calo::PrsSpdFiredCells& prsSpdCells( ); // get all FiredCells
-  const  LHCb::Calo::PrsSpdFiredCells& prsSpdCells(int source ); // get FiredCells for a single bank
-  const  LHCb::Calo::PrsSpdFiredCells& prsSpdCells( LHCb::RawBank* bank ); // get FiredCells for a single bank
-  void clear();
-  void cleanData(int feb);
+  const LHCb::Calo::FiredCells& prsCells( ) override; // get prs FiredCells
+  const LHCb::Calo::FiredCells& spdCells( ) override; // get spd FiredCells
+  const  LHCb::Calo::PrsSpdFiredCells& prsSpdCells( ) override; // get all FiredCells
+  const  LHCb::Calo::PrsSpdFiredCells& prsSpdCells(int source ) override; // get FiredCells for a single bank
+  const  LHCb::Calo::PrsSpdFiredCells& prsSpdCells( LHCb::RawBank* bank ) override; // get FiredCells for a single bank
+  void clear() override;
+  void cleanData(int feb) override;
   
-protected:
-  bool getData( LHCb::RawBank* bank );
 private:
+  bool getData( LHCb::RawBank* bank );
+
   LHCb::Calo::PrsSpdFiredCells m_data;  
 };
 #endif // CALOTRIGGERBITSFROMRAW_H

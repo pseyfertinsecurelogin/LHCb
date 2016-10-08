@@ -13,7 +13,7 @@
  *  @author Olivier Deschamps
  *  @date   2007-02-27
  */
-class CaloDataProvider : public CaloReadoutTool, virtual public ICaloDataProvider {
+class CaloDataProvider : public extends<CaloReadoutTool, ICaloDataProvider> {
 
 public: 
   /// Standard constructor
@@ -21,7 +21,6 @@ public:
                      const std::string& name,
                      const IInterface* parent);
 
-  virtual ~CaloDataProvider( ); ///< Destructor
 
   virtual StatusCode initialize();
   void clear();
@@ -72,7 +71,7 @@ private:
   }
   CaloVector<LHCb::CaloAdc>    m_adcs;
   CaloVector<LHCb::CaloDigit> m_digits;
-  unsigned int m_tell1s;
+  unsigned int m_tell1s = 0;
   LHCb::CaloAdc m_minADC;
   LHCb::CaloAdc m_minPinADC;
   LHCb::CaloAdc m_maxADC;
