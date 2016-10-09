@@ -1,4 +1,3 @@
-// $Id: ICaloClusterSelector.h,v 1.8 2008-09-22 00:50:30 odescham Exp $
 // ============================================================================
 #ifndef CALOINTERFACES_ICALOCLUSTERSELECTOR_H 
 #define CALOINTERFACES_ICALOCLUSTERSELECTOR_H 1
@@ -11,7 +10,6 @@
 namespace LHCb{
   class  CaloCluster     ;    
 }
-static const InterfaceID IID_ICaloClusterSelector ( "ICaloClusterSelector" , 1 , 0 );
 
 /** @class ICaloClusterSelector ICaloClusterSelector.h
  *  
@@ -26,19 +24,10 @@ static const InterfaceID IID_ICaloClusterSelector ( "ICaloClusterSelector" , 1 ,
  *  @date   31/03/2002
  */
 
-class ICaloClusterSelector :
-  virtual public IAlgTool                           ,
-  public std::unary_function<const LHCb::CaloCluster*,bool> 
+struct ICaloClusterSelector : extend_interfaces<IAlgTool>
 {
-public:
   
-  /** static interface identification
-   *  @see IInterface
-   *  @see IID_ICaloClusterSelector
-   *  @return the unique interface identifier
-   */
-  static const InterfaceID& interfaceID() { return IID_ICaloClusterSelector; }
-  
+  DeclareInterfaceID( ICaloClusterSelector , 2 , 0 );
   
   /** "select"/"preselect" method 
    *  @param  cluster pointer to calo cluster object to be selected 
@@ -51,9 +40,6 @@ public:
    *  @return true if cluster is selected
    */
   virtual bool operator() ( const LHCb::CaloCluster* cluster ) const = 0 ;
-  
-protected:
-  
   
 };
   

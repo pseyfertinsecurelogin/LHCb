@@ -73,10 +73,6 @@ protected:
   /// Standard constructor
   CondDBLayeringSvc( const std::string& name, ISvcLocator* svcloc );
 
-  virtual ~CondDBLayeringSvc( ); ///< Destructor
-
-protected:
-
 private:
 
   // -------------------- Data Members
@@ -86,7 +82,7 @@ private:
   std::vector<std::string> m_layersNames;
 
   /// Container fo the alternatives.
-  std::vector<ICondDBReader*> m_layers;
+  std::vector<SmartIF<ICondDBReader>> m_layers;
 
   /// Enable/disable direct mapping from the database structure to the transient
   /// store using XML persistency format (enabled by default).

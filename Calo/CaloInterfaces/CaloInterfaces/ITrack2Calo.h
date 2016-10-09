@@ -1,4 +1,3 @@
-// $Id: ITrack2Calo.h,v 1.3 2007-07-20 13:14:22 cattanem Exp $
 #ifndef ITRACK2CALO_H 
 #define ITRACK2CALO_H 1
 
@@ -24,7 +23,6 @@ namespace LHCb
 }
 
 
-static const InterfaceID IID_ITrack2Calo ( "ITrack2Calo", 2, 0 );
 
 /** @class ITrack2Calo ITrack2Calo.h Kernel/ITrack2Calo.h
  *  
@@ -32,13 +30,11 @@ static const InterfaceID IID_ITrack2Calo ( "ITrack2Calo", 2, 0 );
  *  @author Olivier Deschamps
  *  @date   2007-06-25
  */
-class ITrack2Calo : virtual public IAlgTool {
-public: 
-
+struct ITrack2Calo : extend_interfaces<IAlgTool>
+{
   // Return the interface ID
-  static const InterfaceID& interfaceID() { return IID_ITrack2Calo; }
+  DeclareInterfaceID(ITrack2Calo, 3, 0 );
 
-  virtual StatusCode         initialize() = 0;
   virtual bool  match(const  LHCb::Track* track,
                       std::string det = DeCalorimeterLocation::Ecal,
                       CaloPlane::Plane plane = CaloPlane::ShowerMax, 
@@ -56,9 +52,6 @@ public:
   virtual LHCb::State closestState(LHCb::CaloPosition calopos,LHCb::ParticleID pid = LHCb::ParticleID(211))=0;
   virtual LHCb::State closestState(LHCb::CaloCellID   cellID ,LHCb::ParticleID pid = LHCb::ParticleID(211))=0;
   virtual const LHCb::Track* track()=0;  
-protected:
-
-private:
 
 };
 #endif // ITRACK2CALO_H

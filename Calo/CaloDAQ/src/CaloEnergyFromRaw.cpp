@@ -16,28 +16,22 @@ DECLARE_TOOL_FACTORY( CaloEnergyFromRaw )
 CaloEnergyFromRaw::CaloEnergyFromRaw( const std::string& type,
                                       const std::string& name,
                                       const IInterface* parent )
-  : CaloReadoutTool ( type, name , parent )
+  : base_class ( type, name , parent )
 {
   declareInterface<ICaloEnergyFromRaw>(this);
 
   // set default detectorName
   int index = name.find_last_of(".") +1 ; // return 0 if '.' not found --> OK !!
-
-  m_detectorName = name.substr( index, 4 );
-  if ( name.substr(index,3) == "Prs" ) m_detectorName = "Prs";
+  m_detectorName = ( name.compare(index,3, "Prs") == 0 
+                     ? "Prs" : name.substr( index, 4 ) );
   clear();
 }
-//=============================================================================
-// Destructor
-//=============================================================================
-CaloEnergyFromRaw::~CaloEnergyFromRaw() {}
-
 
 //=========================================================================
 //  Initialisation, according to the name -> detector
 //=========================================================================
 StatusCode CaloEnergyFromRaw::initialize ( ) {
-  StatusCode sc = CaloReadoutTool::initialize(); // must be executed first
+  StatusCode sc = base_class::initialize(); // must be executed first
   if ( sc.isFailure() ) return sc;  // error printed already by GaudiAlgorithm
   if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
     debug() << "==> Initialize " << name() << " Det = "<< m_detectorName << endmsg;
@@ -84,37 +78,22 @@ void CaloEnergyFromRaw::clear( ) {
 //-------------------------------------
 void CaloEnergyFromRaw::cleanData(int feb ) {
   if(feb<0)return;
-  std::vector<LHCb::CaloAdc>   tempP;
-  std::vector<LHCb::CaloAdc>   temp;
-  std::vector<LHCb::CaloDigit>  tempD;
 
   if(m_calo->isPinCard(feb)){
-    for(std::vector<LHCb::CaloAdc>::iterator iadc = m_pinData.begin();iadc!=m_pinData.end();++iadc){
-      if( m_calo->cellParam( (*iadc).cellID() ).cardNumber() == feb)continue;
-      tempP.push_back( *iadc );
-    }
-    m_pinData.clear();
-    for(std::vector<LHCb::CaloAdc>::iterator iadc = tempP.begin();iadc!=tempP.end();++iadc){
-      m_pinData.push_back( *iadc );
-    }
-
+    m_pinData.erase( std::remove_if( m_pinData.begin(), m_pinData.end(),
+                                     [&](const LHCb::CaloAdc& adc) 
+                                     { return m_calo->cellParam( adc.cellID() ).cardNumber() == feb; }),
+                     m_pinData.end());
   }else{
-    for(std::vector<LHCb::CaloAdc>::iterator iadc = m_data.begin();iadc!=m_data.end();++iadc){
-      if( m_calo->cellParam( (*iadc).cellID() ).cardNumber() == feb)continue;
-      temp.push_back( *iadc );
-    }
-    for(std::vector<LHCb::CaloDigit>::iterator idig = m_digits.begin();idig!=m_digits.end();++idig){
-      if( m_calo->cellParam( (*idig).cellID() ).cardNumber() == feb)continue;
-      tempD.push_back( *idig );
-    }
-    m_data.clear();
-    m_digits.clear();
-    for(std::vector<LHCb::CaloAdc>::iterator iadc = temp.begin();iadc!=temp.end();++iadc){
-      m_data.push_back( *iadc );
-    }
-    for(std::vector<LHCb::CaloDigit>::iterator idig = tempD.begin();idig!=tempD.end();++idig){
-      m_digits.push_back( *idig );
-    }
+    m_data.erase( std::remove_if( m_data.begin(), m_data.end(),
+                                  [&](const LHCb::CaloAdc& adc) 
+                                  { return m_calo->cellParam( adc.cellID() ).cardNumber() == feb; }),
+                  m_data.end() );
+
+    m_digits.erase( std::remove_if( m_digits.begin(), m_digits.end(),
+                                    [&](const LHCb::CaloDigit& dig) 
+                                    { return m_calo->cellParam( dig.cellID() ).cardNumber() == feb; } ),
+                    m_digits.end() );
   }
 }
 
@@ -143,20 +122,19 @@ const std::vector<LHCb::CaloAdc>& CaloEnergyFromRaw::adcs (int source) {
   bool decoded = false;
   bool found   = false;
   if(m_getRaw)getBanks();
-  if( NULL == m_banks || 0 == m_banks->size() ){
+  if( !m_banks || m_banks->empty() ){
     if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
       debug() << "The banks container is empty"<< endmsg;
   }else{
-    for( std::vector<LHCb::RawBank*>::const_iterator itB = m_banks->begin();
-         itB != m_banks->end() ; ++itB ) {
-      sourceID       = (*itB)->sourceID();
+    for( const auto& bank : *m_banks ) {
+      sourceID       = bank->sourceID();
       if( source >= 0 && source != sourceID )continue;
 
       found = true;
 
       if(checkSrc( sourceID ))continue;
 
-      decoded = getData ( *itB );
+      decoded = getData ( *bank );
       if( !decoded ){
         if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
           debug() <<"Error when decoding bank " << Gaudi::Utils::toString(sourceID)
@@ -176,7 +154,7 @@ const std::vector<LHCb::CaloAdc>& CaloEnergyFromRaw::adcs (int source) {
 //=========================================================================
 const std::vector<LHCb::CaloAdc>& CaloEnergyFromRaw::adcs ( LHCb::RawBank* bank ){
   clear();
-  if( !getData( bank ) )clear();
+  if( !getData( *bank ) )clear();
   return m_data ;
 }
 
@@ -213,18 +191,17 @@ const std::vector<LHCb::CaloDigit>&  CaloEnergyFromRaw::digits ( ) {
 //=============================================================================
 // Main method to decode the rawBank - fill m_data vector
 //=============================================================================
-bool CaloEnergyFromRaw::getData ( LHCb::RawBank* bank ){
-  if(NULL == bank)return false;
-  if( LHCb::RawBank::MagicPattern != bank->magic() )return false;// do not decode when MagicPattern is bad
+bool CaloEnergyFromRaw::getData ( const LHCb::RawBank& bank ){
+  if( LHCb::RawBank::MagicPattern != bank.magic() )return false;// do not decode when MagicPattern is bad
   // Get bank info
-  unsigned int* data = bank->data();
-  int size           = bank->size()/4;  // Bank size is in bytes
-  int version        = bank->version();
-  int sourceID       = bank->sourceID();
+  const unsigned int* data = bank.data();
+  int size           = bank.size()/4;  // Bank size is in bytes
+  int version        = bank.version();
+  int sourceID       = bank.sourceID();
 
 
   if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
-    debug() << "Decode bank " << bank << " source " << sourceID
+    debug() << "Decode bank " << &bank << " source " << sourceID
             << " version " << version << " size " << size << endmsg;
 
 
@@ -240,7 +217,7 @@ bool CaloEnergyFromRaw::getData ( LHCb::RawBank* bank ){
 
 
   if ( 1 > version || 3 < version ) {
-    warning() << "Bank type " << bank->type() << " sourceID " << sourceID
+    warning() << "Bank type " << bank.type() << " sourceID " << sourceID
               << " has version " << version
               << " which is not supported" << endmsg;
 
@@ -402,28 +379,26 @@ bool CaloEnergyFromRaw::getData ( LHCb::RawBank* bank ){
       int ctrl    = (word >> 23) &  0x1FF;
       checkCtrl( ctrl,sourceID );
       // access chanID via condDB
-      std::vector<LHCb::CaloCellID> chanID  ;
       // look for the FE-Card in the Tell1->cards vector
       int card = findCardbyCode(feCards,code);
-      if( 0 <= card ){
-        chanID = m_calo->cardChannels( feCards[card] );
-        feCards.erase(feCards.begin()+card);
-      }else{
+      if( card < 0 ) {
         Error(" FE-Card w/ [code : " + Gaudi::Utils::toString( code ) + " ] is not associated with TELL1 bank sourceID : "
               +Gaudi::Utils::toString(sourceID)
               + " in condDB :  Cannot read that bank").ignore();
         Error("Warning : previous data may be corrupted").ignore();
-        if(m_cleanCorrupted)cleanData(prevCard);
+        if(m_cleanCorrupted) cleanData(prevCard);
         m_status.addStatus( sourceID,   LHCb::RawBankReadoutStatus::Corrupted || LHCb::RawBankReadoutStatus::Incomplete);
         return false;
       }
+      std::vector<LHCb::CaloCellID> chanID = m_calo->cardChannels( feCards[card] );
+      feCards.erase(feCards.begin()+card);
       prevCard = card;
 
       // Read the FE-Board
       // skip the trigger bits
       int nSkip = (lenTrig+3)/4;  //== Length in byte, with padding
       size -= nSkip;
-      data     += nSkip;
+      data += nSkip;
 
 
       // read data
@@ -439,9 +414,8 @@ bool CaloEnergyFromRaw::getData ( LHCb::RawBank* bank ){
         int adc = ( lastData >> offset ) & 0x3FF;
         unsigned int num = ( lastData >> (offset+10) ) & 0x3F;
 
-        LHCb::CaloCellID id = LHCb::CaloCellID();
-        if(num < chanID.size())id= chanID[ num ];
-        LHCb::CaloAdc temp( id, adc );
+        LHCb::CaloCellID id = ( num < chanID.size() ? chanID[ num ] 
+                                                    : LHCb::CaloCellID{} );
 
         // event dump
         if ( msgLevel( MSG::VERBOSE) ) {
@@ -457,9 +431,9 @@ bool CaloEnergyFromRaw::getData ( LHCb::RawBank* bank ){
 
         if ( 0 != id.index() ) {
           if( !id.isPin() ){
-            m_data.push_back( temp );
+            m_data.emplace_back( id, adc );
           }else{
-            m_pinData.push_back( temp );
+            m_pinData.emplace_back( id, adc );
           }
         }
 
@@ -480,15 +454,16 @@ bool CaloEnergyFromRaw::getData ( LHCb::RawBank* bank ){
 //=========================================================================
 bool CaloEnergyFromRaw::getDigits ( ) {
   m_digits.clear();
-  if( 0 == m_data.size() )return true;
+  if( m_data.empty() )return true;
+  m_digits.reserve(m_data.size());
   double pedShift = m_calo->pedestalShift();
-  for ( std::vector<LHCb::CaloAdc>::const_iterator itAdc = m_data.begin();
-        m_data.end() != itAdc; ++itAdc ) {
-    LHCb::CaloCellID id = (*itAdc).cellID();
-    int adc = (*itAdc).adc();
-    double e = ( double(adc) - pedShift ) * m_calo->cellGain( id );
-    LHCb::CaloDigit dig( id, e );
-    m_digits.push_back( dig );
-  }
+  std::transform( m_data.begin(), m_data.end(), 
+                  std::back_inserter(m_digits),
+                  [&](const LHCb::CaloAdc& cadc) -> LHCb::CaloDigit { 
+                     LHCb::CaloCellID id = cadc.cellID();
+                     int adc = cadc.adc();
+                     double e = ( double(adc) - pedShift ) * m_calo->cellGain( id );
+                     return { id, e };
+  } );
   return true;
 }

@@ -1,10 +1,3 @@
-// $Id: InputStreamIterator.h,v 1.1.1.1 2001-11-25 14:07:38 ibelyaev Exp $ 
-// ============================================================================
-// CVS tag $Name: not supported by cvs2svn $
-// ============================================================================
-// $Log: not supported by cvs2svn $
-// Revision 1.4  2001/06/23 14:39:32  ibelyaev
-//  fix CVS-keywords and remove long lines
 // ============================================================================
 #ifndef    CALOKERNEL_INPUTSTREAMITERATOR_H 
 #define    CALOKERNEL_INPUTSTREAMITERATOR_H  1 

@@ -1,7 +1,4 @@
-// $Id: MuonHLTDigitFormat.cpp,v 1.4 2008-04-09 15:38:42 cattanem Exp $
 // Include files 
-
-
 
 // local
 #include "MuonDAQ/MuonHLTDigitFormat.h"
@@ -12,22 +9,6 @@
 // 2004-01-23 : Alessia Satta
 //-----------------------------------------------------------------------------
 
-//=============================================================================
-// Standard constructor, initializes variables
-//=============================================================================
-MuonHLTDigitFormat::MuonHLTDigitFormat(unsigned int type  ) {
-m_data=0;
-m_type=type;
-}
-MuonHLTDigitFormat::MuonHLTDigitFormat(unsigned int num ,unsigned int type){
-m_data=num;
-m_type=type;
-}
-
-//=============================================================================
-// Destructor
-//=============================================================================
-MuonHLTDigitFormat::~MuonHLTDigitFormat() {}
 
 //=============================================================================
 void MuonHLTDigitFormat::setAddress(unsigned int num)
@@ -63,7 +44,7 @@ void MuonHLTDigitFormat::setTime(unsigned int num)
   m_data = ( tmp1 | tmp2 ) ;
 }
 
-unsigned int MuonHLTDigitFormat::getTime()
+unsigned int MuonHLTDigitFormat::getTime() const
 {
   if(m_type==MuonBankVersion::DC06){
     return  ( m_data & MuonHLTBaseDC06::MaskTime ) >> 
@@ -78,7 +59,7 @@ unsigned int MuonHLTDigitFormat::getTime()
     return 0;
 }
 
-unsigned int MuonHLTDigitFormat::getAddress()
+unsigned int MuonHLTDigitFormat::getAddress() const
 {
   if(m_type==MuonBankVersion::DC06){
     return  ( m_data & MuonHLTBaseDC06::MaskAddress ) >> 
@@ -94,8 +75,3 @@ unsigned int MuonHLTDigitFormat::getAddress()
 
 }
 
-unsigned int  MuonHLTDigitFormat::getWord()
-{
-  return m_data;
-  
-}

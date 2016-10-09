@@ -16,7 +16,6 @@ namespace LHCb
   class ProtoParticle;
 }
 
-static const InterfaceID IID_ICaloElectron ( "ICaloElectron", 3, 0 );
 
 /** @class ICaloElectron ICaloElectron.h Kernel/ICaloElectron.h
  *  
@@ -24,13 +23,11 @@ static const InterfaceID IID_ICaloElectron ( "ICaloElectron", 3, 0 );
  *  @author Olivier Deschamps
  *  @date   2006-11-30
  */
-class ICaloElectron : virtual public IPart2Calo {
-public: 
+struct ICaloElectron : public extend_interfaces<IPart2Calo> {
 
   // Return the interface ID
-  static const InterfaceID& interfaceID() { return IID_ICaloElectron; }
+  DeclareInterfaceID( ICaloElectron, 4, 0 );
 
-  virtual StatusCode         initialize() = 0;
   virtual bool  set(const  LHCb::Particle* particle, 
                     std::string det = DeCalorimeterLocation::Ecal,
                     CaloPlane::Plane plane = CaloPlane::ShowerMax,
@@ -48,12 +45,8 @@ public:
   using ITrack2Calo::closestState;
   virtual LHCb::State        closestState(std::string toWhat = "hypo") =0;
 
-  virtual double             caloTrajectoryZ(CaloPlane::Plane refPlane = CaloPlane::ShowerMax,std::string toWhat = "hypo") =0;
-  virtual double             caloTrajectoryL(CaloPlane::Plane refPlane = CaloPlane::ShowerMax ,std::string toWhat = "hypo") =0 ;
-
-protected:
-
-private:
+  virtual double caloTrajectoryZ(CaloPlane::Plane refPlane = CaloPlane::ShowerMax,std::string toWhat = "hypo") =0;
+  virtual double caloTrajectoryL(CaloPlane::Plane refPlane = CaloPlane::ShowerMax ,std::string toWhat = "hypo") =0 ;
 
 };
 #endif // ICALOELECTRON_H

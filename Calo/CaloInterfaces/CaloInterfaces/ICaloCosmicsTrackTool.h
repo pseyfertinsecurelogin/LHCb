@@ -1,4 +1,3 @@
-// $Id: ICaloCosmicsTrackTool.h,v 1.3 2008-12-10 09:57:07 cattanem Exp $
 #ifndef ICALOCOSMICSTRACKTOOL_H 
 #define ICALOCOSMICSTRACKTOOL_H 1
 
@@ -12,12 +11,11 @@
 #include "GaudiKernel/Vector3DTypes.h"
 
 // forward declarations
-class ICaloCosmicsTool;
+struct ICaloCosmicsTool;
 namespace LHCb {
   class Track;
 }
 
-static const InterfaceID IID_ICaloCosmicsTrackTool ( "ICaloCosmicsTrackTool", 1, 0 );
 
 /** @class ICaloCosmicsTrackTool ICaloCosmicsTrackTool.h
  *  
@@ -25,13 +23,10 @@ static const InterfaceID IID_ICaloCosmicsTrackTool ( "ICaloCosmicsTrackTool", 1,
  *  @author Olivier Deschamps
  *  @date   2008-05-17
  */
-class ICaloCosmicsTrackTool : virtual public IAlgTool {
-public: 
+struct ICaloCosmicsTrackTool : public extend_interfaces<IAlgTool> {
 
-  // Return the interface ID
-  static const InterfaceID& interfaceID() { return IID_ICaloCosmicsTrackTool; }
+  DeclareInterfaceID( ICaloCosmicsTrackTool, 2, 0 );
 
-  virtual StatusCode finalize()=0;
   virtual StatusCode processing()=0;
   virtual StatusCode tupling(unsigned int unit)=0;
   //virtual  const double time()=0;
@@ -55,10 +50,6 @@ public:
   virtual StatusCode propagate(Gaudi::Plane3D plane)=0;
   virtual StatusCode propagate(double z )=0;
 
-
-protected:
-
-private:
 
 };
 #endif // ICALOCOSMICSTRACKTOOL_H
