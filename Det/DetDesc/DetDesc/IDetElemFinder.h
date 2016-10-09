@@ -8,7 +8,7 @@
 // from Gaudi
 #include "GaudiKernel/IInterface.h"
 
-class IDetectorElement;
+struct IDetectorElement;
 
 /** @class IDetElemFinder IDetElemFinder.h Kernel/IDetElemFinder.h
  *  

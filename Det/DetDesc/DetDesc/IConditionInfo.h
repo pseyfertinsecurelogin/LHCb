@@ -3,7 +3,7 @@
 
 #include "GaudiKernel/IInterface.h"
 // Forward declarations
-class IDetectorElement;
+struct IDetectorElement;
 class Condition;
 
 /** the unique interface identifier 

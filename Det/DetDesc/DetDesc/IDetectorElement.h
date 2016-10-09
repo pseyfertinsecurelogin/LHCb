@@ -11,12 +11,12 @@
 #include "GaudiKernel/Point3DTypes.h"
 
 // Forward declarations
-class IGeometryInfo;
-class IAlignment;
-class ICalibration;
-class IReadOut;
-class ISlowControl;
-class IFastControl;
+struct IGeometryInfo;
+struct IAlignment;
+struct ICalibration;
+struct IReadOut;
+struct ISlowControl;
+struct IFastControl;
 
 class Condition;
 class ParamValidDataObject;

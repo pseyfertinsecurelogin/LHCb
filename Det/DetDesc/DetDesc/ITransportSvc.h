@@ -6,7 +6,7 @@
 #include "DetDesc/ILVolume.h"
 
 // Forward declarations
-class IGeometryInfo;
+struct IGeometryInfo;
 
 
 /** @class ITransportSvc ITransportSvc.h DetDesc/ITransportSvc.h

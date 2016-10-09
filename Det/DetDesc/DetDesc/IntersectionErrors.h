@@ -18,7 +18,7 @@
 namespace DetDesc
 {
   // forward declarations 
-  class IGeometryErrorSvc ;
+  struct IGeometryErrorSvc ;
   // ==========================================================================
   /** @class IntersectionErrors DetDesc/IntersectionErrors.h
    *  

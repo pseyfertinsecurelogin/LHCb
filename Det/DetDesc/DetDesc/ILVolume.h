@@ -19,8 +19,8 @@
 /// Forward declarations 
 class StatusCode;
 class Material; 
-class IPVolume;
-class ISolid;
+struct IPVolume;
+struct ISolid;
 template <class TYPE>
 class SmartRefVector;
 class Surface;

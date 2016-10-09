@@ -5,8 +5,8 @@
 /// DetDesc 
 #include "DetDesc/ILVolume.h"
 /// forward declarations
-class IDetectorElement;
-class IGeometryInfo;
+struct IDetectorElement;
+struct IGeometryInfo;
 
 /** @namespace GeoInfo GeoInfo.h
  *  

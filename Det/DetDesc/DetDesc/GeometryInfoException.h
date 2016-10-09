@@ -4,7 +4,7 @@
 #include "GaudiKernel/GaudiException.h" 
 ///
 class MsgStream;
-class IGeometryInfo;
+struct IGeometryInfo;
 ///
 
 /** @class GeometryInfoException GeometryInfoException.h DetDesc/GeometryInfoException.h

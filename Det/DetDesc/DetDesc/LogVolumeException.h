@@ -3,7 +3,7 @@
 // Include files
 #include "GaudiKernel/GaudiException.h"
 // forward declarations
-class ILVolume ; ///< detdesc package 
+struct ILVolume ; ///< detdesc package 
 
 /** @class LogVolumeException LogVolumeException.h DetDesc/LogVolumeException.h
  *  

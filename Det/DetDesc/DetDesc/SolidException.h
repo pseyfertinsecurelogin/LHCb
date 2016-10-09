@@ -3,7 +3,7 @@
 /// GaudiKernle
 #include "GaudiKernel/GaudiException.h" 
 ///
-class ISolid;
+struct ISolid;
 ///
 
 class SolidException : public GaudiException 
