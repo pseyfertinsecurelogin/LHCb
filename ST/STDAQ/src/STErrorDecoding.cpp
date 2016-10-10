@@ -13,6 +13,7 @@ using namespace LHCb;
 //
 // 2007-11-29: Mathias Knecht
 // Update 2008 M Needham
+// Update 2016 S Ponce
 //-----------------------------------------------------------------------------
 
 // ----------------------------------------------------------------------------
@@ -23,41 +24,29 @@ DECLARE_ALGORITHM_FACTORY( STErrorDecoding )
 // Standard constructor, initializes variables
 //=============================================================================
 STErrorDecoding::STErrorDecoding( const std::string& name,
-                          ISvcLocator* pSvcLocator)
-  : STDecodingBaseAlg ( name , pSvcLocator ){
- 
+                          ISvcLocator* pSvcLocator) :
+Consumer(name, pSvcLocator,
+         KeyValue{"RawEventLocations",
+                  Gaudi::Functional::concat_alternatives(LHCb::RawEventLocation::Tracker,
+                                                         LHCb::RawEventLocation::Other,
+                                                         LHCb::RawEventLocation::Default)}) {
   declareProperty("PrintErrorInfo", m_PrintErrorInfo = false);  
 }
 
 //=============================================================================
-// Destructor
-//=============================================================================
-STErrorDecoding::~STErrorDecoding() {} 
-
-//=============================================================================
 // Main execution
 //=============================================================================
-StatusCode STErrorDecoding::execute() {
-
+void STErrorDecoding::operator()(const LHCb::RawEvent& raw) const {
   // in fact all the work is delegated to the base class
-
   if( UNLIKELY( msgLevel(MSG::DEBUG) ) ) debug() << "==> Execute " << endmsg;
-
-  STTELL1BoardErrorBanks* errorBanks = getErrorBanks();
-
-  if (errorBanks == 0) {
-    // was not possible to decode the banks
-    return StatusCode::FAILURE;
-  }
-   
+  STTELL1BoardErrorBanks* errorBanks = decodeErrors(raw);
   // print out the error banks
   if (m_PrintErrorInfo == true){
     STTELL1BoardErrorBanks::const_iterator iterBank = errorBanks->begin();
-    for ( ; iterBank != errorBanks->end();  ++iterBank){
+    for ( ; iterBank != errorBanks->end(); ++iterBank){
       info() << **iterBank << endmsg;
     }  //iterBanks
   }
-  
-  return StatusCode::SUCCESS;
+  delete errorBanks;
 } 
 

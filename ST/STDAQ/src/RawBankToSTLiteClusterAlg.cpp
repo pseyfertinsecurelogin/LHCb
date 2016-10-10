@@ -28,66 +28,56 @@ using namespace LHCb;
 // Implementation file for class : RawBufferToSTLiteClusterAlg
 //
 // 2004-01-07 : Matthew Needham
+// 2016-10-07 : Sebastien Ponce
 //-----------------------------------------------------------------------------
 
 DECLARE_ALGORITHM_FACTORY( RawBankToSTLiteClusterAlg )
 
-RawBankToSTLiteClusterAlg::RawBankToSTLiteClusterAlg( const std::string& name,
-                                                      ISvcLocator* pSvcLocator )
-: STDecodingBaseAlg (name , pSvcLocator)
-{
+RawBankToSTLiteClusterAlg::RawBankToSTLiteClusterAlg(const std::string& name,
+                                                     ISvcLocator* pSvcLocator) :
+Transformer(name, pSvcLocator,
+            {KeyValue{"OdinLocation", LHCb::ODINLocation::Default},
+             KeyValue{"RawEventLocations",
+                      Gaudi::Functional::concat_alternatives(LHCb::RawEventLocation::Tracker,
+                                                             LHCb::RawEventLocation::Other,
+                                                             LHCb::RawEventLocation::Default)}},
+            KeyValue("clusterLocation", STLiteClusterLocation::TTClusters)) {
   // Standard constructor, initializes variables
-  auto p = declareSTConfigProperty( "clusterLocation", m_clusterLocation , STLiteClusterLocation::TTClusters);
-  p->declareUpdateHandler([=](Property&){  this->m_clusterDh.updateKey( this->m_clusterLocation ); } );
-  p->useUpdateHandler();
   declareSTConfigProperty("BankType", m_bankTypeString , detType() );
 }
 
 StatusCode RawBankToSTLiteClusterAlg::initialize() {
-
   // Initialization
-  StatusCode sc = STDecodingBaseAlg::initialize();
+  StatusCode sc = Transformer::initialize();
   if (sc.isFailure()) return Error("Failed to initialize", sc);
-  
-  // FIXME: STDecodingBaseAlg::initialize uses DeclareSTConfigProperty declared properties
-  // to 'flip' their detector types by directly writing to eg. m_clusterLocation
-  // the callback doesn't get invoked, so m_clusterDh gets out of sync. So we need to explicilty fix
-  // the key at the end of initialize...
-  m_clusterDh.updateKey(m_clusterLocation);
+  // Spill
+  computeSpillOffset(inputLocation<1>());
+  // return
   return StatusCode::SUCCESS;
 }
 
-
-StatusCode RawBankToSTLiteClusterAlg::execute() {
-
-  if (!validSpill()) return Warning("Not a valid spill",StatusCode::SUCCESS, 1);
-
-  // Retrieve the RawEvent:
-  LHCb::RawEvent* rawEvt = nullptr;
-  for (const auto& p : m_rawEventLocations) {
-    rawEvt = getIfExists<LHCb::RawEvent>(p);
-    if (rawEvt) break;
-  }
-  if( !rawEvt ) return Error("Failed to find raw data");
-
-  // decode banks
+LHCb::STLiteCluster::STLiteClusters RawBankToSTLiteClusterAlg::operator()(const LHCb::ODIN& odin, const LHCb::RawEvent& rawEvt) const {
   STLiteCluster::STLiteClusters fCont;
-  fCont.reserve(5000);
-  StatusCode sc = decodeBanks(rawEvt, fCont);
-  if (sc.isFailure()){
-    return Error("Problems in decoding event skipped", sc);
+  if (!validSpill(odin)) {
+    warning() << "Not a valid spill" << endmsg;
+  } else {
+    fCont.reserve(5000);
+    // decode banks
+    StatusCode sc = decodeBanks(rawEvt, fCont);
+    if (sc.isFailure()){
+      throw GaudiException("Problems in decoding event skipped", "RawBankToSTLiteClusterAlg", StatusCode::FAILURE );
+    }
   }
-
-  // put clusters into Event Store
-  m_clusterDh.put(std::move(fCont));
-
-  return sc;
+  return fCont;
 }
 
 
-StatusCode RawBankToSTLiteClusterAlg::decodeBanks(RawEvent* rawEvt,STLiteCluster::STLiteClusters& fCont) const{
+StatusCode RawBankToSTLiteClusterAlg::decodeBanks(const RawEvent& rawEvt,
+                                                  STLiteCluster::STLiteClusters& fCont) const {
+  LHCb::STTELL1BoardErrorBanks* errorBanks = nullptr;
+  bool errorBanksFailed = false;
 
-  const std::vector<RawBank* >&  tBanks = rawEvt->banks(bankType());
+  const std::vector<RawBank* >&  tBanks = rawEvt.banks(bankType());
   std::vector<unsigned int> missing = missingInAction(tBanks);
   if ( !missing.empty() ){
     counter("lost Banks") += missing.size() ;
@@ -149,7 +139,20 @@ StatusCode RawBankToSTLiteClusterAlg::decodeBanks(RawEvent* rawEvt,STLiteCluster
     }
 
     // ok this is a bit ugly.....
-    STTELL1BoardErrorBank* errorBank = recover ? findErrorBank((*iterBank)->sourceID()) : nullptr;
+    STTELL1BoardErrorBank* errorBank = nullptr;
+    if (recover) {
+      if (!errorBanks && !errorBanksFailed) {
+        try {
+          errorBanks = decodeErrors(rawEvt);
+        } catch (GaudiException &e) {
+          errorBanksFailed = true;
+          warning() << e.what() << endmsg;
+        }
+      }
+      if (errorBanks) {
+        errorBank = errorBanks->object((*iterBank)->sourceID());
+      }
+    }
 
     if (errorBank) {
       const unsigned bankpcn = decoder.header().pcn();
@@ -172,7 +175,7 @@ StatusCode RawBankToSTLiteClusterAlg::decodeBanks(RawEvent* rawEvt,STLiteCluster
 
 
     // read in the first half of the bank
-    
+
     for (auto iterDecoder = decoder.posBegin();iterDecoder != decoder.posEnd(); ++iterDecoder){
 
       if (!recover){
@@ -186,6 +189,10 @@ StatusCode RawBankToSTLiteClusterAlg::decodeBanks(RawEvent* rawEvt,STLiteCluster
     } //decoder
 
   } // iterBank
+
+  if (errorBanks) {
+    delete errorBanks;
+  }
 
   // sort and remove any duplicates
   std::stable_sort(fCont.begin(),fCont.end(), Less_by_Channel());
@@ -211,6 +218,6 @@ StatusCode RawBankToSTLiteClusterAlg::finalize() {
   }
   info() << "Successfully processed " << 100* eff << " %"  << endmsg;
 
-  return STDecodingBaseAlg::finalize();
+  return Transformer::finalize();
 }
 
