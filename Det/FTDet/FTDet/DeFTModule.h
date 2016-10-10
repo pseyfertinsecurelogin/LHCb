@@ -7,6 +7,7 @@
 /// Kernel
 #include "Kernel/FTChannelID.h"
 #include "Kernel/LineTraj.h"
+#include "Kernel/DetectorSegment.h"
 
 #include "GaudiKernel/Plane3DTypes.h"
 
@@ -59,6 +60,12 @@ public:
 
   /** Set element id */
   void setElementID(const LHCb::FTChannelID& chanID);
+
+  /** @return flag true if this quarter is bottom half */
+  bool isBottom() const {return m_quarterID == 0 || m_quarterID == 1; }
+
+  /** @return flag true if this quarter is top half */
+  bool isTop() const {return m_quarterID == 2 || m_quarterID == 3; }
 
   /**
    * Return a sensitive volume identifier for a given point in the
@@ -141,6 +148,14 @@ public:
    */
   std::unique_ptr<LHCb::Trajectory> trajectory(const LHCb::FTChannelID channelID,
       const double frac) const;
+
+  /** Get the line defined by the begin and end positions of a hit
+   *   (channelID + fraction)
+   *  @param channelID input FTChannelID
+   *  @param frac input fraction
+   */
+  std::pair<Gaudi::XYZPoint,Gaudi::XYZPoint> endPoints(
+      const LHCb::FTChannelID channelID, const double frac) const;
 
   /** Flag if the local x is in or above the beam pipe hole */
   bool inHole( double localX ) const {
