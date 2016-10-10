@@ -44,7 +44,7 @@ public:
   double globalZ() const { return m_globalZ; }
 
   /** Returns the xy-plane at z-middle the layer */
-  Gaudi::Plane3D plane() const { return m_plane; }
+  const Gaudi::Plane3D plane() const { return m_plane; }
 
   /** Returns the stereo angle of the layer */
   double stereoAngle() const { return m_stereoAngle; }
