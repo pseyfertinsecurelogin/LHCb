@@ -109,6 +109,27 @@
                   length  = "2" 
                   desc    = "Station id" 
                   setMeth = "FALSE"/>
+                  
+        <bitfield name    = 'uniqueLayer'
+                  length  = 'layer, station' 
+                  desc    = 'unique layer'
+                  setMeth = 'FALSE'/>
+
+        <bitfield name    = 'uniqueQuarter'
+                  length  = 'quarter, layer, station' 
+                  desc    = 'unique quarter'
+                  setMeth = 'FALSE'/>
+
+        <bitfield name    = 'uniqueModule'
+                  length  = 'module, quarter, layer, station' 
+                  desc    = 'unique module'
+                  setMeth = 'FALSE'/>
+
+        <bitfield name    = 'uniqueSiPM'
+                  length  = 'sipm, module, quarter, layer, station' 
+                  desc    = 'unique SiPM'
+                  setMeth = 'FALSE'/>
+                  
       </attribute>
 
       <method 
