@@ -142,6 +142,11 @@ public:
    */
   const DeFTModule* findModule( const LHCb::FTChannelID& id ) const;
 
+  int sensitiveVolumeID(const Gaudi::XYZPoint& point) const override {
+    const DeFTModule* module = findModule( point );
+    return module ? module->sensitiveVolumeID( point ) : -1 ;
+  }
+
   /** Get a random channelID using a seed between 0 and 1 */
   LHCb::FTChannelID getRandomChannelFromSeed(const double seed) const;
 
