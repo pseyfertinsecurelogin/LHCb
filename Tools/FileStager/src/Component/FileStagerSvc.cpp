@@ -360,7 +360,9 @@ void FileStagerSvc::stage()
 
             if ( !stageFile->exists() ) {
                error() << stageFile->remote() << " does not exists" << endmsg;
-               error() << stageFile->errorMessage() << endmsg;
+               for (auto msg : stageFile->errorMessages()) {
+                  error() << msg << endmsg;
+               }
                err = true;
             }
 

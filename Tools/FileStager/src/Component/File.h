@@ -1,6 +1,9 @@
 #ifndef FILE_H
 #define FILE_H 1
 
+// std
+#include <vector>
+
 // boost
 #include <boost/optional.hpp>
 #include <boost/thread/thread.hpp>
@@ -15,8 +18,8 @@
  *  @date   2009-11-22
  */
 class File {
-public: 
-   
+public:
+
    File( const std::string& original, const std::string& command,
          const std::string& remote, const std::string& temp );
 
@@ -42,9 +45,9 @@ public:
       return m_temporary;
    }
 
-   const std::string& errorMessage() const
+   const std::vector<std::string>& errorMessages() const
    {
-      return m_errorMessage;
+      return m_errorMessages;
    }
 
    boost::mutex& openMutex()
@@ -135,7 +138,7 @@ private:
    const std::string m_temporary;
 
    // A string to hold possible error messages
-   mutable std::string m_errorMessage;
+   mutable std::vector<std::string> m_errorMessages;
 
    bool m_staged;
    bool m_good;
