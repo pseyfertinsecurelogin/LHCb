@@ -32,9 +32,6 @@ protected:
   /// Constructor
   CondDBCnvSvc( const std::string& name, ISvcLocator* svc );
 
-  /// Destructor
-  virtual ~CondDBCnvSvc();
-
 public:
 
   // Overloaded from ConversionSvc
@@ -112,9 +109,7 @@ private:
   std::string    m_dbReaderName;
 
   /// Handles to the database Access services
-  ICondDBReader* m_dbReader;
-
-protected:
+  SmartIF<ICondDBReader> m_dbReader;
 
 };
 

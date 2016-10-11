@@ -27,12 +27,7 @@ using namespace LHCb;
 MuonRawBuffer::MuonRawBuffer( const std::string& type,
                               const std::string& name,
                               const IInterface* parent )
-  : Decoder::ToolBase ( type, name , parent ),
-    m_M1Tell1(0),
-    m_muonDet(0),
-    m_checkTell1HeaderPerformed(false),
-    m_checkTell1HeaderResult(false),
-    m_statusCreated(false)
+  : base_class( type, name , parent )
 {
   declareInterface<IMuonRawBuffer>(this);
 
@@ -40,19 +35,9 @@ MuonRawBuffer::MuonRawBuffer( const std::string& type,
   m_rawEventLocations = {LHCb::RawEventLocation::Muon, LHCb::RawEventLocation::Default};
   initRawEventSearch();
 
-  m_NLink=24;
-  m_ODEWord=35;
-  m_TESChanged=false;
-
 }
-//=============================================================================
-// Destructor
-//=============================================================================
-MuonRawBuffer::~MuonRawBuffer() {}
 
 //=============================================================================
-
-
 
 StatusCode MuonRawBuffer::initialize()
 {

@@ -121,7 +121,7 @@ namespace L0Muon {
     virtual void setProperties(std::map<std::string,L0Muon::Property>properties);
 
     /// Retrieve a property
-    L0Muon::Property getProperty(std::string name);
+    L0Muon::Property getProperty(const std::string& name);
 
   protected:
 

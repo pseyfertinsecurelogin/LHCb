@@ -19,12 +19,7 @@ DECLARE_TOOL_FACTORY( CaloDataProviderFromTES )
 CaloDataProviderFromTES::CaloDataProviderFromTES( const std::string& type,
                                   const std::string& name,
                                   const IInterface* parent )
-  : GaudiTool ( type, name , parent )
-  ,m_calo(0)
-  ,m_digCont(NULL)
-  ,m_adcCont(NULL)
-  ,m_ok(false)
-  ,m_getRaw(true)
+  : base_class ( type, name , parent )
 {
   declareInterface<ICaloDataProvider>(this);
 
@@ -32,11 +27,9 @@ CaloDataProviderFromTES::CaloDataProviderFromTES( const std::string& type,
   declareProperty("InputDataLocation" , m_loc = "" );
   // set default detectorName
   int index = name.find_last_of(".") +1 ; // return 0 if '.' not found --> OK !!
-  m_detectorName = name.substr( index, 4 );
-  if ( name.substr(index,3) == "Prs" ) m_detectorName = "Prs";
-  if ( name.substr(index,3) == "Spd" ) m_detectorName = "Spd";
-
-
+  m_detectorName = ( name.compare(index,3, "Prs") == 0 ? "Prs" 
+                 : ( name.compare(index,3, "Spd") == 0 ? "Spd"
+                 :   name.substr( index, 4 ) ) );
   //
   if ( "Ecal" == m_detectorName ) {
     m_digLoc = LHCb::CaloDigitLocation::Ecal;
@@ -51,22 +44,17 @@ CaloDataProviderFromTES::CaloDataProviderFromTES( const std::string& type,
     m_digLoc = LHCb::CaloDigitLocation::Spd;
     m_adcLoc = LHCb::CaloAdcLocation::Spd;
   }
-
 }
-//=============================================================================
-// Destructor
-//=============================================================================
-CaloDataProviderFromTES::~CaloDataProviderFromTES() {}
 
 //=============================================================================
 StatusCode CaloDataProviderFromTES::finalize ( ) {
-     IIncidentSvc* inc = incSvc() ;
-     if ( 0 != inc ) { inc -> removeListener  ( this ) ; }
-     return GaudiTool::finalize();
+  IIncidentSvc* inc = incSvc() ;
+  if ( inc ) { inc->removeListener( this ); }
+  return base_class::finalize();
 }
 
 StatusCode CaloDataProviderFromTES::initialize ( ) {
-  StatusCode sc = GaudiTool::initialize(); // must be executed first
+  StatusCode sc = base_class::initialize(); // must be executed first
   if ( sc.isFailure() ) return sc;  // error printed already by GaudiAlgorithm
   if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
     debug() << "==> Initialize " << name() << endmsg;
@@ -203,10 +191,10 @@ int CaloDataProviderFromTES::adc (LHCb::CaloCellID id,int def){
 
 
 const CaloVector<LHCb::CaloAdc>& CaloDataProviderFromTES::adcs(int source,bool clean){
-  return adcs({source},clean);
+  return adcs(std::vector<int>(1,source),clean);
 }
 const CaloVector<LHCb::CaloDigit>& CaloDataProviderFromTES::digits(int source,bool clean){
-  return digits({source},clean);
+  return digits(std::vector<int>(1,source),clean);
 }
 
 

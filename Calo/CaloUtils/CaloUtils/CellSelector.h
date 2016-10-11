@@ -11,13 +11,11 @@
  *  
  */
 
-class CellSelector: public CellMatrix{
+class CellSelector final : public CellMatrix{
 public:
   
   CellSelector( const DeCalorimeter* det = 0 , std::string selector = "" );  
   
-  virtual ~CellSelector( ); ///< Destructor
-
   void setDet(  const DeCalorimeter* det);
   inline void setSelector(std::string selector){ m_selector = selector;  };
   inline double operator()    ( const LHCb::CaloCellID& seed , 
@@ -29,7 +27,7 @@ public:
     else return 1.;
   };
   
-protected:
+private:
   
   std::string m_selector;
   CellMatrix3x3 m_cell3x3 ;

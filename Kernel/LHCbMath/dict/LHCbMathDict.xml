@@ -102,8 +102,10 @@
   <class name    = "Gaudi::Math::HermiteSum"         />
   <class name    = "Gaudi::Math::Polynomial"         />
   <class name    = "Gaudi::Math::Bernstein"          />
+  <class name    = "Gaudi::Math::BernsteinEven"      />
   <class name    = "Gaudi::Math::BernsteinDualBasis" />
-  <class name    = "Gaudi::Math::Positive"         />
+  <class name    = "Gaudi::Math::Positive"           />
+  <class name    = "Gaudi::Math::PositiveEven"       />
   <class name    = "Gaudi::Math::Monothonic"       />
   <class name    = "Gaudi::Math::Convex"           />
   <class name    = "Gaudi::Math::ConvexOnly"       />

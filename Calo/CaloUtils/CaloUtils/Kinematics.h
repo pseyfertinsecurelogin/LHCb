@@ -1,4 +1,3 @@
-// $Id: $
 // ============================================================================
 #ifndef CALOUTILS_KINEMATICS_H 
 #define CALOUTILS_KINEMATICS_H 1
@@ -26,8 +25,6 @@
  *  @author Vanya BELYAEV Ivan.Belyaev@nikkef.nl
  *  @date 2010-08--29
  *
- *  Last modification $Date$
- *                 by $AUthor$
  */
 namespace Calo 
 {

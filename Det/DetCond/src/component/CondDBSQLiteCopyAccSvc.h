@@ -28,8 +28,6 @@ protected:
   /// Standard constructor
   CondDBSQLiteCopyAccSvc( const std::string& name, ISvcLocator* svcloc );
 
-  virtual ~CondDBSQLiteCopyAccSvc( ); ///< Destructor
-
 private:
 
   /// Path to the original file

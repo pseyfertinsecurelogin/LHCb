@@ -18,7 +18,7 @@ DECLARE_TOOL_FACTORY( CaloDigitFilterTool )
 CaloDigitFilterTool::CaloDigitFilterTool( const std::string& type,
                                           const std::string& name,
                                           const IInterface* parent )
-  : GaudiTool ( type, name , parent )
+  : base_class ( type, name , parent )
 {
   declareInterface<ICaloDigitFilterTool>(this);
   declareProperty("MaskMap", m_maskMap);
@@ -44,15 +44,10 @@ CaloDigitFilterTool::CaloDigitFilterTool( const std::string& type,
   declareProperty("SetCounterLevel", m_setCounters = 1 );
 }
 //=============================================================================
-// Destructor
-//=============================================================================
-CaloDigitFilterTool::~CaloDigitFilterTool() {}
-
-//=============================================================================
 
 
 StatusCode CaloDigitFilterTool::initialize(){
-  StatusCode sc = GaudiTool::initialize(); // must be executed first
+  StatusCode sc = base_class::initialize(); // must be executed first
   if ( sc.isFailure() ) return sc;  // error printed already by Calo2Dview
   if ( m_vertLoc.empty() ) 
   { m_vertLoc = (m_usePV3D) ? LHCb::RecVertexLocation::Velo3D : LHCb::RecVertexLocation::Primary; }
@@ -261,15 +256,12 @@ unsigned int CaloDigitFilterTool::nVertices(){
   int nVert = 0;
   if( !m_usePV3D){
     LHCb::RecVertices* verts= getIfExists<LHCb::RecVertices>(evtSvc(),m_vertLoc);
-    if( nullptr != verts){
-      nVert = verts->size();
-      return nVert;
-    }
+    if( verts ) return verts->size();
   }
   // try PV3D if explicitely requested or if RecVertices not found
   if(!m_usePV3D)m_vertLoc = LHCb::RecVertexLocation::Velo3D;
   LHCb::VertexBases* verts= getIfExists<LHCb::VertexBases>( m_vertLoc );
-  if( nullptr != verts)nVert = verts->size();
+  if( verts ) nVert = verts->size();
 
   return nVert;
 }
@@ -283,5 +275,5 @@ unsigned int CaloDigitFilterTool::nSpd(){
 StatusCode CaloDigitFilterTool::finalize() {
   if ( msgLevel(MSG::DEBUG) ) debug() << "==> Finalize" << endmsg;
   incSvc() -> removeListener  ( this ) ;
-  return GaudiTool::finalize();  // must be called after all other actions
+  return base_class::finalize();  // must be called after all other actions
 }

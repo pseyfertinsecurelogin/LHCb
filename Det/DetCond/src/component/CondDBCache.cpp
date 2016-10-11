@@ -67,7 +67,7 @@ bool CondDBCache::insert(const cool::IFolderPtr &folder,const cool::IObject &obj
     if (f->second.items[channel].end() != f->second.conflict(obj.since(), obj.until(), channel)) {
       const MSG::Level lvl = (m_silentConflicts ? MSG::DEBUG : MSG::WARNING);
       m_log << lvl << "Conflict found: item not inserted" << endmsg;
-      ItemListType::iterator i = f->second.conflict(obj.since(), obj.until(), channel);
+      auto i = f->second.conflict(obj.since(), obj.until(), channel);
       m_log << lvl << " IOV : " << i->iov.first << " - " << i->iov.second << endmsg;
       return false;
     }
@@ -162,7 +162,7 @@ bool CondDBCache::addObject(const std::string &path, const cool::ValidityKey &si
   */
   // **** COOL single version style --> [x;+inf] + [y(>x);z] = [x;y], [y;z]
   // scan for conflicting items (from the end)
-  ItemListType::iterator i = f->second.conflict(since,until,channel);
+  auto i = f->second.conflict(since,until,channel);
   if ( i != f->second.items[channel].end() ) { // conflict found
     if ( i->iov.second == cool::ValidityKeyMax && i->iov.first < since ) {
       // solvable conflict
@@ -352,16 +352,14 @@ void CondDBCache::clean_up(){
   if( UNLIKELY( m_log.level() <= MSG::DEBUG ) )
     m_log << MSG::DEBUG << "Remove empty folders:" << endmsg;
   // remove empty folders
-  std::vector<FolderIdType> to_remove;
-  for ( StorageType::iterator i = m_cache.begin(); i != m_cache.end(); ++i ) {
+  auto i = m_cache.begin();
+  while ( i!=m_cache.end() ) {
     if (!i->second.sticky && i->second.empty()) { // delete folders which are empty but not sticky
-      to_remove.push_back(i->first);
+      if( UNLIKELY( m_log.level() <= MSG::DEBUG ) ) m_log << MSG::DEBUG << "   " << i->first << endmsg;
+      i = m_cache.erase(i);
+    } else {
+      ++i;
     }
-  }
-  for ( std::vector<FolderIdType>::iterator i = to_remove.begin(); i != to_remove.end(); ++i ) {
-    if( UNLIKELY( m_log.level() <= MSG::DEBUG ) )
-      m_log << MSG::DEBUG << "   " << *i << endmsg;
-    m_cache.erase(m_cache.find(*i));
   }
   if( UNLIKELY( m_log.level() <= MSG::DEBUG ) )
     m_log << MSG::DEBUG << "Clean up finished (level = " << level() << ")" << endmsg;
@@ -376,13 +374,13 @@ void CondDBCache::clean_up(){
 //  Check if an entry for the give path+time is in the cache
 //=========================================================================
 bool CondDBCache::hasTime(const std::string &path, const cool::ValidityKey &when, const cool::ChannelId &channel) const {
-  StorageType::const_iterator folder = m_cache.find(path);
+  auto folder = m_cache.find(path);
   if (folder != m_cache.end()) {
 
     if ( !folder->second.spec ) return true; // It's a FolderSet! They ignore time
 
-    ItemListType::const_iterator i = folder->second.find(when,channel);
-    const ItemListType &lst = (*const_cast<CondFolder::StorageType *>(&folder->second.items))[channel];
+    auto i = folder->second.find(when,channel);
+    const auto& lst = folder->second.items[channel];
     return i != lst.end();
   }
   return false;
@@ -391,11 +389,11 @@ bool CondDBCache::hasTime(const std::string &path, const cool::ValidityKey &when
 ICondDBReader::IOVList CondDBCache::getIOVs(const std::string & path, const ICondDBReader::IOV & iov, cool::ChannelId channel)
 {
   ICondDBReader::IOVList result;
-  StorageType::const_iterator folder = m_cache.find(path);
+  auto folder = m_cache.find(path);
   if (folder != m_cache.end()) {
     if (folder->second.spec) {
       // find the first recorded interval which overlaps with requested IOV
-      ItemListType::const_iterator i = folder->second.conflict(iov.since.ns(), iov.until.ns(), channel);
+      auto i = folder->second.conflict(iov.since.ns(), iov.until.ns(), channel);
       // marker for the end of IOVs in the cache for the channel
       const ItemListType::const_iterator end = folder->second.end(channel);
       // we add all the IOVs in the cache starting from the one found until
@@ -419,15 +417,15 @@ void CondDBCache::dump() {
   m_log << MSG::DEBUG << "Cache content dump --------------------- BEGIN" << endmsg;
   m_log << MSG::DEBUG << " Thresholds (high/low) -> " <<  m_highLvl << '/' << m_lowLvl << endmsg;
   m_log << MSG::DEBUG << " Level = " << level() << endmsg;
-  for(StorageType::const_iterator i = m_cache.begin(); i != m_cache.end(); ++i ) {
-    if ( !i->second.spec ) { // It's a FolderSet! They ignore time
-      m_log << MSG::DEBUG << "FolderSet '" << i->first << "' " << ((i->second.sticky)?"(sticky)":"") << endmsg;
+  for(const auto& i : m_cache) {
+    if ( !i.second.spec ) { // It's a FolderSet! They ignore time
+      m_log << MSG::DEBUG << "FolderSet '" << i.first << "' " << ((i.second.sticky)?"(sticky)":"") << endmsg;
       continue;
     } else {
-      m_log << MSG::DEBUG << "Folder '" << i->first << "' " << ((i->second.sticky)?"(sticky)":"") << endmsg;
+      m_log << MSG::DEBUG << "Folder '" << i.first << "' " << ((i.second.sticky)?"(sticky)":"") << endmsg;
     }
 
-    for(CondFolder::StorageType::const_iterator ch = i->second.items.begin(); ch != i->second.items.end(); ++ch) {
+    for(CondFolder::StorageType::const_iterator ch = i.second.items.begin(); ch != i.second.items.end(); ++ch) {
       m_log << MSG::DEBUG << "  Channel " << ch->first << endmsg;
       size_t cnt = 0;
       for(ItemListType::const_iterator j = ch->second.begin(); j != ch->second.end(); ++j) {

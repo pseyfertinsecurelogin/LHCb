@@ -35,14 +35,9 @@ void L0Muon::Unit::setParent(L0Muon::Unit * unit)
 // }
 
 
-L0Muon::Property L0Muon::Unit::getProperty(std::string name) {
-  std::map<std::string,L0Muon::Property>::iterator im;
-  im = m_properties.find(name);
-  if (im!=m_properties.end()) {
-    return (*im).second;
-  } else {
-    return L0Muon::Property("Unknown");
-  }
+L0Muon::Property L0Muon::Unit::getProperty(const std::string& name) {
+  auto im = m_properties.find(name);
+  return im!=m_properties.end() ? im->second : L0Muon::Property("Unknown");
 }
 
 

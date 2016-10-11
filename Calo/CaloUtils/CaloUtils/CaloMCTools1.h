@@ -2,6 +2,7 @@
 #ifndef EVENT_CALOMCTOOLS1_H 
 #define EVENT_CALOMCTOOLS1_H 1
 // include 
+#include <numeric>
 // from CaloEvent 
 #include "GaudiKernel/HashMap.h"
 #include "GaudiKernel/Hash.h"
@@ -20,7 +21,6 @@ namespace GaudiUtils
    */
   template <>
   struct Hash<const LHCb::MCParticle*>
-    : public std::unary_function<const LHCb::MCParticle*,size_t>
   {
     // Needed to behave like VC++'s hash_compare
     enum { // parameters for hash table
@@ -28,7 +28,7 @@ namespace GaudiUtils
       min_buckets = 8};   // min_buckets = 2 ^^ N, 0 < N
   
     size_t operator() ( const LHCb::MCParticle* p ) const
-    { return 0 == p ? size_t ( 0 ) : size_t( p -> key() ) ; }
+    { return !p ? size_t ( 0 ) : size_t( p -> key() ) ; }
 
     inline bool operator() ( const LHCb::MCParticle* p1 , 
                              const LHCb::MCParticle* p2 ) const 
@@ -48,7 +48,7 @@ namespace CaloMCTools
    * the ALL (active) energy deposition from given LHCb::MCParticle
    * 
    * For "general class" it returns  negative energy of 1 TeV 
-   * only the "template specializations" produce 
+   * only the "specializations" produce 
    * reasonable results
    *
    * The specializations exist for
@@ -70,179 +70,85 @@ namespace CaloMCTools
    *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
    *  @date   26/06/2002
    */  
-  template<class TYPE>
-  struct AllEnergyFromMCParticle:
-    public std::binary_function<const TYPE*,const LHCb::MCParticle*, double>
+  struct AllEnergyFromMCParticle
   {
     ///  the only one essential (and absolutely useless! :-)) ) method
+    template<class TYPE>
     double operator() ( const TYPE*       /* object   */  , 
                         const LHCb::MCParticle* /* particle */  ) const 
-    { return   -1. * Gaudi::Units::TeV ; };
-  };
-  // ==========================================================================
-  
-  // ==========================================================================
-  /** The template specialization of main inline method of 
-   *  templated class AllEnergyFromMCParticle for class LHCb::MCCaloHit
-   *
-   *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
-   *  @date   26/06/2002
-   *
-   *  @see LHCb::MCParticle
-   *  @see LHCb::MCCaloHit
-   *  @param hit      pointer to LHCb::MCCaloHit   object
-   *  @param particle pointer to LHCb::MCParticle  object 
-   *  @return active energy of the hit if the 
-   *          hit was  produced by this particle or its daughter 
-   */
-  template<> 
-  inline double 
-  AllEnergyFromMCParticle<LHCb::MCCaloHit>::operator() 
-    ( const LHCb::MCCaloHit*  hit      ,
-      const LHCb::MCParticle* particle ) const 
-  {
-    // invalid arguments 
-    if( 0 == hit || 0 == particle   ) { return        0   ; }
-    // True particle!
-    if( particle == hit->particle() ) { return hit -> activeE() ; }
-    // avoid long names 
-    typedef SmartRefVector<LHCb::MCVertex>   Vertices ;
-    typedef SmartRefVector<LHCb::MCParticle> Products ;
-    double energy = 0 ;
-    const Vertices& vertices = particle->endVertices();
-    // loop over all daugter particles 
-    for( Vertices::const_iterator vertex = vertices.begin() ; 
-         vertices.end() != vertex ; ++vertex )
-      {
-        const LHCb::MCVertex* mcv = *vertex ;
-        if( 0 == mcv ) { continue ; }
-        const Products& products = mcv->products();
-        for( Products::const_iterator product = products.begin() ;
-             products.end() != product ; ++product )
-          {
-            const LHCb::MCParticle* mcp = *product ;
-            if( 0 == mcp  ) { continue ; }
-            energy += (*this) ( hit , mcp );
+    { return   -1. * Gaudi::Units::TeV ; }
+    // ========================================================================
+    double operator() ( const LHCb::MCCaloHit*  hit      ,
+                        const LHCb::MCParticle* particle ) const 
+    {
+      // invalid arguments 
+      if( !hit || !particle   ) { return        0   ; }
+      // True particle!
+      if( particle == hit->particle() ) { return hit -> activeE() ; }
+      const auto& vertices = particle->endVertices();
+      // loop over all daughter particles 
+      return std::accumulate( vertices.begin(), vertices.end(), 0.,
+                              [&](double energy, const LHCb::MCVertex* mcv) {
+          if( mcv ) {
+            const auto& products = mcv->products();
+            energy += std::accumulate( products.begin(), products.end(), energy,
+                                       [&](double ep, const LHCb::MCParticle* mcp) {
+                                         if (mcp) ep+=(*this)(hit,mcp);
+                                         return ep;
+            });
           }
-      }
-    ///
-    return energy ;
-  }
-  // ==========================================================================
+          return energy;
+      } );
+    }
+    // ========================================================================
 
-  // ==========================================================================
-  /** The template specialization of main inline method of 
-   *  templated class AllEnergyFromMCParticle for class LHCb::MCCaloDigit
-   *
-   *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
-   *  @date   26/06/2002
-   *
-   *  @see LHCb::MCParticle
-   *  @see LHCb::MCCaloDigit
-   *  @param digit    pointer to LHCb::MCCaloDigit object
-   *  @param particle pointer to LHCb::MCParticle  object 
-   *  @return active energy of the hit if the 
-   *          hit was  produced by this particle or its daughter 
-   */
-  template<> 
-  inline double 
-  AllEnergyFromMCParticle<LHCb::MCCaloDigit>::operator() 
-    ( const LHCb::MCCaloDigit* digit    ,
-      const LHCb::MCParticle*  particle ) const 
-  {
-    // invalid arguments 
-    if( 0 == digit || 0 == particle ) { return        0   ; }
-    // create evaluator 
-    AllEnergyFromMCParticle<LHCb::MCCaloHit> evaluator;
-    double energy = 0.0 ;
-    for( LHCb::MCCaloDigit::Hits::const_iterator hit = digit->hits().begin();
-         digit->hits().end() != hit ; ++hit ) 
-      {
-	    const LHCb::MCCaloHit* mchit = *hit ;
-        if( 0 == mchit ) { continue ; }
-        // accumulate 
-        energy += evaluator( mchit , particle );
-      }
-    // 
-    return energy ;
-  }
-  // ==========================================================================
+    double operator() ( const LHCb::MCCaloDigit* digit    ,
+                        const LHCb::MCParticle*  particle ) const 
+    {
+      // invalid arguments 
+      if( !digit || !particle ) { return        0   ; }
+      const auto& hits = digit->hits();
+      return std::accumulate( hits.begin(), hits.end(), 0.,
+                              [&](double energy, const LHCb::MCCaloHit* hit)
+                              { if (hit) energy += (*this)(hit, particle);
+                                return energy; 
+                              } );
+    }
+    // ==========================================================================
 
-  // ==========================================================================
-  /** The template specialization of main inline method of 
-   *  templated class AllEnergyFromMCParticle for class CaloDigit
-   *
-   *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
-   *  @date   26/06/2002
-   *
-   *  @see MCParticle
-   *  @see   CaloDigit
-   *  @param digit    pointer to CaloDigit object
-   *  @param particle pointer to MCParticle  object 
-   *  @return active energy of the hit if the 
-   *          hit was  produced by this particle or its daughter 
-   */
-  template<> 
-  inline double 
-  AllEnergyFromMCParticle<LHCb::CaloDigit>::operator() 
-    ( const LHCb::CaloDigit*   digit    ,
-      const LHCb::MCParticle*  particle ) const 
-  {
-    // invalid arguments 
-    if( 0 == digit || 0 == particle ) { return 0 ; }
-    // get MCTruth information 
-    // temporary plug 
-    if( 0 == digit->parent()        ) { return 0 ; }
-    // get MC truth information
-    const LHCb::MCCaloDigit* mcdigit = mcTruth<LHCb::MCCaloDigit>( digit );
-    // truth is available?
-    if( 0 == mcdigit                ) { return 0 ; }
-    // create the evaluator 
-    AllEnergyFromMCParticle<LHCb::MCCaloDigit> evaluator;
-    // use evaluator 
-    return evaluator( mcdigit , particle );
-  }
-  // ==========================================================================
+    double operator() ( const LHCb::CaloDigit*   digit    ,
+                        const LHCb::MCParticle*  particle ) const 
+    {
+      // invalid arguments 
+      if( !digit || !particle ) { return 0 ; }
+      // get MCTruth information 
+      // temporary plug 
+      if( !digit->parent()        ) { return 0 ; }
+      // get MC truth information
+      const LHCb::MCCaloDigit* mcdigit = mcTruth<LHCb::MCCaloDigit>( digit );
+      // truth is available?
+      if( !mcdigit                ) { return 0 ; }
+      return (*this)( mcdigit , particle );
+    }
+    // ==========================================================================
   
-  // ==========================================================================
-  /** The template specialization of main inline method of 
-   *  templated class AllEnergyFromMCParticle for class LHCb::CaloCluster
-   *
-   *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
-   *  @date   26/06/2002
-   *
-   *  @see LHCb::MCParticle
-   *  @see   LHCb::CaloCluster
-   *  @param cluster  pointer to LHCb::CaloCluster object
-   *  @param particle pointer to LHCb::MCParticle  object 
-   *  @return active energy of the hit if the 
-   *          hit was  produced by this particle or its daughter 
-   */
-  template<> 
-  inline double 
-  AllEnergyFromMCParticle<LHCb::CaloCluster>::operator() 
-    ( const LHCb::CaloCluster* cluster  ,
-      const LHCb::MCParticle*  particle ) const 
-  {
-    // invalid arguments 
-    if( 0 == cluster || 0 == particle ) { return 0 ; }
-    // empty clusters 
-    if( cluster->entries().empty()    ) { return 0 ; }
-    // create evaluator 
-    AllEnergyFromMCParticle<LHCb::CaloDigit> evaluator;
-    const LHCb::CaloCluster::Entries& entries = cluster->entries();
-    double energy = 0.0 ;
-    for( LHCb::CaloCluster::Entries::const_iterator entry = entries.begin() ; 
-         entries.end() != entry ; ++entry )
-      {
-        const LHCb::CaloDigit* digit = entry->digit() ;
-        if( 0 == digit ) { continue ; }
-        // use evaluatoir: accumulate energy 
-        energy += evaluator( digit , particle ) ;  
-      }
-    return energy ;
-  }
-  // ==========================================================================
+    double operator() ( const LHCb::CaloCluster* cluster  ,
+                        const LHCb::MCParticle*  particle ) const 
+    {
+      // invalid arguments 
+      if( !cluster || !particle ) { return 0 ; }
+      // empty clusters 
+      if( cluster->entries().empty()    ) { return 0 ; }
+      const LHCb::CaloCluster::Entries& entries = cluster->entries();
+      return std::accumulate( entries.begin(), entries.end(), 0.,
+                              [&](double energy, const LHCb::CaloClusterEntry& entry) {
+          const LHCb::CaloDigit* digit = entry.digit() ;
+          if( digit ) energy += (*this)( digit , particle ) ;
+          return energy;
+      });
+    }
+    // ==========================================================================
+  };
   
   /** the auxilalry type to keep all MC history for calo objects 
    *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
@@ -276,8 +182,7 @@ namespace CaloMCTools
    *  @date   2003-04-01 
    */
   template <class TYPE>
-  class MCCaloHistory : 
-    public std::unary_function<const TYPE*,StatusCode>
+  class MCCaloHistory
   {
   public:
     /** constructor from pointer to CaloMCMap object
@@ -297,8 +202,6 @@ namespace CaloMCTools
      */
     inline CaloMCMap* mcmap() const { return m_mcmap ; }
     
-  private:
-    MCCaloHistory () ;      
   private:
     CaloMCMap* m_mcmap ;
   };
@@ -334,12 +237,12 @@ namespace CaloMCTools
   MCCaloHistory<LHCb::MCCaloHit>::operator() 
     ( const LHCb::MCCaloHit* hit ) const 
   {
-    if( 0 == mcmap()  ) { return StatusCode ( 901 ) ; }     // RETURN 
-    if( 0 == hit      ) { return StatusCode ( 902 ) ; }     // RETURN 
+    if( !mcmap()  ) { return StatusCode ( 901 ) ; }     // RETURN 
+    if( !hit      ) { return StatusCode ( 902 ) ; }     // RETURN 
     
     // get MC particle from the hit 
     const LHCb::MCParticle* particle = hit -> particle() ;
-    if( 0 == particle ) { return StatusCode ( 903 ) ; }     // RETURN 
+    if( !particle ) { return StatusCode ( 903 ) ; }     // RETURN 
     
     // add the energy to the MC history Map 
     (*mcmap())[ particle ] += hit -> activeE() ;
@@ -376,8 +279,8 @@ namespace CaloMCTools
   MCCaloHistory<LHCb::MCCaloDigit>::operator() 
     ( const LHCb::MCCaloDigit* digit ) const 
   {
-    if( 0 == mcmap()  ) { return StatusCode  ( 901 ) ; }     // RETURN 
-    if( 0 == digit    ) { return StatusCode  ( 904 ) ; }     // RETURN
+    if( !mcmap()  ) { return StatusCode  ( 901 ) ; }     // RETURN 
+    if( !digit    ) { return StatusCode  ( 904 ) ; }     // RETURN
     
     // get all hits 
     const LHCb::MCCaloDigit::Hits& hits = digit->hits() ;
@@ -431,17 +334,17 @@ namespace CaloMCTools
   MCCaloHistory<LHCb::CaloDigit>::operator() 
     ( const LHCb::CaloDigit* digit ) const 
   {
-    if( 0 == mcmap()  ) { return StatusCode  ( 901 ) ; }     // RETURN 
-    if( 0 == digit    ) { return StatusCode  ( 905 ) ; }     // RETURN
+    if( !mcmap()  ) { return StatusCode  ( 901 ) ; }     // RETURN 
+    if( !digit    ) { return StatusCode  ( 905 ) ; }     // RETURN
     
     // is it needed ?
-    if( 0 == digit->parent() ) { return StatusCode ( 906 ) ; } // RETURN
+    if( !digit->parent() ) { return StatusCode ( 906 ) ; } // RETURN
     
     // get MC truth information
     const LHCb::MCCaloDigit* mcdigit = mcTruth<LHCb::MCCaloDigit>( digit );
     
     // truth is available? 
-    if ( 0 == mcdigit  ) { return StatusCode ( 907 ) ; }      // RETURN
+    if ( !mcdigit  ) { return StatusCode ( 907 ) ; }      // RETURN
     
     // create the evaluator 
     MCCaloHistory<LHCb::MCCaloDigit> evaluator( mcmap() ) ;
@@ -479,8 +382,8 @@ namespace CaloMCTools
   MCCaloHistory<LHCb::CaloCluster>::operator() 
     ( const LHCb::CaloCluster* cluster ) const 
   {
-    if( 0 == mcmap()    ) { return StatusCode  ( 901 ) ; }     // RETURN 
-    if( 0 == cluster    ) { return StatusCode  ( 908 ) ; }     // RETURN
+    if( !mcmap()    ) { return StatusCode  ( 901 ) ; }     // RETURN 
+    if( !cluster    ) { return StatusCode  ( 908 ) ; }     // RETURN
     
     const LHCb::CaloCluster::Entries& entries = cluster->entries() ;
     
@@ -514,15 +417,15 @@ namespace CaloMCTools
     const double      energy   , 
     CaloMCMap&        mcmap    )
   {
-    if( 0 == mcp ) { return StatusCode::FAILURE ; }
+    if( !mcp ) { return StatusCode::FAILURE ; }
     
     const LHCb::MCParticle* particle = mcp ;
     while( 0 != particle ) 
       {
         const LHCb::MCVertex*  vertex    = particle -> originVertex () ;
-        if( 0 == vertex   ) { return StatusCode::SUCCESS ; }
+        if( !vertex   ) { return StatusCode::SUCCESS ; }
         particle                   = vertex   -> mother       () ;
-        if( 0 == particle ) { return StatusCode::SUCCESS ; }
+        if( !particle ) { return StatusCode::SUCCESS ; }
         
         mcmap[ particle ] += energy ;
       }
