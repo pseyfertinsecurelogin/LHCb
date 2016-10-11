@@ -74,7 +74,7 @@ LHCb::STLiteCluster::STLiteClusters RawBankToSTLiteClusterAlg::operator()(const 
 
 StatusCode RawBankToSTLiteClusterAlg::decodeBanks(const RawEvent& rawEvt,
                                                   STLiteCluster::STLiteClusters& fCont) const {
-  LHCb::STTELL1BoardErrorBanks* errorBanks = nullptr;
+  std::unique_ptr<LHCb::STTELL1BoardErrorBanks> errorBanks = nullptr;
   bool errorBanksFailed = false;
 
   const std::vector<RawBank* >&  tBanks = rawEvt.banks(bankType());
@@ -141,7 +141,7 @@ StatusCode RawBankToSTLiteClusterAlg::decodeBanks(const RawEvent& rawEvt,
     // ok this is a bit ugly.....
     STTELL1BoardErrorBank* errorBank = nullptr;
     if (recover) {
-      if (!errorBanks && !errorBanksFailed) {
+      if (!errorBanks.get() && !errorBanksFailed) {
         try {
           errorBanks = decodeErrors(rawEvt);
         } catch (GaudiException &e) {
@@ -149,7 +149,7 @@ StatusCode RawBankToSTLiteClusterAlg::decodeBanks(const RawEvent& rawEvt,
           warning() << e.what() << endmsg;
         }
       }
-      if (errorBanks) {
+      if (errorBanks.get()) {
         errorBank = errorBanks->object((*iterBank)->sourceID());
       }
     }
@@ -189,10 +189,6 @@ StatusCode RawBankToSTLiteClusterAlg::decodeBanks(const RawEvent& rawEvt,
     } //decoder
 
   } // iterBank
-
-  if (errorBanks) {
-    delete errorBanks;
-  }
 
   // sort and remove any duplicates
   std::stable_sort(fCont.begin(),fCont.end(), Less_by_Channel());

@@ -172,12 +172,12 @@ std::vector<unsigned int> STDecodingBaseAlg::missingInAction(const std::vector<R
   return missing;
 }
 
-STTELL1BoardErrorBanks* STDecodingBaseAlg::decodeErrors(const LHCb::RawEvent& raw) const {
+std::unique_ptr<LHCb::STTELL1BoardErrorBanks> STDecodingBaseAlg::decodeErrors(const LHCb::RawEvent& raw) const {
 
-  if( UNLIKELY( msgLevel(MSG::DEBUG) ) ) debug() << "==> Execute " << endmsg;
+ if( UNLIKELY( msgLevel(MSG::DEBUG) ) ) debug() << "==> Execute " << endmsg;
 
-  // make an empty output vector
-  STTELL1BoardErrorBanks* outputErrors = new STTELL1BoardErrorBanks();
+ // make an empty output vector
+ std::unique_ptr<LHCb::STTELL1BoardErrorBanks> outputErrors = std::make_unique<STTELL1BoardErrorBanks>();
 
  // Pick up ITError bank
  const std::vector<LHCb::RawBank*>& itf = raw.banks(LHCb::RawBank::BankType(m_errorType));
@@ -290,7 +290,7 @@ STTELL1BoardErrorBanks* STDecodingBaseAlg::decodeErrors(const LHCb::RawEvent& ra
 
   }// end of loop over banks of a certain type
 
- return outputErrors;
+  return outputErrors;
 }
 
 std::string STDecodingBaseAlg::toSpill(const std::string& location) const{

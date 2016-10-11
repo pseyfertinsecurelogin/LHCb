@@ -39,7 +39,7 @@ Consumer(name, pSvcLocator,
 void STErrorDecoding::operator()(const LHCb::RawEvent& raw) const {
   // in fact all the work is delegated to the base class
   if( UNLIKELY( msgLevel(MSG::DEBUG) ) ) debug() << "==> Execute " << endmsg;
-  STTELL1BoardErrorBanks* errorBanks = decodeErrors(raw);
+  std::unique_ptr<LHCb::STTELL1BoardErrorBanks> errorBanks = decodeErrors(raw);
   // print out the error banks
   if (m_PrintErrorInfo == true){
     STTELL1BoardErrorBanks::const_iterator iterBank = errorBanks->begin();
@@ -47,6 +47,5 @@ void STErrorDecoding::operator()(const LHCb::RawEvent& raw) const {
       info() << **iterBank << endmsg;
     }  //iterBanks
   }
-  delete errorBanks;
 } 
 

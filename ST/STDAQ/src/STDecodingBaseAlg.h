@@ -57,8 +57,7 @@ protected:
  std::vector<unsigned int> missingInAction(const std::vector<LHCb::RawBank*>& banks) const; 
 
  /// Decodes error banks
- /// allocates memory of the returned object. Caller is responsible for its deallocation
- LHCb::STTELL1BoardErrorBanks* decodeErrors(const LHCb::RawEvent& raw) const;
+ std::unique_ptr<LHCb::STTELL1BoardErrorBanks> decodeErrors(const LHCb::RawEvent& raw) const;
 
  /** recover mode **/
  bool recoverMode() const;

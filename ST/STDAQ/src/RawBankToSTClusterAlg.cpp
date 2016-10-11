@@ -91,7 +91,7 @@ RawBankToSTClusterAlg::operator()(const LHCb::ODIN& odin, const LHCb::RawEvent& 
 
 LHCb::STSummary RawBankToSTClusterAlg::decodeBanks(const RawEvent& rawEvt,
                                                    LHCb::STClusters& clusCont) const {
-  LHCb::STTELL1BoardErrorBanks* errorBanks = nullptr;
+  std::unique_ptr<LHCb::STTELL1BoardErrorBanks> errorBanks = nullptr;
   bool errorBanksFailed = false;
 
   // create Clusters from this type 
@@ -172,10 +172,9 @@ LHCb::STSummary RawBankToSTClusterAlg::decodeBanks(const RawEvent& rawEvt,
       }
     }
 
-    // ok this is a bit ugly.....
     STTELL1BoardErrorBank* errorBank = nullptr;
     if (recover) {
-      if (!errorBanks && !errorBanksFailed) {
+      if (!errorBanks.get() && !errorBanksFailed) {
         try {
           errorBanks = decodeErrors(rawEvt);
         } catch (GaudiException &e) {
@@ -183,7 +182,7 @@ LHCb::STSummary RawBankToSTClusterAlg::decodeBanks(const RawEvent& rawEvt,
           warning() << e.what() << endmsg;
         }
       }
-      if (errorBanks) {
+      if (errorBanks.get()) {
         errorBank = errorBanks->object(bank->sourceID());
       }
       // check what fraction we can recover
@@ -224,10 +223,6 @@ LHCb::STSummary RawBankToSTClusterAlg::decodeBanks(const RawEvent& rawEvt,
       }
     } // iterDecoder
   } // bank
-
-  if (errorBanks) {
-    delete errorBanks;
-  }
 
   const unsigned int bsize = byteSize(tBanks);
   return createSummaryBlock(rawEvt, clusCont.size(), pcn, pcnSync, bsize, bankList, missing, recoveredBanks);
