@@ -1,4 +1,3 @@
-//$Id: ISlowControl.h,v 1.1 2001-12-13 19:20:29 andreav Exp $
 #ifndef DETDESC_ISLOWCONTROL_H
 #define DETDESC_ISLOWCONTROL_H 1
 
@@ -15,7 +14,7 @@
     @date December 2001
 *///--------------------------------------------------------------------------
 
-class ISlowControl : virtual public IConditionInfo
+struct  ISlowControl : virtual IConditionInfo
 {
 
 };

@@ -88,9 +88,6 @@ protected:
    */
   SolidPolyHedronHelper ( const std::string& Name = "Anonymous PoliHedron");
   
-  /// destructor 
-  virtual ~SolidPolyHedronHelper ();
-  
   /**  add a face/plane given with 3 points
    *  @see addFace( const Gaudi::XYZPoint& , const Gaudi::XYZPoint& ,
    *                const Gaudi::XYZPoint& , const Gaudi::XYZPoint& )

@@ -24,8 +24,6 @@ namespace DetDesc
     // ========================================================================
     /// the constructor 
     Histo1DCond () ;                                      //    the constructor 
-    /// virtual destructor 
-    virtual ~Histo1DCond () ;                             // virtual destructor 
     // ========================================================================
   public:
     // ========================================================================
@@ -67,8 +65,6 @@ namespace DetDesc
     // ========================================================================
     /// the constructor 
     Histo2DCond () ;                                      //    the constructor 
-    /// virtual destructor 
-    virtual ~Histo2DCond () ;                             // virtual destructor 
     // ========================================================================
   public:
     // ========================================================================

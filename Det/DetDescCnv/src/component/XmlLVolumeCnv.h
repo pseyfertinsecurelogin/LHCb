@@ -1,5 +1,3 @@
-// $Id: XmlLVolumeCnv.h,v 1.10 2009-05-04 14:57:09 ocallot Exp $
-
 #ifndef DETDESCCNV_XMLCNVSVC_XMLLVOLUMECNV_H
 #define DETDESCCNV_XMLCNVSVC_XMLLVOLUMECNV_H
 
@@ -15,7 +13,7 @@
 #include "DetDesc/Solids.h"
 
 // Forward and extern declarations
-class ISolid;
+struct ISolid;
 class LVolume;
 template <class TYPE> class CnvFactory;
 

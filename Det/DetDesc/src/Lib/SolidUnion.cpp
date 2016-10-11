@@ -1,11 +1,7 @@
-// $Id: SolidUnion.cpp,v 1.16 2009-04-17 08:54:24 cattanem Exp $ 
 // ===========================================================================
 /** STD & STL  */
 #include <iostream> 
 #include <string>
-#ifdef __INTEL_COMPILER         // Disable ICC remark
-  #pragma warning(disable:1572) // Floating-point equality and inequality comparisons are unreliable
-#endif
 /** DetDesc */ 
 #include "DetDesc/Solid.h"
 #include "DetDesc/SolidUnion.h"
@@ -32,9 +28,8 @@ SolidUnion::SolidUnion( const std::string& name  ,
                         ISolid*            first )
   : SolidBase    ( name         )
   , SolidBoolean ( name , first )
-  , m_coverTop   ( 0 ) 
 {
-  if( 0 == first ) 
+  if( UNLIKELY(!first) ) 
     { throw SolidException(" SolidUnion:: ISolid* points to NULL!"); }
 }
 // ============================================================================
@@ -47,17 +42,7 @@ SolidUnion::SolidUnion( const std::string& name  ,
 SolidUnion::SolidUnion( const std::string& name )
   : SolidBase    ( name )
   , SolidBoolean ( name )
-  , m_coverTop( 0 ) 
 {}
-// ============================================================================
-
-// ============================================================================
-/// destructor 
-// ============================================================================
-SolidUnion::~SolidUnion()
-{ 
-  if( 0 != m_coverTop ) { delete m_coverTop ; }
-}
 // ============================================================================
 
 // ============================================================================
@@ -93,12 +78,8 @@ bool SolidUnion::isInsideImpl( const aPoint   & point ) const
   ///  is point inside the "main" volume?  
   if ( first()->isInside( point ) ) { return true  ; }
   /// find the first daughter in which the given point is placed   
-  SolidUnion::SolidChildrens::const_iterator ci = 
-    std::find_if( childBegin () , 
-                  childEnd   () , 
-                  Solid::IsInside<aPoint>( point ) ) ;
-  ///
-  return ( childEnd() == ci ? false : true );   
+  return std::any_of( childBegin () , childEnd   () , 
+                      Solid::IsInside<aPoint>( point ) ) ;
 }
 
 // ============================================================================
@@ -111,9 +92,8 @@ bool SolidUnion::isInsideImpl( const aPoint   & point ) const
 StatusCode  SolidUnion::unite( ISolid*                solid    , 
                                const Gaudi::Transform3D*  mtrx     )
 {  
-  StatusCode sc = addChild( solid , mtrx ); 
-  if( sc.isFailure() ) { return sc ; }
-  return updateBP();
+  auto sc = addChild( solid , mtrx ); 
+  return sc.isSuccess() ? updateBP() : sc ;
 }
 
 // ============================================================================
@@ -127,9 +107,8 @@ StatusCode  SolidUnion::unite ( ISolid*                  child    ,
                                 const Gaudi::XYZPoint&   position , 
                                 const Gaudi::Rotation3D& rotation )
 {
-  StatusCode sc = addChild( child , position , rotation ); 
-  if( sc.isFailure() ) { return sc ; }
-  return updateBP();
+  auto sc = addChild( child , position , rotation ); 
+  return sc.isSuccess() ? updateBP() : sc;
 }
 // ============================================================================
 
@@ -139,18 +118,14 @@ StatusCode  SolidUnion::unite ( ISolid*                  child    ,
 // ============================================================================
 const ISolid* SolidUnion::coverTop() const 
 {
-  if( 0 != m_coverTop ) { return m_coverTop ; }
-  
-  const double x =  
-    fabs( xMax() ) > fabs( xMin() ) ? fabs( xMax() ) : fabs( xMin() ) ;
-  const double y =  
-    fabs( yMax() ) > fabs( yMin() ) ? fabs( yMax() ) : fabs( yMin() ) ;
-  const double z =  
-    fabs( zMax() ) > fabs( zMin() ) ? fabs( zMax() ) : fabs( zMin() ) ;
-  
-  m_coverTop = new SolidBox ("CoverTop for " + name () , x , y, z  ) ;
+  if( UNLIKELY(!m_coverTop) ) { 
+    const double x =  std::max( std::abs(xMin()), std::abs(xMax()) );
+    const double y =  std::max( std::abs(yMin()), std::abs(yMax()) ); 
+    const double z =  std::max( std::abs(zMin()), std::abs(zMax()) );
+    m_coverTop = std::make_unique<SolidBox> ("CoverTop for " + name () , x , y, z  ) ;
+  }
   // 
-  return m_coverTop;
+  return m_coverTop.get();
 }
 // ============================================================================
 
@@ -167,19 +142,19 @@ StatusCode SolidUnion::updateBP()
     *( childBegin() + ( childEnd() - childBegin() - 1 ) );
   // cast it!
   SolidBase* base = dynamic_cast<SolidBase*> (child);
-  if( 0 == base ) { return StatusCode::FAILURE ; }
+  if( !base ) { return StatusCode::FAILURE ; }
   //
-  setXMin   ( base->xMin   () < xMin   () ? base->xMin   () : xMin   () );
-  setXMax   ( base->xMax   () > xMax   () ? base->xMax   () : xMax   () );
+  setXMin   ( std::min( base->xMin(), xMin() ) );
+  setXMax   ( std::max( base->xMax(), xMax() ) );
 
-  setYMin   ( base->yMin   () < yMin   () ? base->yMin   () : yMin   () );
-  setYMax   ( base->yMax   () > yMax   () ? base->yMax   () : yMax   () );
+  setYMin   ( std::min( base->yMin(), yMin() ) );
+  setYMax   ( std::max( base->yMax(), yMax() ) );
 
-  setZMin   ( base->zMin   () < zMin   () ? base->zMin   () : zMin   () );
-  setZMax   ( base->zMax   () > zMax   () ? base->zMax   () : zMax   () );
+  setZMin   ( std::min( base->zMin(), zMin() ) );
+  setZMax   ( std::max( base->zMax(), zMax() ) );
 
-  setRMax   ( base->rMax   () > rMax   () ? base->rMax   () : rMax   () );
-  setRhoMax ( base->rhoMax () > rhoMax () ? base->rhoMax () : rhoMax () );
+  setRMax   ( std::max( base->rMax(), rMax() ) );
+  setRhoMax ( std::max( base->rhoMax(), rhoMax() ) );
   //
   checkBP();
   return StatusCode::SUCCESS;

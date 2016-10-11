@@ -24,7 +24,7 @@
     
 */
 
-class TabulatedProperty: public ValidDataObject
+class TabulatedProperty final : public ValidDataObject
 {
   ///
 public:

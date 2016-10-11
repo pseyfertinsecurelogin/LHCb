@@ -36,9 +36,6 @@ public:
    */
   SolidIntersection( const std::string& name , ISolid* first ); 
 
-  /// destructor   
-  virtual ~SolidIntersection();
-
 public:
   
   /** retrieve the specific type of the solid

@@ -1,4 +1,3 @@
-//$Id: ValidDataObject.cpp,v 1.10 2007-11-09 17:10:07 marcocle Exp $
 #include <string>
 
 #include "DetDesc/ValidDataObject.h"
@@ -10,14 +9,12 @@
 
 //---------------------------------------------------------------------------
 
-static Gaudi::Time local_time_epoch = Gaudi::Time::epoch();
-static Gaudi::Time local_time_max   = Gaudi::Time::max();
+static const Gaudi::Time local_time_epoch = Gaudi::Time::epoch();
+static const Gaudi::Time local_time_max   = Gaudi::Time::max();
 
 /// Default constructor
 ValidDataObject::ValidDataObject()
-  : IValidity()
-  , DataObject()
-  , m_validSince (Gaudi::Time::epoch())
+  : m_validSince (Gaudi::Time::epoch())
   , m_validUntil (Gaudi::Time::max())
   , m_updateMode (DEFAULT)
 {}
@@ -26,8 +23,7 @@ ValidDataObject::ValidDataObject()
 
 /// Copy constructor
 ValidDataObject::ValidDataObject( const ValidDataObject& obj )
-  : IValidity()
-  , DataObject( obj )
+  : DataObject( obj )
   , m_validSince (obj.validSince())
   , m_validUntil (obj.validTill())
   , m_updateMode (obj.updateMode())
@@ -36,9 +32,8 @@ ValidDataObject::ValidDataObject( const ValidDataObject& obj )
 //---------------------------------------------------------------------------
 std::ostream& ValidDataObject::fillStream( std::ostream& s ) const {
   DataObject::fillStream(s);
-  s << std::endl << "Validity: " << std::dec << validSince()
-                                   << " -> " << validTill();
-  return s;
+  return s << "\nValidity: " << std::dec << validSince()
+                             << " -> " << validTill();
 }
 
 //---------------------------------------------------------------------------
@@ -59,10 +54,6 @@ void ValidDataObject::update ( ValidDataObject& obj )
 
 //---------------------------------------------------------------------------
 
-/// Destructor
-ValidDataObject::~ValidDataObject()
-{
-}
 
 //---------------------------------------------------------------------------
 

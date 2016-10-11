@@ -27,7 +27,7 @@ class StatusCode;
 *///--------------------------------------------------------------------------
 
 class ValidDataObject : public DataObject,
-			virtual public IValidity
+                        virtual public IValidity
 
 {
 
@@ -47,9 +47,6 @@ class ValidDataObject : public DataObject,
   /// Update using another instance of this class: deep copy all
   /// contents, except for the properties of a generic DataObject
   virtual void update ( ValidDataObject& obj );
-
-  /// Destructor
-  virtual ~ValidDataObject();
 
  public:
 

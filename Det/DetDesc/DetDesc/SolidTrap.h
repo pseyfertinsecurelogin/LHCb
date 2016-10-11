@@ -69,9 +69,6 @@ public:
              const double        dxAtPlusZPlusY   ,
              const double        alphaAtPlusZ    );
 
-  /// destructor 
-  virtual ~SolidTrap();
-  
   /** - retrieve the TRAP type 
    *  - implementation of ISolid abstract interface 
    *  @see ISolid 

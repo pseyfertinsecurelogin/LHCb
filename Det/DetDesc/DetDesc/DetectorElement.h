@@ -59,6 +59,7 @@ public:
   ///  Destructor
   ~DetectorElement() override;
 
+
 public:
 
   /**
@@ -350,7 +351,7 @@ private:
   enum userParamKind { DOUBLE, INT, OTHER };
 
   /// reference to services
-  DetDesc::Services* m_services = nullptr;
+  DetDesc::ServicesPtr m_services;
 
 };
 

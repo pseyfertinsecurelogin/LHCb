@@ -1,4 +1,3 @@
-// $Id: ISolid.h,v 1.14 2007-09-20 15:15:18 wouter Exp $ 
 // ===========================================================================
 #ifndef DETDESC_ISOLID_H
 #define DETDESC_ISOLID_H 1
@@ -23,9 +22,8 @@
  *  @date   xx/xx/xxxx 
  */
 
-class ISolid : public extend_interfaces<IInterface>
+struct ISolid : extend_interfaces<IInterface>
 {
-public:
   
   /** useful type definition for dealing 
    *  with intersections of the solid and the line 
@@ -34,12 +32,8 @@ public:
   static constexpr std::size_t MaxTicks = 96;
   typedef boost::container::static_vector<Tick,MaxTicks> Ticks ;
 
-public:
     /// Declaration of the interface ID ( interface id, major & minor versions)
     DeclareInterfaceID( ISolid , 5 , 0 );
-  
-  
-public:
   
   /** retrieve the specific name of the solid object  
    *  @return specific name of the solid
@@ -179,11 +173,6 @@ public:
   */
   virtual Ticks::size_type maxNumberOfTicks() const = 0 ;
   
-  /** virtual destructor
-   *  @see ISolid::reset()
-   */
-  virtual  ~ISolid() ;
-  
 };
 
 // ============================================================================
@@ -231,8 +220,3 @@ inline MsgStream&    operator<<( MsgStream&     os , const ISolid*  solid  )
 // ============================================================================
 #endif   ///< DETDESC_ISOLID_H
 // ============================================================================
-
-
-
-
-
