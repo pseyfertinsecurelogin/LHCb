@@ -1,6 +1,8 @@
 // FTDet
 #include "FTDet/DeFTLayer.h"
 
+#include "DetDesc/SolidBox.h"
+
 /** @file DeFTLayer.cpp
  *
  *  Implementation of class : DeFTLayer
@@ -41,15 +43,25 @@ StatusCode DeFTLayer::initialize() {
     }
   }
 
+  m_layerID = (unsigned int)param<int>("layerID");
+
   // Get the global z position of the layer
   Gaudi::XYZPoint globalPoint = geometry()->toGlobal( Gaudi::XYZPoint(0.,0.,0.) );
   m_globalZ = globalPoint.z();
+
+  // Get the boundaries of the layer
+  const SolidBox* box = dynamic_cast<const SolidBox*> (geometry()->lvolume()->solid()->coverTop());
+  m_sizeX = box->xsize();
+  m_sizeY = box->ysize();
 
   // Make the plane for the layer
   const Gaudi::XYZPoint g1 = geometry() -> toGlobal( Gaudi::XYZPoint(0.,0.,0.) );
   const Gaudi::XYZPoint g2 = geometry() -> toGlobal( Gaudi::XYZPoint(1.,0.,0.) );
   const Gaudi::XYZPoint g3 = geometry() -> toGlobal( Gaudi::XYZPoint(0.,1.,0.) );
   m_plane = Gaudi::Plane3D(g1,g2,g3 );
+  m_dzdy = (g3.z() - g1.z()) / (g3.y() - g1.y());
+  m_stereoAngle = (double)param<double>("stereoAngle");
+  m_dxdy = tan( m_stereoAngle );
 
   return StatusCode::SUCCESS;
 }

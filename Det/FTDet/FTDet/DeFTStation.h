@@ -41,6 +41,9 @@ public:
    */
   static const CLID& classID() { return CLID_DeFTStation; }
 
+  /** @return stationID */
+  unsigned int stationID() const { return m_stationID;}
+
   /** @return Vector of pointers to the FT Layers */
   const Layers&   layers()   const { return m_layers;   }
 
@@ -58,6 +61,7 @@ public:
 private: // private data members
 
   Layers m_layers;               ///< vector of pointers to layers
+  unsigned int m_stationID;      ///< station ID number
 
 }; //end of class
 

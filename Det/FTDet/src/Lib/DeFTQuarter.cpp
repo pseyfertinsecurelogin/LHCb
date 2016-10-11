@@ -39,6 +39,8 @@ StatusCode DeFTQuarter::initialize() {
     }
   } /// iM
 
+  m_quarterID = (unsigned int)param<int>("quarterID");
+
   return StatusCode::SUCCESS;
 }
 

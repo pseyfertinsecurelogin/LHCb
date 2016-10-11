@@ -34,6 +34,9 @@ StatusCode DeFTStation::initialize(){
     DeFTLayer* layer = dynamic_cast<DeFTLayer*>(*iL);
     if (layer) m_layers.push_back(layer);
   }
+
+  m_stationID = (unsigned int)param<int>("stationID");
+
   return StatusCode::SUCCESS;
 }
 

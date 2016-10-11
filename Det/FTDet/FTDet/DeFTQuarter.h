@@ -60,8 +60,18 @@ public:
    */
   const Modules& modules() const;
 
+  /** @return quarterID */
+  unsigned int quarterID() const { return m_quarterID; }
+
+  /** @return flag true if this quarter is bottom half */
+  bool isBottom() const {return m_quarterID == 0 || m_quarterID == 1; }
+
+  /** @return flag true if this quarter is top half */
+  bool isTop() const {return m_quarterID == 2 || m_quarterID == 3; }
+
 private:
 
+  unsigned int m_quarterID;      ///< quarter ID number
   Modules m_modules;             ///< vector of modules
 
 };  //end of class

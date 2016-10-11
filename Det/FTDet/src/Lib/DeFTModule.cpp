@@ -183,6 +183,17 @@ std::unique_ptr<LHCb::Trajectory> DeFTModule::trajectory(const LHCb::FTChannelID
                                            to_global(localX, +0.5*m_fibreSizeY, 0.) );
 }
 
+// Get the endpoints of the line defined by the hit
+std::pair<Gaudi::XYZPoint,Gaudi::XYZPoint> DeFTModule::endPoints(
+    const LHCb::FTChannelID channelID, const double frac) const{
+  double localX = localXfromChannel( channelID, frac );
+  double localY1 = (inHole(localX)) ? -0.5*m_fibreSizeY + m_holeSizeY : -0.5*m_fibreSizeY;
+  auto to_global = [g=geometry()](double x, double y, double z) { return g->toGlobal(Gaudi::XYZPoint(x,y,z));};
+  return std::make_pair<Gaudi::XYZPoint>( to_global(localX,           localY1, 0.),
+                                          to_global(localX, +0.5*m_fibreSizeY, 0.) );
+}
+
+
 // Get the pseudo-channel for a FTChannelID (useful in the monitoring)
 int DeFTModule::pseudoChannel( const LHCb::FTChannelID channelID ) const {
   int channelInModule = channelID.channelID() & (m_nChannelsInModule-1u);
