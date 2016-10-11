@@ -27,10 +27,6 @@
 CovarianceEstimator::CovarianceEstimator( const DeCalorimeter* Detector ): 
   m_detector     ( Detector             ){}
 
-// ============================================================================
-// (virtual) destructor 
-// ============================================================================
-CovarianceEstimator::~CovarianceEstimator(){}
 
 // ============================================================================
 /** main method (operator)
@@ -81,7 +77,7 @@ StatusCode CovarianceEstimator::operator()( LHCb::CaloCluster* cluster ) const{
   using namespace LHCb::CaloDigitStatus;
 
   int i=0;
-  for( LHCb::CaloCluster::Entries::iterator it = entries.begin() ; entries.end() != it ; ++ it ){    
+  for( auto it = entries.begin() ; entries.end() != it ; ++ it ){
     const LHCb::CaloDigit* digit  = it->digit() ;    
     /// check the status 
 
@@ -150,7 +146,7 @@ StatusCode CovarianceEstimator::operator()( LHCb::CaloCluster* cluster ) const{
     y    [i] = y_i ;
     gain [i] = g ;
     int j=0;      
-    for( LHCb::CaloCluster::Entries::iterator jt = entries.begin() ; jt < it ; ++jt ){    
+    for( auto jt = entries.begin() ; jt < it ; ++jt ){    
       if( jt->digit() == 0 )continue;
       if( (jt->status() & UseForCovariance) == 0 ) continue; 
       

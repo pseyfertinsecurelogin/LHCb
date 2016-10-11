@@ -75,8 +75,6 @@ protected:
   /// Standard constructor
   CondDBDispatcherSvc( const std::string& name, ISvcLocator* svcloc );
 
-  virtual ~CondDBDispatcherSvc( ); ///< Destructor
-
 
 private:
 
@@ -93,10 +91,10 @@ private:
   std::map<std::string,std::string> m_alternativesDeclarationMap;
 
   /// Pointer to the main access service.
-  ICondDBReader* m_mainDB;
+  SmartIF<ICondDBReader> m_mainDB;
 
   /// Container fo the alternatives.
-  std::map<std::string,ICondDBReader*> m_alternatives;
+  std::map<std::string,SmartIF<ICondDBReader>> m_alternatives;
 
   /// Enable/disable direct mapping from the database structure to the transient
   /// store using XML persistency format (enabled by default).

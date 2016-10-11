@@ -1,4 +1,3 @@
-// $Id: ICaloSplitTool.h,v 1.8 2008-09-22 00:50:30 odescham Exp $
 // ============================================================================
 #ifndef CALOINTERFACES_ICALOSPLITTOOL_H 
 #define CALOINTERFACES_ICALOSPLITTOOL_H 1
@@ -22,13 +21,9 @@
 namespace LHCb{
   class     CaloHypo     ;     
 }
-static const InterfaceID IID_ICaloSplitTool( "ICaloSplitTool" , 2 , 0 );
 
-class ICaloSplitTool: 
-  public virtual IAlgTool ,
-  public std::binary_function<LHCb::CaloHypo*,LHCb::CaloHypos&,StatusCode>
+struct ICaloSplitTool :  extend_interfaces<IAlgTool>
 {
-public:
 
   // OD ALREADY DEFINED AS A KEYEDCONTAINER IN EVENT
   // useful type definition for output container  
@@ -36,12 +31,10 @@ public:
   //  typedef std::vector<LHCb::CaloHypo*>  CaloHypos;
   //}
   
-public:
-  
   /** static interface identification
    *  @return unique interface identifier
    */
-  static const InterfaceID& interfaceID()  { return IID_ICaloSplitTool;};
+  DeclareInterfaceID(ICaloSplitTool , 3 , 0 );
   
   /** The main processing method 
    *  @param  hypo   pointer to CaloHypo object to be processed

@@ -139,8 +139,8 @@ class  MsgStream      ;
  *  @author Ivan Belyaev
  *  @date   06/07/2001
  */
-class CovarianceEstimator:
-  public std::unary_function<LHCb::CaloCluster*,StatusCode>{
+class CovarianceEstimator final 
+{
 public:
 
   typedef DeCalorimeter* DET;
@@ -154,11 +154,8 @@ public:
    *  @param  ResB     intrinsic additions to the constant term 
    *                   (nonuniformities, leakages)  
    */
-  CovarianceEstimator( const DeCalorimeter* Det     = 0 );
+  CovarianceEstimator( const DeCalorimeter* Det     = nullptr );
   
-  /// (virtual) Destructor
-  virtual ~CovarianceEstimator();
-
   /** calculation of covariance matrix for cluster 
    *
    *  Error codes:
@@ -196,8 +193,8 @@ public:
   /** set new resolution parameter
    *  @param A calorimeter resolution 
    */
-  inline void setStochastic ( const std::vector<double> A ){ 
-    m_A = A ;
+  inline void setStochastic ( std::vector<double> A ){ 
+    m_A = std::move(A) ;
   }
 
 

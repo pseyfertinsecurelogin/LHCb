@@ -1,4 +1,3 @@
-// $Id: CaloDigitsFromRaw.h,v 1.7 2009-02-20 11:37:30 odescham Exp $
 #ifndef CALOEVENT_CALODIGITSFROMRAW_H 
 #define CALOEVENT_CALODIGITSFROMRAW_H 1
 
@@ -26,22 +25,9 @@ public:
   /// Standard constructor
   CaloDigitsFromRaw( const std::string& name, ISvcLocator* pSvcLocator );
 
-  virtual ~CaloDigitsFromRaw( ); ///< Destructor
+  StatusCode initialize () override;    ///< Algorithm initialization
+  StatusCode execute    () override;    ///< Algorithm execution
 
-  virtual StatusCode initialize ();    ///< Algorithm initialization
-  virtual StatusCode execute    ();    ///< Algorithm execution
-
-  class IncreasingByCellID {
-  public:
-    inline bool operator ()
-      ( const LHCb::CaloDigit* dig1 , 
-        const LHCb::CaloDigit* dig2 ) const {
-      return 
-      ( 0 == dig1 ) ? true  :
-      ( 0 == dig2 ) ? false : 
-      dig1->cellID().all() < dig2->cellID().all() ;
-    }
-  };
 
 protected:
   
@@ -49,22 +35,20 @@ protected:
   
   void convertCaloEnergies( );
 
-private: 
-  
 private:
   std::string m_extension ; ///< Added to the default container name, for tests
   int         m_detectorNum      ;
 
-  ICaloTriggerBitsFromRaw* m_spdTool;
-  ICaloEnergyFromRaw*  m_energyTool;
+  ICaloTriggerBitsFromRaw* m_spdTool = nullptr;
+  ICaloEnergyFromRaw*  m_energyTool = nullptr;
 
-  bool m_adcOnTES;
-  bool m_digitOnTES;
+  bool m_adcOnTES = false;
+  bool m_digitOnTES = false;
   std::string m_outputType;
   std::string m_pinContainerName;
   std::string m_outputDigits;
   std::string m_outputADCs;
-  DeCalorimeter* m_calo;
+  DeCalorimeter* m_calo = nullptr;
   bool m_statusOnTES;  
 };
 #endif // CALOEVENT_CALODIGITSFROMRAW_H

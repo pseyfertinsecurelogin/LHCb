@@ -1,4 +1,3 @@
-// $Id: ICaloClusterTool.h,v 1.10 2008-09-22 00:50:30 odescham Exp $
 // ============================================================================
 #ifndef CALOINTERFACES_ICALOCLUSTERTOOL_H 
 #define CALOINTERFACES_ICALOCLUSTERTOOL_H 1
@@ -11,7 +10,6 @@
 namespace LHCb{
   class     CaloCluster                ;
 }
-const InterfaceID IID_ICaloClusterTool( "ICaloClusterTool" , 3 , 0 );
 
 /** @class ICaloClusterTool ICaloClusterTool.h 
  *           CaloInterfaces/ICaloClusterTool.h
@@ -28,18 +26,10 @@ const InterfaceID IID_ICaloClusterTool( "ICaloClusterTool" , 3 , 0 );
  *  @date   30/10/2001
  */
 
-class ICaloClusterTool: 
-  public virtual IAlgTool                            ,
-  public std::unary_function<LHCb::CaloCluster*,StatusCode>
+struct ICaloClusterTool: extend_interfaces<IAlgTool>
 {
   
- public:
-  
-  /** static interface identification
-   *  @see IInterface 
-   *  @return unique interface identifier
-   */
-  static const InterfaceID& interfaceID() { return IID_ICaloClusterTool; };
+  DeclareInterfaceID( ICaloClusterTool , 3 , 0 );
   
   /** The main processing method 
    *  @param cluster pointer to CaloCluster object to be processed
@@ -53,9 +43,6 @@ class ICaloClusterTool:
    */  
   virtual StatusCode operator() ( LHCb::CaloCluster* cluster)const =0;
 
- protected:
-  
-  
 };
 
 // ============================================================================

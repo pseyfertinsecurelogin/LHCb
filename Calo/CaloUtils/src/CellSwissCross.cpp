@@ -16,12 +16,6 @@
 // ============================================================================
 
 // ============================================================================
-/** destructor 
- */
-// ============================================================================
-CellSwissCross::~CellSwissCross() {}
-
-// ============================================================================
 /** if cells belong to different areas
  *  one need to treat them in a different way
  *  @param cell  the cell to be tested
@@ -46,7 +40,7 @@ double CellSwissCross::treatDifferentAreas ( const LHCb::CaloCellID& seed ,
   const Gaudi::XYZPoint& centerMtrx =         det()->cellCenter ( seed ) ;
   const Gaudi::XYZPoint& centerCell =         det()->cellCenter ( cell ) ;
   /// effective halfsize 
-  const double      sizeMin    =  0.01 * mini ( sizeMtrx , sizeCell ) ;
+  const double      sizeMin    =  0.01 * std::min ( sizeMtrx , sizeCell ) ;
   /// 
   /// check the intersection with larger 3x3 matrix  
   const double AreaAux = 

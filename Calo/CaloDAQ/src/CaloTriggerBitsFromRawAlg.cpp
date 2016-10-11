@@ -20,8 +20,7 @@ DECLARE_ALGORITHM_FACTORY( CaloTriggerBitsFromRawAlg )
 //=============================================================================
 CaloTriggerBitsFromRawAlg::CaloTriggerBitsFromRawAlg( const std::string& name,
                                                       ISvcLocator* pSvcLocator)
-  : GaudiAlgorithm ( name , pSvcLocator )
-  , m_l0BitTool(NULL)
+: GaudiAlgorithm ( name , pSvcLocator )
 {
   declareProperty("OutputData"  , m_outputData  );  
   declareProperty( "Extension"  ,  m_extension = "" );
@@ -30,20 +29,14 @@ CaloTriggerBitsFromRawAlg::CaloTriggerBitsFromRawAlg( const std::string& name,
 
   m_toolType  = "CaloTriggerBitsFromRaw";
   m_toolName = name + "Tool";
-  m_isPrs = false;
-  if ( "Prs" == name.substr( 0 , 3 ) ) {
+  if ( name.compare( 0 , 3, "Prs" ) == 0 ) {
     m_outputData = LHCb::L0PrsSpdHitLocation::Prs + m_extension;
     m_isPrs = true;
-  } else if ( "Spd" == name.substr( 0 , 3 ) ) {
+  } else if ( name.compare( 0 , 3, "Spd" ) == 0 ) {
     m_outputData = LHCb::L0PrsSpdHitLocation::Spd + m_extension;
   }
 
 }
-//=============================================================================
-// Destructor
-//==============h===============================================================
-CaloTriggerBitsFromRawAlg::~CaloTriggerBitsFromRawAlg() {} 
-
 //=============================================================================
 // Initialization
 //=============================================================================
@@ -68,37 +61,29 @@ StatusCode CaloTriggerBitsFromRawAlg::execute() {
   LHCb::L0PrsSpdHits* newL0Bits = new LHCb::L0PrsSpdHits();
   put( newL0Bits , m_outputData );
   //*** get the input data from Raw and fill the output container
-  LHCb::Calo::FiredCells l0Cells ;
-  if( m_isPrs){    
-    l0Cells = m_l0BitTool->prsCells();
-  }
-  else {
-    l0Cells = m_l0BitTool->spdCells();
-  }
-  
+  LHCb::Calo::FiredCells l0Cells = ( m_isPrs ? m_l0BitTool->prsCells()
+                                             : m_l0BitTool->spdCells() );
 
-  std::vector<LHCb::CaloCellID>::const_iterator iCell;
-  for( iCell = l0Cells.begin(); l0Cells.end() != iCell ; ++iCell ) {
-    LHCb::L0PrsSpdHit* l0Bit = new LHCb::L0PrsSpdHit( *iCell );
-
+  for( const auto& iCell : l0Cells ) {
     // protect against SEU
     try{
-      newL0Bits->insert( l0Bit ) ;
+      auto l0Bit = std::make_unique<LHCb::L0PrsSpdHit>( iCell );
+      newL0Bits->insert( l0Bit.get() ) ;
+      l0Bit.release();
     }catch(GaudiException &exc) { 
       counter("Duplicate l0Bit") += 1;
-      std::ostringstream os("");
-      os << "Duplicate l0Bit for channel " << *iCell << " " << std::endl;
+      std::ostringstream os;
+      os << "Duplicate l0Bit for channel " << iCell << " " << std::endl;
       Warning(os.str(),StatusCode::SUCCESS).ignore();
-      int card =  m_l0BitTool->deCalo()->cardNumber( *iCell );
+      int card =  m_l0BitTool->deCalo()->cardNumber( iCell );
       int tell1=  m_l0BitTool->deCalo()->cardToTell1( card);
       LHCb::RawBankReadoutStatus& status = m_l0BitTool->status();
       status.addStatus( tell1 ,LHCb::RawBankReadoutStatus::DuplicateEntry);
-      delete l0Bit;
-    }     
+    }
   }
   
-  if(m_statusOnTES)m_l0BitTool->putStatusOnTES();
-  if( UNLIKELY( msgLevel(MSG::DEBUG) ) ) 
+  if (m_statusOnTES) m_l0BitTool->putStatusOnTES();
+  if (UNLIKELY( msgLevel(MSG::DEBUG) ) ) 
     debug() << " L0PrsSpdHits container size " << newL0Bits->size() << endmsg;
   return StatusCode::SUCCESS;
 }

@@ -36,10 +36,6 @@ CaloFillPrsSpdRawBuffer::CaloFillPrsSpdRawBuffer( const std::string& name,
 
   declareProperty( "DataCodingType",   m_dataCodingType = 2 );
 }
-//=============================================================================
-// Destructor
-//=============================================================================
-CaloFillPrsSpdRawBuffer::~CaloFillPrsSpdRawBuffer() {}
 
 //=============================================================================
 // Initialization

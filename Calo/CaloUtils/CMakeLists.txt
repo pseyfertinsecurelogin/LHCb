@@ -19,13 +19,13 @@ gaudi_add_library(CaloUtils
                   src/*.cpp
                   PUBLIC_HEADERS CaloUtils
                   INCLUDE_DIRS AIDA Event/DigiEvent
-                  LINK_LIBRARIES CaloInterfaces CaloDetLib L0Event MCEvent PhysEvent RecEvent GaudiAlgLib LHCbMathLib)
+                  LINK_LIBRARIES CaloDetLib L0Event MCEvent PhysEvent RecEvent GaudiAlgLib LHCbMathLib)
 
 gaudi_add_dictionary(CaloUtils
                      dict/CaloUtilsDict.h
                      dict/CaloUtils.xml
                      INCLUDE_DIRS Event/DigiEvent
-                     LINK_LIBRARIES CaloInterfaces CaloDetLib L0Event MCEvent PhysEvent RecEvent GaudiAlgLib LHCbMathLib CaloUtils
+                     LINK_LIBRARIES CaloDetLib L0Event MCEvent PhysEvent RecEvent GaudiAlgLib LHCbMathLib CaloUtils
                      OPTIONS " -U__MINGW32__ ")
 
 gaudi_install_python_modules()

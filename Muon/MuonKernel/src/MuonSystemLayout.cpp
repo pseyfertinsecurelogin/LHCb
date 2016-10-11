@@ -1,9 +1,18 @@
-// $Id: MuonSystemLayout.cpp,v 1.8 2005-12-16 15:57:59 asatta Exp $
 // Include files
 #include <iostream>
 #include "MuonKernel/MuonSystemLayout.h"
 #include "Kernel/MuonTileID.h"
 
+namespace {
+    // note: this properly deals with both references (in which case C is-a reference)
+    //       and rvalue references (in which case C is a value type)
+    //       (thanks to C++ reference collapsing)
+    template <typename C>
+    C setStation(C&& c, int s) {
+        for (auto& i : c ) i.setStation(s);
+        return c;
+    }
+}
 //------------------------------------------------------------------------------
 //
 /// Implementation of class :  MuonSystemLayout
@@ -12,30 +21,17 @@
 //
 //------------------------------------------------------------------------------
 
-MuonSystemLayout::MuonSystemLayout() {    
-}
 
 MuonSystemLayout::MuonSystemLayout(const MuonStationLayout& lq1,
-                		   const MuonStationLayout& lq2,
-				   const MuonStationLayout& lq3,
-                		   const MuonStationLayout& lq4,
-				   const MuonStationLayout& lq5) {
-	
-    m_station_layouts[0] = lq1;
-    m_station_layouts[1] = lq2;
-    m_station_layouts[2] = lq3;
-    m_station_layouts[3] = lq4;
-    m_station_layouts[4] = lq5;           
+                                   const MuonStationLayout& lq2,
+                                   const MuonStationLayout& lq3,
+                                   const MuonStationLayout& lq4,
+                                   const MuonStationLayout& lq5) 
+: m_station_layouts{ lq1, lq2, lq3, lq4, lq5 }
+{
 }
 
-MuonSystemLayout::MuonSystemLayout(const MuonStationLayout& lq) {
-	
-    for (int i = 0; i<5; i++ ) {
-      m_station_layouts[i] = lq;
-    }        
-}
 
-MuonSystemLayout::~MuonSystemLayout() {}
 
 std::vector<LHCb::MuonTileID> 
 MuonSystemLayout::tiles(const LHCb::MuonTileID& pad) const {
@@ -54,13 +50,8 @@ MuonSystemLayout::tilesInArea(const LHCb::MuonTileID& pad,
 std::vector<LHCb::MuonTileID> MuonSystemLayout::tiles() const {
 
   std::vector<LHCb::MuonTileID> result;
-  std::vector<LHCb::MuonTileID>::iterator it;
-
   for (int is = 0; is<5; is++) {
-    std::vector<LHCb::MuonTileID> tmp=m_station_layouts[is].tiles();
-    for(it = tmp.begin(); it != tmp.end(); it++ ) {
-      it->setStation(is);
-    }
+    auto tmp = setStation( m_station_layouts[is].tiles(), is );
     result.insert(result.end(),tmp.begin(),tmp.end()); 
   }					
   return result;
@@ -69,13 +60,8 @@ std::vector<LHCb::MuonTileID> MuonSystemLayout::tiles() const {
 std::vector<LHCb::MuonTileID> MuonSystemLayout::tiles(int iq) const {
 
   std::vector<LHCb::MuonTileID> result;
-  std::vector<LHCb::MuonTileID>::iterator it;
-
   for (int is = 0; is<5; is++) {
-    std::vector<LHCb::MuonTileID> tmp=m_station_layouts[is].tiles(iq);
-    for(it = tmp.begin(); it != tmp.end(); it++ ) {
-      it->setStation(is);
-    }
+    auto tmp = setStation( m_station_layouts[is].tiles(iq), is);
     result.insert(result.end(),tmp.begin(),tmp.end()); 
   }					
   return result;
@@ -84,13 +70,8 @@ std::vector<LHCb::MuonTileID> MuonSystemLayout::tiles(int iq) const {
 std::vector<LHCb::MuonTileID> MuonSystemLayout::tiles(int iq, int ir) const {
 
   std::vector<LHCb::MuonTileID> result;
-  std::vector<LHCb::MuonTileID>::iterator it;
-
   for (int is = 0; is<5; is++) {
-    std::vector<LHCb::MuonTileID> tmp=m_station_layouts[is].tiles(iq,ir);
-    for(it = tmp.begin(); it != tmp.end(); it++ ) {
-      it->setStation(is);
-    }
+    auto tmp = setStation( m_station_layouts[is].tiles(iq,ir),is);
     result.insert(result.end(),tmp.begin(),tmp.end()); 
   }					
   return result;
@@ -100,28 +81,14 @@ std::vector<LHCb::MuonTileID> MuonSystemLayout::tilesInRegion(const LHCb::MuonTi
                                                 int pregion) const {
     
   int st = pad.station();
-  std::vector<LHCb::MuonTileID> result;
-  std::vector<LHCb::MuonTileID>::iterator it;
-  
-  result=m_station_layouts[st].tilesInRegion(pad,pregion);
-  for(it = result.begin(); it != result.end(); it++ ) {
-    it->setStation(st);
-  }
-  return result;
+  return setStation( m_station_layouts[st].tilesInRegion(pad,pregion), st);
 }  
 
 std::vector<LHCb::MuonTileID> 
 MuonSystemLayout::neighbours(const LHCb::MuonTileID& pad) const {
 
   int st = pad.station();
-  std::vector<LHCb::MuonTileID> result;
-  std::vector<LHCb::MuonTileID>::iterator it;
-  
-  result=m_station_layouts[st].neighbours(pad);
-  for(it = result.begin(); it != result.end(); it++ ) {
-    it->setStation(st);
-  }
-  return result;  
+  return setStation( m_station_layouts[st].neighbours(pad), st);
 }
 
 std::vector<LHCb::MuonTileID> 
@@ -129,43 +96,22 @@ MuonSystemLayout::neighbours(const LHCb::MuonTileID& pad,
                              int dirX, int dirY) const {
 
   int st = pad.station();
-  std::vector<LHCb::MuonTileID> result;
-  std::vector<LHCb::MuonTileID>::iterator it;
-  
-  result=m_station_layouts[st].neighbours(pad,dirX,dirY);
-  for(it = result.begin(); it != result.end(); it++ ) {
-    it->setStation(st);
-  }
-  return result;
+  return setStation( m_station_layouts[st].neighbours(pad,dirX,dirY), st);
 }
 
 std::vector<LHCb::MuonTileID> 
 MuonSystemLayout::neighbours(const LHCb::MuonTileID& pad,
                              int dirX, int dirY, int depth) const {
   int st = pad.station();
-  std::vector<LHCb::MuonTileID> result;
-  std::vector<LHCb::MuonTileID>::iterator it;
-  
-  result=m_station_layouts[st].neighbours(pad,dirX,dirY,depth);
-  for(it = result.begin(); it != result.end(); it++ ) {
-    it->setStation(st);
-  }
-  return result;    
+  return setStation( m_station_layouts[st].neighbours(pad,dirX,dirY,depth), st );
 }
 
 std::vector<LHCb::MuonTileID> 
 MuonSystemLayout::neighboursInArea(const LHCb::MuonTileID& pad,
                                    int dirX, int dirY, 
-				   int depthX, int depthY) const {
+                                   int depthX, int depthY) const {
   int st = pad.station();
-  std::vector<LHCb::MuonTileID> result;
-  std::vector<LHCb::MuonTileID>::iterator it;
-  
-  result=m_station_layouts[st].neighboursInArea(pad,dirX,dirY,depthX,depthY);
-  for(it = result.begin(); it != result.end(); it++ ) {
-    it->setStation(st);
-  }
-  return result;    
+  return setStation(m_station_layouts[st].neighboursInArea(pad,dirX,dirY,depthX,depthY),st);
 }
 
 bool MuonSystemLayout::isValidID(const LHCb::MuonTileID& pad) const {
