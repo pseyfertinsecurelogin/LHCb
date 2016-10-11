@@ -52,6 +52,9 @@ public:
   /** Returns the dx/dy of the layer (ie. tan(m_stereoAngle)) */
   double dxdy() const { return m_dxdy; }
 
+  /** Returns the dz/dy of the layer (ie. tan of the beam angle) */
+  double dzdy() const { return m_dzdy; }
+
   /** Returns the size of the layer in x */
   double sizeX() const { return m_sizeX; }
 
