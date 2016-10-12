@@ -48,8 +48,10 @@ DataOnDemandSvc().AlgMap["Raw/Rich/Digits"]       = "Rich::DAQ::RawBufferToRichD
 RawBankToSTClusterAlg("createITClusters").DetType          = "IT"
 RawBankToSTLiteClusterAlg("createITLiteClusters").DetType  = "IT"
 
-RawBankToSTClusterAlg("createUTClusters").DetType          = "UT"
-RawBankToSTLiteClusterAlg("createUTLiteClusters").DetType  = "UT"
+RawBankToSTClusterAlg("createUTClusters").clusterLocation         = "Raw/UT/Clusters"
+RawBankToSTClusterAlg("createUTClusters").DetType                 = "UT"
+RawBankToSTLiteClusterAlg("createUTLiteClusters").clusterLocation = "Raw/UT/LiteClusters"
+RawBankToSTLiteClusterAlg("createUTLiteClusters").DetType         = "UT"
 
 #Moved to ST/STTools/python/STTools/STOfflineConf, as with TT and IT
 #from Configurables import STOfflinePosition
