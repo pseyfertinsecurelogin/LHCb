@@ -225,11 +225,8 @@ class Decoder(object):
         #print "GAAAAAAAHHHHHHHHH!!!!!!", output, self.FullName
         if not self.isOutputSettable():
             raise AttributeError("My output is not settable "+self.FullName)
-        #if type(self.Outputs) is list and len(self.Outputs):
-        #    if type(output) is list:
-        #        self.Outputs=output
-        #    elif type(output) is str:
-        #        self.Outputs=[output]
+        if type(self.Outputs) is list and len(self.Outputs):
+            raise TypeError(self.FullName+": outputs must be a dict, not "+ str(type(self.Outputs)))
         if type(self.Outputs) is dict and len(self.Outputs):
             #print "recognized I can set the output"
             for k,op in self.Outputs.items():
