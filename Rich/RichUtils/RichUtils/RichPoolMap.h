@@ -43,7 +43,7 @@ namespace Rich
   template < typename KEY,
              typename VALUE, 
              typename USERALLOC = boost::default_user_allocator_new_delete,
-             typename MUTEX     = boost::details::pool::null_mutex,
+             typename MUTEX     = boost::details::pool::default_mutex,
              unsigned NEXTSIZE  = 32 >
   using MapPoolAlloc = boost::fast_pool_allocator< std::pair<const KEY,VALUE>, 
                                                    USERALLOC, MUTEX, NEXTSIZE >;

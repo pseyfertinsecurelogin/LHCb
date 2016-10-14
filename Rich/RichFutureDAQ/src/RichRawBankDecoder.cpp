@@ -24,12 +24,11 @@ namespace
 RawBankDecoder::RawBankDecoder( const std::string& name,
                                 ISvcLocator* pSvcLocator )
   : Transformer ( name, pSvcLocator,
-                  { KeyValue{ "RawEventLocations",
+                  { KeyValue{ "RawEventLocation",
                         concat_alternatives( { LHCb::RawEventLocation::Rich,
                                                LHCb::RawEventLocation::Default } ) },
-                      KeyValue{ "OdinLocation", LHCb::ODINLocation::Default } },
-                  { KeyValue{ "DecodedDataLocation", L1MapLocation::Default } }
-                  )
+                    KeyValue{ "OdinLocation", LHCb::ODINLocation::Default } },
+                  { KeyValue{ "DecodedDataLocation", L1MapLocation::Default } } )
 {
   declareProperty( "DumpRawBanks",       m_dumpBanks          = false  );
   declareProperty( "DecodeUsingODIN",    m_decodeUseOdin      = false  );
