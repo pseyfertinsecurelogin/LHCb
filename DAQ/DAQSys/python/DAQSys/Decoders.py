@@ -78,14 +78,14 @@ Decoder("RawBankToSTLiteClusterAlg/createTTLiteClustersExpert",
 
 Decoder("RawBankToSTClusterAlg/createTTClusters",
         active=True, banks=["TT"],
-        outputs={"clusterLocation":"Raw/TT/Clusters"},
+        outputs={"clusterLocation":"Raw/TT/Clusters", "summaryLocation":"Rec/TT/Summary"},
         inputs={"RawEventLocations" : None},
         required=["createODIN"],
         conf=DecoderDB)
 
 Decoder("RawBankToSTClusterAlg/createTTClustersExpert",
         active=False, banks=["TTPedestal","TTFull","TTProcFull","TTError"],
-        outputs={"clusterLocation":"Raw/TT/Clusters"},
+        outputs={"clusterLocation":"Raw/TT/Clusters", "summaryLocation":"Rec/TT/Summary"},
         inputs={"RawEventLocations" : None},
         required=["createODIN"],
         conf=DecoderDB)

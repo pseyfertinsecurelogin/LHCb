@@ -14,7 +14,8 @@ known_extras=['Raw/Prs/Adcs', 'Hlt1/DecReports', 'Hlt2/DecReports',
               'Hlt/DecReports', 'Trig/L0/L0DUData', 'Hlt1/SelReports',
               'Raw/Velo/PUClusters', 'Hlt2/VertexReports', 'Hlt/LumiSummary',
               'Hlt1/SelReports/Candidates', 'Hlt2/SelReports/Candidates',
-              'Hlt/VertexReports/PV3D','Hlt/VertexReports/ProtoPV3D']
+              'Hlt/VertexReports/PV3D','Hlt/VertexReports/ProtoPV3D',
+              'Rec/TT/Summary', 'Rec/IT/Summary', 'Rec/UT/Summary']
 
 from GaudiConf.PersistRecoConf import PersistRecoPacking
 __packing = PersistRecoPacking()
