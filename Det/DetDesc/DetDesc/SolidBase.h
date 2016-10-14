@@ -1,4 +1,3 @@
-// $Id: SolidBase.h,v 1.18 2008-06-24 13:25:03 jonrob Exp $
 #ifndef DETDESC_SOLIDBASE_H 
 #define DETDESC_SOLIDBASE_H 1
 
@@ -485,7 +484,7 @@ protected:
   double m_rhomax ;
   
   /// reference to services
-  DetDesc::Services* m_services;
+  DetDesc::ServicesPtr m_services;
 };
 
 // ===========================================================================

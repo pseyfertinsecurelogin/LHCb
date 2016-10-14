@@ -1,7 +1,3 @@
-// $Id: SolidUnion.h,v 1.11 2005-12-08 19:20:01 jpalac Exp $ 
-// ===========================================================================
-// CVS tag $Name: not supported by cvs2svn $ 
-// ===========================================================================
 #ifndef       DETDESC_SOLIDUNION_H
 #define       DETDESC_SOLIDUNION_H 1 
 
@@ -41,8 +37,6 @@ public:
    */
   SolidUnion( const std::string& name , ISolid* first ); 
   
-  /// destruictor   
-  virtual ~SolidUnion();
   
 public:
   
@@ -109,7 +103,7 @@ public:
 
 private:
   
-  mutable ISolid* m_coverTop ;
+  mutable std::unique_ptr<ISolid> m_coverTop ;
 
   template <class aPoint>
   bool isInsideImpl(const aPoint& point) const;

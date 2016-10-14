@@ -25,7 +25,7 @@ class TabulatedProperty;
 */
 
 
-class Surface: public DataObject
+class Surface final: public DataObject
 {
   ///
 public:
@@ -36,7 +36,6 @@ public:
   ///
   /// constructor
   Surface( const std::string& Name = "");
-  virtual ~Surface();
   /// 
   virtual const CLID& clID    () const { return Surface::classID() ; }
   static  const CLID& classID ()       { return CLID_Surface       ; }

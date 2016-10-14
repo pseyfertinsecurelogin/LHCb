@@ -38,10 +38,7 @@ unsigned long LogVolBase::s_volumeCounter = 0 ;
 LogVolBase::LogVolBase( const std::string& /*name*/    , 
                         const std::string& sensitivity ,
                         const std::string& magnetic    )
-  : ValidDataObject (             )
-  , m_pvolumes   (             )
-  , m_surfaces   (             ) 
-  , m_sdName     ( sensitivity ) 
+  : m_sdName     ( sensitivity ) 
   , m_mfName     ( magnetic    )
   , m_services   ( 0           )
 {
@@ -58,15 +55,8 @@ LogVolBase::~LogVolBase()
   /// decrease  volume counter 
   --s_volumeCounter ;
   // release physical volumes
-  for (PVolumes::const_iterator ipv = m_pvolumes.begin();
-       ipv != m_pvolumes.end() ; ++ipv ) 
-  {
-    IPVolume* pv = *ipv ;
-    if( 0 != pv ) { delete pv ; }
-  }
+  for (auto& ipv : m_pvolumes) delete ipv;
   m_pvolumes.clear();
-  // release services
-  m_services->release();
 }
 // ============================================================================
 /* 

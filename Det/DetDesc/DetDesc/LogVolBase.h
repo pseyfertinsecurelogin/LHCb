@@ -417,7 +417,7 @@ private:
   /// static  volume counter 
   static  unsigned long s_volumeCounter ;
   /// reference to services
-  DetDesc::Services* m_services;
+  DetDesc::ServicesPtr m_services;
 };
 
 // ============================================================================

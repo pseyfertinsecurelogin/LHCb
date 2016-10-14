@@ -11,12 +11,12 @@
 #include "GaudiKernel/Point3DTypes.h"
 
 // Forward declarations
-class IGeometryInfo;
-class IAlignment;
-class ICalibration;
-class IReadOut;
-class ISlowControl;
-class IFastControl;
+struct IGeometryInfo;
+struct IAlignment;
+struct ICalibration;
+struct IReadOut;
+struct ISlowControl;
+struct IFastControl;
 
 class Condition;
 class ParamValidDataObject;
@@ -37,14 +37,11 @@ static const InterfaceID IID_IDetectorElement( 156 , 2 , 2 );
  *  @author Marco Clemencic <marco.clemencic@cern.ch>
  */
 
-class IDetectorElement : virtual public IInterface
+struct IDetectorElement : virtual IInterface
 {
-  ///
- public:
   ///
   typedef std::vector<IDetectorElement*>   IDEContainer;
   ///
- public:
 
   /** retrieve the unique interface identifier
    *  @return the unique interface identifier
@@ -179,8 +176,6 @@ class IDetectorElement : virtual public IInterface
    */
   virtual StatusCode initialize() = 0;
 
-  /// destructor
-  virtual ~IDetectorElement() ;
 
 };
 ///

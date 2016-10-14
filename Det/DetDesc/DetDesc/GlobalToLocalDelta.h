@@ -1,4 +1,3 @@
-// $Id: GlobalToLocalDelta.h,v 1.13 2008-05-20 15:41:17 cattanem Exp $
 #ifndef DETDESC_GLOBALTOLOCALDELTA_H 
 #define DETDESC_GLOBALTOLOCALDELTA_H 1
 
@@ -6,8 +5,8 @@
 #include "GaudiKernel/Transform3DTypes.h"
 
 // forward declarations
-class IDetectorElement;
-class IGeometryInfo;
+struct IDetectorElement;
+struct IGeometryInfo;
 
 /** @file  GlobalToLocalDelta.h
  *  

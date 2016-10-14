@@ -22,6 +22,7 @@
 #include "Kernel/RichRadiatorType.h"
 #include "Kernel/RichDetectorType.h"
 #include "Kernel/RichRadIntersection.h"
+#include "Kernel/FastAllocVector.h"
 
 // geometry
 #include "GaudiKernel/Point3DTypes.h"
@@ -62,6 +63,11 @@ namespace LHCb
   class RichTrackSegment : public LHCb::MemPoolAlloc<LHCb::RichTrackSegment>
   {
 
+  public:
+    
+    /// Vector of track segments
+    using Vector = LHCb::STL::Vector<RichTrackSegment>;
+    
   private:
 
     /** Add two Gaudi::XYZPoint points together
@@ -709,6 +715,13 @@ namespace LHCb
 
   };
 
+  /// TES locations
+  namespace RichTrackSegmentLocation
+  {
+    /// Default Location in TES for the track segments
+    static const std::string Default = "Rec/Rich/TrackSegments/Default";
+  }
+  
 } // end LHCb namespace
 
 #endif // RICHUTILS_RichTrackSegment_H

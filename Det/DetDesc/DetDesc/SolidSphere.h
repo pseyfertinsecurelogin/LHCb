@@ -44,9 +44,6 @@ public:
                const double       DeltaThetaAngle = 180.0 * Gaudi::Units::degree,
                const int          CoverModel      =   0            );
 
-  // destructor 
-  virtual ~SolidSphere();
-  
   /** - retrieve the specific type of the solid
    *  - implementation of ISolid abstract interface  
    *  @see ISolid 

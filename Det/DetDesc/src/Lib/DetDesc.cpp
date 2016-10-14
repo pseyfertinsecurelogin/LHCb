@@ -29,6 +29,6 @@ std::string DetDesc::print (const long value, const char*  format) {
 /**
  * Gets an instance of Services
  */
-DetDesc::Services* DetDesc::services() {
+DetDesc::ServicesPtr DetDesc::services() {
   return DetDesc::Services::services();
 }

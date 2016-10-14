@@ -547,7 +547,7 @@ private:
   //static unsigned long m_count;
 
   /// reference to services
-  DetDesc::Services* m_services = nullptr;
+  DetDesc::ServicesPtr m_services;
 
   /// Keep for now the local and all the parents ideal and delta
   /// transformation matrices.

@@ -183,13 +183,6 @@ public:
     const ISolid::Tick        tickMax       ,
     const double              threshold     ) const ;
   
-  /** Copy number
-   *  for "Regular" case it is an ordering number 
-   *  of physical volume withoin logical volume, 
-   *  but it can be redefined for certain purposes, e.g. for Rich HPDs
-   *  @return copy number 
-   */
-  //  virtual size_t    copy  () const { return m_copy ; }
   
   /** apply the  misalignemnt to the transformation matrix 
    *  @param ma misalignment matrix (assumed to be small!!!)
@@ -269,8 +262,6 @@ private:
   
 private:
   
-  // copy number 
-  //  size_t                  m_copy          ;
   // name of physical volume 
   std::string             m_name          ;
   // name of logical volume 
@@ -282,11 +273,11 @@ private:
   // pointer to inverse transformation matrix 
   mutable boost::optional<Gaudi::Transform3D> m_imatrix       ;
   // pointer to logical volume 
-  mutable ILVolume*       m_lvolume       ;
+  mutable ILVolume*       m_lvolume = nullptr      ;
   // reference/object counter 
   static unsigned long    s_volumeCounter ;
   // reference to dataSvc
-  DetDesc::Services*      m_services      ;
+  DetDesc::ServicesPtr    m_services;
 };
 
 /// ===========================================================================

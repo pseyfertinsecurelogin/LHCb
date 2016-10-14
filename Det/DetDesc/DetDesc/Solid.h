@@ -1,4 +1,3 @@
-// $Id: Solid.h,v 1.7 2007-02-26 12:07:11 cattanem Exp $
 /// ===========================================================================
 #ifndef DETDESC_SOLID_H 
 #define DETDESC_SOLID_H 1

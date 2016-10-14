@@ -14,7 +14,7 @@
 
    @author Radovan Chytracek
 */
-class Isotope : public Material
+class Isotope final : public Material
 {
   
 public:
@@ -23,15 +23,13 @@ public:
   Isotope( const std::string name    = ""              , 
            const double      a       = 0               , 
            const double      z       = 0               , 
-	   const double      i       = 0               ,
+           const double      i       = 0               ,
            const double      density = 0               ,
            const double      rl      = 0               ,  
            const double      al      = 0               ,
            const double      temp    = Gaudi::Units::STP_Temperature , 
            const double      press   = Gaudi::Units::STP_Pressure    , 
            const eState      s       = stateUndefined  );
-  // Destructor
-  virtual ~Isotope();
   
   //        Atomic mass [g/mole]
   virtual inline double   A() const;

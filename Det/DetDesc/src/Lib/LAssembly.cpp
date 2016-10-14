@@ -51,11 +51,6 @@ LAssembly::LAssembly() : LogVolBase()
   , m_coverComputed( false )
  {}
 // ============================================================================
-/*  destructor 
- */
-// ============================================================================
-LAssembly::~LAssembly() {}
-// ============================================================================
 /* class/object identifier (static method)
  *  @return unique class identifier 
  */

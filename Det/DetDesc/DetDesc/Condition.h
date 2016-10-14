@@ -1,4 +1,3 @@
-//$Id: Condition.h,v 1.11 2008-02-22 12:12:12 marcocle Exp $
 #ifndef DETDESC_CONDITION_H
 #define DETDESC_CONDITION_H 1
 
@@ -38,8 +37,6 @@ class Condition : public ParamValidDataObject {
   /// Prepare an XML string representing the condition.
   virtual std::string toXml(std::string name = "", bool header = false, int precision = 16) const;
 
-  /// Destructor 
-  virtual ~Condition();
   
  public:
 

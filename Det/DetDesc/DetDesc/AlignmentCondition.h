@@ -33,11 +33,8 @@ public:
   ///
   AlignmentCondition(const std::vector<double>& translation,
                      const std::vector<double>& rotation,
-                     const std::vector<double>& pivot =
-                     std::vector<double>(3, 0.) ) ;
+                     const std::vector<double>& pivot = std::vector<double>(3, 0.) ) ;
   
-  virtual ~AlignmentCondition( ); ///< Destructor
-
   virtual StatusCode initialize();
 
   /// Class ID of this instance
@@ -103,14 +100,11 @@ protected:
 
   virtual void updateParams(const Gaudi::Transform3D& matrixInv);
 
-  DetDesc::Services* m_services;
+  DetDesc::ServicesPtr m_services;
 
   Gaudi::Transform3D m_matrix; /// The misaligned to aligned transformation matrix.
   Gaudi::Transform3D m_matrixInv; /// The aligned to misaligned transformation matrix.
 
-  const std::string m_translationString;
-  const std::string m_rotationString;
-  const std::string m_pivotString;
 
 };
 #ifdef __INTEL_COMPILER // Re-enable ICC remark 1572

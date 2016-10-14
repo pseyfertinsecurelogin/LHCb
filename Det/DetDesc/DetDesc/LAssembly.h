@@ -39,9 +39,6 @@ public:
     const std::string& sensitivity = "" ,
     const std::string& magnetic    = "" );
   
-  /// destructor 
-  virtual ~LAssembly();
-  
 public:  
   
   /** is this volume "Assembly" of other volumes?

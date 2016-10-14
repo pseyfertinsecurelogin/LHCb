@@ -1,5 +1,3 @@
-// $Id: IPVolume_predicates.h,v 1.7 2007-01-17 12:10:12 cattanem Exp $ 
-// ============================================================================
 #ifndef     DETDESC_IPVOLUME_PREDICATES_H
 #define     DETDESC_IPVOLUME_PREDICATES_H
 // STD & STL 
@@ -27,7 +25,7 @@
  *  IPVolume_isInside(Point) );
  *  @author Vanya Belyaev Ivan.Belyaev@itep.ru 
  */
-class IPVolume_isInside
+class IPVolume_isInside final
 {
 public:
   /** explict constructor
@@ -82,9 +80,8 @@ private:
  * std::accumulate(...)
  *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
  */
-class IPVolume_accumulateMatrix
+struct IPVolume_accumulateMatrix
 {
-public: 
   //
   inline Gaudi::Transform3D& operator() 
     ( Gaudi::Transform3D&  mtrx , const  IPVolume* pv   ) 
@@ -114,7 +111,7 @@ public:
    *  @return pointer to physical volume 
    */
   inline const IPVolume* operator() 
-    ( const ILVolume::ReplicaType& replica ) const  
+    ( const ILVolume::ReplicaType& replica )
   {
     if( !m_lv ) {            return nullptr ; }  
     const IPVolume* pv = (*m_lv)[replica]; 
@@ -124,7 +121,7 @@ public:
   }
 private:
   
-  mutable const ILVolume* m_lv;
+  const ILVolume* m_lv;
   
 }; 
 

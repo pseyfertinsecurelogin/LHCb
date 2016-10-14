@@ -1,4 +1,3 @@
-// $Id: SolidIntersection.cpp,v 1.14 2009-04-17 08:54:24 cattanem Exp $
 // ===========================================================================
 #include <iostream> 
 #include <string> 
@@ -44,11 +43,6 @@ SolidIntersection::SolidIntersection( const std::string& name )
 // ============================================================================
 
 // ============================================================================
-/// destructor 
-// ============================================================================
-SolidIntersection::~SolidIntersection(){}
-
-// ============================================================================
 bool SolidIntersection::isInside( const Gaudi::XYZPoint   & point ) const 
 {
   return isInsideImpl(point);
@@ -69,12 +63,9 @@ bool SolidIntersection::isInsideImpl( const aPoint   & point ) const
 { 
   ///  is point inside the "main" volume?  
   if ( !first()->isInside( point ) ) { return false; }
-  /// find the first daughter in which the given point is NOT placed   
-  SolidBoolean::SolidChildrens::const_iterator ci = 
-    std::find_if( childBegin() , childEnd() , 
-                  std::not1(Solid::IsInside<aPoint>( point ) ) );
-  /// 
-  return ( childEnd() == ci ? true : false );   
+  /// return the 'and' of all children
+  return std::all_of( childBegin() , childEnd() , 
+                      Solid::IsInside<aPoint>( point ) );
 }
 
 // ============================================================================
