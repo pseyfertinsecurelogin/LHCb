@@ -109,7 +109,7 @@ namespace LHCb
 #ifndef GOD_NOALLOC
     template < typename TYPE,
                typename USERALLOC = boost::default_user_allocator_new_delete,
-               typename MUTEX     = boost::details::pool::null_mutex,
+               typename MUTEX     = boost::details::pool::default_mutex,
                unsigned NEXTSIZE  = 32 >
     using VecPoolAlloc = boost::pool_allocator< TYPE, USERALLOC, MUTEX, NEXTSIZE >;
 #else

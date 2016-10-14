@@ -827,7 +827,7 @@ namespace LHCb
     {
       using pool = boost::singleton_pool< RichSmartID, sizeof(RichSmartID),
         boost::default_user_allocator_new_delete,
-        boost::details::pool::null_mutex, 128 >;
+        boost::details::pool::default_mutex, 128 >;
       return ( sizeof(RichSmartID) == size ? pool::malloc() : ::operator new(size) );
     }
 
@@ -842,7 +842,7 @@ namespace LHCb
     {
       using pool = boost::singleton_pool< RichSmartID, sizeof(RichSmartID),
         boost::default_user_allocator_new_delete,
-        boost::details::pool::null_mutex, 128 >;
+        boost::details::pool::default_mutex, 128 >;
       pool::is_from(p) ? pool::free(p) : ::operator delete(p);
     }
     
