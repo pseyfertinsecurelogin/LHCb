@@ -145,6 +145,20 @@ namespace Rich
                            const std::vector<std::string> & options = std::vector<std::string>(),
                            const bool overwrite = false ) const;
 
+      /// Compare sizes of two containers
+      template < typename A, typename B >
+      inline bool check_sizes( const A& a, const B&b ) const noexcept
+      { 
+        return a.size() == b.size(); 
+      }
+      
+      /// Compare sizes of 3 or more containers
+      template < typename A, typename B, typename... C >
+      inline bool check_sizes( const A& a, const B& b, const C& ... c ) const noexcept
+      {
+        return check_sizes(a,b) && check_sizes(b,c...);
+      }
+      
     private:
 
       /// Common Constructor initisalisations
