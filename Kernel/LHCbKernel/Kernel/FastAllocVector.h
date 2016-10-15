@@ -63,7 +63,8 @@ namespace LHCb
      *  @param init Initialisation value
      */
     constexpr FastAllocVector( const typename BaseClass::size_type size,
-                               const TYPE & init ) : BaseClass(size,init) { }
+                               const TYPE & init )
+      : BaseClass(size,init) { }
 
   public:
 

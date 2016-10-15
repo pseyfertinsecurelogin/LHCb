@@ -55,14 +55,14 @@ namespace LHCb
     /** Constructor with initial size
      *  @param size Initialisation size for list
      */
-    constexpr FastAllocList( const typename std::list<TYPE,ALLOC>::size_type size )
+    constexpr FastAllocList( const typename BaseClass::size_type size )
       : BaseClass(size) { }
 
     /** Constructor with initial size and initialisation value
      *  @param size Initialisation size for list
      *  @param init Initialisation value
      */
-    constexpr FastAllocList( const typename std::list<TYPE,ALLOC>::size_type size,
+    constexpr FastAllocList( const typename BaseClass::size_type size,
                              const TYPE & init )
       : BaseClass(size,init) { }
 
