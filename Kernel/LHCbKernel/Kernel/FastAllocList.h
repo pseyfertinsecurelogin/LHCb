@@ -42,38 +42,29 @@ namespace LHCb
   class FastAllocList : public std::list< TYPE, ALLOC >
   {
 
+  private:
+
+    /// Shortcut to the base class type
+    typedef std::list< TYPE, ALLOC > BaseClass;
+
   public:
 
     /// Default constructor
-    FastAllocList( ) { }
-
-    /// Default destructor
-    ~FastAllocList() = default;
-
-    /// Default Copy Constructor
-    FastAllocList( const FastAllocList& ) = default;
-
-    /// Default Copy operator
-    FastAllocList& operator=( const FastAllocList& ) = default;
-
-    /// Default Move Constructor
-    FastAllocList( FastAllocList&& ) = default;
-
-    /// Default Move operator
-    FastAllocList& operator=( FastAllocList&& ) = default;
+    constexpr FastAllocList( ) { }
 
     /** Constructor with initial size
      *  @param size Initialisation size for list
      */
-    FastAllocList( const typename std::list<TYPE,ALLOC>::size_type size )
-      : std::list<TYPE,ALLOC>(size) { }
+    constexpr FastAllocList( const typename std::list<TYPE,ALLOC>::size_type size )
+      : BaseClass(size) { }
 
     /** Constructor with initial size and initialisation value
      *  @param size Initialisation size for list
      *  @param init Initialisation value
      */
-    FastAllocList( const typename std::list<TYPE,ALLOC>::size_type size,
-                   const TYPE & init ) : std::list<TYPE,ALLOC>(size,init) { }
+    constexpr FastAllocList( const typename std::list<TYPE,ALLOC>::size_type size,
+                             const TYPE & init )
+      : BaseClass(size,init) { }
 
   public:
 
@@ -158,22 +149,22 @@ namespace LHCb
              >
   using PoolAllocList = FastAllocList< TYPE, ALLOC >;
 
-//--------------------------------------------------------------------------------
-/** @typedef List Kernel/FastAllocList.h
- *
- *  Standard STL list, with default allocator
- *
- *  @author Chris Jones   Christopher.Rob.Jones@cern.ch
- *  @date   23/09/2015
- */
-//--------------------------------------------------------------------------------
-
-template < typename TYPE,
-           typename ALLOC = std::allocator< TYPE > >
-using List = FastAllocList< TYPE, ALLOC >;
-
-}
-
+    //--------------------------------------------------------------------------------
+    /** @typedef List Kernel/FastAllocList.h
+     *
+     *  Standard STL list, with default allocator
+     *
+     *  @author Chris Jones   Christopher.Rob.Jones@cern.ch
+     *  @date   23/09/2015
+     */
+    //--------------------------------------------------------------------------------
+    
+    template < typename TYPE,
+               typename ALLOC = std::allocator< TYPE > >
+    using List = FastAllocList< TYPE, ALLOC >;
+    
+  }
+  
 }
 
 #endif // KERNEL_FastAllocList_H

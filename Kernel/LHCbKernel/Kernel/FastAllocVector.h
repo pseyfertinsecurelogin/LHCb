@@ -52,21 +52,6 @@ namespace LHCb
     /// Default constructor
     constexpr FastAllocVector( ) { }
 
-    /// Default destructor
-    ~FastAllocVector() = default;
-
-    /// Default Copy Constructor
-    FastAllocVector( const FastAllocVector& ) = default;
-
-    /// Default Copy operator
-    FastAllocVector& operator=( const FastAllocVector& ) = default;
-
-    /// Default Move Constructor
-    FastAllocVector( FastAllocVector&& ) = default;
-
-    /// Default Move operator
-    FastAllocVector& operator=( FastAllocVector&& ) = default;
-
     /** Constructor with initial size
      *  @param size Initialisation size for vector 
      */
