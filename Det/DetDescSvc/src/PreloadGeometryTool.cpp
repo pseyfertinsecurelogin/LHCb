@@ -34,7 +34,7 @@ PreloadGeometryTool::PreloadGeometryTool( const std::string& type,
 void PreloadGeometryTool::execute() 
 {
   std::unique_ptr<DataStoreLoadAgent> loadAgent ( new DataStoreLoadAgent() );
-  IDataManagerSvc *dataMgr = svc<IDataManagerSvc>("DetectorDataSvc", true);
+  auto dataMgr = svc<IDataManagerSvc>("DetectorDataSvc", true);
   info() << "Preloading detector geometry..." << endmsg;
   const auto sc = dataMgr->traverseTree(loadAgent.get());
   if ( sc ) 
