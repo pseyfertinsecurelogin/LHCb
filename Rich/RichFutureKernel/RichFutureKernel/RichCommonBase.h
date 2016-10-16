@@ -130,7 +130,6 @@ namespace Rich
       /// Pointer to Job Options Service
       inline IJobOptionsSvc * joSvc() const noexcept { return m_jos; }
 
-
       /** Propagate a list oj job options from one object to another
        *  @param from_name The name of the object to get the options from
        *  @param to_name   The name of the oject to copy the options to
@@ -144,20 +143,6 @@ namespace Rich
                            const std::string & to_name,
                            const std::vector<std::string> & options = std::vector<std::string>(),
                            const bool overwrite = false ) const;
-
-      /// Compare sizes of two containers
-      template < typename A, typename B >
-      inline bool check_sizes( const A& a, const B&b ) const noexcept
-      { 
-        return a.size() == b.size(); 
-      }
-      
-      /// Compare sizes of 3 or more containers
-      template < typename A, typename B, typename... C >
-      inline bool check_sizes( const A& a, const B& b, const C& ... c ) const noexcept
-      {
-        return check_sizes(a,b) && check_sizes(b,c...);
-      }
       
     private:
 
