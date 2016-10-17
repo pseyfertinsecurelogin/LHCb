@@ -107,6 +107,7 @@ StatusCode LbAppInit::initialize() {
   if( m_preload ) {
     IGenericTool* preloadTool = tool<IGenericTool>( "PreloadGeometryTool" );
     preloadTool->execute();
+    release(preloadTool);
   }
 
   m_condDBInfo = svc<ICondDBInfo>("CondDBCnvSvc", true );
