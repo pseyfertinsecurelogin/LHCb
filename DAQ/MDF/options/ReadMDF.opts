@@ -1,4 +1,0 @@
-#include "$MDFROOT/options/MDFdata.opts"
-#include "$MDFROOT/options/MDFCheck.opts"
-ApplicationMgr.EvtMax                = 100000;
-ApplicationMgr.HistogramPersistency  = "NONE";
