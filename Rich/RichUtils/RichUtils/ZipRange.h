@@ -29,14 +29,28 @@ namespace Rich
     /// Implementation details
     namespace
     {
-      /// Compare sizes of a list of objects (assume container like so implement size() )
-      template < typename... C >
-      inline bool check_sizes( const C& ... c ) noexcept
-      { 
-        const auto sizes = { c.size() ... };
-        return ( sizes.size() < 2 || 
-                 std::mismatch( std::next( std::begin(sizes) ), std::end(sizes),
-                                std::begin(sizes) ).first == std::end(sizes) );
+      /// Compare sizes of a list of containers
+      //template < typename... C >
+      //inline bool check_sizes( const C& ... c ) noexcept
+      //{ 
+      //  const auto sizes = { c.size() ... };
+      // return ( sizes.size() < 2 || 
+      //           std::mismatch( std::next( std::begin(sizes) ), std::end(sizes),
+      //                          std::begin(sizes) ).first == std::end(sizes) );
+      //}
+
+      /// Compare sizes of two containers
+      template < typename A, typename B >
+      inline bool check_sizes( const A& a, const B& b ) noexcept
+      {
+        return a.size() == b.size();
+      }
+      
+      /// Compare sizes of 3 or more containers
+      template < typename A, typename B, typename... C >
+      inline bool check_sizes( const A& a, const B& b, const C& ... c ) noexcept
+      {
+        return ( check_sizes(a,b) && check_sizes(b,c...) );
       }
     }
 
