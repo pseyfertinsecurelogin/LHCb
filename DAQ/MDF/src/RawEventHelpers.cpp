@@ -7,7 +7,6 @@
 //  ====================================================================
 #include "MDF/RawEventHelpers.h"
 #include "MDF/RawEventPrintout.h"
-#include "MDF/RawEventDescriptor.h"
 #include "MDF/OnlineRunInfo.h"
 #include "MDF/MDFHeader.h"
 #include "Event/RawEvent.h"
@@ -470,7 +469,7 @@ Error:  // Anyhow only end up here if no exception was thrown...
   return false;
 }
 
-/// Check consistency of MEP multi event fragment
+/// Check consistency of the MDF event fragment
 bool LHCb::checkMDFRecord(const MDFHeader* h, int opt_len, bool exc,bool prt)    {
   if ( h )  {
     int  compress;

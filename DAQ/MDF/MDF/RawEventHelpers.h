@@ -24,11 +24,7 @@ namespace LHCb  {
   // Forward declarations
   class RawBank;
   class RawEvent;
-  class RawEventDescriptor;
-  class MEPMultiFragment;
-  class MEPFragment;
   class MDFHeader;
-  class MEPEvent;
   typedef std::pair<char*,int> MDFDescriptor;
 
   unsigned int hash32Checksum(const void* ptr, size_t len); 
