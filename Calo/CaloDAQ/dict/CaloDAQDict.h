@@ -1,4 +1,3 @@
-// $Id: CaloDAQDict.h,v 1.1 2007-12-06 12:43:42 cattanem Exp $
 #ifndef DICT_CALODAQDICT_H 
 #define DICT_CALODAQDICT_H 1
 

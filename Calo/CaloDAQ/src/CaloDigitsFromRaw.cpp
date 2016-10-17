@@ -204,17 +204,15 @@ void CaloDigitsFromRaw::convertSpd ( double energyScale ) {
 //=========================================================================
 void CaloDigitsFromRaw::convertCaloEnergies ( ) {
 
-
   if(m_digitOnTES){
-
     LHCb::CaloDigits* digits = new LHCb::CaloDigits();
     put( digits, m_outputDigits+ m_extension );
     for ( const auto& itD : m_energyTool->digits( ) ) {
-      try{
+      try {
         std::unique_ptr<LHCb::CaloDigit> dig{ itD.clone() };
         digits->insert( dig.get() );
         dig.release();
-      }catch(GaudiException &exc){
+      } catch(GaudiException &exc) {
         counter("Duplicate CaloDigit") += 1;
         std::ostringstream os;
         os << "Duplicate digit for channel " << itD.cellID();

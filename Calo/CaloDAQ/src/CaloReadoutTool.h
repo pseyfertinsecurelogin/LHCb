@@ -24,9 +24,7 @@
  *  @date   2007-02-01
  */
 class CaloReadoutTool 
-  : public Decoder::ToolBase 
-    , virtual public ICaloReadoutTool 
-    , virtual public IIncidentListener{
+  : public extends<Decoder::ToolBase, ICaloReadoutTool, IIncidentListener> {
 public: 
 
   /// Standard constructor
@@ -36,7 +34,6 @@ public:
 
   virtual StatusCode initialize();
   virtual StatusCode finalize();
-  virtual std::string _rootInTES(){ return rootInTES(); };
   virtual StatusCode  _setProperty(const std::string& p,const std::string& v){return  setProperty(p,v);};
   
   // Useful methods  to set/get m_banks externally 
@@ -48,10 +45,10 @@ public:
     m_ok = getCaloBanksFromRaw();    
     return m_ok;
   };
-  virtual void setBanks(const std::vector<LHCb::RawBank*>* bank ){
+  virtual void setBanks(const std::vector<LHCb::RawBank*>& bank ){
     m_getRaw = false;
     clear();
-    m_banks = bank;
+    m_banks = &bank;
     m_ok = true;
   };
   //actual implementation MUST BE in the parent tool
@@ -79,29 +76,29 @@ public:
 protected:  
   
   bool getCaloBanksFromRaw();
-  int findCardbyCode(std::vector<int> feCards, int code ) const;
-  bool checkCards(int nCards, std::vector<int> feCards ) const;
+  int findCardbyCode(const std::vector<int>& feCards, int code ) const;
+  bool checkCards(int nCards, const std::vector<int>& feCards ) const;
   void checkCtrl(int word, int sourceID);
   bool checkSrc(int source);
 
   std::string  m_detectorName;
-  bool m_packedIsDefault; 
-  const std::vector<LHCb::RawBank*>* m_banks;
-  DeCalorimeter*   m_calo;
+  bool m_packedIsDefault = false; 
+  const std::vector<LHCb::RawBank*>* m_banks = nullptr;
+  DeCalorimeter*   m_calo = nullptr;
   LHCb::RawBank::BankType m_packedType;
   LHCb::RawBank::BankType m_shortType;
   LHCb::RawBank::BankType m_errorType;
-  bool m_getRaw;
+  bool m_getRaw = true;
   
   
-  bool m_extraHeader;
-  bool m_packed;
-  bool m_cleanCorrupted;
+  bool m_extraHeader = false;
+  bool m_packed = false;
+  bool m_cleanCorrupted = false;
   LHCb::RawBankReadoutStatus m_status;
   std::vector<int> m_readSources;
-  bool m_ok;
+  bool m_ok = false;
 private:
-  bool m_first;
-  bool m_stat;
+  bool m_first = true;
+  bool m_stat = false;
 };
 #endif // CALODAQ_CALOREADOUTTOOL_H
