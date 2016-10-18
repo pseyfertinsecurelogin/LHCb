@@ -1,4 +1,3 @@
-// $Id: Param.h,v 1.9 2008-02-22 12:12:12 marcocle Exp $
 #ifndef DETDESC_PARAM_H 
 #define DETDESC_PARAM_H 1
 
@@ -6,6 +5,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <memory>
 
 #include <sstream>
 
@@ -14,7 +14,7 @@
 
 /** @class Param Param.h DetDesc/Param.h
  *  
- *  Class implementing a polimorfic parameter using templates
+ *  Class implementing a polymorfic parameter using templates
  *
  *  @author Marco CLEMENCIC
  *  @date   2005-02-22
@@ -30,8 +30,6 @@ public:
   /// Constructor by value
   Param(value_type val): m_val(std::move(val)) {}
 
-  virtual ~Param() = default; ///< Destructor
-
   /// Setter (with automatic conversion)
   template <class T1>
   inline void set(T1 val) { m_val = std::move(val); }
@@ -43,26 +41,27 @@ public:
   inline const value_type &get() const { return m_val; }
 
   /// String representation for printout
-  inline virtual std::string toStr() const;
+  inline std::string toStr() const override;
   
   /// String representation for printout
-  virtual std::string toXMLStr(const std::string& name,
-                               const std::string& comment = "",
-                               int precision = 16) const;
+  std::string toXMLStr(const std::string& name,
+                       const std::string& comment = "",
+                       int precision = 16) const override;
   
   /// TypeId of the datum
-  virtual const std::type_info &type() const { return typeid(T); }
+  const std::type_info &type() const override { return typeid(T); }
 
   /// Create a copy of this object on the heap (generic copy)
-  virtual BasicParam * new_copy() const {
-    return new Param<T>(m_val);
+  std::unique_ptr<BasicParam> new_copy() const override {
+    // return std::make_unique<Param<T>>(m_val);
+    return std::unique_ptr<BasicParam>( new Param<T>(m_val) );
   }
 
 private:
   /// Void pointer to the datum (used by BasicParam)
-  virtual void *_get_ptr() { return &m_val;}
+  void *_get_ptr() override { return &m_val;}
   /// Void pointer to the datum (used by BasicParam), const version
-  virtual const void *_get_ptr() const { return &m_val;}
+  const void *_get_ptr() const override { return &m_val;}
   /// Where the datum is stored
   value_type m_val;
 

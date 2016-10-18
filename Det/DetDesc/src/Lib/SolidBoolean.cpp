@@ -56,8 +56,7 @@ SolidBoolean::SolidBoolean( const std::string& name  )
 SolidBoolean::~SolidBoolean()
 {
   /// delete all daughters
-  for(auto it = childBegin(); childEnd() != it ; ++it )
-  { delete *it ; }
+  for(auto& c : m_sb_childrens) delete c;
 }
 
 // ============================================================================

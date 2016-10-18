@@ -1,5 +1,3 @@
-// $Id: SolidBox.h,v 1.18 2007-09-20 15:17:05 wouter Exp $
-// ===========================================================================
 #ifndef     DETDESC_SOLIDBOX_H
 #define     DETDESC_SOLIDBOX_H
 /// STD and STL 
@@ -43,7 +41,7 @@ public:
   
   /** destructor  
    */
-  virtual ~SolidBox();  
+  ~SolidBox() override;  
   
   /** - retrieve the box type 
    *  - implementation of ISolid abstract interface 
@@ -60,16 +58,16 @@ public:
    *  @param point point (in local reference system of the solid)
    *  @return true if the point is inside the solid
    */
-  virtual bool isInside  ( const Gaudi::XYZPoint& point ) const;
-  virtual bool isInside ( const Gaudi::Polar3DPoint& point ) const ;
-  virtual bool isInside ( const Gaudi::RhoZPhiPoint& point ) const ;
+  bool isInside  ( const Gaudi::XYZPoint& point ) const override;
+  bool isInside ( const Gaudi::Polar3DPoint& point ) const  override;
+  bool isInside ( const Gaudi::RhoZPhiPoint& point ) const  override;
   /** - retrieve the pointer to "simplified" solid - "cover"
    *  - implementation of ISolid abstract interface 
    *  The Box is the most simple shape
    *  @see ISolid 
    *  @return pointer to "simplified" solid - "cover"
    */
-  virtual const ISolid* cover () const ;
+  const ISolid* cover () const override;
   
   /** - retrieve the pointer to "the most simplified cover" 
    *  - implementation  of ISolid abstract interface 
@@ -79,7 +77,7 @@ public:
    *  @see SolidBase 
    *  @return pointer to the most simplified cover 
    */
-  virtual const ISolid* coverTop () const ;
+  const ISolid* coverTop () const override;
   
   /** - printout to STD/STL stream    
    *  - implementation  of ISolid abstract interface 
@@ -89,7 +87,7 @@ public:
    *  @param os STD/STL stream
    *  @return reference to the stream 
    */
-  virtual std::ostream& printOut ( std::ostream& os ) const;
+  std::ostream& printOut ( std::ostream& os ) const override;
   
   /** - printout to Gaudi MsgStream stream    
    *  - implementation  of ISolid abstract interface 
@@ -99,7 +97,7 @@ public:
    *  @param os Gaudi MsgStream  stream
    *  @return reference to the stream 
    */
-  virtual MsgStream&    printOut ( MsgStream&    os ) const;
+  MsgStream&    printOut ( MsgStream&    os ) const override;
   
   /** - calculate the intersection points("ticks") of the solid objects 
    *    with given line. 
@@ -119,15 +117,15 @@ public:
    *  @param ticks output container of "Ticks"
    *  @return the number of intersection points
    */
-  virtual unsigned int intersectionTicks( const Gaudi::XYZPoint&  Point  ,
-                                          const Gaudi::XYZVector& Vector ,
-                                          ISolid::Ticks   &  ticks  ) const ; 
-  virtual unsigned int intersectionTicks( const Gaudi::Polar3DPoint  & Point,
-                                          const Gaudi::Polar3DVector & Vector,
-                                          ISolid::Ticks     & ticks) const ; 
-  virtual unsigned int intersectionTicks( const Gaudi::RhoZPhiPoint  & Point,
-                                          const Gaudi::RhoZPhiVector & Vector,
-                                          ISolid::Ticks     & ticks) const ;
+  unsigned int intersectionTicks( const Gaudi::XYZPoint&  Point  ,
+                                  const Gaudi::XYZVector& Vector ,
+                                  ISolid::Ticks   &  ticks  ) const override; 
+  unsigned int intersectionTicks( const Gaudi::Polar3DPoint  & Point,
+                                  const Gaudi::Polar3DVector & Vector,
+                                  ISolid::Ticks     & ticks) const override; 
+  unsigned int intersectionTicks( const Gaudi::RhoZPhiPoint  & Point,
+                                  const Gaudi::RhoZPhiVector & Vector,
+                                  ISolid::Ticks     & ticks) const override;
   /** calculate the intersection points("ticks") of the solid objects 
    *  with given line. 
    *  - Line is parametrized with parameter \a t : 
@@ -149,23 +147,23 @@ public:
    *  @param ticks output container of "Ticks"
    *  @return the number of intersection points
    */
-  virtual unsigned int intersectionTicks( const Gaudi::XYZPoint & Point,
-                                          const Gaudi::XYZVector& Vector,
-                                          const ISolid::Tick&     tickMin,
-                                          const ISolid::Tick&     tickMax ,
-                                          ISolid::Ticks&  ticks   ) const ;
+  unsigned int intersectionTicks( const Gaudi::XYZPoint & Point,
+                                  const Gaudi::XYZVector& Vector,
+                                  const ISolid::Tick&     tickMin,
+                                  const ISolid::Tick&     tickMax ,
+                                  ISolid::Ticks&  ticks   ) const override;
 
-  virtual unsigned int intersectionTicks( const Gaudi::Polar3DPoint& Point,
-                                          const Gaudi::Polar3DVector & Vector,
-                                          const ISolid::Tick& tickMin,
-                                          const ISolid::Tick& tickMax,
-                                          ISolid::Ticks& ticks   ) const ; 
+  unsigned int intersectionTicks( const Gaudi::Polar3DPoint& Point,
+                                  const Gaudi::Polar3DVector & Vector,
+                                  const ISolid::Tick& tickMin,
+                                  const ISolid::Tick& tickMax,
+                                  ISolid::Ticks& ticks   ) const override; 
 
-  virtual unsigned int intersectionTicks( const Gaudi::RhoZPhiPoint& Point,
-                                          const Gaudi::RhoZPhiVector & Vector,
-                                          const ISolid::Tick& tickMin,
-                                          const ISolid::Tick& tickMax,
-                                          ISolid::Ticks& ticks   ) const ; 
+  unsigned int intersectionTicks( const Gaudi::RhoZPhiPoint& Point,
+                                  const Gaudi::RhoZPhiVector & Vector,
+                                  const ISolid::Tick& tickMin,
+                                  const ISolid::Tick& tickMax,
+                                  ISolid::Ticks& ticks   ) const override; 
 
 
   /**  return the full x-size of the box 
