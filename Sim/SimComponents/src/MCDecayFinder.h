@@ -1,4 +1,3 @@
-// $Id: MCDecayFinder.h,v 1.10 2009-03-05 13:55:07 rlambert Exp $
 #ifndef TOOLS_MCDECAYFINDER_H 
 #define TOOLS_MCDECAYFINDER_H 1
 
@@ -131,15 +130,15 @@ public:
   StatusCode initialize( void );
 
   /// Get/Set the decay string to find
-  std::string decay( void ) { return m_source; }
-  StatusCode setDecay( std::string decay );
+  std::string decay( void ) const override { return m_source; }
+  StatusCode setDecay( std::string decay ) override;
 
-  std::string revert( void );
+  std::string revert( void ) const;
 
   /// Does the described decay exists in the event?
-  bool hasDecay( const LHCb::MCParticle::ConstVector &event );
-  bool hasDecay( const LHCb::MCParticle::Container &event );
-  bool hasDecay( void );
+  bool hasDecay( const LHCb::MCParticle::ConstVector &event ) const override;
+  bool hasDecay( const LHCb::MCParticle::Container &event ) const override;
+  bool hasDecay( void ) const override;
 
   /** Try to find the (next) match of the decay in the event.
    *
@@ -151,10 +150,10 @@ public:
    *  The particle pointed to by previous_result must be contained in event.
    */
   bool findDecay( const LHCb::MCParticle::ConstVector& event,
-                  const LHCb::MCParticle*& previous_result );
+                  const LHCb::MCParticle*& previous_result ) const override;
   bool findDecay( const LHCb::MCParticle::Container& event,
-                  const LHCb::MCParticle*& previous_result ) ;
-  bool findDecay( const LHCb::MCParticle*&previous_result );
+                  const LHCb::MCParticle*& previous_result )  const override;
+  bool findDecay( const LHCb::MCParticle*&previous_result ) const override;
 
   /** Return the tree pointed at by head as a flat list.
    *
@@ -166,7 +165,7 @@ public:
    */
   void descendants( const LHCb::MCParticle *head, 
                     LHCb::MCParticle::ConstVector& result,
-                    bool leaf=false );
+                    bool leaf=false ) const override;
 
   /** Get a list of all the requested members that are present in a decay.
    *
@@ -177,13 +176,13 @@ public:
    *  any particle in the decay.
    */
   void decayMembers( const LHCb::MCParticle *head, 
-                     LHCb::MCParticle::ConstVector& members );
+                     LHCb::MCParticle::ConstVector& members ) const override;
 
   /// Get a vector of pairs <mother, products> for all sub-trees.
   void decaySubTrees( const LHCb::MCParticle *head,
                       std::vector<std::pair<const LHCb::MCParticle*,
                                             LHCb::MCParticle::ConstVector  >
-                                 > & subtrees );
+                                 > & subtrees ) const override;
 
   /// Enumaration types used internally.
   enum Quarks { empty, up, down, charm, strange, top, bottom, antiup,
@@ -248,7 +247,7 @@ private:
   };
 
   /// The opaque representation of the decay chain.
-  class Descriptor
+  class Descriptor final
   {
   public:
     Descriptor( LHCb::IParticlePropertySvc *ppSvc, double resonnanceThreshold );
@@ -271,8 +270,7 @@ private:
       
       if( mother == NULL ) { // No mother == pp collision
         std::list<const LHCb::MCParticle*> prims;
-        iter i;
-        for( i=(previous_result ? start : first); i != last; i++ ) {
+        for( auto i=(previous_result ? start : first); i != last; i++ ) {
           const LHCb::MCVertex *origin = (*i)->originVertex();
           if( origin && origin->mother() )
             continue;
@@ -289,8 +287,7 @@ private:
         return false;
       }
       
-      iter part_i;
-      part_i = (previous_result ? start : first);
+      auto part_i = (previous_result ? start : first);
       while( (part_i != last) && (test(*part_i) == false) )
         part_i++;
       

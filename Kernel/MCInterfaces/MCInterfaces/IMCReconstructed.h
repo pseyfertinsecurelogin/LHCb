@@ -1,4 +1,3 @@
-// $Id: IMCReconstructed.h,v 1.1 2008-03-28 12:21:51 cattanem Exp $
 #ifndef MCINTERFACES_IMCRECONSTRUCTED_H 
 #define MCINTERFACES_IMCRECONSTRUCTED_H 1
 
@@ -15,7 +14,6 @@ namespace LHCb
   class MCParticle;
 }
 
-static const InterfaceID IID_IMCReconstructed ( "IMCReconstructed", 1, 0 );
 
 /** @class IMCReconstructed IMCReconstructed.h MCInterfaces/IMCReconstructed.h
  *   
@@ -23,8 +21,7 @@ static const InterfaceID IID_IMCReconstructed ( "IMCReconstructed", 1, 0 );
  *  @author Christian Jacoby
  *  @date   2004-03-08
  */
-class IMCReconstructed : virtual public IAlgTool {
-public: 
+struct IMCReconstructed : extend_interfaces<IAlgTool> {
 
   /// Reconstructed categories
   enum RecCategory
@@ -46,16 +43,11 @@ public:
   /// Convert type enum to string
   static std::string text( const RecCategory cat );
 
-
   // Return the interface ID
-  static const InterfaceID& interfaceID() { return IID_IMCReconstructed; }
+  DeclareInterfaceID(IMCReconstructed, 2, 0 );
 
   /// check if MCParticle is reconstructed
   virtual IMCReconstructed::RecCategory reconstructed( const LHCb::MCParticle * ) = 0;
-
-protected:
-
-private:
 
 };
 

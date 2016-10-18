@@ -178,14 +178,10 @@ void DumpHepMC::orderedVertexPrint( HepMC::GenVertex * theVertex ,
     ostr << std::endl;
   }
   // print out all the incoming, then outgoing particles
-  std::list< const HepMC::GenParticle * > lP ;
-  for ( HepMC::GenVertex::particles_in_const_iterator part1 = 
-          theVertex -> particles_in_const_begin();
-        part1 != theVertex -> particles_in_const_end(); part1++ ) 
-    lP.push_back( *part1 ) ;
-  lP.sort( HepMCUtils::compareHepMCParticles ) ;
-  std::list< const HepMC::GenParticle * >::iterator it ;
-  for ( it = lP.begin() ; it != lP.end() ; ++it ) {
+  std::vector< const HepMC::GenParticle * > lP{ theVertex -> particles_in_const_begin(),
+                                                theVertex -> particles_in_const_end() };
+  std::sort(lP.begin(), lP.end(),  HepMCUtils::compareHepMCParticles ) ;
+  for (auto it = lP.begin() ; it != lP.end() ; ++it ) {
     if ( it == lP.begin() ) {
       char label[5];
       sprintf( label," I:%2d", theVertex -> particles_in_size() );
@@ -195,15 +191,11 @@ void DumpHepMC::orderedVertexPrint( HepMC::GenVertex * theVertex ,
     ostr << **it << std::endl;
   }
   
-  std::list< const HepMC::GenParticle * > lP2 ;
-  for ( HepMC::GenVertex::particles_out_const_iterator 
-          part2 = theVertex -> particles_out_const_begin();
-        part2 != theVertex -> particles_out_const_end(); part2++ ) 
-    lP2.push_back( *part2 ) ;
-  lP2.sort( HepMCUtils::compareHepMCParticles ) ;
-  std::list< const HepMC::GenParticle * >::iterator it2 ;
+  std::vector< const HepMC::GenParticle * > lP2{ theVertex -> particles_out_const_begin(),
+                                                 theVertex -> particles_out_const_end() };
+  std::sort(lP2.begin(), lP2.end(), HepMCUtils::compareHepMCParticles ) ;
   
-  for ( it2 = lP2.begin() ; it2 != lP2.end() ; ++it2 ) {
+  for ( auto it2 = lP2.begin() ; it2 != lP2.end() ; ++it2 ) {
     if ( it2 == lP2.begin() ) { 
       char label[5];
       sprintf( label," O:%2d", theVertex -> particles_out_size() );

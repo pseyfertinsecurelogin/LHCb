@@ -1,4 +1,3 @@
-// $Id: PrintMCDecayTreeTool.h,v 1.3 2009-01-08 09:44:37 cattanem Exp $
 #ifndef PRINTMCDECAYTREETOOL_H 
 #define PRINTMCDECAYTREETOOL_H 1
 
@@ -26,8 +25,7 @@ class MsgStream;
  *  @author Olivier Dormond
  *  @date   29/03/2001
  */
-class PrintMCDecayTreeTool : public GaudiTool,
-                           virtual public IPrintMCDecayTreeTool {
+class PrintMCDecayTreeTool : public extends<GaudiTool, IPrintMCDecayTreeTool> {
 public:  
   /// Standard Constructor
   PrintMCDecayTreeTool( const std::string& type,
@@ -39,37 +37,37 @@ public:
 
   StatusCode initialize( void );
 
-  virtual void printTree( const LHCb::MCParticle* mother, 
-                          int maxDepth = -1);
+  void printTree( const LHCb::MCParticle* mother, 
+                  int maxDepth = -1) const override;
 
 
   /// Print all the MC particles leading to this one.
-  virtual void printAncestor( const LHCb::MCParticle *child );
+  void printAncestor( const LHCb::MCParticle *child ) const override;
 
-  virtual void printAsTree( const LHCb::MCParticle::ConstVector& event );
+  void printAsTree( const LHCb::MCParticle::ConstVector& event ) const override;
 
-  virtual void printAsTree( const LHCb::MCParticles &event );
+  void printAsTree( const LHCb::MCParticles &event ) const override;
 
-  virtual void printAsList( const LHCb::MCParticle::ConstVector &event );
+  void printAsList( const LHCb::MCParticle::ConstVector &event ) const override;
 
-  virtual void printAsList( const LHCb::MCParticles &event );
+  void printAsList( const LHCb::MCParticles &event ) const override;
 
 private:
 
   enum InfoKeys { Name, PID, E, M, P, Pt, Px, Py, Pz, Vx, Vy, Vz,
                   theta, phi, eta, flags, fromSignal, idcl, };
 
-  void printHeader( MsgStream &log );
+  MsgStream& printHeader( MsgStream &log ) const;
 
-  void printInfo( const std::string& prefix, 
-                  const LHCb::MCParticle* part,
-                  MsgStream& log );
-  void printDecayTree( const LHCb::MCParticle *mother,
-                       const std::string &prefix, 
-                       int depth, 
-                       MsgStream &log );
+  MsgStream& printInfo( const std::string& prefix, 
+                        const LHCb::MCParticle* part,
+                        MsgStream& log ) const;
+  MsgStream& printDecayTree( const LHCb::MCParticle *mother,
+                             const std::string &prefix, 
+                             int depth, 
+                             MsgStream &log ) const;
 
-  LHCb::IParticlePropertySvc* m_ppSvc; ///< Pointer to particle property service
+  SmartIF<LHCb::IParticlePropertySvc> m_ppSvc; ///< Pointer to particle property service
   int m_depth;         ///< Depth of printing for tree
   int m_treeWidth;     ///< width of the tree drawing
   int m_fWidth;        ///< width of the data fields
