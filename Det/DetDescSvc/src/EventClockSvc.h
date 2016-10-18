@@ -1,4 +1,3 @@
-// $Id: EventClockSvc.h,v 1.3 2006-09-26 10:45:48 marcocle Exp $
 #ifndef EVENTCLOCKSVC_H 
 #define EVENTCLOCKSVC_H 1
 
@@ -20,8 +19,6 @@ class EventClockSvc: public extends<Service, IIncidentListener> {
 public: 
   /// Standard constructor
   EventClockSvc(const std::string& name, ISvcLocator* svcloc); 
-
-  virtual ~EventClockSvc( ); ///< Destructor
 
   /// Initialize Service
   virtual StatusCode initialize();
@@ -51,9 +48,9 @@ private:
   /// Pointer to the incident service;
   SmartIF<IIncidentSvc> m_incidentSvc;
   /// Handle to the IDetDataSvc interface (to propagate the event time).
-  IDetDataSvc      *m_detDataSvc;
+  SmartIF<IDetDataSvc>  m_detDataSvc;
   /// Handle to the Tool Service.
-  IToolSvc         *m_toolSvc;
+  SmartIF<IToolSvc>     m_toolSvc;
 
   // --- tools ---
   /// Pointer to the EventTimeDecoder tool
