@@ -5,6 +5,8 @@
 // STL
 #include <cassert>
 #include <algorithm>
+#include <type_traits>
+#include <tuple>
 
 // Range V3
 #include <range/v3/all.hpp>
@@ -29,16 +31,6 @@ namespace Rich
     /// Implementation details
     namespace
     {
-      /// Compare sizes of a list of containers
-      //template < typename... C >
-      //inline bool check_sizes( const C& ... c ) noexcept
-      //{ 
-      //  const auto sizes = { c.size() ... };
-      // return ( sizes.size() < 2 || 
-      //           std::mismatch( std::next( std::begin(sizes) ), std::end(sizes),
-      //                          std::begin(sizes) ).first == std::end(sizes) );
-      //}
-
       /// Compare sizes of two containers
       template < typename A, typename B >
       inline bool check_sizes( const A& a, const B& b ) noexcept
@@ -61,6 +53,20 @@ namespace Rich
       assert( check_sizes( args... ) );
       return ranges::view::zip( args... );
     }
+
+    /// Zips multiple containers together to form a single const range
+    template< typename... Args >
+    inline decltype(auto) ConstZip( const Args&... args ) noexcept
+    {
+      return ranges::view::const_( Zip(args...) );
+    }
+
+    /// Access the element for the given container type from the given zipped tuple
+    //template < typename CONT, typename TUPLE >
+    //inline decltype(auto) unzip( const TUPLE & data )
+    //{
+    //  return std::get<const typename std::remove_reference<CONT>::type ::value_type&>(data);
+    //}
 
   }
 }
