@@ -23,11 +23,8 @@ namespace LHCb {
  *  @author Marco Cattaneo
  *  @date   2008-07-18
  */
-class ILHCbMagnetSvc : public extend_interfaces<IMagneticFieldSvc>
+struct ILHCbMagnetSvc : extend_interfaces<IMagneticFieldSvc>
 {
-
-public:
-
   DeclareInterfaceID( ILHCbMagnetSvc, 2, 0 );
 
   virtual bool   useRealMap()            const = 0; ///< True if using measured map

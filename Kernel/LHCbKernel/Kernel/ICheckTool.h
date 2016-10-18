@@ -13,14 +13,9 @@
  *  @date   2003-02-24
  */
 
-// Declaration of  the interface ID
-static const InterfaceID IID_ICheckTool( "ICheckTool", 0, 0 );
-
-
-class ICheckTool : virtual public IAlgTool {
-public:
-  /// Static access to interface id
-  static const InterfaceID& interfaceID() { return IID_ICheckTool; }
+struct ICheckTool : extend_interfaces<IAlgTool> {
+  /// access to interface id
+  DeclareInterfaceID( ICheckTool, 1, 0 );
 
   /// Check the data
   virtual StatusCode check()=0;

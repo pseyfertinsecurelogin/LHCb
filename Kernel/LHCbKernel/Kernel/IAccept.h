@@ -16,22 +16,14 @@
  *  @author Vanya Belyaev
  *  @date   2010-08-02
  */
-class GAUDI_API IAccept : virtual public IAlgTool
+struct GAUDI_API IAccept : extend_interfaces<IAlgTool>
 {
-public:
   // ==========================================================================
   /// InterfaceID
   DeclareInterfaceID(IAccept, 4, 0);
   // ==========================================================================
-public:
-  // ==========================================================================
   /// make a generic selection
   virtual bool accept () const = 0 ;
-  // ==========================================================================
-protected:
-  // ==========================================================================
-  /// virtual & protected destructor
-  virtual ~IAccept ( ) ;                      // virtual & protected destructor
   // ==========================================================================
 };
 // ============================================================================
