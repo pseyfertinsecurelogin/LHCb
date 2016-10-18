@@ -61,7 +61,7 @@ StatusCode DeFTLayer::initialize() {
   m_plane = Gaudi::Plane3D(g1,g2,g3 );
   m_dzdy = (g3.z() - g1.z()) / (g3.y() - g1.y());
   m_stereoAngle = (double)param<double>("stereoAngle");
-  m_dxdy = tan( m_stereoAngle );
+  m_dxdy = -tan( m_stereoAngle );
 
   return StatusCode::SUCCESS;
 }
