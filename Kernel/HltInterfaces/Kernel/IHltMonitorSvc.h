@@ -20,13 +20,10 @@ class HltHistogram;
  *  @author Roel Aaij
  *  @date   2015-06-01
  */
-class GAUDI_API IHltMonitorSvc : virtual public extend_interfaces<INamedInterface> {
-public:
+struct GAUDI_API IHltMonitorSvc : extend_interfaces<INamedInterface> {
 
    // Return the interface ID
    DeclareInterfaceID(IHltMonitorSvc, 2, 0);
-
-   virtual ~IHltMonitorSvc() = default;
 
    /// List of all counters
    virtual std::vector<std::string> counters() const = 0;
