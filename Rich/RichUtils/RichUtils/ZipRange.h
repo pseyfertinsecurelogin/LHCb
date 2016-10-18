@@ -4,9 +4,9 @@
 
 // STL
 #include <cassert>
-
-// Boost implementation
-//#include "boost/iterator/zip_iterator.hpp"
+#include <algorithm>
+#include <type_traits>
+#include <tuple>
 
 // Range V3
 #include <range/v3/all.hpp>
@@ -54,17 +54,19 @@ namespace Rich
       return ranges::view::zip( args... );
     }
 
-    // namespace Boost
-    // {
-    //   /// Zips multiple containers together to form a single range
-    //   template<class... Conts>
-    //   decltype(auto) ZipRange( Conts&... conts )
-    //   {
-    //     return boost::make_iterator_range
-    //       ( boost::make_zip_iterator(boost::make_tuple(conts.begin()...)),
-    //         boost::make_zip_iterator(boost::make_tuple(conts.end()...  )) );
-    //   }
-    // }
+    /// Zips multiple containers together to form a single const range
+    template< typename... Args >
+    inline decltype(auto) ConstZip( const Args&... args ) noexcept
+    {
+      return ranges::view::const_( Zip(args...) );
+    }
+
+    /// Access the element for the given container type from the given zipped tuple
+    //template < typename CONT, typename TUPLE >
+    //inline decltype(auto) unzip( const TUPLE & data )
+    //{
+    //  return std::get<const typename std::remove_reference<CONT>::type ::value_type&>(data);
+    //}
 
   }
 }
