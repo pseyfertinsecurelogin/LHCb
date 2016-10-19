@@ -1,4 +1,3 @@
-// $Id$
 // ============================================================================
 #ifndef LOKIMC_MCCHILDSELECTOR_H 
 #define LOKIMC_MCCHILDSELECTOR_H 1
@@ -66,8 +65,6 @@ namespace LoKi
       /// constructor from the cut 
       Selector ( const LoKi::MCTypes::MCCuts&     cut              , 
                  const bool                       decayOnly = true ) ;
-      /// desctructor  
-      virtual ~Selector() ;
       /// OPTIONAL: nice printout 
       virtual std::ostream& fillStream ( std::ostream& s ) const ;
       // ======================================================================

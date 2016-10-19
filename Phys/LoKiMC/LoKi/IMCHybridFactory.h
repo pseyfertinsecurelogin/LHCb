@@ -1,4 +1,3 @@
-// $Id$
 // ============================================================================
 #ifndef LOKI_IMCHYBRIDFACTORY_H 
 #define LOKI_IMCHYBRIDFACTORY_H 1
@@ -227,11 +226,6 @@ namespace LoKi
     ( const std::string&      pycode       , 
       LoKi::Types::MCVSource& func         , 
       const std::string&      context = "" ) = 0 ;
-    // ========================================================================
-  protected:
-    // ========================================================================
-    // virtual & protected destructor 
-    virtual ~IMCHybridFactory( ); ///< Destructor
     // ========================================================================
   } ;
 } // end of namespace LoKi

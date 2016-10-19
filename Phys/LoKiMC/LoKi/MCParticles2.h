@@ -1,4 +1,3 @@
-// $Id$
 // ============================================================================
 #ifndef LOKI_MCPARTICLES2_H 
 #define LOKI_MCPARTICLES2_H 1
@@ -74,19 +73,12 @@ namespace LoKi
         const std::string&             parent                      ,      
         const bool                     mother    = true            , 
         const std::string&             factory   = "LoKi::MCDecay" ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~PolarizationAngle () ;
       /// MANDATORY: clone method ("virtual constructor")
       virtual  PolarizationAngle* clone() const ;
       /// MANDATORY: the only one essential method
       virtual result_type operator() ( argument p ) const ;
       /// OPTIONAL: the nice printout 
       virtual std::ostream& fillStream ( std::ostream& s ) const ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled 
-      PolarizationAngle () ;             // the default constructor is disabled
       // ======================================================================
     protected:
       // ======================================================================
@@ -201,19 +193,12 @@ namespace LoKi
                const std::string& particle3                   , 
                const std::string& particle4                   , 
                const std::string& factory   = "LoKi::MCDecay" ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~SinChi() ;
       /// MANDATORY: clone method ("virtual constructor")
       virtual  SinChi* clone() const ;
       /// MANDATORY: the only one essential method
       virtual result_type operator() ( argument p ) const ;
       /// OPTIONAL: the nice printout 
       virtual std::ostream& fillStream ( std::ostream& s ) const ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled 
-      SinChi () ;                        // the default constructor is disabled 
       // ======================================================================
     protected:
       // ======================================================================
@@ -281,9 +266,8 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2010-02-21
      */
-    class GAUDI_API CosChi : public SinChi
+    struct GAUDI_API CosChi : SinChi
     {    
-    public:
       // ======================================================================
       /// constructor from child-selector 
       CosChi ( const LoKi::MCChild::Selector& particle1        ,  
@@ -313,19 +297,12 @@ namespace LoKi
                const std::string&   particle3 , 
                const std::string&   particle4 , 
                const std::string&   factory = "LoKi::MCDecay" ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~CosChi() ;
       /// MANDATORY: clone method ("virtual constructor")
       virtual  CosChi* clone() const ;
       /// MANDATORY: the only one essential method
       virtual result_type operator() ( argument p ) const ;
       /// OPTIONAL: the nice printout 
       virtual std::ostream& fillStream ( std::ostream& s ) const ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled 
-      CosChi () ;                        // the default constructor is disabled 
       // ======================================================================
     } ;
     // ========================================================================
@@ -346,9 +323,8 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2010-02-21
      */
-    class GAUDI_API AngleChi : public CosChi
+    struct GAUDI_API AngleChi : CosChi
     {    
-    public:
       // ======================================================================
       /// constructor from child-selector 
       AngleChi ( const LoKi::MCChild::Selector& particle1        ,  
@@ -378,19 +354,12 @@ namespace LoKi
                  const std::string& particle3 , 
                  const std::string& particle4 , 
                  const std::string& factory = "LoKi::MCDecay" ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~AngleChi() ;
       /// MANDATORY: clone method ("virtual constructor")
       virtual  AngleChi* clone() const ;
       /// MANDATORY: the only one essential method
       virtual result_type operator() ( argument p ) const ;
       /// OPTIONAL: the nice printout 
       virtual std::ostream& fillStream ( std::ostream& s ) const ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled 
-      AngleChi () ;                      // the default constructor is disabled 
       // ======================================================================
     } ;
     // ========================================================================
@@ -459,19 +428,12 @@ namespace LoKi
                    const std::string& particle3 , 
                    const std::string& particle4 , 
                    const std::string& factory = "LoKi::MCDecay" ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~CosThetaTr () ;
       /// MANDATORY: clone method ("virtual constructor")
       virtual  CosThetaTr* clone() const ;
       /// MANDATORY: the only one essential method
       virtual result_type operator() ( argument p ) const ;
       /// OPTIONAL: the nice printout 
       virtual std::ostream& fillStream ( std::ostream& s ) const ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled 
-      CosThetaTr () ;                    // the default constructor is disabled 
       // ======================================================================
     } ;
     // ========================================================================
@@ -514,9 +476,8 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2010-06-02
      */
-    class GAUDI_API SinPhiTr : public CosThetaTr
+    struct GAUDI_API SinPhiTr : CosThetaTr
     {    
-    public:
       // ======================================================================
       /// constructor from child-selector 
       SinPhiTr ( const LoKi::MCChild::Selector& particle1        ,  
@@ -546,19 +507,12 @@ namespace LoKi
                  const std::string& particle3 , 
                  const std::string& particle4 , 
                  const std::string& factory = "LoKi::MCDecay" ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~SinPhiTr () ;
       /// MANDATORY: clone method ("virtual constructor")
       virtual  SinPhiTr* clone() const ;
       /// MANDATORY: the only one essential method
       virtual result_type operator() ( argument p ) const ;
       /// OPTIONAL: the nice printout 
       virtual std::ostream& fillStream ( std::ostream& s ) const ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled 
-      SinPhiTr () ;                      // the default constructor is disabled 
       // ======================================================================
     } ;
     // ========================================================================
@@ -577,9 +531,8 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2010-06-02
      */
-    class GAUDI_API CosPhiTr : public SinPhiTr
+    struct GAUDI_API CosPhiTr : SinPhiTr
     {    
-    public:
       // ======================================================================
       /// constructor from child-selector 
       CosPhiTr ( const LoKi::MCChild::Selector& particle1        ,  
@@ -609,19 +562,12 @@ namespace LoKi
                  const std::string& particle3 , 
                  const std::string& particle4 , 
                  const std::string& factory = "LoKi::MCDecay" ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~CosPhiTr () ;
       /// MANDATORY: clone method ("virtual constructor")
       virtual  CosPhiTr* clone() const ;
       /// MANDATORY: the only one essential method
       virtual result_type operator() ( argument p ) const ;
       /// OPTIONAL: the nice printout 
       virtual std::ostream& fillStream ( std::ostream& s ) const ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled 
-      CosPhiTr () ;                      // the default constructor is disabled 
       // ======================================================================
     } ;
     // ========================================================================
@@ -640,9 +586,8 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2010-06-02
      */
-    class GAUDI_API AnglePhiTr : public CosPhiTr
+    struct GAUDI_API AnglePhiTr : CosPhiTr
     {    
-    public:
       // ======================================================================
       /// constructor from child-selector 
       AnglePhiTr ( const LoKi::MCChild::Selector& particle1        ,  
@@ -672,19 +617,12 @@ namespace LoKi
                    const std::string& particle3 , 
                    const std::string& particle4 , 
                    const std::string& factory = "LoKi::MCDecay" ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~AnglePhiTr () ;
       /// MANDATORY: clone method ("virtual constructor")
       virtual  AnglePhiTr* clone() const ;
       /// MANDATORY: the only one essential method
       virtual result_type operator() ( argument p ) const ;
       /// OPTIONAL: the nice printout 
       virtual std::ostream& fillStream ( std::ostream& s ) const ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled 
-      AnglePhiTr () ;                    // the default constructor is disabled 
       // ======================================================================
     } ;
     // ========================================================================
@@ -742,16 +680,16 @@ namespace LoKi
      *   \epsilon_{\mu\nu\lambda\delta}
      *   L_D^{\mu}L_H^{\nu}H^{\lambda}M^{\delta} }
      *   { \sqrt{ 
-	   *   \left[ -L_D^2 \right]\left[ -L_H^2 \right] 
+	 *   \left[ -L_D^2 \right]\left[ -L_H^2 \right] 
      *   \left[ \left( H\ cdot M\right)^2-H^2M^2 \right] 
      *   }} = \frac { 
      *   \epsilon_{\mu\nu\lambda\delta}
      *   d_1^{\mu}d_2^{\nu}h_1^{\lambda}h_2^{\delta}
      *   \left( \left( D \cdot H \right)^2 - D^2H^2 \right) }
      *   { \sqrt{ 
-	   *   \left[ -L_D^2 \right]\left[ -L_H^2    \right] 
+	 *   \left[ -L_D^2 \right]\left[ -L_H^2    \right] 
      *   \left[ \left(H\cdot M\right)^2-H^2M^2 \right] 
-	   *   }},
+	 *   }},
      * \f$ 
      *  where "4-normales" are defined as:
      *  \f$
@@ -805,7 +743,7 @@ namespace LoKi
      *     { \sqrt{ \left[ -L_D^2 \right]\left[ -L_H^2 \right] }},
      &   =
      *   - \frac{ 
-	   *     \epsilon_{ijkl}d_1^{j}d_2^{k}\left(h_1+h_2\right)^l
+	 *     \epsilon_{ijkl}d_1^{j}d_2^{k}\left(h_1+h_2\right)^l
      *     \epsilon_{imnp}h_1^{m}h_2^{n}\left(d_1+d_2\right)^p }
      *     { \sqrt{ \left[ -L_D^2 \right]\left[ -L_H^2 \right] }},
      *  \f] 

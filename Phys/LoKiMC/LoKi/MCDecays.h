@@ -1,4 +1,3 @@
-// $Id$
 // ============================================================================
 #ifndef LOKI_MCDECAYS_H
 #define LOKI_MCDECAYS_H 1
@@ -156,8 +155,6 @@ namespace Decays
         const Alg                  alg        = Daughters ,
         const bool                 decayOnly  = true      ,
         const Oscillation          oscillated = Undefined ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~MCExclusive () {}
       // ======================================================================
     public:
       // ======================================================================
@@ -279,11 +276,6 @@ namespace Decays
       // ======================================================================
       inline bool mother ( const LHCb::ParticleID& pid ) const
       { return m_mother.node ( pid ) ;  }
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      MCExclusive () ;                   // the default constructor is disabled
       // ======================================================================
     private:
       // ======================================================================
@@ -427,9 +419,6 @@ namespace Decays
       /// constructor from any exclusive 
       MCInclusive ( const MCExclusive& exclusive ) ;
       // ======================================================================
-      /// MANDATORY: virtual destructor
-      virtual ~MCInclusive () {}
-      // ======================================================================
     public:
       // ======================================================================
       /// MANDATORY: clone method ("virtual constructor")
@@ -465,10 +454,6 @@ namespace Decays
       MCInclusive& operator+= ( const LHCb::ParticleProperty*    node )
       { addDaughter ( node ) ; return *this ; }
       // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      MCInclusive () ;                   // the default constructor is disabled
       // ======================================================================
     };
     // ========================================================================
@@ -516,8 +501,6 @@ namespace Decays
       MCOptional 
       ( const MCExclusive& right                  , 
         const TreeList&    optional = TreeList () ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~MCOptional () {}
       // ======================================================================
     public:
       // ======================================================================
@@ -590,11 +573,6 @@ namespace Decays
       // ======================================================================
     private:
       // ======================================================================
-      /// the default constructor is disabled
-      MCOptional () ;                    // the default constructor is disabled
-      // ======================================================================
-    private:
-      // ======================================================================
       /// the optional particles in the tree
       TreeList m_optional ;               // the optional particles in the tree
       // ======================================================================
@@ -635,8 +613,6 @@ namespace Decays
         const Oscillation        oscillated = Undefined ) ;
       /// constructor from MC-exclusive )                   
       Photos ( const MCExclusive& decay ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~Photos () {}
       // ======================================================================
     public:
       // ======================================================================
@@ -676,11 +652,6 @@ namespace Decays
       /// add one more node to the tree
       Photos& operator+= ( const LHCb::ParticleProperty*    node )
       { addDaughter ( node ) ; return *this ; }
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      Photos () ;                        // the default constructor is disabled
       // ======================================================================
     private:
       // ======================================================================
@@ -734,8 +705,6 @@ namespace Decays
       PhotosOptional 
       ( const MCExclusive& right    ,
         const TreeList&    optional ) ;          
-      /// MANDATORY: virtual destructor
-      virtual ~PhotosOptional () {}
       // ======================================================================
     public:
       // ======================================================================
@@ -776,11 +745,6 @@ namespace Decays
       /// add one more node to the tree
       PhotosOptional& operator+= ( const LHCb::ParticleProperty*    node )
       { addDaughter ( node ) ; return *this ; }
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      PhotosOptional () ;                // the default constructor is disabled
       // ======================================================================
     private:
       // ======================================================================

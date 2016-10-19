@@ -1,4 +1,3 @@
-// $Id$
 // ============================================================================
 #ifndef LOKI_MCHYBRIDLOCK_H 
 #define LOKI_MCHYBRIDLOCK_H 1
@@ -30,14 +29,10 @@ namespace LoKi
       /// destrcutor : UnLock
       virtual ~MCLock () ;                              //  destructor : UnLock
       // ======================================================================
-    private:
-      // ======================================================================
-      /// no default constructor 
-      MCLock () ;                                     // no default constructor 
       /// no copy constructor 
-      MCLock ( const MCLock& ) ;                     // no copy constructor 
+      MCLock ( const MCLock& ) = delete;                // no copy constructor 
       /// no assignement opeartor 
-      MCLock& operator = ( const MCLock& ) ;         // no assignement operator
+      MCLock& operator = ( const MCLock& )= delete ;    // no assignement operator
       // ======================================================================
     private:
       // ======================================================================

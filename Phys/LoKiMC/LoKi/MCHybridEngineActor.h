@@ -1,4 +1,3 @@
-// $Id$
 // ===========================================================================
 #ifndef LOKI_MCCUTSHOLDER_H 
 #define LOKI_MCCUTSHOLDER_H 1
@@ -138,9 +137,7 @@ namespace LoKi
     protected:
       // ======================================================================     
       /// Standard constructor
-      MCEngineActor() ;
-      /// desctructor 
-      virtual ~MCEngineActor( ); // Destructor
+      MCEngineActor() = default;
       // ======================================================================     
     private:
       // ======================================================================
@@ -159,7 +156,7 @@ namespace LoKi
     private:
       // ======================================================================
       // the tool itself 
-      LoKi::Interface<LoKi::IMCHybridTool> m_tool ;
+      LoKi::Interface<LoKi::IMCHybridTool> m_tool = nullptr;
       // ======================================================================
     };
     // ========================================================================

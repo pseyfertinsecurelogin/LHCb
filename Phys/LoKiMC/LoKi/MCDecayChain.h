@@ -1,4 +1,3 @@
-// $Id$
 #ifndef LOKI_MCDECAYCHAIN_H 
 #define LOKI_MCDECAYCHAIN_H 1
 // ============================================================================
@@ -27,9 +26,6 @@
  *  @author Vanya Belyaev Ivan.Belyaev@cern.ch
  *  @date   2011-06-03
  * 
- *                    $Revision$
- *  Last modification $Date$
- *                 by $Author$
  */
 // ============================================================================
 namespace LoKi 
@@ -74,8 +70,6 @@ namespace LoKi
     ( const LoKi::DecayChainBase& base              , 
       const bool                  vertexe  = true   , 
       const bool                  vertexd  = true   ) ;
-    /// virtual destructor 
-    virtual ~MCDecayChain () ;                         // virtual destructor 
     // ========================================================================
   public:
     // ========================================================================
