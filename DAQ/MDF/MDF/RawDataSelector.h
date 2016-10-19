@@ -40,7 +40,7 @@ namespace LHCb  {
       /// Connection specs of current file
       std::string                      m_conSpec;
       /// Data holder
-      std::pair<char*,int>             m_data;
+      mutable std::pair<char*,int>     m_data;
       /// Current file offset
       long long                        m_fileOffset;
       /// Pointer to file manager service
@@ -65,6 +65,13 @@ namespace LHCb  {
       virtual long long offset()  const         { return m_fileOffset;  }
       /// Raw data buffer (if it exists)
       virtual std::pair<char*,int> data() const { return m_data;        }
+      /// Release data buffer and give ownership to caller
+      virtual std::pair<char*,int> releaseData() const {
+	std::pair<char*,int> tmp = m_data;
+	m_data.first  = 0;
+	m_data.second = 0;
+	return tmp;
+      }
       /// Receive event and update communication structure
       virtual StatusCode receiveData(IMessageSvc* msg) = 0;
       /// Skip N events

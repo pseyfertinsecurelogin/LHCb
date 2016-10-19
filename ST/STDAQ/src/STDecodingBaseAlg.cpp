@@ -7,7 +7,6 @@
 #include "Event/RawEvent.h"
 #include "Event/ByteStream.h"
 #include "Event/STCluster.h"
-#include "Event/STSummary.h"
 #include "Event/ODIN.h"
 
 #include "Kernel/STDataFunctor.h"
@@ -34,6 +33,7 @@ using namespace LHCb;
 // Implementation file for class : RawBufferToSTClusterAlg
 //
 // 2004-01-07 : Matthew Needham
+// 2016-10-07 : Sebastien Ponce
 //-----------------------------------------------------------------------------
 
 
@@ -42,26 +42,13 @@ STDecodingBaseAlg::STDecodingBaseAlg( const std::string& name,
     : ST::AlgBase (name , pSvcLocator)
 {
  // Standard constructor, initializes variables
- declareSTConfigProperty("ErrorLocation",m_errorLocation, STTELL1BoardErrorBankLocation::TTErrors );
- declareSTConfigProperty("summaryLocation", m_summaryLocation , STSummaryLocation::TTSummary);
  declareSTConfigProperty("ErrorBank", m_errorBankString , "TTError");
- declareSTConfigProperty("PedestalBank", m_pedestalBankString , "TTPedestal");
- declareSTConfigProperty("FullBank", m_fullBankString , "TTFull");
 
  declareProperty("skipBanksWithErrors", m_skipErrors = false );
  declareProperty("recoverMode", m_recoverMode = true);
 
- declareProperty( "rawEventLocation",  m_rawEventLocation = "",
-                  "DEPRECATED. Use RawEventLocations instead" );
- declareProperty( "RawEventLocations", m_rawEventLocations=
-     {LHCb::RawEventLocation::Tracker,LHCb::RawEventLocation::Other,LHCb::RawEventLocation::Default},
-                  "List of possible locations of the RawEvent object in the"
-                  " transient store. By default it is LHCb::RawEventLocation::Tracker,LHCb::RawEventLocation::Other,"
-                  " LHCb::RawEventLocation::Default.");
  declareProperty("forcedVersion", m_forcedVersion = STDAQ::inValidVersion);
  declareProperty("checkValidity", m_checkValidSpill = true);
-
- declareProperty("ODINLocation", m_odin);
 
  setForcedInit();
 }
@@ -72,34 +59,6 @@ StatusCode STDecodingBaseAlg::initialize() {
   StatusCode sc = ST::AlgBase::initialize();
   if (sc.isFailure()) return sc;
   if( UNLIKELY( msgLevel(MSG::DEBUG) ) ) debug() << "==> initialize " << endmsg;
-
-  if (! m_rawEventLocation.empty()) {
-    warning() << "Use of the rawEventLocation property is deprecated, use RawEventLocations instead" << endmsg;
-    m_rawEventLocations.clear();
-    m_rawEventLocations.push_back( m_rawEventLocation );
-  }
-
-  // if (std::find(m_rawEventLocations.begin(), m_rawEventLocations.end(), LHCb::RawEventLocation::Default)
-  //     == m_rawEventLocations.end()) {
-  //   // append the defaults to the search path
-  //   m_rawEventLocations.push_back(LHCb::RawEventLocation::Other);
-  //   m_rawEventLocations.push_back(LHCb::RawEventLocation::Default);
-  // }
-
-  // // Initialise the RawEvent locations
-  // bool usingDefaultLocation = true;
-  // //if (!m_rawEventLocation.empty()) usingDefaultLocation=false;
-  // if (m_rawEventLocations.size()>2 || m_rawEventLocations.empty()) usingDefaultLocation=false;
-  // if (m_rawEventLocations.size()>0
-  //     && m_rawEventLocations[0]!=LHCb::RawEventLocation::Other
-  //     && m_rawEventLocations[0]!=LHCb::RawEventLocation::Default) usingDefaultLocation=false;
-
-  // if (!usingDefaultLocation) {
-  //   info() << "Using '" << m_rawEventLocations << "' as search path for the RawEvent object" << endmsg;
-  // }
-
-  std::string spill = toSpill(m_rawEventLocations[0]);
-  m_spillOffset = spillOffset(spill);
 
   // bank type
   if (!m_bankTypeString.empty()){
@@ -117,49 +76,7 @@ StatusCode STDecodingBaseAlg::initialize() {
     return StatusCode::FAILURE;
   }
 
-  // pedestal bank
-  m_pedestalType =  STRawBankMap::stringToType(m_pedestalBankString);
-  if (m_bankType ==  LHCb::RawBank::Velo){
-    fatal() << "Wrong detector type: only IT or TT !"<< endmsg;
-    return StatusCode::FAILURE;
-  }
-
-  // full bank
-  m_fullType =  STRawBankMap::stringToType(m_fullBankString);
-  if (m_fullType ==  LHCb::RawBank::Velo){
-    fatal() << "Wrong detector type: only IT or TT !"<< endmsg;
-    return StatusCode::FAILURE;
-  }
-
   return StatusCode::SUCCESS;
-}
-
-
-void STDecodingBaseAlg::createSummaryBlock(const RawEvent& rawEvt, const unsigned int& nclus, const unsigned int& pcn,
-                                           const bool pcnsync, const unsigned int bytes,
-                                           const std::vector<unsigned int>& bankList,
-                                           const std::vector<unsigned int>& missing,
-                                           const LHCb::STSummary::RecoveredInfo& recoveredBanks) const{
-  unsigned totalBytes = bytes;
-
-  // get the error banks
-  const auto& errorBanks = rawEvt.banks(LHCb::RawBank::BankType(m_errorType));
-  totalBytes += byteSize(errorBanks);
-
-  // get the pedestal banks
-  const auto& pBanks = rawEvt.banks(LHCb::RawBank::BankType(m_pedestalType));
-  totalBytes += byteSize(pBanks);
-
-  // get the full banks
-  const auto& fullBanks = rawEvt.banks(LHCb::RawBank::BankType(m_fullType));
-  totalBytes += byteSize(fullBanks);
-
-  STSummary* sum = new STSummary(nclus,pcn,pcnsync, totalBytes,
-                                 fullBanks.size(), pBanks.size(),
-                                 errorBanks.size() , bankList, missing, recoveredBanks);
-
-
-  put(sum, m_summaryLocation);
 }
 
 unsigned int STDecodingBaseAlg::pcnVote(const std::vector<RawBank* >& banks) const{
@@ -255,34 +172,15 @@ std::vector<unsigned int> STDecodingBaseAlg::missingInAction(const std::vector<R
   return missing;
 }
 
-LHCb::STTELL1BoardErrorBanks* STDecodingBaseAlg::getErrorBanks() const{
-  if (!exist<STTELL1BoardErrorBanks>(m_errorLocation)) {
-    // we have to do the decoding
-    StatusCode sc = decodeErrors();
-    if (sc.isFailure()){
-      Warning("Error Bank Decoding failed",StatusCode::FAILURE,2);
-      return 0;
-    }
-  }
-  return get<STTELL1BoardErrorBanks>(m_errorLocation);
-}
+std::unique_ptr<LHCb::STTELL1BoardErrorBanks> STDecodingBaseAlg::decodeErrors(const LHCb::RawEvent& raw) const {
 
-StatusCode STDecodingBaseAlg::decodeErrors() const{
-
-  if( UNLIKELY( msgLevel(MSG::DEBUG) ) ) debug() << "==> Execute " << endmsg;
-
-  // get the raw event + odin info
-  LHCb::RawEvent* raw = nullptr;
-  for (auto p = m_rawEventLocations.begin(); p != m_rawEventLocations.end() && !raw; ++p) {
-    raw = getIfExists<LHCb::RawEvent>(*p);
-  }
-  if( !raw ) return Error("Failed to find raw data");
+ if( UNLIKELY( msgLevel(MSG::DEBUG) ) ) debug() << "==> Execute " << endmsg;
 
  // make an empty output vector
- STTELL1BoardErrorBanks* outputErrors = new STTELL1BoardErrorBanks();
+ std::unique_ptr<LHCb::STTELL1BoardErrorBanks> outputErrors = std::make_unique<STTELL1BoardErrorBanks>();
 
  // Pick up ITError bank
- const std::vector<LHCb::RawBank*>& itf = raw->banks(LHCb::RawBank::BankType(m_errorType));
+ const std::vector<LHCb::RawBank*>& itf = raw.banks(LHCb::RawBank::BankType(m_errorType));
 
  if (itf.empty()){
    if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
@@ -392,11 +290,8 @@ StatusCode STDecodingBaseAlg::decodeErrors() const{
 
   }// end of loop over banks of a certain type
 
- put(outputErrors, m_errorLocation);
-
- return StatusCode::SUCCESS;
+  return outputErrors;
 }
-
 
 std::string STDecodingBaseAlg::toSpill(const std::string& location) const{
 
@@ -413,19 +308,17 @@ std::string STDecodingBaseAlg::toSpill(const std::string& location) const{
   return theSpill;
 }
 
-LHCb::STCluster::Spill STDecodingBaseAlg::spillOffset(const std::string& spill) const{
-
+void STDecodingBaseAlg::computeSpillOffset(const std::string& location) {
   // convert spill to offset in time
-  return (spill.size() > 4u ? LHCb::STCluster::SpillToType(spill) : LHCb::STCluster::Central);
+  std::string spill = toSpill(location);
+  m_spillOffset = (spill.size() > 4u ? LHCb::STCluster::SpillToType(spill) : LHCb::STCluster::Central);
 }
 
-bool STDecodingBaseAlg::validSpill() const{
-
+bool STDecodingBaseAlg::validSpill(const LHCb::ODIN& odin) const{
   if (!m_checkValidSpill) return true;
 
   // check spill is actually read out using the ODIN
-  const ODIN* odin = m_odin.get();
-  const unsigned int numberOfSpills = odin->timeAlignmentEventWindow();
+  const unsigned int numberOfSpills = odin.timeAlignmentEventWindow();
   return (unsigned int)abs(m_spillOffset) <= numberOfSpills ;
 }
 
