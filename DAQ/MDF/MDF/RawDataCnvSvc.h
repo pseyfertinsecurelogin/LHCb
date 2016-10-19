@@ -11,7 +11,6 @@
 
 // Framework include files
 #include "GaudiKernel/ConversionSvc.h"
-#include "GaudiKernel/StreamBuffer.h"
 #include "GaudiKernel/IDataManagerSvc.h"
 #include "GaudiUtils/IIODataManager.h"
 #include "MDF/MDFIO.h"
@@ -51,8 +50,6 @@ namespace LHCb  {
     FileMap                m_fileMap;
 
     bool                   m_wrFlag;
-    /// Streambuffer to hold uncompressed data
-    StreamBuffer           m_data;
     /// Reference to data manager interface
     SmartIF<IDataManagerSvc> m_dataMgr;
     /// Reference to file manager service
@@ -63,6 +60,8 @@ namespace LHCb  {
     int                    m_genChecksum;
     /// Property: Properties for time alignment events
     int                    m_evtsBefore, m_evtsAfter;
+    /// Property: Flag to copy banks to the raw event (or only reference the banks)
+    int                    m_copyBanks;
     /// Property: Property to indicate input data type (RAW, RDST)
     std::string            m_sourceType;
     /// Property: Location of RAW banks in the TES
@@ -84,23 +83,8 @@ namespace LHCb  {
     /// Close all files disconnected from the IO manager
     virtual void closeDisconnected();
 
-    /// Commit output to buffer manager
-    virtual StatusCode commitDescriptors(void* ioDesc);
-
     /// Read raw banks
-    virtual StatusCode readRawBanks(RawDataAddress* pAddr,MDFDescriptor& data);
-
-    /// Allocate data space for output
-    virtual MDFDescriptor getDataSpace(void* const /* ioDesc */, size_t len)  {
-      m_data.reserve(len);
-      return MDFDescriptor(m_data.data(), m_data.size());
-    }
-
-    /// Write data block to stream
-    virtual StatusCode writeBuffer(void* const ioDesc, const void* data, size_t len);
-
-    /// Read raw byte buffer from input stream
-    virtual StatusCode readBuffer(void* const ioDesc, void* const data, size_t len);
+    virtual StatusCode readRawBanks(RawDataAddress* pAddr);
 
     /// Helper to install opaque address leaf
     StatusCode regAddr(IRegistry* pReg,RawDataAddress* pA,CSTR path,const CLID& clid);
@@ -113,17 +97,16 @@ namespace LHCb  {
                                     RawDataAddress* pAddRaw,
                                     const std::vector<std::string>& names);
 
-    /// Decode a MEP (Multi event packets) record
-    StatusCode unpackMEP(const MDFDescriptor& dat, const std::string& loc, RawEvent* raw);
+    /// MDFIO interface: Allocate data space for input or output
+    virtual MDFDescriptor getDataSpace(void* const ioDesc, size_t len);
+
+    /// MDFIO interface: Write data block to output stream
+    virtual StatusCode writeBuffer(void* const ioDesc, const void* data, size_t len);
+
+    /// MDFIO interface: Read raw byte buffer from input stream
+    virtual StatusCode readBuffer(void* const ioDesc, void* const data, size_t len);
 
   public:
-    /** Initializing constructor
-      *  @param[in]   nam   Name of the service
-      *  @param[in]   typ   Storage type if different from MDF_StorageType
-      *  @param[in]   loc   Pointer to the service locator object
-      *  @return Initialized reference to service object
-      */
-    RawDataCnvSvc(CSTR nam, ISvcLocator* loc, long typ);
 
     /** Initializing constructor
       *  @param[in]   nam   Name of the service

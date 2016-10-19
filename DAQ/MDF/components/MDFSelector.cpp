@@ -30,8 +30,7 @@ namespace LHCb  {
   *  @version 1.0
   */
   class MDFContext : public RawDataSelector::LoopContext, protected MDFIO {
-    /// I/O Buffer holder
-    StreamBuffer         m_buff;
+    typedef std::pair<char*,size_t> io_context_t;
   public:
     /// Standard constructor
     MDFContext(const RawDataSelector* sel,bool ignoreChcksum) 
@@ -40,9 +39,14 @@ namespace LHCb  {
     /// Standard destructor 
     virtual ~MDFContext()                                    { }
     /// Allocate buffer space for reading data
-    MDFDescriptor getDataSpace(void* const /* ioDesc */, size_t len)  {
-      m_buff.reserve(len+m_sel->additionalSpace());
-      return MDFDescriptor(m_buff.data(),m_buff.size());
+    MDFDescriptor getDataSpace(void* const ioDesc, size_t len)  {
+      io_context_t* par = (io_context_t*)ioDesc;
+      size_t addon = m_sel->additionalSpace();
+      if ( (len+addon) > par->second )   {
+	par->first  = (char*)::realloc(par->first,len+addon);
+	par->second = len+addon;
+      }
+      return MDFDescriptor(par->first,par->second);
     }
     /// Read raw byte buffer from input stream
     StatusCode readBuffer(void* const /* ioDesc */, void* const data, size_t len)  {
@@ -50,14 +54,16 @@ namespace LHCb  {
     }
     /// Receive event and update communication structure
     virtual StatusCode receiveData(IMessageSvc* msg)  {
+      io_context_t par(0,0);
+
     Next:
       m_fileOffset = m_ioMgr->seek(m_connection,0,SEEK_CUR);
       setupMDFIO(msg,0);
-      m_data = readBanks(m_connection, 0 == m_fileOffset);
+      m_data = readBanks(&par, 0 == m_fileOffset);
       if ( m_data.second > 0 )  {
 	/// Check if trigger and/or veto masks should be processed
 	if ( m_trgMask || m_vetoMask ) {
-	  RawBank* b = (RawBank*)m_data.first;
+	  RawBank* b   = (RawBank*)m_data.first;
 	  MDFHeader* h = b->begin<MDFHeader>();
 	  const unsigned int* msk = h->subHeader().H1->triggerMask();
 	  if ( m_vetoMask ) {
