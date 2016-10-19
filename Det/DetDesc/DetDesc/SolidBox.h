@@ -48,7 +48,7 @@ public:
    *  @see ISolid 
    *  return box type
    */
-  inline       std::string  typeName ()  const { return "SolidBox" ; };
+  inline std::string  typeName ()  const override { return "SolidBox" ; };
   
   /** - check for the given 3D-point. 
    *    Point coordinated are in the local reference 
@@ -207,7 +207,7 @@ public:
       make with this solid
   *  @return maximum number of ticks
   */
-  Ticks::size_type maxNumberOfTicks() const { return 2 ; }
+  Ticks::size_type maxNumberOfTicks() const override { return 2 ; }
 
 protected:
   
