@@ -130,7 +130,6 @@ namespace Rich
       /// Pointer to Job Options Service
       inline IJobOptionsSvc * joSvc() const noexcept { return m_jos; }
 
-
       /** Propagate a list oj job options from one object to another
        *  @param from_name The name of the object to get the options from
        *  @param to_name   The name of the oject to copy the options to
@@ -144,7 +143,7 @@ namespace Rich
                            const std::string & to_name,
                            const std::vector<std::string> & options = std::vector<std::string>(),
                            const bool overwrite = false ) const;
-
+      
     private:
 
       /// Common Constructor initisalisations

@@ -25,6 +25,7 @@
 
 // Kernel
 #include "Kernel/MemPoolAlloc.h"
+#include "Kernel/FastAllocVector.h"
 
 // Forward declarations
 class DeRichSphMirror;
@@ -44,6 +45,11 @@ namespace LHCb
 
   class RichGeomPhoton final : public LHCb::MemPoolAlloc<RichGeomPhoton>
   {
+
+  public:
+
+    /// Container of photons
+    using Vector = LHCb::STL::Vector<RichGeomPhoton>;
 
   public:
 

@@ -52,21 +52,6 @@ namespace LHCb
     /// Default constructor
     constexpr FastAllocVector( ) { }
 
-    /// Default destructor
-    ~FastAllocVector() = default;
-
-    /// Default Copy Constructor
-    FastAllocVector( const FastAllocVector& ) = default;
-
-    /// Default Copy operator
-    FastAllocVector& operator=( const FastAllocVector& ) = default;
-
-    /// Default Move Constructor
-    FastAllocVector( FastAllocVector&& ) = default;
-
-    /// Default Move operator
-    FastAllocVector& operator=( FastAllocVector&& ) = default;
-
     /** Constructor with initial size
      *  @param size Initialisation size for vector 
      */
@@ -78,7 +63,8 @@ namespace LHCb
      *  @param init Initialisation value
      */
     constexpr FastAllocVector( const typename BaseClass::size_type size,
-                               const TYPE & init ) : BaseClass(size,init) { }
+                               const TYPE & init )
+      : BaseClass(size,init) { }
 
   public:
 
@@ -109,7 +95,7 @@ namespace LHCb
 #ifndef GOD_NOALLOC
     template < typename TYPE,
                typename USERALLOC = boost::default_user_allocator_new_delete,
-               typename MUTEX     = boost::details::pool::null_mutex,
+               typename MUTEX     = boost::details::pool::default_mutex,
                unsigned NEXTSIZE  = 32 >
     using VecPoolAlloc = boost::pool_allocator< TYPE, USERALLOC, MUTEX, NEXTSIZE >;
 #else

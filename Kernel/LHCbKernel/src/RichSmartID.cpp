@@ -103,9 +103,9 @@ void LHCb::RichSmartID::setPixelSubRow( const DataType pixelSubRow )
 {
   if ( HPDID == idType() )
   {
-#ifndef NDEBUG
-    checkRange( pixelSubRow, HPD::MaxPixelSubRow, "PixelSubRow" );
-#endif
+    //#ifndef NDEBUG
+    //checkRange( pixelSubRow, HPD::MaxPixelSubRow, "PixelSubRow" );
+    //#endif
     setData( pixelSubRow, HPD::ShiftPixelSubRow, HPD::MaskPixelSubRow, HPD::MaskPixelSubRowIsSet );
   }
   else

@@ -17,7 +17,8 @@
 #include "RichUtils/RichDAQHeaderPD_V4.h"
 #include "RichUtils/RichDAQParityFooter.h"
 #include "RichUtils/RichDAQL1IngressHeader.h"
-#include "RichUtils/RichPoolMap.h"
+#include "RichUtils/RichMap.h"
+//#include "RichUtils/RichPoolMap.h"
 
 namespace Rich
 {
@@ -29,7 +30,7 @@ namespace Rich
      *  @author Chris Jones   Christopher.Rob.Jones@cern.ch
      *  @date   20/04/2007
      */
-    class PDInfo final // : public LHCb::MemPoolAlloc<PDInfo>
+    class PDInfo final 
     {
 
     public:
@@ -46,21 +47,19 @@ namespace Rich
 
       /// Constructor from PD data bank information
       PDInfo( const LHCb::RichSmartID& input,
-               const Header&            header,
-               const Footer&            footer )
+              const Header&            header,
+              const Footer&            footer )
         : m_pdID   ( input  ),
           m_header ( header ),
-          m_footer ( footer )
-      { }
-
+          m_footer ( footer ) { }
+      
       /// Constructor from PD data bank information
       PDInfo( const LHCb::RichSmartID&   input,
-               const Header::HeaderWords& header,
-               const Footer::FooterWords& footer )
+              const Header::HeaderWords& header,
+              const Footer::FooterWords& footer )
         : m_pdID   ( input  ),
           m_header ( header ),
-          m_footer ( footer )
-      { }
+          m_footer ( footer ) { }
 
       /**  Access the PD ID (LHCb::RichSmartID) for this PD
        *   @attention It is possible this PDID is invalid (for instance
@@ -105,14 +104,14 @@ namespace Rich
     };
 
     /// Map for RICH PD data, sorted by PD number
-    using L1InToPDMap = Rich::PoolMap< Rich::DAQ::Level1Input, PDInfo >;
+    using L1InToPDMap = Rich::Map< Rich::DAQ::Level1Input, PDInfo >;
 
     /** @class IngressInfo RichUtils/RichDecodedData.h
      *  Information for each L1 ingress
      *  @author Chris Jones   Christopher.Rob.Jones@cern.ch
      *  @date   20/04/2007
      */
-    class IngressInfo final // : public LHCb::MemPoolAlloc<IngressInfo>
+    class IngressInfo final
     {
 
     public:
@@ -149,10 +148,10 @@ namespace Rich
     };
 
     /// Map for PD data for each L1 ingress
-    using IngressMap = Rich::PoolMap< L1IngressID, IngressInfo >;
+    using IngressMap = Rich::Map< L1IngressID, IngressInfo >;
     
     /// Map for RICH PD data, sorted by Level1 board number
-    class L1Map final : public Rich::PoolMap< Level1HardwareID, IngressMap >
+    class L1Map final : public Rich::Map< Level1HardwareID, IngressMap >
     {
     public:
       /// Returns the total number of RICH hits in the decoded data
