@@ -44,7 +44,7 @@ namespace
     }
   }
   // ==========================================================================
-  struct NotPid : public std::unary_function<const LHCb::MCParticle*,bool>
+  struct NotPid
   {
     /// constructor 
     NotPid ( const Decays::Nodes::Pid& pid ) : m_pid ( pid ) {}
@@ -75,7 +75,7 @@ namespace
   /// the helper object tfor comparison 
   typedef Decays::Trees::CheckTree<const LHCb::MCParticle*> Equal ;  
   // ==========================================================================
-  struct _Pid :  public std::unary_function<const LHCb::MCParticle*,bool>
+  struct _Pid
   {
     /// constructor 
     _Pid ( const Decays::Nodes::Pid& pid ) : m_pid ( pid ) {}
