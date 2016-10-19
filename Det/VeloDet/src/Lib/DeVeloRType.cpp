@@ -25,17 +25,8 @@
 #include "VeloDet/DeVeloRType.h"
 #include "Kernel/VeloChannelID.h"
 
-namespace {
-
-    // simplified implementation of Library TS2's std::make_array... @FIXME: remove once std::make_array is available
-    template <typename... Args>
-    auto make_array( Args&&... a ) -> std::array<typename std::common_type<Args...>::type, sizeof...(a)>
-    {
-            return { std::forward<Args>(a)... };
-    }
-
-
-}
+// for make_array
+#include "Kernel/STLExtensions.h"
 
 namespace VeloDet {
   /** This function simply provides access to a local static
@@ -763,9 +754,9 @@ StatusCode DeVeloRType::updateZoneLimits()
     auto globalLimitsMin = globalStripLimits(minStrip);
     auto globalLimitsMax = globalStripLimits(maxStrip);
     auto globalLimitsMid = globalStripLimits(midStrip);
-    auto phiLimits = make_array( globalLimitsMin.first.phi(), globalLimitsMin.second.phi(),
-                                 globalLimitsMax.first.phi(), globalLimitsMax.second.phi(),
-                                 globalLimitsMid.first.phi(), globalLimitsMid.second.phi()  );
+    auto phiLimits = LHCb::make_array( globalLimitsMin.first.phi(), globalLimitsMin.second.phi(),
+                                       globalLimitsMax.first.phi(), globalLimitsMax.second.phi(),
+                                       globalLimitsMid.first.phi(), globalLimitsMid.second.phi()  );
     // map to [0,2pi] for right hand side sensors
     if (isRight()) {
       for (auto& phiLimit : phiLimits) {
@@ -788,9 +779,9 @@ StatusCode DeVeloRType::updateZoneLimits()
                                            globalToVeloHalfBox(globalLimitsMax.second));
     auto halfBoxLimitsMid = std::make_pair(globalToVeloHalfBox(globalLimitsMid.first),
                                            globalToVeloHalfBox(globalLimitsMid.second));
-    phiLimits = make_array( halfBoxLimitsMin.first.phi(),halfBoxLimitsMin.second.phi(),
-                            halfBoxLimitsMax.first.phi(),halfBoxLimitsMax.second.phi(),
-                            halfBoxLimitsMid.first.phi(),halfBoxLimitsMid.second.phi() );
+    phiLimits = LHCb::make_array( halfBoxLimitsMin.first.phi(),halfBoxLimitsMin.second.phi(),
+                                  halfBoxLimitsMax.first.phi(),halfBoxLimitsMax.second.phi(),
+                                  halfBoxLimitsMid.first.phi(),halfBoxLimitsMid.second.phi() );
     // map to [0,2pi] for right hand side sensors
     if (isRight()) {
       for (auto& phiLimit : phiLimits ) {
