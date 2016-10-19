@@ -1,4 +1,3 @@
-// $Id: ConfigDBAccessSvc.h,v 1.1 2010-05-05 13:20:44 graven Exp $
 #ifndef CONFIGDBACCESSSVC_H 
 #define CONFIGDBACCESSSVC_H 1
 
@@ -50,14 +49,6 @@ public:
   std::vector<ConfigTreeNodeAlias> configTreeNodeAliases(const ConfigTreeNodeAlias::alias_type& alias) override;
 
 private:
-  MsgStream& msg(MSG::Level level) const;
-  MsgStream& verbose() const { return msg(MSG::VERBOSE); }
-  MsgStream& debug() const { return msg(MSG::DEBUG); }
-  MsgStream& info() const { return msg(MSG::INFO); }
-  MsgStream& warning() const { return msg(MSG::WARNING); }
-  MsgStream& error() const { return msg(MSG::ERROR); }
-  MsgStream& fatal() const { return msg(MSG::FATAL); }
-  MsgStream& always() const { return msg(MSG::ALWAYS); }
 
   template <typename T> struct table_traits;
 
@@ -73,7 +64,6 @@ private:
   template <typename iter> void writeCacheEntries( const std::string&, const std::string&, iter, iter);
   void createCacheTables();
 
-  mutable std::unique_ptr<MsgStream>   m_msg;
   std::string                          m_connection;
   coral::ISessionProxy*                m_session = nullptr;
   ICOOLConfSvc*                        m_coolConfSvc = nullptr;
