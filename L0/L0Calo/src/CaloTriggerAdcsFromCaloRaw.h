@@ -22,19 +22,16 @@ public:
                               const std::string& name,
                               const IInterface* parent);
 
-  virtual ~CaloTriggerAdcsFromCaloRaw( ); ///< Destructor
-
   virtual StatusCode initialize() ;
 
   virtual const std::vector<LHCb::L0CaloAdc>&    adcs( ) ;
   virtual const std::vector<LHCb::L0CaloAdc>&    adcs( int source ) ;
-  virtual const std::vector<LHCb::L0CaloAdc>&    adcs( LHCb::RawBank* bank ) ;
+  virtual const std::vector<LHCb::L0CaloAdc>&    adcs( const LHCb::RawBank& bank ) ;
   virtual const std::vector<LHCb::L0CaloAdc>&    pinAdcs( ) ;
 
-  virtual std::string _rootInTES() { return "" ; } ;
   virtual StatusCode  _setProperty(const std::string& ,const std::string& ) { return StatusCode::SUCCESS ; } ;
   virtual bool getBanks() { return true ; } ;
-  virtual void setBanks(const std::vector<LHCb::RawBank*>* ) { return ; } ;
+  virtual void setBanks(const std::vector<LHCb::RawBank*>& ) {  } ;
   virtual void clear() { m_data.clear() ; }
   virtual void cleanData(int ) { clear() ; } ;
   virtual LHCb::RawBankReadoutStatus& status() {
@@ -44,8 +41,6 @@ public:
   virtual void putStatusOnTES() { return ; } ;
   virtual bool ok() { return true ; } ;
   virtual DeCalorimeter* deCalo() { return m_calo ; } ;
-
-protected:
 
 private:
   LHCb::RawBankReadoutStatus m_theSt ;
