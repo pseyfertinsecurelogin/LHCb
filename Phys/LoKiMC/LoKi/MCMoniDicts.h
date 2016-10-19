@@ -1,4 +1,3 @@
-// $Id$
 // ============================================================================
 #ifndef LOKI_MCMONIDICTS_H 
 #define LOKI_MCMONIDICTS_H 1

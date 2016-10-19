@@ -1,4 +1,3 @@
-// $Id$
 // ============================================================================
 #ifndef LOKI_MCSOURCES_H 
 #define LOKI_MCSOURCES_H 1
@@ -74,8 +73,6 @@ namespace LoKi
       ( const std::string&              path       , 
         const std::string&              descriptor ,  
         IDataProviderSvc*               svc  = 0   ) ;
-      /// MANDATORY: virtual destructor 
-      virtual ~SourceTES() ;
       /// MANDATORY: clone method ("virtual constructor")
       virtual  SourceTES* clone () const ; 
       /// MANDATORY: the only essential method:
@@ -168,8 +165,6 @@ namespace LoKi
       TESCounter
       ( const std::string&              path   ,
         const std::string&              decay  ) ;
-      /// MANDATORY: virtual destructor 
-      virtual ~TESCounter() ;
       /// MANDATORY: clone method ("virtual constructor")
       virtual  TESCounter* clone() const ;
       /// MANDATORY: the only essential method:
@@ -218,8 +213,6 @@ namespace LoKi
       ( const std::string&              path       , 
         const LoKi::MCTypes::MCVCuts&   cuts       ,  
         IDataProviderSvc*               svc  = 0   ) ;
-      /// MANDATORY: virtual destructor 
-      virtual ~SourceTES() ;
       /// MANDATORY: clone method ("virtual constructor")
       virtual  SourceTES* clone () const ;
       /// MANDATORY: the only essential method:

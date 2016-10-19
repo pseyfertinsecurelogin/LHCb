@@ -1,4 +1,3 @@
-// $Id$
 // ============================================================================
 #ifndef LOKI_MCPARTICLES_H
 #define LOKI_MCPARTICLES_H 1
@@ -66,8 +65,6 @@ namespace LoKi
     {
     public:
       // ======================================================================
-      /// default constructor
-      Momentum() {}
       /// clone method (mandatory!)
       virtual Momentum* clone() const  ;
       /// the only one essential method
@@ -88,8 +85,6 @@ namespace LoKi
     {
     public:
       // ======================================================================
-      /// default constructor
-      Energy() {}
       /// clone method (mandatory!)
       virtual Energy* clone() const ;
       /// the only one essential method
@@ -110,8 +105,6 @@ namespace LoKi
     {
     public:
       // ======================================================================
-      /// default constructor
-      TransverseMomentum() {}
       /// clone method (mandatory!)
       virtual TransverseMomentum* clone() const ;
       /// the only one essential method
@@ -132,8 +125,6 @@ namespace LoKi
     {
     public:
       // ======================================================================
-      /// default constructor
-      MomentumX() {}
       /// clone method (mandatory!)
       virtual MomentumX* clone() const ;
       /// the only one essential method
@@ -154,8 +145,6 @@ namespace LoKi
     {
     public:
       // ======================================================================
-      /// default constructor
-      MomentumY() {}
       /// clone method (mandatory!)
       virtual MomentumY* clone() const ;
       /// the only one essential method
@@ -176,8 +165,6 @@ namespace LoKi
     {
     public:
       // ======================================================================
-      /// default constructor
-      MomentumZ() {}
       /// clone method (mandatory!)
       virtual MomentumZ* clone() const  ;
       /// the only one essential method
@@ -198,8 +185,6 @@ namespace LoKi
     {
     public:
       // ======================================================================
-      /// default constructor
-      Theta() {}
       /// clone method (mandatory!)
       virtual Theta* clone() const ;
       /// the only one essential method
@@ -221,8 +206,6 @@ namespace LoKi
     {
     public:
       // ======================================================================
-      /// default constructor
-      PseudoRapidity() {}
       /// clone method (mandatory!)
       virtual PseudoRapidity* clone() const ;
       /// the only one essential method
@@ -265,8 +248,6 @@ namespace LoKi
     {
     public:
       // ======================================================================
-      /// default constructor
-      Rapidity() {}
       /// clone method (mandatory!)
       virtual Rapidity* clone() const ;
       /// the only one essential method
@@ -292,8 +273,6 @@ namespace LoKi
     {
     public:
       // ======================================================================
-      /// default constructor
-      Rapidity0() {}
       /// clone method (mandatory!)
       virtual Rapidity0* clone() const ;
       /// the only one essential method
@@ -314,8 +293,6 @@ namespace LoKi
     {
     public:
       // ======================================================================
-      /// default constructor
-      Phi() {}
       /// clone method (mandatory!)
       virtual Phi* clone() const ;
       /// the only one essential method
@@ -351,8 +328,6 @@ namespace LoKi
     {
     public:
       // ======================================================================
-      /// default constructor
-      Mass() {}
       /// clone method (mandatory!)
       virtual Mass* clone() const ;
       /// the only one essential method
@@ -373,8 +348,6 @@ namespace LoKi
     {
     public:
       // ======================================================================
-      /// default constructor
-      Identifier() {}
       /// clone method (mandatory!)
       virtual Identifier* clone() const ;
       /// the only one essential method
@@ -412,10 +385,6 @@ namespace LoKi
       /// "SHORT" representation, @see LoKi::AuxFunBase
       virtual  std::ostream& fillStream( std::ostream& s ) const ;
       // ======================================================================
-    private:
-      // ======================================================================      
-      IsID() ;
-      // ======================================================================
     } ;
     // ========================================================================
     /** @class IsNotID 
@@ -444,10 +413,6 @@ namespace LoKi
       /// "SHORT" representation, @see LoKi::AuxFunBase
       virtual  std::ostream& fillStream( std::ostream& s ) const ;
       // ======================================================================
-    private:
-      // ======================================================================      
-      IsNotID() ;
-      // ======================================================================
     } ;
     // ========================================================================
     class GAUDI_API IsAbsID : public LoKi::MCParticles::IsID   
@@ -471,10 +436,6 @@ namespace LoKi
       result_type operator() ( argument p ) const ;
       /// "SHORT" representation, @see LoKi::AuxFunBase
       virtual  std::ostream& fillStream( std::ostream& s ) const ;
-      // ======================================================================
-    private:
-      // ======================================================================      
-      IsAbsID() ;
       // ======================================================================
     } ;
     // ========================================================================
@@ -500,10 +461,6 @@ namespace LoKi
       /// "SHORT" representation, @see LoKi::AuxFunBase
       virtual  std::ostream& fillStream( std::ostream& s ) const ;
       // ======================================================================
-    private:
-      // ======================================================================      
-      IsNotAbsID() ;
-      // ======================================================================
     } ;
     // ========================================================================
     /** @class AbsIdentifier
@@ -517,8 +474,6 @@ namespace LoKi
     {
     public:
       // ======================================================================
-      /// default constructor
-      AbsIdentifier() {}
       /// clone method (mandatory!)
       virtual AbsIdentifier* clone() const ;
       /// the only one essential method
@@ -540,8 +495,6 @@ namespace LoKi
     {
     public:
       // ======================================================================
-      /// default constructor
-      Oscillated() {}
       /// clone method (mandatory!)
       virtual Oscillated* clone() const ;
       /// the only one essential method
@@ -562,8 +515,6 @@ namespace LoKi
     {
     public:
       // ======================================================================
-      /// default constructor
-      ThreeCharge() {}
       /// clone method (mandatory!)
       virtual ThreeCharge* clone() const ;
       /// the only one essential method
@@ -588,8 +539,6 @@ namespace LoKi
     {
     public:
       // ======================================================================
-      /// default constructor
-      ProperLifeTime() {}
       /// clone method (mandatory!)
       virtual ProperLifeTime* clone() const ;
       /// the only one essential method
@@ -611,8 +560,6 @@ namespace LoKi
     public:
       // ======================================================================
       HasQuark (  const LHCb::ParticleID::Quark quark ) ;
-      // copy constructor
-      HasQuark (  const HasQuark& right ) ;
       /// clone method (mandatory!)
       virtual HasQuark* clone() const ;
       /// the only one essential method
@@ -621,10 +568,6 @@ namespace LoKi
       virtual  std::ostream& fillStream( std::ostream& s ) const ;
       //
       LHCb::ParticleID::Quark quark() const { return m_quark ; }
-      // ======================================================================
-    private:
-      // ======================================================================
-      HasQuark();
       // ======================================================================
     private :
       // ======================================================================
@@ -642,8 +585,6 @@ namespace LoKi
     {
     public:
       // ======================================================================
-      /// default constructor
-      IsCharged() {}
       /// clone method (mandatory!)
       virtual IsCharged* clone() const ;
       /// the only one essential method
@@ -663,8 +604,6 @@ namespace LoKi
     {
     public:
       // ======================================================================
-      /// default constructor
-      IsNeutral() {}
       /// clone method (mandatory!)
       virtual IsNeutral* clone() const ;
       /// the only one essential method
@@ -684,8 +623,6 @@ namespace LoKi
     {
     public:
       // ======================================================================
-      /// default constructor
-      IsLepton() {}
       /// clone method (mandatory!)
       virtual IsLepton* clone() const ;
       /// the only one essential method
@@ -705,8 +642,6 @@ namespace LoKi
     {
     public:
       // ======================================================================
-      /// default constructor
-      IsMeson() {}
       /// clone method (mandatory!)
       virtual IsMeson* clone() const ;
       /// the only one essential method
@@ -726,8 +661,6 @@ namespace LoKi
     {
     public:
       // ======================================================================
-      /// default constructor
-      IsBaryon() {}
       /// clone method (mandatory!)
       virtual IsBaryon* clone() const ;
       /// the only one essential method
@@ -747,8 +680,6 @@ namespace LoKi
     {
     public:
       // ======================================================================
-      /// default constructor
-      IsHadron() {}
       /// clone method (mandatory!)
       virtual IsHadron* clone() const ;
       /// the only one essential method
@@ -768,8 +699,6 @@ namespace LoKi
     {
     public:
       // ======================================================================
-      /// default constructor
-      IsNucleus() {}
       /// clone method (mandatory!)
       virtual IsNucleus* clone() const ;
       /// the only one essential method
@@ -820,10 +749,6 @@ namespace LoKi
                         MCPARTICLE last  )
         : LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate()
           , m_cont ( first , last ) {}
-      // copy constructor
-      FromMCDecayTree( const FromMCDecayTree& ) ;
-      /// virtual destructor
-      ~FromMCDecayTree();
       /// clone method (mandatory!)
       virtual FromMCDecayTree* clone() const ;
       /// the only one essential method
@@ -892,10 +817,6 @@ namespace LoKi
       // ======================================================================
     private:
       // ======================================================================
-      FromMCDecayTree();
-      // ======================================================================
-    private:
-      // ======================================================================
       MCCont m_cont ;
       // ======================================================================
     };
@@ -913,19 +834,12 @@ namespace LoKi
       // ======================================================================
       /// constructor from the predicate
       InAncestors ( const LoKi::MCTypes::MCCuts& cut ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~InAncestors() ;
       /// MANDATORY: clone method ("virtual constructor")
       virtual  InAncestors* clone() const ;
       /// MANDATORY: the only one important method
       virtual result_type operator() ( argument p ) const ;
       /// OPTIONAL: "SHORT" representation
       virtual  std::ostream& fillStream( std::ostream& s ) const ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the defautl constructor is disabled
-      InAncestors () ;                  // the default constructor is disabled
       // ======================================================================
     public:
       // ======================================================================
@@ -952,19 +866,12 @@ namespace LoKi
       // ======================================================================
       /// constructor from the predicate
       NinAncestors ( const LoKi::MCTypes::MCCuts& cut ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~NinAncestors() ;
       /// MANDATORY: clone method ("virtual constructor")
       virtual  NinAncestors* clone() const ;
       /// MANDATORY: the only one important method
       virtual result_type operator() ( argument p ) const ;
       /// OPTIONAL: "SHORT" representation
       virtual  std::ostream& fillStream( std::ostream& s ) const ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the defautl constructor is disabled
-      NinAncestors () ;                  // the default constructor is disabled
       // ======================================================================
     public:
       // ======================================================================
@@ -994,8 +901,6 @@ namespace LoKi
        */
       NinMCdownTree
       ( const LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate& cut ) ;
-      /// destructor
-      virtual ~NinMCdownTree() ;
       /// clone method/"virtual constructor" (mandatory!)
       virtual NinMCdownTree* clone() const ;
       /// the main method
@@ -1028,10 +933,6 @@ namespace LoKi
       MCMotherFunction
       ( const LoKi::BasicFunctors<const LHCb::MCParticle*>::Function& fun   ,
         const double                             val   ) ;
-      /// copy constructor
-      MCMotherFunction ( const MCMotherFunction&                  right ) ;
-      /// destructor
-      virtual ~MCMotherFunction();
       /// clone method (virtual constructor) (mandatory!)
       virtual MCMotherFunction* clone() const ;
       /// the only one essential method
@@ -1065,11 +966,6 @@ namespace LoKi
       MCMotherPredicate
       ( const LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate& cut   ,
         const bool                                                     val   ) ;
-      /// copy constructor
-      MCMotherPredicate
-      ( const MCMotherPredicate&                  right ) ;
-      /// destructor
-      virtual ~MCMotherPredicate();
       /// clone method (virtual constructor) (mandatory!)
       virtual MCMotherPredicate* clone() const ;
       /// the only one essential method
@@ -1113,15 +1009,8 @@ namespace LoKi
       IsParticle
       ( OBJECT begin ,
         OBJECT end   )
-        : LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate()
-        , m_objects ( begin , end )
+        : m_objects ( begin , end )
       {}
-      /** copy constructor
-       *  @param right  object to be copied
-       */
-      IsParticle( const IsParticle& right ) ;
-      /// destructor (virtual)
-      virtual ~IsParticle();
       /// MANDATORY: clone method ('virtual constructor')
       virtual IsParticle* clone() const ;
       /// MANDATORY: the only one essential method
@@ -1168,12 +1057,6 @@ namespace LoKi
         : LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate()
         , m_objects ( begin , end )
       {}
-      /** copy constructor
-       *  @param right  object to be copied
-       */
-      IsContainedObject( const IsContainedObject& right ) ;
-      /// destructor (virtual)
-      virtual ~IsContainedObject();
       /// MANDATORY: clone method ('virtual constructor')
       virtual IsContainedObject* clone() const ;
       /// MANDATORY: the only one essential method
@@ -1226,22 +1109,12 @@ namespace LoKi
         const double e  ) ;
       /// constructor from the given 4-momentum
       MomentumDistance ( const LoKi::LorentzVector& vct ) ;
-      /** copy constructor
-       *  @param right object to be copied
-       */
-      MomentumDistance ( const MomentumDistance& right ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~MomentumDistance() ;
       /// MANDATORY: clone function ("virtual constructor")
       virtual MomentumDistance* clone() const ;
       /// MANDATORY: the only one essential method
       virtual result_type operator() ( argument p ) const ;
       /// "SHORT" representation, @see LoKi::AuxFunBase
       virtual  std::ostream& fillStream( std::ostream& s ) const ;
-      private:
-      /// default constructor is private
-      MomentumDistance() ;
-      // ======================================================================
     private:
       // ======================================================================
       LoKi::LorentzVector m_vct ;
@@ -1279,13 +1152,6 @@ namespace LoKi
        */
       TransverseMomentumRel
       ( const LoKi::ThreeVector& vct ) ;
-      /** copy constructor
-       *  @param right object to be copied
-       */
-      TransverseMomentumRel
-      ( const TransverseMomentumRel& right ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~TransverseMomentumRel();
       /// MANDATORY: clone function ("virtual constructor")
       virtual TransverseMomentumRel* clone() const ;
       /// MANDATORY: the only one essential method
@@ -1293,11 +1159,6 @@ namespace LoKi
       /// "SHORT" representation, @see LoKi::AuxFunBase
       virtual  std::ostream& fillStream( std::ostream& s ) const ;
       // =====================================================================
-    private:
-      // ======================================================================
-      /// default constructor is private
-      TransverseMomentumRel() ;
-      // ======================================================================
     private:
       // ======================================================================
       LoKi::ThreeVector m_vct ;
@@ -1342,8 +1203,6 @@ namespace LoKi
       //         m_phi = p->momentum().Phi() ;
       //         m_phi = adjust ( m_phi ) ;
       //       } ;
-      /// MANDATORY: virtual destructor
-      virtual ~DeltaPhi() {}
       /// MANDATORY: clone method ("virtual constructor")
       virtual  DeltaPhi* clone() const
       { return new DeltaPhi(*this) ; }
@@ -1359,11 +1218,6 @@ namespace LoKi
       /// get delta phi
       result_type dphi ( argument p ) const
       { return adjust ( phi ( p ) - phi0 () ) ; }
-      // ======================================================================
-    private:
-      // ======================================================================
-      // the default constructor is disabled
-      DeltaPhi ();
       // ======================================================================
     private:
       // ======================================================================
@@ -1407,8 +1261,6 @@ namespace LoKi
       //         if ( 0 == p ) { Exception("Invalid PARTICLE*") ;}
       //         m_eta = p->momentum().Eta() ;
       //       } ;
-      /// MANDATORY: virtual destructor
-      virtual ~DeltaEta() {}
       /// MANDATORY: clone method ("virtual constructor")
       virtual  DeltaEta* clone() const
       { return new DeltaEta( *this ) ; }
@@ -1422,11 +1274,6 @@ namespace LoKi
       // accessor to eta0
       result_type eta0 () const { return m_eta ; }
       result_type deta ( argument p ) const { return eta ( p ) - eta0() ; }
-      // ======================================================================
-    private:
-      // ======================================================================
-      // the default constructor is disabled
-      DeltaEta ();
       // ======================================================================
     private:
       // ======================================================================
@@ -1474,8 +1321,6 @@ namespace LoKi
       //         : DeltaPhi ()
       //         , m_deta ( p )
       //       {} ;
-      /// MANDATORY: virtual destructor
-      virtual ~DeltaR2() {} ;
       /// MANDATORY: clone method ("virtual constructor")
       virtual  DeltaR2* clone() const
       { return new DeltaR2(*this) ; }
@@ -1496,11 +1341,6 @@ namespace LoKi
       // ======================================================================
     private:
       // ======================================================================
-      // the default constructor is disabled
-      DeltaR2 ();
-      // ======================================================================
-    private:
-      // ======================================================================
       /// the actual evaluator of delta eta
       LoKi::MCParticles::DeltaEta m_deta ; // the actual evaluator of delta eta
       // ======================================================================
@@ -1517,10 +1357,6 @@ namespace LoKi
     {
     public:
       // ======================================================================
-      /// MANDATORY: default constructor
-      ValidOrigin() {}
-      /// MANDATORY : virtual destructor
-      virtual ~ValidOrigin();
       /// MANDATORY : clone method ("virtual constructor")
       virtual  ValidOrigin* clone() const ;
       /// MANDATORY: the only one essential method
@@ -1548,8 +1384,6 @@ namespace LoKi
       MCVertexFunAdapter
       ( const LoKi::MCTypes::MCVFunc& vfunc            ,
         const double                  err   = -1000000 ) ;
-      /// MANDATORY : virtual destructor
-      virtual ~MCVertexFunAdapter() ;
       /// MANDATORY : clone method ("virtual constructor")
       virtual  MCVertexFunAdapter* clone() const ;
       /// MANDATORY: the only one essential method
@@ -1611,24 +1445,12 @@ namespace LoKi
       MCDecayPattern
       ( const std::string&                     decay  ,
         const LoKi::Interface<IMCDecayFinder>& finder ) ;
-      /** copy constructor
-       *  @param right object to be copied
-       */
-      MCDecayPattern
-      ( const  MCDecayPattern& right ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~MCDecayPattern() ;
       /// MANDATORY: clone method ("virtual constructor")
       virtual  MCDecayPattern* clone() const ;
       /// MANDATORY: the only one essential method
       virtual result_type operator() ( argument p ) const ;
       /// "SHORT" representation, @see LoKi::AuxFunBase
       virtual  std::ostream& fillStream( std::ostream& s ) const ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// default constructor is disabled
-      MCDecayPattern() ;
       // ======================================================================
     private:
       // ======================================================================
@@ -1653,21 +1475,12 @@ namespace LoKi
       MCFilter ( const IMCParticleSelector*                  selector ) ;
       /// constructor from selector
       MCFilter ( const LoKi::Interface<IMCParticleSelector>& selector ) ;
-      /// copy constructor
-      MCFilter ( const MCFilter& right ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~MCFilter() ;
       /// MANDATORY: clone method ("virtual constructor")
       virtual MCFilter* clone() const ;
       /// MANDATORY: the only one essential method
       virtual result_type operator() ( argument p ) const ;
       /// "SHORT" representation, @see LoKi::AuxFunBase
       virtual  std::ostream& fillStream( std::ostream& s ) const ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// default constructor is disabled
-      MCFilter() ;
       // ======================================================================
     private:
       // ======================================================================
@@ -1692,10 +1505,6 @@ namespace LoKi
       MCReconstructible ( const IMCReconstructible*                  tool ) ;
       /// constructor from the holder
       MCReconstructible ( const LoKi::Interface<IMCReconstructible>& tool ) ;
-      /// copy constructor
-      MCReconstructible ( const MCReconstructible&  copy ) ;
-      /// MANDATORY: virtual dectructor
-      virtual ~MCReconstructible (){} ;
       /// MANDATORY: clone method ("virtual constructor")
       virtual  MCReconstructible* clone() const ;
       /// MANDATORY: the only one essential method
@@ -1708,11 +1517,6 @@ namespace LoKi
       /// cast operator to the underlying tool
       operator const LoKi::Interface<IMCReconstructible>& () const
       { return m_eval ; }
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// default constructor is disabled
-      MCReconstructible () ; // default constructor is disabled
       // ======================================================================
     private:
       // ======================================================================
@@ -1750,10 +1554,6 @@ namespace LoKi
       MCReconstructibleAs
       ( const IMCReconstructible::RecCategory      cat  ,
         const LoKi::Interface<IMCReconstructible>& tool ) ;
-      /// copy constructor
-      MCReconstructibleAs ( const MCReconstructibleAs&  copy ) ;
-      /// MANDATORY: virtual dectructor
-      virtual ~MCReconstructibleAs (){} ;
       /// MAND ATORY: clone method ("virtual constructor")
       virtual  MCReconstructibleAs* clone() const ;
       /// MANDATORY: the only one essential method
@@ -1765,11 +1565,6 @@ namespace LoKi
       // ======================================================================
       /// cast operator to the underlying tool
       operator const LoKi::Interface<IMCReconstructible>& () const { return m_eval ; }
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// default constructor is disabled
-      MCReconstructibleAs () ;               // default constructor is disabled
       // ======================================================================
     private:
       // ======================================================================
@@ -1823,21 +1618,12 @@ namespace LoKi
       ( const size_t                 index ,
         const LoKi::MCTypes::MCFunc& fun   ,
         const double bad = LoKi::Constants::NegativeInfinity ) ;
-      /// copy
-      ChildFunction ( const ChildFunction& right ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~ChildFunction(){};
       /// MANDATORY: clone method ("virtual constructor")
       virtual  ChildFunction*  clone() const ;
       /// MANDATORY: the only one essential method
       virtual result_type operator() ( argument p ) const ;
       /// OPTIONAL:  specific printout
       virtual std::ostream& fillStream ( std::ostream& s ) const ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// no default constructor
-      ChildFunction();  // no default constructor
       // ======================================================================
     private:
       // ======================================================================
@@ -1893,21 +1679,12 @@ namespace LoKi
       ( const size_t                 index       ,
         const LoKi::MCTypes::MCCuts& cut         ,
         const bool                   bad = false ) ;
-      /// copy
-      ChildPredicate ( const ChildPredicate& right ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~ChildPredicate(){};
       /// MANDATORY: clone method ("virtual constructor")
       virtual  ChildPredicate*  clone() const ;
       /// MANDATORY: the only one essential method
       virtual result_type operator() ( argument p ) const ;
       /// OPTIONAL:  specific printout
       virtual std::ostream& fillStream ( std::ostream& s ) const ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// no default constructor
-      ChildPredicate();                               // no default constructor
       // ======================================================================
     private:
       // ======================================================================
@@ -1946,21 +1723,12 @@ namespace LoKi
        */
       InTree  ( const LoKi::MCTypes::MCCuts& cut               ,
                 const bool                   decayOnly = false ) ;
-      /// copy constructor
-      InTree  ( const InTree& right ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~InTree (){};
       /// MANDATORY: clone function ("virtual constructor")
       virtual  InTree*       clone() const ;
       /// MANDATORY: the only one essential method
       virtual  result_type   operator() ( argument p ) const ;
       /// OPTIONAL: the specific printout
       virtual std::ostream& fillStream ( std::ostream& s ) const ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// default constructor is disabled
-      InTree () ;                            // default constructor is disabled
       // ======================================================================
     private:
       // ======================================================================
@@ -1993,21 +1761,12 @@ namespace LoKi
        */
       NinTree  ( const LoKi::MCTypes::MCCuts& cut                ,
                  const bool                   decayOnly = false  ) ;
-      /// copy constructor
-      NinTree  ( const NinTree& right ) ;
-      /// destructor
-      virtual ~NinTree (){} ;
       /// MANDATORY: clone function (virtual destructor)
       virtual  NinTree* clone() const ;
       /// MANDATORY: the only one essential method
       virtual  result_type   operator() ( argument p ) const ;
       /// OPTIONAL: the specific printout
       virtual std::ostream& fillStream( std::ostream& s ) const ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      NinTree () ;                       // the default constructor is disabled
       // ======================================================================
     private:
       // ======================================================================
@@ -2060,21 +1819,12 @@ namespace LoKi
         const LoKi::MCTypes::MCFunc& fun               ,
         const bool                   decayOnly = false ,
         const double                 res       = 0.0   ) ;
-      /// copy constructor
-      SumTree ( const SumTree& right ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~SumTree (){} ;
       /// MANDATORY: clone function (virtual destructor)
       virtual  SumTree* clone() const ;
       /// MANDATORY: the only one essential method
       virtual  result_type   operator() ( argument p ) const ;
       /// OPTIONAL: the specific printout
       virtual std::ostream& fillStream( std::ostream& s ) const ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      SumTree() ;                       // the default constructor is disabled
       // ======================================================================
     private:
       // ======================================================================
@@ -2129,21 +1879,12 @@ namespace LoKi
         const LoKi::MCTypes::MCFunc& fun               ,
         const bool                   decayOnly = false ,
         const double                 res       = 1.0   ) ;
-      /// copy constructor
-      MultTree ( const MultTree& right ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~MultTree (){} ;
       /// MANDATORY: clone function (virtual destructor)
       virtual  MultTree* clone() const ;
       /// MANDATORY: the only one essential method
       virtual  result_type   operator() ( argument p ) const ;
       /// OPTIONAL: the specific printout
       virtual std::ostream& fillStream( std::ostream& s ) const ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      MultTree () ;                      // the default constructor is disabled
       // ======================================================================
     private:
       // ======================================================================
@@ -2199,21 +1940,12 @@ namespace LoKi
         const bool                   decayOnly = false ,
         const double                 res =
         LoKi::Constants::PositiveInfinity ) ;
-      /// copy constructor
-      MinTree ( const MinTree& right ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~MinTree (){} ;
       /// MANDATORY: clone function (virtual destructor)
       virtual  MinTree* clone() const  ;
       /// MANDATORY: the only one essential method
       virtual  result_type   operator() ( argument p ) const ;
       /// OPTIONAL: the specific printout
       virtual std::ostream& fillStream( std::ostream& s ) const ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      // the default constructor is disabled
-      MinTree() ; ///< the default constructor is disabled
       // ======================================================================
     private:
       // ======================================================================
@@ -2269,21 +2001,12 @@ namespace LoKi
         const bool                   decayOnly = false ,
         const double                 res =
         LoKi::Constants::NegativeInfinity ) ;
-      /// copy constructor
-      MaxTree ( const MaxTree& right ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~MaxTree (){} ;
       /// MANDATORY: clone function (virtual destructor)
       virtual  MaxTree* clone() const  ;
       /// MANDATORY: the only one essential method
       virtual  result_type   operator() ( argument p ) const ;
       /// OPTIONAL: the specific printout
       virtual std::ostream& fillStream( std::ostream& s ) const ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      MaxTree() ;                        // the default constructor is disabled
       // ======================================================================
     private:
       // ======================================================================
@@ -2315,10 +2038,6 @@ namespace LoKi
     {
     public:
       // ======================================================================
-      /// MANDATORY: default constructor
-      FromDecays() {}
-      /// MANDATORY: virtual destructor
-      virtual ~FromDecays() ;
       /// MANDATORY: clone method ("virtual constructor")
       virtual  FromDecays* clone() const ;
       /// MANDATORY: the only one essential method
@@ -2350,10 +2069,6 @@ namespace LoKi
     {
     public:
       // ======================================================================
-      /// MANDATORY: default constructor
-      FromInteractions() {}
-      /// MANDATORY: virtual destructor
-      virtual ~FromInteractions () ;
       /// MANDATORY: clone method ("virtual constructor")
       virtual  FromInteractions* clone() const ;
       /// MANDATORY: the only one essential method
