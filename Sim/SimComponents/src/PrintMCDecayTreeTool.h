@@ -32,10 +32,7 @@ public:
                       const std::string& name,
                       const IInterface* parent );
 
-  /// Destructor 
-  virtual ~PrintMCDecayTreeTool( ){}; ///< Destructor
-
-  StatusCode initialize( void );
+  StatusCode initialize( ) override;
 
   void printTree( const LHCb::MCParticle* mother, 
                   int maxDepth = -1) const override;

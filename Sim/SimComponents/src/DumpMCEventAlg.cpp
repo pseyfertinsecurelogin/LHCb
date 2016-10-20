@@ -1,4 +1,3 @@
-// $Id: DumpMCEventAlg.cpp,v 1.2 2007-01-12 10:01:00 cattanem Exp $
 // Include files
 // Tools
 #include "Kernel/ICheckTool.h"
@@ -25,15 +24,10 @@ DECLARE_ALGORITHM_FACTORY(DumpMCEventAlg)
 //=============================================================================
 DumpMCEventAlg::DumpMCEventAlg( const std::string& name,
                                 ISvcLocator* pSvcLocator)
-  : GaudiAlgorithm ( name , pSvcLocator ),
-    m_checker(0)
+  : GaudiAlgorithm ( name , pSvcLocator )
 {
   declareProperty( "NumberOfObjectsToPrint", m_numObjects = 5 );
 }
-//=============================================================================
-// Destructor
-//=============================================================================
-DumpMCEventAlg::~DumpMCEventAlg() {}
 
 //=============================================================================
 // Initialization
@@ -54,8 +48,7 @@ StatusCode DumpMCEventAlg::execute() {
 
   LHCb::MCHeader* evt =
     get<LHCb::MCHeader>( LHCb::MCHeaderLocation::Default );
-  info() << "++++++++++++++++++++++++++++++++++++++++++++++++++++"
-         << std::endl
+  info() << "++++++++++++++++++++++++++++++++++++++++++++++++++++\n"
          << *evt << endmsg;
 
   StatusCode sc = m_checker->check();
@@ -68,8 +61,7 @@ StatusCode DumpMCEventAlg::execute() {
 
   if( 0 < m_numObjects && msgLevel( MSG::DEBUG ) ) {
     unsigned int count = 0;
-    LHCb::MCVertices::iterator iVert;
-    for( iVert = verts->begin(); iVert != verts->end(); iVert++ ) {
+    for( auto iVert = verts->begin(); iVert != verts->end(); iVert++ ) {
       if( !msgLevel(MSG::VERBOSE) && m_numObjects < ++count ) break;
       debug() << "MCVertex " << (*iVert)->key() << ":" << std::endl;
       (*iVert)->fillStream(debug().stream());
@@ -83,8 +75,7 @@ StatusCode DumpMCEventAlg::execute() {
 
   if( 0 < m_numObjects && msgLevel( MSG::DEBUG ) ) {
     unsigned int count = 0;
-    LHCb::MCParticles::iterator iPart;
-    for( iPart = parts->begin(); iPart != parts->end(); iPart++ ) {
+    for(auto iPart = parts->begin(); iPart != parts->end(); iPart++ ) {
       if( !msgLevel(MSG::VERBOSE) && m_numObjects < ++count ) break;
       debug() << "MCParticle " << (*iPart)->key() << ":" << std::endl;
       (*iPart)->fillStream(debug().stream());

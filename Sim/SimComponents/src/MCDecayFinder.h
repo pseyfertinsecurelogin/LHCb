@@ -127,13 +127,13 @@ public:
   /// Destructor 
   virtual ~MCDecayFinder( ); ///< Destructor
 
-  StatusCode initialize( void );
+  StatusCode initialize( ) override;
 
   /// Get/Set the decay string to find
   std::string decay( void ) const override { return m_source; }
   StatusCode setDecay( std::string decay ) override;
 
-  std::string revert( void ) const;
+  std::string revert( ) const override;
 
   /// Does the described decay exists in the event?
   bool hasDecay( const LHCb::MCParticle::ConstVector &event ) const override;
