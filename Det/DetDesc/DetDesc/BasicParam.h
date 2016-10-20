@@ -1,4 +1,3 @@
-// $Id: BasicParam.h,v 1.3 2008-02-22 12:12:12 marcocle Exp $
 #ifndef DETDESC_BASICPARAM_H 
 #define DETDESC_BASICPARAM_H 1
 
@@ -16,27 +15,27 @@ class BasicParam {
 public:
 
   /// Virtual destructor, just to be safe.
-  virtual ~BasicParam() {};
+  virtual ~BasicParam() = default;
   
   /// Generic getter. When accessing the datum of a parameter through the base class
   /// you should specify the exact type (no automatic conversion implemented).
   template <class T>
   inline T &get() {
     if (type() != typeid(T)) { throw std::bad_cast(); }
-    return *(T*)_get_ptr();
+    return *static_cast<T*>(_get_ptr());
   }
   /// Generic getter (const version). see above
   template <class T>
   inline const T &get() const {
     if (type() != typeid(T)) { throw std::bad_cast(); }
-    return *(T*)_get_ptr();
+    return *static_cast<T*>(_get_ptr());
   }
   
   /// Generic setter. Same cosideration as for the getters.
   template <class T>
   inline void set(const T &val) {
     if (type() != typeid(T)) { throw std::bad_cast(); }
-    *(T*)_get_ptr() = val;
+    *static_cast<T*>(_get_ptr()) = val;
   }
 
   ///  String representation for printout
@@ -52,9 +51,7 @@ public:
 
   /// Used for generic copy. You can copy type-safely a parameter via the base class. 
   /// (Needed by ParamList)
-  virtual BasicParam * new_copy() const = 0;
-
-protected:
+  virtual std::unique_ptr<BasicParam> new_copy() const = 0;
 
 private:
   /// Handle to access the real datum

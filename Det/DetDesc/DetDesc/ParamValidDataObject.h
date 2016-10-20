@@ -1,4 +1,3 @@
-//$Id: ParamValidDataObject.h,v 1.11 2008-07-11 16:34:50 marcocle Exp $
 #ifndef DETDESC_PARAMVALIDDATAOBJECT_H
 #define DETDESC_PARAMVALIDDATAOBJECT_H 1
 
@@ -23,13 +22,10 @@ class ParamValidDataObject : public ValidDataObject {
  public: 
   
   /// Default constructor
-  ParamValidDataObject();
+  ParamValidDataObject() = default;
 
   /// Copy constructor 
   ParamValidDataObject (const ParamValidDataObject& obj);
-  
-  /// Destructor 
-  virtual ~ParamValidDataObject();
   
  public:
 
@@ -72,7 +68,7 @@ class ParamValidDataObject : public ValidDataObject {
   /// Give a read-only accessor to a parameter.
   template <class T>
   inline const T &param(const std::string &name) const {
-    ParamList::const_iterator i = m_paramList.find(name);
+    auto i = m_paramList.find(name);
     if ( i == m_paramList.end() ) throw ParamException(name);
     try {
       return i->second-> template get<T>();
@@ -84,7 +80,7 @@ class ParamValidDataObject : public ValidDataObject {
   /// Give a read/write accessor to a parameter.
   template <class T>
   inline T &param(const std::string &name) {
-    ParamList::iterator i = m_paramList.find(name);
+    auto i = m_paramList.find(name);
     if ( i == m_paramList.end() ) throw ParamException(name);
     try {
       return i->second-> template get<T>();
@@ -154,7 +150,7 @@ public:
   	}
   }
 
-  inline void addBasicParam(const std::string &name, const BasicParam *p, const std::string &comment=std::string()){
+  inline void addBasicParam(const std::string &name, const BasicParam& p, const std::string &comment=std::string()){
   	m_paramList.addBasicParam(name,p);
   	if (!comment.empty()) {
   	  m_comments[name] = comment;
