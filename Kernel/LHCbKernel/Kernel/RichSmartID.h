@@ -98,9 +98,9 @@ namespace LHCb
      */
     enum IDType : int8_t
     {
-      Undefined = -1, ///< Undefined
-        MaPMTID = 0,    ///< Represents an MaPMT channel
-        HPDID   = 1     ///< Represents an HPD channel
+      Undefined = -1,  ///< Undefined
+        MaPMTID =  0,  ///< Represents an MaPMT channel
+        HPDID   =  1   ///< Represents an HPD channel
         };
 
   public:
@@ -120,7 +120,8 @@ namespace LHCb
 #endif
     {
 #ifndef NDEBUG
-      checkRange(type,MaxIDType,"IDType");
+      static const std::string mess("IDType");
+      checkRange(type,MaxIDType,mess);
 #endif
       setData( type, ShiftIDType, MaskIDType );
     }
@@ -289,7 +290,7 @@ namespace LHCb
     /// Checks if a data value is within range for a given field
     inline void checkRange( const DataType value,
                             const DataType maxValue,
-                            const std::string& message) const
+                            const std::string & message ) const
     {
       if ( value > maxValue ) { rangeError( value, maxValue, message ); }
     }
@@ -297,27 +298,12 @@ namespace LHCb
     /// Issue an exception in the case of a range error
     void rangeError( const DataType value,
                      const DataType maxValue,
-                     const std::string& message ) const;
+                     const std::string & message ) const;
 
   public:
 
     /// Default Constructor
     RichSmartID() { }
-
-    /// Default Destructor
-    ~RichSmartID() = default;
-
-    /// Default Copy Constructor
-    RichSmartID( const RichSmartID& ) = default;
-
-    /// Default Copy Operator
-    RichSmartID& operator=( const RichSmartID& ) = default;
-
-    /// Default Move Constructor
-    RichSmartID( RichSmartID&& ) = default;
-
-    /// Default Move Operator
-    RichSmartID& operator=( RichSmartID&& ) = default;
 
   public:
 
@@ -347,7 +333,7 @@ namespace LHCb
                  const DataType pixelSubRow,
                  const IDType type = HPDID )
 #ifdef NDEBUG
-    noexcept
+      noexcept
 #endif
     {
       setIDType        ( type              );
@@ -368,7 +354,7 @@ namespace LHCb
                  const DataType pixelCol,
                  const IDType type = HPDID )
 #ifdef NDEBUG
-    noexcept
+      noexcept
 #endif
     {
       setIDType        ( type              );
@@ -386,7 +372,7 @@ namespace LHCb
                  const DataType pdCol,
                  const IDType type = HPDID )
 #ifdef NDEBUG
-    noexcept
+      noexcept
 #endif
     {
       setIDType        ( type              );
@@ -400,7 +386,7 @@ namespace LHCb
                  const Rich::Side panel,
                  const IDType type = HPDID )
 #ifdef NDEBUG
-    noexcept
+      noexcept
 #endif
     {
       setIDType        ( type  );
@@ -457,14 +443,16 @@ namespace LHCb
       if ( HPDID == idType() )
       {
 #ifndef NDEBUG
-        checkRange( rich, HPD::MaxRich, "RICH" );
+        static const std::string mess("RICH");
+        checkRange( rich, HPD::MaxRich, mess );
 #endif
         setData( rich, HPD::ShiftRich,   HPD::MaskRich,   HPD::MaskRichIsSet   );
       }
       else // assume only two ID types ...
       {
 #ifndef NDEBUG
-        checkRange( rich, MaPMT::MaxRich, "RICH" );
+        static const std::string mess("RICH");
+        checkRange( rich, MaPMT::MaxRich, mess );
 #endif
         setData( rich, MaPMT::ShiftRich, MaPMT::MaskRich, MaPMT::MaskRichIsSet );
       }
@@ -479,14 +467,16 @@ namespace LHCb
       if ( HPDID == idType() )
       {
 #ifndef NDEBUG
-        checkRange( panel, HPD::MaxPanel, "Panel" );
+        static const std::string mess("Panel");
+        checkRange( panel, HPD::MaxPanel, mess );
 #endif
         setData( panel, HPD::ShiftPanel,   HPD::MaskPanel,   HPD::MaskPanelIsSet   );
       }
       else // assume only two ID types ...
       {
 #ifndef NDEBUG
-        checkRange( panel, MaPMT::MaxPanel, "Panel" );
+        static const std::string mess("Panel");
+        checkRange( panel, MaPMT::MaxPanel, mess );
 #endif
         setData( panel, MaPMT::ShiftPanel, MaPMT::MaskPanel, MaPMT::MaskPanelIsSet );
       }
@@ -501,8 +491,10 @@ namespace LHCb
       if ( HPDID == idType() )
       {
 #ifndef NDEBUG
-        checkRange ( col,    HPD::MaxPDCol,      "PDColumn"   );
-        checkRange ( nInCol, HPD::MaxPDNumInCol, "PDNumInCol" );
+        static const std::string messa("PDColumn");
+        static const std::string messb("PDNumInCol");
+        checkRange ( col,    HPD::MaxPDCol,      messa );
+        checkRange ( nInCol, HPD::MaxPDNumInCol, messb );
 #endif
         setData( col,    HPD::ShiftPDCol,      HPD::MaskPDCol,      HPD::MaskPDIsSet );
         setData( nInCol, HPD::ShiftPDNumInCol, HPD::MaskPDNumInCol                   );
@@ -510,8 +502,10 @@ namespace LHCb
       else // assume only two ID types ...
       {
 #ifndef NDEBUG
-        checkRange ( col,    MaPMT::MaxPDCol,      "PDColumn"   );
-        checkRange ( nInCol, MaPMT::MaxPDNumInCol, "PDNumInCol" );
+        static const std::string messa("PDColumn");
+        static const std::string messb("PDNumInCol");
+        checkRange ( col,    MaPMT::MaxPDCol,      messa );
+        checkRange ( nInCol, MaPMT::MaxPDNumInCol, messb );
 #endif
         setData( col,    MaPMT::ShiftPDCol,      MaPMT::MaskPDCol,      MaPMT::MaskPDIsSet );
         setData( nInCol, MaPMT::ShiftPDNumInCol, MaPMT::MaskPDNumInCol                     );
@@ -527,14 +521,16 @@ namespace LHCb
       if ( HPDID == idType() )
       {
 #ifndef NDEBUG
-        checkRange( row, HPD::MaxPixelRow, "PixelRow" );
+        static const std::string mess("PixelRow");
+        checkRange( row, HPD::MaxPixelRow, mess );
 #endif
         setData( row, HPD::ShiftPixelRow,   HPD::MaskPixelRow,   HPD::MaskPixelRowIsSet   );
       }
       else
       {
 #ifndef NDEBUG
-        checkRange( row, MaPMT::MaxPixelRow, "PixelRow" );
+        static const std::string mess("PixelRow");
+        checkRange( row, MaPMT::MaxPixelRow, mess );
 #endif
         setData( row, MaPMT::ShiftPixelRow, MaPMT::MaskPixelRow, MaPMT::MaskPixelRowIsSet );
       }
@@ -549,14 +545,16 @@ namespace LHCb
       if ( HPDID == idType() )
       {
 #ifndef NDEBUG
-        checkRange( col, HPD::MaxPixelCol, "PixelColumn" );
+        static const std::string mess("PixelColumn");
+        checkRange( col, HPD::MaxPixelCol, mess );
 #endif
         setData( col, HPD::ShiftPixelCol,   HPD::MaskPixelCol,   HPD::MaskPixelColIsSet   );
       }
       else
       {
 #ifndef NDEBUG
-        checkRange( col, MaPMT::MaxPixelCol, "PixelColumn" );
+        static const std::string mess("PixelColumn");
+        checkRange( col, MaPMT::MaxPixelCol, mess );
 #endif
         setData( col, MaPMT::ShiftPixelCol, MaPMT::MaskPixelCol, MaPMT::MaskPixelColIsSet );
       }
@@ -853,7 +851,7 @@ namespace LHCb
     }
     
 #endif
-    
+  
   public:
     
     /// Print this RichSmartID in a human readable way
