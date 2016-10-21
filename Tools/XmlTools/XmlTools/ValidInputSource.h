@@ -14,7 +14,7 @@
 
 
 /** @class ValidInputSource XmlTools/ValidInputSource.h
- *  
+ *
  *  Extend xercesc::InputSource adding a validity (IValidity interface).
  *
  *  @author Marco Clemencic
@@ -41,39 +41,39 @@ public:
   virtual ~ValidInputSource();
 
   // -------- Implementation of IValidity --------
-   
+
   /// is the Object valid? (it can be always invalid)
-  virtual bool isValid() const; 
+  bool isValid() const override;
 
   /// is the Object valid for a given time?
-  virtual bool isValid( const Gaudi::Time& time) const; 
+  bool isValid( const Gaudi::Time& time) const override;
 
   /// since what time the Objest is valid?
-  virtual const Gaudi::Time& validSince() const; 
+  const Gaudi::Time& validSince() const override;
 
   /// till  what time the Object is Valid?
-  virtual const Gaudi::Time& validTill() const;
+  const Gaudi::Time& validTill() const override;
 
   /// set the validity range of the Object
-  virtual void setValidity( const Gaudi::Time& since, const Gaudi::Time& until); 
+  void setValidity( const Gaudi::Time& since, const Gaudi::Time& until) override;
 
-  /// set the validity time of the Object 
-  virtual void setValiditySince( const Gaudi::Time& since); 
+  /// set the validity time of the Object
+  void setValiditySince( const Gaudi::Time& since) override;
 
-  /// set the validity time of the Object 
-  virtual void setValidityTill( const Gaudi::Time& until);
+  /// set the validity time of the Object
+  void setValidityTill( const Gaudi::Time& until) override;
 
 private:
-  
+
   /// Time of the start of validity
   Gaudi::Time m_since;
-  
+
   /// Time of end of validity
   Gaudi::Time m_until;
 
   /// optional buffer, external to xercesc
   std::string m_buffer;
-  
+
 };
 
 #endif /*VALIDINPUTSOURCE_H_*/
