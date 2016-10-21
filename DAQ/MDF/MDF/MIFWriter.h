@@ -13,8 +13,8 @@
 #include "GaudiKernel/Algorithm.h"
 #include <map>
 
-namespace Gaudi { 
-  class IIODataManager; 
+namespace Gaudi {
+  class IIODataManager;
   class IDataConnection;
 }
 
@@ -23,7 +23,7 @@ namespace Gaudi {
  */
 namespace LHCb    {
 
-  /**@class MIFWriter 
+  /**@class MIFWriter
     *
     *
     * @author:  M.Frank
@@ -54,13 +54,13 @@ namespace LHCb    {
     virtual ~MIFWriter();
 
     /// Initialize
-    virtual StatusCode initialize();
+    StatusCode initialize() override;
 
     /// Finalize
-    virtual StatusCode finalize();
+    StatusCode finalize() override;
 
     // Execute procedure
-    virtual StatusCode execute();
+    StatusCode execute() override;
   };
 }
 #endif // MDF_MIFWRITER_H
