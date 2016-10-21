@@ -27,32 +27,32 @@ template <class TYPE> class CnvFactory;
  * @author Pere Mato
  */
 class XmlLVolumeCnv : public XmlGenericCnv {
-  
+
   /// Friend needed for instantiation
   friend class CnvFactory<XmlLVolumeCnv>;
 
  public:
-  
+
   /**
    * accessor to the type of elements that this converter converts
    * @return the classID for this type
    */
   static const CLID& classID () { return CLID_LVolume; }
-  
-  
+
+
  protected:
-  
+
   /**
    * Constructor for this converter
    * @param svcs a ISvcLocator interface to find services
    */
   XmlLVolumeCnv (ISvcLocator* svcs);
-  
+
   /**
    * Default destructor
    */
   virtual ~XmlLVolumeCnv();
-  
+
   /** This creates the transient representation of an object from the
    * DOMElement representing it, then fills it and process it.
    * Overrides the default method in XmlGenericCnv
@@ -61,9 +61,9 @@ class XmlLVolumeCnv : public XmlGenericCnv {
    * @param address the address for this object
    * @return status depending on the completion of the call
    */
-  virtual StatusCode internalCreateObj (xercesc::DOMElement* element,
-                                        DataObject*& refpObject,
-                                        IOpaqueAddress* address);
+  StatusCode internalCreateObj (xercesc::DOMElement* element,
+                                DataObject*& refpObject,
+                                IOpaqueAddress* address) override;
 
 
  private:
@@ -202,7 +202,7 @@ class XmlLVolumeCnv : public XmlGenericCnv {
                                   unsigned int nD);
 
   /**
-   * expands a given list of physical volumes. The expansion is done in 
+   * expands a given list of physical volumes. The expansion is done in
    * n dimensions (n being the size of numbers and transformations). For a
    * given element, a n-dimensionnal array of elements is created whose
    * dimensions are given by numbers. Each element of this array is placed
@@ -267,7 +267,7 @@ class XmlLVolumeCnv : public XmlGenericCnv {
   PlacedSolidList* dealWithBooleanChildren (xercesc::DOMElement* element);
 
   /**
-   * deals with the xml tags \<box\>, \<cons\>, \<sphere\>, \<tubs\>, \<trd\> 
+   * deals with the xml tags \<box\>, \<cons\>, \<sphere\>, \<tubs\>, \<trd\>
    * and \<trap\>.
    * Creates the corresponding C++ Object or 0 if the element does not
    * correspond to one of these tags. Take care that memory is allocated
@@ -424,7 +424,7 @@ class XmlLVolumeCnv : public XmlGenericCnv {
    * Method to replace the tag string by the value, if it exists
    */
   void replaceTagInString( std::string& string );
-  
+
 private:
 
   // Constant strings for element and parameter names
