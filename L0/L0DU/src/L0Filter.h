@@ -1,5 +1,5 @@
 // $Id: L0Filter.h,v 1.6 2010-05-26 10:46:21 odescham Exp $
-#ifndef L0FILTER_H 
+#ifndef L0FILTER_H
 #define L0FILTER_H 1
 
 // Include files
@@ -7,12 +7,12 @@
 
 
 /** @class L0Filter L0Filter.h
- *  
+ *
  * L0 decision(s) Filtering
  *
  *  configuration properties:
  *
- *   * FILTERING DECISION : 
+ *   * FILTERING DECISION :
  *      - TriggerBit : the decision bit to be used  L0 / TimingTrigger bit / Force bit [def = L0 ]
  *
  *   * IF TriggerBit = "L0"
@@ -35,11 +35,11 @@
  *
  *     - orSubTriggers : select the list of subTriggers  [ def = {} ]
  *            TCK-independent predefined subTriggers :    'L0Ecal'/'L0Hcal'/'L0Muon'/'Other'
- *            syntax :  orSubTrigger += { "L0Ecal" };  
+ *            syntax :  orSubTrigger += { "L0Ecal" };
  *
  *     - if orChannels and orSubTriggers are EMPTIES : filter on global decision ( ==>  orChannels += {"ALL" : {"ANY"} };
  *
- *   
+ *
  *
  *
  *    + Revert : revert the filtering (default: event is ACCEPTED according to the filtering criteria )
@@ -49,15 +49,15 @@
  *  @date   2010-05-26
  */
 class L0Filter : public L0AlgBase {
-public: 
+public:
   /// Standard constructor
   L0Filter( const std::string& name, ISvcLocator* pSvcLocator );
 
   virtual ~L0Filter( ); ///< Destructor
 
-  virtual StatusCode initialize();    ///< Algorithm initialization
-  virtual StatusCode execute   ();    ///< Algorithm execution
-  virtual StatusCode finalize  ();    ///< Algorithm finalization
+  StatusCode initialize() override;    ///< Algorithm initialization
+  StatusCode execute   () override;    ///< Algorithm execution
+  StatusCode finalize  () override;    ///< Algorithm finalization
 
 protected:
 
@@ -73,6 +73,6 @@ private:
   int m_mask;
   std::vector<std::string> m_l0triggers;
   bool m_revert;
-  
+
 };
 #endif // L0FILTER_H
