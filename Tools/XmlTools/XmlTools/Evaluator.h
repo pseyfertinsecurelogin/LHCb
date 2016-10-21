@@ -1,5 +1,4 @@
 // -*- C++ -*-
-// $Id: Evaluator.h,v 1.1 2005-12-07 15:08:51 jpalac Exp $
 // ---------------------------------------------------------------------------
 
 #ifndef XMLTOOLS_EVALUATOR_H
@@ -252,8 +251,8 @@ class Evaluator {
 
 private: 
   void * p;                                 // private data 
-  Evaluator(const Evaluator &);             // copy constructor is not allowed
-  Evaluator & operator=(const Evaluator &); // assignment is not allowed
+  Evaluator(const Evaluator &) = delete ;             // copy constructor is not allowed
+  Evaluator & operator=(const Evaluator &) = delete; // assignment is not allowed
 };
 
 } // namespace XmlTools

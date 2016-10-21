@@ -7,9 +7,9 @@
 #include <iostream>
 #include <algorithm>
 #include <cmath>	// for pow()
-#include "stack.src"
+#include <stack>
 #include "string.src"
-#include "hash_map.src"
+#include <unordered_map>
 #include <string.h>
 #include <ctype.h>
 #include <errno.h>
@@ -33,8 +33,21 @@ struct Item final {
   Item(void  *x) : what(FUNCTION),   function(x) {}
 };
 
+
+
+namespace std {
+  template<> struct hash<::string> {
+    std::size_t operator()(::string const& s) const {
+      const char* key = s.c_str();
+      std::size_t res = 0;
+      while(*key) { res = res*31 + *key++; }
+      return res;
+    }
+  };
+}
+
 typedef char * pchar;
-typedef hash_map<string,Item> dic_type;
+typedef std::unordered_map<string,Item> dic_type;
 
 struct Struct final {
   dic_type theDictionary;
@@ -108,7 +121,7 @@ static int variable(const string & name, double & result,
  *                                                                     *
  ***********************************************************************/
 {
-  dic_type::const_iterator iter = dictionary.find(name);
+  auto iter = dictionary.find(name);
   if (iter == dictionary.end())
     return EVAL::ERROR_UNKNOWN_VARIABLE;
   Item item = iter->second;
@@ -128,7 +141,7 @@ static int variable(const string & name, double & result,
   }
 }
 
-static int function(const string & name, stack<double> & par,
+static int function(const string & name, std::stack<double> & par,
 		    double & result, const dic_type & dictionary)
 /***********************************************************************
  *                                                                     *
@@ -247,8 +260,8 @@ static int operand(pchar begin, pchar end, double & result,
 
   //   G E T   F U N C T I O N
 
-  stack<pchar>  pos;                // position stack
-  stack<double> par;                // parameter stack
+  std::stack<pchar>  pos;                // position stack
+  std::stack<double> par;                // parameter stack
   double        value;
   pchar         par_begin = pointer+1, par_end;
 
@@ -311,7 +324,7 @@ static int operand(pchar begin, pchar end, double & result,
  *   val - stack of values.                                            *
  *                                                                     *
  ***********************************************************************/
-static int maker(int op, stack<double> & val)
+static int maker(int op, std::stack<double> & val)
 {
   if (val.size() < 2) return EVAL::ERROR_SYNTAX_ERROR;
   double val2 = val.top(); val.pop();
@@ -422,9 +435,9 @@ static int engine(pchar begin, pchar end, double & result,
     { 4, 1, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4 }  // ^
   };
 
-  stack<int>    op;                      // operator stack
-  stack<pchar>  pos;                     // position stack
-  stack<double> val;                     // value stack
+  std::stack<int>    op;                      // operator stack
+  std::stack<pchar>  pos;                     // position stack
+  std::stack<double> val;                     // value stack
   double        value;
   pchar         pointer = begin;
   int           iWhat, iCur, iPrev = 0, iTop, EVAL_STATUS;
