@@ -7,7 +7,7 @@
 /** @class DeVP DeVP.h VPDet/DeVP.h
  *
  *  Detector element class for the VP as a whole.
- * 
+ *
  *  @author Victor Coco Victor.Coco@cern.ch
  *  @date 20/5/2009
  */
@@ -32,13 +32,13 @@ class DeVP : public DetectorElement {
 
   /// Object identification
   static const CLID& classID() { return CLID_DeVP; }
-  virtual const CLID& clID() const;
+  virtual const CLID& clID() const override;
 
   /// Initialization method
-  virtual StatusCode initialize();
+  StatusCode initialize() override;
 
   /// Return sensitive volume identifier for a given point in the global frame.
-  virtual int sensitiveVolumeID(const Gaudi::XYZPoint& point) const;
+  int sensitiveVolumeID(const Gaudi::XYZPoint& point) const override;
 
   /// Return the number of sensors.
   unsigned int numberSensors() const { return m_sensors.size(); }
