@@ -34,14 +34,14 @@ public:
   virtual ~RunChangeHandlerSvc(); ///< Destructor
 
   /// Initialize Service
-  virtual StatusCode initialize();
+  StatusCode initialize() override;
 
   /// Finalize Service
-  virtual StatusCode finalize();
+  StatusCode finalize() override;
 
   // ---- Implement IIncidentListener interface ----
   /// Handle RunChange incident.
-  virtual void handle(const Incident &inc);
+  void handle(const Incident &inc) override;
 
 private:
 

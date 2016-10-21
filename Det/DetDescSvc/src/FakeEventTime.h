@@ -1,4 +1,4 @@
-#ifndef FAKEEVENTTIME_H 
+#ifndef FAKEEVENTTIME_H
 #define FAKEEVENTTIME_H 1
 
 // Include files
@@ -9,7 +9,7 @@
 class IDataProviderSvc;
 
 /** @class FakeEventTime FakeEventTime.h
- *  
+ *
  *  Basic implementation of an EventTimeDecoder.
  *  It just provides fake event times.
  *
@@ -17,27 +17,27 @@ class IDataProviderSvc;
  *  @date   2006-09-21
  */
 class FakeEventTime : public AlgTool, virtual public IEventTimeDecoder {
-public: 
+public:
   /// Standard constructor
-  FakeEventTime( const std::string& type, 
+  FakeEventTime( const std::string& type,
                  const std::string& name,
                  const IInterface* parent);
 
   virtual ~FakeEventTime( ); ///< Destructor
 
   /// Initialization
-  virtual StatusCode initialize();
+  StatusCode initialize() override;
 
   /// Finalization
-  virtual StatusCode finalize();  
+  StatusCode finalize() override;
 
   // --- implementation of IEventTimeDecoder ---
 
   /// Return the time of current event.
-  Gaudi::Time getTime() const;
+  Gaudi::Time getTime() const override;
 
 private:
-  
+
   // ---------- data members ----------
 
   /// First event time (when simluating them).
