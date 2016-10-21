@@ -36,7 +36,7 @@ public:
   ///
   /// constructor
   Surface( ) = default;
-  Surface( const std::string& Name ) : Surface() {}
+  Surface( const std::string& /* Name */ ) : Surface() {}
   /// 
   virtual const CLID& clID    () const { return Surface::classID() ; }
   static  const CLID& classID ()       { return CLID_Surface       ; }
