@@ -1,5 +1,4 @@
-// $Id: CompareTrack.h,v 1.1.1.1 2008-11-18 17:12:59 ocallot Exp $
-#ifndef COMPARETRACK_H 
+#ifndef COMPARETRACK_H
 #define COMPARETRACK_H 1
 
 // from Gaudi
@@ -17,14 +16,14 @@
 class CompareTrack : public GaudiAlgorithm
 {
 
-public: 
+public:
 
   /// Standard constructor
   CompareTrack( const std::string& name, ISvcLocator* pSvcLocator );
 
-  virtual ~CompareTrack( ); ///< Destructor
+  virtual ~CompareTrack(); ///< Destructor
 
-  virtual StatusCode execute(); ///< Algorithm execution
+  StatusCode execute() override; ///< Algorithm execution
 
 private:
 

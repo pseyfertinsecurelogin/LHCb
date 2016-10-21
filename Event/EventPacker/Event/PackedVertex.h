@@ -29,9 +29,9 @@ namespace LHCb
    */
   struct PackedVertex
   {
-   
+
     /// Key and possibly container index.
-    long long key{0}; 
+    long long key{0};
 
     int technique{0};    ///< packed technique
     int chi2{0};         ///< packed chi^2
@@ -92,7 +92,7 @@ namespace LHCb
     typedef std::vector<ExtraInfo> ExtraInfoVector;
 
   public:
-    
+
     /// Default Packing Version
     static char defaultPackingVersion() { return 1; }
 
@@ -102,7 +102,7 @@ namespace LHCb
     static const CLID& classID() { return CLID_PackedVertices; }
 
     /// Class ID
-    virtual const CLID& clID() const { return PackedVertices::classID(); }
+    const CLID& clID() const override { return PackedVertices::classID(); }
 
   public:
 
@@ -180,7 +180,7 @@ namespace LHCb
 
     /// Default Constructor
     VertexPacker( const GaudiAlgorithm * parent ) : m_pack(parent) {}
-    
+
   public:
 
     /// Pack a Vertex

@@ -28,8 +28,8 @@ namespace DataPacking
 
     virtual ~Pack();     ///< Destructor
 
-    virtual StatusCode initialize(); ///< Algorithm initialize
-    virtual StatusCode execute();    ///< Algorithm execution
+    StatusCode initialize() override; ///< Algorithm initialize
+    StatusCode execute() override;    ///< Algorithm execution
 
   private:
 

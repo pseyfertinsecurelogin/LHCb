@@ -1,5 +1,5 @@
 // $Id: CompareMCVertex.h,v 1.1.1.1 2008-11-18 17:12:59 ocallot Exp $
-#ifndef COMPAREMCVERTEX_H 
+#ifndef COMPAREMCVERTEX_H
 #define COMPAREMCVERTEX_H 1
 
 // Include files
@@ -13,17 +13,17 @@
  *  @author Olivier Callot
  *  @date   2005-03-18
  */
-class CompareMCVertex : public GaudiAlgorithm 
+class CompareMCVertex : public GaudiAlgorithm
 {
 
-public: 
+public:
 
   /// Standard constructor
   CompareMCVertex( const std::string& name, ISvcLocator* pSvcLocator );
 
   virtual ~CompareMCVertex(); ///< Destructor
 
-  virtual StatusCode execute(); ///< Algorithm execution
+  StatusCode execute() override; ///< Algorithm execution
 
 private:
 

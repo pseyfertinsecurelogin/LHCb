@@ -1,5 +1,5 @@
 // $Id: UnpackTrack.h,v 1.2 2009-11-06 18:34:34 jonrob Exp $
-#ifndef UNPACKTRACK_H 
+#ifndef UNPACKTRACK_H
 #define UNPACKTRACK_H 1
 
 // Include files
@@ -18,14 +18,14 @@
 class UnpackTrack : public GaudiAlgorithm
 {
 
-public: 
+public:
 
   /// Standard constructor
   UnpackTrack( const std::string& name, ISvcLocator* pSvcLocator );
 
   virtual ~UnpackTrack( ); ///< Destructor
 
-  virtual StatusCode execute(); ///< Algorithm execution
+  StatusCode execute() override; ///< Algorithm execution
 
 private:
 
