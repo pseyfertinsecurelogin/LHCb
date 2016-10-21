@@ -57,9 +57,9 @@ public:
 
   L0MuonAlg(const std::string& name, ISvcLocator* pSvcLocator);
 
-  StatusCode initialize();
-  StatusCode finalize();
-  StatusCode execute();
+  StatusCode initialize() override;
+  StatusCode finalize() override;
+  StatusCode execute() override;
 
 private:
 
