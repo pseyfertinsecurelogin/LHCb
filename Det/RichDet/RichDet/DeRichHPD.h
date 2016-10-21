@@ -57,7 +57,7 @@ public:
    * Retrieves reference to class identifier
    * @return the class identifier for this class
    */
-  const CLID& clID() const final { return classID(); }
+  const CLID& clID() const override final { return classID(); }
 
   /**
    * Retrieves reference to class identifier
@@ -71,7 +71,7 @@ public:
    * @retval StatusCode::FAILURE Initialisation failed, program should
    * terminate
    */
-  virtual StatusCode initialize() final;
+  StatusCode initialize() override final;
 
 public:
 
@@ -113,17 +113,17 @@ public:
   }
 
   // @brief Converts a RichSmartID to a point in global coordinates.
-  virtual bool detectionPoint ( const LHCb::RichSmartID smartID,
-                                Gaudi::XYZPoint& detectPoint,
-                                bool photoCathodeSide = false ) const final;
-  
+  bool detectionPoint ( const LHCb::RichSmartID smartID,
+                        Gaudi::XYZPoint& detectPoint,
+                        bool photoCathodeSide = false ) const override final;
+
 
   // Converts an x,y point from the anode to the photocathode in the
   // coordinate system of the HPD.
-  virtual bool detectionPoint ( const double fracPixelCol,
-                                const double fracPixelRow,
-                                Gaudi::XYZPoint& detectPoint,
-                                const bool photoCathodeSide = true ) const final;
+  bool detectionPoint ( const double fracPixelCol,
+                        const double fracPixelRow,
+                        Gaudi::XYZPoint& detectPoint,
+                        const bool photoCathodeSide = true ) const override final;
 
   /** Converts a RichSmartID to a point on the anode in global coordinates.
    *  @param[in] smartID The RichSmartID for the HPD channel
@@ -135,7 +135,7 @@ public:
    *  For a given R on the HPD cathode returns the R on the anode.
    *  @return A pointer to the demagnification function for R(R)
    */
-  inline const Rich::TabulatedFunction1D* 
+  inline const Rich::TabulatedFunction1D*
   demagnification_RtoR( const int field = 0 ) const noexcept
   {
     return m_demagMapR[ field > 0 ? 1 : 0 ].get();
@@ -155,7 +155,7 @@ public:
    *  For a given R on the HPD anode returns the R on the cathode.
    *  @return A pointer to the magnification function for R(R)
    */
-  inline const Rich::TabulatedFunction1D* 
+  inline const Rich::TabulatedFunction1D*
   magnification_RtoR( const int field = 0 ) const noexcept
   {
     return m_magMapR[ field > 0 ? 1 : 0 ].get();
@@ -165,7 +165,7 @@ public:
    *  For a given R on the HPD anode returns the phi on the cathode.
    *  @return A pointer to the magnification function for phi(R)
    */
-  inline const Rich::TabulatedFunction1D* 
+  inline const Rich::TabulatedFunction1D*
   magnification_RtoPhi( const int field = 0 ) const noexcept
   {
     return m_magMapPhi[ field > 0 ? 1 : 0 ].get();
@@ -232,7 +232,7 @@ public:
   bool testKaptonShadowing( const Gaudi::XYZPoint&  pInPanel,
                             const Gaudi::XYZVector& vInPanel ) const;
 
-  /** Intersect a given direction, from a given point, with the outer surface 
+  /** Intersect a given direction, from a given point, with the outer surface
    *  of the HPD window in the global LHCb frame
    *
    *  @param[in]  position      The start point to use for the ray tracing
@@ -246,7 +246,7 @@ public:
   bool intersectEntryWindow ( const Gaudi::XYZPoint& position,
                               const Gaudi::XYZVector& direction,
                               Gaudi::XYZPoint& intersection ) const;
-  
+
 private: // functions
 
   /** Returns the silicon x coordinate for the given RichSmartID
@@ -288,11 +288,11 @@ private: // functions
   StatusCode updateDemagProperties();
 
   /// go from a point on silicon to a point on the photo-cathode with magnet ON
-  bool magnifyToGlobalMagnetON( Gaudi::XYZPoint& detectPoint, 
+  bool magnifyToGlobalMagnetON( Gaudi::XYZPoint& detectPoint,
                                 const bool photoCathodeSide ) const;
-  
+
   /// go from a point on silicon to a point on the photo-cathode with magnet OFF
-  bool magnifyToGlobalMagnetOFF( Gaudi::XYZPoint& detectPoint, 
+  bool magnifyToGlobalMagnetOFF( Gaudi::XYZPoint& detectPoint,
                                  const bool photoCathodeSide ) const;
 
   /// Initialise the interpolators for demagnification (cathode to anode)
