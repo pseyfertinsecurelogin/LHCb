@@ -63,7 +63,7 @@ namespace ST
      * @retval StatusCode::SUCCESS Initialization was successful
      * @retval StatusCode::FAILURE Initialization failed
      */
-    virtual StatusCode initialize();
+    StatusCode initialize() override;
 
     /** Finalization of the algorithm before deletion
      *
@@ -71,7 +71,7 @@ namespace ST
      * @retval StatusCode::SUCCESS Finalization was successful
      * @retval StatusCode::FAILURE Finalization failed
      */
-   virtual StatusCode finalize();
+   StatusCode finalize() override;
 
    /** get the top level detector element */
    DeSTDetector* tracker() const;
