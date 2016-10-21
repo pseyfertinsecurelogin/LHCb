@@ -20,7 +20,7 @@
         access = "PUBLIC"
        />
 
-       <constructor argList="unsigned int nClusters, unsigned int pcn, bool pcnSynch , unsigned int nBytes, unsigned int nFull, unsigned int nPed, unsigned int nError, std::vector&lt; unsigned int &gt; corruptedBanks, std::vector&lt; unsigned int &gt; missing , RecoveredInfo recoveredBanks" 
+       <constructor argList="unsigned int nClusters, unsigned int pcn, bool pcnSynch , unsigned int nBytes, unsigned int nFull, unsigned int nPed, unsigned int nError, std::vector&lt; unsigned int &gt; corruptedBanks, std::vector&lt; unsigned int &gt; missing , RecoveredInfo recoveredBanks"
                     initList="m_nClusters(nClusters), m_pcn(pcn), m_pcnSynch(pcnSynch), m_rawBufferSize(nBytes), m_nFullBanks(nFull), m_nPedestalBanks(nPed), m_nErrorBanks(nError),  m_corruptedBanks(corruptedBanks), m_missingBanks(missing), m_recoveredBanks(recoveredBanks)" desc="special constructor">
        <code></code>
       </constructor>
@@ -36,16 +36,16 @@
       <attribute name="recoveredBanks" type="RecoveredInfo" setMeth = "FALSE" desc="banks recovered"/>
       <method name = "hasError" type = "bool" const = "TRUE" desc = "data is good or not">
          <code>
-            bool good = m_pcnSynch &amp; m_corruptedBanks.empty(); 
-            return !good; 
+            bool good = m_pcnSynch &amp; m_corruptedBanks.empty();
+            return !good;
          </code>
       </method>
 
-   <method 
+   <method
     name = "fillStream"
     desc = "Print in a human readable way"
     type = "std::ostream&amp;"
-    virtual = "FALSE"
+    override = "TRUE"
     const = "TRUE">
     <arg type = "std::ostream" name  = "s" />
   </method>

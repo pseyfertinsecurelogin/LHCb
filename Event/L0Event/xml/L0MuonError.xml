@@ -21,14 +21,14 @@
         argList="LHCb::MuonTileID mid"
         initList="KeyedObject&lt;LHCb::MuonTileID&gt;(mid), m_decoding (0), m_hardware (0), m_status (0), m_bcid (0)"
         desc="Constructor"/>
-      
-      <attribute name="decoding" type="int" 
+
+      <attribute name="decoding" type="int"
         desc="Decoding error"/>
-      <attribute name="hardware" type="int" 
+      <attribute name="hardware" type="int"
         desc="Hardware error"/>
-      <attribute name="status" type="int" 
+      <attribute name="status" type="int"
         desc="Status if in error"/>
-      <attribute name="bcid" type="int" 
+      <attribute name="bcid" type="int"
         desc="BCID if in error"/>
 
       <method name="index" type="void" const="TRUE" inline="FALSE"
@@ -36,30 +36,30 @@
 	<arg type="int" name="quarter" inout="BOTH"/>
 	<arg type="int" name="board" inout="BOTH"/>
 	<arg type="int" name="pu" inout="BOTH"/>
-      </method>      
+      </method>
 
-      <method name="index" type="long" const="TRUE" virtual="TRUE" inline="TRUE" 
+      <method name="index" type="long" const="TRUE" override="TRUE" inline="TRUE"
               desc="Avoids hiding base class method, ICC warning 1125">
 	<code> return ContainedObject::index(); </code>
-      </method>      
+      </method>
 
-      <method name="decoding_data" type="bool" const="TRUE" inline="TRUE" 
+      <method name="decoding_data" type="bool" const="TRUE" inline="TRUE"
               desc="True if an error occurred in the bank containing data">
 	<code> return ((m_decoding&amp;0x2)&gt;0); </code>
-      </method>      
-      <method name="decoding_cand" type="bool" const="TRUE" inline="TRUE" 
+      </method>
+      <method name="decoding_cand" type="bool" const="TRUE" inline="TRUE"
               desc="True if an error occurred in the bank containing candidates">
 	<code> return ((m_decoding&amp;0x1)&gt;0); </code>
-      </method>      
-      <method name="overflow" type="bool" const="TRUE" inline="TRUE" 
+      </method>
+      <method name="overflow" type="bool" const="TRUE" inline="TRUE"
               desc="True if an overflow was reported (more than 2 candidates in a PU)">
 	<code>  return (m_status&amp;0x3)&gt;0; </code>
-      </method>      
-      <method name="internal" type="bool" const="TRUE" inline="TRUE" 
+      </method>
+      <method name="internal" type="bool" const="TRUE" inline="TRUE"
               desc="True if an internal error was reported (wrong bcid/input links)">
 	<code>  return ( ((m_status&amp;0xC)&gt;0) || (m_hardware&gt;0) || (m_bcid&gt;0) );</code>
-      </method>      
+      </method>
 
-    </class>  
+    </class>
   </package>
 </gdd>

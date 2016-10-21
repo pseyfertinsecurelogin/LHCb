@@ -13,13 +13,13 @@
       name        = 'HltObjectSummary'
       author      = 'Tomasz Skwarnicki'
       desc        = 'Summary class for selected Hlt candidates (Particles, Tracks, vertices, etc.), and selection list itself.'
-      stdVectorTypeDef = 'TRUE' 
+      stdVectorTypeDef = 'TRUE'
       id          = '7530'>
 
 
       <location name='Default'  place='Hlt/SelReports/Candidates' />
       <location name='Emulated' place='Hlt/Emu/SelReports/Candidates' />
-      
+
       <base name='ContainedObject' />
       &ContainedObject;
 
@@ -41,7 +41,7 @@
         type      = 'std::vector&lt; LHCb::LHCbID &gt;'
         name      = 'lhcbIDs'
         desc      = 'List of of LHCbIDs stored directly here. Not expected for obj summary with a substructure. See also Flattened access method.'
-        access    = 'PROTECTED' 
+        access    = 'PROTECTED'
       />
 
 
@@ -69,7 +69,7 @@
         name      = 'substructure'
         addMeth   = 'TRUE'
         desc      = 'Either pointer to subobject of the same type or pointers to objects on which this one was built ( e.g. particle daughters, tracks making the vertex etc.). See also Flattened access method.'
-        access    = 'PROTECTED' 
+        access    = 'PROTECTED'
 	multiplicity = 'N'
       />
 
@@ -78,14 +78,14 @@
         name      = 'substructureExtended'
         addMeth   = 'TRUE'
         desc      = 'substructure (used in TisTos) plus any extended substructure added for Turbo stream.'
-        access    = 'PROTECTED' 
+        access    = 'PROTECTED'
 	multiplicity = 'N'
       />
 
 
      <!-- methods undoing subobjects if any -->
 
-      <method 
+      <method
           name='numericalInfoFlattened'
           type='LHCb::HltObjectSummary::Info'
           desc='numericalInfo from the summarized objected including the parts stored on subobjects. Users should use this method instead of locally stored numericalInfo.'
@@ -102,9 +102,9 @@
           return flattenedInfo;
        </code>
       </method>
-                  
-         
-      <method 
+
+
+      <method
           name='lhcbIDsFlattened'
           type='std::vector&lt;LHCb::LHCbID&gt;'
           desc='lhcbIDs from the summarized object including the parts stored on subobjects. Users should use this method instead of locally stored lhcbIDs.'
@@ -121,15 +121,15 @@
           return flattenedLhcbIDs;
        </code>
       </method>
-                  
-         
-      <method 
+
+
+      <method
           name='substructureFlattened'
           type='SmartRefVector&lt;LHCb::HltObjectSummary&gt;'
           desc='substructure of the summarized object (e.g. particle daughters, track of particle with no daughters etc.) - returns substructure of the bottom subobject'
           const='TRUE' >
         <code>
-          SmartRefVector&lt;LHCb::HltObjectSummary&gt; subFlattened;             
+          SmartRefVector&lt;LHCb::HltObjectSummary&gt; subFlattened;
           if( m_substructure.size() == 1 ){
               const HltObjectSummary &amp; inner = *(m_substructure[0]);
               if( inner.summarizedObjectCLID() == m_summarizedObjectCLID ){
@@ -144,7 +144,7 @@
           return subFlattened;
        </code>
       </method>
-                  
+
 
       <!--- add to local info -->
 
@@ -155,12 +155,12 @@
         type    = "bool" >
         <code>
           return m_numericalInfo.insert( key , info ).second ;
-        </code>       
+        </code>
       </method>
-          
+
       <!--- keys of numerical infos -->
-         
-      <method 
+
+      <method
           name='numericalInfoKeys'
           type='std::vector&lt; std::string &gt;'
           desc='string keys present in numericalInfo'
@@ -173,7 +173,7 @@
         </code>
       </method>
 
-      <method 
+      <method
           name='numericalInfoFlattenedKeys'
           type='std::vector&lt; std::string &gt;'
           desc='string keys present in numericalInfoFlattened'
@@ -193,7 +193,8 @@
         name='fillStream'
         type='std::ostream&amp;'
         desc='intelligent printout'
-        const='TRUE' >
+        const='TRUE'
+        override='TRUE' >
         <arg name="ss" type="std::ostream"/>
       </method>
 
@@ -208,7 +209,7 @@
       author      = 'Tomasz Skwarnicki'
       desc        = 'managed container of Hlt Selection Reports'
       id          = '7531' >
-      
+
       <location name='Default'  place='Hlt/SelReports' />
       <location name='Emulated' place='Hlt/Emu/SelReports' />
 
@@ -235,7 +236,7 @@
 
       <!-- report accessor (for convenience) -->
 
-      <method 
+      <method
          name='selReport'
          type='const LHCb::HltObjectSummary*'
          argList = 'const std::string selectionName'
@@ -288,7 +289,7 @@
           return m_selReports.begin();
        </code>
       </method>
-        
+
       <method
          name = 'end'
          type = 'LHCb::HltSelReports::Container::const_iterator'
@@ -299,7 +300,7 @@
           return m_selReports.end();
        </code>
       </method>
-        
+
       <method
          name = 'find'
          type = 'LHCb::HltSelReports::Container::const_iterator'
@@ -310,7 +311,7 @@
           return m_selReports.find(selectionName);
        </code>
       </method>
-        
+
      <!-- size -->
 
      <method
@@ -322,7 +323,7 @@
    return m_selReports.size();
        </code>
       </method>
-      
+
 
      <!-- insertor -->
 
@@ -330,7 +331,7 @@
         name='insert'
         type='StatusCode'
         argList='const std::string selectionName,const LHCb::HltObjectSummary selReport'
-        desc='insert HltObjectSummary for given selectionName, returns StatusCode::FAILURE if duplicate selection name'        
+        desc='insert HltObjectSummary for given selectionName, returns StatusCode::FAILURE if duplicate selection name'
       >
         <code>
    if( m_selReports.insert(selectionName,selReport).second )return StatusCode::SUCCESS;
@@ -340,7 +341,7 @@
 
       <!-- utility to search for all selections to which given summarized candidate belongs to -->
 
-      <method 
+      <method
          name='selectedAsCandidateBy'
          type='std::vector &lt; std::string &gt;'
          argList = 'const LHCb::HltObjectSummary* selectedCandidate'
@@ -349,14 +350,14 @@
         <code>
      std::vector &lt; std::string &gt; selNamesV;
      for( HltSelReports::Container::const_iterator i=m_selReports.begin();i!=m_selReports.end();++i){
-        const SmartRefVector&lt;LHCb::HltObjectSummary&gt; &amp; candidates = i-&gt;second.substructure(); 
+        const SmartRefVector&lt;LHCb::HltObjectSummary&gt; &amp; candidates = i-&gt;second.substructure();
         for( SmartRefVector&lt;LHCb::HltObjectSummary&gt;::const_iterator iObj = candidates.begin();
                        iObj != candidates.end(); ++iObj ){
-          if( iObj-&gt;target() == selectedCandidate ){             
+          if( iObj-&gt;target() == selectedCandidate ){
 	    selNamesV.push_back( i-&gt;first );
             break;
           }
-        }          
+        }
      }
      return selNamesV;
         </code>
@@ -365,7 +366,7 @@
 
       <!-- name of primary vertex selection associated with given trigger selection -->
 
-      <method 
+      <method
          name='pvSelectionName'
          type='std::string'
          argList = 'const std::string selectionName'
@@ -380,41 +381,41 @@
          if( nInfoKey.substr(0,3) == "10#" ){
 	     return nInfoKey.substr(3);
          }
-    }	     
+    }
     return std::string("");
         </code>
       </method>
-       
+
       <!-- key of primary vertex (in PV container) used in selection of the given summarized object -->
 
-      <method 
+      <method
          name='pvKey'
          type='int'
          argList = 'const std::string selectionName, const LHCb::HltObjectSummary* selectedCandidate'
          desc='returns key of the Primary Vertex in its container used in selection of the given summarized candidate (=-3 illegal selection,=-2 illegal candi.=-1 if none or not saved)'
          const = 'TRUE' >
-        <code>    
+        <code>
     const LHCb::HltObjectSummary* summaryOfSelection = selReport(selectionName);
     if( !summaryOfSelection )return int(-3);
     // make sure that the candidate in fact in this selection
-    const SmartRefVector&lt;LHCb::HltObjectSummary&gt; &amp; candidates = summaryOfSelection-&gt;substructure(); 
+    const SmartRefVector&lt;LHCb::HltObjectSummary&gt; &amp; candidates = summaryOfSelection-&gt;substructure();
     int iKey(0);
     for( SmartRefVector&lt;LHCb::HltObjectSummary&gt;::const_iterator iObj = candidates.begin();
                        iObj != candidates.end(); ++iObj,++iKey ){
-         if( iObj-&gt;target() == selectedCandidate ){             
+         if( iObj-&gt;target() == selectedCandidate ){
              const HltObjectSummary::Info &amp; nInfo = summaryOfSelection-&gt;numericalInfo();
              for( HltObjectSummary::Info::const_iterator i=nInfo.begin();i!=nInfo.end();++i){
                 const std::string &amp; nInfoKey = i-&gt;first;
                 if( nInfoKey.substr(0,3) == "10#" ){
 	            // std::string pvSelectionName = nInfoKey.substr(3); // not used
-                    // now unpack the key	     	     
+                    // now unpack the key
                     int j = iKey / 4;
                     int inj = iKey -j*4;
                     std::stringstream ss;
                     ss &lt;&lt; "11#" &lt;&lt; boost::format("%1$=08X") % j;
 		    if( nInfo.find( ss.str() )!= nInfo.end() ){
                         union IntFloat { unsigned int mInt; float mFloat; };
-                        IntFloat a; 
+                        IntFloat a;
 			a.mFloat = nInfo( ss.str() );
                         unsigned int pWord = a.mInt;
                         return int( ( (pWord &gt;&gt; inj*8 ) &amp; 255 ) );
@@ -428,16 +429,16 @@
     return int(-2);
         </code>
       </method>
-       
+
       <!-- name of primary vertex selection and PV key used in selection of the given summarized object -->
 
-      <method 
+      <method
          name='pvSelectionNameAndKey'
          type='std::pair&lt; std::string, int &gt;'
          argList = 'const LHCb::HltObjectSummary* selectedCandidate'
          desc='returns name of PV selection and PV key used in selection of the given summarized candidate. Goes via 1st candidate selection found. ("",-1 if none).'
          const = 'TRUE' >
-        <code>    
+        <code>
    std::vector&lt;std::string&gt; selectedBy = selectedAsCandidateBy(selectedCandidate);
    if( selectedBy.size() ){
       return std::pair&lt;std::string,int&gt;( pvSelectionName(selectedBy[0]),pvKey(selectedBy[0],selectedCandidate) );
@@ -451,8 +452,9 @@
       <method
         name='fillStream'
         type='std::ostream&amp;'
-        desc='intelligent printout' 
-        const='TRUE' >
+        desc='intelligent printout'
+        const='TRUE'
+        override='TRUE' >
         <arg name="ss" type="std::ostream"/>
       </method>
 
