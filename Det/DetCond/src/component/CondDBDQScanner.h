@@ -24,10 +24,10 @@ public:
 
   /// Scan all the Data Quality flags in the give time range in the CondDB.
   /// @return merged list of DQ flags
-  virtual IDQFilter::FlagsType scan(const Gaudi::Time& since, const Gaudi::Time& until) const;
+  IDQFilter::FlagsType scan(const Gaudi::Time& since, const Gaudi::Time& until) const override;
 
-  virtual StatusCode initialize(); ///< Initialize the instance.
-  virtual StatusCode finalize(); ///< Finalize the instance.
+  StatusCode initialize() override; ///< Initialize the instance.
+  StatusCode finalize() override; ///< Finalize the instance.
 
 protected:
 private:

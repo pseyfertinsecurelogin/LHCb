@@ -35,13 +35,13 @@ public:
    * Initializes the converter
    *  @return status depending on the completion of the call
    */
-  virtual StatusCode initialize();
+  StatusCode initialize() override;
 
   /**
    * Finalizes the converter
    *  @return status depending on the completion of the call
    */
-  virtual StatusCode finalize();
+  StatusCode finalize() override;
 
   /**
    * Creates the transient representation of an object.
@@ -49,32 +49,32 @@ public:
    * @param  pObject the object created
    * @return status depending on the completion of the call
    */
-  virtual StatusCode createObj (IOpaqueAddress *pAddress,
-                                DataObject *&pObject);
+  StatusCode createObj (IOpaqueAddress *pAddress,
+                        DataObject *&pObject) override;
   /**
    * Resolve the references of the created transient object.
    * @param  pAddress the address of the object representation
    * @param  pObject the object created
    * @return status depending on the completion of the call
    */
-  virtual StatusCode fillObjRefs (IOpaqueAddress *pAddress,
-                                  DataObject *pObject);
+  StatusCode fillObjRefs (IOpaqueAddress *pAddress,
+                          DataObject *pObject) override;
   /**
    * Resolve the references of the just updated transient object.
    * @param  pAddress the address of the object representation
    * @param  pObject the object created
    * @return status depending on the completion of the call
    */
-  virtual StatusCode updateObjRefs (IOpaqueAddress *pAddress,
-                                    DataObject *pObject);
+  StatusCode updateObjRefs (IOpaqueAddress *pAddress,
+                            DataObject *pObject) override;
   /**
    * Updates the transient object from the other representation (not implemented).
    * @param pAddress the address of the object representation
    * @param pObject the object updated
    *  @return status depending on the completion of the call
    */
-  virtual StatusCode updateObj (IOpaqueAddress *pAddress,
-                                DataObject *pObject);
+  StatusCode updateObj (IOpaqueAddress *pAddress,
+                        DataObject *pObject) override;
 
   /**
    * Converts the transient object to the requested representation (not implemented).
@@ -82,8 +82,8 @@ public:
    * @param pObject the object to convert
    *  @return status depending on the completion of the call
    */
-  virtual StatusCode createRep (DataObject* pObject,
-                                IOpaqueAddress*& refpAddress);
+  StatusCode createRep (DataObject* pObject,
+                        IOpaqueAddress*& refpAddress) override;
 
   /**
    * Updates the converted representation of a transient object.
@@ -91,8 +91,8 @@ public:
    * @param pObject the object whose representation has to be updated
    *  @return status depending on the completion of the call
    */
-  virtual StatusCode updateRep (IOpaqueAddress* pAddress,
-                                DataObject* pObject);
+  StatusCode updateRep (IOpaqueAddress* pAddress,
+                        DataObject* pObject) override;
 
   /**
    * Accessor to the type of elements that this converter converts.

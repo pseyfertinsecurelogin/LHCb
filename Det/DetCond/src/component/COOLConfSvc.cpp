@@ -135,7 +135,7 @@ namespace
     }
 
     /// Main function
-    virtual void sort (std::vector< const coral::IDatabaseServiceDescription * > &replicaSet)
+    void sort (std::vector< const coral::IDatabaseServiceDescription * > &replicaSet) override
     {
       if( UNLIKELY( log.level() <= MSG::VERBOSE ) ) {
         log << MSG::VERBOSE << "Original list" << endmsg;
