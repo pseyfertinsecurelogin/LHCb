@@ -1,5 +1,5 @@
 // $Id: DumpFSR.h,v 1.3 2010-05-12 08:11:08 panmanj Exp $
-#ifndef DUMPFSR_H 
+#ifndef DUMPFSR_H
 #define DUMPFSR_H 1
 
 // Include files
@@ -22,27 +22,27 @@
 #include "FSRNavigator.h"
 
 /** @class DumpFSR DumpFSR.h
- *   
+ *
  *
  *  @author Jaap Panman
  *  @date   2009-02-27
  */
-class DumpFSR : public GaudiAlgorithm 
+class DumpFSR : public GaudiAlgorithm
   , public virtual IIncidentListener {
-public: 
+public:
   /// Standard constructor
   DumpFSR( const std::string& name, ISvcLocator* pSvcLocator );
 
   virtual ~DumpFSR( ); ///< Destructor
 
-  virtual StatusCode initialize();    ///< Algorithm initialization
-  virtual StatusCode execute   ();    ///< Algorithm execution
-  virtual StatusCode finalize  ();    ///< Algorithm finalization
+  StatusCode initialize() override;    ///< Algorithm initialization
+  StatusCode execute   () override;    ///< Algorithm execution
+  StatusCode finalize  () override;    ///< Algorithm finalization
 
   // ==========================================================================
   // IIncindentListener interface
   // ==========================================================================
-  virtual void handle ( const Incident& ) ;
+  void handle ( const Incident& )  override;
   // ==========================================================================
 
 protected:
@@ -60,7 +60,7 @@ protected:
   std::string m_LowFSRName;                     ///< specific tag of low lumi summary data in FSR
   std::string m_EventCountFSRName;              ///< specific tag of event summary data in FSR
   std::string m_TimeSpanFSRName;                ///< specific tag of event summary data in FSR
-  std::string m_current_fname;                  ///< current file ID string 
+  std::string m_current_fname;                  ///< current file ID string
   std::string m_ascii_fname;                    ///< name of ascii file to write FSR data to
   std::string m_dumprequests;                   ///< job: E:event F:fini, files: B:begin C:close
   int         m_count_files;                    ///< number of files read
@@ -69,7 +69,7 @@ protected:
 
 private:
   IFSRNavigator *m_navigatorTool;               ///< tool to navigate FSR
-  mutable IIncidentSvc* m_incSvc ;              ///< the incident service 
+  mutable IIncidentSvc* m_incSvc ;              ///< the incident service
 
 };
 #endif // DUMPFSR_H
