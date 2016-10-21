@@ -1,4 +1,4 @@
-#ifndef CALOTRIGGERADCSFROMCALORAW_H 
+#ifndef CALOTRIGGERADCSFROMCALORAW_H
 #define CALOTRIGGERADCSFROMCALORAW_H 1
 
 // Include files
@@ -16,34 +16,34 @@ class ICaloDataProvider ;
  *  @date   2014-03-04
  */
 class CaloTriggerAdcsFromCaloRaw : public GaudiTool, virtual public ICaloTriggerAdcsFromRaw {
-public: 
+public:
   /// Standard constructor
-  CaloTriggerAdcsFromCaloRaw( const std::string& type, 
+  CaloTriggerAdcsFromCaloRaw( const std::string& type,
                               const std::string& name,
                               const IInterface* parent);
 
   virtual ~CaloTriggerAdcsFromCaloRaw( ); ///< Destructor
 
-  virtual StatusCode initialize() ;
+  StatusCode initialize()  override;
 
-  virtual const std::vector<LHCb::L0CaloAdc>&    adcs( ) ;
-  virtual const std::vector<LHCb::L0CaloAdc>&    adcs( int source ) ;
-  virtual const std::vector<LHCb::L0CaloAdc>&    adcs( LHCb::RawBank* bank ) ;
-  virtual const std::vector<LHCb::L0CaloAdc>&    pinAdcs( ) ;
+  const std::vector<LHCb::L0CaloAdc>&    adcs( )  override;
+  const std::vector<LHCb::L0CaloAdc>&    adcs( int source )  override;
+  const std::vector<LHCb::L0CaloAdc>&    adcs( LHCb::RawBank* bank )  override;
+  const std::vector<LHCb::L0CaloAdc>&    pinAdcs( )  override;
 
-  virtual std::string _rootInTES() { return "" ; } ;
-  virtual StatusCode  _setProperty(const std::string& ,const std::string& ) { return StatusCode::SUCCESS ; } ;
-  virtual bool getBanks() { return true ; } ;
-  virtual void setBanks(const std::vector<LHCb::RawBank*>* ) { return ; } ;
-  virtual void clear() { m_data.clear() ; }
-  virtual void cleanData(int ) { clear() ; } ;
-  virtual LHCb::RawBankReadoutStatus& status() {
-    m_theSt = LHCb::RawBankReadoutStatus( LHCb::RawBank::EcalTrig ) ; 
-    return m_theSt ; 
-  } ;
-  virtual void putStatusOnTES() { return ; } ;
-  virtual bool ok() { return true ; } ;
-  virtual DeCalorimeter* deCalo() { return m_calo ; } ;
+  std::string _rootInTES() override { return "" ; }
+  StatusCode  _setProperty(const std::string& ,const std::string& ) override { return StatusCode::SUCCESS ; }
+  bool getBanks() override { return true ; }
+  void setBanks(const std::vector<LHCb::RawBank*>* ) override { return ; }
+  void clear() override { m_data.clear() ; }
+  void cleanData(int ) override { clear() ; }
+  LHCb::RawBankReadoutStatus& status() override {
+    m_theSt = LHCb::RawBankReadoutStatus( LHCb::RawBank::EcalTrig ) ;
+    return m_theSt ;
+  }
+  void putStatusOnTES() override { return ; }
+  bool ok() override { return true ; }
+  DeCalorimeter* deCalo() override { return m_calo ; }
 
 protected:
 
