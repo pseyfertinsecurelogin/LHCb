@@ -62,7 +62,7 @@ namespace LoKi
     public:
       // ======================================================================
       /// finalization   of the tool
-      virtual StatusCode finalize   () ;
+      StatusCode finalize   ()  override;
       // ======================================================================
     public: // L0-functors
       // ======================================================================
@@ -71,10 +71,10 @@ namespace LoKi
        *  @param cuts the placeholder for the result
        *  @return StatusCode
        */
-      virtual StatusCode get
+      StatusCode get
       ( const std::string&   pycode  ,
         LoKi::Types::L0_Cut& cuts    ,
-        const std::string&   context )
+        const std::string&   context ) override
       { return _get ( pycode , m_l0_cuts  , cuts , context ) ; }
       // ======================================================================
       /** "Factory": get the the object form python code
@@ -82,10 +82,10 @@ namespace LoKi
        *  @param cuts the placeholder for the result
        *  @return StatusCode
        */
-      virtual StatusCode get
+      StatusCode get
       ( const std::string&   pycode  ,
         LoKi::Types::L0_Fun& cuts    ,
-        const std::string&   context )
+        const std::string&   context ) override
       { return _get ( pycode , m_l0_func , cuts , context ) ; }
       // ======================================================================
     public: // ODIN-functors
@@ -95,10 +95,10 @@ namespace LoKi
        *  @param cuts the placeholder for the result
        *  @return StatusCode
        */
-      virtual StatusCode get
+      StatusCode get
       ( const std::string&   pycode  ,
         LoKi::Types::ODIN_Cut& cuts    ,
-        const std::string&   context )
+        const std::string&   context ) override
       { return _get ( pycode , m_o1_cuts  , cuts , context ) ; }
       // ======================================================================
       /** "Factory": get the the object form python code
@@ -106,10 +106,10 @@ namespace LoKi
        *  @param cuts the placeholder for the result
        *  @return StatusCode
        */
-      virtual StatusCode get
+      StatusCode get
       ( const std::string&   pycode  ,
         LoKi::Types::ODIN_Fun& cuts    ,
-        const std::string&   context )
+        const std::string&   context ) override
       { return _get ( pycode , m_o1_func , cuts , context ) ; }
       // ======================================================================
     public: // HLT-functors
@@ -119,10 +119,10 @@ namespace LoKi
        *  @param cuts the placeholder for the result
        *  @return StatusCode
        */
-      virtual StatusCode get
+      StatusCode get
       ( const std::string&    pycode  ,
         LoKi::Types::HLT_Cut& cuts    ,
-        const std::string&    context )
+        const std::string&    context ) override
       { return _get ( pycode , m_hlt_cuts  , cuts , context ) ; }
       // ======================================================================
       /** "Factory": get the the object form python code
@@ -130,37 +130,37 @@ namespace LoKi
        *  @param cuts the placeholder for the result
        *  @return StatusCode
        */
-      virtual StatusCode get
+      StatusCode get
       ( const std::string&    pycode  ,
         LoKi::Types::HLT_Fun& cuts    ,
-        const std::string&    context )
+        const std::string&    context ) override
       { return _get ( pycode , m_hlt_func , cuts , context ) ; }
       // ======================================================================
     public: // L0-functors
       // ======================================================================
       /// set the C++ predicate
-      virtual void set ( const LoKi::Types::L0_Cuts& cut )
+      void set ( const LoKi::Types::L0_Cuts& cut ) override
       { LoKi::Hybrid::Base::_set ( m_l0_cuts , cut ) ; }
       /// set the C++ function
-      virtual void set ( const LoKi::Types::L0_Func& cut )
+      void set ( const LoKi::Types::L0_Func& cut ) override
       { LoKi::Hybrid::Base::_set ( m_l0_func , cut ) ; }
       // ======================================================================
     public: // O1-functors
       // ======================================================================
       /// set the C++ predicate
-      virtual void set ( const LoKi::Types::ODIN_Cuts& cut )
+      void set ( const LoKi::Types::ODIN_Cuts& cut ) override
       { LoKi::Hybrid::Base::_set ( m_o1_cuts , cut ) ; }
       /// set the C++ function
-      virtual void set ( const LoKi::Types::ODIN_Func& cut )
+      void set ( const LoKi::Types::ODIN_Func& cut ) override
       { LoKi::Hybrid::Base::_set ( m_o1_func , cut ) ; }
       // ======================================================================
     public: // HLT-functors
       // ======================================================================
       /// set the C++ predicate
-      virtual void set ( const LoKi::Types::HLT_Cuts& cut )
+      void set ( const LoKi::Types::HLT_Cuts& cut ) override
       { LoKi::Hybrid::Base::_set ( m_hlt_cuts , cut ) ; }
       /// set the C++ function
-      virtual void set ( const LoKi::Types::HLT_Func& cut )
+      void set ( const LoKi::Types::HLT_Func& cut ) override
       { LoKi::Hybrid::Base::_set ( m_hlt_func , cut ) ; }
       // ======================================================================
     protected:
