@@ -40,13 +40,13 @@ public:
   /** initialization method
    * @return StatusCode OK or not
    */
-  virtual StatusCode initialize();
+  StatusCode initialize() override;
 
   /** check whether contains
   *  @param  aChannel channel
   *  @return bool
   */
-  virtual bool contains(const LHCb::STChannelID aChannel) const;
+  bool contains(const LHCb::STChannelID aChannel) const override;
 
   /** sector identfier
    * @return id
@@ -164,10 +164,10 @@ public:
   bool yInverted() const;
 
   /** print to stream */
-  std::ostream& printOut( std::ostream& os ) const;
+  std::ostream& printOut( std::ostream& os ) const override;
 
   /** print to msgstream */
-  MsgStream& printOut( MsgStream& os) const;
+  MsgStream& printOut( MsgStream& os) const override;
 
 protected:
 

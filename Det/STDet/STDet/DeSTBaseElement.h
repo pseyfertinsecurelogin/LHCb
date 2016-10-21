@@ -25,7 +25,7 @@ public:
   /** initialization method
   * @return Status of initialisation
   */
-  virtual StatusCode initialize();
+  StatusCode initialize() override;
 
   /** transform global to local point
   * @param  point global point
