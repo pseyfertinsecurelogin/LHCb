@@ -83,7 +83,7 @@ namespace LoKi
   public:
     // ========================================================================
     /// the initialization of the algorithm
-    virtual StatusCode initialize () ;
+    StatusCode initialize ()  override;
     // ========================================================================
   protected:
     // ========================================================================
