@@ -10,7 +10,7 @@
 
 // forward declarations
 class DeCalorimeter ;
-class ICaloTriggerAdcsFromRaw ;
+struct ICaloTriggerAdcsFromRaw ;
 
 /** @class LLTCaloAlg LLTCaloAlg.h
  *
@@ -43,11 +43,11 @@ private:
   unsigned int m_HCALThreshold ;  ///< Threshold to count multiplicity in HCAL
   
   // Local variables
-  DeCalorimeter *    m_ecal               ; ///< Pointer to Ecal detector element
-  DeCalorimeter *    m_hcal               ; ///< Pointer to Hcal detector element
+  DeCalorimeter *    m_ecal = nullptr            ; ///< Pointer to Ecal detector element
+  DeCalorimeter *    m_hcal = nullptr            ; ///< Pointer to Hcal detector element
 
-  ICaloTriggerAdcsFromRaw * m_adcsEcal ; ///< Tool to decode trigger adcs.
-  ICaloTriggerAdcsFromRaw * m_adcsHcal ; ///< Tool to decode trigger adcs.
+  ICaloTriggerAdcsFromRaw * m_adcsEcal = nullptr ; ///< Tool to decode trigger adcs.
+  ICaloTriggerAdcsFromRaw * m_adcsHcal = nullptr ; ///< Tool to decode trigger adcs.
 
   // Trigger cards
   std::vector< LLTTriggerCard > m_ecalFe ; ///< Ecal front-end card vector

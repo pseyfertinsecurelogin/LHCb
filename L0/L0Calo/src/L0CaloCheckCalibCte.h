@@ -1,4 +1,3 @@
-// $Id: L0CaloCheckCalibCte.h,v 1.1 2009-11-24 17:42:50 robbep Exp $
 #ifndef L0CALO_L0CALOCHECKCALIBCTE_H 
 #define L0CALO_L0CALOCHECKCALIBCTE_H 1
 
@@ -7,7 +6,7 @@
 #include "CaloUtils/Calo2Dview.h"
 
 class DeCalorimeter ;
-class ICaloDataProvider ;
+struct ICaloDataProvider ;
 class ICaloL0DataProvider ;
 
 /** @class L0CaloCheckCalibCte L0CaloCheckCalibCte.h
@@ -44,12 +43,12 @@ private:
   std::string m_l0readoutTool ;
 
   /// Pointer to the Ecal or Hcal Detector Element
-  DeCalorimeter * m_calo ;
+  DeCalorimeter * m_calo = nullptr;
 
   /// Tool to decode calo banks (ADCs)
-  ICaloDataProvider * m_daq ;
+  ICaloDataProvider * m_daq = nullptr;
 
   /// Tool to decode calo banks (L0ADCs)
-  ICaloL0DataProvider * m_l0daq ;
+  ICaloL0DataProvider * m_l0daq = nullptr;
 };
 #endif // L0CALO_L0CALOCHECKCALIBCTE_H
