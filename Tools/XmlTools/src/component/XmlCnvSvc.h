@@ -34,19 +34,19 @@ public:
    * Initializes the service
    * @return status depending on the completion of the call
    */
-  virtual StatusCode initialize();
+  StatusCode initialize() override;
   
   /**
    * Reinitializes the service
    * @return status depending on the completion of the call
    */
-  virtual StatusCode reinitialize();
+  StatusCode reinitialize() override;
   
   /**
    * Finalizes the service
    * @return status depending on the completion of the call
    */
-  virtual StatusCode finalize();
+  StatusCode finalize() override;
   
 
   /**
@@ -60,11 +60,11 @@ public:
    * @note unsigned long fourth argument can be ignored for XML addresses
    */
   using ConversionSvc::createAddress;
-  virtual StatusCode createAddress(long  svc_type,
-                                   const CLID& clid,
-                                   const std::string* par, 
-                                   const unsigned long* /*ip*/,
-                                   IOpaqueAddress*& refpAddress);
+  StatusCode createAddress(long  svc_type,
+                           const CLID& clid,
+                           const std::string* par, 
+                           const unsigned long* /*ip*/,
+                           IOpaqueAddress*& refpAddress) override;
   
 
   ///////////////////////////////////////////////////
@@ -77,7 +77,7 @@ public:
    * @param fileName the name of the file to parse
    * @return the document issued from the parsing
    */
-  virtual IOVDOMDocument* parse (const char* fileName);
+  IOVDOMDocument* parse (const char* fileName) override;
 
   /**
    * This method parses XML from a string and produces the corresponding DOM
@@ -85,16 +85,16 @@ public:
    * @param source the string to parse
    * @return the document issued from the parsing
    */
-  virtual IOVDOMDocument* parseString (std::string source);
+  IOVDOMDocument* parseString (std::string source) override;
 
   /**
    * This clears the cache of previously parsed xml files.
    */
-  virtual void clearCache();
+  void clearCache() override;
 
   /// Method to remove the lock from a document in the cache or to delete the document
   /// generated from a string.
-  virtual void releaseDoc(IOVDOMDocument* doc);
+  void releaseDoc(IOVDOMDocument* doc) override;
 
   /////////////////////////////////////////////
   // implementation of the IXmlSvc interface //
@@ -107,7 +107,7 @@ public:
    * dimentioned magnitude (with units)
    * @return return double value
    */
-  virtual double eval( const char* expr, bool check = true );
+  double eval( const char* expr, bool check = true ) override;
 
   /** 
    * Evaluates a numerical expresion
@@ -116,7 +116,7 @@ public:
    * dimentioned magnitude (with units)
    * @return return double value
    */
-  virtual double eval( const std::string& expr, bool check = true );
+  double eval( const std::string& expr, bool check = true ) override;
 
   /**
    * Adds a parameter in the list of known parameters. The value can also be an
@@ -125,8 +125,8 @@ public:
    * @param value string which defines the value of the parameter.
    * @return true if success 
    */
-  virtual bool addParameter (const std::string& name,
-                             const std::string& value);
+  bool addParameter (const std::string& name,
+                     const std::string& value) override;
 
   /**
    * Adds a parameter in the list of known parameters. The value can also be an
@@ -135,7 +135,7 @@ public:
    * @param value string which defines the value of the parameter.
    * @return true if success 
    */
-  virtual bool addParameter( const char* name, const char* value );
+  bool addParameter( const char* name, const char* value ) override;
 
   /**
    * Adds a parameter in the list of known parameters. The value can also be an
@@ -144,21 +144,21 @@ public:
    * @param value string which defines the value of the parameter.
    * @return true if success 
    */
-  virtual bool addParameter( const char* name, double value );
+  bool addParameter( const char* name, double value ) override;
 
   /**
    * Removes a parameter from the list of known parameters
    * @param name parameter name
    * @return true if success 
    */
-  virtual bool removeParameter( const std::string& name );
+  bool removeParameter( const std::string& name ) override;
 
   /**
    * Removes a parameter from the list of known parameters
    * @param name parameter name
    * @return true if success 
    */
-  virtual bool removeParameter( const char* name );
+  bool removeParameter( const char* name ) override;
 
   /**
    * Accessor to m_genericConversion.

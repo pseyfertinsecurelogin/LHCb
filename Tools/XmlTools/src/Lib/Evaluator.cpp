@@ -19,21 +19,13 @@
 #include "GaudiKernel/System.h"
 
 #include "boost/utility/string_ref.hpp"
+#include "boost/variant.hpp"
+
+#define EVAL XmlTools::Evaluator
 
 //---------------------------------------------------------------------------
-struct Item final {
-  enum { UNKNOWN, VARIABLE, EXPRESSION, FUNCTION } what;
-  double variable = 0;
-  string expression;
-  void   *function = nullptr;
-
-  Item()         : what(UNKNOWN)      {}
-  Item(double x) : what(VARIABLE),   variable(x)  {}
-  Item(string x) : what(EXPRESSION), expression(x) {}
-  Item(void  *x) : what(FUNCTION),   function(x) {}
-};
-
-
+using Item = boost::variant<boost::blank,double,   string,     void*>;
+enum                      { UNKNOWN,     VARIABLE, EXPRESSION, FUNCTION }; // must match order in boost::variant
 
 namespace std {
   template<> struct hash<::string> {
@@ -46,19 +38,18 @@ namespace std {
   };
 }
 
-typedef char * pchar;
+typedef const char * pchar;
 typedef std::unordered_map<string,Item> dic_type;
 
-struct Struct final {
+struct XmlTools::Evaluator::Struct final {
   dic_type theDictionary;
-  pchar    theExpression;
-  pchar    thePosition;
-  int      theStatus;
-  double   theResult;
+  std::unique_ptr<char[]> theExpression;
+  pchar    thePosition = nullptr;
+  int      theStatus = EVAL::OK;
+  double   theResult = 0.0;
 };
 
 //---------------------------------------------------------------------------
-#define EVAL XmlTools::Evaluator
 
 namespace { 
 
@@ -124,13 +115,13 @@ static int variable(const string & name, double & result,
   auto iter = dictionary.find(name);
   if (iter == dictionary.end())
     return EVAL::ERROR_UNKNOWN_VARIABLE;
-  Item item = iter->second;
-  switch (item.what) {
-  case Item::VARIABLE:
-    result = item.variable;
+  const auto& item = iter->second;
+  switch (item.which()) {
+  case VARIABLE:
+    result = boost::get<double>(item);
     return EVAL::OK;
-  case Item::EXPRESSION: {
-    pchar exp_begin = (char *)(item.expression.c_str());
+  case EXPRESSION: {
+    pchar exp_begin = boost::get<string>(item).c_str();
     pchar exp_end   = exp_begin + strlen(exp_begin) - 1;
     if (engine(exp_begin, exp_end, result, exp_end, dictionary) == EVAL::OK)
       return EVAL::OK;
@@ -164,32 +155,32 @@ static int function(const string & name, std::stack<double> & par,
 
   auto iter = dictionary.find(sss[npar]+name);
   if (iter == dictionary.end()) return EVAL::ERROR_UNKNOWN_FUNCTION;
-  Item item = iter->second;
+  const auto& item = iter->second;
 
   double pp[MAX_N_PAR];
   for(int i=0; i<npar; i++) { pp[i] = par.top(); par.pop(); }
   errno = 0;
-  if (item.function == 0)       return EVAL::ERROR_CALCULATION_ERROR;
+  if (!boost::get<void*>(item))       return EVAL::ERROR_CALCULATION_ERROR;
   switch (npar) {
   case 0:
-    result = System::FuncPtrCast<double (*)()>(item.function)();
+    result = System::FuncPtrCast<double (*)()>(boost::get<void*>(item))();
     break;
   case 1:
-    result = System::FuncPtrCast<double (*)(double)>(item.function)(pp[0]);
+    result = System::FuncPtrCast<double (*)(double)>(boost::get<void*>(item))(pp[0]);
     break;
   case 2:
-    result = System::FuncPtrCast<double (*)(double,double)>(item.function)(pp[1], pp[0]);
+    result = System::FuncPtrCast<double (*)(double,double)>(boost::get<void*>(item))(pp[1], pp[0]);
     break;
   case 3:
-    result = System::FuncPtrCast<double (*)(double,double,double)>(item.function)
+    result = System::FuncPtrCast<double (*)(double,double,double)>(boost::get<void*>(item))
       (pp[2],pp[1],pp[0]);
     break;
   case 4:
-    result = System::FuncPtrCast<double (*)(double,double,double,double)>(item.function)
+    result = System::FuncPtrCast<double (*)(double,double,double,double)>(boost::get<void*>(item))
       (pp[3],pp[2],pp[1],pp[0]);
     break;
   case 5:
-    result = System::FuncPtrCast<double (*)(double,double,double,double,double)>(item.function)
+    result = System::FuncPtrCast<double (*)(double,double,double,double,double)>(boost::get<void*>(item))
       (pp[4],pp[3],pp[2],pp[1],pp[0]);
     break;
   }
@@ -245,9 +236,9 @@ static int operand(pchar begin, pchar end, double & result,
     pointer++;
   }
   c = *pointer;
-  *pointer = '\0';
+  *const_cast<char*>(pointer) = '\0';
   string name(begin);
-  *pointer = c;
+  *const_cast<char*>(pointer) = c;
 
   //   G E T   V A R I A B L E
 
@@ -564,7 +555,7 @@ static int engine(pchar begin, pchar end, double & result,
 
 //---------------------------------------------------------------------------
 static void setItem(const char * prefix, const char * name,
-		    const Item & item, Struct * s) {
+		            Item&& item, XmlTools::Evaluator::Struct* s) {
 
   if (name == 0 || *name == '\0') {
     s->theStatus = EVAL::ERROR_NOT_A_NAME;
@@ -586,18 +577,23 @@ static void setItem(const char * prefix, const char * name,
   //   A D D   I T E M   T O   T H E   D I C T I O N A R Y
 
   string item_name = prefix + to_string(nam);
-  dic_type::iterator iter = (s->theDictionary).find(item_name);
-  if (iter != (s->theDictionary).end()) {
-    iter->second = item;
-    if (item_name == name) {
-      s->theStatus = EVAL::WARNING_EXISTING_VARIABLE;
-    }else{
-      s->theStatus = EVAL::WARNING_EXISTING_FUNCTION;
-    }
+#if  __cplusplus > 201402L
+  // C++17
+  auto r = s->theDictionary.insert_or_assign(item_name, std::move(item));
+  s->theStatus = ( r.second          ? EVAL::OK 
+                 : item_name == name ? EVAL::WARNING_EXISTING_VARIABLE
+                                     : EVAL::WARNING_EXISTING_FUNCTION );
+#else
+  auto iter = s->theDictionary.find(item_name);
+  if (iter != s->theDictionary.end()) {
+    iter->second = std::move(item);
+    s->theStatus = ( item_name == name ? EVAL::WARNING_EXISTING_VARIABLE
+                                       : EVAL::WARNING_EXISTING_FUNCTION ); 
   }else{
-    (s->theDictionary)[item_name] = item;
+    s->theDictionary.insert( std::make_pair(item_name, std::move(item)) );
     s->theStatus = EVAL::OK;
   }
+#endif
 }
 
 //---------------------------------------------------------------------------
@@ -605,59 +601,46 @@ namespace XmlTools {
 
 //---------------------------------------------------------------------------
 Evaluator::Evaluator() {
-  Struct * s = new Struct();
-  p = (void *) s;
-  s->theExpression = 0;
-  s->thePosition   = 0;
-  s->theStatus     = OK;
-  s->theResult     = 0.0;
+  m_p = new Struct();
 }
 
 //---------------------------------------------------------------------------
 Evaluator::~Evaluator() {
-  Struct * s = (Struct *)(p);
-  if (s->theExpression) {
-    delete[] s->theExpression;
-    s->theExpression = nullptr;
-  }
-  delete s;
+  delete m_p;
 }
 
 //---------------------------------------------------------------------------
 double Evaluator::evaluate(const char * expression) {
-  Struct * s = (Struct *)(p);
-  if (s->theExpression != 0) { delete[] s->theExpression; }
-  s->theExpression = 0;
-  s->thePosition   = 0;
-  s->theStatus     = WARNING_BLANK_STRING;
-  s->theResult     = 0.0;
-  if (expression != 0) {
-    s->theExpression = new char[strlen(expression)+1];
-    strcpy(s->theExpression, expression);
-    s->theStatus = engine(s->theExpression,
-			  s->theExpression+strlen(expression)-1,
-			  s->theResult,
-			  s->thePosition,
-			  s->theDictionary);
+  m_p->theExpression.reset();
+  m_p->thePosition   = 0;
+  m_p->theStatus     = WARNING_BLANK_STRING;
+  m_p->theResult     = 0.0;
+  if (expression) {
+    m_p->theExpression = std::make_unique<char[]>(strlen(expression)+1);
+    strcpy(m_p->theExpression.get(), expression);
+    m_p->theStatus = engine(m_p->theExpression.get(),
+			  m_p->theExpression.get()+strlen(expression)-1,
+			  m_p->theResult,
+			  m_p->thePosition,
+			  m_p->theDictionary);
   }
-  return s->theResult;
+  return m_p->theResult;
 }
 
 //---------------------------------------------------------------------------
 int Evaluator::status() const {
-  return ((Struct *)(p))->theStatus;
+  return m_p->theStatus;
 }
 
 //---------------------------------------------------------------------------
 int Evaluator::error_position() const {
-  return ((Struct *)(p))->thePosition - ((Struct *)(p))->theExpression;
+  return m_p->thePosition - m_p->theExpression.get();
 }
 
 //---------------------------------------------------------------------------
 void Evaluator::print_error() const {
   char prefix[] = "Evaluator : ";
-  Struct * s = (Struct *) p;
-  switch (s->theStatus) {
+  switch (m_p->theStatus) {
   case ERROR_NOT_A_NAME:
     std::cerr << prefix << "invalid name"         << std::endl;
     return;
@@ -690,42 +673,42 @@ void Evaluator::print_error() const {
 
 //---------------------------------------------------------------------------
 void Evaluator::setVariable(const char * name, double value)
-{ setItem("", name, Item(value), (Struct *)p); }
+{ setItem("", name, Item(value), m_p); }
 
 void Evaluator::setVariable(const char * name, const char * expression)
-{ setItem("", name, Item(expression), (Struct *)p); }
+{ setItem("", name, Item(expression), m_p); }
 
 //---------------------------------------------------------------------------
 void Evaluator::setFunction(const char * name,
 			    double (*fun)())
-{ setItem("0", name, Item(System::FuncPtrCast<void*>(fun)), (Struct *)p); }
+{ setItem("0", name, Item(System::FuncPtrCast<void*>(fun)), m_p); }
 
 void Evaluator::setFunction(const char * name,
 			    double (*fun)(double))
-{ setItem("1", name, Item(System::FuncPtrCast<void*>(fun)), (Struct *)p); }
+{ setItem("1", name, Item(System::FuncPtrCast<void*>(fun)), m_p); }
 
 void Evaluator::setFunction(const char * name,
 			    double (*fun)(double,double))
-{ setItem("2", name, Item(System::FuncPtrCast<void*>(fun)), (Struct *)p); }
+{ setItem("2", name, Item(System::FuncPtrCast<void*>(fun)), m_p); }
 
 void Evaluator::setFunction(const char * name,
 			    double (*fun)(double,double,double))
-{ setItem("3", name, Item(System::FuncPtrCast<void*>(fun)), (Struct *)p); }
+{ setItem("3", name, Item(System::FuncPtrCast<void*>(fun)), m_p); }
 
 void Evaluator::setFunction(const char * name,
 			    double (*fun)(double,double,double,double))
-{ setItem("4", name, Item(System::FuncPtrCast<void*>(fun)), (Struct *)p); }
+{ setItem("4", name, Item(System::FuncPtrCast<void*>(fun)), m_p); }
 
 void Evaluator::setFunction(const char * name,
 			    double (*fun)(double,double,double,double,double))
-{ setItem("5", name, Item(System::FuncPtrCast<void*>(fun)), (Struct *)p); }
+{ setItem("5", name, Item(System::FuncPtrCast<void*>(fun)), m_p); }
 
 //---------------------------------------------------------------------------
 bool Evaluator::findVariable(const char * name) const {
   if (name == 0 || *name == '\0') return false;
   auto nam = remove_blanks(name);
   if (nam.empty()) return false;
-  Struct * s = (Struct *)(p);
+  auto s = m_p;
   return s->theDictionary.find(to_string(nam)) != s->theDictionary.end();
 }
 
@@ -735,7 +718,7 @@ bool Evaluator::findFunction(const char * name, int npar) const {
   if (name == 0 || *name == '\0')    return false;
   auto nam = remove_blanks(name);
   if (nam.empty()) return false;
-  Struct * s = (Struct *)(p);
+  auto s = m_p;
   return s->theDictionary.find(sss[npar]+nam) != s->theDictionary.end();
 }
 
@@ -744,7 +727,7 @@ void Evaluator::removeVariable(const char * name) {
   if (name == 0 || *name == '\0') return;
   auto nam = remove_blanks(name);
   if (nam.empty()) return;
-  Struct * s = (Struct *)(p);
+  auto s = m_p;
   s->theDictionary.erase(to_string(nam));
 }
 
@@ -754,18 +737,16 @@ void Evaluator::removeFunction(const char * name, int npar) {
   if (name == 0 || *name == '\0')    return;
   auto nam = remove_blanks(name);
   if (nam.empty()) return;
-  Struct * s = (Struct *)(p);
-  s->theDictionary.erase(sss[npar]+nam);
+  m_p->theDictionary.erase(sss[npar]+nam);
 }
 
 //---------------------------------------------------------------------------
 void Evaluator::clear() {
-  Struct * s = (Struct *) p;
-  s->theDictionary.clear();
-  s->theExpression = 0;
-  s->thePosition   = 0;
-  s->theStatus     = OK;
-  s->theResult     = 0.0;
+  m_p->theDictionary.clear();
+  m_p->theExpression.reset();
+  m_p->thePosition   = 0;
+  m_p->theStatus     = OK;
+  m_p->theResult     = 0.0;
 }
 
 //---------------------------------------------------------------------------

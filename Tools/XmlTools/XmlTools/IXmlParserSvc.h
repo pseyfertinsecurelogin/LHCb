@@ -1,5 +1,3 @@
-// $Id: IXmlParserSvc.h,v 1.6 2007-02-05 18:51:19 marcocle Exp $
-
 #ifndef DETDESCCNV_IXMLPARSERSVC_H
 #define DETDESCCNV_IXMLPARSERSVC_H
 
@@ -18,9 +16,8 @@
  *  @author Marco Clemencic
  */
 
-class IXmlParserSvc : public extend_interfaces<IInterface> {
+struct IXmlParserSvc : extend_interfaces<IInterface> {
 
- public:
    DeclareInterfaceID( IXmlParserSvc, 2 , 0);
 
   /**

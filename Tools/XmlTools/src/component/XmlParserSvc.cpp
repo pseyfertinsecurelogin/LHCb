@@ -61,7 +61,7 @@ XmlParserSvc::XmlParserSvc (const std::string& name, ISvcLocator* svc) :
 //  Initialization
 //=========================================================================
 StatusCode XmlParserSvc::initialize( ) {
-  StatusCode sc = Service::initialize();
+  StatusCode sc = base_class::initialize();
   if ( !sc.isSuccess() ) return sc;
 
   m_sumCpu = 0.;
@@ -143,7 +143,7 @@ StatusCode XmlParserSvc::finalize() {
 
   xercesc::XMLPlatformUtils::Terminate();
 
-  return Service::finalize();
+  return base_class::finalize();
 }
 
 //=========================================================================
@@ -429,9 +429,6 @@ void XmlParserSvc::increaseCacheAge () {
     // the cacheAge is an unsigned int. We are here because the age
     // has just exceeded the maximum possible value for unsigned ints.
     // As a consequence, we put every birthDate to 0.
-    for (auto& i : m_cache ) {
-      i.second.birthDate = 0;
-    }
+    for (auto& i : m_cache ) i.second.birthDate = 0;
   }
 }
-

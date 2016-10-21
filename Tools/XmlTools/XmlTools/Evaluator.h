@@ -249,9 +249,10 @@ class Evaluator {
                         double mole     = 1.0,
                         double candela  = 1.0);
 
+  struct Struct;
 private: 
-  void * p;                                 // private data 
-  Evaluator(const Evaluator &) = delete ;             // copy constructor is not allowed
+  Struct* m_p;                                       // private data 
+  Evaluator(const Evaluator &) = delete ;            // copy constructor is not allowed
   Evaluator & operator=(const Evaluator &) = delete; // assignment is not allowed
 };
 
