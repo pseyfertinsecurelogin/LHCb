@@ -1,5 +1,5 @@
 // $Id: MuonChamberGrid.h,v 1.7 2008-10-28 15:06:04 cattanem Exp $
-#ifndef MUONDET_MUONCHAMBERGRID_H 
+#ifndef MUONDET_MUONCHAMBERGRID_H
 #define MUONDET_MUONCHAMBERGRID_H 1
 
 #include "DetDesc/Condition.h"
@@ -8,24 +8,24 @@
 #include "MuonDet/MuonFrontEndID.h"
 
 /** @class MuonChamberGrid MuonChamberGrid.h MuonDet/MuonChamberGrid.h
- *  
+ *
  *
  *  @author Alessia(o) Sat(r)ta(i)
  *  @date   2004-01-07
  */
 
 /// Class ID of the Muon Grid
-static const CLID CLID_MuonChamberGrid = 11094;  
+static const CLID CLID_MuonChamberGrid = 11094;
 
 class MuonChamberGrid: public Condition {
-public: 
+public:
   /// Standard constructor
-  MuonChamberGrid( ); 
+  MuonChamberGrid( );
 
   virtual ~MuonChamberGrid( ); ///< Destructor
 
-  StatusCode initialize();
-  
+  StatusCode initialize() override;
+
   //Returns distances relative to chamber dimension
   std::vector< std::pair<MuonFrontEndID, std::vector<float> > > listOfPhysChannels(double x_enter,double y_enter,
 										   double x_exit,double y_exit);

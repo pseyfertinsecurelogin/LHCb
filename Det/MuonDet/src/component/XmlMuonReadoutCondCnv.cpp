@@ -38,9 +38,9 @@ protected:
    * @param address ??
    * @return status depending on the completion of the call
    */
-  virtual StatusCode i_fillSpecificObj (xercesc::DOMElement* childElement,
-                                        MuonReadoutCond* dataObj,
-                                        IOpaqueAddress* address);
+  StatusCode i_fillSpecificObj (xercesc::DOMElement* childElement,
+                                MuonReadoutCond* dataObj,
+                                IOpaqueAddress* address) override;
 
 private:
   /// fills the X and Y cluster sizes and probabilities
