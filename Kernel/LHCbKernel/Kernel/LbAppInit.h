@@ -25,7 +25,7 @@ class IRndmGenSvc;
  *  @date   2005-12-21
  */
 
-class LbAppInit : public GaudiAlgorithm 
+class LbAppInit : public GaudiAlgorithm
 {
 
 public:
@@ -35,9 +35,9 @@ public:
 
   virtual ~LbAppInit( ); ///< Destructor
 
-  virtual StatusCode initialize();     ///< Algorithm initialization
-  virtual StatusCode execute   ();     ///< Algorithm execution
-  virtual StatusCode finalize  ();     ///< Algorithm finalization
+  StatusCode initialize() override;     ///< Algorithm initialization
+  StatusCode execute   () override;     ///< Algorithm execution
+  StatusCode finalize  () override;     ///< Algorithm finalization
 
 protected:
 
@@ -136,7 +136,7 @@ private:
   unsigned long long m_memPurgeLimit; ///< Memory limit to trigger a purge of the pools
 
   long long m_minMemDelta; ///< Minimum memory delta to trigger a message
-  
+
 };
 
 #endif // LBAPPINIT_H
