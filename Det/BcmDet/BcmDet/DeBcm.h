@@ -7,15 +7,17 @@
 
 #include "DetDesc/DetectorElement.h"
 #include "DetDesc/IGeometryInfo.h"
- 
- 
-static const CLID& CLID_DeBcm = 14001;  
+
+static const CLID& CLID_DeBcm = 14001;
 
 namespace DeBcmLocation{
-  static const std::string& BcmUp="/dd/Structure/LHCb/BeforeMagnetRegion/BcmUp";
-  static const std::string& BcmDown="/dd/Structure/LHCb/MagnetRegion/BcmDown";
-  static const std::string& Default=BcmUp;
-  
+  static const std::string& BcmUp = "/dd/Structure/LHCb/BeforeMagnetRegion/BcmUp";
+  static const std::string& BcmDown = "/dd/Structure/LHCb/MagnetRegion/BcmDown";
+  static const std::string& Default
+#ifdef __GNUC__
+    __attribute__ ((unused))
+#endif
+    = BcmUp;
 }
 
 namespace DeBcmShifts{
@@ -24,9 +26,9 @@ namespace DeBcmShifts{
 }
 
 class DeBcm: public DetectorElement {
- 
+
 public:
- 
+
   DeBcm();
 
   DeBcm(int nStation);
