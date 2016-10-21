@@ -1,14 +1,14 @@
-// Include files 
+// Include files
 
 // local
 #include "GenFSRStat.h"
 
-// from Event                                                                                                                                  
+// from Event
 #include "Event/GenFSR.h"
 #include "Event/GenCountersFSR.h"
 #include "Event/CrossSectionsFSR.h"
 
-// other libraries                                                                                                                            
+// other libraries
 #include <string>
 #include <iostream>
 #include <fstream>
@@ -53,7 +53,7 @@ GenFSRStat::GenFSRStat( const std::string& name,
 //=============================================================================
 // Destructor
 //=============================================================================
-GenFSRStat::~GenFSRStat() {} 
+GenFSRStat::~GenFSRStat() {}
 
 //=============================================================================
 // Initialization
@@ -64,11 +64,11 @@ StatusCode GenFSRStat::initialize() {
 
   if ( msgLevel(MSG::DEBUG) ) debug() << "==> Initialize" << endmsg;
 
-  // get the File Records service                                                                                                              
+  // get the File Records service
   m_fileRecordSvc = svc<IDataProviderSvc>("FileRecordDataSvc", true);
 
-  // prepare navigator tool                                                                                 
-  m_navigatorTool = tool<IFSRNavigator>("FSRNavigator", "FSRNavigator");  
+  // prepare navigator tool
+  m_navigatorTool = tool<IFSRNavigator>("FSRNavigator", "FSRNavigator");
 
   return StatusCode::SUCCESS;
 }
@@ -98,39 +98,39 @@ StatusCode GenFSRStat::finalize() {
 //=============================================================================
 
 
-//=============================================================================                                                                
-//  Print the GenFSR in a file xml                                                                                                             
-//=============================================================================             
+//=============================================================================
+//  Print the GenFSR in a file xml
+//=============================================================================
 
 void GenFSRStat::printHtmlFSR()
 {
   if (msgLevel(MSG::DEBUG)) debug() << "write to file: " << m_htmlFileName << endmsg;
 
-  // root of store                                               
+  // root of store
   std::string fileRecordRoot = m_fileRecordName;
   int nFSRs = 0;
 
   GenFSRStat::getEvtTypeDesc(100);
 
-  // make an inventory of the FileRecord store                                                                                        
-  std::vector< std::string > addresses = m_navigatorTool->navigate(fileRecordRoot, m_FSRName);  
+  // make an inventory of the FileRecord store
+  std::vector< std::string > addresses = m_navigatorTool->navigate(fileRecordRoot, m_FSRName);
 
   for(std::vector< std::string >::iterator iAddr=addresses.begin(); iAddr!=addresses.end(); iAddr++)
     nFSRs += 1;
-  
+
   if(nFSRs != 0)
   {
     for(std::vector< std::string >::iterator iAddr=addresses.begin(); iAddr!=addresses.end(); iAddr++)
     {
       std::string genRecordAddress = *iAddr;
       std::string line = "";
-      
-      // read GenFSR          
+
+      // read GenFSR
       LHCb::GenFSR* genFSR = getIfExists<LHCb::GenFSR>(m_fileRecordSvc, genRecordAddress);
       if (genFSR==NULL)
       {
         Warning("A genFSR record was not found").ignore();
-        if (msgLevel(MSG::DEBUG)) debug() << genRecordAddress << " not found" << endmsg;        
+        if (msgLevel(MSG::DEBUG)) debug() << genRecordAddress << " not found" << endmsg;
       }
       else
       {
@@ -149,20 +149,20 @@ void GenFSRStat::printHtmlFSR()
         std::string time = "";
         bool flag_evType = false;
         std::size_t pos_end, pos_ref;
-        
+
         time = getCurrentTime();
 
         LHCb::GenFSR::GeneratorCounter::iterator icounter;
         LHCb::GenFSR::GeneratorCounter genCounters = genFSR->getGenCounters();
-        LHCb::GenFSR::CrossSection::iterator icross;        
+        LHCb::GenFSR::CrossSection::iterator icross;
         LHCb::GenFSR::CrossSection crossSections = genFSR->getCrossSections();
-        int key = 0;        
+        int key = 0;
 
         // look in the FSR what kind if counters are stored
         for(icounter = genCounters.begin(); icounter != genCounters.end(); icounter++)
         {
           key = icounter->first;
-          
+
           if(key ==  7 || key == 27 || key == 91 || key == 92 || key == 94 || key == 96)
           {
             before = genFSR->getDenominator(key);
@@ -193,31 +193,31 @@ void GenFSRStat::printHtmlFSR()
           }
         }
 
-        // look in the FSR if there are any generator cross-section is stored        
-        for(icross = crossSections.begin(); icross != crossSections.end(); icross++)          
+        // look in the FSR if there are any generator cross-section is stored
+        for(icross = crossSections.begin(); icross != crossSections.end(); icross++)
         {
           value = icross->second.second;
-          if(value == 0 || isnan(value) != 0) continue;
+          if(value == 0 || std::isnan(value) != 0) continue;
           count5 += 1;
         }
-        
-        // read the already existing file 
+
+        // read the already existing file
         std::fstream readFile;
         std::string readFileName = m_htmlFileLocation + "GenerationFSR_" + m_appConfigFile + ".html";
-     
+
         readFile.open(readFileName.c_str(), std::fstream::in);
         // open the new file
         m_htmlFile.open((m_htmlFileLocation + m_htmlFileName).c_str(), std::fstream::out);
-    
+
         if (m_htmlFile.is_open())
         {
-          if (msgLevel(MSG::DEBUG)) debug() << "Html file: " << m_htmlFileName.c_str() << " - created in the following directory: " 
+          if (msgLevel(MSG::DEBUG)) debug() << "Html file: " << m_htmlFileName.c_str() << " - created in the following directory: "
                                             << m_htmlFileLocation.c_str() << endmsg;
-          
+
           if (readFile.is_open())
           {
             if (msgLevel(MSG::DEBUG)) debug() << "Read file GenerationFSR_"+ m_appConfigFile + ".html opened" << endmsg;
-            
+
             // hyper-link related to this simulation conditions
             std::string ref_evType = "<a href=\"GenerationFSR_"+m_appConfigFile+".html#"+evType_str+"\">"+evType_str+"</a>";
 
@@ -229,7 +229,7 @@ void GenFSRStat::printHtmlFSR()
             {
               // look for the hyper-link in the current line
               if(!flag_evType) pos_ref = line.find(ref_evType);
-              
+
               if(pos_ref != std::string::npos && flag_evType == false)
                 flag_evType = true;
 
@@ -242,23 +242,23 @@ void GenFSRStat::printHtmlFSR()
               // add the tables if the current line contains the right link or if the end of the file is reached
               else if((line == link && flag_evType == true) || (flag_evType == false && line == "</body>"))
               {
-                // There is already a simulation for this production       
+                // There is already a simulation for this production
                 // but if we are here it's because we have to overwrite the previous results
                 m_htmlFile << link << std::endl;  // write link
 
                 std::string evtDesc = getEvtTypeDesc(evType);
-                
-                // Write the tables       
+
+                // Write the tables
                 m_htmlFile << "<table>\n<th colspan=\"2\"><font color=\"#0000FF\">" << evType_str << " (" << evtDesc << ")</font> ";
                 m_htmlFile << "Hard Generator <font color=\"#088A08\">" << genName << "</font> ";
-                m_htmlFile << "Gauss <font color=\"#088A08\">" << m_gaussVersion << "</font>";                
+                m_htmlFile << "Gauss <font color=\"#088A08\">" << m_gaussVersion << "</font>";
                 m_htmlFile << "<br> DecFiles <font color=\"#088A08\">" << decFiles << "</font>";
                 m_htmlFile << "<br> DDDB <font color=\"#FF0000\">" << m_dddb << "</font> - ";
                 m_htmlFile << "SIMCOND <font color=\"#FF0000\">" << m_simCond << "</font><br>";
                 m_htmlFile << "APPCONFIG <font color=\"#088A08\">" << m_appConfigVersion << "</font> ";
-                m_htmlFile << "<font color=\"#FF0000\">" << m_appConfigFile << "</font><br>";                
+                m_htmlFile << "<font color=\"#FF0000\">" << m_appConfigFile << "</font><br>";
                 m_htmlFile << time << "</th>\n<tr>\n\n";
-                
+
                 if(count2 != 0) writeGeneratorCounters(genFSR, count2);
                 if(count3 != 0) writeGenHadronCounters(genFSR, count3);
                 if(count4 != 0) writeAccHadronCounters(genFSR, count4);
@@ -274,14 +274,14 @@ void GenFSRStat::printHtmlFSR()
                 if(count5 == 0) m_htmlFile << "<p><font color=\"#FF0000\">Warning: No Generator Cross-Sections lines found</font></p>\n";
                 if(count1 == 0) m_htmlFile << "<p><font color=\"#FF0000\">Warning: No Cut Efficiencies Counters lines found</font></p>\n";
 
-                writeFinalComments(genFSR);                
+                writeFinalComments(genFSR);
 
                 m_htmlFile << "<p> Statistics done (script version " << script_version << ") with " << njobs_str <<
                   " jobs from the following ProdID:<font color=\"#0000FF\">" << m_prodID << "</font></p>\n";
 
                 // skip the lines which contain the previous table because they have been just updated
                 if(flag_evType) getline(readFile, line);
-                
+
                 pos_end = line.find("<a name=");
 
                 while(pos_end == std::string::npos && line != "</body>")
@@ -289,20 +289,20 @@ void GenFSRStat::printHtmlFSR()
                   getline(readFile, line);
                   pos_end = line.find("<a name=");
                 }
-                
+
                 m_htmlFile << line << std::endl;
               }
-              else  m_htmlFile << line << std::endl;              
+              else  m_htmlFile << line << std::endl;
             }
           }
-          // the file does not exist, create it              
+          // the file does not exist, create it
           else
           {
             if (msgLevel(MSG::DEBUG)) debug() << "GenerationFSR.html does not exist, creating it now." << endmsg;
-            
+
             // write the web-header
-            m_htmlFile << "<html>\n<head>\n";            
-            m_htmlFile << "<link rel=\"stylesheet\" href=\"http://lhcb-release-area.web.cern.ch/LHCb-release-area/DOC/css/lhcb.css\" type=\"text/css\" media=\"screen\">\n";           
+            m_htmlFile << "<html>\n<head>\n";
+            m_htmlFile << "<link rel=\"stylesheet\" href=\"http://lhcb-release-area.web.cern.ch/LHCb-release-area/DOC/css/lhcb.css\" type=\"text/css\" media=\"screen\">\n";
             m_htmlFile << "<link rel=\"stylesheet\" href=\"http://lhcb-release-area.web.cern.ch/LHCb-release-area/DOC/gauss/css/css.css\" type=\"text/css\" media=\"screen\">\n";
             m_htmlFile << "<link rel=\"stylesheet\" href=\"css.css\" type=\"text/css\" media=\"screen\">\n";
             m_htmlFile << "<title>Table for Generation</title>\n";
@@ -312,9 +312,9 @@ void GenFSRStat::printHtmlFSR()
             m_htmlFile << "<p> Event Type:\n<a href=\"GenerationFSR_" << m_appConfigFile << ".html#" << evType_str << "\">" << evType_str << "</a>\n</p>\n";
             // link
             m_htmlFile << "<a name=\"" << evType_str << "\"></a>\n" << std::endl;
-            
+
             std::string evtDesc = getEvtTypeDesc(evType);
-            // Write the tables                                                                                                             
+            // Write the tables
             m_htmlFile << "<table>\n<th colspan=\"2\"><font color=\"#0000FF\">" << evType_str << " (" << evtDesc << ")</font> ";
             m_htmlFile << "Hard Generator <font color=\"#088A08\">" << genName << "</font> ";
             m_htmlFile << "Gauss <font color=\"#088A08\">"<< m_gaussVersion << ": ";
@@ -329,12 +329,12 @@ void GenFSRStat::printHtmlFSR()
             if(count2 != 0) writeGeneratorCounters(genFSR, count2);
             if(count3 != 0) writeGenHadronCounters(genFSR, count3);
             if(count4 != 0) writeAccHadronCounters(genFSR, count4);
-            if(count5 != 0) writeGeneratorCrossSections(genFSR, count5);            
+            if(count5 != 0) writeGeneratorCrossSections(genFSR, count5);
             if(count1 != 0) writeCutEfficiencies(genFSR, count1);
 
             m_htmlFile << "</table>\n";
 
-            // Write the warnings                                                                                                         
+            // Write the warnings
             if(count2 == 0) m_htmlFile << "<p><font color=\"#FF0000\">Warning: No Hadron Counters lines found</font></p>\n";
             if(count3 == 0) m_htmlFile << "<p><font color=\"#FF0000\">Warning: No Signal Counters lines found</font></p>\n";
             if(count4 == 0) m_htmlFile << "<p><font color=\"#FF0000\">Warning: No Accepted Hadron Counters lines found</font></p>\n";
@@ -342,8 +342,8 @@ void GenFSRStat::printHtmlFSR()
             if(count1 == 0) m_htmlFile << "<p><font color=\"#FF0000\">Warning: No Counters Interactions lines found</font></p>\n";
 
             writeFinalComments(genFSR);
-            
-            m_htmlFile << "<p> Statistics done (script version " << script_version << ") with " << njobs_str << 
+
+            m_htmlFile << "<p> Statistics done (script version " << script_version << ") with " << njobs_str <<
               " jobs from the following ProdID:<font color=\"#0000FF\">" << m_prodID << "</font></p>\n";
 
             m_htmlFile << "\n</body>\n</html>\n";
@@ -356,7 +356,7 @@ void GenFSRStat::printHtmlFSR()
           remove(originalFile.c_str());
           std::string newFile = m_htmlFileLocation + m_htmlFileName;
 
-          // create the new GenerationFSR.html 
+          // create the new GenerationFSR.html
           rename(newFile.c_str(),originalFile.c_str());
         }
       }
@@ -368,15 +368,15 @@ void GenFSRStat::printHtmlFSR()
 // Each function contains different loops for each information requested
 // (name, value, error)
 
-//=============================================================================                                                                
-//  Add generator level counters in the html file       
-//=============================================================================                                                                
+//=============================================================================
+//  Add generator level counters in the html file
+//=============================================================================
 
 void GenFSRStat::writeGeneratorCounters(LHCb::GenFSR* genFSR, int count)
 {
-  LHCb::GenFSR::GeneratorCounter::iterator icounter; 
+  LHCb::GenFSR::GeneratorCounter::iterator icounter;
   LHCb::GenFSR::GeneratorCounter genCounters = genFSR->getGenCounters();
-  int key = 0;  
+  int key = 0;
   std::string name = "", fullName = "";
   longlong after = 0, before = 0;
   double fraction = 0, error = 0, C = 1;
@@ -390,10 +390,10 @@ void GenFSRStat::writeGeneratorCounters(LHCb::GenFSR* genFSR, int count)
   m_htmlFile << "><div class=firstcell>Counters for Interactions</div></th>\n" << std::endl;
 
   m_htmlFile << "<tr>\n";
-  
+
   // write the list of cross-section names
   for(icounter = genCounters.begin(); icounter != genCounters.end(); icounter++)
-  {    
+  {
     key = icounter->first;
     if(key > 24) continue;
     if(key == 6 || key == 7) continue;
@@ -406,27 +406,27 @@ void GenFSRStat::writeGeneratorCounters(LHCb::GenFSR* genFSR, int count)
     else m_htmlFile << "<td><font size=2>" << fullName << "</font></td>\n";
   }
   m_htmlFile <<"</tr>\n\n<tr>\n";
-  
+
   // write the value of each fraction
   for(icounter = genCounters.begin(); icounter != genCounters.end(); icounter++)
   {
     key = icounter->first;
-    if(key > 24) continue; 
+    if(key > 24) continue;
     if(key == 6 || key == 7) continue;
     before = genFSR->getDenominator(key);
     if(before == 0) continue;
     if(key >= 10)
-    { 
-      int keycs = LHCb::CrossSectionsFSR::CrossSectionKeyToType("MBCrossSection"); 
+    {
+      int keycs = LHCb::CrossSectionsFSR::CrossSectionKeyToType("MBCrossSection");
       C = genFSR->getCrossSectionInfo(keycs).second;
     }
     else C = 1;
-    
+
     if(key == 2) after = genFSR->getGenCounterInfo(key+1).second;
     else after = icounter->second.second;
     if(after == 0) continue;
     fraction = genFSR->getEfficiency(after, before, C);
-  
+
     m_htmlFile << "<td>" << fraction << "</td>\n";
   }
   m_htmlFile <<"</tr>\n\n<tr>\n";
@@ -435,20 +435,20 @@ void GenFSRStat::writeGeneratorCounters(LHCb::GenFSR* genFSR, int count)
   for(icounter = genCounters.begin(); icounter != genCounters.end(); icounter++)
   {
     key = icounter->first;
-    if(key > 24) continue; 
+    if(key > 24) continue;
     if(key == 6 || key == 7) continue;
     before = genFSR->getDenominator(key);
     if(before == 0) continue;
     if(key >= 10)
     {
       int keycs = LHCb::CrossSectionsFSR::CrossSectionKeyToType("MBCrossSection");
-      C = genFSR->getCrossSectionInfo(keycs).second; 
+      C = genFSR->getCrossSectionInfo(keycs).second;
     }
     else
       C = 1;
-    
+
     if(key == 2) after = genFSR->getGenCounterInfo(key+1).second;
-    else after = icounter->second.second;  
+    else after = icounter->second.second;
     if(after == 0) continue;
     name =  LHCb::CrossSectionsFSR::CrossSectionKeyToString(key);
     if(name == "MeanNoZeroPUInt" || name == "MeanPUInt" || name == "MeanPUIntAcc") flag = false;
@@ -456,30 +456,30 @@ void GenFSRStat::writeGeneratorCounters(LHCb::GenFSR* genFSR, int count)
 
     error = genFSR->getEfficiencyError(after, before, C, flag);
 
-    m_htmlFile << "<td>&plusmn; " << error << "</td>\n"; 
+    m_htmlFile << "<td>&plusmn; " << error << "</td>\n";
   }
   m_htmlFile << "</tr>\n</table>\n</td>\n</tr>" << std::endl;
 }
 
-//=============================================================================                      
-//  Add generator level cut efficiencies in the xml file                                                                                       
-//=============================================================================    
+//=============================================================================
+//  Add generator level cut efficiencies in the xml file
+//=============================================================================
 void GenFSRStat::writeCutEfficiencies(LHCb::GenFSR* genFSR, int count)
 {
-  LHCb::GenFSR::GeneratorCounter::iterator icounter; 
+  LHCb::GenFSR::GeneratorCounter::iterator icounter;
   LHCb::GenFSR::GeneratorCounter genCounters = genFSR->getGenCounters();
   int key = 0;
   std::string name = "", fullName = "";
   longlong after = 0, before = 0;
   double fraction = 0, error = 0;
-  
+
   LHCb::CrossSectionsFSR crossFSR;
   std::map<std::string,std::string> mapCross = crossFSR.getFullNames();
 
   m_htmlFile << "<tr>\n<td align=center>\n<table border=2>\n<th colspan=" << count;
   m_htmlFile << "><div class=firstcell>Generator Efficiencies</div></th>\n";
   m_htmlFile << "<tr>\n";
-  
+
   for(icounter = genCounters.begin(); icounter != genCounters.end(); icounter++)
   {
     key = icounter->first;
@@ -491,7 +491,7 @@ void GenFSRStat::writeCutEfficiencies(LHCb::GenFSR* genFSR, int count)
     after    = icounter->second.second;
     if(after == 0) continue;
     m_htmlFile << "<td><font size=2>" << fullName << "</font></td>\n";
-  }  
+  }
   m_htmlFile <<"</tr>\n\n<tr>\n";
 
   for(icounter = genCounters.begin(); icounter != genCounters.end(); icounter++)
@@ -510,30 +510,30 @@ void GenFSRStat::writeCutEfficiencies(LHCb::GenFSR* genFSR, int count)
 
   for(icounter = genCounters.begin(); icounter != genCounters.end(); icounter++)
   {
-    key = icounter->first;  
+    key = icounter->first;
     if(key !=  7 && key != 27 && key != 94 && key != 96) continue;
     before = genFSR->getDenominator(key);
     if(before == 0) continue;
     after = icounter->second.second;
     if(after == 0) continue;
     error = genFSR->getEfficiencyError(after, before);
-    
+
     m_htmlFile << "<td>&plusmn; " << error << "</td>\n";
   }
   m_htmlFile << "</tr>\n</table>\n</td>\n</tr>" << std::endl;
 }
 
-//=============================================================================                                                                
-//  Add generated hadron counters in the html file             
-//=============================================================================                                                                
+//=============================================================================
+//  Add generated hadron counters in the html file
+//=============================================================================
 
 void GenFSRStat::writeGenHadronCounters(LHCb::GenFSR* genFSR, int countGen)
 {
   LHCb::GenFSR::GeneratorCounter::iterator icounter;
   LHCb::GenFSR::GeneratorCounter genCounters = genFSR->getGenCounters();
-  int key = 0;  
+  int key = 0;
   std::string name = "", fullName = "";
-  longlong after = 0, before = 0;  
+  longlong after = 0, before = 0;
   double fraction = 0, error = 0;
   LHCb::CrossSectionsFSR crossFSR;
   std::map<std::string,std::string> mapCross = crossFSR.getFullNames();
@@ -543,9 +543,9 @@ void GenFSRStat::writeGenHadronCounters(LHCb::GenFSR* genFSR, int countGen)
   m_htmlFile << "<tr>\n";
 
   for(icounter = genCounters.begin(); icounter != genCounters.end(); icounter++)
-  {    
+  {
     key = icounter->first;
-    // Generated Hadron Fractions                                                                                                         
+    // Generated Hadron Fractions
     if((key>=30 && key<=40) || (key>=55 && key<=63) || (key>=75 && key<=77) || (key>=85 && key<=87))
     {
       name = LHCb::CrossSectionsFSR::CrossSectionKeyToString(key);
@@ -562,62 +562,62 @@ void GenFSRStat::writeGenHadronCounters(LHCb::GenFSR* genFSR, int countGen)
   for(icounter = genCounters.begin(); icounter != genCounters.end(); icounter++)
   {
     key = icounter->first;
-    // Generated Hadron Fractions                                                                                                              
+    // Generated Hadron Fractions
     if((key>=30 && key<=40) || (key>=55 && key<=63) || (key>=75 && key<=77) || (key>=85 && key<=87))
     {
       before = genFSR->getDenominator(key);
-      if(before == 0) continue;     
+      if(before == 0) continue;
       after = icounter->second.second;
       if(after == 0) continue;
       fraction = genFSR->getEfficiency(after, before);
 
       m_htmlFile << "<td>" << fraction << "</td>\n";
-    }    
+    }
   }
   m_htmlFile <<"</tr>\n\n<tr>\n";
 
   for(icounter = genCounters.begin(); icounter != genCounters.end(); icounter++)
   {
     key = icounter->first;
-    // Generated Hadron Fractions                                                                                                              
+    // Generated Hadron Fractions
     if((key>=30 && key<=40) || (key>=55 && key<=63) || (key>=75 && key<=77) || (key>=85 && key<=87))
-    {      
+    {
       before = genFSR->getDenominator(key);
       if(before == 0) continue;
       after = icounter->second.second;
       if(after == 0) continue;
       error = genFSR->getEfficiencyError(after, before);
 
-      m_htmlFile << "<td>&plusmn; " << error << "</td>\n"; 
-    } 
+      m_htmlFile << "<td>&plusmn; " << error << "</td>\n";
+    }
   }
-  
+
   m_htmlFile << "</tr>\n</table>\n</td>\n</tr>" << std::endl;
 }
 
-//=============================================================================                                                                
-//  Add accepted hadron counters in the html file                                  
-//=============================================================================                                                                
+//=============================================================================
+//  Add accepted hadron counters in the html file
+//=============================================================================
 
 void GenFSRStat::writeAccHadronCounters(LHCb::GenFSR* genFSR, int countAcc)
 {
   LHCb::GenFSR::GeneratorCounter::iterator icounter;
-  LHCb::GenFSR::GeneratorCounter genCounters = genFSR->getGenCounters();  
+  LHCb::GenFSR::GeneratorCounter genCounters = genFSR->getGenCounters();
   int key = 0;
   longlong after = 0, before = 0;
   double fraction = 0, error = 0;
   std::string name = "", fullName = "";
   LHCb::CrossSectionsFSR crossFSR;
   std::map<std::string,std::string> mapCross = crossFSR.getFullNames();
-  
-  m_htmlFile << "<tr>\n<td align=center>\n<table border=2>\n<th colspan=" << countAcc;  
+
+  m_htmlFile << "<tr>\n<td align=center>\n<table border=2>\n<th colspan=" << countAcc;
   m_htmlFile << "><div class=firstcell> Accepted Hadron Counters</div></th>\n" << std::endl;
   m_htmlFile << "<tr>\n";
-  
+
   for(icounter = genCounters.begin(); icounter != genCounters.end(); icounter++)
   {
     key = icounter->first;
-    // Accepted Hadron Fractions               
+    // Accepted Hadron Fractions
     if ((key>=41 && key<=51) || (key>=64 && key<=72) || (key>=78 && key<=80) || (key>=88 && key<=90))
     {
       name = LHCb::CrossSectionsFSR::CrossSectionKeyToString(key);
@@ -626,15 +626,15 @@ void GenFSRStat::writeAccHadronCounters(LHCb::GenFSR* genFSR, int countAcc)
       if(before == 0) continue;
       after = genFSR->getGenCounterInfo(key).second;
       if(after == 0) continue;
-      m_htmlFile << "<td><font size=2>" << fullName << "</font></td>\n"; 
-    } 
+      m_htmlFile << "<td><font size=2>" << fullName << "</font></td>\n";
+    }
   }
   m_htmlFile <<"</tr>\n\n<tr>\n";
 
   for(icounter = genCounters.begin(); icounter != genCounters.end(); icounter++)
   {
     key = icounter->first;
-    // Accepted Hadron Fractions   
+    // Accepted Hadron Fractions
     if ((key>=41 && key<=51) || (key>=64 && key<=72) || (key>=78 && key<=80) || (key>=88 && key<=90))
     {
       before = genFSR->getDenominator(key);
@@ -643,7 +643,7 @@ void GenFSRStat::writeAccHadronCounters(LHCb::GenFSR* genFSR, int countAcc)
       if(after == 0) continue;
       fraction = genFSR->getEfficiency(after, before);
 
-      m_htmlFile << "<td>" << fraction << "</td>\n";      
+      m_htmlFile << "<td>" << fraction << "</td>\n";
     }
   }
   m_htmlFile << "</tr>\n\n<tr>\n";
@@ -651,72 +651,72 @@ void GenFSRStat::writeAccHadronCounters(LHCb::GenFSR* genFSR, int countAcc)
   for(icounter = genCounters.begin(); icounter != genCounters.end(); icounter++)
   {
     key = icounter->first;
-    // Accepted Hadron Fractions               
+    // Accepted Hadron Fractions
     if ((key>=41 && key<=51) || (key>=64 && key<=72) || (key>=78 && key<=80) || (key>=88 && key<=90))
     {
       before = genFSR->getDenominator(key);
       if(before == 0) continue;
-      after = icounter->second.second;       
+      after = icounter->second.second;
       if(after == 0) continue;
       error    = genFSR->getEfficiencyError(after, before);
 
-      m_htmlFile << "<td>&plusmn; " << error << "</td>\n";  
+      m_htmlFile << "<td>&plusmn; " << error << "</td>\n";
     }
   }
   m_htmlFile << "</tr>\n</table>\n</td>\n</tr>" << std::endl;
 }
 
-//=============================================================================                                                                
+//=============================================================================
 //  Add accepted hadron counters in the html file
-//=============================================================================                                                                
+//=============================================================================
 
 void GenFSRStat::writeGeneratorCrossSections(LHCb::GenFSR* genFSR, int count)
 {
   LHCb::GenFSR::CrossSection::iterator icross;
-  LHCb::GenFSR::CrossSection crossSections = genFSR->getCrossSections();  
+  LHCb::GenFSR::CrossSection crossSections = genFSR->getCrossSections();
   std::string name = "";
   double value = 0;
-  
+
   m_htmlFile << "<tr>\n<td align=center>\n<table border=2>\n<th colspan=" << count;
   m_htmlFile << "><div class=firstcell>Hard Generator Cross-Sections</div></th>\n" << std::endl;
   m_htmlFile << "<tr>\n";
-  
-  // Generator Cross-Sections                                                                                                             
+
+  // Generator Cross-Sections
   for(icross = crossSections.begin(); icross != crossSections.end(); icross++)
   {
-    name = icross->second.first;    
+    name = icross->second.first;
     value = icross->second.second;
-    if(value == 0 || isnan(value) != 0) continue;
+    if(value == 0 || std::isnan(value) != 0) continue;
 
     m_htmlFile << "<td><font size=2>" << name.c_str() << " (mb)</font></td>\n";
   }
   m_htmlFile <<"</tr>\n\n<tr>\n";
 
-  // Generator Cross-Sections                                                                                                                  
+  // Generator Cross-Sections
   for(icross = crossSections.begin(); icross != crossSections.end(); icross++)
   {
     value = icross->second.second;
-    if(value == 0 || isnan(value) != 0) continue;
+    if(value == 0 || std::isnan(value) != 0) continue;
 
-    m_htmlFile << "<td>" << value << "</td>\n"; 
+    m_htmlFile << "<td>" << value << "</td>\n";
   }
   m_htmlFile << "</tr>\n</table>\n</td>\n</tr>" << std::endl;
 }
 
 void GenFSRStat::writeFinalComments(LHCb::GenFSR* genFSR)
-{  
-  LHCb::GenFSR::GeneratorCounter::iterator icounter; 
+{
+  LHCb::GenFSR::GeneratorCounter::iterator icounter;
   LHCb::GenFSR::GeneratorCounter genCounters = genFSR->getGenCounters();
   int key = 0;
   std::string name = "";
   longlong countEvtGen = 0, countEvtAcc = 0, countIntGen = 0, countIntAcc = 0;
   double fraction_events = 0, fraction_interactions = 0;
-  
+
   for(icounter = genCounters.begin(); icounter != genCounters.end(); icounter++)
-  {    
-    key = icounter->first; 
+  {
+    key = icounter->first;
     if(key > 5) continue;
-    
+
     if(key == 2) countEvtGen = icounter->second.second;
     if(key == 3) countIntGen = icounter->second.second;
     if(key == 4) countEvtAcc = icounter->second.second;
@@ -727,19 +727,19 @@ void GenFSRStat::writeFinalComments(LHCb::GenFSR* genFSR)
   fraction_interactions = genFSR->getEfficiency(countIntAcc, countIntGen);
 
   m_htmlFile << "<p> Number of accepted events/generated events: " << countEvtAcc << "/" << countEvtGen;
-  m_htmlFile << " = " <<  fraction_events  << "</p>\n";  
+  m_htmlFile << " = " <<  fraction_events  << "</p>\n";
   m_htmlFile << "<p> Number of interactions in accepted events/generated interactions: " << countIntAcc;
   m_htmlFile << "/" << countIntGen << " = " << fraction_interactions << "</p>\n";
 }
 
-//=============================================================================                                                                
-//  Get current date/time, format is YYYY-MM-DD.HH:mm:ss     
-//=============================================================================                                                                
+//=============================================================================
+//  Get current date/time, format is YYYY-MM-DD.HH:mm:ss
+//=============================================================================
 
 // naive function to get the current time
 const std::string GenFSRStat::getCurrentTime()
 {
-  time_t now = time(0);  
+  time_t now = time(0);
   struct tm  tstruct;
   char time[80];
   tstruct = *localtime(&now);
@@ -764,11 +764,11 @@ const std::string GenFSRStat::getEvtTypeDesc(int evtType)
     file_desc.open(path_desc, std::fstream::in);
     line_ref = "$DECFILESROOT/dkfiles/";
     line_stop = ".dec\"";
-    
+
     while(getline(file_desc,line))
     {
       pos_ref = line.find(line_ref);
-      
+
       if(pos_ref != std::string::npos)
       {
         pos_end = line.find(line_stop);
@@ -781,6 +781,6 @@ const std::string GenFSRStat::getEvtTypeDesc(int evtType)
 
     file_desc.close();
   }
-  
+
   return description;
 }

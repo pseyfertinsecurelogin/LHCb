@@ -1,5 +1,5 @@
 // $Id: ForcedBDecayTool.h,v 1.2 2007-05-29 08:48:16 cattanem Exp $
-#ifndef FORCEDBDECAYTOOL_H 
+#ifndef FORCEDBDECAYTOOL_H
 #define FORCEDBDECAYTOOL_H 1
 // Include files
 // from Gaudi
@@ -13,28 +13,28 @@
 #include "MCInterfaces/IForcedBDecayTool.h"
 
 /** @class ForcedBDecayTool ForcedBDecayTool.h
- *  
+ *
  *  v1.0
  *  @author Marco Musy
  *  @date   2006-10-02
  */
-class ForcedBDecayTool : public GaudiTool, 
+class ForcedBDecayTool : public GaudiTool,
 	virtual public IForcedBDecayTool {
 public:
   /// Standard constructor
-  ForcedBDecayTool( const std::string& type, 
+  ForcedBDecayTool( const std::string& type,
 		    const std::string& name,
 		    const IInterface* parent );
 
   virtual ~ForcedBDecayTool( ); ///< Destructor
 
   /// Initialize
-  StatusCode initialize();
+  StatusCode initialize() override;
 
   /// Finalize
-  StatusCode finalize();
-  
-  const LHCb::MCParticle* forcedB(void);
+  StatusCode finalize() override;
+
+  const LHCb::MCParticle* forcedB(void) override;
 
 private:
 

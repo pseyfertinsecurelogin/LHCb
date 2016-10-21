@@ -23,7 +23,7 @@ class IMCParticleSelector;
  *  Top Level Algorithm that manages MCHits digitization code
  *
  *  @author M.Needham
- *  @date 04/12/2008 [revised] 
+ *  @date 04/12/2008 [revised]
  *  @date   21/10/2000
 */
 
@@ -38,13 +38,13 @@ public:
   ~MCHitMonitor();
 
   /// intialize
-  virtual StatusCode initialize();
+  StatusCode initialize() override;
 
   /// execute
-  virtual StatusCode execute();
+  StatusCode execute() override;
 
   /// finalize
-  virtual StatusCode finalize();
+  StatusCode finalize() override;
 
 private:
 
@@ -53,10 +53,10 @@ private:
 
   /// fill histograms
   StatusCode fillHistograms(const LHCb::MCHit* aHit) const;
-  
+
   /// station number for a given z
   int getStationID(const double z) const;
-  
+
   // selector
   std::string m_selectorName;
   IMCParticleSelector* m_selector;
@@ -64,7 +64,7 @@ private:
   std::vector<IHistogram1D*> m_timeOfFlightHistos;
   std::vector<IHistogram2D*> m_XvsYHistos;
   std::vector<IHistogram1D*> m_EnergyLossHistos;
-  
+
   mutable std::vector<double> m_energyVec;
 
   // job Options
@@ -79,7 +79,7 @@ private:
   double m_ZTolerance;
   double m_minPathLength;
   unsigned int m_nToCollect;
-  
+
 };
- 
+
 #endif // TrMCHitMonitor_H

@@ -1,5 +1,5 @@
 // $Id: PrintMCDecayTreeTool.h,v 1.3 2009-01-08 09:44:37 cattanem Exp $
-#ifndef PRINTMCDECAYTREETOOL_H 
+#ifndef PRINTMCDECAYTREETOOL_H
 #define PRINTMCDECAYTREETOOL_H 1
 
 // Include files
@@ -28,31 +28,31 @@ class MsgStream;
  */
 class PrintMCDecayTreeTool : public GaudiTool,
                            virtual public IPrintMCDecayTreeTool {
-public:  
+public:
   /// Standard Constructor
   PrintMCDecayTreeTool( const std::string& type,
                       const std::string& name,
                       const IInterface* parent );
 
-  /// Destructor 
-  virtual ~PrintMCDecayTreeTool( ){}; ///< Destructor
+  /// Destructor
+  virtual ~PrintMCDecayTreeTool( ){} ///< Destructor
 
-  StatusCode initialize( void );
+  StatusCode initialize( void ) override;
 
-  virtual void printTree( const LHCb::MCParticle* mother, 
-                          int maxDepth = -1);
+  void printTree( const LHCb::MCParticle* mother,
+                  int maxDepth = -1) override;
 
 
   /// Print all the MC particles leading to this one.
-  virtual void printAncestor( const LHCb::MCParticle *child );
+  void printAncestor( const LHCb::MCParticle *child ) override;
 
-  virtual void printAsTree( const LHCb::MCParticle::ConstVector& event );
+  void printAsTree( const LHCb::MCParticle::ConstVector& event ) override;
 
-  virtual void printAsTree( const LHCb::MCParticles &event );
+  void printAsTree( const LHCb::MCParticles &event ) override;
 
-  virtual void printAsList( const LHCb::MCParticle::ConstVector &event );
+  void printAsList( const LHCb::MCParticle::ConstVector &event ) override;
 
-  virtual void printAsList( const LHCb::MCParticles &event );
+  void printAsList( const LHCb::MCParticles &event ) override;
 
 private:
 
@@ -61,12 +61,12 @@ private:
 
   void printHeader( MsgStream &log );
 
-  void printInfo( const std::string& prefix, 
+  void printInfo( const std::string& prefix,
                   const LHCb::MCParticle* part,
                   MsgStream& log );
   void printDecayTree( const LHCb::MCParticle *mother,
-                       const std::string &prefix, 
-                       int depth, 
+                       const std::string &prefix,
+                       int depth,
                        MsgStream &log );
 
   LHCb::IParticlePropertySvc* m_ppSvc; ///< Pointer to particle property service
@@ -82,6 +82,6 @@ private:
   double m_lengthUnit ; /// Unit for distances
   std::string m_energyUnitName; ///< Unit for energies, momenta and masses
   std::string m_lengthUnitName; ///< Unit for distances
-   
+
 };
 #endif // PRINTMDECAYTREETOOL_H
