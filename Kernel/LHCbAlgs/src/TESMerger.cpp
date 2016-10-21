@@ -23,7 +23,7 @@ public:
   TESMerger(const std::string& name,
             ISvcLocator* pSvcLocator);
 
-  virtual StatusCode execute();
+  StatusCode execute() override;
 
 private:
 
@@ -53,7 +53,7 @@ StatusCode TESMerger<T>::execute()
   for ( const auto & loc : m_inputLocations )
   {
     auto * cont_in = getIfExists<ContT>(loc) ;
-    if ( cont_in ) 
+    if ( cont_in )
     {
       for ( const auto * obj : *cont_in )
       { out->insert( obj->clone() ) ; }

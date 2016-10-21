@@ -17,7 +17,7 @@ class IDataStoreLeaves;
  *  @author Illya Shapoval
  *  @date   2011-05-11
  */
-class TESFingerPrint final : public GaudiAlgorithm 
+class TESFingerPrint final : public GaudiAlgorithm
 {
 
 public:
@@ -27,9 +27,9 @@ public:
 
   virtual ~TESFingerPrint( ) = default; ///< Destructor
 
-  virtual StatusCode initialize();    ///< Algorithm initialization
-  virtual StatusCode execute   ();    ///< Algorithm execution
-  virtual StatusCode finalize  ();    ///< Algorithm finalization
+  StatusCode initialize() override;    ///< Algorithm initialization
+  StatusCode execute   () override;    ///< Algorithm execution
+  StatusCode finalize  () override;    ///< Algorithm finalization
 
 private:
 

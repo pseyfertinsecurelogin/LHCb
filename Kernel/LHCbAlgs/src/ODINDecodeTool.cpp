@@ -25,10 +25,10 @@ class ODINDecodeTool final : public ODINCodecBaseTool
   virtual ~ODINDecodeTool() = default; ///< Destructor
 
   /// Initialize the tool
-  virtual inline StatusCode initialize();
+  inline StatusCode initialize() override;
 
   /// Do the conversion
-  virtual void execute();
+  void execute() override;
 
  private:
 

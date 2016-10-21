@@ -14,7 +14,7 @@
  */
 class EvtCounter final : public extends2<GaudiTool,
                                          IEventCounter,
-                                         IIncidentListener> 
+                                         IIncidentListener>
 {
 
  public:
@@ -27,19 +27,19 @@ class EvtCounter final : public extends2<GaudiTool,
   virtual ~EvtCounter() = default; ///< Destructor
 
   /// IListener interface to be triggered at begin of event
-  virtual void handle(const Incident&) { this->incrementEventCounter(); }
+  void handle(const Incident&) override { this->incrementEventCounter(); }
 
   /// Initialize method
-  StatusCode initialize();
+  StatusCode initialize() override;
 
   /// Get Event counter
-  unsigned long long getEventCounter() const noexcept { return m_eventCounter; }
+  unsigned long long getEventCounter() const noexcept override { return m_eventCounter; }
 
   /// Increment Event counter
-  void incrementEventCounter() { ++m_eventCounter; }
+  void incrementEventCounter() override { ++m_eventCounter; }
 
   /// Set Event counter
-  void setEventCounter( unsigned long long n ) { m_eventCounter = n; }
+  void setEventCounter( unsigned long long n ) override { m_eventCounter = n; }
 
  private:
 

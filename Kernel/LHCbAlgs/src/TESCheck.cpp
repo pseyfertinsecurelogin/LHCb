@@ -87,7 +87,7 @@ class TESCheck final : public GaudiAlgorithm
  public:
 
   /// execute the algorithm itself
-  virtual StatusCode execute() ;
+  StatusCode execute()  override;
 
  protected:
 

@@ -20,7 +20,7 @@
  * @author Marco Clemencic
  * @date 04/11/2011
  */
-class BasicDQFilter final : public extends1<GaudiTool, IDQFilter> 
+class BasicDQFilter final : public extends1<GaudiTool, IDQFilter>
 {
 
 public:
@@ -32,7 +32,7 @@ public:
 
   /// Accept the flags if there is not flag set, except the ignored ones
   /// (property IgnoredFlags).
-  virtual bool accept(const FlagsType& flags) const;
+  bool accept(const FlagsType& flags) const override;
 
 private:
 
