@@ -1,8 +1,8 @@
 // $Id$
 // ============================================================================
-// Include files 
+// Include files
 // ============================================================================
-// GenEvent 
+// GenEvent
 // ============================================================================
 #include "Event/HepMCEvent.h"
 // ============================================================================
@@ -14,12 +14,12 @@
 // ============================================================================
 /** @file
  *
- *  This file is a part of LoKi project - 
+ *  This file is a part of LoKi project -
  *    "C++ ToolKit  for Smart and Friendly Physics Analysis"
  *
  *  The package has been designed with the kind help from
- *  Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas, 
- *  contributions and advices from G.Raven, J.van Tilburg, 
+ *  Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas,
+ *  contributions and advices from G.Raven, J.van Tilburg,
  *  A.Golutvin, P.Koppenburg have been used in the design.
  *
  *                    $Revision$
@@ -27,26 +27,26 @@
  *                 by $Author$
  */
 // ============================================================================
-namespace LoKi 
+namespace LoKi
 {
   // ==========================================================================
-  /** @class ODINFilter 
+  /** @class ODINFilter
    *  Simple filtering algorithm bases on LoKi/Bender "hybrid" framework
-   *  for filtering according to Generator (HepMC) information 
+   *  for filtering according to Generator (HepMC) information
    *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
    *  @date 2011-06-02
    */
-  class GenFilter : public LoKi::FilterAlg 
+  class GenFilter : public LoKi::FilterAlg
   {
     // ========================================================================
-    /// friend factory for instantiation 
+    /// friend factory for instantiation
     friend class AlgFactory<LoKi::GenFilter> ;
     // ========================================================================
   public:
     // ========================================================================
     /// the main method: execute
-    virtual StatusCode execute  () ;
-    virtual StatusCode finalize () ;    
+    StatusCode execute  ()  override;
+    StatusCode finalize ()  override;
     // ========================================================================
   public:
     // ========================================================================
@@ -55,7 +55,7 @@ namespace LoKi
      *  @see LoKi::FilterAlg::decode
      *  @see LoKi::FilterAlg::i_decode
      */
-    virtual StatusCode decode () 
+    StatusCode decode () override
     {
       StatusCode sc = i_decode<LoKi::IGenHybridFactory> ( m_cut ) ;
       Assert ( sc.isSuccess() , "Unable to decode the functor!" ) ;
@@ -64,82 +64,82 @@ namespace LoKi
     // ========================================================================
   protected:
     // ========================================================================
-    /** standard constructor 
-     *  @see LoKi::FilterAlg 
-     *  @see GaudiAlgorithm 
-     *  @see      Algorithm 
+    /** standard constructor
+     *  @see LoKi::FilterAlg
+     *  @see GaudiAlgorithm
+     *  @see      Algorithm
      *  @see      AlgFactory
      *  @see     IAlgFactory
-     *  @param name the algorithm instance name 
-     *  @param pSvc pointer to Service Locator 
+     *  @param name the algorithm instance name
+     *  @param pSvc pointer to Service Locator
      */
     GenFilter
-    ( const std::string& name ,    // the algorithm instance name 
+    ( const std::string& name ,    // the algorithm instance name
       ISvcLocator*       pSvc ) ; // pointer to the service locator
-    /// virtual and protected destructor 
-    virtual ~GenFilter () {} ;
+    /// virtual and protected destructor
+    virtual ~GenFilter () {}
     // ========================================================================
   private:
     // ========================================================================
-    /// the default constructor is disabled 
-    GenFilter () ;                       // the default constructor is disabled 
-    /// the copy constructor is disabled 
-    GenFilter ( const GenFilter& ) ;        // the copy constructor is disabled 
-    /// the assignement operator is disabled 
+    /// the default constructor is disabled
+    GenFilter () ;                       // the default constructor is disabled
+    /// the copy constructor is disabled
+    GenFilter ( const GenFilter& ) ;        // the copy constructor is disabled
+    /// the assignement operator is disabled
     GenFilter& operator=( const GenFilter& ) ;   // the assignement is disabled
     // ========================================================================
   private:
     // ========================================================================
-    /// the functor itself 
-    LoKi::Types::GCutVal m_cut ; // the functor itself 
-    /// TES location of LHCb::HepMCEvent::Container object 
+    /// the functor itself
+    LoKi::Types::GCutVal m_cut ; // the functor itself
+    /// TES location of LHCb::HepMCEvent::Container object
     std::string m_location ;     // TES location of LHCb::HepMCEvent::Container
     // ========================================================================
   };
   // ==========================================================================
-} //                                                      end of namespace LoKi 
+} //                                                      end of namespace LoKi
 // ============================================================================
-namespace 
+namespace
 {
   // ==========================================================================
-  LoKi::BasicFunctors<LoKi::GenTypes::GenContainer>::BooleanConstant s_NONE = 
+  LoKi::BasicFunctors<LoKi::GenTypes::GenContainer>::BooleanConstant s_NONE =
     LoKi::BasicFunctors<LoKi::GenTypes::GenContainer>::BooleanConstant ( false ) ;
   // ==========================================================================
 }
 // ============================================================================
-/* standard constructor 
- *  @see LoKi::FilterAlg 
- *  @see GaudiAlgorithm 
- *  @see      Algorithm 
+/* standard constructor
+ *  @see LoKi::FilterAlg
+ *  @see GaudiAlgorithm
+ *  @see      Algorithm
  *  @see      AlgFactory
  *  @see     IAlgFactory
- *  @param name the algorithm instance name 
- *  @param pSvc pointer to Service Locator 
+ *  @param name the algorithm instance name
+ *  @param pSvc pointer to Service Locator
  */
 // ===========================================================================
 LoKi::GenFilter::GenFilter
-( const std::string& name , // the algorithm instance name 
+( const std::string& name , // the algorithm instance name
   ISvcLocator*       pSvc ) // pointer to the service locator
-  : LoKi::FilterAlg ( name , pSvc ) 
+  : LoKi::FilterAlg ( name , pSvc )
 // the functor itself
-  , m_cut      ( s_NONE ) 
+  , m_cut      ( s_NONE )
 // TES location of LHCb::HEpMCEvent::Constainer object
-  , m_location ( LHCb::HepMCEventLocation::Default ) 
+  , m_location ( LHCb::HepMCEventLocation::Default )
 {
   //
-  declareProperty 
-    ( "Location" , 
-      m_location , 
-      "TES location of LHCb::HepMCEvent::Container object" ) ;    
+  declareProperty
+    ( "Location" ,
+      m_location ,
+      "TES location of LHCb::HepMCEvent::Container object" ) ;
   //
   StatusCode sc = setProperty ( "Code" , "~GEMPTY" ) ;
   Assert ( sc.isSuccess () , "Unable (re)set property 'Code'"    , sc ) ;
-  sc = setProperty 
+  sc = setProperty
     ( "Factory" , "LoKi::Hybrid::GenTool/GenFactory:PUBLIC" ) ;
   Assert ( sc.isSuccess () , "Unable (re)set property 'Factory'" , sc ) ;
 }
 // ============================================================================
-// finalize 
+// finalize
 // ============================================================================
 StatusCode LoKi::GenFilter::finalize ()
 {
@@ -147,56 +147,56 @@ StatusCode LoKi::GenFilter::finalize ()
   return LoKi::FilterAlg::finalize () ;
 }
 // ============================================================================
-// the main method: execute 
+// the main method: execute
 // ============================================================================
-StatusCode LoKi::GenFilter::execute () // the main method: execute 
+StatusCode LoKi::GenFilter::execute () // the main method: execute
 {
-  if ( updateRequired() ) 
+  if ( updateRequired() )
   {
-    StatusCode sc = decode() ; 
+    StatusCode sc = decode() ;
     Assert ( sc.isSuccess() , "Unable to decode the functor!" ) ;
   }
   //
-  // get HepMC information from TES 
+  // get HepMC information from TES
   //
-  const LHCb::HepMCEvent::Container* events = 
+  const LHCb::HepMCEvent::Container* events =
     get<LHCb::HepMCEvent::Container>( m_location ) ;
   if ( 0 == events ) { return StatusCode::FAILURE ; }
   //
-  // copy all particles into single vector 
-  // 
+  // copy all particles into single vector
+  //
   LoKi::GenTypes::GenContainer particles ;
-  for ( LHCb::HepMCEvent::Container::const_iterator ievent = 
+  for ( LHCb::HepMCEvent::Container::const_iterator ievent =
           events->begin() ; events->end() != ievent ; ++ievent )
   {
     const LHCb::HepMCEvent* event = *ievent ;
-    if ( 0 == event ) { continue ; }                       // CONTINUE 
+    if ( 0 == event ) { continue ; }                       // CONTINUE
     //
     const HepMC::GenEvent* evt =  event->pGenEvt() ;
-    if ( 0 == evt   ) { continue ; }                       // CONTINUE 
+    if ( 0 == evt   ) { continue ; }                       // CONTINUE
     //
-    particles.insert ( particles.end          () , 
-                       evt -> particles_begin () , 
+    particles.insert ( particles.end          () ,
+                       evt -> particles_begin () ,
                        evt -> particles_end   () ) ;
   }
-  // 
-  // use the functor 
-  // 
+  //
+  // use the functor
+  //
   const bool result = m_cut ( particles ) ;
   //
   // some statistics
   //
   counter ("#passed" ) += result ;
-  // 
+  //
   // set the filter:
   //
   setFilterPassed ( result ) ;
   //
   return StatusCode::SUCCESS ;
-}  
+}
 // ============================================================================
 /// the factory (needed for instantiation)
 DECLARE_NAMESPACE_ALGORITHM_FACTORY(LoKi,GenFilter)
 // ============================================================================
-// The END 
+// The END
 // ============================================================================
