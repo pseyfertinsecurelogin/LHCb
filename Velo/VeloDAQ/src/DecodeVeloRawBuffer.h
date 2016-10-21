@@ -32,8 +32,8 @@ public:
 
   virtual ~DecodeVeloRawBuffer( ); ///< Destructor
 
-  virtual StatusCode initialize();    ///< Algorithm initialization
-  virtual StatusCode execute   ();    ///< Algorithm execution
+  StatusCode initialize() override;    ///< Algorithm initialization
+  StatusCode execute   () override;    ///< Algorithm execution
 
   enum AlgStatusType{
     OK = 0,

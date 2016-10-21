@@ -1,4 +1,4 @@
-#ifndef VELOCLUSTERFILTER_H 
+#ifndef VELOCLUSTERFILTER_H
 #define VELOCLUSTERFILTER_H 1
 
 #include "Kernel/VeloChannelID.h"
@@ -16,12 +16,12 @@ class DeVelo;
 ///<    "PU"  : retains only clusters in PU sensors
 
 class VeloClusterFilter : public GaudiAlgorithm {
-public: 
+public:
   VeloClusterFilter( const std::string& name, ISvcLocator* pSvcLocator );
   virtual ~VeloClusterFilter( );
 
-  virtual StatusCode initialize();
-  virtual StatusCode execute   ();
+  StatusCode initialize() override;
+  StatusCode execute   () override;
 
   bool passesFilter(LHCb::VeloChannelID id);
   void incrementCounters(LHCb::VeloChannelID, int&, int&, int&);
