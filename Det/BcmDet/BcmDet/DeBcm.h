@@ -39,11 +39,11 @@ public:
     return CLID_DeBcm;
   }
 
-  inline virtual const CLID& clID() const {
+  inline const CLID& clID() const override {
     return classID();
   }
 
-  virtual StatusCode initialize();
+  StatusCode initialize() override;
 
   inline int stationNumber() const {
     return m_StationNumber;
@@ -53,8 +53,8 @@ public:
     m_StationNumber = nStation;
   }
 
-  int sensitiveVolumeID( const Gaudi::XYZPoint& point )const;
-  
+  int sensitiveVolumeID( const Gaudi::XYZPoint& point ) const override;
+
 private:
   int m_StationNumber;
 
