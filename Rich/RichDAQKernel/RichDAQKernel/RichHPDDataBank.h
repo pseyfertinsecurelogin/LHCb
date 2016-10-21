@@ -93,7 +93,7 @@ namespace Rich
 
       /// Read access to header
       virtual const HeaderPDBase::HeaderWords & headerWords() const = 0;
-      
+
       /// Read access to footer
       virtual const FooterPDBase::FooterWords & footerWords() const = 0;
 
@@ -141,11 +141,11 @@ namespace Rich
       HPDDataBankImp( const ShortType maxDataSize = 1 )
         : m_data         ( new LongType[maxDataSize] ),
           m_maxDataSize  ( maxDataSize ),
-          m_internalData ( true ) 
-      { 
+          m_internalData ( true )
+      {
         for ( ShortType i = 0; i < maxDataSize; ++i ) m_data[i] = 0;
         // memset ( m_data, 0, sizeof(m_data) );
-        // for ( ShortType i = 0; i < maxDataSize; ++i ) 
+        // for ( ShortType i = 0; i < maxDataSize; ++i )
         // { std::cout << i << " " << m_data[i] << std::endl; }
       }
 
@@ -173,7 +173,7 @@ namespace Rich
       {
         for ( ShortType i = 0; i < maxDataSize; ++i ) m_data[i] = dataInit;
       }
-      
+
     public:
 
       /** Constructor from external data (decoding RawBuffer)
@@ -194,7 +194,7 @@ namespace Rich
     protected:
 
       /// Reset object to decode a new data stream
-      inline void reset( const LongType * data, 
+      inline void reset( const LongType * data,
                          const ShortType  dataSize = 0 )
       {
         // reset header and footer to default size if needed
@@ -245,10 +245,10 @@ namespace Rich
       }
 
       /// Read access to header
-      virtual const HeaderPDBase::HeaderWords & headerWords() const final;
-      
+      const HeaderPDBase::HeaderWords & headerWords() const override final;
+
       /// Read access to footer
-      virtual const FooterPDBase::FooterWords & footerWords() const final;
+      const FooterPDBase::FooterWords & footerWords() const override final;
 
       /** Decode the data bank to a RichSmartID vector
        *
@@ -259,26 +259,26 @@ namespace Rich
                                           const LHCb::RichSmartID hpdID ) const override = 0;
 
       /// Returns the L0ID
-      virtual Level0ID level0ID() const final;
+      Level0ID level0ID() const override final;
 
       /// Returns the hit count for this HPD
       /// To be removed once DC04/DC06 support no longer needed
       virtual ShortType hitCount() const override = 0;
 
       /// Returns the number of header words for this HPD
-      virtual ShortType nHeaderWords() const final;
+      ShortType nHeaderWords() const override final;
 
       /// Returns the number of footer words for this HPD
-      virtual ShortType nFooterWords() const final;
+      ShortType nFooterWords() const override final;
 
       /// Returns the number of data words for this HPD
-      virtual ShortType nDataWords() const final;
+      ShortType nDataWords() const override final;
 
       /// Returns the Event ID word
-      virtual EventID eventID() const final;
+      EventID eventID() const override final;
 
       /// Checks for errors in the header word
-      virtual bool suppressed() const final;
+      bool suppressed() const override final;
 
       /** Fill a RAWBank with the data for this bank
        *
@@ -374,7 +374,7 @@ namespace Rich
        *
        *  @param os Stream to print to
        */
-      void fillMsgStream( MsgStream & os ) const final;
+      void fillMsgStream( MsgStream & os ) const override final;
 
     private:
 
