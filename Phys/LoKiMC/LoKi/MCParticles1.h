@@ -1,6 +1,6 @@
 // $Id$
 // ============================================================================
-#ifndef LOKI_MCPARTICLES1_H 
+#ifndef LOKI_MCPARTICLES1_H
 #define LOKI_MCPARTICLES1_H 1
 // ============================================================================
 // Include files
@@ -9,12 +9,12 @@
 // ============================================================================
 #include "Kernel/iNode.h"
 // ============================================================================
-// LoKi 
+// LoKi
 // ============================================================================
 #include "LoKi/iTree.h"
 #include "LoKi/MCTypes.h"
 // ============================================================================
-namespace LoKi 
+namespace LoKi
 {
   // ==========================================================================
   namespace MCParticles
@@ -39,11 +39,11 @@ namespace LoKi
       /// MANDATORY: virtual destructor
       virtual ~DecNode() {}
       /// MANDATORY: clone method ("virtual constructor")
-      virtual DecNode* clone() const { return new DecNode ( *this ) ; }
+      DecNode* clone() const override { return new DecNode ( *this ) ; }
       /// MANDATORY: the only one essential method
-      virtual result_type operator() ( argument p ) const ;
+      result_type operator() ( argument p ) const  override;
       /// OPTIONAL: the nice printout
-      virtual std::ostream& fillStream( std::ostream& s ) const ;
+      std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
     private:
       // ======================================================================
@@ -71,7 +71,7 @@ namespace LoKi
       std::string          m_string ;
       // ======================================================================
     };
-    // ========================================================================    
+    // ========================================================================
     /** @class DecTree
      *  simple predicate, which acts on the decay structuire/tree for the particle
      *  @see Decays::iTree
@@ -100,11 +100,11 @@ namespace LoKi
       /// MANDATORY: virtual destructor
       virtual ~DecTree() {}
       /// MANDATORY: clone method ("virtual constructor")
-      virtual DecTree* clone() const { return new DecTree ( *this ) ; }
+      DecTree* clone() const override { return new DecTree ( *this ) ; }
       /// MANDATORY: the only one essential method
-      virtual result_type operator() ( argument p ) const ;
+      result_type operator() ( argument p ) const  override;
       /// OPTIONAL: the nice printout
-      virtual std::ostream& fillStream( std::ostream& s ) const ;
+      std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
     private:
       // ======================================================================
@@ -136,7 +136,7 @@ namespace LoKi
       // ======================================================================
     };
     // ========================================================================
-  } //                                       end of namespace LoKi::MCParticles 
+  } //                                       end of namespace LoKi::MCParticles
   // ==========================================================================
   namespace Cuts
   {
@@ -197,11 +197,11 @@ namespace LoKi
      */
     typedef LoKi::MCParticles::DecTree                              MCDECTREE ;
     // ========================================================================
-  } // end of namespace LoKi::Cuts 
+  } // end of namespace LoKi::Cuts
   // ==========================================================================
 } //                                                      end of namespace LoKi
 // ============================================================================
-// The END 
+// The END
 // ============================================================================
 #endif // LOKI_MCPARTICLES1_H
 // ============================================================================
