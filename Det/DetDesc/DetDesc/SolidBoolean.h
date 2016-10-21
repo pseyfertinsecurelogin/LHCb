@@ -32,34 +32,34 @@ class SolidBoolean: public virtual SolidBase
   /** retrieve the specific type of the solid
    *  @return specific type of the solid
    */
-  virtual  std::string   typeName () const { return "SolidBoolean"; };
+  std::string   typeName () const override { return "SolidBoolean"; }
 
   /** retrieve the pointer to "simplified" solid - "cover"
    *  @return pointer to "simplified" solid - "cover"
    */
-  virtual const ISolid* cover () const { return first()->cover() ; };
+  const ISolid* cover () const override { return first()->cover() ; }
 
   /** retrieve the pointer to "the most simplified cover"
    *  probably, something like "gabarite box"
    *  @return pointer to the most simplified cover
    */
-  virtual const ISolid* coverTop () const { return first()->coverTop() ; };
+  const ISolid* coverTop () const override { return first()->coverTop() ; }
 
   /** printout to STD/STL stream
    *  @param os STD/STL stream
    *  @return reference to the stream
    */
-  virtual  std::ostream& printOut ( std::ostream& os = std::cout ) const ;
+  std::ostream& printOut ( std::ostream& os = std::cout ) const override;
 
   /** printout to Gaudi  stream
    *  @param os Gaudi stream
    *  @return reference to the stream
    */
-  virtual  MsgStream&    printOut ( MsgStream&    os             ) const ;
+  MsgStream&    printOut ( MsgStream&    os             ) const override;
 
   /** reset to the initial ("after constructor") state
    */
-  virtual ISolid* reset() ;
+  ISolid* reset() override;
 
   /** calculate the intersection points("ticks") with a given line.
    *  Input - line, paramterised by  x_vect = Point + Vector * T
@@ -69,17 +69,17 @@ class SolidBoolean: public virtual SolidBase
    *  @param ticks output container of "Ticks"
    *  @return the number of intersection points (=size of Ticks container)
    */
-  virtual unsigned int intersectionTicks( const Gaudi::XYZPoint & Point,
-                                          const Gaudi::XYZVector& Vector,
-                                          ISolid::Ticks& ticks  ) const ;
+  unsigned int intersectionTicks( const Gaudi::XYZPoint & Point,
+                                  const Gaudi::XYZVector& Vector,
+                                  ISolid::Ticks& ticks  ) const override;
 
-  virtual unsigned int intersectionTicks( const Gaudi::Polar3DPoint  & Point,
-                                          const Gaudi::Polar3DVector & Vector,
-                                          ISolid::Ticks     & ticks) const ;
+  unsigned int intersectionTicks( const Gaudi::Polar3DPoint  & Point,
+                                  const Gaudi::Polar3DVector & Vector,
+                                  ISolid::Ticks     & ticks) const override;
 
-  virtual unsigned int intersectionTicks( const Gaudi::RhoZPhiPoint  & Point,
-                                          const Gaudi::RhoZPhiVector & Vector,
-                                          ISolid::Ticks     & ticks) const ;
+  unsigned int intersectionTicks( const Gaudi::RhoZPhiPoint  & Point,
+                                  const Gaudi::RhoZPhiVector & Vector,
+                                  ISolid::Ticks     & ticks) const override;
 
   /** calculate the intersection points("ticks") with a given line.
    *  Input - line, paramterised by  x_vect = Point + Vector * T
@@ -93,52 +93,52 @@ class SolidBoolean: public virtual SolidBase
    *  between tickMin and tickMax
    */
 
-  virtual unsigned int intersectionTicks( const Gaudi::XYZPoint& Point,
-                                          const Gaudi::XYZVector & Vector,
-                                          const ISolid::Tick& tickMin,
-                                          const ISolid::Tick& tickMax,
-                                          ISolid::Ticks& ticks   ) const ;
+  unsigned int intersectionTicks( const Gaudi::XYZPoint& Point,
+                                  const Gaudi::XYZVector & Vector,
+                                  const ISolid::Tick& tickMin,
+                                  const ISolid::Tick& tickMax,
+                                  ISolid::Ticks& ticks   ) const override;
 
-  virtual unsigned int intersectionTicks( const Gaudi::Polar3DPoint& Point,
-                                          const Gaudi::Polar3DVector & Vector,
-                                          const ISolid::Tick& tickMin,
-                                          const ISolid::Tick& tickMax,
-                                          ISolid::Ticks& ticks   ) const ;
+  unsigned int intersectionTicks( const Gaudi::Polar3DPoint& Point,
+                                  const Gaudi::Polar3DVector & Vector,
+                                  const ISolid::Tick& tickMin,
+                                  const ISolid::Tick& tickMax,
+                                  ISolid::Ticks& ticks   ) const override;
 
-  virtual unsigned int intersectionTicks( const Gaudi::RhoZPhiPoint& Point,
-                                          const Gaudi::RhoZPhiVector & Vector,
-                                          const ISolid::Tick& tickMin,
-                                          const ISolid::Tick& tickMax,
-                                          ISolid::Ticks& ticks   ) const ;
+  unsigned int intersectionTicks( const Gaudi::RhoZPhiPoint& Point,
+                                  const Gaudi::RhoZPhiVector & Vector,
+                                  const ISolid::Tick& tickMin,
+                                  const ISolid::Tick& tickMax,
+                                  ISolid::Ticks& ticks   ) const override;
 
   /** poiter to the "main"/"first" boolean
    *  @return poiter to the "main"/"first" boolean
    */
-  const  ISolid* first () const { return m_sb_first.get(); } ;
+  const  ISolid* first () const { return m_sb_first.get(); }
 
   /** number of childrens
    *  @return number of childrens
    */
-  unsigned int  noChildrens () const { return m_sb_childrens.size(); } ;
+  unsigned int  noChildrens () const { return m_sb_childrens.size(); }
 
   /** access to the childrens by index
    *  @param index index of child solid
    *  @return pointer to child solid
    */
   const ISolid* operator[]  ( unsigned int index ) const
-  {  return  ( ( index < noChildrens() )  ? *(childBegin()+index) : 0 ) ; } ;
+  {  return  ( ( index < noChildrens() )  ? *(childBegin()+index) : 0 ) ; }
 
   /** acess to constant iterator
    *  @return "begin" iterator
    */
   SolidChildrens::const_iterator
-  childBegin () const { return m_sb_childrens.begin(); };
+  childBegin () const { return m_sb_childrens.begin(); }
 
   /** acess to constant iterator
    *  @return "end" iterator
    */
   SolidChildrens::const_iterator
-  childEnd   () const { return m_sb_childrens.end  (); };
+  childEnd   () const { return m_sb_childrens.end  (); }
 
   ///
 protected:
@@ -182,19 +182,19 @@ protected:
    *  @return "begin" iterator
    */
   SolidChildrens::iterator
-  childBegin () { return m_sb_childrens.begin(); };
+  childBegin () { return m_sb_childrens.begin(); }
 
   /** acess to iterator
    *  @return "begin" iterator
    */
   SolidChildrens::iterator
-  childEnd   () { return m_sb_childrens.end  (); };
+  childEnd   () { return m_sb_childrens.end  (); }
 
   /** Calculate the maximum number of ticks that a straight line could
       make with this solid
   *  @return maximum number of ticks
   */
-  Ticks::size_type maxNumberOfTicks() const ;
+  Ticks::size_type maxNumberOfTicks() const override;
 
 private:
 

@@ -16,29 +16,29 @@ class MaterialException: public GaudiException
   ///
 public:
   ///
-  MaterialException( const std::string    & message     , 
+  MaterialException( const std::string    & message     ,
                      const Material       * mat     = nullptr );
   ///
   MaterialException( const std::string    &  message    ,
-                     const GaudiException &  Exception  ,  
+                     const GaudiException &  Exception  ,
                      const Material       *  mat    = nullptr );
   ///
   MaterialException( const MaterialException& );
   ///
   virtual ~MaterialException() noexcept;
   ///
-  virtual std::ostream& printOut ( std::ostream& os = std::cerr ) const;
-  virtual MsgStream&    printOut ( MsgStream&    os             ) const;
+  std::ostream& printOut ( std::ostream& os = std::cerr ) const override;
+  MsgStream&    printOut ( MsgStream&    os             ) const override;
   ///
-  virtual inline GaudiException* clone() const {
+  inline GaudiException* clone() const override {
     return new MaterialException( *this );
-  } 
+  }
   ///
 private:
   ///
   const Material* m_me_mat;
   ///
-}; 
+};
 ///
 
 #endif  // DETDESC_MATERIALEXCEPTION_H

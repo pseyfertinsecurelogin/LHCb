@@ -66,31 +66,31 @@ public:
   /** retrieve the specific type of the solid
    *  @return specific type of the solid
    */
-  inline virtual std::string typeName   () const { return "SolidChild" ; }
+  inline std::string typeName   () const override { return "SolidChild" ; }
 
   /** retrieve the pointer to "simplified" solid - "cover"
    *  @return pointer to "simplified" solid - "cover"
    */
-  inline virtual const ISolid* cover () const { return solid()->cover() ; };
+  inline const ISolid* cover () const override { return solid()->cover() ; }
 
   /** retrieve the pointer to "the most simplified cover"
    *  probably, something like "gabarite box"
    *  @return pointer to the most simplified cover
    */
-  virtual inline const ISolid* coverTop () const
-  { return solid()->coverTop() ; };
+  inline const ISolid* coverTop () const override
+  { return solid()->coverTop() ; }
 
   /** printout to STD/STL stream
    *  @param os STD/STL stream
    *  @return reference to the stream
    */
-  virtual std::ostream& printOut ( std::ostream& os = std::cout ) const ;
+  std::ostream& printOut ( std::ostream& os = std::cout ) const override;
 
   /** printout to Gaudi  stream
    *  @param os Gaudi stream
    *  @return reference to the stream
    */
-  virtual MsgStream&    printOut ( MsgStream&    os             ) const ;
+  MsgStream&    printOut ( MsgStream&    os             ) const override;
 
   /** - check for the given 3D-point.
    *    Point coordinated are in the local reference
@@ -100,12 +100,12 @@ public:
    *  @param point point (in local reference system of the solid)
    *  @return true if the point is inside the solid
    */
-  virtual bool isInside ( const Gaudi::XYZPoint& point) const;
-  virtual bool isInside ( const Gaudi::Polar3DPoint   & point ) const;
-  virtual bool isInside ( const Gaudi::RhoZPhiPoint   & point ) const;
+  bool isInside ( const Gaudi::XYZPoint& point) const override;
+  bool isInside ( const Gaudi::Polar3DPoint   & point ) const override;
+  bool isInside ( const Gaudi::RhoZPhiPoint   & point ) const override;
   /** reset to the initial ("after constructor") state
    */
-  virtual ISolid*  reset();
+  ISolid*  reset() override;
 
   /** - calculate the intersection points("ticks") of the solid objects
    *    with given line.
@@ -126,38 +126,38 @@ public:
    *  @return the number of intersection points
    */
   using SolidBase::intersectionTicks;
-  virtual unsigned int
+  unsigned int
   intersectionTicks ( const Gaudi::XYZPoint&  Point  ,
                       const Gaudi::XYZVector& Vector ,
-                      ISolid::Ticks&          ticks  ) const;
-  virtual unsigned int
+                      ISolid::Ticks&          ticks  ) const override;
+  unsigned int
   intersectionTicks  ( const Gaudi::Polar3DPoint&  Point  ,
                        const Gaudi::Polar3DVector& Vector ,
-                       ISolid::Ticks&              ticks  ) const;
+                       ISolid::Ticks&              ticks  ) const override;
 
-  virtual unsigned int
+  unsigned int
   intersectionTicks  ( const Gaudi::RhoZPhiPoint  & Point  ,
                        const Gaudi::RhoZPhiVector & Vector ,
-                       ISolid::Ticks              & ticks  ) const;
+                       ISolid::Ticks              & ticks  ) const override;
 
   /** Calculate the maximum number of ticks that a straight line could
       make with this solid
   *  @return maximum number of ticks
   */
-  Ticks::size_type maxNumberOfTicks() const { return solid() ? solid()->maxNumberOfTicks() : 0 ; }
+  Ticks::size_type maxNumberOfTicks() const override { return solid() ? solid()->maxNumberOfTicks() : 0 ; }
 
 public:
 
   /// "new" method - return solid itself
-  inline const ISolid* solid () const { return m_sc_solid.get(); };
+  inline const ISolid* solid () const { return m_sc_solid.get(); }
   // is solid transformed?
-  inline       bool    simple() const { return m_sc_simple; };
+  inline       bool    simple() const { return m_sc_simple; }
   // transfromation
   inline const Gaudi::Transform3D& matrix () const
   {
     if( !m_sc_matrix ) { m_sc_matrix = Gaudi::Transform3D{}; }
     return *m_sc_matrix;
-  };
+  }
 
 protected:
 
