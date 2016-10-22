@@ -1,5 +1,3 @@
-// $Id: SolidBox.h,v 1.18 2007-09-20 15:17:05 wouter Exp $
-// ===========================================================================
 #ifndef     DETDESC_SOLIDBOX_H
 #define     DETDESC_SOLIDBOX_H
 /// STD and STL
@@ -43,14 +41,14 @@ public:
 
   /** destructor
    */
-  virtual ~SolidBox();
+  ~SolidBox() override;
 
   /** - retrieve the box type
    *  - implementation of ISolid abstract interface
    *  @see ISolid
    *  return box type
    */
-  inline       std::string  typeName ()  const override { return "SolidBox" ; }
+  inline std::string  typeName ()  const override { return "SolidBox" ; }
 
   /** - check for the given 3D-point.
    *    Point coordinated are in the local reference
@@ -69,7 +67,7 @@ public:
    *  @see ISolid
    *  @return pointer to "simplified" solid - "cover"
    */
-  const ISolid* cover () const  override;
+  const ISolid* cover () const override;
 
   /** - retrieve the pointer to "the most simplified cover"
    *  - implementation  of ISolid abstract interface
@@ -79,7 +77,7 @@ public:
    *  @see SolidBase
    *  @return pointer to the most simplified cover
    */
-  const ISolid* coverTop () const  override;
+  const ISolid* coverTop () const override;
 
   /** - printout to STD/STL stream
    *  - implementation  of ISolid abstract interface

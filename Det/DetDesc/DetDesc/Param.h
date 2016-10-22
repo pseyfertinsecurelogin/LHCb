@@ -1,4 +1,3 @@
-// $Id: Param.h,v 1.9 2008-02-22 12:12:12 marcocle Exp $
 #ifndef DETDESC_PARAM_H
 #define DETDESC_PARAM_H 1
 
@@ -6,6 +5,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <memory>
 
 #include <sstream>
 
@@ -14,7 +14,7 @@
 
 /** @class Param Param.h DetDesc/Param.h
  *
- *  Class implementing a polimorfic parameter using templates
+ *  Class implementing a polymorfic parameter using templates
  *
  *  @author Marco CLEMENCIC
  *  @date   2005-02-22
@@ -29,8 +29,6 @@ public:
 
   /// Constructor by value
   Param(value_type val): m_val(std::move(val)) {}
-
-  virtual ~Param() = default; ///< Destructor
 
   /// Setter (with automatic conversion)
   template <class T1>
@@ -54,8 +52,9 @@ public:
   const std::type_info &type() const override { return typeid(T); }
 
   /// Create a copy of this object on the heap (generic copy)
-  BasicParam * new_copy() const override {
-    return new Param<T>(m_val);
+  std::unique_ptr<BasicParam> new_copy() const override {
+    // return std::make_unique<Param<T>>(m_val);
+    return std::unique_ptr<BasicParam>( new Param<T>(m_val) );
   }
 
 private:

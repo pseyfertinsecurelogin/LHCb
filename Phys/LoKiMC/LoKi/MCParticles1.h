@@ -1,4 +1,3 @@
-// $Id$
 // ============================================================================
 #ifndef LOKI_MCPARTICLES1_H
 #define LOKI_MCPARTICLES1_H 1
@@ -36,19 +35,12 @@ namespace LoKi
       DecNode ( const Decays::iNode& node ) ;
       /// constructor from the actual node
       DecNode ( const std::string&   node ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~DecNode() {}
       /// MANDATORY: clone method ("virtual constructor")
       DecNode* clone() const override { return new DecNode ( *this ) ; }
       /// MANDATORY: the only one essential method
       result_type operator() ( argument p ) const  override;
       /// OPTIONAL: the nice printout
       std::ostream& fillStream( std::ostream& s ) const  override;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      DecNode () ;                       // the default constructor is disabled
       // ======================================================================
     public:
       // ======================================================================
@@ -97,19 +89,12 @@ namespace LoKi
       DecTree ( const iTree&       node ) ;
       /// constructor from the actual node
       DecTree ( const std::string& node ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~DecTree() {}
       /// MANDATORY: clone method ("virtual constructor")
       DecTree* clone() const override { return new DecTree ( *this ) ; }
       /// MANDATORY: the only one essential method
       result_type operator() ( argument p ) const  override;
       /// OPTIONAL: the nice printout
       std::ostream& fillStream( std::ostream& s ) const  override;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      DecTree () ;                       // the default constructor is disabled
       // ======================================================================
     public:
       // ======================================================================

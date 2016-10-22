@@ -1,15 +1,3 @@
-// $Id: CaloException.h,v 1.2 2003-01-17 14:15:18 sponce Exp $
-// ===========================================================================
-// $Log: not supported by cvs2svn $
-// Revision 1.1.1.1  2001/11/25 14:07:38  ibelyaev
-// New Package: substitution of the  previous CaloGen package
-//
-// Revision 1.4  2001/07/02 17:49:10  ibelyaev
-// update in CaloException and CaloVector
-//
-// Revision 1.3  2001/06/23 14:39:31  ibelyaev
-//  fix CVS-keywords and remove long lines
-//
 // ===========================================================================
 #ifndef      CALOKERNEL_CALOEXCEPTION_H
 #define      CALOKERNEL_CALOEXCEPTION_H 1
@@ -27,17 +15,15 @@
  *  @date    26/11/1999
  */
 
-class CaloException : public GaudiException
+struct CaloException : GaudiException
 {
-public:
-
   /** constructor
    *  @param ex  exception message
    *  @param sc  status code assiciated with exception
    */
   CaloException( const std::string& ex   = "unspecified exception",
                  const StatusCode&  sc   =  StatusCode::FAILURE )
-    : GaudiException( ex , "*CaloException*" , sc )  {};
+    : GaudiException( ex , "*CaloException*" , sc )  {}
 
   /** constructor
    *  @param ex          exception message
@@ -47,11 +33,7 @@ public:
   CaloException( const std::string   & ex                        ,
                  const GaudiException& Ex                        ,
                  const StatusCode&     sc =  StatusCode::FAILURE )
-    : GaudiException( ex, "*CaloException*" , sc , Ex ) {};
-
-  /** destructor
-   */
-  virtual ~CaloException() throw() {}
+    : GaudiException( ex, "*CaloException*" , sc , Ex ) {}
 
   /** clone (virtual constructor)
    */
@@ -64,4 +46,3 @@ public:
 // ===========================================================================
 #endif  ///<   CALOKERNEL_CALOEXCEPTION_H
 // ===========================================================================
-

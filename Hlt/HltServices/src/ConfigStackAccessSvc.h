@@ -1,4 +1,3 @@
-// $Id: ConfigStackAccessSvc.h,v 1.1 2010-05-05 13:20:44 graven Exp $
 #ifndef CONFIGFILEACCESSSVC_H 
 #define CONFIGFILEACCESSSVC_H 1
 
@@ -30,7 +29,6 @@
 class ConfigStackAccessSvc : public extends1<Service, IConfigAccessSvc> {
 public:
   ConfigStackAccessSvc(const std::string& name, ISvcLocator* pSvcLocator);
-  ~ConfigStackAccessSvc( ) override = default;     ///< Destructor
 
   StatusCode initialize() override;    ///< Service initialization
   StatusCode finalize() override;    ///< Service finalization
@@ -47,17 +45,7 @@ public:
   std::vector<ConfigTreeNodeAlias> configTreeNodeAliases(const ConfigTreeNodeAlias::alias_type& alias) override;
 
 private:
-  MsgStream& verbose() const { return msg(MSG::VERBOSE); }
-  MsgStream& debug() const { return msg(MSG::DEBUG); }
-  MsgStream& info() const { return msg(MSG::INFO); }
-  MsgStream& warning() const { return msg(MSG::WARNING); }
-  MsgStream& error() const { return msg(MSG::ERROR); }
-  MsgStream& fatal() const { return msg(MSG::FATAL); }
-  MsgStream& always() const { return msg(MSG::ALWAYS); }
-  
   std::vector<std::string>             s_svcs;
   boost::ptr_vector<IConfigAccessSvc>  m_svcs;
-  mutable std::unique_ptr<MsgStream>     m_msg;
-  MsgStream& msg(MSG::Level level) const;
 };
 #endif // CONFIGFILEACCESSSVC_H

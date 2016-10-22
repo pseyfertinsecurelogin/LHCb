@@ -1,4 +1,3 @@
-// $Id$
 // ============================================================================
 #ifndef LOKI_MCVERTICES_H
 #define LOKI_MCVERTICES_H 1
@@ -60,8 +59,6 @@ namespace LoKi
       // ======================================================================
       /// default constructor
       TypeOfMCVertex() {}
-      /// destructor
-      virtual ~TypeOfMCVertex();
       /// clone method (mandatory)
       TypeOfMCVertex* clone() const  override;
       /// the only one essential method
@@ -83,8 +80,6 @@ namespace LoKi
       // ======================================================================
       /// default constructor
       TimeOfFlight() {}
-      /// destructor
-      virtual ~TimeOfFlight();
       /// clone method (mandatory)
       TimeOfFlight* clone() const  override;
       /// the only one essential method
@@ -106,8 +101,6 @@ namespace LoKi
       // ======================================================================
       /// default constructor
       VertexPositionX() {}
-      /// destructor
-      virtual ~VertexPositionX();
       /// clone method (mandatory)
       VertexPositionX* clone() const  override;
       /// the only one essential method
@@ -129,8 +122,6 @@ namespace LoKi
       // ======================================================================
       /// default constructor
       VertexPositionY() {}
-      /// destructor
-      virtual ~VertexPositionY();
       /// clone method (mandatory)
       VertexPositionY* clone() const  override;
       /// the only one essential method
@@ -152,8 +143,6 @@ namespace LoKi
       // ======================================================================
       /// default constructor
       VertexPositionZ() {}
-      /// destructor
-      virtual ~VertexPositionZ();
       /// clone method (mandatory)
       VertexPositionZ* clone() const  override;
       /// the only one essential method
@@ -175,8 +164,6 @@ namespace LoKi
       // ======================================================================
       /// default constructor
       VertexTime() {}
-      /// destructor
-      virtual ~VertexTime();
       /// clone method (mandatory)
       VertexTime* clone() const  override;
       /// the only one essential method
@@ -198,8 +185,6 @@ namespace LoKi
       // ======================================================================
       /// default constructor
       Primary() {}
-      /// destructor
-      virtual ~Primary();
       /// clone method (mandatory)
       Primary* clone() const  override;
       /// the only one essential method
@@ -221,8 +206,6 @@ namespace LoKi
       // ======================================================================
       /// default constructor
       Decay() {}
-      /// destructor
-      virtual ~Decay();
       /// clone method (mandatory)
       Decay* clone() const  override;
       /// the only one essential method
@@ -250,8 +233,6 @@ namespace LoKi
        *  @param point 3D-point
        */
       MCVertexDistance ( const LHCb::MCVertex*   point ) ;
-      /// virtual descructor
-      virtual ~MCVertexDistance() ;
       /// clone method (mandatory!)
       MCVertexDistance* clone() const  override;
       /// the only one essential method
@@ -286,8 +267,6 @@ namespace LoKi
       // ======================================================================
       /// constructor from MC Vertex fuction
       MCVFunAsMCFun ( const LoKi::MCTypes::MCVFunc& func   ) ;
-      /// virtual descructor
-      virtual ~MCVFunAsMCFun() ;
       /// clone method (mandatory!)
       MCVFunAsMCFun* clone() const  override;
       /// the only one essential method
@@ -347,8 +326,6 @@ namespace LoKi
       /// constructor from MC Vertex fuction and vertex selection
       MCVFunction ( const LoKi::MCTypes::MCVCuts& cuts  ,
                     const LoKi::MCTypes::MCVFunc& func  ) ;
-      /// virtual descructor
-      virtual ~MCVFunction () ;
       /// clone method (mandatory!)
       MCVFunction* clone() const  override;
       /// the only one essential method
@@ -380,8 +357,6 @@ namespace LoKi
       // ======================================================================
       /// default constructor
       Key() {}
-      /// destructor
-      virtual ~Key();
       /// clone method (mandatory)
       Key* clone() const  override;
       /// the only one essential method
@@ -406,8 +381,6 @@ namespace LoKi
       // ======================================================================
       /// constructor from MC Vertex fuction
       MCVPFunAsMCFun ( const LoKi::MCTypes::MCVFunc& func   ) ;
-      /// virtual descructor
-      virtual ~MCVPFunAsMCFun() ;
       /// clone method (mandatory!)
       MCVPFunAsMCFun* clone() const  override;
       /// the only one essential method

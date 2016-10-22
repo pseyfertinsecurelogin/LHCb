@@ -47,8 +47,8 @@ protected:
   void adc2digit();
   bool decodeCell(LHCb::CaloCellID id);
   bool decodeTell1(int tell1);
-  bool decodeBank(LHCb::RawBank* bank);
-  bool decodePrsTriggerBank(LHCb::RawBank* bank);
+  bool decodeBank(const LHCb::RawBank& bank);
+  bool decodePrsTriggerBank(const LHCb::RawBank& bank);
 private:
   LHCb::CaloAdc fillAdc(LHCb::CaloCellID id, int adc,int sourceID){
     LHCb::CaloAdc temp(id,adc);
@@ -69,7 +69,7 @@ private:
     }
     return temp;
   }
-  CaloVector<LHCb::CaloAdc>    m_adcs;
+  CaloVector<LHCb::CaloAdc>   m_adcs;
   CaloVector<LHCb::CaloDigit> m_digits;
   unsigned int m_tell1s = 0;
   LHCb::CaloAdc m_minADC;

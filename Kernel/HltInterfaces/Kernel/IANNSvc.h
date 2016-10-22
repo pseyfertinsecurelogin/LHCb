@@ -33,11 +33,9 @@
  */
 
 
-class IANNSvc : virtual public extend_interfaces<IANSvc>  {
-public:
-  DeclareInterfaceID(IANNSvc,3,0);
+struct IANNSvc : extend_interfaces<IANSvc>  {
   /// Return the interface ID
-  virtual ~IANNSvc() = default;
+  DeclareInterfaceID(IANNSvc,4,0);
 
   typedef IANSvc::major_key_type                      major_key_type;
   typedef IANSvc::minor_key_type                      minor_key_type;

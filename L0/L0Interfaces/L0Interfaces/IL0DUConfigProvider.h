@@ -1,4 +1,3 @@
-// $Id: IL0DUConfigProvider.h,v 1.2 2010-01-20 16:06:46 odescham Exp $
 #ifndef IL0DUCONFIGPROVIDER_H
 #define IL0DUCONFIGPROVIDER_H 1
 
@@ -10,7 +9,6 @@
 //from Event
 #include "Event/L0DUConfig.h"
 
-static const InterfaceID IID_IL0DUConfigProvider ( "IL0DUConfigProvider", 3, 0 );
 
 /** @class IL0DUConfigProvider IL0DUConfigProvider.h
  *
@@ -18,21 +16,13 @@ static const InterfaceID IID_IL0DUConfigProvider ( "IL0DUConfigProvider", 3, 0 )
  *  @author Olivier Deschamps
  *  @date   2007-09-19
  */
-class IL0DUConfigProvider : virtual public IAlgTool {
-public:
+struct IL0DUConfigProvider : extend_interfaces<IAlgTool> {
 
-  // Return the interface ID
-  static const InterfaceID& interfaceID() { return IID_IL0DUConfigProvider; }
+  // Declare the interface ID
+  DeclareInterfaceID( IL0DUConfigProvider, 3, 0 );
 
   virtual LHCb::L0DUConfig* config(long tck,std::string slot="T0")=0;
   virtual LHCb::L0DUConfig::Container* configs(std::string slot="T0")=0;
-
-
-protected:
-
-private:
-
-
 
 };
 #endif // IL0DUCONFIGPROVIDER_H

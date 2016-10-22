@@ -1,7 +1,6 @@
 // Include files 
 #include <algorithm>
 
-
 // local
 #include "DetDesc/ParamList.h"
 
@@ -14,32 +13,31 @@
 //=============================================================================
 // Copy constructor
 //=============================================================================
-ParamList::ParamList(const  ParamList&pl):base_type(){*this = pl;}
+ParamList::ParamList(const  ParamList&pl) : base_type() { *this = pl; }
 
 //=============================================================================
 // Destructor
 //=============================================================================
-ParamList::~ParamList(){deleteItems();}
+ParamList::~ParamList() { deleteItems(); }
 
 //=============================================================================
 // Assignement
 //=============================================================================
 ParamList& ParamList::operator= (const ParamList &pl){
   clear();
-  for (auto  i = pl.begin(); i != pl.end() ; ++i ){
-  	insert(std::make_pair(i->first,i->second->new_copy()));
+  for (const auto&  i : pl ) {
+  	insert(std::make_pair(i.first,i.second->new_copy().release()));
   }
   return *this;
 }
 ParamList& ParamList::operator+= (const ParamList &pl){
-  for ( auto i = pl.begin(); i != pl.end() ; ++i ){
-	auto old = find(i->first);
+  for ( const auto& i : pl ) {
+	auto old = find(i.first);
     if ( old != end() ) { // key already used
       delete old->second;
-      old->second = i->second->new_copy();
+      old->second = i.second->new_copy().release();
     } else {
-  	  insert(make_pair(i->first,i->second->new_copy()));
-      //(*this)[i->first] = i->second->new_copy();
+  	  insert(std::make_pair(i.first,i.second->new_copy().release()));
     }
   }
   return *this;

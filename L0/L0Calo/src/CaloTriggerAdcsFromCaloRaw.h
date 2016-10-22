@@ -22,19 +22,16 @@ public:
                               const std::string& name,
                               const IInterface* parent);
 
-  virtual ~CaloTriggerAdcsFromCaloRaw( ); ///< Destructor
-
   StatusCode initialize()  override;
 
   const std::vector<LHCb::L0CaloAdc>&    adcs( )  override;
   const std::vector<LHCb::L0CaloAdc>&    adcs( int source )  override;
-  const std::vector<LHCb::L0CaloAdc>&    adcs( LHCb::RawBank* bank )  override;
+  const std::vector<LHCb::L0CaloAdc>&    adcs( const LHCb::RawBank& bank )  override;
   const std::vector<LHCb::L0CaloAdc>&    pinAdcs( )  override;
 
-  std::string _rootInTES() override { return "" ; }
   StatusCode  _setProperty(const std::string& ,const std::string& ) override { return StatusCode::SUCCESS ; }
   bool getBanks() override { return true ; }
-  void setBanks(const std::vector<LHCb::RawBank*>* ) override { return ; }
+  void setBanks(const std::vector<LHCb::RawBank*>& ) override { return ; }
   void clear() override { m_data.clear() ; }
   void cleanData(int ) override { clear() ; }
   LHCb::RawBankReadoutStatus& status() override {
@@ -44,8 +41,6 @@ public:
   void putStatusOnTES() override { return ; }
   bool ok() override { return true ; }
   DeCalorimeter* deCalo() override { return m_calo ; }
-
-protected:
 
 private:
   LHCb::RawBankReadoutStatus m_theSt ;

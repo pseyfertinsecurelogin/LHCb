@@ -25,10 +25,8 @@
  */
 
 
-class IConfigAccessSvc : virtual public extend_interfaces<INamedInterface>  {
-public:
-  DeclareInterfaceID(IConfigAccessSvc,3,0);
-  virtual ~IConfigAccessSvc() = default;
+struct IConfigAccessSvc : extend_interfaces<INamedInterface>  {
+  DeclareInterfaceID(IConfigAccessSvc,4,0);
 
   // read & write PropertyConfig instances: vertices (aka leafs) in the configuration graph
   virtual boost::optional<PropertyConfig> readPropertyConfig(const PropertyConfig::digest_type& ref) = 0;
