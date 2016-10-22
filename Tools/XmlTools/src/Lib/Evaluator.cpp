@@ -7,9 +7,8 @@
 #include <algorithm>
 #include <cmath>	// for pow()
 #include <stack>
-#include "string.src"
+#include <string>
 #include <unordered_map>
-#include <string.h>
 #include <ctype.h>
 #include <errno.h>
 #include <stdlib.h>	// for strtod()
@@ -23,22 +22,12 @@
 #define EVAL XmlTools::Evaluator
 
 //---------------------------------------------------------------------------
-using Item = boost::variant<boost::blank,double,   string,     void*>;
+using Item = boost::variant<boost::blank,double,   std::string,     void*>;
 enum                      { UNKNOWN,     VARIABLE, EXPRESSION, FUNCTION }; // must match order in boost::variant
 
-namespace std {
-  template<> struct hash<::string> {
-    std::size_t operator()(::string const& s) const {
-      const char* key = s.c_str();
-      std::size_t res = 0;
-      while(*key) { res = res*31 + *key++; }
-      return res;
-    }
-  };
-}
 
 typedef const char * pchar;
-typedef std::unordered_map<string,Item> dic_type;
+typedef std::unordered_map<std::string,Item> dic_type;
 
 struct EVAL::Struct final {
   dic_type theDictionary;
@@ -59,22 +48,22 @@ namespace {
         return str.substr(i,j-i+1);
     }
 
-    inline string to_string(boost::string_ref str) {
-        return string( str.data(), str.size() );
+    inline std::string to_string(boost::string_ref str) {
+        return std::string( str.data(), str.size() );
     }
-    inline string operator+(const string& s1, boost::string_ref s2) {
+    inline std::string operator+(const std::string& s1, boost::string_ref s2) {
         return s1+to_string(s2);
     }
-    inline string operator+(const char* s1, boost::string_ref s2) {
+    inline std::string operator+(const char* s1, boost::string_ref s2) {
         return s1+to_string(s2);
     }
-    inline string operator+(char s1, boost::string_ref s2) {
+    inline std::string operator+(char s1, boost::string_ref s2) {
         return s1+to_string(s2);
     }
-    inline string operator+(boost::string_ref s1, const string& s2) {
+    inline std::string operator+(boost::string_ref s1, const std::string& s2) {
         return to_string(s1)+s2;
     }
-    inline string operator+(boost::string_ref s1, const char* s2) {
+    inline std::string operator+(boost::string_ref s1, const char* s2) {
         return to_string(s1)+s2;
     }
 }
@@ -94,7 +83,7 @@ enum { ENDL, LBRA, OR, AND, EQ, NE, GE, GT, LE, LT,
 
 static int engine(pchar, pchar, double &, pchar &, const dic_type &);
 
-static int variable(const string & name, double & result,
+static int variable(const std::string & name, double & result,
                     const dic_type & dictionary)
 /***********************************************************************
  *                                                                     *
@@ -120,7 +109,7 @@ static int variable(const string & name, double & result,
     result = boost::get<double>(item);
     return EVAL::OK;
   case EXPRESSION: {
-    auto exp_begin = boost::get<string>(item).c_str();
+    auto exp_begin = boost::get<std::string>(item).c_str();
     auto exp_end   = std::next(exp_begin,strlen(exp_begin) - 1);
     if (engine(exp_begin, exp_end, result, exp_end, dictionary) == EVAL::OK)
       return EVAL::OK;
@@ -131,7 +120,7 @@ static int variable(const string & name, double & result,
   }
 }
 
-static int function(const string & name, std::stack<double> & par,
+static int function(const std::string & name, std::stack<double> & par,
 	                double & result, const dic_type & dictionary)
 /***********************************************************************
  *                                                                     *
@@ -233,7 +222,7 @@ static int operand(pchar begin, pchar end, double & result,
   }
   c = *pointer;
   *const_cast<char*>(pointer) = '\0';
-  string name(begin);
+  std::string name(begin);
   *const_cast<char*>(pointer) = c;
 
   //   G E T   V A R I A B L E
@@ -565,7 +554,7 @@ static void setItem(const char * prefix, const char * name,
   }
 
   //   A D D   I T E M   T O   T H E   D I C T I O N A R Y
-  string item_name = prefix + to_string(nam);
+  auto item_name = prefix + to_string(nam);
 #if  __cplusplus > 201402L
   // C++17
   auto r = s.theDictionary.insert_or_assign(item_name, std::move(item));
@@ -663,7 +652,7 @@ void Evaluator::setVariable(const char * name, double value)
 { setItem("", name, value, *m_p); }
 
 void Evaluator::setVariable(const char * name, const char * expression)
-{ setItem("", name, string(expression), *m_p); }
+{ setItem("", name, std::string(expression), *m_p); }
 
 //---------------------------------------------------------------------------
 void Evaluator::setFunction(const char * name,
