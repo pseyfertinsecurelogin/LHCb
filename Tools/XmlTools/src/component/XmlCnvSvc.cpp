@@ -22,7 +22,7 @@ DECLARE_SERVICE_FACTORY(XmlCnvSvc)
 XmlCnvSvc::XmlCnvSvc (const std::string& name, ISvcLocator* svc) :
   base_class(name, svc, XML_StorageType)
 {
-  
+
   // gets the AllowGenericConversion property value
   declareProperty ("AllowGenericConversion", m_genericConversion = false);
 
@@ -44,12 +44,12 @@ XmlCnvSvc::XmlCnvSvc (const std::string& name, ISvcLocator* svc) :
 StatusCode XmlCnvSvc::initialize() {
   // Before anything we have to initialize grand mother
   StatusCode status = ConversionSvc::initialize();
-  if (!status.isSuccess()) return status;  
-  
+  if (!status.isSuccess()) return status;
+
   // creation of a parser service
   m_parserSvc = serviceLocator()->service(m_parserSvcName,  true);
   if (!m_parserSvc) return StatusCode::FAILURE;
-  
+
   // Initialize numerical expressions parser with the standard math functions
   // and the system of units used by Gaudi (Geant4)
   m_xp.setStdMath();
@@ -90,16 +90,16 @@ StatusCode XmlCnvSvc::finalize() {
 // -----------------------------------------------------------------------
 StatusCode XmlCnvSvc::createAddress(long  svc_type,
                                     const CLID& clid,
-                                    const std::string* par, 
+                                    const std::string* par,
                                     const unsigned long* ipar,
-                                    IOpaqueAddress*& refpAddress) 
+                                    IOpaqueAddress*& refpAddress)
 {
   // First check that requested address is of type XML_StorageType
   if( msgLevel(MSG::VERBOSE) ) verbose() << "Create an XML address" << endmsg;
   if( XML_StorageType != svc_type ) {
-    error() 
-	<< "Cannot create addresses of type " << (int)svc_type 
-	<< " which is different from " << (int)XML_StorageType 
+    error()
+	<< "Cannot create addresses of type " << (int)svc_type
+	<< " which is different from " << (int)XML_StorageType
 	<< endmsg;
     return StatusCode::FAILURE;
   }
@@ -114,29 +114,29 @@ StatusCode XmlCnvSvc::createAddress(long  svc_type,
   unsigned long isString;
 
   // To avoid the need of two separate address creators with two different
-  // storage types for files and strings, this method also creates XML string 
+  // storage types for files and strings, this method also creates XML string
   // addresses when par[0] begins by "<?xml": in this case ipar[0] is ignored.
-  std::string::size_type pos = source.find_first_not_of(" ");
+  auto pos = source.find_first_not_of(" ");
   if( 0 < pos && pos < source.length() ) source.erase( 0, pos );
   if( source.find("<?xml") == 0 ) {
     isString = 1;
-    if( msgLevel(MSG::VERBOSE) ) verbose() 
+    if( msgLevel(MSG::VERBOSE) ) verbose()
 	<< "XML source beginning by \"<?xml\" is interpreted"
 	<< " as an XML string" << endmsg;
   } else {
     isString = ipar[0];
     if( isString == 0 ) {
       if( msgLevel(MSG::VERBOSE) ) verbose() << "XML source is an XML file name" << endmsg;
-    } else if( isString == 1 ) { 
+    } else if( isString == 1 ) {
       if( msgLevel(MSG::VERBOSE) ) verbose() << "XML source is an XML string" << endmsg;
     } else {
-      error() 
+      error()
 	  << "Cannot create address: invalid ipar[0] value = "
 	  << ipar[0] << endmsg;
       return StatusCode::FAILURE;
     }
   }
-  
+
   // Now create the address
   refpAddress = new GenericAddress( XML_StorageType,
 				    clid,
@@ -160,7 +160,7 @@ StatusCode XmlCnvSvc::createAddress(long  svc_type,
 IOVDOMDocument* XmlCnvSvc::parse (const char* fileName) {
   if (m_parserSvc) return m_parserSvc->parse(fileName);
   if( msgLevel(MSG::DEBUG) ) debug() << "null result returned in parse" << endmsg;
-  return 0;
+  return nullptr;
 }
 
 
@@ -171,27 +171,26 @@ IOVDOMDocument* XmlCnvSvc::parseString (std::string source) {
 
   // First prepend the proper DTD path where appropriate
   // Only one "relpath/file.dtd" or 'relpath/file.dtd' is expected in string
-  if( m_dtdLocation != "" ) {
-    std::string::size_type dtdPos = source.find( ".dtd" );
+  if( !m_dtdLocation.empty() ) {
+    auto dtdPos = source.find( ".dtd" );
     if( dtdPos < source.length() ) {
-      if( msgLevel(MSG::VERBOSE) ) verbose() 
+      if( msgLevel(MSG::VERBOSE) ) verbose()
           << "Set correct DTD location in the string to be parsed" << endmsg;
-      std::string::size_type quotePos;
       if( source[dtdPos+4] == '\'' ) {
-        quotePos = source.substr(0,dtdPos).rfind("\'");
+        auto quotePos = source.substr(0,dtdPos).rfind("\'");
         source.insert( quotePos+1, m_dtdLocation+"/" );
-        if( msgLevel(MSG::VERBOSE) ) verbose() << "DTD literal is now: " 
+        if( msgLevel(MSG::VERBOSE) ) verbose() << "DTD literal is now: "
             << source.substr(quotePos,dtdPos+6-quotePos+m_dtdLocation.length())
             << endmsg;
       } else if ( source[dtdPos+4] == '\"' ) {
-        quotePos = source.substr(0,dtdPos).rfind("\"");
+        auto quotePos = source.substr(0,dtdPos).rfind("\"");
         source.insert( quotePos+1, m_dtdLocation+"/" );
-        if( msgLevel(MSG::VERBOSE) ) verbose() << "DTD literal is now: " 
+        if( msgLevel(MSG::VERBOSE) ) verbose() << "DTD literal is now: "
             << source.substr(quotePos,dtdPos+6-quotePos+m_dtdLocation.length())
             << endmsg;
       } else {
         if( msgLevel(MSG::VERBOSE) ) verbose()
-            << "Bad DTD literal in the string to be parsed: do nothing" 
+            << "Bad DTD literal in the string to be parsed: do nothing"
             << endmsg;
       }
     }
@@ -200,10 +199,8 @@ IOVDOMDocument* XmlCnvSvc::parseString (std::string source) {
   // Then feed the string to the XML parser
   if (m_parserSvc) return m_parserSvc->parseString (source);
   if( msgLevel(MSG::DEBUG) )  debug() << "null result returned in parseString" << endmsg;
-  return 0;
-
+  return nullptr;
 }
-
 
 // -----------------------------------------------------------------------
 // clears the cache of previously parsed xml files
@@ -219,14 +216,12 @@ void XmlCnvSvc::releaseDoc(IOVDOMDocument* doc) {
   if (m_parserSvc) m_parserSvc->releaseDoc(doc);
 }
 
-
 // -----------------------------------------------------------------------
 // Evaluate a numerical expresion
 // -----------------------------------------------------------------------
 double XmlCnvSvc::eval (const std::string& expr, bool check) {
   return eval (expr.c_str(), check);
 }
-
 
 // -----------------------------------------------------------------------
 // Evaluate a numerical expresion
@@ -244,7 +239,7 @@ double XmlCnvSvc::eval (const char* expr, bool check) {
       }
     }
   }
-  
+
   // Call the CLHEP Evaluator
   double value = m_xp.evaluate( expr );
   std::string errtxt;
@@ -287,7 +282,6 @@ double XmlCnvSvc::eval (const char* expr, bool check) {
   return 0;
 }
 
-
 // -----------------------------------------------------------------------
 // addParameter into expresion parser
 // -----------------------------------------------------------------------
@@ -295,7 +289,6 @@ bool XmlCnvSvc::addParameter (const std::string& name,
                               const std::string& value) {
   return addParameter (name.c_str(), value.c_str());
 }
-
 
 // -----------------------------------------------------------------------
 // addParameter into expresion parser
@@ -305,7 +298,6 @@ bool XmlCnvSvc::addParameter (const char* name, const char* expr) {
   return m_xp.status() == XmlTools::Evaluator::OK;
 }
 
-
 // -----------------------------------------------------------------------
 // addParameter into expresion parser
 // -----------------------------------------------------------------------
@@ -314,14 +306,12 @@ bool XmlCnvSvc::addParameter (const char* name, double value) {
   return m_xp.status() == XmlTools::Evaluator::OK;
 }
 
-
 // -----------------------------------------------------------------------
 // removeParameter from expresion parser
 // -----------------------------------------------------------------------
 bool XmlCnvSvc::removeParameter (const std::string& name) {
   return removeParameter (name.c_str());
 }
-
 
 // -----------------------------------------------------------------------
 // removeParameter from expresion parser
@@ -331,49 +321,44 @@ bool XmlCnvSvc::removeParameter (const char* name) {
   return m_xp.status() == XmlTools::Evaluator::OK;
 }
 
-
 // -----------------------------------------------------------------------
 // skipSum
 // -----------------------------------------------------------------------
 std::string::size_type XmlCnvSvc::skipSum (std::string s,
-                                 std::string::size_type start,
-                                 std::string::size_type end) {
-  std::string::size_type result = start;
+                                           std::string::size_type start,
+                                           std::string::size_type end) {
+  auto result = start;
   while (result < end) {
     result = skipProduct (s, result, end);
     if (result == end) return end;
     result = s.find_first_not_of(' ', result);
-    if (result == s.npos) return end;
-    if (s[result] == ')') {
-      return result;
-    } else {
-      // skip the + or - and loop
-      result = s.find_first_not_of(' ', result + 1);
-      if (result == s.npos) return end;
-    }
+    if (result == std::string::npos) return end;
+    if (s[result] == ')') return result;
+    // skip the + or - and loop
+    result = s.find_first_not_of(' ', result + 1);
+    if (result == std::string::npos) return end;
   }
   return result;
 }
-
 
 // -----------------------------------------------------------------------
 // skipProduct
 // -----------------------------------------------------------------------
 std::string::size_type XmlCnvSvc::skipProduct (std::string s,
-                                     std::string::size_type start,
-                                     std::string::size_type end) {
-  std::string::size_type result = start;
+                                               std::string::size_type start,
+                                               std::string::size_type end) {
+  auto result = start;
   while (result < end) {
     result = skipExpr (s, result, end);
     if (result == end) return end;
     result = s.find_first_not_of(' ', result);
-    if (result == s.npos) return end;
+    if (result == std::string::npos) return end;
     if ((s[result] == '+') || (s[result] == '-') || (s[result] == ')')) {
       return result;
     } else {
       // skip the * or / and loop
       result = s.find_first_not_of(' ', result + 1);
-      if (result == s.npos) return end;
+      if (result == std::string::npos) return end;
     }
   }
   return result;
@@ -386,13 +371,13 @@ std::string::size_type XmlCnvSvc::skipExpr (std::string s,
                                   std::string::size_type start,
                                   std::string::size_type end) {
   // deal with the unary plus/minus
-  std::string::size_type realStart = s.find_first_not_of(' ', start);
-  if (realStart != s.npos) {
+  auto realStart = s.find_first_not_of(' ', start);
+  if (realStart != std::string::npos) {
     if ((s[realStart] == '-') || (s[realStart] == '+')) {
       realStart = s.find_first_not_of(' ', realStart + 1);
     }
   }
-  if (realStart == s.npos) {
+  if (realStart == std::string::npos) {
     // the expression is empty !
     error()
         << "Invalid expression (It's empty !) : \""
@@ -400,15 +385,15 @@ std::string::size_type XmlCnvSvc::skipExpr (std::string s,
         << endmsg;
     return end;
   }
-  std::string::size_type index = s.find_first_of("+-/*()", realStart);
+  auto index = s.find_first_of("+-/*()", realStart);
   // if we the expression starts with an opening parenthesis or a
   // function call
-  if ((index != s.npos) && (s[index] == '(')) {
+  if ((index != std::string::npos) && (s[index] == '(')) {
     // skip the sum inside the parenthesis
-    std::string::size_type endIndex = skipSum (s, index+1, end);
+    auto endIndex = skipSum (s, index+1, end);
     if (endIndex != end) {
       endIndex = s.find_first_not_of(' ', endIndex);
-      if (endIndex == s.npos) endIndex = end;
+      if (endIndex == std::string::npos) endIndex = end;
     }
     // if no end
     if (endIndex == end) {
@@ -420,7 +405,7 @@ std::string::size_type XmlCnvSvc::skipExpr (std::string s,
     }
     // else test the closing parenthesis
     if (s[endIndex] != ')') {
-      error() 
+      error()
           << "Invalid expression (missing ')' at column "
           << endIndex - realStart << ") : \""
           << s.substr (realStart, end - realStart) << "\""
@@ -429,42 +414,32 @@ std::string::size_type XmlCnvSvc::skipExpr (std::string s,
     }
     // else everything is ok
     endIndex = s.find_first_not_of(' ', endIndex + 1);
-    if (endIndex == s.npos) endIndex = end;
-    if (endIndex < end) return endIndex; else return end;
-  } else {
-    // if the expression does not start with a parenthesis nor a
-    // function call, it should be either a word or a number
-    if (isalpha(s[realStart])) {
-      if (index != s.npos) {
-        return index;
-      } else {
-        return end;
-      }
-    } else if ((isdigit(s[realStart])) || (s[realStart] == '.')) {
-      // We have a number, look whether we have an exponent
-      // if yes, skip it
-      if ((index != s.npos) && ((s[index] == '-') || (s[index] == '+'))) {
-        if (index > realStart + 1) {
-          if ((s[index-1] == 'e') || (s[index-1] == 'E')) {
-            index = s.find_first_of("+-/*()", index+1);
-          }
+    if (endIndex == std::string::npos) endIndex = end;
+    return endIndex < end ? endIndex : end;
+  }
+  // if the expression does not start with a parenthesis nor a
+  // function call, it should be either a word or a number
+  if (isalpha(s[realStart])) {
+    return index != std::string::npos ? index : end;
+  }
+  if ((isdigit(s[realStart])) || (s[realStart] == '.')) {
+    // We have a number, look whether we have an exponent
+    // if yes, skip it
+    if ((index != std::string::npos) && ((s[index] == '-') || (s[index] == '+'))) {
+      if (index > realStart + 1) {
+        if ((s[index-1] == 'e') || (s[index-1] == 'E')) {
+          index = s.find_first_of("+-/*()", index+1);
         }
       }
-      if (index != s.npos) {
-        return index;
-      } else {
-        return end;
-      }
-    } else {
-      // in case there is no alphanumeric character
-      error()
-          << "Invalid expression (Alphanumeric character expected) : \""
-          << s.substr (realStart, end - realStart) << "\""
-          << endmsg;
-      return end;
     }
+    return index != std::string::npos ? index : end;
   }
-  // We should never reach this point
+  // in case there is no alphanumeric character
+  error()
+      << "Invalid expression (Alphanumeric character expected) : \""
+      << s.substr (realStart, end - realStart) << "\""
+      << endmsg;
+  return end;
 }
 
 
@@ -475,8 +450,8 @@ bool XmlCnvSvc::sumHasUnit (std::string s,
                  std::string::size_type baseIndex,
                  std::string::size_type lastIndex) {
   bool result = true;
-  std::string::size_type index = baseIndex;
-  std::string::size_type oldIndex = index;
+  auto index = baseIndex;
+  auto oldIndex = index;
   while (oldIndex < lastIndex) {
     // get next product subexpression
     index = skipProduct (s, oldIndex, lastIndex);
@@ -484,7 +459,7 @@ bool XmlCnvSvc::sumHasUnit (std::string s,
     result = result && productHasUnit(s, oldIndex, index);
     // skip the + or - sign
     oldIndex = s.find_first_not_of(' ', index + 1);
-    if (oldIndex == s.npos) oldIndex = lastIndex;
+    if (oldIndex == std::string::npos) oldIndex = lastIndex;
   }
   return result;
 }
@@ -497,8 +472,8 @@ bool XmlCnvSvc::productHasUnit (std::string s,
                      std::string::size_type baseIndex,
                      std::string::size_type lastIndex) {
   bool result = false;
-  std::string::size_type index = baseIndex;
-  std::string::size_type oldIndex = index;
+  auto index = baseIndex;
+  auto oldIndex = index;
   while (oldIndex < lastIndex) {
     // get next subexpression
     index = skipExpr (s, oldIndex, lastIndex);
@@ -506,7 +481,7 @@ bool XmlCnvSvc::productHasUnit (std::string s,
     result = result || exprHasUnit(s, oldIndex, index);
     // skip the * or / sign
     oldIndex = s.find_first_not_of(' ', index + 1);
-    if (oldIndex == s.npos) oldIndex = lastIndex;
+    if (oldIndex == std::string::npos) oldIndex = lastIndex;
   }
   return result;
 }
@@ -519,38 +494,32 @@ bool XmlCnvSvc::exprHasUnit (std::string s,
                              std::string::size_type baseIndex,
                              std::string::size_type lastIndex) {
   // deal with the unary minus
-  std::string::size_type realBaseIndex =  s.find_first_not_of(' ', baseIndex);
-  if (realBaseIndex == s.npos) {
+  auto realBaseIndex =  s.find_first_not_of(' ', baseIndex);
+  if (realBaseIndex == std::string::npos) {
     realBaseIndex = lastIndex;
   } else if (s[realBaseIndex] == '-') {
     realBaseIndex = s.find_first_not_of(' ', realBaseIndex + 1);
-    if (realBaseIndex == s.npos) realBaseIndex = lastIndex;
+    if (realBaseIndex == std::string::npos) realBaseIndex = lastIndex;
   }
   if (realBaseIndex == lastIndex) {
     // empty expression, return false
     return false;
   }
-  std::string::size_type index = s.find_first_of("+-/*()", realBaseIndex);
-  if ((index != s.npos) && (s[index] == '(')) {
+  auto index = s.find_first_of("+-/*()", realBaseIndex);
+  if ((index != std::string::npos) && (s[index] == '(')) {
     if (index == realBaseIndex) {
       // if we the expression starts with an opening parenthesis
       // deal with the sum which is its content
       return sumHasUnit (s, realBaseIndex + 1, lastIndex - 1);
-    } else {
-      // else we are calling a function, the result has no unit except
-      // if the function abs is called.
-      int findex = s.find_last_not_of(' ', index-1);
-      std::string function = s.substr(realBaseIndex, findex+1-realBaseIndex);
-      if ((function == "abs") || (function == "sqrt")) {
-        return sumHasUnit(s, index+1, s.find_last_of(')', lastIndex));
-      } else {
-        return false;
-      }
     }
-  } else {
-    // else we consider that having an alphabetic character at the first
-    // place means there is a unit
-
-    return isalpha(s[realBaseIndex]) != 0;
+    // else we are calling a function, the result has no unit except
+    // if the function abs is called.
+    int findex = s.find_last_not_of(' ', index-1);
+    auto function = s.substr(realBaseIndex, findex+1-realBaseIndex);
+    return  ((function == "abs") || (function == "sqrt")) &&
+            sumHasUnit(s, index+1, s.find_last_of(')', lastIndex));
   }
+  // else we consider that having an alphabetic character at the first
+  // place means there is a unit
+  return isalpha(s[realBaseIndex]) != 0;
 }

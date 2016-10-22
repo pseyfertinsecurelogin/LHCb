@@ -151,8 +151,11 @@ protected:
   SolidBoolean( const std::string& name  ,
                 ISolid*            solid );
 
+public:
   /// destructor
   virtual ~SolidBoolean();
+
+protected:
 
   /** constructor - "main"("first") solid is mandatory!
    *  @param name name of the solid

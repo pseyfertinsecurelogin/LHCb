@@ -80,7 +80,7 @@ StatusCode XmlParserSvc::initialize( ) {
   }
 
   // creates a new XercesDOMParser
-  m_parser.reset( new xercesc::XercesDOMParser );
+  m_parser = std::make_unique<xercesc::XercesDOMParser>();
   // if the creation was successful, sets some properties
   if( !m_parser ) {
     Service::error() << "Could not create xercesc::XercesDOMParser" << endmsg;
@@ -214,7 +214,7 @@ IOVDOMDocument* XmlParserSvc::parse (const char* fileName) {
       // If we have an entity resolver, we try to use it
       if (m_resolver){
         XMLCh *sysId = xercesc::XMLString::transcode(fileName);
-        is = std::unique_ptr<xercesc::InputSource>(m_resolver->resolver()->resolveEntity(nullptr,sysId));
+        is.reset( m_resolver->resolver()->resolveEntity(nullptr,sysId) );
         xercesc::XMLString::release(&sysId);
       }
       if ( is ) { // If the entity resolver succeeded, we parse the InputSource
@@ -227,10 +227,10 @@ IOVDOMDocument* XmlParserSvc::parse (const char* fileName) {
       doc = m_parser->adoptDocument();
       // if the document is not null, cache it
       if (!doc) return nullptr;
-      std::unique_ptr<IOVDOMDocument> cache_doc{ new IOVDOMDocument(doc) };
+      auto cache_doc = std::make_unique<IOVDOMDocument>(doc);
       // Try to see if the InputSource knows about validity/
       ValidInputSource *iov_is = dynamic_cast<ValidInputSource *>(is.get());
-      if (iov_is){ // it does
+      if (iov_is) { // it does
         cache_doc->setValidity(iov_is->validSince(),iov_is->validTill());
       }
       auto myDoc = cacheItem(fileName, std::move(cache_doc));

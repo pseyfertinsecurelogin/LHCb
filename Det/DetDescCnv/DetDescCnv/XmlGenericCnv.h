@@ -88,9 +88,10 @@ class XmlGenericCnv : public Converter {
    * @return the IXmlSvc interface of this object
    *  @return status depending on the completion of the call
    */
-  IXmlSvc* xmlSvc() {
-    if (!m_xmlSvc.isValid()) {
-      m_xmlSvc = conversionSvc();
+  IXmlSvc* xmlSvc() const {
+    if (UNLIKELY(!m_xmlSvc)) {
+        auto self = const_cast<XmlGenericCnv*>(this);
+        self->m_xmlSvc = this->conversionSvc();
     }
     return m_xmlSvc;
   }
@@ -233,7 +234,7 @@ protected:
   SmartIF<IXmlSvc> m_xmlSvc;
 
   /// The message stream
-  MsgStream* m_msg;
+  std::unique_ptr<MsgStream> m_msg;
   
   /// Methods to print as in GaudiAlgorithms
   MsgStream& verbose() const { return *m_msg << MSG::VERBOSE; }

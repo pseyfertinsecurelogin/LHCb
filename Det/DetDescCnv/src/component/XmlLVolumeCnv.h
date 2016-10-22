@@ -27,32 +27,32 @@ template <class TYPE> class CnvFactory;
  * @author Pere Mato
  */
 class XmlLVolumeCnv : public XmlGenericCnv {
-  
+
   /// Friend needed for instantiation
   friend class CnvFactory<XmlLVolumeCnv>;
 
  public:
-  
+
   /**
    * accessor to the type of elements that this converter converts
    * @return the classID for this type
    */
   static const CLID& classID () { return CLID_LVolume; }
-  
-  
+
+
  protected:
-  
+
   /**
    * Constructor for this converter
    * @param svcs a ISvcLocator interface to find services
    */
   XmlLVolumeCnv (ISvcLocator* svcs);
-  
+
   /**
    * Default destructor
    */
   virtual ~XmlLVolumeCnv();
-  
+
   /** This creates the transient representation of an object from the
    * DOMElement representing it, then fills it and process it.
    * Overrides the default method in XmlGenericCnv
@@ -71,7 +71,7 @@ class XmlLVolumeCnv : public XmlGenericCnv {
   /**
    * This encapsulates the parameters needed to build a PVolume
    */
-  typedef struct _PVolumeItem {
+  typedef struct _PVolumeItem final {
     /// the name of the physical volume
     std::string physvolName;
     /**
@@ -85,24 +85,22 @@ class XmlLVolumeCnv : public XmlGenericCnv {
     /// the name of the logical volume
     std::string logvolName;
     /// the transformation to place the volume
-    Gaudi::Transform3D* transformation;
+    std::unique_ptr<Gaudi::Transform3D> transformation;
   } PVolumeItem;
 
   /**
    * This type defines a vector of PVolumeItem*. This is used from the
    * processing of parametrised volumes.
    */
-  typedef std::deque<PVolumeItem*> PVolumes;
+  typedef std::deque<PVolumeItem> PVolumes;
 
   /**
    * This is the encapsulation of a solid and a transformation to be
    * applied ot it
    */
-  typedef struct _placedSolid {
-    /// the solid
-    ISolid* solid;
-    /// the transformation
-    Gaudi::Transform3D* transformation;
+  typedef struct _placedSolid final {
+    std::unique_ptr<ISolid> solid;
+    std::unique_ptr<Gaudi::Transform3D> transformation;
   } PlacedSolid;
 
   /**
@@ -117,42 +115,42 @@ class XmlLVolumeCnv : public XmlGenericCnv {
    * @param pv the PVolumeItem
    * @return the corresponding name
    */
-  std::string createPvName (PVolumeItem* pv);
+  std::string createPvName (const PVolumeItem& pv) const;
 
   /**
    * says whether the given tag is denoting a simple solid
    * @param tag the tag to be tested
    * @result true if this denotes a simple solid
    */
-  bool isSimpleSolid (const XMLCh* tag);
+  bool isSimpleSolid (const XMLCh* tag) const;
 
   /**
    * says whether the given tag is denoting a boolean solid
    * @param tag the tag to be tested
    * @result true if this denotes a boolean solid
    */
-  bool isBooleanSolid (const XMLCh* tag);
+  bool isBooleanSolid (const XMLCh* tag) const;
 
   /**
    * says whether the given tag is denoting a solid
    * @param tag the tag to be tested
    * @result true if this denotes a solid
    */
-  bool isSolid (const XMLCh* tag);
+  bool isSolid (const XMLCh* tag) const;
 
   /**
    * says whether the given tag is denoting a transformation
    * @param tag the tag to be tested
    * @result true if this denotes a transformation
    */
-  bool isTransformation (const XMLCh* tag);
+  bool isTransformation (const XMLCh* tag) const;
 
   /**
    * says whether the given tag is denoting a parametrized physical volume
    * @param tag the tag to be tested
    * @result true if this denotes a parametrized physical volume
    */
-  bool isParamphysvol (const XMLCh* tag);
+  bool isParamphysvol (const XMLCh* tag) const;
 
   /**
    * builds a string locating the element. When possible, this strings
@@ -161,7 +159,7 @@ class XmlLVolumeCnv : public XmlGenericCnv {
    * @param element the element to locate
    * @result a locating string
    */
-  std::string locateElement (xercesc::DOMElement* element);
+  std::string locateElement (const xercesc::DOMElement* element) const;
 
   /**
    * deals with the xml tag \<physvol\>. Creates the corresponding C++ Object.
@@ -170,7 +168,7 @@ class XmlLVolumeCnv : public XmlGenericCnv {
    * @param element the DOM element representing the tag
    * @return the C++ Object
    */
-  PVolumeItem* dealWithPhysvol (xercesc::DOMElement* element);
+  PVolumeItem dealWithPhysvol(const xercesc::DOMElement* element) const;
 
   /**
    * deals with the xml tags \<paramphysvol\>, \<paramphysvol2D\>, \<paramphysvol3D\>.
@@ -183,7 +181,7 @@ class XmlLVolumeCnv : public XmlGenericCnv {
    * @param element the DOM element representing the tag
    * @return a vector of physical volumes
    */
-  PVolumes* dealWithParamphysvol (xercesc::DOMElement* element);
+  std::unique_ptr<PVolumes> dealWithParamphysvol (const xercesc::DOMElement* element) const;
 
   /**
    * deals with parametrized physical volumes of any dimension. The dimension
@@ -198,11 +196,11 @@ class XmlLVolumeCnv : public XmlGenericCnv {
    * @param nD      dimension of volume
    * @return a vector of physical volumes
    */
-  PVolumes* dealWithParamphysvol (xercesc::DOMElement* element,
-                                  unsigned int nD);
+  std::unique_ptr<PVolumes> dealWithParamphysvol (const xercesc::DOMElement* element,
+                                                  unsigned int nD) const;
 
   /**
-   * expands a given list of physical volumes. The expansion is done in 
+   * expands a given list of physical volumes. The expansion is done in
    * n dimensions (n being the size of numbers and transformations). For a
    * given element, a n-dimensionnal array of elements is created whose
    * dimensions are given by numbers. Each element of this array is placed
@@ -221,9 +219,9 @@ class XmlLVolumeCnv : public XmlGenericCnv {
    * @param transformations the transformations used to generate the volumes
    * in each dimension
    */
-  PVolumes* expandParamPhysVol (PVolumes* volumes,
-	                            std::vector<int> numbers,
-								std::vector<Gaudi::Transform3D*> transformations);
+  std::unique_ptr<PVolumes> expandParamPhysVol(std::unique_ptr<PVolumes> volumes,
+                                               const std::vector<int>& numbers,
+                                               const std::vector<std::unique_ptr<Gaudi::Transform3D>>& transformations) const;
 
   /**
    * deals with the xml tag \<surf\>. Returns a string giving the address of
@@ -232,7 +230,7 @@ class XmlLVolumeCnv : public XmlGenericCnv {
    * @param element the DOM element representing the tag
    * @return the address of the surface
    */
-  std::string dealWithSurf (xercesc::DOMElement* element);
+  std::string dealWithSurf(const xercesc::DOMElement* element) const;
 
   /**
    * deals with the xml tags \<box\>, \<trd\>, \<trap\>, \<cons\>, \<tubs\>,
@@ -244,7 +242,7 @@ class XmlLVolumeCnv : public XmlGenericCnv {
    * @param element the DOM element representing the tag
    * @return the C++ object
    */
-  ISolid* dealWithSolid (xercesc::DOMElement* element);
+  std::unique_ptr<ISolid> dealWithSolid(const xercesc::DOMElement* element) const;
 
   /**
    * deals with the xml tags \<union\>, \<subtraction\> and \<intersection\>.
@@ -255,7 +253,7 @@ class XmlLVolumeCnv : public XmlGenericCnv {
    * @param element the DOM element representing the tag
    * @return the C++ object
    */
-  SolidBoolean* dealWithBoolean (xercesc::DOMElement* element);
+  std::unique_ptr<SolidBoolean> dealWithBoolean(const xercesc::DOMElement* element) const;
 
   /**
    * deals with the children of a boolean operation. Builds a PlacedSolidList
@@ -264,10 +262,10 @@ class XmlLVolumeCnv : public XmlGenericCnv {
    * @param element the boolean solid node
    * @return the list of children, as a PlacedSolidList*
    */
-  PlacedSolidList* dealWithBooleanChildren (xercesc::DOMElement* element);
+  std::unique_ptr<PlacedSolidList> dealWithBooleanChildren(const xercesc::DOMElement* element) const;
 
   /**
-   * deals with the xml tags \<box\>, \<cons\>, \<sphere\>, \<tubs\>, \<trd\> 
+   * deals with the xml tags \<box\>, \<cons\>, \<sphere\>, \<tubs\>, \<trd\>
    * and \<trap\>.
    * Creates the corresponding C++ Object or 0 if the element does not
    * correspond to one of these tags. Take care that memory is allocated
@@ -276,7 +274,7 @@ class XmlLVolumeCnv : public XmlGenericCnv {
    * @param element the DOM element representing the tag
    * @return the C++ object
    */
-  ISolid* dealWithSimpleSolid (xercesc::DOMElement* element);
+  std::unique_ptr<ISolid> dealWithSimpleSolid(const xercesc::DOMElement* element) const;
 
   /**
    * deals with the xml tag \<box\>. Creates the corresponding C++ Object.
@@ -285,7 +283,7 @@ class XmlLVolumeCnv : public XmlGenericCnv {
    * @param element the DOM element representing the tag
    * @return the C++ object
    */
-  SolidBox* dealWithBox (xercesc::DOMElement* element);
+  std::unique_ptr<SolidBox> dealWithBox(const xercesc::DOMElement* element) const;
 
   /**
    * deals with the xml tag \<trd\>. Creates the corresponding C++ Object.
@@ -294,7 +292,7 @@ class XmlLVolumeCnv : public XmlGenericCnv {
    * @param element the DOM element representing the tag
    * @return the C++ object
    */
-  SolidTrd* dealWithTrd (xercesc::DOMElement* element);
+  std::unique_ptr<SolidTrd> dealWithTrd(const xercesc::DOMElement* element) const;
 
   /**
    * deals with the xml tag \<trap\>. Creates the corresponding C++ Object.
@@ -303,7 +301,7 @@ class XmlLVolumeCnv : public XmlGenericCnv {
    * @param element the DOM element representing the tag
    * @return the C++ object
    */
-  SolidTrap* dealWithTrap (xercesc::DOMElement* element);
+  std::unique_ptr<SolidTrap> dealWithTrap(const xercesc::DOMElement* element) const;
 
   /**
    * deals with the xml tag \<cons\>. Creates the corresponding C++ Object.
@@ -313,7 +311,7 @@ class XmlLVolumeCnv : public XmlGenericCnv {
    * @return the C++ object or 0 if an error occured
    * @return status depending on the completion of the call
    */
-  SolidCons* dealWithCons (xercesc::DOMElement* element);
+  std::unique_ptr<SolidCons> dealWithCons(const xercesc::DOMElement* element) const;
 
   /**
    * deals with the xml tag \<polycone\>. Creates the corresponding C++ Object.
@@ -323,7 +321,7 @@ class XmlLVolumeCnv : public XmlGenericCnv {
    * @return the C++ object or 0 if an error occured
    * @return status depending on the completion of the call
    */
-  SolidPolycone* dealWithPolycone (xercesc::DOMElement* element);
+  std::unique_ptr<SolidPolycone> dealWithPolycone(const xercesc::DOMElement* element) const;
 
   /**
    * deals with the xml tag \<tubs\>. Creates the corresponding C++ Object.
@@ -332,7 +330,7 @@ class XmlLVolumeCnv : public XmlGenericCnv {
    * @param element the DOM element representing the tag
    * @return the C++ object
    */
-  SolidTubs* dealWithTubs (xercesc::DOMElement* element);
+  std::unique_ptr<SolidTubs> dealWithTubs(const xercesc::DOMElement* element) const;
 
   /**
    * deals with the xml tag \<sphere\>. Creates the corresponding C++ Object.
@@ -341,7 +339,7 @@ class XmlLVolumeCnv : public XmlGenericCnv {
    * @param element the DOM element representing the tag
    * @return the C++ object
    */
-  SolidSphere* dealWithSphere (xercesc::DOMElement* element);
+  std::unique_ptr<SolidSphere> dealWithSphere(const xercesc::DOMElement* element) const;
 
   /**
    * deals with a transformation beginning at child number *index of the element
@@ -355,8 +353,8 @@ class XmlLVolumeCnv : public XmlGenericCnv {
    * @param index of the first element of the transformation in the parent
    * @return the Hep transformation or 0 if an error occured
    */
-  Gaudi::Transform3D* dealWithTransformation (xercesc::DOMElement* element,
-                                          unsigned int* index);
+  std::unique_ptr<Gaudi::Transform3D> dealWithTransformation(const xercesc::DOMElement* element,
+                                             unsigned int* index) const;
 
   /**
    * deals with the xml tag transformation. Creates the corresponding
@@ -365,7 +363,7 @@ class XmlLVolumeCnv : public XmlGenericCnv {
    * @param element the parent element of the transformation
    * @return the Hep transformation or 0 if an error occured
    */
-  Gaudi::Transform3D* dealWithTransformation (xercesc::DOMElement* element);
+  std::unique_ptr<Gaudi::Transform3D> dealWithTransformation(const xercesc::DOMElement* element) const;
 
   /**
    * deals with the xml tag \<posXYZ\>. Creates the corresponding Gaudi::TranslationXYZ
@@ -374,7 +372,7 @@ class XmlLVolumeCnv : public XmlGenericCnv {
    * @param element the DOM element representing the tag
    * @return the corresponding Hep transformation or 0 if an error occured
    */
-  Gaudi::Transform3D* dealWithPosXYZ (xercesc::DOMElement* element);
+  Gaudi::Transform3D dealWithPosXYZ(const xercesc::DOMElement* element) const;
 
   /**
    * deals with the xml tag \<posRPhiZ\>. Creates the corresponding Gaudi::TranslationXYZ
@@ -385,7 +383,7 @@ class XmlLVolumeCnv : public XmlGenericCnv {
    * @param element the DOM element representing the tag
    * @return the corresponding Hep transformation or 0 if an error occured
    */
-  Gaudi::Transform3D* dealWithPosRPhiZ (xercesc::DOMElement* element);
+  Gaudi::Transform3D dealWithPosRPhiZ(const xercesc::DOMElement* element) const;
 
   /**
    * deals with the xml tag \<posRThPhi\>. Creates the corresponding
@@ -396,7 +394,7 @@ class XmlLVolumeCnv : public XmlGenericCnv {
    * @param element the DOM element representing the tag
    * @return the corresponding Hep transformation or 0 if an error occured
    */
-  Gaudi::Transform3D* dealWithPosRThPhi (xercesc::DOMElement* element);
+  Gaudi::Transform3D dealWithPosRThPhi(const xercesc::DOMElement* element) const;
 
   /**
    * deals with the xml tag \<rotXYZ\>. Creates the corresponding Gaudi::Rotation
@@ -405,7 +403,7 @@ class XmlLVolumeCnv : public XmlGenericCnv {
    * @param element the DOM element representing the tag
    * @return the corresponding Hep transformation or 0 if an error occured
    */
-  Gaudi::Transform3D* dealWithRotXYZ (xercesc::DOMElement* element);
+  Gaudi::Transform3D dealWithRotXYZ(const xercesc::DOMElement* element) const;
 
   /**
    * deals with the xml tag \<rotAxis\>. Creates the corresponding Gaudi::Rotation
@@ -417,14 +415,14 @@ class XmlLVolumeCnv : public XmlGenericCnv {
    * @param element the DOM element representing the tag
    * @return the corresponding Hep transformation or 0 if an error occured
    */
-  Gaudi::Transform3D* dealWithRotAxis (xercesc::DOMElement* element);
+  Gaudi::Transform3D dealWithRotAxis(const xercesc::DOMElement* element) const;
 
 
   /**
    * Method to replace the tag string by the value, if it exists
    */
-  void replaceTagInString( std::string& string );
-  
+  void replaceTagInString( std::string& string ) const;
+
 private:
 
   // Constant strings for element and parameter names

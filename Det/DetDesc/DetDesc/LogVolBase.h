@@ -8,6 +8,7 @@
 #include "GaudiKernel/IRegistry.h"
 #include "GaudiKernel/Transform3DTypes.h"
 /// DetDesc  includes
+#include "DetDesc/DetDesc.h"
 #include "DetDesc/ISolid.h" 
 #include "DetDesc/Services.h" 
 #include "DetDesc/IPVolume.h"
@@ -48,10 +49,11 @@ protected:
               const std::string& sensitivity = "" ,
               const std::string& magnetic    = "" );
   
-  /// destructor 
-  virtual ~LogVolBase();
-  
 public:
+
+  /// destructor 
+  ~LogVolBase() override;
+  
   
   /** retrieve  the name(identification)  of Logical Volume  
    *  @see ILVolume 
@@ -417,7 +419,7 @@ private:
   /// static  volume counter 
   static  unsigned long s_volumeCounter ;
   /// reference to services
-  DetDesc::ServicesPtr m_services;
+  DetDesc::ServicesPtr m_services = DetDesc::services();
 };
 
 // ============================================================================
