@@ -163,8 +163,6 @@ class XmlLVolumeCnv : public XmlGenericCnv {
 
   /**
    * deals with the xml tag \<physvol\>. Creates the corresponding C++ Object.
-   * Take care that memory is allocated in case the return value is not null
-   * and that the caller is responsible for deallocating it
    * @param element the DOM element representing the tag
    * @return the C++ Object
    */
@@ -175,9 +173,7 @@ class XmlLVolumeCnv : public XmlGenericCnv {
    * Instead of creating a C++ object corresponding to these parametrised
    * volumes, this method expands them in a vector of simple physical volumes.
    * The return value is a pointer on this vector or 0 if there is an
-   * error in the tag definition. Take care that memory is allocated for
-   * each physical volume inside the vector in case the return value is not
-   * empty and that the caller is responsible for deallocating it
+   * error in the tag definition.
    * @param element the DOM element representing the tag
    * @return a vector of physical volumes
    */
@@ -189,9 +185,7 @@ class XmlLVolumeCnv : public XmlGenericCnv {
    * Instead of creating a C++ object corresponding to these parametrised
    * volumes, this method expands them in a vector of simple physical volumes.
    * The return value is a pointer on this vector or 0 if there is an
-   * error in the tag definition. Take care that memory is allocated for
-   * each physical volume inside the vector in case the return value is not
-   * empty and that the caller is responsible for deallocating it
+   * error in the tag definition.
    * @param element the DOM element representing the tag
    * @param nD      dimension of volume
    * @return a vector of physical volumes
@@ -211,9 +205,6 @@ class XmlLVolumeCnv : public XmlGenericCnv {
    * Note that a transformation may be null. It is supposed then to be the
    * identity. Note that null is returned if numbers and transformations
    * don't have the same size.
-   * Take care that the first argument pointer may be deallocate and that
-   * memory will be allocated for the return value. The deallocation of this
-   * one is the responsability of the caller.
    * @param volumes the volumes to be expanded
    * @param numbers the number of copy of each volume in each dimension
    * @param transformations the transformations used to generate the volumes
@@ -237,8 +228,7 @@ class XmlLVolumeCnv : public XmlGenericCnv {
    * \<sphere\>, \<union\>, \<subtraction\> and \<intersection\>.
    * Creates the corresponding
    * C++ Object or 0 if the element does not correspond to one of these
-   * tags. Take care that memory is allocated in case the return value is
-   * not null and that the caller is responsible for deallocating it
+   * tags.
    * @param element the DOM element representing the tag
    * @return the C++ object
    */
@@ -247,9 +237,7 @@ class XmlLVolumeCnv : public XmlGenericCnv {
   /**
    * deals with the xml tags \<union\>, \<subtraction\> and \<intersection\>.
    * Creates the corresponding C++ Object or 0 if the element does not
-   * correspond to one of these tags. Take care that memory is allocated
-   * in case the return value is not null and that the caller is responsible
-   * for deallocating it
+   * correspond to one of these tags.
    * @param element the DOM element representing the tag
    * @return the C++ object
    */
@@ -257,8 +245,7 @@ class XmlLVolumeCnv : public XmlGenericCnv {
 
   /**
    * deals with the children of a boolean operation. Builds a PlacedSolidList
-   * out of them. Note that memory is allocated and that the caller is
-   * responsible for its deallocation.
+   * out of them.
    * @param element the boolean solid node
    * @return the list of children, as a PlacedSolidList*
    */
@@ -268,9 +255,7 @@ class XmlLVolumeCnv : public XmlGenericCnv {
    * deals with the xml tags \<box\>, \<cons\>, \<sphere\>, \<tubs\>, \<trd\>
    * and \<trap\>.
    * Creates the corresponding C++ Object or 0 if the element does not
-   * correspond to one of these tags. Take care that memory is allocated
-   * in case the return value is not null and that the caller is responsible
-   * for deallocating it
+   * correspond to one of these tags.
    * @param element the DOM element representing the tag
    * @return the C++ object
    */
@@ -278,8 +263,6 @@ class XmlLVolumeCnv : public XmlGenericCnv {
 
   /**
    * deals with the xml tag \<box\>. Creates the corresponding C++ Object.
-   * Take care that memory is allocated and that the caller is responsible
-   * for deallocating it
    * @param element the DOM element representing the tag
    * @return the C++ object
    */
@@ -287,8 +270,6 @@ class XmlLVolumeCnv : public XmlGenericCnv {
 
   /**
    * deals with the xml tag \<trd\>. Creates the corresponding C++ Object.
-   * Take care that memory is allocated and that the caller is responsible
-   * for deallocating it
    * @param element the DOM element representing the tag
    * @return the C++ object
    */
@@ -296,8 +277,6 @@ class XmlLVolumeCnv : public XmlGenericCnv {
 
   /**
    * deals with the xml tag \<trap\>. Creates the corresponding C++ Object.
-   * Take care that memory is allocated and that the caller is responsible
-   * for deallocating it
    * @param element the DOM element representing the tag
    * @return the C++ object
    */
@@ -305,8 +284,6 @@ class XmlLVolumeCnv : public XmlGenericCnv {
 
   /**
    * deals with the xml tag \<cons\>. Creates the corresponding C++ Object.
-   * Take care that memory is allocated and that the caller is responsible
-   * for deallocating it
    * @param element the DOM element representing the tag
    * @return the C++ object or 0 if an error occured
    * @return status depending on the completion of the call
@@ -315,8 +292,6 @@ class XmlLVolumeCnv : public XmlGenericCnv {
 
   /**
    * deals with the xml tag \<polycone\>. Creates the corresponding C++ Object.
-   * Take care that memory is allocated and that the caller is responsible
-   * for deallocating it
    * @param element the DOM element representing the tag
    * @return the C++ object or 0 if an error occured
    * @return status depending on the completion of the call
@@ -325,8 +300,6 @@ class XmlLVolumeCnv : public XmlGenericCnv {
 
   /**
    * deals with the xml tag \<tubs\>. Creates the corresponding C++ Object.
-   * Take care that memory is allocated and that the caller is responsible
-   * for deallocating it
    * @param element the DOM element representing the tag
    * @return the C++ object
    */
@@ -334,8 +307,6 @@ class XmlLVolumeCnv : public XmlGenericCnv {
 
   /**
    * deals with the xml tag \<sphere\>. Creates the corresponding C++ Object.
-   * Take care that memory is allocated and that the caller is responsible
-   * for deallocating it
    * @param element the DOM element representing the tag
    * @return the C++ object
    */
@@ -347,8 +318,7 @@ class XmlLVolumeCnv : public XmlGenericCnv {
    * the next child of element.
    * The return value is either Gaudi::Transform3D::Identity in case there is no
    * transformation or the Gaudi::Transform3D corresponding to the DOM tree.
-   * This method allocates memory. The deallocation is the responsability
-   * of the caller. This method should never raise an exception.
+   * This method should never raise an exception.
    * @param element the parent element of the transformation
    * @param index of the first element of the transformation in the parent
    * @return the Hep transformation or 0 if an error occured
@@ -358,26 +328,21 @@ class XmlLVolumeCnv : public XmlGenericCnv {
 
   /**
    * deals with the xml tag transformation. Creates the corresponding
-   * Gaudi::TranslationXYZ and allocates the corresponding memory. The deallocation
-   * is the responsability of the caller
+   * Gaudi::TranslationXYZ
    * @param element the parent element of the transformation
    * @return the Hep transformation or 0 if an error occured
    */
-  std::unique_ptr<Gaudi::Transform3D> dealWithTransformation(const xercesc::DOMElement* element) const;
+  Gaudi::Transform3D dealWithTransformation(const xercesc::DOMElement* element) const;
 
   /**
-   * deals with the xml tag \<posXYZ\>. Creates the corresponding Gaudi::TranslationXYZ
-   * and allocates the corresponding memory. The deallocation is the
-   * responsability of the caller
+   * deals with the xml tag \<posXYZ\>. Creates the corresponding Gaudi::TranslationXYZ.
    * @param element the DOM element representing the tag
    * @return the corresponding Hep transformation or 0 if an error occured
    */
   Gaudi::Transform3D dealWithPosXYZ(const xercesc::DOMElement* element) const;
 
   /**
-   * deals with the xml tag \<posRPhiZ\>. Creates the corresponding Gaudi::TranslationXYZ
-   * and allocates the corresponding memory. The deallocation is the
-   * responsability of the caller.
+   * deals with the xml tag \<posRPhiZ\>. Creates the corresponding Gaudi::TranslationXYZ.
    * An XmlCnvException will be launched if the tag attribute r has a negative
    * value
    * @param element the DOM element representing the tag
@@ -387,8 +352,7 @@ class XmlLVolumeCnv : public XmlGenericCnv {
 
   /**
    * deals with the xml tag \<posRThPhi\>. Creates the corresponding
-   * Gaudi::TranslationXYZ and allocates the corresponding memory. The deallocation
-   * is the responsability of the caller
+   * Gaudi::TranslationXYZ
    * An XmlCnvException will be launched if the tag attribute r has a negative
    * value
    * @param element the DOM element representing the tag
@@ -398,8 +362,6 @@ class XmlLVolumeCnv : public XmlGenericCnv {
 
   /**
    * deals with the xml tag \<rotXYZ\>. Creates the corresponding Gaudi::Rotation
-   * and allocates the corresponding memory. The deallocation is the
-   * responsability of the caller
    * @param element the DOM element representing the tag
    * @return the corresponding Hep transformation or 0 if an error occured
    */
@@ -407,8 +369,6 @@ class XmlLVolumeCnv : public XmlGenericCnv {
 
   /**
    * deals with the xml tag \<rotAxis\>. Creates the corresponding Gaudi::Rotation
-   * and allocates the corresponding memory. The deallocation is the
-   * responsability of the caller
    * An XmlCnvException will be launched if the tag attribute theta has a
    * value outside the range 0 - 180 * degree or if the tag attribute phi
    * has a value outside the range 0 - 360 * degree

@@ -872,7 +872,7 @@ std::unique_ptr<SolidBoolean> XmlLVolumeCnv::dealWithBoolean(const xercesc::DOME
   PlacedSolid placedSolid = std::move(solids->front());
   solids->pop_front();
   if (0 == xercesc::XMLString::compareString(unionString, tagName)) {
-    auto unionResult = std::make_unique<SolidUnion>(nameAttribute, placedSolid.solid.release());
+    auto unionResult = std::make_unique<SolidUnion>(nameAttribute, std::move(placedSolid.solid));
     // TO BE IMPLEMENTED -- TODO
     if (placedSolid.transformation) {
       MsgStream log(msgSvc(), "XmlLVolumeCnv" );
@@ -886,7 +886,7 @@ std::unique_ptr<SolidBoolean> XmlLVolumeCnv::dealWithBoolean(const xercesc::DOME
     while (!solids->empty()) {
       placedSolid = std::move(solids->front());
       solids->pop_front();
-      StatusCode sc = unionResult->unite (placedSolid.solid.release(),
+      StatusCode sc = unionResult->unite (std::move(placedSolid.solid),
                                           placedSolid.transformation.get());
       if( !sc.isSuccess() ) {
         MsgStream log(msgSvc(), "XmlLVolumeCnv" );
@@ -898,7 +898,7 @@ std::unique_ptr<SolidBoolean> XmlLVolumeCnv::dealWithBoolean(const xercesc::DOME
   } else if (0 == xercesc::XMLString::compareString
              (subtractionString, tagName)) {
     auto subtractionResult =
-      std::make_unique<SolidSubtraction>(nameAttribute, placedSolid.solid.release());
+      std::make_unique<SolidSubtraction>(nameAttribute, std::move(placedSolid.solid));
     // TO BE IMPLEMENTED -- TODO
     if ( placedSolid.transformation) {
       MsgStream log(msgSvc(), "XmlLVolumeCnv" );
@@ -912,7 +912,7 @@ std::unique_ptr<SolidBoolean> XmlLVolumeCnv::dealWithBoolean(const xercesc::DOME
     while (!solids->empty()) {
       placedSolid = std::move(solids->front());
       solids->pop_front();
-      StatusCode sc = subtractionResult->subtract (placedSolid.solid.release(),
+      StatusCode sc = subtractionResult->subtract (std::move(placedSolid.solid),
                                                    placedSolid.transformation.get());
       if( !sc.isSuccess() ) {
         MsgStream log(msgSvc(), "XmlLVolumeCnv" );
@@ -924,7 +924,7 @@ std::unique_ptr<SolidBoolean> XmlLVolumeCnv::dealWithBoolean(const xercesc::DOME
   } else if (0 == xercesc::XMLString::compareString
              (intersectionString, tagName)) {
     auto intersectionResult =
-      std::make_unique<SolidIntersection>(nameAttribute, placedSolid.solid.release());
+      std::make_unique<SolidIntersection>(nameAttribute, std::move(placedSolid.solid));
     // TO BE IMPLEMENTED -- TODO
     if ( placedSolid.transformation) {
       MsgStream log(msgSvc(), "XmlLVolumeCnv" );
@@ -938,7 +938,7 @@ std::unique_ptr<SolidBoolean> XmlLVolumeCnv::dealWithBoolean(const xercesc::DOME
     while (!solids->empty()) {
       placedSolid = std::move(solids->front());
       solids->pop_front();
-      StatusCode sc = intersectionResult->intersect (placedSolid.solid.release(),
+      StatusCode sc = intersectionResult->intersect (std::move(placedSolid.solid),
                                                      placedSolid.transformation.get());
       if( !sc.isSuccess() ) {
         MsgStream log(msgSvc(), "XmlLVolumeCnv" );
@@ -1538,10 +1538,6 @@ XmlLVolumeCnv::dealWithTransformation(const xercesc::DOMElement* element,
     *index += 1;
   }
 
-
-#ifdef __INTEL_COMPILER        // Disable ICC remark
-  #pragma warning(disable:177) // handler parameter was declared but never referenced
-#endif
   // the result
   boost::optional<Gaudi::Transform3D> result;
 
@@ -1555,18 +1551,18 @@ XmlLVolumeCnv::dealWithTransformation(const xercesc::DOMElement* element,
     try {
       result = dealWithPosRPhiZ(childElement);
     } catch (XmlCnvException e) {
-      result = Gaudi::Transform3D();
+      result.emplace();
     }
   } else if (0 == xercesc::XMLString::compareString(posRThPhiString, tagName)) {
     // catches an exception in case the r attribute is negative
     try {
       result = dealWithPosRThPhi(childElement);
     } catch (XmlCnvException e) {
-      result = Gaudi::Transform3D();
+      result.emplace();
     }
   } else if (0 == xercesc::XMLString::compareString
              (transformationString, tagName)) {
-    return dealWithTransformation (childElement);
+    return std::make_unique<Gaudi::Transform3D>(dealWithTransformation (childElement));
   } else {
     MsgStream log(msgSvc(), "XmlLVolumeCnv" );
     char* tagNameString = xercesc::XMLString::transcode(tagName);
@@ -1577,7 +1573,7 @@ XmlLVolumeCnv::dealWithTransformation(const xercesc::DOMElement* element,
     return std::make_unique<Gaudi::Transform3D>();
   }
 
-  if (!result) { 
+  if (!result) {
     MsgStream log(msgSvc(), "XmlLVolumeCnv");
     log << MSG::ERROR << "did not get expected translation???" << endmsg;
   }
@@ -1614,7 +1610,6 @@ XmlLVolumeCnv::dealWithTransformation(const xercesc::DOMElement* element,
     }
   }
 
-  // returns
   return std::make_unique<Gaudi::Transform3D>( *result );
 } // end dealWithTransformation
 
@@ -1622,12 +1617,12 @@ XmlLVolumeCnv::dealWithTransformation(const xercesc::DOMElement* element,
 // -----------------------------------------------------------------------
 // Deal with transformation
 // -----------------------------------------------------------------------
-std::unique_ptr<Gaudi::Transform3D>
+Gaudi::Transform3D
 XmlLVolumeCnv::dealWithTransformation(const xercesc::DOMElement* element) const {
   // gets the children
   xercesc::DOMNodeList* childNodes = element->getChildNodes();
 
-  auto result = std::make_unique<Gaudi::Transform3D>();
+  Gaudi::Transform3D result;
   // scans the children and builds the transformations
   // computes the result
   unsigned int i = 0;
@@ -1635,7 +1630,7 @@ XmlLVolumeCnv::dealWithTransformation(const xercesc::DOMElement* element) const 
   while (i < childNodes->getLength()) {
     auto transformation = dealWithTransformation (element, &i);
     if (transformation)  {
-      *result = *transformation * *result;
+      result = *transformation * result;
       ++n;
     }
   }

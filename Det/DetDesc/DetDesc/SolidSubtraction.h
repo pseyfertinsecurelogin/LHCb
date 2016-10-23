@@ -1,4 +1,3 @@
-// $Id: SolidSubtraction.h,v 1.15 2007-03-16 15:57:09 cattanem Exp $
 /// ===========================================================================
 #ifndef       DETDESC_SOLIDSUBTRACTION_H
 #define       DETDESC_SOLIDSUBTRACTION_H 1 
@@ -23,7 +22,7 @@ class SolidFactory;
  *  @date xx/xx/xxxx
  */
 
-class SolidSubtraction: public SolidBoolean
+class SolidSubtraction final : public SolidBoolean
 {
   /// friend factory for instantiation 
   friend class SolidFactory<SolidSubtraction>;
@@ -34,7 +33,9 @@ public:
    *  @param name name of the intersection
    *  @param first pointer to first/main solid 
    */
-  SolidSubtraction( const std::string& name , ISolid* first );
+  SolidSubtraction( const std::string& name , std::unique_ptr<ISolid> first );
+  SolidSubtraction( const std::string& name , ISolid* first )
+      : SolidSubtraction(name,std::unique_ptr<ISolid>(first)) {}
   
 public:
   
@@ -64,8 +65,12 @@ public:
    *  @return status code 
    */
   StatusCode subtract 
-  ( ISolid*               solid , 
+  ( std::unique_ptr<ISolid>  solid , 
     const Gaudi::Transform3D* mtrx  );
+  StatusCode subtract 
+  ( ISolid*               solid , 
+    const Gaudi::Transform3D* mtrx  )
+  { return subtract( std::unique_ptr<ISolid>(solid), mtrx ); }
   
   /** subtract child solid from  the solid 
    *  @param child    pointer to child solid 
@@ -74,9 +79,14 @@ public:
    *  @return status code 
    */
   StatusCode subtract 
-  ( ISolid*               child                    , 
+  ( std::unique_ptr<ISolid>  child                    , 
     const Gaudi::XYZPoint&     position                 , 
     const Gaudi::Rotation3D&    rotation = Gaudi::Rotation3D() );
+  StatusCode subtract 
+  ( ISolid*               child                    , 
+    const Gaudi::XYZPoint&     position                 , 
+    const Gaudi::Rotation3D&    rotation = Gaudi::Rotation3D() )
+  { return subtract( std::unique_ptr<ISolid>(child), position, rotation); }
   
 protected:
   

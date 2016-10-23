@@ -20,7 +20,7 @@ class SolidFactory;          ///< DetDesc
  *  @date xx/xx/xxx
  */
 
-class SolidBox: public virtual SolidBase
+class SolidBox final : public virtual SolidBase
 {
   /// friend factory 
   friend class SolidFactory<SolidBox>;

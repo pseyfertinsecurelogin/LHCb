@@ -1,4 +1,3 @@
-// $Id: SolidCons.h,v 1.22 2008-10-28 12:04:37 cattanem Exp $ 
 // ===========================================================================
 #ifndef     DETDESC_SOLIDCONS_H
 #define     DETDESC_SOLIDCONS_H 1   
@@ -25,7 +24,7 @@ class SolidFactory;
  *  @author Vanya Belyaev 
  */
 
-class SolidCons: public virtual SolidBase
+class SolidCons final : public virtual SolidBase
 {
   /// friend factory for instantiation 
   friend class SolidFactory<SolidCons>;

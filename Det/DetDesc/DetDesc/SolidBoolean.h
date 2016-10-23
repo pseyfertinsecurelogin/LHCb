@@ -149,11 +149,13 @@ protected:
    *  @exception SolidException NULL pointer to ISolid
    */
   SolidBoolean( const std::string& name  ,
-                ISolid*            solid );
+                ISolid*            solid ) : SolidBoolean(name,std::unique_ptr<ISolid>(solid)) {}
+  SolidBoolean( const std::string& name  ,
+                std::unique_ptr<ISolid> solid );
 
 public:
   /// destructor
-  virtual ~SolidBoolean();
+  ~SolidBoolean() override;
 
 protected:
 
@@ -168,8 +170,12 @@ protected:
    *  @return status code
    */
   StatusCode addChild
-  ( ISolid*               child ,
+  ( std::unique_ptr<ISolid>   child ,
     const Gaudi::Transform3D* mtrx  );
+  StatusCode addChild
+  ( ISolid*               child ,
+    const Gaudi::Transform3D* mtrx  ) 
+  { return addChild( std::unique_ptr<ISolid>(child), mtrx) ; }
 
   /** add child to daughter container
    *  @param child    pointer to solid
@@ -177,9 +183,14 @@ protected:
    *  @param rotation rotation
    */
   StatusCode addChild
-  ( ISolid*               child    ,
+  ( std::unique_ptr<ISolid>   child    ,
     const Gaudi::XYZPoint&     position ,
     const Gaudi::Rotation3D&    rotation );
+  StatusCode addChild
+  ( ISolid*               child    ,
+    const Gaudi::XYZPoint&     position ,
+    const Gaudi::Rotation3D&    rotation )
+  { return addChild( std::unique_ptr<ISolid>(child),position,rotation); }
 
   /** acess to iterator
    *  @return "begin" iterator

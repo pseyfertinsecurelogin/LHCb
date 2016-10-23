@@ -25,9 +25,9 @@
  */
 // ============================================================================
 SolidIntersection::SolidIntersection( const std::string& name  , 
-                                      ISolid*            first )
+                                      std::unique_ptr<ISolid> first )
   : SolidBase    ( name         )
-  , SolidBoolean ( name , first )
+  , SolidBoolean ( name , std::move(first) )
 {}
 // ============================================================================
 
@@ -75,9 +75,9 @@ bool SolidIntersection::isInsideImpl( const aPoint   & point ) const
  *  @return status code
  */
 // ============================================================================
-StatusCode  SolidIntersection::intersect( ISolid*               solid     , 
+StatusCode  SolidIntersection::intersect( std::unique_ptr<ISolid> solid       , 
                                           const Gaudi::Transform3D* mtrx      )
-{  return addChild( solid , mtrx ); }
+{  return addChild( std::move(solid) , mtrx ); }
 
 // ============================================================================
 /** add intersections 
@@ -88,9 +88,9 @@ StatusCode  SolidIntersection::intersect( ISolid*               solid     ,
  */
 // ============================================================================
 StatusCode  SolidIntersection::intersect 
-( ISolid*               solid    , 
+( std::unique_ptr<ISolid> solid  , 
   const Gaudi::XYZPoint&     position , 
   const Gaudi::Rotation3D&    rotation )
-{ return addChild( solid , position , rotation ) ; }
+{ return addChild( std::move(solid) , position , rotation ) ; }
 
 // ============================================================================
