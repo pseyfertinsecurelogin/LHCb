@@ -28,7 +28,6 @@ MCEventTypeFinder::MCEventTypeFinder( const std::string& type,
                               const std::string& name,
                               const IInterface* parent )
   : GaudiTool ( type, name , parent ),
-    m_evtTypeSvc(0),
     m_mcFinders(0),
     m_inputTypes(0),
     m_decProdCut(0),
@@ -60,14 +59,6 @@ MCEventTypeFinder::MCEventTypeFinder( const std::string& type,
   
 }
 
-//=============================================================================
-// Standard destructor
-//=============================================================================
-
-MCEventTypeFinder::~MCEventTypeFinder( )
-{
-
-}
 
 //=============================================================================
 
@@ -78,7 +69,7 @@ StatusCode MCEventTypeFinder::initialize(){
   if(UNLIKELY(msgLevel(MSG::DEBUG))) debug() << "==> Initializing" << endmsg;
 
   // Retrieve the EvtTypeSvc here so that it is always done at initialization
-  m_evtTypeSvc = svc<IEvtTypeSvc>( "EvtTypeSvc", true );
+  m_evtTypeSvc = service( "EvtTypeSvc", true );
 
   if(m_inputTypes.empty()) m_allTypes=m_evtTypeSvc->allTypes();
   else vec2set(m_inputTypes,m_allTypes);
@@ -135,23 +126,18 @@ StatusCode MCEventTypeFinder::fillMCTools()
   std::string minbias =  m_evtTypeSvc->decayDescriptor(m_mbias);
 
   //if minbias doesn't exist, pick the highest one:
-  if(!m_allTypes.count(m_mbias))
-    {
+  if(!m_allTypes.count(m_mbias)) {
+    for(const auto& iType : m_allTypes) {
+        if(!iType) break;
+        std::string sdecay=m_evtTypeSvc->decayDescriptor(iType);
       
-      for(LHCb::EventTypeSet::const_iterator iType=m_allTypes.begin();
-	  iType!=m_allTypes.end(); iType++)
-	{
-	  if(!(*iType)) break;
-	  std::string sdecay=m_evtTypeSvc->decayDescriptor(*iType);
-    
-	  if(sdecay=="Unknown" || sdecay=="") continue;
-	  if (strcompNoSpace(sdecay,minbias))
-	    {
-	      info() << "Resetting min bias to EventType " << *iType << endmsg;
-	      m_mbias=*iType;
-	      break;
-	    }
-	}
+        if(sdecay=="Unknown" || sdecay=="") continue;
+        if (strcompNoSpace(sdecay,minbias)) {
+            info() << "Resetting min bias to EventType " << iType << endmsg;
+            m_mbias=iType;
+            break;
+        }
+	  }
     }
   //if it still doesn't exist, just add it in, all events are min bias, generally
   if(!m_allTypes.count(m_mbias)) m_allTypes.insert(m_mbias);
@@ -159,9 +145,7 @@ StatusCode MCEventTypeFinder::fillMCTools()
     debug() << "Min bias is set to EventType " << m_mbias << endmsg;
   
 
-  for(LHCb::EventTypeSet::const_iterator iType=m_allTypes.begin();
-      iType!=m_allTypes.end(); iType++)
-  {
+  for(auto iType=m_allTypes.begin(); iType!=m_allTypes.end(); iType++) {
     if(!(*iType)) break;
     std::string sname=m_evtTypeSvc->nickName(*iType);
     std::string sdecay=m_evtTypeSvc->decayDescriptor(*iType);

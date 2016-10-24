@@ -25,12 +25,11 @@ namespace LHCb {
  *  @date   4-7-2002
  */
 
-static const InterfaceID IID_IIdealStateCreator( "IIdealStateCreator", 1, 0 );
 
-class IIdealStateCreator: virtual public IAlgTool {
-public:
+struct  IIdealStateCreator: extend_interfaces<IAlgTool> {
+
   /// Retrieve interface ID
-  static const InterfaceID& interfaceID() { return IID_IIdealStateCreator; }
+  DeclareInterfaceID( IIdealStateCreator, 2, 0 );
   
   /// Create a state at a z-position from an MCParticle's entry/exit points
   virtual StatusCode createState( const LHCb::MCParticle* mcPart,

@@ -1,4 +1,3 @@
-// $Id: EvtTypeChecker.h,v 1.2 2007-05-29 08:48:16 cattanem Exp $
 #ifndef EVTTYPECHECKER_H 
 #define EVTTYPECHECKER_H 1
 
@@ -12,7 +11,7 @@
 // from LHCb
 #include "Kernel/IEvtTypeSvc.h"
 
-class IMCDecayFinder;
+struct IMCDecayFinder;
 
 
 /** @class EvtTypeChecker EvtTypeChecker.h
@@ -27,11 +26,9 @@ public:
   /// Standard constructor
   EvtTypeChecker( const std::string& name, ISvcLocator* pSvcLocator );
 
-  virtual ~EvtTypeChecker( ); ///< Destructor
-
-  virtual StatusCode initialize();    ///< Algorithm initialization
-  virtual StatusCode execute   ();    ///< Algorithm execution
-  virtual StatusCode finalize  ();    ///< Algorithm finalization
+  StatusCode initialize() override;    ///< Algorithm initialization
+  StatusCode execute   () override;    ///< Algorithm execution
+  StatusCode finalize  () override;    ///< Algorithm finalization
 
 protected:
 
