@@ -36,6 +36,7 @@ public:
    *  @param first pointer to first/main solid
    */
   SolidUnion( const std::string& name , std::unique_ptr<ISolid> first );
+  [[deprecated("please call with an std::unique_ptr<ISolid> as second argument")]]
   SolidUnion( const std::string& name , ISolid* first )
       : SolidUnion(name, std::unique_ptr<ISolid>(first) ){}
 
@@ -75,6 +76,7 @@ public:
    */
   StatusCode unite ( std::unique_ptr<ISolid>  solid ,
                      const Gaudi::Transform3D* mtrx  );
+  [[deprecated("please call with an std::unique_ptr<ISolid> as first argument")]]
   StatusCode unite ( ISolid*               solid ,
                      const Gaudi::Transform3D* mtrx  )
   { return unite( std::unique_ptr<ISolid>(solid), mtrx ); }
@@ -88,6 +90,7 @@ public:
   StatusCode unite ( std::unique_ptr<ISolid>    child                    ,
                      const Gaudi::XYZPoint&     position                 ,
                      const Gaudi::Rotation3D&    rotation = Gaudi::Rotation3D() );
+  [[deprecated("please call with an std::unique_ptr<ISolid> as first argument")]]
   StatusCode unite ( ISolid*               child                    ,
                      const Gaudi::XYZPoint&     position                 ,
                      const Gaudi::Rotation3D&    rotation = Gaudi::Rotation3D() )

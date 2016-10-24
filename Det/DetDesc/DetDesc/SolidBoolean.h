@@ -149,9 +149,10 @@ protected:
    *  @exception SolidException NULL pointer to ISolid
    */
   SolidBoolean( const std::string& name  ,
-                ISolid*            solid ) : SolidBoolean(name,std::unique_ptr<ISolid>(solid)) {}
-  SolidBoolean( const std::string& name  ,
                 std::unique_ptr<ISolid> solid );
+  [[deprecated("please call with std::unique_ptr<ISolid> as 2nd argument")]]
+  SolidBoolean( const std::string& name  ,
+                ISolid*            solid ) : SolidBoolean(name,std::unique_ptr<ISolid>(solid)) {}
 
 public:
   /// destructor
@@ -172,6 +173,7 @@ protected:
   StatusCode addChild
   ( std::unique_ptr<ISolid>   child ,
     const Gaudi::Transform3D* mtrx  );
+  [[deprecated("please call with std::unique_ptr<ISolid> as 1st argument")]]
   StatusCode addChild
   ( ISolid*               child ,
     const Gaudi::Transform3D* mtrx  ) 
@@ -186,6 +188,7 @@ protected:
   ( std::unique_ptr<ISolid>   child    ,
     const Gaudi::XYZPoint&     position ,
     const Gaudi::Rotation3D&    rotation );
+  [[deprecated("please call with std::unique_ptr<ISolid> as 1st argument")]]
   StatusCode addChild
   ( ISolid*               child    ,
     const Gaudi::XYZPoint&     position ,
@@ -208,7 +211,7 @@ protected:
       make with this solid
   *  @return maximum number of ticks
   */
-  Ticks::size_type maxNumberOfTicks() const ;
+  Ticks::size_type maxNumberOfTicks() const override;
 
 private:
 
