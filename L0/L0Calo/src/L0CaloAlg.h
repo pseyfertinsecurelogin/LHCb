@@ -13,7 +13,7 @@
 
 // forward declarations
 class DeCalorimeter ;
-class ICaloTriggerAdcsFromRaw ;
+struct ICaloTriggerAdcsFromRaw ;
 class L0CaloCandidatesFromRawBank ;
 
 /** @class L0CaloAlg L0CaloAlg.h
@@ -87,8 +87,8 @@ protected:
                        int cardNumber , int spdMult ,  unsigned int bank ) ;
 
 private:
-  bool        m_usePsSpd                  ;   ///< use Ps/Spd in validation
-  bool        m_addEcalToHcal             ;   ///< Use ECAL in Validation
+  bool        m_usePsSpd          = true  ;   ///< use Ps/Spd in validation
+  bool        m_addEcalToHcal     = true  ;   ///< Use ECAL in Validation
 
   bool        m_usePsSpdOpts              ;   ///< use Ps/Spd in validation (by options)
   bool        m_addEcalToHcalOpts         ;   ///< Use ECAL in Validation (by options)
@@ -103,18 +103,18 @@ private:
   bool        m_ignoreDatabase            ;   ///< Ignore the database content to add ECAL or to use PS/SPD
   
   // Local variables
-  DeCalorimeter *    m_ecal               ; ///< Pointer to Ecal detector element
-  DeCalorimeter *    m_hcal               ; ///< Pointer to Hcal detector element
-  DeCalorimeter *    m_prs                ; ///< Pointer to Prs detector element
+  DeCalorimeter *    m_ecal = nullptr     ; ///< Pointer to Ecal detector element
+  DeCalorimeter *    m_hcal = nullptr     ; ///< Pointer to Hcal detector element
+  DeCalorimeter *    m_prs  = nullptr     ; ///< Pointer to Prs detector element
   int                m_validPrs[16]       ; ///< Array for PRS validation: 1 or 2 bits
   int                m_validPrsInner[16]  ; ///< Array for PRS validation in the outer part.
 
-  ICaloTriggerAdcsFromRaw * m_adcsEcal ; ///< Tool to decode trigger adcs.
-  ICaloTriggerAdcsFromRaw * m_adcsHcal ; ///< Tool to decode trigger adcs.
-  ICaloTriggerBitsFromRaw * m_bitsFromRaw ; ///< Tool to decode trigger bits.
+  ICaloTriggerAdcsFromRaw * m_adcsEcal    = nullptr ; ///< Tool to decode trigger adcs.
+  ICaloTriggerAdcsFromRaw * m_adcsHcal    = nullptr ; ///< Tool to decode trigger adcs.
+  ICaloTriggerBitsFromRaw * m_bitsFromRaw = nullptr ; ///< Tool to decode trigger bits.
 
   LHCb::Calo::PrsSpdFiredCells m_PrsSpdIds  ; ///< Fired cells
-  L0CaloCandidatesFromRawBank * m_bankToTES ; ///< Tool to decode the raw banks
+  L0CaloCandidatesFromRawBank * m_bankToTES = nullptr ; ///< Tool to decode the raw banks
 
   // Trigger cards
   std::vector< TriggerCard > m_ecalFe ; ///< Ecal front-end card vector
@@ -122,15 +122,15 @@ private:
 
   std::vector<std::vector<unsigned int> > m_rawOutput ; ///< RAW output bank
 
-  double m_totRawSize;
-  int    m_nbEvents;  
+  double m_totRawSize = 0.0 ;
+  int    m_nbEvents   = 0   ;  
   
-  int m_bankVersion ; ///< Version of the bank to simulate
-  int m_nbValidation ; ///< Number of validation boards
+  int m_bankVersion   = 1; ///< Version of the bank to simulate
+  int m_nbValidation  = 0; ///< Number of validation boards
 
   std::vector< int > m_spdMult            ; ///< Multiplicity of Spd
 
-  Condition * m_l0Cond ; ///< Pointer to the L0 conditions 
+  Condition * m_l0Cond = nullptr; ///< Pointer to the L0 conditions 
 
   /// Call back function to check condition database content
   StatusCode updateL0Calibration() ;
