@@ -13,7 +13,7 @@
 #include "XmlTools/IXmlParserSvc.h"
 
 // Forward and external declarations
-class IXmlEntityResolver;
+struct IXmlEntityResolver;
 class IDetDataSvc;
 class IToolSvc;
 class IAlgTool;
