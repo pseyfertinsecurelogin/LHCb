@@ -36,19 +36,19 @@ class MemoryTool final : public extends<GaudiHistoTool, IGenericTool>
 
   StatusCode initialize () override;
 
-  void execute() /* const */  override; ///< Plot the current memory usage
+  void execute() /* const */ override; ///< Plot the current memory usage
 
   StatusCode finalize () override;
 
 private:
   // ==========================================================================
+  /// the previous measurement of virtual memory 
+  mutable std::atomic<double> m_prev = {-1.e+6};  
   mutable std::atomic<long long> m_counter = {0}; ///< Counter of calls to the tool
   unsigned int  m_bins{0};  ///< Number of bins of histogram (Property HistoSize)  
   // ==========================================================================
   /// flag to skip/reset events for memory measurements  
   unsigned int  m_skip   ;   // flag to skip/reset events for memory measurements
-  /// the previous measurement of virtual memory 
-  mutable std::atomic<double> m_prev = {-1.e+6};  
   // ==========================================================================
   /// the histogram definition (as property) 
   Gaudi::Histo1DDef m_histo1 { "Total Memory [MB]" ,   0 , 2000 }; // the histogram definition (as property) 

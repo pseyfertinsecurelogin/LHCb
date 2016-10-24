@@ -96,9 +96,11 @@ void MemoryTool::execute() /* const */
   const auto memMB = mem / 1000. ;
   // set "previous" measurement 
   auto prev = m_prev.exchange(memMB);  // memory in MB
+  /// grab current value, and (post!)increment event counter
+  auto counter = m_counter.fetch_add(1);
 
   // reset the counter (if required ) 
-  if  ( 0 < m_skip &&  m_skip == m_counter && 0 != m_delMem ) 
+  if  ( 0 < m_skip &&  m_skip == counter && 0 != m_delMem ) 
   {
     // NB: I hate StatEntity::reset, use == instead!
     *m_delMem = StatEntity() ;
@@ -121,8 +123,6 @@ void MemoryTool::execute() /* const */
     if ( m_plot2  ) { fill ( m_plot2 , deltaMem , 1 , m_histo2.title() ) ; }
   }
   
-  /// grab current value, and increment event counter, and fetch the prev
-  auto counter = m_counter.fetch_add(1);
   if ( m_bins > counter ) 
   {
     plot( counter+1, "Virtual mem, all entries", "Virtual memory (kB), first 'HistoSize' entries",
@@ -166,7 +166,7 @@ void MemoryTool::execute() /* const */
                << "+-"                << m_delMem->flagRMS() << ")" << endmsg ;
   }
   /// check the tendency: 
-  if ( ( ( 0 < m_check && 0 == m_counter % m_check ) || 1 == m_check  ) && 
+  if ( ( ( 0 < m_check && 0 == counter % m_check ) || 1 == m_check  ) && 
        m_delMem                      && 
        16 < m_delMem->nEntries    () && 
        0  < m_delMem->flagMean    () && 
