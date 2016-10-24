@@ -166,7 +166,7 @@ public:
    * be used in case the corresponding user defined converter is not available
    * @return true if generic conversion is allowed
    */
-  bool allowGenericCnv() { return m_genericConversion; }
+  bool allowGenericCnv() override { return m_genericConversion; }
 
   
 
