@@ -123,8 +123,8 @@ private:
 
   // Member data
   IRndmEngine*  m_engine;       ///< Pointer to random number engine
-  IRndmGenSvc*  m_randSvc;      ///< Pointer to random number service
-  ICondDBInfo*  m_condDBInfo;   ///< Pointer to Info interface of CondDB service
+  SmartIF<IRndmGenSvc>  m_randSvc;      ///< Pointer to random number service
+  SmartIF<ICondDBInfo>  m_condDBInfo;   ///< Pointer to Info interface of CondDB service
   IEventCounter* m_evtCounter;  ///< Pointer to EventCounter interface
   std::string   m_evtCounterName;  ///< Name of EventCounter tool
   long long  m_eventMax;     ///< Number of events requested (ApplicationMgr.EvtMax)
