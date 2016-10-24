@@ -17,7 +17,7 @@
 
 // Forward and external declarations
 class ISvcLocator;
-class IXmlSvc;
+struct IXmlSvc;
 class GenericAddress;
 template <class TYPE> class CnvFactory;
 
