@@ -89,13 +89,15 @@ StatusCode MemoryTool::finalize ()
 //=============================================================================
 // Plot the memory usage
 //=============================================================================
-void MemoryTool::execute() /* const */
+void MemoryTool::execute() /*const*/
 {
-  const auto mem = (double)System::virtualMemory();
+  const auto lmem = System::virtualMemory();
+  const double mem = lmem;
+
+  // get/set "previous" measurement
+  auto prev = double(m_prev.exchange(lmem))/1000.;  // memory in MB
   // memory in megabytes 
   const auto memMB = mem / 1000. ;
-  // set "previous" measurement 
-  auto prev = m_prev.exchange(memMB);  // memory in MB
   /// grab current value, and (post!)increment event counter
   auto counter = m_counter.fetch_add(1);
 
