@@ -23,9 +23,7 @@ DECLARE_TOOL_FACTORY( MemoryTool )
 MemoryTool::MemoryTool( const std::string& type,
                         const std::string& name,
                         const IInterface* parent )
-  : GaudiHistoTool ( type, name , parent )
-  , m_histo1 ( "Total Memory [MB]" ,   0 , 2000 ) 
-  , m_histo2 ( "Delta Memory [MB]" , -25 ,   25 )
+  : base_class ( type, name , parent )
 {
   declareProperty( "HistoSize"  , m_bins = 500 );
   //
@@ -58,6 +56,20 @@ MemoryTool::MemoryTool( const std::string& type,
 // ============================================================================
 // finalize the tool 
 // ============================================================================
+StatusCode MemoryTool::initialize () 
+{
+  auto sc = base_class::initialize (); 
+  static const std::string s_TotalMemory = "Total Memory/MB" ;
+  static const std::string s_DeltaMemory = "Delta Memory/MB" ;
+  if ( !m_totMem                   ) { m_totMem = &counter( s_TotalMemory ) ; }
+  if ( !m_delMem                   ) { m_delMem = &counter( s_DeltaMemory ) ; }
+  if ( !m_plot1 && produceHistos() ) { m_plot1  = book    ( m_histo1      ) ; }
+  if ( !m_plot2 && produceHistos() ) { m_plot2  = book    ( m_histo2      ) ; }
+  return sc;
+}
+// ============================================================================
+// finalize the tool 
+// ============================================================================
 StatusCode MemoryTool::finalize () 
 {
   if ( m_delMem                     && 
@@ -72,63 +84,56 @@ StatusCode MemoryTool::finalize ()
   m_delMem = nullptr ;
   m_plot1  = nullptr ;
   m_plot2  = nullptr ;
-  return GaudiHistoTool::finalize (); 
+  return base_class::finalize (); 
 }
 //=============================================================================
 // Plot the memory usage
 //=============================================================================
-void MemoryTool::execute() 
+void MemoryTool::execute() /* const */
 {
   const auto mem = (double)System::virtualMemory();
-  
-  static const std::string s_TotalMemory = "Total Memory/MB" ;
-  static const std::string s_DeltaMemory = "Delta Memory/MB" ;
-  
-  if ( !m_totMem                   ) { m_totMem = &counter( s_TotalMemory ) ; }
-  if ( !m_delMem                   ) { m_delMem = &counter( s_DeltaMemory ) ; }
-  if ( !m_plot1 && produceHistos() ) { m_plot1  = book    ( m_histo1      ) ; }
-  if ( !m_plot2 && produceHistos() ) { m_plot2  = book    ( m_histo2      ) ; }
-  
   // memory in megabytes 
   const auto memMB = mem / 1000. ;
+  // set "previous" measurement 
+  auto prev = m_prev.exchange(memMB);  // memory in MB
+
   // reset the counter (if required ) 
-  if      ( 0 < m_skip && (unsigned long) m_skip == m_counter && 0 != m_delMem ) 
+  if  ( 0 < m_skip &&  m_skip == m_counter && 0 != m_delMem ) 
   {
     // NB: I hate StatEntity::reset, use == instead!
     *m_delMem = StatEntity() ;
     if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
       debug()  << "Reset Delta Virtual Memory counter" << endmsg ;
-  } 
+  }
   // Fill the counter for "valid" previous measurements
   if   ( m_totMem ) { *m_totMem += memMB ; }
   // Fill the plot
   if   ( m_plot1  ) { fill ( m_plot1 , memMB , 1 , m_histo1.title() ) ; }
+
+
   // Fill the counter for "valid" previous measurements
-  const auto deltaMem = memMB - m_prev ;
-  if   ( 0 <= m_prev   )
+  const auto deltaMem = memMB - prev ;
+  if   ( 0 <= prev   )
   { 
     // fill the counter 
     if ( m_delMem ) { *m_delMem += deltaMem ; }
     // fill the counter
     if ( m_plot2  ) { fill ( m_plot2 , deltaMem , 1 , m_histo2.title() ) ; }
-  } 
+  }
   
-  // set "previous" measurement 
-  m_prev = memMB    ;                                        // memory in MB
-  
-  if ( m_bins > m_counter ) 
+  /// grab current value, and increment event counter, and fetch the prev
+  auto counter = m_counter.fetch_add(1);
+  if ( m_bins > counter ) 
   {
-    plot( m_counter+1, "Virtual mem, all entries", "Virtual memory (kB), first 'HistoSize' entries",
+    plot( counter+1, "Virtual mem, all entries", "Virtual memory (kB), first 'HistoSize' entries",
           0.5, m_bins+0.5, m_bins, mem );
   }
-  if( 0 == m_counter%m_bins ) {
-    const unsigned int bin = 1 + ( m_counter/m_bins );
+  if( 0 == counter%m_bins ) {
+    const unsigned int bin = 1 + ( counter/m_bins );
     plot( bin, "Virtual mem, downscaled", "Virtual memory (kB), downscaled entries",
           0.5, m_bins+0.5, m_bins, mem );
   }
   
-  /// increment event counter 
-  ++m_counter;                                         // increment event counter
   
   // check Total Memory for the particular event
   if ( m_totMem                          && 
