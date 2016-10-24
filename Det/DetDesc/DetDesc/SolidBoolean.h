@@ -32,34 +32,34 @@ class SolidBoolean: public virtual SolidBase
   /** retrieve the specific type of the solid
    *  @return specific type of the solid
    */
-  virtual  std::string   typeName () const { return "SolidBoolean"; };
+  std::string   typeName () const override { return "SolidBoolean"; };
 
   /** retrieve the pointer to "simplified" solid - "cover"
    *  @return pointer to "simplified" solid - "cover"
    */
-  virtual const ISolid* cover () const { return first()->cover() ; };
+  const ISolid* cover () const override { return first()->cover() ; };
 
   /** retrieve the pointer to "the most simplified cover"
    *  probably, something like "gabarite box"
    *  @return pointer to the most simplified cover
    */
-  virtual const ISolid* coverTop () const { return first()->coverTop() ; };
+  const ISolid* coverTop () const override { return first()->coverTop() ; };
 
   /** printout to STD/STL stream
    *  @param os STD/STL stream
    *  @return reference to the stream
    */
-  virtual  std::ostream& printOut ( std::ostream& os = std::cout ) const ;
+  std::ostream& printOut ( std::ostream& os = std::cout ) const override;
 
   /** printout to Gaudi  stream
    *  @param os Gaudi stream
    *  @return reference to the stream
    */
-  virtual  MsgStream&    printOut ( MsgStream&    os             ) const ;
+  MsgStream&    printOut ( MsgStream&    os             ) const override;
 
   /** reset to the initial ("after constructor") state
    */
-  virtual ISolid* reset() ;
+  ISolid* reset() override;
 
   /** calculate the intersection points("ticks") with a given line.
    *  Input - line, paramterised by  x_vect = Point + Vector * T
@@ -69,17 +69,17 @@ class SolidBoolean: public virtual SolidBase
    *  @param ticks output container of "Ticks"
    *  @return the number of intersection points (=size of Ticks container)
    */
-  virtual unsigned int intersectionTicks( const Gaudi::XYZPoint & Point,
-                                          const Gaudi::XYZVector& Vector,
-                                          ISolid::Ticks& ticks  ) const ;
+  unsigned int intersectionTicks( const Gaudi::XYZPoint & Point,
+                                  const Gaudi::XYZVector& Vector,
+                                  ISolid::Ticks& ticks  ) const override;
 
-  virtual unsigned int intersectionTicks( const Gaudi::Polar3DPoint  & Point,
-                                          const Gaudi::Polar3DVector & Vector,
-                                          ISolid::Ticks     & ticks) const ;
+  unsigned int intersectionTicks( const Gaudi::Polar3DPoint  & Point,
+                                  const Gaudi::Polar3DVector & Vector,
+                                  ISolid::Ticks     & ticks) const override;
 
-  virtual unsigned int intersectionTicks( const Gaudi::RhoZPhiPoint  & Point,
-                                          const Gaudi::RhoZPhiVector & Vector,
-                                          ISolid::Ticks     & ticks) const ;
+  unsigned int intersectionTicks( const Gaudi::RhoZPhiPoint  & Point,
+                                  const Gaudi::RhoZPhiVector & Vector,
+                                  ISolid::Ticks     & ticks) const override;
 
   /** calculate the intersection points("ticks") with a given line.
    *  Input - line, paramterised by  x_vect = Point + Vector * T
@@ -93,23 +93,23 @@ class SolidBoolean: public virtual SolidBase
    *  between tickMin and tickMax
    */
 
-  virtual unsigned int intersectionTicks( const Gaudi::XYZPoint& Point,
-                                          const Gaudi::XYZVector & Vector,
-                                          const ISolid::Tick& tickMin,
-                                          const ISolid::Tick& tickMax,
-                                          ISolid::Ticks& ticks   ) const ;
+  unsigned int intersectionTicks( const Gaudi::XYZPoint& Point,
+                                  const Gaudi::XYZVector & Vector,
+                                  const ISolid::Tick& tickMin,
+                                  const ISolid::Tick& tickMax,
+                                  ISolid::Ticks& ticks   ) const override;
 
-  virtual unsigned int intersectionTicks( const Gaudi::Polar3DPoint& Point,
-                                          const Gaudi::Polar3DVector & Vector,
-                                          const ISolid::Tick& tickMin,
-                                          const ISolid::Tick& tickMax,
-                                          ISolid::Ticks& ticks   ) const ;
+  unsigned int intersectionTicks( const Gaudi::Polar3DPoint& Point,
+                                  const Gaudi::Polar3DVector & Vector,
+                                  const ISolid::Tick& tickMin,
+                                  const ISolid::Tick& tickMax,
+                                  ISolid::Ticks& ticks   ) const override;
 
-  virtual unsigned int intersectionTicks( const Gaudi::RhoZPhiPoint& Point,
-                                          const Gaudi::RhoZPhiVector & Vector,
-                                          const ISolid::Tick& tickMin,
-                                          const ISolid::Tick& tickMax,
-                                          ISolid::Ticks& ticks   ) const ;
+  unsigned int intersectionTicks( const Gaudi::RhoZPhiPoint& Point,
+                                  const Gaudi::RhoZPhiVector & Vector,
+                                  const ISolid::Tick& tickMin,
+                                  const ISolid::Tick& tickMax,
+                                  ISolid::Ticks& ticks   ) const override;
 
   /** poiter to the "main"/"first" boolean
    *  @return poiter to the "main"/"first" boolean
