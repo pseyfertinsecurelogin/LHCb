@@ -2,12 +2,6 @@
 #ifndef RICHUTILS_ZipRange_H
 #define RICHUTILS_ZipRange_H 1
 
-// STL
-#include <cassert>
-#include <algorithm>
-#include <type_traits>
-#include <tuple>
-
 // Gaudi
 #include "GaudiAlg/FunctionalDetails.h"
 
@@ -32,7 +26,7 @@ namespace Rich
 
     /// Zips multiple containers together to form a single range
     template< typename... Args >
-    inline decltype(auto) Zip( const Args&... args ) noexcept
+    inline decltype(auto) Zip( Args&... args ) noexcept
     {
       return Gaudi::Functional::details::zip::range( args... );
     }
