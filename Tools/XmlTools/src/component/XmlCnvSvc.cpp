@@ -37,10 +37,6 @@ XmlCnvSvc::XmlCnvSvc (const std::string& name, ISvcLocator* svc) :
 }
 
 
-// -----------------------------------------------------------------------
-// Standard Destructor
-// -----------------------------------------------------------------------
-XmlCnvSvc::~XmlCnvSvc() = default;
 
 // -----------------------------------------------------------------------
 // Initialize the service.
@@ -48,18 +44,12 @@ XmlCnvSvc::~XmlCnvSvc() = default;
 StatusCode XmlCnvSvc::initialize() {
   // Before anything we have to initialize grand mother
   StatusCode status = ConversionSvc::initialize();
-
-  // Service MUST be initialized BEFORE!
-  m_msg.reset( new MsgStream(msgSvc(), name() ) );
-
   if (!status.isSuccess()) return status;  
   
   // creation of a parser service
   m_parserSvc = serviceLocator()->service(m_parserSvcName,  true);
   if (!m_parserSvc) return StatusCode::FAILURE;
   
-  //setProperties();
-
   // Initialize numerical expressions parser with the standard math functions
   // and the system of units used by Gaudi (Geant4)
   m_xp.setStdMath();
@@ -312,8 +302,7 @@ bool XmlCnvSvc::addParameter (const std::string& name,
 // -----------------------------------------------------------------------
 bool XmlCnvSvc::addParameter (const char* name, const char* expr) {
   m_xp.setVariable (name, expr);
-  if (m_xp.status() == XmlTools::Evaluator::OK) return true;
-  else return false;
+  return m_xp.status() == XmlTools::Evaluator::OK;
 }
 
 
@@ -322,11 +311,7 @@ bool XmlCnvSvc::addParameter (const char* name, const char* expr) {
 // -----------------------------------------------------------------------
 bool XmlCnvSvc::addParameter (const char* name, double value) {
   m_xp.setVariable (name, value);
-  if (m_xp.status() == XmlTools::Evaluator::OK) {
-    return true;
-  } else {
-    return false;
-  }
+  return m_xp.status() == XmlTools::Evaluator::OK;
 }
 
 
@@ -343,11 +328,7 @@ bool XmlCnvSvc::removeParameter (const std::string& name) {
 // -----------------------------------------------------------------------
 bool XmlCnvSvc::removeParameter (const char* name) {
   m_xp.removeVariable (name);
-  if (m_xp.status() == XmlTools::Evaluator::OK) {
-    return true;
-  } else {
-    return false;
-  }
+  return m_xp.status() == XmlTools::Evaluator::OK;
 }
 
 
