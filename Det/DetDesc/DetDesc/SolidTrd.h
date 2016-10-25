@@ -1,4 +1,3 @@
-// $Id: SolidTrd.h,v 1.11 2007-03-16 15:57:09 cattanem Exp $
 // ===========================================================================
 #ifndef     DETDESC_SOLIDTRD_H
 #define     DETDESC_SOLIDTRD_H 1
@@ -21,8 +20,8 @@ class SolidFactory;
  *  @date xx/xx/xxxx
  */
 
-class SolidTrd: public    virtual SolidBase             ,
-                protected virtual SolidPolyHedronHelper
+class SolidTrd final : public    virtual SolidBase             ,
+                       protected virtual SolidPolyHedronHelper
 {
   /// friend factory for instantiation
   friend class SolidFactory<SolidTrd>;

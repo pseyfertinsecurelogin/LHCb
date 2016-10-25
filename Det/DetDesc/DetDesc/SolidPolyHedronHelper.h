@@ -1,4 +1,3 @@
-// $Id: SolidPolyHedronHelper.h,v 1.15 2007-09-20 15:17:05 wouter Exp $
 // ===========================================================================
 #ifndef     DETDESC_SOLIDPOLYHEDRONHELPER_H
 #define     DETDESC_SOLIDPOLYHEDRONHELPER_H 1

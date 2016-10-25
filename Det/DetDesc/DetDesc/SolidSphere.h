@@ -1,4 +1,3 @@
-// $Id: SolidSphere.h,v 1.19 2008-10-28 14:41:39 cattanem Exp $
 // ===========================================================================
 #ifndef     DETDESC_SOLIDSPHERE_H
 #define     DETDESC_SOLIDSPHERE_H 1
@@ -18,7 +17,7 @@ class SolidFactory;
  *  @author Vanya Belyaev
  */
 
-class SolidSphere: public virtual SolidBase
+class SolidSphere final : public virtual SolidBase
 {
   /// friend factory fo instantiation
   friend class SolidFactory<SolidSphere>;

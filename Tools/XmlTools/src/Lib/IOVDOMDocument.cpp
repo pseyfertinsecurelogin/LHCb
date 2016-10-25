@@ -9,9 +9,7 @@ IOVDOMDocument::IOVDOMDocument(xercesc::DOMDocument *dom):
 
 IOVDOMDocument::~IOVDOMDocument()
 {
-  if ( NULL != m_dom ) {
-    m_dom->release();
-  }
+  if ( m_dom ) m_dom->release();
 }
 
 bool IOVDOMDocument::isValid() const

@@ -1,5 +1,3 @@
-// $Id: XmlCnvSvc.h,v 1.13 2009-05-05 09:26:45 ocallot Exp $
-
 #ifndef DETDESCCNV_XMLCNVSVC_H
 #define DETDESCCNV_XMLCNVSVC_H
 
@@ -31,12 +29,6 @@ public:
    * @return Reference to CdfPersCnvSvc
    */
   XmlCnvSvc (const std::string& name, ISvcLocator* svc);
-
-  /**
-   * Default destructor
-   */
-  virtual ~XmlCnvSvc();
-
 
   /**
    * Initializes the service
@@ -177,7 +169,6 @@ public:
   bool allowGenericCnv() override { return m_genericConversion; }
 
 
-
 private:
 
 // -----------------------------------------------------------------------
@@ -269,23 +260,6 @@ private:
    * tells whether to check parameters for units or not.
    */
   bool m_checkUnits;
-  /// The message stream
-  std::unique_ptr<MsgStream> m_msg;
-
-  /// Methods to print as in GaudiAlgorithms
-  MsgStream& verbose() const { return *m_msg << MSG::VERBOSE; }
-
-  MsgStream& debug()   const { return *m_msg << MSG::DEBUG; }
-
-  MsgStream& info()    const { return *m_msg << MSG::INFO; }
-
-  MsgStream& warning() const { return *m_msg << MSG::WARNING; }
-
-  MsgStream& error()   const { return *m_msg << MSG::ERROR; }
-
-  MsgStream& fatal()   const { return *m_msg << MSG::FATAL; }
-
-  inline bool msgLevel( const MSG::Level level ) const { return m_msg->level() <= level; }
 
 };
 

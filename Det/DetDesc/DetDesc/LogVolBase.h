@@ -8,6 +8,7 @@
 #include "GaudiKernel/IRegistry.h"
 #include "GaudiKernel/Transform3DTypes.h"
 /// DetDesc  includes
+#include "DetDesc/DetDesc.h"
 #include "DetDesc/ISolid.h"
 #include "DetDesc/Services.h"
 #include "DetDesc/IPVolume.h"
@@ -48,10 +49,11 @@ protected:
               const std::string& sensitivity = "" ,
               const std::string& magnetic    = "" );
 
-  /// destructor
-  virtual ~LogVolBase();
-
 public:
+
+  /// destructor
+  ~LogVolBase() override;
+
 
   /** retrieve  the name(identification)  of Logical Volume
    *  @see ILVolume
@@ -202,7 +204,7 @@ public:
    *  @see ILVolume
    *  @return vector of surfaces
    */
-  inline Surfaces& surfaces() override{ return m_surfaces ; }
+  inline Surfaces& surfaces() override { return m_surfaces ; }
 
   /** accessors to surfaces  (const version)
    *  @see ILVolume
@@ -215,7 +217,7 @@ public:
    *  @param os STD/STL stream
    *  @return reference to the stream
    */
-  std::ostream& printOut( std::ostream & os = std::cout ) const  override;
+  std::ostream& printOut( std::ostream & os = std::cout ) const override;
 
   /** printout to Gaudi MsgStream stream
    *  @see ILVolume
@@ -244,7 +246,8 @@ public:
    *  @param ppI placeholder for returned interface
    *  @return status code
    */
-  StatusCode  queryInterface( const InterfaceID& ID , void** ppI )  override;
+  StatusCode
+  queryInterface( const InterfaceID& ID , void** ppI ) override;
 
   /** add the reference
    *  @see IInterface
@@ -416,7 +419,7 @@ private:
   /// static  volume counter
   static  unsigned long s_volumeCounter ;
   /// reference to services
-  DetDesc::ServicesPtr m_services;
+  DetDesc::ServicesPtr m_services = DetDesc::services();
 };
 
 // ============================================================================

@@ -24,9 +24,6 @@ DECLARE_ALGORITHM_FACTORY( L0CaloCheckCalibCte )
 L0CaloCheckCalibCte::L0CaloCheckCalibCte( const std::string& name,
                                           ISvcLocator* pSvcLocator)
   : Calo2Dview( name , pSvcLocator )
-  , m_calo(NULL)
-  , m_daq(NULL)
-  , m_l0daq(NULL)
 {
   declareProperty( "Detector"      , m_detectorName = "Ecal" ) ;
   declareProperty( "ReadoutTool"   , m_readoutTool = "CaloDataProvider" ) ;

@@ -1,4 +1,3 @@
-// $Id: MCEventTypeFinder.h,v 1.4 2009-06-11 12:43:12 rlambert Exp $
 #ifndef TOOLS_MCEVENTTYPEFINDER_H
 #define TOOLS_MCEVENTTYPEFINDER_H 1
 
@@ -12,7 +11,7 @@
 #include "MCInterfaces/IMCEventTypeFinder.h"
 #include "Event/MCParticle.h"
 
-class IMCDecayFinder;
+struct IMCDecayFinder;
 class IEvtTypeSvc;
 
 
@@ -97,10 +96,7 @@ public:
                  const std::string& name,
                  const IInterface* parent );
 
-  /// Destructor
-  virtual ~MCEventTypeFinder( ); ///< Destructor
-
-  StatusCode initialize( void ) override;
+  StatusCode initialize( ) override;
 
   /// Set up the event types, in case you want to change them with some other code.
   StatusCode setEventTypes(const LHCb::EventTypeSet events) override;
@@ -144,7 +140,7 @@ public:
     ///convert a std::set to a std::vector
     bool vec2set(std::vector<long unsigned int>& avec,LHCb::EventTypeSet& aset);
 
-    IEvtTypeSvc * m_evtTypeSvc;        ///< pointer to the event type service
+    SmartIF<IEvtTypeSvc> m_evtTypeSvc;        ///< pointer to the event type service
     std::vector<IMCDecayFinder*> m_mcFinders;        ///< Vector of pointers to tools :)
     StatusCode fillMCTools(void);
     std::vector<long unsigned int> m_inputTypes; ///<Set in the options of this tool, "Types"

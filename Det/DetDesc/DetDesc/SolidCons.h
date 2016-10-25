@@ -1,3 +1,4 @@
+// ===========================================================================
 #ifndef     DETDESC_SOLIDCONS_H
 #define     DETDESC_SOLIDCONS_H 1
 // STD and STL
@@ -23,7 +24,7 @@ class SolidFactory;
  *  @author Vanya Belyaev
  */
 
-class SolidCons: public virtual SolidBase
+class SolidCons final : public virtual SolidBase
 {
   /// friend factory for instantiation
   friend class SolidFactory<SolidCons>;

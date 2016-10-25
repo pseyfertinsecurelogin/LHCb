@@ -1,4 +1,3 @@
-// $Id: SolidPolycone.h,v 1.15 2008-12-11 15:33:25 cattanem Exp $
 // ============================================================================
 #ifndef DETDESC_SOLIDPOLYCONE_H
 #define DETDESC_SOLIDPOLYCONE_H 1
@@ -30,7 +29,7 @@ class SolidFactory;
  *  @date   23/10/2001
  */
 
-class SolidPolycone: public virtual SolidBase
+class SolidPolycone final : public virtual SolidBase
 {
   /// friend factory for instantiation
   friend class SolidFactory<SolidPolycone>;

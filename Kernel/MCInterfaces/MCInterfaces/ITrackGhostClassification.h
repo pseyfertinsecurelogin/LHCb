@@ -11,17 +11,12 @@ namespace LHCb{
   class GhostTrackInfo;
 }
 
-static const InterfaceID IID_ITrackGhostClassification( "ITrackGhostClassification", 0,0 );
-
-class ITrackGhostClassification: virtual public IAlgTool {
-
-public:
+struct ITrackGhostClassification: extend_interfaces<IAlgTool> {
 
  typedef std::vector<LHCb::LHCbID> LHCbIDs;
-
  
  /// Retrieve interface ID
- static const InterfaceID& interfaceID() { return IID_ITrackGhostClassification ; }
+ DeclareInterfaceID(ITrackGhostClassification, 1,0 );
 
  /**
  *  Information on what a ghost track is....
@@ -30,7 +25,6 @@ public:
  *  @return statuscode whether classification was successful
  */
  virtual StatusCode info(const LHCb::Track& aTrack, LHCb::GhostTrackInfo& tinfo) const= 0;
-
 
  /**
  *  Information on a list of LHCbIDs
@@ -42,22 +36,20 @@ public:
  virtual StatusCode info(LHCbIDs::const_iterator& start, 
                    LHCbIDs::const_iterator& stop, LHCb::GhostTrackInfo& tinfo) const= 0;
 
-
   /**
-  *  Check this is a ghost .
+  *  Check whether this is a ghost .
   *  @param aTrack to link
   *  @return bool true if a ghost
   */
   virtual bool isGhost(const LHCb::Track& aTrack) const= 0;
 
   /**
-   *  Check this is a ghost .
+   *  Check whether this is a ghost .
    *  @param aTrack to link
    *  @return bool true if a ghost
    */
   virtual bool isGhost(LHCbIDs::const_iterator& start, 
                        LHCbIDs::const_iterator& stop) const = 0;
-
 
 };
 

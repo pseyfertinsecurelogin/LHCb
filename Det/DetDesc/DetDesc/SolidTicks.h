@@ -1,4 +1,3 @@
-// $Id: SolidTicks.h,v 1.14 2007-09-20 15:41:06 wouter Exp $
 // ===========================================================================
 #ifndef     DETDESC_SOLIDTICKS_H
 #define     DETDESC_SOLIDTICKS_H 1

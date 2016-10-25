@@ -1,5 +1,3 @@
-// $Id: IXmlSvc.h,v 1.5 2007-02-05 18:51:19 marcocle Exp $
-
 #ifndef DETDESCCNV_IXMLSVC_H
 #define DETDESCCNV_IXMLSVC_H
 
@@ -7,8 +5,6 @@
 #include "GaudiKernel/IInterface.h"
 #include "xercesc/dom/DOMDocument.hpp"
 #include "XmlTools/IXmlParserSvc.h"
-
-
 
 /** @class IXmlSvc IXmlSvc.h DetDescCnv/IXmlSvc.h
 
@@ -21,9 +17,8 @@
     @author Sebastien Ponce
 
 */
-class IXmlSvc : public extend_interfaces<IInterface, IXmlParserSvc> {
 
-public:
+struct IXmlSvc : extend_interfaces<IInterface, IXmlParserSvc> {
 
   /// Declaration of the interface ID (interface id, major version, minor version)
   DeclareInterfaceID( IXmlSvc, 4 , 0);

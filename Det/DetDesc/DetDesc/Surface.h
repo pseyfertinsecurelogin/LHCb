@@ -35,7 +35,8 @@ public:
 public:
   ///
   /// constructor
-  Surface( const std::string& Name = "");
+  Surface( ) = default;
+  Surface( const std::string& /* Name */ ) : Surface() {}
   ///
   const CLID& clID    () const override { return Surface::classID() ; }
   static  const CLID& classID ()       { return CLID_Surface       ; }
@@ -70,13 +71,13 @@ public:
   ///
 private:
   ///
-  unsigned int m_model      ; /// G4OpticalSurfaceModel
+  unsigned int m_model = 0  ; /// G4OpticalSurfaceModel
   ///
-  unsigned int m_finish     ; /// G4OpticalSurfaceFinish
+  unsigned int m_finish = 0 ; /// G4OpticalSurfaceFinish
   ///
-  unsigned int m_type       ; /// G4OpticalSurfaceType
+  unsigned int m_type = 0   ; /// G4OpticalSurfaceType
   ///
-  double       m_value      ; /// used for "model"
+  double       m_value = 0  ; /// used for "model"
   ///
   std::string  m_firstVol   ; /// G4PhysicalVolume
   ///

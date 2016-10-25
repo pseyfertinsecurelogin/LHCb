@@ -149,10 +149,16 @@ protected:
    *  @exception SolidException NULL pointer to ISolid
    */
   SolidBoolean( const std::string& name  ,
-                ISolid*            solid );
+                std::unique_ptr<ISolid> solid );
+  [[deprecated("please call with std::unique_ptr<ISolid> as 2nd argument")]]
+  SolidBoolean( const std::string& name  ,
+                ISolid*            solid ) : SolidBoolean(name,std::unique_ptr<ISolid>(solid)) {}
 
+public:
   /// destructor
-  virtual ~SolidBoolean();
+  ~SolidBoolean() override;
+
+protected:
 
   /** constructor - "main"("first") solid is mandatory!
    *  @param name name of the solid
@@ -165,8 +171,13 @@ protected:
    *  @return status code
    */
   StatusCode addChild
-  ( ISolid*               child ,
+  ( std::unique_ptr<ISolid>   child ,
     const Gaudi::Transform3D* mtrx  );
+  [[deprecated("please call with std::unique_ptr<ISolid> as 1st argument")]]
+  StatusCode addChild
+  ( ISolid*               child ,
+    const Gaudi::Transform3D* mtrx  ) 
+  { return addChild( std::unique_ptr<ISolid>(child), mtrx) ; }
 
   /** add child to daughter container
    *  @param child    pointer to solid
@@ -174,9 +185,15 @@ protected:
    *  @param rotation rotation
    */
   StatusCode addChild
-  ( ISolid*               child    ,
+  ( std::unique_ptr<ISolid>   child    ,
     const Gaudi::XYZPoint&     position ,
     const Gaudi::Rotation3D&    rotation );
+  [[deprecated("please call with std::unique_ptr<ISolid> as 1st argument")]]
+  StatusCode addChild
+  ( ISolid*               child    ,
+    const Gaudi::XYZPoint&     position ,
+    const Gaudi::Rotation3D&    rotation )
+  { return addChild( std::unique_ptr<ISolid>(child),position,rotation); }
 
   /** acess to iterator
    *  @return "begin" iterator

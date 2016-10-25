@@ -1,4 +1,3 @@
-// $Id: DumpHepMCDecay.h,v 1.2 2009-01-08 09:44:37 cattanem Exp $
 // ============================================================================
 #ifndef SIM_DUMPHEPMCDECAY_H
 #define SIM_DUMPHEPMCDECAY_H 1
@@ -19,7 +18,6 @@ namespace HepMC {
   class GenVertex;
 }
 
-
 /** @class DumpHepMCDecay DumpHepMCDecay.h
  *
  *  Dump the decays of certain particles
@@ -30,8 +28,6 @@ namespace HepMC {
  */
 class DumpHepMCDecay : public GaudiAlgorithm
 {
-  // factory for instantiation
-  friend class AlgFactory<DumpHepMCDecay> ;
 public:
 
   /// the actual type of container with addresses
@@ -68,7 +64,7 @@ public:
    */
   std::string particleName
   ( const HepMC::GenParticle* particle ) const ;
-protected:
+
   /** standard constructor
    *  @see GaudiAlgorithm
    *  @see      Algorithm
@@ -80,15 +76,13 @@ protected:
   DumpHepMCDecay
   ( const std::string& name ,
     ISvcLocator*       isvc ) ;
-  /// dectructor
-  virtual ~DumpHepMCDecay(){}
-private:
+
   // default constructor   is disabled
-  DumpHepMCDecay();
+  DumpHepMCDecay() = delete;
   // copy constructor      is disabled
-  DumpHepMCDecay           ( const DumpHepMCDecay& );
-  // assigenemtn operator  is disabled
-  DumpHepMCDecay& operator=( const DumpHepMCDecay& );
+  DumpHepMCDecay           ( const DumpHepMCDecay& ) = delete;
+  // assigenemtn operator  is disabled 
+  DumpHepMCDecay& operator=( const DumpHepMCDecay& ) = delete;
 protected:
   // addresses of HepMC events
   Addresses                     m_addresses ;

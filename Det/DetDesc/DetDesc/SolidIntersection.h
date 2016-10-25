@@ -1,3 +1,4 @@
+/// ==========================================================================
 #ifndef      DETDESC_SOLIDINTERSECTION_H
 #define      DETDESC_SOLIDINTERSECTION_H 1
 // STD & STL
@@ -20,7 +21,7 @@ class SolidFactory;
  *  @date   xx/xx/xxxx
  */
 
-class SolidIntersection: public SolidBoolean
+class SolidIntersection final : public SolidBoolean
 {
   ///
   friend class SolidFactory<SolidIntersection>;
@@ -32,7 +33,9 @@ public:
    *  @param first pointer to first/main solid
    *  @exception SolidException wrong parameters
    */
-  SolidIntersection( const std::string& name , ISolid* first );
+  SolidIntersection( const std::string& name , std::unique_ptr<ISolid> first );
+  [[deprecated("please call with an std::unique_ptr<ISolid> as first argument")]]
+  SolidIntersection( const std::string& name , ISolid* first ) : SolidIntersection(name,std::unique_ptr<ISolid>(first) ) {}
 
 public:
 
@@ -57,8 +60,12 @@ public:
    *  @param mtrx  pointer transformation
    *  @return status code
    */
-  StatusCode    intersect( ISolid*               solid                    ,
+  StatusCode    intersect( std::unique_ptr<ISolid>   solid                    ,
                            const Gaudi::Transform3D* mtrx                     );
+  [[deprecated("please call with an std::unique_ptr<ISolid> as first argument")]]
+  StatusCode    intersect( ISolid*               solid                    ,
+                           const Gaudi::Transform3D* mtrx                     )
+  { return intersect( std::unique_ptr<ISolid>(solid),mtrx); }
 
   /** add intersections
    *  @param child    pointer to new solid
@@ -66,9 +73,14 @@ public:
    *  @param rotation rotation
    *  @return status code
    */
-  StatusCode intersect( ISolid*                  child                    ,
+  StatusCode intersect( std::unique_ptr<ISolid>  child                    ,
                         const Gaudi::XYZPoint&   position                 ,
                         const Gaudi::Rotation3D& rotation = Gaudi::Rotation3D() );
+  [[deprecated("please call with an std::unique_ptr<ISolid> as first argument")]]
+  StatusCode intersect( ISolid*                  child                    ,
+                        const Gaudi::XYZPoint&   position                 ,
+                        const Gaudi::Rotation3D& rotation = Gaudi::Rotation3D() )
+  { return intersect( std::unique_ptr<ISolid>(child), position, rotation); }
 protected:
 
   /** constructor

@@ -7,7 +7,7 @@
 #include "CaloDAQ/ICaloTriggerAdcsFromRaw.h"            // Interface
 
 class DeCalorimeter ;
-class ICaloDataProvider ;
+struct ICaloDataProvider ;
 
 /** @class CaloTriggerAdcsFromCaloRaw CaloTriggerAdcsFromCaloRaw.h
  *  Compute Trigger Adcs from Calo Adcs
@@ -46,8 +46,8 @@ private:
   LHCb::RawBankReadoutStatus m_theSt ;
   std::vector< LHCb::L0CaloAdc > m_data ;
   std::string m_detectorName ;
-  ICaloDataProvider * m_adcs ;
-  DeCalorimeter * m_calo ;
+  ICaloDataProvider * m_adcs = nullptr ;
+  DeCalorimeter     * m_calo = nullptr ;
 
   bool m_doubleScale ;
 

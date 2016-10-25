@@ -1,4 +1,3 @@
-// $Id: PrintMCDecayTreeAlg.h,v 1.2 2008-04-11 07:34:32 jpalac Exp $
 #ifndef PRINTMCDECAYTREEALG_H
 #define PRINTMCDECAYTREEALG_H 1
 
@@ -11,7 +10,7 @@
 
 
 // forward declaration
-class IPrintMCDecayTreeTool;
+struct IPrintMCDecayTreeTool;
 
 /** @class PrintMCDecayTreeAlg PrintMCDecayTreeAlg.h
  *  Prints a dump of the MC event tree, using an implementation of the
@@ -32,18 +31,13 @@ public:
   /// Standard constructor
   PrintMCDecayTreeAlg( const std::string& name, ISvcLocator* pSvcLocator );
 
-  virtual ~PrintMCDecayTreeAlg( ); ///< Destructor
-
   StatusCode initialize() override;    ///< Algorithm initialization
   StatusCode execute   () override;    ///< Algorithm execution
-  StatusCode finalize  () override;    ///< Algorithm finalization
-
-protected:
 
 private:
-  IPrintMCDecayTreeTool *m_printTool;
-  std::string m_printToolName;
-  std::string m_particleLocation;
+  IPrintMCDecayTreeTool *m_printTool = nullptr;
+  std::string m_printToolName = "PrintMCDecayTreeTool";
+  std::string m_particleLocation =  LHCb::MCParticleLocation::Default;
 
 };
 #endif // PRINTMCDECAYTREEALG_H

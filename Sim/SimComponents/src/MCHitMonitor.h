@@ -1,4 +1,3 @@
-// $Id $
 #ifndef _MCHitMonitor_H
 #define _MCHitMonitor_H
 
@@ -17,7 +16,7 @@ namespace AIDA {
   class IHistogram2D;
 }
 
-class IMCParticleSelector;
+struct IMCParticleSelector;
 
 /** class MCHitMonitor, package MCHitMonitor
  *  Top Level Algorithm that manages MCHits digitization code
@@ -33,9 +32,6 @@ public:
 
   /// Constructer
   MCHitMonitor(const std::string& name, ISvcLocator* pSvcLocator);
-
-  /// Destructer
-  ~MCHitMonitor();
 
   /// intialize
   StatusCode initialize() override;
@@ -59,7 +55,7 @@ private:
 
   // selector
   std::string m_selectorName;
-  IMCParticleSelector* m_selector;
+  IMCParticleSelector* m_selector = nullptr;
 
   std::vector<IHistogram1D*> m_timeOfFlightHistos;
   std::vector<IHistogram2D*> m_XvsYHistos;

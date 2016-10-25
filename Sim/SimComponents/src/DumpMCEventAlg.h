@@ -1,4 +1,3 @@
-// $Id: DumpMCEventAlg.h,v 1.1.1.1 2005-12-15 14:29:30 gcorti Exp $
 #ifndef DUMPMCEVENTALG_H
 #define DUMPMCEVENTALG_H 1
 
@@ -6,7 +5,7 @@
 // from Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
 
-class ICheckTool;
+struct ICheckTool;
 
 /** @class DumpMCEventAlg DumpMCEventAlg.h
  *  Dump contents of an MCEvent.
@@ -25,16 +24,12 @@ public:
   /// Standard constructor
   DumpMCEventAlg( const std::string& name, ISvcLocator* pSvcLocator );
 
-  virtual ~DumpMCEventAlg( ); ///< Destructor
-
   StatusCode initialize() override;    ///< Algorithm initialization
   StatusCode execute   () override;    ///< Algorithm execution
 
-protected:
-
 private:
   unsigned int m_numObjects; ///< Number of objects to print
-  ICheckTool*  m_checker;    ///< Tool to check event integrity
+  ICheckTool*  m_checker = nullptr;    ///< Tool to check event integrity
 };
 
 #endif // DUMPMCEVENTALG_H

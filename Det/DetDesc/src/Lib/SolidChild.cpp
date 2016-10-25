@@ -36,14 +36,14 @@ SolidChild::SolidChild( const std::string& Name )
  *  @param Name name of this solid
  */
 // ============================================================================
-SolidChild::SolidChild( ISolid*               solid ,
+SolidChild::SolidChild( std::unique_ptr<ISolid>   solid ,
                         const Gaudi::Transform3D* mtrx  ,
                         const std::string&    Name  )
   : SolidBase      ( Name  )
-  , m_sc_solid     ( solid )
+  , m_sc_solid     ( std::move(solid) )
   , m_sc_simple    ( true  )
 {
-  if( !solid )
+  if( !m_sc_solid )
     { throw SolidException("SolidChild(), ISolid* points to NULL!");}
   ///
   if( mtrx && !(Gaudi::Transform3D() == *mtrx) )
@@ -118,12 +118,12 @@ void SolidChild::setBP()
  */
 // ============================================================================
 SolidChild::SolidChild
-( ISolid*               solid ,
+( std::unique_ptr<ISolid>    solid ,
   const Gaudi::XYZPoint&     pos   ,
-  const Gaudi::Rotation3D&    rot   ,
+  const Gaudi::Rotation3D&   rot   ,
   const std::string&    Name  )
   : SolidBase      ( Name  )
-  , m_sc_solid     ( solid )
+  , m_sc_solid     ( std::move(solid) )
   , m_sc_simple    ( true  )
 {
   ////

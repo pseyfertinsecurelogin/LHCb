@@ -1,4 +1,3 @@
-// $Id: ValidInputSource.h,v 1.1 2007-02-02 08:10:49 marcocle Exp $
 #ifndef VALIDINPUTSOURCE_H_
 #define VALIDINPUTSOURCE_H_
 
@@ -37,8 +36,6 @@ public:
                      xercesc::MemoryManager *const  manager = xercesc::XMLPlatformUtils::fgMemoryManager );
 
 
-  /// Destructor
-  virtual ~ValidInputSource();
 
   // -------- Implementation of IValidity --------
 

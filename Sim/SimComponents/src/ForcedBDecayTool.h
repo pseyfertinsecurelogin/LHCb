@@ -1,4 +1,3 @@
-// $Id: ForcedBDecayTool.h,v 1.2 2007-05-29 08:48:16 cattanem Exp $
 #ifndef FORCEDBDECAYTOOL_H
 #define FORCEDBDECAYTOOL_H 1
 // Include files
@@ -26,13 +25,6 @@ public:
 		    const std::string& name,
 		    const IInterface* parent );
 
-  virtual ~ForcedBDecayTool( ); ///< Destructor
-
-  /// Initialize
-  StatusCode initialize() override;
-
-  /// Finalize
-  StatusCode finalize() override;
 
   const LHCb::MCParticle* forcedB(void) override;
 
