@@ -10,7 +10,7 @@
  *  @return string representation of the "value"
  */
 std::string DetDesc::print (const double value, const char*  format) {
-  static const unsigned int buflen = 128;
+  static constexpr unsigned int buflen = 128;
   static char  buffer[buflen];
   return { buffer , buffer + snprintf( buffer , buflen, format , value ) };
 }
@@ -21,7 +21,7 @@ std::string DetDesc::print (const double value, const char*  format) {
  *  @return string representation of the "value"
  */
 std::string DetDesc::print (const long value, const char*  format) {
-  static const unsigned int buflen = 128;
+  static constexpr unsigned int buflen = 128;
   static char  buffer[buflen];
   return { buffer , buffer + snprintf( buffer , buflen, format , value ) };
 }

@@ -8,6 +8,7 @@
 #include "GaudiKernel/IRegistry.h"
 #include "GaudiKernel/Transform3DTypes.h"
 /// DetDesc  includes
+#include "DetDesc/DetDesc.h"
 #include "DetDesc/ISolid.h" 
 #include "DetDesc/Services.h" 
 #include "DetDesc/IPVolume.h"
@@ -48,16 +49,17 @@ protected:
               const std::string& sensitivity = "" ,
               const std::string& magnetic    = "" );
   
-  /// destructor 
-  virtual ~LogVolBase();
-  
 public:
+
+  /// destructor 
+  ~LogVolBase() override;
+  
   
   /** retrieve  the name(identification)  of Logical Volume  
    *  @see ILVolume 
    *  @return    the name(identification)  of Logical Volume  
    */
-  inline virtual const std::string&  name () const 
+  inline const std::string&  name () const override
   {
     static std::string s_empty = "";
     IRegistry* pReg = registry();
@@ -68,19 +70,19 @@ public:
    *  @see ILVolume 
    *  @return vector of physical volumes 
    */
-  inline virtual        PVolumes& pvolumes ()      { return m_pvolumes ; } 
+  inline PVolumes& pvolumes () override { return m_pvolumes ; } 
   
   /** vector of physical volumes (const version)
    *  @see ILVolume 
    *  @return vector of physical volumes 
    */
-  inline virtual const PVolumes& pvolumes () const { return m_pvolumes ; }
+  inline const PVolumes& pvolumes () const override { return m_pvolumes ; }
   
   /** number of Physical(positioned) Volumes 
    *  @see ILVolume 
    *  @return number of Physical(positioned) Volumes
    */
-  inline virtual ILVolume::ReplicaType noPVolumes () const
+  inline ILVolume::ReplicaType noPVolumes () const override
   { return m_pvolumes.size() ; }
   
   /** daughter (Physical Volume) by index
@@ -88,8 +90,8 @@ public:
    *  @param  index    physical volume index 
    *  @return pointer to daughter (Physical Volume) 
    */
-  inline virtual const IPVolume* operator[]
-  ( const ILVolume::ReplicaType& index ) const
+  inline const IPVolume* operator[]
+  ( const ILVolume::ReplicaType& index ) const override
   {
     return index < m_pvolumes.size() ? 
       *(m_pvolumes.begin()+index) : nullptr ;
@@ -100,8 +102,8 @@ public:
    *  @param  name    physical volume name 
    *  @return pointer to daughter (Physical Volume) 
    */
-  inline virtual const IPVolume* operator[]
-  ( const std::string&           name  ) const
+  inline const IPVolume* operator[]
+  ( const std::string&           name  ) const override
   { 
     auto pvi = std::find_if( m_pvolumes.begin  () , 
                              m_pvolumes.end    () , 
@@ -113,8 +115,8 @@ public:
    *  @param  index    physical volume index 
    *  @return pointer to daughter (Physical Volume) 
    */
-  virtual const IPVolume* pvolume   
-  ( const ILVolume::ReplicaType& index ) const
+  const IPVolume* pvolume   
+  ( const ILVolume::ReplicaType& index ) const override
   {
     return index < m_pvolumes.size() ? 
       *(m_pvolumes.begin()+index) : nullptr ;
@@ -124,8 +126,8 @@ public:
    *  @param  name    physical volume name 
    *  @return pointer to daughter (Physical Volume) 
    */
-  virtual const IPVolume* pvolume   
-  ( const std::string&           name  ) const 
+  const IPVolume* pvolume   
+  ( const std::string&           name  ) const override
   { 
     auto pvi = std::find_if( m_pvolumes.begin  () , 
                              m_pvolumes.end    () , 
@@ -137,28 +139,28 @@ public:
    *  @see ILVolume 
    *  @return begin iterator  for manipulation with daughters
    */
-  inline virtual ILVolume::PVolumes::iterator       pvBegin     ()
+  inline ILVolume::PVolumes::iterator       pvBegin     () override
   { return m_pvolumes.begin () ;}
   
   /** begin iterator  for manipulation with daughters (const version)
    *  @see ILVolume 
    *  @return begin iterator  for manipulation with daughters
    */
-  inline virtual ILVolume::PVolumes::const_iterator pvBegin     () const
+  inline ILVolume::PVolumes::const_iterator pvBegin     () const override
   { return m_pvolumes.begin () ;}
   
   /** retrieve end iterator for manipulation with daughters
    *  @see ILVolume 
    *  @return end iterator  for manipulation with daughters
    */
-  inline virtual ILVolume::PVolumes::iterator       pvEnd       ()
+  inline ILVolume::PVolumes::iterator       pvEnd       () override
   { return m_pvolumes.end ()  ;}
   
   /** retrieve end iterator for manipulation with daughters (const version)
    *  @see ILVolume 
    *  @return end iterator  for manipulation with daughters
    */
-  inline virtual ILVolume::PVolumes::const_iterator pvEnd       () const 
+  inline ILVolume::PVolumes::const_iterator pvEnd       () const  override
   { return m_pvolumes.end () ;}
   
   /** traverse the sequence of paths  \n 
@@ -169,10 +171,10 @@ public:
    *  @param pVolumePath  vector of physical volumes 
    *  @return status code 
    */
-  virtual StatusCode traverse 
+  StatusCode traverse 
   ( ILVolume::ReplicaPath::const_iterator pathBegin,
     ILVolume::ReplicaPath::const_iterator pathEnd  ,
-    ILVolume::PVolumePath&                pVolumePath ) const ;
+    ILVolume::PVolumePath&                pVolumePath ) const override;
   
   /** traverse the sequence of paths  \n 
    *  transform the sequence of replicas to sequence of  physical volumes 
@@ -181,54 +183,54 @@ public:
    *  @param pVolumePath  vector of physical volumes 
    *  @return status code 
    */
-  inline virtual StatusCode traverse 
+  inline StatusCode traverse 
   ( const ILVolume::ReplicaPath&  path,
-    ILVolume::PVolumePath&        pVolumePath ) const
+    ILVolume::PVolumePath&        pVolumePath ) const override
   { return traverse( path.begin() , path.end() , pVolumePath ); }
   
   /** name of sensitive "detector" - needed for simulation 
    *  @see ILVolume 
    *  @return name of sensitive "detector"
    */
-  inline virtual const std::string& sdName () const { return m_sdName; } ;
+  inline const std::string& sdName () const override { return m_sdName; } ;
   
   /** magnetic properties  (if needed for simulation)  
    *  @see ILVolume 
    *  @return name of magnetic field  object
    */
-  inline virtual const std::string& mfName () const { return m_mfName; } ;
+  inline const std::string& mfName () const override { return m_mfName; } ;
   
   /** accessors to surfaces 
    *  @see ILVolume 
    *  @return vector of surfaces 
    */  
-  inline virtual        Surfaces& surfaces()       { return m_surfaces ; }
+  inline Surfaces& surfaces() override { return m_surfaces ; }
   
   /** accessors to surfaces  (const version) 
    *  @see ILVolume 
    *  @return vector of surfaces 
    */  
-  inline virtual  const Surfaces& surfaces() const { return m_surfaces ; }
+  inline const Surfaces& surfaces() const override { return m_surfaces ; }
   
   /** printout to STD/STL stream
    *  @see ILVolume 
    *  @param os STD/STL stream
    *  @return reference to the stream
    */
-  virtual std::ostream& printOut( std::ostream & os = std::cout ) const ;
+  std::ostream& printOut( std::ostream & os = std::cout ) const override;
   
   /** printout to Gaudi MsgStream stream
    *  @see ILVolume 
    *  @param os Gaudi MsgStream  stream
    *  @return reference to the stream
    */
-  virtual MsgStream&    printOut( MsgStream    & os             ) const;
+  MsgStream&    printOut( MsgStream    & os             ) const override;
   
   /** reset to initial state, clear chaches, etc...
    *  @see ILVolume 
    *  @return self reference
    */
-  inline virtual ILVolume* reset () 
+  inline ILVolume* reset () override
   {
     /// reset all physical volumes 
     std::for_each( m_pvolumes.begin ()         , 
@@ -244,20 +246,20 @@ public:
    *  @param ppI placeholder for returned interface
    *  @return status code 
    */
-  virtual StatusCode 
-  queryInterface( const InterfaceID& ID , void** ppI ) ;
+  StatusCode 
+  queryInterface( const InterfaceID& ID , void** ppI ) override;
 
   /** add the reference
    *  @see IInterface 
    *  @return reference counter 
    */
-  virtual unsigned long addRef  ();
+  unsigned long addRef  () override;
 
   /** release the interface 
    *  @see IInterface 
    *  @return reference counter 
    */
-  virtual unsigned long release ();
+  unsigned long release () override;
 
   /** create daughter physical volume 
    *  @param PVname name of daughter volume 
@@ -417,7 +419,7 @@ private:
   /// static  volume counter 
   static  unsigned long s_volumeCounter ;
   /// reference to services
-  DetDesc::ServicesPtr m_services;
+  DetDesc::ServicesPtr m_services = DetDesc::services();
 };
 
 // ============================================================================

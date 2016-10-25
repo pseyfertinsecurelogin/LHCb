@@ -1,4 +1,3 @@
-// $Id: SolidTubs.h,v 1.20 2008-10-28 12:04:37 cattanem Exp $
 // ===========================================================================
 #ifndef     DETDESC_SOLIDTUBS_H
 #define     DETDESC_SOLIDTUBS_H 1  
@@ -25,7 +24,7 @@ class MsgStream;
  *  @author Vanya Belyaev  Ivan.Belyaev@itep.ru
  */
 
-class SolidTubs: public virtual SolidBase
+class SolidTubs final : public virtual SolidBase
 {
   /// frined factory for instantiation 
   friend class SolidFactory<SolidTubs>;
