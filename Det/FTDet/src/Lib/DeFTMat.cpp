@@ -161,18 +161,32 @@ double DeFTMat::distancePointToChannel(const Gaudi::XYZPoint& globalPoint,
 std::unique_ptr<LHCb::Trajectory> DeFTMat::trajectory(const LHCb::FTChannelID channelID,
     const double frac) const {
   double localX = localXfromChannel( channelID, frac );
-  auto to_global = [g=geometry()](double x, double y, double z)
-      { return g->toGlobal(Gaudi::XYZPoint(x,y,z));};
-  return std::make_unique<LHCb::LineTraj>( to_global(localX, -0.5*m_sizeY, 0.),
-                                           to_global(localX, +0.5*m_sizeY, 0.) );
+
+  // Use this piece of code instead as soon as Gauss is compliant with c++1y
+  //auto to_global = [g=geometry()](double x, double y, double z)
+  //    { return g->toGlobal(Gaudi::XYZPoint(x,y,z));};
+  //return std::make_unique<LHCb::LineTraj>( to_global(localX, -0.5*m_sizeY, 0.),
+  //                                         to_global(localX, +0.5*m_sizeY, 0.) );
+
+  // c++11 code:
+  auto to_global = [&](double x, double y, double z) { return geometry()->toGlobal(Gaudi::XYZPoint(x,y,z));};
+  return std::unique_ptr<LHCb::Trajectory>(new LHCb::LineTraj(to_global(localX, -0.5*m_sizeY, 0.),
+                                                              to_global(localX, +0.5*m_sizeY, 0.) ));
 }
 
 // Get the endpoints of the line defined by the hit
 std::pair<Gaudi::XYZPoint,Gaudi::XYZPoint> DeFTMat::endPoints(
     const LHCb::FTChannelID channelID, const double frac) const{
   double localX = localXfromChannel( channelID, frac );
-  auto to_global = [g=geometry()](double x, double y, double z)
-      { return g->toGlobal(Gaudi::XYZPoint(x,y,z));};
+
+  // Use this piece of code instead as soon as Gauss is compliant with c++1y
+  //auto to_global = [g=geometry()](double x, double y, double z)
+  //    { return g->toGlobal(Gaudi::XYZPoint(x,y,z));};
+
+  // c++11 code:
+  auto to_global = [&](double x, double y, double z) { return geometry()->toGlobal(Gaudi::XYZPoint(x,y,z));};
+
+
   return std::make_pair<Gaudi::XYZPoint>( to_global(localX, -0.5*m_sizeY, 0.),
                                           to_global(localX, +0.5*m_sizeY, 0.) );
 }
