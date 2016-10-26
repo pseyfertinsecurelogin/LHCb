@@ -5,7 +5,7 @@
 
 #include <iostream>
 #include <algorithm>
-#include <cmath>	// for pow()
+#include <cmath>	// for std::pow()
 #include <stack>
 #include <string>
 #include <unordered_map>
@@ -13,17 +13,22 @@
 #include <errno.h>
 #include <stdlib.h>	// for strtod()
 
-// System.h defines the function FuncPtrCast
-#include "GaudiKernel/System.h"
-
 #include "boost/utility/string_ref.hpp"
 #include "boost/variant.hpp"
 
 #define EVAL XmlTools::Evaluator
 
 //---------------------------------------------------------------------------
-using Item = boost::variant<boost::blank,double,   std::string,     void*>;
-enum                      { UNKNOWN,     VARIABLE, EXPRESSION, FUNCTION }; // must match order in boost::variant
+using FuncPtr = boost::variant<double(*)(),
+                               double(*)(double),
+                               double(*)(double,double),
+                               double(*)(double,double,double),
+                               double(*)(double,double,double,double),
+                               double(*)(double,double,double,double,double)>;
+
+
+using Item = boost::variant<boost::blank,double,   std::string, FuncPtr>;
+enum                      { UNKNOWN,     VARIABLE, EXPRESSION,  FUNCTION }; // must match order in boost::variant
 
 
 typedef const char * pchar;
@@ -40,6 +45,20 @@ struct EVAL::Struct final {
 //---------------------------------------------------------------------------
 
 namespace {
+
+    class InvokeFuncPtrWith : public boost::static_visitor<double> {
+        const double *p;
+        template <typename F, std::size_t ... Is>
+        double helper( F fun, std::index_sequence<Is...> ) const {
+            return fun( p[sizeof...(Is)-1-Is]... ); // reverse the arguments...
+        }
+    public:
+        InvokeFuncPtrWith(const double* pp) : p(pp) {}
+        template <typename... Args>
+        double operator()( double(*fun)(Args...) ) const {
+            return helper( fun, std::index_sequence_for<Args...>{} );
+        }
+    };
 
     inline boost::string_ref remove_blanks(boost::string_ref str) {
         int n=str.size();
@@ -74,8 +93,8 @@ for(;;++pointer) {                       \
 }
 
 #define EVAL_EXIT(STATUS,POSITION) endp = POSITION; return STATUS
-#define MAX_N_PAR 5
 
+static constexpr int MAX_N_PAR = 5;
 static const char sss[MAX_N_PAR+2] = "012345";
 
 enum { ENDL, LBRA, OR, AND, EQ, NE, GE, GT, LE, LT,
@@ -148,30 +167,10 @@ static int function(const std::string & name, std::stack<double> & par,
   double pp[MAX_N_PAR];
   for(int i=0; i<npar; i++) { pp[i] = par.top(); par.pop(); }
   errno = 0;
-  if (!boost::get<void*>(item)) return EVAL::ERROR_CALCULATION_ERROR;
-  switch (npar) {
-  case 0:
-    result = System::FuncPtrCast<double (*)()>(boost::get<void*>(item))();
-    break;
-  case 1:
-    result = System::FuncPtrCast<double (*)(double)>(boost::get<void*>(item))(pp[0]);
-    break;
-  case 2:
-    result = System::FuncPtrCast<double (*)(double,double)>(boost::get<void*>(item))(pp[1], pp[0]);
-    break;
-  case 3:
-    result = System::FuncPtrCast<double (*)(double,double,double)>(boost::get<void*>(item))
-      (pp[2],pp[1],pp[0]);
-    break;
-  case 4:
-    result = System::FuncPtrCast<double (*)(double,double,double,double)>(boost::get<void*>(item))
-      (pp[3],pp[2],pp[1],pp[0]);
-    break;
-  case 5:
-    result = System::FuncPtrCast<double (*)(double,double,double,double,double)>(boost::get<void*>(item))
-      (pp[4],pp[3],pp[2],pp[1],pp[0]);
-    break;
-  }
+  if (item.which()!=FUNCTION) return EVAL::ERROR_CALCULATION_ERROR;
+  const auto& fun = boost::get<FuncPtr>(item);
+  if ( fun.which()!=npar)     return EVAL::ERROR_CALCULATION_ERROR;
+  result = boost::apply_visitor( InvokeFuncPtrWith(pp), fun );
   return (errno == 0) ? EVAL::OK : EVAL::ERROR_CALCULATION_ERROR;
 }
 
@@ -200,12 +199,7 @@ static int operand(pchar begin, pchar end, double & result,
   //   G E T   N U M B E R
   if (!isalpha(*pointer)) {
 	errno = 0;
-#ifdef _WIN32
-	if ( pointer[0] == '0' && pointer < end && (pointer[1] == 'x' || pointer[1] == 'X') )
-      result = strtol(pointer, (char **)(&pointer), 0);
-	else
-#endif
-      result = strtod(pointer, (char **)(&pointer));
+    result = strtod(pointer, (char **)(&pointer));
     if (errno == 0) {
       EVAL_EXIT( EVAL::OK, --pointer );
     }else{
@@ -518,12 +512,12 @@ static int engine(pchar begin, pchar end, double & result,
         }
         op.top() = iCur; pos.top() = pointer;
         break;
-      case 3:                           // delete '(' from stack
+      case 3:                           // remove '(' from stack
         op.pop(); pos.pop();
         break;
       case 4: default:                  // execute top operator and
-        EVAL_STATUS = maker(iTop, val); // delete it from stack
-        if (EVAL_STATUS != EVAL::OK) {  // repete with the same iCur
+        EVAL_STATUS = maker(iTop, val); // remove it from stack
+        if (EVAL_STATUS != EVAL::OK) {  // repeat with the same iCur
           EVAL_EXIT( EVAL_STATUS, pos.top() );
         }
         op.pop(); pos.pop();
@@ -578,7 +572,7 @@ static void setItem(const char * prefix, const char * name,
 namespace XmlTools {
 
 //---------------------------------------------------------------------------
-Evaluator::Evaluator() 
+Evaluator::Evaluator()
 : m_p{ std::make_unique<Struct>() } {
 }
 
@@ -655,29 +649,38 @@ void Evaluator::setVariable(const char * name, const char * expression)
 { setItem("", name, std::string(expression), *m_p); }
 
 //---------------------------------------------------------------------------
+// TODO: could remove the prefix for functions now that they are stored
+//       as variant, ie. the same info (# of args) is now present in the
+//       state of the FuncPtr variant...
+//       But that would change the semantics, as now the functions are in
+//       a different 'namespace' which depends on the # of arguments...
+//       so one could get clashes which were not there before.
+//       In addition, checks for existing function vs. variable would have
+//       to be changed, as those two are currently distinguished by the prefix.
+//       But that could easily be changed to use Item::which() instead.
 void Evaluator::setFunction(const char * name,
                             double (*fun)())
-{ setItem("0", name, System::FuncPtrCast<void*>(fun), *m_p); }
+{ setItem("0", name, FuncPtr{fun}, *m_p); }
 
 void Evaluator::setFunction(const char * name,
                             double (*fun)(double))
-{ setItem("1", name, System::FuncPtrCast<void*>(fun), *m_p); }
+{ setItem("1", name, FuncPtr{fun}, *m_p); }
 
 void Evaluator::setFunction(const char * name,
                             double (*fun)(double,double))
-{ setItem("2", name, System::FuncPtrCast<void*>(fun), *m_p); }
+{ setItem("2", name, FuncPtr{fun}, *m_p); }
 
 void Evaluator::setFunction(const char * name,
                             double (*fun)(double,double,double))
-{ setItem("3", name, System::FuncPtrCast<void*>(fun), *m_p); }
+{ setItem("3", name, FuncPtr{fun}, *m_p); }
 
 void Evaluator::setFunction(const char * name,
                             double (*fun)(double,double,double,double))
-{ setItem("4", name, System::FuncPtrCast<void*>(fun), *m_p); }
+{ setItem("4", name, FuncPtr{fun}, *m_p); }
 
 void Evaluator::setFunction(const char * name,
                             double (*fun)(double,double,double,double,double))
-{ setItem("5", name, System::FuncPtrCast<void*>(fun), *m_p); }
+{ setItem("5", name, FuncPtr{fun}, *m_p); }
 
 //---------------------------------------------------------------------------
 bool Evaluator::findVariable(const char * name) const {
