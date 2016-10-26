@@ -33,7 +33,7 @@
                         (layer    &lt;&lt;  layerBits) + 
                         (quarter  &lt;&lt;  quarterBits) + 
                         (module   &lt;&lt;  moduleBits ) + 
-                        (channelInModule  &lt;&lt;  (channelBits+sipmBits+matBits) );
+                        (channelInModule  &lt;&lt;  channelBits );
         </code>
       </constructor>
 
