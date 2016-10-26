@@ -12,7 +12,7 @@
 #include "Event/MCParticle.h"
 
 struct IMCDecayFinder;
-class IEvtTypeSvc;
+struct IEvtTypeSvc;
 
 
 /** @class MCEventTypeFinder MCEventTypeFinder.h
