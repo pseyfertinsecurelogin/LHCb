@@ -53,8 +53,8 @@ StatusCode DeFTMat::initialize(){
   m_nDiesInSiPM = (unsigned int)param<int>("nDiesInSiPM");
 
   m_sipmPitch = m_nChannelsInSiPM*m_channelPitch+m_dieGap+2*m_airGap+2*m_deadRegion;
-  m_diePitch = m_nChannelsInDie*m_channelPitch+m_dieGap;
   m_nChannelsInDie = m_nChannelsInSiPM / m_nDiesInSiPM;
+  m_diePitch = m_nChannelsInDie*m_channelPitch+m_dieGap;
   m_uBegin = m_airGap + m_deadRegion - 2.0*m_sipmPitch;
 
   // Get the boundaries of the layer

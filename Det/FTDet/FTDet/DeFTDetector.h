@@ -148,11 +148,15 @@ public:
    */
   const DeFTModule* findModule( const LHCb::FTChannelID& id ) const;
 
-  /** Find the FT Module corresponding to the channel id
+  /** Find the FT Mat corresponding to the channel id
    *  @return Pointer to the relevant module
    */
   const DeFTMat* findMat( const LHCb::FTChannelID& id ) const;
 
+  /**
+   * Return a sensitive volume identifier for a given point in the
+   * global reference frame. This function is vital for Gauss.
+   */
   int sensitiveVolumeID(const Gaudi::XYZPoint& point) const override {
     const DeFTMat* mat = findMat( point );
     return mat ? mat->sensitiveVolumeID( point ) : -1 ;

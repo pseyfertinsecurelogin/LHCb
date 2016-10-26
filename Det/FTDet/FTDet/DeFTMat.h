@@ -118,24 +118,6 @@ public:
     return 0.5 * m_sizeY - localPoint.y();
   };
 
-  /** Get the pseudoChannel for a given FTChannelID
-   *  The pseudoChannel is defined for a full quarter and runs
-   *  in increasing global |x|.
-   *  This function is useful for occupancy plots.
-   *  @param the FTChannelID
-   *  @return the pseudoChannel, between 0 and 6*16*128
-   */
-  int pseudoChannel( LHCb::FTChannelID channelID ) const;
-
-  /** Get the FTChannelID corresponding to a given pseudoChannel
-   *  The pseudoChannel is defined for a full quarter and runs
-   *  in increasing global |x|.
-   *  This function is useful to generate noise form afterpulses.
-   *  @param pseudoChannel, between 0 and 16*128
-   *  @return the corresponding FTChannelID
-   */
-  LHCb::FTChannelID channelFromPseudo( const int pseudoChannel ) const ;
-
   /** Get the local x from a channelID and its fraction */
   double localXfromChannel(const LHCb::FTChannelID channelID, const double frac) const;
 
@@ -189,9 +171,6 @@ private :
   int m_nSiPMsInMat;      ///< number of SiPM arrays per mat
   int m_nDiesInSiPM;      ///< number of dies per SiPM
 
-// TODO: remove this variable
-  int m_nChannelsInModule;///< number of channels per module
-
   Gaudi::Plane3D m_plane;          ///< xy-plane in the z-middle of the module
   double m_globalZ;                ///< Global z position of module closest to y-axis
   double m_uBegin;                 ///< start in local u-coordinate of sensitive SiPM
@@ -204,7 +183,6 @@ private :
   double m_sizeX;                  ///< Length in x of all fibres in the mat
   double m_sizeY;                  ///< Length in y of the fibre in the mat
   double m_sizeZ;                  ///< Thickness of the fibre mat (nominal: 1.3 mm)
-  bool   m_reversed;               ///< Flag set when the pseudochannel-ordering is reversed
 
 }; // end of class
 
