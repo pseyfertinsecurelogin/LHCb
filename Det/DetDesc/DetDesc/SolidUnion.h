@@ -48,7 +48,7 @@ public:
    *  @see ISolid
    *  @return specific type of the solid
    */
-  virtual std::string typeName () const { return "SolidUnion" ; };
+  std::string typeName () const override { return "SolidUnion" ; }
 
   /** - check for the given 3D-point.
    *    Point coordinates are in the local reference
@@ -58,16 +58,16 @@ public:
    *  @param point point (in local reference system of the solid)
    *  @return true if the point is inside the solid
    */
-  bool isInside ( const Gaudi::XYZPoint   & point ) const ;
-  bool isInside ( const Gaudi::Polar3DPoint& point ) const ;
-  bool isInside ( const Gaudi::RhoZPhiPoint& point ) const ;
+  bool isInside ( const Gaudi::XYZPoint   & point ) const override;
+  bool isInside ( const Gaudi::Polar3DPoint& point ) const override;
+  bool isInside ( const Gaudi::RhoZPhiPoint& point ) const override;
 
   /** retrieve the pointer to "the most simplified cover",
    *  ideally to something like "the bounding box"
    *  @see ISolid::cover()
    *  @return pointer to the most simplified cover
    */
-  virtual const ISolid* coverTop () const ;
+  const ISolid* coverTop () const  override;
 
   /** add child solid to the solid union
    *  @param solid pointer to child solid

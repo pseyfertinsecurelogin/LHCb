@@ -13,7 +13,7 @@ class ICondDBEditor;
     Simple algorithm emulating a DAQ task to populate the ConditionsDB.
     This can be useful to measure the I/O rate for writing in the database.
 
-    @author Andrea Valassi 
+    @author Andrea Valassi
     @date July 2002
 *///--------------------------------------------------------------------------
 
@@ -22,13 +22,13 @@ class DAQCondDBAlgorithm : public GaudiAlgorithm {
  public:
 
   /// Constructor
-  DAQCondDBAlgorithm ( const std::string& name, ISvcLocator* pSvcLocator ); 
-  
+  DAQCondDBAlgorithm ( const std::string& name, ISvcLocator* pSvcLocator );
+
   // Algorithm standard methods
-  StatusCode initialize();
-  StatusCode execute();
-  StatusCode finalize();
-  
+  StatusCode initialize() override;
+  StatusCode execute() override;
+  StatusCode finalize() override;
+
  private:
 
   /// DAQ CondDB relative folder name (from the job options)
@@ -46,7 +46,7 @@ class DAQCondDBAlgorithm : public GaudiAlgorithm {
   /// Number of events analysed so far
   long m_daqEventNumber;
 
-  /// System time at the end of initialization 
+  /// System time at the end of initialization
   long long m_nsInitialized;
 
   /// Total time (ns) spent in event processing

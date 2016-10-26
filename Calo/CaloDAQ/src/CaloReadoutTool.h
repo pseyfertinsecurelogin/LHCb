@@ -1,12 +1,12 @@
-#ifndef CALODAQ_CALOREADOUTTOOL_H 
+#ifndef CALODAQ_CALOREADOUTTOOL_H
 #define CALODAQ_CALOREADOUTTOOL_H 1
 
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiTool.h"
 #include "GaudiKernel/IIncidentListener.h"
-#include "GaudiKernel/IIncidentSvc.h" 
-#include "GaudiKernel/Incident.h" 
+#include "GaudiKernel/IIncidentSvc.h"
+#include "GaudiKernel/Incident.h"
 // from LHCb
 #include "CaloDAQ/ICaloReadoutTool.h"
 #include "DAQKernel/DecoderToolBase.h"
@@ -16,65 +16,65 @@
 
 
 /** @class CaloReadoutTool CaloReadoutTool.h CaloDAQ/CaloReadoutTool.h
- *  
+ *
  * base class for Calo readout tools :
  * (CaloEnergyFromRaw, CaloTriggerAdcsFromRaw and CaloTriggerBitsFromRaw)
  *
  *  @author Olivier Deschamps
  *  @date   2007-02-01
  */
-class CaloReadoutTool 
+class CaloReadoutTool
   : public extends<Decoder::ToolBase, ICaloReadoutTool, IIncidentListener> {
-public: 
+public:
 
   /// Standard constructor
-  CaloReadoutTool( const std::string& type, 
+  CaloReadoutTool( const std::string& type,
                const std::string& name,
                const IInterface* parent);
 
-  virtual StatusCode initialize();
-  virtual StatusCode finalize();
-  virtual StatusCode  _setProperty(const std::string& p,const std::string& v){return  setProperty(p,v);};
-  
-  // Useful methods  to set/get m_banks externally 
+  StatusCode initialize() override;
+  StatusCode finalize() override;
+  StatusCode  _setProperty(const std::string& p,const std::string& v) override {return  setProperty(p,v);}
+
+  // Useful methods  to set/get m_banks externally
   // e.g. : avoid the call to getCaloBanksFromRaw() at each call of adc(bank)
-  virtual bool getBanks(){
+  bool getBanks() override {
     if(m_stat)counter("getCaloBanks") += 1;
     m_getRaw = false;
     clear();
-    m_ok = getCaloBanksFromRaw();    
+    m_ok = getCaloBanksFromRaw();
     return m_ok;
-  };
-  virtual void setBanks(const std::vector<LHCb::RawBank*>& bank ){
+  }
+  void setBanks(const std::vector<LHCb::RawBank*>& bank) override {
     m_getRaw = false;
     clear();
     m_banks = &bank;
     m_ok = true;
-  };
+  }
   //actual implementation MUST BE in the parent tool
-  virtual void clear(){Warning("DUMMY CLEARING : THIS MESSAGE MUST NOT APPEAR").ignore() ; return;}; 
+  void clear() override {Warning("DUMMY CLEARING : THIS MESSAGE MUST NOT APPEAR").ignore() ; return;}
   //
-  virtual void cleanData(int ){return; } ;// to be implemented in the parent tool
-  virtual LHCb::RawBankReadoutStatus& status(){return m_status;};
-  virtual void putStatusOnTES();
-  virtual bool ok(){
+  void cleanData(int) override {return; } // to be implemented in the parent tool
+  LHCb::RawBankReadoutStatus& status() override {return m_status;}
+  void putStatusOnTES() override;
+  bool ok() override {
     if(m_getRaw)getBanks() ;
     return m_ok;
   };
-  virtual DeCalorimeter* deCalo(){return m_calo;}
-  
+  DeCalorimeter* deCalo() override {return m_calo;}
+
 
   // =========================================================================
   /// Inform that a new incident has occurred
-  virtual void handle(const Incident& /* inc */ ) { 
-    if( UNLIKELY( msgLevel(MSG::DEBUG) ) ) 
+  void handle(const Incident& /* inc */ ) override {
+    if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
       debug() << "IIncident Svc reset" << endmsg;
-    m_getRaw = true ;  
-  } 
+    m_getRaw = true ;
+  }
   // =========================================================================
 
-protected:  
-  
+protected:
+
   bool getCaloBanksFromRaw();
   int findCardbyCode(const std::vector<int>& feCards, int code ) const;
   bool checkCards(int nCards, const std::vector<int>& feCards ) const;
@@ -82,15 +82,15 @@ protected:
   bool checkSrc(int source);
 
   std::string  m_detectorName;
-  bool m_packedIsDefault = false; 
+  bool m_packedIsDefault = false;
   const std::vector<LHCb::RawBank*>* m_banks = nullptr;
   DeCalorimeter*   m_calo = nullptr;
   LHCb::RawBank::BankType m_packedType;
   LHCb::RawBank::BankType m_shortType;
   LHCb::RawBank::BankType m_errorType;
   bool m_getRaw = true;
-  
-  
+
+
   bool m_extraHeader = false;
   bool m_packed = false;
   bool m_cleanCorrupted = false;

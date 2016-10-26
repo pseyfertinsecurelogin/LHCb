@@ -1,5 +1,5 @@
 // $Id: $
-#ifndef RATEFROMTCK_H 
+#ifndef RATEFROMTCK_H
 #define RATEFROMTCK_H 1
 
 // CondDB
@@ -14,50 +14,50 @@
 #include "Kernel/TCK.h"
 #include "GaudiKernel/SmartDataPtr.h"
 /** @class RateFromTCK RateFromTCK.h
- *  
+ *
  *  Get rate of a given rate limiter for the present TCK
  *
  *  @author Patrick Koppenburg
  *  @date   2011-08-10
  */
 
-class RateFromTCK final : public GaudiTool, virtual public IRateFromTCK 
+class RateFromTCK final : public GaudiTool, virtual public IRateFromTCK
 {
 
-public: 
+public:
 
   /// Standard constructor
-  RateFromTCK( const std::string& type, 
+  RateFromTCK( const std::string& type,
                const std::string& name,
                const IInterface* parent);
 
   virtual ~RateFromTCK( ) = default; ///< Destructor
 
-  StatusCode initialize(); 
+  StatusCode initialize() override;
 
  public:
 
-  inline unsigned int getTCK() const {
+  inline unsigned int getTCK() const override {
     return   m_triggerTCK;
-  };                            ///< retrieve TCK
+  }                            ///< retrieve TCK
   /// Get rate of rate limiting algorithm given its instance name (See TCKsh)
-  double rateFromTCK(const std::string& instanceName) const
+  double rateFromTCK(const std::string& instanceName) const override
   {
     return parameterFromTCK(instanceName,"Code","RATE(");
   }
-  
+
   /// Get prescale of algorithm given its instance name (See TCKsh)
-  double prescaleFromTCK(const std::string& instanceName) const
+  double prescaleFromTCK(const std::string& instanceName) const override
   {
     return parameterFromTCK(instanceName,"AcceptFraction","");
   }
 
-  StatusCode runUpdate() ;
+  StatusCode runUpdate() override;
 
 private:
 
   /// Get prescale of algorithm given its instance name (See TCKsh)
-  double parameterFromTCK( const std::string& instanceName, 
+  double parameterFromTCK( const std::string& instanceName,
                            const std::string& code,
                            const std::string& sub ) const ;
 

@@ -16,58 +16,58 @@
 */
 class Isotope final : public Material
 {
-  
+
 public:
-  
+
   /// Constructors
-  Isotope( const std::string name    = ""              , 
-           const double      a       = 0               , 
-           const double      z       = 0               , 
+  Isotope( const std::string name    = ""              ,
+           const double      a       = 0               ,
+           const double      z       = 0               ,
            const double      i       = 0               ,
            const double      density = 0               ,
-           const double      rl      = 0               ,  
+           const double      rl      = 0               ,
            const double      al      = 0               ,
-           const double      temp    = Gaudi::Units::STP_Temperature , 
-           const double      press   = Gaudi::Units::STP_Pressure    , 
+           const double      temp    = Gaudi::Units::STP_Temperature ,
+           const double      press   = Gaudi::Units::STP_Pressure    ,
            const eState      s       = stateUndefined  );
-  
+
   //        Atomic mass [g/mole]
-  virtual inline double   A() const;
-  virtual inline void  setA(  const double value );
-  
+  inline double   A() const override;
+  inline void  setA(  const double value ) override;
+
   //        Atomic number
-  virtual inline double   Z() const;
-  virtual inline void  setZ(  const double value ); 
+  inline double   Z() const override;
+  inline void  setZ(  const double value ) override;
 
  //        Mean excitation energy
-  virtual inline double   I() const;
-  virtual inline void  setI(  const double value );
+  inline double   I() const override;
+  inline void  setI(  const double value ) override;
 
   //       Parameters for density effect correction
-  virtual inline double   C() const;
-  virtual inline void  setC(  const double value );
-  virtual inline double   a() const;
-  virtual inline void  seta(  const double value );
-  virtual inline double   m() const;
-  virtual inline void  setm(  const double value );
-  virtual inline double   X0() const;
-  virtual inline void  setX0(  const double value );
-  virtual inline double   X1() const;
-  virtual inline void  setX1(  const double value );
+  inline double   C() const override;
+  inline void  setC(  const double value ) override;
+  inline double   a() const override;
+  inline void  seta(  const double value ) override;
+  inline double   m() const override;
+  inline void  setm(  const double value ) override;
+  inline double   X0() const override;
+  inline void  setX0(  const double value ) override;
+  inline double   X1() const override;
+  inline void  setX1(  const double value ) override;
 
 
-  
+
   //        Number of nucleons
-  virtual inline double   N() const;
-  
-  inline const CLID& clID    () const { return Isotope::classID(); } 
-  static const CLID& classID ()       { return CLID_Isotope; } 
-  
+  inline double   N() const override;
+
+  inline const CLID& clID    () const override { return Isotope::classID(); }
+  static const CLID& classID ()       { return CLID_Isotope; }
+
 protected:
-  
+
   //        Atomic mass [g/mole]
   double m_A;
-  
+
   //        Atomic number
   double m_Z;
 
@@ -80,7 +80,7 @@ protected:
   double m_m;
   double m_X0;
   double m_X1;
-  
+
 };
 
 ///////////////////////////////////////////////////////////////////////////

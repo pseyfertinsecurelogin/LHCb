@@ -93,10 +93,10 @@ namespace LHCb
   {
 
   public:
-    
+
     /// Default Packing Version
     static char defaultPackingVersion() { return 1; }
-    
+
   public:
 
     /// Standard constructor
@@ -107,8 +107,8 @@ namespace LHCb
     }
 
   public:
-    
-    virtual const CLID& clID()  const { return PackedCaloHypos::classID(); }
+
+    const CLID& clID()  const override { return PackedCaloHypos::classID(); }
     static  const CLID& classID()     { return CLID_PackedCaloHypos;       }
 
   public:

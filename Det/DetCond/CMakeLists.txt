@@ -12,6 +12,8 @@ find_package(Boost COMPONENTS system thread filesystem)
 find_package(COOL COMPONENTS CoolKernel CoolApplication)
 find_package(CORAL COMPONENTS CoralBase CoralKernel RelationalAccess)
 
+include_directories(SYSTEM ${CORAL_INCLUDE_DIRS} ${COOL_INCLUDE_DIRS})
+
 gaudi_add_library(DetCondLib
                   src/Lib/*.cpp
                   PUBLIC_HEADERS DetCond

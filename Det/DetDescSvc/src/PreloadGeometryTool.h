@@ -1,5 +1,5 @@
 // $Id: PreloadGeometryTool.h,v 1.2 2008-07-21 14:52:40 cattanem Exp $
-#ifndef PRELOADGEOMETRYTOOL_H 
+#ifndef PRELOADGEOMETRYTOOL_H
 #define PRELOADGEOMETRYTOOL_H 1
 
 // STL
@@ -18,14 +18,14 @@
 class PreloadGeometryTool : public GaudiTool, virtual public IGenericTool
 {
 
-public: 
+public:
 
   /// Standard constructor
-  PreloadGeometryTool( const std::string& type, 
+  PreloadGeometryTool( const std::string& type,
                        const std::string& name,
                        const IInterface* parent );
 
-  void execute(); ///< Load the geometry tree
+  void execute() override; ///< Load the geometry tree
 
 };
 

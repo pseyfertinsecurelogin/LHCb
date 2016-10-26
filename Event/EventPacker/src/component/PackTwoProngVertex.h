@@ -1,5 +1,5 @@
 // $Id: PackTwoProngVertex.h,v 1.2 2009-11-06 18:34:34 jonrob Exp $
-#ifndef PACKTWOPRONGVERTEX_H 
+#ifndef PACKTWOPRONGVERTEX_H
 #define PACKTWOPRONGVERTEX_H 1
 
 // Include files
@@ -13,17 +13,17 @@
  *  @author Olivier Callot
  *  @date   2009-01-21
  */
-class PackTwoProngVertex : public GaudiAlgorithm 
+class PackTwoProngVertex : public GaudiAlgorithm
 {
 
-public: 
+public:
 
   /// Standard constructor
   PackTwoProngVertex( const std::string& name, ISvcLocator* pSvcLocator );
 
   virtual ~PackTwoProngVertex(); ///< Destructor
 
-  virtual StatusCode execute();///< Algorithm execution
+  StatusCode execute() override;///< Algorithm execution
 
 private:
 

@@ -1,4 +1,4 @@
-#ifndef PRINTMCDECAYTREETOOL_H 
+#ifndef PRINTMCDECAYTREETOOL_H
 #define PRINTMCDECAYTREETOOL_H 1
 
 // Include files
@@ -26,7 +26,7 @@ class MsgStream;
  *  @date   29/03/2001
  */
 class PrintMCDecayTreeTool : public extends<GaudiTool, IPrintMCDecayTreeTool> {
-public:  
+public:
   /// Standard Constructor
   PrintMCDecayTreeTool( const std::string& type,
                       const std::string& name,
@@ -34,7 +34,7 @@ public:
 
   StatusCode initialize( ) override;
 
-  void printTree( const LHCb::MCParticle* mother, 
+  void printTree( const LHCb::MCParticle* mother,
                   int maxDepth = -1) const override;
 
 
@@ -56,12 +56,12 @@ private:
 
   MsgStream& printHeader( MsgStream &log ) const;
 
-  MsgStream& printInfo( const std::string& prefix, 
+  MsgStream& printInfo( const std::string& prefix,
                         const LHCb::MCParticle* part,
                         MsgStream& log ) const;
   MsgStream& printDecayTree( const LHCb::MCParticle *mother,
-                             const std::string &prefix, 
-                             int depth, 
+                             const std::string &prefix,
+                             int depth,
                              MsgStream &log ) const;
 
   SmartIF<LHCb::IParticlePropertySvc> m_ppSvc; ///< Pointer to particle property service
@@ -77,6 +77,6 @@ private:
   double m_lengthUnit ; /// Unit for distances
   std::string m_energyUnitName; ///< Unit for energies, momenta and masses
   std::string m_lengthUnitName; ///< Unit for distances
-   
+
 };
 #endif // PRINTMDECAYTREETOOL_H

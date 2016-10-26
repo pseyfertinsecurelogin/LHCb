@@ -49,7 +49,7 @@ class SolidTrd final : public    virtual SolidBase             ,
    *  @see ISolid
    *  return box type
    */
-  inline std::string typeName () const { return "SolidTrd"; };
+  inline std::string typeName () const override { return "SolidTrd"; }
 
   /** - retrieve the pointer to "simplified" solid - "cover"
    *    -\# The cover for general TRD is "symmetric" TRD
@@ -58,7 +58,7 @@ class SolidTrd final : public    virtual SolidBase             ,
    *  @see ISolid
    *  @return pointer to "simplified" solid - "cover"
    */
-  const ISolid* cover () const;
+  const ISolid* cover () const override;
 
   /** - printout to STD/STL stream
    *  - implementation  of ISolid abstract interface
@@ -68,7 +68,7 @@ class SolidTrd final : public    virtual SolidBase             ,
    *  @param os STD/STL stream
    *  @return reference to the stream
    */
-  virtual std::ostream& printOut ( std::ostream& os = std::cout ) const;
+  std::ostream& printOut ( std::ostream& os = std::cout ) const override;
 
   /** - printout to Gaudi MsgStream stream
    *  - implementation  of ISolid abstract interface
@@ -78,67 +78,67 @@ class SolidTrd final : public    virtual SolidBase             ,
    *  @param os  Gaudi MsgStream stream
    *  @return reference to the stream
    */
-  virtual MsgStream&    printOut   ( MsgStream&  os             ) const;
+  MsgStream&    printOut   ( MsgStream&  os             ) const override;
 
   /**  half size in x at point 1
    *  @return half size in x at point 1
    */
   inline       double                xHalfLength1() const
-  { return m_trd_xHalfLength1; };
+  { return m_trd_xHalfLength1; }
 
   /**  half size in x at point 2
    *  @return  half size in x at point 2
    */
   inline       double                xHalfLength2() const
-  { return m_trd_xHalfLength2; };
+  { return m_trd_xHalfLength2; }
 
   /**  half size in y at point 1
    *  @return half size in y at point 1
    */
   inline       double                yHalfLength1() const
-  { return m_trd_yHalfLength1; };
+  { return m_trd_yHalfLength1; }
 
   /**  half size in y at point 2
    *  @return half size in y at point 2
    */
   inline       double                yHalfLength2() const
-  { return m_trd_yHalfLength2; };
+  { return m_trd_yHalfLength2; }
 
   /**  half size in z
    *  @return  half size in z
    */
   inline       double                zHalfLength () const
-  { return m_trd_zHalfLength; };
+  { return m_trd_zHalfLength; }
 
   /**  full size in x at point 1
    *  @return full size in x at point 1
    */
   inline       double                xLength1    () const
-  { return m_trd_xHalfLength1 * 2 ; };
+  { return m_trd_xHalfLength1 * 2 ; }
 
   /**  full size in x at point 2
    *  @return full size in x at point 2
    */
   inline       double                xLength2    () const
-  { return m_trd_xHalfLength2 * 2 ; };
+  { return m_trd_xHalfLength2 * 2 ; }
 
   /**  full size in y at point 1
    *  @return full size in y at point 1
    */
   inline       double                yLength1    () const
-  { return m_trd_yHalfLength1 * 2 ; };
+  { return m_trd_yHalfLength1 * 2 ; }
 
   /**  full size in y at point 2
    *  @return full size in y at point 2
    */
   inline       double                yLength2    () const
-  { return m_trd_yHalfLength2 * 2 ; };
+  { return m_trd_yHalfLength2 * 2 ; }
 
   /**  full size in z
    *  @return full size in z
    */
   inline       double                zLength     () const
-  { return m_trd_zHalfLength  * 2 ; };
+  { return m_trd_zHalfLength  * 2 ; }
 
   //
 protected:

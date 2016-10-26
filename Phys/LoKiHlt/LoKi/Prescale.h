@@ -1,5 +1,5 @@
 // ============================================================================
-#ifndef LOKI_PRESCALE_H 
+#ifndef LOKI_PRESCALE_H
 #define LOKI_PRESCALE_H 1
 // ============================================================================
 // Include files
@@ -15,13 +15,13 @@
 namespace LoKi
 {
   // ==========================================================================
-  namespace Odin 
+  namespace Odin
   {
     // ========================================================================
-    /** @class Prescale 
+    /** @class Prescale
      *  Simple "functor"-implementation of Deterministic Prescaler
      *  @see LoKi::Cuts::ODIN_PRESCALE
-     *  @see DeterministicPrescaler 
+     *  @see DeterministicPrescaler
      *  The idea & code belongs to Gerhard The Great Raven
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2010-02-12
@@ -30,24 +30,24 @@ namespace LoKi
     {
     public:
       // ======================================================================
-      /// constructor from the accept fraction and the seed 
-      Prescale ( const double       accept      , 
+      /// constructor from the accept fraction and the seed
+      Prescale ( const double       accept      ,
                  const std::string& seed   = "" ) ;
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  Prescale* clone() const ;
-      /// MANDATORY: the only essential method 
-      virtual result_type operator() ( argument o ) const ;
-      /// OPTIONAL: the nice printout 
-      virtual std::ostream& fillStream ( std::ostream& s ) const ;
+      Prescale* clone() const  override;
+      /// MANDATORY: the only essential method
+      result_type operator() ( argument o ) const  override;
+      /// OPTIONAL: the nice printout
+      std::ostream& fillStream ( std::ostream& s ) const  override;
       // ======================================================================
     private:
       // ======================================================================
-      /// the accept fraction 
-      double       m_accept  ;                           // the accept fraction 
-      /// the "seed" 
-      std::string  m_seed    ;                           //          the "seed" 
-      /// the initial value 
-      unsigned int m_initial ;                           //   the initial value 
+      /// the accept fraction
+      double       m_accept  ;                           // the accept fraction
+      /// the "seed"
+      std::string  m_seed    ;                           //          the "seed"
+      /// the initial value
+      unsigned int m_initial ;                           //   the initial value
       // ======================================================================
     } ;
     // ========================================================================
@@ -55,7 +55,7 @@ namespace LoKi
   // ==========================================================================
 } //                                                      end of namespace LoKi
 // ============================================================================
-// The END 
+// The END
 // ============================================================================
 #endif // LOKI_PRESCALE_H
 // ============================================================================

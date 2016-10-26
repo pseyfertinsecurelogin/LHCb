@@ -106,6 +106,7 @@
         access           (PUBLIC | PROTECTED | PRIVATE)    "PUBLIC"
         const            (TRUE | FALSE)                    "FALSE"
         virtual          (TRUE | FALSE | PURE)             "FALSE"
+        override         (TRUE | FALSE)                    "FALSE"
         static           (TRUE | FALSE)                    "FALSE"
         inline           (TRUE | FALSE)                    "FALSE"
         friend           (TRUE | FALSE)                    "FALSE"

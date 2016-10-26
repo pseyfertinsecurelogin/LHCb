@@ -45,7 +45,7 @@ public:
   * another reference to class identifier
   * @return the class identifier for this class
   */
-  const CLID& clID () const;
+  const CLID& clID () const override;
 
   /**
    * Retrives the hybrid type
@@ -56,7 +56,7 @@ public:
   /** initialization method
   * @return Status of initialisation
   */
-  virtual StatusCode initialize();
+  StatusCode initialize() override;
 
   /** column number */
   unsigned int column() const;
@@ -68,9 +68,9 @@ public:
   std::string position() const;
 
   /** production ID --> in fact parent ID */
-  virtual unsigned int prodID() const;
+  unsigned int prodID() const override;
 
-  std::string conditionsPathName() const;
+  std::string conditionsPathName() const override;
 
   /** half module type */
   std::string halfModuleType() const;

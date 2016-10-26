@@ -1,4 +1,4 @@
-#ifndef PREPAREVELOFULLRAWBUFFER_H 
+#ifndef PREPAREVELOFULLRAWBUFFER_H
 #define PREPAREVELOFULLRAWBUFFER_H 1
 
 // Include files
@@ -20,14 +20,14 @@
 #include "Event/RawBank.h"
 
 /** @class PrepareVeloFullRawBuffer PrepareVeloFullRawBuffer.h
- *  
+ *
  *
  *  @author Tomasz Szumlak
  *  @date   2006-03-22
  *
  *  Algorithm dedicated to decoding the new 1MHz non-zero suppresed
  *  RawBank which is sent out by TELL1 pre-processing board.
- *  The input for the algorithm is binary file and the output 
+ *  The input for the algorithm is binary file and the output
  *  is container with VeloDigits objects.
  *  The container is the input for the TELL1
  *  algorithms (pedestal subtraction and following, FIR filter nad
@@ -43,10 +43,10 @@ using namespace VeloTELL1;
 using namespace LHCb;
 
 class PrepareVeloFullRawBuffer : public GaudiTupleAlg {
-public: 
+public:
 
   typedef std::map<unsigned int, std::pair<unsigned int, unsigned int* > > DATA_REPO;
-  
+
   enum parameters{
     ERROR_HEADER_1=1,
     ERROR_HEADER_2=2,
@@ -60,11 +60,11 @@ public:
   };
   enum bitMasks{
     ADCMask=0x000003ff
-  };  
+  };
 
   enum bitShifts{
     ADCShift=10
-  };  
+  };
 
   enum BANKS_SIZES{
     WORD2BYTE=4,
@@ -80,8 +80,8 @@ public:
 
   virtual ~PrepareVeloFullRawBuffer( ); ///< Destructor
 
-  virtual StatusCode initialize();    ///< Algorithm initialization
-  virtual StatusCode execute   ();    ///< Algorithm execution
+  StatusCode initialize() override;    ///< Algorithm initialization
+  StatusCode execute   () override;    ///< Algorithm execution
 
   // fetch the RawEvent
   StatusCode getRawEvent();
@@ -127,19 +127,19 @@ private:
   bool m_pedBankPresent;               /// flag to check if ped is sent out
   bool m_runWithODIN;
   bool m_isDebug;
-  bool m_roundRobin;  
+  bool m_roundRobin;
   bool m_ignoreErrorBanks;
-  
+
 };
 #endif // DECODEVELOFULLRAWBUFFER_H
 
 struct errorBankFinder{
 
-  errorBankFinder(unsigned int tell1): 
-    currentTell1 (tell1) 
+  errorBankFinder(unsigned int tell1):
+    currentTell1 (tell1)
   { }
 
-  bool operator()(LHCb::RawBank* aBank) const{ 
+  bool operator()(LHCb::RawBank* aBank) const{
     return (aBank->sourceID())==static_cast<int>(currentTell1);
   }
 

@@ -1,5 +1,5 @@
 // $Id: FilterByRunEvent.h,v 1.4 2008-12-09 13:17:31 spradlin Exp $
-#ifndef FILTERBYRUNEVENT_H 
+#ifndef FILTERBYRUNEVENT_H
 #define FILTERBYRUNEVENT_H 1
 
 // from Gaudi
@@ -11,7 +11,7 @@
 #include <algorithm>
 
 /** @class FilterByRunEvent FilterByRunEvent.h
- *   
+ *
  *
  *  @author Patrick Spradlin
  *  @date   2007-01-18
@@ -36,7 +36,7 @@
  *    The default configuration of @c FilterByRunEvent is a fail-all filter.
  *
  *  @par Example of usage
- * 
+ *
  *    In order to configure a sequencer @c MySequence to skip the two events
  *    with (run number, event number) pairs (86456, 421) and (48621, 3):
  *    @verbatim
@@ -51,19 +51,19 @@ MyFilterByRunEvent.PassSelectedEvents = 0
 MyFilterByRunEvent.RunEventNumList = [ (86456, 421), (48621, 3) ]
 .... @endverbatim
  */
-class FilterByRunEvent final : public GaudiAlgorithm 
+class FilterByRunEvent final : public GaudiAlgorithm
 {
 
-public: 
+public:
 
   /// Standard constructor
   FilterByRunEvent( const std::string& name, ISvcLocator* pSvcLocator );
 
   virtual ~FilterByRunEvent( ) = default; ///< Destructor
 
-  virtual StatusCode execute();    ///< Algorithm execution
+  StatusCode execute() override;    ///< Algorithm execution
 
-  virtual StatusCode initialize();    ///< Algorithm initialize
+  StatusCode initialize() override;    ///< Algorithm initialize
 
 private:
 

@@ -1,4 +1,4 @@
-#ifndef RAWBANKTOSTLITECLUSTERALG_H 
+#ifndef RAWBANKTOSTLITECLUSTERALG_H
 #define RAWBANKTOSTLITECLUSTERALG_H 1
 
 #include "STDecodingBaseAlg.h"
@@ -12,9 +12,9 @@
 #include <utility>
 
 /** @class RawBankToSTLiteClusterAlg RawBankToSTLiteClusterAlg.h
- *  
+ *
  *  Algorithm to create STClusters from RawEvent object
- * 
+ *
  *  @author M. Needham
  *  @date   2004-01-07
  */
@@ -39,9 +39,9 @@ public:
 
   virtual ~RawBankToSTLiteClusterAlg( ); ///< Destructor
 
-  virtual StatusCode initialize();    ///< Algorithm initialization
-  virtual StatusCode execute();    ///< Algorithm execution
-  virtual StatusCode finalize(); ///< finalize
+  StatusCode initialize() override;    ///< Algorithm initialization
+  StatusCode execute() override;    ///< Algorithm execution
+  StatusCode finalize() override; ///< finalize
 
 private:
 
@@ -49,12 +49,12 @@ private:
   StatusCode decodeBanks(LHCb::RawEvent* rawEvt, LHCb::STLiteCluster::STLiteClusters* fCont) const;
 
   // add a single cluster to the output container
-  void createCluster(const STTell1Board* aBoard,  const STDAQ::version& bankVersion, 
+  void createCluster(const STTell1Board* aBoard,  const STDAQ::version& bankVersion,
                      const STClusterWord& aWord, LHCb::STLiteCluster::STLiteClusters* fCont, const bool isUT) const;
 
 
-  std::string m_clusterLocation;  
-  
+  std::string m_clusterLocation;
+
   class Less_by_Channel : public std::binary_function<LHCb::STLiteCluster,LHCb::STLiteCluster ,bool>{
   public:
 
@@ -71,7 +71,7 @@ private:
     }
   };
 
-   
+
   class Equal_Channel : public std::binary_function<LHCb::STLiteCluster,LHCb::STLiteCluster ,bool>{
   public:
 
@@ -88,17 +88,17 @@ private:
     }
   };
 
-  
+
 };
 
 #include "Kernel/STTell1Board.h"
 #include "Kernel/ISTReadoutTool.h"
 
 inline void RawBankToSTLiteClusterAlg::createCluster(const STTell1Board* aBoard,  const STDAQ::version& bankVersion,
-                                                     const STClusterWord& aWord, LHCb::STLiteCluster::STLiteClusters* fCont, 
+                                                     const STClusterWord& aWord, LHCb::STLiteCluster::STLiteClusters* fCont,
                                                      const bool isUT) const{
-   
-  const unsigned int fracStrip = aWord.fracStripBits();     
+
+  const unsigned int fracStrip = aWord.fracStripBits();
   const STTell1Board::chanPair chan = aBoard->DAQToOffline(fracStrip, bankVersion, STDAQ::StripRepresentation(aWord.channelID()));
   LHCb::STLiteCluster liteCluster(chan.second,
                             aWord.pseudoSizeBits(),
@@ -108,4 +108,4 @@ inline void RawBankToSTLiteClusterAlg::createCluster(const STTell1Board* aBoard,
   fCont->push_back(std::move(liteCluster));
 }
 
-#endif //  RAWBANKTOSTLITECLUSTERALG_H 
+#endif //  RAWBANKTOSTLITECLUSTERALG_H

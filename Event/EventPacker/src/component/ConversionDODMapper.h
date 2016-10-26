@@ -41,15 +41,15 @@ class ConversionDODMapper : public MapperToolBase
 public:
 
   /// Standard constructor
-  ConversionDODMapper( const std::string& type, 
-                       const std::string& name, 
+  ConversionDODMapper( const std::string& type,
+                       const std::string& name,
                        const IInterface* parent );
 
   /// Destructor
-  virtual ~ConversionDODMapper(); 
+  virtual ~ConversionDODMapper();
 
   /// Initialize the tool instance.
-  virtual StatusCode initialize();
+  StatusCode initialize() override;
 
 public:
 
@@ -64,7 +64,7 @@ public:
   /// Then the TypeNameString of the algorithm instance is returned.
   ///
   /// @see IDODAlgMapper
-  virtual Gaudi::Utils::TypeNameString algorithmForPath(const std::string &path);
+  Gaudi::Utils::TypeNameString algorithmForPath(const std::string &path) override;
 
 public:
 
@@ -76,7 +76,7 @@ public:
   /// create the node.
   ///
   /// @see IDODNodeMapper
-  virtual std::string nodeTypeForPath(const std::string &path);
+  std::string nodeTypeForPath(const std::string &path) override;
 
 private:
 
@@ -108,32 +108,32 @@ private:
 private:
 
   /// Helper class to manage the regex translation rules.
-  class Rule 
+  class Rule
   {
   public:
-  
+
     /// Constructor.
     inline Rule(const std::string& _regexp, const std::string& _format):
       regexp(_regexp), format(_format) {}
-    
+
     /// Apply the conversion rule to the input string.
     /// If the regex does not match the input, an empty string is returned.
     inline std::string apply(const std::string &input) const
     {
       return boost::regex_replace(input, regexp, format, boost::match_default | boost::format_no_copy);
     }
-    
+
     /// Helper to create a Rule from a pair of strings.
-    inline static Rule make(const std::pair<std::string, std::string> &p) 
+    inline static Rule make(const std::pair<std::string, std::string> &p)
     {
       return Rule(p.first, p.second);
     }
- 
+
   private:
-    
+
     /// Regular expression object.
     boost::regex regexp;
-  
+
     /// Format string (see Boost documentation).
     std::string format;
   };

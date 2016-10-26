@@ -1,5 +1,5 @@
 // $Id: $
-#ifndef UNPACKDECREPORT_H 
+#ifndef UNPACKDECREPORT_H
 #define UNPACKDECREPORT_H 1
 
 // Include files
@@ -7,23 +7,23 @@
 #include "GaudiAlg/GaudiAlgorithm.h"
 
 /** @class UnpackDecReport UnpackDecReport.h
- *  
+ *
  *  Unpacks DecReports
- *  
+ *
  *  @author Olivier Callot
  *  @date   2012-01-23
  */
-class UnpackDecReport : public GaudiAlgorithm 
+class UnpackDecReport : public GaudiAlgorithm
 {
 
-public: 
+public:
 
   /// Standard constructor
   UnpackDecReport( const std::string& name, ISvcLocator* pSvcLocator );
 
   virtual ~UnpackDecReport(); ///< Destructor
 
-  virtual StatusCode execute();    ///< Algorithm execution
+  StatusCode execute() override;    ///< Algorithm execution
 
 private:
 

@@ -1,5 +1,5 @@
 // $Id: PrintHeader.h,v 1.1 2007-03-02 08:49:27 cattanem Exp $
-#ifndef PRINTHEADER_H 
+#ifndef PRINTHEADER_H
 #define PRINTHEADER_H 1
 
 // Include files
@@ -11,14 +11,14 @@
 
 
 /** @class PrintHeader PrintHeader.h cmt/PrintHeader.h
- *  
+ *
  *  Print event and run number in debug mode
  *
  *  @author Gloria Corti
  *  @date   2003-03-16
  */
 
-class PrintHeader final : public GaudiAlgorithm 
+class PrintHeader final : public GaudiAlgorithm
 {
 
 public:
@@ -28,8 +28,8 @@ public:
 
   virtual ~PrintHeader( ) = default; ///< Destructor
 
-  virtual StatusCode execute   ();    ///< Algorithm execution
-  virtual StatusCode finalize  ();    ///< Algorithm finalization
+  StatusCode execute   () override;    ///< Algorithm execution
+  StatusCode finalize  () override;    ///< Algorithm finalization
 
 private:
 

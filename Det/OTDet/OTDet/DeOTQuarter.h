@@ -1,4 +1,3 @@
-// $Id: DeOTQuarter.h,v 1.16 2008-10-22 11:12:50 cattanem Exp $
 #ifndef OTDET_DEOTQUARTER_H
 #define OTDET_DEOTQUARTER_H 1
 
@@ -40,7 +39,7 @@ class DeOTQuarter : public DetectorElement {
   /** Retrieves reference to class identifier
    * @return the class identifier for this class
    */
-  const CLID& clID() const;
+  const CLID& clID() const override;
 
   /** Another reference to class identifier
    * @return the class identifier for this class
@@ -50,7 +49,7 @@ class DeOTQuarter : public DetectorElement {
   /** Initialization method
    * @return Status of initialisation
    */
-  virtual StatusCode initialize();
+  StatusCode initialize() override;
 
   /** @return quarterID */
   unsigned int quarterID() const;

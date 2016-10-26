@@ -32,18 +32,18 @@ class SolidBoolean: public virtual SolidBase
   /** retrieve the specific type of the solid
    *  @return specific type of the solid
    */
-  std::string   typeName () const override { return "SolidBoolean"; };
+  std::string   typeName () const override { return "SolidBoolean"; }
 
   /** retrieve the pointer to "simplified" solid - "cover"
    *  @return pointer to "simplified" solid - "cover"
    */
-  const ISolid* cover () const override { return first()->cover() ; };
+  const ISolid* cover () const override { return first()->cover() ; }
 
   /** retrieve the pointer to "the most simplified cover"
    *  probably, something like "gabarite box"
    *  @return pointer to the most simplified cover
    */
-  const ISolid* coverTop () const override { return first()->coverTop() ; };
+  const ISolid* coverTop () const override { return first()->coverTop() ; }
 
   /** printout to STD/STL stream
    *  @param os STD/STL stream
@@ -114,31 +114,31 @@ class SolidBoolean: public virtual SolidBase
   /** poiter to the "main"/"first" boolean
    *  @return poiter to the "main"/"first" boolean
    */
-  const  ISolid* first () const { return m_sb_first.get(); } ;
+  const  ISolid* first () const { return m_sb_first.get(); }
 
   /** number of childrens
    *  @return number of childrens
    */
-  unsigned int  noChildrens () const { return m_sb_childrens.size(); } ;
+  unsigned int  noChildrens () const { return m_sb_childrens.size(); }
 
   /** access to the childrens by index
    *  @param index index of child solid
    *  @return pointer to child solid
    */
   const ISolid* operator[]  ( unsigned int index ) const
-  {  return  ( ( index < noChildrens() )  ? *(childBegin()+index) : 0 ) ; } ;
+  {  return  ( ( index < noChildrens() )  ? *(childBegin()+index) : 0 ) ; }
 
   /** acess to constant iterator
    *  @return "begin" iterator
    */
   SolidChildrens::const_iterator
-  childBegin () const { return m_sb_childrens.begin(); };
+  childBegin () const { return m_sb_childrens.begin(); }
 
   /** acess to constant iterator
    *  @return "end" iterator
    */
   SolidChildrens::const_iterator
-  childEnd   () const { return m_sb_childrens.end  (); };
+  childEnd   () const { return m_sb_childrens.end  (); }
 
   ///
 protected:
@@ -199,13 +199,13 @@ protected:
    *  @return "begin" iterator
    */
   SolidChildrens::iterator
-  childBegin () { return m_sb_childrens.begin(); };
+  childBegin () { return m_sb_childrens.begin(); }
 
   /** acess to iterator
    *  @return "begin" iterator
    */
   SolidChildrens::iterator
-  childEnd   () { return m_sb_childrens.end  (); };
+  childEnd   () { return m_sb_childrens.end  (); }
 
   /** Calculate the maximum number of ticks that a straight line could
       make with this solid

@@ -6,9 +6,9 @@
 <!DOCTYPE gdd SYSTEM 'gdd.dtd'>
 <gdd>
   <package name='RecEvent'>
-    
+
     <!-- ================ TwoProngVertex class definition ================ -->
-    
+
     <class
 	name        = 'TwoProngVertex'
 	author      = 'Wouter Hulsbergen, Sean Brisbane'
@@ -17,12 +17,12 @@
 	keyedContTypeDef = "TRUE"
 	id = '10040'
 	serializers = 'TRUE'>
-      
+
       <location name= "Default"
 		place="LHCb::RecVertexLocation::V0"
 		noQuote="TRUE"
 		/>
-      
+
       <base name='LHCb::RecVertex'/>
       &KeyedObject;
       <import name='GaudiKernel/NamedRange'/>
@@ -34,21 +34,21 @@
       <import name='Track' soft='FORWARDONLY'/>
       <import name='LHCbMath/MatrixTransforms'/>
       <import name='LHCbMath/ValueWithError'/>
-      
-      <typedef 
+
+      <typedef
 	  type   = "SharedObjectsContainer&lt;LHCb::TwoProngVertex&gt;"
 	  def    = "Selection"
 	  desc   = "For defining SharedObjectContainer"
 	  access = "PUBLIC"
 	  />
-      
-      <typedef 
+
+      <typedef
 	  type = "Gaudi::NamedRange_&lt;ConstVector&gt;"
 	  def  = "Range"
 	  desc = "For accessing a list of L0CaloCandidates which is either a SharedObjectContainer, a KeyedContainer or a ConstVector"
 	  access = "PUBLIC"
 	  />
-      
+
       <enum
         desc="Additional information assigned to this V0. Contains Impact parameter information"
         name="additionalInfo"
@@ -63,7 +63,7 @@
 
        </enum>
 
-	
+
       <constructor
         desc = 'Sets minimal data content for useable vertex. The rest we do with setters.'
         initList = "LHCb::RecVertex(position)">
@@ -76,6 +76,7 @@
         type    = 'LHCb::TwoProngVertex*'
         name    = 'clone'
         desc    = 'Clone the TwoProngVertex'
+        override = 'TRUE'
         const   = 'TRUE'>
         <code>
           return new LHCb::TwoProngVertex(*this);
@@ -132,17 +133,17 @@
 	setMeth = 'FALSE'
 	nonconstaccessor = 'TRUE'  />
 
-      <attribute 
+      <attribute
 	type = 'std::vector&lt;LHCb::ParticleID&gt;'
 	name = 'compatiblePIDs'
 	desc = 'Vector of compatible PIDs for the mother'
 	/>
-      
+
       <method
 	type = 'void'
 	name = 'addPID'
 	desc = 'add a PID to the vector'>
-	<arg type = 'LHCb::ParticleID' name = 'value'/> 
+	<arg type = 'LHCb::ParticleID' name = 'value'/>
 	<code>
 	  m_compatiblePIDs.push_back(value);
 	</code>
@@ -159,7 +160,7 @@
 	  return Gaudi::Math::geo2LA(m_momA,mass, p4a);
 	</code>
       </method>
-      
+
       <method
         type = 'const Gaudi::LorentzVector'
         name = 'p4B'
@@ -172,7 +173,7 @@
       </code>
      </method>
 
-    <method 
+    <method
         type = 'double'
         name = 'mass'
         desc = 'fitted mass of two-prong given mass hypothesis for 2 daughters'
@@ -180,11 +181,11 @@
       <arg type='double' name='massA'/>
       <arg type='double' name='massB'/>
       <code>
-         return (p4A(massA)+p4B(massB)).M() ; 
+         return (p4A(massA)+p4B(massB)).M() ;
       </code>
      </method>
 
-    <method 
+    <method
         type = 'Gaudi::Math::ValueWithError'
         name = 'massWithError'
         desc = 'error on fitted mass of two-prong given mass hypothesis for 2 daughters'
@@ -193,7 +194,7 @@
       <arg type='double' name='massB'/>
      </method>
 
-      <method 
+      <method
         type = 'const Gaudi::LorentzVector'
         name = 'momentum'
         desc = 'fitted momentum of two-prong given mass hypothesis for 2 daughters'
@@ -201,7 +202,7 @@
 	<arg type='double' name='massA'/>
 	<arg type='double' name='massB'/>
 	<code>
-	  return (p4A(massA)+p4B(massB)) ; 
+	  return (p4A(massA)+p4B(massB)) ;
 	</code>
       </method>
 
@@ -211,7 +212,7 @@
 	desc = 'fitted p3 of first track'
 	const   = 'TRUE'>
       </method>
-      
+
       <method
         type = 'Gaudi::XYZVector'
         name = 'p3B'
@@ -219,18 +220,18 @@
         const   = 'TRUE'>
      </method>
 
-       <method 
+       <method
         type = 'Gaudi::XYZVector'
         name = 'p3'
         desc = 'fitted momentum of two-prong'
         const   = 'TRUE'>
 	<code>
-	  return p3A()+p3B() ; 
+	  return p3A()+p3B() ;
 	</code>
       </method>
 
       <method
-	type = "const Gaudi::SymMatrix7x7"	
+	type = "const Gaudi::SymMatrix7x7"
 	name = "covMatrix7x7"
 	desc = "retrieve the  7x7 Covariance Martix, x, y, z, px, py, pz, E for the V0"
 	const = "TRUE">
@@ -239,7 +240,7 @@
 	</method>
 
       <method
-	type = "Gaudi::SymMatrix6x6"	
+	type = "Gaudi::SymMatrix6x6"
 	name = "covMatrix6x6"
 	desc = "retrieve the 6x6 covariance matrix, x, y, z, px, py, pz for the two-prong"
 	const = "TRUE">
@@ -258,9 +259,9 @@
         desc = "Retrieve the first track easily"
         const = "TRUE">
         <code>
-	  
+
           return  (tracks().at(0)).target();
-	  
+
         </code>
       </method>
 
@@ -282,18 +283,18 @@
         desc = "error handling"
 	static = "TRUE">
 	<arg type=
-	  "char" 
+	  "char"
 	  name="error[]"
 	 />
 	<code>
 	  std::cout &lt;&lt; error &lt;&lt; std::endl;//this is bad, how should I report error
 	</code>
-        
+
       </method>
 
-	  
-        
- 
+
+
+
       <method
 	type ="LHCb::Track::Types"
 	name = "TrackType"
@@ -313,7 +314,7 @@
 <arg type = "double" name = "qT" inout = "BOTH"/>
 	<arg type = "double" name = "alpha" inout = "BOTH"/>
       </method>
-      
+
 
 
 

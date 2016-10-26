@@ -1,4 +1,4 @@
-#ifndef IL0DUCONFIGPROVIDER_H 
+#ifndef IL0DUCONFIGPROVIDER_H
 #define IL0DUCONFIGPROVIDER_H 1
 
 // Include files
@@ -11,7 +11,7 @@
 
 
 /** @class IL0DUConfigProvider IL0DUConfigProvider.h
- *  
+ *
  *
  *  @author Olivier Deschamps
  *  @date   2007-09-19

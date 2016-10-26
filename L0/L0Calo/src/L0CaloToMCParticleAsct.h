@@ -1,5 +1,5 @@
 // $Id: L0CaloToMCParticleAsct.h,v 1.4 2005-01-12 09:19:38 ocallot Exp $
-#ifndef L0CALOTOMCPARTICLEASCT_H 
+#ifndef L0CALOTOMCPARTICLEASCT_H
 #define L0CALOTOMCPARTICLEASCT_H 1
 
 // Include files
@@ -11,7 +11,7 @@ class MCParticle;
 class L0CaloCandidate;
 
 /** @class L0CaloToMCParticleAsct L0CaloToMCParticleAsct.h
- *  
+ *
  *
  *  @author Olivier Callot
  *  @date   2002-07-01
@@ -23,7 +23,7 @@ public:
 
   virtual ~L0CaloToMCParticleAsct( ); ///< Destructor
 
-  virtual StatusCode execute   ();    ///< Algorithm execution
+  StatusCode execute   () override;    ///< Algorithm execution
 
 protected:
 

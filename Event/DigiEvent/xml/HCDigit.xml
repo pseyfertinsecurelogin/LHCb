@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<!DOCTYPE gdd SYSTEM "gdd.dtd" > 
+<!DOCTYPE gdd SYSTEM "gdd.dtd" >
 <gdd>
   <package name = "DigiEvent">
     <class name = "HCDigit"
@@ -26,7 +26,7 @@
       <arg const = 'TRUE' name = "digit" type = "LHCb::HCDigit"/>
     </constructor>
 
-    <method type = "LHCb::HCDigit*" name = "clone" const = 'TRUE' access = "PUBLIC" 
+    <method type = "LHCb::HCDigit*" name = "clone" const = 'TRUE' access = "PUBLIC"
             desc = "Clone method">
       <code>
         return new LHCb::HCDigit(*this);
@@ -37,13 +37,13 @@
     <attribute name = "ctrlWord" type = "int" desc = "control word"/>
     <attribute name = "card" type = "int" desc = "card number"/>
 
-    <method type = "LHCb::HCCellID" name = "cellID" const = 'TRUE' 
+    <method type = "LHCb::HCCellID" name = "cellID" const = 'TRUE'
             desc = "Return the digit cellID = key">
       <code>return key();</code>
     </method>
 
-    <method type = "std::ostream&amp;" name = "fillStream" const = 'TRUE' 
-            virtual = "FALSE"
+    <method type = "std::ostream&amp;" name = "fillStream" const = 'TRUE'
+            override = "TRUE"
             desc = "Print the digit key = cellID">
       <arg type = "std::ostream" name = "s"/>
       <code>

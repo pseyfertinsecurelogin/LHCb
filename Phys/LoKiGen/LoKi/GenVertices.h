@@ -63,13 +63,13 @@ namespace LoKi
       /// MANDATORY: default constructor
       BarCode() {}
       /// MANDATORY: clone method ("virtual" constructor")
-      virtual  BarCode* clone() const ;
+      BarCode* clone() const  override;
       /// MANDATORY: virtual destructor
       virtual ~BarCode() ;
       /// MANDATORY: the only one essential method
-      virtual  result_type operator() ( argument p ) const ;
+      result_type operator() ( argument p ) const  override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      virtual  std::ostream& fillStream( std::ostream& s ) const ;
+      std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
     } ;
     // ========================================================================
@@ -91,13 +91,13 @@ namespace LoKi
       /// MANDATORY: default constructor
       PositionX() {}
       /// MANDATORY: clone method ("virtual" constructor")
-      virtual  PositionX* clone() const ;
+      PositionX* clone() const  override;
       /// MANDATORY: virtual destructor
       virtual ~PositionX() ;
       /// MANDATORY: the only one essential method
-      virtual  result_type operator() ( argument p ) const ;
+      result_type operator() ( argument p ) const  override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      virtual  std::ostream& fillStream( std::ostream& s ) const ;
+      std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
     } ;
     // ========================================================================
@@ -119,13 +119,13 @@ namespace LoKi
       /// MANDATORY: default constructor
       PositionY() {}
       /// MANDATORY: clone method ("virtual" constructor")
-      virtual  PositionY* clone() const ;
+      PositionY* clone() const  override;
       /// MANDATORY: virtual destructor
       virtual ~PositionY() ;
       /// MANDATORY: the only one essential method
-      virtual  result_type operator() ( argument p ) const ;
+      result_type operator() ( argument p ) const  override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      virtual  std::ostream& fillStream( std::ostream& s ) const ;
+      std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
     } ;
     // ========================================================================
@@ -147,13 +147,13 @@ namespace LoKi
       /// MANDATORY: default constructor
       PositionZ() {}
       /// MANDATORY: clone method ("virtual" constructor")
-      virtual  PositionZ* clone() const ;
+      PositionZ* clone() const  override;
       /// MANDATORY: virtual destructor
       virtual ~PositionZ() ;
       /// MANDATORY: the only one essential method
-      virtual  result_type operator() ( argument p ) const ;
+      result_type operator() ( argument p ) const  override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      virtual  std::ostream& fillStream( std::ostream& s ) const ;
+      std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
     } ;
     // ========================================================================
@@ -175,13 +175,13 @@ namespace LoKi
       /// MANDATORY: default constructor
       PositionT() {}
       /// MANDATORY: clone method ("virtual" constructor")
-      virtual  PositionT* clone() const ;
+      PositionT* clone() const  override;
       /// MANDATORY: virtual destructor
       virtual ~PositionT() ;
       /// MANDATORY: the only one essential method
-      virtual  result_type operator() ( argument p ) const ;
+      result_type operator() ( argument p ) const  override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      virtual  std::ostream& fillStream( std::ostream& s ) const ;
+      std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
     } ;
     // ========================================================================
@@ -203,13 +203,13 @@ namespace LoKi
       /// MANDATORY: default constructor
       Rho() {}
       /// MANDATORY: clone method ("virtual" constructor")
-      virtual  Rho* clone() const ;
+      Rho* clone() const  override;
       /// MANDATORY: virtual destructor
       virtual ~Rho() ;
       /// MANDATORY: the only one essential method
-      virtual  result_type operator() ( argument p ) const ;
+      result_type operator() ( argument p ) const  override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      virtual  std::ostream& fillStream( std::ostream& s ) const ;
+      std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
     } ;
     // ========================================================================
@@ -249,11 +249,11 @@ namespace LoKi
       /// virtual destructor
       virtual ~CountIF();
       /// MANDATORY: clone method ("virtual contructor")
-      virtual CountIF* clone() const ;
+      CountIF* clone() const  override;
       /// MANDATORY: the only one essential method
-      virtual result_type operator() ( argument v ) const ;
+      result_type operator() ( argument v ) const  override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      virtual  std::ostream& fillStream ( std::ostream& s ) const ;
+      std::ostream& fillStream ( std::ostream& s ) const  override;
       // ======================================================================
     private:
       // ======================================================================
@@ -334,11 +334,11 @@ namespace LoKi
       /// virtual destructor
       virtual ~SumIF();
       /// MANDATORY: clone method ("virtual contructor")
-      virtual SumIF* clone() const ;
+      SumIF* clone() const  override;
       /// MANDATORY: the only one essential method
-      virtual result_type operator() ( argument v ) const ;
+      result_type operator() ( argument v ) const  override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      virtual  std::ostream& fillStream( std::ostream& s ) const ;
+      std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
     private:
       // ======================================================================

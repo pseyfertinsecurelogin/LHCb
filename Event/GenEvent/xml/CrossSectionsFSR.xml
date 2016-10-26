@@ -7,20 +7,20 @@
 <gdd>
   <package name='GenEvent'>
 
-<!-- Cross-Section Class --> 
-       
+<!-- Cross-Section Class -->
+
     <class
       name="CrossSectionsFSR"
       author="Davide Fazzini"
       desc="Enum class for Generator fractions and cross-sections"
-      id="13602" 
+      id="13602"
       serializers="TRUE"
       >
-      
+
       &DataObject;
       <base name="DataObject"/>
       <import name="GaudiKernel/VectorMap"/>
-     
+
       <enum
 	 desc="lookup table for fraction and cross-section keys"
 	 name="CrossSectionKey"
@@ -162,7 +162,7 @@
 
 <!-- ****************************** Computation of generator level cut efficiencies ****************************** -->
           map.insert(std::pair&lt;std::string,std::string&gt;("GenLevelCut","Generator level cut efficiency"));
-	  
+
 <!-- ****************************** Computation of B Hadron fraction ****************************** -->
 	  map.insert(std::pair&lt;std::string,std::string&gt;("FractionB0Gen","Fraction of generated B0"));
           map.insert(std::pair&lt;std::string,std::string&gt;("FractionantiB0Gen","Fraction of generated B0bar"));
@@ -237,7 +237,8 @@
         name='fillStream'
         type='std::ostream&amp;'
         desc='printout'
-        const='TRUE'>
+        const='TRUE'
+        override='TRUE'>
         <arg name="s" type="std::ostream" const="FALSE"/>
 	<code>
 	  std::ostream&amp; ss = const_cast&lt; std::ostream&amp; &gt;(s);
@@ -247,7 +248,7 @@
         </code>
       </method>
 
-      
+
 
     </class>
 

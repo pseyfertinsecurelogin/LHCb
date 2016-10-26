@@ -61,9 +61,9 @@ class XmlLVolumeCnv : public XmlGenericCnv {
    * @param address the address for this object
    * @return status depending on the completion of the call
    */
-  virtual StatusCode internalCreateObj (xercesc::DOMElement* element,
-                                        DataObject*& refpObject,
-                                        IOpaqueAddress* address);
+  StatusCode internalCreateObj (xercesc::DOMElement* element,
+                                DataObject*& refpObject,
+                                IOpaqueAddress* address) override;
 
 
  private:

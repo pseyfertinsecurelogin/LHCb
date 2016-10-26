@@ -29,31 +29,31 @@ public:
    * @return Reference to CdfPersCnvSvc
    */
   XmlCnvSvc (const std::string& name, ISvcLocator* svc);
-  
+
   /**
    * Initializes the service
    * @return status depending on the completion of the call
    */
   StatusCode initialize() override;
-  
+
   /**
    * Reinitializes the service
    * @return status depending on the completion of the call
    */
   StatusCode reinitialize() override;
-  
+
   /**
    * Finalizes the service
    * @return status depending on the completion of the call
    */
   StatusCode finalize() override;
-  
+
 
   /**
    * Create an XML address using explicit arguments to identify a single object
    * @param svc_type the service type
    * @param clid the CLID of the XML Element for which an address is created
-   * @param par an array of two strings containing the dbname and objectname 
+   * @param par an array of two strings containing the dbname and objectname
    * in this order
    * @param refpAddress the new address created
    * @return a StatusCode giving the status of the address creation
@@ -62,10 +62,10 @@ public:
   using ConversionSvc::createAddress;
   StatusCode createAddress(long  svc_type,
                            const CLID& clid,
-                           const std::string* par, 
+                           const std::string* par,
                            const unsigned long* /*ip*/,
                            IOpaqueAddress*& refpAddress) override;
-  
+
 
   ///////////////////////////////////////////////////
   // implementation of the IXmlParserSvc interface //
@@ -100,7 +100,7 @@ public:
   // implementation of the IXmlSvc interface //
   /////////////////////////////////////////////
 
-  /** 
+  /**
    * Evaluates a numerical expresion
    * @param expr expresion to evaluate. It may include units and parameters
    * @param check boolean to control if the value needs to be check for being a
@@ -109,7 +109,7 @@ public:
    */
   double eval( const char* expr, bool check = true ) override;
 
-  /** 
+  /**
    * Evaluates a numerical expresion
    * @param expr expresion to evaluate. It may include units and parameters
    * @param check boolean to control if the value needs to be check for being a
@@ -123,7 +123,7 @@ public:
    * expression with units and other parameters.
    * @param name parameter name
    * @param value string which defines the value of the parameter.
-   * @return true if success 
+   * @return true if success
    */
   bool addParameter (const std::string& name,
                      const std::string& value) override;
@@ -133,7 +133,7 @@ public:
    * expression with units and other parameters.
    * @param name parameter name
    * @param value string which defines the value of the parameter.
-   * @return true if success 
+   * @return true if success
    */
   bool addParameter( const char* name, const char* value ) override;
 
@@ -142,21 +142,21 @@ public:
    * expression with units and other parameters.
    * @param name parameter name
    * @param value string which defines the value of the parameter.
-   * @return true if success 
+   * @return true if success
    */
   bool addParameter( const char* name, double value ) override;
 
   /**
    * Removes a parameter from the list of known parameters
    * @param name parameter name
-   * @return true if success 
+   * @return true if success
    */
   bool removeParameter( const std::string& name ) override;
 
   /**
    * Removes a parameter from the list of known parameters
    * @param name parameter name
-   * @return true if success 
+   * @return true if success
    */
   bool removeParameter( const char* name ) override;
 
@@ -168,7 +168,6 @@ public:
    */
   bool allowGenericCnv() override { return m_genericConversion; }
 
-  
 
 private:
 
@@ -221,7 +220,7 @@ private:
   std::string::size_type skipExpr (std::string s,
                          std::string::size_type start,
                          std::string::size_type end);
-  
+
   bool sumHasUnit (std::string s,
                    std::string::size_type baseIndex,
                    std::string::size_type lastIndex);
@@ -231,7 +230,7 @@ private:
   bool exprHasUnit (std::string s,
                     std::string::size_type baseIndex,
                     std::string::size_type lastIndex);
-  
+
 
 private:
 
@@ -261,7 +260,7 @@ private:
    * tells whether to check parameters for units or not.
    */
   bool m_checkUnits;
-  
+
 };
 
 #endif    // DETDESCCNV_XMLCNVSVC_H

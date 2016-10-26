@@ -9,7 +9,7 @@
  */
 //-----------------------------------------------------------------------------
 
-#ifndef GLOBALRECO_RICHPIDSFROMPROTOPARTICLESALG_H 
+#ifndef GLOBALRECO_RICHPIDSFROMPROTOPARTICLESALG_H
 #define GLOBALRECO_RICHPIDSFROMPROTOPARTICLESALG_H 1
 
 // from Gaudi
@@ -21,27 +21,27 @@
 
 //-----------------------------------------------------------------------------
 /** @class RichPIDsFromProtoParticlesAlg RichPIDsFromProtoParticlesAlg.h
- *  
+ *
  *  Simple algorithm to recreate RichPID data objects from the data
  *  stored in the ProtoParticles
- *m_richPIDloc 
+ *m_richPIDloc
  *  @author Chris Jones
  *  @date   2006-08-01
  */
 //-----------------------------------------------------------------------------
 
-class RichPIDsFromProtoParticlesAlg : public GaudiAlgorithm 
+class RichPIDsFromProtoParticlesAlg : public GaudiAlgorithm
 {
 
-public: 
+public:
 
   /// Standard constructor
   RichPIDsFromProtoParticlesAlg( const std::string& name, ISvcLocator* pSvcLocator );
 
   virtual ~RichPIDsFromProtoParticlesAlg( ); ///< Destructor
 
-  virtual StatusCode initialize();    ///< Algorithm initialization
-  virtual StatusCode execute   ();    ///< Algorithm execution
+  StatusCode initialize() override;    ///< Algorithm initialization
+  StatusCode execute   () override;    ///< Algorithm execution
 
 private:
 

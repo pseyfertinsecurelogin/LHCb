@@ -1,4 +1,4 @@
-#ifndef PREPAREVELORAWBUFFER_H 
+#ifndef PREPAREVELORAWBUFFER_H
 #define PREPAREVELORAWBUFFER_H 1
 
 #include <vector>
@@ -34,21 +34,21 @@ public:
 
   virtual ~PrepareVeloRawBuffer( ); ///< Destructor
 
-  virtual StatusCode initialize();    ///< Algorithm initialization
-  virtual StatusCode execute   ();    ///< Algorithm execution
+  StatusCode initialize() override;    ///< Algorithm initialization
+  StatusCode execute   () override;    ///< Algorithm execution
 
 private:
-  
-  void dumpInputClusters() const;
-    
-  unsigned int 
-makeBank (std::vector<const LHCb::InternalVeloCluster*>::const_iterator begin, 
-	  std::vector<const LHCb::InternalVeloCluster*>::const_iterator end); 
-	  
 
-void 
+  void dumpInputClusters() const;
+
+  unsigned int
+makeBank (std::vector<const LHCb::InternalVeloCluster*>::const_iterator begin,
+	  std::vector<const LHCb::InternalVeloCluster*>::const_iterator end);
+	
+
+void
 storeBank(int sensor,
-	  std::vector<const LHCb::InternalVeloCluster*>::const_iterator begin, 
+	  std::vector<const LHCb::InternalVeloCluster*>::const_iterator begin,
 	  std::vector<const LHCb::InternalVeloCluster*>::const_iterator end,
 	  LHCb::RawEvent* rawEvent);
 private:
@@ -56,7 +56,7 @@ private:
   // configurable locations in the TES
   std::string m_clusterLoc;
   std::string m_rawEventLoc;
-  
+
   // configurable cluster dump flag
   bool m_dumpInputClusters;
 
@@ -65,7 +65,7 @@ private:
 
   // long lived containers for performance reasons. Also used to communicate
   // with makeBank() method
-  std::vector<const LHCb::InternalVeloCluster*> m_sortedClusters; 
+  std::vector<const LHCb::InternalVeloCluster*> m_sortedClusters;
   std::vector<SiDAQ::buffer_word> m_rawData;
   std::vector<SiDAQ::buffer_word> m_clusterADCBuffer;
   std::vector<SiDAQ::buffer_word> m_clusterPosBuffer;
@@ -73,10 +73,10 @@ private:
   // size of raw bank in bytes, inclding the 4 byte header but
   // *without* the padding bytes at the end
   unsigned int m_bankSizeInBytes;
-  
+
   /// pointer to Velo Detector Element
   DeVelo* m_velo;
-  
+
   /// list of sensor numbers to check for empty sensors
   std::vector<int> m_sensorNumbers;
 

@@ -1,5 +1,5 @@
 // $Id: PackTrack.h,v 1.2 2009-11-06 18:34:34 jonrob Exp $
-#ifndef PACKTRACK_H 
+#ifndef PACKTRACK_H
 #define PACKTRACK_H 1
 
 // from Gaudi
@@ -14,18 +14,18 @@
  *  @author Olivier Callot
  *  @date   2008-11-12
  */
-class PackTrack : public GaudiAlgorithm 
+class PackTrack : public GaudiAlgorithm
 {
 
-public: 
+public:
 
   /// Standard constructor
   PackTrack( const std::string& name, ISvcLocator* pSvcLocator );
 
   virtual ~PackTrack( ); ///< Destructor
 
-  virtual StatusCode execute(); ///< Algorithm execution
-  
+  StatusCode execute() override; ///< Algorithm execution
+
 private:
 
   std::string m_inputName;  ///< Input location

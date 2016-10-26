@@ -36,7 +36,7 @@ namespace LHCb
     public :
       // ======================================================================
       /// standard algorithm initialization
-      virtual StatusCode  initialize ()
+      StatusCode  initialize () override
       {
         StatusCode sc = Algorithm::initialize () ;   //     initialize the base
         if ( sc.isFailure() ) { return sc ; }
@@ -45,14 +45,14 @@ namespace LHCb
         return StatusCode::SUCCESS ;
       }
       /// standard algorithm finalization
-      virtual StatusCode  finalize   ()
+      StatusCode  finalize   () override
       {
         // release the aquired service
         m_ppSvc.reset();
         return Algorithm::finalize () ;            //        finalize the base
       }
       /// algorithm execution
-      virtual StatusCode  execute    () ;
+      StatusCode  execute    () override;
       // ======================================================================
     protected:
       // ======================================================================

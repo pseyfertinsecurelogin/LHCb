@@ -51,8 +51,8 @@ class XmlTabulatedPropertyCnv : public XmlGenericCnv {
    * @param refpObject the object to be built
    * @return status depending on the completion of the call
    */
-  virtual StatusCode i_createObj (xercesc::DOMElement* element,
-                                  DataObject*& refpObject);
+  StatusCode i_createObj (xercesc::DOMElement* element,
+                          DataObject*& refpObject) override;
 
   /** This fills the current object for its child childElement.
    * Overrides the default method in XmlGenericCnv
@@ -62,9 +62,9 @@ class XmlTabulatedPropertyCnv : public XmlGenericCnv {
    * @param address the address for this object
    * @return status depending on the completion of the call
    */
-  virtual StatusCode i_fillObj (xercesc::DOMElement* childElement,
-                                DataObject* refpObject,
-                                IOpaqueAddress* address);
+  StatusCode i_fillObj (xercesc::DOMElement* childElement,
+                        DataObject* refpObject,
+                        IOpaqueAddress* address) override;
 
   /** This fills the current object for its child text node childText.
    * Overrides the default method in XmlGenericCnv
@@ -73,9 +73,9 @@ class XmlTabulatedPropertyCnv : public XmlGenericCnv {
    * @param address the address for this object
    * @return status depending on the completion of the call
    */
-  virtual StatusCode i_fillObj (xercesc::DOMText* childText,
-                                DataObject* refpObject,
-                                IOpaqueAddress* address);
+  StatusCode i_fillObj (xercesc::DOMText* childText,
+                        DataObject* refpObject,
+                        IOpaqueAddress* address) override;
 
   /** This processes the current object.
    * Overrides the default method in XmlGenericCnv
@@ -83,8 +83,8 @@ class XmlTabulatedPropertyCnv : public XmlGenericCnv {
    * @param address the address for this object
    * @return status depending on the completion of the call
    */
-  virtual StatusCode i_processObj (DataObject* refpObject,
-                                      IOpaqueAddress* address);
+  StatusCode i_processObj (DataObject* refpObject,
+                           IOpaqueAddress* address) override;
 
  private:
 

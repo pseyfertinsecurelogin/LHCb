@@ -1,5 +1,5 @@
 // $Id: createODIN.h,v 1.1 2008-01-15 10:11:23 cattanem Exp $
-#ifndef CREATEODIN_H 
+#ifndef CREATEODIN_H
 #define CREATEODIN_H 1
 
 // Include files
@@ -17,15 +17,15 @@ class IEventTimeDecoder;
 class createODIN final : public GaudiAlgorithm
 {
 
-public: 
+public:
 
   /// Standard constructor
   createODIN( const std::string& name, ISvcLocator* pSvcLocator );
 
   virtual ~createODIN( ) = default; ///< Destructor
 
-  virtual StatusCode initialize();    ///< Algorithm initialization
-  virtual StatusCode execute   ();    ///< Algorithm execution
+  StatusCode initialize() override;    ///< Algorithm initialization
+  StatusCode execute   () override;    ///< Algorithm execution
 
 private:
 

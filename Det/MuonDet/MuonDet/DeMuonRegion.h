@@ -9,18 +9,18 @@
 #include "DetDesc/DetectorElement.h"
 
 /** @class DeMuonRegion DeMuonRegion.h MuonDet/DeMuonRegion.h
- *  
+ *
  *  Detector element class for a region in the muon system
  *
  *  The Xml converted for this object also makes all of the chamber objects
- *  at the same time. 
+ *  at the same time.
  *
  *  @author David Hutchcroft
  *  @date   21/01/2002
  */
 
 /// Class ID of DeMuonRegion
-static const CLID CLID_DEMuonRegion = 11005;  
+static const CLID CLID_DEMuonRegion = 11005;
 
 class DeMuonRegion: public DetectorElement {
 
@@ -32,13 +32,13 @@ public:
   ~DeMuonRegion();
 
 
-  inline virtual const CLID& clID() const {
+  inline const CLID& clID() const override {
     return classID();
   }
 
   static const CLID& classID(){  return CLID_DEMuonRegion;  }
 
-  StatusCode initialize();
+  StatusCode initialize() override;
 
 private:
 

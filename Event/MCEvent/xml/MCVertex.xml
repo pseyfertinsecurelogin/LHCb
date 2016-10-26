@@ -8,7 +8,7 @@
 
     <class
       author="Gloria Corti, revised by P. Koppenburg"
-      desc="Monte Carlo vertex information" 
+      desc="Monte Carlo vertex information"
       name="MCVertex"
       id="220"
       stdVectorTypeDef="TRUE"
@@ -26,11 +26,11 @@
        />
        <base name="KeyedObject&lt;int&gt;"/>
 
-       <constructor 
-           desc     = "Copy Constructor" 
+       <constructor
+           desc     = "Copy Constructor"
            argList  = "const LHCb::MCVertex* right"
-           initList = "KeyedObject&lt;int&gt;(), m_position(right->position()), m_time(right->time()), m_type(right->type()), m_mother(right->mother()), m_products(right->products())" 
-           > <code/> 
+           initList = "KeyedObject&lt;int&gt;(), m_position(right->position()), m_time(right->time()), m_type(right->type()), m_mother(right->mother()), m_products(right->products())"
+           > <code/>
        </constructor>
 
       <method
@@ -57,7 +57,7 @@
         </code>
       </method>
        <attribute
-        desc="Position in LHCb reference system" 
+        desc="Position in LHCb reference system"
         name="position"
         type="Gaudi::XYZPoint"
         init="0.0, 0.0, 0.0"
@@ -107,9 +107,9 @@
         name="isDecay"
         type="bool"
        >
-         <code> 
-  return ((m_type == MCVertex::DecayVertex) || 
-          (m_type == MCVertex::OscillatedAndDecay))  ; 
+         <code>
+  return ((m_type == MCVertex::DecayVertex) ||
+          (m_type == MCVertex::OscillatedAndDecay))  ;
        </code>
        </method>
        <method
@@ -118,15 +118,15 @@
         name="primaryVertex"
         type="const LHCb::MCVertex*"
        >
-         <code> 
-  return ( this->isPrimary() ? this : ( m_mother!=0 ? m_mother->primaryVertex() : NULL ) ); 
+         <code>
+  return ( this->isPrimary() ? this : ( m_mother!=0 ? m_mother->primaryVertex() : NULL ) );
          </code>
        </method>
        <method
           name    = "fillStream"
           desc    = "Print this MCVertex in a human readable way"
           type    = "std::ostream&amp;"
-          virtual = "FALSE"
+          override = "TRUE"
           const   = "TRUE">
           <arg
             type = "std::ostream"

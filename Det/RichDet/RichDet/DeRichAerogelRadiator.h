@@ -22,7 +22,7 @@
  *  @author Antonis Papanestis
  *  @date   2006-03-02
  */
-class DeRichAerogelRadiator : public DeRichSingleSolidRadiator 
+class DeRichAerogelRadiator : public DeRichSingleSolidRadiator
 {
 
 public:
@@ -36,7 +36,7 @@ public:
    * Retrieves reference to class identifier
    * @return the class identifier for this class
    */
-  inline const CLID& clID() const
+  inline const CLID& clID() const override
   {
     return classID();
   }
@@ -53,7 +53,7 @@ public:
    * @retval StatusCode::FAILURE Initialisation failed, program should
    * terminate
    */
-  virtual StatusCode initialize();
+  StatusCode initialize() override;
 
 public:
 
@@ -69,19 +69,19 @@ public:
    */
   inline int subtileCopynumber() const noexcept { return m_subtilecopynumber; }
 
-  /** Returns the sub-tile number within a primary tile 
+  /** Returns the sub-tile number within a primary tile
    *
    *  If sub tiles are not active, returns -1
    */
   inline int subtileIDInTile()   const noexcept { return m_subtileNumInTile;  }
 
   /// Returns a unique tile ID number, when sub-tiles are both active and inactive
-  inline int tileID() const 
-  { 
+  inline int tileID() const
+  {
     return ( !subTile() ? primaryTileID() :
              1000*primaryTileID() + subtileIDInTile() );
   }
-  
+
 private:
 
   /// method to update the refractive index of the radiator
@@ -121,13 +121,13 @@ private:
 
   /// Aerogel sub tile copy number
   int m_subtilecopynumber{-1};
-  
+
   /// Aerogel subtile number in a tile
   int m_subtileNumInTile{-1};
 
   /// Flag to say if this is a sub tile or not
   bool m_subTile{true};
-  
+
 };
 
 #endif // RICHDET_DERICHAEROGELRADIATOR_H

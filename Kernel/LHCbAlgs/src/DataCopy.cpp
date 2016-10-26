@@ -51,9 +51,9 @@ namespace Gaudi
   public:
     // ========================================================================
     /// standard initialization
-    virtual StatusCode initialize () ;
+    StatusCode initialize ()  override;
     /// the only one essential method
-    virtual StatusCode execute () ; // the only one essential method
+    StatusCode execute ()  override; // the only one essential method
     // ========================================================================
   protected:
     // ========================================================================

@@ -1,4 +1,3 @@
-// $Id: PackedMCParticle.h,v 1.5 2009-10-21 16:40:16 jonrob Exp $
 #ifndef EVENT_PACKEDMCPARTICLE_H
 #define EVENT_PACKEDMCPARTICLE_H 1
 
@@ -49,13 +48,13 @@ namespace LHCb
   {
 
   public:
-    
+
     /// Default Packing Version
     static char defaultPackingVersion() { return 1; }
 
   public:
 
-    virtual const CLID& clID() const { return PackedMCParticles::classID(); }
+    const CLID& clID() const override { return PackedMCParticles::classID(); }
     static  const CLID& classID()    { return CLID_PackedMCParticles;       }
 
   public:
@@ -64,13 +63,13 @@ namespace LHCb
     const std::vector<PackedMCParticle>& mcParts() const { return m_vect; }
 
   public:
-    
+
     /// Set the packing version
     void setPackingVersion( const char ver ) { m_packingVersion = ver; }
-    
+
     /// Access the packing version
     char packingVersion() const { return m_packingVersion; }
-    
+
   private:
 
     /// Packed MCParticles

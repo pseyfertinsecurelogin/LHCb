@@ -35,14 +35,14 @@ public:
    */
   SolidIntersection( const std::string& name , std::unique_ptr<ISolid> first );
   [[deprecated("please call with an std::unique_ptr<ISolid> as first argument")]]
-  SolidIntersection( const std::string& name , ISolid* first ) : SolidIntersection(name,std::unique_ptr<ISolid>(first) ) {};
+  SolidIntersection( const std::string& name , ISolid* first ) : SolidIntersection(name,std::unique_ptr<ISolid>(first) ) {}
 
 public:
 
   /** retrieve the specific type of the solid
    *  @return specific type of the solid
    */
-  virtual std::string typeName () const { return "SolidIntersection" ; };
+  std::string typeName () const override { return "SolidIntersection" ; }
 
   /** - check for the given 3D-point.
    *    Point coordinates are in the local reference
@@ -52,9 +52,9 @@ public:
    *  @param "" point (in local reference system of the solid)
    *  @return true if the point is inside the solid
    */
-  bool isInside ( const Gaudi::XYZPoint   & ) const ;
-  bool isInside ( const Gaudi::Polar3DPoint& point ) const ;
-  bool isInside ( const Gaudi::RhoZPhiPoint& point ) const ;
+  bool isInside ( const Gaudi::XYZPoint   & ) const override;
+  bool isInside ( const Gaudi::Polar3DPoint& point ) const override;
+  bool isInside ( const Gaudi::RhoZPhiPoint& point ) const override;
   /** add intersections
    *  @param solid pointer         to new solid
    *  @param mtrx  pointer transformation

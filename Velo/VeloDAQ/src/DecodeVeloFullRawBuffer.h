@@ -1,4 +1,4 @@
-#ifndef DECODEVELOFULLRAWBUFFER_H 
+#ifndef DECODEVELOFULLRAWBUFFER_H
 #define DECODEVELOFULLRAWBUFFER_H 1
 
 // Include files
@@ -14,7 +14,7 @@
 #include "VeloFullDecoder.h"
 
 /** @class DecodeVeloFullRawBuffer DecodeVeloFullRawBuffer.h
- *  
+ *
  *
  *  @author Tomasz Szumlak
  *  @date   2006-04-21
@@ -23,14 +23,14 @@
 using namespace VeloTELL1;
 
 class DecodeVeloFullRawBuffer : public GaudiAlgorithm {
-public: 
+public:
   /// Standard constructor
   DecodeVeloFullRawBuffer( const std::string& name, ISvcLocator* pSvcLocator );
 
   virtual ~DecodeVeloFullRawBuffer( ); ///< Destructor
 
-  virtual StatusCode initialize();    ///< Algorithm initialization
-  virtual StatusCode execute   ();    ///< Algorithm execution
+  StatusCode initialize() override;    ///< Algorithm initialization
+  StatusCode execute   () override;    ///< Algorithm execution
 
   StatusCode getData();
   StatusCode decodeData();
@@ -74,7 +74,7 @@ private:
   EvtInfos* m_evtInfo;
   // flags
   bool m_adcDataPresent;
-  bool m_pedDataPresent;  
+  bool m_pedDataPresent;
   bool m_sectorCorrection;
   bool m_isDebug;
   // data buffers
@@ -93,7 +93,7 @@ private:
   VeloFullDecoder m_PedDecoder;
   // cable order
   std::vector<unsigned int> m_cableOrder;
-  
-  
+
+
 };
 #endif // DECODEVELOFULLRAWBUFFER_H

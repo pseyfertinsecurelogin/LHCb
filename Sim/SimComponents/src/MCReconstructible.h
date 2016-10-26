@@ -60,23 +60,23 @@ public:
   virtual ~MCReconstructible( ); ///< Destructor
 
   /// Initialize
-  StatusCode initialize();
+  StatusCode initialize() override;
 
   /** Implement the handle method for the Incident service.
    *  This is used to inform the tool of software incidents.
    *  @param incident The incident identifier
    */
-  void handle( const Incident& incident );
+  void handle( const Incident& incident ) override;
 
   /// Get the reconstruction category for the given MCParticle
-  virtual IMCReconstructible::RecCategory reconstructible( const LHCb::MCParticle* mcPart ) const;
+  IMCReconstructible::RecCategory reconstructible( const LHCb::MCParticle* mcPart ) const override;
 
   /// Is the MCParticle in the detector acceptance?
-  virtual bool inAcceptance( const LHCb::MCParticle* mcPart ) const;
+  bool inAcceptance( const LHCb::MCParticle* mcPart ) const override;
 
-  /// Is the MCParticle reconstructible as given type 
-  virtual bool isReconstructibleAs(const IMCReconstructible::RecCategory& category,
-                                   const LHCb::MCParticle* mcPart ) const;
+  /// Is the MCParticle reconstructible as given type
+  bool isReconstructibleAs(const IMCReconstructible::RecCategory& category,
+                           const LHCb::MCParticle* mcPart ) const override;
 
 private: // methods
 
@@ -89,8 +89,8 @@ private: // methods
   /// get the MCTrackInfo object
   inline MCTrackInfo & mcTkInfo() const
   {
-    if ( NULL == m_tkInfo ) 
-    { 
+    if ( NULL == m_tkInfo )
+    {
       m_tkInfo = new MCTrackInfo( evtSvc(), msgSvc() );
       if ( NULL == m_tkInfo ) { Exception( "Failed to load MCTrackInfo" ); }
     }
@@ -100,10 +100,10 @@ private: // methods
 private: // data
 
   /// Acceptance parameters (neutrals)
-  double m_zECAL; 
-  double m_xECALInn; 
-  double m_yECALInn; 
-  double m_xECALOut; 
+  double m_zECAL;
+  double m_xECALInn;
+  double m_yECALInn;
+  double m_xECALOut;
   double m_yECALOut;
 
   /// Threshold for Et gammas reconstructibility
@@ -125,7 +125,7 @@ private: // data
   std::vector<std::string> m_chargedVeloCriteria;
 
   typedef GaudiUtils::VectorMap<unsigned int,LHCb::MC::MCTrackGeomCriteria*> CriteriaMap;
-  CriteriaMap m_critMap;  
+  CriteriaMap m_critMap;
 
 };
 

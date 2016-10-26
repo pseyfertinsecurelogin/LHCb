@@ -1,5 +1,5 @@
 // $Id: CompareCaloHypo.h,v 1.1.1.1 2008-11-18 17:12:59 ocallot Exp $
-#ifndef COMPARECALOHYPO_H 
+#ifndef COMPARECALOHYPO_H
 #define COMPARECALOHYPO_H 1
 
 // from Gaudi
@@ -13,17 +13,17 @@
  *  @author Olivier Callot
  *  @date   2008-11-14
  */
-class CompareCaloHypo : public GaudiAlgorithm 
+class CompareCaloHypo : public GaudiAlgorithm
 {
 
-public: 
+public:
 
   /// Standard constructor
   CompareCaloHypo( const std::string& name, ISvcLocator* pSvcLocator );
 
   virtual ~CompareCaloHypo( ); ///< Destructor
 
-  virtual StatusCode execute(); ///< Algorithm execution
+  StatusCode execute() override; ///< Algorithm execution
 
 private:
 

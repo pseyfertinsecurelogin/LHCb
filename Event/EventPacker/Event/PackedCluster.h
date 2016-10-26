@@ -7,9 +7,9 @@
 #include <string>
 #include <vector>
 
-namespace LHCb 
+namespace LHCb
 {
- 
+
   /** @class PackedCluster PackedCluster.h Event/PackedCluster.h
    *
    *  Packed description of a cluster (Velo, ST) for mDST transmission
@@ -17,7 +17,7 @@ namespace LHCb
    *  @author Olivier Callot
    *  @date   2012-03-05
    */
-  struct PackedCluster 
+  struct PackedCluster
   {
     unsigned int id{0};
     unsigned int begin{0};
@@ -30,7 +30,7 @@ namespace LHCb
 
   static const CLID CLID_PackedClusters = 1540;
 
-  namespace PackedClusterLocation 
+  namespace PackedClusterLocation
   {
     static const std::string& Default = "pRec/Track/Clusters";
   }
@@ -43,34 +43,34 @@ namespace LHCb
    *  @date   2012-03-05
    */
 
-  class PackedClusters : public DataObject 
+  class PackedClusters : public DataObject
   {
-  
+
   public:
-  
+
     /// Standard constructor
-    PackedClusters() 
+    PackedClusters()
     {
       m_clusters.reserve ( 100  );
       m_strips.reserve   ( 1000 );
       m_adcs.reserve     ( 1000 );
     }
-    
-    virtual ~PackedClusters() {}; /// Destructor
 
-    virtual const CLID& clID()  const { return PackedClusters::classID(); }
+    virtual ~PackedClusters() {} /// Destructor
+
+    const CLID& clID()  const override { return PackedClusters::classID(); }
     static  const CLID& classID()     { return CLID_PackedClusters;       }
 
   public:
 
     void addVeloCluster( const LHCb::VeloCluster* vCl );
 
-    void addTTCluster( const LHCb::STCluster* sCl ) 
+    void addTTCluster( const LHCb::STCluster* sCl )
     {
       addSTCluster( sCl, 0x40000000 );
     }
 
-    void addUTCluster( const LHCb::STCluster* sCl ) 
+    void addUTCluster( const LHCb::STCluster* sCl )
     {
       addSTCluster( sCl, 0x50000000 ); // need to find the proper key (JC)
     }
@@ -80,7 +80,7 @@ namespace LHCb
       addSTCluster( sCl, 0x60000000 );
     }
 
-    void addSTCluster( const LHCb::STCluster* sCl, 
+    void addSTCluster( const LHCb::STCluster* sCl,
                        const unsigned int key );
 
   public:

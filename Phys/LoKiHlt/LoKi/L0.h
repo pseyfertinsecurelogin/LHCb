@@ -301,12 +301,12 @@ namespace LoKi
       ChannelDecision ( const std::vector<std::string>& channels ,
                         const int bx = 0 ) ;
       /// MANDATORY: clone method ('virtual constructor')
-      virtual  ChannelDecision* clone() const
+      ChannelDecision* clone() const override
       { return new ChannelDecision ( *this ) ; }
       /// MANDATORY: the only one essential method
-      virtual result_type operator() ( argument a ) const ;
+      result_type operator() ( argument a ) const  override;
       /// OPTIONAL: the nice printout
-      virtual std::ostream& fillStream ( std::ostream& s ) const ;
+      std::ostream& fillStream ( std::ostream& s ) const  override;
       // ======================================================================
     public:
       // ======================================================================
@@ -357,12 +357,12 @@ namespace LoKi
       ChannelPreDecision ( const std::vector<std::string>& channels ,
                            const int bx = 0 ) ;
       /// MANDATORY: clone method ('virtual constructor')
-      virtual  ChannelPreDecision* clone() const
+      ChannelPreDecision* clone() const override
       { return new ChannelPreDecision ( *this ) ; }
       /// MANDATORY: the only one essential method
-      virtual result_type operator() ( argument a ) const ;
+      result_type operator() ( argument a ) const  override;
       /// OPTIONAL: the nice printout
-      virtual std::ostream& fillStream ( std::ostream& s ) const ;
+      std::ostream& fillStream ( std::ostream& s ) const  override;
       // ======================================================================
     } ;
     // ========================================================================
@@ -384,12 +384,12 @@ namespace LoKi
       TriggerDecision ( const std::vector<std::string>& channels ,
                        const int bx = 0 ) ;
       /// MANDATORY: clone method ('virtual constructor')
-      virtual  TriggerDecision* clone() const
+      TriggerDecision* clone() const override
       { return new TriggerDecision ( *this ) ; }
       /// MANDATORY: the only one essential method
-      virtual result_type operator() ( argument a ) const ;
+      result_type operator() ( argument a ) const  override;
       /// OPTIONAL: the nice printout
-      virtual std::ostream& fillStream ( std::ostream& s ) const ;
+      std::ostream& fillStream ( std::ostream& s ) const  override;
       // ======================================================================
     } ;
     // ========================================================================
@@ -411,12 +411,12 @@ namespace LoKi
       ConditionValue ( const std::vector<std::string>& channels ,
                        const int bx = 0 ) ;
       /// MANDATORY: clone method ('virtual constructor')
-      virtual  ConditionValue* clone() const
+      ConditionValue* clone() const override
       { return new ConditionValue ( *this ) ; }
       /// MANDATORY: the only one essential method
-      virtual result_type operator() ( argument a ) const ;
+      result_type operator() ( argument a ) const  override;
       /// OPTIONAL: the nice printout
-      virtual std::ostream& fillStream ( std::ostream& s ) const ;
+      std::ostream& fillStream ( std::ostream& s ) const  override;
       // ======================================================================
     } ;
     // ========================================================================
@@ -429,12 +429,12 @@ namespace LoKi
       ( const std::string& substr     ,
         const int          bx     = 0 ) ;
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  ChannelDecisionSubString* clone() const
+      ChannelDecisionSubString* clone() const override
       { return new ChannelDecisionSubString ( *this ) ; }
       /// MANDATORY: the only one essential methos
-      virtual result_type operator() ( argument a ) const ;
+      result_type operator() ( argument a ) const  override;
       /// OPTIONAL: nice printout
-      virtual std::ostream& fillStream ( std::ostream& s ) const ;
+      std::ostream& fillStream ( std::ostream& s ) const  override;
       // ======================================================================
       const std::string& substr() const { return m_substr ; }
       // ======================================================================
@@ -454,12 +454,12 @@ namespace LoKi
       ( const std::string& substr     ,
         const int          bx     = 0 ) ;
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  ChannelDecisionRegex* clone() const
+      ChannelDecisionRegex* clone() const override
       { return new ChannelDecisionRegex ( *this ) ; }
       /// MANDATORY: the only one essential methos
-      virtual result_type operator() ( argument a ) const ;
+      result_type operator() ( argument a ) const  override;
       /// OPTIONAL: nice printout
-      virtual std::ostream& fillStream ( std::ostream& s ) const ;
+      std::ostream& fillStream ( std::ostream& s ) const  override;
       // ======================================================================
       const boost::regex& expression() const { return m_expression ; }
       // ======================================================================
@@ -479,12 +479,12 @@ namespace LoKi
       ( const std::string& substr     ,
         const int          bx     = 0 ) ;
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  ChannelPreDecisionSubString* clone() const
+      ChannelPreDecisionSubString* clone() const override
       { return new ChannelPreDecisionSubString ( *this ) ; }
       /// MANDATORY: the only one essential methos
-      virtual result_type operator() ( argument a ) const ;
+      result_type operator() ( argument a ) const  override;
       /// OPTIONAL: nice printout
-      virtual std::ostream& fillStream ( std::ostream& s ) const ;
+      std::ostream& fillStream ( std::ostream& s ) const  override;
       // ======================================================================
     } ;
     // ========================================================================
@@ -497,12 +497,12 @@ namespace LoKi
       ( const std::string& substr     ,
         const int          bx     = 0 ) ;
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  ChannelPreDecisionRegex* clone() const
+      ChannelPreDecisionRegex* clone() const override
       { return new ChannelPreDecisionRegex ( *this ) ; }
       /// MANDATORY: the only one essential methos
-      virtual result_type operator() ( argument a ) const ;
+      result_type operator() ( argument a ) const  override;
       /// OPTIONAL: nice printout
-      virtual std::ostream& fillStream ( std::ostream& s ) const ;
+      std::ostream& fillStream ( std::ostream& s ) const  override;
       // ======================================================================
     } ;
     // ========================================================================
@@ -521,12 +521,12 @@ namespace LoKi
       /// trigger decision by name
       TriggerDecisionSubString ( const std::string& channel , const int bx = 0 ) ;
       /// MANDATORY: clone method ('virtual constructor')
-      virtual  TriggerDecisionSubString* clone() const
+      TriggerDecisionSubString* clone() const override
       { return new TriggerDecisionSubString ( *this ) ; }
       /// MANDATORY: the only one essential method
-      virtual result_type operator() ( argument a ) const ;
+      result_type operator() ( argument a ) const  override;
       /// OPTIONAL: the nice printout
-      virtual std::ostream& fillStream ( std::ostream& s ) const ;
+      std::ostream& fillStream ( std::ostream& s ) const  override;
       // ======================================================================
     } ;
     // ========================================================================
@@ -545,12 +545,12 @@ namespace LoKi
       /// trigger decision by name
       TriggerDecisionRegex ( const std::string& channel , const int bx = 0 ) ;
       /// MANDATORY: clone method ('virtual constructor')
-      virtual  TriggerDecisionRegex* clone() const
+      TriggerDecisionRegex* clone() const override
       { return new TriggerDecisionRegex ( *this ) ; }
       /// MANDATORY: the only one essential method
-      virtual result_type operator() ( argument a ) const ;
+      result_type operator() ( argument a ) const  override;
       /// OPTIONAL: the nice printout
-      virtual std::ostream& fillStream ( std::ostream& s ) const ;
+      std::ostream& fillStream ( std::ostream& s ) const  override;
       // ======================================================================
     } ;
     // ========================================================================
