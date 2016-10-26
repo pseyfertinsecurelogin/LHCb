@@ -38,9 +38,9 @@ StatusCode DeFTDetector::initialize(){
   // Load version and check if version is correct
   m_FTversion = ( exists("FTversion") ? this->params()->param<int>("FTversion") : 0 );
   *m_msg << MSG::INFO << "Current FT geometry version =   " <<  m_FTversion << endmsg;
-  if ( m_FTversion < 60 ) {
+  if ( m_FTversion < 61 ) {
     *m_msg << MSG::FATAL << "Wrong geometry version! " << endmsg;
-    *m_msg << MSG::FATAL << "This version of FTDet requires version 60 or higher." << endmsg;
+    *m_msg << MSG::FATAL << "This version of FTDet requires version 6.1 or higher." << endmsg;
     *m_msg << MSG::FATAL << "--> Current version is " <<  m_FTversion << endmsg;
     return StatusCode::FAILURE;
   }
