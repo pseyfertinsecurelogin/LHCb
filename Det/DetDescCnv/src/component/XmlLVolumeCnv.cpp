@@ -10,6 +10,7 @@
 
 #include "DetDescCnv/XmlCnvException.h"
 
+#include <numeric>
 #include <sstream>
 #include <cstdlib>
 #include <float.h>
