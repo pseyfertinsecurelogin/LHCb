@@ -140,7 +140,7 @@ DECLARE_ALGORITHM_FACTORY( HltSelReportsWriter )
 //=============================================================================
 HltSelReportsWriter::HltSelReportsWriter( const std::string& name,
                                           ISvcLocator* pSvcLocator)
-    : GaudiAlgorithm ( name , pSvcLocator ),  m_hltANNSvc{ nullptr }
+    : GaudiAlgorithm ( name , pSvcLocator )
 {
   declareProperty("InputHltSelReportsLocation",
     m_inputHltSelReportsLocation= LHCb::HltSelReportsLocation::Default);
@@ -159,7 +159,7 @@ StatusCode HltSelReportsWriter::initialize() {
 
   if ( msgLevel(MSG::DEBUG) ) debug() << "==> Initialize" << endmsg;
 
-  m_hltANNSvc = svc<IANNSvc>("HltANNSvc");
+  m_hltANNSvc = service("HltANNSvc");
 
   if( m_sourceID > kSourceID_Max || m_sourceID<0 ){
     return Error("Illegal SourceID specified; maximal allowed value is 7" , StatusCode::FAILURE );
