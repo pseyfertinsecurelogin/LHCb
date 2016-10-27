@@ -26,14 +26,14 @@ namespace Rich
 
     /// Zips multiple containers together to form a single range
     template< typename... Args >
-    inline decltype(auto) Zip( Args&... args ) noexcept
+    inline decltype(auto) Zip( Args&... args )
     {
       return Gaudi::Functional::details::zip::range( args... );
     }
 
     /// Zips multiple containers together to form a single const range
     template< typename... Args >
-    inline decltype(auto) ConstZip( const Args&... args ) noexcept
+    inline decltype(auto) ConstZip( const Args&... args )
     {
       return Gaudi::Functional::details::zip::const_range( args... );
     }
