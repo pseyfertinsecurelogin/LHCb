@@ -1,4 +1,3 @@
-// $Id: STErrorDecoding.h,v 1.3 2008-08-15 08:21:44 mneedham Exp $
 #ifndef STERRORDECODING_H
 #define STERRORDECODING_H 1
 
@@ -20,13 +19,9 @@ public:
   /// Standard constructor
   STErrorDecoding( const std::string& name, ISvcLocator* pSvcLocator );
 
-  virtual ~STErrorDecoding( ); ///< Destructor
-
   StatusCode execute   () override;    ///< Algorithm execution
 
 private:
-
-
 
   bool m_PrintErrorInfo;
 
