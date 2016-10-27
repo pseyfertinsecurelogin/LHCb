@@ -7,7 +7,7 @@
 
 class DeCalorimeter ;
 struct ICaloDataProvider ;
-class ICaloL0DataProvider ;
+struct ICaloL0DataProvider ;
 
 /** @class L0CaloCheckCalibCte L0CaloCheckCalibCte.h
  *
