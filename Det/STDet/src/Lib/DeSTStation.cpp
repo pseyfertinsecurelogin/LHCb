@@ -15,22 +15,18 @@ using namespace LHCb;
 DeSTStation::DeSTStation( const std::string& name ) :
   DeSTBaseElement( name ),
   m_id(0u)
-{ 
-  // constructer 
-}
-
-DeSTStation::~DeSTStation() {
-  // desctructer
+{
+  // constructer
 }
 
 StatusCode DeSTStation::initialize() {
 
   // initialize
- 
+
   StatusCode sc = DeSTBaseElement::initialize();
   if (sc.isFailure() ){
     MsgStream msg(msgSvc(), name() );
-    msg << MSG::ERROR << "Failed to initialize detector element" << endmsg; 
+    msg << MSG::ERROR << "Failed to initialize detector element" << endmsg;
   }
   else {
     m_id = (unsigned int)param<int>("stationID");
@@ -43,7 +39,7 @@ std::ostream& DeSTStation::printOut( std::ostream& os ) const{
 
   // stream to cout
   os << " Station: "  << m_id << std::endl;
-  os   << " Nickname: " << m_nickname 
+  os   << " Nickname: " << m_nickname
      << std::endl;
 
   return os;

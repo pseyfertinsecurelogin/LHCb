@@ -28,9 +28,6 @@ public:
   /** Constructor */
   DeTTDetector ( const std::string& name = "" ) ;
 
-  /** Destructor */
-  virtual ~DeTTDetector();
-
   /**
    * Retrieves reference to class identifier
    * @return the class identifier for this class

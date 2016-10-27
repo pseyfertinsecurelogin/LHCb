@@ -34,9 +34,6 @@ public:
   /** Constructor */
   DeSTStation ( const std::string& name = "" ) ;
 
-  /** Destructor */
-  virtual ~DeSTStation();
-
   /** initialization method
   * @return Status of initialisation
   */

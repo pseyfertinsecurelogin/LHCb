@@ -64,9 +64,6 @@ public:
   /** Constructor */
   DeSTDetector ( const std::string& name = "" ) ;
 
-  /** Destructor */
-  virtual ~DeSTDetector();
-
   /** initialization method
   * @return Status of initialisation
   */

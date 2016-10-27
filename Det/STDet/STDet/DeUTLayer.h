@@ -36,9 +36,6 @@ public:
   /** Constructor */
   DeUTLayer ( const std::string& name = "" ) ;
 
-  /** Destructor */
-  virtual ~DeUTLayer();
-
   /**
   * Retrieves reference to class identifier
   * @return the class identifier for this class
