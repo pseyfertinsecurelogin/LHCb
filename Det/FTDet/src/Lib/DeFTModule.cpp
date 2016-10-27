@@ -50,8 +50,8 @@ StatusCode DeFTModule::initialize(){
 
   // Determine if the pseudoChannel numbering is reversed.
   // (pseudoChannels have increasing x)
-  Gaudi::XYZPoint firstPoint = geometry()->toGlobal( Gaudi::XYZPoint( 1.0,0,0) );
-  Gaudi::XYZPoint lastPoint  = geometry()->toGlobal( Gaudi::XYZPoint(-1.0,0,0) );
+  Gaudi::XYZPoint firstPoint = geometry()->toGlobal( Gaudi::XYZPoint(-1.0,0,0) );
+  Gaudi::XYZPoint lastPoint  = geometry()->toGlobal( Gaudi::XYZPoint( 1.0,0,0) );
   m_reversed = std::abs(firstPoint.x()) > std::abs(lastPoint.x());
 
   // Make the plane for the module
