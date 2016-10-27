@@ -157,7 +157,7 @@ bool VeloClusterFilter::passesFilter(LHCb::VeloChannelID id) const
     default :
       throw GaudiException(format("Invalid value for filter type, property was"\
 				  " string %s which was converted to invalid integer %i",
-				  m_filterCriterion.c_str(), m_filter),	  
+				  m_filterCriterion.c_str(), m_filter),
 			   this->name(),
 			   StatusCode::FAILURE);
       return false;
