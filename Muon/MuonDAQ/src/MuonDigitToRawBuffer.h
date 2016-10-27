@@ -21,8 +21,6 @@ public:
   /// Standard constructor
   MuonDigitToRawBuffer( const std::string& name, ISvcLocator* pSvcLocator );
 
-  virtual ~MuonDigitToRawBuffer( ); ///< Destructor
-
   StatusCode initialize() override;    ///< Algorithm initialization
   StatusCode execute   () override;    ///< Algorithm execution
 
@@ -32,23 +30,18 @@ public:
   StatusCode ProcessDigitV1();
   StatusCode ProcessPads();
 
-
-protected:
-
 private:
-  DeMuonDetector* m_muonDet;
+  DeMuonDetector* m_muonDet = nullptr;
 
   std::vector<unsigned int> m_digitsInODE[MuonDAQHelper_maxODENumber];
   std::vector<unsigned int> m_digitsInL1[MuonDAQHelper_maxTell1Number];
   unsigned int firedInODE[MuonDAQHelper_maxODENumber];
   unsigned int firedInPP[MuonDAQHelper_maxTell1Number*4];
 
-
   std::vector<unsigned int> m_padInL1[MuonDAQHelper_maxTell1Number];
 
-
-  long m_TotL1Board;
-  unsigned int m_M1Tell1;
+  long m_TotL1Board = 0;
+  unsigned int m_M1Tell1 = 0;
 
   unsigned int m_vtype;
 
