@@ -1,9 +1,3 @@
-// $Id: IRelation2D.h,v 1.5 2009-04-24 15:26:46 ibelyaev Exp $
-// ============================================================================
-// CVS tag $Name: not supported by cvs2svn $, version $Revision: 1.5 $
-// ============================================================================
-// $Log: not supported by cvs2svn $
-//
 // ============================================================================
 #ifndef RELATIONS_IRELATION2D_H 
 #define RELATIONS_IRELATION2D_H 1
@@ -42,8 +36,6 @@ public:
   /// shortcut to "inverse" type
   typedef IRelation<TO,FROM>                     InverseType    ;
   // ==========================================================================
-public:
-  // ==========================================================================
   /** get the "direct" interface 
    *  @return pointer to the 'direct' interface 
    */
@@ -61,8 +53,6 @@ public:
    */
   virtual const InverseType* inverse () const = 0 ;
   // ==========================================================================
-public:
-  // ==========================================================================
   /** interface identification (static)
    *  @attention the unique interface identifier is constructed "on-fly"
    *  using hash-technique from the generic interface name and 
@@ -76,11 +66,6 @@ public:
       Relations::interfaceID( System::typeinfoName(typeid(OwnType)) );
     return s_iid ;
   }
-  // ==========================================================================
-protected:
-  // ==========================================================================
-  /// destructor (virtual and protected)
-  virtual ~IRelation2D(){}
   // ==========================================================================
 };
 // ============================================================================

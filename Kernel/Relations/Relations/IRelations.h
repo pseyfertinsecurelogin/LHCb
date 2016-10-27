@@ -1,8 +1,3 @@
-// $Id: IRelations.h,v 1.1 2006-06-11 15:23:45 ibelyaev Exp $
-// ============================================================================
-// CVS tag $Name: not supported by cvs2svn $, version $Revision: 1.1 $ 
-// ============================================================================
-// $Log: not supported by cvs2svn $ 
 // ============================================================================
 #ifndef RELATIONS_IRELATIONS_H 
 #define RELATIONS_IRELATIONS_H 1

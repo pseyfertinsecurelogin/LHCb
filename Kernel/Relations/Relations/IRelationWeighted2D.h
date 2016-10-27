@@ -1,9 +1,3 @@
-// $Id: IRelationWeighted2D.h,v 1.5 2009-04-24 15:26:46 ibelyaev Exp $
-// ============================================================================
-// CVS tag $Name: not supported by cvs2svn $, version $Revision: 1.5 $
-// ============================================================================
-// $Log: not supported by cvs2svn $
-//
 // ============================================================================
 #ifndef RELATIONS_IRELATIONWEIGHTED2D_H 
 #define RELATIONS_IRELATIONWEIGHTED2D_H 1
@@ -76,11 +70,6 @@ public:
       Relations::interfaceID( System::typeinfoName( typeid(OwnType) ) ) ;
     return s_iid ;
   }
-  // ==========================================================================
-protected:
-  // ==========================================================================
-  /// destructor (virtual and protected)
-  virtual ~IRelationWeighted2D(){}
   // ==========================================================================
 };
 // ============================================================================

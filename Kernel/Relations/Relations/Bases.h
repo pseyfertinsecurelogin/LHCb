@@ -1,4 +1,3 @@
-// $Id: Bases.h,v 1.2 2008-02-19 15:26:09 ibelyaev Exp $
 // ============================================================================
 #ifndef RELATIONS_BASES_H 
 #define RELATIONS_BASES_H 1
@@ -14,7 +13,9 @@ namespace Relations
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date 2006-02-06
    */
-  struct BaseRange {} ;
+  struct BaseRange {
+      virtual ~BaseRange() = default;
+  } ;
   // ==========================================================================  
   /** @struct BaseTable
    *  helper structure to make easy interacyive manipulations
@@ -22,7 +23,9 @@ namespace Relations
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date 2006-02-06
    */
-  struct BaseTable {} ;
+  struct BaseTable {
+      virtual ~BaseTable() = default;
+  } ;
   // ==========================================================================  
   /** @struct BaseWeightedTable
    *  helper structure to make easy interacyive manipulations
@@ -30,7 +33,7 @@ namespace Relations
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date 2006-02-06
    */
-  struct BaseWeightedTable  : public BaseTable {} ;
+  struct BaseWeightedTable  : BaseTable {} ;
   // ==========================================================================  
 } // end of namespace Relations 
 // ============================================================================

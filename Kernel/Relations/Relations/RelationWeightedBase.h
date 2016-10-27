@@ -313,8 +313,6 @@ namespace Relations
       : BaseWeightedTable () 
       , m_entries () 
     { if ( 0 < reserve ) { i_reserve ( reserve ).ignore() ; } }
-    /// destructor (virtual)
-    virtual ~RelationWeightedBase() {} ;
     /// constructor from any "direct" interface 
     RelationWeightedBase
     ( const IDirect& copy )
