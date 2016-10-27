@@ -25,25 +25,21 @@ public:
   // Standard constructor
   GenFSRLog( const std::string& name, ISvcLocator* pSvcLocator );
 
-  virtual ~GenFSRLog( );          // Destructor
-
   StatusCode initialize() override;  // Algorithm initialization
   StatusCode execute   () override;  // Algorithm execution
   StatusCode finalize  () override;  // Algorithm finalization
 
-protected:
+private:
 
-  virtual void printXmlFSR();       // Print the GenFSR in a file .xml
+  void printXmlFSR();       // Print the GenFSR in a file .xml
 
-  virtual void addGenCounters(LHCb::GenFSR* genFSR);
-  virtual void addGenFractions(LHCb::GenFSR* genFSR);
-  virtual void addGenCrossSections(LHCb::GenFSR* genFSR);
-  virtual void addGeneratorCrossSections(LHCb::GenFSR* genFSR);
-  virtual void addCutEfficiencies(LHCb::GenFSR* genFSR);
+  void addGenCounters(LHCb::GenFSR* genFSR);
+  void addGenFractions(LHCb::GenFSR* genFSR);
+  void addGenCrossSections(LHCb::GenFSR* genFSR);
+  void addGeneratorCrossSections(LHCb::GenFSR* genFSR);
+  void addCutEfficiencies(LHCb::GenFSR* genFSR);
 
-protected:
-
-  IDataProviderSvc* m_fileRecordSvc;
+  SmartIF<IDataProviderSvc> m_fileRecordSvc;
 
   std::string m_fileRecordName;     // location of FileRecords
   std::string m_FSRName;            // specific tag of summary data in FSR
@@ -52,7 +48,7 @@ protected:
 
 private:
 
-  IFSRNavigator* m_navigatorTool;   // tool to navigate FSR
+  IFSRNavigator* m_navigatorTool = nullptr;   // tool to navigate FSR
 
 };
 #endif // GENFSRLOG_H

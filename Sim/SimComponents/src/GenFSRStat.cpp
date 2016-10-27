@@ -34,9 +34,7 @@ DECLARE_ALGORITHM_FACTORY( GenFSRStat )
 //=============================================================================
 GenFSRStat::GenFSRStat( const std::string& name,
                         ISvcLocator* pSvcLocator)
-: GaudiAlgorithm (name, pSvcLocator),
-  m_fileRecordSvc(NULL),
-  m_navigatorTool(NULL)
+: GaudiAlgorithm (name, pSvcLocator)
 {
   declareProperty("FileRecordLocation", m_fileRecordName = "/FileRecords");
   declareProperty("FSRName"           , m_FSRName = "/GenFSR");
@@ -51,11 +49,6 @@ GenFSRStat::GenFSRStat( const std::string& name,
 }
 
 //=============================================================================
-// Destructor
-//=============================================================================
-GenFSRStat::~GenFSRStat() {}
-
-//=============================================================================
 // Initialization
 //=============================================================================
 StatusCode GenFSRStat::initialize() {
@@ -65,7 +58,7 @@ StatusCode GenFSRStat::initialize() {
   if ( msgLevel(MSG::DEBUG) ) debug() << "==> Initialize" << endmsg;
 
   // get the File Records service
-  m_fileRecordSvc = svc<IDataProviderSvc>("FileRecordDataSvc", true);
+  m_fileRecordSvc = service("FileRecordDataSvc", true);
 
   // prepare navigator tool
   m_navigatorTool = tool<IFSRNavigator>("FSRNavigator", "FSRNavigator");
@@ -126,7 +119,7 @@ void GenFSRStat::printHtmlFSR()
       std::string line = "";
 
       // read GenFSR
-      LHCb::GenFSR* genFSR = getIfExists<LHCb::GenFSR>(m_fileRecordSvc, genRecordAddress);
+      LHCb::GenFSR* genFSR = getIfExists<LHCb::GenFSR>(m_fileRecordSvc.get(), genRecordAddress);
       if (genFSR==NULL)
       {
         Warning("A genFSR record was not found").ignore();

@@ -14,21 +14,15 @@
  *  @author Gloria Corti
  *  @date   2015-07-23
  */
-class FlagSignalChain : public GaudiTool, virtual public IFlagSignalChain {
+struct FlagSignalChain : extends<GaudiTool,IFlagSignalChain> {
 public:
   /// Standard constructor
   FlagSignalChain( const std::string& type,
                    const std::string& name,
                    const IInterface* parent);
 
-  virtual ~FlagSignalChain( ); ///< Destructor
-
   /// Set flag if particle is from signal
   void setFromSignalFlag( const LHCb::MCParticle* mcPart ) override;
-
-protected:
-
-private:
 
 };
 #endif // FLAGSIGNALCHAIN_H

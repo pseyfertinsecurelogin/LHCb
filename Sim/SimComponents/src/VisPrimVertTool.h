@@ -1,4 +1,3 @@
-// $Id: VisPrimVertTool.h,v 1.2 2007-05-29 08:48:16 cattanem Exp $
 #ifndef VISPRIMVERTTOOL_VISPRIMVERTTOOL_H
 #define VISPRIMVERTTOOL_VISPRIMVERTTOOL_H 1
 
@@ -25,25 +24,19 @@ public:
                   const std::string& name,
                   const IInterface* parent );
 
-  virtual ~VisPrimVertTool( ){} ///< Destructor
-
-
   /// Initialize
   StatusCode initialize() override;
 
-
   long countVertices() const override;
-  bool isVisible(const LHCb::MCVertex* pv ) const override {
-    return (countVisTracks(pv) >= m_nTracks) ; }
+  bool isVisible(const LHCb::MCVertex* pv ) const override
+  { return (countVisTracks(pv) >= m_nTracks) ; }
   bool isB( const LHCb::MCVertex* ) const override;
   long countVisTracks( const LHCb::MCVertex* ) const override;
-
-protected:
 
 private:
 
   long m_nTracks;
   bool m_veloAndSeed;
 
-  };
+};
 #endif // VISPRIMVERTTOOL_VISPRIMVERTTOOL_H
