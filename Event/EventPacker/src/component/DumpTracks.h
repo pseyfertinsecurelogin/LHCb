@@ -1,4 +1,3 @@
-// $Id: DumpTracks.h,v 1.1 2009-07-10 06:15:55 cattanem Exp $
 #ifndef DUMPTRACKS_H
 #define DUMPTRACKS_H 1
 
@@ -24,8 +23,6 @@ public:
 
   /// Standard constructor
   DumpTracks( const std::string& name, ISvcLocator* pSvcLocator );
-
-  virtual ~DumpTracks( ); ///< Destructor
 
   StatusCode execute() override; ///< Algorithm execution
 

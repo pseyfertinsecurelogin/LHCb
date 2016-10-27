@@ -47,9 +47,6 @@ public:
                               const std::string& name,
                               const IInterface* parent );
 
-  /// Destructor
-  virtual ~ParticlesAndVerticesMapper();
-
   /// Initialize the tool instance.
   StatusCode initialize() override;
 

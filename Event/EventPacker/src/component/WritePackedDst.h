@@ -1,4 +1,3 @@
-// $Id: WritePackedDst.h,v 1.2 2009-12-04 16:40:20 jonrob Exp $
 #ifndef WRITEPACKEDDST_H
 #define WRITEPACKEDDST_H 1
 
@@ -20,8 +19,6 @@ public:
 
   /// Standard constructor
   WritePackedDst( const std::string& name, ISvcLocator* pSvcLocator );
-
-  virtual ~WritePackedDst( ); ///< Destructor
 
   StatusCode initialize() override;    ///< Algorithm initialization
   StatusCode execute   () override;    ///< Algorithm execution

@@ -130,17 +130,9 @@ namespace LHCb
     typedef LHCb::MCHits             DataVector;
     typedef LHCb::PackedMCHits PackedDataVector;
 
-  private:
-
-    /// Default Constructor hidden
-    MCHitPacker( ) {}
-
-  public:
 
     /// Constructor
     MCHitPacker( const GaudiAlgorithm * p ) : m_pack(p) {}
-
-  public:
 
     /// Pack MCHits
     void pack( const DataVector & hits,

@@ -1,4 +1,3 @@
-// $Id: PackTrack.h,v 1.2 2009-11-06 18:34:34 jonrob Exp $
 #ifndef PACKTRACK_H
 #define PACKTRACK_H 1
 
@@ -21,8 +20,6 @@ public:
 
   /// Standard constructor
   PackTrack( const std::string& name, ISvcLocator* pSvcLocator );
-
-  virtual ~PackTrack( ); ///< Destructor
 
   StatusCode execute() override; ///< Algorithm execution
 

@@ -1,4 +1,3 @@
-
 #ifndef EVENT_PackedFlavourTag_H
 #define EVENT_PackedFlavourTag_H 1
 

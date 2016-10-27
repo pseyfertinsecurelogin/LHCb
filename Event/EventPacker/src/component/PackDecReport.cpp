@@ -32,10 +32,6 @@ PackDecReport::PackDecReport( const std::string& name,
   declareProperty( "Filter",             m_filter       = true      );
   declareProperty( "DeleteInput",        m_deleteInput  = false     );
 }
-//=============================================================================
-// Destructor
-//=============================================================================
-PackDecReport::~PackDecReport() {} 
 
 //=============================================================================
 // Main execution
@@ -78,7 +74,7 @@ StatusCode PackDecReport::execute()
     
     // store the result
     LinkManager::Link * myLink = out->linkMgr()->link( tR.first );
-    if ( nullptr == myLink )
+    if ( !myLink )
     {
       out->linkMgr()->addLink( tR.first, nullptr );
       myLink = out->linkMgr()->link( tR.first );

@@ -1,4 +1,3 @@
-// $Id: UnpackCaloHypo.h,v 1.2 2009-11-07 12:20:39 jonrob Exp $
 #ifndef UNPACKCALOHYPO_H
 #define UNPACKCALOHYPO_H 1
 
@@ -21,8 +20,6 @@ public:
 
   /// Standard constructor
   UnpackCaloHypo( const std::string& name, ISvcLocator* pSvcLocator );
-
-  virtual ~UnpackCaloHypo(); ///< Destructor
 
   StatusCode execute() override; ///< Algorithm execution
 

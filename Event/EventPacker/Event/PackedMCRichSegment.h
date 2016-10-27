@@ -1,4 +1,3 @@
-
 #ifndef EVENT_PackedMCRichSegment_H
 #define EVENT_PackedMCRichSegment_H 1
 

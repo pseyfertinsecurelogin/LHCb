@@ -29,9 +29,6 @@ public:
                        const std::string& name,
                        const IInterface* parent );
 
-  /// Destructor
-  virtual ~TrackClustersMapper();
-
 public:
 
   /** Returns the correctly configured and name instance of the

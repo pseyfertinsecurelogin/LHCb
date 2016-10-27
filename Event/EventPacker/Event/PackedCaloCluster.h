@@ -206,14 +206,7 @@ namespace LHCb
       return LHCb::CaloClusterLocation::Default;
     }
 
-  private:
-
-    /// Default Constructor hidden
-    CaloClusterPacker() {}
-
-  public:
-
-    /// Default Constructor
+    /// Constructor
     CaloClusterPacker( const GaudiAlgorithm * p ) : m_pack(p) { }
 
   public:

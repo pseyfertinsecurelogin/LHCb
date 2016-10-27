@@ -1,4 +1,3 @@
-// $Id: CompareRecVertex.h,v 1.1.1.1 2008-11-18 17:12:59 ocallot Exp $
 #ifndef COMPARERECVERTEX_H
 #define COMPARERECVERTEX_H 1
 
@@ -20,8 +19,6 @@ public:
 
   /// Standard constructor
   CompareRecVertex( const std::string& name, ISvcLocator* pSvcLocator );
-
-  virtual ~CompareRecVertex(); ///< Destructor
 
   StatusCode execute() override;  ///< Algorithm execution
 

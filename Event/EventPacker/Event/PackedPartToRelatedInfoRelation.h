@@ -1,4 +1,3 @@
-
 #ifndef EVENT_PackedPartToRelatedInfoRelation_H
 #define EVENT_PackedPartToRelatedInfoRelation_H 1
 

@@ -1,4 +1,3 @@
-
 // STL
 #include <algorithm>
 
@@ -28,11 +27,6 @@ DECLARE_ALGORITHM_FACTORY( PackMCParticle )
   declareProperty( "AlwaysCreateOutput",         m_alwaysOutput = false     );
   declareProperty( "DeleteInput",                m_deleteInput  = false     );
 }
-
-//=============================================================================
-// Destructor
-//=============================================================================
-PackMCParticle::~PackMCParticle() {}
 
 //=============================================================================
 // Main execution

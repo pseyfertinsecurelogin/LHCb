@@ -1,4 +1,3 @@
-// $Id: $
 #ifndef PACKCLUSTER_H
 #define PACKCLUSTER_H 1
 
@@ -21,8 +20,6 @@ public:
 
   /// Standard constructor
   PackCluster( const std::string& name, ISvcLocator* pSvcLocator );
-
-  virtual ~PackCluster( ); ///< Destructor
 
   StatusCode execute() override; ///< Algorithm execution
 

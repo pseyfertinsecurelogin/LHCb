@@ -21,8 +21,6 @@ public:
   /// Standard constructor
   CompareTrack( const std::string& name, ISvcLocator* pSvcLocator );
 
-  virtual ~CompareTrack(); ///< Destructor
-
   StatusCode execute() override; ///< Algorithm execution
 
 private:

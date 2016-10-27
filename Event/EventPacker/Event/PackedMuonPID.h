@@ -1,4 +1,3 @@
-// $Id: PackedMuonPID.h,v 1.3 2009-11-10 10:24:09 jonrob Exp $
 #ifndef EVENT_PACKEDMUONPID_H
 #define EVENT_PACKEDMUONPID_H 1
 

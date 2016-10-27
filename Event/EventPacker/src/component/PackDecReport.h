@@ -1,4 +1,3 @@
-// $Id: $
 #ifndef PACKDECREPORT_H
 #define PACKDECREPORT_H 1
 
@@ -21,9 +20,7 @@ public:
   /// Standard constructor
   PackDecReport( const std::string& name, ISvcLocator* pSvcLocator );
 
-  virtual ~PackDecReport( ); ///< Destructor
-
-  StatusCode execute   () override;    ///< Algorithm execution
+  StatusCode execute() override;    ///< Algorithm execution
 
 private:
 
