@@ -21,8 +21,6 @@ class ODINEncodeTool final : public ODINCodecBaseTool
                  const std::string& name,
                  const IInterface* parent);
 
-  virtual ~ODINEncodeTool() = default; ///< Destructor
-
   /// Initialize the tool
   inline StatusCode initialize() override;
 
