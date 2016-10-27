@@ -1,4 +1,3 @@
-// $Id$
 // ============================================================================
 #ifndef LOKI_BUILDMCTREES_H 
 #define LOKI_BUILDMCTREES_H 1

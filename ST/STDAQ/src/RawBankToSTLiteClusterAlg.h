@@ -1,4 +1,4 @@
-#ifndef RAWBANKTOSTLITECLUSTERALG_H 
+#ifndef RAWBANKTOSTLITECLUSTERALG_H
 #define RAWBANKTOSTLITECLUSTERALG_H 1
 
 #include "STDecodingBaseAlg.h"
@@ -14,9 +14,9 @@
 #include <utility>
 
 /** @class RawBankToSTLiteClusterAlg RawBankToSTLiteClusterAlg.h
- *  
+ *
  *  Algorithm to create STClusters from RawEvent object
- * 
+ *
  *  @author M. Needham
  *  @author S. Ponce
  */
@@ -35,18 +35,15 @@ namespace LHCb{
 typedef Gaudi::Functional::Transformer<LHCb::STLiteCluster::STLiteClusters(const LHCb::ODIN&, const LHCb::RawEvent&),
   Gaudi::Functional::Traits::BaseClass_t<STDecodingBaseAlg>> RawBankToSTLiteClusterAlgBaseClass;
 
-class RawBankToSTLiteClusterAlg : public RawBankToSTLiteClusterAlgBaseClass {
+class RawBankToSTLiteClusterAlg final : public RawBankToSTLiteClusterAlgBaseClass {
 
 public:
 
   /// Standard constructor
   RawBankToSTLiteClusterAlg(const std::string& name, ISvcLocator* pSvcLocator);
 
-  /// initialize
-  StatusCode initialize() override;
-  /// finalize
-  StatusCode finalize() override;
-  /// Algorithm execution
+  StatusCode initialize() override;   ///< Algorithm initialization
+  StatusCode finalize() override;     ///< Algorithm finalization
   LHCb::STLiteCluster::STLiteClusters operator()(const LHCb::ODIN&, const LHCb::RawEvent&) const override;
 
 private:
@@ -55,11 +52,11 @@ private:
   StatusCode decodeBanks(const LHCb::RawEvent& rawEvt, LHCb::STLiteCluster::STLiteClusters& fCont) const;
 
   // add a single cluster to the output container
-  void createCluster(const STTell1Board* aBoard,  const STDAQ::version& bankVersion, 
+  void createCluster(const STTell1Board* aBoard,  const STDAQ::version& bankVersion,
                      const STClusterWord& aWord, LHCb::STLiteCluster::STLiteClusters* fCont, const bool isUT) const;
 
-  class Less_by_Channel : public std::binary_function<LHCb::STLiteCluster,LHCb::STLiteCluster ,bool>{
-  public:
+
+  struct Less_by_Channel {
 
     /** compare the channel of one object with the
      *  channel of another object
@@ -68,15 +65,14 @@ private:
      *  @return  result of the comparision
      */
     //
-    inline bool operator() ( LHCb::STLiteCluster obj1 , LHCb::STLiteCluster obj2 ) const
+    bool operator() ( LHCb::STLiteCluster obj1 , LHCb::STLiteCluster obj2 ) const
     {
       return obj1.channelID() < obj2.channelID() ;
     }
   };
 
-   
-  class Equal_Channel : public std::binary_function<LHCb::STLiteCluster,LHCb::STLiteCluster ,bool>{
-  public:
+
+  struct Equal_Channel {
 
     /** compare the channel of one object with the
      *  channel of another object
@@ -85,23 +81,23 @@ private:
      *  @return  result of the comparision
      */
     //
-    inline bool operator() ( LHCb::STLiteCluster obj1 , LHCb::STLiteCluster obj2 ) const
+    bool operator() ( LHCb::STLiteCluster obj1 , LHCb::STLiteCluster obj2 ) const
     {
       return obj1.channelID() == obj2.channelID() ;
     }
   };
 
-  
+
 };
 
 #include "Kernel/STTell1Board.h"
 #include "Kernel/ISTReadoutTool.h"
 
 inline void RawBankToSTLiteClusterAlg::createCluster(const STTell1Board* aBoard,  const STDAQ::version& bankVersion,
-                                                     const STClusterWord& aWord, LHCb::STLiteCluster::STLiteClusters* fCont, 
+                                                     const STClusterWord& aWord, LHCb::STLiteCluster::STLiteClusters* fCont,
                                                      const bool isUT) const{
-   
-  const unsigned int fracStrip = aWord.fracStripBits();     
+
+  const unsigned int fracStrip = aWord.fracStripBits();
   const STTell1Board::chanPair chan = aBoard->DAQToOffline(fracStrip, bankVersion, STDAQ::StripRepresentation(aWord.channelID()));
   LHCb::STLiteCluster liteCluster(chan.second,
                             aWord.pseudoSizeBits(),
@@ -111,4 +107,4 @@ inline void RawBankToSTLiteClusterAlg::createCluster(const STTell1Board* aBoard,
   fCont->push_back(std::move(liteCluster));
 }
 
-#endif //  RAWBANKTOSTLITECLUSTERALG_H 
+#endif //  RAWBANKTOSTLITECLUSTERALG_H

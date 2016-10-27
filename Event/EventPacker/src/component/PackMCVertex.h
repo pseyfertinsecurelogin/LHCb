@@ -1,5 +1,4 @@
-// $Id: PackMCVertex.h,v 1.2 2009-11-06 18:34:34 jonrob Exp $
-#ifndef PACKMCVERTEX_H 
+#ifndef PACKMCVERTEX_H
 #define PACKMCVERTEX_H 1
 
 // Include files
@@ -13,16 +12,16 @@
  *  @author Olivier Callot
  *  @date   2005-03-18
  */
-class PackMCVertex : public GaudiAlgorithm 
+class PackMCVertex : public GaudiAlgorithm
 {
 
-public: 
+public:
 
   /// Standard constructor
   PackMCVertex( const std::string& name, ISvcLocator* pSvcLocator );
 
-  virtual ~PackMCVertex( );     ///< Destructor
-  virtual StatusCode execute(); ///< Algorithm execution
+  virtual ~PackMCVertex();     ///< Destructor
+  StatusCode execute() override; ///< Algorithm execution
 
 private:
 

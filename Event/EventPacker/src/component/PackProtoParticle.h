@@ -1,5 +1,5 @@
 // $Id: PackProtoParticle.h,v 1.2 2009-11-06 18:34:34 jonrob Exp $
-#ifndef PACKPROTOPARTICLE_H 
+#ifndef PACKPROTOPARTICLE_H
 #define PACKPROTOPARTICLE_H 1
 
 // from Gaudi
@@ -17,14 +17,14 @@
 class PackProtoParticle : public GaudiAlgorithm
 {
 
-public: 
+public:
 
   /// Standard constructor
   PackProtoParticle( const std::string& name, ISvcLocator* pSvcLocator );
 
   virtual ~PackProtoParticle(); ///< Destructor
 
-  virtual StatusCode execute();  ///< Algorithm execution
+  StatusCode execute() override;  ///< Algorithm execution
 
 private:
 

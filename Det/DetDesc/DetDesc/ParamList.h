@@ -3,7 +3,7 @@
 
 // Include files
 
-#include <DetDesc/Param.h>
+#include "DetDesc/Param.h"
 
 #include "GaudiKernel/Map.h"
 
@@ -15,19 +15,23 @@
  *  @author Marco CLEMENCIC
  *  @date   2005-02-22
  */
-class ParamList: public GaudiUtils::Map<std::string,BasicParam *> {
+class ParamList: private GaudiUtils::Map<std::string,BasicParam *> {
 private:
   typedef GaudiUtils::Map<std::string,BasicParam *> base_type;
 
 public: 
   /// Standard constructor
-  ParamList();
+  ParamList() = default;
 
   /// Copy constructor
   ParamList(const ParamList &pl);
 
   /// Destructor
   virtual ~ParamList();
+
+  using base_type::begin;
+  using base_type::end;
+  using base_type::find;
 
   /// Add a new parameter to the list (or replace if already there)
   template <class T>
@@ -36,20 +40,18 @@ public:
     if ( i != end() ) { // key already used
       i->second->set(val);
     } else {
-      //(*this)[key] = new Param<T>(val);
-      insert(std::pair<std::string,Param<T>*>(key,new Param<T>(val)));
+      insert(std::make_pair(key,new Param<T>(val)));
     }
   }
 
-  inline void addBasicParam(const std::string &key, const BasicParam* &p) {
-    iterator i = find(key);
+  inline void addBasicParam(const std::string &key, const BasicParam& p) {
+    auto i = find(key);
     if ( i != end() ) { // key already used
-    // replace with new one
+       // replace with new one
       delete i->second;
-      i->second = p->new_copy();
+      i->second = p.new_copy().release();
     } else {
-      //(*this)[key] = p->new_copy();
-      insert(std::pair<std::string,BasicParam*>(key,p->new_copy()));
+      insert(std::make_pair(key,p.new_copy().release()));
     }
   }
 

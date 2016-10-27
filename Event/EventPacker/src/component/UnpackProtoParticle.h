@@ -1,5 +1,5 @@
 // $Id: UnpackProtoParticle.h,v 1.2 2009-11-06 18:34:34 jonrob Exp $
-#ifndef UNPACKPROTOPARTICLE_H 
+#ifndef UNPACKPROTOPARTICLE_H
 #define UNPACKPROTOPARTICLE_H 1
 
 // from Gaudi
@@ -17,14 +17,14 @@
 class UnpackProtoParticle : public GaudiAlgorithm
 {
 
-public: 
+public:
 
   /// Standard constructor
   UnpackProtoParticle( const std::string& name, ISvcLocator* pSvcLocator );
 
   virtual ~UnpackProtoParticle( ); ///< Destructor
 
-  virtual StatusCode execute();    ///< Algorithm execution
+  StatusCode execute() override;    ///< Algorithm execution
 
 private:
 

@@ -71,7 +71,7 @@ public:
   /** initialization method
    * @return StatusCode OK or not
    */
-  virtual StatusCode initialize();
+  StatusCode initialize() override;
 
   /** get the sector name as expected in the Condition DB
    * @return std::string "sector name"
@@ -230,7 +230,7 @@ public:
    *  @param  aChannel channel
    *  @return bool
    */
-  virtual bool contains(const LHCb::STChannelID aChannel) const;
+  bool contains(const LHCb::STChannelID aChannel) const override;
 
   /** detector pitch
    * @return pitch
@@ -301,7 +301,7 @@ public:
   LHCb::STChannelID nextRight(const LHCb::STChannelID testChan) const;
 
   /// Workaround to prevent hidden base class function
-  inline const std::type_info& type(const std::string &name) const
+  inline const std::type_info& type(const std::string &name) const override
                       {return ParamValidDataObject::type(name);}
   /**
    * @return std::string type
@@ -409,10 +409,10 @@ public:
   double deadWidth() const;
 
   /** print to stream */
-  std::ostream& printOut( std::ostream& os ) const;
+  std::ostream& printOut( std::ostream& os ) const override;
 
   /** print to msgstream */
-  MsgStream& printOut( MsgStream& os) const;
+  MsgStream& printOut( MsgStream& os) const override;
 
   /** flat vector of sensors
   * @return vector of sensors

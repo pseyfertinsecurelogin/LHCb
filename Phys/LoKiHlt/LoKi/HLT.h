@@ -53,11 +53,11 @@ namespace LoKi
     public:
       // ======================================================================
       /// constructor from the decision name
-      HasDecision ( const std::string& name  ) 
+      HasDecision ( const std::string& name  )
           : HasDecision( Names{ name } ) { }
       /// constructor from the decision names ("OR")
       HasDecision ( const std::string& name1 ,
-                    const std::string& name2 ) 
+                    const std::string& name2 )
           : HasDecision( Names{ name1, name2 } ) { }
       /// constructor from the decision names ("OR")
       HasDecision ( const std::string& name1 ,
@@ -68,7 +68,7 @@ namespace LoKi
       HasDecision ( const std::string& name1 ,
                     const std::string& name2 ,
                     const std::string& name3 ,
-                    const std::string& name4 ) 
+                    const std::string& name4 )
           : HasDecision( Names{ name1, name2, name3, name4 } ) { }
       /// constructor form the decision names ("OR")
       HasDecision ( Names       names ) ;
@@ -114,7 +114,7 @@ namespace LoKi
     public:
       // ======================================================================
       /// constructor from the decision name
-      PassDecision ( const std::string& name  ) 
+      PassDecision ( const std::string& name  )
           : PassDecision( Names{ name } ) { }
       /// constructor from the decision names ("OR")
       PassDecision ( const std::string& name1 ,
@@ -123,16 +123,16 @@ namespace LoKi
       /// constructor from the decision names ("OR")
       PassDecision ( const std::string& name1 ,
                      const std::string& name2 ,
-                     const std::string& name3 ) 
+                     const std::string& name3 )
           : PassDecision( Names{ name1, name2, name3 } ) { }
       /// constructor from the decision names ("OR")
       PassDecision ( const std::string& name1 ,
                      const std::string& name2 ,
                      const std::string& name3 ,
-                     const std::string& name4 ) 
+                     const std::string& name4 )
           : PassDecision( Names{ name1, name2, name3, name4 } ) { }
       /// constructor form the decision names ("OR")
-      PassDecision ( Names names ) ; 
+      PassDecision ( Names names ) ;
       /// MANDATORY: clone method ("virtual constructor")
       PassDecision* clone() const override
       { return new PassDecision ( *this ) ; }
@@ -260,7 +260,7 @@ namespace LoKi
                     const std::string& name4 )
           : DecisionBut( Names{ name1, name2, name3, name4 } ) { }
       /// constructor from vector of "special" decisions
-      DecisionBut ( const std::vector<std::string>& names ) 
+      DecisionBut ( const std::vector<std::string>& names )
           : DecisionBut( Names( names.begin(), names.end() ) ) { }
       /// constructor from vector of "special" decisions
       DecisionBut ( Names       names ) ;
@@ -649,11 +649,11 @@ namespace LoKi
       ( const std::string&  expression ,
         const unsigned int  mask       ) ;
       /// MANDATORY: clone method ( "virtual constructor")
-      virtual  CountErrorBitsRegex* clone () const ;
+      CountErrorBitsRegex* clone () const  override;
       /// MANDATORY: the only one essential method
-      result_type operator() ( argument a ) const ;
+      result_type operator() ( argument a ) const override;
       /// OPTIONAL: nice printout
-      virtual std::ostream& fillStream ( std::ostream& ) const ;
+      std::ostream& fillStream ( std::ostream& ) const  override;
       // ======================================================================
     private:
       // ======================================================================
@@ -688,11 +688,11 @@ namespace LoKi
       /// constructor from routing bits
       HltRoutingBits ( const LoKi::HLT::RoutingBits& bits ) ;
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  HltRoutingBits* clone() const ;
+      HltRoutingBits* clone() const  override;
       /// MANDATORY: the only one essential method
-      virtual  result_type operator() ( argument /* a */ ) const ;
+      result_type operator() ( argument /* a */ ) const  override;
       /// OPTIONAL: nice printout
-      virtual std::ostream& fillStream ( std::ostream& ) const ;
+      std::ostream& fillStream ( std::ostream& ) const  override;
       // ======================================================================
     public:
       // ======================================================================
@@ -726,12 +726,12 @@ namespace LoKi
       /// MANDATORY: default constructor
       TrgConfKey() : AuxFunBase{ std::tie() } { }
       /// MANDATORY: clone method ("virtual consructor")
-      virtual  TrgConfKey* clone() const { return new TrgConfKey ( *this ) ; }
+      TrgConfKey* clone() const override { return new TrgConfKey ( *this ) ; }
       /// MANDATORY: the only one essential method
-      virtual result_type operator () ( argument a ) const
+      result_type operator () ( argument a ) const override
       { return a -> configuredTCK () ; }
       /// OPTIONAL: the nice printout
-      virtual std::ostream& fillStream ( std::ostream& s ) const
+      std::ostream& fillStream ( std::ostream& s ) const override
       { return s << "HLT_TCK" ; }
       // ======================================================================
     };

@@ -1,4 +1,3 @@
-
 // Gaudi
 #include "GaudiAlg/FilterPredicate.h"
 
@@ -18,13 +17,13 @@ using boost::uint64_t;
 
 class DeterministicPrescaler final : public Gaudi::Functional::FilterPredicate<bool(const LHCb::ODIN&)>
 {
- public:
+public:
   DeterministicPrescaler( const std::string& name, ISvcLocator* pSvcLocator );
 
   StatusCode initialize() override;
   bool operator()(const LHCb::ODIN&) const override;
 
- private:
+private:
 
   /// fraction of input events to accept...
   double                  m_accFrac;
@@ -39,4 +38,3 @@ class DeterministicPrescaler final : public Gaudi::Functional::FilterPredicate<b
   StatEntity*             m_counter = nullptr;
 
 };
-

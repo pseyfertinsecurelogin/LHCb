@@ -12,7 +12,7 @@
  *  Class for selection of MCParticles given a criteria
  *
  *  @author M.Needham
- *  @date   4/12/2008 [revised] 
+ *  @date   4/12/2008 [revised]
  *  @date   13/3/2002
  */
 
@@ -31,12 +31,12 @@ public:
   virtual ~MCParticleSelector();
 
    // Tool initialization
-  virtual StatusCode initialize(); 
+  StatusCode initialize() override;
 
 public:
 
   // select
-  virtual bool accept(const LHCb::MCParticle* aParticle) const;
+  bool accept(const LHCb::MCParticle* aParticle) const override;
 
 private: // methods
 

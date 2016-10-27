@@ -1,5 +1,5 @@
 // $Id: $
-#ifndef FSRCleaner_H 
+#ifndef FSRCleaner_H
 #define FSRCleaner_H 1
 
 // #include "GaudiAlg/GaudiAlgorithm.h"
@@ -9,7 +9,7 @@
 #include "EmptyEventNodeCleaner.h"
 
 /** @class FSRCleaner FSRCleaner.h
- *  
+ *
  *  Searches for and removes empty data nodes in the FSR tree
  *
  *  @author Rob Lambert
@@ -18,15 +18,15 @@
 class FSRCleaner final : public EmptyEventNodeCleaner
 {
 
-public: 
+public:
 
   /// Standard constructor
   FSRCleaner( const std::string& name, ISvcLocator* pSvcLocator );
 
   virtual ~FSRCleaner( ) = default; ///< Destructor
 
-  virtual StatusCode execute() { return StatusCode::SUCCESS; } ///< Algorithm execution, do nothing
-  virtual StatusCode finalize();    ///< Real algorithm execution in finalize
+  StatusCode execute() override { return StatusCode::SUCCESS; } ///< Algorithm execution, do nothing
+  StatusCode finalize() override;    ///< Real algorithm execution in finalize
 
 };
 

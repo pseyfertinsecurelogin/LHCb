@@ -19,9 +19,9 @@ class XmlDetectorElementCnv : public XmlBaseDetElemCnv {
 
   /// Friend needed for instantiation
   friend class CnvFactory<XmlDetectorElementCnv>;
-  
+
 protected:
-  
+
   /**
    * Constructor for this converter
    * @param svcs a ISvcLocator interface to find services
@@ -40,9 +40,9 @@ protected:
    * @param address the address for this object
    * @return status depending on the completion of the call
    */
-  virtual StatusCode i_fillSpecificObj (xercesc::DOMElement* childElement,
-                                        DetectorElement* refpObject,
-                                        IOpaqueAddress* address);
+  StatusCode i_fillSpecificObj (xercesc::DOMElement* childElement,
+                                DetectorElement* refpObject,
+                                IOpaqueAddress* address) override;
 
 };
 

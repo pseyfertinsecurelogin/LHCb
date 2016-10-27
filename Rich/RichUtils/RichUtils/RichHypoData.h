@@ -2,7 +2,7 @@
 //------------------------------------------------------------------------
 /** @file RichHypoData.h
  *
- *  Header file for utility class : RichHypoData
+ *  Header file for utility class : Rich::HypoData
  *
  *  @author Chris Jones   Christopher.Rob.Jones@cern.ch
  *  @date   2003-07-31
@@ -17,7 +17,6 @@
 #include <type_traits>
 
 // LHCbKernel
-#include "Kernel/RichParticleIDType.h"
 #include "Kernel/RichParticleIDType.h"
 #include "Kernel/MemPoolAlloc.h"
 
@@ -43,7 +42,7 @@ namespace Rich
   template < typename TYPE,
              typename = typename std::enable_if< std::is_arithmetic <TYPE> ::value ||
                                                  std::is_pointer    <TYPE> ::value >::type
-               >
+	     >
   class HypoData : public LHCb::MemPoolAlloc< HypoData<TYPE> >
   {
 
@@ -84,7 +83,7 @@ namespace Rich
      */
     inline void setData( const Rich::ParticleIDType type, const TYPE value ) noexcept
     {
-      m_valid[type] = true; 
+      m_valid[type] = true;
       m_data[type]  = value;
     }
 

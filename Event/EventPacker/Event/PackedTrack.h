@@ -50,7 +50,7 @@ namespace LHCb
     //== Note that Nodes and Measurements on Track are transient only, an thus never stored.
 
     template<typename T>
-    inline void save(T& buf) const 
+    inline void save(T& buf) const
     {
       buf.io( key,
               chi2PerDoF, nDoF, flags,
@@ -123,10 +123,10 @@ namespace LHCb
       buf.io( flags,
               x, y, z, tx, ty, p,
               cov_00, cov_11, cov_22, cov_33, cov_44,
-              cov_10, cov_20, cov_21, cov_30, cov_31, 
+              cov_10, cov_20, cov_21, cov_30, cov_31,
               cov_32, cov_40, cov_41, cov_42, cov_43 );
     }
-    
+
     template<typename T>
     inline void load(T& buf, unsigned int /*version*/)
     {
@@ -169,7 +169,7 @@ namespace LHCb
 
   public:
 
-    virtual const CLID& clID()  const { return PackedTracks::classID(); }
+    const CLID& clID()  const override { return PackedTracks::classID(); }
     static  const CLID& classID()     { return CLID_PackedTracks;       }
 
   public:
@@ -187,7 +187,7 @@ namespace LHCb
     const std::vector<std::pair<int,int> >& extras() const { return m_extra; }
 
     /// Describe serialization of object
-    template<typename T> 
+    template<typename T>
     inline void save(T& buf) const
     {
       buf.template save<uint8_t>( version() );
@@ -196,10 +196,10 @@ namespace LHCb
       buf.save(m_ids);
       buf.save(m_extra);
     }
-    
+
     /// Describe de-serialization of object
-    template<typename T> 
-    inline void load(T& buf) 
+    template<typename T>
+    inline void load(T& buf)
     {
       setVersion( buf.template load<uint8_t>() );
       if ( version() < 4 || version() > 5 )

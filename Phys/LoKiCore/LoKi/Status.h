@@ -1,5 +1,5 @@
 // ============================================================================
-#ifndef LOKI_STATUS_H 
+#ifndef LOKI_STATUS_H
 #define LOKI_STATUS_H 1
 // ============================================================================
 // Include files
@@ -16,29 +16,29 @@
 // ============================================================================
 /** @file Loki/Status.h
  *  collection of "checkers" deaing with generic tools
- *  @see ICheckTool 
+ *  @see ICheckTool
  *  @see IAcceptTool
  *
- *  This file is part of LoKi project: 
+ *  This file is part of LoKi project:
  *   ``C++ ToolKit for Smart and Friendly Physics Analysis''
- * 
+ *
  *  @author Vanya Belyaev Ivan.Belyaev@nikhef.nl
- *  @date   2010-08-02 
+ *  @date   2010-08-02
  */
 // ============================================================================
-namespace LoKi 
+namespace LoKi
 {
   // ==========================================================================
-  /** @namespace LoKi::Status 
-   *  Collection of "checkers"-functors dealing with generic tools 
+  /** @namespace LoKi::Status
+   *  Collection of "checkers"-functors dealing with generic tools
    *  @author Vanya Belyaev Ivan.Belyaev@nikhef.nl
    *  @date   2010-08-02
    */
-  namespace Status 
+  namespace Status
   {
     // ========================================================================
     /** @class Check     LoKi/Status.h
-     *  Simple checker to "check" using ICheckTool 
+     *  Simple checker to "check" using ICheckTool
      *  @see ICheckTool
      *  @author Vanya BELYAEV  Ivan.Belyaev@nikhef.nl
      *  @date 2010-08-03
@@ -47,21 +47,21 @@ namespace LoKi
     {
     public:
       // ======================================================================
-      /// constructor from tool nickname 
+      /// constructor from tool nickname
       Check ( const std::string& nikname ) ;
-      /// MANDATORY: virtual destructor 
+      /// MANDATORY: virtual destructor
       virtual ~Check() ;
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  Check* clone() const ;
-      /// MANDATORY: the only one essential method 
-      virtual  result_type operator() ( /* argument v */ ) const ;
-      /// OPTIONAL: nice printout 
-      virtual std::ostream& fillStream ( std::ostream& s ) const ;
+      Check* clone() const  override;
+      /// MANDATORY: the only one essential method
+      result_type operator() ( /* argument v */ ) const  override;
+      /// OPTIONAL: nice printout
+      std::ostream& fillStream ( std::ostream& s ) const  override;
       // ======================================================================
     private:
       // ======================================================================
-      /// the default constructor is disabled 
-      Check () ;                         // the default constructor is disabled 
+      /// the default constructor is disabled
+      Check () ;                         // the default constructor is disabled
       // ======================================================================
     protected:
       // ======================================================================
@@ -69,10 +69,10 @@ namespace LoKi
       // ======================================================================
     private:
       // ======================================================================
-      /// tool nickname 
-      std::string                     m_nickname ; // the tool nickname  
-      /// the checker 
-      mutable LoKi::Interface<ICheckTool> m_tool;  // the checker 
+      /// tool nickname
+      std::string                     m_nickname ; // the tool nickname
+      /// the checker
+      mutable LoKi::Interface<ICheckTool> m_tool;  // the checker
       // ======================================================================
     } ;
     // ========================================================================
@@ -86,21 +86,21 @@ namespace LoKi
     {
     public:
       // ======================================================================
-      /// constructor from tool nickname 
+      /// constructor from tool nickname
       Accept ( const std::string& nikname ) ;
-      /// MANDATORY: virtual destructor 
+      /// MANDATORY: virtual destructor
       virtual ~Accept () ;
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  Accept* clone() const ;
-      /// MANDATORY: the only one essential method 
-      virtual  result_type operator() ( /* argument v */ ) const ;
-      /// OPTIONAL: nice printout 
-      virtual std::ostream& fillStream ( std::ostream& s ) const ;
+      Accept* clone() const  override;
+      /// MANDATORY: the only one essential method
+      result_type operator() ( /* argument v */ ) const  override;
+      /// OPTIONAL: nice printout
+      std::ostream& fillStream ( std::ostream& s ) const  override;
       // ======================================================================
     private:
       // ======================================================================
-      /// the default constructor is disabled 
-      Accept () ;                        // the default constructor is disabled 
+      /// the default constructor is disabled
+      Accept () ;                        // the default constructor is disabled
       // ======================================================================
     protected:
       // ======================================================================
@@ -108,21 +108,21 @@ namespace LoKi
       // ======================================================================
     private:
       // ======================================================================
-      /// tool nickname 
-      std::string                      m_nickname ;  // the tool nickname  
-      /// the checker 
-      mutable LoKi::Interface<IAccept> m_tool     ;  // the checker 
+      /// tool nickname
+      std::string                      m_nickname ;  // the tool nickname
+      /// the checker
+      mutable LoKi::Interface<IAccept> m_tool     ;  // the checker
       // ======================================================================
     } ;
     // ========================================================================
-  } //                                            end of namespace LoKi::Status 
+  } //                                            end of namespace LoKi::Status
   // ==========================================================================
-  namespace Cuts 
+  namespace Cuts
   {
     // ========================================================================
     /** @typedef ACCEPT
      *  Trivial checker/function to "check"
-     *  @see IAccept 
+     *  @see IAccept
      *  @see LoKi::Status::Accept
      *  @author Vanya BELYAEV  Ivan.BElyaev@nikhef.nl
      *  @date 2010-08-03
@@ -131,18 +131,18 @@ namespace LoKi
     // ========================================================================
     /** @typedef CHECK
      *  Trivial checker/function to "check"
-     *  @see ICheckTool 
+     *  @see ICheckTool
      *  @see LoKi::Status::Check
      *  @author Vanya BELYAEV  Ivan.BElyaev@nikhef.nl
      *  @date 2010-08-03
      */
     typedef LoKi::Status::Check                                         CHECK ;
     // ========================================================================
-  } //                                             end of namespace LoKi::Cuts 
+  } //                                             end of namespace LoKi::Cuts
   // ==========================================================================
 } //                                                      end of namespace LoKi
 // ============================================================================
-// The END 
+// The END
 // ============================================================================
 #endif // LOKI_STATUS_H
 // ============================================================================

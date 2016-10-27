@@ -72,7 +72,7 @@ namespace LHCb
     typedef std::vector<LHCb::PackedRelatedInfoMap> RelationVector;
 
   public:
-    
+
     /// Default Packing Version
     static char defaultPackingVersion() { return 0; }
 
@@ -82,7 +82,7 @@ namespace LHCb
     static const CLID& classID() { return CLID_PackedRelatedInfoRelations; }
 
     /// Class ID
-    virtual const CLID& clID() const { return PackedRelatedInfoRelations::classID(); }
+    const CLID& clID() const override { return PackedRelatedInfoRelations::classID(); }
 
   public:
 
@@ -113,7 +113,7 @@ namespace LHCb
   public: // For templated algorithms
 
     typedef RelationVector Vector;
-    
+
     /// Write access to the data vector
     Vector & data()             { return relations(); }
 
@@ -161,7 +161,7 @@ namespace LHCb
 
     /// Default Constructor hidden
     RelatedInfoRelationsPacker() { }
-    
+
   public:
 
     /// Default Constructor

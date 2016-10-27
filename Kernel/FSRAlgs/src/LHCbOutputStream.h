@@ -127,11 +127,11 @@ protected:
 
 public:
   /// Initialize LHCbOutputStream
-  virtual StatusCode initialize();
+  StatusCode initialize() override;
   /// Terminate LHCbOutputStream
-  virtual StatusCode finalize();
+  StatusCode finalize() override;
   /// Working entry point
-  virtual StatusCode execute();
+  StatusCode execute() override;
   // Connect to proper conversion service
   virtual StatusCode connectConversionSvc();
   /// Store agent's classback

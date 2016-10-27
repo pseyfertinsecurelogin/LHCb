@@ -65,7 +65,7 @@ namespace LHCb
     typedef std::vector<LHCb::PackedMCCaloHit> Vector;
 
   public:
-    
+
     /// Default Packing Version
     static char defaultPackingVersion() { return 1; }
 
@@ -75,7 +75,7 @@ namespace LHCb
     static const CLID& classID() { return CLID_PackedMCCaloHits; }
 
     /// Class ID
-    virtual const CLID& clID() const { return PackedMCCaloHits::classID(); }
+    const CLID& clID() const  override { return PackedMCCaloHits::classID(); }
 
   public:
 
@@ -95,9 +95,9 @@ namespace LHCb
 
     /// Data packing version
     char   m_packingVersion{ defaultPackingVersion() };
-    
+
     /// The packed data objects
-    Vector m_vect; 
+    Vector m_vect;
 
   };
 

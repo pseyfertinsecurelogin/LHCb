@@ -1,4 +1,3 @@
-// $Id$
 // ============================================================================
 #ifndef LOKI_MCHYBRIDENGINE_H 
 #define LOKI_MCHYBRIDENGINE_H 1
@@ -31,19 +30,9 @@ namespace LoKi
      *
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date   2004-06-30
-     *                    $Revision$
-     *  Last modification $Date$
-     *                 by $Author$
      */
     class GAUDI_API MCEngine
     {
-    public:
-      // ======================================================================
-      /// constructor
-      MCEngine () ;
-      /// destructor 
-      virtual ~MCEngine( );
-      // ======================================================================
     public:
       // ======================================================================
       // predicates:

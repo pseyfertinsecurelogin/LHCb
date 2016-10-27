@@ -1,5 +1,5 @@
 // $Id: L0DUMultiConfigProvider.h,v 1.2 2010-01-20 16:30:58 odescham Exp $
-#ifndef L0DUMULTICONFIGPROVIDER_H 
+#ifndef L0DUMULTICONFIGPROVIDER_H
 #define L0DUMULTICONFIGPROVIDER_H 1
 
 // Include files
@@ -11,8 +11,8 @@
 
 
 /** @class L0DUMultiConfigProvider L0DUMultiConfigProvider.h
- *  
- *  Provide  **ANY** predefined L0DU configuration according to 
+ *
+ *  Provide  **ANY** predefined L0DU configuration according to
  *  the Trigger Configuration Key
  *  Configuration described in options file
  *
@@ -20,21 +20,21 @@
  *  @date   2008-01-26
  */
 class L0DUMultiConfigProvider : public GaudiTool, virtual public IL0DUConfigProvider {
-public: 
+public:
   /// Standard constructor
-  L0DUMultiConfigProvider( const std::string& type, 
+  L0DUMultiConfigProvider( const std::string& type,
                            const std::string& name,
                            const IInterface* parent);
 
   virtual ~L0DUMultiConfigProvider( ); ///< Destructor
 
-  virtual StatusCode initialize();
-  virtual StatusCode finalize();
+  StatusCode initialize() override;
+  StatusCode finalize() override;
 
-  LHCb::L0DUConfig*  config(long tck = LHCb::L0DUTemplateConfig::TCKValue,std::string slot="T0");
-  LHCb::L0DUConfigs*  configs(std::string slot="T0"){return m_configs[slot];};
+  LHCb::L0DUConfig*  config(long tck = LHCb::L0DUTemplateConfig::TCKValue,std::string slot="T0") override;
+  LHCb::L0DUConfigs*  configs(std::string slot="T0") override {return m_configs[slot];}
 
-  
+
 protected:
 
 private:

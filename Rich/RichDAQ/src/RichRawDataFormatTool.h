@@ -85,10 +85,10 @@ namespace Rich
                          const IInterface* parent );
 
       // Initialization of the tool after creation
-      StatusCode initialize() final;
+      StatusCode initialize() override final;
 
       // Finalization of the tool before deletion
-      StatusCode finalize() final;
+      StatusCode finalize() override final;
 
     public:
 
@@ -97,17 +97,17 @@ namespace Rich
        *
        *  @param incident The incident identifier
        */
-      void handle( const Incident& incident ) final;
+      void handle( const Incident& incident ) override final;
 
     public: // methods (and doxygen comments) inherited from interface
 
       /// Creates a bank data from a vector of RichSmartIDs
       void fillRawEvent( const LHCb::RichSmartID::Vector & smartIDs,
-                         const Rich::DAQ::BankVersion version = Rich::DAQ::LHCb2 ) const final;
+                         const Rich::DAQ::BankVersion version = Rich::DAQ::LHCb2 ) const override final;
 
       /// Decode all RICH RawBanks into RichSmartID identifiers
       void decodeToSmartIDs( const RawEventLocations & taeLocations,
-                             Rich::DAQ::L1Map & decodedData ) const final;
+                             Rich::DAQ::L1Map & decodedData ) const override final;
 
     private: // definitions
 

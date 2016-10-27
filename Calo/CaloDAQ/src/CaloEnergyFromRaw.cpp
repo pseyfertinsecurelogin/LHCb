@@ -152,9 +152,9 @@ const std::vector<LHCb::CaloAdc>& CaloEnergyFromRaw::adcs (int source) {
 //=========================================================================
 //  Decode the adcs of a single bank (given by bank pointer)
 //=========================================================================
-const std::vector<LHCb::CaloAdc>& CaloEnergyFromRaw::adcs ( LHCb::RawBank* bank ){
+const std::vector<LHCb::CaloAdc>& CaloEnergyFromRaw::adcs ( const LHCb::RawBank& bank ){
   clear();
-  if( !getData( *bank ) )clear();
+  if( !getData( bank ) )clear();
   return m_data ;
 }
 
@@ -171,7 +171,7 @@ const std::vector<LHCb::CaloDigit>&  CaloEnergyFromRaw::digits ( int source ) {
 //=========================================================================
 //  Decode the adcs of a single bank and convert to digit (given by bank pointer)
 //=========================================================================
-const std::vector<LHCb::CaloDigit>&  CaloEnergyFromRaw::digits ( LHCb::RawBank* bank ) {
+const std::vector<LHCb::CaloDigit>&  CaloEnergyFromRaw::digits ( const LHCb::RawBank& bank ) {
   adcs( bank );
   if( !getDigits() ) m_digits.clear();
   return m_digits ;
@@ -182,7 +182,7 @@ const std::vector<LHCb::CaloDigit>&  CaloEnergyFromRaw::digits ( LHCb::RawBank* 
 //=========================================================================
 const std::vector<LHCb::CaloDigit>&  CaloEnergyFromRaw::digits ( ) {
   adcs();
-  if( !getDigits() ) m_digits.clear();
+  if ( !getDigits() ) m_digits.clear();
   return m_digits;
 }
 
@@ -204,8 +204,7 @@ bool CaloEnergyFromRaw::getData ( const LHCb::RawBank& bank ){
     debug() << "Decode bank " << &bank << " source " << sourceID
             << " version " << version << " size " << size << endmsg;
 
-
-  if(0 == size)m_status.addStatus(sourceID,LHCb::RawBankReadoutStatus::Empty );
+  if (0 == size) m_status.addStatus(sourceID,LHCb::RawBankReadoutStatus::Empty );
 
   // -----------------------------------------------
   // skip detector specific header line
@@ -214,7 +213,6 @@ bool CaloEnergyFromRaw::getData ( const LHCb::RawBank& bank ){
     --size;
   }
   // -----------------------------------------------
-
 
   if ( 1 > version || 3 < version ) {
     warning() << "Bank type " << bank.type() << " sourceID " << sourceID
@@ -454,7 +452,6 @@ bool CaloEnergyFromRaw::getData ( const LHCb::RawBank& bank ){
 //=========================================================================
 bool CaloEnergyFromRaw::getDigits ( ) {
   m_digits.clear();
-  if( m_data.empty() )return true;
   m_digits.reserve(m_data.size());
   double pedShift = m_calo->pedestalShift();
   std::transform( m_data.begin(), m_data.end(), 

@@ -1,4 +1,4 @@
-#ifndef PUBLIC_MUONCHAMBERLAYOUT_H 
+#ifndef PUBLIC_MUONCHAMBERLAYOUT_H
 #define PUBLIC_MUONCHAMBERLAYOUT_H 1
 
 #include "GaudiKernel/MsgStream.h"
@@ -13,13 +13,13 @@
 class IMessageSvc;
 
 /** @class MuonChamberLayout MuonChamberLayout.h MuonDet/MuonChamberLayout.h
- *  
+ *
  *
  *  @author Alessio Sarti
  *  @date   2005-10-06
  */
 class MuonChamberLayout : public DetectorElement {
-public: 
+public:
 
   /// Standard constructor
   MuonChamberLayout(MuonLayout R1,
@@ -28,31 +28,31 @@ public:
                     MuonLayout R4,
                     IDataProviderSvc* detSvc,
                     IMessageSvc * msgSvc);
-  
+
   // Void constructor: calls the previous one
   // with dummy DataProvider and default grid Layout
-  MuonChamberLayout(); 
+  MuonChamberLayout();
 
   virtual ~MuonChamberLayout( ); /// Destructor
-    
+
   //Fill the vector with all the chambers
-  virtual StatusCode initialize();
+  StatusCode initialize() override;
 
   //Copy function
   void Copy(MuonChamberLayout &lay);
 
   //Fill the vector with all the chambers
-  std::vector<DeMuonChamber*> fillChambersVector(IDataProviderSvc* detSvc); 
+  std::vector<DeMuonChamber*> fillChambersVector(IDataProviderSvc* detSvc);
 
   //Find the most likely chamber for a given x,y,station set
   void chamberMostLikely(float x,float y, int station, int& chmb, int& reg) const;
-  
+
   //Return the tiles of the neighbor Chambers
   std::vector<int> neighborChambers(float myX, float myY, int stat, int x_direction, int y_direction) const;
-  
+
   //Return the tiles of the neighbor Chambers
   void returnChambers(int sta, float st_x, float st_y, int x_dir, int y_dir, std::vector<int>& regs, std::vector<int>& chs) const;
-  
+
   //Convert tiles in chambers
   std::vector<DeMuonChamber*> createChambersFromTile(std::vector<LHCb::MuonTileID> mytiles);
 
@@ -66,16 +66,16 @@ public:
   LHCb::MuonTileID tileChamberNumber(int sta, int reg, int chmbNum) const ;
 
 
-  StatusCode Tile2XYZpos(const LHCb::MuonTileID& tile, 
+  StatusCode Tile2XYZpos(const LHCb::MuonTileID& tile,
 			 double& x, double& deltax,
 			 double& y, double& deltay,
 			 double& z, double& deltaz);
 
   //Fill the system grids for a chamber in a given region
-  StatusCode fillSystemGrids(DeMuonChamber *deChmb, 
+  StatusCode fillSystemGrids(DeMuonChamber *deChmb,
 			     int vIdx, int reg);
 
-  //Returns the region for a given chamber with numbering scheme 
+  //Returns the region for a given chamber with numbering scheme
   //defined in the MuonGeometry.h file
   int findRegion(int chamber) const ;
 
@@ -114,13 +114,13 @@ public:
   int getChamberNumber(const LHCb::MuonTileID& tile);
 
   //Function for chamber x,y,z retrieval from tile info
-  StatusCode getXYZChamberTile(const LHCb::MuonTileID& tile, 
+  StatusCode getXYZChamberTile(const LHCb::MuonTileID& tile,
 			       double& x, double& deltax,
 			       double& y, double& deltay,
 			       double& z, double& deltaz,
 			       bool toGlob);
 
-  /// get position of a "named" chamber 
+  /// get position of a "named" chamber
   /// NOTE: station and region are indexed from 0 (C style)
   /// chamberNum is the real chamber number (from 0)
   StatusCode getXYZChamber(const int& station,
@@ -141,7 +141,7 @@ public:
                           double& x, double& deltax,
                           double& y, double& deltay,
                           double& z, double& deltaz);
-  
+
   /// get position of chamber or gas gap with caching of results and pointers
   /// NOTE: station, region and gapNum are indexed from 0 (C style)
   /// chamberNum is the real chamber number (from 0)
@@ -155,49 +155,49 @@ public:
 		    bool toGlob);
 
   /// get xyz of specific pad
-  StatusCode getXYZPad(const LHCb::MuonTileID& tile, 
+  StatusCode getXYZPad(const LHCb::MuonTileID& tile,
 		       double& x, double& deltax,
 		       double& y, double& deltay,
 		       double& z, double& deltaz);
-  
+
   /// get postion of logical channel (may be multiple chambers)
-  StatusCode getXYZLogical(const LHCb::MuonTileID& tile, 
+  StatusCode getXYZLogical(const LHCb::MuonTileID& tile,
                            double& x, double& deltax,
                            double& y, double& deltay,
                            double& z, double& deltaz);
 
   /// get xyz of twelfth (useful for defining regions)
-  StatusCode getXYZTwelfth(const LHCb::MuonTileID& tile, 
+  StatusCode getXYZTwelfth(const LHCb::MuonTileID& tile,
                            double& x, double& deltax,
                            double& y, double& deltay,
                            double& z, double& deltaz);
 
   /// returns the chamber number (same for each station) on the corner of
   /// the region
-  int getTwelfthCorner(const int& region, 
+  int getTwelfthCorner(const int& region,
                        const int& twelfth,
                        const int& chamberNum);
 
   /// get the xIndex and yIndex of the corner chamber in the twelfth
-  void getTwelfthCornerIndex(const int& region, 
+  void getTwelfthCornerIndex(const int& region,
                              const int& twelfth,
                              const int& chamberNum,
                              int &xPos, int &yPos);
 
-  
+
   void localToglobal(const IGeometryInfo* gInfo,
 		     const Gaudi::XYZPoint& cent, const Gaudi::XYZPoint& corn,
 		     double &dx, double &dy, double &dz);
 
   ///get the chamber number (vector) from the MuonTile
   std::vector<unsigned int> Tile2ChamberNum(const LHCb::MuonTileID& tile);
-  
+
   ///get the chamber number (vector) from the logical channel tile
   std::vector<unsigned int> Logical2ChamberNum(const LHCb::MuonTileID& tile);
-  
+
   ///get the chamber number (vector) from the twelfth-chamber tile
   std::vector<unsigned int> Twelfth2ChamberNum(const LHCb::MuonTileID& tile);
-  
+
 private:
 
   /// Access to Msgstream object

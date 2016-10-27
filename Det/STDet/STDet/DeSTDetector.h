@@ -70,7 +70,7 @@ public:
   /** initialization method
   * @return Status of initialisation
   */
-  virtual StatusCode initialize();
+  StatusCode initialize() override;
 
   /** @return number of first station */
   unsigned int firstStation() const;
@@ -84,7 +84,7 @@ public:
   /** Implementation of sensitive volume identifier for a given point in the
       global reference frame. This is the sensor number defined in the xml.
   */
-  int sensitiveVolumeID(const Gaudi::XYZPoint& globalPos) const;
+  int sensitiveVolumeID(const Gaudi::XYZPoint& globalPos) const override;
 
   /**  locate the station based on a channel id
   @return  station */
@@ -123,9 +123,9 @@ public:
   bool contains(const LHCb::STChannelID aChannel) const;
 
   /// Workaround to prevent hidden base class function
-  inline bool isValid() const { return ValidDataObject::isValid(); }
+  inline bool isValid() const override { return ValidDataObject::isValid(); }
   /// Workaround to prevent hidden base class function
-  inline bool isValid(const Gaudi::Time& t) const
+  inline bool isValid(const Gaudi::Time& t) const override
                               { return ValidDataObject::isValid(t); }
   /** check channel number is valid */
   bool isValid(const LHCb::STChannelID aChannel) const;
@@ -150,7 +150,7 @@ public:
   * @param  aPoint point in global frame
   * @return sector
   */
-  virtual DeSTSector* findSector(const Gaudi::XYZPoint& aPoint) const = 0;
+  virtual DeSTSector* findSector(const Gaudi::XYZPoint& aPoint) const= 0;
 
   /**
   *  short cut to pick up the wafer corresponding to a channel

@@ -1,4 +1,4 @@
-#ifndef MUONDIGITTORAWBUFFER_H 
+#ifndef MUONDIGITTORAWBUFFER_H
 #define MUONDIGITTORAWBUFFER_H 1
 
 // Include files
@@ -11,31 +11,31 @@
 #include "GaudiAlg/GaudiAlgorithm.h"
 
 /** @class MuonDigitToRawBuffer MuonDigitToRawBuffer.h
- *  
+ *
  *
  *  @author Alessia Satta
  *  @date   2004-01-19
  */
 class MuonDigitToRawBuffer : public GaudiAlgorithm {
-public: 
+public:
   /// Standard constructor
   MuonDigitToRawBuffer( const std::string& name, ISvcLocator* pSvcLocator );
 
   virtual ~MuonDigitToRawBuffer( ); ///< Destructor
 
-  virtual StatusCode initialize();    ///< Algorithm initialization
-  virtual StatusCode execute   ();    ///< Algorithm execution
+  StatusCode initialize() override;    ///< Algorithm initialization
+  StatusCode execute   () override;    ///< Algorithm execution
 
-  StatusCode ProcessDC06(); 
+  StatusCode ProcessDC06();
   StatusCode ProcessV1();
-  StatusCode ProcessDigitDC06();  
-  StatusCode ProcessDigitV1();  
+  StatusCode ProcessDigitDC06();
+  StatusCode ProcessDigitV1();
   StatusCode ProcessPads();
-  
+
 
 protected:
 
-private: 
+private:
   DeMuonDetector* m_muonDet;
 
   std::vector<unsigned int> m_digitsInODE[MuonDAQHelper_maxODENumber];
@@ -44,13 +44,13 @@ private:
   unsigned int firedInPP[MuonDAQHelper_maxTell1Number*4];
 
 
-  std::vector<unsigned int> m_padInL1[MuonDAQHelper_maxTell1Number];  
+  std::vector<unsigned int> m_padInL1[MuonDAQHelper_maxTell1Number];
 
 
   long m_TotL1Board;
   unsigned int m_M1Tell1;
 
   unsigned int m_vtype;
-  
+
 };
 #endif // MUONDIGITTORAWBUFFER_H

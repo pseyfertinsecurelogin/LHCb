@@ -35,7 +35,7 @@
         <enumval name="LastGlobal"     value = "99"  desc="User variables should use flags greater than this value"/>
       </enum>
 
-      <!-- 
+      <!--
       <enum
         name="correctionMethod"
         desc="lookup table for method keys"
@@ -51,12 +51,13 @@
         name='fillStream'
         type='std::ostream&amp;'
         desc='intelligent printout'
-        const='TRUE'>
-	<arg name="s" type="std::ostream" const="FALSE"/>   
+        const='TRUE'
+        override='TRUE'>
+	<arg name="s" type="std::ostream" const="FALSE"/>
         <code>
 
     std::ostream&amp; ss = const_cast&lt; std::ostream&amp; &gt;(s);
-    ss &lt;&lt; "{ }"; 
+    ss &lt;&lt; "{ }";
 
     return ss;
         </code>

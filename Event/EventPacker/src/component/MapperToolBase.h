@@ -37,10 +37,10 @@ public:
   virtual ~MapperToolBase( ); ///< Destructor
 
   /// Initialize the tool instance.
-  virtual StatusCode initialize();
+  StatusCode initialize() override;
 
   /// Initialize the tool instance.
-  virtual StatusCode finalize();
+  StatusCode finalize() override;
 
 protected:
 

@@ -1,5 +1,5 @@
 // $Id: $
-#ifndef PACKDECREPORT_H 
+#ifndef PACKDECREPORT_H
 #define PACKDECREPORT_H 1
 
 // Include files
@@ -7,23 +7,23 @@
 #include "GaudiAlg/GaudiAlgorithm.h"
 
 /** @class PackDecReport PackDecReport.h
- *  
+ *
  *  Packs DecReports
  *
  *  @author Olivier Callot
  *  @date   2012-01-20
  */
-class PackDecReport : public GaudiAlgorithm 
+class PackDecReport : public GaudiAlgorithm
 {
 
-public: 
+public:
 
   /// Standard constructor
   PackDecReport( const std::string& name, ISvcLocator* pSvcLocator );
 
   virtual ~PackDecReport( ); ///< Destructor
 
-  virtual StatusCode execute   ();    ///< Algorithm execution
+  StatusCode execute   () override;    ///< Algorithm execution
 
 private:
 

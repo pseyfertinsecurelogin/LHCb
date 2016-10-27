@@ -294,7 +294,7 @@ LoKi::Hybrid::CoreFactory::CoreFactory
        std::string::npos != name.find ("Trig")  ||
        std::string::npos != name.find ("TRIG") )
   {
-    m_cpplines.push_back ( "#include \"LoKi/LoKiTracks.h\""         ) ;
+    m_cpplines.push_back ( "#include \"LoKi/LoKiTrack.h\""         ) ;
     m_cpplines.push_back ( "#include \"LoKi/LoKiProtoParticles.h\"" ) ;
     m_cpplines.push_back ( "#include \"LoKi/LoKiPhys.h\""           ) ;
     m_cpplines.push_back ( "#include \"LoKi/LoKiArrayFunctors.h\""  ) ;

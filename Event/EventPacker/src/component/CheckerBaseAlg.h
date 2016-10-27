@@ -27,7 +27,7 @@ namespace DataPacking
 
     virtual ~Check();     ///< Destructor
 
-    virtual StatusCode execute(); ///< Algorithm execution
+    StatusCode execute() override; ///< Algorithm execution
 
   private:
 

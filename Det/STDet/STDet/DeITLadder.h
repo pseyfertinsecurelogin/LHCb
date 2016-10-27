@@ -47,19 +47,19 @@ public:
    * another reference to class identifier
    * @return the class identifier for this class
    */
-   const CLID& clID () const;
+   const CLID& clID () const override;
 
    /** initialization method
    * @return Status of initialisation
    */
-   virtual StatusCode initialize();
+   StatusCode initialize() override;
 
 
    /** check whether contains
    *  @param  aChannel channel
    *  @return bool
    */
-   virtual bool contains(const LHCb::STChannelID aChannel) const;
+   bool contains(const LHCb::STChannelID aChannel) const override;
 
    /** identifier */
    unsigned int id() const;
@@ -68,10 +68,10 @@ public:
    DeITLadder::child_type* sector() const;
 
    /** print to stream */
-   std::ostream& printOut( std::ostream& os ) const;
+   std::ostream& printOut( std::ostream& os ) const override;
 
    /** print to msgstream */
-   MsgStream& printOut( MsgStream& os) const;
+   MsgStream& printOut( MsgStream& os) const override;
 
    /**
    * fraction active channels

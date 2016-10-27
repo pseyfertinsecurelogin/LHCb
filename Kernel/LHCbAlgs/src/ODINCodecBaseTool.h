@@ -1,4 +1,3 @@
-// $Id: ODINCodecBaseTool.h,v 1.3 2009-11-09 18:28:15 marcocle Exp $
 #ifndef ODIN_CODEC_BASE_TOOL_H
 #define ODIN_CODEC_BASE_TOOL_H
 // Include files
@@ -44,7 +43,7 @@ public:
   virtual ~ODINCodecBaseTool() = default; ///< Destructor
 
   /// Initialize the tool
-  virtual inline StatusCode initialize() { return Decoder::ToolBase::initialize(); }
+  inline StatusCode initialize() override { return Decoder::ToolBase::initialize(); }
 
 protected:
 

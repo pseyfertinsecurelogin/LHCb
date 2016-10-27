@@ -28,10 +28,6 @@
  *  @see http://en.wikipedia.org/wiki/Bernstein_polynomial
  *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
  *  @date 2010-04-19
- *
- *                    $Revision$
- *  Last modification $Date$
- *                 by $author$
  */
 // ============================================================================
 namespace 
@@ -48,10 +44,6 @@ namespace
                  "std::numeric_limits<double> is not specialized" ) ;
   static_assert( std::numeric_limits<long double>::is_specialized , 
                  "std::numeric_limits<long double> is not specialized" ) ;
-  /// machine epsilon (double)
-  const double s_epsilon   = std::numeric_limits<double>::epsilon() ;
-  /// machine epsilon (long double) 
-  const double s_ld_epsilon = std::numeric_limits<long double>::epsilon() ;
   /// small value 
   const LHCb::Math::Small<long double> s_small
   ( 2.0L * std::numeric_limits<double>::epsilon() ) ;

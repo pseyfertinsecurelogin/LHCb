@@ -1,5 +1,5 @@
 // $Id: STDigitsToSTTELL1Data.h,v 1.1 2008-10-17 15:13:24 mneedham Exp $
-#ifndef STDIGITSTOSTTELL1DATA_H 
+#ifndef STDIGITSTOSTTELL1DATA_H
 #define STDIGITSTOSTTELL1DATA_H 1
 
 #include "Kernel/STAlgBase.h"
@@ -12,9 +12,9 @@
 #include <string>
 
 /** @class RawBankToSTProcFull RawBankToSTProcFull.h
- *  
+ *
  *  Algorithm to create STTELL1Data (type ProcFull) from RawEvent object
- * 
+ *
  *  @author M. Needham
  *  @date   2007-10-10
  */
@@ -23,7 +23,7 @@ class ISTReadoutTool;
 class DeSTDetector;
 
 class STDigitsToSTTELL1Data: public ST::AlgBase {
-    
+
 public:
 
   /// Standard constructor
@@ -32,11 +32,11 @@ public:
   virtual ~STDigitsToSTTELL1Data(); ///< Destructor
 
 
-  virtual StatusCode execute();    ///< Algorithm execution
+  StatusCode execute() override;    ///< Algorithm execution
 
 private:
 
-  StatusCode createTell1Data(const LHCb::STDigits* digits, 
+  StatusCode createTell1Data(const LHCb::STDigits* digits,
                              LHCb::STTELL1Datas* outCont) const;
 
 
@@ -46,4 +46,4 @@ private:
 
 };
 
-#endif // STDigitsToSTTELL1Data_H 
+#endif // STDigitsToSTTELL1Data_H

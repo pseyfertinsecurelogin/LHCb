@@ -33,7 +33,7 @@ namespace LHCb
     PackedWeight() = default;
 
     /// Constructor from values
-    PackedWeight( const int       _key , 
+    PackedWeight( const int       _key ,
                   const short int _weight )
       : key(_key), weight(_weight)
     {}
@@ -85,7 +85,7 @@ namespace LHCb
     typedef std::vector<LHCb::PackedWeight> WeightVector;
 
   public:
-    
+
     /// Default Packing Version
     static char defaultPackingVersion() { return 0; }
 
@@ -95,7 +95,7 @@ namespace LHCb
     static const CLID& classID() { return CLID_PackedWeightsVector; }
 
     /// Class ID
-    virtual const CLID& clID() const { return PackedWeightsVector::classID(); }
+    const CLID& clID() const override { return PackedWeightsVector::classID(); }
 
   public:
 
@@ -123,10 +123,10 @@ namespace LHCb
     char m_packingVersion{ defaultPackingVersion() };
 
     /// The packed data objects
-    WeightsVector m_weights; 
-    
+    WeightsVector m_weights;
+
     /// Vector of all weights
-    WeightVector m_weight; 
+    WeightVector m_weight;
 
   };
 

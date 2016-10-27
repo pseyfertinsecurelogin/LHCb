@@ -1,4 +1,4 @@
-#ifndef COMPONENT_L0MUONOLERRORTOOL_H 
+#ifndef COMPONENT_L0MUONOLERRORTOOL_H
 #define COMPONENT_L0MUONOLERRORTOOL_H 1
 
 // Include files
@@ -16,13 +16,13 @@
  *  @date   2010-02-25
  */
 class L0MuonOLErrorTool : public extends<GaudiTool, IL0MuonOLErrorTool> {
-public: 
+public:
   /// Standard constructor
-  L0MuonOLErrorTool( const std::string& type, 
+  L0MuonOLErrorTool( const std::string& type,
                      const std::string& name,
                      const IInterface* parent);
 
-  StatusCode getTiles(std::vector<LHCb::MuonTileID> & ols, std::string rootInTes="");
+  StatusCode getTiles(std::vector<LHCb::MuonTileID> & ols, std::string rootInTes="") override;
 
 private:
   // Options

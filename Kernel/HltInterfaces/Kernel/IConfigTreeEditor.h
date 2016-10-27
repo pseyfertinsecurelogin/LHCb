@@ -25,10 +25,8 @@
  */
 
 
-class IConfigTreeEditor : virtual public extend_interfaces<INamedInterface>  {
-public:
-  DeclareInterfaceID(IConfigTreeEditor,4,0);
-  virtual ~IConfigTreeEditor() = default;
+struct IConfigTreeEditor : extend_interfaces<INamedInterface>  {
+  DeclareInterfaceID(IConfigTreeEditor,5,0);
 
   // given a configuration tree identified by 'in', apply the changes 
   // defined by 'updates' (which is a multimap of 'component' -> 'key','value'),

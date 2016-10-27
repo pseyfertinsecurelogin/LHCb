@@ -19,7 +19,7 @@ public:
   /** the standard constructor
    *  @param Det pointer to calorimeter detector 
    */
-  CellNeighbour( const DeCalorimeter* Det = 0 );
+  using CellMatrix::CellMatrix;
     
   /** the major method. It returns "true" if the cell 
    *  is a neighbor for seed cell  

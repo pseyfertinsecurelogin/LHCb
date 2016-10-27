@@ -1,5 +1,5 @@
 // ============================================================================
-#ifndef LOKI_ROUTINGBITS_H 
+#ifndef LOKI_ROUTINGBITS_H
 #define LOKI_ROUTINGBITS_H 1
 // ============================================================================
 // GaudiKernel
@@ -11,13 +11,13 @@
 #include "LoKi/BasicFunctors.h"
 #include "LoKi/Interface.h"
 // ============================================================================
-// forward declarations 
+// forward declarations
 // ============================================================================
 namespace LHCb { class RawEvent ; }
 // ============================================================================
 /** @file
  *  set of helper function to deal with "hlt-routing-bits"
- *  @see Hlt::firedRoutingBits 
+ *  @see Hlt::firedRoutingBits
  *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
  *  @date 2010-05-17
  */
@@ -25,16 +25,16 @@ namespace LHCb { class RawEvent ; }
 namespace LoKi
 {
   // ==========================================================================
-  namespace HLT 
+  namespace HLT
   {
     // ========================================================================
     /** @class RoutingBits
-     *  simple class to check if the given routing bit is fired 
+     *  simple class to check if the given routing bit is fired
      *  @see LoKi::Cuts::ROUTINGBITS
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2010-05-17
      */
-    class RoutingBits : public LoKi::Functor<void,bool> 
+    class RoutingBits : public LoKi::Functor<void,bool>
     {
     public:
       // ======================================================================
@@ -42,64 +42,64 @@ namespace LoKi
       // ======================================================================
     public:
       // ======================================================================
-      /// constructor from the bit 
+      /// constructor from the bit
       RoutingBits ( const unsigned short bit  ) ;
       /// constructor from the bits
       RoutingBits ( const unsigned short bit1 ,
                     const unsigned short bit2 ) ;
-      /// constructor from the bits 
+      /// constructor from the bits
       RoutingBits ( const unsigned short bit1 ,
-                    const unsigned short bit2 , 
+                    const unsigned short bit2 ,
                     const unsigned short bit3 ) ;
-      /// constructor from the bits 
+      /// constructor from the bits
       RoutingBits ( const unsigned short bit1 ,
-                    const unsigned short bit2 , 
+                    const unsigned short bit2 ,
                     const unsigned short bit3 ,
                     const unsigned short bit4 ) ;
-      /// constructor from the bits 
+      /// constructor from the bits
       RoutingBits ( const std::vector<unsigned int>& bits ) ;
       /// MANDATORY: clones method ("virtual contructor")
-      virtual  RoutingBits* clone() const ;
-      /// MANDATORY: the only one essential method 
-      virtual result_type operator() ( /* argument */ ) const ;
-      /// OPTIONAL : the nice printout 
-      virtual std::ostream& fillStream ( std::ostream& s ) const ;
+      RoutingBits* clone() const  override;
+      /// MANDATORY: the only one essential method
+      result_type operator() ( /* argument */ ) const  override;
+      /// OPTIONAL : the nice printout
+      std::ostream& fillStream ( std::ostream& s ) const  override;
       // ======================================================================
-      const Bits& bits() const { return m_bits ; }      
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// get the fired bits 
-      std::size_t getFired () const ;                     // get the fired bits 
+      const Bits& bits() const { return m_bits ; }
       // ======================================================================
     private:
       // ======================================================================
-      /// the list of fired bits 
-      mutable Bits m_fired ;                          // the list of fired bits 
-      /// the bits to be checked 
-      Bits         m_bits  ;                          //  the bit to be checked 
+      /// get the fired bits
+      std::size_t getFired () const ;                     // get the fired bits
+      // ======================================================================
+    private:
+      // ======================================================================
+      /// the list of fired bits
+      mutable Bits m_fired ;                          // the list of fired bits
+      /// the bits to be checked
+      Bits         m_bits  ;                          //  the bit to be checked
       // ======================================================================
     } ;
-  } //                                               end of namespace LoKi::HLT 
+  } //                                               end of namespace LoKi::HLT
   // ==========================================================================
-  namespace Cuts 
+  namespace Cuts
   {
     // ========================================================================
-    /** @typedef ROUTINBITS 
-     *  simple (void)-predicate to check the fired routing bits 
-     *  @see LoKi::HLT::RoutingBits 
+    /** @typedef ROUTINBITS
+     *  simple (void)-predicate to check the fired routing bits
+     *  @see LoKi::HLT::RoutingBits
      *  @see LoKi::HLT::RoutingBit
-     *  @see LoKi::Cuts::ROUTINGBIT 
-     *  @see Hlt::firedRoutingBits 
+     *  @see LoKi::Cuts::ROUTINGBIT
+     *  @see Hlt::firedRoutingBits
      *  @author Vanya BELYAEV  Ivan.Belyaev@nikhef.nl
      *  @date   2010-05-17
      */
     typedef LoKi::HLT::RoutingBits                                ROUTINGBITS ;
     // ========================================================================
-  } //                                              end of namespace LoKi::Cuts 
+  } //                                              end of namespace LoKi::Cuts
   // ==========================================================================
 } //                                                      end of namespace LoKi
 // ============================================================================
-// The END 
+// The END
 // ============================================================================
 #endif // LOKI_ROUTINGBITS_H

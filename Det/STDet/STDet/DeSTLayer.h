@@ -35,7 +35,7 @@ public:
   /** initialization method
   * @return Status of initialisation
   */
-  virtual StatusCode initialize();
+  StatusCode initialize() override;
 
   /** layer identifier
   *  @return identifier
@@ -59,16 +59,16 @@ public:
 
 
   /** print to stream */
-  std::ostream& printOut( std::ostream& os ) const;
+  std::ostream& printOut( std::ostream& os ) const override;
 
   /** print to stream */
-  MsgStream& printOut( MsgStream& os) const;
+  MsgStream& printOut( MsgStream& os) const override;
 
   /** check contains channel
   *  @param  aChannel channel
   *  @return bool
   */
-  virtual bool contains(const LHCb::STChannelID aChannel) const = 0;
+  virtual bool contains(const LHCb::STChannelID aChannel) const override = 0;
 
   /** flat vector of sectors
   * @return vector of sectors

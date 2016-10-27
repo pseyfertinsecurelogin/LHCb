@@ -1,4 +1,3 @@
-// $Id: UpdateManagerSvc.h,v 1.13 2009-01-16 12:03:46 ocallot Exp $
 #ifndef UPDATEMANAGERSVC_H
 #define UPDATEMANAGERSVC_H 1
 
@@ -48,48 +47,48 @@ public:
   virtual ~UpdateManagerSvc( ); ///< Destructor
 
   /// Initialize Service
-  virtual StatusCode initialize();
+  StatusCode initialize() override;
 
   /// Stop Service.
   /// Dump the status of the network of dependencies.
-  virtual StatusCode stop();
+  StatusCode stop() override;
 
   /// Finalize Service
-  virtual StatusCode finalize();
+  StatusCode finalize() override;
 
   /// Return the pointer to the data provider service, used to retrieve objects.
-  virtual IDataProviderSvc *dataProvider() const;
+  IDataProviderSvc *dataProvider() const override;
   /// Return the pointer to the detector data service, used to obtain the event time..
-  virtual IDetDataSvc *detDataSvc() const;
+  IDetDataSvc *detDataSvc() const override;
 
   /// Start a the update loop getting the time to use from the detector data service.
-  virtual StatusCode newEvent();
+  StatusCode newEvent() override;
   /// Start a the update loop using the provided time to decide if an item is valid or not.
   /// \warning{The time used to retrieve an object from the condition database is the one obtained from
   /// the detector data service.}
-  virtual StatusCode newEvent(const Gaudi::Time &evtTime);
+  StatusCode newEvent(const Gaudi::Time &evtTime) override;
 
   //virtual StatusCode runAll() const;
 
-  virtual bool getValidity(const std::string path, Gaudi::Time& since, Gaudi::Time &until, bool path_to_db = false);
-  virtual void setValidity(const std::string path, const Gaudi::Time& since, const Gaudi::Time &until, bool path_to_db = false);
+  bool getValidity(const std::string path, Gaudi::Time& since, Gaudi::Time &until, bool path_to_db = false) override;
+  void setValidity(const std::string path, const Gaudi::Time& since, const Gaudi::Time &until, bool path_to_db = false) override;
 
   /// Debug method: it dumps the dependency network through the message service (not very readable, for experts only).
-  virtual void dump();
+  void dump() override;
 
   /// Force the update manager service to wait before entering the newEvent loop.
-  virtual void acquireLock();
+  void acquireLock() override;
   /// Let the update manager service enter the newEvent loop.
-  virtual void releaseLock();
+  void releaseLock() override;
 
   /// Remove all the items referring to objects present in the transient store.
   /// This is needed when the Detector Transient Store is purged, otherwise we
   /// will keep pointers to not existing objects.
-  virtual void purge();
+  void purge() override;
 
   // ---- Implement IIncidentListener interface ----
   /// Handle BeginEvent incident.
-  virtual void handle(const Incident &inc);
+  void handle(const Incident &inc) override;
 
 protected:
 
@@ -97,21 +96,21 @@ protected:
   //  virtual StatusCode i_registerCondition(const std::string &condition, BaseObjectMemberFunction *mf);
 
   /// Register a condition for an object together with the destination for the pointer to the condition object.
-  virtual void i_registerCondition(const std::string &condition, BaseObjectMemberFunction *mf,
-                                         BasePtrSetter *ptr_dest = NULL);
+  void i_registerCondition(const std::string &condition, BaseObjectMemberFunction *mf,
+                                 BasePtrSetter *ptr_dest = NULL) override;
 
   /// Register a condition for an object
-  virtual void i_registerCondition(void *obj, BaseObjectMemberFunction *mf);
+  void i_registerCondition(void *obj, BaseObjectMemberFunction *mf) override;
 
   /// Used to force an update of the given instance (e.g. when the object is created during an event).
-  virtual StatusCode i_update(void *instance);
+  StatusCode i_update(void *instance) override;
 
   /// Used to remove an object from the dependency network.
   /// \warning{Removing an object is dangerous}
-  virtual void i_unregister(void *instance);
+  void i_unregister(void *instance) override;
 
   /// Force an update of all the object depending on the given one for the next event.
-  virtual void i_invalidate(void *instance);
+  void i_invalidate(void *instance) override;
 
 private:
 

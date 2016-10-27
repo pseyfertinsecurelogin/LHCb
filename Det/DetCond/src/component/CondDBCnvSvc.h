@@ -37,70 +37,70 @@ public:
   // Overloaded from ConversionSvc
 
   /// Initialize the service
-  virtual StatusCode initialize();
+  StatusCode initialize() override;
 
   /// Finalize the service
-  virtual StatusCode finalize();
+  StatusCode finalize() override;
 
   using ConversionSvc::createAddress;
   /// Create an address using explicit arguments to identify a single object.
-  virtual StatusCode createAddress (long svc_type,
-				     const CLID& clid,
-				     const std::string* par,
-				     const unsigned long* ip,
-				     IOpaqueAddress*& refpAddress );
+  StatusCode createAddress (long svc_type,
+                             const CLID& clid,
+                             const std::string* par,
+                             const unsigned long* ip,
+                             IOpaqueAddress*& refpAddress ) override;
 
 public:
 
   /// Retrieve converter from list
-  virtual IConverter* converter(const CLID& clid);
+  IConverter* converter(const CLID& clid) override;
 
   // --------- ICondDBReader implementation
 
   /// Try to retrieve an object from the Condition DataBase. If path points to a FolderSet,
   /// channel and when are ignored and data is set ot NULL.
-  virtual StatusCode getObject (const std::string &path, const Gaudi::Time &when,
-                                DataPtr &data,
-                                std::string &descr, Gaudi::Time &since, Gaudi::Time &until, cool::ChannelId channel = 0);
+  StatusCode getObject (const std::string &path, const Gaudi::Time &when,
+                        DataPtr &data,
+                        std::string &descr, Gaudi::Time &since, Gaudi::Time &until, cool::ChannelId channel = 0) override;
 
   /// Try to retrieve an object from the Condition DataBase. If path points to a FolderSet,
   /// channel and when are ignored and data is set ot NULL.
-  virtual StatusCode getObject (const std::string &path, const Gaudi::Time &when,
-                                DataPtr &data,
-                                std::string &descr, Gaudi::Time &since, Gaudi::Time &until, const std::string &channel);
+  StatusCode getObject (const std::string &path, const Gaudi::Time &when,
+                        DataPtr &data,
+                        std::string &descr, Gaudi::Time &since, Gaudi::Time &until, const std::string &channel) override;
 
   /// @{
   /// @see ICondDBReader::getIOVs
-  virtual IOVList getIOVs (const std::string &path, const IOV &iov, cool::ChannelId channel = 0);
-  virtual IOVList getIOVs (const std::string &path, const IOV &iov, const std::string &channel);
+  IOVList getIOVs (const std::string &path, const IOV &iov, cool::ChannelId channel = 0) override;
+  IOVList getIOVs (const std::string &path, const IOV &iov, const std::string &channel) override;
   /// @}
 
   /// Retrieve the names of the children nodes of a FolderSet.
-  virtual StatusCode getChildNodes (const std::string &path, std::vector<std::string> &node_names);
+  StatusCode getChildNodes (const std::string &path, std::vector<std::string> &node_names) override;
 
   /// Retrieve the names of the children nodes of a FolderSet divided in folders and foldersets.
-  virtual StatusCode getChildNodes (const std::string &path,
-                                    std::vector<std::string> &folders,
-                                    std::vector<std::string> &foldersets);
+  StatusCode getChildNodes (const std::string &path,
+                            std::vector<std::string> &folders,
+                            std::vector<std::string> &foldersets) override;
 
   /// Tells if the path is available in the database.
-  virtual bool exists(const std::string &path);
+  bool exists(const std::string &path) override;
 
   /// Tells if the path (if it exists) is a folder.
-  virtual bool isFolder(const std::string &path);
+  bool isFolder(const std::string &path) override;
 
   /// Tells if the path (if it exists) is a folderset.
-  virtual bool isFolderSet(const std::string &path);
+  bool isFolderSet(const std::string &path) override;
 
   /// Disconnect from the database.
-  virtual void disconnect();
+  void disconnect() override;
 
   // --------- ICondDBInfo implementation
 
   /** Get the current default database tags
    *  @param  tags vector of DB name, tag pairs. Empty if DB not available
    */
-  virtual void defaultTags( std::vector<LHCb::CondDBNameTagPair>& tags) const;
+  void defaultTags( std::vector<LHCb::CondDBNameTagPair>& tags) const override;
 
 private:
 

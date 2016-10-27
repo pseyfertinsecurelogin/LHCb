@@ -33,11 +33,7 @@ DetectorElement::DetectorElement( const std::string&   /* name */ )
 {
 }
 
-DetectorElement::~DetectorElement()
-{
-  // release services
-  m_services->release();
-}
+DetectorElement::~DetectorElement() = default;
 
 IDataProviderSvc* DetectorElement::dataSvc() const {
   return m_services->detSvc();

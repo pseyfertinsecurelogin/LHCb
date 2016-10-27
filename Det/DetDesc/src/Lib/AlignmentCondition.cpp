@@ -18,27 +18,24 @@
 //
 // 2005-04-12 : Juan PALACIOS
 //-----------------------------------------------------------------------------
+namespace {
+  static const std::string s_translationString = "dPosXYZ";
+  static const std::string s_rotationString =  "dRotXYZ";
+  static const std::string s_pivotString = "pivotXYZ";
+}
 
 //=============================================================================
 // Default constructor
 //=============================================================================
 AlignmentCondition::AlignmentCondition(  ) : 
-  Condition(),
-  m_services(DetDesc::services()),
-  m_translationString("dPosXYZ"),
-  m_rotationString("dRotXYZ"),
-  m_pivotString("pivotXYZ")
+  m_services(DetDesc::services())
 {
 }
 //=============================================================================
 AlignmentCondition::AlignmentCondition(const std::vector<double>& translation,
                                        const std::vector<double>& rotation,
                                        const std::vector<double>& pivot) : 
-  Condition(),
-  m_services(DetDesc::services()),
-  m_translationString("dPosXYZ"),
-  m_rotationString("dRotXYZ"),
-  m_pivotString("pivotXYZ")
+  m_services(DetDesc::services())
 {
   MsgStream log(msgSvc(), "AlignmentCondition");
   if( log.level() <= MSG::VERBOSE )
@@ -50,10 +47,6 @@ AlignmentCondition::AlignmentCondition(const std::vector<double>& translation,
 
 }
 
-//=============================================================================
-// Destructor
-//=============================================================================
-AlignmentCondition::~AlignmentCondition() {}
 
 //=============================================================================
 /// initialize
@@ -85,7 +78,7 @@ void AlignmentCondition::setPivotPoint( const Gaudi::XYZPoint& point )
   pivotvec[0] = point.x() ;
   pivotvec[1] = point.y() ;
   pivotvec[2] = point.z() ;
-  this->addParam(m_pivotString, pivotvec );
+  this->addParam(s_pivotString, pivotvec );
   updateParams(m_matrixInv) ;
 }
 //=============================================================================
@@ -95,10 +88,10 @@ StatusCode AlignmentCondition::makeMatrices()
   if( log.level() <= MSG::VERBOSE )
     log << MSG::VERBOSE << " Making transformation matrix for \'" << name() << "\'" << endmsg;
   
-  std::vector<double> translations = paramAsDoubleVect (m_translationString);
-  std::vector<double> rotations    = paramAsDoubleVect (m_rotationString);
-  std::vector<double> pivot = (exists(m_pivotString) ) ? 
-    paramAsDoubleVect(m_pivotString) : std::vector<double>(3, 0);
+  std::vector<double> translations = paramAsDoubleVect (s_translationString);
+  std::vector<double> rotations    = paramAsDoubleVect (s_rotationString);
+  std::vector<double> pivot = (exists(s_pivotString) ) ? 
+    paramAsDoubleVect(s_pivotString) : std::vector<double>(3, 0);
 
   if (translations.size()==3  && rotations.size()==3 && pivot.size()==3) {
 
@@ -123,8 +116,8 @@ void AlignmentCondition::updateParams(const Gaudi::Transform3D& matrixInv)
 {
   std::vector<double> newTrans(3,0);
   std::vector<double> newRot(3,0);
-  const std::vector<double> pivot = (exists(m_pivotString) ) ? 
-    paramAsDoubleVect(m_pivotString) : std::vector<double>(3, 0);
+  const std::vector<double> pivot = (exists(s_pivotString) ) ? 
+    paramAsDoubleVect(s_pivotString) : std::vector<double>(3, 0);
 
   DetDesc::getZYXTransformParameters( matrixInv, newTrans, newRot, pivot );
   
@@ -135,9 +128,9 @@ void AlignmentCondition::loadParams(const std::vector<double>& translation,
 				    const std::vector<double>& rotation,
 				    const std::vector<double>& pivot) 
 {
-  this->addParam(m_translationString, translation );
-  this->addParam(m_rotationString,    rotation    );
-  this->addParam(m_pivotString,       pivot       );
+  this->addParam(s_translationString, translation );
+  this->addParam(s_rotationString,    rotation    );
+  this->addParam(s_pivotString,       pivot       );
 }
 //=============================================================================
 IMessageSvc* AlignmentCondition::msgSvc() const {

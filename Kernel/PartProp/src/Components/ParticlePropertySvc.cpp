@@ -98,14 +98,14 @@ namespace LHCb
      *  It is assumed that the container is properly ordered
      *  @return begin-iterator for the container of particle properties
      */
-    virtual iterator begin () const { return m_vector.begin () ; }
+    iterator begin () const override { return m_vector.begin () ; }
     /** get the end-iterator for the container of particle properties
      *  It is assumed that the container is properly ordered
      *  @return end-iterator for the container of particle properties
      */
-    virtual iterator end   () const { return m_vector.end   () ; }
+    iterator end   () const override { return m_vector.end   () ; }
     /// get the container size.
-    virtual size_t   size  () const { return m_vector.size  () ; }
+    size_t   size  () const override { return m_vector.size  () ; }
     /** Retrieve an object by name:
      *
      *  @code
@@ -120,8 +120,8 @@ namespace LHCb
      *  @param name the particle name
      *  @return pointer to particle property object
      */
-    virtual const LHCb::ParticleProperty* find
-    ( const std::string&      name ) const { return m_nameMap ( name ) ; }
+    const LHCb::ParticleProperty* find
+    ( const std::string&      name ) const override { return m_nameMap ( name ) ; }
     /** Retrieve an object by PID:
      *
      *  @code
@@ -136,8 +136,8 @@ namespace LHCb
      *  @param name the particle name
      *  @return pointer to particle property object
      */
-    virtual const LHCb::ParticleProperty* find
-    ( const LHCb::ParticleID& pid  ) const { return m_pidMap ( pid ) ; }
+    const LHCb::ParticleProperty* find
+    ( const LHCb::ParticleID& pid  ) const override { return m_pidMap ( pid ) ; }
     // =========================================================================
   public:  // CC-ing
     // =========================================================================
@@ -156,12 +156,12 @@ namespace LHCb
      *  @param decay the decay descriptor
      *  @return the charge conjugation for the decay descriptor
      */
-    virtual std::string cc ( const std::string& decay ) const ;
+    std::string cc ( const std::string& decay ) const  override;
      // =========================================================================
   public:  // (I)Service
     // =========================================================================
     /// Initialize the service.
-    virtual StatusCode initialize () ;
+    StatusCode initialize ()  override;
     // ========================================================================
              // technical methods
     // ========================================================================

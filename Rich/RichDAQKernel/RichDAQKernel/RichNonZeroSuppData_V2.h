@@ -100,11 +100,11 @@ namespace Rich
         ~RichNonZeroSuppData() = default;
 
         // Returns the hit count for this HPD
-        virtual ShortType hitCount() const final;
+        ShortType hitCount() const override final;
 
         // Fill a vector with RichSmartIDs for hit pixels
-        virtual ShortType fillRichSmartIDs( LHCb::RichSmartID::Vector & ids,
-                                            const LHCb::RichSmartID hpdID ) const final;
+        ShortType fillRichSmartIDs( LHCb::RichSmartID::Vector & ids,
+                                    const LHCb::RichSmartID hpdID ) const override final;
 
       private: // methods
 

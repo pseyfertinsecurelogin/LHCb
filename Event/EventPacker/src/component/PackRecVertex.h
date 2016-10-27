@@ -1,5 +1,5 @@
 // $Id: PackRecVertex.h,v 1.2 2009-11-06 18:34:34 jonrob Exp $
-#ifndef PACKRECVERTEX_H 
+#ifndef PACKRECVERTEX_H
 #define PACKRECVERTEX_H 1
 
 // Include files
@@ -14,17 +14,17 @@
  *  @author Olivier Callot
  *  @date   2008-11-14
  */
-class PackRecVertex : public GaudiAlgorithm 
+class PackRecVertex : public GaudiAlgorithm
 {
 
-public: 
+public:
 
   /// Standard constructor
   PackRecVertex( const std::string& name, ISvcLocator* pSvcLocator );
 
   virtual ~PackRecVertex( ); ///< Destructor
 
-  virtual StatusCode execute(); ///< Algorithm execution
+  StatusCode execute() override; ///< Algorithm execution
 
 private:
 
