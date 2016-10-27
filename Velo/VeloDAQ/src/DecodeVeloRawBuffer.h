@@ -135,8 +135,6 @@ private:
   /// Check when decoding lite clusters that the bank length is correct
   bool m_doLengthCheck;
 
-  SmartIF<IIncidentSvc> m_incidentSvc;  ///< Pointer to the incident service.
-
   /// default raw event locations: not set in options to allow comparison
   std::vector<std::string> m_defaultRawEventLocations;
 
