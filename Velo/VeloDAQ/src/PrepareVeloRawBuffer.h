@@ -72,10 +72,10 @@ private:
 
   // size of raw bank in bytes, inclding the 4 byte header but
   // *without* the padding bytes at the end
-  unsigned int m_bankSizeInBytes;
+  unsigned int m_bankSizeInBytes = 0;
 
   /// pointer to Velo Detector Element
-  DeVelo* m_velo;
+  DeVelo* m_velo = nullptr;
 
   /// list of sensor numbers to check for empty sensors
   std::vector<int> m_sensorNumbers;
