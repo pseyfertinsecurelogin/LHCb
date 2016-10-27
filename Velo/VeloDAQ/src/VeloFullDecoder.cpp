@@ -24,12 +24,9 @@ VeloFullDecoder::VeloFullDecoder(const int decoderType)
 void VeloFullDecoder::decode(VeloFullBank* inData, VeloTELL1::sdataVec& decodedData) const
 {
   decodedData.clear();
-    //
-  int NumberOfPPFPGA=VeloTELL1::NumberOfPPFPGA;
-  int SectionsPerBlock=VeloTELL1::SectionsPerBlock;
   //
-  for(int aBlock=0; aBlock<NumberOfPPFPGA; aBlock++){
-    for(int aSection=0; aSection<SectionsPerBlock; aSection++){
+  for(int aBlock=0; aBlock<VeloTELL1::NumberOfPPFPGA; aBlock++){
+    for(int aSection=0; aSection<VeloTELL1::SectionsPerBlock; aSection++){
       dataVec section=inData->getSection(aBlock, aSection);
       for(int stream=0; stream<VeloTELL1::DataStreamPerSection; stream++){
         // skip the empty space in C section
@@ -40,12 +37,6 @@ void VeloFullDecoder::decode(VeloFullBank* inData, VeloTELL1::sdataVec& decodedD
             int beginDecode=m_initialShift+analogChanShift;
             int endDecode=m_wordsToDecode+beginDecode;
             int count=0;
-            if(aBlock==10&&aSection==0&&stream==0&&aLink==0){
-              std::cout<< "chanShift: " << analogChanShift
-                << ", beginDecode: " << beginDecode
-                << ", endDecode: " << endDecode
-                << ", steram: " << stream <<std::endl;
-            }
             //
             for(auto secIt  = section.begin()+beginDecode;
                      secIt != section.begin()+endDecode; ++secIt ){
@@ -53,10 +44,6 @@ void VeloFullDecoder::decode(VeloFullBank* inData, VeloTELL1::sdataVec& decodedD
               // from now on we must be prepared for negative values, hence
               // the cast to int.
               decodedData.push_back(static_cast<int>(decodedWord));
-              if(aBlock==10&&aSection==0&&stream==0&&aLink==0){
-                std::cout<< "counter: " << count << ", decoded ADC: "
-                  << decodedWord <<std::endl;
-              }
               count++;
             }
           } // loop over channels
