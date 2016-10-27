@@ -23,10 +23,6 @@ public:
                      const GaudiException &  Exception  ,
                      const Material       *  mat    = nullptr );
   ///
-  MaterialException( const MaterialException& );
-  ///
-  virtual ~MaterialException() noexcept;
-  ///
   std::ostream& printOut ( std::ostream& os = std::cerr ) const override;
   MsgStream&    printOut ( MsgStream&    os             ) const override;
   ///

@@ -18,8 +18,6 @@ public:
                     const GaudiException&  Exception     ,
                     const PVolume*         pvolume =  nullptr  );
   ///
-  virtual ~PVolumeException() noexcept;
-  ///
   std::ostream&   printOut ( std::ostream& os = std::cerr ) const  override;
   MsgStream&      printOut ( MsgStream&    os             ) const  override;
   GaudiException* clone    ()                               const  override;

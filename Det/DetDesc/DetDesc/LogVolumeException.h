@@ -14,8 +14,7 @@ struct ILVolume ; ///< detdesc package
  */
 
 
-class LogVolumeException :
-  public GaudiException
+class LogVolumeException : public GaudiException
 {
 
 public:
@@ -41,10 +40,6 @@ public:
     const GaudiException& excp                         ,
     const ILVolume*       logvol = nullptr             ,
     const StatusCode&     sc     = StatusCode::FAILURE );
-
-  /** destructor
-   */
-  virtual ~LogVolumeException() noexcept;
 
   /** printout to standard STD/STL stream
    *  @param os reference to the stream
