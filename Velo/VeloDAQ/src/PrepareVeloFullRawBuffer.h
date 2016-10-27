@@ -95,8 +95,6 @@ public:
   void resetMemory();
   // use only as emergency checker!
   void dumpADCs(const dataVec& inADCs);
-  // find object function
-  bool findObject(const dataVec& inCont, const unsigned int obj) const;
 
 protected:
 
