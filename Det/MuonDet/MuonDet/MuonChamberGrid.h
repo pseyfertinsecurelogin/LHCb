@@ -1,4 +1,3 @@
-// $Id: MuonChamberGrid.h,v 1.7 2008-10-28 15:06:04 cattanem Exp $
 #ifndef MUONDET_MUONCHAMBERGRID_H
 #define MUONDET_MUONCHAMBERGRID_H 1
 
@@ -20,9 +19,7 @@ static const CLID CLID_MuonChamberGrid = 11094;
 class MuonChamberGrid: public Condition {
 public:
   /// Standard constructor
-  MuonChamberGrid( );
-
-  virtual ~MuonChamberGrid( ); ///< Destructor
+  MuonChamberGrid( ) = default;
 
   StatusCode initialize() override;
 
@@ -68,13 +65,9 @@ public:
 
   StatusCode getPCCenter(MuonFrontEndID fe,
                          double& xcenter, double& ycenter);
-
-
-protected:
-
 private:
 
-  int m_number_of_grid;
+  int m_number_of_grid = 0;
   std::vector<int> m_readoutType;
   std::vector<int> m_mapType;
   std::vector<double> m_x_pad_rdout1;

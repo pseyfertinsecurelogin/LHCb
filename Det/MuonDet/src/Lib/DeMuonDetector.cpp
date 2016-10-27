@@ -21,6 +21,9 @@
  *
  */
 
+DeMuonDetector::DeMuonDetector() = default;
+DeMuonDetector::~DeMuonDetector() = default;
+
   //Maximum number of chambers allowed per region
   //Initialize the maximum number of allowed chambers per region
 static constexpr const std::array<int,4> MaxRegions = {12,24,48,192}; // this can go to DDDB
@@ -30,12 +33,8 @@ const CLID& DeMuonDetector::clID () const
   return DeMuonDetector::classID() ;
 }
 
-DeMuonDetector::DeMuonDetector() = default;
-DeMuonDetector::~DeMuonDetector() = default;
-
 StatusCode DeMuonDetector::initialize()
 {
-
   if( UNLIKELY( msgStream().level() <= MSG::VERBOSE ) ) 
     msgStream() << MSG::VERBOSE << "Initializing the detector" <<endmsg;
   
@@ -70,11 +69,11 @@ StatusCode DeMuonDetector::initialize()
     m_isM1defined |= (name.find("/M1") != name.npos);
     
     std::string base = DeMuonLocation::Cabling;
-    std::string sName, path;
-    path = base+"/"+sName.assign(name.end()-2, name.end())+"/Cabling";
+    std::string sName;
+    auto path = base+"/"+sName.assign(name.end()-2, name.end())+"/Cabling";
 
     updMgrSvc()->registerCondition(&m_daqHelper, path,
-				   &MuonDAQHelper::updateLUT);
+				                   &MuonDAQHelper::updateLUT);
       /*
     if(m_isM1defined) {
       updMgrSvc()->registerCondition(&m_daqHelper,
