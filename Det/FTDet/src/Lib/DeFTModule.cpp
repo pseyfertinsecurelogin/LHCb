@@ -32,10 +32,12 @@ StatusCode DeFTModule::initialize(){
   IDetectorElement* station = layer->parentIDetectorElement();
 
   // Get specific parameters from the module
-  m_moduleID = (unsigned int)param<int>("moduleID");
-  m_quarterID = (unsigned int)quarter->params()->param<int>("quarterID");
-  m_layerID = (unsigned int)layer->params()->param<int>("layerID");
-  m_stationID = (unsigned int)station->params()->param<int>("stationID");
+  unsigned int moduleID = param<int>("moduleID");
+  unsigned int quarterID = quarter->params()->param<int>("quarterID");
+  unsigned int layerID = layer->params()->param<int>("layerID");
+  unsigned int stationID = station->params()->param<int>("stationID");
+  LHCb::FTChannelID aChan(stationID, layerID, quarterID, moduleID, 0u, 0u, 0u);
+  setElementID(aChan);
 
   /// Loop over mats and add to mat vector
   for (auto iM = this->childBegin(); iM != this->childEnd(); ++iM) {
@@ -82,7 +84,7 @@ int DeFTModule::pseudoChannel( const LHCb::FTChannelID channelID ) const {
   if( m_reversed ) {
     channelInModule = m_nChannelsInModule - 1 - channelInModule;
   }
-  int pseudoChannel = channelInModule + m_moduleID * m_nChannelsInModule;
+  int pseudoChannel = channelInModule + moduleID() * m_nChannelsInModule;
   return pseudoChannel;
 }
 
@@ -91,6 +93,5 @@ LHCb::FTChannelID DeFTModule::channelFromPseudo( const int pseudoChannel ) const
   if( m_reversed ) {
     channelInModule = m_nChannelsInModule - 1 - channelInModule;
   }
-  return LHCb::FTChannelID(m_stationID, m_layerID, m_quarterID,
-      m_moduleID, channelInModule);
+  return LHCb::FTChannelID(elementID() + channelInModule);
 }

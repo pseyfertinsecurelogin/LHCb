@@ -35,12 +35,12 @@ StatusCode DeFTMat::initialize(){
   IDetectorElement* station = layer->parentIDetectorElement();
 
   // Get specific parameters from the module
-  m_matID = (unsigned int)param<int>("matID");
-  m_moduleID = (unsigned int)module->params()->param<int>("moduleID");
-  m_quarterID = (unsigned int)quarter->params()->param<int>("quarterID");
-  m_layerID = (unsigned int)layer->params()->param<int>("layerID");
-  m_stationID = (unsigned int)station->params()->param<int>("stationID");
-  LHCb::FTChannelID aChan(m_stationID, m_layerID, m_quarterID, m_moduleID, m_matID, 0u, 0u);
+  unsigned int matID = param<int>("matID");
+  unsigned int moduleID = module->params()->param<int>("moduleID");
+  unsigned int quarterID = quarter->params()->param<int>("quarterID");
+  unsigned int layerID = layer->params()->param<int>("layerID");
+  unsigned int stationID = station->params()->param<int>("stationID");
+  LHCb::FTChannelID aChan(stationID, layerID, quarterID, moduleID, matID, 0u, 0u);
   setElementID(aChan);
 
   // Get some useful geometric parameters from the database
@@ -59,7 +59,6 @@ StatusCode DeFTMat::initialize(){
 
   // Get the boundaries of the layer
   const SolidBox* box = dynamic_cast<const SolidBox*> (geometry()->lvolume()->solid()->coverTop());
-  m_sizeX = box->xsize();
   m_sizeY = box->ysize();
   m_sizeZ = box->zsize();
 
@@ -100,7 +99,7 @@ LHCb::FTChannelID DeFTMat::calculateChannelAndFrac(double localX,
   frac = xInChan/m_channelPitch - 0.5;
 
   // Construct channelID
-  return LHCb::FTChannelID(m_stationID, m_layerID, m_quarterID, m_moduleID, m_matID,
+  return LHCb::FTChannelID(stationID(), layerID(), quarterID(), moduleID(), matID(),
       hitSiPM, hitChan+(hitDie*m_nChannelsInDie));
 }
 

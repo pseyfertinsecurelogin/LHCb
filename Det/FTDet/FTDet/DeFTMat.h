@@ -65,10 +65,10 @@ public:
   void setElementID(const LHCb::FTChannelID& chanID);
 
   /** @return flag true if this quarter is bottom half */
-  bool isBottom() const {return m_quarterID == 0 || m_quarterID == 1; }
+  bool isBottom() const {return quarterID() == 0 || quarterID() == 1; }
 
   /** @return flag true if this quarter is top half */
-  bool isTop() const {return m_quarterID == 2 || m_quarterID == 3; }
+  bool isTop() const {return quarterID() == 2 || quarterID() == 3; }
 
   /**
    * Return a sensitive volume identifier for a given point in the
@@ -91,7 +91,7 @@ public:
   double globalZ() const { return m_globalZ; }
 
   /** Returns the xy-plane at z-middle the layer */
-  const Gaudi::Plane3D plane() const { return m_plane; }
+  const Gaudi::Plane3D& plane() const { return m_plane; }
 
   /** Main method to determine which channel was hit
    *  @param localX is the input x coordinate in the local frame.
@@ -107,8 +107,8 @@ public:
    *  corresponding left edges (along x) in the local frame.
    */
   std::vector<std::pair<LHCb::FTChannelID, double>>
-  calculateChannels(const double localEntry, const double localExit,
-      const unsigned int numOfAdditionalChannels ) const;
+    calculateChannels(const double localEntry, const double localExit,
+                      const unsigned int numOfAdditionalChannels ) const;
 
   /** Get the distance from the hit to the SiPM
    *  @param localPoint is the position of the half module in local coordinates
@@ -159,17 +159,12 @@ public:
 
 
 private :
-  unsigned int m_stationID;        ///< station ID number
-  unsigned int m_layerID;          ///< layer ID number
-  unsigned int m_quarterID;        ///< quarter ID number
-  unsigned int m_moduleID;         ///< module ID number
-  unsigned int m_matID;            ///< mat ID number
   LHCb::FTChannelID m_elementID;   ///< element ID
 
-  int m_nChannelsInSiPM;  ///< number of channels per SiPM
-  int m_nChannelsInDie;   ///< number of channels per die
-  int m_nSiPMsInMat;      ///< number of SiPM arrays per mat
-  int m_nDiesInSiPM;      ///< number of dies per SiPM
+  int m_nChannelsInSiPM;           ///< number of channels per SiPM
+  int m_nChannelsInDie;            ///< number of channels per die
+  int m_nSiPMsInMat;               ///< number of SiPM arrays per mat
+  int m_nDiesInSiPM;               ///< number of dies per SiPM
 
   Gaudi::Plane3D m_plane;          ///< xy-plane in the z-middle of the module
   double m_globalZ;                ///< Global z position of module closest to y-axis
@@ -180,30 +175,29 @@ private :
   double m_channelPitch;           ///< readout channel pitch (250 micron)
   double m_sipmPitch;              ///< pitch between SiPMs in mat
   double m_diePitch;               ///< pitch between dies in SiPM
-  double m_sizeX;                  ///< Length in x of all fibres in the mat
   double m_sizeY;                  ///< Length in y of the fibre in the mat
   double m_sizeZ;                  ///< Thickness of the fibre mat (nominal: 1.3 mm)
 
 }; // end of class
 
 inline unsigned int DeFTMat::matID() const {
-  return m_matID;
+  return m_elementID.mat();
 }
 
 inline unsigned int DeFTMat::moduleID() const {
-  return m_moduleID;
+  return m_elementID.module();
 }
 
 inline unsigned int DeFTMat::quarterID() const {
-  return m_quarterID;
+  return m_elementID.quarter();
 }
 
 inline unsigned int DeFTMat::layerID() const {
-  return m_layerID;
+  return m_elementID.layer();
 }
 
 inline unsigned int DeFTMat::stationID() const {
-  return m_stationID;
+  return m_elementID.station();
 }
 
 inline LHCb::FTChannelID DeFTMat::elementID() const {

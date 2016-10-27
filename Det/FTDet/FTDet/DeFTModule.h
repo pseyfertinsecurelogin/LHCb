@@ -55,11 +55,17 @@ public:
   /** @return stationID */
   unsigned int stationID() const;
 
+  /** Element id */
+  LHCb::FTChannelID elementID() const;
+
+  /** Set element id */
+  void setElementID(const LHCb::FTChannelID& chanID);
+
   /** @return flag true if this quarter is bottom half */
-  bool isBottom() const {return m_quarterID == 0 || m_quarterID == 1; }
+  bool isBottom() const {return quarterID() == 0 || quarterID() == 1; }
 
   /** @return flag true if this quarter is top half */
-  bool isTop() const {return m_quarterID == 2 || m_quarterID == 3; }
+  bool isTop() const {return quarterID() == 2 || quarterID() == 3; }
 
   /** @return Vector of pointers to the FT Mats */
   const Mats&   mats()   const { return m_mats;   }
@@ -79,7 +85,7 @@ public:
   double globalZ() const { return m_globalZ; }
 
   /** Returns the xy-plane at z-middle the layer */
-  const Gaudi::Plane3D plane() const { return m_plane; }
+  const Gaudi::Plane3D& plane() const { return m_plane; }
 
   /** Get the pseudoChannel for a given FTChannelID
    *  The pseudoChannel is defined for a full quarter and runs
@@ -100,10 +106,7 @@ public:
   LHCb::FTChannelID channelFromPseudo( const int pseudoChannel ) const ;
 
 private :
-  unsigned int m_stationID;        ///< station ID number
-  unsigned int m_layerID;          ///< layer ID number
-  unsigned int m_quarterID;        ///< quarter ID number
-  unsigned int m_moduleID;         ///< module ID number
+  LHCb::FTChannelID m_elementID;   ///< element ID
 
   Mats m_mats;                     ///< vector of pointers to mats
   int m_nChannelsInModule;         ///< number of channels per module
@@ -114,19 +117,27 @@ private :
 }; // end of class
 
 inline unsigned int DeFTModule::moduleID() const {
-  return m_moduleID;
+  return m_elementID.module();
 }
 
 inline unsigned int DeFTModule::quarterID() const {
-  return m_quarterID;
+  return m_elementID.quarter();
 }
 
 inline unsigned int DeFTModule::layerID() const {
-  return m_layerID;
+  return m_elementID.layer();
 }
 
 inline unsigned int DeFTModule::stationID() const {
-  return m_stationID;
+  return m_elementID.station();
+}
+
+inline LHCb::FTChannelID DeFTModule::elementID() const {
+  return m_elementID;
+}
+
+inline void DeFTModule::setElementID(const LHCb::FTChannelID& chanID) {
+  m_elementID = chanID;
 }
 
 /// Find mat method
