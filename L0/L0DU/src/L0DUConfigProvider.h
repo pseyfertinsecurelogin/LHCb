@@ -118,21 +118,21 @@ private:
 
   std::map<std::string,LHCb::L0DUConfigs*> m_configs;
 
-  LHCb::L0DUConfig*  m_config;
+  LHCb::L0DUConfig*  m_config = nullptr;
 
-  IL0CondDBProvider* m_condDB;
+  IL0CondDBProvider* m_condDB = nullptr;
 
-  unsigned long m_cData;
-  int m_pData;
-  long m_tckopts;
-  bool m_template;
-  bool m_uptodate;
-  bool m_forceOrder;
+  unsigned long m_cData =0;
+  int m_pData       = 0;
+  long m_tckopts    = 0;
+  bool m_template   = false;
+  bool m_uptodate   = false;
+  bool m_forceOrder = false;
   std::vector<std::vector<LHCb::L0DUElementaryCondition*> > m_condOrder;
   std::vector<int> m_condMax;
   bool m_reOrder;
   bool m_check;
-  unsigned int m_reported;
+  unsigned int m_reported = 0;
   std::vector<int> m_FOIx;
   std::vector<int> m_FOIy;
   std::vector<int> m_knownBXs;

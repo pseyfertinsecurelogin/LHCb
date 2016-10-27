@@ -248,7 +248,10 @@ const std::string& LoKi::Base::type() const
 // ============================================================================
 long LoKi::Base::release    ()
 {
-  if ( 0 == --m_refCount ) { delete this ; }   ///< ATTENTION!
+  if ( 0 == --m_refCount ) { 
+    delete this ;  ///< ATTENTION!
+    return 0 ;
+  }
   return m_refCount ;
 } 
 // ============================================================================

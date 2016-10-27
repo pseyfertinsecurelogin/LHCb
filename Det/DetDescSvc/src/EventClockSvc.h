@@ -54,7 +54,7 @@ private:
 
   // --- tools ---
   /// Pointer to the EventTimeDecoder tool
-  IEventTimeDecoder *m_eventTimeDecoder;
+  IEventTimeDecoder *m_eventTimeDecoder = nullptr;
 
 
   // --- misc ---
