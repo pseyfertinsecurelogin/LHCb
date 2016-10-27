@@ -54,11 +54,6 @@ StatusCode DeFTModule::initialize(){
   Gaudi::XYZPoint lastPoint  = geometry()->toGlobal( Gaudi::XYZPoint(-1.0,0,0) );
   m_reversed = std::abs(firstPoint.x()) > std::abs(lastPoint.x());
 
-  // TODO: Get the global z position of the module at the point closest to the mirror
-  Gaudi::XYZPoint mirrorPoint =
-      geometry()->toGlobal( Gaudi::XYZPoint( 0,-0.5,0) );
-  m_globalZ = mirrorPoint.z();
-
   // Make the plane for the module
   const Gaudi::XYZPoint g1 = geometry() -> toGlobal( Gaudi::XYZPoint(0.,0.,0.) );
   const Gaudi::XYZPoint g2 = geometry() -> toGlobal( Gaudi::XYZPoint(1.,0.,0.) );

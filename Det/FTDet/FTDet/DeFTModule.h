@@ -81,9 +81,6 @@ public:
    */
   const DeFTMat* findMat(const LHCb::FTChannelID& aChannel) const;
 
-  /** Returns the global z position of the module */
-  double globalZ() const { return m_globalZ; }
-
   /** Returns the xy-plane at z-middle the layer */
   const Gaudi::Plane3D& plane() const { return m_plane; }
 
@@ -111,7 +108,6 @@ private :
   Mats m_mats;                     ///< vector of pointers to mats
   int m_nChannelsInModule;         ///< number of channels per module
   Gaudi::Plane3D m_plane;          ///< xy-plane in the z-middle of the module
-  double m_globalZ;                ///< Global z position of module closest to y-axis
   bool   m_reversed;               ///< Flag set when the pseudochannel-ordering is reversed
 
 }; // end of class

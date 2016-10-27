@@ -95,8 +95,8 @@ const DeFTQuarter* DeFTDetector::findQuarter(const Gaudi::XYZPoint& aPoint) cons
 
 /// Find the module for a given XYZ point
 const DeFTModule* DeFTDetector::findModule(const Gaudi::XYZPoint& aPoint) const {
-  const DeFTQuarter* q = findQuarter(aPoint);
-  return q ? q->findModule(aPoint) : nullptr ;
+  const DeFTLayer* l = findLayer(aPoint); // is faster than via DeFTQuarter
+  return l ? l->findModule(aPoint) : nullptr ;
 }
 
 /// Find the mat for a given XYZ point
