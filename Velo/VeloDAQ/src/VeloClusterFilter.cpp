@@ -155,7 +155,11 @@ bool VeloClusterFilter::passesFilter(LHCb::VeloChannelID id) const
       return false;
     }
     default :
-      error() << "Don't understand \'"<<m_filterCriterion<<"\'. Expect: All,Left,Right,R,Phi,PU or Overlap" << endmsg;
+      throw GaudiException(format("Invalid value for filter type, property was"\
+				  " string %s which was converted to invalid integer %i",
+				  m_filterCriterion.c_str(), m_filter),	  
+			   this->name(),
+			   StatusCode::FAILURE);
       return false;
   }
 }
