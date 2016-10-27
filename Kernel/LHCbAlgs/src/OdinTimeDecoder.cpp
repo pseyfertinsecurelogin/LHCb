@@ -65,7 +65,10 @@ LHCb::ODIN *OdinTimeDecoder::getODIN() const
   if ( LIKELY( evtSvc()->findObject("", tmp).isSuccess() ) ) 
   {
     // Decode the ODIN bank.
-    m_odinDecoder->execute();
+    /// \fixme because of https://gitlab.cern.ch/gaudi/Gaudi/merge_requests/217 IGenericTool
+    /// cannot be used in a const method. The proper fix can be implemented only in the context
+    /// of transformer algorithms of Gaudi::Functional.
+    const_cast<IGenericTool&>(*m_odinDecoder).execute();
     // @FIXME: we must get the ODIN object from where the Tool created it
     return getIfExists<LHCb::ODIN>(LHCb::ODINLocation::Default);
   }
