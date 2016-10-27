@@ -63,11 +63,6 @@ DecodeVeloRawBuffer::DecodeVeloRawBuffer( const std::string& name,
 
 
 //=============================================================================
-// Destructor
-//=============================================================================
-DecodeVeloRawBuffer::~DecodeVeloRawBuffer() {}
-
-//=============================================================================
 // Initialisation. Check parameters
 //=============================================================================
 StatusCode DecodeVeloRawBuffer::initialize() {
@@ -117,7 +112,7 @@ StatusCode DecodeVeloRawBuffer::initialize() {
   }
 
   // Pointer to IncidentSvc
-  m_incidentSvc = svc<IIncidentSvc>("IncidentSvc",true);
+  m_incidentSvc = service<IIncidentSvc>("IncidentSvc",true);
 
   return StatusCode::SUCCESS;
 }
