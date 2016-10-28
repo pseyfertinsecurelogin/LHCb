@@ -1,4 +1,3 @@
-// $Id: UnpackerBaseAlg.h,v 1.3 2009-11-06 17:50:04 jonrob Exp $
 #ifndef UNPACKERBASEALG_H
 #define UNPACKERBASEALG_H 1
 
@@ -23,8 +22,6 @@ namespace DataPacking
 
     /// Standard constructor
     Unpack( const std::string& name, ISvcLocator* pSvcLocator );
-
-    virtual ~Unpack();     ///< Destructor
 
     StatusCode initialize() override; ///< Algorithm initialize
     StatusCode execute() override;    ///< Algorithm execution

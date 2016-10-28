@@ -1,4 +1,3 @@
-
 #ifndef SRC_ChargedProtoParticleMapper_H
 #define SRC_ChargedProtoParticleMapper_H 1
 
@@ -29,9 +28,6 @@ public:
   ChargedProtoParticleMapper( const std::string& type,
                               const std::string& name,
                               const IInterface* parent );
-
-  /// Destructor
-  virtual ~ChargedProtoParticleMapper();
 
 public:
 

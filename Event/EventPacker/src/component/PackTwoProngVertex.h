@@ -1,4 +1,3 @@
-// $Id: PackTwoProngVertex.h,v 1.2 2009-11-06 18:34:34 jonrob Exp $
 #ifndef PACKTWOPRONGVERTEX_H
 #define PACKTWOPRONGVERTEX_H 1
 
@@ -20,8 +19,6 @@ public:
 
   /// Standard constructor
   PackTwoProngVertex( const std::string& name, ISvcLocator* pSvcLocator );
-
-  virtual ~PackTwoProngVertex(); ///< Destructor
 
   StatusCode execute() override;///< Algorithm execution
 

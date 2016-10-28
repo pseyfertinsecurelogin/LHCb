@@ -1,4 +1,3 @@
-
 #ifndef EVENT_PACKEDTRACK_H
 #define EVENT_PACKEDTRACK_H 1
 

@@ -1,4 +1,3 @@
-// $Id: UnpackRecVertex.h,v 1.2 2009-11-06 18:34:34 jonrob Exp $
 #ifndef UNPACKRECVERTEX_H
 #define UNPACKRECVERTEX_H 1
 
@@ -20,8 +19,6 @@ public:
 
   /// Standard constructor
   UnpackRecVertex( const std::string& name, ISvcLocator* pSvcLocator );
-
-  virtual ~UnpackRecVertex(); ///< Destructor
 
   StatusCode execute() override; ///< Algorithm execution
 

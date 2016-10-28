@@ -39,9 +39,6 @@ public:
   /** Constructor */
   DeTTHalfModule ( const std::string& name = "" ) ;
 
-  /** Destructor */
-  virtual ~DeTTHalfModule();
-
   /**
   * Retrieves reference to class identifier
   * @return the class identifier for this class

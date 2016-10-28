@@ -1,4 +1,3 @@
-// $Id: CompareProtoParticle.h,v 1.1.1.1 2008-11-18 17:12:59 ocallot Exp $
 #ifndef COMPAREPROTOPARTICLE_H
 #define COMPAREPROTOPARTICLE_H 1
 
@@ -22,8 +21,6 @@ public:
 
   /// Standard constructor
   CompareProtoParticle( const std::string& name, ISvcLocator* pSvcLocator );
-
-  virtual ~CompareProtoParticle( ); ///< Destructor
 
   StatusCode execute() override; ///< Algorithm execution
 

@@ -1,5 +1,3 @@
-// $Id: DumpHepMC.h,v 1.1 2008-07-23 17:38:05 cattanem Exp $
-// ============================================================================
 #ifndef SIM_DUMPHEPMC_H
 #define SIM_DUMPHEPMC_H 1
 // ============================================================================
@@ -38,17 +36,11 @@ protected:
    */
   DumpHepMC ( const std::string& name ,
               ISvcLocator*       isvc ) ;
-  /// destructor
-  virtual ~DumpHepMC();
 
-private:
-
-  // default constructor   is disabled
-  DumpHepMC();
   // copy constructor      is disabled
-  DumpHepMC           ( const DumpHepMC& );
-  // assigenemtn operator  is disabled
-  DumpHepMC& operator=( const DumpHepMC& );
+  DumpHepMC           ( const DumpHepMC& ) = delete;
+  // assignment operator  is disabled
+  DumpHepMC& operator=( const DumpHepMC& ) = delete;
 
 private:
 

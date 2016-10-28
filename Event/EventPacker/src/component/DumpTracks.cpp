@@ -1,4 +1,3 @@
-// $Id: DumpTracks.cpp,v 1.1 2009-07-10 06:15:55 cattanem Exp $
 // Include files
 
 // Event Model
@@ -27,10 +26,6 @@ DumpTracks::DumpTracks( const std::string& name,
   declareProperty( "TracksLocation", m_tracksLocation = LHCb::TrackLocation::Default );
 }
 
-//=============================================================================
-// Destructor
-//=============================================================================
-DumpTracks::~DumpTracks() {}
 
 //=============================================================================
 // Main execution

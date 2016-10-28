@@ -1,4 +1,3 @@
-// $Id: $
 #ifndef UNPACKPARTICLESANDVERTICES_H
 #define UNPACKPARTICLESANDVERTICES_H 1
 
@@ -48,8 +47,6 @@ public:
 
   /// Standard constructor
   UnpackParticlesAndVertices( const std::string& name, ISvcLocator* pSvcLocator );
-
-  virtual ~UnpackParticlesAndVertices( ); ///< Destructor
 
   StatusCode execute() override; ///< Algorithm execution
 

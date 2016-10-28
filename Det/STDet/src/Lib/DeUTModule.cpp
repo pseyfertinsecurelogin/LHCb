@@ -25,11 +25,6 @@ DeUTModule::DeUTModule( const std::string& name ) :
 }
 
 
-DeUTModule::~DeUTModule()
-{
-}
-
-
 const CLID& DeUTModule::clID () const
 {
   return DeUTModule::classID() ;

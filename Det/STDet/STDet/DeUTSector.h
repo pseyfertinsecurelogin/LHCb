@@ -29,9 +29,6 @@ public:
   /** Constructor */
   DeUTSector ( const std::string& name = "" ) ;
 
-  /** Destructor */
-  virtual ~DeUTSector();
-
   /**
   * Retrieves reference to class identifier
   * @return the class identifier for this class

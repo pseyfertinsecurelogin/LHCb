@@ -19,9 +19,6 @@ public:
   /** Constructor */
   DeSTBaseElement ( const std::string& name = "" ) ;
 
-  /** Destructor */
-  virtual ~DeSTBaseElement();
-
   /** initialization method
   * @return Status of initialisation
   */

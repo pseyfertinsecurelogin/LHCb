@@ -1,4 +1,3 @@
-
 #ifndef EVENT_PACKEDVERTEX_H
 #define EVENT_PACKEDVERTEX_H 1
 

@@ -24,11 +24,6 @@ UnpackParticlesAndVertices( const std::string& name,
 }
 
 //=============================================================================
-// Destructor
-//=============================================================================
-UnpackParticlesAndVertices::~UnpackParticlesAndVertices() {}
-
-//=============================================================================
 // Main execution
 //=============================================================================
 StatusCode UnpackParticlesAndVertices::execute()

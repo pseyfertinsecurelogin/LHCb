@@ -15,12 +15,8 @@ using namespace LHCb;
 DeITSensor::DeITSensor( const std::string& name ) :
   DeSTSensor( name ),
   m_parent(0)
-{ 
+{
   // constructer
-}
-
-DeITSensor::~DeITSensor() {
-  // destructer
 }
 
 const CLID& DeITSensor::clID () const
@@ -29,7 +25,7 @@ const CLID& DeITSensor::clID () const
 }
 
 StatusCode DeITSensor::initialize() {
-  
+
   // initialize method
   StatusCode sc = DeSTSensor::initialize();
   if (sc.isFailure() ){
@@ -39,10 +35,10 @@ StatusCode DeITSensor::initialize() {
   else {
     // get the parent
     m_parent = getParent<DeITSensor>();
-    int id = param<int>("sensorID"); 
-    setID(id);   
+    int id = param<int>("sensorID");
+    setID(id);
     cacheParentProperties(m_parent);
-    sc = initGeometryInfo();  
+    sc = initGeometryInfo();
     if (sc.isFailure()){
       MsgStream msg(msgSvc(), name() );
       msg<< MSG::ERROR << "failed to cache geometry" << endmsg;

@@ -1,4 +1,3 @@
-// $Id: DeSTLayer.h,v 1.11 2008-07-14 07:38:36 mneedham Exp $
 #ifndef _DeSTLayer_H_
 #define _DeSTLayer_H_
 
@@ -28,9 +27,6 @@ public:
 
   /** Constructor */
   DeSTLayer ( const std::string& name = "" );
-
-  /** Destructor */
-  virtual ~DeSTLayer();
 
   /** initialization method
   * @return Status of initialisation

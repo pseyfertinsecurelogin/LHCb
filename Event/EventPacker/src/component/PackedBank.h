@@ -1,4 +1,3 @@
-// $Id: PackedBank.h,v 1.2 2009-01-27 15:59:17 cattanem Exp $
 #ifndef PACKEDBANK_H 
 #define PACKEDBANK_H 1
 
@@ -27,8 +26,6 @@ public:
     }
   }; 
 
-  virtual ~PackedBank( ) {}; ///< Destructor
-
   void storeInt( const unsigned int k ) { m_bank.push_back( k ); };
 
   void storeString ( const std::string& str) {
@@ -52,8 +49,6 @@ public:
     m_bank.push_back( nItem ); 
     m_bank.push_back( blobNb ); 
   }
-
-protected:
 
 private:
   std::vector<unsigned int> m_bank;

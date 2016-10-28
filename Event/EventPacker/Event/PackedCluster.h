@@ -1,4 +1,3 @@
-// $Id: $
 #ifndef EVENT_PACKEDCLUSTER_H
 #define EVENT_PACKEDCLUSTER_H 1
 #include "GaudiKernel/DataObject.h"
@@ -55,8 +54,6 @@ namespace LHCb
       m_strips.reserve   ( 1000 );
       m_adcs.reserve     ( 1000 );
     }
-
-    virtual ~PackedClusters() {} /// Destructor
 
     const CLID& clID()  const override { return PackedClusters::classID(); }
     static  const CLID& classID()     { return CLID_PackedClusters;       }

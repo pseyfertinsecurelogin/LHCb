@@ -30,20 +30,15 @@ namespace LHCb {
  *  @author Marco Clemencic
  *  @date   2009-02-02
  */
-class ODINCodecBaseTool : public Decoder::ToolBase, virtual public IGenericTool
+class ODINCodecBaseTool : public extends<Decoder::ToolBase, IGenericTool>
 {
 
 public:
 
   /// Standard constructor
   ODINCodecBaseTool(const std::string& type,
-                 const std::string& name,
-                 const IInterface* parent);
-
-  virtual ~ODINCodecBaseTool() = default; ///< Destructor
-
-  /// Initialize the tool
-  inline StatusCode initialize() override { return Decoder::ToolBase::initialize(); }
+                    const std::string& name,
+                    const IInterface* parent);
 
 protected:
 

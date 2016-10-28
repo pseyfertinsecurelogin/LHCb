@@ -1,4 +1,3 @@
-// $Id: PackMCParticle.h,v 1.2 2009-11-06 18:34:33 jonrob Exp $
 #ifndef PACKMCPARTICLE_H
 #define PACKMCPARTICLE_H 1
 
@@ -21,7 +20,6 @@ public:
   /// Standard constructor
   PackMCParticle( const std::string& name, ISvcLocator* pSvcLocator );
 
-  virtual ~PackMCParticle( );    ///< Destructor
   StatusCode execute() override;  ///< Algorithm execution
 
 private:

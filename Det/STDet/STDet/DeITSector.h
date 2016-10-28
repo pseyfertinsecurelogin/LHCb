@@ -32,9 +32,6 @@ public:
   /** Constructor */
   DeITSector ( const std::string& name = "" ) ;
 
-  /** Destructor */
-  virtual ~DeITSector();
-
   unsigned int prodID() const override;
 
   /**

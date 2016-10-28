@@ -20,7 +20,6 @@ public:
   /// Standard constructor
   PackMCVertex( const std::string& name, ISvcLocator* pSvcLocator );
 
-  virtual ~PackMCVertex();     ///< Destructor
   StatusCode execute() override; ///< Algorithm execution
 
 private:

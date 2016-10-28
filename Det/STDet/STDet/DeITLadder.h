@@ -34,9 +34,6 @@ public:
    /** Constructor */
    DeITLadder ( const std::string& name = "" ) ;
 
-   /** Destructor */
-   virtual ~DeITLadder();
-
    /**
    * Retrieves reference to class identifier
    * @return the class identifier for this class

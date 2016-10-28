@@ -1,4 +1,3 @@
-// $Id: CheckMCEventTool.h,v 1.3 2010-05-18 22:04:01 cattanem Exp $
 #ifndef CHECKMCEVENTTOOL_H
 #define CHECKMCEVENTTOOL_H 1
 
@@ -17,21 +16,17 @@
  *  @author Marco Cattaneo
  *  @date   2003-02-24
  */
-class CheckMCEventTool : public GaudiTool, virtual public ICheckTool {
+class CheckMCEventTool : public extends<GaudiTool, ICheckTool> {
 public:
   /// Standard constructor
   CheckMCEventTool( const std::string& type,
                     const std::string& name,
                     const IInterface* parent);
 
-  virtual ~CheckMCEventTool( ); ///< Destructor
-
   StatusCode check() override; ///< Perform the check
 
-protected:
-
 private:
-  long long m_event;    ///< last event number
-  StatusCode m_status; ///< Status of last check
+  long long m_event = -1;    ///< last event number
+  StatusCode m_status = StatusCode::SUCCESS; ///< Status of last check
 };
 #endif // CHECKMCEVENTTOOL_H

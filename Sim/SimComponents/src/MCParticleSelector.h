@@ -27,9 +27,6 @@ public:
                       const std::string& name,
                       const IInterface* parent );
 
-  /// destructor
-  virtual ~MCParticleSelector();
-
    // Tool initialization
   StatusCode initialize() override;
 

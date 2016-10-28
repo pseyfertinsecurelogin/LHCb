@@ -40,9 +40,6 @@ public:
   /** Constructor */
   DeTTLayer ( const std::string& name = "" ) ;
 
-  /** Destructor */
-  virtual ~DeTTLayer();
-
   /**
   * Retrieves reference to class identifier
   * @return the class identifier for this class

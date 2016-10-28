@@ -39,9 +39,6 @@ public:
   /** Constructor */
   DeTTStation ( const std::string& name = "" ) ;
 
-  /** Destructor */
-  virtual ~DeTTStation();
-
    /**
    * Retrieves reference to class identifier
    * @return the class identifier for this class

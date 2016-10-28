@@ -39,9 +39,6 @@ public:
   /** Constructor */
   DeITBox ( const std::string& name = "" ) ;
 
-  /** Destructor */
-  virtual ~DeITBox() = default;
-
    /**
    * Retrieves reference to class identifier
    * @return the class identifier for this class

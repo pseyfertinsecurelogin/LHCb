@@ -23,10 +23,6 @@ DECLARE_ALGORITHM_FACTORY( CompareMCParticle )
   declareProperty( "TestName"  , m_testName   = LHCb::MCParticleLocation::Default+"Test" );
 }
 
-//=============================================================================
-// Destructor
-//=============================================================================
-CompareMCParticle::~CompareMCParticle() {}
 
 //=============================================================================
 // Main execution

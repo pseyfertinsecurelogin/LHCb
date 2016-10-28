@@ -65,9 +65,6 @@ public:
   /** Constructor */
   DeSTSector ( const std::string& name = "" ) ;
 
-  /** Destructor */
-  virtual ~DeSTSector();
-
   /** initialization method
    * @return StatusCode OK or not
    */
