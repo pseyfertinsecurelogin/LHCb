@@ -25,26 +25,20 @@ public:
   // Standard constructor
   GenFSRRead( const std::string& name, ISvcLocator* pSvcLocator );
 
-  virtual ~GenFSRRead( );          // Destructor
-
   StatusCode initialize() override;  // Algorithm initialization
   StatusCode execute   () override;  // Algorithm execution
   StatusCode finalize  () override;  // Algorithm finalization
 
-protected:
+private:
 
   virtual void dumpFSR();       // Dump the GenFSR informations
 
-protected:
-
-  IDataProviderSvc* m_fileRecordSvc;
+  SmartIF<IDataProviderSvc> m_fileRecordSvc;
 
   std::string m_fileRecordName;     // location of FileRecords
   std::string m_FSRName;            // specific tag of summary data in FSR
 
-private:
-
-  IFSRNavigator* m_navigatorTool;   // tool to navigate FSR
+  IFSRNavigator* m_navigatorTool = nullptr;   // tool to navigate FSR
 
 };
 #endif // GENFSRREAD_H

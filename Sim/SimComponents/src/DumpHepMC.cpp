@@ -47,12 +47,6 @@ DumpHepMC::DumpHepMC ( const std::string& name ,
 // ============================================================================
 
 // ============================================================================
-// Destructor
-// ============================================================================
-DumpHepMC::~DumpHepMC() {}
-// ============================================================================
-
-// ============================================================================
 /** execution of the algoritm
  *  @see IAlgorithm
  *  @return status code
@@ -66,25 +60,20 @@ StatusCode DumpHepMC::execute()
   // get the stream
   MsgStream& log = info() ;
 
-  for( Addresses::const_iterator ia = m_addresses.begin() ;
-       m_addresses.end() != ia ; ++ia )
-  {
+  for( auto ia = m_addresses.cbegin() ; m_addresses.cend() != ia ; ++ia ) {
     //
     if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
       debug () << " Inspect the container '" << *ia << "'" << endmsg ;
-    LHCb::HepMCEvents* events = get<LHCb::HepMCEvents>( *ia ) ;
-    if( 0 == events ) { continue ; }
+    const LHCb::HepMCEvents* events = get<LHCb::HepMCEvents>( *ia ) ;
+    if( !events ) { continue ; }
     //
     info  () << " HepMC container '" << *ia << "' \t has "
              << events->size() << " event(s) " << endmsg ;
-    for ( LHCb::HepMCEvents::const_iterator ie = events->begin() ;
-          events->end() != ie ; ++ie )
-    {
+    for ( auto ie = events->begin() ; events->end() != ie ; ++ie ) {
       const LHCb::HepMCEvent* event = *ie ;
-      if ( 0 == event ) { continue ; }
-      log << "  Generator '" << event->generatorName() << "'" << std::endl ;
-      if ( log.isActive() )
-        { orderedPrint( event->pGenEvt() , log.stream() ) ; }
+      if ( !event ) { continue ; }
+      log << "  Generator '" << event->generatorName() << "'\n";
+      if ( log.isActive() ) orderedPrint( event->pGenEvt() , log.stream() );
       log << endmsg ;
     }
   };
@@ -122,13 +111,12 @@ void DumpHepMC::orderedPrint( const HepMC::GenEvent * theEvent ,
   ostr << "________________________________________"
        << "________________________________________\n";
   // Print all Vertices
-  for ( HepMC::GenEvent::vertex_const_iterator
-          vtx = theEvent -> vertices_begin();
+  for ( auto vtx = theEvent -> vertices_begin();
         vtx != theEvent -> vertices_end(); ++vtx ) {
     orderedVertexPrint(*vtx , ostr);
   }
   ostr << "________________________________________"
-       << "________________________________________" << std::endl;
+       << "________________________________________\n";
 }
 
 //=============================================================================
@@ -168,14 +156,12 @@ void DumpHepMC::orderedVertexPrint( HepMC::GenVertex * theVertex ,
     }
   }
 
-  ostr << outline << std::endl;
+  ostr << outline << '\n';
   // print the weights if there are any
   if ( ! theVertex -> weights().empty() ) {
     ostr << " Wgts(" << theVertex -> weights().size() << ")=";
-    for ( HepMC::WeightContainer::const_iterator wgt =
-            theVertex -> weights().begin();
-          wgt != theVertex -> weights().end(); wgt++ ) { ostr << *wgt << " "; }
-    ostr << std::endl;
+    for ( const auto& wgt : theVertex -> weights() ) ostr << wgt << " ";
+    ostr << '\n';
   }
   // print out all the incoming, then outgoing particles
   std::vector< const HepMC::GenParticle * > lP{ theVertex -> particles_in_const_begin(),

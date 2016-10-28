@@ -26,30 +26,25 @@ public:
   /// Standard constructor
   GenFSRStat( const std::string& name, ISvcLocator* pSvcLocator );
 
-  virtual ~GenFSRStat( ); ///< Destructor
-
   StatusCode initialize() override;    ///< Algorithm initialization
   StatusCode execute   () override;    ///< Algorithm execution
   StatusCode finalize  () override;    ///< Algorithm finalization
 
-protected:
+private:
 
-  virtual void printHtmlFSR();  // Print the GenFSR in a file .xml
+  void printHtmlFSR();  // Print the GenFSR in a file .xml
 
-  virtual void writeGeneratorCounters(LHCb::GenFSR* genFRS, int count);
-  virtual void writeCutEfficiencies(LHCb::GenFSR* genFRS, int count);
-  virtual void writeGenHadronCounters(LHCb::GenFSR* genFRS, int countGen);
-  virtual void writeAccHadronCounters(LHCb::GenFSR* genFRS, int countAcc);
-  virtual void writeGeneratorCrossSections(LHCb::GenFSR* genFRS, int count);
-  virtual void writeFinalComments(LHCb::GenFSR* genFSR);
+  void writeGeneratorCounters(LHCb::GenFSR* genFRS, int count);
+  void writeCutEfficiencies(LHCb::GenFSR* genFRS, int count);
+  void writeGenHadronCounters(LHCb::GenFSR* genFRS, int countGen);
+  void writeAccHadronCounters(LHCb::GenFSR* genFRS, int countAcc);
+  void writeGeneratorCrossSections(LHCb::GenFSR* genFRS, int count);
+  void writeFinalComments(LHCb::GenFSR* genFSR);
 
   const std::string getCurrentTime();
   const std::string getEvtTypeDesc(int evtType);
 
-
-protected:
-
-  IDataProviderSvc* m_fileRecordSvc;
+  SmartIF<IDataProviderSvc> m_fileRecordSvc;
 
   std::string m_fileRecordName;     // location of FileRecords
   std::string m_FSRName;            // specific tag of summary data in FSR
@@ -57,9 +52,7 @@ protected:
   std::string m_htmlFileLocation;   // html file location
   std::ofstream m_htmlFile;         // file html
 
-private:
-
-  IFSRNavigator* m_navigatorTool;   // tool to navigate FSR
+  IFSRNavigator* m_navigatorTool = nullptr;   // tool to navigate FSR
 
   // Informations not stored in the FSR
   std::string m_dddb;
