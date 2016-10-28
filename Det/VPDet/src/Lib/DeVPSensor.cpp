@@ -1,8 +1,4 @@
 // Gaudi
-#include "GaudiKernel/Bootstrap.h"
-#include "GaudiKernel/PropertyMgr.h"
-#include "GaudiKernel/IJobOptionsSvc.h"
-#include "GaudiKernel/ISvcLocator.h"
 #include "GaudiKernel/IUpdateManagerSvc.h"
 
 // LHCb
@@ -11,6 +7,7 @@
 
 // Local
 #include "VPDet/DeVPSensor.h"
+#include "getOutputLevel.h"
 
 // Dimensions of the sensor active area
 double DeVPSensor::m_sizeX;
@@ -64,21 +61,14 @@ const CLID& DeVPSensor::clID() const {
 //==============================================================================
 StatusCode DeVPSensor::initialize() {
 
-  // Set the output level.
-  std::unique_ptr<PropertyMgr> pmgr{ new PropertyMgr() };
-  int outputLevel = 0;
-  pmgr->declareProperty("OutputLevel", outputLevel);
-  ISvcLocator* svcLoc = Gaudi::svcLocator();
-  auto jobSvc = svcLoc->service<IJobOptionsSvc>("JobOptionsSvc");
-  if (jobSvc) {
-    auto sc = jobSvc->setMyProperties("DeVPSensor", pmgr.get());
-    if (!sc) return sc;
+  try { // Trick to set the output level
+    msgSvc()->setOutputLevel("DeVPSensor", getOutputLevel("DeVPSensor"));
+  } catch (const std::exception& x) {
+    std::cerr << x.what() << std::endl;
+    return StatusCode::FAILURE;
   }
-  if (outputLevel > 0) {
-    msgSvc()->setOutputLevel("DeVPSensor", outputLevel);
-  }
-  m_debug = (msgSvc()->outputLevel("DeVPSensor") == MSG::DEBUG ||
-             msgSvc()->outputLevel("DeVPSensor") == MSG::VERBOSE);
+  const auto lvl = msgSvc()->outputLevel("DeVPSensor");
+  m_debug   = lvl <= MSG::DEBUG;
 
   auto sc = DetectorElement::initialize();
   if (!sc.isSuccess()) {
