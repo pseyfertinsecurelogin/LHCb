@@ -1,4 +1,3 @@
-// $Id$
 // ============================================================================
 #ifndef LOKI_GENSOURCES_H
 #define LOKI_GENSOURCES_H 1
@@ -29,9 +28,6 @@
  *  contributions and advices from G.Raven, J.van Tilburg,
  *  A.Golutvin, P.Koppenburg have been used in the design.
  *
- *                    $Revision$
- *  Last modification $Date$
- *                 by $Author$
  */
 // ============================================================================
 namespace LoKi
@@ -75,10 +71,6 @@ namespace LoKi
       ( const LoKi::GenTypes::GCuts& cuts                                     ,
         IDataProviderSvc*            svc                                      ,
         const std::string&           path = LHCb::HepMCEventLocation::Default ) ;
-      /// copy constructor
-      SourceTES ( const SourceTES& right ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~SourceTES() ;
       /// MANDATORY: clone method ("virtual constructor")
       SourceTES* clone() const override { return new SourceTES(*this) ; }
       /// MANDATORY: the only essential method:

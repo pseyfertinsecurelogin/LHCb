@@ -1,4 +1,3 @@
-// $Id$
 // ============================================================================
 #ifndef LOKI_GENCHILDSELECTOR_H
 #define LOKI_GENCHILDSELECTOR_H 1
@@ -33,9 +32,6 @@
  *  @author Vanya Belyaev  Ivan.Belyaev@cern.ch
  *  @date 2011-12-11
  *
- *                    $Revision$
- *  Last modification $Date$
- *                 by $Author$
  */
 // ============================================================================
 namespace LoKi
@@ -98,8 +94,6 @@ namespace LoKi
                  const std::string&               factory          ) ;
       /// constructor from the cut
       Selector ( const LoKi::Types::GCuts&        cut              ) ;
-      /// desctructor
-      virtual ~Selector() ;
       /// OPTIONAL: nice printout
       std::ostream& fillStream ( std::ostream& s ) const  override;
       // ======================================================================
@@ -125,11 +119,6 @@ namespace LoKi
       bool valid () const  ;
       /// try to validate it!
       StatusCode validate ( const LHCb::IParticlePropertySvc* svc ) const ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      Selector () ;                      // the default constructor is disabled
       // ======================================================================
     private:
       // ======================================================================

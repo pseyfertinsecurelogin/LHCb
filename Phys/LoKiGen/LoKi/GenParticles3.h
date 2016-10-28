@@ -1,4 +1,3 @@
-// $Id$
 // ============================================================================
 #ifndef LOKI_GENPARTICLES3_H
 #define LOKI_GENPARTICLES3_H 1
@@ -26,9 +25,6 @@
  *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
  *  @date 2012-01-28
  *
- *                    $Revision$
- *  Last modification $Date$
- *                 by $Author$
  */
 // ============================================================================
 namespace LoKi
@@ -69,19 +65,12 @@ namespace LoKi
       ( HepMC::IteratorRange      range ,
         const LoKi::Types::GCuts& cut   ) ;
       // ======================================================================
-      /// MANDATORY: virtual destructor
-      virtual ~Count ();
       /// MANDATORY: clone method ("virtual contructor")
       Count * clone() const  override;
       /// MANDATORY: the only one essential method
       result_type operator() ( argument v ) const  override;
       /// OPTIONAL: nice printout
       std::ostream& fillStream ( std::ostream& s ) const  override;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      Count () ;                         // the default constructor is disabled
       // ======================================================================
     private:
       // ======================================================================
@@ -122,19 +111,12 @@ namespace LoKi
       ( HepMC::IteratorRange      range ,
         const LoKi::Types::GCuts& cut   ) ;
       // ======================================================================
-      /// MANDATORY: virtual destructor
-      virtual ~Has ();
       /// MANDATORY: clone method ("virtual contructor")
       Has* clone() const  override;
       /// MANDATORY: the only one essential method
       result_type operator() ( argument v ) const  override;
       /// OPTIONAL: nice printout
       std::ostream& fillStream ( std::ostream& s ) const  override;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      Has () ;                         // the default constructor is disabled
       // ======================================================================
     private:
       // ======================================================================

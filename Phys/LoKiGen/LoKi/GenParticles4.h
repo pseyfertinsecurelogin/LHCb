@@ -1,4 +1,3 @@
-// $Id$
 // ============================================================================
 #ifndef LOKI_GENPARTICLES4_H
 #define LOKI_GENPARTICLES4_H 1
@@ -28,9 +27,6 @@
  *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
  *  @date 2012-01-28
  *
- *                    $Revision$
- *  Last modification $Date$
- *                 by $Author$
  */
 // ============================================================================
 namespace LoKi
@@ -82,9 +78,6 @@ namespace LoKi
                      const LoKi::GenTypes::GCuts&    c4 ) ;
       /// default constructor
       FourMomentum () ;
-      // =======================================================================
-      /// vitual destructor
-      virtual ~FourMomentum() {}
       // ======================================================================
     public:
       // ======================================================================
@@ -180,8 +173,6 @@ namespace LoKi
         : LoKi::GenParticles::FourMomentum ( c1 , c2 , c3 , c4 ) {} ;
       /// default constructor
       Mass () : LoKi::GenParticles::FourMomentum () {} ;
-      /// MANDATORY: virtual destructor
-      virtual ~Mass () ;
       /// MANDATORY: clone method ("virtual destructor")
       Mass* clone() const  override;
       /// MANDATORY: the only one essential method
@@ -245,8 +236,6 @@ namespace LoKi
         : LoKi::GenParticles::FourMomentum ( c1 , c2 , c3 , c4 ) {} ;
       /// default constructor
       Energy () : LoKi::GenParticles::FourMomentum () {} ;
-      /// MANDATORY: virtual destructor
-      virtual ~Energy () ;
       /// MANDATORY: clone method ("virtual destructor")
       Energy* clone() const  override;
       /// MANDATORY: the only one essential method
@@ -310,8 +299,6 @@ namespace LoKi
         : LoKi::GenParticles::FourMomentum ( c1 , c2 , c3 , c4 ) {} ;
       /// default constructor
       Momentum () : LoKi::GenParticles::FourMomentum () {} ;
-      /// MANDATORY: virtual destructor
-      virtual ~Momentum () ;
       /// MANDATORY: clone method ("virtual destructor")
       Momentum* clone() const  override;
       /// MANDATORY: the only one essential method
@@ -375,8 +362,6 @@ namespace LoKi
         : LoKi::GenParticles::FourMomentum ( c1 , c2 , c3 , c4 ) {} ;
       /// default constructor
       MomentumX () : LoKi::GenParticles::FourMomentum () {} ;
-      /// MANDATORY: virtual destructor
-      virtual ~MomentumX () ;
       /// MANDATORY: clone method ("virtual destructor")
       MomentumX* clone() const  override;
       /// MANDATORY: the only one essential method
@@ -440,8 +425,6 @@ namespace LoKi
         : LoKi::GenParticles::FourMomentum ( c1 , c2 , c3 , c4 ) {} ;
       /// default constructor
       MomentumY () : LoKi::GenParticles::FourMomentum () {} ;
-      /// MANDATORY: virtual destructor
-      virtual ~MomentumY () ;
       /// MANDATORY: clone method ("virtual destructor")
       MomentumY* clone() const  override;
       /// MANDATORY: the only one essential method
@@ -505,8 +488,6 @@ namespace LoKi
         : LoKi::GenParticles::FourMomentum ( c1 , c2 , c3 , c4 ) {} ;
       /// default constructor
       MomentumZ () : LoKi::GenParticles::FourMomentum () {} ;
-      /// MANDATORY: virtual destructor
-      virtual ~MomentumZ () ;
       /// MANDATORY: clone method ("virtual destructor")
       MomentumZ* clone() const  override;
       /// MANDATORY: the only one essential method
@@ -570,8 +551,6 @@ namespace LoKi
         : LoKi::GenParticles::FourMomentum ( c1 , c2 , c3 , c4 ) {} ;
       /// default constructor
       TransverseMomentum () : LoKi::GenParticles::FourMomentum () {} ;
-      /// MANDATORY: virtual destructor
-      virtual ~TransverseMomentum () ;
       /// MANDATORY: clone method ("virtual destructor")
       TransverseMomentum* clone() const  override;
       /// MANDATORY: the only one essential method
@@ -635,8 +614,6 @@ namespace LoKi
         : LoKi::GenParticles::FourMomentum ( c1 , c2 , c3 , c4 ) {} ;
       /// default constructor
       PseudoRapidity () : LoKi::GenParticles::FourMomentum () {} ;
-      /// MANDATORY: virtual destructor
-      virtual ~PseudoRapidity () ;
       /// MANDATORY: clone method ("virtual destructor")
       PseudoRapidity* clone() const  override;
       /// MANDATORY: the only one essential method
@@ -702,8 +679,6 @@ namespace LoKi
         : LoKi::GenParticles::FourMomentum ( c1 , c2 , c3 , c4 ) {} ;
       /// default constructor
       Rapidity () : LoKi::GenParticles::FourMomentum () {} ;
-      /// MANDATORY: virtual destructor
-      virtual ~Rapidity () ;
       /// MANDATORY: clone method ("virtual destructor")
       Rapidity* clone() const  override;
       /// MANDATORY: the only one essential method
@@ -769,8 +744,6 @@ namespace LoKi
         : LoKi::GenParticles::FourMomentum ( c1 , c2 , c3 , c4 ) {} ;
       /// default constructor
       Rapidity0 () : LoKi::GenParticles::FourMomentum () {} ;
-      /// MANDATORY: virtual destructor
-      virtual ~Rapidity0 () ;
       /// MANDATORY: clone method ("virtual destructor")
       Rapidity0* clone() const  override;
       /// MANDATORY: the only one essential method
@@ -834,8 +807,6 @@ namespace LoKi
         : LoKi::GenParticles::FourMomentum ( c1 , c2 , c3 , c4 ) {} ;
       /// default constructor
       Phi () : LoKi::GenParticles::FourMomentum () {} ;
-      /// MANDATORY: virtual destructor
-      virtual ~Phi () ;
       /// MANDATORY: clone method ("virtual destructor")
       Phi* clone() const  override;
       /// MANDATORY: the only one essential method
@@ -899,8 +870,6 @@ namespace LoKi
         : LoKi::GenParticles::FourMomentum ( c1 , c2 , c3 , c4 ) {} ;
       /// default constructor
       Theta () : LoKi::GenParticles::FourMomentum () {} ;
-      /// MANDATORY: virtual destructor
-      virtual ~Theta () ;
       /// MANDATORY: clone method ("virtual destructor")
       Theta* clone() const  override;
       /// MANDATORY: the only one essential method
@@ -924,8 +893,6 @@ namespace LoKi
       // ======================================================================
       /// default constructor
       Beta () ;
-      /// MANDATORY: virtual destructor
-      virtual ~Beta () ;
       /// MANDATORY: clone method ("virtual destructor")
       Beta* clone() const  override;
       /// MANDATORY: the only one essential method
@@ -958,8 +925,6 @@ namespace LoKi
       // ======================================================================
       /// default constructor
       Gamma () ;
-      /// MANDATORY: virtual destructor
-      virtual ~Gamma () ;
       /// MANDATORY: clone method ("virtual destructor")
       Gamma* clone() const  override;
       /// MANDATORY: the only one essential method
@@ -985,8 +950,6 @@ namespace LoKi
       // ======================================================================
       /// default constructor
       BetaGamma () ;
-      /// MANDATORY: virtual destructor
-      virtual ~BetaGamma () ;
       /// MANDATORY: clone method ("virtual destructor")
       BetaGamma* clone() const  override;
       /// MANDATORY: the only one essential method
@@ -1016,8 +979,6 @@ namespace LoKi
       DeltaPhi ( const LoKi::LorentzVector& v ) ;
       /// constructor from the particle
       DeltaPhi ( const HepMC::GenParticle*  p ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~DeltaPhi() {}
       /// MANDATORY: clone method ("virtual constructor")
       DeltaPhi* clone() const  override;
       /// MANDATORY: the only essential method
@@ -1063,8 +1024,6 @@ namespace LoKi
       DeltaEta ( const LoKi::LorentzVector& v ) ;
       /// constructor from the particle
       DeltaEta ( const HepMC::GenParticle*  p ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~DeltaEta() {}
       /// MANDATORY: clone method ("virtual constructor")
       DeltaEta* clone() const  override;
       /// MANDATORY: the only essential method
@@ -1072,16 +1031,9 @@ namespace LoKi
       /// OPTIONAL: "SHORT" representation
       std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
-    public:
-      // ======================================================================
       /// get the eta
       double eta0 () const { return m_eta ; }
       double deta ( argument p ) const ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      DeltaEta ();                       // the default constructor is disabled
       // ======================================================================
     private:
       // ======================================================================
@@ -1117,8 +1069,6 @@ namespace LoKi
       DeltaR2 ( const LoKi::LorentzVector& v ) ;
       /// constructor from the particle
       DeltaR2 ( const HepMC::GenParticle* p ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~DeltaR2() {}
       /// MANDATORY: clone method ("virtual constructor")
       DeltaR2* clone() const  override;
       /// MANDATORY: the only essential method
@@ -1131,11 +1081,6 @@ namespace LoKi
       /// get the eta
       double eta0 () const { return m_deta.eta0()  ; }
       double deta ( argument p ) const { return m_deta.deta ( p )  ; }
-      // ======================================================================
-    private:
-      // ======================================================================
-      // the default constructor is disabled
-      DeltaR2 ();                       /// the default constructor is disabled
       // ======================================================================
     private:
       // ======================================================================

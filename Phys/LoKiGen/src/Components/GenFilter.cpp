@@ -1,4 +1,3 @@
-// $Id$
 // ============================================================================
 // Include files
 // ============================================================================
@@ -22,9 +21,6 @@
  *  contributions and advices from G.Raven, J.van Tilburg,
  *  A.Golutvin, P.Koppenburg have been used in the design.
  *
- *                    $Revision$
- *  Last modification $Date$
- *                 by $Author$
  */
 // ============================================================================
 namespace LoKi
@@ -76,17 +72,11 @@ namespace LoKi
     GenFilter
     ( const std::string& name ,    // the algorithm instance name
       ISvcLocator*       pSvc ) ; // pointer to the service locator
-    /// virtual and protected destructor
-    virtual ~GenFilter () {}
     // ========================================================================
-  private:
-    // ========================================================================
-    /// the default constructor is disabled
-    GenFilter () ;                       // the default constructor is disabled
     /// the copy constructor is disabled
-    GenFilter ( const GenFilter& ) ;        // the copy constructor is disabled
+    GenFilter ( const GenFilter& ) = delete; // the copy constructor is disabled
     /// the assignement operator is disabled
-    GenFilter& operator=( const GenFilter& ) ;   // the assignement is disabled
+    GenFilter& operator=( const GenFilter& ) = delete ; // the assignement is disabled
     // ========================================================================
   private:
     // ========================================================================
@@ -102,8 +92,7 @@ namespace LoKi
 namespace
 {
   // ==========================================================================
-  LoKi::BasicFunctors<LoKi::GenTypes::GenContainer>::BooleanConstant s_NONE =
-    LoKi::BasicFunctors<LoKi::GenTypes::GenContainer>::BooleanConstant ( false ) ;
+  LoKi::BasicFunctors<LoKi::GenTypes::GenContainer>::BooleanConstant s_NONE = { false };
   // ==========================================================================
 }
 // ============================================================================

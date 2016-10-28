@@ -1,4 +1,3 @@
-// $Id$
 // ============================================================================
 #ifndef LOKI_GENPARTICLES2_H
 #define LOKI_GENPARTICLES2_H 1
@@ -36,9 +35,6 @@
  *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
  *  @date 2006-01-23
  *
- *                    $Revision$
- *  Last modification $Date$
- *                 by $Author$
  */
 // ============================================================================
 namespace LoKi
@@ -100,19 +96,12 @@ namespace LoKi
         const std::string&             parent                       ,
         const bool                     mother    = true             ,
         const std::string&             factory   = "LoKi::GenDecay" ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~PolarizationAngle () ;
       /// MANDATORY: clone method ("virtual constructor")
       PolarizationAngle* clone() const  override;
       /// MANDATORY: the only one essential method
       result_type operator() ( argument p ) const  override;
       /// OPTIONAL: the nice printout
       std::ostream& fillStream ( std::ostream& s ) const  override;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      PolarizationAngle () ;             // the default constructor is disabled
       // ======================================================================
     protected:
       // ======================================================================
@@ -227,19 +216,12 @@ namespace LoKi
                const std::string& particle3                    ,
                const std::string& particle4                    ,
                const std::string& factory   = "LoKi::GenDecay" ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~SinChi() ;
       /// MANDATORY: clone method ("virtual constructor")
       SinChi* clone() const  override;
       /// MANDATORY: the only one essential method
       result_type operator() ( argument p ) const  override;
       /// OPTIONAL: the nice printout
       std::ostream& fillStream ( std::ostream& s ) const  override;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      SinChi () ;                        // the default constructor is disabled
       // ======================================================================
     protected:
       // ======================================================================
@@ -338,19 +320,12 @@ namespace LoKi
                const std::string&   particle3 ,
                const std::string&   particle4 ,
                const std::string&   factory = "LoKi::GenDecay" ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~CosChi() ;
       /// MANDATORY: clone method ("virtual constructor")
       CosChi* clone() const  override;
       /// MANDATORY: the only one essential method
       result_type operator() ( argument p ) const  override;
       /// OPTIONAL: the nice printout
       std::ostream& fillStream ( std::ostream& s ) const  override;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      CosChi () ;                        // the default constructor is disabled
       // ======================================================================
     } ;
     // ========================================================================
@@ -403,19 +378,12 @@ namespace LoKi
                  const std::string& particle3 ,
                  const std::string& particle4 ,
                  const std::string& factory = "LoKi::GenDecay" ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~AngleChi() ;
       /// MANDATORY: clone method ("virtual constructor")
       AngleChi* clone() const  override;
       /// MANDATORY: the only one essential method
       result_type operator() ( argument p ) const  override;
       /// OPTIONAL: the nice printout
       std::ostream& fillStream ( std::ostream& s ) const  override;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      AngleChi () ;                      // the default constructor is disabled
       // ======================================================================
     } ;
     // ========================================================================
@@ -484,19 +452,12 @@ namespace LoKi
                    const std::string& particle3 ,
                    const std::string& particle4 ,
                    const std::string& factory = "LoKi::GenDecay" ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~CosThetaTr () ;
       /// MANDATORY: clone method ("virtual constructor")
       CosThetaTr* clone() const  override;
       /// MANDATORY: the only one essential method
       result_type operator() ( argument p ) const  override;
       /// OPTIONAL: the nice printout
       std::ostream& fillStream ( std::ostream& s ) const  override;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      CosThetaTr () ;                    // the default constructor is disabled
       // ======================================================================
     } ;
     // ========================================================================
@@ -571,19 +532,12 @@ namespace LoKi
                  const std::string& particle3 ,
                  const std::string& particle4 ,
                  const std::string& factory = "LoKi::GenDecay" ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~SinPhiTr () ;
       /// MANDATORY: clone method ("virtual constructor")
       SinPhiTr* clone() const  override;
       /// MANDATORY: the only one essential method
       result_type operator() ( argument p ) const  override;
       /// OPTIONAL: the nice printout
       std::ostream& fillStream ( std::ostream& s ) const  override;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      SinPhiTr () ;                      // the default constructor is disabled
       // ======================================================================
     } ;
     // ========================================================================
@@ -634,19 +588,12 @@ namespace LoKi
                  const std::string& particle3 ,
                  const std::string& particle4 ,
                  const std::string& factory = "LoKi::GenDecay" ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~CosPhiTr () ;
       /// MANDATORY: clone method ("virtual constructor")
       CosPhiTr* clone() const  override;
       /// MANDATORY: the only one essential method
       result_type operator() ( argument p ) const  override;
       /// OPTIONAL: the nice printout
       std::ostream& fillStream ( std::ostream& s ) const  override;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      CosPhiTr () ;                      // the default constructor is disabled
       // ======================================================================
     } ;
     // ========================================================================
@@ -697,19 +644,12 @@ namespace LoKi
                    const std::string& particle3 ,
                    const std::string& particle4 ,
                    const std::string& factory = "LoKi::GenDecay" ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~AnglePhiTr () ;
       /// MANDATORY: clone method ("virtual constructor")
       AnglePhiTr* clone() const  override;
       /// MANDATORY: the only one essential method
       result_type operator() ( argument p ) const  override;
       /// OPTIONAL: the nice printout
       std::ostream& fillStream ( std::ostream& s ) const  override;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      AnglePhiTr () ;                    // the default constructor is disabled
       // ======================================================================
     } ;
     // ========================================================================

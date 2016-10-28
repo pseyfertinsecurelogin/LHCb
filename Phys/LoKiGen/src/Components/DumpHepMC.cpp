@@ -1,4 +1,3 @@
-// $Id$
 // ============================================================================
 // Include files
 // ============================================================================
@@ -73,18 +72,12 @@ namespace LoKi
       declareProperty
         ( "Mode" , m_mode , "Printout mode, see LoKi::DecayChainBase::Mode" ) ;
     }
-    /// virtual and protected desctructor
-    virtual ~DumpHepMC() {}
     // ========================================================================
   private:
-    // ========================================================================
-    /// the default constructor is disabled
-    // ========================================================================
-    DumpHepMC () ;                                    // no default constructor
     /// copy constructor is disabled
-    DumpHepMC ( const DumpHepMC& right ) ;               // no copy constructor
+    DumpHepMC ( const DumpHepMC& right ) = delete;       // no copy constructor
     /// assignment operator is disabled
-    DumpHepMC& operator=( const DumpHepMC& right ) ;          // no assignement
+    DumpHepMC& operator=( const DumpHepMC& right ) = delete;  // no assignement
     // ========================================================================
   private:
     // ========================================================================
@@ -146,7 +139,7 @@ StatusCode LoKi::DumpHepMC::execute()
 
   MsgStream&    log    = always()     ;
   //
-  log << " HepMC event dump '" << m_input << "' " << std::endl ;
+  log << " HepMC event dump '" << m_input << "' \n";
   //
   printer.print
     ( events       , // input data

@@ -68,13 +68,9 @@ namespace LoKi
       declareInterface<Decays::IGenDecay>  ( this ) ;
       declareInterface<Decays::IDecayNode> ( this ) ;
     }
-    /// virtual & protected destructor
-    virtual ~GenDecay() {}                    // virtual & protected destructor
     // ========================================================================
   private:
     // ========================================================================
-    /// the default constructor is disabled
-    GenDecay ( ) ;                       // the default constructor is disabled
     /// the copy constructor is disabled
     GenDecay ( const GenDecay& ) ;          // the copy constructor is disabled
     /// the assignement operator is disabled
