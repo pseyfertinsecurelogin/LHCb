@@ -1,4 +1,3 @@
-
 #ifndef EVENT_PackedMCRichTrack_H
 #define EVENT_PackedMCRichTrack_H 1
 

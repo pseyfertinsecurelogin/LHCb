@@ -1,4 +1,3 @@
-// $Id: CompareCaloHypo.h,v 1.1.1.1 2008-11-18 17:12:59 ocallot Exp $
 #ifndef COMPARECALOHYPO_H
 #define COMPARECALOHYPO_H 1
 
@@ -20,8 +19,6 @@ public:
 
   /// Standard constructor
   CompareCaloHypo( const std::string& name, ISvcLocator* pSvcLocator );
-
-  virtual ~CompareCaloHypo( ); ///< Destructor
 
   StatusCode execute() override; ///< Algorithm execution
 

@@ -25,8 +25,6 @@ public:
   /// Standard constructor
   ReadPackedDst( const std::string& name, ISvcLocator* pSvcLocator );
 
-  virtual ~ReadPackedDst(); ///< Destructor
-
   StatusCode initialize() override;    ///< Algorithm initialization
   StatusCode finalize() override;      ///< Algorithm finalization
   StatusCode execute() override;    ///< Algorithm execution

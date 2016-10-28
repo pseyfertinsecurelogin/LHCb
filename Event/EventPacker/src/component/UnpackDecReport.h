@@ -1,4 +1,3 @@
-// $Id: $
 #ifndef UNPACKDECREPORT_H
 #define UNPACKDECREPORT_H 1
 
@@ -20,8 +19,6 @@ public:
 
   /// Standard constructor
   UnpackDecReport( const std::string& name, ISvcLocator* pSvcLocator );
-
-  virtual ~UnpackDecReport(); ///< Destructor
 
   StatusCode execute() override;    ///< Algorithm execution
 

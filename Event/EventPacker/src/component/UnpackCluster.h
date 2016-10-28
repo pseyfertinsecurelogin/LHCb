@@ -1,4 +1,3 @@
-// $Id: $
 #ifndef UNPACKCLUSTER_H
 #define UNPACKCLUSTER_H 1
 
@@ -20,8 +19,6 @@ public:
   /// Standard constructor
   UnpackCluster( const std::string& name,
                  ISvcLocator* pSvcLocator );
-
-  virtual ~UnpackCluster( ); ///< Destructor
 
   StatusCode execute() override; ///< Algorithm execution
 

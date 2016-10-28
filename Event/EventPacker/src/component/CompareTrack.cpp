@@ -1,4 +1,3 @@
-// $Id: CompareTrack.cpp,v 1.12 2009-11-12 07:27:01 ocallot Exp $
 // Include files 
 
 // local
@@ -24,10 +23,6 @@ CompareTrack::CompareTrack( const std::string& name,
   declareProperty( "TestName"  , m_testName   = LHCb::TrackLocation::Default+"Test" );
 }
 
-//=============================================================================
-// Destructor
-//=============================================================================
-CompareTrack::~CompareTrack() {} 
 
 //=============================================================================
 // Main execution

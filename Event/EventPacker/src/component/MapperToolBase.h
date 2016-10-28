@@ -22,22 +22,16 @@
  *  @author Chris Jones
  *  @date   2012-03-26
  */
-class MapperToolBase : public extends2< GaudiTool,
-                                        IDODAlgMapper,
-                                        IDODNodeMapper >
+class MapperToolBase : public extends< GaudiTool,
+                                       IDODAlgMapper,
+                                       IDODNodeMapper >
 {
 
 public:
 
   /// Standard constructor
-  MapperToolBase( const std::string& type,
-                  const std::string& name,
-                  const IInterface* parent );
+  using base_class::base_class;
 
-  virtual ~MapperToolBase( ); ///< Destructor
-
-  /// Initialize the tool instance.
-  StatusCode initialize() override;
 
   /// Initialize the tool instance.
   StatusCode finalize() override;
@@ -59,9 +53,7 @@ protected:
   /// Make sure a path starts with /Event/
   inline std::string fixPath( const std::string & path ) const
   {
-    std::string tmp = path;
-    if ( tmp.substr(0,7) != "/Event/" ) { tmp = "/Event/"+tmp; }
-    return tmp;
+    return path.compare(0,7,"/Event/")!=0 ? "/Event/"+path : path ;
   }
 
 private:

@@ -1,4 +1,3 @@
-
 #ifndef EVENT_PackedWeightsVector_H
 #define EVENT_PackedWeightsVector_H 1
 

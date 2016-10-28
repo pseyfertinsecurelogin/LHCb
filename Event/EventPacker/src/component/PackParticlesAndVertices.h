@@ -1,4 +1,3 @@
-// $Id: $
 #ifndef PACKPARTICLESANDVERTICES_H
 #define PACKPARTICLESANDVERTICES_H 1
 
@@ -50,8 +49,6 @@ public:
 
   /// Standard constructor
   PackParticlesAndVertices( const std::string& name, ISvcLocator* pSvcLocator );
-
-  virtual ~PackParticlesAndVertices( ); ///< Destructor
 
   StatusCode execute() override; ///< Algorithm execution
 

@@ -176,14 +176,7 @@ namespace LHCb
     typedef LHCb::CaloHypos             DataVector;
     typedef LHCb::PackedCaloHypos PackedDataVector;
 
-  private:
-
-    /// Default Constructor hidden
-    CaloHypoPacker() {}
-
-  public:
-
-    /// Default Constructor
+    /// Constructor
     CaloHypoPacker( const GaudiAlgorithm * p ) : m_pack(p) {}
 
   public:

@@ -1,4 +1,3 @@
-// $Id: CompareTwoProngVertex.h,v 1.1 2009-01-26 09:45:51 ocallot Exp $
 #ifndef COMPARETWOPRONGVERTEX_H
 #define COMPARETWOPRONGVERTEX_H 1
 
@@ -20,8 +19,6 @@ public:
 
   /// Standard constructor
   CompareTwoProngVertex( const std::string& name, ISvcLocator* pSvcLocator );
-
-  virtual ~CompareTwoProngVertex(); ///< Destructor
 
   StatusCode execute() override; ///< Algorithm execution
 

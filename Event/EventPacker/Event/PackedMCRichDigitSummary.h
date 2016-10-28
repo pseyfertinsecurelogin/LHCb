@@ -1,4 +1,3 @@
-
 #ifndef EVENT_PackedMCRichDigitSummary_H
 #define EVENT_PackedMCRichDigitSummary_H 1
 

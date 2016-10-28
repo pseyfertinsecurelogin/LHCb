@@ -53,7 +53,7 @@ void MuonPIDPacker::pack( const DataVector & pids,
     ppids.data().reserve( pids.size() );
     for ( const auto * pid : pids )
     {
-      ppids.data().emplace_back( PackedData() );
+      ppids.data().emplace_back( );
       auto & ppid = ppids.data().back();
       // save the key
       ppid.key = pid->key();

@@ -1,4 +1,3 @@
-// $Id: PackerBaseAlg.h,v 1.3 2009-11-06 17:50:04 jonrob Exp $
 #ifndef PACKERBASEALG_H
 #define PACKERBASEALG_H 1
 
@@ -25,8 +24,6 @@ namespace DataPacking
 
     /// Standard constructor
     Pack( const std::string& name, ISvcLocator* pSvcLocator );
-
-    virtual ~Pack();     ///< Destructor
 
     StatusCode initialize() override; ///< Algorithm initialize
     StatusCode execute() override;    ///< Algorithm execution

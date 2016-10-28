@@ -1,4 +1,3 @@
-// $Id: UnpackMCParticle.h,v 1.2 2009-11-06 18:34:34 jonrob Exp $
 #ifndef UNPACKMCPARTICLE_H
 #define UNPACKMCPARTICLE_H 1
 
@@ -20,8 +19,6 @@ public:
 
   /// Standard constructor
   UnpackMCParticle( const std::string& name, ISvcLocator* pSvcLocator );
-
-  virtual ~UnpackMCParticle(); ///< Destructor
 
   StatusCode execute() override; ///< Algorithm execution
 
