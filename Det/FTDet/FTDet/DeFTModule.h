@@ -138,7 +138,7 @@ inline void DeFTModule::setElementID(const LHCb::FTChannelID& chanID) {
 
 /// Find mat method
 inline const DeFTMat* DeFTModule::findMat(const LHCb::FTChannelID& aChannel) const {
-  return m_mats[aChannel.layer()];
+  return m_mats[aChannel.mat()];
 }
 
 #endif // DEFTMODULE_H
