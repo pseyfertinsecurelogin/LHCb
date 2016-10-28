@@ -29,11 +29,6 @@ public:
    */
   StatusCode initialize() override;
 
-  /** standard algorithm execution
-   *  @return status code
-   */
-  StatusCode execute   () override;
-
 protected:
 
   /** Standard constructor
@@ -42,10 +37,6 @@ protected:
    */
   CaloDetTestAlgorithm( const std::string& name   ,
                         ISvcLocator*       svcloc );
-
-  /** destructor
-   */
-  virtual ~CaloDetTestAlgorithm();
 
 private:
   std::string m_DetData;

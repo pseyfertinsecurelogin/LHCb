@@ -1,4 +1,3 @@
-// $Id: DeCaloCalib.h,v 1.3 2009-04-10 14:51:08 odescham Exp $
 #ifndef COMPONENT_DECALOCALIB_H
 #define COMPONENT_DECALOCALIB_H 1
 
@@ -21,16 +20,13 @@ public:
   /// Standard constructor
   DeCaloCalib( const std::string& name, ISvcLocator* pSvcLocator );
 
-  virtual ~DeCaloCalib( ); ///< Destructor
-
   StatusCode initialize() override;    ///< Algorithm initialization
   StatusCode execute   () override;    ///< Algorithm execution
-  StatusCode finalize  () override;    ///< Algorithm finalization
 
 
 
 protected:
-  IRndmGenSvc* rndmSvc() const  { return m_rndmSvc ; }
+  IRndmGenSvc* rndmSvc() const  { return m_rndmSvc.get() ; }
 private:
   double delta(long id ){
      std::stringstream sid("");
@@ -47,8 +43,8 @@ private:
   std::vector<double> m_params;
   std::map<std::string , double > m_deltas;
   std::string m_key;
-  DeCalorimeter* m_calo;
-  mutable IRndmGenSvc*   m_rndmSvc;        ///< random number service
+  DeCalorimeter* m_calo = nullptr;
+  mutable SmartIF<IRndmGenSvc>   m_rndmSvc;        ///< random number service
   bool m_update;
   bool m_ntup;
   std::vector<int> m_dead;
