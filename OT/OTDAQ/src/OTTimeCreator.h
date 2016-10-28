@@ -9,7 +9,7 @@
 #include "OTDAQ/IOTRawBankDecoder.h"
 
 // forward declarations
-class IOTRawBankDecoder;
+struct IOTRawBankDecoder;
 class DeOTDetector;
 
 /** @class OTTimeCreator OTTimeCreator.h
