@@ -9,6 +9,8 @@
 #include "STDet/DeSTBaseElement.h"
 #include "GaudiKernel/Plane3DTypes.h"
 #include "LHCbMath/LineTypes.h"
+#include "Kernel/Trajectory.h"
+
 
 /** @class DeSTSensor DeSTSensor.h "STDet/DeSTSensor.h"
  *
@@ -23,19 +25,12 @@
 
 class DeSTSector;
 
-namespace LHCb{
-  class Trajectory;
-}
-
 class DeSTSensor : public DeSTBaseElement  {
 
 public:
 
   /** Constructor */
   DeSTSensor ( const std::string& name = "" ) ;
-
-  /** Destructor */
-  virtual ~DeSTSensor();
 
   /** initialization method
    * @return StatusCode OK or not

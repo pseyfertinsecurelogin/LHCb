@@ -36,9 +36,6 @@ public:
   /** Constructor */
   DeUTStation ( std::string name = {} ) ;
 
-  /** Destructor */
-  virtual ~DeUTStation() = default;
-
    /**
    * Retrieves reference to class identifier
    * @return the class identifier for this class

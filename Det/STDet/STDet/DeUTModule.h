@@ -37,9 +37,6 @@ public:
   /** Constructor */
   DeUTModule ( const std::string& name = "" ) ;
 
-  /** Destructor */
-  virtual ~DeUTModule();
-
   /**
   * Retrieves reference to class identifier
   * @return the class identifier for this class

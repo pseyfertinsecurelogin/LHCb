@@ -46,9 +46,6 @@ public:
    /** Constructor */
    DeITLayer ( const std::string& name = "" ) ;
 
-   /** Destructor */
-   virtual ~DeITLayer();
-
    /**
    * another reference to class identifier
    * @return the class identifier for this class

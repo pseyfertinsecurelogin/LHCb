@@ -23,12 +23,8 @@ DeITLayer::DeITLayer( const std::string& name ) :
   m_parent(NULL),
   m_firstSector(NULL),
   m_lastSector(NULL)
-{ 
+{
   // constructor
-}
-
-DeITLayer::~DeITLayer() {
-
 }
 
 const CLID& DeITLayer::clID () const
@@ -42,7 +38,7 @@ StatusCode DeITLayer::initialize() {
   MsgStream msg(msgSvc(), name() );
   StatusCode sc = DeSTLayer::initialize();
   if (sc.isFailure() ){
-    msg << MSG::ERROR << "Failed to initialize detector element" << endmsg; 
+    msg << MSG::ERROR << "Failed to initialize detector element" << endmsg;
   }
   else {
     m_parent = getParent<DeITLayer>();
@@ -69,15 +65,15 @@ StatusCode DeITLayer::initialize() {
 DeITLadder* DeITLayer::findLadder(const STChannelID aChannel) const{
 
   // return pointer to the station from channel
-  auto iter = std::find_if(m_ladders.begin() , m_ladders.end(), 
+  auto iter = std::find_if(m_ladders.begin() , m_ladders.end(),
                            [&](const DeITLadder* l) { return l->contains(aChannel); });
   return iter != m_ladders.end() ? *iter: nullptr;
 }
 
 DeITLadder* DeITLayer::findLadder(const Gaudi::XYZPoint& point)  const{
 
-  // find the half module 
-  auto iter = std::find_if(m_ladders.begin(), m_ladders.end(), 
+  // find the half module
+  auto iter = std::find_if(m_ladders.begin(), m_ladders.end(),
                            [&](const DeITLadder* l) { return l->isInside(point); });
   return iter != m_ladders.end() ? *iter: nullptr;
 }
@@ -94,15 +90,15 @@ void DeITLayer::flatten() {
 
 double DeITLayer::fractionActive() const {
 
-  return std::accumulate(m_ladders.begin(), m_ladders.end(), 0.0,  
+  return std::accumulate(m_ladders.begin(), m_ladders.end(), 0.0,
                          [](double fa, const DeITLadder* l) {
                              return fa + l->fractionActive();
-                         }) / double(m_ladders.size());   
+                         }) / double(m_ladders.size());
 }
 
 bool DeITLayer::contains(const LHCb::STChannelID aChannel) const{
-  return (elementID().layer() == aChannel.layer() && 
-         (m_parent->contains(aChannel))); 
+  return (elementID().layer() == aChannel.layer() &&
+         (m_parent->contains(aChannel)));
 }
 
 

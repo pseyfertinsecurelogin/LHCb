@@ -29,9 +29,6 @@ public:
   /** Constructor */
   DeUTSensor ( const std::string& name = "" ) ;
 
-  /** Destructor */
-  virtual ~DeUTSensor();
-
   /**
   * Retrieves reference to class identifier
   * @return the class identifier for this class
