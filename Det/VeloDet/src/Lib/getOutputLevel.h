@@ -4,6 +4,7 @@
 #include "GaudiKernel/Bootstrap.h"
 #include "GaudiKernel/IJobOptionsSvc.h"
 #include "GaudiKernel/ISvcLocator.h"
+#include "GaudiKernel/Property.h"
 
 #include <string>
 #include <exception>
