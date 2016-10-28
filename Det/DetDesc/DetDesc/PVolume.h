@@ -57,7 +57,7 @@ protected:
     const Gaudi::Transform3D&  Transform    );
 
   /// destructor
-  virtual ~PVolume();
+  ~PVolume() override;
 
 public:
 
