@@ -18,18 +18,12 @@
 class MuonDAQTest : public GaudiAlgorithm {
 public:
   /// Standard constructor
-  MuonDAQTest( const std::string& name, ISvcLocator* pSvcLocator );
-
-  virtual ~MuonDAQTest( ); ///< Destructor
+  using GaudiAlgorithm::GaudiAlgorithm;
 
   StatusCode initialize() override;    ///< Algorithm initialization
   StatusCode execute   () override;    ///< Algorithm execution
 
-protected:
-
 private:
-
-
-IMuonRawBuffer* m_MuonBuffer;
+  IMuonRawBuffer* m_MuonBuffer = nullptr;
 };
 #endif // MUONDAQTEST_H

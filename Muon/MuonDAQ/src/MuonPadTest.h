@@ -18,15 +18,11 @@ public:
   /// Standard constructor
   MuonPadTest( const std::string& name, ISvcLocator* pSvcLocator );
 
-  virtual ~MuonPadTest( ); ///< Destructor
-
   StatusCode initialize() override;    ///< Algorithm initialization
   StatusCode execute   () override;    ///< Algorithm execution
 
-protected:
-
 private:
-IMuonRawBuffer* m_MuonBuffer;
+  IMuonRawBuffer* m_MuonBuffer;
 
 };
 #endif // MUONPADTEST_H

@@ -34,16 +34,14 @@ public:
 private:
 
   /// Copy MuonTileID from digits to coords with no logical map (1:1 copy)
-  StatusCode addCoordsNoMap(LHCb::MuonCoords *coords,
-                            std::vector<std::pair<LHCb::MuonTileID ,
-                            unsigned int> > & digit,
+  StatusCode addCoordsNoMap(LHCb::MuonCoords& coords,
+                            const std::vector<std::pair<LHCb::MuonTileID , unsigned int>>& digit,
                             int station,
                             int region) const;
 
   /// Copy MuonTileID from digits to coord by crossing the digits
-  StatusCode addCoordsCrossingMap(LHCb::MuonCoords *coords,
-                                  std::vector<std::pair<LHCb::MuonTileID,
-                                  unsigned int> > &digit,
+  StatusCode addCoordsCrossingMap(LHCb::MuonCoords& coords,
+                                  const std::vector<std::pair<LHCb::MuonTileID,unsigned int>>&digit,
                                   int station,
                                   int region) const;
 

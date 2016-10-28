@@ -21,13 +21,8 @@ public:
   /// Standard constructor
   MuonTAERec( const std::string& name, ISvcLocator* pSvcLocator );
 
-  virtual ~MuonTAERec( ); ///< Destructor
-
   StatusCode initialize() override;    ///< Algorithm initialization
   StatusCode execute   () override;    ///< Algorithm execution
-
-protected:
-
 
 private:
   /// Copy MuonTileID from digits to coords with no logical map (1:1 copy)
