@@ -1,19 +1,16 @@
-// $Id: DeMuonChamber.h,v 1.10 2009-10-02 13:24:19 asatta Exp $
-// ============================================================================
-// CVS tag $Name:
-// ============================================================================
-//
 // ============================================================================
 #ifndef MUONDET_DEMUONCHAMBER_H
 #define MUONDET_DEMUONCHAMBER_H 1
 
 
 // Include files
+#include <memory>
 #include <vector>
 #include <string>
 #include <sstream>
 
 #include "GaudiKernel/MsgStream.h"
+
 
 #include "DetDesc/DetectorElement.h"
 #include "MuonDet/MuonNamespace.h"
@@ -35,14 +32,11 @@ class DeMuonChamber: public DetectorElement {
 public:
 
   /// Constructor (empty)
-  DeMuonChamber();
+  DeMuonChamber() = default;
 
   /// Constructor used by XmlMuonRegionCnv to create chambers
   /// pad sizes in mm
   DeMuonChamber( int nStation, int nRegion, int nChamber);
-
-  /// Destructor
-  ~DeMuonChamber();
 
   inline static const CLID& classID(){
     return CLID_DEMuonChamber;
@@ -113,25 +107,23 @@ private:
   /// Access to Msgstream object
   inline MsgStream & msgStream() const
   {
-    if ( !m_msgStream ) m_msgStream = new MsgStream(msgSvc(),name());
+    if ( UNLIKELY( !m_msgStream ) ) m_msgStream.reset( new MsgStream(msgSvc(),name()) );
     return *m_msgStream;
   }
 
-private:
-
-  mutable MsgStream * m_msgStream;
+  mutable std::unique_ptr<MsgStream> m_msgStream;
 
   /// Chamber Grid
   std::string m_chmbGrid;
 
   /// Station number
-  int m_StationNumber;
+  int m_StationNumber = 0;
 
   /// Region number in station
-  int m_RegionNumber;
+  int m_RegionNumber = 0;
 
   /// Chamber number in region
-  int m_ChamberNumber;
+  int m_ChamberNumber = 0;
 
   /// Station name
   std::stringstream m_StationName;

@@ -33,8 +33,6 @@ public:
   // with dummy DataProvider and default grid Layout
   MuonChamberLayout();
 
-  virtual ~MuonChamberLayout( ); /// Destructor
-
   //Fill the vector with all the chambers
   StatusCode initialize() override;
 
@@ -203,12 +201,12 @@ private:
   /// Access to Msgstream object
   inline MsgStream & msgStream() const
   {
-    if ( !m_msgStream ) m_msgStream = new MsgStream(m_msgSvc,name());
+    if ( !m_msgStream ) m_msgStream = std::make_unique<MsgStream>(m_msgSvc,name());
     return *m_msgStream;
   }
 
 private:
-  mutable MsgStream * m_msgStream;
+  mutable std::unique_ptr<MsgStream> m_msgStream;
   IMessageSvc* m_msgSvc ;
   //Chambers
   std::vector<int> m_offSet;
@@ -241,7 +239,7 @@ private:
   // definition of M1 according to DB, filled in DeMuonDetector::initialize()
   bool m_isM1defined;
   //  MuonBasicGeometry* m_baseGeom(IDataProviderSvc* d, IMessageSvc* m);
-  MuonBasicGeometry* m_baseGeom;
+  std::unique_ptr<MuonBasicGeometry> m_baseGeom;
 
 
 };
@@ -265,26 +263,22 @@ inline IDataProviderSvc* MuonChamberLayout::DataProvider(){
 //Sets the xGrid
 inline void MuonChamberLayout::setXGrid(std::vector<unsigned int> xg){
   m_cgX = xg;
-  return;
 }
 
 //Set chamber in grid
 inline void MuonChamberLayout::setChamberInGrid(int enc, int num){
   m_chamberGrid.at(enc) = num;
-  return;
 }
 
 //Sets the Layout
 inline void MuonChamberLayout::setYGrid(std::vector<unsigned int> yg){
   m_cgY = yg;
-  return;
 }
 
 //Sets the Layout
 inline void MuonChamberLayout::setLayout(int region, MuonLayout lay){
   //Region index starts from 0 (R1 -> idx = 0)
   m_layout[region] = lay;
-  return;
 }
 
 //Gets the encoding
@@ -298,7 +292,6 @@ inline void MuonChamberLayout::setDataProvider(IDataProviderSvc* dataPr)
 {
   //Set the data Provder
   m_detSvc = dataPr;
-  return;
 }
 
 #endif // PUBLIC_MUONCHAMBERLAYOUT_H

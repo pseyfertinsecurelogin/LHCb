@@ -16,9 +16,7 @@
 class MuonStationCabling: public Condition {
 public:
   /// Standard constructor
-  MuonStationCabling( );
-
-  virtual ~MuonStationCabling( ); ///< Destructor
+  MuonStationCabling( ) = default;
 
   using Condition::update;
   virtual void update ( Condition& obj );
@@ -30,18 +28,14 @@ public:
     return CLID_MuonStationCabling;
   }
 
-  inline long getNumberOfL1Board(){return m_numberOfL1Board;}
-  inline std::string getL1Name(unsigned int i){return m_listOfL1[i];}
-  inline std::vector<std::string> getAllL1Names(){return m_listOfL1;}
+  long getNumberOfL1Board() const {return m_numberOfL1Board;}
+  const std::string& getL1Name(unsigned int i) const {return m_listOfL1[i];}
+  const std::vector<std::string>& getAllL1Names() const {return m_listOfL1;}
   StatusCode addL1Name(std::string name);
 
-
-protected:
-
 private:
-  long m_numberOfL1Board;
+  long m_numberOfL1Board = 0;
   std::vector<std::string> m_listOfL1;
 
 };
 #endif // MUONDET_MUONSTATIONCABLING_H
-

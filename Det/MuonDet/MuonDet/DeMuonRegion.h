@@ -1,8 +1,7 @@
-// $Id: DeMuonRegion.h,v 1.11 2009-09-14 08:58:35 jonrob Exp $
 // ============================================================================
 #ifndef MUONDET_DEMUONREGION_H
 #define MUONDET_DEMUONREGION_H 1
-
+#include <memory>
 #include "GaudiKernel/MsgStream.h"
 
 // Include files
@@ -26,32 +25,25 @@ class DeMuonRegion: public DetectorElement {
 
 public:
   /// Constructor, empty
-  DeMuonRegion();
-
-  /// Destructor
-  ~DeMuonRegion();
+  DeMuonRegion() = default;
 
 
-  inline const CLID& clID() const override {
-    return classID();
-  }
+  inline const CLID& clID() const override { return classID(); }
 
   static const CLID& classID(){  return CLID_DEMuonRegion;  }
-
-  StatusCode initialize() override;
 
 private:
 
   /// Access to Msgstream object
   inline MsgStream & msgStream() const
   {
-    if ( !m_msgStream ) m_msgStream = new MsgStream(msgSvc(),name());
+    if ( UNLIKELY(!m_msgStream) ) m_msgStream.reset( new MsgStream(msgSvc(),name()));
     return *m_msgStream;
   }
 
 private:
 
-  mutable MsgStream * m_msgStream;
+  mutable std::unique_ptr<MsgStream> m_msgStream;
 
 };
 
