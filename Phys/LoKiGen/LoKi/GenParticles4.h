@@ -77,7 +77,7 @@ namespace LoKi
                      const LoKi::GenTypes::GCuts&    c3 ,
                      const LoKi::GenTypes::GCuts&    c4 ) ;
       /// default constructor
-      FourMomentum () ;
+      FourMomentum () = default;
       // ======================================================================
     public:
       // ======================================================================

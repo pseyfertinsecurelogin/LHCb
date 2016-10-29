@@ -54,68 +54,8 @@ namespace
 // constructor from the index
 // ============================================================================
 LoKi::GenChild::Selector::Selector
-( const unsigned int   i  )
-  : LoKi::AuxFunBase ()
-  , m_indices   ( 1 , i      )
-  , m_finder    ( s_INVALID  )
-  , m_setCut    ( false      )
-  , m_cut       ( s_NONE     )
-{}
-// ============================================================================
-// constructor from the index
-// ============================================================================
-LoKi::GenChild::Selector::Selector
-( const unsigned int   i1 ,
-  const unsigned int   i2 )
-  : LoKi::AuxFunBase ()
-  , m_finder    ( s_INVALID )
-  , m_setCut    ( false     )
-  , m_cut       ( s_NONE    )
-{
-  m_indices.push_back ( i1 ) ;
-  m_indices.push_back ( i2 ) ;
-}
-// ============================================================================
-// constructor from the index
-// ============================================================================
-LoKi::GenChild::Selector::Selector
-( const unsigned int   i1 ,
-  const unsigned int   i2 ,
-  const unsigned int   i3 )
-  : LoKi::AuxFunBase ()
-  , m_finder    ( s_INVALID  )
-  , m_setCut    ( false      )
-  , m_cut       ( s_NONE     )
-{
-  m_indices.push_back ( i1 ) ;
-  m_indices.push_back ( i2 ) ;
-  m_indices.push_back ( i3 ) ;
-}
-// ============================================================================
-// constructor from the index
-// ============================================================================
-LoKi::GenChild::Selector::Selector
-( const unsigned int   i1 ,
-  const unsigned int   i2 ,
-  const unsigned int   i3 ,
-  const unsigned int   i4 )
-  : LoKi::AuxFunBase ()
-  , m_finder    ( s_INVALID )
-  , m_setCut    ( false     )
-  , m_cut       ( s_NONE    )
-{
-  m_indices.push_back ( i1 ) ;
-  m_indices.push_back ( i2 ) ;
-  m_indices.push_back ( i3 ) ;
-  m_indices.push_back ( i4 ) ;
-}
-// ============================================================================
-// constructor from the index
-// ============================================================================
-LoKi::GenChild::Selector::Selector
 ( const std::vector<unsigned int>& indices )
-  : LoKi::AuxFunBase ()
-  , m_indices   ( indices    )
+  : m_indices   ( indices    )
   , m_finder    ( s_INVALID  )
   , m_setCut    ( false      )
   , m_cut       ( s_NONE     )
@@ -127,8 +67,7 @@ LoKi::GenChild::Selector::Selector
 // ============================================================================
 LoKi::GenChild::Selector::Selector
 ( const Decays::IGenDecay::iTree& child )
-  : LoKi::AuxFunBase ()
-  , m_finder    ( child  )
+  : m_finder    ( child  )
   , m_setCut    ( false  )
   , m_cut       ( s_NONE )
 {
@@ -154,8 +93,7 @@ LoKi::GenChild::Selector::Selector
 // ============================================================================
 LoKi::GenChild::Selector::Selector
 ( const Decays::iNode& node )
-  : LoKi::AuxFunBase ()
-  , m_finder    ( s_INVALID )
+  : m_finder    ( s_INVALID )
   , m_setCut    ( false     )
   , m_cut       ( s_NONE    )
 {
@@ -170,9 +108,7 @@ LoKi::GenChild::Selector::Selector
 // ============================================================================
 LoKi::GenChild::Selector::Selector
 ( const Decays::IGenDecay::Finder& child )
-  : LoKi::AuxFunBase ()
-  , m_indices   (        )
-  , m_finder    ( child  )
+  : m_finder    ( child  )
   , m_setCut    ( false  )
   , m_cut       ( s_NONE )
 {

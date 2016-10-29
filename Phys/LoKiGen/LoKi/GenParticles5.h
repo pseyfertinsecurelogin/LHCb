@@ -57,8 +57,6 @@ namespace LoKi
       /// OPTIONAL: nice printout
       std::ostream& fillStream ( std::ostream& s ) const  override;
       // ======================================================================
-    public:
-      // ======================================================================
       /// use primary vertex ?
       bool primary() const { return m_primary ; } // use primary vertex ?
       // ======================================================================

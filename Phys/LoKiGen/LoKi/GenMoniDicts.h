@@ -1,6 +1,5 @@
-// $Id$
 // ============================================================================
-#ifndef LOKI_GENMONIDICTS_H 
+#ifndef LOKI_GENMONIDICTS_H
 #define LOKI_GENMONIDICTS_H 1
 // ============================================================================
 // Include files
@@ -16,7 +15,7 @@ namespace AIDA { class IHistogram1D ; }
 // ============================================================================
 namespace LoKi
 {
-  namespace Dicts 
+  namespace Dicts
   {
   } // end of namespace LoKi::Dicts
 } // end of namespace LoKi

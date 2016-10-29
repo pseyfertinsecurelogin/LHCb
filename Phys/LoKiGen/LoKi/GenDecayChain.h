@@ -38,7 +38,7 @@ namespace LoKi
    *  @author Vanya Belyaev Ivan.Belyaev@cern.ch
    *  @date   2011-06-03
    */
-  class GAUDI_API GenDecayChain : public virtual DecayChainBase
+  class GAUDI_API GenDecayChain final : public virtual DecayChainBase
   {
   protected:
     // ========================================================================
@@ -204,10 +204,8 @@ namespace LoKi
       //
       if ( 0 != evertex )
       {
-        HepMC::GenVertex::particle_iterator begin =
-          evertex->particles_begin ( HepMC::children ) ;
-        HepMC::GenVertex::particle_iterator end   =
-          evertex->particles_end   ( HepMC::children ) ;
+        auto begin = evertex->particles_begin ( HepMC::children ) ;
+        auto end   = evertex->particles_end   ( HepMC::children ) ;
         print ( begin  , end   ,
                 stream , term  ,
                 accept , mark  ,
@@ -254,7 +252,7 @@ namespace LoKi
                     const size_t               depth   = 0    ) const
     {
       // invalid event
-      if ( 0 == event )
+      if ( !event )
       {
         Error ( " HepMC::GenEvent* points to NULL" ) ;
         return stream ;
@@ -308,7 +306,7 @@ namespace LoKi
                     const size_t               depth   = 0    ) const
     {
       // invalid event
-      if ( 0 == event )
+      if ( !event )
       {
         Error ( " LHCb::HepMCEvent* points to NULL" ) ;
         return stream ;
@@ -353,7 +351,7 @@ namespace LoKi
                     const size_t               depth   = 0    ) const
     {
       // invalid event
-      if ( 0 == events )
+      if ( !events )
       {
         Error ( " LHCb::HepMCEvent::Container* points to NULL" ) ;
         return stream ;

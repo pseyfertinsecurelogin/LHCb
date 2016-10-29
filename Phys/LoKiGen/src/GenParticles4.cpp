@@ -82,8 +82,6 @@ LoKi::GenParticles::FourMomentum::FourMomentum
   const LoKi::GenChild::Selector& c2 ,
   const LoKi::GenChild::Selector& c3 ,
   const LoKi::GenChild::Selector& c4 )
-  : LoKi::GenTypes::GFunc  ()
-  , m_children ()
 {
   m_children . push_back ( c1 ) ;
   m_children . push_back ( c2 ) ;
@@ -95,16 +93,14 @@ LoKi::GenParticles::FourMomentum::FourMomentum
 // ============================================================================
 LoKi::GenParticles::FourMomentum::FourMomentum
 ( const LoKi::GenChild::Selector::Vector& cs )
-  : LoKi::GenTypes::GFunc  ()
-  , m_children ( cs )
+  : m_children ( cs )
 {}
 // ============================================================================
 // constructor from one selector
 // ============================================================================
 LoKi::GenParticles::FourMomentum::FourMomentum
 ( const LoKi::GenTypes::GCuts& c1 )
-  : LoKi::GenTypes::GFunc  ()
-  , m_children ( 1 , c1 )
+  : m_children ( 1 , c1 )
 {}
 // ============================================================================
 // constructor from two selectors
@@ -112,8 +108,6 @@ LoKi::GenParticles::FourMomentum::FourMomentum
 LoKi::GenParticles::FourMomentum::FourMomentum
 ( const LoKi::GenTypes::GCuts& c1 ,
   const LoKi::GenTypes::GCuts& c2 )
-  : LoKi::GenTypes::GFunc  ()
-  , m_children ()
 {
   m_children . push_back ( c1 ) ;
   m_children . push_back ( c2 ) ;
@@ -125,8 +119,6 @@ LoKi::GenParticles::FourMomentum::FourMomentum
 ( const LoKi::GenTypes::GCuts& c1 ,
   const LoKi::GenTypes::GCuts& c2 ,
   const LoKi::GenTypes::GCuts& c3 )
-  : LoKi::GenTypes::GFunc  ()
-  , m_children ()
 {
   m_children . push_back ( c1 ) ;
   m_children . push_back ( c2 ) ;
@@ -140,21 +132,12 @@ LoKi::GenParticles::FourMomentum::FourMomentum
   const LoKi::GenTypes::GCuts& c2 ,
   const LoKi::GenTypes::GCuts& c3 ,
   const LoKi::GenTypes::GCuts& c4 )
-  : LoKi::GenTypes::GFunc  ()
-  , m_children ()
 {
   m_children . push_back ( c1 ) ;
   m_children . push_back ( c2 ) ;
   m_children . push_back ( c3 ) ;
   m_children . push_back ( c4 ) ;
 }
-// ============================================================================
-// default constructo
-// ============================================================================
-LoKi::GenParticles::FourMomentum::FourMomentum()
-  : LoKi::GenTypes::GFunc  ()
-  , m_children ()
-{}
 // ============================================================================
 // base class printput
 // ============================================================================
