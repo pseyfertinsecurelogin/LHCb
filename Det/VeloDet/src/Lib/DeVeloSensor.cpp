@@ -46,14 +46,10 @@ const CLID& DeVeloSensor::clID()
 StatusCode DeVeloSensor::initialize()
 {
 
-  try { // Trick to set the output level
-    msgSvc()->setOutputLevel("DeVeloSensor", getOutputLevel("DeVeloSensor"));
-  } catch (const std::exception& x) {
-    std::cerr << x.what() << std::endl;
-    return StatusCode::FAILURE;
-  }
+  auto sc = initOutputLevel(msgSvc(), "DeVeloSensor");
+  if (!sc) return sc;
 
-  auto sc = DetectorElement::initialize();
+  sc = DetectorElement::initialize();
   if(!sc.isSuccess()) {
     msg() << MSG::ERROR << "Failed to initialise DetectorElement" << endmsg;
     return sc;
@@ -315,4 +311,3 @@ StatusCode DeVeloSensor::updateReadoutCondition () {
 
   return StatusCode::SUCCESS;
 }
-

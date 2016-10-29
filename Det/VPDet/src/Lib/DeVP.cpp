@@ -37,17 +37,14 @@ const CLID& DeVP::clID() const {
 //============================================================================
 StatusCode DeVP::initialize() {
 
-  try { // Trick to set the output level
-    msgSvc()->setOutputLevel("DeVP", getOutputLevel("DeVP"));
-  } catch (const std::exception& x) {
-    std::cerr << x.what() << std::endl;
-    return StatusCode::FAILURE;
-  }
+  auto sc = initOutputLevel(msgSvc(), "DeVP");
+  if (!sc) return sc;
+
   const auto lvl = msgSvc()->outputLevel("DeVP");
-  m_debug   = lvl <= MSG::DEBUG;
+  m_debug = lvl <= MSG::DEBUG;
 
   // Initialise the base class.
-  auto sc = DetectorElement::initialize();
+  sc = DetectorElement::initialize();
   if (sc.isFailure()) {
     msg() << MSG::ERROR << "Cannot initialize DetectorElement" << endmsg;
     return sc;

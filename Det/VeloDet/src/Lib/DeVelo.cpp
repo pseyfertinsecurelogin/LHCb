@@ -47,19 +47,16 @@ const CLID& DeVelo::clID () const { return DeVelo::classID() ; }
 // ============================================================================
 StatusCode DeVelo::initialize() {
 
-  try { // Trick to set the output level
-    msgSvc()->setOutputLevel("DeVelo", getOutputLevel("DeVelo"));
-  } catch (const std::exception& x) {
-    std::cerr << x.what() << std::endl;
-    return StatusCode::FAILURE;
-  }
+  auto sc = initOutputLevel(msgSvc(), "DeVelo");
+  if (!sc) return sc;
+
   const auto lvl = msgSvc()->outputLevel("DeVelo");
   m_debug   = lvl <= MSG::DEBUG;
   m_verbose = lvl <= MSG::VERBOSE;
 
   if( m_debug ) msg() << MSG::DEBUG << "Initialising DeVelo " << endmsg;
   // Initialise the detector element
-  auto sc = DetectorElement::initialize();
+  sc = DetectorElement::initialize();
   if( sc.isFailure() ) {
     msg() << MSG::ERROR << "Failure to initialize DetectorElement" << endmsg;
     return sc ;

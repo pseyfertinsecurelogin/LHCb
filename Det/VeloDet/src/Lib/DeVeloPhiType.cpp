@@ -87,14 +87,11 @@ const CLID& DeVeloPhiType::clID()
 //==============================================================================
 StatusCode DeVeloPhiType::initialize()
 {
-  try { // Trick to set the output level
-    msgSvc()->setOutputLevel("DeVeloPhiType", getOutputLevel("DeVeloPhiType"));
-  } catch (const std::exception& x) {
-    std::cerr << x.what() << std::endl;
-    return StatusCode::FAILURE;
-  }
 
-  auto sc = DeVeloSensor::initialize();
+  auto sc = initOutputLevel(msgSvc(), "DeVeloPhiType");
+  if (!sc) return sc;
+
+  sc = DeVeloSensor::initialize();
   if(!sc.isSuccess()) {
     msg() << MSG::ERROR << "Failed to initialise DeVeloSensor" << endmsg;
     return sc;

@@ -3,6 +3,7 @@
 
 #include "GaudiKernel/Bootstrap.h"
 #include "GaudiKernel/IJobOptionsSvc.h"
+#include "GaudiKernel/IMessageSvc.h"
 #include "GaudiKernel/ISvcLocator.h"
 #include "GaudiKernel/Property.h"
 
@@ -27,6 +28,19 @@ namespace {
       }
     }
     return outputLevel;
+  }
+  StatusCode initOutputLevel(IMessageSvc* msgSvc, const std::string& name) {
+    StatusCode sc = StatusCode::SUCCESS;
+    try { // Trick to set the output level
+      if (!msgSvc) throw std::invalid_argument("invalid IMessageSvc (nullptr)");
+      const auto lvl = getOutputLevel(name);
+      if (lvl > 0)
+        msgSvc->setOutputLevel(name, lvl);
+    } catch (const std::exception& x) {
+      std::cerr << x.what() << std::endl;
+      sc = StatusCode::FAILURE;
+    }
+    return sc;
   }
 }
 

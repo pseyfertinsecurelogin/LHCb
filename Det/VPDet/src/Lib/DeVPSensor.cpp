@@ -61,16 +61,13 @@ const CLID& DeVPSensor::clID() const {
 //==============================================================================
 StatusCode DeVPSensor::initialize() {
 
-  try { // Trick to set the output level
-    msgSvc()->setOutputLevel("DeVPSensor", getOutputLevel("DeVPSensor"));
-  } catch (const std::exception& x) {
-    std::cerr << x.what() << std::endl;
-    return StatusCode::FAILURE;
-  }
-  const auto lvl = msgSvc()->outputLevel("DeVPSensor");
-  m_debug   = lvl <= MSG::DEBUG;
+  auto sc = initOutputLevel(msgSvc(), "DeVPSensor");
+  if (!sc) return sc;
 
-  auto sc = DetectorElement::initialize();
+  const auto lvl = msgSvc()->outputLevel("DeVPSensor");
+  m_debug = lvl <= MSG::DEBUG;
+
+  sc = DetectorElement::initialize();
   if (!sc.isSuccess()) {
     msg() << MSG::ERROR << "Cannot initialise DetectorElement" << endmsg;
     return sc;
