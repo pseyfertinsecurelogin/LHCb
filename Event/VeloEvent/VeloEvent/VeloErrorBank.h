@@ -1,5 +1,5 @@
 // $Id: VeloErrorBank.h,v 1.7 2010-02-18 07:54:54 szumlat Exp $
-#ifndef VELOERRORBANK_H 
+#ifndef VELOERRORBANK_H
 #define VELOERRORBANK_H 1
 
 #include <stdexcept>
@@ -14,7 +14,7 @@
 #include "VeloEvent/EvtInfo.h"
 
 /** @class VeloErrorBank VeloErrorBank.h
- *  
+ *
  *
  *  @author Tomasz Szumlak
  *  @date   2006-05-02
@@ -32,7 +32,6 @@ public:
     m_evtInfoData(numberOfTELL1)
   { }
 
-  virtual ~VeloErrorBank( ){ } ///< Destructor
   void setEvtInfoSection(EvtInfo& inInfo);
   void setErrorInfoSection(VeloTELL1::allError& inSec);
   void setErrorSources(VeloTELL1::dataVec& sources);
@@ -59,8 +58,6 @@ public:
   unsigned int numberOfCluster(const int PPFPGA=0) const;
   unsigned int errorBankLength(const int PPFPGA=0) const;
   unsigned int nzsBankLength(const int PPFPGA=0) const;
-
-protected:
 
 private:
 
@@ -179,7 +176,7 @@ inline VeloTELL1::dataVec VeloErrorBank::errorSources() const
   return ( m_errorSources );
 }
 //
-inline unsigned int 
+inline unsigned int
 VeloErrorBank::clusterDataSectionLength(const int PPFPGA) const
 {
   VeloTELL1::errorInfo anInfo=m_errorInfoData[PPFPGA];
@@ -219,7 +216,7 @@ inline unsigned int VeloErrorBank::numberOfCluster(const int PPFPGA) const
 inline unsigned int VeloErrorBank::errorBankLength(const int PPFPGA) const
 {
   VeloTELL1::errorInfo anInfo=m_errorInfoData[PPFPGA];
-  // 
+  //
   unsigned int errorBankLength=0;
   try{
     if(((anInfo[4])&VeloTELL1::bitMask8)==0x00){

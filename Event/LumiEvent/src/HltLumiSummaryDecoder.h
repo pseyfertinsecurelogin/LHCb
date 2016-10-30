@@ -22,14 +22,9 @@ public:
   /// Standard constructor
   HltLumiSummaryDecoder(  const std::string& name, ISvcLocator* pSvcLocator );
 
-  /// Destructor
-  virtual ~HltLumiSummaryDecoder( ) ; ///< Destructor
-
   StatusCode initialize() override;    ///< Algorithm initialization
   StatusCode execute   () override;    ///< Algorithm execution
   StatusCode finalize  () override;    ///< Algorithm finalization
-
-protected:
 
 private:
   // data

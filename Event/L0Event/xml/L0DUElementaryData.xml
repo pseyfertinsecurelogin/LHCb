@@ -7,7 +7,10 @@
     <class 
       author="Olivier Deschamps"
       desc="This class represents the L0DU Data"
-      name="L0DUElementaryData">
+      name="L0DUElementaryData"
+      final  = "TRUE"
+      defaultdestructor = "FALSE"
+      >
 
       <base name="ContainedObject"/>
        &ContainedObject;

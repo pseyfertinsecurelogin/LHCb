@@ -6,7 +6,10 @@
    <class author="Olivier Deschamps" 
           desc="L0DU summary class" 
           name="L0DUReport"
-          id="6004">
+          id="6004"
+          final  = "TRUE"
+          defaultdestructor = "FALSE"
+          >
       
       <base name="DataObject"/>
       &DataObject;

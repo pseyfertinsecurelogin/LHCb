@@ -14,6 +14,8 @@
       name   = "ProtoParticle"
       id     = "803"
       stdVectorTypeDef="TRUE"
+      final = "TRUE"
+      defaultdestructor="FALSE"
      >
 
        <base name="KeyedObject&lt;int&gt;"/>

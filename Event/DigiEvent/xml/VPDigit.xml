@@ -5,7 +5,10 @@
     <class name = "VPDigit"
            id = "4503"
            author = "Marcin Kucharczyk"
-           desc = "Digitized pixel hit in VP">
+           desc = "Digitized pixel hit in VP"
+           final = "TRUE"
+           defaultdestructor="FALSE"
+           >
     <location name = "Default" place = "Raw/VP/Digits"/>
     <import name = "Kernel/VPChannelID"/>
     <template name = "KeyedObjectDict" t1 = "LHCb::VPChannelID"/>

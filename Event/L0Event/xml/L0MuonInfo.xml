@@ -6,7 +6,10 @@
 <!DOCTYPE gdd SYSTEM "gdd.dtd" >
 <gdd>
   <package name='L0Event' >
-    <class name='L0MuonInfo' id='6009' author='J. Cogan' desc='L0Muon information'>
+    <class name='L0MuonInfo' id='6009' author='J. Cogan' desc='L0Muon information'
+      final  = "TRUE"
+      defaultdestructor = "FALSE"
+    >
       <desc> *  Contains info on the L0Muon trigger.</desc>
       <base name='DataObject'/>
       &DataObject;

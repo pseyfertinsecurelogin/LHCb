@@ -5,7 +5,10 @@
     <class name = "HCDigit"
            id = "13001"
            author = "Victor Coco"
-           desc = "This class represents a Herschel PMT measurement">
+           desc = "This class represents a Herschel PMT measurement"
+           final = "TRUE"
+           defaultdestructor="FALSE"
+           >
     <location name = "Default" place = "Raw/HC/Digits"/>
     <location name = "L0" place = "Raw/HC/L0Digits"/>
     <location name = "Corrected" place = "Raw/HC/CorrectedDigits"/>

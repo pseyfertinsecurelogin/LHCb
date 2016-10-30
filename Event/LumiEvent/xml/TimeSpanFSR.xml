@@ -17,6 +17,8 @@
       keyedContTypeDef="TRUE"
       id="13504"
       serializers="TRUE"
+      final  = "TRUE"
+      defaultdestructor = "FALSE"
       >
 <!--
       <base name='DataObject'/>

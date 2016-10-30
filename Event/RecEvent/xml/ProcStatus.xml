@@ -8,6 +8,8 @@
       name   = "ProcStatus"
       author = "Olivier Callot"
       desc   = "Record the status of the Brunel processing"
+      final = "TRUE"
+      defaultdestructor="FALSE"
       location = "Rec/Status"
       id     = "5001" >
 

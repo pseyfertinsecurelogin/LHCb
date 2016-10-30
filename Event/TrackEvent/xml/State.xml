@@ -11,6 +11,8 @@
       desc             = 'State is the base class of offline and online track states.'
       id               = '10011'
       location         = 'Rec/Track/States'
+      final            = "TRUE"
+      defaultdestructor = "FALSE"
       stdVectorTypeDef = "TRUE"
       keyedContTypeDef = 'TRUE'>
 
@@ -276,23 +278,20 @@
         type    = 'double'
         name    = 'qOverP'
         desc    = 'Retrieve the charge-over-momentum Q/P of the state'
-        const   = 'TRUE'
-        virtual = 'TRUE' >
+        const   = 'TRUE' >
       </method>
 
       <method
         type    = 'double'
         name    = 'p'
         desc    = 'Retrieve the momentum of the state'
-        const   = 'TRUE'
-        virtual = 'TRUE' />
+        const   = 'TRUE'/>
 
       <method
         type    = 'double'
         name    = 'pt'
         desc    = 'Retrieve the transverse momentum of the state'
-        const   = 'TRUE'
-        virtual = 'TRUE' />
+        const   = 'TRUE' />
 
       <method
         type    = 'Gaudi::XYZVector'
@@ -321,8 +320,7 @@
         type    = 'Gaudi::SymMatrix6x6'
         name    = 'posMomCovariance'
         desc    = 'Retrieve the 6D (x,y,z,px,py,pz) covariance matrix of the state'
-        const   = 'TRUE'
-        virtual = 'TRUE' />
+        const   = 'TRUE' />
 
       <method
         type    = 'Gaudi::SymMatrix3x3'
@@ -380,36 +378,31 @@
         type    = 'double'
         name    = 'errQOverP2'
         desc    = 'Retrieve the squared error on the charge-over-momentum Q/P of the state'
-        const   = 'TRUE'
-        virtual = 'TRUE'>
+        const   = 'TRUE'>
       </method>
 
       <method
         type    = 'double'
         name    = 'errP2'
         desc    = 'Retrieve the squared error on the momentum (px,py,pz) of the state'
-        const   = 'TRUE'
-        virtual = 'TRUE' />
+        const   = 'TRUE' />
 
       <method
         type    = 'Gaudi::SymMatrix3x3'
         name    = 'errMomentum'
         desc    = 'Retrieve the errors on the momentum vector (px,py,pz) of the state'
-        const   = 'TRUE'
-        virtual = 'TRUE' />
+        const   = 'TRUE' />
 
       <method
         type    = 'double'
         name    = 'errQOverPperp2'
         desc    = 'Retrieve the squared error on the Q/Pperp of the state'
-        const   = 'TRUE'
-        virtual = 'TRUE' />
+        const   = 'TRUE'/>
 
       <method
         type    = 'LHCb::State*'
         name    = 'clone'
         desc    = 'Clone the state (remember you then own the pointer)'
-        virtual = 'TRUE'
         const   = 'TRUE' >
       </method>
 
@@ -435,8 +428,7 @@
       <method
         name    = 'setState'
         argList = 'double x, double y, double z, double tx, double ty, double qOverP'
-        desc    = 'Update the state vector'
-        virtual = 'TRUE' />
+        desc    = 'Update the state vector' />
 
       <method
         name    = 'setCovariance'
@@ -495,15 +487,13 @@
       <method
         name    = 'setQOverP'
         argList = 'double value'
-        desc    = 'Update the charge-over-momentum Q/P value of the state'
-        virtual = 'TRUE' >
+        desc    = 'Update the charge-over-momentum Q/P value of the state' >
       </method>
 
       <method
         name    = 'setErrQOverP2'
         argList = 'double value'
-        desc    = 'Update the squared error on the charge-over-momentum Q/P of the state'
-        virtual = 'TRUE' >
+        desc    = 'Update the squared error on the charge-over-momentum Q/P of the state' >
       </method>
 
       <method
@@ -521,7 +511,6 @@
 	name      = "linearTransportTo"
 	desc      = "transport this state to a new z-position"
 	type      = "void"
-	virtual   = "FALSE"
 	const     = "FALSE" >
 	<arg name = "z" type = "double"/>
       </method>
@@ -530,7 +519,6 @@
 	name      = "fillStream"
 	desc      = "printOut method to Gaudi message stream"
 	type      = "std::ostream&amp;"
-	virtual   = "TRUE"
 	const     = "TRUE" >
 	<arg name = "os" type = "std::ostream" inout = "BOTH"/>
       </method>

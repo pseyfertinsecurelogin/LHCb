@@ -5,7 +5,10 @@
     <class name = "VPCluster"
            id = "4504"
            author = "Marcin Kucharczyk"
-           desc = "This class represents a cluster of pixel hits">
+           desc = "This class represents a cluster of pixel hits"
+           final = "TRUE"
+           defaultdestructor="FALSE"
+           >
     <location name = "Default" place = "Raw/VP/Clusters"/>
     <import name = "vector" std = "TRUE"/>
     <import name = "Kernel/VPChannelID"/>
