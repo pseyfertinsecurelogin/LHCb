@@ -35,7 +35,6 @@ DECLARE_SERVICE_FACTORY( UpdateManagerSvc )
 //=============================================================================
 UpdateManagerSvc::UpdateManagerSvc(const std::string& name, ISvcLocator* svcloc):
   base_class(name,svcloc),
-  m_dataProvider(NULL), m_detDataSvc(NULL), m_incidentSvc(NULL), m_evtProc(NULL),
   m_head_since(1),m_head_until(0)
 {
 #ifndef WIN32
@@ -52,9 +51,7 @@ UpdateManagerSvc::UpdateManagerSvc(const std::string& name, ISvcLocator* svcloc)
 //=============================================================================
 UpdateManagerSvc::~UpdateManagerSvc() {
   // delete objects in the container
-  for (Item::ItemList::const_iterator i = m_all_items.begin(); i != m_all_items.end(); ++i){
-    delete *i;
-  }
+  for (auto& i : m_all_items) delete i;
 }
 
 //=============================================================================
@@ -65,81 +62,68 @@ StatusCode UpdateManagerSvc::initialize(){
   StatusCode sc = base_class::initialize();
   if (!sc.isSuccess()) return sc;
   // local initialization
-  MsgStream log(msgSvc(),name());
-  if( log.level() <= MSG::DEBUG )
-    log << MSG::DEBUG << "--- initialize ---" << endmsg;
+  if( msgLevel(MSG::DEBUG) )
+    debug() << "--- initialize ---" << endmsg;
 
   // find the data provider
-  sc = serviceLocator()->service<IDataProviderSvc>(m_dataProviderName,m_dataProvider,true);
-  if (!sc.isSuccess()) {
-    log << MSG::ERROR << "Unable to get a handle to the data provider" << endmsg;
-    return sc;
+  m_dataProvider = serviceLocator()->service(m_dataProviderName,true);
+  if (!m_dataProvider) {
+    error() << "Unable to get a handle to the data provider" << endmsg;
+    return StatusCode::FAILURE;
+  }
+  if( msgLevel(MSG::DEBUG) )
+    debug() << "Got pointer to IDataProviderSvc \"" << m_dataProviderName << '"' << endmsg;
+  auto dMgr = m_dataProvider.as<IDataManagerSvc>();
+  if ( !dMgr ) {
+    warning() << "Cannot access IDataManagerSvc interface of \"" << m_dataProviderName
+        << "\": using empty RootName" << endmsg;
+    m_dataProviderRootName = "";
   } else {
-    if( log.level() <= MSG::DEBUG )
-      log << MSG::DEBUG << "Got pointer to IDataProviderSvc \"" << m_dataProviderName << '"' << endmsg;
-    IDataManagerSvc * dMgr;
-    sc = m_dataProvider->queryInterface(IDataManagerSvc::interfaceID(),(void **) &dMgr);
-    if ( sc.isSuccess() ) {
-      m_dataProviderRootName = dMgr->rootName() + "/";
-      dMgr->release();
-      if (!sc.isSuccess()) {
-        return sc;
-      }
-    }
-    else {
-      log << MSG::WARNING << "Cannot access IDataManagerSvc interface of \"" << m_dataProviderName
-          << "\": using empty RootName" << endmsg;
-      m_dataProviderRootName = "";
-    }
+    m_dataProviderRootName = dMgr->rootName() + "/";
   }
 
   // find the detector data service
-  if (m_detDataSvcName == "") m_detDataSvcName = m_dataProviderName;
-  sc = serviceLocator()->service(m_detDataSvcName,m_detDataSvc,true);
-  if (!sc.isSuccess()) {
-    log << MSG::WARNING << "Unable to get a handle to the detector data service interface:"
+  if (m_detDataSvcName.empty()) m_detDataSvcName = m_dataProviderName;
+  m_detDataSvc = serviceLocator()->service(m_detDataSvcName,true);
+  if (!m_detDataSvc) {
+    warning() << "Unable to get a handle to the detector data service interface:"
       " all the calls to newEvent(void) will fail!" << endmsg;
-    m_detDataSvc = NULL;
   } else {
-    if( log.level() <= MSG::DEBUG )
-      log << MSG::DEBUG << "Got pointer to IDetDataSvc \"" << m_detDataSvcName << '"' << endmsg;
+    if( msgLevel(MSG::DEBUG) )
+      debug() << "Got pointer to IDetDataSvc \"" << m_detDataSvcName << '"' << endmsg;
   }
 
-  // before registering to the incident service I have to be sure that the EventClockSvc is ready
-  IService *evtClockSvc;
-  sc = service("EventClockSvc", evtClockSvc, true);
-  if ( sc.isSuccess() ) {
-    if( log.level() <= MSG::DEBUG )
-      log << MSG::DEBUG << "Good: EventClockSvc found" << endmsg;
-    evtClockSvc->release();
-  } else {
-    log << MSG::WARNING << "Unable find EventClockSvc, probably I'll not work." << endmsg;
+  {
+    // before registering to the incident service I have to be sure that the EventClockSvc is ready
+    auto evtClockSvc = service("EventClockSvc",  true);
+    if (!evtClockSvc) {
+      warning() << "Unable find EventClockSvc, probably I'll not work." << endmsg;
+    } else if ( msgLevel(MSG::DEBUG) ) {
+      debug() << "Good: EventClockSvc found" << endmsg;
+    }
   }
 
   // register to the incident service for BeginEvent incidents
-  sc = service("IncidentSvc", m_incidentSvc, false);
-  if ( sc.isSuccess() ) {
-    m_incidentSvc->addListener(this,IncidentType::BeginEvent);
-    if( log.level() <= MSG::DEBUG )
-      log << MSG::DEBUG << "Got pointer to IncidentSvc" << endmsg;
-  } else {
-    log << MSG::ERROR << "Unable to register to the incident service." << endmsg;
-    m_incidentSvc = NULL;
-    return sc;
+  m_incidentSvc = service("IncidentSvc", false);
+  if ( !m_incidentSvc ) {
+    error() << "Unable to register to the incident service." << endmsg;
+    return StatusCode::FAILURE;
   }
+  if( msgLevel(MSG::DEBUG) )
+      debug() << "Got pointer to IncidentSvc" << endmsg;
+  m_incidentSvc->addListener(this,IncidentType::BeginEvent);
 
-  sc = serviceLocator()->service("ApplicationMgr",m_evtProc);
+  m_evtProc = serviceLocator()->service("ApplicationMgr");
   if ( !sc.isSuccess() ) {
-    log << MSG::ERROR << "Cannot find an event processor." << endmsg;
+    error() << "Cannot find an event processor." << endmsg;
     return sc;
   }
 
   // Loop over overridden conditions
-  for ( std::vector<std::string>::iterator co = m_conditionsOveridesDesc.begin();
-        co != m_conditionsOveridesDesc.end(); ++co ) {
+  for ( const auto& co : m_conditionsOveridesDesc ) {
     std::string name;
     Condition *cond = new Condition();
-    if (ConditionParser(*co,name,*cond)) {
+    if (ConditionParser(co,name,*cond)) {
       // Special update mode
       cond->setUpdateMode(ValidDataObject::OVERRIDE);
 
@@ -152,21 +136,21 @@ StatusCode UpdateManagerSvc::initialize(){
       // If a condition override with that name already exists, delete it
       Condition * dest = m_conditionsOverides[name];
       if ( dest ) {
-        log << MSG::WARNING << "Override condition for path '" << name
+        warning() << "Override condition for path '" << name
             << "' is defined more than once (I use the last one)." << endmsg;
         delete dest;
       }
 
       // Add the condition to internal list
       m_conditionsOverides[name] = cond;
-      if( log.level() <= MSG::DEBUG )
-        log << MSG::DEBUG << "Added condition: " << name << "\n" << cond->printParams() << endmsg;
+      if( msgLevel(MSG::DEBUG) )
+        debug() << "Added condition: " << name << "\n" << cond->printParams() << endmsg;
 
     } else {
       // something went wrong while parsing: delete the temporary
       delete cond;
-      log << MSG::ERROR << "Cannot understand condition:" << endmsg;
-      log << MSG::ERROR << *co << endmsg;
+      error() << "Cannot understand condition:" << endmsg;
+      error() << co << endmsg;
       return StatusCode::FAILURE;
     }
   }
@@ -175,39 +159,36 @@ StatusCode UpdateManagerSvc::initialize(){
 }
 
 StatusCode UpdateManagerSvc::stop(){
-  if( m_outputLevel <= MSG::DEBUG ) {
-    MsgStream log(msgSvc(),name());
-    log << MSG::DEBUG << "--- stop ---" << endmsg;
+  if( msgLevel(MSG::DEBUG) ) {
+    debug() << "--- stop ---" << endmsg;
   }
 
-  if ( m_outputLevel <= MSG::DEBUG || ! m_dotDumpFile.empty() ) dump();
+  if ( msgLevel(MSG::DEBUG) || ! m_dotDumpFile.empty() ) dump();
 
   return base_class::stop();
 }
 
 StatusCode UpdateManagerSvc::finalize(){
   // local finalization
-  MsgStream log(msgSvc(),name());
-  if( m_outputLevel <= MSG::DEBUG )
-    log << MSG::DEBUG << "--- finalize ---" << endmsg;
+  if( msgLevel(MSG::DEBUG) )
+    debug() << "--- finalize ---" << endmsg;
 
   // release the interfaces used
-  if (m_dataProvider != NULL) m_dataProvider->release();
-  if (m_detDataSvc != NULL) m_detDataSvc->release();
-  if (m_incidentSvc != NULL) {
+  m_dataProvider.reset();
+  m_detDataSvc.reset();
+  if (m_incidentSvc) {
     // unregister from the incident svc
     m_incidentSvc->removeListener(this,IncidentType::BeginEvent);
-    m_incidentSvc->release();
   }
-  if (m_evtProc != NULL) m_evtProc->release();
+  m_incidentSvc.reset();
+  m_evtProc.reset();
 
   // delete unused overridden conditions (the others are deleted together with the T.S.)
   if ( ! m_conditionsOverides.empty() ) {
-    log << MSG::WARNING << "Overridden conditions not used:" << endmsg;
-    for (GaudiUtils::Map<std::string,Condition*>::iterator c = m_conditionsOverides.begin();
-         c != m_conditionsOverides.end(); ++c ) {
-      log << MSG::WARNING << c->first << endmsg;
-      delete c->second;
+    warning() << "Overridden conditions not used:" << endmsg;
+    for (auto& c : m_conditionsOverides) {
+      warning() << c.first << endmsg;
+      delete c.second;
     }
   }
 
@@ -218,18 +199,16 @@ StatusCode UpdateManagerSvc::finalize(){
 // IUpdateManagerSvc implementation
 //=============================================================================
 IDataProviderSvc *UpdateManagerSvc::dataProvider() const {
-  return m_dataProvider;
+  return m_dataProvider.get();
 }
 IDetDataSvc *UpdateManagerSvc::detDataSvc() const {
-  return m_detDataSvc;
+  return m_detDataSvc.get();
 }
 void UpdateManagerSvc::i_registerCondition(const std::string &condition, BaseObjectMemberFunction *mf,
                                            BasePtrSetter *ptr_dest){
   if ( FSMState() < Gaudi::StateMachine::INITIALIZED ){
     throw GaudiException("Service offline","UpdateManagerSvc::registerCondition",StatusCode::FAILURE);
   }
-
-  MsgStream log(msgSvc(),name());
 
   std::string cond_copy(condition);
 
@@ -239,14 +218,13 @@ void UpdateManagerSvc::i_registerCondition(const std::string &condition, BaseObj
          && cond_copy.compare(0,m_dataProviderRootName.size(),m_dataProviderRootName) == 0 ){
       cond_copy.erase(0,m_dataProviderRootName.size());
     }
-    if( m_outputLevel <= MSG::VERBOSE )
-      log << MSG::VERBOSE << "registering condition \"" << cond_copy
+    if( msgLevel(MSG::VERBOSE) )
+      verbose() << "registering condition \"" << cond_copy
           << "\" for object of type " << System::typeinfoName(mf->type())
           << " at " << std::hex << mf->castToVoid() << endmsg;
-  }
-  else {
-    if( m_outputLevel <= MSG::VERBOSE )
-      log << MSG::VERBOSE << "registering object of type " << System::typeinfoName(mf->type())
+  } else {
+    if( msgLevel(MSG::VERBOSE) )
+      verbose() << "registering object of type " << System::typeinfoName(mf->type())
           << " (without condition)" << endmsg;
   }
 
@@ -270,7 +248,7 @@ void UpdateManagerSvc::i_registerCondition(const std::string &condition, BaseObj
     if (!cond_item){ // a new condition
 
       // Check if the requested condition is in the override list.
-      GaudiUtils::Map<std::string,Condition*>::iterator cond_ov = m_conditionsOverides.find(cond_copy);
+      auto cond_ov = m_conditionsOverides.find(cond_copy);
       if ( cond_ov != m_conditionsOverides.end() ) {
         // yes, it is!
         cond_item = new Item(cond_copy,Item::UserPtrType(ptr_dest,mf_item->ptr),
@@ -287,7 +265,7 @@ void UpdateManagerSvc::i_registerCondition(const std::string &condition, BaseObj
     } else {
       if (ptr_dest){
         // I already have this condition registered, but a new user wants to set the pointer to it.
-        cond_item->user_dest_ptrs.push_back(Item::UserPtrType(ptr_dest,mf_item->ptr));
+        cond_item->user_dest_ptrs.emplace_back(ptr_dest,mf_item->ptr);
         // Let's check if the object is already loaded (the pointers are set by Item only when it loads them)
         if (cond_item->vdo) {
           ptr_dest->set(cond_item->vdo);
@@ -302,7 +280,7 @@ void UpdateManagerSvc::i_registerCondition(const std::string &condition, BaseObj
     link(mf_item,mf,cond_item);
   } else {
     // this is usually done inside Item::addChild (called by "link")
-    Item::MembFuncList::iterator mfIt = mf_item->find(mf);
+    auto mfIt = mf_item->find(mf);
     if (mfIt == mf_item->memFuncs.end()) {
       // I do not have the MF registered inside the item
       // so I add it
@@ -325,9 +303,8 @@ void UpdateManagerSvc::i_registerCondition(void *obj, BaseObjectMemberFunction *
   if ( FSMState() < Gaudi::StateMachine::INITIALIZED ){
     throw GaudiException("Service offline","UpdateManagerSvc::registerCondition",StatusCode::FAILURE);
   }
-  if( m_outputLevel <= MSG::VERBOSE ) {
-    MsgStream log(msgSvc(),name());
-    log << MSG::VERBOSE << "registering object at " << std::hex << obj << std::dec
+  if( msgLevel(MSG::VERBOSE) ) {
+    verbose() << "registering object at " << std::hex << obj << std::dec
         << " for object of type " << System::typeinfoName(mf->type()) << " at " << std::hex << mf->castToVoid() << endmsg;
   }
 
@@ -360,8 +337,7 @@ StatusCode UpdateManagerSvc::newEvent(){
     if (detDataSvc()->validEventTime()) {
       return newEvent(detDataSvc()->eventTime());
     } else {
-      MsgStream log(msgSvc(),name());
-      log << MSG::WARNING << "newEvent(): the event time is not defined!" << endmsg;
+      warning() << "newEvent(): the event time is not defined!" << endmsg;
     }
   }
   return StatusCode::FAILURE;
@@ -374,17 +350,16 @@ StatusCode UpdateManagerSvc::newEvent(const Gaudi::Time &evtTime){
   StatusCode sc = StatusCode::SUCCESS;
 
 #ifndef WIN32
-  MsgStream log(msgSvc(),name());
-  if ( m_outputLevel <= MSG::VERBOSE )
-    log << MSG::VERBOSE << "newEvent(evtTime): acquiring mutex lock" << endmsg;
+  if ( msgLevel(MSG::VERBOSE) )
+    verbose() << "newEvent(evtTime): acquiring mutex lock" << endmsg;
   acquireLock();
 #endif
 
   // Check head validity
   if ( evtTime >= m_head_since && evtTime < m_head_until ) {
 #ifndef WIN32
-    if ( m_outputLevel <= MSG::VERBOSE )
-      log << MSG::VERBOSE << "newEvent(evtTime): releasing mutex lock" << endmsg;
+    if ( msgLevel(MSG::VERBOSE) )
+      verbose() << "newEvent(evtTime): releasing mutex lock" << endmsg;
     releaseLock();
 #endif
     return sc; // no need to update
@@ -402,9 +377,8 @@ StatusCode UpdateManagerSvc::newEvent(const Gaudi::Time &evtTime){
   // The head list may change while updating, I'll loop until it's stable (or a problem occurs)
   bool head_has_changed = false;
   do {
-    if ( m_outputLevel <= MSG::DEBUG ) {
-      MsgStream log(msgSvc(),name());
-      log << MSG::DEBUG << "newEvent(evtTime): loop over head items" << endmsg;
+    if ( msgLevel(MSG::DEBUG) ) {
+      debug() << "newEvent(evtTime): loop over head items" << endmsg;
     }
     // first I make a copy of the current head
     Item::ItemList head_copy(m_head_items);
@@ -429,14 +403,14 @@ StatusCode UpdateManagerSvc::newEvent(const Gaudi::Time &evtTime){
 
 #ifndef WIN32
   } catch (...) {
-    if ( m_outputLevel <= MSG::VERBOSE )
-      log << MSG::VERBOSE << "newEvent(evtTime): releasing mutex lock (exception occurred)" << endmsg;
+    if ( msgLevel(MSG::VERBOSE) )
+      verbose() << "newEvent(evtTime): releasing mutex lock (exception occurred)" << endmsg;
     releaseLock();
     throw;
   }
 
-  if ( m_outputLevel <= MSG::VERBOSE )
-    log << MSG::VERBOSE << "newEvent(evtTime): releasing mutex lock" << endmsg;
+  if ( msgLevel(MSG::VERBOSE) )
+    verbose() << "newEvent(evtTime): releasing mutex lock" << endmsg;
   releaseLock();
 #endif
 
@@ -447,9 +421,8 @@ StatusCode UpdateManagerSvc::i_update(void *instance){
     throw GaudiException("Service offline","UpdateManagerSvc::update",StatusCode::FAILURE);
   }
 
-  if ( m_outputLevel <= MSG::VERBOSE ) {
-    MsgStream log(msgSvc(),name());
-    log << MSG::VERBOSE << "Update specific object at " << instance << endmsg;
+  if ( msgLevel(MSG::VERBOSE) ) {
+    verbose() << "Update specific object at " << instance << endmsg;
   }
   if (detDataSvc() != NULL){
     if (detDataSvc()->validEventTime()) {
@@ -469,8 +442,7 @@ StatusCode UpdateManagerSvc::i_update(void *instance){
         }
         return sc;
       } else {
-        MsgStream log(msgSvc(),name());
-        log << MSG::WARNING << "Cannot find object at " << instance << endmsg;
+        warning() << "Cannot find object at " << instance << endmsg;
       }
     } else {
       return StatusCode::SUCCESS;
@@ -483,9 +455,8 @@ void UpdateManagerSvc::i_invalidate(void *instance){
     throw GaudiException("Service not initialized","UpdateManagerSvc::invalidate",StatusCode::FAILURE);
   }
 
-  if ( m_outputLevel <= MSG::VERBOSE ) {
-    MsgStream log(msgSvc(),name());
-    log << MSG::VERBOSE << "Invalidate object at " << instance << endmsg;
+  if ( msgLevel(MSG::VERBOSE) ) {
+    verbose() << "Invalidate object at " << instance << endmsg;
   }
   Item *item = findItem(instance);
   if (item) {
@@ -493,21 +464,20 @@ void UpdateManagerSvc::i_invalidate(void *instance){
     m_head_since = 1;
     m_head_until = 0;
   } else {
-    MsgStream log(msgSvc(),name());
-    log << MSG::WARNING << "Cannot find object at " << instance << endmsg;
+    warning() << "Cannot find object at " << instance << endmsg;
   }
 }
 
 void UpdateManagerSvc::unlink(Item *parent, Item *child){
 
   // check if the parent knows about the child
-  Item::ItemList::iterator childIt = std::find(parent->children.begin(),
-                                               parent->children.end(),child);
+  auto childIt = std::find(parent->children.begin(),
+                           parent->children.end(),child);
   if ( parent->children.end() == childIt )
     return; // parent does not know about child
 
   // remove from child all the user pointers belonging to the parent
-  Item::UserPtrList::iterator pi = child->user_dest_ptrs.begin();
+  auto pi = child->user_dest_ptrs.begin();
   while ( pi != child->user_dest_ptrs.end() ) {
     if (pi->second != parent) {
       pi = child->user_dest_ptrs.erase(pi);
@@ -521,8 +491,7 @@ void UpdateManagerSvc::unlink(Item *parent, Item *child){
   std::set<Item*> siblings; // list of Items used together with "child"
 
   // loop over child parent's pairs (mf,parent) to disconnect from them
-  Item::MembFuncList::iterator p_mf;
-  Item::ParentList::iterator p = child->parents.begin();
+  auto p = child->parents.begin();
   while ( p != child->parents.end() ) {
     if (p->first != parent) {
       ++p;
@@ -530,34 +499,33 @@ void UpdateManagerSvc::unlink(Item *parent, Item *child){
     }
 
     // find the MF inside the parent
-    p_mf = parent->find(p->second);
+    auto p_mf = parent->find(p->second);
 
     // find iterator to child in MF list ...
-    Item::ItemList *mfInternalList = p_mf->items;
-    Item::ItemList::iterator entry = std::find(mfInternalList->begin(),
-                                               mfInternalList->end(),child);
+    Item::ItemList& mfInternalList = p_mf->items;
+    auto entry = std::find(mfInternalList.begin(),
+                           mfInternalList.end(),child);
     // ... and remove it (if found)
-    if ( mfInternalList->end() != entry )
-      mfInternalList->erase(entry);
+    if ( mfInternalList.end() != entry )
+      mfInternalList.erase(entry);
 
     // append then other Items in the MF (to unlink them too)
-    siblings.insert(mfInternalList->begin(),mfInternalList->end());
+    siblings.insert(mfInternalList.begin(),mfInternalList.end());
 
     // remove the parent pair from child
     p = child->parents.erase(p);
   }
 
   // unlink the siblings
-  std::set<Item*>::iterator s;
-  for ( s = siblings.begin(); s != siblings.end(); ++s ) {
+  for (auto s = siblings.begin(); s != siblings.end(); ++s ) {
     unlink(parent,*s);
   }
 
   // Check in the parent if there are MF without children: they have to be
   // removed.
-  p_mf = parent->memFuncs.begin();
+  auto p_mf = parent->memFuncs.begin();
   while ( p_mf != parent->memFuncs.end() ) {
-    if ( p_mf->items->empty() ) p_mf = parent->memFuncs.erase(p_mf);
+    if ( p_mf->items.empty() ) p_mf = parent->memFuncs.erase(p_mf);
     else ++p_mf;
   }
 
@@ -570,9 +538,7 @@ void UpdateManagerSvc::unlink(Item *parent, Item *child){
     parent->children.erase(childIt);
 
   // check if the child should be part of the head now
-  if ( child->isHead() ) {
-    m_head_items.push_back(child);
-  }
+  if ( child->isHead() ) m_head_items.push_back(child);
 
   // Note: I do not need to touch the validity because the it can only increase
 
@@ -581,31 +547,29 @@ void UpdateManagerSvc::unlink(Item *parent, Item *child){
 void UpdateManagerSvc::i_unregister(void *instance){
   if ( FSMState() < Gaudi::StateMachine::INITIALIZED ){
     // un-registration is allowed after service finalize (no-op).
-    if ( m_outputLevel <= MSG::VERBOSE ) {
-      MsgStream log(msgSvc(),name());
-      log << MSG::VERBOSE << "Trying to unregister object at " << instance
+    if ( msgLevel(MSG::VERBOSE) ) {
+      verbose() << "Trying to unregister object at " << instance
           << ", with the service OFFLINE"<< endmsg;
     }
     return;
   }
 
-  if ( m_outputLevel <= MSG::VERBOSE ) {
-    MsgStream log(msgSvc(),name());
-    log << MSG::VERBOSE << "Unregister object at " << instance << endmsg;
+  if ( msgLevel(MSG::VERBOSE) ) {
+    verbose() << "Unregister object at " << instance << endmsg;
   }
 
   Item *item = findItem(instance);
   if (item){
 
     // unlink from parents
-    Item::ParentList::iterator p = item->parents.begin();
+    auto p = item->parents.begin();
     while ( p != item->parents.end() ) {
       unlink(p->first,item);
       p = item->parents.begin();
     }
 
     // unlink from children
-    Item::ItemList::iterator c = item->children.begin();
+    auto c = item->children.begin();
     while ( c != item->children.end() ) {
       unlink(item,(*c));
       c = item->children.begin();
@@ -628,12 +592,10 @@ void UpdateManagerSvc::dump(){
     throw GaudiException("Service offline","UpdateManagerSvc::dump",StatusCode::FAILURE);
   }
 
-  MsgStream log(msgSvc(),name());
-
   std::unique_ptr<std::ofstream> dot_file;
 
   if ( !m_dotDumpFile.empty() ){
-    dot_file.reset(new std::ofstream(m_dotDumpFile.c_str()));
+    dot_file = std::make_unique<std::ofstream>(m_dotDumpFile.c_str());
   }
 
   if (dot_file) {
@@ -641,22 +603,22 @@ void UpdateManagerSvc::dump(){
     (*dot_file) << "digraph " << name() << " {\n";
   }
 
-  if ( m_outputLevel <= MSG::VERBOSE ) {
-    log << MSG::VERBOSE << "--- Dump" << endmsg;
-    log << MSG::VERBOSE << "    " << m_all_items.size() << " items registered" << endmsg;
-    log << MSG::VERBOSE << "     of which " << m_head_items.size() << " in the head" << endmsg;
-    log << MSG::VERBOSE << "         head IOV = " << m_head_since << " - " << m_head_until << endmsg;
+  if ( msgLevel(MSG::VERBOSE) ) {
+    verbose() << "--- Dump" << endmsg;
+    verbose() << "    " << m_all_items.size() << " items registered" << endmsg;
+    verbose() << "     of which " << m_head_items.size() << " in the head" << endmsg;
+    verbose() << "         head IOV = " << m_head_since << " - " << m_head_until << endmsg;
   }
 
   size_t cnt = 0, head_cnt = 0;
   for (auto i = m_all_items.begin(); i != m_all_items.end(); ++i){
-    if ( m_outputLevel <= MSG::VERBOSE ) {
-      log << MSG::VERBOSE << "--item " << cnt++ << " " << std::hex << *i << std::dec;
+    if ( msgLevel(MSG::VERBOSE) ) {
+      verbose() << "--item " << cnt++ << " " << std::hex << *i << std::dec;
       if ((*i)->isHead()){
-        log << " (head)";
+        msgStream() << " (head)";
         ++head_cnt;
       }
-      log << endmsg;
+      msgStream() << endmsg;
     }
 
     if (dot_file) {
@@ -668,11 +630,11 @@ void UpdateManagerSvc::dump(){
     		  << "(" << (*i)->ptr << ")";
     }
 
-    if ( m_outputLevel <= MSG::VERBOSE )
-      log << MSG::VERBOSE << "       ptr  = " << std::hex << (*i)->ptr << std::dec << endmsg;
+    if ( msgLevel(MSG::VERBOSE) )
+      verbose() << "       ptr  = " << std::hex << (*i)->ptr << std::dec << endmsg;
     if ( !(*i)->path.empty() ) {
-      if ( m_outputLevel <= MSG::VERBOSE )
-        log << MSG::VERBOSE << "       path = " << (*i)->path << endmsg;
+      if ( msgLevel(MSG::VERBOSE) )
+        verbose() << "       path = " << (*i)->path << endmsg;
       if (dot_file) {
         // If we have the path, we can put it in the graph label
         (*dot_file) << "\\n" << (*i)->path;
@@ -690,25 +652,25 @@ void UpdateManagerSvc::dump(){
       (*dot_file) << "\"];\n";
     }
 
-    if ( m_outputLevel <= MSG::VERBOSE )
-      log << MSG::VERBOSE << "        IOV = " << (*i)->since << " - " << (*i)->until << endmsg;
+    if ( msgLevel(MSG::VERBOSE) )
+      verbose() << "        IOV = " << (*i)->since << " - " << (*i)->until << endmsg;
     if ((*i)->memFuncs.size()){
-      if ( m_outputLevel <= MSG::VERBOSE )
-        log << MSG::VERBOSE << "       depend on :" << endmsg;
+      if ( msgLevel(MSG::VERBOSE) )
+        verbose() << "       depend on :" << endmsg;
       for (auto mfIt = (*i)->memFuncs.begin(); mfIt != (*i)->memFuncs.end(); ++mfIt){
-        if ( m_outputLevel <= MSG::VERBOSE )
-          log << MSG::VERBOSE << std::hex << "                  ";
-        for (auto itemIt = mfIt->items->begin(); itemIt != mfIt->items->end(); ++itemIt){
-          if ( m_outputLevel <= MSG::VERBOSE )
-            log << " " << *itemIt;
+        if ( msgLevel(MSG::VERBOSE) )
+          verbose() << std::hex << "                  ";
+        for (auto itemIt = mfIt->items.begin(); itemIt != mfIt->items.end(); ++itemIt){
+          if ( msgLevel(MSG::VERBOSE) )
+            msgStream() << " " << *itemIt;
           if (dot_file) {
             // Add an arrow to the graph connecting the user Item to the
             // used Item
             (*dot_file) << "item_" << std::hex << *i << " -> " << "item_" << std::hex << *itemIt << ";\n";
           }
         }
-        if ( m_outputLevel <= MSG::VERBOSE )
-          log << std::dec << endmsg;
+        if ( msgLevel(MSG::VERBOSE) )
+          msgStream() << std::dec << endmsg;
       }
     }
   }
@@ -716,17 +678,14 @@ void UpdateManagerSvc::dump(){
   if (dot_file) {
     // DIA header
     (*dot_file) << "}\n";
-    log << MSG::ALWAYS << "DOT file '" << m_dotDumpFile << "' written" << endmsg;
+    always() << "DOT file '" << m_dotDumpFile << "' written" << endmsg;
   }
 
-  if ( m_outputLevel <= MSG::VERBOSE ) {
-      log << MSG::VERBOSE << "Found " << head_cnt << " head items: ";
-      if (m_head_items.size() == head_cnt){
-        log << "OK";
-      } else {
-        log << "MISMATCH!!!!!";
-      }
-      log << endmsg;
+  if ( msgLevel(MSG::VERBOSE) ) {
+      verbose() << "Found " << head_cnt << " head items: ";
+      msgStream() << ( m_head_items.size() == head_cnt ? "OK"
+                                                       : "MISMATCH!!!!!" )
+                  << endmsg;
   }
 }
 
@@ -736,9 +695,7 @@ void UpdateManagerSvc::purge() {
     throw GaudiException("Service offline","UpdateManagerSvc::purge",StatusCode::FAILURE);
   }
 
-  MsgStream log(msgSvc(),name());
-
-  log << MSG::INFO << "Purging dependencies network" << endmsg;
+  info() << "Purging dependencies network" << endmsg;
 
   // first I make a copy of the list of objects
   //Item::ItemList items_copy(m_all_items);
@@ -747,10 +704,8 @@ void UpdateManagerSvc::purge() {
   //Gaudi::Time head_copy_since(Gaudi::Time::epoch());
   //Gaudi::Time head_copy_until(Gaudi::Time::max());
 
-  
   for (auto& item : m_all_items ) {
-    item->purge(&log);
-
+    item->purge(&msgStream());
     if ( ! item->path.empty() ) {
       auto& children = item->children;
       // remove connections to children if the object is going to be reloaded
@@ -825,12 +780,11 @@ void UpdateManagerSvc::setValidity(const std::string path, const Gaudi::Time& si
 //=========================================================================
 void UpdateManagerSvc::handle(const Incident &inc) {
   if ( inc.type() == IncidentType::BeginEvent ) {
-    MsgStream log( msgSvc(), name() );
-    if( m_outputLevel <= MSG::DEBUG )
-      log << MSG::DEBUG << "New BeginEvent incident received" << endmsg;
+    if( msgLevel(MSG::DEBUG) )
+      debug() << "New BeginEvent incident received" << endmsg;
     StatusCode sc = UpdateManagerSvc::newEvent();
     if (!sc.isSuccess()) {
-      log << MSG::FATAL << "***** The update failed. I schedule a stop of the run *****" << endmsg;
+      fatal() << "***** The update failed. I schedule a stop of the run *****" << endmsg;
       m_evtProc->stopRun();
       // The exception is ignored by the IncidentSvc
       // throw UpdateManagerException("Failed to perform the update","*UpdateManagerSvc*",sc);

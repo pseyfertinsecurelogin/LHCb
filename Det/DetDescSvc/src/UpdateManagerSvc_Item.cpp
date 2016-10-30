@@ -19,16 +19,9 @@
 // Destructor
 //=============================================================================
 UpdateManagerSvc::Item::~Item() {
-  for (MembFuncList::const_iterator mi = memFuncs.begin();
-       mi != memFuncs.end(); ++mi) {
-    delete mi->mf;
-    delete mi->items;
-  }
+  for (auto& mi : memFuncs) delete mi.mf;
   // I'm the owner of the list of user's pointer setters: delete them!
-  for (UserPtrList::iterator pi = user_dest_ptrs.begin();
-       pi != user_dest_ptrs.end(); ++pi){
-    delete pi->first;
-  }
+  for (auto& pi : user_dest_ptrs) delete pi.first;
 }
 //=============================================================================
 // Main method. Used to update the object and all the used ones.
@@ -41,7 +34,7 @@ StatusCode UpdateManagerSvc::Item::update(IDataProviderSvc *dp,const Gaudi::Time
     if( log.level() <= MSG::VERBOSE )
       log << MSG::VERBOSE << "    initial validity: " << since << " -> " << until << endmsg;
   }
-  
+
   if (updateLock) {
     if( log.level() <= MSG::VERBOSE )
       log << MSG::VERBOSE << "Update lock found: break loop" << endmsg;
@@ -90,7 +83,6 @@ StatusCode UpdateManagerSvc::Item::update(IDataProviderSvc *dp,const Gaudi::Time
         }
         // to avoid memory leaks, I have to delete the overriding object
         delete override;
-        //override->release();
         override = nullptr;
       } else { // I cannot update the object, so I replace it.
         //   let's unregister the original object
@@ -156,13 +148,13 @@ StatusCode UpdateManagerSvc::Item::update(IDataProviderSvc *dp,const Gaudi::Time
   // object internal data are up-to-date, now check what it depends on
   if( log.level() <= MSG::VERBOSE )
     log << MSG::VERBOSE << "Enter dependencies update loop" << endmsg;
-  for (MembFuncList::iterator mfIt = memFuncs.begin(); mfIt != memFuncs.end(); ++mfIt){
+  for (auto mfIt = memFuncs.begin(); mfIt != memFuncs.end(); ++mfIt){
     if (!mfIt->isValid(when)) { // only if one the children of the member function need an update
       size_t n = mfIt - memFuncs.begin();
       if( log.level() <= MSG::VERBOSE )
         log << MSG::VERBOSE << "Loop over dependencies of m.f. " << n << endmsg;
       mfIt->resetIOV();
-      for (ItemList::iterator itemIt = mfIt->items->begin(); itemIt != mfIt->items->end(); ++itemIt){
+      for (auto itemIt = mfIt->items.begin(); itemIt != mfIt->items.end(); ++itemIt){
         sc = (*itemIt)->update(dp, when, log, inInit);
         if (!sc.isSuccess()) return sc;
         // child item updated, update mf's IOV
@@ -204,9 +196,9 @@ BaseObjectMemberFunction * UpdateManagerSvc::Item::addChild(BaseObjectMemberFunc
     if (mfIt->mf != thisMF)
       delete thisMF;
   }
-  if (std::find(mfIt->items->begin(),mfIt->items->end(),child) == mfIt->items->end()){
+  if (std::find(mfIt->items.begin(),mfIt->items.end(),child) == mfIt->items.end()){
     // it is a new child (not in current m.f. list)
-    mfIt->items->push_back(child);
+    mfIt->items.push_back(child);
 
     // intersect M.F. validity with the new child
     if (mfIt->since < child->since) mfIt->since = child->since;

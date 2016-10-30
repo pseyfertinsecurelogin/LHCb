@@ -53,13 +53,13 @@ struct Item final {
   /// Used inside Item to identify a registered member function.
   struct MembFunc final {
     /// Simple constructor.
-    MembFunc(BaseObjectMemberFunction *mf_p): mf(mf_p) { items = new ItemList; }
+    MembFunc(BaseObjectMemberFunction *mf_p): mf(mf_p) { }
     /// Simple destructor. The pointers are not deleted because \e owned by the item.
     ~MembFunc() = default;
     /// Pointer to the registered member function.
     BaseObjectMemberFunction *mf;
     /// List of the items used by this member function
-    ItemList                 *items;
+    ItemList  items;
     /// Time points delimiting the interval of validity of the member function
     /// (intersection of the intervals of validity of the used items).
     Gaudi::Time              since{1},until{0};
@@ -146,7 +146,7 @@ struct Item final {
 
   inline StatusCode setUserPointers(DataObject  *pObj, bool force = false)
   {
-    for (UserPtrList::iterator pi = user_dest_ptrs.begin(); pi != user_dest_ptrs.end(); ++pi){
+    for (auto pi = user_dest_ptrs.begin(); pi != user_dest_ptrs.end(); ++pi){
       if (!force){
         if ( pi->first->isNull() ){
           pi->first->set(pObj);

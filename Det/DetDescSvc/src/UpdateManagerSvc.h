@@ -97,7 +97,7 @@ protected:
 
   /// Register a condition for an object together with the destination for the pointer to the condition object.
   void i_registerCondition(const std::string &condition, BaseObjectMemberFunction *mf,
-                                 BasePtrSetter *ptr_dest = NULL) override;
+                                 BasePtrSetter *ptr_dest = nullptr) override;
 
   /// Register a condition for an object
   void i_registerCondition(void *obj, BaseObjectMemberFunction *mf) override;
@@ -147,7 +147,7 @@ private:
 
   // ---------- data members ----------
   /// Handle to the Data Provider (where to find conditions).
-  IDataProviderSvc *m_dataProvider;
+  SmartIF<IDataProviderSvc> m_dataProvider;
 
   /// Name of the Data Provider (set by the option DataProviderSvc, by default "DetectorDataSvc").
   std::string       m_dataProviderName;
@@ -158,16 +158,16 @@ private:
   /// Handle to the IDetDataSvc interface (used to get the event time).
   /// If the service is not found it is not fatal, but you cannot use the method newEvent()
   /// without the event time parameter (will always fail).
-  IDetDataSvc      *m_detDataSvc;
+  SmartIF<IDetDataSvc> m_detDataSvc;
 
   /// Name of the DetDataSvc (set by the option DetDataSvc, by default empty, which means <i>the same as data provider</i>).
   std::string       m_detDataSvcName;
 
   /// Pointer to the incident service;
-  IIncidentSvc     *m_incidentSvc;
+  SmartIF<IIncidentSvc> m_incidentSvc;
 
   /// Pointer to the event processor in order to be able to top the run if something goes wrpong during an update.
-  IEventProcessor  *m_evtProc;
+  SmartIF<IEventProcessor> m_evtProc;
 
   /// List used to keep track of all the registered items.
   Item::ItemList    m_all_items;
