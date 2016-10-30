@@ -1,4 +1,3 @@
-// $Id: PackMCVertex.cpp,v 1.7 2009-11-26 10:50:49 cattanem Exp $
 // Include files
 
 // from Boost
@@ -30,11 +29,6 @@ DECLARE_ALGORITHM_FACTORY( PackMCVertex )
   declareProperty( "AlwaysCreateOutput",         m_alwaysOutput = false     );
   declareProperty( "DeleteInput",                m_deleteInput  = false     );
 }
-
-//=============================================================================
-// Destructor
-//=============================================================================
-PackMCVertex::~PackMCVertex() {}
 
 //=============================================================================
 // Main execution

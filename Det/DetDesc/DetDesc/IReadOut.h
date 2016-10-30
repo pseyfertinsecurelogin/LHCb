@@ -14,7 +14,7 @@
     @date December 2001
 *///--------------------------------------------------------------------------
 
-class IReadOut : virtual public IConditionInfo
+struct IReadOut : virtual IConditionInfo
 {
 
 };

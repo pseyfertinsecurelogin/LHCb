@@ -74,7 +74,7 @@ private:
   }
 
 protected:
-  void cleanDigit(LHCb::CaloDigit* digit, bool substr=true,int scale = -1, bool mask=true,bool spd=false);
+  void cleanDigit(LHCb::CaloDigit& digit, bool substr=true,int scale = -1, bool mask=true,bool spd=false);
 
 private:
   std::map<std::string,int> m_maskMap;

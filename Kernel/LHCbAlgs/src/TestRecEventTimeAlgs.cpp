@@ -28,7 +28,7 @@ namespace LHCbAlgsTest
 
     virtual ~CreateFakeRecHeader() = default;
 
-    virtual StatusCode initialize()
+    StatusCode initialize() override
     {
       StatusCode sc = base_class::initialize();
       if (sc.isFailure())
@@ -50,7 +50,7 @@ namespace LHCbAlgsTest
       return sc;
     }
 
-    virtual void handle(const Incident&)
+    void handle(const Incident&) override
     {
       Gaudi::Time t = m_timeDecoder->getTime();
       info() << "Adding RecHeader with event time " << t << endmsg;

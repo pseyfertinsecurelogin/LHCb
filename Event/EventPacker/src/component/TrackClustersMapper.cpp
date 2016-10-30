@@ -25,10 +25,6 @@ TrackClustersMapper::TrackClustersMapper( const std::string& type,
 
 // ============================================================================
 
-TrackClustersMapper::~TrackClustersMapper() {}
-
-// ============================================================================
-
 Gaudi::Utils::TypeNameString
 TrackClustersMapper::algorithmForPath( const std::string & path )
 {

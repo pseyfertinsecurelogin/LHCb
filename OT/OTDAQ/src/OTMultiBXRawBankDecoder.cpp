@@ -54,39 +54,39 @@ public:
   virtual ~OTMultiBXRawBankDecoder( ) ; ///< Destructor
 
   /// Tool initialization
-  virtual StatusCode initialize();
+  StatusCode initialize() override;
 
   /// Tool finalize
-  virtual StatusCode finalize();
+  StatusCode finalize() override;
 
   /// Decode data for a single module
-  virtual LHCb::OTLiteTimeRange decodeModule( const LHCb::OTChannelID& moduleId ) const ;
+  LHCb::OTLiteTimeRange decodeModule( const LHCb::OTChannelID& moduleId ) const  override;
 
   /// Decode all gol headers
-  virtual StatusCode decodeGolHeaders() const { return m_decoder->decodeGolHeaders() ; }
+  StatusCode decodeGolHeaders() const override { return m_decoder->decodeGolHeaders() ; }
 
   /// Decode all gol headers.
-  virtual StatusCode decodeGolHeaders(const LHCb::RawEvent& rawevent) const { return m_decoder->decodeGolHeaders(rawevent) ;}
+  StatusCode decodeGolHeaders(const LHCb::RawEvent& rawevent) const override { return m_decoder->decodeGolHeaders(rawevent) ;}
 
   /// Decode all modules
-  virtual StatusCode decode( LHCb::OTLiteTimeContainer& ottimes ) const ;
+  StatusCode decode( LHCb::OTLiteTimeContainer& ottimes ) const  override;
 
   /// Translate the raw bank in an ot-specific raw bank.
-  virtual StatusCode decode( OTDAQ::RawEvent& otevent ) const ;
+  StatusCode decode( OTDAQ::RawEvent& otevent ) const  override;
 
   /// Retrieve the total number of hits in the OT without actually
   /// decoding the modules. Useful in pattern reco to remove full
   /// events.
-  virtual size_t totalNumberOfHits() const ;
+  size_t totalNumberOfHits() const  override;
 
   /// Get the conversion factor
-  virtual double nsPerTdcCount() const { return m_decoder->nsPerTdcCount() ; }
+  double nsPerTdcCount() const override { return m_decoder->nsPerTdcCount() ; }
 
   /// Create a single OTLiteTime
-  virtual LHCb::OTLiteTime time( LHCb::OTChannelID channel ) const ;
+  LHCb::OTLiteTime time( LHCb::OTChannelID channel ) const  override;
 
 protected:
-  virtual void handle ( const Incident& incident );
+  void handle ( const Incident& incident ) override;
   StatusCode decodeAll() const ;
 
 private:

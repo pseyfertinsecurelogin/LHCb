@@ -20,10 +20,8 @@
 ODINCodecBaseTool::ODINCodecBaseTool( const std::string& type,
                                       const std::string& name,
                                       const IInterface* parent )
-  : Decoder::ToolBase ( type, name , parent )
+  : base_class( type, name , parent )
 {
-  declareInterface<IGenericTool>(this);
-
   declareProperty("Force", m_force = false,
                   "If already present, override the destination object.");
   declareProperty("IgnoreUnknownBankVersion", m_ignoreBankVersion = false,

@@ -1,4 +1,4 @@
-#ifndef MULTIDBTEST_H 
+#ifndef MULTIDBTEST_H
 #define MULTIDBTEST_H 1
 
 // Include files
@@ -9,28 +9,28 @@ class Condition;
 class AlignmentCondition;
 
 /** @class MultiDBTest MultiDBTest.h
- *  
+ *
  *  Algorithm to test the multi-db functionality.
  *
  *  @author Marco Clemencic
  *  @date   2005-05-12
  */
 class MultiDBTest : public GaudiAlgorithm {
-public: 
+public:
   /// Standard constructor
   MultiDBTest( const std::string& name, ISvcLocator* pSvcLocator );
 
   virtual ~MultiDBTest( ); ///< Destructor
 
-  virtual StatusCode initialize();    ///< Algorithm initialization
-  virtual StatusCode execute   ();    ///< Algorithm execution
+  StatusCode initialize() override;    ///< Algorithm initialization
+  StatusCode execute   () override;    ///< Algorithm execution
 
 protected:
 
 private:
 
   Condition *m_cond1, *m_cond2;
-  AlignmentCondition *m_align1; 
-  
+  AlignmentCondition *m_align1;
+
 };
 #endif // MULTIDBTEST_H

@@ -1,27 +1,26 @@
 #ifndef   CHECKCALOBANK_H
 #define   CHECKCALOBANK_H 1
 
-// from Gaudi 
+// from Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
 // from Event
 #include "Event/RawEvent.h"
 
-/** @class CheckCaloBank CheckCaloBank.h   
+/** @class CheckCaloBank CheckCaloBank.h
  *
  *    @author: Olivier Deschamps
  *    @date:   O6 Septembre 2006
  */
 
-class CheckCaloBank : public GaudiAlgorithm { 
- public:
-  
+class CheckCaloBank : public GaudiAlgorithm {
+public:
+
   CheckCaloBank( const std::string& name, ISvcLocator* pSvcLocator);
-  
   StatusCode initialize() override;
   StatusCode execute   () override;
-  
-  
- private:   
+
+
+private:
   LHCb::RawBank::BankType m_trig;
   LHCb::RawBank::BankType m_bank;
   std::string m_typ;

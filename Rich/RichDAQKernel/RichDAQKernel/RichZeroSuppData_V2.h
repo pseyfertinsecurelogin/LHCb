@@ -84,7 +84,7 @@ namespace Rich
          *  @param data     Pointer to the start of the data block
          *  @param dataSize The size of the data block (excluding header HPD word)
          */
-        inline void reset( const LongType * data, 
+        inline void reset( const LongType * data,
                            const ShortType dataSize )
         {
           m_tooBig = false;
@@ -95,11 +95,11 @@ namespace Rich
         virtual ~RichZeroSuppData() = default;
 
         // Returns the hit count for this HPD
-        virtual ShortType hitCount() const final;
+        ShortType hitCount() const override final;
 
         // Fill a vector with RichSmartIDs for hit pixels
-        virtual ShortType fillRichSmartIDs( LHCb::RichSmartID::Vector & ids,
-                                            const LHCb::RichSmartID hpdID ) const final;
+        ShortType fillRichSmartIDs( LHCb::RichSmartID::Vector & ids,
+                                    const LHCb::RichSmartID hpdID ) const override final;
 
         // Test if this bank would be too big ( i.e. greater than 32 words )
         inline bool tooBig() const noexcept { return m_tooBig; }

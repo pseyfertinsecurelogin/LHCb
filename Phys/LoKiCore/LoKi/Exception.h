@@ -67,7 +67,7 @@ namespace LoKi
      *  @see GaudiException
      *  @return the clone
      */
-    virtual Exception* clone() const;
+    Exception* clone() const override;
     // ========================================================================
   private:
     // ========================================================================

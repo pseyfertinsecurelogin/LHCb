@@ -1,4 +1,3 @@
-
 // Local
 #include "UnpackerBaseAlg.h"
 
@@ -16,9 +15,6 @@ Unpack<PACKER>::Unpack( const std::string& name,
   declareProperty( "OutputName", m_outputName = PACKER::unpackedLocation() );
   declareProperty( "AlwaysCreateOutput",        m_alwaysOutput = false     );
 }
-
-template < class PACKER >
-Unpack<PACKER>::~Unpack() { }
 
 template < class PACKER >
 StatusCode Unpack<PACKER>::initialize()

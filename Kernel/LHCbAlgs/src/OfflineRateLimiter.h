@@ -1,4 +1,4 @@
-#ifndef OFFLINERATELIMITER_H 
+#ifndef OFFLINERATELIMITER_H
 #define OFFLINERATELIMITER_H 1
 
 // Include files
@@ -42,7 +42,7 @@ class OfflineRateLimiter final : public OfflineDeterministicPrescaler
   OfflineRateLimiter( const std::string& name, ISvcLocator* pSvcLocator );
 
   virtual ~OfflineRateLimiter( ) = default; ///< Destructor
-  virtual StatusCode execute ( ); ///< Algorithm execution
+  StatusCode execute ( ) override; ///< Algorithm execution
 
  private:
 

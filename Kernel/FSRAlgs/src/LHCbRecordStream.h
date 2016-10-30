@@ -18,9 +18,9 @@ public:
   /// Standard Destructor
   virtual ~LHCbRecordStream() {}
   /// Algorithm overload: finalization
-  virtual StatusCode finalize();
+  StatusCode finalize() override;
   /// Runrecords do not get written for each event: Event processing hence dummy....
-  virtual StatusCode execute() {  return StatusCode::SUCCESS; }
+  StatusCode execute() override {  return StatusCode::SUCCESS; }
 };
 
 #endif // LHCB_RECORDSTREAM_H

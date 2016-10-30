@@ -49,15 +49,15 @@ namespace L0Muon {
     ~BCSUnit();
 
     /// Overloads from Unit : initialize the CandRegisterHandler
-    void initialize();
+    void initialize() override;
 
     /** Overloads from Unit : add the PU number to the input candidate,
         select best candidates and fill output register
     */
-    void execute();
+    void execute() override;
 
     /// Give a static type name to the unit
-    std::string type() {
+    std::string type() override {
       return "BCSUnit";
     }
 

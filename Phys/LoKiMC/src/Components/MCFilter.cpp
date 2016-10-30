@@ -1,9 +1,9 @@
 // ============================================================================
-// Include files 
+// Include files
 // ============================================================================
 #include "GaudiAlg/FilterPredicate.h"
 // ============================================================================
-// MCEvent 
+// MCEvent
 // ============================================================================
 #include "Event/MCParticle.h"
 // ============================================================================
@@ -15,12 +15,12 @@
 // ============================================================================
 /** @file
  *
- *  This file is a part of LoKi project - 
+ *  This file is a part of LoKi project -
  *    "C++ ToolKit  for Smart and Friendly Physics Analysis"
  *
  *  The package has been designed with the kind help from
- *  Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas, 
- *  contributions and advices from G.Raven, J.van Tilburg, 
+ *  Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas,
+ *  contributions and advices from G.Raven, J.van Tilburg,
  *  A.Golutvin, P.Koppenburg have been used in the design.
  *
  */
@@ -32,12 +32,12 @@ namespace
     LoKi::BasicFunctors<LHCb::MCParticle::ConstVector>::BooleanConstant ( false ) ;
   // ==========================================================================
 }
-namespace LoKi 
+namespace LoKi
 {
   // ==========================================================================
-  /** @class MCFilter 
+  /** @class MCFilter
    *  Simple filtering algorithm bases on LoKi/Bender "hybrid" framework
-   *  for filtering according to MC -information 
+   *  for filtering according to MC -information
    *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
    *  @date 2011-06-02
    */
@@ -62,62 +62,60 @@ namespace LoKi
       return StatusCode::SUCCESS ;
     }
     // ========================================================================
-    /** standard constructor 
-     *  @see LoKi::FilterAlg 
-     *  @see GaudiAlgorithm 
-     *  @see      Algorithm 
+    /** standard constructor
+     *  @see LoKi::FilterAlg
+     *  @see GaudiAlgorithm
+     *  @see      Algorithm
      *  @see      AlgFactory
      *  @see     IAlgFactory
-     *  @param name the algorithm instance name 
-     *  @param pSvc pointer to Service Locator 
+     *  @param name the algorithm instance name
+     *  @param pSvc pointer to Service Locator
      */
     MCFilter
-    ( const std::string& name ,    // the algorithm instance name 
+    ( const std::string& name ,    // the algorithm instance name
       ISvcLocator*       pSvc ) ; // pointer to the service locator
     // ========================================================================
-    /// the default constructor is disabled 
-    MCFilter () = delete;                // the default constructor is disabled
-    /// the copy constructor is disabled 
+    /// the copy constructor is disabled
     MCFilter ( const MCFilter& ) = delete;  // the copy constructor is disabled
-    /// the assignement operator is disabled 
+    /// the assignement operator is disabled
     MCFilter& operator=( const MCFilter& ) = delete;// the assignement is disabled
     // ========================================================================
   private:
     // ========================================================================
-    /// the functor itself 
+    /// the functor itself
     LoKi::Types::MCCutVal m_cut = s_NONE; // the functor itself
-    /// TES location of LHCb::MCParticle::Container object 
+    /// TES location of LHCb::MCParticle::Container object
     std::string m_location ;     // TES location of LHCb::MCParticle::Container
     // ========================================================================
   };
   // ==========================================================================
-} //                                                      end of namespace LoKi 
+} //                                                      end of namespace LoKi
 // ============================================================================
 // ============================================================================
-/* standard constructor 
- *  @see LoKi::FilterAlg 
- *  @see GaudiAlgorithm 
- *  @see      Algorithm 
+/* standard constructor
+ *  @see LoKi::FilterAlg
+ *  @see GaudiAlgorithm
+ *  @see      Algorithm
  *  @see      AlgFactory
  *  @see     IAlgFactory
- *  @param name the algorithm instance name 
- *  @param pSvc pointer to Service Locator 
+ *  @param name the algorithm instance name
+ *  @param pSvc pointer to Service Locator
  */
 // ===========================================================================
 LoKi::MCFilter::MCFilter
-( const std::string& name , // the algorithm instance name 
+( const std::string& name , // the algorithm instance name
   ISvcLocator*       pSvc ) // pointer to the service locator
   : FilterPredicate ( name , pSvc ,
                       KeyValue{ "Location", LHCb::MCParticleLocation::Default } )
 {
   StatusCode sc = setProperty ( "Code" , "~MCEMPTY" ) ;
   Assert ( sc.isSuccess () , "Unable (re)set property 'Code'"    , sc ) ;
-  sc = setProperty 
+  sc = setProperty
     ( "Factory" , "LoKi::Hybrid::MCTool/MCFactory:PUBLIC" ) ;
   Assert ( sc.isSuccess () , "Unable (re)set property 'Factory'" , sc ) ;
 }
 // ============================================================================
-// finalize 
+// finalize
 // ============================================================================
 StatusCode LoKi::MCFilter::finalize ()
 {
@@ -125,30 +123,29 @@ StatusCode LoKi::MCFilter::finalize ()
   return LoKi::FilterAlg::finalize () ;
 }
 // ============================================================================
-// the main method: execute 
+// the main method: execute
 // ============================================================================
 bool LoKi::MCFilter::operator() (const LHCb::MCParticle::Container& particles) const // the main method
 {
-  if ( updateRequired() ) 
-  {
+  if ( updateRequired() ) {
     StatusCode sc = const_cast<LoKi::MCFilter*>(this)->decode() ;
     Assert ( sc.isSuccess() , "Unable to decode the functor!" ) ;
   }
   //
-  // copy all particles into single vector 
+  // copy all particles into single vector
   // and use the functor
-  // 
+  //
   const bool result = m_cut ( { particles.begin(), particles.end() } ) ;
   //
   // some statistics
   //
   counter ("#passed" ) += result ;
-  // 
+  //
   return result;
-}  
+}
 // ============================================================================
 /// the factory (needed for instantiation)
 DECLARE_NAMESPACE_ALGORITHM_FACTORY(LoKi,MCFilter)
 // ============================================================================
-// The END 
+// The END
 // ============================================================================

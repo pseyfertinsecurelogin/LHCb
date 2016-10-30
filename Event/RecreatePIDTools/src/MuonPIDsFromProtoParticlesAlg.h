@@ -9,7 +9,7 @@
  */
 //-----------------------------------------------------------------------------
 
-#ifndef GLOBALRECO_MuonPIDsFromProtoParticlesAlg_H 
+#ifndef GLOBALRECO_MuonPIDsFromProtoParticlesAlg_H
 #define GLOBALRECO_MuonPIDsFromProtoParticlesAlg_H 1
 
 // from Gaudi
@@ -21,7 +21,7 @@
 
 //-----------------------------------------------------------------------------
 /** @class MuonPIDsFromProtoParticlesAlg MuonPIDsFromProtoParticlesAlg.h
- *  
+ *
  *  Simple algorithm to recreate MuonPID data objects from the data
  *  stored in the ProtoParticles
  *
@@ -30,18 +30,18 @@
  */
 //-----------------------------------------------------------------------------
 
-class MuonPIDsFromProtoParticlesAlg : public GaudiAlgorithm 
+class MuonPIDsFromProtoParticlesAlg : public GaudiAlgorithm
 {
 
-public: 
+public:
 
   /// Standard constructor
   MuonPIDsFromProtoParticlesAlg( const std::string& name, ISvcLocator* pSvcLocator );
 
   virtual ~MuonPIDsFromProtoParticlesAlg( ); ///< Destructor
 
-  virtual StatusCode initialize();    ///< Algorithm initialization
-  virtual StatusCode execute   ();    ///< Algorithm execution
+  StatusCode initialize() override;    ///< Algorithm initialization
+  StatusCode execute   () override;    ///< Algorithm execution
 
 private:
 

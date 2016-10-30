@@ -33,14 +33,14 @@ public:
   virtual ~BdlTool();
 
   /// Initialize
-  StatusCode initialize();
+  StatusCode initialize() override;
 
   /// Finalize()
-  StatusCode finalize();
+  StatusCode finalize() override;
 
   /// Actual operator function
-  double bdlIntegral(double ySlopeVelo,double zOrigin,double zVelo);
-  double zBdlMiddle(double ySlopeVelo,double zOrigin,double zVelo);
+  double bdlIntegral(double ySlopeVelo,double zOrigin,double zVelo) override;
+  double zBdlMiddle(double ySlopeVelo,double zOrigin,double zVelo) override;
 
 protected:
   void f_bdl(double slopeY, double zOrigin , double zStart, double zStop);

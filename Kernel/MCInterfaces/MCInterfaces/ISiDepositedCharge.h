@@ -1,4 +1,3 @@
-// $Id: ISiDepositedCharge.h,v 1.1.1.1 2007-05-25 16:24:33 cattanem Exp $
 #ifndef _ISiDepositedCharge_H
 #define _ISiDepositedCharge_H
 
@@ -17,14 +16,11 @@ namespace LHCb{
  */
 
 // Declaration of the interface ID ( interface id, major version, minor version) 
-static const InterfaceID IID_ISiDepositedCharge("ISiDepositedCharge", 0 , 0); 
 
-class ISiDepositedCharge : virtual public IAlgTool {
-
-public: 
+struct ISiDepositedCharge : extend_interfaces<IAlgTool> {
 
   /** Static access to interface id */
-  static const InterfaceID& interfaceID() { return IID_ISiDepositedCharge; }
+  DeclareInterfaceID(ISiDepositedCharge, 1 , 0); 
    
   /** calculate deposited charge (in electrons)
   * @param  aHit hit 
@@ -35,7 +31,3 @@ public:
 };
 
 #endif // _ISiDepositedCharge_H
-
-
-
-

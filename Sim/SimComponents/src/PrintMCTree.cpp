@@ -26,17 +26,10 @@ DECLARE_ALGORITHM_FACTORY( PrintMCTree )
 PrintMCTree::PrintMCTree( const std::string& name,
                           ISvcLocator* pSvcLocator)
   : GaudiAlgorithm ( name , pSvcLocator )
-    ,  m_printMCTree(0)
-    ,  m_particleNames()
-    ,  m_particleIDs()
 {
   declareProperty( "ParticleNames", m_particleNames );
-  declareProperty( "Depth", m_depth = -1 );
+  declareProperty( "Depth", m_depth );
 }
-//=============================================================================
-// Destructor
-//=============================================================================
-PrintMCTree::~PrintMCTree() {}
 
 //=============================================================================
 // Initialization
@@ -54,19 +47,16 @@ StatusCode PrintMCTree::initialize() {
 
   m_printMCTree = tool<IPrintMCDecayTreeTool>( "PrintMCDecayTreeTool", this );
 
-  const LHCb::IParticlePropertySvc *ppSvc =
-    svc<LHCb::IParticlePropertySvc>("LHCb::ParticlePropertySvc");
+  auto ppSvc = service<LHCb::IParticlePropertySvc>("LHCb::ParticlePropertySvc");
 
-  std::vector<std::string>::iterator PN;
-  for (PN=m_particleNames.begin() ; PN!=m_particleNames.end() ; ++PN ){
+  for (auto PN=m_particleNames.begin() ; PN!=m_particleNames.end() ; ++PN ){
     const LHCb::ParticleProperty *pp = ppSvc->find(*PN);
     if (!pp) {
       fatal() << " Unable to retrieve particle property for "
               << *PN << endmsg;
       return StatusCode::FAILURE;
     }
-    int pid = pp->pid().pid();
-    m_particleIDs.push_back(pid);
+    m_particleIDs.push_back(pp->pid().pid());
   }
 
   info() << "Will print tree for MC particles " << m_particleNames << endmsg;
@@ -88,13 +78,11 @@ StatusCode PrintMCTree::execute() {
     debug() << "There are " <<  mcparts.size() << " MC particles" << endmsg;
 
   bool printed = false ;
-  std::vector<LHCb::MCParticle*>::iterator MCP;
-  for (MCP=mcparts.begin() ; MCP!=mcparts.end() ; ++MCP ){
+  for (auto MCP=mcparts.begin() ; MCP!=mcparts.end() ; ++MCP ){
     int pid = (*MCP)->particleID().pid() ;
     if( UNLIKELY( msgLevel(MSG::VERBOSE) ) )
       verbose() << "MC Particle is a " << pid << endmsg ;
-    std::vector<int>::iterator PID;
-    for (PID=m_particleIDs.begin() ; PID!=m_particleIDs.end() ; ++PID ){
+    for (auto PID=m_particleIDs.begin() ; PID!=m_particleIDs.end() ; ++PID ){
       if ( pid==(*PID)) {
         info() << "Printing MC tree for particle with ID " << pid << endmsg ;
         m_printMCTree->printTree( (*MCP), m_depth ) ;
@@ -110,15 +98,6 @@ StatusCode PrintMCTree::execute() {
   setFilterPassed(printed);
 
   return StatusCode::SUCCESS;
-}
-
-//=============================================================================
-//  Finalize
-//=============================================================================
-StatusCode PrintMCTree::finalize() {
-
-  if( UNLIKELY( msgLevel(MSG::DEBUG) ) ) debug() << "==> Finalize" << endmsg;
-  return GaudiAlgorithm::finalize();  // must be called after all other actions
 }
 
 //=============================================================================

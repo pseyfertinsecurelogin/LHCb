@@ -1,5 +1,5 @@
 // $Id: L0DUMultiTrends.h,v 1.3 2010-02-02 11:27:02 odescham Exp $
-#ifndef L0DUMULTITRENDS_H 
+#ifndef L0DUMULTITRENDS_H
 #define L0DUMULTITRENDS_H 1
 
 // Include files
@@ -16,7 +16,7 @@
 #include "L0Interfaces/IL0DUFromRawTool.h"
 
 /** @class L0DUMultiTrends L0DUMultiTrends.h
- *  L0 Processors (L0Calo/L0Muon/PUVETO) -> L0DU 
+ *  L0 Processors (L0Calo/L0Muon/PUVETO) -> L0DU
  *  bit assignment from EDMS 528259
  *
  *  @author Olivier Deschamps
@@ -28,9 +28,9 @@ public:
   L0DUMultiTrends( const std::string& name, ISvcLocator* pSvcLocator );
 
   virtual ~L0DUMultiTrends( ); ///< Destructor
-  virtual StatusCode initialize();    ///< Algorithm initialization
-  virtual StatusCode execute   ();    ///< Algorithm execution
-  virtual StatusCode finalize  ();    ///< Algorithm finalization
+  StatusCode initialize() override;    ///< Algorithm initialization
+  StatusCode execute   () override;    ///< Algorithm execution
+  StatusCode finalize  () override;    ///< Algorithm finalization
 
 protected:
 
@@ -41,7 +41,7 @@ private:
   void doRates();
   void slideHistos(int nStep);
   void booking(std::string pref="");
-  void setLabels();  
+  void setLabels();
 
   // booking/filling TCK comparaison plots
   std::map<std::string,AIDA::IHistogram1D*> m_cMap;
@@ -59,7 +59,7 @@ private:
   void tBook(std::string unit , std::string title);
   void tFill(std::string unit , int bin);
 
- 
+
   // Tools
   IL0DUConfigProvider* m_config;
   IL0DUEmulatorTool*   m_emulator;

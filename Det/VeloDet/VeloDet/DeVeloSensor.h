@@ -44,12 +44,12 @@ public:
   DeVeloSensor( const std::string& name = "" );
 
   /// object identifier (static method)
-  static  const CLID& classID() { return CLID_DeVeloSensor; };
+  static  const CLID& classID() { return CLID_DeVeloSensor; }
   /// object identification
-  virtual const CLID& clID()     const;
+  const CLID& clID()     const override;
 
   /// Initialise the DeVeloSensor from the XML
-  virtual StatusCode initialize();
+  StatusCode initialize() override;
 
   /// Calculate the nearest channel to a 3-d point.
   virtual StatusCode pointToChannel(const Gaudi::XYZPoint& point,
@@ -74,7 +74,7 @@ public:
    *
    *  This is not a residual in 3D! The supplied 3-d point is assumed
    *  to be in the plane of the sensor and the residual is computed
-   *  in this plane. No check is performed whether the point is 
+   *  in this plane. No check is performed whether the point is
    *  actually on the sensor.
    */
   virtual StatusCode residual(const Gaudi::XYZPoint& point,
@@ -94,7 +94,7 @@ public:
    *
    *  This is not a residual in 3D! The supplied 3-d point is assumed
    *  to be in the plane of the sensor and the residual is computed
-   *  in this plane. No check is performed whether the point is 
+   *  in this plane. No check is performed whether the point is
    *  actually on the sensor.
    */
   virtual StatusCode residual(const Gaudi::XYZPoint& point,
@@ -120,7 +120,7 @@ public:
   /** Propagate a line to the sensor plane in the global frame.
    *
    *  The line is defined by a 3-d point and slope vector in the
-   *  global frame. The resulting 3-d point is the intersection 
+   *  global frame. The resulting 3-d point is the intersection
    *  of the line and the sensor plane. Note that the result is
    *  not guaranteed to actually be on the sensor.
    */
@@ -268,7 +268,7 @@ public:
   inline unsigned int moduleId() const {return m_moduleId;}
 
   /// Workaround to prevent hidden base class function
-  inline const std::type_info& type(const std::string &name) const
+  inline const std::type_info& type(const std::string &name) const override
                       {return ParamValidDataObject::type(name);}
   /// Returns the sensor type
   inline std::string type() const {return m_type;}
@@ -422,9 +422,9 @@ public:
    *  Provides event-specific TELL1 information.
    *  This information is only valid after the VELO ZS decoding stage.
    *  The default state after construction or reset is 'bad', that is
-   *  the TELL1 is considered to have an error and the bank is 
+   *  the TELL1 is considered to have an error and the bank is
    *  considered not to have been decoded. The decoder will reset
-   *  and then change these flags to the true value in each event. 
+   *  and then change these flags to the true value in each event.
    *
    *  @author Kurt Rinnert
    *  @date   2011-10-05
@@ -433,9 +433,9 @@ public:
 
     public:
 
-      Tell1EventInfo() 
-        : m_hasError(true) 
-        , m_wasDecoded(false) 
+      Tell1EventInfo()
+        : m_hasError(true)
+        , m_wasDecoded(false)
       { ; }
 
       void reset() const { m_hasError=true; m_wasDecoded=false; }
@@ -454,7 +454,7 @@ public:
   // condition and event related public methods
 
 public:
-  /** Retrieve event-specific TELL1 information. 
+  /** Retrieve event-specific TELL1 information.
    *  This information is only valid after the decoding stage.
    */
   const Tell1EventInfo& tell1EventInfo() const { return m_tell1EventInfo; }

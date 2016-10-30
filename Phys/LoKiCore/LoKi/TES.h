@@ -58,7 +58,7 @@ namespace LoKi
       virtual ~Get() ;
       // ======================================================================
       /// OPTIONAL: nice printout
-      virtual std::ostream& fillStream ( std::ostream& s ) const ;
+      std::ostream& fillStream ( std::ostream& s ) const  override;
       // ======================================================================
     public:
       // ======================================================================
@@ -76,7 +76,7 @@ namespace LoKi
     protected:
       // ======================================================================
       void setLocation ( const std::string& value ) { m_location = value ; }
-      /// acquire algorithm or service 
+      /// acquire algorithm or service
       void getAlgSvc   () const ;
       // ======================================================================
     private:
@@ -144,7 +144,7 @@ namespace LoKi
       explicit Contains ( const std::string& location            ,
                           const bool         useRootInTes = true ) ;
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  Contains* clone() const override;
+      Contains* clone() const override;
       /** MANDATORY: the only one essential method
        *  @return number of elements in container, -1 for non-existing container
        */
@@ -346,7 +346,7 @@ namespace LoKi
     typedef LoKi::TES::Contains                                      CONTAINS ;
     // ========================================================================
     /** @typedef HRCSUMADC
-     *  Function to find Herschel station sum digits 
+     *  Function to find Herschel station sum digits
      *
      *  @code
      *

@@ -1,4 +1,4 @@
-#ifndef STLAYERSELECTOR_H 
+#ifndef STLAYERSELECTOR_H
 #define STLAYERSELECTOR_H 1
 
 // Include files
@@ -15,25 +15,25 @@
 
 
 /** @class STLayerSelector STLayerSelector.h
- *  
+ *
  *  Algorithm to remove clusters in excluded layers
- * 
+ *
  *  @author Ch. Elsasser
  *  @date   2012-05-02
  */
 
 
-class STLayerSelector : 
-  public virtual ISTChannelIDSelector, 
+class STLayerSelector :
+  public virtual ISTChannelIDSelector,
   public GaudiTool
 {
   friend struct ToolFactory<STLayerSelector>;
 
 public:
 
-  virtual bool select (const LHCb::STChannelID& id ) const;
-  virtual bool operator() ( const LHCb::STChannelID& id ) const;
-  virtual StatusCode initialize();    ///< Algorithm initialization
+  bool select (const LHCb::STChannelID& id ) const override;
+  bool operator() ( const LHCb::STChannelID& id ) const override;
+  StatusCode initialize() override;    ///< Algorithm initialization
 
 protected:
 
@@ -41,7 +41,7 @@ protected:
                     const std::string& name,
                     const IInterface* parent);
   virtual ~STLayerSelector();
-  
+
 
 private:
 
@@ -63,4 +63,4 @@ private:
 
 
 
-#endif // STLAYERSELECTOR_H 
+#endif // STLAYERSELECTOR_H

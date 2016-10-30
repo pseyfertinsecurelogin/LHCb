@@ -96,11 +96,11 @@ namespace Rich
         virtual ~RichZeroSuppData() = default;
 
         // Returns the hit count for this HPD
-        virtual ShortType hitCount() const final;
+        ShortType hitCount() const override final;
 
         // Fill a vector with RichSmartIDs for hit pixels
-        virtual ShortType fillRichSmartIDs( LHCb::RichSmartID::Vector & ids,
-                                            const LHCb::RichSmartID hpdID ) const final;
+        ShortType fillRichSmartIDs( LHCb::RichSmartID::Vector & ids,
+                                    const LHCb::RichSmartID hpdID ) const override final;
 
         // Test if this bank would be too big ( i.e. greater than 32 words )
         inline bool tooBig() const noexcept { return m_tooBig; }

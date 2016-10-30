@@ -28,10 +28,10 @@ namespace LHCb
   public:
 
     /// Default Destructor
-    virtual ~CircleTraj() {};
+    virtual ~CircleTraj() {}
 
     // clone thyself...
-    virtual std::unique_ptr<Trajectory> clone() const;
+    std::unique_ptr<Trajectory> clone() const override;
 
     /// Constructor from a center, the normal which defines the plane
     /// of the circle, a vector from the center to a point on the circle,
@@ -55,42 +55,42 @@ namespace LHCb
                 double radius);
 
     /// Point on the trajectory at arclength from the starting point
-    virtual Point position( double arclength ) const;
+    Point position( double arclength ) const override;
 
     /// First derivative of the trajectory at arclength from the starting point
-    virtual Vector direction( double arclength ) const;
+    Vector direction( double arclength ) const override;
 
     /// Second derivative of the trajectory at arclength from the starting point
-    virtual Vector curvature( double arclength ) const;
+    Vector curvature( double arclength ) const override;
 
     /// Create a parabolic approximation to the trajectory
     /// at arclength from the starting point
-    virtual void expansion( double arclength,
-                            Point& p,
-                            Vector& dp,
-                            Vector& ddp ) const;
+    void expansion( double arclength,
+                    Point& p,
+                    Vector& dp,
+                    Vector& ddp ) const override;
 
     /// Return arclen at which the trajectory is
     /// closest to the specified point
-    virtual double muEstimate( const Point& point ) const;
+    double muEstimate( const Point& point ) const override;
 
     /// distance along the trajectory until deviation from the
     /// 1st order expansion reaches the given tolerance.
-    virtual double distTo1stError( double arclength,
-                                   double tolerance,
-                                   int pathDirection = +1 ) const;
+    double distTo1stError( double arclength,
+                           double tolerance,
+                           int pathDirection = +1 ) const override;
 
     /// distance along trajectory until deviation from the
     /// 2nd order expansion reaches the given tolerance.
-    virtual double distTo2ndError( double arclength,
-                                   double tolerance,
-                                   int pathDirection = +1 ) const;
+    double distTo2ndError( double arclength,
+                           double tolerance,
+                           int pathDirection = +1 ) const override;
 
     /// Distance, along the Trajectory, between position(mu1) and
     /// position(mu2). Trivial because CircleTraj is parameterized in
     /// arclength.
     using Trajectory::arclength;
-    virtual double arclength(double mu1, double mu2) const { return mu2 - mu1 ; }
+    double arclength(double mu1, double mu2) const override { return mu2 - mu1 ; }
 
 #ifndef GOD_NOALLOC
     /// operator new

@@ -45,9 +45,9 @@ protected:
    * @param address ??
    * @return status depending on the completion of the call
    */
-  virtual StatusCode i_fillSpecificObj (xercesc::DOMElement* childElement,
-                                        MuonL1Board* dataObj,
-                                        IOpaqueAddress* address);
+  StatusCode i_fillSpecificObj (xercesc::DOMElement* childElement,
+                                MuonL1Board* dataObj,
+                                IOpaqueAddress* address) override;
 
 private:
 StatusCode splitList( std::string &stringList,

@@ -50,12 +50,6 @@ L0DUConfigProvider::L0DUConfigProvider( const std::string& type,
                             const std::string& name,
                             const IInterface* parent )
   : GaudiTool ( type, name , parent )
-  , m_cData(0)
-  , m_pData(0)
-  , m_template(false)
-  , m_uptodate(false)
-  , m_reOrder(false)
-  , m_reported(0)
 {
   declareInterface<IL0DUConfigProvider>(this);
   

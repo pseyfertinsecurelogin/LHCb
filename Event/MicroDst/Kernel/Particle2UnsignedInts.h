@@ -1,5 +1,5 @@
 // $Id: Particle2UnsignedInts.h,v 1.1 2010/08/19 15:09:43 jpalac Exp $
-#ifndef PARTICLE2UNSIGNEDINTS_H 
+#ifndef PARTICLE2UNSIGNEDINTS_H
 #define PARTICLE2UNSIGNEDINTS_H 1
 
 // Include files
@@ -12,15 +12,15 @@
 namespace DaVinci{
 
   namespace Map {
-    
+
 
     /** @class Particle2UnsignedInts Kernel/Particle2UnsignedInts.h
-     *  
+     *
      *
      *  @author Juan Palacios
      *  @date   2010-09-27
      */
-    class Particle2UnsignedInts : public DataObject2ObjectMap< LHCb::Particle, 
+    class Particle2UnsignedInts : public DataObject2ObjectMap< LHCb::Particle,
                                                                std::vector<unsigned int> >
     {
 
@@ -28,21 +28,21 @@ namespace DaVinci{
 
       // ======================================================================
       /// Retrieve pointer to class definition structure     (virtual)
-      virtual const CLID& clID() const 
+      const CLID& clID() const override
       {
         return Particle2UnsignedInts::classID() ;
       }
-  
-      /// Retrieve pointer to class definition structure     (static) 
+
+      /// Retrieve pointer to class definition structure     (static)
       static const CLID& classID();
-  
+
       // ======================================================================
 
     };
 
   } // namespace Map
-  
+
 } // namespace DaVinci
 
-  
+
 #endif // PARTICLE2UNSIGNEDINTS_H

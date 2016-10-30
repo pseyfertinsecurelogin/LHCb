@@ -4,7 +4,6 @@
 // Include files
 #include "GaudiKernel/IAlgTool.h"
 
-static const InterfaceID IID_IBdlTool("IBdlTool", 1 , 0);
 
 /** @class IBdlTool IBdlTool.h
  *  Interface class for field integral tool
@@ -14,13 +13,10 @@ static const InterfaceID IID_IBdlTool("IBdlTool", 1 , 0);
  *  @date   2005-09-06
  *
 */
-class IBdlTool : virtual public IAlgTool 
+struct IBdlTool : extend_interfaces<IAlgTool>
 {
-
-public:
-
   // Return the interface ID
-  static const InterfaceID& interfaceID() { return IID_IBdlTool; }
+  DeclareInterfaceID(IBdlTool, 2, 0);
 
   /// Actual operator function
   virtual double bdlIntegral( double ySlopeVelo,

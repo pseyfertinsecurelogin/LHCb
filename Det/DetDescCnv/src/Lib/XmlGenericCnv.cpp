@@ -25,8 +25,6 @@
 // ------------------------------------------------------------------------
 XmlGenericCnv::XmlGenericCnv( ISvcLocator* svc, const CLID& clid) :
   Converter (XML_StorageType, clid, svc),
-  m_xmlSvc (),
-  m_msg(0),
   m_have_CONDDB_StorageType(false)
 {
   DDDBString = xercesc::XMLString::transcode("DDDB");
@@ -70,7 +68,7 @@ StatusCode XmlGenericCnv::initialize() {
   // Initializes the grand father
   StatusCode status = Converter::initialize();
 
-  if ( 0 == m_msg ) m_msg = new MsgStream( msgSvc(), "XmlGenericCnv" );
+  if ( !m_msg ) m_msg = std::make_unique<MsgStream>( msgSvc(), "XmlGenericCnv" );
 
   // I need to check if I can create conddb addresses.
   // (sorry, I did not find a better way)
@@ -96,8 +94,7 @@ StatusCode XmlGenericCnv::initialize() {
 // Finalize the converter
 // -----------------------------------------------------------------------
 StatusCode XmlGenericCnv::finalize() {
-  if ( 0 != m_msg ) delete m_msg;
-  m_msg = 0;
+  m_msg.reset();
   return Converter::finalize();
 }
 
@@ -665,12 +662,12 @@ XmlGenericCnv::createAddressForHref (std::string href,
 
     // I'm including the leading '/' of "../" to ease the search
     // for the start of the parent directory name.
-    std::string  upwardString    = std::string("/../");
+    static const std::string  upwardString    = {"/../"};
     std::string::size_type upwardStringPos = location.find(upwardString);
 
     while (location.size() > upwardStringPos){
-      std::string::size_type parentDirPos = location.find_last_of('/', upwardStringPos - 1);
-      std::string::size_type cutLength    = (upwardStringPos + upwardString.size()) - (parentDirPos + 1);
+      auto parentDirPos = location.find_last_of('/', upwardStringPos - 1);
+      auto cutLength    = (upwardStringPos + upwardString.size()) - (parentDirPos + 1);
       location = location.erase(parentDirPos + 1, cutLength);
       upwardStringPos = location.find(upwardString);
     }
