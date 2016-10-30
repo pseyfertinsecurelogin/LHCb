@@ -26,9 +26,6 @@ namespace LHCb
 
   public:
 
-    /// Destructor
-    virtual ~ParabolaTraj() {}
-
     // clone thyself...
     std::unique_ptr<Trajectory> clone() const override;
 

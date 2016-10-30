@@ -70,9 +70,6 @@ namespace LHCb
         m_pivot(pivot), m_traj(&traj)
     {  m_trans.SetX(p(0)); m_trans.SetY(p(1)); m_trans.SetZ(p(2)); }
 
-    /// destructor
-    virtual ~AlignTraj(){}
-
     // clone thyself...
     std::unique_ptr<Trajectory> clone() const override;
 

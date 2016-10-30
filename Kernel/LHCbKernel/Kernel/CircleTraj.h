@@ -27,9 +27,6 @@ namespace LHCb
 
   public:
 
-    /// Default Destructor
-    virtual ~CircleTraj() {}
-
     // clone thyself...
     std::unique_ptr<Trajectory> clone() const override;
 
