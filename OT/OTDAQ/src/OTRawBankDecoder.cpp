@@ -527,18 +527,18 @@ StatusCode OTRawBankDecoder::decodeGolHeadersV3(const LHCb::RawBank& bank, int b
 
   // The data starts at the next 4byte
   const unsigned int* begin = bank.begin<unsigned int>()+1;
-  const unsigned int* end   = bank.end<unsigned int>();
-  const unsigned int* idata;
-  unsigned int station,layer,quarter,module,numhits,numgols(0);
-  for( idata = begin ; idata < end; ++idata) {
+  const unsigned int* const end = bank.end<unsigned int>();
+  unsigned int numgols(0);
+  auto idata = begin;
+  for( ; idata < end; ++idata) {
     // decode the header
     OTDAQ::GolHeader golHeader(*idata);
-    numhits = golHeader.numberOfHits();
+    auto numhits = golHeader.numberOfHits();
     // Decode the GOL ID
-    station = golHeader.station();
-    layer = golHeader.layer();
-    quarter = golHeader.quarter();
-    module = golHeader.module();
+    auto station = golHeader.station();
+    auto layer = golHeader.layer();
+    auto quarter = golHeader.quarter();
+    auto module = golHeader.module();
     // check that the GOL ID is valid
     if(!m_detectordata->isvalidID(station,layer,quarter,module) ) {
       std::ostringstream mess;
@@ -592,9 +592,9 @@ StatusCode OTRawBankDecoder::decodeGolHeaders(const LHCb::RawEvent& event) const
       debug() << "Decoding GOL headers in OTRawBankDecoder. Number of OT banks is "
               << OTBanks.size() << endmsg;
 
-    for (auto ibank = OTBanks.begin(); ibank != OTBanks.end() ; ++ibank) {
+    for (const auto& ibank : OTBanks ) {
 
-      if( LHCb::RawBank::MagicPattern != (*ibank)->magic() )
+      if( LHCb::RawBank::MagicPattern != ibank->magic() )
       {
         Error("Wrong 'magic' value: skip decoding this RawBank.", StatusCode::FAILURE, 0).ignore();
         continue;
@@ -602,16 +602,16 @@ StatusCode OTRawBankDecoder::decodeGolHeaders(const LHCb::RawEvent& event) const
 
       // Report the bank size and version
       if (msgLevel(MSG::DEBUG))
-        debug() << "OT Bank sourceID= " << (*ibank)->sourceID()
-                << " size=" << (*ibank)->size()/4 << " bankversion=" << (*ibank)->version() << endmsg;
+        debug() << "OT Bank sourceID= " << ibank->sourceID()
+                << " size=" << ibank->size()/4 << " bankversion=" << ibank->version() << endmsg;
 
       // Choose decoding based on bank version
-      int bVersion = m_forcebankversion != OTBankVersion::UNDEFINED ? m_forcebankversion : (*ibank)->version();
+      int bVersion = m_forcebankversion != OTBankVersion::UNDEFINED ? m_forcebankversion : ibank->version();
       StatusCode sc;
       switch( bVersion ) {
         case OTBankVersion::DC06:
           m_channelmaptool->setBankVersion( bVersion );
-          sc = decodeGolHeadersDC06(**ibank,bVersion);
+          sc = decodeGolHeadersDC06(*ibank,bVersion);
           break;
           // Note: SIM and v3 currently (22/07/2008) uses same decoding.
           //       If SIM changes w.r.t. to the real decoding then we'll need
@@ -620,7 +620,7 @@ StatusCode OTRawBankDecoder::decodeGolHeaders(const LHCb::RawEvent& event) const
           m_channelmaptool->setBankVersion( bVersion );
         case OTBankVersion::v3:
           m_channelmaptool->setBankVersion( bVersion );
-          sc = decodeGolHeadersV3(**ibank,bVersion);
+          sc = decodeGolHeadersV3(*ibank,bVersion);
           break;
         default:
           Warning( "Cannot decode OT raw buffer bank version " +
@@ -718,7 +718,7 @@ StatusCode OTRawBankDecoder::decode( OTDAQ::RawEvent& otrawevent ) const
 
     // The data starts at the next 4byte
     const unsigned int* begin = bank->begin<unsigned int>()+1;
-    const unsigned int* end   = bank->end<unsigned int>();
+    const unsigned int* const end = bank->end<unsigned int>();
     size_t numgols(0);
     for( idata = begin ; idata < end; ++idata) {
       OTDAQ::GolHeader golheader(*idata);
