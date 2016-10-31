@@ -27,9 +27,6 @@ namespace LHCb
 
   public:
 
-    /// Destructor
-    virtual ~LineTraj() {}
-
     // clone thyself...
     std::unique_ptr<Trajectory> clone() const override;
 

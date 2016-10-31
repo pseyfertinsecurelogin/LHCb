@@ -26,7 +26,7 @@ namespace LHCb {
   class MuonTileID;
 }
 
-class MuonLayout : public IMuonLayout {
+class MuonLayout final : public IMuonLayout {
 
 public:
   /// Default constructor
@@ -40,9 +40,6 @@ public:
     @param   xygrid  granularity in X
   */
   MuonLayout(std::pair<unsigned int, unsigned int> xygrid);
-
-  /// Destructor
-  virtual ~MuonLayout();
 
   /// Accessor to MuonLayout grid corresponding to the given MuonTileID
   /// reimplemented from IMuonLayout

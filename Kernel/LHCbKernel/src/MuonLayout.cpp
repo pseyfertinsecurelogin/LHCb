@@ -28,36 +28,18 @@ MuonLayout::MuonLayout(std::pair<unsigned int, unsigned int> grid) {
     m_ygrid = grid.second;
 }
 
-MuonLayout::~MuonLayout() {}
-
 int MuonLayout::region(unsigned int ix, unsigned int iy) const {
-
-  int nrx;
-  if ( ix/m_xgrid < 1 ) {
-    nrx = -1;
-  } else if ( ix/m_xgrid == 1 ) {
-    nrx = 0;
-  } else if ( ix/m_xgrid <= 3 ) {
-    nrx = 1;
-  } else if ( ix/m_xgrid <= 7 ) {
-    nrx = 2;
-  } else {
-    nrx = 3;
-  }
-  int nry;
-  if ( iy/m_ygrid < 1 ) {
-    nry = -1;
-  } else if ( iy/m_ygrid == 1 ) {
-    nry = 0;
-  } else if ( iy/m_ygrid <= 3 ) {
-    nry = 1;
-  } else if ( iy/m_ygrid <= 7 ) {
-    nry = 2;
-  } else {
-    nry = 3;
-  }
+  int nrx = ( ix/m_xgrid  < 1 ?  -1
+            : ix/m_xgrid == 1 ?   0
+            : ix/m_xgrid <= 3 ?   1
+            : ix/m_xgrid <= 7 ?   2
+            :                     3 );
+  int nry = ( iy/m_ygrid  < 1 ? -1
+            : iy/m_ygrid == 1 ?  0
+            : iy/m_ygrid <= 3 ?  1
+            : iy/m_ygrid <= 7 ?  2
+            :                    3 );
   return std::max(nrx,nry);
-
 }
 
 std::vector<LHCb::MuonTileID>
@@ -96,8 +78,8 @@ MuonLayout::tilesInArea(const LHCb::MuonTileID& pad, int areaX, int areaY) const
   int xratio = m_xgrid/playout.xGrid();
   int yratio = m_ygrid/playout.yGrid();
 
-  xratio = (xratio == 0) ? 1 : xratio ;
-  yratio = (yratio == 0) ? 1 : yratio ;
+  if (xratio == 0) xratio = 1;
+  if (yratio == 0) yratio = 1;
 
   // input pad area in terms of the finest grid
 //   int maxX = (pad.nX()+areaX+1)*playout.rfactor(nreg)*xratio-1;
@@ -110,11 +92,10 @@ MuonLayout::tilesInArea(const LHCb::MuonTileID& pad, int areaX, int areaY) const
   int minX = maxX - rfactor(nreg)*xratio - 2*areaX*rfactor(nreg) + 1;
   int minY = maxY - rfactor(nreg)*yratio - 2*areaY*rfactor(nreg) + 1;
 
-  minX = std::max(0,minX);
-  minY = std::max(0,minY);
+  if (minX<0) minX=0;
+  if (minY<0) minY=0;
 
   // Which tiles are hit ?
-
   xratio = mxgrid/m_xgrid;
   yratio = mygrid/m_ygrid;
 
@@ -134,14 +115,12 @@ MuonLayout::tilesInArea(const LHCb::MuonTileID& pad, int areaX, int areaY) const
       if( nr == -1 ) nr = 0;
       if( nr > 3 ) break;
       if(nr == nrx || !regleap) {
-	unsigned int newx = ix/rfactor(nr)/xratio;
-	unsigned int newy = iy/rfactor(nr)/yratio;
-	if(newy < 2*yGrid() && newx < 2*xGrid()) {
-    LHCb::MuonTileID newtile(sta,*this,nr,quarter,newx,newy);
-	  if(newtile.isValid()) {
-	    vmt.push_back(newtile);
-	  }
-	}
+        unsigned int newx = ix/rfactor(nr)/xratio;
+        unsigned int newy = iy/rfactor(nr)/yratio;
+        if(newy < 2*yGrid() && newx < 2*xGrid()) {
+          LHCb::MuonTileID newtile(sta,*this,nr,quarter,newx,newy);
+          if(newtile.isValid()) vmt.push_back(newtile);
+        }
       }
       iy += rfactor(nr)*yratio;
     }
@@ -159,17 +138,13 @@ MuonLayout::tilesInArea(const LHCb::MuonTileID& pad, int areaX, int areaY) const
 std::vector<LHCb::MuonTileID> MuonLayout::tiles() const {
 
   std::vector<LHCb::MuonTileID> vmt;
-  std::vector<LHCb::MuonTileID> vmtr;
-
   if( ! isDefined() ) return vmt;
-
   for(int iq = 0; iq <4; iq++) {
     for(int ir = 0; ir <4; ir++) {
-      vmtr = tiles(iq,ir);
+      auto vmtr = tiles(iq,ir);
       vmt.insert(vmt.end(),vmtr.begin(),vmtr.end());
     }
   }
-
   return vmt;
 
 }
@@ -177,15 +152,12 @@ std::vector<LHCb::MuonTileID> MuonLayout::tiles() const {
 std::vector<LHCb::MuonTileID> MuonLayout::tiles(int iq) const {
 
   std::vector<LHCb::MuonTileID> vmt;
-  std::vector<LHCb::MuonTileID> vmtr;
-
-  if( ! isDefined() ) return vmt;
+  if( !isDefined() ) return vmt;
 
   for(int ir = 0; ir <4; ir++) {
-    vmtr = tiles(iq,ir);
+    auto vmtr = tiles(iq,ir);
     vmt.insert(vmt.end(),vmtr.begin(),vmtr.end());
   }
-
   return vmt;
 
 }
@@ -197,17 +169,14 @@ std::vector<LHCb::MuonTileID> MuonLayout::tiles(int iq, int ir) const {
 
   vmt.reserve(xGrid()*yGrid()*3);
 
-  LHCb::MuonTileID newpad;
-
-  unsigned int ix; unsigned int iy;
-  for(ix = 0; ix < 2*xGrid(); ix++) {
-    for(iy = yGrid(); iy < 2*yGrid(); iy++) {
-      vmt.push_back(LHCb::MuonTileID(0,*this,ir,iq,ix,iy));
+  for(unsigned ix = 0; ix < 2*xGrid(); ix++) {
+    for(unsigned iy = yGrid(); iy < 2*yGrid(); iy++) {
+      vmt.emplace_back(0,*this,ir,iq,ix,iy);
     }
   }
-  for(ix = xGrid(); ix < 2*xGrid(); ix++) {
-    for(iy = 0; iy < yGrid(); iy++) {
-      vmt.push_back(LHCb::MuonTileID(0,*this,ir,iq,ix,iy));
+  for(unsigned ix = xGrid(); ix < 2*xGrid(); ix++) {
+    for(unsigned iy = 0; iy < yGrid(); iy++) {
+      vmt.emplace_back(0,*this,ir,iq,ix,iy);
     }
   }
   return vmt;
@@ -216,41 +185,41 @@ std::vector<LHCb::MuonTileID> MuonLayout::tiles(int iq, int ir) const {
 std::vector<LHCb::MuonTileID>
 MuonLayout::tilesInRegion(const LHCb::MuonTileID& pad, int pregion) const{
 
-  std::vector<LHCb::MuonTileID> vmt;
-  if( ! isDefined() ) return vmt;
+  if( ! isDefined() ) return {};
 
   int nr = pad.region();
+  auto vmt = tiles(pad);
+  if(nr == pregion) return vmt;
+
   int nq = pad.quarter();
   int sta = pad.station();
 
-  if(nr == pregion) {
-    return tiles(pad);
-  } else {
-    vmt = tiles(pad);
-    std::vector<LHCb::MuonTileID>::iterator ivmt;
-    std::vector<LHCb::MuonTileID> nvmt;
-    // Bring the pads in vmt to the pregion definition
-    for (ivmt = vmt.begin(); ivmt != vmt.end(); ivmt++) {
-      if(nr<pregion) {
-        int factor = rfactor(pregion)/rfactor(nr);
-        int newX = ivmt->nX()/factor;
-        int newY = ivmt->nY()/factor;
-        LHCb::MuonTileID tile(sta,*this,pregion,nq,newX,newY);
-        nvmt.push_back(tile);
-      } else {
-        int factor = rfactor(nr)/rfactor(pregion);
-        int minX = ivmt->nX()*factor;
-        int minY = ivmt->nY()*factor;
-        for(int ix=0; ix<factor; ix++) {
-          for(int iy=0; iy<factor; iy++) {
-            LHCb::MuonTileID tile(sta,*this,pregion,nq,minX+ix,minY+iy);
-            nvmt.push_back(tile);
-          }
-        }
-      }
-    }
-    return nvmt;
+  // Bring the pads in vmt to the pregion definition
+
+  if(nr<pregion) {
+    // transform 'in situ' and return
+    int factor = rfactor(pregion)/rfactor(nr);
+    std::transform(vmt.begin(), vmt.end(), vmt.begin(),
+                   [&](const LHCb::MuonTileID& id) {
+                       int newX = id.nX()/factor;
+                       int newY = id.nY()/factor;
+                       return LHCb::MuonTileID{ sta,*this,pregion,nq,newX,newY };
+                   } );
+    return vmt;
   }
+
+  // expand out...
+  std::vector<LHCb::MuonTileID> nvmt;
+  int factor = rfactor(nr)/rfactor(pregion);
+  nvmt.reserve(factor*factor*vmt.size());
+  for (const auto& ivmt : vmt ) {
+    int minX = ivmt.nX()*factor;
+    int minY = ivmt.nY()*factor;
+    for(int ix=0; ix<factor; ix++) for(int iy=0; iy<factor; iy++) {
+        nvmt.emplace_back(sta,*this,pregion,nq,minX+ix,minY+iy);
+    }
+  }
+  return nvmt;
 }
 
 std::vector<LHCb::MuonTileID>
@@ -297,58 +266,34 @@ MuonLayout::neighbours(const LHCb::MuonTileID& pad, int dirX, int dirY ) const {
 
   // We have got to the smaller region
   nreg = vtm[0].region();
-  std::vector<LHCb::MuonTileID> xvtm,result;
-  std::vector<LHCb::MuonTileID>::iterator ivtm;
   // Find the limits of the returned pad's area
   unsigned int minx=9999;
   unsigned int maxx=0;
   unsigned int miny=9999;
   unsigned int maxy=0;
-  for ( ivtm = vtm.begin(); ivtm != vtm.end(); ivtm++) {
-    if( (*ivtm).nY() > maxy ) maxy = (*ivtm).nY();
-    if( (*ivtm).nX() > maxx ) maxx = (*ivtm).nX();
-    if( (*ivtm).nY() < miny ) miny = (*ivtm).nY();
-    if( (*ivtm).nX() < minx ) minx = (*ivtm).nX();
+  for ( const auto& ivtm : vtm ) {
+    if( ivtm.nY() < miny ) miny = ivtm.nY();
+    if( ivtm.nY() > maxy ) maxy = ivtm.nY();
+    if( ivtm.nX() < minx ) minx = ivtm.nX();
+    if( ivtm.nX() > maxx ) maxx = ivtm.nX();
   }
 
   // perform the check in the X direction first
-  if ( dirX == MuonBase::LEFT ) {
-    for ( ivtm = vtm.begin(); ivtm != vtm.end(); ivtm++) {
-      if( (*ivtm).nX() == maxx ) {
-        xvtm.push_back(*ivtm);
-      }
-    }
-  } else if ( dirX == MuonBase::RIGHT ) {
-    for ( ivtm = vtm.begin(); ivtm != vtm.end(); ivtm++) {
-      if( (*ivtm).nX() == minx ) {
-        xvtm.push_back(*ivtm);
-      }
-    }
-  } else {
-    for ( ivtm = vtm.begin(); ivtm != vtm.end(); ivtm++) {
-      xvtm.push_back(*ivtm);
-    }
-  }
+  auto end = ( dirX == MuonBase::LEFT  ? std::remove_if( vtm.begin(), vtm.end(),
+                                                         [&](const LHCb::MuonTileID& id) { return id.nX() != maxx; } )
+             : dirX == MuonBase::RIGHT ? std::remove_if( vtm.begin(), vtm.end(),
+                                                         [&](const LHCb::MuonTileID& id) { return id.nX() != minx; } )
+             : vtm.end() );
 
   // check in the Y direction with the pads that are left
-  if ( dirY == MuonBase::DOWN ) {
-    for ( ivtm = xvtm.begin(); ivtm != xvtm.end(); ivtm++) {
-      if( (*ivtm).nY() == maxy ) {
-        result.push_back(*ivtm);
-      }
-    }
-  } else if ( dirY == MuonBase::UP ) {
-    for ( ivtm = xvtm.begin(); ivtm != xvtm.end(); ivtm++) {
-      if( (*ivtm).nY() == miny ) {
-        result.push_back(*ivtm);
-      }
-    }
-  } else {
-    for ( ivtm = xvtm.begin(); ivtm != xvtm.end(); ivtm++) {
-      result.push_back(*ivtm);
-    }
-  }
-  return result;
+  end = (  dirY == MuonBase::DOWN ? std::remove_if( vtm.begin(), end,
+                                                    [&](const LHCb::MuonTileID& id) { return id.nY() != maxy; } )
+        :  dirY == MuonBase::UP   ? std::remove_if( vtm.begin(), end,
+                                                    [&](const LHCb::MuonTileID& id) { return id.nY() != miny; } )
+        : end );
+
+  vtm.erase(end, vtm.end());
+  return vtm;
 }
 
 std::vector<LHCb::MuonTileID>
@@ -477,34 +422,19 @@ MuonLayout::neighboursInArea(const LHCb::MuonTileID& pad, int dirX, int dirY,
 bool MuonLayout::isValidID(const LHCb::MuonTileID& mt) const {
 
   if(mt.layout() != *this) return false;
-
   int nx = mt.nX();
   int ny = mt.nY();
   int xg = xGrid();
   int yg = yGrid();
-
-  if(nx >= 0 &&
-     nx < (2*xg) &&
-     ny >= (yg) &&
-     ny < 2*yg) {
-    return true;
-  }
-  if(nx >= xg &&
-     nx < 2*xg &&
-     ny >= 0 &&
-     ny < yg) {
-    return true;
-  }
-  return false;
+  return (nx >=  0 && nx < 2*xg && ny >= yg && ny < 2*yg) ||
+         (nx >= xg && nx < 2*xg && ny >= 0  && ny <   yg ) ;
 }
 
 LHCb::MuonTileID MuonLayout::contains(const LHCb::MuonTileID& pad) const {
   // It is responsibility of the user to assure that the pad
   // layout is finer than the containing layout
   std::vector<LHCb::MuonTileID> mtiles = tiles(pad);
-  if( mtiles.empty() ) return LHCb::MuonTileID();
-  LHCb::MuonTileID tile = mtiles[0];
-  return tile;
+  return mtiles.empty() ? LHCb::MuonTileID() :  mtiles[0];
 }
 
 bool MuonLayout::isDefined() const {
