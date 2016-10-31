@@ -18,20 +18,19 @@ class DeVelo;
 class VeloClusterFilter : public GaudiAlgorithm {
 public:
   VeloClusterFilter( const std::string& name, ISvcLocator* pSvcLocator );
-  virtual ~VeloClusterFilter( );
 
   StatusCode initialize() override;
   StatusCode execute   () override;
 
-  bool passesFilter(LHCb::VeloChannelID id);
-  void incrementCounters(LHCb::VeloChannelID, int&, int&, int&);
+private:
+  bool passesFilter(LHCb::VeloChannelID id) const;
 
-protected:
   std::string m_inputLiteClusterLocation;
   std::string m_outputLiteClusterLocation;
   std::string m_inputClusterLocation;
   std::string m_outputClusterLocation;
   std::string m_filterCriterion;
+  enum filter_t { ALL, LEFT, RIGHT, R, PHI, PU, OVERLAP } m_filter = ALL;
 
   int m_minNRClustersCut;
   int m_minNPhiClustersCut;
@@ -39,7 +38,7 @@ protected:
   int m_maxNRClustersCut;
   int m_maxNPhiClustersCut;
   int m_maxNClustersCut;
- private:
-  DeVelo* m_velo;                  ///< Detector element
+
+  DeVelo* m_velo = nullptr;                  ///< Detector element
 };
 #endif // VELOCLUSTERFILTER_H

@@ -361,19 +361,20 @@ void PrepareVeloFullRawBuffer::resetMemory()
   if(pedBankFlag()) unsetPedBankFlag();
 }
 //=============================================================================
+// Note only for use in emergency debugging (not referenced in code presently)
 void PrepareVeloFullRawBuffer::dumpADCs(const dataVec& inADCs)
 {
-  if(m_isDebug) debug()<< " Dumping ADC values for all channels (1 TELL1)" <<endmsg;
+  info()<< " Dumping ADC values for all channels (1 TELL1)" <<endmsg;
   //
   cdatIt adcIt;
   int ii=0;
   for(adcIt=inADCs.begin(); adcIt!=inADCs.end(); adcIt++, ii++){
     if(!(ii%32)){
-      if(m_isDebug) debug()<< " Beggining dumping ALink number: " << ii/32 <<endmsg;
+      info()<< " Beggining dumping ALink number: " << ii/32 <<endmsg;
     }
     //
-    std::cout<< "[Beetle, Channel] = " << "[" << ii/128 << ", "
-             << ii%32 << "]" << (*adcIt) <<std::endl;
+    info() << "[Beetle, Channel] = " << "[" << ii/128 << ", "
+	   << ii%32 << "]" << (*adcIt) <<std::endl;
   }
 }
 //=============================================================================
@@ -407,19 +408,3 @@ bool PrepareVeloFullRawBuffer::pedBankFlag()
   return ( m_pedBankPresent );
 }
 //=============================================================================
-bool PrepareVeloFullRawBuffer::findObject(const dataVec& inCont,
-                                          const unsigned int obj) const
-{
-  // predicate like method to search the vector for a given object
-  cdatIt It;
-  It=inCont.begin();
-  while(It!=inCont.end()){
-    if((*It)==obj) return ( true );
-    It++;
-  }
-  It=inCont.end();
-  if((*It)==obj) return ( true );
-  //
-  return ( false );
-}
-//--
