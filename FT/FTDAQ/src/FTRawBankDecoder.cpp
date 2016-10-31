@@ -86,13 +86,15 @@ FTRawBankDecoder::operator()(const std::vector<LHCb::RawBank*>& banks) const
       if ( first == last && sipmHeader == 0 ) continue;  // padding at the end...
       unsigned modulesipm = ( sipmHeader >> FTRawBank::sipmShift );
       unsigned module = modulesipm >> FTRawBank::sipmShift ;
-      unsigned sipm = modulesipm & 15;
+      unsigned mat  = (modulesipm & 15 ) >> 2; // hardcoded: this should be replaced by mapping
+      unsigned sipm = modulesipm & 3;          // hardcoded: this should be replaced by mapping
       int nClus  = ( sipmHeader & FTRawBank::nbClusMaximum );
       if (UNLIKELY( msgLevel(MSG::VERBOSE) && nClus > 0) )
-        verbose() << "   Module " << module << " SiPM " << sipm << " nClusters " << nClus
-                << endmsg;
+        verbose() << "  Module " << module << " mat " << mat << " SiPM " << sipm
+                  << " nClusters " << nClus << endmsg;
       if (UNLIKELY(nClus>std::distance(first,last))) {
-        warning() << " inconsistent size of rawbank " << endmsg;
+        warning() << "Inconsistent size of rawbank. #clusters in header="
+                  << nClus << ", #clusters in bank=" << std::distance(first,last) << endmsg;
         return nullptr;
       }
       std::transform( first, first+nClus,
@@ -104,10 +106,10 @@ FTRawBankDecoder::operator()(const std::vector<LHCb::RawBank*>& banks) const
         int cSize    = ( c >> FTRawBank::sizeShift     ) & FTRawBank::sizeMaximum;
         //int charge   = ( c >> FTRawBank::chargeShift   ) & FTRawBank::chargeMaximum;
         if ( msgLevel( MSG::VERBOSE ) ) {
-          verbose() << format(  "  channel %4d frac %3d size %3d code %4.4x",
+          verbose() << format(  "    channel %4d frac %3d size %3d code %4.4x",
                                 channel,fraction, cSize, c ) << endmsg;
         }
-        return  { LHCb::FTChannelID{ station, layer, quarter, module, sipm, channel },
+        return  { LHCb::FTChannelID{ station, layer, quarter, module, mat, sipm, channel },
                   fraction, cSize };
       } );
       first += nClus;

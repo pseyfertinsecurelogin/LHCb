@@ -53,7 +53,7 @@ public:
   const DeFTLayer* findLayer(const Gaudi::XYZPoint& point) const;
 
   /** Const method to return the layer for a given channel id
-   * @param  aChannel  an OT channel id
+   * @param  aChannel an FT channel id
    * @return pointer to detector element
    */
   const DeFTLayer* findLayer(const LHCb::FTChannelID& aChannel) const;

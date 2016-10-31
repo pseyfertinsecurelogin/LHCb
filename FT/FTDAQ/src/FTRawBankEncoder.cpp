@@ -61,20 +61,21 @@ StatusCode FTRawBankEncoder::execute() {
 
   for ( const auto&  cluster : *clusters ) {
     LHCb::FTChannelID id = cluster->channelID();
+
     unsigned int bankNumber = id.quarter() + 4*id.layer() + 16*(id.station()-1u);   //== Temp, assumes 1 TELL40 per quarter.
 
     if ( m_sipmData.size() <= bankNumber ) {
       info() << "*** Invalid bank number " << bankNumber << " channelID " << id << endmsg;
       return StatusCode::FAILURE;
     }
-    unsigned int sipmNumber = id.sipm() + 16 * id.module();//== changes to be done here to include module + mat
+    unsigned int sipmNumber = id.sipm() + 4*id.mat() + 16 * id.module();
     if ( m_sipmData[bankNumber].size() <= sipmNumber ) {
       info() << "Invalid SiPM number " << sipmNumber << " in bank " << bankNumber << " channelID " << id << endmsg;
       return StatusCode::FAILURE;
     }
 
     auto& data = m_sipmData[bankNumber][sipmNumber];
-    if (data.size() > FTRawBank::nbClusMaximum+1u ) continue; // JvT: should be 9 (only for non-central)
+    if (data.size() > FTRawBank::nbClusMaximum ) continue; // JvT: should be 9 (only for non-central)
     // one extra word for sipm number + nbClus
     if ( data.empty() ) data.push_back( sipmNumber << FTRawBank::sipmShift );
     auto frac =   std::min(uint16_t(0.5 + cluster->fraction() * (FTRawBank::fractionMaximum+1)),

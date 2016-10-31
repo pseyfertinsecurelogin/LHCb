@@ -11,15 +11,29 @@
 	   &StlVector;
 
       <constructor argList = "unsigned int station, unsigned int layer, unsigned int quarter, 
-                              unsigned int module, unsigned int sipm, unsigned int channel" 
+                              unsigned int module, unsigned int mat, unsigned int sipm,
+                              unsigned int channel" 
                    desc    = "Explicit constructor from the geometrical location">
         <code>    
           m_channelID = (station  &lt;&lt;  stationBits  ) + 
                         (layer    &lt;&lt;  layerBits) + 
                         (quarter  &lt;&lt;  quarterBits) + 
                         (module   &lt;&lt;  moduleBits ) + 
+                        (mat      &lt;&lt;  matBits ) + 
                         (sipm     &lt;&lt;  sipmBits ) + 
                         (channel  &lt;&lt;  channelBits  );
+        </code>
+      </constructor>
+
+      <constructor argList = "unsigned int station, unsigned int layer, unsigned int quarter, 
+                              unsigned int module, unsigned int channelInModule" 
+                   desc    = "Explicit constructor from the geometrical location">
+        <code>    
+          m_channelID = (station  &lt;&lt;  stationBits  ) + 
+                        (layer    &lt;&lt;  layerBits) + 
+                        (quarter  &lt;&lt;  quarterBits) + 
+                        (module   &lt;&lt;  moduleBits ) + 
+                        (channelInModule  &lt;&lt;  channelBits );
         </code>
       </constructor>
 
@@ -86,10 +100,15 @@
                   setMeth = "FALSE"/>
 
         <bitfield name    = "sipm" 
-                  length  = "4" 
-                  desc    = "ID of the SiPM in the module" 
+                  length  = "2" 
+                  desc    = "ID of the SiPM in the mat" 
                   setMeth = "FALSE"/>
         
+        <bitfield name    = "mat" 
+                  length  = "2" 
+                  desc    = "ID of the mat in the module" 
+                  setMeth = "FALSE"/>
+
         <bitfield name    = "module" 
                   length  = "3" 
                   desc    = "Module id (0 - 5 or 0 - 6)" 
@@ -125,8 +144,13 @@
                   desc    = 'unique module'
                   setMeth = 'FALSE'/>
 
+        <bitfield name    = 'uniqueMat'
+                  length  = 'mat, module, quarter, layer, station' 
+                  desc    = 'unique mat'
+                  setMeth = 'FALSE'/>
+
         <bitfield name    = 'uniqueSiPM'
-                  length  = 'sipm, module, quarter, layer, station' 
+                  length  = 'sipm, mat, module, quarter, layer, station' 
                   desc    = 'unique SiPM'
                   setMeth = 'FALSE'/>
                   
@@ -146,6 +170,7 @@ return s
 &lt;&lt; "{ FTChannelID : "
 &lt;&lt; " channel =" &lt;&lt; channel()
 &lt;&lt; " sipm ="    &lt;&lt; sipm()
+&lt;&lt; " mat ="     &lt;&lt; mat()
 &lt;&lt; " module="   &lt;&lt; module()
 &lt;&lt; " quarter="  &lt;&lt; quarter()
 &lt;&lt; " layer="    &lt;&lt; layer()
