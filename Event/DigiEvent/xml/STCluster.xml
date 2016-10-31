@@ -16,6 +16,8 @@
      id="9004"
      author="Matthew Needham"
      desc="A cluster as produced by the TELL1 with full ADC information."
+     final = "TRUE"
+     defaultdestructor="FALSE"
      serializers="TRUE">
 
      <import name="vector"  std="TRUE"/>

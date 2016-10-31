@@ -8,7 +8,10 @@
        author   = "C. Jones"
        desc     = "Holds basic summary information from the reconstruction"
        name     = "RecSummary"
-       id       = "106" >
+       id       = "106" 
+    final = "TRUE"
+    defaultdestructor="FALSE"
+       >
 
        <location name="Default" place="Rec/Summary" />
        <location name="Track" place="Rec/TrackSummary" />

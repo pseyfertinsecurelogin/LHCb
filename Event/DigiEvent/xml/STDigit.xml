@@ -6,7 +6,10 @@
 <gdd>
   <package name='DigiEvent'>
 
-  <class author="Matthew Needham" desc="Silicon tracker digitization class" id="9003" name="STDigit">
+  <class author="Matthew Needham" desc="Silicon tracker digitization class" id="9003" name="STDigit"
+    final = "TRUE"
+    defaultdestructor="FALSE"
+  >
       <base name="KeyedObject&lt;LHCb::STChannelID&gt;"/>
       &KeyedContainer;
       <location name="TTDigits"   place="Raw/TT/Digits"   />

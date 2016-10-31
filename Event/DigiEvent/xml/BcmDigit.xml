@@ -14,7 +14,10 @@
     location = "&location;"
     id = "&CLID_BcmDigit;"
     author = "M Lieng" 
-    desc = "BCM digit class">
+    desc = "BCM digit class"
+    final = "TRUE"
+    defaultdestructor="FALSE"
+    >
     <base name="KeyedObject&lt;int&gt;"/>
     &KeyedContainer;
     <attribute type = "unsigned int"

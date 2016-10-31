@@ -3,7 +3,11 @@
 <gdd>
   <package name='RecEvent'>
 
-  <class author="Matthew Needham" desc="Silicon tracker summary class" id="9005" name="STSummary"  serializers = "TRUE">
+  <class author="Matthew Needham" desc="Silicon tracker summary class" id="9005" name="STSummary"  serializers = "TRUE"
+    virtual = "FALSE"
+    final = "TRUE"
+    defaultdestructor="FALSE"
+  >
       <base name="DataObject"/>
       &DataObject;
 

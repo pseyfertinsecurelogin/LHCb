@@ -14,6 +14,8 @@
      id="4006"
      author="Chris Parkes"
      desc="A cluster as produced by the TELL1 with full ADC information."
+     final = "TRUE"
+     defaultdestructor="FALSE"
      serializers="FALSE">
 
     <import name="vector"  std="TRUE"/> 

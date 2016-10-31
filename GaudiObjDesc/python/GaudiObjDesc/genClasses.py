@@ -477,7 +477,7 @@ class genClasses(genSrcUtils.genSrcUtils):
         if godClass['attrs'].has_key('id') :                                        # then we know that it is an event class
             if (not scopeName) :                                                       # we are inside the class (declaration)
                 s  = '  // Retrieve pointer to class definition structure\n  '
-                if godClass['attrs']['virtual'] and not godClass.has_key('base'):
+                if godClass['attrs']['virtual'] == 'TRUE' and not godClass.has_key('base'):
                     s += 'virtual '
                 s += 'const CLID& clID() const'
                 if godClass.has_key('base'):

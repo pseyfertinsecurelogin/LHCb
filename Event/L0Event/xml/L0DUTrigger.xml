@@ -8,7 +8,10 @@
     <class 
       author="Olivier Deschamps"
       desc="This class represents individual L0DU Trigger (i.e. L0DUChannel set)"
-      name="L0DUTrigger">
+      name="L0DUTrigger"
+      final  = "TRUE"
+      defaultdestructor = "FALSE"
+      >
 
       <base name="ContainedObject"/>
        &ContainedObject;

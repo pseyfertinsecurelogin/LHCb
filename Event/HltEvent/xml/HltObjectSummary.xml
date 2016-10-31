@@ -14,6 +14,8 @@
       author      = 'Tomasz Skwarnicki'
       desc        = 'Summary class for selected Hlt candidates (Particles, Tracks, vertices, etc.), and selection list itself.'
       stdVectorTypeDef = 'TRUE'
+      defaultdestructor = "FALSE"
+      final       = "TRUE"
       id          = '7530'>
 
 
