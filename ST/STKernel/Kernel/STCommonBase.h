@@ -3,9 +3,6 @@
  *
  *  Header file for ST base class : STCommonBase
  *
- *  CVS Log :-
- *  $Id: STCommonBase.h,v 1.8 2010-04-24 11:35:49 mneedham Exp $
- *
  *  @author Matthew Needham    Matthew.Needham@cern.ch
  *  @date   2005-11-10
  */
@@ -18,7 +15,7 @@
 #include <string>
 #include <map>
 
-class ISTReadoutTool;
+struct ISTReadoutTool;
 class DeSTDetector;
 class DeSTSector;
 
