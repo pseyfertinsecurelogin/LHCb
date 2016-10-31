@@ -10,7 +10,6 @@
 namespace LHCb{
   class  STChannelID;    
 }
-static const InterfaceID IID_ISTChannelIDSelector ( "ISTChannelIDSelector" , 1 , 0 );
 
 /** @class ISTChannelID ISTChannelID.h
  *  
@@ -23,18 +22,15 @@ static const InterfaceID IID_ISTChannelIDSelector ( "ISTChannelIDSelector" , 1 ,
  *  @date   03/02/2009
  */
 
-class ISTChannelIDSelector :
-  virtual public IAlgTool                           ,
-  public std::unary_function<const LHCb::STChannelID ,bool> 
+struct ISTChannelIDSelector : extend_interfaces<IAlgTool>
 {
-public:
   
   /** static interface identification
    *  @see IInterface
    *  @see IID_ISTChannelIDSelector
    *  @return the unique interface identifier
    */
-  static const InterfaceID& interfaceID() { return IID_ISTChannelIDSelector; }
+  DeclareInterfaceID( ISTChannelIDSelector , 2 , 0 );
   
   
   /** "select"/"preselect" method 

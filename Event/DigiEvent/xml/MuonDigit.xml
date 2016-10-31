@@ -8,7 +8,10 @@
       The key associated to each object is the channel ID coded as a  
       MuonTileID object" 
       id="11021" 
-      name="MuonDigit">
+      name="MuonDigit"
+      final = "TRUE"
+      defaultdestructor="FALSE"
+      >
       <import name="Kernel/MuonTileID"/>
       <import name="Kernel/Packer"/>
       <import name="Event/PackMuonDigit"/>      

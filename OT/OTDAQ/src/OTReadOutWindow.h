@@ -26,9 +26,6 @@ public:
                   const std::string& name, 
                   const IInterface* parent);
 
-  /// destructor
-  ~OTReadOutWindow() override;
-
   StatusCode initialize() override;
 
   /// Start of read out window for each station

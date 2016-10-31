@@ -1,8 +1,5 @@
 // Include files
 
-#if !(defined(__GXX_EXPERIMENTAL_CXX0X__) || __cplusplus >= 201103L)
-#include <boost/assign/list_of.hpp>
-#endif
 #include <cmath>
 #include <sstream>
 #include <numeric>
@@ -38,9 +35,7 @@ namespace LocalHelpers
   class DetectorHitData ;
 }
 
-class OTMultiBXRawBankDecoder : public GaudiTool,
-				virtual public IOTRawBankDecoder,
-				virtual public IIncidentListener
+class OTMultiBXRawBankDecoder : public extends<GaudiTool, IOTRawBankDecoder, IIncidentListener>
 {
 
 public:
@@ -50,9 +45,6 @@ public:
 			   const std::string& name,
 			   const IInterface* parent);
 
-  /// Destructor
-  virtual ~OTMultiBXRawBankDecoder( ) ; ///< Destructor
-
   /// Tool initialization
   StatusCode initialize() override;
 
@@ -60,7 +52,7 @@ public:
   StatusCode finalize() override;
 
   /// Decode data for a single module
-  LHCb::OTLiteTimeRange decodeModule( const LHCb::OTChannelID& moduleId ) const  override;
+  LHCb::OTLiteTimeRange decodeModule( const LHCb::OTChannelID& moduleId ) const override;
 
   /// Decode all gol headers
   StatusCode decodeGolHeaders() const override { return m_decoder->decodeGolHeaders() ; }
@@ -69,21 +61,21 @@ public:
   StatusCode decodeGolHeaders(const LHCb::RawEvent& rawevent) const override { return m_decoder->decodeGolHeaders(rawevent) ;}
 
   /// Decode all modules
-  StatusCode decode( LHCb::OTLiteTimeContainer& ottimes ) const  override;
+  StatusCode decode( LHCb::OTLiteTimeContainer& ottimes ) const override;
 
   /// Translate the raw bank in an ot-specific raw bank.
-  StatusCode decode( OTDAQ::RawEvent& otevent ) const  override;
+  StatusCode decode( OTDAQ::RawEvent& otevent ) const override;
 
   /// Retrieve the total number of hits in the OT without actually
   /// decoding the modules. Useful in pattern reco to remove full
   /// events.
-  size_t totalNumberOfHits() const  override;
+  size_t totalNumberOfHits() const override;
 
   /// Get the conversion factor
   double nsPerTdcCount() const override { return m_decoder->nsPerTdcCount() ; }
 
   /// Create a single OTLiteTime
-  LHCb::OTLiteTime time( LHCb::OTChannelID channel ) const  override;
+  LHCb::OTLiteTime time( LHCb::OTChannelID channel ) const override;
 
 protected:
   void handle ( const Incident& incident ) override;
@@ -142,7 +134,7 @@ DECLARE_TOOL_FACTORY( OTMultiBXRawBankDecoder )
 OTMultiBXRawBankDecoder::OTMultiBXRawBankDecoder( const std::string& type,
                                     const std::string& name,
                                     const IInterface* parent )
-  : GaudiTool ( type, name , parent ),
+  : base_class ( type, name , parent ),
     m_decoder("OTRawBankDecoder/OTSingleBXRawBankDecoder")
 {
   declareInterface<IOTRawBankDecoder>(this);
@@ -159,12 +151,6 @@ OTMultiBXRawBankDecoder::OTMultiBXRawBankDecoder( const std::string& type,
 		  );
   declareProperty("SelectEarliestHit",m_selectEarliestHit=true) ;
 }
-
-//=============================================================================
-// Destructor
-//=============================================================================
-OTMultiBXRawBankDecoder::~OTMultiBXRawBankDecoder() {}
-
 //=============================================================================
 
 //=============================================================================
@@ -174,12 +160,12 @@ StatusCode OTMultiBXRawBankDecoder::initialize()
 {
   std::stringstream msg ;
   msg <<  "Merging raw events from following locations: " ;
-  for( std::vector<std::string>::const_iterator ilocation = m_rawEventLocations.begin() ;
+  for( auto ilocation = m_rawEventLocations.begin() ;
        ilocation != m_rawEventLocations.end(); ++ilocation)
     msg << "\'" << *ilocation << "\', " ;
   info() << msg.str() << endmsg ;
 
-  StatusCode sc = GaudiTool::initialize();
+  StatusCode sc = base_class::initialize();
   if ( sc.isFailure() ) return sc;  // error printed already by GaudiAlgorithm
 
   sc = m_decoder.retrieve() ;
@@ -206,7 +192,7 @@ StatusCode OTMultiBXRawBankDecoder::finalize()
 {
   m_hitdata.reset();
   m_decoder.release().ignore() ;
-  return GaudiTool::finalize() ;
+  return base_class::finalize() ;
 }
 
 //=============================================================================
@@ -245,7 +231,7 @@ StatusCode OTMultiBXRawBankDecoder::decode( LHCb::OTLiteTimeContainer& ottimes )
 StatusCode OTMultiBXRawBankDecoder::decodeAll() const
 {
   StatusCode sc = StatusCode::SUCCESS ;
-  for( std::vector<std::string>::const_iterator ilocation = m_rawEventLocations.begin() ;
+  for( auto ilocation = m_rawEventLocations.begin() ;
        ilocation != m_rawEventLocations.end() && sc.isSuccess(); ++ilocation) {
     // Get the raw event if it exists at this location. Issue a warning otherwise
     const LHCb::RawEvent* event = NULL;

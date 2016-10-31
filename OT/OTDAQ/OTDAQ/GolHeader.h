@@ -181,7 +181,7 @@ namespace OTDAQ {
   inline unsigned int GolHeader::otis1SEU() const
   {
     return (unsigned int)((m_data & otis1SEUMask ) >> otis1SEUBits );
-}
+  }
   
   inline unsigned int GolHeader::otis2SEU() const
   {

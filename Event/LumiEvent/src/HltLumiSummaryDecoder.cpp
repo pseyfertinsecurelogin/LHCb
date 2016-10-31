@@ -39,8 +39,6 @@ HltLumiSummaryDecoder::HltLumiSummaryDecoder( const std::string& name,
 }
 
 //=============================================================================
-
-//=============================================================================
 // Initialisation. Check parameters
 //=============================================================================
 StatusCode HltLumiSummaryDecoder::initialize()
@@ -109,8 +107,9 @@ HltLumiSummary HltLumiSummaryDecoder::operator() (const RawEvent& event) const {
 StatusCode HltLumiSummaryDecoder::finalize()
 {
   if ( 0 < m_nbEvents ) {
-    info() << "Average event size : " << format( "%7.1f words", m_totDataSize / m_nbEvents )
-	   << endmsg;
+    info() << "Average event size : "
+           << format( "%7.1f words", m_totDataSize / m_nbEvents )
+           << endmsg;
   }
   return Transformer::finalize(); // must be called after all other actions
 }

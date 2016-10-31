@@ -17,6 +17,8 @@
         desc             = "The Rich Digitisation object" 
         id               = "12407" 
         location         = "Raw/Rich/Digits"  
+        final = "TRUE"
+        defaultdestructor="FALSE"
         keyedContTypeDef = "TRUE" 
         stdVectorTypeDef = "TRUE">
 

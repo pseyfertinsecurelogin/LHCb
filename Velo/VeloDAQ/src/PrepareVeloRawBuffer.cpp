@@ -31,12 +31,7 @@ DECLARE_ALGORITHM_FACTORY( PrepareVeloRawBuffer )
 PrepareVeloRawBuffer::PrepareVeloRawBuffer( const std::string& name,
     ISvcLocator* pSvcLocator) 
 : 
-  GaudiAlgorithm (name , pSvcLocator),
-  m_clusterLoc(LHCb::InternalVeloClusterLocation::Default),
-  m_rawEventLoc(LHCb::RawEventLocation::Default),
-  m_bankVersion(VeloDAQ::v3),
-  m_bankSizeInBytes(0),
-  m_velo(NULL)
+  GaudiAlgorithm (name , pSvcLocator)
 {
   declareProperty("InternalVeloClusterLocation",m_clusterLoc=LHCb::InternalVeloClusterLocation::Default);
   declareProperty("RawEventLocation",m_rawEventLoc=LHCb::RawEventLocation::Default);
@@ -462,20 +457,20 @@ void PrepareVeloRawBuffer::dumpInputClusters() const
     // interstrip position in 1/8 of strip pitch (as it is encoded in raw bank)
     double interStripPos = static_cast<unsigned int>((channelPos-centroidStrip)*8.0)/8.0;
 
-    std::cout << "ENC::POSDUMP:"
-      << " SN=" << sensorNumber
-      << " CS=" << centroidStrip
-      << " ISP=" << interStripPos
-      << std::endl;
+    info() << "ENC::POSDUMP:"
+	   << " SN=" << sensorNumber
+	   << " CS=" << centroidStrip
+	   << " ISP=" << interStripPos
+	   << endmsg;
 
-    std::cout << "ENC::ADCDUMP:"
-      << " SN=" << sensorNumber;
+    info() << "ENC::ADCDUMP:"
+	   << " SN=" << sensorNumber;
 
     for (int adci=0; adci<clu->size(); ++adci) {
-      std::cout << " " << adcValues[adci]
-        << "@" << clu->strip(adci);
+      info() << " " << adcValues[adci]
+	     << "@" << clu->strip(adci);
     }
-    std::cout << std::endl;
+    info() << endmsg;
 
   }
   return;

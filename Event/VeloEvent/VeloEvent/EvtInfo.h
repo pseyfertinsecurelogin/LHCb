@@ -1,5 +1,4 @@
-// $Id: EvtInfo.h,v 1.4 2008-02-27 14:43:18 jonrob Exp $
-#ifndef EVTINFO_H 
+#ifndef EVTINFO_H
 #define EVTINFO_H 1
 
 // Include files
@@ -9,7 +8,7 @@
 #include "Tell1Kernel/VeloDecodeCore.h"
 
 /** @class EvtInfo EvtInfo.h
- *  
+ *
  * The class implements object that can store data contained in
  * EventInfo block placed at the end of the non-zero suppressed
  * data block in VeloFull raw bank. For each sensor we have four
@@ -32,9 +31,7 @@ public:
     m_evtInfo ( )
   { }
   /// Standard constructor
-  EvtInfo(){ }
-  virtual ~EvtInfo( ){ }; ///< Destructor
-  //  
+  EvtInfo() = default;
   void setEvtInfo(VeloTELL1::allEvt& inData);
   unsigned int bunchCounter(const int PPFPGA=0) const;
   unsigned int detectorID(const int PPFPGA=0) const;

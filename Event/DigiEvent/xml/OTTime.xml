@@ -7,7 +7,10 @@
            location='Raw/OT/Times' 
 	   id='8001' 
 	   author='Jacopo Nardulli' 
-	   desc='For each MCOTTime an OTTime is made'>
+	   desc='For each MCOTTime an OTTime is made'
+       final = "TRUE"
+       defaultdestructor="FALSE"
+       >
       <base name='KeyedObject&lt; LHCb::OTChannelID&gt; '/>  
       <import name='Kernel/OTChannelID' />
       &KeyedContainer;
