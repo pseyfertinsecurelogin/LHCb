@@ -56,7 +56,7 @@ namespace LoKi
      *  @date   2011-12-13
      */
     // ========================================================================
-    class GAUDI_API Selector final : public virtual LoKi::AuxFunBase
+    class GAUDI_API Selector final : public LoKi::AuxFunBase
     {
     public:
       // ======================================================================
