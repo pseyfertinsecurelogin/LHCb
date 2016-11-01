@@ -82,8 +82,7 @@ StatusCode UpdateManagerSvc::Item::update(IDataProviderSvc *dp,const Gaudi::Time
           }
         }
         // to avoid memory leaks, I have to delete the overriding object
-        delete override;
-        override = nullptr;
+        override.reset();
       } else { // I cannot update the object, so I replace it.
         //   let's unregister the original object
         sc = dp->unregisterObject(pObj);
@@ -94,13 +93,14 @@ StatusCode UpdateManagerSvc::Item::update(IDataProviderSvc *dp,const Gaudi::Time
         //   and delete it
         pObj->release();
         //   Now I can register the user specified one
-        pObj = override;
+        pObj = override.get();
         sc = dp->registerObject(path,pObj);
         if ( !sc.isSuccess() ) {
           log << MSG::ERROR << "Unable to register override object to " << path << endmsg;
           return sc;
         }
         // I do not need to delete the overriding object because now it belongs to the T.S.
+        override.release();
       }
     }
 

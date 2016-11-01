@@ -46,13 +46,6 @@ UpdateManagerSvc::UpdateManagerSvc(const std::string& name, ISvcLocator* svcloc)
   declareProperty("ConditionsOverride", m_conditionsOveridesDesc);
   declareProperty("DotDumpFile",        m_dotDumpFile = "");
 }
-//=============================================================================
-// Destructor
-//=============================================================================
-UpdateManagerSvc::~UpdateManagerSvc() {
-  // delete objects in the container
-  for (auto& i : m_all_items) delete i;
-}
 
 //=============================================================================
 // IService implementation
@@ -122,39 +115,48 @@ StatusCode UpdateManagerSvc::initialize(){
   // Loop over overridden conditions
   for ( const auto& co : m_conditionsOveridesDesc ) {
     std::string name;
-    Condition *cond = new Condition();
-    if (ConditionParser(co,name,*cond)) {
-      // Special update mode
-      cond->setUpdateMode(ValidDataObject::OVERRIDE);
-
-      // Remove TS root name from the path
-      if ( name[0] == '/'
-           && name.compare(0,m_dataProviderRootName.size(),m_dataProviderRootName) == 0 ){
-        name.erase(0,m_dataProviderRootName.size());
-      }
-
-      // If a condition override with that name already exists, delete it
-      Condition * dest = m_conditionsOverides[name];
-      if ( dest ) {
-        warning() << "Override condition for path '" << name
-            << "' is defined more than once (I use the last one)." << endmsg;
-        delete dest;
-      }
-
-      // Add the condition to internal list
-      m_conditionsOverides[name] = cond;
-      if( msgLevel(MSG::DEBUG) )
-        debug() << "Added condition: " << name << "\n" << cond->printParams() << endmsg;
-
-    } else {
-      // something went wrong while parsing: delete the temporary
-      delete cond;
+    auto cond = std::make_unique<Condition>();
+    if (!ConditionParser(co,name,*cond)) {
+      // something went wrong while parsing
       error() << "Cannot understand condition:" << endmsg;
       error() << co << endmsg;
       return StatusCode::FAILURE;
     }
-  }
 
+    // Special update mode
+    cond->setUpdateMode(ValidDataObject::OVERRIDE);
+
+    // Remove TS root name from the path
+    if ( name[0] == '/'
+         && name.compare(0,m_dataProviderRootName.size(),m_dataProviderRootName) == 0 ){
+      name.erase(0,m_dataProviderRootName.size());
+    }
+
+    // If a condition override with that name already exists, delete it
+#if  __cplusplus > 201402L
+    auto ret = m_conditionsOverides.insert_or_assign( name, std::move(cond) );
+    if (!ret.second) {
+      warning() << "Override condition for path '" << name
+          << "' is defined more than once (I use the last one)." << endmsg;
+    }
+    auto dest = ret.first;
+#else
+    auto dest = m_conditionsOverides.find(name);
+    if ( dest!=m_conditionsOverides.end() ) {
+      warning() << "Override condition for path '" << name
+          << "' is defined more than once (I use the last one)." << endmsg;
+      dest->second = std::move(cond);
+    } else {
+      auto ret = m_conditionsOverides.emplace( name, std::move(cond) );
+      assert( ret.second ); // we first did a 'find' and there was nothing, so this better be true...
+      dest = ret.first;
+    }
+#endif
+    // Add the condition to internal list
+    if( msgLevel(MSG::DEBUG) )
+      debug() << "Added condition: " << name << "\n" << dest->second->printParams() << endmsg;
+
+  }
   return StatusCode::SUCCESS;
 }
 
@@ -162,9 +164,7 @@ StatusCode UpdateManagerSvc::stop(){
   if( msgLevel(MSG::DEBUG) ) {
     debug() << "--- stop ---" << endmsg;
   }
-
   if ( msgLevel(MSG::DEBUG) || ! m_dotDumpFile.empty() ) dump();
-
   return base_class::stop();
 }
 
@@ -186,10 +186,8 @@ StatusCode UpdateManagerSvc::finalize(){
   // delete unused overridden conditions (the others are deleted together with the T.S.)
   if ( ! m_conditionsOverides.empty() ) {
     warning() << "Overridden conditions not used:" << endmsg;
-    for (auto& c : m_conditionsOverides) {
-      warning() << c.first << endmsg;
-      delete c.second;
-    }
+    for (auto& c : m_conditionsOverides) warning() << c.first << endmsg;
+    m_conditionsOverides.clear();
   }
 
   // base class finalization
@@ -229,10 +227,10 @@ void UpdateManagerSvc::i_registerCondition(const std::string &condition, BaseObj
   }
 
   // find the object
-  Item *mf_item = findItem(mf);
+  Item* mf_item = findItem(mf);
   if (!mf_item){ // a new OMF
-    mf_item = new Item(mf, m_dataProviderRootName);
-    m_all_items.push_back(mf_item);
+    m_all_items.push_back(std::make_unique<Item>(mf, m_dataProviderRootName));
+    mf_item = m_all_items.back().get();
     m_head_items.push_back(mf_item); // since it is new, it has no parents
     insertInMap( mf_item );
  } else {
@@ -244,23 +242,25 @@ void UpdateManagerSvc::i_registerCondition(const std::string &condition, BaseObj
 
   if (!cond_copy.empty()) {
     // find the condition
-    Item *cond_item = findItem(cond_copy);
+    Item* cond_item = findItem(cond_copy);
     if (!cond_item){ // a new condition
 
+      std::unique_ptr<Item> cnd_item;
       // Check if the requested condition is in the override list.
       auto cond_ov = m_conditionsOverides.find(cond_copy);
       if ( cond_ov != m_conditionsOverides.end() ) {
         // yes, it is!
-        cond_item = new Item(cond_copy,Item::UserPtrType(ptr_dest,mf_item->ptr),
-                             cond_ov->second);
+        cnd_item = std::make_unique<Item>(cond_copy,Item::UserPtrType(ptr_dest,mf_item->ptr),
+                                          std::move(cond_ov->second));
         // I do not need it anymore in the list
         m_conditionsOverides.erase(cond_ov);
       } else {
         // no override
-        cond_item = new Item(cond_copy,Item::UserPtrType(ptr_dest,mf_item->ptr));
+        cnd_item = std::make_unique<Item>(cond_copy,Item::UserPtrType(ptr_dest,mf_item->ptr));
       }
 
-      m_all_items.push_back(cond_item);
+      m_all_items.push_back(std::move(cnd_item));
+      cond_item = m_all_items.back().get();
       insertInMap( cond_item );
     } else {
       if (ptr_dest){
@@ -309,17 +309,17 @@ void UpdateManagerSvc::i_registerCondition(void *obj, BaseObjectMemberFunction *
   }
 
   // find the "condition"
-  Item *cond_item = findItem(obj);
+  Item* cond_item = findItem(obj);
   if (!cond_item){ // Error!!!
     throw UpdateManagerException("tried to register for an object not in the UpdateManagerSvc");
   } else {
     if (cond_item->isHead()) removeFromHead(cond_item);
   }
   // find the OMF (Object Member Function)
-  Item *mf_item = findItem(mf);
+  Item* mf_item = findItem(mf);
   if (!mf_item){ // a new OMF
-    mf_item = new Item(mf, m_dataProviderRootName);
-    m_all_items.push_back(mf_item);
+    m_all_items.push_back(std::make_unique<Item>(mf, m_dataProviderRootName));
+    mf_item = m_all_items.back().get();
     m_head_items.push_back(mf_item); // since it is new, it has no parents
     insertInMap( mf_item );
   }
@@ -333,7 +333,7 @@ void UpdateManagerSvc::i_registerCondition(void *obj, BaseObjectMemberFunction *
   m_head_until = 0;
 }
 StatusCode UpdateManagerSvc::newEvent(){
-  if (detDataSvc() != NULL){
+  if (detDataSvc()){
     if (detDataSvc()->validEventTime()) {
       return newEvent(detDataSvc()->eventTime());
     } else {
@@ -426,7 +426,7 @@ StatusCode UpdateManagerSvc::i_update(void *instance){
   }
   if (detDataSvc() != NULL){
     if (detDataSvc()->validEventTime()) {
-      Item *item = findItem(instance);
+      Item* item = findItem(instance);
       if (item) {
         StatusCode sc;
         // We are in the initialization phase if we are not yet "STARTED"
@@ -458,7 +458,7 @@ void UpdateManagerSvc::i_invalidate(void *instance){
   if ( msgLevel(MSG::VERBOSE) ) {
     verbose() << "Invalidate object at " << instance << endmsg;
   }
-  Item *item = findItem(instance);
+  Item* item = findItem(instance);
   if (item) {
     item->invalidate();
     m_head_since = 1;
@@ -558,7 +558,7 @@ void UpdateManagerSvc::i_unregister(void *instance){
     verbose() << "Unregister object at " << instance << endmsg;
   }
 
-  Item *item = findItem(instance);
+  Item* item = findItem(instance);
   if (item){
 
     // unlink from parents
@@ -577,13 +577,12 @@ void UpdateManagerSvc::i_unregister(void *instance){
 
     // update the lists of Items
     if ( item->isHead() ) removeFromHead(item);
-    m_all_items.erase(std::find(m_all_items.begin(),m_all_items.end(),item));
-
     // The erased item shoud also disappear from the maps, if this is the last for this key, i.e. isHead
     m_pathMap.erase( item->path );
-
     // finally we can delete the Item
-    delete item;
+    m_all_items.erase(std::find_if(m_all_items.begin(),m_all_items.end(),
+                                   [&](const std::unique_ptr<Item>& i)
+                                   { return i.get()==item; }));
   }
 }
 
@@ -611,10 +610,10 @@ void UpdateManagerSvc::dump(){
   }
 
   size_t cnt = 0, head_cnt = 0;
-  for (auto i = m_all_items.begin(); i != m_all_items.end(); ++i){
+  for (const auto& i : m_all_items) {
     if ( msgLevel(MSG::VERBOSE) ) {
-      verbose() << "--item " << cnt++ << " " << std::hex << *i << std::dec;
-      if ((*i)->isHead()){
+      verbose() << "--item " << cnt++ << " " << std::hex << i.get() << std::dec;
+      if (i->isHead()){
         msgStream() << " (head)";
         ++head_cnt;
       }
@@ -623,24 +622,24 @@ void UpdateManagerSvc::dump(){
 
     if (dot_file) {
       // graph node for registered item (first part, label)
-      (*dot_file) << "item_" << std::hex << *i
+      (*dot_file) << "item_" << std::hex << i.get()
     		  << "[label=\""
     		  << "(" << std::dec << cnt-1 << ") "
-    		  << std::hex << *i << "\\n"
-    		  << "(" << (*i)->ptr << ")";
+    		  << std::hex << i.get() << "\\n"
+    		  << "(" << i->ptr << ")";
     }
 
     if ( msgLevel(MSG::VERBOSE) )
-      verbose() << "       ptr  = " << std::hex << (*i)->ptr << std::dec << endmsg;
-    if ( !(*i)->path.empty() ) {
+      verbose() << "       ptr  = " << std::hex << i->ptr << std::dec << endmsg;
+    if ( !i->path.empty() ) {
       if ( msgLevel(MSG::VERBOSE) )
-        verbose() << "       path = " << (*i)->path << endmsg;
+        verbose() << "       path = " << i->path << endmsg;
       if (dot_file) {
         // If we have the path, we can put it in the graph label
-        (*dot_file) << "\\n" << (*i)->path;
+        (*dot_file) << "\\n" << i->path;
       }
     }/* else {
-      INamedInterface *ni = dynamic_cast<INamedInterface>((*i)->ptr);
+      INamedInterface *ni = dynamic_cast<INamedInterface>(i->ptr);
       if (ni) {
     	// It's a component with name, we can put it in the graph label
     	(*dot_file) << "\\n" << ni->name();
@@ -653,11 +652,11 @@ void UpdateManagerSvc::dump(){
     }
 
     if ( msgLevel(MSG::VERBOSE) )
-      verbose() << "        IOV = " << (*i)->since << " - " << (*i)->until << endmsg;
-    if ((*i)->memFuncs.size()){
+      verbose() << "        IOV = " << i->since << " - " << i->until << endmsg;
+    if (i->memFuncs.size()){
       if ( msgLevel(MSG::VERBOSE) )
         verbose() << "       depend on :" << endmsg;
-      for (auto mfIt = (*i)->memFuncs.begin(); mfIt != (*i)->memFuncs.end(); ++mfIt){
+      for (auto mfIt = i->memFuncs.begin(); mfIt != i->memFuncs.end(); ++mfIt){
         if ( msgLevel(MSG::VERBOSE) )
           verbose() << std::hex << "                  ";
         for (auto itemIt = mfIt->items.begin(); itemIt != mfIt->items.end(); ++itemIt){
@@ -666,7 +665,7 @@ void UpdateManagerSvc::dump(){
           if (dot_file) {
             // Add an arrow to the graph connecting the user Item to the
             // used Item
-            (*dot_file) << "item_" << std::hex << *i << " -> " << "item_" << std::hex << *itemIt << ";\n";
+            (*dot_file) << "item_" << std::hex << i.get() << " -> " << "item_" << std::hex << *itemIt << ";\n";
           }
         }
         if ( msgLevel(MSG::VERBOSE) )
@@ -711,7 +710,7 @@ void UpdateManagerSvc::purge() {
       // remove connections to children if the object is going to be reloaded
       auto c = children.begin();
       while ( c != children.end() ) {
-        unlink(item,*c);
+        unlink(item.get(),*c);
         c = children.begin();
       }
     }
@@ -731,7 +730,7 @@ bool UpdateManagerSvc::getValidity(const std::string path, Gaudi::Time& since, G
     throw GaudiException("Service offline","UpdateManagerSvc::registerCondition",StatusCode::FAILURE);
   }
   // search
-  Item *item = findItem(path,path_to_db);
+  const Item* item = findItem(path,path_to_db);
   if (item) {
     // copy IOV limits
     since = item->since;
@@ -751,7 +750,7 @@ void UpdateManagerSvc::setValidity(const std::string path, const Gaudi::Time& si
 
   if (!path_to_db) { // the DDS path is unique
     // search
-    Item *item = findItem(path,path_to_db);
+    Item* item = findItem(path,path_to_db);
     if (item) {
       // set the validity and propagate up
       item->changeValidity(since,until);

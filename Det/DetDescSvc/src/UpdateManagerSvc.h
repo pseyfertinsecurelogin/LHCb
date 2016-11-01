@@ -44,8 +44,6 @@ public:
   /// Standard constructor
   UpdateManagerSvc(const std::string& name, ISvcLocator* svcloc);
 
-  virtual ~UpdateManagerSvc( ); ///< Destructor
-
   /// Initialize Service
   StatusCode initialize() override;
 
@@ -170,20 +168,20 @@ private:
   SmartIF<IEventProcessor> m_evtProc;
 
   /// List used to keep track of all the registered items.
-  Item::ItemList    m_all_items;
+  std::vector<std::unique_ptr<Item>>                                        m_all_items;
   /// List used to record all the objects without parents. (for fast access)
-  Item::ItemList    m_head_items;
+  Item::ItemList                                                            m_head_items;
   /// Lower bound of intersection of head IOVs.
-  Gaudi::Time       m_head_since;
+  Gaudi::Time                                                               m_head_since;
   /// Higher bound of intersection of head IOVs.
-  Gaudi::Time       m_head_until;
+  Gaudi::Time                                                               m_head_until;
 
   /// List of condition definitions to override the ones in the transient store (option ConditionsOverride).
   /// The syntax to define a condition is:<BR>
   /// path := type1 name1 = value1; type2 name2 = value2; ...
   std::vector<std::string> m_conditionsOveridesDesc;
   /// Map containing the list of parsed condition definitions
-  GaudiUtils::Map<std::string,Condition*> m_conditionsOverides;
+  std::map<std::string,std::unique_ptr<Condition>> m_conditionsOverides;
 
   /// Name of the dot (graphviz) file into which write the dump (http://www.graphviz.org)
   /// (property DotDumpFile).

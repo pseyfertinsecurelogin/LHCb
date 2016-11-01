@@ -12,12 +12,12 @@ struct Item final {
   // ------ Item Cons & Dest
 
   /// Constructor for an item representing an object in the data store.
-  Item(std::string objPath, ValidDataObject *overrideObj = nullptr):
-    path(std::move(objPath)), override(overrideObj)
+  Item(std::string objPath, std::unique_ptr<ValidDataObject> overrideObj = nullptr):
+    path(std::move(objPath)), override(std::move(overrideObj))
   {}
   /// Constructor for an item representing an object in the data store.
-  Item(std::string objPath, UserPtrType dest, ValidDataObject *overrideObj = nullptr):
-    path(std::move(objPath)), override(overrideObj)
+  Item(std::string objPath, UserPtrType dest, std::unique_ptr<ValidDataObject> overrideObj = nullptr):
+    path(std::move(objPath)), override(std::move(overrideObj))
   {
     if (dest.first) user_dest_ptrs.push_back(dest);
   }
@@ -134,7 +134,7 @@ struct Item final {
   /// Void pointer to the represented object, obtained via dynamic_cast (used to unically identify the item)
   void             *ptr = nullptr;
   /// Pointer to the object used to override the object retrieved from the data provider.
-  ValidDataObject  *override = nullptr;
+  std::unique_ptr<ValidDataObject> override = nullptr;
   /// List of the registered member functions.
   MembFuncList     memFuncs;
 
