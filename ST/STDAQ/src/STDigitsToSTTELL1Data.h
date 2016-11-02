@@ -1,4 +1,3 @@
-// $Id: STDigitsToSTTELL1Data.h,v 1.1 2008-10-17 15:13:24 mneedham Exp $
 #ifndef STDIGITSTOSTTELL1DATA_H
 #define STDIGITSTOSTTELL1DATA_H 1
 
@@ -19,7 +18,7 @@
  *  @date   2007-10-10
  */
 
-class ISTReadoutTool;
+struct ISTReadoutTool;
 class DeSTDetector;
 
 class STDigitsToSTTELL1Data: public ST::AlgBase {
@@ -28,9 +27,6 @@ public:
 
   /// Standard constructor
   STDigitsToSTTELL1Data( const std::string& name, ISvcLocator* pSvcLocator );
-
-  virtual ~STDigitsToSTTELL1Data(); ///< Destructor
-
 
   StatusCode execute() override;    ///< Algorithm execution
 

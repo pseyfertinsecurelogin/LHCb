@@ -40,16 +40,12 @@ protected:
   STLayerSelector ( const std::string& type,
                     const std::string& name,
                     const IInterface* parent);
-  virtual ~STLayerSelector();
-
 
 private:
 
   STLayerSelector ();
   STLayerSelector ( const STLayerSelector & );
   STLayerSelector& operator= ( const STLayerSelector& );
-
-private:
 
   std::string m_detType;
   std::vector<std::string> m_ignoredLayers;
