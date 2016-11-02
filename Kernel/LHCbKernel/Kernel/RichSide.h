@@ -17,6 +17,7 @@
 #include <vector>
 #include <iostream>
 #include <stdint.h>
+#include <array>
 
 // Kernel
 #include "Kernel/RichDetectorType.h"
@@ -75,6 +76,10 @@ namespace Rich
   {
     return s << Rich::text( side );
   }
+
+  /// Type for fixed size arrays with RICH panel information
+  template < typename TYPE >
+  using PanelArray = std::array< TYPE, NPDPanelsPerRICH >;
 
 }
 
