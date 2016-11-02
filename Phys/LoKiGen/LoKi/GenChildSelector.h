@@ -1,4 +1,3 @@
-// $Id$
 // ============================================================================
 #ifndef LOKI_GENCHILDSELECTOR_H
 #define LOKI_GENCHILDSELECTOR_H 1
@@ -33,9 +32,6 @@
  *  @author Vanya Belyaev  Ivan.Belyaev@cern.ch
  *  @date 2011-12-11
  *
- *                    $Revision$
- *  Last modification $Date$
- *                 by $Author$
  */
 // ============================================================================
 namespace LoKi
@@ -60,7 +56,7 @@ namespace LoKi
      *  @date   2011-12-13
      */
     // ========================================================================
-    class GAUDI_API Selector : public virtual LoKi::AuxFunBase
+    class GAUDI_API Selector final : public LoKi::AuxFunBase
     {
     public:
       // ======================================================================
@@ -70,19 +66,19 @@ namespace LoKi
     public:
       // ======================================================================
       /// constructor from the index
-      Selector ( const unsigned int   i  ) ;
+      Selector ( const unsigned int   i  ) : Selector( std::vector<unsigned int>(1,i) ) {}
       /// constructor from the indices
       Selector ( const unsigned int   i1 ,
-                 const unsigned int   i2 ) ;
+                 const unsigned int   i2 ) : Selector( std::vector<unsigned int>{ i1, i2 } ) {}
       /// constructor from the indices
       Selector ( const unsigned int   i1 ,
                  const unsigned int   i2 ,
-                 const unsigned int   i3 ) ;
+                 const unsigned int   i3 ) : Selector( std::vector<unsigned int>{ i1, i2, i3 } ) {}
       /// constructor from the indices
       Selector ( const unsigned int   i1 ,
                  const unsigned int   i2 ,
                  const unsigned int   i3 ,
-                 const unsigned int   i4 ) ;
+                 const unsigned int   i4 ) : Selector( std::vector<unsigned int>{ i1, i2, i3, i4 } ) {}
       /// constructor from the indices
       Selector ( const std::vector<unsigned int>& indices          ) ;
       /// constructor from decay node
@@ -98,8 +94,6 @@ namespace LoKi
                  const std::string&               factory          ) ;
       /// constructor from the cut
       Selector ( const LoKi::Types::GCuts&        cut              ) ;
-      /// desctructor
-      virtual ~Selector() ;
       /// OPTIONAL: nice printout
       std::ostream& fillStream ( std::ostream& s ) const  override;
       // ======================================================================
@@ -125,11 +119,6 @@ namespace LoKi
       bool valid () const  ;
       /// try to validate it!
       StatusCode validate ( const LHCb::IParticlePropertySvc* svc ) const ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      Selector () ;                      // the default constructor is disabled
       // ======================================================================
     private:
       // ======================================================================

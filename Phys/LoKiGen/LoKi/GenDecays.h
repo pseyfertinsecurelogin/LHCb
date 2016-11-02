@@ -1,4 +1,3 @@
-// $Id$
 // ============================================================================
 #ifndef LOKI_GENDECAYS_H
 #define LOKI_GENDECAYS_H 1
@@ -280,8 +279,6 @@ namespace Decays
       ( const Decays::Decay&       decay                   ,
         const Alg                  alg         = Daughters ,
         const Oscillation          oscillation = Undefined ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~GenExclusive () {}
       // ======================================================================
     public:
       // ======================================================================
@@ -603,8 +600,6 @@ namespace Decays
        *  @param mother the mother node
        */
       GenInclusive ( const GenExclusive& right ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~GenInclusive () {}
       // ====================================================================
     public:
       // ====================================================================
@@ -641,11 +636,6 @@ namespace Decays
       /// add one more node to the tree
       GenInclusive& operator+= ( const LHCb::ParticleProperty* node )
       { addDaughter ( node ) ; return *this ; }
-      // ====================================================================
-    private:
-      // ====================================================================
-      /// the default constructor is disabled
-      GenInclusive () ; // the default constructor is disabled
       // ====================================================================
     };
     // ======================================================================
@@ -745,8 +735,6 @@ namespace Decays
       GenOptional
       ( const GenExclusive& right                  ,
         const TreeList&     optional = TreeList () ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~GenOptional () {}
       // ====================================================================
     public:
       // ====================================================================
@@ -831,11 +819,6 @@ namespace Decays
       // ======================================================================
     private:
       // ======================================================================
-      /// the default constructor is disabled
-      GenOptional () ;                   // the default constructor is disabled
-      // ======================================================================
-    private:
-      // ======================================================================
       /// the optional particles in the tree
       TreeList m_optional ;               // the optional particles in the tree
       // ======================================================================
@@ -913,8 +896,6 @@ namespace Decays
         const Oscillation        oscillated = Undefined ) ;
       /// constructor from GenExclusive
       GenPhotos ( const GenExclusive& right ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~GenPhotos () {}
       // ======================================================================
     public:
       // ======================================================================
@@ -954,11 +935,6 @@ namespace Decays
       /// add one more node to the tree
       GenPhotos& operator+= ( const LHCb::ParticleProperty* node )
       { addDaughter ( node ) ; return *this ; }
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      GenPhotos () ; // the default constructor is disabled
       // ======================================================================
     private:
       // ======================================================================
@@ -1029,9 +1005,6 @@ namespace Decays
       ( const GenExclusive& right                  ,
         const TreeList&     optional = TreeList () ) ;
       // ======================================================================
-      /// MANDATORY: virtual destructor
-      virtual ~GenPhotosOptional () {}
-      // ======================================================================
     public:
       // ======================================================================
       /// MANDATORY: clone method ("virtual constructor")
@@ -1071,11 +1044,6 @@ namespace Decays
       /// add one more node to the tree
       GenPhotosOptional& operator+= ( const LHCb::ParticleProperty* node )
       { addDaughter ( node ) ; return *this ; }
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      GenPhotosOptional () ;             // the default constructor is disabled
       // ======================================================================
     private:
       // ======================================================================
