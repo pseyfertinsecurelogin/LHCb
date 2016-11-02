@@ -44,8 +44,6 @@ public:
   /// Standard constructor
   UpdateManagerSvc(const std::string& name, ISvcLocator* svcloc);
 
-  virtual ~UpdateManagerSvc( ); ///< Destructor
-
   /// Initialize Service
   StatusCode initialize() override;
 
@@ -97,7 +95,7 @@ protected:
 
   /// Register a condition for an object together with the destination for the pointer to the condition object.
   void i_registerCondition(const std::string &condition, BaseObjectMemberFunction *mf,
-                                 BasePtrSetter *ptr_dest = NULL) override;
+                                 BasePtrSetter *ptr_dest = nullptr) override;
 
   /// Register a condition for an object
   void i_registerCondition(void *obj, BaseObjectMemberFunction *mf) override;
@@ -147,7 +145,7 @@ private:
 
   // ---------- data members ----------
   /// Handle to the Data Provider (where to find conditions).
-  IDataProviderSvc *m_dataProvider;
+  SmartIF<IDataProviderSvc> m_dataProvider;
 
   /// Name of the Data Provider (set by the option DataProviderSvc, by default "DetectorDataSvc").
   std::string       m_dataProviderName;
@@ -158,32 +156,32 @@ private:
   /// Handle to the IDetDataSvc interface (used to get the event time).
   /// If the service is not found it is not fatal, but you cannot use the method newEvent()
   /// without the event time parameter (will always fail).
-  IDetDataSvc      *m_detDataSvc;
+  SmartIF<IDetDataSvc> m_detDataSvc;
 
   /// Name of the DetDataSvc (set by the option DetDataSvc, by default empty, which means <i>the same as data provider</i>).
   std::string       m_detDataSvcName;
 
   /// Pointer to the incident service;
-  IIncidentSvc     *m_incidentSvc;
+  SmartIF<IIncidentSvc> m_incidentSvc;
 
   /// Pointer to the event processor in order to be able to top the run if something goes wrpong during an update.
-  IEventProcessor  *m_evtProc;
+  SmartIF<IEventProcessor> m_evtProc;
 
   /// List used to keep track of all the registered items.
-  Item::ItemList    m_all_items;
+  std::vector<std::unique_ptr<Item>>                                        m_all_items;
   /// List used to record all the objects without parents. (for fast access)
-  Item::ItemList    m_head_items;
+  Item::ItemList                                                            m_head_items;
   /// Lower bound of intersection of head IOVs.
-  Gaudi::Time       m_head_since;
+  Gaudi::Time                                                               m_head_since;
   /// Higher bound of intersection of head IOVs.
-  Gaudi::Time       m_head_until;
+  Gaudi::Time                                                               m_head_until;
 
   /// List of condition definitions to override the ones in the transient store (option ConditionsOverride).
   /// The syntax to define a condition is:<BR>
   /// path := type1 name1 = value1; type2 name2 = value2; ...
   std::vector<std::string> m_conditionsOveridesDesc;
   /// Map containing the list of parsed condition definitions
-  GaudiUtils::Map<std::string,Condition*> m_conditionsOverides;
+  std::map<std::string,std::unique_ptr<Condition>> m_conditionsOverides;
 
   /// Name of the dot (graphviz) file into which write the dump (http://www.graphviz.org)
   /// (property DotDumpFile).
