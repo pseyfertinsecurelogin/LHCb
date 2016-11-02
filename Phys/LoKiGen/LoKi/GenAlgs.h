@@ -410,8 +410,8 @@ namespace LoKi
       //
       const HepMC::GenParticle* result = nullptr ;
       //
-      for ( ; !result && begin != end ; ++begin ) 
-      { result = foundFirst ( *begin , cut ) ; } 
+      for ( ; !result && begin != end ; ++begin )
+      { result = foundFirst ( *begin , cut ) ; }
       //
       return result ;
     }
@@ -792,9 +792,9 @@ namespace LoKi
       if ( !vertex ) { return minval ; }                          // RETURN
       // investigate the vertex
       HepMC::GenVertex* _v = const_cast<HepMC::GenVertex*> ( vertex ) ;
-      HepMC::GenVertex::particle_iterator ifound = LoKi::Algs::select_min
-        ( _v->particles_begin ( range ) ,
-          _v->particles_end   ( range ) , fun , cut ) ;
+      auto ifound = LoKi::Algs::select_min( _v->particles_begin ( range ) ,
+                                            _v->particles_end   ( range ) ,
+                                            fun , cut ) ;
       if ( _v->particles_end ( range ) == ifound ) { return minval ; } // RETURN
       // check the minimum:
       minval = std::min ( minval , fun ( *ifound ) ) ;
@@ -862,7 +862,7 @@ namespace LoKi
                                             _v->particles_end   ( range ) ,
                                             fun , cut ) ;
       // check the maximum
-      return  ( _v->particles_end(range)!=ifound) ? std::max ( maxval , fun ( *ifound ) ) 
+      return  ( _v->particles_end(range)!=ifound) ? std::max ( maxval , fun ( *ifound ) )
                                                   : maxval ;
     }
     // ========================================================================
@@ -919,7 +919,7 @@ namespace LoKi
       if ( !event ) { return minval ; }                    // RETURN
       //
       auto ifound = LoKi::Algs::select_min( event->particles_begin () ,
-                                            event->particles_end   () , 
+                                            event->particles_end   () ,
                                             fun , cut ) ;
       return ifound != event->particles_end() ? std::min( minval, fun(*ifound) )
                                               : minval ;
@@ -941,7 +941,7 @@ namespace LoKi
       const PREDICATE&        cut    ,
       RESULT                  minval )
     {
-      return event ? LoKi::GenAlgs::min_value ( event->pGenEvt() , fun , cut , minval ) 
+      return event ? LoKi::GenAlgs::min_value ( event->pGenEvt() , fun , cut , minval )
                    : minval;
     }
     // ========================================================================
@@ -1009,7 +1009,7 @@ namespace LoKi
       const PREDICATE&        cut    ,
       RESULT                  maxval )
     {
-      return event ? LoKi::GenAlgs::max_value ( event->pGenEvt() , fun , cut , maxval ) 
+      return event ? LoKi::GenAlgs::max_value ( event->pGenEvt() , fun , cut , maxval )
                    : maxval;
     }
     // ========================================================================
@@ -1052,7 +1052,7 @@ namespace LoKi
     {
       if ( !event ) { return nullptr ; }                          // RETURN
       auto ifound = LoKi::Algs::select_min( event->particles_begin () ,
-                                            event->particles_end   () , 
+                                            event->particles_end   () ,
                                             fun , cut ) ;
       return ifound != event->particles_end() ? *ifound : nullptr;
     }
@@ -1199,15 +1199,14 @@ namespace LoKi
       const FUNCTION&         fun   ,
       const PREDICATE&        cut   )
     {
-      if ( 0 == event ) { return 0 ; }                          // RETURN
-      HepMC::GenParticle* result = 0 ;
-      for ( LHCb::HepMCEvent::Container::const_iterator iev = event->begin() ;
-            event->end() != iev ; ++iev )
+      if ( !event ) { return nullptr ; }                          // RETURN
+      HepMC::GenParticle* result = nullptr ;
+      for ( auto iev = event->begin() ; event->end() != iev ; ++iev )
       {
         const HepMC::GenParticle* tmp =
           LoKi::GenAlgs::max_element ( *iev , fun , cut ) ;    // RECURSION
-        HepMC::GenParticle* _tmp = const_cast<HepMC::GenParticle*> ( tmp ) ;
-        if ( 0 == result || fun ( result ) < fun ( _tmp ) ) { result  = _tmp ; }
+        auto _tmp = const_cast<HepMC::GenParticle*> ( tmp ) ;
+        if ( !result || fun ( result ) < fun ( _tmp ) ) { result  = _tmp ; }
       }
       return result ;
     }

@@ -1,4 +1,3 @@
-// $Id$
 // ============================================================================
 #ifndef LOKI_GENVERTICES_H
 #define LOKI_GENVERTICES_H 1
@@ -28,9 +27,6 @@
  *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
  *  @date 2006-02-08
  *
- *                    $Revision$
- *  Last modification $Date$
- *                 by $Author$
  */
 namespace LoKi
 {
@@ -60,12 +56,8 @@ namespace LoKi
     {
     public:
       // ======================================================================
-      /// MANDATORY: default constructor
-      BarCode() {}
       /// MANDATORY: clone method ("virtual" constructor")
       BarCode* clone() const  override;
-      /// MANDATORY: virtual destructor
-      virtual ~BarCode() ;
       /// MANDATORY: the only one essential method
       result_type operator() ( argument p ) const  override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
@@ -88,12 +80,8 @@ namespace LoKi
     {
     public:
       // ======================================================================
-      /// MANDATORY: default constructor
-      PositionX() {}
       /// MANDATORY: clone method ("virtual" constructor")
       PositionX* clone() const  override;
-      /// MANDATORY: virtual destructor
-      virtual ~PositionX() ;
       /// MANDATORY: the only one essential method
       result_type operator() ( argument p ) const  override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
@@ -116,12 +104,8 @@ namespace LoKi
     {
     public:
       // ======================================================================
-      /// MANDATORY: default constructor
-      PositionY() {}
       /// MANDATORY: clone method ("virtual" constructor")
       PositionY* clone() const  override;
-      /// MANDATORY: virtual destructor
-      virtual ~PositionY() ;
       /// MANDATORY: the only one essential method
       result_type operator() ( argument p ) const  override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
@@ -144,12 +128,8 @@ namespace LoKi
     {
     public:
       // ======================================================================
-      /// MANDATORY: default constructor
-      PositionZ() {}
       /// MANDATORY: clone method ("virtual" constructor")
       PositionZ* clone() const  override;
-      /// MANDATORY: virtual destructor
-      virtual ~PositionZ() ;
       /// MANDATORY: the only one essential method
       result_type operator() ( argument p ) const  override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
@@ -172,12 +152,8 @@ namespace LoKi
     {
     public:
       // ======================================================================
-      /// MANDATORY: default constructor
-      PositionT() {}
       /// MANDATORY: clone method ("virtual" constructor")
       PositionT* clone() const  override;
-      /// MANDATORY: virtual destructor
-      virtual ~PositionT() ;
       /// MANDATORY: the only one essential method
       result_type operator() ( argument p ) const  override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
@@ -200,12 +176,8 @@ namespace LoKi
     {
     public:
       // ======================================================================
-      /// MANDATORY: default constructor
-      Rho() {}
       /// MANDATORY: clone method ("virtual" constructor")
       Rho* clone() const  override;
-      /// MANDATORY: virtual destructor
-      virtual ~Rho() ;
       /// MANDATORY: the only one essential method
       result_type operator() ( argument p ) const  override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
@@ -244,21 +216,12 @@ namespace LoKi
       CountIF
       ( HepMC::IteratorRange      range ,
         const LoKi::Types::GCuts& cut   ) ;
-      /// copy constructor
-      CountIF ( const CountIF& right ) ;
-      /// virtual destructor
-      virtual ~CountIF();
       /// MANDATORY: clone method ("virtual contructor")
       CountIF* clone() const  override;
       /// MANDATORY: the only one essential method
       result_type operator() ( argument v ) const  override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
       std::ostream& fillStream ( std::ostream& s ) const  override;
-      // ======================================================================
-    private:
-      // ======================================================================
-      // the default constructor is disabled
-      CountIF () ;
       // ======================================================================
     private:
       // ======================================================================
@@ -329,21 +292,12 @@ namespace LoKi
       ( const LoKi::Types::GCuts& cut   ,
         const LoKi::Types::GFunc& fun   ,
         HepMC::IteratorRange      range ) ;
-      /// copy constructor
-      SumIF ( const SumIF& right ) ;
-      /// virtual destructor
-      virtual ~SumIF();
       /// MANDATORY: clone method ("virtual contructor")
       SumIF* clone() const  override;
       /// MANDATORY: the only one essential method
       result_type operator() ( argument v ) const  override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
       std::ostream& fillStream( std::ostream& s ) const  override;
-      // ======================================================================
-    private:
-      // ======================================================================
-      // the default constructor is disabled
-      SumIF () ;
       // ======================================================================
     private:
       // ======================================================================

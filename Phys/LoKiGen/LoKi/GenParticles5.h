@@ -1,4 +1,3 @@
-// $Id$
 // ============================================================================
 #ifndef LOKI_GENPARTICLES5_H
 #define LOKI_GENPARTICLES5_H 1
@@ -27,9 +26,6 @@
  *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
  *  @date 2012-01-28
  *
- *                    $Revision$
- *  Last modification $Date$
- *                 by $Author$
  */
 // ============================================================================
 namespace LoKi
@@ -54,16 +50,12 @@ namespace LoKi
        *  @param primary use primary vertex, otherwise use own vertex
        */
       Flight ( const bool primary = false ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~Flight () ;
       /// MANDATORY: clone method ("virtual destructor")
       Flight* clone() const  override;
       /// MANDATORY: the only one essential method
       result_type operator() ( argument p ) const  override;
       /// OPTIONAL: nice printout
       std::ostream& fillStream ( std::ostream& s ) const  override;
-      // ======================================================================
-    public:
       // ======================================================================
       /// use primary vertex ?
       bool primary() const { return m_primary ; } // use primary vertex ?
