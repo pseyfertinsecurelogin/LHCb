@@ -51,6 +51,8 @@ StatusCode FTRawBankDecoder::execute() {
 
   auto clus = (*this)( rawEvent->banks(LHCb::RawBank::FTCluster) );
   if (!clus) return StatusCode::FAILURE;
+  if( msgLevel( MSG::DEBUG ) )
+    debug() << "Created " << clus->size() << " FTLiteClusters" << endmsg;
   put( clus.release(), m_outputClusterLocation);
   return StatusCode::SUCCESS;
 }
