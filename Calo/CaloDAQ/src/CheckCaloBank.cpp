@@ -43,11 +43,6 @@ CheckCaloBank::CheckCaloBank( const std::string& name, ISvcLocator* pSvcLocator)
 }
 
 //=============================================================================
-// Standard destructor
-//=============================================================================
-CheckCaloBank::~CheckCaloBank() {}
-
-//=============================================================================
 // Initialisation. Check parameters
 //=============================================================================
 StatusCode CheckCaloBank::initialize() {
@@ -87,13 +82,9 @@ StatusCode CheckCaloBank::execute() {
   setFilterPassed(false);
 
   // Retrieve the RawEvent:
-  LHCb::RawEvent* rawEvt = NULL ;
-  for (std::vector<std::string>::const_iterator p = m_rawEventLocations.begin(); p != m_rawEventLocations.end(); ++p) {
+  LHCb::RawEvent* rawEvt = nullptr ;
+  for (auto p = m_rawEventLocations.begin(); p != m_rawEventLocations.end() && ! rawEvt; ++p) {
     rawEvt = getIfExists<LHCb::RawEvent>(*p);
-    if ( NULL != rawEvt ){
-      rawEvt = get<LHCb::RawEvent>(*p);
-      break;
-    }
   }
 
   if( rawEvt == NULL ) {

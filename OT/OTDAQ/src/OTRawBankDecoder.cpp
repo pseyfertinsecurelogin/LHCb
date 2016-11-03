@@ -138,28 +138,18 @@ namespace OTRawBankDecoderHelpers {
     bool golHeadersLoaded() const { return m_event; }
 
     size_t totalNumberOfHits() const {
-        //size_t ntot = std::accumulate( begin(), end(), size_t(0),
-	//	[] (size_t acc, const Module& m)
-	//	{ return acc + m.size(); });
-      if (m_totalNumberOfHits==0){
-	m_totalNumberOfHits = totalNumberOfHitsInWindow();
-	return m_totalNumberOfHits; // ns...
-      }else{
-	return m_totalNumberOfHits;
-      }
+      return totalNumberOfHitsInWindow();
     }
 
     size_t totalNumberOfHitsInWindow() const
     {
-      if (m_totalNumberOfHits==0){
-	m_totalNumberOfHits = std::accumulate( begin(), end(), size_t(0),
-					       [] (size_t acc, const Module& m) {
-						 return acc + m.countHitsInWindow();
-					       });
-	return m_totalNumberOfHits;
-      }else{
-      	return m_totalNumberOfHits;
+      if (UNLIKELY(m_totalNumberOfHits==0)){
+        m_totalNumberOfHits = std::accumulate( begin(), end(), size_t(0),
+                                               [] (size_t acc, const Module& m) {
+                                               return acc + m.countHitsInWindow();
+                                               } );
       }
+      return m_totalNumberOfHits;
     }
 
     bool isTotalNumberOfHitsLessThen(size_t nmax) const
@@ -537,18 +527,18 @@ StatusCode OTRawBankDecoder::decodeGolHeadersV3(const LHCb::RawBank& bank, int b
 
   // The data starts at the next 4byte
   const unsigned int* begin = bank.begin<unsigned int>()+1;
-  const unsigned int* end   = bank.end<unsigned int>();
-  const unsigned int* idata;
-  unsigned int station,layer,quarter,module,numhits,numgols(0);
-  for( idata = begin ; idata < end; ++idata) {
+  const unsigned int* const end = bank.end<unsigned int>();
+  unsigned int numgols(0);
+  auto idata = begin;
+  for( ; idata < end; ++idata) {
     // decode the header
     OTDAQ::GolHeader golHeader(*idata);
-    numhits = golHeader.numberOfHits();
+    auto numhits = golHeader.numberOfHits();
     // Decode the GOL ID
-    station = golHeader.station();
-    layer = golHeader.layer();
-    quarter = golHeader.quarter();
-    module = golHeader.module();
+    auto station = golHeader.station();
+    auto layer = golHeader.layer();
+    auto quarter = golHeader.quarter();
+    auto module = golHeader.module();
     // check that the GOL ID is valid
     if(!m_detectordata->isvalidID(station,layer,quarter,module) ) {
       std::ostringstream mess;
@@ -602,9 +592,9 @@ StatusCode OTRawBankDecoder::decodeGolHeaders(const LHCb::RawEvent& event) const
       debug() << "Decoding GOL headers in OTRawBankDecoder. Number of OT banks is "
               << OTBanks.size() << endmsg;
 
-    for (auto ibank = OTBanks.begin(); ibank != OTBanks.end() ; ++ibank) {
+    for (const auto& ibank : OTBanks ) {
 
-      if( LHCb::RawBank::MagicPattern != (*ibank)->magic() )
+      if( LHCb::RawBank::MagicPattern != ibank->magic() )
       {
         Error("Wrong 'magic' value: skip decoding this RawBank.", StatusCode::FAILURE, 0).ignore();
         continue;
@@ -612,16 +602,16 @@ StatusCode OTRawBankDecoder::decodeGolHeaders(const LHCb::RawEvent& event) const
 
       // Report the bank size and version
       if (msgLevel(MSG::DEBUG))
-        debug() << "OT Bank sourceID= " << (*ibank)->sourceID()
-                << " size=" << (*ibank)->size()/4 << " bankversion=" << (*ibank)->version() << endmsg;
+        debug() << "OT Bank sourceID= " << ibank->sourceID()
+                << " size=" << ibank->size()/4 << " bankversion=" << ibank->version() << endmsg;
 
       // Choose decoding based on bank version
-      int bVersion = m_forcebankversion != OTBankVersion::UNDEFINED ? m_forcebankversion : (*ibank)->version();
+      int bVersion = m_forcebankversion != OTBankVersion::UNDEFINED ? m_forcebankversion : ibank->version();
       StatusCode sc;
       switch( bVersion ) {
         case OTBankVersion::DC06:
           m_channelmaptool->setBankVersion( bVersion );
-          sc = decodeGolHeadersDC06(**ibank,bVersion);
+          sc = decodeGolHeadersDC06(*ibank,bVersion);
           break;
           // Note: SIM and v3 currently (22/07/2008) uses same decoding.
           //       If SIM changes w.r.t. to the real decoding then we'll need
@@ -630,7 +620,7 @@ StatusCode OTRawBankDecoder::decodeGolHeaders(const LHCb::RawEvent& event) const
           m_channelmaptool->setBankVersion( bVersion );
         case OTBankVersion::v3:
           m_channelmaptool->setBankVersion( bVersion );
-          sc = decodeGolHeadersV3(**ibank,bVersion);
+          sc = decodeGolHeadersV3(*ibank,bVersion);
           break;
         default:
           Warning( "Cannot decode OT raw buffer bank version " +
@@ -728,38 +718,30 @@ StatusCode OTRawBankDecoder::decode( OTDAQ::RawEvent& otrawevent ) const
 
     // The data starts at the next 4byte
     const unsigned int* begin = bank->begin<unsigned int>()+1;
-    const unsigned int* end   = bank->end<unsigned int>();
+    const unsigned int* const end = bank->end<unsigned int>();
     size_t numgols(0);
     for( idata = begin ; idata < end; ++idata) {
-      // decode the header
       OTDAQ::GolHeader golheader(*idata);
-      OTDAQ::Gol gol(golheader);
       const OTDAQ::RawHit* firsthit = reinterpret_cast<const OTDAQ::RawHit*>(idata+1);
-      gol.hits().insert(gol.hits().end(),firsthit,firsthit+golheader.numberOfHits());
-      otspecificbank.gols().push_back( gol );
-      // increase the pointer with the gol size
+      otspecificbank.gols().emplace_back( golheader, firsthit, firsthit+golheader.numberOfHits());
       idata += golheader.hitBufferSize();
       ++numgols;
     }
-
     // check that everything is well aligned
     if(idata != end) {
-      std::ostringstream mess;
-      mess << "GOL headers do not add up to buffer size. " << idata << " " << end;
-      Warning( mess.str(), StatusCode::FAILURE, 0 ).ignore();
+      Warning( "GOL headers do not add up to buffer size.",
+               StatusCode::FAILURE, 0 ).ignore();
       decodingerror = true;
     }
-
     // check that we have read the right number of GOLs
     if( numgols != otspecificbank.header().numberOfGOLs() ) {
       Warning( "Found " + std::to_string(otspecificbank.header().numberOfGOLs())
-               + " in bank header, but read only " + std::to_string(numgols)
+               + " in bank header, but read " + std::to_string(numgols)
                + " from bank.",
               StatusCode::FAILURE, 0 ).ignore();
       decodingerror = true;
     }
   }
-
   return decodingerror ? StatusCode::FAILURE : StatusCode::SUCCESS;
 }
 

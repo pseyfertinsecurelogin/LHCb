@@ -1,4 +1,3 @@
-// $Id$
 // ============================================================================
 #ifndef LOKI_COMPOSE_H 
 #define LOKI_COMPOSE_H 1
@@ -16,13 +15,16 @@ namespace LoKi
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date 2007-11-29
    */
-  template <class TYPE,class TYPE1, class TYPE2, class TYPE3>
+  template <typename F1, typename F2,
+            typename TYPE = typename details::LF<F1>::type1,
+            typename TYPE1 = typename details::LF<F1>::type2,
+            typename TYPE2 = typename details::LF<F2>::type2,
+            typename TYPE3 = typename details::LF<F2>::type1 >
   inline 
   LoKi::Compose<TYPE,TYPE1,TYPE2,TYPE3>
-  compose ( const LoKi::Functor<TYPE,TYPE1>&  fun1 , 
-            const LoKi::Functor<TYPE3,TYPE2>& fun2 )
+  compose ( F1&& fun1, F2&& fun2 )
   {
-    return LoKi::Compose<TYPE,TYPE1,TYPE2,TYPE3> ( fun1 , fun2 ) ;
+    return { std::forward<F1>(fun1) , std::forward<F2>(fun2) } ;
   }
   // ==========================================================================
 } // end of namespace LoKi 

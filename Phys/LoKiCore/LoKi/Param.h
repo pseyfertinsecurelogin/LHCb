@@ -1,4 +1,3 @@
-// $Id$ 
 // ============================================================================
 #ifndef LOKI_PARAM_H 
 #define LOKI_PARAM_H 1
@@ -25,16 +24,9 @@
  * contributions and advices from G.Raven, J.van Tilburg,
  * A.Golutvin, P.Koppenburg have been used in the design.
  *
- * By usage of this code one clearly states the disagreement 
- * with the smear campaign of Dr.O.Callot et al.: 
- * ``No Vanya's lines are allowed in LHCb/Gaudi software''
- *
  * @date 2014-02-02 
  * @author Vanya BELYAEV Ivan.Belyaev@itep.ru
  *  
- *                    $Revision$
- *  Last modification $Date$
- *                 by $Author$ 
  */
 namespace LoKi 
 {
@@ -45,7 +37,7 @@ namespace LoKi
    *  @date   2014-02-02
    *  @thanks Alexander MAZUROV for regex parsing code 
    */
-  class GAUDI_API Param 
+  class GAUDI_API Param final
   {
   public:
     // ========================================================================
@@ -57,7 +49,6 @@ namespace LoKi
      */
     Param ( const std::string& property  = "" ) ;
     //
-    virtual ~Param() ;
     // ========================================================================
   public:
     // ========================================================================

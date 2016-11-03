@@ -1,4 +1,3 @@
-// $Id: HLT.h,v 1.6 2010-05-17 16:01:38 ibelyaev Exp $
 // ============================================================================
 #ifndef LOKI_HLT_H
 #define LOKI_HLT_H 1
@@ -54,30 +53,32 @@ namespace LoKi
     public:
       // ======================================================================
       /// constructor from the decision name
-      HasDecision ( const std::string& name  ) ;
+      HasDecision ( const std::string& name  )
+          : HasDecision( Names{ name } ) { }
       /// constructor from the decision names ("OR")
       HasDecision ( const std::string& name1 ,
-                    const std::string& name2 ) ;
+                    const std::string& name2 )
+          : HasDecision( Names{ name1, name2 } ) { }
       /// constructor from the decision names ("OR")
       HasDecision ( const std::string& name1 ,
                     const std::string& name2 ,
-                    const std::string& name3 ) ;
+                    const std::string& name3 )
+          : HasDecision( Names{ name1, name2, name3 } ) {}
       /// constructor from the decision names ("OR")
       HasDecision ( const std::string& name1 ,
                     const std::string& name2 ,
                     const std::string& name3 ,
-                    const std::string& name4 ) ;
+                    const std::string& name4 )
+          : HasDecision( Names{ name1, name2, name3, name4 } ) { }
       /// constructor form the decision names ("OR")
-      HasDecision ( const Names&       names ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~HasDecision () {}
+      HasDecision ( Names       names ) ;
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  HasDecision* clone() const
+      HasDecision* clone() const override
       { return new HasDecision ( *this ) ; }
       /// MANDATORY: the only one essential method
-      virtual result_type operator() ( argument a ) const ;
+      result_type operator() ( argument a ) const override;
       /// OPTIONAL: the nice printout
-      virtual std::ostream& fillStream ( std::ostream& s ) const
+      std::ostream& fillStream ( std::ostream& s ) const override
       { return print ( s , "HLT_HAS" ) ; }
       // ======================================================================
     protected:
@@ -91,11 +92,6 @@ namespace LoKi
       Names::const_iterator end   () const { return m_names.end   () ; }
       // ======================================================================
       std::ostream& print ( std::ostream& s , const std::string& name ) const ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      HasDecision () ;                  // the default constructor is disabled
       // ======================================================================
     private:
       // ======================================================================
@@ -118,36 +114,33 @@ namespace LoKi
     public:
       // ======================================================================
       /// constructor from the decision name
-      PassDecision ( const std::string& name  ) ;
+      PassDecision ( const std::string& name  )
+          : PassDecision( Names{ name } ) { }
       /// constructor from the decision names ("OR")
       PassDecision ( const std::string& name1 ,
-                     const std::string& name2 );
+                     const std::string& name2 )
+          : PassDecision( Names{ name1, name2 } ) { }
       /// constructor from the decision names ("OR")
       PassDecision ( const std::string& name1 ,
                      const std::string& name2 ,
-                     const std::string& name3 ) ;
+                     const std::string& name3 )
+          : PassDecision( Names{ name1, name2, name3 } ) { }
       /// constructor from the decision names ("OR")
       PassDecision ( const std::string& name1 ,
                      const std::string& name2 ,
                      const std::string& name3 ,
-                     const std::string& name4 ) ;
+                     const std::string& name4 )
+          : PassDecision( Names{ name1, name2, name3, name4 } ) { }
       /// constructor form the decision names ("OR")
-      PassDecision ( const Names& names ) ; 
-      /// MANDATORY: virtual destructor
-      virtual ~PassDecision () {}
+      PassDecision ( Names names ) ;
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  PassDecision* clone() const
+      PassDecision* clone() const override
       { return new PassDecision ( *this ) ; }
       /// MANDATORY: the only one essential method
-      virtual result_type operator() ( argument a ) const ;
+      result_type operator() ( argument a ) const override;
       /// OPTIONAL: the nice printout
-      virtual std::ostream& fillStream ( std::ostream& s ) const
+      std::ostream& fillStream ( std::ostream& s ) const override
       { return print ( s , "HLT_PASS" ) ; }
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      PassDecision () ;                 // the default constructor is disabled
       // ======================================================================
     } ;
     // ========================================================================
@@ -165,15 +158,13 @@ namespace LoKi
     public:
       // ======================================================================
       /// MANDATORY: default constructor
-      Size() {}
-      /// MANDATORY: virtual destructor
-      virtual ~Size () {}
+      Size() : AuxFunBase{ std::tie() } { }
       /// MANDATORY: clone method ("virtual consructor")
-      virtual  Size* clone() const { return new Size ( *this ) ; }
+      Size* clone() const override { return new Size ( *this ) ; }
       /// MANDATORY: the only one essential method
-      virtual result_type operator () ( argument a ) const ;
+      result_type operator () ( argument a ) const override;
       /// OPTIONAL: the nice printout
-      virtual std::ostream& fillStream ( std::ostream& s ) const
+      std::ostream& fillStream ( std::ostream& s ) const override
       { return s << "HLT_SIZE" ; }
       // ======================================================================
     };
@@ -194,15 +185,13 @@ namespace LoKi
     public:
       // ======================================================================
       /// MANDATORY: default constructor
-      NPass() {}
-      /// MANDATORY: virtual destructor
-      virtual ~NPass () {}
+      NPass() : AuxFunBase{ std::tie() } { }
       /// MANDATORY: clone method ("virtual consructor")
-      virtual  NPass* clone() const { return new NPass ( *this ) ; }
+      NPass* clone() const override { return new NPass ( *this ) ; }
       /// MANDATORY: the only one essential method
-      virtual result_type operator () ( argument a ) const ;
+      result_type operator () ( argument a ) const override;
       /// OPTIONAL: the nice printout
-      virtual std::ostream& fillStream ( std::ostream& s ) const
+      std::ostream& fillStream ( std::ostream& s ) const override
       { return s << "HLT_NPASS" ; }
       // ======================================================================
     } ;
@@ -224,15 +213,13 @@ namespace LoKi
     public:
       // ======================================================================
       /// MANDATORY: default constructor
-      Decision() {}
-      /// MANDATORY: virtual destructor
-      virtual ~Decision () {}
+      Decision() : AuxFunBase{ std::tie() } { }
       /// MANDATORY: clone method ("virtual consructor")
-      virtual  Decision* clone() const { return new Decision ( *this ) ; }
+      Decision* clone() const override { return new Decision ( *this ) ; }
       /// MANDATORY: the only one essential method
-      virtual result_type operator () ( argument a ) const ;
+      result_type operator () ( argument a ) const override;
       /// OPTIONAL: the nice printout
-      virtual std::ostream& fillStream ( std::ostream& s ) const
+      std::ostream& fillStream ( std::ostream& s ) const override
       { return s << "HLT_DECISION" ; }
       // ======================================================================
     } ;
@@ -255,31 +242,34 @@ namespace LoKi
     public:
       // ======================================================================
       /// constructor from one "special" decicion
-      DecisionBut ( const std::string& name ) ;
+      DecisionBut ( const std::string& name )
+          : DecisionBut( Names{ name } ) { }
       /// constructor from two "special" decicions
       DecisionBut ( const std::string& name1 ,
-                    const std::string& name2 ) ;
+                    const std::string& name2 )
+          : DecisionBut( Names{ name1, name2 } ) { }
       /// constructor from three "special" decicions
       DecisionBut ( const std::string& name1 ,
                     const std::string& name2 ,
-                    const std::string& name3 ) ;
+                    const std::string& name3 )
+          : DecisionBut( Names{ name1, name2, name3 } ) { }
       /// constructor from four "special" decicions
       DecisionBut ( const std::string& name1 ,
                     const std::string& name2 ,
                     const std::string& name3 ,
-                    const std::string& name4 ) ;
-      /// constructor from vector of "special" decicions
-      DecisionBut ( const Names&       names ) ;
-      /// constructor from vector of "special" decicions
-      DecisionBut ( const std::vector<std::string>& names ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~DecisionBut() {} ;
+                    const std::string& name4 )
+          : DecisionBut( Names{ name1, name2, name3, name4 } ) { }
+      /// constructor from vector of "special" decisions
+      DecisionBut ( const std::vector<std::string>& names )
+          : DecisionBut( Names( names.begin(), names.end() ) ) { }
+      /// constructor from vector of "special" decisions
+      DecisionBut ( Names       names ) ;
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  DecisionBut* clone () const { return new DecisionBut ( *this ) ; }
+      DecisionBut* clone () const override { return new DecisionBut ( *this ) ; }
       /// MANDATORY: the only one essential method
-      virtual result_type operator () ( argument a ) const ;
+      result_type operator () ( argument a ) const override;
       /// OPTIONAL: the nice printout
-      virtual std::ostream& fillStream ( std::ostream& s ) const ;
+      std::ostream& fillStream ( std::ostream& s ) const override;
       // ======================================================================
     private:
       // ======================================================================
@@ -303,28 +293,19 @@ namespace LoKi
       // ======================================================================
       /// constructor from substring
       HasDecisionSubString ( const std::string& substr ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~HasDecisionSubString () ;
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  HasDecisionSubString* clone () const ;
+      HasDecisionSubString* clone () const override;
       /// MANDATORY: the only one essential method
-      virtual result_type operator() ( argument a ) const ;
+      result_type operator() ( argument a ) const override;
       /// OPTIONAL: nice printout
-      virtual std::ostream& fillStream ( std::ostream& ) const ;
-      // ======================================================================
-    public:
+      std::ostream& fillStream ( std::ostream& ) const override;
       // ======================================================================
       /// access to the substring
       const std::string& substr() const { return m_substr ; }
       // ======================================================================
     private:
       // ======================================================================
-      /// the default constructor is disabled
-      HasDecisionSubString () ;          // the default constructor is disabled
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the substring to be looked
+      /// the substring to be looked for
       std::string m_substr ;                      // the substring to be looked
       // ======================================================================
     } ;
@@ -343,19 +324,12 @@ namespace LoKi
       // ======================================================================
       /// constructor from substring
       PassDecisionSubString ( const std::string& substr ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~PassDecisionSubString () ;
       /// MANDATORY: clone method ("virtual constructor")
-      virtual PassDecisionSubString* clone () const ;
+      PassDecisionSubString* clone () const override;
       /// MANDATORY: the only one essential method
-      virtual result_type operator() ( argument a ) const ;
+      result_type operator() ( argument a ) const override;
       /// OPTIONAL: nice printout
-      virtual std::ostream& fillStream ( std::ostream& ) const ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      PassDecisionSubString () ;          // the default constructor is disabled
+      std::ostream& fillStream ( std::ostream& ) const override;
       // ======================================================================
     };
     // ========================================================================
@@ -373,19 +347,12 @@ namespace LoKi
       // ======================================================================
       /// constructor from substring
       DecisionButSubString ( const std::string& substr ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~DecisionButSubString () ;
       /// MANDATORY: clone method ("virtual constructor")
-      virtual DecisionButSubString* clone () const ;
+      DecisionButSubString* clone () const override;
       /// MANDATORY: the only one essential method
-      virtual result_type operator() ( argument a ) const ;
+      result_type operator() ( argument a ) const override;
       /// OPTIONAL: nice printout
-      virtual std::ostream& fillStream ( std::ostream& ) const ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      DecisionButSubString () ;          // the default constructor is disabled
+      std::ostream& fillStream ( std::ostream& ) const override;
       // ======================================================================
     };
     // ========================================================================
@@ -403,21 +370,12 @@ namespace LoKi
       // ======================================================================
       /// constructor from substring
       HasDecisionRegex ( const std::string& substr ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~HasDecisionRegex () ;
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  HasDecisionRegex* clone () const ;
+      HasDecisionRegex* clone () const override;
       /// MANDATORY: the only one essential method
-      virtual result_type operator() ( argument a ) const ;
+      result_type operator() ( argument a ) const override;
       /// OPTIONAL: nice printout
-      virtual std::ostream& fillStream ( std::ostream& ) const ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      HasDecisionRegex () ;              // the default constructor is disabled
-      // ======================================================================
-    public:
+      std::ostream& fillStream ( std::ostream& ) const override;
       // ======================================================================
       /// regurn the regular expression
       const boost::regex& expression () const { return m_expression ; }
@@ -443,19 +401,12 @@ namespace LoKi
       // ======================================================================
       /// constructor from substring
       PassDecisionRegex ( const std::string& substr ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~PassDecisionRegex () ;
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  PassDecisionRegex* clone () const ;
+      PassDecisionRegex* clone () const override;
       /// MANDATORY: the only one essential method
-      virtual result_type operator() ( argument a ) const ;
+      result_type operator() ( argument a ) const override;
       /// OPTIONAL: nice printout
-      virtual std::ostream& fillStream ( std::ostream& ) const ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      PassDecisionRegex () ;             // the default constructor is disabled
+      std::ostream& fillStream ( std::ostream& ) const override;
       // ======================================================================
     };
     // ========================================================================
@@ -473,20 +424,12 @@ namespace LoKi
       // ======================================================================
       /// constructor from substring
       DecisionButRegex ( const std::string& substr ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~DecisionButRegex () ;
       /// MANDATORY: clone method ("virtual constructor")
-      virtual DecisionButRegex* clone () const ;
+      DecisionButRegex* clone () const override;
       /// MANDATORY: the only one essential method
-      virtual result_type operator() ( argument a ) const ;
+      result_type operator() ( argument a ) const override;
       /// OPTIONAL: nice printout
-      virtual std::ostream& fillStream ( std::ostream& ) const ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      DecisionButRegex () ;          // the default constructor is disabled
-      // ======================================================================
+      std::ostream& fillStream ( std::ostream& ) const override;
     };
     // ========================================================================
     /** @class ErrorBits
@@ -503,21 +446,12 @@ namespace LoKi
       // ======================================================================
       /// constructor from the channel name
       ErrorBits ( const std::string&      name ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~ErrorBits() ;
       /// MANDATORY: clone method ( "virtual constructor")
-      virtual  ErrorBits* clone () const ;
+      ErrorBits* clone () const override;
       /// MANDATORY: the only one essential methor
-      result_type operator() ( argument a ) const ;
+      result_type operator() ( argument a ) const override;
       /// OPTIONAL: nice printout
-      virtual std::ostream& fillStream ( std::ostream& ) const ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      ErrorBits () ;                     // the default constructor is disabled
-      // ======================================================================
-    public:
+      std::ostream& fillStream ( std::ostream& ) const override;
       // ======================================================================
       const Gaudi::StringKey& channel( ) const { return m_key ; }
       // ======================================================================
@@ -540,17 +474,10 @@ namespace LoKi
       // ======================================================================
       /// constructor from the channel name
       NonTurboPass ( const std::string&      name ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~NonTurboPass() ;
       /// MANDATORY: clone method ( "virtual constructor")
-      virtual  NonTurboPass* clone () const ;
+      NonTurboPass* clone () const override;
       /// MANDATORY: the only one essential methor
-      result_type operator() ( argument a ) const ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      NonTurboPass () ;                // the default constructor is disabled
+      result_type operator() ( argument a ) const override;
       // ======================================================================
     } ;
     // ========================================================================
@@ -560,23 +487,16 @@ namespace LoKi
      *  @author Sean Benson sean.benson@cern.ch
      *  @date 2015-01-12
      */
-    class GAUDI_API TurboPass : public HasDecisionRegex
+    class GAUDI_API TurboPass final : public HasDecisionRegex
     {
     public:
       // ======================================================================
       /// constructor from the channel name
       TurboPass ( const std::string&      name ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~TurboPass() ;
       /// MANDATORY: clone method ( "virtual constructor")
-      virtual  TurboPass* clone () const ;
+      TurboPass* clone () const override;
       /// MANDATORY: the only one essential methor
-      result_type operator() ( argument a ) const ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      TurboPass () ;                // the default constructor is disabled
+      result_type operator() ( argument a ) const override;
       // ======================================================================
     } ;
     // ========================================================================
@@ -587,25 +507,18 @@ namespace LoKi
      *  @author Vanya BELYAEV  Ivan.Belyaev@cern.ch
      *  @date 2010-05-17
      */
-    class GAUDI_API ExecutionStage : public ErrorBits
+    class GAUDI_API ExecutionStage final : public ErrorBits
     {
     public:
       // ======================================================================
       /// constructor from the channel name
       ExecutionStage ( const std::string&      name ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~ExecutionStage() ;
       /// MANDATORY: clone method ( "virtual constructor")
-      virtual  ExecutionStage* clone () const ;
+      ExecutionStage* clone () const override;
       /// MANDATORY: the only one essential methor
-      result_type operator() ( argument a ) const ;
+      result_type operator() ( argument a ) const override;
       /// OPTIONAL: nice printout
-      virtual std::ostream& fillStream ( std::ostream& ) const ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      ExecutionStage () ;                // the default constructor is disabled
+      std::ostream& fillStream ( std::ostream& ) const override;
       // ======================================================================
     } ;
     // ========================================================================
@@ -616,25 +529,18 @@ namespace LoKi
      *  @author Vanya BELYAEV  Ivan.Belyaev@cern.ch
      *  @date 2010-05-17
      */
-    class GAUDI_API NumberOfCandidates : public ErrorBits
+    class GAUDI_API NumberOfCandidates final : public ErrorBits
     {
     public:
       // ======================================================================
       /// constructor from the channel name
       NumberOfCandidates ( const std::string&      name ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~NumberOfCandidates() ;
       /// MANDATORY: clone method ( "virtual constructor")
-      virtual  NumberOfCandidates* clone () const ;
+      NumberOfCandidates* clone () const override;
       /// MANDATORY: the only one essential methor
-      result_type operator() ( argument a ) const ;
+      result_type operator() ( argument a ) const override;
       /// OPTIONAL: nice printout
-      virtual std::ostream& fillStream ( std::ostream& ) const ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      NumberOfCandidates () ;  // the default constructor is disabled
+      std::ostream& fillStream ( std::ostream& ) const override;
       // ======================================================================
     } ;
     // ========================================================================
@@ -646,28 +552,19 @@ namespace LoKi
      *  @author Vanya BELYAEV  Ivan.Belyaev@cern.ch
      *  @date 2010-05-17
      */
-    class GAUDI_API Saturated
+    class GAUDI_API Saturated final
       : public LoKi::BasicFunctors<const LHCb::HltDecReports*>::Predicate
     {
     public:
       // ======================================================================
       /// constructor from the channel name
       Saturated ( const std::string&      name ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~Saturated() ;
       /// MANDATORY: clone method ( "virtual constructor")
-      virtual  Saturated* clone () const ;
+      Saturated* clone () const override;
       /// MANDATORY: the only one essential methor
-      result_type operator() ( argument a ) const ;
+      result_type operator() ( argument a ) const override;
       /// OPTIONAL: nice printout
-      virtual std::ostream& fillStream ( std::ostream& ) const ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      Saturated () ;  // the default constructor is disabled
-      // ======================================================================
-    public:
+      std::ostream& fillStream ( std::ostream& ) const override;
       // ======================================================================
       const Gaudi::StringKey& channel( ) const { return m_key ; }
       // ======================================================================
@@ -684,7 +581,7 @@ namespace LoKi
      *  @author Vanya BELYAEV  Ivan.Belyaev@cern.ch
      *  @date 2010-05-17
      */
-    class GAUDI_API CountErrorBits
+    class GAUDI_API CountErrorBits final
       : public LoKi::BasicFunctors<const LHCb::HltDecReports*>::Function
     {
     public:
@@ -720,19 +617,12 @@ namespace LoKi
         const std::string& line4 ,
         const unsigned int mask  ) ;
       // =====================================================================
-      /// MANDATORY: virtual desctructor
-      virtual ~CountErrorBits() ;
       /// MANDATORY: clone method ( "virtual constructor")
-      virtual  CountErrorBits* clone () const ;
+      CountErrorBits* clone () const override;
       /// MANDATORY: the only one essential methor
-      result_type operator() ( argument a ) const ;
+      result_type operator() ( argument a ) const override;
       /// OPTIONAL: nice printout
-      virtual std::ostream& fillStream ( std::ostream& ) const ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      CountErrorBits () ;  // the default constructor is disabled
+      std::ostream& fillStream ( std::ostream& ) const override;
       // ======================================================================
     private:
       // ======================================================================
@@ -749,7 +639,7 @@ namespace LoKi
      *  @author Vanya BELYAEV  Ivan.Belyaev@cern.ch
      *  @date 2010-05-17
      */
-    class GAUDI_API CountErrorBitsRegex
+    class GAUDI_API CountErrorBitsRegex final
       : public LoKi::BasicFunctors<const LHCb::HltDecReports*>::Function
     {
     public:
@@ -758,14 +648,12 @@ namespace LoKi
       CountErrorBitsRegex
       ( const std::string&  expression ,
         const unsigned int  mask       ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~CountErrorBitsRegex() ;
       /// MANDATORY: clone method ( "virtual constructor")
-      virtual  CountErrorBitsRegex* clone () const ;
+      CountErrorBitsRegex* clone () const  override;
       /// MANDATORY: the only one essential method
-      result_type operator() ( argument a ) const ;
+      result_type operator() ( argument a ) const override;
       /// OPTIONAL: nice printout
-      virtual std::ostream& fillStream ( std::ostream& ) const ;
+      std::ostream& fillStream ( std::ostream& ) const  override;
       // ======================================================================
     private:
       // ======================================================================
@@ -792,21 +680,19 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.BElyaev@nikhef.nl
      *  @date 2010-05-17
      */
-    class GAUDI_API HltRoutingBits
+    class GAUDI_API HltRoutingBits final
       : public LoKi::BasicFunctors<const LHCb::HltDecReports*>::Predicate
     {
     public:
       // ======================================================================
       /// constructor from routing bits
       HltRoutingBits ( const LoKi::HLT::RoutingBits& bits ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~HltRoutingBits () ;
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  HltRoutingBits* clone() const ;
+      HltRoutingBits* clone() const  override;
       /// MANDATORY: the only one essential method
-      virtual  result_type operator() ( argument /* a */ ) const ;
+      result_type operator() ( argument /* a */ ) const  override;
       /// OPTIONAL: nice printout
-      virtual std::ostream& fillStream ( std::ostream& ) const ;
+      std::ostream& fillStream ( std::ostream& ) const  override;
       // ======================================================================
     public:
       // ======================================================================
@@ -832,22 +718,20 @@ namespace LoKi
      *  @author Pieter David <pieter.david@nikhef.nl>
      *  @date 2014-08-28
      */
-    class GAUDI_API TrgConfKey
+    class GAUDI_API TrgConfKey final
       : public LoKi::BasicFunctors<const LHCb::HltDecReports*>::Function
     {
     public:
       // ======================================================================
       /// MANDATORY: default constructor
-      TrgConfKey() {}
-      /// MANDATORY: virtual destructor
-      virtual ~TrgConfKey () {}
+      TrgConfKey() : AuxFunBase{ std::tie() } { }
       /// MANDATORY: clone method ("virtual consructor")
-      virtual  TrgConfKey* clone() const { return new TrgConfKey ( *this ) ; }
+      TrgConfKey* clone() const override { return new TrgConfKey ( *this ) ; }
       /// MANDATORY: the only one essential method
-      virtual result_type operator () ( argument a ) const
+      result_type operator () ( argument a ) const override
       { return a -> configuredTCK () ; }
       /// OPTIONAL: the nice printout
-      virtual std::ostream& fillStream ( std::ostream& s ) const
+      std::ostream& fillStream ( std::ostream& s ) const override
       { return s << "HLT_TCK" ; }
       // ======================================================================
     };

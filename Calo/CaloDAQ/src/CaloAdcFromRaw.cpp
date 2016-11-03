@@ -1,4 +1,4 @@
-// Include files 
+// Include files
 
 // local
 #include "CaloAdcFromRaw.h"
@@ -16,24 +16,33 @@
 // Declaration of the Algorithm Factory
 DECLARE_ALGORITHM_FACTORY( CaloAdcFromRaw )
 
+namespace {
 
+// C++17:
+template <typename T>
+constexpr const T& clamp( const T& v, const T& lo, const T& hi) noexcept
+{
+        return ( v < lo ) ? lo : ( hi < v ) ? hi : v;
+}
+
+}
 //=============================================================================
 // Standard constructor, initializes variables
 //=============================================================================
 CaloAdcFromRaw::CaloAdcFromRaw( const std::string& name,
                                 ISvcLocator* pSvcLocator)
-  : GaudiAlgorithm ( name , pSvcLocator ), m_calo(0), m_data(0), m_l0data(0)
+  : GaudiAlgorithm ( name , pSvcLocator )
 {
-  declareProperty("AdcLocation"        , m_location = "");
-  declareProperty("L0AdcLocation"      , m_l0Location = "");
-  declareProperty("L0BitLocation"      , m_l0BitLocation = "");
-  declareProperty("DeCalibration"      , m_calib = false); // Expert usage
+  declareProperty("AdcLocation"        , m_location );
+  declareProperty("L0AdcLocation"      , m_l0Location );
+  declareProperty("L0BitLocation"      , m_l0BitLocation );
+  declareProperty("DeCalibration"      , m_calib ); // Expert usage
 
   // set default detectorName
   int index = name.find_last_of(".") +1 ; // return 0 if '.' not found --> OK !!
-  m_detectorName = name.substr( index, 4 ); 
-  if ( name.substr(index,3) == "Prs" ) m_detectorName = "Prs";
-  if ( name.substr(index,3) == "Spd" ) m_detectorName = "Spd";
+  m_detectorName = ( name.compare(index, 3, "Prs") == 0 ? "Prs"
+                   : name.compare(index, 3, "Spd") == 0 ? "Spd"
+                   : name.substr( index, 4 ) );
 
  if( "Ecal" == m_detectorName ) {
    m_location      = LHCb::CaloAdcLocation::Ecal    ;
@@ -66,15 +75,7 @@ CaloAdcFromRaw::CaloAdcFromRaw( const std::string& name,
    m_caloName = "";
    m_offset = 0;
  }
- 
-
-
 }
-//=============================================================================
-// Destructor
-//=============================================================================
-CaloAdcFromRaw::~CaloAdcFromRaw() {} 
-
 //=============================================================================
 // Initialization
 //=============================================================================
@@ -85,7 +86,7 @@ StatusCode CaloAdcFromRaw::initialize() {
   if( UNLIKELY( msgLevel(MSG::DEBUG) ) ) debug() << "==> Initialize" << endmsg;
 
   // get detector elements
-  if( m_caloName == "")return Error("Unknown calo detector name " + m_detectorName,StatusCode::FAILURE);
+  if( m_caloName.empty() ) return Error("Unknown calo detector name " + m_detectorName,StatusCode::FAILURE);
   m_calo  = getDet<DeCalorimeter>( m_caloName );
   // get data provider tools
   m_data = tool<ICaloDataProvider>("CaloDataProvider", m_detectorName + "DataProvider",this);
@@ -102,36 +103,31 @@ StatusCode CaloAdcFromRaw::execute() {
   if( UNLIKELY( msgLevel(MSG::DEBUG) ) ) debug() << "==> Execute" << endmsg;
 
   // ADCs (ecal/hcal/prs)
-  if( m_location != ""  && m_data->getBanks()){
+  if( !m_location.empty() && m_data->getBanks()){
     LHCb::CaloAdcs* outs = new LHCb::CaloAdcs();
     put( outs , m_location);
     const CaloVector<LHCb::CaloAdc>& adcs = m_data->adcs();
 
-    if( UNLIKELY( msgLevel(MSG::DEBUG) ) ) 
+    if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
       debug() << " #ADCS " << adcs.size() << endmsg;
-    for(CaloVector<LHCb::CaloAdc>::const_iterator iadc = adcs.begin();adcs.end()!=iadc;++iadc){
-      LHCb::CaloAdc adc = *iadc;
+    for(LHCb::CaloAdc adc : adcs ) {
       LHCb::CaloCellID id = adc.cellID();
       int value = adc.adc();
       double calib = 1.;
       if( m_calib){
-        const CellParam& cParam = m_calo->cellParam( id );
-        calib  = cParam.calibration();
+        calib  = m_calo->cellParam( id ).calibration();
         value = (calib > 0) ? int( (double) adc.adc() / calib) : 0 ;
-        if( m_calo->isDead( id ))value = 0;
+        if( m_calo->isDead( id )) value = 0;
       }
-      const unsigned int max = m_calo->adcMax();
-      int satur = max - m_offset;
-      if( value > satur      )value = satur;
-      if( value < -m_offset  )value = -m_offset;
-      LHCb::CaloAdc* out = new LHCb::CaloAdc( id, value);
-      if( UNLIKELY( msgLevel(MSG::DEBUG) ) ) 
-        debug() << "Inserting : " << id << " adc = " << value << "  =  " << adc.adc() << " / " << calib 
-                << "  (dead channel ? " << m_calo->isDead( id ) << ")" << endmsg;
+      value = clamp( value, -m_offset, static_cast<int>(m_calo->adcMax()) - m_offset );
       try{
-        outs->insert(out);
-      }
-      catch(GaudiException &exc) { 
+        auto out = std::make_unique<LHCb::CaloAdc>( id, value);
+        if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
+          debug() << "Inserting : " << id << " adc = " << value << "  =  " << adc.adc() << " / " << calib
+                  << "  (dead channel ? " << m_calo->isDead( id ) << ")" << endmsg;
+        outs->insert(out.get());
+        out.release();
+      } catch(GaudiException &exc) {
         counter("Duplicate CaloADC") += 1;
         std::ostringstream os("");
         os << "Duplicate CaloADC for channel " << id << std::endl;
@@ -140,38 +136,32 @@ StatusCode CaloAdcFromRaw::execute() {
         int tell1=  m_data->deCalo()->cardToTell1( card);
         LHCb::RawBankReadoutStatus& status = m_data->status();
         status.addStatus( tell1 ,LHCb::RawBankReadoutStatus::DuplicateEntry);
-        delete out;
       }
-    }    
+    }
   }
   // L0ADCs (ecal/hcal)
-  if( m_l0Location != ""  && m_l0data->getBanks() ){
+  if( !m_l0Location.empty() && m_l0data->getBanks() ){
     LHCb::L0CaloAdcs* outs = new LHCb::L0CaloAdcs();
     put( outs , m_l0Location);
-    const CaloVector<LHCb::L0CaloAdc>& adcs = m_l0data->l0Adcs();
-    for(CaloVector<LHCb::L0CaloAdc>::const_iterator iadc = adcs.begin();adcs.end()!=iadc;++iadc){
-      LHCb::L0CaloAdc adc = *iadc;
+    for(LHCb::L0CaloAdc adc : m_l0data->l0Adcs() ) {
       LHCb::CaloCellID id = adc.cellID();
       int value = adc.adc();
       double calib = 1.;
       if( m_calib){
-        CellParam cParam = m_calo->cellParam( id );
-        calib  = cParam.calibration();
+        calib  = m_calo->cellParam( id ).calibration();
         value = ( calib > 0) ? int( (double) adc.adc() / calib) : 0;
         if( m_calo->isDead( id ))value = 0;
       }
-      int satur = 255; // 8 bit L0ADC
-      if( value > satur)value = satur;
-      if( value < 0  )value = 0;
-      LHCb::L0CaloAdc* out = new LHCb::L0CaloAdc( id, value);
-      if( UNLIKELY( msgLevel(MSG::DEBUG) ) ) 
-        debug() << "Inserting : " << id << " l0adc = " << value << "  =  " << adc.adc() << " / " << calib 
+      value = clamp( value, 0, 255 ); // 8 bin L0ADC
+      if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
+        debug() << "Inserting : " << id << " l0adc = " << value << "  =  " << adc.adc() << " / " << calib
                 << "  (dead channel ? " << m_calo->isDead( id ) << ")" << endmsg;
 
-      try{
-        outs->insert(out);
-      }
-      catch(GaudiException &exc) { 
+      try {
+        auto out = std::make_unique<LHCb::L0CaloAdc>( id, value);
+        outs->insert(out.get());
+        out.release();
+      } catch(GaudiException &exc) {
         counter("Duplicate L0ADC") += 1;
         std::ostringstream os("");
         os << "Duplicate L0ADC for channel " << id << std::endl;
@@ -180,17 +170,14 @@ StatusCode CaloAdcFromRaw::execute() {
         int tell1=  m_data->deCalo()->cardToTell1( card);
         LHCb::RawBankReadoutStatus& status = m_data->status();
         status.addStatus( tell1 ,LHCb::RawBankReadoutStatus::DuplicateEntry);
-        delete out;
       }
     }
   }
   // Trigger bits (prs/spd)
-  if( m_l0BitLocation != ""  && m_l0data->getBanks() ){
+  if( !m_l0BitLocation.empty() && m_l0data->getBanks() ){
     LHCb::L0PrsSpdHits* outs = new LHCb::L0PrsSpdHits();
     put( outs , m_l0BitLocation);
-    const CaloVector<LHCb::L0CaloAdc>& adcs = m_l0data->l0Adcs();
-    for(CaloVector<LHCb::L0CaloAdc>::const_iterator iadc = adcs.begin();adcs.end()!=iadc;++iadc){
-      LHCb::L0CaloAdc adc = *iadc;
+    for(LHCb::L0CaloAdc adc : m_l0data->l0Adcs()) {
       LHCb::CaloCellID id = adc.cellID();
       int value = adc.adc();
       if( m_calib & m_calo->isDead( id ))value = 0;
@@ -198,15 +185,14 @@ StatusCode CaloAdcFromRaw::execute() {
       if(value > satur)value = satur;
       if(value < 0)value = 0;
       if( 1 == value){
-        LHCb::L0PrsSpdHit* out = new LHCb::L0PrsSpdHit( id );
-        if( UNLIKELY( msgLevel(MSG::DEBUG) ) ) 
-          debug() << "Inserting : " << id << " bit = " << value 
+        if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
+          debug() << "Inserting : " << id << " bit = " << value
                   << "  (dead channel ? " << m_calo->isDead( id ) << ")" << endmsg;
-
         try{
-          outs->insert(out);
-        }
-        catch(GaudiException &exc) { 
+          auto out = std::make_unique<LHCb::L0PrsSpdHit>( id );
+          outs->insert(out.get());
+          out.release();
+        } catch(GaudiException &exc) {
           counter("Duplicate L0Bit") += 1;
           std::ostringstream os("");
           os << "Duplicate L0Bit for channel " << id << std::endl;
@@ -215,8 +201,7 @@ StatusCode CaloAdcFromRaw::execute() {
           int tell1=  m_data->deCalo()->cardToTell1( card);
           LHCb::RawBankReadoutStatus& status = m_data->status();
           status.addStatus( tell1 ,LHCb::RawBankReadoutStatus::DuplicateEntry);
-          delete out;
-      }
+        }
       }
     }
   }

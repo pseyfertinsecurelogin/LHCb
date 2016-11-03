@@ -1,4 +1,4 @@
-#ifndef SMARTVELOERRORBANKDECODER_H 
+#ifndef SMARTVELOERRORBANKDECODER_H
 #define SMARTVELOERRORBANKDECODER_H 1
 
 // Include files
@@ -20,21 +20,21 @@
 #include <iterator>
 
 /** @class SmartVeloErrorBankDecoder SmartVeloErrorBankDecoder.h
- *  
+ *
  *
  *  @author Tomasz Szumlak
  *  @date   2008-08-22
  */
 
 class SmartVeloErrorBankDecoder : public GaudiAlgorithm {
-public: 
+public:
 
   /// iterator to the error bank body
   typedef unsigned int* ErrorBankIT;
   typedef std::pair<ErrorBankIT, ErrorBankIT> ITPair;
   typedef std::map<unsigned int, ITPair> BANKS;
   typedef std::map<unsigned int, ITPair> SECTORS;
-  
+
   enum marks{
     INIT_SHIFT=4,
     EVT_WORDS=5
@@ -45,14 +45,14 @@ public:
     HEADER=5,
     ERROR_BANK_SIZE=20
   };
-  
+
   /// Standard constructor
   SmartVeloErrorBankDecoder( const std::string& name, ISvcLocator* pSvcLocator );
 
   virtual ~SmartVeloErrorBankDecoder( ); ///< Destructor
 
-  virtual StatusCode initialize();    ///< Algorithm initialization
-  virtual StatusCode execute   ();    ///< Algorithm execution
+  StatusCode initialize() override;    ///< Algorithm initialization
+  StatusCode execute   () override;    ///< Algorithm execution
 
 protected:
 
@@ -85,6 +85,6 @@ private:
   unsigned int m_bankVersion;
   unsigned int m_bankType;
   unsigned int m_magicPattern;
-  
+
 };
 #endif // SMARTVELOERRORBANKDECODER_H

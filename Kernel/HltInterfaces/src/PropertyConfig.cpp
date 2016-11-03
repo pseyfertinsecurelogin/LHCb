@@ -1,5 +1,6 @@
 #include <cstdlib>
 #include <memory>
+#include <numeric>
 #include "Kernel/PropertyConfig.h"
 #include "GaudiKernel/Property.h"
 #include "GaudiKernel/IProperty.h"
@@ -70,10 +71,10 @@ using boost::property_tree::ptree;
 namespace {
 void read_custom(std::istream& is, ptree& top) {
     bool parsing_properties = false;
-    static boost::regex propstart("^Properties: \\[$"),
-                        property("^ ?'([^']+)':(.*)$"),
-                        propend("^\\]$"),
-                        topitem("^(Name|Type|Kind): (.*)$");
+    static const boost::regex propstart("^Properties: \\[$"),
+                              property("^ ?'([^']+)':(.*)$"),
+                              propend("^\\]$"),
+                              topitem("^(Name|Type|Kind): (.*)$");
     boost::smatch what;
     std::string s;
     ptree& props = top.put_child("Properties",ptree{});
@@ -108,10 +109,11 @@ void read_custom(std::istream& is, ptree& top) {
 std::istream& PropertyConfig::read(std::istream& is) {
     m_digest = digest_type::createInvalid(); // reset our state;
     ptree top;
-    int fmt = is.peek();
-    if (fmt=='{')      { read_json(is,top);   }
-    else if (fmt=='<') { read_xml(is,top);    }
-    else               { read_custom(is,top); }
+    switch (is.peek()) {
+        case '{' : read_json(is,top);   break;
+        case '<' : read_xml(is,top);    break;
+        default  : read_custom(is,top); break;
+    }
     if (top.empty()) {
         // flag as invalid 'forever' -- needs to interact with updateCache
     } else {

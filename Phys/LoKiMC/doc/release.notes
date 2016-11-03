@@ -14,6 +14,19 @@
 !
 ! -----------------------------------------------------------------------------
 
+! 2016-09-02 - Vanya Belyaev
+ - MCCCTAU 
+   fix the choice of env-vertex for calcualtion of lifetime 
+   previosuly the first vertex in evnVertex list was used, now
+   it looks for "decay" vertex, if no "decay" vertex found, 
+   "hadronic interaction" vertex is used and  
+   the first vertex is picked up overwise.
+ 
+
+
+! 2016-07-29 - Marco Cattaneo
+ - Fix clang warnings: ToolFactory is now a struct, no longer a class
+
 ! 2016-04-27 - Vanya Belyaev
  - fix the issue with hash-functions 
 

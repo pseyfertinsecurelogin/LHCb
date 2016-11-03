@@ -13,6 +13,8 @@
     name   = "CaloCellID"
     desc   = "Simple class to represent cell identifier for calorimeter devices"
     author = "Vanya BELYAEV Ivan.Belyaev@itep.ru"
+    defaultdestructor = "FALSE"
+    final = "TRUE"
     virtual= "FALSE"                                                           >
   &StlVector;
   <desc> *
@@ -116,8 +118,6 @@
       m_all = all ;
     </code>
   </constructor>
-
-  <copyconstructor/>
 
   <method
     desc   = "Decoding function to extract index"

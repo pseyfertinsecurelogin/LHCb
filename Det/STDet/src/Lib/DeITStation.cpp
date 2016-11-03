@@ -29,10 +29,6 @@ DeITStation::DeITStation( const std::string& name ) :
 }
 
 
-DeITStation::~DeITStation() {
-
-}
-
 const CLID& DeITStation::clID () const
 {
   return DeITStation::classID() ;

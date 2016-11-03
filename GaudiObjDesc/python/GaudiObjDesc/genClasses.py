@@ -99,6 +99,12 @@ class genClasses(genSrcUtils.genSrcUtils):
                 s += '%s %s' % ( baseAtt['access'].lower(), baseAtt['name'] )
         return s
 #--------------------------------------------------------------------------------
+    def genFinal(self, godClass):
+        s = ''
+        if godClass['attrs'].get('final','FALSE') == 'TRUE' :
+            s += ' final'
+        return s
+#--------------------------------------------------------------------------------
     def genConstructor(self, godClass, const, scopeName=''):
         s = ''
         indent = 0
@@ -470,8 +476,13 @@ class genClasses(genSrcUtils.genSrcUtils):
         s = ''
         if godClass['attrs'].has_key('id') :                                        # then we know that it is an event class
             if (not scopeName) :                                                       # we are inside the class (declaration)
-                s  = '  // Retrieve pointer to class definition structure\n'
-                s += '  virtual const CLID& clID() const;\n'
+                s  = '  // Retrieve pointer to class definition structure\n  '
+                if godClass['attrs']['virtual'] == 'TRUE' and not godClass.has_key('base'):
+                    s += 'virtual '
+                s += 'const CLID& clID() const'
+                if godClass.has_key('base'):
+                    s += ' override'
+                s += ';\n'
                 s += '  static const CLID& classID();\n'
             else :                                                                     # we are outside the class (definition)
                 s  = 'inline const CLID& %s::clID() const\n{\n' % scopeName
@@ -532,11 +543,14 @@ class genClasses(genSrcUtils.genSrcUtils):
         if self.genFillStream:
             self.addInclude('ostream',1)
             virt = 'virtual '
-            if godClass['attrs']['virtual'] == 'FALSE' : virt = ''
+            if godClass['attrs']['virtual'] == 'FALSE' or godClass.has_key('base') : virt = ''
             if className : s += 'inline '
-            else : s += '  /// Fill the ASCII output stream\n %s' % virt
+            else : s += '  /// Fill the ASCII output stream\n  %s' % virt
             s += 'std::ostream& %sfillStream(std::ostream& s) const' % className
-            if not className : s += ';\n'
+            if not className:
+                if godClass.has_key('base'):
+                    s += ' override'
+                s += ';\n'
             else:
                 s += '\n{\n'
                 if godClass.has_key('attribute'):
@@ -859,6 +873,7 @@ namespace {
             classDict['today']                        = time.ctime()
             classDict['classNamespace']               = namespace
             classDict['inheritance']                  = self.genInheritance(godClass)
+            classDict['final']                        = self.genFinal(godClass)
             classDict['classContainerTypedefs']       = self.genClassContainerTypedefs(godClass)
             classDict['classTypedefs']                = self.genClassTypedefs(godClass)
             classDict['globalTypedefs']               = self.genTypedefs('global',godClass)

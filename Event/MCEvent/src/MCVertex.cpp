@@ -15,9 +15,7 @@ std::ostream& LHCb::MCVertex::fillStream(std::ostream& s) const
     << " Type = "       << type()
     << " Mother = "     << mother()
     << " Products : #=" << products().size() << " [";
-  for ( SmartRefVector<LHCb::MCParticle>::const_iterator iter = products().begin();
-        iter != products().end(); ++iter )
-  { s << " " << *iter; }
+  for ( const auto & p : products() ) { s << " " << p.target(); }
   s << " ] }";
   return s;
 }

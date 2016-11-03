@@ -1,4 +1,3 @@
-// $Id: DAQTypes.h,v 1.2 2008-09-23 13:13:35 ibelyaev Exp $
 // ============================================================================
 #ifndef LOKI_DAQTYPES_H 
 #define LOKI_DAQTYPES_H 1

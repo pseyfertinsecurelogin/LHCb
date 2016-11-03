@@ -13,28 +13,26 @@
  *  @author Olivier Callot
  *  @date   2005-01-05
  */
-class CaloTriggerAdcsFromRaw : public CaloReadoutTool, virtual public ICaloTriggerAdcsFromRaw {
+class CaloTriggerAdcsFromRaw final 
+: public extends<CaloReadoutTool, ICaloTriggerAdcsFromRaw> {
 public: 
   /// Standard constructor
   CaloTriggerAdcsFromRaw( const std::string& type, 
                       const std::string& name,
                       const IInterface* parent);
 
-  virtual ~CaloTriggerAdcsFromRaw( ); ///< Destructor
-
-  virtual StatusCode initialize();
+  StatusCode initialize() override;
 
 
-  const std::vector<LHCb::L0CaloAdc>& adcs( );
-  const std::vector<LHCb::L0CaloAdc>& adcs( int source );
-  const std::vector<LHCb::L0CaloAdc>& adcs( LHCb::RawBank* bank);
-  const std::vector<LHCb::L0CaloAdc>& pinAdcs( );
-  void clear();
-  void cleanData(int feb);
+  const std::vector<LHCb::L0CaloAdc>& adcs( ) override;
+  const std::vector<LHCb::L0CaloAdc>& adcs( int source ) override;
+  const std::vector<LHCb::L0CaloAdc>& adcs( const LHCb::RawBank& bank) override;
+  const std::vector<LHCb::L0CaloAdc>& pinAdcs( ) override;
+  void clear() override;
+  void cleanData(int feb) override;
 
-protected:
-  bool getData ( LHCb::RawBank* bank );
 private:
+  bool getData ( const LHCb::RawBank& bank );
   std::vector<LHCb::L0CaloAdc> m_data;
   std::vector<LHCb::L0CaloAdc> m_pinData;
 };

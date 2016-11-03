@@ -37,11 +37,6 @@ EvtTypeChecker::EvtTypeChecker( const std::string& name,
 }
 
 //=============================================================================
-// Destructor
-//=============================================================================
-EvtTypeChecker::~EvtTypeChecker() {}
-
-//=============================================================================
 // Initialisation. Check parameters
 //=============================================================================
 StatusCode EvtTypeChecker::initialize() {
@@ -137,10 +132,8 @@ StatusCode EvtTypeChecker::finalize() {
 
   if( UNLIKELY( msgLevel(MSG::DEBUG) ) ) debug() << "==> Finalize" << endmsg;
 
-  std::string decayAnalyzed = "Unknown";
-  if( 0 != m_mcFinder ) {
-    decayAnalyzed =  m_mcFinder->decay();
-  }
+  auto decayAnalyzed = ( m_mcFinder ? m_mcFinder->decay(): "Unknown" );
+
   double multiplicity = double(m_nMCFound)/double(m_nEvents);
   info() << endmsg
          << " EvtType analyzed = " << m_evtCode

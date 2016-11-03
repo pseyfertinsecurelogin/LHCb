@@ -18,18 +18,14 @@ namespace Gaudi {
  * @author Marco Clemencic
  * @date 04/11/2011
  */
-class IDQScanner: virtual public IAlgTool {
-public:
+struct IDQScanner: extend_interfaces<IAlgTool> {
   /// InterfaceID
   DeclareInterfaceID(IDQScanner, 1, 0);
-  virtual ~IDQScanner() {}
 
   /// Scan all the Data Quality flags in the give time range.
   /// @return merged list of DQ flags
   virtual IDQFilter::FlagsType scan(const Gaudi::Time& since, const Gaudi::Time& until) const = 0;
 
-protected:
-private:
 };
 
 #endif // KERNEL_IDQSCANNER_H

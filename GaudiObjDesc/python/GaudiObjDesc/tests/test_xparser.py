@@ -102,6 +102,7 @@ def test_parse_minimal():
                                                  'defaultconstructor': 'TRUE',
                                                  'defaultdestructor': 'TRUE',
                                                  'desc': 'Test class.',
+                                                 'final': 'FALSE',
                                                  'keyedContTypeDef': 'FALSE',
                                                  'name': 'Class1',
                                                  'serializers': 'TRUE',
@@ -144,6 +145,7 @@ def test_parse_comment():
                                                  'defaultconstructor': 'TRUE',
                                                  'defaultdestructor': 'TRUE',
                                                  'desc': 'Test class.',
+                                                 'final': 'FALSE',
                                                  'keyedContTypeDef': 'FALSE',
                                                  'name': 'Class1',
                                                  'serializers': 'TRUE',
@@ -187,6 +189,7 @@ def test_parse_many_classes():
                                                  'defaultconstructor': 'TRUE',
                                                  'defaultdestructor': 'TRUE',
                                                  'desc': 'Test class.',
+                                                 'final': 'FALSE',
                                                  'keyedContTypeDef': 'FALSE',
                                                  'name': 'Class1',
                                                  'serializers': 'TRUE',
@@ -198,6 +201,7 @@ def test_parse_many_classes():
                                                  'defaultconstructor': 'TRUE',
                                                  'defaultdestructor': 'TRUE',
                                                  'desc': 'Test class.',
+                                                 'final': 'FALSE',
                                                  'keyedContTypeDef': 'FALSE',
                                                  'name': 'Class2',
                                                  'serializers': 'TRUE',
@@ -245,6 +249,7 @@ def test_parse_method():
                                                  'defaultconstructor': 'TRUE',
                                                  'defaultdestructor': 'TRUE',
                                                  'desc': 'Test class.',
+                                                 'final': 'FALSE',
                                                  'keyedContTypeDef': 'FALSE',
                                                  'name': 'Class1',
                                                  'serializers': 'TRUE',
@@ -258,7 +263,8 @@ def test_parse_method():
                                                              u'name': u'doSomething',
                                                              u'static': u'FALSE',
                                                              u'type': u'void',
-                                                             u'virtual': u'FALSE'},
+                                                             u'virtual': u'FALSE',
+                                                             u'override': u'FALSE'},
                                                    'code': [{'attrs': {'xml:space': 'preserve'},
                                                              'cont': '\n        // here goes the code\n        '}]}]}]}]}
 
@@ -305,6 +311,7 @@ def test_parse_method_comment():
                                                  'defaultconstructor': 'TRUE',
                                                  'defaultdestructor': 'TRUE',
                                                  'desc': 'Test class.',
+                                                 'final': 'FALSE',
                                                  'keyedContTypeDef': 'FALSE',
                                                  'name': 'Class1',
                                                  'serializers': 'TRUE',
@@ -318,7 +325,8 @@ def test_parse_method_comment():
                                                              u'name': u'doSomething',
                                                              u'static': u'FALSE',
                                                              u'type': u'void',
-                                                             u'virtual': u'FALSE'},
+                                                             u'virtual': u'FALSE',
+                                                             u'override': u'FALSE'},
                                                    'code': [{'attrs': {'xml:space': 'preserve'},
                                                              'cont': '\n        // here goes the code\n        \n        // other code\n        '}]}]}]}]}
 
@@ -359,6 +367,7 @@ def test_parse_DataObject():
                                                  'defaultconstructor': 'TRUE',
                                                  'defaultdestructor': 'TRUE',
                                                  'desc': 'Test class.',
+                                                 'final': 'FALSE',
                                                  'keyedContTypeDef': 'FALSE',
                                                  'name': 'Class1',
                                                  'serializers': 'TRUE',
@@ -375,4 +384,3 @@ def test_parse_DataObject():
     pprint(data)
 
     assert data == expected
-

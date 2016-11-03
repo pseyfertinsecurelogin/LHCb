@@ -1,4 +1,3 @@
-
 #ifndef EVENT_PackedFlavourTag_H
 #define EVENT_PackedFlavourTag_H 1
 
@@ -95,7 +94,7 @@ namespace LHCb
     typedef std::vector<long long> TaggingParticles;
 
   public:
-    
+
     /// Default Packing Version
     static char defaultPackingVersion() { return 0; }
 
@@ -105,7 +104,7 @@ namespace LHCb
     static const CLID& classID() { return CLID_PackedFlavourTags; }
 
     /// Class ID
-    virtual const CLID& clID() const { return PackedFlavourTags::classID(); }
+    const CLID& clID() const override { return PackedFlavourTags::classID(); }
 
   public:
 

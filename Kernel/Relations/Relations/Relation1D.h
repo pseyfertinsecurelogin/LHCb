@@ -1,6 +1,6 @@
 // $Id: Relation1D.h,v 1.13 2009-04-24 15:26:46 ibelyaev Exp $
 // =============================================================================
-// CVS tag $Name: not supported by cvs2svn $ ; version $Revision: 1.13 $ 
+// CVS tag $Name: not supported by cvs2svn $ ; version $Revision: 1.13 $
 // ============================================================================
 // $Log: not supported by cvs2svn $
 //
@@ -31,58 +31,58 @@ namespace LHCb
 {
   /** @class Relation1D Relation1D.h Relations/Relation1D.h
    *
-   *  @brief Implementation of ordinary unidirectional relations 
-   * 
-   *  Implementation of ordinary unidirectional relations 
+   *  @brief Implementation of ordinary unidirectional relations
+   *
+   *  Implementation of ordinary unidirectional relations
    *  from objects of type "FROM" to objects of type "TO".
-   *  
+   *
    *  Data types for "FROM" and "TO":
    *
-   *   - either inherits form ContainedObject/DataObject 
-   *   - or have the templated specializations through 
-   *     ObjectTypeTraits structure with defined streamer operator 
-   *     to/from StreamBuffer class 
-   *  
-   *  @see DataObject 
-   *  @see ContainedObject 
-   *  @see ObjectTypeTraits 
-   *  @see StreamBuffer 
-   *  @warning for the current implementation the actual type of 
+   *   - either inherits form ContainedObject/DataObject
+   *   - or have the templated specializations through
+   *     ObjectTypeTraits structure with defined streamer operator
+   *     to/from StreamBuffer class
+   *
+   *  @see DataObject
+   *  @see ContainedObject
+   *  @see ObjectTypeTraits
+   *  @see StreamBuffer
+   *  @warning for the current implementation the actual type of
    *           FROM should differ from the actual type of TO
-   *  
+   *
    *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
    *  @date   25/01/2002
    */
-  
+
   template<class FROM,class TO>
-  class Relation1D 
+  class Relation1D
     : public DataObject
-    , public Relations::BaseTable 
+    , public Relations::BaseTable
     , public IRelation<FROM,TO>
-  {    
-  public: 
+  {
+  public:
     // ========================================================================
     /// short cut for own     type
     typedef Relation1D<FROM,TO>              OwnType        ;
     /// short cut for inverse type
     typedef Relation1D<TO,FROM>              InvType        ;
-    /// short cut for interface 
+    /// short cut for interface
     typedef IRelation<FROM,TO>               IBase          ;
-    /// import "Range" type from the base 
+    /// import "Range" type from the base
     typedef typename IBase::Range            Range          ;
-    /// import "From"  type from the base 
+    /// import "From"  type from the base
     typedef typename IBase::From             From           ;
-    /// import "From"  type from the base 
+    /// import "From"  type from the base
     typedef typename IBase::From_            From_          ;
-    /// import "To"    type from the base 
+    /// import "To"    type from the base
     typedef typename IBase::To               To             ;
-    /// import "To"    type from the base 
+    /// import "To"    type from the base
     typedef typename IBase::To_              To_            ;
-    /// short cut for the actual implementation type 
+    /// short cut for the actual implementation type
     typedef typename Relations::Relation<FROM,TO> Base      ;
-    // shortcut for "direct" interface 
+    // shortcut for "direct" interface
     typedef typename IBase::DirectType       IDirect        ;
-    // shortcut for "inverse" interface 
+    // shortcut for "inverse" interface
     typedef typename IBase::InverseType      IInverse       ;
     /// the actual type of the entry
     typedef typename IBase::Entry            Entry          ;
@@ -90,67 +90,67 @@ namespace LHCb
   public:
     // ========================================================================
     /// the default constructor
-    Relation1D 
-    ( const size_t reserve = 0 ) 
-      : DataObject () 
-      , Relations::BaseTable  () 
-      , IBase      () 
-      , m_base     ( reserve )  
+    Relation1D
+    ( const size_t reserve = 0 )
+      : DataObject ()
+      , Relations::BaseTable  ()
+      , IBase      ()
+      , m_base     ( reserve )
     {
-#ifdef COUNT_INSTANCES 
+#ifdef COUNT_INSTANCES
       Relations::InstanceCounter::instance().increment( type() ) ;
 #endif // COUNT_INSTANCES
     }
     /// constructor from any direct interface
-    Relation1D 
+    Relation1D
     ( const IDirect& copy  )
       : DataObject ()
-      , Relations::BaseTable  ()  
-      , IBase      () 
+      , Relations::BaseTable  ()
+      , IBase      ()
       , m_base     ( copy )
     {
-#ifdef COUNT_INSTANCES 
-      Relations::InstanceCounter::instance().increment( type() ) ;
-#endif // COUNT_INSTANCES
-    }    
-    /** constructor from "inverted interface"
-     *  @param inv object to be inverted
-     *  @param flag artificial argument to distinguisch from 
-     *  copy constructor
-     */
-    Relation1D 
-    ( const IInverse& inv  , 
-      const int       flag ) 
-      : DataObject () 
-      , Relations::BaseTable  () 
-      , IBase      () 
-      , m_base     ( inv  , flag )
-    {
-#ifdef COUNT_INSTANCES 
+#ifdef COUNT_INSTANCES
       Relations::InstanceCounter::instance().increment( type() ) ;
 #endif // COUNT_INSTANCES
     }
-    /// copy constructor 
-    Relation1D 
+    /** constructor from "inverted interface"
+     *  @param inv object to be inverted
+     *  @param flag artificial argument to distinguisch from
+     *  copy constructor
+     */
+    Relation1D
+    ( const IInverse& inv  ,
+      const int       flag )
+      : DataObject ()
+      , Relations::BaseTable  ()
+      , IBase      ()
+      , m_base     ( inv  , flag )
+    {
+#ifdef COUNT_INSTANCES
+      Relations::InstanceCounter::instance().increment( type() ) ;
+#endif // COUNT_INSTANCES
+    }
+    /// copy constructor
+    Relation1D
     ( const OwnType& copy  )
       : DataObject    ( copy         )
-      , Relations::BaseTable ( copy  )  
-      , IBase         ( copy         ) 
+      , Relations::BaseTable ( copy  )
+      , IBase         ( copy         )
       , m_base        ( copy.m_base  )
     {
-#ifdef COUNT_INSTANCES 
+#ifdef COUNT_INSTANCES
       Relations::InstanceCounter::instance().increment( type() ) ;
 #endif // COUNT_INSTANCES
     }
     /// destructor (virtual)
-    virtual ~Relation1D() 
+    virtual ~Relation1D()
     {
-#ifdef COUNT_INSTANCES 
+#ifdef COUNT_INSTANCES
       Relations::InstanceCounter::instance().decrement( type() ) ;
 #endif // COUNT_INSTANCES
     }
-    /// the type name 
-    const std::string& type() const 
+    /// the type name
+    const std::string& type() const
     {
       static const std::string s_type( System::typeinfoName( typeid(OwnType) ) ) ;
       return s_type ;
@@ -163,7 +163,7 @@ namespace LHCb
       return s_clid ;
     }
     /// object identification (virtual method)
-    virtual const CLID& clID()     const { return classID() ; }    
+    const CLID& clID()     const override { return classID() ; }
     // ========================================================================
   public:  // major functional methods (fast, 100% inline)
     // ========================================================================
@@ -172,14 +172,14 @@ namespace LHCb
     { return m_base.i_relations ( object ) ; }
     /// retrive all relations from ALL objects (fast,100% inline)
     inline   Range i_relations () const { return m_base.i_relations () ; }
-    /// make the relation between 2 objects (fast,100% inline method) 
+    /// make the relation between 2 objects (fast,100% inline method)
     inline   StatusCode i_relate ( From_ object1 , To_ object2 )
     {
       const Entry entry ( object1 , object2 ) ;
       return i_add ( entry ) ;
     }
-    /// add entry 
-    inline   StatusCode i_add  ( const Entry& entry ) 
+    /// add entry
+    inline   StatusCode i_add  ( const Entry& entry )
     { return m_base.i_add ( entry ) ; }
     /// remove the concrete relation between objects (fast,100% inline method)
     inline   StatusCode i_remove ( From_ object1 , To_ object2 )
@@ -194,74 +194,74 @@ namespace LHCb
     inline  StatusCode i_clear() { return m_base.i_clear() ; }
     /// rebuild ALL relations form ALL  object to ALL objects(fast,100% inline)
     inline  StatusCode i_rebuild() { return m_base.i_rebuild() ; }
-    /** make the relation between 2 objects (fast,100% inline method) 
-     *   - the call for i_sort() is mandatory 
+    /** make the relation between 2 objects (fast,100% inline method)
+     *   - the call for i_sort() is mandatory
      */
     inline   void i_push ( From_ object1 , To_ object2 )
     { m_base.i_push   ( object1 , object2 ) ; }
-    /** (re)sort the table 
+    /** (re)sort the table
      *   mandatory to use after i_push
      */
     inline  void i_sort() { m_base.i_sort() ; }
     // ========================================================================
-  public: // merge 
+  public: // merge
     // ========================================================================
-    /** merge with the sorted range of relations 
-     *  @attention the range is assumed to be sorted! 
-     *  @param range the range to be added 
-     *  @return self-reference 
+    /** merge with the sorted range of relations
+     *  @attention the range is assumed to be sorted!
+     *  @param range the range to be added
+     *  @return self-reference
      */
-    Relation1D& merge ( const Range& range ) 
+    Relation1D& merge ( const Range& range )
     { m_base.merge ( range ) ; return *this ; }
-    /** merge with the sorted range of relations 
-     *  @attention the range is assumed to be sorted! 
-     *  @param range the range to be added 
-     *  @return self-reference 
+    /** merge with the sorted range of relations
+     *  @attention the range is assumed to be sorted!
+     *  @param range the range to be added
+     *  @return self-reference
      */
-    Relation1D& imerge ( const typename IInverse::Range& range ) 
+    Relation1D& imerge ( const typename IInverse::Range& range )
     { m_base.imerge ( range ) ; return *this ; }
-    /** merge with the sorted range of relations 
-     *  @attention the range is assumed to be sorted! 
-     *  @param range the range to be added 
-     *  @return self-reference 
+    /** merge with the sorted range of relations
+     *  @attention the range is assumed to be sorted!
+     *  @param range the range to be added
+     *  @return self-reference
      */
-    Relation1D& operator+=( const Range& range ) 
+    Relation1D& operator+=( const Range& range )
     { return merge ( range ) ; }
     // ========================================================================
   public: // abstract methods from interface
     // ========================================================================
     /// retrive all relations from the given object object
-    virtual Range      relations ( From_ object ) const 
+    Range      relations ( From_ object ) const override
     { return i_relations( object ) ; }
-    /// retrive ALL relations from ALL objects  
-    virtual Range      relations () const { return i_relations() ; }    
+    /// retrive ALL relations from ALL objects
+    Range      relations () const override { return i_relations() ; }
     /// make the relation between 2 objects
-    virtual StatusCode relate ( From_ object1 , To_ object2 ) 
+    StatusCode relate ( From_ object1 , To_ object2 )  override
     { return i_relate( object1 , object2 ) ; }
-    /// add the entry 
-    virtual StatusCode add    ( const Entry& entry ) 
+    /// add the entry
+    StatusCode add    ( const Entry& entry )  override
     { return i_add ( entry ) ; }
     /// remove the concrete relation between objects
-    virtual StatusCode remove ( From_ object1 , To_ object2 ) 
+    StatusCode remove ( From_ object1 , To_ object2 )  override
     { return i_remove( object1 , object2 ) ; }
     /// remove all relations FROM the defined object
-    virtual StatusCode   removeFrom ( From_ object ) 
+    StatusCode   removeFrom ( From_ object )  override
     { return i_removeFrom( object ) ; }
     /// remove all relations TO the defined object
-    virtual StatusCode   removeTo ( To_ object ) 
+    StatusCode   removeTo ( To_ object )  override
     { return i_removeTo( object ) ; }
     /// remove ALL relations from ALL to ALL objects
-    virtual StatusCode   clear () { return i_clear() ; }
-    /// rebuild ALL relations from ALL  object to ALL objects 
-    virtual  StatusCode rebuild() { return i_rebuild () ; }
-    /// update the object after POOL/ROOT reading 
-    virtual StatusCode update() { return i_rebuild() ; }
+    StatusCode   clear () override { return i_clear() ; }
+    /// rebuild ALL relations from ALL  object to ALL objects
+    StatusCode rebuild() override { return i_rebuild () ; }
+    /// update the object after POOL/ROOT reading
+    StatusCode update() override { return i_rebuild() ; }
     // ========================================================================
   public:
     // ========================================================================
     /// query the interface
-    virtual StatusCode queryInterface
-    ( const InterfaceID& id , void** ret )
+    StatusCode queryInterface
+    ( const InterfaceID& id , void** ret ) override
     {
       if( 0 == ret  )          { return StatusCode::FAILURE ; } // RETURN !!!
       if( IInterface::interfaceID() == id )
@@ -274,9 +274,9 @@ namespace LHCb
       return StatusCode::SUCCESS ;
     }
     /// increase the reference counter
-    virtual unsigned long addRef  () { return  DataObject::addRef  () ; }
+    unsigned long addRef  () override { return  DataObject::addRef  () ; }
     /// release the reference counter
-    virtual unsigned long release () { return  DataObject::release () ; }
+    unsigned long release () override { return  DataObject::release () ; }
     // ========================================================================
   public:
     // ========================================================================
@@ -285,8 +285,8 @@ namespace LHCb
     // ========================================================================
   private:
     // ========================================================================
-    /// assignement is disabled 
-    Relation1D& operator= ( const Relation1D& ) ;    // assignement is disabled 
+    /// assignement is disabled
+    Relation1D& operator= ( const Relation1D& ) ;    // assignement is disabled
     // ========================================================================
   public:
     // ========================================================================
@@ -295,8 +295,8 @@ namespace LHCb
     // ========================================================================
   private:
     // ========================================================================
-    /// the base table itself 
-    Base m_base ;                                      // the base table itself 
+    /// the base table itself
+    Base m_base ;                                      // the base table itself
     // ========================================================================
   };
   // ==========================================================================

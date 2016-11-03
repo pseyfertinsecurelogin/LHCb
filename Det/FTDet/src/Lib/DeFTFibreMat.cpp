@@ -21,6 +21,7 @@
 #include "FTDet/DeFTDetector.h"
 #include "FTDet/DeFTFibreMat.h"
 
+#include <numeric>
 
 /** @file DeFTFibreMat.cpp
  *

@@ -1,5 +1,4 @@
-// $Id: UnpackTwoProngVertex.h,v 1.2 2009-11-06 18:34:34 jonrob Exp $
-#ifndef UNPACKTWOPRONGVERTEX_H 
+#ifndef UNPACKTWOPRONGVERTEX_H
 #define UNPACKTWOPRONGVERTEX_H 1
 
 // Include files
@@ -13,17 +12,15 @@
  *  @author Olivier Callot
  *  @date   2009-01-21
  */
-class UnpackTwoProngVertex : public GaudiAlgorithm 
+class UnpackTwoProngVertex : public GaudiAlgorithm
 {
 
-public: 
+public:
 
   /// Standard constructor
   UnpackTwoProngVertex( const std::string& name, ISvcLocator* pSvcLocator );
 
-  virtual ~UnpackTwoProngVertex(); ///< Destructor
-
-  virtual StatusCode execute(); ///< Algorithm execution
+  StatusCode execute() override; ///< Algorithm execution
 
 private:
 

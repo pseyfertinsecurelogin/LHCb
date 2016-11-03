@@ -1,4 +1,3 @@
-// $Id: OdinCuts.h,v 1.3 2010-05-17 16:01:39 ibelyaev Exp $
 // ============================================================================
 #ifndef LOKI_ODINCUTS_H
 #define LOKI_ODINCUTS_H 1

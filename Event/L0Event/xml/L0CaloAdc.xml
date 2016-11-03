@@ -10,7 +10,10 @@
       author = "Olivier Callot" 
       desc   = "Information for L0 Calo Trigger: CellID + 8-bit Et" 
       id     = "6006" 
-      name   = "L0CaloAdc">
+      name   = "L0CaloAdc"
+      final  = "TRUE"
+      defaultdestructor = "FALSE"
+      >
       <base     name = "KeyedObject&lt;int&gt;"/>
       &KeyedObject;
       <import name="Kernel/CaloCellID"/>

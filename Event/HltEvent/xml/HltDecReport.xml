@@ -13,6 +13,7 @@
       author      = 'Tomasz Skwarnicki'
       desc        = 'Hlt Trigger Decision'
       defaultdestructor = "FALSE"
+      final       = "TRUE"
       >
 
       <attribute
@@ -446,7 +447,8 @@
         name='fillStream'
         type='std::ostream&amp;'
         desc='intelligent printout'
-        const='TRUE' >
+        const='TRUE'
+        override='TRUE' >
         <arg name="s" type="std::ostream"/>
       </method>
 

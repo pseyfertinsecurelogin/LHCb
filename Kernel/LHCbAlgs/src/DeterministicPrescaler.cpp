@@ -1,15 +1,5 @@
+
 #include "DeterministicPrescaler.h"
-
-#include <math.h>
-
-// from Boost
-#include "boost/integer/integer_mask.hpp"
-#include "boost/integer_traits.hpp"
-using boost::uint32_t;
-using boost::uint64_t;
-// from LHCb core
-#include "Event/ODIN.h"
-
 
 inline uint32_t mix(uint32_t state)
 {
@@ -67,17 +57,12 @@ inline uint32_t mixString(uint32_t state, const std::string& extra)
 // Declaration of the Algorithm Factory
 DECLARE_ALGORITHM_FACTORY( DeterministicPrescaler )
 
-DeterministicPrescaler::DeterministicPrescaler(const std::string& name, ISvcLocator* pSvcLocator) :
+DeterministicPrescaler::DeterministicPrescaler(const std::string& name, 
+                                               ISvcLocator* pSvcLocator) :
     GaudiAlgorithm(name, pSvcLocator) 
-  , m_acc(boost::integer_traits<uint32_t>::const_max)
-  , m_initial(0)
-  , m_counter(0)
 {
-  declareProperty( "AcceptFraction" , m_accFrac = 1 )->declareUpdateHandler( &DeterministicPrescaler::update, this);
-}
-
-DeterministicPrescaler::~DeterministicPrescaler( )
-{
+  declareProperty( "AcceptFraction" , m_accFrac = 1 ) 
+    -> declareUpdateHandler( &DeterministicPrescaler::update, this);
 }
 
 void 
@@ -130,9 +115,9 @@ DeterministicPrescaler::accept(const LHCb::ODIN& odin)  const
 StatusCode
 DeterministicPrescaler::execute()
 {
-  bool acc =(    ( m_acc == boost::integer_traits<uint32_t>::const_max ) 
-              || ( m_acc !=0 && accept( *get<LHCb::ODIN> ( LHCb::ODINLocation::Default )))
-            );
+  const bool acc =( ( m_acc == boost::integer_traits<uint32_t>::const_max ) 
+                    || ( m_acc !=0 && accept( *get<LHCb::ODIN> ( LHCb::ODINLocation::Default )))
+                    );
   setFilterPassed(acc);
   *m_counter += acc;
   if (msgLevel(MSG::DEBUG)) debug() << (acc?"Accepted":"Rejected") << endmsg ;

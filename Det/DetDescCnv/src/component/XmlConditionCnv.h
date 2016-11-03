@@ -17,9 +17,9 @@ class XmlConditionCnv : public XmlBaseConditionCnv {
 
   /// Friend needed for instantiation
   friend class CnvFactory<XmlConditionCnv>;
-  
+
 protected:
-  
+
   /**
    * Constructor for this converter
    * @param svcs a ISvcLocator interface to find services
@@ -38,9 +38,9 @@ protected:
    * @param address the address for this object
    * @return status depending on the completion of the call
    */
-  virtual StatusCode i_fillSpecificObj (xercesc::DOMElement* childElement,
-                                        Condition* refpObject,
-                                        IOpaqueAddress* address);
+  StatusCode i_fillSpecificObj (xercesc::DOMElement* childElement,
+                                Condition* refpObject,
+                                IOpaqueAddress* address) override;
 
 };
 

@@ -1,4 +1,4 @@
-// Include files 
+// Include files
 
 // from LHCb
 #include "Event/MCParticle.h"
@@ -23,26 +23,19 @@ DECLARE_TOOL_FACTORY( FlagSignalChain )
 FlagSignalChain::FlagSignalChain( const std::string& type,
                                   const std::string& name,
                                   const IInterface* parent )
-  : GaudiTool ( type, name , parent )
+: base_class ( type, name , parent )
 {
   declareInterface<IFlagSignalChain>(this);
-
 }
-//=============================================================================
-// Destructor
-//=============================================================================
-FlagSignalChain::~FlagSignalChain() {} 
 
 //==============================================================================
 // Set from signal flag
 //==============================================================================
 void FlagSignalChain::setFromSignalFlag( const LHCb::MCParticle* mother ) {
 
-  SmartRefVector<LHCb::MCVertex>::const_iterator iv;
-  for ( iv = mother->endVertices().begin();
+  for ( auto iv = mother->endVertices().begin();
         iv != mother->endVertices().end(); iv++ ) {
-    SmartRefVector<LHCb::MCParticle>::const_iterator idau;
-    for ( idau = (*iv)->products().begin();
+    for ( auto idau = (*iv)->products().begin();
           idau != (*iv)->products().end(); idau++ ) {
       const LHCb::MCParticle* mcpc = *idau;
       LHCb::MCParticle* mcp = const_cast< LHCb::MCParticle* >( mcpc ) ;
@@ -50,6 +43,5 @@ void FlagSignalChain::setFromSignalFlag( const LHCb::MCParticle* mother ) {
       setFromSignalFlag( *idau );
     }
   }
-  
 }
 //==============================================================================

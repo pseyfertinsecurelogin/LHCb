@@ -1,4 +1,3 @@
-// $Id: HltLock.h,v 1.1.1.1 2008-09-21 14:41:20 ibelyaev Exp $
 // ============================================================================
 #ifndef LOKI_HltLOCK_H 
 #define LOKI_HltLOCK_H 1
@@ -32,8 +31,6 @@ namespace LoKi
       // ======================================================================
     private:
       // ======================================================================
-      /// no default constructor 
-      HltLock () ;                                    // no default constructor 
       /// no copy constructor 
       HltLock ( const HltLock& ) ;                       // no copy constructor 
       /// no assignement opeartor 

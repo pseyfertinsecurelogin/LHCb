@@ -39,7 +39,7 @@ public:
    * Retrieves reference to class identifier
    * @return the class identifier for this class
    */
-  const CLID& clID() const final { return classID(); }
+  const CLID& clID() const override final { return classID(); }
 
   static const CLID& classID();
   /**
@@ -49,36 +49,36 @@ public:
    * @retval StatusCode::FAILURE Initialisation failed, program should
    * terminate
    */
-  virtual StatusCode initialize() final;
+  StatusCode initialize() override final;
 
   // Returns the detector element for the given PD number
-  virtual const DeRichPD* dePD( const unsigned int PDNumber ) const final;
+  const DeRichPD* dePD( const Rich::DAQ::HPDCopyNumber PDNumber ) const override final;
 
   // Converts a Gaudi::XYZPoint in global coordinates to a RichSmartID.
-  virtual bool smartID( const Gaudi::XYZPoint& globalPoint,
-                        LHCb::RichSmartID& id ) const final;
+  bool smartID( const Gaudi::XYZPoint& globalPoint,
+                LHCb::RichSmartID& id ) const override final;
 
   // Returns the intersection point with the detector plane given a vector and a point.
-  virtual LHCb::RichTraceMode::RayTraceResult
+  LHCb::RichTraceMode::RayTraceResult
   detPlanePoint( const Gaudi::XYZPoint& pGlobal,
                  const Gaudi::XYZVector& vGlobal,
                  Gaudi::XYZPoint& hitPosition,
                  LHCb::RichSmartID& smartID,
-                 const LHCb::RichTraceMode mode ) const final;
+                 const LHCb::RichTraceMode mode ) const override final;
 
   // Returns the intersection point with an HPD window given a vector and a point.
-  virtual LHCb::RichTraceMode::RayTraceResult
+  LHCb::RichTraceMode::RayTraceResult
   PDWindowPoint( const Gaudi::XYZVector& vGlobal,
                  const Gaudi::XYZPoint& pGlobal,
                  Gaudi::XYZPoint& windowPointGlobal,
                  LHCb::RichSmartID& smartID,
-                 const LHCb::RichTraceMode mode ) const final;
+                 const LHCb::RichTraceMode mode ) const override final;
 
   // Adds to the given vector all the available readout channels in this HPD panel
-  virtual bool readoutChannelList( LHCb::RichSmartID::Vector& readoutChannels ) const final;
+  bool readoutChannelList( LHCb::RichSmartID::Vector& readoutChannels ) const override final;
 
   /// Get tge sensitivevolumeID
-  virtual int sensitiveVolumeID(const Gaudi::XYZPoint& globalPoint) const final;
+  int sensitiveVolumeID(const Gaudi::XYZPoint& globalPoint) const override final;
 
   /** Converts a RichSmartID to a point on the anode in global coordinates.
    *  @param[in] smartID The RichSmartID for the PMT channel
@@ -89,12 +89,12 @@ public:
 private:
 
   /// Returns the PD number for the given RichSmartID
-  unsigned int pdNumber( const LHCb::RichSmartID& smartID ) const;
+  Rich::DAQ::HPDCopyNumber pdNumber( const LHCb::RichSmartID& smartID ) const override;
 
   /// Size of something ...
-  bool pdGrandSize( const LHCb::RichSmartID& smartID ) const ;
-  
-  const DeRichPMT* dePMT( const unsigned int PmtCopyNumber ) const;
+  bool pdGrandSize( const LHCb::RichSmartID& smartID ) const  override;
+
+  const DeRichPMT* dePMT( const Rich::DAQ::HPDCopyNumber PmtCopyNumber ) const;
 
   std::vector<int> getPmtRowColFromPmtNum( const int aPmtNum );
   std::vector<int> getGrandPmtRowColFromPmtNum( const int aPmtNum );
@@ -126,7 +126,7 @@ private:
                                     Gaudi::XYZPoint& panelIntersection,
                                     Gaudi::XYZPoint& panelIntersectionGlobal ) const;
 
- 
+
 private:
 
   std::vector<IDetectorElement*> m_DePMTModules; ///< Container for the PMT Modules
@@ -187,12 +187,12 @@ private:
    bool isCurrentPmtWithLens(const int aPMTNum) ;
    Gaudi::XYZPoint DemagnifyFromLens(const Gaudi::XYZPoint aLensPoint) const ;
    bool  ModuleIsWithGrandPMT(int aModuleNum ) const  {
-     return (( aModuleNum >=0 && aModuleNum < (int) m_ModuleIsWithGrandPMT.size() ) ? m_ModuleIsWithGrandPMT[aModuleNum] : false);    
+     return (( aModuleNum >=0 && aModuleNum < (int) m_ModuleIsWithGrandPMT.size() ) ? m_ModuleIsWithGrandPMT[aModuleNum] : false);
    }
-  
- 
 
- 
+
+
+
   double  m_PmtMasterWithLensLateralSize;
   double  m_PmtModuleWithLensPitch;
   double m_PmtLensPitch;
@@ -205,7 +205,7 @@ private:
 
   bool  m_Rich2UseGrandModule;
   int   m_Rich2ArrayConfig;
-  bool  m_Rich2UseMixedModule; 
+  bool  m_Rich2UseMixedModule;
 
 
   std::vector<double> m_GrandPmtModulePlaneHalfSizeR2;
@@ -235,7 +235,7 @@ private:
 
   std::vector<int> m_Rich2MixedModuleArrayColumnSize;
   std::vector<bool>  m_ModuleIsWithGrandPMT;
-    
+
 };
 
 #endif // RICHDET_DERICHPMTPANEL_H

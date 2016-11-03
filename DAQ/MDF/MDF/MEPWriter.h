@@ -20,7 +20,7 @@ namespace LHCb    {
   // Forward declarations
   class RawEvent;
 
-  /**@class MEPWriter 
+  /**@class MEPWriter
     *
     *
     * @author:  M.Frank
@@ -50,10 +50,10 @@ namespace LHCb    {
     virtual ~MEPWriter();
 
     // Initialize procedure
-    virtual StatusCode initialize();
+    StatusCode initialize() override;
 
     // Execute procedure
-    virtual StatusCode execute();
+    StatusCode execute() override;
 
     /// Dump stored events
     StatusCode dumpEvents(const Events& evts);

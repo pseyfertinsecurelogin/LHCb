@@ -1,5 +1,3 @@
-// $Id: ISTClusterSelector.h,v 1.1 2009-02-05 11:57:10 mneedham Exp $
-// ============================================================================
 #ifndef STKERNEL_ISTCLUSTERSELECTOR_H
 #define STKERNEL_ISTCLUSTERSELECTOR_H 1
 // Include files
@@ -11,7 +9,6 @@
 namespace LHCb{
   class  STCluster     ;
 }
-static const InterfaceID IID_ISTClusterSelector ( "ISTClusterSelector" , 1 , 0 );
 
 /** @class ISTClusterSelector ISTClusterSelector.h
  *
@@ -24,18 +21,15 @@ static const InterfaceID IID_ISTClusterSelector ( "ISTClusterSelector" , 1 , 0 )
  *  @date   03/02/2009
  */
 
-class ISTClusterSelector :
-  virtual public IAlgTool                           ,
-  public std::unary_function<const LHCb::STCluster*,bool>
+struct ISTClusterSelector : extend_interfaces<IAlgTool>
 {
-public:
 
   /** static interface identification
    *  @see IInterface
    *  @see IID_ISTClusterSelector
    *  @return the unique interface identifier
    */
-  static const InterfaceID& interfaceID() { return IID_ISTClusterSelector; }
+  DeclareInterfaceID( ISTClusterSelector , 2 , 0 );
 
 
   /** "select"/"preselect" method

@@ -590,51 +590,12 @@ bool Gaudi::Math::affine_transform
   return true ;
 }
 // ============================================================================
-namespace 
-{
-  // ==========================================================================
-  /** evaluate the integral for monomial 
-   *  @param N    the polynomial degree 
-   *  @param low  low edge of integration 
-   *  @param high high edge of integration 
-   */  
-  inline long double _monomial_int_ 
-  ( const unsigned int N    ,
-    const long double  low  , 
-    const long double  high ) 
-  {
-    // trivial cases 
-    if      ( s_equal ( low , high ) ) { return 0          ; }
-    else if ( 0 == N                 ) { return high - low ; }
-    else if ( 1 == N                 )
-    { return 0.5 * ( high * high - low * low ) ; }
-    else if ( high < low ) 
-    { return -_monomial_int_ ( N ,  high , low )  ; }
-    //
-    const long double ihigh = Gaudi::Math::pow ( high , N + 1 ) ;
-    const long double ilow  = Gaudi::Math::pow ( low  , N + 1 ) ;
-    //
-    return ( ihigh - ilow ) / ( N + 1 ) ;
-  }
-  // ========================================================================== 
-  /** evaluate the derivative for monomial 
-   *  @param N the polynomial degree
-   *  @param x the point 
-   */
-  inline long double _monomial_der_
-  ( const unsigned int N ,
-    const long double  x )  
-  {
-    //
-    if      ( 0 == N       ) { return 0   ; }
-    else if ( 1 == N       ) { return 1   ; }
-    //
-    return N * Gaudi::Math::pow ( x , N - 1 ) ;
-  }
-  // ==========================================================================
-}
+
+
+
+
 // ============================================================================
-/* class Polynomial
+/*  class Polynomial
  *  Trivial polynomial
  *  \f$ f(x) = \sum_i \p_i x^i\f$
  *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
@@ -665,11 +626,10 @@ Gaudi::Math::Polynomial::Polynomial
 // ============================================================================
 // get the value
 // ============================================================================
-double Gaudi::Math::Polynomial::operator () ( const double x ) const 
+double Gaudi::Math::Polynomial::evaluate ( const double x ) const 
 {
   // trivial cases 
-  if      ( x < m_xmin || x > m_xmax ) { return         0 ; }  // RETURN 
-  else if ( 1 == m_pars.size()       ) { return m_pars[0] ; }  // RETURN 
+  if      ( 1 == m_pars.size()       ) { return m_pars[0] ; }  // RETURN 
   else if ( zero ()                  ) { return 0         ; }
   // 1) transform argument:
   const double tx = t ( x ) ;  
@@ -866,7 +826,7 @@ Gaudi::Math::Polynomial::__isub__   ( const double a )
 { (*this) -= a ; return *this ; } 
 // ============================================================================
 Gaudi::Math::Polynomial& 
-Gaudi::Math::Polynomial::__imult__  ( const double a )
+Gaudi::Math::Polynomial::__imul__   ( const double a )
 { (*this) *= a ; return *this ; } 
 // ============================================================================
 Gaudi::Math::Polynomial& 
@@ -882,7 +842,7 @@ Gaudi::Math::Polynomial::__sub__    ( const double a ) const
 { return Polynomial(*this) -= a ; } 
 // ============================================================================
 Gaudi::Math::Polynomial 
-Gaudi::Math::Polynomial::__mult__   ( const double a ) const 
+Gaudi::Math::Polynomial::__mul__   ( const double a ) const 
 { return Polynomial(*this) *= a ; } 
 // ============================================================================
 Gaudi::Math::Polynomial 
@@ -898,8 +858,8 @@ Gaudi::Math::Polynomial::__rsub__   ( const double a ) const
 { return (-(*this))+a; } 
 // ============================================================================
 Gaudi::Math::Polynomial 
-Gaudi::Math::Polynomial::__rmult__  ( const double a ) const 
-{ return __mult__ ( a ) ; } 
+Gaudi::Math::Polynomial::__rmul__   ( const double a ) const 
+{ return __mul__ ( a ) ; } 
 // ============================================================================
 Gaudi::Math::Polynomial 
 Gaudi::Math::Polynomial::__neg__   () const { return -(*this); } 
@@ -941,11 +901,10 @@ Gaudi::Math::ChebyshevSum::ChebyshevSum
 // ============================================================================
 // get the value
 // ============================================================================
-double Gaudi::Math::ChebyshevSum::operator () ( const double x ) const 
+double Gaudi::Math::ChebyshevSum::evaluate ( const double x ) const 
 {
   // trivial cases 
-  if      ( x < m_xmin || x > m_xmax ) { return         0 ; }  // RETURN 
-  else if ( 1 == m_pars.size()       ) { return m_pars[0] ; }  // RETURN 
+  if      ( 1 == m_pars.size()       ) { return m_pars[0] ; }  // RETURN 
   else if ( zero ()                  ) { return 0         ; }
   // 1) transform argument:
   const double tx = t ( x ) ;  
@@ -1150,7 +1109,7 @@ Gaudi::Math::ChebyshevSum::__isub__   ( const double a )
 { (*this) -= a ; return *this ; } 
 // ============================================================================
 Gaudi::Math::ChebyshevSum& 
-Gaudi::Math::ChebyshevSum::__imult__  ( const double a )
+Gaudi::Math::ChebyshevSum::__imul__   ( const double a )
 { (*this) *= a ; return *this ; } 
 // ============================================================================
 Gaudi::Math::ChebyshevSum& 
@@ -1166,7 +1125,7 @@ Gaudi::Math::ChebyshevSum::__sub__    ( const double a ) const
 { return ChebyshevSum(*this) -= a ; } 
 // ============================================================================
 Gaudi::Math::ChebyshevSum 
-Gaudi::Math::ChebyshevSum::__mult__   ( const double a ) const 
+Gaudi::Math::ChebyshevSum::__mul__    ( const double a ) const 
 { return ChebyshevSum(*this) *= a ; } 
 // ============================================================================
 Gaudi::Math::ChebyshevSum 
@@ -1182,8 +1141,8 @@ Gaudi::Math::ChebyshevSum::__rsub__   ( const double a ) const
 { return (-(*this))+a; } 
 // ============================================================================
 Gaudi::Math::ChebyshevSum 
-Gaudi::Math::ChebyshevSum::__rmult__  ( const double a ) const 
-{ return __mult__ ( a ) ; } 
+Gaudi::Math::ChebyshevSum::__rmul__   ( const double a ) const 
+{ return __mul__  ( a ) ; } 
 // ============================================================================
 Gaudi::Math::ChebyshevSum 
 Gaudi::Math::ChebyshevSum::__neg__   () const { return -(*this); } 
@@ -1273,10 +1232,9 @@ Gaudi::Math::LegendreSum::LegendreSum
 // ============================================================================
 // get the value
 // ============================================================================
-double Gaudi::Math::LegendreSum::operator () ( const double x ) const 
+double Gaudi::Math::LegendreSum::evaluate ( const double x ) const 
 {
-  if      ( x < m_xmin || x > m_xmax ) { return         0 ; }
-  else if ( 1 == m_pars.size()       ) { return m_pars[0] ; }
+  if      ( 1 == m_pars.size()       ) { return m_pars[0] ; }
   else if ( zero ()                  ) { return         0 ; }
   // transform argument:
   const double tx = t ( x ) ;  
@@ -1449,7 +1407,7 @@ Gaudi::Math::LegendreSum::__isub__   ( const double a )
 { (*this) -= a ; return *this ; } 
 // ============================================================================
 Gaudi::Math::LegendreSum& 
-Gaudi::Math::LegendreSum::__imult__  ( const double a )
+Gaudi::Math::LegendreSum::__imul__   ( const double a )
 { (*this) *= a ; return *this ; } 
 // ============================================================================
 Gaudi::Math::LegendreSum& 
@@ -1465,7 +1423,7 @@ Gaudi::Math::LegendreSum::__sub__    ( const double a ) const
 { return LegendreSum(*this) -= a ; } 
 // ============================================================================
 Gaudi::Math::LegendreSum 
-Gaudi::Math::LegendreSum::__mult__   ( const double a ) const 
+Gaudi::Math::LegendreSum::__mul__    ( const double a ) const 
 { return LegendreSum(*this) *= a ; } 
 // ============================================================================
 Gaudi::Math::LegendreSum 
@@ -1481,8 +1439,8 @@ Gaudi::Math::LegendreSum::__rsub__   ( const double a ) const
 { return (-(*this))+a; } 
 // ============================================================================
 Gaudi::Math::LegendreSum 
-Gaudi::Math::LegendreSum::__rmult__  ( const double a ) const 
-{ return __mult__ ( a ) ; } 
+Gaudi::Math::LegendreSum::__rmul__   ( const double a ) const 
+{ return __mul__ ( a ) ; } 
 // ============================================================================
 Gaudi::Math::LegendreSum 
 Gaudi::Math::LegendreSum::__neg__   () const { return -(*this); } 
@@ -1564,7 +1522,9 @@ Gaudi::Math::HermiteSum::HermiteSum
 // ============================================================================
 // get the value
 // ============================================================================
-double Gaudi::Math::HermiteSum:: operator () ( const double x ) const 
+double Gaudi::Math::HermiteSum::operator() ( const double x ) const 
+{ return evaluate ( x ) ; }
+double Gaudi::Math::HermiteSum:: evaluate  ( const double x ) const 
 {
   const double tx = t ( x ) ;
   return Gaudi::Math::Clenshaw::hermite_sum ( m_pars.begin() , m_pars.end() , tx ) ;
@@ -1683,7 +1643,7 @@ Gaudi::Math::HermiteSum::__isub__   ( const double a )
 { (*this) -= a ; return *this ; } 
 // ============================================================================
 Gaudi::Math::HermiteSum& 
-Gaudi::Math::HermiteSum::__imult__  ( const double a )
+Gaudi::Math::HermiteSum::__imul__   ( const double a )
 { (*this) *= a ; return *this ; } 
 // ============================================================================
 Gaudi::Math::HermiteSum& 
@@ -1699,7 +1659,7 @@ Gaudi::Math::HermiteSum::__sub__    ( const double a ) const
 { return HermiteSum(*this) -= a ; } 
 // ============================================================================
 Gaudi::Math::HermiteSum 
-Gaudi::Math::HermiteSum::__mult__   ( const double a ) const 
+Gaudi::Math::HermiteSum::__mul__    ( const double a ) const 
 { return HermiteSum(*this) *= a ; } 
 // ============================================================================
 Gaudi::Math::HermiteSum 
@@ -1715,8 +1675,8 @@ Gaudi::Math::HermiteSum::__rsub__   ( const double a ) const
 { return (-(*this))+a; } 
 // ============================================================================
 Gaudi::Math::HermiteSum 
-Gaudi::Math::HermiteSum::__rmult__  ( const double a ) const 
-{ return __mult__ ( a ) ; } 
+Gaudi::Math::HermiteSum::__rmul__   ( const double a ) const 
+{ return __mul__ ( a ) ; } 
 // ============================================================================
 Gaudi::Math::HermiteSum 
 Gaudi::Math::HermiteSum::__neg__   () const { return -(*this); } 

@@ -13,7 +13,7 @@
       keyedContTypeDef="TRUE"
       id="811"
       >
-      
+
       <typedef
 	  type="GaudiUtils::VectorMap&lt;int,double&gt;"
 	  def="ExtraInfo"
@@ -35,7 +35,7 @@
       <import name="GaudiKernel/SymmetricMatrixTypes.h"/>
 
       <base name="KeyedObject&lt;int&gt;"/>
-       &KeyedObject; 
+       &KeyedObject;
 
 
       <enum
@@ -44,26 +44,26 @@
         value="Primary=100"
         access="PUBLIC"
 	/>
-      
+
       <constructor
 	  argList="VertexBase rhs"
 	  desc="Copy constructor"
 	  initList="KeyedObject&lt;int&gt;(), m_position(rhs.m_position), m_covMatrix(rhs.m_covMatrix), m_chi2(rhs.m_chi2), m_nDoF(rhs.m_nDoF), m_extraInfo(rhs.m_extraInfo)"
 	  />
-      
+
       <constructor
 	  argList="int key"
 	  explicit = "TRUE"
 	  desc="create a vertex with a selected key"
 	  initList="KeyedObject&lt;int&gt;( key ), m_position(0.0, 0.0, -100*Gaudi::Units::m), m_covMatrix(), m_chi2(-1.0), m_nDoF(-1), m_extraInfo()"
 	  />
-      
+
       <constructor
 	  argList="const Gaudi::XYZPoint&amp; point"
 	  desc="Constructor from a point"
 	  initList="KeyedObject&lt;int&gt;(), m_position(point), m_covMatrix(), m_chi2(-1.0), m_nDoF(-1), m_extraInfo()"
 	  />
-      
+
       <method
         name="clone"
         desc="Clone vertex"
@@ -153,7 +153,7 @@
         const="TRUE"
         desc="ExtraInformation. Don't use directly, use hasInfo, info, addInfo..."
         type="const ExtraInfo&amp;"
-	> 
+	>
 	<code>
 	  return m_extraInfo ;
 	</code>
@@ -165,7 +165,7 @@
         desc="has information for specified key"
         argList="int key"
         type="bool"
-	> 
+	>
 	<code>
 	  return m_extraInfo.end() != m_extraInfo.find( key ) ;
 	</code>
@@ -176,7 +176,7 @@
         desc=" Add new information associated with the specified key. This method cannot be used to modify information for a pre-existing key."
         argList="const int key, const double info"
         type="bool"
-	> 
+	>
 	<code>
 	  return m_extraInfo.insert( key , info ).second ;
 	</code>
@@ -188,7 +188,7 @@
         argList="const int key, const double def"
         type="double"
         const="TRUE"
-	> 
+	>
 	<code>
 	  ExtraInfo::iterator i = m_extraInfo.find( key ) ;
 	  return m_extraInfo.end() == i ? def : i->second ;
@@ -200,9 +200,9 @@
         desc="erase the information associated with the given key"
         argList="int key"
         type="unsigned long"
-	> 
+	>
 	<code>
-	  return m_extraInfo.erase( key ) ; 
+	  return m_extraInfo.erase( key ) ;
 	</code>
       </method>
 
@@ -215,14 +215,14 @@
 	>
       </method>
 
-      <method 
-         name    = "fillStream" 
+      <method
+         name    = "fillStream"
          desc    = "Print this Particle in a human readable way"
-         type    = "std::ostream&amp;" 
-         virtual = "FALSE" 
+         type    = "std::ostream&amp;"
+         override = "TRUE"
          const   = "TRUE">
-         <arg 
-           type = "std::ostream" 
+         <arg
+           type = "std::ostream"
            name = "s"/>
       </method>
 

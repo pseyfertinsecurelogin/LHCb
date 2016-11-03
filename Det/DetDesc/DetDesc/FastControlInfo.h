@@ -1,4 +1,3 @@
-//$Id: FastControlInfo.h,v 1.1 2006-04-20 14:39:55 ranjard Exp $
 #ifndef DETDESC_FASTCONTROLINFO_H
 #define DETDESC_FASTCONTROLINFO_H 1
 
@@ -18,19 +17,12 @@
     @date December 2001
 *///--------------------------------------------------------------------------
 
-class FastControlInfo: virtual public ConditionInfo,
-                       virtual public IFastControl
+struct FastControlInfo: ConditionInfo, virtual IFastControl
 {
-
- public: 
-  
   /// Constructor
-  FastControlInfo( IDetectorElement* de,
-		   const std::string& condition );
+  FastControlInfo( IDetectorElement* de, const std::string& condition )
+  : ConditionInfo( de, condition ) {}
 
-  /// Destructor 
-  virtual ~FastControlInfo();
-  
 };
 
 #endif // DETDESC_FASTCONTROLINFO_H

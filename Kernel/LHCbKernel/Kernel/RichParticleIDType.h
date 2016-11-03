@@ -16,13 +16,18 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include <array>
+#include <stdint.h>
 
 // General namespace for RICH specific definitions documented in RichSide.h
 namespace Rich 
 {
 
-  /// Number of RICH particle types (Electron, Muon, Pion, Kaon, Proton and 'Below Threshold')
-  static const int NParticleTypes = 7;
+  /// Number of RICH particle types (Electron, Muon, Pion, Kaon, Proton, Deuteron and 'Below Threshold')
+  static const int NParticleTypes     = 7;
+
+  /// Number of 'real' RICH particle types (Electron, Muon, Pion, Kaon, Proton and Deuteron)
+  static const int NRealParticleTypes = 6;
 
   //--------------------------------------------------------------------------
   /** @enum ParticleIDType
@@ -32,7 +37,7 @@ namespace Rich
    *  @date   08/07/2004
    */
   //--------------------------------------------------------------------------
-  enum ParticleIDType
+  enum ParticleIDType : int8_t
     {
       Unknown = -1,   ///< Unknown particle type
       Electron,       ///< Represents e+ or e-
@@ -51,7 +56,7 @@ namespace Rich
   typedef std::vector<ParticleIDType> Particles;
   //using Particles = std::vector<ParticleIDType>;
 
-  /// Access a vector of valid particle ID types
+  /// Access a vector of all valid particle ID types
   const Particles & particles() noexcept;
 
   /// Implement textual ostream << method for Rich::ParticleIDType enumeration
@@ -60,6 +65,10 @@ namespace Rich
   {
     return s << Rich::text(particle) ;
   }
+
+  /// Type for fixed size arrays with mass hypothesis information
+  template < typename TYPE >
+  using ParticleArray = std::array< TYPE, NParticleTypes >;
   
 }
 

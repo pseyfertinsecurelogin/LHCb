@@ -1,5 +1,5 @@
 // $Id: PropagateFSRs.h,v 1.1 2010-03-26 11:43:18 rlambert Exp $
-#ifndef PROPAGATEFSRS_H 
+#ifndef PROPAGATEFSRS_H
 #define PROPAGATEFSRS_H 1
 
 // Include files
@@ -15,48 +15,48 @@
 
 
 /** @class PropagateFSRs PropagateFSRs.h
- *  
+ *
  *
  *  @author Rob LAmbert
  *  @date   2010-03-26
  */
-class PropagateFSRs : public GaudiAlgorithm 
+class PropagateFSRs : public GaudiAlgorithm
   , public virtual IIncidentListener {
-public: 
+public:
   /// Standard constructor
   PropagateFSRs( const std::string& name, ISvcLocator* pSvcLocator );
 
   virtual ~PropagateFSRs( ); ///< Destructor
 
-  virtual StatusCode initialize();    ///< Algorithm initialization
-  virtual StatusCode execute   ();    ///< Algorithm execution
-  virtual StatusCode finalize  ();    ///< Algorithm finalization
+  StatusCode initialize() override;    ///< Algorithm initialization
+  StatusCode execute   () override;    ///< Algorithm execution
+  StatusCode finalize  () override;    ///< Algorithm finalization
 
-  
+
   // ==========================================================================
   // IIncindentListener interface
   // ==========================================================================
-  virtual void handle ( const Incident& ) ;
+  void handle ( const Incident& )  override;
   // ==========================================================================
-  
+
 protected:
   /// Reference to file records data service
   IDataProviderSvc* m_fileRecordSvc;
   std::string m_rawEventLocation;     // Location where we get the RawEvent
 
 private:
-  mutable IIncidentSvc* m_incSvc ;                      /// the incident service 
-  
+  mutable IIncidentSvc* m_incSvc ;                      /// the incident service
+
   //copied from XMLSummarySvc
   std::string m_filename; ///the current open filename
-  
+
   Gaudi::IIODataManager * m_ioDataManager; ///the pointer to the data manager service
-  
+
   std::string file2GUID(const std::string & filename);
   std::string AFN2name(const std::string & filename) const;
   std::string GUIDinEvent() const;
   void AddName2GUID(const std::string & filename, const std::string & GUID);
-  
+
   /// Map of FID to PFN
   typedef std::map<std::string, std::string> FidMap;
   /// Map of FID to PFN

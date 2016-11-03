@@ -4,6 +4,32 @@
 ! Purpose     : General purpose RICH classes
 !------------------------------------------------------------------------------
 
+! 2016-09-05 - Chris Jones
+ - Update various classes to avoid designs where mutbale data members (caches)
+   are changed in const methods, as this will not play well with the upgrade
+   framework with parallel processing.
+
+! 2016-08-10 - Chris Jones
+ - Cache the panel and RICH enums in HPDPixelCluster for speed.
+ - Use 8 bit int as underlying type in RichTrackSegment type enum.
+
+! 2016-08-10 - Chris Jones
+ - Add shortcut method to RichTrackSegment to access the magnitude of the
+   'best' (middle point) momentum vector.
+
+! 2016-07-31 - Chris Jones
+ - Cache some variables in RichTrackSegment to allow for faster bestPoint and
+   bestMomentum calculations
+ - Some C++11 cleanups.
+
+! 2016-07-29 - Chris Jones
+ - Remove custom overloading of MsgStream printout for std::array as this is
+   no longer required.
+
+! 2016-07-20 - Chris Jones
+ - Pass the vector of SmartIDs to IRichPixelClusteringTool::findClusters 
+   by const reference.
+
 ! 2016-07-11 - Chris Jones
  - Update RichSmartID interface to return booleans instead of StatusCodes.
 

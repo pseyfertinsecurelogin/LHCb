@@ -61,10 +61,8 @@ XmlParserSvc::XmlParserSvc (const std::string& name, ISvcLocator* svc) :
 //  Initialization
 //=========================================================================
 StatusCode XmlParserSvc::initialize( ) {
-  StatusCode sc = Service::initialize();
+  StatusCode sc = base_class::initialize();
   if ( !sc.isSuccess() ) return sc;
-
-  if ( !m_msg ) m_msg.reset(new MsgStream (msgSvc(), name()) );
 
   m_sumCpu = 0.;
   m_sumClock = 0.;
@@ -75,17 +73,17 @@ StatusCode XmlParserSvc::initialize( ) {
     xercesc::XMLPlatformUtils::Initialize();
   } catch(const xercesc::XMLException& toCatch) {
     char *message = xercesc::XMLString::transcode(toCatch.getMessage());
-    warning() << "Error during Xerces-c Initialization.\n"
+    Service::warning() << "Error during Xerces-c Initialization.\n"
               << "  Exception message:"
               << message << endmsg;
     xercesc::XMLString::release(&message);
   }
 
   // creates a new XercesDOMParser
-  m_parser.reset( new xercesc::XercesDOMParser );
+  m_parser = std::make_unique<xercesc::XercesDOMParser>();
   // if the creation was successful, sets some properties
   if( !m_parser ) {
-    error() << "Could not create xercesc::XercesDOMParser" << endmsg;
+    Service::error() << "Could not create xercesc::XercesDOMParser" << endmsg;
     return StatusCode::FAILURE;
   }
   // sets the error handler to this object
@@ -102,18 +100,18 @@ StatusCode XmlParserSvc::initialize( ) {
   if( ! m_resolverName.empty() ) {
     m_toolSvc = service("ToolSvc",true);
     if ( !m_toolSvc ) {
-      error() << "Could not locate the ToolSvc " << endmsg;
+      Service::error() << "Could not locate the ToolSvc " << endmsg;
       return sc;
     }
     sc = m_toolSvc->retrieveTool(m_resolverName,m_resolverTool,0,true);
     if (  !sc.isSuccess() ) {
-      error() << "Could not locate the tool " << m_resolverName << endmsg;
+      Service::error() << "Could not locate the tool " << m_resolverName << endmsg;
       m_resolverTool = nullptr; // extra safety check
       return sc;
     }
     m_resolver.reset( m_resolverTool );
     if (  !m_resolver) {
-      error() << "Could not get the IXmlEntityResolver interface of" << m_resolverName << endmsg;
+      Service::error() << "Could not get the IXmlEntityResolver interface of" << m_resolverName << endmsg;
       return sc;
     }
     m_parser->setEntityResolver(m_resolver->resolver());
@@ -143,16 +141,10 @@ StatusCode XmlParserSvc::finalize() {
     info() << "***** Total parsing clock time " << m_sumClock << " ms" << endmsg;
   }
 
-  m_msg.reset();
-
   xercesc::XMLPlatformUtils::Terminate();
 
-  return Service::finalize();
+  return base_class::finalize();
 }
-// -----------------------------------------------------------------------
-// Standard Destructor
-// ------------------------------------------------------------------------
-XmlParserSvc::~XmlParserSvc() { }
 
 //=========================================================================
 // Return the pointer to the detector data service (loading it if not yet done).
@@ -222,7 +214,7 @@ IOVDOMDocument* XmlParserSvc::parse (const char* fileName) {
       // If we have an entity resolver, we try to use it
       if (m_resolver){
         XMLCh *sysId = xercesc::XMLString::transcode(fileName);
-        is = std::unique_ptr<xercesc::InputSource>(m_resolver->resolver()->resolveEntity(nullptr,sysId));
+        is.reset( m_resolver->resolver()->resolveEntity(nullptr,sysId) );
         xercesc::XMLString::release(&sysId);
       }
       if ( is ) { // If the entity resolver succeeded, we parse the InputSource
@@ -235,10 +227,10 @@ IOVDOMDocument* XmlParserSvc::parse (const char* fileName) {
       doc = m_parser->adoptDocument();
       // if the document is not null, cache it
       if (!doc) return nullptr;
-      std::unique_ptr<IOVDOMDocument> cache_doc{ new IOVDOMDocument(doc) };
+      auto cache_doc = std::make_unique<IOVDOMDocument>(doc);
       // Try to see if the InputSource knows about validity/
       ValidInputSource *iov_is = dynamic_cast<ValidInputSource *>(is.get());
-      if (iov_is){ // it does
+      if (iov_is) { // it does
         cache_doc->setValidity(iov_is->validSince(),iov_is->validTill());
       }
       auto myDoc = cacheItem(fileName, std::move(cache_doc));
@@ -253,7 +245,7 @@ IOVDOMDocument* XmlParserSvc::parse (const char* fileName) {
       return myDoc;
     } catch (xercesc::XMLPlatformUtilsException e) {
       char *message = xercesc::XMLString::transcode(e.getMessage());
-      error() << "Unable to find file " << fileName
+      Service::error() << "Unable to find file " << fileName
               << ",  Exception message:" << message << endmsg;
       xercesc::XMLString::release(&message);
     }
@@ -295,7 +287,7 @@ void XmlParserSvc::clearCache() {
   //    check the lock status of the cached objects
   for ( auto& i : m_cache ) {
     if ( i.second.lock > 0 ) {
-      warning() << "Item in cache with lock count = " << i.second.lock
+      Service::warning() << "Item in cache with lock count = " << i.second.lock
                 << " " << i.first << endmsg;
     }
   }
@@ -317,7 +309,7 @@ void XmlParserSvc::releaseDoc(IOVDOMDocument* doc) {
     delete doc;
   } else {
     if ( --it->second.lock < 0 ) {
-      warning() << "XmlParserSvc::release request for an object which wasn't locked!" << endmsg;
+      Service::warning() << "XmlParserSvc::release request for an object which wasn't locked!" << endmsg;
       it->second.lock = 0;
     }
   }
@@ -331,7 +323,7 @@ void XmlParserSvc::warning (const xercesc::SAXParseException& exception){
   char*        aSysId  = xercesc::XMLString::transcode(exception.getSystemId());
   char*        aMsg    = xercesc::XMLString::transcode(exception.getMessage());
 
-  warning() << "DOM>> File "    << aSysId
+  Service::warning() << "DOM>> File "    << aSysId
             << ", line "        << exception.getLineNumber()
             << ", column "      << exception.getColumnNumber()
             << ": "             << aMsg << endmsg;
@@ -348,7 +340,7 @@ void XmlParserSvc::error (const xercesc::SAXParseException& exception){
   char* aSysId = xercesc::XMLString::transcode (exception.getSystemId());
   char* aMsg = xercesc::XMLString::transcode (exception.getMessage());
 
-  error() << "DOM>> File "    << aSysId
+  Service::error() << "DOM>> File "    << aSysId
           << ", line "        << exception.getLineNumber()
           << ", column "      << exception.getColumnNumber()
           << ": "             << aMsg << endmsg;
@@ -366,7 +358,7 @@ void XmlParserSvc::fatalError (const xercesc::SAXParseException& exception){
   char* aSysId = xercesc::XMLString::transcode (exception.getSystemId());
   char*        aMsg    = xercesc::XMLString::transcode (exception.getMessage());
 
-  error() << "DOM>> File "    << aSysId
+  Service::error() << "DOM>> File "    << aSysId
           << ", line "        << exception.getLineNumber()
           << ", column "      << exception.getColumnNumber()
           << ": "             << aMsg << endmsg;
@@ -408,7 +400,7 @@ IOVDOMDocument* XmlParserSvc::cacheItem (std::string fileName,
     }
     if (m_cache.end() == winner) {
       // This means that the cache is too small: increase it
-      warning() << "The cache is full and I cannot delete anything: I increase the max size to "
+      Service::warning() << "The cache is full and I cannot delete anything: I increase the max size to "
                 << ++m_maxDocNbInCache << endmsg;
     } else {
       // remove its entry in the map
@@ -437,9 +429,6 @@ void XmlParserSvc::increaseCacheAge () {
     // the cacheAge is an unsigned int. We are here because the age
     // has just exceeded the maximum possible value for unsigned ints.
     // As a consequence, we put every birthDate to 0.
-    for (auto& i : m_cache ) {
-      i.second.birthDate = 0;
-    }
+    for (auto& i : m_cache ) i.second.birthDate = 0;
   }
 }
-

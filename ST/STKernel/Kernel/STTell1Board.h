@@ -1,4 +1,3 @@
-// $Id: STTell1Board.h,v 1.14 2009-10-26 14:21:47 jvantilb Exp $
 #ifndef _STTell1Board_H
 #define _STTell1Board_H 1
 
@@ -20,19 +19,16 @@
  */
 
 
-class STTell1Board{
+class STTell1Board final {
 
 public:
 
   typedef std::pair<LHCb::STChannelID,int> chanPair;
 
   /// constructer
-  STTell1Board(const STTell1ID aBoard, 
-               const unsigned int stripsPerHybrid, 
+  STTell1Board(const STTell1ID aBoard,
+               const unsigned int stripsPerHybrid,
                const std::string& type);
-
-  /// destructer
-  virtual ~STTell1Board();
 
   /// add wafer
   void addSector(LHCb::STChannelID aOfflineChan, unsigned int orientation, const std::string& serviceBox);
@@ -45,7 +41,7 @@ public:
 
   /// flat tell1 number as in itell1XXX etc
   unsigned int flatTell1Number() const;
- 
+
   /// channel is in this board
   bool isInside(const LHCb::STChannelID aOfflineChan,
                 unsigned int& sectorIndex) const;
@@ -55,13 +51,13 @@ public:
 			const STDAQ::version& version,
                         const STDAQ::StripRepresentation aDAQChan) const;
 
-  /// fill adc values offline 
+  /// fill adc values offline
   void ADCToOffline(const unsigned int aDAQChan,
 		      LHCb::STCluster::ADCVector& adcs,
 		      const int version,
 		      const unsigned int offset,
 		      const unsigned int fracStrip) const;
-  
+
 
   /// construct DAQChannel from LHCb::STChannelID
   unsigned int offlineToDAQ(const LHCb::STChannelID aOfflineChan,
@@ -73,7 +69,7 @@ public:
 
   /// vector of sectors on the board
   const std::vector<LHCb::STChannelID>& sectorIDs() const;
-  
+
   /// vector of hybrid orientations
   const std::vector<int>& orientation() const;
 
@@ -81,7 +77,7 @@ public:
   const std::vector<std::string>& serviceBoxes() const;
 
   /// service box
-  std::string serviceBox(const LHCb::STChannelID& chan) const; 
+  std::string serviceBox(const LHCb::STChannelID& chan) const;
 
   /// service box
   std::string serviceBox(const STDAQ::StripRepresentation& tell1Chan) const;
@@ -96,7 +92,7 @@ public:
   }
 
   // Fill the ASCII output stream
-  virtual std::ostream& fillStream(std::ostream& s) const;
+  std::ostream& fillStream(std::ostream& s) const;
 
   /** print method for python Not needed in C++ */
   std::string toString() const;
@@ -104,7 +100,7 @@ public:
 private:
 
   /// service box
-  std::string serviceBox(const unsigned int& waferIndex) const; 
+  std::string serviceBox(const unsigned int& waferIndex) const;
 
   STTell1ID m_boardID;
   unsigned int m_nStripsPerHybrid;
@@ -156,11 +152,10 @@ inline std::string STTell1Board::serviceBox(const LHCb::STChannelID& chan) const
 
 inline bool STTell1Board::validChannel(const unsigned int daqChan) const{
   if (daqChan > m_nStripsPerHybrid*m_sectorsVector.size()) return false;
-  const int index = daqChan/m_nStripsPerHybrid; 
-  if (m_sectorsVector[index].sector() == 0 ) return false;
-  return true; 
+  const int index = daqChan/m_nStripsPerHybrid;
+  return m_sectorsVector[index].sector() != 0;
 }
-  
+
 inline unsigned int STTell1Board::nSectors() const{
   return m_sectorsVector.size();
 }

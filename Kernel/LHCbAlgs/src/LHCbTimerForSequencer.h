@@ -18,23 +18,12 @@ public:
 
   /** Constructor. Specify the name, for later printing. */
   LHCbTimerForSequencer( const std::string& name,
-                     const unsigned int size,
-                     const double factor )
+                         const unsigned int size,
+                         const double factor )
     : m_name     ( name ),
       m_size     ( size ),
-      m_factor   ( factor ),
-      m_startClock ( 0LL  ),
-      m_startCpu   ( 0LL  ),
-      m_num      ( 0LL  ),
-      m_lastTime ( 0.   ),
-      m_lastCpu  ( 0.   ),
-      m_min      ( 0.   ),
-      m_max      ( 0.   ),
-      m_sum      ( 0.   ),
-      m_sumCpu   ( 0.   )
+      m_factor   ( factor )
   { }
-
-  ~LHCbTimerForSequencer() {}
 
   /** Start a time measurement */
   inline void start ()
@@ -49,28 +38,28 @@ public:
   double stop();
 
   /** returns the name **/
-  inline const std::string& name() const { return m_name; }
+  inline const std::string& name() const noexcept { return m_name; }
 
   /** returns the last measured time **/
-  inline double lastTime()   const { return m_lastTime; }
+  inline double lastTime()   const noexcept { return m_lastTime; }
 
   /** returns the last measured time **/
-  inline double lastCpu()   const { return m_lastCpu; }
+  inline double lastCpu()   const noexcept { return m_lastCpu; }
 
   /** returns the total elapsed time */
-  inline double elapsedTotal() const { return m_sum; }
+  inline double elapsedTotal() const noexcept { return m_sum; }
 
   /** returns the total cpu time */
-  inline double cpuTotal() const { return m_sumCpu; }
+  inline double cpuTotal() const noexcept { return m_sumCpu; }
 
   /** Returns the number run count*/
-  inline double count() const { return (double)m_num; }
+  inline double count() const noexcept { return (double)m_num; }
 
   /** Returns the min*/
-  inline double min() const { return (double)m_min; }
+  inline double min() const noexcept { return (double)m_min; }
 
   /** Returns the max*/
-  inline double max() const { return (double)m_max; }
+  inline double max() const noexcept { return (double)m_max; }
 
   /** Write measured time into the message stream. */
   MsgStream & fillStream(MsgStream & s) const;
@@ -81,18 +70,18 @@ public:
 private:
 
   std::string m_name;
-  unsigned int m_size;
-  double m_factor;
-  long long m_startClock;
-  long long m_startCpu;
+  unsigned int m_size{0};
+  double m_factor{0};
+  long long m_startClock{0LL};
+  long long m_startCpu{0LL};
 
-  long long m_num;
-  double m_lastTime;
-  double m_lastCpu;
-  double m_min;
-  double m_max;
-  double m_sum;
-  double m_sumCpu;
+  long long m_num{0LL};
+  double m_lastTime{0};
+  double m_lastCpu{0};
+  double m_min{0};
+  double m_max{0};
+  double m_sum{0};
+  double m_sumCpu{0};
 };
 
 inline MsgStream& operator<<(MsgStream& ms, const LHCbTimerForSequencer& count)

@@ -1,4 +1,3 @@
-// $Id: ISTReadoutTool.h,v 1.9 2009-10-30 12:48:45 mtobin Exp $
 #ifndef _ISTReadoutTool_H
 #define _ISTReadoutTool_H
 
@@ -27,15 +26,12 @@ namespace LHCb{
 
 // Declaration of the interface ID ( interface id, major version, minor version)
 
-static const InterfaceID IID_ISTReadoutTool("ISTReadoutTool", 0 , 0);
 
 
-class ISTReadoutTool: virtual public IAlgTool{
-
-public:
+struct ISTReadoutTool: extend_interfaces<IAlgTool>{
 
   /// Static access to interface id
-  static const InterfaceID& interfaceID() { return IID_ISTReadoutTool; }
+  DeclareInterfaceID(ISTReadoutTool, 1 , 0);
 
   /// number of boards
   virtual unsigned int nBoard() const = 0;

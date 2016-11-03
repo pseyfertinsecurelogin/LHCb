@@ -3,6 +3,8 @@
 #include "Event/FTCluster.h"
 #include "Event/RawEvent.h"
 
+#include <numeric>
+
 // local
 #include "FTRawBankEncoder.h"
 #include "FTRawBankParams.h"

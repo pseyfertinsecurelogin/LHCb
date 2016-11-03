@@ -1,5 +1,3 @@
-// $Id: ProcUnit.h,v 1.7 2008-11-07 16:23:39 jucogan Exp $
-
 #ifndef L0MUONKERNEL_PROCUNIT_H
 #define L0MUONKERNEL_PROCUNIT_H     1
 
@@ -45,7 +43,7 @@ namespace L0Muon {
     LHCb::MuonTileID puId(){return m_mid;}
 
     /// Give a static type name to the unit
-    std::string type() {
+    std::string type() override {
       return "ProcUnit";
     }
 

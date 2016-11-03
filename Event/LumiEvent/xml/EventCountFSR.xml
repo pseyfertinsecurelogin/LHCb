@@ -14,6 +14,8 @@
       name="EventCountFSR"
       author="Rob Lambert"
       desc="Accounting class for processed events in FSR"
+      defaultdestructor = "FALSE"
+      final       = "TRUE"
       id="13503"
       >
       <base name='DataObject'/>
@@ -30,9 +32,9 @@
         <enumval name="VERIFIED"   value = "1"   desc="The counting in all lower FSRs has been verified OK"/>
       </enum>
 
-      <location name="Default"   
+      <location name="Default"
 		place="/FileRecords/EventCountFSR"/>
-      
+
       <attribute
         desc="Number of events this output file should contain"
         name="output"
@@ -60,16 +62,17 @@
         name='fillStream'
         type='std::ostream&amp;'
         desc='readable printout'
-        const='TRUE'>
-	<arg name="s" type="std::ostream" const="FALSE"/>   
+        const='TRUE'
+        override='TRUE'>
+	<arg name="s" type="std::ostream" const="FALSE"/>
         <code>
 
     std::ostream&amp; ss = const_cast&lt; std::ostream&amp; &gt;(s);
     ss &lt;&lt; "{ "
-       &lt;&lt; " input : " &lt;&lt;  m_input  
-       &lt;&lt; " output : " &lt;&lt;  m_output  
-       &lt;&lt; " statusFlag : " &lt;&lt;  m_statusFlag  
-       &lt;&lt; " }"; 
+       &lt;&lt; " input : " &lt;&lt;  m_input
+       &lt;&lt; " output : " &lt;&lt;  m_output
+       &lt;&lt; " statusFlag : " &lt;&lt;  m_statusFlag
+       &lt;&lt; " }";
 
     return ss;
         </code>

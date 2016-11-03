@@ -1,7 +1,7 @@
 // $Id: RawEventTestCreator.cpp,v 1.1 2009-02-06 09:37:57 frankb Exp $
 // Include files from Gaudi
-#include "GaudiKernel/Algorithm.h" 
-#include "GaudiKernel/IDataProviderSvc.h" 
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/IDataProviderSvc.h"
 #include "MDF/RawEventHelpers.h"
 #include "MDF/OnlineRunInfo.h"
 #include "MDF/MDFHeader.h"
@@ -16,7 +16,7 @@
 namespace LHCb  {
 
  /** @class RawEventTestCreator RawEventTestCreator.cpp
-  *  Creates and fills dummy RawEvent  
+  *  Creates and fills dummy RawEvent
   *
   *  @author Markus Frank
   *  @date   2005-10-13
@@ -24,7 +24,7 @@ namespace LHCb  {
   class RawEventTestCreator : public Algorithm {
     /// Flag to test bank removal
     bool m_removeBank;
-  public: 
+  public:
     /// Standard constructor
     RawEventTestCreator( const std::string& name, ISvcLocator* pSvcLocator )
     : Algorithm(name, pSvcLocator), m_removeBank(false) {
@@ -32,10 +32,10 @@ namespace LHCb  {
     }
 
     /// Destructor
-    virtual ~RawEventTestCreator()  {} 
+    virtual ~RawEventTestCreator()  {}
 
     /// Main execution
-    virtual StatusCode execute()  {
+    StatusCode execute() override {
       int i, cnt, *p;
       static int trNumber = -1;
       unsigned int trMask[] = {~0u,~0u,~0u,~0u};

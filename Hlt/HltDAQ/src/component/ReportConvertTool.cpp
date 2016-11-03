@@ -38,7 +38,7 @@ namespace {
        LHCb::RecSummary::nMuonTracks,
        LHCb::RecSummary::nPVs
   };
-  static const std::array<LHCb::ProtoParticle::additionalInfo,66> s_proto_map = {
+  static const std::array<LHCb::ProtoParticle::additionalInfo,67> s_proto_map = {
       LHCb::ProtoParticle::IsPhoton,//381
       LHCb::ProtoParticle::IsNotE,//382
       LHCb::ProtoParticle::IsNotH,//383
@@ -104,7 +104,8 @@ namespace {
       LHCb::ProtoParticle::ProbNNpi,//
       LHCb::ProtoParticle::ProbNNk,//
       LHCb::ProtoParticle::ProbNNp,//
-      LHCb::ProtoParticle::ProbNNghost //
+      LHCb::ProtoParticle::ProbNNghost, //
+      LHCb::ProtoParticle::CombDLLd//605
   };
 }
 
@@ -512,6 +513,7 @@ void ReportConvertTool::RichPIDObject2Summary( HltObjectSummary::Info* info, con
       case 4: info->insert( rpid.first, float( object->particleDeltaLL( Rich::ParticleIDType::Kaon ) ) ); break;
       case 5: info->insert( rpid.first, float( object->particleDeltaLL( Rich::ParticleIDType::Proton ) ) ); break;
       case 6: info->insert( rpid.first, float( object->particleDeltaLL( Rich::ParticleIDType::BelowThreshold ) ) ); break;
+      case 7: info->insert( rpid.first, float( object->particleDeltaLL( Rich::ParticleIDType::Deuteron ) ) ); break;
     }
   }
 
@@ -897,6 +899,7 @@ void ReportConvertTool::RichPIDObjectFromSummary( const HltObjectSummary::Info*i
       case 4: object->setParticleDeltaLL( Rich::ParticleIDType::Kaon, (*info)[ rpid.first ] ); break;
       case 5: object->setParticleDeltaLL( Rich::ParticleIDType::Proton, (*info)[ rpid.first ] ); break;
       case 6: object->setParticleDeltaLL( Rich::ParticleIDType::BelowThreshold, (*info)[ rpid.first ] ); break;
+      case 7: object->setParticleDeltaLL( Rich::ParticleIDType::Deuteron, (*info)[ rpid.first ] ); break;
     }
   }
 

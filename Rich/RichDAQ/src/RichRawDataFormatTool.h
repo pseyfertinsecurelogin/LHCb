@@ -30,27 +30,28 @@
 // Base class
 #include "RichKernel/RichToolBase.h"
 
-// Kernel
-#include "RichKernel/RichStatDivFunctor.h"
-#include "RichKernel/RichHashMap.h"
+// Utils
+#include "RichUtils/RichStatDivFunctor.h"
+#include "RichUtils/RichHashMap.h"
+#include "RichUtils/RichMap.h"
+#include "RichUtils/RichPoolMap.h"
+#include "RichUtils/RichHashMap.h"
 
 // Interfaces
-#include "RichKernel/IRichRawDataFormatTool.h"
+#include "RichInterfaces/IRichRawDataFormatTool.h"
 
-// local
-#include "RichDAQVersions.h"
+// RICH DAQ Kernel
+#include "RichDAQKernel/RichDAQVersions.h"
 
 // RichDet
 #include "RichDet/DeRichSystem.h"
 
-// RichKernel
-#include "RichKernel/RichMap.h"
-#include "RichKernel/RichPoolMap.h"
-#include "RichKernel/RichHashMap.h"
-
 // Event model
 #include "Event/RawEvent.h"
 #include "Event/ODIN.h"
+
+// Old 32 bit SmartID
+#include "Kernel/RichSmartID32.h"
 
 namespace Rich
 {
@@ -84,14 +85,11 @@ namespace Rich
                          const std::string& name,
                          const IInterface* parent );
 
-      /// Destructor
-      virtual ~RawDataFormatTool( );
-
       // Initialization of the tool after creation
-      StatusCode initialize();
+      StatusCode initialize() override final;
 
       // Finalization of the tool before deletion
-      StatusCode finalize();
+      StatusCode finalize() override final;
 
     public:
 
@@ -100,17 +98,17 @@ namespace Rich
        *
        *  @param incident The incident identifier
        */
-      void handle( const Incident& incident );
+      void handle( const Incident& incident ) override final;
 
     public: // methods (and doxygen comments) inherited from interface
 
       /// Creates a bank data from a vector of RichSmartIDs
       void fillRawEvent( const LHCb::RichSmartID::Vector & smartIDs,
-                         const Rich::DAQ::BankVersion version = Rich::DAQ::LHCb2 ) const;
+                         const Rich::DAQ::BankVersion version = Rich::DAQ::LHCb2 ) const override final;
 
       /// Decode all RICH RawBanks into RichSmartID identifiers
       void decodeToSmartIDs( const RawEventLocations & taeLocations,
-                             Rich::DAQ::L1Map & decodedData ) const;
+                             Rich::DAQ::L1Map & decodedData ) const override final;
 
     private: // definitions
 
@@ -135,9 +133,9 @@ namespace Rich
         { return this->l1HardwareID < id.l1HardwareID ; }
       public:
         /// Bank version
-        Rich::DAQ::BankVersion bankVersion = Rich::DAQ::UndefinedBankVersion; 
+        Rich::DAQ::BankVersion bankVersion = Rich::DAQ::UndefinedBankVersion;
         /// L1 hardwareID
-        Rich::DAQ::Level1HardwareID l1HardwareID; 
+        Rich::DAQ::Level1HardwareID l1HardwareID;
       };
 
       /** @class L1CountAndSize RichRawDataFormatTool.h
@@ -189,7 +187,7 @@ namespace Rich
        */
       const HPDDataBank * createDataBank( const LHCb::RichSmartID::Vector & smartIDs,
                                           const Rich::DAQ::BankVersion version,
-                                          const LHCb::ODIN * odin = NULL ) const;
+                                          const LHCb::ODIN * odin = nullptr ) const;
 
       /** Creates a bank data from the given raw block of data
        *
@@ -204,20 +202,41 @@ namespace Rich
                                           const Rich::DAQ::BankVersion version ) const;
 
       /// Initialise for each event
-      void InitEvent();
+      inline void InitEvent()
+      {
+        m_rawEvent.clear();
+        m_odin.clear();
+        m_hasBeenCalled = false;
+      }
 
       /// Finalise for each event
-      void FinishEvent();
+      inline void FinishEvent()
+      {
+        if ( m_hasBeenCalled ) { ++m_evtCount; }
+      }
 
       /// Retrieves the raw event for the current TAE event
       LHCb::RawEvent * rawEvent() const;
 
       /** Retrieves the ODIN data object
        */
-      const LHCb::ODIN * odin() const;
+      inline const LHCb::ODIN * odin() const
+      {
+        LHCb::ODIN *& odin = m_odin[m_currentTAE];
+        if ( !odin )
+        {
+          timeTool()->getTime(); // Needed to make sure ODIN object is in TES (Strange but true)
+          odin = get<LHCb::ODIN>( m_currentTAE+LHCb::ODINLocation::Default );
+        }
+        return odin;
+      }
 
       /// Get the ODIN time tool
-      const IEventTimeDecoder * timeTool() const;
+      inline const IEventTimeDecoder * timeTool() const
+      {
+        if ( !m_timeTool ) { acquireTool( "OdinTimeDecoder", m_timeTool ); }
+        return m_timeTool;
+      }
 
       /** Final printout of Level 1 stats
        *
@@ -227,7 +246,10 @@ namespace Rich
       void printL1Stats( const L1TypeCount & count, const std::string & title ) const;
 
       /// Returns the RawBank version emun for the given bank
-      Rich::DAQ::BankVersion bankVersion( const LHCb::RawBank & bank ) const;
+      inline Rich::DAQ::BankVersion bankVersion( const LHCb::RawBank & bank ) const
+      {
+        return static_cast< Rich::DAQ::BankVersion > ( bank.version() );
+      }
 
       /** Print the given RawBank as a simple hex dump
        *  @param bank The RawBank to dump out
@@ -238,7 +260,10 @@ namespace Rich
 
       /// Test if a given bit in a word is set on
       template < class TYPE >
-      bool isBitOn( const TYPE data, const Rich::DAQ::ShortType pos ) const;
+      inline bool isBitOn( const TYPE data, const Rich::DAQ::ShortType pos ) const noexcept
+      {
+        return ( 0 != (data & (1<<pos)) );
+      }
 
       /// Decode a RawBank into RichSmartID identifiers
       /// Version with DC06 and DC04 compatibility
@@ -258,13 +283,24 @@ namespace Rich
       /// Decode a RawBank into RichSmartID identifiers
       /// MaPMT0 version
       void decodeToSmartIDs_MaPMT0( const LHCb::RawBank & bank,
-                                      Rich::DAQ::L1Map & decodedData ) const;
+                                    Rich::DAQ::L1Map & decodedData ) const;
 
       /// Print the given data word as Hex and as bits, to the given precision
       template < class TYPE >
-      void rawDump( MsgStream & os,
-                    const TYPE word,
-                    const ShortType nBits = 32 ) const;
+      inline void rawDump( MsgStream & os,
+                           const TYPE word,
+                           const ShortType nBits = 32 ) const
+      {
+        std::ostringstream hexW;
+        hexW << std::hex << word;
+        std::string tmpW = hexW.str();
+        if ( tmpW.size() < 8 ) { tmpW = std::string(8-tmpW.size(),'0')+tmpW; }
+        os << tmpW << "  |";
+        for ( int iCol = nBits-1; iCol >= 0; --iCol )
+        {
+          os << "  " << isBitOn( word, iCol );
+        }
+      }
 
       /// Returns a default data map
       const Rich::DAQ::L1Map & dummyMap() const;
@@ -364,7 +400,7 @@ namespace Rich
 
       typedef std::vector<LHCb::RichSmartID::KeyType> HotPixelListType;
 
-      /** Software suppression of hot channels. List of RichSmartIDs (as unsigned ints) 
+      /** Software suppression of hot channels. List of RichSmartIDs (as unsigned ints)
        *  to suppress in the data. */
       HotPixelListType m_hotChannels;
 
@@ -381,65 +417,6 @@ namespace Rich
       std::vector<std::string> m_rawEventLocations;
 
     };
-
-    inline void RawDataFormatTool::InitEvent()
-    {
-      m_rawEvent.clear();
-      m_odin.clear();
-      m_hasBeenCalled = false;
-    }
-
-    inline void RawDataFormatTool::FinishEvent()
-    {
-      if ( m_hasBeenCalled ) ++m_evtCount;
-    }
-
-    inline Rich::DAQ::BankVersion
-    RawDataFormatTool::bankVersion( const LHCb::RawBank & bank ) const
-    {
-      return static_cast< Rich::DAQ::BankVersion > ( bank.version() );
-    }
-
-    template < class TYPE >
-    inline bool
-    RawDataFormatTool::isBitOn( const TYPE data, const Rich::DAQ::ShortType pos ) const
-    {
-      return ( 0 != (data & (1<<pos)) );
-    }
-
-    inline const IEventTimeDecoder * RawDataFormatTool::timeTool() const
-    {
-      if (!m_timeTool) { acquireTool( "OdinTimeDecoder", m_timeTool ); }
-      return m_timeTool;
-    }
-
-    inline const LHCb::ODIN * RawDataFormatTool::odin() const
-    {
-      LHCb::ODIN *& odin = m_odin[m_currentTAE];
-      if ( !odin )
-      {
-        timeTool()->getTime(); // Needed to make sure ODIN object is in TES (Strange but true)
-        odin = get<LHCb::ODIN>( m_currentTAE+LHCb::ODINLocation::Default );
-      }
-      return odin;
-    }
-
-    // Print the given data word as Hex and as bits, to the given precision
-    template < class TYPE >
-    inline void RawDataFormatTool::rawDump( MsgStream & os,
-                                            const TYPE word,
-                                            const ShortType nBits ) const
-    {
-      std::ostringstream hexW;
-      hexW << std::hex << word;
-      std::string tmpW = hexW.str();
-      if ( tmpW.size() < 8 ) { tmpW = std::string(8-tmpW.size(),'0')+tmpW; }
-      os << tmpW << "  |";
-      for ( int iCol = nBits-1; iCol >= 0; --iCol )
-      {
-        os << "  " << isBitOn( word, iCol );
-      }
-    }
 
   }
 }

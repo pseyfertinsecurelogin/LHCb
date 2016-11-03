@@ -32,7 +32,7 @@ namespace LHCb
    *  @author Iain Last,G.Corti
    *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
    */
-  class GAUDI_API ParticleProperty 
+  class GAUDI_API ParticleProperty  final
   {
   public:
     // ========================================================================
@@ -94,8 +94,6 @@ namespace LHCb
       const double            mass       , 
       const double            tlife      ,
       const double            maxWidth   ) ;
-    /// Destructor.
-    virtual ~ParticleProperty() ;
     // ========================================================================
   public:  // the major accessors 
     // ========================================================================

@@ -1,9 +1,9 @@
 #ifndef    DETDESC_PVOLUME_H
-#define    DETDESC_PVOLUME_H 1 
+#define    DETDESC_PVOLUME_H 1
 
-///  GaudiKernel includes   
+///  GaudiKernel includes
 #include "GaudiKernel/Transform3DTypes.h"
-/// DetDesc includes 
+/// DetDesc includes
 #include "DetDesc/Services.h"
 #include "DetDesc/IPVolume.h"
 
@@ -16,277 +16,268 @@ class MsgStream;
 class GaudiException;
 class PVolumeException;
 
-/** @class PVolume PVolume.h 
- *  
+/** @class PVolume PVolume.h
+ *
  *  simple implementation of IPVolume interface
- *  @see IPVolume 
- * 
+ *  @see IPVolume
+ *
  *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
  *  @author Sebastien Ponce
- */ 
+ */
 
 class PVolume: public IPVolume
 {
-  /// friend class 
+  /// friend class
   friend class LogVolBase;
 
 protected:
 
-  /** constructor    
-   *  @param PhysVol_name name of phys volume 
-   *  @param LogVol_name name of log volume 
-   *  @param Position position of physical volume inside mother volume 
-   *  @param Rotation  rotation of physical volume with respect to mother 
+  /** constructor
+   *  @param PhysVol_name name of phys volume
+   *  @param LogVol_name name of log volume
+   *  @param Position position of physical volume inside mother volume
+   *  @param Rotation  rotation of physical volume with respect to mother
    */
-  PVolume 
+  PVolume
   ( const std::string& PhysVol_name                  ,
     const std::string& LogVol_name                   ,
     //    const size_t       copynumber                    ,
     const Gaudi::XYZPoint&   Position     = Gaudi::XYZPoint  () ,
     const Gaudi::Rotation3D& Rotation     = Gaudi::Rotation3D () );
-  
-  /** constructor    
-   *  @param PhysVol_name name of phys volume 
-   *  @param LogVol_name name of log volume 
-   *  @param Transform transformation matrix 
+
+  /** constructor
+   *  @param PhysVol_name name of phys volume
+   *  @param LogVol_name name of log volume
+   *  @param Transform transformation matrix
    */
-  PVolume 
+  PVolume
   ( const std::string&     PhysVol_name ,
     const std::string&     LogVol_name  ,
     //    const size_t           copynumber   ,
     const Gaudi::Transform3D&  Transform    );
-  
-  /// destructor 
-  virtual ~PVolume();
+
+  /// destructor
+  ~PVolume() override;
 
 public:
 
 
   /** retrieve name of the physical volume
    *  (unique within mother logical volume)
-   *  @return name of physical volume 
-   */ 
-  virtual const std::string& name       () const { return m_name ; };
-  
-  /**  retrieve the name of associated Logical Volume 
-   *  @return name of associated Logical Volume 
+   *  @return name of physical volume
    */
-  virtual const std::string& lvolumeName() const { return m_lvname ; };
-  
-  /**  retrieve  the C++ pointer to Logical Volume 
-   *  @return pointer to Logical Volume 
+  const std::string& name       () const override { return m_name ; }
+
+  /**  retrieve the name of associated Logical Volume
+   *  @return name of associated Logical Volume
    */
-  virtual const ILVolume* lvolume () const ;
-  
-  /** get the tranformation matrix   
-   *  @return reference to transformation matrix 
-   */ 
-  virtual const Gaudi::Transform3D&  matrix      () const { return m_matrix ; }
-  
+  const std::string& lvolumeName() const override { return m_lvname ; }
+
+  /**  retrieve  the C++ pointer to Logical Volume
+   *  @return pointer to Logical Volume
+   */
+  const ILVolume* lvolume () const override;
+
+  /** get the tranformation matrix
+   *  @return reference to transformation matrix
+   */
+  const Gaudi::Transform3D&  matrix      () const override { return m_matrix ; }
+
   /** get the inverse transformation matrix
-   *  @return reference to inverse transformationmatrix 
+   *  @return reference to inverse transformationmatrix
    */
-  virtual const Gaudi::Transform3D&  matrixInv  () const ;
-  
+  const Gaudi::Transform3D&  matrixInv  () const override;
+
   /** transform point from  Mother Reference System  to the Local one
-   *  @param PointInMother point in Mother Reference System 
-   *  @return point in local reference system 
-   */ 
-  virtual Gaudi::XYZPoint toLocal  ( const Gaudi::XYZPoint& PointInMother ) const ;
-  
+   *  @param PointInMother point in Mother Reference System
+   *  @return point in local reference system
+   */
+  Gaudi::XYZPoint toLocal  ( const Gaudi::XYZPoint& PointInMother ) const override;
+
   /** transform point in Local Reference System to the Mother Reference System
    *  @param PointInLocal point in Local Referency System
-   *  @return point in mother reference system 
+   *  @return point in mother reference system
    */
-  virtual Gaudi::XYZPoint toMother ( const Gaudi::XYZPoint& PointInLocal  ) const ;
-  
+  Gaudi::XYZPoint toMother ( const Gaudi::XYZPoint& PointInLocal  ) const  override;
+
   /** check for 3D-point
-   *  @param PointInMother pointin Mother Referency System 
-   *  @return true if point is inside physical volume 
+   *  @param PointInMother pointin Mother Referency System
+   *  @return true if point is inside physical volume
    */
-  virtual bool isInside       ( const Gaudi::XYZPoint& PointInMother ) const ;
-  
-  /** printout to STD/STL stream 
-   *  @param os reference to STD/STL stream 
-   *  @return reference to STD/STL stream 
+  bool isInside       ( const Gaudi::XYZPoint& PointInMother ) const  override;
+
+  /** printout to STD/STL stream
+   *  @param os reference to STD/STL stream
+   *  @return reference to STD/STL stream
    */
-  virtual std::ostream& printOut
-  ( std::ostream& os = std::cout ) const;
-  
-  /** printout to Gaudi stream 
-   *  @param os reference to Gaudi stream 
-   *  @return reference to Gaudi stream 
+  std::ostream& printOut
+  ( std::ostream& os = std::cout ) const override;
+
+  /** printout to Gaudi stream
+   *  @param os reference to Gaudi stream
+   *  @return reference to Gaudi stream
    */
-  virtual MsgStream&    printOut
-  ( MsgStream&    os             ) const;
-  
-  /** reset to the initial state 
+  MsgStream&    printOut
+  ( MsgStream&    os             ) const override;
+
+  /** reset to the initial state
    *  @return self-reference
    */
-  virtual IPVolume* reset () ;
-  
+  IPVolume* reset ()  override;
+
   /** Intersection of the physical volume with with line.
    *  The line is parametrized in the local reference system of the mother
-   *  logical volume ("Mother Reference System")  
-   *  with initial Point and direction Vector: 
-   *   - @f$ \vec{x}(t) = \vec{p} + t \times \vec{v} @f$ @n 
-   *  
-   * Method returns the number of intersection points("ticks") and 
-   * the container of pairs - ticks and pointer to the corresponding 
-   * material. @n 
-   * The simplification is determined by value of threshold
-   * (in units of radiation length) 
-   *  
-   *  @see ILVolume
-   *  @see ISolid 
+   *  logical volume ("Mother Reference System")
+   *  with initial Point and direction Vector:
+   *   - @f$ \vec{x}(t) = \vec{p} + t \times \vec{v} @f$ @n
    *
-   *  @exception PVolumeException wrong environment 
+   * Method returns the number of intersection points("ticks") and
+   * the container of pairs - ticks and pointer to the corresponding
+   * material. @n
+   * The simplification is determined by value of threshold
+   * (in units of radiation length)
+   *
+   *  @see ILVolume
+   *  @see ISolid
+   *
+   *  @exception PVolumeException wrong environment
    *  @param Point initial point at the line
    *  @param Vector direction vector of the line
-   *  @param intersections output container 
-   *  @param threshold threshold value 
+   *  @param intersections output container
+   *  @param threshold threshold value
    */
-  virtual unsigned int intersectLine
+  unsigned int intersectLine
   ( const Gaudi::XYZPoint        & Point         ,
-    const Gaudi::XYZVector       & Vector        , 
+    const Gaudi::XYZVector       & Vector        ,
     ILVolume::Intersections & intersections ,
-    const double              threshold     ) const ;
-  
+    const double              threshold     ) const override;
+
   /** Intersection of the physical volume with with line.
    *  The line is parametrized in the local reference system of the mother
-   *  logical volume ("Mother Reference System")  
-   *  with initial Point and direction Vector: 
-   *   - @f$ \vec{x}(t) = \vec{p} + t \times \vec{v} @f$ @n 
-   *  
-   * Method returns the number of intersection points("ticks") and 
-   * the container of pairs - ticks and pointer to the corresponding 
-   * material. @n 
-   * The simplification is determined by value of threshold
-   * (in units of radiation length) 
-   *  
-   *  @see ILVolume
-   *  @see ISolid 
+   *  logical volume ("Mother Reference System")
+   *  with initial Point and direction Vector:
+   *   - @f$ \vec{x}(t) = \vec{p} + t \times \vec{v} @f$ @n
    *
-   *  @exception PVolumeException wrong environment 
+   * Method returns the number of intersection points("ticks") and
+   * the container of pairs - ticks and pointer to the corresponding
+   * material. @n
+   * The simplification is determined by value of threshold
+   * (in units of radiation length)
+   *
+   *  @see ILVolume
+   *  @see ISolid
+   *
+   *  @exception PVolumeException wrong environment
    *  @param Point initial point at the line
    *  @param Vector direction vector of the line
-   *  @param intersections output container 
+   *  @param intersections output container
    *  @param tickMin minimum value of possible Tick
    *  @param tickMax maximum value of possible Tick
-   *  @param threshold threshold value 
+   *  @param threshold threshold value
    */
-  virtual unsigned int intersectLine
+  unsigned int intersectLine
   ( const Gaudi::XYZPoint        & Point ,
-    const Gaudi::XYZVector       & Vector        ,       
-    ILVolume::Intersections & intersections ,      
+    const Gaudi::XYZVector       & Vector        ,
+    ILVolume::Intersections & intersections ,
     const ISolid::Tick        tickMin       ,
     const ISolid::Tick        tickMax       ,
-    const double              threshold     ) const ;
-  
-  /** Copy number
-   *  for "Regular" case it is an ordering number 
-   *  of physical volume withoin logical volume, 
-   *  but it can be redefined for certain purposes, e.g. for Rich HPDs
-   *  @return copy number 
-   */
-  //  virtual size_t    copy  () const { return m_copy ; }
-  
-  /** apply the  misalignemnt to the transformation matrix 
+    const double              threshold     ) const override;
+
+
+  /** apply the  misalignemnt to the transformation matrix
    *  @param ma misalignment matrix (assumed to be small!!!)
    *  @return the resulting transformation matrix
    */
-  virtual const Gaudi::Transform3D& 
-  applyMisAlignment ( const Gaudi::Transform3D& ma ) ;
-  
-  /** reset the  misalignemnt 
+  const Gaudi::Transform3D&
+  applyMisAlignment ( const Gaudi::Transform3D& ma ) override;
+
+  /** reset the  misalignemnt
    *  @return the "nominal" transformation matrix
    */
-  virtual const Gaudi::Transform3D& 
-  resetMisAlignment (                          ) ;
-  
+  const Gaudi::Transform3D&
+  resetMisAlignment (                          ) override;
+
   /** query the interface
-   *  @param ID unique interface identifier 
+   *  @param ID unique interface identifier
    *  @param ppI placeholder for returned interface
-   *  @return status code 
+   *  @return status code
    */
-  virtual StatusCode 
-  queryInterface( const InterfaceID& ID , void** ppI ) ;
+  StatusCode
+  queryInterface( const InterfaceID& ID , void** ppI ) override;
 
   /** add the reference
-   *  @return reference counter 
+   *  @return reference counter
    */
-  virtual unsigned long addRef  ();
-  
-  /** release the interface 
-   *  @return reference counter 
+  unsigned long addRef  () override;
+
+  /** release the interface
+   *  @return reference counter
    */
-  virtual unsigned long release ();
+  unsigned long release () override;
 
 protected:
-  
-  /** find logical volume by name 
-   *  @return pointet to logical volume 
+
+  /** find logical volume by name
+   *  @return pointet to logical volume
    */
-  ILVolume*       findLogical () const ; 
-  
-  /** Assertion 
-   *  @exception PVolumeException for wrong condition 
-   *  @param assertion condition 
+  ILVolume*       findLogical () const ;
+
+  /** Assertion
+   *  @exception PVolumeException for wrong condition
+   *  @param assertion condition
    *  @param name      exception message
    */
   void Assert
-  ( bool               assertion , 
+  ( bool               assertion ,
     const std::string& name      ) const;
-  
-  
-  /** Assertion 
-   *  @exception PVolumeException for wrong condition 
-   *  @param assertion condition 
+
+
+  /** Assertion
+   *  @exception PVolumeException for wrong condition
+   *  @param assertion condition
    *  @param name       exception message
-   *  @param Exception  previous exception 
-   */  
+   *  @param Exception  previous exception
+   */
   void Assert
-  ( bool                  assertion , 
+  ( bool                  assertion ,
     const std::string&    name      ,
     const GaudiException& Exception ) const;
-  
+
 protected:
-  
-  /** 
+
+  /**
    * accessor to the data service
-   * @return pointer to data service 
+   * @return pointer to data service
    */
   IDataProviderSvc* dataSvc() const;
-  
+
 private:
-  
-  /// no default constructor 
+
+  /// no default constructor
   PVolume()                           ;
-  /// no public copy constructor 
+  /// no public copy constructor
   PVolume           ( const PVolume& );
   /// no public assignment
   PVolume& operator=( const PVolume& );
-  
+
 private:
-  
-  // copy number 
-  //  size_t                  m_copy          ;
-  // name of physical volume 
+
+  // name of physical volume
   std::string             m_name          ;
-  // name of logical volume 
+  // name of logical volume
   std::string             m_lvname        ;
-  // nominal transformationmatrix 
+  // nominal transformationmatrix
   Gaudi::Transform3D          m_nominal       ;
-  // transformation matrix 
+  // transformation matrix
   Gaudi::Transform3D          m_matrix        ;
-  // pointer to inverse transformation matrix 
+  // pointer to inverse transformation matrix
   mutable boost::optional<Gaudi::Transform3D> m_imatrix       ;
-  // pointer to logical volume 
-  mutable ILVolume*       m_lvolume       ;
-  // reference/object counter 
+  // pointer to logical volume
+  mutable ILVolume*       m_lvolume = nullptr      ;
+  // reference/object counter
   static unsigned long    s_volumeCounter ;
   // reference to dataSvc
-  DetDesc::Services*      m_services      ;
+  DetDesc::ServicesPtr    m_services;
 };
 
 /// ===========================================================================

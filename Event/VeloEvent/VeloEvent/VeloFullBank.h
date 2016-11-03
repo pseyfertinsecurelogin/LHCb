@@ -1,5 +1,4 @@
-// $Id: VeloFullBank.h,v 1.5 2008-12-09 16:26:25 cattanem Exp $
-#ifndef VELOFULLBANK_H 
+#ifndef VELOFULLBANK_H
 #define VELOFULLBANK_H 1
 
 // Include files
@@ -12,7 +11,7 @@
 #include "Tell1Kernel/VeloDecodeCore.h"
 
 /** @class VeloFullBank VeloFullBank.h
- *  
+ *
  *
  *  @author Tomasz Szumlak
  *  @date   2006-04-06
@@ -25,7 +24,7 @@ namespace VeloFullBankLocation {
 
 class VeloFullBank: public KeyedObject<int>{
 
-public: 
+public:
   /// Standard constructor
   typedef std::vector<unsigned int> section;
   //
@@ -37,12 +36,11 @@ public:
       writeSections();
       writeEventInfos(type);
     }
-  virtual ~VeloFullBank( ) { }; ///< Destructor
   VeloTELL1::dataVec& getSection(int blockNnb, int secNbn);
   VeloTELL1::allEvt& getEvtInfo();
   //
 
-protected:  
+protected:
 
   void initialize(const int type);
   void writeSections();
@@ -61,7 +59,7 @@ private:
   int m_NumberOfWordsInBlock;
   int m_NumberOfWordsInSection;
   VeloTELL1::allEvt m_infos;
-  
+
 };
 //=============================================================================
 /*inline const CLID& VeloFullBank::clID() const
@@ -79,11 +77,11 @@ inline void VeloFullBank::initialize(const int type)
 {
   if(type==VeloTELL1::VeloFull){
     m_NumberOfWordsInBlock=(VeloTELL1::PPFPGADataBlock);
-    m_NumberOfWordsInSection=(VeloTELL1::PPFPGADataSection); 
+    m_NumberOfWordsInSection=(VeloTELL1::PPFPGADataSection);
   }
   else if(type==VeloTELL1::VeloPedestal){
     m_NumberOfWordsInBlock=VeloTELL1::PPFPGAPedBlock;
-    m_NumberOfWordsInSection=VeloTELL1::PPFPGAPedBlock; 
+    m_NumberOfWordsInSection=VeloTELL1::PPFPGAPedBlock;
   }else{
     std::cout<< " Wrong initialization! " <<std::endl;
   }
@@ -95,7 +93,7 @@ inline void VeloFullBank::writeSections()
   const int wordsInBlock=NumberOfWordsInBlock();
   // skip the last eight words which contain event info
   const int dataWords=NumberOfWordsInSection();
-  //                                                
+  //
   for(int i=0; i<VeloTELL1::NumberOfPPFPGA; i++){
     // we can divide data stream form the bank on four logical
     // units each from which corrsponds to data that will be sent
@@ -104,19 +102,19 @@ inline void VeloFullBank::writeSections()
     // set the pointer at the beginning of the PPFPGA block
     unsigned int* dataPtr=m_bank+i*wordsInBlock;
     for(int k=0; k<VeloTELL1::SectionsPerBlock; k++){
-      // create section object, there are three sections 
+      // create section object, there are three sections
       // per one data block
       section sec;
       unsigned int* secPtr=dataPtr+k;
       int ii=0;
       while(ii<dataWords){
         sec.push_back((*(secPtr+ii)));
-        ii+=3; 
+        ii+=3;
       }
-      aBlock.sections.push_back(sec); 
+      aBlock.sections.push_back(sec);
     }
-    m_PPFPGABlocks.push_back(aBlock); 
-  } 
+    m_PPFPGABlocks.push_back(aBlock);
+  }
 }
 //============================================================================
 inline void VeloFullBank::writeEventInfos(const int type)
@@ -139,12 +137,12 @@ inline void VeloFullBank::writeEventInfos(const int type)
 //=============================================================================
 inline int VeloFullBank::NumberOfWordsInBlock() const
 {
-  return ( m_NumberOfWordsInBlock ); 
+  return ( m_NumberOfWordsInBlock );
 }
 //=============================================================================
 inline int VeloFullBank::NumberOfWordsInSection() const
 {
-  return ( m_NumberOfWordsInSection ); 
+  return ( m_NumberOfWordsInSection );
 }
 //=============================================================================
 inline VeloTELL1::allEvt& VeloFullBank::getEvtInfo()

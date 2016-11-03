@@ -1,7 +1,4 @@
-// $Id: State.cpp,v 1.32 2008-04-17 11:27:11 wouter Exp $
-
-#include <math.h>
-#include <gsl/gsl_math.h>
+#include <cmath>
 
 // from GaudiKernel
 #include "GaudiKernel/GenericMatrixTypes.h"
@@ -68,7 +65,7 @@ SymMatrix6x6 State::posMomCovariance() const
 
   const double tY = ty();
   const double tY2 = tY*tY;
-  
+
   const double invNorm = 1. / sqrt( 1. + tX2 + tY2 );
   const double mom = p();
   const double invNorm3 = invNorm * invNorm * invNorm;
@@ -83,7 +80,7 @@ SymMatrix6x6 State::posMomCovariance() const
   jmat(5,2) = -mom * tX * invNorm3;
   jmat(5,3) = -mom * tY * invNorm3;
   jmat(5,4) = -q * invNorm * mom * mom; // -q == -1/q
-  
+
   return ROOT::Math::Similarity( jmat, covariance() );
 }
 
@@ -144,7 +141,7 @@ Gaudi::SymMatrix3x3 State::errSlopes() const
 double State::errP2() const
 {
   return ( fabs(m_stateVector[4]) > TrackParameters::lowTolerance ?
-           errQOverP2() * gsl_pow_4( p() ): 0. );
+           errQOverP2() * std::pow(std::pow(p(),2),2): 0. );
 }
 
 //=============================================================================
@@ -170,7 +167,7 @@ double State::errQOverPperp2() const
   const double QOverPperpError = ( (norm/transSlope) * m_covariance(4,4) )
 
     + ( qOverP2 * tx2 * ty2*ty2 * m_covariance(2,2)/
-        (gsl_pow_3(transSlope)*norm))
+        (transSlope*transSlope*transSlope*norm))
 
     + ( qOverP2 * ty2 * m_covariance(3,3) / (norm*transSlope) )
 
@@ -225,7 +222,7 @@ void State::linearTransportTo( double z )
 //=============================================================================
 // fillstream
 //=============================================================================
-std::ostream& LHCb::State::fillStream(std::ostream& os) const 
+std::ostream& LHCb::State::fillStream(std::ostream& os) const
 {
   os << "*** State ***" << std::endl
      << " z        : " << z() << std::endl

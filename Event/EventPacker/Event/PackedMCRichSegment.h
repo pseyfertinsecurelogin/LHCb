@@ -1,4 +1,3 @@
-
 #ifndef EVENT_PackedMCRichSegment_H
 #define EVENT_PackedMCRichSegment_H 1
 
@@ -65,7 +64,7 @@ namespace LHCb
     typedef std::vector<LHCb::PackedMCRichSegment> Vector;
 
   public:
-    
+
     /// Default Packing Version
     static char defaultPackingVersion() { return 1; }
 
@@ -75,7 +74,7 @@ namespace LHCb
     static const CLID& classID() { return CLID_PackedMCRichSegments; }
 
     /// Class ID
-    virtual const CLID& clID() const { return classID(); }
+    const CLID& clID() const override { return classID(); }
 
   public:
 
@@ -97,7 +96,7 @@ namespace LHCb
     char   m_packingVersion{ defaultPackingVersion() };
 
     /// The packed data objects
-    Vector m_vect; 
+    Vector m_vect;
 
   };
 

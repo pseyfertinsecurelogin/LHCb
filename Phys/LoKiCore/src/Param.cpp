@@ -1,4 +1,3 @@
-// $Id$ 
 // ============================================================================
 // Include files 
 // ============================================================================
@@ -37,13 +36,6 @@
  *  contributions and advices from G.Raven, J.van Tilburg,
  *  A.Golutvin, P.Koppenburg have been used in the design.
  *
- * By usage of this code one clearly states the disagreement 
- * with the smear campaign of Dr.O.Callot et al.: 
- * ``No Vanya's lines are allowed in LHCb/Gaudi software''
- *
- *                    $Revision$
- *  Last modification $Date$
- *                 by $Author$
  */
 // ============================================================================
 namespace 
@@ -87,17 +79,10 @@ namespace
 // Constructor
 // ============================================================================
 LoKi::Param::Param ( const std::string& property ) 
-  : m_property  () 
-  , m_key       () 
-  , m_algorithm () 
 {
   LoKi::Assert ( ::parse ( property , m_property , m_key , m_algorithm ) ,
                  "Invalid pattern for parameter name '" + property + "'" ) ; 
 }
-// ============================================================================
-// destructor 
-// ============================================================================
-LoKi::Param::~Param () {} 
 // ============================================================================
 // printout 
 // ============================================================================

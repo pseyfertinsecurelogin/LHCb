@@ -3,6 +3,7 @@
 #include "DetDesc/MaterialException.h"
 #include "DetDesc/Mixture.h"
 #include <cmath>
+#include <numeric>
 // Gaudi Math (for floating point comparison)
 #include "GaudiKernel/Lomont.h"
 //
@@ -27,8 +28,6 @@ Mixture::Mixture( const std::string&  name    ,
   , m_X1      ( 0.)
 { }
 
-
-Mixture::~Mixture() = default;
 
 void Mixture::reset()
 {
@@ -71,8 +70,6 @@ void Mixture::addElement( const SmartRef<Element>& e,
                           const int nOfAtoms ,
                           const bool comp )
 {
-  //std::cout << name() << ":: Called addElement(nOfAtoms)" << std::endl;
-  //
   if( m_own )
   { throw MaterialException( "Mixture::could not add element!",this);}
   if( !e    )
@@ -91,7 +88,6 @@ void Mixture::addElement( const SmartRef<Element>& e,
                           const double fraction     ,
                           const bool comp )
 {
-  //std::cout << name() << ":: Called addElement(fraction)" << std::endl;
   if( m_own            )
   { throw MaterialException("Mixture::could not add element!",this);}
   if( !e               )
@@ -116,7 +112,6 @@ void Mixture::addMixture( const SmartRef<Mixture>& mx,
                           const double fraction,
                           const bool comp )
 {
-  //std::cout << name() << ":: Called addMixture()" << std::endl;
   if( !mx ) { throw MaterialException("Mixture::non valid pointer!");}
   //
   for( const auto& e : mx->elements() )
@@ -129,7 +124,6 @@ void Mixture::addMixture( const SmartRef<Mixture>& mx,
 //
 StatusCode Mixture::compute()
 {
-  //std::cout << name() << ":: Called compute()" << std::endl;
   if      ( m_atoms.empty()                      )
   {
     return computeByFraction() ;
@@ -146,7 +140,6 @@ StatusCode Mixture::compute()
 //
 StatusCode Mixture::computeByAtoms()
 {
-  //std::cout << name() << ":: Called computeByAtoms()" << std::endl;
   //
   if( m_elements.empty() ) { addMyself() ;}
   //
@@ -178,7 +171,6 @@ StatusCode Mixture::computeByAtoms()
 //
 StatusCode Mixture::computeByFraction()
 {
-  //std::cout << name() << ":: Called computeByFraction()" << std::endl;
   //
   if( !m_atoms.empty() )
   { throw MaterialException(std::string("Mixture::computeByFraciton!")
@@ -295,7 +287,6 @@ StatusCode Mixture::computeByFraction()
 //
 StatusCode Mixture::addMyself()
 {
-  //std::cout << name() << ":: Called addMyself()" << std::endl;
   if( m_own         )
   { throw MaterialException(std::string("Mixture::addMyself: ")
                             + "could not add myself twice! ",this); }
@@ -366,27 +357,24 @@ std::ostream&     Mixture::fillStream ( std::ostream& s ) const
   if( !m_elements.empty() )
   {
     s << "\t #MassComponents=" << std::setw(2)  << m_elements.size()
-      << std::endl ;
-    for( Elements::const_iterator it  = m_elements.begin() ;
-         m_elements.end() != it ; ++it )
+      << '\n' ;
+    for( auto it  = m_elements.begin() ; m_elements.end() != it ; ++it )
     {
       s << " \t\tcomponent#"    << std::setw(2) << it - m_elements.begin()
         << " massfraction="     << std::setw(9) << it->first
-        << std::endl
-        << "\t"                 << it->second;
+        << "\n\t"                 << it->second;
     }
   }
   //
   if( !m_atoms.empty() )
   {
     s << "\t #AtomComponents=" << std::setw(2)  << m_atoms.size()
-      << std::endl;
-    for( Atoms::const_iterator it  = m_atoms.begin() ;
-         m_atoms.end() != it ; ++it )
+      << '\n';
+    for( auto it  = m_atoms.begin() ; m_atoms.end() != it ; ++it )
     {
       s << " \t\tcomponent#"    << std::setw(2) << it - m_atoms.begin()
         << " atom="             << std::setw(2) << *it
-        << std::endl ;
+        << '\n';
     }
   }
   return s;

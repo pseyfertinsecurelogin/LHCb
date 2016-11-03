@@ -150,13 +150,6 @@ PropertyConfigSvc::PropertyConfigSvc( const string& name, ISvcLocator* pSvcLocat
   declareProperty("ApplyTransformation",m_transform);
 }
 
-
-MsgStream& PropertyConfigSvc::msg(MSG::Level level) const {
-     if (!m_msg) m_msg.reset( new MsgStream( msgSvc(), name() ));
-     *m_msg << level;
-     return *m_msg;
-}
-
 //=============================================================================
 // Initialization
 //=============================================================================

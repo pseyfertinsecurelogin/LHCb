@@ -1,4 +1,3 @@
-// $Id: ICaloCorrection.h,v 1.8 2007-03-29 16:55:34 odescham Exp $
 // ============================================================================
 #ifndef CALOINTERFACES_ICALOCORRECTION_H 
 #define CALOINTERFACES_ICALOCORRECTION_H 1
@@ -18,19 +17,12 @@
  *  @date   22/03/2002
  */
 
-static const InterfaceID IID_ICaloCorrection( "ICaloCorrection" , 1 , 0 );
 
 
-class ICaloCorrection :
-  public virtual IAlgTool , 
-  public std::binary_function<const LHCb::CaloPosition, const  LHCb::CaloPosition::Center , LHCb::CaloPosition*>
+struct ICaloCorrection : extend_interfaces<IAlgTool>
 {
-public:
   
-  /** static interface identification
-   *  @return unique interface identifier
-   */
-  static const InterfaceID& interfaceID() { return IID_ICaloCorrection; };
+  DeclareInterfaceID( ICaloCorrection , 2 , 0 );
   
   /** The main processing method 
    *  @param  position  uncorrected position
@@ -61,9 +53,6 @@ public:
     ( const LHCb::CaloPosition & position , 
       const LHCb::CaloPosition::Center & seed     ) const = 0 ;
 
-protected:
-  
-  
 };
 
 // ============================================================================

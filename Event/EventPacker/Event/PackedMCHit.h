@@ -75,7 +75,7 @@ namespace LHCb
     typedef std::vector<LHCb::PackedMCHit> Vector;
 
   public:
-    
+
     /// Default Packing Version
     static char defaultPackingVersion() { return 1; }
 
@@ -85,7 +85,7 @@ namespace LHCb
     static const CLID& classID() { return CLID_PackedMCHits; }
 
     /// Class ID
-    virtual const CLID& clID() const { return PackedMCHits::classID(); }
+    const CLID& clID() const  override { return PackedMCHits::classID(); }
 
   public:
 
@@ -107,7 +107,7 @@ namespace LHCb
     char   m_packingVersion{ defaultPackingVersion() };
 
     /// The packed data objects
-    Vector m_vect; 
+    Vector m_vect;
 
   };
 
@@ -130,17 +130,9 @@ namespace LHCb
     typedef LHCb::MCHits             DataVector;
     typedef LHCb::PackedMCHits PackedDataVector;
 
-  private:
 
-    /// Default Constructor hidden
-    MCHitPacker( ) {}
-    
-  public:
-    
     /// Constructor
     MCHitPacker( const GaudiAlgorithm * p ) : m_pack(p) {}
-    
-  public:
 
     /// Pack MCHits
     void pack( const DataVector & hits,
@@ -238,7 +230,7 @@ namespace LHCb
   {
   public:
     MCVPHitPacker( const GaudiAlgorithm * parent ) : MCHitPacker(parent)
-    { 
+    {
       m_dispScale = 1.0e2;
       m_enScale   = 5.0e3;
     }
@@ -298,7 +290,7 @@ namespace LHCb
     {
       m_dispScale = 1.0e2;
       m_enScale   = 5.0e3;
-    }    
+    }
     static const std::string packedLocation()   { return LHCb::PackedMCHitLocation::IT; }
     static const std::string unpackedLocation() { return LHCb::MCHitLocation::IT;       }
   };
@@ -317,7 +309,7 @@ namespace LHCb
     {
       m_dispScale = 1.0e2;
       m_enScale   = 5.0e3;
-    }    
+    }
     static const std::string packedLocation()   { return LHCb::PackedMCHitLocation::SL; }
     static const std::string unpackedLocation() { return LHCb::MCHitLocation::SL;       }
   };

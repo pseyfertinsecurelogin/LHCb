@@ -1,4 +1,4 @@
-#ifndef REPORTCONVERTTOOL_H 
+#ifndef REPORTCONVERTTOOL_H
 #define REPORTCONVERTTOOL_H 1
 
 // Include files
@@ -37,8 +37,8 @@ using LHCb::HltObjectSummary;
 using LHCb::HltSelRepRBStdInfo;
 
 /** @class ReportConvertTool ReportConvertTool.h
- *  
- *  Tool to check if version number of the HltSelReports 
+ *
+ *  Tool to check if version number of the HltSelReports
  *
  *  @author Sean Benson
  *  @date   02/10/2014
@@ -48,54 +48,54 @@ class ReportConvertTool : public GaudiTool, virtual public IReportConvert
   public:
     typedef unordered_map<string,pair<int,int> >::const_iterator it_unordered_map;
     typedef unordered_map<int, unordered_map<string,pair<int,int> > >::const_iterator it_unordered_map2;
-    
+
     /// Standard constructor
-    ReportConvertTool( const std::string& type, 
+    ReportConvertTool( const std::string& type,
                 const std::string& name,
                 const IInterface* parent);
     ///  Destructor
-    virtual ~ReportConvertTool( ) { };
- 
-    void setReportVersion(int);
-    void setReportVersionLatest();
-    int getReportVersion();
-    int getLatestVersion();
-    int getSizeSelRepParticleLatest();
+    virtual ~ReportConvertTool( ) { }
+
+    void setReportVersion(int) override;
+    void setReportVersionLatest() override;
+    int getReportVersion() override;
+    int getLatestVersion() override;
+    int getSizeSelRepParticleLatest() override;
 
     float floatFromInt(unsigned int);
 
     //===========================================================================
     /// Convert the sub bank to a HltObjectSummary.
-    void SummaryFromRaw( HltObjectSummary::Info*, HltSelRepRBStdInfo::StdInfo*, int );
+    void SummaryFromRaw( HltObjectSummary::Info*, HltSelRepRBStdInfo::StdInfo*, int ) override;
 
     /// Put the information in to the HltObjectSummary
-    void ParticleObject2Summary( HltObjectSummary::Info*, const LHCb::Particle* , bool) ;
-    void ProtoParticleObject2Summary( HltObjectSummary::Info*, const LHCb::ProtoParticle*, bool) ;
-    void TrackObject2Summary( HltObjectSummary::Info*, const LHCb::Track*, bool) ;
-    void RichPIDObject2Summary( HltObjectSummary::Info*, const LHCb::RichPID*, bool) ;
-    void MuonPIDObject2Summary( HltObjectSummary::Info*, const LHCb::MuonPID*, bool) ;
-    void CaloClusterObject2Summary( HltObjectSummary::Info*, const LHCb::CaloCluster*, bool) ;
-    void CaloHypoObject2Summary( HltObjectSummary::Info*, const LHCb::CaloHypo*, bool) ;
-    void RecVertexObject2Summary( HltObjectSummary::Info*, const LHCb::RecVertex*, bool) ;
-    void VertexObject2Summary( HltObjectSummary::Info*, const LHCb::Vertex*, bool) ;
-    void RecSummaryObject2Summary( HltObjectSummary::Info*, const LHCb::RecSummary*) ;
-    void GenericMapObject2Summary( HltObjectSummary::Info*, const GaudiUtils::VectorMap<short,float>*) ;
+    void ParticleObject2Summary( HltObjectSummary::Info*, const LHCb::Particle* , bool)  override;
+    void ProtoParticleObject2Summary( HltObjectSummary::Info*, const LHCb::ProtoParticle*, bool)  override;
+    void TrackObject2Summary( HltObjectSummary::Info*, const LHCb::Track*, bool)  override;
+    void RichPIDObject2Summary( HltObjectSummary::Info*, const LHCb::RichPID*, bool)  override;
+    void MuonPIDObject2Summary( HltObjectSummary::Info*, const LHCb::MuonPID*, bool)  override;
+    void CaloClusterObject2Summary( HltObjectSummary::Info*, const LHCb::CaloCluster*, bool)  override;
+    void CaloHypoObject2Summary( HltObjectSummary::Info*, const LHCb::CaloHypo*, bool)  override;
+    void RecVertexObject2Summary( HltObjectSummary::Info*, const LHCb::RecVertex*, bool)  override;
+    void VertexObject2Summary( HltObjectSummary::Info*, const LHCb::Vertex*, bool)  override;
+    void RecSummaryObject2Summary( HltObjectSummary::Info*, const LHCb::RecSummary*)  override;
+    void GenericMapObject2Summary( HltObjectSummary::Info*, const GaudiUtils::VectorMap<short,float>*)  override;
     //
     /// Put the information in the summary back in the object
-    void ParticleObjectFromSummary( const HltObjectSummary::Info*, LHCb::Particle*,bool) ;
-    void ProtoParticleObjectFromSummary( const HltObjectSummary::Info*, LHCb::ProtoParticle*,bool) ;
-    void TrackObjectFromSummary( const HltObjectSummary::Info*, LHCb::Track*,bool) ;
-    void RichPIDObjectFromSummary( const HltObjectSummary::Info*, LHCb::RichPID*,bool) ;
-    void MuonPIDObjectFromSummary( const HltObjectSummary::Info*, LHCb::MuonPID*,bool) ;
-    void CaloClusterObjectFromSummary( const HltObjectSummary::Info*, LHCb::CaloCluster*,bool) ;
-    void CaloHypoObjectFromSummary( const HltObjectSummary::Info*, LHCb::CaloHypo*,bool) ;
-    void RecVertexObjectFromSummary( const HltObjectSummary::Info*, LHCb::RecVertex*,bool) ;
-    void VertexObjectFromSummary( const HltObjectSummary::Info*, LHCb::Vertex*,bool) ;
-    void RecSummaryObjectFromSummary( const HltObjectSummary::Info*, LHCb::RecSummary*) ;
-    void GenericMapObjectFromSummary( const HltObjectSummary::Info*, GaudiUtils::VectorMap<short,float>*) ;
+    void ParticleObjectFromSummary( const HltObjectSummary::Info*, LHCb::Particle*,bool)  override;
+    void ProtoParticleObjectFromSummary( const HltObjectSummary::Info*, LHCb::ProtoParticle*,bool)  override;
+    void TrackObjectFromSummary( const HltObjectSummary::Info*, LHCb::Track*,bool)  override;
+    void RichPIDObjectFromSummary( const HltObjectSummary::Info*, LHCb::RichPID*,bool)  override;
+    void MuonPIDObjectFromSummary( const HltObjectSummary::Info*, LHCb::MuonPID*,bool)  override;
+    void CaloClusterObjectFromSummary( const HltObjectSummary::Info*, LHCb::CaloCluster*,bool)  override;
+    void CaloHypoObjectFromSummary( const HltObjectSummary::Info*, LHCb::CaloHypo*,bool)  override;
+    void RecVertexObjectFromSummary( const HltObjectSummary::Info*, LHCb::RecVertex*,bool)  override;
+    void VertexObjectFromSummary( const HltObjectSummary::Info*, LHCb::Vertex*,bool)  override;
+    void RecSummaryObjectFromSummary( const HltObjectSummary::Info*, LHCb::RecSummary*)  override;
+    void GenericMapObjectFromSummary( const HltObjectSummary::Info*, GaudiUtils::VectorMap<short,float>*)  override;
 
     int findBestPrevious(const unordered_map<int, unordered_map<string,pair<int,int> > >&,int) const;
-    
+
   private:
     int m_version = -999;
     int m_LatestVersion;
@@ -465,6 +465,74 @@ class ReportConvertTool : public GaudiTool, virtual public IReportConvert
         ,  {"64#Proto.extraInfo.ProbNNp",               {60,64}}
         ,  {"65#Proto.extraInfo.ProbNNghost",           {61,65}}}
       }
+      , { 10
+        , {{"0#Proto.extraInfo.IsPhoton",               {0,0}}
+        ,  {"1#Proto.extraInfo.IsNotE",                 {1,1}}
+        ,  {"2#Proto.extraInfo.IsNotH",                 {12,2}}
+        ,  {"3#Proto.extraInfo.EcalPIDe",               {23,3}}
+        ,  {"4#Proto.extraInfo.PrsPIDe",                {34,4}}
+        ,  {"5#Proto.extraInfo.BremPIDe",               {45,5}}
+        ,  {"6#Proto.extraInfo.HcalPIDe",               {55,6}}
+        ,  {"7#Proto.extraInfo.HcalPIDmu",              {63,7}}
+        ,  {"8#Proto.extraInfo.EcalPIDmu",              {64,8}}
+        ,  {"9#Proto.extraInfo.CaloTrMatch",            {65,9}}
+        ,  {"10#Proto.extraInfo.CaloElectronMatch",     {2,10}}
+        ,  {"11#Proto.extraInfo.CaloBremMatch",         {3,11}}
+        ,  {"12#Proto.extraInfo.CaloNeutralSpd",        {4,12}}
+        ,  {"13#Proto.extraInfo.CaloNeutralPrs",        {5,13}}
+        ,  {"14#Proto.extraInfo.CaloNeutralEcal",       {6,14}}
+        ,  {"15#Proto.extraInfo.CaloNeutralHcal2Ecal",  {7,15}}
+        ,  {"16#Proto.extraInfo.CaloNeutralE49",        {8,16}}
+        ,  {"17#Proto.extraInfo.CaloNeutralID",         {9,17}}
+        ,  {"18#Proto.extraInfo.CaloDepositID",         {10,18}}
+        ,  {"19#Proto.extraInfo.ShowerShape",           {11,19}}
+        ,  {"20#Proto.extraInfo.ClusterMass",           {13,20}}
+        ,  {"21#Proto.extraInfo.CaloSpdE",              {14,21}}
+        ,  {"22#Proto.extraInfo.CaloPrsE",              {15,22}}
+        ,  {"23#Proto.extraInfo.CaloEcalE",             {16,23}}
+        ,  {"24#Proto.extraInfo.CaloHcalE",             {17,24}}
+        ,  {"25#Proto.extraInfo.CaloEcalChi2",          {18,25}}
+        ,  {"26#Proto.extraInfo.CaloBremChi2",          {19,26}}
+        ,  {"27#Proto.extraInfo.CaloClusChi2",          {20,27}}
+        ,  {"28#Proto.extraInfo.CaloNeutralPrsM",       {21,28}}
+        ,  {"29#Proto.extraInfo.CaloShapeFr2r4",        {22,29}}
+        ,  {"30#Proto.extraInfo.CaloShapeKappa",        {24,30}}
+        ,  {"31#Proto.extraInfo.CaloShapeAsym",         {25,31}}
+        ,  {"32#Proto.extraInfo.CaloShapeE1",           {26,32}}
+        ,  {"33#Proto.extraInfo.CaloShapeE2",           {27,33}}
+        ,  {"34#Proto.extraInfo.CaloPrsShapeE2",        {28,34}}
+        ,  {"35#Proto.extraInfo.CaloPrsShapeEmax",      {29,35}}
+        ,  {"36#Proto.extraInfo.CaloPrsShapeFr2",       {30,36}}
+        ,  {"37#Proto.extraInfo.CaloPrsShapeAsym",      {31,37}}
+        ,  {"38#Proto.extraInfo.CaloPrsM",              {32,38}}
+        ,  {"39#Proto.extraInfo.CaloPrsM15",            {33,39}}
+        ,  {"40#Proto.extraInfo.CaloPrsM30",            {35,40}}
+        ,  {"41#Proto.extraInfo.CaloPrsM45",            {36,41}}
+        ,  {"42#Proto.extraInfo.CaloClusterCode",       {37,42}}
+        ,  {"43#Proto.extraInfo.CaloClusterFrac",       {38,43}}
+        ,  {"44#Proto.extraInfo.CombDLLe",              {39,44}}
+        ,  {"45#Proto.extraInfo.CombDLLmu",             {40,45}}
+        ,  {"46#Proto.extraInfo.CombDLLpi",             {41,46}}
+        ,  {"47#Proto.extraInfo.CombDLLk",              {42,47}}
+        ,  {"48#Proto.extraInfo.CombDLLp",              {43,48}}
+        ,  {"49#Proto.extraInfo.InAccBrem",             {44,49}}
+        ,  {"50#Proto.extraInfo.InAccSpd",              {46,50}}
+        ,  {"51#Proto.extraInfo.InAccPrs",              {47,51}}
+        ,  {"52#Proto.extraInfo.InAccEcal",             {48,52}}
+        ,  {"53#Proto.extraInfo.InAccHcal",             {49,53}}
+        ,  {"54#Proto.extraInfo.VeloCharge",            {50,54}}
+        ,  {"56#Proto.extraInfo.CaloChargedID",         {51,56}}
+        ,  {"57#Proto.extraInfo.CaloChargedEcal",       {52,57}}
+        ,  {"58#Proto.extraInfo.CaloChargedPrs",        {53,58}}
+        ,  {"59#Proto.extraInfo.CaloChargedSpd",        {54,59}}
+        ,  {"60#Proto.extraInfo.ProbNNe",               {56,60}}
+        ,  {"61#Proto.extraInfo.ProbNNmu",              {57,61}}
+        ,  {"62#Proto.extraInfo.ProbNNpi",              {58,62}}
+        ,  {"63#Proto.extraInfo.ProbNNk",               {59,63}}
+        ,  {"64#Proto.extraInfo.ProbNNp",               {60,64}}
+        ,  {"65#Proto.extraInfo.ProbNNghost",           {61,65}}
+        ,  {"66#Proto.extraInfo.CombDLLd",              {62,66}}}
+      }
     };
     //===========================================================================
     /// Version unordered_map for LHCb::ProtoParticle in the Full stream
@@ -632,6 +700,16 @@ class ReportConvertTool : public GaudiTool, virtual public IReportConvert
           , {"5#Rich.DLLp",                     {5,5}}
           , {"6#Rich.BelowThreshold",           {6,6}}}
       }
+      , { 10
+        , {{"0#Rich.pidResultCode",             {0,0}}
+          , {"1#Rich.DLLe",                     {1,1}}
+          , {"2#Rich.DLLmu",                    {2,2}}
+          , {"3#Rich.DLLpi",                    {3,3}}
+          , {"4#Rich.DLLK",                     {4,4}}
+          , {"5#Rich.DLLp",                     {5,5}}
+          , {"6#Rich.BelowThreshold",           {6,6}}
+          , {"7#Rich.DLLd",                     {7,7}}}
+      }
     };
     //===========================================================================
     /// Version unordered_map for LHCb::RichPID in the Full stream
@@ -712,7 +790,7 @@ class ReportConvertTool : public GaudiTool, virtual public IReportConvert
           , {"3#CaloCluster.position.z",              {3,3}}}
       }
     };
-    
+
     //===========================================================================
     /// Version unordered_map for LHCb::CaloHypo in the Turbo stream
     unordered_map<int, unordered_map<string,pair<int,int> > > const m_calohypo_unordered_map2_Turbo {
@@ -872,6 +950,6 @@ class ReportConvertTool : public GaudiTool, virtual public IReportConvert
           , {"22#RecSummary.nPVs",                     {15,22}}}
       }
     };
-}; // End of class header. 
+}; // End of class header.
 
 #endif // REPORTCONVERTTOOL_H

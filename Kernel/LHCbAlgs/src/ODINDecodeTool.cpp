@@ -12,22 +12,26 @@
  *  @author Marco Clemencic
  *  @date   2009-02-02
  */
-class ODINDecodeTool : public ODINCodecBaseTool {
-public:
+class ODINDecodeTool final : public ODINCodecBaseTool
+{
+
+ public:
+
   /// Standard constructor
   ODINDecodeTool(const std::string& type,
                  const std::string& name,
                  const IInterface* parent);
 
-  virtual ~ODINDecodeTool(); ///< Destructor
+  virtual ~ODINDecodeTool() = default; ///< Destructor
 
   /// Initialize the tool
-  virtual inline StatusCode initialize();
+  inline StatusCode initialize() override;
 
   /// Do the conversion
-  virtual void execute();
+  void execute() override;
 
-private:
+ private:
+
   /// Location in the transient store of the ODIN object.
   std::string m_odinLocation;
 
@@ -49,22 +53,17 @@ DECLARE_TOOL_FACTORY( ODINDecodeTool )
 //=============================================================================
 // Standard constructor, initializes variables
 //=============================================================================
-  ODINDecodeTool::ODINDecodeTool( const std::string& type,
-                                  const std::string& name,
-                                  const IInterface* parent )
-    : ODINCodecBaseTool(type, name, parent) {
-    declareProperty("ODINLocation", 
-                    m_odinLocation = LHCb::ODINLocation::Default,
-                    "Location of the ODIN object in the transient store. By "
-                    "default is the content of LHCb::ODINLocation::Default.");
+ODINDecodeTool::ODINDecodeTool( const std::string& type,
+                                const std::string& name,
+                                const IInterface* parent )
+: ODINCodecBaseTool(type, name, parent) {
+  declareProperty("ODINLocation",
+                  m_odinLocation = LHCb::ODINLocation::Default,
+                  "Location of the ODIN object in the transient store. By "
+                  "default is the content of LHCb::ODINLocation::Default.");
   //new for decoders, initialize search path, and then call the base method
   m_rawEventLocations = {LHCb::RawEventLocation::Trigger, LHCb::RawEventLocation::Default};
   initRawEventSearch();
-  }
-//=============================================================================
-// Destructor
-//=============================================================================
-ODINDecodeTool::~ODINDecodeTool() {
 }
 //=============================================================================
 // Initialize
@@ -73,15 +72,15 @@ StatusCode ODINDecodeTool::initialize()
 {
   StatusCode sc = ODINCodecBaseTool::initialize(); // always first
   if (sc.isFailure()) return sc; // error message already printed
-  
-  if (m_odinLocation!=LHCb::ODINLocation::Default) 
+
+  if ( m_odinLocation != LHCb::ODINLocation::Default )
   {
     info() << "Using '" << m_odinLocation << "' as location of the ODIN object" << endmsg;
   }
-  
-  if (m_rawEventLocations.empty() or 
-      (m_rawEventLocations[0]!=LHCb::RawEventLocation::Default 
-       and m_rawEventLocations[0]!=LHCb::RawEventLocation::Trigger)) 
+
+  if ( m_rawEventLocations.empty() ||
+       ( m_rawEventLocations[0] != LHCb::RawEventLocation::Default
+         && m_rawEventLocations[0]!=LHCb::RawEventLocation::Trigger ) )
   {
     info() << "Using '" << m_rawEventLocations << "' as search path for the RawEvent object" << endmsg;
   }
@@ -91,21 +90,21 @@ StatusCode ODINDecodeTool::initialize()
 //=============================================================================
 // Main function
 //=============================================================================
-void ODINDecodeTool::execute() 
+void ODINDecodeTool::execute()
 {
-  LHCb::ODIN* odin = NULL;
+  // load the odin
+  LHCb::ODIN* odin = getIfExists<LHCb::ODIN>(m_odinLocation);
 
   // Check if there is already an ODIN object
-  if (exist<LHCb::ODIN>(m_odinLocation)) 
+  if ( odin )
   {
-    if (m_force) 
+    if ( m_force )
     {
       // Use the already registered object
       if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
         debug() << "Modify existing ODIN object" << endmsg;
-      odin = get<LHCb::ODIN>(m_odinLocation);
-    } 
-    else 
+    }
+    else
     {
       // ODIN already there and we are not supposed to touch it
       if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
@@ -113,10 +112,10 @@ void ODINDecodeTool::execute()
       return;
     }
   }
-  
+
   if( UNLIKELY( msgLevel(MSG::DEBUG) ) ) debug() << "Getting RawEvent" << endmsg;
-  LHCb::RawEvent* rawEvent = findFirstRawEvent();
-  if (!rawEvent) 
+  LHCb::RawEvent * rawEvent = findFirstRawEvent();
+  if (!rawEvent)
   {
     using namespace GaudiUtils;
     // Throw a meaningful exception it the bank is not found;
@@ -126,12 +125,12 @@ void ODINDecodeTool::execute()
   }
 
   // Check if have an ODIN bank...
-  const std::vector<LHCb::RawBank*>& odinBanks = rawEvent->banks(LHCb::RawBank::ODIN);
-  if ( !odinBanks.empty() ) 
+  const auto & odinBanks = rawEvent->banks(LHCb::RawBank::ODIN);
+  if ( !odinBanks.empty() )
   { // ... good, we can decode it
     odin = this->i_decode(*odinBanks.begin(), odin);
     if (odin && (!odin->registry())) // register ODIN object if valid and not yet registered
-    { 
+    {
       put(odin, m_odinLocation);
     }
   }

@@ -8,7 +8,7 @@
 // base class
 #include "Kernel/STHistoAlgBase.h"
 
-/** @class STRawBankMonitor STRawBankMonitor.h 
+/** @class STRawBankMonitor STRawBankMonitor.h
  * ITCheckers/STRawBankMonitor.h
  *
  *  Class for checking ST RAW buffer
@@ -22,24 +22,24 @@ class STTell1ID;
 class STRawBankMonitor : public ST::HistoAlgBase{
 
 public:
- 
+
   /// constructer
-  STRawBankMonitor(const std::string& name, 
+  STRawBankMonitor(const std::string& name,
                    ISvcLocator *svcloc );
 
   /// destructer
   virtual ~STRawBankMonitor();
 
   /// initialize
-  StatusCode initialize();
+  StatusCode initialize() override;
 
   /// execute
-  StatusCode execute();
+  StatusCode execute() override;
 
 private:
-  
+
   StatusCode configureBankType();
- 
+
   LHCb::RawBank::BankType m_bankType;
 
   /// List of locations in the transient store to search the RawEvent object.

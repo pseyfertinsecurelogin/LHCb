@@ -21,23 +21,23 @@ static const CLID CLID_DeFTFibreModule = 8606;
 
 class DeFTFibreModule : public DetectorElement {
 
-public: 
+public:
 
   /// Standard constructor
   DeFTFibreModule( const std::string& name = "" );
-  
+
   /// Destructor
   virtual ~DeFTFibreModule( );
 
-  /** Initialization method 
+  /** Initialization method
    *  @return Status of initialization
-   */ 
-  virtual StatusCode initialize();
+   */
+  StatusCode initialize() override;
 
   /** Retrieves reference to class identifier
    *  @return The class identifier for this class
    */
-  const CLID& clID() const;
+  const CLID& clID() const override;
 
   /** Another reference to class identifier
    *  @return The class identifier for this class

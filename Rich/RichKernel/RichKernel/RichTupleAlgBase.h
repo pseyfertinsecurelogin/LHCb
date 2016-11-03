@@ -18,8 +18,8 @@
 // local
 #include "RichKernel/RichHistoBase.h"
 
-// histogramming utilities
-#include "RichKernel/RichHistoID.h"
+// Rich Utils
+#include "RichUtils/RichHistoID.h"
 
 namespace Rich
 {

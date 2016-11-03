@@ -22,7 +22,7 @@
  * @author:  M.Frank
  * @version: 1.0
  */
-class AddressKillerAlg : public Algorithm 
+class AddressKillerAlg : public Algorithm
 {
 
 private:
@@ -38,7 +38,7 @@ public:
 
   /// Standard algorithm constructor
   AddressKillerAlg(const std::string& name, ISvcLocator* pSvcLocator)
-    : Algorithm(name, pSvcLocator), m_dataSvc(0)  
+    : Algorithm(name, pSvcLocator), m_dataSvc(0)
   {
     declareProperty("DataSvc", m_dataSvcName="EventDataSvc");
   }
@@ -47,15 +47,15 @@ public:
   virtual ~AddressKillerAlg() {  }
 
   /// Initialize
-  virtual StatusCode initialize()
+  StatusCode initialize() override
   {
     MsgStream log(msgSvc(), name());
     m_rootName = "";
     StatusCode sc = service(m_dataSvcName, m_dataSvc, true);
-    if ( sc.isSuccess() )  
+    if ( sc.isSuccess() )
     {
       SmartIF<IDataManagerSvc> mgr(m_dataSvc);
-      if ( mgr )  
+      if ( mgr )
       {
         m_rootName = mgr->rootName();
         return sc;
@@ -68,7 +68,7 @@ public:
   }
 
   /// Finalize
-  virtual StatusCode finalize() 
+  StatusCode finalize() override
   {
     if ( m_dataSvc ) m_dataSvc->release();
     m_dataSvc = 0;
@@ -76,10 +76,10 @@ public:
   }
 
   /// Execute procedure
-  virtual StatusCode execute() 
+  StatusCode execute() override
   {
     SmartDataPtr<DataObject> root(m_dataSvc,m_rootName);
-    if ( root ) 
+    if ( root )
     {
       explore(root->registry());
       return StatusCode::SUCCESS;
@@ -89,19 +89,19 @@ public:
 
 private:
 
-  void explore( IRegistry* pObj, const unsigned int depth = 0 )    
+  void explore( IRegistry* pObj, const unsigned int depth = 0 )
   {
     if ( depth > 9999999 ) return; // infinite recursion protection..
 
     SmartIF<IDataManagerSvc> mgr(m_dataSvc);
-    if ( mgr && pObj )   
+    if ( mgr && pObj )
     {
       std::vector<IRegistry*> leaves;
       const IOpaqueAddress* addr = pObj->address();
-      if ( addr ) 
+      if ( addr )
       {
         // NOT for MDF top level address!!!!
-        if ( !(addr->svcType() == RAWDATA_StorageType && pObj->identifier() == m_rootName) ) 
+        if ( !(addr->svcType() == RAWDATA_StorageType && pObj->identifier() == m_rootName) )
         {
           MsgStream log(msgSvc(), name());
           log << MSG::DEBUG << "Remove store address \"" << pObj->identifier() << "\"." << endmsg;
@@ -109,7 +109,7 @@ private:
         }
       }
       const StatusCode sc = mgr->objectLeaves(pObj, leaves);
-      if ( sc.isSuccess() ) 
+      if ( sc.isSuccess() )
       {
         for ( IRegistry * leaf : leaves ) { explore(leaf,depth+1); }
       }

@@ -1,4 +1,3 @@
-
 #ifndef EVENT_PACKEDRECVERTEX_H
 #define EVENT_PACKEDRECVERTEX_H 1
 
@@ -63,6 +62,8 @@ namespace LHCb
     template<typename T>
     inline void load(T& buf, unsigned int /*version*/) {
       save(buf); // identical operation until version is incremented
+      container = 0;  // initialize "container" with a well defined value
+                      // as it is not serialized
     }
   };
 
@@ -85,11 +86,11 @@ namespace LHCb
    *  @date   2008-11-14
    */
 
-  class PackedRecVertices : public DataObject 
+  class PackedRecVertices : public DataObject
   {
 
   public:
-    
+
     /// Default Packing Version
     static char defaultPackingVersion() { return 1; }
 
@@ -97,9 +98,9 @@ namespace LHCb
 
     /// Vector of packed objects
     typedef std::vector<LHCb::PackedRecVertex> Vector;
-  
+
   public:
-  
+
     /// Standard constructor
     PackedRecVertices( )
     {
@@ -111,7 +112,7 @@ namespace LHCb
 
   public:
 
-    virtual const CLID& clID()  const { return PackedRecVertices::classID(); }
+    const CLID& clID()  const override { return PackedRecVertices::classID(); }
     static  const CLID& classID()     { return CLID_PackedRecVertices;       }
 
   public:
@@ -212,7 +213,7 @@ namespace LHCb
     /// Pack a Vertex
     void pack( const Data & vert,
                PackedData & pvert,
-               const DataVector & verts, 
+               const DataVector & verts,
                PackedDataVector & pverts ) const;
 
     /// Pack Vertices

@@ -1,29 +1,29 @@
 // $Id: FastL0DUFilter.h,v 1.1 2008-12-08 18:03:28 odescham Exp $
-#ifndef FASTL0DUFILTER_H 
+#ifndef FASTL0DUFILTER_H
 #define FASTL0DUFILTER_H 1
 
 // Include files
 // from Gaudi
-#include "L0Base/L0FromRawBase.h" 
+#include "L0Base/L0FromRawBase.h"
 #include "Event/RawEvent.h"
 
 
 /** @class FastL0DUFilter FastL0DUFilter.h
- *  
+ *
  *
  *  @author Olivier Deschamps
  *  @date   2008-11-12
  */
 class FastL0DUFilter : public L0FromRawBase {
-public: 
+public:
   /// Standard constructor
   FastL0DUFilter( const std::string& name, ISvcLocator* pSvcLocator );
 
   virtual ~FastL0DUFilter( ); ///< Destructor
 
-  virtual StatusCode initialize();    ///< Algorithm initialization
-  virtual StatusCode execute   ();    ///< Algorithm execution
-  virtual StatusCode finalize  ();    ///< Algorithm finalization
+  StatusCode initialize() override;    ///< Algorithm initialization
+  StatusCode execute   () override;    ///< Algorithm execution
+  StatusCode finalize  () override;    ///< Algorithm finalization
 
 protected:
 
@@ -38,7 +38,7 @@ private:
   bool m_useDecInBank;
   unsigned long m_count;
   unsigned long m_sel;
-  
+
 
 
 };

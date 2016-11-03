@@ -9,8 +9,16 @@ if(EXISTS ${CMAKE_SOURCE_DIR}/Online/RootCnv)
   set(override_subdirs RootCnv)
 endif()
 
+# hide warnings from some external projects
+find_package(Boost)
+find_package(ROOT)
+find_package(CLHEP)
+find_package(XercesC)
+include_directories(SYSTEM ${Boost_INCLUDE_DIRS} ${ROOT_INCLUDE_DIRS}
+                           ${CLHEP_INCLUDE_DIRS} ${XERCESC_INCLUDE_DIRS})
+
 # Declare project name and version
-gaudi_project(LHCb v41r0
+gaudi_project(LHCb v41r1
               USE Gaudi v27r1
               DATA Gen/DecFiles
                    Det/SQLDDDB VERSION v7r*

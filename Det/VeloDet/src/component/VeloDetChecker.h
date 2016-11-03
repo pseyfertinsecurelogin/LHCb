@@ -1,5 +1,5 @@
 // $Id: VeloDetChecker.h,v 1.2 2006-11-16 21:58:25 mtobin Exp $
-#ifndef VELODETCHECKER_H 
+#ifndef VELODETCHECKER_H
 #define VELODETCHECKER_H 1
 
 // Include files
@@ -7,21 +7,21 @@
 #include "GaudiAlg/GaudiTupleAlg.h"
 
 /** @class VeloDetChecker VeloDetChecker.h
- *  
+ *
  *
  *  @author Mark TOBIN
  *  @date   2006-06-12
  */
 class VeloDetChecker : public GaudiTupleAlg {
-public: 
+public:
   /// Standard constructor
   VeloDetChecker( const std::string& name, ISvcLocator* pSvcLocator );
 
   virtual ~VeloDetChecker( ); ///< Destructor
 
-  virtual StatusCode initialize();    ///< Algorithm initialization
-  virtual StatusCode execute   ();    ///< Algorithm execution
-  virtual StatusCode finalize  ();    ///< Algorithm finalization
+  StatusCode initialize() override;    ///< Algorithm initialization
+  StatusCode execute   () override;    ///< Algorithm execution
+  StatusCode finalize  () override;    ///< Algorithm finalization
 
   /// Print out a table with numbers of sensors of each type
   void PrintNumberOfSensors();
@@ -59,13 +59,13 @@ public:
   void TestPhiSensorReverseIterators(std::vector<DeVeloPhiType*>::const_reverse_iterator phiSensorsReverseBegin,
                                      std::vector<DeVeloPhiType*>::const_reverse_iterator phiSensorsReverseEnd);
 
-  /** Look at trajectory of first and last strips in each zone of the sensors for all 
+  /** Look at trajectory of first and last strips in each zone of the sensors for all
       sensor */
   void TestTrajectories();
 
   /** Print the start and end co-ordinates of the trajectory for a given sensor
-      and VeloChannelID */ 
-  void PrintTrajectory(std::vector<DeVeloSensor*>::const_iterator iSens, 
+      and VeloChannelID */
+  void PrintTrajectory(std::vector<DeVeloSensor*>::const_iterator iSens,
                        LHCb::VeloChannelID channel);
 
   /// Test sensors (geometry and readout)
@@ -81,7 +81,7 @@ public:
   /// Test phi sensors (geometry and readout)
   void CheckPhiSensorGeometry();
 
-  /** Scan the surface of x-y plane to check point to channel and residual 
+  /** Scan the surface of x-y plane to check point to channel and residual
       calculations work. **/
   void ScanXYPlaneOfSensors();
 

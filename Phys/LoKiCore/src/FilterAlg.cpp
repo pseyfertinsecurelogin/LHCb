@@ -74,10 +74,6 @@ LoKi::FilterAlg::FilterAlg
           "Unable to enforce the registration for Algorithm Context Service") ;
 }
 // ============================================================================
-// virtual and protected destructor 
-// ============================================================================
-LoKi::FilterAlg::~FilterAlg () {}
-// ============================================================================
 // add to preambulo 
 // ============================================================================
 void LoKi::FilterAlg::addToPreambulo 
@@ -186,13 +182,6 @@ StatusCode LoKi::FilterAlg::initialize ()
   // decode the functor 
   return decode () ;
 }
-// ============================================================================
-// the finalization of the algorithm 
-// ============================================================================
-StatusCode LoKi::FilterAlg::finalize () { return GaudiAlgorithm::finalize () ; }
-// ============================================================================
-
-
 
 // ============================================================================
 // The END 

@@ -4,9 +4,6 @@
  *
  *  Implementation file for class : MCRichSegment
  *
- *  CVS Log :-
- *  $Id: MCRichSegment.cpp,v 1.2 2005-12-16 17:47:36 jonrob Exp $
- *
  *  @author  Chris Jones  Christopher.Rob.Jones@cern.ch
  *  @date    2004-03-23
  */
@@ -44,8 +41,8 @@ LHCb::MCRichSegment::bestPoint( const double fraction ) const
     const double zPoint = fraction*exitPoint().z() + (1-fraction)*entryPoint().z();
 
     // Find the position points either side of the z point
-    std::vector<Gaudi::XYZPoint>::const_iterator iF = trajectoryPoints().begin();
-    std::vector<Gaudi::XYZPoint>::const_iterator iS = iF; 
+    auto iF = trajectoryPoints().begin();
+    auto iS = iF; 
     ++iS; // iterate once so iS is one ahead of iF
     for ( ; iS != trajectoryPoints().end(); ++iF, ++iS ) 
     {
@@ -55,8 +52,8 @@ LHCb::MCRichSegment::bestPoint( const double fraction ) const
     if ( iS != trajectoryPoints().end() ) 
     {
       // finally, interpolate between the two points either side of required z
-      const double stepLength = (*iS).z() - (*iF).z();
-      const double firstF = ( stepLength>0 ? ((*iS).z()-zPoint)/stepLength : 0 );
+      const auto stepLength = (*iS).z() - (*iF).z();
+      const auto firstF = ( stepLength>0 ? ((*iS).z()-zPoint)/stepLength : 0 );
       // CRJ _ Need to decide which way is neatest ...
       // return firstF*(*iF) + Gaudi::XYZVector((1-firstF)*(*iS));
       return Gaudi::XYZPoint ( firstF*(*iF).x() + (1-firstF)*(*iS).x(),
@@ -94,13 +91,13 @@ LHCb::MCRichSegment::bestMomentum( const double fraction ) const
   { // Need to find which two state points to use
 
     // Get the z coordinate of the point on the segment
-    const double zPoint = fraction*exitPoint().z() + (1-fraction)*entryPoint().z();
+    const auto zPoint = fraction*exitPoint().z() + (1-fraction)*entryPoint().z();
 
     // Find the position points either side of the z point
-    std::vector<Gaudi::XYZPoint>::const_iterator iF = trajectoryPoints().begin();
-    std::vector<Gaudi::XYZPoint>::const_iterator iS = iF; 
+    auto iF = trajectoryPoints().begin();
+    auto iS = iF; 
     ++iS; // iterate once so iS is one ahead of iF
-    std::vector<Gaudi::XYZVector>::const_iterator iMom = trajectoryMomenta().begin();
+    auto iMom = trajectoryMomenta().begin();
     for ( ; iS != trajectoryPoints().end(); ++iF, ++iS, ++iMom ) 
     {
       if ( (*iF).z() < zPoint && (*iS).z() > zPoint ) break;
@@ -109,8 +106,8 @@ LHCb::MCRichSegment::bestMomentum( const double fraction ) const
     if ( iS != trajectoryPoints().end() ) 
     {
       // interpolate between the two points either side of required z
-      const double stepLength = (*iS).z() - (*iF).z();
-      const double firstF = ( stepLength>0 ? ((*iS).z()-zPoint)/stepLength : 0 );
+      const auto stepLength = (*iS).z() - (*iF).z();
+      const auto firstF = ( stepLength>0 ? ((*iS).z()-zPoint)/stepLength : 0.0 );
       return ( firstF * (*iMom) ) + ( (1-firstF) * (*(++iMom)) );
     } 
     else 

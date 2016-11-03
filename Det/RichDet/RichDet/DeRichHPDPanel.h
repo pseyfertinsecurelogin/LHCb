@@ -61,7 +61,7 @@ public:
    * Retrieves reference to class identifier
    * @return the class identifier for this class
    */
-  const CLID& clID() const final { return classID(); }
+  const CLID& clID() const override final { return classID(); }
 
   /**
    * Retrieves reference to class identifier
@@ -76,13 +76,13 @@ public:
    * @retval StatusCode::FAILURE Initialisation failed, program should
    * terminate
    */
-  virtual StatusCode initialize() final;
+  StatusCode initialize() override final;
 
 public:
 
   // Converts a Gaudi::XYZPoint in global coordinates to a RichSmartID.
   bool smartID( const Gaudi::XYZPoint& globalPoint,
-                LHCb::RichSmartID& id ) const final;
+                LHCb::RichSmartID& id ) const override final;
 
   /** Converts a RichSmartID to a point on the anode in global coordinates.
    *  @param[in] smartID      The HPD channel ID
@@ -91,29 +91,30 @@ public:
   Gaudi::XYZPoint detPointOnAnode( const LHCb::RichSmartID& smartID ) const;
 
   // Returns the intersection point with an HPD window given a vector and a point.
-  virtual LHCb::RichTraceMode::RayTraceResult
+  LHCb::RichTraceMode::RayTraceResult
   PDWindowPoint( const Gaudi::XYZVector& vGlobal,
                  const Gaudi::XYZPoint& pGlobal,
                  Gaudi::XYZPoint& windowPointGlobal,
                  LHCb::RichSmartID& smartID,
-                 const LHCb::RichTraceMode mode ) const final;
+                 const LHCb::RichTraceMode mode ) const override final;
 
   // Returns the intersection point with the detector plane given a vector and a point.
-  virtual LHCb::RichTraceMode::RayTraceResult
+  LHCb::RichTraceMode::RayTraceResult
   detPlanePoint( const Gaudi::XYZPoint& pGlobal,
                  const Gaudi::XYZVector& vGlobal,
                  Gaudi::XYZPoint& hitPosition,
                  LHCb::RichSmartID& smartID,
-                 const LHCb::RichTraceMode mode ) const final;
+                 const LHCb::RichTraceMode mode ) const override final;
 
   /// Returns the detector element for the given PD number
-  virtual const DeRichPD* dePD( const unsigned int PDNumber ) const override;
+  const DeRichPD* dePD( const Rich::DAQ::HPDCopyNumber PDNumber ) const override;
 
   /// Returns the detector element for the given PD number
-  inline const DeRichHPD* deHPD( const unsigned int HPDNumber ) const
+  inline const DeRichHPD* deHPD( const Rich::DAQ::HPDCopyNumber HPDNumber ) const
   {
     // CRJ : should this just be < ??
-    const DeRichHPD * deHPD = ( HPDNumber <= nPDs() ? m_DeHPDs[HPDNumber] : nullptr );
+    const DeRichHPD * deHPD = ( HPDNumber.data() <= nPDs() ?
+                                m_DeHPDs[HPDNumber.data()] : nullptr );
 #ifndef NDEBUG
     if ( !deHPD )
     {
@@ -126,10 +127,10 @@ public:
   }
 
   /// Adds to the given vector all the available readout channels in this HPD panel
-  virtual bool readoutChannelList( LHCb::RichSmartID::Vector& readoutChannels ) const final;
+  bool readoutChannelList( LHCb::RichSmartID::Vector& readoutChannels ) const override final;
 
   /// sensitive volume identifier
-  virtual int sensitiveVolumeID(const Gaudi::XYZPoint& globalPoint) const final;
+  int sensitiveVolumeID( const Gaudi::XYZPoint& globalPoint ) const override final;
 
 private: // methods
 
@@ -143,11 +144,11 @@ private: // methods
   bool findHPDColAndPos( const Gaudi::XYZPoint& inPanel, LHCb::RichSmartID& id ) const;
 
   /// Returns the PD number for the given RichSmartID
-  unsigned int pdNumber( const LHCb::RichSmartID& smartID ) const final;
+  Rich::DAQ::HPDCopyNumber pdNumber( const LHCb::RichSmartID& smartID ) const override final;
 
   /// Need to ask Sajan about this
-  bool pdGrandSize( const LHCb::RichSmartID& /** smartID **/ ) const final { return false; }
-  
+  bool pdGrandSize( const LHCb::RichSmartID& /** smartID **/ ) const override final { return false; }
+
   /// Check HPD panel acceptance
   LHCb::RichTraceMode::RayTraceResult checkPanelAcc( const Gaudi::XYZPoint & point ) const;
 
@@ -196,10 +197,10 @@ private: // data
 //=========================================================================
 //  convert a SmartID to a point on the anode (global coord system)
 //=========================================================================
-inline Gaudi::XYZPoint 
+inline Gaudi::XYZPoint
 DeRichHPDPanel::detPointOnAnode( const LHCb::RichSmartID& smartID ) const
 {
-  return deHPD(smartID)->detPointOnAnode(smartID);
+  return deHPD( pdNumber(smartID) ) -> detPointOnAnode( smartID );
 }
 
 //=========================================================================
@@ -217,7 +218,7 @@ DeRichHPDPanel::detPointOnAnode( const LHCb::RichSmartID& smartID ) const
 inline LHCb::RichTraceMode::RayTraceResult
 DeRichHPDPanel::checkPanelAcc( const Gaudi::XYZPoint & point ) const
 {
-  const auto uv = ( rich() == Rich::Rich1 ? 
+  const auto uv = ( rich() == Rich::Rich1 ?
                     std::make_pair(point.y(),point.x()) :
                     std::make_pair(point.x(),point.y()) );
   return ( ( fabs(uv.first)  >= fabs(m_panelColumnSideEdge) ||

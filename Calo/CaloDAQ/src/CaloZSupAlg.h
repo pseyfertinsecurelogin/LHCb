@@ -30,13 +30,9 @@ public:
   
   CaloZSupAlg( const std::string& name, ISvcLocator* pSvcLocator);
   
-  virtual ~CaloZSupAlg();
+  StatusCode initialize() override;
+  StatusCode execute   () override;
   
-  virtual StatusCode initialize();
-  virtual StatusCode execute   ();
-  
-protected:
-
 private:   
   std::string m_detectorName;       ///< Detector element name
   std::string m_inputToolName;
@@ -44,18 +40,18 @@ private:
   std::string m_outputADCData;         ///< Output container for CaloAdc
   std::string m_outputDigitData;       ///< Output container for CaloDigit
   std::string m_zsupMethod        ; ///< Name of Zero Suppression method
-  bool        m_zsup2D            ; ///< do we use 2D-zero sup. scheme ?
+  bool        m_zsup2D = false            ; ///< do we use 2D-zero sup. scheme ?
   int         m_zsupThreshold     ; ///< Initial threshold, in ADC counts 
   int         m_zsupNeighbor      ; ///< zsup (ADC) for neighbors for 2D method
-  bool m_adcOnTES;
-  bool m_digitOnTES;
+  bool m_adcOnTES = false;
+  bool m_digitOnTES = false;
   std::string m_outputType;
   std::string m_extension;
   
 
-  DeCalorimeter*         m_calo;    ///< Detector element pointer
-  ICaloEnergyFromRaw*    m_adcTool; ///< acces to adcs in Raw buffer
-  int         m_numberOfCells     ; ///< Number of cells of this detector.
+  DeCalorimeter*         m_calo = nullptr;    ///< Detector element pointer
+  ICaloEnergyFromRaw*    m_adcTool = nullptr; ///< acces to adcs in Raw buffer
+  int         m_numberOfCells =0    ; ///< Number of cells of this detector.
   bool m_statusOnTES;
 };
 

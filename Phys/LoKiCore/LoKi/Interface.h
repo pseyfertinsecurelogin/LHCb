@@ -42,7 +42,7 @@ namespace LoKi
     /** Standard/default constructor from the interface
      *  @param obj object to be used
      */
-    Interface ( const TYPE* obj = 0 )
+    Interface ( const TYPE* obj = nullptr )
       : m_object ( const_cast<TYPE*>( obj )  ) { LoKi::addRef ( m_object ) ; }
     /// copy constructor
     Interface ( const Interface<TYPE>& right )
@@ -131,7 +131,7 @@ namespace LoKi
     // ========================================================================
   public :
     // ========================================================================
-    void reset () {  m_object = 0 ; }
+    void reset () {  m_object = nullptr ; }
     // ========================================================================
   public :
     // ========================================================================
@@ -139,7 +139,7 @@ namespace LoKi
     void release ()
     {
       LoKi::release ( m_object ) ;
-      m_object = 0 ;
+      m_object = nullptr ;
     }
     // ========================================================================
   private:

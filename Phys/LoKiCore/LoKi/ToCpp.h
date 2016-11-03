@@ -1,4 +1,3 @@
-// $Id$ 
 // ============================================================================
 #ifndef LOKI_TOCPP_H 
 #define LOKI_TOCPP_H 1
@@ -28,9 +27,6 @@
  *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
  *  @date 2015-03-30
  * 
- *                    $Revision$
- *  Last modification $Date$
- *                 by $Author$ 
  */
 // ============================================================================
 // Forward declarations 
@@ -212,7 +208,7 @@ namespace Gaudi
       template<class Tuple>
       struct TupleCppPrinter<Tuple,0> 
       {
-        static std::string toCpp ( const Tuple& t ) { return ""; }
+        static std::string toCpp ( const Tuple& ) { return {}; }
       } ;
       // ======================================================================
     }

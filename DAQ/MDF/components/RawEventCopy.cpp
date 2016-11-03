@@ -39,7 +39,7 @@ namespace LHCb  {
     /// Destructor
     virtual ~RawEventCopy()  {}
     /// Main execution
-    virtual StatusCode execute()  {
+    StatusCode execute() override {
       SmartDataPtr<RawEvent> raw(eventSvc(),m_source);
       if( raw ) {
         RawEvent *org = raw;

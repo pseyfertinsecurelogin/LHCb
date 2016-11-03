@@ -16,12 +16,8 @@ DeITLadder::DeITLadder( const std::string& name ) :
   m_child(0),
   m_parent(NULL),
   m_id(0u)
-{ 
+{
   // constructor
-}
-
-DeITLadder::~DeITLadder() {
-
 }
 
 const CLID& DeITLadder::clID () const
@@ -32,16 +28,16 @@ const CLID& DeITLadder::clID () const
 StatusCode DeITLadder::initialize() {
 
   // initialize
-  
+
   StatusCode sc = DeSTBaseElement::initialize();
   if (sc.isFailure() ){
     MsgStream msg(msgSvc(), name() );
-    msg << MSG::ERROR << "Failed to initialize detector element" << endmsg; 
+    msg << MSG::ERROR << "Failed to initialize detector element" << endmsg;
   }
   else {
     // get parent
     m_id = param<int>("sectorID");
-    m_parent = getParent<DeITLadder>(); 
+    m_parent = getParent<DeITLadder>();
     const STChannelID parentID = m_parent->elementID();
     STChannelID chan(STChannelID::typeIT,
                      parentID.station(),parentID.layer(),
@@ -66,7 +62,7 @@ std::ostream& DeITLadder::printOut( std::ostream& os ) const{
 
   // stream to cout
   os << " Ladder : "  << name()  << std::endl
-     << " id " << id() 
+     << " id " << id()
      << std::endl;
 
   return os;
@@ -75,8 +71,8 @@ std::ostream& DeITLadder::printOut( std::ostream& os ) const{
 MsgStream& DeITLadder::printOut( MsgStream& os ) const{
 
   // stream to Msg service
-  os << " Ladder : "  << name() 
-     << " id " << id() 
+  os << " Ladder : "  << name()
+     << " id " << id()
      << std::endl;
 
   return os;

@@ -1,4 +1,3 @@
-// $Id: HltGenConfig.cpp,v 1.18 2010-05-05 21:07:43 graven Exp $
 // Include files
 #include <algorithm>
 
@@ -39,8 +38,7 @@ DECLARE_ALGORITHM_FACTORY(HltGenConfig)
 // Standard constructor, initializes variables
 //=============================================================================
 HltGenConfig::HltGenConfig(const string &name, ISvcLocator *pSvcLocator)
-    : GaudiAlgorithm(name, pSvcLocator), m_appMgr{ nullptr },
-      m_accessSvc{ nullptr }, m_configSvc{ nullptr }
+    : GaudiAlgorithm(name, pSvcLocator)
 {
   declareProperty("ConfigTop", m_topConfig = { { "Hlt" } });
   declareProperty("ConfigSvc",
@@ -60,10 +58,10 @@ HltGenConfig::HltGenConfig(const string &name, ISvcLocator *pSvcLocator)
 //=============================================================================
 StatusCode HltGenConfig::initialize() {
   StatusCode sc = GaudiAlgorithm::initialize();
-  m_appMgr = svc<IAlgManager>("ApplicationMgr");
-  m_accessSvc = svc<IConfigAccessSvc>(s_accessSvc, true);
-  m_configSvc = svc<IPropertyConfigSvc>("PropertyConfigSvc", true);
-  IToolSvc *toolSvc = svc<IToolSvc>("ToolSvc", true);
+  m_appMgr = service("ApplicationMgr");
+  m_accessSvc = service(s_accessSvc, true);
+  m_configSvc = service("PropertyConfigSvc", true);
+  auto toolSvc = service<IToolSvc>("ToolSvc", true);
   toolSvc->registerObserver(this);
   // FIXME: need to unregister at some point!!!
   if (m_hltType.empty()) {
@@ -161,8 +159,11 @@ HltGenConfig::generateConfig(const INamedInterface &obj) const {
 
   // If some overrules were found, apply them
   if (!overrule.empty()) {
-    warning() << " applying overrule to " << obj.name() << " : " << overrule
-              << endmsg;
+    if (!m_overruled.count(obj.name())) {
+      warning() << " applying overrule to " << obj.name() << " : " << overrule
+                << endmsg;
+      m_overruled.emplace(obj.name());
+    }
     currentConfig = currentConfig.copyAndModify(std::begin(overrule), std::end(overrule));
     if (!currentConfig.digest().valid()) {
       error() << " overruling of " << obj.name() << " : " << overrule

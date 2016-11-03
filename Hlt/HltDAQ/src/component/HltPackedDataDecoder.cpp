@@ -29,9 +29,10 @@ HltPackedDataDecoder::HltPackedDataDecoder(const std::string& name,
 
 template<typename PackedData>
 void HltPackedDataDecoder::register_object() {
-  m_loaders[PackedData::classID()] = [=](const std::string& s) {
-    return this->loadObject<PackedData>(s);
-  };
+  m_loaders[PackedData::classID()] =
+    [this](const std::string& location){
+      return this->loadObject<PackedData>(location);
+    };
 }
 
 StatusCode HltPackedDataDecoder::initialize() {
@@ -59,13 +60,13 @@ std::pair<DataObject*, size_t> HltPackedDataDecoder::loadObject(const std::strin
   auto object = new T{};
   put(object, location);
   auto nBytesRead = m_buffer.load(*object);
-  if (UNLIKELY(m_enableChecksum)) m_checksum->processObject(*object);
+  if (UNLIKELY(m_enableChecksum)) m_checksum->processObject(*object, location);
   return std::make_pair(dynamic_cast<DataObject*>(object), nBytesRead);
 }
 
 
 StatusCode HltPackedDataDecoder::execute() {
-  if (msgLevel(MSG::DEBUG)) debug() << "==> Execute" << endmsg;
+  if (UNLIKELY(msgLevel(MSG::DEBUG))) debug() << "==> Execute" << endmsg;
 
   auto* rawEvent = findFirstRawEvent();
   if (!rawEvent) {
@@ -115,7 +116,7 @@ StatusCode HltPackedDataDecoder::execute() {
   }
 
   auto compression = HltPackedDataWriter::compression(rawBank0->sourceID());
-  if (msgLevel(MSG::DEBUG)) {
+  if (UNLIKELY(msgLevel(MSG::DEBUG))) {
     debug() << "Compression " << compression << ", payload size " << payload.size() << endmsg;
   }
 
@@ -158,8 +159,8 @@ StatusCode HltPackedDataDecoder::execute() {
       continue;
     }
     std::string containerPath = locationIt->second;
-
-    if (msgLevel(MSG::DEBUG)) {
+    
+    if (UNLIKELY(msgLevel(MSG::DEBUG))) {
       debug() << "Reading " << storedObjectSize << " bytes "
               << "for object with CLID " << classID << " into TES location "
               << containerPath << endmsg;
@@ -208,8 +209,9 @@ StatusCode HltPackedDataDecoder::execute() {
     }
   }
 
-  if (UNLIKELY(m_enableChecksum)) {
-    debug() << "packed data checksum = " << m_checksum->checksum() << endmsg;
+  if (UNLIKELY(msgLevel(MSG::DEBUG) && m_enableChecksum)) {
+    for (const auto& x: m_checksum->checksums())
+      debug() << "Packed data checksum for '" << x.first << "' = " << x.second << endmsg;
   }
 
   m_buffer.clear();
@@ -221,7 +223,8 @@ StatusCode HltPackedDataDecoder::execute() {
 
 StatusCode HltPackedDataDecoder::finalize() {
   if (UNLIKELY(m_enableChecksum)) {
-    info() << "Global packed data checksum = " << m_checksum->checksum() << endmsg;
+    for (const auto& x: m_checksum->checksums())
+      info() << "Packed data checksum for '" << x.first << "' = " << x.second << endmsg;
     delete m_checksum;
   }
   return HltRawBankDecoderBase::finalize();  // must be called after all other actions

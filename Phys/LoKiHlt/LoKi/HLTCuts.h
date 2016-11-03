@@ -37,7 +37,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2010-05-17
      */
-    typedef LoKi::HLT::ErrorBits                                HLT_ERRORBITS ;
+    using HLT_ERRORBITS = LoKi::HLT::ErrorBits;
     // ========================================================================
     /** @var HLT_DECISION
      *  simple functor which evaluates number of known decisions
@@ -47,7 +47,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-09-21
      */
-    const LoKi::HLT::Decision                                    HLT_DECISION ;
+    const auto HLT_DECISION = LoKi::HLT::Decision{};
     // ========================================================================
     /** @typedef HLT_ERRORBITS
      *  simple functor to get the error bits for the certain line
@@ -66,7 +66,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2010-05-17
      */
-    typedef LoKi::HLT::ErrorBits                                HLT_ERRORBITS ;
+    using HLT_ERRORBITS = LoKi::HLT::ErrorBits;
     // ========================================================================
     /** @typedef HLT_EXECUTIONSTAGE
      *  simple functor to get the error bits for the certain line
@@ -85,7 +85,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2010-05-17
      */
-    typedef LoKi::HLT::ExecutionStage                      HLT_EXECUTIONSTAGE ;
+    using HLT_EXECUTIONSTAGE = LoKi::HLT::ExecutionStage;
     // ========================================================================
     /** @typedef HLT_NONTURBOPASS_RE
      *  Simple predicate to check a non-Turbo stream line has fired
@@ -104,7 +104,7 @@ namespace LoKi
      *  @author Sean Benson sean.benson@cern.ch
      *  @date 2015-01-12
      */
-    typedef LoKi::HLT::NonTurboPass                      HLT_NONTURBOPASS_RE ;
+    using HLT_NONTURBOPASS_RE = LoKi::HLT::NonTurboPass;
     // ========================================================================
     /** @typedef HLT_TURBOPASS_RE
      *  Simple predicate to check a Turbo stream line has fired
@@ -123,7 +123,7 @@ namespace LoKi
      *  @author Sean Benson sean.benson@cern.ch
      *  @date 2015-01-12
      */
-    typedef LoKi::HLT::TurboPass                      HLT_TURBOPASS_RE ;
+    using HLT_TURBOPASS_RE = LoKi::HLT::TurboPass;
     // ========================================================================
     /** @typedef HLT_HAS
      *  Simple predicate to check the certain decisions
@@ -149,7 +149,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-09-21
      */
-    typedef LoKi::HLT::HasDecision                                   HLT_HAS ;
+    using HLT_HAS = LoKi::HLT::HasDecision;
     // ========================================================================
     /** @typedef HLT_HAS_SUBSTR
      *  Simple predicate to check the presence of decison with has
@@ -170,7 +170,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-09-21
      */
-    typedef LoKi::HLT::HasDecisionSubString                    HLT_HAS_SUBSTR ;
+    using HLT_HAS_SUBSTR = LoKi::HLT::HasDecisionSubString;
     // ========================================================================
     /** @typedef HLT_HAS_RE
      *  Simple predicate to check the presence of decison with has
@@ -191,7 +191,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-09-21
      */
-    typedef LoKi::HLT::HasDecisionRegex                            HLT_HAS_RE ;
+    using HLT_HAS_RE = LoKi::HLT::HasDecisionRegex;
     // ========================================================================
     /** @var HLT_NPASS
      *  simple functor which evaluates the number of passed decision
@@ -201,7 +201,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-09-21
      */
-    const LoKi::HLT::NPass                                          HLT_NPASS ;
+    const auto HLT_NPASS = LoKi::HLT::NPass{};
     // ========================================================================
     /** @typedef HLT_NCANDIDATES
      *  simple functor to get the number of candidates
@@ -220,7 +220,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2010-05-17
      */
-    typedef LoKi::HLT::NumberOfCandidates                     HLT_NCANDIDATES ;
+    using HLT_NCANDIDATES = LoKi::HLT::NumberOfCandidates;
     // ========================================================================
     /** @typedef HLT_ROUTINGBITS
      *  Simple functor tocheck the routing bits
@@ -241,7 +241,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date   2008-09-17
      */
-    typedef LoKi::HLT::HltRoutingBits                         HLT_ROUTINGBITS ;
+    using HLT_ROUTINGBITS = LoKi::HLT::HltRoutingBits;
     // ========================================================================
     /** @typedef HLT_PASS
      *  Simple predicate to check the positive decision forcertain decision
@@ -268,7 +268,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-09-21
      */
-    typedef LoKi::HLT::PassDecision                                 HLT_PASS ;
+    using HLT_PASS = LoKi::HLT::PassDecision;
     // ========================================================================
     /** @typedef HLT_PASS_SUBSTR
      *  Simple predicate to check the positive decision for the selection
@@ -290,7 +290,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-09-21
      */
-    typedef LoKi::HLT::PassDecisionSubString                  HLT_PASS_SUBSTR ;
+    using HLT_PASS_SUBSTR = LoKi::HLT::PassDecisionSubString;
     // ========================================================================
     /** @typedef HLT_PASS_RE
      *  Simple predicate to check the positive decision for the selection
@@ -312,7 +312,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-09-21
      */
-    typedef LoKi::HLT::PassDecisionRegex                          HLT_PASS_RE ;
+    using HLT_PASS_RE = LoKi::HLT::PassDecisionRegex;
     // ========================================================================
     /** @typedef HLT_PASSIGNORING
      *  simple predicate which checks the overall decision,
@@ -340,7 +340,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-10-03
      */
-    typedef LoKi::HLT::DecisionBut                           HLT_PASSIGNORING ;
+    using HLT_PASSIGNORING = LoKi::HLT::DecisionBut;
     // ========================================================================
     /** @typedef HLT_PASSIGNORING_SUBSTR
      *  simple predicate which checks the overall decision,
@@ -361,7 +361,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-10-03
      */
-    typedef LoKi::HLT::DecisionButSubString           HLT_PASSIGNORING_SUBSTR ;
+    using HLT_PASSIGNORING_SUBSTR = LoKi::HLT::DecisionButSubString;
     // ========================================================================
     /** @typedef HLT_PASSIGNORING_RE
      *  simple predicate which checks the overall decision,
@@ -382,7 +382,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-10-03
      */
-    typedef LoKi::HLT::DecisionButRegex                   HLT_PASSIGNORING_RE ;
+    using HLT_PASSIGNORING_RE = LoKi::HLT::DecisionButRegex;
     // ========================================================================
     /** @typedef HLT_SATURATED
      *  simple functor to check if number fo candidates is saturated
@@ -402,7 +402,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2010-05-17
      */
-    typedef LoKi::HLT::Saturated                                HLT_SATURATED ;
+    using HLT_SATURATED = LoKi::HLT::Saturated;
     // ========================================================================
     /** @var HLT_SIZE
      *  simple functor which evaluates number of known decisions
@@ -412,7 +412,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-09-21
      */
-    const LoKi::HLT::Size                                            HLT_SIZE ;
+    const auto HLT_SIZE = LoKi::HLT::Size{};
     // ========================================================================
     /** @var HLT_TCK
      *  simple function which returns the TCK
@@ -422,7 +422,7 @@ namespace LoKi
      *  @author Pieter David <pieter.david@nikhef.nl>
      *  @date 2014-08-28
      */
-    const LoKi::HLT::TrgConfKey                                       HLT_TCK ;
+    const auto HLT_TCK = LoKi::HLT::TrgConfKey{};
     // ========================================================================
   } // end of namespace LoKi::Cuts
   // ==========================================================================

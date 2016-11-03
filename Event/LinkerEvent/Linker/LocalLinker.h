@@ -1,4 +1,3 @@
-// $Id: LocalLinker.h,v 1.1 2008-03-10 14:41:45 ocallot Exp $
 #ifndef LINKER_LOCALLINKER_H 
 #define LINKER_LOCALLINKER_H 1
 
@@ -19,7 +18,7 @@
  *  @date   2008-03-10
  */
 template <class TARGET, class SOURCE > 
-class LocalLinker {
+class LocalLinker final {
 public: 
 
   /// Standard constructor
@@ -30,8 +29,6 @@ public:
     m_curReference.setNextIndex( -1 );
     m_curReference.setWeight( 0. );
   }; 
-
-  virtual ~LocalLinker( ); ///< Destructor
 
   void link( const SOURCE* source,
              const TARGET* dest, 
@@ -100,13 +97,13 @@ public:
     return currentSource( index );
   };
 
-protected:
+private:
 
   TARGET* currentTarget() {
     int myLinkID = m_curReference.linkID();
     LinkManager::Link* link = m_links.linkMgr()->link( myLinkID );
     if ( 0 == link->object() ) {
-      SmartDataPtr<DataObject> tmp( m_eventSvc, link->path() );
+      SmartDataPtr<DataObject> tmp( m_eventSvc.get(), link->path() );
       link->setObject( tmp );
       if ( 0 == tmp ) return NULL;
     }
@@ -122,7 +119,7 @@ protected:
     int myLinkID = m_curReference.srcLinkID();
     LinkManager::Link* link = m_links.linkMgr()->link( myLinkID );
     if ( 0 == link->object() ) {
-      SmartDataPtr<DataObject> tmp( m_eventSvc, link->path() );
+      SmartDataPtr<DataObject> tmp( m_eventSvc.get(), link->path() );
       link->setObject( tmp );
       if ( 0 == tmp ) return NULL;
     }
@@ -133,8 +130,7 @@ protected:
     return NULL;
   }
 
-private:
-  IDataProviderSvc*   m_eventSvc;
+  SmartIF<IDataProviderSvc>   m_eventSvc;
   LHCb::LinksByKey    m_links;
   LHCb::LinkReference m_curReference;
   int                 m_wantedKey;

@@ -1,4 +1,3 @@
-// $Id: LinkerRange.h,v 1.3 2005-12-01 08:35:21 ocallot Exp $
 #ifndef LINKER_LINKERRANGE_H 
 #define LINKER_LINKERRANGE_H 1
 
@@ -12,24 +11,32 @@
  *  @date   2005-01-19
  */
 
-template <class SOURCE, class TARGET> class LinkerRange {
+template <class SOURCE, class TARGET>
+class LinkerRange final {
 public: 
 
   typedef typename std::vector<LinkerEntry<SOURCE,TARGET> >::const_iterator iterator;
   
-  /// Standard constructor
-  LinkerRange( ) {}; 
-
-  virtual ~LinkerRange( ) {}; ///< Destructor
-
   /** Add a LinkerEntry inside the range
    *  @param src    pointer to the SOURCE of the entry
    *  @param tgt    pointer to the TARGET of the entry
    *  @param weight Weight of the relation
    */
   void addEntry( const SOURCE* src, const TARGET* tgt, double weight ) {
-    LinkerEntry<SOURCE,TARGET> tmp( src, tgt, weight );
-    m_entries.push_back( tmp );
+    emplace_back( src, tgt, weight );
+  }
+
+  template <typename... Args>
+  void emplace_back( Args&&... args ) {
+    m_entries.emplace_back( std::forward<Args>(args)... );
+  }
+
+  void push_back( const LinkerEntry<SOURCE,TARGET>& le ) {
+    m_entries.push_back( le );
+  }
+
+  void push_back( LinkerEntry<SOURCE,TARGET>&& le ) {
+    m_entries.push_back( std::move(le) );
   }
 
   /** returns an iterator to the beginning of the table of entries = range
@@ -58,13 +65,11 @@ public:
 
   /** returns a reference to the first element
    */
-  LinkerEntry<SOURCE,TARGET>& front() const { return m_entries.front(); }
+  const LinkerEntry<SOURCE,TARGET>& front() const { return m_entries.front(); }
 
   /** returns a reference to the last element
    */
-  LinkerEntry<SOURCE,TARGET>& back() const { return m_entries.back(); }
-
-protected:
+  const LinkerEntry<SOURCE,TARGET>& back() const { return m_entries.back(); }
 
 private:
   std::vector<LinkerEntry<SOURCE,TARGET> > m_entries;

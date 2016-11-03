@@ -30,10 +30,8 @@ public:
   /// Standard constructor
   DecodeVeloRawBuffer( const std::string& name, ISvcLocator* pSvcLocator );
 
-  virtual ~DecodeVeloRawBuffer( ); ///< Destructor
-
-  virtual StatusCode initialize();    ///< Algorithm initialization
-  virtual StatusCode execute   ();    ///< Algorithm execution
+  StatusCode initialize() override;    ///< Algorithm initialization
+  StatusCode execute   () override;    ///< Algorithm execution
 
   enum AlgStatusType{
     OK = 0,
@@ -136,8 +134,6 @@ private:
 
   /// Check when decoding lite clusters that the bank length is correct
   bool m_doLengthCheck;
-
-  IIncidentSvc* m_incidentSvc = nullptr;  ///< Pointer to the incident service.
 
   /// default raw event locations: not set in options to allow comparison
   std::vector<std::string> m_defaultRawEventLocations;

@@ -22,10 +22,10 @@ public:
   /// Standard constructor
   EmptyEventNodeCleaner( const std::string& name, ISvcLocator* pSvcLocator );
 
-  virtual ~EmptyEventNodeCleaner( ); ///< Destructor
+  virtual ~EmptyEventNodeCleaner( ) = default; ///< Destructor
 
-  virtual StatusCode initialize ();   ///< Initialize
-  virtual StatusCode execute   ();    ///< Execution
+  virtual StatusCode initialize () override;   ///< Initialize
+  virtual StatusCode execute   () override;    ///< Execution
 
 private:
 
@@ -39,7 +39,7 @@ private:
   std::string m_inputStream;   ///< Input stream root
   std::string m_dataSvcName;   ///< name of the data service
 
-  IDataProviderSvc* m_dataSvc; ///< The data service itself
+  IDataProviderSvc* m_dataSvc = nullptr; ///< The data service itself
 
 };
 

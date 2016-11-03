@@ -6,8 +6,8 @@
   <!-- location = address in TES -->
   <!-- classId = identifier -->
     <class name='STTELL1EventInfo'
-	   id='9011' 
-	   author='Mathias Knecht' 
+	   id='9011'
+	   author='Mathias Knecht'
 	   desc='Event info from a TELL1 board'>
    <base name='KeyedObject&lt; int &gt; '/>
       <location name="ITEventInfo"   place="Raw/IT/EventInfo"   />
@@ -58,7 +58,7 @@
 	desc = 'few useful constants'
 	value = 'nPort = 4, nBeetle = 6, nMagic = 0x8E'
 	/>
- 	   
+
       <attribute
        type    = 'bitfield'
        name    = 'word1'
@@ -87,7 +87,7 @@
          desc      = 'PCN from Beetle 0'
          setMeth   = 'TRUE'
          getMeth   = 'TRUE'
-         checkMeth = 'FALSE' /> 
+         checkMeth = 'FALSE' />
        <bitfield
          type      = 'unsigned char'
          name      = 'ProcessInfo'
@@ -118,7 +118,7 @@
          desc      = 'Indicates that no data has been received, one bit per link'
          setMeth   = 'TRUE'
          getMeth   = 'TRUE'
-         checkMeth = 'FALSE' /> 
+         checkMeth = 'FALSE' />
        <bitfield
          type      = 'unsigned char'
          name      = 'OptLnkDisable'
@@ -174,7 +174,7 @@
          desc      = 'Indicates if the ADC value is between low and high thresholds, one per Analog Link'
          setMeth   = 'TRUE'
          getMeth   = 'TRUE'
-         checkMeth = 'FALSE' /> 
+         checkMeth = 'FALSE' />
        <bitfield
          type      = 'unsigned char'
          name      = 'OptLnkNoClock'
@@ -191,7 +191,7 @@
          setMeth   = 'TRUE'
          getMeth   = 'TRUE'
          checkMeth = 'FALSE' />
-    
+
         <bitfield
          type      = 'unsigned char'
          name      = 'R2'
@@ -214,7 +214,7 @@
          desc      = 'PCN of the Beetle 0'
          setMeth   = 'TRUE'
          getMeth   = 'TRUE'
-         checkMeth = 'FALSE' /> 
+         checkMeth = 'FALSE' />
        <bitfield
          type      = 'unsigned char'
          name      = 'PCNBeetle1'
@@ -222,7 +222,7 @@
          desc      = 'PCN of the Beetle 1'
          setMeth   = 'TRUE'
          getMeth   = 'TRUE'
-         checkMeth = 'FALSE' /> 
+         checkMeth = 'FALSE' />
 	 <bitfield
          type      = 'unsigned char'
          name      = 'PCNBeetle2'
@@ -230,7 +230,7 @@
          desc      = 'PCN of the Beetle 2'
          setMeth   = 'TRUE'
          getMeth   = 'TRUE'
-         checkMeth = 'FALSE' /> 
+         checkMeth = 'FALSE' />
 	 <bitfield
          type      = 'unsigned char'
          name      = 'PCNBeetle3'
@@ -238,8 +238,8 @@
          desc      = 'PCN of the Beetle 3'
          setMeth   = 'TRUE'
          getMeth   = 'TRUE'
-         checkMeth = 'FALSE' /> 
-	
+         checkMeth = 'FALSE' />
+
 	</attribute>
      <attribute
        type    = 'bitfield'
@@ -254,7 +254,7 @@
          desc      = 'PCN of the Beetle 4'
          setMeth   = 'TRUE'
          getMeth   = 'TRUE'
-         checkMeth = 'FALSE' /> 
+         checkMeth = 'FALSE' />
        <bitfield
          type      = 'unsigned char'
          name      = 'PCNBeetle5'
@@ -262,7 +262,7 @@
          desc      = 'PCN of the Beetle 5'
          setMeth   = 'TRUE'
          getMeth   = 'TRUE'
-         checkMeth = 'FALSE' /> 
+         checkMeth = 'FALSE' />
 	 <bitfield
          type      = 'short'
          name      = 'R3'
@@ -270,9 +270,9 @@
          desc      = 'Reserved bits for later use =0x8B8B'
          setMeth   = 'TRUE'
          getMeth   = 'TRUE'
-         checkMeth = 'FALSE' /> 
-	 
-	
+         checkMeth = 'FALSE' />
+
+
 	</attribute>
       <attribute
        type    = 'bitfield'
@@ -287,7 +287,7 @@
          desc      = 'I Header of the Beetle 0'
          setMeth   = 'TRUE'
          getMeth   = 'TRUE'
-         checkMeth = 'FALSE' /> 
+         checkMeth = 'FALSE' />
        <bitfield
          type      = 'unsigned char'
          name      = 'IHeaderBeetle1'
@@ -295,7 +295,7 @@
          desc      = 'I Header of the Beetle 1'
          setMeth   = 'TRUE'
          getMeth   = 'TRUE'
-         checkMeth = 'FALSE' /> 
+         checkMeth = 'FALSE' />
        <bitfield
          type      = 'unsigned char'
          name      = 'IHeaderBeetle2'
@@ -303,7 +303,7 @@
          desc      = 'I Header of the Beetle 2'
          setMeth   = 'TRUE'
          getMeth   = 'TRUE'
-         checkMeth = 'FALSE' /> 
+         checkMeth = 'FALSE' />
        <bitfield
          type      = 'unsigned char'
          name      = 'IHeaderBeetle3'
@@ -311,7 +311,7 @@
          desc      = 'I Header of the Beetle 3'
          setMeth   = 'TRUE'
          getMeth   = 'TRUE'
-         checkMeth = 'FALSE' /> 
+         checkMeth = 'FALSE' />
        <bitfield
          type      = 'unsigned char'
          name      = 'IHeaderBeetle4'
@@ -319,7 +319,7 @@
          desc      = 'I Header of the Beetle 4'
          setMeth   = 'TRUE'
          getMeth   = 'TRUE'
-         checkMeth = 'FALSE' /> 
+         checkMeth = 'FALSE' />
        <bitfield
          type      = 'unsigned char'
          name      = 'IHeaderBeetle5'
@@ -327,7 +327,7 @@
          desc      = 'I Header of the Beetle 5'
          setMeth   = 'TRUE'
          getMeth   = 'TRUE'
-         checkMeth = 'FALSE' /> 
+         checkMeth = 'FALSE' />
        <bitfield
          type      = 'unsigned char'
          name      = 'R4'
@@ -335,12 +335,12 @@
          desc      = 'Reserved bits for later use'
          setMeth   = 'TRUE'
          getMeth   = 'TRUE'
-         checkMeth = 'FALSE' /> 
- 
-	
+         checkMeth = 'FALSE' />
+
+
 	</attribute>
 
-	
+
        <attribute
          type    = 'unsigned int'
          name    = 'sourceID'
@@ -348,11 +348,11 @@
          init    = '100'
          access  = 'PUBLIC'>
 	 </attribute>
- 
+
       <method
 	name    = "findPCN"
 	desc    = "find pcn for value for this beetle"
-        argList = "const unsigned int beetle" 
+        argList = "const unsigned int beetle"
         const   = "TRUE"
         type    = "unsigned int"
 	/>
@@ -360,11 +360,11 @@
        <method
 	name    = "findIHeader"
 	desc    = "find iheader for each beetle"
-        argList = "const unsigned int beetle" 
+        argList = "const unsigned int beetle"
         const   = "TRUE"
         type    = "unsigned int"
 	/>
-  
+
       <method
 	name = 'pcnVote'
 	desc = 'majority vote on pcn'
@@ -379,7 +379,7 @@
 	const  = "TRUE"
 	access = "PUBLIC"
 	/>
-     
+
 
     <method name = "noEvent"
        type = "bool"
@@ -387,7 +387,7 @@
        argList = "const unsigned int"
        const = "TRUE" />
 
-       
+
     <method name = "noClock"
        type = "bool"
        desc = "test for clock loss on link"
@@ -412,23 +412,23 @@
        argList = "const unsigned int"
        const = "TRUE" />
 
-     
+
         <method name = "linkEnabled"
          type = "bool"
          desc = "test if link enabled"
          argList = "const unsigned int"
          const = "TRUE" />
 
-        <method name = "enabled" 
+        <method name = "enabled"
          type = "bool"
          desc = "true if pp has enabled links"
          const = "TRUE" />
- 
-         <method 
+
+         <method
           name = "fillStream"
           desc = "Print in a human readable way"
           type = "std::ostream&amp;"
-          virtual = "FALSE"
+          override = "TRUE"
           const = "TRUE">
           <arg type = "std::ostream" name  = "s" />
            </method>

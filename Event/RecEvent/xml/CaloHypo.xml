@@ -18,10 +18,12 @@
  id     = "&CLID_CaloHypo;"
  author = "Vanya Belyaev Ivan.Belyaev@itep.ru"
  stdVectorTypeDef = "TRUE"
+ final = "TRUE"
+ defaultdestructor="FALSE"
 >
 <desc> *
  *
- *  The class represents the calorimeter hypothesis. 
+ *  The class represents the calorimeter hypothesis.
  *
  *</desc>
 <import name = "Event/CaloDigit"      />
@@ -33,7 +35,7 @@
 
 
 <base   name = "KeyedObject&lt;int&gt;"  />
-  
+
 <location name = "Default"      place = "Rec/Calo/Hypos"        />
 <location name = "Photons"      place = "Rec/Calo/Photons"      />
 <location name = "Electrons"    place = "Rec/Calo/Electrons"    />
@@ -46,14 +48,14 @@
 <location name = "MergedPi0sHlt"   place = "Hlt/Calo/MergedPi0s"   />
 <location name = "SplitPhotonsHlt" place = "Hlt/Calo/SplitPhotons" />
 
-<typedef 
+<typedef
     type   = "SharedObjectsContainer&lt;LHCb::CaloHypo&gt;"
     def    = "Selection"
     desc   = "For defining SharedObjectContainer"
     access = "PUBLIC"
     />
 
-<typedef 
+<typedef
     type = "Gaudi::NamedRange_&lt;ConstVector&gt;"
     def  = "Range"
     desc = "For accessing a list of CaloHypos which is either a SharedObjectContainer, a KeyedContainer or a ConstVector"
@@ -67,14 +69,14 @@
  access = "PROTECTED"
 />
 &KeyedObject;
-  
+
 <enum
   desc="Calo hypotheses"
   name="Hypothesis"
   value="    Undefined = 0  , Mip  , MipPositive  ,  MipNegative  ,  Photon ,  PhotonFromMergedPi0 ,  BremmstrahlungPhoton,  Pi0Resolved  ,  Pi0Overlapped,Pi0Merged ,  EmCharged ,  Positron  ,  Electron  ,  EmChargedSeed,  PositronSeed ,  ElectronSeed ,  NeutralHadron,  ChargedHadron,  PositiveHadron,  NegativeHadron,  Jet,  Other"
   access="PUBLIC"
   />
-      
+
 <typedef
  def    = "Likelihood"
  type   = "double"
@@ -111,45 +113,45 @@
  access = "PUBLIC"
 />
 
-<constructor 
- desc     = "Copy Constructor" 
+<constructor
+ desc     = "Copy Constructor"
  argList  = "LHCb::CaloHypo right"
  initList = "Base() , m_hypothesis( right.hypothesis() ) , m_lh( right.lh() ) , m_position( 0 ) , m_digits( right.digits() ) , m_clusters( right.clusters() ) , m_hypos( right.hypos() )">
-<code> 
-      if( 0 != right.position() ){ m_position = right.position()->clone() ; }
-</code> 
+<code>
+      m_position = ( right.position() ? new CaloPosition( *right.position() ): nullptr );
+</code>
 </constructor>
 
 <destructor
  desc    = "Destructor">
 <code>
-   if( 0 != m_position ) { delete m_position ; m_position = 0 ; } 
+   delete m_position;
 </code>
 </destructor>
-  
 
-<attribute 
+
+<attribute
  name = "hypothesis"
  desc = "The hypothesis's ID"
- type = "LHCb::CaloHypo::Hypothesis" 
+ type = "LHCb::CaloHypo::Hypothesis"
  init = "CaloHypo::Undefined"
  dictalias = "int"
 />
 
 
-<attribute 
+<attribute
  name = "lh"
  desc = "The Hypothesis's likelihood"
- type = "LHCb::CaloHypo::Likelihood" 
+ type = "LHCb::CaloHypo::Likelihood"
  init = "-1."
  dictalias = "double"
 />
 
 
-<attribute 
+<attribute
  name = "position"
  desc = "The hypothesis's CaloPosition object "
- type = "LHCb::CaloHypo::Position*" 
+ type = "LHCb::CaloHypo::Position*"
  init = "0"
  dictalias = "CaloPosition*"
  nonconstaccessor = "TRUE"
@@ -183,7 +185,7 @@
  type   = "double"
  const  = "TRUE"
  access = "PUBLIC" >
- <code> 
+ <code>
  return ( 0 != m_position ? m_position->e() : 0 );
 </code>
 </method>
@@ -201,7 +203,7 @@
     name    = "fillStream"
     desc    = "Print this CaloHypo data object in a human readable way"
     type    = "std::ostream&amp;"
-    virtual = "FALSE"
+    override = "TRUE"
     const   = "TRUE">
   <arg
       type = "std::ostream"

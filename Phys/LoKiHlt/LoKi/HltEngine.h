@@ -1,4 +1,3 @@
-// $Id: HltEngine.h,v 1.2 2008-09-23 13:13:35 ibelyaev Exp $
 // ============================================================================
 #ifndef LOKI_HltENGINE_H 
 #define LOKI_HltENGINE_H 1
@@ -35,10 +34,10 @@ namespace LoKi
     public: 
       // ======================================================================
       /// Standard constructor
-      HltEngine () ; 
+      HltEngine () = default; 
       // ======================================================================
       // destructor 
-      virtual ~HltEngine () ; // Destructor
+      virtual ~HltEngine () = default; // Destructor
       // ======================================================================      
     public: // L0
       // ======================================================================

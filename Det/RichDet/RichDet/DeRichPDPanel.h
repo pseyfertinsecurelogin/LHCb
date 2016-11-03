@@ -24,6 +24,9 @@
 #include "Kernel/RichSmartID.h"
 #include "Kernel/RichTraceMode.h"
 
+// RichUtils
+#include "RichUtils/RichDAQDefinitions.h"
+
 //=============================================================================
 /** @class DeRichPDPanel DeRichPDPanel.h RichDet/DeRichPDPanel.h
  *
@@ -138,7 +141,7 @@ public:
 public: // virtual methods. Derived classes must implement these
 
   /// Returns the detector element for the given PD number
-  virtual const DeRichPD* dePD( const unsigned int PDNumber ) const = 0;
+  virtual const DeRichPD* dePD( const Rich::DAQ::HPDCopyNumber PDNumber ) const = 0;
 
   /** @brief Returns the intersection point with an HPD window given a vector
    *  and a point.
@@ -197,10 +200,10 @@ public: // virtual methods. Derived classes must implement these
                         LHCb::RichSmartID& id ) const = 0;
 
   /// Returns the PD number for the given RichSmartID
-  virtual unsigned int pdNumber( const LHCb::RichSmartID& smartID ) const = 0;
-  ///Returns true when the given smartID corresponds to a GrandPMT.  
-  // For hpds and for standard pmts returns false.
+  virtual Rich::DAQ::HPDCopyNumber pdNumber( const LHCb::RichSmartID& smartID ) const = 0;
 
+  ///Returns true when the given smartID corresponds to a GrandPMT.  
+  /// For hpds and for standard pmts returns false.
   virtual bool pdGrandSize( const LHCb::RichSmartID& smartID ) const = 0;
 
   /**

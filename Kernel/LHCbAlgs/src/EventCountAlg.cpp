@@ -30,8 +30,8 @@ EventCountAlg::EventCountAlg( const std::string& name,
 //=============================================================================
 // Initialization
 //=============================================================================
-StatusCode EventCountAlg::initialize() {
-
+StatusCode EventCountAlg::initialize() 
+{
   StatusCode sc = GaudiAlgorithm::initialize();
   if ( sc.isFailure() ) return sc;
 
@@ -40,15 +40,16 @@ StatusCode EventCountAlg::initialize() {
   if(!m_incSvc) return StatusCode::FAILURE;
   m_incSvc->addListener( this, IncidentType::BeginEvent);
   if( UNLIKELY( msgLevel(MSG::DEBUG) ) ) debug() << "==> Initialize" << endmsg;
-  return StatusCode::SUCCESS;
+
+  return sc;
 }
 
 //=============================================================================
 // Main execution
 //=============================================================================
-StatusCode EventCountAlg::execute() {
-
-  m_nExecuted++;
+StatusCode EventCountAlg::execute() 
+{
+  ++m_nExecuted;
 
   setFilterPassed(true);   // Mandatory. Set to true if event is accepted.
   return StatusCode::SUCCESS;
@@ -57,16 +58,13 @@ StatusCode EventCountAlg::execute() {
 //=============================================================================
 //  Finalize
 //=============================================================================
-StatusCode EventCountAlg::finalize() {
-
+StatusCode EventCountAlg::finalize() 
+{
   if( UNLIKELY( msgLevel(MSG::DEBUG) ) ) debug() << "==> Finalize" << endmsg;
-  //create the statEntity
-  //                                                     entries    flag          flag2      min, max
-  StatEntity anent(
-                   m_nHandled, m_nExecuted,
-                   m_nExecuted, int(m_nHandled>m_nExecuted),
-                   int(m_nExecuted!=0));
-  counter(m_counterName)= anent;
+ 
+  counter(m_counterName) = StatEntity( m_nHandled, m_nExecuted,
+                                       m_nExecuted, int(m_nHandled>m_nExecuted),
+                                       int(m_nExecuted!=0));
 
   return GaudiAlgorithm::finalize();
 }

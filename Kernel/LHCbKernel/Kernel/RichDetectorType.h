@@ -16,6 +16,8 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include <array>
+#include <stdint.h>
 
 //  General namespace for RICH specific definitions documented in RichSide.h
 namespace Rich
@@ -31,7 +33,7 @@ namespace Rich
    *  @author Chris Jones  Christopher.Rob.Jones@cern.ch
    *  @date   08/07/2004
    */
-  enum DetectorType
+  enum DetectorType : int8_t
     {
       InvalidDetector = -1, ///< Unspecified Detector
       Rich1           = 0,  ///< RICH1 detector
@@ -60,6 +62,10 @@ namespace Rich
   {
     return s << Rich::text( detector );
   }
+
+  /// Type for fixed size arrays with RICH detector information
+  template < typename TYPE >
+  using DetectorArray = std::array< TYPE, NRiches >;
 
 }
 

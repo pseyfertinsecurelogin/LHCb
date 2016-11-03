@@ -14,7 +14,9 @@
 
 // local
 #include "RichKernel/RichHistoBase.h"
-#include "RichKernel/RichException.h"
+
+// Utils
+#include "RichUtils/RichException.h"
 
 // Disable warning on windows
 #ifdef _WIN32
@@ -48,12 +50,6 @@ void Rich::HistoBase<PBASE>::initRichTupleConstructor()
   this -> setProperty ( "NTupleTopDir", "RICH/" );
   this -> setProperty ( "NTupleLUN",    "RICHTUPLE1" );
 }
-
-//=============================================================================
-// Destructor
-//=============================================================================
-template <class PBASE>
-Rich::HistoBase<PBASE>::~HistoBase() { }
 
 //=============================================================================
 // Initialisation

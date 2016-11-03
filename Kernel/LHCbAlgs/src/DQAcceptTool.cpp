@@ -20,8 +20,10 @@ DECLARE_TOOL_FACTORY(DQAcceptTool)
 // ============================================================================
 // Standard constructor, initializes variables
 // ============================================================================
-DQAcceptTool::DQAcceptTool(const std::string& type, const std::string& name, const IInterface* parent)
-  : base_class(type, name, parent), m_filter(0), m_scanner(0), m_accepted(true), m_cond(0)
+DQAcceptTool::DQAcceptTool( const std::string& type,
+                            const std::string& name, 
+                            const IInterface* parent )
+: base_class(type, name, parent)
 {
   declareProperty("ConditionPath",
                   m_condPath = "Conditions/Online/LHCb/RunParameters",
@@ -38,11 +40,13 @@ DQAcceptTool::DQAcceptTool(const std::string& type, const std::string& name, con
                   "IDQScanner Tool to collect all the DQ Flags in a run.");
 }
 
-StatusCode DQAcceptTool::initialize() {
+StatusCode DQAcceptTool::initialize()
+{
   StatusCode sc = GaudiTool::initialize();
   if (sc.isFailure()) return sc;
 
-  if (UNLIKELY(m_condPath.empty())) {
+  if (UNLIKELY(m_condPath.empty())) 
+  {
     error() << "Cannot work with empty ConditionPath" << endmsg;
     return StatusCode::FAILURE;
   }
@@ -71,7 +75,8 @@ StatusCode DQAcceptTool::initialize() {
   // instantiated during and event. So, if it is the case, we trigger an
   // immediate update.
   SmartIF<IStateful> stateMachine(serviceLocator());
-  if (stateMachine->FSMState() >= Gaudi::StateMachine::RUNNING) {
+  if (stateMachine->FSMState() >= Gaudi::StateMachine::RUNNING) 
+  {
     sc = updMgrSvc()->update(this);
   }
 
@@ -97,7 +102,7 @@ StatusCode DQAcceptTool::i_checkFlagsByEvent()
   if(UNLIKELY(msgLevel(MSG::VERBOSE)))
     verbose() << "Updating Data Quality flags" << endmsg;
 
-  const IDQFilter::FlagsType& flags = m_cond->param<IDQFilter::FlagsType>("map");
+  const auto & flags = m_cond->param<IDQFilter::FlagsType>("map");
   if (UNLIKELY(msgLevel(MSG::VERBOSE)))
       verbose() << "-> " << flags << endmsg;
 
@@ -110,23 +115,19 @@ StatusCode DQAcceptTool::finalize()
 {
   if (m_filter) {
     releaseTool(m_filter).ignore();
-    m_filter = 0;
+    m_filter = nullptr;
   }
   if (m_scanner) {
     releaseTool(m_scanner).ignore();
-    m_scanner = 0;
+    m_scanner = nullptr;
   }
 
   return GaudiTool::finalize();
 }
 
-bool DQAcceptTool::accept() const {
+bool DQAcceptTool::accept() const
+{
   return m_accepted;
 }
-
-// ============================================================================
-// Destructor
-// ============================================================================
-DQAcceptTool::~DQAcceptTool() {}
 
 // ============================================================================

@@ -37,9 +37,6 @@ public:
   /** Constructor */
   DeUTModule ( const std::string& name = "" ) ;
 
-  /** Destructor */
-  virtual ~DeUTModule();
-
   /**
   * Retrieves reference to class identifier
   * @return the class identifier for this class
@@ -50,12 +47,12 @@ public:
   * another reference to class identifier
   * @return the class identifier for this class
   */
-  const CLID& clID () const;
+  const CLID& clID () const override;
 
   /** initialization method
   * @return Status of initialisation
   */
-  virtual StatusCode initialize();
+  StatusCode initialize() override;
 
   /** region where module is located
   * @return m_region
@@ -63,7 +60,7 @@ public:
   unsigned int detRegion() const;
 
   /// Workaround to prevent hidden base class function
-  inline const std::type_info& type(const std::string &name) const
+  inline const std::type_info& type(const std::string &name) const override
                       {return ParamValidDataObject::type(name);}
   /** indicate the module type (A/B/C/D)
   * @return m_type
@@ -94,13 +91,13 @@ public:
   * @param  aChannel test channel
   * @return bool
   */
-  virtual bool contains(const LHCb::STChannelID aChannel) const;
+  bool contains(const LHCb::STChannelID aChannel) const override;
 
   /** print to stream */
-  std::ostream& printOut( std::ostream& os ) const;
+  std::ostream& printOut( std::ostream& os ) const override;
 
   /** print to stream */
-  MsgStream& printOut( MsgStream& os) const;
+  MsgStream& printOut( MsgStream& os) const override;
 
   /**  locate sector based on a channel id
   @return  sector */

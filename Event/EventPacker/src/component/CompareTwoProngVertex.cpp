@@ -1,4 +1,3 @@
-// $Id: CompareTwoProngVertex.cpp,v 1.2 2009-07-09 09:44:16 cattanem Exp $
 // Include files 
 
 #include "Event/TwoProngVertex.h"
@@ -24,10 +23,6 @@ CompareTwoProngVertex::CompareTwoProngVertex( const std::string& name,
   declareProperty( "InputName" , m_inputName  = LHCb::TwoProngVertexLocation::Default );
   declareProperty( "TestName"  , m_testName   = LHCb::TwoProngVertexLocation::Default+"Test" );
 }
-//=============================================================================
-// Destructor
-//=============================================================================
-CompareTwoProngVertex::~CompareTwoProngVertex() {} 
 
 //=============================================================================
 // Main execution

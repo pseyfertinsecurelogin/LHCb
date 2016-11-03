@@ -17,8 +17,7 @@ class DeCalorimeter ;
  *  @author Vanya Belyaev Ivan.Belyaev@itep.ru 
  *  @date   07/11/2001
  */
-class CellMatrix : 
-  public std::binary_function<LHCb::CaloCellID,LHCb::CaloCellID,double>
+class CellMatrix
 {
   
  public:
@@ -29,16 +28,15 @@ class CellMatrix :
   inline void setDet( const DeCalorimeter* Det ) 
     { m_det = Det; }
   
+  virtual ~CellMatrix() = default;
  protected:
   
   /** Standard constructor
    *  @param Det pointer to calorimeter detector 
    */
-  CellMatrix( const DeCalorimeter* Det = 0 )
+  CellMatrix( const DeCalorimeter* Det = nullptr )
     : m_det ( Det )
     {};
-  
-  virtual ~CellMatrix(); ///< Destructor
   
  protected:
   
@@ -46,24 +44,6 @@ class CellMatrix :
    *  @return pointer to detector element 
    */
   const DeCalorimeter* det() const { return m_det ;}
-  
-  /** select minimum from 2 values 
-   *  @param a the first parameter 
-   *  @param b the second parameter
-   *  @return minnimum value 
-   */
-  template<class TYPE>
-    inline TYPE mini ( const TYPE& a , const TYPE& b ) const 
-    { return a < b ? a : b ; }
-  
-  /** select maximum from  2 values 
-   *  @param a the first parameter 
-   *  @param b the second parameter
-   *  @return maximum value 
-   */
-  template <class TYPE>
-    inline TYPE maxi ( const TYPE& a , const TYPE& b ) const 
-    { return a < b ? b : a ; }
   
   /** calculate the intersection area for 2 squares on the plane
    *  @param   center1   center point of the first  square
@@ -80,12 +60,12 @@ class CellMatrix :
       /// check the sizes 
       if( halfsize1 <= 0 || halfsize2 <= 0 ) { return 0 ; } ///< RETURN 
       const double xSize = 
-        mini( center1.x() + halfsize1 , center2.x() + halfsize2 ) - 
-        maxi( center1.x() - halfsize1 , center2.x() - halfsize2 ) ;
+        std::min( center1.x() + halfsize1 , center2.x() + halfsize2 ) - 
+        std::max( center1.x() - halfsize1 , center2.x() - halfsize2 ) ;
       if( xSize <= 0        )  { return 0 ; } ///< RETURN 
       const double ySize = 
-        mini( center1.y() + halfsize1 , center2.y() + halfsize2 ) - 
-        maxi( center1.y() - halfsize1 , center2.y() - halfsize2 ) ;
+        std::min( center1.y() + halfsize1 , center2.y() + halfsize2 ) - 
+        std::max( center1.y() - halfsize1 , center2.y() - halfsize2 ) ;
       if( ySize <= 0        )  { return 0 ; } ///< RETURN 
       ///
       return xSize * ySize ;
@@ -98,19 +78,17 @@ class CellMatrix :
   void Exception
     ( const std::string& message ) const ;
   
- private:
-  
-  /** copy constructor is private!
+  /** copy constructor is disabled!
    */
-  CellMatrix( const CellMatrix& );
+  CellMatrix( const CellMatrix& ) = delete;
   
-  /** assignement operator is private!
+  /** assignement operator is disabled!
    */
-  CellMatrix& operator=( const CellMatrix& );
+  CellMatrix& operator=( const CellMatrix& ) = delete;
   
  private:
 
-  const DeCalorimeter* m_det ;
+  const DeCalorimeter* m_det = nullptr;
   
 };
 

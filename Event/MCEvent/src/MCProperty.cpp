@@ -15,9 +15,9 @@
 //  Returns the second member of the pair with the specified key, or zero
 //=========================================================================
 int LHCb::MCProperty::property ( const LHCb::MCParticle* part) {
-  if ( NULL == part ) return 0;
-  int key = part->key();
-  int indx;
+  if ( !part ) return 0;
+  const int key = part->key();
+  int indx(0);
   if ( findIndex( key, indx ) )  return m_property[indx].second;
   return 0;
 }
@@ -30,9 +30,10 @@ bool LHCb::MCProperty::findIndex ( int key, int& index) {
   // binary search
   int iF = 0;
   int iL = m_property.size() - 1;
-  while ( iF <= iL ) {
-    int iM = (iF + iL ) / 2;
-    int tmpKey = m_property[iM].first;
+  while ( iF <= iL ) 
+  {
+    const int iM = (iF + iL ) / 2;
+    const int tmpKey = m_property[iM].first;
 
     if ( key == tmpKey ) {
       index = iM;
@@ -51,13 +52,17 @@ bool LHCb::MCProperty::findIndex ( int key, int& index) {
 //  Insert the pair (MCParticle->key,value) at the appropriate place.
 //  l Replace if key exists
 //=========================================================================
-void LHCb::MCProperty::setProperty ( const LHCb::MCParticle* part, int value ) {
-  if ( NULL == part ) return;
-  int key = part->key();
-  int iF;
-  if ( findIndex( key, iF ) ) {
+void LHCb::MCProperty::setProperty ( const LHCb::MCParticle* part, int value ) 
+{
+  if ( !part ) return;
+  const int key = part->key();
+  int iF(0);
+  if ( findIndex( key, iF ) )
+  {
     m_property[iF].second = value;
-  } else {
+  } 
+  else 
+  {
     m_property.push_back( std::pair<int,int>( 0, 0 ) );
     int iL = m_property.size() - 1;
     while ( iL > iF ) {
