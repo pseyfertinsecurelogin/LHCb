@@ -108,7 +108,6 @@ protected:
    private:
 
       HltEvaluator* m_parent;
-      LoKi::Hybrid::IHltFactory* m_factory;
       const std::string m_expr;
       const std::string m_title;
       const std::string m_htitle;
@@ -183,7 +182,7 @@ protected:
    double timeSpan() const { return m_timeSpan; }
 
    SmartIF<IHltMonitorSvc> m_hltMonSvc;
-   mutable LoKi::Hybrid::IHltFactory* m_factory;
+   mutable LoKi::Hybrid::IHltFactory* m_factory = nullptr;
 
    std::string m_odin_location;
    std::string m_l0_location;
@@ -191,8 +190,8 @@ protected:
    std::string m_raw_location;
    std::map<unsigned int,std::string> m_bits;
 
-   bool m_evals_updated;
-   bool m_preambulo_updated;
+   bool m_evals_updated      = false;
+   bool m_preambulo_updated  = false;
    std::string m_preambulo;
 
 private:
@@ -203,12 +202,12 @@ private:
    std::vector<std::string> m_preambulo_ ;             // the preambulo property
 
    std::unordered_map<std::string, const DataObject*> m_data;
-   Condition *m_runpars;
+   Condition *m_runpars = nullptr;
    SmartIF<IUpdateManagerSvc> m_updMgrSvc;
 
    mutable unsigned long long m_startOfRun = 0;
-   double m_binWidth; // in _minutes_!
-   double m_timeSpan; // in _minutes_!
+   double m_binWidth = 10;   // in _minutes_!
+   double m_timeSpan = 4000; // in _minutes_!
 
    StatusCode i_updateConditions();
    void handle(const Incident&) override;
